@@ -68,7 +68,7 @@ public:
 	uint16 getPaletteCount() const { return 256; }
 
 	/** Read the cursor's data out of a stream. */
-	bool readFromStream(Common::SeekableReadStream &stream, bool forceMonochrome = false, byte monochromeInvertedPixelColor = 0xff);
+	bool readFromStream(Common::SeekableReadStream &stream, bool forceMonochrome = false, byte monochromeInvertedPixelColor = 0xff, bool forceCURSFormat = false);
 
 protected:
 	bool readFromCURS(Common::SeekableReadStream &stream, byte monochromeInvertedPixelColor);

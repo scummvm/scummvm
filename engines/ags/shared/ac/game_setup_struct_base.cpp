@@ -249,9 +249,8 @@ Size ResolutionTypeToSize(GameResolutionType resolution, bool letterbox) {
 	case kGameResolution_1280x720:
 		return Size(1280, 720);
 	default:
-		break;
+		return Size();
 	}
-	return Size();
 }
 
 const char *GetScriptAPIName(ScriptAPIVersion v) {
@@ -266,9 +265,8 @@ const char *GetScriptAPIName(ScriptAPIVersion v) {
 	case kScriptAPI_v3507: return "v3.5.0-final";
 	case kScriptAPI_v351: return "v3.5.1";
 	case kScriptAPI_v360: return "v3.6.0";
-	case kScriptAPI_Undefined: return "undefined";
-	}
-	return "unknown";
+	default: return "unknown";
+	}	
 }
 
 } // namespace AGS3

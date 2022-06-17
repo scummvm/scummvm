@@ -28,16 +28,6 @@
 
 namespace HDB {
 
-#define	CONFIG_MUSICVOL		"music_volume"
-#define	CONFIG_SOUNDVOL		"sound_volume"
-#define	CONFIG_MSTONE7		"hdb_memory_heap"
-#define	CONFIG_MSTONE14		"lua_stack_offset"
-#define	CONFIG_MSTONE21		"fmod_mix_timer"
-#define	CONFIG_SOUNDCACHE	"sound_cache_max"
-#define	CONFIG_GFXCACHE		"gfx_cache_max"
-#define	CONFIG_CHEAT		"hypercheat"
-#define	CONFIG_VOICES		"voices"
-
 #define	TITLE_DELAY1		2				// time to wait before OOH OOH
 #define	TITLE_DELAY2		0.5				// time to spend doing OOH OOH
 #define	TITLE_DELAY3		1				// time to wait before ending title
@@ -58,6 +48,17 @@ enum {
 	kScreenFade = 512,
 	kNebulaCount = 7,
 	kMaxStars = 10
+};
+
+enum OptionsScreens {
+	kOptionsScreenMain = 1,          // The main Options screen; Sound Settings and Modify Controls button
+	kOptionsScreenModifyControls = 2 // The controls screen, for viewing and remapping controls (currently not implemented)
+};
+
+enum MenuScreens {
+	kMenuOptions  = 0,
+	kMenuLoadGame = 1,
+	kMenuNewGame  = 2
 };
 
 struct Star {
@@ -85,7 +86,7 @@ public:
 	void freeMenu();
 
 	void processInput(int x, int y);	// this is where the items are clicked!
-	void controlsInput(int x, int y);	// take mouse input and pass through to menu
+	void controlsInput(int x, int y, int xit); // take mouse input and pass through to menu
 	void controlsDraw();
 	void drawNebula();
 	void drawRocketAndSelections();		// draw the background stuff
@@ -197,8 +198,8 @@ public:
 	Picture	*_starRedGfx[2], *_starGreenGfx[2], *_starBlueGfx[2], *_versionGfx;
 	Picture *_screenshots1gfx, *_screenshots1agfx, *_screenshots2gfx, *_demoPlaqueGfx, *_handangoGfx;
 
-	bool _menuActive, _optionsScrolling, _newgameActive, _sayHDB;
-	int	_gamefilesActive, _clickDelay, _saveSlot, _optionsActive, _quitActive, _warpActive;
+	bool _menuActive, _optionsScrolling, _newgameActive, _sayHDB, _warpActive, _gamefilesActive, _optionsActive, _quitActive;
+	int	_clickDelay, _saveSlot, _optionsScreenId, _quitCounter, _warpMapId;
 	int	_optionsScrollX, _optionsXV, _oBannerY;
 	int	_nextScreen;
 

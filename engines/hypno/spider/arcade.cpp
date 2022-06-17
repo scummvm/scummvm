@@ -34,6 +34,9 @@ static const int shootOriginIndex[9][2] = {
 	{41, 3}, {51, 3}, {65, 6}, {40, 16}, {58, 20}, {67, 10}, {37, 14}, {37, 15}, {67, 22}};
 
 void SpiderEngine::runBeforeArcade(ArcadeShooting *arc) {
+	_health = arc->health;
+	_maxHealth = _health;
+	resetStatistics();
 	_checkpoint = _currentLevel;
 	assert(!arc->player.empty());
 	_playerFrames = decodeFrames(arc->player);
@@ -63,6 +66,12 @@ void SpiderEngine::runAfterArcade(ArcadeShooting *arc) {
 		assert(_score >= _bonus);
 		_score -= _bonus;
 	}
+
+	for (Frames::iterator it =_playerFrames.begin(); it != _playerFrames.end(); ++it) {
+		(*it)->free();
+		delete (*it);
+	}
+	_playerFrames.clear();
 
 	if (isDemo() && _restoredContentEnabled) {
 		if (_health == 0)
@@ -118,7 +127,8 @@ void SpiderEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 	if (_arcadeMode != "YC" && _arcadeMode != "YD")
 		return;
 	if ((uint32)(s->name[0]) == _currentPlayerPosition) {
-		_health = _health - s->attackWeight;
+		if (!_infiniteHealthCheat)
+			_health = _health - s->attackWeight;
 		hitPlayer();
 	}
 }
@@ -274,6 +284,15 @@ void SpiderEngine::drawPlayer() {
 			}
 		}
 	} else if (_arcadeMode == "YE" || _arcadeMode == "YF") {
+		if (_arcadeMode == "YF") {
+			int fraction = _background->decoder->getFrameCount() / (_maxHealth / 2);
+			if (_background->decoder->getCurFrame() % fraction == 0)
+				_health = MAX(1, _health - 1);
+
+			if (checkArcadeObjectives())
+				_skipLevel = true;
+		}
+
 		Common::Point mousePos = g_system->getEventManager()->getMousePos();
 		uint32 idx = mousePos.x / (_screenW / 5);
 		_playerFrameIdx = oIndexYE[idx];

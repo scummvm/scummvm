@@ -60,8 +60,7 @@ int Transition::computeDuration() {
 
 void Transition::playSound() {
 	if (_vm->_state->getTransitionSound()) {
-		_vm->_sound->playEffect(_vm->_state->getTransitionSound(),
-				_vm->_state->getTransitionSoundVolume());
+		_vm->_sound->playEffect(_vm->_state->getTransitionSound(), _vm->_state->getTransitionSoundVolume());
 	}
 	_vm->_state->setTransitionSound(0);
 }

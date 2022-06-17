@@ -136,7 +136,7 @@ Common::String OSystem_POSIX::getDefaultConfigFileName() {
 
 	// On POSIX systems we follow the XDG Base Directory Specification for
 	// where to store files. The version we based our code upon can be found
-	// over here: http://standards.freedesktop.org/basedir-spec/basedir-spec-0.8.html
+	// over here: https://specifications.freedesktop.org/basedir-spec/basedir-spec-0.8.html
 	envVar = getenv("XDG_CONFIG_HOME");
 	if (!envVar || !*envVar) {
 		envVar = getenv("HOME");
@@ -285,7 +285,7 @@ Common::String OSystem_POSIX::getDefaultLogFileName() {
 
 	// On POSIX systems we follow the XDG Base Directory Specification for
 	// where to store files. The version we based our code upon can be found
-	// over here: http://standards.freedesktop.org/basedir-spec/basedir-spec-0.8.html
+	// over here: https://specifications.freedesktop.org/basedir-spec/basedir-spec-0.8.html
 	const char *prefix = getenv("XDG_CACHE_HOME");
 	if (prefix == nullptr || !*prefix) {
 		prefix = getenv("HOME");

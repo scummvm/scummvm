@@ -36,7 +36,6 @@ void SetWalkBehindBase(int wa, int bl) {
 
 	if (bl != _G(croom)->walkbehind_base[wa]) {
 		_G(walk_behind_baselines_changed) = 1;
-		invalidate_cached_walkbehinds();
 		_G(croom)->walkbehind_base[wa] = bl;
 		debug_script_log("Walk-behind %d baseline changed to %d", wa, bl);
 	}

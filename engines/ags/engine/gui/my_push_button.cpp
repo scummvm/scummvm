@@ -98,7 +98,7 @@ int MyPushButton::pressedon(int mx, int my) {
 	return wasstat;
 }
 
-int MyPushButton::processmessage(int mcode, int wParam, NumberPtr lParam) {
+int MyPushButton::processmessage(int /*mcode*/, int /*wParam*/, NumberPtr /*lParam*/) {
 	return -1;                  // doesn't support messages
 }
 

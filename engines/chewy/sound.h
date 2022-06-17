@@ -33,6 +33,12 @@ class SoundResource;
 #define MAX_SOUND_EFFECTS 14
 
 class Sound {
+private:
+	static const int TMF_NUM_INSTRUMENTS = 31;
+	static const uint8 TMF_MOD_SONG_NAME[20];
+	static const uint8 TMF_MOD_INSTRUMENT_NAME[22];
+	static const uint16 TMF_MOD_PERIODS[36];
+
 public:
 	Sound(Audio::Mixer *mixer);
 	virtual ~Sound();
@@ -43,24 +49,25 @@ public:
 	void resumeSound(uint channel);
 	void stopSound(uint channel = 0);
 	void stopAllSounds();
-	bool isSoundActive(uint channel);
+	bool isSoundActive(uint channel) const;
 	void setSoundVolume(uint volume);
 	void setSoundChannelVolume(uint channel, uint volume);
 	void setSoundChannelBalance(uint channel, int8 balance);
 
-	void playMusic(int num, bool loop = false);
-	void playMusic(uint8 *data, uint32 size, bool loop = false, DisposeAfterUse::Flag dispose = DisposeAfterUse::YES);
+	void playMusic(int16 num, bool loop = false);
+	void playMusic(uint8 *data, uint32 size);
 	void pauseMusic();
 	void resumeMusic();
 	void stopMusic();
-	bool isMusicActive();
+	bool isMusicActive() const;
 	void setMusicVolume(uint volume);
+	void playRoomMusic(int16 roomNum);
 
 	void playSpeech(int num, bool waitForFinish);
 	void pauseSpeech();
 	void resumeSpeech();
 	void stopSpeech();
-	bool isSpeechActive();
+	bool isSpeechActive() const;
 	void setSpeechVolume(uint volume);
 
 	void stopAll();
@@ -87,11 +94,10 @@ private:
 	Audio::SoundHandle _soundHandle[MAX_SOUND_EFFECTS];
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _speechHandle;
+	int16 _curMusic = -1;
 
 	SoundResource *_speechRes;
 	SoundResource *_soundRes;
-
-	void convertTMFToMod(uint8 *tmfData, uint32 tmfSize, uint8 *modData, uint32 &modSize);
 };
 
 } // End of namespace Chewy

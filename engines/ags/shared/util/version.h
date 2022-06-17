@@ -48,9 +48,6 @@ struct Version {
 	String  ShortString;
 	String  BackwardCompatibleString;
 
-	// Last engine version, using different version format than AGS Editor (3.22.1120 / 3.2.2.1120)
-	static const Version LastOldFormatVersion;
-
 	Version();
 	Version(int32_t major, int32_t minor, int32_t release);
 	Version(int32_t major, int32_t minor, int32_t release, int32_t revision);

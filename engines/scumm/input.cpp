@@ -545,7 +545,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 	bool talkstopKeyEnabled = (VAR_TALKSTOP_KEY == 0xFF || VAR(VAR_TALKSTOP_KEY) != 0);
 	bool cutsceneExitKeyEnabled = (VAR_CUTSCENEEXIT_KEY == 0xFF || VAR(VAR_CUTSCENEEXIT_KEY) != 0);
 	bool mainmenuKeyEnabled = (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0);
-	bool snapScrollKeyEnabled = (_game.version <= 2 || VAR_CAMERA_FAST_X != 0xFF);
+	bool snapScrollKeyEnabled = (_game.version >= 2 && _game.version <= 4);
 
 	// In FM-TOWNS games F8 / restart is always enabled
 	if (_game.platform == Common::kPlatformFMTowns)
@@ -686,6 +686,15 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		} else {
 			_mouseAndKeyboardStat = lastKeyHit.ascii;
 		}
+	}
+
+	// The original interpreters allowed the usage of the Enter key as a substitute for left mouse click,
+	// and the Tab key as a substitute for right click; while v7-8 games handle this substitution via
+	// scripts, we have to do this manually for the other games.
+	if (_mouseAndKeyboardStat == Common::KEYCODE_RETURN && _cursor.state > 0 && _game.version <= 6) {
+		_mouseAndKeyboardStat = MBS_LEFT_CLICK;
+	} else if (_mouseAndKeyboardStat == Common::KEYCODE_TAB && _cursor.state > 0 && _game.version >= 4 && _game.version <= 6) {
+		_mouseAndKeyboardStat = MBS_RIGHT_CLICK;
 	}
 }
 

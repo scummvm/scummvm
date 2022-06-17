@@ -671,6 +671,19 @@ void ScummEngine::writeVar(uint var, int value) {
 				value = 3;
 		}
 
+		// WORKAROUND: When the Loom messenger nymph flies to wake up
+		// Bobbin, the whole game is sped up. Slow down the fire
+		// animation so that it appears to run at constant speed
+		// throughout the intro. This does not apply to the VGA talkie
+		// version, because there the fire isn't animated.
+
+		else if (_game.id == GID_LOOM && !(_game.features & GF_DEMO) && _game.version < 4 && vm.slot[_currentScript].number == 44 && var == VAR_TIMER_NEXT && _enableEnhancements) {
+			Actor *a = derefActorSafe(4, "writeVar");
+			if (a) {
+				a->setAnimSpeed((value == 0) ? 6 : 0);
+			}
+		}
+
 		_scummVars[var] = value;
 
 		// Unlike the PC version, the Macintosh version of Loom appears
@@ -883,8 +896,9 @@ void ScummEngine::freezeScripts(int flag) {
 		return;
 	}
 
+	bool flagCondition = _game.version >= 7 ? flag == 2 : flag >= 0x80;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++) {
-		if (_currentScript != i && vm.slot[i].status != ssDead && (!vm.slot[i].freezeResistant || flag >= 0x80)) {
+		if (_currentScript != i && vm.slot[i].status != ssDead && (!vm.slot[i].freezeResistant || flagCondition)) {
 			vm.slot[i].status |= 0x80;
 			vm.slot[i].freezeCount++;
 		}

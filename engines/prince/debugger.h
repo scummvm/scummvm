@@ -33,7 +33,6 @@ class InterpreterFlags;
 class Debugger : public GUI::Debugger {
 public:
 	Debugger(PrinceEngine *vm, InterpreterFlags *flags);
-	~Debugger() override {}	// we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 	uint8 _locationNr;
 	uint8 _cursorNr;

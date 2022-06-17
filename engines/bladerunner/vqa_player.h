@@ -122,6 +122,8 @@ public:
 	bool open();
 	void close();
 
+	bool loadVQPTable(const Common::String& vqpResName);
+
 	int  update(bool forceDraw = false, bool advanceFrame = true, bool useTime = true, Graphics::Surface *customSurface = nullptr);
 	void updateZBuffer(ZBuffer *zbuffer);
 	void updateView(View *view);

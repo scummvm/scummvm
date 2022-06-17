@@ -30,7 +30,7 @@ Effect::Effect() {
 Effect::~Effect() {
 }
 
-void Effect::rnd_blende(byte *rnd_speicher, byte *sram_speicher, byte *screen, byte *palette, int16 col, int16 skip_line) {
+void Effect::rnd_blende(byte *rnd_speicher, byte *sram_speicher, byte *screen, byte *palette, int16 col) {
 	byte *sp = (byte *)MALLOC(8 * 8 + 4);
 	int16 *rnd_zeiger = (int16 *)rnd_speicher;
 	if (col < 256) {
@@ -60,7 +60,8 @@ void Effect::rnd_blende(byte *rnd_speicher, byte *sram_speicher, byte *screen, b
 	free(sp);
 }
 
-void Effect::blende1(byte *memPtr, byte *screen, byte *palette, int16 frames, uint8 mode, int16 color) {
+void Effect::blende1(byte *memPtr, byte *palette, uint8 mode, int16 color) {
+	byte *screen = (byte *)g_screen->getPixels();
 	byte *sp = (byte *)MALLOC(8 * 8 + 4);
 	if (color < 256) {
 		for (int16 i = 0; i < 13; i++) {
@@ -143,20 +144,20 @@ void Effect::blende1(byte *memPtr, byte *screen, byte *palette, int16 frames, ui
 	free(sp);
 }
 
-void Effect::border(byte *workpage_, int16 lines, uint8 mode, int16 color) {
+void Effect::border(byte *workpage_, uint8 mode, int16 color) {
 	if (mode) {
 		for (int i = 0, x = 0; i < 20; ++i, x += 8) {
 			_G(out)->setPointer(workpage_ + 4);
 			_G(out)->boxFill(152 - x, 0, 152 - x + 8, 200, color);
 			_G(out)->boxFill(x + 160, 0, x + 168, 200, color);
-			_G(out)->back2screen(workpage_);
+			_G(out)->copyToScreen();
 		}
 	} else {
 		for (int i = 0, x = 0; i < 20; ++i, x += 8) {
 			_G(out)->setPointer(workpage_ + 4);
 			_G(out)->boxFill(x, 0, x + 8, 200, color);
 			_G(out)->boxFill(312 - x, 0, 31 - x + 8, 200, color);
-			_G(out)->back2screen(workpage_);
+			_G(out)->copyToScreen();
 		}
 	}
 }

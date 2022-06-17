@@ -30,7 +30,7 @@
 #include "lure/events.h"
 #include "lure/lure.h"
 
-#if defined(__SYMBIAN32__) || defined(__ANDROID__) || defined(__WII__)
+#if defined(__ANDROID__) || defined(__WII__)
 #define LURE_CLICKABLE_MENUS
 #endif
 

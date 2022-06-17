@@ -366,12 +366,6 @@ static void setupGraphics(OSystem &system) {
 
 	system.applyBackendSettings();
 
-	// When starting up launcher for the first time, the user might have specified
-	// a --gui-theme option, to allow that option to be working, we need to initialize
-	// GUI here.
-	// FIXME: Find a nicer way to allow --gui-theme to be working
-	GUI::GuiManager::instance();
-
 	// Set initial window caption
 	system.setWindowCaption(Common::U32String(gScummVMFullVersion));
 
@@ -422,7 +416,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// Load the config file (possibly overridden via command line):
 	if (settings.contains("config")) {
 		ConfMan.loadConfigFile(settings["config"]);
-		settings.erase("config");
 	} else {
 		ConfMan.loadDefaultConfigFile();
 	}
@@ -619,13 +612,12 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			}
 #endif
 			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-			if (ttsMan != nullptr && ConfMan.hasKey("tts_enabled", "scummvm") && ConfMan.getBool("tts_enabled", "scummvm")) {
+			if (ttsMan != nullptr) {
 				ttsMan->pushState();
 			}
-
 			// Try to run the game
 			Common::Error result = runGame(plugin, enginePlugin, system, specialDebug);
-			if (ttsMan != nullptr && ConfMan.hasKey("tts_enabled", "scummvm") && ConfMan.getBool("tts_enabled", "scummvm")) {
+			if (ttsMan != nullptr) {
 				ttsMan->popState();
 			}
 

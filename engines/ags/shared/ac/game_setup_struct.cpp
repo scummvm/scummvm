@@ -122,7 +122,7 @@ void GameSetupStruct::read_font_infos(Shared::Stream *in, GameDataVersion data_v
 		for (int i = 0; i < numfonts; ++i) {
 			fonts[i].YOffset = in->ReadInt32();
 			if (data_ver >= kGameVersion_341_2)
-				fonts[i].LineSpacing = Math::Max<int32_t>(0, in->ReadInt32());
+				fonts[i].LineSpacing = MAX<int32_t>(0, in->ReadInt32());
 		}
 	} else {
 		for (int i = 0; i < numfonts; ++i) {
@@ -130,7 +130,7 @@ void GameSetupStruct::read_font_infos(Shared::Stream *in, GameDataVersion data_v
 			fonts[i].Size = in->ReadInt32();
 			fonts[i].Outline = in->ReadInt32();
 			fonts[i].YOffset = in->ReadInt32();
-			fonts[i].LineSpacing = Math::Max<int32_t>(0, in->ReadInt32());
+			fonts[i].LineSpacing = MAX<int32_t>(0, in->ReadInt32());
 			AdjustFontInfoUsingFlags(fonts[i], flags);
 		}
 	}
@@ -152,7 +152,7 @@ void GameSetupStruct::WriteInvInfo_Aligned(Stream *out) {
 	}
 }
 
-HGameFileError GameSetupStruct::read_cursors(Shared::Stream *in, GameDataVersion data_ver) {
+HGameFileError GameSetupStruct::read_cursors(Shared::Stream *in) {
 	ReadMouseCursors_Aligned(in);
 	return HGameFileError::None();
 }
@@ -208,8 +208,8 @@ void GameSetupStruct::WriteMouseCursors_Aligned(Stream *out) {
 //-----------------------------------------------------------------------------
 // Reading Part 2
 
-void GameSetupStruct::read_characters(Shared::Stream *in, GameDataVersion data_ver) {
-	chars = new CharacterInfo[numcharacters + 5]; // TODO: why +5, is this really needed?
+void GameSetupStruct::read_characters(Shared::Stream *in) {
+	chars = new CharacterInfo[numcharacters];
 
 	ReadCharacters_Aligned(in);
 }

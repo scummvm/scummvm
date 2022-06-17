@@ -246,7 +246,7 @@ void MidiDriver_MT32::mt32SysEx(const byte *&dataPtr, int32 &bytesLeft) {
 	g_system->delayMillis(delay);
 }
 
-// MIDI messages can be found at http://www.midi.org/techspecs/midimessages.php
+// MIDI messages can be found at https://web.archive.org/web/20120128110425/http://www.midi.org/techspecs/midimessages.php
 void MidiDriver_MT32::send(uint32 b) {
 	byte command = b & 0xf0;
 	byte channel = b & 0xf;

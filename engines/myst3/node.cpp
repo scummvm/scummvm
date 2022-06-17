@@ -178,10 +178,7 @@ void Node::loadSpotItem(uint16 id, int16 condition, bool fade) {
 			const ResourceDescription &image = spotItemImages[j];
 			ResourceDescription::SpotItemData spotItemData = image.getSpotItemData();
 
-			SpotItemFace *spotItemFace = new SpotItemFace(
-					_faces[i],
-					spotItemData.u,
-					spotItemData.v);
+			SpotItemFace *spotItemFace = new SpotItemFace(_faces[i], spotItemData.u, spotItemData.v);
 
 			spotItemFace->loadData(&image);
 
@@ -412,8 +409,7 @@ void SpotItemFace::initNotDrawn(uint16 width, uint16 height) {
 	_notDrawnBitmap->create(width, height, Texture::getRGBAPixelFormat());
 
 	for (uint i = 0; i < height; i++) {
-		memcpy(_notDrawnBitmap->getBasePtr(0, i),
-				_face->_bitmap->getBasePtr(_posX, _posY + i), width * 4);
+		memcpy(_notDrawnBitmap->getBasePtr(0, i), _face->_bitmap->getBasePtr(_posX, _posY + i), width * 4);
 	}
 }
 
@@ -427,9 +423,7 @@ Common::Rect SpotItemFace::getFaceRect() const {
 
 void SpotItemFace::draw() {
 	for (int i = 0; i < _bitmap->h; i++) {
-		memcpy(_face->_bitmap->getBasePtr(_posX, _posY + i),
-				_bitmap->getBasePtr(0, i),
-				_bitmap->w * 4);
+		memcpy(_face->_bitmap->getBasePtr(_posX, _posY + i), _bitmap->getBasePtr(0, i), _bitmap->w * 4);
 	}
 
 	_drawn = true;
@@ -438,9 +432,7 @@ void SpotItemFace::draw() {
 
 void SpotItemFace::undraw() {
 	for (int i = 0; i < _notDrawnBitmap->h; i++) {
-		memcpy(_face->_bitmap->getBasePtr(_posX, _posY + i),
-				_notDrawnBitmap->getBasePtr(0, i),
-				_notDrawnBitmap->w * 4);
+		memcpy(_face->_bitmap->getBasePtr(_posX, _posY + i), _notDrawnBitmap->getBasePtr(0, i), _notDrawnBitmap->w * 4);
 	}
 
 	_drawn = false;

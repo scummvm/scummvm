@@ -26,10 +26,9 @@
 
 namespace AGS3 {
 
-// 64 bit: Struct size must be 8 byte for scripts to work
+// WARNING: struct size must be 8 byte for old scripts to work
 struct ScriptObject {
-	int id = 0;
-	//RoomObject *obj;
+	int id = -1;
 	int __padding = 0;
 };
 

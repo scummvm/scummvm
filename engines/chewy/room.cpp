@@ -125,7 +125,7 @@ void JungleRoom::rightEntry() {
 void JungleRoom::setup_func() {
 	calc_person_look();
 
-	const int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	const int posX = _G(moveState)[P_CHEWY].Xypos[0];
 
 	int howDestX, nicDestX;
 	if (posX < 40) {
@@ -150,34 +150,13 @@ Room::Room() {
 	_roomTimer._timerMaxNr = 0;
 	_roomTimer._timerStart = 0;
 	init_ablage();
-	for (int16 i = 0; i < MAX_ROOM_HANDLE; i++)
-		_roomHandle[i] = nullptr;
 	_roomInfo = nullptr;
+	_barriers = new BarrierResource(EPISODE1_GEP);
 }
 
 Room::~Room() {
-	for (int16 i = 0; i < MAX_ROOM_HANDLE; i++) {
-		if (_roomHandle[i])
-			delete _roomHandle[i];
-	}
-
+	delete _barriers;
 	free_ablage();
-}
-
-Common::Stream *Room::open_handle(const char *fname1, int16 mode) {
-	assert(mode == R_GEP_DATA || mode == R_VOC_DATA);
-
-	Common::File *f = new Common::File();
-	f->open(fname1);
-	if (f->isOpen()) {
-		if (_roomHandle[mode])
-			delete _roomHandle[mode];
-		_roomHandle[mode] = f;
-	} else {
-		error("open_handle error");
-	}
-
-	return _roomHandle[mode];
 }
 
 void Room::loadRoom(RaumBlk *Rb, int16 room_nr, GameState *player) {
@@ -191,11 +170,11 @@ void Room::loadRoom(RaumBlk *Rb, int16 room_nr, GameState *player) {
 	if (_roomInfo->_tafLoad != 255) {
 		_G(det)->load_rdi_taf(_roomInfo->_tafName, _roomInfo->_tafLoad);
 		Rb->Fti = _G(det)->get_taf_info();
-		Rb->_detImage = Rb->Fti->_image;
-		Rb->DetKorrekt = Rb->Fti->_correction;
+		Rb->_detImage = Rb->Fti->image;
+		Rb->DetKorrekt = Rb->Fti->correction;
 	}
 	_G(obj)->calc_all_static_detail();
-	load_tgp(_roomInfo->_imageNr, Rb, EPISODE1_TGP, GED_LOAD, EPISODE1);
+	load_tgp(_roomInfo->_imageNr, Rb, EPISODE1_TGP, true, EPISODE1);
 	set_pal(_ablagePal[Rb->AkAblage], Rb->LowPalMem);
 	calc_invent(Rb, player);
 
@@ -315,7 +294,7 @@ void Room::calc_invent(RaumBlk *Rb, GameState *player) {
 	delete spriteRes;
 }
 
-int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const char *fileName) {
+int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, bool loadBarriers, const char *fileName) {
 	BackgroundResource *res = new BackgroundResource(fileName);
 	TBFChunk *img = res->getImage(nr, false);
 
@@ -333,14 +312,8 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const cha
 		memcpy(_ablagePal[Rb->AkAblage], img->palette, 3 * 256);
 		set_ablage_info(Rb->AkAblage, nr + (1000 * tgp_idx), img->size);
 
-		if (mode == GED_LOAD) {
-			Common::SeekableReadStream *gstream = dynamic_cast<Common::SeekableReadStream *>(
-				_roomHandle[R_GEP_DATA]);
-			_G(ged)->load_ged_pool(gstream, &_gedInfo[Rb->AkAblage],
-						        nr, _gedMem[Rb->AkAblage]);
-			_gedXNr[Rb->AkAblage] = img->width / _gedInfo[Rb->AkAblage].X;
-			_gedYNr[Rb->AkAblage] = img->height / _gedInfo[Rb->AkAblage].Y;
-		}
+		if (loadBarriers)
+			_barriers->init(nr, img->width, img->height);
 	}
 
 	delete img;
@@ -353,19 +326,16 @@ void Room::init_ablage() {
 	_lastAblageSave = 0;
 	_ablage[0] = (byte *)MALLOC(MAX_ABLAGE * (ABLAGE_BLOCK_SIZE + 4l));
 	_ablagePal[0] = (byte *)MALLOC(MAX_ABLAGE * 768l);
-	_gedMem[0] = (byte *)MALLOC(MAX_ABLAGE * GED_BLOCK_SIZE);
 	_akAblage = 0;
 	for (int16 i = 0; i < MAX_ABLAGE; i++) {
 		_ablage[i] = _ablage[0] + (ABLAGE_BLOCK_SIZE + 4l) * i;
 		_ablageInfo[i][0] = -1;
 		_ablageInfo[i][1] = -1;
 		_ablagePal[i] = _ablagePal[0] + 768l * i;
-		_gedMem[i] = _gedMem[0] + (GED_BLOCK_SIZE * i);
 	}
 }
 
 void Room::free_ablage() {
-	free(_gedMem[0]);
 	free(_ablagePal[0]);
 	free(_ablage[0]);
 	_akAblage = -1;
@@ -385,15 +355,6 @@ byte **Room::get_ablage() {
 
 	if (_akAblage != -1) {
 		ret = &_ablage[0];
-	}
-	return ret;
-}
-
-byte **Room::get_ged_mem() {
-	byte **ret = nullptr;
-
-	if (_akAblage != -1) {
-		ret = &_gedMem[0];
 	}
 	return ret;
 }
@@ -543,7 +504,6 @@ void load_chewy_taf(int16 taf_nr) {
 			_G(gameState).ChewyAni = taf_nr;
 			_G(AkChewyTaf) = taf_nr;
 			_G(chewy) = _G(mem)->taf_adr(filename);
-			_G(chewy_kor) = _G(chewy)->_correction;
 		}
 	}
 }
@@ -561,7 +521,7 @@ void calc_person_look() {
 	for (int16 i = 1; i < MAX_PERSON; i++) {
 		if (_G(spieler_mi)[i].Id != NO_MOV_OBJ) {
 
-			if (_G(spieler_vector)[i].Xypos[0] > _G(spieler_vector)[P_CHEWY].Xypos[0])
+			if (_G(moveState)[i].Xypos[0] > _G(moveState)[P_CHEWY].Xypos[0])
 				_G(person_end_phase)[i] = P_LEFT;
 			else
 				_G(person_end_phase)[i] = P_RIGHT;

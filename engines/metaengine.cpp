@@ -77,53 +77,63 @@ Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
 	act = new Action(kStandardActionPause, _("Pause"));
 	act->setKeyEvent(KeyState(KEYCODE_SPACE, ' '));
 	act->addDefaultInputMapping("SPACE");
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionOpenMainMenu, _("Game menu"));
 	act->setKeyEvent(KeyState(KEYCODE_F5, ASCII_F5));
 	act->addDefaultInputMapping("F5");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionSkip, _("Skip"));
 	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
 	act->addDefaultInputMapping("ESCAPE");
 	act->addDefaultInputMapping("JOY_Y");
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	act = new Action("SKLI", _("Skip line"));
 	act->setKeyEvent(KeyState(KEYCODE_PERIOD, '.'));
 	act->addDefaultInputMapping("PERIOD");
 	act->addDefaultInputMapping("JOY_X");
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	act = new Action("PIND", _("Predictive input dialog"));
 	act->setEvent(EVENT_PREDICTIVE_DIALOG);
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	act = new Action("RETURN", _("Confirm"));
 	act->setKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN));
 	act->addDefaultInputMapping("RETURN");
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionMoveUp, _("Up"));
 	act->setKeyEvent(KEYCODE_KP8);
 	act->addDefaultInputMapping("JOY_UP");
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionMoveDown, _("Down"));
 	act->setKeyEvent(KEYCODE_KP2);
 	act->addDefaultInputMapping("JOY_DOWN");
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionMoveLeft, _("Left"));
 	act->setKeyEvent(KEYCODE_KP4);
 	act->addDefaultInputMapping("JOY_LEFT");
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionMoveRight, _("Right"));
 	act->setKeyEvent(KEYCODE_KP6);
 	act->addDefaultInputMapping("JOY_RIGHT");
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	return Keymap::arrayOf(engineKeyMap);

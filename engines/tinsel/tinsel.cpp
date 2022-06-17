@@ -59,6 +59,8 @@
 #include "tinsel/sysvar.h"
 #include "tinsel/timers.h"
 #include "tinsel/tinsel.h"
+#include "tinsel/noir/notebook.h"
+#include "tinsel/noir/sysreel.h"
 
 namespace Tinsel {
 
@@ -225,6 +227,12 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 		case Common::KEYCODE_F1:
 			// Options dialog
 			ProcessKeyEvent(PLR_MENU);
+			continue;
+		case Common::KEYCODE_F2:
+			ProcessKeyEvent(PLR_INVENTORY);
+			continue;
+		case Common::KEYCODE_F3:
+			ProcessKeyEvent(PLR_NOTEBOOK);
 			continue;
 		case Common::KEYCODE_5:
 		case Common::KEYCODE_F5:
@@ -537,8 +545,8 @@ void SetNewScene(SCNHANDLE scene, int entrance, int transition) {
 	// right items: player must have Mambo the swamp dragon, and mustn't have fireworks (used on
 	// the swamp dragon previously to "load it up").
 	if (TinselV1PSX && g_NextScene.scene == 0x1800000 && g_NextScene.entry == 2) {
-		if ((_vm->_dialogs->IsInInventory(261, INV_1) || _vm->_dialogs->IsInInventory(261, INV_2)) &&
-		    (!_vm->_dialogs->IsInInventory(232, INV_1) && !_vm->_dialogs->IsInInventory(232, INV_2)))
+		if ((_vm->_dialogs->isInInventory(261, INV_1) || _vm->_dialogs->isInInventory(261, INV_2)) &&
+		    (!_vm->_dialogs->isInInventory(232, INV_1) && !_vm->_dialogs->isInInventory(232, INV_2)))
 			g_NextScene.entry = 1;
 	}
 }
@@ -801,17 +809,7 @@ void LoadBasicChunks() {
 	RegisterGlobals(game.numGlobals);
 
 	cptr = FindChunk(INV_OBJ_SCNHANDLE, CHUNK_OBJECTS);
-
-	// Convert to native endianness
-	INV_OBJECT *io = (INV_OBJECT *)cptr;
-	for (int i = 0; i < game.numObjects; i++, io++) {
-		io->id        = FROM_32(io->id);
-		io->hIconFilm = FROM_32(io->hIconFilm);
-		io->hScript   = FROM_32(io->hScript);
-		io->attribute = FROM_32(io->attribute);
-	}
-
-	_vm->_dialogs->RegisterIcons(cptr, game.numObjects);
+	_vm->_dialogs->registerIcons(cptr, game.numObjects);
 
 	// Max polygons are 0 in the original DW1 V0 demo and in DW1 Mac (both in the demo and the full version)
 	if (game.numPolygons != 0)
@@ -902,7 +900,17 @@ const char *const TinselEngine::_textFiles[][3] = {
 	{ "japanese.txt", "japanese1.txt", "japanese2.txt" },	// Japanese
 	{ "us.txt", "us1.txt", "us2.txt" }					// US English
 };
-
+const char *const TinselEngine::_sceneFiles[] = {
+	"english.scn", // English
+	"french.scn", // French
+	"german.scn", // German
+	"italian.scn", // Italian
+	"spanish.scn", // Spanish
+	"english.scn", // Hebrew (FIXME: not sure if this is correct)
+	"english.scn", // Hungarian (FIXME: not sure if this is correct)
+	"japanese.scn", // Japanese
+	"us.scn"  // US English
+};
 
 TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _random("tinsel"),
@@ -1012,6 +1020,11 @@ Common::Error TinselEngine::run() {
 	_handle = new Handle();
 	_scroll = new Scroll();
 	_dialogs = new Dialogs();
+
+	if (TinselVersion == 3) {
+		_notebook = new Notebook();
+		_systemReel = new SystemReel();
+	}
 
 	// Initialize backend
 	if (getGameID() == GID_NOIR) {
@@ -1225,7 +1238,7 @@ void TinselEngine::CreateConstProcesses() {
  * Restart the game
  */
 void TinselEngine::RestartGame() {
-	_vm->_dialogs->HoldItem(INV_NOICON); // Holding nothing
+	_vm->_dialogs->holdItem(INV_NOICON); // Holding nothing
 
 	_bg->DropBackground();	// No background
 
@@ -1401,6 +1414,20 @@ const char *TinselEngine::getTextFile(LANGUAGE lang) {
 		cd = 0;
 
 	return _textFiles[lang][cd];
+}
+
+/**
+ * Return the loading screen(?) scene file specific to the given language.
+ *
+ * @param lang index of the language
+ */
+const char *TinselEngine::getSceneFile(LANGUAGE lang) {
+	assert(((unsigned int) lang) < NUM_LANGUAGES);
+
+	if (!Common::File::exists(_sceneFiles[lang]))
+		lang = TXT_ENGLISH; // fallback to ENGLISH.SCN if <LANG>.IDX is not found
+
+	return _sceneFiles[lang];
 }
 
 } // End of namespace Tinsel

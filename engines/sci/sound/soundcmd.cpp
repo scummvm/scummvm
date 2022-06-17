@@ -35,6 +35,11 @@
 
 namespace Sci {
 
+enum SoundFlags {
+	kSoundFlagFixedPriority = 2,
+	kSoundFlagPreload = 4
+};
+
 SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, AudioPlayer *audio, SciVersion soundVersion) :
 	_resMan(resMan), _segMan(segMan), _kernel(kernel), _audio(audio), _soundVersion(soundVersion) {
 
@@ -137,8 +142,12 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 
 	// Check if a track with the same sound object is already playing
 	MusicEntry *oldSound = _music->getSlot(obj);
-	if (oldSound)
-		processDisposeSound(obj);
+	if (oldSound) {
+		if (_soundVersion <= SCI_VERSION_0_LATE)
+			_music->soundKill(oldSound);
+		else
+			processDisposeSound(obj);
+	}
 
 	MusicEntry *newSound = new MusicEntry();
 	newSound->resourceId = resourceId;
@@ -249,6 +258,16 @@ void SoundCommandParser::processPlaySound(reg_t obj, bool playBed, bool restorin
 		_audio->incrementPlayCounter();
 	}
 
+	if (_soundVersion >= SCI_VERSION_2_1_EARLY && musicSlot->isSample) {
+		// When playing a sample without the preload flag, set the
+		// handle to -1 instead of the object. LSL6HIRES depends on
+		// this to play certain death messages. Fixes bug #13500
+		uint16 flags = readSelectorValue(_segMan, obj, SELECTOR(flags));
+		if (!(flags & kSoundFlagPreload)) {
+			writeSelectorValue(_segMan, obj, SELECTOR(handle), 0xffff);
+		}
+	}
+
 	// Reset any left-over signals
 	musicSlot->signal = 0;
 	musicSlot->fadeStep = 0;
@@ -350,7 +369,11 @@ reg_t SoundCommandParser::kDoSoundPause(EngineState *s, int argc, reg_t *argv) {
 		(_soundVersion < SCI_VERSION_2 && !obj.getSegment()) ||
 		(_soundVersion >= SCI_VERSION_2 && obj.isNull())
 	) {
-		_music->pauseAll(shouldPause);
+		// Don't unpause here, if the sound is already unpaused. The negative global pause counter
+		// that we introduced to accomodate our special needs during GMM save/load and autosave
+		// operations is not meant to be used here and will cause glitches.
+		if (_music->isAllPaused() || shouldPause)
+			_music->pauseAll(shouldPause);
 #ifdef ENABLE_SCI32
 		if (_soundVersion >= SCI_VERSION_2_1_EARLY) {
 			if (shouldPause) {
@@ -801,12 +824,12 @@ reg_t SoundCommandParser::kDoSoundSetPriority(EngineState *s, int argc, reg_t *a
 
 		// NB: It seems SSCI doesn't actually reset the priority here.
 
-		writeSelectorValue(_segMan, obj, SELECTOR(flags), readSelectorValue(_segMan, obj, SELECTOR(flags)) & 0xFD);
+		writeSelectorValue(_segMan, obj, SELECTOR(flags), readSelectorValue(_segMan, obj, SELECTOR(flags)) & ~kSoundFlagFixedPriority);
 	} else {
 		// Scripted priority
 		musicSlot->overridePriority = true;
 
-		writeSelectorValue(_segMan, obj, SELECTOR(flags), readSelectorValue(_segMan, obj, SELECTOR(flags)) | 2);
+		writeSelectorValue(_segMan, obj, SELECTOR(flags), readSelectorValue(_segMan, obj, SELECTOR(flags)) | kSoundFlagFixedPriority);
 
 		_music->soundSetPriority(musicSlot, value);
 	}
@@ -912,6 +935,10 @@ void SoundCommandParser::setVolume(const reg_t obj, const int volume) {
 
 void SoundCommandParser::pauseAll(bool pause) {
 	_music->pauseAll(pause);
+}
+
+void SoundCommandParser::resetGlobalPauseCounter() {
+	_music->resetGlobalPauseCounter();
 }
 
 MusicType SoundCommandParser::getMusicType() const {

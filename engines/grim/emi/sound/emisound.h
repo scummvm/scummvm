@@ -23,10 +23,12 @@
 #define GRIM_MSS_H
 
 #include "audio/mixer.h"
+
 #include "common/str.h"
 #include "common/stack.h"
 #include "common/mutex.h"
 #include "common/hashmap.h"
+
 #include "math/vector3d.h"
 
 namespace Grim {

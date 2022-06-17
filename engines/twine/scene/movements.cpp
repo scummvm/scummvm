@@ -37,10 +37,11 @@ namespace TwinE {
 
 Movements::Movements(TwinEEngine *engine) : _engine(engine) {}
 
-void Movements::getShadowPosition(const IVec3 &pos) {
-	const uint8 *ptr = _engine->_grid->getBlockBufferGround(pos, _processActor.y);
-	_processActor.x = pos.x;
-	_processActor.z = pos.z;
+IVec3 Movements::getShadowPosition(const IVec3 &pos) { // GetShadow
+	IVec3 shadowCoord;
+	const uint8 *ptr = _engine->_grid->getBlockBufferGround(pos, shadowCoord.y);
+	shadowCoord.x = pos.x;
+	shadowCoord.z = pos.z;
 
 	ShapeType shadowCollisionType;
 	const int32 blockIdx = *ptr;
@@ -51,9 +52,8 @@ void Movements::getShadowPosition(const IVec3 &pos) {
 	} else {
 		shadowCollisionType = ShapeType::kNone;
 	}
-	_engine->_collision->reajustActorPosition(shadowCollisionType);
-
-	_engine->_actor->_shadowCoord = _processActor;
+	_engine->_collision->reajustPos(shadowCoord, shadowCollisionType);
+	return shadowCoord;
 }
 
 void Movements::setActorAngleSafe(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct *movePtr) {
@@ -225,7 +225,7 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 			_lastJoyFlag = true;
 			actor->_angle = actor->_move.getRealAngle(_engine->_lbaTime);
 			// TODO: previousLoopActionKey must be handled properly
-			if (!_previousLoopActionKey || actor->_anim == AnimationTypes::kStanding) {
+			if (!_previousLoopActionKey || actor->_genAnim == AnimationTypes::kStanding) {
 				const int32 aggresiveMode = _engine->getRandomNumber(3);
 
 				switch (aggresiveMode) {
@@ -275,7 +275,7 @@ bool Movements::processAttackExecution(int actorIdx) {
 			return true;
 		}
 	} else if (_engine->_gameState->hasItem(InventoryItems::kiUseSabre)) {
-		if (actor->_body != BodyType::btSabre) {
+		if (actor->_genBody != BodyType::btSabre) {
 			_engine->_actor->initModelActor(BodyType::btSabre, actorIdx);
 		}
 
@@ -319,7 +319,7 @@ void Movements::processManualMovementExecution(int actorIdx) {
 		}
 
 		if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
-			if (actor->_anim == AnimationTypes::kStanding) {
+			if (actor->_genAnim == AnimationTypes::kStanding) {
 				_engine->_animations->initAnim(AnimationTypes::kTurnLeft, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 			} else {
 				if (!actor->_dynamicFlags.bIsRotationByAnim) {
@@ -328,7 +328,7 @@ void Movements::processManualMovementExecution(int actorIdx) {
 			}
 			_lastJoyFlag = true;
 		} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
-			if (actor->_anim == AnimationTypes::kStanding) {
+			if (actor->_genAnim == AnimationTypes::kStanding) {
 				_engine->_animations->initAnim(AnimationTypes::kTurnRight, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 			} else {
 				if (!actor->_dynamicFlags.bIsRotationByAnim) {
@@ -397,7 +397,8 @@ void Movements::processRandomAction(int actorIdx) {
 	}
 
 	if (actor->brickCausesDamage()) {
-		moveActor(actor->_angle, ClampAngle((_engine->getRandomNumber() & ANGLE_90) + (actor->_angle - ANGLE_90)), actor->_speed, &actor->_move);
+		const int32 angle = ClampAngle(actor->_angle + (_engine->getRandomNumber() & (ANGLE_180 - 1)) - ANGLE_90 + ANGLE_180);
+		moveActor(actor->_angle, angle, actor->_speed, &actor->_move);
 		actor->_delayInMillis = _engine->getRandomNumber(300) + _engine->_lbaTime + 300;
 		_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 	}
@@ -405,7 +406,8 @@ void Movements::processRandomAction(int actorIdx) {
 	if (!actor->_move.numOfStep) {
 		_engine->_animations->initAnim(AnimationTypes::kForward, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 		if (_engine->_lbaTime > actor->_delayInMillis) {
-			moveActor(actor->_angle, ClampAngle((_engine->getRandomNumber() & ANGLE_90) + (actor->_angle - ANGLE_90)), actor->_speed, &actor->_move);
+			const int32 angle = ClampAngle(actor->_angle + (_engine->getRandomNumber() & (ANGLE_180 - 1)) - ANGLE_90);
+			moveActor(actor->_angle, angle, actor->_speed, &actor->_move);
 			actor->_delayInMillis = _engine->getRandomNumber(300) + _engine->_lbaTime + 300;
 		}
 	}
@@ -427,7 +429,7 @@ void Movements::processSameXZAction(int actorIdx) {
 
 void Movements::processActorMovements(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	if (actor->_entity == -1) {
+	if (actor->_body == -1) {
 		return;
 	}
 

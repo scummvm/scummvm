@@ -51,8 +51,8 @@ private:
 		return NutRenderer::draw2byte(buffer, clipRect, x, y, pitch, _vm->_game.id == GID_CMI ? 255 : (_vm->_game.id == GID_DIG && col == -1 ? 1 : col), chr);
 	}
 
-	int drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) override {
-		return NutRenderer::drawChar(buffer, clipRect, x, y, pitch, col, flags, chr, _hardcodedFontColors, true);
+	int drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) override {
+		return NutRenderer::drawCharV7(buffer, clipRect, x, y, pitch, col, flags, chr, _hardcodedFontColors, true);
 	}
 
 	int getCharWidth(uint16 chr) const override { return NutRenderer::getCharWidth(chr & 0xFF); }

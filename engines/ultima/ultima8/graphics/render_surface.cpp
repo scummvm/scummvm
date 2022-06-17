@@ -21,6 +21,7 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/soft_render_surface.h"
+#include "ultima/ultima8/ultima8.h"
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/screen.h"
@@ -28,7 +29,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-RenderSurface::U8PixelFormat RenderSurface::_format;
+U8PixelFormat *RenderSurface::_format = nullptr;
 
 uint8 RenderSurface::_gamma10toGamma22[256];
 uint8 RenderSurface::_gamma22toGamma10[256];
@@ -41,6 +42,8 @@ uint8 RenderSurface::_gamma22toGamma10[256];
 //
 
 RenderSurface *RenderSurface::SetVideoMode(uint32 width, uint32 height, int bpp) {
+	_format = &Ultima8Engine::get_instance()->_renderFormat;
+
 	// Set up the pixel format to use
 	Graphics::PixelFormat pixelFormat;
 
@@ -79,8 +82,8 @@ RenderSurface *RenderSurface::CreateSecondaryRenderSurface(uint32 width, uint32 
 	RenderSurface *surf;
 
 	// TODO: Change this
-	Graphics::ManagedSurface *managedSurface = new Graphics::ManagedSurface(width, height, _format);
-	if (_format.bytesPerPixel == 4) surf = new SoftRenderSurface<uint32>(managedSurface);
+	Graphics::ManagedSurface *managedSurface = new Graphics::ManagedSurface(width, height, *_format);
+	if (_format->bytesPerPixel == 4) surf = new SoftRenderSurface<uint32>(managedSurface);
 	else surf = new SoftRenderSurface<uint16>(managedSurface);
 	return surf;
 }

@@ -1120,6 +1120,7 @@ int GUI_HoF::sliderHandler(Button *caller) {
 			break;
 
 		case 2:
+			_vm->snd_stopVoice();
 			_vm->playVoice(90, 28);
 			break;
 

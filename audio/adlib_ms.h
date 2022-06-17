@@ -26,6 +26,18 @@
 #include "audio/fmopl.h"
 
 /**
+ * Rhythm instrument types used by the OPL2 and OPL3 rhythm mode.
+ */
+enum OplInstrumentRhythmType {
+	RHYTHM_TYPE_UNDEFINED,
+	RHYTHM_TYPE_HI_HAT,
+	RHYTHM_TYPE_CYMBAL,
+	RHYTHM_TYPE_TOM_TOM,
+	RHYTHM_TYPE_SNARE_DRUM,
+	RHYTHM_TYPE_BASS_DRUM
+};
+
+/**
  * Data for one operator of an OPL instrument definition.
  */
 struct OplInstrumentOperatorDefinition {
@@ -50,6 +62,13 @@ struct OplInstrumentOperatorDefinition {
 	 * Ex register: waveform select.
 	 */
 	uint8 waveformSelect;
+
+	/**
+	 * Check if this operator definition contains any data.
+	 *
+	 * @return True if this operator is empty; false otherwise.
+	 */
+	bool isEmpty();
 };
 
 /**
@@ -89,6 +108,12 @@ struct OplInstrumentDefinition {
 	 * instrument. Not used for melodic instruments.
 	 */
 	uint8 rhythmNote;
+	/**
+	 * The type of OPL rhythm instrument that this definition should be used
+	 * with. Type undefined indicates that this definition should not be used
+	 * with rhythm mode.
+	 */
+	OplInstrumentRhythmType rhythmType;
 
 	/**
 	 * Check if this instrument definition contains any data.
@@ -295,6 +320,35 @@ public:
 	 */
 	static const uint8 OPL2_NUM_CHANNELS = 9;
 	static const uint8 OPL3_NUM_CHANNELS = 18;
+	/**
+	 * The melodic channel numbers available on an OPL2 chip with rhythm mode
+	 * disabled.
+	 */
+	static uint8 MELODIC_CHANNELS_OPL2[9];
+	/**
+	 * The melodic channel numbers available on an OPL2 chip with rhythm mode
+	 * enabled.
+	 */
+	static uint8 MELODIC_CHANNELS_OPL2_RHYTHM[6];
+	/**
+	 * The melodic channel numbers available on an OPL3 chip with rhythm mode
+	 * disabled.
+	 */
+	static uint8 MELODIC_CHANNELS_OPL3[18];
+	/**
+	 * The melodic channel numbers available on an OPL3 chip with rhythm mode
+	 * enabled.
+	 */
+	static uint8 MELODIC_CHANNELS_OPL3_RHYTHM[15];
+	/**
+	 * The number of rhythm instruments available in OPL rhythm mode.
+	 */
+	static const uint8 OPL_NUM_RHYTHM_INSTRUMENTS = 5;
+	/**
+	 * The OPL channels used by the rhythm instruments, in order:
+	 * hi-hat, cymbal, tom tom, snare drum, bass drum.
+	 */
+	static const uint8 OPL_RHYTHM_INSTRUMENT_CHANNELS[OPL_NUM_RHYTHM_INSTRUMENTS];
 
 	/**
 	 * OPL test and timer registers.
@@ -336,6 +390,11 @@ public:
 	 * Offset to the second register set (for dual OPL2 and OPL3).
 	 */
 	static const uint16 OPL_REGISTER_SET_2_OFFSET = 0x100;
+
+	/**
+	 * Offsets for the rhythm mode instrument registers.
+	 */
+	static const uint8 OPL_REGISTER_RHYTHM_OFFSETS[];
 
 	/**
 	 * Bitmasks for various parameters in the OPL registers.
@@ -530,8 +589,10 @@ public:
 	 * of OPL chip.
 	 * 
 	 * @param oplType The type of OPL chip that should be used.
+	 * @param timerFrequency The number of timer callbacks per second that
+	 * should be generated.
 	 */
-	MidiDriver_ADLIB_Multisource(OPL::Config::OplType oplType);
+	MidiDriver_ADLIB_Multisource(OPL::Config::OplType oplType, int timerFrequency = OPL::OPL::kDefaultCallbackFrequency);
 	~MidiDriver_ADLIB_Multisource();
 
 	/**
@@ -547,15 +608,15 @@ public:
 	uint32 property(int prop, uint32 param) override;
 	uint32 getBaseTempo() override;
 	/**
-	 * This driver does not use MidiChannel objects, so this function returns 0.
+	 * This driver does not use MidiChannel objects, so this function returns nullptr.
 	 * 
-	 * @return 0
+	 * @return nullptr
 	 */
 	MidiChannel *allocateChannel() override;
 	/**
-	 * This driver does not use MidiChannel objects, so this function returns 0.
+	 * This driver does not use MidiChannel objects, so this function returns nullptr.
 	 * 
-	 * @return 0
+	 * @return nullptr
 	 */
 	MidiChannel *getPercussionChannel() override;
 
@@ -826,6 +887,14 @@ protected:
 	 */
 	virtual uint8 allocateOplChannel(uint8 channel, uint8 source, uint8 instrumentId);
 	/**
+	 * Determines which melodic channels are available based on the OPL chip
+	 * type and rhythm mode setting and sets _melodicChannels and
+	 * _numMelodicChannels to the determined values.
+	 * This is called after constructing the driver with the OPL chip type and
+	 * after calls to setRhythmMode.
+	 */
+	void determineMelodicChannels();
+	/**
 	 * Calculates the OPL frequency (F-num) and octave (block) to play the
 	 * specified note on the specified MIDI channel and source, taking into
 	 * account the MIDI controllers pitch bend and (on accuracy mode GM) pitch
@@ -919,26 +988,39 @@ protected:
 	virtual uint8 calculatePanning(uint8 channel, uint8 source);
 
 	/**
-	 * Determines the number of channels available on the OPL chip used by the
-	 * driver.
+	 * Activates or deactivates the rhythm mode setting of the OPL chip. This
+	 * setting uses 3 OPL channels to make 5 preset rhythm instruments
+	 * available. Rhythm mode is turned off by default.
+	 * Activating rhythm mode will deallocate and end active notes on channels
+	 * 6 to 8. Deactivating rhythm mode will end active rhythm notes.
+	 * If the specified setting is the same as the current setting, this method
+	 * does nothing.
 	 * 
-	 * @return The number of OPL channels (9 or 18).
+	 * @param rhythmMode True if rhythm mode should be turned on; false if it
+	 * should be turned off.
 	 */
-	uint8 determineNumOplChannels();
+	virtual void setRhythmMode(bool rhythmMode);
+
 	/**
 	 * Determines the offset from a base register for the specified operator of
-	 * the specified OPL channel.
+	 * the specified OPL channel or rhythm instrument.
 	 * Add the offset to the base register to get the correct register for this
-	 * operator and channel.
+	 * operator and channel or rhythm instrument.
 	 * 
 	 * @param oplChannel The OPL channel for which to determine the offset.
+	 * Ignored if a rhythm type is specified.
 	 * @param operatorNum The operator for which to determine the offset;
-	 * 0-1 for 2 operator instruments, 0-3 for 4 operator instruments.
+	 * 0-1 for 2 operator instruments, 0-3 for 4 operator instruments. Ignored
+	 * for rhythm instruments other than bass drum.
+	 * @param rhythmType The rhythm instrument for which to determine the
+	 * offset. Specify type undefined to determine the offset for a melodic
+	 * instrument on the specified channel.
 	 * @param fourOperator True if the instrument used is a 4 operator
-	 * instrument; false if it is a 2 operator instrument.
+	 * instrument; false if it is a 2 operator instrument. Ignored if a rhythm
+	 * instrument type is specified.
 	 * @return The offset to the base register for this operator.
 	 */
-	uint16 determineOperatorRegisterOffset(uint8 oplChannel, uint8 operatorNum, bool fourOperator = false);
+	uint16 determineOperatorRegisterOffset(uint8 oplChannel, uint8 operatorNum, OplInstrumentRhythmType rhythmType = RHYTHM_TYPE_UNDEFINED, bool fourOperator = false);
 	/**
 	 * Determines the offset from a base register for the specified OPL channel.
 	 * Add the offset to the base register to get the correct register for this
@@ -950,46 +1032,72 @@ protected:
 	 * @return The offset to the base register for this channel.
 	 */
 	uint16 determineChannelRegisterOffset(uint8 oplChannel, bool fourOperator = false);
-
 	/**
-	 * Sets the key on bit to false on the specified OPL channel and updates
-	 * _activeNotes with the new status.
+	 * Writes the specified instrument definition to the specified OPL channel.
+	 * It will calculate volume and panning if necessary.
+	 * 
+	 * @param oplChannel The OPL channel on which to write the instrument.
+	 * @param instrument The data of the instrument to write.
+	 */
+	void writeInstrument(uint8 oplChannel, InstrumentInfo instrument);
+	/**
+	 * Sets the key on bit to false for the specified OPL channel or rhythm
+	 * instrument and updates _activeNotes or _activeRhythmNotes with the new
+	 * status.
 	 * Specify forceWrite to force the OPL register to be written, even if the
 	 * key on bit is already false according to the shadow registers.
 	 * 
 	 * @param oplChannel The OPL channel on which the key on bit should be set
-	 * to false.
+	 * to false. Ignored if a rhythm type is specified.
+	 * @param rhythmType The rhythm instrument for which the key on bit should
+	 * be set to false.
 	 * @param forceWrite True if the OPL register write should be forced; false
 	 * otherwise.
 	 */
-	void writeKeyOff(uint8 oplChannel, bool forceWrite = false);
+	void writeKeyOff(uint8 oplChannel, OplInstrumentRhythmType rhythmType = RHYTHM_TYPE_UNDEFINED, bool forceWrite = false);
 	/**
-	 * Calculates the volume for the specified OPL channel and operator
-	 * (@see calculateVolume) and writes the new value to the OPL registers.
+	 * Determines the value for the rhythm register (0xBD) and writes the new
+	 * value to the OPL chip. This register controls rhythm mode, the rhythm
+	 * instruments and the vibrato and modulation depth settings.
+	 */
+	void writeRhythm(bool forceWrite = false);
+	/**
+	 * Calculates the volume for the specified OPL channel or rhythm instrument
+	 * and operator (@see calculateVolume) and writes the new value to the OPL
+	 * registers.
 	 * 
 	 * @param oplChannel The OPL channel for which volume should be calculated
-	 * and written.
+	 * and written. Ignored if a rhythm type is specified.
 	 * @param operatorNum The operator for which volume should be calculated
 	 * and written.
+	 * @param rhythmType The rhythm instrument for which volume should be
+	 * calculated and written. Use type undefined to calculate volume for a
+	 * melodic instrument.
 	 */
-	void writeVolume(uint8 oplChannel, uint8 operatorNum);
+	void writeVolume(uint8 oplChannel, uint8 operatorNum, OplInstrumentRhythmType rhythmType = RHYTHM_TYPE_UNDEFINED);
 	/**
-	 * Calculates the panning for the specified OPL channel
+	 * Calculates the panning for the specified OPL channel or rhythm type
 	 * (@see calculatePanning) and writes the new value to the OPL registers.
 	 * 
 	 * @param oplChannel The OPL channel for which panning should be calculated
-	 * and written.
+	 * and written. Ignored if a rhythm type is specified.
+	 * @param rhythmType The rhythm instrument for which panning should be
+	 * calculated and written. Use type undefined to calculate panning for a
+	 * melodic instrument.
 	 */
-	void writePanning(uint8 oplChannel);
+	virtual void writePanning(uint8 oplChannel, OplInstrumentRhythmType rhythmType = RHYTHM_TYPE_UNDEFINED);
 	/**
 	 * Calculates the frequency for the active note on the specified OPL
-	 * channel (@see calculateFrequency) and writes the new value to the OPL
-	 * registers.
+	 * channel or of the specified rhythm type (@see calculateFrequency) and
+	 * writes the new value to the OPL registers.
 	 * 
 	 * @param oplChannel The OPL channel for which the frequency should be
-	 * calculated and written.
+	 * calculated and written. Ignored if a rhythm type is specified.
+	 * @param rhythmType The rhythm instrument for which the frequency should
+	 * be calculated and written. Use type undefined to calculate the frequency
+	 * for a melodic instrument.
 	 */
-	void writeFrequency(uint8 oplChannel);
+	virtual void writeFrequency(uint8 oplChannel, OplInstrumentRhythmType rhythmType = RHYTHM_TYPE_UNDEFINED);
 
 	/**
 	 * Writes the specified value to the specified OPL register.
@@ -1012,10 +1120,14 @@ protected:
 
 	// True if the driver has been successfully opened.
 	bool _isOpen;
+	// The number of timer callbacks per second.
+	int _timerFrequency;
 	// Controls the behavior for calculating note frequency and volume.
 	AccuracyMode _accuracyMode;
 	// Controls the OPL channel allocation behavior.
 	ChannelAllocationMode _allocationMode;
+	// Controls response to rhythm note off events when rhythm mode is active.
+	bool _rhythmModeIgnoreNoteOffs;
 
 	// The default MIDI channel volume (set when opening the driver).
 	uint8 _defaultChannelVolume;
@@ -1025,6 +1137,8 @@ protected:
 	NoteSelectMode _noteSelect;
 	ModulationDepth _modulationDepth;
 	VibratoDepth _vibratoDepth;
+	// Current OPL rhythm mode setting. Use setRhythmMode to set and activate.
+	bool _rhythmMode;
 
 	// Pointer to the melodic instrument definitions.
 	OplInstrumentDefinition *_instrumentBank;
@@ -1039,10 +1153,16 @@ protected:
 	MidiChannelControlData _controlData[MAXIMUM_SOURCES][MIDI_CHANNEL_COUNT];
 	// The active note data for each OPL channel.
 	ActiveNote _activeNotes[OPL3_NUM_CHANNELS];
+	// The active note data for the OPL rhythm instruments.
+	ActiveNote _activeRhythmNotes[5];
 	// The OPL channel allocated to each MIDI channel and source; 0xFF if a
 	// MIDI channel has no OPL channel allocated. Note that this is only used by
 	// the static channel allocation mode.
 	uint8 _channelAllocations[MAXIMUM_SOURCES][MIDI_CHANNEL_COUNT];
+	// Array containing the numbers of the available melodic channels.
+	uint8 *_melodicChannels;
+	// The number of available melodic channels (length of _melodicChannels).
+	uint8 _numMelodicChannels;
 	// The amount of notes played since the driver was opened / reset.
 	uint32 _noteCounter;
 

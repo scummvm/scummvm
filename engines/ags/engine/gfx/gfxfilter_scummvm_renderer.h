@@ -41,8 +41,6 @@ public:
 	virtual ~ScummVMRendererGfxFilter() {}
 
 	virtual const GfxFilterInfo &GetInfo() const;
-
-	static const GfxFilterInfo FilterInfo;
 };
 
 } // namespace ALSW

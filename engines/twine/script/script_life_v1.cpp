@@ -189,22 +189,22 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 	}
 	case kcBODY:
 		debugCN(3, kDebugLevels::kDebugScripts, "body(");
-		engine->_scene->_currentScriptValue = (int16)ctx.actor->_body;
+		engine->_scene->_currentScriptValue = (int16)ctx.actor->_genBody;
 		break;
 	case kcBODY_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
 		debugCN(3, kDebugLevels::kDebugScripts, "body_obj(%i, ", actorIdx);
-		engine->_scene->_currentScriptValue = (int16)engine->_scene->getActor(actorIdx)->_body;
+		engine->_scene->_currentScriptValue = (int16)engine->_scene->getActor(actorIdx)->_genBody;
 		break;
 	}
 	case kcANIM:
 		debugCN(3, kDebugLevels::kDebugScripts, "anim(");
-		engine->_scene->_currentScriptValue = (int16)ctx.actor->_anim;
+		engine->_scene->_currentScriptValue = (int16)ctx.actor->_genAnim;
 		break;
 	case kcANIM_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
 		debugCN(3, kDebugLevels::kDebugScripts, "anim_obj(%i, ", actorIdx);
-		engine->_scene->_currentScriptValue = (int16)engine->_scene->getActor(actorIdx)->_anim;
+		engine->_scene->_currentScriptValue = (int16)engine->_scene->getActor(actorIdx)->_genAnim;
 		break;
 	}
 	case kcL_TRACK:
@@ -901,7 +901,7 @@ static int32 lKILL_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_actor->processActorCarrier(otherActorIdx);
 	ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
 	otherActor->_dynamicFlags.bIsDead = 1;
-	otherActor->_entity = -1;
+	otherActor->_body = -1;
 	otherActor->_zone = -1;
 	otherActor->setLife(0);
 
@@ -916,7 +916,7 @@ static int32 lSUICIDE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SUICIDE()");
 	engine->_actor->processActorCarrier(ctx.actorIdx);
 	ctx.actor->_dynamicFlags.bIsDead = 1;
-	ctx.actor->_entity = -1;
+	ctx.actor->_body = -1;
 	ctx.actor->_zone = -1;
 	ctx.actor->setLife(0);
 
@@ -952,9 +952,9 @@ static int32 lGIVE_GOLD_PIECES(TwinEEngine *engine, LifeScriptContext &ctx) {
 	for (int16 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
 		OverlayListStruct *overlay = &engine->_redraw->overlayList[i];
 		if (overlay->info0 != -1 && overlay->type == OverlayType::koNumberRange) {
-			overlay->info0 = engine->_collision->getAverageValue(overlay->info1, overlay->info0, 100, overlay->lifeTime - engine->_lbaTime - 50);
+			overlay->info0 = engine->_collision->clampedLerp(overlay->info1, overlay->info0, TO_SECONDS(2), overlay->lifeTime - engine->_lbaTime - TO_SECONDS(1));
 			overlay->info1 = engine->_gameState->_inventoryNumKashes;
-			overlay->lifeTime = engine->_lbaTime + 150;
+			overlay->lifeTime = engine->_lbaTime + TO_SECONDS(3);
 			hideRange = true;
 			break;
 		}
@@ -1052,7 +1052,7 @@ static int32 lSET_DOOR_LEFT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_LEFT(%i)", (int)distance);
 
 	ctx.actor->_angle = ANGLE_270;
-	ctx.actor->_pos.x = ctx.actor->_lastPos.x - distance;
+	ctx.actor->_pos.x = ctx.actor->_animStep.x - distance;
 	ctx.actor->_dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
 
@@ -1068,7 +1068,7 @@ static int32 lSET_DOOR_RIGHT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_RIGHT(%i)", (int)distance);
 
 	ctx.actor->_angle = ANGLE_90;
-	ctx.actor->_pos.x = ctx.actor->_lastPos.x + distance;
+	ctx.actor->_pos.x = ctx.actor->_animStep.x + distance;
 	ctx.actor->_dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
 
@@ -1084,7 +1084,7 @@ static int32 lSET_DOOR_UP(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_UP(%i)", (int)distance);
 
 	ctx.actor->_angle = ANGLE_180;
-	ctx.actor->_pos.z = ctx.actor->_lastPos.z - distance;
+	ctx.actor->_pos.z = ctx.actor->_animStep.z - distance;
 	ctx.actor->_dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
 
@@ -1100,7 +1100,7 @@ static int32 lSET_DOOR_DOWN(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_DOWN(%i)", (int)distance);
 
 	ctx.actor->_angle = ANGLE_0;
-	ctx.actor->_pos.z = ctx.actor->_lastPos.z + distance;
+	ctx.actor->_pos.z = ctx.actor->_animStep.z + distance;
 	ctx.actor->_dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
 
@@ -1116,11 +1116,11 @@ static int32 lGIVE_BONUS(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::GIVE_BONUS(%i)", (int)flag);
 
 	if (ctx.actor->_bonusParameter.cloverleaf || ctx.actor->_bonusParameter.kashes || ctx.actor->_bonusParameter.key || ctx.actor->_bonusParameter.lifepoints || ctx.actor->_bonusParameter.magicpoints) {
-		engine->_actor->processActorExtraBonus(ctx.actorIdx);
+		engine->_actor->giveExtraBonus(ctx.actorIdx);
 	}
 
 	if (flag != 0) {
-		ctx.actor->_bonusParameter.unk1 = 1;
+		ctx.actor->_bonusParameter.givenNothing = 1;
 	}
 
 	return 0;
@@ -1308,7 +1308,7 @@ static int32 lHIT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
 	const int32 strengthOfHit = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::HIT_OBJ(%i, %i)", (int)otherActorIdx, (int)strengthOfHit);
-	engine->_actor->hitActor(ctx.actorIdx, otherActorIdx, strengthOfHit, engine->_scene->getActor(otherActorIdx)->_angle);
+	engine->_actor->hitObj(ctx.actorIdx, otherActorIdx, strengthOfHit, engine->_scene->getActor(otherActorIdx)->_angle);
 	return 0;
 }
 
@@ -1436,7 +1436,7 @@ static int32 lINIT_PINGOUIN(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_scene->_mecaPenguinIdx = penguinActor;
 	ActorStruct *penguin = engine->_scene->getActor(penguinActor);
 	penguin->_dynamicFlags.bIsDead = 1;
-	penguin->_entity = -1;
+	penguin->_body = -1;
 	penguin->_zone = -1;
 	return 0;
 }
@@ -1759,7 +1759,7 @@ static int32 lANIM_SET(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const AnimationTypes animIdx = (AnimationTypes)ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ANIM_SET(%i)", (int)animIdx);
 
-	ctx.actor->_anim = AnimationTypes::kAnimNone;
+	ctx.actor->_genAnim = AnimationTypes::kAnimNone;
 	ctx.actor->_previousAnimIdx = -1;
 	engine->_animations->initAnim(animIdx, AnimType::kAnimationTypeLoop, AnimationTypes::kStanding, ctx.actorIdx);
 

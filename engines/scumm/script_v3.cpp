@@ -66,10 +66,6 @@ void ScummEngine_v3::o3_waitForActor() {
 }
 
 void ScummEngine_v3::o3_waitForSentence() {
-	// FIXME/TODO: Can we merge this with o2_waitForSentence? I think
-	// the code here is actually incorrect, and the code in
-	// o2_waitForSentence correct, but somebody should check the
-	// disassembly for Indy and Loom.
 	if (_sentenceNum) {
 		if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
 			return;

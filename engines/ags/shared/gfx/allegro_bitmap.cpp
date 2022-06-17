@@ -168,10 +168,6 @@ bool Bitmap::SaveToFile(const char *filename, const void *palette) {
 	return result;
 }
 
-void Bitmap::SetMaskColor(color_t color) {
-	// not supported? CHECKME
-}
-
 color_t Bitmap::GetCompatibleColor(color_t color) {
 	color_t compat_color = 0;
 	__my_setcolor(&compat_color, color, bitmap_color_depth(_alBitmap));
@@ -288,12 +284,19 @@ void Bitmap::LitBlendBlt(Bitmap *src, int dst_x, int dst_y, int light_amount) {
 
 void Bitmap::FlipBlt(Bitmap *src, int dst_x, int dst_y, BitmapFlip flip) {
 	BITMAP *al_src_bmp = src->_alBitmap;
-	if (flip == kBitmap_HFlip) {
+	switch (flip) {
+	case kBitmap_HFlip:
 		draw_sprite_h_flip(_alBitmap, al_src_bmp, dst_x, dst_y);
-	} else if (flip == kBitmap_VFlip) {
+		break;
+	case kBitmap_VFlip:
 		draw_sprite_v_flip(_alBitmap, al_src_bmp, dst_x, dst_y);
-	} else if (flip == kBitmap_HVFlip) {
+		break;
+	case kBitmap_HVFlip:
 		draw_sprite_vh_flip(_alBitmap, al_src_bmp, dst_x, dst_y);
+		break;
+	default: // blit with no transform
+		Blit(src, dst_x, dst_y);
+		break;
 	}
 }
 

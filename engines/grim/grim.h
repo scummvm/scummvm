@@ -23,12 +23,11 @@
 #define GRIM_ENGINE_H
 
 #include "engines/engine.h"
+#include "engines/advancedDetector.h"
 
 #include "common/str-array.h"
 #include "common/hashmap.h"
 #include "common/events.h"
-
-#include "engines/advancedDetector.h"
 
 #include "engines/grim/textobject.h"
 #include "engines/grim/iris.h"

@@ -64,8 +64,6 @@ public:
 	virtual void GetKeys(std::vector<const char *> &buf) const = 0;
 	virtual void GetValues(std::vector<const char *> &buf) const = 0;
 protected:
-	// Calculate and return required space for serialization, in bytes
-	virtual size_t CalcSerializeSize() = 0;
 	// Write object data into the provided stream
 	void Serialize(const char *address, AGS::Shared::Stream *out) override;
 
@@ -140,8 +138,7 @@ private:
 		_dic[key] = value;
 		return true;
 	}
-	void DeleteItem(ConstIterator it) { /* do nothing */
-	}
+	void DeleteItem(ConstIterator /*it*/) { /* do nothing */ }
 
 	size_t CalcSerializeSize() override {
 		// 2 class properties + item count

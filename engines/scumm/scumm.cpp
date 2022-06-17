@@ -106,14 +106,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _game(dr.game),
 	  _filenamePattern(dr.fp),
 	  _language(dr.language),
-	  _currentScript(0xFF), // Let debug() work on init stage
-	  _messageDialog(nullptr), _pauseDialog(nullptr), _versionDialog(nullptr),
-	  _rnd("scumm"),
-	  _shakeTimerRate(dr.game.version <= 3 ? 236696 : 291304),
-	  _enableEnhancements(false)
-	  {
-
-	_localizer = nullptr;
+	  _rnd("scumm")
+{
 
 #ifdef USE_RGB_COLOR
 	if (_game.features & GF_16BIT_COLOR) {
@@ -158,195 +152,41 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_objs = nullptr;
 	_sound = nullptr;
 	memset(&vm, 0, sizeof(vm));
-	_pauseDialog = nullptr;
-	_versionDialog = nullptr;
-	_fastMode = 0;
-	_actors = _sortedActors = nullptr;
-	_arraySlot = nullptr;
-	_inventory = nullptr;
-	_newNames = nullptr;
-	_scummVars = nullptr;
-	_roomVars = nullptr;
-	_varwatch = 0;
-	_bitVars = nullptr;
-	_numVariables = 0;
-	_numBitVariables = 0;
-	_numRoomVariables = 0;
-	_numLocalObjects = 0;
-	_numGlobalObjects = 0;
-	_numArray = 0;
-	_numVerbs = 0;
-	_numFlObject = 0;
-	_numInventory = 0;
-	_numRooms = 0;
-	_numScripts = 0;
-	_numSounds = 0;
-	_numCharsets = 0;
-	_numNewNames = 0;
-	_numGlobalScripts = 0;
-	_numCostumes = 0;
-	_numImages = 0;
-	_numLocalScripts = 60;
-	_numSprites = 0;
-	_numTalkies = 0;
-	_numPalettes = 0;
-	_numUnk = 0;
-	_curPalIndex = 0;
-	_currentRoom = 0;
-	_egoPositioned = false;
-	_mouseAndKeyboardStat = 0;
-	_leftBtnPressed = 0;
-	_rightBtnPressed = 0;
-	_lastInputScriptTime = 0;
-	_bootParam = 0;
-	_dumpScripts = false;
-	_debugMode = false;
-	_objectOwnerTable = nullptr;
-	_objectRoomTable = nullptr;
-	_objectStateTable = nullptr;
-	_numObjectsInRoom = 0;
-	_userPut = 0;
-	_userState = 0;
-	_resourceHeaderSize = 8;
-	_saveLoadFlag = 0;
-	_saveLoadSlot = 0;
-	_lastSaveTime = 0;
-	_saveTemporaryState = false;
 	memset(_localScriptOffsets, 0, sizeof(_localScriptOffsets));
-	_scriptPointer = nullptr;
-	_scriptOrgPointer = nullptr;
-	_opcode = 0;
 	vm.numNestedScripts = 0;
-	_lastCodePtr = nullptr;
-	_scummStackPos = 0;
 	memset(_vmStack, 0, sizeof(_vmStack));
-	_fileOffset = 0;
 	memset(_resourceMapper, 0, sizeof(_resourceMapper));
-	_lastLoadedRoom = 0;
-	_roomResource = 0;
-	OF_OWNER_ROOM = 0;
-	_verbMouseOver = 0;
-	_classData = nullptr;
-	_actorToPrintStrFor = 0;
-	_sentenceNum = 0;
 	memset(_sentence, 0, sizeof(_sentence));
 	memset(_string, 0, sizeof(_string));
-	_screenB = 0;
-	_screenH = 0;
-	_roomHeight = 0;
-	_roomWidth = 0;
-	_screenHeight = 0;
-	_screenWidth = 0;
 	for (uint i = 0; i < ARRAYSIZE(_virtscr); i++) {
 		_virtscr[i].clear();
 	}
+
+	setTimerAndShakeFrequency();
+
 	camera.reset();
 	memset(_colorCycle, 0, sizeof(_colorCycle));
 	memset(_colorUsedByCycle, 0, sizeof(_colorUsedByCycle));
-	_ENCD_offs = 0;
-	_EXCD_offs = 0;
-	_CLUT_offs = 0;
-	_EPAL_offs = 0;
-	_IM00_offs = 0;
-	_PALS_offs = 0;
-	_fullRedraw = false;
-	_bgNeedsRedraw = false;
-	_screenEffectFlag = false;
-	_completeScreenRedraw = false;
-	_disableFadeInEffect = false;
 	memset(&_cursor, 0, sizeof(_cursor));
 	memset(_grabbedCursor, 0, sizeof(_grabbedCursor));
-	_currentCursor = 0;
-	_newEffect = 0;
-	_switchRoomEffect2 = 0;
-	_switchRoomEffect = 0;
-
-	_bytesPerPixel = 1;
-	_doEffect = false;
-	_snapScroll = false;
-	_shakeEnabled = false;
-	_shakeNextTick = _shakeTickCounter = 0;
-	_shakeFrame = 0;
-	_screenStartStrip = 0;
-	_screenEndStrip = 0;
-	_screenTop = 0;
-	_drawObjectQueNr = 0;
 	memset(_drawObjectQue, 0, sizeof(_drawObjectQue));
-	_palManipStart = 0;
-	_palManipEnd = 0;
-	_palManipCounter = 0;
-	_palManipPalette = nullptr;
-	_palManipIntermediatePal = nullptr;
 	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
-	_hePalettes = nullptr;
-	_hePaletteSlot = 0;
-	_16BitPalette = nullptr;
-	_macScreen = nullptr;
-	_macIndy3TextBox = nullptr;
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-	_townsScreen = nullptr;
-	_scrollRequest = _scrollDeltaAdjust = 0;
-	_scrollDestOffset = _scrollTimer = 0;
 	_scrollNeedDeltaAdjust = scumm_stricmp(_game.gameid, "indyzak");
-	_refreshNeedCatchUp = false;
 	_enableSmoothScrolling = (_game.platform == Common::kPlatformFMTowns);
 	memset(_refreshDuration, 0, sizeof(_refreshDuration));
-	_refreshArrayPos = 0;
-#ifdef USE_RGB_COLOR
-	_cjkFont = nullptr;
 #endif
-#endif
-	_shadowPalette = nullptr;
-	_shadowPaletteSize = 0;
-	_verbPalette = nullptr;
 	memset(_currentPalette, 0, sizeof(_currentPalette));
 	memset(_darkenPalette, 0, sizeof(_darkenPalette));
 	memset(_HEV7ActorPalette, 0, sizeof(_HEV7ActorPalette));
-	_palDirtyMin = 0;
-	_palDirtyMax = 0;
-	_haveMsg = 0;
-	_haveActorSpeechMsg = false;
-	_useTalkAnims = false;
-	_defaultTalkDelay = 0;
-	_saveSound = 0;
 	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
 	memset(_scaleSlots, 0, sizeof(_scaleSlots));
-	_charset = nullptr;
-	_charsetColor = 0;
 	memset(_charsetColorMap, 0, sizeof(_charsetColorMap));
 	memset(_charsetData, 0, sizeof(_charsetData));
-	_charsetBufPos = 0;
 	memset(_charsetBuffer, 0, sizeof(_charsetBuffer));
-	_copyProtection = false;
-	_voiceMode = 0;
-	_talkDelay = 0;
-	_NES_lastTalkingActor = 0;
-	_NES_talkColor = 0;
-	_keepText = false;
-	_msgCount = 0;
-	_costumeLoader = nullptr;
-	_costumeRenderer = nullptr;
-	_existLanguageFile = false;
-	_languageBuffer = nullptr;
-	_numTranslatedLines = 0;
-	_translatedLines = nullptr;
-	_languageLineIndex = nullptr;
-	_2byteFontPtr = nullptr;
-	_2byteWidth = 0;
-	_2byteHeight = 0;
-	_2byteShadow = 0;
-	_krStrPost = 0;
-	_V1TalkingActor = 0;
 	for (int i = 0; i < 20; i++)
 		_2byteMultiFontPtr[i] = nullptr;
-	_NESStartStrip = 0;
-
-	_skipDrawObject = 0;
-
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-	_townsPaletteFlags = 0;
-	_townsClearLayerFlag = 1;
-	_townsActiveLayerFlags = 3;
 	_curStringRect.top = -1;
 	_curStringRect.left = -1;
 	_curStringRect.bottom = -1;
@@ -359,147 +199,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_cyclRects[i].right = 0;
 	}
 
-	_numCyclRects = 0;
 	memset(_scrollFeedStrips, 0, sizeof(_scrollFeedStrips));
 #endif
-
-	//
-	// Init all VARS to 0xFF
-	//
-	VAR_KEYPRESS = 0xFF;
-	VAR_SYNC = 0xFF;
-	VAR_EGO = 0xFF;
-	VAR_CAMERA_POS_X = 0xFF;
-	VAR_HAVE_MSG = 0xFF;
-	VAR_ROOM = 0xFF;
-	VAR_OVERRIDE = 0xFF;
-	VAR_MACHINE_SPEED = 0xFF;
-	VAR_ME = 0xFF;
-	VAR_NUM_ACTOR = 0xFF;
-	VAR_CURRENT_LIGHTS = 0xFF;
-	VAR_CURRENTDRIVE = 0xFF;	// How about merging this with VAR_CURRENTDISK?
-	VAR_CURRENTDISK = 0xFF;
-	VAR_TMR_1 = 0xFF;
-	VAR_TMR_2 = 0xFF;
-	VAR_TMR_3 = 0xFF;
-	VAR_MUSIC_TIMER = 0xFF;
-	VAR_ACTOR_RANGE_MIN = 0xFF;
-	VAR_ACTOR_RANGE_MAX = 0xFF;
-	VAR_CAMERA_MIN_X = 0xFF;
-	VAR_CAMERA_MAX_X = 0xFF;
-	VAR_TIMER_NEXT = 0xFF;
-	VAR_VIRT_MOUSE_X = 0xFF;
-	VAR_VIRT_MOUSE_Y = 0xFF;
-	VAR_ROOM_RESOURCE = 0xFF;
-	VAR_LAST_SOUND = 0xFF;
-	VAR_CUTSCENEEXIT_KEY = 0xFF;
-	VAR_OPTIONS_KEY = 0xFF;
-	VAR_TALK_ACTOR = 0xFF;
-	VAR_CAMERA_FAST_X = 0xFF;
-	VAR_SCROLL_SCRIPT = 0xFF;
-	VAR_ENTRY_SCRIPT = 0xFF;
-	VAR_ENTRY_SCRIPT2 = 0xFF;
-	VAR_EXIT_SCRIPT = 0xFF;
-	VAR_EXIT_SCRIPT2 = 0xFF;
-	VAR_VERB_SCRIPT = 0xFF;
-	VAR_SENTENCE_SCRIPT = 0xFF;
-	VAR_INVENTORY_SCRIPT = 0xFF;
-	VAR_CUTSCENE_START_SCRIPT = 0xFF;
-	VAR_CUTSCENE_END_SCRIPT = 0xFF;
-	VAR_CHARINC = 0xFF;
-	VAR_CHARCOUNT = 0xFF;
-	VAR_WALKTO_OBJ = 0xFF;
-	VAR_DEBUGMODE = 0xFF;
-	VAR_HEAPSPACE = 0xFF;
-	VAR_RESTART_KEY = 0xFF;
-	VAR_PAUSE_KEY = 0xFF;
-	VAR_MOUSE_X = 0xFF;
-	VAR_MOUSE_Y = 0xFF;
-	VAR_TIMER = 0xFF;
-	VAR_TIMER_TOTAL = 0xFF;
-	VAR_SOUNDCARD = 0xFF;
-	VAR_VIDEOMODE = 0xFF;
-	VAR_MAINMENU_KEY = 0xFF;
-	VAR_FIXEDDISK = 0xFF;
-	VAR_CURSORSTATE = 0xFF;
-	VAR_USERPUT = 0xFF;
-	VAR_SOUNDRESULT = 0xFF;
-	VAR_TALKSTOP_KEY = 0xFF;
-	VAR_FADE_DELAY = 0xFF;
-	VAR_NOSUBTITLES = 0xFF;
-
-	VAR_SOUNDPARAM = 0xFF;
-	VAR_SOUNDPARAM2 = 0xFF;
-	VAR_SOUNDPARAM3 = 0xFF;
-	VAR_INPUTMODE = 0xFF;
-	VAR_MEMORY_PERFORMANCE = 0xFF;
-
-	VAR_VIDEO_PERFORMANCE = 0xFF;
-	VAR_ROOM_FLAG = 0xFF;
-	VAR_GAME_LOADED = 0xFF;
-	VAR_NEW_ROOM = 0xFF;
-	VAR_VERSION_KEY = 0xFF;
-
-	VAR_V5_TALK_STRING_Y = 0xFF;
-
-	VAR_ROOM_WIDTH = 0xFF;
-	VAR_ROOM_HEIGHT = 0xFF;
-	VAR_SUBTITLES = 0xFF;
-	VAR_V6_EMSSPACE = 0xFF;
-
-	VAR_CAMERA_POS_Y = 0xFF;
-	VAR_CAMERA_MIN_Y = 0xFF;
-	VAR_CAMERA_MAX_Y = 0xFF;
-	VAR_CAMERA_THRESHOLD_X = 0xFF;
-	VAR_CAMERA_THRESHOLD_Y = 0xFF;
-	VAR_CAMERA_SPEED_X = 0xFF;
-	VAR_CAMERA_SPEED_Y = 0xFF;
-	VAR_CAMERA_ACCEL_X = 0xFF;
-	VAR_CAMERA_ACCEL_Y = 0xFF;
-	VAR_CAMERA_DEST_X = 0xFF;
-	VAR_CAMERA_DEST_Y = 0xFF;
-	VAR_CAMERA_FOLLOWED_ACTOR = 0xFF;
-
-	VAR_LEFTBTN_DOWN = 0xFF;
-	VAR_RIGHTBTN_DOWN = 0xFF;
-	VAR_LEFTBTN_HOLD = 0xFF;
-	VAR_RIGHTBTN_HOLD = 0xFF;
-
-	VAR_SAVELOAD_SCRIPT = 0xFF;
-	VAR_SAVELOAD_SCRIPT2 = 0xFF;
-
-	VAR_DEFAULT_TALK_DELAY = 0xFF;
-	VAR_CHARSET_MASK = 0xFF;
-
-	VAR_CUSTOMSCALETABLE = 0xFF;
-	VAR_V6_SOUNDMODE = 0xFF;
-
-	VAR_ACTIVE_VERB = 0xFF;
-	VAR_ACTIVE_OBJECT1 = 0xFF;
-	VAR_ACTIVE_OBJECT2 = 0xFF;
-	VAR_VERB_ALLOWED = 0xFF;
-
-	VAR_BLAST_ABOVE_TEXT = 0xFF;
-	VAR_VOICE_MODE = 0xFF;
-	VAR_MUSIC_BUNDLE_LOADED = 0xFF;
-	VAR_VOICE_BUNDLE_LOADED = 0xFF;
-
-	VAR_REDRAW_ALL_ACTORS = 0xFF;
-	VAR_SKIP_RESET_TALK_ACTOR = 0xFF;
-
-	VAR_SOUND_CHANNEL = 0xFF;
-	VAR_TALK_CHANNEL = 0xFF;
-	VAR_SOUNDCODE_TMR = 0xFF;
-	VAR_RESERVED_SOUND_CHANNELS = 0xFF;
-
-	VAR_MAIN_SCRIPT = 0xFF;
-
-	VAR_NUM_SCRIPT_CYCLES = 0xFF;
-	VAR_SCRIPT_CYCLE = 0xFF;
-
-	VAR_QUIT_SCRIPT = 0xFF;
-
-	VAR_NUM_GLOBAL_OBJS = 0xFF;
 
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
@@ -576,9 +277,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		break;
 	}
 
-	_hexdumpScripts = false;
-	_showStack = false;
-
 	if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) {	// FM-TOWNS V3 games originally use 320x240, and we have an option to trim to 200
 		_screenWidth = 320;
 		if (ConfMan.getBool("trim_fmtowns_to_200_pixels"))
@@ -622,11 +320,12 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	else
 		_compositeBuf = nullptr;
 
-	_herculesBuf = nullptr;
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 		_herculesBuf = (byte *)malloc(kHercWidth * kHercHeight);
 	}
 
+	_isRTL = (_language == Common::HE_ISR && _game.heversion == 0)
+			&& (_game.id == GID_MANIAC || (_game.version >= 4 && _game.version < 7));
 #ifndef DISABLE_HELP
 	// Create custom GMM dialog providing a help subdialog
 	assert(!_mainMenuDialog);
@@ -1628,7 +1327,8 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 		_bootParam = -7873;
 	}
 
-	if (!_copyProtection && _game.id == GID_SAMNMAX && _bootParam == 0) {
+	// Skip the sound pre-loading
+	if (_game.id == GID_SAMNMAX && _bootParam == 0 && _enableEnhancements) {
 		_bootParam = -1;
 	}
 
@@ -2397,26 +2097,21 @@ int ScummEngine::getTalkSpeed() {
 Common::Error ScummEngine::go() {
 	setTotalPlayTime();
 
+	_lastWaitTime = _system->getMillis();
+
 	// If requested, load a save game instead of running the boot script
 	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveTemporaryState)) {
 		_saveLoadFlag = 0;
 		runBootscript();
 	} else {
+		_loadFromLauncher = true; // The only purpose of this is triggering the IQ points update for INDY3/4
 		_saveLoadFlag = 0;
 	}
-
-	int diff = 0;	// Duration of one loop iteration
 
 	while (!shouldQuit()) {
 		// Randomize the PRNG by calling it at regular intervals. This ensures
 		// that it will be in a different state each time you run the program.
 		_rnd.getRandomNumber(2);
-
-		// Notify the script about how much time has passed, in ticks (60 ticks per second)
-		if (VAR_TIMER != 0xFF)
-			VAR(VAR_TIMER) = diff * 60 / 1000;
-		if (VAR_TIMER_TOTAL != 0xFF)
-			VAR(VAR_TIMER_TOTAL) += diff * 60 / 1000;
 
 		// Determine how long to wait before the next loop iteration should start
 		int delta = (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;
@@ -2446,26 +2141,24 @@ Common::Error ScummEngine::go() {
 			delta += ((ScummEngine_v0 *)this)->DelayCalculateDelta();
 		}
 
-		// WORKAROUND: walking speed in the original v1 interpreter
-		// is sometimes slower (e.g. during scrolling) than in ScummVM.
-		// This is important for the door-closing action in the dungeon,
-		// otherwise (delta < 6) a single kid is able to escape.
-		if (_game.version == 1 && isScriptRunning(137)) {
-			delta = 6;
+		// In MANIAC V1, the workings of the wait loop will increment the
+		// timer past the comparison, producing a longer wait loop than
+		// expected. The timer resolution is lower than the frame-time
+		// derived from it, i.e., one tick represents three frames. We need
+		// to round up VAR_TIMER_NEXT to the nearest multiple of three.
+		if (_game.id == GID_MANIAC && _game.version == 1) {
+			delta = ceil(delta / 3.0) * 3;
 		}
 
-		// Wait and start the stop watch at the time the wait is assumed
+		// Wait, start and stop the stop watch at the time the wait is assumed
 		// to end. There is no guarantee that the wait is that exact,
 		// but this way if it overshoots that time will count as part
 		// of the main loop.
 
-		diff = waitForTimer(delta * 1000 / 60 - diff);
+		waitForTimer(delta * 4);
 
 		// Run the main loop
 		scummLoop(delta);
-
-		// Halt the stop watch and compute how much time this iteration took.
-		diff = _system->getMillis() - diff;
 
 		if (shouldQuit()) {
 			// TODO: Maybe perform an autosave on exit?
@@ -2476,17 +2169,19 @@ Common::Error ScummEngine::go() {
 	return Common::kNoError;
 }
 
-int ScummEngine::waitForTimer(int msec_delay) {
-	uint32 end_time;
+void ScummEngine::waitForTimer(int quarterFrames) {
+	uint32 endTime, cur;
+	uint32 msecDelay = getIntegralTime(quarterFrames * (1000 / _timerFrequency));
 
 	if (_fastMode & 2)
-		msec_delay = 0;
+		msecDelay = 0;
 	else if (_fastMode & 1)
-		msec_delay = 10;
+		msecDelay = 10;
 
-	uint32 cur = _system->getMillis();;
-
-	end_time = cur + msec_delay;
+	cur = _system->getMillis();
+	uint32 diff = cur - _lastWaitTime;
+	msecDelay = (msecDelay > diff) ? msecDelay - diff : 0;
+	endTime = cur + msecDelay;
 
 	while (!shouldQuit()) {
 		_sound->updateCD(); // Loop CD Audio if needed
@@ -2508,20 +2203,78 @@ int ScummEngine::waitForTimer(int msec_delay) {
 		_refreshDuration[_refreshArrayPos] = (int)(cur - screenUpdateTimerStart);
 		_refreshArrayPos = (_refreshArrayPos + 1) % ARRAYSIZE(_refreshDuration);
 #endif
-		if (cur >= end_time)
+		if (cur >= endTime)
 			break;
-		_system->delayMillis(MIN<uint32>(10, end_time - cur));
+		_system->delayMillis(MIN<uint32>(10, endTime - cur));
 	}
 
-	// Return the expected end time, which may be different from the actual
-	// time. This helps the main loop maintain consistent timing.
+	// Set the last wait time as the expected end time, which may be different
+	// from the actual time. This helps the main loop maintain consistent timing.
 	//
 	// If it's lagging too far behind, we probably resumed from pausing, or
 	// the process was suspended, or any such thing. We probably can't
 	// sensibly detect all of them from within ScummVM, so in that case we
 	// simply return the current time to catch up.
 
-	return (cur > end_time + 50) ? cur : end_time;
+	_lastWaitTime = (cur > endTime + 50) ? cur : endTime;
+}
+
+uint32 ScummEngine::getIntegralTime(double fMsecs) {
+	double msecIntPart;
+	_msecFractParts += modf(fMsecs, &msecIntPart);
+	if (_msecFractParts >= 1) {
+		_msecFractParts--;
+		msecIntPart++;
+	}
+
+	return msecIntPart;
+}
+
+void ScummEngine::setTimerAndShakeFrequency() {
+	_shakeTimerRate = _timerFrequency = 240.0;
+
+	if (_game.platform == Common::kPlatformDOS || _game.platform == Common::kPlatformWindows || _game.platform == Common::kPlatformUnknown) {
+		switch (_game.version) {
+		case 1:
+			if (_game.id == GID_MANIAC) {
+				// In MANIAC V1, one tick represents three frames,
+				// i.e., 12 quarter-frames.
+				_shakeTimerRate = _timerFrequency = PIT_BASE_FREQUENCY / PIT_V1_DIVISOR * 12;
+			} else {
+				_shakeTimerRate = _timerFrequency = PIT_BASE_FREQUENCY / PIT_V2_4_DIVISOR;
+			}
+			break;
+		case 2:
+		case 3:
+		case 4:
+			_shakeTimerRate = _timerFrequency = PIT_BASE_FREQUENCY / PIT_V2_4_DIVISOR;
+			break;
+		case 5:
+			_shakeTimerRate = _timerFrequency = PIT_BASE_FREQUENCY / PIT_V5_6_ORCHESTRATOR_DIVISOR;
+			_timerFrequency *= PIT_V5_6_SUBTIMER_INC / PIT_V5_SUBTIMER_THRESH;
+			break;
+		case 6:
+			_shakeTimerRate = _timerFrequency = PIT_BASE_FREQUENCY / PIT_V5_6_ORCHESTRATOR_DIVISOR;
+			if (_game.id == GID_TENTACLE) {
+				_timerFrequency *= PIT_V5_6_SUBTIMER_INC / PIT_V6_DOTT_SUBTIMER_THRESH;
+			} else {
+				_timerFrequency *= PIT_V5_6_SUBTIMER_INC / PIT_V6_SAMNMAX_SUBTIMER_THRESH;
+			}
+			break;
+		case 7:
+			_shakeTimerRate = _timerFrequency = PIT_BASE_FREQUENCY / PIT_V7_ORCHESTRATOR_DIVISOR;
+			_timerFrequency *= PIT_V7_SUBTIMER_INC / PIT_V7_SUBTIMER_THRESH;
+			break;
+		default:
+			_shakeTimerRate = _timerFrequency = 240.0;
+		}
+	} else if (_game.platform == Common::kPlatformAmiga) {
+		_shakeTimerRate = _timerFrequency = AMIGA_NTSC_VBLANK_RATE;
+	}
+}
+
+double ScummEngine::getTimerFrequency() {
+	return _timerFrequency;
 }
 
 void ScummEngine_v0::scummLoop(int delta) {
@@ -2531,6 +2284,12 @@ void ScummEngine_v0::scummLoop(int delta) {
 }
 
 void ScummEngine::scummLoop(int delta) {
+	// Notify the script about how much time has passed, in jiffies
+	if (VAR_TIMER != 0xFF)
+		VAR(VAR_TIMER) = delta;
+	if (VAR_TIMER_TOTAL != 0xFF)
+		VAR(VAR_TIMER_TOTAL) += delta;
+
 	if (_game.version >= 3) {
 		VAR(VAR_TMR_1) += delta;
 		VAR(VAR_TMR_2) += delta;
@@ -2570,14 +2329,18 @@ void ScummEngine::scummLoop(int delta) {
 	scummLoop_updateScummVars();
 
 	if (_game.features & GF_AUDIOTRACKS) {
-		// Covered automatically by the Sound class
+		VAR(VAR_MUSIC_TIMER) = _sound->getCDMusicTimer();
 	} else if (VAR_MUSIC_TIMER != 0xFF) {
 		if (_sound->useReplacementAudioTracks() && _sound->getCurrentCDSound()) {
+			// The replacement music timer operates on real time, adjusted to
+			// the expected length of the Loom Overture (since there are so
+			// many different recordings of it). It's completely independent of
+			// the SCUMM engine's timer frequency.
 			_sound->updateMusicTimer();
 			VAR(VAR_MUSIC_TIMER) = _sound->getMusicTimer();
 		} else if (_musicEngine) {
 			// The music engine generates the timer data for us.
-			VAR(VAR_MUSIC_TIMER) = _musicEngine->getMusicTimer();
+			VAR(VAR_MUSIC_TIMER) = _musicEngine->getMusicTimer() * _timerFrequency / 240.0;
 		}
 	}
 
@@ -2590,30 +2353,16 @@ load_game:
 		clearCharsetMask();
 		_charset->_hasMask = false;
 
-		// HACK as in game save stuff isn't supported currently
-		if (_game.id == GID_LOOM) {
-			int args[NUM_SCRIPT_LOCAL];
-			uint var;
-			memset(args, 0, sizeof(args));
-			args[0] = 2;
+		if (_game.version > 3) {
+			if (_townsPlayer)
+				_townsPlayer->restoreAfterLoad();
 
-			if (_game.platform == Common::kPlatformMacintosh)
-				var = 105;
-			// 256 color CD version and PC engine version
-			else if (_game.platform == Common::kPlatformPCEngine || _game.version == 4)
-				var = 150;
-			else
-				var = 100;
-			byte restoreScript = (_game.platform == Common::kPlatformFMTowns) ? 17 : 18;
-			// if verbs should be shown restore them
-			if (VAR(var) == 2)
-				runScript(restoreScript, 0, 0, args);
-		} else if (_game.version > 3) {
 			for (int i = 0; i < _numVerbs; i++)
 				drawVerb(i, 0);
-		} else {
-			redrawVerbs();
 		}
+
+		// Update volume settings
+		syncSoundSettings();
 
 		handleMouseOver(false);
 
@@ -2804,30 +2553,130 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 	}
 }
 
-void ScummEngine_v4::scummLoop_handleSaveLoad() {
-	// copy saveLoadFlag as handleSaveLoad() resets it
-	byte saveLoad = _saveLoadFlag;
+void ScummEngine_v3::scummLoop_handleSaveLoad() {
+	bool processIQPoints = (_game.id == GID_INDY3) && (_saveLoadFlag == 2 || _loadFromLauncher);
+	_loadFromLauncher = false;
 
-	ScummEngine_v5::scummLoop_handleSaveLoad();
+	ScummEngine::scummLoop_handleSaveLoad();
 
-	// update IQ points after loading
-	if (saveLoad == 2) {
-		if (_game.id == GID_INDY3)
-			updateIQPoints();
+	if (_completeScreenRedraw) {
+		clearCharsetMask();
+		_charset->_hasMask = false;
+		bool restoreFMTownsSounds = (_townsPlayer != nullptr);
+
+		if (_game.id == GID_LOOM) {
+			// HACK as in game save stuff isn't supported exactly as in the original interpreter when using the
+			// ScummVM save/load dialog. The original save/load screen uses a special script (which we cannot
+			// call without displaying that screen) which will also makes some necessary follow-up operations. We
+			// simply try to achieve that manually. It fixes bugs #6011 and #13369.
+			// We just have to kind of pretend that we've gone through the save/load "room" (with all the right
+			// variables in place), so that all the operations get triggered properly.
+			// The Mac, DOS Talkie and PC-Engine don't have the bugs. We can rely on our old hack there, since
+			// it wouldn't work otherwise, anyway.
+			int args[NUM_SCRIPT_LOCAL];
+			memset(args, 0, sizeof(args));
+
+			uint saveLoadVar = 100;
+			if (_game.platform == Common::kPlatformMacintosh)
+				saveLoadVar = 105;
+			else if (_game.platform == Common::kPlatformPCEngine || _game.version == 4)
+				saveLoadVar = 150;
+
+			// Run this hack only under conditions where the original save script could actually be executed.
+			// Otherwise this would cause all sorts of glitches. Also exclude Mac, PC-Engine and DOS Talkie...
+			if (saveLoadVar == 100 && _userPut > 0 && !isScriptRunning(VAR(VAR_VERB_SCRIPT))) {
+				uint16 prevFlag = VAR(214) & 0x6000;
+				beginCutscene(args);
+				uint16 blockVerbsFlag = VAR(214) & (0x6000 ^ prevFlag);
+				if (Actor *a = derefActor(VAR(VAR_EGO))) {
+					// This is used to restore the correct camera position.
+					VAR(171) = a->_walkbox;
+					VAR(172) = a->getRealPos().x;
+					VAR(173) = a->getRealPos().y;
+				}
+				startScene(70, nullptr, 0);
+				VAR(saveLoadVar) = 0;
+				VAR(214) &= ~blockVerbsFlag;
+				endCutscene();
+
+				if (_game.platform == Common::kPlatformFMTowns && VAR(163)) {
+					// Sound restore script. Unlike other versions which handle this
+					// inside the usual entry scripts, FM-Towns calls this from the save script.
+					memset(args, 0, sizeof(args));
+					args[0] = VAR(163);
+					runScript(38, false, false, args);
+				}
+
+				restoreFMTownsSounds = false;
+
+			} else if (VAR(saveLoadVar) == 2) {
+				// This is our old hack. If verbs should be shown restore them.
+				byte restoreScript = (_game.platform == Common::kPlatformFMTowns) ? 17 : 18;
+				args[0] = 2;
+				runScript(restoreScript, 0, 0, args);
+				// Reset two variables, similiar to what the save script would do, to avoid minor glitches
+				// of the verb image on the right of the distaff (image remainung blank when moving the
+				// mouse cursor over an object, bug #13369).
+				VAR(saveLoadVar + 2) = VAR(saveLoadVar + 3) = 0;
+			}
+
+		} else {
+			if (_game.platform == Common::kPlatformNES) {
+				// WORKAROUND: Original save/load script ran this script
+				// after game load, and o2_loadRoomWithEgo() does as well
+				// this script starts character-dependent music
+				// Fixes bug #3362: MANIACNES: Music Doesn't Start On Load Game
+				if (_game.platform == Common::kPlatformNES) {
+					runScript(5, 0, 0, nullptr);
+					if (VAR(224))
+						_sound->addSoundToQueue(VAR(224));
+				}
+
+			} else if (_game.platform != Common::kPlatformC64 && _game.platform != Common::kPlatformMacintosh) {
+				// MM and ZAK (v1/2)
+				int saveLoadRoom = 50;
+				int saveLoadVar = 21;
+				int saveLoadEnable = 1;
+
+				if (_game.id == GID_INDY3) {
+					saveLoadRoom = 14;
+					saveLoadVar = 58;
+				} else if (_game.platform == Common::kPlatformFMTowns) {
+					// ZAK FM-Towns
+					saveLoadVar = 115;
+				}
+
+				// Only execute this if the original would even allow saving in that situation
+				if (VAR(saveLoadVar) == saveLoadEnable && _userPut > 0 && !(VAR_VERB_SCRIPT != 0xFF && isScriptRunning(VAR(VAR_VERB_SCRIPT)))) {
+					int args[NUM_SCRIPT_LOCAL];
+					memset(args, 0, sizeof(args));
+					beginCutscene(args);
+					startScene(saveLoadRoom, nullptr, 0);
+					endCutscene();
+					restoreFMTownsSounds = false;
+				}
+			}
+
+			// update IQ points after loading
+			if (processIQPoints)
+				updateIQPoints();
+
+			redrawVerbs();
+		}
+
+		if (restoreFMTownsSounds)
+			_townsPlayer->restoreAfterLoad();
 	}
 }
-
 void ScummEngine_v5::scummLoop_handleSaveLoad() {
-	// copy saveLoadFlag as handleSaveLoad() resets it
-	byte saveLoad = _saveLoadFlag;
+	bool processIQPoints = (_game.id == GID_INDY4) && (_saveLoadFlag == 2 || _loadFromLauncher);
+	_loadFromLauncher = false;
 
 	ScummEngine::scummLoop_handleSaveLoad();
 
 	// update IQ points after loading
-	if (saveLoad == 2) {
-		if (_game.id == GID_INDY4)
-			runScript(145, 0, 0, nullptr);
-	}
+	if (processIQPoints)
+		runScript(145, 0, 0, nullptr);
 }
 
 #ifdef ENABLE_SCUMM_7_8

@@ -67,6 +67,9 @@ enum PLR_EVENT {
 	PLR_WHEEL_UP = 19,
 	PLR_WHEEL_DOWN = 20,
 
+	PLR_INVENTORY = 21,
+	PLR_NOTEBOOK = 22,
+
 	// Aliases used for DW1 actions
 	PLR_SLEFT = PLR_WALKTO,
 	PLR_DLEFT = PLR_ACTION,

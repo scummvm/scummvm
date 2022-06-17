@@ -90,6 +90,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 	int               scoreClipID;
 	// number of allowed game audio channels (the ones under direct user control)
 	int               numGameChannels = 0;
+	int               numCompatGameChannels = 0;
 
 	// TODO: I converted original array of sprite infos to vector here, because
 	// statistically in most games sprites go in long continious sequences with minimal
@@ -132,7 +133,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 	// Part 1
 	void read_savegame_info(Shared::Stream *in, GameDataVersion data_ver);
 	void read_font_infos(Shared::Stream *in, GameDataVersion data_ver);
-	HGameFileError read_cursors(Shared::Stream *in, GameDataVersion data_ver);
+	HGameFileError read_cursors(Shared::Stream *in);
 	void read_interaction_scripts(Shared::Stream *in, GameDataVersion data_ver);
 	void read_words_dictionary(Shared::Stream *in);
 
@@ -142,7 +143,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 	void WriteMouseCursors_Aligned(Shared::Stream *out);
 	//------------------------------
 	// Part 2
-	void read_characters(Shared::Stream *in, GameDataVersion data_ver);
+	void read_characters(Shared::Stream *in);
 	void read_lipsync(Shared::Stream *in, GameDataVersion data_ver);
 	void read_messages(Shared::Stream *in, GameDataVersion data_ver);
 

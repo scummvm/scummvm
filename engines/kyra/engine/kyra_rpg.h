@@ -449,6 +449,8 @@ protected:
 	uint32 _flyingObjectStructSize;
 	void *_flyingObjectsPtr;
 
+	Common::String _versionString;
+
 	// sound
 	virtual bool snd_processEnvironmentalSoundEffect(int soundId, int block);
 	virtual void snd_stopSpeech(bool) {}

@@ -19,10 +19,10 @@
  *
  */
 
+#include "common/translation.h"
+
 #include "engines/advancedDetector.h"
 #include "engines/grim/detection.h"
-
-#include "common/translation.h"
 #include "engines/grim/debug.h"
 
 static const DebugChannelDef debugFlagList[] = {
@@ -177,6 +177,19 @@ static const GrimGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
+			GUI_OPTIONS_GRIME
+		},
+		GType_GRIM
+	},
+	{
+		// Grim Fandango German version (CD protected) - unsupported
+		{
+			"grim",
+			"",
+			AD_ENTRY1s("VOX0001.LAB", "88e8e13a8164c0df62b1f2f4e9ab4583", 388753408),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
 			GUI_OPTIONS_GRIME
 		},
 		GType_GRIM

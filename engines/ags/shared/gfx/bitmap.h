@@ -44,6 +44,7 @@ enum BitmapMaskOption {
 };
 
 enum BitmapFlip {
+	kBitmap_NoFlip,
 	kBitmap_HFlip,
 	kBitmap_VFlip,
 	kBitmap_HVFlip

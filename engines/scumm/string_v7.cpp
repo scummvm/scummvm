@@ -170,7 +170,7 @@ void TextRenderer_v7::drawSubstring(const char *str, uint numBytesMax, byte *buf
 			++i;
 			--numBytesMax;
 		} else if (str[i] != '\n' && str[i] != _lineBreakMarker) {
-			x += _gr->drawChar(buffer, clipRect, x, y, pitch, col, flags, str[i]);
+			x += _gr->drawCharV7(buffer, clipRect, x, y, pitch, col, flags, str[i]);
 		}
 		--numBytesMax;
 	}

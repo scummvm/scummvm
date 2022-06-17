@@ -893,4 +893,57 @@ bool GameFeatures::canSaveFromGMM() const {
 	}
 }
 
+uint16 GameFeatures::getGameFlagsGlobal() const {
+	Common::Platform platform = g_sci->getPlatform();
+	bool isCD = g_sci->isCD();
+	switch (g_sci->getGameId()) {
+	case GID_CAMELOT: return 250;
+	case GID_CASTLEBRAIN: return 250;
+	case GID_ECOQUEST: return isCD ? 152 : 150;
+	case GID_ECOQUEST2: return 110;
+	case GID_FAIRYTALES: return 250;
+	case GID_FREDDYPHARKAS: return 186;
+	case GID_GK1: return 127;
+	case GID_GK2: return 150;
+	// ICEMAN uses object properties
+	case GID_ISLANDBRAIN: return 250;
+	case GID_LAURABOW: return 440;
+	case GID_LAURABOW2: return 186;
+	case GID_KQ1: return 150;
+	// KQ4 has no flags
+	case GID_KQ5: return 129;
+	case GID_KQ6: return 137;
+	case GID_KQ7: return 127;
+	case GID_LIGHTHOUSE: return 116;
+	case GID_LONGBOW: return 200;
+	case GID_LSL1: return 111;
+	// LSL2 has no flags
+	case GID_LSL3: return 111;
+	case GID_LSL5: return 186;
+	case GID_LSL6: return 137;
+	// LSL6HIRES uses a flags object
+	case GID_PEPPER: return 134;
+	case GID_PHANTASMAGORIA: return 250;
+	case GID_PHANTASMAGORIA2: return 101;
+	case GID_PQ1: return 134;
+	case GID_PQ2: return (platform != Common::kPlatformPC98) ? 250 : 245;
+	case GID_PQ3: return 165;
+	// PQ4 uses object properties
+	case GID_PQSWAT: return 150;
+	case GID_QFG1: return 350;
+	case GID_QFG1VGA: return 290;
+	case GID_QFG2: return 700;
+	case GID_QFG3: return 500;
+	case GID_QFG4: return 500;
+	case GID_RAMA: return 300;
+	case GID_SHIVERS: return 209;
+	case GID_SQ1: return 118;
+	case GID_SQ4: return 114;
+	case GID_SQ5: return 183;
+	case GID_SQ6: return 250;
+	// TORIN uses a flags object
+	default: return 0;
+	}
+}
+
 } // End of namespace Sci

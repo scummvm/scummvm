@@ -26,7 +26,6 @@
 #include "ags/engine/ac/audio_channel.h"
 #include "ags/engine/ac/button.h"
 #include "ags/engine/ac/character.h"
-#include "ags/engine/ac/character_cache.h"
 #include "ags/shared/ac/dialog_topic.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/dynamic_sprite.h"
@@ -45,7 +44,7 @@
 #include "ags/shared/ac/keycode.h"
 #include "ags/engine/ac/lip_sync.h"
 #include "ags/engine/ac/mouse.h"
-#include "ags/engine/ac/object_cache.h"
+#include "ags/engine/ac/move_list.h"
 #include "ags/engine/ac/overlay.h"
 #include "ags/engine/ac/path_helper.h"
 #include "ags/engine/ac/sys_events.h"
@@ -66,6 +65,7 @@
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/graphics_driver.h"
 #include "ags/shared/gui/gui_button.h"
+#include "ags/shared/gui/gui_slider.h"
 #include "ags/engine/gui/gui_dialog.h"
 #include "ags/engine/main/engine.h"
 #include "ags/engine/media/audio/audio_system.h"
@@ -196,19 +196,13 @@ void set_game_speed(int new_fps) {
 void setup_for_dialog() {
 	_G(cbuttfont) = _GP(play).normal_font;
 	_G(acdialog_font) = _GP(play).normal_font;
-	if (!_GP(play).mouse_cursor_hidden)
-		ags_domouse();
 	_G(oldmouse) = _G(cur_cursor);
 	set_mouse_cursor(CURS_ARROW);
 }
 void restore_after_dialog() {
 	set_mouse_cursor(_G(oldmouse));
-	if (!_GP(play).mouse_cursor_hidden)
-		ags_domouse();
 	invalidate_screen();
 }
-
-
 
 String get_save_game_directory() {
 	return _G(saveGameDirectory);
@@ -331,12 +325,16 @@ void restore_game_dialog() {
 		_G(curscript)->queue_action(ePSARestoreGameDialog, 0, "RestoreGameDialog");
 		return;
 	}
+	do_restore_game_dialog();
+}
+
+bool do_restore_game_dialog() {
 	setup_for_dialog();
 	int toload = loadgamedialog();
 	restore_after_dialog();
-	if (toload >= 0) {
+	if (toload >= 0)
 		try_restore_save(toload);
-	}
+	return toload >= 0;
 }
 
 void save_game_dialog() {
@@ -348,11 +346,16 @@ void save_game_dialog() {
 		_G(curscript)->queue_action(ePSASaveGameDialog, 0, "SaveGameDialog");
 		return;
 	}
+	do_save_game_dialog();
+}
+
+bool do_save_game_dialog() {
 	setup_for_dialog();
 	int toload = savegamedialog();
 	restore_after_dialog();
 	if (toload >= 0)
 		save_game(toload, get_gui_dialog_buffer());
+	return toload >= 0;
 }
 
 void free_do_once_tokens() {
@@ -367,20 +370,15 @@ void unload_game_file() {
 
 	_GP(play).FreeViewportsAndCameras();
 
-	_GP(characterScriptObjNames).clear();
-	free(_G(charextra));
-	free(_G(mls));
+	_GP(charextra).clear();
+	_GP(mls).clear();
 
 	dispose_game_drawdata();
 
-	if ((_G(gameinst) != nullptr) && (_G(gameinst)->pc != 0)) {
-		quit("Error: unload_game called while script still running");
-	} else {
-		delete _G(gameinstFork);
-		delete _G(gameinst);
-		_G(gameinstFork) = nullptr;
-		_G(gameinst) = nullptr;
-	}
+	delete _G(gameinstFork);
+	delete _G(gameinst);
+	_G(gameinstFork) = nullptr;
+	_G(gameinst) = nullptr;
 
 	_GP(gamescript).reset();
 
@@ -415,9 +413,6 @@ void unload_game_file() {
 
 	_GP(views).clear();
 
-	free(_G(charcache));
-	_G(charcache) = nullptr;
-
 	if (_G(splipsync) != nullptr) {
 		for (int i = 0; i < _G(numLipLines); ++i) {
 			free(_G(splipsync)[i].endtimeoffs);
@@ -439,7 +434,6 @@ void unload_game_file() {
 	delete[] _G(scrDialog);
 	_G(scrDialog) = nullptr;
 
-	_GP(guiScriptObjNames).clear();
 	_GP(guis).clear();
 	free(_G(scrGui));
 
@@ -450,7 +444,7 @@ void unload_game_file() {
 	ccUnregisterAllObjects();
 
 	free_do_once_tokens();
-	free(_GP(play).gui_draw_order);
+	_GP(play).gui_draw_order.clear();
 
 	resetRoomStatuses();
 
@@ -889,14 +883,11 @@ void save_game(int slotn, const char *descript) {
 
 	VALIDATE_STRING(descript);
 	String nametouse = get_save_game_path(slotn);
-	UBitmap screenShot;
-
-	// WORKAROUND: AGS originally only creates savegames if the game flags
-	// that it supports it. But we want it all the time for ScummVM GMM
-	if (/*_GP(game).options[OPT_SAVESCREENSHOT] != 0*/ true)
+	std::unique_ptr<Bitmap> screenShot;
+	if (_GP(game).options[OPT_SAVESCREENSHOT] != 0)
 		screenShot.reset(create_savegame_screenshot());
 
-	Engine::UStream out(StartSavegame(nametouse, descript, screenShot.get()));
+	std::unique_ptr<Stream> out(StartSavegame(nametouse, descript, screenShot.get()));
 	if (out == nullptr) {
 		Display("ERROR: Unable to open savegame file for writing!");
 		return;
@@ -1356,48 +1347,48 @@ bool unserialize_audio_script_object(int index, const char *objectType, Stream *
 }
 
 void game_sprite_updated(int sprnum) {
-	// Check if this sprite is assigned to any game object, and update them if necessary
-	// room objects cache
-	if (_G(croom) != nullptr) {
-		for (size_t i = 0; i < (size_t)_G(croom)->numobj; ++i) {
-			if (_G(objs)[i].num == sprnum)
-				_G(objcache)[i].sppic = -1;
-		}
-	}
-	// character cache
-	for (size_t i = 0; i < (size_t)_GP(game).numcharacters; ++i) {
-		if (_G(charcache)[i].sppic == sprnum)
-			_G(charcache)[i].sppic = -1;
-	}
+	// update the shared texture (if exists)
+	_G(gfxDriver)->UpdateSharedDDB(sprnum, _GP(spriteset)[sprnum], _GP(game).SpriteInfos[sprnum].Flags & SPF_ALPHACHANNEL, false);
+
+	// character and object draw caches
+	reset_objcache_for_sprite(sprnum);
+
 	// gui backgrounds
-	for (size_t i = 0; i < (size_t)_GP(game).numgui; ++i) {
-		if (_GP(guis)[i].BgImage == sprnum) {
-			_GP(guis)[i].MarkChanged();
+	for (auto &gui : _GP(guis)) {
+		if (gui.BgImage == sprnum) {
+			gui.MarkChanged();
 		}
 	}
 	// gui buttons
-	for (size_t i = 0; i < (size_t)_G(numguibuts); ++i) {
-		if (_GP(guibuts)[i].CurrentImage == sprnum) {
-			_GP(guibuts)[i].NotifyParentChanged();
+	for (auto &but : _GP(guibuts)) {
+		if (but.CurrentImage == sprnum) {
+			but.MarkChanged();
 		}
+	}
+	// gui sliders
+	for (auto &slider : _GP(guislider)) {
+		if ((slider.BgImage == sprnum) || (slider.HandleImage == sprnum)) {
+			slider.MarkChanged();
+		}
+	}
+	// overlays
+	for (auto &over : _GP(screenover)) {
+		if (over.GetSpriteNum() == sprnum)
+			over.MarkChanged();
 	}
 }
 
 void game_sprite_deleted(int sprnum) {
-	// Check if this sprite is assigned to any game object, and update them if necessary
-	// room objects and their cache
+	// clear from texture cache
+	_G(gfxDriver)->ClearSharedDDB(sprnum);
+	// character and object draw caches
+	reset_objcache_for_sprite(sprnum);
+	// room object graphics
 	if (_G(croom) != nullptr) {
 		for (size_t i = 0; i < (size_t)_G(croom)->numobj; ++i) {
-			if (_G(objs)[i].num == sprnum) {
+			if (_G(objs)[i].num == sprnum)
 				_G(objs)[i].num = 0;
-				_G(objcache)[i].sppic = -1;
-			}
 		}
-	}
-	// character cache
-	for (size_t i = 0; i < (size_t)_GP(game).numcharacters; ++i) {
-		if (_G(charcache)[i].sppic == sprnum)
-			_G(charcache)[i].sppic = -1;
 	}
 	// gui backgrounds
 	for (size_t i = 0; i < (size_t)_GP(game).numgui; ++i) {
@@ -1407,18 +1398,27 @@ void game_sprite_deleted(int sprnum) {
 		}
 	}
 	// gui buttons
-	for (size_t i = 0; i < (size_t)_G(numguibuts); ++i) {
-		if (_GP(guibuts)[i].Image == sprnum)
-			_GP(guibuts)[i].Image = 0;
-		if (_GP(guibuts)[i].MouseOverImage == sprnum)
-			_GP(guibuts)[i].MouseOverImage = 0;
-		if (_GP(guibuts)[i].PushedImage == sprnum)
-			_GP(guibuts)[i].PushedImage = 0;
+	for (auto &but : _GP(guibuts)) {
+		if (but.Image == sprnum)
+			but.Image = 0;
+		if (but.MouseOverImage == sprnum)
+			but.MouseOverImage = 0;
+		if (but.PushedImage == sprnum)
+			but.PushedImage = 0;
 
-		if (_GP(guibuts)[i].CurrentImage == sprnum) {
-			_GP(guibuts)[i].CurrentImage = 0;
-			_GP(guibuts)[i].NotifyParentChanged();
+		if (but.CurrentImage == sprnum) {
+			but.CurrentImage = 0;
+			but.MarkChanged();
 		}
+	}
+	// gui sliders
+	for (auto &slider : _GP(guislider)) {
+		if ((slider.BgImage == sprnum) || (slider.HandleImage == sprnum))
+			slider.MarkChanged();
+		if (slider.BgImage == sprnum)
+			slider.BgImage = 0;
+		if (slider.HandleImage == sprnum)
+			slider.HandleImage = 0;
 	}
 	// views
 	for (size_t v = 0; v < (size_t)_GP(game).numviews; ++v) {
@@ -1428,6 +1428,11 @@ void game_sprite_deleted(int sprnum) {
 					_GP(views)[v].loops[l].frames[f].pic = 0;
 			}
 		}
+	}
+	// overlays
+	for (auto &over : _GP(screenover)) {
+		if (over.GetSpriteNum() == sprnum)
+			over.SetSpriteNum(0);
 	}
 }
 

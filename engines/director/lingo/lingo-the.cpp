@@ -711,7 +711,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = (movie->_keyFlags & Common::KBD_ALT) ? 1 : 0;
 		break;
 	case kThePauseState:
-		getTheEntitySTUB(kThePauseState);
+		d.type = INT;
+		d.u.i = (int) g_director->_playbackPaused;
 		break;
 	case kThePerFrameHook:
 		d = _perFrameHook;
@@ -740,13 +741,17 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = g_lingo->_theResult;
 		break;
 	case kTheRightMouseDown:
-		getTheEntitySTUB(kTheRightMouseDown);
+		d.type = INT;
+		d.u.i = g_system->getEventManager()->getButtonState() & (1 << Common::MOUSE_BUTTON_RIGHT) ? 1 : 0;
 		break;
 	case kTheRightMouseUp:
-		getTheEntitySTUB(kTheRightMouseUp);
+		d.type = INT;
+		d.u.i = g_system->getEventManager()->getButtonState() & (1 << Common::MOUSE_BUTTON_RIGHT) ? 0 : 1;
 		break;
 	case kTheRomanLingo:
-		getTheEntitySTUB(kTheRomanLingo);
+		d.type = INT;
+		d.u.i = g_lingo->_romanLingo;
+		warning("BUILDBOT: the romanLingo is get, value is %d", g_lingo->_romanLingo);
 		break;
 	case kTheScummvmVersion:
 		d.type = INT;
@@ -821,7 +826,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = _vm->getCurrentWindow()->getSurface()->h;
 		break;
 	case kTheStageColor:
-		getTheEntitySTUB(kTheStageColor);
+		d.type = INT;
+		d.u.i = g_director->getCurrentWindow()->getStageColor();
 		break;
 	case kTheStageLeft:
 		d.type = INT;
@@ -881,7 +887,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = _vm->getMacTicks() - movie->_lastTimerReset;
 		break;
 	case kTheTrace:
-		getTheEntitySTUB(kTheTrace);
+		d.type = INT;
+		d.u.i = (int) g_lingo->_trace;
 		break;
 	case kTheTraceLoad:
 		d.type = INT;
@@ -1027,6 +1034,8 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		g_director->_rnd.setSeed(d.asInt());
 		break;
 	case kTheRomanLingo:
+		g_lingo->_romanLingo = bool(d.asInt());
+		warning("BUILDBOT: the romanLingo is set to %d", g_lingo->_romanLingo);
 		setTheEntitySTUB(kTheRomanLingo);
 		break;
 	case kTheScummvmVersion:
@@ -1115,7 +1124,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		movie->_lastTimerReset = _vm->getMacTicks() - d.asInt();
 		break;
 	case kTheTrace:
-		setTheEntitySTUB(kTheTrace);
+		g_lingo->_trace = (bool) d.asInt();
 		break;
 	case kTheTraceLoad:
 		g_lingo->_traceLoad = d.asInt();
@@ -1559,7 +1568,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheMovieRate:
 		channel->_movieRate = d.asFloat();
-		if (sprite->_cast->_type == kCastDigitalVideo)
+		if (sprite->_cast && sprite->_cast->_type == kCastDigitalVideo)
 			((DigitalVideoCastMember *)sprite->_cast)->setMovieRate(channel->_movieRate);
 		else
 			warning("Setting movieTime for non-digital video");

@@ -140,7 +140,8 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		_returnAfterSpellCallback = in.readByte() ? true : false;
 
 		if (_flags.platform == Common::kPlatformSegaCD || header.version > 18) {
-			_totalPlaySecs = in.readUint32BE();
+			if (header.version < 21)
+				header.totalPlaySecs = in.readUint32BE();
 			_totalEnemiesKilled = in.readUint32BE();
 			_totalSteps = in.readUint32BE();
 			_levelMaps = in.readUint32BE();
@@ -312,6 +313,8 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 	if (_flags.platform != Common::kPlatformSegaCD)
 		_screen->fadeFromBlack(20);
 
+	restartPlayTimerAt(header.totalPlaySecs);
+
 	_loading = false;
 	removeInputTop();
 
@@ -419,7 +422,6 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 	out->writeByte(_returnAfterSpellCallback ? 1 : 0);
 
 	// SegaCD specific
-	out->writeUint32BE(_totalPlaySecs);
 	out->writeUint32BE(_totalEnemiesKilled);
 	out->writeUint32BE(_totalSteps);
 	out->writeUint32BE(_levelMaps);

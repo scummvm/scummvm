@@ -161,6 +161,14 @@ Color Blind Mode
 
 .. _CINE:
 
+CHEWY
+*********
+
+Use original save/load screen
+	Uses the original save/load screens instead of the ScummVM screens.
+
+	*original_menus*
+
 CINE
 *********
 
@@ -508,6 +516,13 @@ Use NES Classic Palette
 
 	*mm_nes_classic_palette*
 
+.. _enhancements:
+
+Enable game-specific enhancements
+	Allow ScummVM to make small enhancements to the game, usually based on other versions of the same game.
+
+	*enable_enhancements*
+
 ,,,,,,,,,,
 
 .. _SHERLOCK:
@@ -641,4 +656,3 @@ More durable armor
 	Armor won't break until character is at -80HP, instead of the default -10HP.
 
 	*DurableArmor*
-

@@ -100,15 +100,11 @@ void DrawSpriteWithTransparency(Bitmap *ds, Bitmap *sprite, int x, int y, int al
 		return;
 	}
 
-	int surface_depth = ds->GetColorDepth();
-	int sprite_depth = sprite->GetColorDepth();
+	Bitmap hctemp;
+	const int surface_depth = ds->GetColorDepth();
+	const int sprite_depth = sprite->GetColorDepth();
 
-	if (sprite_depth < surface_depth
-	        // CHECKME: what is the purpose of this hack and is this still relevant?
-#if AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID
-	        || (ds->GetBPP() < surface_depth && _G(psp_gfx_renderer) > 0) // Fix for corrupted speechbox outlines with the OGL driver
-#endif
-	   ) {
+	if (sprite_depth < surface_depth) {
 		// If sprite is lower color depth than destination surface, e.g.
 		// 8-bit sprites drawn on 16/32-bit surfaces.
 		if (sprite_depth == 8 && surface_depth >= 24) {
@@ -120,7 +116,6 @@ void DrawSpriteWithTransparency(Bitmap *ds, Bitmap *sprite, int x, int y, int al
 
 		// 256-col sprite -> hi-color background, or
 		// 16-bit sprite -> 32-bit background
-		Bitmap hctemp;
 		hctemp.CreateCopy(sprite, surface_depth);
 		if (sprite_depth == 8) {
 			// only do this for 256-col -> hi-color, cos the Blit call converts
@@ -138,19 +133,14 @@ void DrawSpriteWithTransparency(Bitmap *ds, Bitmap *sprite, int x, int y, int al
 			}
 		}
 
-		if (alpha < 0xFF) {
-			set_trans_blender(0, 0, 0, alpha);
-			ds->TransBlendBlt(&hctemp, x, y);
-		} else {
-			ds->Blit(&hctemp, x, y, kBitmap_Transparency);
-		}
+		sprite = &hctemp;
+	}
+
+	if ((alpha < 0xFF) && (surface_depth > 8) && (sprite_depth > 8)) {
+		set_trans_blender(0, 0, 0, alpha);
+		ds->TransBlendBlt(sprite, x, y);
 	} else {
-		if (alpha < 0xFF && surface_depth > 8 && sprite_depth > 8) {
-			set_trans_blender(0, 0, 0, alpha);
-			ds->TransBlendBlt(sprite, x, y);
-		} else {
-			ds->Blit(sprite, x, y, kBitmap_Transparency);
-		}
+		ds->Blit(sprite, x, y, kBitmap_Transparency);
 	}
 }
 

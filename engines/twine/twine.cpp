@@ -31,6 +31,7 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/text-to-speech.h"
 #include "engines/metaengine.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
@@ -122,8 +123,8 @@ void TwineScreen::update() {
 	Super::update();
 }
 
-TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flags, TwineGameType gameType)
-	: Engine(system), _gameType(gameType), _gameLang(language), _frontVideoBuffer(this), _gameFlags(flags), _rnd("twine") {
+TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flags, Common::Platform platform, TwineGameType gameType)
+	: Engine(system), _gameType(gameType), _gameLang(language), _frontVideoBuffer(this), _gameFlags(flags), _platform(platform), _rnd("twine") {
 	// Add default file directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "fla");
@@ -132,6 +133,24 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 		SearchMan.addSubDirectoryMatching(gameDataDir, "video");
 		SearchMan.addSubDirectoryMatching(gameDataDir, "music");
 	}
+
+	if (isLba1Classic()) {
+		SearchMan.addSubDirectoryMatching(gameDataDir, "common");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "commonclassic");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "common/fla");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "common/vox");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "common/music");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "common/midi");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "commonclassic/images");
+		if (_gameLang == Common::Language::DE_DEU) {
+			SearchMan.addSubDirectoryMatching(gameDataDir, "commonclassic/voices/de_voice");
+		} else if (_gameLang == Common::Language::EN_ANY || _gameLang == Common::Language::EN_GRB || _gameLang == Common::Language::EN_USA) {
+			SearchMan.addSubDirectoryMatching(gameDataDir, "commonclassic/voices/en_voice");
+		} else if (_gameLang == Common::Language::FR_FRA) {
+			SearchMan.addSubDirectoryMatching(gameDataDir, "commonclassic/voices/fr_voice");
+		}
+	}
+
 	if (isDotEmuEnhanced()) {
 		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/hqr");
 		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/fla");
@@ -478,6 +497,10 @@ void TwinEEngine::initConfigurations() {
 	_cfgfile.SceZoom = ConfGetBoolOrDefault("scezoom", false);
 	_cfgfile.PolygonDetails = ConfGetIntOrDefault("polygondetails", 2);
 
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr)
+		ttsMan->enable(ConfGetBoolOrDefault("tts_narrator", false));
+
 	debug(1, "UseCD:          %s", (_cfgfile.UseCD ? "true" : "false"));
 	debug(1, "Sound:          %s", (_cfgfile.Sound ? "true" : "false"));
 	debug(1, "Movie:          %i", _cfgfile.Movie);
@@ -505,27 +528,34 @@ void TwinEEngine::playIntro() {
 		abort |= _screens->loadImageDelay(_resources->eaLogo(), 7);
 	}
 
-	abort |= _screens->adelineLogo();
+	if (isLba1Classic()) {
+		abort |= _screens->loadBitmapDelay("Logo2Point21_640_480_256.bmp", 3);
+		if (!abort) {
+			abort |= _screens->loadBitmapDelay("TLBA1C_640_480_256.bmp", 3);
+		}
+	} else {
+		abort |= _screens->adelineLogo();
 
-	if (isLBA1()) {
-		// verify game version screens
-		if (!abort && _cfgfile.Version == EUROPE_VERSION) {
-			// Little Big Adventure screen
-			abort |= _screens->loadImageDelay(_resources->lbaLogo(), 3);
-			if (!abort) {
-				// Electronic Arts Logo
-				abort |= _screens->loadImageDelay(_resources->eaLogo(), 2);
+		if (isLBA1()) {
+			// verify game version screens
+			if (!abort && _cfgfile.Version == EUROPE_VERSION) {
+				// Little Big Adventure screen
+				abort |= _screens->loadImageDelay(_resources->lbaLogo(), 3);
+				if (!abort) {
+					// Electronic Arts Logo
+					abort |= _screens->loadImageDelay(_resources->eaLogo(), 2);
+				}
+			} else if (!abort && _cfgfile.Version == USA_VERSION) {
+				// Relentless screen
+				abort |= _screens->loadImageDelay(_resources->relentLogo(), 3);
+				if (!abort) {
+					// Electronic Arts Logo
+					abort |= _screens->loadImageDelay(_resources->eaLogo(), 2);
+				}
+			} else if (!abort && _cfgfile.Version == MODIFICATION_VERSION) {
+				// Modification screen
+				abort |= _screens->loadImageDelay(_resources->relentLogo(), 2);
 			}
-		} else if (!abort && _cfgfile.Version == USA_VERSION) {
-			// Relentless screen
-			abort |= _screens->loadImageDelay(_resources->relentLogo(), 3);
-			if (!abort) {
-				// Electronic Arts Logo
-				abort |= _screens->loadImageDelay(_resources->eaLogo(), 2);
-			}
-		} else if (!abort && _cfgfile.Version == MODIFICATION_VERSION) {
-			// Modification screen
-			abort |= _screens->loadImageDelay(_resources->relentLogo(), 2);
 		}
 	}
 
@@ -644,7 +674,7 @@ void TwinEEngine::processInventoryAction() {
 		_gameState->_usingSabre = false;
 		break;
 	case kiUseSabre:
-		if (_scene->_sceneHero->_body != BodyType::btSabre) {
+		if (_scene->_sceneHero->_genBody != BodyType::btSabre) {
 			if (_actor->_heroBehaviour == HeroBehaviourType::kProtoPack) {
 				_actor->setBehaviour(HeroBehaviourType::kNormal);
 			}
@@ -659,10 +689,10 @@ void TwinEEngine::processInventoryAction() {
 		break;
 	}
 	case kiProtoPack:
-		if (_gameState->hasItem(InventoryItems::kiBookOfBu)) {
-			_scene->_sceneHero->_body = BodyType::btNormal;
+		if (_gameState->hasItem(InventoryItems::kSendellsMedallion)) {
+			_scene->_sceneHero->_genBody = BodyType::btNormal;
 		} else {
-			_scene->_sceneHero->_body = BodyType::btTunic;
+			_scene->_sceneHero->_genBody = BodyType::btTunic;
 		}
 
 		if (_actor->_heroBehaviour == HeroBehaviourType::kProtoPack) {
@@ -682,15 +712,15 @@ void TwinEEngine::processInventoryAction() {
 
 		penguin->_angle = _scene->_sceneHero->_angle;
 
-		if (!_collision->checkCollisionWithActors(_scene->_mecaPenguinIdx)) {
+		if (!_collision->checkValidObjPos(_scene->_mecaPenguinIdx)) {
 			penguin->setLife(kActorMaxLife);
-			penguin->_body = BodyType::btNone;
+			penguin->_genBody = BodyType::btNone;
 			_actor->initModelActor(BodyType::btNormal, _scene->_mecaPenguinIdx);
 			penguin->_dynamicFlags.bIsDead = 0;
 			penguin->setBrickShape(ShapeType::kNone);
 			_movements->moveActor(penguin->_angle, penguin->_angle, penguin->_speed, &penguin->_move);
 			_gameState->removeItem(InventoryItems::kiPenguin);
-			penguin->_delayInMillis = _lbaTime + 1500;
+			penguin->_delayInMillis = _lbaTime + TO_SECONDS(30);
 		}
 		break;
 	}
@@ -761,7 +791,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 	} else {
 		// Process give up menu - Press ESC
-		if (_input->toggleAbortAction() && _scene->_sceneHero->_life > 0 && _scene->_sceneHero->_entity != -1 && !_scene->_sceneHero->_staticFlags.bIsHidden) {
+		if (_input->toggleAbortAction() && _scene->_sceneHero->_life > 0 && _scene->_sceneHero->_body != -1 && !_scene->_sceneHero->_staticFlags.bIsHidden) {
 			ScopedEngineFreeze scopedFreeze(this);
 			exitSceneryView();
 			const int giveUp = _menu->giveupMenu();
@@ -782,7 +812,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		// inventory menu
 		_loopInventoryItem = -1;
-		if (_input->isActionActive(TwinEActionType::InventoryMenu) && _scene->_sceneHero->_entity != -1 && _scene->_sceneHero->_controlMode == ControlMode::kManual) {
+		if (_input->isActionActive(TwinEActionType::InventoryMenu) && _scene->_sceneHero->_body != -1 && _scene->_sceneHero->_controlMode == ControlMode::kManual) {
 			processInventoryAction();
 		}
 
@@ -802,7 +832,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		     _input->isActionActive(TwinEActionType::QuickBehaviourAthletic, false) ||
 		     _input->isActionActive(TwinEActionType::QuickBehaviourAggressive, false) ||
 		     _input->isActionActive(TwinEActionType::QuickBehaviourDiscreet, false)) &&
-		    _scene->_sceneHero->_entity != -1 && _scene->_sceneHero->_controlMode == ControlMode::kManual) {
+		    _scene->_sceneHero->_body != -1 && _scene->_sceneHero->_controlMode == ControlMode::kManual) {
 			if (_input->isActionActive(TwinEActionType::QuickBehaviourNormal, false)) {
 				_actor->_heroBehaviour = HeroBehaviourType::kNormal;
 			} else if (_input->isActionActive(TwinEActionType::QuickBehaviourAthletic, false)) {
@@ -820,9 +850,9 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		// use Proto-Pack
 		if (_input->toggleActionIfActive(TwinEActionType::UseProtoPack) && _gameState->hasItem(InventoryItems::kiProtoPack)) {
 			if (_gameState->hasItem(InventoryItems::kiBookOfBu)) {
-				_scene->_sceneHero->_body = BodyType::btNormal;
+				_scene->_sceneHero->_genBody = BodyType::btNormal;
 			} else {
-				_scene->_sceneHero->_body = BodyType::btTunic;
+				_scene->_sceneHero->_genBody = BodyType::btTunic;
 			}
 
 			if (_actor->_heroBehaviour == HeroBehaviourType::kProtoPack) {
@@ -906,8 +936,8 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 				}
 			}
 
-			if (!actor->_bonusParameter.unk1 && (actor->_bonusParameter.cloverleaf || actor->_bonusParameter.kashes || actor->_bonusParameter.key || actor->_bonusParameter.lifepoints || actor->_bonusParameter.magicpoints)) {
-				_actor->processActorExtraBonus(a);
+			if (!actor->_bonusParameter.givenNothing && (actor->_bonusParameter.cloverleaf || actor->_bonusParameter.kashes || actor->_bonusParameter.key || actor->_bonusParameter.lifepoints || actor->_bonusParameter.magicpoints)) {
+				_actor->giveExtraBonus(a);
 			}
 		}
 
@@ -919,10 +949,10 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			_scriptMove->processMoveScript(a);
 		}
 
-		_animations->processActorAnimations(a);
+		_animations->doAnim(a);
 
 		if (actor->_staticFlags.bIsZonable) {
-			_scene->processActorZones(a);
+			_scene->checkZoneSce(a);
 		}
 
 		if (actor->_positionInLifeScript != -1) {
@@ -936,13 +966,13 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		if (actor->_staticFlags.bCanDrown) {
-			const uint8 brickSound = _grid->getBrickSoundType(actor->_pos.x, actor->_pos.y - 1, actor->_pos.z);
+			const uint8 brickSound = _grid->worldCodeBrick(actor->_pos.x, actor->_pos.y - 1, actor->_pos.z);
 			actor->_brickSound = brickSound;
 
 			if (brickSound == WATER_BRICK) {
 				if (IS_HERO(a)) {
 					// we are dying if we aren't using the protopack to fly over water
-					if (_actor->_heroBehaviour != HeroBehaviourType::kProtoPack || actor->_anim != AnimationTypes::kForward) {
+					if (_actor->_heroBehaviour != HeroBehaviourType::kProtoPack || actor->_genAnim != AnimationTypes::kForward) {
 						if (!_actor->_cropBottomScreen) {
 							_animations->initAnim(AnimationTypes::kDrawn, AnimType::kAnimationSet, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 						}
@@ -955,8 +985,8 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 				} else {
 					_sound->playSample(Samples::Explode, 1, actor->pos(), a);
 					if (actor->_bonusParameter.cloverleaf || actor->_bonusParameter.kashes || actor->_bonusParameter.key || actor->_bonusParameter.lifepoints || actor->_bonusParameter.magicpoints) {
-						if (!actor->_bonusParameter.unk1) {
-							_actor->processActorExtraBonus(a);
+						if (!actor->_bonusParameter.givenNothing) {
+							_actor->giveExtraBonus(a);
 						}
 						actor->setLife(0);
 					}
@@ -1007,7 +1037,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			} else {
 				_actor->processActorCarrier(a);
 				actor->_dynamicFlags.bIsDead = 1;
-				actor->_entity = -1;
+				actor->_body = -1;
 				actor->_zone = -1;
 			}
 		}

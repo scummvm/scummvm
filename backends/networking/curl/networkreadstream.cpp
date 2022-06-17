@@ -296,7 +296,7 @@ Common::String NetworkReadStream::responseHeaders() const {
 }
 
 Common::HashMap<Common::String, Common::String> NetworkReadStream::responseHeadersMap() const {
-	// HTTP headers are described at RFC 2616: https://tools.ietf.org/html/rfc2616#section-4.2
+	// HTTP headers are described at RFC 2616: https://datatracker.ietf.org/doc/html/rfc2616#section-4.2
 	// this implementation tries to follow it, but for simplicity it does not support multi-line header values
 
 	Common::HashMap<Common::String, Common::String> headers;

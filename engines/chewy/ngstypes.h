@@ -27,32 +27,24 @@
 namespace Chewy {
 
 struct TafInfo {
-	int16 _count = 0;
-	byte *_palette = nullptr;
-	int16 *_correction = nullptr;
-	byte **_image = nullptr;
+	int16 count = 0;
+	byte *palette = nullptr;
+	int16 *correction = nullptr;
+	byte **image = nullptr;
 };
 
 struct TafSeqInfo {
-	int16 _count = 0;
-	int16 *_correction = nullptr;
-	byte **_image = nullptr;
-};
-
-struct NewPhead {
-	char _id[4] = { 0 };
-	uint16 _type = 0;
-	uint16 _poolNr = 0;
-
-	bool load(Common::SeekableReadStream *src);
+	int16 count = 0;
+	int16 *correction = nullptr;
+	byte **image = nullptr;
 };
 
 struct MouseInfo {
-	int16 _button = 0;
+	int16 button = 0;
 };
 
-struct musik_info {
-	int16 musik_playing = 0;
+struct MusicInfo {
+	int16 playing = 0;
 	int16 play_mode = 0;
 	int16 pattern_line = 0;
 	int16 sequence_pos = 0;
@@ -60,28 +52,12 @@ struct musik_info {
 	char *cur_pattern = nullptr;
 };
 
-struct GedPoolHeader {
-	char _id[4] = { 0 };
-	int16 _nr = 0;
-
-	bool load(Common::SeekableReadStream *src);
-};
-
-struct GedChunkHeader {
-	uint32 Len = 0;
-	int16 X = 0;
-	int16 Y = 0;
-	int16 Ebenen = 0;
-
-	bool load(Common::SeekableReadStream *src);
-};
-
 struct CurBlk {
 	byte **sprite = nullptr;
 };
 
 struct CustomInfo {
-	byte *TempArea = 0;
+	byte *tempArea = 0;
 };
 
 } // namespace Chewy

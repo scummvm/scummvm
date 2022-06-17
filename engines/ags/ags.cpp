@@ -47,16 +47,18 @@
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/game/savegame.h"
+#include "ags/engine/game/savegame_components.h"
 #include "ags/engine/main/config.h"
 #include "ags/engine/main/engine.h"
 #include "ags/engine/main/main.h"
 #include "ags/engine/main/quit.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
+#include "ags/engine/script/cc_instance.h"
 #include "ags/engine/script/script.h"
 #include "ags/engine/ac/route_finder.h"
 #include "ags/shared/core/asset_manager.h"
 #include "ags/shared/util/directory.h"
-#include "ags/shared/script/cc_options.h"
+#include "ags/shared/script/cc_common.h"
 
 #ifdef ENABLE_AGS_TESTS
 #include "ags/tests/test_all.h"
@@ -75,6 +77,8 @@ AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine
 	_gfxDriver(nullptr), _globals(nullptr), _forceTextAA(false) {
 	g_vm = this;
 
+	AGS3::script_commands_init();
+	AGS3::Engine::SavegameComponents::component_handlers_init();
 	_events = new EventsManager();
 	_globals = new ::AGS3::Globals();
 
@@ -99,6 +103,8 @@ AGSEngine::~AGSEngine() {
 	delete _events;
 	delete _music;
 	delete _globals;
+	AGS3::Engine::SavegameComponents::component_handlers_free();
+	AGS3::script_commands_free();
 }
 
 uint32 AGSEngine::getFeatures() const {

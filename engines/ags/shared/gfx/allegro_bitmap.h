@@ -155,7 +155,7 @@ public:
 		return (index >= 0 && index < GetHeight()) ? (unsigned char *)_alBitmap->getBasePtr(0, index) : nullptr;
 	}
 
-	void    SetMaskColor(color_t color);
+	// Get bitmap's mask color (transparent color)
 	inline color_t GetMaskColor() const {
 		return bitmap_mask_color(_alBitmap);
 	}
@@ -168,6 +168,7 @@ public:
 
 	//=========================================================================
 	// Clipping
+	// TODO: consider implementing push-pop clipping stack logic.
 	//=========================================================================
 	void    SetClip(const Rect &rc);
 	void    ResetClip();

@@ -41,6 +41,7 @@
 #include <sys/types.h>
 #endif
 #ifdef PSP2
+#include <psp2/io/stat.h>
 #define mkdir sceIoMkdir
 #endif
 #include <dirent.h>

@@ -33,12 +33,11 @@ namespace Ultima8 {
 // various unicode characters which look like small black circles
 static const uint16 BULLETS[] = { 0x2022, 0x30FB, 0x25CF, 0 };
 
-static const Graphics::PixelFormat PF_RGBA(4, 8, 8, 8, 8, 24, 16, 8, 0);
-
 TTFont::TTFont(Graphics::Font *font, uint32 rgb, int borderSize,
 		bool antiAliased, bool SJIS) :
-		_borderSize(borderSize), _ttfFont(font), _antiAliased(antiAliased), _SJIS(SJIS) {
-	_color = PF_RGBA.RGBToColor((rgb >> 16) & 0xFF, (rgb >> 8) & 0xff, rgb & 0xff);
+		_borderSize(borderSize), _ttfFont(font), _antiAliased(antiAliased), _SJIS(SJIS),
+		_PF_RGBA(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) {
+	_color = _PF_RGBA.RGBToColor((rgb >> 16) & 0xFF, (rgb >> 8) & 0xff, rgb & 0xff);
 
 	_bullet = 0;
 	// scan for a character to use as a conversation option _bullet
@@ -132,9 +131,9 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 			resultWidth, resultHeight, cursor);
 	lineHeight = _ttfFont->getFontHeight();
 
-	uint32 borderColor = PF_RGBA.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+	uint32 borderColor = _PF_RGBA.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 
-	Graphics::ManagedSurface *texture = new Graphics::ManagedSurface(resultWidth, resultHeight, PF_RGBA);
+	Graphics::ManagedSurface *texture = new Graphics::ManagedSurface(resultWidth, resultHeight, _PF_RGBA);
 	uint32 *texBuf = (uint32 *)texture->getPixels();
 
 	Std::list<PositionedText>::const_iterator iter;
@@ -156,14 +155,14 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 			_ttfFont->drawString(&textSurf, unicodeText, 0, 0, resultWidth, 1);
 		} else {
 			// Use a high color surface with the specified _color color for text
-			textSurf.create(resultWidth, lineHeight, PF_RGBA);
+			textSurf.create(resultWidth, lineHeight, _PF_RGBA);
 			_ttfFont->drawString(&textSurf, unicodeText, 0, 0, resultWidth, _color);
 		};
 
 		// Add border within radius. Pixels on the edge are alpha blended if antialiased
 		if (_borderSize > 0) {
 			uint8 bA, bR, bG, bB;
-			PF_RGBA.colorToARGB(borderColor, bA, bR, bG, bB);
+			_PF_RGBA.colorToARGB(borderColor, bA, bR, bG, bB);
 
 			int sqrSize = _borderSize * _borderSize;
 			int sqrEdge = (_borderSize + 1) * (_borderSize + 1);
@@ -175,7 +174,7 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 					if (_antiAliased) {
 						uint32 sColor = *((const uint32 *)(surfrow + x * 4));
 						uint8 sR, sG, sB, sA;
-						PF_RGBA.colorToARGB(sColor, sA, sR, sG, sB);
+						_PF_RGBA.colorToARGB(sColor, sA, sR, sG, sB);
 
 						if (sA == 0x00)
 							continue;
@@ -194,7 +193,7 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 										else if (sqrDist < sqrEdge) {
 											// Blend border color at source intensity with destination
 											uint8 dA, dR, dG, dB;
-											PF_RGBA.colorToARGB(dColor, dA, dR, dG, dB);
+											_PF_RGBA.colorToARGB(dColor, dA, dR, dG, dB);
 
 											double bAlpha = (double)bA / 255.0;
 											double sAlpha = (double)sA / 255.0;
@@ -206,7 +205,7 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 											dB = static_cast<uint8>((bB * sAlpha + dB * dAlpha) / (sAlpha + dAlpha));
 											dA = static_cast<uint8>(255. * bAlpha * (sAlpha + dAlpha));
 
-											texBuf[ty * resultWidth + tx] = PF_RGBA.ARGBToColor(dA, dR, dG, dB);
+											texBuf[ty * resultWidth + tx] = _PF_RGBA.ARGBToColor(dA, dR, dG, dB);
 										}
 									}
 								}
@@ -241,7 +240,7 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 				if (_antiAliased) {
 					uint32 sColor = *((const uint32 *)(surfrow + x * 4));
 					uint8 sR, sG, sB, sA;
-					PF_RGBA.colorToARGB(sColor, sA, sR, sG, sB);
+					_PF_RGBA.colorToARGB(sColor, sA, sR, sG, sB);
 
 					if (sA == 0xFF) {
 						texBuf[ty * resultWidth + tx] = sColor;
@@ -250,7 +249,7 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 						// Blend color with destination
 						int32 dColor = texBuf[ty * resultWidth + tx];
 						uint8 dA, dR, dG, dB;
-						PF_RGBA.colorToARGB(dColor, dA, dR, dG, dB);
+						_PF_RGBA.colorToARGB(dColor, dA, dR, dG, dB);
 
 						double sAlpha = (double)sA / 255.0;
 						double dAlpha = (double)dA / 255.0;
@@ -261,7 +260,7 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 						dB = static_cast<uint8>((sB * sAlpha + dB * dAlpha) / (sAlpha + dAlpha));
 						dA = static_cast<uint8>(255. * (sAlpha + dAlpha));
 
-						texBuf[ty * resultWidth + tx] = PF_RGBA.ARGBToColor(dA, dR, dG, dB);
+						texBuf[ty * resultWidth + tx] = _PF_RGBA.ARGBToColor(dA, dR, dG, dB);
 					}
 				}
 				else if (surfrow[x] == 1) {

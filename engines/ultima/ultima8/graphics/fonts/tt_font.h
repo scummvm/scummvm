@@ -24,6 +24,7 @@
 
 #include "ultima/ultima8/graphics/fonts/font.h"
 #include "graphics/font.h"
+#include "graphics/pixelformat.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -61,6 +62,7 @@ protected:
 	int _borderSize;
 	bool _antiAliased;
 	bool _SJIS;
+	Graphics::PixelFormat _PF_RGBA;
 
 	uint16 _bullet;
 };

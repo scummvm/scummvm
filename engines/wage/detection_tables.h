@@ -35,6 +35,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("3rd Floor", "140883954b7cd89b0ffabde6ee0073d4", 281167), // alt version
 	BIGGAME("afm", "v1.8", "Another Fine Mess 1.8", "8bbec64ffe9deee4ff48d27f01176814", 1420467),
 	BIGGAME("amot", "v1.8", "A Mess O' Trouble 1.8", "57de8f1f79a24fa1a296aa10242c3648", 1842848),
+	FANGAMEND("The Ashland Revolution", "xn--The Ashland Revolution Demo-uc9p", "18f1f5d1081b9a5676ccfb0c3b857059", 144767), // Original file name "The Ashland Revolution Demo†"
 	FANGAMEND("The Ashland Revolution", "The Ashland Revolution Demo", "18f1f5d1081b9a5676ccfb0c3b857059", 144767), // Original file name "The Ashland Revolution Demo†"
 	FANGAME("The Axe-orcist", "9718b72e86a9727bbd68e12fa992b268", 308508),
 	FANGAME("Brownie's Dream", "379f2c810efc18bad932049d331df1b6", 440448),

@@ -107,10 +107,10 @@ void convert_objects_to_data_resolution(GameDataVersion filever) {
 		_GP(game).chars[i].y /= mul;
 	}
 
-	for (int i = 0; i < _G(numguiinv); ++i) {
-		_GP(guiinv)[i].ItemWidth /= mul;
-		_GP(guiinv)[i].ItemHeight /= mul;
-		_GP(guiinv)[i].OnResized();
+	for (auto &inv : _GP(guiinv)) {
+		inv.ItemWidth /= mul;
+		inv.ItemHeight /= mul;
+		inv.OnResized();
 	}
 }
 
@@ -169,22 +169,6 @@ void engine_pre_gfxmode_driver_cleanup() {
 	_G(gfxDriver)->SetMemoryBackBuffer(nullptr);
 }
 
-// Setup virtual screen
-void engine_post_gfxmode_screen_setup(const DisplayMode &dm, bool recreate_bitmaps) {
-	if (recreate_bitmaps) {
-		// TODO: find out if
-		// - we need to support this case at all;
-		// - if yes then which bitmaps need to be recreated (probably only video bitmaps and textures?)
-	}
-}
-
-void engine_pre_gfxmode_screen_cleanup() {
-}
-
-// Release virtual screen
-void engine_pre_gfxsystem_screen_destroy() {
-}
-
 // Setup color conversion parameters
 void engine_setup_color_conversions(int coldepth) {
 	// default shifts for how we store the sprite data
@@ -235,7 +219,7 @@ void engine_pre_gfxmode_draw_cleanup() {
 }
 
 // Setup mouse control mode and graphic area
-void engine_post_gfxmode_mouse_setup(const DisplayMode &dm, const Size &init_desktop) {
+void engine_post_gfxmode_mouse_setup(const Size &init_desktop) {
 	// Assign mouse control parameters.
 	//
 	// NOTE that we setup speed and other related properties regardless of
@@ -244,7 +228,7 @@ void engine_post_gfxmode_mouse_setup(const DisplayMode &dm, const Size &init_des
 	if (_GP(usetup).mouse_speed_def == kMouseSpeed_CurrentDisplay) {
 		Size cur_desktop;
 		if (sys_get_desktop_resolution(cur_desktop.Width, cur_desktop.Height) == 0)
-			_GP(mouse).SetSpeedUnit(Math::Max((float)cur_desktop.Width / (float)init_desktop.Width,
+			_GP(mouse).SetSpeedUnit(MAX((float)cur_desktop.Width / (float)init_desktop.Width,
 			                                  (float)cur_desktop.Height / (float)init_desktop.Height));
 	}
 
@@ -284,8 +268,7 @@ void engine_post_gfxmode_setup(const Size &init_desktop) {
 	if (has_driver_changed) {
 		engine_post_gfxmode_draw_setup(dm);
 	}
-	engine_post_gfxmode_screen_setup(dm, has_driver_changed);
-	engine_post_gfxmode_mouse_setup(dm, init_desktop);
+	engine_post_gfxmode_mouse_setup(init_desktop);
 
 	invalidate_screen();
 }
@@ -293,13 +276,11 @@ void engine_post_gfxmode_setup(const Size &init_desktop) {
 void engine_pre_gfxmode_release() {
 	engine_pre_gfxmode_mouse_cleanup();
 	engine_pre_gfxmode_driver_cleanup();
-	engine_pre_gfxmode_screen_cleanup();
 }
 
 void engine_pre_gfxsystem_shutdown() {
 	engine_pre_gfxmode_release();
 	engine_pre_gfxmode_draw_cleanup();
-	engine_pre_gfxsystem_screen_destroy();
 }
 
 void on_coordinates_scaling_changed() {

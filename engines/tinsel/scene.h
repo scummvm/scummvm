@@ -88,6 +88,8 @@ void EndScene();
 
 void SendSceneTinselProcess(TINSEL_EVENT event);
 
+void SetView(int id, int scale);
+
 } // End of namespace Tinsel
 
 #endif	// TINSEL_SCENE_H

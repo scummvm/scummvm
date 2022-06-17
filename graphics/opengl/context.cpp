@@ -135,7 +135,7 @@ void ContextGL::initialize(ContextOGLType contextType) {
 			ARBVertexShader = true;
 		} else if (token == "GL_ARB_fragment_shader") {
 			ARBFragmentShader = true;
-		} else if (token == "GL_EXT_framebuffer_object") {
+		} else if (token == "GL_ARB_framebuffer_object") {
 			framebufferObjectSupported = true;
 		} else if (token == "GL_EXT_packed_depth_stencil" || token == "GL_OES_packed_depth_stencil") {
 			packedDepthStencilSupported = true;

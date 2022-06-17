@@ -25,6 +25,7 @@
 
 #include "ags/shared/core/platform.h"
 #include "ags/engine/ac/cd_audio.h"
+#include "ags/engine/ac/game.h"
 #include "ags/engine/ac/game_setup.h"
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/game_state.h"
@@ -47,6 +48,7 @@
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/engine/platform/base/sys_main.h"
 #include "ags/plugins/plugin_engine.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/globals.h"
 #include "ags/ags.h"
@@ -113,7 +115,7 @@ QuitReason quit_check_for_error_state(const char *&qmsg, String &alertis) {
 			               "(ACI version %s)\n\n", _G(EngineVersion).LongString.GetCStr());
 		}
 
-		alertis.Append(get_cur_script(5));
+		alertis.Append(cc_get_error().CallStack);
 
 		if (qreason != kQuit_UserAbort)
 			alertis.Append("\nError: ");
@@ -124,7 +126,7 @@ QuitReason quit_check_for_error_state(const char *&qmsg, String &alertis) {
 		qmsg++;
 		alertis.Format("A warning has been generated. This is not normally fatal, but you have selected "
 		               "to treat warnings as errors.\n"
-		               "(ACI version %s)\n\n%s\n", _G(EngineVersion).LongString.GetCStr(), get_cur_script(5).GetCStr());
+		               "(ACI version %s)\n\n%s\n", _G(EngineVersion).LongString.GetCStr(), cc_get_error().CallStack.GetCStr());
 		return kQuit_GameWarning;
 	} else {
 		alertis.Format("An internal error has occurred. Please note down the following information.\n"
@@ -138,7 +140,7 @@ void quit_message_on_exit(const String &qmsg, String &alertis, QuitReason qreaso
 	// successful exit or user abort displays no messages
 	if ((qreason & (kQuitKind_NormalExit | kQuit_UserAbort)) == 0 && !_G(handledErrorInEditor)) {
 		// Display the message (at this point the window still exists)
-		sprintf(_G(pexbuf), "%s\n", qmsg.GetCStr());
+		snprintf(_G(pexbuf), sizeof(_G(pexbuf)), "%s\n", qmsg.GetCStr());
 		alertis.Append(_G(pexbuf));
 		_G(platform)->DisplayAlert("%s", alertis.GetCStr());
 	}
@@ -148,7 +150,7 @@ void quit_release_data() {
 	resetRoomStatuses();
 	_GP(thisroom).Free();
 	_GP(play).Free();
-	_GP(AssetMgr).reset();
+	unload_game_file();
 }
 
 void quit_delete_temp_files() {
@@ -219,31 +221,26 @@ void quit_free() {
 
 	_G(our_eip) = 9901;
 
-	shutdown_font_renderer();
-	_G(our_eip) = 9902;
-
 	_GP(spriteset).Reset();
-
-	_G(our_eip) = 9907;
-
-	close_translation();
 
 	_G(our_eip) = 9908;
 
 	shutdown_pathfinder();
 
+	quit_release_data();
+
 	engine_shutdown_gfxmode();
 
 	quit_message_on_exit(quitmsg, alertis, qreason);
-
-	quit_release_data();
 
 	_G(platform)->PreBackendExit();
 
 	// release backed library
 	// WARNING: no Allegro objects should remain in memory after this,
 	// if their destruction is called later, program will crash!
+	shutdown_font_renderer();
 	allegro_exit();
+	sys_main_shutdown();
 
 	_G(platform)->PostAllegroExit();
 

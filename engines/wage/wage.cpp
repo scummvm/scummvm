@@ -48,6 +48,7 @@
 #include "common/debug-channels.h"
 #include "common/error.h"
 #include "common/events.h"
+#include "common/punycode.h"
 #include "common/system.h"
 
 #include "engines/engine.h"
@@ -107,7 +108,7 @@ Common::Error WageEngine::run() {
 
 	// Your main event loop should be (invoked from) here.
 	_resManager = new Common::MacResManager();
-	if (!_resManager->open(getGameFile()))
+	if (!_resManager->open(Common::punycode_decodepath(getGameFile()).toString('/')))
 		error("Could not open %s as a resource fork", getGameFile());
 
 	_world = new World(this);

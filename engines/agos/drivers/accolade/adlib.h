@@ -19,102 +19,82 @@
  *
  */
 
-#include "agos/drivers/accolade/mididriver.h"
+#ifndef AGOS_DRIVERS_ACCOLADE_ADLIB_H
+#define AGOS_DRIVERS_ACCOLADE_ADLIB_H
 
-#include "audio/fmopl.h"
-#include "audio/mididrv.h"
+#include "audio/adlib_ms.h"
 
 namespace AGOS {
 
-#define AGOS_ADLIB_VOICES_COUNT 11
+class MidiDriver_Accolade_AdLib : public MidiDriver_ADLIB_Multisource {
+protected:
+	static const byte RHYTHM_NOTE_INSTRUMENT_TYPES[40];
+	static const uint16 OPL_NOTE_FREQUENCIES_INSTR_DAT[12];
+	static const uint16 OPL_NOTE_FREQUENCIES_MUSIC_DRV[12];
 
-struct InstrumentEntry {
-	byte reg20op1; // Amplitude Modulation / Vibrato / Envelope Generator Type / Keyboard Scaling Rate / Modulator Frequency Multiple
-	byte reg40op1; // Level Key Scaling / Total Level
-	byte reg60op1; // Attack Rate / Decay Rate
-	byte reg80op1; // Sustain Level / Release Rate
-	byte reg20op2; // Amplitude Modulation / Vibrato / Envelope Generator Type / Keyboard Scaling Rate / Modulator Frequency Multiple
-	byte reg40op2; // Level Key Scaling / Total Level
-	byte reg60op2; // Attack Rate / Decay Rate
-	byte reg80op2; // Sustain Level / Release Rate
-	byte regC0;    // Feedback / Algorithm, bit 0 - set -> both operators in use
-};
-
-class MidiDriver_Accolade_AdLib : public MidiDriver {
 public:
-	MidiDriver_Accolade_AdLib();
+	MidiDriver_Accolade_AdLib(OPL::Config::OplType oplType, bool newVersion, int timerFrequency);
 	~MidiDriver_Accolade_AdLib() override;
 
-	// MidiDriver
 	int open() override;
-	void close() override;
-	void send(uint32 b) override;
-	MidiChannel *allocateChannel() override { return NULL; }
-	MidiChannel *getPercussionChannel() override { return NULL; }
+	using MidiDriver_ADLIB_Multisource::send;
+	void send(int8 source, uint32 b) override;
+	void deinitSource(uint8 source) override;
 
-	bool isOpen() const override { return _isOpen; }
-	uint32 getBaseTempo() override { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
+	// Read the specified data from INSTR.DAT or MUSIC.DRV.
+	void readDriverData(byte *driverData, uint16 driverDataSize, bool isMusicDrv);
 
-	void setVolume(byte volume);
-	uint32 property(int prop, uint32 param) override;
+	// Returns the number of simultaneous SFX sources supported by the current
+	// driver configuration.
+	byte getNumberOfSfxSources();
+	// Loads the specified instrument for the specified instrument source.
+	void loadSfxInstrument(uint8 source, byte *instrumentData);
+	// Sets the note (upper byte) and note fraction (lower byte; 1/256th notes)
+	// for the specified SFX source.
+	void setSfxNoteFraction(uint8 source, uint16 noteFraction);
+	// Writes out the current frequency for the specified SFX source.
+	void updateSfxNote(uint8 source);
+	// Applies a workaround for an Elvira 1 OPL3 instrument issue.
+	void patchE1Instruments();
+	// Applies a workaround for a Waxworks OPL3 instrument issue.
+	void patchWwInstruments();
 
-	bool setupInstruments(byte *instrumentData, uint16 instrumentDataSize, bool useMusicDrvFile);
+protected:
+	InstrumentInfo determineInstrument(uint8 channel, uint8 source, uint8 note) override;
 
-	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) override;
+	uint8 allocateOplChannel(uint8 channel, uint8 source, uint8 instrumentId) override;
+	uint16 calculateFrequency(uint8 channel, uint8 source, uint8 note) override;
+	uint8 calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum) override;
 
-private:
-	bool _musicDrvMode;
+	void writePanning(uint8 oplChannel, OplInstrumentRhythmType rhythmType = RHYTHM_TYPE_UNDEFINED) override;
+	void writeFrequency(uint8 oplChannel, OplInstrumentRhythmType rhythmType = RHYTHM_TYPE_UNDEFINED) override;
 
-	// from INSTR.DAT/MUSIC.DRV - simple mapping between MIDI channel and MT32 channel
-	byte _channelMapping[AGOS_MIDI_CHANNEL_COUNT];
-	// from INSTR.DAT/MUSIC.DRV - simple mapping between MIDI instruments and MT32 instruments
-	byte _instrumentMapping[AGOS_MIDI_INSTRUMENT_COUNT];
+	// Copies the specified instrument data (in INSTR.DAT/MUSIC.DRV format)
+	// into the specified instrument definition.
+	void loadInstrumentData(OplInstrumentDefinition &definition, byte *instrumentData,
+		OplInstrumentRhythmType rhythmType, byte rhythmNote, bool newVersion);
+
+	// False if the driver should have the behavior of the Elvira 1 driver;
+	// true if it should have the behavior of the Elvira 2 / Waxworks version.
+	bool _newVersion;
+
 	// from INSTR.DAT/MUSIC.DRV - volume adjustment per instrument
-	signed char _instrumentVolumeAdjust[AGOS_MIDI_INSTRUMENT_COUNT];
-	// simple mapping between MIDI key notes and MT32 key notes
-	byte _percussionKeyNoteMapping[AGOS_MIDI_KEYNOTE_COUNT];
+	int8 _volumeAdjustments[128];
+	// from INSTR.DAT/MUSIC.DRV - simple mapping between MIDI channel and AdLib channel
+	byte _channelRemapping[16];
+	// from INSTR.DAT/MUSIC.DRV - simple mapping between MIDI instruments and AdLib instruments
+	byte _instrumentRemapping[128];
+	// Points to one of the OPL_NOTE_FREQUENCIES arrays, depending on the driver version
+	const uint16 *_oplNoteFrequencies;
 
-	// from INSTR.DAT/MUSIC.DRV - adlib instrument data
-	InstrumentEntry *_instrumentTable;
-	byte            _instrumentCount;
+	// Data used by AdLib SFX (Elvira 2 / Waxworks)
 
-	struct ChannelEntry {
-		const  InstrumentEntry *currentInstrumentPtr;
-		byte   currentNote;
-		byte   currentA0hReg;
-		byte   currentB0hReg;
-		int16  volumeAdjust;
-		byte   velocity;
-
-		ChannelEntry() : currentInstrumentPtr(NULL), currentNote(0),
-						currentA0hReg(0), currentB0hReg(0), volumeAdjust(0), velocity(0) { }
-	};
-
-	byte _percussionReg;
-
-	OPL::OPL *_opl;
-	int _masterVolume;
-
-	Common::TimerManager::TimerProc _adlibTimerProc;
-	void *_adlibTimerParam;
-
-	bool _isOpen;
-
-	// stores information about all FM voice channels
-	ChannelEntry _channels[AGOS_ADLIB_VOICES_COUNT];
-
-	void onTimer();
-
-	void resetAdLib();
-	void resetAdLibOperatorRegisters(byte baseRegister, byte value);
-	void resetAdLibFMVoiceChannelRegisters(byte baseRegister, byte value);
-
-	void programChange(byte FMvoiceChannel, byte mappedInstrumentNr, byte MIDIinstrumentNr);
-	void programChangeSetInstrument(byte FMvoiceChannel, byte mappedInstrumentNr, byte MIDIinstrumentNr);
-	void setRegister(int reg, int value);
-	void noteOn(byte FMvoiceChannel, byte note, byte velocity);
-	void noteOnSetVolume(byte FMvoiceChannel, byte operatorReg, byte velocity);
-	void noteOff(byte FMvoiceChannel, byte note, bool dontCheckNote);
+	// Instrument definition for each SFX source
+	OplInstrumentDefinition _sfxInstruments[4];
+	// Current MIDI note fraction (1/256th notes) for each SFX source
+	byte _sfxNoteFractions[4];
 };
 
 } // End of namespace AGOS
+
+#endif

@@ -23,7 +23,6 @@
 #include "ags/shared/util/string_utils.h" //strlwr()
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/character.h"
-#include "ags/engine/ac/character_cache.h"
 #include "ags/engine/ac/character_extras.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/event.h"
@@ -38,7 +37,6 @@
 #include "ags/engine/ac/global_translation.h"
 #include "ags/engine/ac/move_list.h"
 #include "ags/engine/ac/mouse.h"
-#include "ags/engine/ac/object_cache.h"
 #include "ags/engine/ac/overlay.h"
 #include "ags/engine/ac/properties.h"
 #include "ags/engine/ac/region.h"
@@ -62,7 +60,7 @@
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/plugins/ags_plugin.h"
 #include "ags/plugins/plugin_engine.h"
-#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/engine/script/script.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/shared/ac/sprite_cache.h"
@@ -271,15 +269,9 @@ void unload_old_room() {
 	for (size_t i = 0; i < _GP(thisroom).LocalVariables.size() && i < MAX_GLOBAL_VARIABLES; ++i)
 		_G(croom)->interactionVariableValues[i] = _GP(thisroom).LocalVariables[i].Value;
 
-	// wipe the character cache when we change rooms
+	// ensure that any half-moves (eg. with scaled movement) are stopped
 	for (ff = 0; ff < _GP(game).numcharacters; ff++) {
-		if (_G(charcache)[ff].inUse) {
-			delete _G(charcache)[ff].image;
-			_G(charcache)[ff].image = nullptr;
-			_G(charcache)[ff].inUse = 0;
-		}
-		// ensure that any half-moves (eg. with scaled movement) are stopped
-		_G(charextra)[ff].xwas = INVALID_X;
+		_GP(charextra)[ff].xwas = INVALID_X;
 	}
 
 	_GP(play).swap_portrait_lastchar = -1;
@@ -287,10 +279,10 @@ void unload_old_room() {
 
 	for (ff = 0; ff < _G(croom)->numobj; ff++) {
 		// un-export the object's script object
-		if (_G(objectScriptObjNames)[ff].IsEmpty())
+		if (_GP(thisroom).Objects[ff].ScriptName.IsEmpty())
 			continue;
 
-		ccRemoveExternalSymbol(_G(objectScriptObjNames)[ff]);
+		ccRemoveExternalSymbol(_GP(thisroom).Objects[ff].ScriptName);
 	}
 
 	for (ff = 0; ff < MAX_ROOM_HOTSPOTS; ff++) {
@@ -322,11 +314,11 @@ void convert_room_coordinates_to_data_res(RoomStruct *rstruc) {
 		return;
 
 	const int mul = _GP(game).GetDataUpscaleMult();
-	for (size_t i = 0; i < rstruc->ObjectCount; ++i) {
-		rstruc->Objects[i].X /= mul;
-		rstruc->Objects[i].Y /= mul;
-		if (rstruc->Objects[i].Baseline > 0) {
-			rstruc->Objects[i].Baseline /= mul;
+	for (auto &obj : rstruc->Objects) {
+		obj.X /= mul;
+		obj.Y /= mul;
+		if (obj.Baseline > 0) {
+			obj.Baseline /= mul;
 		}
 	}
 
@@ -406,15 +398,13 @@ HError LoadRoomScript(RoomStruct *room, int newnum) {
 		if (!script)
 			return new Error(String::FromFormat(
 				"Failed to load a script module: %s", filename.GetCStr()),
-				_G(ccErrorString));
+				cc_get_error().ErrorString);
 		room->CompiledScript = script;
 	}
 	return HError::None();
 }
 
 static void reset_temp_room() {
-	_GP(troom).FreeScriptData();
-	_GP(troom).FreeProperties();
 	_GP(troom) = RoomStatus();
 }
 
@@ -424,7 +414,6 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	debug_script_log("Loading room %d", newnum);
 
 	String room_filename;
-	int cc;
 	_G(done_es_error) = 0;
 	_GP(play).room_changes ++;
 	// TODO: find out why do we need to temporarily lower color depth to 8-bit.
@@ -472,11 +461,11 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	_GP(play).bg_anim_delay = _GP(play).anim_background_speed;
 
 	// Fixup the frame index, in case the new room does not have enough background frames
-	if (_GP(play).bg_frame < 0 || _GP(play).bg_frame >= (int)_GP(thisroom).BgFrameCount)
+	if (_GP(play).bg_frame < 0 || static_cast<size_t>(_GP(play).bg_frame) >= _GP(thisroom).BgFrameCount)
 		_GP(play).bg_frame = 0;
 
 	// do the palette
-	for (cc = 0; cc < 256; cc++) {
+	for (uint cc = 0; cc < 256; cc++) {
 		if (_GP(game).paluses[cc] == PAL_BACKGROUND)
 			_G(palette)[cc] = _GP(thisroom).Palette[cc];
 		else {
@@ -521,7 +510,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	update_polled_stuff_if_runtime();
 	redo_walkable_areas();
 	update_polled_stuff_if_runtime();
-	recache_walk_behinds();
+	walkbehinds_recalc();
 	update_polled_stuff_if_runtime();
 
 	_G(our_eip) = 205;
@@ -543,11 +532,11 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		if (_GP(thisroom).EventHandlers == nullptr) {
 			// legacy interactions
 			_GP(thisroom).Interaction->CopyTimesRun(_G(croom)->intrRoom);
-			for (cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++)
+			for (uint cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++)
 				_GP(thisroom).Hotspots[cc].Interaction->CopyTimesRun(_G(croom)->intrHotspot[cc]);
-			for (cc = 0; cc < MAX_ROOM_OBJECTS; cc++)
+			for (uint cc = 0; cc < _GP(thisroom).Objects.size(); cc++)
 				_GP(thisroom).Objects[cc].Interaction->CopyTimesRun(_G(croom)->intrObject[cc]);
-			for (cc = 0; cc < MAX_ROOM_REGIONS; cc++)
+			for (uint cc = 0; cc < MAX_ROOM_REGIONS; cc++)
 				_GP(thisroom).Regions[cc].Interaction->CopyTimesRun(_G(croom)->intrRegion[cc]);
 		}
 		for (size_t i = 0; i < _GP(thisroom).LocalVariables.size() && i < (size_t)MAX_GLOBAL_VARIABLES; ++i)
@@ -555,58 +544,63 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 
 		// Always copy object and hotspot names for < 3.6.0 games, because they were not settable
 		if (_G(loaded_game_file_version) < kGameVersion_360_16) {
-			for (cc = 0; cc < _G(croom)->numobj; ++cc)
+			for (uint cc = 0; cc < _GP(thisroom).Objects.size(); ++cc)
 				_G(croom)->obj[cc].name = _GP(thisroom).Objects[cc].Name;
-			for (cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++)
+			for (uint cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++)
 				_G(croom)->hotspot[cc].Name = _GP(thisroom).Hotspots[cc].Name;
 		}
 	} else {
 		// If we have not been in this room before, then copy necessary fields from _GP(thisroom)
-		_G(croom)->numobj = _GP(thisroom).ObjectCount;
+		_G(croom)->numobj = _GP(thisroom).Objects.size();
 		_G(croom)->tsdatasize = 0;
-		for (cc = 0; cc < _G(croom)->numobj; cc++) {
-			_G(croom)->obj[cc].x = _GP(thisroom).Objects[cc].X;
-			_G(croom)->obj[cc].y = _GP(thisroom).Objects[cc].Y;
-			_G(croom)->obj[cc].num = Math::InRangeOrDef<uint16_t>(_GP(thisroom).Objects[cc].Sprite, 0);
-			_G(croom)->obj[cc].on = _GP(thisroom).Objects[cc].IsOn;
-			_G(croom)->obj[cc].view = RoomObject::NoView;
-			_G(croom)->obj[cc].loop = 0;
-			_G(croom)->obj[cc].frame = 0;
-			_G(croom)->obj[cc].wait = 0;
-			_G(croom)->obj[cc].transparent = 0;
-			_G(croom)->obj[cc].moving = -1;
-			_G(croom)->obj[cc].flags = _GP(thisroom).Objects[cc].Flags;
-			_G(croom)->obj[cc].baseline = -1;
-			_G(croom)->obj[cc].zoom = 100;
-			_G(croom)->obj[cc].last_width = 0;
-			_G(croom)->obj[cc].last_height = 0;
-			_G(croom)->obj[cc].blocking_width = 0;
-			_G(croom)->obj[cc].blocking_height = 0;
-			_G(croom)->obj[cc].name = _GP(thisroom).Objects[cc].Name;
-			if (_GP(thisroom).Objects[cc].Baseline >= 0)
-				_G(croom)->obj[cc].baseline = _GP(thisroom).Objects[cc].Baseline;
-			if (_GP(thisroom).Objects[cc].Sprite > UINT16_MAX)
+		_G(croom)->obj.resize(_G(croom)->numobj);
+		_G(croom)->objProps.resize(_G(croom)->numobj);
+		_G(croom)->intrObject.resize(_G(croom)->numobj);
+		for (int cc = 0; cc < _G(croom)->numobj; cc++) {
+			const auto &trobj = _GP(thisroom).Objects[cc];
+			auto &crobj = _G(croom)->obj[cc];
+			crobj.x = trobj.X;
+			crobj.y = trobj.Y;
+			crobj.num = Math::InRangeOrDef<uint16_t>(trobj.Sprite, 0);
+			crobj.on = trobj.IsOn;
+			crobj.view = RoomObject::NoView;
+			crobj.loop = 0;
+			crobj.frame = 0;
+			crobj.wait = 0;
+			crobj.transparent = 0;
+			crobj.moving = -1;
+			crobj.flags = trobj.Flags;
+			crobj.baseline = -1;
+			crobj.zoom = 100;
+			crobj.last_width = 0;
+			crobj.last_height = 0;
+			crobj.blocking_width = 0;
+			crobj.blocking_height = 0;
+			crobj.name = trobj.Name;
+			if (trobj.Baseline >= 0)
+				crobj.baseline = trobj.Baseline;
+			if (trobj.Sprite > UINT16_MAX)
 				debug_script_warn("Warning: object's (id %d) sprite %d outside of internal range (%d), reset to 0",
-				                  cc, _GP(thisroom).Objects[cc].Sprite, UINT16_MAX);
+				                  cc, trobj.Sprite, UINT16_MAX);
 		}
 		for (size_t i = 0; i < (size_t)MAX_WALK_BEHINDS; ++i)
 			_G(croom)->walkbehind_base[i] = _GP(thisroom).WalkBehinds[i].Baseline;
 
-		for (cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++) {
+		for (uint cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++) {
 			_G(croom)->hotspot[cc].Enabled = true;
 			_G(croom)->hotspot[cc].Name = _GP(thisroom).Hotspots[cc].Name;
 		}
-		for (cc = 0; cc < MAX_ROOM_REGIONS; cc++) {
+		for (uint cc = 0; cc < MAX_ROOM_REGIONS; cc++) {
 			_G(croom)->region_enabled[cc] = 1;
 		}
 
 #if defined (OBSOLETE)
-		for (cc = 0; cc < MAX_LEGACY_ROOM_FLAGS; cc++) _G(croom)->flagstates[cc] = 0;
+		for (uint cc = 0; cc < MAX_LEGACY_ROOM_FLAGS; cc++) _G(croom)->flagstates[cc] = 0;
 		// we copy these structs for the Score column to work
 		_G(croom)->misccond = _GP(thisroom).misccond;
-		for (cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++)
+		for (uint cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++)
 			_G(croom)->hscond[cc] = _GP(thisroom).hscond[cc];
-		for (cc = 0; cc < MAX_ROOM_OBJECTS; cc++)
+		for (uint cc = 0; cc < MAX_ROOM_OBJECTS; cc++)
 			_G(croom)->objcond[cc] = _GP(thisroom).objcond[cc];
 #endif
 
@@ -620,29 +614,24 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		// legacy interactions
 		// copy interactions from room file into our temporary struct
 		_G(croom)->intrRoom = *_GP(thisroom).Interaction;
-		for (cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++)
+		for (uint cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++)
 			_G(croom)->intrHotspot[cc] = *_GP(thisroom).Hotspots[cc].Interaction;
-		for (cc = 0; cc < MAX_ROOM_OBJECTS; cc++)
+		for (uint cc = 0; cc < _GP(thisroom).Objects.size(); cc++)
 			_G(croom)->intrObject[cc] = *_GP(thisroom).Objects[cc].Interaction;
-		for (cc = 0; cc < MAX_ROOM_REGIONS; cc++)
+		for (uint cc = 0; cc < MAX_ROOM_REGIONS; cc++)
 			_G(croom)->intrRegion[cc] = *_GP(thisroom).Regions[cc].Interaction;
 	}
 
-	_G(objs) = &_G(croom)->obj[0];
+	_G(objs) = _G(croom)->obj.size() > 0 ? &_G(croom)->obj[0] : nullptr;
 
-	for (cc = 0; cc < MAX_ROOM_OBJECTS; cc++) {
-		_G(objectScriptObjNames)[cc].Free();
-	}
-
-	for (cc = 0; cc < _G(croom)->numobj; cc++) {
+	for (int cc = 0; cc < _G(croom)->numobj; cc++) {
 		// export the object's script object
 		if (_GP(thisroom).Objects[cc].ScriptName.IsEmpty())
 			continue;
-		_G(objectScriptObjNames)[cc] = _GP(thisroom).Objects[cc].ScriptName;
-		ccAddExternalDynamicObject(_G(objectScriptObjNames)[cc], &_G(scrObj)[cc], &_GP(ccDynamicObject));
+		ccAddExternalDynamicObject(_GP(thisroom).Objects[cc].ScriptName, &_G(scrObj)[cc], &_GP(ccDynamicObject));
 	}
 
-	for (cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++) {
+	for (uint cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++) {
 		if (_GP(thisroom).Hotspots[cc].ScriptName.IsEmpty())
 			continue;
 
@@ -691,7 +680,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		forchar->room = newnum;
 
 		// only stop moving if it's a new room, not a restore game
-		for (cc = 0; cc < _GP(game).numcharacters; cc++)
+		for (int cc = 0; cc < _GP(game).numcharacters; cc++)
 			StopMoving(cc);
 	}
 
@@ -869,7 +858,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 
 	_G(our_eip) = 212;
 	invalidate_screen();
-	for (cc = 0; cc < _G(croom)->numobj; cc++) {
+	for (int cc = 0; cc < _G(croom)->numobj; cc++) {
 		if (_G(objs)[cc].on == 2)
 			MergeObject(cc);
 	}
@@ -976,7 +965,7 @@ void check_new_room() {
 		evh.type = EV_RUNEVBLOCK;
 		evh.data1 = EVB_ROOM;
 		evh.data2 = 0;
-		evh.data3 = 5;
+		evh.data3 = EVROM_BEFOREFADEIN;
 		evh.player = _GP(game).playercharacter;
 		// make sure that any script calls don't re-call enters screen
 		int newroom_was = _G(in_new_room);
@@ -989,22 +978,22 @@ void check_new_room() {
 }
 
 void compile_room_script() {
-	_G(ccError) = 0;
+	cc_clear_error();
 
 	_G(roominst) = ccInstance::CreateFromScript(_GP(thisroom).CompiledScript);
-	if ((_G(ccError) != 0) || (_G(roominst) == nullptr)) {
-		quitprintf("Unable to create local script:\n%s", _G(ccErrorString).GetCStr());
+	if (cc_has_error() || (_G(roominst) == nullptr)) {
+		quitprintf("Unable to create local script:\n%s", cc_get_error().ErrorString.GetCStr());
 	}
 
 	if (!_G(roominst)->ResolveScriptImports(_G(roominst)->instanceof.get()))
-		quitprintf("Unable to resolve imports in room script:\n%s", _G(ccErrorString).GetCStr());
+		quitprintf("Unable to resolve imports in room script:\n%s", cc_get_error().ErrorString.GetCStr());
 
 	if (!_G(roominst)->ResolveImportFixups(_G(roominst)->instanceof.get()))
-		quitprintf("Unable to resolve import fixups in room script:\n%s", _G(ccErrorString).GetCStr());
+		quitprintf("Unable to resolve import fixups in room script:\n%s", cc_get_error().ErrorString.GetCStr());
 
 	_G(roominstFork) = _G(roominst)->Fork();
 	if (_G(roominstFork) == nullptr)
-		quitprintf("Unable to create forked room instance:\n%s", _G(ccErrorString).GetCStr());
+		quitprintf("Unable to create forked room instance:\n%s", cc_get_error().ErrorString.GetCStr());
 
 	_GP(repExecAlways).roomHasFunction = true;
 	_GP(lateRepExecAlways).roomHasFunction = true;
@@ -1012,10 +1001,8 @@ void compile_room_script() {
 }
 
 void on_background_frame_change() {
-
 	invalidate_screen();
 	mark_current_background_dirty();
-	invalidate_cached_walkbehinds();
 
 	// get the new frame's palette
 	memcpy(_G(palette), _GP(thisroom).BgFrames[_GP(play).bg_frame].Palette, sizeof(RGB) * 256);

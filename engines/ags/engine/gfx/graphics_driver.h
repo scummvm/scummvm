@@ -56,20 +56,27 @@ enum TintMethod {
 	TintSpecifyMaximum = 1
 };
 
+struct SpriteColorTransform {
+	int Alpha = 255; // alpha color value (0 - 255)
+
+	SpriteColorTransform() = default;
+	SpriteColorTransform(int alpha) : Alpha(alpha) {
+	}
+};
+
 // Sprite transformation
 // TODO: combine with stretch parameters in the IDriverDependantBitmap?
 struct SpriteTransform {
 	// Translate
-	int X, Y;
-	float ScaleX, ScaleY;
-	float Rotate; // angle, in radians
+	int X = 0, Y = 0;
+	float ScaleX = 1.f, ScaleY = 1.f;
+	float Rotate = 0.f; // angle, in radians
+	SpriteColorTransform Color;
 
-	SpriteTransform()
-		: X(0), Y(0), ScaleX(1.f), ScaleY(1.f), Rotate(0.f) {
-	}
-
-	SpriteTransform(int x, int y, float scalex = 1.0f, float scaley = 1.0f, float rotate = 0.0f)
-		: X(x), Y(y), ScaleX(scalex), ScaleY(scaley), Rotate(rotate) {
+	SpriteTransform() = default;
+	SpriteTransform(int x, int y, float scalex = 1.0f, float scaley = 1.0f, float rotate = 0.0f,
+		SpriteColorTransform color = SpriteColorTransform())
+		: X(x), Y(y), ScaleX(scalex), ScaleY(scaley), Rotate(rotate), Color(color) {
 	}
 };
 
@@ -132,11 +139,22 @@ public:
 	virtual void UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Shared::Bitmap *bitmap, bool hasAlpha) = 0;
 	virtual void DestroyDDB(IDriverDependantBitmap *bitmap) = 0;
 
+	// Get shared texture from cache, or create from bitmap and assign ID
+	virtual IDriverDependantBitmap *GetSharedDDB(uint32_t sprite_id,
+		Shared::Bitmap *bitmap = nullptr, bool hasAlpha = true, bool opaque = false) = 0;
+	virtual void UpdateSharedDDB(uint32_t sprite_id, Shared::Bitmap *bitmap = nullptr, bool hasAlpha = true, bool opaque = false) = 0;
+	// Removes the shared texture reference, will force the texture to recreate next time
+	virtual void ClearSharedDDB(uint32_t sprite_id) = 0;
+
 	// Prepares next sprite batch, a list of sprites with defined viewport and optional
 	// global model transformation; all subsequent calls to DrawSprite will be adding
 	// sprites to this batch's list.
+	// Beginning a batch while the previous was not ended will create a sub-batch
+	// (think of it as of a child scene node).
 	virtual void BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
-	                              const Point offset = Point(), GlobalFlipType flip = kFlip_None, PBitmap surface = nullptr) = 0;
+		const Point offset = Point(), GlobalFlipType flip = kFlip_None, PBitmap surface = nullptr) = 0;
+	// Ends current sprite batch
+	virtual void EndSpriteBatch() = 0;
 	// Adds sprite to the active batch
 	virtual void DrawSprite(int x, int y, IDriverDependantBitmap *bitmap) = 0;
 	// Adds fade overlay fx to the active batch

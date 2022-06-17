@@ -7,7 +7,7 @@ ENTRY(_start)
 SECTIONS
 {
   /* Read-only sections, merged into text segment: */
-  PROVIDE (__executable_start = 0x08900000); . = 0x08900000;
+  PROVIDE (__executable_start = 0x08804000); . = 0x08804000;
   .interp         : { *(.interp) }
   .reginfo        : { *(.reginfo) }
   .dynamic        : { *(.dynamic) }

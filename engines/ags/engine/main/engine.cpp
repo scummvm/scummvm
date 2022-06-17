@@ -39,7 +39,6 @@
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/gui.h"
 #include "ags/engine/ac/lip_sync.h"
-#include "ags/engine/ac/object_cache.h"
 #include "ags/engine/ac/path_helper.h"
 #include "ags/engine/ac/route_finder.h"
 #include "ags/engine/ac/sys_events.h"
@@ -183,7 +182,7 @@ static String find_game_data_in_config(const String &path) {
 	ConfigTree cfg;
 	String def_cfg_file = Path::ConcatPaths(path, DefaultConfigFileName);
 	if (IniUtil::Read(def_cfg_file, cfg)) {
-		String data_file = INIreadstring(cfg, "misc", "datafile");
+		String data_file = CfgReadString(cfg, "misc", "datafile");
 		Debug::Printf("Found game config: %s", def_cfg_file.GetCStr());
 		Debug::Printf(" Cfg: data file: %s", data_file.GetCStr());
 		// Only accept if it's a relative path
@@ -346,6 +345,8 @@ void engine_init_audio() {
 }
 
 void engine_init_debug() {
+	if (_GP(usetup).show_fps)
+		_G(display_fps) = kFPS_Forced;
 	if ((_G(debug_flags) & (~DBG_DEBUGMODE)) > 0) {
 		_G(platform)->DisplayAlert("Engine debugging enabled.\n"
 		                           "\nNOTE: You have selected to enable one or more engine debugging options.\n"
@@ -380,22 +381,6 @@ int engine_load_game_data() {
 		display_game_file_error(err);
 		return EXIT_ERROR;
 	}
-	return 0;
-}
-
-int engine_check_register_game() {
-	if (_G(justRegisterGame)) {
-		_G(platform)->RegisterGameWithGameExplorer();
-		_G(proper_exit) = 1;
-		return EXIT_NORMAL;
-	}
-
-	if (_G(justUnRegisterGame)) {
-		_G(platform)->UnRegisterGameWithGameExplorer();
-		_G(proper_exit) = 1;
-		return EXIT_NORMAL;
-	}
-
 	return 0;
 }
 
@@ -524,7 +509,6 @@ void show_preload() {
 
 int engine_init_sprites() {
 	Debug::Printf(kDbgMsg_Info, "Initialize sprites");
-
 	HError err = _GP(spriteset).InitFile(SpriteFile::DefaultSpriteFileName, SpriteFile::DefaultSpriteIndexName);
 	if (!err) {
 		sys_main_shutdown();
@@ -536,6 +520,8 @@ int engine_init_sprites() {
 		return EXIT_ERROR;
 	}
 
+	if (_GP(usetup).SpriteCacheSize > 0)
+		_GP(spriteset).SetMaxCacheSize(_GP(usetup).SpriteCacheSize);
 	return 0;
 }
 
@@ -598,8 +584,8 @@ void engine_init_game_settings() {
 		_GP(game).chars[ee].baseline = -1;
 		_GP(game).chars[ee].walkwaitcounter = 0;
 		_GP(game).chars[ee].z = 0;
-		_G(charextra)[ee].xwas = INVALID_X;
-		_G(charextra)[ee].zoom = 100;
+		_GP(charextra)[ee].xwas = INVALID_X;
+		_GP(charextra)[ee].zoom = 100;
 		if (_GP(game).chars[ee].view >= 0) {
 			// set initial loop to 0
 			_GP(game).chars[ee].loop = 0;
@@ -607,10 +593,10 @@ void engine_init_game_settings() {
 			if (_GP(views)[_GP(game).chars[ee].view].loops[0].numFrames < 1)
 				_GP(game).chars[ee].loop = 1;
 		}
-		_G(charextra)[ee].process_idle_this_time = 0;
-		_G(charextra)[ee].invorder_count = 0;
-		_G(charextra)[ee].slow_move_counter = 0;
-		_G(charextra)[ee].animwait = 0;
+		_GP(charextra)[ee].process_idle_this_time = 0;
+		_GP(charextra)[ee].invorder_count = 0;
+		_GP(charextra)[ee].slow_move_counter = 0;
+		_GP(charextra)[ee].animwait = 0;
 	}
 
 	_G(our_eip) = -5;
@@ -809,10 +795,13 @@ void engine_prepare_to_start_game() {
 
 	engine_setup_scsystem_auxiliary();
 
-#if AGS_PLATFORM_OS_ANDROID
-	if (psp_load_latest_savegame)
-		selectLatestSavegame();
+	if (_GP(usetup).load_latest_save) {
+#ifndef AGS_PLATFORM_SCUMMVM
+		int slot = GetLastSaveSlot();
+		if (slot >= 0)
+			loadSaveGameOnStartup = get_save_game_path(slot);
 #endif
+	}
 }
 
 // TODO: move to test unit
@@ -945,9 +934,9 @@ void engine_read_config(ConfigTree &cfg) {
 	// Handle directive to search for the user config inside the custom directory;
 		// this option may come either from command line or default/global config.
 	if (_GP(usetup).user_conf_dir.IsEmpty())
-		_GP(usetup).user_conf_dir = INIreadstring(cfg, "misc", "user_conf_dir");
+		_GP(usetup).user_conf_dir = CfgReadString(cfg, "misc", "user_conf_dir");
 	if (_GP(usetup).user_conf_dir.IsEmpty()) // also try deprecated option
-		_GP(usetup).user_conf_dir = INIreadint(cfg, "misc", "localuserconf") != 0 ? "." : "";
+		_GP(usetup).user_conf_dir = CfgReadBoolInt(cfg, "misc", "localuserconf") ? "." : "";
 	// Test if the file is writeable, if it is then both engine and setup
 	// applications may actually use it fully as a user config, otherwise
 	// fallback to default behavior.
@@ -965,7 +954,7 @@ void engine_read_config(ConfigTree &cfg) {
 
 	// Handle directive to search for the user config inside the game directory;
 	// this option may come either from command line or default/global config.
-	_GP(usetup).local_user_conf |= INIreadint(cfg, "misc", "localuserconf", 0) != 0;
+	_GP(usetup).local_user_conf |= CfgReadInt(cfg, "misc", "localuserconf", 0) != 0;
 	if (_GP(usetup).local_user_conf) { // Test if the file is writeable, if it is then both engine and setup
 	  // applications may actually use it fully as a user config, otherwise
 	  // fallback to default behavior.
@@ -978,11 +967,9 @@ void engine_read_config(ConfigTree &cfg) {
 	        Path::ComparePaths(user_cfg_file, user_global_cfg_file) != 0)
 		IniUtil::Read(user_cfg_file, cfg);
 
-	// Apply overriding options from mobile port settings
+	// Apply overriding options from platform settings
 	// TODO: normally, those should be instead stored in the same config file in a uniform way
-	// NOTE: the variable is historically called "ignore" but we use it in "override" meaning here
-	if (_G(psp_ignore_acsetup_cfg_file))
-		override_config_ext(cfg);
+	override_config_ext(cfg);
 }
 
 // Gathers settings from all available sources into single ConfigTree
@@ -1159,10 +1146,6 @@ int initialize_engine(const ConfigTree &startup_opts) {
 	_G(our_eip) = -19;
 
 	int res = engine_load_game_data();
-	if (res != 0)
-		return res;
-
-	res = engine_check_register_game();
 	if (res != 0)
 		return res;
 

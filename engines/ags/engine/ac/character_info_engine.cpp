@@ -294,18 +294,19 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 			// Normal view animation
 			const int oldframe = frame;
 
+			bool done_anim = false;
 			if ((aa == _G(char_speaking)) &&
 				(_GP(play).speech_in_post_state ||
 				((!_GP(play).speech_has_voice) &&
 					(_GP(play).close_mouth_speech_time > 0) &&
 					(_GP(play).messagetime < _GP(play).close_mouth_speech_time)))) {
 				// finished talking - stop animation
-				animating = 0;
+				done_anim = true;
 				frame = 0;
 			} else {
 				if (!CycleViewAnim(view, loop, frame, (animating & CHANIM_BACKWARDS) == 0,
 					(animating & CHANIM_REPEAT) ? ANIM_REPEAT : ANIM_ONCE)) {
-					animating = 0; // finished animating
+					done_anim = true; // finished animating
 					// end of idle anim
 					if (idleleft < 0) {
 						// constant anim, reset (need this cos animating==0)
@@ -329,6 +330,9 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 
 			if (frame != oldframe)
 				CheckViewFrameForCharacter(this);
+
+			if (done_anim)
+				stop_character_anim(this);
 		}
 	}
 

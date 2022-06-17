@@ -99,6 +99,14 @@ void Window::testFontScaling() {
 		}
 	}
 
+	x = 10;
+	for (int i = 0; i < kNumBuiltinTiles; i++) {
+		Image::ImageDecoder *tile = g_director->getTile(i);
+		surface.blitFrom(tile->getSurface(), Common::Point(x, 250));
+
+		x += tile->getSurface()->w + 10;
+	}
+
 	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, w, h); // testing fonts
 
 	Common::Event event;

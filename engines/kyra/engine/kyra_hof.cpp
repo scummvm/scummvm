@@ -377,6 +377,7 @@ void KyraEngine_HoF::startup() {
 	loadNPCScript();
 
 	if (_gameToLoad == -1) {
+		restartPlayTimerAt(0);
 		snd_playWanderScoreViaMap(52, 1);
 		enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
 		saveGameStateIntern(0, "New Game", nullptr);
@@ -446,6 +447,7 @@ void KyraEngine_HoF::runLoop() {
 		removeInputTop();
 
 		update();
+		updatePlayTimer();
 
 		if (inputFlag == 198 || inputFlag == 199) {
 			_savedMouseState = _mouseState;

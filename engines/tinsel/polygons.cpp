@@ -25,10 +25,14 @@
 #include "tinsel/pid.h"
 #include "tinsel/polygons.h"
 #include "tinsel/movers.h"
+#include "tinsel/noir/notebook.h"
 #include "tinsel/sched.h"
 #include "common/serializer.h"
 #include "tinsel/tinsel.h"
 #include "tinsel/token.h"
+#include "tinsel/sysvar.h"
+
+#include "tinsel/background.h"
 
 #include "common/textconsole.h"
 #include "common/util.h"
@@ -106,6 +110,11 @@ struct POLYGON {
 	 */
 	POLYGON *adjpaths[MAXADJ];
 
+	void setPoint(int index, const Common::Point &point) {
+		cx[index] = point.x;
+		cy[index] = point.y;
+	}
+	bool containsPoint(const Common::Point &point) const;
 };
 
 #define MAXONROUTE 40
@@ -185,6 +194,10 @@ public:
 	int32 playfield;	// Noir field
 	int32 sceneId;		// Noir field
 
+	int32 vx[4]; // Noir field, only for scale polygon
+	int32 vy[4]; // Noir field, only for scale polygon
+	int32 vz[4]; // Noir field, only for scale polygon
+
 protected:
 	int32 nodecount;		///<The number of nodes in this polygon
 	int32 pnodelistx, pnodelisty;	///<offset in chunk to this array if present
@@ -192,10 +205,6 @@ protected:
 
 	const int32 *nlistx;
 	const int32 *nlisty;
-
-	int32 vx[4]; // Noir field, only for scale polygon
-	int32 vy[4]; // Noir field, only for scale polygon
-	int32 vz[4]; // Noir field, only for scale polygon
 
 public:
 	SCNHANDLE hScript;	///< handle of code segment for polygon events
@@ -401,13 +410,8 @@ static HPOLYGON PolygonIndex(const POLYGON *pp) {
  * have two polygon corners above it and two corners to the left of it.
  */
 bool IsInPolygon(int xt, int yt, HPOLYGON hp) {
-	const POLYGON *pp;
-	int	i;
-	bool BeenTested = false;
-	int	pl = 0, pa = 0;
-
 	CHECK_HP_OR(hp, "Out of range polygon handle (1)");
-	pp = Polys[hp];
+	const POLYGON *pp = Polys[hp];
 	assert(pp != NULL); // Testing whether in a NULL polygon
 
 	// Shift cursor for relative polygons
@@ -416,18 +420,26 @@ bool IsInPolygon(int xt, int yt, HPOLYGON hp) {
 		yt -= volatileStuff[hp].yoff;
 	}
 
+	return pp->containsPoint(Common::Point(xt, yt));
+}
+
+bool POLYGON::containsPoint(const Common::Point &point) const {
+	int xt = point.x;
+	int yt = point.y;
 	/* Is point within the external rectangle? */
-	if (xt < pp->pleft || xt > pp->pright || yt < pp->ptop || yt > pp->pbottom)
+	if (point.x < this->pleft || point.x > this->pright || yt < this->ptop || yt > this->pbottom)
 		return false;
 
+	bool BeenTested = false;
+
 	// For each corner/side
-	for (i = 0; i < 4; i++)	{
+	for (int i = 0; i < 4; i++)	{
 		// If within this side's 'testable' area
 		// i.e. within the width of the line in y direction of end of line
 		// or within the height of the line in x direction of end of line
-		if ((xt >= pp->lleft[i] && xt <= pp->lright[i]  && ((yt > pp->cy[i]) == (pp->cy[(i+1)%4] > pp->cy[i])))
-		 || (yt >= pp->ltop[i]  && yt <= pp->lbottom[i] && ((xt > pp->cx[i]) == (pp->cx[(i+1)%4] > pp->cx[i])))) {
-			if (((long)xt*pp->a[i] + (long)yt*pp->b[i]) < pp->c[i])
+		if ((xt >= this->lleft[i] && xt <= this->lright[i]  && ((yt > this->cy[i]) == (this->cy[(i+1)%4] > this->cy[i])))
+		 || (yt >= this->ltop[i]  && yt <= this->lbottom[i] && ((xt > this->cx[i]) == (this->cx[(i+1)%4] > this->cx[i])))) {
+			if (((long)xt*this->a[i] + (long)yt*this->b[i]) < this->c[i])
 				return false;
 			else
 				BeenTested = true;
@@ -436,21 +448,23 @@ bool IsInPolygon(int xt, int yt, HPOLYGON hp) {
 
 	if (BeenTested) {
 		// New dodgy code 29/12/94
-		if (pp->polyType == BLOCK) {
+		if (this->polyType == BLOCK) {
 			// For each corner/side
-			for (i = 0; i < 4; i++) {
+			for (int i = 0; i < 4; i++) {
 				// Pretend the corners of blocking polys are not in the poly.
-				if (xt == pp->cx[i] && yt == pp->cy[i])
+				if (xt == this->cx[i] && yt == this->cy[i])
 					return false;
 			}
 		}
 		return true;
 	} else {
+		int	pl = 0, pa = 0;
+
 		// Is point within the internal rectangle?
-		for (i = 0; i < 4; i++) {
-			if (pp->cx[i] < xt)
+		for (int i = 0; i < 4; i++) {
+			if (this->cx[i] < xt)
 				pl++;
-			if (pp->cy[i] < yt)
+			if (this->cy[i] < yt)
 				pa++;
 		}
 
@@ -734,7 +748,7 @@ void FindBestPoint(HPOLYGON hp, int *x, int *y, int *pline) {
 }
 
 /**
- * Returns TRUE if two paths are asdjacent.
+ * Returns TRUE if two paths are adjacent.
  */
 bool IsAdjacentPath(HPOLYGON hPath1, HPOLYGON hPath2) {
 	const POLYGON *pp1, *pp2;
@@ -2426,6 +2440,143 @@ void DisableExit(int exitno) {
 			break;
 		}
 	}
+}
+
+#if 0
+void drawpolys() {
+	int Loffset, Toffset;
+
+	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+	for (int i = 0; i < noofPolys; ++i) {
+		POLYGON* p = Polys[i];
+		if (volatileStuff[i].bDead) continue;
+		if (p->polyType != PATH) continue;
+		int xoff = volatileStuff[i].xoff - Loffset;
+		int yoff = volatileStuff[i].yoff - Toffset;
+		// if (p->polyType == TAG) {
+
+		uint color = 0xFFFF;
+		_vm->screen().drawLine(xoff + p->cx[0], yoff + p->cy[0], xoff + p->cx[1], yoff + p->cy[1], 0xFFFF);
+		_vm->screen().drawLine(xoff + p->cx[2], yoff + p->cy[2], xoff + p->cx[1], yoff + p->cy[1], 0xFFFF);
+		_vm->screen().drawLine(xoff + p->cx[2], yoff + p->cy[2], xoff + p->cx[3], yoff + p->cy[3], 0xFFFF);
+		_vm->screen().drawLine(xoff + p->cx[0], yoff + p->cy[0], xoff + p->cx[3], yoff + p->cy[3], 0xFFFF);
+	}
+}
+#endif
+
+void UpdateGroundPlane() {
+	int i;
+	for (i = 0; i < noofPolys; ++i) {
+		if (Polys[i]->polyType == SCALE && Polys[i]->polyID == SysVar(SV_SPRITER_SCENE_ID)) {
+			break;
+		}
+	}
+	if (i >= noofPolys)
+		return;
+	// assert(i < noofPolys);// No scale polygon
+
+	POLYGON *pp = Polys[i];
+	Poly ptp(_vm->_handle->LockMem(pHandle), pp->pIndex);
+
+	// Vertex2c v[4];
+
+	// float scale = SysVar(SV_SPRITER_SCALE);
+	// TransformXYZ(ptp.vx[0] * scale, -ptp.vy[0] * scale, -ptp.vz[0] * scale, v[0]);
+	// TransformXYZ(ptp.vx[1] * scale, -ptp.vy[1] * scale, -ptp.vz[1] * scale, v[1]);
+	// TransformXYZ(ptp.vx[2] * scale, -ptp.vy[2] * scale, -ptp.vz[2] * scale, v[2]);
+	// TransformXYZ(ptp.vx[3] * scale, -ptp.vy[3] * scale, -ptp.vz[3] * scale, v[3]);
+	//...
+}
+
+class NoteBookPolygonsImpl : public NoteBookPolygons {
+public:
+	NoteBookPolygonsImpl() {
+		setPolygon(NoteBookPoly::MAIN,
+				   Common::Point(220, 0),
+				   Common::Point(446, 0),
+				   Common::Point(553, 425),
+				   Common::Point(164, 410));
+	}
+
+	void setPolygon(NoteBookPoly polyKind, const Common::Point &c0, const Common::Point &c1, const Common::Point &c2, const Common::Point &c3) override {
+		POLYGON *poly = nullptr;
+		switch(polyKind) {
+		case NoteBookPoly::MAIN:
+			poly = &_main;
+			break;
+		case NoteBookPoly::NEXT:
+			poly = &_next;
+			break;
+		case NoteBookPoly::PREV:
+			poly = &_prev;
+			break;
+		default:
+			poly = _cluePoly + static_cast<int>(polyKind);
+			break;
+		}
+		poly->polyType = SHAPE;
+		poly->setPoint(0, c0);
+		poly->setPoint(1, c1);
+		poly->setPoint(2, c2);
+		poly->setPoint(3, c3);
+		FiddlyBit(poly);
+	}
+
+	void pushPolygon(const Common::Point &c0, const Common::Point &c1, const Common::Point &c2, const Common::Point &c3) override {
+		assert(_polyIndex < MAX_CLUE_POLYS);
+		setPolygon(static_cast<NoteBookPoly>(_polyIndex), c0, c1, c2, c3);
+		_polyIndex++;
+	}
+
+	bool isInsideNotebook(const Common::Point &point) const override {
+		return _main.containsPoint(point);
+	}
+
+	int lineHit(const Common::Point &point) const override {
+		for (int i = 0; i < MAX_CLUE_POLYS; i++) {
+			if (_cluePoly[i].containsPoint(point)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	NoteBookPoly mostSpecificHit(const Common::Point &point) const override {
+		auto line = lineHit(point);
+		if (line != -1) {
+			return static_cast<NoteBookPoly>(line);
+		}
+		if (_next.containsPoint(point)) {
+			return NoteBookPoly::NEXT;
+		} else if (_prev.containsPoint(point)) {
+			return NoteBookPoly::PREV;
+		} else if (_main.containsPoint(point)) {
+			return NoteBookPoly::MAIN;
+		}
+		return NoteBookPoly::NONE;
+	}
+private:
+	static const int MAX_CLUE_POLYS = 8;
+	int _polyIndex = 0;
+	POLYGON _main, _prev, _next;
+	POLYGON _cluePoly[MAX_CLUE_POLYS];
+};
+
+NoteBookPolygons *instantiateNoteBookPolygons() {
+	return new NoteBookPolygonsImpl;
+}
+
+// Notebook (Tinsel)
+void NotebookPolyEntry(Common::Point c0, Common::Point c1, Common::Point c2, Common::Point c3) {
+	_vm->_notebook->_polygons->pushPolygon(c0, c1, c2, c3);
+}
+
+void NotebookPolyNextPage(Common::Point c0, Common::Point c1, Common::Point c2, Common::Point c3) {
+	_vm->_notebook->_polygons->setPolygon(NoteBookPoly::NEXT, c0, c1, c2, c3);
+}
+
+void NotebookPolyPrevPage(Common::Point c0, Common::Point c1, Common::Point c2, Common::Point c3) {
+	_vm->_notebook->_polygons->setPolygon(NoteBookPoly::PREV, c0, c1, c2, c3);
 }
 
 } // End of namespace Tinsel

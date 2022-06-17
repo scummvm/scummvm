@@ -213,6 +213,8 @@ bool CharacterGenerator::start(EoBCharacter *characters, const uint8 ***faceShap
 	_vm->snd_stopSound();
 	_vm->delay(_vm->_tickLength);
 
+	_vm->restartPlayTimerAt(0);
+
 	init(defaultParty);
 
 	if (defaultParty)

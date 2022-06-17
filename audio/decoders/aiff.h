@@ -43,6 +43,24 @@ namespace Audio {
 
 class RewindableAudioStream;
 
+class AIFFHeader {
+public:
+	~AIFFHeader();
+	static AIFFHeader *readAIFFHeader(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
+	RewindableAudioStream *makeAIFFStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
+
+	uint32 getFrameCount() const { return _frameCount; }
+	uint32 getFrameRate() const { return _rate; }
+
+private:
+	uint16 _channels = 0;
+	uint32 _frameCount = 0;
+	uint16 _bitsPerSample = 0;
+	uint32 _rate = 0;
+	uint32 _codec = 0;
+	Common::SeekableReadStream *_dataStream = nullptr;
+};
+
 /**
  * Try to load an AIFF from the given seekable stream and create an AudioStream
  * from that data.

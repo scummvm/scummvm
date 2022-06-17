@@ -44,7 +44,6 @@
 #include "engines/grim/remastered/overlay.h"
 #include "engines/grim/registry.h"
 
-
 namespace Grim {
 
 GfxBase *CreateGfxOpenGL() {
@@ -1052,7 +1051,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 	if (bitmap->_format == 1 || _useDepthShader) {
 		bitmap->_hasTransparency = false;
 		bitmap->_numTex = ((bitmap->_width + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
-						  ((bitmap->_height + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
+		                  ((bitmap->_height + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
 		bitmap->_texIds = new GLuint[bitmap->_numTex * bitmap->_numImages];
 		textures = (GLuint *)bitmap->_texIds;
 		glGenTextures(bitmap->_numTex * bitmap->_numImages, textures);
@@ -1119,7 +1118,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 					int height = (y + BITMAP_TEXTURE_SIZE >= bitmap->_height) ? (bitmap->_height - y) : BITMAP_TEXTURE_SIZE;
 					glBindTexture(GL_TEXTURE_2D, textures[cur_tex_idx]);
 					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format, type,
-									texOut + (y * bytes * bitmap->_width) + (bytes * x));
+					                texOut + (y * bytes * bitmap->_width) + (bytes * x));
 					cur_tex_idx++;
 				}
 			}
@@ -1491,8 +1490,6 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 			glTexCoord2f(0.0f, 1.0f);
 			glVertex2f(x, (y + height));
 			glEnd();
-
-
 		}
 
 		glColor3f(1, 1, 1);
@@ -1590,7 +1587,7 @@ void GfxOpenGL::createTexture(Texture *texture, const uint8 *data, const CMap *c
 	GLuint *textures = (GLuint *)texture->_texture;
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 
-	//Remove darkened lines in EMI intro
+	// Remove darkened lines in EMI intro
 	if (g_grim->getGameType() == GType_MONKEY4 && clamp) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -2019,7 +2016,7 @@ void GfxOpenGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
 
 	glColor3f(0.0f, 0.0f, 0.0f);
 
-	//Explicitly cast to avoid problems with C++11
+	// Explicitly cast to avoid problems with C++11
 	float fx1 = x1;
 	float fx2 = x2;
 	float fy1 = y1;
@@ -2129,7 +2126,8 @@ void GfxOpenGL::drawLine(const PrimitiveObject *primitive) {
 }
 
 void GfxOpenGL::drawDimPlane() {
-	if (_dimLevel == 0.0f) return;
+	if (_dimLevel == 0.0f)
+		return;
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();

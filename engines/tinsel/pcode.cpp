@@ -385,7 +385,7 @@ void FreeMasterInterpretContext() {
  * @param pinvo			Associated inventory object
  */
 INT_CONTEXT *InitInterpretContext(GSORT gsort, SCNHANDLE hCode,	TINSEL_EVENT event,
-		HPOLYGON hpoly, int actorid, INV_OBJECT *pinvo, int myEscape) {
+		HPOLYGON hpoly, int actorid, const InventoryObject *pinvo, int myEscape) {
 	INT_CONTEXT *ic;
 
 	ic = AllocateInterpretContext(gsort);

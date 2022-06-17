@@ -119,8 +119,8 @@ int Sprite::getPixel(int x, int y, const Displacement &displacement) const {
 	double scaleX = double(rect.width()) / _width;
 	double scaleY = double(rect.height()) / _height;
 
-	int sy = scummvm_lround(dy / scaleY);
-	int sx = scummvm_lround(dx / scaleX);
+	int sy = lround(dy / scaleY);
+	int sx = lround(dx / scaleX);
 
 	if (_mirror)
 		return _data[sy * _width + (_width - sx)];
@@ -244,8 +244,8 @@ void Sprite::draw(Surface *surface, bool markDirty, int relX, int relY) const {
 
 Common::Rect Sprite::getRect(const Displacement &displacement) const {
 	return Common::Rect(_x + displacement.relX, _y + displacement.relY,
-	    _x + displacement.relX + scummvm_lround(_scaledWidth * displacement.extraScaleX),
-	    _y + displacement.relY + scummvm_lround(_scaledHeight * displacement.extraScaleY));
+	    _x + displacement.relX + lround(_scaledWidth * displacement.extraScaleX),
+	    _y + displacement.relY + lround(_scaledHeight * displacement.extraScaleY));
 }
 
 Text::Text(const Common::String &str, const Font *font, byte fontColor,

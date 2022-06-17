@@ -41,8 +41,7 @@
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/room.h"
 #include "ags/engine/ac/room_object.h"
-#include "ags/shared/script/cc_error.h"
-#include "ags/shared/script/cc_options.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/main/game_run.h"
@@ -158,7 +157,7 @@ int run_interaction_event(Interaction *nint, int evnt, int chkAny, int isInv) {
 // Returns 0 normally, or -1 to indicate that the NewInteraction has
 // become invalid and don't run another interaction on it
 // (eg. a room change occurred)
-int run_interaction_script(InteractionScripts *nint, int evnt, int chkAny, int isInv) {
+int run_interaction_script(InteractionScripts *nint, int evnt, int chkAny) {
 
 	if ((nint->ScriptFuncNames[evnt] == nullptr) || (nint->ScriptFuncNames[evnt][0u] == 0)) {
 		// no response defined for this event
@@ -303,22 +302,21 @@ static bool DoRunScriptFuncCantBlock(ccInstance *sci, NonBlockingScriptFunction 
 	}
 
 	// this might be nested, so don't disrupt blocked scripts
-	_G(ccErrorString) = "";
-	_G(ccError) = 0;
+	cc_clear_error();
 	_G(no_blocking_functions)--;
 	return (hasTheFunc);
 }
 
 static int PrepareTextScript(ccInstance *sci, const char **tsname) {
-	_G(ccError) = 0;
+	cc_clear_error();
 	// FIXME: try to make it so this function is not called with NULL sci
 	if (sci == nullptr) return -1;
 	if (sci->GetSymbolAddress(tsname[0]).IsNull()) {
-		_G(ccErrorString) = "no such function in script";
+		cc_error("no such function in script");
 		return -2;
 	}
 	if (sci->IsBeingRun()) {
-		_G(ccErrorString) = "script is already in execution";
+		cc_error("script is already in execution");
 		return -3;
 	}
 	_G(scripts)[_G(num_scripts)].init();
@@ -340,38 +338,31 @@ static int PrepareTextScript(ccInstance *sci, const char **tsname) {
 	tsname[0] = &scfunctionname[0];
 	update_script_mouse_coords();
 	_G(inside_script)++;
-	//  aborted_ip=0;
-	//  abort_executor=0;
 	return 0;
 }
 
 int RunScriptFunction(ccInstance *sci, const char *tsname, size_t numParam, const RuntimeScriptValue *params) {
 	int oldRestoreCount = _G(gameHasBeenRestored);
+	// TODO: research why this is really necessary, and refactor to avoid such hacks!
 	// First, save the current ccError state
 	// This is necessary because we might be attempting
 	// to run Script B, while Script A is still running in the
 	// background.
 	// If CallInstance here has an error, it would otherwise
 	// also abort Script A because ccError is a global variable.
-	int cachedCcError = _G(ccError);
-	_G(ccError) = 0;
+	ScriptError cachedCcError = cc_get_error();
 
+	cc_clear_error();
 	int toret = PrepareTextScript(sci, &tsname);
 	if (toret) {
-		_G(ccError) = cachedCcError;
+		cc_error(cachedCcError);
 		return -18;
 	}
-
-	// Clear the error message
-	_G(ccErrorString) = "";
-
+	cc_clear_error();
 	toret = _G(curscript)->inst->CallScriptFunction(tsname, numParam, params);
 
-	if (_G(abort_engine))
-		return -1;
-
 	// 100 is if Aborted (eg. because we are LoadAGSGame'ing)
-	if ((toret != 0) && (toret != -2) && (toret != 100)) {
+	if (!_G(abort_engine) && (toret != 0) && (toret != -2) && (toret != 100)) {
 		quit_with_script_error(tsname);
 	}
 
@@ -385,7 +376,7 @@ int RunScriptFunction(ccInstance *sci, const char *tsname, size_t numParam, cons
 	_G(post_script_cleanup_stack)--;
 
 	// restore cached error state
-	_G(ccError) = cachedCcError;
+	cc_error(cachedCcError);
 
 	// if the game has been restored, ensure that any further scripts are not run
 	if ((oldRestoreCount != _G(gameHasBeenRestored)) && (_G(eventClaimed) == EVENT_INPROGRESS))
@@ -409,7 +400,7 @@ int RunScriptFunctionInRoom(const char *tsname, size_t param_count, const Runtim
 	// If it's a obligatory room event, and return code means missing function - error
 	if (strict_room_event && (toret == -18))
 		quitprintf("RunScriptFunction: error %d (%s) trying to run '%s'   (Room %d)",
-			toret, _G(ccErrorString).GetCStr(), tsname, _G(displayed_room));
+			toret, cc_get_error().ErrorString.GetCStr(), tsname, _G(displayed_room));
 	return toret;
 }
 
@@ -488,7 +479,8 @@ char *make_ts_func_name(const char *base, int iii, int subd) {
 
 void post_script_cleanup() {
 	// should do any post-script stuff here, like go to new room
-	if (_G(ccError)) quit(_G(ccErrorString));
+	if (cc_has_error())
+		quit(cc_get_error().ErrorString);
 	ExecutingScript copyof = _G(scripts)[_G(num_scripts) - 1];
 	if (_G(scripts)[_G(num_scripts) - 1].forked)
 		delete _G(scripts)[_G(num_scripts) - 1].inst;
@@ -578,10 +570,12 @@ void quit_with_script_error(const char *functionName) {
 	// TODO: clean up the error reporting logic. Now engine will append call
 	// stack info in quit_check_for_error_state() but only in case of explicit
 	// script error ("!" type), and not in other case.
-	if (_G(ccErrorIsUserError))
-		quitprintf("!Error running function '%s':\n%s", functionName, _G(ccErrorString).GetCStr());
+	const auto &error = cc_get_error();
+	if (error.IsUserError)
+		quitprintf("!Error running function '%s':\n%s", functionName, error.ErrorString.GetCStr());
 	else
-		quitprintf("Error running function '%s':\n%s\n\n%s", functionName, _G(ccErrorString).GetCStr(), get_cur_script(5).GetCStr());
+		quitprintf("Error running function '%s':\n%s\n\n%s", functionName,
+			error.ErrorString.GetCStr(), error.CallStack.GetCStr());
 }
 
 int get_nivalue(InteractionCommandList *nic, int idx, int parm) {
@@ -690,11 +684,10 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 			PlayFlic(IPARAM1, IPARAM2);
 			break;
 		case 9: { // Run Dialog
-			int roomWas = _GP(play).room_changes;
 			RunDialog(IPARAM1);
 			// if they changed room within the dialog script,
 			// the interaction command list is no longer valid
-			if (roomWas != _GP(play).room_changes)
+			if (room_was != _GP(play).room_changes)
 				return -1;
 		}
 		break;
@@ -889,6 +882,22 @@ void run_unhandled_event(int evnt) {
 		RuntimeScriptValue params[] = { evtype, evnt };
 		QueueScriptFunction(kScInstGame, "unhandled_event", 2, params);
 	}
+}
+
+bool get_script_position(ScriptPosition &script_pos) {
+	ccInstance *cur_instance = ccInstance::GetCurrentInstance();
+	if (cur_instance) {
+		cur_instance->GetScriptPosition(script_pos);
+		return true;
+	}
+	return false;
+}
+
+String cc_format_error(const String &message) {
+	if (_G(currentline) > 0)
+		return String::FromFormat("Error (line %d): %s", _G(currentline), message.GetCStr());
+	else
+		return String::FromFormat("Error (line unknown): %s", message.GetCStr());
 }
 
 } // namespace AGS3

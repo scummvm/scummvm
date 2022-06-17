@@ -30,7 +30,7 @@
 #include "ags/engine/ac/gui.h"
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/screen.h"
-#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/plugins/ags_plugin.h"
 #include "ags/plugins/plugin_engine.h"
@@ -133,7 +133,7 @@ void force_event(int evtyp, int ev1, int ev2, int ev3) {
 void process_event(const EventHappened *evp) {
 	RuntimeScriptValue rval_null;
 	if (evp->type == EV_TEXTSCRIPT) {
-		_G(ccError) = 0;
+		cc_clear_error();
 		RuntimeScriptValue params[2]{ evp->data2, evp->data3 };
 		if (evp->data3 > -1000)
 			QueueScriptFunction(kScInstGame, _G(tsnames)[evp->data1], 2, params);
@@ -167,10 +167,9 @@ void process_event(const EventHappened *evp) {
 				evpt = &_G(croom)->intrRoom;
 
 			_G(evblockbasename) = "room";
-			if (evp->data3 == 5) {
+			if (evp->data3 == EVROM_BEFOREFADEIN) {
 				_G(in_enters_screen)++;
 				run_on_event(GE_ENTER_ROOM, RuntimeScriptValue().SetInt32(_G(displayed_room)));
-
 			}
 			//Debug::Printf("Running room interaction, event %d", evp->data3);
 		}
@@ -188,7 +187,7 @@ void process_event(const EventHappened *evp) {
 		_G(evblockbasename) = oldbasename;
 		_G(evblocknum) = oldblocknum;
 
-		if ((evp->data3 == 5) && (evp->data1 == EVB_ROOM))
+		if ((evp->data1 == EVB_ROOM) && (evp->data3 == EVROM_BEFOREFADEIN))
 			_G(in_enters_screen)--;
 	} else if (evp->type == EV_FADEIN) {
 		// if they change the transition type before the fadein, make
@@ -269,24 +268,21 @@ void process_event(const EventHappened *evp) {
 
 			IDriverDependantBitmap *ddb = prepare_screen_for_transition_in();
 
-			int transparency = 254;
-
-			while (transparency > 0) {
+			for (int alpha = 254; alpha > 0; alpha -= 16) {
 				// do the crossfade
-				ddb->SetTransparency(transparency);
+				ddb->SetAlpha(alpha);
 				invalidate_screen();
 				construct_game_scene(true);
 				construct_game_screen_overlay(false);
-
-				if (transparency > 16) {
-					// on last frame of fade (where transparency < 16), don't
-					// draw the old screen on top
+				// draw old screen on top while alpha > 16
+				if (alpha > 16) {
+					_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform());
 					_G(gfxDriver)->DrawSprite(0, 0, ddb);
+					_G(gfxDriver)->EndSpriteBatch();
 				}
 				render_to_screen();
 				update_polled_stuff_if_runtime();
 				WaitForNextFrame();
-				transparency -= 16;
 			}
 
 			delete _G(saved_viewport_bitmap);
@@ -315,7 +311,9 @@ void process_event(const EventHappened *evp) {
 				_G(gfxDriver)->UpdateDDBFromBitmap(ddb, _G(saved_viewport_bitmap), false);
 				construct_game_scene(true);
 				construct_game_screen_overlay(false);
+				_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform());
 				_G(gfxDriver)->DrawSprite(0, 0, ddb);
+				_G(gfxDriver)->EndSpriteBatch();
 				render_to_screen();
 				update_polled_stuff_if_runtime();
 				WaitForNextFrame();
@@ -327,9 +325,11 @@ void process_event(const EventHappened *evp) {
 			_G(gfxDriver)->DestroyDDB(ddb);
 		}
 
-	} else if (evp->type == EV_IFACECLICK)
+	} else if (evp->type == EV_IFACECLICK) {
 		process_interface_click(evp->data1, evp->data2, evp->data3);
-	else quit("process_event: unknown event to process");
+	} else {
+		quit("process_event: unknown event to process");
+	}
 }
 
 
@@ -344,8 +344,10 @@ void runevent_now(int evtyp, int ev1, int ev2, int ev3) {
 }
 
 void processallevents() {
-	if (_G(inside_processevent))
+	if (_G(inside_processevent)) {
+		_GP(events).clear(); // flush queued events
 		return;
+	}
 
 	// Take ownership of the pending events
 	// Note: upstream AGS used std::move, which I haven't been able
@@ -358,7 +360,7 @@ void processallevents() {
 
 	_G(inside_processevent)++;
 
-	for (size_t i = 0; i < evtCopy->size(); ++i) {
+	for (size_t i = 0; i < evtCopy->size() && !_G(abort_engine); ++i) {
 		process_event(&(*evtCopy)[i]);
 
 		if (room_was != _GP(play).room_changes)

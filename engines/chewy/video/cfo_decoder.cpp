@@ -107,7 +107,7 @@ void CfoDecoder::CfoVideoTrack::readHeader() {
 #define FRAME_TYPE 0xF1FA
 #define CUSTOM_FRAME_TYPE 0xFAF1
 
-const ::Graphics::Surface *CfoDecoder::CfoVideoTrack::decodeNextFrame() {
+const Graphics::Surface *CfoDecoder::CfoVideoTrack::decodeNextFrame() {
 	uint16 frameType;
 
 	// Read chunk
@@ -183,6 +183,7 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 	for (uint32 i = 0; i < chunkCount; ++i) {
 		uint32 frameSize = _fileStream->readUint32LE();
 		uint16 frameType = _fileStream->readUint16LE();
+		uint16 musicLoops = 0;
 
 		switch (frameType) {
 		case kChunkFadeIn:
@@ -213,7 +214,7 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			break;
 		case kChunkPlayMusic:
 			// Used in videos 0, 18, 34, 71
-			_sound->playMusic(_musicData, _musicSize, false, DisposeAfterUse::NO);
+			_sound->playMusic(_musicData, _musicSize);
 			break;
 		case kChunkPlaySeq:
 			error("Unused chunk kChunkPlaySeq found");
@@ -235,7 +236,9 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 				while (g_system->getEventManager()->pollEvent(event)) {}	// ignore events
 				g_system->updateScreen();
 				g_system->delayMillis(10);
-			} while (_sound->isMusicActive());
+				// Await 100 loops (about 1 sec)
+				musicLoops++;
+			} while (_sound->isMusicActive() && musicLoops < 100);
 			break;
 		case kChunkSetMusicVolume:
 			volume = _fileStream->readUint16LE() * Audio::Mixer::kMaxChannelVolume / 63;

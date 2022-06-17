@@ -39,15 +39,16 @@ class Stream;
 using namespace AGS; // FIXME later
 
 struct AnimatingGUIButton {
-	// index into _GP(guibuts) array, GUI, button
-	short buttonid = 0, ongui = 0, onguibut = 0;
+	// index into guibuts array, GUI, button
+	short buttonid = -1, ongui = -1, onguibut = -1;
 	// current animation status
 	uint16_t view = 0, loop = 0, frame = 0;
-	short speed = 0, repeat = 0, blocking = 0,
-		direction = 0, wait = 0;
+	short speed = 0, repeat = 0, blocking = 0, direction = 0, wait = 0;
+	// relative volume of the frame sounds
+	int volume = -1;
 
-	void ReadFromFile(Shared::Stream *in, int cmp_ver);
-	void WriteToFile(Shared::Stream *out);
+	void ReadFromSavegame(Shared::Stream *in, int cmp_ver);
+	void WriteToSavegame(Shared::Stream *out);
 };
 
 } // namespace AGS3

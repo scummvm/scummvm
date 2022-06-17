@@ -57,7 +57,7 @@ int Label_GetTextAlignment(GUILabel *labl) {
 void Label_SetTextAlignment(GUILabel *labl, int align) {
 	if (labl->TextAlignment != align) {
 		labl->TextAlignment = (HorAlignment)align;
-		labl->NotifyParentChanged();
+		labl->MarkChanged();
 	}
 }
 
@@ -68,7 +68,7 @@ int Label_GetColor(GUILabel *labl) {
 void Label_SetColor(GUILabel *labl, int colr) {
 	if (labl->TextColor != colr) {
 		labl->TextColor = colr;
-		labl->NotifyParentChanged();
+		labl->MarkChanged();
 	}
 }
 
@@ -82,7 +82,7 @@ void Label_SetFont(GUILabel *guil, int fontnum) {
 
 	if (fontnum != guil->Font) {
 		guil->Font = fontnum;
-		guil->NotifyParentChanged();
+		guil->MarkChanged();
 	}
 }
 

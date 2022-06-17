@@ -32,8 +32,6 @@
 #include "common/system.h"
 #include "common/substream.h"
 
-#include "base/version.h"
-
 namespace Kyra {
 
 class EoBSeqPlayerCommon {
@@ -2172,7 +2170,7 @@ int EoBEngine::mainMenu() {
 			else
 				_screen->setScreenPalette(_screen->getPalette(0));
 
-			Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
+			Common::String versionString = "ScummVM " + _versionString;
 
 			if (_flags.platform == Common::kPlatformSegaCD) {
 				_txt->clearDim(3);
@@ -2381,10 +2379,10 @@ void EoBEngine::seq_xdeath() {
 			_screen->copyRegion(0, 0, 0, 0, 176, 120, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->drawShape(0, shapes2, 32, 10, 0);
 			_screen->updateScreen();
-			updateAnimTimers();
+			updateAnimations();
 			delete[] shapes2;
 			for (uint32 cur = _system->getMillis(); cur < del; cur = _system->getMillis()) {
-				updateAnimTimers();
+				updateAnimations();
 				delay(MIN<uint32>(8, del - cur));
 			}
 		}
@@ -2819,7 +2817,6 @@ bool EoBEngine::seq_segaPlaySequence(int sequenceId, bool setupScreen) {
 	if (_flags.platform != Common::kPlatformSegaCD)
 		return true;
 
-	uint32 startTime = _system->getMillis();
 	_allowSkip = true;
 	resetSkipFlag();
 
@@ -2833,8 +2830,6 @@ bool EoBEngine::seq_segaPlaySequence(int sequenceId, bool setupScreen) {
 
 	if (setupScreen)
 		seq_segaRestoreAfterSequence();
-
-	_totalPlaySecs += ((_system->getMillis() - startTime) / 1000);
 
 	if (!res)
 		error("EoBEngine::seq_segaPlaySequence(): Failed to play cutscene no. %d", sequenceId);

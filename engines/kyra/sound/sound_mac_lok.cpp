@@ -227,6 +227,9 @@ void SoundMac::beginFadeOut() {
 	if (!_ready)
 		return;
 
+	if (!isPlaying())
+		return;
+
 	_driver->doCommand(HalestormDriver::kSongFadeOut, 30);
 	while (_driver->doCommand(HalestormDriver::kSongFadeGetState) >= 16)
 		_vm->delay(8);

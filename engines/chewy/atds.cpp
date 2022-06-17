@@ -27,7 +27,6 @@
 #include "chewy/main.h"
 #include "chewy/mcga_graphics.h"
 #include "chewy/mouse.h"
-#include "chewy/ngsdefs.h"
 #include "chewy/sound.h"
 #include "chewy/text.h"
 
@@ -134,7 +133,7 @@ void Atdsys::init() {
 	set_handle(ATDS_TXT, INV_USE_DATA, USE_TAP_OFF, USE_TAP_MAX);
 	_G(gameState).AadSilent = 10;
 	_G(gameState).DelaySpeed = 5;
-	_G(spieler_vector)[P_CHEWY].Delay = _G(gameState).DelaySpeed;
+	_G(moveState)[P_CHEWY].Delay = _G(gameState).DelaySpeed;
 	set_delay(&_G(gameState).DelaySpeed, _G(gameState).AadSilent);
 	set_string_end_func(&atdsStringStart);
 }
@@ -415,16 +414,12 @@ bool Atdsys::start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int1
 
 	if (_atsv.text.size() > 0) {
 		*vocNr = txtMode != TXT_MARK_NAME ? _text->getLastSpeechId() : -1;
-		_atsv.shown = g_engine->_sound->subtitlesEnabled();
+		_atsv.shown = true;
 		_atsv._txtMode = txtMode;
 		_atsv._delayCount = get_delay(_atsv.text.size());
 		_atsv._color = color;
 		_printDelayCount1 = _atsv._delayCount / 10;
 		_mousePush = true;
-
-		if (*vocNr == -1) {
-			_atsv.shown = g_engine->_sound->subtitlesEnabled();
-		}
 	}
 
 	return _atsv.shown;
@@ -475,22 +470,24 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
 			split_string(atsSsi, &splitString);
 
 			for (int16 i = 0; i < splitString._nr; i++) {
-				_G(out)->printxy(splitString._x[i],
-								 splitString._y + (i * h) + 1,
-								 0, 300, 0, splitString._strPtr[i]);
-				_G(out)->printxy(splitString._x[i],
-								 splitString._y + (i * h) - 1,
-								 0, 300, 0, splitString._strPtr[i]);
-				_G(out)->printxy(splitString._x[i] + 1,
-				              splitString._y + (i * h),
-				              0, 300, 0, splitString._strPtr[i]);
-				_G(out)->printxy(splitString._x[i] - 1,
-				              splitString._y + (i * h),
-				              0, 300, 0, splitString._strPtr[i]);
-				_G(out)->printxy(splitString._x[i],
-				              splitString._y + (i * h),
-				              _atsv._color,
-				              300, 0, splitString._strPtr[i]);
+				if (g_engine->_sound->subtitlesEnabled()) {
+					_G(out)->printxy(splitString._x[i],
+									 splitString._y + (i * h) + 1,
+									 0, 300, 0, splitString._strPtr[i]);
+					_G(out)->printxy(splitString._x[i],
+									 splitString._y + (i * h) - 1,
+									 0, 300, 0, splitString._strPtr[i]);
+					_G(out)->printxy(splitString._x[i] + 1,
+									 splitString._y + (i * h),
+									 0, 300, 0, splitString._strPtr[i]);
+					_G(out)->printxy(splitString._x[i] - 1,
+									 splitString._y + (i * h),
+									 0, 300, 0, splitString._strPtr[i]);
+					_G(out)->printxy(splitString._x[i],
+									 splitString._y + (i * h),
+									 _atsv._color,
+									 300, 0, splitString._strPtr[i]);
+				}
 
 				shownLen += strlen(splitString._strPtr[i]) + 1;
 			}
@@ -648,10 +645,10 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 			SplitStringRet splitString;
 			split_string(&tmp_ssi, &splitString);
 
-			if (g_engine->_sound->subtitlesEnabled() ||
-			        (_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) == -1) {
-				const int16 h = _G(fontMgr)->getFont()->getDataHeight();
-				for (int16 i = 0; i < splitString._nr; i++) {
+			const int16 h = _G(fontMgr)->getFont()->getDataHeight();
+			for (int16 i = 0; i < splitString._nr; i++) {
+				if (g_engine->_sound->subtitlesEnabled() ||
+					_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET == -1) {
 					_G(out)->printxy(splitString._x[i] + 1,
 									 splitString._y + (i * h),
 									 0, 300, 0, splitString._strPtr[i]);
@@ -666,38 +663,25 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 									 0, 300, 0, splitString._strPtr[i]);
 					_G(out)->printxy(splitString._x[i],
 									 splitString._y + (i * h),
-					              _aadv._person[personId]._color,
+									 _aadv._person[personId]._color,
 									 300, 0, splitString._strPtr[i]);
-					tmp_ptr += strlen(splitString._strPtr[i]) + 1;
 				}
-				str_null2leer(start_ptr, start_ptr + txt_len - 1);
-
+				tmp_ptr += strlen(splitString._strPtr[i]) + 1;
 			}
+			str_null2leer(start_ptr, start_ptr + txt_len - 1);
 
 			if (g_engine->_sound->speechEnabled() &&
-					(_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) != -1) {
+					_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET != -1) {
 				if (_atdsv._vocNr != _aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) {
 					_atdsv._vocNr = _aadv._strHeader->_vocNr - ATDS_VOC_OFFSET;
-					g_engine->_sound->playSpeech(_atdsv._vocNr, !g_engine->_sound->subtitlesEnabled());
-					int16 vocx = _G(spieler_vector)[personId].Xypos[0] -
+					const int16 vocx = _G(moveState)[personId].Xypos[0] -
 								 _G(gameState).scrollx + _G(spieler_mi)[personId].HotX;
 					g_engine->_sound->setSoundChannelBalance(0, getStereoPos(vocx));
-
-					if (!g_engine->_sound->subtitlesEnabled()) {
-						_aadv._strNr = -1;
-						_aadv._delayCount = 1;
-					}
+					g_engine->_sound->playSpeech(_atdsv._vocNr, false);
 				}
 
-				// FIXME: This breaks subtitles, as it removes
-				// all string terminators. This was previously
-				// used when either speech or subtitles (but not
-				// both) were selected, but its logic is broken.
-				// Check if it should be removed altogether.
-				/*for (int16 i = 0; i < splitString._nr; i++) {
-					tmp_ptr += strlen(splitString._strPtr[i]) + 1;
-				}
-				str_null2leer(start_ptr, start_ptr + txt_len - 1);*/
+				if (_atdsv._vocNr >= 0 && !g_engine->_sound->isSpeechActive())
+					stopAad();
 			}
 
 			if (_aadv._delayCount <= 0) {
@@ -734,13 +718,8 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 					_aadv._silentCount = _atdsv._silent;
 				}
 			} else {
-				if (g_engine->_sound->subtitlesEnabled() ||
-				        (_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) == -1)
+				if (_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET == -1)
 					--_aadv._delayCount;
-
-				else if (!g_engine->_sound->subtitlesEnabled()) {
-					_aadv._delayCount = 0;
-				}
 			}
 		} else {
 			--_aadv._silentCount;

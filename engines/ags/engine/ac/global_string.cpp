@@ -30,18 +30,19 @@
 namespace AGS3 {
 
 int StrGetCharAt(const char *strin, int posn) {
-	if ((posn < 0) || (posn >= (int)strlen(strin)))
+	if ((posn < 0) || (static_cast<size_t>(posn) >= strlen(strin)))
 		return 0;
 	return strin[posn];
 }
 
 void StrSetCharAt(char *strin, int posn, int nchar) {
-	if ((posn < 0) || (posn > (int)strlen(strin)) || (posn >= MAX_MAXSTRLEN))
+	size_t len = strlen(strin);
+	if ((posn < 0) || (static_cast<size_t>(posn) > len) || (posn >= MAX_MAXSTRLEN))
 		quit("!StrSetCharAt: tried to write past end of string");
 
-	if (posn == (int)strlen(strin))
+	strin[posn] = static_cast<char>(nchar);
+	if (static_cast<size_t>(posn) == len)
 		strin[posn + 1] = 0;
-	strin[posn] = nchar;
 }
 
 void _sc_strcat(char *s1, const char *s2) {
@@ -49,7 +50,6 @@ void _sc_strcat(char *s1, const char *s2) {
 	VALIDATE_STRING(s2);
 	check_strlen(s1);
 	int mosttocopy = (_G(MAXSTRLEN) - strlen(s1)) - 1;
-	//  int numbf=_GP(game).iface[4].numbuttons;
 	my_strncpy(&s1[strlen(s1)], s2, mosttocopy);
 }
 
@@ -64,14 +64,6 @@ void _sc_strupper(char *desbuf) {
 	check_strlen(desbuf);
 	ags_strupr(desbuf);
 }
-
-/*int _sc_strcmp (char *s1, char *s2) {
-return strcmp (get_translation (s1), get_translation(s2));
-}
-
-int _sc_stricmp (char *s1, char *s2) {
-return ags_stricmp (get_translation (s1), get_translation(s2));
-}*/
 
 void _sc_strcpy(char *destt, const char *text) {
 	VALIDATE_STRING(destt);

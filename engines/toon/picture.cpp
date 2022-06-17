@@ -271,7 +271,7 @@ uint8 Picture::getData(int16 x, int16 y) {
 void Picture::floodFillNotWalkableOnMask(int16 x, int16 y) {
 	debugC(1, kDebugPicture, "floodFillNotWalkableOnMask(%d, %d)", x, y);
 	// Stack-based floodFill algorithm based on
-	// http://student.kuleuven.be/~m0216922/CG/files/floodfill.cpp
+	// https://web.archive.org/web/20100825020453/http://student.kuleuven.be/~m0216922/CG/files/floodfill.cpp
 	Common::Stack<Common::Point> stack;
 	stack.push(Common::Point(x, y));
 	while (!stack.empty()) {

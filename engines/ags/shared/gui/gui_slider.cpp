@@ -19,6 +19,7 @@
  *
  */
 
+#include "ags/lib/std/algorithm.h"
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/gui/gui_slider.h"
@@ -48,6 +49,10 @@ bool GUISlider::IsHorizontal() const {
 	return Width > Height;
 }
 
+bool GUISlider::HasAlphaChannel() const {
+	return is_sprite_alpha(BgImage) || is_sprite_alpha(HandleImage);
+}
+
 bool GUISlider::IsOverControl(int x, int y, int leeway) const {
 	// check the overall boundary
 	if (GUIObject::IsOverControl(x, y, leeway))
@@ -56,7 +61,22 @@ bool GUISlider::IsOverControl(int x, int y, int leeway) const {
 	return _cachedHandle.IsInside(Point(x, y));
 }
 
-void GUISlider::Draw(Shared::Bitmap *ds) {
+Rect GUISlider::CalcGraphicRect(bool clipped) {
+	// Sliders are never clipped as of 3.6.0
+	// TODO: precalculate everything on width/height/graphic change!!
+	UpdateMetrics();
+	Rect logical = RectWH(0, 0, Width, Height);
+	Rect bar = _cachedBar;
+	Rect handle = _cachedHandle;
+	return Rect(
+		MIN(MIN(logical.Left, bar.Left), handle.Left),
+		MIN(MIN(logical.Top, bar.Top), handle.Top),
+		MAX(MAX(logical.Right, bar.Right), handle.Right),
+		MAX(MAX(logical.Bottom, bar.Bottom), handle.Bottom)
+	);
+}
+
+void GUISlider::UpdateMetrics() {
 	// Clamp Value
 	// TODO: this is necessary here because some Slider fields are still public
 	if (MinValue >= MaxValue)
@@ -95,7 +115,7 @@ void GUISlider::Draw(Shared::Bitmap *ds) {
 	if (IsHorizontal()) // horizontal slider
 	{
 		// Value pos is a coordinate corresponding to current slider's value
-		bar = RectWH(X + 1, Y + Height / 2 - thick_f, Width - 1, bar_thick);
+		bar = RectWH(1, Height / 2 - thick_f, Width - 1, bar_thick);
 		handle_range = Width - 4;
 		int value_pos = (int)(((float)(Value - MinValue) * (float)handle_range) / (float)(MaxValue - MinValue));
 		handle = RectWH((bar.Left + get_fixed_pixel_size(2)) - (handle_sz.Width / 2) + 1 + value_pos - 2,
@@ -105,7 +125,7 @@ void GUISlider::Draw(Shared::Bitmap *ds) {
 	}
 	// vertical slider
 	else {
-		bar = RectWH(X + Width / 2 - thick_f, Y + 1, bar_thick, Height - 1);
+		bar = RectWH(Width / 2 - thick_f, 1, bar_thick, Height - 1);
 		handle_range = Height - 4;
 		int value_pos = (int)(((float)(MaxValue - Value) * (float)handle_range) / (float)(MaxValue - MinValue));
 		handle = RectWH(bar.Left + (bar.GetWidth() - handle_sz.Width) / 2,
@@ -113,6 +133,17 @@ void GUISlider::Draw(Shared::Bitmap *ds) {
 			handle_sz.Width, handle_sz.Height);
 		handle.MoveToX(handle.Left + data_to_game_coord(HandleOffset));
 	}
+
+	_cachedBar = bar;
+	_cachedHandle = handle;
+	_handleRange = MAX(1, handle_range);
+}
+
+void GUISlider::Draw(Bitmap *ds, int x, int y) {
+	UpdateMetrics();
+
+	Rect bar = Rect::MoveBy(_cachedBar, x, y);
+	Rect handle = Rect::MoveBy(_cachedHandle, x, y);
 
 	color_t draw_color;
 	if (BgImage > 0) {
@@ -122,11 +153,11 @@ void GUISlider::Draw(Shared::Bitmap *ds) {
 		if (IsHorizontal()) {
 			x_inc = get_adjusted_spritewidth(BgImage);
 			// centre the image vertically
-			bar.Top = Y + (Height / 2) - get_adjusted_spriteheight(BgImage) / 2;
+			bar.Top = y + (Height / 2) - get_adjusted_spriteheight(BgImage) / 2;
 		} else {
 			y_inc = get_adjusted_spriteheight(BgImage);
 			// centre the image horizontally
-			bar.Left = X + (Width / 2) - get_adjusted_spritewidth(BgImage) / 2;
+			bar.Left = x + (Width / 2) - get_adjusted_spritewidth(BgImage) / 2;
 		}
 		int cx = bar.Left;
 		int cy = bar.Top;
@@ -164,9 +195,6 @@ void GUISlider::Draw(Shared::Bitmap *ds) {
 		ds->DrawLine(Line(handle.Right, handle.Top + 1, handle.Right, handle.Bottom), draw_color);
 		ds->DrawLine(Line(handle.Left + 1, handle.Bottom, handle.Right, handle.Bottom), draw_color);
 	}
-
-	_cachedHandle = handle;
-	_handleRange = handle_range;
 }
 
 bool GUISlider::OnMouseDown() {
@@ -179,13 +207,18 @@ void GUISlider::OnMouseMove(int x, int y) {
 	if (!IsMousePressed)
 		return;
 
+	int32_t value;
+	assert(_handleRange > 0);
 	if (IsHorizontal())
-		Value = (int)(((float)((x - X) - 2) * (float)(MaxValue - MinValue)) / (float)_handleRange) + MinValue;
+		value = (int)(((float)((x - X) - 2) * (float)(MaxValue - MinValue)) / (float)_handleRange) + MinValue;
 	else
-		Value = (int)(((float)(((Y + Height) - y) - 2) * (float)(MaxValue - MinValue)) / (float)_handleRange) + MinValue;
+		value = (int)(((float)(((Y + Height) - y) - 2) * (float)(MaxValue - MinValue)) / (float)_handleRange) + MinValue;
 
-	Value = Math::Clamp(Value, MinValue, MaxValue);
-	NotifyParentChanged();
+	value = Math::Clamp(value, MinValue, MaxValue);
+	if (value != Value) {
+		Value = value;
+		MarkChanged();
+	}
 	IsActivated = true;
 }
 

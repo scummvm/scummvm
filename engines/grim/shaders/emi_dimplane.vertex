@@ -1,7 +1,6 @@
 in vec2 position;
 
-void main()
-{
+void main() {
 	// Coordinates are [0.0;1.0], transform to [-1.0; 1.0]
 	vec2 pos = position;
 	pos.x = pos.x * 2.0 - 1.0;

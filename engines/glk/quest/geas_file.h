@@ -80,7 +80,7 @@ struct GeasFile {
 	const GeasBlock &block(String type, uint index) const;
 	uint size(String type) const;
 
-	void read_into(const Common::Array<String> &, String, uint, bool, const reserved_words &, const reserved_words &);
+	void read_into(const Common::Array<String> &, String, uint, bool, const reserved_words &, const reserved_words &, const reserved_words &);
 
 
 
@@ -98,7 +98,7 @@ struct GeasFile {
 	bool type_of_type(String subtype, String supertype) const;
 
 	Set<String> get_obj_keys(String obj) const;
-	void get_obj_keys(String, Set<String> &) const;
+	void get_obj_keys(String, Set<String> &, const reserved_words &obj_tag_property) const;
 	void get_type_keys(String, Set<String> &) const;
 
 	bool obj_has_action(String objname, String propname) const;

@@ -31,7 +31,6 @@ namespace Grim {
 
 template class ObjectPtr<LipSync>;
 
-
 LipSync::LipSync(const Common::String &filename, Common::SeekableReadStream *data) :
 		Object(), _fname(filename) {
 
@@ -83,7 +82,7 @@ int LipSync::getAnim(int pos) {
 		if ((i + 1) < _numEntries) {
 			frame2 = _entries[i + 1].frame;
 		} else {
-			frame2 = (unsigned int) - 1L;
+			frame2 = (uint) - 1L;
 		}
 		if ((pos >= frame1) && (pos < frame2)) {
 			return _entries[i].anim;

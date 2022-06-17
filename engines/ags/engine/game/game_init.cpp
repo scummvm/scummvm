@@ -20,7 +20,6 @@
  */
 
 #include "ags/engine/ac/character.h"
-#include "ags/engine/ac/character_cache.h"
 #include "ags/engine/ac/dialog.h"
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/draw.h"
@@ -49,7 +48,7 @@
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/plugins/plugin_engine.h"
-#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/engine/script/exports.h"
 #include "ags/engine/script/script.h"
 #include "ags/engine/script/script_runtime.h"
@@ -90,7 +89,7 @@ String GetGameInitErrorText(GameInitErrorType err) {
 
 // Initializes audio channels and clips and registers them in the script system
 void InitAndRegisterAudioObjects(GameSetupStruct &game) {
-	for (int i = 0; i < game.numGameChannels; ++i) {
+	for (int i = 0; i < game.numCompatGameChannels; ++i) {
 		_G(scrAudioChannel)[i].id = i;
 		ccRegisterManagedObject(&_G(scrAudioChannel)[i], &_GP(ccDynamicAudio));
 	}
@@ -107,7 +106,6 @@ void InitAndRegisterAudioObjects(GameSetupStruct &game) {
 
 // Initializes characters and registers them in the script system
 void InitAndRegisterCharacters(GameSetupStruct &game) {
-	_GP(characterScriptObjNames).resize(game.numcharacters);
 	for (int i = 0; i < game.numcharacters; ++i) {
 		game.chars[i].walking = 0;
 		game.chars[i].animating = 0;
@@ -125,8 +123,7 @@ void InitAndRegisterCharacters(GameSetupStruct &game) {
 		ccRegisterManagedObject(&game.chars[i], &_GP(ccDynamicCharacter));
 
 		// export the character's script object
-		_GP(characterScriptObjNames)[i] = game.chars[i].scrname;
-		ccAddExternalDynamicObject(_GP(characterScriptObjNames)[i], &game.chars[i], &_GP(ccDynamicCharacter));
+		ccAddExternalDynamicObject(game.chars[i].scrname, &game.chars[i], &_GP(ccDynamicCharacter));
 	}
 }
 
@@ -160,7 +157,6 @@ HError InitAndRegisterGUI(GameSetupStruct &game) {
 		_G(scrGui)[i].id = -1;
 	}
 
-	_GP(guiScriptObjNames).resize(game.numgui);
 	for (int i = 0; i < game.numgui; ++i) {
 		// link controls to their parent guis
 		HError err = _GP(guis)[i].RebuildArray();
@@ -168,11 +164,8 @@ HError InitAndRegisterGUI(GameSetupStruct &game) {
 			return err;
 		// export all the GUI's controls
 		export_gui_controls(i);
-		// copy the script name to its own memory location
-		// because ccAddExtSymbol only keeps a reference
-		_GP(guiScriptObjNames)[i] = _GP(guis)[i].Name;
 		_G(scrGui)[i].id = i;
-		ccAddExternalDynamicObject(_GP(guiScriptObjNames)[i], &_G(scrGui)[i], &_GP(ccDynamicGUI));
+		ccAddExternalDynamicObject(_GP(guis)[i].Name, &_G(scrGui)[i], &_GP(ccDynamicGUI));
 		ccRegisterManagedObject(&_G(scrGui)[i], &_GP(ccDynamicGUI));
 	}
 	return HError::None();
@@ -363,9 +356,8 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	//
 	// 3. Allocate and init game objects
 	//
-	_G(charextra) = (CharacterExtras *)calloc(game.numcharacters, sizeof(CharacterExtras));
-	_G(charcache) = (CharacterCache *)calloc(1, sizeof(CharacterCache) * game.numcharacters + 5);
-	_G(mls) = (MoveList *)calloc(game.numcharacters + MAX_ROOM_OBJECTS + 1, sizeof(MoveList));
+	_GP(charextra).resize(game.numcharacters);
+	_GP(mls).resize(game.numcharacters + MAX_ROOM_OBJECTS + 1);
 	init_game_drawdata();
 	_GP(views) = std::move(ents.Views);
 
@@ -374,10 +366,13 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	_G(old_speech_lines) = ents.OldSpeechLines;
 
 	// Set number of game channels corresponding to the loaded game version
-	if (_G(loaded_game_file_version) < kGameVersion_360)
-		game.numGameChannels = MAX_GAME_CHANNELS_v320;
-	else
-		game.numGameChannels = MAX_GAME_CHANNELS;
+	if (_G(loaded_game_file_version) < kGameVersion_360) {
+		_GP(game).numGameChannels = MAX_GAME_CHANNELS_v320;
+		_GP(game).numCompatGameChannels = TOTAL_AUDIO_CHANNELS_v320;
+	} else {
+		_GP(game).numGameChannels = MAX_GAME_CHANNELS;
+		_GP(game).numCompatGameChannels = MAX_GAME_CHANNELS;
+	}
 
 	HError err = InitAndRegisterGameEntities(game);
 	if (!err)
@@ -402,11 +397,14 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	//
 	// 5. Initialize runtime state of certain game objects
 	//
-	for (int i = 0; i < _G(numguilabels); ++i) {
+	for (auto &label : _GP(guilabels)) {
 		// labels are not clickable by default
-		_GP(guilabels)[i].SetClickable(false);
+		label.SetClickable(false);
 	}
-	_GP(play).gui_draw_order = (int32_t *)calloc(game.numgui * sizeof(int), 1);
+	_GP(play).gui_draw_order.resize(game.numgui);
+	for (int i = 0; i < game.numgui; ++i)
+		_GP(play).gui_draw_order[i] = i;
+
 	update_gui_zorder();
 	calculate_reserved_channel_count();
 
@@ -438,7 +436,7 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	_GP(scriptModules) = ents.ScriptModules;
 	AllocScriptModules();
 	if (create_global_script())
-		return new GameInitError(kGameInitErr_ScriptLinkFailed, _G(ccErrorString));
+		return new GameInitError(kGameInitErr_ScriptLinkFailed, cc_get_error().ErrorString);
 
 	return HGameInitError::None();
 }

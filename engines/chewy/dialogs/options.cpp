@@ -45,28 +45,15 @@ namespace Dialogs {
 #define MUSIC_ON2 26
 #define EXIT 27
 
-static const Common::Rect optionHotspots[] = {
-	{  18,   61,   40,   76 },
-	{ 112,   61,  130,   76 },
-	{  82,  104,  144,  139 },
-	{ 164,   93,  194,  115 },
-	{ 198,   80,  206,  115 },
-	{ 210,   55,  302,  138 },
-	{ 126,  146,  210,  198 },
-	{  22,   92,   44,  136 },
-	{  50,   92,   72,  136 },
-	{  -1,   -1,   -1,   -1 }
-};
-
 void Options::execute(TafInfo *ti) {
 	long akt_clock = 0, stop_clock = 0;
-	_G(room)->load_tgp(0, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
+	_G(room)->load_tgp(0, &_G(room_blk), GBOOK_TGP, false, GBOOK);
 	_G(out)->setPointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
-	_G(out)->setPointer(_G(screen0));
+	_G(out)->setPointer((byte *)g_screen->getPixels());
 
 	_G(room)->set_ak_pal(&_G(room_blk));
-	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 	_G(out)->setPointer(_G(workptr));
 	int16 key = 0;
 	int16 surimy_ani = SURIMY_START;
@@ -91,27 +78,27 @@ void Options::execute(TafInfo *ti) {
 			warning("stop_clock = (clock() / CLK_TCK) + 1;");
 		}
 
-		_G(out)->spriteSet(ti->_image[surimy_ani], 18 + ti->_correction[surimy_ani << 1],
-			8 + ti->_correction[(surimy_ani << 1) + 1], 0);
+		_G(out)->spriteSet(ti->image[surimy_ani], 18 + ti->correction[surimy_ani << 1],
+			8 + ti->correction[(surimy_ani << 1) + 1], 0);
 		short bar_off = (_G(gameState).FramesPerSecond - 6) * 16;
 		_G(out)->boxFill(33 + bar_off, 65, 33 + 17 + bar_off, 65 + 8, 0);
 		Common::String fps = Common::String::format("%d", _G(gameState).FramesPerSecond << 1);
 		_G(out)->printxy(36 + bar_off, 65, 255, 300, 0, fps.c_str());
 
 		if (g_engine->_sound->soundEnabled()) {
-			_G(out)->spriteSet(ti->_image[mund_ani],
-				18 + ti->_correction[mund_ani << 1],
-				8 + ti->_correction[(mund_ani << 1) + 1], 0);
-			_G(out)->spriteSet(ti->_image[SCHNULL_OFF],
-				18 + ti->_correction[SCHNULL_OFF << 1],
-				8 + ti->_correction[(SCHNULL_OFF << 1) + 1], 0);
+			_G(out)->spriteSet(ti->image[mund_ani],
+				18 + ti->correction[mund_ani << 1],
+				8 + ti->correction[(mund_ani << 1) + 1], 0);
+			_G(out)->spriteSet(ti->image[SCHNULL_OFF],
+				18 + ti->correction[SCHNULL_OFF << 1],
+				8 + ti->correction[(SCHNULL_OFF << 1) + 1], 0);
 		} else {
-			_G(out)->spriteSet(ti->_image[SCHNULLER],
-				18 + ti->_correction[SCHNULLER << 1],
-				8 + ti->_correction[(SCHNULLER << 1) + 1], 0);
-			_G(out)->spriteSet(ti->_image[SCHNULL_BAND],
-				18 + ti->_correction[SCHNULL_BAND << 1],
-				8 + ti->_correction[(SCHNULL_BAND << 1) + 1], 0);
+			_G(out)->spriteSet(ti->image[SCHNULLER],
+				18 + ti->correction[SCHNULLER << 1],
+				8 + ti->correction[(SCHNULLER << 1) + 1], 0);
+			_G(out)->spriteSet(ti->image[SCHNULL_BAND],
+				18 + ti->correction[SCHNULL_BAND << 1],
+				8 + ti->correction[(SCHNULL_BAND << 1) + 1], 0);
 		}
 		_G(out)->pop_box(32 - 2, 104 - 12, 42 + 4, 136 + 2, 192, 183, 182);
 		_G(out)->printxy(32 + 3, 104 - 10, 15, 300, 0, "S");
@@ -121,38 +108,38 @@ void Options::execute(TafInfo *ti) {
 		_G(out)->printxy(52 + 3, 104 - 10, 31, 300, 0, "M");
 		_G(out)->boxFill(53, 136 - (_G(gameState).MusicVol >> 1), 62, 136, 31);
 		if (g_engine->_sound->musicEnabled()) {
-			_G(out)->spriteSet(ti->_image[MUSIC_ON1],
-				18 + ti->_correction[MUSIC_ON1 << 1],
-				8 + ti->_correction[(MUSIC_ON1 << 1) + 1], 0);
-			_G(out)->spriteSet(ti->_image[MUSIC_ON2],
-				18 + ti->_correction[MUSIC_ON2 << 1],
-				8 + ti->_correction[(MUSIC_ON2 << 1) + 1], 0);
+			_G(out)->spriteSet(ti->image[MUSIC_ON1],
+				18 + ti->correction[MUSIC_ON1 << 1],
+				8 + ti->correction[(MUSIC_ON1 << 1) + 1], 0);
+			_G(out)->spriteSet(ti->image[MUSIC_ON2],
+				18 + ti->correction[MUSIC_ON2 << 1],
+				8 + ti->correction[(MUSIC_ON2 << 1) + 1], 0);
 		} else
-			_G(out)->spriteSet(ti->_image[MUSIC_OFF],
-				18 + ti->_correction[MUSIC_OFF << 1],
-				8 + ti->_correction[(MUSIC_OFF << 1) + 1], 0);
+			_G(out)->spriteSet(ti->image[MUSIC_OFF],
+				18 + ti->correction[MUSIC_OFF << 1],
+				8 + ti->correction[(MUSIC_OFF << 1) + 1], 0);
 
 		if (g_engine->_sound->subtitlesEnabled()) {
-			_G(out)->spriteSet(ti->_image[tdisp_ani],
-				18 + ti->_correction[tdisp_ani << 1],
-				8 + ti->_correction[(tdisp_ani << 1) + 1], 0);
-			_G(out)->spriteSet(ti->_image[TDISP_EIN],
-				18 + ti->_correction[TDISP_EIN << 1],
-				8 + ti->_correction[(TDISP_EIN << 1) + 1], 0);
+			_G(out)->spriteSet(ti->image[tdisp_ani],
+				18 + ti->correction[tdisp_ani << 1],
+				8 + ti->correction[(tdisp_ani << 1) + 1], 0);
+			_G(out)->spriteSet(ti->image[TDISP_EIN],
+				18 + ti->correction[TDISP_EIN << 1],
+				8 + ti->correction[(TDISP_EIN << 1) + 1], 0);
 		} else
-			_G(out)->spriteSet(ti->_image[TDISP_AUS],
-				18 + ti->_correction[TDISP_AUS << 1],
-				8 + ti->_correction[(TDISP_AUS << 1) + 1], 0);
+			_G(out)->spriteSet(ti->image[TDISP_AUS],
+				18 + ti->correction[TDISP_AUS << 1],
+				8 + ti->correction[(TDISP_AUS << 1) + 1], 0);
 
-		_G(out)->spriteSet(ti->_image[EXIT],
-			18 + ti->_correction[EXIT << 1],
-			8 + ti->_correction[(EXIT << 1) + 1], 0);
+		_G(out)->spriteSet(ti->image[EXIT],
+			18 + ti->correction[EXIT << 1],
+			8 + ti->correction[(EXIT << 1) + 1], 0);
 
 		key = _G(in)->getSwitchCode();
-		if ((_G(minfo)._button == 1) || (key == Common::KEYCODE_RETURN)) {
+		if ((_G(minfo).button == 1) || (key == Common::KEYCODE_RETURN)) {
 			WAIT_TASTE_LOS
 
-			int16 rect = _G(in)->findHotspot(optionHotspots);
+			int16 rect = _G(in)->findHotspot(_G(optionHotspots));
 			switch (rect) {
 			case 0:
 				if (_G(gameState).FramesPerSecond > 6)
@@ -187,8 +174,7 @@ void Options::execute(TafInfo *ti) {
 					g_engine->_sound->stopMusic();
 				} else {
 					g_engine->_sound->toggleMusic(true);
-					_G(currentSong) = -1;
-					load_room_music(_G(gameState)._personRoomNr[P_CHEWY]);
+					g_engine->_sound->playRoomMusic(_G(gameState)._personRoomNr[P_CHEWY]);
 				}
 				break;
 			case 6:
@@ -206,7 +192,7 @@ void Options::execute(TafInfo *ti) {
 			default:
 				break;
 			}
-			_G(minfo)._button = 0;
+			_G(minfo).button = 0;
 		}
 		switch (key) {
 
@@ -231,7 +217,7 @@ void Options::execute(TafInfo *ti) {
 		}
 
 		_G(cur)->plot_cur();
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 		EVENTS_UPDATE;
 		SHOULD_QUIT_RETURN;
 
@@ -263,12 +249,12 @@ void Options::execute(TafInfo *ti) {
 			--delay_count;
 	}
 
-	_G(room)->load_tgp(1, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
+	_G(room)->load_tgp(1, &_G(room_blk), GBOOK_TGP, false, GBOOK);
 	_G(out)->setPointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
-	_G(out)->setPointer(_G(screen0));
+	_G(out)->setPointer((byte *)g_screen->getPixels());
 	_G(room)->set_ak_pal(&_G(room_blk));
-	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 	_G(out)->setPointer(_G(workptr));
 }
 

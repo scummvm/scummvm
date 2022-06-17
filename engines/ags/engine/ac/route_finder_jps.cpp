@@ -243,7 +243,8 @@ bool Navigation::Reachable(int x0, int y0, int x1, int y1) const {
 }
 
 // A* using jump point search (JPS)
-// reference: http://users.cecs.anu.edu.au/~dharabor/data/papers/harabor-grastien-aaai11.pdf
+// reference: Online Graph Pruning for Pathfinding on Grid Maps
+// http://users.cecs.anu.edu.au/~dharabor/data/papers/harabor-grastien-aaai11.pdf
 void Navigation::AddPruned(int *buf, int &bcount, int x, int y) const {
 	assert(buf && bcount < 8);
 

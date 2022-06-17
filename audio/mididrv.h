@@ -57,7 +57,9 @@ enum MusicType {
 	MT_SEGACD,			// SegaCD
 	MT_GM,				// General MIDI
 	MT_MT32,			// MT-32
-	MT_GS				// Roland GS
+	MT_GS,				// Roland GS
+	MT_MT540,			// Casio MT-540
+	MT_CT460			// Casio CT-460 / CSM-1
 };
 
 /**
@@ -244,8 +246,11 @@ public:
 	 * A driver implementation might need time to prepare playback of
 	 * a track. Use this function to check if the driver is ready to
 	 * receive MIDI events.
+	 *
+	 * @param source Check if the driver is ready to receive events from this
+	 * specific source. Specify -1 to check readiness regardless of source.
 	 */
-	virtual bool isReady() { return true; }
+	virtual bool isReady(int8 source = -1) { return true; }
 
 protected:
 
@@ -432,7 +437,21 @@ public:
 		 * MILES_VERSION_3: behavior matches Miles Sound System version 3 and
 		 * higher. GM devices are initialized according to the GM standard.
 		 */
-		PROP_MILES_VERSION = 9
+		PROP_MILES_VERSION = 9,
+		/**
+		 * Set this property to make the OPL driver ignore note off events for
+		 * rhythm instruments when rhythm mode is activated.
+		 * MIDI data should contain a note off for each note on. For rhythm
+		 * instruments, a note off typically has no effect, because the note
+		 * plays for a fixed amount of time. For the OPL rhythm instruments a
+		 * note off will cut off the note. With this option, this behavior can
+		 * be prevented.
+		 * Currently only the AdLib multisource driver supports this option.
+		 *
+		 * False: note offs for OPL rhythm mode instruments are processed.
+		 * True: note offs for OPL rhythm mode instruments are ignored.
+		 */
+		PROP_OPL_RHYTHM_MODE_IGNORE_NOTE_OFF = 10
 	};
 
 	/**

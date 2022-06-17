@@ -20,7 +20,9 @@
  */
 
 #include "common/system.h"
+
 #include "video/qt_decoder.h"
+
 #include "engines/grim/movie/quicktime.h"
 #include "engines/grim/grim.h"
 

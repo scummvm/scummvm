@@ -22,13 +22,11 @@
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/drawing_surface.h"
 #include "ags/shared/ac/common.h"
-#include "ags/engine/ac/character_cache.h"
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/game.h"
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_translation.h"
-#include "ags/engine/ac/object_cache.h"
 #include "ags/engine/ac/room_object.h"
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/string.h"
@@ -66,7 +64,7 @@ void DrawingSurface_Release(ScriptDrawingSurface *sds) {
 	}
 	if (sds->roomMaskType > kRoomAreaNone) {
 		if (sds->roomMaskType == kRoomAreaWalkBehind) {
-			recache_walk_behinds();
+			walkbehinds_recalc();
 		}
 		sds->roomMaskType = kRoomAreaNone;
 	}
@@ -398,8 +396,8 @@ void DrawingSurface_DrawPixel(ScriptDrawingSurface *sds, int x, int y) {
 int DrawingSurface_GetPixel(ScriptDrawingSurface *sds, int x, int y) {
 	sds->PointToGameResolution(&x, &y);
 	Bitmap *ds = sds->StartDrawing();
-	unsigned int rawPixel = ds->GetPixel(x, y);
-	unsigned int maskColor = ds->GetMaskColor();
+	int rawPixel = ds->GetPixel(x, y);
+	int maskColor = ds->GetMaskColor();
 	int colDepth = ds->GetColorDepth();
 
 	if (rawPixel == maskColor) {
@@ -408,12 +406,10 @@ int DrawingSurface_GetPixel(ScriptDrawingSurface *sds, int x, int y) {
 		int r = getr_depth(colDepth, rawPixel);
 		int g = getg_depth(colDepth, rawPixel);
 		int b = getb_depth(colDepth, rawPixel);
-
 		rawPixel = Game_GetColorFromRGB(r, g, b);
 	}
 
 	sds->FinishedDrawingReadOnly();
-
 	return rawPixel;
 }
 

@@ -49,8 +49,9 @@ String GetTraFileErrorText(TraFileErrorType err) {
 		return "Unknown block type.";
 	case kTraFileErr_BlockDataOverlapping:
 		return "Block data overlapping.";
+	default:
+		return "Unknown error.";
 	}
-	return "Unknown error.";
 }
 
 String GetTraBlockName(TraFileBlock id) {
@@ -58,9 +59,8 @@ String GetTraBlockName(TraFileBlock id) {
 	case kTraFblk_Dict: return "Dictionary";
 	case kTraFblk_GameID: return "GameID";
 	case kTraFblk_TextOpts: return "TextOpts";
-	default: break;
+	default: return "unknown";
 	}
-	return "unknown";
 }
 
 HError OpenTraFile(Stream *in) {
@@ -72,7 +72,7 @@ HError OpenTraFile(Stream *in) {
 	return HError::None();
 }
 
-HError ReadTraBlock(Translation &tra, Stream *in, TraFileBlock block, const String &ext_id, soff_t block_len) {
+HError ReadTraBlock(Translation &tra, Stream *in, TraFileBlock block, const String &ext_id, soff_t /*block_len*/) {
 	switch (block) {
 	case kTraFblk_Dict:
 	{
@@ -101,7 +101,7 @@ HError ReadTraBlock(Translation &tra, Stream *in, TraFileBlock block, const Stri
 		tra.SpeechFont = in->ReadInt32();
 		tra.RightToLeft = in->ReadInt32();
 		return HError::None();
-	case kTraFblk_ExtStrID:
+	case kTraFblk_None:
 		// continue reading extensions with string ID
 		break;
 	default:
@@ -146,7 +146,8 @@ private:
 	}
 
 	HError ReadBlock(int block_id, const String &ext_id,
-		soff_t block_len, bool &read_next) override {
+			soff_t block_len, bool &read_next) override {
+		read_next = true;
 		return ReadTraBlock(_tra, _in, (TraFileBlock)block_id, ext_id, block_len);
 	}
 

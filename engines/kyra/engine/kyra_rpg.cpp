@@ -30,6 +30,8 @@
 #include "common/func.h"
 #include "common/system.h"
 
+#include "base/version.h"
+
 namespace Kyra {
 
 KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(system, flags), _numFlyingObjects(_flags.gameID == GI_LOL ? 8 : 10) {
@@ -128,6 +130,13 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 
 	_environmentSfx = _environmentSfxVol = _envSfxDistThreshold = 0;
 	_monsterStepCounter = _monsterStepMode = 0;
+
+	uint slen = Common::String(gScummVMVersion).size();
+	for (uint i = 0; i < slen; ++i) {
+		if (!(gScummVMVersion[i] >= '0' && gScummVMVersion[i] <= '9') && gScummVMVersion[i] != '.')
+			break;
+		_versionString += gScummVMVersion[i];
+	}
 
 	_buttonFont = Screen::FID_6_FNT;
 	if (_flags.use16ColorMode)

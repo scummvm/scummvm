@@ -75,6 +75,7 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 	_saveSlot = 0;
 
 	_ticks = g_system->getMillis();
+	_ticksAtPauseStart = 0;
 
 	for (int i = 0; i < 33; ++i) {
 		for (int j = 0; j < 6; ++j) {
@@ -131,8 +132,10 @@ void GriffonEngine::saveConfig() {
 
 Common::Error GriffonEngine::run() {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ttsMan != nullptr)
+	if (ttsMan != nullptr) {
 		ttsMan->setLanguage("en");
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+	}
 
 	initGraphics(320, 240, new Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 
@@ -189,6 +192,16 @@ Common::Error GriffonEngine::run() {
 	}
 
 	return Common::kNoError;
+}
+
+void GriffonEngine::pauseEngineIntern(bool pause) {
+	if (pause) {
+		_ticksAtPauseStart = _ticks;
+	} else {
+		uint32 diff = _system->getMillis() - _ticksAtPauseStart;
+		_ticks += diff;
+		_nextTicks += diff;
+	}
 }
 
 }

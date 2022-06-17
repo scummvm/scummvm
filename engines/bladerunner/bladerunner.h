@@ -113,6 +113,11 @@ public:
 	static const int kActorVoiceOver = kActorCount - 1;
 	static const int kMaxCustomConcurrentRepeatableEvents = 20;
 
+	static const int16 kOriginalGameWidth  = 640;
+	static const int16 kOriginalGameHeight = 480;
+	static const int16 kDemoGameWidth      = 320;
+	static const int16 kDemoGameHeight     = 200;
+
 	// Incremental number to keep track of significant revisions of the ScummVM bladerunner engine
 	// that could potentially introduce incompatibilities with old save files or require special actions to restore compatibility
 	// This is stored in game global variable "kVariableGameVersion"
@@ -259,6 +264,8 @@ public:
 
 	uint32 _timeOfMainGameLoopTickPrevious;
 
+	bool _isNonInteractiveDemo;
+
 	// This addon is to emulate keeping a keyboard key pressed (continuous / repeated firing of the event)
 	// -- code is pretty much identical from our common\events.cpp (KeyboardRepeatEventSourceWrapper)
 	// for continuous events (keyDown)
@@ -396,6 +403,7 @@ public:
 	void loopQueuedDialogueStillPlaying();
 
 	void outtakePlay(int id, bool no_localization, int container = -1);
+	void outtakePlay(const Common::String &basenameNoExt, bool no_localization, int container = -3);
 
 	bool openArchive(const Common::String &name);
 	bool closeArchive(const Common::String &name);

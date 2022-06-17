@@ -41,6 +41,10 @@ struct PreservedParams;
 struct RestoredData;
 
 namespace SavegameComponents {
+
+extern void component_handlers_init();
+extern void component_handlers_free();
+
 // Reads all available components from the stream
 HSaveError    ReadAll(Stream *in, SavegameVersion svg_version, const PreservedParams &pp, RestoredData &r_data);
 // Writes a full list of common components to the stream

@@ -64,7 +64,7 @@ void InvWindow_SetCharacterToUse(GUIInvWindow *guii, CharacterInfo *chaa) {
 	// reset to top of list
 	guii->TopItem = 0;
 
-	guii->NotifyParentChanged();
+	guii->MarkChanged();
 }
 
 CharacterInfo *InvWindow_GetCharacterToUse(GUIInvWindow *guii) {
@@ -95,7 +95,7 @@ int InvWindow_GetItemHeight(GUIInvWindow *guii) {
 void InvWindow_SetTopItem(GUIInvWindow *guii, int topitem) {
 	if (guii->TopItem != topitem) {
 		guii->TopItem = topitem;
-		guii->NotifyParentChanged();
+		guii->MarkChanged();
 	}
 }
 
@@ -108,7 +108,7 @@ int InvWindow_GetItemsPerRow(GUIInvWindow *guii) {
 }
 
 int InvWindow_GetItemCount(GUIInvWindow *guii) {
-	return _G(charextra)[guii->GetCharacterId()].invorder_count;
+	return _GP(charextra)[guii->GetCharacterId()].invorder_count;
 }
 
 int InvWindow_GetRowCount(GUIInvWindow *guii) {
@@ -116,10 +116,10 @@ int InvWindow_GetRowCount(GUIInvWindow *guii) {
 }
 
 void InvWindow_ScrollDown(GUIInvWindow *guii) {
-	if ((_G(charextra)[guii->GetCharacterId()].invorder_count) >
+	if ((_GP(charextra)[guii->GetCharacterId()].invorder_count) >
 	        (guii->TopItem + (guii->ColCount * guii->RowCount))) {
 		guii->TopItem += guii->ColCount;
-		guii->NotifyParentChanged();
+		guii->MarkChanged();
 	}
 }
 
@@ -129,14 +129,14 @@ void InvWindow_ScrollUp(GUIInvWindow *guii) {
 		if (guii->TopItem < 0)
 			guii->TopItem = 0;
 
-		guii->NotifyParentChanged();
+		guii->MarkChanged();
 	}
 }
 
 ScriptInvItem *InvWindow_GetItemAtIndex(GUIInvWindow *guii, int index) {
-	if ((index < 0) || (index >= _G(charextra)[guii->GetCharacterId()].invorder_count))
+	if ((index < 0) || (index >= _GP(charextra)[guii->GetCharacterId()].invorder_count))
 		return nullptr;
-	return &_G(scrInv)[_G(charextra)[guii->GetCharacterId()].invorder[index]];
+	return &_G(scrInv)[_GP(charextra)[guii->GetCharacterId()].invorder[index]];
 }
 
 //=============================================================================
@@ -153,10 +153,10 @@ int offset_over_inv(GUIInvWindow *inv) {
 		return -1;
 
 	mover += inv->TopItem;
-	if ((mover < 0) || (mover >= _G(charextra)[inv->GetCharacterId()].invorder_count))
+	if ((mover < 0) || (mover >= _GP(charextra)[inv->GetCharacterId()].invorder_count))
 		return -1;
 
-	return _G(charextra)[inv->GetCharacterId()].invorder[mover];
+	return _GP(charextra)[inv->GetCharacterId()].invorder[mover];
 }
 
 //
@@ -237,9 +237,9 @@ int InventoryScreen::Redraw() {
 	numitems = 0;
 	widest = 0;
 	highest = 0;
-	if (_G(charextra)[_GP(game).playercharacter].invorder_count < 0)
+	if (_GP(charextra)[_GP(game).playercharacter].invorder_count < 0)
 		update_invorder();
-	if (_G(charextra)[_GP(game).playercharacter].invorder_count == 0) {
+	if (_GP(charextra)[_GP(game).playercharacter].invorder_count == 0) {
 		DisplayMessage(996);
 		_G(in_inv_screen)--;
 		return -1;
@@ -251,17 +251,17 @@ int InventoryScreen::Redraw() {
 		return -1;
 	}
 
-	for (int i = 0; i < _G(charextra)[_GP(game).playercharacter].invorder_count; ++i) {
-		if (_GP(game).invinfo[_G(charextra)[_GP(game).playercharacter].invorder[i]].name[0] != 0) {
-			dii[numitems].num = _G(charextra)[_GP(game).playercharacter].invorder[i];
-			dii[numitems].sprnum = _GP(game).invinfo[_G(charextra)[_GP(game).playercharacter].invorder[i]].pic;
+	for (int i = 0; i < _GP(charextra)[_GP(game).playercharacter].invorder_count; ++i) {
+		if (_GP(game).invinfo[_GP(charextra)[_GP(game).playercharacter].invorder[i]].name[0] != 0) {
+			dii[numitems].num = _GP(charextra)[_GP(game).playercharacter].invorder[i];
+			dii[numitems].sprnum = _GP(game).invinfo[_GP(charextra)[_GP(game).playercharacter].invorder[i]].pic;
 			int snn = dii[numitems].sprnum;
 			if (_GP(game).SpriteInfos[snn].Width > widest) widest = _GP(game).SpriteInfos[snn].Width;
 			if (_GP(game).SpriteInfos[snn].Height > highest) highest = _GP(game).SpriteInfos[snn].Height;
 			numitems++;
 		}
 	}
-	if (numitems != _G(charextra)[_GP(game).playercharacter].invorder_count)
+	if (numitems != _GP(charextra)[_GP(game).playercharacter].invorder_count)
 		quit("inconsistent inventory calculations");
 
 	widest += get_fixed_pixel_size(4);
@@ -303,7 +303,7 @@ void InventoryScreen::Draw(Bitmap *ds) {
 		wputblock(ds, barxp + 1 + ((i - top_item) % 4) * widest + widest / 2 - spof->GetWidth() / 2,
 		          bartop + 1 + ((i - top_item) / 4) * highest + highest / 2 - spof->GetHeight() / 2, spof, 1);
 	}
-#define BUTTONWID Math::Max(1, _GP(game).SpriteInfos[btn_select_sprite].Width)
+#define BUTTONWID MAX(1, _GP(game).SpriteInfos[btn_select_sprite].Width)
 	// Draw select, look and OK buttons
 	wputblock(ds, 2, buttonyp + get_fixed_pixel_size(2), _GP(spriteset)[btn_look_sprite], 1);
 	wputblock(ds, 3 + BUTTONWID, buttonyp + get_fixed_pixel_size(2), _GP(spriteset)[btn_select_sprite], 1);

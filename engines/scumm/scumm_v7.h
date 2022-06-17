@@ -78,17 +78,6 @@ protected:
 	int _languageIndexSize;
 	char _lastStringTag[12+1];
 
-#if defined(__SYMBIAN32__) // for some reason VC6 cannot find the base class TextObject
-	struct SubtitleText {
-		int16 xpos, ypos;
-		byte color;
-		byte charset;
-		byte text[256];
-		bool actorSpeechMsg;
-		bool center;
-		bool wrap;
-	};
-#else
 	struct SubtitleText : TextObject {
 		void clear() {
 			TextObject::clear();
@@ -98,7 +87,6 @@ protected:
 		bool center;
 		bool wrap;
 	};
-#endif
 
 	friend void syncWithSerializer(Common::Serializer &, SubtitleText &);
 
@@ -111,6 +99,7 @@ public:
 	void clearSubtitleQueue();
 	void CHARSET_1() override;
 	bool isSmushActive() { return _smushActive; }
+	void removeBlastTexts() override;
 
 protected:
 
@@ -143,7 +132,7 @@ protected:
 	void createTextRenderer(GlyphRenderer_v7 *gr) override;
 	void enqueueText(const byte *text, int x, int y, byte color, byte charset, TextStyleFlags flags);
 	void drawBlastTexts() override;
-	void removeBlastTexts() override;
+
 	void actorTalk(const byte *msg) override;
 	void translateText(const byte *text, byte *trans_buff) override;
 	void loadLanguageBundle() override;

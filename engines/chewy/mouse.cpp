@@ -23,11 +23,8 @@
 #include "chewy/mouse.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
-#include "chewy/ngsdefs.h"
 
 namespace Chewy {
-
-bool _cursorMoveFl;
 
 InputMgr::InputMgr() {
 }
@@ -50,11 +47,11 @@ int16 InputMgr::findHotspot(const Common::Rect *hotspots) {
 int16 InputMgr::getSwitchCode() {
 	int16 switch_code = 0;
 
-	if (_G(minfo)._button == 2) {
+	if (_G(minfo).button == 2) {
 		switch_code = Common::KEYCODE_ESCAPE;
-	} else if (_G(minfo)._button == 1)
+	} else if (_G(minfo).button == 1)
 		switch_code = MOUSE_LEFT;
-	else if (_G(minfo)._button == 4)
+	else if (_G(minfo).button == 4)
 		switch_code = MOUSE_CENTER;
 
 	if (g_events->_kbInfo._keyCode != 0)

@@ -21,7 +21,7 @@
 
 // Based on http://wiki.multimedia.cx/index.php?title=Smacker
 // and the FFmpeg Smacker decoder (libavcodec/smacker.c), revision 16143
-// http://git.ffmpeg.org/?p=ffmpeg;a=blob;f=libavcodec/smacker.c;hb=b8437a00a2f14d4a437346455d624241d726128e
+// https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/40a19c443430de520d86bbd644033c8e2ca87e9b
 
 #include "video/smk_decoder.h"
 
@@ -294,6 +294,16 @@ SmackerDecoder::~SmackerDecoder() {
 	close();
 }
 
+uint32 SmackerDecoder::getSignatureVersion(uint32 signature) const {
+	if (signature == MKTAG('S', 'M', 'K', '2')) {
+		return 2;
+	} else if (signature == MKTAG('S', 'M', 'K', '4')) {
+		return 4;
+	} else {
+		return 0;
+	}
+}
+
 bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
@@ -302,7 +312,8 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 	// Read in the Smacker header
 	_header.signature = _fileStream->readUint32BE();
 
-	if (_header.signature != MKTAG('S', 'M', 'K', '2') && _header.signature != MKTAG('S', 'M', 'K', '4'))
+	uint32 version = getSignatureVersion(_header.signature);
+	if (version == 0)
 		return false;
 
 	uint32 width = _fileStream->readUint32LE();
@@ -329,7 +340,7 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 	if (_header.flags & 1)
 		frameCount++;
 
-	SmackerVideoTrack *videoTrack = createVideoTrack(width, height, frameCount, frameRate, _header.flags, _header.signature);
+	SmackerVideoTrack *videoTrack = createVideoTrack(width, height, frameCount, frameRate, _header.flags, version);
 	addTrack(videoTrack);
 
 	// TODO: should we do any extra processing for Smacker files with ring frames?
@@ -571,14 +582,14 @@ VideoDecoder::AudioTrack *SmackerDecoder::getAudioTrack(int index) {
 	return (AudioTrack *)track;
 }
 
-SmackerDecoder::SmackerVideoTrack::SmackerVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature) {
+SmackerDecoder::SmackerVideoTrack::SmackerVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 version) {
 	_surface = new Graphics::Surface();
 	_surface->create(width, height * ((flags & 6) ? 2 : 1), Graphics::PixelFormat::createFormatCLUT8());
 	_dirtyBlocks.set_size(width * height / 16);
 	_frameCount = frameCount;
 	_frameRate = frameRate;
 	_flags = flags;
-	_signature = signature;
+	_version = version;
 	_curFrame = -1;
 	_dirtyPalette = false;
 	_MMapTree = _MClrTree = _FullTree = _TypeTree = 0;
@@ -663,7 +674,7 @@ void SmackerDecoder::SmackerVideoTrack::decodeFrame(Common::BitStreamMemory8LSB 
 			break;
 		case SMK_BLOCK_FULL:
 			// Smacker v2 has one mode, Smacker v4 has three
-			if (_signature == MKTAG('S','M','K','2')) {
+			if (_version == 2) {
 				mode = 0;
 			} else {
 				// 00 - mode 0
@@ -713,7 +724,7 @@ void SmackerDecoder::SmackerVideoTrack::decodeFrame(Common::BitStreamMemory8LSB 
 						for (i = 0; i < 2; i++) {
 							// We first get p2 and then p1
 							// Check ffmpeg thread "[PATCH] Smacker video decoder bug fix"
-							// http://article.gmane.org/gmane.comp.video.ffmpeg.devel/78768
+							// https://ffmpeg.org/pipermail/ffmpeg-devel/2008-December/044246.html
 							p2 = _FullTree->getCode(bs);
 							p1 = _FullTree->getCode(bs);
 							for (j = 0; j < doubleY; ++j) {
@@ -927,8 +938,8 @@ void SmackerDecoder::SmackerAudioTrack::queuePCM(byte *buffer, uint32 bufferSize
 	_audioStream->queueBuffer(buffer, bufferSize, DisposeAfterUse::YES, flags);
 }
 
-SmackerDecoder::SmackerVideoTrack *SmackerDecoder::createVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature) const {
-	return new SmackerVideoTrack(width, height, frameCount, frameRate, flags, signature);
+SmackerDecoder::SmackerVideoTrack *SmackerDecoder::createVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 version) const {
+	return new SmackerVideoTrack(width, height, frameCount, frameRate, flags, version);
 }
 
 Common::Rational SmackerDecoder::getFrameRate() const {

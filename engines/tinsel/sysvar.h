@@ -77,18 +77,28 @@ typedef enum {	SV_DEFAULT_INV,
 		SYS_Platform,			// Hardware platform     **READ ONLY**
 		SYS_Debug,			// TRUE for debug build/'cheat'**READ ONLY**
 
-		//SV_SPRITER_SCENE_ID = 0x2f // Noir, loaded scene
+		ISV_DIVERT_ACTOR_T2 = 0x28,
+		ISV_NO_BLOCKING_T2 = 0x29,
+		ISV_GHOST_ACTOR_T2 = 0x2A,
+		ISV_GHOST_BASE_T2 = 0x2B,
+		ISV_GHOST_COLOR_T2 = 0x2C,
 
-		ISV_DIVERT_ACTOR, // for DW2 = 0x28, for Noir = 0x32
-		ISV_NO_BLOCKING,
-		ISV_GHOST_ACTOR,
-		ISV_GHOST_BASE,
-		ISV_GHOST_COLOR,
-
-		//SV_SPRITER_SCALE = 0x37 // Noir, scale used for 3D rendering
-		//SV_SPRITER_OVERLAY = 0x38 // Noir, if additional model is loaded
+		SV_SPRITER_SCENE_ID = 0x2F, // Noir, loaded scene
+		ISV_DIVERT_ACTOR_T3 = 0x32,
+		ISV_NO_BLOCKING_T3 = 0x33,
+		ISV_GHOST_ACTOR_T3 = 0x34,
+		ISV_GHOST_BASE_T3 = 0x35,
+		ISV_GHOST_COLOR_T3 = 0x36,
+		SV_SPRITER_SCALE = 0x37, // Noir, scale used for 3D rendering
+		SV_SPRITER_OVERLAY = 0x38, // Noir, if additional model is loaded
 
 		SV_TOPVALID } SYSVARS;
+
+#define ISV_DIVERT_ACTOR ((TinselVersion == 3) ? ISV_DIVERT_ACTOR_T3 : ISV_DIVERT_ACTOR_T2)
+#define ISV_NO_BLOCKING ((TinselVersion == 3) ? ISV_NO_BLOCKING_T3 : ISV_NO_BLOCKING_T2)
+#define ISV_GHOST_ACTOR ((TinselVersion == 3) ? ISV_GHOST_ACTOR_T3 : ISV_GHOST_ACTOR_T2)
+#define ISV_GHOST_BASE ((TinselVersion == 3) ? ISV_GHOST_BASE_T3 : ISV_GHOST_BASE_T2)
+#define ISV_GHOST_COLOR ((TinselVersion == 3) ? ISV_GHOST_COLOR_T3 : ISV_GHOST_COLOR_T2)
 
 typedef enum {
 

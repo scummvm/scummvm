@@ -486,7 +486,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LSL6,          820,    82,  0,                   "", "export 0",                     nullptr,     0,   326, { WORKAROUND_FAKE,   0 } }, // when touching the electric fence (temp 193 for English release, temp 293 for French/German, temp 313 for Spanish - used for setting the loop of the death animation), it's not setting it for this death - bug #5103
 	{ GID_LSL6,           -1,    85,  0,          "washcloth", "doVerb",                       nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // washcloth in inventory
 	{ GID_LSL6,           -1,   928, -1,           "Narrator", "startText",                    nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
-	{ GID_LSL6HIRES,      -1,    85,  0,             "LL6Inv", "init",                         nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // when creating a new game
+	{ GID_LSL6HIRES,      -1,    85,  0,             "LL6Inv", "init",                         nullptr,     0,     0, { WORKAROUND_FAKE,   1 } }, // when creating a new game. must be non-zero for correct inventory background color - bug #13497
 	{ GID_LSL6HIRES,      -1,    85,  0,          "washcloth", "doVerb",                       nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // when interacting with the wet washcloth in the inventory - Trac#9811
 	{ GID_LSL6HIRES,     820,    82,  0,                   "", "export 0",                     nullptr,     3,     3, { WORKAROUND_FAKE,   0 } }, // when touching the electric fence - bug #10361
 	{ GID_LSL6HIRES,      -1, 64950,  1,            "Feature", "handleEvent",                  nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // at least when entering swimming pool area
@@ -532,14 +532,13 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_QFG2,          260,   260,  0,            "jabbarS", "changeState",    sig_uninitread_qfg2_1,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // During the thief's first mission (in the house), just before Jabbar is about to enter the house (where you have to hide in the wardrobe), bug #5164, temps 1 and 2
 	{ GID_QFG2,          500,   500,  0,   "lightNextCandleS", "changeState",                  nullptr,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // Inside the last room, while Ad Avis performs the ritual to summon the genie - bug #5566
 	{ GID_QFG2,           -1,   700,  0,              nullptr, "showSign",                     nullptr,    10,    10, { WORKAROUND_FAKE,   0 } }, // Occurs sometimes when reading a sign in Raseir, Shapeir et al - bugs #5627, #5635
-	{ GID_QFG3,          510,   510,  0,         "awardPrize", "changeState",                  nullptr,     0,     0, { WORKAROUND_FAKE,   1 } }, // Simbani warrior challenge, after throwing the spears and retrieving the ring - bug #5277. Must be non-zero, otherwise the prize is awarded twice - bug #6160
 	{ GID_QFG3,          140,   140,  0,              "rm140", "init",           sig_uninitread_qfg3_1,     0,     0, { WORKAROUND_FAKE,   0 } }, // when importing a character and selecting the previous profession - bug #5163
 	{ GID_QFG3,          330,   330, -1,             "Teller", "doChild",                      nullptr,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // when talking to King Rajah about "Rajah" (bug #5033, temp 1) or "Tarna" (temp 0), or when clicking on yourself and saying "Greet" (bug #5148, temp 1)
 	{ GID_QFG3,          700,   700, -1,      "monsterIsDead", "changeState",                  nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // in the jungle, after winning any fight, bug #5169
+	{ GID_QFG3,          450,   450, -1,    "castOpenOnCrack", "changeState",                  nullptr,     0,     0, { WORKAROUND_FAKE,   1 } }, // in laibon's hut, wait for night and cast open on crack in wall
 	{ GID_QFG3,          470,   470, -1,              "rm470", "notify",                       nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // closing the character screen in the Simbani village in the room with the bridge, bug #5165
 	{ GID_QFG3,          470,   470, -1,     "<invalid name>", "notify",                       nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // same as previous, with rm470::name used for temp storage by fan patches added by GOG
-	{ GID_QFG3,          490,   490, -1,      "computersMove", "changeState",                  nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // when finishing awari game, bug #5167
-	{ GID_QFG3,          490,   490, -1,      "computersMove", "changeState",    sig_uninitread_qfg3_2,     4,     4, { WORKAROUND_FAKE,   0 } }, // also when finishing awari game
+	{ GID_QFG3,          490,   490, -1,      "computersMove", "changeState",    sig_uninitread_qfg3_2,     4,     4, { WORKAROUND_FAKE,   0 } }, // when finishing awari game, bug #5167
 	{ GID_QFG3,           -1,    32, -1,            "ProjObj", "doit",                         nullptr,     1,     1, { WORKAROUND_FAKE,   0 } }, // near the end, when throwing the spear of death or sword, bugs #5282, #11477
 	{ GID_QFG3,           -1,   937, -1,            "IconBar", "dispatchEvent",                nullptr,    58,    58, { WORKAROUND_FAKE,  64 } }, // pressing the Enter key on the main menu screen, bugs #13045, #13161 (affects multiple room numbers). value must have 0x40 set for quit global to be evaluated
 	{ GID_QFG4,           -1,    15, -1,     "charInitScreen", "dispatchEvent",                nullptr,     5,     5, { WORKAROUND_FAKE,   0 } }, // floppy version, when viewing the character screen
@@ -1057,24 +1056,6 @@ const SciWorkaroundEntry kRandom_workarounds[] = {
 const SciWorkaroundEntry kReadNumber_workarounds[] = {
 	{ GID_CNICK_LAURABOW,100,   101,  0,          "dominoes.opt", "doit",                nullptr,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // When dominoes.opt is present, the game scripts call kReadNumber with an extra integer parameter - bug #6425
 	{ GID_HOYLE3,        100,   101,  0,          "dominoes.opt", "doit",                nullptr,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // When dominoes.opt is present, the game scripts call kReadNumber with an extra integer parameter - bug #6425
-	SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//                Game: Leisure Suit Larry 6 hires
-//      Calling method: myCreditText::changeState
-//   Subroutine offset: 0x8c (script 740)
-// Applies to at least: English PC CD
-static const uint16 sig_kResCheck_lsl6hires_1[] = {
-	0x3f, 0x01, // link 01
-	0x81, 0x13, // lag global[$13]
-	0xa5, 0x00, // sat 00
-	0x7a,       // push2
-	SIG_END
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,       local-call-signature, index-range,   workaround
-const SciWorkaroundEntry kResCheck_workarounds[] = {
-	{ GID_LSL6HIRES,     740,   740, -1,       "myCreditText", "handleEvent", sig_kResCheck_lsl6hires_1,    0,     0, { WORKAROUND_IGNORE, 0 } }, // when clicking quit during the final credits
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 

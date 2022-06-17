@@ -43,6 +43,8 @@ struct MULTI_INIT {
 	int32 mulY;				///< multi-objects initial y ani position
 	int32 mulZ;				///< multi-objects initial z position
 	uint32 otherFlags;		///< multi-objects Tinsel 2 - other flags
+
+	const FRAME *GetFrame() const;
 } PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
@@ -61,6 +63,10 @@ void MultiInsertObject(		// Insert a multi-part object onto a object list
 void MultiDeleteObject(		// Delete all the pieces of a multi-part object
 	OBJECT **pObjList,	// list to delete multi-part object from
 	OBJECT *pMultiObj);	// multi-part object to be deleted
+
+void MultiDeleteObjectIfExists( // Delete all the pieces of a multi-part object (if it exists)
+	unsigned int playfield, // playfield to delete the objects from
+	OBJECT **pMultiObj); // multi-part object to be deleted
 
 void MultiHideObject(		// Hide a multi-part object
 	OBJECT *pMultiObj);	// multi-part object to be hidden
@@ -86,6 +92,12 @@ void MultiSetAniXY(		// Set the x & y anim position of a multi-part object
 	int newAniX,		// new x animation position
 	int newAniY);		// new y animation position
 
+void MultiSetAniXYZ(     // Set the x & y anim position of a multi-part object
+	OBJECT *pMultiObj,   // multi-part object whose position is to be changed
+	int newAniX,         // new x animation position
+	int newAniY,         // new y animation position
+	int zPosition);      // new Z order
+
 void MultiSetAniX(		// Set the x anim position of a multi-part object
 	OBJECT *pMultiObj,	// multi-part object whose x position is to be changed
 	int newAniX);		// new x animation position
@@ -101,23 +113,33 @@ void MultiSetZPosition(		// Sets the z position of a multi-part object
 void MultiReshape(		// Reshape a multi-part object
 	OBJECT *pMultiObj);	// multi-part object to re-shape
 
-int MultiLeftmost(		// Returns the left-most point of a multi-part object
-	OBJECT *pMulti);	// multi-part object
+Common::Rect MultiBounds( // Returns the bounds of a multi-part object
+	OBJECT *pMulti);      // multi-part object
 
-int MultiRightmost(		// Returns the right-most point of a multi-part object
-	OBJECT *pMulti);	// multi-part object
+int MultiLeftmost(		  // Returns the left-most point of a multi-part object
+	OBJECT *pMulti);	  // multi-part object
 
-int MultiHighest(		// Returns the highest point of a multi-part object
-	OBJECT *pMulti);	// multi-part object
+int MultiRightmost(		  // Returns the right-most point of a multi-part object
+	OBJECT *pMulti);	  // multi-part object
 
-int MultiLowest(		// Returns the lowest point of a multi-part object
-	OBJECT *pMulti);	// multi-part object
+int MultiHighest(		  // Returns the highest point of a multi-part object
+	OBJECT *pMulti);	  // multi-part object
 
-bool MultiHasShape(		// Returns TRUE if the object currently has an image
-	OBJECT *pMulti);	// multi-part object
+int MultiLowest(		  // Returns the lowest point of a multi-part object
+	OBJECT *pMulti);	  // multi-part object
+
+bool MultiHasShape(		  // Returns TRUE if the object currently has an image
+	OBJECT *pMulti);	  // multi-part object
 
 void MultiForceRedraw(
 	OBJECT *pMultiObj);	// multi-part object to be forced
+
+struct FREEL;
+OBJECT *InsertReelObj(const FREEL *reels);
+struct FILM;
+enum class SysReel;
+const FILM *GetSystemReelFilm(SysReel reelIndex);
+OBJECT *InsertSystemReelObj(SysReel reelIndex);
 
 } // End of namespace Tinsel
 

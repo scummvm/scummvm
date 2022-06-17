@@ -24,7 +24,7 @@
 #include "ags/globals.h"
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/shared/gfx/allegro_bitmap.h"
-#include "ags/shared/script/cc_options.h"
+#include "ags/shared/script/cc_common.h"
 #include "image/png.h"
 
 namespace AGS {

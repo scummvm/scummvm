@@ -60,12 +60,12 @@ void Room87::setup_func() {
 	int nicDestY = 0;
 
 	
-	if (_G(spieler_vector)[P_CHEWY].Xypos[0] > 186) {
+	if (_G(moveState)[P_CHEWY].Xypos[0] > 186) {
 		howDestX = 103;
 		howDestY = 128;
 		nicDestX = 134;
 		nicDestY = 123;
-	} else if (_G(spieler_vector)[P_CHEWY].Xypos[0] > 20) {
+	} else if (_G(moveState)[P_CHEWY].Xypos[0] > 20) {
 		howDestX = 27;
 		howDestY = 98;
 		nicDestX = -2;

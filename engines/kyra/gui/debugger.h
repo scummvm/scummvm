@@ -34,7 +34,6 @@ class KyraEngine_HoF;
 class Debugger : public ::GUI::Debugger {
 public:
 	Debugger(KyraEngine_v1 *vm);
-	~Debugger() override {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 	virtual void initialize();
 
@@ -55,7 +54,6 @@ protected:
 class Debugger_LoK : public Debugger {
 public:
 	Debugger_LoK(KyraEngine_LoK *vm);
-	~Debugger_LoK() override {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 	void initialize() override;
 protected:

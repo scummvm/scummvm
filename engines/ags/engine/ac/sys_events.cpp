@@ -65,7 +65,9 @@ static void(*_on_switchout_callback)(void) = nullptr;
 KeyInput ags_keycode_from_scummvm(const Common::Event &event, bool old_keyhandle) {
 	KeyInput ki;
 
+	ki.UChar = event.kbd.ascii;
 	ki.Key = ::AGS::g_events->scummvm_key_to_ags_key(event, ki.Mod, old_keyhandle);
+	ki.CompatKey = ::AGS::g_events->scummvm_key_to_ags_key(event, ki.Mod, true);
 
 	return ki;
 }
@@ -79,7 +81,7 @@ Common::Event ags_get_next_keyevent() {
 }
 
 int ags_iskeydown(eAGSKeyCode ags_key) {
-	return ::AGS::g_events->isKeyPressed(ags_key);
+	return ::AGS::g_events->isKeyPressed(ags_key, _GP(game).options[OPT_KEYHANDLEAPI] == 0);
 }
 
 void ags_simulate_keypress(eAGSKeyCode ags_key) {

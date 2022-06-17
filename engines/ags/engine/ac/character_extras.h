@@ -37,26 +37,28 @@ using namespace AGS; // FIXME later
 // The CharacterInfo struct size is fixed because it's exposed to script
 // and plugin API, therefore new stuff has to go here
 struct CharacterExtras {
-	short invorder[MAX_INVORDER];
-	short invorder_count;
-	// TODO: implement full AABB and keep updated, so that engine could rely on these cached values all time;
+	short invorder[MAX_INVORDER] = {};
+	short invorder_count = 0;
+	// TODO: implement full AABB and keep updated, so that engine could rely on these cached values all time = 0;
 	// TODO: consider having both fixed AABB and volatile one that changes with animation frame (unless you change how anims work)
-	short width;
-	short height;
-	short zoom;
-	short xwas;
-	short ywas;
-	short tint_r;
-	short tint_g;
-	short tint_b;
-	short tint_level;
-	short tint_light;
-	int8  process_idle_this_time;
-	int8  slow_move_counter;
-	short animwait;
+	short width = 0;
+	short height = 0;
+	short zoom = 0;
+	short xwas = 0;
+	short ywas = 0;
+	short tint_r = 0;
+	short tint_g = 0;
+	short tint_b = 0;
+	short tint_level = 0;
+	short tint_light = 0;
+	int8  process_idle_this_time = 0;
+	int8  slow_move_counter = 0;
+	short animwait = 0;
+	int   anim_volume = -1; // default animation volume (-1 use clip default)
+	int   cur_anim_volume = -1; // current animation sound volume (-1 = default)
 
-	void ReadFromFile(Shared::Stream *in);
-	void WriteToFile(Shared::Stream *out);
+	void ReadFromSavegame(Shared::Stream *in, int save_ver);
+	void WriteToSavegame(Shared::Stream *out);
 };
 
 } // namespace AGS3

@@ -33,12 +33,13 @@ class GUIInvWindow : public GUIObject {
 public:
 	GUIInvWindow();
 
+	bool HasAlphaChannel() const override;
 	// This function has distinct implementations in Engine and Editor
 	int GetCharacterId() const;
 
 	// Operations
 	// This function has distinct implementations in Engine and Editor
-	void Draw(Bitmap *ds) override;
+	void Draw(Bitmap *ds, int x = 0, int y = 0) override;
 
 	// Events
 	void OnMouseEnter() override;

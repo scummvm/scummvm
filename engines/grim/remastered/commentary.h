@@ -24,6 +24,7 @@
 
 #include "common/str.h"
 #include "common/hash-str.h"
+
 namespace Grim {
 
 class Comment;

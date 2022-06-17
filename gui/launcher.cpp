@@ -162,10 +162,11 @@ bool LauncherFilterMatcher(void *boss, int idx, const Common::U32String &item, C
 	return invert ? !result : result;
 }
 
-LauncherDialog::LauncherDialog(const Common::String &dialogName)
+LauncherDialog::LauncherDialog(const Common::String &dialogName, LauncherChooser *chooser)
 	: Dialog(dialogName), _title(dialogName), _browser(nullptr),
 	_loadDialog(nullptr), _searchClearButton(nullptr), _searchDesc(nullptr),
-	_grpChooserDesc(nullptr), _grpChooserPopup(nullptr), _groupBy(kGroupByNone)
+	_grpChooserDesc(nullptr), _grpChooserPopup(nullptr), _groupBy(kGroupByNone),
+	_launcherChooser(chooser)
 #ifndef DISABLE_FANCY_THEMES
 	, _logo(nullptr), _searchPic(nullptr), _groupPic(nullptr)
 #endif // !DISABLE_FANCY_THEMES
@@ -238,29 +239,20 @@ void LauncherDialog::build() {
 #endif
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
 		new ButtonWidget(this, _title + ".QuitButton", _("~Q~uit"), _("Quit ScummVM"), kQuitCmd);
+
 	new ButtonWidget(this, _title + ".AboutButton", _("A~b~out"), _("About ScummVM"), kAboutCmd);
-	if (g_system->getOverlayWidth() > 320)
-		new ButtonWidget(this, _title + ".OptionsButton", _("Global ~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd);
-	else
-		new ButtonWidget(this, _title + ".OptionsButton", _c("Global ~O~pts...", "lowres"), _("Change global ScummVM options"), kOptionsCmd);
+	new ButtonWidget(this, _title + ".OptionsButton", _("Global ~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd, 0, _c("Global ~O~pts...", "lowres"));
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
+	DropdownButtonWidget *addButton =
+		new DropdownButtonWidget(this, _title + ".AddGameButton", _("~A~dd Game..."), _("Add games to the list"), kAddGameCmd, 0, _c("~A~dd Game...", "lowres"));
+	_addButton = addButton;
+	_removeButton =
+		new ButtonWidget(this, _title + ".RemoveGameButton", _("~R~emove Game"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd, 0, _c("~R~emove Game", "lowres"));
 	if (g_system->getOverlayWidth() > 320) {
-		DropdownButtonWidget *addButton =
-			new DropdownButtonWidget(this, _title + ".AddGameButton", _("~A~dd Game..."), _("Add games to the list"), kAddGameCmd);
 		addButton->appendEntry(_("Mass Add..."), kMassAddGameCmd);
-		_addButton = addButton;
-
-		_removeButton =
-			new ButtonWidget(this, _title + ".RemoveGameButton", _("~R~emove Game"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
 	} else {
-		DropdownButtonWidget *addButton =
-			new DropdownButtonWidget(this, _title + ".AddGameButton", _c("~A~dd Game...", "lowres"), _("Add games to the list"), kAddGameCmd);
 		addButton->appendEntry(_c("Mass Add...", "lowres"), kMassAddGameCmd);
-		_addButton = addButton;
-
-		_removeButton =
-		new ButtonWidget(this, _title + ".RemoveGameButton", _c("~R~emove Game", "lowres"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
 	}
 
 	// Search box
@@ -553,7 +545,12 @@ void LauncherDialog::handleKeyUp(Common::KeyState state) {
 void LauncherDialog::handleOtherEvent(const Common::Event &evt) {
 	Dialog::handleOtherEvent(evt);
 	if (evt.type == Common::EVENT_DROP_FILE) {
-		doGameDetection(evt.path);
+		// If the path is a file, take the parent directory for the detection
+		Common::String path = evt.path;
+		Common::FSNode node(path);
+		if (!node.isDirectory())
+			path = node.getParent().getPath();
+		doGameDetection(path);
 	}
 }
 
@@ -856,11 +853,29 @@ bool LauncherDialog::checkModifier(int checkedModifier) {
 
 #pragma mark -
 
-LauncherChooser::LauncherChooser() : _impl(nullptr) {}
+LauncherChooser::LauncherChooser() : _impl(nullptr) {
+	genGameList();
+}
 
 LauncherChooser::~LauncherChooser() {
 	delete _impl;
 	_impl = nullptr;
+}
+
+static Common::String buildQualifiedGameName(const Common::String &engineId, const Common::String &gameId) {
+	return Common::String::format("%s:%s", engineId.c_str(), gameId.c_str());
+}
+
+void LauncherChooser::genGameList() {
+	const PluginList &plugins = EngineMan.getPlugins();
+	for (auto iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
+
+		PlainGameList list = metaEngine.getSupportedGames();
+		for (auto v = list.begin(); v != list.end(); ++v) {
+			_games[buildQualifiedGameName(metaEngine.getEngineId(), v->gameId)] = v->description;
+		}
+	}
 }
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
@@ -878,7 +893,7 @@ LauncherDisplayType getRequestedLauncherType() {
 
 class LauncherSimple : public LauncherDialog {
 public:
-	LauncherSimple(const Common::String &title);
+	LauncherSimple(const Common::String &title, LauncherChooser *chooser);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleKeyDown(Common::KeyState state) override;
@@ -899,7 +914,7 @@ private:
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 class LauncherGrid : public LauncherDialog {
 public:
-	LauncherGrid(const Common::String &title);
+	LauncherGrid(const Common::String &title, LauncherChooser *chooser);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleKeyDown(Common::KeyState state) override;
@@ -914,7 +929,9 @@ protected:
 	int getSelected() override;
 	void build() override;
 private:
-	GridWidget		*_grid;
+	GridWidget       *_grid;
+	SliderWidget     *_gridItemSizeSlider;
+	StaticTextWidget *_gridItemSizeLabel;
 };
 #endif // !DISABLE_LAUNCHERDISPLAY_GRID
 
@@ -928,14 +945,14 @@ void LauncherChooser::selectLauncher() {
 
 		switch (requestedType) {
 		case kLauncherDisplayGrid:
-			_impl = new LauncherGrid("LauncherGrid");
+			_impl = new LauncherGrid("LauncherGrid", this);
 			break;
 
 		default:
 			// fallthrough intended
 		case kLauncherDisplayList:
 #endif // !DISABLE_LAUNCHERDISPLAY_GRID
-			_impl = new LauncherSimple("Launcher");
+			_impl = new LauncherSimple("Launcher", this);
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 			break;
 		}
@@ -959,8 +976,8 @@ int LauncherChooser::runModal() {
 
 #pragma mark -
 
-LauncherSimple::LauncherSimple(const Common::String &title)
-	: LauncherDialog(title),
+LauncherSimple::LauncherSimple(const Common::String &title, LauncherChooser *chooser)
+	: LauncherDialog(title, chooser),
 	_list(nullptr) {
 	build();
 }
@@ -994,13 +1011,8 @@ void LauncherSimple::build() {
 	_loadButton = loadButton;
 
 	// Add edit button
-	if (g_system->getOverlayWidth() > 320) {
-		_editButton =
-			new ButtonWidget(this, "Launcher.EditGameButton", _("~G~ame Options..."), _("Change game options"), kEditGameCmd);
-	} else {
-		_editButton =
-			new ButtonWidget(this, "Launcher.EditGameButton", _c("~G~ame Opts...", "lowres"), _("Change game options"), kEditGameCmd);
-	}
+	_editButton =
+		new ButtonWidget(this, "Launcher.EditGameButton", _("~G~ame Options..."), _("Change game options"), kEditGameCmd, 0, _c("~G~ame Opts...", "lowres"));
 
 	// Add list with game titles
 	_list = new GroupedListWidget(this, "Launcher.GameList", Common::U32String(), kListSearchCmd);
@@ -1023,7 +1035,6 @@ void LauncherSimple::build() {
 void LauncherSimple::updateListing() {
 	Common::U32StringArray l;
 	Common::Array<const Common::ConfigManager::Domain *> attrs;
-	ListWidget::ColorList colors;
 	ThemeEngine::FontColor color;
 	int numEntries = ConfMan.getInt("gui_list_max_scan_entries");
 
@@ -1078,14 +1089,15 @@ void LauncherSimple::updateListing() {
 				// description += Common::String::format(" (%s)", _("Not found"));
 			}
 		}
-		l.push_back(iter->description);
-		colors.push_back(color);
+		Common::U32String gameDesc = GUI::ListWidget::getThemeColor(color) + Common::U32String(iter->description);
+
+		l.push_back(gameDesc);
 		attrs.push_back(iter->domain);
 		_domains.push_back(iter->key);
 	}
 
 	const int oldSel = _list->getSelected();
-	_list->setList(l, &colors);
+	_list->setList(l);
 
 	groupEntries(attrs);
 
@@ -1291,9 +1303,9 @@ void LauncherSimple::updateButtons() {
 #pragma mark -
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
-LauncherGrid::LauncherGrid(const Common::String &title)
-	: LauncherDialog(title),
-	_grid(nullptr) {
+LauncherGrid::LauncherGrid(const Common::String &title, LauncherChooser *chooser)
+	: LauncherDialog(title, chooser),
+	_grid(nullptr), _gridItemSizeSlider(nullptr), _gridItemSizeLabel(nullptr) {
 	build();
 }
 
@@ -1458,6 +1470,13 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		}
 		break;
 	}
+	case kItemSizeCmd:
+		_gridItemSizeLabel->setValue(_gridItemSizeSlider->getValue());
+		_gridItemSizeLabel->markAsDirty();
+		ConfMan.setInt("grid_items_per_row", _gridItemSizeSlider->getValue());
+		ConfMan.flushToDisk();
+		reflowLayout();
+		break;
 	default:
 		LauncherDialog::handleCommand(sender, cmd, data);
 	}
@@ -1485,19 +1504,26 @@ void LauncherGrid::updateListing() {
 				description = g.description;
 		}
 
+		Common::String gameid;
+		if (!iter->_value.tryGetVal("gameid", gameid))
+			gameid = iter->_key;
+
+		Common::String engineid;
+		engineid = iter->_value.getValOrDefault("engineid");
+
 		// Strip platform language from the title.
-		size_t extraPos = description.findLastOf("(");
-		if (extraPos != Common::String::npos)
-			title = Common::String(description.c_str(), extraPos);
+		Common::String key = buildQualifiedGameName(engineid, gameid);
 
-		if (description.empty()) {
-			Common::String gameid;
-			if (!iter->_value.tryGetVal("gameid", gameid)) {
-				gameid = iter->_key;
-			}
+		if (_launcherChooser->getGameList()->contains(key)) {
+			title = _launcherChooser->getGameList()->getVal(key);
 
-			description = Common::String::format("Unknown (target %s, gameid %s)", iter->_key.c_str(), gameid.c_str());
+			// This is not reliable
+			if (gameid.contains("-demo"))
+				title += " (Demo)";
 		}
+
+		if (description.empty())
+			description = Common::String::format("Unknown (target %s, gameid %s)", iter->_key.c_str(), gameid.c_str());
 
 		if (title.empty())
 			title = description;
@@ -1523,8 +1549,18 @@ void LauncherGrid::updateListing() {
 		gridList.push_back(GridItemInfo(k++, engineid, gameid, iter->title, iter->description, Common::parseLanguage(language), Common::parsePlatform(platform)));
 	}
 
+	const int oldSel = _grid->getSelected();
+
 	_grid->setEntryList(&gridList);
 	groupEntries(attrs);
+
+	if (oldSel < (int)gridList.size() && oldSel >= 0)
+		_grid->setSelected(oldSel);	// Restore the old selection
+	else if (oldSel != -1)
+		// Select the last entry if the list has been reduced
+		_grid->setSelected(gridList.size() - 1);
+	updateButtons();
+
 	// And fill out our structures
 	for (Common::Array<LauncherEntry>::const_iterator iter = domainList.begin(); iter != domainList.end(); ++iter) {
 		_domains.push_back(iter->key);
@@ -1539,11 +1575,31 @@ void LauncherGrid::updateButtons() {
 	}
 }
 
-void LauncherGrid::selectTarget(const Common::String &target) {}
+void LauncherGrid::selectTarget(const Common::String &target) {
+	if (!target.empty()) {
+		int itemToSelect = 0;
+		Common::StringArray::const_iterator iter;
+		for (iter = _domains.begin(); iter != _domains.end(); ++iter, ++itemToSelect) {
+			if (target == *iter) {
+				_grid->setSelected(itemToSelect);
+				break;
+			}
+		}
+	}
+}
+
 int LauncherGrid::getSelected() { return _grid->getSelected(); }
 
 void LauncherGrid::build() {
 	LauncherDialog::build();
+
+	new StaticTextWidget(this, "LauncherGrid.GridItemsPerRowDesc", _("Icons per row:"));
+	_gridItemSizeSlider = new SliderWidget(this, "LauncherGrid.GridItemsPerRow", Common::U32String(), kItemSizeCmd);
+	_gridItemSizeSlider->setMinValue(1);
+	_gridItemSizeSlider->setMaxValue(12);
+	_gridItemSizeSlider->setValue(ConfMan.getInt("grid_items_per_row"));
+	_gridItemSizeLabel = new StaticTextWidget(this, "LauncherGrid.GridItemsPerRowLabel", Common::U32String("  "), Common::U32String(), ThemeEngine::kFontStyleBold, Common::UNK_LANG, false);
+	_gridItemSizeLabel->setValue(ConfMan.getInt("grid_items_per_row"));
 
 	// Add list with game titles
 	_grid = new GridWidget(this, "LauncherGrid.IconArea");

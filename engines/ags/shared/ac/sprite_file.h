@@ -146,7 +146,7 @@ public:
 	bool        LoadSpriteIndexFile(const String &filename, int expectedFileID,
 		soff_t spr_initial_offs, sprkey_t topmost, std::vector<Size> &metrics);
 	// Rebuilds sprite index from the main sprite file
-	HError      RebuildSpriteIndex(Stream *in, sprkey_t topmost, SpriteFileVersion vers,
+	HError      RebuildSpriteIndex(Stream *in, sprkey_t topmost,
 		std::vector<Size> &metrics);
 
 	// Loads an image data and creates a ready bitmap
@@ -188,7 +188,9 @@ public:
 		return _index;
 	}
 
-	// Initializes new sprite file format
+	// Initializes new sprite file format;
+	// store_flags are SpriteStorage;
+	// optionally hint how many sprites will be written.
 	void Begin(int store_flags, SpriteCompression compress, sprkey_t last_slot = -1);
 	// Writes a bitmap into file, compressing if necessary
 	void WriteBitmap(Bitmap *image);

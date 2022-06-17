@@ -120,7 +120,7 @@ void RunHotspotInteraction(int hotspothere, int mood) {
 
 	if (_GP(thisroom).Hotspots[hotspothere].EventHandlers != nullptr) {
 		if (passon >= 0)
-			run_interaction_script(_GP(thisroom).Hotspots[hotspothere].EventHandlers.get(), passon, 5, (passon == 3));
+			run_interaction_script(_GP(thisroom).Hotspots[hotspothere].EventHandlers.get(), passon, 5);
 		run_interaction_script(_GP(thisroom).Hotspots[hotspothere].EventHandlers.get(), 5);  // any click on hotspot
 	} else {
 		if (passon >= 0) {

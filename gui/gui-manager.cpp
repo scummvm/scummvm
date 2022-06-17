@@ -846,6 +846,7 @@ void GuiManager::initTextToSpeech() {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (ttsMan == nullptr)
 		return;
+	ttsMan->enable(ConfMan.hasKey("tts_enabled", "scummvm") ? ConfMan.getBool("tts_enabled", "scummvm") : false);
 #ifdef USE_TRANSLATION
 	Common::String currentLanguage = TransMan.getCurrentLanguage();
 	ttsMan->setLanguage(currentLanguage);

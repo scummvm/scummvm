@@ -100,7 +100,7 @@ public:
 
 	// Provides a leeway for over-reading (reading past the reported block length):
 	// the parser will not error if the mistake is in this range of bytes
-	virtual soff_t GetOverLeeway(int block_id) const {
+	virtual soff_t GetOverLeeway(int /*block_id*/) const {
 		return 0;
 	}
 
@@ -156,7 +156,7 @@ protected:
 
 // Type of function that writes a single data block.
 typedef void(*PfnWriteExtBlock)(Stream *out);
-void WriteExtBlock(int block, const String &ext_id, PfnWriteExtBlock writer, int flags, Stream *out);
+void WriteExtBlock(int block, const String &ext_id, const PfnWriteExtBlock &writer, int flags, Stream *out);
 // Writes a block with a new-style string id
 inline void WriteExtBlock(const String &ext_id, PfnWriteExtBlock writer, int flags, Stream *out) {
 	WriteExtBlock(0, ext_id, writer, flags, out);

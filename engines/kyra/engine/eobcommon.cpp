@@ -242,7 +242,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_amigaSoundMap = 0;
 	_amigaCurSoundFile = -1;
 	_prefMenuPlatformOffset = 0;
-	_lastVIntTick = _lastSecTick = _totalPlaySecs = _totalEnemiesKilled = _totalSteps = 0;
+	_lastVIntTick = _totalEnemiesKilled = _totalSteps = 0;
 	_levelMaps = 0;
 	_closeSpellbookAfterUse = false;
 	_wndBackgrnd = 0;
@@ -734,7 +734,8 @@ void EoBCoreEngine::runLoop() {
 		if (_sceneUpdateRequired && !_sceneShakeCountdown)
 			drawScene(1);
 
-		updateAnimTimers();
+		updatePlayTimer();
+		updateAnimations();
 
 		uint32 curTime = _system->getMillis();
 		if (_envAudioTimer < curTime && !(_flags.gameID == GI_EOB1 && (_flags.platform == Common::kPlatformSegaCD || _flags.platform == Common::kPlatformAmiga || _currentLevel == 0 || _currentLevel > 3))) {
@@ -786,13 +787,8 @@ bool EoBCoreEngine::checkPartyStatus(bool handleDeath) {
 	return false;
 }
 
-void EoBCoreEngine::updateAnimTimers() {
+void EoBCoreEngine::updateAnimations() {
 	uint32 curTime = _system->getMillis();
-	if (_lastSecTick + 1000 <= curTime) {
-		_lastSecTick = curTime;
-		_totalPlaySecs++;
-	}
-
 	if (_lastVIntTick + 16 <= curTime) {
 		_lastVIntTick = curTime;
 		gui_updateAnimations();

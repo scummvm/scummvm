@@ -68,8 +68,8 @@ SpriteCache::SpriteData::~SpriteData() {
 }
 
 SpriteCache::SpriteCache(std::vector<SpriteInfo> &sprInfos)
-	: _sprInfos(sprInfos) {
-	Init();
+	: _sprInfos(sprInfos), _maxCacheSize(DEFAULTCACHESIZE_KB * 1024u),
+	_cacheSize(0u), _lockedSize(0u), _liststart(-1), _listend(-1) {
 }
 
 SpriteCache::~SpriteCache() {
@@ -96,14 +96,6 @@ void SpriteCache::SetMaxCacheSize(size_t size) {
 	_maxCacheSize = size;
 }
 
-void SpriteCache::Init() {
-	_cacheSize = 0;
-	_lockedSize = 0;
-	_maxCacheSize = (size_t)DEFAULTCACHESIZE_KB * 1024;
-	_liststart = -1;
-	_listend = -1;
-}
-
 void SpriteCache::Reset() {
 	_file.Close();
 	// TODO: find out if it's safe to simply always delete _spriteData.Image with array element
@@ -115,10 +107,13 @@ void SpriteCache::Reset() {
 	}
 	_spriteData.clear();
 
+	_cacheSize = 0;
+	_lockedSize = 0;
 	_mrulist.clear();
 	_mrubacklink.clear();
 
-	Init();
+	_liststart = -1;
+	_listend = -1;
 }
 
 void SpriteCache::SetSprite(sprkey_t index, Bitmap *sprite) {

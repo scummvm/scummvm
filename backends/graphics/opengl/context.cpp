@@ -172,7 +172,7 @@ void OpenGLGraphicsManager::initializeGLContext() {
 			ARBFragmentShader = true;
 		} else if (token == "GL_ARB_multitexture") {
 			g_context.multitextureSupported = true;
-		} else if (token == "GL_EXT_framebuffer_object") {
+		} else if (token == "GL_ARB_framebuffer_object") {
 			g_context.framebufferObjectSupported = true;
 		} else if (token == "GL_EXT_packed_pixels" || token == "GL_APPLE_packed_pixels") {
 			g_context.packedPixelsSupported = true;

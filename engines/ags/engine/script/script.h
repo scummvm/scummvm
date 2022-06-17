@@ -46,7 +46,7 @@ using AGS::Shared::InteractionVariable;
 int     run_dialog_request(int parmtr);
 void    run_function_on_non_blocking_thread(NonBlockingScriptFunction *funcToRun);
 int     run_interaction_event(Interaction *nint, int evnt, int chkAny = -1, int isInv = 0);
-int     run_interaction_script(InteractionScripts *nint, int evnt, int chkAny = -1, int isInv = 0);
+int     run_interaction_script(InteractionScripts *nint, int evnt, int chkAny = -1);
 int     create_global_script();
 void    cancel_all_scripts();
 
@@ -85,6 +85,10 @@ InteractionVariable *get_interaction_variable(int varindx);
 InteractionVariable *FindGraphicalVariable(const char *varName);
 void    run_unhandled_event(int evnt);
 void    can_run_delayed_command();
+
+// Gets current running script position
+bool    get_script_position(ScriptPosition &script_pos);
+AGS::Shared::String cc_get_callstack(int max_lines = INT_MAX);
 
 } // namespace AGS3
 

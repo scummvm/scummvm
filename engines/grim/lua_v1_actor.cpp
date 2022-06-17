@@ -28,7 +28,6 @@
 #include "engines/grim/set.h"
 #include "engines/grim/model.h"
 #include "engines/grim/gfx_base.h"
-
 #include "engines/grim/lua/lauxlib.h"
 
 namespace Grim {
@@ -556,9 +555,10 @@ void Lua_V1::WalkActorTo() {
 	lua_Object yObj = lua_getparam(3);
 	lua_Object zObj = lua_getparam(4);
 
-	lua_Object txObj = lua_getparam(5);
+	// Not used in scripts
+/*	lua_Object txObj = lua_getparam(5);
 	lua_Object tyObj = lua_getparam(6);
-	lua_Object tzObj = lua_getparam(7);
+	lua_Object tzObj = lua_getparam(7);*/
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
@@ -577,11 +577,11 @@ void Lua_V1::WalkActorTo() {
 		destVec.set(x, y, z);
 	}
 
-	// TODO figure out purpose this
-	float tx = lua_getnumber(txObj);
+	// Not used in scripts
+/*	float tx = lua_getnumber(txObj);
 	float ty = lua_getnumber(tyObj);
 	float tz = lua_getnumber(tzObj);
-	Math::Vector3d tVec(tx, ty, tz);
+	Math::Vector3d tVec(tx, ty, tz);*/
 
 	actor->walkTo(destVec);
 }
@@ -767,7 +767,7 @@ void Lua_V1::GetActorCostume() {
 	if (lua_isnil(costumeObj)) {
 		// dummy
 	} else if (lua_isnumber(costumeObj)) {
-/*		int num = (int)lua_getnumber(costumeObj);*/
+		//int num = (int)lua_getnumber(costumeObj);
 		error("GetActorCostume: implement number Id");
 	} else
 		return;
@@ -1220,16 +1220,15 @@ void Lua_V1::PointActorAt() {
 void Lua_V1::WalkActorVector() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object actor2Obj = lua_getparam(2);
-//	lua_Object xObj = lua_getparam(3);
-//	lua_Object yObj = lua_getparam(4);
-//	lua_Object zObj = lua_getparam(5);
-//	lua_Object param6Obj = lua_getparam(6);
+	//lua_Object xObj = lua_getparam(3);
+	//lua_Object yObj = lua_getparam(4);
+	//lua_Object zObj = lua_getparam(5);
+	//lua_Object param6Obj = lua_getparam(6);
 
-	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R') ||
-			!lua_isuserdata(actor2Obj) || lua_tag(actor2Obj) != MKTAG('A','C','T','R'))
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R') || !lua_isuserdata(actor2Obj) || lua_tag(actor2Obj) != MKTAG('A','C','T','R'))
 		return;
 
-//	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	//Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
 	Actor *actor2 = getactor(actor2Obj);
 
 	// TODO whole below part need rewrote to much original
@@ -1276,6 +1275,18 @@ void Lua_V1::SetActorPitch() {
 	Actor *actor = getactor(actorObj);
 	float pitch = lua_getnumber(pitchObj);
 	actor->setRot(pitch, actor->getYaw(), actor->getRoll());
+}
+
+void Lua_V1::SetActorRoll() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object rollObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	float roll = lua_getnumber(rollObj);
+	actor->setRot(actor->getPitch(), actor->getYaw(), roll);
 }
 
 void Lua_V1::SetActorLookRate() {
@@ -1380,17 +1391,17 @@ void Lua_V1::SetActorFollowBoxes() {
 
 void Lua_V1::SetActorConstrain() {
 	lua_Object actorObj = lua_getparam(1);
-//	lua_Object constrainObj = lua_getparam(2);
+	//lua_Object constrainObj = lua_getparam(2);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
 
-//	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
-//	bool constrain = !lua_isnil(constrainObj);
+	//Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	//bool constrain = !lua_isnil(constrainObj);
 
 	// FIXME that below should be enabled, but for now it's disabled realated to
 	// above func SetActorFollowBoxes.
-//	actor->setConstrain(constrain);
+	//actor->setConstrain(constrain);
 }
 
 void Lua_V1::GetVisibleThings() {
@@ -1541,7 +1552,27 @@ void Lua_V1::GetActorRect() {
 }
 
 void Lua_V1::SetActorInvClipNode() {
-	warning("Stub function: SetActorInvClipNode");
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object nodeObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || actorObj == LUA_NOOBJECT) {
+		return;
+	}
+	/*Actor *actor =*/ getactor(actorObj);
+	int nodeId = (int)lua_getnumber(nodeObj);
+
+	// Game script in grim fandango using it on animation of take in/out things from inventory.
+	// It's unknown purpose of this opcode.
+	//
+	// The node id is 13 'null18' which is between 'hand' and 'thumb'.
+	// Opcode with above node id is used on starting animation.
+	// Exception is when take out 'scythe', then node id is -1.
+	//
+	// The node id -1 is when animation finished.
+	//
+	// There is no known visual differences between lack implementation and original.
+	// Possible it's original implemenation specific or left over from development phase.
+	debug(2, "Stub function: SetActorInvClipNode(%d)", nodeId);
 }
 
 void Lua_V1::SetActorClipPlane() {
@@ -1550,10 +1581,6 @@ void Lua_V1::SetActorClipPlane() {
 
 void Lua_V1::SetActorClipActive() {
 	warning("Stub function: SetActorClipActive");
-}
-
-void Lua_V1::SetActorRoll() {
-	warning("Stub function: SetActorRoll");
 }
 
 void Lua_V1::SetActorFrustrumCull() {

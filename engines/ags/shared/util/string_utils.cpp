@@ -61,6 +61,14 @@ StrUtil::ConversionError StrUtil::StringToInt(const String &s, int &val, int def
 	return StrUtil::kNoError;
 }
 
+float StrUtil::StringToFloat(const String &s, float def_val) {
+	if (!s.GetCStr())
+		return def_val;
+	char *stop_ptr;
+	float val = strtof(s.GetCStr(), &stop_ptr);
+	return (stop_ptr == s.GetCStr() + s.GetLength()) ? val : def_val;
+}
+
 String StrUtil::Unescape(const String &s) {
 	size_t at = s.FindChar('\\');
 	if (at == String::NoIndex)
@@ -122,7 +130,7 @@ void StrUtil::ReadString(char *cstr, Stream *in, size_t buf_limit) {
 		return;
 	}
 
-	len = Math::Min(len, buf_limit - 1);
+	len = MIN(len, buf_limit - 1);
 	if (len > 0)
 		in->Read(cstr, len);
 	cstr[len] = 0;

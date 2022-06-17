@@ -88,8 +88,11 @@ protected:
 	void clearStateCommon(byte type);
 	void stopScriptCommon(int script);
 
-	void resetSentence();
+	void resetSentence() override;
 	void setUserState(byte state);
+
+	void beginCutscene(int *args) override { o2_cutscene(); }
+	void endCutscene() override { o2_endCutscene(); }
 
 	void handleMouseOver(bool updateInventory) override;
 	void checkExecVerbs() override;

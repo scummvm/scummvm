@@ -38,7 +38,7 @@ public:
 
 protected:
 	void handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize) override;
-	SmackerVideoTrack *createVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature) const override;
+	SmackerVideoTrack *createVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 version) const override;
 
 private:
 	bool _lowRes;

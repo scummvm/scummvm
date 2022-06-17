@@ -44,7 +44,7 @@ bool LibFile::open(const Common::String &prefix, const Common::String &filename,
 		uint32 start = libfile.size();
 		FileEntry f;
 		libfile.seek(offset);
-		debugC(1, kHypnoDebugParser, "parsing at offset %d with size %li", offset, libfile.size());
+		debugC(1, kHypnoDebugParser, "parsing at offset %d with size %li", offset, long(libfile.size()));
 		while (true) {
 			f.name = "";
 			f.data.clear();

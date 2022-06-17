@@ -88,6 +88,10 @@ void OSystem_PS3::initBackend() {
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
 
+	ConfMan.setBool("fullscreen", true);
+	if (!ConfMan.hasKey("aspect_ratio"))
+		ConfMan.setBool("aspect_ratio", true);
+
 	// Create the savefile manager
 	if (_savefileManager == 0)
 		_savefileManager = new DefaultSaveFileManager(PREFIX "/saves");

@@ -22,7 +22,7 @@
  //=============================================================================
  //
  // UTF-8 utilities.
- // Based on utf8 code from https://c9x.me/git/irc.git/tree/irc.c
+ // Based on utf8 code from https://c9x.me/irc/ (public domain)
  //
  //=============================================================================
 

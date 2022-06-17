@@ -64,6 +64,8 @@ class Actor;
 class Handle;
 class Scroll;
 class Dialogs;
+class Notebook;
+class SystemReel;
 
 typedef Common::List<Common::Rect> RectList;
 
@@ -99,7 +101,6 @@ typedef bool (*KEYFPTR)(const Common::KeyState &);
 #define GAME_FRAME_DELAY (1000 / ONE_SECOND)
 
 #define TinselVersion (_vm->getVersion())
-#define TinselV3 (TinselVersion == 3)
 #define TinselV2Demo (TinselVersion == 2 && _vm->getIsADGFDemo())
 #define TinselV1PSX (TinselVersion == 1 && _vm->getPlatform() == Common::kPlatformPSX)
 #define TinselV1Mac (TinselVersion == 1 && _vm->getPlatform() == Common::kPlatformMacintosh)
@@ -126,6 +127,7 @@ class TinselEngine : public Engine {
 	static const char *const _sampleIndices[][3];
 	static const char *const _sampleFiles[][3];
 	static const char *const _textFiles[][3];
+	static const char *const _sceneFiles[];
 
 protected:
 
@@ -161,6 +163,8 @@ public:
 	const char *getSampleIndex(LANGUAGE lang);
 	const char *getSampleFile(LANGUAGE lang);
 	const char *getTextFile(LANGUAGE lang);
+	// Noir
+	const char *getSceneFile(LANGUAGE lang);
 
 	MidiDriver *_driver;
 	SoundManager *_sound;
@@ -176,6 +180,8 @@ public:
 	Config *_config;
 	Scroll *_scroll;
 	Dialogs *_dialogs;
+	Notebook *_notebook = nullptr;
+	SystemReel *_systemReel = nullptr;
 
 	KEYFPTR _keyHandler;
 

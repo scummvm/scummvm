@@ -40,9 +40,9 @@
 /*
 For information on how to unify the CoreMidi and MusicDevice code:
 
-http://lists.apple.com/archives/Coreaudio-api/2005/Jun/msg00194.html
-http://lists.apple.com/archives/coreaudio-api/2003/Mar/msg00248.html
-http://lists.apple.com/archives/coreaudio-api/2003/Jul/msg00137.html
+https://lists.apple.com/archives/coreaudio-api/2005/Jun/msg00194.html
+https://lists.apple.com/archives/coreaudio-api/2003/Mar/msg00248.html
+https://lists.apple.com/archives/coreaudio-api/2003/Jul/msg00137.html
 
 */
 
@@ -70,8 +70,7 @@ private:
 MidiDriver_CoreMIDI::MidiDriver_CoreMIDI(ItemCount device)
 	: mDevice(device), mClient(0), mOutPort(0), mDest(0) {
 
-	OSStatus err;
-	err = MIDIClientCreate(CFSTR("ScummVM MIDI Driver for macOS"), NULL, NULL, &mClient);
+	/*OSStatus err = */MIDIClientCreate(CFSTR("ScummVM MIDI Driver for macOS"), NULL, NULL, &mClient);
 }
 
 MidiDriver_CoreMIDI::~MidiDriver_CoreMIDI() {

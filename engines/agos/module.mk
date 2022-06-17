@@ -2,6 +2,8 @@ MODULE := engines/agos
 
 MODULE_OBJS := \
 	drivers/accolade/adlib.o \
+	drivers/accolade/casio.o \
+	drivers/accolade/cms.o \
 	drivers/accolade/driverfile.o \
 	drivers/accolade/pc98.o \
 	drivers/accolade/mt32.o \
@@ -23,7 +25,9 @@ MODULE_OBJS := \
 	menus.o \
 	metaengine.o \
 	midi.o \
+	midiparser_gmf.o \
 	midiparser_s1d.o \
+	midiparser_simonwin.o \
 	pn.o \
 	res.o \
 	res_ami.o \
@@ -37,6 +41,7 @@ MODULE_OBJS := \
 	script_ww.o \
 	script_s1.o \
 	script_s2.o \
+	sfxparser_accolade.o \
 	sound.o \
 	string.o \
 	string_pn.o \

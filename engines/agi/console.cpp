@@ -23,9 +23,9 @@
 #include "agi/opcodes.h"
 #include "agi/graphics.h"
 
-#include "agi/preagi.h"
-#include "agi/preagi_mickey.h"
-#include "agi/preagi_winnie.h"
+#include "agi/preagi/preagi.h"
+#include "agi/preagi/mickey.h"
+#include "agi/preagi/winnie.h"
 
 namespace Agi {
 

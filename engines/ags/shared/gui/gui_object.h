@@ -60,20 +60,30 @@ public:
 	bool            IsVisible() const;
 	// implemented separately in engine and editor
 	bool            IsClickable() const;
-    // Compatibility: should the control's graphic be clipped to its x,y,w,h
+	int             GetTransparency() const { return _transparency; }
+	// Compatibility: should the control's graphic be clipped to its x,y,w,h
     virtual bool    IsContentClipped() const { return true; }
+	// Tells if the object image supports alpha channel
+	virtual bool    HasAlphaChannel() const { return false; }
 
 	// Operations
-	virtual void    Draw(Bitmap *ds) {
+	// Returns the (untransformed!) visual rectangle of this control,
+	// in *relative* coordinates, optionally clipped by the logical size
+	virtual Rect    CalcGraphicRect(bool clipped) {
+		return RectWH(0, 0, Width, Height);
+	}
+	virtual void    Draw(Bitmap *ds, int x = 0, int y = 0) {
+		(void)ds; (void)x; (void)y;
 	}
 	void            SetClickable(bool on);
 	void            SetEnabled(bool on);
 	void            SetTranslated(bool on);
 	void            SetVisible(bool on);
+	void            SetTransparency(int trans);
 
 	// Events
 	// Key pressed for control
-	virtual void    OnKeyPress(const KeyInput &ki) {}
+	virtual void    OnKeyPress(const KeyInput &) {}
 	// Mouse button down - return 'True' to lock focus
 	virtual bool    OnMouseDown() {
 		return false;
@@ -85,14 +95,13 @@ public:
 	virtual void    OnMouseLeave() {
 	}
 	// Mouse moves over control - x,y relative to gui
-	virtual void    OnMouseMove(int x, int y) {
+	virtual void    OnMouseMove(int /*x*/, int /*y*/) {
 	}
 	// Mouse button up
 	virtual void    OnMouseUp() {
 	}
 	// Control was resized
-	virtual void    OnResized() {
-	}
+	virtual void    OnResized() { MarkChanged(); }
 
 	// Serialization
 	virtual void    ReadFromFile(Shared::Stream *in, GuiVersion gui_version);
@@ -102,8 +111,15 @@ public:
 
 	// TODO: these members are currently public; hide them later
 public:
-	// Notifies parent GUI that this control has changed
+	// Manually marks GUIObject as graphically changed
+	// NOTE: this only matters if control's own graphic changes (content, size etc),
+	// but not its state (visible) or texture drawing mode (transparency, etc).
+	void     MarkChanged();
+	// Notifies parent GUI that this control has changed its state (but not graphic)
 	void     NotifyParentChanged();
+
+	bool     HasChanged() const;
+	void     ClearChanged();
 
 	int32_t  Id;         // GUI object's identifier
 	int32_t  ParentId;   // id of parent GUI
@@ -120,6 +136,8 @@ public:
 
 protected:
 	uint32_t Flags;      // generic style and behavior flags
+	int32_t  _transparency; // "incorrect" alpha (in legacy 255-range units)
+	bool     _hasChanged;
 
 	// TODO: explicit event names & handlers for every event
 	int32_t  _scEventCount;                    // number of supported script events

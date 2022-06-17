@@ -307,7 +307,7 @@ int ScummEngine::getState(int obj) {
 		// it. Fortunately this does not prevent frustrated players from
 		// blowing up the mansion, should they feel the urge to.
 
-		if (_game.id == GID_MANIAC && _game.version != 0 && (obj == 182 || obj == 193))
+		if (_game.id == GID_MANIAC && _game.version != 0 && _game.platform != Common::kPlatformNES && (obj == 182 || obj == 193))
 			_objectStateTable[obj] |= kObjectState_08;
 	}
 
@@ -624,8 +624,16 @@ void ScummEngine::drawObject(int obj, int arg) {
 	const int xpos = od.x_pos / 8;
 	const int ypos = od.y_pos;
 
+	// In most cases we want to mask out the last three bits, though it is
+	// possible that this has already been done by resetRoomObject(). In
+	// later versions we need to keep those bits intact. See bug #13419 for
+	// an example of where this is important.
+
+	if (_game.version < 7)
+		od.height &= 0xFFFFFFF8;
+
 	width = od.width / 8;
-	height = od.height &= 0xFFFFFFF8;	// Mask out last 3 bits
+	height = od.height;
 
 	// Short circuit for objects which aren't visible at all.
 	if (width == 0 || xpos > _screenEndStrip || xpos + width < _screenStartStrip)

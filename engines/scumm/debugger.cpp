@@ -82,7 +82,8 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 
 	if (_vm->_game.id == GID_LOOM)
 		registerCmd("drafts",  WRAP_METHOD(ScummDebugger, Cmd_PrintDraft));
-
+	if (_vm->_game.id == GID_INDY3)
+		registerCmd("grail",  WRAP_METHOD(ScummDebugger, Cmd_PrintGrail));
 	if (_vm->_game.id == GID_MONKEY && _vm->_game.platform == Common::kPlatformSegaCD)
 		registerCmd("passcode",  WRAP_METHOD(ScummDebugger, Cmd_Passcode));
 
@@ -102,10 +103,6 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 #endif
 
 	registerCmd("resetcursors",    WRAP_METHOD(ScummDebugger, Cmd_ResetCursors));
-}
-
-ScummDebugger::~ScummDebugger() {
-	 // we need this destructor, even if it is empty, for __SYMBIAN32__
 }
 
 void ScummDebugger::preEnter() {
@@ -580,8 +577,10 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 			debugPrintf("Actor[%d].costume = %d\n", actnum, a->_costume);
 		}
 	} else if (!strcmp(argv[2], "name")) {
-		debugPrintf("Name of actor %d: %s\n", actnum,
-			_vm->getObjOrActorName(_vm->actorToObj(actnum)));
+		const byte *name = _vm->getObjOrActorName(_vm->actorToObj(actnum));
+		if (!name)
+			name = (const byte *)"(null)";
+		debugPrintf("Name of actor %d: %s\n", actnum, name);
 	} else if (!strcmp(argv[2], "condmask")) {
 		if (argc > 3) {
 			a->_heCondMask = value;
@@ -604,6 +603,8 @@ bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 	for (i = 1; i < _vm->_numActors; i++) {
 		a = _vm->_actors[i];
 		const byte *name = _vm->getObjOrActorName(_vm->actorToObj(a->_number));
+		if (!name)
+			name = (const byte *)"(null)";
 		if (a->_visible)
 			debugPrintf("|%2d|%-12.12s|%4d|%4d|%3d|%3d|%4d|%3d|%3d|%3d|%3d|%3d|%3d|%3d|$%08x|\n",
 						 a->_number, name, a->getRealPos().x, a->getRealPos().y, a->_width,  a->_bottom - a->_top,
@@ -629,6 +630,8 @@ bool ScummDebugger::Cmd_PrintObjects(int argc, const char **argv) {
 			continue;
 		int classData = (_vm->_game.version != 0 ? _vm->_classData[o->obj_nr] : 0);
 		const byte *name = _vm->getObjOrActorName(o->obj_nr);
+		if (!name)
+			name = (const byte *)"(null)";
 		debugPrintf("|%4d|%-12.12s|%4d|%4d|%5d|%6d|%5d|%2d|$%08x|\n",
 				o->obj_nr, name, o->x_pos, o->y_pos, o->width, o->height, o->state,
 				o->fl_object_index, classData);
@@ -682,7 +685,10 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 			debugPrintf("State of object %d: %d\n", obj, _vm->getState(obj));
 		}
 	} else if (!strcmp(argv[2], "name")) {
-		debugPrintf("Name of object %d: %s\n", obj, _vm->getObjOrActorName(obj));
+		const byte *name = _vm->getObjOrActorName(obj);
+		if (!name)
+			name = (const byte *)"(null)";
+		debugPrintf("Name of object %d: %s\n", obj, name);
 	} else {
 		debugPrintf("Unknown object command '%s'\nUse <pickup | state | name> as command\n", argv[2]);
 	}
@@ -913,11 +919,11 @@ void ScummDebugger::drawBox(int box) {
 
 bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 	const char *names[] = {
-		"Opening",      "Straw to Gold", "Dyeing",
-		"Night Vision",	"Twisting",      "Sleep",
-		"Emptying",     "Invisibility",  "Terror",
-		"Sharpening",   "Reflection",    "Healing",
-		"Silence",      "Shaping",       "Unmaking",
+		"Opening",      "Straw Into Gold", "Dyeing",
+		"Night Vision",	"Twisting",        "Sleep",
+		"Emptying",     "Invisibility",    "Terror",
+		"Sharpening",   "Reflection",      "Healing",
+		"Silence",      "Shaping",         "Unmaking",
 		"Transcendence"
 	};
 
@@ -985,7 +991,7 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 
 	for (i = 0; i < 16; i++) {
 		draft = _vm->_scummVars[base + i * 2];
-		debugPrintf("%d %-13s %c%c%c%c %c%c\n",
+		debugPrintf("%d %-15s %c%c%c%c %c%c\n",
 			base + 2 * i,
 			names[i],
 			notes[draft & 0x0007],
@@ -995,6 +1001,28 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 			(draft & 0x2000) ? 'K' : ' ',
 			(draft & 0x4000) ? 'U' : ' ');
 	}
+
+	return true;
+}
+
+bool ScummDebugger::Cmd_PrintGrail(int argc, const char **argv) {
+	if (_vm->_game.id != GID_INDY3) {
+		debugPrintf("Command only works with Indy3\n");
+		return true;
+	}
+
+	if (_vm->_currentRoom != 86) {
+		debugPrintf("Command only works in room 86\n");
+		return true;
+	}
+
+	const int grailNumber = _vm->_scummVars[253];
+	if (grailNumber < 1 || grailNumber > 10) {
+		debugPrintf("Couldn't find the Grail number\n");
+		return true;
+	}
+
+	debugPrintf("Real Grail is Grail #%d\n", grailNumber);
 
 	return true;
 }

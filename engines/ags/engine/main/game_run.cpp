@@ -49,6 +49,7 @@
 #include "ags/engine/ac/room.h"
 #include "ags/engine/ac/room_object.h"
 #include "ags/engine/ac/room_status.h"
+#include "ags/engine/ac/walk_behind.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/device/mouse_w32.h"
@@ -102,19 +103,18 @@ static void game_loop_check_problems_at_start() {
 		quit("!A blocking function was called from within a non-blocking event such as " REP_EXEC_ALWAYS_NAME);
 }
 
-static void game_loop_check_new_room() {
+// Runs rep-exec
+static void game_loop_do_early_script_update() {
 	if (_G(in_new_room) == 0) {
 		// Run the room and game script repeatedly_execute
 		run_function_on_non_blocking_thread(&_GP(repExecAlways));
 		setevent(EV_TEXTSCRIPT, TS_REPEAT);
-		setevent(EV_RUNEVBLOCK, EVB_ROOM, 0, 6);
+		setevent(EV_RUNEVBLOCK, EVB_ROOM, 0, EVROM_REPEXEC);
 	}
-	// run this immediately to make sure it gets done before fade-in
-	// (player enters screen)
-	check_new_room();
 }
 
-static void game_loop_do_late_update() {
+// Runs late-rep-exec
+static void game_loop_do_late_script_update() {
 	if (_G(in_new_room) == 0) {
 		// Run the room and game script late_repeatedly_execute
 		run_function_on_non_blocking_thread(&_GP(lateRepExecAlways));
@@ -126,7 +126,7 @@ static int game_loop_check_ground_level_interactions() {
 		// check if he's standing on a hotspot
 		int hotspotThere = get_hotspot_at(_G(playerchar)->x, _G(playerchar)->y);
 		// run Stands on Hotspot event
-		setevent(EV_RUNEVBLOCK, EVB_HOTSPOT, hotspotThere, 0);
+		setevent(EV_RUNEVBLOCK, EVB_HOTSPOT, hotspotThere, EVHOT_STANDSON);
 
 		// check current region
 		int onRegion = GetRegionIDAtRoom(_G(playerchar)->x, _G(playerchar)->y);
@@ -309,10 +309,11 @@ bool run_service_key_controls(KeyInput &out_key) {
 		return false; // in backward mode the engine does not react to single mod keys
 
 	KeyInput ki = ags_keycode_from_scummvm(key_evt, old_keyhandle);
-	eAGSKeyCode agskey = ki.Key;
-	if (agskey == eAGSKeyCodeNone)
+	if (ki.Key == eAGSKeyCodeNone)
 		return false; // should skip this key event
 
+	// Use backward-compatible combined key for service checks
+	eAGSKeyCode agskey = ki.CompatKey;
 	// LAlt or RAlt + Enter/Return
 	if ((cur_mod == Common::KBD_ALT) && agskey == eAGSKeyCodeReturn) {
 		engine_try_switch_windowed_gfxmode();
@@ -376,7 +377,7 @@ bool run_service_key_controls(KeyInput &out_key) {
 			        _GP(game).chars[chd].x, _GP(game).chars[chd].y, _GP(game).chars[chd].z,
 			        _GP(game).chars[chd].idleview, _GP(game).chars[chd].idletime, _GP(game).chars[chd].idleleft,
 			        _GP(game).chars[chd].walking, _GP(game).chars[chd].animating, _GP(game).chars[chd].following,
-			        _GP(game).chars[chd].flags, _GP(game).chars[chd].wait, _G(charextra)[chd].zoom);
+			        _GP(game).chars[chd].flags, _GP(game).chars[chd].wait, _GP(charextra)[chd].zoom);
 		}
 		Display(bigbuffer);
 		return false;
@@ -501,6 +502,15 @@ static void check_keyboard_controls() {
 				}
 			}
 		}
+	}
+
+	// Built-in key-presses
+	if (kgn == _GP(usetup).key_save_game) {
+		do_save_game_dialog();
+		return;
+	} else if (kgn == _GP(usetup).key_restore_game) {
+		do_restore_game_dialog();
+		return;
 	}
 
 	if (!keywasprocessed) {
@@ -629,7 +639,7 @@ static void game_loop_do_render_and_check_mouse(IDriverDependantBitmap *extraBit
 				if (__GetLocationType(game_to_data_coord(_G(mousex)), game_to_data_coord(_G(mousey)), 1) == LOCTYPE_HOTSPOT) {
 					int onhs = _G(getloctype_index);
 
-					setevent(EV_RUNEVBLOCK, EVB_HOTSPOT, onhs, 6);
+					setevent(EV_RUNEVBLOCK, EVB_HOTSPOT, onhs, EVHOT_MOUSEOVER);
 				}
 			}
 
@@ -650,9 +660,9 @@ static void game_loop_update_events() {
 		// then queue the Enters Screen scripts
 		// run these next time round, when it's faded in
 		if (_G(new_room_was) == 2)  // first time enters screen
-			setevent(EV_RUNEVBLOCK, EVB_ROOM, 0, 4);
+			setevent(EV_RUNEVBLOCK, EVB_ROOM, 0, EVROM_FIRSTENTER);
 		if (_G(new_room_was) != 3)   // enters screen after fadein
-			setevent(EV_RUNEVBLOCK, EVB_ROOM, 0, 7);
+			setevent(EV_RUNEVBLOCK, EVB_ROOM, 0, EVROM_AFTERFADEIN);
 	}
 }
 
@@ -738,7 +748,11 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 
 	_G(our_eip) = 1004;
 
-	game_loop_check_new_room();
+	game_loop_do_early_script_update();
+	// run this immediately to make sure it gets done before fade-in
+	// (player enters screen)
+	check_new_room();
+
 	if (_G(abort_engine))
 		return;
 
@@ -764,7 +778,7 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 
 	game_loop_update_animated_buttons();
 
-	game_loop_do_late_update();
+	game_loop_do_late_script_update();
 
 	update_audio_system_on_game_loop();
 

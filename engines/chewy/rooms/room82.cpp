@@ -90,7 +90,7 @@ void Room82::xit(int16 eib_nr) {
 void Room82::setup_func() {
 	calc_person_look();
 
-	const int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	const int posX = _G(moveState)[P_CHEWY].Xypos[0];
 	int howDestX, nicDestX;
 	
 	if (posX < 200) {
@@ -196,7 +196,7 @@ int Room82::proc6() {
 
 	if (_G(gameState).flags30_10) {
 		startAadWait(450);
-		_G(out)->ausblenden(0);
+		_G(out)->fadeOut();
 		_G(out)->set_partialpalette(_G(pal), 255, 1);
 		_G(atds)->enableEvents(false);
 		startAadWait(598);
@@ -225,7 +225,7 @@ void Room82::proc8() {
 	startAadWait(447);
 	autoMove(6, P_CHEWY);
 
-	while (_G(spieler_vector)[P_NICHELLE].Count != 0)
+	while (_G(moveState)[P_NICHELLE].Count != 0)
 		setupScreen(DO_SETUP);
 
 	_G(gameState)._personHide[P_NICHELLE] = true;

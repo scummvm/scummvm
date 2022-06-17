@@ -62,6 +62,8 @@ bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSupportsDeleteSave) ||
 	    (f == kSavesSupportMetaInfo) ||
 	    (f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime) ||
 		(f == kSimpleSavesNames);
 }
 
@@ -216,6 +218,12 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 			if (slot == getAutosaveSlot())
 				desc.setAutosave(true);
 			desc.setThumbnail(header.thumbnail);
+
+			if (header.version >= 21) {
+				desc.setPlayTime(header.totalPlaySecs * 1000);
+				desc.setSaveDate(header.timeDate.tm_year + 1900, header.timeDate.tm_mon + 1, header.timeDate.tm_mday);
+				desc.setSaveTime(header.timeDate.tm_hour, header.timeDate.tm_min);
+			}
 
 			return desc;
 		}

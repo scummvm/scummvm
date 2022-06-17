@@ -94,7 +94,7 @@ void Matrix<4, 4>::translate(const Vector3d &vec) {
 
 /**
  * Generates a lookat matrix. For reference, see
- * http://clb.demon.fi/MathGeoLib/docs/float3x3_LookAt.php
+ * http://clb.confined.space/MathGeoLib/nightly/docs/float3x3_LookAt.php
  */
 void Matrix<4, 4>::buildFromTargetDir(const Math::Vector3d &modelForward, const Math::Vector3d &targetDirection,
 									  const Math::Vector3d &modelUp, const Math::Vector3d &worldUp)

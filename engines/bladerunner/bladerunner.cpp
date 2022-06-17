@@ -244,6 +244,8 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_activeCustomEvents->clear();
 	_customEventRepeatTimeLast = 0;
 	_customEventRepeatTimeDelay = 0;
+
+	_isNonInteractiveDemo = desc->flags & ADGF_DEMO;
 }
 
 BladeRunnerEngine::~BladeRunnerEngine() {
@@ -260,6 +262,11 @@ bool BladeRunnerEngine::hasFeature(EngineFeature f) const {
 bool BladeRunnerEngine::canLoadGameStateCurrently() {
 	return
 		playerHasControl() &&
+		_gameIsRunning &&
+		!_isNonInteractiveDemo &&
+		!_actorIsSpeaking &&
+		!_vqaIsPlaying &&
+		!_gameJustLaunched &&
 		!_sceneScript->isInsideScript() &&
 		!_aiScripts->isInsideScript() &&
 		!_kia->isOpen() &&
@@ -296,6 +303,9 @@ bool BladeRunnerEngine::canSaveGameStateCurrently() {
 	return
 		playerHasControl() &&
 		_gameIsRunning &&
+		!_isNonInteractiveDemo &&
+		!_actorIsSpeaking &&
+		!_vqaIsPlaying &&
 		!_gameJustLaunched &&
 		!_sceneScript->isInsideScript() &&
 		!_aiScripts->isInsideScript() &&
@@ -334,7 +344,7 @@ void BladeRunnerEngine::pauseEngineIntern(bool pause) {
 
 Common::Error BladeRunnerEngine::run() {
 	Common::Array<Common::String> missingFiles;
-	if (!checkFiles(missingFiles)) {
+	if (!_isNonInteractiveDemo && !checkFiles(missingFiles)) {
 		Common::String missingFileStr = "";
 		for (uint i = 0; i < missingFiles.size(); ++i) {
 			if (i > 0) {
@@ -357,9 +367,21 @@ Common::Error BladeRunnerEngine::run() {
 		_screenPixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0);
 	}
 	debug("Using pixel format: %s", _screenPixelFormat.toString().c_str());
-	initGraphics(640, 480, &_screenPixelFormat);
 
-	_system->showMouse(true);
+	int16 gameBRWidth = kOriginalGameWidth;
+	int16 gameBRHeight = kOriginalGameHeight;
+	if (_isNonInteractiveDemo) {
+		if (Common::File::exists("SIZZLE2.VQP")) {
+			gameBRWidth = kDemoGameWidth * 2;
+			gameBRHeight = kDemoGameHeight * 2;
+		} else {
+			gameBRWidth = kDemoGameWidth;
+			gameBRHeight = kDemoGameHeight;
+		}
+	}
+
+	initGraphics(gameBRWidth, gameBRHeight, &_screenPixelFormat);
+	_system->showMouse(_isNonInteractiveDemo ? false : true);
 
 	bool hasSavegames = !SaveFileManager::list(getMetaEngine(), _targetName).empty();
 
@@ -368,7 +390,41 @@ Common::Error BladeRunnerEngine::run() {
 		return Common::Error(Common::kUnknownError, _("Failed to initialize resources"));
 	}
 
-	// improvement: Use a do-while() loop to handle the normal end-game state
+	if (_isNonInteractiveDemo) {
+		_gameOver         = false;
+		_gameIsRunning    = true;
+		_gameJustLaunched = true;
+
+		if (getEventManager()->getKeymapper() != nullptr) {
+			if (getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kGameplayKeymapId) != nullptr) {
+				getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kGameplayKeymapId)->setEnabled(true);
+				const Common::Keymap::ActionArray karr = getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kGameplayKeymapId)->getActions();
+				for (uint8 i = 0; i < karr.size(); ++i) {
+					if (karr[i]->description == "COMBAT"
+					    || karr[i]->description == "SKIPDLG"
+					    || karr[i]->description == "KIADB") {
+						getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kGameplayKeymapId)->unregisterMapping(karr[i]);
+					}
+				}
+			}
+		}
+
+		// Required for calls in OuttakePlayer::play() of playerLosesControl(), playerGainsControl()
+		_mouse = new Mouse(this);
+		_mouse->disable();
+
+		// Speech Sound Type (kSpeechSoundType) is the volume of the outtake video,
+		// so we don't mute that one
+		_mixer->setVolumeForSoundType(_mixer->kMusicSoundType, 0);
+		_mixer->setVolumeForSoundType(_mixer->kPlainSoundType, 0);
+		_mixer->setVolumeForSoundType(_mixer->kSFXSoundType, 0);
+		int vqpCompanionPresenceId = Common::File::exists("SIZZLE2.VQP")? -2 : -3;
+		outtakePlay("SIZZLE2", true, vqpCompanionPresenceId);
+		// shutting down
+		return Common::kNoError;
+	}
+
+	// Improvement: Use a do-while() loop to handle the normal end-game state
 	// so that the game won't exit abruptly after end credits
 	do {
 		// additional code for gracefully handling end-game after _endCredits->show()
@@ -400,7 +456,7 @@ Common::Error BladeRunnerEngine::run() {
 
 			if (getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kKiaKeymapId) != nullptr) {
 				// When disabling a keymap, make sure all their active events in the _activeCustomEvents array
-				// are cleared, because as they won't get an explicit "EVENT_CUSTOM_ENGINE_ACTION_END" event.
+				// are cleared, because they won't get an explicit "EVENT_CUSTOM_ENGINE_ACTION_END" event.
 				cleanupPendingRepeatingEvents(BladeRunnerEngine::kKiaKeymapId);
 				getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kKiaKeymapId)->setEnabled(false);
 			}
@@ -505,51 +561,21 @@ bool BladeRunnerEngine::checkFiles(Common::Array<Common::String> &missingFiles) 
 
 bool BladeRunnerEngine::startup(bool hasSavegames) {
 	// Assign default values to the ScummVM configuration manager, in case settings are missing
-	ConfMan.registerDefault("subtitles", "true");
 	ConfMan.registerDefault("sfx_volume", 192);
 	ConfMan.registerDefault("music_volume", 192);
 	ConfMan.registerDefault("speech_volume", 192);
 	ConfMan.registerDefault("mute", "false");
 	ConfMan.registerDefault("speech_mute", "false");
-	ConfMan.registerDefault("sitcom", "false");
-	ConfMan.registerDefault("shorty", "false");
 	ConfMan.registerDefault("nodelaymillisfl", "false");
 	ConfMan.registerDefault("frames_per_secondfl", "false");
-	ConfMan.registerDefault("disable_stamina_drain", "false");
 
-	_sitcomMode                = ConfMan.getBool("sitcom");
-	_shortyMode                = ConfMan.getBool("shorty");
 	_noDelayMillisFramelimiter = ConfMan.getBool("nodelaymillisfl");
 	_framesPerSecondMax        = ConfMan.getBool("frames_per_secondfl");
-	_disableStaminaDrain       = ConfMan.getBool("disable_stamina_drain");
-
-	// These are static objects in original game
-	_screenEffects = new ScreenEffects(this, 0x8000);
-
-	_endCredits = new EndCredits(this);
-
-	_actorDialogueQueue = new ActorDialogueQueue(this);
-
-	_settings = new Settings(this);
-
-	_itemPickup = new ItemPickup(this);
-
-	_lights = new Lights(this);
-
-	// outtake player was initialized here in the original game - but this is done bit differently
-
-	_obstacles = new Obstacles(this);
-
-	_sceneScript = new SceneScript(this);
-
-	_debugger = new Debugger(this);
-	setDebugger(_debugger);
 
 	// This is the original startup in the game
-
-	_surfaceFront.create(640, 480, screenPixelFormat());
+	_surfaceFront.create(_system->getWidth(), _system->getHeight(), screenPixelFormat());
 	_surfaceFrontCreated = true;
-	_surfaceBack.create(640, 480, screenPixelFormat());
+	_surfaceBack.create(_system->getWidth(), _system->getHeight(), screenPixelFormat());
 	_surfaceBackCreated = true;
 
 	_time = new Time(this);
@@ -569,47 +595,6 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	} else {
 		debug("Download SUBTITLES.MIX from ScummVM's website to enable subtitles");
 	}
-
-	bool r = openArchive("STARTUP.MIX");
-	if (!r)
-		return false;
-
-	_gameInfo = new GameInfo(this);
-	if (!_gameInfo)
-		return false;
-
-	r = _gameInfo->open("GAMEINFO.DAT");
-	if (!r) {
-		return false;
-	}
-
-	if (hasSavegames) {
-		if (!loadSplash()) {
-			return false;
-		}
-	}
-
-	_waypoints = new Waypoints(this, _gameInfo->getWaypointCount());
-
-	_combat = new Combat(this);
-
-	_gameVars = new int[_gameInfo->getGlobalVarCount()]();
-
-	// Seed rand
-
-	_cosTable1024 = new Common::CosineTable(1024); // 10-bits = 1024 points for 2*PI;
-	_sinTable1024 = new Common::SineTable(1024);
-
-	_view = new View();
-
-	_sceneObjects = new SceneObjects(this, _view);
-
-	_gameFlags = new GameFlags();
-	_gameFlags->setFlagCount(_gameInfo->getFlagCount());
-
-	_items = new Items(this);
-
-	_audioCache = new AudioCache();
 
 	_audioMixer = new AudioMixer(this);
 
@@ -638,127 +623,201 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	//
 	syncSoundSettings();
 
-	_chapters = new Chapters(this);
-	if (!_chapters)
-		return false;
+	if (!_isNonInteractiveDemo) {
+		ConfMan.registerDefault("subtitles", "true");
+		ConfMan.registerDefault("sitcom", "false");
+		ConfMan.registerDefault("shorty", "false");
+		ConfMan.registerDefault("disable_stamina_drain", "false");
 
-	if (!openArchive("MUSIC.MIX"))
-		return false;
+		_sitcomMode                = ConfMan.getBool("sitcom");
+		_shortyMode                = ConfMan.getBool("shorty");
+		_disableStaminaDrain       = ConfMan.getBool("disable_stamina_drain");
 
-	if (!openArchive("SFX.MIX"))
-		return false;
+		// These are static objects in original game
+		_screenEffects = new ScreenEffects(this, 0x8000);
 
-	if (!openArchive("SPCHSFX.TLK"))
-		return false;
+		_endCredits = new EndCredits(this);
 
-	_overlays = new Overlays(this);
-	_overlays->init();
+		_actorDialogueQueue = new ActorDialogueQueue(this);
 
-	_zbuffer = new ZBuffer();
-	_zbuffer->init(640, 480);
+		_settings = new Settings(this);
 
-	int actorCount = (int)_gameInfo->getActorCount();
-	assert(actorCount < kActorCount);
-	for (int i = 0; i != actorCount; ++i) {
-		_actors[i] = new Actor(this, i);
-	}
-	_actors[kActorVoiceOver] = new Actor(this, kActorVoiceOver);
-	_playerActor = _actors[_gameInfo->getPlayerId()];
+		_itemPickup = new ItemPickup(this);
 
-	_playerActor->setFPS(15); // this seems redundant
+		_lights = new Lights(this);
+
+		// outtake player was initialized here in the original game - but this is done bit differently
+
+		_obstacles = new Obstacles(this);
+
+		_sceneScript = new SceneScript(this);
+
+		_debugger = new Debugger(this);
+		setDebugger(_debugger);
+
+		bool r = openArchive("STARTUP.MIX");
+		if (!r)
+			return false;
+
+		_gameInfo = new GameInfo(this);
+		if (!_gameInfo)
+			return false;
+
+		r = _gameInfo->open("GAMEINFO.DAT");
+		if (!r) {
+			return false;
+		}
+
+		if (hasSavegames) {
+			if (!loadSplash()) {
+				return false;
+			}
+		}
+
+		_waypoints = new Waypoints(this, _gameInfo->getWaypointCount());
+
+		_combat = new Combat(this);
+
+		_gameVars = new int[_gameInfo->getGlobalVarCount()]();
+
+		// Seed rand
+
+		_cosTable1024 = new Common::CosineTable(1024); // 10-bits = 1024 points for 2*PI;
+		_sinTable1024 = new Common::SineTable(1024);
+
+		_view = new View();
+
+		_sceneObjects = new SceneObjects(this, _view);
+
+		_gameFlags = new GameFlags();
+		_gameFlags->setFlagCount(_gameInfo->getFlagCount());
+
+		_items = new Items(this);
+
+		_audioCache = new AudioCache();
+
+		_chapters = new Chapters(this);
+		if (!_chapters)
+			return false;
+
+		if (!openArchive("MUSIC.MIX"))
+			return false;
+
+		if (!openArchive("SFX.MIX"))
+			return false;
+
+		if (!openArchive("SPCHSFX.TLK"))
+			return false;
+
+		_overlays = new Overlays(this);
+		_overlays->init();
+
+		_zbuffer = new ZBuffer();
+		_zbuffer->init(kOriginalGameWidth, kOriginalGameHeight);
+
+		int actorCount = (int)_gameInfo->getActorCount();
+		assert(actorCount < kActorCount);
+		for (int i = 0; i != actorCount; ++i) {
+			_actors[i] = new Actor(this, i);
+		}
+		_actors[kActorVoiceOver] = new Actor(this, kActorVoiceOver);
+		_playerActor = _actors[_gameInfo->getPlayerId()];
+
+		_playerActor->setFPS(15); // this seems redundant
 #if BLADERUNNER_ORIGINAL_BUGS
-	_playerActor->timerStart(kActorTimerRunningStaminaFPS, 200);
-#else
-	// Make code here similar to the bugfix in newGame in that
-	// we only start the timer in vanilla game mode (not Restored Content mode)
-	if (!_cutContent) {
 		_playerActor->timerStart(kActorTimerRunningStaminaFPS, 200);
-	}
+#else
+		// Make code here similar to the bugfix in newGame in that
+		// we only start the timer in vanilla game mode (not Restored Content mode)
+		if (!_cutContent) {
+			_playerActor->timerStart(kActorTimerRunningStaminaFPS, 200);
+		}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
-	_policeMaze = new PoliceMaze(this);
+		_policeMaze = new PoliceMaze(this);
 
-	_textActorNames = new TextResource(this);
-	if (!_textActorNames->open("ACTORS"))
-		return false;
+		_textActorNames = new TextResource(this);
+		if (!_textActorNames->open("ACTORS"))
+			return false;
 
-	_textCrimes = new TextResource(this);
-	if (!_textCrimes->open("CRIMES"))
-		return false;
+		_textCrimes = new TextResource(this);
+		if (!_textCrimes->open("CRIMES"))
+			return false;
 
-	_textClueTypes = new TextResource(this);
-	if (!_textClueTypes->open("CLUETYPE"))
-		return false;
+		_textClueTypes = new TextResource(this);
+		if (!_textClueTypes->open("CLUETYPE"))
+			return false;
 
-	_textKIA = new TextResource(this);
-	if (!_textKIA->open("KIA"))
-		return false;
+		_textKIA = new TextResource(this);
+		if (!_textKIA->open("KIA"))
+			return false;
 
-	_textSpinnerDestinations = new TextResource(this);
-	if (!_textSpinnerDestinations->open("SPINDEST"))
-		return false;
+		_textSpinnerDestinations = new TextResource(this);
+		if (!_textSpinnerDestinations->open("SPINDEST"))
+			return false;
 
-	_textVK = new TextResource(this);
-	if (!_textVK->open("VK"))
-		return false;
+		_textVK = new TextResource(this);
+		if (!_textVK->open("VK"))
+			return false;
 
-	_textOptions = new TextResource(this);
-	if (!_textOptions->open("OPTIONS"))
-		return false;
+		_textOptions = new TextResource(this);
+		if (!_textOptions->open("OPTIONS"))
+			return false;
 
-	_russianCP1251 = ((uint8)_textOptions->getText(0)[0]) == 209;
+		_russianCP1251 = ((uint8)_textOptions->getText(0)[0]) == 209;
 
-	_dialogueMenu = new DialogueMenu(this);
-	if (!_dialogueMenu->loadResources())
-		return false;
+		_dialogueMenu = new DialogueMenu(this);
+		if (!_dialogueMenu->loadResources())
+			return false;
 
-	_suspectsDatabase = new SuspectsDatabase(this, _gameInfo->getSuspectCount());
+		_suspectsDatabase = new SuspectsDatabase(this, _gameInfo->getSuspectCount());
 
-	_kia = new KIA(this);
+		_kia = new KIA(this);
 
-	_spinner = new Spinner(this);
+		_spinner = new Spinner(this);
 
-	_elevator = new Elevator(this);
+		_elevator = new Elevator(this);
 
-	_scores = new Scores(this);
+		_scores = new Scores(this);
 
-	_mainFont = Font::load(this, "KIA6PT.FON", 1, false);
+		_mainFont = Font::load(this, "KIA6PT.FON", 1, false);
 
-	_shapes = new Shapes(this);
-	_shapes->load("SHAPES.SHP");
+		_shapes = new Shapes(this);
+		_shapes->load("SHAPES.SHP");
 
-	_esper = new ESPER(this);
+		_esper = new ESPER(this);
 
-	_vk = new VK(this);
+		_vk = new VK(this);
 
-	_mouse = new Mouse(this);
-	_mouse->setCursor(0);
+		_mouse = new Mouse(this);
+		_mouse->setCursor(0);
 
-	_sliceAnimations = new SliceAnimations(this);
-	r = _sliceAnimations->open("INDEX.DAT");
-	if (!r)
-		return false;
+		_sliceAnimations = new SliceAnimations(this);
+		r = _sliceAnimations->open("INDEX.DAT");
+		if (!r)
+			return false;
 
-	r = _sliceAnimations->openCoreAnim();
-	if (!r) {
-		return false;
+		r = _sliceAnimations->openCoreAnim();
+		if (!r) {
+			return false;
+		}
+
+		_sliceRenderer = new SliceRenderer(this);
+		_sliceRenderer->setScreenEffects(_screenEffects);
+
+		_crimesDatabase = new CrimesDatabase(this, "CLUES", _gameInfo->getClueCount());
+
+		_scene = new Scene(this);
+
+		// Load INIT.DLL
+		InitScript initScript(this);
+		initScript.SCRIPT_Initialize_Game();
+
+		// Load AI-ACT1.DLL
+		_aiScripts = new AIScripts(this, actorCount);
+
+		initChapterAndScene();
 	}
-
-	_sliceRenderer = new SliceRenderer(this);
-	_sliceRenderer->setScreenEffects(_screenEffects);
-
-	_crimesDatabase = new CrimesDatabase(this, "CLUES", _gameInfo->getClueCount());
-
-	_scene = new Scene(this);
-
-	// Load INIT.DLL
-	InitScript initScript(this);
-	initScript.SCRIPT_Initialize_Game();
-
-	// Load AI-ACT1.DLL
-	_aiScripts = new AIScripts(this, actorCount);
-
-	initChapterAndScene();
 	return true;
 }
 
@@ -1198,10 +1257,10 @@ void BladeRunnerEngine::gameTick() {
 		// The surface front pixel format is 32 bit now,
 		// but the _zbuffer->getData() still returns 16bit pixels
 		// We need to copy pixel by pixel, converting each pixel from 16 to 32bit
-		for (int y = 0; y < 480; ++y) {
-			for (int x = 0; x < 640; ++x) {
+		for (int y = 0; y < kOriginalGameHeight; ++y) {
+			for (int x = 0; x < kOriginalGameWidth; ++x) {
 				uint8 a, r, g, b;
-				getGameDataColor(_zbuffer->getData()[y*640 + x], a, r, g, b);
+				getGameDataColor(_zbuffer->getData()[y*kOriginalGameWidth + x], a, r, g, b);
 				void   *dstPixel = _surfaceFront.getBasePtr(x, y);
 				drawPixel(_surfaceFront, dstPixel, _surfaceFront.format.ARGBToColor(a, r, g, b));
 			}
@@ -1217,9 +1276,21 @@ void BladeRunnerEngine::gameTick() {
 		//      Fixing this (storing ambient sounds and restoring them after the outtake has finished)
 		//      is too cumbersome to be worth it.
 		int ambientSoundsPreOuttakeVol = _mixer->getVolumeForSoundType(_mixer->kPlainSoundType);
+		int musicPreOuttakeVol = _mixer->getVolumeForSoundType(_mixer->kMusicSoundType);
+		int sfxPreOuttakeVol = _mixer->getVolumeForSoundType(_mixer->kSFXSoundType);
+		// Speech Sound Type (kSpeechSoundType) is the volume of the outtake video,
+		// so we don't mute that one
+		_mixer->setVolumeForSoundType(_mixer->kMusicSoundType, 0);
 		_mixer->setVolumeForSoundType(_mixer->kPlainSoundType, 0);
-		outtakePlay(_debugger->_dbgPendingOuttake.outtakeId, _debugger->_dbgPendingOuttake.notLocalized, _debugger->_dbgPendingOuttake.container);
+		_mixer->setVolumeForSoundType(_mixer->kSFXSoundType, 0);
+		if (_debugger->_dbgPendingOuttake.outtakeId == -1 && _debugger->_dbgPendingOuttake.container < -1) {
+			outtakePlay(_debugger->_dbgPendingOuttake.externalFilename, _debugger->_dbgPendingOuttake.notLocalized, _debugger->_dbgPendingOuttake.container);
+		} else {
+			outtakePlay(_debugger->_dbgPendingOuttake.outtakeId, _debugger->_dbgPendingOuttake.notLocalized, _debugger->_dbgPendingOuttake.container);
+		}
+		_mixer->setVolumeForSoundType(_mixer->kSFXSoundType, sfxPreOuttakeVol);
 		_mixer->setVolumeForSoundType(_mixer->kPlainSoundType, ambientSoundsPreOuttakeVol);
+		_mixer->setVolumeForSoundType(_mixer->kMusicSoundType, musicPreOuttakeVol);
 		_debugger->resetPendingOuttake();
 	}
 
@@ -2256,9 +2327,13 @@ void BladeRunnerEngine::loopQueuedDialogueStillPlaying() {
 void BladeRunnerEngine::outtakePlay(int id, bool noLocalization, int container) {
 	Common::String name = _gameInfo->getOuttake(id);
 
+	outtakePlay(name, noLocalization, container);
+}
+
+void BladeRunnerEngine::outtakePlay(const Common::String &basenameNoExt, bool noLocalization, int container) {
 	OuttakePlayer player(this);
 
-	player.play(name, noLocalization, container);
+	player.play(basenameNoExt, noLocalization, container);
 }
 
 bool BladeRunnerEngine::openArchive(const Common::String &name) {
@@ -2725,7 +2800,7 @@ void BladeRunnerEngine::blitToScreen(const Graphics::Surface &src) const {
 
 Graphics::Surface BladeRunnerEngine::generateThumbnail() const {
 	Graphics::Surface thumbnail;
-	thumbnail.create(640 / 8, 480 / 8, gameDataPixelFormat());
+	thumbnail.create(kOriginalGameWidth / 8, kOriginalGameHeight / 8, gameDataPixelFormat());
 
 	for (int y = 0; y < thumbnail.h; ++y) {
 		for (int x = 0; x < thumbnail.w; ++x) {

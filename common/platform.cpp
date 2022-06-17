@@ -55,6 +55,7 @@ const PlatformDescription g_platforms[] = {
 	{ "xbox", "xbox", "xbox", "Microsoft Xbox", kPlatformXbox },
 	{ "cdi", "cdi", "cdi", "Philips CD-i", kPlatformCDi },
 	{ "ios", "ios", "ios", "Apple iOS", kPlatformIOS },
+	{ "android", "android", "android", "Android", kPlatformAndroid },
 	{ "os2", "os2", "os2", "OS/2", kPlatformOS2 },
 	{ "beos", "beos", "beos", "BeOS", kPlatformBeOS },
 	{ "ppc", "ppc", "ppc", "PocketPC", kPlatformPocketPC },

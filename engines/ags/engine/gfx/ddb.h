@@ -21,12 +21,12 @@
 
 //=============================================================================
 //
-// Driver-dependant bitmap interface
+// Driver-dependant bitmap interface.
 //
-// TODO: split into texture object that has only tex data
-// and object describing a drawing operation, with ref to texture and
-// drawing parameters (modes, shaders, etc).
-// Then we will also be able to share one texture among multiple game entities.
+// This interface describes an individual sprite object. The actual texture
+// data (pixel data) may be shared among multiple DDBs, while DDB define
+// additional settings telling how to present the texture: transform, colorize,
+// and so on.
 //=============================================================================
 
 #ifndef AGS_ENGINE_GFX_DDB_H
@@ -38,8 +38,11 @@ namespace Engine {
 
 class IDriverDependantBitmap {
 public:
-	virtual int  GetTransparency() const = 0;
-	virtual void SetTransparency(int transparency) = 0;  // 0-255
+	// Get an arbitrary sprite ID, returns UINT32_MAX if does not have one
+	virtual uint32_t GetRefID() const = 0;
+
+	virtual int  GetAlpha() const = 0;
+	virtual void SetAlpha(int alpha) = 0;  // 0-255
 	virtual void SetFlippedLeftRight(bool isFlipped) = 0;
 	virtual void SetStretch(int width, int height, bool useResampler = true) = 0;
 	virtual void SetLightLevel(int light_level) = 0;   // 0-255

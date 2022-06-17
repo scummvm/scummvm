@@ -51,7 +51,7 @@ void Room2::jump_out_r1(int16 nr) {
 	_G(gameState)._personHide[P_CHEWY] = false;
 	clear_prog_ani();
 	switchRoom(1);
-	check_shad(2, 1);
+	checkShadow(2, 1);
 }
 
 void Room2::electrifyWalkway1() {

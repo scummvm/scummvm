@@ -20,6 +20,7 @@
  */
 
 #include "common/config-manager.h"
+
 #include "graphics/renderer.h"
 
 #include "engines/grim/debugger.h"

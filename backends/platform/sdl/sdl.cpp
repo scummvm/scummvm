@@ -204,13 +204,6 @@ void OSystem_SDL::initBackend() {
 			_logger->open(logFile);
 	}
 
-	// In case the user specified the screenshot path, we get it here.
-	// That way if it was specified on the command line we will not lose it
-	// when the launcher is started (as it clears the ConfMan transient domain).
-	_userScreenshotPath = ConfMan.get("screenshotpath");
-	if (!_userScreenshotPath.empty() && !_userScreenshotPath.hasSuffix("/"))
-		_userScreenshotPath += "/";
-
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	const char *sdlDriverName = SDL_GetCurrentVideoDriver();
 	// Allow the screen to turn off
@@ -763,7 +756,10 @@ Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
 
 //Not specified in base class
 Common::String OSystem_SDL::getScreenshotsPath() {
-	return _userScreenshotPath;
+	Common::String path = ConfMan.get("screenshotpath");
+	if (!path.empty() && !path.hasSuffix("/"))
+		path += "/";
+	return path;
 }
 
 #ifdef USE_OPENGL

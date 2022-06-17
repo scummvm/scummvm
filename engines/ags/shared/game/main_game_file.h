@@ -79,11 +79,7 @@ String GetMainGameFileErrorText(MainGameFileErrorType err);
 
 typedef TypedCodeError<MainGameFileErrorType, GetMainGameFileErrorText> MainGameFileError;
 typedef ErrorHandle<MainGameFileError> HGameFileError;
-#ifdef AGS_PLATFORM_SCUMMVM
-typedef std::shared_ptr<Stream> UStream;
-#else
 typedef std::unique_ptr<Stream> UStream;
-#endif
 
 // MainGameSource defines a successfully opened main game file
 struct MainGameSource {

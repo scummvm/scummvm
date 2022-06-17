@@ -126,7 +126,7 @@ void Room85::xit(int16 eib_nr) {
 void Room85::setup_func() {
 	calc_person_look();
 
-	const int xyPos = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	const int xyPos = _G(moveState)[P_CHEWY].Xypos[0];
 	int howDestX, nicDestX;
 	
 	if (xyPos > 255) {

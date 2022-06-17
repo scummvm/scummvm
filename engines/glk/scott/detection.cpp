@@ -44,7 +44,7 @@ GameDescriptor ScottMetaEngine::findGame(const char *gameId) {
 }
 
 bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[] = { ".z80", ".saga", ".dat", nullptr };
+	const char *const EXTENSIONS[] = {".z80", ".saga", ".dat", ".D64", nullptr};
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -73,7 +73,7 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 
 		// Scan through the Scott game list for a match
 		const GlkDetectionEntry *p = SCOTT_GAMES;
-		while (p->_md5 && p->_filesize != filesize && md5 != p->_md5)
+		while (p->_md5 && (p->_filesize != filesize || md5 != p->_md5))
 			++p;
 
 		if (!p->_gameId) {

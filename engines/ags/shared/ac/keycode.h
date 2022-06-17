@@ -268,6 +268,7 @@ struct KeyInput {
 	const static size_t UTF8_ARR_SIZE = 5;
 
 	eAGSKeyCode Key = eAGSKeyCodeNone; // actual key code
+	eAGSKeyCode CompatKey = eAGSKeyCodeNone; // old-style key code, combined with mods
 	int         Mod = 0; // key modifiers
 	int         UChar = 0; // full character value (supports unicode)
 	char        Text[UTF8_ARR_SIZE]{}; // character in a string format

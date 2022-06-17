@@ -19,7 +19,7 @@
  *
  */
 
-#if defined(WIN32) && !defined(__SYMBIAN32__)
+#if defined(WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include "backends/platform/sdl/win32/win32_wrapper.h"
@@ -495,7 +495,7 @@ bool Engine::existExtractedCDAudioFiles(uint track) {
  * @return			true, if this case is applicable and the warning is displayed
  */
 bool Engine::isDataAndCDAudioReadFromSameCD() {
-#if defined(WIN32) && !defined(__SYMBIAN32__)
+#if defined(WIN32)
 	// It is a known bug under Windows that games that play CD audio cause
 	// ScummVM to crash if the data files are read from the same CD. Check
 	// if this appears to be the case and issue a warning.
@@ -526,7 +526,7 @@ bool Engine::isDataAndCDAudioReadFromSameCD() {
 		dialog.runModal();
 		return true;
 	}
-#endif // defined(WIN32) && !defined(__SYMBIAN32__)
+#endif // defined(WIN32)
 	return false;
 }
 
@@ -666,7 +666,7 @@ void Engine::openMainMenuDialog() {
 	if (!_mainMenuDialog)
 		_mainMenuDialog = new MainMenuDialog(this);
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ttsMan != nullptr && ConfMan.hasKey("tts_enabled", "scummvm") && ConfMan.getBool("tts_enabled", "scummvm")) {
+	if (ttsMan != nullptr) {
 		ttsMan->pushState();
 		g_gui.initTextToSpeech();
 	}
@@ -697,7 +697,7 @@ void Engine::openMainMenuDialog() {
 		}
 	}
 
-	if (ttsMan != nullptr && ConfMan.hasKey("tts_enabled", "scummvm") && ConfMan.getBool("tts_enabled", "scummvm"))
+	if (ttsMan != nullptr)
 		ttsMan->popState();
 
 	g_system->applyBackendSettings();
@@ -707,21 +707,41 @@ void Engine::openMainMenuDialog() {
 
 bool Engine::warnUserAboutUnsupportedGame(Common::String msg) {
 	if (ConfMan.getBool("enable_unsupported_game_warning")) {
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if (ttsMan != nullptr) {
+			ttsMan->pushState();
+			g_gui.initTextToSpeech();
+		}
+
 		GUI::MessageDialog alert(!msg.empty() ? _("WARNING: ") + Common::U32String(msg) + _(" Shall we still run the game?") :
 				 _("WARNING: The game you are about to start is"
 			" not yet fully supported by ScummVM. As such, it is likely to be"
 			" unstable, and any saved game you make might not work in future"
 			" versions of ScummVM."), _("Start anyway"), _("Cancel"));
-		return alert.runModal() == GUI::kMessageOK;
+		int status = alert.runModal();
+
+		if (ttsMan != nullptr)
+			ttsMan->popState();
+
+		return status == GUI::kMessageOK;
 	}
 	return true;
 }
 
 void Engine::errorUnsupportedGame(Common::String extraMsg) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr) {
+		ttsMan->pushState();
+		g_gui.initTextToSpeech();
+	}
+
 	Common::String message = extraMsg.empty() ? _("This game is not supported.") : _("This game is not supported for the following reason:\n\n");
 	message += _(extraMsg);
 	message += "\n\n";
 	GUI::MessageDialog(message).runModal();
+
+	if (ttsMan != nullptr)
+		ttsMan->popState();
 }
 
 uint32 Engine::getTotalPlayTime() const {

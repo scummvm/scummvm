@@ -86,6 +86,8 @@ struct AGSPlatformDriver
 	virtual void DisplayAlert(const char *, ...) = 0;
 	virtual void AttachToParentConsole();
 	virtual int  GetLastSystemError();
+	// Optionally fill in config tree from the platform-specific config source
+	virtual void ReadConfiguration(Shared::ConfigTree &cfg) {}
 	// Get root directory for storing per-game shared data
 	virtual FSLocation GetAllUsersDataDirectory() {
 		return FSLocation(".");
@@ -164,12 +166,9 @@ struct AGSPlatformDriver
 	virtual void AdjustWindowStyleForFullscreen();
 	// Adjust application window's parameters to suit windowed mode
 	virtual void AdjustWindowStyleForWindowed();
-	virtual void RegisterGameWithGameExplorer();
-	virtual void UnRegisterGameWithGameExplorer();
 	virtual int  ConvertKeycodeToScanCode(int keyCode);
 	// Adjust window size to ensure it is in the supported limits
-	virtual void ValidateWindowSize(int &x, int &y, bool borderless) const {
-	}
+	virtual void ValidateWindowSize(int &x, int &y, bool /*borderless*/) const;
 
 	virtual int  InitializeCDPlayer() = 0;  // return 0 on success
 	virtual int  CDPlayerCommand(int cmdd, int datt) = 0;

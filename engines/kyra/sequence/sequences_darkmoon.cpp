@@ -28,8 +28,6 @@
 
 #include "common/system.h"
 
-#include "base/version.h"
-
 namespace Kyra {
 
 class DarkmoonSequenceHelper {
@@ -154,7 +152,7 @@ int DarkMoonEngine::mainMenu() {
 
 			of = _screen->setFont(Screen::FID_6_FNT);
 			op = _screen->setCurPage(2);
-			Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
+			Common::String versionString = "ScummVM " + _versionString;
 			_screen->printText(versionString.c_str(), 267 - versionString.size() * 6, _flags.platform == Common::kPlatformFMTowns ? 152 : 160, _flags.platform == Common::kPlatformAmiga ? 18 : 13, 0);
 			_screen->setFont(of);
 			_screen->_curPage = op;

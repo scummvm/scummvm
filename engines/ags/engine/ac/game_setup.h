@@ -92,11 +92,20 @@ struct GameSetup {
 	MouseSpeedDef mouse_speed_def;
 	bool  RenderAtScreenRes; // render sprites at screen resolution, as opposed to native one
 	int   Supersampling;
-	bool  clear_cache_on_room_change; // compatibility
+	size_t SpriteCacheSize = 0u;
+	bool  clear_cache_on_room_change; // for low-end devices: clear resource caches on room change
+	bool  load_latest_save; // load latest saved game on launch
 	ScreenRotation rotation;
+	bool  show_fps;
 
 	DisplayModeSetup Screen;
 	String software_render_driver;
+
+	// Optional keys for calling built-in save/restore dialogs;
+	// primarily meant for the test runs of the games where save functionality
+	// is not implemented (or does not work correctly).
+	int   key_save_game = 0;
+	int   key_restore_game = 0;
 
 	GameSetup();
 };

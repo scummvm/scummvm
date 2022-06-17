@@ -333,20 +333,8 @@ void SaveLoadChooserDialog::listSaves() {
 void SaveLoadChooserDialog::activate(int slot, const Common::U32String &description) {
 	if (!_saveList.empty() && slot < int(_saveList.size())) {
 		const SaveStateDescriptor &desc = _saveList[slot];
-		if (_saveMode) {
-			if (g_engine) {
-				const int currentPlayTime = g_engine->getTotalPlayTime();
-				const int savedPlayTime = desc.getPlayTimeMSecs();
-				if (currentPlayTime > 0 && savedPlayTime > 0 && currentPlayTime < savedPlayTime) {
-					GUI::MessageDialog warn(
-								_("WARNING: Existing save has longer gameplay duration than the "
-								  "current state. Are you sure you want to overwrite it?"), _("Yes"), _("No"));
-					if (warn.runModal() != GUI::kMessageOK)
-						return;
-				}
-			}
+		if (_saveMode)
 			_resultString = description.empty() ? desc.getDescription() : description;
-		}
 		setResult(desc.getSaveSlot());
 	}
 	close();
@@ -449,7 +437,7 @@ int SaveLoadChooserSimple::runIntern() {
 	return Dialog::runModal();
 }
 
-const Common::U32String &SaveLoadChooserSimple::getResultString() const {
+const Common::U32String SaveLoadChooserSimple::getResultString() const {
 	int selItem = _list->getSelected();
 	return (selItem >= 0) ? _list->getSelectedString() : _resultString;
 }
@@ -640,8 +628,7 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 		if (startEditMode) {
 			_list->startEditMode();
 
-			if (_chooseButton->isEnabled() && _list->getSelectedString() == _("Untitled saved game") &&
-					_list->getSelectionColor() == ThemeEngine::kFontColorAlternate) {
+			if (_chooseButton->isEnabled() && _list->getSelectedString() == _("Untitled saved game")) {
 				_list->setEditString(Common::U32String());
 				_list->setEditColor(ThemeEngine::kFontColorNormal);
 			}
@@ -703,7 +690,7 @@ void SaveLoadChooserSimple::updateSaveList() {
 	int curSlot = 0;
 	int saveSlot = 0;
 	Common::U32StringArray saveNames;
-	ListWidget::ColorList colors;
+	ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal;
 	for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x) {
 		// Handle gaps in the list of save games
 		saveSlot = x->getSaveSlot();
@@ -711,8 +698,7 @@ void SaveLoadChooserSimple::updateSaveList() {
 			while (curSlot < saveSlot) {
 				SaveStateDescriptor dummySave(_metaEngine, curSlot, "");
 				_saveList.insert_at(curSlot, dummySave);
-				saveNames.push_back(dummySave.getDescription());
-				colors.push_back(ThemeEngine::kFontColorNormal);
+				saveNames.push_back(GUI::ListWidget::getThemeColor(color) + dummySave.getDescription());
 				curSlot++;
 			}
 
@@ -729,12 +715,12 @@ void SaveLoadChooserSimple::updateSaveList() {
 		trimmedDescription.trim();
 		if (trimmedDescription.empty()) {
 			description = _("Untitled saved game");
-			colors.push_back(ThemeEngine::kFontColorAlternate);
+			color = ThemeEngine::kFontColorAlternate;
 		} else {
-			colors.push_back((x->getLocked() ? ThemeEngine::kFontColorAlternate : ThemeEngine::kFontColorNormal));
+			color = x->getLocked() ? ThemeEngine::kFontColorAlternate : ThemeEngine::kFontColorNormal;
 		}
 
-		saveNames.push_back(description);
+		saveNames.push_back(GUI::ListWidget::getThemeColor(color) + description);
 		curSlot++;
 	}
 
@@ -750,16 +736,16 @@ void SaveLoadChooserSimple::updateSaveList() {
 	}
 #endif
 
-	Common::String emptyDesc;
+	Common::U32String emptyDesc;
+	color = ThemeEngine::kFontColorNormal;
 	for (int i = curSlot; i <= maximumSaveSlots; i++) {
 		saveNames.push_back(emptyDesc);
 		SaveStateDescriptor dummySave(_metaEngine, i, "");
 		_saveList.push_back(dummySave);
-		colors.push_back(ThemeEngine::kFontColorNormal);
 	}
 
 	int selected = _list->getSelected();
-	_list->setList(saveNames, &colors);
+	_list->setList(saveNames);
 	if (selected >= 0 && selected < (int)saveNames.size())
 		_list->setSelected(selected);
 	else
@@ -810,7 +796,7 @@ SaveLoadChooserGrid::~SaveLoadChooserGrid() {
 	delete _pageDisplay;
 }
 
-const Common::U32String &SaveLoadChooserGrid::getResultString() const {
+const Common::U32String SaveLoadChooserGrid::getResultString() const {
 	return _resultString;
 }
 

@@ -1121,8 +1121,30 @@ bool Audio32::fadeChannel(const int16 channelIndex, const int16 targetVolume, co
 
 	AudioChannel &channel = getChannel(channelIndex);
 
-	if (channel.id.getType() != kResourceTypeAudio || channel.volume == targetVolume) {
+	if (channel.id.getType() != kResourceTypeAudio) {
 		return false;
+	}
+
+	// Do nothing when volume is already at the target
+	if (channel.volume == targetVolume) {
+		// WORKAROUND: GK2 has a script bug that locks up the game in many places
+		// when the music volume slider is set to lowest. This also occurs in
+		// the original. Instead of using kDoSoundMasterVolume, the slider sets
+		// the volume of every sound object along with a global that limits the
+		// maximum volume that any sound object can be set to. At the lowest
+		// setting, all sound object volumes are zero and can only be set or
+		// faded to zero. GK2 also fades many sounds and waits for them to
+		// complete in HandsOff mode. But the interpreter ignores attempts to
+		// fade a sound whose volume is already at the target, turning every
+		// fade wait into a lockup. We work around this by allowing GK2 fades
+		// to proceed if the current and target volume are both zero.
+		// Ideally this would be a script patch, but it's unclear how to do that
+		// and keep the expected delays that fading provides. 
+		// Example: Start of chapter 1, exit the farm interior and re-enter.
+		bool allowFadeToCurrent = (g_sci->getGameId() == GID_GK2 && targetVolume == 0);
+		if (!allowFadeToCurrent) {
+			return false;
+		}
 	}
 
 	if (steps && speed) {

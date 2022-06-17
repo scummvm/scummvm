@@ -89,6 +89,7 @@ void WetEngine::initSegment(ArcadeShooting *arc) {
 	uint32 randomSegmentShootSequence = _segmentShootSequenceOffset + _rnd->getRandomNumber(_segmentShootSequenceMax);
 	debugC(1, kHypnoDebugArcade, "Select random sequence %d", randomSegmentShootSequence);
 	SegmentShoots segmentShoots = arc->shootSequence[randomSegmentShootSequence];
+	_segments = arc->segments;
 	_shootSequence = segmentShoots.shootSequence;
 	_segmentRepetitionMax = segmentShoots.segmentRepetition; // Usually zero
 	_segmentRepetition = 0;
@@ -106,14 +107,13 @@ void WetEngine::initSegment(ArcadeShooting *arc) {
 void WetEngine::findNextSegment(ArcadeShooting *arc) {
 	debugC(1, kHypnoDebugArcade, "Repetition %d of %d", _segmentRepetition, _segmentRepetitionMax);
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
-	Segments segments = arc->segments;
 
 	if (_segmentRepetition < _segmentRepetitionMax) {
 		_segmentRepetition = _segmentRepetition + 1;
 	} else {
 		_segmentRepetition = 0;
 		_segmentRepetitionMax = 0;
-		if (segments[_segmentIdx].type == 0xb3) {
+		if (_segments[_segmentIdx].type == 0xb3) {
 			if (_arcadeMode == "Y1") {
 				if (_rnd->getRandomBit())
 					_segmentIdx = _segmentIdx + 1;
@@ -128,16 +128,16 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 				else
 					_segmentIdx = r + 4;
 
-				if (segments[_segmentIdx].type == 'L') {
+				if (_segments[_segmentIdx].type == 'L') {
 					_shootSequence = arc->shootSequence[11].shootSequence;
 					_segmentRepetitionMax = 0;
-				} else if (segments[_segmentIdx].type == 'R') {
+				} else if (_segments[_segmentIdx].type == 'R') {
 					_shootSequence = arc->shootSequence[12].shootSequence;
 					_segmentRepetitionMax = 0;
-				} else if (segments[_segmentIdx].type == 'A') {
+				} else if (_segments[_segmentIdx].type == 'A') {
 					_shootSequence = arc->shootSequence[15].shootSequence;
 					_segmentRepetitionMax = 0;
-				} else if (segments[_segmentIdx].type == 'P') {
+				} else if (_segments[_segmentIdx].type == 'P') {
 					r = _rnd->getRandomNumber(1);
 					_shootSequence = arc->shootSequence[13 + r].shootSequence; //13-14
 					_segmentRepetitionMax = 0;
@@ -145,7 +145,7 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 			} else
 				_segmentIdx = _segmentIdx + 1;
 
-		} else if (segments[_segmentIdx].type == 0xc5) {
+		} else if (_segments[_segmentIdx].type == 0xc5) {
 			if (_arcadeMode == "Y1") {
 				if (mousePos.x <= 106)
 					_segmentIdx = _segmentIdx + 1;
@@ -171,47 +171,58 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 				} else
 					_segmentIdx = _segmentIdx + 1;
 			} else
-				error("Invalid segment type for mode: %s at the end of segment %x", _arcadeMode.c_str(), segments[_segmentIdx].type);
+				error("Invalid segment type for mode: %s at the end of segment %x", _arcadeMode.c_str(), _segments[_segmentIdx].type);
 
-		} else if (segments[_segmentIdx].type == 0xc2) {
+		} else if (_segments[_segmentIdx].type == 0xc2) {
 			if (mousePos.x <= 160)
 				_segmentIdx = _segmentIdx + 1;
 			else
 				_segmentIdx = _segmentIdx + 2;
-		} else if (segments[_segmentIdx].type == 0xcc) {
+		} else if (_segments[_segmentIdx].type == 0xcc) {
 			if (mousePos.x <= 160)
 				_segmentIdx = _segmentIdx + 1;
-			else
+			else {
 				_segmentIdx = _segmentIdx + 2;
-		} else if (segments[_segmentIdx].type == 'Y') {
-			if (mousePos.x <= 160)
+				if (_arcadeMode == "Y3") {
+					ShootInfo si;
+					si.name = "SP_WALKER_U";
+					si.timestamp = 25;
+					_shootSequence.push_back(si);
+				}
+			}
+		} else if (_segments[_segmentIdx].type == 'Y') {
+			if (mousePos.x <= 160) {
 				_segmentIdx = _segmentIdx + 2;
-			else
+				if (_arcadeMode == "Y3") {
+					ShootInfo si;
+					si.name = "SP_WALKER_D";
+					si.timestamp = 25;
+					_shootSequence.push_back(si);
+				}
+			} else
 				_segmentIdx = _segmentIdx + 1;
 
-		/*} else if (segments[_segmentIdx].type == 'a') {
+		/*} else if (_segments[_segmentIdx].type == 'a') {
 			_segmentIdx = 1;*/
-		} else if (segments[_segmentIdx].type == 's') {
+		} else if (_segments[_segmentIdx].type == 's') {
 			_segmentIdx = _segmentIdx + 10; // _segmentIdx = 11;
 		} else {
 
 			// Objective checking
-			if (arc->objKillsRequired[_objIdx] > 0) {
-				if (_objKillsCount[_objIdx] >= arc->objKillsRequired[_objIdx] && _objMissesCount[_objIdx] <= arc->objMissesAllowed[_objIdx]) {
-					if (_objIdx == 0) {
-						_objIdx = 1;
-						if (_arcadeMode == "Y1") {
-							_segmentOffset = 8;
-							_segmentRepetition = 0;
-							_segmentShootSequenceOffset = 8;
-						}
-					} else {
-						_skipLevel = true; // RENAME
-						return;
+			if (availableObjectives() && checkArcadeObjectives()) {
+				if (_objIdx == 0) {
+					_objIdx = 1;
+					if (_arcadeMode == "Y1") {
+						_segmentOffset = 8;
+						_segmentRepetition = 0;
+						_segmentShootSequenceOffset = 8;
 					}
+				} else {
+					_loseLevel = true;
+					return;
 				}
 			}
-			if (segments[_segmentIdx].type == 0xc9) {
+			if (_segments[_segmentIdx].type == 0xc9) {
 				if (_arcadeMode == "Y3") {
 					_segmentOffset = _segmentIdx + 1;
 					_segmentShootSequenceOffset = 8;
@@ -227,21 +238,22 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 						_segmentShootSequenceMax = 5;
 					}
 				} else
-					error("Invalid segment type for mode: %s at the end of segment %x", _arcadeMode.c_str(), segments[_segmentIdx].type);
-			} else if (segments[_segmentIdx].type == 0xbb) {
+					error("Invalid segment type for mode: %s at the end of segment %x", _arcadeMode.c_str(), _segments[_segmentIdx].type);
+			} else if (_segments[_segmentIdx].type == 0xbb) {
 				_segmentOffset = 0;
 				_segmentShootSequenceOffset = 0;
 				_segmentShootSequenceMax = 7;
-			} else if (segments[_segmentIdx].type == 0x61) {
+			} else if (_segments[_segmentIdx].type == 0x61) {
 				_segmentOffset = _segmentOffset + 1; // _segmentOffset = 1;
 				_segmentShootSequenceOffset = 6;
 				_segmentShootSequenceMax = 4;
-			} else if (segments[_segmentIdx].type == 0x63) {
+			} else if (_segments[_segmentIdx].type == 0x63) {
 				_segmentOffset = _segmentOffset - 1; // _segmentOffset = 0;
 				//_segmentShootSequenceOffset = 0; // TODO
 				//_segmentShootSequenceMax = 7; // TODO
 			}
-
+			// TODO: refactor the following code to avoid using a variable here
+			bool addBarrier = false;
 			if (_arcadeMode == "Y4") {
 				if (_c40SegmentPath[_c40SegmentIdx] == _segmentIdx) {
 					_c40SegmentIdx++;
@@ -249,7 +261,7 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 					if (_c40lastTurn == int(_segmentIdx))
 						_health = 0;
 					else {
-						// TODO: this should also add a barrier near the end
+						addBarrier = true;
 						_c40lastTurn = int(_segmentIdx);
 					}
 				}
@@ -277,13 +289,115 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 
 				si.timestamp = 30 * (_segmentRepetitionMax + 1) - 3;
 				_shootSequence.push_back(si);
+			} else if (_arcadeMode == "Y4" && addBarrier) {
+				// Add a barrier near the end
+				ShootInfo si;
+				si.name = "SP_BLOCKADE";
+				si.timestamp = (30 * _segmentRepetitionMax) - 20;
+				_shootSequence.push_back(si);
 			}
 		}
 	}
 }
 
+bool WetEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting *arc) {
+	ArcadeTransition at = *transitions.begin();
+	int ttime = at.time;
+	if (ttime == 0) { // This special case is only reachable in c33
+		assert(_objIdx == 1);
+		transitions.pop_front();
+	} else if (_background->decoder->getCurFrame() > ttime) {
+
+		if (at.video == "NONE") {
+			//TODO
+			return true;
+		}
+
+		if (_playerFrameSeps.size() == 1) {
+			_playerFrameStart = _playerFrameEnd + 1;
+			_playerFrameSep = *_playerFrameSeps.begin();
+			_playerFrameSeps.pop_front();
+			_playerFrameEnd = _playerFrames.size();
+			_playerFrameIdx = _playerFrameStart;
+			debugC(1, kHypnoDebugArcade, "New separator frames %d %d %d", _playerFrameStart, _playerFrameSep, _playerFrameEnd);
+		} else if (_playerFrameSeps.size() >= 2) {
+			_playerFrameStart = _playerFrameEnd + 1;
+			_playerFrameSep = *_playerFrameSeps.begin();
+			_playerFrameSeps.pop_front();
+			_playerFrameEnd = *_playerFrameSeps.begin();
+			_playerFrameSeps.pop_front();
+			_playerFrameIdx = _playerFrameStart;
+			debugC(1, kHypnoDebugArcade, "New separator frames %d %d %d", _playerFrameStart, _playerFrameSep, _playerFrameEnd);
+		}
+
+		if (_levelId == 33) {
+			if (checkArcadeObjectives()) {
+				_objIdx = 1;
+			} else {
+				// We do not play the transition, just skip the level
+				_loseLevel = true;
+				return true;
+			}
+		} else if (_levelId == 52) {
+			// Ignore the first objective, this will be checked when the targets are missed
+			// just go to the second one
+			_objIdx = 1;
+		} else if (_levelId == 61 && transitions.size() == 1) {
+			// Check the first objective during the second transition
+			if (checkArcadeObjectives()) {
+				_objIdx = 1;
+			} else {
+				// We do not play the transition, just skip the level
+				_loseLevel = true;
+				return true;
+			}
+		}
+		if (at.video.empty() && !at.palette.empty()) {
+			_background->decoder->pauseVideo(true);
+			_currentPalette = at.palette;
+			loadPalette(_currentPalette);
+			_background->decoder->pauseVideo(false);
+			drawPlayer();
+			updateScreen(*_background);
+			drawScreen();
+		} else if (!at.video.empty()) {
+			_background->decoder->pauseVideo(true);
+			debugC(1, kHypnoDebugArcade, "Playing transition %s", at.video.c_str());
+			MVideo video(at.video, Common::Point(0, 0), false, true, false);
+			disableCursor();
+			runIntro(video);
+
+			if (!at.palette.empty())
+				_currentPalette = at.palette;
+
+			loadPalette(_currentPalette);
+			_background->decoder->pauseVideo(false);
+			drawPlayer();
+			updateScreen(*_background);
+			drawScreen();
+			drawCursorArcade(g_system->getEventManager()->getMousePos());
+			if (!_music.empty())
+				playSound(_music, 0, _musicRate); // restore music
+		} else
+			error ("Invalid transition at %d", ttime);
+
+		transitions.pop_front();
+		return true;
+	}
+	return false;
+}
+
+
 void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 	_checkpoint = _currentLevel;
+
+	_playerFrameSeps.clear();
+	for (Frames::iterator it =_playerFrames.begin(); it != _playerFrames.end(); ++it) {
+		(*it)->free();
+		delete (*it);
+	}
+	_playerFrames.clear();
+
 	if (_health < 0)
 		_health = 0;
 
@@ -296,13 +410,14 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 
 	if (isDemo() && _variant != "Demo" && _restoredContentEnabled) {
 		showDemoScore();
-	} else if (!isDemo() || (_variant == "Demo" && _language == Common::EN_USA)) {
+	} else if (!isDemo() || _variant == "Demo" || _variant == "Gen4") {
 		byte *palette;
 		Graphics::Surface *frame = decodeFrame("c_misc/zones.smk", 12, &palette);
 		loadPalette(palette, 0, 256);
 		uint32 c = kHypnoColorGreen; // green
 		int bonusCounter = 0;
 		int scoreCounter = _score - _bonus;
+		bool extraLife = false;
 		assert(scoreCounter >= 0);
 		bool skip = false;
 		Common::Event event;
@@ -310,10 +425,10 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 
 			drawImage(*frame, 0, 0, false);
 			drawString("scifi08.fgx", Common::String::format("Lives : %d", _lives), 36, 2, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "SHOTS FIRED", _shootsFired), 60, 46, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "ENEMY TARGETS", _enemyTargets), 60, 56, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "TARGETS DESTROYED", _targetsDestroyed), 60, 66, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "TARGETS MISSED", _targetsMissed), 60, 76, 0, c);
+			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "SHOTS FIRED", _stats.shootsFired), 60, 46, 0, c);
+			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "ENEMY TARGETS", _stats.enemyTargets), 60, 56, 0, c);
+			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "TARGETS DESTROYED", _stats.targetsDestroyed), 60, 66, 0, c);
+			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "TARGETS MISSED", _stats.targetsMissed), 60, 76, 0, c);
 			drawString("scifi08.fgx", Common::String::format("%-20s = %5d %%", "KILL RATIO", killRatio()), 60, 86, 0, c);
 			drawString("scifi08.fgx", Common::String::format("%-20s = %5d %%", "ACCURACY", accuracyRatio()), 60, 96, 0, c);
 			drawString("scifi08.fgx", Common::String::format("%-20s = %5d %%", "ENERGY", _health), 60, 106, 0, c);
@@ -344,6 +459,11 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 				drawString("scifi08.fgx", Common::String::format("%-20s = %3d pts", "SCORE", scoreCounter), 60, 126, 0, c);
 			}
 
+			extraLife |= checkScoreMilestones(scoreCounter); // This increase the number of lives, if necessary
+			if (extraLife) {
+				drawString("scifi08.fgx", "EXTRA LIFE", 164, 140, 0, kHypnoColorRed);
+			}
+
 			drawScreen();
 			g_system->delayMillis(25);
 		}
@@ -351,6 +471,38 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 		delete frame;
 	}
 
+	if (!arc->postStatsVideo.empty()) {
+		MVideo video(arc->postStatsVideo, Common::Point(0, 0), false, true, false);
+		disableCursor();
+		runIntro(video);
+	}
+}
+void WetEngine::restoreScoreMilestones(int score) {
+	if (score == 0) {
+		_scoreMilestones.clear();
+		_scoreMilestones.push_back(10000);
+		_scoreMilestones.push_back(25000);
+		_scoreMilestones.push_back(50000);
+		_scoreMilestones.push_back(100000);
+	} else {
+		while (true) {
+			if (_scoreMilestones.empty() || score < *_scoreMilestones.begin())
+				break;
+			_scoreMilestones.pop_front();
+		}
+	}
+}
+
+bool WetEngine::checkScoreMilestones(int score) {
+	bool extraLife = false;
+	while (true) {
+		if (_scoreMilestones.empty() || score < *_scoreMilestones.begin())
+			break;
+		_scoreMilestones.pop_front();
+		_lives = _lives + 1;
+		extraLife = true;
+	}
+	return extraLife;
 }
 
 uint32 WetEngine::findPaletteIndexZones(uint32 id) {
@@ -398,6 +550,8 @@ uint32 WetEngine::findPaletteIndexZones(uint32 id) {
 }
 
 void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
+	_health = arc->health;
+	_maxHealth = _health;
 	resetStatistics();
 	_checkpoint = _currentLevel;
 	MVideo *video;
@@ -443,9 +597,13 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 						break;
 					}
 					if (!arc->briefingVideo.empty()) {
+						Graphics::Surface *bframe = decodeFrame(arc->briefingVideo, 1, &palette);
+						loadPalette(palette, 0, 256);
 						video = new MVideo(arc->briefingVideo, Common::Point(44, 22), false, false, false);
 						runIntro(*video);
 						delete video;
+						bframe->free();
+						delete bframe;
 					}
 					showedBriefing = true;
 					break;
@@ -518,27 +676,61 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 
 	if (arc->mode == "YT") {
 		_c33PlayerCursor = decodeFrames("c33/c33i2.smk");
+		_c33UseMouse = true;
+		_c33PlayerDirection.clear();
 	}
+	if (arc->mode == "Y3") {
+		bool started = startCountdown(420); // 7 minutes
+		if (!started)
+			error("Failed to start countdown in level %d!", arc->id);
+	} else
+		_timerStarted = false;
 
 }
 
 void WetEngine::pressedKey(const int keycode) {
 	if (keycode == Common::KEYCODE_c) {
-		if (_cheatsEnabled) {
-			_skipLevel = true;
-			return;
-		}
 		_background->decoder->pauseVideo(true);
 		showCredits();
-		//loadPalette(currentPalette); //FIXME
+		loadPalette(_currentPalette);
 		changeScreenMode("320x200");
 		_background->decoder->pauseVideo(false);
 		updateScreen(*_background);
 		drawScreen();
+		if (!_music.empty())
+			playSound(_music, 0, _musicRate); // restore music
+	} else if (keycode == Common::KEYCODE_s) { // Added for testing
+		if (_cheatsEnabled) {
+			_skipLevel = true;
+		}
 	} else if (keycode == Common::KEYCODE_k) { // Added for testing
 		_health = 0;
 	} else if (keycode == Common::KEYCODE_ESCAPE) {
 		openMainMenuDialog();
+	} else if (keycode == Common::KEYCODE_LEFT) {
+		if (_arcadeMode == "YT" && _c33PlayerPosition.x > 0) {
+			_c33UseMouse = false;
+			if (_c33PlayerDirection.size() < 3)
+				_c33PlayerDirection.push_back(kPlayerLeft);
+		}
+	} else if (keycode == Common::KEYCODE_DOWN) {
+		if (_arcadeMode == "YT" && _c33PlayerPosition.y < 130) { // Viewport value minus 30
+			_c33UseMouse = false;
+			if (_c33PlayerDirection.size() < 3)
+				_c33PlayerDirection.push_back(kPlayerBottom);
+		}
+	} else if (keycode == Common::KEYCODE_RIGHT) {
+		if (_arcadeMode == "YT" && _c33PlayerPosition.x < _screenW) {
+			_c33UseMouse = false;
+			if (_c33PlayerDirection.size() < 3)
+				_c33PlayerDirection.push_back(kPlayerRight);
+		}
+	} else if (keycode == Common::KEYCODE_UP) {
+		if (_arcadeMode == "YT" && _c33PlayerPosition.y > 0) {
+			_c33UseMouse = false;
+			if (_c33PlayerDirection.size() < 3)
+				_c33PlayerDirection.push_back(kPlayerTop);
+		}
 	}
 }
 
@@ -546,19 +738,55 @@ Common::Point WetEngine::getPlayerPosition(bool needsUpdate) {
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
 	if (_arcadeMode == "YT") {
 		if (needsUpdate) {
-			Common::Point diff = mousePos - _c33PlayerPosition;
-			if (diff.x > 1 || diff.y > 1)
-				diff = diff / 10;
-			_c33PlayerPosition = _c33PlayerPosition + diff;
+			if (!_c33UseMouse) {
+				disableCursor();
+				if (_c33PlayerDirection.size() == 0)
+					drawImage(*_c33PlayerCursor[10], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+				else if (_c33PlayerDirection.front() == kPlayerRight) {
+					_c33PlayerPosition.x = _c33PlayerPosition.x + 4;
+					drawImage(*_c33PlayerCursor[4], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+				} else if (_c33PlayerDirection.front() == kPlayerLeft) {
+					_c33PlayerPosition.x = _c33PlayerPosition.x - 4;
+					drawImage(*_c33PlayerCursor[8], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+				} else if (_c33PlayerDirection.front() == kPlayerBottom) {
+					_c33PlayerPosition.y = _c33PlayerPosition.y + 4;
+					drawImage(*_c33PlayerCursor[12], _c33PlayerPosition.x - 10,  _c33PlayerPosition.y, true);
+				} else if (_c33PlayerDirection.front() == kPlayerTop) {
+					_c33PlayerPosition.y = _c33PlayerPosition.y - 4;
+					drawImage(*_c33PlayerCursor[10], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+				} else
+					error("Invalid condition in getPlayerPosition");
 
-			if (diff.x > 0 && abs(diff.x) > abs(diff.y))
-				drawImage(*_c33PlayerCursor[4], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
-			else if (diff.x < 0 && abs(diff.x) > abs(diff.y))
-				drawImage(*_c33PlayerCursor[8], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
-			else if (diff.y > 0)
-				drawImage(*_c33PlayerCursor[12], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
-			else
-				drawImage(*_c33PlayerCursor[10], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+				if (_c33PlayerDirection.size() > 0)
+					_c33PlayerDirection.pop_front();
+			} else {
+				Common::Point diff = mousePos - _c33PlayerPosition;
+				if (abs(diff.x) > 1 || abs(diff.y) > 1)
+					diff = diff / 10;
+
+				if (abs(diff.x) >= 10)
+					diff.x = (diff.x / abs(diff.x)) * 10;
+
+				if (abs(diff.y) >= 10)
+					diff.y = (diff.x / abs(diff.x)) * 10;
+
+				_c33PlayerPosition = _c33PlayerPosition + diff;
+
+				if (diff.x > 0 && abs(diff.x) > abs(diff.y))
+					drawImage(*_c33PlayerCursor[4], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+				else if (diff.x < 0 && abs(diff.x) > abs(diff.y))
+					drawImage(*_c33PlayerCursor[8], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+				else if (diff.y > 0)
+					drawImage(*_c33PlayerCursor[12], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+				else
+					drawImage(*_c33PlayerCursor[10], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+			}
+		}
+		uint32 c = _compositeSurface->getPixel(_c33PlayerPosition.x, _c33PlayerPosition.y);
+		if (c >= 225 && c <= 231) {
+			if (!_infiniteHealthCheat)
+				_health = _health - 1;
+			generateStaticEffect();
 		}
 		return _c33PlayerPosition;
 	}
@@ -568,7 +796,10 @@ Common::Point WetEngine::getPlayerPosition(bool needsUpdate) {
 void WetEngine::drawCursorArcade(const Common::Point &mousePos) {
 	int i = detectTarget(mousePos);
 	if (_arcadeMode == "YT") {
-		changeCursor("arcade");
+		if (_c33UseMouse)
+			changeCursor("arcade");
+		else
+			disableCursor();
 		return;
 	}
 
@@ -582,7 +813,8 @@ bool WetEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
 	if (_ammo <= 0)
 		return false;
 
-	_ammo--;
+	if (!_infiniteAmmoCheat)
+		_ammo--;
 	incShotsFired();
 	return clickedPrimaryShoot(mousePos);
 }
@@ -591,7 +823,8 @@ void WetEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 	if (s->name == "SP_SWITCH_R" || s->name == "SP_SWITCH_L") {
 		_health = 0;
 	} else if (s->name == "SP_LIZARD1") {
-		_health = _health - 15;
+		if (!_infiniteHealthCheat)
+			_health = _health - 15;
 		_background->decoder->pauseVideo(true);
 		MVideo video(arc->additionalVideo, Common::Point(0, 0), false, true, false);
 		runIntro(video);
@@ -599,19 +832,20 @@ void WetEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		_background->decoder->pauseVideo(false);
 		updateScreen(*_background);
 		drawScreen();
-	} else if (_levelId == 60 && s->name == "DOOR1") {
+	} else if (s->name.hasPrefix("DOOR")) {
 		_health = 0;
 		_background->decoder->pauseVideo(true);
-		// In the last level, the hit boss video is used to store this ending
+		// In some levels, the hit boss video is used to store this ending
 		MVideo video(arc->hitBoss1Video, Common::Point(0, 0), false, true, false);
 		runIntro(video);
-		loadPalette(arc->backgroundPalette);
+		loadPalette(_currentPalette);
 		_background->decoder->pauseVideo(false);
 		updateScreen(*_background);
 		drawScreen();
 		_skipDefeatVideo = true;
 	} else if (s->attackFrames.empty()) {
-		_health = _health - s->attackWeight;
+		if (!_infiniteHealthCheat)
+			_health = _health - s->attackWeight;
 		hitPlayer();
 	}
 }
@@ -630,7 +864,7 @@ void WetEngine::missNoTarget(ArcadeShooting *arc) {
 			updateScreen(*_background);
 			drawScreen();
 			if (!_music.empty())
-				playSound(_music, 0, arc->musicRate); // restore music
+				playSound(_music, 0, _musicRate); // restore music
 			break;
 		} else if (it->name == "SP_BOSS2" && !arc->missBoss2Video.empty()) {
 			_background->decoder->pauseVideo(true);
@@ -643,8 +877,39 @@ void WetEngine::missNoTarget(ArcadeShooting *arc) {
 			updateScreen(*_background);
 			drawScreen();
 			if (!_music.empty())
-				playSound(_music, 0, arc->musicRate); // restore music
+				playSound(_music, 0, _musicRate); // restore music
 			break;
+		}
+	}
+}
+
+void WetEngine::generateStaticEffect() {
+	// random static
+	uint8 c = _compositeSurface->getPixel(150, 120); // some pixel in the middle
+	if (c != 0 && c != 254) {
+		for (int i = 0; i < _screenW; i++) {
+			for (int j = 50; j < 60; j++) {
+				c = _rnd->getRandomBit() ? 254 : 0;
+				_compositeSurface->setPixel(i, j, c);
+			}
+		}
+
+		for (int i = 0; i < _screenW; i++) {
+			for (int j = 80; j < 90; j++) {
+				c = _rnd->getRandomBit() ? 254 : 0;
+				_compositeSurface->setPixel(i, j, c);
+			}
+		}
+
+		for (int i = 0; i < _screenW; i++) {
+			for (int j = 120; j < 150; j++) {
+				c = _rnd->getRandomBit() ? 254 : 0;
+				_compositeSurface->setPixel(i, j, c);
+			}
+		}
+		drawScreen();
+		if (!_additionalSound.empty()) {
+			playSound(_soundPath + _additionalSound, 1, 11025);
 		}
 	}
 }
@@ -671,9 +936,11 @@ void WetEngine::drawShoot(const Common::Point &mousePos) {
 	uint32 c = kHypnoColorYellow;
 
 	if (_arcadeMode == "YT") {
-		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x, mousePos.y + 1, c);
-		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x, mousePos.y, c);
-		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x, mousePos.y - 1, c);
+		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x + 5, mousePos.y, c);
+		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x + 5, mousePos.y, c);
+
+		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x - 5, mousePos.y, c);
+		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x - 5, mousePos.y, c);
 	} else if (_arcadeMode == "Y4") {
 		_compositeSurface->drawLine(_screenW/2 - 50, _screenH, mousePos.x, mousePos.y, c);
 		_compositeSurface->drawLine(_screenW/2 - 50, _screenH, mousePos.x - 1, mousePos.y, c);
@@ -709,6 +976,11 @@ void WetEngine::drawShoot(const Common::Point &mousePos) {
 }
 
 void WetEngine::drawPlayer() {
+	uint8 segmentType = _segments[_segmentIdx].type;
+	if (segmentType == 0xc5 || segmentType == 0xc2 || segmentType == 0xcc)
+		if (_background->decoder->getCurFrame() % 3 > 0) // Avoid flashing too much
+			drawString("block05.fgx", _directionString, 113, 13, 80, kHypnoColorCyan);
+
 	// TARGET ACQUIRED frame
 	uint32 c = kHypnoColorGreen; // green
 	_compositeSurface->drawLine(113, 1, 119, 1, c);
@@ -720,11 +992,26 @@ void WetEngine::drawPlayer() {
 	_compositeSurface->drawLine(113, 9, 119, 9, c);
 	_compositeSurface->drawLine(200, 9, 206, 9, c);
 
+	if (_timerStarted) {
+		assert(_arcadeMode == "Y3");
+		c = kHypnoColorYellow;
+		uint32 minutes = _countdown / 60;
+		uint32 seconds = _countdown % 60;
+		drawString("block05.fgx", Common::String::format("CLOCK %02d:%02d", minutes, seconds), 19, 11, 0, c);
+
+		const chapterEntry *entry = _chapterTable[_levelId];
+		Common::Point ep(entry->energyPos[0], entry->energyPos[1]);
+
+		Common::Rect r = Common::Rect(ep.x - 2, ep.y + 6, ep.x + 69, ep.y + 15);
+		_compositeSurface->frameRect(r, kHypnoColorGreen);
+
+	}
+
 	c = kHypnoColorRed; // red ?
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
 	int i = detectTarget(mousePos);
 	if (i >= 0)
-		drawString("block05.fgx", "TARGET ACQUIRED", 116, 3, 80, c);
+		drawString("block05.fgx", _targetString.c_str(), 116, 3, 80, c);
 
 	if (_arcadeMode == "Y1" || _arcadeMode == "Y3")
 		return;
@@ -773,25 +1060,29 @@ void WetEngine::drawHealth() {
 		Common::Point ep(entry->energyPos[0], entry->energyPos[1]);
 		Common::Point sp(entry->scorePos[0], entry->scorePos[1]);
 		Common::Point op(entry->objectivesPos[0], entry->objectivesPos[1]);
+		Common::String healthFormat = _healthString + " %d%%";
+		drawString("block05.fgx", Common::String::format(healthFormat.c_str(), p), ep.x, ep.y, 65, c);
+		Common::String scoreFormat = _scoreString + "  %04d";
+		Common::String moFormat = _objString + " %d/%d";
 
 		if (_arcadeMode == "Y1" || _arcadeMode == "Y3" || _arcadeMode == "Y4" || _arcadeMode == "Y5") {
 			Common::Rect r;
-			r = Common::Rect(ep.x - 2, ep.y - 2, ep.x + 69, sp.y + 9);
+			r = Common::Rect(ep.x - 2, ep.y - 2, ep.x + 69, sp.y + 7);
 			_compositeSurface->frameRect(r, kHypnoColorGreen);
 
-			r = Common::Rect(sp.x - 2, sp.y - 2, sp.x + 74, sp.y + 8);
+			r = Common::Rect(sp.x - 2, sp.y - 2, sp.x + 74, sp.y + 7);
 			_compositeSurface->frameRect(r, kHypnoColorGreen);
 
-			// TODO: not rendering correctly
-			//r = Common::Rect(op.x - 2, op.y - 2, op.x + 75, op.y + 9);
-			//_compositeSurface->frameRect(r, kHypnoColorGreen);
+			r = Common::Rect(op.x - 2, op.y - 2, op.x + 74, op.y + 7);
+			_compositeSurface->frameRect(r, kHypnoColorGreen);
+
+			scoreFormat = _scoreString + " %04d";
+			moFormat = _objString + "   %d/%d";
 		}
 
-		drawString("block05.fgx", Common::String::format("ENERGY %d%%", p), ep.x, ep.y, 65, c);
-		drawString("block05.fgx", Common::String::format("SCORE  %04d", s), sp.x, sp.y, 72, c);
-		// Objectives are always in the zero in the demo
+		drawString("block05.fgx", Common::String::format(scoreFormat.c_str(), s), sp.x, sp.y, 72, c);
 		if (op.x > 0 && op.y > 0)
-			drawString("block05.fgx", Common::String::format("M.O.  %d/%d", mo, mm), op.x, op.y, 60, c);
+			drawString("block05.fgx", Common::String::format(moFormat.c_str(), mo, mm), op.x, op.y, 60, c);
 	}
 }
 
@@ -807,6 +1098,7 @@ void WetEngine::drawAmmo() {
 	if (d >= 13)
 		return;
 	Common::Point p(entry->ammoPos[0], entry->ammoPos[1]);
+	int ao = entry->ammoOffset;
 	Common::Rect r;
 	if (_arcadeMode == "Y1" || _arcadeMode == "Y3" || _arcadeMode == "Y4" || _arcadeMode == "Y5") {
 		r = Common::Rect(p.x - 1, p.y - 1, p.x + 16, p.y + 14);
@@ -816,9 +1108,19 @@ void WetEngine::drawAmmo() {
 	if (_levelId / 10 == 5 && _arcadeMode != "Y5") {
 		r = Common::Rect(p.x, p.y + d, p.x + 13, p.y + 13);
 		_compositeSurface->fillRect(r, kHypnoColorWhiteOrBlue); // blue
+
+		if (ao > 0) {
+			r = Common::Rect(p.x + ao, p.y + d, p.x + 13 + ao, p.y + 13);
+			_compositeSurface->fillRect(r, kHypnoColorWhiteOrBlue); // blue
+		}
 	} else {
 		r = Common::Rect(p.x, p.y + d, p.x + 15, p.y + 13);
 		_compositeSurface->fillRect(r, kHypnoColorWhiteOrBlue); // blue
+
+		if (ao > 0) {
+			r = Common::Rect(p.x + ao, p.y + d, p.x + 15 + ao, p.y + 13);
+			_compositeSurface->fillRect(r, kHypnoColorWhiteOrBlue); // blue
+		}
 	}
 }
 

@@ -64,7 +64,7 @@ typedef int HPOLYGON;
 // i.e. it gets a Z position of 0
 
 #define Z_INV_BRECT	10	// Inventory background rectangle
-#define Z_INV_MFRAME	15	// Inventory window frame
+#define Z_INV_MFRAME	((TinselVersion == 3) ? 16 : 15)	// Inventory window frame
 #define Z_INV_HTEXT	15	// Inventory heading text
 #define Z_INV_ICONS	16	// Icons in inventory
 #define Z_INV_ITEXT	995	// Icon text
@@ -85,6 +85,7 @@ typedef int HPOLYGON;
 #define Z_TOPW_TEXT	Z_TAG_TEXT
 
 // Started a collection of assorted maximum numbers here:
+// TODO: Noir only has two movers - deal with that
 #define MAX_MOVERS	6	// Moving actors using path system
 #define MAX_SAVED_ACTORS 32	// Saved 'Normal' actors
 #define MAX_SAVED_ALIVES 512	// Saves actors'lives

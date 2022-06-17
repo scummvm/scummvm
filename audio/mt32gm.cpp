@@ -378,6 +378,24 @@ void MidiDriver_MT32GM::close() {
 	}
 }
 
+bool MidiDriver_MT32GM::isReady(int8 source) {
+	Common::StackLock lock(_sysExQueueMutex);
+
+	// For an unspecified source, just return if the queue is empty or not.
+	if (source < 0)
+		return _sysExQueue.empty();
+
+	// For a specific source, check if there is a SysEx for that source in the
+	// queue.
+	for (Common::ListInternal::Iterator<SysExData> it = _sysExQueue.begin();
+			it != _sysExQueue.end(); it++) {
+		if (it->source == source)
+			return false;
+	}
+
+	return true;
+}
+
 uint32 MidiDriver_MT32GM::property(int prop, uint32 param) {
 	switch (prop) {
 	case PROP_MIDI_DATA_REVERSE_PANNING:
@@ -404,7 +422,7 @@ void MidiDriver_MT32GM::send(int8 source, uint32 b) {
 	processEvent(source, b, outputChannel, controlData);
 }
 
-// MIDI messages can be found at http://www.midi.org/techspecs/midimessages.php
+// MIDI messages can be found at https://web.archive.org/web/20120128110425/http://www.midi.org/techspecs/midimessages.php
 void MidiDriver_MT32GM::processEvent(int8 source, uint32 b, uint8 outputChannel, MidiChannelControlData &controlData, bool channelLockedByOtherSource) {
 	assert(source < MAXIMUM_SOURCES);
 
@@ -458,36 +476,36 @@ void MidiDriver_MT32GM::applyControllerDefaults(uint8 source, MidiChannelControl
 	if (outputChannel != MIDI_RHYTHM_CHANNEL) {
 		// Apply default bank and program only to melodic channels.
 		if (_controllerDefaults.instrumentBank >= 0 && controlData.instrumentBank != _controllerDefaults.instrumentBank) {
-			send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_BANK_SELECT_MSB, _controllerDefaults.instrumentBank);
-			send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_BANK_SELECT_LSB, 0);
+			controlChange(outputChannel, MIDI_CONTROLLER_BANK_SELECT_MSB, _controllerDefaults.instrumentBank, source, controlData);
+			controlChange(outputChannel, MIDI_CONTROLLER_BANK_SELECT_LSB, 0, source, controlData);
 		}
-		if (_controllerDefaults.program >= 0 && controlData.program != _controllerDefaults.program) {
-			send(source, MIDI_COMMAND_PROGRAM_CHANGE | outputChannel, _controllerDefaults.program, 0);
+		if (_controllerDefaults.program[outputChannel] >= 0 && controlData.program != _controllerDefaults.program[outputChannel]) {
+			programChange(outputChannel, _controllerDefaults.program[outputChannel], source, controlData);
 		}
 	} else {
 		// Apply default drumkit only to the rhythm channel.
 		if (_controllerDefaults.drumkit >= 0 && controlData.program != _controllerDefaults.drumkit) {
-			send(source, MIDI_COMMAND_PROGRAM_CHANGE | outputChannel, _controllerDefaults.drumkit, 0);
+			programChange(outputChannel, _controllerDefaults.drumkit, source, controlData);
 		}
 	}
 	if (_controllerDefaults.channelPressure >= 0 && controlData.channelPressure != _controllerDefaults.channelPressure) {
-		send(source, MIDI_COMMAND_CHANNEL_AFTERTOUCH | outputChannel, _controllerDefaults.channelPressure, 0);
+		channelAftertouch(outputChannel, _controllerDefaults.channelPressure, source, controlData);
 	}
 	if (_controllerDefaults.pitchBend >= 0 && controlData.pitchWheel != _controllerDefaults.pitchBend) {
-		send(source, MIDI_COMMAND_PITCH_BEND | outputChannel, _controllerDefaults.pitchBend & 0x7F, _controllerDefaults.pitchBend >> 7);
+		pitchBend(outputChannel, _controllerDefaults.pitchBend & 0x7F, _controllerDefaults.pitchBend >> 7, source, controlData);
 	}
 
 	if (_controllerDefaults.modulation >= 0 && controlData.modulation != _controllerDefaults.modulation) {
-		send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_MODULATION, _controllerDefaults.modulation);
+		controlChange(outputChannel, MIDI_CONTROLLER_MODULATION, _controllerDefaults.modulation, source, controlData);
 	}
 	if (_controllerDefaults.volume >= 0 && controlData.volume != _controllerDefaults.volume) {
-		send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_VOLUME, _controllerDefaults.volume);
+		controlChange(outputChannel, MIDI_CONTROLLER_VOLUME, _controllerDefaults.volume, source, controlData);
 	}
 	if (_controllerDefaults.panning >= 0 && controlData.panPosition != _controllerDefaults.panning) {
-		send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_PANNING, _controllerDefaults.panning);
+		controlChange(outputChannel, MIDI_CONTROLLER_PANNING, _controllerDefaults.panning, source, controlData);
 	}
 	if (_controllerDefaults.expression >= 0 && controlData.expression != _controllerDefaults.expression) {
-		send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_EXPRESSION, _controllerDefaults.expression);
+		controlChange(outputChannel, MIDI_CONTROLLER_EXPRESSION, _controllerDefaults.expression, source, controlData);
 	}
 
 	// RPN will be changed by setting pitch bend sensitivity, so store the
@@ -495,10 +513,10 @@ void MidiDriver_MT32GM::applyControllerDefaults(uint8 source, MidiChannelControl
 	uint16 rpn = controlData.rpn;
 	bool setRpn = false;
 	if (_controllerDefaults.pitchBendSensitivity >= 0 && controlData.pitchBendSensitivity != _controllerDefaults.pitchBendSensitivity) {
-		send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_RPN_MSB, MIDI_RPN_PITCH_BEND_SENSITIVITY >> 8);
-		send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_RPN_LSB, MIDI_RPN_PITCH_BEND_SENSITIVITY & 0xFF);
-		send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_DATA_ENTRY_MSB, _controllerDefaults.pitchBendSensitivity);
-		send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_DATA_ENTRY_LSB, 0);
+		controlChange(outputChannel, MIDI_CONTROLLER_RPN_MSB, MIDI_RPN_PITCH_BEND_SENSITIVITY >> 8, source, controlData);
+		controlChange(outputChannel, MIDI_CONTROLLER_RPN_LSB, MIDI_RPN_PITCH_BEND_SENSITIVITY & 0xFF, source, controlData);
+		controlChange(outputChannel, MIDI_CONTROLLER_DATA_ENTRY_MSB, _controllerDefaults.pitchBendSensitivity, source, controlData);
+		controlChange(outputChannel, MIDI_CONTROLLER_DATA_ENTRY_LSB, 0, source, controlData);
 		if (rpn != controlData.rpn)
 			// Active RPN was changed; reset it to previous value (or default).
 			setRpn = true;
@@ -510,8 +528,8 @@ void MidiDriver_MT32GM::applyControllerDefaults(uint8 source, MidiChannelControl
 	}
 
 	if (setRpn) {
-		send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_RPN_MSB, rpn >> 8);
-		send(source, MIDI_COMMAND_CONTROL_CHANGE | outputChannel, MIDI_CONTROLLER_RPN_LSB, rpn & 0xFF);
+		controlChange(outputChannel, MIDI_CONTROLLER_RPN_MSB, rpn >> 8, source, controlData);
+		controlChange(outputChannel, MIDI_CONTROLLER_RPN_LSB, rpn & 0xFF, source, controlData);
 	}
 }
 
@@ -718,6 +736,10 @@ void MidiDriver_MT32GM::programChange(byte outputChannel, byte patchId, int8 sou
 	if (channelLockedByOtherSource)
 		return;
 
+	if (_instrumentRemapping && outputChannel != MIDI_RHYTHM_CHANNEL)
+		// Apply instrument remapping (if specified) to instrument channels.
+		patchId = _instrumentRemapping[patchId];
+
 	if (_midiType == MT_MT32) {
 		if (outputChannel == MIDI_RHYTHM_CHANNEL &&
 				!(!_nativeMT32 && _enableGS && patchId == 0x7F)) {
@@ -877,17 +899,18 @@ uint16 MidiDriver_MT32GM::sysExNoDelay(const byte *msg, uint16 length) {
 	return delay;
 }
 
-void MidiDriver_MT32GM::sysExQueue(const byte *msg, uint16 length) {
+void MidiDriver_MT32GM::sysExQueue(const byte *msg, uint16 length, int8 source) {
 	SysExData sysEx;
 	memcpy(sysEx.data, msg, length);
 	sysEx.length = length;
+	sysEx.source = source;
 
 	_sysExQueueMutex.lock();
-	_sysExQueue.push(sysEx);
+	_sysExQueue.push_back(sysEx);
 	_sysExQueueMutex.unlock();
 }
 
-uint16 MidiDriver_MT32GM::sysExMT32(const byte *msg, uint16 length, const uint32 targetAddress, bool queue, bool delay) {
+uint16 MidiDriver_MT32GM::sysExMT32(const byte *msg, uint16 length, const uint32 targetAddress, bool queue, bool delay, int8 source) {
 	if (!_nativeMT32)
 		// MT-32 SysExes have no effect on GM devices.
 		return 0;
@@ -930,7 +953,7 @@ uint16 MidiDriver_MT32GM::sysExMT32(const byte *msg, uint16 length, const uint32
 	sysExMessage[sysExPos++] = sysExChecksum & 0x7F;
 
 	if (queue) {
-		sysExQueue(sysExMessage, sysExPos);
+		sysExQueue(sysExMessage, sysExPos, source);
 	} else if (!delay) {
 		return sysExNoDelay(sysExMessage, sysExPos);
 	} else {
@@ -1067,6 +1090,20 @@ int8 MidiDriver_MT32GM::mapSourceChannel(uint8 source, uint8 dataChannel) {
 void MidiDriver_MT32GM::deinitSource(uint8 source) {
 	assert(source < MAXIMUM_SOURCES);
 
+	_sysExQueueMutex.lock();
+
+	// Remove any pending SysExes for this source from the queue.
+	Common::ListInternal::Iterator<SysExData> it = _sysExQueue.begin();
+	while (it != _sysExQueue.end()) {
+		if (it->source == source) {
+			it = _sysExQueue.erase(it);
+		} else {
+			it++;
+		}
+	}
+
+	_sysExQueueMutex.unlock();
+
 	MidiDriver_Multisource::deinitSource(source);
 
 	// Free channels which were used by this source.
@@ -1078,7 +1115,7 @@ void MidiDriver_MT32GM::deinitSource(uint8 source) {
 			// Set the sustain default value if it is specified (typically
 			// sustain would be turned off).
 			if (_controllerDefaults.sustain >= 0 && _controlData[i]->sustain != (_controllerDefaults.sustain >= 0x40)) {
-				send(-1, MIDI_COMMAND_CONTROL_CHANGE | i, MIDI_CONTROLLER_SUSTAIN, _controllerDefaults.sustain);
+				controlChange(i, MIDI_CONTROLLER_SUSTAIN, _controllerDefaults.sustain, _controlData[i]->source, *_controlData[i]);
 			}
 
 			_controlData[i]->source = -1;
@@ -1129,8 +1166,9 @@ void MidiDriver_MT32GM::onTimer() {
 
 	if (!_sysExQueue.empty() && _sysExDelay == 0) {
 		// Ready to send next SysEx message to the MIDI device
-		SysExData sysEx = _sysExQueue.pop();
+		SysExData sysEx = _sysExQueue.front();
 		_sysExDelay = sysExNoDelay(sysEx.data, sysEx.length) * 1000;
+		_sysExQueue.pop_front();
 	}
 
 	_sysExQueueMutex.unlock();

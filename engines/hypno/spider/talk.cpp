@@ -158,6 +158,7 @@ void SpiderEngine::showConversation() {
 }
 
 void SpiderEngine::leftClickedConversation(const Common::Point &mousePos) {
+	defaultCursor();
 	Talk *t;
 	Videos videos;
 	for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
@@ -190,7 +191,7 @@ void SpiderEngine::leftClickedConversation(const Common::Point &mousePos) {
 
 			}
 		}
-		if (!a->background.empty()) {
+		if (_refreshConversation && !a->background.empty()) {
 			loadImage(a->background, a->backgroundPos.x, a->backgroundPos.y, false);
 		}
 	}
@@ -207,6 +208,7 @@ void SpiderEngine::leftClickedConversation(const Common::Point &mousePos) {
 }
 
 void SpiderEngine::rightClickedConversation(const Common::Point &mousePos) {
+	defaultCursor();
 	Videos videos;
 	for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
 		Talk *a = (Talk *)*itt;

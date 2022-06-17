@@ -19,9 +19,9 @@
  *
  */
 
-#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/shared/script/cc_script.h"
-#include "ags/shared/script/script_common.h"
+#include "ags/shared/script/cc_internal.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_compat.h"
 #include "ags/globals.h"
@@ -281,7 +281,7 @@ bool ccScript::Read(Stream *in) {
 		sectionOffsets = nullptr;
 	}
 
-	if ((uint32)in->ReadInt32() != ENDFILESIG) {
+	if (static_cast<uint32_t>(in->ReadInt32()) != ENDFILESIG) {
 		cc_error("internal error rebuilding script");
 		return false;
 	}
@@ -342,8 +342,7 @@ void ccScript::Free() {
 	numSections = 0;
 }
 
-const char *ccScript::GetSectionName(int32_t offs) {
-
+const char *ccScript::GetSectionName(int32_t offs) const {
 	int i;
 	for (i = 0; i < numSections; i++) {
 		if (sectionOffsets[i] < offs)

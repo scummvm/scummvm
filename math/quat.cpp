@@ -31,7 +31,7 @@
  * This code (and our modifications) is made available here under the GPLv2 (or later).
  *
  * Additional changes written based on the math presented in
- * http://www.swarthmore.edu/NatSci/mzucker1/e27/diebel2006attitude.pdf
+ * https://web.archive.org/web/20120710204808/http://www.swarthmore.edu/NatSci/mzucker1/e27/diebel2006attitude.pdf
  *
  */
 

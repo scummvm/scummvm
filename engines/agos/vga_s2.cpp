@@ -146,7 +146,7 @@ void AGOSEngine::vc69_playSeq() {
 	// as a means of stopping what music is currently
 	// playing.
 	_midi->setLoop(loop != 0);
-	_midi->startTrack(track);
+	playMusic(0, track);
 }
 
 void AGOSEngine::vc70_joinSeq() {
@@ -195,7 +195,7 @@ void AGOSEngine::vc72_segue() {
 		stopMusic();
 	} else {
 		_midi->setLoop(loop != 0);
-		_midi->startTrack(track);
+		playMusic(0, track);
 	}
 }
 

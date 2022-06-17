@@ -61,6 +61,7 @@ private:
 	bool doToggleFreeCamera(int argc, const char **argv);
 	bool doToggleSceneChanges(int argc, const char **argv);
 	bool doToggleSceneRendering(int argc, const char **argv);
+	bool doSetTrackObject(int argc, const char **argv);
 	bool doSkipSceneActorsBut(int argc, const char **argv);
 	bool doSetGameFlag(int argc, const char **argv);
 	bool doSetInventoryFlag(int argc, const char **argv);

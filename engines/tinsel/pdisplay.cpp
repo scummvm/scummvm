@@ -55,13 +55,6 @@ extern int g_newestString;	// The overrun counter, in STRRES.C
 
 //----------------- LOCAL DEFINES --------------------
 
-#define LPOSX	295		// X-co-ord of lead actor's position display
-#define CPOSX	24		// X-co-ord of cursor's position display
-#define OPOSX	SCRN_CENTER_X	// X-co-ord of overrun counter's display
-#define SPOSX	SCRN_CENTER_X	// X-co-ord of string numbner's display
-
-#define POSY	0		// Y-co-ord of these position displays
-
 enum HotSpotTag {
 	NO_HOTSPOT_TAG,
 	POLY_HOTSPOT_TAG,
@@ -415,8 +408,7 @@ static bool ActorTag(int curX_, int curY_, HotSpotTag *pTag, OBJECT **ppText) {
 			SaveTaggedActor(actor);		// This actor tagged
 			SaveTaggedPoly(NOPOLY);		// No tagged polygon
 
-			if (*ppText)
-				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), *ppText);
+			MultiDeleteObjectIfExists(FIELD_STATUS, ppText);
 
 			if (_vm->_actor->ActorTagIsWanted(actor)) {
 				_vm->_actor->GetActorTagPos(actor, &tagX, &tagY, false);
@@ -460,8 +452,7 @@ static bool ActorTag(int curX_, int curY_, HotSpotTag *pTag, OBJECT **ppText) {
 			if (newActor) {
 				// Display actor's tag
 
-				if (*ppText)
-					MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), *ppText);
+				MultiDeleteObjectIfExists(FIELD_STATUS, ppText);
 
 				*pTag = ACTOR_HOTSPOT_TAG;
 				SaveTaggedActor(ano);	// This actor tagged
@@ -522,10 +513,7 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 		if ((hp != NOPOLY) && (PolyPointState(hp) == PS_POINTING) && (PolyTagState(hp) != TAG_ON)) {
 			// This poly is entitled to be tagged
 			if (hp != GetTaggedPoly()) {
-				if (*ppText) {
-					MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), *ppText);
-					*ppText = nullptr;
-				}
+				MultiDeleteObjectIfExists(FIELD_STATUS, ppText);
 				*pTag = POLY_HOTSPOT_TAG;
 				SaveTaggedActor(0);	// No tagged actor
 				SaveTaggedPoly(hp);	// This polygon tagged
@@ -689,8 +677,7 @@ void TagProcess(CORO_PARAM, const void *) {
 			// Remove tag, if there is one
 			if (_ctx->pText) {
 				// kill current text objects
-				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
-				_ctx->pText = nullptr;
+				MultiDeleteObjectIfExists(FIELD_STATUS, &_ctx->pText);
 				_ctx->Tag = NO_HOTSPOT_TAG;
 			}
 		}

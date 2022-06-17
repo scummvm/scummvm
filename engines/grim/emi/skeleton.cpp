@@ -20,9 +20,11 @@
  */
 
 #include "common/stream.h"
+
 #include "math/vector3d.h"
 #include "math/vector4d.h"
 #include "math/quat.h"
+
 #include "engines/grim/debug.h"
 #include "engines/grim/emi/animationemi.h"
 #include "engines/grim/emi/skeleton.h"
@@ -222,6 +224,5 @@ AnimationLayer* Skeleton::getLayer(int priority) const {
 	assert(priority >= 0 && priority < MAX_ANIMATION_LAYERS);
 	return &_animLayers[priority];
 }
-
 
 } // end of namespace Grim

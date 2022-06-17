@@ -27,19 +27,15 @@
 #include "engines/grim/remastered/lua_remastered.h"
 #include "engines/grim/remastered/overlay.h"
 #include "engines/grim/remastered/hotspot.h"
-
 #include "engines/grim/grim.h"
 #include "engines/grim/font.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/registry.h"
-
 #include "engines/grim/localize.h"
-
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/luadebug.h"
 
 namespace Grim {
-
 
 void Lua_Remastered::WidescreenCorrectionFactor() {
 	warning("Stub function: WidescreenCorrectionFactor, returns 1");
@@ -212,7 +208,6 @@ void Lua_Remastered::QueryActiveHotspots() {
 		lua_pushobject(inner);
 		lua_settable();
 	}
-
 
 	lua_pushobject(result);
 }
@@ -399,7 +394,7 @@ void Lua_Remastered::AddHotspot() {
 	assert(lua_isnumber(param5));
 	assert(lua_isnumber(param6));
 	assert(lua_isnumber(param7));
-//	assert(lua_isnumber(param8));
+	//assert(lua_isnumber(param8));
 	assert(lua_isnumber(param11));
 
 	const char *p9str = "nil";
@@ -526,7 +521,7 @@ void Lua_Remastered::FindSaveGames() {
 
 void Lua_Remastered::Load() {
 	lua_Object fileName = lua_getparam(1);
-//	lua_Object param2 = lua_getparam(2);
+	//lua_Object param2 = lua_getparam(2);
 
 	if (lua_isnil(fileName)) {
 		g_grim->loadGame("");
@@ -617,7 +612,6 @@ STUB_FUNC(Lua_Remastered::StartCheckOfCrossSaveStatus)
 STUB_FUNC(Lua_Remastered::GetCrossSaveStatus)
 STUB_FUNC(Lua_Remastered::GetFloorWalkPos)
 STUB_FUNC(Lua_Remastered::CursorMovieEnabled)
-
 
 struct luaL_reg remasteredMainOpcodes[] = {
 	{ "GetPlatform", LUA_OPCODE(Lua_Remastered, GetPlatform) },

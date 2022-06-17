@@ -202,6 +202,34 @@ uint32 Archive::convertTagToUppercase(uint32 tag) {
 	return newTag | toupper(tag & 0xFF);
 }
 
+void Archive::dumpChunk(Resource &res, Common::DumpFile &out) {
+	byte *data = nullptr;
+	uint dataSize = 0;
+
+	Common::SeekableReadStreamEndian *resStream = getResource(res.tag, res.index);
+	uint32 len = res.size;
+
+	if (dataSize < len) {
+		free(data);
+		data = (byte *)malloc(resStream->size());
+		dataSize = resStream->size();
+	}
+
+	Common::String prepend = _pathName.size() ? _pathName : "stream";
+	Common::String filename = Common::String::format("./dumps/%s-%s-%d", encodePathForDump(prepend).c_str(), tag2str(res.tag), res.index);
+	resStream->read(data, len);
+
+	if (!out.open(filename, true)) {
+		warning("Archive::dumpChunk(): Can not open dump file %s", filename.c_str());
+	} else {
+		out.write(data, len);
+		out.flush();
+		out.close();
+	}
+
+	delete resStream;
+}
+
 // Mac Archive code
 
 MacArchive::MacArchive() : Archive(), _resFork(nullptr) {
@@ -265,6 +293,7 @@ bool MacArchive::openStream(Common::SeekableReadStream *stream, uint32 startOffs
 
 void MacArchive::readTags() {
 	Common::MacResTagArray tagArray = _resFork->getResTagArray();
+	Common::DumpFile out;
 
 	for (uint32 i = 0; i < tagArray.size(); i++) {
 		ResourceMap &resMap = _types[tagArray[i]];
@@ -276,6 +305,8 @@ void MacArchive::readTags() {
 			res.offset = res.size = 0; // unused
 			res.name = _resFork->getResName(tagArray[i], idArray[j]);
 			debug(3, "Found MacArchive resource '%s' %d: %s", tag2str(tagArray[i]), idArray[j], res.name.c_str());
+			if (ConfMan.getBool("dump_scripts"))
+				dumpChunk(res, out);
 		}
 	}
 }
@@ -535,8 +566,6 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	if (ConfMan.getBool("dump_scripts")) {
 		debug("RIFXArchive::openStream(): Dumping %d resources", _resources.size());
 
-		byte *data = nullptr;
-		uint dataSize = 0;
 		Common::DumpFile out;
 
 		for (uint i = 0; i < _resources.size(); i++) {
@@ -544,35 +573,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 				// This is in the initial load segment and can't be read like a normal chunk.
 				continue;
 			}
-
-			Common::SeekableReadStreamEndian *resStream = getResource(_resources[i]->tag, _resources[i]->index);
-
-			uint32 len = _resources[i]->size;
-
-			if (dataSize < _resources[i]->size) {
-				free(data);
-				data = (byte *)malloc(resStream->size());
-				dataSize = resStream->size();
-			}
-			Common::String prepend;
-			if (_pathName.size() != 0)
-				prepend = _pathName;
-			else
-				prepend = "stream";
-
-			Common::String filename = Common::String::format("./dumps/%s-%s-%d", encodePathForDump(prepend).c_str(), tag2str(_resources[i]->tag), _resources[i]->index);
-			resStream->read(data, len);
-
-			if (!out.open(filename, true)) {
-				warning("RIFXArchive::openStream(): Can not open dump file %s", filename.c_str());
-				break;
-			}
-
-			out.write(data, len);
-
-			out.flush();
-			out.close();
-			delete resStream;
+			dumpChunk(*_resources[i], out);
 		}
 	}
 

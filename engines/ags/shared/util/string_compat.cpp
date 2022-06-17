@@ -28,14 +28,14 @@ namespace AGS3 {
 char *ags_strlwr(char *s) {
 	char *p = s;
 	for (; *p; p++)
-		*p = tolower(*p);
+		*p = (char)tolower(*p);
 	return s;
 }
 
 char *ags_strupr(char *s) {
 	char *p = s;
 	for (; *p; p++)
-		*p = toupper(*p);
+		*p = (char)toupper(*p);
 	return s;
 }
 

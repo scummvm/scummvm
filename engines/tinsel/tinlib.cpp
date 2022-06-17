@@ -65,6 +65,8 @@
 #include "tinsel/tinlib.h"
 #include "tinsel/tinsel.h"
 #include "tinsel/token.h"
+#include "tinsel/noir/notebook.h"
+#include "tinsel/noir/sysreel.h"
 
 #include "common/textconsole.h"
 
@@ -152,7 +154,9 @@ enum MASTER_LIB_CODES {
 	TRYPLAYSAMPLE, UNDIMMUSIC, UNHOOKSCENE, UNTAGACTOR, VIBRATE, WAITFRAME, WAITKEY,
 	WAITSCROLL, WAITTIME, WALK, WALKED, WALKEDPOLY, WALKEDTAG, WALKINGACTOR, WALKPOLY,
 	WALKTAG, WALKXPOS, WALKYPOS, WHICHCD, WHICHINVENTORY, ZZZZZZ, DEC3D, DECINVMAIN,
-	ADDNOTEBOOK, ADDINV3, ADDCONV, SET3DTEXTURE, FADEMUSIC, VOICEOVER, SETVIEW, HIGHEST_LIBCODE
+	ADDNOTEBOOK, ADDINV3, ADDCONV, SET3DTEXTURE, FADEMUSIC, VOICEOVER, SETVIEW,
+	HELDOBJECTORTOPIC, BOOKADDHYPERLINK, OPENNOTEBOOK, NTBPOLYENTRY, NTBPOLYPREVPAGE,
+	NTBPOLYNEXTPAGE, CROSSCLUE, HIGHEST_LIBCODE
 };
 
 static const MASTER_LIB_CODES DW1DEMO_CODES[] = {
@@ -612,7 +616,7 @@ static void ActorsOn() {
  * Adds an icon to the conversation window.
  */
 static void AddTopic(int icon) {
-	_vm->_dialogs->AddToInventory(INV_CONV, icon, false);
+	_vm->_dialogs->addToInventory(INV_CONV, icon, false);
 }
 
 /**
@@ -620,9 +624,9 @@ static void AddTopic(int icon) {
  */
 static void AddInv(int invno, int object) {
 	// illegal inventory number
-	assert(invno == INV_1 || invno == INV_2 || invno == INV_OPEN || invno == INV_DEFAULT);
+	assert(invno == INV_1 || invno == INV_2 || invno == INV_3 || invno == INV_OPEN || invno == INV_DEFAULT);
 
-	_vm->_dialogs->AddToInventory(invno, object, false);
+	_vm->_dialogs->addToInventory(invno, object, false);
 }
 
 /**
@@ -734,7 +738,7 @@ static void ClearHookScene() {
  * Guess what.
  */
 static void CloseInventory() {
-	_vm->_dialogs->KillInventory();
+	_vm->_dialogs->killInventory();
 }
 
 /**
@@ -748,11 +752,11 @@ void Control(int param) {
 		else {
 			ControlOff();
 
-			switch (_vm->_dialogs->WhichInventoryOpen()) {
+			switch (_vm->_dialogs->whichInventoryOpen()) {
 			case INV_1:
 			case INV_2:
 			case INV_MENU:
-				_vm->_dialogs->KillInventory();
+				_vm->_dialogs->killInventory();
 				break;
 			default:
 				break;
@@ -808,7 +812,7 @@ void Control(int param) {
 
 		FreeControlToken();	// Release control
 
-		if (!_vm->_dialogs->InventoryActive())
+		if (!_vm->_dialogs->inventoryActive())
 			EnableTags();		// Tags back on
 
 		_vm->_cursor->RestoreMainCursor(); // Re-instate cursor...
@@ -831,7 +835,7 @@ static void Conversation(CORO_PARAM, int fn, HPOLYGON hp, int actor, bool escOn,
 
 	if (fn == CONV_END) {
 		// Close down conversation
-		_vm->_dialogs->CloseDownConv();
+		_vm->_dialogs->closeDownConv();
 	} else if ((fn == CONV_TOP) || (fn == CONV_DEF) || (fn == CONV_BOTTOM)) {
 		// TOP of screen, Default (i.e. TOP of screen), or BOTTOM of screen
 
@@ -844,10 +848,10 @@ static void Conversation(CORO_PARAM, int fn, HPOLYGON hp, int actor, bool escOn,
 			return;
 
 		// Don't do it if already in a conversation
-		if (_vm->_dialogs->IsConvWindow())
+		if (_vm->_dialogs->isConvWindow())
 			return;
 
-		_vm->_dialogs->KillInventory();
+		_vm->_dialogs->killInventory();
 
 		if (TinselVersion >= 2) {
 			// If this is from a tag polygon, get the associated
@@ -861,14 +865,14 @@ static void Conversation(CORO_PARAM, int fn, HPOLYGON hp, int actor, bool escOn,
 			}
 
 			// Top or bottom; tag polygon or tagged actor
-			_vm->_dialogs->SetConvDetails((CONV_PARAM)fn, hp, actor);
+			_vm->_dialogs->setConvDetails((CONV_PARAM)fn, hp, actor);
 		} else {
 			_vm->_dialogs->convPos(fn);
-			_vm->_dialogs->ConvPoly(hp);
+			_vm->_dialogs->convPoly(hp);
 		}
 
-		_vm->_dialogs->PopUpInventory(INV_CONV); // Conversation window
-		_vm->_dialogs->ConvAction(INV_OPENICON); // CONVERSATION event
+		_vm->_dialogs->popUpInventory(INV_CONV); // Conversation window
+		_vm->_dialogs->convAction(INV_OPENICON); // CONVERSATION event
 	}
 
 	CORO_END_CODE;
@@ -878,7 +882,7 @@ static void Conversation(CORO_PARAM, int fn, HPOLYGON hp, int actor, bool escOn,
  * Add icon to conversation window's permanent default list.
  */
 static void ConvTopic(int icon) {
-	_vm->_dialogs->PermaConvIcon(icon);
+	_vm->_dialogs->permaConvIcon(icon);
 }
 
 /**
@@ -977,6 +981,18 @@ static void DecInv2(SCNHANDLE text, int MaxContents,
 }
 
 /**
+ * Declare parameters of inventories 1, 3 and 4.
+ * Display loadingscreen (?).
+ * Takes 8 parameter, but uses only 2.
+ */
+static void DecInvMain(SCNHANDLE text, int MaxContents,
+		int MinWidth, int MinHeight,
+		int StartWidth, int StartHeight,
+		int MaxWidth, int MaxHeight) {
+	_vm->_dialogs->idec_invMain(text, MaxContents);
+}
+
+/**
  * Declare the bits that the inventory windows are constructed from.
  */
 static void DecInvW(SCNHANDLE hf) {
@@ -1055,24 +1071,24 @@ static void DecScale(int actor, int scale,
  * Remove an icon from the conversation window.
  */
 static void DelIcon(int icon) {
-	_vm->_dialogs->RemFromInventory(INV_CONV, icon);
+	_vm->_dialogs->remFromInventory(INV_CONV, icon);
 }
 
 /**
  * Delete the object from inventory 1 or 2.
  */
 static void DelInv(int object) {
-	if (!_vm->_dialogs->RemFromInventory(INV_1, object)) // Remove from inventory 1...
-		_vm->_dialogs->RemFromInventory(INV_2, object);  // ...or 2 (whichever)
+	if (!_vm->_dialogs->remFromInventory(INV_1, object)) // Remove from inventory 1...
+		_vm->_dialogs->remFromInventory(INV_2, object);  // ...or 2 (whichever)
 
-	_vm->_dialogs->DropItem(object); // Stop holding it
+	_vm->_dialogs->dropItem(object); // Stop holding it
 }
 
 /**
  * DelTopic
  */
 static void DelTopic(int icon) {
-	_vm->_dialogs->RemFromInventory(INV_CONV, icon);
+	_vm->_dialogs->remFromInventory(INV_CONV, icon);
 }
 
 /**
@@ -1082,20 +1098,20 @@ static void Drop(int object) {
 	if (object == -1)
 		object = HeldObject();
 
-	if (!_vm->_dialogs->RemFromInventory(INV_1, object)) // Remove from inventory 1...
-		_vm->_dialogs->RemFromInventory(INV_2, object);  // ...or 2 (whichever)
+	if (!_vm->_dialogs->remFromInventory(INV_1, object)) // Remove from inventory 1...
+		_vm->_dialogs->remFromInventory(INV_2, object);  // ...or 2 (whichever)
 
-	_vm->_dialogs->DropItem(object); // Stop holding it
+	_vm->_dialogs->dropItem(object); // Stop holding it
 }
 
 /**
  * Delete all objects from inventory 1 and 2.
  */
 static void DropEverything() {
-	_vm->_dialogs->HoldItem(NOOBJECT, false);
+	_vm->_dialogs->holdItem(INV_NOICON, false);
 
-	_vm->_dialogs->ClearInventory(INV_1);
-	_vm->_dialogs->ClearInventory(INV_2);
+	_vm->_dialogs->clearInventory(INV_1);
+	_vm->_dialogs->clearInventory(INV_2);
 }
 
 /**
@@ -1184,7 +1200,7 @@ static void FreezeCursor(bool bFreeze) {
  * Guess what.
  */
 static int GetInvLimit(int invno) {
-	return _vm->_dialogs->InvGetLimit(invno);
+	return _vm->_dialogs->invGetLimit(invno);
 }
 
 /**
@@ -1214,14 +1230,14 @@ static bool HasRestarted() {
  * See if an object is in the inventory.
  */
 int Have(int object) {
-	return (_vm->_dialogs->InventoryPos(object) != NOOBJECT);
+	return (_vm->_dialogs->inventoryPos(object) != INV_NOICON);
 }
 
 /**
  * Returns which object is currently held.
  */
 static int HeldObject() {
-	return _vm->_dialogs->WhichItemHeld();
+	return _vm->_dialogs->whichItemHeld();
 }
 
 /**
@@ -1271,7 +1287,7 @@ static void HideTag(CORO_PARAM, int tag, HPOLYGON hp) {
  * Hold the specified object.
  */
 static void Hold(int object) {
-	_vm->_dialogs->HoldItem(object, false);
+	_vm->_dialogs->holdItem(object, false);
 }
 
 /**
@@ -1310,14 +1326,14 @@ void InstantScroll(int onoff) {
  * invdepict
  */
 static void InvDepict(int object, SCNHANDLE hFilm) {
-	_vm->_dialogs->SetObjectFilm(object, hFilm);
+	_vm->_dialogs->setObjectFilm(object, hFilm);
 }
 
 /**
  * See if an object is in the inventory.
  */
 int InInventory(int object) {
-	return (_vm->_dialogs->InventoryPos(object) != INV_NOICON);
+	return (_vm->_dialogs->inventoryPos(object) != INV_NOICON);
 }
 
 /**
@@ -1330,27 +1346,27 @@ static void Inventory(int invno, bool escOn, int myEscape) {
 
 	assert((invno == INV_1 || invno == INV_2)); // Trying to open illegal inventory
 
-	_vm->_dialogs->PopUpInventory(invno);
+	_vm->_dialogs->popUpInventory(invno);
 }
 
 /**
  * Alter inventory object's icon.
  */
 static void InvPlay(int object, SCNHANDLE hFilm) {
-	_vm->_dialogs->SetObjectFilm(object, hFilm);
+	_vm->_dialogs->setObjectFilm(object, hFilm);
 }
 
 /**
  * See if an object is in the inventory.
  */
 static int InWhichInv(int object) {
-	if (_vm->_dialogs->WhichItemHeld() == object)
+	if (_vm->_dialogs->whichItemHeld() == object)
 		return 0;
 
-	if (_vm->_dialogs->IsInInventory(object, INV_1))
+	if (_vm->_dialogs->isInInventory(object, INV_1))
 		return 1;
 
-	if (_vm->_dialogs->IsInInventory(object, INV_2))
+	if (_vm->_dialogs->isInInventory(object, INV_2))
 		return 2;
 
 	return -1;
@@ -1486,7 +1502,7 @@ static void NoScroll(int x1, int y1, int x2, int y2) {
  * Hold the specified object.
  */
 static void ObjectHeld(int object) {
-	_vm->_dialogs->HoldItem(object);
+	_vm->_dialogs->holdItem(object);
 }
 
 /**
@@ -1504,21 +1520,21 @@ void Offset(EXTREME extreme, int x, int y) {
 /**
  * OtherObject()
  */
-int OtherObject(INV_OBJECT *pinvo) {
+int OtherObject(const InventoryObject *pinvo) {
 	assert(pinvo != NULL);
 
 	// return held object or object clicked on - whichever is not the calling object
 
 	// pinvo->id is the calling object
-	// WhichItemHeld() gives the held object
-	// GetIcon() gives the object clicked on
+	// whichItemHeld() gives the held object
+	// getIcon() gives the object clicked on
 
-	assert(_vm->_dialogs->GetIcon() == pinvo->id || _vm->_dialogs->WhichItemHeld() == pinvo->id);
+	assert(_vm->_dialogs->getIcon() == pinvo->getId() || _vm->_dialogs->whichItemHeld() == pinvo->getId());
 
-	if (_vm->_dialogs->GetIcon() == pinvo->id)
-		return _vm->_dialogs->WhichItemHeld();
+	if (_vm->_dialogs->getIcon() == pinvo->getId())
+		return _vm->_dialogs->whichItemHeld();
 	else
-		return _vm->_dialogs->GetIcon();
+		return _vm->_dialogs->getIcon();
 }
 
 /**
@@ -1997,7 +2013,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 
 		// Adjust x, y, or z if necessary
 		KeepOnScreen(_ctx->pText, &x, &y);
-		if (_vm->_dialogs->IsTopWindow())
+		if (_vm->_dialogs->isTopWindow())
 			MultiSetZPosition(_ctx->pText, Z_TOPW_TEXT);
 
 	} else if (bJapDoPrintText || (!_vm->_config->isJapanMode() && (_vm->_config->_useSubtitles || !_ctx->bSample))) {
@@ -2009,7 +2025,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 					0, x - Loffset, y - Toffset,
 					fontHandle, TXT_CENTER);
 		assert(_ctx->pText); // string produced NULL text
-		if (_vm->_dialogs->IsTopWindow())
+		if (_vm->_dialogs->isTopWindow())
 			MultiSetZPosition(_ctx->pText, Z_TOPW_TEXT);
 
 		/*
@@ -2078,21 +2094,20 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 	}
 
 	// Delete the text
-	if (_ctx->pText != NULL)
-		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
+	MultiDeleteObjectIfExists(FIELD_STATUS, &_ctx->pText);
 	_vm->_mixer->stopHandle(_ctx->handle);
 
 	CORO_END_CODE;
 }
 
 
-static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *pinvo, OBJECT *&pText, const int textx, const int texty, const int item);
+static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const InventoryObject *pinvo, OBJECT *&pText, const int textx, const int texty, const int item);
 static void PrintObjNonPointed(CORO_PARAM, const SCNHANDLE text, const OBJECT *pText);
 
 /**
  * Print the given inventory object's name or whatever.
  */
-static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo, const int event, int myEscape) {
+static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const InventoryObject *pinvo, const int event, int myEscape) {
 	CORO_BEGIN_CONTEXT;
 		OBJECT *pText;		// text object pointer
 		int	textx, texty;
@@ -2129,7 +2144,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 	* Find out which icon the cursor is over, and where to put the text.
 	*/
 	_vm->_cursor->GetCursorXY(&_ctx->textx, &_ctx->texty, false); // Cursor position..
-	_ctx->item = _vm->_dialogs->InvItem(&_ctx->textx, &_ctx->texty, true); // ..to text position
+	_ctx->item = _vm->_dialogs->invItem(&_ctx->textx, &_ctx->texty, true); // ..to text position
 	if (_ctx->item == INV_NOICON)
 		return;
 
@@ -2204,20 +2219,19 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 				int x, y;
 				do {
 					// Give up if this item gets picked up
-					if (_vm->_dialogs->WhichItemHeld() == pinvo->id)
+					if (_vm->_dialogs->whichItemHeld() == pinvo->getId())
 						break;
 
 					// Give way to non-POINTED-generated text
 					if (g_bNotPointedRunning) {
 						// Delete the text, and wait for the all-clear
-						MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
-						_ctx->pText = nullptr;
+						MultiDeleteObjectIfExists(FIELD_STATUS, &_ctx->pText);
 
 						while (g_bNotPointedRunning)
 							CORO_SLEEP(1);
 
 						_vm->_cursor->GetCursorXY(&x, &y, false);
-						if (_vm->_dialogs->InvItem(&x, &y, false) != _ctx->item)
+						if (_vm->_dialogs->invItem(&x, &y, false) != _ctx->item)
 							break;
 
 						// Re-display in the same place
@@ -2236,7 +2250,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 					// Carry on until the cursor leaves this icon
 					_vm->_cursor->GetCursorXY(&x, &y, false);
 
-				} while (_vm->_dialogs->InvItemId(x, y) == pinvo->id);
+				} while (_vm->_dialogs->invItemId(x, y) == pinvo->getId());
 			} else {
 				/*
 				 * PrintObj() called from other event
@@ -2256,7 +2270,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 					// Abort if sample times out
 					// Abort if conversation hidden
 					if (LeftEventChange(_ctx->myLeftEvent)
-							|| --_ctx->timeout <= 0 || _vm->_dialogs->ConvIsHidden())
+							|| --_ctx->timeout <= 0 || _vm->_dialogs->convIsHidden())
 						break;
 
 					if (_ctx->bSample) {
@@ -2296,8 +2310,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 		}
 
 		// Delete the text, if haven't already
-		if (_ctx->pText)
-			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
+		MultiDeleteObjectIfExists(FIELD_STATUS, &_ctx->pText);
 
 		// If it hasn't already finished, stop sample
 		if (_ctx->bSample)
@@ -2311,7 +2324,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 	CORO_END_CODE;
 }
 
-static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *pinvo, OBJECT *&pText, const int textx, const int texty, const int item) {
+static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const InventoryObject *pinvo, OBJECT *&pText, const int textx, const int texty, const int item) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
@@ -2321,19 +2334,18 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 		int	x, y;
 		do {
 			// Give up if this item gets picked up
-		    if (_vm->_dialogs->WhichItemHeld() == pinvo->id)
+		    if (_vm->_dialogs->whichItemHeld() == pinvo->getId())
 				break;
 
 			// Give way to non-POINTED-generated text
 			if (g_bNotPointedRunning) {
 				// Delete the text, and wait for the all-clear
-				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), pText);
-				pText = nullptr;
+				MultiDeleteObjectIfExists(FIELD_STATUS, &pText);
 				while (g_bNotPointedRunning)
 					CORO_SLEEP(1);
 
 				_vm->_cursor->GetCursorXY(&x, &y, false);
-			    if (_vm->_dialogs->InvItem(&x, &y, false) != item)
+			    if (_vm->_dialogs->invItem(&x, &y, false) != item)
 					break;
 
 				// Re-display in the same place
@@ -2348,7 +2360,7 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 
 			// Carry on until the cursor leaves this icon
 		    _vm->_cursor->GetCursorXY(&x, &y, false);
-	    } while (_vm->_dialogs->InvItemId(x, y) == pinvo->id);
+	    } while (_vm->_dialogs->invItemId(x, y) == pinvo->getId());
 
 	CORO_END_CODE;
 }
@@ -2391,7 +2403,7 @@ static void PrintObjNonPointed(CORO_PARAM, const SCNHANDLE text, const OBJECT *p
 			// Abort if left click - hardwired feature for talky-print!
 			// Abort if sample times out
 			// Abort if conversation hidden
-		    if (_ctx->myleftEvent != GetLeftEvents() || _ctx->timeout <= 0 || _vm->_dialogs->ConvIsHidden())
+		    if (_ctx->myleftEvent != GetLeftEvents() || _ctx->timeout <= 0 || _vm->_dialogs->convIsHidden())
 				break;
 
 			if (_ctx->bSample) {
@@ -2584,7 +2596,7 @@ static void ScalingReels(int actor, int scale, int direction,
  * Return the icon that caused the CONVERSE event.
  */
 static int ScanIcon() {
-	return _vm->_dialogs->GetIcon();
+	return _vm->_dialogs->getIcon();
 }
 
 /**
@@ -2737,7 +2749,7 @@ static void SetExit(int exitno) {
  * Guess what.
  */
 static void SetInvLimit(int invno, int n) {
-	_vm->_dialogs->InvSetLimit(invno, n);
+	_vm->_dialogs->invSetLimit(invno, n);
 }
 
 /**
@@ -2745,7 +2757,7 @@ static void SetInvLimit(int invno, int n) {
  */
 static void SetInvSize(int invno, int MinWidth, int MinHeight,
 		int StartWidth, int StartHeight, int MaxWidth, int MaxHeight) {
-	_vm->_dialogs->InvSetSize(invno, MinWidth, MinHeight, StartWidth, StartHeight, MaxWidth, MaxHeight);
+	_vm->_dialogs->invSetSize(invno, MinWidth, MinHeight, StartWidth, StartHeight, MaxWidth, MaxHeight);
 }
 
 /**
@@ -2774,14 +2786,7 @@ static void SetPalette(SCNHANDLE hPal, bool escOn, int myEscape) {
  * Set system reel
  */
 static void SetSystemReel(int index, SCNHANDLE reel) {
-	switch (index) {
-		case 11:
-			DecCursor(reel);
-			break;
-		default:
-			warning("SetSystemReel(%d, %08X), STUBBED", index, reel);
-			break;
-	}
+	_vm->_systemReel->set(index, reel);
 }
 
 /**
@@ -2862,7 +2867,7 @@ static void showstring() {
  * Shows the main menu
  */
 static void ShowMenu() {
-	_vm->_dialogs->OpenMenu(MAIN_MENU);
+	_vm->_dialogs->openMenu(MAIN_MENU);
 }
 
 /**
@@ -3432,7 +3437,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 					_vm->_font->GetTalkFontHandle(), TXT_CENTER);
 			assert(_ctx->pText); // talk() string produced NULL text;
 
-			if (_vm->_dialogs->IsTopWindow())
+			if (_vm->_dialogs->isTopWindow())
 				MultiSetZPosition(_ctx->pText, Z_TOPW_TEXT);
 
 			if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_TALK)) {
@@ -3547,10 +3552,8 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			}
 		} while (1);
 
-		if (_ctx->pText != NULL) {
-			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
-			_ctx->pText = nullptr;
-		}
+		MultiDeleteObjectIfExists(FIELD_STATUS, &_ctx->pText);
+
 		if ((TinselVersion >= 2) && _ctx->bSample)
 			_vm->_sound->stopSpecSample(hText, _ctx->sub);
 	}
@@ -3562,8 +3565,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 	 */
 	if (_ctx->bTalkReel)
 		CORO_INVOKE_2(FinishTalkingReel, _ctx->pActor, _ctx->actor);
-	if (_ctx->pText != NULL)
-		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
+	MultiDeleteObjectIfExists(FIELD_STATUS, &_ctx->pText);
 
 	if (TinselVersion >= 2) {
 		if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_SAYAT)) {
@@ -3675,10 +3677,10 @@ static void TalkVia(int actor) {
 /**
  * ThisObject
  */
-static int ThisObject(INV_OBJECT *pinvo) {
+static int ThisObject(const InventoryObject *pinvo) {
 	assert(pinvo != NULL);
 
-	return pinvo->id;
+	return pinvo->getId();
 }
 
 /**
@@ -3708,7 +3710,7 @@ static int TimerFn(int timerno) {
  * Return the icon that caused the CONVERSE event.
  */
 int Topic() {
-	return _vm->_dialogs->GetIcon();
+	return _vm->_dialogs->getIcon();
 }
 
 /**
@@ -3727,10 +3729,10 @@ static void TopPlay(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, i
 static void TopWindow(int bpos) {
 	bool isStart = ((TinselVersion >= 2) && (bpos != 0)) || ((TinselVersion <= 1) && (bpos == TW_START));
 
-	_vm->_dialogs->KillInventory();
+	_vm->_dialogs->killInventory();
 
 	if (isStart)
-		_vm->_dialogs->OpenMenu(TOP_WINDOW);
+		_vm->_dialogs->openMenu(TOP_WINDOW);
 }
 
 /**
@@ -3828,16 +3830,16 @@ static void WaitKey(CORO_PARAM, bool escOn, int myEscape) {
 					break;
 			}
 
-			if (_vm->_dialogs->MenuActive())
+			if (_vm->_dialogs->menuActive())
 				break;
 		}
 
-		if (!_vm->_dialogs->MenuActive())
+		if (!_vm->_dialogs->menuActive())
 			return;
 
 		do {
 			CORO_SLEEP(1);
-		} while (_vm->_dialogs->MenuActive());
+		} while (_vm->_dialogs->menuActive());
 
 		CORO_SLEEP(ONE_SECOND / 2);		// Let it die down
 	}
@@ -4259,7 +4261,7 @@ int WhichCd() {
  * whichinventory
  */
 int WhichInventory() {
-	return _vm->_dialogs->WhichInventoryOpen();
+	return _vm->_dialogs->whichInventoryOpen();
 }
 
 
@@ -4444,7 +4446,10 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		debug(7, "%s(%08X)", mapping.name, pp[0]);
 		break;
 	case 39: // 1 param
-		error("Unsupported libCode %d to set_notebook _entry_bool", libCode);
+		mapping = NoirMapping{"CROSSCLUE", CROSSCLUE, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
+		break;
 	case 40:
 		mapping = NoirMapping{"CURSOR", CURSOR, 1};
 		pp -= mapping.numArgs - 1;
@@ -4464,7 +4469,6 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6], pp[7]);
 		break;
 	case 44: // Changed in Noir
-		warning("TODO: Implement DECINV2 v3");
 		mapping = NoirMapping{"DECINV2", DECINV2, 8};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6], pp[7]);
@@ -4494,7 +4498,7 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
-	case 50: // 1 parameter, calls RemFromInventory variant of TinselV1
+	case 50: // 1 parameter, calls remFromInventory variant of TinselV1
 		error("Unsupported libCode %d del_inv3_item", libCode);
 	case 51: // 1 parameter
 		error("Unsupported libCode %d DELTOPIC variant", libCode);
@@ -4598,8 +4602,10 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d)", mapping.name, pp[0]);
 		break;
-	case 75: // 0 parameters, returns icon of topic or held object
-		error("Unsupported libCode %d", libCode);
+	case 75:
+		mapping = NoirMapping{"HELDOBJECTORTOPIC", HELDOBJECTORTOPIC, 0};
+		debug(7, "%s()", mapping.name);
+		break;
 	case 76: // 0 parameters, returns enum depending on a bitfield value on held object
 		error("Unsupported libCode %d", libCode);
 	case 77:
@@ -4645,8 +4651,7 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		debug(7, "%s(0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2]);
 		break;
 	case 86: // 2 parameters
-		warning("TODO: Implement notebook_add_hyperlink");
-		mapping = NoirMapping{"NODEBOOKADDHYPERLINK", ZZZZZZ, 2};
+		mapping = NoirMapping{"BOOKADDHYPERLINK", BOOKADDHYPERLINK, 2};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X, 0x%08X)", mapping.name, pp[0], pp[1]);
 		break;
@@ -4665,8 +4670,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d)", mapping.name, pp[0]);
 		break;
-	case 90: // play anim based on item
-		error("Unsupported libCode %d", libCode);
+	case 90: // 2 parameters, play anim based on item
+		mapping = NoirMapping{"INVPLAY", INVPLAY, 2};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d %d)", mapping.name, pp[0], pp[1]);
+		break;
 	case 91:
 		mapping = NoirMapping{"INWHICHINV", INWHICHINV, 0};
 		debug(7, "%s()", mapping.name);
@@ -4717,7 +4725,9 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3]);
 		break;
 	case 103: // 0 parameters
-		error("Unsupported libCode %d open_notebook", libCode);
+		mapping = NoirMapping{"OPENNOTEBOOK", OPENNOTEBOOK, 0};
+		debug(7, "%s()", mapping.name);
+		break;
 	case 104: // 1 parameter
 		error("Unsupported libCode %d OFFSET variant", libCode);
 	case 105: // 0 parameters
@@ -5190,32 +5200,28 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		mapping = NoirMapping{"WHICHCD", WHICHCD, 0};
 		debug(7, "%s()", mapping.name);
 		break;
-	case 208: // WhichInventory is implemented differently in v3, checking notebookstate
-		warning("TODO: Implement WHICHINVENTORY v3");
+	case 208:
 		mapping = NoirMapping{"WHICHINVENTORY", WHICHINVENTORY, 0};
 		debug(7, "%s()", mapping.name);
 		break;
 	case 209:
-		mapping = NoirMapping{"ZZZZZZ", ZZZZZZ, 0};
+		mapping = NoirMapping{"ZZZZZZ", ZZZZZZ, 1};
 		debug(7, "%s()", mapping.name);
 		break;
 	case 210: // STUBBED
-		warning("TODO: Implement OP210");
-		mapping = NoirMapping{"OP210", ZZZZZZ, 8};
+		mapping = NoirMapping{"NTBPOLYENTRY", NTBPOLYENTRY, 8};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6], pp[7]);
 		break;
 	case 211: // 4 parameters
 		error("Unsupported libCode %d PLAYSEQUENCE", libCode);
 	case 212: // STUBBED
-		warning("TODO: Implement OP212");
-		mapping = NoirMapping{"OP212", ZZZZZZ, 8};
+		mapping = NoirMapping{"NTBPOLYPREVPAGE", NTBPOLYPREVPAGE, 8};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6], pp[7]);
 		break;
 	case 213: // STUBBED
-		warning("TODO: Implement OP213");
-		mapping = NoirMapping{"OP213", ZZZZZZ, 8};
+		mapping = NoirMapping{"NTBPOLYNEXTPAGE", NTBPOLYNEXTPAGE, 8};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6], pp[7]);
 		break;
@@ -5387,12 +5393,12 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case ADDINV3:
 		// Noir only
-		warning("TODO: Implement ADDINV3");
+		AddInv(INV_3, pp[0]);
 		return -1;
 
 	case ADDNOTEBOOK:
 		// Noir Only
-		warning("TODO: Implement ADDNOTEBOOK");
+		_vm->_notebook->addClue(pp[0]);
 		return -1;
 
 	case ADDOPENINV:
@@ -5415,6 +5421,12 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		// Common to DW1 / DW2 / Noir
 		startBackground(coroParam, pp[0]);
 		return -1;
+
+	case BOOKADDHYPERLINK:
+		// Noir
+		pp -= 1; // 2 parameters
+		_vm->_notebook->addHyperlink(pp[0], pp[1]);
+		return -2;
 
 	case BLOCKING:
 		// DW2 only
@@ -5561,6 +5573,11 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		ConvTopic(pp[0]);
 		return -1;
 
+	case CROSSCLUE:
+		// Noir only
+		_vm->_notebook->crossClue(pp[0]);
+		return -1;
+
 	case CURSOR:
 		// DW2 only
 		ToggleCursor(pp[0]);
@@ -5627,7 +5644,9 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -8;
 
 	case DECINVMAIN:
-		warning("TODO: Implement DECINVMAIN");
+		pp -= 7;			// 8 parameters
+		DecInvMain(pp[0], pp[1], pp[2], pp[3],
+			 pp[4], pp[5], pp[6], pp[7]);
 		return -8;
 
 	case DECINVW:
@@ -5809,6 +5828,15 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		pp[0] = HeldObject();
 		return 0;
 
+	case HELDOBJECTORTOPIC:
+		// Noir
+		if (_vm->_dialogs->isConvAndNotMove()) {
+			pp[0] = HeldObject();
+		} else {
+			pp[0] = Topic();
+		}
+		return 0;
+
 	case HIDEACTOR:
 		// Common to DW1 / DW2 / Noir
 		if (TinselVersion <= 1)
@@ -5982,6 +6010,33 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		g_bNoPause = true;
 		return 0;
 
+	case NTBPOLYENTRY:
+		// Noir only
+		pp -= 7; // 8 Parameters
+		NotebookPolyEntry(Common::Point(pp[0], pp[1]),
+						  Common::Point(pp[2], pp[3]),
+						  Common::Point(pp[4], pp[5]),
+						  Common::Point(pp[6], pp[7]));
+		return -8;
+
+	case NTBPOLYNEXTPAGE:
+		// Noir only
+		pp -= 7; // 8 Parameters
+		NotebookPolyNextPage(Common::Point(pp[0], pp[1]),
+							 Common::Point(pp[2], pp[3]),
+							 Common::Point(pp[4], pp[5]),
+							 Common::Point(pp[6], pp[7]));
+		return -8;
+
+	case NTBPOLYPREVPAGE:
+		// Noir only
+		pp -= 7; // 8 Parameters
+		NotebookPolyPrevPage(Common::Point(pp[0], pp[1]),
+							 Common::Point(pp[2], pp[3]),
+							 Common::Point(pp[4], pp[5]),
+							 Common::Point(pp[6], pp[7]));
+		return -8;
+
 	case NOSCROLL:
 		// Common to both DW1 & DW2
 		pp -= 3;			// 4 parameters
@@ -6008,6 +6063,11 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case OTHEROBJECT:
 		// DW2 only
 		pp[0] = OtherObject(pic->pinvo);
+		return 0;
+
+	case OPENNOTEBOOK:
+		// Noir only
+		_vm->_notebook->show(0);
 		return 0;
 
 	case PAUSE:
@@ -6382,7 +6442,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case SETVIEW:
 		// Noir only
 		pp -= 1;
-		warning("TODO: Implement SETVIEW(0x%08X, %i)", pp[0], pp[1]);
+		SetView(pp[0], pp[1]);
 		return -2;
 
 	case SHELL:

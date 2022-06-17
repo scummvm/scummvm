@@ -3238,7 +3238,7 @@ static void gagt_display_debug() {
 		        paragraph ? paragraph->id + 1 : 0,
 		        paragraph ? paragraph->line_count : 0,
 		        paragraph && paragraph->special
-		        ? paragraph->special - GAGT_SPECIALS + 1 : 0,
+		        ? long(paragraph->special - GAGT_SPECIALS + 1) : 0,
 		        line->buffer.allocation, line->buffer.length,
 		        line->indent, line->outdent,
 		        line->real_length,

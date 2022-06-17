@@ -958,6 +958,16 @@ Graphics::TextAlign TextCastMember::getAlignment() {
 	}
 }
 
+void TextCastMember::setBackColor(uint32 bgCol) {
+	_bgcolor = bgCol;
+	_modified = true;
+}
+
+void TextCastMember::setForeColor(uint32 fgCol) {
+	_fgcolor = fgCol;
+	_modified = true;
+}
+
 void TextCastMember::importStxt(const Stxt *stxt) {
 	_fontId = stxt->_style.fontId;
 	_textSlant = stxt->_style.textSlant;
@@ -1142,6 +1152,16 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 
 	if (debugChannelSet(3, kDebugLoading))
 		_initialRect.debugPrint(0, "ShapeCastMember: rect:");
+}
+
+void ShapeCastMember::setBackColor(uint32 bgCol) {
+	_bgCol = bgCol;
+	_modified = true;
+}
+
+void ShapeCastMember::setForeColor(uint32 fgCol) {
+	_fgCol = fgCol;
+	_modified = true;
 }
 
 

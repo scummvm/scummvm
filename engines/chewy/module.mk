@@ -2,16 +2,15 @@ MODULE := engines/chewy
 
 MODULE_OBJS = \
 	atds.o \
+	barriers.o \
 	chewy.o \
 	cursor.o \
-	debugger.o \
+	console.o \
 	detail.o \
 	effect.o \
 	events.o \
-	gedclass.o \
 	globals.o \
 	inits.o \
-	m_event.o \
 	main.o \
 	mouse.o \
 	mcga_graphics.o \
@@ -19,7 +18,6 @@ MODULE_OBJS = \
 	menus.o \
 	metaengine.o \
 	movclass.o \
-	ngstypes.o \
 	object.o \
 	object_extra.o \
 	r_event.o \
@@ -37,6 +35,8 @@ MODULE_OBJS = \
 	dialogs/inventory.o \
 	dialogs/main_menu.o \
 	dialogs/options.o \
+	music/module_tmf.o \
+	music/tmf_stream.o \
 	video/cfo_decoder.o \
 	video/video_player.o \
 	rooms/room00.o \

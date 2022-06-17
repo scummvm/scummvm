@@ -20,10 +20,10 @@
  */
 
 #include "common/str.h"
+
 #include "engines/grim/emi/sound/emisound.h"
 #include "engines/grim/emi/poolsound.h"
 #include "engines/grim/resource.h"
-
 
 namespace Grim {
 
@@ -114,4 +114,5 @@ void PoolSound::restoreState(SaveGame *state) {
 			openFile(state->readString());
 	}
 }
+
 }

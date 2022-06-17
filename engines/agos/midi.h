@@ -22,7 +22,10 @@
 #ifndef AGOS_MIDI_H
 #define AGOS_MIDI_H
 
+#include "agos/sfxparser_accolade.h"
+
 #include "audio/mididrv.h"
+#include "audio/mididrv_ms.h"
 #include "audio/midiparser.h"
 #include "common/mutex.h"
 
@@ -32,98 +35,99 @@ class File;
 
 namespace AGOS {
 
-enum kMusicMode {
-	kMusicModeDisabled = 0,
-	kMusicModeAccolade = 1,
-	kMusicModeMilesAudio = 2,
-	kMusicModeSimon1 = 3,
-	kMusicModePC98 = 4
-};
-
-struct MusicInfo {
-	MidiParser *parser;
-	byte *data;
-	byte num_songs;           // For Type 1 SMF resources
-	byte *songs[16];          // For Type 1 SMF resources
-	uint32 song_sizes[16];    // For Type 1 SMF resources
-
-	MidiChannel *channel[16]; // Dynamic remapping of channels to resolve conflicts
-	byte volume[16];          // Current channel volume
-
-	MusicInfo() { clear(); }
-	void clear() {
-		parser = 0; data = 0; num_songs = 0;
-		memset(songs, 0, sizeof(songs));
-		memset(song_sizes, 0, sizeof(song_sizes));
-		memset(channel, 0, sizeof(channel));
-	}
-};
-
-class MidiPlayer : public MidiDriver_BASE {
+class MidiPlayer {
 protected:
+	// Instrument map specifically for remapping the instruments of the GM
+	// version of Simon 2 track 10 subtracks 2 and 3 to MT-32.
+	static const byte SIMON2_TRACK10_GM_MT32_INSTRUMENT_REMAPPING[];
+
+	AGOSEngine *_vm;
+
 	Common::Mutex _mutex;
+	// Driver used for music. This points to the same object as _driverMsMusic,
+	// except if a PC-98 driver is used (these do not implement the Multisource
+	// interface).
 	MidiDriver *_driver;
-	bool _map_mt32_to_gm;
-	bool _nativeMT32;
+	// Multisource driver used for music. Provides access to multisource
+	// methods without casting. If this is not nullptr, it points to the same
+	// object as _driver.
+	MidiDriver_Multisource *_driverMsMusic;
+	// Multisource driver used for sound effects. Only used for Elvira 2,
+	// Waxworks and Simon The Sorcerer DOS floppy AdLib sound effects.
+	// If AdLib is also used for music, this points to the same object as
+	// _driverMsMusic and _driver.
+	MidiDriver_Multisource *_driverMsSfx;
 
-	MusicInfo _music;
-	MusicInfo _sfx;
-	MusicInfo *_current; // Allows us to establish current context for operations.
+	// MIDI parser and data used for music.
+	MidiParser *_parserMusic;
+	byte *_musicData;
+	// MIDI parser and data used for SFX (Simon 1 DOS floppy).
+	MidiParser *_parserSfx;
+	byte *_sfxData;
+	// Parser used for SFX (Elvira 2 and Waxworks DOS).
+	SfxParser_Accolade *_parserSfxAccolade;
 
-	// These are maintained for both music and SFX
-	byte _masterVolume;    // 0-255
-	byte _musicVolume;
-	byte _sfxVolume;
 	bool _paused;
 
-	// These are only used for music.
-	byte _currentTrack;
-	bool _loopTrack;
+	// Queued music track data (Simon 2).
 	byte _queuedTrack;
 	bool _loopQueuedTrack;
 
 protected:
 	static void onTimer(void *data);
-	void clearConstructs();
-	void clearConstructs(MusicInfo &info);
-	void resetVolumeTable();
 
 public:
-	bool _adLibMusic;
-	bool _enable_sfx;
+	MidiPlayer(AGOSEngine *vm);
+	~MidiPlayer();
 
-public:
-	MidiPlayer();
-	~MidiPlayer() override;
+	// Creates and opens the relevant parsers and drivers for the game version
+	// and selected sound device.
+	int open();
 
-	void loadSMF(Common::SeekableReadStream *in, int song, bool sfx = false);
-	void loadMultipleSMF(Common::SeekableReadStream *in, bool sfx = false);
-	void loadXMIDI(Common::SeekableReadStream *in, bool sfx = false);
-	void loadS1D(Common::SeekableReadStream *in, bool sfx = false);
+	// Loads music or SFX data supported by the MidiParser or SfxParser used
+	// for the detected version of the game. Specify sfx to indicate that this
+	// is a synthesized sound effect.
+	void load(Common::SeekableReadStream *in, int32 size = -1, bool sfx = false);
 
-	bool hasNativeMT32() const { return _nativeMT32; }
+	/**
+	 * Plays the currently loaded music or SFX data. If the loaded data has
+	 * multiple tracks, specify track to select the track to play.
+	 * 
+	 * @param track The track to play. Default 0.
+	 * @param sfx True if the SFX data should be played, otherwise the loaded
+	 * music data will be played. Default false.
+	 * @param sfxUsesRhythm True if the sound effect uses OPL rhythm
+	 * instruments. Default false.
+	 * @param queued True if this track was queued; false if it was played
+	 * directly. Default false.
+	 */
+	void play(int track = 0, bool sfx = false, bool sfxUsesRhythm = false, bool queued = false);
+	
+	// Returns true if the playback device uses MT-32 MIDI data; false it it
+	// uses a different data type.
+	bool usesMT32Data() const;
+	// Returns true if the game version and selected sound device can use MIDI
+	// (or synthesized) sound effects.
+	bool hasMidiSfx() const;
 	void setLoop(bool loop);
-	void startTrack(int track);
+	// Activates or deactivates remapping GM to MT-32 instruments for
+	// Simon 2 track 10.
+	void setSimon2Remapping(bool remap);
 	void queueTrack(int track, bool loop);
-	bool isPlaying(bool check_queued = false) { return (_currentTrack != 255 && (_queuedTrack != 255 || !check_queued)); }
+	bool isPlaying(bool checkQueued = false);
 
-	void stop();
+	void stop(bool sfx = false);
 	void pause(bool b);
+	void fadeOut();
 
-	int  getMusicVolume() const { return _musicVolume; }
-	int  getSFXVolume() const { return _sfxVolume; }
-	void setVolume(int musicVol, int sfxVol);
-
-public:
-	int open(int gameType, Common::Platform platform, bool isDemo);
-
-	// MidiDriver_BASE interface implementation
-	void send(uint32 b) override;
-	void metaEvent(byte type, byte *data, uint16 length) override;
+	void syncSoundSettings();
 
 private:
-	kMusicMode _musicMode;
-	MusicType musicType;
+	bool _pc98;
+	// The type of the music device selected for playback.
+	MusicType _deviceType;
+	// The type of the MIDI data of the game (MT-32 or GM).
+	MusicType _dataType;
 
 private:
 	Common::SeekableReadStream *simon2SetupExtractFile(const Common::String &requestedFileName);

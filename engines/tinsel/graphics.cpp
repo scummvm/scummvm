@@ -26,18 +26,12 @@
 #include "tinsel/palette.h"
 #include "tinsel/scene.h"
 #include "tinsel/tinsel.h"
-#include "tinsel/scn.h"
 
 #include "common/textconsole.h"
 
 namespace Tinsel {
 
 //----------------- LOCAL DEFINES --------------------
-
-// Defines used in graphic drawing
-#define CHARPTR_OFFSET 16
-#define CHAR_WIDTH 4
-#define CHAR_HEIGHT 4
 
 extern uint8 g_transPalette[MAX_COLORS];
 
@@ -716,6 +710,26 @@ static void t3WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP) {
 }
 
 /**
+ * Fill the destination area with a constant color (Noir)
+ */
+static void t3WrtConst(DRAWOBJECT *pObj, bool applyClipping) {
+	if (applyClipping) {
+		pObj->height -= pObj->topClip + pObj->botClip;
+		pObj->width -= pObj->leftClip + pObj->rightClip;
+
+		if (pObj->width <= 0)
+			return;
+	}
+
+	Common::Rect rect;
+	rect.top = pObj->yPos;
+	rect.bottom = pObj->yPos + pObj->height;
+	rect.left = pObj->xPos;
+	rect.right = pObj->xPos + pObj->width;
+	_vm->screen().fillRect(rect, pObj->constant);
+}
+
+/**
  * Fill the destination area with a constant color
  */
 static void WrtConst(DRAWOBJECT *pObj, uint8 *destP, bool applyClipping) {
@@ -799,6 +813,35 @@ static void t3TransWNZ(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP) {
 		srcP += pObj->rightClip * 2;
 		destP += SCREEN_WIDTH * 2;
 	}
+}
+
+/**
+ * Translates the destination surface within the object's bounds giving it a slightly
+ * green tint (Noir)
+ */
+static void t3WrtTrans(DRAWOBJECT *pObj, bool applyClipping) {
+	if (applyClipping) {
+		pObj->height -= pObj->topClip + pObj->botClip;
+		pObj->width -= pObj->leftClip + pObj->rightClip;
+
+		if (pObj->width <= 0)
+			return;
+	}
+
+	auto &surface = _vm->screen();
+	for (int yOffset = 0; yOffset < pObj->height; ++yOffset) {
+		for (int xOffset = 0; xOffset < pObj->width; ++xOffset) {
+			int x = pObj->xPos + xOffset;
+			int y = pObj->yPos + yOffset;
+			uint8 r,g,b;
+			surface.format.colorToRGB(surface.getPixel(x, y), r, g, b);
+			r >>= 2;
+			g >>= 1;
+			b >>= 2;
+			surface.setPixel(x, y, surface.format.RGBToColor(r,g,b));
+		}
+	}
+
 }
 
 /**
@@ -1191,7 +1234,10 @@ void DrawObject(DRAWOBJECT *pObj) {
 			break;
 		case 0x04:	// fill with constant color without clipping
 		case 0x44:	// fill with constant color with clipping
-			WrtConst(pObj, destPtr, typeId == 0x44);
+			if (TinselVersion == 3)
+				t3WrtConst(pObj, typeId == 0x44);
+			else
+				WrtConst(pObj, destPtr, typeId == 0x44);
 			break;
 		case 0x81:	// TinselV3, draw sprite with transparency
 		case 0xC1:	// TinselV3, draw sprite with transparency & clipping
@@ -1202,7 +1248,10 @@ void DrawObject(DRAWOBJECT *pObj) {
 			break;
 		case 0x84:	// draw transparent surface without clipping
 		case 0xC4:	// draw transparent surface with clipping
-			WrtTrans(pObj, destPtr, typeId == 0xC4);
+			if (TinselVersion == 3)
+				t3WrtTrans(pObj, typeId == 0xC4);
+			else
+				WrtTrans(pObj, destPtr, typeId == 0xC4);
 			break;
 		case 0x05:	// TinselV3, draw text with color replacement without clipping
 		case 0x45:	// TinselV3, draw text with color replacement with clipping

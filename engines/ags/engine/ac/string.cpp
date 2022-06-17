@@ -114,7 +114,7 @@ const char *String_Substring(const char *thisString, int index, int length) {
 	size_t strlen = ustrlen(thisString);
 	if ((index < 0) || ((size_t)index > strlen))
 		quit("!String.Substring: invalid index");
-	size_t sublen = std::min((size_t)length, strlen - index);
+	size_t sublen = MIN((size_t)length, strlen - index);
 	size_t start = uoffset(thisString, index);
 	size_t end = uoffset(thisString + start, sublen) + start;
 	size_t copysz = end - start;
@@ -255,11 +255,10 @@ DynObjectRef CreateNewScriptStringObj(const char *fromText, bool reAllocate) {
 	ScriptString *str;
 	if (reAllocate) {
 		str = new ScriptString(fromText);
-	} else {
-		str = new ScriptString();
-		str->text = const_cast<char *>(fromText);
+	} else { // TODO: refactor to avoid const casts!
+		str = new ScriptString(const_cast<char *>(fromText), true);
 	}
-	void *obj_ptr = str->text;
+	void *obj_ptr = str->GetTextPtr();
 	int32_t handle = ccRegisterManagedObject(obj_ptr, str);
 	if (handle == 0) {
 		delete str;

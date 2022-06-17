@@ -37,12 +37,12 @@
 #include "ags/engine/ac/walkable_area.h"
 #include "ags/engine/gfx/gfxfilter.h"
 #include "ags/engine/gui/gui_dialog.h"
-#include "ags/shared/script/cc_options.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/main/main.h"
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/engine/gfx/graphics_driver.h"
 #include "ags/engine/main/graphics_mode.h"
 
@@ -59,7 +59,7 @@ String GetRuntimeInfo() {
 		"Adventure Game Studio run-time engine[ACI version %s"
 		"[Game resolution %d x %d (%d-bit)"
 		"[Running %d x %d at %d-bit%s[GFX: %s; %s[Draw frame %d x %d["
-		"Sprite cache size: %d KB (limit %d KB; %d locked)",
+		"Sprite cache size: %d KB (limit %d KB; %d KB locked)",
 		_G(EngineVersion).LongString.GetCStr(), _GP(game).GetGameRes().Width, _GP(game).GetGameRes().Height, _GP(game).GetColorDepth(),
 		mode.Width, mode.Height, mode.ColorDepth,
 		mode.IsWindowed() ? " W" : "",
@@ -116,7 +116,7 @@ void script_debug(int cmdd, int dataa) {
 		int goToRoom = -1;
 		if (_GP(game).roomCount == 0) {
 			char inroomtex[80];
-			sprintf(inroomtex, "!Enter new room: (in room %d)", _G(displayed_room));
+			snprintf(inroomtex, sizeof(inroomtex), "!Enter new room: (in room %d)", _G(displayed_room));
 			setup_for_dialog();
 			goToRoom = enternumberwindow(inroomtex);
 			restore_after_dialog();
@@ -140,7 +140,7 @@ void script_debug(int cmdd, int dataa) {
 		int mlsnum = _GP(game).chars[dataa].walking;
 		if (_GP(game).chars[dataa].walking >= TURNING_AROUND)
 			mlsnum %= TURNING_AROUND;
-		MoveList *cmls = &_G(mls)[mlsnum];
+		MoveList *cmls = &_GP(mls)[mlsnum];
 		for (int i = 0; i < cmls->numstage - 1; i++) {
 			short srcx = short((cmls->pos[i] >> 16) & 0x00ffff);
 			short srcy = short(cmls->pos[i] & 0x00ffff);

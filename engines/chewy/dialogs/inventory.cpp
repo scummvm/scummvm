@@ -28,21 +28,10 @@
 #include "chewy/main.h"
 #include "chewy/menus.h"
 #include "chewy/mouse.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Dialogs {
-
-static const Common::Rect inventoryHotspots[] = {
-	{  21,  25,  51,  39 },
-	{  53,  25,  83,  39 },
-	{  -2,  -2,  -2,  -2 },
-	{ 213,  25, 243,  39 },
-	{ 253,  25, 283,  39 },
-	{  21,  45, 283, 135 },
-	{ 257, 151, 307, 165 },
-	{ 257, 171, 307, 185 },
-	{  -1,  -1,  -1,  -1 }
-};
 
 static const int16 ANI_INVENT_END[3] = { 7, 16, 24 };
 
@@ -63,11 +52,11 @@ void Inventory::plot_menu() {
 	}
 
 	int16 y;
-	int16 k = _G(in)->findHotspot(inventoryHotspots);
+	int16 k = _G(in)->findHotspot(_G(inventoryHotspots));
 	if (k != -1) {
 		if (k < 5)
-			_G(out)->boxFill(inventoryHotspots[k].left, inventoryHotspots[k].top,
-	  						 inventoryHotspots[k].bottom + 1, inventoryHotspots[k].right + 5, 41);
+			_G(out)->boxFill(_G(inventoryHotspots)[k].left, _G(inventoryHotspots)[k].top,
+	  						 _G(inventoryHotspots)[k].right + 1, _G(inventoryHotspots)[k].bottom + 5, 41);
 		else {
 			int16 x = (g_events->_mousePos.x - (WIN_INF_X)) / 54;
 			y = (g_events->_mousePos.y - (WIN_INF_Y + 4 + 30)) / 30;
@@ -100,12 +89,12 @@ void Inventory::plot_menu() {
 			y = 3;
 		else
 			y = 0;
-		_G(out)->spriteSet(_G(curtaf)->_image[_G(ani_count)[i]],
+		_G(out)->spriteSet(_G(curtaf)->image[_G(ani_count)[i]],
 			WIN_INF_X + 8 + i * 32, WIN_INF_Y + 12 - y, _G(scr_width));
 	}
 
 	for (int16 i = 0; i < 2; i++) {
-		_G(out)->spriteSet(_G(menutaf)->_image[PFEIL_UP + i],
+		_G(out)->spriteSet(_G(menutaf)->image[PFEIL_UP + i],
 			WIN_INF_X + 200 + i * 40, WIN_INF_Y + 12, _G(scr_width));
 	}
 
@@ -163,14 +152,14 @@ void Inventory::menu() {
 	_G(show_invent_menu) = 1;
 
 	while (_G(show_invent_menu) == 1 && !SHOULD_QUIT) {
-		if (!_G(minfo)._button)
+		if (!_G(minfo).button)
 			mouseFl = false;
-		if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN || keyVal) {
+		if (_G(minfo).button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN || keyVal) {
 			if (!mouseFl) {
 				mouseFl = true;
 				g_events->_kbInfo._keyCode = '\0';
 
-				int16 k = _G(in)->findHotspot(inventoryHotspots);
+				int16 k = _G(in)->findHotspot(_G(inventoryHotspots));
 				if (keyVal == Common::KEYCODE_F1)
 					k = 0;
 				else if (keyVal == Common::KEYCODE_F2)
@@ -248,7 +237,7 @@ void Inventory::menu() {
 					break;
 				}
 			}
-		} else if (_G(minfo)._button == 2 || g_events->_kbInfo._keyCode == Common::KEYCODE_ESCAPE) {
+		} else if (_G(minfo).button == 2 || g_events->_kbInfo._keyCode == Common::KEYCODE_ESCAPE) {
 			if (!mouseFl) {
 				// Set virtual key
 				_G(in)->_hotkey = Common::KEYCODE_ESCAPE;
@@ -266,7 +255,7 @@ void Inventory::menu() {
 		} else if (ret_look == 5) {
 			taste_flag = false;
 			mouseFl = false;
-			_G(minfo)._button = 1;
+			_G(minfo).button = 1;
 			keyVal = Common::KEYCODE_RETURN;
 		}
 
@@ -296,7 +285,7 @@ void Inventory::menu() {
 						inv_rand_y = -1;
 						plot_menu();
 						_G(cur)->plot_cur();
-						_G(out)->back2screen(_G(workpage));
+						_G(out)->copyToScreen();
 					}
 				} else {
 					if (menu_flag1 != MENU_DISPLAY) {
@@ -355,12 +344,11 @@ void Inventory::menu() {
 				_G(cur)->plot_cur();
 			_G(out)->setPointer(nullptr);
 			if (menu_flag1 == MENU_DISPLAY) {
-				_G(fx)->blende1(_G(workptr), _G(screen0), nullptr, 200, 0, 300);
+				_G(fx)->blende1(_G(workptr), nullptr, 0, 300);
 			} else if (menu_flag1 == MENU_HIDE)
-				_G(fx)->blende1(_G(workptr), _G(screen0), nullptr, 200, 1, 300);
+				_G(fx)->blende1(_G(workptr), nullptr, 1, 300);
 			menu_flag1 = false;
-			_G(out)->setClip(0, 0, 320, 200);
-			_G(out)->back2screen(_G(workpage));
+			_G(out)->copyToScreen();
 		} else {
 			showCur();
 		}
@@ -369,12 +357,12 @@ void Inventory::menu() {
 	_G(cur)->move(_G(maus_old_x), _G(maus_old_y));
 	g_events->_mousePos.x = _G(maus_old_x);
 	g_events->_mousePos.y = _G(maus_old_y);
-	_G(minfo)._button = 0;
+	_G(minfo).button = 0;
 
 	while (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE && !SHOULD_QUIT) {
 		setupScreen(NO_SETUP);
 		_G(cur)->plot_cur();
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 	}
 
 	_G(flags).InventMenu = false;
@@ -396,6 +384,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 	bool endLoop = false;
 	int16 startLine = 0;
 	bool mouseFl = true;
+	bool firstTime = true;
 
 	if (mode == INV_ATS_MODE) {
 		itemName = _G(atds)->getTextEntry(invent_nr, TXT_MARK_NAME, INV_ATS_DATA);
@@ -422,14 +411,16 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		endLoop = true;
 	}
 
-	while (!endLoop) {
-		int16 rect = _G(in)->findHotspot(inventoryHotspots);
+	const int16 speechId = _G(atds)->getLastSpeechId();
 
-		if (_G(minfo)._button) {
-			if (_G(minfo)._button == 2) {
+	while (!endLoop) {
+		int16 rect = _G(in)->findHotspot(_G(inventoryHotspots));
+
+		if (_G(minfo).button) {
+			if (_G(minfo).button == 2) {
 				if (!mouseFl)
 					g_events->_kbInfo._scanCode = Common::KEYCODE_ESCAPE;
-			} else if (_G(minfo)._button == 1) {
+			} else if (_G(minfo).button == 1) {
 				if (!mouseFl) {
 					switch (rect) {
 					case 0:
@@ -531,10 +522,15 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 								 _G(scr_width), itemDesc[i].c_str());
 				++k;
 			}
+
+			if (g_engine->_sound->speechEnabled() && speechId >= 0 && firstTime) {
+				g_engine->_sound->playSpeech(speechId, false);
+				firstTime = false;
+			}
 		}
 
 		_G(cur)->plot_cur();
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 		SHOULD_QUIT_RETURN0;
 	}
 
@@ -542,7 +538,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		setupScreen(NO_SETUP);
 		plot_menu();
 		_G(cur)->plot_cur();
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 		SHOULD_QUIT_RETURN0;
 	}
 
@@ -651,13 +647,13 @@ void Inventory::showDiary() {
 	_G(gameState).scrollx = 0;
 	_G(gameState).scrolly = 0;
 
-	_G(room)->load_tgp(DIARY_START, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
+	_G(room)->load_tgp(DIARY_START, &_G(room_blk), GBOOK_TGP, false, GBOOK);
 	_G(out)->setPointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(gameState).scrollx, _G(gameState).scrolly);
-	_G(out)->back2screen(_G(workpage));
+	_G(out)->copyToScreen();
 	_G(room)->set_ak_pal(&_G(room_blk));
 	_G(out)->setPointer(nullptr);
-	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 
 	while (_G(in)->getSwitchCode() != Common::KEYCODE_ESCAPE) {
 		g_events->update();
@@ -668,14 +664,14 @@ void Inventory::showDiary() {
 		SHOULD_QUIT_RETURN;
 	}
 
-	_G(room)->load_tgp(_G(gameState)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
+	_G(room)->load_tgp(_G(gameState)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, true, EPISODE1);
 	_G(gameState).scrollx = scrollx;
 	_G(gameState).scrolly = scrolly;
 	setupScreen(NO_SETUP);
 	plot_menu();
 	_G(out)->setPointer(nullptr);
 	_G(room)->set_ak_pal(&_G(room_blk));
-	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 }
 
 } // namespace Dialogs

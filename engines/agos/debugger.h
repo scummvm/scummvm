@@ -31,7 +31,6 @@ class AGOSEngine;
 class Debugger : public GUI::Debugger {
 public:
 	Debugger(AGOSEngine *vm);
-	~Debugger() override {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 private:
 	AGOSEngine *_vm;

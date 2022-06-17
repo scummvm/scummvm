@@ -77,14 +77,9 @@ void TextStreamWriter::WriteLine(const String &str) {
 void TextStreamWriter::WriteFormat(const char *fmt, ...) {
 	va_list argptr;
 	va_start(argptr, fmt);
-	int need_length = vsnprintf(nullptr, 0, fmt, argptr);
-	va_start(argptr, fmt); // Reset argptr
-	char *buffer = new char[need_length + 1];
-	vsprintf(buffer, fmt, argptr);
+	_buf.FormatV(fmt, argptr);
 	va_end(argptr);
-
-	_stream->Write(buffer, need_length);
-	delete[] buffer;
+	_stream->Write(_buf.GetCStr(), _buf.GetLength());
 }
 
 void TextStreamWriter::WriteLineBreak() {

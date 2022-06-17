@@ -26,8 +26,6 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
-const Version Version::LastOldFormatVersion(3, 2, 2, 1120);
-
 Version::Version()
 	: Major(0)
 	, Minor(0)

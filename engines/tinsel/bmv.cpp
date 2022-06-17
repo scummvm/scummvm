@@ -50,9 +50,6 @@ namespace Tinsel {
 #define BMOVIE_EXTENSION	".bmv"
 
 #define SZ_C_BLOB	65
-#define SZ_U_BLOB	128
-
-#define BLANK_SOUND	0x0	// for 16 bit silence
 
 #define PT_A	20	// Number of times PT_B may be reached
 #define PT_B	6
@@ -64,8 +61,6 @@ namespace Tinsel {
 
 #define CD_SLOT_NOP	0x00	// Skip to next slot
 #define CD_LE_FIN	0x01	// End of movie
-#define CD_PDELTA	0x02	// Image compressed to previous one
-#define CD_SDELTA	0x03	// Image self-compressed
 
 #define BIT0		0x01
 
@@ -717,8 +712,7 @@ void BMVPlayer::FettleMovieText() {
 	for (i = 0; i < 2; i++) {
 		if (texts[i].pText) {
 			if (currentFrame > texts[i].dieFrame) {
-				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), texts[i].pText);
-				texts[i].pText = nullptr;
+				MultiDeleteObjectIfExists(FIELD_STATUS, &texts[i].pText);
 			} else {
 				MultiForceRedraw(texts[i].pText);
 				bIsText = true;
@@ -736,10 +730,11 @@ void BMVPlayer::BmvDrawText(bool bDraw) {
 
 	for (int i = 0; i < 2; i++) {
 		if (texts[i].pText) {
-			x = MultiLeftmost(texts[i].pText);
-			y = MultiHighest(texts[i].pText);
-			w = MIN(MultiRightmost(texts[i].pText) + 1, (int)SCREEN_WIDTH) - x;
-			h = MIN(MultiLowest(texts[i].pText) + 1, SCREEN_HIGH) - y;
+			Common::Rect bounds = MultiBounds(texts[i].pText);
+			x = bounds.left;
+			y = bounds.top;
+			w = MIN(bounds.right + 1, (int)SCREEN_WIDTH) - x;
+			h = MIN(bounds.bottom + 1, SCREEN_HIGH) - y;
 
 			const byte *src = ScreenBeg + (y * SCREEN_WIDTH) + x;
 			byte *dest = (byte *)_vm->screen().getBasePtr(x, y);
@@ -785,8 +780,7 @@ void BMVPlayer::MovieText(CORO_PARAM, int stringId, int x, int y, int fontId, CO
 		index = 1;
 	}
 
-	if (texts[index].pText)
-		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), texts[index].pText);
+	MultiDeleteObjectIfExists(FIELD_STATUS, &texts[index].pText);
 
 	LoadSubString(stringId, 0, _vm->_font->TextBufferAddr(), TBUFSZ);
 
@@ -1025,10 +1019,7 @@ void BMVPlayer::FinishBMV() {
 
 	// Ditch any text objects
 	for (i = 0; i < 2; i++) {
-		if (texts[i].pText) {
-			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), texts[i].pText);
-			texts[i].pText = nullptr;
-		}
+		MultiDeleteObjectIfExists(FIELD_STATUS, &texts[i].pText);
 	}
 	bMovieOn = false;
 

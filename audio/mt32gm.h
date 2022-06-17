@@ -24,8 +24,8 @@
 
 #include "audio/mididrv.h"
 #include "audio/mididrv_ms.h"
+#include "common/list.h"
 #include "common/mutex.h"
-#include "common/queue.h"
 
 /**
  * @defgroup audio_mt32_gm MIDI driver for MT-32 and GM
@@ -112,7 +112,7 @@ class MidiDriver_MT32GM : public MidiDriver_Multisource {
 public:
 	static const byte MT32_DEFAULT_INSTRUMENTS[8];
 	static const byte MT32_DEFAULT_PANNING[8];
-	static const uint8 MT32_DEFAULT_CHANNEL_VOLUME = 98;
+	static const uint8 MT32_DEFAULT_CHANNEL_VOLUME = 102;
 	static const uint8 GM_DEFAULT_CHANNEL_VOLUME = 100;
 	// Map for correcting Roland GS drumkit numbers.
 	static const uint8 GS_DRUMKIT_FALLBACK_MAP[128];
@@ -239,7 +239,8 @@ protected:
 	struct SysExData {
 		byte data[270];
 		uint16 length;
-		SysExData() : length(0) {
+		int8 source;
+		SysExData() : length(0), source(-1) {
 			memset(data, 0, sizeof(data));
 		}
 	};
@@ -259,10 +260,7 @@ public:
 	virtual int open(MidiDriver *driver, bool nativeMT32);
 	void close() override;
 	bool isOpen() const override { return _isOpen; }
-	bool isReady() override {
-		Common::StackLock lock(_sysExQueueMutex);
-		return _sysExQueue.empty();
-	}
+	bool isReady(int8 source = -1) override;
 	uint32 property(int prop, uint32 param) override;
 
 	using MidiDriver_BASE::send;
@@ -277,7 +275,7 @@ public:
 	 * MIDI messages (not using the queue) should not be sent until the queue
 	 * is empty.
 	 */
-	void sysExQueue(const byte *msg, uint16 length);
+	void sysExQueue(const byte *msg, uint16 length, int8 source = -1);
 	/**
 	 * Write data to an MT-32 memory location using a SysEx message.
 	 * This function will add the necessary header and checksum bytes.
@@ -297,7 +295,7 @@ public:
 	 * it is the caller's responsibility to make sure that the next SysEx is
 	 * not sent before this time has passed.
 	 */
-	uint16 sysExMT32(const byte *msg, uint16 length, const uint32 targetAddress, bool queue = false, bool delay = true);
+	uint16 sysExMT32(const byte *msg, uint16 length, const uint32 targetAddress, bool queue = false, bool delay = true, int8 source = -1);
 	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
 
 	void stopAllNotes(bool stopSustainedNotes = false) override;
@@ -584,7 +582,7 @@ protected:
 	// SysEx message can be sent.
 	uint32 _sysExDelay;
 	// Queue of SysEx messages to be sent to the MIDI device.
-	Common::Queue<SysExData> _sysExQueue;
+	Common::List<SysExData> _sysExQueue;
 	// Mutex for write access to the SysEx queue.
 	Common::Mutex _sysExQueueMutex;
 };

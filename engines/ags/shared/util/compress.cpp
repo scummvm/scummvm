@@ -315,7 +315,7 @@ Shared::Bitmap *load_rle_bitmap8(Stream *in, RGB(*pal)[256]) {
 	return bmp;
 }
 
-void skip_rle_bitmap8(Shared::Stream *in) {
+void skip_rle_bitmap8(Stream *in) {
 	int w = in->ReadInt16();
 	int h = in->ReadInt16();
 	// Skip 8-bit pixel data + RGB palette
@@ -326,7 +326,7 @@ void skip_rle_bitmap8(Shared::Stream *in) {
 // LZW
 //-----------------------------------------------------------------------------
 
-void lzw_compress(const uint8_t *data, size_t data_sz, int image_bpp, Shared::Stream *out) {
+void lzw_compress(const uint8_t *data, size_t data_sz, int /*image_bpp*/, Shared::Stream *out) {
 	// LZW algorithm that we use fails on sequence less than 16 bytes.
 	if (data_sz < 16) {
 		out->Write(data, data_sz);
@@ -336,7 +336,7 @@ void lzw_compress(const uint8_t *data, size_t data_sz, int image_bpp, Shared::St
 	lzwcompress(&mem_in, out);
 }
 
-void lzw_decompress(uint8_t *data, size_t data_sz, int image_bpp, Shared::Stream *in) {
+void lzw_decompress(uint8_t *data, size_t data_sz, int /*image_bpp*/, Shared::Stream *in) {
 	// LZW algorithm that we use fails on sequence less than 16 bytes.
 	if (data_sz < 16) {
 		in->Read(data, data_sz);

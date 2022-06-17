@@ -36,9 +36,6 @@ int  get_our_eip();
 
 extern const char *game_file_sig;
 
-// archive attributes to search for - al_findfirst breaks with 0
-#define FA_SEARCH -1
-
 } // namespace AGS3
 
 #endif

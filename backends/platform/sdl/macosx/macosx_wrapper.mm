@@ -27,6 +27,7 @@
 
 #include <AppKit/NSPasteboard.h>
 #include <Foundation/NSArray.h>
+#include <Foundation/NSBundle.h>
 #include <Foundation/NSPathUtilities.h>
 #include <AvailabilityMacros.h>
 #include <CoreFoundation/CFString.h>
@@ -109,4 +110,11 @@ Common::String getDesktopPathMacOSX() {
 	if (path == nil)
 		return Common::String();
 	return Common::String([path fileSystemRepresentation]);
+}
+
+Common::String getResourceAppBundlePathMacOSX() {
+	NSString *bundlePath = [[NSBundle mainBundle] resourcePath];
+	if (bundlePath == nil)
+		return Common::String();
+	return Common::String([bundlePath fileSystemRepresentation]);
 }

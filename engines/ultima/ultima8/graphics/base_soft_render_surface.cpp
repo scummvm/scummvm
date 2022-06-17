@@ -51,31 +51,31 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(Graphics::ManagedSurface *s) :
 	_bytesPerPixel = _surface->format.bytesPerPixel;
 
 	// TODO: Slight hack - set the global surface format only once.
-	if (!RenderSurface::_format.bytesPerPixel) {
-		RenderSurface::_format.bytesPerPixel = _bytesPerPixel;
-		RenderSurface::_format.rLoss = _surface->format.rLoss;
-		RenderSurface::_format.gLoss = _surface->format.gLoss;
-		RenderSurface::_format.bLoss = _surface->format.bLoss;
-		RenderSurface::_format.aLoss = _surface->format.aLoss;
-		RenderSurface::_format.rLoss16 = _format.rLoss + 8;
-		RenderSurface::_format.gLoss16 = _format.gLoss + 8;
-		RenderSurface::_format.bLoss16 = _format.bLoss + 8;
-		RenderSurface::_format.aLoss16 = _format.aLoss + 8;
-		RenderSurface::_format.rShift = _surface->format.rShift;
-		RenderSurface::_format.gShift = _surface->format.gShift;
-		RenderSurface::_format.bShift = _surface->format.bShift;
-		RenderSurface::_format.aShift = _surface->format.aShift;
-		RenderSurface::_format.rMask = _surface->format.rMax() << _surface->format.rShift;
-		RenderSurface::_format.gMask = _surface->format.gMax() << _surface->format.gShift;
-		RenderSurface::_format.bMask = _surface->format.bMax() << _surface->format.bShift;
-		RenderSurface::_format.aMask = _surface->format.aMax() << _surface->format.aShift;
+	if (!RenderSurface::_format->bytesPerPixel) {
+		RenderSurface::_format->bytesPerPixel = _bytesPerPixel;
+		RenderSurface::_format->rLoss = _surface->format.rLoss;
+		RenderSurface::_format->gLoss = _surface->format.gLoss;
+		RenderSurface::_format->bLoss = _surface->format.bLoss;
+		RenderSurface::_format->aLoss = _surface->format.aLoss;
+		RenderSurface::_format->rLoss16 = _format->rLoss + 8;
+		RenderSurface::_format->gLoss16 = _format->gLoss + 8;
+		RenderSurface::_format->bLoss16 = _format->bLoss + 8;
+		RenderSurface::_format->aLoss16 = _format->aLoss + 8;
+		RenderSurface::_format->rShift = _surface->format.rShift;
+		RenderSurface::_format->gShift = _surface->format.gShift;
+		RenderSurface::_format->bShift = _surface->format.bShift;
+		RenderSurface::_format->aShift = _surface->format.aShift;
+		RenderSurface::_format->rMask = _surface->format.rMax() << _surface->format.rShift;
+		RenderSurface::_format->gMask = _surface->format.gMax() << _surface->format.gShift;
+		RenderSurface::_format->bMask = _surface->format.bMax() << _surface->format.bShift;
+		RenderSurface::_format->aMask = _surface->format.aMax() << _surface->format.aShift;
 	}
 
 	SetPixelsPointer();
 
 	// Trickery to get the alpha channel
-	if (_format.aMask == 0 && _bytesPerPixel == 4) {
-		uint32 mask = ~(_format.rMask | _format.gMask | _format.bMask);
+	if (_format->aMask == 0 && _bytesPerPixel == 4) {
+		uint32 mask = ~(_format->rMask | _format->gMask | _format->bMask);
 
 		// Using all bits????
 		if (!mask) return;
@@ -104,10 +104,10 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(Graphics::ManagedSurface *s) :
 		if (zero < last) return;
 
 		// Set it
-		_format.aShift = first;
-		_format.aLoss = 8 - (last + 1 - first);
-		_format.aLoss16 = _format.aLoss + 8;
-		_format.aMask = mask;
+		_format->aShift = first;
+		_format->aLoss = 8 - (last + 1 - first);
+		_format->aLoss16 = _format->aLoss + 8;
+		_format->aMask = mask;
 	}
 }
 

@@ -143,7 +143,7 @@ void Room51::setup_func() {
 
 		_G(det)->setStaticPos(17, _tmpx, _tmpy, false, false);
 
-		if ((_G(minfo)._button == 1 || _G(in)->getSwitchCode() == 28) && !_flag) {
+		if ((_G(minfo).button == 1 || _G(in)->getSwitchCode() == 28) && !_flag) {
 			_flag = true;
 			_G(det)->setSetailPos(8, _tmpx - 20, _tmpy + 41);
 			startSetAILWait(8, 1, ANI_FRONT);
@@ -184,7 +184,7 @@ void Room51::setup_func() {
 		}
 	} else if (_G(gameState)._personRoomNr[P_HOWARD] == 51) {
 		calc_person_look();
-		const int16 ch_y = _G(spieler_vector)[P_CHEWY].Xypos[1];
+		const int16 ch_y = _G(moveState)[P_CHEWY].Xypos[1];
 
 		int16 x, y;
 		if (ch_y < 129) {
@@ -255,10 +255,10 @@ int16 Room51::use_door(int16 txt_nr) {
 					_G(gameState).R51KillerWeg = true;
 					startAadWait(290);
 					g_engine->_sound->stopSound(0);
-					_G(out)->ausblenden(1);
+					_G(out)->fadeOut();
 					_G(out)->setPointer(nullptr);
 					_G(out)->cls();
-					_G(out)->einblenden(_G(pal), 0);
+					_G(out)->fadeIn(_G(pal));
 					_G(flags).NoPalAfterFlc = true;
 					_G(det)->showStaticSpr(16);
 					flic_cut(FCUT_068);

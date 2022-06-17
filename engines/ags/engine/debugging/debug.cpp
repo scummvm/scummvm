@@ -22,13 +22,6 @@
 #include "ags/lib/std/memory.h"
 #include "ags/lib/std/limits.h"
 #include "ags/shared/core/platform.h"
-#if AGS_PLATFORM_OS_WINDOWS
-#define NOMINMAX
-#define BITMAP WINDOWS_BITMAP
-//include <windows.h>
-#undef BITMAP
-#endif
-//include <SDL.h>
 #include "ags/lib/std/initializer_list.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/game_setup_struct.h"
@@ -48,8 +41,8 @@
 #include "ags/engine/platform/base/sys_main.h"
 #include "ags/plugins/plugin_engine.h"
 #include "ags/engine/script/script.h"
-#include "ags/shared/script/script_common.h"
-#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/cc_internal.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/shared/util/text_stream_writer.h"
@@ -73,7 +66,7 @@ IAGSEditorDebugger *GetEditorDebugger(const char *instanceToken) {
 
 #else   // AGS_PLATFORM_OS_WINDOWS
 
-IAGSEditorDebugger *GetEditorDebugger(const char *instanceToken) {
+IAGSEditorDebugger *GetEditorDebugger(const char * /*instanceToken*/) {
 	return nullptr;
 }
 
@@ -119,6 +112,9 @@ std::vector<String> parse_log_multigroup(const String &group_str) {
 		case 'g':
 			grplist.push_back("game");
 			break;
+		case 's':
+			grplist.push_back("script");
+			break;
 		case 'c':
 			grplist.push_back("sprcache");
 			break;
@@ -150,7 +146,7 @@ typedef std::pair<CommonDebugGroup, MessageType> DbgGroupOption;
 void apply_log_config(const ConfigTree &cfg, const String &log_id,
                       bool def_enabled,
                       std::initializer_list<DbgGroupOption> def_opts) {
-	String value = INIreadstring(cfg, "log", log_id);
+	String value = CfgReadString(cfg, "log", log_id);
 	if (value.IsEmpty() && !def_enabled)
 		return;
 
@@ -158,7 +154,7 @@ void apply_log_config(const ConfigTree &cfg, const String &log_id,
 	auto dbgout = _GP(DbgMgr).GetOutput(log_id);
 	const bool was_created_earlier = dbgout != nullptr;
 	if (!dbgout) {
-		String path = INIreadstring(cfg, "log", String::FromFormat("%s-path", log_id.GetCStr()));
+		String path = CfgReadString(cfg, "log", String::FromFormat("%s-path", log_id.GetCStr()));
 		dbgout = create_log_output(log_id, path);
 		if (!dbgout)
 			return; // unknown output type
@@ -212,7 +208,7 @@ void init_debug(const ConfigTree &cfg, bool stderr_only) {
 
 void apply_debug_config(const ConfigTree &cfg) {
 	apply_log_config(cfg, OutputSystemID, /* defaults */ true, { DbgGroupOption(kDbgGroup_Main, kDbgMsg_Info) });
-	bool legacy_log_enabled = INIreadint(cfg, "misc", "log", 0) != 0;
+	bool legacy_log_enabled = CfgReadBoolInt(cfg, "misc", "log", false);
 	apply_log_config(cfg, OutputFileID,
 	                 /* defaults */
 	legacy_log_enabled, {
@@ -312,49 +308,30 @@ void debug_script_log(const char *msg, ...) {
 	debug_script_print_impl(full_msg, kDbgMsg_Debug);
 }
 
-
-String get_cur_script(int numberOfLinesOfCallStack) {
-	String callstack;
-	ccInstance *sci = ccInstance::GetCurrentInstance();
-	if (sci)
-		callstack = sci->GetCallStack(numberOfLinesOfCallStack);
-	if (callstack.IsEmpty())
-		callstack = _G(ccErrorCallStack);
-	return callstack;
-}
-
-bool get_script_position(ScriptPosition &script_pos) {
-	ccInstance *cur_instance = ccInstance::GetCurrentInstance();
-	if (cur_instance) {
-		cur_instance->GetScriptPosition(script_pos);
-		return true;
-	}
-	return false;
-}
-
 struct Breakpoint {
 	char scriptName[80];
 	int lineNumber;
 };
 
 bool send_message_to_editor(const char *msg, const char *errorMsg) {
-	String callStack = get_cur_script(25);
+	// Get either saved callstack from a script error, or current execution point
+	String callStack = (errorMsg && cc_has_error()) ?
+		cc_get_error().CallStack : cc_get_callstack();
 	if (callStack.IsEmpty())
 		return false;
 
-	char messageToSend[STD_BUFFER_SIZE];
-	sprintf(messageToSend, "<?xml version=\"1.0\" encoding=\"Windows-1252\"?><Debugger Command=\"%s\">", msg);
+	String message;
+	message.AppendFmt("<?xml version=\"1.0\" encoding=\"Windows-1252\"?><Debugger Command=\"%s\">", msg);
 #if AGS_PLATFORM_OS_WINDOWS
-	sprintf(&messageToSend[strlen(messageToSend)], "  <EngineWindow>%d</EngineWindow> ", (int)sys_win_get_window());
+	message.AppendFmt("  <EngineWindow>%d</EngineWindow> ", (int)sys_win_get_window());
 #endif
-	sprintf(&messageToSend[strlen(messageToSend)], "  <ScriptState><![CDATA[%s]]></ScriptState> ", callStack.GetCStr());
+	message.AppendFmt("  <ScriptState><![CDATA[%s]]></ScriptState> ", callStack.GetCStr());
 	if (errorMsg != nullptr) {
-		sprintf(&messageToSend[strlen(messageToSend)], "  <ErrorMessage><![CDATA[%s]]></ErrorMessage> ", errorMsg);
+		message.AppendFmt("  <ErrorMessage><![CDATA[%s]]></ErrorMessage> ", errorMsg);
 	}
-	strcat(messageToSend, "</Debugger>");
+	message.Append("</Debugger>");
 
-	_G(editor_debugger)->SendMessageToEditor(messageToSend);
-
+	_G(editor_debugger)->SendMessageToEditor(message.GetCStr());
 	return true;
 }
 

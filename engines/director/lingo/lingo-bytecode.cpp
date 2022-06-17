@@ -22,6 +22,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/substream.h"
+#include "common/xpfloat.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -71,6 +72,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x1d, LC::c_telldone,		"" },
 	{ 0x1e, LC::cb_list,		"" },
 	{ 0x1f, LC::cb_proplist,	"" },
+
 	{ 0x41, LC::c_intpush,		"B" },
 	{ 0x42, LC::c_argcnoretpush,"b" },
 	{ 0x43, LC::c_argcpush,		"b" },
@@ -106,6 +108,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x64, LC::c_stackpeek, 	"b" },
 	{ 0x65, LC::c_stackdrop, 	"b" },
 	{ 0x66, LC::cb_v4theentitynamepush, "bN" },
+
 	{ 0x81, LC::c_intpush,		"W" },
 	{ 0x82, LC::c_argcnoretpush,"w" },
 	{ 0x83, LC::c_argcpush,		"w" },
@@ -136,6 +139,9 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0xa0, LC::cb_theassign2, "wN" },
 	{ 0xa1, LC::cb_objectfieldpush, "wN" },
 	{ 0xa2, LC::cb_objectfieldassign, "wN" },
+	{ 0xa3, LC::cb_call,		"wN" }, // tellcall
+	{ 0xa4, LC::c_stackpeek, 	"w" },
+	{ 0xa5, LC::c_stackdrop, 	"w" },
 	{ 0xa6, LC::cb_v4theentitynamepush, "wN" },
 	{ 0, nullptr, nullptr }
 };
@@ -416,7 +422,7 @@ void LC::cb_localcall() {
 	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
 		Common::String name = g_lingo->_currentScriptContext->_functionNames[functionId];
 		if (debugChannelSet(3, kDebugLingoExec))
-			g_lingo->printSTUBWithArglist(name.c_str(), nargs.u.i, "localcall:");
+			printWithArgList(name.c_str(), nargs.u.i, "localcall:");
 
 		LC::call(name, nargs.u.i, nargs.type == ARGC);
 
@@ -1140,29 +1146,10 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 					error("Constant float expected to be 10 bytes");
 					break;
 				}
-				uint16 exponent = READ_BE_UINT16(&constsStore[pointer]);
-				uint64 f64sign = (uint64)(exponent & 0x8000) << 48;
-				exponent &= 0x7fff;
-				uint64 fraction = READ_BE_UINT64(&constsStore[pointer+2]);
-				fraction &= 0x7fffffffffffffffULL;
-				uint64 f64exp = 0;
-				if (exponent == 0) {
-					f64exp = 0;
-				} else if (exponent == 0x7fff) {
-					f64exp = 0x7ff;
-				} else {
-					int32 normexp = (int32)exponent - 0x3fff;
-					if ((-0x3fe > normexp) || (normexp >= 0x3ff)) {
-						error("Constant float exponent too big for a double");
-						break;
-					}
-					f64exp = (uint64)(normexp + 0x3ff);
-				}
-				f64exp <<= 52;
-				uint64 f64fract = fraction >> 11;
-				uint64 f64bin = f64sign | f64exp | f64fract;
+				uint16 signAndExponent = READ_BE_UINT16(&constsStore[pointer]);
+				uint64 mantissa = READ_BE_UINT64(&constsStore[pointer+2]);
 
-				constant.u.f = *(double *)(&f64bin);
+				constant.u.f = Common::XPFloat(signAndExponent, mantissa).toDouble(Common::XPFloat::kSemanticsSANE);
 			}
 			break;
 		default:

@@ -3116,6 +3116,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		dialog->pop(scene, dsAddr_dialogStackJohnNotyEndgame, 0, 797, textColorMark, textColorJohnNoty, 0, 1);
 		break;
 
+	case 0x7962:
 	case 0x7966:
 		if (CHECK_FLAG(dsAddr_lightOnFlag, 1))
 			retVal = false;

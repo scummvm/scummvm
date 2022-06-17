@@ -7,8 +7,7 @@ uniform vec2 sizeWH;
 
 out vec2 Texcoord;
 
-void main()
-{
+void main() {
 	Texcoord = texcoord * texcrop;
 	// Coordinates are [0.0;1.0], transform [-1.0; 1.0] and flip Y
 	vec2 pos = offsetXY + position * sizeWH;

@@ -396,10 +396,6 @@ Sound::Sound(AGOSEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mixe
 	_voice = nullptr;
 	_effects = nullptr;
 
-	_effectsPaused = false;
-	_ambientPaused = false;
-	_sfx5Paused = false;
-
 	_filenums = nullptr;
 	_lastVoiceFile = 0;
 	_offsets = nullptr;
@@ -571,9 +567,6 @@ void Sound::playEffects(uint sound) {
 	if (!_effects)
 		return;
 
-	if (_effectsPaused)
-		return;
-
 	if (_vm->getGameType() == GType_SIMON1)
 		_mixer->stopHandle(_effectsHandle);
 	_effects->playSound(sound, Audio::Mixer::kSFXSoundType, &_effectsHandle, false);
@@ -587,9 +580,6 @@ void Sound::playAmbient(uint sound) {
 		return;
 
 	_ambientPlaying = sound;
-
-	if (_ambientPaused)
-		return;
 
 	_mixer->stopHandle(_ambientHandle);
 	_effects->playSound(sound, Audio::Mixer::kSFXSoundType, &_ambientHandle, true);
@@ -627,21 +617,13 @@ void Sound::stopAll() {
 	_ambientPlaying = 0;
 }
 
-void Sound::effectsPause(bool b) {
-	_effectsPaused = b;
-	_sfx5Paused = b;
+void Sound::effectsMute(bool mute, uint16 effectsVolume) {
+	_mixer->setChannelVolume(_effectsHandle, mute ? 0 : effectsVolume);
+	_mixer->setChannelVolume(_sfx5Handle, mute ? 0 : effectsVolume);
 }
 
-void Sound::ambientPause(bool b) {
-	_ambientPaused = b;
-
-	if (_ambientPaused && _ambientPlaying) {
-		_mixer->stopHandle(_ambientHandle);
-	} else if (_ambientPlaying) {
-		uint tmp = _ambientPlaying;
-		_ambientPlaying = 0;
-		playAmbient(tmp);
-	}
+void Sound::ambientMute(bool mute, uint16 effectsVolume) {
+	_mixer->setChannelVolume(_ambientHandle, mute ? 0 : effectsVolume);
 }
 
 // Personal Nightmare specific
@@ -664,9 +646,6 @@ void Sound::handleSoundQueue() {
 }
 
 void Sound::queueSound(byte *ptr, uint16 sound, uint32 size, uint16 freq) {
-	if (_effectsPaused)
-		return;
-
 	// Only a single sound can be queued
 	_soundQueuePtr = ptr;
 	_soundQueueNum = sound;
@@ -676,9 +655,6 @@ void Sound::queueSound(byte *ptr, uint16 sound, uint32 size, uint16 freq) {
 
 // Elvira 1/2 and Waxworks specific
 void Sound::playRawData(byte *soundData, uint sound, uint size, uint freq) {
-	if (_effectsPaused)
-		return;
-
 	byte *buffer = (byte *)malloc(size);
 	memcpy(buffer, soundData, size);
 
@@ -697,24 +673,15 @@ void Sound::playAmbientData(byte *soundData, uint sound, uint pan, uint vol) {
 
 	_ambientPlaying = sound;
 
-	if (_ambientPaused)
-		return;
-
 	_mixer->stopHandle(_ambientHandle);
 	playSoundData(&_ambientHandle, soundData, sound, pan, vol, true);
 }
 
 void Sound::playSfxData(byte *soundData, uint sound, uint pan, uint vol) {
-	if (_effectsPaused)
-		return;
-
 	playSoundData(&_effectsHandle, soundData, sound, pan, vol, false);
 }
 
 void Sound::playSfx5Data(byte *soundData, uint sound, uint pan, uint vol) {
-	if (_sfx5Paused)
-		return;
-
 	_mixer->stopHandle(_sfx5Handle);
 	playSoundData(&_sfx5Handle, soundData, sound, pan, vol, true);
 }

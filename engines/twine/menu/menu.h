@@ -153,6 +153,7 @@ private:
 	MenuSettings _saveManageMenuState;
 	MenuSettings _giveUpMenuState;
 	MenuSettings _mainMenuState;
+	MenuSettings _newGameMenuState;
 	MenuSettings _advOptionsMenuState;
 	MenuSettings _optionsMenuState;
 
@@ -222,7 +223,7 @@ public:
 	 * @param menuSettings menu settings array with the information to build the menu options
 	 * @return pressed menu button identification
 	 */
-	int32 processMenu(MenuSettings *menuSettings, bool showCredits = true);
+	int32 processMenu(MenuSettings *menuSettings);
 
 	bool init();
 
@@ -239,6 +240,8 @@ public:
 
 	/** Process hero behaviour menu */
 	void processBehaviourMenu();
+
+	int32 newGameClassicMenu();
 
 	/** Process in-game inventory menu */
 	void processInventoryMenu();

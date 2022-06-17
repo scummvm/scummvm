@@ -21,7 +21,7 @@
 
 /*
  * This file is based on WME Steam Plugin.
- * https://bitbucket.org/MnemonicWME/wme_steam_plugin
+ * https://archive.softwareheritage.org/browse/origin/directory/?origin_url=https://bitbucket.org/MnemonicWME/wme_steam_plugin
  * Copyright (c) 2013 Jan Nedoma
  */
 

@@ -106,7 +106,7 @@ enum Magics {
 };
 
 // Constants to replace the command characters from Pascal.
-// For more information, see: https://github.com/urukgit/avalot/wiki/Scrolldrivers
+// For more information, see: https://github.com/marnanel/avalot/wiki/Scrolldrivers
 enum ControlCharacter {
 	kControlSpeechBubble = 2, // ^B
 	kControlCenter = 3, // ^C

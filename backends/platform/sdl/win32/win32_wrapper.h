@@ -55,7 +55,7 @@ void getProcessDirectory(TCHAR *processDirectory, DWORD size);
 
 /**
  * Checks if the current running Windows version is greater or equal to the specified version.
- * See: https://docs.microsoft.com/en-us/windows/desktop/sysinfo/operating-system-version
+ * See: https://docs.microsoft.com/en-us/windows/win32/sysinfo/operating-system-version
  *
  * @param majorVersion The major version number (x.0)
  * @param minorVersion The minor version number (0.x)

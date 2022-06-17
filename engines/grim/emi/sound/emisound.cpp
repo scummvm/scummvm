@@ -25,9 +25,11 @@
 #include "common/mutex.h"
 #include "common/timer.h"
 #include "common/translation.h"
+
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/mixer.h"
+
 #include "engines/grim/debug.h"
 #include "engines/grim/sound.h"
 #include "engines/grim/grim.h"
@@ -693,7 +695,7 @@ void EMISound::initMusicTable() {
 		initMusicTableRetail(musicTable, "Textures/FullMonkeyMap2.imt");
 		initMusicTableRetail(musicTable, "Textures/FullMonkeyMap.imt");
 
-		/* There seem to be 69+60 music tracks, for a total of 125 unique tracks. */
+		// There seem to be 69+60 music tracks, for a total of 125 unique tracks.
 		int numTracks = 0;
 		for (int i = 0; i < 126; i++) {
 			if (!musicTable[i]._filename.empty()) {

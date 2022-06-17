@@ -26,8 +26,6 @@
 #include "kyra/resource/resource.h"
 #include "kyra/sound/sound.h"
 
-#include "base/version.h"
-
 #include "common/system.h"
 
 namespace Kyra {
@@ -42,7 +40,12 @@ int LoLEngine::processPrologue() {
 		return playDemo();
 	} else {
 		setupPrologueData(true);
-		if (!saveFileLoadable(0) || _flags.isDemo)
+		bool hasSave = false;
+		for (int i = 0; i < 20 && !hasSave; ++i) {
+			if (saveFileLoadable(i)) 
+				hasSave = true;
+		}
+		if (!hasSave || _flags.isDemo)
 			showIntro();
 	}
 
@@ -60,7 +63,7 @@ int LoLEngine::processPrologue() {
 
 	preInit();
 
-	Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
+	Common::String versionString = "ScummVM " + _versionString;
 
 	int processSelection = -1;
 	while (!shouldQuit() && processSelection == -1) {
@@ -121,6 +124,7 @@ int LoLEngine::processPrologue() {
 	}
 
 	if (processSelection == 0) {
+		restartPlayTimerAt(0);
 		if (_flags.isDemo) {
 			_charSelection = 0;
 			_screen->loadBitmap("ITEMICN.SHP", 3, 3, 0);
@@ -307,7 +311,7 @@ int LoLEngine::chooseCharacter() {
 	while (!_screen->isMouseVisible())
 		_screen->showMouse();
 
-	_screen->loadBitmap("CHAR.CPS", 2, 2, &_screen->getPalette(0));
+	_screen->loadBitmap(_flags.lang == Common::ZH_TWN ? "CHARCHI.CPS" : "CHAR.CPS", 2, 2, &_screen->getPalette(0));
 	_screen->loadBitmap("BACKGRND.CPS", 4, 4, &_screen->getPalette(0));
 
 	if (!_chargenWSA->open("CHARGEN.WSA", 1, 0))

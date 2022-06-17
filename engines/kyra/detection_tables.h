@@ -259,11 +259,11 @@ const KYRAGameDescription adGameDescs[] = {
 	{ // from trembyle
 		{
 			"kyra1",
-			msg_missingLangResources, // Reason for being unsupported
+			"Extracted",
 			AD_ENTRY1("GEMCUT.EMC", "57907d931675dbd16386c1d81d18fee4"),
 			Common::KO_KOR,
 			Common::kPlatformDOS,
-			ADGF_UNSUPPORTED,
+			ADGF_NO_FLAGS,
 			GUIO5(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
 		},
 		KYRA1_FLOPPY_FLAGS
@@ -329,6 +329,19 @@ const KYRAGameDescription adGameDescs[] = {
 			"kyra1",
 			"StuffIt",
 			AD_ENTRY1s("xn--Install Legend of Kyrandia-jf8p", "1d763e991c787431cac3786afbbdae72", 53899),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO3(GUIO_NOSPEECH, GUIO_MIDIGM, GUIO_RENDERVGA)
+		},
+				KYRA1_FLOPPY_CMP_FLAGS
+	},
+
+	{
+		{
+			"kyra1",
+			"StuffIt",
+			AD_ENTRY1s("xn--Install Legend of Kyrandia-jf8p", "e279c397f46b0913abb5595e2cdce2ed", 10276153),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK,
@@ -1688,6 +1701,19 @@ const KYRAGameDescription adGameDescs[] = {
 			0,
 			AD_ENTRY1s("WESTWOOD.1", "43857e24d1fc6731f3b13d9ed6db8c3a", -1),
 			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO9(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS, GAMEOPTION_LOL_SAVENAMES)
+		},
+		LOL_FLOPPY_CMP_FLAGS
+	},
+
+	{ // Spanish floppy version
+		{
+			"lol",
+			0,
+			AD_ENTRY1s("WESTWOOD.1", "6c99a3e6b904cc9e8c026061305309de", -1),
+			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO9(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS, GAMEOPTION_LOL_SAVENAMES)

@@ -25,7 +25,7 @@
 #include "engines/util.h"
 #include "graphics/palette.h"
 #include "chewy/chewy.h"
-#include "chewy/debugger.h"
+#include "chewy/console.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
@@ -73,7 +73,9 @@ void ChewyEngine::initialize() {
 	_sound = new Sound(_mixer);
 	_video = new VideoPlayer();
 
-	setDebugger(new Debugger());
+	setDebugger(new Console());
+
+	syncSoundSettings();
 }
 
 Common::Error ChewyEngine::run() {
@@ -139,8 +141,8 @@ Common::Error ChewyEngine::saveGameStream(Common::WriteStream *stream, bool isAu
 	Common::Serializer s(nullptr, stream);
 
 	for (int i = 0; i < MAX_PERSON; i++) {
-		_G(gameState).X[i] = _G(spieler_vector)[i].Xypos[0];
-		_G(gameState).Y[i] = _G(spieler_vector)[i].Xypos[1];
+		_G(gameState).X[i] = _G(moveState)[i].Xypos[0];
+		_G(gameState).Y[i] = _G(moveState)[i].Xypos[1];
 		_G(gameState).Phase[i] = _G(person_end_phase)[i];
 	}
 

@@ -105,7 +105,7 @@ public:
 	/**
 	 * Returns true if a given key is pressed
 	 */
-	bool isKeyPressed(AGS3::eAGSKeyCode key);
+	bool isKeyPressed(AGS3::eAGSKeyCode key, bool poll = true);
 
 	void clearEvents() {
 		_pendingEvents.clear();

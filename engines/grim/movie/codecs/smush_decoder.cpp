@@ -32,7 +32,6 @@
 #include "audio/decoders/raw.h"
 
 #include "engines/grim/debug.h"
-
 #include "engines/grim/movie/codecs/codec48.h"
 #include "engines/grim/movie/codecs/blocky8.h"
 #include "engines/grim/movie/codecs/blocky16.h"
@@ -724,6 +723,5 @@ void SmushDecoder::SmushAudioTrack::skipSamples(int sampleCount) {
 	_queueStream->readBuffer(tempBuffer, sampleCount);
 	delete[] tempBuffer;
 }
-
 
 } // end of namespace Grim

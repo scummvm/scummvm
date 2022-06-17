@@ -187,7 +187,7 @@ size_t AlignedStream::WriteArrayOfInt64(const int64_t *buffer, size_t count) {
 	return count;
 }
 
-bool AlignedStream::Seek(soff_t offset, StreamSeek origin) {
+bool AlignedStream::Seek(soff_t /*offset*/, StreamSeek /*origin*/) {
 	// TODO: split out Seekable Stream interface
 	return false;
 }
@@ -210,7 +210,7 @@ void AlignedStream::ReadPadding(size_t next_type) {
 			_block += next_type - pad;
 		}
 
-		_maxAlignment = Math::Max(_maxAlignment, next_type);
+		_maxAlignment = MAX(_maxAlignment, next_type);
 		// Data is evenly aligned now
 		if (_block % LargestPossibleType == 0) {
 			_block = 0;
@@ -233,7 +233,7 @@ void AlignedStream::WritePadding(size_t next_type) {
 			_block += next_type - pad;
 		}
 
-		_maxAlignment = Math::Max(_maxAlignment, next_type);
+		_maxAlignment = MAX(_maxAlignment, next_type);
 		// Data is evenly aligned now
 		if (_block % LargestPossibleType == 0) {
 			_block = 0;

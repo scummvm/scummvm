@@ -48,7 +48,7 @@
 
 namespace Common {
 
-/* punycode parameters, see http://tools.ietf.org/html/rfc3492#section-5 */
+/* punycode parameters, see https://datatracker.ietf.org/doc/html/rfc3492#section-5 */
 #define BASE 36
 #define TMIN 1
 #define TMAX 26

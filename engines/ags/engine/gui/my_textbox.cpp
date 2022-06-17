@@ -59,28 +59,35 @@ int MyTextBox::pressedon(int /*mx*/, int /*my*/) {
 }
 
 int MyTextBox::processmessage(int mcode, int wParam, NumberPtr lParam) {
+
 	if (mcode == CTB_SETTEXT) {
-		strcpy(text, (char *)lParam._ptr);
+		snprintf(text, sizeof(text), "%s", (const char *)lParam._ptr);
 		needredraw = 1;
 	} else if (mcode == CTB_GETTEXT)
-		strcpy((char *)lParam._ptr, text);
+		strcpy((char *)lParam._ptr, text); // FIXME! dangerous
 	else if (mcode == CTB_KEYPRESS) {
+		// NOTE: this deprecated control does not support UTF-8
+		//int key = wParam;
+		int uchar = lParam;
+		size_t len = strlen(text);
 		if (wParam == eAGSKeyCodeBackspace) {
-			if (text[0] != 0)
-				text[strlen(text) - 1] = 0;
-
+			if (len > 0)
+				text[len - 1] = 0;
 			drawandmouse();
-		} else if (strlen(text) >= TEXTBOX_MAXLEN - 1)
-			;
-		else if (get_text_width(text, _G(cbuttfont)) >= wid - 5)
-			;
-		else if (wParam > 127)
-			;  // font only has 128 chars
-		else {
-			text[strlen(text) + 1] = 0;
-			text[strlen(text)] = wParam;
-			drawandmouse();
+			return 0;
 		}
+
+		if (len >= TEXTBOX_MAXLEN - 1)
+			return 0; // buffer full;
+		if (uchar == 0)
+			return 0; // not a textual event
+		if ((uchar >= 128) && (!font_supports_extended_characters(_G(cbuttfont))))
+			return 0; // unsupported letter
+		if (get_text_width(text, _G(cbuttfont)) >= wid - 5)
+			return 0; // not enough control space
+		text[len] = uchar;
+		text[len + 1] = 0;
+		drawandmouse();
 	} else
 		return -1;
 

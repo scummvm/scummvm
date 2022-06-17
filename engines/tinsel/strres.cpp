@@ -68,12 +68,6 @@ bool g_bMultiByte = false;
 
 LANGUAGE g_textLanguage, g_sampleLanguage = TXT_ENGLISH;
 
-//----------------- LOCAL DEFINES ----------------------------
-
-#define languageExtension	".txt"
-#define indexExtension		".idx"
-#define sampleExtension		".smp"
-
 //----------------- FUNCTIONS --------------------------------
 
 void ResetVarsStrRes() {

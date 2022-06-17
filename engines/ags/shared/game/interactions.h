@@ -62,7 +62,7 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
-enum InterValType {
+enum InterValType : int8_t {
 	kInterValInvalid = 0,
 	kInterValLiteralInt = 1,
 	kInterValVariable = 2,

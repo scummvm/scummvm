@@ -23,13 +23,14 @@
 #define CHEWY_GLOBALS_H
 
 #include "common/array.h"
+#include "common/rect.h"
 #include "chewy/chewy.h"
 #include "chewy/types.h"
 #include "chewy/atds.h"
 #include "chewy/room.h"
 #include "chewy/movclass.h"
 #include "chewy/timer.h"
-#include "chewy/gedclass.h"
+#include "chewy/barriers.h"
 #include "chewy/text.h"
 #include "chewy/object.h"
 #include "chewy/effect.h"
@@ -118,7 +119,6 @@ public:
 	const uint8 *_chewy_ph_nr;
 	const uint8 *_chewy_ph;
 	byte *_pal = nullptr;
-	byte *_screen0 = nullptr;
 	int16 _scr_width = 0;
 	BlendMode _fx_blend = BLEND_NONE;
 	void (*_SetUpScreenFunc)() = nullptr;
@@ -129,7 +129,6 @@ public:
 	byte **_ablage = nullptr;
 	byte *_workpage = nullptr;
 	byte *_workptr = nullptr;
-	byte **_ged_mem = nullptr;
 	byte *_spblende = nullptr;
 	char **_ads_item_ptr = nullptr;
 
@@ -153,7 +152,6 @@ public:
 
 	int16 _talk_start_ani = -1;
 	int16 _talk_hide_static = -1;
-	int16 _currentSong = -1;
 	bool _savegameFlag = false;
 	int _timer_action_ctr = 0;
 
@@ -183,8 +181,7 @@ public:
 	TafInfo *_menutaf = nullptr;
 	TafSeqInfo *_howard_taf = nullptr;
 	TafInfo *_chewy = nullptr;
-	int16 *_chewy_kor = nullptr;
-	GedClass *_ged = nullptr;
+	Barriers *_barriers = nullptr;
 	Text *_txt = nullptr;
 	Room *_room = nullptr;
 	Object *_obj = nullptr;
@@ -194,7 +191,7 @@ public:
 	Atdsys *_atds = nullptr;
 	MovClass *_mov = nullptr;
 
-	ObjMov _spieler_vector[MAX_PERSON];
+	ObjMov _moveState[MAX_PERSON];
 	SprInfo _spr_info[MAX_PROG_ANI];
 	MovInfo _spieler_mi[MAX_PERSON];
 	ObjMov _auto_mov_vector[MAX_OBJ_MOV];
@@ -227,7 +224,6 @@ public:
 	};
 
 	// main.cpp
-	int16 _menu_flag = 0;
 	bool _inv_disp_ok = 0;
 	int16 _txt_aus_click = 0;
 	int16 _txt_nummer = 0;
@@ -248,7 +244,6 @@ public:
 	int _spriteWidth = 0;
 
 	// mcga_graphics.cpp
-	int16 _clipx1 = 0, _clipx2 = 0, _clipy1 = 0, _clipy2 = 0;
 	int16 _gcurx = 0, _gcury = 0;
 
 	// menus.cpp
@@ -265,6 +260,48 @@ public:
 	bool _timer_int = false;
 	int _timer_count = 0;
 	bool _timer_suspend = false;
+
+	// Hotspot rect arrays
+	const Common::Rect _cinematicsHotspots[4] = {
+		{ 10,  80,  32, 105 },
+		{ 10, 150,  32, 175 },
+		{ 36,  64, 310, 188 },
+		{ -1,  -1,  -1,  -1 }
+	};
+	const Common::Rect _fileHotspots[9] = {
+		{  14,  73,  32,  94 },
+		{  14,  96,  32, 118 },
+		{  36,  64, 310, 128 },
+		{  16, 143,  76, 193 },
+		{  78, 143, 130, 193 },
+		{ 132, 143, 178, 193 },
+		{ 180, 143, 228, 193 },
+		{ 232, 143, 310, 193 },
+		{  -1,  -1,  -1,  -1 }
+	};
+	const Common::Rect _inventoryHotspots[9] = {
+		{  21,  25,  51,  39 },
+		{  53,  25,  83,  39 },
+		{  -2,  -2,  -2,  -2 },
+		{ 213,  25, 243,  39 },
+		{ 253,  25, 283,  39 },
+		{  21,  45, 283, 135 },
+		{ 257, 151, 307, 165 },
+		{ 257, 171, 307, 185 },
+		{  -1,  -1,  -1,  -1 }
+	};
+	const Common::Rect _optionHotspots[10] = {
+		{  18,   61,   40,   76 },
+		{ 112,   61,  130,   76 },
+		{  82,  104,  144,  139 },
+		{ 164,   93,  194,  115 },
+		{ 198,   80,  206,  115 },
+		{ 210,   55,  302,  138 },
+		{ 126,  146,  210,  198 },
+		{  22,   92,   44,  136 },
+		{  50,   92,   72,  136 },
+		{  -1,   -1,   -1,   -1 }
+	};
 };
 
 extern Globals *g_globals;
@@ -305,7 +342,7 @@ void delInventory(int16 nr);
 
 bool isCurInventory(int16 nr);
 
-void check_shad(int16 palIdx, int16 mode);
+void checkShadow(int16 palIdx, int16 mode);
 
 void get_scroll_off(int16 x, int16 y, int16 pic_x, int16 pic_y,
                     int16 *sc_x, int16 *sc_y);
@@ -388,8 +425,6 @@ void play_scene_ani(int16 nr, int16 mode);
 void timer_action(int16 t_nr);
 
 void check_ged_action(int16 index);
-
-int16 ged_user_func(int16 idx_nr);
 
 void enter_room(int16 eib_nr);
 
@@ -492,8 +527,6 @@ void get_lr_phase(ObjMov *om, int16 obj_mode);
 void load_person_ani(int16 ani_id, int16 p_nr);
 
 void calc_person_ani();
-
-void load_room_music(int16 room_nr);
 
 } // namespace Chewy
 

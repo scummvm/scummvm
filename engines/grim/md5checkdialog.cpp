@@ -67,8 +67,7 @@ MD5CheckDialog::MD5CheckDialog() :
 	// Each line is represented by one static text item.
 	int height = 10;
 	for (int i = 0; i < lineCount; i++) {
-		new GUI::StaticTextWidget(this, 10, height, maxlineWidth, kLineHeight,
-								  lines[i], Graphics::kTextAlignCenter);
+		new GUI::StaticTextWidget(this, 10, height, maxlineWidth, kLineHeight, lines[i], Graphics::kTextAlignCenter);
 		height += kLineHeight;
 	}
 	height += 20;

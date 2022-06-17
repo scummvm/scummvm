@@ -151,8 +151,16 @@ Shared::String get_save_game_suffix();
 void set_save_game_suffix(const Shared::String &suffix);
 // Returns full path to the save for the given slot number
 Shared::String get_save_game_path(int slotNum);
+// Try calling built-in restore game dialog;
+// NOTE: this is a script command; may be aborted according to the game & room settings
 void restore_game_dialog();
+// Unconditionally display a built-in restore game dialog
+bool do_restore_game_dialog();
+// Try calling built-in save game dialog;
+// NOTE: this is a script command; may be aborted according to the game & room settings
 void save_game_dialog();
+// Unconditionally display a built-in save game dialog
+bool do_save_game_dialog();
 void free_do_once_tokens();
 // Free all the memory associated with the game
 void unload_game_file();

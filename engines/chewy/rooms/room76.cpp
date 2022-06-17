@@ -191,7 +191,7 @@ int Room76::proc7() {
 		invent_2_slot(106);
 		invent_2_slot(105);
 		startAadWait(444);
-		_G(out)->ausblenden(0);
+		_G(out)->fadeOut();
 		_G(out)->set_partialpalette(_G(pal), 255, 1);
 		startAadWait(443);
 		_G(gameState).scrollx = 0;

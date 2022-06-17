@@ -22,6 +22,7 @@
 #include "ags/engine/script/executing_script.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/debugging/debugger.h"
+#include "ags/engine/script/script.h"
 
 namespace AGS3 {
 

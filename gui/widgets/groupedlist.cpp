@@ -42,31 +42,10 @@ GroupedListWidget::GroupedListWidget(Dialog *boss, const Common::String &name, c
 	_groupsVisible = true;
 }
 
-void GroupedListWidget::setList(const Common::U32StringArray &list, const ColorList *colors) {
-	if (_editMode && _caretVisible)
-		drawCaret(true);
+void GroupedListWidget::setList(const Common::U32StringArray &list) {
+	ListWidget::setList(list);
 
-	// Copy everything
-	_dataList = list;
-	_list = list;
-
-	_filter.clear();
-	_listIndex.clear();
-	_listColors.clear();
-
-	if (colors) {
-		_listColors = *colors;
-		assert(_listColors.size() == _dataList.size());
-	}
-
-	int size = list.size();
-	if (_currentPos >= size)
-		_currentPos = size - 1;
-	if (_currentPos < 0)
-		_currentPos = 0;
-	_selectedItem = -1;
-	_editMode = false;
-	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	_attributeValues.clear();	// Regenerate attributes for the new list
 	groupByAttribute();
 	scrollBarRecalc();
 }
@@ -82,27 +61,6 @@ void GroupedListWidget::setAttributeValues(const Common::U32StringArray &attrVal
 
 void GroupedListWidget::setMetadataNames(const Common::StringMap &metadata) {
 	_metadataNames = metadata;
-}
-
-void GroupedListWidget::append(const Common::String &s, ThemeEngine::FontColor color) {
-	if (_dataList.size() == _listColors.size()) {
-		// If the color list has the size of the data list, we append the color.
-		_listColors.push_back(color);
-	} else if (_listColors.empty() && color != ThemeEngine::kFontColorNormal) {
-		// If it's the first entry to use a non default color, we will fill
-		// up all other entries of the color list with the default color and
-		// add the requested color for the new entry.
-		for (uint i = 0; i < _dataList.size(); ++i)
-			_listColors.push_back(ThemeEngine::kFontColorNormal);
-		_listColors.push_back(color);
-	}
-
-	_dataList.push_back(s);
-	_list.push_back(s);
-
-	setFilter(_filter, false);
-
-	scrollBarRecalc();
 }
 
 void GroupedListWidget::setGroupHeaderFormat(const Common::U32String &prefix, const Common::U32String &suffix) {
@@ -163,7 +121,6 @@ void GroupedListWidget::sortGroups() {
 		uint groupID = _groupValueIndex[header];
 
 		if (_groupsVisible) {
-			_listColors.insert_at(curListSize, ThemeEngine::kFontColorNormal);
 			_listIndex.push_back(kGroupTag - groupID);
 
 			displayedHeader.toUppercase();
@@ -174,7 +131,7 @@ void GroupedListWidget::sortGroups() {
 
 		if (_groupExpanded[groupID]) {
 			for (int *k = _itemsInGroup[groupID].begin(); k != _itemsInGroup[groupID].end(); ++k) {
-				_list.push_back(Common::U32String(_groupsVisible ? "    " : "") + _dataList[*k]);
+				_list.push_back(Common::U32String(_groupsVisible ? "    " : "") + _dataList[*k].orig);
 				_listIndex.push_back(*k);
 				++curListSize;
 			}
@@ -217,11 +174,15 @@ void GroupedListWidget::setSelected(int item) {
 		if (_editMode)
 			abortEditMode();
 
-		_selectedItem = -1;
-		for (uint i = 0; i < _listIndex.size(); ++i) {
-			if (_listIndex[i] == item) {
-				_selectedItem = i;
-				break;
+		if (!_filter.empty()) {
+			_selectedItem = item;
+		} else {
+			_selectedItem = -1;
+			for (uint i = 0; i < _listIndex.size(); ++i) {
+				if (_listIndex[i] == item) {
+					_selectedItem = i;
+					break;
+				}
 			}
 		}
 
@@ -293,41 +254,6 @@ void GroupedListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 	}
 }
 
-void GroupedListWidget::reflowLayout() {
-	Widget::reflowLayout();
-
-	_leftPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.Padding.Left", 0);
-	_rightPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.Padding.Right", 0);
-	_topPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.Padding.Top", 0);
-	_bottomPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.Padding.Bottom", 0);
-	_hlLeftPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.hlLeftPadding", 0);
-	_hlRightPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.hlRightPadding", 0);
-
-	_scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
-
-	// HACK: Once we take padding into account, there are times where
-	// integer rounding leaves a big chunk of white space in the bottom
-	// of the list.
-	// We do a rough rounding on the decimal places of Entries Per Page,
-	// to add another entry even if it goes a tad over the padding.
-	frac_t entriesPerPage = intToFrac(_h - _topPadding - _bottomPadding) / kLineHeight;
-
-	// Our threshold before we add another entry is 0.9375 (0xF000 with FRAC_BITS being 16).
-	const frac_t threshold = intToFrac(15) / 16;
-
-	if ((frac_t)(entriesPerPage & FRAC_LO_MASK) >= threshold)
-		entriesPerPage += FRAC_ONE;
-
-	_entriesPerPage = fracToInt(entriesPerPage);
-	assert(_entriesPerPage > 0);
-
-	if (_scrollBar) {
-		_scrollBar->resize(_w - _scrollBarWidth, 0, _scrollBarWidth, _h, false);
-		scrollBarRecalc();
-		scrollToCurrent();
-	}
-}
-
 void GroupedListWidget::toggleGroup(int groupID) {
 	_groupExpanded[groupID] = !_groupExpanded[groupID];
 	sortGroups();
@@ -346,7 +272,9 @@ void GroupedListWidget::drawWidget() {
 		const int y = _y + _topPadding + kLineHeight * i;
 		const int fontHeight = g_gui.getFontHeight();
 		ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone;
+#if 0
 		ThemeEngine::FontStyle bold = ThemeEngine::kFontStyleBold;
+#endif
 
 		// Draw the selected item inverted, on a highlighted background.
 		if (_selectedItem == pos)
@@ -358,7 +286,9 @@ void GroupedListWidget::drawWidget() {
 
 		if (isGroupHeader(_listIndex[pos])) {
 			int groupID = indexToGroupID(_listIndex[pos]);
+#if 0
 			bold = ThemeEngine::kFontStyleBold;
+#endif
 			r.left += fontHeight + _leftPadding;
 			g_gui.theme()->drawFoldIndicator(Common::Rect(_x + _hlLeftPadding + _leftPadding, y, _x + fontHeight + _leftPadding, y + fontHeight), _groupExpanded[groupID]);
 			pad = 0;
@@ -370,15 +300,6 @@ void GroupedListWidget::drawWidget() {
 			g_gui.theme()->drawText(Common::Rect(_x + _hlLeftPadding, y, _x + r.left + _leftPadding, y + fontHeight),
 									buffer, _state, _drawAlign, inverted, _leftPadding, true);
 			pad = 0;
-		}
-
-		ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal;
-
-		if (!_listColors.empty()) {
-			if (_filter.empty() || _selectedItem == -1)
-				color = _listColors[pos];
-			else
-				color = _listColors[_listIndex[pos]];
 		}
 
 		Common::Rect r1(_x + r.left, y, _x + r.right, y + fontHeight);
@@ -393,6 +314,8 @@ void GroupedListWidget::drawWidget() {
 			}
 		}
 
+		ThemeEngine::FontColor color = ThemeEngine::kFontColorFormatting;
+
 		if (_selectedItem == pos && _editMode) {
 			buffer = _editString;
 			color = _editColor;
@@ -400,8 +323,8 @@ void GroupedListWidget::drawWidget() {
 		} else {
 			buffer = _list[pos];
 		}
-		g_gui.theme()->drawText(r1, buffer, _state,
-								_drawAlign, inverted, pad, true, bold, color);
+
+		drawFormattedText(r1, buffer, _state, _drawAlign, inverted, pad, true, color);
 
 		// If in numbering mode & using RTL layout in GUI, we print a number suffix after drawing the text
 		if (_numberingMode != kListNumberingOff && g_gui.useRTL()) {
@@ -415,21 +338,6 @@ void GroupedListWidget::drawWidget() {
 			g_gui.theme()->drawText(r2, buffer, _state, _drawAlign, inverted, _leftPadding, true);
 		}
 	}
-}
-
-void GroupedListWidget::scrollToCurrent() {
-	// Only do something if the current item is not in our view port
-	if (_selectedItem != -1 && _selectedItem < _currentPos) {
-		// it's above our view
-		_currentPos = _selectedItem;
-	} else if (_selectedItem >= _currentPos + _entriesPerPage ) {
-		// it's below our view
-		_currentPos = _selectedItem - _entriesPerPage + 1;
-	}
-
-	checkBounds();
-	_scrollBar->_currentPos = _currentPos;
-	_scrollBar->recalc();
 }
 
 void GroupedListWidget::setFilter(const Common::U32String &filter, bool redraw) {
@@ -459,8 +367,8 @@ void GroupedListWidget::setFilter(const Common::U32String &filter, bool redraw) 
 		_list.clear();
 		_listIndex.clear();
 
-		for (Common::U32StringArray::iterator i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
-			tmp = *i;
+		for (auto i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
+			tmp = i->clean;
 			tmp.toLowercase();
 			bool matches = true;
 			tok.reset();
@@ -472,7 +380,7 @@ void GroupedListWidget::setFilter(const Common::U32String &filter, bool redraw) 
 			}
 
 			if (matches) {
-				_list.push_back(*i);
+				_list.push_back(i->orig);
 				_listIndex.push_back(n);
 			}
 		}

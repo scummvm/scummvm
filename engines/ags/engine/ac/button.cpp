@@ -47,13 +47,16 @@ using namespace AGS::Shared;
 // Update the actual button's image from the current animation frame
 void UpdateButtonState(const AnimatingGUIButton &abtn) {
 	_GP(guibuts)[abtn.buttonid].Image = _GP(views)[abtn.view].loops[abtn.loop].frames[abtn.frame].pic;
-	_GP(guibuts)[abtn.buttonid].CurrentImage = _GP(guibuts)[abtn.buttonid].Image;
+	if (_GP(guibuts)[abtn.buttonid].CurrentImage != _GP(guibuts)[abtn.buttonid].Image) {
+		_GP(guibuts)[abtn.buttonid].CurrentImage = _GP(guibuts)[abtn.buttonid].Image;
+		_GP(guibuts)[abtn.buttonid].MarkChanged();
+	}
 	_GP(guibuts)[abtn.buttonid].PushedImage = 0;
 	_GP(guibuts)[abtn.buttonid].MouseOverImage = 0;
-	_GP(guibuts)[abtn.buttonid].NotifyParentChanged();
 }
 
-void Button_AnimateEx(GUIButton *butt, int view, int loop, int speed, int repeat, int blocking, int direction, int sframe) {
+void Button_AnimateEx(GUIButton *butt, int view, int loop, int speed,
+		int repeat, int blocking, int direction, int sframe, int volume = -1) {
 	int guin = butt->ParentId;
 	int objn = butt->Id;
 
@@ -80,6 +83,8 @@ void Button_AnimateEx(GUIButton *butt, int view, int loop, int speed, int repeat
 	if ((direction < 0) || (direction > 1))
 		quit("!AnimateButton: invalid direction");
 
+	volume = std::min(volume, 100); // NOTE: negative volume means use defaults
+
 	// if it's already animating, stop it
 	FindAndRemoveButtonAnimation(guin, objn);
 
@@ -102,6 +107,7 @@ void Button_AnimateEx(GUIButton *butt, int view, int loop, int speed, int repeat
 	abtn.direction = direction;
 	abtn.frame = sframe;
 	abtn.wait = abtn.speed + _GP(views)[abtn.view].loops[abtn.loop].frames[abtn.frame].speed;
+	abtn.volume = volume;
 	_GP(animbuts).push_back(abtn);
 	// launch into the first frame, and play the first frame's sound
 	UpdateButtonState(abtn);
@@ -113,7 +119,7 @@ void Button_AnimateEx(GUIButton *butt, int view, int loop, int speed, int repeat
 }
 
 void Button_Animate(GUIButton *butt, int view, int loop, int speed, int repeat) {
-	Button_AnimateEx(butt, view, loop, speed, repeat, IN_BACKGROUND, FORWARDS, 0);
+	Button_AnimateEx(butt, view, loop, speed, repeat, IN_BACKGROUND, FORWARDS, 0, -1);
 }
 
 const char *Button_GetText_New(GUIButton *butt) {
@@ -138,7 +144,7 @@ void Button_SetFont(GUIButton *butt, int newFont) {
 
 	if (butt->Font != newFont) {
 		butt->Font = newFont;
-		butt->NotifyParentChanged();
+		butt->MarkChanged();
 	}
 }
 
@@ -170,11 +176,11 @@ int Button_GetMouseOverGraphic(GUIButton *butt) {
 void Button_SetMouseOverGraphic(GUIButton *guil, int slotn) {
 	debug_script_log("GUI %d Button %d mouseover set to slot %d", guil->ParentId, guil->Id, slotn);
 
-	if ((guil->IsMouseOver != 0) && (guil->IsPushed == 0))
+	if ((guil->IsMouseOver != 0) && (guil->IsPushed == 0) && (guil->CurrentImage != slotn)) {
 		guil->CurrentImage = slotn;
+		guil->MarkChanged();
+	}
 	guil->MouseOverImage = slotn;
-
-	guil->NotifyParentChanged();
 	FindAndRemoveButtonAnimation(guil->ParentId, guil->Id);
 }
 
@@ -184,20 +190,26 @@ int Button_GetNormalGraphic(GUIButton *butt) {
 
 void Button_SetNormalGraphic(GUIButton *guil, int slotn) {
 	debug_script_log("GUI %d Button %d normal set to slot %d", guil->ParentId, guil->Id, slotn);
-	// normal pic - update if mouse is not over, or if there's no MouseOverImage
-	if (((guil->IsMouseOver == 0) || (guil->MouseOverImage < 1)) && (guil->IsPushed == 0))
-		guil->CurrentImage = slotn;
-	guil->Image = slotn;
 	// update the clickable area to the same size as the graphic
+	int width, height;
 	if (slotn < 0 || (size_t)slotn >= _GP(game).SpriteInfos.size()) {
-		guil->Width = 0;
-		guil->Height = 0;
+		width = 0;
+		height = 0;
 	} else {
-		guil->Width = _GP(game).SpriteInfos[slotn].Width;
-		guil->Height = _GP(game).SpriteInfos[slotn].Height;
+		width = _GP(game).SpriteInfos[slotn].Width;
+		height = _GP(game).SpriteInfos[slotn].Height;
 	}
 
-	guil->NotifyParentChanged();
+	if ((slotn != guil->Image) || (width != guil->Width) || (height != guil->Height)) {
+		// normal pic - update if mouse is not over, or if there's no MouseOverImage
+		if (((guil->IsMouseOver == 0) || (guil->MouseOverImage < 1)) && (guil->IsPushed == 0))
+			guil->CurrentImage = slotn;
+		guil->Image = slotn;
+		guil->Width = width;
+		guil->Height = height;
+		guil->MarkChanged();
+	}
+
 	FindAndRemoveButtonAnimation(guil->ParentId, guil->Id);
 }
 
@@ -208,11 +220,11 @@ int Button_GetPushedGraphic(GUIButton *butt) {
 void Button_SetPushedGraphic(GUIButton *guil, int slotn) {
 	debug_script_log("GUI %d Button %d pushed set to slot %d", guil->ParentId, guil->Id, slotn);
 
-	if (guil->IsPushed)
+	if (guil->IsPushed && (guil->CurrentImage != slotn)) {
 		guil->CurrentImage = slotn;
+		guil->MarkChanged();
+	}
 	guil->PushedImage = slotn;
-
-	guil->NotifyParentChanged();
 	FindAndRemoveButtonAnimation(guil->ParentId, guil->Id);
 }
 
@@ -223,7 +235,7 @@ int Button_GetTextColor(GUIButton *butt) {
 void Button_SetTextColor(GUIButton *butt, int newcol) {
 	if (butt->TextColor != newcol) {
 		butt->TextColor = newcol;
-		butt->NotifyParentChanged();
+		butt->MarkChanged();
 	}
 }
 
@@ -252,7 +264,7 @@ bool UpdateAnimatingButton(int bu) {
 	if (!CycleViewAnim(abtn.view, abtn.loop, abtn.frame, !abtn.direction,
 		abtn.repeat != 0 ? ANIM_REPEAT : ANIM_ONCE))
 		return false;
-	CheckViewFrame(abtn.view, abtn.loop, abtn.frame);
+	CheckViewFrame(abtn.view, abtn.loop, abtn.frame, abtn.volume);
 	abtn.wait = abtn.speed + _GP(views)[abtn.view].loops[abtn.loop].frames[abtn.frame].speed;
 	UpdateButtonState(abtn);
 	return true;
@@ -317,7 +329,7 @@ int Button_GetTextAlignment(GUIButton *butt) {
 void Button_SetTextAlignment(GUIButton *butt, int align) {
 	if (butt->TextAlignment != align) {
 		butt->TextAlignment = (FrameAlignment)align;
-		butt->NotifyParentChanged();
+		butt->MarkChanged();
 	}
 }
 
@@ -333,7 +345,7 @@ RuntimeScriptValue Sc_Button_Animate(void *self, const RuntimeScriptValue *param
 }
 
 RuntimeScriptValue Sc_Button_AnimateEx(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_VOID_PINT7(GUIButton, Button_AnimateEx);
+	API_OBJCALL_VOID_PINT8(GUIButton, Button_AnimateEx);
 }
 
 // const char* | GUIButton *butt
@@ -446,7 +458,7 @@ RuntimeScriptValue Sc_Button_GetView(void *self, const RuntimeScriptValue *param
 
 void RegisterButtonAPI() {
 	ccAddExternalObjectFunction("Button::Animate^4", Sc_Button_Animate);
-	ccAddExternalObjectFunction("Button::Animate^7", Sc_Button_AnimateEx);
+	ccAddExternalObjectFunction("Button::Animate^8", Sc_Button_AnimateEx);
 	ccAddExternalObjectFunction("Button::Click^1", Sc_Button_Click);
 	ccAddExternalObjectFunction("Button::GetText^1", Sc_Button_GetText);
 	ccAddExternalObjectFunction("Button::SetText^1", Sc_Button_SetText);

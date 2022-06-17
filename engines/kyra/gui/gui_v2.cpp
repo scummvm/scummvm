@@ -453,7 +453,7 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 	for (int i = startSlot; i < num && uint(_savegameOffset + i) < _saveSlots.size(); ++i) {
 		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header)) != nullptr) {
 			Common::String s = header.description;
-			s = Util::convertUTF8ToDOS(s);
+			s = Util::convertString_GUItoKYRA(s);
 
 			if (_vm->gameFlags().lang == Common::JA_JPN || _vm->gameFlags().lang == Common::ZH_CHN || _vm->gameFlags().lang == Common::ZH_TWN) {
 				// Strip special characters from GMM save dialog which might get misinterpreted as 2-byte characters
@@ -638,7 +638,8 @@ int GUI_v2::saveMenu(Button *caller) {
 
 	Graphics::Surface thumb;
 	createScreenThumbnail(thumb);
-	Util::convertDOSToUTF8(_saveDescription, 81);
+	_vm->updatePlayTimer();
+	Util::convertString_KYRAtoGUI(_saveDescription, 81);
 	_vm->saveGameStateIntern(_saveSlot, _saveDescription, &thumb);
 	thumb.free();
 

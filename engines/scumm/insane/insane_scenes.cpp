@@ -140,6 +140,7 @@ void Insane::runScene(int arraynum) {
 		error("Unknown FT_INSANE mode %d", readArray(0));
 	}
 
+	_player->resetAudioTracks();
 	putActors();
 	_enemy[EN_ROTT3].maxdamage = 120;
 

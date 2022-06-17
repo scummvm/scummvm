@@ -1079,7 +1079,7 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 	// for directory, we either return the correct path, which we can access recursively.
 	// or we get a wrong path, which will lead us to a non-exist file node
 
-	Common::StringTokenizer directory_list(path, "/");
+	Common::StringTokenizer directory_list(path, Common::String(g_director->_dirSeparator));
 	Common::FSNode d = Common::FSNode(*g_director->getGameDataDir());
 	while (d.exists() && !directory_list.empty()) {
 		d = d.getChild(directory_list.nextToken());
@@ -1655,9 +1655,7 @@ void LB::b_alert(int nargs) {
 }
 
 void LB::b_clearGlobals(int nargs) {
-	g_lingo->printSTUBWithArglist("b_clearGlobals", nargs);
-
-	g_lingo->dropStack(nargs);
+	g_lingo->_globalvars.clear();
 }
 
 void LB::b_cursor(int nargs) {
@@ -1682,11 +1680,26 @@ void LB::b_put(int nargs) {
 }
 
 void LB::b_showGlobals(int nargs) {
-	warning("STUB: b_showGlobals");
+	b_version(0);
+	Datum ver = g_lingo->pop();
+	Common::String global_out = "-- Global Variables --\nversion = ";
+	global_out += ver.asString() + "\n";
+	if (g_lingo->_globalvars.size()) {
+		for (auto it = g_lingo->_globalvars.begin(); it != g_lingo->_globalvars.end(); it++) {
+			global_out += it->_key + " = " + it->_value.asString() + "\n";
+		}
+	}
+	g_debugger->debugPrintf("%s", global_out.c_str());
 }
 
 void LB::b_showLocals(int nargs) {
-	warning("STUB: b_showLocals");
+	Common::String local_out = "-- Local Variables --\n";
+	if (g_lingo->_localvars) {
+		for (auto it = g_lingo->_localvars->begin(); it != g_lingo->_localvars->end(); it++) {
+			local_out += it->_key + " = " + it->_value.asString() + "\n";
+		}
+	}
+	g_debugger->debugPrintf("%s", local_out.c_str());
 }
 
 ///////////////////
@@ -1732,9 +1745,8 @@ void LB::b_constrainV(int nargs) {
 }
 
 void LB::b_copyToClipBoard(int nargs) {
-	g_lingo->printSTUBWithArglist("b_copyToClipBoard", nargs);
-
-	g_lingo->dropStack(nargs);
+	Datum d = g_lingo->pop();
+	g_director->_clipBoard = new CastMemberID(d.asMemberID());
 }
 
 void LB::b_duplicate(int nargs) {
@@ -1810,11 +1822,38 @@ void LB::b_erase(int nargs) {
 }
 
 void LB::b_findEmpty(int nargs) {
-	g_lingo->printSTUBWithArglist("b_findEmpty", nargs);
+	Datum d = g_lingo->pop();
+	uint16  c_start = g_director->getCurrentMovie()->getCast()->_castArrayStart;
+	uint16  c_end = g_director->getCurrentMovie()->getCast()->_castArrayEnd;
+	Common::HashMap<int, CastMember *> *cast = g_director->getCurrentMovie()->getCast()->_loadedCast;
 
-	g_lingo->dropStack(nargs);
+	if (d.type != CASTREF) {
+		warning("Incorrect argument type for findEmpty");
+		return;
+	}
 
-	g_lingo->push(Datum(0));
+	if (d.u.cast->member > c_end) {
+		d.type = INT;
+		g_lingo->push(d);
+		return;
+	}
+
+	if (d.u.cast->member > c_start) {
+		c_start = (uint16) d.u.cast->member;
+	}
+
+	for (uint16 i = c_start; i <= c_end; i++) {
+		if (!cast->contains((int) i) || cast->getVal((int) i)->_type == kCastTypeNull) {
+			d.u.i = i;
+			d.type = INT;
+			g_lingo->push(d);
+			return;
+		}
+	}
+
+	d.type = INT;
+	d.u.i = (int) c_end + 1;
+	g_lingo->push(d);
 }
 
 void LB::b_importFileInto(int nargs) {
@@ -1965,9 +2004,50 @@ void LB::b_marker(int nargs) {
 }
 
 void LB::b_move(int nargs) {
-	g_lingo->printSTUBWithArglist("b_move", nargs);
+	Datum src, dest;
 
-	g_lingo->dropStack(nargs);
+	if (nargs == 1) {
+		Datum d;
+		d.type = CASTREF;
+		d.u.cast = new CastMemberID();
+		d.u.cast->member = (int) g_director->getCurrentMovie()->getCast()->_castArrayStart;
+		g_lingo->push(d);
+		b_findEmpty(1);
+		dest = g_lingo->pop();
+		src = g_lingo->pop();
+	} else if (nargs == 2) {
+		dest = g_lingo->pop();
+		src = g_lingo->pop();
+	}
+
+	//Convert dest datum to type CASTREF if it is INT
+	//As CastMemberID constructor changes all the values, datum_int is used to preserve int
+	if (dest.type == INT) {
+		dest.type = CASTREF;
+		int datum_int = dest.u.i;
+		dest.u.cast = new CastMemberID();
+		dest.u.cast->member = datum_int;
+	}
+
+	//No need to move if src and dest are same
+	if (src.u.cast->member == dest.u.cast->member) {
+		return;
+	}
+
+	if (!g_director->getCurrentMovie()->getCast()->_loadedCast->contains(src.u.cast->member)) {
+		warning("b_move: Source CastMember doesn't exist");
+		return;
+	}
+
+	if (src.u.cast->castLib != 0) {
+		warning("b_move: wrong castLib '%d' in src CastMemberID", src.u.cast->castLib);
+	}
+
+	CastMember *toMove = g_director->getCurrentMovie()->getCast()->_loadedCast->getVal(src.u.cast->member);
+	CastMember *toReplace = new CastMember(*toMove);
+	toReplace->_type = kCastTypeNull;
+	g_director->getCurrentMovie()->getCast()->_loadedCast->setVal(dest.u.cast->member, toMove);
+	g_director->getCurrentMovie()->getCast()->_loadedCast->setVal(src.u.cast->member, toReplace);
 }
 
 void LB::b_moveableSprite(int nargs) {
@@ -1987,9 +2067,32 @@ void LB::b_moveableSprite(int nargs) {
 }
 
 void LB::b_pasteClipBoardInto(int nargs) {
-	g_lingo->printSTUBWithArglist("b_pasteClipBoardInto", nargs);
+	Datum to = g_lingo->pop();
+	if (!g_director->_clipBoard) {
+		warning("LB::b_pasteClipBoardInto(): Nothing to paste from clipboard, skipping paste..");
+		return;
+	}
 
-	g_lingo->dropStack(nargs);
+	Movie *movie = g_director->getCurrentMovie();
+	uint16 frame = movie->getScore()->getCurrentFrame(); 
+	Frame *currentFrame = movie->getScore()->_frames[frame];
+	CastMember *castMember = movie->getCastMember(*g_director->_clipBoard);
+	auto channels = movie->getScore()->_channels;
+
+	castMember->setModified(true);
+	movie->getCast()->_loadedCast->setVal(to.u.cast->member, castMember);
+
+	for (uint16 i = 0; i < currentFrame->_sprites.size(); i++) {
+		if (currentFrame->_sprites[i]->_castId == to.asMemberID())
+			currentFrame->_sprites[i]->setCast(to.asMemberID());
+	}
+
+	for (uint i = 0; i < channels.size(); i++) {
+		if (channels[i]->_sprite->_castId == to.asMemberID()) {
+			channels[i]->_sprite->setCast(to.asMemberID());
+			channels[i]->_dirty = true;
+		}
+	}
 }
 
 void LB::b_puppetPalette(int nargs) {
@@ -2484,11 +2587,32 @@ void LB::b_offsetRect(int nargs) {
 }
 
 void LB::b_union(int nargs) {
-	g_lingo->printSTUBWithArglist("b_union", nargs);
+	if (nargs != 2) {
+		warning("Wrong number of arguments for b_union: Expected 2, got %d", nargs);
+		g_lingo->dropStack(nargs);
+		g_lingo->push(Datum(0));
+		return;
+	}
 
-	g_lingo->dropStack(nargs);
+	Datum rect1 = g_lingo->pop();
+	Datum rect2 = g_lingo->pop();
 
-	g_lingo->push(Datum(0));
+	if (rect1.type != RECT || rect2.type != RECT) {
+		warning("Wrong type of arguments for b_union");
+		g_lingo->push(Datum(0));
+		return;
+	}
+
+	Datum res;
+	res.type = RECT;
+
+	res.u.farr = new FArray();
+	res.u.farr->arr.push_back(Datum(MIN(rect1.u.farr->arr[0].u.i, rect2.u.farr->arr[0].u.i)));
+	res.u.farr->arr.push_back(Datum(MIN(rect1.u.farr->arr[1].u.i, rect2.u.farr->arr[1].u.i)));
+	res.u.farr->arr.push_back(Datum(MAX(rect1.u.farr->arr[2].u.i, rect2.u.farr->arr[2].u.i)));
+	res.u.farr->arr.push_back(Datum(MAX(rect1.u.farr->arr[3].u.i, rect2.u.farr->arr[3].u.i)));
+
+	g_lingo->push(res);
 }
 
 

@@ -194,7 +194,6 @@ void Animation::restoreState(SaveGame *state) {
  */
 
 AnimManager::AnimManager() {
-
 }
 
 AnimManager::~AnimManager() {

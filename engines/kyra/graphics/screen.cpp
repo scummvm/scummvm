@@ -1395,6 +1395,9 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 				Common::MemoryReadStream str(oneByteData, temp);
 				fnt->load(str);
 			}
+		} else if (fontId == FID_KOREAN_FNT) {
+			const uint16 *lookupTable = _vm->staticres()->loadRawDataBe16(k1TwoByteFontLookupTable, temp);
+			fnt = new JohabFontLoK(_fonts[FID_8_FNT], lookupTable, temp);
 		} else {
 			fnt = new DOSFont();
 		}
@@ -1429,8 +1432,10 @@ int Screen::getFontWidth() const {
 }
 
 int Screen::getCharWidth(uint16 c) const {
-	const int width = _fonts[_currentFont]->getCharWidth(c);
-	return width + (_isSegaCD || _fonts[_currentFont]->getType() == Font::kASCII ? _charSpacing : 0);
+	int width = _fonts[_currentFont]->getCharWidth(c);
+	if (_isSegaCD || _fonts[_currentFont]->getType() == Font::kASCII || (_fonts[_currentFont]->getType() == Font::kJohab && c < 0x80))
+		width += _charSpacing;
+	return width;
 }
 
 int Screen::getCharHeight(uint16 c) const {
@@ -1538,13 +1543,15 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 }
 
 uint16 Screen::fetchChar(const char *&s) const {
-	if (_fonts[_currentFont]->getType() == Font::kASCII)
+	const int fontType = _fonts[_currentFont]->getType();
+	if (fontType == Font::kASCII)
 		return (uint8)*s++;
 
 	uint16 ch = (uint8)*s++;
 
-	if ((_fonts[_currentFont]->getType() == Font::kSJIS && (ch <= 0x7F || (ch >= 0xA1 && ch <= 0xDF))) || (_fonts[_currentFont]->getType() == Font::kBIG5 && ch < 0x7F))
-		return ch;
+	if ((fontType == Font::kSJIS && (ch <= 0x7F || (ch >= 0xA1 && ch <= 0xDF))) ||
+		((fontType == Font::kBIG5 || fontType == Font::kJohab) && ch < 0x80))
+			return ch;
 
 	ch |= (uint8)(*s++) << 8;
 	return ch;
@@ -1592,7 +1599,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		shapeData += 2;
 
 	if (*shapeData & 1)
-		flags |= 0x400;
+		flags |= kDRAWSHP_COMPACT;
 
 	va_list args;
 	va_start(args, flags);
@@ -1609,36 +1616,36 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	_dsBackgroundFadingTable = nullptr;
 	_dsDrawLayer = 0;
 
-	if (flags & DSF_CUSTOM_PALETTE) {
+	if (flags & kDRAWSHP_COLOR) {
 		_dsColorTable = va_arg(args, uint8 *);
 	}
 
-	if (flags & DSF_SHAPE_FADING) {
+	if (flags & kDRAWSHP_FADE) {
 		_dsShapeFadingTable = va_arg(args, uint8 *);
 		_dsShapeFadingLevel = va_arg(args, int);
 		if (!_dsShapeFadingLevel)
-			flags &= ~DSF_SHAPE_FADING;
+			flags &= ~kDRAWSHP_FADE;
 	}
 
-	if (flags & DSF_TRANSPARENCY) {
+	if (flags & kDRAWSHP_TRANSPARENT) {
 		_dsTransparencyTable1 = va_arg(args, uint8 *);
 		_dsTransparencyTable2 = va_arg(args, uint8 *);
 	}
 
-	if (flags & 0x200) {
+	if (flags & kDRAWSHP_PREDATOR) {
 		_drawShapeVar1 = (_drawShapeVar1 + 1) & 0x7;
 		_drawShapeVar3 = drawShapeVar2[_drawShapeVar1];
 		_drawShapeVar4 = 0;
 		_drawShapeVar5 = 256;
 	}
 
-	if (flags & 0x4000)
+	if (flags & kDRAWSHP_MORPH)
 		_drawShapeVar5 = va_arg(args, int);
 
-	if (flags & 0x800)
+	if (flags & kDRAWSHP_PRIORITY)
 		_dsDrawLayer = va_arg(args, int);
 
-	if (flags & DSF_SCALE) {
+	if (flags & kDRAWSHP_SCALE) {
 		_dsScaleW = va_arg(args, int);
 		_dsScaleH = va_arg(args, int);
 	} else {
@@ -1646,7 +1653,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		_dsScaleH = 0x100;
 	}
 
-	if ((flags & DSF_BACKGROUND_FADING) && _vm->game() != GI_KYRA1)
+	if ((flags & kDRAWSHP_BCKGRNDFADE) && _vm->game() != GI_KYRA1)
 		_dsBackgroundFadingTable = va_arg(args, uint8 *);
 
 	va_end(args);
@@ -1728,7 +1735,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	const int ppc = (flags >> 8) & 0x3F;
 	_dsPlot = dsPlotFunc[ppc];
 	DsPlotFunc dsPlot2 = dsPlotFunc[ppc], dsPlot3 = dsPlotFunc[ppc];
-	if (flags & 0x800)
+	if (flags & kDRAWSHP_PRIORITY)
 		dsPlot3 = dsPlotFunc[((flags >> 8) & 0xF7) & 0x3F];
 
 	if (!_dsPlot || !dsPlot2 || !dsPlot3) {
@@ -1746,12 +1753,12 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	const ScreenDim *dsDim = getScreenDim(sd);
 	dst += (dsDim->sx << 3);
 
-	if (!(flags & 0x10))
+	if (!(flags & kDRAWSHP_WINREL))
 		x -= (dsDim->sx << 3);
 
 	int x2 = (dsDim->w << 3);
 	int y1 = dsDim->sy;
-	if (flags & 0x10)
+	if (flags & kDRAWSHP_WINREL)
 		y += y1;
 
 	int y2 = y1 + dsDim->h;
@@ -1764,7 +1771,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	int shpWidthScaled1 = shapeWidth;
 	int shpWidthScaled2 = shapeWidth;
 
-	if (flags & DSF_SCALE) {
+	if (flags & kDRAWSHP_SCALE) {
 		shapeHeight = (shapeHeight * _dsScaleH) >> 8;
 		shpWidthScaled1 = shpWidthScaled2 = (shapeWidth * _dsScaleW) >> 8;
 
@@ -1772,7 +1779,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			return;
 	}
 
-	if (flags & DSF_CENTER) {
+	if (flags & kDRAWSHP_CENTER) {
 		x -= (shpWidthScaled1 >> 1);
 		y -= (shapeHeight >> 1);
 	}
@@ -1783,10 +1790,10 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 
 	int colorTableColors = ((_vm->game() != GI_KYRA1) && (shapeFlags & 4)) ? *src++ : 16;
 
-	if (!(flags & 0x8000) && (shapeFlags & 1))
+	if (!(flags & kDRAWSHP_COLOR) && (shapeFlags & 1))
 		_dsColorTable = src;
 
-	if (flags & 0x400)
+	if (flags & kDRAWSHP_COMPACT)
 		src += colorTableColors;
 
 	if (!(shapeFlags & 2)) {
@@ -1794,7 +1801,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		src = _animBlockPtr;
 	}
 
-	int t = (flags & 2) ? y2 - y - shapeHeight : y - y1;
+	int t = (flags & kDRAWSHP_YFLIP) ? y2 - y - shapeHeight : y - y1;
 
 	if (t < 0) {
 		shapeHeight += t;
@@ -1827,17 +1834,17 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			scaleCounterV += (-t << 8);
 		}
 
-		if (!(flags & 2))
+		if (!(flags & kDRAWSHP_YFLIP))
 			y = y1;
 	}
 
-	t = (flags & 2) ? y + shapeHeight - y1 : y2 - y;
+	t = (flags & kDRAWSHP_YFLIP) ? y + shapeHeight - y1 : y2 - y;
 	if (t <= 0)
 		return;
 
 	if (t < shapeHeight) {
 		shapeHeight = t;
-		if (flags & 2)
+		if (flags & kDRAWSHP_YFLIP)
 			y = y1;
 	}
 
@@ -1864,19 +1871,19 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	int dsPitch = 320;
 	int ty = y;
 
-	if (flags & 2) {
+	if (flags & kDRAWSHP_YFLIP) {
 		dsPitch *= -1;
 		ty = ty - 1 + shapeHeight;
 	}
 
-	if (flags & DSF_X_FLIPPED) {
+	if (flags & kDRAWSHP_XFLIP) {
 		SWAP(_dsOffscreenLeft, _dsOffscreenRight);
 		dst += (shpWidthScaled1 - 1);
 	}
 
 	dst += (320 * ty + x);
 
-	if (flags & DSF_SCALE) {
+	if (flags & kDRAWSHP_SCALE) {
 		_dsOffscreenRight = 0;
 		_dsOffscreenScaleVal2 = _dsOffscreenLeft;
 		_dsOffscreenLeft <<= 8;
@@ -1915,7 +1922,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			if (_dsTmpWidth) {
 				cnt += shpWidthScaled1;
 				if (cnt > 0) {
-					if (flags & 0x800)
+					if (flags & kDRAWSHP_PRIORITY)
 						normalPlot = (curY > _maskMinY && curY < _maskMaxY);
 					_dsPlot = normalPlot ? dsPlot2 : dsPlot3;
 					(this->*_dsProcessLine)(d, src, cnt, scaleState);

@@ -121,7 +121,7 @@ static byte *DecompressMsZipData(byte *buffer, uint32 inputSize, uint32 &decompr
 #endif
 	warning("DecompressMsZipData: Error decompressing data!");
 	decompressedSize = 0;
-	return new byte[0];
+	return nullptr;
 }
 
 static XFileLexer createXFileLexer(byte *&buffer, uint32 fileSize) {

@@ -340,7 +340,7 @@ String tag2string(uint32 tag);
  * string.
  *
  * @note This is modeled after OpenBSD's strlcpy. See the manpage here:
- *       http://www.openbsd.org/cgi-bin/man.cgi?query=strlcpy
+ *       https://man.openbsd.org/strlcpy
  *
  * @param dst The destination buffer.
  * @param src The source string.
@@ -358,7 +358,7 @@ size_t strlcpy(char *dst, const char *src, size_t size);
  * the dst string will not be changed and size + strlen(src) is returned.
  *
  * @note This is modeled after OpenBSD's strlcat. See the manpage here:
- *       http://www.openbsd.org/cgi-bin/man.cgi?query=strlcat
+ *       https://man.openbsd.org/strlcat
  *
  * @param dst The string the source string should be appended to.
  * @param src The source string.

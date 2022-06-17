@@ -106,15 +106,15 @@ Localizer::Localizer() {
 
 	char *nextline = data;
 	Common::String last_entry;
-	//Read file till end
+	// Read file till end
 	for (char *line = data + 4; nextline != nullptr && (line - data <= filesize); nextline != nullptr && (line = nextline + 1)) {
 		nextline = strchr(line, '\n');
-		//if there is no next line we arrived the last one
+		// If there is no next line we arrived the last one
 		if (nextline == nullptr) {
 			nextline = strchr(line, '\0');
 		}
 
-		//in grim we have to exit on first empty line else skip line
+		// In grim we have to exit on first empty line else skip line
 		if (*line == '\r') {
 			if (g_grim->getGameType() == GType_GRIM) {
 				break;
@@ -124,7 +124,7 @@ Localizer::Localizer() {
 			continue;
 		}
 
-		//EMI has an garbage line which should be ignored
+		// EMI has an garbage line which should be ignored
 		if (g_grim->getGameType() == GType_MONKEY4 && *line == '\x1A')
 			continue;
 

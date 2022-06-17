@@ -632,8 +632,8 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 
 	SDL_Keymod mod = (SDL_Keymod)ev.key.keysym.mod;
 #if defined(__amigaos4__)
-	// On AmigaOS SDL always report numlock as off. However we get KEYCODE_KP# only when
-	// it is on, and get different keycodes (for example KEYCODE_PAGEDONW) when it is off.
+	// On AmigaOS, SDL always reports numlock as off. However, we get KEYCODE_KP# only when
+	// it is on, and get different keycodes (for example KEYCODE_PAGEDOWN) when it is off.
 	if (event.kbd.keycode >= Common::KEYCODE_KP0 && event.kbd.keycode <= Common::KEYCODE_KP9) {
 		event.kbd.flags |= Common::KBD_NUM;
 		mod = SDL_Keymod(mod | KMOD_NUM);
@@ -665,8 +665,8 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 
 	SDL_Keymod mod = (SDL_Keymod)ev.key.keysym.mod;
 #if defined(__amigaos4__)
-	// On AmigaOS SDL always report numlock as off. However we get KEYCODE_KP# only when
-	// it is on, and get different keycodes (for example KEYCODE_PAGEDONW) when it is off.
+	// On AmigaOS, SDL always reports numlock as off. However, we get KEYCODE_KP# only when
+	// it is on, and get different keycodes (for example KEYCODE_PAGEDOWN) when it is off.
 	if (event.kbd.keycode >= Common::KEYCODE_KP0 && event.kbd.keycode <= Common::KEYCODE_KP9) {
 		event.kbd.flags |= Common::KBD_NUM;
 		mod = SDL_Keymod(mod | KMOD_NUM);

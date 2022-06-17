@@ -32,7 +32,7 @@
 #include "ags/shared/game/main_game_file.h"
 #include "ags/shared/font/fonts.h"
 #include "ags/shared/gui/gui_main.h"
-#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/shared/util/aligned_stream.h"
 #include "ags/shared/util/data_ext.h"
 #include "ags/shared/util/path.h"
@@ -220,7 +220,7 @@ HGameFileError ReadDialogScript(PScript &dialog_script, Stream *in, GameDataVers
 	if (data_ver > kGameVersion_310) { // 3.1.1+ dialog script
 		dialog_script.reset(ccScript::CreateFromStream(in));
 		if (dialog_script == nullptr)
-			return new MainGameFileError(kMGFErr_CreateDialogScriptFailed, _G(ccErrorString));
+			return new MainGameFileError(kMGFErr_CreateDialogScriptFailed, cc_get_error().ErrorString);
 	} else { // 2.x and < 3.1.1 dialog
 		dialog_script.reset();
 	}
@@ -234,7 +234,7 @@ HGameFileError ReadScriptModules(std::vector<PScript> &sc_mods, Stream *in, Game
 		for (int i = 0; i < count; ++i) {
 			sc_mods[i].reset(ccScript::CreateFromStream(in));
 			if (sc_mods[i] == nullptr)
-				return new MainGameFileError(kMGFErr_CreateScriptModuleFailed, _G(ccErrorString));
+				return new MainGameFileError(kMGFErr_CreateScriptModuleFailed, cc_get_error().ErrorString);
 		}
 	} else {
 		sc_mods.resize(0);
@@ -350,13 +350,13 @@ void ReadDialogs(DialogTopic *&dialog,
 	} else {
 		// Encrypted text on > 2.60
 		while (1) {
-			size_t newlen = in->ReadInt32();
-			if (static_cast<uint32_t>(newlen) == 0xCAFEBEEF) { // GUI magic
+			size_t newlen = static_cast<uint32_t>(in->ReadInt32());
+			if (newlen == 0xCAFEBEEF) { // GUI magic
 				in->Seek(-4);
 				break;
 			}
 
-			newlen = Math::Min(newlen, sizeof(buffer) - 1);
+			newlen = MIN(newlen, sizeof(buffer) - 1);
 			in->Read(buffer, newlen);
 			decrypt_text(buffer, newlen);
 			buffer[newlen] = 0;
@@ -712,9 +712,10 @@ protected:
 	GameDataVersion _dataVer;
 };
 
-HError GameDataExtReader::ReadBlock(int block_id, const String &ext_id,
-		soff_t block_len, bool &read_next) {
-    // Add extensions here checking ext_id, which is an up to 16-chars name, for example:
+HError GameDataExtReader::ReadBlock(int /*block_id*/, const String &ext_id,
+		soff_t /*block_len*/, bool &read_next) {
+	read_next = true;
+	// Add extensions here checking ext_id, which is an up to 16-chars name, for example:
     // if (ext_id.CompareNoCase("GUI_NEWPROPS") == 0)
     // {
     //     // read new gui properties
@@ -768,7 +769,7 @@ HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersio
 	if (!err)
 		return err;
 	game.ReadInvInfo_Aligned(in);
-	err = game.read_cursors(in, data_ver);
+	err = game.read_cursors(in);
 	if (!err)
 		return err;
 	game.read_interaction_scripts(in, data_ver);
@@ -777,7 +778,7 @@ HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersio
 	if (game.load_compiled_script) {
 		ents.GlobalScript.reset(ccScript::CreateFromStream(in));
 		if (!ents.GlobalScript)
-			return new MainGameFileError(kMGFErr_CreateGlobalScriptFailed, _G(ccErrorString));
+			return new MainGameFileError(kMGFErr_CreateGlobalScriptFailed, cc_get_error().ErrorString);
 		err = ReadDialogScript(ents.DialogScript, in, data_ver);
 		if (!err)
 			return err;
@@ -794,7 +795,7 @@ HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersio
 		in->Seek(count * 0x204);
 	}
 
-	game.read_characters(in, data_ver);
+	game.read_characters(in);
 	game.read_lipsync(in, data_ver);
 	game.read_messages(in, data_ver);
 

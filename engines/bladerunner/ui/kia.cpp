@@ -703,7 +703,7 @@ void KIA::mouseDownCallback(int buttonId, void *callbackData) {
 		if (buttonId == 12) {
 			int endTrackId = self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxSHUTDOWN), 70, 0, 0, 50, 0);
 
-			self->_vm->_surfaceFront.fillRect(Common::Rect(0, 0, 640, 480), 0);
+			self->_vm->_surfaceFront.fillRect(Common::Rect(0, 0, BladeRunnerEngine::kOriginalGameWidth, BladeRunnerEngine::kOriginalGameHeight), 0);
 			self->_vm->blitToScreen(self->_vm->_surfaceFront);
 
 			if (endTrackId != -1) {

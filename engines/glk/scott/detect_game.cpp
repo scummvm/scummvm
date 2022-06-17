@@ -378,7 +378,7 @@ GameIDType detectGame(Common::SeekableReadStream *f) {
 
 	_G(_fileLength) = f->size();
 
-	_G(_game) = new GameInfo;
+	_G(_game) = &_G(_fallbackGame);
 
 	Common::String md5 = g_vm->getGameMD5();
 	const GlkDetectionEntry *p = SCOTT_GAMES;
@@ -386,7 +386,7 @@ GameIDType detectGame(Common::SeekableReadStream *f) {
 	while (p->_md5) {
 		if (md5.equalsC(p->_md5)) {
 			if (!scumm_stricmp(p->_extra, "")) {
-				CURRENT_GAME = SCOTTFREE;
+				_G(_fallbackGame)._gameID = SCOTTFREE;
 			}
 			if (!scumm_stricmp(p->_extra, "ZXSpectrum")) {
 				_G(_entireFile) = new uint8_t[_G(_fileLength)];
@@ -407,10 +407,9 @@ GameIDType detectGame(Common::SeekableReadStream *f) {
 				if (dict_type == NOT_A_GAME)
 					return UNKNOWN_GAME;
 				for (int i = 0; i < NUMGAMES; i++) {
-					if (g_games[i]._dictionary == dict_type) {
-						if (tryLoading(g_games[i], offset, 0)) {
-							delete _G(_game);
-							_G(_game) = &g_games[i];
+					if (_G(_games)[i]._dictionary == dict_type) {
+						if (tryLoading(_G(_games)[i], offset, 0)) {
+							_G(_game) = &_G(_games)[i];
 							break;
 						}
 					}

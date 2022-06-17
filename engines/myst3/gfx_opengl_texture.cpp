@@ -88,7 +88,6 @@ OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	update(surface);
-
 }
 
 OpenGLTexture::~OpenGLTexture() {

@@ -62,12 +62,14 @@ class GUIButton : public GUIObject {
 public:
 	GUIButton();
 
+	bool HasAlphaChannel() const override;
 	const String &GetText() const;
 	bool IsImageButton() const;
 	bool IsClippingImage() const;
 
 	// Operations
-	void Draw(Bitmap *ds) override;
+	Rect CalcGraphicRect(bool clipped) override;
+	void Draw(Bitmap *ds, int x = 0, int y = 0) override;
 	void SetClipImage(bool on);
 	void SetText(const String &text);
 
@@ -102,9 +104,9 @@ public:
 	bool        IsMouseOver;
 
 private:
-	void DrawImageButton(Bitmap *ds, bool draw_disabled);
-	void DrawText(Bitmap *ds, bool draw_disabled);
-	void DrawTextButton(Bitmap *ds, bool draw_disabled);
+	void DrawImageButton(Bitmap *ds, int x, int y, bool draw_disabled);
+	void DrawText(Bitmap *ds, int x, int y, bool draw_disabled);
+	void DrawTextButton(Bitmap *ds, int x, int y, bool draw_disabled);
 	void PrepareTextToDraw();
 
 	// Defines button placeholder mode; the mode is set

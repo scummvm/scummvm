@@ -70,7 +70,8 @@ struct DisplayVars {
 // Pass yy = -1 to find Y co-ord automatically
 // allowShrink = 0 for none, 1 for leftwards, 2 for rightwards
 // pass blocking=2 to create permanent overlay
-int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int usingfont, int asspch, int isThought, int allowShrink, bool overlayPositionFixed) {
+ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp_type, int usingfont,
+		int asspch, int isThought, int allowShrink, bool overlayPositionFixed, bool roomlayer) {
 	const bool use_speech_textwindow = (asspch < 0) && (_GP(game).options[OPT_SPEECHTYPE] >= 2);
 	const bool use_thought_gui = (isThought) && (_GP(game).options[OPT_THOUGHTGUI] > 0);
 
@@ -174,8 +175,8 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 	if (disp_type < DISPLAYTEXT_NORMALOVERLAY)
 		remove_screen_overlay(_GP(play).text_overlay_on); // remove any previous blocking texts
 
-	const int bmp_width = std::max(2, wii);
-	const int bmp_height = std::max(2, disp.fulltxtheight + extraHeight);
+	const int bmp_width = MAX(2, wii);
+	const int bmp_height = MAX(2, disp.fulltxtheight + extraHeight);
 	Bitmap *text_window_ds = BitmapHelper::CreateTransparentBitmap(
 		bmp_width, bmp_height, _GP(game).GetColorDepth());
 
@@ -252,11 +253,11 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 	default: ovrtype = disp_type; break; // must be precreated overlay id
 	}
 
-	int nse = add_screen_overlay(xx, yy, ovrtype, text_window_ds, adjustedXX - xx, adjustedYY - yy, alphaChannel);
+	size_t nse = add_screen_overlay(roomlayer, xx, yy, ovrtype, text_window_ds, adjustedXX - xx, adjustedYY - yy, alphaChannel);
 	// we should not delete text_window_ds here, because it is now owned by Overlay
 
 	if (disp_type >= DISPLAYTEXT_NORMALOVERLAY) {
-		return _GP(screenover)[nse].type;
+		return &_GP(screenover)[nse];
 	}
 
 	//
@@ -268,11 +269,9 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 			remove_screen_overlay(OVER_TEXTMSG);
 			_GP(play).SetWaitSkipResult(SKIP_AUTOTIMER);
 			_GP(play).messagetime = -1;
-			return 0;
+			return nullptr;
 		}
 
-		if (!_GP(play).mouse_cursor_hidden)
-			ags_domouse();
 		int countdown = GetTextDisplayTime(todis);
 		int skip_setting = user_to_internal_skip_speech((SkipSpeechStyle)_GP(play).skip_display);
 		// Loop until skipped
@@ -332,8 +331,7 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 			if ((countdown < 1) && (_GP(play).fast_forward))
 				break;
 		}
-		if (!_GP(play).mouse_cursor_hidden)
-			ags_domouse();
+
 		remove_screen_overlay(OVER_TEXTMSG);
 		invalidate_screen();
 	} else {
@@ -344,7 +342,7 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 			_GP(play).messagetime = 2;
 
 		if (!overlayPositionFixed) {
-			_GP(screenover)[nse].positionRelativeToScreen = false;
+			_GP(screenover)[nse].SetRoomRelative(true);
 			VpPoint vpt = _GP(play).GetRoomViewport(0)->ScreenToRoom(_GP(screenover)[nse].x, _GP(screenover)[nse].y, false);
 			_GP(screenover)[nse].x = vpt.first.X;
 			_GP(screenover)[nse].y = vpt.first.Y;
@@ -354,7 +352,7 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 	}
 
 	_GP(play).messagetime = -1;
-	return 0;
+	return nullptr;
 }
 
 void _display_at(int xx, int yy, int wii, const char *text, int disp_type, int asspch, int isThought, int allowShrink, bool overlayPositionFixed) {
@@ -447,7 +445,7 @@ int GetTextDisplayTime(const char *text, int canberel) {
 }
 
 bool ShouldAntiAliasText() {
-	return (_GP(game).options[OPT_ANTIALIASFONTS] != 0 || ::AGS::g_vm->_forceTextAA);
+	return (_GP(game).GetColorDepth() >= 24) && (_GP(game).options[OPT_ANTIALIASFONTS] != 0 || ::AGS::g_vm->_forceTextAA);
 }
 
 void wouttextxy_AutoOutline(Bitmap *ds, size_t font, int32_t color, const char *texx, int &xxp, int &yyp) {

@@ -136,7 +136,7 @@ void Room63::bork_platt() {
 	flic_cut(FCUT_081);
 	flic_cut(FCUT_082);
 	_G(gameState)._personHide[P_CHEWY] = false;
-	check_shad(4, 1);
+	checkShadow(4, 1);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	autoMove(6, P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = false;

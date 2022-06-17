@@ -56,7 +56,6 @@ public:
 	bool isId(int16 id) const { return _dataPtr && (_id == id); }
 
 	void set(SoundType type, byte *data, uint32 dSize);
-	void set(SoundType type, Resource *resource);
 	bool load(SoundType type, byte *data, uint32 dSize);
 	bool load(SoundType type, Resource *resource);
 

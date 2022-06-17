@@ -96,7 +96,10 @@ public:
 	/**
 	 * Clip the given source bounds so the passed destBounds will be entirely on-screen.
 	 */
-	bool clip(Common::Rect &srcBounds, Common::Rect &destBounds);
+	bool clip(Common::Rect& srcBounds, Common::Rect& destBounds) const {
+		return _innerSurface.clip(srcBounds, destBounds);
+	}
+
 public:
 	int16 &w;           /*!< Width of the surface rectangle. */
 	int16 &h;           /*!< Height of the surface rectangle. */
@@ -528,6 +531,24 @@ public:
 	 */
 	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect) {
 		_innerSurface.copyRectToSurface(srcSurface, destX, destY, subRect);
+	}
+
+	/**
+	 * Copy a bitmap to the internal buffer of the surface.
+	 *
+	 * The pixel format of the buffer must match the pixel format of the surface.
+	 */
+	void copyRectToSurfaceWithKey(const void *buffer, int srcPitch, int destX, int destY, int width, int height, uint32 key) {
+		_innerSurface.copyRectToSurfaceWithKey(buffer, srcPitch, destX, destY, width, height, key);
+	}
+
+	/**
+	 * Copy a bitmap to the internal buffer of the surface.
+	 *
+	 * The pixel format of the buffer must match the pixel format of the surface.
+	 */
+	void copyRectToSurfaceWithKey(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect, uint32 key) {
+		_innerSurface.copyRectToSurfaceWithKey(srcSurface, destX, destY, subRect, key);
 	}
 
 	/**

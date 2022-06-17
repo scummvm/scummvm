@@ -808,6 +808,7 @@ private:
 
 	// translation
 	int _lang;
+	int _langIntern;
 
 	uint8 *_landsFile;
 	uint8 *_levelLangFile;

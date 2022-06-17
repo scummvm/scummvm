@@ -396,6 +396,10 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	hdr.name[sizeof(hdr.name)-1] = 0;
 	_saveLoadDescription = hdr.name;
 
+	// Set to 0 during load to minimize stuttering
+	if (_musicEngine)
+		_musicEngine->setMusicVolume(0);
+
 	// Unless specifically requested with _saveSound, we do not save the iMUSE
 	// state for temporary state saves - such as certain cutscenes in DOTT,
 	// FOA, Sam and Max, etc.
@@ -449,12 +453,6 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	ser.setVersion(hdr.ver);
 	saveLoadWithSerializer(ser);
 	delete in;
-
-	// Update volume settings
-	syncSoundSettings();
-
-	if (_townsPlayer && (hdr.ver >= VER(81)))
-		_townsPlayer->restoreAfterLoad();
 
 	// Init NES costume data
 	if (_game.platform == Common::kPlatformNES) {
@@ -544,6 +542,13 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	sb = _screenB;
 	sh = _screenH;
 
+#ifdef ENABLE_SCUMM_7_8
+	// Remove any blast text leftovers
+	if (_game.version >= 7) {
+		((ScummEngine_v7 *)this)->removeBlastTexts();
+	}
+#endif
+
 	// Restore the virtual screens and force a fade to black.
 	initScreens(0, _screenHeight);
 
@@ -580,19 +585,6 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	debug(1, "State loaded from '%s'", filename.c_str());
 
 	_sound->pauseSounds(false);
-
-	// WORKAROUND: Original save/load script ran this script
-	// after game load, and o2_loadRoomWithEgo() does as well
-	// this script starts character-dependent music
-	//
-	// Fixes bug #3362: MANIACNES: Music Doesn't Start On Load Game
-	if (_game.platform == Common::kPlatformNES) {
-		runScript(5, 0, 0, nullptr);
-
-		if (VAR(224)) {
-			_sound->addSoundToQueue(VAR(224));
-		}
-	}
 
 	_sound->restoreAfterLoad();
 
@@ -1170,8 +1162,23 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 
 	// When loading, move the mouse to the saved mouse position.
 	if (s.isLoading() && s.getVersion() >= VER(20)) {
+		int x = _mouse.x;
+		int y = _mouse.y;
+
+		// Convert the mouse position, which uses game coordinates, to
+		// screen coordinates for the rendering modes that need it.
+
+		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
+			x *= 2;
+			x += (kHercWidth - _screenWidth * 2) / 2;
+			y = y * 7 / 4;
+		} else if (_macScreen || (_useCJKMode && _textSurfaceMultiplier == 2)) {
+			x *= 2;
+			y *= 2;
+		}
+
 		updateCursor();
-		_system->warpMouse(_mouse.x, _mouse.y);
+		_system->warpMouse(x, y);
 	}
 
 	// Before V61, we re-used the _haveMsg flag to handle "alternative" speech
@@ -1490,7 +1497,8 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 		// If we are loading, and the music being loaded was supposed to loop
 		// forever, then resume playing it. This helps a lot when the audio CD
 		// is used to provide ambient music (see bug #1150).
-		if (s.isLoading() && info.playing && info.numLoops < 0)
+		// FM-Towns versions handle this in Player_Towns_v1::restoreAfterLoad().
+		if (s.isLoading() && info.playing && info.numLoops < 0 && _game.platform != Common::kPlatformFMTowns)
 			_sound->playCDTrackInternal(info.track, info.numLoops, info.start, info.duration);
 	}
 

@@ -74,7 +74,7 @@ void Room9::gtuer() {
 void Room9::surimy() {
 	hideCur();
 	_G(gameState).R9Surimy = true;
-	const int16 tmp = _G(spieler_vector)[P_CHEWY].Count;
+	const int16 tmp = _G(moveState)[P_CHEWY].Count;
 	stopPerson(P_CHEWY);
 	_G(atds)->setControlBit(75, ATS_ACTIVE_BIT);
 	_G(det)->hideStaticSpr(4);
@@ -83,8 +83,8 @@ void Room9::surimy() {
 	start_spz(CH_TALK11, 255, false, P_CHEWY);
 	startAadWait(56);
 	_G(gameState).room_e_obj[17].Attribut = EXIT_RIGHT;
-	_G(spieler_vector)[P_CHEWY].Count = tmp;
-	get_phase(&_G(spieler_vector)[P_CHEWY], &_G(spieler_mi)[P_CHEWY]);
+	_G(moveState)[P_CHEWY].Count = tmp;
+	get_phase(&_G(moveState)[P_CHEWY], &_G(spieler_mi)[P_CHEWY]);
 	_G(mov)->continue_auto_go();
 	showCur();
 }

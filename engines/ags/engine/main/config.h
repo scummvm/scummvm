@@ -52,13 +52,6 @@ String make_scaling_option(FrameScaleDef scale_def);
 uint32_t convert_scaling_to_fp(int scale_factor);
 int convert_fp_to_scaling(uint32_t scaling);
 
-bool INIreaditem(const ConfigTree &cfg, const String &sectn, const String &item, String &value);
-int INIreadint(const ConfigTree &cfg, const String &sectn, const String &item, int def_value = 0);
-float INIreadfloat(const ConfigTree &cfg, const String &sectn, const String &item, float def_value = 0.f);
-String INIreadstring(const ConfigTree &cfg, const String &sectn, const String &item, const String &def_value = "");
-void INIwriteint(ConfigTree &cfg, const String &sectn, const String &item, int value);
-void INIwritestring(ConfigTree &cfg, const String &sectn, const String &item, const String &value);
-
 } // namespace AGS3
 
 #endif

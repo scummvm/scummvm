@@ -38,8 +38,6 @@ Cursor::~Cursor() {
 
 void Cursor::plot_cur() {
 	if (CursorMan.isVisible()) {
-		_cursorMoveFl = false;
-
 		--_curAniCountdown;
 		if (_curAniCountdown <= 0) {
 			_curAniCountdown = _animDelay;
@@ -56,7 +54,6 @@ void Cursor::plot_cur() {
 
 void Cursor::show_cur() {
 	CursorMan.showMouse(true);
-	_cursorMoveFl = true;
 	plot_cur();
 }
 
@@ -74,7 +71,6 @@ void Cursor::setAnimation(uint8 start, uint8 end, int16 delay) {
 
 void Cursor::move(int16 x, int16 y) {
 	g_events->warpMouse(Common::Point(x, y));
-	_cursorMoveFl = CursorMan.isVisible();
 }
 
 } // namespace Chewy

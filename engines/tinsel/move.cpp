@@ -52,9 +52,7 @@ HPOLYGON InitExtraBlock(MOVER *ca, MOVER *ta);
 //----------------- LOCAL DEFINES --------------------
 
 #define XMDIST	((TinselVersion >= 2) ? 6 : 4)
-#define XHMDIST	((TinselVersion >= 2) ? 3 : 2)
 #define YMDIST	((TinselVersion >= 2) ? 3 : 2)
-#define YHMDIST	((TinselVersion >= 2) ? 3 : 2)
 
 #define XTHERE		1
 #define XRESTRICT	2
@@ -691,10 +689,35 @@ static void SetMoverDest(MOVER *pActor, int x, int y) {
 	pActor->targetY = y;
 	pActor->InDifficulty = NO_PROB;
 
-	reel = GetDirection(pActor->objX, pActor->objY, x, y, pActor->direction, pActor->hCpath);
-	scale = GetScale(pActor->hCpath, pActor->objY);
-	if (scale != pActor->scale || reel != pActor->direction) {
-		SetMoverWalkReel(pActor, reel, scale, false);
+
+	if ((TinselVersion == 3) && pActor->type == MOVER_3D) {
+		// int scale = SysVar(SV_SPRITER_SCALE);
+		// groundplane::Get3Dfrom2D(&pActor->vObj,pActor->objX,pActor->objY);
+		// groundplane::Get3Dfrom2D(&pActor->vTarget,pActor->targetX,pActor->targetY);
+		// targetX = (pActor->vTarget).x;
+		// posX = (pActor->vObj).x;
+		// targetZ = (pActor->vTarget).z;
+		// posZ = (pActor->vObj).z;
+		// int dX = (targetX - posX) / scale;
+		// int dZ = (targetZ - posZ) / scale;
+		// if ((dX != 0) || (dZ != 0)) {
+		// 	if (dX < 1) {
+		// 		if (dX < 0) {
+		// 		fpatan(-(float10)dZ / (float10)dX,(float10)1);
+		// 		}
+		// 	}
+		// 	else {
+		// 		fpatan((float10)dZ / (float10)dX,(float10)1);
+		// 	}
+		// 	direction = (int)(longlong)ROUND(0.5 + *(double *)(local_8 + 0x10));
+		// 	pActor->direction = direction;
+		// }
+	} else {
+		reel = GetDirection(pActor->objX, pActor->objY, x, y, pActor->direction, pActor->hCpath);
+		scale = GetScale(pActor->hCpath, pActor->objY);
+		if (scale != pActor->scale || reel != pActor->direction) {
+			SetMoverWalkReel(pActor, reel, scale, false);
+		}
 	}
 }
 

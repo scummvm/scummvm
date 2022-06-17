@@ -283,7 +283,6 @@ void Codec48Decoder::decode3(byte *dst, const byte *src, int bufOffset) {
 		for (int j = 0; j < _blockX; j++) {
 			byte opcode = *src++;
 
-
 			switch (opcode) {
 			case 0xFF: {
 				// Interpolate a 4x4 block based on 1 pixel, then scale to 8x8

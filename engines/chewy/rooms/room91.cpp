@@ -89,7 +89,7 @@ void Room91::xit(int16 eib_nr) {
 void Room91::setup_func() {
 	if (!_G(gameState).flags34_4) {
 		calc_person_look();
-		const int xyPos = _G(spieler_vector)[0].Xypos[0];
+		const int xyPos = _G(moveState)[0].Xypos[0];
 		if (xyPos < 130)
 			goAutoXy(40, 97, P_HOWARD, ANI_GO);
 		else if (xyPos < 312)

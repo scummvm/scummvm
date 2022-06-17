@@ -20,7 +20,7 @@
  */
 
 // PlayStation Stream demuxer based on FFmpeg/libav
-// MDEC video emulation based on http://kenai.com/downloads/jpsxdec/Old/PlayStation1_STR_format1-00.txt
+// MDEC video emulation based on https://web.archive.org/web/20170411092531/https://kenai.com/downloads/jpsxdec/Old/PlayStation1_STR_format1-00.txt
 
 #include "audio/audiostream.h"
 #include "audio/decoders/adpcm.h"

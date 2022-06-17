@@ -26,6 +26,7 @@
 
 #include "common/scummsys.h"
 #include "common/endian.h"
+#include "common/stream.h"
 
 class MidiDriver_BASE;
 
@@ -101,11 +102,13 @@ struct EventInfo {
 	               ///< will occur, and the MidiParser will have to generate one itself.
 	               ///< For all other events, this value should always be zero.
 	bool   loop;   ///< Indicates that this event loops (part of) the MIDI data.
+	bool   noop;   ///< Indicates that no action should be taken for this event
+				   ///< (only delta should be handled).
 
 	byte channel() const { return event & 0x0F; } ///< Separates the MIDI channel from the event.
 	byte command() const { return event >> 4; }   ///< Separates the command code from the event.
 
-	EventInfo() : start(0), delta(0), event(0), length(0), loop(false) { basic.param1 = 0; basic.param2 = 0; ext.type = 0; ext.data = 0; }
+	EventInfo() : start(0), delta(0), event(0), length(0), loop(false), noop(false) { basic.param1 = 0; basic.param2 = 0; ext.type = 0; ext.data = 0; }
 };
 
 /**
@@ -317,6 +320,15 @@ protected:
 	bool   _doParse;       ///< True if the parser should be parsing; false if it should not be active
 	bool   _pause;		   ///< True if the parser has paused parsing
 
+	/**
+	 * The source number to use when sending MIDI messages to the driver.
+	 * When using multiple sources, use source 0 and higher. This must be
+	 * used when source volume or channel locking is used.
+	 * By default this is -1, which means the parser is the only source
+	 * of MIDI messages and multiple source functionality is disabled.
+	 */
+	int8   _source;
+
 protected:
 	static uint32 readVLQ(byte * &data);
 	virtual void resetTracking();
@@ -373,13 +385,6 @@ public:
 	 */
 	enum {
 		/**
-		 * Events containing a pitch bend command should be treated as
-		 * single-byte padding before the  real event. This allows the
-		 * MidiParser to work with some malformed SMF files from Simon 1/2.
-		 */
-		mpMalformedPitchBends = 1,
-
-		/**
 		 * Sets auto-looping, which can be used by lightweight clients
 		 * that don't provide their own flow control.
 		 */
@@ -424,16 +429,23 @@ public:
 public:
 	typedef void (*XMidiCallbackProc)(byte eventData, void *refCon);
 
-	MidiParser();
+	MidiParser(int8 source = -1);
 	virtual ~MidiParser() { stopPlaying(); }
 
 	virtual bool loadMusic(byte *data, uint32 size) = 0;
 	virtual void unloadMusic();
 	virtual void property(int prop, int value);
+	/**
+	 * Returns the size in bytes of the MIDI data in the specified stream, or
+	 * -1 if the size could not be determined. The MIDI data must be in the
+	 * format handled by the MidiParser subclass that this method is called on.
+	 * Not every MidiParser subclass has an implementation of this method.
+	 */
+	virtual int32 determineDataSize(Common::SeekableReadStream *stream) { return -1; };
 
 	virtual void setMidiDriver(MidiDriver_BASE *driver) { _driver = driver; }
 	void setTimerRate(uint32 rate) { _timerRate = rate; }
-	void setTempo(uint32 tempo);
+	virtual void setTempo(uint32 tempo);
 	void onTimer();
 
 	bool isPlaying() const { return (_position._playPos != 0 && _doParse); }

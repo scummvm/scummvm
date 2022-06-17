@@ -19,8 +19,6 @@
  *
  */
 
-//include <cstdio>
-//include <stdarg.h>
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/character.h"
 #include "ags/engine/ac/display.h"
@@ -49,7 +47,7 @@ void Display(const char *texx, ...) {
 	char displbuf[STD_BUFFER_SIZE];
 	va_list ap;
 	va_start(ap, texx);
-	vsprintf(displbuf, get_translation(texx), ap);
+	vsnprintf(displbuf, sizeof(displbuf), get_translation(texx), ap);
 	va_end(ap);
 	DisplayAtY(-1, displbuf);
 }

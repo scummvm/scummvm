@@ -297,7 +297,8 @@ bool SdlGraphicsManager::createOrUpdateWindow(int width, int height, const Uint3
 	// may change the scaler, which should reset the window size)
 	if (!_window->getSDLWindow() || _lastFlags != flags || _overlayVisible || _allowWindowSizeReset) {
 		const bool fullscreen = (flags & (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_FULLSCREEN_DESKTOP)) != 0;
-		if (!fullscreen) {
+		const bool maximized = (flags & SDL_WINDOW_MAXIMIZED);
+		if (!fullscreen && !maximized) {
 			if (_hintedWidth) {
 				width = _hintedWidth;
 			}

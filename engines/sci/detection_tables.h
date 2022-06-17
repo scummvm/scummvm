@@ -993,7 +993,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_GK2_DEMO },
 
 	// Gabriel Knight 2 - English DOS (GOG version) - ressci.* merged in ressci.000
-	// using Enrico Rolfi's HD/DVD installer: http://gkpatches.vogons.zetafleet.com/
+	// using Enrico Rolfi's HD/DVD installer: https://gkpatches.vogons.org/english.php
 	{"gk2", "", {
 		{"resmap.000", 0, "b996fa1e57389a1e179a00a0049de1f4", 8110},
 		{"ressci.000", 0, "a19fc3604c6e5407abcf03d59ee87217", 168522221},
@@ -1001,13 +1001,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK2 },
 	
 	// Gabriel Knight 2 - Korean DOS (GOG version) (from swkim01)
-    // using swkim01's SCI Message Editor: http://github.com/swkim01/scime/
-    {"gk2", "", {
-        {"resmap.000", 0, "b996fa1e57389a1e179a00a0049de1f4", 8110},
-        {"ressci.000", 0, "a19fc3604c6e5407abcf03d59ee87217", 168522221},
-        {"resource.msg", 0, "1c4439abcfda38be40090a37a91ad7d2", 331954},
-        AD_LISTEND},
-        Common::KO_KOR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK2 },
+	// using swkim01's SCI Message Editor: http://github.com/swkim01/scime/
+	{"gk2", "", {
+		{"resmap.000", 0, "b996fa1e57389a1e179a00a0049de1f4", 8110},
+		{"ressci.000", 0, "a19fc3604c6e5407abcf03d59ee87217", 168522221},
+		{"resource.msg", 0, "1c4439abcfda38be40090a37a91ad7d2", 331954},
+		AD_LISTEND},
+		Common::KO_KOR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK2 },
 
 	// Gabriel Knight 2 - English DOS (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.1"
@@ -1921,7 +1921,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
 
-	// King's Quest 5 DOS Spanish Floppy 0.000.062 VGA (5 x 3.5" disks)
+	// King's Quest 5 DOS Spanish Floppy VGA (3.5" disks)
+	// Game version 0.000.162 from about box, 1.000 from VERSION file
+	// SCI interpreter version 1.000.784
 	// Supplied by dianiu in bug report #6121
 	{"kq5", "", {
 		{"resource.map", 0, "c09896a2a30c9b002c5cbbc62f5a5c3a", 8169},
@@ -1933,6 +1935,24 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "4aaa2e9a69089b9afbaaccbbf2c4e647", 1202936},
 		{"resource.006", 0, "65b520e60c4217e6a6572d9edf77193b", 1141985},
 		{"resource.007", 0, "f42b0100f0a1c30806814f8648b6bc28", 1145583},
+		// MISSING: resource.008 wasn't included in the generated entries
+		// but was included in a directory listing
+		AD_LISTEND},
+		Common::ES_ESP, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
+
+	// King's Quest 5 DOS Spanish Floppy VGA (3.5" disks)
+	// Game version 0.000.162 from about box, 1.000 from VERSION file
+	// SCI interpreter version 1.000.784
+	{"kq5", "", {
+		{"resource.map", 0, "3e196254d84b228e735a605ca2fc3fc0", 8283},
+		{"resource.000", 0, "1f1d03aead44da46362ff40c0074a3ec", 335871},
+		{"resource.001", 0, "37770b6ed38fa45286388988752d2881", 1136316},
+		{"resource.002", 0, "66d46bdd8f017ff11db855e796c89921", 1339480},
+		{"resource.003", 0, "e5c88ef1d6cb02005a1676e1020e0786", 1323620},
+		{"resource.004", 0, "829c8caeff793f3cfcea2cb01aaa4150", 1331675},
+		{"resource.005", 0, "7c8476ebf77fd7fc9090ae01f4010095", 1266871},
+		{"resource.006", 0, "65b520e60c4217e6a6572d9edf77193b", 1208819},
+		{"resource.007", 0, "f719a33d9b3d2ee6d5fae4d182119af4", 1337045},
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
 
@@ -2574,13 +2594,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::ES_ESP, Common::kPlatformDOS, 0, GUIO_STD16	},
 
 	// Laura Bow 2 - Spanish DOS CD (from jvprat)
+	// This is the floppy version (text-only) distributed on a CD.
 	// Executable scanning reports "2.000.274", VERSION file reports "1.000.000, May 10, 1994"
-	{"laurabow2", "CD", {
+	{"laurabow2", "", {
 		{"resource.map", 0, "3b6dfbcda210bbc3f23fd1927113bf98", 6483},
 		{"resource.000", 0, "57084910bc923bff5d6d9bc1b56e9604", 5028766},
 		{"resource.msg", 0, "71f1f0cd9f082da2e750c793a8ed9d84", 286141},
 		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformDOS, ADGF_CD, GUIO_STD16_SPEECH	},
+		Common::ES_ESP, Common::kPlatformDOS, 0, GUIO_STD16_SPEECH	},
 
 #define GUIO_LIGHTHOUSE_DEMO GUIO6(GUIO_NOSPEECH, \
 								   GUIO_NOMUSIC, \

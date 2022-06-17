@@ -2963,12 +2963,6 @@ void ScummEngine::actorTalk(const byte *msg) {
 	} else {
 		int oldact;
 
-		// WORKAROUND bug #1025
-		if (_game.id == GID_LOOM && _roomResource == 23 &&
-			vm.slot[_currentScript].number == 232 && _actorToPrintStrFor == 0) {
-			_actorToPrintStrFor = 2;	// Could be anything from 2 to 5. Maybe compare to original?
-		}
-
 		a = derefActor(_actorToPrintStrFor, "actorTalk");
 
 		if (!a->isInCurrentRoom()) {

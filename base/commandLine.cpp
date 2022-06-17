@@ -34,6 +34,7 @@
 
 #include "common/config-manager.h"
 #include "common/fs.h"
+#include "common/macresman.h"
 #include "common/md5.h"
 #include "common/rendermode.h"
 #include "common/savefile.h"
@@ -54,15 +55,17 @@ namespace Base {
 
 #ifndef DISABLE_COMMAND_LINE
 
+#if defined(__DS__)
 static const char USAGE_STRING[] =
 	"%s: %s\n"
 	"Usage: %s [OPTIONS]... [GAME]\n"
 	"\n"
 	"Try '%s --help' for more options.\n"
 ;
+#endif
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
-#if defined(__SYMBIAN32__) || defined(ANDROID) || defined(__DS__) || defined(__3DS__)
+#if defined(ANDROID) || defined(__DS__) || defined(__3DS__)
 static const char HELP_STRING[] = "NoUsageString"; // save more data segment space
 #else
 static const char HELP_STRING[] =
@@ -93,7 +96,7 @@ static const char HELP_STRING[] =
 	"  --auto-detect            Display a list of games from current or specified directory\n"
 	"                           and start the first one. Use --path=PATH to specify a directory.\n"
 	"  --recursive              In combination with --add or --detect recurse down all subdirectories\n"
-#if defined(WIN32) && !defined(__SYMBIAN32__)
+#if defined(WIN32)
 	"  --console                Enable the console window (default:enabled)\n"
 #endif
 	"\n"
@@ -211,12 +214,17 @@ static const char HELP_STRING[] =
 	"                           Grim Fandango or Escape from Monkey Island\n"
 	"  --md5                    Shows MD5 hash of the file given by --md5-path=PATH\n"
 	"                           If --md5-length=NUM is passed then it shows the MD5 hash of\n"
-	"                           the first NUM bytes of the file given by PATH\n"
+	"                           the first or last NUM bytes of the file given by PATH\n"
 	"                           If --md5-engine=ENGINE_ID is passed, it fetches the MD5 length\n"
 	"                           automatically, overriding --md5-length\n"
-	"  --md5-path=PATH          Used with --md5 to specify path of file to calculate MD5 hash of\n"
-	"  --md5-length=NUM         Used with --md5 to specify the number of bytes to be hashed.\n"
-	"                           Use negative number for calculating tail md5.\n"
+	"  --md5mac                 Shows MD5 hash for both the resource fork and data fork of the\n"
+	"                           mac file given by --md5-path=PATH. If --md5-length=NUM is passed\n"
+	"                           then it shows the MD5 hash of the first or last NUM bytes of each\n"
+	"                           fork.\n"
+	"  --md5-path=PATH          Used with --md5 or --md5mac to specify path of file to calculate\n"
+	"                           MD5 hash of\n"
+	"  --md5-length=NUM         Used with --md5 or --md5mac to specify the number of bytes to be\n"
+	"                           hashed. Use negative number for calculating tail md5.\n"
 	"                           Is overriden when used with --md5-engine\n"
 	"  --md5-engine=ENGINE_ID   Used with --md5 to specify the engine for which number of bytes\n"
 	"                           to be hashed must be calculated. This option overrides --md5-length\n"
@@ -239,7 +247,7 @@ static void usage(const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-#if !(defined(__SYMBIAN32__) || defined(__DS__))
+#if defined(__DS__)
 	printf(USAGE_STRING, s_appName, buf, s_appName, s_appName);
 #endif
 	exit(1);
@@ -342,6 +350,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("gui_browser_native", true);
 	ConfMan.registerDefault("gui_return_to_launcher_at_exit", false);
 	ConfMan.registerDefault("gui_launcher_chooser", "list");
+	ConfMan.registerDefault("grid_items_per_row", 4);
 	// Specify threshold for scanning directories in the launcher
 	// If number of game entries in scummvm.ini exceeds the specified
 	// number, then skip scanning. -1 = scan always
@@ -598,6 +607,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_COMMAND("md5")
 			END_COMMAND
 
+			DO_LONG_COMMAND("md5mac")
+			END_COMMAND
+
 #ifdef DETECTOR_TESTING_HACK
 			// HACK FIXME TODO: This command is intentionally *not* documented!
 			DO_LONG_COMMAND("test-detector")
@@ -827,14 +839,8 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION("md5-path")
-				Common::FSNode path(option);
-				if (!path.exists()) {
-					usage("Non-existent file path '%s'", option);
-				} else if (path.isDirectory()) {
-					usage("'%s' is a directory, not a file path!", option);
-				} else if (!path.isReadable()) {
-					usage("Non-readable file path '%s'", option);
-				}
+				// While the --md5 command expect a file name, the --md5mac may take a base name.
+				// Thus we do not check that the file exists here.
 			END_OPTION
 
 			DO_LONG_OPTION("md5-engine")
@@ -900,7 +906,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 #endif
 
-#if defined(WIN32) && !defined(__SYMBIAN32__)
+#if defined(WIN32)
 			// Optional console window on Windows (default: enabled)
 			DO_LONG_OPTION_BOOL("console")
 			END_OPTION
@@ -1374,6 +1380,12 @@ static int recAddGames(const Common::FSNode &dir, const Common::String &engineId
 }
 
 static void calcMD5(Common::FSNode &path, int32 length) {
+	if (!path.exists()) {
+		usage("File '%s' does not exist", path.getName().c_str());
+		return;
+	} else if (!path.isReadable()) {
+		usage("Non-readable file path '%s'", path.getName().c_str());
+	}
 	Common::SeekableReadStream *stream = path.createReadStream();
 
 	if (stream) {
@@ -1394,6 +1406,55 @@ static void calcMD5(Common::FSNode &path, int32 length) {
 		delete stream;
 	} else {
 		printf("Usage : --md5 --md5-path=<PATH> [--md5-length=NUM]\n");
+	}
+}
+
+static void calcMD5Mac(Common::Path &filePath, int32 length) {
+	// We need to split the path into the file name and a SearchSet
+	Common::SearchSet dir;
+	char nativeSeparator = '/';
+#ifdef WIN32
+	nativeSeparator = '\\';
+#endif
+	Common::FSNode dirNode(filePath.getParent().toString(nativeSeparator));
+	dir.addDirectory(dirNode.getPath(), dirNode);
+	Common::String fileName = filePath.getLastComponent().toString();
+
+	Common::MacResManager macResMan;
+	// FIXME: There currently isn't any way to tell the Mac resource
+	// manager to open a specific file. Instead, it takes a "base name"
+	// and constructs a file name out of that. While usually a desirable
+	// thing, it's not ideal here.
+	if (!macResMan.open(fileName, dir)) {
+		printf("Mac resource file '%s' not found or could not be open\n", filePath.toString(nativeSeparator).c_str());
+	} else {
+		if (!macResMan.hasResFork() && !macResMan.hasDataFork()) {
+			printf("'%s' has neither data not resource fork\n", macResMan.getBaseFileName().toString().c_str());
+		} else {
+			bool tail = false;
+			if (length < 0) {// Tail md5 is requested
+				length = -length;
+				tail = true;
+			}
+
+			// The resource fork is probably the most relevant one.
+			if (macResMan.hasResFork()) {
+				Common::String md5 = macResMan.computeResForkMD5AsString(length, tail);
+				if (length != 0 && length < (int32)macResMan.getResForkDataSize())
+					md5 += Common::String::format(" (%s %d bytes)", tail ? "last" : "first", length);
+				printf("%s (resource): %s, %llu bytes\n", macResMan.getBaseFileName().toString().c_str(), md5.c_str(), (unsigned long long)macResMan.getResForkDataSize());
+			}
+			if (macResMan.hasDataFork()) {
+				Common::SeekableReadStream *stream = macResMan.getDataFork();
+				if (tail && stream->size() > length)
+					stream->seek(-length, SEEK_END);
+				Common::String md5 = Common::computeStreamMD5AsString(*stream, length);
+				if (length != 0 && length < stream->size())
+					md5 += Common::String::format(" (%s %d bytes)", tail ? "last" : "first", length);
+				printf("%s (data): %s, %llu bytes\n", macResMan.getBaseFileName().toString().c_str(), md5.c_str(), (unsigned long long)stream->size());
+			}
+		}
+		macResMan.close();
 	}
 }
 
@@ -1608,7 +1669,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 
 #endif // DISABLE_COMMAND_LINE
 
-
 bool processSettings(Common::String &command, Common::StringMap &settings, Common::Error &err) {
 	err = Common::kNoError;
 
@@ -1693,16 +1753,21 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	} else if (command == "add") {
 		addGames(settings["path"], gameOption.engineId, gameOption.gameId, settings["recursive"] == "true");
 		return true;
-	} else if (command == "md5") {
+	} else if (command == "md5" || command == "md5mac") {
 		Common::String filename = settings.getValOrDefault("md5-path", "scummvm");
-		Common::Path Filename(filename, '/');
-		Common::FSNode path(Filename);
+		// Assume '/' separator except on Windows if the path contain at least one `\`
+		char sep = '/';
+#ifdef WIN32
+		if (filename.contains('\\'))
+			sep = '\\';
+#endif
+		Common::Path Filename(filename, sep);
 		int32 md5Length = 0;
 
 		if (settings.contains("md5-length"))
 			md5Length = strtol(settings["md5-length"].c_str(), nullptr, 10);
 
-		if (settings.contains("md5-engine")) {
+		if (command == "md5" && settings.contains("md5-engine")) {
 			Common::String engineID = settings["md5-engine"];
 			if (engineID == "scumm") {
 				// Hardcoding value as scumm doesn't use AdvancedMetaEngineDetection
@@ -1723,7 +1788,11 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 			}
 		}
 
-		calcMD5(path, md5Length);
+		if (command == "md5") {
+			Common::FSNode path(Filename);
+			calcMD5(path, md5Length);
+		} else
+			calcMD5Mac(Filename, md5Length);
 
 		return true;
 #ifdef DETECTOR_TESTING_HACK
@@ -1760,8 +1829,35 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		}
 	}
 
-
 	// Finally, store the command line settings into the config manager.
+	static const char * const sessionSettings[] = {
+		"config",
+		"fullscreen",
+		"gfx-mode",
+		"stretch-mode",
+		"scaler",
+		"scale-factor",
+		"filtering",
+		"gui-theme",
+		"themepath",
+		"music-volume",
+		"sfx-volume",
+		"speech-volume",
+		"midi-gain",
+		"subtitles",
+		"savepath",
+		"extrapath",
+		"screenshotpath",
+		"soundfont",
+		"multi-midi",
+		"native-mt32",
+		"enable-gs",
+		"opl-driver",
+		"talkspeed",
+		"render-mode",
+		nullptr
+	};
+
 	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x) {
 		Common::String key(x->_key);
 		Common::String value(x->_value);
@@ -1772,7 +1868,10 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 				*c = '_';
 
 		// Store it into ConfMan.
-		ConfMan.set(key, value, Common::ConfigManager::kTransientDomain);
+		bool useSessionDomain = false;
+		for (auto sessionKey = sessionSettings; *sessionKey && !useSessionDomain; ++sessionKey)
+			useSessionDomain = (x->_key == *sessionKey);
+		ConfMan.set(key, value, useSessionDomain ? Common::ConfigManager::kSessionDomain : Common::ConfigManager::kTransientDomain);
 	}
 
 	return false;

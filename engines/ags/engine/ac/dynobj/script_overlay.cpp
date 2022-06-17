@@ -43,8 +43,8 @@ int ScriptOverlay::Dispose(const char *address, bool force) {
 
 	// if this is being removed voluntarily (ie. pointer out of
 	// scope) then remove the associateed overlay
-	// Otherwise, it's a Restre Game or something so don't
-	if ((!force) && (!isBackgroundSpeech) && (Overlay_GetValid(this))) {
+	// Otherwise, it's a Restore Game or something so don't
+	if ((!force) && (Overlay_GetValid(this))) {
 		Remove();
 	}
 
@@ -62,16 +62,16 @@ size_t ScriptOverlay::CalcSerializeSize() {
 
 void ScriptOverlay::Serialize(const char *address, Stream *out) {
 	out->WriteInt32(overlayId);
-	out->WriteInt32(borderWidth);
-	out->WriteInt32(borderHeight);
-	out->WriteInt32(isBackgroundSpeech);
+	out->WriteInt32(0); // unused (was text window x padding)
+	out->WriteInt32(0); // unused (was text window y padding)
+	out->WriteInt32(0); // unused (was internal ref flag)
 }
 
 void ScriptOverlay::Unserialize(int index, Stream *in, size_t data_sz) {
 	overlayId = in->ReadInt32();
-	borderWidth = in->ReadInt32();
-	borderHeight = in->ReadInt32();
-	isBackgroundSpeech = in->ReadInt32();
+	in->ReadInt32(); // unused (was text window x padding)
+	in->ReadInt32(); // unused (was text window y padding)
+	in->ReadInt32(); // unused (was internal ref flag)
 	ccRegisterUnserializedObject(index, this, this);
 }
 
@@ -83,14 +83,6 @@ void ScriptOverlay::Remove() {
 	}
 	remove_screen_overlay_index(overlayIndex);
 	overlayId = -1;
-}
-
-
-ScriptOverlay::ScriptOverlay() {
-	overlayId = -1;
-	borderWidth = 0;
-	borderHeight = 0;
-	isBackgroundSpeech = 0;
 }
 
 } // namespace AGS3

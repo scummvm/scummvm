@@ -810,8 +810,9 @@ void LoLEngine::movePartySmoothScrollBlocked(int speed) {
 
 	_screen->backupSceneWindow(_sceneDrawPage2 == 2 ? 2 : 6, 6);
 
+	uint32 delayTimer = _system->getMillis();
 	for (int i = 0; i < 2; i++) {
-		uint32 delayTimer = _system->getMillis() + speed * _tickLength;
+		delayTimer += (speed * _tickLength);
 		_screen->smoothScrollZoomStepTop(6, 2, _scrollXTop[i], _scrollYTop[i]);
 		_screen->smoothScrollZoomStepBottom(6, 2, _scrollXBottom[i], _scrollYBottom[i]);
 		_screen->restoreSceneWindow(2, 0);
@@ -822,8 +823,9 @@ void LoLEngine::movePartySmoothScrollBlocked(int speed) {
 			i++;
 	}
 
+	delayTimer = _system->getMillis();
 	for (int i = 2; i; i--) {
-		uint32 delayTimer = _system->getMillis() + speed * _tickLength;
+		delayTimer += (speed * _tickLength);
 		_screen->smoothScrollZoomStepTop(6, 2, _scrollXTop[i], _scrollYTop[i]);
 		_screen->smoothScrollZoomStepBottom(6, 2, _scrollXBottom[i], _scrollYBottom[i]);
 		_screen->restoreSceneWindow(2, 0);
@@ -860,8 +862,9 @@ void LoLEngine::movePartySmoothScrollUp(int speed) {
 		_screen->backupSceneWindow(6, 6);
 	}
 
+	uint32 delayTimer = _system->getMillis();
 	for (int i = 0; i < 5; i++) {
-		uint32 delayTimer = _system->getMillis() + speed * _tickLength;
+		delayTimer += (speed * _tickLength);
 		_screen->smoothScrollZoomStepTop(6, 2, _scrollXTop[i], _scrollYTop[i]);
 		_screen->smoothScrollZoomStepBottom(6, 2, _scrollXBottom[i], _scrollYBottom[i]);
 
@@ -895,8 +898,9 @@ void LoLEngine::movePartySmoothScrollDown(int speed) {
 	gui_drawScene(2);
 	_screen->backupSceneWindow(2, 6);
 
+	uint32 delayTimer = _system->getMillis();
 	for (int i = 4; i >= 0; i--) {
-		uint32 delayTimer = _system->getMillis() + speed * _tickLength;
+		delayTimer += (speed * _tickLength);
 		_screen->smoothScrollZoomStepTop(6, 2, _scrollXTop[i], _scrollYTop[i]);
 		_screen->smoothScrollZoomStepBottom(6, 2, _scrollXBottom[i], _scrollYBottom[i]);
 
@@ -930,8 +934,9 @@ void LoLEngine::movePartySmoothScrollLeft(int speed) {
 
 	gui_drawScene(_sceneDrawPage1);
 
+	uint32 delayTimer = _system->getMillis();
 	for (int i = 88, d = 88; i > 22; i -= 22, d += 22) {
-		uint32 delayTimer = _system->getMillis() + speed * _tickLength;
+		delayTimer += (speed * _tickLength);
 		_screen->smoothScrollHorizontalStep(_sceneDrawPage2, 66, d, i);
 		_screen->copyRegion(112 + i, 0, 112, 0, d, 120, _sceneDrawPage1, _sceneDrawPage2, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(112, 0, 112, 0, 176, 120, _sceneDrawPage2, 0, Screen::CR_NO_P_CHECK);
@@ -963,7 +968,7 @@ void LoLEngine::movePartySmoothScrollRight(int speed) {
 	fadeText();
 	delayUntil(delayTimer);
 
-	delayTimer = _system->getMillis() + speed * _tickLength;
+	delayTimer += (speed * _tickLength);
 	_screen->smoothScrollHorizontalStep(_sceneDrawPage2, 22, 0, 66);
 	_screen->copyRegion(112, 0, 200, 0, 88, 120, _sceneDrawPage1, _sceneDrawPage2, Screen::CR_NO_P_CHECK);
 	_screen->copyRegion(112, 0, 112, 0, 176, 120, _sceneDrawPage2, 0, Screen::CR_NO_P_CHECK);
@@ -971,7 +976,7 @@ void LoLEngine::movePartySmoothScrollRight(int speed) {
 	fadeText();
 	delayUntil(delayTimer);
 
-	delayTimer = _system->getMillis() + speed * _tickLength;
+	delayTimer += (speed * _tickLength);
 	_screen->smoothScrollHorizontalStep(_sceneDrawPage2, 44, 0, 22);
 	_screen->copyRegion(112, 0, 178, 0, 110, 120, _sceneDrawPage1, _sceneDrawPage2, Screen::CR_NO_P_CHECK);
 	_screen->copyRegion(112, 0, 112, 0, 176, 120, _sceneDrawPage2, 0, Screen::CR_NO_P_CHECK);
@@ -1006,7 +1011,7 @@ void LoLEngine::movePartySmoothScrollTurnLeft(int speed) {
 	fadeText();
 	delayUntil(delayTimer);
 
-	delayTimer = _system->getMillis() + speed * _tickLength;
+	delayTimer += (speed * _tickLength);
 	_screen->smoothScrollTurnStep2(_sceneDrawPage1, _sceneDrawPage2, dp);
 	if (d)
 		_screen->copyGuiShapeToSurface(14, dp);
@@ -1015,7 +1020,7 @@ void LoLEngine::movePartySmoothScrollTurnLeft(int speed) {
 	fadeText();
 	delayUntil(delayTimer);
 
-	delayTimer = _system->getMillis() + speed * _tickLength;
+	delayTimer += (speed * _tickLength);
 	_screen->smoothScrollTurnStep3(_sceneDrawPage1, _sceneDrawPage2, dp);
 	if (d)
 		_screen->copyGuiShapeToSurface(14, dp);
@@ -1050,7 +1055,7 @@ void LoLEngine::movePartySmoothScrollTurnRight(int speed) {
 	fadeText();
 	delayUntil(delayTimer);
 
-	delayTimer = _system->getMillis() + speed * _tickLength;
+	delayTimer += (speed * _tickLength);
 	_screen->smoothScrollTurnStep2(_sceneDrawPage2, _sceneDrawPage1, dp);
 	if (d)
 		_screen->copyGuiShapeToSurface(14, dp);
@@ -1059,7 +1064,7 @@ void LoLEngine::movePartySmoothScrollTurnRight(int speed) {
 	fadeText();
 	delayUntil(delayTimer);
 
-	delayTimer = _system->getMillis() + speed * _tickLength;
+	delayTimer += (speed * _tickLength);
 	_screen->smoothScrollTurnStep1(_sceneDrawPage2, _sceneDrawPage1, dp);
 	if (d)
 		_screen->copyGuiShapeToSurface(14, dp);
@@ -1077,10 +1082,10 @@ void LoLEngine::movePartySmoothScrollTurnRight(int speed) {
 
 void LoLEngine::pitDropScroll(int numSteps) {
 	_screen->copyRegionSpecial(0, 320, 200, 112, 0, 6, 176, 120, 0, 0, 176, 120, 0);
-	uint32 etime = 0;
+	uint32 etime = _system->getMillis();
 
 	for (int i = 0; i < numSteps; i++) {
-		etime = _system->getMillis() + _tickLength;
+		etime += _tickLength;
 		int ys = ((30720 / numSteps) * i) >> 8;
 		_screen->copyRegionSpecial(6, 176, 120, 0, ys, 0, 320, 200, 112, 0, 176, 120 - ys, 0);
 		_screen->copyRegionSpecial(2, 320, 200, 112, 0, 0, 320, 200, 112, 120 - ys, 176, ys, 0);
@@ -1089,7 +1094,7 @@ void LoLEngine::pitDropScroll(int numSteps) {
 		delayUntil(etime);
 	}
 
-	etime = _system->getMillis() + _tickLength;
+	etime += _tickLength;
 
 	_screen->copyRegionSpecial(2, 320, 200, 112, 0, 0, 320, 200, 112, 0, 176, 120, 0);
 	_screen->updateScreen();
@@ -1102,9 +1107,10 @@ void LoLEngine::pitDropScroll(int numSteps) {
 void LoLEngine::shakeScene(int duration, int width, int height, int restore) {
 	_screen->copyRegion(112, 0, 112, 0, 176, 120, 0, 6, Screen::CR_NO_P_CHECK);
 	uint32 endTime = _system->getMillis() + duration * _tickLength;
+	uint32 delayTimer = _system->getMillis();
 
 	while (endTime > _system->getMillis()) {
-		uint32 delayTimer = _system->getMillis() + 2 * _tickLength;
+		delayTimer += (2 * _tickLength);
 
 		int s1 = width ? (_rnd.getRandomNumber(255) % (width << 1)) - width : 0;
 		int s2 = height ? (_rnd.getRandomNumber(255) % (height << 1)) - height : 0;
@@ -1203,7 +1209,7 @@ int LoLEngine::smoothScrollDrawSpecialGuiShape(int pageNum) {
 
 void LoLEngine::drawScene(int pageNum) {
 	if (pageNum && pageNum != _sceneDrawPage1) {
-		SWAP(_sceneDrawPage1, _sceneDrawPage2);
+			SWAP(_sceneDrawPage1, _sceneDrawPage2);
 		updateDrawPage2();
 	}
 

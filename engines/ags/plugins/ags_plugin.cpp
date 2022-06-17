@@ -26,7 +26,6 @@
 #include "ags/plugins/core/core.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/view.h"
-#include "ags/engine/ac/character_cache.h"
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/dynamic_sprite.h"
@@ -39,7 +38,6 @@
 #include "ags/shared/ac/keycode.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/move_list.h"
-#include "ags/engine/ac/object_cache.h"
 #include "ags/engine/ac/parser.h"
 #include "ags/engine/ac/path_helper.h"
 #include "ags/engine/ac/room_status.h"
@@ -74,6 +72,7 @@
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_compat.h"
 #include "ags/shared/util/wgt2_allg.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -294,7 +293,6 @@ void IAGSEngine::DrawTextWrapped(int32 xx, int32 yy, int32 wid, int32 font, int3
 		draw_and_invalidate_text(ds, xx, yy + linespacing * i, font, text_color, _GP(Lines)[i].GetCStr());
 }
 
-Bitmap glVirtualScreenWrap;
 void IAGSEngine::SetVirtualScreen(BITMAP *bmp) {
 	if (!_G(gfxDriver)->UsesMemoryBackBuffer()) {
 		debug_script_warn("SetVirtualScreen: this plugin requires software graphics driver to work correctly.");
@@ -302,10 +300,10 @@ void IAGSEngine::SetVirtualScreen(BITMAP *bmp) {
 	}
 
 	if (bmp) {
-		glVirtualScreenWrap.WrapAllegroBitmap(bmp, true);
-		_G(gfxDriver)->SetMemoryBackBuffer(&glVirtualScreenWrap);
+		_GP(glVirtualScreenWrap).WrapAllegroBitmap(bmp, true);
+		_G(gfxDriver)->SetMemoryBackBuffer(&_GP(glVirtualScreenWrap));
 	} else {
-		glVirtualScreenWrap.Destroy();
+		_GP(glVirtualScreenWrap).Destroy();
 		_G(gfxDriver)->SetMemoryBackBuffer(nullptr);
 	}
 }
@@ -713,21 +711,21 @@ void IAGSEngine::SimulateMouseClick(int32 button) {
 }
 
 int IAGSEngine::GetMovementPathWaypointCount(int32 pathId) {
-	return _G(mls)[pathId % TURNING_AROUND].numstage;
+	return _GP(mls)[pathId % TURNING_AROUND].numstage;
 }
 
 int IAGSEngine::GetMovementPathLastWaypoint(int32 pathId) {
-	return _G(mls)[pathId % TURNING_AROUND].onstage;
+	return _GP(mls)[pathId % TURNING_AROUND].onstage;
 }
 
 void IAGSEngine::GetMovementPathWaypointLocation(int32 pathId, int32 waypoint, int32 *x, int32 *y) {
-	*x = (_G(mls)[pathId % TURNING_AROUND].pos[waypoint] >> 16) & 0x0000ffff;
-	*y = (_G(mls)[pathId % TURNING_AROUND].pos[waypoint] & 0x0000ffff);
+	*x = (_GP(mls)[pathId % TURNING_AROUND].pos[waypoint] >> 16) & 0x0000ffff;
+	*y = (_GP(mls)[pathId % TURNING_AROUND].pos[waypoint] & 0x0000ffff);
 }
 
 void IAGSEngine::GetMovementPathWaypointSpeed(int32 pathId, int32 waypoint, int32 *xSpeed, int32 *ySpeed) {
-	*xSpeed = _G(mls)[pathId % TURNING_AROUND].xpermove[waypoint];
-	*ySpeed = _G(mls)[pathId % TURNING_AROUND].ypermove[waypoint];
+	*xSpeed = _GP(mls)[pathId % TURNING_AROUND].xpermove[waypoint];
+	*ySpeed = _GP(mls)[pathId % TURNING_AROUND].ypermove[waypoint];
 }
 
 int IAGSEngine::IsRunningUnderDebugger() {

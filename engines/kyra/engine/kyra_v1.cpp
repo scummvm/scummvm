@@ -63,6 +63,7 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	memset(_flagsTable, 0, sizeof(_flagsTable));
 
 	_isSaveAllowed = false;
+	_totalPlaySecs = _lastSecTick = _lastSecTickAtPauseStart = 0;
 
 	_mouseX = _mouseY = 0;
 	_transOffsY = 0;
@@ -75,6 +76,7 @@ void KyraEngine_v1::pauseEngineIntern(bool pause) {
 		_sound->pause(pause);
 	if (_timer)
 		_timer->pause(pause);
+	pausePlayTimer(pause);
 }
 
 Common::Error KyraEngine_v1::init() {
@@ -704,6 +706,26 @@ void KyraEngine_v1::syncSoundSettings() {
 
 	if (_sound)
 		_sound->updateVolumeSettings();
+}
+
+void KyraEngine_v1::updatePlayTimer() {
+	uint32 curTime = _system->getMillis();
+	while (_lastSecTick + 1000 <= curTime) {
+		_lastSecTick += 1000;
+		_totalPlaySecs++;
+	}
+}
+
+void KyraEngine_v1::restartPlayTimerAt(uint32 totalPlaySecs) {
+	_lastSecTick = _system->getMillis();
+	_totalPlaySecs = totalPlaySecs;
+}
+
+void KyraEngine_v1::pausePlayTimer(bool pause) {
+	if (pause)
+		_lastSecTickAtPauseStart = _lastSecTick;
+	else
+		_lastSecTick += (_system->getMillis() - _lastSecTickAtPauseStart);
 }
 
 } // End of namespace Kyra

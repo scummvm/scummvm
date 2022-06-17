@@ -368,8 +368,15 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 	// basically worthless. So we'll just try to keep things closeish to the
 	// maximum for now.
 	Common::Rect desktopRes = getDesktopResolution();
-	if (!fullscreenFlags) {
+	if (
+		!fullscreenFlags
+#if defined(MACOSX)
+		// On macOS a maximized window is borderless
+		&& !(flags & SDL_WINDOW_MAXIMIZED)
+#endif
+	) {
 		int top, left, bottom, right;
+
 #if SDL_VERSION_ATLEAST(2, 0, 5)
 		if (!_window || SDL_GetWindowBordersSize(_window, &top, &left, &bottom, &right) < 0)
 #endif
@@ -426,7 +433,7 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 	// macOS windows with the flag SDL_WINDOW_FULLSCREEN_DESKTOP exiting their fullscreen space
 	// ignore the size set by SDL_SetWindowSize while they were in fullscreen mode.
 	// Instead, they revert back to their previous windowed mode size.
-	// This is a bug in SDL2: https://bugzilla.libsdl.org/show_bug.cgi?id=3719.
+	// This is a bug in SDL2: https://github.com/libsdl-org/SDL/issues/2518.
 	// TODO: Remove the call to SDL_SetWindowSize below once the SDL bug is fixed.
 
 	// In some cases at this point there may be a pending SDL resize event with the old size.

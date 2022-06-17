@@ -57,7 +57,7 @@ void CdCD(CORO_PARAM) {
 	while (g_bChangingCD) {
 		if (CoroScheduler.getCurrentProcess()) {
 			// FIXME: CdCD gets passed a Common::nullContext in RegisterGlobals() and
-			//        PrimeSceneHopper(), because I didn't know how to get a proper
+			//        primeSceneHopper(), because I didn't know how to get a proper
 			//        context without converting the whole calling stack to CORO'd
 			//        functions. If these functions really get called while a CD
 			//        change is requested, this needs to be resolved.

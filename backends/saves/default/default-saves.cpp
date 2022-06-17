@@ -19,11 +19,6 @@
  *
  */
 
-// This define lets us use the system function remove() on Symbian, which
-// is disabled by default due to a macro conflict.
-// See backends/platform/symbian/src/portdefs.h .
-#define SYMBIAN_USE_SYSTEM_REMOVE
-
 #include "common/scummsys.h"
 
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)

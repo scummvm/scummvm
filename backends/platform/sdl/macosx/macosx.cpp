@@ -43,8 +43,8 @@
 #include "common/fs.h"
 #include "common/translation.h"
 
-#include "ApplicationServices/ApplicationServices.h"	// for LSOpenFSRef
-#include "CoreFoundation/CoreFoundation.h"	// for CF* stuff
+#include <ApplicationServices/ApplicationServices.h>	// for LSOpenFSRef
+#include <CoreFoundation/CoreFoundation.h>	// for CF* stuff
 
 // For querying number of MIDI devices
 #include <pthread.h>
@@ -132,17 +132,10 @@ void OSystem_MacOSX::addSysArchivesToSearchSet(Common::SearchSet &s, int priorit
 	OSystem_POSIX::addSysArchivesToSearchSet(s, priority);
 
 	// Get URL of the Resource directory of the .app bundle
-	CFURLRef fileUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
-	if (fileUrl) {
-		// Try to convert the URL to an absolute path
-		UInt8 buf[MAXPATHLEN];
-		if (CFURLGetFileSystemRepresentation(fileUrl, true, buf, sizeof(buf))) {
-			// Success: Add it to the search path
-			Common::String bundlePath((const char *)buf);
-			// Search with a depth of 2 so the shaders are found
-			s.add("__OSX_BUNDLE__", new Common::FSDirectory(bundlePath, 2), priority);
-		}
-		CFRelease(fileUrl);
+	Common::String bundlePath = getResourceAppBundlePathMacOSX();
+	if (!bundlePath.empty()) {
+		// Success: search with a depth of 2 so the shaders are found
+		s.add("__OSX_BUNDLE__", new Common::FSDirectory(bundlePath, 2), priority);
 	}
 }
 

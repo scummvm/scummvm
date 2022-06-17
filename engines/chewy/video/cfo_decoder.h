@@ -49,7 +49,7 @@ private:
 
 		void readHeader() override;
 
-		const ::Graphics::Surface *decodeNextFrame() override;
+		const Graphics::Surface *decodeNextFrame() override;
 
 	private:
 		void handleFrame() override;

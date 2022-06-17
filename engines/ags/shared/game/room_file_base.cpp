@@ -62,9 +62,8 @@ String GetRoomFileErrorText(RoomFileErrorType err) {
 	case kRoomFileErr_BlockNotFound:
 		return "Required block was not found.";
 	default:
-		break;
+		return "Unknown error.";
 	}
-	return "Unknown error.";
 }
 
 HRoomFileError OpenRoomFile(const String &filename, RoomDataSource &src) {
@@ -100,10 +99,8 @@ String GetRoomBlockName(RoomFileBlock id) {
 	case kRoomFblk_Properties: return "Properties";
 	case kRoomFblk_ObjectScNames: return "ObjScNames";
 	case kRoomFile_EOF: return "EOF";
-	default:
-		break;
-	}
-	return "unknown";
+	default: return "unknown";
+	}	
 }
 
 

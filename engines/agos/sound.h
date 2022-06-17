@@ -46,10 +46,6 @@ private:
 	BaseSound *_voice;
 	BaseSound *_effects;
 
-	bool _effectsPaused;
-	bool _ambientPaused;
-	bool _sfx5Paused;
-
 	uint16 *_filenums;
 	uint32 *_offsets;
 	uint16 _lastVoiceFile;
@@ -114,8 +110,8 @@ public:
 	void stopSfx5();
 	void stopVoice();
 	void stopAll();
-	void effectsPause(bool b);
-	void ambientPause(bool b);
+	void effectsMute(bool mute, uint16 effectsVolume);
+	void ambientMute(bool mute, uint16 effectsVolume);
 };
 
 } // End of namespace AGOS

@@ -68,6 +68,7 @@ enum Platform {
 	kPlatformXbox,
 	kPlatformCDi,
 	kPlatformIOS,
+	kPlatformAndroid,
 	kPlatformOS2,
 	kPlatformBeOS,
 	kPlatformPocketPC,

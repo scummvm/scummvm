@@ -37,12 +37,9 @@ EMIEngine *g_emi = nullptr;
 
 EMIEngine::EMIEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language) :
 		GrimEngine(syst, gameFlags, gameType, platform, language), _sortOrderInvalidated(false), _textObjectsSortOrderInvalidated(true) {
-
 	g_emi = this;
 	g_emiregistry = new EmiRegistry();
 }
-
-
 
 EMIEngine::~EMIEngine() {
 	g_emi = nullptr;

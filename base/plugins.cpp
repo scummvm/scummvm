@@ -109,7 +109,7 @@ public:
 		// static/dynamic plugin, like it's done for the engines
 		LINK_PLUGIN(AUTO)
 		LINK_PLUGIN(NULL)
-		#if defined(WIN32) && !defined(__SYMBIAN32__)
+		#if defined(WIN32)
 		LINK_PLUGIN(WINDOWS)
 		#endif
 		#if defined(USE_ALSA)
@@ -717,7 +717,7 @@ QualifiedGameList EngineManager::findGameInLoadedPlugins(const Common::String &g
 	return results;
 }
 
-DetectionResults EngineManager::detectGames(const Common::FSList &fslist) {
+DetectionResults EngineManager::detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) {
 	DetectedGames candidates;
 	PluginList plugins;
 	PluginList::const_iterator iter;
@@ -735,7 +735,7 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) {
 		MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 		// set the debug flags
 		DebugMan.addAllDebugChannels(metaEngine.getDebugChannels());
-		DetectedGames engineCandidates = metaEngine.detectGames(fslist);
+		DetectedGames engineCandidates = metaEngine.detectGames(fslist, skipADFlags, skipIncomplete);
 
 		for (uint i = 0; i < engineCandidates.size(); i++) {
 			engineCandidates[i].path = fslist.begin()->getParent().getPath();
@@ -943,6 +943,8 @@ void EngineManager::upgradeTargetForEngineId(const Common::String &target) const
 		MetaEngineDetection &metaEngine = plugin->get<MetaEngineDetection>();
 		// set debug flags before call detectGames
 		DebugMan.addAllDebugChannels(metaEngine.getDebugChannels());
+		// Clear md5 cache before detection starts
+		MD5Man.clear();
 		DetectedGames candidates = metaEngine.detectGames(files);
 		if (candidates.empty()) {
 			warning("No games supported by the engine '%s' were found in path '%s' when upgrading target '%s'",

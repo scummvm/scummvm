@@ -316,7 +316,7 @@ public:
 	void printChar(int, bool) override { error("CharsetRendererV7::printChar(): Unexpected call to deprecated function"); }
 
 	int draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) override;
-	int drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) override;
+	int drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) override;
 	int getCharWidth(uint16 chr) const override;
 	int getCharHeight(uint16 chr) const override { return ((chr & 0x80) && _vm->_useCJKMode) ? _vm->_2byteHeight : _fontHeight; }
 	int getFontHeight() const override { return _fontHeight; }
@@ -340,7 +340,7 @@ public:
 	bool newStyleWrapping() const override { return true; }
 
 	int draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) override;
-	int drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) override;
+	int drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) override;
 
 	int getFontHeight() const override;
 	int getCharWidth(uint16 chr) const override;

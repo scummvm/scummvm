@@ -38,7 +38,7 @@ void standard_init() {
 	_G(in) = new InputMgr();
 	_G(fx) = new Effect();
 	_G(txt) = new Text();
-	_G(ged) = new GedClass(&ged_user_func);
+	_G(barriers) = new Barriers();
 	_G(room) = new Room();
 	_G(obj) = new Object(&_G(gameState));
 	_G(uhr) = new Timer(MAX_TIMER_OBJ, _G(ani_timer));
@@ -48,15 +48,13 @@ void standard_init() {
 
 	_G(out)->init();
 	_G(out)->cls();
-	_G(out)->setClip(0, 0, 320, 200);
 	_G(scr_width) = 0;
-	_G(screen0) = (byte *)g_screen->getPixels();
 
 	// WORKAROUND: Moved from init_load because the original
 	// uses _G(curtaf)->_image below before _G(curtaf) was initialized
 	_G(curtaf) = _G(mem)->taf_adr(CURSOR_TAF);
 
-	_G(curblk).sprite = _G(curtaf)->_image;
+	_G(curblk).sprite = _G(curtaf)->image;
 	
 	_G(cur) = new Cursor(&_G(curblk));
 	_G(cur)->setAnimation(0, 0, 0);
@@ -65,20 +63,19 @@ void standard_init() {
 	_G(pal)[765] = 63;
 	_G(pal)[766] = 63;
 	_G(pal)[767] = 63;
-	_G(out)->einblenden(_G(pal), 0);
+	_G(out)->fadeIn(_G(pal));
 	_G(room)->set_timer_start(1);
 
 	_G(out)->cls();
 
 	var_init();
 	_G(ablage) = _G(room)->get_ablage();
-	_G(ged_mem) = _G(room)->get_ged_mem();
 
 	_G(zoom_horizont) = 140;
 	_G(pal)[765] = 63;
 	_G(pal)[766] = 63;
 	_G(pal)[767] = 63;
-	_G(out)->einblenden(_G(pal), 0);
+	_G(out)->fadeIn(_G(pal));
 	_G(out)->cls();
 	_G(uhr)->setNewTimer(0, 5, SEC_10_MODE);
 
@@ -139,7 +136,6 @@ void var_init() {
 	_G(gpkt).Vorschub = _G(spieler_mi)[P_CHEWY].Vorschub;
 	init_room();
 	_G(gameState).FramesPerSecond = 7;
-	_G(currentSong) = -1;
 	_G(SetUpScreenFunc) = nullptr;
 	_G(pfeil_delay) = 0;
 	_G(pfeil_ani) = 0;
@@ -158,8 +154,6 @@ void init_room() {
 	_G(room_blk).Rsi = _G(gameState).room_s_obj;
 	_G(room_blk).AadLoad = true;
 	_G(room_blk).AtsLoad = true;
-
-	_G(room)->open_handle(EPISODE1_GEP, R_GEP_DATA);
 }
 
 void new_game() {
@@ -233,7 +227,7 @@ void tidy() {
 	delete _G(uhr);
 	delete _G(obj);
 	delete _G(room);
-	delete _G(ged);
+	delete _G(barriers);
 	delete _G(txt);
 	delete _G(fx);
 	delete _G(in);
@@ -247,7 +241,7 @@ void tidy() {
 	_G(uhr) = nullptr;
 	_G(obj) = nullptr;
 	_G(room) = nullptr;
-	_G(ged) = nullptr;
+	_G(barriers) = nullptr;
 	_G(txt) = nullptr;
 	_G(fx) = nullptr;
 	_G(in) = nullptr;

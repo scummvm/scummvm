@@ -30,8 +30,10 @@ namespace Sci {
 
 SciTTS::SciTTS() : _curMessage("") {
 	_ttsMan = ConfMan.getBool("tts_enabled") ? g_system->getTextToSpeechManager() : nullptr;
-	if (_ttsMan != nullptr)
+	if (_ttsMan != nullptr) {
 		_ttsMan->setLanguage(ConfMan.get("language"));
+		_ttsMan->enable(true);
+	}
 }
 
 void SciTTS::button(const Common::String &text) {

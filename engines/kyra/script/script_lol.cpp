@@ -800,7 +800,7 @@ int LoLEngine::olol_copyRegion(EMCState *script) {
 
 int LoLEngine::olol_initMonster(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_initMonster(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script,
-	       stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9), stackPos(10));
+	       stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), safeStackPos(7), safeStackPos(8), safeStackPos(9), safeStackPos(10));
 	uint16 x = 0;
 	uint16 y = 0;
 	calcCoordinates(x, y, stackPos(0), stackPos(1), stackPos(2));
@@ -841,7 +841,7 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		l->destDirection = l->direction;
 
 		for (int ii = 0; ii < 4; ii++)
-			l->equipmentShapes[ii] = stackPos(7 + ii) & 0xFF;
+			l->equipmentShapes[ii] = safeStackPos(7 + ii) & 0xFF;
 
 		checkSceneUpdateNeed(l->block);
 		return i;

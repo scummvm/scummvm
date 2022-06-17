@@ -55,10 +55,10 @@ void MouseCursor::WriteToFile(Stream *out) {
 
 void MouseCursor::ReadFromSavegame(Stream *in, int cmp_ver) {
 	pic = in->ReadInt32();
-	hotx = in->ReadInt32();
-	hoty = in->ReadInt32();
-	view = in->ReadInt32();
-	flags = in->ReadInt32();
+	hotx = static_cast<int16_t>(in->ReadInt32());
+	hoty = static_cast<int16_t>(in->ReadInt32());
+	view = static_cast<int16_t>(in->ReadInt32());
+	flags = static_cast<int8_t>(in->ReadInt32());
 	if (cmp_ver > 0)
 		animdelay = in->ReadInt32();
 }

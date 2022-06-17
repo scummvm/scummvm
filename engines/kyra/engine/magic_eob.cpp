@@ -427,7 +427,7 @@ void EoBCoreEngine::sparkEffectDefensive(int charIndex) {
 				_screen->drawShape(0, _sparkShapes[shpIndex - 1], x, y, 0);
 			}
 		}
-		updateAnimTimers();
+		updateAnimations();
 		_screen->updateScreen();
 		delay(_tickLength >> 1);
 	}
@@ -446,7 +446,7 @@ void EoBCoreEngine::sparkEffectOffensive() {
 
 	for (int i = 0; i < 44; i++) {
 		bool sceneShake = _sceneShakeCountdown;
-		updateAnimTimers();
+		updateAnimations();
 		if (sceneShake) {
 			_screen->copyRegion(0, 0, 0, 0, 176, 120, 0, 2, Screen::CR_NO_P_CHECK);
 			if (!_sceneShakeCountdown) {

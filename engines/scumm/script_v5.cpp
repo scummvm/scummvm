@@ -425,7 +425,7 @@ void ScummEngine_v5::o5_actorOps() {
 	// the code below just skips the extra script code.
 	if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformFMTowns &&
 		vm.slot[_currentScript].number == 45 && _currentRoom == 45 &&
-		(_scriptPointer - _scriptOrgPointer == 0xA9)) {
+		(_scriptPointer - _scriptOrgPointer == 0xA9) && _enableEnhancements) {
 		_scriptPointer += 0xCF - 0xA1;
 		writeVar(32811, 0); // clear bit 43
 		return;
@@ -504,6 +504,20 @@ void ScummEngine_v5::o5_actorOps() {
 			j = getVarOrDirectByte(PARAM_2);
 			assertRange(0, i, 31, "o5_actorOps: palette slot");
 
+			// WORKAROUND: In the corridors of Castle Brunwald,
+			// there is a 'continuity error' with the Nazi guards
+			// in the FM-TOWNS version. They still have their
+			// palette override from the EGA version, making them
+			// appear in gray there, although their uniforms are
+			// green when you fight them or meet them again in
+			// the zeppelin. The PC VGA version fixed this.
+
+			if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns &&
+				(a->_costume == 23 || a->_costume == 28 || a->_costume == 29) &&
+				(_currentRoom == 20 || _currentRoom == 28 || _currentRoom == 32) && _enableEnhancements) {
+				break;
+			}
+
 			// WORKAROUND: The smoke animation is the same as
 			// what's used for the voodoo lady's cauldron. But
 			// for some reason, the colors changed between the
@@ -511,6 +525,11 @@ void ScummEngine_v5::o5_actorOps() {
 			// remap the colors, it uses the wrong indexes. The
 			// CD animation uses colors 1-3, where the floppy
 			// version uses 2, 3, and 9.
+			//
+			// We don't touch the colours in general - the Special
+			// edition have pretty much made them canon anyway -
+			// but for the Smirk close-up we want the same colors
+			// as the floppy version.
 
 			if (_game.id == GID_MONKEY && _currentRoom == 76) {
 				if (i == 3)
@@ -944,6 +963,33 @@ void ScummEngine_v5::o5_drawObject() {
 		default:
 			error("o5_drawObject: unknown subopcode %d", _opcode & 0x1F);
 		}
+	}
+
+	// WORKAROUND: Captain Dread's head will glitch if you have already talked to him,
+	// give him an object and then immediately talk to him again ("It's me again.").
+	// This is because the original script forgot to check Bit[129] (= already facing
+	// Guybrush) in that particular case, and so Dread would always try to turn and
+	// face Guybrush even if he's already looking at him.  drawObject() should never
+	// be called if Bit[129] is set in that script, so if it does happen, it means
+	// the check was missing, and so we ignore the next 32 bytes of Dread's reaction.
+	if (_game.id == GID_MONKEY2 && _currentRoom == 22 && vm.slot[_currentScript].number == 201 && obj == 237 && state == 1 && readVar(0x8000 + 129) == 1 && _enableEnhancements) {
+		_scriptPointer += 32;
+		return;
+	}
+
+	// WORKAROUND: In Indy3, the first close-up frame of Indy's reaction after drinking
+	// from the Grail is never shown; it always starts at the second step, with Indy
+	// already appearing a bit older. This is a bit unfortunate, especially if you
+	// picked up the real Grail. This was probably done as a way to unconditionally
+	// reset the animation if it's already been played, but we can just do an
+	// unconditional reset of all previous frames instead, restoring the first one.
+	if (_game.id == GID_INDY3 && _roomResource == 87 && vm.slot[_currentScript].number == 200 && obj == 899 && state == 1 && VAR(VAR_TIMER_NEXT) != 12 && _enableEnhancements) {
+		i = _numLocalObjects - 1;
+		do {
+			if (_objs[i].obj_nr)
+				putState(_objs[i].obj_nr, 0);
+		} while (--i);
+		return;
 	}
 
 	idx = getObjectIndex(obj);
@@ -1972,10 +2018,11 @@ void ScummEngine_v5::o5_roomOps() {
 			// we want the original color 3 for the cigar smoke. It
 			// should be ok since there is no GUI in this scene.
 
-			if (_game.id == GID_MONKEY && _currentRoom == 76 && d == 3 && _enableEnhancements)
-				break;
-
-			setPalColor(d, a, b, c);	/* index, r, g, b */
+			if (_game.id == GID_MONKEY && _currentRoom == 76 && d == 3 && _enableEnhancements) {
+				// Do nothing
+			} else {
+				setPalColor(d, a, b, c);	/* index, r, g, b */
+			}
 		}
 		break;
 	case 5:		// SO_ROOM_SHAKE_ON
@@ -2395,6 +2442,14 @@ void ScummEngine_v5::o5_stopSound() {
 		return;
 	}
 
+	// WORKAROUND: In MM NES, Wendy's CD player script forgets to update the
+	// music status variable when you stop it. Wendy's music would then
+	// resume when leaving some rooms (such as room 3 with the chandelier),
+	// even though her CD player was off.
+	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformNES && sound == 75 && vm.slot[_currentScript].number == 50 && VAR(VAR_EGO) == 6 && VAR(224) == sound && _enableEnhancements) {
+		VAR(224) = 0;
+	}
+
 	_sound->stopSound(sound);
 }
 
@@ -2462,6 +2517,52 @@ void ScummEngine_v5::o5_startScript() {
 		// Wrong : startScript(125,[30,15]);
 		data[0] = 29;
 		data[1] = 10;
+	}
+
+	// WORKAROUND bug #1025: in Loom, using the stealth draft on the
+	// shepherds would crash the game because of a missing actor number for
+	// their first reaction line ("We are the masters of stealth"...).
+	if (_game.id == GID_LOOM && _game.version == 3 && _roomResource == 23 && script == 232 && data[0] == 0) {
+		byte shepherdActor;
+		bool buggyShepherdsEGArelease = false;
+
+		switch (vm.slot[_currentScript].number) {
+		case 422:
+		case 423:
+		case 424:
+		case 425:
+			// It is assumed that the original intent was that any shepherd could
+			// say this line.
+			shepherdActor = vm.slot[_currentScript].number % 10;
+			break;
+		default:
+			// Match the behavior of the Talkie version, if necessary
+			shepherdActor = 4;
+			break;
+		}
+
+		// WORKAROUND: in some EGA releases, actor 3 may have been removed from the
+		// current room, although he's still on screen (the EGA English 1.1 release
+		// fixed this). In ScummVM, this invalid use means that you'd see no reaction
+		// at all from any shepherd when using the stealth draft on him.  In the
+		// original interpreter, the leftmost shepherd still says his own line, though.
+		// Forcing his appearance or ignoring his removal doesn't fix this bug either.
+		//
+		// Having no reaction at all is confusing for the player, so if we detect this
+		// behavior, we force the workaround, for now.
+		if (isValidActor(3) && !_actors[3]->isInCurrentRoom()) {
+			buggyShepherdsEGArelease = true;
+			if (shepherdActor == 3)
+				shepherdActor = 4;
+		}
+
+		if (isValidActor(shepherdActor) && _actors[shepherdActor]->isInCurrentRoom() && (_enableEnhancements || buggyShepherdsEGArelease)) {
+			// Restore the missing line by attaching it to its actor
+			data[0] = shepherdActor;
+		} else {
+			// Otherwise, behave as the original, and just skip this line
+			return;
+		}
 	}
 
 	// Method used by original games to skip copy protection scheme
@@ -3013,11 +3114,19 @@ void ScummEngine_v5::decodeParseString() {
 						// I.e. in total 22650 frames.
 						offset = (int)(offset * 7.5 - 22500 - 2*75);
 
+						// Add the user-specified adjustment.
+						if (ConfMan.hasKey("loom_playback_adjustment")) {
+							int adjustment = ConfMan.getInt("loom_playback_adjustment");
+							offset += ((75 * adjustment) / 100);
+							if (offset < 0)
+								offset = 0;
+						}
+
 						// Slightly increase the delay (5 frames = 1/25 of a second).
 						// This noticably improves the experience in Loom CD.
 						delay = (int)(delay * 7.5 + 5);
 
-						_sound->playCDTrack(1, 0, offset, delay);
+						_sound->playCDTrack(1, 1, offset, delay);
 					}
 				} else {
 					error("ScummEngine_v5::decodeParseString: Unhandled case 8");

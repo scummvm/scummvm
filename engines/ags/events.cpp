@@ -157,8 +157,9 @@ void EventsManager::updateKeys(const Common::Event &event, bool isDown) {
 	_keys[event.kbd.keycode] = isDown;
 }
 
-bool EventsManager::isKeyPressed(AGS3::eAGSKeyCode key) {
-	pollEvents();
+bool EventsManager::isKeyPressed(AGS3::eAGSKeyCode key, bool poll) {
+	if (poll)
+		pollEvents();
 
 	Common::KeyCode kc[3];
 	if (!ags_key_to_scancode(key, kc))

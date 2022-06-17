@@ -204,10 +204,15 @@ void SpiderEngine::addIngredient(Code *code) {
 		ingredients[6] = true;
 	}
 	resetSceneState();
+	_defaultCursorIdx = 0;
+	defaultCursor();
 	_nextLevel = "bushard2.mi_";
 }
 
 void SpiderEngine::checkMixture(Code *code) {
+	_defaultCursorIdx = 0;
+	defaultCursor();
+
 	_nextLevel = "bushard2.mi_";
 	if (ingredients[0]) {
 		MVideo video("cine/blcs005s.smk", Common::Point(0, 0), false, true, false);
@@ -252,6 +257,11 @@ void SpiderEngine::runNote(Code *code) {
 	char placeEasyEN[] = "????? ???? ??????? ??? ????";
 	char placeEasy2[] = "???? ????";
 
+	const char solEasyIT1[] = "parla con il russo e salva";
+	const char solEasyIT2[] = "mary jane";
+	char placeEasyIT[] = "????? ??? ?? ????? ? ?????";
+	char placeEasyIT2[] = "???? ????";
+
 	const char solHardES1[] = "encvenuse a tmesdzakpw p tv";
 	const char solHardES2[] = "mvjes mpsisa";
 	char placeHardES[] = "????????? ? ?????????? ? ??";
@@ -261,6 +271,11 @@ void SpiderEngine::runNote(Code *code) {
 	const char solHardEN2[] = "dies";
 	char placeHardEN[] = "???? ?????????? ?? ???? ????";
 	char placeHardEN2[] = "????";
+
+	const char solHardIT1[] = "trova smerdyakov o tua";
+	const char solHardIT2[] = "moglie moure";
+	char placeHardIT[] = "????? ?????????? ? ???";
+	char placeHardIT2[] = "?????? ?????";
 
 	changeScreenMode("640x480");
 	Common::Point mousePos;
@@ -278,16 +293,20 @@ void SpiderEngine::runNote(Code *code) {
 	Common::Rect firstSentenceBox;
 	Common::Rect firstSentenceBoxEasyEN(21, 140, 560, 160);
 	Common::Rect firstSentenceBoxEasyES(21, 140, 560, 160);
+	Common::Rect firstSentenceBoxEasyIT(21, 140, 540, 160);
 
 	Common::Rect firstSentenceBoxHardEN(21, 140, 580, 160);
 	Common::Rect firstSentenceBoxHardES(21, 140, 560, 160);
+	Common::Rect firstSentenceBoxHardIT(21, 140, 456, 160);
 
 	Common::Rect secondSentenceBox;
 	Common::Rect secondSentenceBoxEasyEN(21, 140, 196, 201);
 	Common::Rect secondSentenceBoxEasyES(21, 180, 195, 195);
+	Common::Rect secondSentenceBoxEasyIT(21, 180, 195, 200);
 
 	Common::Rect secondSentenceBoxHardEN(21, 180, 96, 201);
 	Common::Rect secondSentenceBoxHardES(21, 180, 260, 195);
+	Common::Rect secondSentenceBoxHardIT(21, 180, 253, 200);
 	switch (_language) {
 	case Common::EN_USA:
 	case Common::DE_DEU:
@@ -307,6 +326,26 @@ void SpiderEngine::runNote(Code *code) {
 			secondSolution = solHardEN2;
 			firstSentenceBox = firstSentenceBoxHardEN;
 			secondSentenceBox = secondSentenceBoxHardEN;
+		}
+	break;
+
+	case Common::IT_ITA:
+		alpha = alphaEN;
+		letterBox = letterBoxEN;
+		if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
+			firstSentence = (char*) &placeEasyIT;
+			secondSentence = (char*) &placeEasyIT2;
+			firstSolution = solEasyIT1;
+			secondSolution = solEasyIT2;
+			firstSentenceBox = firstSentenceBoxEasyIT;
+			secondSentenceBox = secondSentenceBoxEasyIT;
+		} else { // hard
+			firstSentence = (char*) &placeHardIT;
+			secondSentence = (char*) &placeHardIT2;
+			firstSolution = solHardIT1;
+			secondSolution = solHardIT2;
+			firstSentenceBox = firstSentenceBoxHardIT;
+			secondSentenceBox = secondSentenceBoxHardIT;
 		}
 	break;
 
@@ -575,13 +614,17 @@ void SpiderEngine::runFusePanel(Code *code) {
 					runIntro(v);
 					_isFuseRust = false;
 					_isFuseUnreadable = true;
+					_defaultCursorIdx = 0;
 					loadImage("int_alof/fuseclea.smk", 0, 0, false, true);
+					defaultCursor();
 				} else if (_isFuseUnreadable && _sceneState["GS_SWITCH9"]) {
 					MVideo v("cine/spv032s.smk", Common::Point(0, 0), false, false, false);
 					runIntro(v);
 					_isFuseRust = false;
 					_isFuseUnreadable = false;
+					_defaultCursorIdx = 0;
 					loadImage("int_alof/fuseread.smk", 0, 0, false, true);
+					defaultCursor();
 				}
 
 				if (_isFuseRust || _isFuseUnreadable)
@@ -726,6 +769,8 @@ void SpiderEngine::runFileCabinet(Code *code) {
 					}
 
 					_nextLevel = code->levelIfWin;
+					_defaultCursorIdx = 36;
+					defaultCursor();
 					return;
 				}
 
@@ -754,6 +799,7 @@ void SpiderEngine::runFileCabinet(Code *code) {
 				for (int i = 0; i < 6; i++) {
 					drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 				}
+				drawImage(*menu, 0, 0, false);
 				break;
 
 
@@ -867,6 +913,7 @@ void SpiderEngine::runLock(Code *code) {
 					drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 				}
 				drawImage(*menu, 0, 0, false);
+				playSound("mouse.raw", 1);
 				break;
 
 			default:
@@ -1070,6 +1117,7 @@ void SpiderEngine::runFuseBox(Code *code) {
 
 		if (hfound && vfound) {
 			_nextLevel = code->levelIfWin;
+			_checkpoint = _nextLevel;
 			return;
 		}
 
@@ -1099,7 +1147,7 @@ void SpiderEngine::showCredits() {
 	changeScreenMode("640x480");
 	MVideo video("cine/credits.smk", Common::Point(0, 0), false, true, false);
 	runIntro(video);
-	if (_restoredContentEnabled) {
+	if (_restoredContentEnabled && !_checkpoint.empty()) {
 		showScore("Spider-Man saved the day!");
 	}
 	_score = 0;

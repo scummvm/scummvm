@@ -19,6 +19,7 @@
  *
  */
 
+#include "ags/lib/std/algorithm.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/font/fonts.h"
 #include "ags/shared/gui/gui_label.h"
@@ -40,6 +41,10 @@ GUILabel::GUILabel() {
 	_scEventCount = 0;
 }
 
+bool GUILabel::HasAlphaChannel() const {
+	return is_font_antialiased(Font);
+}
+
 String GUILabel::GetText() const {
 	return Text;
 }
@@ -48,7 +53,36 @@ GUILabelMacro GUILabel::GetTextMacros() const {
 	return _textMacro;
 }
 
-void GUILabel::Draw(Shared::Bitmap *ds) {
+Rect GUILabel::CalcGraphicRect(bool clipped) {
+	if (clipped)
+		return RectWH(0, 0, Width, Height);
+	// TODO: need to find a way to text position, or there'll be some repetition
+	// have to precache text and size on some events:
+	// - translation change
+	// - macro value change (score, overhotspot etc)
+	Rect rc = RectWH(0, 0, Width, Height);
+	PrepareTextToDraw();
+	if (SplitLinesForDrawing(_GP(Lines)) == 0)
+		return rc;
+	const int linespacing = // Older engine labels used (font height + 1) as linespacing for some reason
+		((_G(loaded_game_file_version) < kGameVersion_360) && (get_font_flags(Font) & FFLG_DEFLINESPACING)) ?
+		(get_font_height(Font) + 1) :
+		get_font_linespacing(Font);
+	// < 2.72 labels did not limit vertical size of text
+	const bool limit_by_label_frame = _G(loaded_game_file_version) >= kGameVersion_272;
+	int at_y = 0;
+	Line max_line;
+	for (size_t i = 0;
+		i < _GP(Lines).Count() && (!limit_by_label_frame || at_y <= Height);
+		++i, at_y += linespacing) {
+		Line lpos = GUI::CalcTextPositionHor(_GP(Lines)[i].GetCStr(), Font, 0, 0 + Width - 1, at_y,
+			(FrameAlignment)TextAlignment);
+		max_line.X2 = MAX(max_line.X2, lpos.X2);
+	}
+	return SumRects(rc, RectWH(0, 0, max_line.X2 - max_line.X1 + 1, at_y - linespacing + get_font_surface_height(Font)));
+}
+
+void GUILabel::Draw(Bitmap *ds, int x, int y) {
 	// TODO: need to find a way to cache text prior to drawing;
 	// but that will require to update all gui controls when translation is changed in game
 	PrepareTextToDraw();
@@ -62,20 +96,22 @@ void GUILabel::Draw(Shared::Bitmap *ds) {
 		get_font_linespacing(Font);
 	// < 2.72 labels did not limit vertical size of text
 	const bool limit_by_label_frame = _G(loaded_game_file_version) >= kGameVersion_272;
-	int at_y = Y;
+	int at_y = y;
 	for (size_t i = 0;
-	        i < _GP(Lines).Count() && (!limit_by_label_frame || at_y <= Y + Height);
-	        ++i, at_y += linespacing) {
-		GUI::DrawTextAlignedHor(ds, _GP(Lines)[i].GetCStr(), Font, text_color, X, X + Width - 1, at_y,
-		                        (FrameAlignment)TextAlignment);
+		i < _GP(Lines).Count() && (!limit_by_label_frame || at_y <= y + Height);
+		++i, at_y += linespacing) {
+		GUI::DrawTextAlignedHor(ds, _GP(Lines)[i].GetCStr(), Font, text_color, x, x + Width - 1, at_y,
+			(FrameAlignment)TextAlignment);
 	}
 }
 
 void GUILabel::SetText(const String &text) {
+	if (text == Text)
+		return;
 	Text = text;
 	// Check for macros within text
 	_textMacro = GUI::FindLabelMacros(Text);
-	NotifyParentChanged();
+	MarkChanged();
 }
 
 // TODO: replace string serialization with StrUtil::ReadString and WriteString

@@ -37,6 +37,7 @@ struct MEMHANDLE;
 struct PALETTE;
 struct IMAGE;
 struct ACTORDATA;
+struct PROCESS_STRUC;
 
 class Handle {
 public:
@@ -53,7 +54,8 @@ public:
 	const IMAGE *GetImage(SCNHANDLE offset);
 	void SetImagePalette(SCNHANDLE offset, SCNHANDLE palHandle);
 	SCNHANDLE GetFontImageHandle(SCNHANDLE offset);
-	const ACTORDATA *GetActorData(SCNHANDLE offset, int numActors);
+	const ACTORDATA *GetActorData(SCNHANDLE offset, uint32 count);
+	const PROCESS_STRUC *GetProcessData(SCNHANDLE offset, uint32 count);
 	byte *LockMem(SCNHANDLE offset);
 
 	void LockScene(SCNHANDLE offset);
@@ -74,6 +76,9 @@ public:
 		SCNHANDLE next);		// Handle of end of range + 1
 
 	int CdNumber(SCNHANDLE offset);
+
+	// Noir
+	SCNHANDLE FindLanguageSceneHandle(const char *fileName);
 
 #ifdef BODGE
 	bool ValidHandle(SCNHANDLE offset);

@@ -29,12 +29,12 @@ namespace Scott {
 
 /* Sizes of some of the arrays in the snap structure */
 const int SNAPSHOT_RAM_PAGES = 16;
-const int SNAPSHOT_SLT_PAGES = 256;
-const int SNAPSHOT_ZXATASP_PAGES = 32;
-const int SNAPSHOT_ZXCF_PAGES = 64;
-const int SNAPSHOT_DOCK_EXROM_PAGES = 8;
-const int SNAPSHOT_JOYSTICKS = 7;
-const int SNAPSHOT_DIVIDE_PAGES = 4;
+//const int SNAPSHOT_SLT_PAGES = 256;
+//const int SNAPSHOT_ZXATASP_PAGES = 32;
+//const int SNAPSHOT_ZXCF_PAGES = 64;
+//const int SNAPSHOT_DOCK_EXROM_PAGES = 8;
+//const int SNAPSHOT_JOYSTICKS = 7;
+//const int SNAPSHOT_DIVIDE_PAGES = 4;
 
 void *libspectrumReallocN(void *ptr, size_t nmemb, size_t size) {
 	if (nmemb > SIZE_MAX / size)

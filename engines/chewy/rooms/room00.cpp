@@ -236,7 +236,7 @@ void Room0::eyeStart(EyeMode mode) {
 
 		_G(cur)->plot_cur();
 		calcEyeClick(3);
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 
 		if (adi->delay_count > 0)
 			--adi->delay_count;
@@ -281,7 +281,7 @@ void Room0::eyeWait() {
 		setupScreen(NO_SETUP);
 		_G(cur)->plot_cur();
 		calcEyeClick(2);
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 
 		if (adi->delay_count > 0) {
 			--adi->delay_count;
@@ -300,7 +300,7 @@ void Room0::eyeWait() {
 
 void Room0::calcEyeClick(int16 aniNr) {
 	if (mouse_on_prog_ani() == aniNr) {
-		if (_G(minfo)._button != 1 && g_events->_kbInfo._keyCode != Common::KEYCODE_RETURN) {
+		if (_G(minfo).button != 1 && g_events->_kbInfo._keyCode != Common::KEYCODE_RETURN) {
 			const uint8 roomNum = _G(room)->_roomInfo->_roomNr;
 			Common::StringArray desc = _G(atds)->getTextArray(roomNum, 172, ATS_DATA);
 			if (desc.size() > 0) {
@@ -311,7 +311,7 @@ void Room0::calcEyeClick(int16 aniNr) {
 				for (int16 i = 0; i < (int16)desc.size(); i++)
 					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), desc[i].c_str());
 			}
-		} else if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
+		} else if (_G(minfo).button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 			if (isCurInventory(SLIME_INV)) {
 				delInventory(_G(gameState).AkInvent);
 				_G(gameState).R0SlimeUsed = true;
@@ -491,7 +491,7 @@ void Room0::feederStart(int16 mode) {
 		if (!mode)
 			calcPillowClick(1);
 
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 		if (adi->delay_count > 0)
 			--adi->delay_count;
 		else {
@@ -530,7 +530,7 @@ void Room0::feederExtend() {
 		setupScreen(NO_SETUP);
 		_G(cur)->plot_cur();
 		calcPillowClick(1);
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 	}
 
 	clear_prog_ani();
@@ -538,7 +538,7 @@ void Room0::feederExtend() {
 
 void Room0::calcPillowClick(int16 aniNr) {
 	if (mouse_on_prog_ani() == aniNr) {
-		if (_G(minfo)._button != 1 && g_events->_kbInfo._keyCode != Common::KEYCODE_RETURN) {
+		if (_G(minfo).button != 1 && g_events->_kbInfo._keyCode != Common::KEYCODE_RETURN) {
 			const uint8 roomNum = _G(room)->_roomInfo->_roomNr;
 			Common::StringArray desc = _G(atds)->getTextArray(roomNum, 173, ATS_DATA);
 			if (desc.size() > 0) {
@@ -549,7 +549,7 @@ void Room0::calcPillowClick(int16 aniNr) {
 				for (int16 i = 0; i < (int16)desc.size(); i++)
 					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), desc[i].c_str());
 			}
-		} else if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
+		} else if (_G(minfo).button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 			if (isCurInventory(PILLOW_INV) && _G(gameState).R0SlimeUsed) {
 				delInventory(_G(gameState).AkInvent);
 				_G(gameState).R0PillowThrow = true;
@@ -750,9 +750,9 @@ void Room0::feederAni() {
 			_G(room)->loadRoom(&_G(room_blk), _G(gameState)._personRoomNr[P_CHEWY], &_G(gameState));
 			setPersonPos(_G(Rdi)->AutoMov[4]._x - CH_HOT_MOV_X,
 			               _G(Rdi)->AutoMov[4]._y - CH_HOT_MOV_Y, P_CHEWY, P_RIGHT);
-			_G(spieler_vector)[P_CHEWY]._delayCount = 0;
+			_G(moveState)[P_CHEWY]._delayCount = 0;
 
-			check_shad(4, 0);
+			checkShadow(4, 0);
 			_G(fx_blend) = BLEND1;
 			setupScreen(DO_SETUP);
 		} else {

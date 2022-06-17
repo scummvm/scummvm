@@ -153,6 +153,7 @@ public:
 	void refreshCursor(u16 *dst, const Graphics::Surface &src, const uint16 *palette);
 
 	virtual void logMessage(LogMessageType::Type type, const char *message);
+	virtual void messageBox(LogMessageType::Type type, const char *message);
 
 	void setMainScreen(int32 x, int32 y, int32 sx, int32 sy);
 	void setSubScreen(int32 x, int32 y, int32 sx, int32 sy);

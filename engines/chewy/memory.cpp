@@ -35,19 +35,19 @@ TafInfo *Memory::taf_adr(const char *filename) {
 
 	byte *tmp1 = (byte *)MALLOC(size + PALETTE_SIZE + kgroesse);
 	TafInfo *tinfo = (TafInfo *)tmp1;
-	tinfo->_image = (byte **)(tmp1 + sizeof(TafInfo));
-	tinfo->_palette = tmp1 + size;
-	tinfo->_count = imageCount;
-	memcpy(tinfo->_palette, res->getSpritePalette(), PALETTE_SIZE);
+	tinfo->image = (byte **)(tmp1 + sizeof(TafInfo));
+	tinfo->palette = tmp1 + size;
+	tinfo->count = imageCount;
+	memcpy(tinfo->palette, res->getSpritePalette(), PALETTE_SIZE);
 	byte *imgPtr = tmp1 + sizeof(TafInfo) + kgroesse;
 
 	for (int i = 0; i < imageCount; i++) {
-		tinfo->_image[i] = imgPtr;
-		imgPtr += res->getSpriteData(i, &tinfo->_image[i], false);
+		tinfo->image[i] = imgPtr;
+		imgPtr += res->getSpriteData(i, &tinfo->image[i], false);
 	}
 
-	tinfo->_correction = (int16 *)(tmp1 + (size + 768l));
-	memcpy(tinfo->_correction, res->getSpriteCorrectionsTable(), imageCount * 2 * sizeof(int16));
+	tinfo->correction = (int16 *)(tmp1 + (size + 768l));
+	memcpy(tinfo->correction, res->getSpriteCorrectionsTable(), imageCount * 2 * sizeof(int16));
 
 	delete res;
 
@@ -71,18 +71,18 @@ TafSeqInfo *Memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 
 	byte *tmp1 = (byte *)MALLOC(size + image_anz * sizeof(byte *));
 	ts_info = (TafSeqInfo *)tmp1;
-	ts_info->_count = image_anz;
-	ts_info->_image = (byte **)(tmp1 + sizeof(TafSeqInfo));
-	ts_info->_correction = (int16 *)(tmp1 + size);
+	ts_info->count = image_anz;
+	ts_info->image = (byte **)(tmp1 + sizeof(TafSeqInfo));
+	ts_info->correction = (int16 *)(tmp1 + size);
 	byte *sp_ptr = tmp1 + (((uint32)sizeof(TafSeqInfo)) + (image_anz * sizeof(char *)));
 
 	for (int16 i = 0; i < image_anz; i++) {
-		ts_info->_image[i] = sp_ptr;
-		sp_ptr += res->getSpriteData(i + image_start, &ts_info->_image[i], false);
+		ts_info->image[i] = sp_ptr;
+		sp_ptr += res->getSpriteData(i + image_start, &ts_info->image[i], false);
 	}
 
 	uint16 *correctionsTable = res->getSpriteCorrectionsTable() + image_start * 2;
-	memcpy(ts_info->_correction, correctionsTable, image_anz * 2 * sizeof(int16));
+	memcpy(ts_info->correction, correctionsTable, image_anz * 2 * sizeof(int16));
 
 	delete res;
 

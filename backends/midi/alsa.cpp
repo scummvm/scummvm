@@ -107,7 +107,8 @@ int MidiDriver_ALSA::open() {
 	}
 	snd_seq_set_client_group(seq_handle, "input");
 
-	// According to http://www.alsa-project.org/~tiwai/alsa-subs.html
+	// According to
+	// https://web.archive.org/web/20120505164948/http://www.alsa-project.org/~tiwai/alsa-subs.html
 	// you can set read or write capabilities to allow other clients to
 	// read or write the port. I don't think we need that, unless maybe
 	// to be able to record the sound, but I can't get that to work even
