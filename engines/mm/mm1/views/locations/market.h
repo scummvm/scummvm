@@ -24,13 +24,14 @@
 
 #include "mm/mm1/data/char.h"
 #include "mm/mm1/views/locations/location.h"
+#include "mm/mm1/data/locations.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Locations {
 
-class Market : public Location {
+class Market : public Location, public MarketData {
 private:
 	int _foodCost = 0;
 	int _displayCtr = 0;
