@@ -19,20 +19,31 @@
  *
  */
 
-#include "chewy/music/tmf_stream.h"
+#ifndef CHEWY_AUDIO_CHEWY_VOC_H
+#define CHEWY_AUDIO_CHEWY_VOC_H
 
-#include "chewy/music/module_tmf.h"
+#include "audio/decoders/voc.h"
 
-Chewy::TMFStream::TMFStream(Common::SeekableReadStream *stream, int offs) : ProtrackerStream(44100, true) {
-	_module = new Module_TMF();
-	bool result = _module->load(*stream, offs);
-	assert(result);
+#include "common/endian.h"
 
-	// Channel panning used by TMF is L-R-L-R instead of MOD's L-R-R-L.
-	setChannelPanning(0, PANNING_LEFT);
-	setChannelPanning(1, PANNING_RIGHT);
-	setChannelPanning(2, PANNING_LEFT);
-	setChannelPanning(3, PANNING_RIGHT);
+namespace Chewy {
 
-	startPaula();
-}
+// This stream differs from the standard VOC stream on 2 points:
+// - VOC data header is not present, so not processed.
+// - Some VOC blocks contain non-standard headers. These are removed because
+//   otherwise they will be interpreted as audio data and cause static.
+class ChewyVocStream : public Audio::VocStream {
+protected:
+	static const uint32 FOURCC_SCRS = MKTAG('S', 'C', 'R', 'S');
+	static const uint32 FOURCC_RIFF = MKTAG('R', 'I', 'F', 'F');
+
+public:
+	ChewyVocStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
+
+protected:
+	void removeHeaders();
+};
+
+} // End of namespace Audio
+
+#endif
