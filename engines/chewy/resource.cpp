@@ -287,42 +287,11 @@ SoundChunk *SoundResource::getSound(uint num) {
 
 	Chunk *chunk = &_chunkList[num];
 	SoundChunk *sound = new SoundChunk();
+	sound->size = chunk->size;
+	sound->data = new uint8[sound->size];
 
 	_stream.seek(chunk->pos, SEEK_SET);
-
-	uint8 blocksRemaining;
-	uint32 totalLength = 0;
-	uint32 blockSize;
-
-	do {
-		blocksRemaining = _stream.readByte();
-
-		uint8 b1 = _stream.readByte();
-		uint8 b2 = _stream.readByte();
-		uint8 b3 = _stream.readByte();
-		blockSize = b1 + (b2 << 8) + (b3 << 16);
-
-		totalLength += blockSize;
-		_stream.skip(blockSize);
-	} while (blocksRemaining > 1);
-
-	sound->size = totalLength;
-	sound->data = new uint8[totalLength];
-	uint8 *ptr = sound->data;
-
-	_stream.seek(chunk->pos, SEEK_SET);
-
-	do {
-		blocksRemaining = _stream.readByte();
-
-		uint8 b1 = _stream.readByte();
-		uint8 b2 = _stream.readByte();
-		uint8 b3 = _stream.readByte();
-		blockSize = b1 + (b2 << 8) + (b3 << 16);
-
-		_stream.read(ptr, blockSize);
-		ptr += blockSize;
-	} while (blocksRemaining > 1);
+	_stream.read(sound->data, sound->size);
 
 	return sound;
 }

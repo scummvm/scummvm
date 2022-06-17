@@ -24,12 +24,14 @@
 #include "audio/decoders/raw.h"
 #include "audio/mods/protracker.h"
 #include "common/config-manager.h"
+#include "common/memstream.h"
 #include "common/system.h"
 #include "chewy/resource.h"
 #include "chewy/sound.h"
 #include "chewy/types.h"
 #include "chewy/globals.h"
-#include "chewy/music/tmf_stream.h"
+#include "chewy/audio/chewy_voc.h"
+#include "chewy/audio/tmf_stream.h"
 
 namespace Chewy {
 
@@ -75,10 +77,10 @@ void Sound::playSound(int num, uint channel, bool loop) {
 
 void Sound::playSound(uint8 *data, uint32 size, uint channel, bool loop, DisposeAfterUse::Flag dispose) {
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
-	                                 Audio::makeRawStream(data,
-	                                         size, 22050, Audio::FLAG_UNSIGNED,
-	                                         dispose),
-	                                 loop ? 0 : 1);
+		new ChewyVocStream(
+			new Common::MemorySeekableReadWriteStream(data, size, dispose),
+			dispose),
+		loop ? 0 : 1);
 
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle[channel], stream);
 }
@@ -175,9 +177,9 @@ void Sound::playSpeech(int num, bool waitForFinish) {
 	delete sound;
 
 	// Play it
-	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
-	    Audio::makeRawStream(data, size, 22050, Audio::FLAG_UNSIGNED,
-		DisposeAfterUse::YES), 1);
+	Audio::AudioStream *stream = new ChewyVocStream(
+		new Common::MemorySeekableReadWriteStream(data, size, DisposeAfterUse::YES),
+		DisposeAfterUse::YES);
 
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType,
 		&_speechHandle, stream);

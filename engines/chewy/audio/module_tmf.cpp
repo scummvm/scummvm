@@ -19,7 +19,7 @@
  *
  */
 
-#include "chewy/music/module_tmf.h"
+#include "chewy/audio/module_tmf.h"
 
 #include "common/array.h"
 #include "common/stream.h"
