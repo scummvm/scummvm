@@ -23,13 +23,14 @@
 #define MM1_VIEWS_LOCATIONS_BLACKSMITH_BUY_WEAPONS_H
 
 #include "mm/mm1/views/locations/location.h"
+#include "mm/mm1/data/locations.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Locations {
 
-class BlacksmithBuyWeapons : public Location {
+class BlacksmithBuyWeapons : public Location, public BlacksmithData {
 public:
 	BlacksmithBuyWeapons();
 	virtual ~BlacksmithBuyWeapons() {}
