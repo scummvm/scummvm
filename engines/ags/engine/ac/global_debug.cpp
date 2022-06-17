@@ -55,17 +55,22 @@ String GetRuntimeInfo() {
 	DisplayMode mode = _G(gfxDriver)->GetDisplayMode();
 	Rect render_frame = _G(gfxDriver)->GetRenderDestination();
 	PGfxFilter filter = _G(gfxDriver)->GetGraphicsFilter();
+	const size_t total_spr =  _GP(spriteset).GetCacheSize();
+	const size_t total_lockspr =  _GP(spriteset).GetLockedSize();
+	const size_t total_normspr = total_spr - total_lockspr;
+	const size_t max_normspr =  _GP(spriteset).GetMaxCacheSize() - total_lockspr;
+	const unsigned norm_spr_filled = (uint64_t)total_normspr * 100 / max_normspr;
 	String runtimeInfo = String::FromFormat(
 		"Adventure Game Studio run-time engine[ACI version %s"
 		"[Game resolution %d x %d (%d-bit)"
 		"[Running %d x %d at %d-bit%s[GFX: %s; %s[Draw frame %d x %d["
-		"Sprite cache size: %d KB (limit %d KB; %d KB locked)",
+		"Sprite cache KB: %zu, norm: %zu / %zu (%u%%), locked: %zu",
 		_G(EngineVersion).LongString.GetCStr(), _GP(game).GetGameRes().Width, _GP(game).GetGameRes().Height, _GP(game).GetColorDepth(),
 		mode.Width, mode.Height, mode.ColorDepth,
 		mode.IsWindowed() ? " W" : "",
 		_G(gfxDriver)->GetDriverName(), filter->GetInfo().Name.GetCStr(),
 		render_frame.GetWidth(), render_frame.GetHeight(),
-		_GP(spriteset).GetCacheSize() / 1024, _GP(spriteset).GetMaxCacheSize() / 1024, _GP(spriteset).GetLockedSize() / 1024);
+		total_spr / 1024, total_normspr / 1024, max_normspr / 1024, norm_spr_filled, total_lockspr / 1024);
 	if (_GP(play).separate_music_lib)
 		runtimeInfo.Append("[AUDIO.VOX enabled");
 	if (_GP(play).voice_avail)

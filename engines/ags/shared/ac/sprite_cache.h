@@ -114,11 +114,11 @@ public:
 	sprkey_t    EnlargeTo(sprkey_t topmost);
 	// Finds a free slot index, if all slots are occupied enlarges sprite bank; returns index
 	sprkey_t    GetFreeIndex();
-	// Returns current size of the cache, in bytes
+	// Returns current size of the cache, in bytes; this includes locked size too!
 	size_t      GetCacheSize() const;
 	// Gets the total size of the locked sprites, in bytes
 	size_t      GetLockedSize() const;
-	// Returns maximal size limit of the cache, in bytes
+	// Returns maximal size limit of the cache, in bytes; this includes locked size too!
 	size_t      GetMaxCacheSize() const;
 	// Returns number of sprite slots in the bank (this includes both actual sprites and free slots)
 	size_t      GetSpriteSlotCount() const;
