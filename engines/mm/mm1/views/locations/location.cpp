@@ -85,6 +85,11 @@ void Location::notEnoughGold() {
 	displayMessage(STRING["dialogs.misc.not_enough_gold"]);
 }
 
+void Location::backpackFull() {
+	Sound::sound(SOUND_2);
+	displayMessage(STRING["dialogs.misc.backpack_full"]);
+}
+
 void Location::delaySeconds(uint seconds) {
 	_timeoutCtr = seconds * FRAME_RATE;
 }

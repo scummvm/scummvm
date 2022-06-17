@@ -89,6 +89,8 @@ struct Character {
 	uint8 _equipped[INVENTORY_COUNT] = { 0 };
 	uint8 _backpack[INVENTORY_COUNT] = { 0 };
 
+	uint8 _backpack14[INVENTORY_COUNT] = { 0 };
+
 	// TODO: Figure out what these are
 	int _v58, _v59, _v62, _v63, _v64, _v65;
 	int _v66, _v67, _v6c, _v6e, _v6f;
@@ -114,6 +116,12 @@ struct Character {
 		int _numSpells;
 	};
 	LevelIncrease increaseLevel();
+
+	/**
+	 * Buy an item
+	 */
+	enum BuyResult { BUY_SUCCESS, BUY_NOT_ENOUGH_GOLD, BUY_BACKPACK_FULL };
+	BuyResult buyItem(byte itemId);
 };
 
 } // namespace MM1

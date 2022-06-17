@@ -31,33 +31,24 @@ namespace Views {
 namespace Locations {
 
 BlacksmithBuyArmor::BlacksmithBuyArmor() :
-		Location("BlacksmithBuyArmor") {
+		BlacksmithSubview("BlacksmithBuyArmor") {
 	_modeString = STRING["dialogs.location.buy"];
+}
+
+bool BlacksmithBuyArmor::msgFocus(const FocusMessage &msg) {
+	int townNum = g_maps->_currentMap->dataByte(0);
+	if (townNum < 1 || townNum >= 6)
+		townNum = 1;
+	_items = ARMOR[townNum - 1];
+
+	return true;
 }
 
 void BlacksmithBuyArmor::draw() {
 	Location::draw();
 
-	writeString(23, 1, STRING["dialogs.blacksmith.buy.title"]);
-}
-
-bool BlacksmithBuyArmor::msgKeypress(const KeypressMessage &msg) {
-	switch (msg.keycode) {
-	case Common::KEYCODE_ESCAPE:
-		close();
-		break;
-	case Common::KEYCODE_a:
-	case Common::KEYCODE_b:
-	case Common::KEYCODE_c:
-	case Common::KEYCODE_d:
-	case Common::KEYCODE_e:
-	case Common::KEYCODE_f:
-		break;
-	default:
-		break;
-	}
-
-	return true;
+	writeString(23, 1, STRING["dialogs.blacksmith.armor"]);
+	drawItems();
 }
 
 } // namespace Locations
