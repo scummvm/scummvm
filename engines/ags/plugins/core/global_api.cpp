@@ -439,6 +439,7 @@ void GlobalAPI::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(Wait, GlobalAPI::scrWait);
 	SCRIPT_METHOD(WaitKey, GlobalAPI::WaitKey);
 	SCRIPT_METHOD(WaitMouseKey, GlobalAPI::WaitMouseKey);
+	SCRIPT_METHOD(WaitInput, GlobalAPI::WaitInput);
 }
 
 void GlobalAPI::ScPl_sc_AbortGame(ScriptMethodParams &params) {
@@ -2214,6 +2215,11 @@ void GlobalAPI::WaitKey(ScriptMethodParams &params) {
 void GlobalAPI::WaitMouseKey(ScriptMethodParams &params) {
 	PARAMS1(int, nloops);
 	params._result = AGS3::WaitMouseKey(nloops);
+}
+
+void GlobalAPI::WaitInput(ScriptMethodParams &params) {
+	PARAMS2(int, input_flags, int, nloops);
+	params._result = AGS3::WaitInput(input_flags, nloops);
 }
 
 } // namespace Core

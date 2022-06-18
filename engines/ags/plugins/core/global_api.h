@@ -394,6 +394,7 @@ public:
 	void scrWait(ScriptMethodParams &params);
 	void WaitKey(ScriptMethodParams &params);
 	void WaitMouseKey(ScriptMethodParams &params);
+	void WaitInput(ScriptMethodParams &params);
 };
 
 } // namespace Core
