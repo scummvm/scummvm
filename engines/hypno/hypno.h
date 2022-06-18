@@ -590,6 +590,7 @@ public:
 	char selectDirection();
 
 	void runMainMenu(Code *code);
+	bool runExitMenu();
 	void runRetryMenu(Code *code);
 	void runCheckC3(Code *code);
 	void runCheckHo(Code *code);

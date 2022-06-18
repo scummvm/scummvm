@@ -85,7 +85,12 @@ void BoyzEngine::runMainMenu(Code *code) {
 					_name.deleteLastChar();
 				else if (event.kbd.keycode == Common::KEYCODE_RETURN && !_name.empty()) {
 					cont = false;
+				} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					if (runExitMenu())
+						quitGame();
+					disableCursor();
 				}
+
 				else if (Common::isAlpha(event.kbd.keycode)) {
 					playSound("sound/m_choice.raw", 1);
 					_name = _name + char(event.kbd.keycode - 32);
@@ -113,6 +118,9 @@ void BoyzEngine::runMainMenu(Code *code) {
 	menu->free();
 	delete menu;
 
+	if (shouldQuit())
+		return;
+
 	_name.toLowercase();
 	bool found = loadProfile(_name);
 	if (!found) {
@@ -125,6 +133,64 @@ void BoyzEngine::runMainMenu(Code *code) {
 
 	assert(!_nextLevel.empty());
 
+}
+
+bool BoyzEngine::runExitMenu() {
+	changeCursor("crosshair");
+	bool quit = false;
+	Common::Event event;
+	byte *palette;
+	Graphics::Surface *menu = decodeFrame("preload/mainmenu.smk", 8, &palette);
+	loadPalette(palette, 0, 256);
+	drawImage(*menu, 0, 0, false);
+	Common::Rect yesBox(142, 87, 179, 102);
+	Common::Rect noBox(142, 104, 179, 119);
+	bool cont = true;
+	while (!shouldQuit() && cont) {
+		while (g_system->getEventManager()->pollEvent(event)) {
+			Common::Point mousePos = g_system->getEventManager()->getMousePos();
+			// Events
+			switch (event.type) {
+
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				break;
+
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_y) {
+					quit = true;
+					cont = false;
+
+				} else if (event.kbd.keycode == Common::KEYCODE_n) {
+					quit = false;
+					cont = false;
+					break;
+				}
+			break;
+
+			case Common::EVENT_LBUTTONDOWN:
+				if (yesBox.contains(mousePos)) {
+					quit = true;
+					cont = false;
+					break;
+				} else if (noBox.contains(mousePos)) {
+					quit = false;
+					cont = false;
+					break;
+				}
+			break;
+
+			default:
+				break;
+			}
+		}
+
+		drawScreen();
+		g_system->delayMillis(10);
+	}
+	menu->free();
+	delete menu;
+	return quit;
 }
 
 void BoyzEngine::runDifficultyMenu(Code *code) {
