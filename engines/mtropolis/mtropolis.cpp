@@ -313,6 +313,7 @@ MTropolisEngine::MTropolisEngine(OSystem *syst, const MTropolisGameDescription *
 		const Common::FSNode gameDataDir(ConfMan.get("path"));
 		SearchMan.addSubDirectoryMatching(gameDataDir, "Obsidian");
 		SearchMan.addSubDirectoryMatching(gameDataDir, "Obsidian/RESOURCE");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "RESOURCE");
 	}
 }
 
