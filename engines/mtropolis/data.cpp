@@ -1046,7 +1046,7 @@ DataReadErrorCode SetModifier::load(DataReader &reader) {
 		|| !source.load(reader) || !target.load(reader) || !reader.readU8(unknown3)
 		|| !reader.readU8(sourceNameLength) || !reader.readU8(targetNameLength) || !reader.readU8(sourceStringLength)
 		|| !reader.readU8(targetStringLength)  || !reader.readU8(unknown4) || !reader.readNonTerminatedStr(sourceName, sourceNameLength)
-		|| !reader.readNonTerminatedStr(targetName, targetNameLength) || !reader.readNonTerminatedStr(sourceString, sourceNameLength)
+		|| !reader.readNonTerminatedStr(targetName, targetNameLength) || !reader.readNonTerminatedStr(sourceString, sourceStringLength)
 		|| !reader.readNonTerminatedStr(targetString, targetStringLength))
 		return kDataReadErrorReadFailed;
 
