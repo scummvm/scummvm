@@ -485,14 +485,29 @@ void BoyzEngine::loadAssets() {
 
 		cl = new ChangeLevel("<main_menu>");
 		sc->hots[1].actions.push_back(cl);
+
+		hl = new Highlight("GS_SEQ_19");
+		sc->hots[2].actions.push_back(hl);
 		cl = new ChangeLevel("<select_t1>");
 		sc->hots[2].actions.push_back(cl);
+
+		hl = new Highlight("GS_SEQ_21");
+		sc->hots[3].actions.push_back(hl);
 		cl = new ChangeLevel("<select_t2>");
 		sc->hots[3].actions.push_back(cl);
+
+		hl = new Highlight("GS_SEQ_31");
+		sc->hots[4].actions.push_back(hl);
 		cl = new ChangeLevel("<select_t3>");
 		sc->hots[4].actions.push_back(cl);
+
+		hl = new Highlight("GS_SEQ_41");
+		sc->hots[5].actions.push_back(hl);
 		cl = new ChangeLevel("<select_t4>");
 		sc->hots[5].actions.push_back(cl);
+
+		hl = new Highlight("GS_SEQ_51");
+		sc->hots[6].actions.push_back(hl);
 		cl = new ChangeLevel("<select_t5>");
 		sc->hots[6].actions.push_back(cl);
 	}
