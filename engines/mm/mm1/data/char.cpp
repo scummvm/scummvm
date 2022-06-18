@@ -108,6 +108,17 @@ void Character::clear() {
 	_v66 = _v67 = _v6c = _v6f = 0;
 }
 
+
+void Character::gatherGold() {
+	uint total = 0;
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		total += g_globals->_party[i]._gold;
+		g_globals->_party[i]._gold = 0;
+	}
+
+	_gold = total;
+}
+
 Character::LevelIncrease Character::increaseLevel() {
 	_level = ++_levelBase;
 	_age = ++_ageBase;

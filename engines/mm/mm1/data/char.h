@@ -111,6 +111,11 @@ struct Character {
 	void clear();
 
 	/**
+	 * Gathers the party gold into the character
+	 */
+	void gatherGold();
+
+	/**
 	 * Increase the character's level by 1 at a trainer
 	 */
 	struct LevelIncrease {
