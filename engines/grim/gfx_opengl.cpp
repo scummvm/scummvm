@@ -625,8 +625,7 @@ void GfxOpenGL::drawShadowPlanes() {
 			glVertex3f(shadowSector->getVertices()[k].x(), shadowSector->getVertices()[k].y(), shadowSector->getVertices()[k].z());
 		}
 		glEnd();
-	}
-*/
+	}*/
 
 	glPushMatrix();
 

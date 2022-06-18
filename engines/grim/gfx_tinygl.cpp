@@ -550,6 +550,17 @@ void GfxTinyGL::finishActorDraw() {
 }
 
 void GfxTinyGL::drawShadowPlanes() {
+/*	tglColor3f(1.0f, 1.0f, 1.0f);
+	_currentShadowArray->planeList.begin();
+	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); i++) {
+		Sector *shadowSector = i->sector;
+		tglBegin(TGL_POLYGON);
+		for (int k = 0; k < shadowSector->getNumVertices(); k++) {
+			tglVertex3f(shadowSector->getVertices()[k].x(), shadowSector->getVertices()[k].y(), shadowSector->getVertices()[k].z());
+		}
+		tglEnd();
+	}*/
+
 	tglPushMatrix();
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
