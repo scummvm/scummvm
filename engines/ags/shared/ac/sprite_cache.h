@@ -154,8 +154,8 @@ private:
 	sprkey_t    GetDataIndex(sprkey_t index);
 	// Delete the oldest (least recently used) image in cache
 	void        DisposeOldest();
-	// Keep disposing oldest elements until cache size is reduced to the given threshold
-	void        FreeMem(size_t threshold);
+	// Keep disposing oldest elements until cache has at least the given free space
+	void        FreeMem(size_t space);
 
 	// Information required for the sprite streaming
 	struct SpriteData {
