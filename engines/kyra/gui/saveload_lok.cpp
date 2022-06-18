@@ -129,11 +129,9 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 	_sound->selectAudioResourceSet(kMusicIngame);
 	closeFinalWsa();
 
-	if (header.version >= 3) {
-		_lastMusicCommand = in->readSint16BE();
-		if (_lastMusicCommand != -1)
-			snd_playWanderScoreViaMap(_lastMusicCommand, 1);
-	}
+	int lastMusicCommand = _lastMusicCommand = -1;
+	if (header.version >= 3)
+		lastMusicCommand = in->readSint16BE();
 
 	// Version 4 stored settings in the savegame. As of version 5, they are
 	// handled by the config manager.
@@ -214,6 +212,13 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 	restartPlayTimerAt(header.totalPlaySecs);
 
 	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
+
+	// Check if _lastMusicCommand changed during enterNewScene(). If it didn't (no song was
+	// started from script) and we do have the last song id from our savegame, then we start that...
+	// This way we avoid the "stuttering" we used to have from restarting the saved song and
+	// then the same song again directly afterwards from script...
+	if (_lastMusicCommand == -1 && lastMusicCommand != -1)
+		snd_playWanderScoreViaMap(lastMusicCommand, 1);
 
 	_animator->animRefreshNPC(0);
 	_animator->restoreAllObjectBackgrounds();
