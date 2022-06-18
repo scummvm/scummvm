@@ -116,6 +116,36 @@ void OSystem_RISCOS::logMessage(LogMessageType::Type type, const char *message) 
 	_swix(Report_Text0, _IN(0), report.c_str());
 }
 
+void OSystem_RISCOS::messageBox(LogMessageType::Type type, const char *message) {
+	_kernel_swi_regs regs;
+	_kernel_oserror error;
+
+	error.errnum = 0;
+	Common::strlcpy(error.errmess, message, 252);
+	regs.r[0] = (int)&error;
+	regs.r[1] = 0;
+	regs.r[2] = (int)"ScummVM";
+	regs.r[3] = 0;
+	regs.r[4] = 0;
+	regs.r[5] = 0;
+
+	switch (type) {
+	case LogMessageType::kError:
+		regs.r[1] |= (1 << 8);
+		break;
+	case LogMessageType::kWarning:
+		regs.r[1] |= (1 << 8) | (2 << 9);
+		break;
+	case LogMessageType::kInfo:
+	case LogMessageType::kDebug:
+	default:
+		regs.r[1] |= (1 << 8) | (1 << 9);
+		break;
+	}
+
+	_kernel_swi(Wimp_ReportError, &regs, &regs);
+}
+
 Common::String OSystem_RISCOS::getDefaultConfigFileName() {
 	return "/<Choices$Write>/ScummVM/scummvmrc";
 }
