@@ -80,6 +80,34 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
+	{
+		// Obsidian, German Windows, installed
+		// Released via the "ProSieben Mystery" series
+		{
+			"obsidian",
+			"installed, CD",
+			{
+				{ "Obsidian.exe", 0, "0b50a779136ae6c9cc8bcfa3148c1127", 762368 },
+				{ "Obsidian.c95", 0, "fea68ff30ff319cdab30b79d2850a480", 145920 },
+				{ "RSGKit.r95", 0, "071dc9098f9610fcec45c96342b1b69a", 625152 },
+				{ "MCURSORS.C95", 0, "dcbe480913eebf233d0cdc33809bf048", 87040 },
+				{ "Obsidian Data 1.MPL", 0, "f96fc3a3a0a645009265c74c5fcb2c6a", 18972392 },
+				{ "Obsidian Data 2.MPX", 0, "b42a5a7bc36b2de2f9882e8a05435857", 559682181 },
+				{ "Obsidian Data 3.MPX", 0, "d4cb1a43d129019f8c2172a09cbedf2a", 614519546 },
+				{ "Obsidian Data 4.MPX", 0, "ae3095e5ac0a3a8984758ee76420e9b1", 591403514 },
+				{ "Obsidian Data 5.MPX", 0, "e8939423008a47c77735e16d7391a947", 578314080 },
+				{ "Obsidian Data 6.MPX", 0, "1295c1fe1a9113dbf2764b7024bf759d", 552452074 },
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GID_OBSIDIAN,
+		0,
+		0,
+	},
 
 	{ AD_TABLE_END_MARKER, 0, 0, 0 }
 };
