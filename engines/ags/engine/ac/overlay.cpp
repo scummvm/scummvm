@@ -291,7 +291,11 @@ static void invalidate_and_subref(ScreenOverlay &over, ScriptOverlay **scover) {
 	if (scover && (*scover)) {
 		(*scover)->overlayId = -1;
 		*scover = nullptr;
+	} else if (over.associatedOverlayHandle > 0) {
+		ScriptOverlay *scoverlay = const_cast<ScriptOverlay*>((const ScriptOverlay* )ccGetObjectAddressFromHandle(over.associatedOverlayHandle));
+		if (scoverlay) scoverlay->overlayId = -1;
 	}
+
 	if (over.associatedOverlayHandle > 0) {
 		ccReleaseObjectReference(over.associatedOverlayHandle);
 		over.associatedOverlayHandle = 0;
@@ -313,6 +317,9 @@ static void dispose_overlay(ScreenOverlay &over) {
 }
 
 void remove_screen_overlay_index(size_t over_idx) {
+	assert(over_idx < _GP(screenover).size());
+	if (over_idx >= _GP(screenover).size())
+		return; // something is wrong
 	ScreenOverlay &over = _GP(screenover)[over_idx];
 	// TODO: move these custom settings outside of this function
 	if (over.type == _GP(play).complete_overlay_on) {
@@ -323,7 +330,7 @@ void remove_screen_overlay_index(size_t over_idx) {
 	} else if (over.type == OVER_PICTURE) { // release internal ref for speech face
 		invalidate_and_subref(over, &_GP(play).speech_face_scover);
 		_G(face_talking) = -1;
-	} else if (over.bgSpeechForChar > 0) { // release internal ref for bg speech
+	} else if (over.bgSpeechForChar >= 0) { // release internal ref for bg speech
 		invalidate_and_subref(over, nullptr);
 	}
 	dispose_overlay(over);
