@@ -1042,8 +1042,9 @@ DataReadErrorCode SetModifier::load(DataReader &reader) {
 	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !executeWhen.load(reader)
-		|| !source.load(reader) || !target.load(reader) || !reader.readU8(unknown3)
+	// NOTE: executeWhen is split in half and stored in 2 separate parts
+	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !reader.readU32(executeWhen.eventID)
+		|| !source.load(reader) || !target.load(reader) || !reader.readU32(executeWhen.eventInfo) || !reader.readU8(unknown3)
 		|| !reader.readU8(sourceNameLength) || !reader.readU8(targetNameLength) || !reader.readU8(sourceStringLength)
 		|| !reader.readU8(targetStringLength)  || !reader.readU8(unknown4) || !reader.readNonTerminatedStr(sourceName, sourceNameLength)
 		|| !reader.readNonTerminatedStr(targetName, targetNameLength) || !reader.readNonTerminatedStr(sourceString, sourceStringLength)
