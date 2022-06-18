@@ -43,6 +43,14 @@ void Roster::load() {
 	if (sf) {
 		Common::Serializer s(sf, nullptr);
 		synchronize(s);
+
+		while (!sf->eos()) {
+			uint32 chunk = sf->readUint32BE();
+			if (chunk == MKTAG('M', 'A', 'P', 'S')) {
+				sf->skip(4);	// Skip chunk size
+				g_maps->synchronize(s);
+			}
+		}
 	} else {
 		Common::File f;
 		if (!f.open("roster.dta"))
@@ -58,6 +66,17 @@ void Roster::save() {
 		rosterSaveName());
 	Common::Serializer s(nullptr, sf);
 	synchronize(s);
+
+	// Get automap data to save
+	Common::MemoryWriteStreamDynamic mapData(DisposeAfterUse::YES);
+	Common::Serializer s2(nullptr, &mapData);
+	g_maps->synchronize(s2);
+
+	// Write out the map data
+	sf->writeUint32BE(MKTAG('M', 'A', 'P', 'S'));
+	sf->writeUint32LE(mapData.size());
+	sf->write(mapData.getData(), mapData.size());
+
 	delete sf;
 }
 

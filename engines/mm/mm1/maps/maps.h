@@ -106,6 +106,11 @@ public:
 	void load(uint mapId);
 
 	/**
+	 * Loads or saves map data
+	 */
+	void synchronize(Common::Serializer &s);
+
+	/**
 	 * Selects a map
 	 */
 	void select(uint16 id, byte section);
