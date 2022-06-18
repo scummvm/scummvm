@@ -192,7 +192,11 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) {
 	if (!f.open(Common::FSNode(ConfMan.get("path")).getChild(gameDesc._filename)))
 		return Common::kNoGameDataFoundError;
 
-	gameDesc._md5 = Common::computeStreamMD5AsString(f, 5000);
+	Common::String fileName = f.getName();
+	if (fileName.hasSuffixIgnoreCase(".D64"))
+		gameDesc._md5 = Common::computeStreamMD5AsString(f);
+	else
+		gameDesc._md5 = Common::computeStreamMD5AsString(f, 5000);
 	f.close();
 
 	// Create the correct engine
