@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-16 21:46+0100\n"
+"POT-Creation-Date: 2022-06-17 19:36+0000\n"
 "PO-Revision-Date: 2022-06-16 20:42+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -305,7 +305,8 @@ msgstr ""
 #: gui/options.cpp:1501 gui/options.cpp:1521 gui/options.cpp:1535
 #: gui/options.cpp:1929 gui/options.cpp:2338 gui/options.cpp:2412
 #: gui/options.cpp:2592 gui/options.cpp:3025 audio/null.cpp:40
-#: engines/ags/dialogs.cpp:62
+#: backends/platform/android/options.cpp:112
+#: backends/platform/android/options.cpp:113 engines/ags/dialogs.cpp:62
 msgid "<default>"
 msgstr "<oletus>"
 
@@ -1100,7 +1101,7 @@ msgstr "kokoruututilaa ei voitu muuttaa"
 msgid "the filtering setting could not be changed"
 msgstr "Suodatusasetusta ei voitu muuttaa"
 
-#: gui/options.cpp:1287 backends/platform/android/options.cpp:72
+#: gui/options.cpp:1287
 msgid "Touchpad mouse mode"
 msgstr "Touchpad hiiritila"
 
@@ -3689,12 +3690,46 @@ msgstr "Suurennustila poissa. Siirrytään raahaustilaan..."
 msgid "Magnify Mode Off"
 msgstr "Suurennustila poissa"
 
-#: backends/platform/android/options.cpp:71
+#: backends/platform/android/options.cpp:93
 msgid "Show On-screen control"
 msgstr "Virtuaalikontrollit"
 
+#: backends/platform/android/options.cpp:94
+msgid "Choose the preferred touch mode:"
+msgstr "Valitse ensisijainen kosketusmoodi:"
+
+#: backends/platform/android/options.cpp:96
+msgid "In menus"
+msgstr "Menuissa"
+
+#: backends/platform/android/options.cpp:98
+#: backends/platform/android/options.cpp:116
+#: backends/platform/android/options.cpp:117
+msgid "Touchpad emulation"
+msgstr "Touchpad-emulaatio"
+
+#: backends/platform/android/options.cpp:99
+#: backends/platform/android/options.cpp:119
+#: backends/platform/android/options.cpp:120
+msgid "Direct mouse"
+msgstr "Välitön hiiri"
+
+#: backends/platform/android/options.cpp:100
+#: backends/platform/android/options.cpp:122
+#: backends/platform/android/options.cpp:123
+msgid "Gamepad emulation"
+msgstr "Gamepad-emulaatio"
+
+#: backends/platform/android/options.cpp:106
+msgid "In 2D games"
+msgstr "2D-peleissä"
+
+#: backends/platform/android/options.cpp:108
+msgid "In 3D games"
+msgstr "3D-peleissä"
+
 #. I18N: Show a button to revoke Storage Access Framework permissions for Android
-#: backends/platform/android/options.cpp:76
+#: backends/platform/android/options.cpp:128
 msgid "Show SAF revoke permissions overlay button"
 msgstr "Näytä SAF-käyttöoikeuden perumisnappi overlay:ssä"
 
@@ -8916,27 +8951,6 @@ msgstr ""
 "ladata Liberation Fonts -paketin tai GNU FreeFont -paketin. Tarvitset kaikki "
 "fontit paketista jonka valitset, i.e. LiberationMono, LiberationSans ja "
 "LiberationSerif, tai FreeMono, FreeSans ja FreeSerif riippuen valinnastasi."
-
-#~ msgid "Choose the preferred touch mode:"
-#~ msgstr "Valitse ensisijainen kosketusmoodi:"
-
-#~ msgid "In menus"
-#~ msgstr "Menuissa"
-
-#~ msgid "Touchpad emulation"
-#~ msgstr "Touchpad-emulaatio"
-
-#~ msgid "Direct mouse"
-#~ msgstr "Välitön hiiri"
-
-#~ msgid "Gamepad emulation"
-#~ msgstr "Gamepad-emulaatio"
-
-#~ msgid "In 2D games"
-#~ msgstr "2D-peleissä"
-
-#~ msgid "In 3D games"
-#~ msgstr "3D-peleissä"
 
 #~ msgid "Unlock all levels"
 #~ msgstr "Avaa kaikki tasot"

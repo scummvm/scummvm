@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-16 21:46+0100\n"
+"POT-Creation-Date: 2022-06-17 19:36+0000\n"
 "PO-Revision-Date: 2022-06-17 12:28+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -306,7 +306,8 @@ msgstr ""
 #: gui/options.cpp:1501 gui/options.cpp:1521 gui/options.cpp:1535
 #: gui/options.cpp:1929 gui/options.cpp:2338 gui/options.cpp:2412
 #: gui/options.cpp:2592 gui/options.cpp:3025 audio/null.cpp:40
-#: engines/ags/dialogs.cpp:62
+#: backends/platform/android/options.cpp:112
+#: backends/platform/android/options.cpp:113 engines/ags/dialogs.cpp:62
 msgid "<default>"
 msgstr "<défaut>"
 
@@ -1107,7 +1108,7 @@ msgstr "le mode plein écran n'a pu être changé"
 msgid "the filtering setting could not be changed"
 msgstr "le mode de filtrage n'a pu être changé"
 
-#: gui/options.cpp:1287 backends/platform/android/options.cpp:72
+#: gui/options.cpp:1287
 msgid "Touchpad mouse mode"
 msgstr "Souris en mode Touchpad"
 
@@ -3731,12 +3732,46 @@ msgstr "Mode Loupe désactivé. Réactivation du Mode Déplacement..."
 msgid "Magnify Mode Off"
 msgstr "Mode Loupe désactivé"
 
-#: backends/platform/android/options.cpp:71
+#: backends/platform/android/options.cpp:93
 msgid "Show On-screen control"
 msgstr "Afficher les contrôles sur l'écran"
 
+#: backends/platform/android/options.cpp:94
+msgid "Choose the preferred touch mode:"
+msgstr "Choix du mode tactile préféré :"
+
+#: backends/platform/android/options.cpp:96
+msgid "In menus"
+msgstr "Dans les menus"
+
+#: backends/platform/android/options.cpp:98
+#: backends/platform/android/options.cpp:116
+#: backends/platform/android/options.cpp:117
+msgid "Touchpad emulation"
+msgstr "Emulation d'un touchpad"
+
+#: backends/platform/android/options.cpp:99
+#: backends/platform/android/options.cpp:119
+#: backends/platform/android/options.cpp:120
+msgid "Direct mouse"
+msgstr "Souris directe"
+
+#: backends/platform/android/options.cpp:100
+#: backends/platform/android/options.cpp:122
+#: backends/platform/android/options.cpp:123
+msgid "Gamepad emulation"
+msgstr "Emulation d'une manette"
+
+#: backends/platform/android/options.cpp:106
+msgid "In 2D games"
+msgstr "Dans les jeux 2D"
+
+#: backends/platform/android/options.cpp:108
+msgid "In 3D games"
+msgstr "Dans les jeux 3D"
+
 #. I18N: Show a button to revoke Storage Access Framework permissions for Android
-#: backends/platform/android/options.cpp:76
+#: backends/platform/android/options.cpp:128
 msgid "Show SAF revoke permissions overlay button"
 msgstr "Afficher le bouton de révocation des autorisations SAF"
 
@@ -9065,27 +9100,6 @@ msgstr ""
 "les polices du paquet de polices que vous avez choisi, c'est-à-dire "
 "LiberationMono, LiberationSans et LiberationSerif, ou respectivement "
 "FreeMono, FreeSans et FreeSerif."
-
-#~ msgid "Choose the preferred touch mode:"
-#~ msgstr "Choix du mode tactile préféré :"
-
-#~ msgid "In menus"
-#~ msgstr "Dans les menus"
-
-#~ msgid "Touchpad emulation"
-#~ msgstr "Emulation d'un touchpad"
-
-#~ msgid "Direct mouse"
-#~ msgstr "Souris directe"
-
-#~ msgid "Gamepad emulation"
-#~ msgstr "Emulation d'une manette"
-
-#~ msgid "In 2D games"
-#~ msgstr "Dans les jeux 2D"
-
-#~ msgid "In 3D games"
-#~ msgstr "Dans les jeux 3D"
 
 #~ msgid "Unlock all levels"
 #~ msgstr "Débloquer tous les niveaux"

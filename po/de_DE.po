@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-16 21:46+0100\n"
+"POT-Creation-Date: 2022-06-17 19:36+0000\n"
 "PO-Revision-Date: 2022-06-15 15:54+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -309,7 +309,8 @@ msgstr ""
 #: gui/options.cpp:1501 gui/options.cpp:1521 gui/options.cpp:1535
 #: gui/options.cpp:1929 gui/options.cpp:2338 gui/options.cpp:2412
 #: gui/options.cpp:2592 gui/options.cpp:3025 audio/null.cpp:40
-#: engines/ags/dialogs.cpp:62
+#: backends/platform/android/options.cpp:112
+#: backends/platform/android/options.cpp:113 engines/ags/dialogs.cpp:62
 msgid "<default>"
 msgstr "<Standard>"
 
@@ -1108,7 +1109,7 @@ msgstr "Vollbildeinstellung konnte nicht geändert werden"
 msgid "the filtering setting could not be changed"
 msgstr "Die Filtereinstellung konnte nicht geändert werden"
 
-#: gui/options.cpp:1287 backends/platform/android/options.cpp:72
+#: gui/options.cpp:1287
 msgid "Touchpad mouse mode"
 msgstr "Touchpad-Mausmodus"
 
@@ -3714,12 +3715,46 @@ msgstr "Vergrößerungs-Modus deaktiviert. Aktiviere Drag-Modus..."
 msgid "Magnify Mode Off"
 msgstr "Vergrößerungs-Modus deaktiviert"
 
-#: backends/platform/android/options.cpp:71
+#: backends/platform/android/options.cpp:93
 msgid "Show On-screen control"
 msgstr "Virtuelle Bedienelemente anzeigen"
 
+#: backends/platform/android/options.cpp:94
+msgid "Choose the preferred touch mode:"
+msgstr "Bevorzugte Touch-Eingabemethode wählen:"
+
+#: backends/platform/android/options.cpp:96
+msgid "In menus"
+msgstr "In Menüs"
+
+#: backends/platform/android/options.cpp:98
+#: backends/platform/android/options.cpp:116
+#: backends/platform/android/options.cpp:117
+msgid "Touchpad emulation"
+msgstr "Touchpad-Emulation"
+
+#: backends/platform/android/options.cpp:99
+#: backends/platform/android/options.cpp:119
+#: backends/platform/android/options.cpp:120
+msgid "Direct mouse"
+msgstr "Direkte Maus"
+
+#: backends/platform/android/options.cpp:100
+#: backends/platform/android/options.cpp:122
+#: backends/platform/android/options.cpp:123
+msgid "Gamepad emulation"
+msgstr "Gamepad-Emulation"
+
+#: backends/platform/android/options.cpp:106
+msgid "In 2D games"
+msgstr "In 2D-Spielen"
+
+#: backends/platform/android/options.cpp:108
+msgid "In 3D games"
+msgstr "In 3D-Spielen"
+
 #. I18N: Show a button to revoke Storage Access Framework permissions for Android
-#: backends/platform/android/options.cpp:76
+#: backends/platform/android/options.cpp:128
 msgid "Show SAF revoke permissions overlay button"
 msgstr "Zeige Button zum Entfernen von SAF-Berechtigungen an"
 
@@ -9048,27 +9083,6 @@ msgstr ""
 "FreeFont-Paket herunterladen. Sie benötigen jeweils alle Schriftarten des "
 "gewählten Paketes, beispielsweise LiberationMono, LiberationSans und "
 "LiberationSerif oder FreeMono, FreeSans und FreeSerif."
-
-#~ msgid "Choose the preferred touch mode:"
-#~ msgstr "Bevorzugte Touch-Eingabemethode wählen:"
-
-#~ msgid "In menus"
-#~ msgstr "In Menüs"
-
-#~ msgid "Touchpad emulation"
-#~ msgstr "Touchpad-Emulation"
-
-#~ msgid "Direct mouse"
-#~ msgstr "Direkte Maus"
-
-#~ msgid "Gamepad emulation"
-#~ msgstr "Gamepad-Emulation"
-
-#~ msgid "In 2D games"
-#~ msgstr "In 2D-Spielen"
-
-#~ msgid "In 3D games"
-#~ msgstr "In 3D-Spielen"
 
 #~ msgid "Unlock all levels"
 #~ msgstr "Alle Level freischalten"
