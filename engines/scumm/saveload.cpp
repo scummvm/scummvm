@@ -156,6 +156,54 @@ void ScummEngine::requestLoad(int slot) {
 	_saveLoadFlag = 2;		// 2 for load
 }
 
+void ScummEngine::copyHeapSaveGameToFile(int slot, const char *saveName) {
+	Common::String fileName;
+	SaveGameHeader hdr;
+	bool saveFailed = false;
+	uint32 heapFileSize;
+
+	Common::SeekableReadStream *heapSaveFile = openSaveFileForReading(1, true, fileName);
+	hdr.type = heapSaveFile->readUint32BE();
+	hdr.size = heapSaveFile->readUint32LE();
+	hdr.ver = heapSaveFile->readUint32LE();
+	heapSaveFile->read(hdr.name, sizeof(hdr.name));
+	Common::strlcpy(hdr.name, saveName, sizeof(hdr.name));
+
+	heapFileSize = (uint32)heapSaveFile->size();
+	if (heapSaveFile->err() || hdr.type != MKTAG('S','C','V','M')) {
+		saveFailed = true;
+	} else {
+		Common::WriteStream *saveFile = openSaveFileForWriting(slot, false, fileName);
+		if (!saveFile) {
+			saveFailed = true;
+		} else {
+			saveFile->writeUint32BE(hdr.type);
+			saveFile->writeUint32LE(hdr.size);
+			saveFile->writeUint32LE(hdr.ver);
+			saveFile->write(hdr.name, sizeof(hdr.name));
+
+			heapSaveFile->seek(sizeof(hdr), SEEK_SET);
+			while (!heapSaveFile->eos()) {
+				byte b = heapSaveFile->readByte();
+				saveFile->writeByte(b);
+			}
+
+			saveFile->finalize();
+			if (saveFile->err())
+				saveFailed = true;
+
+			delete saveFile;
+		}
+	}
+
+	if (saveFailed)
+		debug(1, "State save as '%s' FAILED", fileName.c_str());
+	else
+		debug(1, "State saved as '%s'", fileName.c_str());
+
+
+}
+
 Common::SeekableReadStream *ScummEngine::openSaveFileForReading(int slot, bool compat, Common::String &fileName) {
 	fileName = makeSavegameName(slot, compat);
 	return _saveFileMan->openForLoading(fileName);
@@ -1652,6 +1700,19 @@ void ScummEngine_v7::saveLoadWithSerializer(Common::Serializer &s) {
 	if (s.getVersion() <= VER(68) && s.isLoading()) {
 		// WORKAROUND bug #3483: Reset the default charset color to a sane value.
 		_string[0]._default.charset = 1;
+	}
+
+	// The original Save/Load screen for COMI saves a heap savegame when it is entered
+	// and the same heap savegame is restored when it is exited, so let's refresh these
+	// variables so that they are not lost. The original doesn't do this as it appears
+	// to handle these temporary heap savegames a little differently, but this should
+	// suffice...
+	if (isUsingOriginalGUI() && _game.version == 8) {
+		if (ConfMan.hasKey("original_gui_saveload_page", _targetName))
+			VAR(VAR_SAVELOAD_PAGE) = ConfMan.getInt("original_gui_saveload_page");
+
+		if (ConfMan.hasKey("original_gui_object_labels", _targetName))
+			VAR(VAR_OBJECT_LABEL_FLAG) = ConfMan.getInt("original_gui_object_labels");
 	}
 }
 #endif

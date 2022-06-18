@@ -377,13 +377,25 @@ void ScummEngine::processInput() {
 
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
-	// F1 (the trigger for the original save/load dialog) is mapped to F5
+	// F1 (the trigger for the original save/load dialog) is mapped to F5,
+	// unless we chose to use the original GUI
 	if (!(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F1 && lastKeyHit.hasFlags(0)) {
-		lastKeyHit = Common::KeyState(Common::KEYCODE_F5, 319);
+		if (isUsingOriginalGUI()) {
+			lastKeyHit = Common::KeyState(Common::KEYCODE_F1, 315);
+		} else {
+			lastKeyHit = Common::KeyState(Common::KEYCODE_F5, 319);
+		}
+
 	}
 
-	// Alt-F5 should bring up the original save/load dialog, so map it to F1.
-	if (!(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(Common::KBD_ALT)) {
+	// If we are using the original GUI, remap F5 to F1
+	if (isUsingOriginalGUI() && !(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(0)) {
+		lastKeyHit = Common::KeyState(Common::KEYCODE_F1, 315);
+	}
+
+	// Alt-F5 should bring up the original save/load dialog, so map it to F1,
+	// again, unless we chose to use the original GUI
+	if (!isUsingOriginalGUI() && !(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(Common::KBD_ALT)) {
 		lastKeyHit = Common::KeyState(Common::KEYCODE_F1, 315);
 	}
 
@@ -668,9 +680,8 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 				// Map arrow keys to number keys in the SEGA version of MI to support
 				// scrolling to conversation choices. See bug report #2013 for details.
 				_mouseAndKeyboardStat = lastKeyHit.keycode - Common::KEYCODE_UP + 54;
-			} else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
-				// Map arrow keys to number keys in the PCEngine version of Loom to support
-				// the menu screen.
+			} else if (isUsingOriginalGUI() || (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine)) {
+				// Map arrow keys to number keys in games which use the original menu screen.
 				switch (lastKeyHit.keycode) {
 				case Common::KEYCODE_UP:
 					_mouseAndKeyboardStat = 328;
@@ -697,7 +708,11 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			}
 
 		} else {
-			_mouseAndKeyboardStat = lastKeyHit.ascii;
+			// Map the DEL key when using the original GUI; used when writing the savegame name.
+			if (isUsingOriginalGUI() && lastKeyHit.keycode == Common::KEYCODE_DELETE)
+				_mouseAndKeyboardStat = 339;
+			else
+				_mouseAndKeyboardStat = lastKeyHit.ascii;
 		}
 	}
 

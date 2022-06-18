@@ -2059,6 +2059,25 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 }
 
 void ScummEngine::syncSoundSettings() {
+	if (isUsingOriginalGUI() && _game.version == 8) {
+		_voiceMode = ConfMan.getInt("original_gui_text_status");
+
+		if (VAR_VOICE_MODE != 0xFF)
+			VAR(VAR_VOICE_MODE) = _voiceMode;
+
+		if (ConfMan.hasKey("original_gui_text_speed", _targetName)) {
+			_defaultTalkDelay = ConfMan.getInt("original_gui_text_speed");
+
+			// In the original GUI the talk delay is represented as text speed,
+			// so we have to invert the value:
+			// - 9 is the highest text speed possible;
+			// - 0 is the lowest text speed possible.
+			if (VAR_CHARINC != 0xFF)
+				VAR(VAR_CHARINC) = 9 - _defaultTalkDelay;
+		}
+		return;
+	}
+
 	Engine::syncSoundSettings();
 
 	// Sync the engine with the config manager
@@ -2534,7 +2553,7 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 		bool success;
 		Common::U32String errMsg;
 
-		if (_game.version == 8 && _saveTemporaryState)
+		if (_game.version == 8 && (_saveTemporaryState || isUsingOriginalGUI()))
 			VAR(VAR_GAME_LOADED) = 0;
 
 		Common::String filename;
@@ -2553,7 +2572,7 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 			if (!success)
 				errMsg = _("Failed to load saved game from file:\n\n%s");
 
-			if (success && _saveTemporaryState && VAR_GAME_LOADED != 0xFF)
+			if (success && (_saveTemporaryState || isUsingOriginalGUI()) && VAR_GAME_LOADED != 0xFF)
 				VAR(VAR_GAME_LOADED) = (_game.version == 8) ? 1 : 203;
 		}
 
@@ -2943,6 +2962,13 @@ void ScummEngine::restart() {
 
 	// Re-run bootscript
 	runBootscript();
+}
+
+bool ScummEngine::isUsingOriginalGUI() {
+	if (_game.version == 8)
+		return _useOriginalGUI;
+
+	return false;
 }
 
 void ScummEngine::runBootscript() {

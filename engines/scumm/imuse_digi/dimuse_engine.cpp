@@ -315,6 +315,12 @@ void IMuseDigital::saveLoadEarly(Common::Serializer &s) {
 		_curMusicCue = 0;
 	} else {
 		diMUSESaveLoad(s);
+
+		if (s.isLoading() && _vm->isUsingOriginalGUI()) {
+			diMUSESetMusicGroupVol(diMUSEGetMusicGroupVol());
+			diMUSESetVoiceGroupVol(diMUSEGetVoiceGroupVol());
+			diMUSESetSFXGroupVol(diMUSEGetSFXGroupVol());
+		}
 	}
 }
 
@@ -359,21 +365,23 @@ void IMuseDigital::diMUSEHeartbeat() {
 
 	waveOutCallback();
 
-	// Update volumes
+	if (!_vm->isUsingOriginalGUI()) {
+		// Update volumes
 
-	if (_curMixerMusicVolume != _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType)) {
-		_curMixerMusicVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
-		diMUSESetMusicGroupVol(CLIP(_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 2, 0, 127));
-	}
+		if (_curMixerMusicVolume != _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType)) {
+			_curMixerMusicVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
+			diMUSESetMusicGroupVol(CLIP(_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 2, 0, 127));
+		}
 
-	if (_curMixerSpeechVolume != _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType)) {
-		_curMixerSpeechVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
-		diMUSESetVoiceGroupVol(CLIP(_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / 2, 0, 127));
-	}
+		if (_curMixerSpeechVolume != _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType)) {
+			_curMixerSpeechVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
+			diMUSESetVoiceGroupVol(CLIP(_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / 2, 0, 127));
+		}
 
-	if (_curMixerSFXVolume != _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType)) {
-		_curMixerSFXVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
-		diMUSESetSFXGroupVol(CLIP(_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 2, 0, 127));
+		if (_curMixerSFXVolume != _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType)) {
+			_curMixerSFXVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
+			diMUSESetSFXGroupVol(CLIP(_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 2, 0, 127));
+		}
 	}
 
 	// Handle fades and triggers
@@ -659,6 +667,7 @@ void IMuseDigital::parseScriptCmds(int cmd, int soundId, int sub_cmd, int d, int
 	int b = soundId;
 	int c = sub_cmd;
 	int id;
+	int volume = b;
 	switch (cmd) {
 	case 0x1000:
 		// SetState
@@ -678,15 +687,27 @@ void IMuseDigital::parseScriptCmds(int cmd, int soundId, int sub_cmd, int d, int
 		break;
 	case 0x2000:
 		// SetGroupSfxVolume
-		diMUSESetSFXGroupVol(CLIP(_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 2, 0, 127));
+		if (!_vm->isUsingOriginalGUI()) {
+			volume = CLIP(_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 2, 0, 127);
+		}
+
+		diMUSESetSFXGroupVol(volume);
 		break;
 	case 0x2001:
 		// SetGroupVoiceVolume
-		diMUSESetVoiceGroupVol(CLIP(_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / 2, 0, 127));
+		if (!_vm->isUsingOriginalGUI()) {
+			volume = CLIP(_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / 2, 0, 127);
+		}
+
+		diMUSESetVoiceGroupVol(volume);
 		break;
 	case 0x2002:
 		// SetGroupMusicVolume
-		diMUSESetMusicGroupVol(CLIP(_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 2, 0, 127));
+		if (!_vm->isUsingOriginalGUI()) {
+			volume = CLIP(_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 2, 0, 127);
+		}
+
+		diMUSESetMusicGroupVol(volume);
 		break;
 	case 10: // StopAllSounds
 	case 12: // SetParam
@@ -811,6 +832,30 @@ int IMuseDigital::diMUSEFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed,
 
 int IMuseDigital::diMUSELipSync(int soundId, int syncId, int msPos, int32 &width, int32 &height) {
 	return waveLipSync(soundId, syncId, msPos, width, height);
+}
+
+int IMuseDigital::diMUSEGetMusicGroupVol() {
+	if (_vm->isUsingOriginalGUI()) {
+		return diMUSESetGroupVol(DIMUSE_GROUP_MUSIC, -1);
+	}
+
+	return _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 2;
+}
+
+int IMuseDigital::diMUSEGetSFXGroupVol() {
+	if (_vm->isUsingOriginalGUI()) {
+		return diMUSESetGroupVol(DIMUSE_GROUP_SFX, -1);
+	}
+
+	return _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 2;
+}
+
+int IMuseDigital::diMUSEGetVoiceGroupVol() {
+	if (_vm->isUsingOriginalGUI()) {
+		return diMUSESetGroupVol(DIMUSE_GROUP_SPEECH, -1);
+	}
+
+	return _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / 2;
 }
 
 int IMuseDigital::diMUSESetMusicGroupVol(int volume) {

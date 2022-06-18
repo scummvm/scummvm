@@ -289,7 +289,7 @@ void ScummEngine_v8::writeVar(uint var, int value) {
 	if (!(var & 0xF0000000)) {
 		assertRange(0, var, _numVariables - 1, "variable (writing)");
 
-		if (var == VAR_CHARINC) {
+		if (!isUsingOriginalGUI() && var == VAR_CHARINC) {
 			// Did the user override the talkspeed manually? Then use that.
 			// Otherwise, use the value specified by the game script.
 			// Note: To determine whether there was a user override, we only
@@ -1120,9 +1120,11 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		break;
 	}
 	case 26: { // saveGameWrite
-		// FIXME: This doesn't work
-		char *address = (char *)getStringAddress(args[2]);
-		debug(0, "o8_kernelSetFunctions: saveGame(%d, %s)", args[1], address);
+		char *saveName = (char *)getStringAddress(args[2]);
+		debug(0, "o8_kernelSetFunctions: saveGame(%d, %s)", args[1], saveName);
+		if (isUsingOriginalGUI()) {
+			copyHeapSaveGameToFile(args[1], saveName);
+		}
 		break;
 	}
 	case 27: // saveGameRead
@@ -1148,6 +1150,24 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		int idx = args[1];
 		int value = args[2];
 		const char *str = (const char *)getStringAddress(idx);
+		if (isUsingOriginalGUI()) {
+			if (!strcmp(str, "SFX Volume"))
+				ConfMan.setInt("sfx_volume", value * 2);
+			else if (!strcmp(str, "Voice Volume"))
+				ConfMan.setInt("speech_volume", value * 2);
+			else if (!strcmp(str, "Music Volume"))
+				ConfMan.setInt("music_volume", value * 2);
+			else if (!strcmp(str, "Text Status"))
+				ConfMan.setInt("original_gui_text_status", value);
+			else if (!strcmp(str, "Text Speed"))
+				ConfMan.setInt("original_gui_text_speed", value);
+			else if (!strcmp(str, "Object Names"))
+				ConfMan.setInt("original_gui_object_labels", value);
+			else if (!strcmp(str, "Saveload Page"))
+				ConfMan.setInt("original_gui_saveload_page", value);
+
+			ConfMan.flushToDisk();
+		}
 
 		debugC(DEBUG_GENERAL,"o8_kernelSetFunctions: writeRegistryValue(%s, %d)", str, value);
 		}
@@ -1156,10 +1176,14 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		debug(0, "o8_kernelSetFunctions: paletteSetIntensity(%d, %d)", args[1], args[2]);
 		break;
 	case 34:	// queryQuit
-		if (ConfMan.getBool("confirm_exit"))
+		if (isUsingOriginalGUI()) {
 			confirmExitDialog();
-		else
-			quitGame();
+		} else {
+			if (ConfMan.getBool("confirm_exit"))
+				confirmExitDialog();
+			else
+				quitGame();
+		}
 		break;
 	case 108:	// buildPaletteShadow
 		setShadowPalette(args[1], args[2], args[3], args[4], args[5], args[6]);
@@ -1234,13 +1258,13 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 		}
 		break;
 	case 0xDD:		// getGroupSfxVol
-		push(_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 2);
+		push(_imuseDigital->diMUSEGetSFXGroupVol());
 		break;
 	case 0xDE:		// getGroupVoiceVol
-		push(_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / 2);
+		push(_imuseDigital->diMUSEGetVoiceGroupVol());
 		break;
 	case 0xDF:		// getGroupMusicVol
-		push(_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 2);
+		push(_imuseDigital->diMUSEGetMusicGroupVol());
 		break;
 	case 0xE0:		// readRegistryValue
 		{
@@ -1253,13 +1277,16 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 		else if (!strcmp(str, "Music Volume"))
 			push(ConfMan.getInt("music_volume") / 2);
 		else if (!strcmp(str, "Text Status"))
-			push(ConfMan.getBool("subtitles"));
+			push(isUsingOriginalGUI() ? ConfMan.getInt("original_gui_text_status") : ConfMan.getBool("subtitles"));
+		else if (!strcmp(str, "Text Speed"))
+			push(ConfMan.getInt("original_gui_text_speed"));
 		else if (!strcmp(str, "Object Names"))
-			push(ConfMan.getBool("object_labels"));
+			push(isUsingOriginalGUI() ? ConfMan.getInt("original_gui_object_labels") : ConfMan.getBool("object_labels"));
 		else if (!strcmp(str, "Saveload Page"))
-			push(14);
+			push(ConfMan.getInt("original_gui_saveload_page"));
 		else		// Use defaults
 			push(-1);
+
 		debugC(DEBUG_GENERAL,"o8_kernelGetFunctions: readRegistryValue(%s)", str);
 		}
 		break;

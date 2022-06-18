@@ -386,6 +386,7 @@ public:
 	ResourceManager *_res = nullptr;
 
 	bool _enableEnhancements = false;
+	bool _useOriginalGUI = true;
 	bool _enableAudioOverride = false;
 
 protected:
@@ -482,6 +483,7 @@ protected:
 public:
 	void pauseGame();
 	void restart();
+	bool isUsingOriginalGUI();
 
 protected:
 	Dialog *_pauseDialog = nullptr;
@@ -619,6 +621,7 @@ protected:
 	void loadResource(Common::Serializer &ser, ResType type, ResId idx);
 	void loadResourceOLD(Common::Serializer &ser, ResType type, ResId idx);	// "Obsolete"
 
+	void copyHeapSaveGameToFile(int slot, const char *saveName);
 	virtual Common::SeekableReadStream *openSaveFileForReading(int slot, bool compat, Common::String &fileName);
 	virtual Common::WriteStream *openSaveFileForWriting(int slot, bool compat, Common::String &fileName);
 
@@ -1443,6 +1446,8 @@ public:
 	byte VAR_RIGHTBTN_HOLD = 0xFF;	// V6/V72HE/V7/V8
 	byte VAR_SAVELOAD_SCRIPT = 0xFF;	// V6/V7 (not HE)
 	byte VAR_SAVELOAD_SCRIPT2 = 0xFF;	// V6/V7 (not HE)
+	byte VAR_SAVELOAD_PAGE = 0xFF;		// V8
+	byte VAR_OBJECT_LABEL_FLAG = 0xFF;	// V8
 
 	// V6/V7 specific variables (FT & Sam & Max specific)
 	byte VAR_CHARSET_MASK = 0xFF;
