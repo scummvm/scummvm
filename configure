@@ -4137,7 +4137,7 @@ POST_OBJS_FLAGS :=
 		append_var DEFINES "-DUNCACHED_PLUGINS"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS	= $(abspath $(srcdir)/backends/platform/dc/plugin.x $(srcdir)/backends/platform/dc/plugin.syms) $(EXECUTABLE) backends/platform/dc/plugin_head.o
-PLUGIN_LDFLAGS		= -ml -m4-single-only -nostartfiles -Wl,-q,-T$(srcdir)/backends/platform/dc/plugin.x,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/dc/plugin.syms backends/platform/dc/plugin_head.o
+PLUGIN_LDFLAGS		+= -ml -m4-single-only -nostartfiles -Wl,-q,-T$(srcdir)/backends/platform/dc/plugin.x,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/dc/plugin.syms backends/platform/dc/plugin_head.o
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '
@@ -4225,7 +4225,7 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 		_plugin_suffix=".dll"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
-PLUGIN_LDFLAGS		:= -Wl,--enable-auto-import -shared ./libscummvm.a
+PLUGIN_LDFLAGS		+= -Wl,--enable-auto-import -shared ./libscummvm.a
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
 '
@@ -4278,7 +4278,7 @@ if test "$_elf_loader" = yes; then
 	_plugin_suffix=".plg"
 	_mak_plugins='
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
-PLUGIN_LDFLAGS		= -nostartfiles backends/plugins/elf/version.o -Wl,-q,--retain-symbols-file,$(srcdir)/backends/plugins/elf/plugin.syms -Xlinker --just-symbols -Xlinker $(EXECUTABLE)
+PLUGIN_LDFLAGS		+= -nostartfiles backends/plugins/elf/version.o -Wl,-q,--retain-symbols-file,$(srcdir)/backends/plugins/elf/plugin.syms -Xlinker --just-symbols -Xlinker $(EXECUTABLE)
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '"$_mak_plugins"
@@ -6399,7 +6399,7 @@ OBJS += $OBJS
 DEFINES += $DEFINES
 LDFLAGS += $LDFLAGS
 
-PLUGIN_LDFLAGS += $PLUGIN_LDFLAGS
+PLUGIN_LDFLAGS = $PLUGIN_LDFLAGS
 $_mak_plugins
 
 port_mk = $_port_mk
