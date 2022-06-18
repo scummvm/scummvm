@@ -236,6 +236,9 @@ void SpriteCache::DisposeOldest() {
 	if (!_spriteData[sprnum].IsAssetSprite()) {
 		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Error, "SpriteCache::DisposeOldest: in MRU list sprite %d is external or does not exist", sprnum);
 		_mru.erase(it);
+		// std::list::erase() invalidates iterators to the erased item.
+		// But our implementation does not.
+		_spriteData[sprnum].MruIt._node = nullptr;
 		return;
 	}
 	// Delete the image, unless is locked
@@ -250,6 +253,9 @@ void SpriteCache::DisposeOldest() {
 	}
 	// Remove from the mru list
 	_mru.erase(it);
+	// std::list::erase() invalidates iterators to the erased item.
+	// But our implementation does not.
+	_spriteData[sprnum].MruIt._node = nullptr;
 }
 
 void SpriteCache::DisposeAll() {
@@ -279,6 +285,9 @@ void SpriteCache::Precache(sprkey_t index) {
 		sprSize = _spriteData[index].Size;
 		// Remove locked sprite from the MRU list
 		_mru.erase(_spriteData[index].MruIt);
+		// std::list::erase() invalidates iterators to the erased item.
+		// But our implementation does not.
+		_spriteData[index].MruIt._node = nullptr;
 	}
 
 	// make sure locked sprites can't fill the cache
