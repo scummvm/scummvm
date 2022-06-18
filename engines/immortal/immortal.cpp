@@ -21,6 +21,7 @@
 
 #include "immortal/immortal.h"
 #include "immortal/detection.h"
+#include "immortal/disk.h"
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
@@ -30,6 +31,7 @@
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
+#include "common/file.h"
 
 #include "engines/util.h"
 #include "audio/mixer.h"
@@ -46,6 +48,10 @@ ImmortalEngine::ImmortalEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	, _gameDescription(gameDesc)
 	, _randomSource("Immortal") {
 	g_engine = this;
+
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "game");
+
 	debug("ImmortalEngine::ImmortalEngine");
 }
 
@@ -64,8 +70,44 @@ Common::String ImmortalEngine::getGameId() const {
 Common::Error ImmortalEngine::run() {
 	initGraphics(320, 200);
 
+	if (SearchMan.hasFile("IMMORTAL.dsk")) {
+		ProDosDisk *diskBoot  = new ProDosDisk("IMMORTAL.dsk");
+		if (diskBoot) {
+			debug("Boot disk found");
+			SearchMan.add("IMMORTAL.dsk", diskBoot, 0, true);
+		}
+	}
+
+	if (SearchMan.hasFile("IMMORTAL_GFX.dsk")) {
+		ProDosDisk *diskGFX  = new ProDosDisk("IMMORTAL_GFX.dsk");
+		if (diskGFX) {
+			debug("Gfx disk found");
+			SearchMan.add("IMMORTAL_GFX.dsk", diskGFX, 0, true);
+		}
+	}
+
+	Common::File f;
+	if (!f.open("LOAD.OBJ")) {
+		debug("oh no :(");
+	}
+
+	debug("first file loaded");
+	f.close();
+
+	Common::File f2;
+	if (!f2.open("GOBLIN.SPR")) {
+		debug("oh no :((");
+	}
+
+	debug("second file loaded");
+	f2.close();
+
+
 	while (!shouldQuit()) {
+	
 		int64 loopStart = g_system->getMillis();
+		Common::Event event;
+		g_system->getEventManager()->pollEvent(event);
 
 		int64 loopEnd = 16 - (g_system->getMillis() - loopStart);
 		if (loopEnd > 0)
