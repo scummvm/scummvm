@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MM1_VIEWS_VIEW_CHARACTERS_H
-#define MM1_VIEWS_VIEW_CHARACTERS_H
+#ifndef MM1_VIEWS_VIEW_CHARACTER_BASE_H
+#define MM1_VIEWS_VIEW_CHARACTER_BASE_H
 
 #include "common/array.h"
 #include "mm/mm1/views/text_view.h"
@@ -30,50 +30,26 @@ namespace MM1 {
 namespace Views {
 
 /**
- * Dialog for View All Characters
+ * Base class for showing character information.
+ * MM1 has three character dialogs:
+ * 1) Character management from Create Characters
+ * 2) Inn that allows simply viewing characters
+ * 3) In-game character display
  */
-class ViewCharacters : public TextView {
+class CharacterBase : public TextView {
 private:
-	Common::Array<uint> _charIndexes;
-public:
-	ViewCharacters() : TextView("ViewCharacters") {}
-	virtual ~ViewCharacters() {}
-
-	void draw() override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-};
-
-/**
- * Base class for showing character information
- */
-class CharacterStats : public TextView {
-protected:
 	void printStats();
 	void printSummary();
-	void printCondition();
 	void printInventory();
+protected:
+	void printCondition();
 
 public:
-	CharacterStats(const Common::String &name) : TextView(name) {}
-	~CharacterStats() {}
-};
-
-/**
- * Dialog for showing the stats for a single character.
- */
-class ViewCharacter : public CharacterStats {
-	enum ViewState { DISPLAY = 0, RENAME = 1, DELETE = 2 };
-	ViewState _state = DISPLAY;
-	Common::String _newName;
-public:
-	ViewCharacter() : CharacterStats("ViewCharacter") {}
-	virtual ~ViewCharacter() {}
+	CharacterBase(const Common::String &name) : TextView(name) {}
+	~CharacterBase() {}
 
 	void draw() override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
 };
-
 
 } // namespace Views
 } // namespace MM1

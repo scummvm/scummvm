@@ -31,7 +31,8 @@
 #include "mm/mm1/views/protect.h"
 #include "mm/mm1/views/quick_ref.h"
 #include "mm/mm1/views/title.h"
-#include "mm/mm1/views/view_characters.h"
+#include "mm/mm1/views/character_manage.h"
+#include "mm/mm1/views/characters.h"
 #include "mm/mm1/views/locations/blacksmith.h"
 #include "mm/mm1/views/locations/inn.h"
 #include "mm/mm1/views/locations/market.h"
@@ -54,8 +55,9 @@ private:
 	Views::Protect _protect;
 	Views::QuickRef _quickRef;
 	Views::Title _title;
-	Views::ViewCharacters _viewCharacters;
-	Views::ViewCharacter _viewCharacter;
+//	Views::ViewCharacters _viewCharacters;
+	Views::CharacterManage _characterManage;
+
 	Views::Locations::Blacksmith _blacksmith;
 	Views::Locations::Inn _inn;
 	Views::Locations::Market _market;

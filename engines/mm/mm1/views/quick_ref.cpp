@@ -101,8 +101,6 @@ bool QuickRef::msgAction(const ActionMessage &msg) {
 	return false;
 }
 
-
-
 } // namespace Views
 } // namespace MM1
 } // namespace MM
