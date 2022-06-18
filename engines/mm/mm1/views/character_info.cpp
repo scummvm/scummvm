@@ -39,10 +39,10 @@ void CharacterInfo::draw() {
 		writeString(0, 24, STRING["dialogs.character.legend4"]);
 		break;
 
-	case RENAME:
+	case EQUIP:
 		break;
 
-	case DELETE:
+	case REMOVE:
 		break;
 	}
 }
@@ -62,6 +62,10 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 	switch (_state) {
 	case DISPLAY:
 		switch (msg.keycode) {
+		case Common::KEYCODE_e:
+			if (!g_globals->_currCharacter->_backpack.empty())
+				_state = EQUIP;
+			break;
 		case Common::KEYCODE_g:
 			g_globals->_currCharacter->gatherGold();
 			redraw();
@@ -69,16 +73,22 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 		case Common::KEYCODE_q:
 			replaceView("QuickRef");
 			break;
+		case Common::KEYCODE_r:
+			if (!g_globals->_currCharacter->_equipped.empty())
+				_state = REMOVE;
+			break;
 		default:
 			break;
 		 }
 		break;
 
-	case RENAME:
+	case EQUIP:
 		break;
 
-	case DELETE:
-		_state = DISPLAY;
+	case REMOVE:
+		break;
+
+	default:
 		break;
 	}
 
