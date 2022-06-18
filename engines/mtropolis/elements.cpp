@@ -1450,6 +1450,7 @@ MiniscriptInstructionOutcome MToonElement::scriptSetRangeTyped(MiniscriptThread 
 		intRange.max = maxFrame;
 
 	if (isInvertedRange) {
+		// coverity[swapped_arguments]
 		_playRange = IntRange::create(intRange.max, intRange.min);
 		if (_rateTimes100000 > 0)
 			_rateTimes100000 = -_rateTimes100000;

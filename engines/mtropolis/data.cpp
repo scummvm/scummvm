@@ -1348,6 +1348,7 @@ DataReadErrorCode GraphicModifier::load(DataReader &reader) {
 	if (!reader.readU16(numPolygonPoints) || !reader.readBytes(unknown6))
 		return kDataReadErrorReadFailed;
 
+	// coverity[tainted_scalar]
 	polyPoints.resize(numPolygonPoints);
 	for (size_t i = 0; i < numPolygonPoints; i++) {
 		if (!polyPoints[i].load(reader))
@@ -1524,8 +1525,8 @@ DataReadErrorCode ColorTableAsset::load(DataReader &reader) {
 
 			const uint8 *rgb = cdefBytes + i * 8 + 2;
 			cdef.red = (rgb[0] << 8) | rgb[1];
-			cdef.green = (rgb[2] << 8) | rgb[5];
-			cdef.blue = (rgb[4] << 8) | rgb[6];
+			cdef.green = (rgb[2] << 8) | rgb[3];
+			cdef.blue = (rgb[4] << 8) | rgb[5];
 		}
 	} else if (reader.getProjectFormat() == Data::kProjectFormatWindows) {
 		if (!reader.skip(14))

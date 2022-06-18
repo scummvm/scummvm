@@ -272,6 +272,7 @@ void DebugToolWindowBase::render() {
 				srcLeft += adjust;
 			}
 			if (destLeft < 0) {
+				// coverity[dead_error_begin]
 				int32 adjust = -destLeft;
 				destLeft += adjust;
 				srcLeft += adjust;

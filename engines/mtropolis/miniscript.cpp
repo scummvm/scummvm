@@ -991,9 +991,12 @@ MiniscriptInstructionOutcome BuiltinFunc::execute(MiniscriptThread *thread) cons
 		if (returnsValue)
 			valuesToPop--;
 
-		if (valuesToPop > 0)
+		if (valuesToPop > 0) {
+			// coverity[dead_error_line]
 			thread->popValues(valuesToPop);
+		}
 	} else {
+		// coverity[dead_error_line]
 		if (returnsValue)
 			thread->pushValue(staticDest);
 	}
@@ -1131,7 +1134,7 @@ MiniscriptInstructionOutcome BuiltinFunc::executeRectToPolar(MiniscriptThread *t
 
 	const Point16POD &pt = inputDynamicValue.getPoint();
 
-	double angle = atan2(pt.x, pt.y);
+	double angle = atan2(pt.y, pt.x);
 	double magnitude = sqrt(pt.x * pt.x + pt.y * pt.y);
 
 	returnValue->setVector(AngleMagVector::createRadians(angle, magnitude));

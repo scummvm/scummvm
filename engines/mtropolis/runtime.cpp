@@ -602,7 +602,7 @@ bool DynamicListContainer<VarReference>::expandToMinimumSize(size_t sz) {
 		_array.resize(sz);
 		_strings.resize(sz);
 
-		for (size_t i = prevSize; i < sz; prevSize++) {
+		for (size_t i = prevSize; i < sz; i++) {
 			_array[i].guid = 0;
 			_array[i].source = nullptr;
 		}
@@ -3540,7 +3540,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	_playTimeBase = system->getMillis();
 
 	for (int i = 0; i < Actions::kMouseButtonCount; i++)
-		_mouseFocusFlags[Actions::kMouseButtonCount] = false;
+		_mouseFocusFlags[i] = false;
 	
 	_worldManagerInterface.reset(new WorldManagerInterface());
 	_worldManagerInterface->setSelfReference(_worldManagerInterface);
@@ -3805,7 +3805,8 @@ void Runtime::drawFrame() {
 		sortedBuckets[i].window = _windows[i].get();
 	}
 
-	Common::sort(sortedBuckets, sortedBuckets + numWindows, WindowSortingBucket::sortPredicate);
+	if (numWindows > 1)	// Quiet Coverity warning
+		Common::sort(sortedBuckets, sortedBuckets + numWindows, WindowSortingBucket::sortPredicate);
 	
 	for (size_t i = 0; i < numWindows; i++) {
 		const Window &window = *sortedBuckets[i].window;

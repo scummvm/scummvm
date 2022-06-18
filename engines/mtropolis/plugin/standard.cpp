@@ -583,7 +583,8 @@ bool ObjectReferenceVariableModifier::load(const PlugInModifierLoaderContext &co
 	if (data.setToSourceParentWhen.type != Data::PlugInTypeTaggedValue::kEvent)
 		return false;
 
-	_setToSourceParentWhen.load(data.setToSourceParentWhen.value.asEvent);
+	if (!_setToSourceParentWhen.load(data.setToSourceParentWhen.value.asEvent))
+		return false;
 
 	if (data.objectPath.type == Data::PlugInTypeTaggedValue::kString)
 		_objectPath = data.objectPath.str;
