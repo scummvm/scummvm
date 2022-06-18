@@ -43,10 +43,12 @@
 namespace Immortal {
 
 struct ImmortalGameDescription;
+class ProDosDisk;
 
 class ImmortalEngine : public Engine {
 private:
 	Common::RandomSource _randomSource;
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
