@@ -80,7 +80,7 @@ bool Characters::msgKeypress(const KeypressMessage &msg) {
 		// Character selected
 		uint charIndex = _charIndexes[msg.keycode - Common::KEYCODE_a];
 		g_globals->_currCharacter = &g_globals->_roster[charIndex];
-		addView("ViewCharacter");
+		_characterView.addView();
 	}
 
 	return false;

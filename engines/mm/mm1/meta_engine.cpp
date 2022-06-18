@@ -37,7 +37,13 @@ struct KeybindingRecord {
 };
 
 static const KeybindingRecord MENU_KEYS[] = {
-	{ KEYBIND_ESCAPE, "ESCPAE", "Escape", "ESC", nullptr },
+	{ KEYBIND_ESCAPE, "ESCAPE", "Escape", "ESC", nullptr },
+	{ KEYBIND_VIEW_PARTY1, "PARTY1", "View Party Member 1", "1", nullptr },
+	{ KEYBIND_VIEW_PARTY2, "PARTY2", "View Party Member 2", "2", nullptr },
+	{ KEYBIND_VIEW_PARTY3, "PARTY3", "View Party Member 3", "3", nullptr },
+	{ KEYBIND_VIEW_PARTY4, "PARTY4", "View Party Member 4", "4", nullptr },
+	{ KEYBIND_VIEW_PARTY5, "PARTY5", "View Party Member 5", "5", nullptr },
+	{ KEYBIND_VIEW_PARTY6, "PARTY6", "View Party Member 6", "6", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 

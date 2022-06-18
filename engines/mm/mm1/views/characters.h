@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "mm/mm1/views/text_view.h"
+#include "mm/mm1/views/character_manage.h"
 
 namespace MM {
 namespace MM1 {
@@ -35,6 +36,7 @@ namespace Views {
 class Characters : public TextView {
 private:
 	Common::Array<uint> _charIndexes;
+	CharacterManage _characterView;
 public:
 	Characters() : TextView("Characters") {}
 	virtual ~Characters() {}

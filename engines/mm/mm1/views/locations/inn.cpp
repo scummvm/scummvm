@@ -117,7 +117,7 @@ bool Inn::msgKeypress(const KeypressMessage &msg) {
 		} else if (msg.flags == 0) {
 			// View character
 			g_globals->_currCharacter = &g_globals->_roster[charNum];
-			addView("ViewCharacter");
+			_characterView.addView();
 		}
 	} else if (msg.keycode == Common::KEYCODE_x) {
 		// Load party from selected characters

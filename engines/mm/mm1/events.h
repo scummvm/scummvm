@@ -188,6 +188,7 @@ protected:
 		bool msg##NAME(const NAME##Message &e) override { \
 			return !_views.empty() ? focusedView()->msg##NAME(e) : false; \
 		}
+	MESSAGE(Action);
 	MESSAGE(Focus);
 	MESSAGE(Unfocus);
 	MESSAGE(Keypress);

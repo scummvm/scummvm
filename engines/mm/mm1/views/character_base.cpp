@@ -197,6 +197,15 @@ void CharacterBase::draw() {
 	printStats();
 }
 
+bool CharacterBase::msgKeypress(const KeypressMessage &msg) {
+	if (msg.keycode == Common::KEYCODE_ESCAPE) {
+		close();
+		return true;
+	}
+
+	return false;
+}
+
 } // namespace Views
 } // namespace MM1
 } // namespace MM

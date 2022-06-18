@@ -107,7 +107,7 @@ void Events::replaceView(UIElement *ui) {
 	assert(ui);
 	if (!_views.empty()) {
 		focusedView()->msgUnfocus(UnfocusMessage());
-		_views.clear();
+		_views.pop();
 	}
 
 	_views.push(ui);
