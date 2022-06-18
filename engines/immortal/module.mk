@@ -2,6 +2,7 @@ MODULE := engines/immortal
 
 MODULE_OBJS = \
 	immortal.o \
+	disk.o \
 	metaengine.o
 
 # This module can be built as a plugin
