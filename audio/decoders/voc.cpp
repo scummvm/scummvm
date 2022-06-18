@@ -168,9 +168,9 @@ int VocStream::fillBuffer(int maxSamples) {
 		maxSamples -= samplesRead;
 		_blockLeft -= samplesRead;
 
-		// In case of an error we will stop
+		// In case of an error or end of stream we will stop
 		// stream playback.
-		if (_stream->err()) {
+		if (_stream->err() || _stream->eos()) {
 			_blockLeft = 0;
 			_curBlock = _blocks.end();
 			break;
