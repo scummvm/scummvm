@@ -57,7 +57,8 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	  _defaultCursor(""), _defaultCursorIdx(0),  _skipDefeatVideo(false),
 	  _background(nullptr), _masks(nullptr), _musicRate(0), _musicStereo(false),
 	  _additionalVideo(nullptr), _ammo(0), _maxAmmo(0), _skipNextVideo(false),
-	  _doNotStopSounds(false), _screenW(0), _screenH(0) { // Every games initializes its own resolution
+	  _doNotStopSounds(false), _screenW(0), _screenH(0), // Every games initializes its own resolution
+	  _keepTimerDuringScenes(false) {
 	_rnd = new Common::RandomSource("hypno");
 	_checkpoint = "";
 
@@ -622,6 +623,7 @@ bool HypnoEngine::startCountdown(uint32 delay) {
 
 void HypnoEngine::removeTimers() {
 	_timerStarted = false;
+	_keepTimerDuringScenes = false;
 	g_system->getTimerManager()->removeTimerProc(&alarmCallback);
 	g_system->getTimerManager()->removeTimerProc(&countdownCallback);
 }

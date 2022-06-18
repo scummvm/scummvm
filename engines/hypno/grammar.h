@@ -140,11 +140,13 @@ public:
 
 class Timer : public Action {
 public:
-	Timer(uint32 delay_) {
+	Timer(uint32 delay_, Common::String flag_) {
 		type = TimerAction;
 		delay = delay_;
+		flag = flag_;
 	}
 	uint32 delay;
+	Common::String flag;
 };
 
 class Palette : public Action {

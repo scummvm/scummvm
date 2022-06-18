@@ -146,11 +146,11 @@ line: MENUTOK mflag mflag mflag {
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "ESC SUBMENU"); }
 	|  TIMETOK NUM  mflag {
-		Timer *a = new Timer($2);
+		Timer *a = new Timer($2, $3);
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
-		debugC(1, kHypnoDebugParser, "TIME %d", $2); }
+		debugC(1, kHypnoDebugParser, "TIME %d %s", $2, $3); }
 	|  SWPTTOK NUM {
 		SwapPointer *a = new SwapPointer($2);
 		Hotspots *cur = stack->back();

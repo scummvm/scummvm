@@ -354,6 +354,7 @@ public:
 	// Timers
 	int32 _countdown;
 	bool _timerStarted;
+	bool _keepTimerDuringScenes;
 	bool startAlarm(uint32, Common::String *);
 	bool startCountdown(uint32);
 	void removeTimers();
