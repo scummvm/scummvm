@@ -676,7 +676,7 @@ static void playIntroSequence() {
 		if (introDialog[i] != -1)
 			start_aad(introDialog[i], -1);
 
-		ret = g_engine->_video->playVideo(introVideo[i]) ? 0 : -1;
+		ret = g_engine->_video->playVideo(introVideo[i], false) ? 0 : -1;
 		_G(atds)->stopAad();
 		SHOULD_QUIT_RETURN;
 	}
