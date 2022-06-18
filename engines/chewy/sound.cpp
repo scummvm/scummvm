@@ -76,6 +76,8 @@ void Sound::playSound(int num, uint channel, bool loop) {
 }
 
 void Sound::playSound(uint8 *data, uint32 size, uint channel, bool loop, DisposeAfterUse::Flag dispose) {
+	stopSound(channel);
+
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
 		new ChewyVocStream(
 			new Common::MemorySeekableReadWriteStream(data, size, dispose),
@@ -101,7 +103,7 @@ void Sound::stopSound(uint channel) {
 }
 
 void Sound::stopAllSounds() {
-	for (int i = 4; i < 8; i++)
+	for (int i = 0; i < 14; i++)
 		stopSound(i);
 }
 

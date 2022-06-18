@@ -86,14 +86,19 @@ CfoDecoder::CfoVideoTrack::CfoVideoTrack(Common::SeekableReadStream *stream, uin
 }
 
 CfoDecoder::CfoVideoTrack::~CfoVideoTrack() {
-	_sound->stopAll();
+	// Stop all sound effects.
+	_sound->stopAllSounds();
 
 	for (int i = 0; i < MAX_SOUND_EFFECTS; i++) {
 		delete[] _soundEffects[i];
 	}
 
-	delete[] _musicData;
-	_musicData = nullptr;
+	// Only stop music if it is included in the video data.
+	if (_musicData) {
+		_sound->stopMusic();
+		delete[] _musicData;
+		_musicData = nullptr;
+	}
 }
 
 void CfoDecoder::CfoVideoTrack::readHeader() {
