@@ -59,7 +59,7 @@ String GetRuntimeInfo() {
 	const size_t total_lockspr =  _GP(spriteset).GetLockedSize();
 	const size_t total_normspr = total_spr - total_lockspr;
 	const size_t max_normspr =  _GP(spriteset).GetMaxCacheSize() - total_lockspr;
-	const unsigned norm_spr_filled = (uint64)total_normspr * 100 / max_normspr;
+	const unsigned norm_spr_filled = (uint64_t)total_normspr * 100 / max_normspr;
 	String runtimeInfo = String::FromFormat(
 		"Adventure Game Studio run-time engine[ACI version %s"
 		"[Game resolution %d x %d (%d-bit)"
