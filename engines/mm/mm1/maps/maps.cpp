@@ -208,6 +208,17 @@ void Maps::load(uint mapId) {
 	Common::fill(&_data1[0], &_data1[32], 0);
 }
 
+void Maps::synchronize(Common::Serializer &s) {
+	// Store a count of the number of maps,
+	// just in case new ones are added in later
+	uint8 mapCount = _maps.size();
+	s.syncAsByte(mapCount);
+
+	for (uint8 i = 0; i < mapCount; ++mapCount) {
+		s.syncBytes(_maps[i]->_visited, MAP_SIZE);
+	}
+}
+
 void Maps::select(uint16 id, byte section) {
 	uint mapId = getIndex(id, section);
 	load(mapId);
