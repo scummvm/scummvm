@@ -77,6 +77,7 @@ void Roster::save() {
 	sf->writeUint32LE(mapData.size());
 	sf->write(mapData.getData(), mapData.size());
 
+	sf->finalize();
 	delete sf;
 }
 

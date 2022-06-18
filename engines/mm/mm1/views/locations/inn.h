@@ -19,27 +19,33 @@
  *
  */
 
-#ifndef MM1_VIEWS_INN_H
-#define MM1_VIEWS_INN_H
+#ifndef MM1_VIEWS_LOCATIONS_INN_H
+#define MM1_VIEWS_LOCATIONS_INN_H
 
 #include "mm/mm1/views/text_view.h"
+#include "mm/mm1/data/int_array.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
+namespace Locations {
 
 class Inn : public TextView {
 private:
 	Common::Array<uint> _charNums;
+	IntArray _partyChars;
 public:
-	Inn() : TextView("Inn") {}
-	virtual ~Inn() {}
+	Inn() : TextView("Inn") {
+	}
+	virtual ~Inn() {
+	}
 
 	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
+} // namespace Locations
 } // namespace Views
 } // namespace MM1
 } // namespace MM

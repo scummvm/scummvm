@@ -27,7 +27,6 @@
 #include "mm/utils/strings_data.h"
 #include "mm/xeen/sprites.h"
 #include "mm/mm1/data/game_state.h"
-#include "mm/mm1/data/int_array.h"
 #include "mm/mm1/data/items.h"
 #include "mm/mm1/data/roster.h"
 #include "mm/mm1/maps/maps.h"
@@ -42,7 +41,6 @@ public:
 	Character *_currCharacter = nullptr;
 	Item _currItem;
 	Maps::TownId _startingTown = Maps::SORPIGAL;
-	IntArray _partyChars;
 	Maps::Maps _maps;
 	bool _intangible = false; // Console flag
 	BitmapFont _font;

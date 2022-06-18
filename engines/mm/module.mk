@@ -30,6 +30,7 @@ MODULE_OBJS := \
 	mm1/views/locations/blacksmith_buy_armor.o \
 	mm1/views/locations/blacksmith_buy_misc.o \
 	mm1/views/locations/blacksmith_sell_item.o \
+	mm1/views/locations/inn.o \
 	mm1/views/locations/market.o \
 	mm1/views/locations/statue.o \
 	mm1/views/locations/tavern.o \
@@ -42,7 +43,6 @@ MODULE_OBJS := \
 	mm1/views/game_messages.o \
 	mm1/views/game_party.o \
 	mm1/views/game_view.o \
-	mm1/views/inn.o \
 	mm1/views/main_menu.o \
 	mm1/views/order.o \
 	mm1/views/protect.o \

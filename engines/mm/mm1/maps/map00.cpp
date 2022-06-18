@@ -58,7 +58,13 @@ void Map00::special() {
 }
 
 void Map00::special00() {
-
+	Sound::sound(SOUND_2);
+	send(InfoMessage(
+		STRING["maps.map00.inn_inside"],
+		[]() {
+			g_events->replaceView("Inn");
+		}
+	));
 }
 
 void Map00::special01() {
