@@ -121,7 +121,7 @@ int Object_GetBaseline(ScriptObject *objj) {
 }
 
 void Object_AnimateEx(ScriptObject *objj, int loop, int delay, int repeat,
-	int blocking, int direction, int sframe, int volume = -1) {
+	int blocking, int direction, int sframe, int volume = 100) {
 	if (direction == FORWARDS)
 		direction = 0;
 	else if (direction == BACKWARDS)

@@ -54,8 +54,8 @@ struct CharacterExtras {
 	int8  process_idle_this_time = 0;
 	int8  slow_move_counter = 0;
 	short animwait = 0;
-	int   anim_volume = -1; // default animation volume (-1 use clip default)
-	int   cur_anim_volume = -1; // current animation sound volume (-1 = default)
+	int   anim_volume = 100; // default animation volume (relative factor)
+	int   cur_anim_volume = 100; // current animation sound volume (relative factor)
 
 	void ReadFromSavegame(Shared::Stream *in, int save_ver);
 	void WriteToSavegame(Shared::Stream *out);
