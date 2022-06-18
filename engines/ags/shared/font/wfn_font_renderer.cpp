@@ -111,7 +111,7 @@ static int RenderChar(Bitmap *ds, const int at_x, const int at_y, Rect clip,
 		for (int w = sw, x = sx; w < width && x < ex; ++w, x += scale) {
 			if (((actdata[h * bytewid + (w / 8)] & (0x80 >> (w % 8))) != 0)) {
 				if (scale > 1) {
-					ds->FillRect(RectWH(x, y, scale - 1, scale - 1), text_color);
+					ds->FillRect(RectWH(x, y, scale, scale), text_color);
 				} else {
 					ds->PutPixel(x, y, text_color);
 				}
