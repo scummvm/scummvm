@@ -1334,11 +1334,11 @@ yyreduce:
   case 11: /* line: TIMETOK NUM mflag  */
 #line 148 "engines/hypno/grammar_mis.y"
                               {
-		Timer *a = new Timer((yyvsp[-1].i));
+		Timer *a = new Timer((yyvsp[-1].i), (yyvsp[0].s));
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
-		debugC(1, kHypnoDebugParser, "TIME %d", (yyvsp[-1].i)); }
+		debugC(1, kHypnoDebugParser, "TIME %d %s", (yyvsp[-1].i), (yyvsp[0].s)); }
 #line 1343 "engines/hypno/grammar_mis.cpp"
     break;
 

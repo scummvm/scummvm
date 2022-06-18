@@ -277,7 +277,6 @@ void HypnoEngine::runTransition(Transition *trans) {
 void HypnoEngine::runScene(Scene *scene) {
 	changeScreenMode(scene->resolution);
 	_refreshConversation = false;
-	_timerStarted = false;
 	Common::Event event;
 	Common::Point mousePos;
 	Common::List<uint32> videosToRemove;
@@ -298,7 +297,8 @@ void HypnoEngine::runScene(Scene *scene) {
 			if (lastCountdown == _countdown) {
 			} else if (_countdown > 0) {
 				uint32 c = 251; // red
-				runMenu(stack.back());
+				if (stack.size() > 0)
+					runMenu(stack.back());
 				uint32 minutes = _countdown / 60;
 				uint32 seconds = _countdown % 60;
 				drawString("console", Common::String::format("TIME: %d:%d", minutes, seconds), 80, 10, 60, c);
@@ -306,8 +306,10 @@ void HypnoEngine::runScene(Scene *scene) {
 			} else {
 				assert(!scene->levelIfLose.empty());
 				_nextLevel = scene->levelIfLose;
-				debugC(1, kHypnoDebugScene, "Finishing level and jumping to %s", _nextLevel.c_str());
+				debugC(1, kHypnoDebugScene, "Finishing level with timeout and jumping to %s", _nextLevel.c_str());
 				resetSceneState();
+				removeTimers();
+				_defaultCursorIdx = 0;
 				continue;
 			}
 			lastCountdown = _countdown;
@@ -557,7 +559,8 @@ void HypnoEngine::runScene(Scene *scene) {
 	_escapeSequentialVideoToPlay.clear();
 	_conversation.clear();
 
-	removeTimers();
+	if (!_keepTimerDuringScenes)
+		removeTimers();
 }
 
 void HypnoEngine::showConversation() { error("Function \"%s\" not implemented", __FUNCTION__); }

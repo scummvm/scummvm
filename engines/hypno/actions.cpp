@@ -93,6 +93,8 @@ void HypnoEngine::runTimer(Timer *a) {
 		return; // Do not start another timer
 
 	uint32 delay = a->delay / 1000;
+	if (a->flag == "vus0")
+		_keepTimerDuringScenes = true;
 	debugC(1, kHypnoDebugScene, "Starting timer with %d secons", delay);
 
 	if (delay == 0 || !startCountdown(delay))

@@ -240,6 +240,7 @@ void SpiderEngine::checkMixture(Code *code) {
 		}
 	}
 	_nextLevel = "<after_bus_hard>";
+	removeTimers();
 }
 
 void SpiderEngine::runNote(Code *code) {
