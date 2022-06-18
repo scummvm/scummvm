@@ -1261,6 +1261,7 @@ public:
 	NonBlockingScriptFunction *_runDialogOptionKeyPressHandlerFunc;
 	NonBlockingScriptFunction *_runDialogOptionTextInputHandlerFunc;
 	NonBlockingScriptFunction *_runDialogOptionRepExecFunc;
+	NonBlockingScriptFunction *_runDialogOptionCloseFunc;
 
 	ScriptSystem *_scsystem;
 

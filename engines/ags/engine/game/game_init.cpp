@@ -322,6 +322,7 @@ void AllocScriptModules() {
 	_GP(runDialogOptionKeyPressHandlerFunc).moduleHasFunction.resize(_G(numScriptModules), true);
 	_GP(runDialogOptionTextInputHandlerFunc).moduleHasFunction.resize(_G(numScriptModules), true);
 	_GP(runDialogOptionRepExecFunc).moduleHasFunction.resize(_G(numScriptModules), true);
+	_GP(runDialogOptionCloseFunc).moduleHasFunction.resize(_G(numScriptModules), true);
 	for (auto &val : _GP(moduleRepExecAddr)) {
 		val.Invalidate();
 	}

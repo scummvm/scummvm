@@ -351,6 +351,7 @@ Globals::Globals() {
 	_runDialogOptionKeyPressHandlerFunc = new NonBlockingScriptFunction("dialog_options_key_press", 3);
 	_runDialogOptionTextInputHandlerFunc = new NonBlockingScriptFunction("dialog_options_text_input", 2);
 	_runDialogOptionRepExecFunc = new NonBlockingScriptFunction("dialog_options_repexec", 1);
+	_runDialogOptionCloseFunc = new NonBlockingScriptFunction("dialog_options_close", 1);
 	_scsystem = new ScriptSystem();
 	_scriptModules = new std::vector<PScript>();
 	_moduleInst = new std::vector<ccInstance *>();
@@ -598,6 +599,7 @@ Globals::~Globals() {
 	delete _runDialogOptionKeyPressHandlerFunc;
 	delete _runDialogOptionTextInputHandlerFunc;
 	delete _runDialogOptionRepExecFunc;
+	delete _runDialogOptionCloseFunc;
 	delete _scsystem;
 	delete _scriptModules;
 	delete _moduleInst;
