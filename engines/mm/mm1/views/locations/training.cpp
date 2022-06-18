@@ -126,7 +126,7 @@ bool Training::msgKeypress(const KeypressMessage &msg) {
 			train();
 		break;
 	case Common::KEYCODE_g:
-		gatherGold();
+		g_globals->_currCharacter->gatherGold();
 		redraw();
 		break;
 	case Common::KEYCODE_1:

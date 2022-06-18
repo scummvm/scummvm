@@ -60,16 +60,6 @@ void Location::newLine() {
 		_textPos.y = 0;
 }
 
-void Location::gatherGold() {
-	uint total = 0;
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		total += g_globals->_party[i]._gold;
-		g_globals->_party[i]._gold = 0;
-	}
-
-	g_globals->_currCharacter->_gold = total;
-}
-
 bool Location::subtractGold(uint amount) {
 	if (g_globals->_currCharacter->_gold < amount) {
 		notEnoughGold();

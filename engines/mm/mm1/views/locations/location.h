@@ -55,11 +55,6 @@ protected:
 	void leave();
 
 	/**
-	 * Gathers all the party gold to the current character
-	 */
-	void gatherGold();
-
-	/**
 	 * Subtract gold from current character
 	 */
 	bool subtractGold(uint amount);

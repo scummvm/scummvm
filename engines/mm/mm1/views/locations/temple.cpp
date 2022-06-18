@@ -58,7 +58,7 @@ bool Temple::msgKeypress(const KeypressMessage &msg) {
 		donate();
 		break;
 	case Common::KEYCODE_g:
-		gatherGold();
+		g_globals->_currCharacter->gatherGold();
 		redraw();
 		break;
 	case Common::KEYCODE_1:

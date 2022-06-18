@@ -61,42 +61,23 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 
 	switch (_state) {
 	case DISPLAY:
-		if ((msg.flags & Common::KBD_CTRL) && msg.keycode == Common::KEYCODE_n) {
-			_state = RENAME;
-			_newName = "";
+		switch (msg.keycode) {
+		case Common::KEYCODE_g:
+			g_globals->_currCharacter->gatherGold();
 			redraw();
-		} else if ((msg.flags & Common::KBD_CTRL) && msg.keycode == Common::KEYCODE_d) {
-			_state = DELETE;
-			redraw();
-		}
+			break;
+		case Common::KEYCODE_q:
+			replaceView("QuickRef");
+			break;
+		default:
+			break;
+		 }
 		break;
 
 	case RENAME:
-		if (msg.ascii >= 32 && msg.ascii <= 127) {
-			_newName += toupper(msg.ascii);
-			redraw();
-		}
-		if (msg.keycode == Common::KEYCODE_RETURN || _newName.size() == 15) {
-			strncpy(g_globals->_currCharacter->_name, _newName.c_str(), 16);
-			_state = DISPLAY;
-			redraw();
-		} else if (msg.keycode == Common::KEYCODE_BACKSPACE &&
-				!_newName.empty()) {
-			_newName.deleteLastChar();
-			redraw();
-		}
 		break;
 
 	case DELETE:
-		if (msg.keycode == Common::KEYCODE_y) {
-			// Removes the character and returns to View All Characters
-			g_globals->_roster.remove(g_globals->_currCharacter);
-			close();
-		} else {
-			// Any other keypress returns to display mode
-			redraw();
-		}
-
 		_state = DISPLAY;
 		break;
 	}
