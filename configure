@@ -3096,6 +3096,12 @@ EOF
 		_sdlconfig=sdl-config
 		# RiscOS has no OpenGL support at all even though it's SDL based
 		_opengl_mode=none
+		if test "$_dynamic_modules" = yes ; then
+			_detection_features_static=no
+			_plugins_default=dynamic
+		else
+			_detection_features_full=no
+		fi
 		;;
 	solaris*)
 		append_var DEFINES "-DSOLARIS"
@@ -4244,6 +4250,7 @@ PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -Wl,-zmax-page
 		append_var DEFINES "-DELF_LOADER_CXA_ATEXIT"
 		append_var CXXFLAGS "-fuse-cxa-atexit"
 		append_var DEFINES "-DUNCACHED_PLUGINS"
+		append_var DEFINES "-DELF_NO_MEM_MANAGER"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS	+= backends/plugins/riscos/plugin.o
 PLUGIN_LDFLAGS		+= -static -Wl,-T$(srcdir)/backends/plugins/riscos/plugin.ld backends/plugins/riscos/plugin.o -Wl,--wrap=__rt_stkovf_split_small -Wl,--wrap=__rt_stkovf_split_big
@@ -6245,10 +6252,10 @@ case $_host_os in
 		if test "$_debug_build" = no; then
 			append_var CXXFLAGS "-mno-poke-function-name"
 		fi
-		append_var CXXFLAGS "-ffunction-sections"
-		append_var CXXFLAGS "-fdata-sections"
 		if test "$_dynamic_modules" = no ; then
 			append_var LDFLAGS "-Wl,--gc-sections"
+			append_var CXXFLAGS "-ffunction-sections"
+			append_var CXXFLAGS "-fdata-sections"
 		else
 			# toolchain asks for gc-sections
 			append_var LDFLAGS "-Wl,--no-gc-sections"
