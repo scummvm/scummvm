@@ -171,7 +171,7 @@ struct MacObsidianResources : public ProjectResources {
 	MacObsidianResources();
 	~MacObsidianResources();
 
-	void setup();
+	void setup(bool haveWordGames);
 	Common::SeekableReadStream *getSegmentStream(int index) const;
 	const Common::SharedPtr<CursorGraphicCollection> &getCursorGraphics() const;
 	const Common::SharedPtr<Obsidian::WordGameData> &getWordGameData() const;
@@ -195,7 +195,7 @@ MacObsidianResources::MacObsidianResources() : _installerArchive(nullptr), _inst
 	_cursorGraphics.reset(new CursorGraphicCollection());
 }
 
-void MacObsidianResources::setup() {
+void MacObsidianResources::setup(bool haveWordGames) {
 	debug(1, "Opening Obsidian Mac installer package...");
 
 	if (!_installerResMan.open("Obsidian Installer"))
@@ -242,47 +242,49 @@ void MacObsidianResources::setup() {
 			error("Failed to read cursor resources from file '%s'", fileName);
 	}
 
-	debug(1, "Loading word games...");
+	if (haveWordGames) {
+		debug(1, "Loading word games...");
 
-	{
-		Common::ArchiveMemberPtr rsgKit = _installerArchive->getMember(Common::Path("RSGKit.rPP"));
-		if (!rsgKit)
-			error("Couldn't find word game file in installer archive");
+		{
+			Common::ArchiveMemberPtr rsgKit = _installerArchive->getMember(Common::Path("RSGKit.rPP"));
+			if (!rsgKit)
+				error("Couldn't find word game file in installer archive");
 
-		_wordGameData.reset(new Obsidian::WordGameData());
+			_wordGameData.reset(new Obsidian::WordGameData());
 
-		Common::SharedPtr<Common::SeekableReadStream> stream(rsgKit->createReadStream());
-		if (!stream)
-			error("Failed to open word game file");
+			Common::SharedPtr<Common::SeekableReadStream> stream(rsgKit->createReadStream());
+			if (!stream)
+				error("Failed to open word game file");
 
-		Obsidian::WordGameLoadBucket buckets[] = {
-			{0, 0},				// 0 letters
-			{0xD7C8, 0xD7CC},	// 1 letter
-			{0xD7CC, 0xD84D},	// 2 letter
-			{0xD84D, 0xE25D},	// 3 letter
-			{0x1008C, 0x12AA8},	// 4 letter
-			{0x14C58, 0x19614},	// 5 letter
-			{0x1C73C, 0x230C1},	// 6 letter
-			{0x26D10, 0x2EB98},	// 7 letter
-			{0x32ADC, 0x3AA0E},	// 8 letter
-			{0x3E298, 0x45B88},	// 9 letter
-			{0x48BE8, 0x4E0D0},	// 10 letter
-			{0x4FFB0, 0x53460},	// 11 letter
-			{0x545F0, 0x56434},	// 12 letter
-			{0x56D84, 0x57CF0}, // 13 letter
-			{0x58158, 0x58833}, // 14 letter
-			{0x58A08, 0x58CD8}, // 15 letter
-			{0x58D8C, 0x58EAD}, // 16 letter
-			{0x58EF4, 0x58F72}, // 17 letter
-			{0x58F90, 0x58FDC},	// 18 letter
-			{0, 0},				// 19 letter
-			{0x58FEC, 0x59001},	// 20 letter
-			{0x59008, 0x59034},	// 21 letter
-			{0x5903C, 0x59053},	// 22 letter
-		};
+			Obsidian::WordGameLoadBucket buckets[] = {
+				{0, 0},             // 0 letters
+				{0xD7C8, 0xD7CC},   // 1 letter
+				{0xD7CC, 0xD84D},   // 2 letter
+				{0xD84D, 0xE25D},   // 3 letter
+				{0x1008C, 0x12AA8}, // 4 letter
+				{0x14C58, 0x19614}, // 5 letter
+				{0x1C73C, 0x230C1}, // 6 letter
+				{0x26D10, 0x2EB98}, // 7 letter
+				{0x32ADC, 0x3AA0E}, // 8 letter
+				{0x3E298, 0x45B88}, // 9 letter
+				{0x48BE8, 0x4E0D0}, // 10 letter
+				{0x4FFB0, 0x53460}, // 11 letter
+				{0x545F0, 0x56434}, // 12 letter
+				{0x56D84, 0x57CF0}, // 13 letter
+				{0x58158, 0x58833}, // 14 letter
+				{0x58A08, 0x58CD8}, // 15 letter
+				{0x58D8C, 0x58EAD}, // 16 letter
+				{0x58EF4, 0x58F72}, // 17 letter
+				{0x58F90, 0x58FDC}, // 18 letter
+				{0, 0},             // 19 letter
+				{0x58FEC, 0x59001}, // 20 letter
+				{0x59008, 0x59034}, // 21 letter
+				{0x5903C, 0x59053}, // 22 letter
+			};
 
-		if (!_wordGameData->load(stream.get(), buckets, 23, 1, false))
-			error("Failed to load word game data");
+			if (!_wordGameData->load(stream.get(), buckets, 23, 1, false))
+				error("Failed to load word game data");
+		}
 	}
 
 	debug(1, "Finished unpacking installer resources");
@@ -402,7 +404,11 @@ Common::Error MTropolisEngine::run() {
 			}
 		}
 
-		Common::SharedPtr<Obsidian::WordGameData> wgData = loadWinObsidianWordGameData();
+		Common::SharedPtr<Obsidian::WordGameData> wgData;
+
+		// Non-English releases don't have Bureau word game puzzles
+		if (_gameDescription->desc.language == Common::Language::EN_ANY)
+			wgData = loadWinObsidianWordGameData();
 
 		desc->setCursorGraphics(cursors);
 
@@ -425,7 +431,8 @@ Common::Error MTropolisEngine::run() {
 		MacObsidianResources *resources = new MacObsidianResources();
 		Common::SharedPtr<ProjectResources> resPtr(resources);
 
-		resources->setup();
+		// Non-English releases don't have Bureau word game puzzles
+		resources->setup(_gameDescription->desc.language == Common::Language::EN_ANY);
 
 		_runtime->addVolume(0, "Installed", true);
 		_runtime->addVolume(1, "OBSIDIAN1", true);

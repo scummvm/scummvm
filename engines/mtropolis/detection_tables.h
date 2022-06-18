@@ -89,7 +89,6 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			{
 				{ "Obsidian.exe", 0, "0b50a779136ae6c9cc8bcfa3148c1127", 762368 },
 				{ "Obsidian.c95", 0, "fea68ff30ff319cdab30b79d2850a480", 145920 },
-				{ "RSGKit.r95", 0, "071dc9098f9610fcec45c96342b1b69a", 625152 },
 				{ "MCURSORS.C95", 0, "dcbe480913eebf233d0cdc33809bf048", 87040 },
 				{ "Obsidian Data 1.MPL", 0, "f96fc3a3a0a645009265c74c5fcb2c6a", 18972392 },
 				{ "Obsidian Data 2.MPX", 0, "b42a5a7bc36b2de2f9882e8a05435857", 559682181 },
