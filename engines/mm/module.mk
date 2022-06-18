@@ -38,6 +38,7 @@ MODULE_OBJS := \
 	mm1/views/locations/training.o \
 	mm1/views/are_you_ready.o \
 	mm1/views/character_base.o \
+	mm1/views/character_info.o \
 	mm1/views/character_manage.o \
 	mm1/views/characters.o \
 	mm1/views/create_characters.o \

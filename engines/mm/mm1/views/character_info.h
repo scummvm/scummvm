@@ -19,38 +19,32 @@
  *
  */
 
-#ifndef MM1_VIEWS_VIEW_CHARACTER_BASE_H
-#define MM1_VIEWS_VIEW_CHARACTER_BASE_H
+#ifndef MM1_VIEWS_CHARACTER_INFO_H
+#define MM1_VIEWS_CHARACTER_INFO_H
 
 #include "common/array.h"
-#include "mm/mm1/views/text_view.h"
+#include "mm/mm1/views/character_base.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 
 /**
- * Base class for showing character information.
- * MM1 has three character dialogs:
- * 1) Character management from Create Characters
- * 2) Inn that allows simply viewing characters
- * 3) In-game character display
+ * In-game character dialog
  */
-class CharacterBase : public TextView {
-private:
-	void printStats();
-	void printSummary();
-	void printInventory();
-protected:
-	void printCondition();
-
+class CharacterInfo : public CharacterBase {
+	enum ViewState { DISPLAY = 0, RENAME = 1, DELETE = 2 };
+	ViewState _state = DISPLAY;
+	Common::String _newName;
 public:
-	CharacterBase(const Common::String &name) : TextView(name) {}
-	~CharacterBase() {}
+	CharacterInfo() : CharacterBase("CharacterInfo") {}
+	virtual ~CharacterInfo() {}
 
-	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 };
+
 
 } // namespace Views
 } // namespace MM1

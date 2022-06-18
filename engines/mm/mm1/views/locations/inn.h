@@ -23,6 +23,7 @@
 #define MM1_VIEWS_LOCATIONS_INN_H
 
 #include "mm/mm1/views/text_view.h"
+#include "mm/mm1/views/character_view.h"
 #include "mm/mm1/data/int_array.h"
 
 namespace MM {
@@ -32,6 +33,7 @@ namespace Locations {
 
 class Inn : public TextView {
 private:
+	CharacterView _characterView;
 	Common::Array<uint> _charNums;
 	IntArray _partyChars;
 public:

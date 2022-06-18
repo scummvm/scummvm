@@ -50,11 +50,28 @@ void Game::draw() {
 bool Game::msgAction(const ActionMessage &msg) {
 	switch (msg._action) {
 	case KEYBIND_ORDER:
-		g_events->send("Game", GameMessage("ORDER"));
+//		g_events->send("Game", GameMessage("ORDER"));
+		addView("Order");
+		return true;
+	case KEYBIND_QUICKREF:
+		addView("QuickRef");
 		return true;
 	case KEYBIND_SEARCH:
 		MM1::Game::Search::execute();
 		break;
+	case KEYBIND_VIEW_PARTY1:
+	case KEYBIND_VIEW_PARTY2:
+	case KEYBIND_VIEW_PARTY3:
+	case KEYBIND_VIEW_PARTY4:
+	case KEYBIND_VIEW_PARTY5:
+	case KEYBIND_VIEW_PARTY6: {
+		uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
+		if (charNum < g_globals->_party.size()) {
+			g_globals->_currCharacter = &g_globals->_party[charNum];
+			addView("CharacterInfo");
+		}
+		break;
+	}
 	default:
 		break;
 	}

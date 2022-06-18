@@ -20,6 +20,11 @@ dialogs:
 		misc: "MISC       PRICE"
 		backpack: "BACKPACK     PRICE"
 		thankyou: "THANK YOU!"
+	character:
+		legend1: "'Q' QUICK REF     'C' CAST    'R' REMOVE"
+		legend2: " # VIEW OTHER     'D' DISCARD 'S' SHARE"
+		legend3: "                  'E' EQUIP   'T' TRADE"
+		legend4: "'ESC' TO GO BACK  'G' GATHER  'U' USE"
 	create_characters:
 		title: "CREATE NEW CHARACTERS"
 		intellect: "INTELLECT...="
