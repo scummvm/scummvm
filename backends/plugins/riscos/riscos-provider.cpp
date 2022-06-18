@@ -43,6 +43,7 @@ void pluginHack() {
 	f = tanhf(f);
 	f = logf(f);
 	f = lroundf(f);
+	f = expf(f);
 	f = frexpf(f, NULL);
 	f = ldexpf(f, 1);
 	f = fmaxf(f, f);
