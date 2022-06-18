@@ -19,7 +19,7 @@
  *
  */
 
-#include "mm/mm1/views/view_characters.h"
+#include "mm/mm1/views/character_base.h"
 #include "mm/mm1/utils/strings.h"
 #include "mm/mm1/globals.h"
 
@@ -27,68 +27,7 @@ namespace MM {
 namespace MM1 {
 namespace Views {
 
-void ViewCharacters::draw() {
-	drawTextBorder();
-
-	Roster &roster = g_globals->_roster;
-	writeString(11, 0, STRING["dialogs.view_characters.title"]);
-	int lineNum = 0;
-	_charIndexes.clear();
-
-	if (g_globals->_roster.empty()) {
-		writeString(8, 5, STRING["dialogs.misc.no_characters"]);
-		escToGoBack();
-		return;
-	}
-
-	// Loop to print characters
-	for (int charNum = 0; charNum < 18; ++charNum) {
-		if (roster._towns[charNum]) {
-			const Character &re = roster[charNum];
-			Common::String charName = re._name;
-			pad_string(charName, 16, '.');
-
-			Common::String level = Common::String::format("(%d)L%d",
-					roster._towns[charNum], re._level);
-			pad_string(level, 7);
-
-			Common::String className = (re._class >= KNIGHT && re._class <= ROBBER) ?
-				STRING[Common::String::format("stats.classes.%d", (int)re._class)] :
-				STRING["stats.none"];
-
-			// Form line like: A) charName...(1)L1  Knight
-			Common::String line = Common::String::format("(%c) %s%s%s",
-				'A' + lineNum, charName.c_str(), level.c_str(), className.c_str());
-			writeString(3, 3 + lineNum++, line);
-
-			_charIndexes.push_back(charNum);
-		}
-	}
-
-	// Print legend at the bottom
-	writeString(6, 22, Common::String::format(
-		STRING["dialogs.view_characters.legend1"].c_str(),
-		'A' + (int)_charIndexes.size() - 1));
-	writeString(12, 24, STRING["dialogs.misc.go_back"]);
-}
-
-bool ViewCharacters::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		close();
-	} else if (msg.keycode >= Common::KEYCODE_a &&
-		msg.keycode <= (Common::KEYCODE_a + (int)_charIndexes.size() - 1)) {
-		// Character selected
-		uint charIndex = _charIndexes[msg.keycode - Common::KEYCODE_a];
-		g_globals->_currCharacter = &g_globals->_roster[charIndex];
-		addView("ViewCharacter");
-	}
-
-	return false;
-}
-
-/*------------------------------------------------------------------------*/
-
-void CharacterStats::printStats() {
+void CharacterBase::printStats() {
 	Character &re = *g_globals->_currCharacter;
 	printSummary();
 
@@ -163,7 +102,7 @@ void CharacterStats::printStats() {
 	printInventory();
 }
 
-void CharacterStats::printSummary() {
+void CharacterBase::printSummary() {
 	Character &re = *g_globals->_currCharacter;
 	writeString(1, 0, re._name);
 
@@ -189,7 +128,7 @@ void CharacterStats::printSummary() {
 		writeString(32, 0, STRING["stats.none"]);
 }
 
-void CharacterStats::printCondition() {
+void CharacterBase::printCondition() {
 	Character &re = *g_globals->_currCharacter;
 	writeString(STRING["stats.attributes.cond"]);
 	_textPos.x++;
@@ -228,7 +167,7 @@ void CharacterStats::printCondition() {
 	}
 }
 
-void CharacterStats::printInventory() {
+void CharacterBase::printInventory() {
 	Character &re = *g_globals->_currCharacter;
 	writeString(0, 12, STRING["stats.inventory"]);
 
@@ -252,99 +191,10 @@ void CharacterStats::printInventory() {
 	}
 }
 
-/*------------------------------------------------------------------------*/
-
-void ViewCharacter::draw() {
+void CharacterBase::draw() {
 	assert(g_globals->_currCharacter);
 	clearSurface();
 	printStats();
-
-	switch (_state) {
-	case DISPLAY:
-		writeString(6, 21, STRING["dialogs.view_character.rename"]);
-		writeString(6, 22, STRING["dialogs.view_character.delete"]);
-		escToGoBack();
-		break;
-
-	case RENAME:
-		writeString(6, 21, STRING["dialogs.view_character.name"]);
-		writeString(_newName);
-		writeChar('_');
-		break;
-
-	case DELETE:
-		writeString(6, 21, STRING["dialogs.view_character.are_you_sure"]);
-		break;
-	}
-}
-
-bool ViewCharacter::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		if (_state != DISPLAY) {
-			redraw();
-		} else {
-			close();
-		}
-
-		_state = DISPLAY;
-		return true;
-	}
-
-	switch (_state) {
-	case DISPLAY:
-		if ((msg.flags & Common::KBD_CTRL) && msg.keycode == Common::KEYCODE_n) {
-			_state = RENAME;
-			_newName = "";
-			redraw();
-		} else if ((msg.flags & Common::KBD_CTRL) && msg.keycode == Common::KEYCODE_d) {
-			_state = DELETE;
-			redraw();
-		}
-		break;
-
-	case RENAME:
-		if (msg.ascii >= 32 && msg.ascii <= 127) {
-			_newName += toupper(msg.ascii);
-			redraw();
-		}
-		if (msg.keycode == Common::KEYCODE_RETURN || _newName.size() == 15) {
-			strncpy(g_globals->_currCharacter->_name, _newName.c_str(), 16);
-			_state = DISPLAY;
-			redraw();
-		} else if (msg.keycode == Common::KEYCODE_BACKSPACE &&
-				!_newName.empty()) {
-			_newName.deleteLastChar();
-			redraw();
-		}
-		break;
-
-	case DELETE:
-		if (msg.keycode == Common::KEYCODE_y) {
-			// Removes the character and returns to View All Characters
-			g_globals->_roster.remove(g_globals->_currCharacter);
-			close();
-		} else {
-			// Any other keypress returns to display mode
-			redraw();
-		}
-
-		_state = DISPLAY;
-		break;
-	}
-
-	return true;
-}
-
-bool ViewCharacter::msgAction(const ActionMessage &msg) {
-	if (msg._action >= KEYBIND_VIEW_PARTY1 &&
-			msg._action <= KEYBIND_VIEW_PARTY6) {
-		g_globals->_currCharacter = &g_globals->_party[
-			msg._action - KEYBIND_VIEW_PARTY1];
-		addView();
-		return true;
-	}
-
-	return false;
 }
 
 } // namespace Views

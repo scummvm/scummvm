@@ -30,7 +30,7 @@
 #include "mm/mm1/views/protect.h"
 #include "mm/mm1/views/quick_ref.h"
 #include "mm/mm1/views/title.h"
-#include "mm/mm1/views/view_characters.h"
+//#include "mm/mm1/views/char.h"
 #include "mm/mm1/views_enh/game.h"
 
 namespace MM {
@@ -49,8 +49,8 @@ private:
 	Views::Protect _protect;
 	Views::QuickRef _quickRef;
 	Views::Title _title;
-	Views::ViewCharacters _viewCharacters;
-	Views::ViewCharacter _viewCharacter;
+//	Views::ViewCharacters _viewCharacters;
+//	Views::ViewCharacter _viewCharacter;
 public:
 	Dialogs() {}
 };

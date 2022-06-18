@@ -19,26 +19,28 @@
  *
  */
 
-#ifndef MM1_VIEWS_QUICK_REF_H
-#define MM1_VIEWS_QUICK_REF_H
+#ifndef MM1_VIEWS_CHARACTERS_H
+#define MM1_VIEWS_CHARACTERS_H
 
-#include "mm/mm1/views/character_base.h"
+#include "common/array.h"
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 
 /**
- * Quick reference list of all the characters.
+ * Dialog for View All Characters
  */
-class QuickRef : public CharacterBase {
+class Characters : public TextView {
+private:
+	Common::Array<uint> _charIndexes;
 public:
-	QuickRef() : CharacterBase("QuickRef") {}
-	virtual ~QuickRef() {}
+	Characters() : TextView("Characters") {}
+	virtual ~Characters() {}
 
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
 };
 
 } // namespace Views

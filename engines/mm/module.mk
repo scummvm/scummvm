@@ -37,6 +37,9 @@ MODULE_OBJS := \
 	mm1/views/locations/temple.o \
 	mm1/views/locations/training.o \
 	mm1/views/are_you_ready.o \
+	mm1/views/character_base.o \
+	mm1/views/character_manage.o \
+	mm1/views/characters.o \
 	mm1/views/create_characters.o \
 	mm1/views/game.o \
 	mm1/views/game_commands.o \
@@ -50,7 +53,6 @@ MODULE_OBJS := \
 	mm1/views/statue.o \
 	mm1/views/title.o \
 	mm1/views/text_view.o \
-	mm1/views/view_characters.o \
 	mm1/views_enh/button_container.o \
 	mm1/views_enh/dialogs.o \
 	mm1/views_enh/game.o \

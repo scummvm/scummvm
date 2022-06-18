@@ -19,9 +19,10 @@
  *
  */
 
-#ifndef MM1_VIEWS_QUICK_REF_H
-#define MM1_VIEWS_QUICK_REF_H
+#ifndef MM1_VIEWS_CHARACTER_MANAGE_H
+#define MM1_VIEWS_CHARACTER_MANAGE_H
 
+#include "common/array.h"
 #include "mm/mm1/views/character_base.h"
 
 namespace MM {
@@ -29,17 +30,21 @@ namespace MM1 {
 namespace Views {
 
 /**
- * Quick reference list of all the characters.
+ * Character management dialog
  */
-class QuickRef : public CharacterBase {
+class CharacterManage : public CharacterBase {
+	enum ViewState { DISPLAY = 0, RENAME = 1, DELETE = 2 };
+	ViewState _state = DISPLAY;
+	Common::String _newName;
 public:
-	QuickRef() : CharacterBase("QuickRef") {}
-	virtual ~QuickRef() {}
+	CharacterManage() : CharacterBase("CharacterManage") {}
+	virtual ~CharacterManage() {}
 
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 };
+
 
 } // namespace Views
 } // namespace MM1
