@@ -163,6 +163,7 @@ const GlkDetectionEntry SCOTT_GAMES[] = {
 
 	// ZX Spectrum games
 	DT_ENTRY1("marveladventure", "ZXSpectrum", "0eec511d3cde815c73e5464ab0cdbef9", 40727),
+	DT_ENTRY1("gremlins",		 "ZXSpectrum", "4200b260b484a3a9766d587def3113a2", 45332),
 
 	// 11 Mysterious Adventures
 	DT_ENTRY1("goldenbaton",	"ZXSpectrum", "cb7dadc9d5f8bce453b9139265e4dd7d", 32060),
@@ -178,11 +179,12 @@ const GlkDetectionEntry SCOTT_GAMES[] = {
 	DT_ENTRY1("waxworks11",		"ZXSpectrum", "6c6fbbbb50032463a6ea71c6750ea1f5", 32662),
 
 	// C64 Games
-	DT_ENTRY1("robinofsherwood", "C64", "6bf95a48f366bdf8af3a198c7b723c77", 174848),
+	DT_ENTRY1("robinofsherwood", "C64", "10109d9776b9372f9c768b53a664b113", 174848),
 	DT_ENTRY1("robinofsherwood", "C64", "552c95ec15d750cbfa02c1f11dcbca1e", 36278),
+
 	// 11 Mysterious Adventures
-	DT_ENTRY1("mysadv1", "C64", "ce5a68cf43b2f29d99c0135b89f4fe31", 174848),
-	DT_ENTRY1("mysadv2", "C64", "1e1ff48f80a8220f5ab9d14c975197b8", 174848),
+	DT_ENTRY1("mysadv1", "C64", "b4d8fc4eabed4f2400717303561ad0fa", 174848),
+	DT_ENTRY1("mysadv2", "C64", "3ce5ea1a0473244bf469fd3c51f1dc48", 174848),
 	DT_END_MARKER
 };
 
