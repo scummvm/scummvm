@@ -156,10 +156,10 @@ static const GameSettings gameVariantsTable[] = {
 	{"maniac", "Apple II",   0, GID_MANIAC, 0, 0, MDT_APPLEIIGS, 0, Common::kPlatformApple2GS, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
 	{"maniac", "C64",        0, GID_MANIAC, 0, 0, MDT_C64, 0, Common::kPlatformC64, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI) },
 	{"maniac", "C64 Demo",   0, GID_MANIAC, 0, 0, MDT_C64, GF_DEMO, Common::kPlatformC64, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI) },
-	{"maniac", "V1",      "v1", GID_MANIAC, 1, 0, MDT_PCSPK | MDT_PCJR, 0, Common::kPlatformDOS, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
+	{"maniac", "V1",      "v1", GID_MANIAC, 1, 0, MDT_PCSPK | MDT_PCJR, 0, Common::kPlatformDOS, GUIO3(GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_ENHANCEMENTS)},
 	{"maniac", "V1 Demo", "v1", GID_MANIAC, 1, 0, MDT_PCSPK | MDT_PCJR, GF_DEMO, Common::kPlatformDOS, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
 	{"maniac", "NES",        0, GID_MANIAC, 1, 0, MDT_NONE,  0, Common::kPlatformNES, GUIO4(GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_NOASPECT, GUIO_ENHANCEMENTS)},
-	{"maniac", "V2",      "v2", GID_MANIAC, 2, 0, MDT_PCSPK | MDT_PCJR, 0, UNK, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
+ 	{"maniac", "V2",      "v2", GID_MANIAC, 2, 0, MDT_PCSPK | MDT_PCJR, 0, UNK, GUIO3(GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_ENHANCEMENTS)},
 	{"maniac", "V2 Demo", "v2", GID_MANIAC, 2, 0, MDT_PCSPK | MDT_PCJR, GF_DEMO, Common::kPlatformDOS, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
 
 	{"zak", "V1",       "v1", GID_ZAK, 1, 0, MDT_PCSPK | MDT_PCJR, 0, UNK, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
