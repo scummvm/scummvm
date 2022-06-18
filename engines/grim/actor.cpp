@@ -1838,6 +1838,9 @@ bool Actor::shouldDrawShadow(int shadowId) {
 
 	// Don't draw a shadow if the shadow caster and the actor are on different sides
 	// of the the shadow plane.
+
+	if (shadow->planeList.size() == 0)
+		return false;
 	Sector *sector = shadow->planeList.front().sector;
 	Math::Vector3d n = sector->getNormal();
 	Math::Vector3d p = sector->getVertices()[0];
