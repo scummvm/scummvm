@@ -59,7 +59,7 @@ public:
 	typename Common::List<T>::iterator insert(typename Common::List<T>::iterator pos,
 			const T &element) {
 		Common::List<T>::insert(pos, element);
-		return pos;
+		return --pos;
 	}
 
 	reverse_iterator rbegin() {
