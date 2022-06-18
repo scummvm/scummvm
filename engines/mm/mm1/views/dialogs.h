@@ -26,7 +26,6 @@
 #include "mm/mm1/views/are_you_ready.h"
 #include "mm/mm1/views/create_characters.h"
 #include "mm/mm1/views/game.h"
-#include "mm/mm1/views/inn.h"
 #include "mm/mm1/views/main_menu.h"
 #include "mm/mm1/views/order.h"
 #include "mm/mm1/views/protect.h"
@@ -34,6 +33,7 @@
 #include "mm/mm1/views/title.h"
 #include "mm/mm1/views/view_characters.h"
 #include "mm/mm1/views/locations/blacksmith.h"
+#include "mm/mm1/views/locations/inn.h"
 #include "mm/mm1/views/locations/market.h"
 #include "mm/mm1/views/locations/statue.h"
 #include "mm/mm1/views/locations/tavern.h"
@@ -49,7 +49,6 @@ private:
 	Views::AreYouReady _areYouReady;
 	Views::CreateCharacters _createCharacters;
 	Views::Game _game;
-	Views::Inn _inn;
 	Views::MainMenu _mainMenu;
 	Views::Order _order;
 	Views::Protect _protect;
@@ -58,6 +57,7 @@ private:
 	Views::ViewCharacters _viewCharacters;
 	Views::ViewCharacter _viewCharacter;
 	Views::Locations::Blacksmith _blacksmith;
+	Views::Locations::Inn _inn;
 	Views::Locations::Market _market;
 	Views::Locations::Statue _statue;
 	Views::Locations::Tavern _tavern;

@@ -99,6 +99,13 @@ struct Character {
 	void synchronize(Common::Serializer &s);
 
 	/**
+	 * Equality test
+	 */
+	bool operator==(const Character &rhs) const {
+		return !strcmp(_name, rhs._name);
+	}
+
+	/**
 	 * Clearing the character
 	 */
 	void clear();

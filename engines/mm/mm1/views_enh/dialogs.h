@@ -25,7 +25,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/views/are_you_ready.h"
 #include "mm/mm1/views/create_characters.h"
-#include "mm/mm1/views/inn.h"
+#include "mm/mm1/views/locations/inn.h"
 #include "mm/mm1/views/main_menu.h"
 #include "mm/mm1/views/protect.h"
 #include "mm/mm1/views/quick_ref.h"
@@ -44,7 +44,7 @@ private:
 	// Unenhanced views
 	Views::AreYouReady _areYouReady;
 	Views::CreateCharacters _createCharacters;
-	Views::Inn _inn;
+	Views::Locations::Inn _inn;
 	Views::MainMenu _mainMenu;
 	Views::Protect _protect;
 	Views::QuickRef _quickRef;

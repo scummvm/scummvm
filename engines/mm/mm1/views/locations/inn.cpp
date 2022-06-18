@@ -19,19 +19,35 @@
  *
  */
 
-#include "mm/mm1/views/inn.h"
+#include "mm/mm1/views/locations/inn.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
+namespace Locations {
 
 bool Inn::msgFocus(const FocusMessage &msg) {
+	// Save the roster
+	g_globals->_roster.save();
+
 	// Get a list of characters in the town
 	_charNums.clear();
 	for (uint i = 0; i < ROSTER_COUNT; ++i) {
 		if (g_globals->_roster._towns[i] == g_globals->_startingTown)
 			_charNums.push_back(i);
+	}
+
+	// Build up a list of characters in the party
+	// (for if we're opening the inn from in-game)
+	_partyChars.clear();
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		for (uint j = 0; j < ROSTER_COUNT; ++j) {
+			if (g_globals->_roster[j] == g_globals->_party[i]) {
+				_partyChars.push_back(j);
+				break;
+			}
+		}
 	}
 
 	return true;
@@ -60,7 +76,7 @@ void Inn::draw() {
 				Common::Point(20, 6 + idx - 9);
 
 			// Write character
-			writeChar(g_globals->_partyChars.contains(charNum) ? '@' : ' ');
+			writeChar(_partyChars.contains(charNum) ? '@' : ' ');
 			writeChar('A' + idx);
 			writeChar(')');
 			writeString(re._name);
@@ -74,9 +90,9 @@ void Inn::draw() {
 		writeString(range);
 		writeString(STRING["dialogs.inn.add_remove"]);
 
-		if (!g_globals->_partyChars.empty())
+		if (!_partyChars.empty())
 			writeString(13, 22, STRING["dialogs.inn.exit"]);
-		if (g_globals->_partyChars.size() == 6)
+		if (_partyChars.size() == 6)
 			writeString(10, 16, STRING["dialogs.inn.full"]);
 	}
 }
@@ -86,15 +102,15 @@ bool Inn::msgKeypress(const KeypressMessage &msg) {
 		replaceView("MainMenu");
 		return true;
 	} else if (msg.keycode >= Common::KEYCODE_a &&
-			msg.keycode < (Common::KeyCode)(Common::KEYCODE_a + _charNums.size())) {
+		msg.keycode < (Common::KeyCode)(Common::KEYCODE_a + _charNums.size())) {
 		int charNum = _charNums[msg.keycode - Common::KEYCODE_a];
 
 		if (msg.flags & Common::KBD_CTRL) {
 			// Toggle in party
-			if (g_globals->_partyChars.contains(charNum))
-				g_globals->_partyChars.remove(charNum);
+			if (_partyChars.contains(charNum))
+				_partyChars.remove(charNum);
 			else
-				g_globals->_partyChars.push_back(charNum);
+				_partyChars.push_back(charNum);
 
 			redraw();
 
@@ -106,9 +122,9 @@ bool Inn::msgKeypress(const KeypressMessage &msg) {
 	} else if (msg.keycode == Common::KEYCODE_x) {
 		// Load party from selected characters
 		g_globals->_party.clear();
-		for (uint i = 0; i < g_globals->_partyChars.size(); ++i)
+		for (uint i = 0; i < _partyChars.size(); ++i)
 			g_globals->_party.push_back(
-				g_globals->_roster[g_globals->_partyChars[i]]);
+				g_globals->_roster[_partyChars[i]]);
 
 		// Load the given town
 		g_globals->_maps.loadTown(g_globals->_startingTown);
@@ -117,6 +133,7 @@ bool Inn::msgKeypress(const KeypressMessage &msg) {
 	return false;
 }
 
+} // namespace Locations
 } // namespace Views
 } // namespace MM1
 } // namespace MM
