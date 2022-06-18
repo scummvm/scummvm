@@ -471,12 +471,12 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 		tglEnable(TGL_POLYGON_OFFSET_FILL);
 		tglDisable(TGL_LIGHTING);
 		tglDisable(TGL_TEXTURE_2D);
-		//tglColor3f(0.0f, 1.0f, 0.0f); // debug draw color
 		if (g_grim->getGameType() == GType_GRIM) {
 			tglColor3ub(_shadowColorR, _shadowColorG, _shadowColorB);
 		} else {
 			tglColor3ub(_currentShadowArray->color.getRed(), _currentShadowArray->color.getGreen(), _currentShadowArray->color.getBlue());
 		}
+		//tglColor3f(0.0f, 1.0f, 0.0f); // debug draw color
 		shadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
 

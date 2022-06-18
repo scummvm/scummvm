@@ -537,12 +537,12 @@ void GfxOpenGL::startActorDraw(const Actor *actor) {
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
-		// glColor3f(0.0f, 1.0f, 0.0f); // debug draw color
 		if (g_grim->getGameType() == GType_GRIM) {
 			glColor3ub(_shadowColorR, _shadowColorG, _shadowColorB);
 		} else {
 			glColor3ub(_currentShadowArray->color.getRed(), _currentShadowArray->color.getGreen(), _currentShadowArray->color.getBlue());
 		}
+		//glColor3f(0.0f, 1.0f, 0.0f); // debug draw color
 		shadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
 
