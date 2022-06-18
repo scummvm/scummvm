@@ -3196,6 +3196,7 @@ if test -n "$_host"; then
 			# -O2 causes internal compiler error on VFP only with gcc 4.7
 			_optimization_level=-O1
 			append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/vfp/lib"
+			append_var PLUGIN_LDFLAGS "-L$GCCSDK_INSTALL_ENV/vfp/lib"
 			append_var CXXFLAGS "-isystem $GCCSDK_INSTALL_ENV/vfp/include"
 			if test -z "$PKG_CONFIG_LIBDIR"; then
 				PKG_CONFIG_LIBDIR="$GCCSDK_INSTALL_ENV/vfp/lib/pkgconfig"
@@ -3207,10 +3208,12 @@ if test -n "$_host"; then
 			append_var CXXFLAGS "-mtune=cortex-a9"
 			append_var CXXFLAGS "-mfpu=vfp"
 			append_var LDFLAGS "-mfpu=vfp"
+			append_var PLUGIN_LDFLAGS "-mfpu=vfp"
 			append_var ASFLAGS "-mfpu=vfp"
 			;;
 		arm-*riscos)
 			append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/lib"
+			append_var PLUGIN_LDFLAGS "-L$GCCSDK_INSTALL_ENV/lib"
 			append_var CXXFLAGS "-isystem $GCCSDK_INSTALL_ENV/include"
 			if test -z "$PKG_CONFIG_LIBDIR"; then
 				PKG_CONFIG_LIBDIR="$GCCSDK_INSTALL_ENV/lib/pkgconfig"
