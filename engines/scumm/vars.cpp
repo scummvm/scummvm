@@ -558,6 +558,9 @@ void ScummEngine_v8::setupScummVars() {
 	VAR_KEYPRESS = 132;
 	VAR_BLAST_ABOVE_TEXT = 133;
 	VAR_SYNC = 134;
+
+	VAR_SAVELOAD_PAGE = 175;
+	VAR_OBJECT_LABEL_FLAG = 176;
 }
 #endif
 
