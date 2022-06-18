@@ -33,7 +33,7 @@ namespace Views {
  * In-game character dialog
  */
 class CharacterInfo : public CharacterBase {
-	enum ViewState { DISPLAY = 0, RENAME = 1, DELETE = 2 };
+	enum ViewState { DISPLAY = 0, EQUIP = 1, REMOVE = 2 };
 	ViewState _state = DISPLAY;
 	Common::String _newName;
 public:

@@ -30,6 +30,30 @@ static const int CLASS_HP_PER_LEVEL[6] = {
 	12, 10, 10, 8, 6, 8
 };
 
+void Inventory::clear() {
+	Common::fill(_items, _items + INVENTORY_COUNT, 0);
+}
+
+void Inventory::synchronize(Common::Serializer &s) {
+	s.syncBytes(_items, INVENTORY_COUNT);
+}
+
+bool Inventory::empty() const {
+	for (uint i = 0; i < INVENTORY_COUNT; ++i) {
+		if (_items[i])
+			return false;
+	}
+	return true;
+}
+
+bool Inventory::full() const {
+	for (uint i = 0; i < INVENTORY_COUNT; ++i) {
+		if (!_items[i])
+			return false;
+	}
+	return true;
+}
+
 void Character::synchronize(Common::Serializer &s) {
 	s.syncBytes((byte *)_name, 16);
 	s.syncAsByte(_sex);
@@ -72,8 +96,8 @@ void Character::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_food);
 	s.syncAsByte(_condition);
 
-	s.syncBytes(_equipped, INVENTORY_COUNT);
-	s.syncBytes(_backpack, INVENTORY_COUNT);
+	_equipped.synchronize(s);
+	_backpack.synchronize(s);
 
 	// TODO: Figure purpose of remaining unknown fields
 	s.skip(51);
@@ -99,8 +123,9 @@ void Character::clear() {
 	_ac = 0;
 	_food = 0;
 	_condition = 0;
-	Common::fill(_equipped, _equipped + INVENTORY_COUNT, 0);
-	Common::fill(_backpack, _backpack + INVENTORY_COUNT, 0);
+	_equipped.clear();
+	_backpack.clear();
+	_backpack14.clear();
 
 	_alignmentInitial = GOOD;
 	_alignment = GOOD;

@@ -54,6 +54,28 @@ enum Condition {
 	DISEASED = 8,  SILENCED = 4, BLINDED = 2, ASLEEP = 1
 };
 
+class Inventory {
+private:
+	byte _items[INVENTORY_COUNT];
+public:
+	Inventory() {
+		clear();
+	}
+	byte &operator[](uint idx) {
+		assert(idx < INVENTORY_COUNT);
+		return _items[idx];
+	}
+	const byte &operator[](uint idx) const {
+		assert(idx < INVENTORY_COUNT);
+		return _items[idx];
+	}
+
+	void synchronize(Common::Serializer &s);
+	void clear();
+	bool empty() const;
+	bool full() const;
+};
+
 struct Character {
 	char _name[16] = { 0 };
 	Sex _sex = MALE;
@@ -81,10 +103,9 @@ struct Character {
 	byte _ac = 0;
 	uint8 _food = 0;
 	uint8 _condition = 0;
-	uint8 _equipped[INVENTORY_COUNT] = { 0 };
-	uint8 _backpack[INVENTORY_COUNT] = { 0 };
-
-	uint8 _backpack14[INVENTORY_COUNT] = { 0 };
+	Inventory _equipped;
+	Inventory _backpack;
+	Inventory _backpack14;
 
 	// TODO: Figure out what these are
 	int _v58, _v59, _v62, _v63, _v64, _v65;
