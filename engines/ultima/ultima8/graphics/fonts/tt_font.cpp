@@ -118,6 +118,76 @@ void TTFont::getTextSize(const Std::string &text,
 }
 
 
+void TTFont::addTextBorder(Graphics::ManagedSurface &textSurf, uint32 *texBuf, const Ultima::Ultima8::Rect &dims, int32 resultWidth, int32 resultHeight, uint32 borderColor) {
+	uint8 bA, bR, bG, bB;
+	_PF_RGBA.colorToARGB(borderColor, bA, bR, bG, bB);
+
+	int sqrSize = _borderSize * _borderSize;
+	int sqrEdge = (_borderSize + 1) * (_borderSize + 1);
+
+	for (int y = 0; y < textSurf.h; y++) {
+		const byte* surfrow = (const byte*)textSurf.getBasePtr(0, y);
+
+		for (int x = 0; x < textSurf.w; x++) {
+			if (_antiAliased) {
+				uint32 sColor = *((const uint32 *)(surfrow + x * 4));
+				uint8 sR, sG, sB, sA;
+				_PF_RGBA.colorToARGB(sColor, sA, sR, sG, sB);
+
+				if (sA == 0x00)
+					continue;
+
+				for (int dx = -_borderSize; dx <= _borderSize; dx++) {
+					for (int dy = -_borderSize; dy <= _borderSize; dy++) {
+						int tx = dims.left + x + _borderSize + dx;
+						int ty = dims.top + y + _borderSize + dy;
+						if (tx >= 0 && tx < resultWidth && ty >= 0 && ty < resultHeight) {
+							uint32 dColor = texBuf[ty * resultWidth + tx];
+							if (borderColor != dColor) {
+								int sqrDist = (dx * dx) + (dy * dy);
+								if (sqrDist < sqrSize) {
+									texBuf[ty * resultWidth + tx] = borderColor;
+								}
+								else if (sqrDist < sqrEdge) {
+									// Blend border color at source intensity with destination
+									uint8 dA, dR, dG, dB;
+									_PF_RGBA.colorToARGB(dColor, dA, dR, dG, dB);
+
+									double bAlpha = (double)bA / 255.0;
+									double sAlpha = (double)sA / 255.0;
+									double dAlpha = (double)dA / 255.0;
+									dAlpha *= (1.0 - sAlpha);
+
+									dR = static_cast<uint8>((bR * sAlpha + dR * dAlpha) / (sAlpha + dAlpha));
+									dG = static_cast<uint8>((bG * sAlpha + dG * dAlpha) / (sAlpha + dAlpha));
+									dB = static_cast<uint8>((bB * sAlpha + dB * dAlpha) / (sAlpha + dAlpha));
+									dA = static_cast<uint8>(255. * bAlpha * (sAlpha + dAlpha));
+
+									texBuf[ty * resultWidth + tx] = _PF_RGBA.ARGBToColor(dA, dR, dG, dB);
+								}
+							}
+						}
+					}
+				}
+			}
+			else if (surfrow[x] == 1) {
+				for (int dx = -_borderSize; dx <= _borderSize; dx++) {
+					for (int dy = -_borderSize; dy <= _borderSize; dy++) {
+						int tx = dims.left + x + _borderSize + dx;
+						int ty = dims.top + y + _borderSize + dy;
+						if (tx >= 0 && tx < resultWidth && ty >= 0 && ty < resultHeight) {
+							int sqrDist = (dx * dx) + (dy * dy);
+							if (sqrDist < sqrEdge) {
+								texBuf[ty * resultWidth + tx] = borderColor;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
 RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remaining,
 		int32 width, int32 height, TextAlign align, bool u8specials,
 		Std::string::size_type cursor) {
@@ -161,73 +231,7 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 
 		// Add border within radius. Pixels on the edge are alpha blended if antialiased
 		if (_borderSize > 0) {
-			uint8 bA, bR, bG, bB;
-			_PF_RGBA.colorToARGB(borderColor, bA, bR, bG, bB);
-
-			int sqrSize = _borderSize * _borderSize;
-			int sqrEdge = (_borderSize + 1) * (_borderSize + 1);
-
-			for (int y = 0; y < textSurf.h; y++) {
-				const byte* surfrow = (const byte*)textSurf.getBasePtr(0, y);
-
-				for (int x = 0; x < textSurf.w; x++) {
-					if (_antiAliased) {
-						uint32 sColor = *((const uint32 *)(surfrow + x * 4));
-						uint8 sR, sG, sB, sA;
-						_PF_RGBA.colorToARGB(sColor, sA, sR, sG, sB);
-
-						if (sA == 0x00)
-							continue;
-
-						for (int dx = -_borderSize; dx <= _borderSize; dx++) {
-							for (int dy = -_borderSize; dy <= _borderSize; dy++) {
-								int tx = iter->_dims.left + x + _borderSize + dx;
-								int ty = iter->_dims.top + y + _borderSize + dy;
-								if (tx >= 0 && tx < resultWidth && ty >= 0 && ty < resultHeight) {
-									uint32 dColor = texBuf[ty * resultWidth + tx];
-									if (borderColor != dColor) {
-										int sqrDist = (dx * dx) + (dy * dy);
-										if (sqrDist < sqrSize) {
-											texBuf[ty * resultWidth + tx] = borderColor;
-										}
-										else if (sqrDist < sqrEdge) {
-											// Blend border color at source intensity with destination
-											uint8 dA, dR, dG, dB;
-											_PF_RGBA.colorToARGB(dColor, dA, dR, dG, dB);
-
-											double bAlpha = (double)bA / 255.0;
-											double sAlpha = (double)sA / 255.0;
-											double dAlpha = (double)dA / 255.0;
-											dAlpha *= (1.0 - sAlpha);
-
-											dR = static_cast<uint8>((bR * sAlpha + dR * dAlpha) / (sAlpha + dAlpha));
-											dG = static_cast<uint8>((bG * sAlpha + dG * dAlpha) / (sAlpha + dAlpha));
-											dB = static_cast<uint8>((bB * sAlpha + dB * dAlpha) / (sAlpha + dAlpha));
-											dA = static_cast<uint8>(255. * bAlpha * (sAlpha + dAlpha));
-
-											texBuf[ty * resultWidth + tx] = _PF_RGBA.ARGBToColor(dA, dR, dG, dB);
-										}
-									}
-								}
-							}
-						}
-					}
-					else if (surfrow[x] == 1) {
-						for (int dx = -_borderSize; dx <= _borderSize; dx++) {
-							for (int dy = -_borderSize; dy <= _borderSize; dy++) {
-								int tx = iter->_dims.left + x + _borderSize + dx;
-								int ty = iter->_dims.top + y + _borderSize + dy;
-								if (tx >= 0 && tx < resultWidth && ty >= 0 && ty < resultHeight) {
-									int sqrDist = (dx * dx) + (dy * dy);
-									if (sqrDist < sqrEdge) {
-										texBuf[ty * resultWidth + tx] = borderColor;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+			addTextBorder(textSurf, texBuf, iter->_dims, resultWidth, resultHeight, borderColor);
 		}
 
 		// render the text surface into our texture buffer
