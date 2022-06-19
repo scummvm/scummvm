@@ -364,7 +364,6 @@ void free_do_once_tokens() {
 
 
 // Free all the memory associated with the game
-// TODO: call this when exiting the game (currently only called in RunAGSGame)
 void unload_game_file() {
 	close_translation();
 
@@ -379,16 +378,10 @@ void unload_game_file() {
 	delete _G(gameinst);
 	_G(gameinstFork) = nullptr;
 	_G(gameinst) = nullptr;
-
 	_GP(gamescript).reset();
 
-	if ((_G(dialogScriptsInst) != nullptr) && (_G(dialogScriptsInst)->pc != 0)) {
-		quit("Error: unload_game called while dialog script still running");
-	} else if (_G(dialogScriptsInst) != nullptr) {
-		delete _G(dialogScriptsInst);
-		_G(dialogScriptsInst) = nullptr;
-	}
-
+	delete _G(dialogScriptsInst);
+	_G(dialogScriptsInst) = nullptr;
 	_GP(dialogScriptsScript).reset();
 
 	for (size_t i = 0; i < _G(numScriptModules); ++i) {
