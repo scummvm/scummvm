@@ -1070,6 +1070,7 @@ Common::Error BoyzEngine::saveGameStream(Common::WriteStream *stream, bool isAut
 	stream->writeUint32LE(_lastLevel);
 
 	// Save current stats
+	stream->writeUint32LE(_stats.livesUsed);
 	stream->writeUint32LE(_stats.shootsFired);
 	stream->writeUint32LE(_stats.enemyHits);
 	stream->writeUint32LE(_stats.enemyTargets);
@@ -1078,6 +1079,7 @@ Common::Error BoyzEngine::saveGameStream(Common::WriteStream *stream, bool isAut
 	stream->writeUint32LE(_stats.friendliesEncountered);
 	stream->writeUint32LE(_stats.infoReceived);
 
+	stream->writeUint32LE(_globalStats.livesUsed);
 	stream->writeUint32LE(_globalStats.shootsFired);
 	stream->writeUint32LE(_globalStats.enemyHits);
 	stream->writeUint32LE(_globalStats.enemyTargets);
@@ -1100,6 +1102,7 @@ Common::Error BoyzEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	_lastLevel = stream->readUint32LE();
 
 	// Load stats
+	_stats.livesUsed = stream->readUint32LE();
 	_stats.shootsFired = stream->readUint32LE();
 	_stats.enemyHits = stream->readUint32LE();
 	_stats.enemyTargets = stream->readUint32LE();
@@ -1108,6 +1111,7 @@ Common::Error BoyzEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	_stats.friendliesEncountered = stream->readUint32LE();
 	_stats.infoReceived = stream->readUint32LE();
 
+	_globalStats.livesUsed = stream->readUint32LE();
 	_globalStats.shootsFired = stream->readUint32LE();
 	_globalStats.enemyHits = stream->readUint32LE();
 	_globalStats.enemyTargets = stream->readUint32LE();

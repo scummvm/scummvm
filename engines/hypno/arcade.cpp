@@ -733,6 +733,10 @@ void HypnoEngine::incScore(int inc) {
 	_score = _score + inc;
 }
 
+void HypnoEngine::incLivesUsed() {
+	_stats.livesUsed++;
+}
+
 void HypnoEngine::incShotsFired() {
 	_stats.shootsFired++;
 }

@@ -277,6 +277,7 @@ public:
 
 	ArcadeStats _stats;
 	void resetStatistics();
+	void incLivesUsed();
 	void incShotsFired();
 	void incEnemyHits();
 	void incEnemyTargets();

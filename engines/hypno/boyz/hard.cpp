@@ -275,8 +275,7 @@ void BoyzEngine::runDifficultyMenu(Code *code) {
 }
 
 void BoyzEngine::runRetryMenu(Code *code) {
-	_lives--;
-
+	incLivesUsed();
 	uint32 idx = _rnd->getRandomNumber(_deathVideo.size() - 1);
 	Filename filename = _deathVideo[idx];
 	MVideo video(filename, Common::Point(0, 0), false, true, false);

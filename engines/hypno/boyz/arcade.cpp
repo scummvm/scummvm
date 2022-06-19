@@ -133,7 +133,7 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 		drawString("scifi08.fgx", Common::String::format("%d%%", killRatio), 240, 54, 0, kHypnoColorWhiteOrBlue);
 		drawString("scifi08.fgx", Common::String::format("%d", _stats.shootsFired), 240, 77, 0, kHypnoColorWhiteOrBlue);
 		drawString("scifi08.fgx", Common::String::format("%d%%", accuracyRatio()), 240, 92, 0, kHypnoColorWhiteOrBlue);
-		drawString("scifi08.fgx", Common::String::format("%d", -uint32(-1) - _lives), 240, 117, 0, kHypnoColorWhiteOrBlue);
+		drawString("scifi08.fgx", Common::String::format("%d", _stats.livesUsed), 240, 117, 0, kHypnoColorWhiteOrBlue);
 		drawString("scifi08.fgx", Common::String::format("%d", _stats.friendliesEncountered), 240, 142, 0, kHypnoColorWhiteOrBlue);
 		drawString("scifi08.fgx", Common::String::format("%d", _stats.infoReceived), 240, 158, 0, kHypnoColorWhiteOrBlue);
 
@@ -154,6 +154,7 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 		}
 
 		// Merge current stats with the global ones
+		_globalStats.livesUsed = _stats.livesUsed + _globalStats.livesUsed;
 		_globalStats.shootsFired = _stats.shootsFired + _globalStats.shootsFired;
 		_globalStats.enemyHits = _stats.enemyHits + _globalStats.enemyHits;
 		_globalStats.enemyTargets = _stats.enemyTargets + _globalStats.enemyTargets;

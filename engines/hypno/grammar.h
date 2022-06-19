@@ -741,6 +741,7 @@ extern ArcadeShooting *g_parsedArc;
 class ArcadeStats {
 	public:
 	ArcadeStats()  {
+		livesUsed = 0;
 		shootsFired = 0;
 		enemyHits = 0;
 		enemyTargets = 0;
@@ -749,7 +750,7 @@ class ArcadeStats {
 		friendliesEncountered = 0;
 		infoReceived = 0;
 	}
-
+	uint32 livesUsed;
 	uint32 shootsFired;
 	uint32 enemyHits;
 	uint32 enemyTargets;
