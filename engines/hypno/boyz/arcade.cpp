@@ -633,6 +633,12 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 			if (checkCup(_shoots[i].name))
 				return false;
 
+			if (!_shoots[i].hitSound.empty())
+				playSound(_soundPath + _shoots[i].hitSound, 1);
+
+			if (!_shoots[i].deathSound.empty())
+				playSound(_soundPath + _shoots[i].deathSound, 1);
+
 			if (!_shoots[i].additionalVideo.empty() || _shoots[i].interactionFrame > 0) // Only count the ones with info
 				incFriendliesEncountered();
 
