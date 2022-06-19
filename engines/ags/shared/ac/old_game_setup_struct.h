@@ -22,10 +22,10 @@
 #ifndef AGS_SHARED_AC_OLD_GAME_SETUP_STRUCT_H
 #define AGS_SHARED_AC_OLD_GAME_SETUP_STRUCT_H
 
-#include "ags/shared/ac/character_info.h"       // OldCharacterInfo, CharacterInfo
 #if defined (OBSOLETE)
+
+#include "ags/shared/ac/character_info.h"       // OldCharacterInfo, CharacterInfo
 #include "ags/shared/ac/event_block.h"       // EventBlock
-#endif
 #include "ags/shared/ac/interface_element.h"    // InterfaceElement
 #include "ags/shared/ac/inventory_item_info.h"   // InventoryItemInfo
 #include "ags/shared/ac/mouse_cursor.h"      // MouseCursor
@@ -82,5 +82,7 @@ struct OldGameSetupStruct : public OriGameSetupStruct2 {
 };
 
 } // namespace AGS3
+
+#endif
 
 #endif

@@ -22,6 +22,8 @@
 #ifndef AGS_SHARED_AC_INTERFACE_ELEMENT_H
 #define AGS_SHARED_AC_INTERFACE_ELEMENT_H
 
+#if defined (OBSOLETE)
+
 #include "ags/shared/ac/interface_button.h" // InterfaceButton
 
 namespace AGS3 {
@@ -43,5 +45,7 @@ struct InterfaceElement {
 };
 
 } // namespace AGS3
+
+#endif // OBSOLETE
 
 #endif

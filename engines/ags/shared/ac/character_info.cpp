@@ -130,6 +130,9 @@ void CharacterInfo::WriteToFile(Stream *out) {
 	out->WriteInt8(on);
 }
 
+#if defined (OBSOLETE)
+#define COPY_CHAR_VAR(name) ci->name = oci->name
+
 void ConvertOldCharacterToNew(OldCharacterInfo *oci, CharacterInfo *ci) {
 	COPY_CHAR_VAR(defview);
 	COPY_CHAR_VAR(talkview);
@@ -164,5 +167,6 @@ void ConvertOldCharacterToNew(OldCharacterInfo *oci, CharacterInfo *ci) {
 	ci->talkcolor = (oci->flags & OCHF_SPEECHCOL) >> OCHF_SPEECHCOLSHIFT;
 	ci->flags = ci->flags & (~OCHF_SPEECHCOL);
 }
+#endif // OBSOLETE
 
 } // namespace AGS3

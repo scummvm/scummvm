@@ -19,6 +19,8 @@
  *
  */
 
+#if defined (OBSOLETE)
+
 #include "common/str.h"
 #include "ags/shared/ac/interface_element.h"
 
@@ -38,3 +40,5 @@ InterfaceElement::InterfaceElement() {
 }
 
 } // namespace AGS3
+
+#endif // OBSOLETE

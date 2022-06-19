@@ -19,6 +19,8 @@
  *
  */
 
+#if defined (OBSOLETE)
+
 #include "ags/shared/ac/interface_button.h"
 
 namespace AGS3 {
@@ -36,3 +38,5 @@ void InterfaceButton::set(int xx, int yy, int picc, int overpicc, int actionn) {
 }
 
 } // namespace AGS3
+
+#endif // OBSOLETE

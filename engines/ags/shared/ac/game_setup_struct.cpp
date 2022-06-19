@@ -367,6 +367,7 @@ void GameSetupStruct::ReadFromSaveGame_v321(Stream *in, char *gswas, ccScript *c
 }
 
 //=============================================================================
+#if defined (OBSOLETE)
 
 void ConvertOldGameStruct(OldGameSetupStruct *ogss, GameSetupStruct *gss) {
 	snprintf(gss->gamename, sizeof(GameSetupStruct::gamename), "%s", ogss->gamename);
@@ -409,6 +410,7 @@ void ConvertOldGameStruct(OldGameSetupStruct *ogss, GameSetupStruct *gss) {
 	gss->compiled_script = ogss->compiled_script;
 	gss->numcursors = 10;
 }
+#endif // OBSOLETE
 
 void GameSetupStruct::ReadFromSavegame(Stream *in) {
 	// of GameSetupStruct
