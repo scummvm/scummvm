@@ -182,7 +182,7 @@ void WetEngine::runMainMenu(Code *code) {
 		g_system->delayMillis(10);
 	}
 
-	if (_name == "COOLCOLE") {
+	if (_name == "COOLCOLE" || _unlockAllLevels) {
 		_lastLevel = 19;
 		playSound("sound/extra.raw", 1);
 	} else
