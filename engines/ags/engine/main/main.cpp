@@ -204,7 +204,7 @@ int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 			_G(loadSaveGameOnStartup) = atoi(argv[ee + 1]);
 			ee++;
 		} else if ((ags_stricmp(arg, "--enabledebugger") == 0) && (argc > ee + 1)) {
-			strcpy(_G(editor_debugger_instance_token), argv[ee + 1]);
+			snprintf(_G(editor_debugger_instance_token), sizeof(_G(editor_debugger_instance_token)), "%s", argv[ee + 1]);
 			_G(editor_debugging_enabled) = 1;
 			ee++;
 		} else if (ags_stricmp(arg, "--conf") == 0 && (argc > ee + 1)) {

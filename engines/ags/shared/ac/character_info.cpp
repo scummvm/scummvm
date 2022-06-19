@@ -157,8 +157,8 @@ void ConvertOldCharacterToNew(OldCharacterInfo *oci, CharacterInfo *ci) {
 	COPY_CHAR_VAR(actx);
 	COPY_CHAR_VAR(acty);
 	COPY_CHAR_VAR(on);
-	strcpy(ci->name, oci->name);
-	strcpy(ci->scrname, oci->scrname);
+	snprintf(ci->name, sizeof(CharacterInfo::name), "%s", oci->name);
+	snprintf(ci->scrname, sizeof(CharacterInfo::scrname), "%s", oci->scrname);
 	memcpy(&ci->inv[0], &oci->inv[0], sizeof(short) * 100);
 	// move the talking colour into the struct and remove from flags
 	ci->talkcolor = (oci->flags & OCHF_SPEECHCOL) >> OCHF_SPEECHCOLSHIFT;

@@ -73,9 +73,9 @@ void WordsDictionary::sort() {
 
 				wordnum[aa] = wordnum[bb];
 				wordnum[bb] = temp;
-				strcpy(tempst, word[aa]);
-				strcpy(word[aa], word[bb]);
-				strcpy(word[bb], tempst);
+				snprintf(tempst, MAX_PARSER_WORD_LENGTH, "%s", word[aa]);
+				snprintf(word[aa], MAX_PARSER_WORD_LENGTH, "%s", word[bb]);
+				snprintf(word[bb], MAX_PARSER_WORD_LENGTH, "%s", tempst);
 				bb = aa;
 			}
 		}

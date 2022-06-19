@@ -873,7 +873,8 @@ void save_game(int slotn, const char *descript) {
 	can_run_delayed_command();
 
 	if (_G(inside_script)) {
-		strcpy(_G(curscript)->postScriptSaveSlotDescription[_G(curscript)->queue_action(ePSASaveGame, slotn, "SaveGameSlot")], descript);
+		snprintf(_G(curscript)->postScriptSaveSlotDescription[_G(curscript)->queue_action(ePSASaveGame, slotn, "SaveGameSlot")],
+					 MAX_QUEUED_ACTION_DESC, "%s", descript);
 		return;
 	}
 
@@ -1290,7 +1291,7 @@ void replace_tokens(const char *srcmes, char *destm, int maxlen) {
 					quit("!Display: invalid global int index speicifed in @GI@");
 				snprintf(tval, sizeof(tval), "%d", GetGlobalInt(inx));
 			}
-			strcpy(destp, tval);
+			snprintf(destp, maxlen, "%s", tval);
 			indxdest += strlen(tval);
 		} else {
 			destp[0] = srcp[0];

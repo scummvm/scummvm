@@ -27,7 +27,7 @@ namespace AGS3 {
 InterfaceElement::InterfaceElement() {
 	vtextxp = 0;
 	vtextyp = 1;
-	strcpy(vtext, "@SCORETEXT@$r@GAMENAME@");
+	snprintf(vtext, sizeof(vtext), "%s", "@SCORETEXT@$r@GAMENAME@");
 
 	numbuttons = 0;
 	bgcol = 8;

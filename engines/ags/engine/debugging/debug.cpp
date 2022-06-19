@@ -418,7 +418,7 @@ int check_for_messages_from_editor() {
 				}
 			} else {
 				_G(breakpoints).push_back(Globals::Breakpoint());
-				strcpy(_G(breakpoints)[_G(numBreakpoints)].scriptName, scriptNameBuf);
+				snprintf(_G(breakpoints)[_G(numBreakpoints)].scriptName, sizeof(Breakpoint::scriptName), "%s", scriptNameBuf);
 				_G(breakpoints)[_G(numBreakpoints)].lineNumber = lineNumber;
 				_G(numBreakpoints)++;
 			}
