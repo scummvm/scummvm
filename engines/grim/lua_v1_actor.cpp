@@ -1571,7 +1571,7 @@ void Lua_V1::SetActorInvClipNode() {
 	// The node id -1 is when animation finished.
 	//
 	// There is no known visual differences between lack implementation and original.
-	// Possible it's original implemenation specific or left over from development phase.
+	// This looks like original renderer specific.
 	debug(2, "Stub function: SetActorInvClipNode(%d)", nodeId);
 }
 
@@ -1584,11 +1584,27 @@ void Lua_V1::SetActorClipActive() {
 }
 
 void Lua_V1::SetActorFrustrumCull() {
-	warning("Stub function: SetActorFrustrumCull");
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object stateObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || actorObj == LUA_NOOBJECT) {
+		return;
+	}
+	/*Actor *actor =*/ getactor(actorObj);
+	int state = (int)lua_getnumber(stateObj);
+
+	// it's called in 3 places:
+	// - 'End of the World Overview', dropping crane into water
+	// - 'Beaver Warning Sign' - leaving bone wagon
+	// - 'High Rollers Dillopede Hall' - while cutscene after taking suitcase
+	// This looks like original renderer specific.
+	// We don't implement frustrum culling, so we are not affected.
+	debug(2, "Stub function: SetActorFrustrumCull(%d)", state);
 }
 
 void Lua_V1::DriveActorTo() {
 	// nothing to implement
+	// dummy opcode in original
 }
 
 } // end of namespace Grim
