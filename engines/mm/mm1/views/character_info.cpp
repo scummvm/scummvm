@@ -271,14 +271,70 @@ void CharacterInfo::equipItem(uint index) {
 		writeString(equipError);
 
 		Sound::sound(SOUND_2);
-		delaySeconds(5);
+		delaySeconds(3);
 	}
 
 	_state = DISPLAY;
 }
 
 void CharacterInfo::removeItem(uint index) {
+	Character &c = *g_globals->_currCharacter;
+	uint itemId = c._equipped[index];
+	uint item14 = c._equipped14[index];
 
+	Common::String removeError;
+
+	getItem(itemId);
+	const Item &item = g_globals->_currItem;
+	if (item._equipMode == EQUIP_CURSED) {
+		removeError = STRING["dialogs.character.cursed"];
+		_textPos.x = 13;
+	} else if (c._backpack.full()) {
+		removeError = STRING["dialogs.character.full"];
+		_textPos.x = 14;
+	}
+
+	_state = DISPLAY;
+
+	if (!removeError.empty()) {
+		clearLines(20, 24);
+		_textPos.y = 21;
+		writeString(removeError);
+
+		Sound::sound(SOUND_2);
+		delaySeconds(3);
+		return;
+	}
+
+	// Shift item to backpack
+	int freeIndex = c._backpack.getFreeSlot();
+	c._backpack[freeIndex] = itemId;
+	c._backpack14[freeIndex] = item14;
+	c._equipped[index] = 0;
+	c._equipped14[index] = 0;
+
+	if (item._val10) {
+		// TODO: This block doesn't make sense in the original.
+		// It uses the item._equipMode as an arbitrary array
+		// index into the character data.
+		error("TODO: item flag in remove item");
+	}
+
+	switch (getItemCategory(itemId)) {
+	case ITEMCAT_WEAPON:
+	case ITEMCAT_TWO_HANDED:
+		c._v68 = c._v69 = 0;
+		break;
+	case ITEMCAT_MISSILE:
+		c._v6a = c._v6b = 0;
+		break;
+	case ITEMCAT_ARMOR:
+	case ITEMCAT_SHIELD:
+		c._acBase = MAX((int)c._acBase - (int)item._val17, 0);
+		break;
+	default:
+		break;
+	}
 }
 
 } // namespace Views

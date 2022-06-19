@@ -37,6 +37,7 @@ dialogs:
 		full: "*** FULL ***"
 		have_missile: "*** AREADY HAVE MISSILE WEAPON ***"
 		wrong_alignment: "*** WRONG ALIGNMENT ***"
+		cursed: "*** CURSED ***"
 	create_characters:
 		title: "CREATE NEW CHARACTERS"
 		intellect: "INTELLECT...="
