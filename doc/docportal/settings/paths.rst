@@ -41,3 +41,9 @@ Extra Path
 
 	*extrapath*
 
+.. _iconspath:
+
+Icons Path
+	Sets the path to the folder in which ScummVM will look for additional icons for the launcher grid view.
+
+	*iconspath*

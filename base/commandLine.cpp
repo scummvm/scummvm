@@ -151,6 +151,7 @@ static const char HELP_STRING[] =
 	"                           pce, segacd, wii, windows)\n"
 	"  --savepath=PATH          Path to where saved games are stored\n"
 	"  --extrapath=PATH         Extra path to additional game data\n"
+	"  --iconspath=PATH         Path to additional icons for the launcher grid view\n"
 	"  --soundfont=FILE         Select the SoundFont for MIDI playback (only\n"
 	"                           supported by some MIDI drivers)\n"
 	"  --multi-midi             Enable combination AdLib and native MIDI\n"
@@ -836,6 +837,15 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 				} else if (!path.isReadable()) {
 					usage("Non-readable extra path '%s'", option);
 				}
+			END_OPTION
+
+			DO_LONG_OPTION("iconspath")
+			Common::FSNode path(option);
+			if (!path.exists()) {
+				usage("Non-existent icons path '%s'", option);
+			} else if (!path.isReadable()) {
+				usage("Non-readable icons path '%s'", option);
+			}
 			END_OPTION
 
 			DO_LONG_OPTION("md5-path")
@@ -1671,7 +1681,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 
 void storeSessionSetting(const Common::String &command, const Common::String &settingName, const Common::StringMap &settings) {
 	if (settings.contains(command))
-		ConfMan.set(settingName, settings[command], Common::ConfigManager::kSessionDomain); 
+		ConfMan.set(settingName, settings[command], Common::ConfigManager::kSessionDomain);
 }
 
 bool processSettings(Common::String &command, Common::StringMap &settings, Common::Error &err) {
@@ -1835,28 +1845,29 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	}
 
 	// store all session related settings
-	storeSessionSetting("config", "config", settings); 
-	storeSessionSetting("fullscreen", "fullscreen", settings); 
-	storeSessionSetting("gfx-mode", "gfx_mode", settings); 
-	storeSessionSetting("stretch-mode", "stretch_mode", settings); 
-	storeSessionSetting("scaler", "scaler", settings); 
-	storeSessionSetting("scale-factor", "scale_factor", settings); 
-	storeSessionSetting("filtering", "filtering", settings); 
-	storeSessionSetting("gui-theme", "gui_theme", settings); 
-	storeSessionSetting("themepath", "themepath", settings); 
-	storeSessionSetting("music-volume", "music_volume", settings); 
-	storeSessionSetting("sfx-volume", "sfx_volume", settings); 
-	storeSessionSetting("speech-volume", "speech_volume", settings); 
-	storeSessionSetting("midi-gain", "midi_gain", settings); 
-	storeSessionSetting("subtitles", "subtitles", settings); 
-	storeSessionSetting("savepath", "savepath", settings); 
-	storeSessionSetting("extrapath", "extrapath", settings); 
-	storeSessionSetting("soundfont", "soundfont", settings); 
-	storeSessionSetting("multi-midi", "multi_midi", settings); 
-	storeSessionSetting("native-mt32", "native-mt32", settings); 
-	storeSessionSetting("enable-gs", "enable_gs", settings); 
-	storeSessionSetting("opl-driver", "opl_driver", settings); 
-	storeSessionSetting("talkspeed", "talkspeed", settings); 
+	storeSessionSetting("config", "config", settings);
+	storeSessionSetting("fullscreen", "fullscreen", settings);
+	storeSessionSetting("gfx-mode", "gfx_mode", settings);
+	storeSessionSetting("stretch-mode", "stretch_mode", settings);
+	storeSessionSetting("scaler", "scaler", settings);
+	storeSessionSetting("scale-factor", "scale_factor", settings);
+	storeSessionSetting("filtering", "filtering", settings);
+	storeSessionSetting("gui-theme", "gui_theme", settings);
+	storeSessionSetting("themepath", "themepath", settings);
+	storeSessionSetting("music-volume", "music_volume", settings);
+	storeSessionSetting("sfx-volume", "sfx_volume", settings);
+	storeSessionSetting("speech-volume", "speech_volume", settings);
+	storeSessionSetting("midi-gain", "midi_gain", settings);
+	storeSessionSetting("subtitles", "subtitles", settings);
+	storeSessionSetting("savepath", "savepath", settings);
+	storeSessionSetting("extrapath", "extrapath", settings);
+	storeSessionSetting("iconspath", "iconspath", settings);
+	storeSessionSetting("soundfont", "soundfont", settings);
+	storeSessionSetting("multi-midi", "multi_midi", settings);
+	storeSessionSetting("native-mt32", "native-mt32", settings);
+	storeSessionSetting("enable-gs", "enable_gs", settings);
+	storeSessionSetting("opl-driver", "opl_driver", settings);
+	storeSessionSetting("talkspeed", "talkspeed", settings);
 	storeSessionSetting("render-mode", "render_mode", settings);
 	storeSessionSetting("screenshotpath", "screenshotpath", settings);
 
