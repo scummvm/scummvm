@@ -127,6 +127,10 @@ public:
 	/** Convert the string to the given @p page encoding and return the result as a new String. */
 	String encode(CodePage page = kUtf8) const;
 
+	/** Convert the string to the given @p page encoding and output in string @p outString,
+		replacing invalid characters with @p errorChar. */
+	StringEncodingResult encode(String &outString, CodePage page, char errorChar) const;
+
 	/**
 	 * Print formatted data into a U32String object.
 	 *

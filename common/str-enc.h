@@ -57,6 +57,11 @@ enum CodePage {
 	kLastEncoding = kASCII
 };
 
+enum StringEncodingResult {
+	kStringEncodingResultSucceeded,
+	kStringEncodingResultHasErrors,
+};
+
 U32String convertUtf8ToUtf32(const String &str);
 String convertUtf32ToUtf8(const U32String &str);
 

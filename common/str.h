@@ -246,14 +246,14 @@ public:
 	U32String decode(CodePage page = kUtf8) const;
 
 protected:
-	void encodeUTF8(const U32String &src);
-	void encodeWindows932(const U32String &src);
-	void encodeWindows949(const U32String &src);
-	void encodeWindows950(const U32String &src, bool translit = true);
-	void encodeJohab(const U32String &src);
-	void encodeOneByte(const U32String &src, CodePage page, bool translit = true);
-	void encodeInternal(const U32String &src, CodePage page);
-	void translitChar(U32String::value_type point);
+	StringEncodingResult encodeUTF8(const U32String &src, char errorChar);
+	StringEncodingResult encodeWindows932(const U32String &src, char errorChar);
+	StringEncodingResult encodeWindows949(const U32String &src, char errorChar);
+	StringEncodingResult encodeWindows950(const U32String &src, bool translit, char errorChar);
+	StringEncodingResult encodeJohab(const U32String &src, char errorChar);
+	StringEncodingResult encodeOneByte(const U32String &src, CodePage page, bool translit, char errorChar);
+	StringEncodingResult encodeInternal(const U32String &src, CodePage page, char errorChar);
+	StringEncodingResult translitChar(U32String::value_type point, char errorChar);
 
 	friend class U32String;
 };
