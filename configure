@@ -3090,7 +3090,7 @@ EOF
 	riscos)
 		define_in_config_if_yes yes 'RISCOS'
 		append_var LDFLAGS "-static"
-		_optimization_level=-O2
+		_optimization_level=-O3
 		_port_mk="backends/platform/sdl/riscos/riscos.mk"
 		_pandoc=yes
 		_sdlconfig=sdl-config
@@ -3185,8 +3185,6 @@ if test -n "$_host"; then
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			;;
 		arm-vfp-riscos)
-			# -O2 causes internal compiler error on VFP only with gcc 4.7
-			_optimization_level=-O1
 			append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/vfp/lib"
 			append_var PLUGIN_LDFLAGS "-L$GCCSDK_INSTALL_ENV/vfp/lib"
 			append_var CXXFLAGS "-isystem $GCCSDK_INSTALL_ENV/vfp/include"
