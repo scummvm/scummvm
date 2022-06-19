@@ -92,23 +92,8 @@
  * and vice versa.
  */
 
-// compilerspecific variants come first, fallback last
-
-// Test for GCC and if the target has the MIPS rel.2 instructions (we know the psp does)
-#if defined(__GNUC__) && (defined(__psp__) || defined(_MIPS_ARCH_MIPS32R2) || defined(_MIPS_ARCH_MIPS64R2))
-
-	FORCEINLINE uint16 SWAP_BYTES_16(const uint16 a) {
-		if (__builtin_constant_p(a)) {
-			return SWAP_CONSTANT_16(a);
-		} else {
-			uint16 result;
-			__asm__ ("wsbh %0,%1" : "=r" (result) : "r" (a));
-			return result;
-		}
-	}
-
-// Test for GCC-compatible
-#elif GCC_ATLEAST(4, 8) || defined(__clang__)
+// compiler-specific variants come first, fallback last
+#if GCC_ATLEAST(4, 8) || defined(__clang__)
 
 	FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 		return __builtin_bswap16(a);
@@ -134,29 +119,8 @@
  * and vice versa.
  */
 
-// machine/compiler-specific variants come first, fallback last
-
-// Test for GCC and if the target has the MIPS rel.2 instructions (we know the psp does)
-#if defined(__GNUC__) && (defined(__psp__) || defined(_MIPS_ARCH_MIPS32R2) || defined(_MIPS_ARCH_MIPS64R2))
-
-	FORCEINLINE uint32 SWAP_BYTES_32(const uint32 a) {
-		if (__builtin_constant_p(a)) {
-			return SWAP_CONSTANT_32(a);
-		} else {
-			uint32 result;
-#	if defined(__psp__)
-			// use special allegrex instruction
-			__asm__ ("wsbw %0,%1" : "=r" (result) : "r" (a));
-#	else
-			__asm__ ("wsbh %0,%1\n"
-			         "rotr %0,%0,16" : "=r" (result) : "r" (a));
-#	endif
-			return result;
-		}
-	}
-
-// Test for GCC-compatible
-#elif defined(__GNUC__)
+// compiler-specific variants come first, fallback last
+#if defined(__GNUC__)
 
 	FORCEINLINE uint32 SWAP_BYTES_32(uint32 a) {
 		return __builtin_bswap32(a);
@@ -183,26 +147,8 @@
  * and vice versa.
  */
 
-// machine/compiler-specific variants come first, fallback last
-
-// Test for GCC and if the target has the MIPS rel.2 instructions (we know the psp does)
-//
-#if defined(__GNUC__) && (defined(__psp__) || defined(_MIPS_ARCH_MIPS32R2) || defined(_MIPS_ARCH_MIPS64R2))
-
-	FORCEINLINE uint64 SWAP_BYTES_64(const uint64 a) {
-		if (__builtin_constant_p(a)) {
-			return SWAP_CONSTANT_64(a);
-		} else {
-			uint32 low = (uint32)a, high = (uint32)(a >> 32);
-			low = SWAP_BYTES_32(low);
-			high = SWAP_BYTES_32(high);
-
-			return (((uint64)low) << 32) | high;
-		}
-	}
-
-// Test for GCC-compatible
-#elif defined(__GNUC__)
+// compiler-specific variants come first, fallback last
+#if defined(__GNUC__)
 
 	FORCEINLINE uint64 SWAP_BYTES_64(uint64 a) {
 		return __builtin_bswap64(a);
