@@ -329,6 +329,17 @@ bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting 
 			} else if (_levelId == 352) {
 				// Objectives are never checked here, for some reason
 				_skipLevel = true;
+			} else if (_levelId == 354) {
+				if (ttime == 70) {
+					incInfoReceived();
+					_background->decoder->pauseVideo(true);
+					MVideo video("tempdir/c35h4a1s.smk", Common::Point(0, 0), false, true, false);
+					disableCursor();
+					runIntro(video);
+					defaultCursor();
+					waitForUserClick(1);
+					_skipLevel = true;
+				}
 			} else if (_levelId == 51) {
 				if (_selectedCorrectBox == 0) {
 					_background->decoder->pauseVideo(true);
@@ -694,7 +705,7 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 		if (!_shoots[i].deathSound.empty())
 			playSound(_soundPath + _shoots[i].deathSound, 1);
 
-		if (_shoots[i].playInteractionAudio) {
+		if (_shoots[i].playInteractionAudio && !arc->missBoss2Video.empty()) {
 			incInfoReceived();
 			_additionalVideo = new MVideo(arc->missBoss2Video, Common::Point(0, 0), true, false, false);
 			playVideo(*_additionalVideo);
@@ -743,7 +754,7 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		_stats.targetsMissed--; // If the target was not hostile, it should *not* count as missed
 	}
 
-	if (s->name == "CAPTOR") {
+	if (s->name == "CAPTOR" || (s->name == "G1" && _currentLevel == "c354.mi_")) {
 		_background->decoder->pauseVideo(true);
 		MVideo video(_warningHostage, Common::Point(0, 0), false, true, false);
 		disableCursor();
