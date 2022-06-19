@@ -577,6 +577,7 @@ public:
 		soundRate = soundRate_;
 		soundStereo = false;
 		loseLevel = false;
+		winLevel = false;
 		selection = false;
 		jumpToTime = 0;
 		time = time_;
@@ -588,6 +589,7 @@ public:
 	uint32 soundRate;
 	bool soundStereo;
 	bool loseLevel;
+	bool winLevel;
 	bool selection;
 	uint32 jumpToTime;
 	uint32 time;

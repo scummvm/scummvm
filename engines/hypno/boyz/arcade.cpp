@@ -395,6 +395,9 @@ bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting 
 		} else if (at.loseLevel) {
 			debugC(1, kHypnoDebugArcade, "Losing level in transition at %d", _background->decoder->getCurFrame());
 			_health = 0;
+		} else if (at.winLevel) {
+			debugC(1, kHypnoDebugArcade, "Wining level in transition at %d", _background->decoder->getCurFrame());
+			_skipLevel = true;
 		} else
 			error ("Invalid transition at %d", ttime);
 
@@ -737,11 +740,17 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 
 		_background->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 		_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
+		debugC(1, kHypnoDebugArcade, "Jumping to: %d", _shoots[i].explosionFrames[0].start - 3);
+
 		changeCursor(_crosshairsActive[_currentWeapon], _crosshairsPalette, true);
 
 		if (_shoots[i].jumpToTimeAfterKilled > 0) {
 			ArcadeTransition at("", 0, "", 0, _shoots[i].explosionFrames[0].lastFrame() - 1);
 			at.jumpToTime = _shoots[i].jumpToTimeAfterKilled;
+			_transitions.push_front(at);
+		} else if ( _shoots[i].jumpToTimeAfterKilled == -1 ) {
+			ArcadeTransition at("", 0, "", 0, _shoots[i].explosionFrames[0].lastFrame() - 1);
+			at.winLevel = true;
 			_transitions.push_front(at);
 		}
 	}
