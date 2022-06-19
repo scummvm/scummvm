@@ -22,6 +22,7 @@
 #include "mm/mm1/views/character_info.h"
 #include "mm/mm1/utils/strings.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
@@ -254,21 +255,26 @@ void CharacterInfo::equipItem(uint index) {
 			break;
 		case ITEMCAT_ARMOR:
 		case ITEMCAT_SHIELD:
-			c._v3c += item._val17;
+			c._acBase += item._val17;
 			break;
 		default:
 			break;
 		}
 
-		// TODO: Stuff
+		warning("TODO: c field58");
+		c.updateAttributes();
+		c.updateAC();
+
 	} else {
 		clearLines(20, 24);
 		_textPos.y = 21;
 		writeString(equipError);
 
-		_state = DISPLAY;
-		// TODO: Delay
+		Sound::sound(SOUND_2);
+		delaySeconds(5);
 	}
+
+	_state = DISPLAY;
 }
 
 void CharacterInfo::removeItem(uint index) {

@@ -127,6 +127,22 @@ void TextView::escToGoBack(int x) {
 	writeString(x, 24, STRING["dialogs.misc.go_back"]);
 }
 
+void TextView::delaySeconds(uint seconds) {
+	_timeoutCtr = seconds * FRAME_RATE;
+}
+
+bool TextView::tick() {
+	if (_timeoutCtr && --_timeoutCtr == 0) {
+		timeout();
+	}
+
+	return UIElement::tick();
+}
+
+void TextView::timeout() {
+	redraw();
+}
+
 } // namespace Views
 } // namespace MM1
 } // namespace MM
