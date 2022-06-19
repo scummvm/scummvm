@@ -231,8 +231,18 @@ int32 luaD_call(StkId base, int32 nResults) {
 			firstResult = callC(fvalue(funcObj), base);
 		} else {
 			TObject *im = luaT_getimbyObj(funcObj, IM_FUNCTION);
-			if (ttype(im) == LUA_T_NIL)
-				lua_error("call expression not a function");
+			if (ttype(im) == LUA_T_NIL) {
+				// NOTE: Originally this throwed the lua_error. Anyway it is commented here because
+				// when in year 4 bi.exit() calls bi.book.act:free(). But bi.book.act is nil,
+				// hence it enters this branch and the error blocks the game.
+				// Now we try instead to survive and go on with the function.
+				lua_Task *t = lua_state->task;
+				lua_state->task = t->next;
+				lua_state->prevTask = tmpTask;
+				luaM_free(t);
+				warning("Lua: call expression not a function");
+				return 1;
+			}
 			luaD_callTM(im, (lua_state->stack.top - lua_state->stack.stack) - (base - 1), nResults);
 			continue;
 		}
