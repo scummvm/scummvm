@@ -25,31 +25,36 @@
 namespace Hypno {
 
 LibFile::LibFile() : Common::Archive() {
+	_libfile = nullptr;
 }
 
 LibFile::~LibFile() {
+	close();
 }
 
 bool LibFile::open(const Common::String &prefix, const Common::String &filename, bool encrypted) {
+	close();
+
 	_prefix = prefix;
-	Common::File libfile;
-	if (!libfile.open(filename)) {
+	_encrypted = encrypted;
+
+	_libfile = new Common::File();
+	if (!_libfile->open(filename)) {
 		warning("Failed to open %s", filename.c_str());
 		return false;
 	}
 	uint32 offset = 0;
-	while (offset < libfile.size()) {
+	while (offset < _libfile->size()) {
 		byte b;
 		uint32 size = 0;
-		uint32 start = libfile.size();
+		uint32 start = _libfile->size();
 		FileEntry f;
-		libfile.seek(offset);
-		debugC(1, kHypnoDebugParser, "parsing at offset %d with size %li", offset, long(libfile.size()));
+		_libfile->seek(offset);
+		debugC(1, kHypnoDebugParser, "parsing at offset %d with size %li", offset, long(_libfile->size()));
 		while (true) {
 			f.name = "";
-			f.data.clear();
 			for (uint32 i = 0; i < 12; i++) {
-				b = libfile.readByte();
+				b = _libfile->readByte();
 				if (b != 0x96 && b != 0x0)
 					f.name += tolower(char(b));
 			}
@@ -58,27 +63,14 @@ bool LibFile::open(const Common::String &prefix, const Common::String &filename,
 				break;
 
 			debugC(1, kHypnoDebugParser, "file: %s", f.name.c_str());
-			start = libfile.readUint32LE();
-			size = libfile.readUint32LE();
+			f.start = start = _libfile->readUint32LE();
+			f.size = size = _libfile->readUint32LE();
 			if (size == 0)
 				error("Trying to load an empty file");
-			libfile.readUint32LE(); // some field?
+			_libfile->readUint32LE(); // some field?
 
-			uint32 pos = libfile.pos();
-			libfile.seek(start);
+			debugC(1, kHypnoDebugParser, "start: %d, size: %d", f.start, f.size);
 
-			for (uint32 i = 0; i < size; i++) {
-				b = libfile.readByte();
-				if (b == '\n' && f.name.hasSuffix(".raw"))
-					b = b ^ 0xfe;
-				else if (encrypted && b != '\n')
-					b = b ^ 0xfe;
-				f.data.push_back(b);
-				//debugN("%c", b);
-			}
-			f.data.push_back(0x0);
-			debugC(1, kHypnoDebugParser, "start: %d, size: %d", start, f.data.size());
-			libfile.seek(pos);
 			_fileEntries.push_back(f);
 
 		};
@@ -98,6 +90,7 @@ const FileEntry *LibFile::getEntry(const Common::Path &path) const {
 }
 
 void LibFile::close() {
+	delete _libfile; _libfile = nullptr;
 	_fileEntries.clear();
 }
 
@@ -122,11 +115,31 @@ const Common::ArchiveMemberPtr LibFile::getMember(const Common::Path &path) cons
 Common::SeekableReadStream *LibFile::createReadStreamForMember(const Common::Path &path) const {
 	Common::String name = path.toString();
 	const FileEntry *entry = getEntry(name);
-	Common::MemoryReadStream *stream = nullptr;
-	if (entry != nullptr)
-		stream = new Common::MemoryReadStream(entry->data.data(), entry->data.size());
+	if (!entry)
+		return nullptr;
 
-	return stream;
+	byte *data = (byte *)malloc(entry->size);
+	if (!data) {
+		warning("Not enough memory to load archive entry %s", name.c_str());
+		return nullptr;
+	}
+
+	_libfile->seek(entry->start);
+	_libfile->read(data, entry->size);
+
+	if (name.hasSuffix(".raw")) {
+		for (uint32 i = 0; i < entry->size; i++) {
+			if (data[i] == '\n')
+				data[i] = data[i] ^ 0xfe;
+		}
+	} else if (_encrypted) {
+		for (uint32 i = 0; i < entry->size; i++) {
+			if (data[i] != '\n')
+				data[i] = data[i] ^ 0xfe;
+		}
+	}
+
+	return new Common::MemoryReadStream(data, entry->size, DisposeAfterUse::YES);
 }
 
 } // namespace Hypno
