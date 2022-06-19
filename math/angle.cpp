@@ -32,7 +32,6 @@ Angle::Angle(float degrees) :
 
 Angle::Angle(const Angle &a) :
 		_degrees(a._degrees) {
-
 }
 
 Angle &Angle::normalize(float low) {

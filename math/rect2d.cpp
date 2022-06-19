@@ -42,7 +42,7 @@ Rect2d::Rect2d(const Vector2d &topLeft, const Vector2d &bottomRight) {
 }
 
 Rect2d::Rect2d(const Vector2d &topLeft, const Vector2d &topRight,
-			   const Vector2d &bottomLeft, const Vector2d &bottomRight) :
+	       const Vector2d &bottomLeft, const Vector2d &bottomRight) :
 	_topLeft(topLeft), _topRight(topRight),
 	_bottomLeft(bottomLeft), _bottomRight(bottomRight) {
 
@@ -115,7 +115,7 @@ bool Rect2d::intersectsCircle(const Vector2d &center, float radius) const {
 		}
 
 		float cornerDistance_sq = pow(circleDistance.getX() - w / 2.f, 2.f) +
-								pow(circleDistance.getY() - h / 2.f, 2.f);
+		                              pow(circleDistance.getY() - h / 2.f, 2.f);
 
 		return (cornerDistance_sq <= radius * radius);
 	} else { //The rectangle was rotated

@@ -20,6 +20,7 @@
  */
 
 #include "math/vector2d.h"
+
 #include "common/streamdebug.h"
 
 namespace Math {

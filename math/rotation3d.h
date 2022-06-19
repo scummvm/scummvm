@@ -43,7 +43,7 @@ enum EulerOrder {
 	EO_YXZ,
 	EO_YZX,
 	EO_YZY,
-	EO_ZXY,		// Original ScummVM implmentation
+	EO_ZXY, // Original ScummVM implmentation
 	EO_ZXZ,
 	EO_ZYX,
 	EO_ZYZ
@@ -56,46 +56,46 @@ public:
 
 	/**
 	 * Constructor and assignment from buildFromEuler
-	 * @param first		Rotation on the first Axis, angle in degrees
-	 * @param second	Rotation on the second Axis, angle in degrees
-	 * @param third		Rotation on the third Axis, angle in degrees
-	 * @param order		The Euler Order (specifies axis order)
+	 * @param first         Rotation on the first Axis, angle in degrees
+	 * @param second        Rotation on the second Axis, angle in degrees
+	 * @param third         Rotation on the third Axis, angle in degrees
+	 * @param order         The Euler Order (specifies axis order)
 	 */
 	Rotation3D(const Angle &first, const Angle &second, const Angle &third, EulerOrder order);
 
 	/**
 	 * Build a rotation matrix from Euler Angles
-	 * @param first		Rotation on the first Axis, angle in degrees
-	 * @param second	Rotation on the second Axis, angle in degrees
-	 * @param third		Rotation on the third Axis, angle in degrees
-	 * @param order		The Euler Order (specifies axis order)
+	 * @param first         Rotation on the first Axis, angle in degrees
+	 * @param second        Rotation on the second Axis, angle in degrees
+	 * @param third         Rotation on the third Axis, angle in degrees
+	 * @param order         The Euler Order (specifies axis order)
 	 */
 	void buildFromEuler(const Angle &first, const Angle &second, const Angle &third, EulerOrder order);
 
 	/**
 	 * Build a rotation matrix on the X Axis from an angle
-	 * @param rotX		Rotation on the X Axis angle in degrees
+	 * @param rotX          Rotation on the X Axis angle in degrees
 	 */
 	void buildAroundX(const Angle &rotX);
 
 	/**
 	 * Build a rotation matrix on the Y Axis from an angle
-	 * @param rotY		Rotation on the Y Axis angle in degrees
+	 * @param rotY          Rotation on the Y Axis angle in degrees
 	 */
 	void buildAroundY(const Angle &rotY);
 
 	/**
 	 * Build a rotation matrix on the Z Axis from an angle
-	 * @param rotZ		Rotation on the Z Axis angle in degrees
+	 * @param rotZ          Rotation on the Z Axis angle in degrees
 	 */
 	void buildAroundZ(const Angle &rotZ);
 
 	/**
 	 * Get Euler Angles from a rotation matrix
-	 * @param first		Pointer to the storage for the first axis angle
-	 * @param second	Pointer to the storage for the second axis angle
-	 * @param third		Pointer to the storage for the third axis angle
-	 * @param order		The Euler order (specifies axis order)
+	 * @param first         Pointer to the storage for the first axis angle
+	 * @param second        Pointer to the storage for the second axis angle
+	 * @param third         Pointer to the storage for the third axis angle
+	 * @param order         The Euler order (specifies axis order)
 	 */
 	void getEuler(Angle *first, Angle *second, Angle *third, EulerOrder order) const;
 };
