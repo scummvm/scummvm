@@ -674,46 +674,46 @@ void BoyzEngine::loadAssets() {
 	cl = new ChangeLevel("c52.mi_");
 	sc->hots[8].actions.push_back(cl);
 
-	hl = new Highlight("GS_SEQ_53");
+	hl = new Highlight("GS_SEQ_54");
 	sc->hots[9].actions.push_back(hl);
-	gl = new Global("GS_SEQ_53", "CHECK");
+	gl = new Global("GS_SEQ_54", "CHECK");
 	sc->hots[9].actions.push_back(gl);
-	cl = new ChangeLevel("c53.mi_");
+	cl = new ChangeLevel("c54.mi_");
 	sc->hots[9].actions.push_back(cl);
 
-	hl = new Highlight("GS_SEQ_54");
+	hl = new Highlight("GS_SEQ_55");
 	sc->hots[10].actions.push_back(hl);
-	gl = new Global("GS_SEQ_54", "CHECK");
+	gl = new Global("GS_SEQ_55", "CHECK");
 	sc->hots[10].actions.push_back(gl);
-	cl = new ChangeLevel("c54.mi_");
+	cl = new ChangeLevel("c55.mi_");
 	sc->hots[10].actions.push_back(cl);
 
-	hl = new Highlight("GS_SEQ_55");
+	hl = new Highlight("GS_SEQ_56");
 	sc->hots[11].actions.push_back(hl);
-	gl = new Global("GS_SEQ_55", "CHECK");
+	gl = new Global("GS_SEQ_56", "CHECK");
 	sc->hots[11].actions.push_back(gl);
-	cl = new ChangeLevel("c55.mi_");
+	cl = new ChangeLevel("c56.mi_");
 	sc->hots[11].actions.push_back(cl);
 
-	hl = new Highlight("GS_SEQ_56");
+	hl = new Highlight("GS_SEQ_57");
 	sc->hots[12].actions.push_back(hl);
-	gl = new Global("GS_SEQ_56", "CHECK");
+	gl = new Global("GS_SEQ_57", "CHECK");
 	sc->hots[12].actions.push_back(gl);
-	cl = new ChangeLevel("c56.mi_");
+	cl = new ChangeLevel("c57.mi_");
 	sc->hots[12].actions.push_back(cl);
 
-	hl = new Highlight("GS_SEQ_57");
+	hl = new Highlight("GS_SEQ_58");
 	sc->hots[13].actions.push_back(hl);
-	gl = new Global("GS_SEQ_57", "CHECK");
+	gl = new Global("GS_SEQ_58", "CHECK");
 	sc->hots[13].actions.push_back(gl);
-	cl = new ChangeLevel("c57.mi_");
+	cl = new ChangeLevel("c58.mi_");
 	sc->hots[13].actions.push_back(cl);
 
-	hl = new Highlight("GS_SEQ_58");
+	hl = new Highlight("GS_SEQ_59");
 	sc->hots[14].actions.push_back(hl);
-	gl = new Global("GS_SEQ_58", "CHECK");
+	gl = new Global("GS_SEQ_59", "CHECK");
 	sc->hots[14].actions.push_back(gl);
-	cl = new ChangeLevel("c58.mi_");
+	cl = new ChangeLevel("c59.mi_");
 	sc->hots[14].actions.push_back(cl);
 
 	loadLib("sound/", "misc/sound.lib", true);
