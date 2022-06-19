@@ -120,39 +120,8 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 	}
 
 	if (_currentLevel == lastLevelTerritory(_currentLevel)) {
-		byte *palette;
 		int territory = getTerritory(_currentLevel) - 1;
-		Graphics::Surface *stats = decodeFrame("preload/stats.smk", territory, &palette);
-		loadPalette(palette, 0, 256);
-		drawImage(*stats, 0, 0, true);
-		stats->free();
-		delete stats;
-		uint32 enemiesAvailable = _stats.targetsDestroyed + _stats.targetsMissed;
-		drawString("scifi08.fgx", Common::String::format("%d", enemiesAvailable), 240, 40, 0, kHypnoColorWhiteOrBlue);
-		uint32 killRatio = enemiesAvailable > 0 ? 100 * _stats.targetsDestroyed / enemiesAvailable : 0;
-		drawString("scifi08.fgx", Common::String::format("%d%%", killRatio), 240, 54, 0, kHypnoColorWhiteOrBlue);
-		drawString("scifi08.fgx", Common::String::format("%d", _stats.shootsFired), 240, 77, 0, kHypnoColorWhiteOrBlue);
-		drawString("scifi08.fgx", Common::String::format("%d%%", accuracyRatio()), 240, 92, 0, kHypnoColorWhiteOrBlue);
-		drawString("scifi08.fgx", Common::String::format("%d", _stats.livesUsed), 240, 117, 0, kHypnoColorWhiteOrBlue);
-		drawString("scifi08.fgx", Common::String::format("%d", _stats.friendliesEncountered), 240, 142, 0, kHypnoColorWhiteOrBlue);
-		drawString("scifi08.fgx", Common::String::format("%d", _stats.infoReceived), 240, 158, 0, kHypnoColorWhiteOrBlue);
-
-		bool cont = true;
-		while (!shouldQuit() && cont) {
-			Common::Event event;
-			while (g_system->getEventManager()->pollEvent(event)) {
-				switch (event.type) {
-					case Common::EVENT_KEYDOWN:
-					cont = false;
-					break;
-					default:
-					break;
-				}
-			}
-			drawScreen();
-			g_system->delayMillis(10);
-		}
-
+		showArcadeStats(territory, _stats);
 		// Merge current stats with the global ones
 		_globalStats.livesUsed = _stats.livesUsed + _globalStats.livesUsed;
 		_globalStats.shootsFired = _stats.shootsFired + _globalStats.shootsFired;
@@ -162,12 +131,53 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 		_globalStats.targetsMissed = _stats.targetsMissed + _globalStats.targetsMissed;
 		_globalStats.friendliesEncountered = _stats.friendliesEncountered + _globalStats.friendliesEncountered;
 		_globalStats.infoReceived = _stats.infoReceived + _globalStats.infoReceived;
+		// If we are finishing the last level, show final stats
+		if (_currentLevel == "c59.mi_")
+			showArcadeStats(5, _globalStats);
+
 		// After that, we can reset the current stats
 		resetStatistics();
 	}
 
 	_previousHealth = _health;
 	_sceneState[Common::String::format("GS_SEQ_%d", _levelId)] = 1;
+}
+
+void BoyzEngine::showArcadeStats(int territory, const ArcadeStats &data) {
+	byte *palette;
+	Graphics::Surface *stats = decodeFrame("preload/stats.smk", territory, &palette);
+	loadPalette(palette, 0, 256);
+	drawImage(*stats, 0, 0, true);
+	stats->free();
+	delete stats;
+	uint32 enemiesAvailable = data.targetsDestroyed + data.targetsMissed;
+	drawString("scifi08.fgx", Common::String::format("%d", enemiesAvailable), 278, 41, 0, kHypnoColorWhiteOrBlue);
+	uint32 killRatio = enemiesAvailable > 0 ? 100 * data.targetsDestroyed / enemiesAvailable : 0;
+	drawString("scifi08.fgx", Common::String::format("%d%%", killRatio), 278, 56, 0, kHypnoColorWhiteOrBlue);
+	drawString("scifi08.fgx", Common::String::format("%d", data.shootsFired), 278, 79, 0, kHypnoColorWhiteOrBlue);
+	uint32 accuracyRatio = data.shootsFired > 0 ? 100 * data.enemyHits / data.shootsFired : 0;
+	drawString("scifi08.fgx", Common::String::format("%d%%", accuracyRatio), 278, 94, 0, kHypnoColorWhiteOrBlue);
+	drawString("scifi08.fgx", Common::String::format("%d", data.livesUsed), 278, 119, 0, kHypnoColorWhiteOrBlue);
+	drawString("scifi08.fgx", Common::String::format("%d", data.friendliesEncountered), 278, 144, 0, kHypnoColorWhiteOrBlue);
+	drawString("scifi08.fgx", Common::String::format("%d", data.infoReceived), 278, 159, 0, kHypnoColorWhiteOrBlue);
+	uint32 scorePercentage = (killRatio + accuracyRatio) / 2;
+	drawString("scifi08.fgx", Common::String::format("%d%%", scorePercentage), 278, 184, 0, kHypnoColorWhiteOrBlue);
+
+	bool cont = true;
+	while (!shouldQuit() && cont) {
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+				case Common::EVENT_KEYDOWN:
+				cont = false;
+				break;
+				default:
+				break;
+			}
+		}
+		drawScreen();
+		g_system->delayMillis(10);
+	}
 }
 
 void BoyzEngine::pressedKey(const int keycode) {
