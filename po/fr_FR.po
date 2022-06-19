@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-17 19:36+0000\n"
+"POT-Creation-Date: 2022-06-18 23:39+0000\n"
 "PO-Revision-Date: 2022-06-17 12:28+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -65,7 +65,7 @@ msgstr "Remonter"
 #: gui/saveload-dialog.cpp:406 gui/saveload-dialog.cpp:477
 #: gui/saveload-dialog.cpp:779 gui/saveload-dialog.cpp:1172
 #: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53
-#: engines/engine.cpp:720 backends/dialogs/gtk/gtk-dialogs.cpp:63
+#: engines/engine.cpp:721 backends/dialogs/gtk/gtk-dialogs.cpp:63
 #: backends/events/default/default-events.cpp:194
 #: backends/events/default/default-events.cpp:218
 #: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:201
@@ -169,7 +169,7 @@ msgstr ""
 #: gui/editrecorddialog.cpp:67 gui/fluidsynth-dialog.cpp:153
 #: gui/launcher.cpp:527 gui/launcher.cpp:531 gui/massadd.cpp:88
 #: gui/options.cpp:2195 gui/predictivedialog.cpp:69
-#: gui/saveload-dialog.cpp:1173 engines/engine.cpp:525 engines/engine.cpp:549
+#: gui/saveload-dialog.cpp:1173 engines/engine.cpp:526 engines/engine.cpp:550
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
 #: engines/buried/saveload.cpp:69
 #: engines/director/lingo/lingo-builtins.cpp:1652
@@ -851,14 +851,14 @@ msgstr "Recherche dans la liste de jeux"
 msgid "Search:"
 msgstr "Filtre :"
 
-#: gui/launcher.cpp:278 engines/dialogs.cpp:97 engines/engine.cpp:884
+#: gui/launcher.cpp:278 engines/dialogs.cpp:97 engines/engine.cpp:885
 #: engines/pegasus/pegasus.cpp:383 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:630 engines/wage/saveload.cpp:741
 #: engines/xeen/saves.cpp:255
 msgid "Load game:"
 msgstr "Charger le jeu :"
 
-#: gui/launcher.cpp:278 engines/dialogs.cpp:97 engines/engine.cpp:884
+#: gui/launcher.cpp:278 engines/dialogs.cpp:97 engines/engine.cpp:885
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:383
 #: engines/scumm/dialogs.cpp:176 engines/trecision/saveload.cpp:253
@@ -1913,7 +1913,7 @@ msgstr ""
 "\n"
 "Voir plus..."
 
-#: gui/options.cpp:2663 engines/engine.cpp:579
+#: gui/options.cpp:2663 engines/engine.cpp:580
 msgid "Move"
 msgstr "Déplacer"
 
@@ -2507,7 +2507,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "Retour au ~L~anceur"
 
-#: engines/dialogs.cpp:98 engines/engine.cpp:913 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:98 engines/engine.cpp:914 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -2527,7 +2527,7 @@ msgstr "Retour au ~L~anceur"
 msgid "Save game:"
 msgstr "Sauvegarder :"
 
-#: engines/dialogs.cpp:98 engines/engine.cpp:913 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:98 engines/engine.cpp:914 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -2608,11 +2608,11 @@ msgstr "Impossible d'appliquer l'option plein écran."
 msgid "Could not apply filtering setting."
 msgstr "Impossible d'appliquer l'option de filtrage."
 
-#: engines/engine.cpp:443
+#: engines/engine.cpp:444
 msgid "Error"
 msgstr "Erreur"
 
-#: engines/engine.cpp:521
+#: engines/engine.cpp:522
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -2626,7 +2626,7 @@ msgstr ""
 "données du jeu sur votre disque dur. Consultez la\n"
 "documentation (CD audio) pour plus de détails."
 
-#: engines/engine.cpp:545
+#: engines/engine.cpp:546
 msgid ""
 "This game has audio tracks on its CD. These\n"
 "tracks need to be ripped from the CD using\n"
@@ -2640,15 +2640,15 @@ msgstr ""
 "logiciel approprié. Consultez la\n"
 "documentation (CD audio) pour plus de détails."
 
-#: engines/engine.cpp:572
+#: engines/engine.cpp:573
 msgid "Overwrite"
 msgstr "Ecraser"
 
-#: engines/engine.cpp:573
+#: engines/engine.cpp:574
 msgid "Cancel autosave"
 msgstr "Annuler sauv. auto."
 
-#: engines/engine.cpp:575
+#: engines/engine.cpp:576
 #, c-format
 msgid ""
 "WARNING: The autosave slot has a saved game named %S. You can either move "
@@ -2660,22 +2660,22 @@ msgstr ""
 "vers un nouvel emplacement, Ecraser la sauvegarde existante, ou annuler la "
 "sauvegarde automatique (ne sera plus redemandé avant un redémarrage)"
 
-#: engines/engine.cpp:583
+#: engines/engine.cpp:584
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr ""
 "ERREUR : Impossible de copier la sauvegarde auto. vers un nouvel emplacement"
 
-#: engines/engine.cpp:609 engines/metaengine.cpp:380 engines/savestate.cpp:98
+#: engines/engine.cpp:610 engines/metaengine.cpp:380 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:249 engines/sky/metaengine.cpp:185
 #: engines/xeen/saves.cpp:289
 msgid "Autosave"
 msgstr "Sauvegarde auto"
 
-#: engines/engine.cpp:617
+#: engines/engine.cpp:618
 msgid "Error occurred making autosave"
 msgstr "Erreur lors de la sauvegarde automatique"
 
-#: engines/engine.cpp:692
+#: engines/engine.cpp:693
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -2684,15 +2684,15 @@ msgstr ""
 "Échec du chargement (%s) ! Lisez le fichier README pour les informations de "
 "base et les instructions pour obtenir de l'aide supplémentaire."
 
-#: engines/engine.cpp:716
+#: engines/engine.cpp:717
 msgid "WARNING: "
 msgstr "ATTENTION : "
 
-#: engines/engine.cpp:716
+#: engines/engine.cpp:717
 msgid " Shall we still run the game?"
 msgstr " Poursuivre le lancement du jeu ?"
 
-#: engines/engine.cpp:717
+#: engines/engine.cpp:718
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2702,15 +2702,15 @@ msgstr ""
 "complètement supporté par ScummVM. Il est donc instable et les sauvegardes "
 "peuvent ne pas marcher avec une future version de ScummVM."
 
-#: engines/engine.cpp:720 engines/wintermute/wintermute.cpp:182
+#: engines/engine.cpp:721 engines/wintermute/wintermute.cpp:182
 msgid "Start anyway"
 msgstr "Lancer quand même"
 
-#: engines/engine.cpp:738
+#: engines/engine.cpp:739
 msgid "This game is not supported."
 msgstr "Ce jeu n'est pas supporté."
 
-#: engines/engine.cpp:738
+#: engines/engine.cpp:739
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -2718,11 +2718,11 @@ msgstr ""
 "Ce jeu n'est pas supporté pour les raisons suivantes :\n"
 "\n"
 
-#: engines/engine.cpp:880
+#: engines/engine.cpp:881
 msgid "Loading game is currently unavailable"
 msgstr "Chargement actuellement non disponible"
 
-#: engines/engine.cpp:909
+#: engines/engine.cpp:910
 msgid "Saving game is currently unavailable"
 msgstr "Sauvegarde actuellement non disponible"
 
@@ -3089,31 +3089,37 @@ msgstr "Touchscreen 'Tap Mode' - Déplacer sans cliquer"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:253
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:228
 #: engines/twine/metaengine.cpp:228
 msgid "Center"
 msgstr "Centrer"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:254
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:229
 msgid "Pixel-perfect scaling"
 msgstr "Mise à l'échelle Pixel-perfect"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:255
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:230
 msgid "Even pixels scaling"
 msgstr "Mise à l'échelle avec pixels réguliers"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:256
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:231
 msgid "Fit to window"
 msgstr "Adapter à la fenêtre"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:257
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:232
 msgid "Stretch to window"
 msgstr "Étirer pour remplir la fenêtre"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:258
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:233
 msgid "Fit to window (4:3)"
 msgstr "Adapter à la fenêtre (4:3)"
 

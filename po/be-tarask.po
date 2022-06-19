@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-17 19:36+0000\n"
+"POT-Creation-Date: 2022-06-18 23:39+0000\n"
 "PO-Revision-Date: 2022-04-30 18:19+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -66,7 +66,7 @@ msgstr "Угару"
 #: gui/saveload-dialog.cpp:406 gui/saveload-dialog.cpp:477
 #: gui/saveload-dialog.cpp:779 gui/saveload-dialog.cpp:1172
 #: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53
-#: engines/engine.cpp:720 backends/dialogs/gtk/gtk-dialogs.cpp:63
+#: engines/engine.cpp:721 backends/dialogs/gtk/gtk-dialogs.cpp:63
 #: backends/events/default/default-events.cpp:194
 #: backends/events/default/default-events.cpp:218
 #: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:201
@@ -169,7 +169,7 @@ msgstr ""
 #: gui/editrecorddialog.cpp:67 gui/fluidsynth-dialog.cpp:153
 #: gui/launcher.cpp:527 gui/launcher.cpp:531 gui/massadd.cpp:88
 #: gui/options.cpp:2195 gui/predictivedialog.cpp:69
-#: gui/saveload-dialog.cpp:1173 engines/engine.cpp:525 engines/engine.cpp:549
+#: gui/saveload-dialog.cpp:1173 engines/engine.cpp:526 engines/engine.cpp:550
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
 #: engines/buried/saveload.cpp:69
 #: engines/director/lingo/lingo-builtins.cpp:1652
@@ -844,14 +844,14 @@ msgstr "Пошук у сьпісе гульняў"
 msgid "Search:"
 msgstr "Пошук:"
 
-#: gui/launcher.cpp:278 engines/dialogs.cpp:97 engines/engine.cpp:884
+#: gui/launcher.cpp:278 engines/dialogs.cpp:97 engines/engine.cpp:885
 #: engines/pegasus/pegasus.cpp:383 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:630 engines/wage/saveload.cpp:741
 #: engines/xeen/saves.cpp:255
 msgid "Load game:"
 msgstr "Заладаваць гульню:"
 
-#: gui/launcher.cpp:278 engines/dialogs.cpp:97 engines/engine.cpp:884
+#: gui/launcher.cpp:278 engines/dialogs.cpp:97 engines/engine.cpp:885
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:383
 #: engines/scumm/dialogs.cpp:176 engines/trecision/saveload.cpp:253
@@ -1873,7 +1873,7 @@ msgstr ""
 "\n"
 "Ды іншыя…"
 
-#: gui/options.cpp:2663 engines/engine.cpp:579
+#: gui/options.cpp:2663 engines/engine.cpp:580
 msgid "Move"
 msgstr "Перамясьціць"
 
@@ -2457,7 +2457,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "Да S~c~ummVM"
 
-#: engines/dialogs.cpp:98 engines/engine.cpp:913 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:98 engines/engine.cpp:914 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -2477,7 +2477,7 @@ msgstr "Да S~c~ummVM"
 msgid "Save game:"
 msgstr "Захаваць гульню:"
 
-#: engines/dialogs.cpp:98 engines/engine.cpp:913 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:98 engines/engine.cpp:914 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -2558,11 +2558,11 @@ msgstr "Ня выйшла ўжыць налады поўнага экрану."
 msgid "Could not apply filtering setting."
 msgstr "Ня выйшла ўжыць налады фільтраваньня."
 
-#: engines/engine.cpp:443
+#: engines/engine.cpp:444
 msgid "Error"
 msgstr "Памылка"
 
-#: engines/engine.cpp:521
+#: engines/engine.cpp:522
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -2576,7 +2576,7 @@ msgstr ""
 "скапіяваць файлы на цьвёрды дыск.\n"
 "Падрабязнасьці ў дакумэнтацыі (CD audio)."
 
-#: engines/engine.cpp:545
+#: engines/engine.cpp:546
 msgid ""
 "This game has audio tracks on its CD. These\n"
 "tracks need to be ripped from the CD using\n"
@@ -2590,15 +2590,15 @@ msgstr ""
 "адпаведнага інструмэнта для гэтай апэрацыі.\n"
 "Падрабязнасьці ў дакумэнтацыі (CD audio)."
 
-#: engines/engine.cpp:572
+#: engines/engine.cpp:573
 msgid "Overwrite"
 msgstr "Перазапісаць"
 
-#: engines/engine.cpp:573
+#: engines/engine.cpp:574
 msgid "Cancel autosave"
 msgstr "Скасаваць аўтазахаваньне"
 
-#: engines/engine.cpp:575
+#: engines/engine.cpp:576
 #, c-format
 msgid ""
 "WARNING: The autosave slot has a saved game named %S. You can either move "
@@ -2609,21 +2609,21 @@ msgstr ""
 "існы захоў у новы слот, перазапісаць яго або скасаваць аўтазахаваньне (ажно "
 "да перазапуску)"
 
-#: engines/engine.cpp:583
+#: engines/engine.cpp:584
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "ПАМЫЛКА: Ня выйшла перанесьці захоў у новы слот"
 
-#: engines/engine.cpp:609 engines/metaengine.cpp:380 engines/savestate.cpp:98
+#: engines/engine.cpp:610 engines/metaengine.cpp:380 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:249 engines/sky/metaengine.cpp:185
 #: engines/xeen/saves.cpp:289
 msgid "Autosave"
 msgstr "Аўтазахаваньне"
 
-#: engines/engine.cpp:617
+#: engines/engine.cpp:618
 msgid "Error occurred making autosave"
 msgstr "Памылка аўтазахаваньня"
 
-#: engines/engine.cpp:692
+#: engines/engine.cpp:693
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -2633,15 +2633,15 @@ msgstr ""
 "README з асноўнай інфармацыяй й інструкцыямі, як атрымаць дадатковую "
 "дапамогу."
 
-#: engines/engine.cpp:716
+#: engines/engine.cpp:717
 msgid "WARNING: "
 msgstr "УВАГА: "
 
-#: engines/engine.cpp:716
+#: engines/engine.cpp:717
 msgid " Shall we still run the game?"
 msgstr " Ці хочаце вы шчэ запусьціць гульню?"
 
-#: engines/engine.cpp:717
+#: engines/engine.cpp:718
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2651,15 +2651,15 @@ msgstr ""
 "гульня будзе нестабільная й вашыя захаваныя гульні могуць не працаваць у "
 "будучых вэрсіях ScummVM."
 
-#: engines/engine.cpp:720 engines/wintermute/wintermute.cpp:182
+#: engines/engine.cpp:721 engines/wintermute/wintermute.cpp:182
 msgid "Start anyway"
 msgstr "Усё адно запусьціць"
 
-#: engines/engine.cpp:738
+#: engines/engine.cpp:739
 msgid "This game is not supported."
 msgstr "Гэтая гульня не падтрымліваецца."
 
-#: engines/engine.cpp:738
+#: engines/engine.cpp:739
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -2667,11 +2667,11 @@ msgstr ""
 "Гэтая гульня не падтрымліваецца, бо:\n"
 "\n"
 
-#: engines/engine.cpp:880
+#: engines/engine.cpp:881
 msgid "Loading game is currently unavailable"
 msgstr "Заладаваньне гульні немажліва цяпер"
 
-#: engines/engine.cpp:909
+#: engines/engine.cpp:910
 msgid "Saving game is currently unavailable"
 msgstr "Захаваньне гульні немажліва цяпер"
 
@@ -3036,31 +3036,37 @@ msgstr "Дотык экрану — Рух (пстрыкі кірункаваг�
 
 #: backends/graphics/opengl/opengl-graphics.cpp:253
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:228
 #: engines/twine/metaengine.cpp:228
 msgid "Center"
 msgstr "Цэнтравана"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:254
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:229
 msgid "Pixel-perfect scaling"
 msgstr "Павялічэньне акурат у піксэль"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:255
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:230
 msgid "Even pixels scaling"
 msgstr "Раўнамернае павялічэньне піксэляў"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:256
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:231
 msgid "Fit to window"
 msgstr "Па памеру акна"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:257
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:232
 msgid "Stretch to window"
 msgstr "Расьцягнуць па акну"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:258
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:233
 msgid "Fit to window (4:3)"
 msgstr "Па памеру акна (4:3)"
 
