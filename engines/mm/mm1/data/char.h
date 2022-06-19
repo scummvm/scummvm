@@ -22,7 +22,9 @@
 #ifndef MM1_DATA_CHAR_H
 #define MM1_DATA_CHAR_H
 
+#include "common/array.h"
 #include "common/serializer.h"
+#include "mm/mm1/data/items.h"
 
 namespace MM {
 namespace MM1 {
@@ -56,7 +58,13 @@ enum Condition {
 
 class Inventory {
 private:
-	byte _items[INVENTORY_COUNT];
+	Common::Array<byte> _items;
+
+	/**
+	 * Used to test if the inventory has a category of item
+	 */
+	typedef bool (*CategoryFn)(byte id);
+	bool hasCategory(CategoryFn fn) const;
 public:
 	Inventory() {
 		clear();
@@ -70,10 +78,45 @@ public:
 		return _items[idx];
 	}
 
+	/**
+	 * Saves or loads the inventory data
+	 */
 	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Clears the inventory
+	 */
 	void clear();
+
+	/**
+	 * Returns true if the inventory is empty
+	 */
 	bool empty() const;
+
+	/**
+	 * Returns true if the inventory is full
+	 */
 	bool full() const;
+
+	/**
+	 * Returns the index of a free slot
+	 */
+	int getFreeSlot() const;
+
+	/**
+	 * Removes an index from the inventory
+	 */
+	void removeAt(uint idx);
+
+	/**
+	 * The following methods return true if any of
+	 * the contained items are of the given category
+	 */
+	bool hasWeapon() const { return hasCategory(isWeapon); }
+	bool hasMissile() const { return hasCategory(isMissile); }
+	bool hasTwoHanded() const { return hasCategory(isTwoHanded); }
+	bool hasArmor() const { return hasCategory(isArmor); }
+	bool hasShield() const { return hasCategory(isShield); }
 };
 
 struct Character {
@@ -100,16 +143,19 @@ struct Character {
 	uint16 _gems = 0;
 	uint16 _hpBase = 0, _hp = 0, _hpMax = 0;
 	uint32 _gold = 0;
+	byte _v3c = 0;
 	byte _ac = 0;
 	uint8 _food = 0;
 	uint8 _condition = 0;
 	Inventory _equipped;
 	Inventory _backpack;
+	Inventory _equipped14;
 	Inventory _backpack14;
 
 	// TODO: Figure out what these are
 	int _v58, _v59, _v62, _v63, _v64, _v65;
-	int _v66, _v67, _v6c, _v6e, _v6f;
+	int _v66, _v67, _v68, _v69, _v6a, _v6b,
+		_v6c, _v6e, _v6f;
 
 	// Non persistent fields
 	byte _numDrinks = 0;

@@ -77,7 +77,7 @@ protected:
 	/**
 	 * Prints a message 'ESC' to go back
 	 */
-	void escToGoBack();
+	void escToGoBack(int x = 12);
 public:
 	TextView(const Common::String &name);
 	TextView(const Common::String &name, UIElement *owner);

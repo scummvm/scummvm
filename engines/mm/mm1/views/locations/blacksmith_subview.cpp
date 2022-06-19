@@ -48,7 +48,7 @@ void BlacksmithSubview::drawIsAllowed() {
 
 	if (c._class != NONE && c._class <= ROBBER) {
 		if (!(BLACKSMITH_CLASS_USAGE[c._class - 1] &
-			g_globals->_currItem._enablement))
+			g_globals->_currItem._disablements))
 			return;
 	}
 

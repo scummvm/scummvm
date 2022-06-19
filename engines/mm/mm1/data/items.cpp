@@ -26,7 +26,7 @@ namespace MM {
 namespace MM1 {
 
 // TODO: Figure out all item fields
-const Item ITEMS1[86] = {
+const ItemData ITEMS1[86] = {
 	{ 0 },
 	{ 0 },
 	{ 0 },
@@ -115,7 +115,7 @@ const Item ITEMS1[86] = {
 	{ 0 }
 };
 
-const Item ITEMS2[] = {
+const ItemData ITEMS2[] = {
 	{ 0 }
 };
 
@@ -126,6 +126,21 @@ Item *getItem(byte index) {
 		"stats.items.%d", (int)index)];
 
 	return &g_globals->_currItem;
+}
+
+ItemCategory getItemCategory(byte itemId) {
+	if (isWeapon(itemId))
+		return ITEMCAT_WEAPON;
+	if (isMissile(itemId))
+		return ITEMCAT_MISSILE;
+	if (isTwoHanded(itemId))
+		return ITEMCAT_TWO_HANDED;
+	if (isArmor(itemId))
+		return ITEMCAT_ARMOR;
+	if (isShield(itemId))
+		return ITEMCAT_SHIELD;
+
+	return ITEMCAT_NONE;
 }
 
 } // namespace MM1

@@ -27,21 +27,67 @@
 namespace MM {
 namespace MM1 {
 
-struct Item {
-	Common::String _name;
-	byte _enablement;
-	byte _field10;
-	byte _field11;
-	byte _field14;
-	uint16 _cost;
-	byte _field17;
-	byte _field18;
+enum EnablementBit {
+	KNIGHT_BIT = 0x20, PALADIN_BIT = 0x10, ARCHER_BIT = 8,
+	CLERIC_BIT = 4, SORCERER_BIT = 2, ROBBER_BIT = 1,
+	GOOD_BIT = 0x80, EVIL_BIT = 0x40,
+	NEUTRAL_BIT = GOOD_BIT | EVIL_BIT
 };
 
-extern const Item ITEMS1[];
-extern const Item ITEMS2[];
+enum ItemCategory {
+	ITEMCAT_NONE, ITEMCAT_WEAPON, ITEMCAT_MISSILE,
+	ITEMCAT_TWO_HANDED, ITEMCAT_ARMOR, ITEMCAT_SHIELD
+};
+
+enum EquipMode {
+	EQUIPMODE_0 = 0, NOT_EQUIPPABLE = 1,
+	EQUIP_CURSED = 0xff
+};
+
+struct ItemData {
+	byte _disablements;
+	EquipMode _equipMode;
+	byte _val10;
+	byte _val11;
+	byte _val12;
+	byte _val13;
+	uint16 _cost;
+	byte _val16;
+	byte _val17;
+};
+
+struct Item : public ItemData {
+	Common::String _name;
+
+	Item *operator=(const ItemData &rhs) {
+		*dynamic_cast<ItemData *>(this) = rhs;
+		_name.clear();
+		return this;
+	}
+};
+
+extern const ItemData ITEMS1[];
+extern const ItemData ITEMS2[];
+
+
+inline bool isWeapon(byte id) {
+	return id >= 1 && id <= 60;
+};
+inline bool isMissile(byte id) {
+	return id >= 61 && id <= 85;
+};
+inline bool isTwoHanded(byte id) {
+	return id >= 86 && id <= 120;
+};
+inline bool isArmor(byte id) {
+	return id >= 121 && id <= 155;
+};
+inline bool isShield(byte id) {
+	return id >= 156 && id <= 170;
+};
 
 extern Item *getItem(byte index);
+extern ItemCategory getItemCategory(byte itemId);
 
 } // namespace MM1
 } // namespace MM
