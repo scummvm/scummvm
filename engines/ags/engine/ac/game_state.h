@@ -404,11 +404,10 @@ private:
 	std::vector<PViewport> _roomViewportsSorted;
 	// Cameras defines the position of a "looking eye" inside the room.
 	std::vector<PCamera> _roomCameras;
-	// Script viewports and cameras are references to real data export to
-	// user script. They became invalidated as the actual object gets
-	// destroyed, but are kept in memory to prevent script errors.
-	std::vector<std::pair<ScriptViewport *, int32_t>> _scViewportRefs;
-	std::vector<std::pair<ScriptCamera *, int32_t>> _scCameraRefs;
+	// We keep handles to the script refs to viewports and cameras, so that we
+	// could address them and invalidate as the actual object gets destroyed.
+	std::vector<int32_t> _scViewportHandles;
+	std::vector<int32_t> _scCameraHandles;
 
 	// Tells that the main viewport's position has changed since last game update
 	bool  _mainViewportHasChanged = false;
