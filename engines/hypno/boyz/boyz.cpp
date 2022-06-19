@@ -248,6 +248,12 @@ void BoyzEngine::loadAssets() {
 
 	loadArcadeLevel("c351.mi_", "<check_ho>", "<retry_menu>", "");
 	loadArcadeLevel("c352.mi_", "<check_ho>", "<retry_menu>", "");
+	ar = (ArcadeShooting *) _levels["c352.mi_"];
+	// These objectives, as every others, are unused
+	// We should remove them to avoid always failing the level
+	ar->objKillsRequired[0] = 0;
+	ar->objMissesAllowed[0] = 0;
+
 	loadArcadeLevel("c353.mi_", "<check_ho>", "<retry_menu>", "");
 	ar = (ArcadeShooting *) _levels["c353.mi_"];
 	ar->id = 353; // This corrects a mistake in the game scripts

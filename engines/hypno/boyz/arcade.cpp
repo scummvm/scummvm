@@ -326,9 +326,6 @@ bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting 
 					_health = 0;
 					// Not sure how to handle this
 				}
-			} else if (_levelId == 352) {
-				// Objectives are never checked here, for some reason
-				_skipLevel = true;
 			} else if (_levelId == 354) {
 				if (ttime == 70) {
 					incInfoReceived();
