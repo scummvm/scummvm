@@ -172,6 +172,7 @@ struct MacObsidianResources : public ProjectResources {
 	~MacObsidianResources();
 
 	void setup(bool haveWordGames);
+	void setup_mac_demo();
 	Common::SeekableReadStream *getSegmentStream(int index) const;
 	const Common::SharedPtr<CursorGraphicCollection> &getCursorGraphics() const;
 	const Common::SharedPtr<Obsidian::WordGameData> &getWordGameData() const;
@@ -290,6 +291,65 @@ void MacObsidianResources::setup(bool haveWordGames) {
 	debug(1, "Finished unpacking installer resources");
 }
 
+void MacObsidianResources::setup_mac_demo() {
+	debug(1, "Opening resources...");
+
+	const char *cursorSources[4] = {"Obsidian Demo", "Basic.rPP", "mCursors.cPP", "Obsidian.cPP"};
+	for (int i = 0; i < 4; i++) {
+		const char *fileName = cursorSources[i];
+
+		Common::MacResManager resMan;
+		if (!resMan.open(Common::Path(fileName)))
+			error("Failed to open resources in file '%s'", fileName);
+
+		if (!loadCursorsFromMacResources(*_cursorGraphics, resMan))
+			error("Failed to read cursor resources from file '%s'", fileName);
+	}
+	debug(1, "Loading word games...");
+
+	{
+		Common::MacResManager resMan;
+		if (!resMan.open(Common::Path("RSGKit.rPP")))
+			error("Couldn't find word game file in installer archive");
+
+		_wordGameData.reset(new Obsidian::WordGameData());
+
+		Common::SeekableReadStream *stream = resMan.getDataFork();
+		if (!stream)
+			error("Failed to open word game file");
+
+		Obsidian::WordGameLoadBucket buckets[] = {
+			{0, 0},				// 0 letters
+			{0xD7C8, 0xD7CC},	// 1 letter
+			{0xD7CC, 0xD84D},	// 2 letter
+			{0xD84D, 0xE25D},	// 3 letter
+			{0x1008C, 0x12AA8},	// 4 letter
+			{0x14C58, 0x19614},	// 5 letter
+			{0x1C73C, 0x230C1},	// 6 letter
+			{0x26D10, 0x2EB98},	// 7 letter
+			{0x32ADC, 0x3AA0E},	// 8 letter
+			{0x3E298, 0x45B88},	// 9 letter
+			{0x48BE8, 0x4E0D0},	// 10 letter
+			{0x4FFB0, 0x53460},	// 11 letter
+			{0x545F0, 0x56434},	// 12 letter
+			{0x56D84, 0x57CF0}, // 13 letter
+			{0x58158, 0x58833}, // 14 letter
+			{0x58A08, 0x58CD8}, // 15 letter
+			{0x58D8C, 0x58EAD}, // 16 letter
+			{0x58EF4, 0x58F72}, // 17 letter
+			{0x58F90, 0x58FDC},	// 18 letter
+			{0, 0},				// 19 letter
+			{0x58FEC, 0x59001},	// 20 letter
+			{0x59008, 0x59034},	// 21 letter
+			{0x5903C, 0x59053},	// 22 letter
+		};
+
+		if (!_wordGameData->load(stream, buckets, 23, 1, false))
+			error("Failed to load word game data");
+	}
+	debug(1, "Finished loading demo resources");
+}
+
 Common::SeekableReadStream *MacObsidianResources::getSegmentStream(int index) const {
 	return _segmentStreams[index];
 }
@@ -311,8 +371,9 @@ MacObsidianResources::~MacObsidianResources() {
 }
 
 MTropolisEngine::MTropolisEngine(OSystem *syst, const MTropolisGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Resource");
 	if (gameDesc->gameID == GID_OBSIDIAN && _gameDescription->desc.platform == Common::kPlatformWindows) {
-		const Common::FSNode gameDataDir(ConfMan.get("path"));
 		SearchMan.addSubDirectoryMatching(gameDataDir, "Obsidian");
 		SearchMan.addSubDirectoryMatching(gameDataDir, "Obsidian/RESOURCE");
 		SearchMan.addSubDirectoryMatching(gameDataDir, "RESOURCE");
@@ -384,23 +445,52 @@ Common::Error MTropolisEngine::run() {
 		_runtime->addVolume(5, "OBSIDIAN5", true);
 
 		Common::SharedPtr<ProjectDescription> desc(new ProjectDescription(kProjectPlatformWindows));
-		desc->addSegment(0, "Obsidian Data 1.MPL");
-		desc->addSegment(1, "Obsidian Data 2.MPX");
-		desc->addSegment(2, "Obsidian Data 3.MPX");
-		desc->addSegment(3, "Obsidian Data 4.MPX");
-		desc->addSegment(4, "Obsidian Data 5.MPX");
-		desc->addSegment(5, "Obsidian Data 6.MPX");
+
+		if (_gameDescription->desc.flags & ADGF_DEMO) {
+			if (Common::File::exists("OBSIDI~1.MPL")) {
+				desc->addSegment(0, "OBSIDI~1.MPL");
+			} else {
+				desc->addSegment(0, "OBSIDIAN DEMO DATA.MPL");
+			}
+		} else {
+			desc->addSegment(0, "Obsidian Data 1.MPL");
+			desc->addSegment(1, "Obsidian Data 2.MPX");
+			desc->addSegment(2, "Obsidian Data 3.MPX");
+			desc->addSegment(3, "Obsidian Data 4.MPX");
+			desc->addSegment(4, "Obsidian Data 5.MPX");
+			desc->addSegment(5, "Obsidian Data 6.MPX");
+
+			Common::SharedPtr<Obsidian::WordGameData> wgData = loadWinObsidianWordGameData();
+			desc->addPlugIn(PlugIns::createObsidian(wgData));
+		}
 
 		Common::SharedPtr<CursorGraphicCollection> cursors(new CursorGraphicCollection());
 		{
+			const char *cursorSources[3];
 			// Has to be in this order, some resources from MCURSORS will clobber resources from the player executable
-			const char *cursorFiles[3] = {"Obsidian.exe", "MCURSORS.C95", "Obsidian.c95"};
+			if (Common::File::exists("OBSIDIAN4.C95")) {
+				cursorSources[1] = "OBSIDIAN4.C95";
+			} else {
+				cursorSources[1] = "MCURSORS.C95";
+			}
 
-			for (int i = 0; i < 3; i++) {
+			if (Common::File::exists("OBSIDIAN DEMO.EXE")) {
+				cursorSources[0] = "OBSIDIAN DEMO.EXE";
+			} else {
+				cursorSources[0] = "OBSIDIAN.EXE";
+			}
+			if (!(_gameDescription->desc.flags & ADGF_DEMO)) {
+				cursorSources[2] = "Obsidian.c95";
+			}
+
+			for (int i = 0; i < (_gameDescription->desc.flags & ADGF_DEMO ? 2 : 3); i++) {
+				const char *fileName = cursorSources[i];
 				Common::File f;
-				if (!f.open(cursorFiles[i]) || !loadCursorsFromPE(*cursors, &f)) {
-					error("Failed to load resources");
-				}
+				if (!f.open(Common::Path(fileName)))
+					error("Failed to open resources in file '%s'", fileName);
+
+				if (!loadCursorsFromPE(*cursors, &f))
+					error("Failed to read cursor resources from file '%s'", fileName);
 			}
 		}
 
@@ -416,8 +506,6 @@ Common::Error MTropolisEngine::run() {
 		static_cast<Standard::StandardPlugIn *>(standardPlugIn.get())->getHacks().allowGarbledListModData = true;
 		desc->addPlugIn(standardPlugIn);
 
-		desc->addPlugIn(PlugIns::createObsidian(wgData));
-
 		_runtime->queueProject(desc);
 
 	} else if (_gameDescription->gameID == GID_OBSIDIAN && _gameDescription->desc.platform == Common::kPlatformMacintosh) {
@@ -431,9 +519,6 @@ Common::Error MTropolisEngine::run() {
 		MacObsidianResources *resources = new MacObsidianResources();
 		Common::SharedPtr<ProjectResources> resPtr(resources);
 
-		// Non-English releases don't have Bureau word game puzzles
-		resources->setup(_gameDescription->desc.language == Common::Language::EN_ANY);
-
 		_runtime->addVolume(0, "Installed", true);
 		_runtime->addVolume(1, "OBSIDIAN1", true);
 		_runtime->addVolume(2, "OBSIDIAN2", true);
@@ -443,8 +528,18 @@ Common::Error MTropolisEngine::run() {
 
 		Common::SharedPtr<ProjectDescription> desc(new ProjectDescription(kProjectPlatformMacintosh));
 
-		for (int i = 0; i < 6; i++)
-			desc->addSegment(i, resources->getSegmentStream(i));
+		if (_gameDescription->desc.flags & ADGF_DEMO) {
+			resources->setup_mac_demo();
+
+			desc->addSegment(0, "Obs Demo Large w Sega");
+		} else {
+			// Non-English releases don't have Bureau word game puzzles
+			resources->setup(_gameDescription->desc.language == Common::Language::EN_ANY);
+
+			for (int i = 0; i < 6; i++)
+				desc->addSegment(i, resources->getSegmentStream(i));
+		}
+
 
 		Common::SharedPtr<MTropolis::PlugIn> standardPlugIn = PlugIns::createStandard();
 		static_cast<Standard::StandardPlugIn *>(standardPlugIn.get())->getHacks().allowGarbledListModData = true;

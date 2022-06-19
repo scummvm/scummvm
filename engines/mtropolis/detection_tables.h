@@ -29,11 +29,11 @@
 namespace MTropolis {
 
 static const MTropolisGameDescription gameDescriptions[] = {
-	{
-		// Obsidian Macintosh
+
+	{ // Obsidian Macintosh
 		{
 			"obsidian",
-			"V1.0, 1/13/97, installed, CD",
+			"V1.0, 1/13/97, CD",
 			{
 				{ "Obsidian Installer", 0, "1c272c23dc50b771970cabe8410c9349", 9250304 },
 				{ "Obsidian Data 2", 0, "1e590e3154c1af09efb951a07abc48b8", 563287808 },
@@ -52,8 +52,8 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
-	{
-		// Obsidian Windows, installed
+
+	{ // Obsidian Windows, installed
 		{
 			"obsidian",
 			"V1.0, 1/13/97, installed, CD",
@@ -108,9 +108,127 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	{ // Obsidian Macintosh demo
+		{
+			"obsidian",
+			"Demo",
+			{
+				{ "Obsidian Demo", 0, "abd1b5e7ac133f4c4b8c45ac67a4c44d", 920832 },
+				{ "Basic.rPP", 0, "cb567ec1423a35903d8d5f458409e681", 210432 },
+				{ "Experimental.rPP", 0, "26aa5fe1a6a152ade74e23a706673c50", 102016 },
+				{ "Extras.rPP", 0, "c0e4c0401f2107ba3a3b7d282a76d99b", 377600 },
+				{ "mCursors.cPP", 0, "a52e2aaf3b1a5c7d93a2949693bca694", 13312 },
+				{ "mNet.rPP", 0, "ed5d998e7db6daae1f24bb124cc269aa", 134784 },
+				{ "Obsidian.cPP", 0, "6da7babae9725a716f27f9f4ea382e92", 7552 },
+				{ "RSGKit.rPP", 0, "c359e3c932b09280d1ccf21f8fb52bd7", 668160 },
+				{ "Obs Demo Large w Sega", 0, "34efe95fc32dcf0a2a90bf6854c08e95", 98953679 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO0()
+		},
+		GID_OBSIDIAN,
+		0,
+		0,
+	},
+
+	{ // Obsidian PC demo from PC Gamer Disc 2.12 (1997-01)
+		{
+			"obsidian",
+			"Demo",
+			{
+				{ "OBSIDIAN.EXE", 0, "b6fb0e0df88c1524bcd0c5de9f5e882c", 750080 },
+				{ "OBSIDIAN.R95", 0, "5361ef93e36d722665594b724e0018fd", 183296 },
+				{ "TEXTWORK.R95", 0, "96346d39c4bb04f525edbf06ffe047e0", 148992 },
+				{ "EXPRMNTL.R95", 0, "aa0431c2be37e33883747c61d3e980ff", 108544 },
+				{ "MCURSORS.C95", 0, "47cf6abb95f3c43cdcbdf7ea1de3478d", 145920 },
+				{ "OBSIDI~1.MPL", 0, "643a989213b42cbac319d04676447624", 29096880 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_OBSIDIAN,
+		0,
+		0,
+	},
+
+	{ // Obsidian PC demo
+		{
+			"obsidian",
+			"Demo",
+			{
+				{ "OBSIDIAN DEMO.EXE", 0, "1bac38af354fd79ae3285e6c737705b7", 751104 },
+				{ "OBSIDIAN1.R95", 0, "5361ef93e36d722665594b724e0018fd", 183296 },
+				{ "OBSIDIAN2.R95", 0, "96346d39c4bb04f525edbf06ffe047e0", 148992 },
+				{ "OBSIDIAN3.R95", 0, "aa0431c2be37e33883747c61d3e980ff", 108544 },
+				{ "OBSIDIAN4.C95", 0, "47cf6abb95f3c43cdcbdf7ea1de3478d", 145920 },
+				{ "OBSIDIAN DEMO DATA.MPL", 0, "77d04f62825c9f424baba46922ffb60f", 29552976 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_OBSIDIAN,
+		0,
+		0,
+	},
+
+	{ // Obsidian PC demo
+		{
+			"obsidian",
+			"Demo",
+			{
+				{ "OBSIDIAN.EXE", 0, "b6fb0e0df88c1524bcd0c5de9f5e882c", 750080 },
+				{ "OBSIDIAN.R95", 0, "5361ef93e36d722665594b724e0018fd", 183296 },
+				{ "TEXTWORK.R95", 0, "96346d39c4bb04f525edbf06ffe047e0", 148992 },
+				{ "EXPRMNTL.R95", 0, "aa0431c2be37e33883747c61d3e980ff", 108544 },
+				{ "MCURSORS.C95", 0, "47cf6abb95f3c43cdcbdf7ea1de3478d", 145920 },
+				{ "OBSIDIAN DEMO DATA.MPL", 0, "4d557cd0a5f2311685d213053ebbd567", 116947911 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_OBSIDIAN,
+		0,
+		0,
+	},
+
+	{ // Obsidian PC demo
+		{
+			"obsidian",
+			"Demo",
+			{
+				{ "OBSIDIAN DEMO.EXE", 0, "1bac38af354fd79ae3285e6c737705b7", 751104 },
+				{ "OBSIDIAN1.R95", 0, "5361ef93e36d722665594b724e0018fd", 183296 },
+				{ "OBSIDIAN2.R95", 0, "96346d39c4bb04f525edbf06ffe047e0", 148992 },
+				{ "OBSIDIAN3.R95", 0, "aa0431c2be37e33883747c61d3e980ff", 108544 },
+				{ "OBSIDIAN4.C95", 0, "47cf6abb95f3c43cdcbdf7ea1de3478d", 145920 },
+				{ "OBSIDIAN DEMO DATA.MPL", 0, "4d557cd0a5f2311685d213053ebbd567", 116947911 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_OBSIDIAN,
+		0,
+		0,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, 0 }
 };
 
-} // End of namespace MTropolisEngine
+} // End of namespace MTropolis
 
 #endif
