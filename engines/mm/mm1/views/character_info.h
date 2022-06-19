@@ -33,9 +33,20 @@ namespace Views {
  * In-game character dialog
  */
 class CharacterInfo : public CharacterBase {
+private:
 	enum ViewState { DISPLAY = 0, EQUIP = 1, REMOVE = 2 };
 	ViewState _state = DISPLAY;
 	Common::String _newName;
+private:
+	/**
+	 * Equips the item at the given index
+	 */
+	void equipItem(uint index);
+
+	/**
+	 * Removes the equipped item at the given index
+	 */
+	void removeItem(uint index);
 public:
 	CharacterInfo() : CharacterBase("CharacterInfo") {}
 	virtual ~CharacterInfo() {}

@@ -31,11 +31,12 @@ static const int CLASS_HP_PER_LEVEL[6] = {
 };
 
 void Inventory::clear() {
-	Common::fill(_items, _items + INVENTORY_COUNT, 0);
+	_items.clear();
+	_items.resize(INVENTORY_COUNT);
 }
 
 void Inventory::synchronize(Common::Serializer &s) {
-	s.syncBytes(_items, INVENTORY_COUNT);
+	s.syncBytes(&_items[0], INVENTORY_COUNT);
 }
 
 bool Inventory::empty() const {
@@ -53,6 +54,32 @@ bool Inventory::full() const {
 	}
 	return true;
 }
+
+int Inventory::getFreeSlot() const {
+	for (uint i = 0; i < INVENTORY_COUNT; ++i) {
+		if (!_items[i])
+			return i;
+	}
+
+	error("Inventory is full");
+	return -1;
+}
+
+
+void Inventory::removeAt(uint idx) {
+	_items.remove_at(idx);
+	_items.push_back(0);
+}
+
+bool Inventory::hasCategory(CategoryFn fn) const {
+	for (uint i = 0; i < INVENTORY_COUNT; ++i) {
+		if (fn(_items[i]))
+			return true;
+	}
+	return false;
+}
+
+/*------------------------------------------------------------------------*/
 
 void Character::synchronize(Common::Serializer &s) {
 	s.syncBytes((byte *)_name, 16);
@@ -98,9 +125,11 @@ void Character::synchronize(Common::Serializer &s) {
 
 	_equipped.synchronize(s);
 	_backpack.synchronize(s);
+	_equipped14.synchronize(s);
+	_backpack14.synchronize(s);
 
 	// TODO: Figure purpose of remaining unknown fields
-	s.skip(51);
+	s.skip(39);
 }
 
 void Character::clear() {
@@ -237,7 +266,7 @@ Character::BuyResult Character::buyItem(byte itemId) {
 	// Add the item
 	_gold -= item._cost;
 	_backpack[slotIndex] = itemId;
-	_backpack14[slotIndex] = item._field14;
+	_backpack14[slotIndex] = item._val13;
 
 	return BUY_SUCCESS;
 }

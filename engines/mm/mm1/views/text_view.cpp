@@ -123,8 +123,8 @@ void TextView::drawTextBorder() {
 	}
 }
 
-void TextView::escToGoBack() {
-	writeString(12, 24, STRING["dialogs.misc.go_back"]);
+void TextView::escToGoBack(int x) {
+	writeString(x, 24, STRING["dialogs.misc.go_back"]);
 }
 
 } // namespace Views

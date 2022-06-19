@@ -71,7 +71,7 @@ void BlacksmithSellItem::selectItem(uint index) {
 	c._backpack14[index] = 0;
 
 	getItem(itemId);
-	if (!v14 && g_globals->_currItem._field14)
+	if (!v14 && g_globals->_currItem._val13)
 		g_globals->_currItem._cost /= 2;
 
 	c._gold += g_globals->_currItem._cost / 2;

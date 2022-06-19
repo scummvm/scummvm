@@ -106,7 +106,7 @@ void Temple::changeCharacter(uint index) {
 	_uncurseCost = UNCURSE_COST[townNum];
 	for (i = 0;  i < INVENTORY_COUNT; ++i) {
 		if (c._equipped[i]) {
-			if (getItem(c._equipped[i])->_field10 == 0xff)
+			if (getItem(c._equipped[i])->_equipMode == EQUIP_CURSED)
 				break;
 		}
 	}
@@ -173,8 +173,10 @@ void Temple::uncurseItems() {
 		for (int i = 0; i < INVENTORY_COUNT; ++i) {
 			if (c._equipped[i]) {
 				getItem(c._equipped[i]);
-				if (g_globals->_currItem._field10 == 0xff)
-					c._equipped[i] = 0;
+				if (g_globals->_currItem._equipMode == EQUIP_CURSED) {
+					c._equipped.removeAt(i);
+					--i;
+				}
 			}
 		}
 
