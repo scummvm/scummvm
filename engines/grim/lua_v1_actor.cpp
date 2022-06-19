@@ -1570,17 +1570,57 @@ void Lua_V1::SetActorInvClipNode() {
 	//
 	// The node id -1 is when animation finished.
 	//
-	// There is no known visual differences between lack implementation and original.
 	// This looks like original renderer specific.
+	// There is no known visual differences between lack implementation and original.
 	debug(2, "Stub function: SetActorInvClipNode(%d)", nodeId);
 }
 
 void Lua_V1::SetActorClipPlane() {
-	warning("Stub function: SetActorClipPlane");
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object normalXObj = lua_getparam(2);
+	lua_Object normalYObj = lua_getparam(3);
+	lua_Object normalZObj = lua_getparam(4);
+	lua_Object pointXObj = lua_getparam(5);
+	lua_Object pointYObj = lua_getparam(6);
+	lua_Object pointZObj = lua_getparam(7);
+
+	if (!lua_isuserdata(actorObj) || actorObj == LUA_NOOBJECT) {
+		return;
+	}
+	if (!lua_isnumber(normalXObj) || !lua_isnumber(normalYObj) || !lua_isnumber(normalZObj) ||
+	    !lua_isnumber(pointXObj) || !lua_isnumber(pointXObj) || !lua_isnumber(pointXObj)) {
+		return;
+	}
+	/*Actor *actor =*/ getactor(actorObj);
+	// This is triggered in few places:
+	// 'Beaver Dam' - while using firing extinguisher after throughing a bone
+	// 'Engines Porthole - Dock', - press button trigger anchor up/down
+	// 'Engines Porthole - Ocean' - anchor scene
+	// 'High Rollers Dillopede' - lift scene
+	// This looks like original renderer specific.
+	// There is no known visual differences between lack implementation and original.
+	debug(2, "Stub function: SetActorClipPlane(norm(%f, %f, %f), point(%f, %f, %f)",
+	         lua_getnumber(normalXObj), lua_getnumber(normalYObj), lua_getnumber(normalZObj),
+	         lua_getnumber(pointXObj), lua_getnumber(pointYObj), lua_getnumber(pointZObj));
 }
 
 void Lua_V1::SetActorClipActive() {
-	warning("Stub function: SetActorClipActive");
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object stateObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || actorObj == LUA_NOOBJECT) {
+		return;
+	}
+	/*Actor *actor =*/ getactor(actorObj);
+	int state = (int)lua_getnumber(stateObj);
+	// This is triggered in few places:
+	// 'Beaver Dam' - while using firing extinguisher after throughing a bone
+	// 'Engines Porthole - Dock', - press button trigger anchor up/down
+	// 'Engines Porthole - Ocean' - anchor scene
+	// 'High Rollers Dillopede' - lift scene
+	// This looks like original renderer specific.
+	// There is no known visual differences between lack implementation and original.
+	debug(2, "Stub function: SetActorClipActive(%d)", state);
 }
 
 void Lua_V1::SetActorFrustrumCull() {
