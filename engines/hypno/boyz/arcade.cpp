@@ -654,6 +654,9 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 
 				hitPlayer();
 			}
+			if (_shoots[i].explosionFrames.size() == 0)
+				return false;
+
 			debugC(1, kHypnoDebugArcade, "Jumping to %d", _shoots[i].explosionFrames[0].start - 3);
 			_background->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 			_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
