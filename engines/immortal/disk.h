@@ -33,11 +33,6 @@
  * matter for game engines anyway.
  */
 
-/* There is also one thing that currently has an error. If a file size is the full 15 chars,
- * it seems to add a char of some kind to the end and can't be looked up by that value.
- * Probably just a difference in string encoding that I need to sort out
- */
-
 namespace Immortal {
 
 // These values define for ProDos how to read the file entry, and also whether it's a keyblock (if it is a directory header, it's the keyblock of that directory)
@@ -85,7 +80,7 @@ enum FileExt {
 
 class ProDosFile : public Common::ArchiveMember {
 public:
-    ProDosFile(char name[15], uint8 type, uint16 tBlk, uint32 eof, uint16 bPtr, Common::File *disk);
+    ProDosFile(char name[16], uint8 type, uint16 tBlk, uint32 eof, uint16 bPtr, Common::File *disk);
     ~ProDosFile() {};
 
     // These are the Common::ArchiveMember related functions
@@ -93,10 +88,12 @@ public:
     Common::SeekableReadStream *createReadStream() const override;
     void getDataBlock(byte *memOffset, int offset, int size) const;
     int parseIndexBlock(byte *memOffset, int blockNum, int cSize) const;
+
+    // Mostly for debugging purposes, just prints the metadata
     void printInfo();
 
 private:
-            char  _name[15];
+            char  _name[16];
            uint8  _type;
           uint16  _blockPtr;
           uint16  _totalBlocks;
@@ -117,7 +114,7 @@ public:
     ProDosDisk(const Common::String filename);
     ~ProDosDisk();
 
-    // Called from the constructor, parses the volume and fills the hashmap with files
+    // Called from the constructor, it parses the volume and fills the hashmap with files
     bool open(const Common::String filename);
 
     // These are the Common::Archive related methods
@@ -150,7 +147,7 @@ Common::HashMap<Common::String, Common::SharedPtr<ProDosFile>> _files; // Hashma
     struct VolHeader {
          uint8 _type;                       // Not really important for a volume header, as this will always be F
          uint8 _nameLen;
-          char _name[15];
+          char _name[16];
           byte _reserved[8];                // Extra space reserved for possible future uses, not important
           Date _date;
           Time _time;
@@ -167,7 +164,7 @@ Common::HashMap<Common::String, Common::SharedPtr<ProDosFile>> _files; // Hashma
     struct DirHeader {
          uint8 _type;
          uint8 _nameLen;
-          char _name[15];
+          char _name[16];
           byte _reserved[8];
           Date _date;
           Time _time;
@@ -185,7 +182,7 @@ Common::HashMap<Common::String, Common::SharedPtr<ProDosFile>> _files; // Hashma
     struct FileEntry {
          uint8 _type;                       // 0 = inactive, 1-3 = file, 4 = pascal area, 14 = subdirectory, 15 = volume directory
          uint8 _nameLen;
-          char _name[15];
+          char _name[16];
          uint8 _ext;                        // File extension, uses the enum FileExt
         uint16 _blockPtr;                   // Block pointer to data for seedling, index block for sapling, or master block for tree
         uint16 _totalBlocks;                // Really important to remember this is the total *including* the index block
@@ -207,7 +204,7 @@ Common::HashMap<Common::String, Common::SharedPtr<ProDosFile>> _files; // Hashma
     void getDirectoryHeader(DirHeader *h);  // Uses getHeader and then fills in the values for the parent directory
     void getVolumeHeader(VolHeader *dir);   // Uses getHeader and then fills in the volume related information (there is no parent directory to this one)
     void getFileEntry(FileEntry *f);        // Adds all of the file entry information to the struct
-    void searchDirectory(DirHeader *h, uint16 p, uint16 n, Common::String path);  // Recursively searches all files within a directory, and dives into subdirectories to search them as well
+    void searchDirectory(DirHeader *h, uint16 p, uint16 n, Common::String path);  // Recursively searches all files within a directory, by calling itself for subdirectories
     void getVolumeBitmap(VolHeader *h);     // Puts together the volume bitmap
 };
 
