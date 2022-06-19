@@ -28,6 +28,7 @@ class OSystem_PS3 : public OSystem_SDL {
 public:
 	void init() override;
 	void initBackend() override;
+	bool hasFeature(Feature f) override;
 	Common::HardwareInputSet *getHardwareInputSet() override;
 
 protected:

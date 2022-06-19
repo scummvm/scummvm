@@ -124,3 +124,14 @@ Common::HardwareInputSet *OSystem_PS3::getHardwareInputSet() {
 
 	return inputSet;
 }
+
+bool OSystem_PS3::hasFeature(Feature f) {
+	if (f == kFeatureDisplayLogFile ||
+	    f == kFeatureOpenUrl ||
+	    f == kFeatureSystemBrowserDialog ||
+	    f == kFeatureClipboardSupport) {
+		return false;
+	}
+
+	return OSystem_SDL::hasFeature(f);
+}
