@@ -24,36 +24,12 @@
 #include "ags/shared/script/cc_internal.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_compat.h"
+#include "ags/shared/util/string_utils.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
 
-using AGS::Shared::Stream;
-
-// [IKM] I reckon this function is almost identical to fgetstring in string_utils
-void freadstring(char **strptr, Stream *in) {
-	static char ibuffer[300];
-	int idxx = 0;
-
-	while ((ibuffer[idxx] = in->ReadInt8()) != 0)
-		idxx++;
-
-	if (ibuffer[0] == 0) {
-		strptr[0] = nullptr;
-		return;
-	}
-
-	strptr[0] = (char *)malloc(strlen(ibuffer) + 1);
-	strcpy(strptr[0], ibuffer);
-}
-
-void fwritestring(const char *strptr, Stream *out) {
-	if (strptr == nullptr) {
-		out->WriteByte(0);
-	} else {
-		out->Write(strptr, strlen(strptr) + 1);
-	}
-}
+using namespace AGS::Shared;
 
 ccScript *ccScript::CreateFromStream(Stream *in) {
 	ccScript *scri = new ccScript();
@@ -190,15 +166,15 @@ void ccScript::Write(Stream *out) {
 	}
 	out->WriteInt32(numimports);
 	for (n = 0; n < numimports; n++)
-		fwritestring(imports[n], out);
+		StrUtil::WriteCStr(imports[n], out);
 	out->WriteInt32(numexports);
 	for (n = 0; n < numexports; n++) {
-		fwritestring(exports[n], out);
+		StrUtil::WriteCStr(exports[n], out);
 		out->WriteInt32(export_addr[n]);
 	}
 	out->WriteInt32(numSections);
 	for (n = 0; n < numSections; n++) {
-		fwritestring(sectionNames[n], out);
+		StrUtil::WriteCStr(sectionNames[n], out);
 		out->WriteInt32(sectionOffsets[n]);
 	}
 	out->WriteInt32(ENDFILESIG);
@@ -256,13 +232,13 @@ bool ccScript::Read(Stream *in) {
 
 	imports = (char **)malloc(sizeof(char *) * numimports);
 	for (n = 0; n < numimports; n++)
-		freadstring(&imports[n], in);
+		imports[n] = StrUtil::ReadMallocCStrOrNull(in);
 
 	numexports = in->ReadInt32();
 	exports = (char **)malloc(sizeof(char *) * numexports);
 	export_addr = (int32_t *)malloc(sizeof(int32_t) * numexports);
 	for (n = 0; n < numexports; n++) {
-		freadstring(&exports[n], in);
+		exports[n] = StrUtil::ReadMallocCStrOrNull(in);
 		export_addr[n] = in->ReadInt32();
 	}
 
@@ -272,7 +248,7 @@ bool ccScript::Read(Stream *in) {
 		sectionNames = (char **)malloc(numSections * sizeof(char *));
 		sectionOffsets = (int32_t *)malloc(numSections * sizeof(int32_t));
 		for (n = 0; n < numSections; n++) {
-			freadstring(&sectionNames[n], in);
+			sectionNames[n] = StrUtil::ReadMallocCStrOrNull(in);
 			sectionOffsets[n] = in->ReadInt32();
 		}
 	} else {
