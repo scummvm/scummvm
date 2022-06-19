@@ -508,7 +508,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			} else if (!it->video && it->bodyFrames.size() > 0) {
 				uint32 frame = _background->decoder->getCurFrame();
 				uint32 bodyLastFrame = it->bodyFrames[it->bodyFrames.size() - 1].lastFrame();
-				if (frame > it->startFrame && frame - it->startFrame >= bodyLastFrame - 3)
+				if (frame > it->startFrame && frame - it->startFrame >= bodyLastFrame)
 					if (!it->destroyed) {
 						incTargetsMissed();
 						missedTarget(it, arc);

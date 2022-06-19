@@ -241,9 +241,13 @@ void BoyzEngine::loadAssets() {
 	loadArcadeLevel("c31.mi_", "<check_c3>", "<retry_menu>", "");
 	loadArcadeLevel("c32.mi_", "<check_c3>", "<retry_menu>", "");
 	loadArcadeLevel("c33.mi_", "<check_c3>", "<retry_menu>", "");
+	// This is manually implemented, if objectives are completed
+	ArcadeShooting *ar = (ArcadeShooting *) _levels["c33.mi_"];
+	ar->nextLevelVideo.clear();
+
 	loadArcadeLevel("c34.mi_", "<check_c3>", "<retry_menu>", "");
 	loadArcadeLevel("c35.mi_", "<check_ho>", "<select_c3>", "");
-	ArcadeShooting *ar = (ArcadeShooting *) _levels["c35.mi_"];
+	ar = (ArcadeShooting *) _levels["c35.mi_"];
 	ar->backgroundVideo = ""; // This will be manually populated
 
 	loadArcadeLevel("c351.mi_", "<check_ho>", "<retry_menu>", "");

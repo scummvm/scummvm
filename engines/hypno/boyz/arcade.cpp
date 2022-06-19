@@ -112,7 +112,12 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 		}
 		return;
 	} else {
-		if (_levelId == 42) {
+		if (_levelId == 33 && checkArcadeObjectives()) {
+			MVideo video("c3/c33a02s.smk", Common::Point(0, 0), false, true, false);
+			runIntro(video);
+			defaultCursor();
+			waitForUserClick(1);
+		} else if (_levelId == 42) {
 			disableCursor();
 			MVideo video("c4/c4bro8s.smk", Common::Point(0, 0), false, true, false);
 			runIntro(video);
@@ -589,6 +594,9 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 				return false;
 			}
 
+			// Not really killed, but counted as objective
+			_objKillsCount[_objIdx] = _objKillsCount[_objIdx] + _shoots[i].objKillsCount;
+
 			if (!_shoots[i].additionalVideo.empty()) {
 				incFriendliesEncountered();
 				incInfoReceived();
@@ -627,8 +635,10 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 				incInfoReceived();
 				_background->decoder->forceSeekToFrame(_shoots[i].interactionFrame);
 				_masks->decoder->forceSeekToFrame(_shoots[i].interactionFrame);
-				_additionalVideo = new MVideo(arc->missBoss2Video, Common::Point(0, 0), true, false, false);
-				playVideo(*_additionalVideo);
+				if (!arc->missBoss2Video.empty()) {
+					_additionalVideo = new MVideo(arc->missBoss2Video, Common::Point(0, 0), true, false, false);
+					playVideo(*_additionalVideo);
+				}
 				//_shoots[i].lastFrame = _background->decoder->getFrameCount();
 				_shoots[i].destroyed = true;
 				_shootsDestroyed[_shoots[i].name] = true;
