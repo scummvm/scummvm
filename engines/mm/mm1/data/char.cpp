@@ -111,8 +111,8 @@ void Character::synchronize(Common::Serializer &s) {
 	s.syncAsUint32LE(_exp);
 	s.syncAsUint16LE(_sp);
 	s.syncAsUint16LE(_spMax);
-	s.syncAsByte(_sp2);
-	s.syncAsByte(_maxSpellLevel);
+	s.syncAsByte(_slvlBase);
+	s.syncAsByte(_slvl);
 	s.syncAsUint16LE(_gems);
 	s.syncAsUint16LE(_hpBase);
 	s.syncAsUint16LE(_hp);
@@ -145,7 +145,7 @@ void Character::clear() {
 	_age = 0;
 	_exp = 0;
 	_sp = _spMax = 0;
-	_maxSpellLevel = _sp2 = 0;
+	_slvl = _slvlBase = 0;
 	_gems = 0;
 	_hpBase = _hp = _hpMax = 0;
 	_gold = 0;
@@ -269,6 +269,51 @@ Character::BuyResult Character::buyItem(byte itemId) {
 	_backpack14[slotIndex] = item._val13;
 
 	return BUY_SUCCESS;
+}
+
+void Character::updateAttributes() {
+	_int = _intBase;
+	_mgt = _mgtBase;
+	_per = _perBase;
+	_end = _endBase;
+	_spd = _spdBase;
+	_acy = _acyBase;
+	_luc = _lucBase;
+	_level = _levelBase;
+	_slvl = _slvlBase;
+}
+
+void Character::updateAC() {
+	int ac = _acBase;
+
+	if (_spd >= 40)
+		ac += 9;
+	else if (_spd >= 35)
+		ac += 8;
+	else if (_spd >= 30)
+		ac += 7;
+	else if (_spd >= 25)
+		ac += 6;
+	else if (_spd >= 21)
+		ac += 5;
+	else if (_spd >= 19)
+		ac += 4;
+	else if (_spd >= 17)
+		ac += 3;
+	else if (_spd >= 15)
+		ac += 2;
+	else if (_spd >= 13)
+		ac += 1;
+	else if (_spd >= 9)
+		ac += 0;
+	else if (_spd >= 7)
+		ac = MAX(ac - 1, 0);
+	else if (_spd >= 5)
+		ac = MAX(ac - 2, 0);
+	else
+		ac = MAX(ac - 3, 0);
+
+	_ac = ac;
 }
 
 } // namespace MM1

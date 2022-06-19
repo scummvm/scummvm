@@ -80,10 +80,6 @@ void Location::backpackFull() {
 	displayMessage(STRING["dialogs.misc.backpack_full"]);
 }
 
-void Location::delaySeconds(uint seconds) {
-	_timeoutCtr = seconds * FRAME_RATE;
-}
-
 void Location::changeCharacter(uint index) {
 	if (index >= g_globals->_party.size())
 		return;
@@ -96,18 +92,6 @@ void Location::leave() {
 	g_maps->turnAround();
 	close();
 	g_events->redraw();
-}
-
-bool Location::tick() {
-	if (_timeoutCtr && --_timeoutCtr == 0) {
-		timeout();
-	}
-
-	return TextView::tick();
-}
-
-void Location::timeout() {
-	redraw();
 }
 
 } // namespace Locations

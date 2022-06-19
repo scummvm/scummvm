@@ -139,12 +139,12 @@ struct Character {
 	uint8 _age = 0;
 	uint32 _exp = 0;
 	uint16 _sp = 0, _spMax = 0;
-	uint8 _sp2 = 0, _maxSpellLevel = 0;
+	uint8 _slvlBase = 0, _slvl = 0;
+
 	uint16 _gems = 0;
 	uint16 _hpBase = 0, _hp = 0, _hpMax = 0;
 	uint32 _gold = 0;
-	byte _v3c = 0;
-	byte _ac = 0;
+	byte _acBase = 0, _ac = 0;
 	uint8 _food = 0;
 	uint8 _condition = 0;
 	Inventory _equipped;
@@ -196,6 +196,17 @@ struct Character {
 	 */
 	enum BuyResult { BUY_SUCCESS, BUY_NOT_ENOUGH_GOLD, BUY_BACKPACK_FULL };
 	BuyResult buyItem(byte itemId);
+
+	/**
+	 * Updates the current attribute levels to match
+	 * their base values
+	 */
+	void updateAttributes();
+
+	/**
+	 * Updates the character's AC
+	 */
+	void updateAC();
 };
 
 } // namespace MM1

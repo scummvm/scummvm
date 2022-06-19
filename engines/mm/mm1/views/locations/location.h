@@ -70,19 +70,9 @@ protected:
 	void backpackFull();
 
 	/**
-	 * Set a delay countdown
-	 */
-	void delaySeconds(uint seconds);
-
-	/**
 	 * Change character
 	 */
 	virtual void changeCharacter(uint index);
-
-	/**
-	 * Called when an active timeout countdown expired
-	 */
-	virtual void timeout();
 
 public:
 	Location(const Common::String &name);
@@ -92,11 +82,6 @@ public:
 	 * Draws the initial display for the business
 	 */
 	void draw() override;
-
-	/**
-	 * Frame tick
-	 */
-	bool tick() override;
 };
 
 } // namespace Locations
