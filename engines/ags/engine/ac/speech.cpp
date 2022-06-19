@@ -28,6 +28,7 @@
 #include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_audio.h"
 #include "ags/engine/ac/global_display.h"
+#include "ags/engine/ac/dynobj/cc_dynamic_object.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
@@ -149,11 +150,11 @@ String get_voice_assetpath() {
 //=============================================================================
 
 ScriptOverlay *Speech_GetTextOverlay() {
-	return _GP(play).speech_text_scover;
+	return const_cast<ScriptOverlay*>((const ScriptOverlay*)ccGetObjectAddressFromHandle(_GP(play).speech_text_schandle));
 }
 
 ScriptOverlay *Speech_GetPortraitOverlay() {
-	return _GP(play).speech_face_scover;
+	return const_cast<ScriptOverlay*>((const ScriptOverlay*)ccGetObjectAddressFromHandle(_GP(play).speech_face_schandle));
 }
 
 RuntimeScriptValue Sc_Speech_GetAnimationStopTimeMargin(const RuntimeScriptValue *params, int32_t param_count) {

@@ -254,12 +254,12 @@ struct GameState {
 	int  complete_overlay_on = 0;
 	// Is there a blocking text overlay on screen (contains overlay ID)
 	int  text_overlay_on = 0;
-	// Script overlay objects, because we must return same pointers
+	// Script overlay handles, because we must return same script objects
 	// whenever user script queries for them.
-	// Blocking speech overlay managed object, for accessing in scripts
-	ScriptOverlay *speech_text_scover = nullptr;
-	// Speech portrait overlay managed object
-	ScriptOverlay *speech_face_scover = nullptr;
+	// Blocking speech overlay managed handle
+	int  speech_text_schandle = 0;
+	// Speech portrait overlay managed handle
+	int  speech_face_schandle = 0;
 
 	int shake_screen_yoff = 0; // y offset of the shaking screen
 

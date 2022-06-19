@@ -279,27 +279,24 @@ ScriptOverlay *create_scriptoverlay(ScreenOverlay &over, bool internal_ref) {
 	ScriptOverlay *scover = new ScriptOverlay();
 	scover->overlayId = over.type;
 	int handl = ccRegisterManagedObject(scover, scover);
-	over.associatedOverlayHandle = handl;
-	if (internal_ref)
+	over.associatedOverlayHandle = handl; // save the handle for access
+	if (internal_ref) // requested additional ref
 		ccAddObjectReference(handl);
 	return scover;
 }
 
 // Invalidates existing script object to let user know that previous overlay is gone,
 // and releases engine's internal reference (script object may exist while there are user refs)
-static void invalidate_and_subref(ScreenOverlay &over, ScriptOverlay **scover) {
-	if (scover && (*scover)) {
-		(*scover)->overlayId = -1;
-		*scover = nullptr;
-	} else if (over.associatedOverlayHandle > 0) {
-		ScriptOverlay *scoverlay = const_cast<ScriptOverlay*>((const ScriptOverlay* )ccGetObjectAddressFromHandle(over.associatedOverlayHandle));
-		if (scoverlay) scoverlay->overlayId = -1;
-	}
+static void invalidate_and_subref(ScreenOverlay &over) {
+	if (over.associatedOverlayHandle <= 0)
+		return; // invalid handle
 
-	if (over.associatedOverlayHandle > 0) {
+	ScriptOverlay *scover = const_cast<ScriptOverlay*>((const ScriptOverlay*)ccGetObjectAddressFromHandle(over.associatedOverlayHandle));
+	if (scover) {
+		scover->overlayId = -1; // invalidate script object
 		ccReleaseObjectReference(over.associatedOverlayHandle);
-		over.associatedOverlayHandle = 0;
 	}
+	over.associatedOverlayHandle = 0; // reset internal handle
 }
 
 // Frees overlay resources and tell to dispose script object if there are no refs left
@@ -325,13 +322,15 @@ void remove_screen_overlay_index(size_t over_idx) {
 	if (over.type == _GP(play).complete_overlay_on) {
 		_GP(play).complete_overlay_on = 0;
 	} else if (over.type == _GP(play).text_overlay_on) { // release internal ref for speech text
-		invalidate_and_subref(over, &_GP(play).speech_text_scover);
+		invalidate_and_subref(over);
+		_GP(play).speech_text_schandle = 0;
 		_GP(play).text_overlay_on = 0;
 	} else if (over.type == OVER_PICTURE) { // release internal ref for speech face
-		invalidate_and_subref(over, &_GP(play).speech_face_scover);
+		invalidate_and_subref(over);
+		_GP(play).speech_face_schandle = 0;
 		_G(face_talking) = -1;
 	} else if (over.bgSpeechForChar >= 0) { // release internal ref for bg speech
-		invalidate_and_subref(over, nullptr);
+		invalidate_and_subref(over);
 	}
 	dispose_overlay(over);
 	_GP(screenover).erase(_GP(screenover).begin() + over_idx);
@@ -393,10 +392,13 @@ size_t add_screen_overlay_impl(bool roomlayer, int x, int y, int type, int sprnu
 		_GP(play).text_overlay_on = type;
 		// only make script object for blocking speech now, because messagebox blocks all script
 		// and therefore cannot be accessed, so no practical reason for that atm
-		if (type == OVER_TEXTSPEECH)
-			_GP(play).speech_text_scover = create_scriptoverlay(over, true);
+		if (type == OVER_TEXTSPEECH) {
+			create_scriptoverlay(over, true);
+			_GP(play).speech_text_schandle = over.associatedOverlayHandle;
+		}
 	} else if (type == OVER_PICTURE) {
-		_GP(play).speech_face_scover = create_scriptoverlay(over, true);
+		create_scriptoverlay(over, true);
+		_GP(play).speech_face_schandle = over.associatedOverlayHandle;
 	}
 	over.MarkChanged();
 	_GP(screenover).push_back(std::move(over));
