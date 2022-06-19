@@ -580,9 +580,9 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 				playSound(_soundPath + _shoots[i].animalSound, 1);
 				return false;
 			}
-			incFriendliesEncountered();
 
 			if (!_shoots[i].additionalVideo.empty()) {
+				incFriendliesEncountered();
 				incInfoReceived();
 				_background->decoder->pauseVideo(true);
 				MVideo video(_shoots[i].additionalVideo, Common::Point(0, 0), false, true, false);
@@ -615,6 +615,7 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 						playSound(_music, 0, _musicRate, _musicStereo); // restore music
 				}
 			} else if (_shoots[i].interactionFrame > 0) {
+				incFriendliesEncountered();
 				incInfoReceived();
 				_background->decoder->forceSeekToFrame(_shoots[i].interactionFrame);
 				_masks->decoder->forceSeekToFrame(_shoots[i].interactionFrame);
@@ -632,7 +633,9 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 			if (checkCup(_shoots[i].name))
 				return false;
 
-			incFriendliesEncountered();
+			if (!_shoots[i].additionalVideo.empty() || _shoots[i].interactionFrame > 0) // Only count the ones with info
+				incFriendliesEncountered();
+
 			uint32 idx = _shoots[i].warningVideoIdx;
 			if (idx > 0) {
 				Common::String filename = _warningVideosDay[idx];
@@ -726,7 +729,8 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 	}
 
 	if (s->nonHostile) {
-		incFriendliesEncountered();
+		if (!s->additionalVideo.empty() || s->interactionFrame > 0) // Only count the ones with info
+			incFriendliesEncountered();
 		_stats.targetsMissed--; // If the target was not hostile, it should *not* count as missed
 	}
 
