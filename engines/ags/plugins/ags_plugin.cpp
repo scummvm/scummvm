@@ -846,7 +846,7 @@ Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> 
 		EnginePlugin *apl = &_GP(plugins).back();
 
 		// Copy plugin info
-		snprintf(apl->filename, sizeof(apl->filename), "%s", name.GetCStr());
+		apl->filename = name;
 		if (info.DataLen) {
 			apl->savedata = (char *)malloc(info.DataLen);
 			memcpy(apl->savedata, info.Data.get(), info.DataLen);
@@ -854,18 +854,18 @@ Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> 
 		apl->savedatasize = info.DataLen;
 
 		// Compatibility with the old SnowRain module
-		if (ags_stricmp(apl->filename, "ags_SnowRain20") == 0) {
-			strcpy(apl->filename, "ags_snowrain");
+		if (apl->filename.CompareNoCase("ags_SnowRain20") == 0) {
+			apl->filename = "ags_snowrain";
 		}
 
 		String expect_filename = apl->library.GetFilenameForLib(apl->filename);
 		if (apl->library.Load(apl->filename)) {
 			apl->_plugin = apl->library.getPlugin();
-			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' loaded as '%s', resolving imports...", apl->filename, expect_filename.GetCStr());
+			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' loaded as '%s', resolving imports...", apl->filename.GetCStr(), expect_filename.GetCStr());
 
 		} else {
 			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' could not be loaded (expected '%s')",
-			                           apl->filename, expect_filename.GetCStr());
+			                           apl->filename.GetCStr(), expect_filename.GetCStr());
 			_GP(plugins).pop_back();
 			continue;
 		}

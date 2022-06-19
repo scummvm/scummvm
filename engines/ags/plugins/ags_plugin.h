@@ -33,6 +33,7 @@
 #include "common/array.h"
 #include "ags/shared/core/types.h"
 #include "ags/shared/font/ags_font_renderer.h"
+#include "ags/shared/util/string.h"
 #include "ags/plugins/plugin_base.h"
 #include "ags/engine/util/library_scummvm.h"
 
@@ -564,8 +565,8 @@ public:
 };
 
 struct EnginePlugin {
-	char filename[PLUGIN_FILENAME_MAX + 1] = { 0 };
-	AGS::Engine::Library   library;
+	AGS::Shared::String  filename;
+	AGS::Engine::Library library;
 	Plugins::PluginBase *_plugin = nullptr;
 	bool available = false;
 	char *savedata = nullptr;
