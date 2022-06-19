@@ -127,7 +127,7 @@ const char *Button_GetText_New(GUIButton *butt) {
 }
 
 void Button_GetText(GUIButton *butt, char *buffer) {
-	strcpy(buffer, butt->GetText().GetCStr());
+	snprintf(buffer, MAX_MAXSTRLEN, "%s", butt->GetText().GetCStr());
 }
 
 void Button_SetText(GUIButton *butt, const char *newtx) {

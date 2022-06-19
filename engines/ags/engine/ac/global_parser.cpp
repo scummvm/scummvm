@@ -29,7 +29,7 @@ namespace AGS3 {
 
 int SaidUnknownWord(char *buffer) {
 	VALIDATE_STRING(buffer);
-	strcpy(buffer, _GP(play).bad_parsed_word);
+	snprintf(buffer, MAX_MAXSTRLEN, "%s", _GP(play).bad_parsed_word);
 	if (_GP(play).bad_parsed_word[0] == 0)
 		return 0;
 	return 1;

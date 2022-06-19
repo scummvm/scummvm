@@ -548,7 +548,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 			if (_GP(play).get_loc_name_last_time != 1000 + mover)
 				GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Overhotspot);
 			_GP(play).get_loc_name_last_time = 1000 + mover;
-			strcpy(tempo, get_translation(_GP(game).invinfo[mover].name));
+			snprintf(tempo, MAX_MAXSTRLEN, "%s", get_translation(_GP(game).invinfo[mover].name));
 		} else if ((_GP(play).get_loc_name_last_time > 1000) && (_GP(play).get_loc_name_last_time < 1000 + MAX_INV)) {
 			// no longer selecting an item
 			GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Overhotspot);
@@ -578,7 +578,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 	// on character
 	if (loctype == LOCTYPE_CHAR) {
 		onhs = _G(getloctype_index);
-		strcpy(tempo, get_translation(_GP(game).chars[onhs].name));
+		snprintf(tempo, MAX_MAXSTRLEN, "%s", get_translation(_GP(game).chars[onhs].name));
 		if (_GP(play).get_loc_name_last_time != 2000 + onhs)
 			GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Overhotspot);
 		_GP(play).get_loc_name_last_time = 2000 + onhs;
@@ -587,7 +587,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 	// on object
 	if (loctype == LOCTYPE_OBJ) {
 		aa = _G(getloctype_index);
-		strcpy(tempo, get_translation(_G(croom)->obj[aa].name.GetCStr()));
+		snprintf(tempo, MAX_MAXSTRLEN, "%s", get_translation(_G(croom)->obj[aa].name.GetCStr()));
 		// Compatibility: < 3.1.1 games returned space for nameless object
 		// (presumably was a bug, but fixing it affected certain games behavior)
 		if (_G(loaded_game_file_version) < kGameVersion_311 && tempo[0] == 0) {
@@ -600,7 +600,8 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 		return;
 	}
 	onhs = _G(getloctype_index);
-	if (onhs > 0) strcpy(tempo, get_translation(_G(croom)->hotspot[onhs].Name.GetCStr()));
+	if (onhs > 0)
+		snprintf(tempo, MAX_MAXSTRLEN, "%s", get_translation(_G(croom)->hotspot[onhs].Name.GetCStr()));
 	if (_GP(play).get_loc_name_last_time != onhs)
 		GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Overhotspot);
 	_GP(play).get_loc_name_last_time = onhs;

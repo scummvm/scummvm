@@ -39,7 +39,7 @@ const char *Label_GetText_New(GUILabel *labl) {
 }
 
 void Label_GetText(GUILabel *labl, char *buffer) {
-	strcpy(buffer, labl->GetText().GetCStr());
+	snprintf(buffer, MAX_MAXSTRLEN, "%s", labl->GetText().GetCStr());
 }
 
 void Label_SetText(GUILabel *labl, const char *newtx) {

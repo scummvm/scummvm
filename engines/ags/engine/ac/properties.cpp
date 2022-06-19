@@ -76,7 +76,7 @@ void get_text_property(const StringIMap &st_prop, const StringIMap &rt_prop, con
 		return;
 
 	String val = get_property_value(st_prop, rt_prop, property, desc.DefaultValue);
-	strcpy(bufer, val.GetCStr());
+	snprintf(bufer, MAX_MAXSTRLEN, "%s", val.GetCStr());
 }
 
 const char *get_text_property_dynamic_string(const StringIMap &st_prop, const StringIMap &rt_prop, const char *property) {
