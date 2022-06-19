@@ -270,9 +270,10 @@ void GameState::DeleteRoomViewport(int index) {
 		return;
 	auto handle = _scViewportHandles[index];
 	auto scobj = const_cast<ScriptViewport*>((const ScriptViewport*)ccGetObjectAddressFromHandle(handle));
-	if (scobj)
+	if (scobj) {
 		scobj->Invalidate();
-	ccReleaseObjectReference(handle);
+		ccReleaseObjectReference(handle);
+	}
 	auto cam = _roomViewports[index]->GetCamera();
 	if (cam)
 		cam->UnlinkFromViewport(index);
@@ -329,9 +330,10 @@ void GameState::DeleteRoomCamera(int index) {
 		return;
 	auto handle = _scCameraHandles[index];
 	auto scobj = const_cast<ScriptCamera*>((const ScriptCamera*)ccGetObjectAddressFromHandle(handle));
-	if (scobj)
+	if (scobj) {
 		scobj->Invalidate();
-	ccReleaseObjectReference(handle);
+		ccReleaseObjectReference(handle);
+	}
 	for (auto &viewref : _roomCameras[index]->GetLinkedViewports()) {
 		auto view = viewref.lock();
 		if (view)
@@ -826,17 +828,19 @@ void GameState::FreeViewportsAndCameras() {
 	_roomViewportsSorted.clear();
 	for (auto handle : _scViewportHandles) {
 		auto scview = const_cast<ScriptViewport*>((const ScriptViewport*)ccGetObjectAddressFromHandle(handle));
-		if (scview)
+		if (scview) {
 			scview->Invalidate();
-		ccReleaseObjectReference(handle);
+			ccReleaseObjectReference(handle);
+		}
 	}
 	_scViewportHandles.clear();
 	_roomCameras.clear();
 	for (auto handle : _scCameraHandles) {
 		auto sccam = const_cast<ScriptCamera*>((const ScriptCamera*)ccGetObjectAddressFromHandle(handle));
-		if (sccam)
+		if (sccam) {
 			sccam->Invalidate();
-		ccReleaseObjectReference(handle);
+			ccReleaseObjectReference(handle);
+		}
 	}
 	_scCameraHandles.clear();
 }
