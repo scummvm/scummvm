@@ -705,6 +705,7 @@ Ordning: scummvm [INSTÄLLNINGAR]... [SPEL]
                            pce, segacd, windows)
   --savepath=PATH          Sökväg dit spardata lagras
   --extrapath=PATH         ”Extra”-sökväg för ytterligare speldata
+  --iconspath=PATH         <Path to additional icons for the launcher grid view>
   --soundfont=FILE         Välj SoundFont för MIDI-uppspelning (Stöds endast
                            av vissa MIDI-drivers)
   --multi-midi             Aktivera kombination av AdLib och Native MIDI

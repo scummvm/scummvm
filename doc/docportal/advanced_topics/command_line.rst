@@ -129,6 +129,7 @@ Short options are listed where they are available.
         ``--dump-scripts``,``-u``,"Enables script dumping if a directory called 'dumps' exists in the current directory"
         ``--enable-gs``,,":ref:`Enables Roland GS mode for MIDI playback <gs>`"
         ``--extrapath=PATH``,,":ref:`Extra path to additional game data <extra>`"
+        ``--iconspath=PATH``,,":ref:`Path to additional icons for the launcher grid view <iconspath>`"
         ``--filtering``,,":ref:`Forces filtered graphics mode <filtering>`"
         ``--fullscreen``,``-f``,":ref:`Forces full-screen mode <fullscreen>`"
         ``--game=NAME``,,"In combination with ``--add`` or ``--detect`` only adds or attempts to detect the game with id NAME."

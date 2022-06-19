@@ -151,6 +151,7 @@ static const char HELP_STRING[] =
 	"                           pce, segacd, wii, windows)\n"
 	"  --savepath=PATH          Path to where saved games are stored\n"
 	"  --extrapath=PATH         Extra path to additional game data\n"
+	"  --iconspath=PATH         Path to additional icons for the launcher grid view\n"
 	"  --soundfont=FILE         Select the SoundFont for MIDI playback (only\n"
 	"                           supported by some MIDI drivers)\n"
 	"  --multi-midi             Enable combination AdLib and native MIDI\n"
@@ -836,6 +837,15 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 				} else if (!path.isReadable()) {
 					usage("Non-readable extra path '%s'", option);
 				}
+			END_OPTION
+
+			DO_LONG_OPTION("iconspath")
+			Common::FSNode path(option);
+			if (!path.exists()) {
+				usage("Non-existent icons path '%s'", option);
+			} else if (!path.isReadable()) {
+				usage("Non-readable icons path '%s'", option);
+			}
 			END_OPTION
 
 			DO_LONG_OPTION("md5-path")
@@ -1847,6 +1857,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		"subtitles",
 		"savepath",
 		"extrapath",
+		"iconspath",
 		"screenshotpath",
 		"soundfont",
 		"multi-midi",
