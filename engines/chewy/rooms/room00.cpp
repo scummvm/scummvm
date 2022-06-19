@@ -74,7 +74,7 @@ bool Room0::timer(int16 timerNr, int16 aniNr) {
 		if (_G(timer_action_ctr) > 0) {
 			_G(uhr)->resetTimer(timerNr, 0);
 			--_G(timer_action_ctr);
-		} else if (!is_chewy_busy()) {
+		} else if (!is_chewy_busy() && _G(flags).AutoAniPlay == 0) {
 			if (!_G(gameState).R0FueterLab)
 				_G(timer_action_ctr) = 2;
 
