@@ -57,7 +57,7 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	_virtualMouse = new Common::VirtualMouse(&_dispatcher);
 
 	_keymapper = new Common::Keymapper(this);
-	_dispatcher.registerMapper(_keymapper);
+	_dispatcher.registerMapper(_keymapper, true);
 }
 
 DefaultEventManager::~DefaultEventManager() {
@@ -65,7 +65,6 @@ DefaultEventManager::~DefaultEventManager() {
 #ifdef ENABLE_VKEYBD
 	delete _vk;
 #endif
-	delete _keymapper;
 }
 
 void DefaultEventManager::init() {

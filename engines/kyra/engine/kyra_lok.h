@@ -308,8 +308,8 @@ protected:
 
 	// chat
 	// -> process
-	void characterSays(int vocFile, const char *chatStr, int8 charNum, int8 chatDuration);
-	void waitForChatToFinish(int vocFile, int16 chatDuration, const char *str, uint8 charNum, const bool printText);
+	void characterSays(int vocFile, const char *chatStr, int16 charNum, int16 chatDuration);
+	void waitForChatToFinish(int vocFile, int chatDuration, const char *str, uint8 charNum, const bool printText);
 
 	// -> initialization
 	int initCharacterChat(int8 charNum);
@@ -480,6 +480,7 @@ protected:
 	uint8 _configTextspeed;
 
 	Screen::FontId _defaultFont;
+	Screen::FontId _noteFont;
 	int _defaultLineSpacing;
 
 	Animator_LoK *_animator;

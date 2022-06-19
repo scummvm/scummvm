@@ -1239,11 +1239,16 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::Strin
 	Common::String ver = version;
 
 	// If the game version is empty, we are probably saving from the GMM, so read it
-	// from global 27 and then the VERSION file
+	// from the version global and then the VERSION file
 	if (ver == "") {
-		reg_t versionRef = s->variables[VAR_GLOBAL][kGlobalVarVersion];
+		// The version global was originally 28 but then became 27.
+		// When it was 28, 27 was a volume level, so differentiate by type.
+		reg_t versionRef = s->variables[VAR_GLOBAL][kGlobalVarVersionNew];
+		if (versionRef.isNumber()) {
+			versionRef = s->variables[VAR_GLOBAL][kGlobalVarVersionOld];
+		}
 #ifdef ENABLE_SCI32
-		// LSL7 stores the version string as an object instead of a reference
+		// LSL7 and Phant2 store the version string as an object instead of a reference
 		if (s->_segMan->isObject(versionRef)) {
 			versionRef = readSelector(s->_segMan, versionRef, SELECTOR(data));
 		}

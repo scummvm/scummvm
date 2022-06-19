@@ -325,12 +325,16 @@ void restore_game_dialog() {
 		_G(curscript)->queue_action(ePSARestoreGameDialog, 0, "RestoreGameDialog");
 		return;
 	}
+	do_restore_game_dialog();
+}
+
+bool do_restore_game_dialog() {
 	setup_for_dialog();
 	int toload = loadgamedialog();
 	restore_after_dialog();
-	if (toload >= 0) {
+	if (toload >= 0)
 		try_restore_save(toload);
-	}
+	return toload >= 0;
 }
 
 void save_game_dialog() {
@@ -342,11 +346,16 @@ void save_game_dialog() {
 		_G(curscript)->queue_action(ePSASaveGameDialog, 0, "SaveGameDialog");
 		return;
 	}
+	do_save_game_dialog();
+}
+
+bool do_save_game_dialog() {
 	setup_for_dialog();
 	int toload = savegamedialog();
 	restore_after_dialog();
 	if (toload >= 0)
 		save_game(toload, get_gui_dialog_buffer());
+	return toload >= 0;
 }
 
 void free_do_once_tokens() {
@@ -361,7 +370,6 @@ void unload_game_file() {
 
 	_GP(play).FreeViewportsAndCameras();
 
-	_GP(characterScriptObjNames).clear();
 	_GP(charextra).clear();
 	_GP(mls).clear();
 
@@ -401,6 +409,7 @@ void unload_game_file() {
 	_GP(runDialogOptionKeyPressHandlerFunc).moduleHasFunction.resize(0);
 	_GP(runDialogOptionTextInputHandlerFunc).moduleHasFunction.resize(0);
 	_GP(runDialogOptionRepExecFunc).moduleHasFunction.resize(0);
+	_GP(runDialogOptionCloseFunc).moduleHasFunction.resize(0);
 	_G(numScriptModules) = 0;
 
 	_GP(views).clear();
@@ -426,7 +435,6 @@ void unload_game_file() {
 	delete[] _G(scrDialog);
 	_G(scrDialog) = nullptr;
 
-	_GP(guiScriptObjNames).clear();
 	_GP(guis).clear();
 	free(_G(scrGui));
 
@@ -1340,6 +1348,9 @@ bool unserialize_audio_script_object(int index, const char *objectType, Stream *
 }
 
 void game_sprite_updated(int sprnum) {
+	// update the shared texture (if exists)
+	_G(gfxDriver)->UpdateSharedDDB(sprnum, _GP(spriteset)[sprnum], (_GP(game).SpriteInfos[sprnum].Flags & SPF_ALPHACHANNEL) != 0, false);
+
 	// character and object draw caches
 	reset_objcache_for_sprite(sprnum);
 
@@ -1369,6 +1380,8 @@ void game_sprite_updated(int sprnum) {
 }
 
 void game_sprite_deleted(int sprnum) {
+	// clear from texture cache
+	_G(gfxDriver)->ClearSharedDDB(sprnum);
 	// character and object draw caches
 	reset_objcache_for_sprite(sprnum);
 	// room object graphics

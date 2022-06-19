@@ -26,7 +26,6 @@
 
 #include "engines/grim/pool.h"
 
-
 namespace Grim {
 
 class Bitmap;

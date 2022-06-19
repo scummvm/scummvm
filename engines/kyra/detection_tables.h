@@ -259,11 +259,11 @@ const KYRAGameDescription adGameDescs[] = {
 	{ // from trembyle
 		{
 			"kyra1",
-			msg_missingLangResources, // Reason for being unsupported
+			"Extracted",
 			AD_ENTRY1("GEMCUT.EMC", "57907d931675dbd16386c1d81d18fee4"),
 			Common::KO_KOR,
 			Common::kPlatformDOS,
-			ADGF_UNSUPPORTED,
+			ADGF_NO_FLAGS,
 			GUIO5(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
 		},
 		KYRA1_FLOPPY_FLAGS

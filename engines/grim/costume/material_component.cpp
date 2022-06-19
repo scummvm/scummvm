@@ -26,16 +26,13 @@
 #include "engines/grim/model.h"
 #include "engines/grim/material.h"
 #include "engines/grim/savegame.h"
-
 #include "engines/grim/costume/material_component.h"
 #include "engines/grim/costume/model_component.h"
 
 namespace Grim {
 
-
 MaterialComponent::MaterialComponent(Component *p, int parentID, const char *filename, tag32 t) :
 		Component(p, parentID, filename, t) {
-
 	Debug::debug(Debug::Costumes, "Constructing MaterialComponent %s", filename);
 }
 

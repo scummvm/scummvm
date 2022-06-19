@@ -68,9 +68,8 @@ void MainMenu::execute() {
 		_G(gameState)._personRoomNr[P_CHEWY] = 98;
 		_G(room)->loadRoom(&_G(room_blk), 98, &_G(gameState));
 
-		_G(currentSong) = -1;
-		load_room_music(98);
-		_G(fx)->border(_G(workpage), 100, 0, 0);
+		g_engine->_sound->playRoomMusic(98);
+		_G(fx)->border(_G(workpage), 0, 0);
 
 		_G(out)->setPalette(_G(pal));
 		_G(gameState)._personHide[P_CHEWY] = true;
@@ -91,7 +90,7 @@ void MainMenu::execute() {
 			break;
 
 		case MM_VIEW_INTRO:
-			_G(fx)->border(_G(workpage), 100, 0, 0);
+			_G(fx)->border(_G(workpage), 0, 0);
 			_G(out)->setPointer(_G(workptr));
 			_G(flags).NoPalAfterFlc = true;
 			flic_cut(FCUT_135);
@@ -117,10 +116,10 @@ void MainMenu::execute() {
 			break;
 
 		case MM_CREDITS:
-			_G(fx)->border(_G(workpage), 100, 0, 0);
+			_G(fx)->border(_G(workpage), 0, 0);
 			_G(flags).NoPalAfterFlc = true;
 			flic_cut(FCUT_159);
-			_G(fx)->border(_G(workpage), 100, 0, 0);
+			_G(fx)->border(_G(workpage), 0, 0);
 			Dialogs::Credits::execute();
 			break;
 
@@ -142,7 +141,7 @@ void MainMenu::animate() {
 	if (_G(ani_timer)->_timeFlag) {
 		_G(uhr)->resetTimer(0, 0);
 		_G(gameState).DelaySpeed = _G(FrameSpeed) / _G(gameState).FramesPerSecond;
-		_G(spieler_vector)->Delay = _G(gameState).DelaySpeed + _G(spz_delay)[0];
+		_G(moveState)->Delay = _G(gameState).DelaySpeed + _G(spz_delay)[0];
 		_G(FrameSpeed) = 0;
 		_G(det)->set_global_delay(_G(gameState).DelaySpeed);
 	}
@@ -162,7 +161,6 @@ void MainMenu::animate() {
 	calcMouseText(g_events->_mousePos.x, g_events->_mousePos.y, 1);
 	_G(cur)->plot_cur();
 	_G(mouseLeftClick) = false;
-	_G(menu_flag) = 0;
 	_G(out)->setPointer(nullptr);
 	_G(out)->copyToScreen();
 
@@ -190,8 +188,8 @@ void MainMenu::startGame() {
 	_G(gameState)._personRoomNr[P_CHEWY] = 0;
 	_G(room)->loadRoom(&_G(room_blk), 0, &_G(gameState));
 
-	_G(spieler_vector)[P_CHEWY].Phase = 6;
-	_G(spieler_vector)[P_CHEWY].PhAnz = _G(chewy_ph_nr)[6];
+	_G(moveState)[P_CHEWY].Phase = 6;
+	_G(moveState)[P_CHEWY].PhAnz = _G(chewy_ph_nr)[6];
 	setPersonPos(160, 80, P_CHEWY, P_RIGHT);
 	_G(fx_blend) = BLEND3;
 	_G(gameState)._personHide[P_CHEWY] = false;
@@ -204,7 +202,7 @@ void MainMenu::startGame() {
 bool MainMenu::loadGame() {
 	_G(flags).SaveMenu = true;
 	savePersonAni();
-	_G(out)->setPointer(_G(screen0));
+	_G(out)->setPointer((byte *)g_screen->getPixels());
 	_G(fontMgr)->setFont(_G(font6));
 	cursorChoice(CUR_SAVE);
 	_G(cur)->move(152, 92);
@@ -239,7 +237,7 @@ void MainMenu::playGame() {
 	_G(flags).MainInput = true;
 	_G(flags).ShowAtsInvTxt = true;
 	_G(cur)->show_cur();
-	_G(spieler_vector)[P_CHEWY].Count = 0;
+	_G(moveState)[P_CHEWY].Count = 0;
 	_G(uhr)->resetTimer(0, 0);
 
 	while (!SHOULD_QUIT && !mainLoop(1)) {

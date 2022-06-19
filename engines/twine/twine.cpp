@@ -123,8 +123,8 @@ void TwineScreen::update() {
 	Super::update();
 }
 
-TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flags, TwineGameType gameType)
-	: Engine(system), _gameType(gameType), _gameLang(language), _frontVideoBuffer(this), _gameFlags(flags), _rnd("twine") {
+TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flags, Common::Platform platform, TwineGameType gameType)
+	: Engine(system), _gameType(gameType), _gameLang(language), _frontVideoBuffer(this), _gameFlags(flags), _platform(platform), _rnd("twine") {
 	// Add default file directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "fla");
@@ -674,7 +674,7 @@ void TwinEEngine::processInventoryAction() {
 		_gameState->_usingSabre = false;
 		break;
 	case kiUseSabre:
-		if (_scene->_sceneHero->_body != BodyType::btSabre) {
+		if (_scene->_sceneHero->_genBody != BodyType::btSabre) {
 			if (_actor->_heroBehaviour == HeroBehaviourType::kProtoPack) {
 				_actor->setBehaviour(HeroBehaviourType::kNormal);
 			}
@@ -689,10 +689,10 @@ void TwinEEngine::processInventoryAction() {
 		break;
 	}
 	case kiProtoPack:
-		if (_gameState->hasItem(InventoryItems::kiBookOfBu)) {
-			_scene->_sceneHero->_body = BodyType::btNormal;
+		if (_gameState->hasItem(InventoryItems::kSendellsMedallion)) {
+			_scene->_sceneHero->_genBody = BodyType::btNormal;
 		} else {
-			_scene->_sceneHero->_body = BodyType::btTunic;
+			_scene->_sceneHero->_genBody = BodyType::btTunic;
 		}
 
 		if (_actor->_heroBehaviour == HeroBehaviourType::kProtoPack) {
@@ -712,9 +712,9 @@ void TwinEEngine::processInventoryAction() {
 
 		penguin->_angle = _scene->_sceneHero->_angle;
 
-		if (!_collision->checkCollisionWithActors(_scene->_mecaPenguinIdx)) {
+		if (!_collision->checkValidObjPos(_scene->_mecaPenguinIdx)) {
 			penguin->setLife(kActorMaxLife);
-			penguin->_body = BodyType::btNone;
+			penguin->_genBody = BodyType::btNone;
 			_actor->initModelActor(BodyType::btNormal, _scene->_mecaPenguinIdx);
 			penguin->_dynamicFlags.bIsDead = 0;
 			penguin->setBrickShape(ShapeType::kNone);
@@ -791,7 +791,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 	} else {
 		// Process give up menu - Press ESC
-		if (_input->toggleAbortAction() && _scene->_sceneHero->_life > 0 && _scene->_sceneHero->_entity != -1 && !_scene->_sceneHero->_staticFlags.bIsHidden) {
+		if (_input->toggleAbortAction() && _scene->_sceneHero->_life > 0 && _scene->_sceneHero->_body != -1 && !_scene->_sceneHero->_staticFlags.bIsHidden) {
 			ScopedEngineFreeze scopedFreeze(this);
 			exitSceneryView();
 			const int giveUp = _menu->giveupMenu();
@@ -812,7 +812,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		// inventory menu
 		_loopInventoryItem = -1;
-		if (_input->isActionActive(TwinEActionType::InventoryMenu) && _scene->_sceneHero->_entity != -1 && _scene->_sceneHero->_controlMode == ControlMode::kManual) {
+		if (_input->isActionActive(TwinEActionType::InventoryMenu) && _scene->_sceneHero->_body != -1 && _scene->_sceneHero->_controlMode == ControlMode::kManual) {
 			processInventoryAction();
 		}
 
@@ -832,7 +832,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		     _input->isActionActive(TwinEActionType::QuickBehaviourAthletic, false) ||
 		     _input->isActionActive(TwinEActionType::QuickBehaviourAggressive, false) ||
 		     _input->isActionActive(TwinEActionType::QuickBehaviourDiscreet, false)) &&
-		    _scene->_sceneHero->_entity != -1 && _scene->_sceneHero->_controlMode == ControlMode::kManual) {
+		    _scene->_sceneHero->_body != -1 && _scene->_sceneHero->_controlMode == ControlMode::kManual) {
 			if (_input->isActionActive(TwinEActionType::QuickBehaviourNormal, false)) {
 				_actor->_heroBehaviour = HeroBehaviourType::kNormal;
 			} else if (_input->isActionActive(TwinEActionType::QuickBehaviourAthletic, false)) {
@@ -842,25 +842,17 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			} else if (_input->isActionActive(TwinEActionType::QuickBehaviourDiscreet, false)) {
 				_actor->_heroBehaviour = HeroBehaviourType::kDiscrete;
 			}
-			if (isLba1Classic()) {
-				_text->initTextBank(TextBankId::Options_and_menus);
-				char text[256];
-				_text->getMenuText(_actor->getTextIdForBehaviour(), text, sizeof(text));
-				_redraw->setRenderText(text);
-				_text->initSceneTextBank();
-			} else {
-				ScopedEngineFreeze scopedFreeze(this);
-				_menu->processBehaviourMenu();
-				_redraw->redrawEngineActions(true);
-			}
+			ScopedEngineFreeze scopedFreeze(this);
+			_menu->processBehaviourMenu();
+			_redraw->redrawEngineActions(true);
 		}
 
 		// use Proto-Pack
 		if (_input->toggleActionIfActive(TwinEActionType::UseProtoPack) && _gameState->hasItem(InventoryItems::kiProtoPack)) {
 			if (_gameState->hasItem(InventoryItems::kiBookOfBu)) {
-				_scene->_sceneHero->_body = BodyType::btNormal;
+				_scene->_sceneHero->_genBody = BodyType::btNormal;
 			} else {
-				_scene->_sceneHero->_body = BodyType::btTunic;
+				_scene->_sceneHero->_genBody = BodyType::btTunic;
 			}
 
 			if (_actor->_heroBehaviour == HeroBehaviourType::kProtoPack) {
@@ -944,8 +936,8 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 				}
 			}
 
-			if (!actor->_bonusParameter.unk1 && (actor->_bonusParameter.cloverleaf || actor->_bonusParameter.kashes || actor->_bonusParameter.key || actor->_bonusParameter.lifepoints || actor->_bonusParameter.magicpoints)) {
-				_actor->processActorExtraBonus(a);
+			if (!actor->_bonusParameter.givenNothing && (actor->_bonusParameter.cloverleaf || actor->_bonusParameter.kashes || actor->_bonusParameter.key || actor->_bonusParameter.lifepoints || actor->_bonusParameter.magicpoints)) {
+				_actor->giveExtraBonus(a);
 			}
 		}
 
@@ -957,10 +949,10 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			_scriptMove->processMoveScript(a);
 		}
 
-		_animations->processActorAnimations(a);
+		_animations->doAnim(a);
 
 		if (actor->_staticFlags.bIsZonable) {
-			_scene->processActorZones(a);
+			_scene->checkZoneSce(a);
 		}
 
 		if (actor->_positionInLifeScript != -1) {
@@ -974,13 +966,13 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		if (actor->_staticFlags.bCanDrown) {
-			const uint8 brickSound = _grid->getBrickSoundType(actor->_pos.x, actor->_pos.y - 1, actor->_pos.z);
+			const uint8 brickSound = _grid->worldCodeBrick(actor->_pos.x, actor->_pos.y - 1, actor->_pos.z);
 			actor->_brickSound = brickSound;
 
 			if (brickSound == WATER_BRICK) {
 				if (IS_HERO(a)) {
 					// we are dying if we aren't using the protopack to fly over water
-					if (_actor->_heroBehaviour != HeroBehaviourType::kProtoPack || actor->_anim != AnimationTypes::kForward) {
+					if (_actor->_heroBehaviour != HeroBehaviourType::kProtoPack || actor->_genAnim != AnimationTypes::kForward) {
 						if (!_actor->_cropBottomScreen) {
 							_animations->initAnim(AnimationTypes::kDrawn, AnimType::kAnimationSet, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 						}
@@ -993,8 +985,8 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 				} else {
 					_sound->playSample(Samples::Explode, 1, actor->pos(), a);
 					if (actor->_bonusParameter.cloverleaf || actor->_bonusParameter.kashes || actor->_bonusParameter.key || actor->_bonusParameter.lifepoints || actor->_bonusParameter.magicpoints) {
-						if (!actor->_bonusParameter.unk1) {
-							_actor->processActorExtraBonus(a);
+						if (!actor->_bonusParameter.givenNothing) {
+							_actor->giveExtraBonus(a);
 						}
 						actor->setLife(0);
 					}
@@ -1045,7 +1037,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			} else {
 				_actor->processActorCarrier(a);
 				actor->_dynamicFlags.bIsDead = 1;
-				actor->_entity = -1;
+				actor->_body = -1;
 				actor->_zone = -1;
 			}
 		}

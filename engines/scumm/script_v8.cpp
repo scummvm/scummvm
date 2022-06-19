@@ -913,10 +913,10 @@ void ScummEngine_v8::o8_cameraOps() {
 
 	switch (subOp) {
 	case 0x32:		// SO_CAMERA_PAUSE
-		//debug(0, "freezeCamera NYI");
+		_cameraIsFrozen = true;
 		break;
 	case 0x33:		// SO_CAMERA_RESUME
-		//debug(0, "unfreezeCamera NYI");
+		_cameraIsFrozen = false;
 		break;
 	default:
 		error("o8_cameraOps: default case 0x%x", subOp);

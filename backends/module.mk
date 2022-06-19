@@ -275,7 +275,12 @@ MODULE_OBJS += \
 	events/riscossdl/riscossdl-events.o \
 	fs/riscos/riscos-fs.o \
 	fs/riscos/riscos-fs-factory.o \
+	plugins/riscos/riscos-provider.o
+ifndef SDL_BACKEND
+# This is needed for null backend but already included in SDL backend
+MODULE_OBJS += \
 	platform/sdl/riscos/riscos-utils.o
+endif
 endif
 
 ifdef PLAYSTATION3

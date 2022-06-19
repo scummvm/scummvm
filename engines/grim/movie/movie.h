@@ -170,7 +170,6 @@ protected:
 	virtual void restore(SaveGame *state) {}
 };
 
-
 // Factory-like functions:
 
 MoviePlayer *CreateMpegPlayer();

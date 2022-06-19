@@ -304,19 +304,19 @@ MidiDriver_Multisource *createMidiDriverSimon1AdLib(const char *instrumentFilena
 	Common::File ibk;
 
 	if (!ibk.open(instrumentFilename)) {
-		return nullptr;
+		error("MidiDriver_Simon1_AdLib::createMidiDriverSimon1AdLib - Could not find AdLib instrument bank file %s", instrumentFilename);
 	}
 
 	// Check for the expected FourCC (IBK\x1A)
 	if (ibk.readUint32BE() != 0x49424b1a) {
-		return nullptr;
+		error("MidiDriver_Simon1_AdLib::createMidiDriverSimon1AdLib - Invalid AdLib instrument bank file %s", instrumentFilename);
 	}
 
 	byte *instrumentData = new byte[128 * 16];
 	if (ibk.read(instrumentData, 128 * 16) != 128 * 16) {
 		// Failed to read the expected amount of data.
 		delete[] instrumentData;
-		return nullptr;
+		error("MidiDriver_Simon1_AdLib::createMidiDriverSimon1AdLib - Unexpected AdLib instrument bank file %s size", instrumentFilename);
 	}
 
 	MidiDriver_Simon1_AdLib *driver = new MidiDriver_Simon1_AdLib(oplType, instrumentData);

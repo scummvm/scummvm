@@ -152,7 +152,7 @@ void Room84::setup_func() {
 		showCur();
 	}
 
-	const int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	const int posX = _G(moveState)[P_CHEWY].Xypos[0];
 	int howDestX, nicDestX;
 	if (posX > 610) {
 		howDestX = nicDestX = 610;

@@ -169,9 +169,9 @@ const char* const ConvertUsecodeRegret::_intrinsics[] = {
 	"Item::unequip(sint16)",
 	"Item::andStatus(void)",
 	"Item::move(uint16,uint16,uint8)",
-	"Ultima8Engine::I_getUnkCrusaderFlag()",
-	"Ultima8Engine::I_setUnkCrusaderFlag()",
-	"Ultima8Engine::I_clrUnkCrusaderFlag()",
+	"Ultima8Engine::I_getCrusaderTeleporting()",
+	"Ultima8Engine::I_setCrusaderTeleporting()",
+	"Ultima8Engine::I_clrCrusaderTeleporting()",
 	"Actor::I_turnToward()",
 	"PaletteFaderProcess::I_fadeToBlack()",
 	// 0080

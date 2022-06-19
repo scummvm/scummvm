@@ -42,7 +42,8 @@ enum {
 	kLoadButtonCmd = 'LOAD',
 	kOpenTrayCmd = 'OPTR',
 	kItemClicked = 'LBX1',
-	kItemDoubleClickedCmd = 'LBX2'
+	kItemDoubleClickedCmd = 'LBX2',
+	kItemSizeCmd = 'SIZE'
 };
 
 /* GridItemInfo */
@@ -59,7 +60,7 @@ struct GridItemInfo {
 	Common::Language	language;
 	Common::Platform 	platform;
 
-	Common::Rect		rect;
+	int32				x, y, w, h;
 
 	GridItemInfo(int id, const Common::String &eid, const Common::String &gid, const Common::String &t,
 		const Common::String &d, Common::Language l, Common::Platform p)
@@ -103,7 +104,8 @@ protected:
 	Common::HashMap<Common::String, const Graphics::ManagedSurface *> _loadedSurfaces;
 
 	Common::Array<GridItemInfo>			_dataEntryList;
-	Common::Array<GridItemInfo>			_sortedEntryList;
+	Common::Array<GridItemInfo>			_headerEntryList;
+	Common::Array<GridItemInfo *>		_sortedEntryList;
 	Common::Array<GridItemInfo *>		_visibleEntryList;
 
 	Common::String							_groupingAttribute;
@@ -208,6 +210,7 @@ public:
 	void openTrayAtSelected();
 	void scrollBarRecalc();
 
+	void setSelected(int id);
 	void setFilter(const Common::U32String &filter);
 };
 

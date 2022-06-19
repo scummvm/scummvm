@@ -1,6 +1,25 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
+
+#### 2.7.0 (DD.MM.YYYY)
+
+ Allgemein:
+   - Anzahl an falsch-positiven Einträgen reduziert, wenn das Gerät nach Spielen durchsucht wird.
+
+ Kyra:
+   - Unterstützung für die koreanische Version von Legend of Kyrandia 1 hinzugefügt.
+
+ SCUMM:
+   - Ein Workaround in der FM-Towns-Version von Monkey Island 2 ist jetzt als
+     Verbesserung gekennzeichnet. Dieser Workaround hat ursprünglich einen
+     Abschnitt im Karten-Puzzle auf Booty Island, welche in der FM-Towns-Version
+     des Spiels entfernt wurde, wiederhergestellt.
+
+ Toon:
+   - Die Spiel-Menüs verhalten sich nun wie das Original.
+
+
 #### 2.6.0 (DD.MM.YYYY)
 
  Neue Spiele:
@@ -86,6 +105,12 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Der Spieler bleibt nun nicht mehr stecken, wenn er sich zu dem Fuß in Szene 30 teleportiert.
    - Inkonsistenten Status des Kaktus korrigiert.
 
+ Private:
+   - Code überarbeitet, sodass die Darstellunbg nun mit der ursprünglichen, aus 256 Farben bestehenden
+     Farbpalette erfolgt.
+   - Endianness-Probleme behoben.
+   - Unterstützung für die koreanische Version hinzugefügt.
+
  Supernova:
    - Unterstützung für Sprachausgabe in Dialogen und für Objektbeschreibungen hinzugefügt.
 
@@ -114,7 +139,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      Abstands in den 16-Farben-Versionen für Macintosh von Indiana Jones and the Last Crusade
      findest du jetzt dort.
    - Fehler bei der Wiedergabe von MIDI-Musik in der EGA/VGA-Diskettenversion von The Secret of Monkey Island behoben.
+   - In der VGA-Diskettenversion von The Secret of Monkey Island fließt die Lava nun nicht mehr in die falsche Richtung.
    - Fehlerhafte Grafik-Darstellung in Full Throttle korrigiert, die auftritt, wenn Ben am Eingang von Corley Motors vorbeiläuft.
+   - Auflöse-Effekt sowie die Darstellung von Bobbins Palette, wenn er das abgedunkelte Zelt verlässt,
+     in der TurboGrafx-16-Version von Loom korrigiert. Das Verhalten entspricht nun dem Originalspiel.
    - Fehlerhafte Farben in der NES-Version von Maniac Mansion auf Plattformen mit striktem Aligment wie Dreamcast,
      Apple Silicon und diversen Handheld-Geräten korrigiert.
    - Die Text-Rendering-Routinen für Full Throttle, The Dig und The Curse of Monkey Island wurden entsprechend
@@ -122,8 +150,17 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Die Timing-Routinen wurden angepasst, um das ursprüngliche Hardware-Verhalten und die Eigenheiten des originalen
      Interpreters besser abzubilden.
    - Lippensynchronisation in Backyard Baseball 2003 korrigiert.
-   - Spiele-Fehler in Day of the Tentacle, Loom, Monkey Island 1, Monkey Island 2 Amiga,
+   - Spiele-Fehler in Day of the Tentacle, Indy 3, Loom, Monkey Island 1, Monkey Island 2 Amiga,
      Sam&Max und Zak McKracken FM-TOWNS korrigiert. Diese Fehler sind auch in den Original-Spielen enthalten.
+   - Die Wiedergabe der CD-Audiospuren im Intro von Monkey Island 1 sowie in der CD-Version von Loom im Allgemeinen
+     kann nun über einen Schieberegler angepasst werden. Loom ist auf eine korrekte Wiedergabe der "stillen" Sequenzen
+     am Beginn einer Audiospur angewiesen, während die CD-Version von Monkey Island 1 die Intro-Musik
+     nicht so genau synchronisiert, wie frühere Versionen. Weitere Details findest Du in unserem Wiki.
+   - Die von Limited Run Games in der Monkey Island 30th Anniversary Anthology verkaufte
+     EGA-Diskettenversion von Monkey Island 1 wird nun korrekt erkannt und zurückgewiesen, da
+     das enthaltene Abbild von DISK4 defekt ist. Es ist möglich, ein funktionierendes Image
+     anhand der bereitgestellten KryoFlux-Dumps zu erzeugen.
+   - Fehlerhafter Zufallsgenerator in Backyard Baseball korrigiert.
 
  Sherlock:
    - Fehler in der Wiedergabegeschwindigkeit im Intro von Serrated Scalpel behoben, der auftritt,

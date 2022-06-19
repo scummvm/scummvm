@@ -264,7 +264,7 @@ void SoundCommandParser::processPlaySound(reg_t obj, bool playBed, bool restorin
 		// this to play certain death messages. Fixes bug #13500
 		uint16 flags = readSelectorValue(_segMan, obj, SELECTOR(flags));
 		if (!(flags & kSoundFlagPreload)) {
-			writeSelectorValue(_segMan, obj, SELECTOR(handle), -1);
+			writeSelectorValue(_segMan, obj, SELECTOR(handle), 0xffff);
 		}
 	}
 

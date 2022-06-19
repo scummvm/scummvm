@@ -46,6 +46,17 @@ static const chapterEntry rawChapterTable[] = {
 	{3592, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
 	{36, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
 	{41, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{42, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{51, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{52, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{53, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{531, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{54, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{55, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{56, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{57, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{58, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{59, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
 	{0,  {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor}
 };
 
@@ -58,6 +69,9 @@ BoyzEngine::BoyzEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine
 	_currentMode = NonInteractive;
 	_crosshairsPalette = nullptr;
 	_lastLevel = 0;
+	_previousHealth = 0;
+	_selectedCorrectBox = 0;
+	_flashbackMode = false;
 
     const chapterEntry *entry = rawChapterTable;
     while (entry->id) {
@@ -116,6 +130,57 @@ HOTS /BBOX= 250 32  301 199\n\
 SOND van2.raw 22K\n\
 END\n";
 
+static const char *selectC5 = "\
+MENU preload\\slct_c5.smk\n\
+HOTS /BBOX= 212 108 306 192\n\
+SOND tolvexp1.raw 22K\n\
+HOTS /BBOX= 212 5 302 82\n\
+SOND tollcom2.raw 22K\n\
+HOTS /BBOX= 110 70 198 148\n\
+SOND tolbwhr1.raw 22K\n\
+HOTS /BBOX= 4 14 91 92\n\
+SOND tolbwhr1.raw 22K\n\
+HOTS /BBOX= 8 105 96 194\n\
+SOND tolbwhr1.raw 22K\n\
+END\n";
+
+static const char *fterr = "\
+MENU preload\\fterr%d.smk\n\
+HOTS /BBOX=  13 151 68 164\n\
+HOTS /BBOX=  19  48 146  59\n\
+HOTS /BBOX=  19  64 146  75\n\
+HOTS /BBOX=  19  80 146  91\n\
+HOTS /BBOX=  19  96 146 107\n\
+HOTS /BBOX=  19 112 146 123\n\
+HOTS /BBOX= 170  48 305  59\n\
+HOTS /BBOX= 170  64 305  75\n\
+HOTS /BBOX= 170  80 305  91\n\
+HOTS /BBOX= 170  96 305 107\n\
+HOTS /BBOX= 170 112 305 123\n\
+HOTS /BBOX= 170 128 305 139\n\
+HOTS /BBOX= 170 144 305 155\n\
+HOTS /BBOX= 170 160 305 171\n\
+HOTS /BBOX= 170 176 305 187\n\
+HOTS /BBOX= 170  48 305  59\n\
+HOTS /BBOX= 170  64 305  75\n\
+HOTS /BBOX= 170  48 305  59\n\
+HOTS /BBOX= 170  64 305  75\n\
+HOTS /BBOX= 170  80 305  91\n\
+HOTS /BBOX= 170  96 305 107\n\
+HOTS /BBOX= 170 112 305 123\n\
+HOTS /BBOX= 170 128 305 139\n\
+HOTS /BBOX= 170  48 305  59\n\
+HOTS /BBOX= 170  64 305  75\n\
+HOTS /BBOX= 170  48 305  59\n\
+HOTS /BBOX= 170  64 305  75\n\
+HOTS /BBOX= 170  80 305  91\n\
+HOTS /BBOX= 170  96 305 107\n\
+HOTS /BBOX= 170 112 305 123\n\
+HOTS /BBOX= 170 128 305 139\n\
+HOTS /BBOX= 170 144 305 155\n\
+HOTS /BBOX= 170 160 305 171\n\
+END\n";
+
 void BoyzEngine::loadAssets() {
 	LibFile *missions = loadLib("", "preload/missions.lib", true);
 	Common::ArchiveMemberList files;
@@ -140,18 +205,39 @@ void BoyzEngine::loadAssets() {
 	Code *retry = new Code("<retry_menu>");
 	_levels["<retry_menu>"] = retry;
 
+	Transition *territory_1 = new Transition("c19.mi_");
+	territory_1->intros.push_back("warnings/w17s.smk");
+	territory_1->intros.push_back("c1/c1t01.smk");
+	_levels["<territory_1>"] = territory_1;
+
+	Transition *warning_1 = new Transition("c14.mi_");
+	warning_1->intros.push_back("warnings/w12s.smk");
+	_levels["<warning_1>"] = warning_1;
+
 	loadArcadeLevel("c19.mi_", "c11.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c11.mi_", "c12.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c12.mi_", "c14.mi_", "<retry_menu>", "");
+	loadArcadeLevel("c12.mi_", "<warning_1>", "<retry_menu>", "");
+
 	loadArcadeLevel("c14.mi_", "c13.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c13.mi_", "c15.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c15.mi_", "c16.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c16.mi_", "c17.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c17.mi_", "c18.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c18.mi_", "c21.mi_", "<retry_menu>", "");
+	loadArcadeLevel("c18.mi_", "<territory_2>", "<retry_menu>", "");
+
+	Transition *territory_2 = new Transition("c21.mi_");
+	territory_2->intros.push_back("warnings/w13s.smk");
+	territory_2->intros.push_back("c2/c2t01.smk");
+	_levels["<territory_2>"] = territory_2;
 
 	loadArcadeLevel("c21.mi_", "c22.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c22.mi_", "<select_c3>", "<retry_menu>", "");
+	loadArcadeLevel("c22.mi_", "<territory_3>", "<retry_menu>", "");
+
+	Transition *territory_3 = new Transition("<select_c3>");
+	territory_3->intros.push_back("warnings/w14s.smk");
+	territory_3->intros.push_back("c3/c3t01.smk");
+	_levels["<territory_3>"] = territory_3;
+
 	loadArcadeLevel("c31.mi_", "<check_c3>", "<retry_menu>", "");
 	loadArcadeLevel("c32.mi_", "<check_c3>", "<retry_menu>", "");
 	loadArcadeLevel("c33.mi_", "<check_c3>", "<retry_menu>", "");
@@ -162,25 +248,50 @@ void BoyzEngine::loadAssets() {
 
 	loadArcadeLevel("c351.mi_", "<check_ho>", "<retry_menu>", "");
 	loadArcadeLevel("c352.mi_", "<check_ho>", "<retry_menu>", "");
+	ar = (ArcadeShooting *) _levels["c352.mi_"];
+	// These objectives, as every others, are unused
+	// We should remove them to avoid always failing the level
+	ar->objKillsRequired[0] = 0;
+	ar->objMissesAllowed[0] = 0;
+
 	loadArcadeLevel("c353.mi_", "<check_ho>", "<retry_menu>", "");
 	ar = (ArcadeShooting *) _levels["c353.mi_"];
 	ar->id = 353; // This corrects a mistake in the game scripts
 	loadArcadeLevel("c354.mi_", "<check_ho>", "<retry_menu>", "");
 	loadArcadeLevel("c355.mi_", "<check_ho>", "<retry_menu>", "");
+	loadArcadeLevel("c36.mi_", "<territory_4>", "<retry_menu>", "");
 
-	loadArcadeLevel("c36.mi_", "c41.mi_", "<retry_menu>", "");
+	Transition *territory_4 = new Transition("c41.mi_");
+	territory_4->intros.push_back("warnings/w15s.smk");
+	territory_4->intros.push_back("c4/c4t01.smk");
+	_levels["<territory_4>"] = territory_4;
+
 	loadArcadeLevel("c41.mi_", "c42.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c42.mi_", "c51.mi_", "<retry_menu>", "");
+	loadArcadeLevel("c42.mi_", "<territory_5>", "<retry_menu>", "");
+	ar = (ArcadeShooting *) _levels["c42.mi_"];
+	// We remove the last element, which plays c4/c4bro8s.smk
+	// This transition is too close to the end of the level
+	// and will likely not be executed
+	ar->transitions.pop_back();
 
-	loadArcadeLevel("c51.mi_", "c52.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c52.mi_", "c53.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c53.mi_", "c54.mi_", "<retry_menu>", "");
+	Transition *territory_5 = new Transition("<check_c5>");
+	territory_5->intros.push_back("warnings/w16s.smk");
+	territory_5->intros.push_back("c5/c5t01.smk");
+	territory_5->intros.push_back("c5/c5intras.smk");
+	_levels["<territory_5>"] = territory_5;
+
+	loadArcadeLevel("c51.mi_", "<check_c5>", "<retry_menu>", "");
+	loadArcadeLevel("c52.mi_", "<check_c5>", "<retry_menu>", "");
+	loadArcadeLevel("c53.mi_", "<check_c5>", "<retry_menu>", "");
 	loadArcadeLevel("c54.mi_", "c55.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c55.mi_", "c56.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c56.mi_", "c57.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c57.mi_", "c58.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c58.mi_", "c59.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c59.mi_", "<credits>", "<retry_menu>", "");
+
+	Code *credits = new Code("<credits>");
+	_levels["<credits>"] = credits;
 
 	Global *gl;
 	ChangeLevel *cl;
@@ -189,6 +300,7 @@ void BoyzEngine::loadAssets() {
 
 	loadSceneLevel(selectBoyz, "<select_boyz>", "", "");
 	Scene *sc = (Scene *) _levels["<select_boyz>"];
+	sc->intros.push_back("intro/c0o01s.smk");
 	sc->resolution = "320x200";
 
 	hl = new Highlight("GS_SWITCH1");
@@ -233,7 +345,7 @@ void BoyzEngine::loadAssets() {
 	cs = new Cutscene("intro/c0i06s.smk");
 	sc->hots[6].actions.push_back(cs);
 
-	cl = new ChangeLevel("c19.mi_");
+	cl = new ChangeLevel("<territory_1>");
 	sc->hots[7].actions.push_back(cl);
 
 	loadSceneLevel(selectC3, "<select_c3>", "", "");
@@ -321,6 +433,285 @@ void BoyzEngine::loadAssets() {
 	Code *check_ho = new Code("<check_ho>");
 	_levels["<check_ho>"] = check_ho;
 
+	Code *check_c5 = new Code("<check_c5>");
+	_levels["<check_c5>"] = check_c5;
+
+	loadSceneLevel(selectC5, "<select_c5>", "", "");
+	sc = (Scene *) _levels["<select_c5>"];
+	sc->resolution = "320x200";
+
+	Code *alarm_c5 = new Code("<alarm_c5>");
+	_levels["<alarm_c5>"] = alarm_c5;
+
+	hl = new Highlight("GS_SEQ_51");
+	sc->hots[1].actions.push_back(hl);
+	gl = new Global("GS_SEQ_51", "NCHECK");
+	sc->hots[1].actions.push_back(gl);
+	cl = new ChangeLevel("c51.mi_");
+	sc->hots[1].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_52");
+	sc->hots[2].actions.push_back(hl);
+	gl = new Global("GS_SEQ_52", "NCHECK");
+	sc->hots[2].actions.push_back(gl);
+	cl = new ChangeLevel("c52.mi_");
+	sc->hots[2].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_53");
+	sc->hots[3].actions.push_back(hl);
+	gl = new Global("GS_SEQ_53", "NCHECK");
+	sc->hots[3].actions.push_back(gl);
+	cl = new ChangeLevel("c53.mi_");
+	sc->hots[3].actions.push_back(cl);
+
+	hl = new Highlight("GS_SWITCH7");
+	sc->hots[4].actions.push_back(hl);
+	gl = new Global("GS_SWITCH7", "NCHECK");
+	sc->hots[4].actions.push_back(gl);
+	gl = new Global("GS_SWITCH7", "TURNON");
+	sc->hots[4].actions.push_back(gl);
+	cl = new ChangeLevel("<alarm_c5>");
+	sc->hots[4].actions.push_back(cl);
+
+	hl = new Highlight("GS_SWITCH8");
+	sc->hots[5].actions.push_back(hl);
+	gl = new Global("GS_SWITCH8", "NCHECK");
+	sc->hots[5].actions.push_back(gl);
+	gl = new Global("GS_SWITCH8", "TURNON");
+	sc->hots[5].actions.push_back(gl);
+	cl = new ChangeLevel("<alarm_c5>");
+	sc->hots[5].actions.push_back(cl);
+
+	for (int t = 1; t <= 5; t++) {
+		Common::String fterrMis = Common::String::format(fterr, t);
+		Common::String fterrName = Common::String::format("<select_t%d>", t);
+		loadSceneLevel(fterrMis.c_str(), fterrName.c_str(), "", "");
+		sc = (Scene *) _levels[fterrName.c_str()];
+		sc->resolution = "320x200";
+
+		cl = new ChangeLevel("<main_menu>");
+		sc->hots[1].actions.push_back(cl);
+
+		hl = new Highlight("GS_SEQ_19");
+		sc->hots[2].actions.push_back(hl);
+		cl = new ChangeLevel("<select_t1>");
+		sc->hots[2].actions.push_back(cl);
+
+		hl = new Highlight("GS_SEQ_21");
+		sc->hots[3].actions.push_back(hl);
+		cl = new ChangeLevel("<select_t2>");
+		sc->hots[3].actions.push_back(cl);
+
+		hl = new Highlight("GS_SEQ_31");
+		sc->hots[4].actions.push_back(hl);
+		cl = new ChangeLevel("<select_t3>");
+		sc->hots[4].actions.push_back(cl);
+
+		hl = new Highlight("GS_SEQ_41");
+		sc->hots[5].actions.push_back(hl);
+		cl = new ChangeLevel("<select_t4>");
+		sc->hots[5].actions.push_back(cl);
+
+		hl = new Highlight("GS_SEQ_51");
+		sc->hots[6].actions.push_back(hl);
+		cl = new ChangeLevel("<select_t5>");
+		sc->hots[6].actions.push_back(cl);
+	}
+
+	sc = (Scene *) _levels["<select_t1>"];
+	hl = new Highlight("GS_SEQ_19");
+	sc->hots[7].actions.push_back(hl);
+	gl = new Global("GS_SEQ_19", "CHECK");
+	sc->hots[7].actions.push_back(gl);
+	cl = new ChangeLevel("c19.mi_");
+	sc->hots[7].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_11");
+	sc->hots[8].actions.push_back(hl);
+	gl = new Global("GS_SEQ_11", "CHECK");
+	sc->hots[8].actions.push_back(gl);
+	cl = new ChangeLevel("c11.mi_");
+	sc->hots[8].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_12");
+	sc->hots[9].actions.push_back(hl);
+	gl = new Global("GS_SEQ_12", "CHECK");
+	sc->hots[9].actions.push_back(gl);
+	cl = new ChangeLevel("c12.mi_");
+	sc->hots[9].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_13");
+	sc->hots[10].actions.push_back(hl);
+	gl = new Global("GS_SEQ_13", "CHECK");
+	sc->hots[10].actions.push_back(gl);
+	cl = new ChangeLevel("c13.mi_");
+	sc->hots[10].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_14");
+	sc->hots[11].actions.push_back(hl);
+	gl = new Global("GS_SEQ_14", "CHECK");
+	sc->hots[11].actions.push_back(gl);
+	cl = new ChangeLevel("c14.mi_");
+	sc->hots[11].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_15");
+	sc->hots[12].actions.push_back(hl);
+	gl = new Global("GS_SEQ_15", "CHECK");
+	sc->hots[12].actions.push_back(gl);
+	cl = new ChangeLevel("c15.mi_");
+	sc->hots[12].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_16");
+	sc->hots[13].actions.push_back(hl);
+	gl = new Global("GS_SEQ_16", "CHECK");
+	sc->hots[13].actions.push_back(gl);
+	cl = new ChangeLevel("c16.mi_");
+	sc->hots[13].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_17");
+	sc->hots[14].actions.push_back(hl);
+	gl = new Global("GS_SEQ_17", "CHECK");
+	sc->hots[14].actions.push_back(gl);
+	cl = new ChangeLevel("c17.mi_");
+	sc->hots[14].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_18");
+	sc->hots[15].actions.push_back(hl);
+	gl = new Global("GS_SEQ_18", "CHECK");
+	sc->hots[15].actions.push_back(gl);
+	cl = new ChangeLevel("c18.mi_");
+	sc->hots[15].actions.push_back(cl);
+
+	sc = (Scene *) _levels["<select_t2>"];
+	hl = new Highlight("GS_SEQ_21");
+	sc->hots[7].actions.push_back(hl);
+	gl = new Global("GS_SEQ_21", "CHECK");
+	sc->hots[7].actions.push_back(gl);
+	cl = new ChangeLevel("c21.mi_");
+	sc->hots[7].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_22");
+	sc->hots[8].actions.push_back(hl);
+	gl = new Global("GS_SEQ_22", "CHECK");
+	sc->hots[8].actions.push_back(gl);
+	cl = new ChangeLevel("c22.mi_");
+	sc->hots[8].actions.push_back(cl);
+
+	sc = (Scene *) _levels["<select_t3>"];
+	hl = new Highlight("GS_SEQ_31");
+	sc->hots[7].actions.push_back(hl);
+	gl = new Global("GS_SEQ_31", "CHECK");
+	sc->hots[7].actions.push_back(gl);
+	cl = new ChangeLevel("c31.mi_");
+	sc->hots[7].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_32");
+	sc->hots[8].actions.push_back(hl);
+	gl = new Global("GS_SEQ_32", "CHECK");
+	sc->hots[8].actions.push_back(gl);
+	cl = new ChangeLevel("c32.mi_");
+	sc->hots[8].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_33");
+	sc->hots[9].actions.push_back(hl);
+	gl = new Global("GS_SEQ_33", "CHECK");
+	sc->hots[9].actions.push_back(gl);
+	cl = new ChangeLevel("c33.mi_");
+	sc->hots[9].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_34");
+	sc->hots[10].actions.push_back(hl);
+	gl = new Global("GS_SEQ_34", "CHECK");
+	sc->hots[10].actions.push_back(gl);
+	cl = new ChangeLevel("c34.mi_");
+	sc->hots[10].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_35");
+	sc->hots[11].actions.push_back(hl);
+	gl = new Global("GS_SEQ_35", "CHECK");
+	sc->hots[11].actions.push_back(gl);
+	cl = new ChangeLevel("c35.mi_");
+	sc->hots[11].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_36");
+	sc->hots[12].actions.push_back(hl);
+	gl = new Global("GS_SEQ_36", "CHECK");
+	sc->hots[12].actions.push_back(gl);
+	cl = new ChangeLevel("c36.mi_");
+	sc->hots[12].actions.push_back(cl);
+
+	sc = (Scene *) _levels["<select_t4>"];
+	hl = new Highlight("GS_SEQ_41");
+	sc->hots[7].actions.push_back(hl);
+	gl = new Global("GS_SEQ_41", "CHECK");
+	sc->hots[7].actions.push_back(gl);
+	cl = new ChangeLevel("c41.mi_");
+	sc->hots[7].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_42");
+	sc->hots[8].actions.push_back(hl);
+	gl = new Global("GS_SEQ_42", "CHECK");
+	sc->hots[8].actions.push_back(gl);
+	cl = new ChangeLevel("c42.mi_");
+	sc->hots[8].actions.push_back(cl);
+
+	sc = (Scene *) _levels["<select_t5>"];
+	hl = new Highlight("GS_SEQ_51");
+	sc->hots[7].actions.push_back(hl);
+	gl = new Global("GS_SEQ_51", "CHECK");
+	sc->hots[7].actions.push_back(gl);
+	cl = new ChangeLevel("c51.mi_");
+	sc->hots[7].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_52");
+	sc->hots[8].actions.push_back(hl);
+	gl = new Global("GS_SEQ_52", "CHECK");
+	sc->hots[8].actions.push_back(gl);
+	cl = new ChangeLevel("c52.mi_");
+	sc->hots[8].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_53");
+	sc->hots[9].actions.push_back(hl);
+	gl = new Global("GS_SEQ_53", "CHECK");
+	sc->hots[9].actions.push_back(gl);
+	cl = new ChangeLevel("c53.mi_");
+	sc->hots[9].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_54");
+	sc->hots[10].actions.push_back(hl);
+	gl = new Global("GS_SEQ_54", "CHECK");
+	sc->hots[10].actions.push_back(gl);
+	cl = new ChangeLevel("c54.mi_");
+	sc->hots[10].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_55");
+	sc->hots[11].actions.push_back(hl);
+	gl = new Global("GS_SEQ_55", "CHECK");
+	sc->hots[11].actions.push_back(gl);
+	cl = new ChangeLevel("c55.mi_");
+	sc->hots[11].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_56");
+	sc->hots[12].actions.push_back(hl);
+	gl = new Global("GS_SEQ_56", "CHECK");
+	sc->hots[12].actions.push_back(gl);
+	cl = new ChangeLevel("c56.mi_");
+	sc->hots[12].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_57");
+	sc->hots[13].actions.push_back(hl);
+	gl = new Global("GS_SEQ_57", "CHECK");
+	sc->hots[13].actions.push_back(gl);
+	cl = new ChangeLevel("c57.mi_");
+	sc->hots[13].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_58");
+	sc->hots[14].actions.push_back(hl);
+	gl = new Global("GS_SEQ_58", "CHECK");
+	sc->hots[14].actions.push_back(gl);
+	cl = new ChangeLevel("c58.mi_");
+	sc->hots[14].actions.push_back(cl);
+
 	loadLib("sound/", "misc/sound.lib", true);
 
 	_weaponShootSound[0] = "";
@@ -350,10 +741,10 @@ void BoyzEngine::loadAssets() {
 	_deathDay[6] = "preload/deathd6s.smk";
 
 	_deathNight[0] = "";
-	_deathNight[1] = "preload/deathn2s.smk";
-	_deathNight[2] = "preload/deathn3s.smk";
-	_deathNight[3] = "preload/deathn4s.smk";
-	_deathNight[4] = "";
+	_deathNight[1] = "";
+	_deathNight[2] = "preload/deathn2s.smk";
+	_deathNight[3] = "preload/deathn3s.smk";
+	_deathNight[4] = "preload/deathn4s.smk";
 	_deathNight[5] = "";
 	_deathNight[6] = "";
 
@@ -408,7 +799,7 @@ void BoyzEngine::loadAssets() {
 	_crosshairsActive[2].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsActive[2].copyRectToSurface(*targets, 0, 0, cursorBox);
 
-	cursorBox = Common::Rect(104, 71, 136, 83);
+	cursorBox = Common::Rect(104, 71, 136, 89);
 	_crosshairsTarget[2].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsTarget[2].copyRectToSurface(*targets, 0, 0, cursorBox);
 
@@ -462,23 +853,21 @@ void BoyzEngine::loadAssets() {
 	cursorBox = Common::Rect(203, 75, 229, 85);
 	_crosshairsTarget[4].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsTarget[4].copyRectToSurface(*targets, 0, 0, cursorBox);
-
+	*/
 	// Granade
-
 	cursorBox = Common::Rect(256, 2, 273, 29);
-	_crosshairsInactive[5].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
-	_crosshairsInactive[5].copyRectToSurface(*targets, 0, 0, cursorBox);
+	_crosshairsInactive[6].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsInactive[6].copyRectToSurface(*targets, 0, 0, cursorBox);
 
 	cursorBox = Common::Rect(256, 34, 273, 61);
-	_crosshairsActive[5].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
-	_crosshairsActive[5].copyRectToSurface(*targets, 0, 0, cursorBox);
+	_crosshairsActive[6].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsActive[6].copyRectToSurface(*targets, 0, 0, cursorBox);
 
 	cursorBox = Common::Rect(256, 66, 273, 93);
-	_crosshairsTarget[5].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
-	_crosshairsTarget[5].copyRectToSurface(*targets, 0, 0, cursorBox);
-    */
-	// Large crossair
+	_crosshairsTarget[6].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsTarget[6].copyRectToSurface(*targets, 0, 0, cursorBox);
 
+	// Large crossair
 	cursorBox = Common::Rect(56, 98, 88, 125);
 	_crosshairsInactive[7].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsInactive[7].copyRectToSurface(*targets, 0, 0, cursorBox);
@@ -491,6 +880,19 @@ void BoyzEngine::loadAssets() {
 	_crosshairsTarget[7].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsTarget[7].copyRectToSurface(*targets, 0, 0, cursorBox);
 
+	// Additional pointers
+	cursorBox = Common::Rect(4, 100, 33, 123);
+	_leftArrowPointer.create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_leftArrowPointer.copyRectToSurface(*targets, 0, 0, cursorBox);
+
+	cursorBox = Common::Rect(10, 134, 32, 155);
+	_crossPointer.create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crossPointer.copyRectToSurface(*targets, 0, 0, cursorBox);
+
+	cursorBox = Common::Rect(8, 166, 38, 188);
+	_rightArrowPointer.create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_rightArrowPointer.copyRectToSurface(*targets, 0, 0, cursorBox);
+
 	_weaponMaxAmmo[0] = 0;
 	_weaponMaxAmmo[1] = 10;
 	_weaponMaxAmmo[2] = 2; // large shotgun
@@ -501,7 +903,6 @@ void BoyzEngine::loadAssets() {
 	_weaponMaxAmmo[7] = 25; // Boat machine-gun
 
 	_maxHealth = 100;
-	_civiliansShoot = 0;
 	_warningVideosDay.push_back("");
 	_warningVideosDay.push_back("warnings/w01s.smk");
 	_warningVideosDay.push_back("warnings/w02s.smk");
@@ -600,6 +1001,11 @@ void BoyzEngine::drawString(const Common::String &font, const Common::String &st
 }
 
 void BoyzEngine::saveProfile(const Common::String &name, int levelId) {
+	if (name.empty()) {
+		debugC(1, kHypnoDebugMedia, "WARNING: refusing to save at last level %d with an empty name", _lastLevel);
+		return;
+	}
+
 	SaveStateList saves = getMetaEngine()->listSaves(_targetName.c_str());
 
 	// Find the correct level index to before saving
@@ -654,7 +1060,7 @@ Common::Error BoyzEngine::saveGameStream(Common::WriteStream *stream, bool isAut
 	if (isAutosave)
 		return Common::kNoError;
 
-	if (_lastLevel < 0 || _lastLevel >= 20)
+	if (_lastLevel < 0 || _lastLevel >= 30)
 		error("Invalid last level!");
 
 	stream->writeString(_name);
@@ -669,20 +1075,27 @@ Common::Error BoyzEngine::saveGameStream(Common::WriteStream *stream, bool isAut
 
 	stream->writeUint32LE(_lastLevel);
 
-	stream->writeUint32LE(_sceneState["GS_C5MAP"]);
-	stream->writeUint32LE(_sceneState["GS_WONSHELLGAME"]);
-	stream->writeUint32LE(_sceneState["GS_C36_READY"]);
-	stream->writeUint32LE(_sceneState["GS_MINEMAP"]);
-	stream->writeUint32LE(_sceneState["GS_MINEMAP_VIEWED"]);
-	stream->writeUint32LE(_sceneState["GS_HOTELDONE"]);
+	// Save current stats
+	stream->writeUint32LE(_stats.livesUsed);
+	stream->writeUint32LE(_stats.shootsFired);
+	stream->writeUint32LE(_stats.enemyHits);
+	stream->writeUint32LE(_stats.enemyTargets);
+	stream->writeUint32LE(_stats.targetsDestroyed);
+	stream->writeUint32LE(_stats.targetsMissed);
+	stream->writeUint32LE(_stats.friendliesEncountered);
+	stream->writeUint32LE(_stats.infoReceived);
 
-	stream->writeUint32LE(_sceneState["GS_SEQ_31"]);
-	stream->writeUint32LE(_sceneState["GS_SEQ_32"]);
-	stream->writeUint32LE(_sceneState["GS_SEQ_33"]);
-	stream->writeUint32LE(_sceneState["GS_SEQ_34"]);
-	stream->writeUint32LE(_sceneState["GS_SEQ_35"]);
-	stream->writeUint32LE(_sceneState["GS_SEQ_36"]);
+	stream->writeUint32LE(_globalStats.livesUsed);
+	stream->writeUint32LE(_globalStats.shootsFired);
+	stream->writeUint32LE(_globalStats.enemyHits);
+	stream->writeUint32LE(_globalStats.enemyTargets);
+	stream->writeUint32LE(_globalStats.targetsDestroyed);
+	stream->writeUint32LE(_globalStats.targetsMissed);
+	stream->writeUint32LE(_globalStats.friendliesEncountered);
+	stream->writeUint32LE(_globalStats.infoReceived);
 
+	stream->writeUint32LE(_flashbackMode);
+	saveSceneState(stream);
 	return Common::kNoError;
 }
 
@@ -694,24 +1107,39 @@ Common::Error BoyzEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	_score = stream->readUint32LE();
 	_lastLevel = stream->readUint32LE();
 
-	_sceneState["GS_C5MAP"] = stream->readUint32LE();
-	_sceneState["GS_WONSHELLGAME"] = stream->readUint32LE();
-	_sceneState["GS_C36_READY"] = stream->readUint32LE();
-	_sceneState["GS_MINEMAP"] = stream->readUint32LE();
-	_sceneState["GS_MINEMAP_VIEWED"] = stream->readUint32LE();
-	_sceneState["GS_HOTELDONE"] = stream->readUint32LE();
+	// Load stats
+	_stats.livesUsed = stream->readUint32LE();
+	_stats.shootsFired = stream->readUint32LE();
+	_stats.enemyHits = stream->readUint32LE();
+	_stats.enemyTargets = stream->readUint32LE();
+	_stats.targetsDestroyed = stream->readUint32LE();
+	_stats.targetsMissed = stream->readUint32LE();
+	_stats.friendliesEncountered = stream->readUint32LE();
+	_stats.infoReceived = stream->readUint32LE();
 
-	_sceneState["GS_SEQ_31"] = stream->readUint32LE();
-	_sceneState["GS_SEQ_32"] = stream->readUint32LE();
-	_sceneState["GS_SEQ_33"] = stream->readUint32LE();
-	_sceneState["GS_SEQ_34"] = stream->readUint32LE();
-	_sceneState["GS_SEQ_35"] = stream->readUint32LE();
+	_globalStats.livesUsed = stream->readUint32LE();
+	_globalStats.shootsFired = stream->readUint32LE();
+	_globalStats.enemyHits = stream->readUint32LE();
+	_globalStats.enemyTargets = stream->readUint32LE();
+	_globalStats.targetsDestroyed = stream->readUint32LE();
+	_globalStats.targetsMissed = stream->readUint32LE();
+	_globalStats.friendliesEncountered = stream->readUint32LE();
+	_globalStats.infoReceived = stream->readUint32LE();
 
-
-	if (_ids[_lastLevel] == 3591)
+	_flashbackMode = stream->readUint32LE();
+	loadSceneState(stream);
+	if (_unlockAllLevels) {
+		_nextLevel = "<select_t1>";
+		_flashbackMode = true;
+		unlockAllLevels();
+	} else if (_flashbackMode) {
+		_nextLevel = "<select_t1>";
+	} else if (_ids[_lastLevel] == 3591)
 		_nextLevel = "<select_c3>";
 	else if (_ids[_lastLevel] == 3592)
 		_nextLevel = "<select_ho>";
+	else if (_ids[_lastLevel] == 531)
+		_nextLevel = "<select_c5>";
 	else
 		_nextLevel = Common::String::format("c%d.mi_", _ids[_lastLevel]);
 	return Common::kNoError;

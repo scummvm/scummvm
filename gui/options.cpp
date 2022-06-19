@@ -908,8 +908,8 @@ void OptionsDialog::apply() {
 			Common::U32String soundFont(_soundFont->getLabel());
 			if (soundFont != ConfMan.get("soundfont", _domain)) {
 				_soundFont->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
-				if (soundFont.empty() || (soundFont != _c("None", "soundfont")))
-					ConfMan.removeKey("soundpath", _domain); 
+				if (soundFont.empty() || (soundFont == _c("None", "soundfont")))
+					ConfMan.removeKey("soundfont", _domain);
 				else 
 					ConfMan.set("soundfont", soundFont.encode(), _domain); 
 			} 
@@ -2216,7 +2216,7 @@ void GlobalOptionsDialog::build() {
 
 	setPath(_savePath, "savepath", _("Default")); 
 	setPath(_themePath, "themepath", _c("None", "path"));
-	setPath(_iconPath, "iconpath", _c("None", "path"));
+	setPath(_iconPath, "iconspath", _c("None", "path"));
 	setPath(_extraPath, "extrapath", _c("None", "path"));
 
 #ifdef DYNAMIC_MODULES
@@ -2709,7 +2709,7 @@ void GlobalOptionsDialog::apply() {
 
 	changePath(_savePath, "savepath", _("Default")); 
 	changePath(_themePath, "themepath", _c("None", "path")); 
-	changePath(_iconPath, "iconpath", _c("None", "path")); 
+	changePath(_iconPath, "iconspath", _c("None", "path")); 
 	changePath(_extraPath, "extrapath", _c("None", "path")); 
 
 #ifdef DYNAMIC_MODULES

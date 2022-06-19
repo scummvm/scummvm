@@ -77,8 +77,7 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 	_bink.setSoundType(Audio::Mixer::kSFXSoundType);
 	_bink.loadStream(binkStream);
 
-	if (binkDesc.getType() == Archive::kMultitrackMovie
-			|| binkDesc.getType() == Archive::kDialogMovie) {
+	if (binkDesc.getType() == Archive::kMultitrackMovie || binkDesc.getType() == Archive::kDialogMovie) {
 		uint language = ConfMan.getInt("audio_language");
 		_bink.setAudioTrack(language);
 	}
@@ -367,7 +366,6 @@ void ScriptedMovie::update() {
 					_vm->_state->setVar(_condition & 0x7FF, 0);
 				}
 			}
-
 		}
 	}
 }

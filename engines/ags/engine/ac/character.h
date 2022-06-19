@@ -177,7 +177,7 @@ class Bitmap;
 using namespace AGS; // FIXME later
 
 void animate_character(CharacterInfo *chap, int loopn, int sppd, int rept,
-	int noidleoverride = 0, int direction = 0, int sframe = 0, int volume = -1);
+	int noidleoverride = 0, int direction = 0, int sframe = 0, int volume = 100);
 // Clears up animation parameters
 void stop_character_anim(CharacterInfo *chap);
 void walk_character(int chac, int tox, int toy, int ignwal, bool autoWalkAnims);

@@ -43,10 +43,11 @@ int16 Room4::comp_probe() {
 		{ 188, 101 }
 	};
 
-	static const Common::Rect consoleHotspots[] = {
-		{  99, 165, 160, 206 },
-		{ 167, 166, 211, 200 },
-		{ 218, 161, 279, 200 }
+	// This can't be static because it makes them global objects
+	const Common::Rect CONSOLE_HOTSPOTS[] = {
+		{  80, 140, 120, 175 },
+		{ 140, 140, 170, 175 },
+		{ 195, 140, 235, 175 }
 	};
 
 	cur_2_inventory();
@@ -62,9 +63,16 @@ int16 Room4::comp_probe() {
 
 	start_aad(46);
 	while (!endLoop) {
+		// WORKAROUND: The original constrained the mouse area.
+		// We don't do that in ScummVM so the below prevents
+		// potential crashes caused by the hand sprites being
+		// unloaded if the cursor is moved up too high
+		if (g_events->_mousePos.y < 135)
+			g_events->_mousePos.y = 135;
 		mouseAction();
+
 		if (_G(mouseLeftClick)) {
-			switch (_G(in)->findHotspot(consoleHotspots)) {
+			switch (_G(in)->findHotspot(CONSOLE_HOTSPOTS)) {
 			case 0:
 				if (curX > 0)
 					--curX;
@@ -118,7 +126,7 @@ int16 Room4::comp_probe() {
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(_G(menu_item));
 
-	_G(spieler_vector)[P_CHEWY]._delayCount = 0;
+	_G(moveState)[P_CHEWY]._delayCount = 0;
 	_G(mouseLeftClick) = false;
 	_G(minfo).button = 0;
 	_G(gameState)._personRoomNr[P_CHEWY] = 3;

@@ -27,7 +27,6 @@
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/colormap.h"
 #include "engines/grim/animation.h"
-
 #include "engines/grim/costume/model_component.h"
 #include "engines/grim/costume/main_model_component.h"
 #include "engines/grim/costume/mesh_component.h"

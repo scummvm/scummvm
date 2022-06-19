@@ -67,7 +67,6 @@ const float Renderer::cubeVertices[] = {
 Renderer::Renderer(OSystem *system)
 		: _system(system),
 		  _font(nullptr) {
-
 	// Compute the cube faces Axis Aligned Bounding Boxes
 	for (uint i = 0; i < ARRAYSIZE(_cubeFacesAABB); i++) {
 		for (uint j = 0; j < 4; j++) {
@@ -307,4 +306,5 @@ const Graphics::PixelFormat Texture::getRGBAPixelFormat() {
 	return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
 #endif
 }
+
 } // End of namespace Myst3

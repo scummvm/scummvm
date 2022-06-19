@@ -718,7 +718,6 @@ void GfxOpenGLS::getActorScreenBBox(const Actor *actor, Common::Point &p1, Commo
 	p2.y = 480 - tmp;
 }
 
-
 void GfxOpenGLS::startActorDraw(const Actor *actor) {
 	_currentActor = actor;
 	glEnable(GL_DEPTH_TEST);
@@ -900,7 +899,6 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 	}
 }
 
-
 void GfxOpenGLS::finishActorDraw() {
 	_currentActor = nullptr;
 	glDisable(GL_POLYGON_OFFSET_FILL);
@@ -1016,7 +1014,6 @@ void GfxOpenGLS::destroyShadow(Shadow *shadow) {
 }
 
 void GfxOpenGLS::set3DMode() {
-
 }
 
 void GfxOpenGLS::translateViewpointStart() {
@@ -1053,8 +1050,7 @@ void GfxOpenGLS::updateEMIModel(const EMIModel* model) {
 }
 
 void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) {
-	if (face->_flags & EMIMeshFace::kAlphaBlend ||
-	    face->_flags & EMIMeshFace::kUnknownBlend)
+	if (face->_flags & EMIMeshFace::kAlphaBlend || face->_flags & EMIMeshFace::kUnknownBlend)
 		glEnable(GL_BLEND);
 	const EMIModelUserData *mud = (const EMIModelUserData *)model->_userData;
 	OpenGL::ShaderGL *actorShader;
@@ -1130,7 +1126,6 @@ void GfxOpenGLS::drawDimPlane() {
 }
 
 void GfxOpenGLS::drawModelFace(const Mesh *mesh, const MeshFace *face) {
-
 }
 
 void GfxOpenGLS::drawSprite(const Sprite *sprite) {
@@ -1487,10 +1482,7 @@ void GfxOpenGLS::drawDepthBitmap(int bitmapId, int x, int y, int w, int h, char 
 
 	// Sometimes the data pointer is reused by the allocator between bitmaps
 	// Use the bitmap ID to ensure we don't prevent an expected update
-	if (bitmapId == prevId &&
-	        prevX == x && prevY == y &&
-	        prevW == w && prevH == h &&
-	        data == prevData) {
+	if (bitmapId == prevId && prevX == x && prevY == y && prevW == w && prevH == h && data == prevData) {
 		return;
 	}
 
@@ -1657,10 +1649,10 @@ void GfxOpenGLS::createTextObject(TextObject *text) {
 			float cy = ((character - 1) / 16) / 16.0f;
 
 			float charData[] = {
-					z, w, cx, cy,
-					z + sizeW, w, cx + width, cy,
-					z + sizeW, w + sizeH, cx + width, cy + width,
-					z, w + sizeH, cx, cy + width
+				z, w, cx, cy,
+				z + sizeW, w, cx + width, cy,
+				z + sizeW, w + sizeH, cx + width, cy + width,
+				z, w + sizeH, cx, cy + width
 			};
 			memcpy(cur, charData, 16 * sizeof(float));
 			cur += 16;
@@ -1749,7 +1741,6 @@ void GfxOpenGLS::copyStoredToDisplay() {
 }
 
 void GfxOpenGLS::dimScreen() {
-
 }
 
 void GfxOpenGLS::dimRegion(int xin, int yReal, int w, int h, float level) {
@@ -1801,7 +1792,6 @@ void GfxOpenGLS::dimRegion(int xin, int yReal, int w, int h, float level) {
 	glDeleteTextures(1, &texture);
 }
 
-
 void GfxOpenGLS::irisAroundRegion(int x1, int y1, int x2, int y2) {
 	_irisProgram->use();
 	_irisProgram->setUniform("color", Math::Vector3d(0.0f, 0.0f, 0.0f));
@@ -1837,7 +1827,6 @@ void GfxOpenGLS::irisAroundRegion(int x1, int y1, int x2, int y2) {
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 }
-
 
 void GfxOpenGLS::drawEmergString(int x, int y, const char *text, const Color &fgColor) {
 	if (!*text)
@@ -1950,7 +1939,6 @@ void GfxOpenGLS::drawRectangle(const PrimitiveObject *primitive) {
 		drawGenericPrimitive(bottom, 8, primitive);
 		drawGenericPrimitive(left, 8, primitive);
 	}
-
 }
 
 void GfxOpenGLS::drawLine(const PrimitiveObject *primitive) {
@@ -2003,7 +1991,6 @@ void GfxOpenGLS::prepareMovieFrame(Graphics::Surface* frame) {
 #else
 		_smushSwap = false;
 #endif
-
 	} else if (frame->format == Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 0) || frame->format == Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24)) {
 		// frame->format: ARGB
 		// read in little endian: {B, G, R, A}, swizzle: {R, G, B, A}
@@ -2071,7 +2058,6 @@ void GfxOpenGLS::drawMovieFrame(int offsetX, int offsetY) {
 	glEnable(GL_DEPTH_TEST);
 }
 
-
 void GfxOpenGLS::releaseMovieFrame() {
 	if (_smushTexId > 0) {
 		glDeleteTextures(1, &_smushTexId);
@@ -2085,13 +2071,10 @@ const char *GfxOpenGLS::getVideoDeviceName() {
 }
 
 void GfxOpenGLS::renderBitmaps(bool render) {
-
 }
 
 void GfxOpenGLS::renderZBitmaps(bool render) {
-
 }
-
 
 void GfxOpenGLS::createEMIModel(EMIModel *model) {
 	EMIModelUserData *mud = new EMIModelUserData;

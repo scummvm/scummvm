@@ -127,19 +127,13 @@ public:
 
 	bool _lastJoyFlag = false;
 
-	/** Process actor coordinate */
-	IVec3 _processActor;
-
-	/** Previous process actor coordinate */
-	IVec3 _previousActor;
-
 	int32 _targetActorDistance = 0;
 
 	/**
 	 * Get shadow position
 	 * @param pos Shadow coordinates
 	 */
-	void getShadowPosition(const IVec3 &pos);
+	IVec3 getShadowPosition(const IVec3 &pos);
 
 	/**
 	 * Set actor safe angle

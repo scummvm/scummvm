@@ -209,13 +209,13 @@ void Screen::addAnimatedSprite(int16 x, int16 y, int16 fragmentId, byte *data, i
 		drawRequest.scaling = 0;
 	}
 
-	int16 count = FROM_LE_16(spriteArray[0]);
+	int16 count = READ_LE_UINT16(&spriteArray[0]);
 
 	//debug(0, "count = %d", count);
 
 	for (int16 index = 1; index <= count; index++) {
 
-		byte *spriteItem = data + FROM_LE_16(spriteArray[index]);
+		byte *spriteItem = data + READ_LE_UINT16(&spriteArray[index]);
 
 		uint16 loopNum = READ_LE_UINT16(spriteItem + 0) & 0x7FFF;
 		uint16 loopCount = READ_LE_UINT16(spriteItem + 2);

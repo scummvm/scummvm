@@ -183,7 +183,7 @@ private:
 
 	// Touch controls layer
 	GLESTexture *_touchcontrols_texture;
-	bool _old_touch_3d_mode;
+	int _old_touch_mode;
 };
 
 #endif

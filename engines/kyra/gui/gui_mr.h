@@ -57,6 +57,7 @@ private:
 
 	uint8 defaultColor1() const override { return 0xF0; }
 	uint8 defaultColor2() const override { return 0xD0; }
+	uint8 menuItemLabelColor() const override { return 0xFF; }
 
 	void resetState(int item);
 

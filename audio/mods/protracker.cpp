@@ -28,114 +28,6 @@
 
 namespace Modules {
 
-class ProtrackerStream : public ::Audio::Paula {
-private:
-	Module _module;
-
-	int _tick;
-	int _row;
-	int _pos;
-
-	int _speed;
-	int _bpm;
-
-	// For effect 0xB - Jump To Pattern;
-	bool _hasJumpToPattern;
-	int _jumpToPattern;
-
-	// For effect 0xD - PatternBreak;
-	bool _hasPatternBreak;
-	int _skipRow;
-
-	// For effect 0xE6 - Pattern Loop
-	bool _hasPatternLoop;
-	int _patternLoopCount;
-	int _patternLoopRow;
-
-	// For effect 0xEE - Pattern Delay
-	byte _patternDelay;
-
-	static const int16 sinetable[];
-
-	struct Track {
-		byte sample;
-		byte lastSample;
-		uint16 period;
-		Offset offset;
-
-		byte vol;
-		byte finetune;
-
-		// For effect 0x0 - Arpeggio
-		bool arpeggio;
-		byte arpeggioNotes[3];
-
-		// For effect 0x3 - Porta to note
-		uint16 portaToNote;
-		byte portaToNoteSpeed;
-
-		// For effect 0x4 - Vibrato
-		int vibrato;
-		byte vibratoPos;
-		byte vibratoSpeed;
-		byte vibratoDepth;
-
-		// For effect 0xED - Delay sample
-		byte delaySample;
-		byte delaySampleTick;
-	} _track[4];
-
-public:
-	ProtrackerStream(Common::SeekableReadStream *stream, int offs, int rate, bool stereo);
-
-	Modules::Module *getModule() {
-		// Ordinarily, the Module is not meant to be seen outside of
-		// this class, but occasionally, it's useful to be able to
-		// manipulate it directly. The Hopkins engine uses this to
-		// repair a broken song.
-		return &_module;
-	}
-
-private:
-	void interrupt() override;
-
-	void doPorta(int track) {
-		if (_track[track].portaToNote && _track[track].portaToNoteSpeed) {
-			int distance = _track[track].period - _track[track].portaToNote;
-			int sign = distance > 0 ? 1 : -1;
-
-			if ((sign * distance) > _track[track].portaToNoteSpeed)
-				_track[track].period -= sign * _track[track].portaToNoteSpeed;
-			else
-				_track[track].period = _track[track].portaToNote;
-		}
-	}
-	void doVibrato(int track) {
-		_track[track].vibrato =
-				(_track[track].vibratoDepth * sinetable[_track[track].vibratoPos]) / 128;
-		_track[track].vibratoPos += _track[track].vibratoSpeed;
-		_track[track].vibratoPos %= 64;
-	}
-	void doVolSlide(int track, byte ex, byte ey) {
-		int vol = _track[track].vol;
-		if (ex == 0)
-			vol -= ey;
-		else if (ey == 0)
-			vol += ex;
-
-		if (vol < 0)
-			vol = 0;
-		else if (vol > 64)
-			vol = 64;
-
-		_track[track].vol = vol;
-	}
-
-	void updateRow();
-	void updateEffects();
-
-};
-
 const int16 ProtrackerStream::sinetable[64] = {
 		 0,   24,   49,   74,   97,  120,  141,  161,
 	 180,  197,  212,  224,  235,  244,  250,  253,
@@ -147,10 +39,8 @@ const int16 ProtrackerStream::sinetable[64] = {
 	-180, -161, -141, -120,  -97,  -74,  -49,  -24
 };
 
-ProtrackerStream::ProtrackerStream(Common::SeekableReadStream *stream, int offs, int rate, bool stereo) :
-		Paula(stereo, rate, rate/50) {
-	bool result = _module.load(*stream, offs);
-	assert(result);
+ProtrackerStream::ProtrackerStream(int rate, bool stereo) : Paula(stereo, rate, rate / 50) {
+	_module = nullptr;
 
 	_tick = _row = _pos = 0;
 
@@ -170,8 +60,22 @@ ProtrackerStream::ProtrackerStream(Common::SeekableReadStream *stream, int offs,
 	_patternDelay = 0;
 
 	ARRAYCLEAR(_track);
+}
+
+ProtrackerStream::ProtrackerStream(Common::SeekableReadStream *stream, int offs, int rate, bool stereo) :
+		ProtrackerStream(rate, stereo) {
+	_module = new Module();
+	bool result = _module->load(*stream, offs);
+	assert(result);
 
 	startPaula();
+}
+
+ProtrackerStream::~ProtrackerStream() {
+	if (_module) {
+		delete _module;
+		_module = nullptr;
+	}
 }
 
 void ProtrackerStream::updateRow() {
@@ -180,7 +84,7 @@ void ProtrackerStream::updateRow() {
 		_track[track].vibrato = 0;
 		_track[track].delaySampleTick = 0;
 		const note_t note =
-		    _module.pattern[_module.songpos[_pos]][_row][track];
+		    _module->pattern[_module->songpos[_pos]][_row][track];
 
 		const int effect = note.effect >> 8;
 
@@ -190,14 +94,14 @@ void ProtrackerStream::updateRow() {
 			}
 			_track[track].sample = note.sample;
 			_track[track].lastSample = note.sample;
-			_track[track].finetune = _module.sample[note.sample - 1].finetune;
-			_track[track].vol = _module.sample[note.sample - 1].vol;
+			_track[track].finetune = _module->sample[note.sample - 1].finetune;
+			_track[track].vol = _module->sample[note.sample - 1].vol;
 		}
 
 		if (note.period) {
 			if (effect != 3 && effect != 5) {
 				if (_track[track].finetune)
-					_track[track].period = _module.noteToPeriod(note.note, _track[track].finetune);
+					_track[track].period = _module->noteToPeriod(note.note, _track[track].finetune);
 				else
 					_track[track].period = note.period;
 
@@ -215,7 +119,7 @@ void ProtrackerStream::updateRow() {
 		case 0x0:
 			if (exy) {
 				_track[track].arpeggio = true;
-				byte trackNote = _module.periodToNote(_track[track].period);
+				byte trackNote = _module->periodToNote(_track[track].period);
 				_track[track].arpeggioNotes[0] = trackNote;
 				_track[track].arpeggioNotes[1] = trackNote + ex;
 				_track[track].arpeggioNotes[2] = trackNote + ey;
@@ -276,10 +180,10 @@ void ProtrackerStream::updateRow() {
 				break;
 			case 0x5: // Set finetune
 				_track[track].finetune = ey;
-				_module.sample[_track[track].sample].finetune = ey;
+				_module->sample[_track[track].sample].finetune = ey;
 				if (note.period) {
 					if (ey)
-						_track[track].period = _module.noteToPeriod(note.note, ey);
+						_track[track].period = _module->noteToPeriod(note.note, ey);
 					else
 						_track[track].period = note.period;
 				}
@@ -342,7 +246,7 @@ void ProtrackerStream::updateEffects() {
 		_track[track].vibrato = 0;
 
 		const note_t note =
-		    _module.pattern[_module.songpos[_pos]][_row][track];
+		    _module->pattern[_module->songpos[_pos]][_row][track];
 
 		const int effect = note.effect >> 8;
 
@@ -355,7 +259,7 @@ void ProtrackerStream::updateEffects() {
 			if (exy) {
 				const int idx = (_tick == 1) ? 0 : (_tick % 3);
 				_track[track].period =
-					_module.noteToPeriod(_track[track].arpeggioNotes[idx],
+					_module->noteToPeriod(_track[track].arpeggioNotes[idx],
 							_track[track].finetune);
 			}
 			break;
@@ -395,7 +299,7 @@ void ProtrackerStream::updateEffects() {
 					_track[track].sample = _track[track].delaySample;
 					_track[track].offset = Offset(0);
 					if (_track[track].sample)
-						_track[track].vol = _module.sample[_track[track].sample - 1].vol;
+						_track[track].vol = _module->sample[_track[track].sample - 1].vol;
 				}
 				break;
 			default:
@@ -414,7 +318,7 @@ void ProtrackerStream::interrupt() {
 	for (track = 0; track < 4; track++) {
 		_track[track].offset = getChannelOffset(track);
 		if (_tick == 0 && _track[track].arpeggio) {
-			_track[track].period = _module.noteToPeriod(_track[track].arpeggioNotes[0],
+			_track[track].period = _module->noteToPeriod(_track[track].arpeggioNotes[0],
 					_track[track].finetune);
 		}
 	}
@@ -427,7 +331,7 @@ void ProtrackerStream::interrupt() {
 		} else if (_hasPatternBreak) {
 			_hasPatternBreak = false;
 			_row = _skipRow;
-			_pos = (_pos + 1) % _module.songlen;
+			_pos = (_pos + 1) % _module->songlen;
 			_patternLoopRow = 0;
 		} else if (_hasPatternLoop) {
 			_hasPatternLoop = false;
@@ -435,7 +339,7 @@ void ProtrackerStream::interrupt() {
 		}
 		if (_row >= 64) {
 			_row = 0;
-			_pos = (_pos + 1) % _module.songlen;
+			_pos = (_pos + 1) % _module->songlen;
 			_patternLoopRow = 0;
 		}
 
@@ -453,7 +357,7 @@ void ProtrackerStream::interrupt() {
 		setChannelVolume(track, _track[track].vol);
 		setChannelPeriod(track, _track[track].period + _track[track].vibrato);
 		if (_track[track].sample) {
-			sample_t &sample = _module.sample[_track[track].sample - 1];
+			sample_t &sample = _module->sample[_track[track].sample - 1];
 			setChannelData(track,
 			               sample.data,
 			               sample.replen > 2 ? sample.data + sample.repeat : nullptr,
@@ -463,6 +367,40 @@ void ProtrackerStream::interrupt() {
 			_track[track].sample = 0;
 		}
 	}
+}
+
+void ProtrackerStream::doPorta(int track) {
+	if (_track[track].portaToNote && _track[track].portaToNoteSpeed) {
+		int distance = _track[track].period - _track[track].portaToNote;
+		int sign = distance > 0 ? 1 : -1;
+
+		if ((sign * distance) > _track[track].portaToNoteSpeed)
+			_track[track].period -= sign * _track[track].portaToNoteSpeed;
+		else
+			_track[track].period = _track[track].portaToNote;
+	}
+}
+
+void ProtrackerStream::doVibrato(int track) {
+	_track[track].vibrato =
+		(_track[track].vibratoDepth * sinetable[_track[track].vibratoPos]) / 128;
+	_track[track].vibratoPos += _track[track].vibratoSpeed;
+	_track[track].vibratoPos %= 64;
+}
+
+void ProtrackerStream::doVolSlide(int track, byte ex, byte ey) {
+	int vol = _track[track].vol;
+	if (ex == 0)
+		vol -= ey;
+	else if (ey == 0)
+		vol += ex;
+
+	if (vol < 0)
+		vol = 0;
+	else if (vol > 64)
+		vol = 64;
+
+	_track[track].vol = vol;
 }
 
 } // End of namespace Modules

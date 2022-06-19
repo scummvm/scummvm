@@ -166,8 +166,7 @@ void Sector::load(TextSplitter &ts) {
 	// Repeat the last vertex for convenience
 	_vertices[_numVertices] = _vertices[0];
 
-	_normal = Math::Vector3d::crossProduct(_vertices[1] - _vertices[0],
-										   _vertices[_numVertices - 1] - _vertices[0]);
+	_normal = Math::Vector3d::crossProduct(_vertices[1] - _vertices[0], _vertices[_numVertices - 1] - _vertices[0]);
 	float length = _normal.getMagnitude();
 	if (length > 0)
 		_normal /= length;
@@ -197,8 +196,7 @@ void Sector::loadBinary(Common::SeekableReadStream *data) {
 	// Repeat the last vertex for convenience
 	_vertices[_numVertices] = _vertices[0];
 
-	_normal = Math::Vector3d::crossProduct(_vertices[1] - _vertices[0],
-										   _vertices[_numVertices - 1] - _vertices[0]);
+	_normal = Math::Vector3d::crossProduct(_vertices[1] - _vertices[0], _vertices[_numVertices - 1] - _vertices[0]);
 	float length = _normal.getMagnitude();
 	if (length > 0)
 		_normal /= length;
@@ -327,7 +325,6 @@ bool Sector::isPointInSector(const Math::Vector3d &point) const {
 	// Calculate the distance of the point from the plane of the sector.
 	// Return false if it isn't within a margin.
 	if (_height < 9000.f) { // No need to check when height is 9999.
-
 		float dist = distanceToPoint(point);
 
 		if (fabsf(dist) > _height + 0.01) // Add an error margin
@@ -412,13 +409,13 @@ Common::List<Math::Line3d> Sector::getBridgesTo(Sector *sector) const {
 			// The value of at least 0.1 was chosen to fix a path finding issue
 			// in set pac when guybrush tried to reach the pile of rocks.
 			if (fabs(getProjectionToPlane((*it).begin()).y() - sector->getProjectionToPlane((*it).begin()).y()) > 0.1f ||
-					fabs(getProjectionToPlane((*it).end()).y() - sector->getProjectionToPlane((*it).end()).y()) > 0.1f) {
+			    fabs(getProjectionToPlane((*it).end()).y() - sector->getProjectionToPlane((*it).end()).y()) > 0.1f) {
 				it = bridges.erase(it);
 				continue;
 			}
 		} else {
 			if (fabs(getProjectionToPlane((*it).begin()).z() - sector->getProjectionToPlane((*it).begin()).z()) > 0.01f ||
-					fabs(getProjectionToPlane((*it).end()).z() - sector->getProjectionToPlane((*it).end()).z()) > 0.01f) {
+			    fabs(getProjectionToPlane((*it).end()).z() - sector->getProjectionToPlane((*it).end()).z()) > 0.01f) {
 				it = bridges.erase(it);
 				continue;
 			}
@@ -548,15 +545,14 @@ Sector &Sector::operator=(const Sector &other) {
 
 bool Sector::operator==(const Sector &other) const {
 	bool ok = _numVertices == other._numVertices &&
-			  _id == other._id &&
-			  _name == other._name &&
-			  _type == other._type &&
-			  _visible == other._visible;
+	          _id == other._id &&
+	          _name == other._name &&
+	          _type == other._type &&
+	          _visible == other._visible;
 	for (int i = 0; i < _numVertices + 1; ++i) {
 		ok = ok && _vertices[i] == other._vertices[i];
 	}
-	ok = ok && _height == other._height &&
-		 _normal == other._normal;
+	ok = ok && _height == other._height && _normal == other._normal;
 
 	return ok;
 }

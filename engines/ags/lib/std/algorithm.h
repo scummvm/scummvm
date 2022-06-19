@@ -125,6 +125,22 @@ ForwardIt upper_bound(ForwardIt first, ForwardIt last, const T &value, Compare c
 	return last;
 }
 
+template<class ForwardIt>
+ForwardIt next(ForwardIt it, int n = 1) {
+	ForwardIt it2 = it;
+	while (n > 0) { ++it2; --n; }
+	while (n < 0) { --it2; ++n; }
+	return it2;
+}
+
+template<class BidirIt>
+BidirIt prev(BidirIt it, int n = 1) {
+	BidirIt it2 = it;
+	while (n > 0) { --it2; --n; }
+	while (n < 0) { ++it2; ++n; }
+	return it2;
+}
+
 } // namespace std
 } // namespace AGS3
 

@@ -125,7 +125,7 @@ void JungleRoom::rightEntry() {
 void JungleRoom::setup_func() {
 	calc_person_look();
 
-	const int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	const int posX = _G(moveState)[P_CHEWY].Xypos[0];
 
 	int howDestX, nicDestX;
 	if (posX < 40) {
@@ -174,7 +174,7 @@ void Room::loadRoom(RaumBlk *Rb, int16 room_nr, GameState *player) {
 		Rb->DetKorrekt = Rb->Fti->correction;
 	}
 	_G(obj)->calc_all_static_detail();
-	load_tgp(_roomInfo->_imageNr, Rb, EPISODE1_TGP, GED_LOAD, EPISODE1);
+	load_tgp(_roomInfo->_imageNr, Rb, EPISODE1_TGP, true, EPISODE1);
 	set_pal(_ablagePal[Rb->AkAblage], Rb->LowPalMem);
 	calc_invent(Rb, player);
 
@@ -294,7 +294,7 @@ void Room::calc_invent(RaumBlk *Rb, GameState *player) {
 	delete spriteRes;
 }
 
-int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const char *fileName) {
+int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, bool loadBarriers, const char *fileName) {
 	BackgroundResource *res = new BackgroundResource(fileName);
 	TBFChunk *img = res->getImage(nr, false);
 
@@ -312,9 +312,8 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const cha
 		memcpy(_ablagePal[Rb->AkAblage], img->palette, 3 * 256);
 		set_ablage_info(Rb->AkAblage, nr + (1000 * tgp_idx), img->size);
 
-		if (mode == GED_LOAD) {
+		if (loadBarriers)
 			_barriers->init(nr, img->width, img->height);
-		}
 	}
 
 	delete img;
@@ -505,7 +504,6 @@ void load_chewy_taf(int16 taf_nr) {
 			_G(gameState).ChewyAni = taf_nr;
 			_G(AkChewyTaf) = taf_nr;
 			_G(chewy) = _G(mem)->taf_adr(filename);
-			_G(chewy_kor) = _G(chewy)->correction;
 		}
 	}
 }
@@ -523,7 +521,7 @@ void calc_person_look() {
 	for (int16 i = 1; i < MAX_PERSON; i++) {
 		if (_G(spieler_mi)[i].Id != NO_MOV_OBJ) {
 
-			if (_G(spieler_vector)[i].Xypos[0] > _G(spieler_vector)[P_CHEWY].Xypos[0])
+			if (_G(moveState)[i].Xypos[0] > _G(moveState)[P_CHEWY].Xypos[0])
 				_G(person_end_phase)[i] = P_LEFT;
 			else
 				_G(person_end_phase)[i] = P_RIGHT;

@@ -143,8 +143,7 @@ void OpenGLRenderer::drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint
 }
 
 void OpenGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect,
-		Texture *texture, float transparency, bool additiveBlending) {
-
+	                                Texture *texture, float transparency, bool additiveBlending) {
 	OpenGLTexture *glTexture = static_cast<OpenGLTexture *>(texture);
 
 	const float tLeft = textureRect.left / (float)glTexture->internalWidth;
@@ -272,7 +271,7 @@ void OpenGLRenderer::drawCube(Texture **textures) {
 }
 
 void OpenGLRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
-		const Math::Vector3d &topRight, const Math::Vector3d &bottomRight, Texture *texture) {
+	                                const Math::Vector3d &topRight, const Math::Vector3d &bottomRight, Texture *texture) {
 
 	OpenGLTexture *glTexture = static_cast<OpenGLTexture *>(texture);
 

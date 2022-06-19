@@ -31,7 +31,7 @@
 #include "engines/engine.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
-#include "graphics/managed_surface.h"
+#include "graphics/surface.h"
 #include "graphics/palette.h"
 
 #include "hypno/grammar.h"
@@ -39,10 +39,6 @@
 
 namespace Image {
 class ImageDecoder;
-}
-
-namespace Graphics {
-class ManagedSurface;
 }
 
 struct ADGameDescription;
@@ -100,6 +96,7 @@ public:
 	bool _cheatsEnabled;
 	bool _infiniteHealthCheat;
 	bool _infiniteAmmoCheat;
+	bool _unlockAllLevels;
 	bool _restoredContentEnabled;
 
 	Audio::SoundHandle _soundHandle;
@@ -157,7 +154,6 @@ public:
 	void playVideo(MVideo &video);
 	void skipVideo(MVideo &video);
 
-	Common::File *fixSmackerHeader(Common::File *file);
 	Graphics::Surface *decodeFrame(const Common::String &name, int frame, byte **palette = nullptr);
 	Frames decodeFrames(const Common::String &name);
 	void loadImage(const Common::String &file, int x, int y, bool transparent, bool palette = false, int frameNumber = 0);
@@ -203,7 +199,7 @@ public:
 	int _screenW, _screenH;
 	Graphics::PixelFormat _pixelFormat;
 	void changeScreenMode(const Common::String &mode);
-	Graphics::ManagedSurface *_compositeSurface;
+	Graphics::Surface *_compositeSurface;
 	uint32 _transparentColor;
 	Common::Rect screenRect;
 	void updateScreen(MVideo &video);
@@ -240,8 +236,10 @@ public:
 	// Sounds
 	Filename _soundPath;
 	Filename _music;
+	int _musicRate;
+	bool _musicStereo;
 	bool _doNotStopSounds;
-	void playSound(const Filename &filename, uint32 loops, uint32 sampleRate = 22050);
+	void playSound(const Filename &filename, uint32 loops, uint32 sampleRate = 22050, bool stereo = false);
 	void stopSound();
 
 	// Arcade
@@ -277,22 +275,16 @@ public:
 	virtual void findNextSegment(ArcadeShooting *arc);
 	virtual void initSegment(ArcadeShooting *arc);
 
+	ArcadeStats _stats;
 	void resetStatistics();
-
+	void incLivesUsed();
 	void incShotsFired();
-	uint32 _shootsFired;
-
 	void incEnemyHits();
-	uint32 _enemyHits;
-
 	void incEnemyTargets();
-	uint32 _enemyTargets;
-
 	void incTargetsDestroyed();
-	uint32 _targetsDestroyed;
-
 	void incTargetsMissed();
-	uint32 _targetsMissed;
+	void incFriendliesEncountered();
+	void incInfoReceived();
 
 	void incScore(int inc);
 	void incBonus(int inc);
@@ -304,6 +296,7 @@ public:
 	bool _skipLevel;
 	bool _loseLevel;
 	bool _skipDefeatVideo;
+	bool _skipNextVideo;
 
 	virtual void drawCursorArcade(const Common::Point &mousePos);
 	virtual void drawPlayer();
@@ -323,6 +316,8 @@ public:
 	Common::String _scoreString;
 	Common::String _objString;
 	Common::String _targetString;
+	Common::String _directionString;
+	Common::String _enterNameString;
 
 	Filename _shootSound;
 	Filename _hitSound;
@@ -360,6 +355,7 @@ public:
 	// Timers
 	int32 _countdown;
 	bool _timerStarted;
+	bool _keepTimerDuringScenes;
 	bool startAlarm(uint32, Common::String *);
 	bool startCountdown(uint32);
 	void removeTimers();
@@ -437,6 +433,11 @@ private:
 	void endCredits(Code *code);
 	void showDemoScore();
 	uint32 findPaletteIndexZones(uint32 id);
+
+	Common::List<int> _scoreMilestones;
+	void restoreScoreMilestones(int score);
+	bool checkScoreMilestones(int score);
+
 
 	Frames _c33PlayerCursor;
 	Common::Point _c33PlayerPosition;
@@ -539,6 +540,7 @@ public:
 	Common::String _name;
 	Common::Array<int> _ids;
 	int _lastLevel;
+	bool _flashbackMode;
 	void loadAssets() override;
 	void runCode(Code *code) override;
 	Common::String findNextLevel(const Common::String &level) override;
@@ -558,6 +560,10 @@ public:
 	bool shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool secondary) override;
 	bool clickedSecondaryShoot(const Common::Point &mousePos) override;
 	void showCredits() override;
+	// Stats
+	void showArcadeStats(int territory, const ArcadeStats &data);
+	ArcadeStats _lastStats;
+	ArcadeStats _globalStats;
 
 	void missedTarget(Shoot *s, ArcadeShooting *arc) override;
 	void drawHealth() override;
@@ -582,15 +588,26 @@ public:
 	private:
 	void renderHighlights(Hotspots *hs);
 	void waitForUserClick(uint32 timeout);
+	int pickABox();
+	int _selectedCorrectBox;
+	char selectDirection();
 
 	void runMainMenu(Code *code);
+	bool runExitMenu();
 	void runRetryMenu(Code *code);
 	void runCheckC3(Code *code);
 	void runCheckHo(Code *code);
+	void runCheckC5(Code *code);
+	void runAlarmC5(Code *code);
 	void runDifficultyMenu(Code *code);
 	void endCredits(Code *code);
+	int getTerritory(const Common::String &level);
+	Common::String lastLevelTerritory(const Common::String &level);
 	Common::String firstLevelTerritory(const Common::String &level);
 
+	void loadSceneState(Common::SeekableReadStream *stream);
+	void saveSceneState(Common::WriteStream *stream);
+	void unlockAllLevels();
 
 	int _previousHealth;
 	Graphics::Surface _healthBar[7];
@@ -608,6 +625,9 @@ public:
 	Graphics::Surface _crosshairsInactive[8];
 	Graphics::Surface _crosshairsActive[8];
 	Graphics::Surface _crosshairsTarget[8];
+	Graphics::Surface _leftArrowPointer;
+	Graphics::Surface _rightArrowPointer;
+	Graphics::Surface _crossPointer;
 
 	void updateFromScript();
 	bool checkCup(const Common::String &name);
@@ -616,7 +636,6 @@ public:
 	ScriptMode _currentMode;
 	uint32 _currentActor;
 	uint32 _currentWeapon;
-	uint32 _civiliansShoot;
 	Common::Array<Filename> _warningVideosDay;
 	Common::Array<Filename> _warningVideosNight;
 	Common::Array<Filename> _warningAlarmVideos;

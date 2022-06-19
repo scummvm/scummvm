@@ -135,6 +135,35 @@ const Surface Surface::getSubArea(const Common::Rect &area) const {
 	return subSurface;
 }
 
+bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) const {
+	if (destBounds.left >= this->w || destBounds.top >= this->h ||
+		destBounds.right <= 0 || destBounds.bottom <= 0)
+		return false;
+
+	// Clip the bounds if necessary to fit on-screen
+	if (destBounds.right > this->w) {
+		srcBounds.right -= destBounds.right - this->w;
+		destBounds.right = this->w;
+	}
+
+	if (destBounds.bottom > this->h) {
+		srcBounds.bottom -= destBounds.bottom - this->h;
+		destBounds.bottom = this->h;
+	}
+
+	if (destBounds.top < 0) {
+		srcBounds.top += -destBounds.top;
+		destBounds.top = 0;
+	}
+
+	if (destBounds.left < 0) {
+		srcBounds.left += -destBounds.left;
+		destBounds.left = 0;
+	}
+
+	return true;
+}
+
 void Surface::copyRectToSurface(const void *buffer, int srcPitch, int destX, int destY, int width, int height) {
 	assert(buffer);
 
@@ -157,6 +186,26 @@ void Surface::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, 
 	assert(srcSurface.format == format);
 
 	copyRectToSurface(srcSurface.getBasePtr(subRect.left, subRect.top), srcSurface.pitch, destX, destY, subRect.width(), subRect.height());
+}
+
+void Surface::copyRectToSurfaceWithKey(const void *buffer, int srcPitch, int destX, int destY, int width, int height, uint32 key) {
+	assert(buffer);
+
+	assert(destX >= 0 && destX < w);
+	assert(destY >= 0 && destY < h);
+	assert(height > 0 && destY + height <= h);
+	assert(width > 0 && destX + width <= w);
+
+	// Copy buffer data to internal buffer
+	const byte *src = (const byte *)buffer;
+	byte *dst = (byte *)getBasePtr(destX, destY);
+	Graphics::keyBlit(dst, src, pitch, srcPitch, width, height, format.bytesPerPixel, key);
+}
+
+void Surface::copyRectToSurfaceWithKey(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect, uint32 key) {
+	assert(srcSurface.format == format);
+
+	copyRectToSurfaceWithKey(srcSurface.getBasePtr(subRect.left, subRect.top), srcSurface.pitch, destX, destY, subRect.width(), subRect.height(), key);
 }
 
 void Surface::hLine(int x, int y, int x2, uint32 color) {
@@ -408,10 +457,10 @@ void Surface::convertToInPlace(const PixelFormat &dstFormat, const byte *palette
 	}
 
 	if (format.bytesPerPixel == 0 || format.bytesPerPixel > 4)
-		error("Surface::convertToInPlace(): Can only convert from 1Bpp, 2Bpp, 3Bpp, and 4Bpp");
+		error("Surface::convertToInPlace(): Can only convert from 1Bpp, 2Bpp, 3Bpp, and 4Bpp but have %dbpp", format.bytesPerPixel);
 
 	if (dstFormat.bytesPerPixel != 2 && dstFormat.bytesPerPixel != 4)
-		error("Surface::convertToInPlace(): Can only convert to 2Bpp and 4Bpp");
+		error("Surface::convertToInPlace(): Can only convert to 2Bpp and 4Bpp but requested %dbpp", dstFormat.bytesPerPixel);
 
 	// In case the surface data needs more space allocate it.
 	if (dstFormat.bytesPerPixel > format.bytesPerPixel) {
@@ -479,10 +528,10 @@ Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *
 	}
 
 	if (format.bytesPerPixel == 0 || format.bytesPerPixel > 4)
-		error("Surface::convertTo(): Can only convert from 1Bpp, 2Bpp, 3Bpp, and 4Bpp");
+		error("Surface::convertTo(): Can only convert from 1Bpp, 2Bpp, 3Bpp, and 4Bpp but have %dbpp", format.bytesPerPixel);
 
 	if (dstFormat.bytesPerPixel < 2 || dstFormat.bytesPerPixel > 4)
-		error("Surface::convertTo(): Can only convert to 2Bpp, 3Bpp and 4Bpp");
+		error("Surface::convertTo(): Can only convert to 2Bpp, 3Bpp and 4Bpp but requested %dbpp", dstFormat.bytesPerPixel);
 
 	surface->create(w, h, dstFormat);
 

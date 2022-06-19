@@ -27,8 +27,6 @@
 #include "ags/shared/ac/dynobj/script_audio_clip.h"
 #include "ags/engine/ac/dynobj/script_audio_channel.h"
 #include "ags/engine/media/audio/ambient_sound.h"
-#include "ags/engine/util/mutex.h"
-#include "ags/engine/util/mutex_lock.h"
 #include "ags/engine/ac/timer.h"
 
 namespace AGS3 {

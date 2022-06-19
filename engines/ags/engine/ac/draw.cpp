@@ -766,22 +766,27 @@ void draw_sprite_slot_support_alpha(Bitmap *ds, bool ds_has_alpha, int xpos, int
 	                          blend_mode, alpha);
 }
 
-IDriverDependantBitmap *recycle_ddb_bitmap(IDriverDependantBitmap *ddb, Bitmap *source, bool has_alpha, bool opaque) {
-	if (ddb) {
-		// same colour depth, width and height -> reuse
-		if ((ddb->GetColorDepth() == source->GetColorDepth()) &&
-			(ddb->GetWidth() == source->GetWidth()) && (ddb->GetHeight() == source->GetHeight())) {
-			_G(gfxDriver)->UpdateDDBFromBitmap(ddb, source, has_alpha);
-			return ddb;
-		}
-
-		_G(gfxDriver)->DestroyDDB(ddb);
+Engine::IDriverDependantBitmap* recycle_ddb_sprite(Engine::IDriverDependantBitmap *ddb, uint32_t sprite_id, Shared::Bitmap *source, bool has_alpha, bool opaque) {
+	// no ddb, - get or create shared object
+	if (!ddb)
+		return _G(gfxDriver)->GetSharedDDB(sprite_id, source, has_alpha, opaque);
+	// same sprite id, - use existing
+	if ((sprite_id != UINT32_MAX) && (ddb->GetRefID() == sprite_id))
+		return ddb;
+	// not related to a sprite ID, but has same resolution, -
+	// repaint directly from the given bitmap
+	if ((sprite_id == UINT32_MAX) && (ddb->GetColorDepth() == source->GetColorDepth()) &&
+		(ddb->GetWidth() == source->GetWidth()) && (ddb->GetHeight() == source->GetHeight())) {
+		_G(gfxDriver)->UpdateDDBFromBitmap(ddb, source, has_alpha);
+		return ddb;
 	}
-	return _G(gfxDriver)->CreateDDBFromBitmap(source, has_alpha, opaque);
+	// have to recreate ddb
+	_G(gfxDriver)->DestroyDDB(ddb);
+	return _G(gfxDriver)->GetSharedDDB(sprite_id, source, has_alpha, opaque);
 }
 
 void sync_object_texture(ObjTexture &obj, bool has_alpha = false, bool opaque = false) {
-	obj.Ddb = recycle_ddb_bitmap(obj.Ddb, obj.Bmp.get(), has_alpha, opaque);
+	obj.Ddb = recycle_ddb_sprite(obj.Ddb, obj.SpriteID, obj.Bmp.get(), has_alpha, opaque);
 }
 
 //------------------------------------------------------------------------
@@ -1136,7 +1141,6 @@ static bool scale_and_flip_sprite(int useindx, int sppic, int newwidth, int newh
 // returns 1 if nothing at all has changed and actsps is still
 // intact from last time; 0 otherwise
 int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysUseSoftware) {
-	int useindx = aa;
 	bool hardwareAccelerated = !alwaysUseSoftware && _G(gfxDriver)->HasAcceleratedTransform();
 
 	if (_GP(spriteset)[_G(objs)[aa].num] == nullptr)
@@ -1210,7 +1214,9 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 		isMirrored = true;
 	}
 
+	const int useindx = aa; // actsps array index
 	auto &actsp = _GP(actsps)[useindx];
+	actsp.SpriteID = _G(objs)[aa].num; // for texture sharing
 	if ((hardwareAccelerated) &&
 			(_G(walkBehindMethod) != DrawOverCharSprite) &&
 			(_G(objcache)[aa].image != nullptr) &&
@@ -1310,16 +1316,16 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 void prepare_objects_for_drawing() {
 	_G(our_eip) = 32;
 
-	for (int aa = 0; aa < _G(croom)->numobj; aa++) {
+	for (uint32_t aa = 0; aa < _G(croom)->numobj; aa++) {
 		if (_G(objs)[aa].on != 1) continue;
 		// offscreen, don't draw
 		if ((_G(objs)[aa].x >= _GP(thisroom).Width) || (_G(objs)[aa].y < 1))
 			continue;
 
-		const int useindx = aa;
 		int tehHeight;
 		int actspsIntact = construct_object_gfx(aa, nullptr, &tehHeight, false);
 
+		const int useindx = aa; // actsps array index
 		auto &actsp = _GP(actsps)[useindx];
 
 		// update the cache for next time
@@ -1431,7 +1437,6 @@ void prepare_characters_for_drawing() {
 		if (_GP(game).chars[aa].on == 0) continue;
 		if (_GP(game).chars[aa].room != _G(displayed_room)) continue;
 		_G(eip_guinum) = aa;
-		const int useindx = aa + MAX_ROOM_OBJECTS;
 
 		CharacterInfo *chin = &_GP(game).chars[aa];
 		_G(our_eip) = 330;
@@ -1506,7 +1511,9 @@ void prepare_characters_for_drawing() {
 
 		_G(our_eip) = 3331;
 
+		const int useindx = aa + ACTSP_OBJSOFF; // actsps array index
 		auto &actsp = _GP(actsps)[useindx];
+		actsp.SpriteID = sppic; // for texture sharing
 
 		// if the character was the same sprite and scaling last time,
 		// just use the cached image
@@ -1659,7 +1666,7 @@ void prepare_characters_for_drawing() {
 }
 
 Bitmap *get_cached_character_image(int charid) {
-	return _GP(actsps)[charid + MAX_ROOM_OBJECTS].Bmp.get();
+	return _GP(actsps)[charid + ACTSP_OBJSOFF].Bmp.get();
 }
 
 Bitmap *get_cached_object_image(int objid) {
@@ -1690,12 +1697,11 @@ void prepare_room_sprites() {
 	// Background sprite is required for the non-software renderers always,
 	// and for software renderer in case there are overlapping viewports.
 	// Note that software DDB is just a tiny wrapper around bitmap, so overhead is negligible.
-	if (_G(roomBackgroundBmp) == nullptr) {
+	if (_G(current_background_is_dirty) || !_G(roomBackgroundBmp)) {
 		update_polled_stuff_if_runtime();
-		_G(roomBackgroundBmp) = _G(gfxDriver)->CreateDDBFromBitmap(_GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic.get(), false, true);
-	} else if (_G(current_background_is_dirty)) {
-		update_polled_stuff_if_runtime();
-		_G(gfxDriver)->UpdateDDBFromBitmap(_G(roomBackgroundBmp), _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic.get(), false);
+		_G(roomBackgroundBmp) =
+			recycle_ddb_bitmap(_G(roomBackgroundBmp), _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic.get(), false, true);
+
 	}
 	if (_G(gfxDriver)->RequiresFullRedrawEachFrame()) {
 		if (_G(current_background_is_dirty) || _G(walkBehindsCachedForBgNum) != _GP(play).bg_frame) {
@@ -1718,8 +1724,8 @@ void prepare_room_sprites() {
 			_G(our_eip) = 34;
 
 			if (_G(walkBehindMethod) == DrawAsSeparateSprite) {
-				for (int wb = 1 /* 0 is "no area" */;
-					(wb < MAX_WALK_BEHINDS) && (wb < (int)_GP(walkbehindobj).size()); ++wb) {
+				for (size_t wb = 1 /* 0 is "no area" */;
+					(wb < MAX_WALK_BEHINDS) && (wb < (size_t)_GP(walkbehindobj).size()); ++wb) {
 					const auto &wbobj = _GP(walkbehindobj)[wb];
 					if (wbobj.Ddb) {
 						add_to_sprite_list(wbobj.Ddb, wbobj.Pos.X, wbobj.Pos.Y,
@@ -2127,7 +2133,7 @@ static void construct_overlays() {
 				use_bmp = _GP(overlaybmp)[i].get();
 			}
 
-			over.ddb = recycle_ddb_bitmap(over.ddb, use_bmp, over.HasAlphaChannel());
+			over.ddb = recycle_ddb_sprite(over.ddb, over.GetSpriteNum(), use_bmp, over.HasAlphaChannel());
 			over.ClearChanged();
 		}
 

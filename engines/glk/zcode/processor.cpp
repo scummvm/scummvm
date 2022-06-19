@@ -349,7 +349,7 @@ void Processor::call(zword routine, int argc, zword *args, int ct) {
 		if (h_version <= V4)		// V1 to V4 games provide default
 			CODE_WORD(value);		// values for all local variables
 
-			*--_sp = (zword)((argc-- > 0) ? args[i] : value);
+		*--_sp = (zword)((argc-- > 0) ? args[i] : value);
 	}
 
 	// Start main loop for direct calls

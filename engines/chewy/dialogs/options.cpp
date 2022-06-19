@@ -47,13 +47,13 @@ namespace Dialogs {
 
 void Options::execute(TafInfo *ti) {
 	long akt_clock = 0, stop_clock = 0;
-	_G(room)->load_tgp(0, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
+	_G(room)->load_tgp(0, &_G(room_blk), GBOOK_TGP, false, GBOOK);
 	_G(out)->setPointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
-	_G(out)->setPointer(_G(screen0));
+	_G(out)->setPointer((byte *)g_screen->getPixels());
 
 	_G(room)->set_ak_pal(&_G(room_blk));
-	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 	_G(out)->setPointer(_G(workptr));
 	int16 key = 0;
 	int16 surimy_ani = SURIMY_START;
@@ -174,8 +174,7 @@ void Options::execute(TafInfo *ti) {
 					g_engine->_sound->stopMusic();
 				} else {
 					g_engine->_sound->toggleMusic(true);
-					_G(currentSong) = -1;
-					load_room_music(_G(gameState)._personRoomNr[P_CHEWY]);
+					g_engine->_sound->playRoomMusic(_G(gameState)._personRoomNr[P_CHEWY]);
 				}
 				break;
 			case 6:
@@ -250,12 +249,12 @@ void Options::execute(TafInfo *ti) {
 			--delay_count;
 	}
 
-	_G(room)->load_tgp(1, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
+	_G(room)->load_tgp(1, &_G(room_blk), GBOOK_TGP, false, GBOOK);
 	_G(out)->setPointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
-	_G(out)->setPointer(_G(screen0));
+	_G(out)->setPointer((byte *)g_screen->getPixels());
 	_G(room)->set_ak_pal(&_G(room_blk));
-	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 	_G(out)->setPointer(_G(workptr));
 }
 

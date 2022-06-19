@@ -425,7 +425,7 @@ void ScummEngine_v5::o5_actorOps() {
 	// the code below just skips the extra script code.
 	if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformFMTowns &&
 		vm.slot[_currentScript].number == 45 && _currentRoom == 45 &&
-		(_scriptPointer - _scriptOrgPointer == 0xA9)) {
+		(_scriptPointer - _scriptOrgPointer == 0xA9) && _enableEnhancements) {
 		_scriptPointer += 0xCF - 0xA1;
 		writeVar(32811, 0); // clear bit 43
 		return;
@@ -503,6 +503,20 @@ void ScummEngine_v5::o5_actorOps() {
 			i = getVarOrDirectByte(PARAM_1);
 			j = getVarOrDirectByte(PARAM_2);
 			assertRange(0, i, 31, "o5_actorOps: palette slot");
+
+			// WORKAROUND: In the corridors of Castle Brunwald,
+			// there is a 'continuity error' with the Nazi guards
+			// in the FM-TOWNS version. They still have their
+			// palette override from the EGA version, making them
+			// appear in gray there, although their uniforms are
+			// green when you fight them or meet them again in
+			// the zeppelin. The PC VGA version fixed this.
+
+			if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns &&
+				(a->_costume == 23 || a->_costume == 28 || a->_costume == 29) &&
+				(_currentRoom == 20 || _currentRoom == 28 || _currentRoom == 32) && _enableEnhancements) {
+				break;
+			}
 
 			// WORKAROUND: The smoke animation is the same as
 			// what's used for the voodoo lady's cauldron. But
@@ -951,6 +965,33 @@ void ScummEngine_v5::o5_drawObject() {
 		}
 	}
 
+	// WORKAROUND: Captain Dread's head will glitch if you have already talked to him,
+	// give him an object and then immediately talk to him again ("It's me again.").
+	// This is because the original script forgot to check Bit[129] (= already facing
+	// Guybrush) in that particular case, and so Dread would always try to turn and
+	// face Guybrush even if he's already looking at him.  drawObject() should never
+	// be called if Bit[129] is set in that script, so if it does happen, it means
+	// the check was missing, and so we ignore the next 32 bytes of Dread's reaction.
+	if (_game.id == GID_MONKEY2 && _currentRoom == 22 && vm.slot[_currentScript].number == 201 && obj == 237 && state == 1 && readVar(0x8000 + 129) == 1 && _enableEnhancements) {
+		_scriptPointer += 32;
+		return;
+	}
+
+	// WORKAROUND: In Indy3, the first close-up frame of Indy's reaction after drinking
+	// from the Grail is never shown; it always starts at the second step, with Indy
+	// already appearing a bit older. This is a bit unfortunate, especially if you
+	// picked up the real Grail. This was probably done as a way to unconditionally
+	// reset the animation if it's already been played, but we can just do an
+	// unconditional reset of all previous frames instead, restoring the first one.
+	if (_game.id == GID_INDY3 && _roomResource == 87 && vm.slot[_currentScript].number == 200 && obj == 899 && state == 1 && VAR(VAR_TIMER_NEXT) != 12 && _enableEnhancements) {
+		i = _numLocalObjects - 1;
+		do {
+			if (_objs[i].obj_nr)
+				putState(_objs[i].obj_nr, 0);
+		} while (--i);
+		return;
+	}
+
 	idx = getObjectIndex(obj);
 	if (idx == -1)
 		return;
@@ -1363,9 +1404,22 @@ void ScummEngine_v5::o5_isEqual() {
 	// are only played on type 5 soundcards. However, there is at least one
 	// other sound effect (the bartender spitting) which is only played on
 	// type 3 soundcards.
-
 	if (_game.id == GID_MONKEY2 && var == VAR_SOUNDCARD && b == 5)
 		b = a;
+
+	// WORKAROUND: The Ultimate Talkie edition of Monkey Island 2 doesn't
+	// check the proper objects when you sell back the hub cap and the
+	// pirate hat to the antique dealer on Booty Island, making Guybrush
+	// silent when he asks about these two particular objects.
+	//
+	// Not using `_enableEnhancements`, since this small oversight only
+	// exists in this fan-made edition which was made for enhancements.
+	if (_game.id == GID_MONKEY2 && _roomResource == 48 && vm.slot[_currentScript].number == 215 && a == vm.localvar[_currentScript][0] && strcmp(_game.variant, "SE Talkie") == 0) {
+		if (a == 550 && b == 530)
+			b = 550;
+		else if (a == 549 && b == 529)
+			b = 549;
+	}
 
 	// HACK: To allow demo script of Maniac Mansion V2
 	// The camera x position is only 100, instead of 180, after game title name scrolls.
@@ -3073,11 +3127,19 @@ void ScummEngine_v5::decodeParseString() {
 						// I.e. in total 22650 frames.
 						offset = (int)(offset * 7.5 - 22500 - 2*75);
 
+						// Add the user-specified adjustment.
+						if (ConfMan.hasKey("loom_playback_adjustment")) {
+							int adjustment = ConfMan.getInt("loom_playback_adjustment");
+							offset += ((75 * adjustment) / 100);
+							if (offset < 0)
+								offset = 0;
+						}
+
 						// Slightly increase the delay (5 frames = 1/25 of a second).
 						// This noticably improves the experience in Loom CD.
 						delay = (int)(delay * 7.5 + 5);
 
-						_sound->playCDTrack(1, 0, offset, delay);
+						_sound->playCDTrack(1, 1, offset, delay);
 					}
 				} else {
 					error("ScummEngine_v5::decodeParseString: Unhandled case 8");

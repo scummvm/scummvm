@@ -209,40 +209,13 @@ void MidiDriver_CORE::loadSoundFont(const char *soundfont) {
 	FSRef fsref;
 	err = FSPathMakeRef((const byte *)soundfont, &fsref, NULL);
 
-	SInt32 version;
-	err = Gestalt(gestaltSystemVersion, &version);
-
 	if (err == noErr) {
-		if (version >= 0x1030) {
-			// Use kMusicDeviceProperty_SoundBankFSRef in >= 10.3
-
-			// HACK HACK HACK HACK SUPER HACK: Using the value of 1012 instead of
-			// kMusicDeviceProperty_SoundBankFSRef so this compiles with the 10.2
-			// SDK (which does not have that symbol).
-			if (err == noErr) {
-				err = AudioUnitSetProperty(
-					_synth,
-					/*kMusicDeviceProperty_SoundBankFSRef*/ 1012, kAudioUnitScope_Global,
-					0,
-					&fsref, sizeof(fsref)
-				);
-			}
-		} else {
-			// In 10.2, only kMusicDeviceProperty_SoundBankFSSpec is available
-			FSSpec fsSpec;
-
-			if (err == noErr)
-				err = FSGetCatalogInfo(&fsref, kFSCatInfoNone, NULL, NULL, &fsSpec, NULL);
-
-			if (err == noErr) {
-				err = AudioUnitSetProperty(
-					_synth,
-					kMusicDeviceProperty_SoundBankFSSpec, kAudioUnitScope_Global,
-					0,
-					&fsSpec, sizeof(fsSpec)
-				);
-			}
-		}
+		err = AudioUnitSetProperty(
+			_synth,
+			kMusicDeviceProperty_SoundBankFSRef, kAudioUnitScope_Global,
+			0,
+			&fsref, sizeof(fsref)
+		);
 	}
 #else
 	// kMusicDeviceProperty_SoundBankURL was added in 10.5 as a replacement

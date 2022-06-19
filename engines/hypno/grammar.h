@@ -40,6 +40,9 @@ typedef Common::List<Filename> Filenames;
 class HypnoSmackerDecoder : public Video::SmackerDecoder {
 public:
 	bool loadStream(Common::SeekableReadStream *stream) override;
+
+protected:
+	uint32 getSignatureVersion(uint32 signature) const override;
 };
 
 class MVideo {
@@ -137,11 +140,13 @@ public:
 
 class Timer : public Action {
 public:
-	Timer(uint32 delay_) {
+	Timer(uint32 delay_, Common::String flag_) {
 		type = TimerAction;
 		delay = delay_;
+		flag = flag_;
 	}
 	uint32 delay;
+	Common::String flag;
 };
 
 class Palette : public Action {
@@ -373,6 +378,7 @@ public:
 		type = CodeLevel;
 		musicRate = 22050;
 		playMusicDuringIntro = false;
+		musicStereo = false;
 	}
 	virtual ~Level() {} // needed to make Level polymorphic
 	LevelType type;
@@ -383,6 +389,7 @@ public:
 	bool playMusicDuringIntro;
 	Filename music;
 	uint32 musicRate;
+	bool musicStereo;
 };
 
 class Scene : public Level {
@@ -449,6 +456,7 @@ public:
 		lastFrame = 1024;
 		interactionFrame = 0;
 		noEnemySound = false;
+		enemySoundRate = 22050;
 		isAnimal = false;
 		nonHostile = false;
 		playInteractionAudio = false;
@@ -456,6 +464,7 @@ public:
 		jumpToTimeAfterKilled = 0;
 		warningVideoIdx = 0;
 		waitForClickAfterInteraction = 0;
+		direction = 0;
 	}
 	Common::String name;
 	Filename animation;
@@ -481,6 +490,7 @@ public:
 
 	// Sounds
 	Filename enemySound;
+	uint32 enemySoundRate;
 	Filename deathSound;
 	Filename hitSound;
 	Filename animalSound;
@@ -503,6 +513,7 @@ public:
 	bool isAnimal;
 	Common::String checkIfDestroyed;
 	int jumpToTimeAfterKilled;
+	char direction;
 	uint32 waitForClickAfterInteraction;
 	uint32 warningVideoIdx;
 };
@@ -564,7 +575,9 @@ public:
 		palette = palette_;
 		sound = sound_;
 		soundRate = soundRate_;
+		soundStereo = false;
 		loseLevel = false;
+		selection = false;
 		jumpToTime = 0;
 		time = time_;
 	}
@@ -573,7 +586,9 @@ public:
 	Filename palette;
 	Filename sound;
 	uint32 soundRate;
+	bool soundStereo;
 	bool loseLevel;
+	bool selection;
 	uint32 jumpToTime;
 	uint32 time;
 };
@@ -597,6 +612,7 @@ public:
 		enemySoundRate = 0;
 		hitSoundRate = 0;
 		additionalSoundRate = 0;
+		noAmmoSoundRate = 0;
 	}
 	void clear() {
 		nextLevelVideo.clear();
@@ -721,6 +737,28 @@ public:
 typedef Common::HashMap<Filename, Level*> Levels;
 extern Hotspots *g_parsedHots;
 extern ArcadeShooting *g_parsedArc;
+
+class ArcadeStats {
+	public:
+	ArcadeStats()  {
+		livesUsed = 0;
+		shootsFired = 0;
+		enemyHits = 0;
+		enemyTargets = 0;
+		targetsDestroyed = 0;
+		targetsMissed = 0;
+		friendliesEncountered = 0;
+		infoReceived = 0;
+	}
+	uint32 livesUsed;
+	uint32 shootsFired;
+	uint32 enemyHits;
+	uint32 enemyTargets;
+	uint32 targetsDestroyed;
+	uint32 targetsMissed;
+	uint32 friendliesEncountered;
+	uint32 infoReceived;
+};
 
 } // End of namespace Hypno
 

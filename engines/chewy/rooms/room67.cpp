@@ -67,7 +67,7 @@ void Room67::setup_func() {
 	calc_person_look();
 	const int16 y = 117;
 	int16 x;
-	if (_G(spieler_vector)[P_CHEWY].Xypos[0] > 320) {
+	if (_G(moveState)[P_CHEWY].Xypos[0] > 320) {
 		x = 178;
 	} else {
 		x = 137;

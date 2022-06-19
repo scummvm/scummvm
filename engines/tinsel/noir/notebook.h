@@ -24,13 +24,16 @@
 
 #include "common/scummsys.h"
 
+#include "notebook_page.h"
+#include "tinsel/anim.h"
 #include "tinsel/events.h"
+#include "tinsel/object.h"
 
 namespace Tinsel {
 // links two clue/title objects together
 struct HYPERLINK {
-	int32 id1;
-	int32 id2;
+	int32 id1 = 0;
+	int32 id2 = 0;
 };
 
 // 6 bytes large
@@ -47,37 +50,67 @@ enum class BOOKSTATE {
 	CLOSED = 0,
 	OPEN_UNKNOWN = 1,
 	OPEN_ANIMATING = 2,
-	OPENED = 3
+	OPENED = 3,
+	PAGEFLIP = 4
 };
+
+class NoteBookPolygons;
+class InventoryObjectT3;
 
 class Notebook {
 public:
-	Notebook() = default;
+	Notebook();
+	~Notebook();
 
-	// Can be a title or clue
-	void AddEntry(int32 entryIdx, int32 page1, int32 page2);
 	// Adds a connection between a clue/title
-	void AddHyperlink(int32 id1, int32 id2);
+	void addHyperlink(int32 id1, int32 id2);
+	void addClue(int id);
+	void crossClue(int id);
 	// Called within InventoryProcess loop
-	void Redraw();
-	// Called by EventToInventory
-	void EventToNotebook(PLR_EVENT event, bool p2, bool p3);
+	void redraw();
+
 	// Called from OPENNOTEBOOK
-	void Show(bool isOpen);
-	bool IsOpen() const;
+	void show(bool isOpen);
+	bool isOpen() const;
+	void close();
+	
+	bool handlePointer(const Common::Point &point);
+	bool handleEvent(PLR_EVENT pEvent, const Common::Point &coOrds);
+	void stepAnimScripts();
+	void refresh();
+
+	NoteBookPolygons *_polygons = nullptr;
 private:
-	const static uint32 MAX_ENTRIES = 100;
+	int addTitle(const InventoryObjectT3 &invObject);
+	void addClue(const InventoryObjectT3 &invObject);
+	int getPageWithTitle(int id);
+
+	void pageFlip(bool up);
+
+	int32 GetPointedClue(const Common::Point &point) const;
+
+	void clearNotebookPage();
+
+	void setNextPage(int pageIndex);
+
 	const static uint32 MAX_PAGES = 0x15;
 	const static uint32 MAX_HYPERS = 0xf;
-	const static uint32 MAX_ENTRIES_PER_PAGE = 8;
 
 	HYPERLINK _hyperlinks[MAX_HYPERS];
 
-	const static uint32 _numEntries = 0;
+	uint32 _numPages = 1;
+	int32 _prevPage = -1;
+	uint32 _currentPage = 1;
 
-	ENTRY _entries[MAX_ENTRIES];
+	NotebookPage _pages[MAX_PAGES] = {};
 
-	BOOKSTATE _state;
+	ANIM _anim = {};
+	OBJECT *_object = nullptr;
+
+	ANIM _pageAnim = {};
+	OBJECT *_pageObject = nullptr;
+
+	BOOKSTATE _state = BOOKSTATE::CLOSED;
 };
 
 } // End of namespace Tinsel

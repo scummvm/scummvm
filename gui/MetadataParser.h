@@ -93,6 +93,9 @@ protected:
 				XML_PROP(datafiles, true)
 				XML_PROP(wikipedia_page, true)
 				XML_PROP(series_id, true)
+				XML_PROP(steam_id, false)
+				XML_PROP(gog_id, false)
+				XML_PROP(additional_stores, false)
 			KEY_END() // game end
 		KEY_END() // games end
 

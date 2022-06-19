@@ -40,7 +40,7 @@ namespace Saga2 {
 #define IMMED_WORD(w)   ((w = *pc++),(w |= (*pc++)<<8)); \
 	debugC(3, kDebugScripts, "IMMED_WORD(%d 0x%04x)", w, w)
 #define BRANCH(w)       pc = codeSeg + (w); \
-	debugC(3, kDebugScripts, "BRANCH(%ld 0x%04lx)", pc - codeSeg, pc - codeSeg)
+	debugC(3, kDebugScripts, "BRANCH(%ld 0x%04lx)", long(pc - codeSeg), long(pc - codeSeg))
 
 const uint32        sagaID      = MKTAG('S', 'A', 'G', 'A'),
                     dataSegID   = MKTAG('_', '_', 'D', 'A'),
@@ -561,9 +561,9 @@ static void print_stack(int16 *stackBase, int16 *stack) {
 }
 
 #define D_OP(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s", (pc - codeSeg - 1), (pc - codeSeg - 1), #x)
-#define D_OP1(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s = %d", (pc - codeSeg - 1), (pc - codeSeg - 1), #x, *stack)
-#define D_OP2(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s [%p] = %d", (pc - codeSeg - 1), (pc - codeSeg - 1), #x, (void *)addr, *stack)
-#define D_OP3(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s [%p] %d", (pc - codeSeg - 1), (pc - codeSeg - 1), #x, (void *)addr, *addr)
+#define D_OP1(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s = %d", long(pc - codeSeg - 1), long(pc - codeSeg - 1), #x, *stack)
+#define D_OP2(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s [%p] = %d", long(pc - codeSeg - 1), long(pc - codeSeg - 1), #x, (void *)addr, *stack)
+#define D_OP3(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s [%p] %d", long(pc - codeSeg - 1), long(pc - codeSeg - 1), #x, (void *)addr, *addr)
 
 bool Thread::interpret() {
 	uint8               *pc,

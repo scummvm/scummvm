@@ -32,6 +32,7 @@ enum class SysReel {
 	NOTEPAD_CLOSED = 6,
 	NOTEPAD_FLIPDOWN = 7,
 	NOTEPAD_FLIPUP = 8,
+	SCRIBBLES = 9,
 	CURSOR = 11,
 	INVMAIN = 15,
 	SLIDER = 16,
@@ -51,8 +52,8 @@ class SystemReel {
 public:
 	SystemReel() = default;
 
-	SCNHANDLE Get(SysReel index);
-	void Set(int32 index, SCNHANDLE reel);
+	SCNHANDLE get(SysReel index);
+	void set(int32 index, SCNHANDLE reel);
 
 private:
 	const static int32 MAX_SYSREELS = 0x28;

@@ -49,19 +49,21 @@ bool Files::execute(bool isInGame) {
 
 	if (!ConfMan.getBool("original_menus")) {
 		g_engine->showGmm(isInGame);
+		_G(flags).mainMouseFlag = false;
+		_G(minfo).button = 0;
 		return 0;
 	}
 
 	TafInfo *ti = _G(mem)->taf_adr(OPTION_TAF);
 	EVENTS_CLEAR;
 
-	_G(room)->load_tgp(1, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
+	_G(room)->load_tgp(1, &_G(room_blk), GBOOK_TGP, false, GBOOK);
 	_G(out)->setPointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
-	_G(out)->setPointer(_G(screen0));
+	_G(out)->setPointer((byte *)g_screen->getPixels());
 	_G(room)->set_ak_pal(&_G(room_blk));
  
-	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 	_G(out)->setPointer(_G(workptr));
 	showCur();
 
@@ -259,7 +261,6 @@ enter:
 				const int16 slotNum = text_off + active_slot;
 				for (uint j = 0; j < saveList.size(); ++j) {
 					if (saveList[j].getSaveSlot() == slotNum) {
-						_G(currentSong) = -1;
 						_G(cur)->hide_cur();
 						g_engine->loadGameState(slotNum);
 						key = Common::KEYCODE_ESCAPE;
@@ -268,7 +269,7 @@ enter:
 				}
 			} else if (mode[SAVE]) {
 				_G(out)->copyToScreen();
-				_G(out)->setPointer(_G(screen0));
+				_G(out)->setPointer((byte *)g_screen->getPixels());
 				char slotName[81];
 				slotName[0] = '\0';
 				key = _G(out)->scanxy(70, 68 + (active_slot * 10),
@@ -295,7 +296,7 @@ enter:
 
 	free(ti);
 
-	_G(room)->load_tgp(_G(gameState)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
+	_G(room)->load_tgp(_G(gameState)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, true, EPISODE1);
 
 	_G(fx_blend) = BLEND1;
 	_G(room)->set_ak_pal(&_G(room_blk));

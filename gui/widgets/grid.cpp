@@ -334,22 +334,20 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int re
 
 GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	: ContainerWidget(boss, name), CommandSender(boss) {
-	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
-	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
-	_flagIconHeight = g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Height");
-	_flagIconWidth = g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Width");
-	_platformIconHeight = g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Height");
-	_platformIconWidth = g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Width");
-	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
-	_minGridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
-	_isTitlesVisible = g_gui.xmlEval()->getVar("Globals.Grid.ShowTitles");
-	_scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 
-	_scrollWindowPaddingX = _minGridXSpacing;
-	_scrollWindowPaddingY = _minGridYSpacing;
+	_thumbnailHeight = 0;
+	_thumbnailWidth = 0;
+	_flagIconHeight = 0;
+	_flagIconWidth = 0;
+	_platformIconHeight = 0;
+	_platformIconWidth = 0;
+	_minGridXSpacing = 0;
+	_minGridYSpacing = 0;
+	_isTitlesVisible = 0;
+	_scrollBarWidth = 0;
 
-	loadPlatformIcons();
-	loadFlagIcons();
+	_scrollWindowPaddingX = 0;
+	_scrollWindowPaddingY = 0;
 
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, _y, _scrollBarWidth, _y + _h);
 	_scrollBar->setTarget(this);
@@ -368,8 +366,8 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	_gridXSpacing = 0;
 	_gridHeaderHeight = kLineHeight;
 	_gridHeaderWidth = 0;
-	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight * _isTitlesVisible);
-	_gridItemWidth = _thumbnailWidth;
+	_gridItemHeight = 0;
+	_gridItemWidth = 0;
 	_trayHeight = kLineHeight * 3;
 
 	_selectedEntry = nullptr;
@@ -382,6 +380,7 @@ GridWidget::~GridWidget() {
 	unloadSurfaces(_loadedSurfaces);
 	_gridItems.clear();
 	_dataEntryList.clear();
+	_headerEntryList.clear();
 	_sortedEntryList.clear();
 	_visibleEntryList.clear();
 }
@@ -414,7 +413,10 @@ const Graphics::ManagedSurface *GridWidget::platformToSurface(Common::Platform p
 
 void GridWidget::setEntryList(Common::Array<GridItemInfo> *list) {
 	_dataEntryList.clear();
+	_headerEntryList.clear();
 	_sortedEntryList.clear();
+	_selectedEntry = nullptr;
+
 	for (Common::Array<GridItemInfo>::iterator entryIter = list->begin(); entryIter != list->end(); ++entryIter) {
 		_dataEntryList.push_back(*entryIter);
 	}
@@ -460,24 +462,60 @@ void GridWidget::groupEntries() {
 void GridWidget::sortGroups() {
 	uint oldHeight = _innerHeight;
 	_sortedEntryList.clear();
+	_headerEntryList.clear();
 
-	Common::sort(_groupHeaders.begin(), _groupHeaders.end());
+	if (_filter.empty()) {
+		// No filter -> display everything with group headers
+		Common::sort(_groupHeaders.begin(), _groupHeaders.end());
 
-	for (uint i = 0; i != _groupHeaders.size(); ++i) {
-		Common::U32String header = _groupHeaders[i];
-		Common::U32String displayedHeader;
-		if (_metadataNames.contains(header)) {
-			displayedHeader = _metadataNames[header];
-		} else {
-			displayedHeader = header;
+		// Avoid reallocation during iteration: that would invalidate our _sortedEntryList items
+		_headerEntryList.reserve(_groupHeaders.size());
+
+		for (uint i = 0; i != _groupHeaders.size(); ++i) {
+			Common::U32String header = _groupHeaders[i];
+			Common::U32String displayedHeader;
+			if (_metadataNames.contains(header)) {
+				displayedHeader = _metadataNames[header];
+			} else {
+				displayedHeader = header;
+			}
+			uint groupID = _groupValueIndex[header];
+
+			// Keep the header in a buffer to be used later
+			_headerEntryList.push_back(GridItemInfo(_groupHeaderPrefix + displayedHeader + _groupHeaderSuffix, groupID));
+			_sortedEntryList.push_back(&_headerEntryList.back());
+
+			if (_groupExpanded[groupID]) {
+				for (int *k = _itemsInGroup[groupID].begin(); k != _itemsInGroup[groupID].end(); ++k) {
+					_sortedEntryList.push_back(&_dataEntryList[*k]);
+				}
+			}
 		}
-		uint groupID = _groupValueIndex[header];
+	} else {
+		// With filter don't display any group header
+		// Restrict the list to everything which contains all words in _filter
+		// as substrings, ignoring case.
 
-		_sortedEntryList.push_back(GridItemInfo(_groupHeaderPrefix + displayedHeader + _groupHeaderSuffix, groupID));
+		Common::U32StringTokenizer tok(_filter);
+		Common::U32String tmp;
+		int n = 0;
 
-		if (_groupExpanded[groupID]) {
-			for (int *k = _itemsInGroup[groupID].begin(); k != _itemsInGroup[groupID].end(); ++k) {
-				_sortedEntryList.push_back(_dataEntryList[*k]);
+		_sortedEntryList.clear();
+
+		for (GridItemInfo *i = _dataEntryList.begin(); i != _dataEntryList.end(); ++i, ++n) {
+			tmp = i->title;
+			tmp.toLowercase();
+			bool matches = true;
+			tok.reset();
+			while (!tok.empty()) {
+				if (!tmp.contains(tok.nextToken())) {
+					matches = false;
+					break;
+				}
+			}
+
+			if (matches) {
+				_sortedEntryList.push_back(i);
 			}
 		}
 	}
@@ -507,7 +545,7 @@ void GridWidget::sortGroups() {
 }
 
 // Perform a binary search to find the last element before position yPos in arr.
-int lastItemBeforeY(const Common::Array<GridItemInfo> &arr, int yPos) {
+int lastItemBeforeY(const Common::Array<GridItemInfo *> &arr, int yPos) {
 	// Binary search to find the last element whose y value is less
 	// than _scrollPos, i.e., the last item of the topmost visible row.
 	int start = 0;
@@ -516,7 +554,7 @@ int lastItemBeforeY(const Common::Array<GridItemInfo> &arr, int yPos) {
 	int ans = -1;
 	while (start <= end) {
 		mid = start + (end - start) / 2;
-		if (arr[mid].rect.top >= yPos) {
+		if (arr[mid]->y >= yPos) {
 			end = mid - 1;
 		} else {
 			ans = mid;
@@ -534,7 +572,7 @@ bool GridWidget::calcVisibleEntries() {
 	nFirstVisibleItem = temp;
 	// We want the leftmost item from the topmost visible row, so we traverse backwards
 	while ((nFirstVisibleItem >= 0) &&
-		   (_sortedEntryList[nFirstVisibleItem].rect.top == _sortedEntryList[temp].rect.top)) {
+		   (_sortedEntryList[nFirstVisibleItem]->y == _sortedEntryList[temp]->y)) {
 			nFirstVisibleItem--;
 	}
 	nFirstVisibleItem++;
@@ -553,8 +591,7 @@ bool GridWidget::calcVisibleEntries() {
 
 		_visibleEntryList.clear();
 		for (int ind = _firstVisibleItem; ind < toRender; ++ind) {
-			GridItemInfo *iter = _sortedEntryList.begin() + ind;
-			_visibleEntryList.push_back(iter);
+			_visibleEntryList.push_back(_sortedEntryList[ind]);
 		}
 	}
 	return needsReload;
@@ -584,7 +621,7 @@ void GridWidget::reloadThumbnails() {
 			}
 
 			if (surf) {
-				const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, 512, true));
+				const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, _thumbnailHeight, true));
 				_loadedSurfaces[entry->thumbPath] = scSurf;
 				if (surf != scSurf) {
 					surf->free();
@@ -648,16 +685,16 @@ void GridWidget::move(int x, int y) {
 void GridWidget::scrollToEntry(int id, bool forceToTop) {
 	int newScrollPos = _scrollPos;
 	for (uint i = 0; i < _sortedEntryList.size(); ++i) {
-		if ((!_sortedEntryList[i].isHeader) && (_sortedEntryList[i].entryID == id)) {
+		if ((!_sortedEntryList[i]->isHeader) && (_sortedEntryList[i]->entryID == id)) {
 			if (forceToTop) {
-				newScrollPos = _sortedEntryList[i].rect.top + _scrollWindowPaddingY + _gridYSpacing;
+				newScrollPos = _sortedEntryList[i]->y + _scrollWindowPaddingY + _gridYSpacing;
 			} else {
-				if (_sortedEntryList[i].rect.top < _scrollPos) {
+				if (_sortedEntryList[i]->y < _scrollPos) {
 					// Item is above the visible view
-					newScrollPos = _sortedEntryList[i].rect.top - _scrollWindowPaddingY - _gridYSpacing;
-				} else if (_sortedEntryList[i].rect.top > _scrollPos + _scrollWindowHeight - _gridItemHeight - _trayHeight) {
+					newScrollPos = _sortedEntryList[i]->y - _scrollWindowPaddingY - _gridYSpacing;
+				} else if (_sortedEntryList[i]->y > _scrollPos + _scrollWindowHeight - _gridItemHeight - _trayHeight) {
 					// Item is below the visible view
-					newScrollPos = _sortedEntryList[i].rect.top - _scrollWindowHeight + _gridItemHeight + _trayHeight;
+					newScrollPos = _sortedEntryList[i]->y - _scrollWindowHeight + _gridItemHeight + _trayHeight;
 				} else {
 					// Item already in view, do nothing
 					newScrollPos = _scrollPos;
@@ -703,8 +740,8 @@ void GridWidget::assignEntriesToItems() {
 			item->setVisible(true);
 			GridItemInfo *entry = _visibleEntryList[k];
 			item->setActiveEntry(*entry);
-			item->setPos(entry->rect.left, entry->rect.top - _scrollPos);
-			item->setSize(entry->rect.width(), entry->rect.height());
+			item->setPos(entry->x, entry->y - _scrollPos);
+			item->setSize(entry->w, entry->h);
 			item->update();
 		}
 	}
@@ -748,43 +785,45 @@ void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 void GridWidget::calcInnerHeight() {
 	int row = 0;
 	int col = 0;
-	int lastRowHeight = 0;
-	Common::Point p(_scrollWindowPaddingX + _gridXSpacing, _scrollWindowPaddingY);
+	int32 lastRowHeight = 0;
+	int32 x = _scrollWindowPaddingX + _gridXSpacing, y = _scrollWindowPaddingY;
 
 	for (int k = 0; k < (int)_sortedEntryList.size(); ++k) {
-		if (_sortedEntryList[k].isHeader) {
+		if (_sortedEntryList[k]->isHeader) {
 			while (col != 0) {
 				if (++col >= _itemsPerRow) {
 					col = 0;
 					++row;
-					p.y += lastRowHeight;
+					y += lastRowHeight;
 					lastRowHeight = 0;
 				}
 			}
-			p.x = _scrollWindowPaddingX;
-			_sortedEntryList[k].rect.moveTo(p);
-			p.x = _scrollWindowPaddingX + _gridXSpacing;
+			x = _scrollWindowPaddingX;
+			_sortedEntryList[k]->x = x;;
+			_sortedEntryList[k]->y = y;;
+			x = _scrollWindowPaddingX + _gridXSpacing;
 			++row;
-			p.y += _sortedEntryList[k].rect.height() + _gridYSpacing;
+			y += _sortedEntryList[k]->h + _gridYSpacing;
 			lastRowHeight = 0;
 		} else {
-			_sortedEntryList[k].rect.moveTo(p);
-			lastRowHeight = MAX(lastRowHeight, _sortedEntryList[k].rect.height() + _gridYSpacing);
+			_sortedEntryList[k]->x = x;
+			_sortedEntryList[k]->y = y;
+			lastRowHeight = MAX(lastRowHeight, _sortedEntryList[k]->h + _gridYSpacing);
 			if (++col >= _itemsPerRow) {
 				++row;
-				p.y += lastRowHeight;
+				y += lastRowHeight;
 				lastRowHeight = 0;
 				col = 0;
-				p.x = _scrollWindowPaddingX + _gridXSpacing;
+				x = _scrollWindowPaddingX + _gridXSpacing;
 			} else {
-				p.x += _sortedEntryList[k].rect.width() + _gridXSpacing;
+				x += _sortedEntryList[k]->w + _gridXSpacing;
 			}
 		}
 	}
 
 	_rows = row;
 
-	_innerHeight = p.y + _gridItemHeight + _scrollWindowPaddingY + _trayHeight;
+	_innerHeight = y + _gridItemHeight + _scrollWindowPaddingY + _trayHeight;
 	_innerWidth = 2 * _scrollWindowPaddingX + (_itemsPerRow * (_gridItemWidth + _gridXSpacing) - _gridXSpacing);
 }
 
@@ -793,10 +832,10 @@ void GridWidget::calcEntrySizes() {
 	_gridHeaderWidth = _scrollWindowWidth - _scrollBarWidth - 2 * _scrollWindowPaddingX;
 
 	for (uint i = 0; i != _sortedEntryList.size(); ++i) {
-		GridItemInfo *entry = &_sortedEntryList[i];
+		GridItemInfo *entry = _sortedEntryList[i];
 		if (entry->isHeader) {
-			entry->rect.setHeight(_gridHeaderHeight);
-			entry->rect.setWidth(_gridHeaderWidth);
+			entry->h = _gridHeaderHeight;
+			entry->w = _gridHeaderWidth;
 		} else {
 			int titleRows;
 			if (_isTitlesVisible) {
@@ -806,8 +845,8 @@ void GridWidget::calcEntrySizes() {
 			} else {
 				titleRows = 0;
 			}
-			entry->rect.setHeight(_thumbnailHeight + titleRows * kLineHeight);
-			entry->rect.setWidth(_gridItemWidth);
+			entry->h = _thumbnailHeight + titleRows * kLineHeight;
+			entry->w = _gridItemWidth;
 		}
 	}
 }
@@ -819,42 +858,49 @@ void GridWidget::reflowLayout() {
 	_scrollWindowHeight = _h;
 	_scrollWindowWidth = _w;
 
+	_itemsPerRow = ConfMan.getInt("grid_items_per_row");
+
+	_minGridXSpacing = int(g_gui.xmlEval()->getVar("Globals.Grid.XSpacing") * g_gui.getScaleFactor() + .5f);
+	_minGridYSpacing = int(g_gui.xmlEval()->getVar("Globals.Grid.YSpacing") * g_gui.getScaleFactor() + .5f);
+	_isTitlesVisible = g_gui.xmlEval()->getVar("Globals.Grid.ShowTitles");
+	_scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
+
+	_scrollWindowPaddingX = _minGridXSpacing;
+	_scrollWindowPaddingY = _minGridYSpacing;
+	_gridYSpacing = _minGridYSpacing;
+
+	// Recompute thumbnail size
 	int oldThumbnailHeight = _thumbnailHeight;
 	int oldThumbnailWidth = _thumbnailWidth;
-	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
-	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
-	_flagIconHeight = g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Height");
-	_flagIconWidth = g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Width");
-	_platformIconHeight = g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Height");
-	_platformIconWidth = g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Width");
+
+	int availableWidth = _scrollWindowWidth - (2 * _scrollWindowPaddingX) - _scrollBarWidth;
+	_thumbnailWidth = availableWidth / _itemsPerRow - _minGridXSpacing;
+	const int minimumthumbnailWidth = int(36 * g_gui.getScaleFactor() + .5f);
+	if (_thumbnailWidth < minimumthumbnailWidth) {
+		_thumbnailWidth = minimumthumbnailWidth;
+		_itemsPerRow = MAX((availableWidth / (_thumbnailWidth + _minGridXSpacing)), 1);
+	}
+
+	_thumbnailHeight = _thumbnailWidth;
+	_flagIconWidth = _thumbnailWidth / 4;
+	_flagIconHeight = _flagIconWidth / 2;
+	_platformIconHeight = _platformIconWidth = _thumbnailWidth / 6;
+
 	if ((oldThumbnailHeight != _thumbnailHeight) || (oldThumbnailWidth != _thumbnailWidth)) {
 		unloadSurfaces(_loadedSurfaces);
 		reloadThumbnails();
 		loadFlagIcons();
 		loadPlatformIcons();
 	}
-	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
-	_minGridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
-	_scrollWindowPaddingX = _minGridXSpacing;
-	_scrollWindowPaddingY = _minGridYSpacing;
-	_gridYSpacing = _minGridYSpacing;
-
-	_isTitlesVisible = g_gui.xmlEval()->getVar("Globals.Grid.ShowTitles");
-
-	_scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 
 	_trayHeight = kLineHeight * 3;
 	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight * _isTitlesVisible);
 	_gridItemWidth = _thumbnailWidth;
 
-	_itemsPerRow = MAX(((_scrollWindowWidth - (2 * _scrollWindowPaddingX) - _scrollBarWidth) / (_gridItemWidth + _minGridXSpacing)), 1);
 	_gridXSpacing = MAX(((_scrollWindowWidth - _scrollBarWidth - (2 * _scrollWindowPaddingX)) - (_itemsPerRow * _gridItemWidth)) / (_itemsPerRow + 1), _minGridXSpacing);
 
 	calcEntrySizes();
 	calcInnerHeight();
-
-	_scrollBar->checkBounds(_scrollBar->_currentPos);
-	_scrollPos = _scrollBar->_currentPos;
 
 	_scrollBar->resize(_scrollWindowWidth - _scrollBarWidth, 0, _scrollBarWidth, _scrollWindowHeight, false);
 
@@ -863,6 +909,9 @@ void GridWidget::reflowLayout() {
 	}
 
 	assignEntriesToItems();
+	if (_selectedEntry) {
+		scrollToEntry(_selectedEntry->entryID, false);
+	}
 	scrollBarRecalc();
 	markAsDirty();
 }
@@ -875,7 +924,7 @@ void GridWidget::openTray(int x, int y, int entryId) {
 
 void GridWidget::openTrayAtSelected() {
 	if (_selectedEntry) {
-		GridItemTray *tray = new GridItemTray(this, _x + _selectedEntry->rect.left - _gridXSpacing / 3, _y + _selectedEntry->rect.bottom - _scrollPos,
+		GridItemTray *tray = new GridItemTray(this, _x + _selectedEntry->x - _gridXSpacing / 3, _y + _selectedEntry->y + _selectedEntry->h - _scrollPos,
 								_gridItemWidth + 2 * (_gridXSpacing / 3), _trayHeight, _selectedEntry->entryID, this);
 		tray->runModal();
 		delete tray;
@@ -902,45 +951,21 @@ void GridWidget::setFilter(const Common::U32String &filter) {
 
 	_filter = filt;
 
-	if (_filter.empty()) {
-		// No filter -> display everything
-		sortGroups();
-	} else {
-		// Restrict the list to everything which contains all words in _filter
-		// as substrings, ignoring case.
-
-		Common::U32StringTokenizer tok(_filter);
-		Common::U32String tmp;
-		int n = 0;
-
-		_sortedEntryList.clear();
-
-		for (GridItemInfo *i = _dataEntryList.begin(); i != _dataEntryList.end(); ++i, ++n) {
-			tmp = i->title;
-			tmp.toLowercase();
-			bool matches = true;
-			tok.reset();
-			while (!tok.empty()) {
-				if (!tmp.contains(tok.nextToken())) {
-					matches = false;
-					break;
-				}
-			}
-
-			if (matches) {
-				_sortedEntryList.push_back(*i);
-			}
-		}
-	}
-
+	// Reset the scrollbar and deselect everything if filter has changed
 	_scrollPos = 0;
 	_selectedEntry = nullptr;
 
-	markGridAsInvalid();
-	reflowLayout();
+	sortGroups();
+}
 
-	scrollBarRecalc();
-	g_gui.scheduleTopDialogRedraw();
+void GridWidget::setSelected(int id) {
+	for (uint i = 0; i < _sortedEntryList.size(); ++i) {
+		if ((!_sortedEntryList[i]->isHeader) && (_sortedEntryList[i]->entryID == id)) {
+			_selectedEntry = _sortedEntryList[i];
+			scrollToEntry(id, false);
+			break;
+		}
+	}
 }
 
 } // End of namespace GUI

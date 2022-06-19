@@ -78,7 +78,7 @@ ResourceLoader::ResourceLoader() {
 	Lab *l;
 	Common::ArchiveMemberList files, updFiles;
 
-	//Load the update from the executable, if needed
+	// Load the update from the executable, if needed
 	const char *updateFilename = nullptr;
 	if ((g_grim->getGameType() == GType_GRIM && !g_grim->isRemastered())
 	    || g_grim->getGameType() == GType_MONKEY4) {
@@ -141,11 +141,11 @@ ResourceLoader::ResourceLoader() {
 				SearchMan.listMatchingMembers(files, "commentary.lab");
 				SearchMan.listMatchingMembers(files, "images.lab");
 			}
-			//Sort the archives in order to ensure that they are loaded with the correct order
+			// Sort the archives in order to ensure that they are loaded with the correct order
 			Common::sort(files.begin(), files.end(), LabListComperator());
 
-			//Check the presence of datausr.lab and if the user wants to load it.
-			//In this case put it in the top of the list
+			// Check the presence of datausr.lab and if the user wants to load it.
+			// In this case put it in the top of the list
 			const char *datausr_name = "datausr.lab";
 			if (SearchMan.hasFile(datausr_name) && ConfMan.getBool("datausr_load")) {
 				warning("%s", "Loading datausr.lab. Please note that the ScummVM team doesn't provide support for using such patches");
@@ -165,9 +165,8 @@ ResourceLoader::ResourceLoader() {
 			SearchMan.listMatchingMembers(files, "tile.lab");
 			SearchMan.listMatchingMembers(files, "voice.lab");
 		} else {
-
-			//Keep i9n.m4b before patch.m4b for a better efficiency
-			//in decompressing from Monkey Update.exe
+			// Keep i9n.m4b before patch.m4b for a better efficiency
+			// in decompressing from Monkey Update.exe
 			SearchMan.listMatchingMembers(files, "i9n.m4b");
 			SearchMan.listMatchingMembers(files, "patch.m4b");
 			SearchMan.listMatchingMembers(files, "art???.m4b");
@@ -181,8 +180,8 @@ ResourceLoader::ResourceLoader() {
 				SearchMan.listMatchingMembers(files, "???.m4b");
 			}
 
-			//Check the presence of datausr.m4b and if the user wants to load it.
-			//In this case put it in the top of the list
+			// Check the presence of datausr.m4b and if the user wants to load it.
+			// In this case put it in the top of the list
 			const char *datausr_name = "datausr.m4b";
 			if (SearchMan.hasFile(datausr_name) && ConfMan.getBool("datausr_load")) {
 				warning("%s", "Loading datausr.m4b. Please note that the ScummVM team doesn't provide support for using such patches");
@@ -194,13 +193,13 @@ ResourceLoader::ResourceLoader() {
 	if (files.empty())
 		error("%s", "Cannot find game data - check configuration file");
 
-	//load labs
+	// Load labs
 	int priority = files.size();
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 		Common::String filename = (*x)->getName();
 		filename.toLowercase();
 
-		//Avoid duplicates
+		// Avoid duplicates
 		if (SearchMan.hasArchive(filename))
 			continue;
 
@@ -250,7 +249,6 @@ Common::SeekableReadStream *ResourceLoader::getFileFromCache(const Common::Strin
 		return nullptr;
 
 	return new Common::MemoryReadStream(entry->resPtr, entry->len);
-
 }
 
 ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const Common::String &filename) const {

@@ -81,10 +81,11 @@ class StaticTextWidget;
 class EditTextWidget;
 class SaveLoadChooser;
 class PopUpWidget;
+class LauncherChooser;
 
 class LauncherDialog : public Dialog {
 public:
-	LauncherDialog(const Common::String &dialogName);
+	LauncherDialog(const Common::String &dialogName, LauncherChooser *chooser);
 	~LauncherDialog() override;
 
 	void rebuild();
@@ -123,6 +124,7 @@ protected:
 	Common::String	_title;
 	Common::String	_search;
 	MetadataParser	_metadataParser;
+	LauncherChooser *_launcherChooser = nullptr;
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	ButtonWidget		*_listButton;
@@ -193,6 +195,7 @@ private:
 class LauncherChooser {
 protected:
 	LauncherDialog *_impl;
+	Common::StringMap _games;
 
 public:
 	LauncherChooser();
@@ -200,6 +203,11 @@ public:
 
 	int runModal();
 	void selectLauncher();
+
+	Common::StringMap *getGameList() { return &_games; }
+
+private:
+	void genGameList();
 };
 
 } // End of namespace GUI

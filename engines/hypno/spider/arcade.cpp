@@ -36,7 +36,7 @@ static const int shootOriginIndex[9][2] = {
 void SpiderEngine::runBeforeArcade(ArcadeShooting *arc) {
 	_health = arc->health;
 	_maxHealth = _health;
-
+	resetStatistics();
 	_checkpoint = _currentLevel;
 	assert(!arc->player.empty());
 	_playerFrames = decodeFrames(arc->player);

@@ -74,6 +74,8 @@ void ChewyEngine::initialize() {
 	_video = new VideoPlayer();
 
 	setDebugger(new Console());
+
+	syncSoundSettings();
 }
 
 Common::Error ChewyEngine::run() {
@@ -139,8 +141,8 @@ Common::Error ChewyEngine::saveGameStream(Common::WriteStream *stream, bool isAu
 	Common::Serializer s(nullptr, stream);
 
 	for (int i = 0; i < MAX_PERSON; i++) {
-		_G(gameState).X[i] = _G(spieler_vector)[i].Xypos[0];
-		_G(gameState).Y[i] = _G(spieler_vector)[i].Xypos[1];
+		_G(gameState).X[i] = _G(moveState)[i].Xypos[0];
+		_G(gameState).Y[i] = _G(moveState)[i].Xypos[1];
 		_G(gameState).Phase[i] = _G(person_end_phase)[i];
 	}
 

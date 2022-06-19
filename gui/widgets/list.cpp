@@ -624,6 +624,12 @@ Common::Rect ListWidget::getEditRect() const {
 	return r;
 }
 
+int ListWidget::getCaretOffset() const {
+	Common::U32String substr(_editString.begin(), _editString.begin() + _caretPos);
+	Common::U32String stripped = stripGUIformatting(substr);
+	return g_gui.getStringWidth(stripped, _font) - _editScrollOffset;
+}
+
 void ListWidget::checkBounds() {
 	if (_currentPos < 0 || _entriesPerPage > (int)_list.size())
 		_currentPos = 0;
@@ -661,7 +667,7 @@ void ListWidget::scrollToEnd() {
 void ListWidget::startEditMode() {
 	if (_editable && !_editMode && _selectedItem >= 0) {
 		_editMode = true;
-		setEditString(_list[_selectedItem]);
+		setEditString(stripGUIformatting(_list[_selectedItem]));
 		_caretPos = _editString.size();	// Force caret to the *end* of the selection.
 		_editColor = ThemeEngine::kFontColorNormal;
 		markAsDirty();
@@ -912,7 +918,7 @@ void ListWidget::drawFormattedText(const Common::Rect &r, const Common::U32Strin
 		}
 	}
 
-	if (chunk.size())
+	if (chunk.size() || str.empty())
 		g_gui.theme()->drawText(r, chunk, state, align, inverted, deltax, true, curfont, curcolor);
 }
 

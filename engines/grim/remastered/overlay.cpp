@@ -20,7 +20,9 @@
  */
 
 #include "image/png.h"
+
 #include "graphics/surface.h"
+
 #include "engines/grim/remastered/overlay.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/material.h"
@@ -34,7 +36,6 @@ Overlay::Overlay(const Common::String &filename, Common::SeekableReadStream *dat
 }
 
 Overlay::~Overlay() {
-
 }
 
 void Overlay::draw() {

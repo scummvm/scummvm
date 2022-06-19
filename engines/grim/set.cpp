@@ -30,7 +30,6 @@
 #include "engines/grim/resource.h"
 #include "engines/grim/bitmap.h"
 #include "engines/grim/gfx_base.h"
-
 #include "engines/grim/sound.h"
 #include "engines/grim/emi/sound/emisound.h"
 
@@ -58,7 +57,6 @@ Set::Set() :
 		_numLights(0), _numSectors(0), _numObjectStates(0), _minVolume(0),
 		_maxVolume(0), _numCmaps(0), _numShadows(0), _currSetup(nullptr),
 		_setups(nullptr), _lights(nullptr), _sectors(nullptr), _shadows(nullptr) {
-
 	setupOverworldLights();
 }
 
@@ -263,25 +261,25 @@ void Set::saveState(SaveGame *savedState) const {
 		savedState->writeLESint32((*i)->getId());
 	}
 
-	//Setups
+	// Setups
 	savedState->writeLESint32(_numSetups);
 	for (int i = 0; i < _numSetups; ++i) {
 		_setups[i].saveState(savedState);
 	}
 
-	//Sectors
+	// Sectors
 	savedState->writeLESint32(_numSectors);
 	for (int i = 0; i < _numSectors; ++i) {
 		_sectors[i]->saveState(savedState);
 	}
 
-	//Lights
+	// Lights
 	savedState->writeLESint32(_numLights);
 	for (int i = 0; i < _numLights; ++i) {
 		_lights[i].saveState(savedState);
 	}
 
-	//Shadows
+	// Shadows
 	savedState->writeLESint32(_numShadows);
 	for (int i = 0; i < _numShadows; ++i) {
 		_shadows[i].saveState(savedState);
@@ -435,7 +433,7 @@ void Set::Setup::saveState(SaveGame *savedState) const {
 		savedState->writeLESint32(0);
 	}
 
-	//bkgndZBm
+	// bkgndZBm
 	if (_bkgndZBm) {
 		savedState->writeLESint32(_bkgndZBm->getId());
 	} else {
@@ -638,11 +636,11 @@ void Light::loadBinary(Common::SeekableReadStream *data) {
 }
 
 void Light::saveState(SaveGame *savedState) const {
-	//name
+	// name
 	savedState->writeString(_name);
 	savedState->writeBool(_enabled);
 
-	//type
+	// type
 	savedState->writeLEUint32(_type);
 
 	savedState->writeVector3d(_pos);
@@ -1035,12 +1033,12 @@ void Set::calculateSoundPosition(const Math::Vector3d &pos, int minVol, int maxV
 	// TODO: The volume and pan needs to be updated when the setup changes.
 	// Note: This is only used in Grim. See SoundTrack::updatePosition for the corresponding implementation in EMI.
 
-	/* distance calculation */
+	// distance calculation
 	Math::Vector3d cameraPos = _currSetup->_pos;
 	Math::Vector3d vector = pos - cameraPos;
 	float distance = vector.getMagnitude();
 	float diffVolume = maxVol - minVol;
-	//This 8.f is a guess, so it may need some adjusting
+	// This 8.f is a guess, so it may need some adjusting
 	int newVolume = (int)(8.f * diffVolume / distance);
 	newVolume += minVol;
 	if (newVolume > _maxVolume)
@@ -1056,11 +1054,10 @@ void Set::calculateSoundPosition(const Math::Vector3d &pos, int minVol, int maxV
 	float cosr = cos(roll);
 	// Rotate the up vector by roll.
 	up = up * cosr + Math::Vector3d::crossProduct(cameraVector, up) * sin(roll) +
-			cameraVector * Math::Vector3d::dotProduct(cameraVector, up) * (1 - cosr);
+	     cameraVector * Math::Vector3d::dotProduct(cameraVector, up) * (1 - cosr);
 	right = Math::Vector3d::crossProduct(cameraVector, up);
 	right.normalize();
-	angle = atan2(Math::Vector3d::dotProduct(vector, right),
-						Math::Vector3d::dotProduct(vector, cameraVector));
+	angle = atan2(Math::Vector3d::dotProduct(vector, right), Math::Vector3d::dotProduct(vector, cameraVector));
 
 	float pan = sin(angle);
 	balance = (int)((pan + 1.f) / 2.f * 127.f + 0.5f);

@@ -24,13 +24,34 @@
 #include "audio/decoders/raw.h"
 #include "audio/mods/protracker.h"
 #include "common/config-manager.h"
+#include "common/memstream.h"
 #include "common/system.h"
 #include "chewy/resource.h"
 #include "chewy/sound.h"
 #include "chewy/types.h"
 #include "chewy/globals.h"
+#include "chewy/audio/chewy_voc.h"
+#include "chewy/audio/tmf_stream.h"
 
 namespace Chewy {
+
+const uint8 Sound::TMF_MOD_SONG_NAME[] = {
+	'S', 'C', 'U', 'M', 'M',
+	'V', 'M', ' ', 'M', 'O',
+	'D', 'U', 'L', 'E', '\0',
+	'\0', '\0', '\0', '\0', '\0'};
+const uint8 Sound::TMF_MOD_INSTRUMENT_NAME[] = {
+	'S', 'C', 'U', 'M', 'M',
+	'V', 'M', ' ', 'I', 'N',
+	'S', 'T', 'R', 'U', 'M',
+	'E', 'N', 'T', '\0', '\0',
+	'\0', '\0'};
+// TODO Verify period values used by the game; this is an educated guess.
+const uint16 Sound::TMF_MOD_PERIODS[] = {
+	856, 808, 762, 720, 678, 640, 604, 570, 538, 508, 480, 453,
+	428, 404, 381, 360, 339, 320, 302, 285, 269, 254, 240, 226,
+	214, 202, 190, 180, 170, 160, 151, 143, 135, 127, 120, 113
+};
 
 Sound::Sound(Audio::Mixer *mixer) {
 	_mixer = mixer;
@@ -55,11 +76,13 @@ void Sound::playSound(int num, uint channel, bool loop) {
 }
 
 void Sound::playSound(uint8 *data, uint32 size, uint channel, bool loop, DisposeAfterUse::Flag dispose) {
+	stopSound(channel);
+
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
-	                                 Audio::makeRawStream(data,
-	                                         size, 22050, Audio::FLAG_UNSIGNED,
-	                                         dispose),
-	                                 loop ? 0 : 1);
+		new ChewyVocStream(
+			new Common::MemorySeekableReadWriteStream(data, size, dispose),
+			dispose),
+		loop ? 0 : 1);
 
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle[channel], stream);
 }
@@ -80,11 +103,11 @@ void Sound::stopSound(uint channel) {
 }
 
 void Sound::stopAllSounds() {
-	for (int i = 4; i < 8; i++)
+	for (int i = 0; i < 14; i++)
 		stopSound(i);
 }
 
-bool Sound::isSoundActive(uint channel) {
+bool Sound::isSoundActive(uint channel) const {
 	assert(channel < MAX_SOUND_EFFECTS);
 	return _mixer->isSoundHandleActive(_soundHandle[channel]);
 }
@@ -103,41 +126,22 @@ void Sound::setSoundChannelBalance(uint channel, int8 balance) {
 	_mixer->setChannelBalance(_soundHandle[channel], balance);
 }
 
-void Sound::playMusic(int num, bool loop) {
+void Sound::playMusic(int16 num, bool loop) {
 	uint32 musicNum = _soundRes->getChunkCount() - 1 - num;
 	Chunk *chunk = _soundRes->getChunk(musicNum);
 	uint8 *data = _soundRes->getChunkData(musicNum);
+	_curMusic = num;
 
-	playMusic(data, chunk->size, loop);
+	playMusic(data, chunk->size);
 
 	delete[] data;
 }
 
-void Sound::playMusic(uint8 *data, uint32 size, bool loop, DisposeAfterUse::Flag dispose) {
-#if 0
-	uint8 *modData = nullptr;
-	uint32 modSize;
-
-	/*
-	// TODO: Finish and use convertTMFToMod()
-	warning("The current music playing implementation is wrong");
-	modSize = size;
-	modData = (uint8 *)MALLOC(modSize);
-	memcpy(modData, data, size);
-	
-	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
-	                                 Audio::makeRawStream(modData,
-	                                         modSize, 22050, Audio::FLAG_UNSIGNED,
-	                                         dispose),
-	                                 loop ? 0 : 1);
-	*/
-
-	convertTMFToMod(data, size, modData, modSize);
-	Audio::AudioStream *stream = Audio::makeProtrackerStream(
-		new Common::MemoryReadStream(data, size));
+void Sound::playMusic(uint8 *data, uint32 size) {
+	TMFStream *stream = new TMFStream(new Common::MemoryReadStream(data, size), 0);
+	_curMusic = -1;
 
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, stream);
-#endif
 }
 
 void Sound::pauseMusic() {
@@ -149,10 +153,11 @@ void Sound::resumeMusic() {
 }
 
 void Sound::stopMusic() {
+	_curMusic = -1;
 	_mixer->stopHandle(_musicHandle);
 }
 
-bool Sound::isMusicActive() {
+bool Sound::isMusicActive() const {
 	return _mixer->isSoundHandleActive(_musicHandle);
 }
 
@@ -174,9 +179,9 @@ void Sound::playSpeech(int num, bool waitForFinish) {
 	delete sound;
 
 	// Play it
-	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
-	    Audio::makeRawStream(data, size, 22050, Audio::FLAG_UNSIGNED,
-		DisposeAfterUse::YES), 1);
+	Audio::AudioStream *stream = new ChewyVocStream(
+		new Common::MemorySeekableReadWriteStream(data, size, DisposeAfterUse::YES),
+		DisposeAfterUse::YES);
 
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType,
 		&_speechHandle, stream);
@@ -201,7 +206,7 @@ void Sound::stopSpeech() {
 	_mixer->stopHandle(_speechHandle);
 }
 
-bool Sound::isSpeechActive() {
+bool Sound::isSpeechActive() const {
 	return _mixer->isSoundHandleActive(_speechHandle);
 }
 
@@ -211,76 +216,6 @@ void Sound::setSpeechVolume(uint volume) {
 
 void Sound::stopAll() {
 	_mixer->stopAll();
-}
-
-void Sound::convertTMFToMod(uint8 *tmfData, uint32 tmfSize, uint8 *modData, uint32 &modSize) {
-	const int maxInstruments = 31;
-
-	modSize = tmfSize + 20 + maxInstruments * 22 + 4;
-	modData = (uint8 *)MALLOC(modSize);
-	uint8 *tmfPtr = tmfData;
-	uint8 *modPtr = modData;
-
-	const uint8 songName[20] = {
-		'S', 'C', 'U', 'M', 'M',
-		'V', 'M', ' ', 'M', 'O',
-		'D', 'U', 'L', 'E', '\0',
-		'\0', '\0', '\0', '\0', '\0'
-	};
-	const uint8 instrumentName[22] = {
-		'S', 'C', 'U', 'M', 'M',
-		'V', 'M', ' ', 'I', 'N',
-		'S', 'T', 'R', 'U', 'M',
-		'E', 'N', 'T', '\0', '\0',
-		'\0', '\0'
-	};
-
-	if (READ_BE_UINT32(tmfPtr) != MKTAG('T', 'M', 'F', '\0'))
-		error("Corrupt TMF resource");
-	tmfPtr += 4;
-
-	memcpy(modPtr, songName, 20);
-	modPtr += 20;
-
-	uint8 fineTune, instVolume;
-	uint16 repeatPoint, repeatLength, sampleLength;
-
-	for (int i = 0; i < maxInstruments; i++) {
-		fineTune = *tmfPtr++;
-		instVolume = *tmfPtr++;
-		repeatPoint = READ_BE_UINT16(tmfPtr);
-		tmfPtr += 2;
-		repeatLength = READ_BE_UINT16(tmfPtr);
-		tmfPtr += 2;
-		sampleLength = READ_BE_UINT16(tmfPtr);
-		tmfPtr += 2;
-
-		memcpy(modPtr, instrumentName, 18);
-		modPtr += 18;
-		*modPtr++ = ' ';
-		*modPtr++ = i / 10;
-		*modPtr++ = i % 10;
-		*modPtr++ = '\0';
-
-		WRITE_BE_UINT16(modPtr, sampleLength / 2);
-		modPtr += 2;
-		*modPtr++ = fineTune;
-		*modPtr++ = instVolume;
-		WRITE_BE_UINT16(modPtr, repeatPoint / 2);
-		modPtr += 2;
-		WRITE_BE_UINT16(modPtr, repeatLength / 2);
-		modPtr += 2;
-	}
-
-	*modPtr++ = *tmfPtr++;
-	*modPtr++ = *tmfPtr++;
-	memcpy(modPtr, tmfPtr, 128);
-	modPtr += 128;
-	tmfPtr += 128;
-	WRITE_BE_UINT32(modPtr, MKTAG('M', '.', 'K', '.'));
-	modPtr += 4;
-
-	// TODO: Finish this
 }
 
 void Sound::waitForSpeechToFinish() {
@@ -321,6 +256,57 @@ bool Sound::subtitlesEnabled() const {
 
 void Sound::toggleSubtitles(bool enable) {
 	return ConfMan.setBool("subtitles", enable);
+}
+
+struct RoomMusic {
+	int16 room;
+	int16 music;
+};
+
+const RoomMusic roomMusic[] = {
+	{   0, 13 }, {   1, 17 }, {  18, 17 }, {  90, 17 }, {   2, 43 },
+	{  88, 43 }, {   3,  0 }, {   4,  0 }, {   5, 14 }, {   8, 14 },
+	{  12, 14 }, {  86, 14 }, {   6,  1 }, {   7, 18 }, {  97, 18 },
+	{   9, 20 }, {  10, 20 }, {  47, 20 }, {  87, 20 }, {  11, 19 },
+	{  14, 19 }, {  15, 16 }, {  16, 16 }, {  19, 16 }, {  96, 16 },
+	{  21,  2 }, {  22, 48 }, {  25, 11 }, {  26, 11 }, {  27, 33 },
+	{  30, 33 }, {  54, 33 }, {  63, 33 }, {  28, 47 }, {  29, 47 },
+	{  31,  9 }, {  35,  9 }, {  32, 38 }, {  40, 38 }, {  71, 38 },
+	{  89, 38 }, {  92, 38 }, {  33, 35 }, {  37,  8 }, {  39,  9 },
+	{  42, 41 }, {  45, 44 }, {  46, 21 }, {  50, 21 }, {  73, 21 },
+	{  74, 21 }, {  48, 22 }, {  49,  3 }, {  51, 27 }, {  52, 27 },
+	{  53, 26 }, {  55, 23 }, {  57, 23 }, {  56, 52 }, {  62, 25 },
+	{  64, 51 }, {  66, 34 }, {  68, 34 }, {  67, 28 }, {  69, 28 },
+	{  70, 28 }, {  75, 28 }, {  72, 31 }, {  76, 46 }, {  79,  6 },
+	{  80, 29 }, {  81, 45 }, {  82, 50 }, {  84, 24 }, {  85, 32 },
+	{  91, 36 }, {  94, 40 }, {  95, 40 }, {  98,  4 }, { 255,  5 },
+	{ 256, 10 }, { 257, 52 }, { 258, 53 }, { 259, 54 }, { 260, 24 },
+	{  -1, -1 }
+};
+
+void Sound::playRoomMusic(int16 roomNum) {
+	int16 musicIndex = -1;
+	if (!musicEnabled())
+		return;
+
+	for (const RoomMusic *cur = roomMusic; cur->room >= 0; ++cur) {
+		if (cur->room == roomNum) {
+			musicIndex = cur->music;
+			break;
+		}
+	}
+	
+	// TODO: Extra checks for two flags in room 56
+	//if ((spieler.flags32 & SpielerFlags32_10) != 0 && spieler.flags33 >= 0)
+	//  musicIndex = 52;
+	//else
+	//  musicIndex = 7;
+
+	if (musicIndex != _curMusic) {
+		stopMusic();
+		if (musicIndex >= 0)
+			playMusic(musicIndex, true);
+	}
 }
 
 } // namespace Chewy

@@ -53,8 +53,6 @@ public:
 protected:
 	void setupOpcodes() override;
 
-	void scummLoop_handleSaveLoad() override;
-
 	int readResTypeList(ResType type) override;
 	void readIndexFile() override;
 	void loadCharset(int no) override;

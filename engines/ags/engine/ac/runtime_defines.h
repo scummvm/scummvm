@@ -125,17 +125,20 @@ const int LegacyRoomVolumeFactor = 30;
 #define FOR_ANIMATION 1
 #define FOR_SCRIPT    2
 #define FOR_EXITLOOP  3
-#define CHMLSOFFS (MAX_ROOM_OBJECTS+1)    // reserve this many movelists for objects & stuff
+// an actsps index offset for characters
+#define ACTSP_OBJSOFF (MAX_ROOM_OBJECTS)
+// a 1-based movelist index offset for characters
+#define CHMLSOFFS (1 + MAX_ROOM_OBJECTS)
 #define MAX_SCRIPT_AT_ONCE 10
 #define EVENT_NONE       0
 #define EVENT_INPROGRESS 1
 #define EVENT_CLAIMED    2
 
 // Internal skip style flags, for speech/display, wait
-#define SKIP_NONE       0
-#define SKIP_AUTOTIMER  1
-#define SKIP_KEYPRESS   2
-#define SKIP_MOUSECLICK 4
+#define SKIP_NONE       0x00
+#define SKIP_AUTOTIMER  0x01
+#define SKIP_KEYPRESS   0x02
+#define SKIP_MOUSECLICK 0x04
 
 #define MANOBJNUM 99
 

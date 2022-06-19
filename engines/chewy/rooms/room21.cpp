@@ -176,30 +176,30 @@ void Room21::chewy_kolli() {
 		xoff += _G(auto_mov_vector)[i].Xzoom;
 		yoff += _G(auto_mov_vector)[i].Yzoom;
 
-		if ((!i && _G(spieler_vector)[P_CHEWY].Xypos[0] < 516) ||
-			(i == 1 && _G(spieler_vector)[P_CHEWY].Xypos[1] > 70) ||
+		if ((!i && _G(moveState)[P_CHEWY].Xypos[0] < 516) ||
+			(i == 1 && _G(moveState)[P_CHEWY].Xypos[1] > 70) ||
 			(i == 2)) {
-			if (_G(spieler_vector)[P_CHEWY].Xypos[0] + 12 >= _G(auto_mov_vector)[i].Xypos[0] + Cxy[0] &&
-				_G(spieler_vector)[P_CHEWY].Xypos[0] + 12 <= _G(auto_mov_vector)[i].Xypos[0] + xoff + Cxy[0] &&
-				_G(spieler_vector)[P_CHEWY].Xypos[1] + 12 >= _G(auto_mov_vector)[i].Xypos[1] + Cxy[1] &&
-				_G(spieler_vector)[P_CHEWY].Xypos[1] + 12 <= _G(auto_mov_vector)[i].Xypos[1] + yoff + Cxy[1] &&
+			if (_G(moveState)[P_CHEWY].Xypos[0] + 12 >= _G(auto_mov_vector)[i].Xypos[0] + Cxy[0] &&
+				_G(moveState)[P_CHEWY].Xypos[0] + 12 <= _G(auto_mov_vector)[i].Xypos[0] + xoff + Cxy[0] &&
+				_G(moveState)[P_CHEWY].Xypos[1] + 12 >= _G(auto_mov_vector)[i].Xypos[1] + Cxy[1] &&
+				_G(moveState)[P_CHEWY].Xypos[1] + 12 <= _G(auto_mov_vector)[i].Xypos[1] + yoff + Cxy[1] &&
 				_G(mov_phasen)[i].Start == 1)
 				kolli = true;
 		}
 	}
 
 	if (kolli && !_G(flags).AutoAniPlay) {
-		const int16 tmp = _G(spieler_vector)[P_CHEWY].Count;
+		const int16 tmp = _G(moveState)[P_CHEWY].Count;
 		stopPerson(P_CHEWY);
 		_G(flags).AutoAniPlay = true;
 		_G(gameState)._personHide[P_CHEWY] = true;
-		int16 ani_nr = (_G(spieler_vector)[P_CHEWY].Xyvo[0] < 0) ? 10 : 11;
-		_G(det)->setSetailPos(ani_nr, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
+		int16 ani_nr = (_G(moveState)[P_CHEWY].Xyvo[0] < 0) ? 10 : 11;
+		_G(det)->setSetailPos(ani_nr, _G(moveState)[P_CHEWY].Xypos[0], _G(moveState)[P_CHEWY].Xypos[1]);
 		startSetAILWait(ani_nr, 1, ANI_FRONT);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		_G(flags).AutoAniPlay = false;
-		_G(spieler_vector)[P_CHEWY].Count = tmp;
-		get_phase(&_G(spieler_vector)[P_CHEWY], &_G(spieler_mi)[P_CHEWY]);
+		_G(moveState)[P_CHEWY].Count = tmp;
+		get_phase(&_G(moveState)[P_CHEWY], &_G(spieler_mi)[P_CHEWY]);
 		_G(mov)->continue_auto_go();
 	}
 }
@@ -212,8 +212,8 @@ void Room21::salto() {
 		_G(gameState)._personHide[P_CHEWY] = true;
 
 		for (int16 i = 0; i < 3; i++) {
-			_G(det)->setSetailPos(12 + i, _G(spieler_vector)[P_CHEWY].Xypos[0],
-				_G(spieler_vector)[P_CHEWY].Xypos[1]);
+			_G(det)->setSetailPos(12 + i, _G(moveState)[P_CHEWY].Xypos[0],
+				_G(moveState)[P_CHEWY].Xypos[1]);
 		}
 
 		startAniBlock(3, ABLOCK19);

@@ -826,7 +826,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = _vm->getCurrentWindow()->getSurface()->h;
 		break;
 	case kTheStageColor:
-		getTheEntitySTUB(kTheStageColor);
+		d.type = INT;
+		d.u.i = g_director->getCurrentWindow()->getStageColor();
 		break;
 	case kTheStageLeft:
 		d.type = INT;
@@ -1367,7 +1368,8 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		warning("STUB: Lingo::getTheSprite(): Unprocessed getting field \"%s\" of sprite", field2str(field));
 		break;
 	case kTheScriptNum:
-		warning("STUB: Lingo::getTheSprite(): Unprocessed getting field \"%s\" of sprite", field2str(field));
+		d.type = INT;
+		d.u.i = sprite->_scriptId.member;
 		break;
 	case kTheStartTime:
 		d.u.i = channel->_startTime;
@@ -1567,7 +1569,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheMovieRate:
 		channel->_movieRate = d.asFloat();
-		if (sprite->_cast->_type == kCastDigitalVideo)
+		if (sprite->_cast && sprite->_cast->_type == kCastDigitalVideo)
 			((DigitalVideoCastMember *)sprite->_cast)->setMovieRate(channel->_movieRate);
 		else
 			warning("Setting movieTime for non-digital video");

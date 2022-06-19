@@ -5,8 +5,7 @@ uniform vec2 scaleWH;
 
 out vec2 Texcoord;
 
-void main()
-{
+void main() {
 	Texcoord = texcoord;
 	// Coordinates are [0.0;1.0], transform to [-1.0; 1.0]
 	vec2 pos = position * scaleWH;

@@ -104,17 +104,19 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 		offTop = 26;
 		break;
 	case GID_QFG1VGA:
-		// QFG1VGA relies on the Mac interpreter initializing the state of the
-		// pic window differently in order to draw its first pic. Pic 748 is a
-		// Mac-only 320x200 version of pic 750 (320x190) that PC drew with the
-		// usual 10 pixel black bar above. Only this game depends on this subtle
-		// difference. It's a byproduct of a complex set of workarounds to
-		// implement the HasStatusBar config flag (the first byte in the `cnfg`
-		// resource in the Mac interpreter's resource fork). This flag is also
-		// set in LSL6, Brain, and Hoyle4 but they don't depend on the altered
-		// initial state. We achieve the same effect by adjusting the initial
-		// pic window size to cover the entire screen.
-		useMacStatusBarSizing = true;
+		// QFG1VGA relies on the initial state of the pic window, but its Mac
+		// interpreter sets this differently. The game draws its first pic without
+		// calling kSetPort first. In the PC version this drew pic 750 (320x190)
+		// under the usual 10 pixel black bar. But the Mac interpreter has a
+		// different initial state when its HasStatusBar config flag is set.
+		// (First byte in the `cnfg` resource in the interpreter's resource fork.)
+		// The first pic is instead drawn at the very top of the screen. This would
+		// have left a 10 pixel black bar at the bottom. Sierra fixed this by cloning
+		// pic 750 into pic 748 and extending it by 10 pixels to fill the screen.
+		// We achieve the same effect by adjusting the initial pic window size.
+		// HasStatusBar is also set in LSL6, Brain, and Hoyle4 but they don't depend
+		// on the altered initial state.
+		useMacStatusBarSizing = (g_sci->getPlatform() == Common::kPlatformMacintosh);
 		break;
 	default:
 		// For Mac games running with a height of 190, we do not have a menu bar

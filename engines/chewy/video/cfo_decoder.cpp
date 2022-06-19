@@ -86,14 +86,19 @@ CfoDecoder::CfoVideoTrack::CfoVideoTrack(Common::SeekableReadStream *stream, uin
 }
 
 CfoDecoder::CfoVideoTrack::~CfoVideoTrack() {
-	_sound->stopAll();
+	// Stop all sound effects.
+	_sound->stopAllSounds();
 
 	for (int i = 0; i < MAX_SOUND_EFFECTS; i++) {
 		delete[] _soundEffects[i];
 	}
 
-	delete[] _musicData;
-	_musicData = nullptr;
+	// Only stop music if it is included in the video data.
+	if (_musicData) {
+		_sound->stopMusic();
+		delete[] _musicData;
+		_musicData = nullptr;
+	}
 }
 
 void CfoDecoder::CfoVideoTrack::readHeader() {
@@ -183,6 +188,7 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 	for (uint32 i = 0; i < chunkCount; ++i) {
 		uint32 frameSize = _fileStream->readUint32LE();
 		uint16 frameType = _fileStream->readUint16LE();
+		uint16 musicLoops = 0;
 
 		switch (frameType) {
 		case kChunkFadeIn:
@@ -213,7 +219,7 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			break;
 		case kChunkPlayMusic:
 			// Used in videos 0, 18, 34, 71
-			_sound->playMusic(_musicData, _musicSize, false, DisposeAfterUse::NO);
+			_sound->playMusic(_musicData, _musicSize);
 			break;
 		case kChunkPlaySeq:
 			error("Unused chunk kChunkPlaySeq found");
@@ -235,7 +241,9 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 				while (g_system->getEventManager()->pollEvent(event)) {}	// ignore events
 				g_system->updateScreen();
 				g_system->delayMillis(10);
-			} while (_sound->isMusicActive());
+				// Await 100 loops (about 1 sec)
+				musicLoops++;
+			} while (_sound->isMusicActive() && musicLoops < 100);
 			break;
 		case kChunkSetMusicVolume:
 			volume = _fileStream->readUint16LE() * Audio::Mixer::kMaxChannelVolume / 63;

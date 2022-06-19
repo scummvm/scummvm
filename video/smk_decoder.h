@@ -81,9 +81,11 @@ protected:
 
 	virtual void handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize);
 
+	virtual uint32 getSignatureVersion(uint32 signature) const;
+
 	class SmackerVideoTrack : public FixedRateVideoTrack {
 	public:
-		SmackerVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature);
+		SmackerVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 version);
 		~SmackerVideoTrack();
 
 		bool isRewindable() const { return true; }
@@ -112,7 +114,7 @@ protected:
 
 	private:
 		Common::Rational _frameRate;
-		uint32 _flags, _signature;
+		uint32 _flags, _version;
 
 		byte _palette[3 * 256];
 		mutable bool _dirtyPalette;
@@ -132,7 +134,7 @@ protected:
 		static uint getBlockRun(int index) { return (index <= 58) ? index + 1 : 128 << (index - 59); }
 	};
 
-	virtual SmackerVideoTrack *createVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature) const;
+	virtual SmackerVideoTrack *createVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 version) const;
 
 	Common::SeekableReadStream *_fileStream;
 

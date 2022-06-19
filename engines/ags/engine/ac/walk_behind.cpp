@@ -80,7 +80,7 @@ void walkbehinds_generate_sprites() {
 
 // Edits the given game object's sprite, cutting out pixels covered by walk-behinds;
 // returns whether any pixels were updated;
-bool walkbehinds_cropout(Bitmap *sprit, int sprx, int spry, int basel, int zoom) {
+bool walkbehinds_cropout(Bitmap *sprit, int sprx, int spry, int basel) {
 	if (_G(noWalkBehindsAtAll))
 		return false;
 

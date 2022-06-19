@@ -227,6 +227,7 @@ typedef struct {
 
 // ARM relocation types
 #define R_ARM_NONE			0
+#define R_ARM_PC24			1
 #define R_ARM_ABS32			2
 #define R_ARM_THM_CALL		10
 #define R_ARM_CALL			28

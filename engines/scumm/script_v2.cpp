@@ -451,6 +451,25 @@ void ScummEngine_v2::writeVar(uint var, int value) {
 			value = 27;
 	}
 
+	// WORKAROUND: According to the Maniac Mansion manual, you should be
+	// able to execute your command by clicking on the sentence line. But
+	// this does not work until later games. The main difference between
+	// the verb scripts (script 4) in Maniac Mansion and Zak McKracken is
+	// that Zak will set variable 34 when you click on the sentence line
+	// (as indicated by VAR_CLICK_AREA), and Maniac Mansion will not.
+	//
+	// When VAR_CLICK_AREA is 5, there is only one place where variable 34
+	// is initialized to 0, so that seems like a good place to inject our
+	// own check.
+
+	if (_game.id == GID_MANIAC && (_game.version == 1 || _game.version == 2)
+			&& _game.platform != Common::kPlatformNES
+			&& vm.slot[_currentScript].number == 4
+			&& VAR(VAR_CLICK_AREA) == kSentenceClickArea
+			&& var == 34 && value == 0 && _enableEnhancements) {
+		value = 1;
+	}
+
 	_scummVars[var] = value;
 }
 

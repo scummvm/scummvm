@@ -1345,8 +1345,8 @@ void ScummEngine_v6::o6_loadRoomWithEgo() {
 }
 
 void ScummEngine_v6::o6_getRandomNumber() {
-	int rnd;
-	rnd = _rnd.getRandomNumber(ABS(pop()));
+	int rnd = _rnd.getRandomNumber(0x7fff);
+	rnd = rnd % (pop() + 1);
 	if (VAR_RANDOM_NR != 0xFF)
 		VAR(VAR_RANDOM_NR) = rnd;
 	push(rnd);
@@ -1355,7 +1355,8 @@ void ScummEngine_v6::o6_getRandomNumber() {
 void ScummEngine_v6::o6_getRandomNumberRange() {
 	int max = pop();
 	int min = pop();
-	int rnd = _rnd.getRandomNumberRng(min, max);
+	int rnd = _rnd.getRandomNumber(0x7fff);
+	rnd = min + (rnd % (max - min + 1));
 	if (VAR_RANDOM_NR != 0xFF)
 		VAR(VAR_RANDOM_NR) = rnd;
 	push(rnd);
@@ -2392,7 +2393,7 @@ void ScummEngine_v6::o6_printEgo() {
 void ScummEngine_v6::o6_talkActor() {
 	int offset = _scriptPointer - _scriptOrgPointer;
 
-	// WORKAROUND for bug #1452: see below for detailed description
+	// WORKAROUND for missing waitForMessage() calls; see below
 	if (_forcedWaitForMessage) {
 		if (VAR(VAR_HAVE_MSG)) {
 			_scriptPointer--;
@@ -2420,6 +2421,20 @@ void ScummEngine_v6::o6_talkActor() {
 
 	_string[0].loadDefault();
 	actorTalk(_scriptPointer);
+
+	// WORKAROUND: Dr Fred's first reaction line about Hoagie's and Laverne's
+	// units after receiving a new diamond is unused because of missing
+	// wait.waitForMessage() calls. We always simulate this opcode when
+	// triggering Dr Fred's lines in this part of the script, since there is
+	// no stable offset for all the floppy, CD and translated versions, and
+	// no easy way to only target the impacted lines.
+	if (_game.id == GID_TENTACLE && vm.slot[_currentScript].number == 9
+		&& vm.localvar[_currentScript][0] == 216 && _actorToPrintStrFor == 4 && _enableEnhancements) {
+		_forcedWaitForMessage = true;
+		_scriptPointer--;
+
+		return;
+	}
 
 	// WORKAROUND for bug #1452: "DIG: Missing subtitles when talking to Brink"
 	// Original script does not have wait.waitForMessage() after several messages:
@@ -2901,10 +2916,10 @@ void ScummEngine_v6::o6_delayFrames() {
 	// WORKAROUND:  At startup, Moonbase Commander will pause for 20 frames before
 	// showing the Infogrames logo.  The purpose of this break is to give time for the
 	// GameSpy Arcade application to fill with the Online game infomation.
-	// 
+	//
 	// [0000] (84) localvar2 = max(readConfigFile.number(":var263:","user","wait-for-gamespy"),10)
 	// [0029] (08) delayFrames((localvar2 * 2))
-	// 
+	//
 	// But since we don't support GameSpy and have our own Online support, this break
 	// has become redundant and only wastes time.
 	if (_game.id == GID_MOONBASE && vm.slot[_currentScript].number == 69) {

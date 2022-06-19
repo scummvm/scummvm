@@ -23,7 +23,9 @@
 #define GRIM_POOLSOUND_H
 
 #include "common/endian.h"
+
 #include "engines/grim/pool.h"
+
 #include "math/vector3d.h"
 
 namespace Grim {

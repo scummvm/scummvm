@@ -398,6 +398,8 @@ bool testPath(Common::String &path, bool directory) {
 	if (SearchMan.hasFile(Common::Path(path, g_director->_dirSeparator)))
 		return true;
 
+	debug(9, "testPath: %s  dir: %d", path.c_str(), directory);
+
 	// check for the game data dir
 	if (!path.contains(g_director->_dirSeparator) && path.equalsIgnoreCase(d.getName())) {
 		if (!directory)
@@ -415,7 +417,7 @@ bool testPath(Common::String &path, bool directory) {
 		fslist.clear();
 		Common::FSNode::ListMode mode = Common::FSNode::kListDirectoriesOnly;
 		if (directory_list.empty() && !directory) {
-			mode = Common::FSNode::kListFilesOnly;
+			mode = Common::FSNode::kListAll;
 		}
 		d.getChildren(fslist, mode);
 
@@ -433,9 +435,12 @@ bool testPath(Common::String &path, bool directory) {
 				break;
 			}
 		}
-		if (!exists)
+		if (!exists) {
+			debug(9, "testPath: Not exists");
 			return false;
+		}
 	}
+	debug(9, "testPath: ***** HAVE MATCH");
 	// write back path with correct case
 	path = newPath;
 	return true;
@@ -455,7 +460,19 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 			foundPath = wrappedPathMakeRelative(searchIn + path, recursive, addexts, directory);
 			if (testPath(foundPath))
 				return foundPath;
+
+			debug(9, "pathMakeRelative(): -- searchPath not found: %s", foundPath.c_str());
 		}
+	}
+
+	for (auto i = g_director->_extraSearchPath.begin(); i != g_director->_extraSearchPath.end(); ++i) {
+		debug(9, "pathMakeRelative(): extraSearchPath: %s", i->c_str());
+
+		foundPath = wrappedPathMakeRelative(*i + path, recursive, addexts, directory);
+		if (testPath(foundPath))
+			return foundPath;
+
+		debug(9, "pathMakeRelative(): -- extraSearchPath not found: %s", foundPath.c_str());
 	}
 
 	return wrappedPathMakeRelative(path, recursive, addexts, directory);
@@ -469,23 +486,25 @@ Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool
 
 	Common::String initialPath(path);
 
-	debug(9, "pathMakeRelative(): s0 %s -> %s", path.c_str(), initialPath.c_str());
+	debug(9, "wrappedPathMakeRelative(): s0 %s -> %s", path.c_str(), initialPath.c_str());
 
 	if (recursive) // first level
 		initialPath = convertPath(initialPath);
 
-	debug(9, "pathMakeRelative(): s1 %s -> %s", path.c_str(), initialPath.c_str());
+	debug(9, "wrappedPathMakeRelative(): s1 %s -> %s", path.c_str(), initialPath.c_str());
 
 	initialPath = Common::normalizePath(g_director->getCurrentPath() + initialPath, g_director->_dirSeparator);
 	Common::String convPath = initialPath;
 
-	debug(9, "pathMakeRelative(): s2 %s", convPath.c_str());
+	debug(9, "wrappedPathMakeRelative(): s2 %s", convPath.c_str());
 
 	// Strip the leading whitespace from the path
 	initialPath.trim();
 
 	if (testPath(initialPath, directory))
 		return initialPath;
+
+	debug(9, "wrappedPathMakeRelative(): s2.1 -- not found %s", initialPath.c_str());
 
 	// Now try to search the file
 	bool opened = false;
@@ -494,19 +513,21 @@ Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool
 		int pos = convPath.find(g_director->_dirSeparator);
 		convPath = Common::String(&convPath.c_str()[pos + 1]);
 
-		debug(9, "pathMakeRelative(): s3 try %s", convPath.c_str());
+		debug(9, "wrappedPathMakeRelative(): s3 try %s", convPath.c_str());
 
 		if (!testPath(convPath, directory)) {
 			// If we were supplied with parh with subdirectories,
 			// attempt to combine it with the current movie path at every iteration
 			Common::String locPath = Common::normalizePath(g_director->getCurrentPath() + convPath, g_director->_dirSeparator);
-			debug(9, "pathMakeRelative(): s3.1 try %s", locPath.c_str());
+			debug(9, "wrappedPathMakeRelative(): s3.1 try %s", locPath.c_str());
 
-			if (!testPath(locPath, directory))
+			if (!testPath(locPath, directory)) {
+				debug(9, "wrappedPathMakeRelative(): s3.1 -- not found %s", locPath.c_str());
 				continue;
+			}
 		}
 
-		debug(9, "pathMakeRelative(): s3 converted %s -> %s", path.c_str(), convPath.c_str());
+		debug(9, "wrappedPathMakeRelative(): s3 converted %s -> %s", path.c_str(), convPath.c_str());
 
 		opened = true;
 
@@ -517,22 +538,26 @@ Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool
 		// Try stripping all of the characters not allowed in FAT
 		convPath = stripMacPath(initialPath.c_str());
 
-		debug(9, "pathMakeRelative(): s4 %s", convPath.c_str());
+		debug(9, "wrappedPathMakeRelative(): s4 %s", convPath.c_str());
 
 		if (testPath(initialPath, directory))
 			return initialPath;
+
+		debug(9, "wrappedPathMakeRelative(): s4.1 -- not found %s", initialPath.c_str());
 
 		// Now try to search the file
 		while (convPath.contains(g_director->_dirSeparator)) {
 			int pos = convPath.find(g_director->_dirSeparator);
 			convPath = Common::String(&convPath.c_str()[pos + 1]);
 
-			debug(9, "pathMakeRelative(): s5 try %s", convPath.c_str());
+			debug(9, "wrappedPathMakeRelative(): s5 try %s", convPath.c_str());
 
-			if (!testPath(convPath, directory))
+			if (!testPath(convPath, directory)) {
+				debug(9, "wrappedPathMakeRelative(): s5 -- not found %s", convPath.c_str());
 				continue;
+			}
 
-			debug(9, "pathMakeRelative(): s5 converted %s -> %s", path.c_str(), convPath.c_str());
+			debug(9, "wrappedPathMakeRelative(): s5 converted %s -> %s", path.c_str(), convPath.c_str());
 
 			opened = true;
 
@@ -572,11 +597,13 @@ Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool
 				Common::String ext = component.substr(component.size() - 4);
 				Common::String newpath = convPath + convertMacFilename(nameWithoutExt.c_str()) + ext;
 
-				debug(9, "pathMakeRelative(): s6 %s -> try %s", initialPath.c_str(), newpath.c_str());
+				debug(9, "wrappedPathMakeRelative(): s6 %s -> try %s", initialPath.c_str(), newpath.c_str());
 				Common::String res = wrappedPathMakeRelative(newpath, false, false);
 
 				if (testPath(res))
 					return res;
+
+				debug(9, "wrappedPathMakeRelative(): s6 -- not found %s", res.c_str());
 			}
 		}
 

@@ -149,6 +149,16 @@ void OpenGLRenderer::setupViewport(int x, int y, int width, int height) {
 	glViewport(x, y, width, height);
 }
 
+void OpenGLRenderer::enableFog(const Math::Vector4d &fogColor) {
+	glFogi(GL_FOG_MODE, GL_EXP);
+	glFogf(GL_FOG_START, 1.0f);
+	glFogf(GL_FOG_END, 1.0f);
+	glFogf(GL_FOG_DENSITY, 0.1f);
+	GLfloat color[4] = { fogColor.x(), fogColor.y(), fogColor.z(), fogColor.w() };
+	glFogfv(GL_FOG_COLOR, color);
+	glEnable(GL_FOG);
+}
+
 void OpenGLRenderer::drawFace(uint face) {
 	glBegin(GL_TRIANGLE_STRIP);
 	for (uint i = 0; i < 4; i++) {

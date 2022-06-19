@@ -603,6 +603,7 @@ protected:
 	byte _saveLoadFlag = 0, _saveLoadSlot = 0;
 	uint32 _lastSaveTime = 0;
 	bool _saveTemporaryState = false;
+	bool _loadFromLauncher = false;
 	Common::String _saveLoadFileName;
 	Common::String _saveLoadDescription;
 
@@ -717,8 +718,8 @@ protected:
 	virtual void resetSentence() {}
 
 protected:
-	void beginCutscene(int *args);
-	void endCutscene();
+	virtual void beginCutscene(int *args);
+	virtual void endCutscene();
 	void abortCutscene();
 	void beginOverride();
 	void endOverride();
@@ -943,6 +944,7 @@ public:
 	int _screenHeight = 0, _screenWidth = 0;
 	VirtScreen _virtscr[4];		// Virtual screen areas
 	CameraData camera;			// 'Camera' - viewport
+	bool _cameraIsFrozen = false;
 
 	int _screenStartStrip = 0, _screenEndStrip = 0;
 	int _screenTop = 0;

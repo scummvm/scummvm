@@ -50,7 +50,7 @@ bool LibFile::open(const Common::String &prefix, const Common::String &filename,
 		uint32 start = _libfile->size();
 		FileEntry f;
 		_libfile->seek(offset);
-		debugC(1, kHypnoDebugParser, "parsing at offset %d with size %li", offset, _libfile->size());
+		debugC(1, kHypnoDebugParser, "parsing at offset %d with size %li", offset, long(_libfile->size()));
 		while (true) {
 			f.name = "";
 			for (uint32 i = 0; i < 12; i++) {

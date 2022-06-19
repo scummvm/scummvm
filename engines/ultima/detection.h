@@ -86,11 +86,6 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "Ultima Games (C) 1980-1995 Origin Systems Inc.";
 	}
-
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
-
-private:
-	static Common::String getGameId(const Common::String& target);
 };
 
 #endif

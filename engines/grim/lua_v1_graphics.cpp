@@ -27,10 +27,8 @@
 #include "engines/grim/iris.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/set.h"
-#include "actor.h"
-
+#include "engines/grim/actor.h"
 #include "engines/grim/movie/movie.h"
-
 #include "engines/grim/lua/lua.h"
 
 namespace Grim {
@@ -66,7 +64,7 @@ void Lua_V1::BlastImage() {
 
 	int x = (int)lua_getnumber(xObj);
 	int y = (int)lua_getnumber(yObj);
-//	bool transparent = getbool(4); // TODO transparent/masked copy into display
+	//bool transparent = getbool(4); // TODO transparent/masked copy into display
 	bitmap->draw(x, y);
 }
 

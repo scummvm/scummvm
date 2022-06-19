@@ -79,6 +79,7 @@ void Text::initVoxBank(TextBankId bankIdx) {
 	}
 	// get the correct vox hqr file
 	_currentVoxBankFile = Common::String::format("%s%s" VOX_EXT, LanguageTypes[_engine->_cfgfile.LanguageId].id, LanguageSuffixTypes[(int)bankIdx]);
+	_currentOggBaseFile = Common::String::format("%s%s_", LanguageTypes[_engine->_cfgfile.LanguageId].id, LanguageSuffixTypes[(int)bankIdx]);
 	// TODO: loop through other languages and take the scummvm settings regarding voices into account...
 
 	// TODO check the rest to reverse
@@ -244,7 +245,7 @@ void Text::drawText(int32 x, int32 y, const char *dialogue, bool shadow) {
 			const int32 dialTextSize = getCharWidth(currChar);
 			if (shadow) {
 				Common::Rect dirtyRect;
-				drawCharacterShadow(x, y, currChar, COLOR_BLACK, dirtyRect);
+				drawCharacterShadow(x, y, currChar, COLOR_WHITE, dirtyRect);
 			} else {
 				drawCharacter(x, y, currChar); // draw the character on screen
 			}

@@ -28,6 +28,8 @@
 #ifndef AGS_ENGINE_GFX_GFX_DRIVER_BASE_H
 #define AGS_ENGINE_GFX_GFX_DRIVER_BASE_H
 
+#include "ags/lib/std/memory.h"
+#include "engines/ags/lib/std/map.h"
 #include "ags/lib/std/vector.h"
 #include "ags/engine/gfx/ddb.h"
 #include "ags/engine/gfx/graphics_driver.h"
@@ -169,11 +171,6 @@ protected:
 
 
 
-// Generic TextureTile base
-struct TextureTile {
-	int x, y;
-	int width, height;
-};
 
 // Parent class for the video memory DDBs
 class BaseDDB : public IDriverDependantBitmap {
@@ -198,6 +195,23 @@ protected:
 	virtual ~BaseDDB() {}
 };
 
+// A base parent for the otherwise opaque texture data object;
+// TextureData refers to the pixel data itself, with no additional
+// properties. It may be shared between multiple sprites if necessary.
+struct TextureData {
+	uint32_t ID = UINT32_MAX;
+	virtual ~TextureData() = default;
+protected:
+	TextureData() = default;
+};
+
+// Generic TextureTile base
+struct TextureTile {
+	int x = 0, y = 0;
+	int width = 0, height = 0;
+};
+
+
 // VideoMemoryGraphicsDriver - is the parent class for the graphic drivers
 // which drawing method is based on passing the sprite stack into GPU,
 // rather than blitting to flat screen bitmap.
@@ -211,9 +225,28 @@ public:
 	void SetMemoryBackBuffer(Bitmap *backBuffer) override;
 	Bitmap *GetStageBackBuffer(bool mark_dirty) override;
 	bool GetStageMatrixes(RenderMatrixes &rm) override;
+	IDriverDependantBitmap *CreateDDB(int width, int height, int color_depth, bool opaque) override = 0;
 	IDriverDependantBitmap *CreateDDBFromBitmap(Bitmap *bitmap, bool hasAlpha, bool opaque = false) override;
+	// Get shared texture from cache, or create from bitmap and assign ID
+	IDriverDependantBitmap *GetSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) override;
+	// Removes the shared texture reference, will force the texture to recreate next time
+	 void ClearSharedDDB(uint32_t sprite_id) override;
+	 // Updates shared texture data, but only if it is present in the cache
+	 void UpdateSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) override;
+	void DestroyDDB(IDriverDependantBitmap* ddb) override;
 
 protected:
+	// Create texture data with the given parameters
+	virtual TextureData *CreateTextureData(int width, int height, bool opaque) = 0;
+	// Update texture data from the given bitmap
+	virtual void UpdateTextureData(TextureData *txdata, Bitmap *bmp, bool opaque, bool hasAlpha) = 0;
+	// Create DDB using preexisting texture data
+	virtual IDriverDependantBitmap *CreateDDB(std::shared_ptr<TextureData> txdata,
+		  int width, int height, int color_depth, bool opaque) = 0;
+	// Retrieve shared texture data object from the given DDB
+	virtual std::shared_ptr<TextureData> GetTextureData(IDriverDependantBitmap *ddb) = 0;
+	virtual void DestroyDDBImpl(IDriverDependantBitmap* ddb) = 0;
+
 	// Stage screens are raw bitmap buffers meant to be sent to plugins on demand
 	// at certain drawing stages. If used at least once these buffers are then
 	// rendered as additional sprites in their respected order.
@@ -270,6 +303,20 @@ private:
 	};
 	std::vector<ScreenFx> _fxPool;
 	size_t _fxIndex; // next free pool item
+
+	// Texture short-term cache:
+	// - caches textures while they are in the immediate use;
+	// - this lets to share same texture data among multiple sprites on screen.
+	// TextureCacheItem stores weak references to the existing texture tiles,
+	// identified by an arbitrary uint32 number.
+	struct TextureCacheItem {
+		GraphicResolution Res;
+		std::weak_ptr<TextureData> Data;
+		TextureCacheItem() = default;
+		TextureCacheItem(std::shared_ptr<TextureData> data, const GraphicResolution &res)
+			: Data(data), Res(res) {}
+	};
+	std::unordered_map<uint32_t, TextureCacheItem> _txRefs;
 };
 
 } // namespace Engine

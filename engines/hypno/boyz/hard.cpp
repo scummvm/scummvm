@@ -40,12 +40,22 @@ void BoyzEngine::runCode(Code *code) {
 		runCheckC3(code);
 	else if (code->name == "<check_ho>")
 		runCheckHo(code);
+	else if (code->name == "<check_c5>")
+		runCheckC5(code);
+	else if (code->name == "<alarm_c5>")
+		runAlarmC5(code);
+	else if (code->name == "<credits>")
+		endCredits(code);
 	else
 		error("invalid hardcoded level: %s", code->name.c_str());
 }
 
 void BoyzEngine::runMainMenu(Code *code) {
 	resetSceneState();
+	resetStatistics();
+	_globalStats = ArcadeStats();
+	_flashbackMode = false;
+
 	Common::Event event;
 	byte *palette;
 	Graphics::Surface *menu = decodeFrame("preload/mainmenu.smk", 0, &palette);
@@ -75,7 +85,12 @@ void BoyzEngine::runMainMenu(Code *code) {
 					_name.deleteLastChar();
 				else if (event.kbd.keycode == Common::KEYCODE_RETURN && !_name.empty()) {
 					cont = false;
+				} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					if (runExitMenu())
+						quitGame();
+					disableCursor();
 				}
+
 				else if (Common::isAlpha(event.kbd.keycode)) {
 					playSound("sound/m_choice.raw", 1);
 					_name = _name + char(event.kbd.keycode - 32);
@@ -103,13 +118,79 @@ void BoyzEngine::runMainMenu(Code *code) {
 	menu->free();
 	delete menu;
 
+	if (shouldQuit())
+		return;
+
 	_name.toLowercase();
 	bool found = loadProfile(_name);
 	if (!found) {
 		_nextLevel = code->levelIfWin;
+	} else if (_unlockAllLevels) {
+		_nextLevel = "<select_t1>";
+		unlockAllLevels();
+		_flashbackMode = true;
 	}
+
 	assert(!_nextLevel.empty());
 
+}
+
+bool BoyzEngine::runExitMenu() {
+	changeCursor("crosshair");
+	bool quit = false;
+	Common::Event event;
+	byte *palette;
+	Graphics::Surface *menu = decodeFrame("preload/mainmenu.smk", 8, &palette);
+	loadPalette(palette, 0, 256);
+	drawImage(*menu, 0, 0, false);
+	Common::Rect yesBox(142, 87, 179, 102);
+	Common::Rect noBox(142, 104, 179, 119);
+	bool cont = true;
+	while (!shouldQuit() && cont) {
+		while (g_system->getEventManager()->pollEvent(event)) {
+			Common::Point mousePos = g_system->getEventManager()->getMousePos();
+			// Events
+			switch (event.type) {
+
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				break;
+
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_y) {
+					quit = true;
+					cont = false;
+
+				} else if (event.kbd.keycode == Common::KEYCODE_n) {
+					quit = false;
+					cont = false;
+					break;
+				}
+			break;
+
+			case Common::EVENT_LBUTTONDOWN:
+				if (yesBox.contains(mousePos)) {
+					quit = true;
+					cont = false;
+					break;
+				} else if (noBox.contains(mousePos)) {
+					quit = false;
+					cont = false;
+					break;
+				}
+			break;
+
+			default:
+				break;
+			}
+		}
+
+		drawScreen();
+		g_system->delayMillis(10);
+	}
+	menu->free();
+	delete menu;
+	return quit;
 }
 
 void BoyzEngine::runDifficultyMenu(Code *code) {
@@ -181,7 +262,12 @@ void BoyzEngine::runDifficultyMenu(Code *code) {
 		_nextLevel = "<main_menu>";
 	else {
 		saveProfile(_name, 0);
-		_nextLevel = code->levelIfWin;
+		if (_unlockAllLevels) {
+			_nextLevel = "<select_t1>";
+			unlockAllLevels();
+			_flashbackMode = true;
+		} else
+			_nextLevel = code->levelIfWin;
 	}
 
 	menu->free();
@@ -189,8 +275,7 @@ void BoyzEngine::runDifficultyMenu(Code *code) {
 }
 
 void BoyzEngine::runRetryMenu(Code *code) {
-	_lives--;
-
+	incLivesUsed();
 	uint32 idx = _rnd->getRandomNumber(_deathVideo.size() - 1);
 	Filename filename = _deathVideo[idx];
 	MVideo video(filename, Common::Point(0, 0), false, true, false);
@@ -200,6 +285,7 @@ void BoyzEngine::runRetryMenu(Code *code) {
 
 	Common::Rect retryMissionBox(73, 62, 245, 77);
 	Common::Rect restartTerritoryBox(73, 81, 245, 96);
+	Common::Rect restartMissionBox(73, 100, 245, 114);
 	Common::Rect quitBox(73, 119, 245, 133);
 
 	Common::Event event;
@@ -227,7 +313,11 @@ void BoyzEngine::runRetryMenu(Code *code) {
 				} else if (restartTerritoryBox.contains(mousePos)) {
 					// Restore initial health for the team
 					_health = _maxHealth;
+					_stats = _globalStats;
 					_nextLevel = firstLevelTerritory(_checkpoint);
+					cont = false;
+				} else if (restartMissionBox.contains(mousePos)) {
+					_nextLevel = "<main_menu>";
 					cont = false;
 				} else if (quitBox.contains(mousePos))
 					quitGame();
@@ -237,9 +327,13 @@ void BoyzEngine::runRetryMenu(Code *code) {
 				if (event.kbd.keycode == Common::KEYCODE_s) {
 					_nextLevel = _checkpoint;
 					cont = false;
+				} else if (event.kbd.keycode == Common::KEYCODE_n) {
+					_nextLevel = "<main_menu>";
+					cont = false;
 				} else if (event.kbd.keycode == Common::KEYCODE_t) {
 					// Restore initial health for the team
 					_health = _maxHealth;
+					_stats = _globalStats;
 					_nextLevel = firstLevelTerritory(_checkpoint);
 					cont = false;
 				} else if (event.kbd.keycode == Common::KEYCODE_q)
@@ -258,6 +352,49 @@ void BoyzEngine::runRetryMenu(Code *code) {
 	menu->free();
 	delete menu;
 }
+
+void BoyzEngine::runAlarmC5(Code *code) {
+	MVideo video1("misc/alrm_c5s.smk", Common::Point(0, 0), false, true, false);
+	disableCursor();
+	runIntro(video1);
+
+	MVideo video2("preload/deathn4s.smk", Common::Point(0, 0), false, true, false);
+	disableCursor();
+	runIntro(video2);
+
+	_nextLevel = "<check_c5>";
+}
+
+
+void BoyzEngine::runCheckC5(Code *code) {
+	if (_sceneState["GS_C5MAP"]) {
+		if (!_sceneState["GS_MINEMAP_VIEWED"]) {
+			MVideo video("c5/c5_maps.smk", Common::Point(0, 0), false, true, false);
+			disableCursor();
+			runIntro(video);
+			defaultCursor();
+			waitForUserClick(1);
+			_sceneState["GS_MINEMAP_VIEWED"] = true;
+		}
+	}
+
+	Common::String nextLevel;
+	if (_sceneState["GS_SEQ_51"] &&
+		_sceneState["GS_SEQ_52"] &&\
+		_sceneState["GS_SEQ_53"]) {
+		MVideo video("c5/c5intrbs.smk", Common::Point(0, 0), false, true, false);
+		disableCursor();
+		runIntro(video);
+		nextLevel = "c54.mi_";
+	}
+
+	if (nextLevel.empty())
+		nextLevel = "<select_c5>";
+
+	_nextLevel = nextLevel;
+	saveProfile(_name, 531);
+}
+
 
 void BoyzEngine::runCheckC3(Code *code) {
 	Common::String nextLevel;
@@ -291,8 +428,10 @@ void BoyzEngine::runCheckHo(Code *code) {
 }
 
 void BoyzEngine::endCredits(Code *code) {
+	_flashbackMode = true;
+	saveProfile(_name, 59);
 	showCredits();
-	_nextLevel = "<main_menu>";
+	_nextLevel = "<select_t1>";
 }
 
 void BoyzEngine::showCredits() {
@@ -302,6 +441,23 @@ void BoyzEngine::showCredits() {
 	runIntro(c2);
 }
 
+int BoyzEngine::getTerritory(const Common::String &level) {
+	if (Common::matchString(level.c_str(), "c1#.mi_"))
+		return 1;
+	else if (Common::matchString(level.c_str(), "c2#.mi_"))
+		return 2;
+	else if (Common::matchString(level.c_str(), "c3#.mi_"))
+		return 3;
+	else if (Common::matchString(level.c_str(), "c3##.mi_"))
+		return 3;
+	else if (Common::matchString(level.c_str(), "c4#.mi_"))
+		return 4;
+	else if (Common::matchString(level.c_str(), "c5#.mi_"))
+		return 5;
+	else
+		error("Invalid territory for level %s", level.c_str());
+}
+
 Common::String BoyzEngine::firstLevelTerritory(const Common::String &level) {
 	if (Common::matchString(level.c_str(), "c1#.mi_"))
 		return "c19.mi_";
@@ -309,10 +465,29 @@ Common::String BoyzEngine::firstLevelTerritory(const Common::String &level) {
 		return "c21.mi_";
 	else if (Common::matchString(level.c_str(), "c3#.mi_"))
 		return "c31.mi_";
+	else if (Common::matchString(level.c_str(), "c3##.mi_"))
+		return "c31.mi_";
 	else if (Common::matchString(level.c_str(), "c4#.mi_"))
 		return "c41.mi_";
 	else if (Common::matchString(level.c_str(), "c5#.mi_"))
 		return "c51.mi_";
+	else
+		error("Invalid territory for level %s", level.c_str());
+}
+
+Common::String BoyzEngine::lastLevelTerritory(const Common::String &level) {
+	if (Common::matchString(level.c_str(), "c1#.mi_"))
+		return "c18.mi_";
+	else if (Common::matchString(level.c_str(), "c2#.mi_"))
+		return "c22.mi_";
+	else if (Common::matchString(level.c_str(), "c3#.mi_"))
+		return "c38.mi_";
+	else if (Common::matchString(level.c_str(), "c3##.mi_"))
+		return "c38.mi_";
+	else if (Common::matchString(level.c_str(), "c4#.mi_"))
+		return "c42.mi_";
+	else if (Common::matchString(level.c_str(), "c5#.mi_"))
+		return "c59.mi_";
 	else
 		error("Invalid territory for level %s", level.c_str());
 }

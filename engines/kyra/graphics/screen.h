@@ -67,7 +67,8 @@ public:
 	enum Type {
 		kASCII = 0,
 		kSJIS,
-		kBIG5
+		kBIG5,
+		kJohab
 	};
 
 public:
@@ -287,6 +288,41 @@ private:
 	const uint8 *_glyphData;
 	uint32 _glyphDataSize;
 	const uint16 _pitch;
+};
+
+class JohabFontLoK final : public Font {
+public:
+	JohabFontLoK(Font *&font8fat, const uint16 *lookupTable, uint32 lookupTableSize);
+	~JohabFontLoK() override;
+
+	enum {
+		kNumJongseong = 191,
+		kNumJungseong = 85,
+		kNumChoseong = 109
+	};
+
+	bool load(Common::SeekableReadStream &data) override;
+	Type getType() const override { return kJohab; }
+	int getHeight() const override { return _height; }
+	int getWidth() const override { return _width; }
+	int getCharWidth(uint16 c) const override;
+	int getCharHeight(uint16 c) const override;
+	void setColorMap(const uint8 *src) override;
+	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
+
+private:
+	const uint8 *createGlyph(uint16 chr) const;
+	void processColorMap();
+	void renderGlyph(byte *dst, const uint8 *glyph, uint8 col, int pitch) const;
+
+	int _width, _height;
+	const uint8 *_colorMap;
+
+	Font *&_font8fat;
+	const uint8 *_fileData;
+	const uint8 *_glyphData[3];
+	const uint16 *_2byteTables[7];
+	uint8 *_glyphTemp;
 };
 
 class ChineseOneByteFontLoK final : public ChineseFont {
@@ -518,16 +554,19 @@ public:
 	};
 
 	enum DrawShapeFlags {
-		DSF_X_FLIPPED  = 0x01,
-		DSF_Y_FLIPPED  = 0x02,
-		DSF_SCALE      = 0x04,
-		DSF_WND_COORDS = 0x10,
-		DSF_CENTER     = 0x20,
-
-		DSF_SHAPE_FADING		= 0x100,
-		DSF_TRANSPARENCY		= 0x1000,
-		DSF_BACKGROUND_FADING	= 0x2000,
-		DSF_CUSTOM_PALETTE		= 0x8000
+		kDRAWSHP_XFLIP			= 0x01,
+		kDRAWSHP_YFLIP			= 0x02,
+		kDRAWSHP_SCALE			= 0x04,
+		kDRAWSHP_WINREL			= 0x10,
+		kDRAWSHP_CENTER			= 0x20,
+		kDRAWSHP_FADE			= 0x100,
+		kDRAWSHP_PREDATOR		= 0x200,
+		kDRAWSHP_COMPACT		= 0x400,
+		kDRAWSHP_PRIORITY		= 0x800,
+		kDRAWSHP_TRANSPARENT	= 0x1000,
+		kDRAWSHP_BCKGRNDFADE	= 0x2000,
+		kDRAWSHP_MORPH			= 0x4000,
+		kDRAWSHP_COLOR			= 0x8000
 	};
 
 	enum FontId {
@@ -544,6 +583,7 @@ public:
 		FID_SJIS_LARGE_FNT,
 		FID_SJIS_SMALL_FNT,
 		FID_CHINESE_FNT,
+		FID_KOREAN_FNT,
 		FID_NUM
 	};
 

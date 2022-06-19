@@ -83,7 +83,7 @@ void GfxTinyGL::setupScreen(int screenW, int screenH) {
 	g_system->showMouse(false);
 
 	_pixelFormat = g_system->getScreenFormat();
-	debug("INFO: TinyGL front buffer pixel format: %s", _pixelFormat.toString().c_str());
+	debug(2, "INFO: TinyGL front buffer pixel format: %s", _pixelFormat.toString().c_str());
 	TinyGL::createContext(screenW, screenH, _pixelFormat, 256, true, ConfMan.getBool("dirtyrects"));
 
 	_storedDisplay = new Graphics::Surface;
@@ -105,7 +105,7 @@ void GfxTinyGL::setupScreen(int screenW, int screenH) {
 }
 
 const char *GfxTinyGL::getVideoDeviceName() {
-	return "TinyGL Software Renderer";
+	return "Software Renderer";
 }
 
 void GfxTinyGL::setupCameraFrustum(float fov, float nclip, float fclip) {
@@ -471,12 +471,12 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 		tglEnable(TGL_POLYGON_OFFSET_FILL);
 		tglDisable(TGL_LIGHTING);
 		tglDisable(TGL_TEXTURE_2D);
-		// tglColor3f(0.0f, 1.0f, 0.0f); // debug draw color
 		if (g_grim->getGameType() == GType_GRIM) {
 			tglColor3ub(_shadowColorR, _shadowColorG, _shadowColorB);
 		} else {
 			tglColor3ub(_currentShadowArray->color.getRed(), _currentShadowArray->color.getGreen(), _currentShadowArray->color.getBlue());
 		}
+		//tglColor3f(0.0f, 1.0f, 0.0f); // debug draw color
 		shadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
 
@@ -550,6 +550,17 @@ void GfxTinyGL::finishActorDraw() {
 }
 
 void GfxTinyGL::drawShadowPlanes() {
+/*	tglColor3f(1.0f, 1.0f, 1.0f);
+	_currentShadowArray->planeList.begin();
+	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); i++) {
+		Sector *shadowSector = i->sector;
+		tglBegin(TGL_POLYGON);
+		for (int k = 0; k < shadowSector->getNumVertices(); k++) {
+			tglVertex3f(shadowSector->getVertices()[k].x(), shadowSector->getVertices()[k].y(), shadowSector->getVertices()[k].z());
+		}
+		tglEnd();
+	}*/
+
 	tglPushMatrix();
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
@@ -1323,7 +1334,7 @@ void GfxTinyGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
 
 	tglColor3f(0.0f, 0.0f, 0.0f);
 
-	//Explicitly cast to avoid problems with C++11
+	// Explicitly cast to avoid problems with C++11
 	float fx1 = x1;
 	float fx2 = x2;
 	float fy1 = y1;
@@ -1381,7 +1392,7 @@ void GfxTinyGL::drawRectangle(const PrimitiveObject *primitive) {
 		tglVertex2f(x1, y2 + 1);
 		tglEnd();
 	} else {
-		// tglLineWidth(_scaleW); // Not implemented in TinyGL
+		//tglLineWidth(_scaleW); // Not implemented in TinyGL
 		tglBegin(TGL_LINE_LOOP);
 		tglVertex2f(x1, y1);
 		tglVertex2f(x2 + 1, y1);
@@ -1417,7 +1428,7 @@ void GfxTinyGL::drawLine(const PrimitiveObject *primitive) {
 
 	tglColor3ub(color.getRed(), color.getGreen(), color.getBlue());
 
-//	tglLineWidth(_scaleW); // Not implemented in TinyGL
+	//tglLineWidth(_scaleW); // Not implemented in TinyGL
 
 	tglBegin(TGL_LINES);
 	tglVertex2f(x1, y1);

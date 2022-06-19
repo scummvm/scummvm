@@ -121,6 +121,13 @@ private:
 	Common::String getSystemProperty(const char *name) const;
 
 public:
+	enum {
+		TOUCH_MODE_TOUCHPAD = 0,
+		TOUCH_MODE_MOUSE = 1,
+		TOUCH_MODE_GAMEPAD = 2,
+		TOUCH_MODE_MAX = 3
+	};
+
 	OSystem_Android(int audio_sample_rate, int audio_buffer_size);
 	virtual ~OSystem_Android();
 
@@ -136,6 +143,8 @@ public:
 	void pushEvent(const Common::Event &event1, const Common::Event &event2);
 
 	TouchControls &getTouchControls() { return _touchControls; }
+	void applyTouchSettings(bool _3dMode, bool overlayShown);
+	void setupTouchMode(int oldValue, int newValue);
 
 private:
 	Common::Queue<Common::Event> _event_queue;
@@ -146,7 +155,7 @@ private:
 	Common::Point _touch_pt_down, _touch_pt_scroll, _touch_pt_dt, _touch_pt_multi;
 	int _eventScaleX;
 	int _eventScaleY;
-	bool _touchpad_mode;
+	int _touch_mode;
 	int _touchpad_scale;
 	int _trackball_scale;
 	int _dpad_scale;

@@ -30,13 +30,14 @@ namespace AGS3 {
 // parameters to run_on_event
 #define GE_LEAVE_ROOM 1
 #define GE_ENTER_ROOM 2
-#define GE_MAN_DIES   3
+//#define GE_MAN_DIES 3 // ancient obsolete event
 #define GE_GOT_SCORE  4
 #define GE_GUI_MOUSEDOWN 5
 #define GE_GUI_MOUSEUP   6
 #define GE_ADD_INV       7
 #define GE_LOSE_INV      8
 #define GE_RESTORE_GAME  9
+#define GE_ENTER_ROOM_AFTERFADE 10
 
 // Game event types:
 // common script callback

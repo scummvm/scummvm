@@ -135,7 +135,6 @@ protected:
 	DECLARE_LUA_OPCODE(ImPause) override;
 	DECLARE_LUA_OPCODE(ImResume) override;
 	DECLARE_LUA_OPCODE(GetSectorName);
-	DECLARE_LUA_OPCODE(GetCameraPosition) override;
 	DECLARE_LUA_OPCODE(GetCameraYaw);
 	DECLARE_LUA_OPCODE(YawCamera);
 	DECLARE_LUA_OPCODE(GetCameraPitch);
@@ -181,11 +180,11 @@ protected:
 	DECLARE_LUA_OPCODE(LocalizeString) override;
 	DECLARE_LUA_OPCODE(WorldToScreen) override;
 	DECLARE_LUA_OPCODE(RenderModeUser) override;
-	//PS2:
+	// PS2:
 	DECLARE_LUA_OPCODE(GetMemoryCardId);
 	DECLARE_LUA_OPCODE(OverWorldToScreen);
 	DECLARE_LUA_OPCODE(SetReplayMode);
-	//ResidualVM-hacks:
+	// ResidualVM-hacks:
 	DECLARE_LUA_OPCODE(GetResidualVMPreference);
 	DECLARE_LUA_OPCODE(SetResidualVMPreference);
 };

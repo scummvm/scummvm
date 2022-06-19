@@ -26,7 +26,6 @@
 
 #include "engines/grim/pool.h"
 
-
 namespace Grim {
 
 class Material;
@@ -43,8 +42,6 @@ public:
 	int getHeight() const;
 
 	static int32 getStaticTag() { return MKTAG('O','V','E','R'); }
-
-
 
 //private:
 	Material *_material;

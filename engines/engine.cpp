@@ -424,6 +424,7 @@ void initGraphics3d(int width, int height) {
 		g_system->initSize(width, height);
 		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen")); // TODO: Replace this with initCommonGFX()
 		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio")); // TODO: Replace this with initCommonGFX()
+		g_system->setStretchMode(ConfMan.get("stretch_mode").c_str()); // TODO: Replace this with initCommonGFX()
 	g_system->endGFXTransaction();
 }
 
@@ -707,21 +708,41 @@ void Engine::openMainMenuDialog() {
 
 bool Engine::warnUserAboutUnsupportedGame(Common::String msg) {
 	if (ConfMan.getBool("enable_unsupported_game_warning")) {
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if (ttsMan != nullptr) {
+			ttsMan->pushState();
+			g_gui.initTextToSpeech();
+		}
+
 		GUI::MessageDialog alert(!msg.empty() ? _("WARNING: ") + Common::U32String(msg) + _(" Shall we still run the game?") :
 				 _("WARNING: The game you are about to start is"
 			" not yet fully supported by ScummVM. As such, it is likely to be"
 			" unstable, and any saved game you make might not work in future"
 			" versions of ScummVM."), _("Start anyway"), _("Cancel"));
-		return alert.runModal() == GUI::kMessageOK;
+		int status = alert.runModal();
+
+		if (ttsMan != nullptr)
+			ttsMan->popState();
+
+		return status == GUI::kMessageOK;
 	}
 	return true;
 }
 
 void Engine::errorUnsupportedGame(Common::String extraMsg) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr) {
+		ttsMan->pushState();
+		g_gui.initTextToSpeech();
+	}
+
 	Common::String message = extraMsg.empty() ? _("This game is not supported.") : _("This game is not supported for the following reason:\n\n");
 	message += _(extraMsg);
 	message += "\n\n";
 	GUI::MessageDialog(message).runModal();
+
+	if (ttsMan != nullptr)
+		ttsMan->popState();
 }
 
 uint32 Engine::getTotalPlayTime() const {

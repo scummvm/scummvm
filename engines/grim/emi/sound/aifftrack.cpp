@@ -20,9 +20,11 @@
  */
 
 #include "common/mutex.h"
+
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/aiff.h"
+
 #include "engines/grim/debug.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/emi/sound/aifftrack.h"

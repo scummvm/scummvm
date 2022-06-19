@@ -23,6 +23,7 @@
 #define GRIM_COMPONENT_H
 
 #include "math/matrix4.h"
+
 #include "engines/grim/object.h"
 #include "engines/grim/animation.h"
 

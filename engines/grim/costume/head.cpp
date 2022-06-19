@@ -35,7 +35,7 @@ void Head::Joint::init(ModelNode *node) {
 }
 
 void Head::Joint::orientTowards(bool entering, const Math::Vector3d &point, float rate, const Math::Matrix4 &matrix,
-								float maxPitch, float maxYaw, float maxRoll, float constrain) {
+                                float maxPitch, float maxYaw, float maxRoll, float constrain) {
 	float step = g_grim->getPerSecond(rate);
 	float yawStep = step;
 	float pitchStep = step / 3.0f;
@@ -82,7 +82,7 @@ void Head::Joint::orientTowards(bool entering, const Math::Vector3d &point, floa
 	                                                                // i.e. when you look straight up, your head up vector tilts/arches to point straight backwards.
 	else if (Math::Vector3d::dotProduct(targetDir, worldUp) <= -0.98f) // Avoid singularity if trying to look straight down.
 		lookAtTM.buildFromTargetDir(modelFront, targetDir, modelUp, frontDir); // Instead of orienting head towards scene down, orient head towards character "front",
-																   // i.e. when you look straight down, your head up vector tilts/arches to point straight forwards.
+		                                                                       // i.e. when you look straight down, your head up vector tilts/arches to point straight forwards.
 	else
 		lookAtTM.buildFromTargetDir(modelFront, targetDir, modelUp, worldUp);
 	// The above specifies the world space orientation of this bone, but we need to output

@@ -55,6 +55,8 @@ public:
 	void drawInViewport() override;
 	void drawRgbaTexture() override;
 
+	void enableFog(const Math::Vector4d &fogColor) override;
+
 	void flipBuffer() override;
 
 private:

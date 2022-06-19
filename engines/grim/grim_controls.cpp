@@ -20,6 +20,7 @@
  */
 
 #include "common/events.h"
+
 #include "engines/grim/lua.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/debugger.h"
@@ -228,7 +229,7 @@ const ControlDescriptor controls[] = {
 	{ "AXIS_MOUSE_Y", KEYCODE_AXIS_MOUSE_Y },
 	{ "AXIS_MOUSE_Z", KEYCODE_AXIS_MOUSE_Z },
 
-//PS2
+// PS2
 	{ "KEY_JOY1_SQUARE", KEYCODE_JOY1_X },
 	{ "KEY_JOY1_TRIANGLE", KEYCODE_JOY1_Y },
 	{ "KEY_JOY1_CIRCLE", KEYCODE_JOY1_B },

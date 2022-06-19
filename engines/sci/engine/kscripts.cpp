@@ -154,6 +154,16 @@ reg_t kResCheck(EngineState *s, int argc, reg_t *argv) {
 	}
 
 #ifdef ENABLE_SCI32
+	// At least LSL6-Hires explicitly treats wave and audio resources the same
+	// in its check routine. This was removed in later interpreters. It may be
+	// in others, but LSL6 is the only game known to have scripts that rely on
+	// this behavior for anything except except kLoad/kUnload calls. Bug #13549
+	if (g_sci->getGameId() == GID_LSL6HIRES) {
+		if (restype == kResourceTypeWave && res == nullptr) {
+			res = g_sci->getResMan()->testResource(ResourceId(kResourceTypeAudio, argv[1].toUint16()));
+		}
+	}
+
 	// GK2 stores some VMDs inside of resource volumes, but usually videos are
 	// streamed from the filesystem.
 	if (res == nullptr) {

@@ -55,7 +55,7 @@ void walkbehinds_recalc();
 void walkbehinds_generate_sprites();
 // Edits the given game object's sprite, cutting out pixels covered by walk-behinds;
 // returns whether any pixels were updated
-bool walkbehinds_cropout(Shared::Bitmap *sprit, int sprx, int spry, int basel, int zoom = 100);
+bool walkbehinds_cropout(Shared::Bitmap *sprit, int sprx, int spry, int basel);
 
 } // namespace AGS3
 

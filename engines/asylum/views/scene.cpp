@@ -71,6 +71,7 @@ Scene::Scene(AsylumEngine *engine): _vm(engine),
 
 	_savedScreen.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 
+	_debugShowVersion = false;
 	g_debugActors = 0;
 	g_debugObjects  = 0;
 	g_debugPolygons  = 0;
@@ -423,7 +424,7 @@ bool Scene::update() {
 bool Scene::action(AsylumAction a) {
 	switch (a) {
 	case kAsylumActionShowVersion:
-		// TODO show version!
+		_debugShowVersion = !_debugShowVersion;
 		break;
 
 	case kAsylumActionQuickLoad:
@@ -444,6 +445,16 @@ bool Scene::action(AsylumAction a) {
 
 		getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2206 + a - kAsylumActionSwitchToSarah)]->scriptIndex,
 								 getSharedData()->getPlayerIndex());
+		break;
+
+	case kAsylumActionOpenInventory:
+		if (getActor()->inventory[0] && getActor()->getStatus() == kActorStatusEnabled) {
+			getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 2));
+			getActor()->changeStatus(kActorStatusShowingInventory);
+		} else if (getActor()->getStatus() == kActorStatusShowingInventory || getActor()->getStatus() == kActorStatus10) {
+			getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 5));
+			getActor()->changeStatus(kActorStatusEnabled);
+		}
 		break;
 	}
 
@@ -505,10 +516,6 @@ bool Scene::key(const AsylumEvent &evt) {
 			_vm->lastScreenUpdate = _vm->screenUpdateCount;
 			getActor()->setLastScreenUpdate(_vm->screenUpdateCount);
 		}
-		break;
-
-	case Common::KEYCODE_m:
-		g_debugScrolling = !g_debugScrolling;
 		break;
 	}
 
@@ -631,6 +638,13 @@ bool Scene::updateScreen() {
 	getActor()->drawNumber();
 
 	// Original handle all debug commands here (we do it as part of each update command)
+	if (_debugShowVersion) {
+		getText()->setPosition(Common::Point(0, 0));
+		getText()->loadFont(_ws->font1);
+		getText()->draw(Common::String::format("Version %s / Build %d",
+												getSaveLoad()->getVersion(),
+												getSaveLoad()->getBuild()).c_str());
+	}
 
 	if (getSharedData()->getFlag(kFlagScene1)) {
 		getScreen()->clear();

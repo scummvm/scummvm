@@ -23,6 +23,7 @@
 #define GFX_OPENGL_SHADERS_H_
 
 #include "common/rect.h"
+
 #include "math/rect2d.h"
 
 #include "graphics/opengl/shader.h"

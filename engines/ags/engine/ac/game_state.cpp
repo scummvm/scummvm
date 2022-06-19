@@ -376,11 +376,9 @@ void GameState::SetWaitSkipResult(int how, int data) {
 }
 
 int GameState::GetWaitSkipResult() const {
-	switch (wait_skipped_by) {
-	case SKIP_KEYPRESS: return wait_skipped_by_data;
-	case SKIP_MOUSECLICK: return -(wait_skipped_by_data + 1); // convert to 1-based code and negate
-	default: return 0;
-	}
+	// NOTE: we remove timer flag to make timeout reason = 0
+	return ((wait_skipped_by & ~SKIP_AUTOTIMER) << 16)
+		| (wait_skipped_by_data & 0x0000FFFF);
 }
 
 bool GameState::IsBlockingVoiceSpeech() const {

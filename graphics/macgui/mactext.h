@@ -194,6 +194,7 @@ public:
 	void appendText(const Common::U32String &str, const Font *font, uint16 r = 0, uint16 g = 0, uint16 b = 0, bool skipAdd = false);
 
 	int getTextFont() { return _defaultFormatting.fontId; }
+	void enforceTextFont(uint16 fontId);
 
 	// because currently, we are counting linespacing as font height
 	int getTextSize() { return _defaultFormatting.fontSize; }
@@ -210,6 +211,7 @@ public:
 
 	int getTextSlant(int start, int end);
 	void setTextSlant(int textSlant, int start, int end);
+	void enforceTextSlant(int textSlant);
 
 	// director text related-functions
 	int getMouseChar(int x, int y);
@@ -272,6 +274,7 @@ public:
 
 	Common::U32String getEditedString();
 	Common::U32String getText() { return _str; }
+	Common::U32String getPlainText();
 
 	void setSelRange(int selStart, int selEnd);
 

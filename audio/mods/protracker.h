@@ -26,17 +26,107 @@
  *  - parallaction
  *  - gob
  *  - hopkins
+ *  - chewy (subclass)
  */
 
 #ifndef AUDIO_MODS_PROTRACKER_H
 #define AUDIO_MODS_PROTRACKER_H
+
+#include "audio/mods/paula.h"
+#include "audio/mods/module.h"
 
 namespace Common {
 class SeekableReadStream;
 }
 
 namespace Modules {
-class Module;
+
+class ProtrackerStream : public ::Audio::Paula {
+protected:
+	Module *_module;
+
+private:
+	int _tick;
+	int _row;
+	int _pos;
+
+	int _speed;
+	int _bpm;
+
+	// For effect 0xB - Jump To Pattern;
+	bool _hasJumpToPattern;
+	int _jumpToPattern;
+
+	// For effect 0xD - PatternBreak;
+	bool _hasPatternBreak;
+	int _skipRow;
+
+	// For effect 0xE6 - Pattern Loop
+	bool _hasPatternLoop;
+	int _patternLoopCount;
+	int _patternLoopRow;
+
+	// For effect 0xEE - Pattern Delay
+	byte _patternDelay;
+
+	static const int16 sinetable[];
+
+	struct Track {
+		byte sample;
+		byte lastSample;
+		uint16 period;
+		Offset offset;
+
+		byte vol;
+		byte finetune;
+
+		// For effect 0x0 - Arpeggio
+		bool arpeggio;
+		byte arpeggioNotes[3];
+
+		// For effect 0x3 - Porta to note
+		uint16 portaToNote;
+		byte portaToNoteSpeed;
+
+		// For effect 0x4 - Vibrato
+		int vibrato;
+		byte vibratoPos;
+		byte vibratoSpeed;
+		byte vibratoDepth;
+
+		// For effect 0xED - Delay sample
+		byte delaySample;
+		byte delaySampleTick;
+	} _track[4];
+
+public:
+	ProtrackerStream(Common::SeekableReadStream *stream, int offs, int rate, bool stereo);
+
+protected:
+	ProtrackerStream(int rate, bool stereo);
+
+public:
+	virtual ~ProtrackerStream();
+
+	Modules::Module *getModule() {
+		// Ordinarily, the Module is not meant to be seen outside of
+		// this class, but occasionally, it's useful to be able to
+		// manipulate it directly. The Hopkins engine uses this to
+		// repair a broken song.
+		return _module;
+	}
+
+private:
+	void interrupt() override;
+
+	void doPorta(int track);
+	void doVibrato(int track);
+	void doVolSlide(int track, byte ex, byte ey);
+
+	void updateRow();
+	void updateEffects();
+};
+
 }
 
 namespace Audio {

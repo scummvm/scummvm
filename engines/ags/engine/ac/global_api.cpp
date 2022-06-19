@@ -1881,6 +1881,11 @@ RuntimeScriptValue Sc_WaitMouseKey(const RuntimeScriptValue *params, int32_t par
 	API_SCALL_INT_PINT(WaitMouseKey);
 }
 
+// int (int input_flags, int nloops)
+RuntimeScriptValue Sc_WaitInput(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_INT_PINT2(WaitInput);
+}
+
 RuntimeScriptValue Sc_SkipWait(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID(SkipWait);
 }
@@ -2257,6 +2262,7 @@ void RegisterGlobalAPI() {
 	ccAddExternalStaticFunction("WaitKey",                  Sc_WaitKey);
 	ccAddExternalStaticFunction("WaitMouse",                Sc_WaitMouse);
 	ccAddExternalStaticFunction("WaitMouseKey",             Sc_WaitMouseKey);
+	ccAddExternalStaticFunction("WaitInput",                Sc_WaitInput);
 	ccAddExternalStaticFunction("SkipWait",                 Sc_SkipWait);
 }
 

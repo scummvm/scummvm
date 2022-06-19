@@ -41,7 +41,6 @@
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/model.h"
 #include "engines/grim/primitives.h"
-
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/luadebug.h"
 #include "engines/grim/lua/lualib.h"
@@ -101,7 +100,6 @@ void LuaObjects::pushObjects() const {
 		}
 	}
 }
-
 
 LuaBase *LuaBase::s_instance = nullptr;
 
@@ -398,7 +396,7 @@ bool LuaBase::findCostume(lua_Object costumeObj, Actor *actor, Costume **costume
 	if (lua_isnil(costumeObj))
 		return true;
 	if (lua_isnumber(costumeObj)) {
-		/*		int num = (int)lua_getnumber(costumeObj);*/
+		//int num = (int)lua_getnumber(costumeObj);
 		error("findCostume: search by Id not implemented");
 		// TODO get costume by ID ?
 	}

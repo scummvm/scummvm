@@ -222,6 +222,8 @@ private:
 	Graphics::Surface _savedScreen;
 	byte _savedPalette[PALETTE_SIZE];
 
+	bool _debugShowVersion;
+
 	//////////////////////////////////////////////////////////////////////////
 	// Message handling
 	void activate();

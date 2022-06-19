@@ -519,6 +519,13 @@ void Sound::playSound(int soundID) {
 			int start = (ptr[2] * 60 + ptr[3]) * 75 + ptr[4];
 			int end = (ptr[5] * 60 + ptr[6]) * 75 + ptr[7];
 
+			// Add the user-specified adjustments.
+			if (_vm->_game.id == GID_MONKEY && track == 17) {
+				int adjustment = ConfMan.getInt(start == 0 ? "mi1_intro_adjustment" : "mi1_outlook_adjustment");
+
+				start += ((75 * adjustment) / 100);
+			}
+
 			playCDTrack(track, loops == 0xff ? -1 : loops, start, end <= start ? 0 : end - start);
 			_currentCDSound = soundID;
 		} else {

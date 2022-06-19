@@ -66,7 +66,8 @@ static void loadBuiltinTexture(JNI::BitmapResources resource, OpenGL::Surface *s
 // AndroidGraphicsManager
 //
 AndroidGraphicsManager::AndroidGraphicsManager() :
-	_touchcontrols(nullptr) {
+	_touchcontrols(nullptr),
+	_old_touch_mode(OSystem_Android::TOUCH_MODE_TOUCHPAD) {
 	ENTER();
 
 	// Initialize our OpenGL ES context.
@@ -76,8 +77,8 @@ AndroidGraphicsManager::AndroidGraphicsManager() :
 	loadBuiltinTexture(JNI::BitmapResources::TOUCH_ARROWS_BITMAP, _touchcontrols);
 	_touchcontrols->updateGLTexture();
 
-	// In 2D we always fallback to standard 2D mode
-	JNI::setTouch3DMode(false);
+	// not in 3D, not in overlay
+	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, false);
 }
 
 AndroidGraphicsManager::~AndroidGraphicsManager() {
@@ -150,23 +151,13 @@ void AndroidGraphicsManager::displayMessageOnOSD(const Common::U32String &msg) {
 	JNI::displayMessageOnOSD(msg);
 }
 
-bool AndroidGraphicsManager::showMouse(bool visible) {
-	bool last = OpenGL::OpenGLGraphicsManager::showMouse(visible);
-
-	if (visible && last != visible) {
-		// We just displayed a mouse cursor, disable the 3D mode if user enabled it
-		JNI::setTouch3DMode(false);
-	}
-
-	return last;
-}
-
 void AndroidGraphicsManager::showOverlay() {
 	if (_overlayVisible)
 		return;
 
-	_old_touch_3d_mode = JNI::getTouch3DMode();
-	JNI::setTouch3DMode(false);
+	_old_touch_mode = JNI::getTouchMode();
+	// not in 3D, in overlay
+	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, true);
 
 	OpenGL::OpenGLGraphicsManager::showOverlay();
 }
@@ -175,7 +166,8 @@ void AndroidGraphicsManager::hideOverlay() {
 	if (!_overlayVisible)
 		return;
 
-	JNI::setTouch3DMode(_old_touch_3d_mode);
+	// Restore touch mode active before overlay was shown
+	JNI::setTouchMode(_old_touch_mode);
 
 	OpenGL::OpenGLGraphicsManager::hideOverlay();
 }

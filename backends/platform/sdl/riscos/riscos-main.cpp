@@ -24,7 +24,7 @@
 #if defined(RISCOS)
 
 #include "backends/platform/sdl/riscos/riscos.h"
-#include "backends/plugins/sdl/sdl-provider.h"
+#include "backends/plugins/riscos/riscos-provider.h"
 #include "base/main.h"
 
 int main(int argc, char *argv[]) {
@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
 	g_system->init();
 
 #ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
+	PluginManager::instance().addPluginProvider(new RiscOSPluginProvider());
 #endif
 
 	// Invoke the actual ScummVM main entry point

@@ -595,8 +595,8 @@ void Holomap::processHolomap() {
 
 		if (rotate) {
 			const int32 dt = _engine->_lbaTime - time;
-			xRot = _engine->_collision->getAverageValue(ClampAngle(xRot), _locations[currentLocation].angleX, 75, dt);
-			yRot = _engine->_collision->getAverageValue(ClampAngle(yRot), _locations[currentLocation].angleY, 75, dt);
+			xRot = _engine->_collision->clampedLerp(ClampAngle(xRot), _locations[currentLocation].angleX, 75, dt);
+			yRot = _engine->_collision->clampedLerp(ClampAngle(yRot), _locations[currentLocation].angleY, 75, dt);
 			redraw = true;
 		}
 

@@ -155,7 +155,7 @@ void Room89::setup_func() {
 	calc_person_look();
 	int destX;
 	
-	if (_G(spieler_vector)[P_CHEWY].Xypos[0] >= 230)
+	if (_G(moveState)[P_CHEWY].Xypos[0] >= 230)
 		destX = 318;
 	else
 		destX = 116;

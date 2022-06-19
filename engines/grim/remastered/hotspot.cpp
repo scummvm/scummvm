@@ -21,18 +21,13 @@
 
 #include "engines/grim/remastered/hotspot.h"
 
-
 namespace Grim {
 
 Hotspot::Hotspot(const Common::String &name, int x, int y, int width, int height) :
 		_name(name), _x(x), _y(y), _width(width), _height(height), _rect(Math::Vector2d(_x, _y), Math::Vector2d(_x + _width, _y + _height)) {
-
 }
 
 Hotspot::~Hotspot() {
-
 }
-
-
 
 }

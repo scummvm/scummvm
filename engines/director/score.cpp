@@ -256,7 +256,7 @@ void Score::startPlay() {
 	_playState = kPlayStarted;
 	_nextFrameTime = 0;
 
-	_lastPalette = _movie->getCast()->_defaultPalette;
+	_lastPalette = _frames[_currentFrame]->_palette.paletteId;
 	_vm->setPalette(resolvePaletteId(_lastPalette));
 
 	if (_frames.size() <= 1) {	// We added one empty sprite
@@ -729,13 +729,13 @@ Sprite *Score::getOriginalSpriteById(uint16 id) {
 	Frame *frame = _frames[_currentFrame];
 	if (id < frame->_sprites.size())
 		return frame->_sprites[id];
-	warning("Score::getOriginalSpriteById(%d): out of bounds", id);
+	warning("Score::getOriginalSpriteById(%d): out of bounds, >= %d", id, frame->_sprites.size());
 	return nullptr;
 }
 
 Channel *Score::getChannelById(uint16 id) {
 	if (id >= _channels.size()) {
-		warning("Score::getChannelById(%d): out of bounds", id);
+		warning("Score::getChannelById(%d): out of bounds, >= %d", id, _channels.size());
 		return nullptr;
 	}
 

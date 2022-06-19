@@ -170,6 +170,8 @@ void process_event(const EventHappened *evp) {
 			if (evp->data3 == EVROM_BEFOREFADEIN) {
 				_G(in_enters_screen)++;
 				run_on_event(GE_ENTER_ROOM, RuntimeScriptValue().SetInt32(_G(displayed_room)));
+			} else if (evp->data3 == EVROM_AFTERFADEIN) {
+				run_on_event(GE_ENTER_ROOM_AFTERFADE, RuntimeScriptValue().SetInt32(_G(displayed_room)));
 			}
 			//Debug::Printf("Running room interaction, event %d", evp->data3);
 		}

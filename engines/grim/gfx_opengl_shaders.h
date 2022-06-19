@@ -24,7 +24,9 @@
 
 #include "engines/grim/actor.h"
 #include "engines/grim/gfx_base.h"
+
 #include "graphics/opengl/shader.h"
+
 #include "common/stack.h"
 #include "common/rect.h"
 
@@ -38,8 +40,8 @@ public:
 	/**
 	 * Creates a render-context.
 	 *
-	 * @param screenW		the width of the context
-	 * @param screenH		the height of the context
+	 * @param screenW        the width of the context
+	 * @param screenH        the height of the context
 	 */
 	void setupScreen(int screenW, int screenH) override;
 
@@ -61,7 +63,7 @@ public:
 	void clearDepthBuffer() override;
 
 	/**
-	 *	Swap the buffers, making the drawn screen visible
+	 * Swap the buffers, making the drawn screen visible
 	 */
 	void flipBuffer() override;
 
@@ -112,7 +114,7 @@ public:
 	 *
 	 * the external bitmap might have its data changed by this function,
 	 *
-	 * @param bitmap	the bitmap to be prepared
+	 * @param bitmap       the bitmap to be prepared
 	 * @see destroyBitmap
 	 * @see drawBitmap
 	 */
@@ -122,7 +124,7 @@ public:
 	 * Draws a bitmap
 	 * before this is safe to use, createBitmap MUST have been called
 	 *
-	 * @param bitmap	the bitmap to be drawn
+	 * @param bitmap       the bitmap to be drawn
 	 * @see createBitmap
 	 * @see destroyBitmap
 	 */
@@ -133,7 +135,7 @@ public:
 	 * after this is called, it is safe to dispose of or change the external
 	 * bitmapdata.
 	 *
-	 * @param bitmap	the bitmap to be destroyed
+	 * @param bitmap       the bitmap to be destroyed
 	 * @see createBitmap
 	 * @see drawBitmap
 	 */
@@ -179,9 +181,9 @@ public:
 	 * Prepare a movie-frame for drawing
 	 * performing any necessary conversion
 	 *
-	 * @param width			the width of the movie-frame.
-	 * @param height		the height of the movie-frame.
-	 * @param bitmap		a pointer to the data for the movie-frame.
+	 * @param width         the width of the movie-frame.
+	 * @param height        the height of the movie-frame.
+	 * @param bitmap        a pointer to the data for the movie-frame.
 	 * @see drawMovieFrame
 	 * @see releaseMovieFrame
 	 */
@@ -287,5 +289,7 @@ private:
 	GLuint _blastVBO;
 	GLuint _storedDisplay;
 };
+
 }
+
 #endif

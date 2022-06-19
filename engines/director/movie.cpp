@@ -92,6 +92,9 @@ Movie::Movie(Window *window) {
 Movie::~Movie() {
 	// _movieArchive is shared with the cast, so the cast will free it
 	delete _cast;
+
+	g_director->_openResFiles.erase(_sharedCast->getArchive()->getPathName());
+
 	delete _sharedCast;
 	delete _score;
 }
@@ -278,6 +281,8 @@ void Movie::clearSharedCast() {
 	if (!_sharedCast)
 		return;
 
+	g_director->_openResFiles.erase(_sharedCast->getArchive()->getPathName());
+
 	delete _sharedCast;
 
 	_sharedCast = nullptr;
@@ -304,6 +309,9 @@ void Movie::loadSharedCastsFrom(Common::String filename) {
 	_sharedCast = new Cast(this, 0, true);
 	_sharedCast->setArchive(sharedCast);
 	_sharedCast->loadArchive();
+
+	// Register the resfile so that Cursor::readFromResource can find it
+	g_director->_openResFiles.setVal(sharedCast->getPathName(), sharedCast);
 }
 
 CastMember *Movie::getCastMember(CastMemberID memberID) {

@@ -61,6 +61,7 @@ struct GameInfo;
 #define GAME_IS_REMORSE (Ultima8Engine::get_instance()->getGameInfo()->_type == GameInfo::GAME_REMORSE)
 #define GAME_IS_REGRET (Ultima8Engine::get_instance()->getGameInfo()->_type == GameInfo::GAME_REGRET)
 #define GAME_IS_CRUSADER (GAME_IS_REMORSE || GAME_IS_REGRET)
+#define GAME_IS_DEMO (Ultima8Engine::get_instance()->getGameInfo()->_ucOffVariant == GameInfo::GAME_UC_DEMO)
 
 class Ultima8Engine : public Shared::UltimaEngine {
 	friend class Debugger;
@@ -121,7 +122,7 @@ private:
 	bool _hasCheated;
 	bool _cheatsEnabled;
 	unsigned int _inversion;
-	bool _unkCrusaderFlag; //!< not sure what this is but it's only used in usecode for crusader, so just keep track of it..
+	bool _crusaderTeleporting; //!< Flag used by the usecode to know if Crusader is currently teleporting
 	uint32 _moveKeyFrame; //!< An imperfect way for the Crusader usecode to stop remote camera viewing.
 	bool _cruStasis; //!< A slightly different kind of stasis for Crusader that stops some keyboard events
 private:
@@ -231,9 +232,9 @@ public:
 	INTRINSIC(I_getTimeInSeconds);
 	INTRINSIC(I_setTimeInGameHours);
 	INTRINSIC(I_avatarCanCheat);
-	INTRINSIC(I_getUnkCrusaderFlag);
-	INTRINSIC(I_setUnkCrusaderFlag);
-	INTRINSIC(I_clrUnkCrusaderFlag);
+	INTRINSIC(I_getCrusaderTeleporting);
+	INTRINSIC(I_setCrusaderTeleporting);
+	INTRINSIC(I_clrCrusaderTeleporting);
 	INTRINSIC(I_makeAvatarACheater);
 	INTRINSIC(I_closeItemGumps);
 	INTRINSIC(I_setCruStasis);
@@ -262,11 +263,11 @@ public:
 		_showTouching = !_showTouching;
 	}
 
-	bool isUnkCrusaderFlag() const {
-		return _unkCrusaderFlag;
+	bool isCrusaderTeleporting() const {
+		return _crusaderTeleporting;
 	}
-	void setUnkCrusaderFlag(bool flag) {
-		_unkCrusaderFlag = flag;
+	void setCrusaderTeleporting(bool flag) {
+		_crusaderTeleporting = flag;
 	}
 	void setCruStasis(bool flag) {
 		_cruStasis = flag;

@@ -354,12 +354,12 @@ uint Menu::dialogIdFromType(DialogType type) {
 		uint id;
 		uint idXbox;
 	} mapping[] = {
-			{ kConfirmNewGame,        1080, 1010 },
-			{ kConfirmLoadGame,       1060, 1003 },
-			{ kConfirmOverwrite,      1040, 1004 },
-			{ kConfirmEraseSavedGame, 1020, 0 },
-			{ kErrorEraseSavedGame,   1050, 0 },
-			{ kConfirmQuit,           1070, 0 }
+		{ kConfirmNewGame,        1080, 1010 },
+		{ kConfirmLoadGame,       1060, 1003 },
+		{ kConfirmOverwrite,      1040, 1004 },
+		{ kConfirmEraseSavedGame, 1020, 0 },
+		{ kErrorEraseSavedGame,   1050, 0 },
+		{ kConfirmQuit,           1070, 0 }
 	};
 
 	uint id = 0;

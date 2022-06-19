@@ -23,14 +23,16 @@
 #include "common/memstream.h"
 #include "common/stream.h"
 #include "common/substream.h"
+
+#include "graphics/surface.h"
+
 #include "engines/grim/grim.h"
 #include "engines/grim/localize.h"
 #include "engines/grim/textobject.h"
 #include "engines/grim/textsplit.h"
-#include "graphics/surface.h"
-#include "video/bink_decoder.h"
-
 #include "engines/grim/movie/bink.h"
+
+#include "video/bink_decoder.h"
 
 #ifdef USE_BINK
 

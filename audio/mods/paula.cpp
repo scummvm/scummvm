@@ -52,10 +52,10 @@ Paula::Paula(bool stereo, int rate, uint interruptFreq, FilterMode filterMode, i
 	_filterState.a0[2] = filterCalculateA0(rate,  7000);
 
 	clearVoices();
-	_voice[0].panning = 191;
-	_voice[1].panning = 63;
-	_voice[2].panning = 63;
-	_voice[3].panning = 191;
+	_voice[0].panning = PANNING_RIGHT;
+	_voice[1].panning = PANNING_LEFT;
+	_voice[2].panning = PANNING_LEFT;
+	_voice[3].panning = PANNING_RIGHT;
 
 	if (_intFreq == 0)
 		_intFreq = _rate;

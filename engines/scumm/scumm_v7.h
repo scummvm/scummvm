@@ -99,6 +99,7 @@ public:
 	void clearSubtitleQueue();
 	void CHARSET_1() override;
 	bool isSmushActive() { return _smushActive; }
+	void removeBlastTexts() override;
 
 protected:
 
@@ -131,7 +132,7 @@ protected:
 	void createTextRenderer(GlyphRenderer_v7 *gr) override;
 	void enqueueText(const byte *text, int x, int y, byte color, byte charset, TextStyleFlags flags);
 	void drawBlastTexts() override;
-	void removeBlastTexts() override;
+
 	void actorTalk(const byte *msg) override;
 	void translateText(const byte *text, byte *trans_buff) override;
 	void loadLanguageBundle() override;

@@ -28,6 +28,7 @@
 #include "chewy/main.h"
 #include "chewy/menus.h"
 #include "chewy/mouse.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Dialogs {
@@ -343,9 +344,9 @@ void Inventory::menu() {
 				_G(cur)->plot_cur();
 			_G(out)->setPointer(nullptr);
 			if (menu_flag1 == MENU_DISPLAY) {
-				_G(fx)->blende1(_G(workptr), _G(screen0), nullptr, 200, 0, 300);
+				_G(fx)->blende1(_G(workptr), nullptr, 0, 300);
 			} else if (menu_flag1 == MENU_HIDE)
-				_G(fx)->blende1(_G(workptr), _G(screen0), nullptr, 200, 1, 300);
+				_G(fx)->blende1(_G(workptr), nullptr, 1, 300);
 			menu_flag1 = false;
 			_G(out)->copyToScreen();
 		} else {
@@ -383,6 +384,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 	bool endLoop = false;
 	int16 startLine = 0;
 	bool mouseFl = true;
+	bool firstTime = true;
 
 	if (mode == INV_ATS_MODE) {
 		itemName = _G(atds)->getTextEntry(invent_nr, TXT_MARK_NAME, INV_ATS_DATA);
@@ -408,6 +410,8 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 	} else {
 		endLoop = true;
 	}
+
+	const int16 speechId = _G(atds)->getLastSpeechId();
 
 	while (!endLoop) {
 		int16 rect = _G(in)->findHotspot(_G(inventoryHotspots));
@@ -517,6 +521,11 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 				_G(out)->printxy(WIN_LOOK_X, WIN_LOOK_Y + yoff + k * 10, 14, 300,
 								 _G(scr_width), itemDesc[i].c_str());
 				++k;
+			}
+
+			if (g_engine->_sound->speechEnabled() && speechId >= 0 && firstTime) {
+				g_engine->_sound->playSpeech(speechId, false);
+				firstTime = false;
 			}
 		}
 
@@ -638,13 +647,13 @@ void Inventory::showDiary() {
 	_G(gameState).scrollx = 0;
 	_G(gameState).scrolly = 0;
 
-	_G(room)->load_tgp(DIARY_START, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
+	_G(room)->load_tgp(DIARY_START, &_G(room_blk), GBOOK_TGP, false, GBOOK);
 	_G(out)->setPointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(gameState).scrollx, _G(gameState).scrolly);
 	_G(out)->copyToScreen();
 	_G(room)->set_ak_pal(&_G(room_blk));
 	_G(out)->setPointer(nullptr);
-	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 
 	while (_G(in)->getSwitchCode() != Common::KEYCODE_ESCAPE) {
 		g_events->update();
@@ -655,14 +664,14 @@ void Inventory::showDiary() {
 		SHOULD_QUIT_RETURN;
 	}
 
-	_G(room)->load_tgp(_G(gameState)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
+	_G(room)->load_tgp(_G(gameState)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, true, EPISODE1);
 	_G(gameState).scrollx = scrollx;
 	_G(gameState).scrolly = scrolly;
 	setupScreen(NO_SETUP);
 	plot_menu();
 	_G(out)->setPointer(nullptr);
 	_G(room)->set_ak_pal(&_G(room_blk));
-	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 }
 
 } // namespace Dialogs

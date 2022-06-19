@@ -164,7 +164,7 @@ void Room97::setup_func() {
 	_G(spieler_mi)[P_HOWARD].Vorschub = 6;
 	_G(spieler_mi)[P_NICHELLE].Vorschub = 4;
 
-	if (_G(gameState).flags35_80 && _G(spieler_vector)->Xypos[P_CHEWY] > 830)
+	if (_G(gameState).flags35_80 && _G(moveState)->Xypos[P_CHEWY] > 830)
 		setPersonPos(830, 98, P_CHEWY, P_RIGHT);
 
 	if (_word18DB2E)
@@ -208,7 +208,7 @@ void Room97::setup_func() {
 
 	calc_person_look();
 
-	const int chewyPosX = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	const int chewyPosX = _G(moveState)[P_CHEWY].Xypos[0];
 	if (!_G(gameState).flags36_80) {
 		int destX, destY;
 
@@ -241,7 +241,7 @@ void Room97::setup_func() {
 
 	int destX = -1;
 	int destY = -1;
-	const int nichellePosX = _G(spieler_vector)[P_NICHELLE].Xypos[0];
+	const int nichellePosX = _G(moveState)[P_NICHELLE].Xypos[0];
 	if (chewyPosX > 250 && nichellePosX < 232) {
 		destX = 232;
 		destY = 27;
@@ -343,7 +343,7 @@ void Room97::proc4() {
 		startSetAILWait(9, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(21);
 
-		while (_G(spieler_vector)[P_HOWARD].Xypos[0] > 996) {
+		while (_G(moveState)[P_HOWARD].Xypos[0] > 996) {
 			setupScreen(DO_SETUP);
 			SHOULD_QUIT_RETURN;
 		}
@@ -386,7 +386,7 @@ int Room97::proc5() {
 	autoMove(0, P_CHEWY);
 	auto_scroll(800, 0);
 	
-	while (_G(spieler_vector)[P_HOWARD].Xypos[0] < 1080) {
+	while (_G(moveState)[P_HOWARD].Xypos[0] < 1080) {
 		setupScreen(DO_SETUP);
 		SHOULD_QUIT_RETURN0;
 	}

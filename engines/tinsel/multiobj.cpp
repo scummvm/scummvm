@@ -30,6 +30,10 @@
 
 namespace Tinsel {
 
+const FRAME *MULTI_INIT::GetFrame() const {
+	return (const FRAME *)_vm->_handle->LockMem(FROM_32(hMulFrame));
+}
+
 /**
  * Initialize a multi-part object using a list of images to init
  * each object piece. One object is created for each image in the list.
@@ -40,11 +44,11 @@ namespace Tinsel {
 OBJECT *MultiInitObject(const MULTI_INIT *pInitTbl) {
 	OBJ_INIT obj_init;	// object init table
 	OBJECT *pFirst, *pObj;	// object pointers
-	FRAME *pFrame;		// list of images for the multi-part object
+	const FRAME *pFrame;		// list of images for the multi-part object
 
 	if (FROM_32(pInitTbl->hMulFrame)) {
 		// we have a frame handle
-		pFrame = (FRAME *)_vm->_handle->LockMem(FROM_32(pInitTbl->hMulFrame));
+		pFrame = pInitTbl->GetFrame();
 
 		obj_init.hObjImg  = READ_32(pFrame);	// first objects shape
 	} else {	// this must be a animation list for a NULL object
@@ -86,9 +90,9 @@ OBJECT *MultiInitObject(const MULTI_INIT *pInitTbl) {
 }
 
 OBJECT *InsertReelObj(const FREEL *reels) {
-	const MULTI_INIT *pmi = (const MULTI_INIT*)_vm->_handle->LockMem(reels->mobj);
+	const MULTI_INIT *pmi = reels->GetMultiInit();
 	// Verify that there is an image defined
-	const FRAME *frame = (const FRAME*)_vm->_handle->LockMem(pmi->hMulFrame);
+	const FRAME *frame = pmi->GetFrame();
 	const IMAGE *image = (const IMAGE*)_vm->_handle->LockMem(*frame);
 	assert(image);
 
@@ -98,7 +102,7 @@ OBJECT *InsertReelObj(const FREEL *reels) {
 }
 
 const FILM *GetSystemReelFilm(SysReel reelIndex) {
-	SCNHANDLE hFilm = _vm->_systemReel->Get(reelIndex);
+	SCNHANDLE hFilm = _vm->_systemReel->get(reelIndex);
 	const FILM *pfilm = (const FILM *)_vm->_handle->LockMem(hFilm);
 	return pfilm;
 }

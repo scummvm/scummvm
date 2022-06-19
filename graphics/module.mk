@@ -57,6 +57,7 @@ MODULE_OBJS += \
 	tinygl/arrays.o \
 	tinygl/clear.o \
 	tinygl/clip.o \
+	tinygl/fog.o \
 	tinygl/get.o \
 	tinygl/image_util.o \
 	tinygl/init.o \

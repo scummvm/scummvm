@@ -147,9 +147,8 @@ void MidiDriver_Accolade_AdLib::deinitSource(uint8 source) {
 		if (_oplType != OPL::Config::kOpl3) {
 			// For OPL2, get the current music instrument for this OPL channel.
 			program = _controlData[0][channel].program;
-			if (_instrumentRemapping)
-				// Apply instrument remapping (if specified) to instrument channels.
-				program = _instrumentRemapping[program];
+			// Apply instrument remapping to instrument channels.
+			program = _instrumentRemapping[program];
 		}
 
 		InstrumentInfo instrument { };

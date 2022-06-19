@@ -58,8 +58,8 @@ void setSsiPos() {
 	for (int16 i = 0; i < MAX_PERSON; i++) {
 		if (i >= P_NICHELLE)
 			tmp = 1;
-		int16 x = _G(spieler_vector)[i].Xypos[0] - _G(gameState).scrollx + _G(spieler_mi)[i].HotX;
-		int16 y = _G(spieler_vector)[i].Xypos[1] - _G(gameState).scrolly;
+		int16 x = _G(moveState)[i].Xypos[0] - _G(gameState).scrollx + _G(spieler_mi)[i].HotX;
+		int16 y = _G(moveState)[i].Xypos[1] - _G(gameState).scrolly;
 		_G(atds)->set_split_win(i + tmp, x, y);
 	}
 }
@@ -2168,7 +2168,7 @@ void calc_inv_use_txt(int16 test_nr) {
 		_G(gameState).scrollx = 0;
 		_G(gameState).scrolly = 0;
 
-		_G(room)->load_tgp(NOTEBOOK_START, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
+		_G(room)->load_tgp(NOTEBOOK_START, &_G(room_blk), GBOOK_TGP, false, GBOOK);
 		_G(out)->setPointer(_G(workptr));
 		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(gameState).scrollx, _G(gameState).scrolly);
 		_G(out)->copyToScreen();
@@ -2182,7 +2182,7 @@ void calc_inv_use_txt(int16 test_nr) {
 			SHOULD_QUIT_RETURN;
 		}
 
-		_G(room)->load_tgp(_G(gameState)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
+		_G(room)->load_tgp(_G(gameState)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, true, EPISODE1);
 
 		_G(gameState).scrollx = scrollx;
 		_G(gameState).scrolly = scrolly;

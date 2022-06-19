@@ -337,6 +337,18 @@ void MacText::setColors(uint32 fg, uint32 bg) {
 	_contentIsDirty = true;
 }
 
+void MacText::enforceTextFont(uint16 fontId) {
+	for (uint i = 0; i < _textLines.size(); i++) {
+		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
+			_textLines[i].chunks[j].fontId = fontId;
+		}
+	}
+
+	_fullRefresh = true;
+	render();
+	_contentIsDirty = true;
+}
+
 void MacText::setTextSize(int textSize) {
 	for (uint i = 0; i < _textLines.size(); i++) {
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
@@ -470,6 +482,22 @@ void setTextSlantCallback(MacFontRun &macFontRun, int textSlant) {
 
 void MacText::setTextSlant(int textSlant, int start, int end) {
 	setTextChunks(start, end, textSlant, setTextSlantCallback);
+}
+
+void MacText::enforceTextSlant(int textSlant) {
+	for (uint i = 0; i < _textLines.size(); i++) {
+		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
+			if (textSlant) {
+				_textLines[i].chunks[j].textSlant |= textSlant;
+			} else {
+				_textLines[i].chunks[j].textSlant = textSlant;
+			}
+		}
+	}
+
+	_fullRefresh = true;
+	render();
+	_contentIsDirty = true;
 }
 
 // this maybe need to amend
@@ -1618,6 +1646,17 @@ bool MacText::isCutAllowed() {
 
 Common::U32String MacText::getEditedString() {
 	return getTextChunk(_editableRow, 0, -1, -1);
+}
+
+Common::U32String MacText::getPlainText() {
+	Common::U32String res;
+	for (uint i = 0; i < _textLines.size(); i++) {
+		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
+			res += _textLines[i].chunks[j].text;
+		}
+	}
+
+	return res;
 }
 
 Common::U32String MacText::cutSelection() {

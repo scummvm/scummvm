@@ -575,8 +575,9 @@ public:
 	AGS::Engine::IDriverDependantBitmap *_blankSidebarImage = nullptr;
 	AGS::Engine::IDriverDependantBitmap *_debugConsole = nullptr;
 
-	// actsps is used for temporary storage of the bitamp image
-	// of the latest version of the sprite
+	// actsps is used for temporary storage of the bitamp and texture
+	// of the latest version of the sprite (room objects and characters);
+	// objects sprites begin with index 0, characters are after MAX_ROOM_OBJECTS
 	std::vector<ObjTexture> *_actsps;
 	// Walk-behind textures (3D renderers only)
 	std::vector<ObjTexture> *_walkbehindobj;
@@ -758,6 +759,8 @@ public:
 	ObjectCache *_objcache;
 	std::vector<Point> *_screenovercache;
 	std::vector<CharacterExtras> *_charextra;
+	// MoveLists for characters and room objects; NOTE: 1-based array!
+	// object sprites begin with index 1, characters are after MAX_ROOM_OBJECTS + 1
 	std::vector<MoveList> *_mls;
 
 	GameSetup *_usetup;
@@ -1258,6 +1261,7 @@ public:
 	NonBlockingScriptFunction *_runDialogOptionKeyPressHandlerFunc;
 	NonBlockingScriptFunction *_runDialogOptionTextInputHandlerFunc;
 	NonBlockingScriptFunction *_runDialogOptionRepExecFunc;
+	NonBlockingScriptFunction *_runDialogOptionCloseFunc;
 
 	ScriptSystem *_scsystem;
 
@@ -1266,12 +1270,6 @@ public:
 	std::vector<ccInstance *> *_moduleInstFork;
 	std::vector<RuntimeScriptValue> *_moduleRepExecAddr;
 	size_t _numScriptModules = 0;
-
-	// TODO: find out if these extra arrays are really necessary. This may be remains from the
-	// time when the symbol import table was holding raw pointers to char array.
-	std::vector<String> *_characterScriptObjNames;
-	String *_objectScriptObjNames;
-	std::vector<String> *_guiScriptObjNames;
 
 	/**@}*/
 

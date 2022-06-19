@@ -16,7 +16,7 @@ put the long date
 
 set a = 5
 
-set gravityConst = the value of ( the text of cast 1)
+set gravityConst = the value of ( QUOTE & the text of cast 1 & QUOTE )
 set the hilite of cast 1 to (a = 3)
 set the text of cast 1 = string( gravityConst )
 
@@ -30,22 +30,25 @@ set the windowtype of BlastWindow to 5
 set the bottom of sprite 1 to originV + (the number of lines in someText) * 16
 set the bottom of sprite 1 to originV + (the number of words in someText) * 16
 
-put the number of words of field 1 into field 5
+put the number of words of field 1 into field 2
+
+set pSprite to 1
+set pChangeH to 10
 
 set h = the locH of sprite pSprite + pChangeH
 
 set the volume of sound 1 to 255
-put the volume of sound 1 into field 11
+put the volume of sound 1 into field 1
 
 set the checkMark of menuItem "Horizontal" of menu "The Ball" to False
 
-put the number of castMembers into field 5
+put the number of castMembers into field 2
 
-put the number of menuItems of menu "sam" into field 3
+put the number of menuItems of menu "sam" into field 2
 
-put abs( the locH of sprite 2 - the mouseH) into field 4
+put abs( the locH of sprite 2 - the mouseH) into field 2
 
-set the castNum of sprite the clickon = the number of cast "main.hi"
+set the castNum of sprite the clickon = the number of cast 1
 
 -- set castname = the name of cast(the castnum of sprite 1)
 

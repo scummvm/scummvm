@@ -290,7 +290,7 @@ void Handle::LoadFile(MEMHANDLE *pH) {
 		// set the loaded flag
 		MEMFLAGSET(pH, fLoaded);
 
-		if (bytes == (pH->filesize & FSIZE_MASK)) {
+		if (bytes == int(pH->filesize & FSIZE_MASK)) {
 			return;
 		}
 

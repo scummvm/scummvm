@@ -6,10 +6,13 @@ uniform sampler2D tex;
 uniform UBOOL swap;
 uniform UBOOL swizzle;
 
-void main()
-{
+void main() {
 	vec4 color = texture(tex, Texcoord);
-	if (UBOOL_TEST(swap)) color.rgba = color.abgr;
-	if (UBOOL_TEST(swizzle)) color.rgba = color.bgra;
+	if (UBOOL_TEST(swap)) {
+		color.rgba = color.abgr;
+	}
+	if (UBOOL_TEST(swizzle)) {
+		color.rgba = color.bgra;
+	}
 	outColor = vec4(color.rgb, 1.0);
 }

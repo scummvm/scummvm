@@ -93,7 +93,7 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_mouse_dont_scale(false),
 	_show_mouse(false),
 	_touchcontrols_texture(nullptr),
-	_old_touch_3d_mode(false) {
+	_old_touch_mode(OSystem_Android::TOUCH_MODE_TOUCHPAD) {
 
 	if (JNI::egl_bits_per_pixel == 16) {
 		// We default to RGB565 and RGBA5551 which is closest to what we setup in Java side
@@ -113,7 +113,9 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_touchcontrols_texture = loadBuiltinTexture(JNI::BitmapResources::TOUCH_ARROWS_BITMAP);
 
 	initSurface();
-	JNI::setTouch3DMode(true);
+
+	// in 3D, not in overlay
+	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(true, false);
 }
 
 AndroidGraphics3dManager::~AndroidGraphics3dManager() {
@@ -123,8 +125,6 @@ AndroidGraphics3dManager::~AndroidGraphics3dManager() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glUseProgram(0);
-
-	JNI::setTouch3DMode(false);
 
 	deinitSurface();
 
@@ -457,8 +457,9 @@ void AndroidGraphics3dManager::showOverlay() {
 		return;
 	}
 
-	_old_touch_3d_mode = JNI::getTouch3DMode();
-	JNI::setTouch3DMode(false);
+	_old_touch_mode = JNI::getTouchMode();
+	// in 3D, in overlay
+	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(true, true);
 
 	_show_overlay = true;
 	_force_redraw = true;
@@ -504,7 +505,8 @@ void AndroidGraphics3dManager::hideOverlay() {
 
 	_overlay_background->release();
 
-	JNI::setTouch3DMode(_old_touch_3d_mode);
+	// Restore touch mode active before overlay was shown
+	JNI::setTouchMode(_old_touch_mode);
 
 	warpMouse(_game_texture->width() / 2, _game_texture->height() / 2);
 

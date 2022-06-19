@@ -368,8 +368,15 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 	// basically worthless. So we'll just try to keep things closeish to the
 	// maximum for now.
 	Common::Rect desktopRes = getDesktopResolution();
-	if (!fullscreenFlags) {
+	if (
+		!fullscreenFlags
+#if defined(MACOSX)
+		// On macOS a maximized window is borderless
+		&& !(flags & SDL_WINDOW_MAXIMIZED)
+#endif
+	) {
 		int top, left, bottom, right;
+
 #if SDL_VERSION_ATLEAST(2, 0, 5)
 		if (!_window || SDL_GetWindowBordersSize(_window, &top, &left, &bottom, &right) < 0)
 #endif

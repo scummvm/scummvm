@@ -153,6 +153,33 @@ public:
 	uint32 getTickCount();
 	void setTickCount(const uint32 ticks);
 
+	/**
+	 * Disable support for ScummVM autosaves.
+	 *
+	 * A lot of SCI games already have an autosaving mechanism.
+	 * Also, a lot of games have death screens when the player
+	 * does something wrong, and autosaves could kick in when the
+	 * death screen is shown, which makes them useless, since
+	 * the player can only restore or restart.
+	 *
+	 * Another place where autosaves could kick in is during
+	 * screens with internal loops, e.g. the inventory screen,
+	 * where the autosave created would be invalid, as the internal
+	 * loop isn't persisted in saved games.
+	 *
+	 * For now, we allow saving in places where the user has
+	 * control via GuestAdditions::userHasControl(), but as
+	 * mentioned above, these do not cover cases where the user
+	 * does have control, but saving would either be useless (e.g.
+	 * in death screens) or invalid saved would be created (e.g.
+	 * while the inventory screen is open).
+	 *
+	 * In the future, if we are able to detect all death screens,
+	 * all internal loops and generally all places where saving
+	 * shouldn't be allowed, we could re-enable this feature.
+	 */
+	int getAutosaveSlot() const override { return -1; }
+
 	const SciGameId &getGameId() const { return _gameId; }
 	const char *getGameIdStr() const;
 	Common::Language getLanguage() const;

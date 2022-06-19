@@ -56,6 +56,7 @@ class LingoCompiler;
 typedef void (*inst)(void);
 #define	STOP (inst)0
 #define ENTITY_INDEX(t,id) ((t) * 100000 + (id))
+#define printWithArgList g_lingo->printSTUBWithArglist
 
 int calcStringAlignment(const char *s);
 int calcCodeAlignment(int l);

@@ -98,7 +98,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("txt/atds.tap", "c3be5641e90dd01274309b778cf8146d", 230686),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
-			ADGF_DEMO | ADGF_TESTING,
+			ADGF_DEMO | ADGF_UNSUPPORTED,
 			GUIO2(GUIO_NOMIDI, GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 	},

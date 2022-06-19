@@ -49,7 +49,6 @@ void standard_init() {
 	_G(out)->init();
 	_G(out)->cls();
 	_G(scr_width) = 0;
-	_G(screen0) = (byte *)g_screen->getPixels();
 
 	// WORKAROUND: Moved from init_load because the original
 	// uses _G(curtaf)->_image below before _G(curtaf) was initialized
@@ -137,7 +136,6 @@ void var_init() {
 	_G(gpkt).Vorschub = _G(spieler_mi)[P_CHEWY].Vorschub;
 	init_room();
 	_G(gameState).FramesPerSecond = 7;
-	_G(currentSong) = -1;
 	_G(SetUpScreenFunc) = nullptr;
 	_G(pfeil_delay) = 0;
 	_G(pfeil_ani) = 0;

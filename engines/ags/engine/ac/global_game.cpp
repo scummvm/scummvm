@@ -787,7 +787,7 @@ int WaitImpl(int skip_type, int nloops) {
 		// < 3.6.0 return 1 is skipped by user input, otherwise 0
 		return ((_GP(play).wait_skipped_by & (SKIP_KEYPRESS | SKIP_MOUSECLICK)) != 0) ? 1 : 0;
 	}
-	// >= 3.6.0 return positive keycode, negative mouse button code, or 0 as time-out
+	// >= 3.6.0 return skip (input) type flags with keycode
 	return _GP(play).GetWaitSkipResult();
 }
 
@@ -805,6 +805,10 @@ int WaitMouse(int nloops) {
 
 int WaitMouseKey(int nloops) {
 	return WaitImpl(SKIP_KEYPRESS | SKIP_MOUSECLICK | SKIP_AUTOTIMER, nloops);
+}
+
+int WaitInput(int input_flags, int nloops) {
+	return WaitImpl(input_flags >> 16 | SKIP_AUTOTIMER, nloops);
 }
 
 void SkipWait() {

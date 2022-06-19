@@ -119,7 +119,6 @@ public:
 	const uint8 *_chewy_ph_nr;
 	const uint8 *_chewy_ph;
 	byte *_pal = nullptr;
-	byte *_screen0 = nullptr;
 	int16 _scr_width = 0;
 	BlendMode _fx_blend = BLEND_NONE;
 	void (*_SetUpScreenFunc)() = nullptr;
@@ -153,7 +152,6 @@ public:
 
 	int16 _talk_start_ani = -1;
 	int16 _talk_hide_static = -1;
-	int16 _currentSong = -1;
 	bool _savegameFlag = false;
 	int _timer_action_ctr = 0;
 
@@ -183,7 +181,6 @@ public:
 	TafInfo *_menutaf = nullptr;
 	TafSeqInfo *_howard_taf = nullptr;
 	TafInfo *_chewy = nullptr;
-	int16 *_chewy_kor = nullptr;
 	Barriers *_barriers = nullptr;
 	Text *_txt = nullptr;
 	Room *_room = nullptr;
@@ -194,7 +191,7 @@ public:
 	Atdsys *_atds = nullptr;
 	MovClass *_mov = nullptr;
 
-	ObjMov _spieler_vector[MAX_PERSON];
+	ObjMov _moveState[MAX_PERSON];
 	SprInfo _spr_info[MAX_PROG_ANI];
 	MovInfo _spieler_mi[MAX_PERSON];
 	ObjMov _auto_mov_vector[MAX_OBJ_MOV];
@@ -227,7 +224,6 @@ public:
 	};
 
 	// main.cpp
-	int16 _menu_flag = 0;
 	bool _inv_disp_ok = 0;
 	int16 _txt_aus_click = 0;
 	int16 _txt_nummer = 0;
@@ -531,8 +527,6 @@ void get_lr_phase(ObjMov *om, int16 obj_mode);
 void load_person_ani(int16 ani_id, int16 p_nr);
 
 void calc_person_ani();
-
-void load_room_music(int16 room_nr);
 
 } // namespace Chewy
 

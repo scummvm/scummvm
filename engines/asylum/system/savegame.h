@@ -183,6 +183,7 @@ public:
 	bool hasSavegame(uint32 index) const;
 	ResourcePackId getScenePack() { return (ResourcePackId)(_savegameToScene[_index] + 4); }
 
+	void resetVersion();
 	const char *getVersion() { return _version.c_str(); }
 	uint32 getBuild() { return _build; }
 

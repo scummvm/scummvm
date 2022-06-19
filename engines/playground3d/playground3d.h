@@ -50,8 +50,10 @@ private:
 	Renderer *_gfx;
 	Graphics::FrameLimiter *_frameLimiter;
 	Math::Vector4d _clearColor;
+	Math::Vector4d _fogColor;
 	float _fade;
 	bool _fadeIn;
+	bool _fogEnable;
 	Graphics::Surface *_rgbaTexture;
 	Graphics::Surface *_rgbTexture;
 	Graphics::Surface *_rgb565Texture;

@@ -29,6 +29,7 @@
 #include "ags/engine/ac/draw.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/engine/media/audio/audio_system.h"
+#include "ags/shared/util/math.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
@@ -36,8 +37,7 @@
 
 namespace AGS3 {
 
-using AGS::Shared::Bitmap;
-using AGS::Shared::Graphics;
+using namespace AGS::Shared;
 
 int ViewFrame_GetFlipped(ScriptViewFrame *svf) {
 	if (_GP(views)[svf->view].loops[svf->loop].frames[svf->frame].flags & VFLG_FLIPSPRITE)
@@ -140,7 +140,7 @@ void CheckViewFrame(int view, int loop, int frame, int sound_volume) {
 		}
 	}
 	if (channel && (sound_volume >= 0)) {
-		sound_volume = std::min(sound_volume, 100);
+		sound_volume = Math::Clamp(sound_volume, 0, 100);
 		auto *ch = AudioChans::GetChannel(channel->id);
 		if (ch)
 			ch->set_volume100(ch->get_volume100() * sound_volume / 100);

@@ -184,6 +184,8 @@ static const char *const selectorNameTable[] = {
 	"setHeading",   // KQ7
 	"setScale",     // LSL6hires, QFG4
 	"setScaler",    // LSL6hires, QFG4
+	"showTitle",    // LSL6hires
+	"name",         // LSL6hires
 	"oSpecialSync", // LSL7
 	"readWord",     // LSL7, Phant1, Torin
 	"points",       // PQ4
@@ -319,6 +321,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setHeading,
 	SELECTOR_setScale,
 	SELECTOR_setScaler,
+	SELECTOR_showTitle,
+	SELECTOR_name,
 	SELECTOR_oSpecialSync,
 	SELECTOR_readWord,
 	SELECTOR_points,
@@ -533,6 +537,93 @@ static const uint16 torinLarry7NumSavesPatch[] = {
 };
 
 #endif
+
+// Most SCI games run an initial speed test. The results are used to enable
+//  animations and other details but some games go further. For example, LSL3
+//  calculates how many times the player has to do a task using machine speed.
+//
+// We disable speed tests by patching them to return fixed results so that all
+//  graphics are enabled and games behave consistently. This also fixes the bug
+//  where tests fail on fast CPUs because their scores overflow. (bug #13529)
+//  We still have a heuristic in GfxAnimate::throttleSpeed() that attempts to
+//  detect tests and unthrottle the engine so that they score well. That should
+//  reasonably handle any games or versions that haven't been patched yet.
+//
+// Note that these patches are only for SCI16 games; the test was rewritten for
+//  SCI32 and we have separate patches for those.
+//
+// The first generation of speed tests measured how many game cycles occurred
+//  within a fixed amount of time and stored it in a global. Initialize this
+//  to a value that always passes and skip the real initialization so that the
+//  test immediately completes. This also removes a 1-2 second startup delay.
+static const uint16 sci0EarlySpeedTestSignature[] = {
+	0xc9, SIG_ADDTOOFFSET(+1),          // +sg machine-speed
+	SIG_MAGICDWORD,
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x30,                               // bnt [ skip initialization ]
+	SIG_END
+};
+
+static const uint16 sci0EarlySpeedTestPatch[] = {
+	0x34, PATCH_UINT16(0x00ff),         // ldi 00ff
+	0xa1, PATCH_GETORIGINALBYTE(+1),    // sag [ machine-speed = 255 ]
+	0x32,                               // jmp [ always skip initialization ]
+	PATCH_END
+};
+
+// Same as previous but the +sg instruction became +ag/push
+static const uint16 sci01SpeedTestGlobalSignature[] = {
+	0xc1, SIG_ADDTOOFFSET(+1),          // +ag machine-speed
+	SIG_MAGICDWORD,
+	0x36,                               // push
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	SIG_END                             // bnt [ skip initialization ]
+};
+
+static const uint16 sci01SpeedTestGlobalPatch[] = {
+	0x34, PATCH_UINT16(0x00ff),         // ldi 00ff
+	0xa1, PATCH_GETORIGINALBYTE(+1),    // sag [ machine-speed = 255 ]
+	0x18,                               // not [ always skip initialization ]
+	PATCH_END
+};
+
+// Same as previous but a local variable is used instead of a global
+static const uint16 sci01SpeedTestLocalSignature[] = {
+	0xc3, SIG_ADDTOOFFSET(+1),          // +al machine-speed
+	SIG_MAGICDWORD,
+	0x36,                               // push
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	SIG_END                             // bnt [ skip initialization ]
+};
+
+static const uint16 sci01SpeedTestLocalPatch[] = {
+	0x34, PATCH_UINT16(0x00ff),         // ldi 00ff
+	0xa3, PATCH_GETORIGINALBYTE(+1),    // sal [ machine-speed = 255 ]
+	0x18,                               // not [ always skip initialization ]
+	PATCH_END
+};
+
+// The second generation of speed tests measured how much time it takes to do a
+//  fixed amount of work. Patch the duration calculation to always be zero.
+static const uint16 sci11SpeedTestSignature[] = {
+	0x76,                               // push0
+	0x43, 0x42, 0x00,                   // callk GetTime 00
+	0x36,                               // push
+	SIG_MAGICDWORD,
+	0x83, 0x01,                         // lal 01
+	0x04,                               // sub    [ GetTime() - start-time ]
+	0xa3, 0x00,                         // sal 00 [ local0 = test-duration ]
+	SIG_END
+};
+
+static const uint16 sci11SpeedTestPatch[] = {
+	0x35, 0x00,                         // ldi 00
+	0x33, 0x04,                         // jmp 04 [ local0 = 0, best result ]
+	PATCH_END
+};
 
 // The Narrator class contains a bug that's responsible for rare random lockups
 //  in almost every Messager SCI game from 1992 to 1996. The later first-person
@@ -1055,9 +1146,19 @@ static const SciScriptPatcherEntry camelotSignatures[] = {
 	{ true,    11, "fix hunter missing points",                    1, camelotSignatureHunterMissingPoints,  camelotPatchHunterMissingPoints },
 	{ true,    62, "fix peepingTom Sierra bug",                    1, camelotSignaturePeepingTom,           camelotPatchPeepingTom },
 	{ true,    64, "fix Fatima room messages",                     2, camelotSignatureFatimaRoomMessages,   camelotPatchFatimaRoomMessages },
+	{ true,   112, "disable speed test",                           1, sci01SpeedTestLocalSignature,         sci01SpeedTestLocalPatch },
 	{ true,   158, "fix give mule message",                        1, camelotSignatureGiveMuleMessage,      camelotPatchGiveMuleMessage },
 	{ true,   169, "fix relic merchant lockup (1/2)",              1, camelotSignatureRelicMerchantLockup1, camelotPatchRelicMerchantLockup1 },
 	{ true,   169, "fix relic merchant lockup (2/2)",              1, camelotSignatureRelicMerchantLockup2, camelotPatchRelicMerchantLockup2 },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
+// Castle of Dr. Brain
+
+//          script, description,                                      signature                                 patch
+static const SciScriptPatcherEntry castleBrainSignatures[] = {
+	{  true,   802, "disable speed test",                          1, sci01SpeedTestGlobalSignature,            sci01SpeedTestGlobalPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1427,6 +1528,7 @@ static const SciScriptPatcherEntry ecoquest1Signatures[] = {
 	{  true,   321, "CD: north cliffs position",                   1, ecoquest1SignatureNorthCliffsPosition,    ecoquest1PatchNorthCliffsPosition },
 	{  true,   321, "CD: north cliffs disposal",                   2, ecoquest1SignatureNorthCliffsDisposal,    ecoquest1PatchNorthCliffsDisposal },
 	{  true,   660, "CD: bad messagebox and freeze",               1, ecoquest1SignatureStayAndHelp,            ecoquest1PatchStayAndHelp },
+	{  true,   803, "disable speed test",                          1, sci01SpeedTestGlobalSignature,            sci01SpeedTestGlobalPatch },
 	{  true,   816, "CD: prophecy scroll",                         1, ecoquest1SignatureProphecyScroll,         ecoquest1PatchProphecyScroll },
 	{  true,   928, "CD: EcoTalker lockup fix",                    1, ecoquest1Sq4CdNarratorLockupSignature,    ecoquest1Sq4CdNarratorLockupPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
@@ -1670,6 +1772,7 @@ static const uint16 ecoquest2PatchCampMessages2[] = {
 //          script, description,                                        signature                          patch
 static const SciScriptPatcherEntry ecoquest2Signatures[] = {
 	{  true,     0, "icon bar tutorial",                            10, ecoquest2SignatureIconBarTutorial, ecoquest2PatchIconBarTutorial },
+	{  true,    10, "disable speed test",                            1, sci11SpeedTestSignature,           sci11SpeedTestPatch},
 	{  true,    50, "initial text not removed on ecorder",           3, ecoquest2SignatureEcorder,         ecoquest2PatchEcorder },
 	{  true,   333, "initial text not removed on ecorder tutorial",  3, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },
 	{  true,   500, "room 500 items reappear",                       1, ecoquest2SignatureRoom500Items,    ecoquest2PatchRoom500Items },
@@ -2110,6 +2213,7 @@ static const uint16 freddypharkasPatchDeskLetter[] = {
 //          script, description,                                      signature                                patch
 static const SciScriptPatcherEntry freddypharkasSignatures[] = {
 	{  true,    15, "Mac: broken inventory",                       1, freddypharkasSignatureMacInventory,      freddypharkasPatchMacInventory },
+	{  true,    28, "disable speed test",                          1, sci11SpeedTestSignature,                 sci11SpeedTestPatch },
 	{  true,   110, "intro scaling workaround",                    2, freddypharkasSignatureIntroScaling,      freddypharkasPatchIntroScaling },
 	{  false,  200, "Mac: skip broken hop singh scene",            1, freddypharkasSignatureMacHopSingh,       freddypharkasPatchMacHopSingh },
 	{  true,   235, "CD: canister pickup hang",                    3, freddypharkasSignatureCanisterHang,      freddypharkasPatchCanisterHang },
@@ -4642,6 +4746,7 @@ static const uint16 icemanClimbDownHatchPatch[] = {
 //         script, description,                                       signature                                      patch
 static const SciScriptPatcherEntry icemanSignatures[] = {
 	{ true,    23, "climb down hatch",                             1, icemanClimbDownHatchSignature,                 icemanClimbDownHatchPatch },
+	{ true,    99, "disable speed test",                           1, sci01SpeedTestLocalSignature,                  sci01SpeedTestLocalPatch },
 	{ true,   314, "destroyer timer (1/2)",                        1, icemanDestroyerTimer1Signature,                icemanDestroyerTimer1Patch },
 	{ true,   391, "destroyer timer (2/2)",                        1, icemanDestroyerTimer2Signature,                icemanDestroyerTimer2Patch },
 	SCI_SIGNATUREENTRY_TERMINATOR
@@ -4692,6 +4797,15 @@ static const SciScriptPatcherEntry islandBrainSignatures[] = {
 };
 
 // ===========================================================================
+// Jones In The Fast Lane
+
+//          script, description,                                      signature                         patch
+static const SciScriptPatcherEntry jonesSignatures[] = {
+	{  true,   764, "disable speed test",                          1, sci01SpeedTestLocalSignature,     sci01SpeedTestLocalPatch },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 // King's Quest 1
 
 // In the demo, the leprechaun dance runs awkwardly fast on modern computers.
@@ -4723,6 +4837,8 @@ static const uint16 kq1PatchDemoDanceSpeed[] = {
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry kq1Signatures[] = {
 	{  true,    77, "demo: dance speed",                           1, kq1SignatureDemoDanceSpeed,       kq1PatchDemoDanceSpeed },
+	{  true,    99, "demo: disable speed test",                    1, sci01SpeedTestGlobalSignature,    sci01SpeedTestGlobalPatch },
+	{  true,   777, "disable speed test",                          1, sci01SpeedTestGlobalSignature,    sci01SpeedTestGlobalPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -4888,6 +5004,8 @@ static const uint16 kq4PatchUnicornNightRide[] = {
 static const SciScriptPatcherEntry kq4Signatures[] = {
 	{ false,    24, "missing waterfall view",                      1, kq4SignatureMissingWaterfallView,         kq4PatchMissingWaterfallView },
 	{  true,    90, "fall down stairs",                            1, kq4SignatureFallDownStairs,               kq4PatchFallDownStairs },
+	{  true,    98, "disable speed test",                          1, sci0EarlySpeedTestSignature,              sci0EarlySpeedTestPatch },
+	{  true,    99, "disable speed test",                          1, sci0EarlySpeedTestSignature,              sci0EarlySpeedTestPatch },
 	{  true,   994, "ride unicorn at night",                       1, kq4SignatureUnicornNightRide,             kq4PatchUnicornNightRide },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -5116,6 +5234,8 @@ static const uint16 kq5PatchPc98CampfireMessages[] = {
 static const SciScriptPatcherEntry kq5Signatures[] = {
 	{  true,     0, "CD: harpy volume change",                     1, kq5SignatureCdHarpyVolume,            kq5PatchCdHarpyVolume },
 	{  true,     0, "timer rollover",                              1, sciSignatureTimerRollover,            sciPatchTimerRollover },
+	{  true,    99, "disable speed test",                          1, sci01SpeedTestLocalSignature,         sci01SpeedTestLocalPatch },
+	{  true,    99, "disable speed test",                          1, sci11SpeedTestSignature,              sci11SpeedTestPatch },
 	{ false,   109, "Crispin intro signal",                        1, kq5SignatureCrispinIntroSignal,       kq5PatchCrispinIntroSignal },
 	{  true,   124, "Multilingual: Ending glitching out",          3, kq5SignatureMultilingualEndingGlitch, kq5PatchMultilingualEndingGlitch },
 	{ false,   124, "Win: GM Music signal checks",                 4, kq5SignatureWinGMSignals,             kq5PatchWinGMSignals },
@@ -6475,6 +6595,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,    80, "fix guard dog music",                            1, kq6SignatureGuardDogMusic,                kq6PatchGuardDogMusic },
 	{  true,    87, "fix Drink Me bottle",                            1, kq6SignatureDrinkMeFix,                   kq6PatchDrinkMeFix },
 	{ false,    87, "Mac: Drink Me pic",                              1, kq6SignatureMacDrinkMePic,                kq6PatchMacDrinkMePic },
+	{  true,    99, "disable speed test",                             1, sci11SpeedTestSignature,                  sci11SpeedTestPatch },
 	{  true,   105, "Mac: opening movie delay",                       1, kq6MacSignatureMacOpeningMovieDelay,      kq6MacPatchMacOpeningMovieDelay },
 	{  true,   281, "fix pawnshop genie eye",                         1, kq6SignaturePawnshopGenieEye,             kq6PatchPawnshopGenieEye },
 	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffStepFloatFix,            kq6PatchCliffStepFloatFix },
@@ -7782,6 +7903,7 @@ static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,   530, "amiga pub fix",                               1, longbowSignatureAmigaPubFix,             longbowPatchAmigaPubFix },
 	{  true,   600, "amiga fulk rescue fix",                       1, longbowSignatureAmigaFulkRescue,         longbowPatchAmigaFulkRescue },
 	{  true,   803, "amiga speed test",                            1, longbowSignatureAmigaSpeedTest,          longbowPatchAmigaSpeedTest },
+	{  true,   803, "disable speed test",                          1, sci01SpeedTestLocalSignature,            sci01SpeedTestLocalPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -7912,29 +8034,6 @@ static const SciScriptPatcherEntry larry1Signatures[] = {
 // ===========================================================================
 // Leisure Suit Larry 2
 
-// Disable the LSL2 speed test by always setting the machine speed to 61 so that
-//  all graphics are enabled. This is the minimum value that enables all details
-//  such as clouds on the cruise ship.
-//
-// Applies to: All versions
-// Responsible method: rm99:doit
-static const uint16 larry2SignatureSpeedTest[] = {
-	SIG_MAGICDWORD,
-	0x8b, 0x00,                      // lsl 00
-	0x76,                            // push0
-	0x43, SIG_ADDTOOFFSET(+1), 0x00, // callk GetTime 00
-	0x22,                            // lt? [ is speed test complete? ]
-	0x30,                            // bnt
-	SIG_END
-};
-
-static const uint16 larry2PatchSpeedTest[] = {
-	0x35, 0x3d,                      // ldi 3d
-	0xa1, 0x78,                      // sag 78 [ machine speed = 61 ]
-	0x33, 0x04,                      // jmp 04 [ complete speed test ]
-	PATCH_END
-};
-
 // On the plane, Larry is able to wear the parachute. This grants 4 points.
 // In early versions of LSL2, it was possible to get "unlimited" points by
 //  simply wearing it multiple times.
@@ -8023,7 +8122,8 @@ static const uint16 larry2PatchLotteryTicketMessages2[] = {
 //          script, description,                                      signature                              patch
 static const SciScriptPatcherEntry larry2Signatures[] = {
 	{  true,    63, "plane: no points for wearing parachute",      1, larry2SignatureWearParachutePoints,    larry2PatchWearParachutePoints },
-	{  true,    99, "disable speed test",                          1, larry2SignatureSpeedTest,              larry2PatchSpeedTest },
+	{  true,    99, "disable speed test",                          1, sci0EarlySpeedTestSignature,           sci0EarlySpeedTestPatch },
+	{  true,    99, "disable speed test",                          1, sci01SpeedTestGlobalSignature,         sci01SpeedTestGlobalPatch },
 	{  true,   114, "lottery ticket messages (1/2)",               1, larry2SignatureLotteryTicketMessages1, larry2PatchLotteryTicketMessages1 },
 	{  true,   114, "lottery ticket messages (2/2)",               1, larry2SignatureLotteryTicketMessages2, larry2PatchLotteryTicketMessages2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
@@ -8043,20 +8143,10 @@ static const SciScriptPatcherEntry larry2Signatures[] = {
 // Applies to: All versions
 // Responsible method: rm290:doit
 // Fixes bug: #11967
-static const uint16 larry3SignatureSpeedTest[] = {
-	SIG_MAGICDWORD,
-	0x8b, 0x00,                      // lsl 00
-	0x76,                            // push0
-	0x43, SIG_ADDTOOFFSET(+1), 0x00, // callk GetTime 00
-	0x22,                            // lt? [ is speed test complete? ]
-	0x30,                            // bnt
-	SIG_END
-};
-
 static const uint16 larry3PatchSpeedTest[] = {
-	0x35, 0x28,                      // ldi 28
-	0xa1, 0x7b,                      // sag 7b [ machine speed = 40 ]
-	0x33, 0x04,                      // jmp 04 [ complete speed test ]
+	0x34, PATCH_UINT16(0x0028),         // ldi 0028
+	0xa1, PATCH_GETORIGINALBYTE(+1),    // sag [ machine-speed = 40 ]
+	0x18,                               // not [ always skip initialization ]
 	PATCH_END
 };
 
@@ -8091,10 +8181,10 @@ static const uint16 larry3PatchVolumeSlider[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                     patch
+//          script, description,                                      signature                      patch
 static const SciScriptPatcherEntry larry3Signatures[] = {
-	{  true,   290, "disable speed test",                          1, larry3SignatureSpeedTest,     larry3PatchSpeedTest },
-	{  true,   997, "fix volume slider",                           1, larry3SignatureVolumeSlider,  larry3PatchVolumeSlider },
+	{  true,   290, "disable speed test",                          1, sci01SpeedTestGlobalSignature, larry3PatchSpeedTest },
+	{  true,   997, "fix volume slider",                           1, larry3SignatureVolumeSlider,   larry3PatchVolumeSlider },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -8206,6 +8296,7 @@ static const uint16 larry6PatchDeathDialog[] = {
 //          script, description,                                      signature                   patch
 static const SciScriptPatcherEntry larry6Signatures[] = {
 	{  true,    82, "death dialog memory corruption",              1, larry6SignatureDeathDialog, larry6PatchDeathDialog },
+	{  true,    99, "disable speed test",                          1, sci11SpeedTestSignature,    sci11SpeedTestPatch },
 	{  true,   928, "Narrator lockup fix",                         1, sciNarratorLockupSignature, sciNarratorLockupPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -8366,6 +8457,53 @@ static const uint16 larry6HiresGuardDelayPatch2[] = {
 	PATCH_END
 };
 
+// When using the phone with text enabled, dialing certain combinations crashes.
+//  This is due to a bug introduced when script 610 was altered for the hi-res
+//  version. The showTitle property of the phone's talker is only supposed to be
+//  set when talking to someone with a name, but now showTitle is never cleared.
+//  The operator is the one voice without a name, so talking to someone else
+//  first leaves these properties out of sync. Talking to the operator in this
+//  state causes Print:addTitle to attempt to duplicate the null name string.
+//
+// We fix this by clearing the phone talker's showTitle property when the name
+//  property is cleared. This keeps both properties in sync as before.
+//
+// Applies to: All versions
+// Responsible method: Export 2 of script 610
+// Fixes bug: #13554
+static const uint16 larry6HiresPhoneOperatorSignature[] = {
+	0x39, SIG_SELECTOR8(name),          // pushi name
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa talker
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ talker name? ]
+	0x31, SIG_MAGICDWORD, 0x1a,         // bnt 1a  [ skip if no name ]
+	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
+	0x76,                               // push0
+	0x39, SIG_SELECTOR8(name),          // pushi name
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa talker
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ talker name? ]
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ name dispose: ]
+	0x39, SIG_SELECTOR8(name),          // pushi name
+	0x78,                               // push1
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa talker
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ talker name: 0 ]
+	SIG_END
+};
+
+static const uint16 larry6HiresPhoneOperatorPatch[] = {
+	PATCH_ADDTOOFFSET(+15),
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ name dispose: ]
+	0x38, PATCH_SELECTOR16(showTitle),  // pushi showTitle
+	0x78,                               // push1
+	0x76,                               // push0
+	0x33, 0x02,                         // jmp 02
+	PATCH_ADDTOOFFSET(+9),
+	0x4a, PATCH_UINT16(0x000c),         // send 0c [ talker showTitle: 0 name: 0 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,     0, "disable mac volume restore",                  1, larry6HiresMacVolumeRestoreSignature, larry6HiresMacVolumeRestorePatch },
@@ -8374,6 +8512,7 @@ static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,    71, "disable video benchmarking",                  1, sci2BenchmarkSignature,               sci2BenchmarkPatch },
 	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSetScaleSignature,         larry6HiresSetScalePatch },
 	{  true,   330, "fix whale oil lamp lockup",                   1, larry6HiresWhaleOilLampSignature,     larry6HiresWhaleOilLampPatch },
+	{  true,   610, "phone operator crash",                        1, larry6HiresPhoneOperatorSignature,    larry6HiresPhoneOperatorPatch },
 	{  true,   850, "guard delay (1/2)",                           1, larry6HiresGuardDelaySignature1,      larry6HiresGuardDelayPatch1 },
 	{  true,   850, "guard delay (2/2)",                           1, larry6HiresGuardDelaySignature2,      larry6HiresGuardDelayPatch2 },
 	{  true, 64928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,           sciNarratorLockupPatch },
@@ -9083,6 +9222,7 @@ static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,    47, "attic stairs lockup fix",                  1, laurabow1SignatureAtticStairsLockupFix,            laurabow1PatchAtticStairsLockupFix },
 	{  true,    47, "left stairs lockup fix",                   3, laurabow1SignatureLeftStairsLockupFix,             laurabow1PatchLeftStairsLockupFix },
 	{  true,    58, "chapel candles persistence",               1, laurabow1SignatureChapelCandlesPersistence,        laurabow1PatchChapelCandlesPersistence },
+	{  true,    99, "disable speed test",                       1, sci01SpeedTestGlobalSignature,                     sci01SpeedTestGlobalPatch },
 	{  true,   236, "tell Lilly about Gertie blocking fix 1/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix1, laurabow1PatchTellLillyAboutGertieBlockingFix1 },
 	{  true,   236, "tell Lilly about Gertie blocking fix 2/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix2, laurabow1PatchTellLillyAboutGertieBlockingFix2 },
 	{  true,   414, "copy protection random fix",               1, laurabow1SignatureCopyProtectionRandomFix,         laurabow1PatchCopyProtectionRandomFix },
@@ -9802,47 +9942,6 @@ static const uint16 laurabow2CDPatchFixAct5FinaleMusic[] = {
 	PATCH_END
 };
 
-// LB2 does a speed test during startup (room 28) to determine the initial
-//  detail level and to use for pacing later scenes. Even with the highest
-//  score the detail level is only set to medium instead of highest like
-//  other SCI games.
-//
-// Platforms such as iOS can introduce a lag during game initialization that
-//  causes the speed test to occasionally get the lowest score, causing
-//  detail to be initialized to lowest and subsequent scenes such as the act 5
-//  chase scene to go very slow.
-//
-// We patch startGame:doit to ignore the score and always set the highest detail
-//  level and cpu speed so that detail needn't be manually increased and act 5
-//  behaves consistently. This also helps touchscreen devices as the game's
-//  detail slider is prohibitively difficult to manually set to highest without
-//  switching from the default touch mode.
-//
-// Applies to: All Floppy and CD versions
-// Responsible method: startGame:doit/<noname57>
-// Fixes bug: #10761
-static const uint16 laurabow2SignatureDisableSpeedTest[] = {
-	0x89, 0x57,                         // lsg global[57] [ speed test result ]
-	SIG_MAGICDWORD,
-	0x35, 0x03,                         // ldi 03 [ low-speed threshold ]
-	0x24,                               // le?
-	0x31, 0x04,                         // bnt 04
-	0x35, 0x01,                         // ldi 01 [ lowest detail ]
-	0x33, 0x0d,                         // jmp 0d
-	0x89, 0x57,                         // lsg global[57] [ speed test result ]
-	SIG_END
-};
-
-static const uint16 laurabow2PatchDisableSpeedTest[] = {
-	0x38, PATCH_UINT16(0x0005),         // pushi 0005
-	0x81, 0x01,                         // lag global[1]
-	0x4a, 0x06,                         // send 06 [ LB2:detailLevel = 5, max detail ]
-	0x35, 0x0f,                         // ldi 0f
-	0xa1, 0x57,                         // sag global[57] [ global[57] = f, max cpu speed ]
-	0x33, 0x10,                         // jmp 10 [ continue init ]
-	PATCH_END
-};
-
 // LB2CD reduces the music volume significantly during the introduction when
 //  characters talk while disembarking the ship in room 120. This is done so
 //  that their speech can be heard but it also occurs in text-only mode.
@@ -10003,7 +10102,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   600, "Floppy: fix bugs with meat",                     1, laurabow2FloppySignatureFixBugsWithMeat,        laurabow2FloppyPatchFixBugsWithMeat },
 	{  true,   600, "CD: fix bugs with meat",                         1, laurabow2CDSignatureFixBugsWithMeat,            laurabow2CDPatchFixBugsWithMeat },
 	{  true,   480, "CD: fix act 5 finale music",                     1, laurabow2CDSignatureFixAct5FinaleMusic,         laurabow2CDPatchFixAct5FinaleMusic },
-	{  true,    28, "CD/Floppy: disable speed test",                  1, laurabow2SignatureDisableSpeedTest,             laurabow2PatchDisableSpeedTest },
+	{  true,    28, "disable speed test",                             1, sci11SpeedTestSignature,                        sci11SpeedTestPatch },
 	{  true,   120, "CD: disable intro volume change in text mode",   1, laurabow2CDSignatureIntroVolumeChange,          laurabow2CDPatchIntroVolumeChange },
 	{  true,   928, "Narrator lockup fix",                            1, sciNarratorLockupSignature,                     sciNarratorLockupPatch },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
@@ -10019,6 +10118,14 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+// ===========================================================================
+// Mother Goose SCI0
+
+//          script, description,                                      signature                             patch
+static const SciScriptPatcherEntry mothergooseSignatures[] = {
+	{  true,    99, "disable speed test",                          1, sci01SpeedTestLocalSignature,        sci01SpeedTestLocalPatch },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
 // ===========================================================================
 // Mother Goose SCI1/SCI1.1
 // MG::replay somewhat calculates the savedgame-id used when saving again
@@ -10241,6 +10348,7 @@ static const SciScriptPatcherEntry mothergoose256Signatures[] = {
 	{  true,     0, "save limit dialog (SCI1.1)",                  1, mothergoose256SignatureSaveLimit,     mothergoose256PatchSaveLimit },
 	{  true,   994, "save limit dialog (SCI1)",                    1, mothergoose256SignatureSaveLimit,     mothergoose256PatchSaveLimit },
 	{  true,    90, "main menu button crash",                      1, mothergoose256SignatureMainMenuCrash, mothergoose256PatchMainMenuCrash },
+	{  true,    99, "disable speed test",                          1, sci01SpeedTestGlobalSignature,        sci01SpeedTestGlobalPatch },
 	{  true,   999, "timer rollover",                              1, sciSignatureTimerRollover,            sciPatchTimerRollover },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -11619,7 +11727,7 @@ static const uint16 pq2PatchSpeedTest[] = {
 
 //          script, description,                                 signature                     patch
 static const SciScriptPatcherEntry pq2Signatures[] = {
-	{  true,    99, "speed test / intro speed",               1, pq2SignatureSpeedTest,        pq2PatchSpeedTest },
+	{  true,    99, "disable speed test, fix intro speed",    1, pq2SignatureSpeedTest,        pq2PatchSpeedTest },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -11864,6 +11972,7 @@ static const SciScriptPatcherEntry pq3Signatures[] = {
 	{  true,    36, "give locket missing points",             1, pq3SignatureGiveLocketPoints,      pq3PatchGiveLocketPoints },
 	{  true,    36, "doctor mouth speed",                     1, pq3SignatureDoctorMouthSpeed,      pq3PatchDoctorMouthSpeed },
 	{  true,    44, "fix judge evidence lockup",              1, pq3SignatureJudgeEvidenceLockup,   pq3PatchJudgeEvidenceLockup },
+	{  true,    99, "disable speed test",                     1, sci01SpeedTestLocalSignature,      sci01SpeedTestLocalPatch },
 	{  true,   994, "NRS: remove speed throttle",             1, pq3SignatureNrsSpeedThrottle,      pq3PatchNrsSpeedThrottle },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -12307,6 +12416,7 @@ static const uint16 qfg1egaPatchPickSafeMessage2[] = {
 static const SciScriptPatcherEntry qfg1egaSignatures[] = {
 	{  true,    54, "throw rock at nest while running",            1, qfg1egaSignatureThrowRockAtNest,     qfg1egaPatchThrowRockAtNest },
 	{  true,   289, "pick safe message",                           1, qfg1egaSignaturePickSafeMessage1,    qfg1egaPatchPickSafeMessage1 },
+	{  true,   299, "disable speed test",                          1, sci01SpeedTestGlobalSignature,       sci01SpeedTestGlobalPatch },
 	{  true,   321, "pick safe message",                           1, qfg1egaSignaturePickSafeMessage2,    qfg1egaPatchPickSafeMessage2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -12728,30 +12838,6 @@ static const uint16 qfg1vgaPatchBrutusScriptFreeze[] = {
 	0x34, PATCH_UINT16(0x0000),         // ldi 0 (waste 7 bytes)
 	0x35, 0x00,                         // ldi 0
 	0x35, 0x00,                         // ldi 0
-	PATCH_END
-};
-
-// Patch the speed test so that it always ends up at the highest level. This
-//  improves the detail in Yorick's room (96), and slightly changes the timing
-//  in other rooms. This is compatible with PC and Mac versions which use
-//  significantly different tests and calculations.
-//
-// Applies to: PC Floppy, Mac Floppy
-// Responsible method: speedTest:changeState(2)
-static const uint16 qfg1vgaSignatureSpeedTest[] = {
-	0x76,                               // push0
-	0x43, 0x42, 0x00,                   // callk GetTime, 0
-	SIG_MAGICDWORD,
-	0x36,                               // push
-	0x83, 0x01,                         // lal 01
-	0x04,                               // sub
-	0xa3, 0x00,                         // sal 00
-	SIG_END
-};
-
-static const uint16 qfg1vgaPatchSpeedTest[] = {
-	0x35, 0x00,                         // ldi 00 [ local0 = 0, the best result ]
-	0x33, 0x04,                         // jmp 04
 	PATCH_END
 };
 
@@ -13272,7 +13358,7 @@ static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,   210, "cheetaur description fixed",                  1, qfg1vgaSignatureCheetaurDescription, qfg1vgaPatchCheetaurDescription },
 	{  true,   215, "fight event issue",                           1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
 	{  true,   216, "weapon master event issue",                   1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
-	{  true,   299, "speedtest",                                   1, qfg1vgaSignatureSpeedTest,           qfg1vgaPatchSpeedTest },
+	{  true,   299, "disable speed test",                          1, sci11SpeedTestSignature,             sci11SpeedTestPatch},
 	{  true,   331, "moving to crusher",                           1, qfg1vgaSignatureMoveToCrusher,       qfg1vgaPatchMoveToCrusher },
 	{  true,   331, "moving to crusher from card game",            1, qfg1vgaSignatureCrusherCardGame,     qfg1vgaPatchCrusherCardGame },
 	{  true,   332, "thieves' guild cashier fix",                  1, qfg1vgaSignatureThievesGuildCashier, qfg1vgaPatchThievesGuildCashier },
@@ -13472,12 +13558,13 @@ static const uint16 qfg2PatchImportCharType[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                    patch
+//          script, description,                                      signature                       patch
 static const SciScriptPatcherEntry qfg2Signatures[] = {
-	{  true,   665, "getting back on saurus freeze fix",           1, qfg2SignatureSaurusFreeze,   qfg2PatchSaurusFreeze },
-	{  true,   695, "Oops Jackalmen fix",                          1, qfg2SignatureOopsJackalMen,  qfg2PatchOopsJackalMen },
-	{  true,   805, "import character type fix",                   1, qfg2SignatureImportCharType, qfg2PatchImportCharType },
-	{  true,   944, "import dialog continuous calls",              1, qfg2SignatureImportDialog,   qfg2PatchImportDialog },
+	{  true,    98, "disable speed test",                          1, sci01SpeedTestGlobalSignature,  sci01SpeedTestGlobalPatch },
+	{  true,   665, "getting back on saurus freeze fix",           1, qfg2SignatureSaurusFreeze,      qfg2PatchSaurusFreeze },
+	{  true,   695, "Oops Jackalmen fix",                          1, qfg2SignatureOopsJackalMen,     qfg2PatchOopsJackalMen },
+	{  true,   805, "import character type fix",                   1, qfg2SignatureImportCharType,    qfg2PatchImportCharType },
+	{  true,   944, "import dialog continuous calls",              1, qfg2SignatureImportDialog,      qfg2PatchImportDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -19060,6 +19147,8 @@ static const SciScriptPatcherEntry sq3Signatures[] = {
 	{  true,  19, "Fix course achieved message",           1, sq3CourseAchievedSignature,                          sq3CourseAchievedPatch },
 	{  true, 117, "Fix end credits",                       1, sq3EndCreditsSignature,                              sq3EndCreditsPatch },
 	{  true, 702, "Fix scumsoft announcements",            1, sq3AnnouncementsSignature,                           sq3AnnouncementsPatch },
+	{  true, 777, "disable speed test",                    1, sci0EarlySpeedTestSignature,                         sci0EarlySpeedTestPatch },
+	{  true, 777, "disable speed test",                    1, sci01SpeedTestGlobalSignature,                       sci01SpeedTestGlobalPatch },
 	{ false, 996, "Hebrew: Replace 'Enter input' prompt",  1, sq3HebrewEnterInputSignature,                        sq3HebrewEnterInputPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -20747,6 +20836,158 @@ static const uint16 sq4CdPatchLaserBeamSpeedThrottle[] = {
 	PATCH_END
 };
 
+// The Skate-O-Rama is well known for timer bugs in the CD version. Originally,
+//  the speed setting in SCI games controlled the speed of the entire game.
+//  In between the floppy and CD versions of SQ4 this was changed to control
+//  just ego's speed along with any specific actors that were programmed to use
+//  the speed value. This changed the fundamental nature of time from what SQ4
+//  had been developed against, but the Skate-O-Rama scripts weren't adjusted.
+//  As a result, most delays are instantaneous at high CPU speeds. But even at
+//  slow CPU speeds, the chase can't be completed unless the game speed is
+//  increased so that ego can move fast enough to escape the Sequel Police.
+//
+// The first problem is solved by the speed throttling we apply to all SCI games
+//  in kGameIsRestarting. The second problem is that Skate-O-Rama delays are in
+//  game cycles, which were originally relative to ego's speed, but now take a
+//  constant amount of time. New Rising Sun solved both problems by changing all
+//  all the cycle delays to tick delays (1/60th of a second) and multiplying
+//  them by the game speed global. (Speed is 1 to 15 with 1 being the fastest.)
+//  This makes the delays relative to ego as they were in the floppy version.
+//
+// We fix this by using NRS' solution of converting Skate-O-Rama cycle delays
+//  to tick delays relative to the game speed global. There are a *lot* of these
+//  delays and they're not all relevant so to keep things manageable only the
+//  practical chase delays are patched. This requires quite a few signatures
+//  even though most only differ by a constant. The code pattern we're targeting
+//  is just too short to have four common consecutive bytes for SIG_MAGICDWORD.
+//
+// Applies to: English PC CD
+// Responsible methods: enterScript:changeState, enterAndShootEgo:changeState,
+//                      shootEgo:changeState, swimAfterEgo:changeState,
+//                      landScript:changeState, swimAndShoot:changeState,
+//                      and egoFollowed:changeState in rooms 405, 406, 410, 411
+// Fixes bug: #11038
+static const uint16 sq4CdSignatureSkateORamaChaseDelays1[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x01,                         // ldi 01
+	0x65, 0x1a,                         // aTop cycles [ cycles = 1 ]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchSkateORamaChaseDelays1[] = {
+	0x89, 0xc7,                         // lsg c7 [ game speed ]
+	0x69, 0x20,                         // sTop ticks [ ticks = 1 * game speed ]
+	PATCH_END
+};
+
+static const uint16 sq4CdSignatureSkateORamaChaseDelays2[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x10,                         // ldi 10
+	0x65, 0x1a,                         // aTop cycles [ cycles = 16 ]
+	0x32,                               // jmp [ toss / ret ]
+	SIG_END
+};
+
+static const uint16 sq4CdSignatureSkateORamaChaseDelays3[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x0e,                         // ldi 0e
+	0x65, 0x1a,                         // aTop cycles [ cycles = 14 ]
+	0x32,                               // jmp [ toss / ret ]
+	SIG_END
+};
+
+static const uint16 sq4CdSignatureSkateORamaChaseDelays4[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x14,                         // ldi 14
+	0x65, 0x1a,                         // aTop cycles [ cycles = 20 ]
+	0x32,                               // jmp [ toss / ret ]
+	SIG_END
+};
+
+static const uint16 sq4CdSignatureSkateORamaChaseDelays5[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x78,                         // ldi 78
+	0x65, 0x1a,                         // aTop cycles [ cycles = 120 ]
+	0x32,                               // jmp [ toss / ret ]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchSkateORamaChaseDelays2_5[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x89, 0xc7,                         // lsg c7 [ game speed ]
+	0x06,                               // mul
+	0x65, 0x20,                         // aTop ticks [ ticks = acc * game speed ]
+	PATCH_END
+};
+
+static const uint16 sq4CdSignatureSkateORamaChaseDelays6[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x00,                         // ldi 00
+	0x65, 0x14,                         // aTop state [ state = 0]
+	0x7a,                               // push2
+	0x39, 0x10,                         // pushi 10
+	0x39, 0x18,                         // pushi 18
+	0x43, 0x3c, 0x04,                   // callk Random 04
+	0x65, 0x1a,                         // aTop cycles [ cycles = Random(16, 24) ]
+	SIG_END                             // jmp [ toss / ret. room 405: 33 0e room 410: 32 0f 00 ]
+};
+
+static const uint16 sq4CdPatchSkateORamaChaseDelays6[] = {
+	0x76,                               // push0
+	0x69, 0x14,                         // sTop state [ state = 0 ]
+	0x7a,                               // push2
+	0x39, 0x10,                         // pushi 10
+	0x39, 0x18,                         // pushi 18
+	0x43, 0x3c, 0x04,                   // callk Random 04
+	0x89, 0xc7,                         // lsg c7 [ game speed ]
+	0x06,                               // mul
+	0x65, 0x20,                         // aTop ticks [ ticks = Random(16, 24) * game speed ]
+	PATCH_END
+};
+
+// During the Skate-O-Rama chase, leaving via the west exit (room 405) is almost
+//  impossible when the game speed is turned up in the CD version. When entering
+//  from the north (room 406) the Sequel Police appear almost instantly at which
+//  point ego can't escape. Although this scene is known for timer bugs, this is
+//  also caused by an inconsistent y coordinate between room 405 and the more
+//  commonly used east exit (room 410) which does not have this problem.
+//
+// In 410 the police aren't eligible to arrive until ego is below 70 but in 405
+//  the script sets that limit to only 30. Both rooms initialize ego to swim to
+//  50 and their exits are symmetrical to each other. At high speeds, the timer
+//  in swimAfterEgo state 0 expires as the player gains control. In 405 this
+//  instantly kills the player because they're already below the threshold.
+//
+// We fix this by patching room 405's swimAfterEgo y coordinate to match the one
+//  in room 410. This isn't the only bug due to inconsistencies between these
+//  two rooms scripts. It appears that the east exit received more testing.
+//
+// This bug was originally reported as a crash due to ego being shot as they
+//  used the exit. It was addressed with extra speed throttling for the entire
+//  Skate-O-Rama, but I think that just made the conflict less likely. Now we
+//  patch the CD delays to be relative to game speed so that Skate-O-Rama can be
+//  completed at all speeds. There may still be a rare crash to reproduce and
+//  fix, although there have been many mall fixes since then.
+//
+// Applies to: All versions
+// Responsible method: swimAfterEgo:changeState(1)
+// Fixes bug: #5514
+static const uint16 sq4SignatureSkateORamaChaseWestExit[] = {
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x04,                         // send 04 [ ego y? ]
+	SIG_MAGICDWORD,
+	0x36,                               // push
+	0x35, 0x1e,                         // ldi 1e [ 30 ]
+	0x1e,                               // gt?    [ ego:y > 30 ]
+	SIG_END
+};
+
+static const uint16 sq4PatchSkateORamaChaseWestExit[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x35, 0x46,                         // ldi 46 [ 70 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,     1, "Floppy: EGA intro delay fix",                    2, sq4SignatureEgaIntroDelay,                     sq4PatchEgaIntroDelay },
@@ -20779,6 +21020,21 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   396, "CD: get points for changing back clothes fix",   1, sq4CdSignatureGetPointsForChangingBackClothes, sq4CdPatchGetPointsForChangingBackClothes },
 	{  true,   397, "Floppy: software clerk message fix",             1, sq4FloppySignatureSoftwareClerkMessage,        sq4FloppyPatchSoftwareClerkMessage },
 	{  true,   397, "Floppy: software store easter eggs fix",         1, sq4FloppySignatureSoftwareStoreEasterEggs,     sq4FloppyPatchSoftwareStoreEasterEggs },
+	{  true,   405, "skate-o-rama chase west exit",                   1, sq4SignatureSkateORamaChaseWestExit,           sq4PatchSkateORamaChaseWestExit },
+	{  true,   405, "CD: skate-o-rama chase delays",                  7, sq4CdSignatureSkateORamaChaseDelays1,          sq4CdPatchSkateORamaChaseDelays1 },
+	{  true,   405, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays2,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   405, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays3,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   405, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays4,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   405, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays5,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   405, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays6,          sq4CdPatchSkateORamaChaseDelays6 },
+	{  true,   406, "CD: skate-o-rama chase delays",                  3, sq4CdSignatureSkateORamaChaseDelays1,          sq4CdPatchSkateORamaChaseDelays1 },
+	{  true,   410, "CD: skate-o-rama chase delays",                  7, sq4CdSignatureSkateORamaChaseDelays1,          sq4CdPatchSkateORamaChaseDelays1 },
+	{  true,   410, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays2,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   410, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays3,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   410, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays4,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   410, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays5,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   410, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays6,          sq4CdPatchSkateORamaChaseDelays6 },
+	{  true,   411, "CD: skate-o-rama chase delays",                  3, sq4CdSignatureSkateORamaChaseDelays1,          sq4CdPatchSkateORamaChaseDelays1 },
 	{  true,   405, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   406, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   410, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
@@ -20798,6 +21054,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   701, "CD: getting shot, while getting rope",           1, sq4CdSignatureGettingShotWhileGettingRope,     sq4CdPatchGettingShotWhileGettingRope },
 	{  true,   706, "CD: biker crouch verb fix",                      2, sq4CdSignatureBikerCrouchVerb,                 sq4CdPatchBikerCrouchVerb },
 	{  true,     0, "CD: Babble icon speech and subtitles fix",       1, sq4CdSignatureBabbleIcon,                      sq4CdPatchBabbleIcon },
+	{  true,   803, "disable speed test",                             1, sci01SpeedTestLocalSignature,                  sci01SpeedTestLocalPatch },
 	{  true,   818, "CD: Speech and subtitles option",                1, sq4CdSignatureTextOptions,                     sq4CdPatchTextOptions },
 	{  true,   818, "CD: Speech and subtitles option button",         1, sq4CdSignatureTextOptionsButton,               sq4CdPatchTextOptionsButton },
 	{  true,   928, "CD: Narrator lockup fix",                        1, ecoquest1Sq4CdNarratorLockupSignature,         ecoquest1Sq4CdNarratorLockupPatch },
@@ -21481,6 +21738,7 @@ static const SciScriptPatcherEntry sq1vgaSignatures[] = {
 	{  true,   703, "deltaur messages",                            1, sq1vgaSignatureDeltaurMessages2,            sq1vgaPatchDeltaurMessages },
 	{  true,   703, "deltaur messages",                            1, sq1vgaSignatureDeltaurMessages3,            sq1vgaPatchDeltaurMessages },
 	{  true,   704, "spider droid timing issue",                   1, sq1vgaSignatureSpiderDroidTiming,           sq1vgaPatchSpiderDroidTiming },
+	{  true,   803, "disable speed test",                          1, sci01SpeedTestLocalSignature,               sci01SpeedTestLocalPatch },
 	{  true,   989, "rename russian Sound class",                  1, sq1vgaSignatureRussianSoundName,            sq1vgaPatchRussianSoundName },
 	{  true,   992, "rename russian Motion class",                 1, sq1vgaSignatureRussianMotionName,           sq1vgaPatchRussianMotionName },
 	{  true,   994, "rename russian Rm class",                     1, sq1vgaSignatureRussianRmName,               sq1vgaPatchRussianRmName },
@@ -23218,6 +23476,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 	case GID_CAMELOT:
 		signatureTable = camelotSignatures;
 		break;
+	case GID_CASTLEBRAIN:
+		signatureTable = castleBrainSignatures;
+		break;
 	case GID_ECOQUEST:
 		signatureTable = ecoquest1Signatures;
 		break;
@@ -23249,6 +23510,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 		break;
 	case GID_ISLANDBRAIN:
 		signatureTable = islandBrainSignatures;
+		break;
+	case GID_JONES:
+		signatureTable = jonesSignatures;
 		break;
 	case GID_KQ1:
 		signatureTable = kq1Signatures;
@@ -23304,6 +23568,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 		signatureTable = larry7Signatures;
 		break;
 #endif
+	case GID_MOTHERGOOSE:
+		signatureTable = mothergooseSignatures;
+		break;
 	case GID_MOTHERGOOSE256:
 		signatureTable = mothergoose256Signatures;
 		break;

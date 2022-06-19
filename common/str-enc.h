@@ -49,6 +49,7 @@ enum CodePage {
 	kDos850,
 	kDos862,
 	kDos866,
+	kJohab,
 	kASCII,
 
 	kLatin1 = kISO8859_1,
@@ -62,6 +63,8 @@ String convertUtf32ToUtf8(const U32String &str);
 U32String convertToU32String(const char *str, CodePage page = kUtf8);
 String convertFromU32String(const U32String &str, CodePage page = kUtf8);
 uint16 convertUHCToUCS(uint8 high, uint8 low);
+
+void releaseCJKTables();
 } // End of namespace Common
 
 #endif

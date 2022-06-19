@@ -219,7 +219,7 @@ static const ADGameDescription gameDescriptions[] = {
 					"setup.exe", "bac1d734f2606dbdd0816dfa7a5cf518", 160740),
 		Common::EN_USA,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -277,6 +277,15 @@ static const ExtraGuiOption hypnoExtraGuiOptionInfiniteAmmoCheat = {
 	0
 };
 
+static const ExtraGuiOption hypnoExtraGuiOptionUnlockAllLevels = {
+	_s("Unlock all levels"),
+	_s("All levels will be available to play."),
+	"unlockAllLevels",
+	false,
+	0,
+	0
+};
+
 static const ExtraGuiOption hypnoExtraGuiOptionRestoredContent = {
 	_s("Enable restored content"),
 	_s("Add additional content that is not enabled the original implementation."),
@@ -321,6 +330,7 @@ const ExtraGuiOptions HypnoMetaEngineDetection::getExtraGuiOptions(const Common:
 	options.push_back(hypnoExtraGuiOptionInfiniteHealthCheat);
 	options.push_back(hypnoExtraGuiOptionInfiniteAmmoCheat);
 	options.push_back(hypnoExtraGuiOptionRestoredContent);
+	options.push_back(hypnoExtraGuiOptionUnlockAllLevels);
 	return options;
 }
 

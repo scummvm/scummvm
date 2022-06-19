@@ -11,7 +11,6 @@ MODULE_OBJS = \
 	events.o \
 	globals.o \
 	inits.o \
-	m_event.o \
 	main.o \
 	mouse.o \
 	mcga_graphics.o \
@@ -30,6 +29,9 @@ MODULE_OBJS = \
 	text.o \
 	timer.o \
 	types.o \
+	audio/chewy_voc.o \
+	audio/module_tmf.o \
+	audio/tmf_stream.o \
 	dialogs/cinema.o \
 	dialogs/credits.o \
 	dialogs/files.o \

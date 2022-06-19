@@ -324,9 +324,19 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	loadSceneLevel("bushard2.mi_", "", prefix);
 	sc = (Scene *) _levels["bushard2.mi_"];
+	sc->levelIfLose = "<over_bus>";
 	Escape *escape = new Escape();
 
-	Hotspots *hs = sc->hots[1].smenu;
+	Hotspots *hs = &sc->hots;
+	Timer *tm = new Timer(600000, "vus0");
+	Actions ac = (*hs)[0].actions;
+	(*hs)[0].actions.clear();
+	(*hs)[0].actions.push_back(tm);
+
+	for (int i = 0; i < int(ac.size()); i++)
+		(*hs)[0].actions.push_back(ac[i]);
+
+	hs = sc->hots[1].smenu;
 	(*hs)[1].actions.push_back(escape);
 
 	cl = new ChangeLevel("<check_mixture>");
@@ -965,7 +975,7 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	Transition *over_bus = new Transition("tryagain.mi_");
 	over_bus->intros.push_back("spider/cine/blcs002s.smk");
-	over_bus->intros.push_back("spider/cine/apt04as.smk");
+	over_bus->intros.push_back("spider/cine/apts04as.smk");
 	_levels["<over_bus>"] = over_bus;
 
 	Transition *over_octo1 = new Transition("tryagain.mi_");

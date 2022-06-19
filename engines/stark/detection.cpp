@@ -350,6 +350,18 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 
 	// The Longest Journey
+	// Russian by Triada
+	{
+		"tlj", "Triada",
+		AD_ENTRY2s("x.xarc",		"a0559457126caadab0cadac02d35f26f", 3032,
+				   "chapters.ini",	"17510546145f6f574702094dca436a8d", 409),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO_NONE
+	},
+
+	// The Longest Journey
 	// Hungarian fan-made
 	{
 		"tlj", "Fanmade",

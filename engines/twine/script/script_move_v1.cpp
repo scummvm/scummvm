@@ -359,14 +359,14 @@ static int32 mBACKGROUND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	if (val != 0) {
 		if (!ctx.actor->_staticFlags.bIsBackgrounded) {
 			ctx.actor->_staticFlags.bIsBackgrounded = 1;
-			if (ctx.actor->_dynamicFlags.bIsVisible) {
+			if (ctx.actor->_dynamicFlags.bIsDrawn) {
 				engine->_redraw->_reqBgRedraw = true;
 			}
 		}
 	} else {
 		if (ctx.actor->_staticFlags.bIsBackgrounded) {
 			ctx.actor->_staticFlags.bIsBackgrounded = 0;
-			if (ctx.actor->_dynamicFlags.bIsVisible) {
+			if (ctx.actor->_dynamicFlags.bIsDrawn) {
 				engine->_redraw->_reqBgRedraw = true;
 			}
 		}
@@ -433,7 +433,7 @@ static int32 mOPEN_GENERIC(TwinEEngine *engine, MoveScriptContext &ctx, int32 an
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::OPEN(%i, %i)", (int)doorStatus, angle);
 	if (ctx.actor->_staticFlags.bIsSpriteActor && ctx.actor->_staticFlags.bUsesClipping) {
 		ctx.actor->_angle = angle;
-		ctx.actor->_doorStatus = doorStatus;
+		ctx.actor->_doorWidth = doorStatus;
 		ctx.actor->_dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->_speed = 1000;
 		engine->_movements->setActorAngle(ANGLE_0, ANGLE_351, ANGLE_17, &ctx.actor->_move);
@@ -485,7 +485,7 @@ static int32 mOPEN_DOWN(TwinEEngine *engine, MoveScriptContext &ctx) {
 static int32 mCLOSE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::CLOSE()");
 	if (ctx.actor->_staticFlags.bIsSpriteActor && ctx.actor->_staticFlags.bUsesClipping) {
-		ctx.actor->_doorStatus = 0;
+		ctx.actor->_doorWidth = 0;
 		ctx.actor->_dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->_speed = -1000;
 		engine->_movements->setActorAngle(ANGLE_0, -ANGLE_351, ANGLE_17, &ctx.actor->_move);

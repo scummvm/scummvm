@@ -107,6 +107,7 @@ void scrWait(int nloops);
 int WaitKey(int nloops);
 int WaitMouse(int nloops);
 int WaitMouseKey(int nloops);
+int WaitInput(int input_flags, int nloops);
 void SkipWait();
 
 void scStartRecording(int keyToStop);

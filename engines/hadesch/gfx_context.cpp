@@ -94,10 +94,7 @@ GfxContext8Bit::GfxContext8Bit(int canvasW, int canvasH) : surf(canvasW, canvasH
 }
 
 void GfxContext8Bit::renderToScreen(Common::Point viewPoint) {
-	if (_palette) {
-		g_system->getPaletteManager()->setPalette(_palette, 0, 256);
-	}
-
+	g_system->getPaletteManager()->setPalette(_palette, 0, 256);
 	g_system->copyRectToScreen(surf.getBasePtr(viewPoint.x, viewPoint.y), surf.w, 0, 0,
 				   kVideoWidth, kVideoHeight);
 }

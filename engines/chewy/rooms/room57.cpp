@@ -64,7 +64,7 @@ void Room57::xit(int16 eib_nr) {
 void Room57::setup_func() {
 	if (_G(gameState)._personRoomNr[P_HOWARD] == 57) {
 		calc_person_look();
-		const int16 ch_y = _G(spieler_vector)[P_CHEWY].Xypos[1];
+		const int16 ch_y = _G(moveState)[P_CHEWY].Xypos[1];
 		int16 x, y;
 		if (ch_y < 145) {
 			x = 176;

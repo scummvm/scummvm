@@ -31,8 +31,8 @@
 namespace Myst3 {
 
 static void polarRectTo3dRect(const PolarRect &polarRect,
-							  Math::Vector3d &topLeft, Math::Vector3d &topRight,
-							  Math::Vector3d &bottomLeft, Math::Vector3d &bottomRight) {
+	                      Math::Vector3d &topLeft, Math::Vector3d &topRight,
+	                      Math::Vector3d &bottomLeft, Math::Vector3d &bottomRight) {
 	static const float scale = 50.0;
 
 	Math::Vector3d direction = Scene::directionToVector(polarRect.centerPitch, 90.0 - polarRect.centerHeading) * scale;
@@ -53,7 +53,7 @@ static void polarRectTo3dRect(const PolarRect &polarRect,
 }
 
 bool static rayIntersectsRect(const Math::Ray &ray, const Math::Vector3d &topLeft, const Math::Vector3d &topRight,
-							  const Math::Vector3d &bottomLeft, const Math::Vector3d &bottomRight) {
+	                      const Math::Vector3d &bottomLeft, const Math::Vector3d &bottomRight) {
 	// Orthogonal basis in rectangle coordinates
 	Math::Vector3d topRectDir = topRight - topLeft;
 	Math::Vector3d leftRectDir = bottomLeft - topLeft;

@@ -53,6 +53,7 @@ void WetEngine::runCheckLives(Code *code) {
 		_nextLevel = "<game_over>";
 		_score = 0;
 		_lives = 2;
+		restoreScoreMilestones(_score);
 		saveProfile(_name, _lastLevel);
 	} else
 		_nextLevel = _checkpoint;
@@ -136,12 +137,12 @@ void WetEngine::runMainMenu(Code *code) {
 	Graphics::Surface *menu = decodeFrame("c_misc/menus.smk", 16, &palette);
 	Graphics::Surface *overlay = decodeFrame("c_misc/menus.smk", 18, nullptr);
 	loadPalette(palette, 0, 256);
-	Common::Rect subName(21, 10, 159, 24);
+	Common::Rect subName(21, 10, 169, 24);
 
 	drawImage(*menu, 0, 0, false);
 	Graphics::Surface surName = overlay->getSubArea(subName);
-	drawImage(surName, subName.left, subName.top, false);
-	drawString("scifi08.fgx", "ENTER NAME :", 48, 50, 100, c);
+	drawImage(surName, subName.left, subName.top, true);
+	drawString("scifi08.fgx", _enterNameString, 48, 50, 100, c);
 	_name.clear();
 	bool cont = true;
 	while (!shouldQuit() && cont) {
@@ -166,8 +167,8 @@ void WetEngine::runMainMenu(Code *code) {
 				}
 
 				drawImage(*menu, 0, 0, false);
-				drawImage(surName, subName.left, subName.top, false);
-				drawString("scifi08.fgx", "ENTER NAME :", 48, 50, 100, c);
+				drawImage(surName, subName.left, subName.top, true);
+				drawString("scifi08.fgx", _enterNameString, 48, 50, 100, c);
 				drawString("scifi08.fgx", _name, 140, 50, 170, c);
 				break;
 
@@ -197,10 +198,18 @@ void WetEngine::runMainMenu(Code *code) {
 		playSound("sound/extra.raw", 1);
 	}
 
+	if ((_name == "FRASCAS" && _language == Common::ES_ESP) || \
+		(_name == "RITCHY" && _language == Common::FR_FRA)) {
+		_infiniteAmmoCheat = true;
+		_infiniteHealthCheat = true;
+		_lastLevel = 19;
+		playSound("sound/extra.raw", 1);
+	}
+
 	_name.toLowercase();
 	bool found = loadProfile(_name);
 
-	if (found) {
+	if (found || _name.empty()) {
 		menu->free();
 		delete menu;
 		overlay->free();
@@ -210,21 +219,22 @@ void WetEngine::runMainMenu(Code *code) {
 
 
 	saveProfile(_name, _ids[_lastLevel]);
+	_name.toUppercase();  // We do this in order to show it again
 
 	Common::Rect subDifficulty(20, 104, 233, 119);
 	Graphics::Surface surDifficulty = overlay->getSubArea(subDifficulty);
 	drawImage(*menu, 0, 0, false);
-	drawImage(surDifficulty, subDifficulty.left, subDifficulty.top, false);
+	drawImage(surDifficulty, subDifficulty.left, subDifficulty.top, true);
 
-	Common::Rect subWet(145, 149, 179, 159);
+	Common::Rect subWet(129, 149, 195, 159);
 	Graphics::Surface surWet = overlay->getSubArea(subWet);
-	drawImage(surWet, subWet.left, subWet.top, false);
+	drawImage(surWet, subWet.left, subWet.top, true);
 	playSound("sound/no_rapid.raw", 1, 11025);
 
-	Common::Rect subDamp(62, 149, 110, 159);
+	Common::Rect subDamp(52, 149, 115, 159);
 	Graphics::Surface surDamp = overlay->getSubArea(subDamp);
 
-	Common::Rect subSoaked(204, 149, 272, 159);
+	Common::Rect subSoaked(202, 149, 272, 159);
 	Graphics::Surface surSoaked = overlay->getSubArea(subSoaked);
 
 	Common::Array<Common::String> difficulties;
@@ -232,6 +242,9 @@ void WetEngine::runMainMenu(Code *code) {
 	difficulties.push_back("1");
 	difficulties.push_back("2");
 	uint32 idx = 1;
+
+	drawString("scifi08.fgx", _enterNameString, 48, 50, 100, c);
+	drawString("scifi08.fgx", _name, 140, 50, 170, c);
 
 	cont = true;
 	while (!shouldQuit() && cont) {
@@ -254,16 +267,19 @@ void WetEngine::runMainMenu(Code *code) {
 					cont = false;
 
 				drawImage(*menu, 0, 0, false);
-				drawImage(surDifficulty, subDifficulty.left, subDifficulty.top, false);
+				drawImage(surDifficulty, subDifficulty.left, subDifficulty.top, true);
 
 				if (difficulties[idx] == "0")
-					drawImage(surDamp, subDamp.left, subDamp.top, false);
+					drawImage(surDamp, subDamp.left, subDamp.top, true);
 				else if (difficulties[idx] == "1")
-					drawImage(surWet, subWet.left, subWet.top, false);
+					drawImage(surWet, subWet.left, subWet.top, true);
 				else if (difficulties[idx] == "2")
-					drawImage(surSoaked, subSoaked.left, subSoaked.top, false);
+					drawImage(surSoaked, subSoaked.left, subSoaked.top, true);
 				else
 					error("Invalid difficulty: %s", difficulties[idx].c_str());
+
+				drawString("scifi08.fgx", _enterNameString, 48, 50, 100, c);
+				drawString("scifi08.fgx", _name, 140, 50, 170, c);
 
 				break;
 			default:
@@ -273,7 +289,7 @@ void WetEngine::runMainMenu(Code *code) {
 		drawScreen();
 		g_system->delayMillis(10);
 	}
-
+	_name.toLowercase(); // make sure it is lowercase when we finish
 	_difficulty = difficulties[idx];
 	_nextLevel = code->levelIfWin;
 	menu->free();
@@ -283,14 +299,23 @@ void WetEngine::runMainMenu(Code *code) {
 }
 
 void WetEngine::showDemoScore() {
-	Common::String fmessage = "You finished the demo with an accuracy of %d%% and a score of %d points";
+	Common::String fmessage = "You finished this demo level with an accuracy of %d%% and a score of %d points";
 	Common::String message = Common::String::format(fmessage.c_str(), accuracyRatio(), _score);
 	GUI::MessageDialog dialog(message);
 	dialog.runModal();
 }
 
 Common::String WetEngine::getLocalizedString(const Common::String name) {
-	if (name == "health") {
+	if (name == "name") {
+		switch (_language) {
+		case Common::FR_FRA:
+			return "NOM :";
+		case Common::ES_ESP:
+			return "NOMBRE :";
+		default:
+			return "ENTER NAME :";
+		}
+	} else if (name == "health") {
 		switch (_language) {
 		case Common::FR_FRA:
 			return "ENERGIE";
@@ -323,6 +348,15 @@ Common::String WetEngine::getLocalizedString(const Common::String name) {
 			return "BLANCO FIJADO";
 		default:
 			return "TARGET ACQUIRED";
+		}
+	} else if (name == "direction") {
+		switch (_language) {
+		case Common::FR_FRA:
+			return "DIRECTION ?";
+		case Common::ES_ESP:
+			return "ELIGE DIRECCION";
+		default:
+			return "CHOOSE DIRECTION";
 		}
 	} else
 		error("Invalid string name to localize: %s", name.c_str());

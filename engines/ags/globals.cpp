@@ -351,14 +351,12 @@ Globals::Globals() {
 	_runDialogOptionKeyPressHandlerFunc = new NonBlockingScriptFunction("dialog_options_key_press", 3);
 	_runDialogOptionTextInputHandlerFunc = new NonBlockingScriptFunction("dialog_options_text_input", 2);
 	_runDialogOptionRepExecFunc = new NonBlockingScriptFunction("dialog_options_repexec", 1);
+	_runDialogOptionCloseFunc = new NonBlockingScriptFunction("dialog_options_close", 1);
 	_scsystem = new ScriptSystem();
 	_scriptModules = new std::vector<PScript>();
 	_moduleInst = new std::vector<ccInstance *>();
 	_moduleInstFork = new std::vector<ccInstance *>();
 	_moduleRepExecAddr = new std::vector<RuntimeScriptValue>();
-	_characterScriptObjNames = new std::vector<String>();
-	_objectScriptObjNames = new String[MAX_ROOM_OBJECTS];
-	_guiScriptObjNames = new std::vector<String>();
 
 	// script_runtime.cpp globals
 	Common::fill(_loadedInstances, _loadedInstances + MAX_LOADED_INSTANCES,
@@ -601,14 +599,12 @@ Globals::~Globals() {
 	delete _runDialogOptionKeyPressHandlerFunc;
 	delete _runDialogOptionTextInputHandlerFunc;
 	delete _runDialogOptionRepExecFunc;
+	delete _runDialogOptionCloseFunc;
 	delete _scsystem;
 	delete _scriptModules;
 	delete _moduleInst;
 	delete _moduleInstFork;
 	delete _moduleRepExecAddr;
-	delete _characterScriptObjNames;
-	delete[] _objectScriptObjNames;
-	delete _guiScriptObjNames;
 
 	// system_imports.cpp globals
 	delete _simp;
