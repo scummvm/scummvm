@@ -45,8 +45,7 @@ void ProDosFile::printInfo() {
     debug("File: %s", _name);
     debug("Type: %02X", _type);
     debug("Blocks: %d", _totalBlocks);
-    debug("Size: %u", _eof);
-    debug("");
+    debug("Size: %u\n", _eof);
 }
 
 /* For Common::Archive, this method just returns a string of the name */
@@ -199,8 +198,11 @@ void ProDosDisk::getHeader(DirHeader *h) {
     h->_nameLen = tempByte & 0xf;
     h->_type = (tempByte & 0xf0) >> 4;
 
-    // The name field is stored in 15 bytes with no null character (aside from unused chars being 00)
+    /* The name field is stored in 15 bytes with no null character (unused chars default to 0).
+     * To make it easier to use the name, we will add a terminator regardless.
+     */
     _disk.read(h->_name, 15);
+    h->_name[15] = 0;
     _disk.read(h->_reserved, 8);
 
     // The time and date can be decompressed into structs right away
@@ -243,6 +245,7 @@ void ProDosDisk::getFileEntry(FileEntry *f) {
     f->_type = (tempByte & 0xf0) >> 4;
 
     _disk.read(f->_name, 15);
+    f->_name[15] = 0;
     f->_ext = _disk.readByte();
     f->_blockPtr = _disk.readUint16LE();
     f->_totalBlocks = _disk.readUint16LE();
@@ -293,17 +296,9 @@ void ProDosDisk::searchDirectory(DirHeader *h, uint16 p, uint16 n, Common::Strin
 
         // It is a regular file if (dead < file type < pascal) and the file has a size
         if ((kFileTypeDead < fileEntry._type) && (fileEntry._type < kFileTypePascal) && (fileEntry._eof > 0)) {
-            char cString[16];
-            for (int j = 0; j < 15; j++) {
-                cString[j] = fileEntry._name[j];
-            }
-            cString[15] = 0;
-            Common::String fileName = path + cString;
+            Common::String fileName = path + fileEntry._name;
             debug("%s", fileName.c_str());
-            //debug("%s", fileName.c_str());
             ProDosFile *currFile = new ProDosFile(fileEntry._name, fileEntry._type, fileEntry._totalBlocks, fileEntry._eof, fileEntry._blockPtr, &_disk);
-            //debug("%s", currFile._name);
-            currFile->printInfo();
 
             _files.setVal(fileName, Common::SharedPtr<ProDosFile>(currFile));
             _disk.seek(currPos);
@@ -365,7 +360,7 @@ bool ProDosDisk::open(const Common::String filename) {
     VolHeader header;
     getVolumeHeader(&header);
     debug("volume name: %s", header._name);
-    debug("volume created %d/%d/19%d", header._date._day, header._date._month, header._date._year);
+    //debug("volume created %d/%d/19%d", header._date._day, header._date._month, header._date._year);
 
     getVolumeBitmap(&header);
 
@@ -397,6 +392,11 @@ bool ProDosDisk::hasFile(const Common::Path &path) const {
     return _files.contains(name);
 }
 
+/* To create a list of files in the Archive, we define an iterator for the object type
+ * used by the Archive member, and then loop through the hashmap, adding the object
+ * pointer returned as the value from the given path. This also returns the size.
+ */
+
 int ProDosDisk::listMembers(Common::ArchiveMemberList &list) const {
     int f = 0;
     Common::HashMap<Common::String, Common::SharedPtr<ProDosFile>>::const_iterator it;
@@ -415,9 +415,17 @@ const Common::ArchiveMemberPtr ProDosDisk::getMember(const Common::Path &path) c
     return _files.getValOrDefault(name);
 }
 
+/* This method is called on Archive members as it searches for the correct one,
+ * so if this member is not the correct one, we return a null pointer.
+ */
+
 Common::SeekableReadStream *ProDosDisk::createReadStreamForMember(const Common::Path &path) const {
     Common::String name = path.toString();
+    if (!_files.contains(name)) {
+        return nullptr;
+    }
     Common::SharedPtr<ProDosFile> f = _files.getValOrDefault(name);
+    f->printInfo();
     return f->createReadStream();
 }
 
