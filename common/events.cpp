@@ -103,7 +103,7 @@ void EventDispatcher::dispatch() {
 					matchedAction = true;
 				}
 
-				if (!matchedAction);
+				if (!matchedAction)
 					dispatchEvent(event);
 			} else {
 				dispatchEvent(event);
