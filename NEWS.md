@@ -8,7 +8,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Kyra:
    - Added support for the Korean version of Legend of Kyrandia 1.
-   
+
  SCUMM:
    - Marked a workaround in Monkey Island 2 (FM-Towns version) as an
      enhancement; this workaround originally restored a portion of the
