@@ -124,13 +124,12 @@ public:
     Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 
 private:
-          byte _loader1[512];               // There's no reason these would be needed, but why not include them just in case
-          byte _loader2[512];
-Common::String _name;                       // Name of volume
-  Common::File _disk;                       // The volume file itself
-           int _volBlocks;                  // Total blocks in volume
-
-Common::Array<byte> _volBitmap;             // Not super useful, but could be used with _totalBlocks to check whether the disk is corrupted
+          byte  _loader1[512];               // There's no reason these would be needed, but why not include them just in case
+          byte  _loader2[512];
+Common::String  _name;                       // Name of volume
+  Common::File  _disk;                       // The volume file itself
+           int  _volBlocks;                  // Total blocks in volume
+          byte *_volBitmap;                  // This can determine if the volume is corrupt as it contains a bit for every block, where 0 = unused, 1 = used
 Common::HashMap<Common::String, Common::SharedPtr<ProDosFile>> _files; // Hashmap of files in the volume, where key=Path, Value=ProDosFile
 
     struct Date {

@@ -324,25 +324,25 @@ void ProDosDisk::searchDirectory(DirHeader *h, uint16 p, uint16 n, Common::Strin
     }
 }
 
-/* This just gets the volume bitmap by finding out how many blocks it takes up and then adding them to vector of the data. */
+/* The volume bitmap is a bitmap spanning as many blocks as is required to store 1 bit for every
+ * block on the disk. There are 8 bits per byte and 512 bytes per block, so it needs
+ * ((total_blocks / 4096) + 1 (if remainder)) * 512 bytes.
+ */
 
 void ProDosDisk::getVolumeBitmap(VolHeader *h) {
     int currPos = _disk.pos();
+    int bitmapSize;
+
+    bitmapSize = _volBlocks / 4096;
+    if ((_volBlocks % 4096) > 0) {
+        bitmapSize++;
+    }
+
+    _volBitmap = (byte *)malloc(bitmapSize * kBlockSize);
     _disk.seek(h->_bitmapPtr * kBlockSize);
-    int bitmapNum = 1;
-    if (_volBlocks >= 4096) {
-        bitmapNum = _volBlocks / 4096;
-    }
-    for (int i = 0; i < bitmapNum; i++) {
-        byte bitmapData[512];
-        _disk.read(bitmapData, kBlockSize);
-        Common::Array<byte> volBitmapBlock = Common::Array<byte>(kBlockSize);
-        for (int j = 0; j < kBlockSize; j++) {
-            volBitmapBlock[j] = bitmapData[j];
-        }
-        _volBitmap.push_back(volBitmapBlock);
-    }
-    _disk.seek(currPos);    
+    _disk.read(_volBitmap, bitmapSize);
+
+    _disk.seek(currPos);
 }
 
 /* Gets the volume information and parses the filesystem, adding file objects to a map as it goes */
@@ -383,6 +383,7 @@ ProDosDisk::ProDosDisk(const Common::String filename) {
 ProDosDisk::~ProDosDisk() {
     _disk.close();
     _files.clear();
+    delete _volBitmap;
 }
 
 // --- Common::Archive methods ---
