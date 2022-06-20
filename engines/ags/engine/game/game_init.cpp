@@ -363,6 +363,9 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	_GP(views) = std::move(ents.Views);
 
 	_GP(play).charProps.resize(game.numcharacters);
+	_G(dialog) = std::move(ents.Dialogs);
+	_G(old_dialog_scripts) = std::move(ents.OldDialogScripts);
+	_G(old_speech_lines) = std::move(ents.OldSpeechLines);
 	_G(old_dialog_scripts) = ents.OldDialogScripts;
 	_G(old_speech_lines) = ents.OldSpeechLines;
 

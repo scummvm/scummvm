@@ -111,7 +111,7 @@ struct MainGameSource {
 // code refactoring.
 struct LoadedGameEntities {
 	GameSetupStruct &Game;
-	DialogTopic *&Dialogs;
+	std::vector<DialogTopic> Dialogs;
 	std::vector<ViewStruct> Views;
 	PScript                 GlobalScript;
 	PScript                 DialogScript;
@@ -131,7 +131,7 @@ struct LoadedGameEntities {
 	// speech texts displayed during dialog
 	std::vector<String>     OldSpeechLines;
 
-	LoadedGameEntities(GameSetupStruct &game, DialogTopic *&dialogs);
+	LoadedGameEntities(GameSetupStruct &game);
 	~LoadedGameEntities();
 };
 

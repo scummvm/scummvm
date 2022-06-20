@@ -22,6 +22,7 @@
 #include "ags/globals.h"
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/shared/ac/sprite_cache.h"
+#include "ags/shared/ac/dialog_topic.h"
 #include "ags/shared/core/asset_manager.h"
 #include "ags/shared/debugging/debug_manager.h"
 #include "ags/shared/font/fonts.h"

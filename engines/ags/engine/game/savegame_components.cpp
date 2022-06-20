@@ -23,7 +23,7 @@
 #include "ags/engine/game/savegame_components.h"
 #include "ags/shared/ac/audio_clip_type.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/dialog_topic.h"
+#include "ags/engine/ac/dialog.h"
 #include "ags/engine/ac/button.h"
 #include "ags/engine/ac/character.h"
 #include "ags/engine/ac/draw.h"

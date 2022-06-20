@@ -26,7 +26,7 @@
 #include "ags/engine/ac/audio_channel.h"
 #include "ags/engine/ac/button.h"
 #include "ags/engine/ac/character.h"
-#include "ags/shared/ac/dialog_topic.h"
+#include "ags/engine/ac/dialog.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/dynamic_sprite.h"
 #include "ags/engine/ac/event.h"
@@ -418,13 +418,11 @@ void unload_game_file() {
 		_G(curLipLine) = -1;
 	}
 
-	for (int i = 0; i < _GP(game).numdialog; ++i) {
-		if (_G(dialog)[i].optionscripts != nullptr)
-			free(_G(dialog)[i].optionscripts);
-		_G(dialog)[i].optionscripts = nullptr;
+	for (auto &dlg : _G(dialog)) {
+		if (dlg.optionscripts != nullptr)
+			free(dlg.optionscripts);
 	}
-	free(_G(dialog));
-	_G(dialog) = nullptr;
+	_G(dialog).clear();
 	delete[] _G(scrDialog);
 	_G(scrDialog) = nullptr;
 

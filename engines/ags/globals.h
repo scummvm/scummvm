@@ -523,7 +523,7 @@ public:
 	 * @{
 	 */
 
-	DialogTopic *_dialog = nullptr;
+	std::vector<DialogTopic> _dialog;
 	ScriptDialogOptionsRendering *_ccDialogOptionsRendering;
 	ScriptDrawingSurface *_dialogOptionsRenderingSurface = nullptr;
 

@@ -32,7 +32,7 @@
 #include "ags/shared/core/types.h"
 #include "ags/engine/ac/character_extras.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/dialog_topic.h"
+#include "ags/engine/ac/dialog.h"
 #include "ags/engine/ac/button.h"
 #include "ags/engine/ac/dynamic_sprite.h"
 #include "ags/engine/ac/game.h"
