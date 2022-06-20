@@ -1015,6 +1015,7 @@ ScummVM může také hru spustit přímo pomocí argumentů příkazové řádky
   --platform=SLOVO         Určí platformu hry (povolené hodnoty: 2gs, 3do, acorn, amiga, atari, c64, fmtowns, mac, nes, pc, pce, segacd, windows)
   --savepath=CESTA         Cesta, kde jsou umístěny uložené hry
   --extrapath=CESTA        Dodatečná cesta pro další data hry
+  --iconspath=CESTA        <Path to additional icons for the launcher grid view>
   --soundfont=SOUBOR       Vybere SoundFont pro přehrávání MIDI (Podporováno pouze některými ovladači MIDI)
   --multi-midi             Povolí kombinaci AdLib a přirozeného MIDI
   --native-mt32            Pravý Roland MT-32 (zakáže emulaci GM)
