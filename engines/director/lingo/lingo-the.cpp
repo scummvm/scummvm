@@ -812,7 +812,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = _vm->getVersion();
 		break;
 	case kTheSearchCurrentFolder:
-		getTheEntitySTUB(kTheSearchCurrentFolder);
+		//We always allow searching in current folder
+		warning("BUILDBOT: SearchCurrentFolder is queried");
+		d = Datum(1);
 		break;
 	case kTheSearchPath:
 		d = g_lingo->_searchPath;
@@ -1141,6 +1143,9 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	case kTheScummvmVersion:
 		// Allow director version change: used for testing version differences via the lingo tests.
 		_vm->setVersion(d.asInt());
+		break;
+	case kTheSearchCurrentFolder:
+		warning("BUILDBOT: Trying to set SearchCurrentFolder lingo property");
 		break;
 	case kTheSelEnd:
 		g_director->getCurrentMovie()->_selEnd = d.asInt();
