@@ -50,7 +50,7 @@ ifdef DYNAMIC_MODULES
 	makedir all $(AMIGAOSPATH)/plugins
 	# Preserve all debug information on debug builds
 ifdef DEBUG_BUILD
-		cp $(PLUGINS) $(AMIGAOSPATH)/$(plugin)
+		cp $(PLUGINS) $(AMIGAOSPATH)/plugins/$(plugin)
 else
 		$(foreach plugin, $(PLUGINS), $(STRIP) $(plugin) -o $(AMIGAOSPATH)/$(plugin);)
 endif
