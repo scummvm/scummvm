@@ -587,16 +587,24 @@ void LC::c_themenuentitypush() {
 	menuRef.u.menu = new MenuReference();
 	if (menuId.type == INT) {
 		menuRef.u.menu->menuIdNum = menuId.u.i;
-	} else {
+	} else if (menuId.type == STRING) {
 		menuRef.u.menu->menuIdStr = menuId.u.s;
+	} else {
+		warning("LC::c_themenuentitypush : Unknown type of menu Reference %d", menuId.type);
+		g_lingo->push(Datum());
+		return;
 	}
 
 	if (entity != kTheMenuItems) { // "<entity> of menuitems" has 1 parameter
 		menuItemId = g_lingo->pop();
 		if (menuItemId.type == INT) {
 			menuRef.u.menu->menuItemIdNum = menuItemId.u.i;
-		} else {
+		} else if (menuItemId.type == STRING) {
 			menuRef.u.menu->menuItemIdStr = menuItemId.u.s;
+		} else {
+			warning("LC::c_themenuentitypush : Unknown type of menuItem Reference %d", menuId.type);
+			g_lingo->push(Datum());
+			return;
 		}
 	}
 
@@ -615,15 +623,22 @@ void LC::c_theentityassign() {
 		Datum menuRef;
 		menuRef.u.menu = new MenuReference();
 		menuRef.type = MENUREF;
-		if (id.type != INT) {
+		if (id.type == STRING) {
 			menuRef.u.menu->menuIdStr = id.u.s;
-		} else {
+		} else if (id.type == INT) {
 			menuRef.u.menu->menuIdNum = id.u.i;
-		}
-		if (itemRef.type != INT) {
-			menuRef.u.menu->menuItemIdStr = itemRef.u.s;
 		} else {
+			warning("LC::c_theentityassign : Unknown menu reference type %d", id.type);
+			return;
+		}
+
+		if (itemRef.type == STRING) {
+			menuRef.u.menu->menuItemIdStr = itemRef.u.s;
+		} else if (itemRef.type == INT) {
 			menuRef.u.menu->menuItemIdNum = itemRef.u.i;
+		} else {
+			warning("LC::c_theentityassign : Unknown menuItem reference type %d", id.type);
+			return;
 		}
 
 		Datum d = g_lingo->pop();
