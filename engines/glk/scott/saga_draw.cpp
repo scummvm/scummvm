@@ -108,6 +108,8 @@ void plotsprite(int32_t character, int32_t x, int32_t y, int32_t fg, int32_t bg)
 }
 
 void transform(int32_t character, int32_t flipMode, int32_t ptr) {
+	if (character > 255)
+		return;
 	uint8_t work[8];
 	int32_t i;
 

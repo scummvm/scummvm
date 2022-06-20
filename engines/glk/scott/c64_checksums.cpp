@@ -95,7 +95,7 @@ static C64Rec g_C64Registry[] = {
 int decrunchC64(uint8_t **sf, size_t *extent, C64Rec entry);
 
 uint8_t *getLargestFile(uint8_t *data, int length, int *newlength) {
-	uint8_t *file = NULL;
+	uint8_t *file = nullptr;
 	*newlength = 0;
 	DiskImage *d64 = diCreateFromData(data, length);
 	if (d64) {
@@ -103,9 +103,10 @@ uint8_t *getLargestFile(uint8_t *data, int length, int *newlength) {
 		if (largest) {
 			ImageFile *c64file = diOpen(d64, largest->_rawname, largest->_type, "rb");
 			if (c64file) {
-				int expectedsize = largest->_sizelo + largest->_sizehi * 0x100;
-				file = new uint8_t[expectedsize];
-				*newlength = diRead(c64file, file, 0xffff);
+				uint8_t *largeFile = new uint8_t[0xffff];
+				*newlength = diRead(c64file, largeFile, 0xffff);
+				file = new uint8_t[*newlength];
+				memcpy(file, largeFile, *newlength);
 			}
 		}
 		//di_free_image(d64);
@@ -369,9 +370,13 @@ int decrunchC64(uint8_t **sf, size_t *extent, C64Rec record) {
 			_G(_fileLength) = decompressedLength;
 		} else {
 			delete[] uncompressed;
+			uncompressed = nullptr;
 			break;
 		}
 	}
+
+	if (uncompressed != nullptr)
+		delete[] uncompressed;
 
 	for (int i = 0; i < NUMGAMES; i++) {
 		if (_G(_games)[i]._gameID == record._id) {
