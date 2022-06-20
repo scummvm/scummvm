@@ -31,6 +31,7 @@
 #include "hpl1/engine/system/LowLevelSystem.h"
 #include "hpl1/engine/system/String.h"
 #include "common/file.h"
+#include "hpl1/debug.h"
 
 namespace hpl {
 
@@ -61,8 +62,11 @@ cConfigFile::~cConfigFile() {
 bool cConfigFile::Load() {
 	Common::File cf;
 	//FIXME: use proper string types
-	cf.open(cString::To8Char(msFile).c_str()); 
-	return mpXmlDoc->LoadFile(cf);;
+	if (!cf.open(cString::To8Char(msFile).c_str())) {
+		debugCN(Hpl1::kDebugLevelWarning, Hpl1::kDebugFilePath, "file %s could not be opened", cString::To8Char(msFile).c_str()); 
+		return false; 
+	}
+	return mpXmlDoc->LoadFile(cf);
 }
 
 //-----------------------------------------------------------------------
