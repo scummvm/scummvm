@@ -217,6 +217,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "ingenious",			"Ingenious!" },
 	{ "ingenioused",		"Ingenious! Education Resources" },
 	{ "ironhelix",			"Iron Helix" },
+	{ "isaslm",				"I Saw A Strange Little Man" },
 	{ "isis",				"Isis" },
 	{ "ispy",				"I Spy" },
 	{ "ispyschool",			"I Spy School Days" },
@@ -546,6 +547,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "nia4",				"News in Action 4" },
 	{ "nixon",				"Nixon: Watergate" },
 	{ "nmm",				"Nine Month Miracle" },
+	{ "nobel100",			"The Nobel Prize: 100 Years of Creativity and Innovation" },
 	{ "painters",			"Emile de Antonio's Painters Painting" },
 	{ "paris",				"Paris: History and Splendour" },
 	{ "parisvt",			"Virtual Tourism Paris" },
@@ -3610,6 +3612,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1_l("ios", "",	 "IOS.EXE", "2b8edd5af0f79d84542c57754b7fbf61", 1004833, Common::JA_JPN, 404),
 	WINGAME1_l("ioshow", "", "HOW.EXE", "a526a724f26e266b17815b4f7f7ae079", 1863309, Common::JA_JPN, 404),
+
+	MACGAME1("isaslm", "", "install this stuff/VM folder/VMplay", "27519b873d23565470f627ad2f3d1b03", 322465, 400),
+	// WINGAME1t("isaslm", "", "PLAY_IT.EXE", "ab30cc755f44ac3844fee3214cfc5ead", 691009, 400),
+	WINGAME1t("isaslm", "", "VMCD.EXE", "02b7441caf27724af5d055259d0d8e30", 1104401, 400),
+
 
 	MACGAME1("isis", "", "ISIS", "dedfabf9ee7bf5aab003bdab4137bca6", 777886, 400),
 	WINGAME1("isis", "", "ISIS.EXE", "59c1cb960199dd3f041262ab5271bb23", 14747213, 400),
@@ -7032,6 +7039,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Produced and developed by New Tier Inc., Scottsdale, Arizona
 	WINGAME1("njdevils2001", "", "NJDevils.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 45455403, 800),
 
+	// OS X version is D9
+	MACGAME1("nobel100", "Classic OS", "data/MacOSClassic/Mac Classic Start", "789536da81694518f494945bb161ace9", 206460, 851),
+	WINGAME2t("nobel100", "", "Start.exe", "5d4d87f2ffcb3c111eeb06ba1879e62d", 151979,
+							  "data/Home.dxr", "3d1ced8f1f20940f79f161cf27c6a07a", 413135, 850),
+
 	WINGAME1("noddyfair", "", "Noddy PC.exe", "c612aa43e7ef55aa4fd2e1085fb1ef7a", 2197822, 850),
 
 	MACGAME2_l("okay2000", "", "Start",	   "8c1b4ddb1adff89deaba119f7cf8df7b", 195159,
@@ -7269,6 +7281,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Mac version must be installed. Additional OS X installer runs the game Classic environment.
 	MACGAME1_l("mats3", "", "Mats und das ratselhafte Tier", "9ba96b315646d5f62be9ab5597d2e0d7", 176978, Common::DE_DEU, 901),
 	WINGAME1_l("mats3", "", "Mats3.exe", "4b89dba499aefda5201eef3d27963d01", 2187308, Common::DE_DEU, 900),
+
+	// Classic Mac OS and Windows executables are D8
+	MACGAME1("nobel100", "OS X", "data/MacOSX/Mac OSX Start", "332aaddc1bc68a89277ef016466a7140", 1295390, 900),
 
 	MACGAME1_l("operafatal", "OS X", "Opera OSX", "3ab7133c17cd4f175e5cb14c6750766e", 222001, Common::DE_DEU, 900),
 	WINGAME1_l("operafatal", "", "Opera.exe", "05e89a3d53d270cac3b53e0a6f9352f5", 2747652, Common::DE_DEU, 900),
