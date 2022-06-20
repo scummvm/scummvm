@@ -42,17 +42,17 @@ void scnMasterCompressor(UnpStr *unp) {
 				 (*(unsigned int *)(mem + p + 0x134) == 0xDBD0FFE6)) {
 				if (/*mem[p]==0x78&&*/ mem[p + 1] == 0xa9 &&
 					(*(unsigned int *)(mem + p + 0x003) == 0xD2A20185)) {
-					unp->_depAdr = READ_LE_INT16(&mem[p + 0x37]); // mem[p + 0x37] | mem[p + 0x38] << 8;
+					unp->_depAdr = READ_LE_UINT16(&mem[p + 0x37]); // mem[p + 0x37] | mem[p + 0x38] << 8;
 					unp->_forced = p + 1;
 					if (mem[p + 0x12b] == 0x020) // jsr $0400, unuseful fx
 						mem[p + 0x12b] = 0x2c;
 				} else if (*(unsigned int *)(mem + p) == 0xD024E0E8) {
 					/* HTL version */
-					unp->_depAdr = READ_LE_INT16(&mem[p + 0x37]); // mem[p + 0x37] | mem[p + 0x38] << 8;
+					unp->_depAdr = READ_LE_UINT16(&mem[p + 0x37]); // mem[p + 0x37] | mem[p + 0x38] << 8;
 					unp->_forced = 0x840;
 				}
 				if (unp->_depAdr) {
-					unp->_retAdr = READ_LE_INT16(&mem[p + 0x13e]); // mem[p + 0x13e] | mem[p + 0x13f] << 8;
+					unp->_retAdr = READ_LE_UINT16(&mem[p + 0x13e]); // mem[p + 0x13e] | mem[p + 0x13f] << 8;
 					unp->_endAdr = 0x2d;
 					unp->_fStrBf = unp->_endAdr;
 					unp->_idFlag = 1;
@@ -71,14 +71,14 @@ void scnMasterCompressor(UnpStr *unp) {
 				 (*(unsigned int *)(mem + p + 0x12d) == 0xe2D0FFE6)) {
 				if (mem[p + 1] == 0xa9 &&
 					(*(unsigned int *)(mem + p + 0x003) == 0xD2A20185)) {
-					unp->_depAdr = READ_LE_INT16(&mem[p + 0x37]); // mem[p + 0x37] | mem[p + 0x38] << 8;
+					unp->_depAdr = READ_LE_UINT16(&mem[p + 0x37]); // mem[p + 0x37] | mem[p + 0x38] << 8;
 					unp->_forced = p + 1;
 				}
 				if (unp->_depAdr) {
 					if (mem[p + 0x136] == 0x4c)
-						unp->_retAdr = READ_LE_INT16(&mem[p + 0x137]); // mem[p + 0x137] | mem[p + 0x138] << 8;
+						unp->_retAdr = READ_LE_UINT16(&mem[p + 0x137]); // mem[p + 0x137] | mem[p + 0x138] << 8;
 					else if (mem[p + 0x13d] == 0x4c)
-						unp->_retAdr = READ_LE_INT16(&mem[p + 0x13e]); // mem[p + 0x13e] | mem[p + 0x13f] << 8;
+						unp->_retAdr = READ_LE_UINT16(&mem[p + 0x13e]); // mem[p + 0x13e] | mem[p + 0x13f] << 8;
 					unp->_endAdr = 0x2d;
 					unp->_fStrBf = unp->_endAdr;
 					unp->_idFlag = 1;
@@ -95,7 +95,7 @@ void scnMasterCompressor(UnpStr *unp) {
 			(*(unsigned int *)(mem + p + 0x00c) == 0x34990910)) {
 			unp->_depAdr = 0x100;
 			unp->_forced = p;
-			unp->_retAdr = READ_LE_INT16(&mem[0x943]); // mem[0x943] | mem[0x944] << 8;
+			unp->_retAdr = READ_LE_UINT16(&mem[0x943]); // mem[0x943] | mem[0x944] << 8;
 			unp->_endAdr = 0x2d;
 			unp->_fStrBf = unp->_endAdr;
 			unp->_idFlag = 1;
@@ -110,7 +110,7 @@ void scnMasterCompressor(UnpStr *unp) {
 			(*(unsigned int *)(mem + 0x882) == 0x01004C2D)) {
 			unp->_depAdr = 0x100;
 			unp->_forced = 0x811;
-			unp->_retAdr = READ_LE_INT16(&mem[0x98b]); // mem[0x98b] | mem[0x98c] << 8;
+			unp->_retAdr = READ_LE_UINT16(&mem[0x98b]); // mem[0x98b] | mem[0x98c] << 8;
 			if (unp->_retAdr < 0x800)
 				unp->_rtAFrc = 1;
 			unp->_endAdr = 0x2d;

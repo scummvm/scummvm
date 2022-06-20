@@ -43,10 +43,10 @@ void scnCCS(UnpStr *unp) {
 			unp->_depAdr = 0x0ff;
 			unp->_fEndAf = 0x2d;
 			unp->_endAdC = 0xffff;
-			unp->_retAdr = READ_LE_INT16(&mem[0x8ed]);
+			unp->_retAdr = READ_LE_UINT16(&mem[0x8ed]);
 			if (unp->_retAdr == 0xa659) {
 				mem[0x8ec] = 0x2c;
-				unp->_retAdr = READ_LE_INT16(&mem[0x8f0]);
+				unp->_retAdr = READ_LE_UINT16(&mem[0x8f0]);
 			}
 			unp->_idFlag = 1;
 			return;
@@ -62,10 +62,10 @@ void scnCCS(UnpStr *unp) {
 				unp->_forced = 0x80b;
 			unp->_depAdr = 0x100;
 			unp->_endAdr = 0xae;
-			unp->_retAdr = READ_LE_INT16(&mem[0x8f1]);
+			unp->_retAdr = READ_LE_UINT16(&mem[0x8f1]);
 			if (unp->_retAdr == 0xa659) {
 				mem[0x8f0] = 0x2c;
-				unp->_retAdr = READ_LE_INT16(&mem[0x8f4]);
+				unp->_retAdr = READ_LE_UINT16(&mem[0x8f4]);
 			}
 			unp->_idFlag = 1;
 			return;
@@ -119,7 +119,7 @@ void scnCCS(UnpStr *unp) {
 				unp->_forced = 0x822;
 			unp->_depAdr = 0x0ff;
 			unp->_fEndBf = 0x39;
-			unp->_retAdr = READ_LE_INT16(&mem[0x8ea]);
+			unp->_retAdr = READ_LE_UINT16(&mem[0x8ea]);
 			unp->_idFlag = 1;
 			return;
 		}
@@ -135,7 +135,7 @@ void scnCCS(UnpStr *unp) {
 			unp->_depAdr = 0x0ff;
 			unp->_fEndAf = 0x39;
 			unp->_endAdC = 0xffff;
-			unp->_retAdr = READ_LE_INT16(&mem[0x8b3]);
+			unp->_retAdr = READ_LE_UINT16(&mem[0x8b3]);
 			unp->_idFlag = 1;
 			return;
 		}
@@ -153,11 +153,11 @@ void scnCCS(UnpStr *unp) {
 			// which is read at $0039/3a by basic, as end address,
 			// then can set arbitrarily $2d/$ae pointers after unpack.
 			// unp->_fEndAf=0x2d;
-			unp->_endAdr = READ_LE_INT16(&mem[0x803]);
+			unp->_endAdr = READ_LE_UINT16(&mem[0x803]);
 			unp->_endAdr++;
 			if (*(unsigned int *)(mem + 0x87f) == 0x4CA65920)
 				mem[0x87f] = 0x2c;
-			unp->_retAdr = READ_LE_INT16(&mem[0x883]);
+			unp->_retAdr = READ_LE_UINT16(&mem[0x883]);
 			unp->_idFlag = 1;
 			return;
 		}
@@ -193,10 +193,10 @@ void scnCCS(UnpStr *unp) {
 			unp->_depAdr = 0x0ff;
 			unp->_fEndAf = 0x2d;
 			unp->_endAdC = 0xffff;
-			unp->_retAdr = READ_LE_INT16(&mem[0x8ed]);
+			unp->_retAdr = READ_LE_UINT16(&mem[0x8ed]);
 			if (unp->_retAdr == 0xa659) {
 				mem[0x8ec] = 0x2c;
-				unp->_retAdr = READ_LE_INT16(&mem[0x8f0]);
+				unp->_retAdr = READ_LE_UINT16(&mem[0x8f0]);
 			}
 			unp->_idFlag = 1;
 			return;

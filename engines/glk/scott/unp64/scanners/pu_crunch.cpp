@@ -43,9 +43,9 @@ void scnPuCrunch(UnpStr *unp) {
 				if ((*(unsigned int *)(mem + p) == 0x2D85FAA5) &&
 					(*(unsigned int *)(mem + p + 4) == 0x2E85FBA5)) {
 					unp->_endAdr = 0xfa;
-					unp->_strMem = READ_LE_INT16(&mem[0x879]); // mem[0x879] | mem[0x87a] << 8;
-					unp->_depAdr = READ_LE_INT16(&mem[0x841]); // mem[0x841] | mem[0x842] << 8;
-					unp->_retAdr = READ_LE_INT16(&mem[p + 0xa]); // mem[p + 0xa] | mem[p + 0xb] << 8;
+					unp->_strMem = READ_LE_UINT16(&mem[0x879]); // mem[0x879] | mem[0x87a] << 8;
+					unp->_depAdr = READ_LE_UINT16(&mem[0x841]); // mem[0x841] | mem[0x842] << 8;
+					unp->_retAdr = READ_LE_UINT16(&mem[p + 0xa]); // mem[p + 0xa] | mem[p + 0xb] << 8;
 					unp->_forced = 0x80d;
 					break;
 				}
@@ -58,9 +58,9 @@ void scnPuCrunch(UnpStr *unp) {
 				if ((*(unsigned int *)(mem + p) == 0x2D85FAA5) &&
 					(*(unsigned int *)(mem + p + 4) == 0x2E85FBA5)) {
 					unp->_endAdr = 0xfa;
-					unp->_strMem = READ_LE_INT16(&mem[p + 0x88a]); // mem[0x88a] | mem[0x88b] << 8;
-					unp->_depAdr = READ_LE_INT16(&mem[p + 0x84b]); // mem[0x84b] | mem[0x84c] << 8;
-					unp->_retAdr = READ_LE_INT16(&mem[p + 0xa]); // mem[p + 0xa] | mem[p + 0xb] << 8;
+					unp->_strMem = READ_LE_UINT16(&mem[p + 0x88a]); // mem[0x88a] | mem[0x88b] << 8;
+					unp->_depAdr = READ_LE_UINT16(&mem[p + 0x84b]); // mem[0x84b] | mem[0x84c] << 8;
+					unp->_retAdr = READ_LE_UINT16(&mem[p + 0xa]); // mem[p + 0xa] | mem[p + 0xb] << 8;
 					unp->_forced = 0x80d;
 					break;
 				}
@@ -71,9 +71,9 @@ void scnPuCrunch(UnpStr *unp) {
 				   (*(unsigned int *)(mem + 0x861) == 0xC501C320) &&
 				   (*(unsigned int *)(mem + 0x839) == 0x01164CED)) {
 			unp->_endAdr = 0xfa;
-			unp->_strMem = READ_LE_INT16(&mem[0x840]); // mem[0x840] | mem[0x841] << 8;
+			unp->_strMem = READ_LE_UINT16(&mem[0x840]); // mem[0x840] | mem[0x841] << 8;
 			unp->_depAdr = 0x116;
-			unp->_retAdr = READ_LE_INT16(&mem[0x8df]); // mem[0x8df] | mem[0x8e0] << 8;
+			unp->_retAdr = READ_LE_UINT16(&mem[0x8df]); // mem[0x8df] | mem[0x8e0] << 8;
 			unp->_forced = 0x80d;
 		} else if ((mem[0x80d] == 0x78) &&
 				   (*(unsigned int *)(mem + 0x811) == 0x85AAA901) &&
@@ -81,17 +81,17 @@ void scnPuCrunch(UnpStr *unp) {
 				   (*(unsigned int *)(mem + 0x861) == 0xC501C820) &&
 				   (*(unsigned int *)(mem + 0x839) == 0x01164CED)) {
 			unp->_endAdr = 0xfa;
-			unp->_strMem = READ_LE_INT16(&mem[0x840]); // mem[0x840] | mem[0x841] << 8;
+			unp->_strMem = READ_LE_UINT16(&mem[0x840]); // mem[0x840] | mem[0x841] << 8;
 			unp->_depAdr = 0x116;
 			if (mem[0x8de] == 0xa9) {
-				unp->_retAdr = READ_LE_INT16(&mem[0x8e1]); // mem[0x8e1] | mem[0x8e2] << 8;
+				unp->_retAdr = READ_LE_UINT16(&mem[0x8e1]); // mem[0x8e1] | mem[0x8e2] << 8;
 				if ((unp->_retAdr == 0xa871) && (mem[0x8e0] == 0x20) &&
 					(mem[0x8e3] == 0x4c)) {
 					mem[0x8e0] = 0x2c;
-					unp->_retAdr = READ_LE_INT16(&mem[0x8e4]); // mem[0x8e4] | mem[0x8e5] << 8;
+					unp->_retAdr = READ_LE_UINT16(&mem[0x8e4]); // mem[0x8e4] | mem[0x8e5] << 8;
 				}
 			} else {
-				unp->_retAdr = READ_LE_INT16(&mem[0x8df]); // mem[0x8df] | mem[0x8e0] << 8;
+				unp->_retAdr = READ_LE_UINT16(&mem[0x8df]); // mem[0x8df] | mem[0x8e0] << 8;
 			}
 			unp->_forced = 0x80d;
 		} else {
@@ -105,17 +105,17 @@ void scnPuCrunch(UnpStr *unp) {
 							(*(unsigned int *)(mem + p + 8) == 0xA2F7D0CA)) {
 							unp->_forced = q;
 							q = mem[p + 3] & 0xf; /* can be $f0 or $f2, q&0x0f as offset */
-							p = READ_LE_INT16(&mem[p + 0xe]); // mem[p + 0xe] | mem[p + 0xf] << 8;
+							p = READ_LE_UINT16(&mem[p + 0xe]); // mem[p + 0xe] | mem[p + 0xf] << 8;
 							if (mem[p - 2] == 0x4c && mem[p + 0xa0 + q] == 0x85) {
-								unp->_depAdr = READ_LE_INT16(&mem[p - 1]); // mem[p - 1] | mem[p] << 8;
-								unp->_strMem = READ_LE_INT16(&mem[p + 4]); // mem[p + 4] | mem[p + 5] << 8;
+								unp->_depAdr = READ_LE_UINT16(&mem[p - 1]); // mem[p - 1] | mem[p] << 8;
+								unp->_strMem = READ_LE_UINT16(&mem[p + 4]); // mem[p + 4] | mem[p + 5] << 8;
 								unp->_endAdr = 0xfa;
 								p += 0xa2;
 								q = p + 8;
 								for (; p < q; p++) {
 									if ((*(unsigned int *)(mem + p) == 0x2D85FAA5) &&
 										(mem[p + 9] == 0x4c)) {
-										unp->_retAdr = READ_LE_INT16(&mem[p + 0xa]); // mem[p + 0xa] | mem[p + 0xb] << 8;
+										unp->_retAdr = READ_LE_UINT16(&mem[p + 0xa]); // mem[p + 0xa] | mem[p + 0xb] << 8;
 										break;
 									}
 								}

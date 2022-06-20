@@ -42,7 +42,7 @@ void scnTBCMultiComp(UnpStr *unp) {
 			if (mem[0x84a] == 0x81) {
 				if (*(unsigned int *)(mem + 0x820) == 0x32BDE9A2) {
 					unp->_forced = 0x820;
-					unp->_retAdr = READ_LE_INT16(&mem[0x8b2]); // mem[0x8b2] | mem[0x8b3] << 8;
+					unp->_retAdr = READ_LE_UINT16(&mem[0x8b2]); // mem[0x8b2] | mem[0x8b3] << 8;
 					if (unp->_retAdr == 0x1e1) {
 						if (*(unsigned int *)(mem + 0x916) == 0x4CA87120) {
 							p = *(unsigned short int *)(mem + 0x91a);
@@ -55,9 +55,9 @@ void scnTBCMultiComp(UnpStr *unp) {
 								unp->_retAdr = p;
 							}
 						} else if ((mem[0x916] == 0x4C) || (mem[0x916] == 0x20)) {
-							unp->_retAdr = READ_LE_INT16(&mem[0x917]); // mem[0x917] | mem[0x918] << 8;
+							unp->_retAdr = READ_LE_UINT16(&mem[0x917]); // mem[0x917] | mem[0x918] << 8;
 						} else if (mem[0x919] == 0x4c) {
-							unp->_retAdr = READ_LE_INT16(&mem[0x91a]); // mem[0x91a] | mem[0x91b] << 8;
+							unp->_retAdr = READ_LE_UINT16(&mem[0x91a]); // mem[0x91a] | mem[0x91b] << 8;
 						}
 					}
 					if ((unp->_retAdr == 0) && (mem[0x8b1] == 0)) {
@@ -73,18 +73,18 @@ void scnTBCMultiComp(UnpStr *unp) {
 			else if (mem[0x84a] == 0x7b) {
 				if (*(unsigned int *)(mem + 0x81d) == 0x32BDE9A2) {
 					unp->_forced = 0x81d;
-					unp->_retAdr = READ_LE_INT16(&mem[0x8ac]); // mem[0x8ac] | mem[0x8ad] << 8;
+					unp->_retAdr = READ_LE_UINT16(&mem[0x8ac]); // mem[0x8ac] | mem[0x8ad] << 8;
 					p = 0x8eb;
 				}
 			}
 			if (unp->_forced) {
 				unp->_depAdr = 0x100;
-				unp->_strMem = READ_LE_INT16(&mem[p + 1]); // mem[p + 1] | mem[p + 2] << 8;
+				unp->_strMem = READ_LE_UINT16(&mem[p + 1]); // mem[p + 1] | mem[p + 2] << 8;
 				q = p;
 				q += mem[p];
 				unp->_endAdr = 0;
 				for (; q > p; q -= 4) {
-					strtmp = READ_LE_INT16(&mem[q - 1]); //(mem[q - 1] | mem[q] << 8);
+					strtmp = READ_LE_UINT16(&mem[q - 1]); //(mem[q - 1] | mem[q] << 8);
 					if (strtmp == 0)
 						strtmp = 0x10000;
 					if (strtmp > unp->_endAdr)
@@ -111,14 +111,14 @@ void scnTBCMultiComp(UnpStr *unp) {
 				}
 			}
 			unp->_depAdr = 0x334;
-			unp->_retAdr = READ_LE_INT16(&mem[0x92a]); // mem[0x92a] | mem[0x92b] << 8;
+			unp->_retAdr = READ_LE_UINT16(&mem[0x92a]); // mem[0x92a] | mem[0x92b] << 8;
 			p = 0x94d;
-			unp->_strMem = READ_LE_INT16(&mem[p + 1]); // mem[p + 1] | mem[p + 2] << 8;
+			unp->_strMem = READ_LE_UINT16(&mem[p + 1]); // mem[p + 1] | mem[p + 2] << 8;
 			q = p;
 			q += mem[p];
 			unp->_endAdr = 0;
 			for (; q > p; q -= 4) {
-				strtmp = READ_LE_INT16(&mem[q - 1]); //(mem[q - 1] | mem[q] << 8);
+				strtmp = READ_LE_UINT16(&mem[q - 1]); //(mem[q - 1] | mem[q] << 8);
 				if (strtmp == 0)
 					strtmp = 0x10000;
 				if (strtmp > unp->_endAdr)
@@ -143,14 +143,14 @@ void scnTBCMultiComp(UnpStr *unp) {
 				}
 			}
 			unp->_depAdr = 0x100;
-			unp->_retAdr = READ_LE_INT16(&mem[0x8c5]); // mem[0x8c5] | mem[0x8c6] << 8;
+			unp->_retAdr = READ_LE_UINT16(&mem[0x8c5]); // mem[0x8c5] | mem[0x8c6] << 8;
 			p = 0x8fe;
-			unp->_strMem = READ_LE_INT16(&mem[p + 1]); // mem[p + 1] | mem[p + 2] << 8;
+			unp->_strMem = READ_LE_UINT16(&mem[p + 1]); // mem[p + 1] | mem[p + 2] << 8;
 			q = p;
 			q += mem[p];
 			unp->_endAdr = 0;
 			for (; q > p; q -= 4) {
-				strtmp = READ_LE_INT16(&mem[q - 1]); //(mem[q - 1] | mem[q] << 8);
+				strtmp = READ_LE_UINT16(&mem[q - 1]); //(mem[q - 1] | mem[q] << 8);
 				if (strtmp == 0)
 					strtmp = 0x10000;
 				if (strtmp > unp->_endAdr)

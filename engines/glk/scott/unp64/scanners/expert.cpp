@@ -93,7 +93,7 @@ void scnExpert(UnpStr *unp) {
 			for (p = 0x900; p < 0xfff0; p++) {
 				if ((*(unsigned int *)(mem + p) == 0xA2F3D0CA) &&
 					(mem[p + 0x05] == 0x4c)) {
-					q = READ_LE_INT16(&mem[p + 0x06]); // mem[p + 0x06] | mem[p + 0x07] << 8;
+					q = READ_LE_UINT16(&mem[p + 0x06]); // mem[p + 0x06] | mem[p + 0x07] << 8;
 					if (q != 0x100) {
 						unp->_depAdr = q;
 						break;
@@ -161,7 +161,7 @@ void scnExpert(UnpStr *unp) {
 			for (p = 0x900; p < 0xfff0; p++) {
 				if ((*(unsigned int *)(mem + p) == 0xA2F3D0CA) &&
 					(mem[p + 0x05] == 0x4c)) {
-					q = READ_LE_INT16(&mem[p + 0x06]); // mem[p + 0x06] | mem[p + 0x07] << 8;
+					q = READ_LE_UINT16(&mem[p + 0x06]); // mem[p + 0x06] | mem[p + 0x07] << 8;
 					if (q != 0x100) {
 						unp->_depAdr = q;
 						break;

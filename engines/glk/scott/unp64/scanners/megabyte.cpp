@@ -36,17 +36,17 @@ void scnMegabyte(UnpStr *unp) {
 	if (unp->_depAdr == 0) {
 		p = 0;
 		if (mem[0x816] == 0x4c)
-			p = READ_LE_INT16(&mem[0x817]); // mem[0x817] | mem[0x818] << 8;
+			p = READ_LE_UINT16(&mem[0x817]); // mem[0x817] | mem[0x818] << 8;
 		else if ((unp->_info->_run == 0x810) && (mem[0x814] == 0x4c) &&
 				 ((*(unsigned int *)(mem + 0x810) & 0xffff00ff) == 0x018500A9))
-			p = READ_LE_INT16(&mem[0x815]); // mem[0x815] | mem[0x816] << 8;
+			p = READ_LE_UINT16(&mem[0x815]); // mem[0x815] | mem[0x816] << 8;
 		if (p) {
 			if ((mem[p + 0] == 0x78) && (mem[p + 1] == 0xa2) &&
 				(mem[p + 3] == 0xa0) &&
 				(*(unsigned int *)(mem + p + 0x05) == 0x15841486) &&
 				(*(unsigned int *)(mem + p + 0x1d) == 0x03804CF7)) {
 				unp->_depAdr = 0x380;
-				unp->_endAdr = READ_LE_INT16(&mem[p + 0x55]); // mem[p + 0x55] | mem[p + 0x56] << 8;
+				unp->_endAdr = READ_LE_UINT16(&mem[p + 0x55]); // mem[p + 0x55] | mem[p + 0x56] << 8;
 				unp->_endAdr++;
 				unp->_strMem = 0x801;
 				unp->_retAdr = 0x801; /* ususally it just runs */
@@ -59,7 +59,7 @@ void scnMegabyte(UnpStr *unp) {
 		p = 0;
 		if ((mem[0x81a] == 0x4c) &&
 			((*(unsigned int *)(mem + 0x816) & 0xffff00ff) == 0x018500A9))
-			p = READ_LE_INT16(&mem[0x81b]); // mem[0x81b] | mem[0x81c] << 8;
+			p = READ_LE_UINT16(&mem[0x81b]); // mem[0x81b] | mem[0x81c] << 8;
 		if (p) {
 			if ((mem[p + 0] == 0x78) && (mem[p + 1] == 0xa2) &&
 				(mem[p + 3] == 0xa0) &&
@@ -67,7 +67,7 @@ void scnMegabyte(UnpStr *unp) {
 				(*(unsigned int *)(mem + p + 0x1d) == 0x03844CF7)) {
 				unp->_depAdr = 0x384;
 				unp->_forced = 0x816;
-				unp->_endAdr = READ_LE_INT16(&mem[p + 0x59]); // mem[p + 0x59] | mem[p + 0x5a] << 8;
+				unp->_endAdr = READ_LE_UINT16(&mem[p + 0x59]); // mem[p + 0x59] | mem[p + 0x5a] << 8;
 				unp->_endAdr++;
 				unp->_strMem = 0x801;
 				unp->_retAdr = 0x801; /* ususally it just runs */

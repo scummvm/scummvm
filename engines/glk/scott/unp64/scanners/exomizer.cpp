@@ -65,7 +65,7 @@ void scnExomizer(UnpStr *unp) {
 			for (; p < unp->_info->_end; p++) {
 				if (mem[p] == 0x4c) {
 					unp->_retAdr = 0;
-					if ((unp->_retAdr = READ_LE_INT16(&mem[p + 1])) >= 0x200) {
+					if ((unp->_retAdr = READ_LE_UINT16(&mem[p + 1])) >= 0x200) {
 						break;
 					} else { /* it's a jmp $01xx, goto next */
 						p++;
@@ -142,7 +142,7 @@ void scnExomizer(UnpStr *unp) {
 				// incredibly there can be a program starting at $4c00 :P
 				if ((mem[p] == 0x4c) && (mem[p - 1] != 0x4c) && (mem[p - 2] != 0x4c)) {
 					unp->_retAdr = 0;
-					if ((unp->_retAdr = READ_LE_INT16(&mem[p + 1])) >= 0x200) {
+					if ((unp->_retAdr = READ_LE_UINT16(&mem[p + 1])) >= 0x200) {
 						break;
 					}
 				}
