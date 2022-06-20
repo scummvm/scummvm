@@ -150,9 +150,9 @@ bool GameState::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(SVal4);
 	s.syncAsSint16LE(soundLoopMode);
 	s.syncAsByte(dummy);	// sound switch
-	s.syncAsByte(SoundVol);
+	s.syncAsByte(dummy);	// sound volume
 	s.syncAsByte(dummy);	// music switch
-	s.syncAsByte(MusicVol);
+	s.syncAsByte(dummy);	// music volume
 	s.syncAsByte(dummy);	// speech switch
 	s.syncAsByte(FramesPerSecond);
 	s.syncAsByte(dummy);	// subtitles switch

@@ -173,15 +173,11 @@ void MainMenu::startGame() {
 	animate();
 	exit_room(-1);
 
-	uint8 soundVol = _G(gameState).SoundVol;
-	uint8 musicVol = _G(gameState).MusicVol;
 	uint8 framesPerSecond = _G(gameState).FramesPerSecond;
 	int sndLoopMode = _G(gameState).soundLoopMode;
 
 	var_init();
 
-	_G(gameState).SoundVol = soundVol;
-	_G(gameState).MusicVol = musicVol;
 	_G(gameState).FramesPerSecond = framesPerSecond;
 	_G(gameState).soundLoopMode = sndLoopMode;
 

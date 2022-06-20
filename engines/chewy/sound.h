@@ -51,8 +51,11 @@ public:
 	void stopAllSounds();
 	bool isSoundActive(uint channel) const;
 	void setSoundVolume(uint volume);
+	int getSoundVolume() const;
 	void setSoundChannelVolume(uint channel, uint volume);
 	void setSoundChannelBalance(uint channel, int8 balance);
+	void pushVolume();
+	void popVolume();
 
 	void playMusic(int16 num, bool loop = false);
 	void playMusic(uint8 *data, uint32 size);
@@ -61,6 +64,7 @@ public:
 	void stopMusic();
 	bool isMusicActive() const;
 	void setMusicVolume(uint volume);
+	int getMusicVolume() const;
 	void playRoomMusic(int16 roomNum);
 
 	void playSpeech(int num, bool waitForFinish);
@@ -68,7 +72,6 @@ public:
 	void resumeSpeech();
 	void stopSpeech();
 	bool isSpeechActive() const;
-	void setSpeechVolume(uint volume);
 
 	void stopAll();
 
@@ -95,6 +98,7 @@ private:
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _speechHandle;
 	int16 _curMusic = -1;
+	int _soundVolume = -1, _speechVolume = -1, _musicVolume = -1;
 
 	SoundResource *_speechRes;
 	SoundResource *_soundRes;

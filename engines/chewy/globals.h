@@ -389,7 +389,6 @@ void init_load();
 void var_init();
 
 void new_game();
-void sound_init();
 void show_intro();
 void register_cutscene(int cutsceneNum);
 void getCutscenes(Common::Array<int> &cutscenes);

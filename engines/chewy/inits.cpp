@@ -79,7 +79,6 @@ void standard_init() {
 	_G(out)->cls();
 	_G(uhr)->setNewTimer(0, 5, SEC_10_MODE);
 
-	sound_init();
 	init_load();
 }
 
@@ -247,13 +246,6 @@ void tidy() {
 	_G(in) = nullptr;
 	_G(out) = nullptr;
 	_G(mem) = nullptr;
-}
-
-void sound_init() {
-	_G(gameState).MusicVol = 63;
-	_G(gameState).SoundVol = 63;
-	g_engine->_sound->setMusicVolume(_G(gameState).MusicVol * Audio::Mixer::kMaxChannelVolume / 120);
-	g_engine->_sound->setSoundVolume(_G(gameState).SoundVol * Audio::Mixer::kMaxChannelVolume / 120);
 }
 
 void show_intro() {
