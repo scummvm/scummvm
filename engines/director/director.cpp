@@ -124,6 +124,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_centerStage = true;
 
 	_surface = nullptr;
+	_tickBaseline = 0;
 }
 
 DirectorEngine::~DirectorEngine() {

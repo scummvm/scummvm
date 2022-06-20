@@ -256,6 +256,9 @@ private:
 	Graphics::ManagedSurface *_surface;
 
 	StartOptions _options;
+
+public:
+	int _tickBaseline;
 };
 
 // An extension of MacPlotData for interfacing with inks and patterns without
