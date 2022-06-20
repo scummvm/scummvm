@@ -725,7 +725,12 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 			_overrideFreq = 0;
 		}
 
-		tryLoadSoundOverride(soundID, &stream);
+		// Try to load high quality audio file if found
+		Audio::Timestamp newDuration;
+		tryLoadSoundOverride(soundID, &stream, &newDuration);
+		if (stream != nullptr) {
+			rate = newDuration.framerate();
+		}
 
 		_vm->setHETimer(heChannel + 4);
 		_heChannel[heChannel].sound = soundID;
@@ -739,7 +744,11 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 		if (heFlags & 1) {
 			_heChannel[heChannel].timer = 0;
 		} else {
-			_heChannel[heChannel].timer = size * 1000 / rate;
+			if (stream != nullptr) {
+				_heChannel[heChannel].timer = newDuration.msecs();
+			} else {
+				_heChannel[heChannel].timer = size * 1000 / rate;
+			}
 		}
 
 		_mixer->stopHandle(_heSoundChannels[heChannel]);
@@ -786,7 +795,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 	}
 }
 
-void SoundHE::tryLoadSoundOverride(int soundID, Audio::RewindableAudioStream **stream) {
+void SoundHE::tryLoadSoundOverride(int soundID, Audio::RewindableAudioStream **stream, Audio::Timestamp *duration) {
 	const char *formats[] = {
 #ifdef USE_FLAC
 	    "flac",
@@ -831,8 +840,13 @@ void SoundHE::tryLoadSoundOverride(int soundID, Audio::RewindableAudioStream **s
 			Common::SeekableReadStream *oStr = soundFileOverride.readStream(soundFileOverride.size());
 			soundFileOverride.close();
 
-			*stream = formatDecoders[i](oStr, DisposeAfterUse::YES);
 			debug(5, "tryLoadSoundOverride: %s loaded", formats[i]);
+			Audio::SeekableAudioStream *seekStream = formatDecoders[i](oStr, DisposeAfterUse::YES);
+			*stream = seekStream;
+			if (duration != nullptr) {
+				*duration = seekStream->getLength();
+			}
+
 			return;
 		}
 	}

@@ -87,7 +87,7 @@ protected:
 	void processSoundQueues() override;
 
 private:
-	void tryLoadSoundOverride(int soundID, Audio::RewindableAudioStream **stream);
+	void tryLoadSoundOverride(int soundID, Audio::RewindableAudioStream **stream, Audio::Timestamp *duration = nullptr);
 };
 
 
