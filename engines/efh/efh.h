@@ -577,7 +577,7 @@ private:
 	int16 _word2D0BA;
 	int16 _word32680[3];
 	int16 _word32482[3];
-	int16 _word3267A[3];
+	int16 _teamNextAttack[3];
 	int16 _word31780[3];
 
 	int16 _word3273A[15];
