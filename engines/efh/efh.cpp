@@ -264,7 +264,7 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 		_unkArray2C8AA[i] = 0;
 		_word32680[i] = 0;
 		_word32482[i] = 0;
-		_word3267A[i] = -1;
+		_teamNextAttack[i] = -1;
 		_word31780[i] = 0;
 		_teamLastAction[i] = 0;
 	}
@@ -3417,7 +3417,7 @@ void EfhEngine::sub1BCA7(int16 monsterTeamId) {
 	debug("sub1BCA7 %d", monsterTeamId);
 
 	int16 counter = 0;
-	if (monsterTeamId != -1 && countPictureRef(monsterTeamId, false)) {
+	if (monsterTeamId != -1 && countPictureRef(monsterTeamId, false) > 0) {
 		counter = 1;
 		_teamMonsterIdArray[0] = monsterTeamId;
 	}
@@ -3651,8 +3651,8 @@ bool EfhEngine::sub1CB27() {
 			switch (var1) {
 			case Common::KEYCODE_a: // Attack
 				_teamLastAction[counter1] = 'A';
-				_word3267A[counter1] = sub1C956(_teamCharId[counter1], 9, true);
-				if (_word3267A[counter1] == -1)
+				_teamNextAttack[counter1] = sub1C956(_teamCharId[counter1], 9, true);
+				if (_teamNextAttack[counter1] == -1)
 					_teamLastAction[counter1] = 0;
 				break;
 			case Common::KEYCODE_d: // Defend
@@ -3689,7 +3689,7 @@ bool EfhEngine::sub1CB27() {
 					case 10:
 					case 12:
 					case 13:
-						_word3267A[counter1] = sub1C956(_teamCharId[counter1], 9, false);
+						_teamNextAttack[counter1] = sub1C956(_teamCharId[counter1], 9, false);
 						break;
 
 					case 9:
@@ -3704,13 +3704,13 @@ bool EfhEngine::sub1CB27() {
 					case 29:
 					case 30:
 						sub1C219((uint8 *)"Select Character:", 3, 1, false);
-						_word3267A[counter1] = selectOtherCharFromTeam();
+						_teamNextAttack[counter1] = selectOtherCharFromTeam();
 						break;
 
 					case 16:
 					case 17:
 					case 26:
-						_word3267A[counter1] = 0xC8;
+						_teamNextAttack[counter1] = 0xC8;
 						break;
 						
 					case 19:
@@ -4639,7 +4639,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 	int16 unk_monsterField5_itemId = sub1C80A(_teamCharId[teamCharId], 9, true);
 	if (unk_monsterField5_itemId == 0x7FFF)
 		unk_monsterField5_itemId = 0x3F;
-	int16 monsterGroupNumber = _word3267A[teamCharId];
+	int16 monsterGroupNumber = _teamNextAttack[teamCharId];
 	if (monsterGroupNumber == 0x64)
 		monsterGroupNumber = 0;
 
@@ -5614,7 +5614,7 @@ void EfhEngine::sub18E80(int16 charId, int16 windowId, int16 menuId, int16 curMe
 }
 
 int16 EfhEngine::displayString_3(const char *str, bool animFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
-	debug("displayString_3 % %s %d %d %d %d", str, animFl ? "True" : "False", charId, windowId, menuId, curMenuLine);
+	debug("displayString_3 %s %s %d %d %d %d", str, animFl ? "True" : "False", charId, windowId, menuId, curMenuLine);
 
 	int16 retVal = 0;
 	
@@ -5648,7 +5648,7 @@ bool EfhEngine::isItemCursed(int16 itemId) {
 }
 
 bool EfhEngine::hasObjectEquipped(int16 charId, int16 objectId) {
-	debug("hasObjectEquipped %d %d", charId, objectId);
+	debugC(6, kDebugEngine, "hasObjectEquipped %d %d", charId, objectId);
 	if ((_npcBuf[charId]._inventory[objectId]._stat1 & 0x80) == 0)
 		return false;
 
@@ -5703,7 +5703,7 @@ void EfhEngine::sub1E028(int16 id, uint8 mask, int16 groupFl) {
 }
 
 bool EfhEngine::isMonsterActive(int16 groupId, int16 id) {
-	debug("isMonsterActive %d %d", groupId, id);
+	debugC(5, kDebugEngine, "isMonsterActive %d %d", groupId, id);
 
 	if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[id] > 0 && _stru32686[groupId]._field0[id] == 0)
 		return true;
