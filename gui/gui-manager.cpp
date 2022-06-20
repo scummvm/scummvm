@@ -121,7 +121,7 @@ void GuiManager::initIconsSet() {
 
 	_iconsSet.clear();
 
-	if (ConfMan.hasKey("iconspath")) {
+	if (!ConfMan.get("iconspath").empty()) {
 		Common::FSDirectory *iconDir = new Common::FSDirectory(ConfMan.get("iconspath"));
 		Common::ArchiveMemberList iconFiles;
 

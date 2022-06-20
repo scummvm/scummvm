@@ -369,7 +369,8 @@ void DownloadIconsDialog::setError(Common::U32String &msg) {
 }
 
 void DownloadIconsDialog::calculateList() {
-	if (!ConfMan.hasKey("iconspath")) {
+	Common::String iconsPath = ConfMan.get("iconspath");
+	if (iconsPath.empty()) {
 		Common::U32String str(_("ERROR: No icons path set"));
 		setError(str);
 		return;
@@ -377,7 +378,8 @@ void DownloadIconsDialog::calculateList() {
 
 	// Scan all files in iconspath and remove present ones from the
 	// donwloaded files list
-	Common::FSDirectory *iconDir = new Common::FSDirectory(ConfMan.get("iconspath"));
+	Common::FSDirectory *iconDir = new Common::FSDirectory(iconsPath);
+
 	Common::ArchiveMemberList iconFiles;
 
 	iconDir->listMatchingMembers(iconFiles, "gui-icons*.dat");

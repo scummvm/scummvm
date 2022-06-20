@@ -2216,7 +2216,7 @@ void GlobalOptionsDialog::build() {
 
 	setPath(_savePath, "savepath", _("Default")); 
 	setPath(_themePath, "themepath", _c("None", "path"));
-	setPath(_iconPath, "iconspath", _c("None", "path"));
+	setPath(_iconPath, "iconspath", _("Default"));
 	setPath(_extraPath, "extrapath", _c("None", "path"));
 
 #ifdef DYNAMIC_MODULES
@@ -2304,7 +2304,7 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 		new ButtonWidget(boss, prefix + "IconButton", _("Icon Path:"), Common::U32String(), kChooseIconDirCmd);
 	else
 		new ButtonWidget(boss, prefix + "IconButton", _c("Icon Path:", "lowres"), Common::U32String(), kChooseIconDirCmd);
-	_iconPath = new StaticTextWidget(boss, prefix + "IconPath", _c("None", "path"));
+	_iconPath = new StaticTextWidget(boss, prefix + "IconPath", _c("Default", "path"));
 
 	_iconPathClearButton = addClearButton(boss, prefix + "IconPathClearButton", kIconPathClearCmd);
 
@@ -2709,7 +2709,7 @@ void GlobalOptionsDialog::apply() {
 
 	changePath(_savePath, "savepath", _("Default")); 
 	changePath(_themePath, "themepath", _c("None", "path")); 
-	changePath(_iconPath, "iconspath", _c("None", "path")); 
+	changePath(_iconPath, "iconspath", _("Default"));
 	changePath(_extraPath, "extrapath", _c("None", "path")); 
 
 #ifdef DYNAMIC_MODULES
@@ -3001,7 +3001,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		_themePath->setLabel(_c("None", "path"));
 		break;
 	case kIconPathClearCmd:
-		_iconPath->setLabel(_c("None", "path"));
+		_iconPath->setLabel(_("Default"));
 		break;
 	case kExtraPathClearCmd:
 		_extraPath->setLabel(_c("None", "path"));

@@ -261,6 +261,21 @@ Common::String OSystem_MacOSX::getDefaultLogFileName() {
 	return Common::String(prefix) + "/Library/Logs/scummvm.log";
 }
 
+Common::String OSystem_MacOSX::getDefaultIconPath() {
+	const char *prefix = getenv("HOME");
+	if (prefix == nullptr) {
+		return Common::String();
+	}
+
+	const Common::String appSupportFolder = Common::String(prefix) + "/Library/Application Support/ScummVM";
+
+	if (!Posix::assureDirectoryExists(appSupportFolder)) {
+		return Common::String();
+	}
+
+	return appSupportFolder;
+}
+
 Common::String OSystem_MacOSX::getScreenshotsPath() {
 	// If the user has configured a screenshots path, use it
 	const Common::String path = OSystem_SDL::getScreenshotsPath();
