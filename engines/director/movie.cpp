@@ -88,7 +88,7 @@ Movie::Movie(Window *window) {
 	_timeOutMouse = true;
 	_timeOutPlay = false;
 
-	_isBeepOn = false;
+	_isBeepOn = false; // Beep is off by default in the original
 }
 
 Movie::~Movie() {
