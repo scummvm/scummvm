@@ -415,6 +415,8 @@ void GridWidget::setEntryList(Common::Array<GridItemInfo> *list) {
 	_dataEntryList.clear();
 	_headerEntryList.clear();
 	_sortedEntryList.clear();
+	_visibleEntryList.clear();
+	_isGridInvalid = true;
 	_selectedEntry = nullptr;
 
 	for (Common::Array<GridItemInfo>::iterator entryIter = list->begin(); entryIter != list->end(); ++entryIter) {
