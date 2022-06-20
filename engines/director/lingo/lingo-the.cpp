@@ -1371,7 +1371,8 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = channel->getBbox().right;
 		break;
 	case kTheScoreColor:
-		warning("STUB: Lingo::getTheSprite(): Unprocessed getting field \"%s\" of sprite", field2str(field));
+		//Check the last 3 bits of the _colorcode byte as value lies in 0 to 5
+		d.u.i = (int)(sprite->_colorcode & 0x7);
 		break;
 	case kTheScriptNum:
 		d.type = INT;
