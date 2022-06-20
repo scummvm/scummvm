@@ -222,9 +222,9 @@ bool Cast::loadConfig() {
 	if (!g_director->_fixStageSize) {
 		_movieRect = Movie::readRect(*stream);
 	} else {
-		//Let the compiler unroll this loop
+		// Skipping rectangle and substituting it with the global one
 		for (int i = 0; i < 4; i++)
-			stream->readSint16();
+			(void)stream->readSint16();
 		_movieRect = g_director->_fixStageRect;
 	}
 	if (!_isShared)
