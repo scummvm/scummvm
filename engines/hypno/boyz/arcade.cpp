@@ -371,6 +371,8 @@ bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting 
 			}
 		} else if (!at.video.empty()) {
 			_background->decoder->pauseVideo(true);
+			_masks->decoder->pauseVideo(true);
+
 			debugC(1, kHypnoDebugArcade, "Playing transition %s", at.video.c_str());
 			MVideo video(at.video, Common::Point(0, 0), false, true, false);
 			disableCursor();
@@ -380,7 +382,13 @@ bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting 
 				_currentPalette = at.palette;
 
 			loadPalette(_currentPalette);
+			if (_levelId == 59) {
+				_background->decoder->forceSeekToFrame(97);
+				_masks->decoder->forceSeekToFrame(97);
+			}
+
 			_background->decoder->pauseVideo(false);
+			_masks->decoder->pauseVideo(false);
 			if (!_music.empty())
 				playSound(_music, 0, _musicRate, _musicStereo); // restore music
 			drawPlayer();
