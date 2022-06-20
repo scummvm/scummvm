@@ -230,7 +230,7 @@ void Room68::talk_keeper() {
 	int16 x = _G(moveState)[P_CHEWY].Xypos[0] - _G(gameState).scrollx + _G(spieler_mi)[P_CHEWY].HotX;
 	int16 y = _G(moveState)[P_CHEWY].Xypos[1] - _G(gameState).scrolly;
 	_G(atds)->set_split_win(3, x, y);
-	startAdsWait(20);
+	startDialogCloseupWait(20);
 	_G(cur_hide_flag) = false;
 	hideCur();
 	_G(det)->del_static_ani(16);
@@ -416,7 +416,7 @@ void Room68::talk_papagei() {
 	showCur();
 
 	_G(atds)->set_split_win(2, 60, 80);
-	startAdsWait(18);
+	startDialogCloseupWait(18);
 }
 
 } // namespace Rooms

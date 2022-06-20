@@ -565,7 +565,7 @@ struct Flags {
 	uint16 AtsAction : 1;
 	uint16 AdsAction : 1;
 	uint16 AtsText : 1;
-	uint16 AdsDialog : 1;
+	uint16 DialogCloseup : 1;
 	uint16 ShowAtsInvTxt : 1;
 	uint16 MainInput : 1;
 	uint16 InventMenu : 1;

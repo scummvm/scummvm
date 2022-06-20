@@ -65,7 +65,7 @@ bool AadTxtHeader::load(const void *src) {
 	return true;
 }
 
-bool AdsTxtHeader::load(const void *src) {
+bool DialogCloseupTxtHeader::load(const void *src) {
 	Common::MemoryReadStream rs((const byte *)src, 8);
 
 	_diaNr = rs.readSint16LE();
@@ -80,10 +80,10 @@ Atdsys::Atdsys() {
 	_aadv._dialog = false;
 	_aadv._strNr = -1;
 	_aadv._silentCount = false;
-	_adsv._dialog = -1;
-	_adsv._autoDia = false;
-	_adsv._strNr = -1;
-	_adsv._silentCount = false;
+	_dialogCloseup._dialog = -1;
+	_dialogCloseup._autoDia = false;
+	_dialogCloseup._strNr = -1;
+	_dialogCloseup._silentCount = false;
 	_tmpDelay = 1;
 	_atdsv._delay = &_tmpDelay;
 	_atdsv._silent = false;
@@ -98,9 +98,9 @@ Atdsys::Atdsys() {
 	_dialogResource = new DialogResource(ADS_TXT_STEUER);
 	_text = new Text();
 
-	_adsnb._blkNr = 0;
-	_adsnb._endNr = 0;
-	_adsStackPtr = 0;
+	_dialogCloseupNextBlock._blkNr = 0;
+	_dialogCloseupNextBlock._endNr = 0;
+	_dialogCloseupStackPtr = 0;
 
 	init();
 	initItemUseWith();
@@ -129,7 +129,7 @@ void Atdsys::init() {
 	set_handle(ATDS_TXT, ATS_DATA, ATS_TAP_OFF, ATS_TAP_MAX);
 	set_handle(ATDS_TXT, INV_ATS_DATA, INV_TAP_OFF, INV_TAP_MAX);
 	set_handle(ATDS_TXT, AAD_DATA, AAD_TAP_OFF, AAD_TAP_MAX);
-	set_handle(ATDS_TXT, ADS_DATA, ADS_TAP_OFF, ADS_TAP_MAX);
+	set_handle(ATDS_TXT, DIALOG_CLOSEUP_DATA, ADS_TAP_OFF, ADS_TAP_MAX);
 	set_handle(ATDS_TXT, INV_USE_DATA, USE_TAP_OFF, USE_TAP_MAX);
 	_G(gameState).AadSilent = 10;
 	_G(gameState).DelaySpeed = 5;
@@ -693,7 +693,7 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 					if (_atdsv.aad_str != 0)
 						_atdsv.aad_str(_atdsv._diaNr, _aadv._strNr, personId, AAD_STR_END);
 					_aadv._dialog = false;
-					_adsv._autoDia = false;
+					_dialogCloseup._autoDia = false;
 					_aadv._strNr = -1;
 					splitString._next = false;
 				} else {
@@ -784,59 +784,59 @@ void Atdsys::aad_search_dia(int16 diaNr, char **ptr) {
 	}
 }
 
-bool  Atdsys::ads_start(int16 diaNr) {
+bool  Atdsys::startDialogCloseup(int16 diaNr) {
 	bool ret = false;
 
-	load_atds(diaNr, ADS_DATA);
-	bool ende = false;
+	load_atds(diaNr, DIALOG_CLOSEUP_DATA);
+	bool end = false;
 
 	if (_atdsMem[ADS_HANDLE][0] == (char)BLOCKENDE &&
 		    _atdsMem[ADS_HANDLE][1] == (char)BLOCKENDE &&
 		    _atdsMem[ADS_HANDLE][2] == (char)BLOCKENDE)
-		ende = true;
+		end = true;
 
-	if (!ende) {
-		_adsv._ptr = _atdsMem[ADS_HANDLE];
-		_adsv._txtHeader.load(_adsv._ptr);
+	if (!end) {
+		_dialogCloseup._ptr = _atdsMem[ADS_HANDLE];
+		_dialogCloseup._txtHeader.load(_dialogCloseup._ptr);
 
-		if (_adsv._txtHeader._diaNr == diaNr) {
+		if (_dialogCloseup._txtHeader._diaNr == diaNr) {
 			ret = true;
-			_adsv._ptr += AdsTxtHeader::SIZE();
-			_adsv._person.load(_adsv._ptr, _adsv._txtHeader._perNr);
-			_adsv._ptr += _adsv._txtHeader._perNr * AadInfo::SIZE();
-			_adsv._dialog = diaNr;
-			_adsv._strNr = 0;
-			_adsStack[0] = 0;
-			_adsStackPtr = 1;
+			_dialogCloseup._ptr += DialogCloseupTxtHeader::SIZE();
+			_dialogCloseup._person.load(_dialogCloseup._ptr, _dialogCloseup._txtHeader._perNr);
+			_dialogCloseup._ptr += _dialogCloseup._txtHeader._perNr * AadInfo::SIZE();
+			_dialogCloseup._dialog = diaNr;
+			_dialogCloseup._strNr = 0;
+			_dialogCloseupStack[0] = 0;
+			_dialogCloseupStackPtr = 1;
 		}
 	}
 	return ret;
 }
 
-void Atdsys::stop_ads() {
-	_adsv._dialog = -1;
-	_adsv._autoDia = false;
+void Atdsys::stopDialogCloseup() {
+	_dialogCloseup._dialog = -1;
+	_dialogCloseup._autoDia = false;
 }
 
-int16 Atdsys::ads_get_status() {
-	return _adsv._dialog;
+int16 Atdsys::getDialogCloseupStatus() {
+	return _dialogCloseup._dialog;
 }
 
-char **Atdsys::ads_item_ptr(uint16 dialogNum, int16 blockNr, int16 *retNr) {
+char **Atdsys::dialogCloseupItemPtr(uint16 dialogNum, int16 blockNr, int16 *retNr) {
 	*retNr = 0;
-	memset(_ePtr, 0, sizeof(char *) * ADS_MAX_BL_EIN);
-	if (_adsv._dialog != -1) {
-		_adsv._blkPtr = _adsv._ptr;
-		ads_search_block(blockNr, &_adsv._blkPtr);
-		if (_adsv._blkPtr) {
-			for (int16 i = 0; i < ADS_MAX_BL_EIN; i++) {
-				char *tmp_adr = _adsv._blkPtr;
-				ads_search_item(i, &tmp_adr);
-				if (tmp_adr) {
-					char nr = tmp_adr[-1];
-					tmp_adr += sizeof(AadStrHeader);
+	memset(_ePtr, 0, sizeof(char *) * DIALOG_CLOSEUP_MAX);
+	if (_dialogCloseup._dialog != -1) {
+		_dialogCloseup._blockPtr = _dialogCloseup._ptr;
+		dialogCloseupSearchBlock(blockNr, &_dialogCloseup._blockPtr);
+		if (_dialogCloseup._blockPtr) {
+			for (int16 i = 0; i < DIALOG_CLOSEUP_MAX; i++) {
+				char *itemPtr = _dialogCloseup._blockPtr;
+				dialogCloseupSearchItem(i, &itemPtr);
+				if (itemPtr) {
+					char nr = itemPtr[-1];
+					itemPtr += sizeof(AadStrHeader);
 					if (_dialogResource->isItemShown(dialogNum, blockNr, (int16)nr)) {
-						_ePtr[*retNr] = tmp_adr;
+						_ePtr[*retNr] = itemPtr;
 						_eNr[*retNr] = (int16)nr;
 						++(*retNr);
 					}
@@ -848,120 +848,120 @@ char **Atdsys::ads_item_ptr(uint16 dialogNum, int16 blockNr, int16 *retNr) {
 	return _ePtr;
 }
 
-AdsNextBlk *Atdsys::ads_item_choice(uint16 dialogNum, int16 blockNr, int16 itemNr) {
-	_adsnb._blkNr = blockNr;
+DialogCloseupNextBlock *Atdsys::dialogCloseupItemChoice(uint16 dialogNum, int16 blockNr, int16 itemNr) {
+	_dialogCloseupNextBlock._blkNr = blockNr;
 	if (!_aadv._dialog) {
-		if (!_adsv._autoDia) {
-			ads_search_item(_eNr[itemNr], &_adsv._blkPtr);
-			if (_adsv._blkPtr) {
-				if (start_ads_auto_dia(_adsv._blkPtr))
-					_adsv._autoDia = true;
+		if (!_dialogCloseup._autoDia) {
+			dialogCloseupSearchItem(_eNr[itemNr], &_dialogCloseup._blockPtr);
+			if (_dialogCloseup._blockPtr) {
+				if (startAutoDialogCloseup(_dialogCloseup._blockPtr))
+					_dialogCloseup._autoDia = true;
 				if (_dialogResource->hasExitBit(dialogNum, blockNr, _eNr[itemNr])) {
-					stop_ads();
-					_adsnb._endNr = _eNr[itemNr];
-					_adsnb._blkNr = -1;
+					stopDialogCloseup();
+					_dialogCloseupNextBlock._endNr = _eNr[itemNr];
+					_dialogCloseupNextBlock._blkNr = -1;
 				}
 			}
 		}
 	}
 
-	return &_adsnb;
+	return &_dialogCloseupNextBlock;
 }
 
-AdsNextBlk *Atdsys::calc_next_block(uint16 dialogNum, int16 blockNr, int16 itemNr) {
+DialogCloseupNextBlock *Atdsys::calcNextDialogCloseupBlock(uint16 dialogNum, int16 blockNr, int16 itemNr) {
 	if (!_dialogResource->hasShowBit(dialogNum, blockNr, _eNr[itemNr]))
 		_dialogResource->setItemShown(dialogNum, blockNr, _eNr[itemNr], false);
-	_adsnb._endNr = _eNr[itemNr];
+	_dialogCloseupNextBlock._endNr = _eNr[itemNr];
 
 	if (_dialogResource->hasRestartBit(dialogNum, blockNr, _eNr[itemNr])) {
-		_adsnb._blkNr = 0;
+		_dialogCloseupNextBlock._blkNr = 0;
 
-		_adsStackPtr = 0;
+		_dialogCloseupStackPtr = 0;
 	} else {
 		const uint8 nextBlock = _dialogResource->getNextBlock(dialogNum, blockNr, _eNr[itemNr]);
 		if (nextBlock) {
-			_adsnb._blkNr = nextBlock;
+			_dialogCloseupNextBlock._blkNr = nextBlock;
 
-			int16 anzahl = 0;
-			while (!anzahl && _adsnb._blkNr != -1) {
+			int16 option = 0;
+			while (!option && _dialogCloseupNextBlock._blkNr != -1) {
 
-				anzahl = 0;
-				ads_item_ptr(dialogNum, _adsnb._blkNr, &anzahl);
-				if (!anzahl) {
-					_adsnb._blkNr = return_block(dialogNum);
+				option = 0;
+				dialogCloseupItemPtr(dialogNum, _dialogCloseupNextBlock._blkNr, &option);
+				if (!option) {
+					_dialogCloseupNextBlock._blkNr = getDialogCloseupBlock(dialogNum);
 				}
 			}
 		} else {
-			_adsnb._blkNr = return_block(dialogNum);
+			_dialogCloseupNextBlock._blkNr = getDialogCloseupBlock(dialogNum);
 		}
 	}
-	_adsStack[_adsStackPtr] = _adsnb._blkNr;
-	++_adsStackPtr;
+	_dialogCloseupStack[_dialogCloseupStackPtr] = _dialogCloseupNextBlock._blkNr;
+	++_dialogCloseupStackPtr;
 
-	return &_adsnb;
+	return &_dialogCloseupNextBlock;
 }
 
-int16 Atdsys::return_block(uint16 dialogNum) {
-	_adsStackPtr -= 1;
+int16 Atdsys::getDialogCloseupBlock(uint16 dialogNum) {
+	_dialogCloseupStackPtr -= 1;
 	int16 ret = -1;
-	bool ende = false;
-	while (_adsStackPtr >= 0 && !ende) {
-		short blk_nr = _adsStack[_adsStackPtr];
-		int16 anz;
-		ads_item_ptr(dialogNum, blk_nr, &anz);
-		if (anz) {
+	bool end = false;
+	while (_dialogCloseupStackPtr >= 0 && !end) {
+		short blk_nr = _dialogCloseupStack[_dialogCloseupStackPtr];
+		int16 option;
+		dialogCloseupItemPtr(dialogNum, blk_nr, &option);
+		if (option) {
 			ret = blk_nr;
-			ende = true;
+			end = true;
 		} else {
-			--_adsStackPtr;
+			--_dialogCloseupStackPtr;
 		}
 	}
 
-	++_adsStackPtr;
+	++_dialogCloseupStackPtr;
 	return ret;
 }
 
-void Atdsys::ads_search_block(int16 blockNr, char **ptr) {
+void Atdsys::dialogCloseupSearchBlock(int16 blockNr, char **ptr) {
 	char *start_ptr = *ptr;
-	bool ende = false;
-	while (!ende) {
+	bool end = false;
+	while (!end) {
 		if (*start_ptr == (char)blockNr) {
-			ende = true;
+			end = true;
 			*ptr = start_ptr;
 		} else {
 			start_ptr += 2 + sizeof(AadStrHeader);
 			while (*start_ptr++ != ATDS_END_BLOCK) {}
 			if (start_ptr[0] == ATDS_END &&
 			        start_ptr[1] == ATDS_END) {
-				ende = true;
+				end = true;
 				*ptr = nullptr;
 			}
 		}
 	}
 }
 
-void Atdsys::ads_search_item(int16 itemNr, char **blkAdr) {
+void Atdsys::dialogCloseupSearchItem(int16 itemNr, char **blkAdr) {
 	char *start_ptr = *blkAdr + 1;
-	bool ende = false;
-	while (!ende) {
+	bool end = false;
+	while (!end) {
 		if (*start_ptr == itemNr) {
-			ende = true;
+			end = true;
 			*blkAdr = start_ptr + 1;
 		} else {
 			start_ptr += 1 + sizeof(AadStrHeader);
 			while (*start_ptr++ != ATDS_END_ENTRY) {}
 			if (*start_ptr == ATDS_END_BLOCK) {
-				ende = true;
+				end = true;
 				*blkAdr = nullptr;
 			}
 		}
 	}
 }
 
-int16 Atdsys::start_ads_auto_dia(char *itemAdr) {
+int16 Atdsys::startAutoDialogCloseup(char *itemAdr) {
 	_aadv._dialog = false;
 	if (itemAdr) {
-		_aadv._person = _adsv._person;
+		_aadv._person = _dialogCloseup._person;
 		_aadv._ptr = itemAdr;
 		_aadv._dialog = true;
 		_aadv._strNr = 0;
@@ -970,7 +970,7 @@ int16 Atdsys::start_ads_auto_dia(char *itemAdr) {
 		int16 txt_len;
 		aad_get_zeilen(_aadv._ptr, &txt_len);
 		_aadv._delayCount = get_delay(txt_len);
-		_atdsv._diaNr = _adsv._txtHeader._diaNr + 10000;
+		_atdsv._diaNr = _dialogCloseup._txtHeader._diaNr + 10000;
 
 		if (_atdsv.aad_str != nullptr)
 			_atdsv.aad_str(_atdsv._diaNr, 0, _aadv._strHeader->_akPerson, AAD_STR_START);
@@ -983,11 +983,11 @@ int16 Atdsys::start_ads_auto_dia(char *itemAdr) {
 	return _aadv._dialog;
 }
 
-void Atdsys::hide_item(int16 diaNr, int16 blockNr, int16 itemNr) {
+void Atdsys::hideDialogCloseupItem(int16 diaNr, int16 blockNr, int16 itemNr) {
 	_dialogResource->setItemShown(diaNr, blockNr, itemNr, false);
 }
 
-void Atdsys::show_item(int16 diaNr, int16 blockNr, int16 itemNr) {
+void Atdsys::showDialogCloseupItem(int16 diaNr, int16 blockNr, int16 itemNr) {
 	_dialogResource->setItemShown(diaNr, blockNr, itemNr, true);
 }
 

@@ -29,16 +29,16 @@
 
 namespace Chewy {
 
-int16 loadAdsDia(int16 diaNr) {
+int16 loadDialogCloseup(int16 diaNr) {
 	int16 ret = false;
 
-	if (_G(flags).AdsDialog == false) {
-		bool tmp = _G(atds)->ads_start(diaNr);
+	if (_G(flags).DialogCloseup == false) {
+		bool tmp = _G(atds)->startDialogCloseup(diaNr);
 		if (tmp == true) {
 			ret = true;
 			_G(ads_blk_nr) = 0;
-			_G(ads_item_ptr) = _G(atds)->ads_item_ptr(diaNr, _G(ads_blk_nr), &_G(ads_item_nr));
-			_G(flags).AdsDialog = true;
+			_G(dialogCloseupItemPtr) = _G(atds)->dialogCloseupItemPtr(diaNr, _G(ads_blk_nr), &_G(ads_item_nr));
+			_G(flags).DialogCloseup = true;
 			_G(ads_push) = true;
 			_G(ads_tmp_dsp) = _G(gameState).DispFlag;
 			_G(gameState).DispFlag = false;
@@ -1185,7 +1185,7 @@ void selectDialogOption(int16 diaNr, int16 blkNr, int16 strEndNr) {
 
 		case 17:
 			if (blkNr == 0 && strEndNr == 2)
-				_G(atds)->show_item(17, 0, 1);
+				_G(atds)->showDialogCloseupItem(17, 0, 1);
 
 			break;
 
@@ -2767,7 +2767,7 @@ void calc_person_dia(int16 p_nr) {
 					_G(stopAutoMove)[P_NICHELLE] = _G(gameState).PersonDiaRoom[P_NICHELLE];
 					showCur();
 				} else {
-					startAdsWait(_G(gameState).PersonDia[P_NICHELLE] - 10000);
+					startDialogCloseupWait(_G(gameState).PersonDia[P_NICHELLE] - 10000);
 				}
 			}
 		}

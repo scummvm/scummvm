@@ -146,7 +146,7 @@ int16 Room67::talk_papagei() {
 			showCur();
 
 			_G(atds)->set_split_win(2, 270 - _G(gameState).scrollx, 10);
-			startAdsWait(19);
+			startDialogCloseupWait(19);
 			_G(room)->set_timer_status(1, TIMER_START);
 		} else if (_G(menu_item) == CUR_NICHELLE) {
 			startAadWait(380);
@@ -156,7 +156,7 @@ int16 Room67::talk_papagei() {
 			showCur();
 
 			_G(atds)->set_split_win(2, 270 - _G(gameState).scrollx, 10);
-			startAdsWait(18);
+			startDialogCloseupWait(18);
 			_G(room)->set_timer_status(1, TIMER_START);
 		} else if (_G(menu_item) == CUR_USE) {
 			hideCur();

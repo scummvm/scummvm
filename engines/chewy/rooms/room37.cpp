@@ -314,7 +314,7 @@ void Room37::hahn_dia() {
 	_G(gameState).scrollx = 0;
 	_G(gameState).scrolly = 0;
 	switchRoom(38);
-	startAdsWait(9);
+	startDialogCloseupWait(9);
 	_G(gameState)._personHide[P_CHEWY] = false;
 	_G(flags).LoadGame = true;
 	_G(gameState).scrollx = tmp_scrollx;

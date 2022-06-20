@@ -131,7 +131,7 @@ void Room35::talk_cat() {
 		_G(gameState)._personHide[P_CHEWY] = true;
 		switchRoom(36);
 		showCur();
-		startAdsWait(dia_nr);
+		startDialogCloseupWait(dia_nr);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		switchRoom(35);
 

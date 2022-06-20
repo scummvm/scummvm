@@ -51,7 +51,7 @@ void Room65::entry() {
 		startAadWait(_G(gameState).PersonDia[P_HOWARD]);
 		showCur();
 	} else {
-		startAdsWait(_G(gameState).PersonDia[P_HOWARD] - 10000);
+		startDialogCloseupWait(_G(gameState).PersonDia[P_HOWARD] - 10000);
 	}
 	_G(flags).LoadGame = true;
 	show_person();

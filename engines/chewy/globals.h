@@ -130,7 +130,7 @@ public:
 	byte *_workpage = nullptr;
 	byte *_workptr = nullptr;
 	byte *_spblende = nullptr;
-	char **_ads_item_ptr = nullptr;
+	char **_dialogCloseupItemPtr = nullptr;
 
 	int16 _ads_dia_nr = 0;
 	int16 _ads_item_nr = 0;
@@ -439,7 +439,7 @@ uint16 exit_flip_flop(int16 ani_nr, int16 eib_nr1, int16 eib_nr2,
                         int16 ats_nr1, int16 ats_nr2, int16 sib_nr,
                         int16 spr_nr1, int16 spr_nr2, int16 flag);
 
-int16 loadAdsDia(int16 diaNr);
+int16 loadDialogCloseup(int16 diaNr);
 
 void setSsiPos();
 
@@ -481,7 +481,7 @@ void startAadWait(int16 diaNr);
 
 void start_aad(int16 diaNr);
 void aadWait(int16 strNr);
-void startAdsWait(int16 diaNr);
+void startDialogCloseupWait(int16 diaNr);
 void start_aad(int16 diaNr, int16 ssiNr);
 void wait_auto_obj(int16 nr);
 

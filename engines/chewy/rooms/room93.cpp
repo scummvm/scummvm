@@ -40,7 +40,7 @@ void Room93::entry() {
 	_G(det)->del_static_ani(0);
 	startSetAILWait(3, 1, ANI_FRONT);
 	_G(det)->set_static_ani(1, -1);
-	startAdsWait(27);
+	startDialogCloseupWait(27);
 
 	if (!_G(gameState).flags37_40) {
 		_G(det)->del_static_ani(1);

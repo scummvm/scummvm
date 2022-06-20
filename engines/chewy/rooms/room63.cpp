@@ -255,7 +255,7 @@ void Room63::talk_girl() {
 	_G(det)->stop_detail(12);
 	startSetAILWait(13, 1, ANI_FRONT);
 	_G(det)->set_static_ani(14, -1);
-	startAdsWait(17);
+	startDialogCloseupWait(17);
 	_G(det)->del_static_ani(14);
 	_G(det)->startDetail(12, 255, ANI_FRONT);
 }
