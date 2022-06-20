@@ -1252,7 +1252,11 @@ void MToonElement::render(Window *window) {
 }
 
 VThreadState MToonElement::startPlayingTask(const StartPlayingTaskData &taskData) {
-	_cel = _playRange.min;
+	if (_rateTimes100000 < 0)
+		_cel = _playRange.max;
+	else
+		_cel = _playRange.min;
+
 	_paused = false;
 	_isPlaying = false;	// Reset play state, it starts for real in playMedia
 
