@@ -84,8 +84,7 @@ Atdsys::Atdsys() {
 	_dialogCloseup._autoDia = false;
 	_dialogCloseup._strNr = -1;
 	_dialogCloseup._silentCount = false;
-	_tmpDelay = 1;
-	_atdsv._delay = &_tmpDelay;
+	_atdsv._delay = 1;
 	_atdsv._silent = false;
 	_atdsv._diaNr = -1;
 	_atdsv.aad_str = nullptr;
@@ -162,7 +161,7 @@ void Atdsys::initItemUseWith() {
 }
 
 void Atdsys::set_delay(int16 *delay, int16 silent) {
-	_atdsv._delay = delay;
+	_atdsv._delay = *delay;
 	_atdsv._silent = silent;
 }
 
@@ -180,7 +179,7 @@ int16 Atdsys::get_delay(int16 txt_len) {
 	if (txt_len > maxLen)
 		txt_len = maxLen;
 
-	int16 ret = *_atdsv._delay * (txt_len + z_len);
+	int16 ret = _atdsv._delay * (txt_len + z_len);
 	return ret;
 }
 

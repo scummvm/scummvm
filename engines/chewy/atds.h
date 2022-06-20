@@ -90,7 +90,7 @@ struct AdsDiaHeaders {
 
 struct AtdsVar {
 	int16 _silent = 0;
-	int16 *_delay = nullptr;
+	int16 _delay = 1;
 	int16 _diaNr = 0;
 
 	bool _eventsEnabled = false;
@@ -315,7 +315,6 @@ private:
 	char *_splitPtr[MAX_STR_SPLIT] = { nullptr };
 	int16 _splitX[MAX_STR_SPLIT] = { 0 };
 	int16 _invBlockNr;
-	int16 _tmpDelay;
 	int16 _mousePush = 0;
 	int _printDelayCount1 = 0;
 	DialogResource *_dialogResource;
