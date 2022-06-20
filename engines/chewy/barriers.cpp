@@ -42,53 +42,51 @@ int16 Barriers::getBarrierId(int16 g_idx, const byte *buffer) {
 		switch (_G(gameState)._personRoomNr[P_CHEWY]) {
 		case 8:
 			if (_G(gameState).R8GTuer)
-				idx_nr = 0;
+				return 0;
 			break;
 
 		case 9:
 			if (!_G(gameState).R9Gitter)
-				idx_nr = 0;
+				return 0;
 			break;
 
 		case 16:
 			if (!_G(gameState).R16F5Exit)
-				idx_nr = 0;
+				return 0;
 			break;
 
 		case 17:
 			if (_G(gameState).R17Location != 1)
-				idx_nr = 0;
+				return 0;
 			break;
 
 		case 21:
 			if (!_G(gameState).R21Laser2Weg)
-				idx_nr = 0;
+				return 0;
 			break;
 
 		case 31:
 			if (!_G(gameState).R31KlappeZu)
-				idx_nr = 0;
+				return 0;
 			break;
 
 		case 41:
 			if (!_G(gameState).R41LolaOk)
-				idx_nr = 0;
+				return 0;
 			break;
 
 		case 52:
 			if (!_G(gameState).R52LichtAn)
-				idx_nr = 2;
+				return 2;
 			else
-				idx_nr = 4;
+				return 4;
 			break;
 
 		case 71:
-			idx_nr = _G(gameState).R71LeopardVined ? 1 : 0;
-			break;
+			return _G(gameState).R71LeopardVined ? 1 : 0;
 
 		case 76:
-			idx_nr = _G(gameState).flags29_4 ? 4 : 0;
-			break;
+			return _G(gameState).flags29_4 ? 4 : 0;
 
 		case 84:
 			if (!_G(gameState).R88UsedMonkey)
@@ -97,17 +95,17 @@ int16 Barriers::getBarrierId(int16 g_idx, const byte *buffer) {
 
 		case 86:
 			if (!_G(gameState).flags32_2)
-				idx_nr = 0;
+				return 0;
 			break;
 
 		case 94:
 			if (!_G(gameState).flags35_10)
-				idx_nr = 0;
+				return 0;
 			break;
 
 		case 97:
 			if (_G(gameState).flags35_80)
-				idx_nr = 0;
+				return 0;
 			break;
 
 		default:
@@ -119,31 +117,30 @@ int16 Barriers::getBarrierId(int16 g_idx, const byte *buffer) {
 		switch (_G(gameState)._personRoomNr[P_CHEWY]) {
 		case 17:
 			if (_G(gameState).R17Location != 2)
-				idx_nr = 0;
+				return 0;
 			break;
 
 		case 21:
-			if (!_G(gameState).R21Laser1Weg) {
-				idx_nr = 0;
-			} else
-				idx_nr = 3;
-			break;
+			if (!_G(gameState).R21Laser1Weg)
+				return 0;
+			else
+				return 3;
 
 		case 37:
 			if (!_G(gameState).R37Kloppe)
-				idx_nr = 0;
+				return 0;
 			break;
 
 		case 52:
 			if (!_G(gameState).R52TuerAuf)
-				idx_nr = 2;
+				return 2;
 			else
-				idx_nr = 4;
+				return 4;
 			break;
 
 		case 97:
 			if (_G(gameState).flags36_20)
-				idx_nr = 0;
+				return 0;
 			break;
 
 		default:
@@ -152,10 +149,8 @@ int16 Barriers::getBarrierId(int16 g_idx, const byte *buffer) {
 		break;
 
 	case 42:
-		if (_G(gameState)._personRoomNr[P_CHEWY] == 97) {
-			if (!_G(gameState).flags37_1)
-				idx_nr = 0;
-		}
+		if (_G(gameState)._personRoomNr[P_CHEWY] == 97 && !_G(gameState).flags37_1)
+			return 0;
 		break;
 
 	default:
