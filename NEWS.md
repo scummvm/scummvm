@@ -206,6 +206,14 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added "Portable Mode" in which the executable's directory is used to store
      application files if a scummvm.ini file is present, instead of the user's
      profile directory.
+   - Fixed detection of the Application Data path on Windows 95/98/ME.
+
+ RISC OS port:
+   - Added support for dynamic plugins.
+   - Added a native MIDI driver.
+
+ Nintendo DS port:
+   - Fixed screen scrolling when using the Load and Save dialogs.
 
 #### 2.5.1 (2022-01-02)
 
