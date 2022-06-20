@@ -72,7 +72,7 @@ void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
 	for (Script::iterator it = _currentScript.begin(); it != _currentScript.end(); ++it) {
 		_ammo = _weaponMaxAmmo[it->cursor];
 	}
-
+	_currentActor = 0;
 	updateFromScript();
 	_shootsDestroyed.clear();
 	_health = _previousHealth;
