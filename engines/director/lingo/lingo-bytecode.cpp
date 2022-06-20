@@ -737,10 +737,13 @@ void LC::cb_v4theentitypush() {
 					int menuId = id.u.i;
 					id.u.menu = new MenuReference();
 					id.u.menu->menuIdNum = menuId;
-				} else {
+				} else if (id.type == STRING) {
 					Common::String *menuId = id.u.s;
 					id.u.menu = new MenuReference();
 					id.u.menu->menuIdStr = menuId;
+				} else {
+					warning("LC::cb_v4theentitypush : Unknown type of menu Reference %d of entity type %d", id.type, g_lingo->_lingoV4TheEntity[key]->type);
+					break;
 				}
 				id.type = MENUREF;
 
@@ -882,10 +885,13 @@ void LC::cb_v4theentityassign() {
 				int menuId = id.u.i;
 				id.u.menu = new MenuReference();
 				id.u.menu->menuIdNum = menuId;
-			} else {
+			} else if (id.type == STRING) {
 				Common::String *menuId = id.u.s;
 				id.u.menu = new MenuReference();
 				id.u.menu->menuIdStr = menuId;
+			} else {
+				warning("LC::cb_v4theentityassign : Unknown type of menu Reference %d of entity type %d", id.type, g_lingo->_lingoV4TheEntity[key]->type);
+				break;
 			}
 			id.type = MENUREF;
 			debugC(3, kDebugLingoExec, "cb_v4theentityassign: calling setTheEntity(%s, %s, %s, %s)", g_lingo->entity2str(entity), id.asString(true).c_str(), g_lingo->field2str(field), value.asString(true).c_str());
@@ -907,13 +913,19 @@ void LC::cb_v4theentityassign() {
 			menuDatum.u.menu = new MenuReference();
 			if (menuId.type == INT) {
 				menuDatum.u.menu->menuIdNum = menuId.u.i;
-			} else {
+			} else if (menuId.type == STRING) {
 				menuDatum.u.menu->menuIdStr = menuId.u.s;
+			} else {
+				warning("LC::cb_v4theentityassign : Unknown type of menu Reference %d of entity type %d", menuId.type, g_lingo->_lingoV4TheEntity[key]->type);
+				break;
 			}
 			if (itemId.type == INT) {
 				menuDatum.u.menu->menuItemIdNum = itemId.u.i;
-			} else {
+			} else if (itemId.type == STRING) {
 				menuDatum.u.menu->menuItemIdStr = itemId.u.s;
+			} else {
+				warning("LC::cb_v4theentityassign : Unknown type of menuItem Reference %d of entity type %d", itemId.type, g_lingo->_lingoV4TheEntity[key]->type);
+				break;
 			}
 			g_lingo->setTheEntity(entity, menuDatum, field, value);
 		}
