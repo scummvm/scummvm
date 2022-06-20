@@ -128,7 +128,10 @@ typedef struct {
 - (void) beginBackgroundSaveStateTask;
 - (void) endBackgroundSaveStateTask;
 
+- (void)addEvent:(InternalEvent)event;
 - (bool)fetchEvent:(InternalEvent *)event;
+
+- (bool)getMouseCoords:(CGPoint)point eventX:(int *)x eventY:(int *)y;
 
 @end
 
