@@ -789,8 +789,6 @@ void flic_cut(int16 nr) {
 	SHOULD_QUIT_RETURN;
 
 	g_events->delay(50);
-	g_engine->_sound->setSoundVolume(_G(gameState).SoundVol * Audio::Mixer::kMaxChannelVolume / 120);
-	g_engine->_sound->setMusicVolume(_G(gameState).MusicVol * Audio::Mixer::kMaxChannelVolume / 120);
 
 	if (nr != FCUT_135) {
 		g_engine->_sound->playRoomMusic(_G(gameState)._personRoomNr[0]);

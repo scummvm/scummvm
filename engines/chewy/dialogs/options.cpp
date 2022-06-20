@@ -65,17 +65,17 @@ void Options::execute(TafInfo *ti) {
 	int16 tdisp_count = tdisp_delay;
 	_G(FrameSpeed) = 0;
 	int16 delay_count = _G(gameState).DelaySpeed;
-	warning("stop_clock = (clock() / CLK_TCK) + 1;");
+	//warning("stop_clock = (clock() / CLK_TCK) + 1;");
 	while (key != Common::KEYCODE_ESCAPE) {
 		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
 		++_G(FrameSpeed);
-		warning("akt_clock = clock() / CLK_TCK;");
+		//warning("akt_clock = clock() / CLK_TCK;");
 		if (akt_clock >= stop_clock) {
 			//TmpFrame = _G(FrameSpeed);
 			_G(gameState).DelaySpeed = (_G(FrameSpeed) >> 1) / _G(gameState).FramesPerSecond;
 
 			_G(FrameSpeed) = 0;
-			warning("stop_clock = (clock() / CLK_TCK) + 1;");
+			//warning("stop_clock = (clock() / CLK_TCK) + 1;");
 		}
 
 		_G(out)->spriteSet(ti->image[surimy_ani], 18 + ti->correction[surimy_ani << 1],
@@ -100,13 +100,16 @@ void Options::execute(TafInfo *ti) {
 				18 + ti->correction[SCHNULL_BAND << 1],
 				8 + ti->correction[(SCHNULL_BAND << 1) + 1], 0);
 		}
+
+		const int soundVolume = g_engine->_sound->getSoundVolume() * Audio::Mixer::kMaxChannelVolume / 2 * 120;
 		_G(out)->pop_box(32 - 2, 104 - 12, 42 + 4, 136 + 2, 192, 183, 182);
 		_G(out)->printxy(32 + 3, 104 - 10, 15, 300, 0, "S");
-		_G(out)->boxFill(33, 136 - (_G(gameState).SoundVol >> 1), 42, 136, 15);
+		_G(out)->boxFill(33, 136 - (soundVolume >> 1), 42, 136, 15);
 
+		const int musicVolume = g_engine->_sound->getSoundVolume() * Audio::Mixer::kMaxChannelVolume / 2 * 120;
 		_G(out)->pop_box(52 - 2, 104 - 12, 62 + 4, 136 + 2, 192, 183, 182);
 		_G(out)->printxy(52 + 3, 104 - 10, 31, 300, 0, "M");
-		_G(out)->boxFill(53, 136 - (_G(gameState).MusicVol >> 1), 62, 136, 31);
+		_G(out)->boxFill(53, 136 - (musicVolume >> 1), 62, 136, 31);
 		if (g_engine->_sound->musicEnabled()) {
 			_G(out)->spriteSet(ti->image[MUSIC_ON1],
 				18 + ti->correction[MUSIC_ON1 << 1],
@@ -181,12 +184,10 @@ void Options::execute(TafInfo *ti) {
 				key = Common::KEYCODE_ESCAPE;
 				break;
 			case 7:
-				_G(gameState).SoundVol = (136 - g_events->_mousePos.y) << 1;
-				g_engine->_sound->setSoundVolume(_G(gameState).SoundVol * Audio::Mixer::kMaxChannelVolume / 120);
+				g_engine->_sound->setSoundVolume(((136 - g_events->_mousePos.y) << 1) * Audio::Mixer::kMaxChannelVolume / 120);
 				break;
 			case 8:
-				_G(gameState).MusicVol = (136 - g_events->_mousePos.y) << 1;
-				g_engine->_sound->setMusicVolume(_G(gameState).MusicVol * Audio::Mixer::kMaxChannelVolume / 120);
+				g_engine->_sound->setMusicVolume(((136 - g_events->_mousePos.y) << 1) * Audio::Mixer::kMaxChannelVolume / 120);
 				break;
 
 			default:
