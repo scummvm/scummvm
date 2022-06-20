@@ -1334,6 +1334,9 @@ int nextInst(CpuCtx* r) {
 			}
 		}
 	}
+	if (WriteToIO) {
+		return 0;
+	}
 
 	info->_op->_f(r, mode, arg);
 	r->_cycles += info->_cycles;
