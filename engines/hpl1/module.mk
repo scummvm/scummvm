@@ -1,9 +1,8 @@
 MODULE := engines/hpl1
 
 MODULE_OBJS := \
-	hpl1.o \
 	console.o \
-	metaengine.o \
+	detection.o \
 	engine/ai/AI.o \
 	engine/ai/AINodeContainer.o \
 	engine/ai/AINodeGenerator.o \
@@ -165,6 +164,8 @@ MODULE_OBJS := \
 	engine/resources/ConfigFile.o \
 	engine/resources/EntityLoader_Object.o \
 	engine/resources/FileSearcher.o \
+	engine/resources/FontManager.o \
+	engine/resources/FrameBitmap.o \
 	engine/resources/FrameTexture.o \
 	engine/resources/GpuProgramManager.o \
 	engine/resources/ImageEntityManager.o \
@@ -232,6 +233,65 @@ MODULE_OBJS := \
 	engine/system/SerializeClass.o \
 	engine/system/String.o \
 	engine/system/System.o \
+	hpl1.o \
+	metaengine.o \
+	penumbra-overture/AttackHandler.o \
+	penumbra-overture/ButtonHandler.o \
+	penumbra-overture/CharacterMove.o \
+	penumbra-overture/Credits.o \
+	penumbra-overture/DeathMenu.o \
+	penumbra-overture/DemoEndText.o \
+	penumbra-overture/EffectHandler.o \
+	penumbra-overture/FadeHandler.o \
+	penumbra-overture/GameArea.o \
+	penumbra-overture/GameDamageArea.o \
+	penumbra-overture/GameEnemy.o \
+	penumbra-overture/GameEnemy_Dog.o \
+	penumbra-overture/GameEnemy_Spider.o \
+	penumbra-overture/GameEnemy_Worm.o \
+	penumbra-overture/GameEntity.o \
+	penumbra-overture/GameForceArea.o \
+	penumbra-overture/GameItem.o \
+	penumbra-overture/GameItemType.o \
+	penumbra-overture/GameLadder.o \
+	penumbra-overture/GameLamp.o \
+	penumbra-overture/GameLink.o \
+	penumbra-overture/GameLiquidArea.o \
+	penumbra-overture/GameMessageHandler.o \
+	penumbra-overture/GameMusicHandler.o \
+	penumbra-overture/GameObject.o \
+	penumbra-overture/GameSaveArea.o \
+	penumbra-overture/GameScripts.o \
+	penumbra-overture/GameStickArea.o \
+	penumbra-overture/GameSwingDoor.o \
+	penumbra-overture/GameTypes.o \
+	penumbra-overture/GraphicsHelper.o \
+	penumbra-overture/HudModel_Weapon.o \
+	penumbra-overture/Init.o \
+	penumbra-overture/IntroStory.o \
+	penumbra-overture/Inventory.o \
+	penumbra-overture/Main.o \
+	penumbra-overture/MainMenu.o \
+	penumbra-overture/MapHandler.o \
+	penumbra-overture/MapLoadText.o \
+	penumbra-overture/Notebook.o \
+	penumbra-overture/NumericalPanel.o \
+	penumbra-overture/Player.o \
+	penumbra-overture/PlayerHands.o \
+	penumbra-overture/PlayerHelper.o \
+	penumbra-overture/PlayerState_Interact.o \
+	penumbra-overture/PlayerState_InteractHaptX.o \
+	penumbra-overture/PlayerState_Misc.o \
+	penumbra-overture/PlayerState_MiscHaptX.o \
+	penumbra-overture/PlayerState_Weapon.o \
+	penumbra-overture/PlayerState_WeaponHaptX.o \
+	penumbra-overture/PreMenu.o \
+	penumbra-overture/RadioHandler.o \
+	penumbra-overture/SaveHandler.o \
+	penumbra-overture/SaveTypes.o \
+	penumbra-overture/StdAfx.o \
+	penumbra-overture/TriggerHandler.o \
+	penumbra-overture/Triggers.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_HPL1), DYNAMIC_PLUGIN)
