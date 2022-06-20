@@ -39,7 +39,7 @@ public:
 	cLowLevelResourcesSDL(cLowLevelGraphicsSDL *apLowLevelGraphics);
 	~cLowLevelResourcesSDL();
 
-	void FindFilesInDir(tWStringList &alstStrings, tWString asDir, tWString asMask);
+	void FindFilesInDir(tStringList &alstStrings, tString asDir, tString asMask);
 
 	void GetSupportedImageFormats(tStringList &alstFormats);
 	iBitmap2D *LoadBitmap2D(tString asFilePath, tString asType = "");
