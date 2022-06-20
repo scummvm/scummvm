@@ -93,16 +93,16 @@ void scnECA(UnpStr *unp) {
 							q += 2;
 							continue;
 						} else {
-							unp->_retAdr = READ_LE_INT16(&mem[p + q + 1]); // mem[p + q + 1] | mem[p + q + 2] << 8;
+							unp->_retAdr = READ_LE_UINT16(&mem[p + q + 1]); // mem[p + q + 1] | mem[p + q + 2] << 8;
 							break;
 						}
 					}
 					if (mem[p + q] == 0x4c) {
-						unp->_retAdr = READ_LE_INT16(&mem[p + q + 1]); // mem[p + q + 1] | mem[p + q + 2] << 8;
+						unp->_retAdr = READ_LE_UINT16(&mem[p + q + 1]); // mem[p + q + 1] | mem[p + q + 2] << 8;
 						break;
 					}
 				}
-				unp->_depAdr = READ_LE_INT16(&mem[p + 0x30]); // mem[p + 0x30] | mem[p + 0x31] << 8;
+				unp->_depAdr = READ_LE_UINT16(&mem[p + 0x30]); // mem[p + 0x30] | mem[p + 0x31] << 8;
 				// some use $2d, some $ae
 				for (q = 0xed; q < 0x108; q++) {
 					if (*(unsigned int *)(mem + p + q) == 0xA518F7D0) {
@@ -135,10 +135,10 @@ void scnECA(UnpStr *unp) {
 				extensively. use -v to know when it does the adjustments. 28/10/09:
 				whoops, was clearing ONLY $d000-dfff =)
 				*/
-				unp->_strMem = READ_LE_INT16(&mem[p + 0x32]); // mem[p + 0x32] | mem[p + 0x33] << 8;
+				unp->_strMem = READ_LE_UINT16(&mem[p + 0x32]); // mem[p + 0x32] | mem[p + 0x33] << 8;
 				for (q = 0xcd; q < 0xd0; q++) {
 					if ((*(unsigned int *)(mem + p + q) & 0xffff00ff) == 0xa9010020) {
-						unp->_ecaFlg = READ_LE_INT16(&mem[p + q + 1]); // mem[p + q + 1] | mem[p + q + 2] << 8;
+						unp->_ecaFlg = READ_LE_UINT16(&mem[p + q + 1]); // mem[p + q + 1] | mem[p + q + 2] << 8;
 						for (q = 0x110; q < 0x11f; q++) {
 							if ((*(unsigned int *)(mem + p + q) == 0x99EF00B9) &&
 								(mem[p + q + 0x12] == 0xc9)) {
@@ -171,9 +171,9 @@ void scnECA(UnpStr *unp) {
 			(*(unsigned int *)(mem + 0x85b) == 0x2A2A2A2A)) {
 			unp->_forced = 0x81b;
 			unp->_depAdr = 0x100;
-			unp->_strMem = READ_LE_INT16(&mem[0x853]); // mem[0x853] | mem[0x854] << 8;
+			unp->_strMem = READ_LE_UINT16(&mem[0x853]); // mem[0x853] | mem[0x854] << 8;
 			unp->_endAdr = mem[0x895];
-			unp->_retAdr = READ_LE_INT16(&mem[0x885]); // mem[0x885] | mem[0x886] << 8;
+			unp->_retAdr = READ_LE_UINT16(&mem[0x885]); // mem[0x885] | mem[0x886] << 8;
 			unp->_idFlag = 1;
 			return;
 		}

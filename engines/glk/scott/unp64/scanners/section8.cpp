@@ -47,8 +47,8 @@ void scnSection8(UnpStr *unp) {
 		if (unp->_depAdr) {
 			if (unp->_info->_run == -1)
 				unp->_forced = p;
-			unp->_strMem = READ_LE_INT16(&mem[p + 0x47]); // mem[p + 0x47] | mem[p + 0x4b] << 8;
-			unp->_retAdr = READ_LE_INT16(&mem[p + 0x87]); // mem[p + 0x87] | mem[p + 0x88] << 8;
+			unp->_strMem = READ_LE_UINT16(&mem[p + 0x47]); // mem[p + 0x47] | mem[p + 0x4b] << 8;
+			unp->_retAdr = READ_LE_UINT16(&mem[p + 0x87]); // mem[p + 0x87] | mem[p + 0x88] << 8;
 			if (unp->_retAdr == 0xf7) {
 				unp->_retAdr = 0xa7ae;
 				mem[p + 0x87] = 0xae;
@@ -69,12 +69,12 @@ void scnSection8(UnpStr *unp) {
 			unp->_depAdr = 0x100;
 			if (unp->_info->_run == -1)
 				unp->_forced = 0x827;
-			unp->_strMem = READ_LE_INT16(&mem[0x86e]); // mem[0x86e] | mem[0x872] << 8;
+			unp->_strMem = READ_LE_UINT16(&mem[0x86e]); // mem[0x86e] | mem[0x872] << 8;
 			if (*(unsigned short int *)(mem + 0x8b7) == 0xff5b) {
 				mem[0x8b6] = 0x2c;
-				unp->_retAdr = READ_LE_INT16(&mem[0x8ba]); // mem[0x8ba] | mem[0x8bb] << 8;
+				unp->_retAdr = READ_LE_UINT16(&mem[0x8ba]); // mem[0x8ba] | mem[0x8bb] << 8;
 			} else {
-				unp->_retAdr = READ_LE_INT16(&mem[0x8b7]); // mem[0x8b7] | mem[0x8b8] << 8;
+				unp->_retAdr = READ_LE_UINT16(&mem[0x8b7]); // mem[0x8b7] | mem[0x8b8] << 8;
 			}
 			unp->_endAdr = 0xae;
 			unp->_idFlag = 1;
@@ -90,8 +90,8 @@ void scnSection8(UnpStr *unp) {
 			unp->_depAdr = 0x33c;
 			if (unp->_info->_run == -1)
 				unp->_forced = 0x812;
-			unp->_strMem = READ_LE_INT16(&mem[0x856]); // mem[0x856] | mem[0x85a] << 8;
-			unp->_retAdr = READ_LE_INT16(&mem[0x896]); // mem[0x896] | mem[0x897] << 8;
+			unp->_strMem = READ_LE_UINT16(&mem[0x856]); // mem[0x856] | mem[0x85a] << 8;
+			unp->_retAdr = READ_LE_UINT16(&mem[0x896]); // mem[0x896] | mem[0x897] << 8;
 			unp->_endAdr = 0xae;
 			unp->_idFlag = 1;
 			return;

@@ -39,9 +39,9 @@ void scnActionPacker(UnpStr *unp) {
 			(*(unsigned int *)(mem + 0x84b) == 0x03D00120)) {
 			unp->_depAdr = 0x110;
 			unp->_forced = 0x811;
-			unp->_strMem = READ_LE_INT16(&mem[0x848]);
+			unp->_strMem = READ_LE_UINT16(&mem[0x848]);
 			unp->_fEndAf = 0x120;
-			unp->_retAdr = READ_LE_INT16(&mem[0x863]);
+			unp->_retAdr = READ_LE_UINT16(&mem[0x863]);
 			unp->_idFlag = 1;
 			return;
 		}

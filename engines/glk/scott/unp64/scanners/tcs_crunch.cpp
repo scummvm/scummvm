@@ -34,7 +34,7 @@ void scnTCScrunch(UnpStr *unp) {
 	mem = unp->_mem;
 	if (unp->_depAdr == 0) {
 		if ((*(unsigned int *)(mem + 0x819) == 0x018536A9) && mem[0x81d] == 0x4c) {
-			p = READ_LE_INT16(&mem[0x81e]); // mem[0x81e] | mem[0x81f] << 8;
+			p = READ_LE_UINT16(&mem[0x81e]); // mem[0x81e] | mem[0x81f] << 8;
 			if (mem[p] == 0xa2 && mem[p + 2] == 0xbd &&
 				(*(unsigned int *)(mem + p + 0x05) == 0xE801109D) &&
 				((*(unsigned int *)(mem + p + 0x38) == 0x01524CFB) ||
@@ -46,7 +46,7 @@ void scnTCScrunch(UnpStr *unp) {
 			}
 		}
 		else if ((*(unsigned int *)(mem + 0x819) == 0x018534A9) && mem[0x81d] == 0x4c) {
-			p = READ_LE_INT16(&mem[0x81e]); // mem[0x81e] | mem[0x81f] << 8;
+			p = READ_LE_UINT16(&mem[0x81e]); // mem[0x81e] | mem[0x81f] << 8;
 			if (mem[p] == 0xa2 && mem[p + 2] == 0xbd &&
 				(*(unsigned int *)(mem + p + 0x05) == 0xE801109D) &&
 				(*(unsigned int *)(mem + p + 0x38) == 0x01304CFB)) {
@@ -55,7 +55,7 @@ void scnTCScrunch(UnpStr *unp) {
 				if (mem[unp->_forced] != 0x78)
 					unp->_forced++;
 				unp->_endAdr = 0x2d;
-				unp->_retAdr = READ_LE_INT16(&mem[p + 0xd9]); // mem[p + 0xd9] | mem[p + 0xda] << 8;
+				unp->_retAdr = READ_LE_UINT16(&mem[p + 0xd9]); // mem[p + 0xd9] | mem[p + 0xda] << 8;
 				p += 0xc8;
 				q = p + 6;
 				for (; p < q; p += 3) {
