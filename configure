@@ -2576,6 +2576,7 @@ case $_host_os in
 			_optimization_level=-O0
 			append_var CXXFLAGS "-fno-omit-frame-pointer"
 			append_var CXXFLAGS "-fno-strict-aliasing"
+			define_in_config_if_yes "$_debug_build" 'DEBUG_BUILD'
 		fi
 		# When building dynamic, add everything possible as plugin
 		if test "$_dynamic_modules" = yes ; then
