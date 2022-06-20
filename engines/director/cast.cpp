@@ -219,7 +219,14 @@ bool Cast::loadConfig() {
 
 	uint16 len = stream->readUint16();
 	uint16 fileVersion = stream->readUint16(); // TODO: very high fileVersion means protected
-	_movieRect = Movie::readRect(*stream);
+	if (!g_director->_fixStageSize) {
+		_movieRect = Movie::readRect(*stream);
+	} else {
+		//Let the compiler unroll this loop
+		for (int i = 0; i < 4; i++)
+			stream->readSint16();
+		_movieRect = g_director->_fixStageRect;
+	}
 	if (!_isShared)
 		_movie->_movieRect = _movieRect;
 

@@ -87,6 +87,8 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_cursorWindow = nullptr;
 	_lingo = nullptr;
 	_version = getDescriptionVersion();
+	_fixStageSize = false;
+	_fixStageRect = Common::Rect();
 
 	_wm = nullptr;
 
