@@ -3,6 +3,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.7.0 (XXXX-XX-XX)
 
+ New games:
+   - Added support for Soldier Boyz.
+
  General:
    - Reduced amount of false positives in Mass Add.
 
