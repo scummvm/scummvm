@@ -5495,9 +5495,8 @@ EOF
 		_opengl_can_compile=no
 		# Try different library names
 		if test "$_opengl_mode" = "gles2" ; then
-			# 1) GLESv2    This is generally used by nearly all platforms for OpenGL ES 2
-			# 2) ogles2    This is used by AmigaOS4 for OpenGL ES 2
-			for lib in "-lGLESv2" "-logles2"; do
+			# GLESv2    This is generally used by nearly all platforms for OpenGL ES 2
+			for lib in "-lGLESv2"; do
 				if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib; then
 					append_var OPENGL_LIBS "$lib"
 					_opengl_can_compile=yes
