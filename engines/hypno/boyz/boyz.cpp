@@ -840,7 +840,7 @@ void BoyzEngine::loadAssets() {
 	_crosshairsActive[5].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsActive[5].copyRectToSurface(*targets, 0, 0, cursorBox);
 
-	cursorBox = Common::Rect(104, 71, 136, 83);
+	cursorBox = Common::Rect(104, 71, 136, 88);
 	_crosshairsTarget[5].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsTarget[5].copyRectToSurface(*targets, 0, 0, cursorBox);
 
