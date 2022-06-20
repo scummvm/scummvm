@@ -49,6 +49,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "amandastories",		"AmandaStories" },
 	{ "amber",				"AMBER: Journeys Beyond" },
 	{ "amertailmb",			"An American Tail Interactive MovieBook" },
+	{ "arcade",				"Classic Arcade" },
 	{ "arcadeairattack",	"Classic Arcade Air Attack" },
 	{ "arcadeboing",		"Classic Arcade Boing" },
 	{ "arcadehockey",		"Classic Arcade Air Hockey" },
@@ -424,6 +425,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "vcop1",				"Virtual Cop: Episode One: Good Cop / Bad Cop" },
 	{ "vcop2",				"Virtual Cop: Episode Two: The Angel Returns" },
 	{ "veniceglass",		"Venice Under Glass" },
+	{ "vjg",				"Vegas Jackpot Gold" },
 	{ "vnc",				"Virtual Nightclub" },
 	{ "vp2",				"Virtual Physics: The Eggs of Time" },
 	{ "vvcyber",			"Victor Vector & Yondo: The Cyberplasm Formula" },
@@ -2951,6 +2953,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Director-based AUTORUN.EXE launcher chooses between these options on Win9X
 	MACGAME1("casino", "", "Casino! for PowerPC", "5bb6f4e7f9f026e2b5cf758796db3cd2", 57984, 400),
 	WINGAME1("casino", "", "CASINO.EXE", "7bb58472256eb84983a7d86843c81042", 692873, 404),
+	MACDEMO1("casino", "Sampler", "Casino! Sampler", "cbce20666bfe47a9533331c6be1e6039", 285255, 404),
+	WINDEMO1t("casino", "Sampler", "CASINO.EXE", "9957a5c3d67e857b5fd9cb084f7f8726", 1801785, 404),
 
 	// aka Cat'sEyeView
 	// by Eij Kato
@@ -3392,8 +3396,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("godigital", "Vol.1 No.2", "GODIGIT.EXE", "7ce7407982b9c3abfab010432a0b9b96", 703515, 404),
 	WINGAME1("godigital", "Vol.2 No.1", "GODIG3.EXE",  "601b468f1e0e22319b7abd5c0d1787e7", 889427, 404),
 
-	MACDEMO1("goldilocks", "Sampler", "Goldilocks Gamebook Sampler", "cbce20666bfe47a9533331c6be1e6039", 285523, 403),
-	WINDEMO1("goldilocks", "Sampler", "GOLDILKS.EXE", "46b6ed6299db88ac1eab54aab4be91d7", 1894363, 403),
+	MACDEMO1("goldilocks", "Sampler", "Goldilocks Gamebook Sampler", "cbce20666bfe47a9533331c6be1e6039", 285267, 403),
+	// from http://web.archive.org/web/20051126063716id_/http://www.beachware.com/download/goldsea.exe (self-extracting ZIP)
+	WINDEMO1t("goldilocks", "Sampler", "GOLDILKS.EXE", "a59533f9043f9e642fc17d39c843d55b", 1894363, 404),
 
 	WINGAME1("gordak", "", "GordakCD.exe", "d3dcd15712e8ac16cb88d86af9cd64bf", 737262, 404),
 
@@ -4013,7 +4018,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("nikolaitoys", "", "NN'nN Toy Makers", "2c7d0c0d55cbe3f622c7d68cedb671e0", 487026, 404),
 	WINGAME1("nikolaitoys", "", "NNN_TOYS.EXE", "22147e4c6311f670f72d43f8b793169e", 3206640, 404),
 
-	MACDEMO1("nightsky", "Sampler", "Night Sky Interactive Sampler", "cbce20666bfe47a9533331c6be1e6039", 285525, 400),
+	MACDEMO1("nightsky", "Sampler", "Night Sky Interactive Sampler", "cbce20666bfe47a9533331c6be1e6039", 285269, 400),
 	WINDEMO1("nightsky", "Sampler", "NIGHTSKY.EXE", "68f1fe67a5881fd47b08e905401d174c", 4300149, 404),
 
 	// Original filename is Visual日本地理DEMO
@@ -4054,7 +4059,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is Nomis™ PPC
 	MACGAME1("nomis", "", "Nomis PPC", "6dd87d48277cf2cd886e5168266ce4bf", 58051, 403),
 
-	MACDEMO1("nurseryrhymes", "Sampler", "Nursery Rhymes Sampler", "cbce20666bfe47a9533331c6be1e6039", 285529, 400),
+	MACDEMO1("nurseryrhymes", "Sampler", "Nursery Rhymes Sampler", "cbce20666bfe47a9533331c6be1e6039", 285273, 400),
 	WINDEMO1("nurseryrhymes", "Sampler", "NURSERY.EXE", "c7cca77d8c1c88e8003db72abb05da0a", 4518423, 404),
 
 	WINDEMO1("nyack", "Demo", "NYACKDEM.EXE", "8902ed0bcaf2d78151f819ba41eaf124", 720431, 404),
@@ -4753,7 +4758,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Mac version is D4
 	WINGAME1("amber", "", "AMBER_JB.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1418103, 500),
-	WINDEMO1("amber", "Demo", "DEMO.EXE",     "1a7acbba10a7246ba58c1d53fc7203f5", 1417811, 500),
+	WINDEMO2t("amber", "Demo", "DEMO.EXE", "98f65233a8d80a75513267fed14c1e18", 1417811,
+							   "AMBERHUB.DXR", "a95601f2521fd00c88ac424d66da1605", 868766, 501),
 
 	MACGAME1_l("aozoragaho", "", "PPC", "08166af62693ceab79b28d90d2f6c86b", 105571, Common::JA_JPN, 501),
 	WINGAME1t_l("aozoragaho", "", "32.EXE", "2787761ff8a943701c291da6e618310b", 1410721, Common::JA_JPN, 501),
@@ -4768,9 +4774,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("arad", "", "arad95nt.exe", "3460ad87d2ba57104e2810a77b53c220", 2623135, 500),
 
+	// Retail CD release from BeachWare, Inc.
+	MACGAME1("arcade", "", "Classic Arcade", "3ecbe87870ab4b0c0acb10a9e22eb561", 705402, 500),
+	WINGAME1t("arcade", "", "ARCADE.EXE", "4f7f250aeae7c255602855f42ad271ea", 925519, 501),
+
 	// Available here: http://web.archive.org/web/20080412010505/http://www.beachware.com/download/
 	// Each shareware title plays 1 of 2 arcade games until unlocked with registration code
-	// All games are also available and unlocked on the retail BeachWare Arcade Classics CD
+	// All games are also available and unlocked on the retail BeachWare Classic Arcade CD
 	MACGAME1("arcadeboing", "",	"Classic Arcade Boing!", "231d3041df162be4a0ddd36a74eb03b6", 719261, 501),
 	WINGAME2("arcadeairattack", "", "shware32.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1410427,
 									"Bomber.Dxr",	"e2409782f6bfa16862fba0437c9cdf3d", 3443518, 501),
@@ -6756,6 +6766,20 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is DreamLight® Verttice™ 3.0
 	MACGAME1("verttice", "v3.0", "DreamLight Verttice 3.0", "0944b962ebb00f4b5d5149d220f8449b", 123353, 702),
 	WINGAME1("verttice", "v3.0", "DreamLight Verttice 30.EXE", "7c18c9a6af2694156bf09ed195c1ab09", 3010200, 702),
+
+	// Runs in 800x600, includes "VJG (640 x 480)" or VJGIAW.EXE for 640x480 monitors
+	MACGAME1("vjg", "", "Vegas Jackpot Gold", "0944b962ebb00f4b5d5149d220f8449b", 113484, 700),
+	WINGAME1t("vjg", "", "VJG.EXE", "f45023765b63cdb1b0343eefd4353939", 2732994, 700),
+	MACGAME1("vjg", "Cards screensaver", "Data/scrnsave/mac/Cards (800x600)", "0944b962ebb00f4b5d5149d220f8449b", 228716, 700),
+	WINGAME1t("vjg", "Cards screensaver", "Data/scrnsave/pc/Cards.exe", "d0a2429140f838b2448d350db45c13bc", 2774344, 700),
+	MACGAME1("vjg", "Chips screensaver", "Data/scrnsave/mac/Chips (800x600)", "0944b962ebb00f4b5d5149d220f8449b", 228716, 700),
+	WINGAME1t("vjg", "Chips screensaver", "Data/scrnsave/pc/Chips.exe", "ec3725cad6f7f6a5b977e309ea2d0522", 3044936, 700),
+	MACGAME1("vjg", "Dice screensaver", "Data/scrnsave/mac/Dice (800x600)", "0944b962ebb00f4b5d5149d220f8449b", 228715, 700),
+	WINGAME1t("vjg", "Dice screensaver", "Data/scrnsave/pc/Dice.exe", "b61e97ab776436f1c4cdf2b96cf1d4d1", 3151605, 700),
+	MACGAME1("vjg", "Gold screensaver", "Data/scrnsave/mac/Gold (800x600)", "0944b962ebb00f4b5d5149d220f8449b", 228715, 700),
+	WINGAME1t("vjg", "Gold screensaver", "Data/scrnsave/pc/Gold.exe", "63ab65806ca8ee2c45826a8cb386dadc", 2676467, 700),
+	MACGAME1("vjg", "Quarters screensaver", "Data/scrnsave/mac/Quarters (800x600)", "0944b962ebb00f4b5d5149d220f8449b", 228719, 700),
+	WINGAME1t("vjg", "Quarters screensaver", "Data/scrnsave/pc/Quarters.exe", "fb759c6bf4b009ddf9f7fe74c2dbdac4", 2696814, 700),
 
 	MACGAME1("webmaster", "", "Webmaster", "0944b962ebb00f4b5d5149d220f8449b", 128297, 702),
 	WINGAME1("webmaster", "", "Webmaster.exe", "7c18c9a6af2694156bf09ed195c1ab09", 1820594, 702),

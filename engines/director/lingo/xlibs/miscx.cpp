@@ -23,6 +23,7 @@
  *
  * USED IN:
  * Pippi
+ * AMBER: Journeys Beyond
  *
  *************************************/
 /* -- Misc_X, Misc Utilities XObject v2.0
