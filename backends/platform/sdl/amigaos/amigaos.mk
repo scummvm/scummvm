@@ -48,7 +48,12 @@ ifneq ($(DIST_FILES_SHADERS),)
 endif
 ifdef DYNAMIC_MODULES
 	makedir all $(AMIGAOSPATH)/plugins
-	$(foreach plugin, $(PLUGINS), $(STRIP) $(plugin) -o $(AMIGAOSPATH)/$(plugin);)
+	# Preserve all debug information on debug builds
+ifdef DEBUG_BUILD
+		cp $(PLUGINS) $(AMIGAOSPATH)/$(plugin)
+else
+		$(foreach plugin, $(PLUGINS), $(STRIP) $(plugin) -o $(AMIGAOSPATH)/$(plugin);)
+endif
 	makedir all $(AMIGAOSPATH)/sobjs
 	# AmigaOS installations, especially vanilla ones, won't have every
 	# mandatory shared library in place, let alone the correct versions.
@@ -57,5 +62,9 @@ ifdef DYNAMIC_MODULES
 	rx Ext_Inst_so.rexx $(EXECUTABLE) $(AMIGAOSPATH)
 	rm -f Ext_Inst_so.rexx
 endif
+# Preserve all debug information on debug builds
+ifdef DEBUG_BUILD
+	cp $(EXECUTABLE) $(AMIGAOSPATH)/$(EXECUTABLE)
+else
 	$(STRIP) $(EXECUTABLE) -o $(AMIGAOSPATH)/$(EXECUTABLE)
-
+endif
