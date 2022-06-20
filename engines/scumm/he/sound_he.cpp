@@ -827,26 +827,42 @@ void SoundHE::tryLoadSoundOverride(int soundID, Audio::RewindableAudioStream **s
 	    formats_formatDecoders_must_have_same_size
 	);
 
-	for (int i = 0; i < ARRAYSIZE(formats); i++) {
-		debug(5, "tryLoadSoundOverride: %d %s", soundID, formats[i]);
+	const char *type;
+	if (soundID == 1) {
+		// Speech audio doesn't have a unique ID,
+		// so we use the file offset instead.
+		// _heTalkOffset is set at startHETalkSound.
+		type = "speech";
+		soundID = _heTalkOffset;
+	} else {
+		// Music and sfx share the same prefix.
+		type = "sound";
+	}
 
-		Common::File soundFileOverride;
-		Common::String buf(Common::String::format("sound%d.%s", soundID, formats[i]));
+	for (int i = 0; i < ARRAYSIZE(formats); i++) {
+		Common::Path pathDir(Common::String::format("%s%d.%s", type, soundID, formats[i]));
+		Common::Path pathSub(Common::String::format("%s/%d.%s", type, soundID, formats[i]));
+
+		debug(5, "tryLoadSoundOverride: %s or %s", pathSub.toString().c_str(), pathDir.toString().c_str());
 
 		// First check if the file exists before opening it to
 		// reduce the amount of "opening %s failed" in the console.
-		if (soundFileOverride.exists(buf) && soundFileOverride.open(buf)) {
+		// Prefer files in subdirectory.
+		Common::File soundFileOverride;
+		bool foundFile = (soundFileOverride.exists(pathSub) && soundFileOverride.open(pathSub)) ||
+						 (soundFileOverride.exists(pathDir) && soundFileOverride.open(pathDir));
+		if (foundFile) {
 			soundFileOverride.seek(0, SEEK_SET);
 			Common::SeekableReadStream *oStr = soundFileOverride.readStream(soundFileOverride.size());
 			soundFileOverride.close();
 
-			debug(5, "tryLoadSoundOverride: %s loaded", formats[i]);
 			Audio::SeekableAudioStream *seekStream = formatDecoders[i](oStr, DisposeAfterUse::YES);
 			*stream = seekStream;
 			if (duration != nullptr) {
 				*duration = seekStream->getLength();
 			}
 
+			debug(5, "tryLoadSoundOverride: %s loaded from %s", formats[i], soundFileOverride.getName());
 			return;
 		}
 	}
@@ -875,11 +891,16 @@ void SoundHE::startHETalkSound(uint32 offset) {
 	}
 	file.setEnc(_sfxFileEncByte);
 
+	// Speech audio doesn't have a unique ID,
+	// so we use the file offset instead.
+	// _heTalkOffset is used at tryLoadSoundOverride.
+	_heTalkOffset = offset;
+
 	_sfxMode |= 2;
 	_vm->_res->nukeResource(rtSound, 1);
 
 	file.seek(offset + 4, SEEK_SET);
-	 size = file.readUint32BE();
+	size = file.readUint32BE();
 	file.seek(offset, SEEK_SET);
 
 	_vm->_res->createResource(rtSound, 1, size);
