@@ -3,7 +3,8 @@ MODULE := engines/immortal
 MODULE_OBJS = \
 	immortal.o \
 	disk.o \
-	metaengine.o
+	metaengine.o \
+	compression.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_IMMORTAL), DYNAMIC_PLUGIN)
