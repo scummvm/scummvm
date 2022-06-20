@@ -26,6 +26,7 @@ namespace Hypno {
 
 LibFile::LibFile() : Common::Archive() {
 	_libfile = nullptr;
+	_encrypted = true;
 }
 
 LibFile::~LibFile() {
