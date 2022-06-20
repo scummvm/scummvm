@@ -266,6 +266,8 @@ MODULE_OBJS := \
 	penumbra-overture/GameSwingDoor.o \
 	penumbra-overture/GameTypes.o \
 	penumbra-overture/GraphicsHelper.o \
+	penumbra-overture/HapticGameCamera.o \
+	penumbra-overture/HudModel_Throw.o \
 	penumbra-overture/HudModel_Weapon.o \
 	penumbra-overture/Init.o \
 	penumbra-overture/IntroStory.o \
@@ -289,7 +291,6 @@ MODULE_OBJS := \
 	penumbra-overture/RadioHandler.o \
 	penumbra-overture/SaveHandler.o \
 	penumbra-overture/SaveTypes.o \
-	penumbra-overture/StdAfx.o \
 	penumbra-overture/TriggerHandler.o \
 	penumbra-overture/Triggers.o
 
