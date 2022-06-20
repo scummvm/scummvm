@@ -571,12 +571,12 @@ void start_aad(int16 diaNr, int16 ssiNr) {
 	_G(atds)->start_aad(diaNr);
 }
 
-void startAdsWait(int16 diaNr) {
-	if (!_G(flags).AdsDialog) {
+void startDialogCloseupWait(int16 diaNr) {
+	if (!_G(flags).DialogCloseup) {
 		_G(menu_item) = CUR_TALK;
 		cursorChoice(_G(menu_item));
-		loadAdsDia(diaNr);
-		while (_G(flags).AdsDialog && !SHOULD_QUIT) {
+		loadDialogCloseup(diaNr);
+		while (_G(flags).DialogCloseup && !SHOULD_QUIT) {
 			setupScreen(DO_SETUP);
 		}
 	}

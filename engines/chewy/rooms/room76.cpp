@@ -206,7 +206,7 @@ int Room76::proc7() {
 
 		startAadWait(427);
 		showCur();
-		startAdsWait(21);
+		startDialogCloseupWait(21);
 		hideCur();
 		startAadWait(428);
 		showCur();

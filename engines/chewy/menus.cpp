@@ -252,7 +252,7 @@ void adsMenu() {
 	int16 curYStart;
 	int16 col;
 
-	if (_G(flags).AdsDialog) {
+	if (_G(flags).DialogCloseup) {
 		_G(flags).ShowAtsInvTxt = false;
 		_G(flags).MainInput = false;
 		if (_G(ads_item_nr) > 4)
@@ -280,7 +280,7 @@ void adsMenu() {
 					col = 255;
 				else
 					col = 14;
-				_G(out)->printxy(4, curYStart - i * 10, col, 300, 0, _G(ads_item_ptr)[i]);
+				_G(out)->printxy(4, curYStart - i * 10, col, 300, 0, _G(dialogCloseupItemPtr)[i]);
 			}
 		}
 
@@ -291,16 +291,16 @@ void adsMenu() {
 				_G(cur_display) = false;
 				_G(ads_push) = true;
 				g_events->_mousePos.y = 159;
-				AdsNextBlk *an_blk = _G(atds)->ads_item_choice(_G(ads_dia_nr), _G(ads_blk_nr), curY);
+				DialogCloseupNextBlock *an_blk = _G(atds)->dialogCloseupItemChoice(_G(ads_dia_nr), _G(ads_blk_nr), curY);
 				if (an_blk->_blkNr == -1) {
 					selectDialogOption(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->_endNr);
 					ads_ende(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->_endNr);
 					stop_ads_dialog();
 				} else {
-					an_blk = _G(atds)->calc_next_block(_G(ads_dia_nr), _G(ads_blk_nr), curY);
+					an_blk = _G(atds)->calcNextDialogCloseupBlock(_G(ads_dia_nr), _G(ads_blk_nr), curY);
 					selectDialogOption(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->_endNr);
 					_G(ads_blk_nr) = an_blk->_blkNr;
-					_G(ads_item_ptr) = _G(atds)->ads_item_ptr(_G(ads_dia_nr), _G(ads_blk_nr), &_G(ads_item_nr));
+					_G(dialogCloseupItemPtr) = _G(atds)->dialogCloseupItemPtr(_G(ads_dia_nr), _G(ads_blk_nr), &_G(ads_item_nr));
 				}
 				_G(det)->stop_detail(_G(talk_start_ani));
 				_G(det)->showStaticSpr(_G(talk_hide_static));
@@ -322,9 +322,9 @@ void stop_ads_dialog() {
 	_G(cur_display) = true;
 	_G(flags).ShowAtsInvTxt = true;
 	_G(flags).MainInput = true;
-	_G(flags).AdsDialog = false;
+	_G(flags).DialogCloseup = false;
 	_G(mouseLeftClick) = false;
-	_G(atds)->stop_ads();
+	_G(atds)->stopDialogCloseup();
 	if (_G(minfo).button)
 		_G(flags).mainMouseFlag = 1;
 }

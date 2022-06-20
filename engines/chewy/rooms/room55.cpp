@@ -280,7 +280,7 @@ void Room55::get_job() {
 	switchRoom(61);
 
 	showCur();
-	startAdsWait(15);
+	startDialogCloseupWait(15);
 	_G(gameState)._personHide[P_CHEWY] = false;
 	_G(flags).LoadGame = true;
 	_G(gameState).scrollx = oldScrollx;

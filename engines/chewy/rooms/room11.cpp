@@ -107,7 +107,7 @@ void Room11::talk_debug() {
 	if (_G(gameState).R12ChewyBork) {
 		_G(flags).AutoAniPlay = true;
 		autoMove(8, P_CHEWY);
-		startAdsWait(5);
+		startDialogCloseupWait(5);
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(CUR_WALK);
 
@@ -156,7 +156,7 @@ int16 Room11::scanner() {
 			cursorChoice(_G(menu_item));
 			startAadWait(12);
 			showCur();
-			loadAdsDia(3);
+			loadDialogCloseup(3);
 		} else if (!_G(gameState).inv_cur) {
 			if (!_G(gameState).R11TerminalOk) {
 				actionFl = true;
@@ -167,7 +167,7 @@ int16 Room11::scanner() {
 				startAadWait(12);
 				_G(menu_item) = CUR_TALK;
 				cursorChoice(_G(menu_item));
-				loadAdsDia(3);
+				loadDialogCloseup(3);
 			}
 		}
 	}

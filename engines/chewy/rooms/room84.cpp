@@ -176,7 +176,7 @@ void Room84::talk1() {
 	_G(flags).NoScroll = true;
 	setPersonSpr(P_LEFT, P_CHEWY);
 	auto_scroll(150, 0);
-	startAdsWait(22);
+	startDialogCloseupWait(22);
 	_G(flags).NoScroll = false;
 }
 

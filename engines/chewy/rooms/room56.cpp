@@ -239,7 +239,7 @@ int16 Room56::use_taxi() {
 void Room56::talk_man() {
 	autoMove(3, P_CHEWY);
 	if (!_G(gameState).R56AbfahrtOk) {
-		startAdsWait(16);
+		startDialogCloseupWait(16);
 	} else if (!_G(gameState).R62Flucht) {
 		hideCur();
 		startAadWait(343);

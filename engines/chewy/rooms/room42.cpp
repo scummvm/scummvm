@@ -172,7 +172,7 @@ void Room42::talkToStationEmployee() {
 		dia_nr = 14;
 	}
 
-	startAdsWait(dia_nr);
+	startDialogCloseupWait(dia_nr);
 }
 
 void Room42::dialogWithStationEmployee(int16 str_end_nr) {

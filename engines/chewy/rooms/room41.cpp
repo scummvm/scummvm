@@ -99,7 +99,7 @@ void Room41::talk_hoggy1() {
 
 	} else if (!_G(gameState).R41Einbruch) {
 		showCur();
-		startAdsWait(11);
+		startDialogCloseupWait(11);
 
 	} else if (_G(gameState).R41Einbruch) {
 		if (!_G(gameState).R41BruchInfo) {
@@ -202,7 +202,7 @@ int16 Room41::use_lola() {
 
 		_G(atds)->delControlBit(267, ATS_ACTIVE_BIT);
 		_G(atds)->set_ats_str(267, 1, ATS_DATA);
-		_G(atds)->hide_item(11, 0, 3);
+		_G(atds)->hideDialogCloseupItem(11, 0, 3);
 		showCur();
 	}
 
@@ -244,7 +244,7 @@ void Room41::sub_dia() {
 
 	if (_G(gameState).R41LolaOk) {
 		startAadWait(163);
-		_G(atds)->hide_item(11, 0, 2);
+		_G(atds)->hideDialogCloseupItem(11, 0, 2);
 		stop_ads_dialog();
 		autoMove(5, P_CHEWY);
 		new_invent_2_cur(PAPIER_INV);

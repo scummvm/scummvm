@@ -174,12 +174,12 @@ void Room8::talk_nimoy() {
 		int16 diaNr = _G(gameState).R8GipsWurf ? 2 : 1;
 
 		if (!_G(gameState).R8GTuer)
-			loadAdsDia(diaNr);
+			loadDialogCloseup(diaNr);
 		else
 			startAadWait(61);
 	} else {
 		startAadWait(603);
-		loadAdsDia(6);
+		loadDialogCloseup(6);
 	}
 
 	_G(flags).NoScroll = false;

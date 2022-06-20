@@ -37,7 +37,7 @@ namespace Chewy {
 #define AAD_STR_END 1
 #define AAD_DATA 0
 #define ATS_DATA 1
-#define ADS_DATA 2
+#define DIALOG_CLOSEUP_DATA 2
 #define INV_USE_DATA 4
 #define INV_ATS_DATA 6
 
@@ -74,9 +74,8 @@ namespace Chewy {
 
 #define CONTROL_BYTE 0xff
 
-#define MAX_ADS_DIALOG 500
-#define ADS_MAX_BL_EIN 6
-#define ADS_STACK_SIZE 50
+#define DIALOG_CLOSEUP_MAX 6
+#define DIALOG_CLOSEUP_STACK_SIZE 50
 
 #define ADS_EXIT_BIT 1
 #define ADS_SHOW_BIT 2
@@ -150,7 +149,8 @@ struct AadVar {
 	int16 _silentCount;
 };
 
-struct AdsTxtHeader {
+// ADS (dialog closeup) header
+struct DialogCloseupTxtHeader {
 	int16 _diaNr;
 	int16 _perNr;
 	int16 _aMov;
@@ -160,19 +160,19 @@ struct AdsTxtHeader {
 	static constexpr int SIZE() { return 8; }
 };
 
-struct AdsVar {
+struct DialogCloseupVariables {
 	int16 _dialog;
 	int16 _autoDia;
-	AdsTxtHeader _txtHeader;
+	DialogCloseupTxtHeader _txtHeader;
 	AadInfoArray _person;
 	char *_ptr;
-	char *_blkPtr;
+	char *_blockPtr;
 	int16 _strNr;
 	int16 _delayCount;
 	int16 _silentCount;
 };
 
-struct AdsNextBlk {
+struct DialogCloseupNextBlock {
 	int16 _blkNr;
 	int16 _endNr;
 };
@@ -251,18 +251,20 @@ public:
 	void set_string_end_func(void (*strFunc)(int16 diaNr, int16 strNr, int16 personNr, int16 mode));
 	void aad_search_dia(int16 diaNr, char **ptr);
 	int16 aad_get_zeilen(char *str, int16 *txtLen);
-	bool ads_start(int16 diaNr);
-	void stop_ads();
-	char **ads_item_ptr(uint16 dialogNum, int16 blockNr, int16 *retNr);
-	AdsNextBlk *ads_item_choice(uint16 dialogNum, int16 blockNr, int16 itemNr);
-	AdsNextBlk *calc_next_block(uint16 dialogNum, int16 blockNr, int16 itemNr);
-	int16 ads_get_status();
-	void hide_item(int16 diaNr, int16 blockNr, int16 itemNr);
-	void show_item(int16 diaNr, int16 blockNr, int16 itemNr);
-	int16 return_block(uint16 dialogNum);
-	void ads_search_block(int16 blockNr, char **ptr);
-	void ads_search_item(int16 itemNr, char **blkAdr);
-	int16 start_ads_auto_dia(char *itemAdr);
+
+	bool startDialogCloseup(int16 diaNr);
+	void stopDialogCloseup();
+	char **dialogCloseupItemPtr(uint16 dialogNum, int16 blockNr, int16 *retNr);
+	DialogCloseupNextBlock *dialogCloseupItemChoice(uint16 dialogNum, int16 blockNr, int16 itemNr);
+	DialogCloseupNextBlock *calcNextDialogCloseupBlock(uint16 dialogNum, int16 blockNr, int16 itemNr);
+	int16 getDialogCloseupStatus();
+	void hideDialogCloseupItem(int16 diaNr, int16 blockNr, int16 itemNr);
+	void showDialogCloseupItem(int16 diaNr, int16 blockNr, int16 itemNr);
+	int16 getDialogCloseupBlock(uint16 dialogNum);
+	void dialogCloseupSearchBlock(int16 blockNr, char **ptr);
+	void dialogCloseupSearchItem(int16 itemNr, char **blkAdr);
+	int16 startAutoDialogCloseup(char *itemAdr);
+
 	int16 calc_inv_no_use(int16 curInv, int16 testNr);
 	int8 getStereoPos(int16 x);
 	void enableEvents(bool nr) {
@@ -289,13 +291,13 @@ private:
 	uint8 *_ats_sheader = nullptr;
 	AadVar _aadv;
 	AtsVar _atsv;
-	AdsVar _adsv;
+	DialogCloseupVariables _dialogCloseup;
 	AtdsVar _atdsv;
-	char *_ePtr[ADS_MAX_BL_EIN] = { nullptr };
-	int16 _eNr[ADS_MAX_BL_EIN] = { 0 };
-	AdsNextBlk _adsnb;
-	uint8 _adsStack[ADS_STACK_SIZE] = { 0 };
-	int16 _adsStackPtr;
+	char *_ePtr[DIALOG_CLOSEUP_MAX] = { nullptr };
+	int16 _eNr[DIALOG_CLOSEUP_MAX] = { 0 };
+	DialogCloseupNextBlock _dialogCloseupNextBlock;
+	uint8 _dialogCloseupStack[DIALOG_CLOSEUP_STACK_SIZE] = { 0 };
+	int16 _dialogCloseupStackPtr;
 
 	SplitStringInit _ssi[AAD_MAX_PERSON] = {
 		{ 0, 100, 0 },

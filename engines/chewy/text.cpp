@@ -95,7 +95,7 @@ TextEntry *Text::getText(uint chunk, uint entry, int type, int subEntry) {
 		chunk += kADSTextMax;
 		isText = true;
 		break;
-	case ADS_DATA:
+	case DIALOG_CLOSEUP_DATA:
 		// No change - chunk starts from 0
 		break;
 	case INV_USE_DATA:
