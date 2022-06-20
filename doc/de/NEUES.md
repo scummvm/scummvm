@@ -4,6 +4,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
 #### 2.7.0 (DD.MM.YYYY)
 
+ Neue Spiele:
+   - Unterstützung für Soldier Boyz hinzugefügt.
+
  Allgemein:
    - Anzahl an falsch-positiven Einträgen reduziert, wenn das Gerät nach Spielen durchsucht wird.
 
@@ -15,7 +18,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      Verbesserung gekennzeichnet. Dieser Workaround hat ursprünglich einen
      Abschnitt im Karten-Puzzle auf Booty Island, welche in der FM-Towns-Version
      des Spiels entfernt wurde, wiederhergestellt.
-
+   - Dialog-Zeilen können nun wie im Handbuch beschrieben bedient werden. Du kannst beispielsweise
+     auf die Dialog-Zeile klicken, um den jeweiligen Befehl auszuführen.
+    
  Toon:
    - Die Spiel-Menüs verhalten sich nun wie das Original.
 
