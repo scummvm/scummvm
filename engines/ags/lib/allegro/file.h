@@ -29,14 +29,8 @@ namespace AGS3 {
 
 #define F_READ          "r"
 #define F_WRITE         "w"
-#define F_READ_PACKED   "rp"
-#define F_WRITE_PACKED  "wp"
-#define F_WRITE_NOPACK  "w!"
 
 #define F_BUF_SIZE      4096           /* 4K buffer for caching data */
-#define F_PACK_MAGIC    0x736C6821L    /* magic number for packed files */
-#define F_NOPACK_MAGIC  0x736C682EL    /* magic number for autodetect */
-#define F_EXE_MAGIC     0x736C682BL    /* magic number for appended data */
 
 struct _al_normal_packfile_details {
 	int hndl;                           /* DOS file handle */
@@ -45,11 +39,7 @@ struct _al_normal_packfile_details {
 	int buf_size;                       /* number of bytes in the buffer */
 	long todo;                          /* number of bytes still on the disk */
 	struct PACKFILE *parent;            /* nested, parent file */
-	struct LZSS_PACK_DATA *pack_data;   /* for LZSS compression */
-	struct LZSS_UNPACK_DATA *unpack_data; /* for LZSS decompression */
 	char *filename;                     /* name of the file */
-	char *passdata;                     /* encryption key data */
-	char *passpos;                      /* current key position */
 	unsigned char buf[F_BUF_SIZE];      /* the actual data buffer */
 };
 
