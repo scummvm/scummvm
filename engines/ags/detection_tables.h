@@ -3351,7 +3351,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_GOG("geminirue", "gemini_rue_pc.exe", "f49a61ea46feb86f89de3c136ad809ff", 73412249),  // Win v1.03
 	GAME_ENTRY_GOG("geminirue", "gemini rue.exe", "5f747ea1c5f624d3716926fe1ca5135d", 73450387),  // Win v2.0
 	GAME_ENTRY_GOG("geminirue", "gemini rue.exe", "5f747ea1c5f624d3716926fe1ca5135d", 73486515),  // Win v2.1
+	GAME_ENTRY_GOG("geminirue", "gemini rue.exe", "5f747ea1c5f624d3716926fe1ca5135d", 73505075),  // Win v2.2
 	GAME_ENTRY_GOG("geminirue", "ac2game.dat", "056239de34dfa52cfe1b645eee4eacb7", 70356639), // Mac v2.1
+	GAME_ENTRY_GOG("geminirue", "ac2game.dat", "056239de34dfa52cfe1b645eee4eacb7", 70375199), // Mac v2.2
 	GAME_ENTRY_GOG("geminirue", "agsgame.dat", "f3c0c7d3892bdd8963e8ce017f73de08", 62069353), // Linux
 	GAME_ENTRY("geminirue", "gemini rue.exe", "0bdfb2139abaae5ae2dc85f1aacfd3f6", 61926695),
 	DETECTION_ENTRY("geminirue", "gemini rue.exe", "0bdfb2139abaae5ae2dc85f1aacfd3f6", 64650419, Common::DE_DEU, nullptr, nullptr, GAMEFLAG_FORCE_AA), // German retail
@@ -3455,6 +3457,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("shardlight", "shardlight.exe", "cc447656f408ac32e8443274c3f70c67", 643459667),  // v2.0
 	GAME_ENTRY_EN_STEAM("shardlight", "shardlight.exe", "cc447656f408ac32e8443274c3f70c67", 643461648),  // v2.1
 	GAME_ENTRY_EN_GOG("shardlight", "ac2game.dat", "df94d3c1cec961c89894c676b000e7bc", 640346706), // Mac v2.3a
+	GAME_ENTRY_EN_GOG("shardlight", "ac2game.dat", "df94d3c1cec961c89894c676b000e7bc", 640348438), // Mac v2.4
 	GAME_ENTRY_EN("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642151325),
 	GAME_ENTRY_EN("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642142591),
 	GAME_ENTRY_EN("shivah", "shivah.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 19542815), // Official website
