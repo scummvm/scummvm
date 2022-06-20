@@ -101,15 +101,16 @@ void Options::execute(TafInfo *ti) {
 				8 + ti->correction[(SCHNULL_BAND << 1) + 1], 0);
 		}
 
-		const int soundVolume = g_engine->_sound->getSoundVolume() * Audio::Mixer::kMaxChannelVolume / 2 * 120;
+		const int soundVolume = g_engine->_sound->getSoundVolume() * Audio::Mixer::kMaxChannelVolume / 120;
 		_G(out)->pop_box(32 - 2, 104 - 12, 42 + 4, 136 + 2, 192, 183, 182);
 		_G(out)->printxy(32 + 3, 104 - 10, 15, 300, 0, "S");
 		_G(out)->boxFill(33, 136 - (soundVolume >> 1), 42, 136, 15);
 
-		const int musicVolume = g_engine->_sound->getSoundVolume() * Audio::Mixer::kMaxChannelVolume / 2 * 120;
+		const int musicVolume = g_engine->_sound->getSoundVolume() * Audio::Mixer::kMaxChannelVolume / 120;
 		_G(out)->pop_box(52 - 2, 104 - 12, 62 + 4, 136 + 2, 192, 183, 182);
 		_G(out)->printxy(52 + 3, 104 - 10, 31, 300, 0, "M");
 		_G(out)->boxFill(53, 136 - (musicVolume >> 1), 62, 136, 31);
+
 		if (g_engine->_sound->musicEnabled()) {
 			_G(out)->spriteSet(ti->image[MUSIC_ON1],
 				18 + ti->correction[MUSIC_ON1 << 1],
