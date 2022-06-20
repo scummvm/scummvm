@@ -87,6 +87,8 @@ protected:
 	void processSoundQueues() override;
 
 private:
+	int _heTalkOffset;
+
 	void tryLoadSoundOverride(int soundID, Audio::RewindableAudioStream **stream, Audio::Timestamp *duration = nullptr);
 };
 
