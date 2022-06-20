@@ -13,7 +13,8 @@ MODULE_OBJS := \
 	ios7_app_delegate.o \
 	ios7_game_controller.o \
 	ios7_touch_controller.o \
-	ios7_mouse_controller.o
+	ios7_mouse_controller.o \
+	ios7_gamepad_controller.o
 
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.
 MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))

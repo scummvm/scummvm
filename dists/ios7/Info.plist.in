@@ -24,6 +24,13 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>@VERSION@</string>
+	<key>GCSupportedGameControllers</key>
+	<array>
+		<dict>
+			<key>ProfileName</key>
+			<string>ExtendedGamepad</string>
+		</dict>
+	</array>
 	<key>GCSupportsControllerUserInteraction</key>
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
