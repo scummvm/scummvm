@@ -221,6 +221,8 @@ public:
 	bool _skipFrameAdvance;
 	bool _centerStage;
 	char _dirSeparator;
+	bool _fixStageSize;
+	Common::Rect _fixStageRect;
 	Common::List<Common::String> _extraSearchPath;
 
 	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _openResFiles;

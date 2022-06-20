@@ -454,7 +454,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = getTheField(id, field);
 		break;
 	case kTheFixStageSize:
-		getTheEntitySTUB(kTheFixStageSize);
+		d.type = INT;
+		d.u.i = (int)g_director->_fixStageSize;
 		break;
 	case kTheFloatPrecision:
 		d.type = INT;
@@ -974,7 +975,10 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		g_lingo->_exitLock = bool(d.asInt());
 		break;
 	case kTheFixStageSize:
-		setTheEntitySTUB(kTheFixStageSize);
+		g_director->_fixStageSize = (bool)d.u.i;
+		if (d.u.i) {
+			g_director->_fixStageRect = g_director->getCurrentMovie()->_movieRect;
+		}
 		break;
 	case kTheField:
 		setTheField(id, field, d);
