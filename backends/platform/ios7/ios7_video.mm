@@ -25,6 +25,7 @@
 #include "backends/platform/ios7/ios7_video.h"
 #include "backends/platform/ios7/ios7_touch_controller.h"
 #include "backends/platform/ios7/ios7_mouse_controller.h"
+#include "backends/platform/ios7/ios7_gamepad_controller.h"
 
 #include "backends/platform/ios7/ios7_app_delegate.h"
 
@@ -425,6 +426,7 @@ uint getSizeNextPOT(uint size) {
 
 	if (@available(iOS 14.0, *)) {
 		_controllers.push_back([[MouseController alloc] initWithView:self]);
+		_controllers.push_back([[GamepadController alloc] initWithView:self]);
 	}
 	_controllers.push_back([[TouchController alloc] initWithView:self]);
 
