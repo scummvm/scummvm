@@ -580,7 +580,13 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 		musicFile.close();
 
 		if (_vm->_game.heversion == 70) {
-			stream = Audio::makeRawStream(spoolPtr, size, 11025, flags, DisposeAfterUse::NO);
+			// Try to load high quality audio file if found
+			tryLoadSoundOverride(soundID, &stream);
+
+			if (!stream) {
+				stream = Audio::makeRawStream(spoolPtr, size, 11025, flags, DisposeAfterUse::NO);
+			}
+
 			_mixer->playStream(type, &_heSoundChannels[heChannel], stream, soundID);
 			return;
 		}
