@@ -395,7 +395,7 @@ int check_for_messages_from_editor() {
 			bool isDelete = (msgPtr[0] == 'D');
 			// Format:  SETBREAK $scriptname$lineNumber$
 			msgPtr += 10;
-			char scriptNameBuf[100];
+			char scriptNameBuf[80];
 			int i = 0;
 			while (msgPtr[0] != '$') {
 				scriptNameBuf[i] = msgPtr[0];
