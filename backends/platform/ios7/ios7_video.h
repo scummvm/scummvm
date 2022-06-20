@@ -92,6 +92,8 @@ typedef struct {
 	UITouch *_secondTouch;
 }
 
+@property (nonatomic, assign) CGPoint pointerPosition;
+
 - (id)initWithFrame:(struct CGRect)frame;
 
 - (VideoContext *)getVideoContext;
