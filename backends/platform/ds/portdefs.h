@@ -45,8 +45,6 @@ typedef unsigned int uint;
 #undef assert
 #define assert(e) sassert(e, " ")
 
-#define double float
-
 #ifndef DISABLE_COMMAND_LINE
 #define DISABLE_COMMAND_LINE
 #endif
