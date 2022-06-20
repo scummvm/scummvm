@@ -90,7 +90,7 @@ public:
 	Common::TimerManager *getTimerManager() override;
 	Common::SaveFileManager *getSavefileManager() override;
 
-	//Screenshots
+	virtual Common::String getDefaultIconPath();
 	virtual Common::String getScreenshotsPath();
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
