@@ -39,6 +39,8 @@
 //#include "SDL/SDL_image.h"
 #include "hpl1/engine/resources/MeshLoaderHandler.h"
 #include "hpl1/engine/resources/VideoManager.h"
+#include "common/fs.h"
+#include "hpl1/debug.h"
 
 namespace hpl {
 
@@ -153,9 +155,16 @@ void cLowLevelResourcesSDL::AddVideoLoaders(cVideoManager *apManager) {
 
 //-----------------------------------------------------------------------
 
-// This is a windows implementation of this...I think.
-void cLowLevelResourcesSDL::FindFilesInDir(tWStringList &alstStrings, tWString asDir, tWString asMask) {
-	Platform::FindFileInDir(alstStrings, asDir, asMask);
+
+void cLowLevelResourcesSDL::FindFilesInDir(tStringList &alstStrings, tString asDir, tString asMask) {
+	//FIXME: use consistent string types
+	Common::String pattern = Common::String(asDir.c_str()) + '/' +  Common::String(asMask.c_str()); 
+	Common::ArchiveMemberList ls; 
+	if (SearchMan.listMatchingMembers(ls, pattern) == 0) 
+		debugCN(Hpl1::kDebugLevelWarning, Hpl1::kDebugFilePath, "no files matching pattern %s were found", pattern.c_str());  
+	
+	for (auto f : ls)
+		alstStrings.push_back(f->getName().c_str()); 
 }
 
 //-----------------------------------------------------------------------

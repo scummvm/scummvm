@@ -46,7 +46,7 @@ public:
 	 * \param asDir Directory
 	 * \param asMask Mask to be used, for example "*.*" to search for all kinds of files.
 	 */
-	virtual void FindFilesInDir(tWStringList &alstStrings, tWString asDir, tWString asMask) = 0;
+	virtual void FindFilesInDir(tStringList &alstStrings, tString asDir, tString asMask) = 0;
 
 	virtual void GetSupportedImageFormats(tStringList &alstFormats) = 0;
 	virtual iBitmap2D *LoadBitmap2D(tString asFilePath, tString asType = "") = 0;
