@@ -221,7 +221,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"dig",  "Demo", 0, GID_DIG, 7, 0, MDT_NONE, GF_DEMO, UNK, GUIO1(GUIO_NOMIDI)},
 	{"dig",  "Steam", "steam", GID_DIG, 7, 0, MDT_NONE, 0, UNK, GUIO1(GUIO_NOMIDI)},
 
-	{"comi", "", 0, GID_CMI, 8, 0, MDT_NONE, 0, Common::kPlatformWindows, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)},
+	{"comi", "", 0, GID_CMI, 8, 0, MDT_NONE, 0, Common::kPlatformWindows, GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GUIO_ORIGINALGUI)},
 	{"comi", "Demo", 0, GID_CMI, 8, 0, MDT_NONE, GF_DEMO, Common::kPlatformWindows, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)},
 
 	// Humongous Entertainment Scumm Version 6
