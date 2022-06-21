@@ -1093,7 +1093,8 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		setScaleSlot(args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
 		break;
 	case 22:	// setBannerColors
-//		debug(0, "o8_kernelSetFunctions: setBannerColors(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
+		debug(0, "o8_kernelSetFunctions: setBannerColors(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
+		setBannerColors(args[1], args[2], args[3], args[4]);
 		break;
 	case 23:	// setActorChoreLimbFrame
 		a = derefActor(args[1], "o8_kernelSetFunctions:setActorChoreLimbFrame");

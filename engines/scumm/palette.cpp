@@ -1498,6 +1498,73 @@ const byte *ScummEngine::getPalettePtr(int palindex, int room) {
 	return cptr;
 }
 
+uint32 ScummEngine::getPaletteColorFromRGB(byte *palette, byte r, byte g, byte b) {
+	uint32 color, black, white;
+
+	if ((r == 0xFF && b == 0xFF && g == 0xFF) || (r == 0x00 && g == 0x00 && b == 0x00)) {
+		fetchBlackAndWhite(black, white, palette, 256);
+
+		if (r) {
+			color = black;
+		} else {
+			color = white;
+		}
+		color = 0xFF;
+	} else {
+		color = findClosestPaletteColor(palette, 256, r, g, b);
+	}
+
+	return color;
+}
+
+void ScummEngine::fetchBlackAndWhite(uint32 &black, uint32 &white, byte *palette, int paletteEntries) {
+	int max = 0;
+	int r, g, b;
+	int componentsSum;
+	int min = 1000;
+
+	for (int elementId = 0; elementId < paletteEntries; elementId++) {
+		r = palette[0];
+		g = palette[1];
+		b = palette[2];
+
+		componentsSum = r + g + b;
+		if (elementId > 0 && componentsSum >= max) {
+			max = componentsSum;
+			white = elementId;
+		}
+
+		if (componentsSum <= min) {
+			min = componentsSum;
+			black = elementId;
+		}
+
+		palette += 3;
+	}
+}
+
+uint32 ScummEngine::findClosestPaletteColor(byte *palette, int numOfSlots, byte r, byte g, byte b) {
+	uint32 color = 0;
+	uint32 redSquareDiff, blueSquareDiff, greenSquareDiff, weightedColorError;
+	uint32 minErr = 10000000;
+
+	// Iterate through the palette slots to find a color with the minimum
+	// weighted error with respect to our queried RGB values.
+	for (int i = 0; numOfSlots > i; ++i) {
+		redSquareDiff   = (r - palette[0]) * (r - palette[0]);
+		greenSquareDiff = (g - palette[1]) * (g - palette[1]);
+		blueSquareDiff  = (b - palette[2]) * (b - palette[2]);
+
+		weightedColorError = 3 * redSquareDiff + 5 * greenSquareDiff + 2 * blueSquareDiff;
+		if (3 * redSquareDiff + 5 * greenSquareDiff + 2 * blueSquareDiff < minErr) {
+			color = i;
+			minErr = 3 * redSquareDiff + 5 * greenSquareDiff + 2 * blueSquareDiff;
+		}
+		palette += 3;
+	}
+	return color;
+}
+
 void ScummEngine::updatePalette() {
 	if (_game.features & GF_16BIT_COLOR)
 		return;

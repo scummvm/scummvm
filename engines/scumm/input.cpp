@@ -38,8 +38,9 @@
 #include "scumm/scumm_v6.h"
 #include "scumm/scumm_v8.h"
 #include "scumm/sound.h"
+#include "scumm/dialogs.h"
 
-
+#include "graphics/cursorman.h"
 
 namespace Scumm {
 
@@ -378,35 +379,72 @@ void ScummEngine::processInput() {
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 	// F1 (the trigger for the original save/load dialog) is mapped to F5,
-	// unless we chose to use the original GUI
+	// unless we chose to use the original GUI.
 	if (!(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F1 && lastKeyHit.hasFlags(0)) {
 		if (isUsingOriginalGUI()) {
 			lastKeyHit = Common::KeyState(Common::KEYCODE_F1, 315);
 		} else {
 			lastKeyHit = Common::KeyState(Common::KEYCODE_F5, 319);
 		}
-
 	}
 
-	// If we are using the original GUI, remap F5 to F1
+	// If we are using the original GUI, remap F5 to F1.
 	if (isUsingOriginalGUI() && !(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(0)) {
 		lastKeyHit = Common::KeyState(Common::KEYCODE_F1, 315);
 	}
 
 	// Alt-F5 should bring up the original save/load dialog, so map it to F1,
-	// again, unless we chose to use the original GUI
+	// again, unless we chose to use the original GUI.
 	if (!isUsingOriginalGUI() && !(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(Common::KBD_ALT)) {
 		lastKeyHit = Common::KeyState(Common::KEYCODE_F1, 315);
 	}
 
 	// If a key script was specified (a V8 feature), and it's trigger
 	// key was pressed, run it. Usually used to display the built-in menu.
-	if (_keyScriptNo && (_keyScriptKey == lastKeyHit.ascii)) {
+	if (!isSmushActive() && _keyScriptNo && (_keyScriptKey == lastKeyHit.ascii)) {
 		runScript(_keyScriptNo, 0, 0, 0);
 		return;
 	}
 
-	// Fall back to V7 behavior
+	// Set up an InfoDialog object for fetching the internal strings.
+	InfoDialog d(this, 0);
+
+	if (isUsingOriginalGUI() && lastKeyHit.keycode == VAR(VAR_PAUSE_KEY)) {
+		// Force the cursor OFF...
+		int8 oldCursorState = _cursor.state;
+		_cursor.state = 0;
+		CursorMan.showMouse(_cursor.state > 0);
+		showBannerAndPause(0, -1, d.getPlainEngineString(4));
+		_cursor.state = oldCursorState;
+		return;
+	}
+
+	if (isUsingOriginalGUI() && VAR(VAR_VERSION_KEY) != 0 &&
+		lastKeyHit.keycode == Common::KEYCODE_v && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+		showBannerAndPause(0, -1, _dataFileVersionString);
+		// This is not the string being used by the interpreter, which is instead hardcoded
+		// in the executable. The one used here is found in the data files.
+		showBannerAndPause(0, -1, _engineVersionString);
+		return;
+	}
+
+	if (isUsingOriginalGUI() &&
+		(lastKeyHit.keycode == Common::KEYCODE_c && lastKeyHit.hasFlags(Common::KBD_CTRL))) {
+		// Force the cursor to be ON...
+		int8 oldCursorState = _cursor.state;
+		_cursor.state = 1;
+		CursorMan.showMouse(_cursor.state > 0);
+		confirmExitDialog();
+		_cursor.state = oldCursorState;
+
+		// If SMUSH is active, manually force the old cursor state...
+		if (isSmushActive()) {
+			CursorMan.showMouse(_cursor.state > 0);
+		}
+		return;
+	}
+
+	// Fall back to V7 behavior...
 	ScummEngine_v7::processKeyboard(lastKeyHit);
 }
 
@@ -452,6 +490,34 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 		ScummEngine_v6::processKeyboard(lastKeyHit);
 	}
 }
+
+void ScummEngine_v7::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked) {
+	if (waitTime && waitTime != -1) {
+		uint32 millis = _system->getMillis();
+		while (((_system->getMillis() - millis) * (_timerFrequency / 4) / 1000) < waitTime) {
+			waitForTimer(1); // Allow the engine to update the screen and fetch new inputs...
+			ks = _keyPressed;
+			leftBtnClicked = (_leftBtnPressed & msClicked) != 0;
+			rightBtnClicked = (_rightBtnPressed & msClicked) != 0;
+			if (&ks || leftBtnClicked || rightBtnClicked)
+				return;
+
+			if (shouldQuit())
+				return;
+		}
+	} else {
+		while (ks == Common::KEYCODE_INVALID && !leftBtnClicked && !rightBtnClicked) {
+			waitForTimer(1); // Allow the engine to update the screen and fetch new inputs...
+			ks = _keyPressed;
+			leftBtnClicked = (_leftBtnPressed & msClicked) != 0;
+			rightBtnClicked = (_rightBtnPressed & msClicked) != 0;
+
+			if (shouldQuit())
+				return;
+		}
+	}
+}
+
 #endif
 
 void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {

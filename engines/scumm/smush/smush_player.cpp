@@ -738,6 +738,10 @@ void SmushPlayer::handleNewPalette(int32 subSize, Common::SeekableReadStream &b)
 	setDirtyColors(0, 255);
 }
 
+byte *SmushPlayer::getVideoPalette() {
+	return _pal;
+}
+
 void smush_decode_codec1(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 void smush_decode_codec20(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
