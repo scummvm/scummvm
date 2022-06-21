@@ -127,7 +127,6 @@ MODULE_OBJS := \
 	engine/impl/VideoStreamTheora.o \
 	engine/impl/scriptstring.o \
 	engine/impl/stdstring.o \
-	engine/impl/tinyXML/tinystr.o \
 	engine/impl/tinyXML/tinyxml.o \
 	engine/impl/tinyXML/tinyxmlerror.o \
 	engine/impl/tinyXML/tinyxmlparser.o \
