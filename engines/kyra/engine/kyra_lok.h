@@ -468,7 +468,7 @@ protected:
 
 	int8 _talkingCharNum;
 	int8 _charSayUnk2;
-	int8 _charSayUnk3;
+	int8 _talkHeadAnimCharNum;
 	int8 _currHeadShape;
 	int _currentHeadFrameTableIndex;
 	int8 _disabledTalkAnimObject;
