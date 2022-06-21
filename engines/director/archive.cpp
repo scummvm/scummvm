@@ -207,6 +207,9 @@ void Archive::dumpChunk(Resource &res, Common::DumpFile &out) {
 	uint dataSize = 0;
 
 	Common::SeekableReadStreamEndian *resStream = getResource(res.tag, res.index);
+	if (!resStream) {
+		return;
+	}
 	uint32 len = res.size;
 
 	if (dataSize < len) {

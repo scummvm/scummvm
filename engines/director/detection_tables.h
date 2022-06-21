@@ -90,6 +90,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "brer",				"Brer Rabbit and the Wonderful Tar Baby" },
 	{ "buzz1",				"Buzz Lightyear 1st Grade" },
 	{ "casino",				"Casino!" },
+	{ "casino5p",			"Casino 5 Pack" },
 	{ "casinoblackjack",	"Casino Black Jack" },
 	{ "casinokeno",			"Casino Keno" },
 	{ "casinopoker",		"Casino Poker" },
@@ -2545,9 +2546,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("vcbe", "", "VirtualCocktailBarExecutive", "f5277c53bacd27936158dd3867e587e2", 394073, Common::JA_JPN, 311),
 
 	// Original filenames are DreamLight® Verttice™ 1.0 and DreamLight® Verttice™ 1.1
-	MACGAME1("verttice", "v1.0", "DreamLight Verttice 1.0", "b57fff2bb16ad91d6e807ceeab357271", 1083249, 311),
-	MACGAME1("verttice", "v1.1", "DreamLight Verttice 1.1", "1ae45c23586b41997ba52e2e7c771c4c", 1087183, 311),
-	MACGAME1("verttice", "v1.1 PowerMac", "DreamLight Verttice 1.1", "1ae45c23586b41997ba52e2e7c771c4c", 1089447, 311),
+	MACGAME1("verttice", "v1.0", "xn--DreamLight Verttice 1.0-35a3288r", "b57fff2bb16ad91d6e807ceeab357271", 1082993, 311),
+	MACGAME1("verttice", "v1.1", "xn--DreamLight Verttice 1.1-35a3288r", "1ae45c23586b41997ba52e2e7c771c4c", 1086927, 311),
+	MACGAME1("verttice", "v1.1 PowerMac", "xn--DreamLight Verttice 1.1-35a3288r", "1ae45c23586b41997ba52e2e7c771c4c", 1089191, 311),
 
 	MACGAME2("vvcyber", "", "Start Game", "7f443f2e63fd497a9ad85b10dc880a91", 384846,
 							"START0",	  "6d6781e7183df66d8995285e4e3f1a50", 807, 300),
@@ -2803,7 +2804,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is Ants Afire!™ 1.2
 	// Original Pro demo filename is Ants Afire! Pro™ PM
 	// Demo is from Inside Mac Games #25 - Mar 25 1995
-	MACGAME1("antsafire", "v1.2", "xn--Ants Afire! 1.2-ke3i", "1682231de376e5465240f6e4a7952072", 292216, 403),
+	MACGAME1("antsafire", "v1.2", "xn--Ants Afire! 1.2-ke3i", "1682231de376e5465240f6e4a7952072", 291960, 403),
 	MACDEMO1("antsafire", "Pro 1.2.7 Demo", "xn--Ants Afire! Pro PM-qu3k", "71287376e445ab9c98f0d150bb0ed175", 60096, 404), // 1.2 on title screen
 
 	MACDEMO1("aol", "v2.6 Demo", "America Online Easy", "67f572196550aedb1f9523d782022be0", 482582, 404),
@@ -4172,11 +4173,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("peterrabbit", "", "Peter Rabbit (PowerMac)", "fd5cf6efd07077a06519145fc3700e63", 62616, 404),
 
 	// These tile puzzles are identical except for the image
-	MACGAME1("pfarrypuzzle", "Flower", "Flower Puzzle", "cdb27c916044ae4dceb4b7326063fa03", 304196, 400),
-	MACGAME1("pfarrypuzzle", "Iris", "Iris Puzzle", "cdb27c916044ae4dceb4b7326063fa03", 304196, 400),
-	MACGAME1("pfarrypuzzle", "Lighthouse", "Lighthouse Puzzle", "cdb27c916044ae4dceb4b7326063fa03", 304196, 400),
-	MACGAME1("pfarrypuzzle", "Old Camera", "Old Camera Puzzle", "cdb27c916044ae4dceb4b7326063fa03", 304196, 400),
-	MACGAME1("pfarrypuzzle", "Sunflower", "Sunflower Puzzle", "cdb27c916044ae4dceb4b7326063fa03", 304196, 400),
+	MACGAME1("pfarrypuzzle", "Flower", "Flower Puzzle", "cdb27c916044ae4dceb4b7326063fa03", 303940, 400),
+	MACGAME1("pfarrypuzzle", "Iris", "Iris Puzzle", "cdb27c916044ae4dceb4b7326063fa03", 303940, 400),
+	MACGAME1("pfarrypuzzle", "Lighthouse", "Lighthouse Puzzle", "cdb27c916044ae4dceb4b7326063fa03", 303940, 400),
+	MACGAME1("pfarrypuzzle", "Old Camera", "Old Camera Puzzle", "cdb27c916044ae4dceb4b7326063fa03", 303940, 400),
+	MACGAME1("pfarrypuzzle", "Sunflower", "Sunflower Puzzle", "cdb27c916044ae4dceb4b7326063fa03", 303940, 400),
 
 	MACDEMO1_l("phantplanet", "Demo", "PHANTASMAGORIA demo", "dc5a87dda7a0daf46604515f7d2cca66", 291960, Common::JA_JPN, 403),
 	WINDEMO1t_l("phantplanet", "Demo", "PHANDEMO.EXE", "56dc12f841f627be652d23e457875f61", 692923, Common::JA_JPN, 404),
@@ -6903,6 +6904,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("broadwayyb", "", "Startmac",	   "4ea5fc09f79eee6dded94dc40f303779", 196199, 800),
 	WINGAME1("broadwayyb", "", "YEARBOOK.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 2256212, 800),
 
+	// Mac OS 9 and OS X versions are D9
+	WINGAME1t("casino5p", "", "Casino.exe", "fb46241e501df6a96d5a3109f13d61b6", 3335762, 850), // Disc 1
+	WINGAME1t("casino5p", "", "Slots200.exe", "0f04a70712597a6bd001232b0913d514", 3011024, 850), // Disc 2
+
 	MACGAME1("cmi", "CM38/10/01", "CMi_38_Mac", "f065c75691d28120e9f630448c3b1b71", 1225735, 800),
 	WINGAME1("cmi", "CM38/10/01", "CMi_38_Win.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 2514361, 800),
 
@@ -7269,6 +7274,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// There is an OS X installer, but the game itself runs in Classic environment (up to OS 10.4)
 	MACGAME1_l("boulebill", "", "Boule et Bill Au voleur !!!", "9ba96b315646d5f62be9ab5597d2e0d7", 176370, Common::FR_FRA, 901),
 	WINGAME1_l("boulebill", "", "Au voleur!.exe", "4b89dba499aefda5201eef3d27963d01", 2186312, Common::FR_FRA, 900),
+
+	// Windows versions are D8
+	// Disc 1
+	MACGAME1("casino5p" ,"", "Casino!/Casino (OSX)", "d483e955df901222145267d2ad729ea2", 230404, 900),
+	MACGAME1("casino5p" ,"", "Keno/Keno Master (OSX)", "d483e955df901222145267d2ad729ea2", 246990, 900),
+	MACGAME1("casino5p" ,"", "Lottery/Lottery Advantage (OSX)", "d483e955df901222145267d2ad729ea2", 289036, 900),
+	MACGAME1("casino5p" ,"", "Slot City/Slot City (OSX)", "d483e955df901222145267d2ad729ea2", 230407, 900),
+	// Disc 2
+	MACGAME1("casino5p" ,"", "Slots 200 Plus (OSX)", "d483e955df901222145267d2ad729ea2", 291178, 900),
 
 	WINGAME2_l("eso", "", "START.EXE",	"c612aa43e7ef55aa4fd2e1085fb1ef7a", 3752491,
 						  "ESO_D1.DXR", "6d39a8ef9a8060e21616f23872c581b6", 2075636, Common::ES_ESP, 900),
