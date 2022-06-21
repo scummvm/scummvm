@@ -93,6 +93,9 @@ Cast::~Cast() {
 
 	if (_castArchive) {
 		_castArchive->close();
+
+		g_director->_openResFiles.erase(_castArchive->getPathName());
+
 		delete _castArchive;
 		_castArchive = nullptr;
 	}
@@ -197,6 +200,9 @@ void Cast::setArchive(Archive *archive) {
 	} else {
 		_macName = archive->getFileName();
 	}
+
+	// Register the resfile so that Cursor::readFromResource can find it
+	g_director->_openResFiles.setVal(archive->getPathName(), archive);
 }
 
 void Cast::loadArchive() {
