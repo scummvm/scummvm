@@ -1126,8 +1126,15 @@ public:
 	virtual void registerModifiers(IPlugInModifierRegistrar *registrar) const = 0;
 };
 
+class ProjectPersistentResource {
+public:
+	virtual ~ProjectPersistentResource();
+};
+
 struct ProjectResources {
 	virtual ~ProjectResources();
+
+	Common::Array<Common::SharedPtr<ProjectPersistentResource> > persistentResources;
 };
 
 class CursorGraphic {
@@ -1177,6 +1184,7 @@ enum ProjectPlatform {
 
 	kProjectPlatformWindows,
 	kProjectPlatformMacintosh,
+	KProjectPlatformCrossPlatform,
 };
 
 class ProjectDescription {
@@ -1457,6 +1465,7 @@ public:
 
 	void addVolume(int volumeID, const char *name, bool isMounted);
 	bool getVolumeState(const Common::String &name, int &outVolumeID, bool &outIsMounted) const;
+	void setDefaultVolumeState(bool defaultState);
 
 	void addSceneStateTransition(const HighLevelSceneTransition &transition);
 
@@ -1741,6 +1750,8 @@ private:
 
 	uint32 _modifierOverrideCursorID;
 	bool _haveModifierOverrideCursor;
+
+	bool _defaultVolumeState;
 
 	// True if any elements were added to the scene, removed from the scene, or reparented since last draw
 	bool _sceneGraphChanged;

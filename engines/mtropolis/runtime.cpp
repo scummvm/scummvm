@@ -2113,7 +2113,14 @@ void IPlugInModifierRegistrar::registerPlugInModifier(const char *name, const IP
 PlugIn::~PlugIn() {
 }
 
+ProjectPersistentResource::~ProjectPersistentResource() {
+}
+
 ProjectResources::~ProjectResources() {
+	// We need these destroyed in reverse order exactly, and unfortunately the ScummVM Common::Array destructor
+	// destroys forward
+	while (persistentResources.size() > 0)
+		persistentResources.pop_back();
 }
 
 CursorGraphic::~CursorGraphic() {
@@ -3525,7 +3532,8 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	_displayWidth(1024), _displayHeight(768), _realTimeBase(0), _playTimeBase(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning),
 	_lastFrameCursor(nullptr), _defaultCursor(new DefaultCursorGraphic()), _platform(kProjectPlatformUnknown),
 	_cachedMousePosition(Common::Point(0, 0)), _realMousePosition(Common::Point(0, 0)), _trackedMouseOutside(false),
-	_forceCursorRefreshOnce(true), _haveModifierOverrideCursor(false), _sceneGraphChanged(false), _isQuitting(false), _collisionCheckTime(0) {
+	_forceCursorRefreshOnce(true), _haveModifierOverrideCursor(false), _sceneGraphChanged(false), _isQuitting(false),
+	  _collisionCheckTime(0), _defaultVolumeState(true) {
 	_random.reset(new Common::RandomSource("mtropolis"));
 
 	_vthread.reset(new VThread());
@@ -5292,6 +5300,11 @@ bool Runtime::getVolumeState(const Common::String &name, int &outVolumeID, bool 
 			outIsMounted = volume.isMounted;
 			return true;
 		}
+	}
+
+	if (_defaultVolumeState) {
+		outIsMounted = true;
+		return true;
 	}
 
 	return false;
