@@ -271,7 +271,7 @@ void KyraEngine_MR::objectChatInit(const char *str, int object, int vocHigh, int
 		xPos = _talkObjectList[object].x;
 	}
 
-	_text->_talkMessageH = lineNum * (_screen->getFontHeight() + _screen->_lineSpacing);
+	_text->_talkMessageH = lineNum * _screen->getFontHeight() + (lineNum - 1) * _screen->_lineSpacing;
 	yPos -= _text->_talkMessageH;
 	yPos = MAX(yPos, 0);
 	_text->_talkMessageY = yPos;
@@ -548,7 +548,7 @@ void KyraEngine_MR::albumChatInit(const char *str, int object, int vocHigh, int 
 		xPos = _talkObjectList[object].x;
 	}
 
-	_text->_talkMessageH = lineNum * (_screen->getFontHeight() + _screen->_lineSpacing);
+	_text->_talkMessageH = lineNum * _screen->getFontHeight() + (lineNum - 1) * _screen->_lineSpacing;
 	yPos -= _text->_talkMessageH;
 	yPos = MAX(yPos, 0);
 	_text->_talkMessageY = yPos;

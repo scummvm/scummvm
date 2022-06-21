@@ -34,7 +34,7 @@ TextDisplayer::TextDisplayer(KyraEngine_v1 *vm, Screen *screen) {
 	_talkMessageY = 0xC;
 	_talkMessageH = 0;
 	_talkMessagePrinted = false;
-	_langExtraSpacing = (vm->gameFlags().lang == Common::KO_KOR) ? 1 : 0;
+	_langExtraSpacing = (vm->gameFlags().lang == Common::KO_KOR) ? 2 : 0;
 	_lineBreakChar = (_vm->gameFlags().platform == Common::kPlatformMacintosh) ? '\n' : '\r';
 	memset(_talkSubstrings, 0, sizeof(_talkSubstrings));
 	memset(_talkBuffer, 0, sizeof(_talkBuffer));
@@ -203,12 +203,12 @@ void TextDisplayer::printTalkTextMessage(const char *text, int x, int y, uint8 c
 		w = MIN<int>(w, 302);
 	}
 
-	int top = y - lineCount * (_screen->getFontHeight() + _screen->_lineSpacing) - _langExtraSpacing;
+	int top = y - (lineCount * _screen->getFontHeight() + (lineCount - 1) * _screen->_lineSpacing) - _langExtraSpacing;
 	if (top < marginTop)
 		top = marginTop;
 
 	_talkMessageY = top;
-	_talkMessageH = lineCount * (_screen->getFontHeight() + _screen->_lineSpacing) + _langExtraSpacing;
+	_talkMessageH = (lineCount * _screen->getFontHeight() + (lineCount - 1) * _screen->_lineSpacing) + _langExtraSpacing;
 	
 	int x1 = 12;
 	int x2 = Screen::SCREEN_W - 12;
@@ -252,7 +252,7 @@ void TextDisplayer::printText(const Common::String &str, int x, int y, uint8 c0,
 	_screen->setTextColor(colorMap, 0, 3);
 	_screen->_charSpacing = -2;
 	int ls = _screen->_lineSpacing;
-	_screen->_lineSpacing = _langExtraSpacing;
+	_screen->_lineSpacing = _langExtraSpacing >> 1;
 	_screen->printText(tmp, x, y, c0, c2);
 	_screen->_charSpacing = 0;
 	_screen->_lineSpacing = ls;
