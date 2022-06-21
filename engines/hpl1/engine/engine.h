@@ -164,7 +164,6 @@
 #include "hpl1/engine/impl/scriptstring.h"
 #include "hpl1/engine/impl/stdstring.h"
 #include "hpl1/engine/impl/temp-types.h"
-#include "hpl1/engine/impl/tinyXML/tinystr.h"
 #include "hpl1/engine/impl/tinyXML/tinyxml.h"
 #include "hpl1/engine/input/Action.h"
 #include "hpl1/engine/input/ActionHaptic.h"
