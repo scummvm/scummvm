@@ -22,15 +22,13 @@
 
 #include "common/debug.h"
 #include "common/file.h"
-
-#include "immortal/immortal.h"
 #include "immortal/disk.h"
 
 namespace Immortal {
 
-// --- ProDosFile methods ---
+// --- ProDOSFile methods ---
 
-ProDosFile::ProDosFile(char name[15], uint8 type, uint16 tBlk, uint32 eof, uint16 bPtr, Common::File *disk)
+ProDOSFile::ProDOSFile(char name[15], uint8 type, uint16 tBlk, uint32 eof, uint16 bPtr, Common::File *disk)
         : _type(type)
         , _totalBlocks(tBlk)
         , _eof(eof)
@@ -41,7 +39,7 @@ ProDosFile::ProDosFile(char name[15], uint8 type, uint16 tBlk, uint32 eof, uint1
 
 /* For debugging purposes, this prints the meta data of a file */
 
-void ProDosFile::printInfo() {
+void ProDOSFile::printInfo() {
     debug("File: %s", _name);
     debug("Type: %02X", _type);
     debug("Blocks: %d", _totalBlocks);
@@ -50,7 +48,7 @@ void ProDosFile::printInfo() {
 
 /* For Common::Archive, this method just returns a string of the name */
 
-Common::String ProDosFile::getName() const {
+Common::String ProDOSFile::getName() const {
     return Common::String(_name);
 }
 
@@ -60,7 +58,7 @@ Common::String ProDosFile::getName() const {
  * memory starting at memOffset
  */
 
-void ProDosFile::getDataBlock(byte *memOffset, int offset, int size) const {
+void ProDOSFile::getDataBlock(byte *memOffset, int offset, int size) const {
 
     // All this method needs to do is read (size) of data at (offset) into (memOffset)
     _disk->seek(offset);
@@ -73,14 +71,14 @@ void ProDosFile::getDataBlock(byte *memOffset, int offset, int size) const {
  * determine the new position within the byte data.
  */
 
-int ProDosFile::parseIndexBlock(byte *memOffset, int blockNum, int rem) const {
+int ProDOSFile::parseIndexBlock(byte *memOffset, int blockNum, int rem) const {
     int dataSize;               // For most of the blocks, this will be kBlockSize, but the last one will be the calculated remainder
     int readSize = 0;           // This keeps track of the new pointer position to read data to, by updating the size of data read last
     int dataOffset;             // Where in the disk to read from
     int diskPos;                // Current position of cursor
 
     for (int i = 0; i < blockNum; i++) {
-        dataSize   = (i == (blockNum - 1)) ? rem : ProDosDisk::kBlockSize;
+        dataSize   = (i == (blockNum - 1)) ? rem : ProDOSDisk::kBlockSize;
         dataOffset = _disk->readByte();         // Low byte is first
         
         /* The cursor needs to know where to get the next pointer from in the index block,
@@ -90,7 +88,7 @@ int ProDosFile::parseIndexBlock(byte *memOffset, int blockNum, int rem) const {
         diskPos = _disk->pos();
 
         _disk->skip(255);                       // The high bytes are stored at the end of the block instead because reasons???
-        dataOffset += (_disk->readByte() << 8) * ProDosDisk::kBlockSize;    // High byte is second
+        dataOffset += (_disk->readByte() << 8) * ProDOSDisk::kBlockSize;    // High byte is second
 
         getDataBlock(memOffset + readSize, dataOffset, dataSize);
         readSize += dataSize;
@@ -108,7 +106,7 @@ int ProDosFile::parseIndexBlock(byte *memOffset, int blockNum, int rem) const {
  * returns a read stream of the file contents.
  */
 
-Common::SeekableReadStream *ProDosFile::createReadStream() const {
+Common::SeekableReadStream *ProDOSFile::createReadStream() const {
 
     // We know the total byte size of the data, so we can allocate the full amount right away
     byte *finalData = (byte *)malloc(_eof);
@@ -116,12 +114,12 @@ Common::SeekableReadStream *ProDosFile::createReadStream() const {
     /* For a seed, this is a direct pointer to data. For a sapling it is an index file,
      * and for a tree it is a master index file.
      */
-    int indexBlock = _blockPtr * ProDosDisk::kBlockSize;
+    int indexBlock = _blockPtr * ProDOSDisk::kBlockSize;
 
     /* For a sapling or tree, the size needs to be calculated, as they are made from multiple blocks.
      * _totalBlocks *includes* the index block, so the blocks before the oef block are _totalBlocks-2
      */
-    int remainder = _eof - ((_totalBlocks - 2) * ProDosDisk::kBlockSize);
+    int remainder = _eof - ((_totalBlocks - 2) * ProDOSDisk::kBlockSize);
 
     // For a seed file, the end of file value is also the size in the block, because it's just the one block
     if (_type == kFileTypeSeed) {
@@ -157,7 +155,7 @@ Common::SeekableReadStream *ProDosFile::createReadStream() const {
             int diskPos = _disk->pos();
 
             _disk->skip(255);
-            indexOffset += (_disk->readByte() << 8) * ProDosDisk::kBlockSize;
+            indexOffset += (_disk->readByte() << 8) * ProDOSDisk::kBlockSize;
 
             _disk->seek(indexOffset);
             readSize += parseIndexBlock(finalData + readSize, blockNum, remainder);
@@ -168,27 +166,27 @@ Common::SeekableReadStream *ProDosFile::createReadStream() const {
     return new Common::MemoryReadStream(finalData, _eof, DisposeAfterUse::YES);
 }
 
-// --- ProDosDisk methods ---
+// --- ProDOSDisk methods ---
 
 /* The time and date are compressed into 16bit words, so to make them useable
  * we have to decompress them by masking the other bits and then shifting
  * to the lowest bit so that they can be stored in 8 bits each.
  */
 
-void ProDosDisk::getDate(Date *d, uint16 date) {
+void ProDOSDisk::getDate(Date *d, uint16 date) {
     d->_day   =  date & 0x001f;
     d->_month = (date & 0x01e0) >> 5;
     d->_year  = (date & 0xfe00) >> 9;
 }
 
-void ProDosDisk::getTime(Time *t, uint16 time) {
+void ProDOSDisk::getTime(Time *t, uint16 time) {
     t->_minute =  time & 0x003f;
     t->_hour   = (time & 0x1f00) >> 8;
 }
 
 /* Adds most of the header data to a directory header struct */
 
-void ProDosDisk::getHeader(DirHeader *h) {
+void ProDOSDisk::getHeader(DirHeader *h) {
 
     /* The type and nameLen fields are stored in the same byte,
      * so we need to split the byte, and shift the high bits to
@@ -219,7 +217,7 @@ void ProDosDisk::getHeader(DirHeader *h) {
 
 /* Since a subdirectory header is mostly the same a volume header, we will reuse the code where we can */
 
-void ProDosDisk::getDirectoryHeader(DirHeader *h) {
+void ProDOSDisk::getDirectoryHeader(DirHeader *h) {
     getHeader(h);
     h->_parentBlockPtr   = _disk.readUint16LE();
     h->_parentEntryIndex = _disk.readByte();
@@ -230,7 +228,7 @@ void ProDosDisk::getDirectoryHeader(DirHeader *h) {
  * is a directory header for the purose of filling it out with the same code
  */
 
-void ProDosDisk::getVolumeHeader(VolHeader *h) {
+void ProDOSDisk::getVolumeHeader(VolHeader *h) {
     getHeader((DirHeader *)h);
     h->_bitmapPtr = _disk.readUint16LE();
     h->_volBlocks = _disk.readUint16LE();
@@ -239,7 +237,7 @@ void ProDosDisk::getVolumeHeader(VolHeader *h) {
 
 /* Getting a file entry header is very similar to getting a header, but with different data. */
 
-void ProDosDisk::getFileEntry(FileEntry *f) {
+void ProDOSDisk::getFileEntry(FileEntry *f) {
     uint8 tempByte = _disk.readByte();
     f->_nameLen = tempByte & 0xf;
     f->_type = (tempByte & 0xf0) >> 4;
@@ -274,7 +272,7 @@ void ProDosDisk::getFileEntry(FileEntry *f) {
  * which is stored with the file object so that the engine can search by path name.
  */
 
-void ProDosDisk::searchDirectory(DirHeader *h, uint16 p, uint16 n, Common::String path) {
+void ProDOSDisk::searchDirectory(DirHeader *h, uint16 p, uint16 n, Common::String path) {
     int currPos;
     int parsedFiles = 0;
 
@@ -298,9 +296,9 @@ void ProDosDisk::searchDirectory(DirHeader *h, uint16 p, uint16 n, Common::Strin
         if ((kFileTypeDead < fileEntry._type) && (fileEntry._type < kFileTypePascal) && (fileEntry._eof > 0)) {
             Common::String fileName = path + fileEntry._name;
             debug("%s", fileName.c_str());
-            ProDosFile *currFile = new ProDosFile(fileEntry._name, fileEntry._type, fileEntry._totalBlocks, fileEntry._eof, fileEntry._blockPtr, &_disk);
+            ProDOSFile *currFile = new ProDOSFile(fileEntry._name, fileEntry._type, fileEntry._totalBlocks, fileEntry._eof, fileEntry._blockPtr, &_disk);
 
-            _files.setVal(fileName, Common::SharedPtr<ProDosFile>(currFile));
+            _files.setVal(fileName, Common::SharedPtr<ProDOSFile>(currFile));
             _disk.seek(currPos);
         
         // Otherwise, if it is a subdirectory, we want to explore that subdirectory
@@ -329,7 +327,7 @@ void ProDosDisk::searchDirectory(DirHeader *h, uint16 p, uint16 n, Common::Strin
  * ((total_blocks / 4096) + 1 (if remainder)) * 512 bytes.
  */
 
-void ProDosDisk::getVolumeBitmap(VolHeader *h) {
+void ProDOSDisk::getVolumeBitmap(VolHeader *h) {
     int currPos = _disk.pos();
     int bitmapSize;
 
@@ -347,7 +345,7 @@ void ProDosDisk::getVolumeBitmap(VolHeader *h) {
 
 /* Gets the volume information and parses the filesystem, adding file objects to a map as it goes */
 
-bool ProDosDisk::open(const Common::String filename) {
+bool ProDOSDisk::open(const Common::String filename) {
     debug("opening %s", filename.c_str());
 
     _disk.open(filename);
@@ -372,7 +370,7 @@ bool ProDosDisk::open(const Common::String filename) {
 
 /* Constructor simply calls open(), and if it is successful it prints a statement */
 
-ProDosDisk::ProDosDisk(const Common::String filename) {
+ProDOSDisk::ProDOSDisk(const Common::String filename) {
     if (open(filename)) {
         debug ("%s has been loaded", filename.c_str());
     }
@@ -380,15 +378,15 @@ ProDosDisk::ProDosDisk(const Common::String filename) {
 
 /* Destructor closes the disk and clears the map of files */
 
-ProDosDisk::~ProDosDisk() {
+ProDOSDisk::~ProDOSDisk() {
     _disk.close();
     _files.clear();
-    delete _volBitmap;
+    delete _volBitmap;              // Should this be free() instead?
 }
 
 // --- Common::Archive methods ---
 
-bool ProDosDisk::hasFile(const Common::Path &path) const {
+bool ProDOSDisk::hasFile(const Common::Path &path) const {
     Common::String name = path.toString();
     return _files.contains(name);
 }
@@ -398,9 +396,9 @@ bool ProDosDisk::hasFile(const Common::Path &path) const {
  * pointer returned as the value from the given path. This also returns the size.
  */
 
-int ProDosDisk::listMembers(Common::ArchiveMemberList &list) const {
+int ProDOSDisk::listMembers(Common::ArchiveMemberList &list) const {
     int f = 0;
-    Common::HashMap<Common::String, Common::SharedPtr<ProDosFile>>::const_iterator it;
+    Common::HashMap<Common::String, Common::SharedPtr<ProDOSFile>>::const_iterator it;
     for (it = _files.begin(); it != _files.end(); ++it) {
         list.push_back(Common::ArchiveMemberList::value_type(it->_value));
         ++f;
@@ -408,7 +406,7 @@ int ProDosDisk::listMembers(Common::ArchiveMemberList &list) const {
     return f;
 }
 
-const Common::ArchiveMemberPtr ProDosDisk::getMember(const Common::Path &path) const {
+const Common::ArchiveMemberPtr ProDOSDisk::getMember(const Common::Path &path) const {
     Common::String name = path.toString();
     if (!_files.contains(name)) {
         return Common::ArchiveMemberPtr();
@@ -420,12 +418,12 @@ const Common::ArchiveMemberPtr ProDosDisk::getMember(const Common::Path &path) c
  * so if this member is not the correct one, we return a null pointer.
  */
 
-Common::SeekableReadStream *ProDosDisk::createReadStreamForMember(const Common::Path &path) const {
+Common::SeekableReadStream *ProDOSDisk::createReadStreamForMember(const Common::Path &path) const {
     Common::String name = path.toString();
     if (!_files.contains(name)) {
         return nullptr;
     }
-    Common::SharedPtr<ProDosFile> f = _files.getValOrDefault(name);
+    Common::SharedPtr<ProDOSFile> f = _files.getValOrDefault(name);
     f->printInfo();
     return f->createReadStream();
 }
