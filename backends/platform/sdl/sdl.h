@@ -90,6 +90,7 @@ public:
 	Common::TimerManager *getTimerManager() override;
 	Common::SaveFileManager *getSavefileManager() override;
 
+	// Default paths
 	virtual Common::String getDefaultIconsPath();
 	virtual Common::String getScreenshotsPath();
 
