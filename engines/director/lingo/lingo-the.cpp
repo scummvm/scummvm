@@ -627,7 +627,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 			menuItem = g_director->_wm->getMenu()->getSubMenuItem(menu, id.u.menu->menuItemIdNum - 1);
 		}
 
-		switch(field) {
+		switch (field) {
 		case kTheCheckMark:
 			d.type = INT;
 			d.u.i = g_director->_wm->getMenuItemCheckMark(menuItem);
@@ -1089,7 +1089,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 			warning("Wrong menuItem!");
 			break;
 		}
-		switch(field) {
+		switch (field) {
 		case kTheCheckMark:
 			g_director->_wm->setMenuItemCheckMark(menuItem, d.asInt());
 			break;
