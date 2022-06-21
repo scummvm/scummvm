@@ -248,7 +248,7 @@ void autoMenu(int16 *x, int16 *y, int16 lineNr, int16 height, char *text, int16 
 
 #define ADS_WIN 0,153,20,3,60,1
 
-void adsMenu() {
+void handleDialogCloseupMenu() {
 	int16 curYStart;
 	int16 col;
 
@@ -294,8 +294,8 @@ void adsMenu() {
 				DialogCloseupNextBlock *an_blk = _G(atds)->dialogCloseupItemChoice(_G(ads_dia_nr), _G(ads_blk_nr), curY);
 				if (an_blk->_blkNr == -1) {
 					selectDialogOption(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->_endNr);
-					ads_ende(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->_endNr);
-					stop_ads_dialog();
+					endDialogCloseup(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->_endNr);
+					stopDialogCloseupDialog();
 				} else {
 					an_blk = _G(atds)->calcNextDialogCloseupBlock(_G(ads_dia_nr), _G(ads_blk_nr), curY);
 					selectDialogOption(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->_endNr);
@@ -316,7 +316,7 @@ void adsMenu() {
 	}
 }
 
-void stop_ads_dialog() {
+void stopDialogCloseupDialog() {
 	aadWait(-1);
 	_G(gameState).DispFlag = _G(ads_tmp_dsp);
 	_G(cur_display) = true;

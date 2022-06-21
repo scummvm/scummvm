@@ -487,7 +487,7 @@ void setupScreen(SetupScreenMode mode) {
 		}
 
 		if (_G(flags).DialogCloseup)
-			adsMenu();
+			handleDialogCloseupMenu();
 		if (_G(mouseLeftClick)) {
 			if (_G(menu_item) == CUR_WALK) {
 				if (_G(cur_ausgang_flag)) {

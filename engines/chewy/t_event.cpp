@@ -1160,7 +1160,7 @@ void selectDialogOption(int16 diaNr, int16 blkNr, int16 strEndNr) {
 				Room41::sub_dia();
 			} else if (blkNr == 0 && strEndNr == 3) {
 				_G(gameState).R41RepairInfo = true;
-				stop_ads_dialog();
+				stopDialogCloseupDialog();
 			}
 			break;
 
@@ -1173,7 +1173,7 @@ void selectDialogOption(int16 diaNr, int16 blkNr, int16 strEndNr) {
 		case 15:
 			if (blkNr == 1 && strEndNr == 0) {
 				_G(gameState).R55Job = true;
-				stop_ads_dialog();
+				stopDialogCloseupDialog();
 			}
 			break;
 
@@ -1212,7 +1212,7 @@ void selectDialogOption(int16 diaNr, int16 blkNr, int16 strEndNr) {
 	}
 }
 
-void ads_ende(int16 diaNr, int16 blkNr, int16 strEndNr) {
+void endDialogCloseup(int16 diaNr, int16 blkNr, int16 strEndNr) {
 	switch (diaNr) {
 	case 0:
 		_G(flags).AutoAniPlay = false;
