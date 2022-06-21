@@ -258,6 +258,7 @@ Common::String OSystem_Win32::getDefaultIconsPath() {
 
 	if (_isPortable) {
 		Win32::getProcessDirectory(iconsPath, MAX_PATH);
+		_tcscat(iconsPath, TEXT("\\Icons\\"));
 	} else {
 		// Use the Application Data directory of the user profile
 		if (!Win32::getApplicationDataDirectory(iconsPath)) {
