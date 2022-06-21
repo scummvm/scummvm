@@ -97,6 +97,12 @@ static C64Rec g_C64Registry[] = {
 	{ GREMLINS_GERMAN_C64,	0xc003,		0x558c, TYPE_T64, 1, nullptr,	nullptr, 0, 0xd801, 0xc6c0, 0x1f00 },  // German Gremlins C64 (T64) version * TBC Multicompactor v2.x
 	{ GREMLINS_GERMAN_C64,	0x2ab00,	0x6729, TYPE_D64, 2, nullptr,	nullptr, 0, 0xdc02, 0xcac1, 0x1f00 }, // German Gremlins C64 (D64) version * Exomizer
 
+	{SEAS_OF_BLOOD_C64, 0xa209,  0xf115, TYPE_T64, 6, "-e0x1000", nullptr, 3, 0xd802, 0xb07c, 0x2000}, // Seas of Blood C64 (T64) MasterCompressor / Relax -> ECA
+	// Compacker -> Unknown -> MasterCompressor / Relax -> ECA
+	// Compacker -> CCS Packer
+	{SEAS_OF_BLOOD_C64, 0x2ab00, 0x5c1d, TYPE_D64, 1, nullptr,	  nullptr, 0, 0xd802, 0xb07c, 0x2000}, // Seas of Blood C64 (D64) CCS Packer
+	{SEAS_OF_BLOOD_C64, 0x2ab00, 0xe308, TYPE_D64, 1, nullptr,	  nullptr, 0, 0xd802, 0xb07c, 0x2000}, // Seas of Blood C64 (D64) alt CCS Packer
+
 	{ UNKNOWN_GAME, 0, 0, UNKNOWN_FILE_TYPE, 0, nullptr, nullptr, 0, 0, 0, 0 }
 };
 

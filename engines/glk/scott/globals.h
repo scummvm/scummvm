@@ -96,6 +96,8 @@ public:
 	uint32 _bitFlags = 0; ///< Might be >32 flags - I haven't seen >32 yet
 	int _autoInventory = 0;
 	int _animationFlag = 0;
+	uint8_t _enemyTable[126];
+	const char *_battleMessages[33];
 
 	// sagadraw
 	int _drawToBuffer = 0;
@@ -189,6 +191,17 @@ public:
 
 	// robin of sherwood]
 	uint8_t *_forestImages = nullptr;
+
+	// seas of blood
+	winid_t _leftDiceWin = nullptr;
+	winid_t _rightDiceWin = nullptr;
+	winid_t _battleRight = nullptr;
+	glui32 _backgroundColour = 0;
+	uint8_t *_bloodImageData = nullptr;
+	glui32 _dicePixelSize = 0;
+	glui32 _diceXOffset = 0;
+	glui32 _diceYOffset = 0;
+	int _shouldDrawObjectImages = 0;
 
 public:
 	Globals();

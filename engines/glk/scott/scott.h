@@ -164,7 +164,6 @@ private:
 	 */
 	void initialize();
 
-	void updateSettings();
 	void delay(double seconds);
 	void clearScreen(void);
 	bool randomPercent(uint n);
@@ -172,7 +171,6 @@ private:
 	int matchUpItem(int noun, int loc);
 	Common::String readString(Common::SeekableReadStream *f);
 	void loadDatabase(Common::SeekableReadStream *f, bool loud);
-	void outputNumber(int a);
 	int whichWord(const char *word, const Common::StringArray &list);
 
 	ActionResultType performLine(int ct);
@@ -196,7 +194,6 @@ private:
 	void transcriptOn();
 	void transcriptOff();
 	int yesOrNo();
-	void listInventory();
 	void lookWithPause();
 	void doneIt();
 	int printScore();
@@ -217,6 +214,7 @@ public:
 	void drawImage(int image);
 	void output(const Common::String &a);
 	void output(const Common::U32String &a);
+	void outputNumber(int a);
 	void display(winid_t w, const char *fmt, ...);
 	void display(winid_t w, const Common::U32String fmt, ...);
 	void fatal(const char *x);
@@ -227,6 +225,9 @@ public:
 	void look(void);
 	void openGraphicsWindow();
 	void closeGraphicsWindow();
+	void listInventory();
+	void updateSettings();
+	uint getRandomNumber(uint max);
 
 public:
 	/**
