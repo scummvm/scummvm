@@ -19,14 +19,14 @@
  *
  */
 
-#ifndef IMMORTAL_DSK_H
-#define IMMORTAL_DSK_H
+#ifndef IMMORTAL_DISK_H
+#define IMMORTAL_DISK_H
 
 #include "common/memstream.h"
 #include "common/file.h"
 #include "common/debug.h"
 
-/* Quick note about ProDos:
+/* Quick note about ProDOS:
  * This disk code handles inactive, seedling, sapling, tree, and subdirectory files.
  * It does *not* handle sparse files at the moment. If a sparse file exists, it may not
  * be read correctly. It also does not do anything with Pascal files, but those should not
@@ -35,7 +35,7 @@
 
 namespace Immortal {
 
-// These values define for ProDos how to read the file entry, and also whether it's a keyblock (if it is a directory header, it's the keyblock of that directory)
+// These values define for ProDOS how to read the file entry, and also whether it's a keyblock (if it is a directory header, it's the keyblock of that directory)
 enum FileType : char {
     kFileTypeDead    = 0,
     kFileTypeSeed    = 1,
@@ -47,8 +47,8 @@ enum FileType : char {
     kFileTypeVolHead = 0x0F
 };
 
-/* File extensions for all the ProDos supported file types
- * NOTE: ProDos user defined files are F1-F8. If they are ever required,
+/* File extensions for all the ProDOS supported file types
+ * NOTE: ProDOS user defined files are F1-F8. If they are ever required,
  * they can be added to this enum.
  */
 enum FileExt {
@@ -72,16 +72,16 @@ enum FileExt {
     kFileExtPDSys    = 0xFF
 };
 
-/* A ProDos file simply contains meta data about the file and the ability to
+/* A ProDOS file simply contains meta data about the file and the ability to
  * find and put together the data blocks that make up the file contents.
  * This implements Common::ArchiveMember so that it can be used directly in
- * the Archive methods in ProDosDisk.
+ * the Archive methods in ProDOSDisk.
  */
 
-class ProDosFile : public Common::ArchiveMember {
+class ProDOSFile : public Common::ArchiveMember {
 public:
-    ProDosFile(char name[16], uint8 type, uint16 tBlk, uint32 eof, uint16 bPtr, Common::File *disk);
-    ~ProDosFile() {};
+    ProDOSFile(char name[16], uint8 type, uint16 tBlk, uint32 eof, uint16 bPtr, Common::File *disk);
+    ~ProDOSFile() {};
 
     // These are the Common::ArchiveMember related functions
     Common::String getName() const override;
@@ -107,12 +107,12 @@ private:
  * file operations to work with it.
  */
 
-class ProDosDisk : public Common::Archive {
+class ProDOSDisk : public Common::Archive {
 public:
-    static const int kBlockSize = 512;      // A ProDos block is always 512 bytes
+    static const int kBlockSize = 512;      // A ProDOS block is always 512 bytes
 
-    ProDosDisk(const Common::String filename);
-    ~ProDosDisk();
+    ProDOSDisk(const Common::String filename);
+    ~ProDOSDisk();
 
     // Called from the constructor, it parses the volume and fills the hashmap with files
     bool open(const Common::String filename);
@@ -130,7 +130,7 @@ Common::String  _name;                       // Name of volume
   Common::File  _disk;                       // The volume file itself
            int  _volBlocks;                  // Total blocks in volume
           byte *_volBitmap;                  // This can determine if the volume is corrupt as it contains a bit for every block, where 0 = unused, 1 = used
-Common::HashMap<Common::String, Common::SharedPtr<ProDosFile>> _files; // Hashmap of files in the volume, where key=Path, Value=ProDosFile
+Common::HashMap<Common::String, Common::SharedPtr<ProDOSFile>> _files; // Hashmap of files in the volume, where key=Path, Value=ProDOSFile
 
     struct Date {
          uint8 _day;
@@ -153,8 +153,8 @@ Common::HashMap<Common::String, Common::SharedPtr<ProDosFile>> _files; // Hashma
          uint8 _ver;
          uint8 _minVer;                     // Should pretty much always be 0 as far as I know
          uint8 _access;                     // If this ends up useful, there should be an enum for the access values
-         uint8 _entryLen;                   // Always 27 in ProDos 1.0
-         uint8 _entriesPerBlock;            // Always 0D in ProDos 1.0
+         uint8 _entryLen;                   // Always 27 in ProDOS 1.0
+         uint8 _entriesPerBlock;            // Always 0D in ProDOS 1.0
         uint16 _fileCount;                  // Number of files across all data blocks in this directory
         uint16 _bitmapPtr;                  // Block pointer to the keyblock of the bitmap for the entire volume
         uint16 _volBlocks;                  // Blocks in entire volume
@@ -173,9 +173,9 @@ Common::HashMap<Common::String, Common::SharedPtr<ProDosFile>> _files; // Hashma
          uint8 _entryLen;
          uint8 _entriesPerBlock;
         uint16 _fileCount;
-        uint16 _parentBlockPtr;             // These values allow ProDos to navigate back out of a directory, but they aren't really needed by the class to navigate
+        uint16 _parentBlockPtr;             // These values allow ProDOS to navigate back out of a directory, but they aren't really needed by the class to navigate
          uint8 _parentEntryIndex;           // Index in the current directory
-         uint8 _parentEntryLen;             // This is always 27 in ProDos 1.0
+         uint8 _parentEntryLen;             // This is always 27 in ProDOS 1.0
     };
 
     struct FileEntry {
