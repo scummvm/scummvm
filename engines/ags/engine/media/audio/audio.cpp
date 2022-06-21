@@ -765,8 +765,6 @@ void update_audio_system_on_game_loop() {
 
 	process_scheduled_music_update();
 
-	_G(audio_doing_crossfade) = true;
-
 	audio_update_polled_stuff();
 
 	if (_G(crossFading)) {
@@ -798,8 +796,6 @@ void update_audio_system_on_game_loop() {
 			}
 		}
 	}
-
-	_G(audio_doing_crossfade) = false;
 
 	if (_G(loopcounter) % 5 == 0) {
 		update_ambient_sound_vol();

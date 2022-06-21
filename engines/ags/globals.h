@@ -299,7 +299,6 @@ public:
 	std::array<SOUNDCLIP *> *_audioChannels;
 	std::array<AmbientSound> *_ambient;
 
-	volatile bool _audio_doing_crossfade = false;
 	ScriptAudioChannel *_scrAudioChannel;
 	char _acaudio_buffer[256];
 	int _reserved_channel_count = 0;
