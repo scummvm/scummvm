@@ -639,7 +639,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
-	// Little Big Adventure - GOG Version
+	// Little Big Adventure - GOG Version 3.2.0 (56122)
 	// TLBA1C.exe
 	// 1st June 2022 02:18
 	{
@@ -682,6 +682,55 @@ static const ADGameDescription twineGameDescriptions[] = {
 		"lba",
 		"GOG Classic Version",
 		AD_ENTRY1s("TLBA1C.exe", "e377d036e997acbf543bc3023ce72be6", 4404224),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Little Big Adventure - GOG Version 3.2.1 (56604)
+	// TLBA1C.exe
+	// 17 Jun 2022 00:30
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "e86192e4a491805dc011dda5ca83c608", 4404736),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "e86192e4a491805dc011dda5ca83c608", 4404736),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "e86192e4a491805dc011dda5ca83c608", 4404736),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "e86192e4a491805dc011dda5ca83c608", 4404736),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "e86192e4a491805dc011dda5ca83c608", 4404736),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		TwinE::TF_LBA1_CLASSIC,
