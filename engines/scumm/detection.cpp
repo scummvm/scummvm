@@ -243,6 +243,15 @@ static const ExtraGuiOption audioOverride {
 	0
 };
 
+static const ExtraGuiOption enableOriginalGUI{
+	_s("Enable the original GUI and Menu"),
+	_s("Allow the game to use the in-engine graphical interface and the original save/load menu."),
+	"original_gui",
+	true,
+	0,
+	0
+};
+
 const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
@@ -252,6 +261,9 @@ const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common:
 	const Common::String guiOptions = parseGameGUIOptions(guiOptionsString);
 	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
 
+	if (target.empty() || guiOptions.contains(GUIO_ORIGINALGUI)) {
+		options.push_back(enableOriginalGUI);
+	}
 	if (target.empty() || guiOptions.contains(GUIO_ENHANCEMENTS)) {
 		options.push_back(enableEnhancements);
 	}

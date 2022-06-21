@@ -32,6 +32,7 @@ namespace Scumm {
 #define GUIO_TRIM_FMTOWNS_TO_200_PIXELS                GUIO_GAMEOPTIONS1
 #define GUIO_ENHANCEMENTS                              GUIO_GAMEOPTIONS2
 #define GUIO_AUDIO_OVERRIDE                            GUIO_GAMEOPTIONS3
+#define GUIO_ORIGINALGUI                               GUIO_GAMEOPTIONS4
 
 /**
  * Descriptor of a specific SCUMM game. Used internally to store

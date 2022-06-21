@@ -1377,6 +1377,9 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::setupScumm(const Common::String &macResourceFile) {
 
+	if (ConfMan.hasKey("original_gui"))
+		_useOriginalGUI =  ConfMan.getBool("original_gui");
+
 	if (_game.id == GID_DIG && (_game.features & GF_DEMO))
 		_smushFrameRate = 15;
 	else
