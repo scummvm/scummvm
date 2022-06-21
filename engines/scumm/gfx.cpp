@@ -1431,9 +1431,9 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 			if (x < 0)
 				effX = 0;
 		}
-		backbuff = vs->getPixels(effX, y);
+		backbuff = vs->getPixels(effX, y + _screenTop);
 		fill(backbuff, vs->pitch, color, effX2, y2, vs->format.bytesPerPixel);
-		markRectAsDirty(vs->number, effX, effX + effX2, y, y + y2);
+		markRectAsDirty(vs->number, effX, effX + effX2, y + _screenTop, y + y2 + _screenTop);
 		return;
 	}
 
@@ -1651,8 +1651,8 @@ void ScummEngine::drawLine(int x1, int y1, int x2, int y2, int color) {
 
 void ScummEngine::drawPixel(VirtScreen *vs, int x, int y, int16 color) {
 	if (x >= 0 && y >= 0 && _screenWidth + 8 > x && _screenHeight > y) {
-		memset(vs->getPixels(x, y), color, 1);
-		markRectAsDirty(vs->number, x, x + 1, y, y + 1);
+		memset(vs->getPixels(x, y + _screenTop), color, 1);
+		markRectAsDirty(vs->number, x, x + 1, y + _screenTop, y + 1 + _screenTop);
 	}
 }
 
