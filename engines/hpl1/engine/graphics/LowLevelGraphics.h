@@ -262,7 +262,7 @@ public:
 	virtual iTexture *CreateTexture(const cVector2l &avSize, int alBpp, cColor aFillCol,
 									bool abUseMipMaps, eTextureType aType, eTextureTarget aTarget) = 0;
 
-	virtual iPixelFormat *GetPixelFormat() = 0;
+	virtual Graphics::PixelFormat *GetPixelFormat() = 0;
 
 	virtual iGpuProgram *CreateGpuProgram(const tString &asName, eGpuProgramType aType) = 0;
 

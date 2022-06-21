@@ -43,7 +43,7 @@
 //--scummvm-temporary--
 
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
-#include "hpl1/engine/impl/SDLPixelFormat.h"
+#include "graphics/pixelformat.h"
 #include "hpl1/engine/math/MathTypes.h"
 
 namespace hpl {
@@ -94,7 +94,7 @@ public:
 	iTexture *CreateTexture(const cVector2l &avSize, int alBpp, cColor aFillCol,
 							bool abUseMipMaps, eTextureType aType, eTextureTarget aTarget);
 
-	iPixelFormat *GetPixelFormat();
+	Graphics::PixelFormat *GetPixelFormat();
 
 	iGpuProgram *CreateGpuProgram(const tString &asName, eGpuProgramType aType);
 
@@ -271,7 +271,7 @@ private:
 
 	// SDL Variables
 	SDL_Surface *mpScreen;
-	cSDLPixelFormat *mpPixelFormat;
+	Graphics::PixelFormat *mpPixelFormat;
 
 	// Vertex Array variables
 	// The vertex arrays used:

@@ -31,14 +31,13 @@
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/LowLevelPicture.h"
 #include "hpl1/engine/math/MathTypes.h"
+#include "graphics/pixelformat.h"
 
 namespace hpl {
 
-class iPixelFormat;
-
 class iBitmap2D : public iLowLevelPicture {
 public:
-	iBitmap2D(tString asType, iPixelFormat *apPxlFmt) : iLowLevelPicture(asType) {}
+	iBitmap2D(tString asType, Graphics::PixelFormat *apPxlFmt) : iLowLevelPicture(asType) {}
 	virtual ~iBitmap2D() {}
 
 	/**

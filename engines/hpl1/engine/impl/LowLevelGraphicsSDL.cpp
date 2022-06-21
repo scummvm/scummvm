@@ -647,7 +647,7 @@ iGpuProgram *cLowLevelGraphicsSDL::CreateGpuProgram(const tString &asName, eGpuP
 
 //-----------------------------------------------------------------------
 
-iPixelFormat *cLowLevelGraphicsSDL::GetPixelFormat() {
+Graphics::PixelFormat *cLowLevelGraphicsSDL::GetPixelFormat() {
 	return mpPixelFormat;
 }
 
