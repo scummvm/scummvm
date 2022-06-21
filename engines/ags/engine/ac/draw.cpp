@@ -715,9 +715,15 @@ void render_to_screen() {
 
 		succeeded = true;
 		/*}
-		catch (Ali3DFullscreenLostException)
-		{
-		    platform->Delay(500);
+		catch (Ali3DFullscreenLostException e) {
+			Debug::Printf("Renderer exception: %s", e._message);
+			platform->Delay(500);
+		}
+		catch (Ali3DException e) {
+			Debug::Printf("Renderer exception: %s", e._message);
+		}
+		catch (...) {
+			Debug::Printf("Unknown renderer exception");
 		}*/
 	}
 }

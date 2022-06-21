@@ -639,14 +639,18 @@ void SetMultitasking(int mode) {
 		quit("!SetMultitasking: invalid mode parameter");
 
 	if (_GP(usetup).override_multitasking >= 0) {
+		Debug::Printf("SetMultitasking: overridden by user config: %d -> %d", mode, _GP(usetup).override_multitasking);
 		mode = _GP(usetup).override_multitasking;
 	}
 
 	// Don't allow background running if full screen
-	if ((mode == 1) && (!_GP(scsystem).windowed))
+	if ((mode == 1) && (!_GP(scsystem).windowed)) {
+		Debug::Printf("SetMultitasking: overridden by fullscreen: %d -> %d", mode, 0);
 		mode = 0;
+	}
 
 	// Install engine callbacks for switching in and out the window
+	Debug::Printf("SetMultitasking: mode %d", mode);
 	if (mode == 0) {
 		sys_set_background_mode(false);
 		sys_evt_set_focus_callbacks(display_switch_in_resume, display_switch_out_suspend);
