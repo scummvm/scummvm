@@ -19,6 +19,13 @@
  *
  */
 
+// ScriptSystem is a readable/writeable struct which has been exposed to
+// script in older versions of API (deprecated).
+// WARNING: it *MUST* keep its size exact to avoid breaking address offsets
+// when running old scripts. In case of emergency you may use its reserved
+// fields, but it's not recommended to do, as this struct is not a part of
+// the modern API anymore.
+
 #ifndef AGS_ENGINE_DYNOBJ_SCRIPT_SYSTEM_H
 #define AGS_ENGINE_DYNOBJ_SCRIPT_SYSTEM_H
 
@@ -26,14 +33,16 @@ namespace AGS3 {
 
 // The text script's "system" struct
 struct ScriptSystem {
-	int width, height;
-	int coldepth;
-	int os;
-	int windowed;
-	int vsync;
-	int viewport_width, viewport_height;
-	char aci_version[10]; // FIXME this when possible, version format is different now
-	int reserved[5];  // so that future scripts don't overwrite data
+	int width = 0; // game screen width
+	int height = 0; // game screen height
+	int coldepth = 0; // game's color depth
+	int os = 0; // operating system's code (see eScriptSystemOSID)
+	int windowed = 0; // windowed/fullscreen flag
+	int vsync = 0; // vertical sync flag
+	int viewport_width = 0; // game viewport width (normal or letterboxed)
+	int viewport_height = 0; // game viewport height (normal or letterboxed)
+	char aci_version[10]{}; // engine version string (informational)
+	int reserved[5]{}; // reserved fields
 };
 
 } // namespace AGS3
