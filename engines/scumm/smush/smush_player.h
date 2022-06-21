@@ -180,6 +180,7 @@ public:
 	void setGroupVolume(int groupId, int volValue);
 	void processDispatches(int16 feedSize);
 	bool isAudioCallbackEnabled();
+	byte *getVideoPalette();
 
 protected:
 	int _width, _height;

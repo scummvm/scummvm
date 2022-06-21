@@ -1418,6 +1418,25 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	if ((vs = findVirtScreen(y)) == nullptr)
 		return;
 
+	if (_game.version == 8) {
+		width = _screenWidth + 8;
+		height = _screenHeight;
+		int effX2 = x2;
+		int effX;
+		if (width >= x2) {
+			effX = x;
+		} else {
+			effX2 = width;
+			effX = x;
+			if (x < 0)
+				effX = 0;
+		}
+		backbuff = vs->getPixels(effX, y);
+		fill(backbuff, vs->pitch, color, effX2, y2, vs->format.bytesPerPixel);
+		markRectAsDirty(vs->number, effX, effX + effX2, y, y + y2);
+		return;
+	}
+
 	// Indy4 Amiga always uses the room or verb palette map to match colors to
 	// the currently setup palette, thus we need to select it over here too.
 	// Done like the original interpreter.
@@ -1551,6 +1570,89 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 
 			fill(backbuff, vs->pitch, color, width, height, vs->format.bytesPerPixel);
 		}
+	}
+}
+
+void ScummEngine::drawLine(int x1, int y1, int x2, int y2, int color) {
+	int effColor, black, white;
+	int effX1, effY1;
+	int width, height, widthAccumulator, heightAccumulator, horizontalStrips, originalHeight;
+	int nudgeX, nudgeY;
+
+	bool canDrawPixel, noColorSpecified;
+
+	VirtScreen *vs;
+
+	if ((vs = findVirtScreen(y1)) == nullptr)
+		return;
+
+	black = getPaletteColorFromRGB(_currentPalette, 0x00, 0x00, 0x00);
+	white = getPaletteColorFromRGB(_currentPalette, 0xFC, 0xFC, 0xFC);
+
+	noColorSpecified = false;
+	effColor = color;
+	if (color == -1) {
+		noColorSpecified = true;
+		effColor = white;
+	}
+
+	effX1 = x1;
+	effY1 = y1;
+	width = abs(x2 - x1);
+	height = abs(y2 - y1);
+	originalHeight = height;
+
+	if (height <= width)
+		height = width;
+
+	widthAccumulator = 0;
+	heightAccumulator = 0;
+
+	drawPixel(vs, x1, y1, effColor);
+
+	if (height >= 0) {
+		horizontalStrips = height + 1;
+		do {
+			widthAccumulator += width;
+			canDrawPixel = false;
+			heightAccumulator += originalHeight;
+			if (widthAccumulator > height) {
+				canDrawPixel = true;
+				widthAccumulator -= height;
+				nudgeX = 1;
+				if (x2 - x1 < 0)
+					nudgeX = -1;
+				effX1 += nudgeX;
+			}
+
+			if (heightAccumulator > height) {
+				canDrawPixel = true;
+				heightAccumulator -= height;
+				nudgeY = 1;
+				if (y2 - y1 < 0)
+					nudgeY = -1;
+				effY1 += nudgeY;
+			}
+
+			if (canDrawPixel) {
+				drawPixel(vs, effX1, effY1, effColor);
+				if (noColorSpecified) {
+					if (effColor != white)
+						effColor = white;
+					else
+						effColor = black;
+				}
+			}
+
+			horizontalStrips--;
+		} while (horizontalStrips);
+	}
+}
+
+void ScummEngine::drawPixel(VirtScreen *vs, int x, int y, int16 color) {
+	if (x >= 0 && y >= 0 && _screenWidth + 8 > x && _screenHeight > y) {
+		memset(vs->getPixels(x, y), color, 1);
+		markRectAsDirty(vs->number, x, x + 1, y, y + 1);
 	}
 }
 

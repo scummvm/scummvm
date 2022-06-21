@@ -491,6 +491,24 @@ void ScummEngine_v8::printString(int m, const byte *msg) {
 	}
 }
 
+void ScummEngine_v7::showMessageDialog(const byte *msg) {
+	if (isUsingOriginalGUI()) {
+		int textColor = _string[3].color;
+		if (textColor)
+			setBannerColors(
+				26,
+				_currentPalette[3 * textColor],
+				_currentPalette[3 * textColor + 1],
+				_currentPalette[3 * textColor + 2]);
+		Common::KeyState ks = showBannerAndPause(2, -1, (const char *)msg);
+
+		if (VAR_KEYPRESS != 0xFF)
+			VAR(VAR_KEYPRESS) = ks.ascii;
+	} else {
+		ScummEngine::showMessageDialog(msg);
+	}
+}
+
 #pragma mark -
 #pragma mark --- V7 subtitle queue code ---
 #pragma mark -

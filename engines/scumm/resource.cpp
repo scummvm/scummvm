@@ -1202,8 +1202,8 @@ void ScummEngine_v5::readMAXS(int blockSize) {
 
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::readMAXS(int blockSize) {
-	_fileHandle->seek(50, SEEK_CUR);                 // Skip over SCUMM engine version
-	_fileHandle->seek(50, SEEK_CUR);                 // Skip over data file version
+	_fileHandle->read(_engineVersionString, 50);
+	_fileHandle->read(_dataFileVersionString, 50);
 	_numVariables = _fileHandle->readUint32LE();     // 1500
 	_numBitVariables = _fileHandle->readUint32LE();  // 2048
 	_fileHandle->readUint32LE();                     // 40
@@ -1230,8 +1230,8 @@ void ScummEngine_v8::readMAXS(int blockSize) {
 }
 
 void ScummEngine_v7::readMAXS(int blockSize) {
-	_fileHandle->seek(50, SEEK_CUR);                 // Skip over SCUMM engine version
-	_fileHandle->seek(50, SEEK_CUR);                 // Skip over data file version
+	_fileHandle->read(_engineVersionString, 50);
+	_fileHandle->read(_dataFileVersionString, 50);
 	_numVariables = _fileHandle->readUint16LE();
 	_numBitVariables = _fileHandle->readUint16LE();
 	_fileHandle->readUint16LE();

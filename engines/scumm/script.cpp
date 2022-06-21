@@ -29,6 +29,7 @@
 #include "scumm/util.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v2.h"
+#include "scumm/scumm_v7.h"
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
 

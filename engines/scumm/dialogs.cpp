@@ -74,7 +74,16 @@ static const ResString string_map_table_v8[] = {
 	{0, "/BT__017/Saving '%s'"},
 	{0, "/BT__018/Loading '%s'"},
 	{0, "/BT__019/Name your SAVE game"},
-	{0, "/BT__020/Select a game to LOAD"}
+	{0, "/BT__020/Select a game to LOAD"},
+	{0, "/BT__028/Do you want to replace this saved game? (Y/N)Y"},
+	{0, "/SYST200/Are you sure you want to quit?"},
+	{0, "/SYST201/Yes"},
+	{0, "/SYST202/No"},
+	{0, "/SYST203/iMuse buffer count changed to %d"},
+	{0, "/BT_104/Voice and Text"},
+	{0, "/BT_105/Text Display Only"},
+	{0, "/BT_103/Voice Only"},
+	{0, "/SYST300/y"},
 };
 
 static const ResString string_map_table_v7[] = {
@@ -424,6 +433,22 @@ void InfoDialog::reflowLayout() {
 	_y = (screenH - height) / 2;
 
 	_text->setSize(_w, _h);
+}
+
+const char *InfoDialog::getPlainEngineString(int stringno) {
+	if (stringno == 0)
+		return nullptr;
+
+	if (_vm->_game.version == 8)
+		return (const char *)string_map_table_v8[stringno - 1].string;
+	else if (_vm->_game.version == 7)
+		return (const char *)_vm->getStringAddressVar(string_map_table_v7[stringno - 1].num);
+	else if (_vm->_game.version == 6)
+		return (const char *)_vm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
+	else if (_vm->_game.version >= 3)
+		return (const char *)_vm->getStringAddress(string_map_table_v345[stringno - 1].num);
+	else
+		return (const char *)(string_map_table_v345[stringno - 1].string);
 }
 
 const Common::U32String InfoDialog::queryResString(int stringno) {
