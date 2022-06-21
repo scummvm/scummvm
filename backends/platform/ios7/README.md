@@ -23,3 +23,5 @@ Here is a list of the in-game gestures:
 |Two fingers double-tap|Skip the cinematic / video|
 
 The iOS keyboard is visible when the device is in portrait mode, and hidden in landscape mode.
+
+External devices such as mouse, trackpad and gamepad controllers, are supported from iOS 14 and later.
