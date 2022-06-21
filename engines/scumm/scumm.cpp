@@ -3223,7 +3223,7 @@ Common::KeyState ScummEngine_v7::showBannerAndPause(int bannerId, int32 waitTime
 		if (_bannerMem)
 			memcpy(
 				_bannerMem,
-				&_virtscr[kMainVirtScreen].getPixels(0, 0)[(_screenWidth + 8) * (_screenHeight / 2 - 10)],
+				&_virtscr[kMainVirtScreen].getPixels(0, _screenTop)[(_screenWidth + 8) * (_screenHeight / 2 - 10)],
 				_bannerMemSize);
 	}
 
@@ -3265,7 +3265,7 @@ void ScummEngine_v7::clearBanner() {
 	// and then mark that part of the screen as dirty.
 	if (_bannerMem) {
 		memcpy(
-			&_virtscr[kMainVirtScreen].getPixels(0, 0)[(_screenWidth + 8) * (_screenHeight / 2 - 10)],
+			&_virtscr[kMainVirtScreen].getPixels(0, _screenTop)[(_screenWidth + 8) * (_screenHeight / 2 - 10)],
 			_bannerMem,
 			_bannerMemSize);
 		free(_bannerMem);
@@ -3275,7 +3275,7 @@ void ScummEngine_v7::clearBanner() {
 			return;
 		}
 
-		markRectAsDirty(_virtscr[kMainVirtScreen].number, 0, _screenWidth + 8, 0, _screenHeight);
+		markRectAsDirty(_virtscr[kMainVirtScreen].number, 0, _screenWidth + 8, _screenTop, _screenHeight + _screenTop);
 		drawDirtyScreenParts();
 	}
 }
