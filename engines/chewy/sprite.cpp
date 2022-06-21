@@ -575,7 +575,12 @@ void startDialogCloseupWait(int16 diaNr) {
 	if (!_G(flags).DialogCloseup) {
 		_G(menu_item) = CUR_TALK;
 		cursorChoice(_G(menu_item));
+		_G(minfo).button = 0;
+		g_events->_kbInfo._keyCode = '\0';
+		g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
+
 		loadDialogCloseup(diaNr);
+
 		while (_G(flags).DialogCloseup && !SHOULD_QUIT) {
 			setupScreen(DO_SETUP);
 		}
