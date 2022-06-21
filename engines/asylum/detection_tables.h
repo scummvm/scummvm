@@ -221,6 +221,21 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
+		// Polish fanmade translation
+		"asylum",
+		"Fanmade",
+		{
+			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
+			{"RES.000",   0, "38989acceb9c7942b8758945768c5f85", 279825},
+			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
+			AD_LISTEND
+		},
+		Common::PL_POL,
+		Common::kPlatformWindows,
+		ADGF_TESTING | ADGF_DROPPLATFORM,
+		GUIO0()
+	},
+	{
 		// Spanish fanmade translation
 		"asylum",
 		"Fanmade",
