@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "common/fs.h"
 #include "graphics/macgui/macbutton.h"
 #include "graphics/macgui/macmenu.h"
 
@@ -951,7 +953,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = g_lingo->_traceLoad;
 		break;
 	case kTheTraceLogFile:
-		getTheEntitySTUB(kTheTraceLogFile);
+		d.type = STRING;
+		d.u.s = new Common::String(g_director->_traceLogFile);
 		break;
 	case kTheUpdateMovieEnabled:
 		d.type = INT;
@@ -1240,7 +1243,15 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		g_lingo->_traceLoad = d.asInt();
 		break;
 	case kTheTraceLogFile:
-		setTheEntitySTUB(kTheTraceLogFile);
+	{
+		if (d.asString().size()) {
+			Common::String logPath = ConfMan.get("path") + "/" + d.asString();
+			if (Common::FSNode(logPath).isWritable())
+				g_director->_traceLogFile = logPath;
+		} else {
+			g_director->_traceLogFile.clear();
+		}
+	}
 		break;
 	case kTheUpdateMovieEnabled:
 		g_lingo->_updateMovieEnabled = bool(d.asInt());

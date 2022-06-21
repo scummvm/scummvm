@@ -259,6 +259,7 @@ private:
 
 public:
 	int _tickBaseline;
+	Common::String _traceLogFile;
 };
 
 // An extension of MacPlotData for interfacing with inks and patterns without

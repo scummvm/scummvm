@@ -30,11 +30,14 @@ namespace Director {
 class Debugger : public GUI::Debugger {
 public:
 	Debugger();
+	void debugLogFile(Common::String logs);
 
 private:
 	bool cmd_lingo(int argc, const char **argv);
 
 	bool lingoCommandProcessor(const char *inputOrig);
+
+	Common::DumpFile out;
 };
 
 
