@@ -101,7 +101,7 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		} else {
 			// Found a match
 			PlainGameDescriptor gameDesc = findGame(p->_gameId);
-			gameList.push_back(GlkDetectedGame(p->_gameId, gameDesc.description, filename));
+			gameList.push_back(GlkDetectedGame(p->_gameId, gameDesc.description, filename, p->_language));
 		}
 	}
 
