@@ -322,6 +322,7 @@ bool run_service_key_controls(KeyInput &out_key) {
 
 	// Alt+X, abort (but only once game is loaded)
 	if ((_G(displayed_room) >= 0) && (_GP(play).abort_key > 0 && agskey == _GP(play).abort_key)) {
+		Debug::Printf("Abort key pressed");
 		_G(check_dynamic_sprites_at_exit) = 0;
 		quit("!|");
 	}

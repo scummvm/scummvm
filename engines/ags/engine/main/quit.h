@@ -25,9 +25,15 @@
 namespace AGS3 {
 
 enum QuitReason {
+	// Flags defining the base reason, could be subtyped by summing
+	// with the other flags:
+	// - normal exit means everything is fine
 	kQuitKind_NormalExit = 0x01,
+	// - game was requested to abort
 	kQuitKind_DeliberateAbort = 0x02,
+	// - something was wrong with the game logic (script)
 	kQuitKind_GameException = 0x04,
+	// - something was wrong with the engine, which it could not handle
 	kQuitKind_EngineException = 0x08,
 
 	// user closed the window or script command QuitGame was executed

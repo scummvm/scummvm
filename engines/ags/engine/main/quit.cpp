@@ -94,7 +94,11 @@ void quit_shutdown_audio() {
 	shutdown_sound();
 }
 
-QuitReason quit_check_for_error_state(const char *&qmsg, String &alertis) {
+// Parses the quit message; returns:
+// * QuitReason - which is a code of the reason we're quitting (game error, etc);
+// * errmsg - a pure error message (extracted from the parsed string).
+// * alertis - a complex message to post into the engine output (stdout, log);
+QuitReason quit_check_for_error_state(const char *qmsg, String &errmsg, String &alertis) {
 	if (qmsg[0] == '|') {
 		return kQuit_GameRequest;
 	} else if (qmsg[0] == '!') {
@@ -117,32 +121,23 @@ QuitReason quit_check_for_error_state(const char *&qmsg, String &alertis) {
 
 		alertis.Append(cc_get_error().CallStack);
 
-		if (qreason != kQuit_UserAbort)
-			alertis.Append("\nError: ");
-		else
-			qmsg = "";
+		if (qreason != kQuit_UserAbort) {
+			alertis.AppendFmt("\nError: %s", qmsg);
+			errmsg = qmsg;
+		}
 		return qreason;
 	} else if (qmsg[0] == '%') {
 		qmsg++;
 		alertis.Format("A warning has been generated. This is not normally fatal, but you have selected "
 		               "to treat warnings as errors.\n"
-		               "(ACI version %s)\n\n%s\n", _G(EngineVersion).LongString.GetCStr(), cc_get_error().CallStack.GetCStr());
+		               "(ACI version %s)\n\n%s\n%s", _G(EngineVersion).LongString.GetCStr(), cc_get_error().CallStack.GetCStr(), qmsg);
+		errmsg = qmsg;
 		return kQuit_GameWarning;
 	} else {
 		alertis.Format("An internal error has occurred. Please note down the following information.\n"
 		               "(ACI version %s)\n"
-		               "\nError: ", _G(EngineVersion).LongString.GetCStr());
+		               "\nError: %s", _G(EngineVersion).LongString.GetCStr(), qmsg);
 		return kQuit_FatalError;
-	}
-}
-
-void quit_message_on_exit(const String &qmsg, String &alertis, QuitReason qreason) {
-	// successful exit or user abort displays no messages
-	if ((qreason & (kQuitKind_NormalExit | kQuit_UserAbort)) == 0 && !_G(handledErrorInEditor)) {
-		// Display the message (at this point the window still exists)
-		snprintf(_G(pexbuf), sizeof(_G(pexbuf)), "%s\n", qmsg.GetCStr());
-		alertis.Append(_G(pexbuf));
-		_G(platform)->DisplayAlert("%s", alertis.GetCStr());
 	}
 }
 
@@ -181,19 +176,24 @@ void quit(const char *quitmsg) {
 }
 
 void quit_free() {
-	String alertis;
 	if (strlen(_G(quit_message)) == 0)
 		strcpy(_G(quit_message), "|bye!");
 
 	const char *quitmsg = _G(quit_message);
-	QuitReason qreason = quit_check_for_error_state(quitmsg, alertis);
+
+	Debug::Printf(kDbgMsg_Info, "Quitting the game...");
+
+	// NOTE: we must not use the quitmsg pointer past this step,
+	// as it may be from a plugin and we're about to free plugins
+	String errmsg, fullmsg;
+	QuitReason qreason = quit_check_for_error_state(quitmsg, errmsg, fullmsg);
 
 	if (qreason & kQuitKind_NormalExit)
 		save_config_file();
 
 	_G(handledErrorInEditor) = false;
 
-	quit_tell_editor_debugger(_G(quit_message), qreason);
+	quit_tell_editor_debugger(errmsg, qreason);
 
 	_G(our_eip) = 9900;
 
@@ -231,9 +231,12 @@ void quit_free() {
 
 	engine_shutdown_gfxmode();
 
-	quit_message_on_exit(quitmsg, alertis, qreason);
-
 	_G(platform)->PreBackendExit();
+
+	// On abnormal exit: display the message (at this point the window still exists)
+	if ((qreason & kQuitKind_NormalExit) == 0 && !_G(handledErrorInEditor)) {
+		_G(platform)->DisplayAlert("%s", fullmsg.GetCStr());
+	}
 
 	// release backed library
 	// WARNING: no Allegro objects should remain in memory after this,
