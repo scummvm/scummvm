@@ -236,59 +236,6 @@ tWString LoadTextFromClipboard() {
 
 //-----------------------------------------------------------------------
 
-void CreateMessageBox(eMsgBoxType eType, const char *asCaption, const char *fmt, ...) {
-	/*char text[2048];
-	va_list ap;
-	if (fmt == NULL)
-		return;
-	va_start(ap, fmt);
-	vsprintf(text, fmt, ap);
-	va_end(ap);
-
-	tString sMess = "";
-	sMess += text;
-
-
-	#ifdef WIN32
-
-	UINT lType = MB_OK;
-
-	switch (eType)
-	{
-	case eMsgBoxType_Info:
-		lType += MB_ICONINFORMATION;
-		break;
-	case eMsgBoxType_Error:
-		lType += MB_ICONERROR;
-		break;
-	case eMsgBoxType_Warning:
-		lType += MB_ICONWARNING;
-		break;
-	default:
-		break;
-	}
-
-
-	MessageBox( NULL, sMess.c_str(), asCaption, lType );
-
-	#endif*/
-}
-
-void CreateMessageBox(const char *asCaption, const char *fmt, ...) {
-	/*char text[2048];
-	va_list ap;
-	if (fmt == NULL)
-		return;
-	va_start(ap, fmt);
-	vsprintf(text, fmt, ap);
-	va_end(ap);
-
-	tString sMess = "";
-	sMess += text;
-
-	CreateMessageBox( eMsgBoxType_Default, asCaption, sMess.c_str() );*/
-}
-
 void CreateMessageBoxW(eMsgBoxType eType, const wchar_t *asCaption, const wchar_t *fmt, va_list ap) {
 #if 0
 		wchar_t text[2048];

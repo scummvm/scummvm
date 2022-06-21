@@ -64,9 +64,6 @@ extern void Log(const char *fmt, ...);
 extern void SetUpdateLogActive(bool abX);
 extern void LogUpdate(const char *fmt, ...);
 
-//	extern void CreateMessageBox ( const char* asCaption, const char *fmt, ...);
-//	extern void CreateMessageBox ( eMsgBoxType eType, const char* asCaption, const char *fmt, ...);
-
 extern void CreateMessageBoxW(const wchar_t *asCaption, const wchar_t *fmt, ...);
 extern void CreateMessageBoxW(eMsgBoxType eType, const wchar_t *asCaption, const wchar_t *fmt, ...);
 
