@@ -254,7 +254,7 @@ Common::Error KyraEngine_LoK::init() {
 	memset(_flagsTable, 0, sizeof(_flagsTable));
 
 	_talkingCharNum = -1;
-	_charSayUnk3 = -1;
+	_talkHeadAnimCharNum = -1;
 	_disabledTalkAnimObject = _enabledTalkAnimObject = 0;
 	memset(_currSentenceColor, 0, 3);
 	_startSentencePalIndex = -1;

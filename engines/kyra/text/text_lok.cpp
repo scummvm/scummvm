@@ -132,7 +132,7 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int chatDuration, const ch
 }
 
 void KyraEngine_LoK::endCharacterChat(int8 charNum, int16 convoInitialized) {
-	_charSayUnk3 = -1;
+	_talkHeadAnimCharNum = -1;
 
 	if (charNum > 4 && charNum < 11) {
 		_animator->sprites()[_disabledTalkAnimObject].active = 1;
@@ -244,7 +244,7 @@ int KyraEngine_LoK::initCharacterChat(int8 charNum) {
 	_animator->flagAllObjectsForRefresh();
 	_animator->flagAllObjectsForBkgdChange();
 	_animator->preserveAnyChangedBackgrounds();
-	_charSayUnk3 = charNum;
+	_talkHeadAnimCharNum = charNum;
 
 	return returnValue;
 }
@@ -268,9 +268,11 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int16 charN
 		backupChatPartnerAnimFrame(chatPartnerNum);
 
 	if (charNum < 5) {
-		_characterList[charNum].currentAnimFrame = startAnimFrames[charNum];
-		_charSayUnk3 = charNum;
-		_talkingCharNum = charNum;
+		if (_flags.isTalkie || _flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98 || _animator->_brandonScaleX == 0x100 || !_scaleMode) {
+			_characterList[charNum].currentAnimFrame = startAnimFrames[charNum];
+			_talkHeadAnimCharNum = charNum;
+			_talkingCharNum = charNum;
+		}
 		_animator->animRefreshNPC(charNum);
 	}
 
