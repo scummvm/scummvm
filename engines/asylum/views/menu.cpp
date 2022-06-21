@@ -734,63 +734,8 @@ void Menu::updateNewGame() {
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1323));
 }
 
-void Menu::adjustCoordinates(Common::Point &point) {
-	if (!g_system->isOverlayVisible())
-		return;
-
-	point.x *= 640.0 / g_system->getOverlayWidth();
-	point.y *= 480.0 / g_system->getOverlayHeight();
-}
-
-bool Menu::hasThumbnail(int index) {
-	if (getSaveLoad()->hasSavegame(index + _startIndex))
-		return _vm->getMetaEngine()->querySaveMetaInfos(_vm->getTargetName().c_str(), index + _startIndex).getThumbnail();
-
-	return false;
-}
-
-void Menu::showThumbnail(int index) {
-	SaveStateDescriptor desc = _vm->getMetaEngine()->querySaveMetaInfos(_vm->getTargetName().c_str(), index + _startIndex);
-	const Graphics::Surface *thumbnail = desc.getThumbnail();
-
-	int x, y;
-	int overlayWidth  = g_system->getOverlayWidth(),
-		overlayHeight = g_system->getOverlayHeight();
-	Graphics::PixelFormat overlayFormat = g_system->getOverlayFormat();
-	Graphics::Surface overlay, *thumbnail1;
-
-	x = (index < 6 ? 150 : 470)  * overlayWidth  / 640;
-	y = (179 + (index % 6) * 29) * overlayHeight / 480;
-
-	overlay.create(overlayWidth, overlayHeight, overlayFormat);
-	if (!g_system->hasFeature(OSystem::kFeatureOverlaySupportsAlpha)) {
-		Graphics::Surface *screen = getScreen()->getSurface().convertTo(overlayFormat, getScreen()->getPalette());
-		if (screen->w != overlayWidth || screen->h != overlayHeight) {
-			Graphics::Surface *screen1 = screen->scale(overlayWidth, overlayHeight);
-			overlay.copyRectToSurface(screen1->getPixels(), screen1->pitch, 0, 0, screen1->w, screen1->h);
-			screen1->free();
-			delete screen1;
-		} else {
-			overlay.copyRectToSurface(screen->getPixels(), screen->pitch, 0, 0, 640, 480);
-		}
-		screen->free();
-		delete screen;
-	}
-
-	thumbnail1 = thumbnail->convertTo(overlayFormat);
-	overlay.copyRectToSurface(thumbnail1->getPixels(), thumbnail1->pitch, x, y, thumbnail1->w, thumbnail1->h);
-
-	g_system->copyRectToOverlay(overlay.getPixels(), overlay.pitch, 0, 0, overlay.w, overlay.h);
-	g_system->showOverlay();
-
-	overlay.free();
-	thumbnail1->free();
-	delete thumbnail1;
-}
-
 void Menu::updateLoadGame() {
 	Common::Point cursor = getCursor()->position();
-	adjustCoordinates(cursor);
 
 	char text[100];
 
@@ -824,7 +769,6 @@ void Menu::updateLoadGame() {
 	getText()->loadFont(kFontYellow);
 	getText()->drawCentered(Common::Point(10, 100), 620, MAKE_RESOURCE(kResourcePackText, 1325));
 
-	int current = -1;
 	if (_dword_455C78) {
 		getText()->drawCentered(Common::Point(10,      190), 620, MAKE_RESOURCE(kResourcePackText, 1332));
 		getText()->drawCentered(Common::Point(10, 190 + 29), 620, MAKE_RESOURCE(kResourcePackText, 1333));
@@ -854,8 +798,6 @@ void Menu::updateLoadGame() {
 				getText()->loadFont(kFontYellow);
 			} else {
 				getText()->loadFont(kFontBlue);
-				if (hasThumbnail(index))
-					current = index;
 			}
 
 			getText()->setPosition(Common::Point(30, y));
@@ -877,8 +819,6 @@ void Menu::updateLoadGame() {
 				getText()->loadFont(kFontYellow);
 			} else {
 				getText()->loadFont(kFontBlue);
-				if (hasThumbnail(index))
-					current = index;
 			}
 
 			getText()->setPosition(Common::Point(350, y));
@@ -920,11 +860,6 @@ void Menu::updateLoadGame() {
 
 	getText()->setPosition(Common::Point(550, 340));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1327));
-
-	if (current == -1)
-		g_system->hideOverlay();
-	else
-		showThumbnail(current);
 }
 
 void Menu::updateSaveGame() {
@@ -1646,9 +1581,6 @@ void Menu::clickNewGame() {
 
 void Menu::clickLoadGame() {
 	Common::Point cursor = getCursor()->position();
-	adjustCoordinates(cursor);
-
-	g_system->hideOverlay();
 
 	if (_dword_455C80) {
 		if (cursor.x < 247 || cursor.x > (247 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1330)))
