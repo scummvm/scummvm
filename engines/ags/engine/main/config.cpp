@@ -244,7 +244,7 @@ static void read_legacy_graphics_config(const ConfigTree &cfg) {
 		break;
 		case kScreenDef_ByGameScaling:
 		{
-			int src_scale;
+			int src_scale = 0;
 			is_windowed ?
 				parse_legacy_scaling_option(CfgReadString(cfg, "graphics", "game_scale_win"), src_scale) :
 				parse_legacy_scaling_option(CfgReadString(cfg, "graphics", "game_scale_fs"), src_scale);
