@@ -39,7 +39,7 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cSDLTexture::cSDLTexture(const tString &asName, iPixelFormat *apPxlFmt, iLowLevelGraphics *apLowLevelGraphics,
+cSDLTexture::cSDLTexture(const tString &asName, Graphics::PixelFormat *apPxlFmt, iLowLevelGraphics *apLowLevelGraphics,
 						 eTextureType aType, bool abUseMipMaps, eTextureTarget aTarget,
 						 bool abCompress)
 	: iTexture(asName, "OGL", apPxlFmt, apLowLevelGraphics, aType, abUseMipMaps, aTarget, abCompress) {

@@ -31,8 +31,8 @@
 #include "hpl1/engine/graphics/Bitmap2D.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/LowLevelPicture.h"
-#include "hpl1/engine/graphics/PixelFormat.h"
 #include "hpl1/engine/resources/ResourceBase.h"
+#include "graphics/pixelformat.h"
 #include <vector>
 
 namespace hpl {
@@ -87,7 +87,7 @@ class iLowLevelGraphics;
 
 class iTexture : public iLowLevelPicture, public iResourceBase {
 public:
-	iTexture(tString asName, tString asType, iPixelFormat *apPxlFmt, iLowLevelGraphics *apLowLevelGraphics,
+	iTexture(tString asName, tString asType, Graphics::PixelFormat *apPxlFmt, iLowLevelGraphics *apLowLevelGraphics,
 			 eTextureType aType, bool abUseMipMaps, eTextureTarget aTarget,
 			 bool abCompress = false)
 		: iLowLevelPicture(asType), iResourceBase(asName, 0),

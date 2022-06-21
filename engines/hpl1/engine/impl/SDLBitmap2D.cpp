@@ -35,16 +35,16 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cSDLBitmap2D::cSDLBitmap2D(iPixelFormat *apPxlFmt) : iBitmap2D("SDL", apPxlFmt) {
+cSDLBitmap2D::cSDLBitmap2D(Graphics::PixelFormat *apPxlFmt) : iBitmap2D("SDL", apPxlFmt) {
 	mpSurface = NULL;
 	mlHeight = 0;
 	mlWidth = 0;
 
-	cSDLPixelFormat *pFmt = static_cast<cSDLPixelFormat *>(apPxlFmt);
-	mpSDLPixelFmt32 = pFmt->GetSDLPixelFormat32();
+//	cSDLPixelFormat *pFmt = static_cast<cSDLPixelFormat *>(apPxlFmt);
+//	mpSDLPixelFmt32 = pFmt->GetSDLPixelFormat32();
 }
 
-cSDLBitmap2D::cSDLBitmap2D(SDL_Surface *apSurface, iPixelFormat *apPxlFmt, const tString &asType) : iBitmap2D("SDL", apPxlFmt) {
+cSDLBitmap2D::cSDLBitmap2D(SDL_Surface *apSurface, Graphics::PixelFormat *apPxlFmt, const tString &asType) : iBitmap2D("SDL", apPxlFmt) {
 #if 0
   		mpSurface = apSurface;
 		mlHeight = mpSurface->h;

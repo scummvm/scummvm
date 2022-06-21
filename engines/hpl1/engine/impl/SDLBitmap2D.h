@@ -29,7 +29,7 @@
 #define HPL_SDL_BITMAP2D_H
 
 #include "hpl1/engine/graphics/Bitmap2D.h"
-#include "hpl1/engine/impl/SDLPixelFormat.h"
+#include "graphics/pixelformat.h"
 
 //#include "SDL/SDL.h"
 #include "temp-types.h"
@@ -38,8 +38,8 @@ namespace hpl {
 
 class cSDLBitmap2D : public iBitmap2D {
 public:
-	cSDLBitmap2D(iPixelFormat *apPxlFmt);
-	cSDLBitmap2D(SDL_Surface *apSurface, iPixelFormat *apPxlFmt, const tString &asType);
+	cSDLBitmap2D(Graphics::PixelFormat *apPxlFmt);
+	cSDLBitmap2D(SDL_Surface *apSurface, Graphics::PixelFormat *apPxlFmt, const tString &asType);
 	~cSDLBitmap2D();
 
 	bool SaveToFile(const tString &asFile);
