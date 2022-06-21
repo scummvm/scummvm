@@ -117,6 +117,8 @@ bool ScummVMRendererGraphicsDriver::SetDisplayMode(const DisplayMode &mode) {
 	const int driver = GFX_SCUMMVM;
 	if (set_gfx_mode(driver, mode.Width, mode.Height, mode.ColorDepth) != 0)
 		return false;
+	if (g_system->hasFeature(OSystem::kFeatureVSync))
+		g_system->setFeatureState(OSystem::kFeatureVSync, mode.Vsync);
 
 	OnInit();
 	OnModeSet(mode);
@@ -206,6 +208,18 @@ void ScummVMRendererGraphicsDriver::SetGamma(int newGamma) {
 
 	SDL_SetWindowGammaRamp(sys_get_window(), gamma_red, gamma_green, gamma_blue);
 #endif
+}
+
+bool ScummVMRendererGraphicsDriver::DoesSupportVsyncToggle() {
+	return g_system->hasFeature(OSystem::kFeatureVSync);
+}
+
+bool ScummVMRendererGraphicsDriver::SetVsync(bool enabled) {
+	if (g_system->hasFeature(OSystem::kFeatureVSync)) {
+		g_system->setFeatureState(OSystem::kFeatureVSync, enabled);
+		_mode.Vsync = g_system->getFeatureState(OSystem::kFeatureVSync);
+	}
+	return _mode.Vsync;
 }
 
 int ScummVMRendererGraphicsDriver::GetCompatibleBitmapFormat(int color_depth) {
