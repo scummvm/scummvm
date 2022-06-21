@@ -47,6 +47,7 @@
 #include "glk/scott/resource.h"
 #include "glk/scott/load_game.h"
 #include "glk/scott/robin_of_sherwood.h"
+#include "glk/scott/gremlins.h"
 
 namespace Glk {
 namespace Scott {
@@ -135,6 +136,26 @@ void loadGameFile(Common::SeekableReadStream *f) {
 	case ROBIN_OF_SHERWOOD_C64:
 		loadExtraSherwoodData64();
 		break;
+	case GREMLINS_GERMAN_C64:
+		loadExtraGermanGremlinsc64Data();
+		break;
+	case GREMLINS_GERMAN:
+	case GREMLINS:
+	case SUPERGRAN:
+		for (int i = DROPPED; i <= OK; i++)
+			_G(_sys)[i] = _G(_systemMessages)[2 - DROPPED + i];
+		for (int i = I_DONT_UNDERSTAND; i <= THATS_BEYOND_MY_POWER; i++)
+			_G(_sys)[i] = _G(_systemMessages)[6 - I_DONT_UNDERSTAND + i];
+		for (int i = YOU_ARE; i <= HIT_ENTER; i++)
+			_G(_sys)[i] = _G(_systemMessages)[17 - YOU_ARE + i];
+		_G(_sys)[PLAY_AGAIN] = _G(_systemMessages)[5];
+		_G(_sys)[YOURE_CARRYING_TOO_MUCH] = _G(_systemMessages)[24];
+		_G(_sys)[IM_DEAD] = _G(_systemMessages)[25];
+		_G(_sys)[YOU_CANT_GO_THAT_WAY] = _G(_systemMessages)[14];
+		break;
+	case GREMLINS_SPANISH:
+		loadExtraSpanishGremlinsData();
+		break;
 	case HULK_C64:
 	case HULK:
 		for (int i = 0; i < 6; i++) {
@@ -159,6 +180,17 @@ void loadGameFile(Common::SeekableReadStream *f) {
 					_G(_sys)[i] = _G(_systemMessages)[2 - PLAY_AGAIN + i];
 			}
 		}
+		break;
+	}
+
+	switch (CURRENT_GAME) {
+	case GREMLINS_GERMAN:
+		loadExtraGermanGremlinsData();
+		break;
+	case GREMLINS_GERMAN_C64:
+		loadExtraGermanGremlinsc64Data();
+		break;
+	default:
 		break;
 	}
 

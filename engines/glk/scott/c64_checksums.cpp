@@ -89,6 +89,14 @@ static C64Rec g_C64Registry[] = {
 	{ ROBIN_OF_SHERWOOD_C64, 0xb690,  0x7b61, TYPE_T64, 1, nullptr, nullptr, 0, 0x9702, 0x9627, 0x2000 }, // Robin Of Sherwood C64 (T64) alt * TCS Cruncher v2.0
 	{ ROBIN_OF_SHERWOOD_C64, 0x8db6,  0x7853, TYPE_T64, 1, nullptr, nullptr, 0, 0xd7fb, 0xbd20, 0x2000 }, // Robin Of Sherwood T64 alt 2 * PUCrunch
 
+	{ GREMLINS_C64,			0xdd94,		0x25a8, TYPE_T64, 1, nullptr,	nullptr, 0 },                                 // Gremlins C64 (T64) version * Action Replay v4.x
+	{ GREMLINS_C64,			0x2ab00,	0xc402, TYPE_D64, 0, nullptr,	"G1",	-0x8D },                               // Gremlins C64 (D64) version
+	{ GREMLINS_C64,			0x2ab00,	0x3ccf, TYPE_D64, 0, nullptr,	"G1",	-0x8D },                               // Gremlins C64 (D64) version 2
+	{ GREMLINS_C64,			0x2ab00,	0xabf8, TYPE_D64, 2, "-e0x1255",nullptr, 2 },                             // Gremlins C64 (D64) version alt * ByteBoiler, Exomizer
+	{ GREMLINS_C64,			0x2ab00,	0xa265, TYPE_D64, 2, "-e0x1255",nullptr, 2 },                             // Gremlins C64 (D64)  version alt 2 * ByteBoiler, Exomizer
+	{ GREMLINS_GERMAN_C64,	0xc003,		0x558c, TYPE_T64, 1, nullptr,	nullptr, 0, 0xd801, 0xc6c0, 0x1f00 },  // German Gremlins C64 (T64) version * TBC Multicompactor v2.x
+	{ GREMLINS_GERMAN_C64,	0x2ab00,	0x6729, TYPE_D64, 2, nullptr,	nullptr, 0, 0xdc02, 0xcac1, 0x1f00 }, // German Gremlins C64 (D64) version * Exomizer
+
 	{ UNKNOWN_GAME, 0, 0, UNKNOWN_FILE_TYPE, 0, nullptr, nullptr, 0, 0, 0, 0 }
 };
 

@@ -1105,5 +1105,260 @@ const GameInfo _games[NUMGAMES] = {
 			 90,     // number_of_pictures
 			 C64B,   // palette
 			 4,      // picture_format_version
+			 0),
+	GameInfo("Gremlins",
+			 GREMLINS,
+			 GREMLINS_VARIANT,         // type
+			 ENGLISH,                  // subtype
+			 FOUR_LETTER_UNCOMPRESSED, // dictionary type
+
+			 99,  // Number of items
+			 236, // Number of actions
+			 126, // Number of words
+			 42,  // Number of rooms
+			 6,   // Max carried items
+			 4,   // Word length
+			 98,  // Number of messages
+
+			 115, // number_of_verbs
+			 126, // number_of_nouns;
+
+			 0x2370, // header
+			 LATE,   // header style
+
+			 0x3a09,  // room images
+			 FOLLOWS, // item flags
+			 FOLLOWS, // item images
+
+			 0x3afe,     // actions
+			 COMPRESSED, // actions_style;
+			 0x45e5,     // dictionary
+			 FOLLOWS,    // start_of_room_descriptions;
+			 FOLLOWS,    // start_of_room_connections;
+			 FOLLOWS,    // start_of_messages;
+			 FOLLOWS,    // start_of_item_descriptions;
+			 FOLLOWS,    // start_of_item_locations;
+			 0x2426,     // start_of_system_messages
+			 0x25f6,     // start of directions
+
+			 0x5be1, // start_of_characters;
+			 0x63e1, // start_of_image_data
+			 0x64e1, // image_address_offset
+			 78,     // number_of_pictures;
+			 ZXOPT,  // palette
+			 3,      // picture_format_version;
+			 0),
+	GameInfo("Gremlins (alternative)",
+			 GREMLINS_ALT,
+			 GREMLINS_VARIANT,         // type
+			 ENGLISH,                  // subtype
+			 FOUR_LETTER_UNCOMPRESSED, // dictionary type
+
+			 99,  // Number of items
+			 236, // Number of actions
+			 126, // Number of words
+			 42,  // Number of rooms
+			 6,   // Max carried items
+			 4,   // Word length
+			 98,  // Number of messages
+
+			 115, // number_of_verbs
+			 126, // number_of_nouns;
+
+			 0x2378, // header
+			 LATE,   // header style
+
+			 0x3a0d,  // room images
+			 FOLLOWS, // item flags
+			 FOLLOWS, // item images
+
+			 0x3b02,     // actions
+			 COMPRESSED, // actions_style;
+			 0x45e5,     // dictionary
+			 FOLLOWS,    // start_of_room_descriptions;
+			 FOLLOWS,    // start_of_room_connections;
+			 FOLLOWS,    // start_of_messages;
+			 FOLLOWS,    // start_of_item_descriptions;
+			 FOLLOWS,    // start_of_item_locations;
+			 0x242e,     // start_of_system_messages
+			 0x25FE,     // start of directions
+
+			 0x5bdd, // start_of_characters;
+			 0x63dd, // start_of_image_data
+			 0x64dd, // image_address_offset
+			 78,     // number_of_pictures;
+			 ZXOPT,  // palette
+			 3,      // picture_format_version;
+			 0),
+	GameInfo("Gremlins (German)",
+			 GREMLINS_GERMAN,
+			 GREMLINS_VARIANT, // type
+			 LOCALIZED,        // subtype
+			 GERMAN,           // dictionary type
+
+			 99,  // Number of items
+			 236, // Number of actions
+			 126, // Number of words
+			 42,  // Number of rooms
+			 6,   // Max carried items
+			 5,   // Word length
+			 98,  // Number of messages
+
+			 115, // number_of_verbs
+			 126, // number_of_nouns
+
+			 0x237d, // header
+			 LATE,   // header style
+
+			 0x3a07,  // room images
+			 FOLLOWS, // item flags
+			 FOLLOWS, // item images
+
+			 0x3afc, // actions
+			 COMPRESSED,
+			 0x45d9,  // dictionary
+			 FOLLOWS, // start_of_room_descriptions;
+			 FOLLOWS, // start_of_room_connections;
+			 FOLLOWS, // start_of_messages;
+			 FOLLOWS, // start_of_item_descriptions;
+			 FOLLOWS, // start_of_item_locations;
+
+			 0x23de, // start_of_system_messages
+			 0x2623, // start of directions
+
+			 0x643e, // start_of_characters
+			 0x6c3e, // start_of_image_data
+			 0x6d3e, // image_address_offset
+			 72,     // number_of_pictures;
+			 ZX,     // palette
+			 3,      // picture_format_version;
+			 0),
+	GameInfo("Gremlins C64",
+			 GREMLINS_C64,
+			 GREMLINS_VARIANT,                    // type
+			 static_cast<Subtype>(ENGLISH | C64), // subtype
+			 FOUR_LETTER_UNCOMPRESSED,            // dictionary type
+
+			 99,  // Number of items
+			 243, // Number of actions
+			 126, // Number of words
+			 42,  // Number of rooms
+			 6,   // Max carried items
+			 4,   // Word length
+			 99,  // Number of messages
+
+			 115, // number_of_verbs
+			 126, // number_of_nouns;
+
+			 0x4584,              // header
+			 GREMLINS_C64_HEADER, // header style
+
+			 0x465e,  // room images
+			 FOLLOWS, // item flags
+			 FOLLOWS, // item images
+
+			 0x4751,     // actions
+			 COMPRESSED, // actions_style;
+			 0x527f,     // dictionary
+			 FOLLOWS,    // start_of_room_descriptions;
+			 FOLLOWS,    // start_of_room_connections;
+			 FOLLOWS,    // start_of_messages;
+			 FOLLOWS,    // start_of_item_descriptions;
+			 0x4596,     // start_of_item_locations;
+			 0x0a5e,     // start_of_system_messages
+			 0x0a5e,     // start of directions
+
+			 0x6a01, // start_of_characters;
+			 0x7201, // start_of_image_data
+			 0x7301, // image_address_offset
+			 91,     // number_of_pictures;
+			 C64B,   // palette
+			 3,      // picture_format_version;
+			 0),
+	GameInfo("Gremlins (German, C64)",
+			 GREMLINS_GERMAN_C64,
+			 GREMLINS_VARIANT,                      // type
+			 static_cast<Subtype>(LOCALIZED | C64), // subtype
+			 FIVE_LETTER_COMPRESSED,                // dictionary type
+
+			 99,  // Number of items
+			 243, // Number of actions
+			 125, // Number of words
+			 42,  // Number of rooms
+			 6,   // Max carried items
+			 5,   // Word length
+			 98,  // Number of messages
+
+			 125, // number_of_verbs
+			 124, // number_of_nouns
+
+			 0x4bb2,              // header
+			 GREMLINS_C64_HEADER, // header style
+
+			 0x4c8c,  // room images
+			 FOLLOWS, // item flags
+			 FOLLOWS, // item images
+
+			 0x4d81, // actions
+			 COMPRESSED,
+			 0x585e,  // dictionary
+			 FOLLOWS, // start_of_room_descriptions;
+			 FOLLOWS, // start_of_room_connections;
+			 FOLLOWS, // start_of_messages;
+			 FOLLOWS, // start_of_item_descriptions;
+			 0x4bc4,  // start_of_item_locations;
+
+			 0x1325, // start_of_system_messages
+			 0x1325, // start of directions
+
+			 0x76c5, // start_of_characters
+			 0x7cfd, // start_of_image_data
+			 0x7db3, // image_address_offset
+			 91,     // number_of_pictures;
+			 C64B,   // palette
+			 3,      // picture_format_version;
+			 0),
+	GameInfo("Gremlins (Spanish)",
+			 GREMLINS_SPANISH,
+			 GREMLINS_VARIANT, // type
+			 LOCALIZED,        // subtype
+			 SPANISH,          // dictionary type
+
+			 99,  // Number of items
+			 236, // Number of actions
+			 126, // Number of words
+			 42,  // Number of rooms
+			 6,   // Max carried items
+			 4,   // Word length
+			 98,  // Number of messages
+
+			 115, // number_of_verbs
+			 126, // number_of_nouns
+
+			 0x23c5, // header
+			 LATE,   // header style
+
+			 0x3993,  // room images
+			 FOLLOWS, // item flags
+			 FOLLOWS, // item images
+
+			 0x3a88, // actions
+			 COMPRESSED,
+			 0x455f,  // dictionary
+			 FOLLOWS, // start_of_room_descriptions;
+			 FOLLOWS, // start_of_room_connections;
+			 FOLLOWS, // start_of_messages;
+			 FOLLOWS, // start_of_item_descriptions;
+			 FOLLOWS, // start_of_item_locations;
+
+			 0x2426, // start_of_system_messages
+			 0x25c4, // start of directions
+
+			 0x6171, // start_of_characters
+			 0x6971, // start_of_image_data
+			 0x6A71, // image_address_offset
+			 74,     // number_of_pictures;
+			 ZXOPT,  // palette
+			 3,      // picture_format_version;
 			 0)
 };

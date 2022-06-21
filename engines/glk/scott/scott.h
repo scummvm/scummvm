@@ -165,7 +165,7 @@ private:
 	void initialize();
 
 	void updateSettings();
-	void delay(int seconds);
+	void delay(double seconds);
 	void clearScreen(void);
 	bool randomPercent(uint n);
 	int countCarried(void);

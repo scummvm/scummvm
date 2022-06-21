@@ -244,6 +244,7 @@ MODULE_OBJS := \
 	scott/game_info.o \
 	scott/game_specific.o \
 	scott/globals.o \
+	scott/gremlins.o \
 	scott/hulk.o \
 	scott/layout_text.o \
 	scott/line_drawing.o \

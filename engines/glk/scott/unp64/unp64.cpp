@@ -395,21 +395,20 @@ int unp64(uint8_t *compressed, size_t length, uint8_t *destinationBuffer, size_t
 			return 0;
 
 		_G(_iter)++;
-		if (_G(_iter) == iterMax) {
+ 		if (_G(_iter) == iterMax) {
 				return 0;
 		}
 
 		if (_G(_unp)._exoFnd && (_G(_unp)._endAdr == 0x10000) && (r->_pc >= 0x100) && (r->_pc <= 0x200) && (_G(_unp)._strMem != 2)) {
 			_G(_unp)._endAdr = r->_mem[0xfe] + (r->_mem[0xff] << 8);
+			if ((_G(_unp)._exoFnd & 0xff) == 0x30) { /* low byte of _endAdr, it's a lda $ff00,y */
+				_G(_unp)._endAdr = (_G(_unp)._exoFnd >> 8) + (r->_mem[0xff] << 8);
+			} else if ((_G(_unp)._exoFnd & 0xff) == 0x32) { /* add 1 */
+				_G(_unp)._endAdr = 1 + ((_G(_unp)._exoFnd >> 8) + (r->_mem[0xff] << 8));
+			}
 
-		if ((_G(_unp)._exoFnd & 0xff) == 0x30) { /* low byte of _endAdr, it's a lda $ff00,y */
-			_G(_unp)._endAdr = (_G(_unp)._exoFnd >> 8) + (r->_mem[0xff] << 8);
-		} else if ((_G(_unp)._exoFnd & 0xff) == 0x32) { /* add 1 */
-			_G(_unp)._endAdr = 1 + ((_G(_unp)._exoFnd >> 8) + (r->_mem[0xff] << 8));
-		}
-
-		if (_G(_unp)._endAdr == 0)
-			_G(_unp)._endAdr = 0x10001;
+			if (_G(_unp)._endAdr == 0)
+				_G(_unp)._endAdr = 0x10001;
 		}
 
 		if (_G(_unp)._fEndBf && (_G(_unp)._endAdr == 0x10000) && (r->_pc == _G(_unp)._depAdr)) {
