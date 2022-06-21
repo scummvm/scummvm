@@ -253,7 +253,7 @@ Common::String OSystem_Win32::getSystemLanguage() const {
 	return OSystem_SDL::getSystemLanguage();
 }
 
-Common::String OSystem_Win32::getDefaultIconPath() {
+Common::String OSystem_Win32::getDefaultIconsPath() {
 	TCHAR iconsPath[MAX_PATH];
 
 	if (_isPortable) {
