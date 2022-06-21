@@ -61,4 +61,17 @@ bool Debugger::lingoCommandProcessor(const char *inputOrig) {
 	return true;
 }
 
+void Debugger::debugLogFile(Common::String logs) {
+	debugPrintf("%s", logs.c_str());
+	if (!g_director->_traceLogFile.empty()) {
+		const Common::String filename = g_director->_traceLogFile;
+		if (out.open(filename, true)) {
+			out.seek(out.size());
+			out.write(logs.c_str(), logs.size());
+			out.flush();
+			out.close();
+		}
+	}
+}
+
 } // End of namespace Director
