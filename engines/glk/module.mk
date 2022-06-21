@@ -254,6 +254,7 @@ MODULE_OBJS := \
 	scott/robin_of_sherwood.o \
 	scott/saga_draw.o \
 	scott/scott.o \
+	scott/seas_of_blood.o \
 	scott/unp64/unp64.o \
 	scott/unp64/6502_emu.o \
 	scott/unp64/exo_util.o \

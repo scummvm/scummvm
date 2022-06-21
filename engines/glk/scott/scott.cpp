@@ -47,6 +47,7 @@
 #include "glk/scott/restore_state.h"
 #include "glk/scott/robin_of_sherwood.h"
 #include "glk/scott/gremlins.h"
+#include "glk/scott/seas_of_blood.h"
 
 namespace Glk {
 namespace Scott {
@@ -270,6 +271,10 @@ void Scott::updateSettings() {
 		if (_G(_vectorState) != NO_VECTOR_IMAGE)
 			drawSomeVectorPixels(1);
 	}
+}
+
+uint Scott::getRandomNumber(uint max) {
+	return _random.getRandomNumber(max);
 }
 
 void Scott::updates(event_t ev) {
@@ -991,9 +996,7 @@ ActionResultType Scott::performLine(int ct) {
 				break;
 			case 66:
 				if (_G(_game)->_type == SEAS_OF_BLOOD_VARIANT)
-					// TODO
-					// AdventureSheet();
-					debug("case 66 not implemented\n");
+					adventureSheet();
 				else
 					listInventory();
 				_G(_stopTime) = 2;
@@ -1125,8 +1128,7 @@ ActionResultType Scott::performLine(int ct) {
 					break;
 				case SEAS_OF_BLOOD:
 				case SEAS_OF_BLOOD_C64:
-					// TODO
-					// BloodAction(p);
+					bloodAction(p);
 					break;
 				case ROBIN_OF_SHERWOOD:
 				case ROBIN_OF_SHERWOOD_C64:
@@ -1720,8 +1722,7 @@ void Scott::drawRoomImage() {
 	switch (CURRENT_GAME) {
 	case SEAS_OF_BLOOD:
 	case SEAS_OF_BLOOD_C64:
-		// TODO
-		// SeasOfBloodRoomImage();
+		seasOfBloodRoomImage();
 		return;
 	case ROBIN_OF_SHERWOOD:
 	case ROBIN_OF_SHERWOOD_C64:

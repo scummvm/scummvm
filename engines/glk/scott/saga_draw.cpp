@@ -346,6 +346,42 @@ void drawSagaPictureAtPos(int pictureNumber, int x, int y) {
 	drawSagaPictureFromData(img._imageData, img._width, img._height, x, y);
 }
 
+void drawSagaPictureFromBuffer() {
+	for (int line = 0; line < 12; line++) {
+		for (int col = 0; col < 32; col++) {
+
+			uint8_t colour = _G(_buffer)[col + line * 32][8];
+
+			int paper = (colour >> 3) & 0x7;
+			paper += 8 * ((colour & 0x40) == 0x40);
+			paper = remap(paper);
+			int ink = (colour & 0x7);
+			ink += 8 * ((colour & 0x40) == 0x40);
+			ink = remap(ink);
+
+			background(col, line, paper);
+
+			for (int i = 0; i < 8; i++) {
+				if (_G(_buffer)[col + line * 32][i] == 0)
+					continue;
+				if (_G(_buffer)[col + line * 32][i] == 255) {
+
+					glui32 glk_color = (_G(_pal)[ink][0] << 16) | (_G(_pal)[ink][1] << 8) | _G(_pal)[ink][2];
+
+					g_scott->glk_window_fill_rect(_G(_graphics), glk_color, col * 8 * _G(_pixelSize) + _G(_xOffset),
+												  (line * 8 + i) * _G(_pixelSize), 8 * _G(_pixelSize), _G(_pixelSize));
+					continue;
+				}
+				for (int j = 0; j < 8; j++)
+					if ((_G(_buffer)[col + line * 32][i] & (1 << j)) != 0) {
+						int ypos = line * 8 + i;
+						putPixel(col * 8 + j, ypos, ink);
+					}
+			}
+		}
+	}
+}
+
 void sagaSetup(size_t imgOffset) {
 	int32_t i, y;
 

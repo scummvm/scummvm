@@ -1360,5 +1360,91 @@ const GameInfo _games[NUMGAMES] = {
 			 74,     // number_of_pictures;
 			 ZXOPT,  // palette
 			 3,      // picture_format_version;
+			 0),
+	GameInfo("Seas of Blood",
+			 SEAS_OF_BLOOD,
+			 SEAS_OF_BLOOD_VARIANT,  // type
+			 ENGLISH,                // subtype
+			 FOUR_LETTER_COMPRESSED, // dictionary type
+
+			 125, // Number of items
+			 344, // Number of actions
+			 134, // Number of words
+			 83,  // Number of rooms
+			 10,  // Max carried items
+			 4,   // Word length
+			 99,  // Number of messages
+
+			 69,  // number_of_verbs
+			 134, // number_of_nouns;
+
+			 0x494d, // header
+			 LATE,   // header style
+
+			 0,       // no room images
+			 0x4961,  // item flags
+			 FOLLOWS, // item images
+
+			 FOLLOWS, // actions
+			 COMPRESSED,
+			 0x591b, // dictionary
+			 0x67cb, // start_of_room_descriptions;
+			 0x5c4b, // start_of_room_connections;
+			 0x5ebb, // start_of_messages;
+			 0x6ce0, // start_of_item_descriptions;
+			 0x5e3d, // start_of_item_locations;
+
+			 0x24ed, // start_of_system_messages
+			 0x26fc, // start of directions
+
+			 0x7389, // start_of_characters;
+			 0x7a89, // start_of_image_data;
+			 0x7b9f, // image_address_offset
+			 139,    // number_of_pictures;
+			 ZXOPT,  // palette
+			 4,      // picture_format_version;
+			 0),
+	GameInfo("Seas of Blood C64",
+			 SEAS_OF_BLOOD_C64,
+			 SEAS_OF_BLOOD_VARIANT,               // type
+			 static_cast<Subtype>(ENGLISH | C64), // subtype
+			 FOUR_LETTER_COMPRESSED,              // dictionary type
+
+			 125, // Number of items
+			 347, // Number of actions
+			 134, // Number of words
+			 82,  // Number of rooms
+			 10,  // Max carried items
+			 4,   // Word length
+			 99,  // Number of messages
+
+			 69,  // number_of_verbs
+			 134, // number_of_nouns;
+
+			 0x527d,                   // header
+			 SEAS_OF_BLOOD_C64_HEADER, // header style
+
+			 0,       // no room images
+			 0x5a73,  // item flags
+			 FOLLOWS, // item images
+
+			 0x5b69, // actions
+			 COMPRESSED,
+			 0x6a2d, // dictionary
+			 0x78dd, // start_of_room_descriptions;
+			 0x6d5d, // start_of_room_connections;
+			 0x6fcd, // start_of_messages;
+			 0x7df2, // start_of_item_descriptions;
+			 0x6f4f, // start_of_item_locations;
+
+			 0x0b9d, // start_of_system_messages
+			 0x0b9d, // start of directions
+
+			 0x84a5, // start_of_characters;
+			 0x8ba5, // start_of_image_data;
+			 0x8CBB, // image_address_offset
+			 139,    // number_of_pictures;
+			 C64B,   // palette
+			 4,      // picture_format_version;
 			 0)
 };

@@ -48,6 +48,7 @@
 #include "glk/scott/load_game.h"
 #include "glk/scott/robin_of_sherwood.h"
 #include "glk/scott/gremlins.h"
+#include "glk/scott/seas_of_blood.h"
 
 namespace Glk {
 namespace Scott {
@@ -135,6 +136,12 @@ void loadGameFile(Common::SeekableReadStream *f) {
 		break;
 	case ROBIN_OF_SHERWOOD_C64:
 		loadExtraSherwoodData64();
+		break;
+	case SEAS_OF_BLOOD:
+		loadExtraSeasOfBloodData();
+		break;
+	case SEAS_OF_BLOOD_C64:
+		loadExtraSeasOfBlood64Data();
 		break;
 	case GREMLINS_GERMAN_C64:
 		loadExtraGermanGremlinsc64Data();
