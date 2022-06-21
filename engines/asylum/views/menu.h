@@ -206,11 +206,6 @@ private:
 	bool key(const AsylumEvent &evt);
 	bool click(const AsylumEvent &evt);
 
-	// Thumbnails
-	void adjustCoordinates(Common::Point &point);
-	bool hasThumbnail(int index);
-	void showThumbnail(int index);
-
 	// Update handlers
 	void updateNewGame();
 	void updateLoadGame();
