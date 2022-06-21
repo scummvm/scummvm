@@ -95,7 +95,8 @@ Movie::~Movie() {
 	// _movieArchive is shared with the cast, so the cast will free it
 	delete _cast;
 
-	g_director->_openResFiles.erase(_sharedCast->getArchive()->getPathName());
+	if (_sharedCast)
+		g_director->_openResFiles.erase(_sharedCast->getArchive()->getPathName());
 
 	delete _sharedCast;
 	delete _score;
