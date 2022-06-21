@@ -255,7 +255,6 @@ void process_event(const EventHappened *evp) {
 					boxhit = Math::Clamp(boxhit, 0, viewport.GetHeight());
 					int lxp = viewport.GetWidth() / 2 - boxwid / 2;
 					int lyp = viewport.GetHeight() / 2 - boxhit / 2;
-					_G(gfxDriver)->Vsync();
 					temp_scr->Blit(saved_backbuf, lxp, lyp, lxp, lyp,
 					               boxwid, boxhit);
 					render_to_screen();

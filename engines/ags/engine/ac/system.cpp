@@ -127,7 +127,7 @@ int System_GetVsync() {
 }
 
 void System_SetVsync(int newValue) {
-	if (ags_stricmp(_G(gfxDriver)->GetDriverID(), "D3D9") != 0)
+	if (_G(gfxDriver)->DoesSupportVsyncToggle())
 		_GP(scsystem).vsync = newValue;
 }
 

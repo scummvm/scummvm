@@ -174,8 +174,10 @@ public:
 	// Bitmap must be of supported size and pixel format. If it's not the method will
 	// fail and optionally write wanted destination format into 'want_fmt' pointer.
 	virtual bool GetCopyOfScreenIntoBitmap(Shared::Bitmap *destination, bool at_native_res, GraphicResolution *want_fmt = nullptr) = 0;
-	virtual void EnableVsyncBeforeRender(bool enabled) = 0;
-	virtual void Vsync() = 0;
+	// Tells if the renderer supports toggling vsync after initializing the mode.
+	virtual bool DoesSupportVsyncToggle() = 0;
+	// Toggles vertical sync mode, if renderer supports one; returns the new state.
+	virtual bool SetVsync(bool enabled) = 0;
 	// Enables or disables rendering mode that draws sprite list directly into
 	// the final resolution, as opposed to drawing to native-resolution buffer
 	// and scaling to final frame. The effect may be that sprites that are

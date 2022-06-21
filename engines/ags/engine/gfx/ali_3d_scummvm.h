@@ -206,8 +206,11 @@ public:
 	bool SupportsGammaControl() override;
 	void SetGamma(int newGamma) override;
 	void UseSmoothScaling(bool /*enabled*/) override {}
-	void EnableVsyncBeforeRender(bool /*enabled*/) override {}
-	void Vsync() override;
+	bool DoesSupportVsyncToggle() override { return false; }
+	bool SetVsync(bool /*enabled*/) override {
+		/* TODO: support toggling; See Common::OSystem::kFeatureVSync */
+		return _mode.Vsync;
+	}
 	void RenderSpritesAtScreenResolution(bool /*enabled*/, int /*supersampling*/) override {}
 	bool RequiresFullRedrawEachFrame() override {
 		return false;

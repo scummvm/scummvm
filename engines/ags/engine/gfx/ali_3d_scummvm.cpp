@@ -505,9 +505,6 @@ void ScummVMRendererGraphicsDriver::Render() {
 	Render(0, 0, kFlip_None);
 }
 
-void ScummVMRendererGraphicsDriver::Vsync() {
-}
-
 Bitmap *ScummVMRendererGraphicsDriver::GetMemoryBackBuffer() {
 	return virtualScreen;
 }
