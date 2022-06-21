@@ -957,6 +957,7 @@ Common::String Datum::asString(bool printonly) const {
 		s += ")";
 		break;
 	case MENUREF:
+		s = Common::String::format("menu(%d, %d)", u.menu->menuIdNum, u.menu->menuItemIdNum);
 		break;
 	default:
 		warning("Incorrect operation asString() for type: %s", type2str());
