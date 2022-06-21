@@ -32,7 +32,6 @@
 #ifdef INCLUDE_THEORA
 #include "hpl1/engine/impl/VideoStreamTheora.h"
 #endif
-#include "hpl1/engine/impl/Platform.h"
 #include "hpl1/engine/system/String.h"
 
 //#include "SDL/SDL.h"

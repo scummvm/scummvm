@@ -151,7 +151,6 @@
 #include "hpl1/engine/impl/PhysicsJointSliderNewton.h"
 #include "hpl1/engine/impl/PhysicsMaterialNewton.h"
 #include "hpl1/engine/impl/PhysicsWorldNewton.h"
-#include "hpl1/engine/impl/Platform.h"
 #include "hpl1/engine/impl/SDLBitmap2D.h"
 #include "hpl1/engine/impl/SDLFontData.h"
 #include "hpl1/engine/impl/SDLGameSetup.h"

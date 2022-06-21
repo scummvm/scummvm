@@ -26,7 +26,6 @@
  */
 
 #include "hpl1/engine/impl/SqScript.h"
-#include "hpl1/engine/impl/Platform.h"
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/system/LowLevelSystem.h"
 #include "hpl1/engine/system/String.h"
