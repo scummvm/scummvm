@@ -48,7 +48,7 @@ public:
 
 	Common::String getSystemLanguage() const override;
 
-	Common::String getDefaultIconPath() override;
+	Common::String getDefaultIconsPath() override;
 	Common::String getScreenshotsPath() override;
 
 protected:

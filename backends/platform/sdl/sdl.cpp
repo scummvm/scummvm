@@ -302,7 +302,7 @@ void OSystem_SDL::initBackend() {
 	_presence = new DiscordPresence();
 #endif
 
-	ConfMan.registerDefault("iconspath", this->getDefaultIconPath());
+	ConfMan.registerDefault("iconspath", this->getDefaultIconsPath());
 
 	_inited = true;
 
@@ -763,7 +763,7 @@ Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
 }
 
 //Not specified in base class
-Common::String OSystem_SDL::getDefaultIconPath() {
+Common::String OSystem_SDL::getDefaultIconsPath() {
 	Common::String path = ConfMan.get("iconspath");
 	if (!path.empty() && !path.hasSuffix("/"))
 		path += "/";
