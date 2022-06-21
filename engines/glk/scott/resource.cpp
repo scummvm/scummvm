@@ -862,7 +862,7 @@ int tryLoading(GameInfo info, int dictStart, int loud) {
 			do {
 				rp = &_G(_rooms)[ct];
 				rp->_text = decompressText(ptr, ct);
-				if (rp->_text == nullptr)
+				if (rp->_text.size() == 0)
 					return 0;
 				rp->_text.replace(0, 1, Common::String(tolower(rp->_text[0])));
 				ct++;
@@ -937,13 +937,14 @@ int tryLoading(GameInfo info, int dictStart, int loud) {
 				const char *p = strchr(ip->_text.c_str(), '.');
 				if (p) {
 					ip->_autoGet = Common::String(p);
+					ip->_text = Common::String(ip->_text.c_str(), p);
 					ip->_autoGet.deleteChar(0);
 					ip->_autoGet.deleteChar(0);
 					const char *t = strchr(ip->_autoGet.c_str(), '.');
 					if (t)
 						ip->_autoGet = Common::String(ip->_autoGet.c_str(), t);
-					for (int i = 1; i < _G(_gameHeader)->_wordLength; i++)
-						ip->_autoGet.replace(i, 1, Common::String(toupper(ip->_text[i])));
+					for (int i = 1; i < ip->_autoGet.size(); i++)
+						ip->_autoGet.replace(i, 1, Common::String(toupper(ip->_autoGet[i])));
 				}
 			}
 			ct++;
