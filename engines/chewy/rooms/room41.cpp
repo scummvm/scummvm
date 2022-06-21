@@ -245,7 +245,7 @@ void Room41::sub_dia() {
 	if (_G(gameState).R41LolaOk) {
 		startAadWait(163);
 		_G(atds)->hideDialogCloseupItem(11, 0, 2);
-		stop_ads_dialog();
+		stopDialogCloseupDialog();
 		autoMove(5, P_CHEWY);
 		new_invent_2_cur(PAPIER_INV);
 

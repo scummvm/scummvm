@@ -415,9 +415,9 @@ void remove_inventory(int16 nr);
 void getDisplayCoord(int16 *x, int16 *y, int16 nr);
 void calcTxtXy(int16 *x, int16 *y, char *txtAdr, int16 txtNr);
 void calcTxtXy(int16 *x, int16 *y, Common::StringArray &desc);
-void adsMenu();
+void handleDialogCloseupMenu();
 
-void stop_ads_dialog();
+void stopDialogCloseupDialog();
 
 void play_scene_ani(int16 nr, int16 mode);
 
@@ -447,7 +447,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 MODE);
 
 void selectDialogOption(int16 diaNr, int16 blkNr, int16 strEndNr);
 
-void ads_ende(int16 diaNr, int16 blkNr, int16 strEndNr);
+void endDialogCloseup(int16 diaNr, int16 blkNr, int16 strEndNr);
 
 void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr,
                        int16 mode);
