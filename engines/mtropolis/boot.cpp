@@ -575,7 +575,7 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 		// MT2 Cross: MFmx[+MFxx]
 		bool haveAnyMFmm = false;
 		bool haveAnyMFmx = false;
-		bool haveAnyMFxx = false;
+		//bool haveAnyMFxx = false; // Unused
 		bool haveAnyMFxm = false;
 
 		for (Boot::FileIdentification &macFile : macFiles) {
@@ -591,7 +591,7 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 					haveAnyMFxm = true;
 					break;
 				case MKTAG('M', 'F', 'x', 'x'):
-					haveAnyMFxx = true;
+					//haveAnyMFxx = true; // Unused
 					break;
 				default:
 					break;
@@ -638,6 +638,12 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 		// Bin segments
 		for (Boot::FileIdentification &macFile : macFiles) {
 			switch (macFile.category) {
+			case Boot::kFileCategoryPlayer:
+				// Case handled below after cursor loading
+				break;
+			case Boot::kFileCategoryExtension:
+				// Case handled below after cursor loading
+				break;
 			case Boot::kFileCategoryProjectMainSegment:
 				mainSegmentFile = &macFile;
 				break;
@@ -651,6 +657,10 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 						segmentFiles.push_back(nullptr);
 					segmentFiles[segmentIndex] = &macFile;
 				} break;
+			case Boot::kFileCategorySpecial:
+				break;
+			case Boot::kFileCategoryUnknown:
+				break;
 			}
 		}
 
@@ -803,6 +813,12 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 		// Bin segments
 		for (Boot::FileIdentification &macFile : winFiles) {
 			switch (macFile.category) {
+			case Boot::kFileCategoryPlayer:
+				// Case handled below after cursor loading
+				break;
+			case Boot::kFileCategoryExtension:
+				// Case handled below after cursor loading
+				break;
 			case Boot::kFileCategoryProjectMainSegment:
 				mainSegmentFile = &macFile;
 				break;
@@ -816,6 +832,10 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 					segmentFiles.push_back(nullptr);
 				segmentFiles[segmentIndex] = &macFile;
 			} break;
+			case Boot::kFileCategorySpecial:
+				break;
+			case Boot::kFileCategoryUnknown:
+				break;
 			}
 		}
 
