@@ -689,6 +689,21 @@ void MarkAllGUIForUpdate() {
 	}
 }
 
+void MarkForTranslationUpdate() {
+	for (auto &btn : _GP(guibuts)) {
+		if (btn.IsTranslated())
+			btn.MarkChanged();
+	}
+	for (auto &lbl : _GP(guilabels)) {
+		if (lbl.IsTranslated())
+			lbl.MarkChanged();
+	}
+	for (auto &list : _GP(guilist)) {
+		if (list.IsTranslated())
+			list.MarkChanged();
+	}
+}
+
 void MarkForFontUpdate(int font) {
 	for (auto &btn : _GP(guibuts)) {
 		if (btn.Font == font)
