@@ -270,6 +270,11 @@ int SoundHE::getSoundVar(int sound, int var) {
 		return isSoundCodeUsed(sound);
 	}
 
+	// Disable lip sync if the speech was overriden
+	if (_heTalkOffset != 0) {
+		return 0;
+	}
+
 	assertRange(0, var, 25, "sound variable");
 
 	int chan = -1;
@@ -754,6 +759,10 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 		_mixer->stopHandle(_heSoundChannels[heChannel]);
 
 		if (!stream) {
+			if (soundID == 1) {
+				// Reset variable to signal getSoundVar that lip sync is allowed
+				_heTalkOffset = 0;
+			}
 			stream = Audio::makeRawStream(ptr + heOffset + 8, size, rate, flags, DisposeAfterUse::NO);
 		}
 		_mixer->playStream(type, &_heSoundChannels[heChannel],
