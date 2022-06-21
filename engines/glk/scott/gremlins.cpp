@@ -325,7 +325,7 @@ void loadExtraSpanishGremlinsData() {
 
 void gremlinsAction(int parameter) {
 	g_scott->drawImage(68); /* Mogwai */
-	g_scott->display(_G(_bottomWindow), "\n%s\n", _G(_sys)[HIT_ENTER]);
+	g_scott->display(_G(_bottomWindow), "\n%s\n", _G(_sys)[HIT_ENTER].c_str());
 	g_scott->hitEnter();
 	g_scott->look();
 }

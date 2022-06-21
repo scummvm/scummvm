@@ -64,7 +64,7 @@ void sherwoodAction(int p) {
 		break;
 	case 1:
 		g_scott->drawImage(0); /* Herne */
-		g_scott->display(_G(_bottomWindow), "\n%s\n", _G(_sys)[HIT_ENTER]);
+		g_scott->display(_G(_bottomWindow), "\n%s\n", _G(_sys)[HIT_ENTER].c_str());
 		g_scott->hitEnter();
 		_G(_items)[39]._location = 79;
 		g_scott->look();
