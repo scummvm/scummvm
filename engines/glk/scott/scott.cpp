@@ -46,6 +46,7 @@
 #include "glk/scott/saga_draw.h"
 #include "glk/scott/restore_state.h"
 #include "glk/scott/robin_of_sherwood.h"
+#include "glk/scott/gremlins.h"
 
 namespace Glk {
 namespace Scott {
@@ -289,8 +290,7 @@ void Scott::updates(event_t ev) {
 			updateRobinOfSherwoodAnimations();
 			break;
 		case GREMLINS_VARIANT:
-			// TODO
-			// UpdateGremlinsAnimations();
+			updateGremlinsAnimations();
 			break;
 		case SECRET_MISSION_VARIANT:
 			// TODO
@@ -304,7 +304,7 @@ void Scott::updates(event_t ev) {
 	}
 }
 
-void Scott::delay(int seconds) {
+void Scott::delay(double seconds) {
 	if (_options & NO_DELAYS)
 		return;
 
@@ -1136,8 +1136,7 @@ ActionResultType Scott::performLine(int ct) {
 				case GREMLINS_SPANISH:
 				case GREMLINS_GERMAN:
 				case GREMLINS_GERMAN_C64:
-					// TODO
-					// GremlinsAction(p);
+					gremlinsAction(p);
 					break;
 				default:
 					break;
@@ -1750,8 +1749,7 @@ void Scott::drawRoomImage() {
 	}
 
 	if (_G(_game)->_type == GREMLINS_VARIANT) {
-		// TODO
-		// GremlinsLook();
+		gremlinsLook();
 	} else {
 		drawImage(_G(_rooms)[MY_LOC]._image & 127);
 	}

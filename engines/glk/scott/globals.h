@@ -152,6 +152,14 @@ public:
 	Common::Array<ExtraCommand> _extraCommandsKey;
 	Common::StringArray _abbreviations;
 	Common::StringArray _abbreviationsKey;
+	Common::StringArray _spanishDirections;
+	Common::StringArray _germanDirections;
+	Common::StringArray _germanExtraCommands;
+	Common::StringArray _spanishExtraCommands;
+	Common::StringArray _germanExtraNouns;
+	Common::StringArray _spanishExtraNouns;
+	Common::StringArray _germanSkipList;
+	Common::StringArray _germanDelimiterList;
 
 	// restore state
 	int _justUndid = 0;

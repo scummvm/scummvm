@@ -84,6 +84,7 @@ const PlainGameDescriptor SCOTT_GAME_LIST[] = {
 	{ "minersadv",         "Miner's Adventure" },
 	{ "romulanadv",        "Romulan Adventure" },
 	{ "topsecretadv",      "Top Secret Adventure" },
+	{ "gremlins",		   "Gremlins" },
 
 	{ nullptr, nullptr }
 };
@@ -163,7 +164,6 @@ const GlkDetectionEntry SCOTT_GAMES[] = {
 
 	// ZX Spectrum games
 	DT_ENTRY1("marveladventure", "ZXSpectrum", "0eec511d3cde815c73e5464ab0cdbef9", 40727),
-	DT_ENTRY1("gremlins",		 "ZXSpectrum", "4200b260b484a3a9766d587def3113a2", 45332),
 
 	// 11 Mysterious Adventures
 	DT_ENTRY1("goldenbaton",	"ZXSpectrum", "cb7dadc9d5f8bce453b9139265e4dd7d", 32060),
@@ -181,6 +181,10 @@ const GlkDetectionEntry SCOTT_GAMES[] = {
 	// C64 Games
 	DT_ENTRY1("robinofsherwood", "C64", "10109d9776b9372f9c768b53a664b113", 174848),
 	DT_ENTRY1("robinofsherwood", "C64", "552c95ec15d750cbfa02c1f11dcbca1e", 36278),
+	DT_ENTRY1("gremlins",		 "C64", "33c920f7ba150dfa1a832d510eebd8fe", 174848),
+	DT_ENTRY1("gremlins",		 "C64", "947e35037cf02269ac013857925137ce", 174848),
+	DT_ENTRY1("gremlins",		 "C64", "108063b2a16a199794f2ecf52ce26377", 56724),
+	DT_ENTRYL1("gremlins", Common::DE_DEU, "C64", "e5d743d8727c8aca011a737bbb5ad818", 49155),
 
 	// 11 Mysterious Adventures
 	DT_ENTRY1("mysadv1", "C64", "b4d8fc4eabed4f2400717303561ad0fa", 174848),

@@ -73,6 +73,25 @@ Globals::Globals() : _sys(MAX_SYSMESS), _directions(NUMBER_OF_DIRECTIONS), _extr
 
 	_englishDelimiterList = {nullptr, ",", "and", "then", " "};
 
+	_spanishDirections = {nullptr, "norte", "sur", "este", "oeste", "arriba", "abajo", "n", "s", "e", "o", "u", "d", "w"};
+
+	_germanDirections = {nullptr, "norden", "sueden", "osten", "westen", "oben", "unten", "n", "s", "o", "w", "u", "d", " "};
+
+	_germanExtraCommands = {nullptr, "restart", "save", "restore", "load", "transcript", "script", "oops", "undo", "ram", "ramload", "ramrestore", "ramsave",
+							"ausser", "bis", "laden", "wiederherstellen", "transkript", "rueckgaengig", "neustarten"};
+
+	_spanishExtraCommands = {nullptr, "restart", "save", "restore", "load", "transcript", "script", "oops", "undo", "ram", "ramload", "ramrestore", "ramsave",
+							 "excepto", "menos", "reanuda", "cargar", "transcripcion", "deshacer", "reinicia"};
+
+	_germanExtraNouns = {nullptr, "spiel", "story", "on", "off", "wiederherstellen", "laden", "speichern", "move", "verschieben", "runde",
+						 "alle", "alles", "es", "einschalten", "ausschalten"};
+
+	_spanishExtraNouns = {nullptr, "juego", "story", "on", "off", "cargar", "reanuda", "conserva", "move", "command", "jugada", "toda", "todo", "eso", "activar", "desactivar"};
+
+	_germanSkipList = {nullptr, "nach", "die", "der", "das", "im", "mein", "meine", "an", "auf", "den", "lassen", "lass", "fallen", " ", " ", " ", " "};
+
+	_germanDelimiterList = {nullptr, ",", "und", "dann", "and"};
+
 	Common::fill(&_counters[0], &_counters[16], 0);
 	Common::fill(&_roomSaved[0], &_roomSaved[16], 0);
 
@@ -92,6 +111,10 @@ Globals::Globals() : _sys(MAX_SYSMESS), _directions(NUMBER_OF_DIRECTIONS), _extr
 	_md5Index.setVal("3ce5ea1a0473244bf469fd3c51f1dc48",  6); // midadv2
 	_md5Index.setVal("10109d9776b9372f9c768b53a664b113", 12); // robin of sherwood
 	_md5Index.setVal("552c95ec15d750cbfa02c1f11dcbca1e", 15); // robin of sherwood
+	_md5Index.setVal("108063b2a16a199794f2ecf52ce26377", 16); // gremlins
+	_md5Index.setVal("947e35037cf02269ac013857925137ce", 17); // gremlins
+	_md5Index.setVal("33c920f7ba150dfa1a832d510eebd8fe", 19); // gremlins
+	_md5Index.setVal("e5d743d8727c8aca011a737bbb5ad818", 21); // gremlins
 }
 
 Globals::~Globals() {
