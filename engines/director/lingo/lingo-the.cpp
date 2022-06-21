@@ -1205,7 +1205,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		break;
 	case kTheTimeoutLapsed:
 		// timeOutLapsed can be set in D4, but can't in D3. see D3.1 interactivity manual p312 and D4 dictionary p296.
-		if (g_director->getVersion() >= 400 && d.type == INT) {
+		if (g_director->getVersion() >= 400 && (d.type == INT || d.type == FLOAT)) {
 			g_director->_tickBaseline = g_director->getMacTicks() - d.asInt();
 		}
 		if (d.type != INT) {
