@@ -30,7 +30,7 @@ typedef Common::HashMap<uint16, Area *> AreaMap;
 
 typedef struct Binary {
 	uint8 bits;
-	uint16 startArea; 
+	uint16 startArea;
 	AreaMap *areasByAreaID;
 	Common::Array<uint8> *border;
 	Common::Array<uint8> *palette;
@@ -52,7 +52,7 @@ private:
 	int _screenW, _screenH;
 
 	Graphics::Surface *_border;
-	
+
 	uint32 _timeOfLastTick;
 	bool _hasReceivedTime;
 
@@ -98,8 +98,12 @@ public:
 	// Spacial attributes
 	Math::Vector3d _position, _rotation, _velocity;
 
+
 	// Rendering
+	void drawFrame(Math::Vector3d scaleVector, Area *area);
 	uint8 _colorNumber;
+	float _nearClipPlane;
+	float _farClipPlane;
 
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return true; }

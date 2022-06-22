@@ -106,7 +106,7 @@ void FreescapeEngine::loadAssets() {
 		else
 			renderMode = ConfMan.get("render_mode");
 
-		Common::File exe;	
+		Common::File exe;
 		debug("renderMode: %s", renderMode.c_str());
 		bool success = false;
 		if (renderMode == "ega") {
@@ -130,6 +130,13 @@ void FreescapeEngine::loadAssets() {
 	   } else
 		error("'%s' is an invalid game", _targetName.c_str());
 
+}
+
+void FreescapeEngine::drawFrame(Math::Vector3d scaleVector, Area *area) {
+	_gfx->updateProjectionMatrix(60.0, _nearClipPlane, _farClipPlane);
+	_gfx->positionCamera(_position, _position + _cameraFront);
+	_gfx->scale(scaleVector);
+	area->draw(_gfx);
 }
 
 Common::Error FreescapeEngine::run() {
@@ -159,7 +166,7 @@ Common::Error FreescapeEngine::run() {
 	debug("scale: %f, %f, %f", scaleVector.x(), scaleVector.y(), scaleVector.z());
 	_position.setValue(1, _position.y() + _playerHeight);
 
-	Math::Vector3d rotation = entrance->getRotation(); 
+	Math::Vector3d rotation = entrance->getRotation();
 	_pitch = rotation.x() - 180.f;
 	_yaw = rotation.y() - 180.f;
 
@@ -169,23 +176,19 @@ Common::Error FreescapeEngine::run() {
 	Common::Point lastMousePos(0, 0);
 	float lastFrame = 0.f;
 	// used to create a projection matrix;
-	float nearClipPlane = 1.f;
-	float farClipPlane;
+	_nearClipPlane = 1.f;
 
 	if (_binaryBits == 16) {
 		// the 16-bit kit permits the range 0-8192 to be used along all three axes and from that comes the far plane distance of 14189.
-		farClipPlane = 14189.f;
+		_farClipPlane = 14189.f;
 	} else {
-		farClipPlane = 1024.f; // wild guess
+		_farClipPlane = 1024.f; // wild guess
 	}
 
 	//g_system->lockMouse(true);
 
 	while (!shouldQuit()) {
-		_gfx->updateProjectionMatrix(60.0, nearClipPlane, farClipPlane);
-		_gfx->positionCamera(_position, _position + _cameraFront);
-		_gfx->scale(scaleVector);
-		area->draw(_gfx);
+		drawFrame(scaleVector, area);
         float currentFrame = g_system->getMillis();
         float deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -209,7 +212,7 @@ Common::Error FreescapeEngine::run() {
 			case Common::EVENT_RETURN_TO_LAUNCHER:
 				return Common::kNoError;
 				break;
-			
+
 			case Common::EVENT_MOUSEMOVE:
 				rotate(lastMousePos, mousePos);
 				lastMousePos = mousePos;
@@ -217,7 +220,7 @@ Common::Error FreescapeEngine::run() {
 					g_system->warpMouse(_screenW/2, mousePos.y);
 					lastMousePos.x = _screenW/2;
 					lastMousePos.y = mousePos.y;
-				} 
+				}
 				break;
 			default:
 				break;
@@ -233,7 +236,6 @@ Common::Error FreescapeEngine::run() {
 
 	return Common::kNoError;
 }
-
 
 void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos) {
 	//debug("x: %d, y: %d", mousePos.x, mousePos.y);
@@ -269,7 +271,7 @@ void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos)
 
 void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTime) {
 	float velocity = _movementSpeed * deltaTime;
-	float positionY = _position.y(); 
+	float positionY = _position.y();
 	switch (direction) {
 	case FORWARD:
 		_position = _position + _cameraFront * velocity;
