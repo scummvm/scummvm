@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-21 21:40+0000\n"
-"PO-Revision-Date: 2022-06-22 06:16+0000\n"
+"PO-Revision-Date: 2022-06-22 06:20+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -3726,49 +3726,37 @@ msgstr "Toon scherm-besturing"
 
 #: backends/platform/android/options.cpp:94
 msgid "Choose the preferred touch mode:"
-msgstr ""
+msgstr "Kies de geprefereerde aanraak modus:"
 
 #: backends/platform/android/options.cpp:96
-#, fuzzy
-#| msgid "Enable Venus"
 msgid "In menus"
-msgstr "Gebruik Venus"
+msgstr "In menus"
 
 #: backends/platform/android/options.cpp:98
 #: backends/platform/android/options.cpp:116
 #: backends/platform/android/options.cpp:117
-#, fuzzy
-#| msgid "TV emulation"
 msgid "Touchpad emulation"
-msgstr "TV emulatie"
+msgstr "Touchpad emulatie"
 
 #: backends/platform/android/options.cpp:99
 #: backends/platform/android/options.cpp:119
 #: backends/platform/android/options.cpp:120
-#, fuzzy
-#| msgid "Virtual mouse up"
 msgid "Direct mouse"
-msgstr "Virtuele muis omhoog"
+msgstr "Directe muis"
 
 #: backends/platform/android/options.cpp:100
 #: backends/platform/android/options.cpp:122
 #: backends/platform/android/options.cpp:123
-#, fuzzy
-#| msgid "TV emulation"
 msgid "Gamepad emulation"
-msgstr "TV emulatie"
+msgstr "Gamepad emulatie"
 
 #: backends/platform/android/options.cpp:106
-#, fuzzy
-#| msgid "V-Sync in 3D Games"
 msgid "In 2D games"
-msgstr "V-Sync in 3D Spellen"
+msgstr "In 2D spellen"
 
 #: backends/platform/android/options.cpp:108
-#, fuzzy
-#| msgid "V-Sync in 3D Games"
 msgid "In 3D games"
-msgstr "V-Sync in 3D Spellen"
+msgstr "In 3D spellen"
 
 #. I18N: Show a button to revoke Storage Access Framework permissions for Android
 #: backends/platform/android/options.cpp:128
@@ -4402,9 +4390,8 @@ msgid "Switch to Olmec"
 msgstr "Schakel naar Olmec"
 
 #: engines/asylum/metaengine.cpp:144
-#, fuzzy
 msgid "Open character inventory"
-msgstr "Open/Sluit Inventaris"
+msgstr "Open personage Inventaris"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:200
@@ -7911,9 +7898,8 @@ msgid "Could not quick load the saved game #%d"
 msgstr "Kon opgeslagen spel #%d niet snelladen"
 
 #: engines/toon/toon.cpp:1502
-#, fuzzy
 msgid "Are you sure you want to exit?"
-msgstr "Weet u zeker dat u wilt stoppen?"
+msgstr "Weet u zeker dat u wilt weggaan?"
 
 #: engines/toon/toon.cpp:1906
 #, c-format
