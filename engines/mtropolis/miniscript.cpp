@@ -1331,7 +1331,7 @@ MiniscriptInstructionOutcome RangeCreate::execute(MiniscriptThread *thread) cons
 
 		switch (v->getType()) {
 		case DynamicValueTypes::kFloat:
-			coords[i] = static_cast<int32>(floor(v->getFloat() + 0.5)) & 0xffff;
+			coords[i] = static_cast<int32>(floor(v->getFloat() + 0.5));
 			break;
 		case DynamicValueTypes::kInteger:
 			coords[i] = v->getInt();
