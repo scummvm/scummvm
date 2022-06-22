@@ -37,6 +37,11 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("lingo", WRAP_METHOD(Debugger, cmd_lingo));
 }
 
+Debugger::~Debugger() {
+	if (_out.isOpen())
+		_out.close();
+}
+
 bool Debugger::cmd_lingo(int argc, const char **argv) {
 	if (argc == 2 && !strcmp(argv[1], "on")) {
 		registerDefaultCmd(WRAP_DEFAULTCOMMAND(Debugger, lingoCommandProcessor));
@@ -61,15 +66,27 @@ bool Debugger::lingoCommandProcessor(const char *inputOrig) {
 	return true;
 }
 
-void Debugger::debugLogFile(Common::String logs) {
-	debugPrintf("%s", logs.c_str());
-	if (!g_director->_traceLogFile.empty()) {
-		const Common::String filename = g_director->_traceLogFile;
-		if (out.open(filename, true)) {
-			out.seek(out.size());
-			out.write(logs.c_str(), logs.size());
-			out.flush();
-			out.close();
+void Debugger::debugLogFile(Common::String logs, bool prompt) {
+	if (prompt)
+		debugPrintf("-- %s", logs.c_str());
+	else
+		debugPrintf("%s", logs.c_str());
+	if (g_director->_traceLogFile.empty()) {
+		if (_out.isOpen())
+			_out.close();
+		_outName.clear();
+	} else {
+		if (_outName != g_director->_traceLogFile) {
+			if (_out.isOpen())
+				_out.close();
+			if (!_out.open(g_director->_traceLogFile, true))
+				return;
+			_outName = g_director->_traceLogFile;
+		}
+		if(_out.isOpen()) {
+			_out.seek(_out.size());
+			_out.write(logs.c_str(), logs.size());
+			_out.flush();
 		}
 	}
 }
