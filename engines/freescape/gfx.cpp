@@ -100,8 +100,6 @@ void Renderer::computeScreenViewport() {
 	int32 screenWidth = _system->getWidth();
 	int32 screenHeight = _system->getHeight();
 
-	//assert(0);
-
 	/*if (ConfMan.getBool("widescreen_mod")) {
 		_screenViewport = Common::Rect(screenWidth, screenHeight);
 	} else {*/
@@ -166,36 +164,4 @@ Renderer *createRenderer(OSystem *system) {
 	error("Unable to create a '%s' renderer", rendererConfig.c_str());
 }
 
-FrameLimiter::FrameLimiter(OSystem *system, const uint framerate) :
-	_system(system),
-	_speedLimitMs(0),
-	_startFrameTime(0) {
-	// The frame limiter is disabled when vsync is enabled.
-	_enabled = !_system->getFeatureState(OSystem::kFeatureVSync) && framerate != 0;
-
-	if (_enabled) {
-		_speedLimitMs = 1000 / CLIP<uint>(framerate, 0, 100);
-	}
-}
-
-void FrameLimiter::startFrame() {
-	_startFrameTime = _system->getMillis();
-}
-
-void FrameLimiter::delayBeforeSwap() {
-	uint endFrameTime = _system->getMillis();
-	uint frameDuration = endFrameTime - _startFrameTime;
-
-	if (_enabled && frameDuration < _speedLimitMs) {
-		_system->delayMillis(_speedLimitMs - frameDuration);
-	}
-}
-
-const Graphics::PixelFormat Texture::getRGBAPixelFormat() {
-#ifdef SCUMM_BIG_ENDIAN
-	return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-#else
-	return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-#endif
-}
 } // End of namespace Myst3
