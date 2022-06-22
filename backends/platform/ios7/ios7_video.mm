@@ -818,6 +818,39 @@ uint getSizeNextPOT(uint size) {
 	return true;
 }
 
+- (BOOL)isControllerTypeConnected:(Class)controller {
+	for (GameController *c : _controllers) {
+		if ([c isConnected]) {
+			if ([c isKindOfClass:controller]) {
+				return YES;
+			}
+		}
+	}
+	return NO;
+}
+
+- (BOOL)isTouchControllerConnected {
+	return [self isControllerTypeConnected:TouchController.class];
+}
+
+- (BOOL)isMouseControllerConnected {
+	if (@available(iOS 14.0, *)) {
+		return [self isControllerTypeConnected:MouseController.class];
+	} else {
+		// Fallback on earlier versions
+		return NO;
+	}
+}
+
+- (BOOL)isGamepadControllerConnected {
+	if (@available(iOS 14.0, *)) {
+		return [self isControllerTypeConnected:GamepadController.class];
+	} else {
+		// Fallback on earlier versions
+		return NO;
+	}
+}
+
 - (void)deviceOrientationChanged:(UIDeviceOrientation)orientation {
 	[self addEvent:InternalEvent(kInputOrientationChanged, orientation, 0)];
 

@@ -124,6 +124,23 @@ bool OSystem_iOS7::isConnectionLimited() {
 	return (flags & kSCNetworkReachabilityFlagsIsWWAN);
 }
 
+Common::HardwareInputSet *OSystem_iOS7::getHardwareInputSet() {
+	using namespace Common;
+
+	CompositeHardwareInputSet *inputSet = new CompositeHardwareInputSet();
+	// Ask view about connected controllers
+	if ([[iOS7AppDelegate iPhoneView] isTouchControllerConnected] ||
+		[[iOS7AppDelegate iPhoneView] isMouseControllerConnected]) {
+		inputSet->addHardwareInputSet(new MouseHardwareInputSet(defaultMouseButtons));
+	}
+
+	if ([[iOS7AppDelegate iPhoneView] isGamepadControllerConnected]) {
+		inputSet->addHardwareInputSet(new JoystickHardwareInputSet(defaultJoystickButtons, defaultJoystickAxes));
+	}
+
+	return inputSet;
+}
+
 void OSystem_iOS7::handleEvent_applicationSaveState() {
 	[[iOS7AppDelegate iPhoneView] beginBackgroundSaveStateTask];
 	saveState();
