@@ -19,18 +19,17 @@
  *
  */
 
-
-#ifndef DIRECTOR_LINGO_XLIBS_WINXOBJ_H
-#define DIRECTOR_LINGO_XLIBS_WINXOBJ_H
+#ifndef DIRECTOR_LINGO_XLIBS_APPLECDXOBJ_H
+#define DIRECTOR_LINGO_XLIBS_APPLECDXOBJ_H
 
 namespace Director {
 
-class RearWindowXObject : public Object<RearWindowXObject> {
+class AppleCDXObject : public Object<AppleCDXObject> {
 public:
-	RearWindowXObject(ObjectType objType);
+	AppleCDXObject(ObjectType objType);
 };
 
-namespace RearWindowXObj {
+namespace AppleCDXObj {
 
 extern const char *xlibName;
 extern const char *fileNames[];
@@ -39,21 +38,11 @@ void open(int type);
 void close(int type);
 
 void m_new(int nargs);
-void m_getAppName(int nargs);
-void m_getMemoryNeeded(int nargs);
-void m_getScreenBottom(int nargs);
-void m_getScreenLeft(int nargs);
-void m_getScreenRight(int nargs);
-void m_getScreenTop(int nargs);
-void m_indexColorToWindow(int nargs);
-void m_patToWindow(int nargs);
-void m_rgbColorToWindow(int nargs);
-void m_getScreenTop(int nargs);
-void m_getScreenLeft(int nargs);
-void m_getScreenBottom(int nargs);
-void m_getScreenRight(int nargs);
+void m_service(int nargs);
+void m_readStatus(int nargs);
+void m_eject(int nargs);
 
-} // End of namespace RearWindowXObj
+} // End of namespace AppleCDXObj
 
 } // End of namespace Director
 

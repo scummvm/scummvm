@@ -37,14 +37,18 @@
 #include "director/lingo/lingo-the.h"
 
 #include "director/lingo/xlibs/aiff.h"
+#include "director/lingo/xlibs/applecdxobj.h"
+#include "director/lingo/xlibs/barakeobj.h"
 #include "director/lingo/xlibs/cdromxobj.h"
 #include "director/lingo/xlibs/fileio.h"
 #include "director/lingo/xlibs/flushxobj.h"
 #include "director/lingo/xlibs/fplayxobj.h"
 #include "director/lingo/xlibs/gpid.h"
 #include "director/lingo/xlibs/jwxini.h"
+#include "director/lingo/xlibs/jitdraw3.h"
 #include "director/lingo/xlibs/labeldrvxobj.h"
 #include "director/lingo/xlibs/memoryxobj.h"
+#include "director/lingo/xlibs/miscx.h"
 #include "director/lingo/xlibs/movemousexobj.h"
 #include "director/lingo/xlibs/movutils.h"
 #include "director/lingo/xlibs/orthoplayxobj.h"
@@ -68,21 +72,21 @@ static struct PredefinedProto {
 	int version;
 } predefinedMethods[] = {
 	// all except window
-	{ "new",					LM::m_new,					-1, 0,	kAllObj, 				200 },	// D2
+	{ "new",					LM::m_new,					-1, 0,	kAllObj,				200 },	// D2
 
 	// factory and XObject
 	{ "describe",				LM::m_describe,				 0, 0,	kXObj,					200 },	// D2
 	{ "dispose",				LM::m_dispose,				 0, 0,	kFactoryObj | kXObj,	200 },	// D2
 	{ "get",					LM::m_get,					 1, 1,	kFactoryObj,			200 },	// D2
-	{ "instanceRespondsTo",		LM::m_instanceRespondsTo,	 1, 1,	kXObj,					300 },		// D3
-	{ "messageList",			LM::m_messageList,			 0, 0,	kXObj,					300 },		// D3
-	{ "name",					LM::m_name,					 0, 0,	kXObj,					300 },		// D3
-	{ "perform",				LM::m_perform,				-1, 0,	kFactoryObj | kXObj, 	300 },		// D3
+	{ "instanceRespondsTo",		LM::m_instanceRespondsTo,	 1, 1,	kXObj,					300 },	// D3
+	{ "messageList",			LM::m_messageList,			 0, 0,	kXObj,					300 },	// D3
+	{ "name",					LM::m_name,					 0, 0,	kXObj,					300 },	// D3
+	{ "perform",				LM::m_perform,				-1, 0,	kFactoryObj | kXObj,	300 },	// D3
 	{ "put",					LM::m_put,					 2, 2,	kFactoryObj,			200 },	// D2
 	{ "respondsTo",				LM::m_respondsTo,			 1, 1,	kXObj,					200 },	// D2
 
 	// script object and Xtra
-	{ "birth",					LM::m_new,					-1, 0,	kScriptObj | kXtraObj, 	400 },			// D4
+	{ "birth",					LM::m_new,					-1, 0,	kScriptObj | kXtraObj,	400 },	// D4
 
 	{ nullptr, nullptr, 0, 0, 0, 0 }
 };
@@ -127,25 +131,29 @@ static struct XLibProto {
 	int version;
 } xlibs[] = {
 	{ AiffXObj::fileNames,				AiffXObj::open,				AiffXObj::close,			kXObj,					400 },	// D4
+	{ AppleCDXObj::fileNames,			AppleCDXObj::open,			AppleCDXObj::close,			kXObj,					400 },	// D4
+	{ BarakeObj::fileNames,				BarakeObj::open,			BarakeObj::close,			kXObj,					400 },	// D4
 	{ CDROMXObj::fileNames,				CDROMXObj::open,			CDROMXObj::close,			kXObj,					200 },	// D2
 	{ FileIO::fileNames,				FileIO::open,				FileIO::close,				kXObj | kXtraObj,		200 },	// D2
-	{ FlushXObj::fileNames,				FlushXObj::open,			FlushXObj::close,			kXObj,					400 },	// D4
+	{ FlushXObj::fileNames,				FlushXObj::open,			FlushXObj::close,			kXObj,					300 },	// D3
 	{ FPlayXObj::fileNames,				FPlayXObj::open,			FPlayXObj::close,			kXObj,					200 },	// D2
 	{ GpidXObj::fileNames,				GpidXObj::open,				GpidXObj::close,			kXObj,					400 },	// D4
-	{ LabelDrvXObj::fileNames,			LabelDrvXObj::open,			LabelDrvXObj::close,		kXObj,					400 }, 	// D4
-	{ OrthoPlayXObj::fileNames,			OrthoPlayXObj::open,		OrthoPlayXObj::close,		kXObj,					400 }, 	// D4
-	{ JourneyWareXINIXObj::fileNames,	JourneyWareXINIXObj::open,	JourneyWareXINIXObj::close,	kXObj,					400 }, 	// D4
-	{ PalXObj::fileNames,				PalXObj::open,				PalXObj::close,				kXObj,					400 }, 	// D4
-	{ MemoryXObj::fileNames,			MemoryXObj::open,			MemoryXObj::close,			kXObj,					400 }, 	// D4
-	{ MovUtilsXObj::fileNames,			MovUtilsXObj::open,			MovUtilsXObj::close,		kXObj,					400 }, 	// D4
-	{ PopUpMenuXObj::fileNames,			PopUpMenuXObj::open,		PopUpMenuXObj::close,		kXObj,					200 }, 	// D2
+	{ JITDraw3XObj::fileNames,			JITDraw3XObj::open,			JITDraw3XObj::close,		kXObj,					400 },	// D4
+	{ JourneyWareXINIXObj::fileNames,	JourneyWareXINIXObj::open,	JourneyWareXINIXObj::close,	kXObj,					400 },	// D4
+	{ LabelDrvXObj::fileNames,			LabelDrvXObj::open,			LabelDrvXObj::close,		kXObj,					400 },	// D4
+	{ MemoryXObj::fileNames,			MemoryXObj::open,			MemoryXObj::close,			kXObj,					300 },	// D3
+	{ MiscX::fileNames,					MiscX::open,				MiscX::close,				kXObj,					400 },	// D4
+	{ MoveMouseXObj::fileNames,			MoveMouseXObj::open,		MoveMouseXObj::close,		kXObj,					400 },	// D4
+	{ MovUtilsXObj::fileNames,			MovUtilsXObj::open,			MovUtilsXObj::close,		kXObj,					400 },	// D4
+	{ OrthoPlayXObj::fileNames,			OrthoPlayXObj::open,		OrthoPlayXObj::close,		kXObj,					400 },	// D4
+	{ PalXObj::fileNames,				PalXObj::open,				PalXObj::close,				kXObj,					400 },	// D4
+	{ PopUpMenuXObj::fileNames,			PopUpMenuXObj::open,		PopUpMenuXObj::close,		kXObj,					200 },	// D2
+	{ RearWindowXObj::fileNames,		RearWindowXObj::open,		RearWindowXObj::close,		kXObj,					400 },	// D4
+	{ RegisterComponent::fileNames,		RegisterComponent::open,	RegisterComponent::close,	kXObj,					400 },	// D4
 	{ SerialPortXObj::fileNames,		SerialPortXObj::open,		SerialPortXObj::close,		kXObj,					200 },	// D2
 	{ SoundJam::fileNames,				SoundJam::open,				SoundJam::close,			kXObj,					400 },	// D4
-	{ RegisterComponent::fileNames,		RegisterComponent::open,	RegisterComponent::close,	kXObj,					400 },	// D4
-	{ VideodiscXObj::fileNames,			VideodiscXObj::open,		VideodiscXObj::close,		kXObj,					200 }, 	// D2
-	{ RearWindowXObj::fileNames,		RearWindowXObj::open,		RearWindowXObj::close,		kXObj,					400 },	// D4
-	{ MoveMouseXObj::fileNames,			MoveMouseXObj::open,		MoveMouseXObj::close,		kXObj,					400 },	// D4
-	{ XPlayAnim::fileNames,				XPlayAnim::open,			XPlayAnim::close, 			kXObj,					300 },	// D3
+	{ VideodiscXObj::fileNames,			VideodiscXObj::open,		VideodiscXObj::close,		kXObj,					200 },	// D2
+	{ XPlayAnim::fileNames,				XPlayAnim::open,			XPlayAnim::close,			kXObj,					300 },	// D3
 	{ nullptr, nullptr, nullptr, 0, 0 }
 };
 

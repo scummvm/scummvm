@@ -19,18 +19,17 @@
  *
  */
 
-
-#ifndef DIRECTOR_LINGO_XLIBS_WINXOBJ_H
-#define DIRECTOR_LINGO_XLIBS_WINXOBJ_H
+#ifndef DIRECTOR_LINGO_XLIBS_JITDRAW3XOBJ_H
+#define DIRECTOR_LINGO_XLIBS_JITDRAW3XOBJ_H
 
 namespace Director {
 
-class RearWindowXObject : public Object<RearWindowXObject> {
+class JITDraw3XObject : public Object<JITDraw3XObject> {
 public:
-	RearWindowXObject(ObjectType objType);
+	JITDraw3XObject(ObjectType objType);
 };
 
-namespace RearWindowXObj {
+namespace JITDraw3XObj {
 
 extern const char *xlibName;
 extern const char *fileNames[];
@@ -39,21 +38,16 @@ void open(int type);
 void close(int type);
 
 void m_new(int nargs);
-void m_getAppName(int nargs);
-void m_getMemoryNeeded(int nargs);
-void m_getScreenBottom(int nargs);
-void m_getScreenLeft(int nargs);
-void m_getScreenRight(int nargs);
-void m_getScreenTop(int nargs);
-void m_indexColorToWindow(int nargs);
-void m_patToWindow(int nargs);
-void m_rgbColorToWindow(int nargs);
-void m_getScreenTop(int nargs);
-void m_getScreenLeft(int nargs);
-void m_getScreenBottom(int nargs);
-void m_getScreenRight(int nargs);
+void m_dispose(int nargs);
+void m_checkifcdrom(int nargs);
+void m_msgokcancel(int nargs);
+void m_msgok(int nargs);
+void m_msgyesno(int nargs);
+void m_gotodraw(int nargs);
+void m_adddrawbutton(int nargs);
+void m_removedrawbutton(int nargs);
 
-} // End of namespace RearWindowXObj
+} // End of namespace JITDraw3XObj
 
 } // End of namespace Director
 

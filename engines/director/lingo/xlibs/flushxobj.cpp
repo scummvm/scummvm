@@ -47,16 +47,18 @@ const char *FlushXObj::xlibNames[] = {
 	nullptr,
 };
 const char *FlushXObj::fileNames[] = {
+	"FlushEvents",
 	"FlushXObj",
 	"Johnny",
+	"Toilet",
 	nullptr
 };
 
 static MethodProto xlibMethods[] = {
-	{ "new",				FlushXObj::m_new,				 0, 0,	400 },	// D4
+	{ "new",				FlushXObj::m_new,				 0, 0,	300 },	// D3
 	{ "AddToMask",			FlushXObj::m_addToMask,			 2, 2,	400 },	// D4
 	{ "ClearMask",			FlushXObj::m_clearMask,			 0, 0,	400 },	// D4
-	{ "Flush",				FlushXObj::m_flush,				 0, 0,  400 },	// D4
+	{ "Flush",				FlushXObj::m_flush,				 0, 0,  300 },	// D3
 	{ "FlushEvents",		FlushXObj::m_flushEvents,		 2, 2,  400 },	// D4
 	{ nullptr, nullptr, 0, 0, 0 }
 };
