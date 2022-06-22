@@ -66,7 +66,7 @@ struct C64Rec {
 	size_t _copySource;
 	size_t _copyDest;
 	size_t _copySize;
-	size_t _imgOffset;
+	int _imgOffset;
 };
 
 static C64Rec g_C64Registry[] = {
@@ -122,6 +122,10 @@ static C64Rec g_C64Registry[] = {
 	{ SAVAGE_ISLAND2_C64, 0x2ab00, 0x8801, TYPE_D64, 1, "-f86 -d0x178b", "SAVAGEISLAND2+",   1, 0, 0 }, // Savage Island part 2 C64 (D64)
 	{ SAVAGE_ISLAND_C64,  0x2ab00, 0xc361, TYPE_D64, 1, "-f86 -d0x1793", "SAVAGE ISLAND P1", 1, 0, 0 }, // Savage Island part 1 C64 (D64) alt
 	{ SAVAGE_ISLAND2_C64, 0x2ab00, 0xc361, TYPE_D64, 1, nullptr,		 "SAVAGE ISLAND P2", 0, 0, 0 }, // Savage Island part 2  C64 (D64) alt
+
+	{ HULK_C64,		 0x2ab00, 0xcdd8, TYPE_D64, 0, nullptr, nullptr, 0, 0x1806, 0xb801, 0x307 },  // Questprobe 1 - The Hulk C64 (D64)
+	{ SPIDERMAN_C64, 0x2ab00, 0xde56, TYPE_D64, 0, nullptr, nullptr, 0, 0x1801, 0xa801, 0x2000 }, // Spiderman C64 (D64)
+	{ SPIDERMAN_C64, 0x08e72, 0xb2f4, TYPE_T64, 3, nullptr, nullptr, 0, 0, 0 },                   // Spiderman C64 (T64) MasterCompressor / Relax -> ECA Compacker -> Section8 Packer
 
 	{ UNKNOWN_GAME, 0, 0, UNKNOWN_FILE_TYPE, 0, nullptr, nullptr, 0, 0, 0, 0 }
 };

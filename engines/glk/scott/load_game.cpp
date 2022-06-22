@@ -188,6 +188,9 @@ void loadGameFile(Common::SeekableReadStream *f) {
 	case GREMLINS_SPANISH:
 		loadExtraSpanishGremlinsData();
 		break;
+	case SPIDERMAN_C64:
+		spiderman64Sysmess();
+		break;
 	case HULK_C64:
 	case HULK:
 		for (int i = 0; i < 6; i++) {

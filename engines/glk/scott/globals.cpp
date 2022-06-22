@@ -124,6 +124,7 @@ Globals::Globals() : _sys(MAX_SYSMESS), _directions(NUMBER_OF_DIRECTIONS), _extr
 	_md5Index.setVal("05cf6c64ecde5288ae2e46099bfd19a3", 31); // adventureland
 	_md5Index.setVal("5af919881417920ec6a3961b4577f587", 32); // adventureland
 	_md5Index.setVal("414d459ceb211230356ad823475866b3", 38); // savage island
+	_md5Index.setVal("d80e133dd396565f773052cb317e8222", 40); // questprobe hulk
 }
 
 Globals::~Globals() {

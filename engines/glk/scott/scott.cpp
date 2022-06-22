@@ -1114,8 +1114,7 @@ ActionResultType Scott::performLine(int ct) {
 				switch (CURRENT_GAME) {
 				case SPIDERMAN:
 				case SPIDERMAN_C64:
-					// TODO
-					// DrawBlack();
+					drawBlack();
 					break;
 				case SECRET_MISSION:
 				case SECRET_MISSION_C64:

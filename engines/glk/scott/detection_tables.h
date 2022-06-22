@@ -189,6 +189,7 @@ const GlkDetectionEntry SCOTT_GAMES[] = {
 	DT_ENTRYL1("gremlins", Common::DE_DEU, "C64", "e5d743d8727c8aca011a737bbb5ad818", 49155),
 	DT_ENTRY1("seasofblood",	 "C64", "267c3fe2bb150365de0358f07b5df15c", 174848),
 	DT_ENTRY1("seasofblood",	 "C64", "46280fb1d701a41492b8434467c31029", 41481),
+	DT_ENTRY1("marveladventure", "C64", "d80e133dd396565f773052cb317e8222", 174848),
 
 	//Scott Adams
 	DT_ENTRY1("adventureland",		"C64", "05cf6c64ecde5288ae2e46099bfd19a3", 27152),

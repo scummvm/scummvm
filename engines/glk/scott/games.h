@@ -1779,5 +1779,134 @@ const GameInfo _games[NUMGAMES] = {
 			 21,     // number_of_pictures;
 			 C64B,   // palette
 			 3,      // picture_format_version;
+			 0),
+	GameInfo("Questprobe 2: Spiderman",
+			 SPIDERMAN,
+			 NO_TYPE,                  // type
+			 ENGLISH,                  // subtype
+			 FOUR_LETTER_UNCOMPRESSED, // dictionary type
+
+			 72,  // Number of items
+			 257, // Number of actions
+			 124, // Number of words
+			 40,  // Number of rooms
+			 12,  // Max carried items
+			 4,   // Word length
+			 99,  // Number of messages
+
+			 125, // number_of_verbs
+			 125, // number_of_nouns;
+
+			 0x246b, // header
+			 EARLY,  // header style
+
+			 0x3dd1,  // room images
+			 FOLLOWS, // item flags
+			 FOLLOWS, // item images
+
+			 FOLLOWS, // actions
+			 UNCOMPRESSED,
+			 0x5036,  // dictionary
+			 0x5518,  // start_of_room_descriptions;
+			 0x4eac,  // start_of_room_connections;
+			 0x575e,  // start_of_messages;
+			 FOLLOWS, // start_of_item_descriptions;
+			 0x4fa2,  // start_of_item_locations;
+
+			 0x2553, // start_of_system_messages
+			 0x28f7, // start of directions
+
+			 0x6296,  // start_of_characters;
+			 0x6a96,  // start_of_image_data
+			 -0x3fe5, // image_address_offset
+			 41,      // number_of_pictures;
+			 ZXOPT,   // palette
+			 2,       // picture_format_version;
+			 0),
+	GameInfo("Questprobe 2: Spiderman C64",
+			 SPIDERMAN_C64,
+			 NO_TYPE,                             // type
+			 static_cast<Subtype>(ENGLISH | C64), // subtype
+			 FOUR_LETTER_UNCOMPRESSED,            // dictionary type
+
+			 72,  // Number of items
+			 245, // Number of actions
+			 124, // Number of words
+			 40,  // Number of rooms
+			 12,  // Max carried items
+			 4,   // Word length
+			 98,  // Number of messages
+
+			 118, // number_of_verbs
+			 124, // number_of_nouns;
+
+			 0x4baf, // header
+			 EARLY,  // header style
+
+			 0x4bc9,  // room images
+			 0x70da,  // item flags
+			 FOLLOWS, // item images
+
+			 0x4bf2, // actions
+			 UNCOMPRESSED,
+			 0x5b52,  // dictionary
+			 0x600c,  // start_of_room_descriptions;
+			 FOLLOWS, // start_of_room_connections;
+			 FOLLOWS, // start_of_messages;
+			 0x6b9b,  // start_of_item_descriptions;
+			 FOLLOWS, // start_of_item_locations;
+
+			 0x0a7b, // start_of_system_messages
+			 0x0a7b, // start of directions
+
+			 0x716c, // start_of_characters;
+			 0x796c, // start_of_image_data
+			 0x716c, // image_address_offset
+			 41,     // number_of_pictures;
+			 C64B,   // palette
+			 2,      // picture_format_version;
+			 0),
+	GameInfo("Questprobe 1: The Hulk C64", HULK_C64,
+			 NO_TYPE,                  // type
+			 ENGLISH,                  // subtype
+			 FOUR_LETTER_UNCOMPRESSED, // dictionary type
+
+			 54,  // Number of items
+			 261, // Number of actions
+			 128, // Number of words
+			 20,  // Number of rooms
+			 10,  // Max carried items
+			 4,   // Word length
+			 99,  // Number of messages
+
+			 128, // number_of_verbs
+			 129, // number_of_nouns;
+
+			 0x7867,      // header
+			 HULK_HEADER, // header style
+
+			 0x2280, // room images
+			 0,      // item flags
+			 0x22ba, // item images
+
+			 0x8c47, // actions
+			 HULK_ACTIONS,
+			 0x7884,  // dictionary
+			 0x7d8d,  // start_of_room_descriptions;
+			 0x9CD1,  // start_of_room_connections;
+			 0x831E,  // start_of_messages;
+			 FOLLOWS, // start_of_item_descriptions;
+			 0x8AFD,  // start_of_item_locations;
+
+			 // These are spread out all over the code
+			 0,      // start_of_system_messages
+			 0xae25, // start of directions
+
+			 0x0d01, // start_of_characters;
+			 0x2701, // start_of_image_data
+			 0,      // image_address_offset
+			 43,     // number_of_pictures;
+			 C64B,   // palette
+			 0,      // picture_format_version;
 			 0)
 };
