@@ -52,11 +52,16 @@ enum FileCategory {
 };
 
 struct FileIdentification {
+	union Tag {
+		uint32 value;
+		char debug[4];
+	};
+
 	Common::String fileName;
 	FileCategory category;
 
-	uint32 macType;
-	uint32 macCreator;
+	Tag macType;
+	Tag macCreator;
 	Common::SharedPtr<Common::MacResManager> resMan;
 	Common::SharedPtr<Common::SeekableReadStream> stream;
 };
@@ -196,8 +201,8 @@ void ObsidianGameDataHandler::unpackMacRetailInstaller(Common::Array<Common::Sha
 
 		FileIdentification ident;
 		ident.fileName = request.fileName;
-		ident.macCreator = request.creator;
-		ident.macType = request.type;
+		ident.macCreator.value = request.creator;
+		ident.macType.value = request.type;
 		ident.resMan = resMan;
 		ident.category = kFileCategoryUnknown;
 		files.push_back(ident);
@@ -210,8 +215,8 @@ void ObsidianGameDataHandler::unpackMacRetailInstaller(Common::Array<Common::Sha
 
 		FileIdentification ident;
 		ident.fileName = "Obsidian Data 1";
-		ident.macCreator = MKTAG('M', 'f', 'P', 'l');
-		ident.macType = MKTAG('M', 'F', 'm', 'm');
+		ident.macCreator.value = MKTAG('M', 'f', 'P', 'l');
+		ident.macType.value = MKTAG('M', 'F', 'm', 'm');
 		ident.category = kFileCategoryUnknown;
 		ident.stream = startupStream;
 		files.push_back(ident);
@@ -551,11 +556,11 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 		const ADGameFileDescription *fileDesc = gameDesc.desc.filesDescriptions;
 		while (fileDesc->fileName) {
 			const char *fileName = fileDesc->fileName;
-			
+
 			Boot::FileIdentification ident;
 			ident.fileName = fileName;
 			ident.category = Boot::kFileCategoryUnknown;
-			if (!Boot::getMacTypesForFile(fileName, ident.macType, ident.macCreator))
+			if (!Boot::getMacTypesForFile(fileName, ident.macType.value, ident.macCreator.value))
 				error("Couldn't determine Mac file type code for file '%s'", fileName);
 
 			macFiles.push_back(ident);
@@ -580,7 +585,7 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 
 		for (Boot::FileIdentification &macFile : macFiles) {
 			if (macFile.category == Boot::kFileCategoryUnknown) {
-				switch (macFile.macType) {
+				switch (macFile.macType.value) {
 				case MKTAG('M', 'F', 'm', 'm'):
 					haveAnyMFmm = true;
 					break;
@@ -601,12 +606,12 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 
 		bool isMT2CrossPlatform = (haveAnyMFmx && !haveAnyMFmm);
 		if (isMT2CrossPlatform && haveAnyMFxm)
-			error("Unexpected combination of player file types");		
+			error("Unexpected combination of player file types");
 
 		// Identify unknown files
 		for (Boot::FileIdentification &macFile : macFiles) {
 			if (macFile.category == Boot::kFileCategoryUnknown) {
-				switch (macFile.macType) {
+				switch (macFile.macType.value) {
 				case MKTAG('M', 'F', 'm', 'm'):
 					macFile.category = Boot::kFileCategoryProjectMainSegment;
 					break;
@@ -676,7 +681,7 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 			if (macFile.category == Boot::kFileCategoryPlayer)
 				Boot::loadCursorsMac(macFile, *cursorGraphics);
 		}
-		
+
 		for (Boot::FileIdentification &macFile : macFiles) {
 			if (macFile.category == Boot::kFileCategoryExtension)
 				Boot::loadCursorsMac(macFile, *cursorGraphics);
@@ -722,8 +727,8 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 			Boot::FileIdentification ident;
 			ident.fileName = fileName;
 			ident.category = Boot::kFileCategoryUnknown;
-			ident.macType = 0;
-			ident.macCreator = 0;
+			ident.macType.value = 0;
+			ident.macCreator.value = 0;
 			winFiles.push_back(ident);
 
 			fileDesc++;
