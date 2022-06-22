@@ -67,6 +67,7 @@ MODULE_OBJS := \
 	engine/graphics/RendererPostEffects.o \
 	engine/graphics/Skeleton.o \
 	engine/graphics/SubMesh.o \
+	engine/graphics/bitmap2D.o \
 	engine/gui/Gui.o \
 	engine/gui/GuiGfxElement.o \
 	engine/gui/GuiMaterialBasicTypes.o \
@@ -95,7 +96,6 @@ MODULE_OBJS := \
 	engine/impl/LowLevelGraphicsSDL.o \
 	engine/impl/LowLevelInputSDL.o \
 	engine/impl/LowLevelPhysicsNewton.o \
-	engine/resources/low_level_resources.o \
 	engine/impl/LowLevelSoundOpenAL.o \
 	engine/impl/LowLevelSystemSDL.o \
 	engine/impl/MeshLoaderCollada.o \
@@ -116,7 +116,6 @@ MODULE_OBJS := \
 	engine/impl/PhysicsJointSliderNewton.o \
 	engine/impl/PhysicsMaterialNewton.o \
 	engine/impl/PhysicsWorldNewton.o \
-	engine/graphics/bitmap2D.o \
 	engine/impl/SDLFontData.o \
 	engine/impl/SDLGameSetup.o \
 	engine/impl/SDLTexture.o \
@@ -183,6 +182,7 @@ MODULE_OBJS := \
 	engine/resources/TextureManager.o \
 	engine/resources/TileSetManager.o \
 	engine/resources/VideoManager.o \
+	engine/resources/low_level_resources.o \
 	engine/scene/AnimationState.o \
 	engine/scene/Area2D.o \
 	engine/scene/Camera2D.o \
@@ -223,8 +223,6 @@ MODULE_OBJS := \
 	engine/sound/LowLevelSound.o \
 	engine/sound/MusicHandler.o \
 	engine/sound/Sound.o \
-	engine/sound/SoundEntityData.o \
-	engine/sound/SoundHandler.o \
 	engine/system/Container.o \
 	engine/system/LogicTimer.o \
 	engine/system/MemoryManager.o \
