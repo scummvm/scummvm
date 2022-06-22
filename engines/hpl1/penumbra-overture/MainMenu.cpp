@@ -2609,7 +2609,7 @@ void cMainMenu::CreateWidgets() {
 																	 mpInit, vPos, cVector2f(355, 170), 15, sDir, (int)i));
 		AddWidgetToState(state, gpSaveGameList[i]);
 
-		iLowLevelResources *pLowLevelResources = mpInit->mpGame->GetResources()->GetLowLevel();
+		LowLevelResources *pLowLevelResources = mpInit->mpGame->GetResources()->GetLowLevel();
 		iLowLevelSystem *pLowLevelSystem = mpInit->mpGame->GetSystem()->GetLowLevel();
 
 		tStringList lstFiles;

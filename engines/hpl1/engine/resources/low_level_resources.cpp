@@ -19,23 +19,8 @@
  *
  */
 
-/*
- * Copyright (C) 2006-2010 - Frictional Games
- *
- * This file is part of HPL1 Engine.
- */
-
-#include "hpl1/engine/impl/LowLevelResourcesSDL.h"
-#include "hpl1/engine/impl/MeshLoaderCollada.h"
-#include "hpl1/engine/impl/MeshLoaderMSH.h"
-#include "hpl1/engine/graphics/bitmap2D.h"
-#ifdef INCLUDE_THEORA
-#include "hpl1/engine/impl/VideoStreamTheora.h"
-#endif
-#include "hpl1/engine/system/String.h"
-
-//#include "SDL/SDL.h"
-//#include "SDL/SDL_image.h"
+#include "hpl1/engine/resources/low_level_resources.h"
+#include "hpl1/engine/graphics/LowLevelGraphics.h"
 #include "hpl1/engine/resources/MeshLoaderHandler.h"
 #include "hpl1/engine/resources/VideoManager.h"
 #include "common/fs.h"
@@ -43,42 +28,7 @@
 
 namespace hpl {
 
-//////////////////////////////////////////////////////////////////////////
-// CONSTRUCTORS
-//////////////////////////////////////////////////////////////////////////
-
-//-----------------------------------------------------------------------
-
-cLowLevelResourcesSDL::cLowLevelResourcesSDL(cLowLevelGraphicsSDL *apLowLevelGraphics) {
-	mvImageFormats[0] = "BMP";
-	mvImageFormats[1] = "LBM";
-	mvImageFormats[2] = "PCX";
-	mvImageFormats[3] = "GIF";
-	mvImageFormats[4] = "JPEG";
-	mvImageFormats[5] = "PNG";
-	mvImageFormats[6] = "JPG";
-	mvImageFormats[7] = "TGA";
-	mvImageFormats[8] = "TIFF";
-	mvImageFormats[9] = "TIF";
-	mvImageFormats[10] = "";
-
-	mpLowLevelGraphics = apLowLevelGraphics;
-}
-
-//-----------------------------------------------------------------------
-
-cLowLevelResourcesSDL::~cLowLevelResourcesSDL() {
-}
-
-//-----------------------------------------------------------------------
-
-//////////////////////////////////////////////////////////////////////////
-// PUBLIC METHOD
-//////////////////////////////////////////////////////////////////////////
-
-//-----------------------------------------------------------------------
-
-Bitmap2D *cLowLevelResourcesSDL::LoadBitmap2D(tString asFilePath, tString asType) {
+Bitmap2D *LowLevelResources::LoadBitmap2D(tString filepath, tString type) {
 #if 0
   		tString tType;
 		if(asType != "")
@@ -126,36 +76,25 @@ Bitmap2D *cLowLevelResourcesSDL::LoadBitmap2D(tString asFilePath, tString asType
 	return nullptr;
 }
 
-//-----------------------------------------------------------------------
-
-void cLowLevelResourcesSDL::GetSupportedImageFormats(tStringList &alstFormats) {
-	int lPos = 0;
-
-	while (mvImageFormats[lPos] != "") {
-		alstFormats.push_back(mvImageFormats[lPos]);
-		lPos++;
-	}
-}
-//-----------------------------------------------------------------------
-
-void cLowLevelResourcesSDL::AddMeshLoaders(cMeshLoaderHandler *apHandler) {
-	// apHandler->AddLoader(hplNew( cMeshLoaderFBX,(mpLowLevelGraphics)));
-	apHandler->AddLoader(hplNew(cMeshLoaderMSH, (mpLowLevelGraphics)));
-	apHandler->AddLoader(hplNew(cMeshLoaderCollada, (mpLowLevelGraphics)));
+void LowLevelResources::GetSupportedImageFormats(tStringList &formats) {
+	formats.insert(formats.end(), {
+		"BMP","LBM","PCX","GIF","JPEG","PNG","JPG","TGA","TIFF","TIF"}); 
 }
 
-//-----------------------------------------------------------------------
+void LowLevelResources::AddMeshLoaders(cMeshLoaderHandler *ml) {
+#if 0
+	ml->AddLoader(hplNew(cMeshLoaderMSH, (mpLowLevelGraphics)));
+	ml->AddLoader(hplNew(cMeshLoaderCollada, (mpLowLevelGraphics)));
+#endif
+}
 
-void cLowLevelResourcesSDL::AddVideoLoaders(cVideoManager *apManager) {
+void LowLevelResources::AddVideoLoaders(cVideoManager *vm) {
 #ifdef INCLUDE_THORA
 	apManager->AddVideoLoader(hplNew(cVideoStreamTheora_Loader, ()));
 #endif
 }
 
-//-----------------------------------------------------------------------
-
-
-void cLowLevelResourcesSDL::FindFilesInDir(tStringList &alstStrings, tString asDir, tString asMask) {
+void LowLevelResources::FindFilesInDir(tStringList &alstStrings, tString asDir, tString asMask) {
 	//FIXME: use consistent string types
 	Common::String pattern = Common::String(asDir.c_str()) + '/' +  Common::String(asMask.c_str()); 
 	Common::ArchiveMemberList ls; 
@@ -166,6 +105,5 @@ void cLowLevelResourcesSDL::FindFilesInDir(tStringList &alstStrings, tString asD
 		alstStrings.push_back(f->getName().c_str()); 
 }
 
-//-----------------------------------------------------------------------
-
 } // namespace hpl
+

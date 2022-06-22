@@ -31,7 +31,7 @@
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
 #include "hpl1/engine/graphics/Texture.h"
 #include "hpl1/engine/resources/FileSearcher.h"
-#include "hpl1/engine/resources/LowLevelResources.h"
+#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/resources/Resources.h"
 #include "hpl1/engine/system/LowLevelSystem.h"
 #include "hpl1/engine/system/String.h"

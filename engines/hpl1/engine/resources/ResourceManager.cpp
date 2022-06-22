@@ -29,7 +29,7 @@
 #include "hpl1/engine/system/String.h"
 
 #include "hpl1/engine/resources/FileSearcher.h"
-#include "hpl1/engine/resources/LowLevelResources.h"
+#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/resources/ResourceBase.h"
 
 #include "hpl1/engine/system/LowLevelSystem.h"
@@ -47,7 +47,7 @@ int iResourceManager::mlTabCount = 0;
 //-----------------------------------------------------------------------
 
 iResourceManager::iResourceManager(cFileSearcher *apFileSearcher,
-								   iLowLevelResources *apLowLevelResources,
+								   LowLevelResources *apLowLevelResources,
 								   iLowLevelSystem *apLowLevelSystem) {
 	mpFileSearcher = apFileSearcher;
 	mpLowLevelResources = apLowLevelResources;

@@ -46,7 +46,7 @@ namespace hpl {
 class cScene;
 class cResources;
 class iLowLevelGraphics;
-class iLowLevelResources;
+class LowLevelResources;
 class cRenderObject2D;
 class cGraphicsDrawer;
 class cCamera2D;
@@ -99,7 +99,7 @@ public:
 
 private:
 	iLowLevelGraphics *mpLowLevelGraphics;
-	iLowLevelResources *mpLowLevelResources;
+	LowLevelResources *mpLowLevelResources;
 	cResources *mpResources;
 	cGraphicsDrawer *mpGraphicsDrawer;
 

@@ -40,7 +40,7 @@ namespace hpl {
 #define kFilterProgramNum (1)
 
 class iLowLevelGraphics;
-class iLowLevelResources;
+class LowLevelResources;
 class iGpuProgram;
 class cResources;
 class iTexture;
@@ -136,7 +136,7 @@ private:
 	void RenderDepthOfField();
 
 	iLowLevelGraphics *mpLowLevelGraphics;
-	iLowLevelResources *mpLowLevelResources;
+	LowLevelResources *mpLowLevelResources;
 	cResources *mpResources;
 	cGpuProgramManager *mpGpuManager;
 	cRenderer3D *mpRenderer3D;

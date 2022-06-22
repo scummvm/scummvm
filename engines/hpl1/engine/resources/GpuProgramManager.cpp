@@ -40,7 +40,7 @@ namespace hpl {
 //-----------------------------------------------------------------------
 
 cGpuProgramManager::cGpuProgramManager(cFileSearcher *apFileSearcher, iLowLevelGraphics *apLowLevelGraphics,
-									   iLowLevelResources *apLowLevelResources, iLowLevelSystem *apLowLevelSystem)
+									   LowLevelResources *apLowLevelResources, iLowLevelSystem *apLowLevelSystem)
 	: iResourceManager(apFileSearcher, apLowLevelResources, apLowLevelSystem) {
 	mpLowLevelGraphics = apLowLevelGraphics;
 }

@@ -48,7 +48,7 @@ typedef tFlag tRendererDebugFlag;
 
 class cResources;
 class iLowLevelGraphics;
-class iLowLevelResources;
+class LowLevelResources;
 class iTexture;
 class cCamera3D;
 class cWorld3D;
@@ -218,7 +218,7 @@ private:
 								  eMaterialRenderType aRenderType, iLight3D *apLight);
 
 	iLowLevelGraphics *mpLowLevelGraphics;
-	iLowLevelResources *mpLowLevelResources;
+	LowLevelResources *mpLowLevelResources;
 
 	cRendererPostEffects *mpPostEffects;
 

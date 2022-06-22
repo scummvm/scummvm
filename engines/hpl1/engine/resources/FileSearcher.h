@@ -34,14 +34,14 @@
 
 namespace hpl {
 
-class iLowLevelResources;
+class LowLevelResources;
 
 typedef std::multimap<tString, tString> tFilePathMap;
 typedef tFilePathMap::iterator tFilePathMapIt;
 
 class cFileSearcher {
 public:
-	cFileSearcher(iLowLevelResources *apLowLevelResources);
+	cFileSearcher(LowLevelResources *apLowLevelResources);
 	~cFileSearcher();
 
 	/**
@@ -67,7 +67,7 @@ private:
 	tFilePathMap m_mapFiles;
 	tStringSet m_setLoadedDirs;
 
-	iLowLevelResources *mpLowLevelResources;
+	LowLevelResources *mpLowLevelResources;
 };
 
 };     // namespace hpl
