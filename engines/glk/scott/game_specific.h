@@ -37,6 +37,7 @@ namespace Glk {
 namespace Scott {
 
 void mysterious64Sysmess();
+void claymorgue64Sysmess();
 
 } // End of namespace Scott
 } // End of namespace Glk
