@@ -69,7 +69,8 @@ protected:
 	int getObjectIdFromOBIM(const byte *obim) override;
 
 	void processKeyboard(Common::KeyState lastKeyHit) override;
-
+	void updateCursor() override;
+	void setCursorTransparency(int a) override;
 	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
 
 

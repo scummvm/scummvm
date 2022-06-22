@@ -136,8 +136,8 @@ protected:
 	virtual void writeArray(int array, int index, int base, int value);
 	void shuffleArray(int num, int minIdx, int maxIdx);
 
-	virtual void setDefaultCursor();
-	void setCursorTransparency(int a);
+	void setDefaultCursor() override;
+	void setCursorTransparency(int a) override;
 	void setCursorHotspot(int x, int y);
 
 	virtual void setCursorFromImg(uint img, uint room, uint imgindex);
