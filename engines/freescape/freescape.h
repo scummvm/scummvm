@@ -6,7 +6,7 @@
 #include "engines/engine.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
-#include "graphics/pixelbuffer.h"
+#include "graphics/tinygl/pixelbuffer.h"
 #include "gui/debugger.h"
 
 #include "freescape/area.h"
