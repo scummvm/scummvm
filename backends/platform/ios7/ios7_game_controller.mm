@@ -34,6 +34,7 @@
 @implementation GameController
 
 @synthesize view;
+@synthesize isConnected;
 
 - (id)initWithView:(iPhoneView *)view {
 	self = [super init];

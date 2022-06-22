@@ -33,6 +33,7 @@
 }
 
 @dynamic view;
+@dynamic isConnected;
 
 - (id)initWithView:(iPhoneView *)view {
 	self = [super initWithView:view];
@@ -49,6 +50,7 @@
 
 - (void)mouseDidConnect:(NSNotification *)notification {
 #ifdef __IPHONE_14_0
+	[self setIsConnected:YES];
 	_mouse = (GCMouse*)notification.object;
 
 	_mouse.mouseInput.mouseMovedHandler = ^(GCMouseInput * _Nonnull mouse, float deltaX, float deltaY) {

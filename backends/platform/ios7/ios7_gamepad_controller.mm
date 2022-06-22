@@ -36,6 +36,7 @@
 }
 
 @dynamic view;
+@dynamic isConnected;
 
 - (id)initWithView:(iPhoneView *)view {
 	self = [super initWithView:view];
@@ -49,6 +50,7 @@
 }
 
 - (void)controllerDidConnect:(NSNotification *)notification {
+	[self setIsConnected:YES];
 	_controller = (GCController*)notification.object;
 
 	if (_controller.extendedGamepad != nil) {

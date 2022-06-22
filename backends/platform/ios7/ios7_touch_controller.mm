@@ -31,12 +31,16 @@
 }
 
 @dynamic view;
+@dynamic isConnected;
 
 - (id)initWithView:(iPhoneView *)view {
 	self = [super initWithView:view];
 
 	_firstTouch = NULL;
 	_secondTouch = NULL;
+
+	// Touches should always be present in iOS view
+	[self setIsConnected:YES];
 
 	return self;
 }
