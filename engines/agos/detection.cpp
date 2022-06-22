@@ -100,6 +100,15 @@ static const ExtraGuiOption preferDigitalSfx = {
 	0
 };
 
+static const ExtraGuiOption disableFadeEffects = {
+	_s("Disable fade-out effects"),
+	_s("Don't fade every screen to black when leaving a room."),
+	"disable_fade_effects",
+	false,
+	0,
+	0
+};
+
 class AgosMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	AgosMetaEngineDetection() : AdvancedMetaEngineDetection(AGOS::gameDescriptions, sizeof(AGOS::AGOSGameDescription), agosGames) {
@@ -153,6 +162,9 @@ public:
 			// DOS versions of Elvira 2 and Waxworks can use either Adlib or
 			// digital SFX.
 			options.push_back(preferDigitalSfx);
+		}
+		if (target.empty() || gameid == "simon1" || gameid == "simon2") {
+			options.push_back(disableFadeEffects);
 		}
 		return options;
 	}

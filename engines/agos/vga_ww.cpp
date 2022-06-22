@@ -197,8 +197,8 @@ void AGOSEngine::vc61() {
 
 void AGOSEngine::vc62_fastFadeOut() {
 	vc29_stopAllSounds();
-	
-	if (!_fastFadeOutFlag) {
+
+	if (!_neverFade && !_fastFadeOutFlag) {
 		uint i, fadeSize, fadeCount;
 
 		_fastFadeCount = 256;

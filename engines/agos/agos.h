@@ -454,6 +454,7 @@ protected:
 	bool _bottomPalette;
 	uint16 _fastFadeCount;
 	volatile uint16 _fastFadeInFlag;
+	bool _neverFade;
 
 	uint16 _screenWidth, _screenHeight;
 	uint16 _internalWidth, _internalHeight;

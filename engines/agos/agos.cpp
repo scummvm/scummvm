@@ -371,7 +371,8 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 
 	_fastFadeCount = 0;
 	_fastFadeInFlag = 0;
-	_fastFadeOutFlag = 0;
+	_fastFadeOutFlag = false;
+	_neverFade = false;
 	_exitCutscene = 0;
 	_paletteFlag = 0;
 	_bottomPalette = false;
@@ -602,6 +603,9 @@ Common::Error AGOSEngine::init() {
 		_internalWidth <<= 1;
 		_internalHeight <<= 1;
 	}
+
+	if (ConfMan.hasKey("disable_fade_effects"))
+		_neverFade = ConfMan.getBool("disable_fade_effects");
 
 	initGraphics(_internalWidth, _internalHeight);
 
