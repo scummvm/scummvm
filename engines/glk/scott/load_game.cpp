@@ -157,6 +157,17 @@ void loadGameFile(Common::SeekableReadStream *f) {
 	case CLAYMORGUE_C64:
 		claymorgue64Sysmess();
 		break;
+	case SAVAGE_ISLAND_C64:
+		_G(_items)[20]._image = 13;
+	case SAVAGE_ISLAND2_C64:
+		_G(_sys)[IM_DEAD] = "I'm DEAD!! ";
+		if (CURRENT_GAME == SAVAGE_ISLAND2_C64)
+			_G(_rooms)[30]._image = 20;
+		break;
+	case SAVAGE_ISLAND:
+		_G(_items)[20]._image = 13;
+	case SAVAGE_ISLAND2:
+		MY_LOC = 30; /* Both parts of Savage Island begin in room 30 */
 	case GREMLINS_GERMAN_C64:
 		loadExtraGermanGremlinsc64Data();
 		break;

@@ -1615,4 +1615,169 @@ const GameInfo _games[NUMGAMES] = {
 			 C64B,    // palette
 			 1,       // picture_format_version;
 			 0),
+	GameInfo("Savage Island part I",
+			 SAVAGE_ISLAND,
+			 SAVAGE_ISLAND_VARIANT,    // type
+			 ENGLISH,                  // subtype
+			 FOUR_LETTER_UNCOMPRESSED, // dictionary type
+
+			 58,  // Number of items
+			 259, // Number of actions
+			 84,  // Number of words
+			 34,  // Number of rooms
+			 6,   // Max carried items
+			 4,   // Word length
+			 99,  // Number of messages
+
+			 82, // number_of_verbs
+			 84, // number_of_nouns;
+
+			 0x236d,  // header
+			 LATE,    // header style
+			 0x390c,  // room images
+			 FOLLOWS, // item flags
+			 FOLLOWS, // item images
+			 0x39a6,  // actions
+			 COMPRESSED,
+			 0x4484,  // dictionary
+			 0x47c7,  // start_of_room_descriptions;
+			 FOLLOWS, // start_of_room_connections;
+			 0x4b91,  // start_of_messages;
+			 FOLLOWS, // start_of_item_descriptions;
+			 FOLLOWS, // start_of_item_locations;
+
+			 0x2423, // start_of_system_messages
+			 0x25f3, // start of directions
+
+			 0x570f,  // start_of_characters;
+			 FOLLOWS, // start_of_image_data
+			 0x600f,  // image_address_offset
+			 37,      // number_of_pictures;
+			 ZXOPT,   // palette
+			 3,       // picture_format_version;
+			 0),
+	GameInfo("Savage Island part I (C64)",
+			 SAVAGE_ISLAND_C64,
+			 SAVAGE_ISLAND_VARIANT,               // type
+			 static_cast<Subtype>(ENGLISH | C64), // subtype
+			 FOUR_LETTER_UNCOMPRESSED,            // dictionary type
+
+			 58,  // Number of items
+			 259, // Number of actions
+			 84,  // Number of words
+			 34,  // Number of rooms
+			 6,   // Max carried items
+			 4,   // Word length
+			 99,  // Number of messages
+
+			 85, // number_of_verbs
+			 84, // number_of_nouns;
+
+			 0x46dc,  // header
+			 EARLY,   // header style
+			 0x4645,  // room images
+			 FOLLOWS, // item flags
+			 FOLLOWS, // item images
+			 0x46f6,  // actions
+			 COMPRESSED,
+			 0x51d6,  // dictionary
+			 0x5528,  // start_of_room_descriptions;
+			 FOLLOWS, // start_of_room_connections;
+			 FOLLOWS, // start_of_messages;
+					  //        0x58f6, // start_of_messages;
+			 FOLLOWS, // start_of_item_descriptions;
+			 FOLLOWS, // start_of_item_locations;
+
+			 0x0a5f, // start_of_system_messages
+			 0x0a5f, // start of directions
+
+			 0x6A02, // start_of_characters;
+			 0x7202, // start_of_image_data
+			 0x7302, // image_address_offset
+			 37,     // number_of_pictures;
+			 C64B,   // palette
+			 3,      // picture_format_version;
+			 0),
+	GameInfo("Savage Island part II",
+			 SAVAGE_ISLAND2,
+			 NO_TYPE,                  // type
+			 ENGLISH,                  // subtype
+			 FOUR_LETTER_UNCOMPRESSED, // dictionary type
+
+			 48,  // Number of items
+			 241, // Number of actions
+			 79,  // Number of words
+			 30,  // Number of rooms
+			 6,   // Max carried items
+			 4,   // Word length
+			 95,  // Number of messages
+
+			 74, // number_of_verbs
+			 79, // number_of_nouns;
+
+			 0x236d,  // header
+			 LATE,    // header style
+			 0x390c,  // room images
+			 FOLLOWS, // item flags
+			 FOLLOWS, // item images
+			 0x398e,  // actions
+			 COMPRESSED,
+			 0x43f0,  // dictionary
+			 0x46ed,  // start_of_room_descriptions;
+			 FOLLOWS, // start_of_room_connections;
+			 FOLLOWS, // start_of_messages;
+			 FOLLOWS, // start_of_item_descriptions;
+			 FOLLOWS, // start_of_item_locations;
+
+			 0x2423, // start_of_system_messages
+			 0x25f3, // start of directions
+
+			 0x57d0,  // start_of_characters;
+			 FOLLOWS, // start_of_image_data
+			 0x60d0,  // image_address_offset
+			 21,      // number_of_pictures;
+			 ZXOPT,   // palette
+			 3,       // picture_format_version;
+			 0),
+	GameInfo("Savage Island part II (C64)",
+			 SAVAGE_ISLAND2_C64,
+			 NO_TYPE,                             // type
+			 static_cast<Subtype>(ENGLISH | C64), // subtype
+			 FOUR_LETTER_UNCOMPRESSED,            // dictionary type
+
+			 48,  // Number of items
+			 241, // Number of actions
+			 78,  // Number of words
+			 30,  // Number of rooms
+			 6,   // Max carried items
+			 4,   // Word length
+			 94,  // Number of messages
+
+			 79, // number_of_verbs
+			 79, // number_of_nouns;
+
+			 0x4654,  // header
+			 EARLY,   // header style
+			 0x6310,  // room images
+			 FOLLOWS, // item flags
+			 FOLLOWS, // item images
+			 0x466e,  // actions
+			 COMPRESSED,
+			 0x50d2,  // dictionary
+			 0x53e8,  // start_of_room_descriptions;
+			 FOLLOWS, // start_of_room_connections;
+			 FOLLOWS, // start_of_messages;
+			 FOLLOWS, // start_of_item_descriptions;
+			 FOLLOWS, // start_of_item_locations;
+
+			 0x0a50, // start_of_system_messages
+			 0x0a50, // start of directions
+
+			 0x6A02, // start_of_characters;
+			 0x7202, // start_of_image_data
+			 0x7302, // image_address_offset
+			 21,     // number_of_pictures;
+			 C64B,   // palette
+			 3,      // picture_format_version;
+			 0)
 };

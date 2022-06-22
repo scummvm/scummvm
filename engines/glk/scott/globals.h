@@ -203,6 +203,12 @@ public:
 	glui32 _diceYOffset = 0;
 	int _shouldDrawObjectImages = 0;
 
+	// savage island
+	uint8_t *_saveIslandAppendix1 = nullptr;
+	int _saveIslandAppendix1Length = 0;
+	uint8_t *_saveIslandAppendix2 = nullptr;
+	int _saveIslandAppendix2Length = 0;
+
 public:
 	Globals();
 	~Globals();

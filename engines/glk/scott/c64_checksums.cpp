@@ -116,7 +116,12 @@ static C64Rec g_C64Registry[] = {
 	{ ADVENTURELAND_C64, 0x6a10,  0x1b10, TYPE_T64, 1, nullptr, nullptr,	0,		0, 0 },            // Adventureland C64 (T64) alt CruelCrunch v2.2
 	{ ADVENTURELAND_C64, 0x2ab00, 0x6638, TYPE_D64, 1, nullptr, nullptr,	0,		0, 0 },            // Adventureland C64 (D64) CruelCrunch v2.2
 	{ ADVENTURELAND_C64, 0x2adab, 0x751f, TYPE_D64, 0, nullptr, nullptr,	0,		0, 0 },            // Adventureland C64 (D64) alt
-	{ ADVENTURELAND_C64, 0x2adab, 0x64a4, TYPE_D64, 0, nullptr, "SAG1PIC",	-0xa53, 0, 0, 0, 0x65af} , // Adventureland C64 (D64) alt 2
+	{ ADVENTURELAND_C64, 0x2adab, 0x64a4, TYPE_D64, 0, nullptr, "SAG1PIC",	-0xa53, 0, 0, 0, 0x65af }, // Adventureland C64 (D64) alt 2
+
+	{ SAVAGE_ISLAND_C64,  0x2ab00, 0x8801, TYPE_D64, 1, "-f86 -d0x1793", "SAVAGEISLAND1+",   1, 0, 0 }, // Savage Island part 1 C64 (D64)
+	{ SAVAGE_ISLAND2_C64, 0x2ab00, 0x8801, TYPE_D64, 1, "-f86 -d0x178b", "SAVAGEISLAND2+",   1, 0, 0 }, // Savage Island part 2 C64 (D64)
+	{ SAVAGE_ISLAND_C64,  0x2ab00, 0xc361, TYPE_D64, 1, "-f86 -d0x1793", "SAVAGE ISLAND P1", 1, 0, 0 }, // Savage Island part 1 C64 (D64) alt
+	{ SAVAGE_ISLAND2_C64, 0x2ab00, 0xc361, TYPE_D64, 1, nullptr,		 "SAVAGE ISLAND P2", 0, 0, 0 }, // Savage Island part 2  C64 (D64) alt
 
 	{ UNKNOWN_GAME, 0, 0, UNKNOWN_FILE_TYPE, 0, nullptr, nullptr, 0, 0, 0, 0 }
 };
@@ -160,6 +165,78 @@ uint8_t *getFileNamed(uint8_t* data, int length, int* newLength, const char* nam
 		}
 	}
 	return file;
+}
+
+int savageIslandMenu(uint8_t **sf, size_t *extent, int recIndex) {
+	g_scott->output("This disk image contains two games. Select one.\n\n"
+					"1. Savage Island part I\n"
+					"2. Savage Island part II");
+
+	g_scott->glk_request_char_event(_G(_bottomWindow));
+
+	event_t ev;
+	int result = 0;
+	do {
+		g_scott->glk_select(&ev);
+		if (ev.type == evtype_CharInput) {
+			if (ev.val1 == '1' || ev.val1 == '2') {
+				result = ev.val1 - '0';
+			} else {
+				g_scott->glk_request_char_event(_G(_bottomWindow));
+			}
+		}
+	} while (result == 0);
+
+	g_scott->glk_window_clear(_G(_bottomWindow));
+
+	recIndex += result - 1;
+
+	C64Rec rec = g_C64Registry[recIndex];
+	int length;
+	uint8_t *file = getFileNamed(*sf, *extent, &length, rec._appendFile);
+
+	if (file != nullptr) {
+		if (rec._chk == 0xc361) {
+			if (rec._switches != nullptr) {
+				_G(_saveIslandAppendix1) = getFileNamed(*sf, *extent, &_G(_saveIslandAppendix1Length), "SI1PC1");
+				_G(_saveIslandAppendix2) = getFileNamed(*sf, *extent, &_G(_saveIslandAppendix2Length), "SI1PC2");
+			} else {
+				_G(_saveIslandAppendix1) = getFileNamed(*sf, *extent, &_G(_saveIslandAppendix1Length), "SI2PIC");
+			}
+		}
+		delete[] *sf;
+		*sf = file;
+		*extent = length;
+		if (_G(_saveIslandAppendix1Length) > 2)
+			_G(_saveIslandAppendix1Length) -= 2;
+		if (_G(_saveIslandAppendix2Length) > 2)
+			_G(_saveIslandAppendix2Length) -= 2;
+		return decrunchC64(sf, extent, rec);
+	} else {
+		error("savageIslandMenu: Failed loading file %s\n", rec._appendFile);
+		return 0;
+	}
+}
+
+void appendSIfiles(uint8_t **sf, size_t *extent) {
+	int totalLength = *extent + _G(_saveIslandAppendix1Length) + _G(_saveIslandAppendix2Length);
+
+	uint8_t *megabuf = new uint8_t[0xFFFF];
+	memcpy(megabuf, *sf, *extent);
+	delete[] *sf;
+	int offset = 0x6202;
+
+	if (_G(_saveIslandAppendix1)) {
+		memcpy(megabuf + offset, _G(_saveIslandAppendix1) + 2, _G(_saveIslandAppendix1Length));
+		delete[] _G(_saveIslandAppendix1);
+	}
+	if (_G(_saveIslandAppendix2)) {
+		memcpy(megabuf + offset + _G(_saveIslandAppendix1Length), _G(_saveIslandAppendix2) + 2, _G(_saveIslandAppendix2Length));
+		delete[] _G(_saveIslandAppendix2);
+	}
+	*extent = offset + _G(_saveIslandAppendix1Length) + _G(_saveIslandAppendix2Length);
+	*sf = new uint8_t[*extent];
+	memcpy(*sf, megabuf, *extent);
 }
 
 int mysteriousMenu(uint8_t **sf, size_t *extent, int recindex) {
@@ -219,7 +296,7 @@ int mysteriousMenu(uint8_t **sf, size_t *extent, int recindex) {
 	uint8_t *file = getFileNamed(*sf, *extent, &length, filename);
 
 	if (file != nullptr) {
-		delete[] * sf;
+		delete[] *sf;
 		*sf = file;
 		*extent = length;
 		C64Rec rec = g_C64Registry[recindex - 1 + result];
@@ -283,7 +360,7 @@ int mysteriousMenu2(uint8_t **sf, size_t *extent, int recindex) {
 	uint8_t *file = getFileNamed(*sf, *extent, &length, filename);
 
 	if (file != nullptr) {
-		delete[] * sf;
+		delete[] *sf;
 		*sf = file;
 		*extent = length;
 		C64Rec rec = g_C64Registry[recindex - 1 + result];
@@ -300,7 +377,9 @@ int detectC64(uint8_t **sf, size_t *extent) {
 
 	Common::String md5 = g_vm->getGameMD5();
 	int index = _G(_md5Index)[md5];
-	if (g_C64Registry[index]._id == BATON_C64) {
+	if (g_C64Registry[index]._id == SAVAGE_ISLAND_C64) {
+		return savageIslandMenu(sf, extent, index);
+	} else if (g_C64Registry[index]._id == BATON_C64) {
 		return mysteriousMenu(sf, extent, index);
 	} else if (g_C64Registry[index]._id == FEASIBILITY_C64) {
 		return mysteriousMenu2(sf, extent, index);
@@ -429,8 +508,19 @@ int decrunchC64(uint8_t **sf, size_t *extent, C64Rec record) {
 		error("decrunchC64: Game could not be read");
 	}
 
+	if (_G(_saveIslandAppendix1) != nullptr) {
+		appendSIfiles(sf, extent);
+	}
+
 	if (record._copySource != 0) {
 		result = copyData(record._copyDest, record._copySource, sf, *extent, record._copySize);
+		if (result) {
+			*extent = result;
+		}
+	}
+
+	if (CURRENT_GAME == CLAYMORGUE_C64 && record._copySource == 0x855) {
+		result = copyData(0x1531a, 0x2002, sf, *extent, 0x2000);
 		if (result) {
 			*extent = result;
 		}
