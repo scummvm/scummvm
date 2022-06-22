@@ -92,7 +92,7 @@ public:
 				 cSoundEntityManager *apSoundEntityManager,
 				 cWorld3D *apWorld,
 				 cSoundHandler *apSoundHandler, bool abRemoveWhenOver);
-	~cSoundEntity();
+	virtual ~cSoundEntity();
 
 	void Play(bool abPlayStart = true);
 	void Stop(bool abPlayEnd = true);
