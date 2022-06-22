@@ -1679,7 +1679,7 @@ void LB::b_put(int nargs) {
 			output += " ";
 	}
 	if (g_debugger->isActive()) {
-		g_debugger->debugPrintf("-- %s\n", output.c_str());
+		g_debugger->debugLogFile(output, true);
 	} else {
 		debug("-- %s", output.c_str());
 	}
@@ -1698,7 +1698,7 @@ void LB::b_showGlobals(int nargs) {
 			}
 		}
 	}
-	g_debugger->debugPrintf("%s", global_out.c_str());
+	g_debugger->debugLogFile(global_out, false);
 }
 
 void LB::b_showLocals(int nargs) {
@@ -1708,7 +1708,7 @@ void LB::b_showLocals(int nargs) {
 			local_out += it->_key + " = " + it->_value.asString() + "\n";
 		}
 	}
-	g_debugger->debugPrintf("%s", local_out.c_str());
+	g_debugger->debugLogFile(local_out, false);
 }
 
 ///////////////////
