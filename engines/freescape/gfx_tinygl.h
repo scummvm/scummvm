@@ -56,14 +56,9 @@ public:
 	virtual void renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours) override;
     virtual void renderFace(const Common::Array<Math::Vector3d> &vertices) override;
 
-
-
 	virtual void flipBuffer() override;
 	virtual void drawSky(uint8 color) override;
 	virtual void drawFloor(uint8 color) override;
-
-private:
-	TinyGL::FrameBuffer *_fb;
 };
 
 } // End of namespace Myst3

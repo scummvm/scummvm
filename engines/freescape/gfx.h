@@ -29,6 +29,7 @@
 #include "math/frustum.h"
 #include "math/matrix4.h"
 #include "math/vector3d.h"
+#include "graphics/tinygl/pixelbuffer.h"
 
 namespace Freescape {
 
@@ -183,7 +184,7 @@ public:
 	static const int kFrameHeight = 200;
 
 	void computeScreenViewport();
-	
+
 
 protected:
 	OSystem *_system;

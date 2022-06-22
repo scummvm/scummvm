@@ -37,7 +37,7 @@ public:
 	TinyGLTexture(const Graphics::Surface *surface);
 	virtual ~TinyGLTexture();
 
-	Graphics::BlitImage *getBlitTexture() const;
+	TinyGL::BlitImage *getBlitTexture() const;
 
 	void update(const Graphics::Surface *surface) override;
 	void updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) override;
@@ -46,7 +46,7 @@ public:
 	TGLuint internalFormat;
 	TGLuint sourceFormat;
 private:
-	Graphics::BlitImage *_blitImage;
+	TinyGL::BlitImage *_blitImage;
 };
 
 } // End of namespace Myst3

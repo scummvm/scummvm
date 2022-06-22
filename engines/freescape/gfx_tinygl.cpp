@@ -33,7 +33,7 @@
 #include "engines/freescape/gfx.h"
 #include "engines/freescape/gfx_tinygl.h"
 #include "engines/freescape/gfx_tinygl_texture.h"
-#include "graphics/tinygl/zblit.h"
+#include "graphics/tinygl/tinygl.h"
 
 namespace Freescape {
 
@@ -41,9 +41,7 @@ Renderer *CreateGfxTinyGL(OSystem *system) {
 	return new TinyGLRenderer(system);
 }
 
-TinyGLRenderer::TinyGLRenderer(OSystem *system) :
-		Renderer(system),
-		_fb(NULL) {
+TinyGLRenderer::TinyGLRenderer(OSystem *system) : Renderer(system) {
 }
 
 TinyGLRenderer::~TinyGLRenderer() {
@@ -63,9 +61,10 @@ void TinyGLRenderer::init() {
 
 	computeScreenViewport();
 
-	_fb = new TinyGL::FrameBuffer(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat());
-	TinyGL::glInit(_fb, 512);
-	tglEnableDirtyRects(ConfMan.getBool("dirtyrects"));
+	//_fb = new TinyGL::FrameBuffer(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat(), true);
+	TinyGL::createContext(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat(), 512, true, ConfMan.getBool("dirtyrects"));
+	//TinyGL::glInit(_fb, 512);
+	//tglEnableDirtyRects(ConfMan.getBool("dirtyrects"));
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
@@ -87,7 +86,7 @@ void TinyGLRenderer::clear() {
 	tglColor3f(1.0f, 1.0f, 1.0f);
 }
 
-void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) {	
+void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) {
 	tglDisable(TGL_TEXTURE_2D);
 	tglColor3ub(r, g, b);
 
@@ -131,7 +130,7 @@ void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	tglEnable(TGL_TEXTURE_2D);
 	tglDepthMask(TGL_FALSE);
 
-	Graphics::BlitTransform transform(sLeft + viewPort[0], sTop + viewPort[1]);
+	TinyGL::BlitTransform transform(sLeft + viewPort[0], sTop + viewPort[1]);
 	transform.sourceRectangle(textureRect.left, textureRect.top, sWidth, sHeight);
 	transform.tint(transparency);
 	tglBlit(((TinyGLTexture *)texture)->getBlitTexture(), transform);
@@ -164,10 +163,10 @@ void TinyGLRenderer::draw2DText(const Common::String &text, const Common::Point 
 		int w = textureRect.width();
 		int h = textureRect.height();
 
-		Graphics::BlitTransform transform(x, y);
+		TinyGL::BlitTransform transform(x, y);
 		transform.sourceRectangle(textureRect.left, textureRect.top, w, h);
 		transform.flip(true, false);
-		Graphics::tglBlit(glFont->getBlitTexture(), transform);
+		//TinyGL::tglBlit(glFont->getBlitTexture(), transform);
 
 		x += textureRect.width() - 3;
 	}
@@ -215,7 +214,7 @@ void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 			return;
 		tglBegin(TGL_LINES);
 		tglVertex3f(v0.x(), v0.y(),	v0.z());
-		tglVertex3f(v1.x(), v1.y(),	v1.z());		
+		tglVertex3f(v1.x(), v1.y(),	v1.z());
 		tglEnd();
 		return;
 	}
@@ -226,7 +225,7 @@ void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 		const Math::Vector3d &v2 = vertices[i+1];
 		tglVertex3f(v0.x(), v0.y(),	v0.z());
 		tglVertex3f(v1.x(), v1.y(),	v1.z());
-		tglVertex3f(v2.x(), v2.y(),	v2.z()); 
+		tglVertex3f(v2.x(), v2.y(),	v2.z());
 	}
 	tglEnd();
 }
@@ -243,16 +242,16 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vec
 		dy = 2;
 	else if (size.z() == 0)
 		dz = 2;
-	else { 
+	else {
 		if (ordinates->size() != 6)
 			error("Invalid polygon: %f %f %f", size.x(), size.y(), size.z());
 	}
-	
+
 	Common::Array<Math::Vector3d> vertices;
-	// tglEnable(TGL_POLYGON_OFFSET_FILL);
+	tglEnable(TGL_POLYGON_OFFSET_FILL);
 	// tglEnable(TGL_POLYGON_OFFSET_LINE);
 	// tglEnable(TGL_POLYGON_OFFSET_POINT);
-	tglPolygonOffset(50.f, 50.f);
+	tglPolygonOffset(1.f, 1.f);
 	if ((*colours)[0] > 0) {
 		_palette->getRGBAt((*colours)[0], r, g, b);
 		tglColor3ub(r, g, b);
@@ -281,13 +280,13 @@ void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::V
 	tglPolygonOffset(250, 250);
 	//debug("origin: %f, %f, %f", origin.x(), origin.y(), origin.z());
 	//debug("size: %f, %f, %f", size.x(), size.y(), size.z());
-	
+
 	float dx, dy, dz;
 	float offset = 0;
 	uint8 r, g, b;
 	Common::Array<Math::Vector3d> vertices;
-	for (int i = 0; i < 2; i++) { 
-		
+	for (int i = 0; i < 2; i++) {
+
 		//debug("rec color: %d", (*colours)[i]);
 		if ((*colours)[i] > 0) {
 			_palette->getRGBAt((*colours)[i], r, g, b);
@@ -330,7 +329,7 @@ void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::V
 			// 	tglVertex3f(origin.x(),	origin.y() + size.y(), origin.z());
 			// else if (size.y() == 0)
 			// 	tglVertex3f(origin.x() + size.x(),	origin.y(), origin.z());
-			// else 
+			// else
 			// 	tglVertex3f(origin.x() + size.x(),	origin.y(), origin.z());
 			// tglVertex3f(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z());
 
@@ -339,7 +338,7 @@ void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::V
 			// 	tglVertex3f(origin.x(),	origin.y(), origin.z()  + size.z());
 			// else if (size.y() == 0)
 			// 	tglVertex3f(origin.x() + size.x(),	origin.y(), origin.z() + size.y());
-			// else 
+			// else
 			// 	tglVertex3f(origin.x(),	origin.y() + size.y(), origin.z());
 			// tglVertex3f(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z());
 			// tglEnd();
@@ -439,7 +438,7 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 
 	// Face 0
 	if ((*colours)[5] > 0) {
-		_palette->getRGBAt((*colours)[5], r, g, b);	
+		_palette->getRGBAt((*colours)[5], r, g, b);
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
 		tglVertex3f(origin.x(),		        origin.y(),				origin.z() + size.z());
@@ -473,9 +472,18 @@ void TinyGLRenderer::drawFloor(uint8 color) {
 }
 
 void TinyGLRenderer::flipBuffer() {
-	TinyGL::tglPresentBuffer();
-	g_system->copyRectToScreen(_fb->getPixelBuffer(), _fb->linesize,
-	                           0, 0, _fb->xsize, _fb->ysize);
+	Common::List<Common::Rect> dirtyAreas;
+	TinyGL::presentBuffer(dirtyAreas);
+
+	Graphics::Surface glBuffer;
+	TinyGL::getSurfaceRef(glBuffer);
+
+	if (!dirtyAreas.empty()) {
+		for (Common::List<Common::Rect>::iterator itRect = dirtyAreas.begin(); itRect != dirtyAreas.end(); ++itRect) {
+			g_system->copyRectToScreen(glBuffer.getBasePtr((*itRect).left, (*itRect).top), glBuffer.pitch,
+			                           (*itRect).left, (*itRect).top, (*itRect).width(), (*itRect).height());
+		}
+	}
 }
 
 } // End of namespace Myst3
