@@ -34,7 +34,6 @@
 @implementation GameController
 
 @synthesize view;
-@synthesize isConnected;
 
 - (id)initWithView:(iPhoneView *)view {
 	self = [super init];
@@ -43,6 +42,13 @@
 	}
 	_firstButtonPressed = _secondButtonPressed = NO;
 	return self;
+}
+
+// Override the setter method
+- (void)setIsConnected:(BOOL)isConnected {
+	// Inform that input changed
+	_isConnected = isConnected;
+	[view addEvent:InternalEvent(kInputChanged, 0, 0)];
 }
 
 - (void)handlePointerMoveTo:(CGPoint)point {

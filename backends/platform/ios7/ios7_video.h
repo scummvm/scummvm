@@ -133,7 +133,9 @@ typedef struct {
 - (bool)fetchEvent:(InternalEvent *)event;
 
 - (bool)getMouseCoords:(CGPoint)point eventX:(int *)x eventY:(int *)y;
-
+- (BOOL)isTouchControllerConnected;
+- (BOOL)isMouseControllerConnected;
+- (BOOL)isGamepadControllerConnected;
 @end
 
 #endif
