@@ -38,6 +38,9 @@ namespace Scott {
 
 void mysterious64Sysmess();
 void claymorgue64Sysmess();
+void adventurelandAction(int p);
+void adventurelandDarkness();
+void adventureland64Sysmess();
 
 } // End of namespace Scott
 } // End of namespace Glk

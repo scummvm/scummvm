@@ -143,6 +143,17 @@ void loadGameFile(Common::SeekableReadStream *f) {
 	case SEAS_OF_BLOOD_C64:
 		loadExtraSeasOfBlood64Data();
 		break;
+	case ADVENTURELAND:
+		for (int i = PLAY_AGAIN; i <= ON_A_SCALE_THAT_RATES; i++)
+			_G(_sys)[i] = _G(_systemMessages)[2 - PLAY_AGAIN + i];
+		for (int i = OK; i <= YOU_HAVENT_GOT_IT; i++)
+			_G(_sys)[i] = _G(_systemMessages)[6 - OK + i];
+		for (int i = YOU_DONT_SEE_IT; i <= RESUME_A_SAVED_GAME; i++)
+			_G(_sys)[i] = _G(_systemMessages)[13 - YOU_DONT_SEE_IT + i];
+		break;
+	case ADVENTURELAND_C64:
+		adventureland64Sysmess();
+		break;
 	case CLAYMORGUE_C64:
 		claymorgue64Sysmess();
 		break;

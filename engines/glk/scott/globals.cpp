@@ -118,6 +118,11 @@ Globals::Globals() : _sys(MAX_SYSMESS), _directions(NUMBER_OF_DIRECTIONS), _extr
 	_md5Index.setVal("267c3fe2bb150365de0358f07b5df15c", 24); // seas of blood
 	_md5Index.setVal("46280fb1d701a41492b8434467c31029", 23); // seas of blood
 	_md5Index.setVal("a1db488c49ad221fa0dc79591cb5a3db", 26); // sorcerer of claymorgue castle
+	_md5Index.setVal("1ebaf9a378355246aa7ed2623bb27fab", 28); // sorcerer of claymorgue castle
+	_md5Index.setVal("dde67117a432420ef05f8d665fbbbe10", 27); // sorcerer of claymorgue castle
+	_md5Index.setVal("64fcee173adecc0f03c595e25d4def04", 30); // sorcerer of claymorgue castle
+	_md5Index.setVal("05cf6c64ecde5288ae2e46099bfd19a3", 31); // adventureland
+	_md5Index.setVal("5af919881417920ec6a3961b4577f587", 32); // adventureland
 }
 
 Globals::~Globals() {

@@ -112,6 +112,12 @@ static C64Rec g_C64Registry[] = {
 	{ CLAYMORGUE_C64, 0xbc5f,  0x492c, TYPE_T64, 1, nullptr, nullptr, 0, 0x855, 0x7352, 0x20},		// Sorcerer Of Claymorgue Castle C64 (T64) alt 3, , Section8 Packer
 	{ CLAYMORGUE_C64, 0x2ab00, 0xfd67, TYPE_D64, 1, nullptr, nullptr, 0, 0x855, 0x7352, 0x20},		// Sorcerer Of Claymorgue Castle C64 (D64), Section8 Packer
 
+	{ ADVENTURELAND_C64, 0x6a10,  0x1910, TYPE_T64, 1 },                                               // Adventureland C64 (T64) CruelCrunch v2.2
+	{ ADVENTURELAND_C64, 0x6a10,  0x1b10, TYPE_T64, 1, nullptr, nullptr,	0,		0, 0 },            // Adventureland C64 (T64) alt CruelCrunch v2.2
+	{ ADVENTURELAND_C64, 0x2ab00, 0x6638, TYPE_D64, 1, nullptr, nullptr,	0,		0, 0 },            // Adventureland C64 (D64) CruelCrunch v2.2
+	{ ADVENTURELAND_C64, 0x2adab, 0x751f, TYPE_D64, 0, nullptr, nullptr,	0,		0, 0 },            // Adventureland C64 (D64) alt
+	{ ADVENTURELAND_C64, 0x2adab, 0x64a4, TYPE_D64, 0, nullptr, "SAG1PIC",	-0xa53, 0, 0, 0, 0x65af} , // Adventureland C64 (D64) alt 2
+
 	{ UNKNOWN_GAME, 0, 0, UNKNOWN_FILE_TYPE, 0, nullptr, nullptr, 0, 0, 0, 0 }
 };
 
