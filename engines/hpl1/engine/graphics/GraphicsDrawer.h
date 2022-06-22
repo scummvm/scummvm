@@ -119,7 +119,7 @@ public:
 	 * \param abAddToList if the engine should delete object at exit, this means DestroyGfxObject must be used. Should almost always be true.
 	 * \return
 	 */
-	cGfxObject *CreateGfxObject(iBitmap2D *apBmp, const tString &asMaterialName,
+	cGfxObject *CreateGfxObject(Bitmap2D *apBmp, const tString &asMaterialName,
 								bool abAddToList = true);
 
 	cGfxObject *CreateGfxObjectFromTexture(const tString &asFileName, const tString &asMaterialName,

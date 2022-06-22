@@ -42,7 +42,7 @@
 
 //#include "graphics/opengl/glad.h"
 #include "hpl1/engine/impl/CGProgram.h"
-#include "hpl1/engine/impl/SDLBitmap2D.h"
+#include "hpl1/engine/graphics/bitmap2D.h"
 #include "hpl1/engine/impl/SDLFontData.h"
 #include "hpl1/engine/impl/SDLTexture.h"
 #include "hpl1/engine/impl/VertexBufferOGL.h"
@@ -581,7 +581,7 @@ void cLowLevelGraphicsSDL::SaveScreenToBMP(const tString &asFile) {
 #if 0
   		glFinish();
 
-		cSDLBitmap2D *pBmp = hplNew( cSDLBitmap2D, (mpPixelFormat) );
+		Bitmap2D *pBmp = hplNew( Bitmap2D, (mpPixelFormat) );
 		pBmp->Create(cVector2l(mvScreenSize.x,mvScreenSize.y),32);
 
 		unsigned char *pDestPixels = (unsigned char*)pBmp->GetSurface()->pixels;
@@ -616,12 +616,15 @@ void cLowLevelGraphicsSDL::SaveScreenToBMP(const tString &asFile) {
 
 //-----------------------------------------------------------------------
 
-iBitmap2D *cLowLevelGraphicsSDL::CreateBitmap2D(const cVector2l &avSize, unsigned int alBpp) {
-	cSDLBitmap2D *pBmp = hplNew(cSDLBitmap2D, (mpPixelFormat));
-	pBmp->Create(avSize, alBpp);
+Bitmap2D *cLowLevelGraphicsSDL::CreateBitmap2D(const cVector2l &avSize, unsigned int alBpp) {
+#if 0
+	Bitmap2D *pBmp = hplNew(Bitmap2D, (mpPixelFormat));
+	pBmp->create(avSize, alBpp);
 
 	return pBmp;
-}
+#endif
+	return nullptr; 
+ }
 
 //-----------------------------------------------------------------------
 
@@ -631,12 +634,15 @@ iFontData *cLowLevelGraphicsSDL::CreateFontData(const tString &asName) {
 
 //-----------------------------------------------------------------------
 
-iBitmap2D *cLowLevelGraphicsSDL::CreateBitmap2DFromSurface(SDL_Surface *apSurface, const tString &asType) {
-	cSDLBitmap2D *pBmp = hplNew(cSDLBitmap2D, (apSurface, mpPixelFormat, asType));
+Bitmap2D *cLowLevelGraphicsSDL::CreateBitmap2DFromSurface(SDL_Surface *apSurface, const tString &asType) {
+#if 0
+  	Bitmap2D *pBmp = hplNew(Bitmap2D, (apSurface, mpPixelFormat, asType));
 
 	pBmp->msType = asType;
 
 	return pBmp;
+#endif
+	return nullptr; 
 }
 
 //-----------------------------------------------------------------------
@@ -665,7 +671,7 @@ iTexture *cLowLevelGraphicsSDL::CreateTexture(const tString &asName, bool abUseM
 
 //-----------------------------------------------------------------------
 
-iTexture *cLowLevelGraphicsSDL::CreateTexture(iBitmap2D *apBmp, bool abUseMipMaps, eTextureType aType,
+iTexture *cLowLevelGraphicsSDL::CreateTexture(Bitmap2D *apBmp, bool abUseMipMaps, eTextureType aType,
 											  eTextureTarget aTarget) {
 	cSDLTexture *pTex = hplNew(cSDLTexture, ("", mpPixelFormat, this, aType, abUseMipMaps, aTarget));
 	pTex->CreateFromBitmap(apBmp);
@@ -683,8 +689,8 @@ iTexture *cLowLevelGraphicsSDL::CreateTexture(const cVector2l &avSize, int alBpp
 		pTex = hplNew(cSDLTexture, ("", mpPixelFormat, this, aType, abUseMipMaps, aTarget));
 		pTex->Create(avSize.x, avSize.y, aFillCol);
 	} else {
-		iBitmap2D *pBmp = CreateBitmap2D(avSize, alBpp);
-		pBmp->FillRect(cRect2l(0, 0, 0, 0), aFillCol);
+		Bitmap2D *pBmp = CreateBitmap2D(avSize, alBpp);
+		pBmp->fillRect(cRect2l(0, 0, 0, 0), aFillCol);
 
 		pTex = hplNew(cSDLTexture, ("", mpPixelFormat, this, aType, abUseMipMaps, aTarget));
 		bool bRet = pTex->CreateFromBitmap(pBmp);

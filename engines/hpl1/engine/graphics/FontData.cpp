@@ -305,7 +305,7 @@ float iFontData::GetLengthFmt(const cVector2f &avSize, const wchar_t *fmt, ...) 
 
 //-----------------------------------------------------------------------
 
-cGlyph *iFontData::CreateGlyph(iBitmap2D *apBmp, const cVector2l &avOffset, const cVector2l &avSize,
+cGlyph *iFontData::CreateGlyph(Bitmap2D *apBmp, const cVector2l &avOffset, const cVector2l &avSize,
 							   const cVector2l &avFontSize, int alAdvance) {
 	// Here the bitmap should be saved to diskk for faster loading.
 

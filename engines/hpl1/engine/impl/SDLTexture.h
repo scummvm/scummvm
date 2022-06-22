@@ -31,7 +31,7 @@
 #include "hpl1/engine/graphics/Texture.h"
 #include "hpl1/engine/impl/LowLevelGraphicsSDL.h"
 #include "hpl1/engine/impl/PBuffer.h"
-#include "hpl1/engine/impl/SDLBitmap2D.h"
+#include "hpl1/engine/graphics/bitmap2D.h"
 
 //#include <GL/GLee.h>
 //#if defined(__APPLE__)&&defined(__MACH__)
@@ -51,7 +51,7 @@ public:
 				bool abCompress = false);
 	~cSDLTexture();
 
-	bool CreateFromBitmap(iBitmap2D *pBmp);
+	bool CreateFromBitmap(Bitmap2D *pBmp);
 
 	bool CreateAnimFromBitmapVec(tBitmap2DVec *avBitmaps);
 
@@ -90,14 +90,14 @@ public:
 	cPBuffer *GetPBuffer() { return mpPBuffer; }
 
 private:
-	bool CreateFromBitmapToHandle(iBitmap2D *pBmp, int alHandleIdx);
+	bool CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx);
 
 	GLenum InitCreation(int alHandleIdx);
 	void PostCreation(GLenum aGLTarget);
 
 	GLenum GetGLWrap(eTextureWrap aMode);
 
-	void GetSettings(cSDLBitmap2D *apSrc, int &alChannels, GLenum &aFormat);
+	void GetSettings(Bitmap2D *apSrc, int &alChannels, GLenum &aFormat);
 
 	tUIntVec mvTextureHandles;
 	bool mbContainsData;

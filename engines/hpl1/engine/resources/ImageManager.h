@@ -37,7 +37,7 @@ class cResourceImage;
 class cFrameTexture;
 class cFrameBitmap;
 class iLowLevelGraphics;
-class iBitmap2D;
+class Bitmap2D;
 
 typedef std::list<cFrameBitmap *> tFrameBitmapList;
 typedef tFrameBitmapList::iterator tFrameBitmapListIt;
@@ -68,7 +68,7 @@ public:
 	int FlushAll();
 	void DeleteAllBitmapFrames();
 
-	cResourceImage *CreateFromBitmap(const tString &asName, iBitmap2D *apBmp, int alFrameHandle = -1);
+	cResourceImage *CreateFromBitmap(const tString &asName, Bitmap2D *apBmp, int alFrameHandle = -1);
 
 	int CreateFrame(cVector2l avSize);
 	void SetFrameLocked(int alHandle, bool abLocked);
@@ -84,7 +84,7 @@ private:
 	int mlFrameHandle;
 
 	cResourceImage *FindImage(const tString &asName, tString &asFilePath);
-	cResourceImage *AddToFrame(iBitmap2D *apBmp, int alFrameHandle);
+	cResourceImage *AddToFrame(Bitmap2D *apBmp, int alFrameHandle);
 	cFrameBitmap *CreateBitmapFrame(cVector2l avSize);
 };
 

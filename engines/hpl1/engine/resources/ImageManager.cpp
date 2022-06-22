@@ -82,7 +82,7 @@ iResourceBase *cImageManager::CreateInFrame(const tString &asName, int alFrameHa
 	pImage = FindImage(asName, sPath);
 	if (!pImage) {
 		if (sPath != "") {
-			iBitmap2D *pBmp;
+			Bitmap2D *pBmp;
 			pBmp = mpLowLevelResources->LoadBitmap2D(sPath);
 			if (pBmp == NULL) {
 				Error("Imagemanager Couldn't load bitmap '%s'\n", sPath.c_str());
@@ -128,7 +128,7 @@ cResourceImage *cImageManager::CreateImage(const tString &asName, int alFrameHan
 
 //-----------------------------------------------------------------------
 
-cResourceImage *cImageManager::CreateFromBitmap(const tString &asName, iBitmap2D *apBmp, int alFrameHandle) {
+cResourceImage *cImageManager::CreateFromBitmap(const tString &asName, Bitmap2D *apBmp, int alFrameHandle) {
 	if (apBmp == NULL)
 		return NULL;
 
@@ -283,7 +283,7 @@ cResourceImage *cImageManager::FindImage(const tString &asName, tString &asFileP
 
 //-----------------------------------------------------------------------
 
-cResourceImage *cImageManager::AddToFrame(iBitmap2D *apBmp, int alFrameHandle) {
+cResourceImage *cImageManager::AddToFrame(Bitmap2D *apBmp, int alFrameHandle) {
 	bool bFound = false;
 	cResourceImage *pImage = NULL;
 
@@ -339,7 +339,7 @@ cResourceImage *cImageManager::AddToFrame(iBitmap2D *apBmp, int alFrameHandle) {
 cFrameBitmap *cImageManager::CreateBitmapFrame(cVector2l avSize) {
 	iTexture *pTex = mpLowLevelGraphics->CreateTexture(false, eTextureType_Normal, eTextureTarget_2D);
 	cFrameTexture *pTFrame = hplNew(cFrameTexture, (pTex, mlFrameHandle));
-	iBitmap2D *pBmp = mpLowLevelGraphics->CreateBitmap2D(avSize, 32);
+	Bitmap2D *pBmp = mpLowLevelGraphics->CreateBitmap2D(avSize, 32);
 	cFrameBitmap *pBFrame = hplNew(cFrameBitmap, (pBmp, pTFrame, mlFrameHandle));
 
 	mlstBitmapFrames.push_back(pBFrame);

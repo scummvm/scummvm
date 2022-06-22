@@ -294,7 +294,7 @@ cGfxObject *cGraphicsDrawer::CreateGfxObject(const tString &asFileName, const tS
 
 //-----------------------------------------------------------------------
 
-cGfxObject *cGraphicsDrawer::CreateGfxObject(iBitmap2D *apBmp, const tString &asMaterialName,
+cGfxObject *cGraphicsDrawer::CreateGfxObject(Bitmap2D *apBmp, const tString &asMaterialName,
 											 bool abAddToList) {
 	cResourceImage *pImage = mpResources->GetImageManager()->CreateFromBitmap("", apBmp);
 	if (pImage == NULL) {

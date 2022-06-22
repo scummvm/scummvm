@@ -26,7 +26,7 @@
  */
 
 #include "hpl1/engine/resources/TextureManager.h"
-#include "hpl1/engine/graphics/Bitmap2D.h"
+#include "hpl1/engine/graphics/bitmap2D.h"
 #include "hpl1/engine/graphics/Graphics.h"
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
 #include "hpl1/engine/graphics/Texture.h"
@@ -129,7 +129,7 @@ iTexture *cTextureManager::CreateAnim2D(const tString &asName, bool abUseMipMaps
 
 		tBitmap2DVec vBitmaps;
 		for (size_t i = 0; i < vPaths.size(); ++i) {
-			iBitmap2D *pBmp = mpResources->GetLowLevel()->LoadBitmap2D(vPaths[i]);
+			Bitmap2D *pBmp = mpResources->GetLowLevel()->LoadBitmap2D(vPaths[i]);
 			if (pBmp == NULL) {
 				Error("Couldn't load bitmap '%s'!\n", vPaths[i].c_str());
 
@@ -210,7 +210,7 @@ iTexture *cTextureManager::CreateCubeMap(const tString &asPathName, bool abUseMi
 		// Load bitmaps for all faces
 		tBitmap2DVec vBitmaps;
 		for (int i = 0; i < 6; i++) {
-			iBitmap2D *pBmp = mpResources->GetLowLevel()->LoadBitmap2D(vPaths[i]);
+			Bitmap2D *pBmp = mpResources->GetLowLevel()->LoadBitmap2D(vPaths[i]);
 			if (pBmp == NULL) {
 				Error("Couldn't load bitmap '%s'!\n", vPaths[i].c_str());
 				for (int j = 0; j < (int)vBitmaps.size(); j++)
@@ -314,15 +314,15 @@ iTexture *cTextureManager::CreateAttenuation(const tString &asFallOffName) {
 		return NULL;
 	}
 
-	iBitmap2D *pBmp = mpResources->GetLowLevel()->LoadBitmap2D(sPath);
+	Bitmap2D *pBmp = mpResources->GetLowLevel()->LoadBitmap2D(sPath);
 	if (pBmp == NULL) {
 		Log("Couldn't load bitmap '%s'\n", asFallOffName.c_str());
 		return NULL;
 	}
 
-	int lBmpChannels = pBmp->GetNumChannels();
+	int lBmpChannels = pBmp->getNumChannels();
 	int lWidth = pBmp->GetWidth();
-	unsigned char *pPixels = (unsigned char *)pBmp->GetRawData();
+	unsigned char *pPixels = (unsigned char *)pBmp->getRawData();
 
 	iTexture *pTexture = mpGraphics->GetLowLevel()->CreateTexture("Attenuation", false, eTextureType_Normal, eTextureTarget_3D);
 	int lSize = 16;
@@ -389,7 +389,7 @@ iTexture *cTextureManager::CreateFlatTexture(const tString &asName, bool abUseMi
 
 	if (pTexture == NULL && sPath != "") {
 		// Load the bitmap
-		iBitmap2D *pBmp;
+		Bitmap2D *pBmp;
 		pBmp = mpLowLevelResources->LoadBitmap2D(sPath);
 		if (pBmp == NULL) {
 			Error("Texturemanager Couldn't load bitmap '%s'\n", sPath.c_str());

@@ -27,7 +27,7 @@
 
 #include "hpl1/engine/impl/SDLFontData.h"
 #include "hpl1/engine/graphics/GraphicsDrawer.h"
-#include "hpl1/engine/impl/SDLBitmap2D.h"
+#include "hpl1/engine/graphics/bitmap2D.h"
 #include "hpl1/engine/impl/tinyXML/tinyxml.h"
 #include "hpl1/engine/system/LowLevelSystem.h"
 
@@ -87,7 +87,7 @@ bool cSDLFontData::CreateFromBitmapFile(const tString &asFileName) {
 
 		////////////////////////////////////////////
 		// Load bitmaps
-		std::vector<cSDLBitmap2D *> vBitmaps;
+		std::vector<Bitmap2D *> vBitmaps;
 
 		TiXmlElement *pPagesRootElem = pRootElem->FirstChildElement("pages");
 
@@ -97,7 +97,7 @@ bool cSDLFontData::CreateFromBitmapFile(const tString &asFileName) {
 			tString sFileName = pPageElem->Attribute("file");
 			tString sFilePath = cString::SetFilePath(sFileName,sPath);
 
-			cSDLBitmap2D *pBitmap = static_cast<cSDLBitmap2D*>(mpLowLevelResources->LoadBitmap2D(sFilePath));
+			Bitmap2D *pBitmap = static_cast<Bitmap2D*>(mpLowLevelResources->LoadBitmap2D(sFilePath));
 			if(pBitmap==NULL)
 			{
 				Error("Couldn't load bitmap %s for FNT file '%s'\n",sFilePath.c_str(),asFileName.c_str());
@@ -131,11 +131,11 @@ bool cSDLFontData::CreateFromBitmapFile(const tString &asFileName) {
 			int lPage = cString::ToInt(pCharElem->Attribute("page"),0);
 
 			//Get the bitmap where the character graphics is
-			cSDLBitmap2D *pSourceBitmap = vBitmaps[lPage];
+			Bitmap2D *pSourceBitmap = vBitmaps[lPage];
 
 			//Create a bitmap for the character.
 			cVector2l vSize(lW, lH);
-			cSDLBitmap2D *pBmp = static_cast<cSDLBitmap2D*>(mpLowLevelGraphics->CreateBitmap2D(vSize,32));
+			Bitmap2D *pBmp = static_cast<Bitmap2D*>(mpLowLevelGraphics->CreateBitmap2D(vSize,32));
 
 			//Copy from source to character bitmap
 			SDL_Rect srcRect;
@@ -237,7 +237,7 @@ cGlyph *cSDLFontData::RenderGlyph(TTF_Font *apFont, unsigned short aChar, int al
 
 		//Create the bitmap we want to draw upon
 		cVector2l vSize = vMax - vMin;
-		cSDLBitmap2D *pBmp = static_cast<cSDLBitmap2D*>(mpLowLevelGraphics->CreateBitmap2D(vSize,32));
+		Bitmap2D *pBmp = static_cast<Bitmap2D*>(mpLowLevelGraphics->CreateBitmap2D(vSize,32));
 
 		pBmp->FillRect(cRect2l(),cColor(0,1));
 

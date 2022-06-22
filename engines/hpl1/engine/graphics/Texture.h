@@ -28,7 +28,7 @@
 #ifndef HPL_TEXTURE_H
 #define HPL_TEXTURE_H
 
-#include "hpl1/engine/graphics/Bitmap2D.h"
+#include "hpl1/engine/graphics/bitmap2D.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/LowLevelPicture.h"
 #include "hpl1/engine/resources/ResourceBase.h"
@@ -112,7 +112,7 @@ public:
 	 * \param pBmp
 	 * \return
 	 */
-	virtual bool CreateFromBitmap(iBitmap2D *pBmp) = 0;
+	virtual bool CreateFromBitmap(Bitmap2D *pBmp) = 0;
 	/**
 	 * Create a cube map texture from a vector of bitmaps. Doesn't work with render targets.
 	 * All bitmaps most be square, a power of 2 and the same same. The order must be: posX, negX, posY, negY, posZ and negZ.

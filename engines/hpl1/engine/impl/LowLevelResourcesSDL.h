@@ -42,7 +42,7 @@ public:
 	void FindFilesInDir(tStringList &alstStrings, tString asDir, tString asMask);
 
 	void GetSupportedImageFormats(tStringList &alstFormats);
-	iBitmap2D *LoadBitmap2D(tString asFilePath, tString asType = "");
+	Bitmap2D *LoadBitmap2D(tString asFilePath, tString asType = "");
 
 	void AddMeshLoaders(cMeshLoaderHandler *apHandler);
 	void AddVideoLoaders(cVideoManager *apManager);
