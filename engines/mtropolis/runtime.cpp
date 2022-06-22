@@ -340,6 +340,9 @@ ColorRGB8 ColorRGB8::create(uint8 r, uint8 g, uint8 b) {
 MessageFlags::MessageFlags() : relay(true), cascade(true), immediate(true) {
 }
 
+IDynamicValueWriteInterface::~IDynamicValueWriteInterface() {
+}
+
 Common::Point Point16POD::toScummVMPoint() const {
 	return Common::Point(x, y);
 }
