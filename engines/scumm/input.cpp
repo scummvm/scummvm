@@ -434,13 +434,12 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 		int8 oldCursorState = _cursor.state;
 		_cursor.state = 1;
 		CursorMan.showMouse(_cursor.state > 0);
-		confirmExitDialog();
-		_cursor.state = oldCursorState;
 
-		// If SMUSH is active, manually force the old cursor state...
-		if (isSmushActive()) {
-			CursorMan.showMouse(_cursor.state > 0);
-		}
+		confirmExitDialog();
+
+		// Restore the old cursor state...
+		_cursor.state = oldCursorState;
+		CursorMan.showMouse(_cursor.state > 0);
 		return;
 	}
 
