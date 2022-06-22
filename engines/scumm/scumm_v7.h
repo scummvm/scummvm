@@ -176,6 +176,8 @@ protected:
 	int getInternalGUIControlFromCoordinates(int x, int y);
 	void confirmExitDialog() override;
 
+	void setDefaultCursor() override;
+
 	void drawVerb(int verb, int mode) override;
 
 	void pauseEngineIntern(bool pause) override;

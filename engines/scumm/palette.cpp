@@ -1499,7 +1499,7 @@ const byte *ScummEngine::getPalettePtr(int palindex, int room) {
 }
 
 uint32 ScummEngine::getPaletteColorFromRGB(byte *palette, byte r, byte g, byte b) {
-	uint32 color, black, white;
+	uint32 color, black = 0x00, white = 0xFF;
 
 	if ((r == 0xFF && b == 0xFF && g == 0xFF) || (r == 0x00 && g == 0x00 && b == 0x00)) {
 		fetchBlackAndWhite(black, white, palette, 256);

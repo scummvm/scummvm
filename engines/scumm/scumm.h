@@ -474,10 +474,11 @@ protected:
 	virtual void clearClickedStatus();
 
 	// Cursor/palette
-	void updateCursor();
+	virtual void updateCursor();
 	virtual void animateCursor() {}
 	virtual void updatePalette();
-
+	virtual void setDefaultCursor() {};
+	virtual void setCursorTransparency(int a) {};
 	virtual void resetCursors() {}
 
 public:

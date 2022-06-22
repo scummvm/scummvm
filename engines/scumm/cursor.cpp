@@ -35,6 +35,8 @@
 #include "scumm/scumm.h"
 #include "scumm/scumm_v2.h"
 #include "scumm/scumm_v5.h"
+#include "scumm/scumm_v8.h"
+#include "scumm/smush/smush_player.h"
 
 namespace Scumm {
 
@@ -180,16 +182,83 @@ void ScummEngine_v6::grabCursor(int x, int y, int w, int h) {
 }
 
 void ScummEngine_v6::setDefaultCursor() {
-	if (_game.version == 8) {
-		setCursorHotspot(9, 9);
-		setCursorFromBuffer(default_v8_cursor, 20, 20, 20);
-		setCursorTransparency(0xFE);
-	} else {
-		setCursorHotspot(7, 6);
-		setCursorFromBuffer(default_v6_cursor, 16, 13, 16);
+	setCursorHotspot(7, 6);
+	setCursorFromBuffer(default_v6_cursor, 16, 13, 16);
+}
+
+#ifdef ENABLE_SCUMM_7_8
+void ScummEngine_v7::setDefaultCursor() {
+	byte *palette = isSmushActive() ? _splayer->getVideoPalette() : _currentPalette;
+	byte cursorBuffer[400];
+	byte cursorPixel;
+	int /* black,*/ white, inverseRgbIdx;
+	int rgbIdx = 0;
+
+	/*	The interpreter does this, but we don't need it, at least for v8.
+	 *	See below for details.
+	 *
+	 *	do {
+	 *		black = getPaletteColorFromRGB(palette, rgbIdx, rgbIdx, rgbIdx);
+	 *		++rgbIdx;
+	 *	} while (black == 1 && rgbIdx != 100);
+	 *	rgbIdx = 0;
+	 */
+	do {
+		inverseRgbIdx = 0xFF - rgbIdx++;
+		white = getPaletteColorFromRGB(palette, inverseRgbIdx, inverseRgbIdx, inverseRgbIdx);
+	} while (white == 1 && rgbIdx != 100);
+
+	for (int i = 0; i < sizeof(default_v8_cursor); ++i) {
+		cursorPixel = default_v8_cursor[i];
+
+		if (isSmushActive() && cursorPixel == 0x0F)
+			cursorPixel = white;
+
+		/* The interpreter also performs this substitution.
+		 * we can't since we handle the palette in a different way and we wouldn't
+		 * find the same color the interpreter finds.
+		 *
+		 * if (cursorPixel == 0x00)
+		 *	cursorPixel = black;
+		 */
+
+		cursorBuffer[i] = (byte)(cursorPixel & 0xFF);
 	}
 
+	setCursorHotspot(9, 9);
+	setCursorFromBuffer(cursorBuffer, 20, 20, 20);
+	setCursorTransparency(0xFE);
 }
+
+void ScummEngine_v8::setCursorTransparency(int a) {
+	int i, size;
+
+	size = _cursor.width * _cursor.height;
+
+	for (i = 0; i < size; i++)
+		if (_grabbedCursor[i] == (byte)a)
+			_grabbedCursor[i] = isSmushActive() ? 0xFE : 0xFF;
+
+	updateCursor();
+}
+
+void ScummEngine_v8::updateCursor() {
+	int transColor = isSmushActive() ? 0xFE : 0xFF;
+#ifdef USE_RGB_COLOR
+	Graphics::PixelFormat format = _system->getScreenFormat();
+	CursorMan.replaceCursor(_grabbedCursor, _cursor.width, _cursor.height,
+							_cursor.hotspotX, _cursor.hotspotY,
+							transColor,
+							false,
+							&format);
+#else
+	CursorMan.replaceCursor(_grabbedCursor, _cursor.width, _cursor.height,
+							_cursor.hotspotX, _cursor.hotspotY,
+							transColor,
+							false);
+#endif
+}
+#endif
 
 void ScummEngine_v6::setCursorFromBuffer(const byte *ptr, int width, int height, int pitch) {
 	uint size;
