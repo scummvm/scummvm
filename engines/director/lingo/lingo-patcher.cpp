@@ -166,11 +166,11 @@ struct ScriptPatch {
 	{"jman", "", kPlatformWindows, "MMM:Shared Cast B&W", kMovieScript, 323, 0,
 			192, "updateStage", "set the trails of sprite 19 to 0"},
 
-	{"snh", "", kPlatformWindows, "SNHstart", kMovieScript, 0, 0,
+	{"snh", "Hybrid release", kPlatformWindows, "SNHstart", kMovieScript, 0, 0,
 			3, "changedrive", ""}, // HACK: This macro inserts \x01 after the first character in myCD/myHD
-	{"snh", "", kPlatformWindows, "SNHstart", kMovieScript, 0, 0,
+	{"snh", "Hybrid release", kPlatformWindows, "SNHstart", kMovieScript, 0, 0,
 			6, "set mytest2 = FileIO(mnew, \"read\" mymovie)", "set mytest2 = FileIO(mnew, \"read\", mymovie)"},
-	{"snh", "", kPlatformWindows, "SNHstart", kMovieScript, 0, 0,
+	{"snh", "Hybrid release", kPlatformWindows, "SNHstart", kMovieScript, 0, 0,
 			14, "set mytest3 = FileIO(mnew, \"read\" mymovie)", "set mytest3 = FileIO(mnew, \"read\", mymovie)"},
 
 	// Ambiguous syntax that's parsed differently between D3 and later versions
@@ -217,7 +217,7 @@ Common::U32String LingoCompiler::patchLingoCode(const Common::U32String &line, L
 		}
 
 		// Now do a safeguard
-		if (!line.contains(Common::U32String(patch->orig))) {
+		if (!line.contains(Common::U32String(patch->orig)) && line.encode().c_str() != Common::U32String()) {
 			warning("Lingo::patchLingoCode(): Unmatched patch for '%s', '%s' %s:%s @ %d. Expecting '%s' but got '%s'",
 					patch->gameId, patch->movie, scriptType2str(type), id.asString().c_str(), linenum,
 					patch->orig, line.encode().c_str());
