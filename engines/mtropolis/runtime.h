@@ -89,7 +89,6 @@ class VisualElement;
 class Window;
 class WorldManagerInterface;
 struct DynamicValue;
-struct DynamicValueReadProxy;
 struct DynamicValueWriteProxy;
 struct ICollider;
 struct ILoadUIProvider;
@@ -181,7 +180,6 @@ enum DynamicValueType {
 	kString,
 	kList,
 	kObject,
-	kReadProxy,
 	kWriteProxy,
 
 	kEmpty,
@@ -461,17 +459,6 @@ struct IDynamicValueWriteInterface : public IInterfaceBase {
 	virtual MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset) const = 0;
 	virtual MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const = 0;
 	virtual MiniscriptInstructionOutcome refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const = 0;
-};
-
-struct DynamicValueReadProxyPOD {
-	uintptr ptrOrOffset;
-	const void *objectRef;
-	IDynamicValueReadInterface *ifc;
-};
-
-struct DynamicValueReadProxy {
-	DynamicValueReadProxyPOD pod;
-	Common::SharedPtr<DynamicList> containerList;
 };
 
 struct DynamicValueWriteProxyPOD {
@@ -801,11 +788,8 @@ struct DynamicValue {
 	const bool &getBool() const;
 	const Common::SharedPtr<DynamicList> &getList() const;
 	const ObjectReference &getObject() const;
-	const DynamicValueReadProxyPOD &getReadProxyPOD() const;
 	const DynamicValueWriteProxyPOD &getWriteProxyPOD() const;
-	DynamicValueReadProxy getReadProxyTEMP() const;
 	DynamicValueWriteProxy getWriteProxyTEMP() const;
-	const Common::SharedPtr<DynamicList> &getReadProxyContainer() const;
 	const Common::SharedPtr<DynamicList> &getWriteProxyContainer() const;
 
 	void clear();
@@ -823,7 +807,6 @@ struct DynamicValue {
 	void setList(const Common::SharedPtr<DynamicList> &value);
 	void setObject(const ObjectReference &value);
 	void setObject(const Common::WeakPtr<RuntimeObject> &value);
-	void setReadProxy(const DynamicValueReadProxy &readProxy);
 	void setWriteProxy(const DynamicValueWriteProxy &writeProxy);
 
 	bool roundToInt(int32 &outInt) const;
@@ -850,7 +833,6 @@ private:
 		Event asEvent;
 		Point16POD asPoint;
 		bool asBool;
-		DynamicValueReadProxyPOD asReadProxy;
 		DynamicValueWriteProxyPOD asWriteProxy;
 	};
 

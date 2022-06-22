@@ -1899,14 +1899,6 @@ MiniscriptInstructionOutcome MiniscriptThread::dereferenceRValue(size_t offset, 
 	case DynamicValueTypes::kWriteProxy:
 		this->error("Attempted to dereference an lvalue proxy");
 		return kMiniscriptInstructionOutcomeFailed;
-	case DynamicValueTypes::kReadProxy: {
-			const DynamicValueReadProxyPOD &readProxy = stackValue.value.getReadProxyPOD();
-			if (!readProxy.ifc->read(this, stackValue.value, readProxy.objectRef, readProxy.ptrOrOffset)) {
-				this->error("Failed to access a proxy value");
-				return kMiniscriptInstructionOutcomeFailed;
-			}
-		}
-		break;
 	case DynamicValueTypes::kList:
 			if (cloneLists)
 				stackValue.value.setList(stackValue.value.getList()->clone());

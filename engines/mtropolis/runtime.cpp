@@ -953,9 +953,6 @@ bool DynamicList::changeToType(DynamicValueTypes::DynamicValueType type) {
 	case DynamicValueTypes::kObject:
 		_container = new DynamicListContainer<ObjectReference>();
 		break;
-	case DynamicValueTypes::kReadProxy:
-		// FIXME
-		break;
 	case DynamicValueTypes::kWriteProxy:
 		// FIXME
 		break;
@@ -1248,24 +1245,9 @@ const ObjectReference &DynamicValue::getObject() const {
 	return _obj;
 }
 
-const DynamicValueReadProxyPOD &DynamicValue::getReadProxyPOD() const {
-	assert(_type == DynamicValueTypes::kReadProxy);
-	return _value.asReadProxy;
-}
-
 const DynamicValueWriteProxyPOD &DynamicValue::getWriteProxyPOD() const {
 	assert(_type == DynamicValueTypes::kWriteProxy);
 	return _value.asWriteProxy;
-}
-
-
-DynamicValueReadProxy DynamicValue::getReadProxyTEMP() const {
-	assert(_type == DynamicValueTypes::kReadProxy);
-
-	DynamicValueReadProxy proxy;
-	proxy.pod = _value.asReadProxy;
-	proxy.containerList = _list;
-	return proxy;
 }
 
 DynamicValueWriteProxy DynamicValue::getWriteProxyTEMP() const {
@@ -1275,11 +1257,6 @@ DynamicValueWriteProxy DynamicValue::getWriteProxyTEMP() const {
 	proxy.pod = _value.asWriteProxy;
 	proxy.containerList = _list;
 	return proxy;
-}
-
-const Common::SharedPtr<DynamicList> &DynamicValue::getReadProxyContainer() const {
-	assert(_type == DynamicValueTypes::kReadProxy);
-	return _list;
 }
 
 const Common::SharedPtr<DynamicList> &DynamicValue::getWriteProxyContainer() const {
@@ -1365,15 +1342,6 @@ void DynamicValue::setList(const Common::SharedPtr<DynamicList> &value) {
 		clear();
 	_type = DynamicValueTypes::kList;
 	_list = value;
-}
-
-void DynamicValue::setReadProxy(const DynamicValueReadProxy &readProxy) {
-	Common::SharedPtr<DynamicList> listRef = readProxy.containerList;	// Back up list ref in case this is a self-assign
-	if (_type != DynamicValueTypes::kReadProxy)
-		clear();
-	_type = DynamicValueTypes::kReadProxy;
-	_value.asReadProxy = readProxy.pod;
-	_list = listRef;
 }
 
 void DynamicValue::setWriteProxy(const DynamicValueWriteProxy &writeProxy) {
