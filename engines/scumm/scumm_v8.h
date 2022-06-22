@@ -43,6 +43,8 @@ public:
 	ScummEngine_v8(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v8() override;
 
+	void setKeyScriptVars(int _keyScriptKey, int _keyScriptNo);
+
 protected:
 	void setupOpcodes() override;
 

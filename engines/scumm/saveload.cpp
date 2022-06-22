@@ -36,6 +36,7 @@
 #include "scumm/resource.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v7.h"
+#include "scumm/scumm_v8.h"
 #include "scumm/sound.h"
 #include "scumm/he/sprite_he.h"
 #include "scumm/verbs.h"
@@ -594,6 +595,12 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	// Remove any blast text leftovers
 	if (_game.version >= 7) {
 		((ScummEngine_v7 *)this)->removeBlastTexts();
+	}
+
+	if (_game.version == 8 && isUsingOriginalGUI()) {
+		// If we are loading a savegame from the ScummVM launcher these two
+		// variables are going to be unassigned, since the game does not save these
+		((ScummEngine_v8 *)this)->setKeyScriptVars(0x13B, 0x1C0);
 	}
 #endif
 
