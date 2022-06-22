@@ -121,6 +121,8 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer)
 		_maxQueuedStreams = 4;
 	}
 
+	_nominalBufferCount = _maxQueuedStreams;
+
 	_vm->getTimerManager()->installTimerProc(timer_handler, 1000000 / _callbackFps, this, "IMuseDigital");
 }
 
@@ -146,6 +148,18 @@ IMuseDigital::~IMuseDigital() {
 	_waveOutOutputBuffer = nullptr;
 
 	free(_audioNames);
+}
+
+int IMuseDigital::roundRobinSetBufferCount() {
+	int minStreams = _nominalBufferCount - 2;
+	int maxStreams = _nominalBufferCount + 2;
+	_maxQueuedStreams++;
+
+	if (_maxQueuedStreams > maxStreams) {
+		_maxQueuedStreams = minStreams;
+	}
+
+	return _maxQueuedStreams;
 }
 
 void IMuseDigital::stopSound(int sound) {

@@ -163,7 +163,7 @@ protected:
 	void playSpeech(const byte *ptr);
 
 	void initBanners();
-	Common::KeyState showBannerAndPause(int bannerId, int32 waitTime, const char *msg);
+	Common::KeyState showBannerAndPause(int bannerId, int32 waitTime, const char *msg, ...);
 	void waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked);
 	void clearBanner();
 	void setBannerColors(int bannerId, byte r, byte g, byte b);

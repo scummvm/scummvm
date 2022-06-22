@@ -3167,8 +3167,9 @@ void ScummEngine_v7::initBanners() {
 	setBannerColors(31, 0x54, 0x54, 0x54);
 }
 
-Common::KeyState ScummEngine_v7::showBannerAndPause(int bannerId, int32 waitTime, const char *msg) {
+Common::KeyState ScummEngine_v7::showBannerAndPause(int bannerId, int32 waitTime, const char *msg, ...) {
 	char bannerMsg[512];
+	char localizedMsg[512];
 	char localizedY[512];
 	char *ptrToBreak;
 	int bannerMsgWidth, bannerMsgHeight, roundedWidth;
@@ -3179,12 +3180,18 @@ Common::KeyState ScummEngine_v7::showBannerAndPause(int bannerId, int32 waitTime
 	InfoDialog d(this, 0);
 
 	// Fetch the translated string for the message...
-	convertMessageToString((const byte *)msg, (byte *)bannerMsg, sizeof(bannerMsg));
-	ptrToBreak = strstr(bannerMsg, "\\n");
+	convertMessageToString((const byte *)msg, (byte *)localizedMsg, sizeof(localizedMsg));
+	ptrToBreak = strstr(localizedMsg, "\\n");
 	if (ptrToBreak) { // Change the line break, if any...
 		ptrToBreak[0] = '\n';
 		ptrToBreak[1] = '\r';
 	}
+
+	// Format the string with the arguments...
+	va_list va;
+	va_start(va, msg);
+	vsnprintf(bannerMsg, sizeof(bannerMsg), localizedMsg, va);
+	va_end(va);
 
 	// Pause the engine
 	PauseToken pt = pauseEngine();
