@@ -443,6 +443,32 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 		return;
 	}
 
+	if (isUsingOriginalGUI() &&
+		(lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.hasFlags(Common::KBD_CTRL))) {
+		int voiceMode = VAR(VAR_VOICE_MODE);
+
+		voiceMode++;
+		if (voiceMode >= 3) {
+			voiceMode = 0;
+		}
+
+		switch (voiceMode) {
+		case 0: // "Voice Only"
+			showBannerAndPause(0, 120, d.getPlainEngineString(28));
+			break;
+		case 1: // "Voice and Text"
+			showBannerAndPause(0, 120, d.getPlainEngineString(26));
+			break;
+		default: // "Text Display Only"
+			showBannerAndPause(0, 120, d.getPlainEngineString(27));
+		}
+
+		ConfMan.setInt("original_gui_text_status", voiceMode);
+		ConfMan.flushToDisk();
+		syncSoundSettings();
+		return;
+	}
+
 	// Fall back to V7 behavior...
 	ScummEngine_v7::processKeyboard(lastKeyHit);
 }
@@ -498,7 +524,7 @@ void ScummEngine_v7::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bo
 			ks = _keyPressed;
 			leftBtnClicked = (_leftBtnPressed & msClicked) != 0;
 			rightBtnClicked = (_rightBtnPressed & msClicked) != 0;
-			if (&ks || leftBtnClicked || rightBtnClicked)
+			if (ks.keycode != Common::KEYCODE_INVALID || leftBtnClicked || rightBtnClicked)
 				return;
 
 			if (shouldQuit())
