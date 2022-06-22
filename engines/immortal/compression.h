@@ -27,7 +27,8 @@
 
 namespace Compression {
 
-int unCompress(Common::File *src, int srcLen, byte *out);
+// Only unCompress() is called from outside Compression, the others are subroutines.
+Common::SeekableReadStream *unCompress(Common::File *src, int srcLen);
 void setupDictionary(uint16 start[], uint16 ptk[], uint16 &findEmpty);
 int getInputCode(bool &carry, Common::File *src, int &srcLen, uint16 &evenOdd);
 uint16 getMember(uint16 codeW, uint16 k, uint16 &findEmpty, uint16 start[], uint16 ptk[]);
