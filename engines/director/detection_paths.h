@@ -68,11 +68,10 @@ const char *directoryGlobs[] = {
 	"endsoung",
 	"gerhelp",
 	"gervideo",
-	"mausejagd mit ton",			// Rename from Mäusejagd mit Ton
+	"xn--Musejagd mit Ton-vnb",		// GGMD German
 	"music",
 	"solos",
 	"sounds",
-	"startsnd",						// GGMD German
 	"duthelp",
 	"dutvideo",
 	"endsound",
@@ -178,6 +177,8 @@ const char *directoryGlobs[] = {
 	"wincurio",						// Curio City
 	"a.d.a.m. the inside story 1.1", // ADAM
 	"nine month miracle 1.0",		// Nine Month Miracle
+	"_A.D.A.M. Data",				// ADAM Software Products
+	"_A.D.A.M.  Data",				// ADAM Software Products with more space
 	"_setup",
 	"bin",
 	"adam resources",				// ADAM Software Products
@@ -190,6 +191,25 @@ const char *directoryGlobs[] = {
 	"Subotnick Hummingbirds",		// All My Hummingbirds Have Alibis
 	"Silly Noisy House Folder",		// A Silly Noisy House
 	"Installer Files",				// Encarta '95
+	"BEATEXP",						// The Beat Experience (Windows)
+	"xn--Invisible Universe -ere",	// Invisible Universe (Mac) ("Invisible Universe ƒ")
+	"UNIVERSE",						// Invisible Universe (Win)
+	"Treasures of the AMNH",		// Treasures of the American Museum of Natural History (Mac)
+	"TAMNH",						// Treasures of the American Museum of Natural History (Win)
+	"xn--Sacred and Secular -ere",	// Sacred and Secular (Mac) ("Sacred and Secular ƒ")
+	"SACRED",						// Sacred and Secular (Win)
+	"McLuhan Folder",				// Understanding McLuhan (Mac)
+	"MCLUHAN",						// Understanding McLuhan (Win)
+	"Dracula - Truth and Terror",	// Dracula: Truth and Terror (Mac)
+	"DRACULA",						// Dracula: Truth and Terror (Win)
+	"The Louvre for Kids",			// The Louvre Museum (Mac)
+	"LOUVRE",						// The Louvre Museum (Win)
+	"Trinity",						// The Day After Trinity
+	"Puppet Motel Folder",			// Puppet Motel (Mac)
+	"PUPPET",						// Puppet Motel (Win)
+	"THEATRE",						// Theatre of the Imagination (Win)
+	"Daedalus Max",					// The Daedalus Encounter
+	"STARTREK",						// Star Trek: The Next Generation Interactive Technical Manual
 	0
 };
 
