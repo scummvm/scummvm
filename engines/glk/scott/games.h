@@ -1530,5 +1530,89 @@ const GameInfo _games[NUMGAMES] = {
 			 44,     // number_of_pictures;
 			 C64B,   // palette
 			 1,      // picture_format_version;
-			 0)
+			 0),
+	GameInfo("Adventureland",
+			 ADVENTURELAND,
+			 NO_TYPE,                   // type
+			 ENGLISH,                   // subtype
+			 THREE_LETTER_UNCOMPRESSED, // dictionary type
+
+			 65,  // Number of items
+			 181, // Number of actions
+			 69,  // Number of words
+			 33,  // Number of rooms
+			 6,   // Max carried items
+			 3,   // Word length
+			 75,  // Number of messages
+
+			 70, // number_of_verbs
+			 69, // number_of_nouns;
+
+			 0x2473, // header
+			 EARLY,  // header style
+
+			 0x3ebe,  // room images
+			 FOLLOWS, // item flags
+			 0x3f1f,  // item images
+			 0x3f5e,  // actions
+			 UNCOMPRESSED,
+			 0x4c10,  // dictionary
+			 0x4e40,  // start_of_room_descriptions;
+			 0x4abe,  // start_of_room_connections;
+			 0x52c3,  // start_of_messages;
+			 FOLLOWS, // start_of_item_descriptions;
+			 0x4b8a,  // start_of_item_locations;
+
+			 0x24eb, // start_of_system_messages
+			 0x285e, // start of directions
+
+			 0x631e,  // start_of_characters;
+			 FOLLOWS, // start_of_image_data
+			 -0x3fe5, // image_address_offset
+			 41,      // number_of_pictures;
+			 ZXOPT,   // palette
+			 1,       // picture_format_version;
+			 0),
+	GameInfo("Adventureland C64",
+			 ADVENTURELAND_C64,
+			 NO_TYPE,                             // type
+			 static_cast<Subtype>(ENGLISH | C64), // subtype
+			 THREE_LETTER_UNCOMPRESSED,           // dictionary type
+
+			 62,  // Number of items
+			 170, // Number of actions
+			 69,  // Number of words
+			 33,  // Number of rooms
+			 6,   // Max carried items
+			 3,   // Word length
+			 75,  // Number of messages
+
+			 70, // number_of_verbs
+			 69, // number_of_nouns;
+
+			 0x4146, // header
+			 EARLY,  // header style
+
+			 0x6364, // room images
+			 0x85a7, // item flags
+			 0x63c5, // item images
+			 0x4160, // actions
+			 UNCOMPRESSED,
+			 0x4c10,  // dictionary
+			 0x4e40,  // start_of_room_descriptions;
+			 FOLLOWS, // start_of_room_connections;
+			 FOLLOWS, // start_of_messages;
+			 FOLLOWS, // start_of_item_descriptions;
+			 0x6404,  // start_of_item_locations;
+
+			 0x188, // start_of_system_messages
+			 0x188, // start of directions
+
+			 0x6482,  // start_of_characters;
+			 0x6c82,  // start_of_image_data
+			 -0x1102, // image_address_offset
+			 41,      // number_of_pictures;
+			 C64B,    // palette
+			 1,       // picture_format_version;
+			 0),
 };

@@ -48,6 +48,7 @@
 #include "glk/scott/robin_of_sherwood.h"
 #include "glk/scott/gremlins.h"
 #include "glk/scott/seas_of_blood.h"
+#include "glk/scott/game_specific.h"
 
 namespace Glk {
 namespace Scott {
@@ -1123,8 +1124,7 @@ ActionResultType Scott::performLine(int ct) {
 					break;
 				case ADVENTURELAND:
 				case ADVENTURELAND_C64:
-					// TODO
-					// AdventurelandAction(p);
+					adventurelandAction(p);
 					break;
 				case SEAS_OF_BLOOD:
 				case SEAS_OF_BLOOD_C64:
@@ -1705,8 +1705,7 @@ void Scott::drawImage(int image) {
 
 void Scott::drawRoomImage() {
 	if (CURRENT_GAME == ADVENTURELAND || CURRENT_GAME == ADVENTURELAND_C64) {
-		// TODO
-		// AdventurelandDarkness();
+		adventurelandDarkness();
 	}
 
 	int dark = ((_G(_bitFlags) & (1 << DARKBIT)) && _G(_items)[LIGHT_SOURCE]._location != CARRIED && _G(_items)[LIGHT_SOURCE]._location != MY_LOC);

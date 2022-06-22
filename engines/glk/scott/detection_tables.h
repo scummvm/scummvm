@@ -190,7 +190,12 @@ const GlkDetectionEntry SCOTT_GAMES[] = {
 	DT_ENTRY1("seasofblood",	 "C64", "46280fb1d701a41492b8434467c31029", 41481),
 
 	//Scott Adams
-	DT_ENTRY1("claymorguesorcerer","C64", "a1db488c49ad221fa0dc79591cb5a3db", 28663),
+	DT_ENTRY1("adventureland",		"C64", "05cf6c64ecde5288ae2e46099bfd19a3", 27152),
+	DT_ENTRY1("adventureland",		"C64", "5af919881417920ec6a3961b4577f587", 27152),
+	DT_ENTRY1("claymorguesorcerer", "C64", "a1db488c49ad221fa0dc79591cb5a3db", 28663),
+	DT_ENTRY1("claymorguesorcerer", "C64", "1ebaf9a378355246aa7ed2623bb27fab", 49373),
+	DT_ENTRY1("claymorguesorcerer", "C64", "dde67117a432420ef05f8d665fbbbe10", 37167),
+	DT_ENTRY1("claymorguesorcerer", "C64", "64fcee173adecc0f03c595e25d4def04", 174848),
 
 	// 11 Mysterious Adventures
 	DT_ENTRY1("mysadv1", "C64", "b4d8fc4eabed4f2400717303561ad0fa", 174848),

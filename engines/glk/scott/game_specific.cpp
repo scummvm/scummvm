@@ -185,5 +185,88 @@ void claymorgue64Sysmess() {
 	_G(_sys)[SOMETHING] = "\" something. ";
 }
 
+void adventurelandAction(int p) {
+	int image = 0;
+	switch (p) {
+	case 1:
+		image = 36;
+		break;
+	case 2:
+		image = 34;
+		break;
+	case 3:
+		image = 33;
+		break;
+	case 4:
+		image = 35;
+		break;
+	default:
+		error("Adventureland: Unsupported action parameter %d", p);
+		return;
+	}
+	g_scott->drawImage(image);
+	g_scott->output("\n");
+	g_scott->output(_G(_sys)[HIT_ENTER]);
+	g_scott->hitEnter();
+	return;
+}
+
+void adventurelandDarkness() {
+	if ((_G(_rooms)[MY_LOC]._image & 128) == 128)
+		_G(_bitFlags) |= 1 << DARKBIT;
+	else
+		_G(_bitFlags) &= ~(1 << DARKBIT);
+}
+
+void adventureland64Sysmess() {
+	SysMessageType messagekey[] = {
+		NORTH,
+		SOUTH,
+		EAST,
+		WEST,
+		UP,
+		DOWN,
+		EXITS,
+		YOU_SEE,
+		YOU_ARE,
+		TOO_DARK_TO_SEE,
+		LIGHT_HAS_RUN_OUT,
+		LIGHT_RUNS_OUT_IN,
+		TURNS,
+		I_DONT_KNOW_HOW_TO,
+		SOMETHING,
+		I_DONT_KNOW_WHAT_A,
+		IS,
+		YOU_CANT_GO_THAT_WAY,
+		OK,
+		WHAT_NOW,
+		HUH,
+		YOU_HAVENT_GOT_IT,
+		INVENTORY,
+		YOU_DONT_SEE_IT,
+		THATS_BEYOND_MY_POWER,
+		DANGEROUS_TO_MOVE_IN_DARK,
+		DIRECTION,
+		YOU_FELL_AND_BROKE_YOUR_NECK,
+		YOURE_CARRYING_TOO_MUCH,
+		IM_DEAD,
+		PLAY_AGAIN,
+		RESUME_A_SAVED_GAME,
+		IVE_STORED,
+		TREASURES,
+		ON_A_SCALE_THAT_RATES,
+		YOU_CANT_DO_THAT_YET,
+		I_DONT_UNDERSTAND,
+		NOTHING,
+		YOUVE_SOLVED_IT};
+
+	for (int i = 0; i < 39; i++) {
+		_G(_sys)[messagekey[i]] = _G(_systemMessages)[i];
+	}
+
+	_G(_sys)[I_DONT_KNOW_HOW_TO] = "I don't know how to \"";
+	_G(_sys)[SOMETHING] = "\" something. ";
+}
+
 } // End of namespace Scott
 } // End of namespace Glk
