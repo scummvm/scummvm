@@ -132,11 +132,53 @@ void FreescapeEngine::loadAssets() {
 
 }
 
-void FreescapeEngine::drawFrame(Math::Vector3d scaleVector, Area *area) {
+void FreescapeEngine::drawFrame(Area *area) {
 	_gfx->updateProjectionMatrix(60.0, _nearClipPlane, _farClipPlane);
 	_gfx->positionCamera(_position, _position + _cameraFront);
-	_gfx->scale(scaleVector);
+	_gfx->scale(_scaleVector);
 	area->draw(_gfx);
+}
+
+void FreescapeEngine::processInput() {
+	float currentFrame = g_system->getMillis();
+	float deltaTime = currentFrame - _lastFrame;
+	_lastFrame = currentFrame;
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		Common::Point mousePos = g_system->getEventManager()->getMousePos();
+
+		switch (event.type) {
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == Common::KEYCODE_w || event.kbd.keycode == Common::KEYCODE_UP)
+				move(FORWARD, _scaleVector.x(), deltaTime);
+			else if (event.kbd.keycode == Common::KEYCODE_s || event.kbd.keycode == Common::KEYCODE_DOWN)
+				move(BACKWARD, _scaleVector.x(), deltaTime);
+			else if (event.kbd.keycode == Common::KEYCODE_a || event.kbd.keycode == Common::KEYCODE_LEFT)
+				move(LEFT, _scaleVector.y(), deltaTime);
+			else if (event.kbd.keycode == Common::KEYCODE_d || event.kbd.keycode == Common::KEYCODE_RIGHT)
+				move(RIGHT, _scaleVector.y(), deltaTime);
+			break;
+
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
+			return;
+			break;
+
+		case Common::EVENT_MOUSEMOVE:
+			rotate(_lastMousePos, mousePos);
+			_lastMousePos = mousePos;
+			if (mousePos.x <= 5 || mousePos.x >= 315) {
+				g_system->warpMouse(_screenW/2, mousePos.y);
+				_lastMousePos.x = _screenW/2;
+				_lastMousePos.y = mousePos.y;
+			}
+			break;
+		default:
+			break;
+
+		}
+	}
+
 }
 
 Common::Error FreescapeEngine::run() {
@@ -157,13 +199,12 @@ Common::Error FreescapeEngine::run() {
 	area->show();
 	assert(entrance);
 	_position = entrance->getOrigin();
-	Math::Vector3d scaleVector;
 	if (_scale == Math::Vector3d(0, 0, 0)) {
 		uint8 scale = area->getScale();
-		scaleVector = Math::Vector3d(scale, scale, scale);
+		_scaleVector = Math::Vector3d(scale, scale, scale);
 	} else
-		scaleVector = _scale;
-	debug("scale: %f, %f, %f", scaleVector.x(), scaleVector.y(), scaleVector.z());
+		_scaleVector = _scale;
+	debug("scale: %f, %f, %f", _scaleVector.x(), _scaleVector.y(), _scaleVector.z());
 	_position.setValue(1, _position.y() + _playerHeight);
 
 	Math::Vector3d rotation = entrance->getRotation();
@@ -172,9 +213,8 @@ Common::Error FreescapeEngine::run() {
 
 	debug("FreescapeEngine::init");
 	// Simple main event loop
-	Common::Event event;
-	Common::Point lastMousePos(0, 0);
-	float lastFrame = 0.f;
+	_lastMousePos = Common::Point(0, 0);
+	_lastFrame = 0.f;
 	// used to create a projection matrix;
 	_nearClipPlane = 1.f;
 
@@ -188,45 +228,8 @@ Common::Error FreescapeEngine::run() {
 	//g_system->lockMouse(true);
 
 	while (!shouldQuit()) {
-		drawFrame(scaleVector, area);
-        float currentFrame = g_system->getMillis();
-        float deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
-
-		while (g_system->getEventManager()->pollEvent(event)) {
-			Common::Point mousePos = g_system->getEventManager()->getMousePos();
-
-			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_w || event.kbd.keycode == Common::KEYCODE_UP)
-					move(FORWARD, scaleVector.x(), deltaTime);
-				else if (event.kbd.keycode == Common::KEYCODE_s || event.kbd.keycode == Common::KEYCODE_DOWN)
-					move(BACKWARD, scaleVector.x(), deltaTime);
-				else if (event.kbd.keycode == Common::KEYCODE_a || event.kbd.keycode == Common::KEYCODE_LEFT)
-					move(LEFT, scaleVector.y(), deltaTime);
-				else if (event.kbd.keycode == Common::KEYCODE_d || event.kbd.keycode == Common::KEYCODE_RIGHT)
-					move(RIGHT, scaleVector.y(), deltaTime);
-				break;
-
-			case Common::EVENT_QUIT:
-			case Common::EVENT_RETURN_TO_LAUNCHER:
-				return Common::kNoError;
-				break;
-
-			case Common::EVENT_MOUSEMOVE:
-				rotate(lastMousePos, mousePos);
-				lastMousePos = mousePos;
-				if (mousePos.x <= 5 || mousePos.x >= 315) {
-					g_system->warpMouse(_screenW/2, mousePos.y);
-					lastMousePos.x = _screenW/2;
-					lastMousePos.y = mousePos.y;
-				}
-				break;
-			default:
-				break;
-
-			}
-		}
+		processInput();
+		drawFrame(area);
 
 		//drawBorder();
 		_gfx->flipBuffer();

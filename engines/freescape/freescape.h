@@ -85,9 +85,14 @@ public:
 	// Entrance
 	uint16 _startEntrance;
 
-	// Movement
+	// Input
+	void processInput();
 	void move(CameraMovement direction, uint8 scale, float deltaTime);
 	void rotate(Common::Point lastMousePos, Common::Point mousePos);
+	// Input state
+	float _lastFrame;
+	Common::Point _lastMousePos;
+
 	// Eular Angles
 	float _yaw;
 	float _pitch;
@@ -100,8 +105,9 @@ public:
 
 
 	// Rendering
-	void drawFrame(Math::Vector3d scaleVector, Area *area);
+	void drawFrame(Area *area);
 	uint8 _colorNumber;
+	Math::Vector3d _scaleVector;
 	float _nearClipPlane;
 	float _farClipPlane;
 
