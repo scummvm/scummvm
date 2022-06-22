@@ -41,6 +41,7 @@ typedef enum {
 
 
 @property (nonatomic, readwrite, retain) iPhoneView *view;
+@property (nonatomic, assign) BOOL isConnected;
 
 - (id)initWithView:(iPhoneView *)view;
 
