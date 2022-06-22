@@ -449,13 +449,7 @@ struct MessageFlags {
 struct DynamicValue;
 struct DynamicList;
 
-struct IDynamicValueReadInterface : public IInterfaceBase {
-	virtual MiniscriptInstructionOutcome read(MiniscriptThread *thread, DynamicValue &dest, const void *objectRef, uintptr ptrOrOffset) const = 0;
-	virtual MiniscriptInstructionOutcome readAttrib(MiniscriptThread *thread, DynamicValue &dest, const void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const = 0;
-	virtual MiniscriptInstructionOutcome readAttribIndexed(MiniscriptThread *thread, DynamicValue &dest, const void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const = 0;
-};
-
-struct IDynamicValueWriteInterface : public IInterfaceBase {
+struct IDynamicValueWriteInterface {
 	virtual MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset) const = 0;
 	virtual MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const = 0;
 	virtual MiniscriptInstructionOutcome refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const = 0;
