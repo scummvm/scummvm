@@ -98,7 +98,7 @@ class cSubMeshEntity : public iRenderable {
 
 public:
 	cSubMeshEntity(const tString &asName, cMeshEntity *apMeshEntity, cSubMesh *apSubMesh, cMaterialManager *apMaterialManager);
-	~cSubMeshEntity();
+	virtual ~cSubMeshEntity();
 
 	iMaterial *GetMaterial();
 

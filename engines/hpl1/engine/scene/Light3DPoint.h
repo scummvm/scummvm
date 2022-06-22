@@ -48,6 +48,7 @@ class cLight3DPoint : public iLight3D {
 
 public:
 	cLight3DPoint(tString asName, cResources *apResources);
+	virtual ~cLight3DPoint() = default; 
 
 	// SaveObject implementation
 	virtual iSaveData *CreateSaveData();

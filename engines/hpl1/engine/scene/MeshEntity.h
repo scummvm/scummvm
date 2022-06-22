@@ -71,6 +71,7 @@ public:
 
 class cMeshEntityCallback {
 public:
+	virtual ~cMeshEntityCallback(); 
 	virtual void AfterAnimationUpdate(cMeshEntity *apMeshEntity, float afTimeStep) = 0;
 };
 
