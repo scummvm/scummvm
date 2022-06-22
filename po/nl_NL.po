@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-21 21:40+0000\n"
-"PO-Revision-Date: 2022-06-09 06:42+0000\n"
+"PO-Revision-Date: 2022-06-22 06:16+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -987,7 +987,7 @@ msgstr "Alles"
 
 #: gui/launcher.cpp:1596
 msgid "Icons per row:"
-msgstr ""
+msgstr "Pictogrammen per rij:"
 
 #: gui/massadd.cpp:75 gui/massadd.cpp:78
 msgid "... progress ..."
