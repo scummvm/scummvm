@@ -45,6 +45,7 @@ TinyGLRenderer::TinyGLRenderer(OSystem *system) : Renderer(system) {
 }
 
 TinyGLRenderer::~TinyGLRenderer() {
+	TinyGL::destroyContext();
 }
 
 Texture *TinyGLRenderer::createTexture(const Graphics::Surface *surface) {
@@ -61,10 +62,7 @@ void TinyGLRenderer::init() {
 
 	computeScreenViewport();
 
-	//_fb = new TinyGL::FrameBuffer(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat(), true);
 	TinyGL::createContext(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat(), 512, true, ConfMan.getBool("dirtyrects"));
-	//TinyGL::glInit(_fb, 512);
-	//tglEnableDirtyRects(ConfMan.getBool("dirtyrects"));
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
