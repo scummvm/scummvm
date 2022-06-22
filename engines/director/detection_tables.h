@@ -619,6 +619,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "101pet",				"Dalmation Adoption" },
 	{ "50ftchicken",		"Attack of the 50-foot Chicken" },
 	{ "alanna",				"The Lost Island of Alanna" },
+	{ "antfarm",			"Ant Farm" },
 	{ "antsafire",			"Ants Afire!" },
 	{ "aolstarwars",		"Star Wars: Episode III: Game, Videos & More!" },
 	{ "arad",				"Animaniacs River Adventure" },
@@ -635,6 +636,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "dfireworks",			"The Digital Fireworks Stand" },
 	{ "dreidel",			"DreidelLand: An Electronic Hanukah Treat" },
 	{ "emigre",				"Emigre Signs of Type: Big Cheese" },
+	{ "fortuneteller",		"The Fortune Teller" },
+	{ "imision369",			"ImIsion 369" },
 	{ "kfk",				"Kung Fu Kim" },
 	{ "letterrally",		"Letter Rally" },
 	{ "limit0",				"Limit 0" },
@@ -1982,6 +1985,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("foocastle", "", "Foo Castle", "7f443f2e63fd497a9ad85b10dc880a91", 385555, 313),
 	WINGAME1("foocastle", "", "FCASTLE.EXE", "65d06b5fef155a2473434571aff5bc29", 370481, 313),
 
+	MACGAME1("fortuneteller", "v1.3", "The Fortune Teller 1.3", "1ae45c23586b41997ba52e2e7c771c4c", 1455979, 310),
+
 	MACGAME1_l("fototune", "", "FotoTune Multimedia show", "1ae45c23586b41997ba52e2e7c771c4c", 378737, Common::JA_JPN, 311),
 
 	MACGAME1("freakshow", "D3", "Freak Show Projector", "bb61dd0cc8356e51fe54c1a00f979b8f", 439227, 300),
@@ -2814,6 +2819,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("ankh1", "", "ANKH.EXE", "ca3b036aed6f38beb3ee762e171b663e", 746959, Common::JA_JPN, 404),
 	MACDEMO1_l("ankh1", "Demo", "ANKH-demo", "4577dd3eadc467a986ab172d90871b22", 500393, Common::JA_JPN, 404),
 
+	MACGAME1("antfarm", "", "Ant Farm", "3269beea2787a0881008e44087479a1f", 302924, 404),
+
 	// Original filename is Ants Afire!™ 1.2
 	// Original Pro demo filename is Ants Afire! Pro™ PM
 	// Demo is from Inside Mac Games #25 - Mar 25 1995
@@ -3589,6 +3596,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("imesceneryfish", "ECD", "Scenery and Fish", "e60d4b832a771b0064a703938f82dfb3", 2804, 404),
 	WINGAME2("imesceneryfish", "ECD", "runme.exe",		  "47b17c219097afb877fd9bc15455e4d4", 738415,
 									  "main.dir",		  "0b20d6b771b4f5fd50e823c3773aecdd", 3526788, 404),
+
+	MACGAME1("imision369", "v2.1", "ImIsion 369", "5830ee2b9ecc97ce8026d00e0977f555", 296780, 404),
 
 	// Play as either Shirley (disc 1) or Dolan (disc 2)
 	MACGAME2("improv", "Shirley", "IMPROV (PowerPC)", "096e0aacbc1670c80a354c3c49b3fabe", 60324,
