@@ -41,7 +41,7 @@ class ImageManager;
 class iLowLevelGraphics;
 class cGraphicsDrawer;
 class cGfxObject;
-class iBitmap2D;
+class Bitmap2D;
 class cGuiGfxElement;
 class cGui;
 
@@ -163,7 +163,7 @@ protected:
 
 	cVector2f mvSizeRatio;
 
-	cGlyph *CreateGlyph(iBitmap2D *apBmp, const cVector2l &avOffset, const cVector2l &avSize,
+	cGlyph *CreateGlyph(Bitmap2D *apBmp, const cVector2l &avOffset, const cVector2l &avSize,
 						const cVector2l &avFontSize, int alAdvance);
 	void AddGlyph(cGlyph *apGlyph);
 };

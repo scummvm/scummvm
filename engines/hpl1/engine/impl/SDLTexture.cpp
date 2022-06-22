@@ -26,7 +26,7 @@
  */
 
 #include "hpl1/engine/impl/SDLTexture.h"
-#include "hpl1/engine/impl/SDLBitmap2D.h"
+#include "hpl1/engine/graphics/bitmap2D.h"
 
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/system/LowLevelSystem.h"
@@ -86,7 +86,7 @@ cSDLTexture::~cSDLTexture() {
 
 //-----------------------------------------------------------------------
 
-bool cSDLTexture::CreateFromBitmap(iBitmap2D *pBmp) {
+bool cSDLTexture::CreateFromBitmap(Bitmap2D *pBmp) {
 #if 0
   		//Generate handles
 		if(mvTextureHandles.empty())
@@ -157,7 +157,7 @@ bool cSDLTexture::CreateCubeFromBitmapVec(tBitmap2DVec *avBitmaps) {
 		//Create the cube map sides
 		for(int i=0; i< 6; i++)
 		{
-			cSDLBitmap2D *pSrc = static_cast<cSDLBitmap2D*>((*avBitmaps)[i]);
+			Bitmap2D *pSrc = static_cast<Bitmap2D*>((*avBitmaps)[i]);
 
 			GLenum target = GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB + i;
 
@@ -550,7 +550,7 @@ unsigned int cSDLTexture::GetTextureHandle() {
 
 //-----------------------------------------------------------------------
 
-bool cSDLTexture::CreateFromBitmapToHandle(iBitmap2D *pBmp, int alHandleIdx) {
+bool cSDLTexture::CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx) {
 #if 0
   		if(mType == eTextureType_RenderTarget)
 		{
@@ -567,7 +567,7 @@ bool cSDLTexture::CreateFromBitmapToHandle(iBitmap2D *pBmp, int alHandleIdx) {
 
 		GLenum GLTarget =InitCreation(alHandleIdx);
 
-		cSDLBitmap2D *pBitmapSrc = static_cast<cSDLBitmap2D*>(pBmp);
+		Bitmap2D *pBitmapSrc = static_cast<Bitmap2D*>(pBmp);
 
 		mlWidth = pBitmapSrc->GetWidth();
 		mlHeight = pBitmapSrc->GetHeight();
@@ -714,7 +714,7 @@ void cSDLTexture::PostCreation(GLenum aGLTarget) {
 
 //-----------------------------------------------------------------------
 
-void cSDLTexture::GetSettings(cSDLBitmap2D *apSrc, int &alChannels, GLenum &aFormat) {
+void cSDLTexture::GetSettings(Bitmap2D *apSrc, int &alChannels, GLenum &aFormat) {
 #if 0
   		SDL_Surface *pSurface =  apSrc->GetSurface();
 		alChannels = pSurface->format->BytesPerPixel;

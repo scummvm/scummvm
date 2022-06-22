@@ -32,56 +32,39 @@
 #include "hpl1/engine/graphics/LowLevelPicture.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "graphics/pixelformat.h"
+#include "common/ptr.h"
+#include "graphics/surface.h"
 
 namespace hpl {
 
-class iBitmap2D : public iLowLevelPicture {
+class Bitmap2D : public iLowLevelPicture {
 public:
-	iBitmap2D(tString asType, Graphics::PixelFormat *apPxlFmt) : iLowLevelPicture(asType) {}
-	virtual ~iBitmap2D() {}
+	Bitmap2D(const tString &type) : iLowLevelPicture(type) {}
+	Bitmap2D(const Graphics::Surface &surface, const tString &type) : 
+		iLowLevelPicture(type), _surface(surface) {
+	} 
+	
+	~Bitmap2D(); 
 
-	/**
-	 * Save the bitmap to file
-	 * \param asFile
-	 * \return
-	 */
-	virtual bool SaveToFile(const tString &asFile) = 0;
 
-	/**
-	 * Draw the bitmap onto another
-	 * \param *apBmp Destination
-	 * \param &avPos Position on new map
-	 */
-	virtual void DrawToBitmap(iBitmap2D *apBmp, const cVector2l &avPos) = 0;
-	/**
-	 * Creates a new size for the bitmap. (all previous content is erased
-	 * \param avSize
-	 * \param alBpp
-	 * \return
-	 */
-	virtual bool Create(cVector2l avSize, unsigned int alBpp) = 0;
+	void drawToBitmap(Bitmap2D &dest, const cVector2l &pos);
 
-	/**
-	 * Draws a solid rect onto the bitmap. IF h and w is than w and how of the bitmap is used.
-	 * \param &aRect
-	 * \param &aColor
-	 */
-	virtual void FillRect(const cRect2l &aRect, const cColor &aColor) = 0;
+	bool create(const cVector2l &size, const Graphics::PixelFormat &format);
 
-	/**
-	 * Get a pointer to the raw pixel data.
-	 */
-	virtual void *GetRawData() = 0;
+	void fillRect(const cRect2l &rect, const cColor &color);
 
-	/**
-	 * Get the number of color channels in the image.
-	 * \return
-	 */
-	virtual int GetNumChannels() = 0;
+	void *getRawData();
+
+	int getNumChannels();
+
+	bool HasAlpha() override;
+
+private: 
+	Graphics::Surface _surface; 
 };
 
-typedef std::vector<iBitmap2D *> tBitmap2DVec;
-typedef std::vector<iBitmap2D *>::iterator tBitmap2DVecIt;
+typedef std::vector<Bitmap2D *> tBitmap2DVec;
+typedef std::vector<Bitmap2D *>::iterator tBitmap2DVecIt;
 
 };     // namespace hpl
 #endif // HPL_BITMAP2D_H

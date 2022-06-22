@@ -36,7 +36,7 @@ namespace hpl {
 
 class cFrameTexture;
 class cResourceImage;
-class iBitmap2D;
+class Bitmap2D;
 
 // The frames bitmap + rect class
 class cFBitmapRect {
@@ -58,10 +58,10 @@ typedef tRectTreeNodeList::iterator tRectTreeNodeListIt;
 
 class cFrameBitmap : public iFrameBase {
 public:
-	cFrameBitmap(iBitmap2D *apBitmap, cFrameTexture *apFrmTex, int alHandle);
+	cFrameBitmap(Bitmap2D *apBitmap, cFrameTexture *apFrmTex, int alHandle);
 	~cFrameBitmap();
 
-	cResourceImage *AddBitmap(iBitmap2D *apSrc);
+	cResourceImage *AddBitmap(Bitmap2D *apSrc);
 	bool MinimumFit(cRect2l aSrc, cRect2l aDest);
 	bool IsFull();
 	bool IsUpdated();
@@ -76,7 +76,7 @@ public:
 	int GetHandle() const { return mlHandle; }
 
 private:
-	iBitmap2D *mpBitmap;
+	Bitmap2D *mpBitmap;
 	cFrameTexture *mpFrameTexture;
 	tRectTree mRects;
 	int mlMinHole;

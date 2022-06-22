@@ -28,7 +28,7 @@
 #include "hpl1/engine/impl/LowLevelResourcesSDL.h"
 #include "hpl1/engine/impl/MeshLoaderCollada.h"
 #include "hpl1/engine/impl/MeshLoaderMSH.h"
-#include "hpl1/engine/impl/SDLBitmap2D.h"
+#include "hpl1/engine/graphics/bitmap2D.h"
 #ifdef INCLUDE_THEORA
 #include "hpl1/engine/impl/VideoStreamTheora.h"
 #endif
@@ -78,7 +78,7 @@ cLowLevelResourcesSDL::~cLowLevelResourcesSDL() {
 
 //-----------------------------------------------------------------------
 
-iBitmap2D *cLowLevelResourcesSDL::LoadBitmap2D(tString asFilePath, tString asType) {
+Bitmap2D *cLowLevelResourcesSDL::LoadBitmap2D(tString asFilePath, tString asType) {
 #if 0
   		tString tType;
 		if(asType != "")

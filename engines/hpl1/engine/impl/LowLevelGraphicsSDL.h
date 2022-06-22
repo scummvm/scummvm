@@ -45,6 +45,8 @@
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
 #include "graphics/pixelformat.h"
 #include "hpl1/engine/math/MathTypes.h"
+#include "graphics/surface.h"
+#include "common/ptr.h"
 
 namespace hpl {
 
@@ -85,12 +87,12 @@ public:
 	cVector2f GetVirtualSize();
 	void SetVirtualSize(cVector2f avSize);
 
-	iBitmap2D *CreateBitmap2D(const cVector2l &avSize, unsigned int alBpp);
+	Bitmap2D *CreateBitmap2D(const cVector2l &avSize, unsigned int alBpp);
 	iFontData *CreateFontData(const tString &asName);
 
 	iTexture *CreateTexture(bool abUseMipMaps, eTextureType aType, eTextureTarget aTarget);
 	iTexture *CreateTexture(const tString &asName, bool abUseMipMaps, eTextureType aType, eTextureTarget aTarget);
-	iTexture *CreateTexture(iBitmap2D *apBmp, bool abUseMipMaps, eTextureType aType, eTextureTarget aTarget);
+	iTexture *CreateTexture(Bitmap2D *apBmp, bool abUseMipMaps, eTextureType aType, eTextureTarget aTarget);
 	iTexture *CreateTexture(const cVector2l &avSize, int alBpp, cColor aFillCol,
 							bool abUseMipMaps, eTextureType aType, eTextureTarget aTarget);
 
@@ -235,7 +237,7 @@ public:
 
 	///// SDL Specific ////////////////////////////
 
-	iBitmap2D *CreateBitmap2DFromSurface(SDL_Surface *apSurface, const tString &asType);
+	Bitmap2D *CreateBitmap2DFromSurface(SDL_Surface *apSurface, const tString &asType);
 
 	CGcontext GetGC_Context() { return mCG_Context; }
 

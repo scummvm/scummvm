@@ -116,7 +116,7 @@ MODULE_OBJS := \
 	engine/impl/PhysicsJointSliderNewton.o \
 	engine/impl/PhysicsMaterialNewton.o \
 	engine/impl/PhysicsWorldNewton.o \
-	engine/impl/SDLBitmap2D.o \
+	engine/graphics/bitmap2D.o \
 	engine/impl/SDLFontData.o \
 	engine/impl/SDLGameSetup.o \
 	engine/impl/SDLTexture.o \
