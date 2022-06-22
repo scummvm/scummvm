@@ -67,6 +67,7 @@ cAINodeGeneratorParams::cAINodeGeneratorParams() {
 
 class cCollideRayCallback : public iPhysicsRayCallback {
 public:
+	virtual ~cCollideRayCallback() {}
 	bool OnIntersect(iPhysicsBody *pBody, cPhysicsRayParams *apParams) {
 		if (pBody->GetMass() != 0)
 			return true;
