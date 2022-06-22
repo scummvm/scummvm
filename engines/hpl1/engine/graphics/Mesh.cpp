@@ -464,7 +464,7 @@ void cMesh::CreateJointsAndBodies(std::vector<iPhysicsBody *> *apBodyVec, cMeshE
 			// Create body
 			if (vShapes.size() > 0) {
 				// Create the compound shape if needed.
-				iCollideShape *pShape;
+				iCollideShape *pShape = nullptr;
 				if (vShapes.size() > 1) {
 					pShape = apPhysicsWorld->CreateCompundShape(vShapes);
 				} else if (vShapes.size() == 1) {
@@ -702,9 +702,9 @@ iCollideShape *cMesh::CreateCollideShapeFromCollider(cMeshCollider *pCollider, i
 		return apWorld->CreateCylinderShape(pCollider->mvSize.x, pCollider->mvSize.y, &pCollider->m_mtxOffset);
 	case eCollideShapeType_Capsule:
 		return apWorld->CreateCapsuleShape(pCollider->mvSize.x, pCollider->mvSize.y, &pCollider->m_mtxOffset);
+	default:
+		return NULL;
 	}
-
-	return NULL;
 }
 
 iCollideShape *cMesh::CreateCollideShape(iPhysicsWorld *apWorld) {

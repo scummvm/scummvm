@@ -195,6 +195,8 @@ float cPhysicsMaterialNewton::Combine(ePhysicsMaterialCombMode aMode, float afX,
 		return std::max(afX, afY);
 	case ePhysicsMaterialCombMode_Multiply:
 		return afX * afY;
+	default:
+		break;
 	}
 
 	return (afX + afY) / 2;

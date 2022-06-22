@@ -129,6 +129,8 @@ kBeginSerializeBase(cEngineBody_SaveData)
 		mfMaxLimit = pSliderJoint->GetMaxDistance();
 		break;
 	}
+	default:
+		break;
 	}
 }
 
@@ -186,6 +188,8 @@ void cEngineJoint_SaveData::ToJoint(iPhysicsJoint *apJoint) {
 		pSliderJoint->SetMaxDistance(mfMaxLimit);
 		break;
 	}
+	default:
+		break;
 	}
 }
 

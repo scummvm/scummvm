@@ -167,6 +167,8 @@ tVertexVec *cMesh2D::GetVertexVec(const cRect2f &aImageRect, cVector2f avSize, e
 		case eTileRotation_270:
 			mvVtx[aRotation][j].norm = cVector3f(0, -1, 3);
 			break;
+		default:
+			break;
 		}
 	}
 

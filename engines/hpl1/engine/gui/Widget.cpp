@@ -190,6 +190,8 @@ bool iWidget::ProcessMessage(eGuiMessage aMessage, cGuiMessageData &aData) {
 		case eGuiMessage_LostFocus:
 			bRet = OnLostFocus(aData);
 			break;
+		default:
+			break;
 		}
 	}
 

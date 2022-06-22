@@ -385,6 +385,8 @@ tString cMaterialManager::GetTextureString(eMaterialTexture aType) {
 		return "CubeMap";
 	case eMaterialTexture_Refraction:
 		return "Refraction";
+	default:
+		break;
 	}
 
 	return "";

@@ -59,7 +59,7 @@ public:
 
 	PlainGameList getSupportedGames() const override;
 
-	PlainGameDescriptor findGame(const char *gameid);
+	PlainGameDescriptor findGame(const char *gameid) const override;
 };
 
 #endif

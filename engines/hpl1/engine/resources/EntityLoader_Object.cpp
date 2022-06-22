@@ -741,6 +741,8 @@ void cEntityLoader_Object::SetJointProperties(iPhysicsJoint *pJoint, TiXmlElemen
 			pSliderJoint->SetMaxDistance(fMaxValue / 100);
 			break;
 		}
+		default:
+			break;
 		}
 	}
 
