@@ -335,6 +335,11 @@ void ScummEngine_v8::writeVar(uint var, int value) {
 	error("Illegal varbits (w)");
 }
 
+void ScummEngine_v8::setKeyScriptVars(int keyScriptKey, int keyScriptNo) {
+	_keyScriptKey = keyScriptKey;
+	_keyScriptNo = keyScriptNo;
+}
+
 void ScummEngine_v8::decodeParseString(int m, int n) {
 	byte b = fetchScriptByte();
 
@@ -1137,8 +1142,7 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		debug(0, "o8_kernelSetFunctions: saveGameStampScreenshot(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
 		break;
 	case 29:	// setKeyScript
-		_keyScriptKey = args[1];
-		_keyScriptNo = args[2];
+		setKeyScriptVars(args[1], args[2]);
 		break;
 	case 30:	// killAllScriptsButMe
 		killAllScriptsExceptCurrent();
