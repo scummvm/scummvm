@@ -19,6 +19,12 @@
  *
  */
 
+/*************************************
+ *
+ * USED IN:
+ * Learning CorelDRAW 3
+ *
+ *************************************/
 /*
   -- JITDraw3 External Factory. 16Feb93 PTM
   JITDraw3
