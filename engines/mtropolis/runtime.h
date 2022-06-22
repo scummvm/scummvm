@@ -2263,6 +2263,8 @@ public:
 
 	virtual bool isVisual() const = 0;
 	virtual bool canAutoPlay() const;
+	virtual void queueAutoPlayEvents(Runtime *runtime, bool isAutoPlaying);
+
 	bool isElement() const override;
 
 	uint32 getStreamLocator() const;

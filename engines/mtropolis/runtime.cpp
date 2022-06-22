@@ -2963,8 +2963,7 @@ MiniscriptInstructionOutcome Structural::scriptSetPaused(MiniscriptThread *threa
 	// while at the Bureau light carousel, since the lever isn't flagged as paused but is set paused
 	// via an init script, and the lever trigger is detected via the pause event.
 	//
-	// (It's possible that this is actually yet another case of the event simply not being sent when the
-	// property is set from script... need to verify and update this comment.)
+	// The event does, however, need to be sent immediately.
 	if (!thread->getRuntime()->isAwaitingSceneTransition()) {
 		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(targetValue ? EventIDs::kPause : EventIDs::kUnpause, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
@@ -6435,6 +6434,14 @@ bool Element::canAutoPlay() const {
 	return false;
 }
 
+void Element::queueAutoPlayEvents(Runtime *runtime, bool isAutoPlaying) {
+	if (isAutoPlaying) {
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, false, true));
+		runtime->queueMessage(dispatch);
+	}
+}
+
 bool Element::isElement() const {
 	return true;
 }
@@ -6462,11 +6469,7 @@ void Element::triggerAutoPlay(Runtime *runtime) {
 
 	_haveCheckedAutoPlay = true;
 
-	if (canAutoPlay()) {
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
-		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, false, true));
-		runtime->queueMessage(dispatch);
-	}
+	queueAutoPlayEvents(runtime, canAutoPlay());
 }
 
 bool Element::resolveMediaMarkerLabel(const Label& label, int32 &outResolution) const {

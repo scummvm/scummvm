@@ -603,8 +603,18 @@ MiniscriptInstructionOutcome MovieElement::writeRefAttribute(MiniscriptThread *t
 }
 
 VThreadState MovieElement::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	// The reaction to the Play command should be to fire Unpaused and then fire Played.
+	// At First Cel is NOT fired by Play commands for some reason.
+
 	if (Event::create(EventIDs::kPlay, 0).respondsTo(msg->getEvent())) {
-		// These reverse order
+		if (_paused)
+		{
+			_paused = false;
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kUnpause, 0), DynamicValue(), getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+			runtime->sendMessageOnVThread(dispatch);
+		}
+
 		{
 			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
 			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
@@ -690,6 +700,17 @@ bool MovieElement::canAutoPlay() const {
 	return _visible && !_paused;
 }
 
+void MovieElement::queueAutoPlayEvents(Runtime *runtime, bool isAutoPlaying) {
+	// At First Cel event fires even if the movie isn't playing, and it fires before Played
+	if (_visible) {
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kAtFirstCel, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+		runtime->queueMessage(dispatch);
+	}
+
+	VisualElement::queueAutoPlayEvents(runtime, isAutoPlaying);
+}
+
 void MovieElement::render(Window *window) {
 	if (_needsReset) {
 		_videoDecoder->setReverse(_reversed);
@@ -731,7 +752,8 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 				if (_videoDecoder->isPaused())
 					_videoDecoder->pauseVideo(false);
 
-				_currentPlayState = kMediaStatePlaying;
+				if (_currentPlayState != kMediaStatePlayingLastFrame)
+					_currentPlayState = kMediaStatePlaying;
 				checkContinuously = true;
 			}
 		} else {
@@ -747,25 +769,25 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 		uint32 targetTS = _currentTimestamp;
 
 		int framesDecodedThisFrame = 0;
-		while (_videoDecoder->needsUpdate()) {
-			if (_playEveryFrame && framesDecodedThisFrame > 0)
-				break;
-
-			const Graphics::Surface *decodedFrame = _videoDecoder->decodeNextFrame();
-
-			// GNARLY HACK: QuickTimeDecoder doesn't return true for endOfVideo or false for needsUpdate until it
-			// tries decoding past the end, so we're assuming that the decoded frame memory stays valid until we
-			// actually have a new frame and continuing to use it.
-			if (decodedFrame) {
-				_contentsDirty = true;
-				framesDecodedThisFrame++;
-				_displayFrame = decodedFrame;
-				if (_playEveryFrame)
-					break;
-			}
-		}
-
 		if (_currentPlayState == kMediaStatePlaying) {
+			while (_videoDecoder->needsUpdate()) {
+				if (_playEveryFrame && framesDecodedThisFrame > 0)
+					break;
+
+				const Graphics::Surface *decodedFrame = _videoDecoder->decodeNextFrame();
+
+				// QuickTimeDecoder doesn't return true for endOfVideo or false for needsUpdate until it
+				// tries decoding past the end, so we're assuming that the decoded frame memory stays valid until we
+				// actually have a new frame and continuing to use it.
+				if (decodedFrame) {
+					_contentsDirty = true;
+					framesDecodedThisFrame++;
+					_displayFrame = decodedFrame;
+					if (_playEveryFrame)
+						break;
+				}
+			}
+
 			if (_videoDecoder->endOfVideo())
 				targetTS = _reversed ? _playRange.min : _playRange.max;
 			else
@@ -782,10 +804,14 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 
 		// Sync TS to the end of video if we hit the end
 
+		bool triggerEndEvents = false;
+
+		if (_currentPlayState == kMediaStatePlayingLastFrame)
+			triggerEndEvents = true;
+
 		if (targetTS != _currentTimestamp) {
 			assert(!_paused);
 
-			
 			// Check media cues
 			for (MediaCueState *mediaCue : _mediaCues)
 				mediaCue->checkTimestampChange(runtime, _currentTimestamp, targetTS, checkContinuously, true);
@@ -793,32 +819,37 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 			_currentTimestamp = targetTS;
 
 			if (_currentTimestamp == maxTS) {
-				Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kAtLastCel, 0), DynamicValue(), getSelfReference()));
-				Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-				runtime->queueMessage(dispatch);
-			}
-
-			if (_currentTimestamp == minTS) {
-				Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kAtFirstCel, 0), DynamicValue(), getSelfReference()));
-				Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-				runtime->queueMessage(dispatch);
+				if (maxTS == _maxTimestamp) {
+					// If this play range plays through to the end, then delay end events 1 frame so it has a chance to render
+					_currentPlayState = kMediaStatePlayingLastFrame;
+				} else
+					triggerEndEvents = true;
 			}
 		}
 
-		if (_currentPlayState == kMediaStatePlaying && _videoDecoder->endOfVideo()) {
-			if (_alternate) {
-				_reversed = !_reversed;
-				if (!_videoDecoder->setReverse(_reversed)) {
-					warning("Failed to reverse video decoder, disabling it");
-					_videoDecoder.reset();
-				}
+		if (triggerEndEvents) {
+			if (!_loop) {
+				_paused = true;
 
-				uint32 endTS = _reversed ? _playRange.min : _playRange.max;
-				_videoDecoder->setEndTime(Audio::Timestamp(0, _timeScale).addFrames(endTS));
-			} else {
-				// It doesn't look like movies fire any events upon reaching the end, just At Last Cel and At First Cel
-				_videoDecoder->stop();
+				Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPause, 0), DynamicValue(), getSelfReference()));
+				Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+				runtime->queueMessage(dispatch);
+
 				_currentPlayState = kMediaStateStopped;
+			}
+
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kAtLastCel, 0), DynamicValue(), getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+			runtime->queueMessage(dispatch);
+
+			// For some reason, At First Cel isn't fired for movies, even when they loop or are set to timevalue 0
+			_videoDecoder->stop();
+			_currentPlayState = kMediaStateStopped;
+
+			if (_loop) {
+				_needsReset = true;
+				_currentTimestamp = _reversed ? _playRange.max : _playRange.min;
+				_contentsDirty = true;
 			}
 		}
 	}
@@ -951,6 +982,7 @@ VThreadState MovieElement::startPlayingTask(const StartPlayingTaskData &taskData
 		_videoDecoder->stop();
 		_currentPlayState = kMediaStateStopped;
 		_needsReset = true;
+		_contentsDirty = true;
 
 		_shouldPlayIfNotPaused = true;
 		_paused = false;

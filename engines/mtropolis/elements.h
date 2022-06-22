@@ -44,6 +44,7 @@ struct MToonMetadata;
 
 enum MediaState {
 	kMediaStatePlaying,
+	kMediaStatePlayingLastFrame,
 	kMediaStateStopped,
 	kMediaStatePaused,
 };
@@ -87,6 +88,7 @@ public:
 	void deactivate() override;
 
 	bool canAutoPlay() const override;
+	void queueAutoPlayEvents(Runtime *runtime, bool isAutoPlaying) override;
 
 	void render(Window *window) override;
 	void playMedia(Runtime *runtime, Project *project) override;
