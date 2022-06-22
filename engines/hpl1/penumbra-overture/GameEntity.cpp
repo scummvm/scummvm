@@ -781,12 +781,6 @@ void iGameEntity::PreloadModel(const tString &asFile) {
 
 //-----------------------------------------------------------------------
 
-iGameEntity_SaveData::~iGameEntity_SaveData() {
-	// Log("Deleting save data %d\n",this);
-}
-
-//-----------------------------------------------------------------------
-
 cEnginePS_SaveData *iGameEntity_SaveData::GetParticleSystem(cParticleSystem3D *apPS) {
 	for (size_t i = 0; i < mvPS.Size(); ++i) {
 		if (mvPS[i].msName == apPS->GetName())

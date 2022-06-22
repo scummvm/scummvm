@@ -60,7 +60,7 @@ public:
 class cAINodeGenerator : public iPhysicsRayCallback {
 public:
 	cAINodeGenerator();
-	~cAINodeGenerator();
+	virtual ~cAINodeGenerator();
 
 	void Generate(cWorld3D *apWorld, cAINodeGeneratorParams *apParams);
 

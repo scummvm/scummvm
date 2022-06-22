@@ -99,12 +99,14 @@ public:
 
 class iPhysicsRayCallback {
 public:
+	virtual ~iPhysicsRayCallback() = default;
 	virtual bool BeforeIntersect(iPhysicsBody *pBody) { return true; }
 	virtual bool OnIntersect(iPhysicsBody *pBody, cPhysicsRayParams *apParams) = 0;
 };
 
 class iPhysicsWorldCollisionCallback {
 public:
+	virtual ~iPhysicsWorldCollisionCallback() = default;
 	virtual void OnCollision(iPhysicsBody *apBody, cCollideData *apCollideData) = 0;
 };
 

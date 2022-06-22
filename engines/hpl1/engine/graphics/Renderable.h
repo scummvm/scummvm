@@ -60,7 +60,7 @@ enum eRenderableType {
 //------------------------------------------
 
 kSaveData_ChildClass(iEntity3D, iRenderable) {
-	kSerializableClassInit(iRenderable) public : bool mbStatic;
+	kSerializableClassInit(cSaveData_iRenderable) public : bool mbStatic;
 	bool mbRendered;
 	float mfZ;
 };

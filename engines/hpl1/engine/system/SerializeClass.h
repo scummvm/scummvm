@@ -108,6 +108,14 @@ public:                                                           \
 	const static tString msSerialize_Name;                        \
 	const static tString msSerialize_ParentName;                  \
 	const static cSerializeMemberField *mpSerialize_MemberFields; \
+	virtual ~aClass() = default; \
+	virtual tString Serialize_GetTopClass() { return #aClass; }
+
+#define kSerializableClassInit_nodestructor(aClass)                            \
+public:                                                           \
+        const static tString msSerialize_Name;                        \
+        const static tString msSerialize_ParentName;                  \
+        const static cSerializeMemberField *mpSerialize_MemberFields; \
 	virtual tString Serialize_GetTopClass() { return #aClass; }
 
 /**
@@ -245,6 +253,7 @@ public:
 
 class iSerializable {
 public:
+	virtual ~iSerializable() = default;
 	virtual tString Serialize_GetTopClass() { return ""; }
 };
 
@@ -252,6 +261,7 @@ public:
 
 class iSerializableType {
 public:
+	virtual ~iSerializableType() = default;
 	virtual char *ValueToString(void *apVal) = 0;
 	virtual void ValueFromString(char *apString, void *apVal) = 0;
 };

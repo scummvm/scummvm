@@ -35,6 +35,7 @@ namespace hpl {
 class iUpdateable {
 public:
 	iUpdateable(const tString &asName) : msName(asName) {}
+	virtual ~iUpdateable() {}
 
 	virtual void OnDraw() {}
 

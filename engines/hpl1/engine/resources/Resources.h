@@ -160,7 +160,7 @@ typedef tResourceManagerList::iterator tResourceManagerListIt;
 class cResources : public iUpdateable {
 public:
 	cResources(LowLevelResources *apLowLevelResources, iLowLevelGraphics *apLowLevelGraphics);
-	~cResources();
+	virtual ~cResources();
 
 	void Init(cGraphics *apGraphics, cSystem *apSystem, cSound *apSound, cScene *apScene, cGui *apGui);
 

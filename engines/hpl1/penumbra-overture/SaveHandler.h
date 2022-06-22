@@ -237,7 +237,7 @@ public:
 //---------------------------------------------
 
 class cSavedWorld : public iSerializable {
-	kSerializableClassInit(cSavedWorld) public : ~cSavedWorld();
+	kSerializableClassInit_nodestructor(cSavedWorld) public : ~cSavedWorld();
 
 	void Reset();
 
@@ -293,7 +293,7 @@ class cSavedWorld : public iSerializable {
 //----------------------------
 
 class cSavedGame : public iSerializable {
-	kSerializableClassInit(cSavedGame) public : ~cSavedGame();
+	kSerializableClassInit_nodestructor(cSavedGame) public : ~cSavedGame();
 
 	void Reset();
 	void ResetWorlds();

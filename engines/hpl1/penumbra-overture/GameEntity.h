@@ -74,9 +74,7 @@ class cGameEntityAnimation_SaveData : public iSerializable {
 //------------------------------------------
 
 class iGameEntity_SaveData : public iSerializable {
-	kSerializableClassInit(iGameEntity_SaveData) public : virtual ~iGameEntity_SaveData();
-
-	bool mbActive;
+	kSerializableClassInit(iGameEntity_SaveData) public : bool mbActive;
 
 	tString msFileName;
 

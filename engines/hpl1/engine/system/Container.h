@@ -41,6 +41,9 @@ namespace hpl {
 class iContainerIterator {
 	friend class cSerializeClass;
 
+public:
+	virtual ~iContainerIterator() {}
+
 protected:
 	virtual bool HasNext() = 0;
 
@@ -183,6 +186,8 @@ public:
 		mIt = apVec->begin();
 	}
 
+	virtual ~cContainerListIterator() {}
+
 	bool HasNext() {
 		return mIt != mpVec->end();
 	}
@@ -224,6 +229,7 @@ private:
 
 public:
 	cContainerList() {}
+	virtual ~cContainerList() {}
 
 	//////////////////////
 	size_t Size() {
