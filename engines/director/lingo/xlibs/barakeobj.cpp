@@ -19,85 +19,78 @@
  *
  */
 
-/* Memory is a Mac only XObject.
+/*************************************
  *
- * Implemented as a no-op, since ScummVM doesn't need to handle memory clears.
+ * USED IN:
+ * Angel Gate demo
  *
- *
-	-- Memory XObject
-	-- December 18th, 1992
-	-- Written by Scott Kildall
-	-- 1992 by Macromedia, Inc
-	-- All rights reserved
-	--
-	I mNew
-	X mClear
-	X mCompact
-	X mPurge
-	I mAvailBytes
-	I mAvailBlock
-	I mStackSpace
-	I mGetVM
-	I mGetAddressing
-	I mGetCache
-	XI mSetCache
-	I mGetPhysicalRAM
-	I mGetMMU
-	I mGetLogicalPage
-	I mGetLogicalRAM
-	I mGetLowMemory
- */
+ *************************************/
+/*
+  -- Picter, a simple demo XObject, v1.0
+  I           mNew
+  XIII        mGpal, h, l, s
+  XIIIIII     mLine, y1, y2, y3, y4, y5, c
+  II          mGetDate, value
+  X           mClear
+*/
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
-#include "director/lingo/xlibs/memoryxobj.h"
+#include "director/lingo/xlibs/barakeobj.h"
 
 
 namespace Director {
 
-const char *MemoryXObj::xlibName = "Memory";
-const char *MemoryXObj::fileNames[] = {
-	"Memory XObj",
-	"Memory",
-	nullptr
+const char *BarakeObj::xlibName = "BarakeObj";
+const char *BarakeObj::fileNames[] = {
+	"BarakeObj",
+	0
 };
 
 static MethodProto xlibMethods[] = {
-	{ "new",					MemoryXObj::m_new,			0,	0,	300 },	// D3
-	{ "Clear",					MemoryXObj::m_clear,		0,	0,	300 },	// D3
-	{ "Purge",					MemoryXObj::m_purge,		0,	0,	400 },	// D4
-	{ nullptr, nullptr, 0, 0, 0 }
+	{ "new",			BarakeObj::m_new,		0,	0,	400 },	// D4
+	{ "Clear",			BarakeObj::m_clear,		0,	0,	400 },	// D4
+	{ "Gpal",			BarakeObj::m_gpal,		3,	3,	400 },	// D4
+	{ "Line",			BarakeObj::m_line,		6,	6,	400 },	// D4
+    { nullptr, nullptr, 0, 0, 0 }
 };
 
-void MemoryXObj::open(int type) {
+void BarakeObj::open(int type) {
 	if (type == kXObj) {
-		MemoryXObject::initMethods(xlibMethods);
-		MemoryXObject *xobj = new MemoryXObject(kXObj);
+		BarakeObject::initMethods(xlibMethods);
+		BarakeObject *xobj = new BarakeObject(kXObj);
 		g_lingo->_globalvars[xlibName] = xobj;
 	}
 }
 
-void MemoryXObj::close(int type) {
+void BarakeObj::close(int type) {
 	if (type == kXObj) {
-		MemoryXObject::cleanupMethods();
+		BarakeObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
 	}
 }
 
 
-MemoryXObject::MemoryXObject(ObjectType ObjectType) :Object<MemoryXObject>("MemoryXObj") {
+BarakeObject::BarakeObject(ObjectType ObjectType) :Object<BarakeObject>("BarakeObj") {
 	_objType = ObjectType;
 }
 
-void MemoryXObj::m_new(int nargs) {
+void BarakeObj::m_new(int nargs) {
 	g_lingo->push(g_lingo->_currentMe);
 }
 
-void MemoryXObj::m_clear(int nargs) {
+void BarakeObj::m_clear(int nargs) {
 }
 
-void MemoryXObj::m_purge(int nargs) {
+void BarakeObj::m_gpal(int nargs) {
+	g_lingo->printSTUBWithArglist("BarakeObj::Gpal", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void BarakeObj::m_line(int nargs) {
+	g_lingo->printSTUBWithArglist("BarakeObj::Line", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 } // End of namespace Director

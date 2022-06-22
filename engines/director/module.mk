@@ -40,16 +40,20 @@ MODULE_OBJS = \
 	lingo/lingo-the.o \
 	lingo/lingo-utils.o \
 	lingo/xlibs/aiff.o \
+	lingo/xlibs/applecdxobj.o \
+	lingo/xlibs/barakeobj.o \
 	lingo/xlibs/cdromxobj.o \
 	lingo/xlibs/fileio.o \
 	lingo/xlibs/flushxobj.o \
 	lingo/xlibs/fplayxobj.o \
 	lingo/xlibs/gpid.o \
-	lingo/xlibs/labeldrvxobj.o \
-	lingo/xlibs/movutils.o \
+	lingo/xlibs/jitdraw3.o \
 	lingo/xlibs/jwxini.o \
+	lingo/xlibs/labeldrvxobj.o \
 	lingo/xlibs/memoryxobj.o \
+	lingo/xlibs/miscx.o \
 	lingo/xlibs/movemousexobj.o \
+	lingo/xlibs/movutils.o \
 	lingo/xlibs/orthoplayxobj.o \
 	lingo/xlibs/palxobj.o \
 	lingo/xlibs/popupmenuxobj.o \

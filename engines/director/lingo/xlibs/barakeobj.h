@@ -19,18 +19,17 @@
  *
  */
 
-
-#ifndef DIRECTOR_LINGO_XLIBS_WINXOBJ_H
-#define DIRECTOR_LINGO_XLIBS_WINXOBJ_H
+#ifndef DIRECTOR_LINGO_XLIBS_BARAKEOBJ_H
+#define DIRECTOR_LINGO_XLIBS_BARAKEOBJ_H
 
 namespace Director {
 
-class RearWindowXObject : public Object<RearWindowXObject> {
+class BarakeObject : public Object<BarakeObject> {
 public:
-	RearWindowXObject(ObjectType objType);
+	BarakeObject(ObjectType objType);
 };
 
-namespace RearWindowXObj {
+namespace BarakeObj {
 
 extern const char *xlibName;
 extern const char *fileNames[];
@@ -39,21 +38,11 @@ void open(int type);
 void close(int type);
 
 void m_new(int nargs);
-void m_getAppName(int nargs);
-void m_getMemoryNeeded(int nargs);
-void m_getScreenBottom(int nargs);
-void m_getScreenLeft(int nargs);
-void m_getScreenRight(int nargs);
-void m_getScreenTop(int nargs);
-void m_indexColorToWindow(int nargs);
-void m_patToWindow(int nargs);
-void m_rgbColorToWindow(int nargs);
-void m_getScreenTop(int nargs);
-void m_getScreenLeft(int nargs);
-void m_getScreenBottom(int nargs);
-void m_getScreenRight(int nargs);
+void m_clear(int nargs);
+void m_gpal(int nargs);
+void m_line(int nargs);
 
-} // End of namespace RearWindowXObj
+} // End of namespace BarakeObj
 
 } // End of namespace Director
 
