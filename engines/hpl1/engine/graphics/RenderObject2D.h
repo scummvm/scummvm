@@ -36,6 +36,7 @@ namespace hpl {
 
 class iRenderObject2DRenderer {
 public:
+	virtual ~iRenderObject2DRenderer() = default;
 	virtual void RenderToBatch(eMaterialRenderType aRenderType,
 							   unsigned int &aIdxAdd) = 0;
 };

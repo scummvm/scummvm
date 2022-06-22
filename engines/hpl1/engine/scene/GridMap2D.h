@@ -107,6 +107,7 @@ class cGridMap2D;
 
 class iGridMap2DIt {
 public:
+	virtual ~iGridMap2DIt() = default;
 	virtual bool HasNext() = 0;
 	virtual iEntity2D *Next() = 0;
 };
