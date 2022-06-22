@@ -9,7 +9,7 @@ From the Launcher, highlight a game on the games list, select **Edit Game**, and
 To find out which engine powers your game, have a look at the ScummVM Supported Games `wiki page
 <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_.
 
-Engines: ADL_ | AGI_ | BLADERUNNER_ | CGE_ | CINE_ | DRASCULA_ | DREAMWEB_ | HDB_ | HOPKINS_ | KYRA_ | LURE_ | MADS_ | NEVERHOOD_ | SCI_ | SCUMM_ | SHERLOCK_ | SKY_ | SUPERNOVA_ | TOLTECS_ | WINTERMUTE_ | XEEN_ |
+Engines: ADL_ | AGI_ | AGOS_ | BLADERUNNER_ | CGE_ | CINE_ | DRASCULA_ | DREAMWEB_ | HDB_ | HOPKINS_ | KYRA_ | LURE_ | MADS_ | NEVERHOOD_ | SCI_ | SCUMM_ | SHERLOCK_ | SKY_ | SUPERNOVA_ | TOLTECS_ | WINTERMUTE_ | XEEN_ |
 
 .. figure:: ../images/settings/engine.png
 
@@ -100,6 +100,20 @@ Add speed menu
 	Adds a game speed menu, similar to the PC version.
 
 	*apple2gs_speedmenu*
+
+,,,,,,
+
+.. _AGOS:
+
+AGOS
+******
+
+.. _fadeout:
+
+Disable fade-out effects
+	Don't fade every screen to black when leaving a room.
+
+	*disable_fade_effects*
 
 ,,,,,,
 
