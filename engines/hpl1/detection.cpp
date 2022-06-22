@@ -54,7 +54,7 @@ PlainGameList Hpl1MetaEngineDetection::getSupportedGames() const {
 	return PlainGameList(Hpl1::GAME_NAMES); 	
 } 
 
-PlainGameDescriptor findGame(const char *gameid) {
+PlainGameDescriptor Hpl1MetaEngineDetection::findGame(const char *gameid) const {
 	return Hpl1::GAME_NAMES[0]; 
 }
 

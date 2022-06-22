@@ -587,6 +587,8 @@ cMainMenuWidget_NewGame::cMainMenuWidget_NewGame(cInit *apInit, const cVector3f 
 	case eGameDifficulty_Hard:
 		msTip = kTranslate("MainMenu", "TipDifficultyHard");
 		break;
+	default:
+		break;
 	}
 }
 //-----------------------------------------------------------------------

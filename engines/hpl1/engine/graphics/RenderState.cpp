@@ -80,6 +80,8 @@ int iRenderState::Compare(const iRenderState *apState) const {
 		return CompareMatrix(apState);
 	case eRenderStateType_Render:
 		return CompareRender(apState);
+	default:
+		break;
 	}
 
 	return 0;
@@ -124,6 +126,8 @@ void iRenderState::SetMode(cRenderSettings *apSettings) {
 		break;
 	case eRenderStateType_Render:
 		SetRenderMode(apSettings);
+		break;
+	default:
 		break;
 	}
 }
@@ -185,6 +189,8 @@ void iRenderState::Set(const iRenderState *apState) {
 
 	case eRenderStateType_Render:
 		mpObject = apState->mpObject;
+		break;
+	default:
 		break;
 	}
 }
@@ -309,6 +315,8 @@ void iRenderState::SetBlendMode(cRenderSettings *apSettings) {
 				if (apSettings->mbLog)
 					Log("DestAlphaAdd");
 				break;
+			default:
+				break;
 			}
 		}
 
@@ -341,6 +349,8 @@ void iRenderState::SetBlendMode(cRenderSettings *apSettings) {
 			apSettings->mpLowLevel->SetColorWriteActive(false, false, false, false);
 			if (apSettings->mbLog)
 				Log("Z");
+			break;
+		default:
 			break;
 		}
 

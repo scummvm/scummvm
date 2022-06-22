@@ -261,6 +261,8 @@ bool cGuiSet::SendMessage(eGuiMessage aMessage, cGuiMessageData &aData) {
 
 	case eGuiMessage_KeyPress:
 		return OnKeyPress(aData);
+	default:
+		break;
 	}
 
 	return false;

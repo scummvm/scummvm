@@ -446,6 +446,8 @@ bool cPlayerHands::AddModelFromFile(const tString &asFile) {
 	case ePlayerHandType_Throw:
 		pHudModel = hplNew(cHudModel_Throw, ());
 		break;
+	default:
+		break;
 	}
 
 	pHudModel->msName = cString::ToString(pMainElem->Attribute("Name"), "");

@@ -1319,6 +1319,8 @@ void cRenderer3D::RenderTrans(cCamera3D *apCamera) {
 					if (bLog)
 						Log("  Set blend mode destalpha-one!\n");
 					break;
+				default:
+					break;
 				}
 			}
 		}

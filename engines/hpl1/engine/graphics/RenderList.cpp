@@ -390,10 +390,13 @@ bool cRenderList::Add(iRenderable *apObject) {
 		break;
 	}
 		// Add a light to a special container
-	case eRenderableType_Light:
-		iLight3D *pLight = static_cast<iLight3D *>(apObject);
+	case eRenderableType_Light: {
+			iLight3D *pLight = static_cast<iLight3D *>(apObject);
 
-		m_setLights.insert(pLight);
+			m_setLights.insert(pLight);
+		}
+		break;
+	default:
 		break;
 	}
 

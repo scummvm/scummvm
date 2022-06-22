@@ -931,6 +931,8 @@ void cMapHandler::LoadSaveData(cSavedWorld *apSavedWorld) {
 				vSize = static_cast<cGameLiquidArea_SaveData *>(pSaveEntity)->mvSize;
 				sType = "liquid";
 				break;
+			default:
+				break;
 			}
 
 			// Load entity

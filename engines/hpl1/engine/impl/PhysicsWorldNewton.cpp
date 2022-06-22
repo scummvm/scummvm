@@ -185,6 +185,8 @@ void cPhysicsWorldNewton::SetAccuracyLevel(ePhysicsAccuracy aAccuracy) {
 		NewtonSetSolverModel(mpNewtonWorld, 0);
 		NewtonSetFrictionModel(mpNewtonWorld, 0);
 		break;
+	default:
+		break;
 	}
 }
 
