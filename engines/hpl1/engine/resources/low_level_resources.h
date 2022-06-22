@@ -41,6 +41,7 @@ class LowLevelResources {
 public:
 	LowLevelResources(cLowLevelGraphics *lowLevelGraphics) : _lowLevelGraphics(lowLevelGraphics) {
 	}
+	virtual ~LowLevelResources() = default;
 
 	//Returns a list of files in a directory matching a pattern
 	virtual void FindFilesInDir(tStringList &fileList, tString dir, tString pattern);

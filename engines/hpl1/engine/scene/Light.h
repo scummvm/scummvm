@@ -38,6 +38,7 @@ class cWorld3D;
 class iLight {
 public:
 	iLight();
+	virtual ~iLight() = default;
 
 	//////////////////////////
 	// Fading

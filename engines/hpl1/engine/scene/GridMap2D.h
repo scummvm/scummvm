@@ -114,6 +114,7 @@ public:
 class cGridMap2DRectIt : public iGridMap2DIt {
 public:
 	cGridMap2DRectIt(cGridMap2D *apGridMap, cVector2l avPos, cVector2l avSize);
+	virtual ~cGridMap2DRectIt() = default;
 
 	bool HasNext();
 	iEntity2D *Next();

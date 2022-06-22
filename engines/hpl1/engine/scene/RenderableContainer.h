@@ -40,6 +40,7 @@ class cRenderList;
 
 class iRenderableContainer {
 public:
+	virtual ~iRenderableContainer() = default;
 	/**
 	 * Add a new object to the container.
 	 * \param *apRenderable the object

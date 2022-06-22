@@ -53,7 +53,7 @@ class iEntity3D;
 class cCamera3D : public iCamera {
 public:
 	cCamera3D();
-	~cCamera3D();
+	virtual ~cCamera3D();
 
 	const cVector3f &GetPosition() const { return mvPosition; }
 	void SetPosition(const cVector3f &avPos);

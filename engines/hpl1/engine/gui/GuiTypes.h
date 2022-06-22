@@ -295,7 +295,7 @@ class iWidget;
 typedef bool (*tGuiCallbackFunc)(void *, iWidget *, cGuiMessageData &);
 
 #define kGuiCalllbackDeclarationEnd(FuncName) \
-	static bool FuncName##_static_gui(void *apObject, iWidget *apWidget, cGuiMessageData &aData);
+	static bool FuncName##_static_gui(void *apObject, iWidget *apWidget, cGuiMessageData &aData)
 
 #define kGuiCalllbackDeclaredFuncEnd(ThisClass, FuncName)                                              \
 	bool ThisClass::FuncName##_static_gui(void *apObject, iWidget *apWidget, cGuiMessageData &aData) { \

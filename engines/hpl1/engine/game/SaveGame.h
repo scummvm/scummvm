@@ -130,7 +130,7 @@ class iSaveObject {
 
 public:
 	iSaveObject();
-	~iSaveObject();
+	virtual ~iSaveObject();
 
 	/**
 	 * Get a unique id for this object.

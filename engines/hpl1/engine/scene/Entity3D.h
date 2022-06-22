@@ -43,6 +43,7 @@ class cSector;
 
 class iEntityCallback {
 public:
+	virtual ~iEntityCallback() = default;
 	virtual void OnTransformUpdate(iEntity3D *apEntity) = 0;
 };
 

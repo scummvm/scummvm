@@ -76,6 +76,7 @@ class iHudModel {
 
 public:
 	iHudModel(ePlayerHandType aType);
+	virtual ~iHudModel() = default;
 
 	cMeshEntity *GetEntity() { return mpEntity; }
 
@@ -141,6 +142,7 @@ class cHudModel_Normal : iHudModel {
 
 public:
 	cHudModel_Normal() : iHudModel(ePlayerHandType_Normal) {}
+	virtual ~cHudModel_Normal() = default;
 
 	void LoadData(TiXmlElement *apRootElem) {}
 

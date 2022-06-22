@@ -50,6 +50,7 @@ class cSoundEntity;
 
 class cSoundEntityChannelCallback : public iSoundChannelCallback {
 public:
+	virtual ~cSoundEntityChannelCallback() = default;
 	void OnPriorityRelease();
 
 	cSoundEntity *mpEntity;
@@ -73,6 +74,7 @@ kSaveData_ChildClass(iEntity3D, cSoundEntity) {
 
 class iSoundEntityGlobalCallback {
 public:
+	virtual ~iSoundEntityGlobalCallback() = default;
 	virtual void OnStart(cSoundEntity *apSoundEntity) = 0;
 };
 
