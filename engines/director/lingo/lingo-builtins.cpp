@@ -521,6 +521,11 @@ void LB::b_string(int nargs) {
 
 void LB::b_value(int nargs) {
 	Datum d = g_lingo->pop();
+	if (d.type != STRING) {
+		g_lingo->push(d);
+		return;
+	}
+
 	Common::String expr = d.asString();
 	if (expr.empty()) {
 		g_lingo->push(Datum(0));
@@ -2074,7 +2079,7 @@ void LB::b_pasteClipBoardInto(int nargs) {
 	}
 
 	Movie *movie = g_director->getCurrentMovie();
-	uint16 frame = movie->getScore()->getCurrentFrame(); 
+	uint16 frame = movie->getScore()->getCurrentFrame();
 	Frame *currentFrame = movie->getScore()->_frames[frame];
 	CastMember *castMember = movie->getCastMember(*g_director->_clipBoard);
 	auto channels = movie->getScore()->_channels;
