@@ -1042,11 +1042,17 @@ MiniscriptInstructionOutcome MidiModifier::writeRefAttribute(MiniscriptThread *t
 	} else if (attrib == "notevelocity") {
 		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetNoteVelocity>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "noteduration") {
+		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetNoteDuration>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "notenum") {
 		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetNoteNum>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "loop") {
 		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetLoop>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "playnote") {
+		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetPlayNote>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -1122,6 +1128,25 @@ MiniscriptInstructionOutcome MidiModifier::scriptSetNoteVelocity(MiniscriptThrea
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
+MiniscriptInstructionOutcome MidiModifier::scriptSetNoteDuration(MiniscriptThread *thread, const DynamicValue &value) {
+	double asDouble = 0.0;
+	if (value.getType() == DynamicValueTypes::kFloat) {
+		asDouble = value.getFloat();
+	} else {
+		DynamicValue converted;
+		if (!value.convertToType(DynamicValueTypes::kFloat, converted))
+			return kMiniscriptInstructionOutcomeFailed;
+		asDouble = converted.getFloat();	
+	}
+
+	if (_mode == kModeSingleNote) {
+		debug(2, "MIDI (%x '%s'): Changing note duration to %g", getStaticGUID(), getName().c_str(), asDouble);
+		_modeSpecific.singleNote.duration = asDouble;
+	}
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
 MiniscriptInstructionOutcome MidiModifier::scriptSetNoteNum(MiniscriptThread *thread, const DynamicValue &value) {
 	int32 asInteger = 0;
 	if (!value.roundToInt(asInteger))
@@ -1156,6 +1181,11 @@ MiniscriptInstructionOutcome MidiModifier::scriptSetLoop(MiniscriptThread *threa
 		}
 	}
 
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome MidiModifier::scriptSetPlayNote(MiniscriptThread *thread, const DynamicValue &value) {
+	warning("MIDI PlayNote is not yet implemented!");
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
