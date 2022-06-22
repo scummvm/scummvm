@@ -179,6 +179,7 @@ protected:
 
 class iMaterialProgramSetup {
 public:
+	virtual ~iMaterialProgramSetup() = default;
 	virtual void Setup(iGpuProgram *apProgram, cRenderSettings *apRenderSettings) = 0;
 	virtual void SetupMatrix(cMatrixf *apModelMatrix, cRenderSettings *apRenderSettings) {}
 };
@@ -385,6 +386,7 @@ typedef tMaterialVec::iterator tMaterialVecIt;
 
 class iMaterialType {
 public:
+	virtual ~iMaterialType() = default;
 	virtual bool IsCorrect(tString asName) = 0;
 	virtual iMaterial *Create(const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
 							  cImageManager *apImageManager, cTextureManager *apTextureManager,

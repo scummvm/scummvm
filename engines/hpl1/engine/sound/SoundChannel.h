@@ -37,6 +37,7 @@ class cSoundManager;
 
 class iSoundChannelCallback {
 public:
+	virtual ~iSoundChannelCallback() = default;
 	virtual void OnPriorityRelease() = 0;
 };
 

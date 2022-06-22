@@ -63,6 +63,7 @@ class iMeshLoader {
 public:
 	iMeshLoader(iLowLevelGraphics *apLowLevelGraphics)
 		: mpLowLevelGraphics(apLowLevelGraphics) {}
+	virtual ~iMeshLoader() = default;
 
 	virtual cMesh *LoadMesh(const tString &asFile, tMeshLoadFlag aFlags) = 0;
 	virtual bool SaveMesh(cMesh *apMesh, const tString &asFile) = 0;

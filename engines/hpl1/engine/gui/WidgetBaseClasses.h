@@ -36,6 +36,7 @@ namespace hpl {
 
 class iWidgetItemContainer {
 public:
+	virtual ~iWidgetItemContainer() = default;
 	void AddItem(const tWString &asItem);
 	void RemoveItem(int alX);
 	void RemoveItem(const tWString &asItem);

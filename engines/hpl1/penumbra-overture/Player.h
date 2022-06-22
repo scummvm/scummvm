@@ -89,6 +89,7 @@ kSaveData_BaseClass(cPlayer) {
 class iPlayerMoveState {
 public:
 	iPlayerMoveState(cPlayer *apPlayer, cInit *apInit);
+	virtual ~iPlayerMoveState() = default;
 
 	void SetupBody();
 

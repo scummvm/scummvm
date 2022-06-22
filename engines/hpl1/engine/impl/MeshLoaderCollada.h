@@ -420,7 +420,7 @@ public:
 class cMeshLoaderCollada : public iMeshLoader {
 public:
 	cMeshLoaderCollada(iLowLevelGraphics *apLowLevelGraphics);
-	~cMeshLoaderCollada();
+	virtual ~cMeshLoaderCollada();
 
 	cMesh *LoadMesh(const tString &asFile, tMeshLoadFlag aFlags);
 	bool SaveMesh(cMesh *apMesh, const tString &asFile) { return false; }

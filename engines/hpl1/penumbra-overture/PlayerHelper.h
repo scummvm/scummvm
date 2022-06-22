@@ -41,6 +41,7 @@ class cPlayer;
 
 class iPlayerWeaponCallback {
 public:
+	virtual ~iPlayerWeaponCallback() = default;
 	virtual tString GetModelFile() = 0;
 	virtual cMatrixf GetOffsetMatrix() = 0;
 
@@ -571,6 +572,7 @@ private:
 class cPlayerBodyCallback : public iCharacterBodyCallback {
 public:
 	cPlayerBodyCallback(cPlayer *apPlayer);
+	virtual ~cPlayerBodyCallback() = default;
 
 	void OnHitGround(iCharacterBody *apCharBody, const cVector3f &avVel);
 	void OnGravityCollide(iCharacterBody *apCharBody, iPhysicsBody *apCollideBody,

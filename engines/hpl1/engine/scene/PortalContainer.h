@@ -233,7 +233,7 @@ class cPortalContainer : public iRenderableContainer {
 
 public:
 	cPortalContainer();
-	~cPortalContainer();
+	virtual ~cPortalContainer();
 
 	bool AddEntity(iEntity3D *pEntity);
 	bool RemoveEntity(iEntity3D *pEntity);

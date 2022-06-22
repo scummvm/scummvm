@@ -97,6 +97,7 @@ typedef tAINodeMap::iterator tAINodeMapIt;
 
 class iAIFreePathCallback {
 public:
+	virtual ~iAIFreePathCallback() = default;
 	virtual bool Intersects(iPhysicsBody *pBody, cPhysicsRayParams *apParams) = 0;
 };
 
