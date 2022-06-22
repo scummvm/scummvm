@@ -29,6 +29,7 @@
 #include "scumm/dialogs.h"
 #include "scumm/insane/insane.h"
 #include "scumm/imuse/imuse.h"
+#include "scumm/imuse_digi/dimuse_engine.h"
 #ifdef ENABLE_HE
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
@@ -414,6 +415,7 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 		int8 oldCursorState = _cursor.state;
 		_cursor.state = 0;
 		CursorMan.showMouse(_cursor.state > 0);
+		// "Game Paused.  Press SPACE to Continue."
 		showBannerAndPause(0, -1, d.getPlainEngineString(4));
 		_cursor.state = oldCursorState;
 		return;
@@ -466,6 +468,14 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 		ConfMan.setInt("original_gui_text_status", voiceMode);
 		ConfMan.flushToDisk();
 		syncSoundSettings();
+		return;
+	}
+
+	if (isUsingOriginalGUI() &&
+		(lastKeyHit.keycode == Common::KEYCODE_b && lastKeyHit.hasFlags(Common::KBD_CTRL))) {
+		int curBufferCount = _imuseDigital->roundRobinSetBufferCount();
+		// iMuse buffer count changed to %d
+		showBannerAndPause(0, 90, d.getPlainEngineString(25), curBufferCount);
 		return;
 	}
 

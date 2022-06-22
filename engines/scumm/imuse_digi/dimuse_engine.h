@@ -91,6 +91,7 @@ private:
 	int _outputSampleRate;
 
 	int _maxQueuedStreams; // maximum number of streams which can be queued before they are played
+	int _nominalBufferCount;
 
 	int _currentSpeechVolume, _currentSpeechFrequency, _currentSpeechPan;
 	int _curMixerMusicVolume, _curMixerSpeechVolume, _curMixerSFXVolume;
@@ -395,6 +396,7 @@ public:
 	int clampNumber(int value, int minValue, int maxValue);
 	int clampTuning(int value, int minValue, int maxValue);
 	int checkHookId(int &trackHookId, int sampleHookId);
+	int roundRobinSetBufferCount();
 
 	// CMDs
 	int cmdsHandleCmd(int cmd, uint8 *ptr = nullptr,
