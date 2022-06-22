@@ -89,7 +89,7 @@ protected:
 private:
 	int _heTalkOffset;
 
-	void tryLoadSoundOverride(int soundID, Audio::RewindableAudioStream **stream, Audio::Timestamp *duration = nullptr);
+	void tryLoadSoundOverride(int soundID, Audio::RewindableAudioStream **stream, int *duration = nullptr);
 };
 
 
