@@ -41,7 +41,7 @@ namespace hpl {
 
 class cImageEntity;
 
-class iLowLevelResources;
+class LowLevelResources;
 class iLowLevelGraphics;
 class iLowLevelSystem;
 class cSystem;
@@ -159,14 +159,14 @@ typedef tResourceManagerList::iterator tResourceManagerListIt;
 
 class cResources : public iUpdateable {
 public:
-	cResources(iLowLevelResources *apLowLevelResources, iLowLevelGraphics *apLowLevelGraphics);
+	cResources(LowLevelResources *apLowLevelResources, iLowLevelGraphics *apLowLevelGraphics);
 	~cResources();
 
 	void Init(cGraphics *apGraphics, cSystem *apSystem, cSound *apSound, cScene *apScene, cGui *apGui);
 
 	void Update(float afTimeStep);
 
-	iLowLevelResources *GetLowLevel();
+	LowLevelResources *GetLowLevel();
 	cFileSearcher *GetFileSearcher();
 
 	bool AddResourceDir(const tString &asDir, const tString &asMask = "*.*");
@@ -208,7 +208,7 @@ public:
 	iLowLevelSystem *GetLowLevelSystem() { return mpLowLevelSystem; }
 
 private:
-	iLowLevelResources *mpLowLevelResources;
+	LowLevelResources *mpLowLevelResources;
 	iLowLevelGraphics *mpLowLevelGraphics;
 	iLowLevelSystem *mpLowLevelSystem;
 	cFileSearcher *mpFileSearcher;

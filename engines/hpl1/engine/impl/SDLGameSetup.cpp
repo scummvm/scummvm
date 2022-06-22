@@ -35,7 +35,7 @@
 #include "hpl1/engine/impl/LowLevelGraphicsSDL.h"
 #include "hpl1/engine/impl/LowLevelInputSDL.h"
 #include "hpl1/engine/impl/LowLevelPhysicsNewton.h"
-#include "hpl1/engine/impl/LowLevelResourcesSDL.h"
+#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/impl/LowLevelSoundOpenAL.h"
 #include "hpl1/engine/impl/LowLevelSystemSDL.h"
 #include "hpl1/engine/impl/MouseSDL.h"

@@ -39,7 +39,7 @@ class iLowLevelGraphics;
 class cGpuProgramManager : public iResourceManager {
 public:
 	cGpuProgramManager(cFileSearcher *apFileSearcher, iLowLevelGraphics *apLowLevelGraphics,
-					   iLowLevelResources *apLowLevelResources, iLowLevelSystem *apLowLevelSystem);
+					   LowLevelResources *apLowLevelResources, iLowLevelSystem *apLowLevelSystem);
 	~cGpuProgramManager();
 
 	iResourceBase *Create(const tString &asName);

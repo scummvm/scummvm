@@ -38,14 +38,14 @@ class cRenderer3D;
 class cRendererPostEffects;
 class cRenderList;
 class cGraphicsDrawer;
-class iLowLevelResources;
+class LowLevelResources;
 class iLowLevelGraphics;
 class cMeshCreator;
 class cMaterialHandler;
 
 class cGraphics {
 public:
-	cGraphics(iLowLevelGraphics *apLowLevelGraphics, iLowLevelResources *apLowLevelResources);
+	cGraphics(iLowLevelGraphics *apLowLevelGraphics, LowLevelResources *apLowLevelResources);
 	~cGraphics();
 
 	bool Init(int alWidth, int alHeight, int alBpp, int abFullscreen, int alMultisampling,
@@ -71,7 +71,7 @@ public:
 
 private:
 	iLowLevelGraphics *mpLowLevelGraphics;
-	iLowLevelResources *mpLowLevelResources;
+	LowLevelResources *mpLowLevelResources;
 	cGraphicsDrawer *mpDrawer;
 	cMeshCreator *mpMeshCreator;
 	cMaterialHandler *mpMaterialHandler;

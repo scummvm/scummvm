@@ -35,7 +35,7 @@
 #include "hpl1/engine/resources/ImageEntityManager.h"
 #include "hpl1/engine/resources/ImageManager.h"
 #include "hpl1/engine/resources/LanguageFile.h"
-#include "hpl1/engine/resources/LowLevelResources.h"
+#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/resources/MaterialManager.h"
 #include "hpl1/engine/resources/MeshLoaderHandler.h"
 #include "hpl1/engine/resources/MeshManager.h"
@@ -61,7 +61,7 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cResources::cResources(iLowLevelResources *apLowLevelResources, iLowLevelGraphics *apLowLevelGraphics)
+cResources::cResources(LowLevelResources *apLowLevelResources, iLowLevelGraphics *apLowLevelGraphics)
 	: iUpdateable("Resources") {
 	mpLowLevelResources = apLowLevelResources;
 	mpLowLevelGraphics = apLowLevelGraphics;
@@ -347,7 +347,7 @@ bool cResources::LoadResourceDirsFile(const tString &asFile) {
 
 //-----------------------------------------------------------------------
 
-iLowLevelResources *cResources::GetLowLevel() {
+LowLevelResources *cResources::GetLowLevel() {
 	return mpLowLevelResources;
 }
 

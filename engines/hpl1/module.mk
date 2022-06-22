@@ -95,7 +95,7 @@ MODULE_OBJS := \
 	engine/impl/LowLevelGraphicsSDL.o \
 	engine/impl/LowLevelInputSDL.o \
 	engine/impl/LowLevelPhysicsNewton.o \
-	engine/impl/LowLevelResourcesSDL.o \
+	engine/resources/low_level_resources.o \
 	engine/impl/LowLevelSoundOpenAL.o \
 	engine/impl/LowLevelSystemSDL.o \
 	engine/impl/MeshLoaderCollada.o \

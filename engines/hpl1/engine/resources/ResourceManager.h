@@ -33,7 +33,7 @@
 
 namespace hpl {
 
-class iLowLevelResources;
+class LowLevelResources;
 class iLowLevelSystem;
 class cFileSearcher;
 class iResourceBase;
@@ -51,7 +51,7 @@ typedef cSTLMapIterator<iResourceBase *, tResourceNameMap, tResourceNameMapIt> c
 
 class iResourceManager {
 public:
-	iResourceManager(cFileSearcher *apFileSearcher, iLowLevelResources *apLowLevelResources,
+	iResourceManager(cFileSearcher *apFileSearcher, LowLevelResources *apLowLevelResources,
 					 iLowLevelSystem *apLowLevelSystem);
 	virtual ~iResourceManager() {}
 
@@ -77,7 +77,7 @@ protected:
 	tResourceHandleMap m_mapHandleResources;
 
 	cFileSearcher *mpFileSearcher;
-	iLowLevelResources *mpLowLevelResources;
+	LowLevelResources *mpLowLevelResources;
 	iLowLevelSystem *mpLowLevelSystem;
 
 	void BeginLoad(const tString &asFile);

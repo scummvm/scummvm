@@ -35,24 +35,23 @@ namespace hpl {
 class Bitmap2D;
 class cMeshLoaderHandler;
 class cVideoManager;
+class cLowLevelGraphics;
 
-class iLowLevelResources {
+class LowLevelResources {
 public:
-	virtual ~iLowLevelResources() {}
+	LowLevelResources(cLowLevelGraphics *lowLevelGraphics) : _lowLevelGraphics(lowLevelGraphics) {
+	}
 
-	/**
-	 * Returns a list of files in a dir
-	 * \param &alstStrings list where the files are saved
-	 * \param asDir Directory
-	 * \param asMask Mask to be used, for example "*.*" to search for all kinds of files.
-	 */
-	virtual void FindFilesInDir(tStringList &alstStrings, tString asDir, tString asMask) = 0;
+	//Returns a list of files in a directory matching a pattern
+	virtual void FindFilesInDir(tStringList &fileList, tString dir, tString pattern);
 
-	virtual void GetSupportedImageFormats(tStringList &alstFormats) = 0;
-	virtual Bitmap2D *LoadBitmap2D(tString asFilePath, tString asType = "") = 0;
+	virtual void GetSupportedImageFormats(tStringList &formats);
+	virtual Bitmap2D *LoadBitmap2D(tString filepath, tString type = "");
 
-	virtual void AddMeshLoaders(cMeshLoaderHandler *apHandler) = 0;
-	virtual void AddVideoLoaders(cVideoManager *apManager) = 0;
+	virtual void AddMeshLoaders(cMeshLoaderHandler *ml);
+	virtual void AddVideoLoaders(cVideoManager *vm);
+private: 
+	cLowLevelGraphics *_lowLevelGraphics;
 };
 };     // namespace hpl
 #endif // HPL_LOWLEVELRESOURCES_H

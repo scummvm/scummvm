@@ -36,7 +36,7 @@
 #include "hpl1/engine/graphics/Renderer2D.h"
 #include "hpl1/engine/graphics/Renderer3D.h"
 #include "hpl1/engine/graphics/RendererPostEffects.h"
-#include "hpl1/engine/resources/LowLevelResources.h"
+#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/resources/Resources.h"
 #include "hpl1/engine/system/LowLevelSystem.h"
 
@@ -70,7 +70,7 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cGraphics::cGraphics(iLowLevelGraphics *apLowLevelGraphics, iLowLevelResources *apLowLevelResources) {
+cGraphics::cGraphics(iLowLevelGraphics *apLowLevelGraphics, LowLevelResources *apLowLevelResources) {
 	mpLowLevelGraphics = apLowLevelGraphics;
 	mpLowLevelResources = apLowLevelResources;
 

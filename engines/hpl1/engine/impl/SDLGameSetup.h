@@ -33,7 +33,7 @@
 #include "hpl1/engine/haptic/LowLevelHaptic.h"
 #include "hpl1/engine/input/LowLevelInput.h"
 #include "hpl1/engine/physics/LowLevelPhysics.h"
-#include "hpl1/engine/resources/LowLevelResources.h"
+#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/sound/LowLevelSound.h"
 #include "hpl1/engine/system/LowLevelSystem.h"
 
@@ -59,7 +59,7 @@ private:
 	iLowLevelSystem *mpLowLevelSystem;
 	iLowLevelGraphics *mpLowLevelGraphics;
 	iLowLevelInput *mpLowLevelInput;
-	iLowLevelResources *mpLowLevelResources;
+	LowLevelResources *mpLowLevelResources;
 	//		#ifdef WIN32
 	//			iLowLevelSound* mpLowLevelSound;
 	//		#else

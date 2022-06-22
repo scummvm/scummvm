@@ -38,7 +38,7 @@
 #include "hpl1/engine/math/BoundingVolume.h"
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/resources/GpuProgramManager.h"
-#include "hpl1/engine/resources/LowLevelResources.h"
+#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/resources/Resources.h"
 #include "hpl1/engine/resources/TextureManager.h"
 #include "hpl1/engine/scene/Camera3D.h"

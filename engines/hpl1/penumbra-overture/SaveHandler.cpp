@@ -668,7 +668,7 @@ void cSaveHandler::OnExit() {
 //-----------------------------------------------------------------------
 
 void cSaveHandler::DeleteOldestIfMax(const tWString &asDir, const tWString &asMask, int alMaxFiles) {
-	iLowLevelResources *pLowLevelResources = mpInit->mpGame->GetResources()->GetLowLevel();
+	LowLevelResources *pLowLevelResources = mpInit->mpGame->GetResources()->GetLowLevel();
 	iLowLevelSystem *pLowLevelSystem = mpInit->mpGame->GetSystem()->GetLowLevel();
 
 	tWString sPath = msSaveDir + asDir;
@@ -697,7 +697,7 @@ void cSaveHandler::DeleteOldestIfMax(const tWString &asDir, const tWString &asMa
 //-----------------------------------------------------------------------
 
 tWString cSaveHandler::GetLatest(const tWString &asDir, const tWString &asMask) {
-	iLowLevelResources *pLowLevelResources = mpInit->mpGame->GetResources()->GetLowLevel();
+	LowLevelResources *pLowLevelResources = mpInit->mpGame->GetResources()->GetLowLevel();
 	iLowLevelSystem *pLowLevelSystem = mpInit->mpGame->GetSystem()->GetLowLevel();
 
 	tWString sPath = msSaveDir + asDir;

@@ -30,7 +30,7 @@
 
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
-#include "hpl1/engine/resources/LowLevelResources.h"
+#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/resources/ResourceBase.h"
 #include "hpl1/engine/system/SystemTypes.h"
 #include <vector>
@@ -80,7 +80,7 @@ public:
 	/**
 	 * Used internally
 	 */
-	void SetUp(cGraphicsDrawer *apGraphicsDrawer, iLowLevelResources *apLowLevelResources,
+	void SetUp(cGraphicsDrawer *apGraphicsDrawer, LowLevelResources *apLowLevelResources,
 			   cGui *apGui) {
 		mpGraphicsDrawer = apGraphicsDrawer;
 		mpLowLevelResources = apLowLevelResources;
@@ -151,7 +151,7 @@ public:
 
 protected:
 	iLowLevelGraphics *mpLowLevelGraphics;
-	iLowLevelResources *mpLowLevelResources;
+	LowLevelResources *mpLowLevelResources;
 	cGraphicsDrawer *mpGraphicsDrawer;
 	cGui *mpGui;
 
