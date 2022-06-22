@@ -28,9 +28,6 @@
 #ifndef HPL_COLLIDE_SHAPE_NEWTON_H
 #define HPL_COLLIDE_SHAPE_NEWTON_H
 
-#if defined(__linux__) || defined(__APPLE__)
-#include <unistd.h>
-#endif
 #include "hpl1/engine/libraries/newton/Newton.h"
 #include "hpl1/engine/physics/CollideShape.h"
 
