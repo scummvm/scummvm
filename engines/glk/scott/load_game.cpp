@@ -143,6 +143,9 @@ void loadGameFile(Common::SeekableReadStream *f) {
 	case SEAS_OF_BLOOD_C64:
 		loadExtraSeasOfBlood64Data();
 		break;
+	case CLAYMORGUE_C64:
+		claymorgue64Sysmess();
+		break;
 	case GREMLINS_GERMAN_C64:
 		loadExtraGermanGremlinsc64Data();
 		break;

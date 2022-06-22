@@ -97,11 +97,20 @@ static C64Rec g_C64Registry[] = {
 	{ GREMLINS_GERMAN_C64,	0xc003,		0x558c, TYPE_T64, 1, nullptr,	nullptr, 0, 0xd801, 0xc6c0, 0x1f00 },  // German Gremlins C64 (T64) version * TBC Multicompactor v2.x
 	{ GREMLINS_GERMAN_C64,	0x2ab00,	0x6729, TYPE_D64, 2, nullptr,	nullptr, 0, 0xdc02, 0xcac1, 0x1f00 }, // German Gremlins C64 (D64) version * Exomizer
 
-	{SEAS_OF_BLOOD_C64, 0xa209,  0xf115, TYPE_T64, 6, "-e0x1000", nullptr, 3, 0xd802, 0xb07c, 0x2000}, // Seas of Blood C64 (T64) MasterCompressor / Relax -> ECA
+	{ SEAS_OF_BLOOD_C64, 0xa209,  0xf115, TYPE_T64, 6, "-e0x1000", nullptr, 3, 0xd802, 0xb07c, 0x2000 }, // Seas of Blood C64 (T64) MasterCompressor / Relax -> ECA
 	// Compacker -> Unknown -> MasterCompressor / Relax -> ECA
 	// Compacker -> CCS Packer
-	{SEAS_OF_BLOOD_C64, 0x2ab00, 0x5c1d, TYPE_D64, 1, nullptr,	  nullptr, 0, 0xd802, 0xb07c, 0x2000}, // Seas of Blood C64 (D64) CCS Packer
-	{SEAS_OF_BLOOD_C64, 0x2ab00, 0xe308, TYPE_D64, 1, nullptr,	  nullptr, 0, 0xd802, 0xb07c, 0x2000}, // Seas of Blood C64 (D64) alt CCS Packer
+	{ SEAS_OF_BLOOD_C64, 0x2ab00, 0x5c1d, TYPE_D64, 1, nullptr,	   nullptr, 0, 0xd802, 0xb07c, 0x2000 }, // Seas of Blood C64 (D64) CCS Packer
+	{ SEAS_OF_BLOOD_C64, 0x2ab00, 0xe308, TYPE_D64, 1, nullptr,	   nullptr, 0, 0xd802, 0xb07c, 0x2000 }, // Seas of Blood C64 (D64) alt CCS Packer
+
+	{ CLAYMORGUE_C64, 0x6ff7,  0xe4ed, TYPE_T64, 3, nullptr, nullptr, 0, 0x855, 0x7352, 0x20},		// Sorcerer Of Claymorgue Castle C64 (T64), MasterCompressor / Relax
+	// -> ECA Compacker -> MegaByte Cruncher v1.x Missing 17 pictures
+	{ CLAYMORGUE_C64, 0x912f,  0xa69f, TYPE_T64, 1, nullptr, nullptr, 0, 0x855, 0x7352, 0x20},		// Sorcerer Of Claymorgue Castle C64 (T64) alt, MegaByte Cruncher
+	// v1.x Missing 17 pictures
+	{ CLAYMORGUE_C64, 0xc0dd,  0x3701, TYPE_T64, 1, nullptr, nullptr, 0, 0,		0,		0,	-0x7fe},// Sorcerer Of Claymorgue Castle C64 (T64) alt 2, Trilogic Expert
+	// v2.7
+	{ CLAYMORGUE_C64, 0xbc5f,  0x492c, TYPE_T64, 1, nullptr, nullptr, 0, 0x855, 0x7352, 0x20},		// Sorcerer Of Claymorgue Castle C64 (T64) alt 3, , Section8 Packer
+	{ CLAYMORGUE_C64, 0x2ab00, 0xfd67, TYPE_D64, 1, nullptr, nullptr, 0, 0x855, 0x7352, 0x20},		// Sorcerer Of Claymorgue Castle C64 (D64), Section8 Packer
 
 	{ UNKNOWN_GAME, 0, 0, UNKNOWN_FILE_TYPE, 0, nullptr, nullptr, 0, 0, 0, 0 }
 };

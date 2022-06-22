@@ -1446,5 +1446,89 @@ const GameInfo _games[NUMGAMES] = {
 			 139,    // number_of_pictures;
 			 C64B,   // palette
 			 4,      // picture_format_version;
+			 0),
+	GameInfo("The Sorcerer of Claymorgue Castle",
+			 CLAYMORGUE,
+			 NO_TYPE,                  // type
+			 ENGLISH,                  // subtype
+			 FIVE_LETTER_UNCOMPRESSED, // dictionary type
+
+			 75,  // Number of items
+			 267, // Number of actions
+			 109, // Number of words
+			 32,  // Number of rooms
+			 10,  // Max carried items
+			 5,   // Word length
+			 79,  // Number of messages
+
+			 110, // number_of_verbs
+			 108, // number_of_nouns;
+
+			 0x246c, // header
+			 EARLY,  // header style
+
+			 0x3bf6,  // room images
+			 FOLLOWS, // item flags
+			 FOLLOWS, // item images
+			 FOLLOWS, // actions
+			 UNCOMPRESSED,
+			 0x4ecf,  // dictionary
+			 0x53f7,  // start_of_room_descriptions;
+			 0x4d6f,  // start_of_room_connections;
+			 0x5605,  // start_of_messages;
+			 FOLLOWS, // start_of_item_descriptions;
+			 0x4e35,  // start_of_item_locations;
+
+			 0x24e2, // start_of_system_messages
+			 0x2877, // start of directions
+
+			 0x6007,  // start_of_characters;
+			 0x6807,  // start_of_image_data
+			 -0x3fe5, // image_address_offset
+			 37,      // number_of_pictures;
+			 ZXOPT,   // palette
+			 1,       // picture_format_version;
+			 0),
+	GameInfo("The Sorcerer of Claymorgue Castle C64",
+			 CLAYMORGUE_C64,
+			 NO_TYPE,                             // type
+			 static_cast<Subtype>(ENGLISH | C64), // subtype
+			 FIVE_LETTER_UNCOMPRESSED,            // dictionary type
+
+			 75,  // Number of items
+			 265, // Number of actions
+			 108, // Number of words
+			 32,  // Number of rooms
+			 10,  // Max carried items
+			 5,   // Word length
+			 79,  // Number of messages
+
+			 110, // number_of_verbs
+			 108, // number_of_nouns;
+
+			 0x47d6, // header
+			 EARLY,  // header style
+
+			 0x471f,  // room images
+			 FOLLOWS, // item flags
+			 FOLLOWS, // item images
+			 0x47f0,  // actions
+			 UNCOMPRESSED,
+			 0x5891,  // dictionary
+			 FOLLOWS, // start_of_room_descriptions;
+			 FOLLOWS, // start_of_room_connections;
+			 FOLLOWS, // start_of_messages;
+			 FOLLOWS, // start_of_item_descriptions;
+			 FOLLOWS, // start_of_item_locations;
+
+			 0xa2c, // start_of_system_messages
+			 0xa2c, // start of directions
+
+			 0x6b1a, // start_of_characters;
+			 0x731a, // start_of_image_data
+			 0x6b1a, // image_address_offset
+			 44,     // number_of_pictures;
+			 C64B,   // palette
+			 1,      // picture_format_version;
 			 0)
 };

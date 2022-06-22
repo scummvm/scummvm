@@ -189,6 +189,9 @@ const GlkDetectionEntry SCOTT_GAMES[] = {
 	DT_ENTRY1("seasofblood",	 "C64", "267c3fe2bb150365de0358f07b5df15c", 174848),
 	DT_ENTRY1("seasofblood",	 "C64", "46280fb1d701a41492b8434467c31029", 41481),
 
+	//Scott Adams
+	DT_ENTRY1("claymorguesorcerer","C64", "a1db488c49ad221fa0dc79591cb5a3db", 28663),
+
 	// 11 Mysterious Adventures
 	DT_ENTRY1("mysadv1", "C64", "b4d8fc4eabed4f2400717303561ad0fa", 174848),
 	DT_ENTRY1("mysadv2", "C64", "3ce5ea1a0473244bf469fd3c51f1dc48", 174848),
