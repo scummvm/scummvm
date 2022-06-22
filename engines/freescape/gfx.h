@@ -35,63 +35,6 @@ namespace Freescape {
 
 class Renderer;
 
-class Drawable {
-public:
-	Drawable();
-	virtual ~Drawable() {}
-
-	virtual void draw() {}
-	virtual void drawOverlay() {}
-
-	/** Should the drawable be drawn inside the active window, or is it allowed to draw on the entire screen? */
-	bool isConstrainedToWindow() const { return _isConstrainedToWindow; }
-
-	/** Whether to setup the renderer state for 2D or 3D when processing the drawable */
-	bool is3D() const { return _is3D; }
-
-	/** Whether to scale the drawable to a size equivalent to the original engine or to draw it at its native size */
-	bool isScaled() const { return _scaled; }
-
-protected:
-	bool _isConstrainedToWindow;
-	bool _is3D;
-	bool _scaled;
-};
-
-/**
- * Game screen window
- *
- * A window represents a game screen pane.
- * It allows abstracting the rendering position from the behavior.
- */
-class Window : public Drawable {
-public:
-	/**
-	 * Get the window position in screen coordinates
-	 */
-	virtual Common::Rect getPosition() const = 0;
-
-	/**
-	 * Get the window position in original (640x480) screen coordinates
-	 */
-	virtual Common::Rect getOriginalPosition() const = 0;
-
-	/**
-	 * Get the window center in screen coordinates
-	 */
-	Common::Point getCenter() const;
-
-	/**
-	 * Convert screen coordinates to window coordinates
-	 */
-	Common::Point screenPosToWindowPos(const Common::Point &screen) const;
-
-	/**
-	 * Transform a point from screen coordinates to scaled window coordinates
-	 */
-	Common::Point scalePoint(const Common::Point &screen) const;
-};
-
 class Texture {
 public:
 	uint width;
@@ -149,18 +92,6 @@ public:
 
 	virtual void drawSky(uint8 color) = 0;
 	virtual void drawFloor(uint8 color) = 0;
-
-	/** Render a Drawable in the specified window */
-	void renderDrawable(Drawable *drawable, Window *window);
-
-	/** Render a Drawable overlay in the specified window */
-	void renderDrawableOverlay(Drawable *drawable, Window *window);
-
-	/** Render the main Drawable of a Window */
-	void renderWindow(Window *window);
-
-	/** Render the main Drawable overlay of a Window */
-	void renderWindowOverlay(Window *window);
 
 	Common::Rect viewport() const;
 	Common::Rect rviewport() const;
