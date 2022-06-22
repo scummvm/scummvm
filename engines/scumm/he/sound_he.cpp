@@ -797,6 +797,10 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 }
 
 void SoundHE::tryLoadSoundOverride(int soundID, Audio::RewindableAudioStream **stream, int *duration) {
+	if (!_vm->_enableEnhancements) {
+		return;
+	}
+
 	const char *formats[] = {
 #ifdef USE_FLAC
 	    "flac",
