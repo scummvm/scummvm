@@ -59,6 +59,7 @@
 #include "hpl1/engine/impl/scriptstring.h"
 #include "hpl1/engine/impl/stdstring.h"
 #include "hpl1/engine/system/String.h"
+#include "common/system.h"
 
 #include <clocale>
 //#include <ObjectArray.h>
@@ -315,15 +316,8 @@ static cDate DateFromGMTIme(struct tm *apClock) {
 //-----------------------------------------------------------------------
 
 void OpenBrowserWindow(const tWString &asURL) {
-#if 0 // def WIN32
-		ShellExecute ( NULL, _W("open"), asURL.c_str(), NULL, NULL, SW_SHOWNORMAL );
-#elif defined(__linux__)
-	tString asTemp = "./openurl.sh " + cString::To8Char(asURL);
-	system(asTemp.c_str());
-#elif defined(__APPLE__)
-	tString asTemp = "open " + cString::To8Char(asURL);
-	system(asTemp.c_str());
-#endif
+	// FIXME: use proper string types 
+	g_system->openUrl(cString::To8Char(asURL).c_str());
 }
 
 //-----------------------------------------------------------------------
