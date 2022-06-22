@@ -3420,7 +3420,7 @@ void ScummEngine_v7::confirmExitDialog() {
 		char noLabelPtr[512];
 		char msgLabelPtr[512];
 		byte *curGrabbedCursor;
-		int curCursorWidth, curCursorHeight, curCursorHotspotX, curCursorHotspotY;
+		int curCursorWidth, curCursorHeight, curCursorHotspotX, curCursorHotspotY, curCursorState;
 
 		InfoDialog d(this, 0);
 
@@ -3438,6 +3438,7 @@ void ScummEngine_v7::confirmExitDialog() {
 		// and set up the internal v8 cursor...
 		curGrabbedCursor = (byte *)malloc(sizeof(_grabbedCursor));
 		memcpy(curGrabbedCursor, _grabbedCursor, sizeof(_grabbedCursor));
+		curCursorState = isSmushActive() ? 0 : _cursor.state;
 		curCursorWidth = _cursor.width;
 		curCursorHeight = _cursor.height;
 		curCursorHotspotX = _cursor.hotspotX;
@@ -3542,6 +3543,8 @@ void ScummEngine_v7::confirmExitDialog() {
 			quitGame();
 
 		// Restore the previous cursor...
+		_cursor.state = curCursorState;
+		CursorMan.showMouse(_cursor.state > 0);
 		setCursorHotspot(curCursorHotspotX, curCursorHotspotY);
 		setCursorFromBuffer(curGrabbedCursor, curCursorWidth, curCursorHeight, curCursorWidth);
 		free(curGrabbedCursor);
