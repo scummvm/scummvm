@@ -30,9 +30,6 @@
 
 #include "hpl1/engine/physics/PhysicsWorld.h"
 
-#if defined(__linux__) || defined(__APPLE__)
-#include <unistd.h>
-#endif
 #include "hpl1/engine/libraries/newton/Newton.h"
 
 namespace hpl {
