@@ -390,19 +390,19 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 	}
 
 	// If we are using the original GUI, remap F5 to F1.
-	if (isUsingOriginalGUI() && !(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(0)) {
+	if (isUsingOriginalGUI() && lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(0)) {
 		lastKeyHit = Common::KeyState(Common::KEYCODE_F1, 315);
 	}
 
 	// Alt-F5 should bring up the original save/load dialog, so map it to F1,
 	// again, unless we chose to use the original GUI.
-	if (!isUsingOriginalGUI() && !(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(Common::KBD_ALT)) {
+	if (!isUsingOriginalGUI() && lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(Common::KBD_ALT)) {
 		lastKeyHit = Common::KeyState(Common::KEYCODE_F1, 315);
 	}
 
 	// If a key script was specified (a V8 feature), and it's trigger
 	// key was pressed, run it. Usually used to display the built-in menu.
-	if (!isSmushActive() && _keyScriptNo && (_keyScriptKey == lastKeyHit.ascii)) {
+	if (!(_game.features & GF_DEMO) && !isSmushActive() && _keyScriptNo && (_keyScriptKey == lastKeyHit.ascii)) {
 		runScript(_keyScriptNo, 0, 0, 0);
 		return;
 	}
@@ -432,16 +432,24 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 
 	if (isUsingOriginalGUI() &&
 		(lastKeyHit.keycode == Common::KEYCODE_c && lastKeyHit.hasFlags(Common::KBD_CTRL))) {
-		// Force the cursor to be ON...
-		int8 oldCursorState = _cursor.state;
-		_cursor.state = 1;
-		CursorMan.showMouse(_cursor.state > 0);
+		if (_game.features & GF_DEMO) {
+			Common::KeyState ks = showBannerAndPause(0, -1, d.getPlainEngineString(6));
+			if (ks.keycode == Common::KEYCODE_y) {
+				quitGame();
+			}
+		} else {
+			// Force the cursor to be ON...
+			int8 oldCursorState = _cursor.state;
+			_cursor.state = 1;
+			CursorMan.showMouse(_cursor.state > 0);
 
-		confirmExitDialog();
+			confirmExitDialog();
 
-		// Restore the old cursor state...
-		_cursor.state = oldCursorState;
-		CursorMan.showMouse(_cursor.state > 0);
+			// Restore the old cursor state...
+			_cursor.state = oldCursorState;
+			CursorMan.showMouse(_cursor.state > 0);
+		}
+
 		return;
 	}
 
