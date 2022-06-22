@@ -48,6 +48,7 @@ const PlainGameDescriptor SCOTT_GAME_LIST[] = {
 	{ "mysteryfunhouse",	"Mystery Fun House" },
 	{ "pyramidofdoom",		"Pyramid Of Doom" },
 	{ "ghosttown",			"Ghost Town" },
+	{ "savageisland",		"Savage Island" },
 	{ "savageisland1",		"Savage Island, Part 1" },
 	{ "savageisland2",		"Savage Island, Part 2" },
 	{ "goldenvoyage",		"The Golden Voyage" },
@@ -196,6 +197,7 @@ const GlkDetectionEntry SCOTT_GAMES[] = {
 	DT_ENTRY1("claymorguesorcerer", "C64", "1ebaf9a378355246aa7ed2623bb27fab", 49373),
 	DT_ENTRY1("claymorguesorcerer", "C64", "dde67117a432420ef05f8d665fbbbe10", 37167),
 	DT_ENTRY1("claymorguesorcerer", "C64", "64fcee173adecc0f03c595e25d4def04", 174848),
+	DT_ENTRY1("savageisland",		"C64", "414d459ceb211230356ad823475866b3", 174848),
 
 	// 11 Mysterious Adventures
 	DT_ENTRY1("mysadv1", "C64", "b4d8fc4eabed4f2400717303561ad0fa", 174848),
