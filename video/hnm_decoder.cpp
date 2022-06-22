@@ -214,6 +214,7 @@ void HNMDecoder::HNMVideoTrack::newFrame(uint32 frameDelay) {
 	// We can't rely on a detection in the header as some soundless HNM indicate they have
 	if (frameDelay == uint32(-1)) {
 		_nextFrameStartTime = _nextFrameStartTime.addMsecs(_regularFrameDelayMs);
+		return;
 	}
 
 	// HNM decoders use sound double buffering to pace the frames
