@@ -68,10 +68,22 @@ Resource::Resource(Common::String filename) {
 		_encrypted = true;
 
 	_chunkCount = _stream.readUint16LE();
-	_chunkList.reserve(_chunkCount);
+	_chunkList.resize(_chunkCount);
+
+	if (header == headerGeneric) {
+		// NGS files have an index at the end
+		_stream.seek(-(int)(_chunkCount * sizeof(uint32)), SEEK_END);
+		for (uint i = 0; i < _chunkCount; i++) {
+			Chunk &cur = _chunkList[i];
+			cur.pos = _stream.readUint32LE();
+		}
+	}
 
 	for (uint i = 0; i < _chunkCount; i++) {
-		Chunk cur;
+		Chunk &cur = _chunkList[i];
+		if (header == headerGeneric)
+			_stream.seek(cur.pos - 6);
+
 		cur.size = _stream.readUint32LE();
 
 		if (isText) {
@@ -88,6 +100,9 @@ Resource::Resource(Common::String filename) {
 
 		cur.pos = _stream.pos();
 
+		// TODO: Is this workaround necessary anymore
+		// with the stream offset fixes
+#if 0
 		// WORKAROUND: Patch invalid speech sample
 		if (isSpeech && i == 2277 && cur.size == 57028) {
 			cur.size = 152057;
@@ -96,9 +111,10 @@ Resource::Resource(Common::String filename) {
 			_chunkList.push_back(cur);
 			continue;
 		}
+#endif
 
-		_stream.skip(cur.size);
-		_chunkList.push_back(cur);
+		if (header != headerGeneric)
+			_stream.skip(cur.size);
 	}
 
 	_spriteCorrectionsCount = 0;
