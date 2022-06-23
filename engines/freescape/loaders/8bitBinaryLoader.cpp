@@ -15,7 +15,7 @@
 namespace Freescape {
 
 static Object *load8bitObject(StreamLoader &stream) {
-	
+
 	Object::Type objectType = (Object::Type)(stream.get8() & 0x1F);
 	Math::Vector3d position, v;
 
@@ -112,21 +112,21 @@ static Object *load8bitObject(StreamLoader &stream) {
 }
 
 float specColors[16][3] = {
-    {0, 0, 0}, 
-	{0, 0, 0.75}, 
-	{0.75, 0, 0}, 
-	{0.75, 0, 0.75}, 
-	{0, 0.75, 0}, 
-	{0, 0.75, 0.75}, 
-	{0.75, 0.75, 0}, 
+    {0, 0, 0},
+	{0, 0, 0.75},
+	{0.75, 0, 0},
+	{0.75, 0, 0.75},
+	{0, 0.75, 0},
+	{0, 0.75, 0.75},
+	{0.75, 0.75, 0},
 	{0.75, 0.75, 0.75},
-    {0, 0, 0}, 
-	{0, 0, 1}, 
-	{1, 0, 0}, 
-	{1, 0, 1}, 
-	{0, 1, 0}, 
-	{0, 1, 1}, 
-	{1, 1, 0}, 
+    {0, 0, 0},
+	{0, 0, 1},
+	{1, 0, 0},
+	{1, 0, 1},
+	{0, 1, 0},
+	{0, 1, 1},
+	{1, 1, 0},
 	{1, 1, 1}
 };
 
@@ -165,9 +165,9 @@ Area *load8bitArea(StreamLoader &stream, uint16 ncolors) {
 	debug("Scale: %d", scale);
 
 	uint8 ci1 = stream.get8()&15;
-	uint8 ci2 = stream.get8()&15; 
-	uint8 ci3 = stream.get8()&15; 
-	uint8 ci4 = stream.get8()&15; 
+	uint8 ci2 = stream.get8()&15;
+	uint8 ci3 = stream.get8()&15;
+	uint8 ci4 = stream.get8()&15;
 
 	debug("Colors: %d %d %d %d", ci1, ci2, ci3, ci4);
 
@@ -235,7 +235,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 
 	uint32 i = 0;
 	while (i < fileSize) {
-		binary.push_back(buf[i]);		
+		binary.push_back(buf[i]);
 		i++;
 	}
 
@@ -298,6 +298,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 			(*areaMap)[newArea->getAreaID()] = newArea;
 		}
 	}
+	_playerHeight = 32;
 	_areasByAreaID = areaMap;
 	_startArea = startArea;
 	_startEntrance = startEntrance;
