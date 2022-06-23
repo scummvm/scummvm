@@ -127,6 +127,21 @@ static C64Rec g_C64Registry[] = {
 	{ SPIDERMAN_C64, 0x2ab00, 0xde56, TYPE_D64, 0, nullptr, nullptr, 0, 0x1801, 0xa801, 0x2000 }, // Spiderman C64 (D64)
 	{ SPIDERMAN_C64, 0x08e72, 0xb2f4, TYPE_T64, 3, nullptr, nullptr, 0, 0, 0 },                   // Spiderman C64 (T64) MasterCompressor / Relax -> ECA Compacker -> Section8 Packer
 
+	{ BATON_C64,		0x5170,		0xb240, TYPE_T64, 2 }, // The Golden Baton C64, T64
+	{ BATON_C64,		0x2ab00,	0xbfbf, TYPE_D64, 2 }, // Mysterious Adventures C64 dsk 1 alt
+	{ FEASIBILITY_C64,	0x2ab00,	0x9c18, TYPE_D64, 2 }, // Mysterious Adventures C64 dsk 2 alt
+	{ TIME_MACHINE_C64, 0x5032,		0x5635, TYPE_T64, 1 }, // The Time Machine C64
+	{ ARROW1_C64,		0x5b46,		0x92db, TYPE_T64, 1 }, // Arrow of Death part 1 C64
+	{ ARROW2_C64,		0x5fe2,		0xe14f, TYPE_T64, 1 }, // Arrow of Death part 2 C64
+	{ PULSAR7_C64,		0x46bf,		0x1679, TYPE_T64, 1 }, // Escape from Pulsar 7 C64
+	{ CIRCUS_C64,		0x4269,		0xa449, TYPE_T64, 2 }, // Circus C64
+	{ FEASIBILITY_C64,	0x5a7b,		0x0f48, TYPE_T64, 1 }, // Feasibility Experiment C64
+	{ AKYRZ_C64,		0x2ab00,	0x6cca, TYPE_D64, 0 }, // The Wizard of Akyrz C64
+	{ AKYRZ_C64,		0x4be1,		0x5a00, TYPE_T64, 1 }, // The Wizard of Akyrz C64, T64
+	{ PERSEUS_C64,		0x502b,		0x913b, TYPE_T64, 1 }, // Perseus and Andromeda C64
+	{ INDIANS_C64,		0x4f9f,		0xe6c8, TYPE_T64, 1 }, // Ten Little Indians C64
+	{ WAXWORKS_C64,		0x4a11,		0xa37a, TYPE_T64, 1 }, // Waxworks C64
+
 	{ UNKNOWN_GAME, 0, 0, UNKNOWN_FILE_TYPE, 0, nullptr, nullptr, 0, 0, 0, 0 }
 };
 
@@ -383,9 +398,9 @@ int detectC64(uint8_t **sf, size_t *extent) {
 	int index = _G(_md5Index)[md5];
 	if (g_C64Registry[index]._id == SAVAGE_ISLAND_C64) {
 		return savageIslandMenu(sf, extent, index);
-	} else if (g_C64Registry[index]._id == BATON_C64) {
+	} else if (g_C64Registry[index]._id == BATON_C64 && index == 0) {
 		return mysteriousMenu(sf, extent, index);
-	} else if (g_C64Registry[index]._id == FEASIBILITY_C64) {
+	} else if (g_C64Registry[index]._id == FEASIBILITY_C64 && index == 6) {
 		return mysteriousMenu2(sf, extent, index);
 	}
 	if (g_C64Registry[index]._type == TYPE_D64) {
