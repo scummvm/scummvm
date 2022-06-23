@@ -44,7 +44,7 @@ Resource::Resource(Common::String filename) {
 	const uint32 header = _stream.readUint32BE();
 	const bool isText = (header == headerTxtDec || header == headerTxtEnc);
 	const bool isSprite = (header == headerSprite);
-	const bool isSpeech = filename.contains("speech.tvp");
+	//const bool isSpeech = filename.contains("speech.tvp");
 	const bool isBarrier = (header == headerBarrier);
 
 	if (header != headerGeneric && !isSprite && !isText && !isBarrier)
