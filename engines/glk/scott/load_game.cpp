@@ -169,6 +169,9 @@ void loadGameFile(Common::SeekableReadStream *f) {
 	case SPIDERMAN_C64:
 		spiderman64Sysmess();
 		break;
+	case SUPERGRAN_C64:
+		supergran64Sysmess();
+		break;
 	case SAVAGE_ISLAND_C64:
 		_G(_items)[20]._image = 13;
 	case SAVAGE_ISLAND2_C64:

@@ -142,6 +142,8 @@ static C64Rec g_C64Registry[] = {
 	{ INDIANS_C64,		0x4f9f,		0xe6c8, TYPE_T64, 1 }, // Ten Little Indians C64
 	{ WAXWORKS_C64,		0x4a11,		0xa37a, TYPE_T64, 1 }, // Waxworks C64
 
+	{ SUPERGRAN_C64, 0x726f, 0x0901, TYPE_T64, 1, nullptr, nullptr, 0, 0xd802, 0xc623, 0x1f00 }, // Super Gran C64 (T64) PUCrunch Generic Hack
+
 	{ UNKNOWN_GAME, 0, 0, UNKNOWN_FILE_TYPE, 0, nullptr, nullptr, 0, 0, 0, 0 }
 };
 

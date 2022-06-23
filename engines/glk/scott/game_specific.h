@@ -42,6 +42,7 @@ void adventurelandAction(int p);
 void adventurelandDarkness();
 void adventureland64Sysmess();
 void spiderman64Sysmess();
+void supergran64Sysmess(void);
 
 } // End of namespace Scott
 } // End of namespace Glk
