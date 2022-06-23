@@ -87,6 +87,7 @@ const PlainGameDescriptor SCOTT_GAME_LIST[] = {
 	{ "topsecretadv",      "Top Secret Adventure" },
 	{ "gremlins",		   "Gremlins" },
 	{ "seasofblood",	   "Seas Of Blood" },
+	{ "supergran",		   "Super Gran" },
 
 	{ nullptr, nullptr }
 };
@@ -198,6 +199,8 @@ const GlkDetectionEntry SCOTT_GAMES[] = {
 	DT_ENTRY1("marveladventure", "C64", "d80e133dd396565f773052cb317e8222", 174848),
 	DT_ENTRY1("marveladventure2","C64", "5d0ea85ca1f260ca718a6bbb6da4cdb9", 174848),
 	DT_ENTRY1("marveladventure2","C64", "3d88539a6dd7e6e179bb61041125cc0f", 36466),
+	DT_ENTRY1("supergran",		 "C64", "36a5b1b2afb38902933856b3446d760e", 29295),
+
 
 	//Scott Adams
 	DT_ENTRY1("adventureland",		"C64", "05cf6c64ecde5288ae2e46099bfd19a3", 27152),

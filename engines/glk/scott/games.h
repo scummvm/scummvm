@@ -1908,5 +1908,87 @@ const GameInfo _games[NUMGAMES] = {
 			 43,     // number_of_pictures;
 			 C64B,   // palette
 			 0,      // picture_format_version;
+			 0),
+	GameInfo("Supergran",
+			 SUPERGRAN,
+			 NO_TYPE,                  // type
+			 ENGLISH,                  // subtype
+			 FOUR_LETTER_UNCOMPRESSED, // dictionary type
+
+			 85,  // Number of items
+			 204, // Number of actions
+			 105, // Number of words
+			 39,  // Number of rooms
+			 6,   // Max carried items
+			 4,   // Word length
+			 99,  // Number of messages
+
+			 101, // number_of_verbs
+			 106, // number_of_nouns;
+
+			 0x236d,  // header
+			 LATE,    // header style
+			 0x38c8,  // room images
+			 FOLLOWS, // item flags
+			 FOLLOWS, // item images
+			 0x399e,  // actions
+			 COMPRESSED,
+			 0x42fd,  // dictionary
+			 0x4708,  // start_of_room_descriptions;
+			 FOLLOWS, // start_of_room_connections;
+			 FOLLOWS, // start_of_messages;
+			 FOLLOWS, // start_of_item_descriptions;
+			 FOLLOWS, // start_of_item_locations;
+
+			 0x2423, // start_of_system_messages
+			 0x25f3, // start of directions
+
+			 0x5a4e,  // start_of_characters;
+			 FOLLOWS, // start_of_image_data
+			 0x634e,  // image_address_offset
+			 47,      // number_of_pictures;
+			 ZXOPT,   // palette
+			 3,       // picture_format_version;
+			 0),
+	GameInfo("Supergran C64",
+			 SUPERGRAN_C64,
+			 NO_TYPE,                             // type
+			 static_cast<Subtype>(ENGLISH | C64), // subtype
+			 FOUR_LETTER_UNCOMPRESSED,            // dictionary type
+
+			 85,  // Number of items
+			 204, // Number of actions
+			 105, // Number of words
+			 39,  // Number of rooms
+			 6,   // Max carried items
+			 4,   // Word length
+			 99,  // Number of messages
+
+			 101, // number_of_verbs
+			 105, // number_of_nouns;
+
+			 0x4624,               // header
+			 SUPERGRAN_C64_HEADER, // header style
+			 0x4636,               // room images
+			 FOLLOWS,              // item flags
+			 FOLLOWS,              // item images
+			 0x47b5,               // actions
+			 COMPRESSED,
+			 0x5119,  // dictionary
+			 0x5524,  // start_of_room_descriptions;
+			 FOLLOWS, // start_of_room_connections;
+			 FOLLOWS, // start_of_messages;
+			 FOLLOWS, // start_of_item_descriptions;
+			 0x470a,  // start_of_item_locations;
+
+			 0x0a53, // start_of_system_messages
+			 0x0a53, // start of directions
+
+			 0x6a02,  // start_of_characters;
+			 FOLLOWS, // start_of_image_data
+			 0x7302,  // image_address_offset
+			 49,      // number_of_pictures;
+			 C64B,    // palette
+			 3,       // picture_format_version;
 			 0)
 };

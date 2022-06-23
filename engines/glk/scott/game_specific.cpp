@@ -321,5 +321,46 @@ void spiderman64Sysmess() {
 	_G(_sys)[SOMETHING] = "\" something. ";
 }
 
+void supergran64Sysmess(void) {
+	SysMessageType messagekey[] = {
+		NORTH,
+		SOUTH,
+		EAST,
+		WEST,
+		UP,
+		DOWN,
+		EXITS,
+		YOU_SEE,
+		YOU_ARE,
+		I_DONT_KNOW_WHAT_A,
+		IS,
+		YOU_CANT_GO_THAT_WAY,
+		OK,
+		WHAT_NOW,
+		HUH,
+		YOU_HAVE_IT,
+		TAKEN,
+		DROPPED,
+		YOU_HAVENT_GOT_IT,
+		INVENTORY,
+		YOU_DONT_SEE_IT,
+		THATS_BEYOND_MY_POWER,
+		DIRECTION,
+		YOURE_CARRYING_TOO_MUCH,
+		IM_DEAD,
+		PLAY_AGAIN,
+		RESUME_A_SAVED_GAME,
+		YOU_CANT_DO_THAT_YET,
+		I_DONT_UNDERSTAND,
+		NOTHING};
+
+	for (int i = 0; i < 30; i++) {
+		_G(_sys)[messagekey[i]] = _G(_systemMessages)[i];
+	}
+
+	_G(_sys)[I_DONT_KNOW_WHAT_A] = "\"";
+	_G(_sys)[IS] = "\" is a word I don't know. ";
+}
+
 } // End of namespace Scott
 } // End of namespace Glk

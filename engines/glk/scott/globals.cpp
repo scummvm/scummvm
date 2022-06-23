@@ -151,6 +151,7 @@ Globals::Globals() : _sys(MAX_SYSMESS), _directions(NUMBER_OF_DIRECTIONS), _extr
 	_md5Index.setVal("96a1ccb3212808eee03e74cdc1f0d1a4", 54); // perseus
 	_md5Index.setVal("79ee3669ccfff7338dfc1810228005dc", 55); // 10 indians
 	_md5Index.setVal("facc11aa8b51e88a807236b765203eb0", 56); // waxworks11
+	_md5Index.setVal("36a5b1b2afb38902933856b3446d760e", 57); // super gran
 }
 
 Globals::~Globals() {
