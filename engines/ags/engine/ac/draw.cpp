@@ -344,7 +344,7 @@ void create_blank_image(int coldepth) {
 	/*}
 	catch (Ali3DException gfxException)
 	{
-		quit(gfxException._message.GetCStr());
+		quit(gfxException.Message.GetCStr());
 	}*/
 }
 
@@ -716,7 +716,7 @@ void render_to_screen() {
 		succeeded = true;
 		/*}
 		catch (Ali3DFullscreenLostException e) {
-			Debug::Printf("Renderer exception: %s", e._message);
+			Debug::Printf("Renderer exception: %s", e.Message.GetCStr());
 			while (_G(game_update_suspend) && (!_G(want_exit)) && (!_G(abort_engine))) {
 				sys_evt_process_pending();
 				platform->Delay(300);
