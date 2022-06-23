@@ -137,6 +137,8 @@ void FreescapeEngine::drawFrame(Area *area) {
 	_gfx->positionCamera(_position, _position + _cameraFront);
 	_gfx->scale(_scaleVector);
 	area->draw(_gfx);
+	//drawBorder();
+	_gfx->flipBuffer();
 }
 
 void FreescapeEngine::processInput() {
@@ -230,9 +232,6 @@ Common::Error FreescapeEngine::run() {
 	while (!shouldQuit()) {
 		processInput();
 		drawFrame(area);
-
-		//drawBorder();
-		_gfx->flipBuffer();
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}

@@ -94,7 +94,6 @@ public:
 	virtual void drawFloor(uint8 color) = 0;
 
 	Common::Rect viewport() const;
-	Common::Rect rviewport() const;
 	Graphics::PixelBuffer *_palette = nullptr;
 
 	/**
@@ -120,18 +119,13 @@ public:
 protected:
 	OSystem *_system;
 	Texture *_font;
-
 	Common::Rect _screenViewport;
-	Common::Rect _rscreenViewport;
 
 	Math::Matrix4 _projectionMatrix;
 	Math::Matrix4 _modelViewMatrix;
 	Math::Matrix4 _mvpMatrix;
 
 	Math::Frustum _frustum;
-
-	static const float cubeVertices[5 * 6 * 4];
-	Math::AABB _cubeFacesAABB[6];
 
 	Common::Rect getFontCharacterRect(uint8 character);
 	Math::Matrix4 makeProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) const;

@@ -92,10 +92,6 @@ Common::Rect Renderer::viewport() const {
 	return _screenViewport;
 }
 
-Common::Rect Renderer::rviewport() const {
-	return _rscreenViewport;
-}
-
 void Renderer::computeScreenViewport() {
 	int32 screenWidth = _system->getWidth();
 	int32 screenHeight = _system->getHeight();
