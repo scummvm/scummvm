@@ -41,7 +41,10 @@ enum InputEvent {
 	kInputApplicationRestoreState,
 	kInputSwipe,
 	kInputTap,
-	kInputMainMenu
+	kInputMainMenu,
+	kInputJoystickAxisMotion,
+	kInputJoystickButtonDown,
+	kInputJoystickButtonUp
 };
 
 enum ScreenOrientation {
