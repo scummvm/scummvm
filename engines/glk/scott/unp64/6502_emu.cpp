@@ -1139,7 +1139,6 @@ int flipspace(void) {
 
 int nextInst(CpuCtx* r) {
 	InstArg arg[1];
-	int oldpc = r->_pc;
 	int opCode = r->_mem[r->_pc];
 	InstInfo *info = g_ops + opCode;
 	int mode, WriteToIO = 0;

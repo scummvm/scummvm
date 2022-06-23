@@ -64,6 +64,8 @@ Follows original disclaimer
 #include "glk/scott/unp64/exo_util.h"
 #include "glk/scott/unp64/unp64.h"
 
+#include "common/util.h"
+
 namespace Glk {
 namespace Scott {
 
@@ -346,7 +348,7 @@ int unp64(uint8_t *compressed, size_t length, uint8_t *destinationBuffer, size_t
 				static unsigned char fpressedchars[] = {0x20, 0, 0x4e, 0, 3, 0, 0x5f, 0, 0x11, 00, 0x0d, 0, 0x31, 0};
 				flipspe4++;
 
-				if (flipspe4 > (sizeof(fpressedchars) / sizeof(*fpressedchars)))
+				if (flipspe4 > ARRAYSIZE(fpressedchars))
 					flipspe4 = 0;
 
 				r->_a = fpressedchars[flipspe4];

@@ -240,7 +240,7 @@ int savageIslandMenu(uint8_t **sf, size_t *extent, int recIndex) {
 }
 
 void appendSIfiles(uint8_t **sf, size_t *extent) {
-	int totalLength = *extent + _G(_saveIslandAppendix1Length) + _G(_saveIslandAppendix2Length);
+	//int totalLength = *extent + _G(_saveIslandAppendix1Length) + _G(_saveIslandAppendix2Length);
 
 	uint8_t *megabuf = new uint8_t[0xFFFF];
 	memcpy(megabuf, *sf, *extent);

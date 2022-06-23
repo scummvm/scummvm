@@ -943,7 +943,7 @@ int tryLoading(GameInfo info, int dictStart, int loud) {
 					const char *t = strchr(ip->_autoGet.c_str(), '.');
 					if (t)
 						ip->_autoGet = Common::String(ip->_autoGet.c_str(), t);
-					for (int i = 1; i < ip->_autoGet.size(); i++)
+					for (uint i = 1; i < ip->_autoGet.size(); i++)
 						ip->_autoGet.replace(i, 1, Common::String(toupper(ip->_autoGet[i])));
 				}
 			}

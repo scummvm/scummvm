@@ -249,7 +249,7 @@ static void SOBPrint(winid_t w, const char *fmt, ...) {
 	g_scott->glk_put_string_stream(g_scott->glk_window_get_stream(w), msg);
 }
 
-const glui32 optimalDicePixelSize(glui32 *width, glui32 *height) {
+glui32 optimalDicePixelSize(glui32 *width, glui32 *height) {
 	int idealWidth = 8;
 	int idealHeight = 8;
 
@@ -281,10 +281,10 @@ static void drawBorder(winid_t win) {
 	width -= 2;
 	g_scott->glk_window_move_cursor(win, 0, 0);
 	g_scott->glk_put_char_uni(0x250F); // Top left corner
-	for (int i = 1; i < width; i++)
+	for (glui32 i = 1; i < width; i++)
 		g_scott->glk_put_char_uni(0x2501); // Top
 	g_scott->glk_put_char_uni(0x2513);     // Top right corner
-	for (int i = 1; i < height; i++) {
+	for (glui32 i = 1; i < height; i++) {
 		g_scott->glk_window_move_cursor(win, 0, i);
 		g_scott->glk_put_char_uni(0x2503);
 		g_scott->glk_window_move_cursor(win, width, i);
@@ -292,7 +292,7 @@ static void drawBorder(winid_t win) {
 	}
 	g_scott->glk_window_move_cursor(win, 0, height);
 	g_scott->glk_put_char_uni(0x2517);
-	for (int i = 1; i < width; i++)
+	for (glui32 i = 1; i < width; i++)
 		g_scott->glk_put_char_uni(0x2501);
 	g_scott->glk_put_char_uni(0x251B);
 }
@@ -791,7 +791,6 @@ int loadExtraSeasOfBlood64Data(void) {
 	offset = 0x3fee + _G(_fileBaselineOffset);
 	uint8_t *ptr;
 
-jumpEnemyTable:
 	ptr = seekToPos(_G(_entireFile), offset);
 
 	int ct;

@@ -260,14 +260,10 @@ void updateRobinOfSherwoodAnimations(void) {
 }
 
 GameIDType loadExtraSherwoodData(void) {
-
-#pragma mark room images
-
 	int offset = 0x3d99 + _G(_fileBaselineOffset);
 	uint8_t *ptr;
 	/* Load the room images */
 
-jumpRoomImages:
 	ptr = seekToPos(_G(_entireFile), offset);
 	if (ptr == 0)
 		return UNKNOWN_GAME;
@@ -285,8 +281,6 @@ jumpRoomImages:
 			}
 		}
 	}
-
-#pragma mark rooms
 
 	ct = 0;
 	rp = &_G(_rooms)[0];
@@ -346,13 +340,10 @@ GameIDType loadExtraSherwoodData64(void) {
 	//    white_colour = 1;
 	//    blue = 6;
 
-#pragma mark room images
-
 	int offset = 0x1ffd + _G(_fileBaselineOffset);
 	uint8_t *ptr;
 	/* Load the room images */
 
-jumpHereRoomImages:
 	ptr = seekToPos(_G(_entireFile), offset);
 	if (ptr == 0)
 		return UNKNOWN_GAME;
@@ -371,8 +362,6 @@ jumpHereRoomImages:
 			}
 		}
 	}
-
-#pragma mark rooms
 
 	ct = 0;
 	rp = &_G(_rooms)[0];
@@ -440,7 +429,6 @@ jumpHereRoomImages:
 	_G(_sys)[MESSAGE_DELIMITER] = ". ";
 
 	offset = 0x2300 + _G(_fileBaselineOffset);
-jumpForestImages:
 
 	ptr = seekToPos(_G(_entireFile), offset);
 	if (ptr == 0)
