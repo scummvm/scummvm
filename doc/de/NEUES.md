@@ -1,7 +1,6 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
-
 #### 2.7.0 (DD.MM.YYYY)
 
  Neue Spiele:
@@ -9,6 +8,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Allgemein:
    - Anzahl an falsch-positiven Einträgen reduziert, wenn das Gerät nach Spielen durchsucht wird.
+
+ AGOS:
+   - Option hinzugefügt, mit der die Ausblende-Effekte bei einem Raum-Wechsel in Simon 1 und 2
+     deaktiviert werden können.
 
  Kyra:
    - Unterstützung für die koreanische Version von Legend of Kyrandia 1 hinzugefügt.
