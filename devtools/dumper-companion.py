@@ -203,7 +203,7 @@ def escape_string(s: str) -> str:
     for char in s:
         if char == "\x81":
             new_name += "\x81\x79"
-        elif char in '/":*|\\?%<>' or ord(char) < 0x20:
+        elif char in '/":*|\\?%<>\x7f' or ord(char) < 0x20:
             new_name += "\x81" + chr(0x80 + ord(char))
         else:
             new_name += char
@@ -689,6 +689,7 @@ def test_decode_name():
         ],
         ["Buried in Timeｪ Demo", "xn--Buried in Time Demo-yp97h"],
         ["ぱそすけPPC", "xn--PPC-873bpbxa3l"],
+        ["Madeline Pre-K\x7f Demo", "xn--Madeline Pre-K Demo-8a06x"],
     ]
     for input, output in checks:
         assert punyencode(input) == output
