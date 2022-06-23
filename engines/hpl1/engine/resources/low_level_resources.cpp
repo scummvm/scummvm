@@ -25,60 +25,27 @@
 #include "hpl1/engine/resources/VideoManager.h"
 #include "common/fs.h"
 #include "hpl1/debug.h"
+#include "common/file.h"
 
 namespace hpl {
 
-Bitmap2D *LowLevelResources::LoadBitmap2D(tString filepath, tString type) {
-#if 0
-  		tString tType;
-		if(asType != "")
-			asFilePath = cString::SetFileExt(asFilePath,asType);
+static tString getImageType(const tString &filepath) {
+	//FIXME: use proper string types
+	Common::String str(filepath.c_str()); 
+	str.toLowercase(); 
+	size_t pos = str.findLastOf(".");
+	if (pos != Common::String::npos)
+		return str.substr(pos + 1).c_str();
+	return "";
+}
 
-		tType = cString::GetFileExt(asFilePath);
-		SDL_Surface* pSurface = NULL;
-
-		if (tType=="bmp") {
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-			SDL_PixelFormat RGBAFormat;
-			RGBAFormat.palette = 0; RGBAFormat.colorkey = 0; RGBAFormat.alpha = 0;
-			RGBAFormat.BitsPerPixel = 32; RGBAFormat.BytesPerPixel = 4;
-
-			RGBAFormat.Rmask = 0xFF000000; RGBAFormat.Rshift = 0; RGBAFormat.Rloss = 0;
-			RGBAFormat.Gmask = 0x00FF0000; RGBAFormat.Gshift = 8; RGBAFormat.Gloss = 0;
-			RGBAFormat.Bmask = 0x0000FF00; RGBAFormat.Bshift = 16; RGBAFormat.Bloss = 0;
-			RGBAFormat.Amask = 0x000000FF; RGBAFormat.Ashift = 24; RGBAFormat.Aloss = 0;
-
-			SDL_Surface* orig = NULL;
-			orig = IMG_Load(asFilePath.c_str());
-
-			if(orig==NULL){
-				//Error handling stuff?
-				return NULL;
-			}
-			pSurface = SDL_ConvertSurface(orig, &RGBAFormat, SDL_SWSURFACE);
-			SDL_FreeSurface(orig);
-#else
-			pSurface = IMG_Load(asFilePath.c_str());
-#endif
-		} else {
-			pSurface= IMG_Load(asFilePath.c_str());
-		}
-		if(pSurface==NULL){
-			//Error handling stuff?
-			return NULL;
-		}
-
-		iBitmap2D* pBmp = mpLowLevelGraphics->CreateBitmap2DFromSurface(pSurface,
-													cString::GetFileExt(asFilePath));
-		pBmp->SetPath(asFilePath);
-		return pBmp;
-#endif
-	return nullptr;
+Bitmap2D *LowLevelResources::LoadBitmap2D(const tString &filepath) {
+	return new Bitmap2D(filepath, getImageType(filepath));
 }
 
 void LowLevelResources::GetSupportedImageFormats(tStringList &formats) {
 	formats.insert(formats.end(), {
-		"BMP","LBM","PCX","GIF","JPEG","PNG","JPG","TGA","TIFF","TIF"}); 
+		"BMP","GIF","JPEG","PNG","JPG","TGA"}); 
 }
 
 void LowLevelResources::AddMeshLoaders(cMeshLoaderHandler *ml) {

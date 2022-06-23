@@ -34,18 +34,16 @@
 #include "graphics/pixelformat.h"
 #include "common/ptr.h"
 #include "graphics/surface.h"
+#include "image/image_decoder.h"
 
 namespace hpl {
 
 class Bitmap2D : public iLowLevelPicture {
 public:
-	Bitmap2D(const tString &type) : iLowLevelPicture(type) {}
-	Bitmap2D(const Graphics::Surface &surface, const tString &type) : 
-		iLowLevelPicture(type), _surface(surface) {
-	} 
-	
-	~Bitmap2D(); 
+	Bitmap2D(const tString &type, const cVector2l &size, const Graphics::PixelFormat &format); 
+	Bitmap2D(const tString &filename, const tString &type); 
 
+	~Bitmap2D(); 
 
 	void drawToBitmap(Bitmap2D &dest, const cVector2l &pos);
 
@@ -53,14 +51,19 @@ public:
 
 	void fillRect(const cRect2l &rect, const cColor &color);
 
-	void *getRawData();
+	const void *getRawData() const;
 
 	int getNumChannels();
 
 	bool HasAlpha() override;
 
 private: 
+	void copyDecoder(); 
+	const Graphics::Surface &activeSurface() const;
+
 	Graphics::Surface _surface; 
+	Common::ScopedPtr<Image::ImageDecoder> _decoder;
+	bool isSurfaceActive; 
 };
 
 typedef std::vector<Bitmap2D *> tBitmap2DVec;
