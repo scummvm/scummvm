@@ -9,6 +9,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Reduced amount of false positives in Mass Add.
 
+ AGOS:
+   - Added option to disable the fade-out effects on room transition for
+     Simon1 and 2.
+
  Kyra:
    - Added support for the Korean version of Legend of Kyrandia 1.
 
