@@ -344,7 +344,7 @@ void create_blank_image(int coldepth) {
 	/*}
 	catch (Ali3DException gfxException)
 	{
-	    quit((char*)gfxException._message);
+		quit(gfxException._message.GetCStr());
 	}*/
 }
 
