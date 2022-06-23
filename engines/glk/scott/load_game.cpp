@@ -143,6 +143,12 @@ void loadGameFile(Common::SeekableReadStream *f) {
 	case SEAS_OF_BLOOD_C64:
 		loadExtraSeasOfBlood64Data();
 		break;
+	case CLAYMORGUE:
+		for (int i = OK; i <= RESUME_A_SAVED_GAME; i++)
+			_G(_sys)[i] = _G(_systemMessages)[6 - OK + i];
+		for (int i = PLAY_AGAIN; i <= ON_A_SCALE_THAT_RATES; i++)
+			_G(_sys)[i] = _G(_systemMessages)[2 - PLAY_AGAIN + i];
+		break;
 	case ADVENTURELAND:
 		for (int i = PLAY_AGAIN; i <= ON_A_SCALE_THAT_RATES; i++)
 			_G(_sys)[i] = _G(_systemMessages)[2 - PLAY_AGAIN + i];
@@ -157,6 +163,12 @@ void loadGameFile(Common::SeekableReadStream *f) {
 	case CLAYMORGUE_C64:
 		claymorgue64Sysmess();
 		break;
+	case GREMLINS_GERMAN_C64:
+		loadExtraGermanGremlinsc64Data();
+		break;
+	case SPIDERMAN_C64:
+		spiderman64Sysmess();
+		break;
 	case SAVAGE_ISLAND_C64:
 		_G(_items)[20]._image = 13;
 	case SAVAGE_ISLAND2_C64:
@@ -168,9 +180,6 @@ void loadGameFile(Common::SeekableReadStream *f) {
 		_G(_items)[20]._image = 13;
 	case SAVAGE_ISLAND2:
 		MY_LOC = 30; /* Both parts of Savage Island begin in room 30 */
-	case GREMLINS_GERMAN_C64:
-		loadExtraGermanGremlinsc64Data();
-		break;
 	case GREMLINS_GERMAN:
 	case GREMLINS:
 	case SUPERGRAN:
@@ -187,9 +196,6 @@ void loadGameFile(Common::SeekableReadStream *f) {
 		break;
 	case GREMLINS_SPANISH:
 		loadExtraSpanishGremlinsData();
-		break;
-	case SPIDERMAN_C64:
-		spiderman64Sysmess();
 		break;
 	case HULK_C64:
 	case HULK:
