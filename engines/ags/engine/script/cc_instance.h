@@ -145,7 +145,7 @@ public:
 	// create a runnable instance of the supplied script
 	static ccInstance *CreateFromScript(PScript script);
 	static ccInstance *CreateEx(PScript scri, ccInstance *joined);
-	static void SetExecTimeout(unsigned sys_poll_ms, unsigned abort_ms);
+	static void SetExecTimeout(unsigned sys_poll_ms, unsigned abort_ms, unsigned abort_loops);
 
 	ccInstance();
 	~ccInstance();

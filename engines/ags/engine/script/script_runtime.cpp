@@ -110,11 +110,8 @@ Plugins::PluginMethod ccGetSymbolAddressForPlugin(const String &name) {
 	return Plugins::PluginMethod();
 }
 
-// If a while loop does this many iterations without the
-// NofityScriptAlive function getting called, the script
-// aborts. Set to 0 to disable.
-void ccSetScriptAliveTimer(unsigned sys_poll_timeout, unsigned abort_timeout) {
-	 ccInstance::SetExecTimeout(sys_poll_timeout, abort_timeout);
+void ccSetScriptAliveTimer(unsigned sys_poll_timeout, unsigned abort_timeout, unsigned abort_loops) {
+	 ccInstance::SetExecTimeout(sys_poll_timeout, abort_timeout, abort_loops);
  }
 
 void ccNotifyScriptStillAlive() {

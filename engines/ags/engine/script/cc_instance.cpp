@@ -226,9 +226,10 @@ ccInstance *ccInstance::CreateEx(PScript scri, ccInstance *joined) {
 	return cinst;
 }
 
-void ccInstance::SetExecTimeout(unsigned sys_poll_ms, unsigned abort_ms) {
+void ccInstance::SetExecTimeout(unsigned sys_poll_ms, unsigned abort_ms, unsigned abort_loops) {
 	_G(timeoutCheckMs) = sys_poll_ms;
 	_G(timeoutAbortMs) = abort_ms;
+	_G(maxWhileLoops) = abort_loops;
 }
 
 ccInstance::ccInstance() {
@@ -436,6 +437,7 @@ int ccInstance::Run(int32_t curpc) {
 	int32_t thisbase[MAXNEST], funcstart[MAXNEST];
 	int was_just_callas = -1;
 	int curnest = 0;
+	int loopIterations = 0;
 	int num_args_to_func = -1;
 	int next_call_needs_object = 0;
 	int loopIterationCheckDisabled = 0;
@@ -791,14 +793,20 @@ int ccInstance::Run(int32_t curpc) {
 					flags &= ~INSTF_RUNNING;
 					_lastAliveTs = now;
 					timeout_warn = false;
+					loopIterations = 0;
+				} else if ((loopIterationCheckDisabled == 0) && (++loopIterations > _G(maxWhileLoops))) {
+					cc_error("!Script appears to be hung (a while loop ran %d times). The problem may be in a calling function; check the call stack.", loopIterations);
+					return -1;
 				} else if (test_dur > timeout) {
 					// minimal timeout occured
 					if (test_dur.count() > timeout_abort.count()) {
 						// critical timeout occured
+						/* CHECKME: disabled, because not working well
 						if (loopIterationCheckDisabled == 0) {
 							cc_error("!Script appears to be hung (no game update for %lld ms). The problem may be in a calling function; check the call stack.", test_dur.count());
 							return -1;
 						}
+						*/
 						if (!timeout_warn) {
 							debug_script_warn("WARNING: script execution hung? (%lld ms)", test_dur.count());
 							timeout_warn = true;
