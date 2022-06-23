@@ -22,6 +22,7 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include "common/events.h"
 #include "backends/platform/ios7/ios7_game_controller.h"
 #include "backends/platform/ios7/ios7_video.h"
 
@@ -96,6 +97,20 @@
 	default:
 		break;
 	}
+}
+
+- (void)handleJoystickAxisMotionX:(int)x andY:(int)y forJoystick:(GameControllerJoystick)joystick {
+	if (joystick == kGameControllerJoystickLeft) {
+		[view addEvent:InternalEvent(kInputJoystickAxisMotion, Common::JOYSTICK_AXIS_LEFT_STICK_X, x)];
+		[view addEvent:InternalEvent(kInputJoystickAxisMotion, Common::JOYSTICK_AXIS_LEFT_STICK_Y, y)];
+	} else {
+		[view addEvent:InternalEvent(kInputJoystickAxisMotion, Common::JOYSTICK_AXIS_RIGHT_STICK_X, x)];
+		[view addEvent:InternalEvent(kInputJoystickAxisMotion, Common::JOYSTICK_AXIS_RIGHT_STICK_Y, y)];
+	}
+}
+
+- (void)handleJoystickButtonAction:(int)button isPressed:(bool)pressed {
+	[view addEvent:InternalEvent(pressed ? kInputJoystickButtonDown : kInputJoystickButtonUp, button, 0)];
 }
 
 @end
