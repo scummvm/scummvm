@@ -696,7 +696,7 @@ void render_to_screen() {
 	_G(gfxDriver)->EnableVsyncBeforeRender((_GP(scsystem).vsync > 0) && (!_GP(scsystem).windowed));
 
 	bool succeeded = false;
-	while (!succeeded) {
+	while (!succeeded && !_G(want_exit) && !_G(abort_engine)) {
 		//     try
 		//     {
 		// For software renderer, need to blacken upper part of the game frame when shaking screen moves image down
@@ -715,9 +715,12 @@ void render_to_screen() {
 
 		succeeded = true;
 		/*}
-		catch (Ali3DFullscreenLostException)
-		{
-		    platform->Delay(500);
+		catch (Ali3DFullscreenLostException e) {
+			Debug::Printf("Renderer exception: %s", e._message);
+			while (_G(game_update_suspend) && (!_G(want_exit)) && (!_G(abort_engine))) {
+				sys_evt_process_pending();
+				platform->Delay(300);
+			}
 		}*/
 	}
 }
