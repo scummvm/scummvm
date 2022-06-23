@@ -360,9 +360,11 @@ bool init_editor_debugging() {
 		}
 
 		send_message_to_editor("START");
+		Debug::Printf(kDbgMsg_Info, "External debugger initialized");
 		return true;
 	}
 
+	Debug::Printf(kDbgMsg_Error, "Failed to initialize external debugger");
 	return false;
 }
 

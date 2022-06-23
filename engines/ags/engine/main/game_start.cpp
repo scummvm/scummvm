@@ -27,6 +27,7 @@
 #include "ags/shared/ac/character_info.h"
 #include "ags/engine/ac/game.h"
 #include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_setup.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/mouse.h"
@@ -51,18 +52,21 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 void start_game_init_editor_debugging() {
-	if (_G(editor_debugging_enabled)) {
-		SetMultitasking(1);
-		if (init_editor_debugging()) {
-			auto waitUntil = AGS_Clock::now() + std::chrono::milliseconds(500);
-			while (waitUntil > AGS_Clock::now()) {
-				// pick up any breakpoints in game_start
-				check_for_messages_from_editor();
-			}
+	Debug::Printf(kDbgMsg_Info, "Try connect to the external debugger");
+	if (!init_editor_debugging())
+		return;
 
-			ccSetDebugHook(scriptDebugHook);
-		}
+	// Debugger expects strict multitasking
+	_GP(usetup).override_multitasking = -1;
+	SetMultitasking(1);
+
+	auto waitUntil = AGS_Clock::now() + std::chrono::milliseconds(500);
+	while (waitUntil > AGS_Clock::now()) {
+		// pick up any breakpoints in game_start
+		check_for_messages_from_editor();
 	}
+
+	ccSetDebugHook(scriptDebugHook);
 }
 
 static void start_game_load_savegame_on_startup(int loadSave) {
@@ -111,7 +115,8 @@ void initialize_start_and_play_game(int override_start_room, int loadSave) {
 	Debug::Printf(kDbgMsg_Info, "Engine initialization complete");
 	Debug::Printf(kDbgMsg_Info, "Starting game");
 
-	start_game_init_editor_debugging();
+	if (_G(editor_debugging_enabled))
+		start_game_init_editor_debugging();
 
 	start_game_load_savegame_on_startup(loadSave);
 
