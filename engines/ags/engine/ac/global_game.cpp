@@ -77,6 +77,11 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
+void AbortGame() {
+	// make sure scripts stop at the next step
+	cancel_all_scripts();
+}
+
 void GiveScore(int amnt) {
 	GUI::MarkSpecialLabelsForUpdate(kLabelMacro_AllScore);
 	_GP(play).score += amnt;

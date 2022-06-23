@@ -251,9 +251,7 @@ int create_global_script() {
 }
 
 void cancel_all_scripts() {
-	int aa;
-
-	for (aa = 0; aa < _G(num_scripts); aa++) {
+	for (int aa = 0; aa < _G(num_scripts); aa++) {
 		if (_G(scripts)[aa].forked)
 			_G(scripts)[aa].inst->AbortAndDestroy();
 		else
@@ -261,8 +259,10 @@ void cancel_all_scripts() {
 		_G(scripts)[aa].numanother = 0;
 	}
 	_G(num_scripts) = 0;
-	/*  if (_G(gameinst)!=NULL) ->Abort(_G(gameinst));
-	if (_G(roominst)!=NULL) ->Abort(_G(roominst));*/
+	// in case the script is running on non-blocking thread (rep-exec-always etc)
+	auto inst = ccInstance::GetCurrentInstance();
+	if (inst)
+		inst->Abort();
 }
 
 ccInstance *GetScriptInstanceByType(ScriptInstType sc_inst) {
@@ -481,10 +481,14 @@ void post_script_cleanup() {
 	// should do any post-script stuff here, like go to new room
 	if (cc_has_error())
 		quit(cc_get_error().ErrorString);
-	ExecutingScript copyof = _G(scripts)[_G(num_scripts) - 1];
-	if (_G(scripts)[_G(num_scripts) - 1].forked)
-		delete _G(scripts)[_G(num_scripts) - 1].inst;
-	_G(num_scripts)--;
+
+	ExecutingScript copyof;
+	if (_G(num_scripts) > 0) {
+		copyof = _G(scripts)[_G(num_scripts) - 1];
+		if (_G(scripts)[_G(num_scripts) - 1].forked)
+			delete _G(scripts)[_G(num_scripts) - 1].inst;
+		_G(num_scripts)--;
+	}
 	_G(inside_script)--;
 
 	if (_G(num_scripts) > 0)
@@ -548,8 +552,7 @@ void post_script_cleanup() {
 	}
 
 
-	int jj;
-	for (jj = 0; jj < copyof.numanother; jj++) {
+	for (int jj = 0; jj < copyof.numanother; jj++) {
 		old_room_number = _G(displayed_room);
 		QueuedScript &script = copyof.ScFnQueue[jj];
 		RunScriptFunctionAuto(script.Instance, script.FnName.GetCStr(), script.ParamCount, script.Params);

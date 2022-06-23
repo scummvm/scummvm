@@ -444,7 +444,7 @@ int ccInstance::Run(int32_t curpc) {
 
 	FunctionCallStack func_callstack;
 
-	while (1) {
+	while ((flags & INSTF_ABORTED) == 0) {
 		if (_G(abort_engine))
 			return -1;
 
@@ -970,9 +970,6 @@ int ccInstance::Run(int32_t curpc) {
 
 			runningInst = wasRunning;
 
-			if (flags & INSTF_ABORTED)
-				return 0;
-
 			if (oldstack != registers[SREG_SP]) {
 				cc_error("stack corrupt after function call");
 				return -1;
@@ -1219,11 +1216,9 @@ int ccInstance::Run(int32_t curpc) {
 			return -1;
 		}
 
-		if (flags & INSTF_ABORTED)
-			return 0;
-
 		pc += codeOp.ArgCount + 1;
 	}
+	return 0;
 }
 
 String ccInstance::GetCallStack(int maxLines) const {

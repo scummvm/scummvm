@@ -107,6 +107,7 @@ void winclosehook() {
 	_G(want_exit) = 1;
 	_G(abort_engine) = 1;
 	_G(check_dynamic_sprites_at_exit) = 0;
+	AbortGame();
 }
 
 void engine_setup_window() {

@@ -43,7 +43,8 @@ struct SaveListItem {
 	}
 };
 
-
+// Notify the running game that the engine requested immediate stop
+void AbortGame();
 void GiveScore(int amnt);
 void restart_game();
 void RestoreGameSlot(int slnum);
