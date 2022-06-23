@@ -92,6 +92,7 @@ struct GameSetup {
 	bool  load_latest_save; // load latest saved game on launch
 	ScreenRotation rotation;
 	bool  show_fps;
+	bool  multitasking = false; // whether run on background, when game is switched out
 
 	DisplayModeSetup Screen;
 	String software_render_driver;

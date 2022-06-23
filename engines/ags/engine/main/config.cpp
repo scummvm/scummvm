@@ -349,6 +349,9 @@ void apply_config(const ConfigTree &cfg) {
 			}
 		}
 
+		// Various system options
+		_GP(usetup).multitasking = CfgReadInt(cfg, "misc", "multitasking", 0) != 0;
+
 		// User's overrides and hacks
 		_GP(usetup).override_multitasking = CfgReadInt(cfg, "override", "multitasking", -1);
 		String override_os = CfgReadString(cfg, "override", "os");

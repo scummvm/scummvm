@@ -1219,9 +1219,6 @@ void display_switch_out_suspend() {
 		}
 	}
 
-	// restore the callbacks
-	SetMultitasking(0);
-
 	_G(switching_away_from_game)--;
 }
 

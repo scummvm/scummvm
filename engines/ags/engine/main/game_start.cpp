@@ -26,6 +26,7 @@
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/character_info.h"
 #include "ags/engine/ac/game.h"
+#include "ags/engine/ac/game_setup.h"
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/game_setup.h"
 #include "ags/engine/ac/game_state.h"
@@ -57,6 +58,7 @@ void start_game_init_editor_debugging() {
 		return;
 
 	// Debugger expects strict multitasking
+	_GP(usetup).multitasking = true;
 	_GP(usetup).override_multitasking = -1;
 	SetMultitasking(1);
 

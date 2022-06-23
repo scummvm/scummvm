@@ -1176,7 +1176,7 @@ int initialize_engine(const ConfigTree &startup_opts) {
 	// Configure game window after renderer was initialized
 	engine_setup_window();
 
-	SetMultitasking(0);
+	SetMultitasking(_GP(usetup).multitasking);
 
 	sys_window_show_cursor(false); // hide the system cursor
 

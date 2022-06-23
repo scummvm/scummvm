@@ -643,19 +643,26 @@ void SetMultitasking(int mode) {
 	if ((mode < 0) | (mode > 1))
 		quit("!SetMultitasking: invalid mode parameter");
 
-	if (_GP(usetup).override_multitasking >= 0) {
+	// Account for the override config option (must be checked first!)
+	if ((_GP(usetup).override_multitasking >= 0) && (mode != _GP(usetup).override_multitasking)) {
 		Debug::Printf("SetMultitasking: overridden by user config: %d -> %d", mode, _GP(usetup).override_multitasking);
 		mode = _GP(usetup).override_multitasking;
 	}
 
-	// Don't allow background running if full screen
-	if ((mode == 1) && (!_GP(scsystem).windowed)) {
-		Debug::Printf("SetMultitasking: overridden by fullscreen: %d -> %d", mode, 0);
+	// Must run on background if debugger is connected
+	if ((mode == 0) && (_G(editor_debugging_initialized) != 0)) {
+		Debug::Printf("SetMultitasking: overridden by the external debugger: %d -> 1", mode);
+		mode = 1;
+	}
+
+	// Regardless, don't allow background running if exclusive full screen
+	if ((mode == 1) && _G(gfxDriver)->GetDisplayMode().IsRealFullscreen()) {
+		Debug::Printf("SetMultitasking: overridden by fullscreen: %d -> 0", mode);
 		mode = 0;
 	}
 
 	// Install engine callbacks for switching in and out the window
-	Debug::Printf("SetMultitasking: mode %d", mode);
+	Debug::Printf(kDbgMsg_Info, "Multitasking mode set: %d", mode);
 	if (mode == 0) {
 		sys_set_background_mode(false);
 		sys_evt_set_focus_callbacks(display_switch_in_resume, display_switch_out_suspend);
