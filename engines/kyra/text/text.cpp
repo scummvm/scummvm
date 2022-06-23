@@ -259,7 +259,7 @@ void TextDisplayer::printText(const Common::String &str, int x, int y, uint8 c0,
 }
 
 void TextDisplayer::printCharacterText(const char *text, int8 charNum, int charX) {
-	int top, left, x1, x2, w, x;
+	int top, left, w, x;
 	char *msg;
 
 	text = preprocessString(text);
@@ -272,6 +272,8 @@ void TextDisplayer::printCharacterText(const char *text, int8 charNum, int charX
 		w = MIN<int>(w, 302);
 	}
 
+	int x1 = 12;
+	int x2 = Screen::SCREEN_W - 12;
 	if (_vm->gameFlags().lang != Common::ZH_TWN || lineCount == 1) {
 		x = charX;
 		calcWidestLineBounds(x1, x2, w, x);
