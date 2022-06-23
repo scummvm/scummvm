@@ -47,7 +47,7 @@ public:
 	virtual void FindFilesInDir(tStringList &fileList, tString dir, tString pattern);
 
 	virtual void GetSupportedImageFormats(tStringList &formats);
-	virtual Bitmap2D *LoadBitmap2D(tString filepath, tString type = "");
+	virtual Bitmap2D *LoadBitmap2D(const tString &filepath);
 
 	virtual void AddMeshLoaders(cMeshLoaderHandler *ml);
 	virtual void AddVideoLoaders(cVideoManager *vm);
