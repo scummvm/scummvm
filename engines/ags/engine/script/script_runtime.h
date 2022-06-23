@@ -77,8 +77,10 @@ extern Plugins::PluginMethod ccGetSymbolAddressForPlugin(const String &name);
 typedef void (*new_line_hook_type)(ccInstance *, int);
 extern void ccSetDebugHook(new_line_hook_type jibble);
 
-// Set the number of while loop iterations that aborts the script
-extern void ccSetScriptAliveTimer(int);
+// Set the script interpreter timeout values, in milliseconds:
+// * sys_poll_timeout - defines the timeout at which the interpreter will run system events poll;
+// * abort_timeout - defines the timeout at which the interpreter will cancel with error.
+extern void ccSetScriptAliveTimer(unsigned sys_poll_timeout, unsigned abort_timeout);
 // reset the current while loop counter
 extern void ccNotifyScriptStillAlive();
 // for calling exported plugin functions old-style

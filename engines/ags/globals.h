@@ -1279,7 +1279,12 @@ public:
 	 */
 
 	new_line_hook_type _new_line_hook = nullptr;
-	int _maxWhileLoops = 0;
+	// Minimal timeout: how much time may pass without any engine update
+	// before we want to check on the situation and do system poll
+	unsigned _timeoutCheckMs = 60u;
+	// Critical timeout: how much time may pass without any engine update
+	// before we abort or post a warning
+	unsigned _timeoutAbortMs = 60u * 10;
 	ccInstance *_loadedInstances[MAX_LOADED_INSTANCES];
 
 	/**@}*/

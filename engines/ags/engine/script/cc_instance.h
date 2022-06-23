@@ -24,6 +24,7 @@
 
 #include "ags/lib/std/memory.h"
 #include "ags/lib/std/map.h"
+#include "ags/engine/ac/timer.h"
 #include "ags/shared/script/cc_internal.h"
 #include "ags/shared/script/cc_script.h"  // ccScript
 #include "ags/engine/script/non_blocking_script_function.h"
@@ -144,6 +145,7 @@ public:
 	// create a runnable instance of the supplied script
 	static ccInstance *CreateFromScript(PScript script);
 	static ccInstance *CreateEx(PScript scri, ccInstance *joined);
+	static void SetExecTimeout(unsigned sys_poll_ms, unsigned abort_ms);
 
 	ccInstance();
 	~ccInstance();
@@ -176,7 +178,7 @@ public:
 	// Also change CALLEXT op-codes to CALLAS when they pertain to a script instance 
 	bool    ResolveImportFixups(const ccScript *scri);
 
-protected:
+private:
 	bool    _Create(PScript scri, ccInstance *joined);
 	// free the memory associated with the instance
 	void    Free();
@@ -213,6 +215,9 @@ protected:
 	// Function call stack processing
 	void    PushToFuncCallStack(FunctionCallStack &func_callstack, const RuntimeScriptValue &rval);
 	void    PopFromFuncCallStack(FunctionCallStack &func_callstack, int32_t num_entries);
+
+	// Last time the script was noted of being "alive"
+	AGS_Clock::time_point _lastAliveTs;
 };
 
 extern void script_commands_init();

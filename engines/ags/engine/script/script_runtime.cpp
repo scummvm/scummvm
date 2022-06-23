@@ -42,8 +42,6 @@
 
 namespace AGS3 {
 
-// static const char ccRunnerCopyright[] = "ScriptExecuter32 v" SCOM_VERSIONSTR " (c) 2001 Chris Jones";
-
 bool ccAddExternalStaticFunction(const String &name, ScriptAPIFunction *pfn) {
 	return _GP(simp).add(name, RuntimeScriptValue().SetStaticFunction(pfn), nullptr) != UINT32_MAX;
 }
@@ -115,9 +113,9 @@ Plugins::PluginMethod ccGetSymbolAddressForPlugin(const String &name) {
 // If a while loop does this many iterations without the
 // NofityScriptAlive function getting called, the script
 // aborts. Set to 0 to disable.
-void ccSetScriptAliveTimer(int numloop) {
-	_G(maxWhileLoops) = numloop;
-}
+void ccSetScriptAliveTimer(unsigned sys_poll_timeout, unsigned abort_timeout) {
+	 ccInstance::SetExecTimeout(sys_poll_timeout, abort_timeout);
+ }
 
 void ccNotifyScriptStillAlive() {
 	ccInstance *cur_inst = ccInstance::GetCurrentInstance();
