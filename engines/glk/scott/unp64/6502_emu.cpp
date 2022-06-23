@@ -1179,10 +1179,15 @@ int nextInst(CpuCtx* r) {
 					switch (opCode) {
 					case 0x8D:
 						_G(_byted011)[0] = r->_a & 0x7f;
+						break;
 					case 0x8E:
 						_G(_byted011)[0] = r->_x & 0x7f;
+						break;
 					case 0x8C:
 						_G(_byted011)[0] = r->_y & 0x7f;
+						break;
+					default:
+						break;
 					}
 				}
 				WriteToIO = 1;

@@ -764,6 +764,7 @@ DiskImage *diCreateFromData(uint8_t *data, int length) {
 	switch (length) {
 	case D64ERRSIZE: /* D64 with error info */
 		// di->_errinfo = &(di->_error_);
+		// fallthrough
 	case D64SIZE: /* standard D64 */
 		di->_type = D64;
 		di->_bam._track = 18;
@@ -773,6 +774,7 @@ DiskImage *diCreateFromData(uint8_t *data, int length) {
 
 	case D71ERRSIZE: /* D71 with error info */
 		di->_errinfo = &(di->_image[D71SIZE]);
+		// fallthrough
 	case D71SIZE:
 		di->_type = D71;
 		di->_bam._track = 18;
@@ -784,6 +786,7 @@ DiskImage *diCreateFromData(uint8_t *data, int length) {
 
 	case D81ERRSIZE: /* D81 with error info */
 		di->_errinfo = &(di->_image[D81SIZE]);
+		// fallthrough
 	case D81SIZE:
 		di->_type = D81;
 		di->_bam._track = 40;

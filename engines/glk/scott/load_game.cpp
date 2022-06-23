@@ -174,6 +174,7 @@ void loadGameFile(Common::SeekableReadStream *f) {
 		break;
 	case SAVAGE_ISLAND_C64:
 		_G(_items)[20]._image = 13;
+		// fallthrough
 	case SAVAGE_ISLAND2_C64:
 		_G(_sys)[IM_DEAD] = "I'm DEAD!! ";
 		if (CURRENT_GAME == SAVAGE_ISLAND2_C64)
@@ -181,8 +182,10 @@ void loadGameFile(Common::SeekableReadStream *f) {
 		break;
 	case SAVAGE_ISLAND:
 		_G(_items)[20]._image = 13;
+		// fallthrough
 	case SAVAGE_ISLAND2:
 		MY_LOC = 30; /* Both parts of Savage Island begin in room 30 */
+		// fallthrough
 	case GREMLINS_GERMAN:
 	case GREMLINS:
 	case SUPERGRAN:
