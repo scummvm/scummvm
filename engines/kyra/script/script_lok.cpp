@@ -543,6 +543,8 @@ int KyraEngine_LoK::o1_popBrandonIntoScene(EMCState *script) {
 	return 0;
 }
 
+bool workaround_removeTextfield = false;
+
 int KyraEngine_LoK::o1_restoreAllObjectBackgrounds(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_restoreAllObjectBackgrounds(%p) (%d)", (const void *)script, stackPos(0));
 	int disable = stackPos(0);
@@ -551,6 +553,13 @@ int KyraEngine_LoK::o1_restoreAllObjectBackgrounds(EMCState *script) {
 		activeBackup = _animator->actors()->active;
 		_animator->actors()->active = 0;
 	}
+
+	// WORKAROUND: See o1_customPrintTalkString() for more info.
+	if (workaround_removeTextfield) {
+		_text->restoreTalkTextMessageBkgd(2, 0);
+		workaround_removeTextfield = false;
+	}
+
 	_animator->restoreAllObjectBackgrounds();
 	if (disable)
 		_animator->actors()->active = activeBackup;
@@ -592,8 +601,14 @@ int KyraEngine_LoK::o1_customPrintTalkString(EMCState *script) {
 		}
 
 		resetSkipFlag();
-		if (textEnabled())
+		if (textEnabled()) {
+			// WORKAROUND: This string appears only in the talkie versions. The engine would need to remove it via
+			// o1_restoreCustomPrintBackground(), but it doesn't happen. Most of the text gets cleared when the
+			// animation background is restored, but not all of it. We just set a notification to have it cleared manually...
+			if (!strcmp(stackPosString(1), "AARGH!"))
+				workaround_removeTextfield = true;
 			_text->printTalkTextMessage(stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF, 0, 2);
+		}
 	} else {
 		debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_customPrintTalkString(%p) ('%s', %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3) & 0xFF);
 		resetSkipFlag();
