@@ -19,6 +19,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
 #include "common/scummsys.h"
 
 #ifdef __MORPHOS__
@@ -51,4 +52,9 @@ bool OSystem_MorphOS::hasFeature(Feature f) {
 	return OSystem_SDL::hasFeature(f);
 }
 
+void OSystem_MorphOS::logMessage(LogMessageType::Type type, const char * message) {
+#ifdef DEBUG_BUILD
+	printf("%s\n", message);
+#endif
+}
 #endif
