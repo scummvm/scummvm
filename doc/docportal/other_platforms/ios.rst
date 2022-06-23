@@ -220,6 +220,10 @@ Keyboard
 ^^^^^^^^^^^^^^^^^^^^
 If no external keyboard is connected, the pinch gesture shows and hides the onscreen keyboard. When an external keyboard is connected, the pinch gesture enables/disables inputs from the external keyboard.
 
+Game controllers
+^^^^^^^^^^^^^^^^^^^^
+If running iOS 14 and later there is support for connected mouses and gamepad controllers using the Apple Game Controller framework. Only "Extended Gamepad Controllers" are supported at the moment. For more information visit https://developer.apple.com/documentation/gamecontroller/gcextendedgamepad
+
 Paths
 =======
 
