@@ -86,7 +86,7 @@ static bool ShouldStayInWaitMode();
 #define UNTIL_ANIMBTNEND 9
 
 static void ProperExit() {
-	_G(want_exit) = 0;
+	_G(want_exit) = false;
 	_G(proper_exit) = 1;
 	quit("||exit!");
 }
@@ -1042,7 +1042,7 @@ void update_polled_stuff_if_runtime() {
 	::AGS::g_events->pollEvents();
 
 	if (_G(want_exit)) {
-		_G(want_exit) = 0;
+		_G(want_exit) = false;
 		quit("||exit!");
 
 	} else if (_G(editor_debugging_initialized))

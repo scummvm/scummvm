@@ -104,8 +104,8 @@ bool engine_init_backend() {
 }
 
 void winclosehook() {
-	_G(want_exit) = 1;
-	_G(abort_engine) = 1;
+	_G(want_exit) = true;
+	_G(abort_engine) = true;
 	_G(check_dynamic_sprites_at_exit) = 0;
 	AbortGame();
 }
