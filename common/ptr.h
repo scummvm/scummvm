@@ -570,6 +570,8 @@ struct ArrayDeleter {
 
 template<typename T, class DL = DefaultDeleter<T> >
 class ScopedPtr : private NonCopyable, public SafeBool<ScopedPtr<T, DL> > {
+	template<class T2, class DL2>
+	friend class ScopedPtr;
 public:
 	typedef T ValueType;
 	typedef T *PointerType;
