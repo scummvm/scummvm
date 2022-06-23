@@ -259,7 +259,7 @@ glui32 optimalDicePixelSize(glui32 *width, glui32 *height) {
 	glui32 graphwidth, graphheight;
 	g_scott->glk_window_get_size(_G(_leftDiceWin), &graphwidth, &graphheight);
 	multiplier = graphheight / idealHeight;
-	if (idealWidth * multiplier > graphwidth)
+	if ((glui32)(idealWidth * multiplier) > graphwidth)
 		multiplier = graphwidth / idealWidth;
 
 	if (multiplier < 2)
@@ -539,7 +539,7 @@ void clearStamina(void) {
 		g_scott->glk_stream_set_current(g_scott->glk_window_get_stream(win));
 
 		g_scott->glk_window_move_cursor(win, 11, 5);
-		for (int i = 0; i < width - 13; i++)
+		for (int i = 0; i < (int)width - 13; i++)
 			g_scott->glk_put_string(" ");
 		drawBorder(win);
 		win = _G(_battleRight);

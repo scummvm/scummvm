@@ -52,7 +52,7 @@ void scnXTC(UnpStr *unp) {
 	if (unp->_depAdr == 0) {
 		for (p = 0x801; p < 0x80c; p += 0x0a) {
 			if ((*(unsigned short int *)(mem + p + 0x02) == 0xE678) &&
-				(*(unsigned int *)(mem + p + 0x07) == (0xce08 | ((p + 0x10) << 16))) &&
+				(*(unsigned int *)(mem + p + 0x07) == (unsigned int)(0xce08 | ((p + 0x10) << 16))) &&
 				(*(unsigned int *)(mem + p + 0x0e) == 0xC8000099) &&
 				(*(unsigned int *)(mem + p + 0x23) == 0x4CF7D0CA)) {
 				/* has variable codebytes so addresses varies */

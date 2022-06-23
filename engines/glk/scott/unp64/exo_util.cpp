@@ -79,9 +79,10 @@ int findSys(const byte *buf, int target) {
 		case 2:
 			if (strchr(" (", c) != nullptr)
 				break;
+			// fallthrough
 			/* convert string number to int */
 		case 3:
-			outstart = (int)strtol((char *)(buf + i), (char **)&sysEnd, 10);
+			outstart = (int)strtol((const char *)(buf + i), (char **)&sysEnd, 10);
 			if ((buf + i) == sysEnd) {
 				/* we got nothing */
 				outstart = -1;

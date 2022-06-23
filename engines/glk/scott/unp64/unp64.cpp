@@ -140,7 +140,7 @@ int unp64(uint8_t *compressed, size_t length, uint8_t *destinationBuffer, size_t
 						 0xA7, 0xA7, 0x79, 0xA6, 0x9C, 0xE3};
 
 	int iterMax = ITERMAX;
-	int copyRoms[2][2] = {{0xa000, 0}, {0xe000, 0}};
+	//int copyRoms[2][2] = {{0xa000, 0}, {0xe000, 0}};
 	int p;
 
 	memset(&_G(_unp), 0, sizeof(_G(_unp)));
@@ -230,10 +230,10 @@ int unp64(uint8_t *compressed, size_t length, uint8_t *destinationBuffer, size_t
 				case 'x':
 					break;
 				case 'B':
-					copyRoms[0][1] = 1;
+					//copyRoms[0][1] = 1;
 					break;
 				case 'K':
-					copyRoms[1][1] = 1;
+					//copyRoms[1][1] = 1;
 					break;
 				case 'c':
 					_G(_unp)._recurs++;
@@ -307,7 +307,7 @@ int unp64(uint8_t *compressed, size_t length, uint8_t *destinationBuffer, size_t
 		r->_sp = 0xff;
 	}
 
-	if (info->_start > (0x314 + sizeof(vector))) {
+	if (info->_start > (long int)(0x314 + sizeof(vector))) {
 		/* some packers use values in irq pointers to decrypt themselves */
 		memcpy(mem + 0x314, vector, sizeof(vector));
 	}
