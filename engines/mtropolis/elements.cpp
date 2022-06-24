@@ -1308,6 +1308,43 @@ void MToonElement::render(Window *window) {
 	}
 }
 
+bool MToonElement::isMouseCollisionAtPoint(int32 relativeX, int32 relativeY) const {
+	relativeX -= _rect.left;
+	relativeY -= _rect.top;
+
+	if (_renderSurface) {
+		Common::Rect frameRect = _metadata->frames[_renderedFrame].rect;
+
+		if (frameRect.width() == _renderSurface->w && frameRect.height() == _renderSurface->h) {
+			// Frame rect is the size of the render surface, meaning the frame rect is an offset
+			relativeX -= frameRect.left;
+			relativeY -= frameRect.top;
+		}
+		// ... otherwise it's a sub-area of the rendered rect, meaning we shouldn't adjust coordinates
+
+		if (relativeX < 0 || relativeY < 0 || relativeX >= frameRect.width() || relativeY >= frameRect.height())
+			return false;
+
+		if (_renderProps.getInkMode() == VisualElementRenderProperties::kInkModeBackgroundMatte) {
+			// TODO: This doesn't account for scaling
+			ColorRGB8 transColorRGB8 = _renderProps.getBackColor();
+			uint32 transColor = _renderSurface->format.ARGBToColor(255, transColorRGB8.r, transColorRGB8.g, transColorRGB8.b);
+
+			// Sanity-check
+			if (relativeX >= _renderSurface->w || relativeY >= _renderSurface->h)
+				return false;
+
+			// Check if the pixel is transparent
+			if (_renderSurface->getPixel(relativeX, relativeY) == transColor)
+				return false;
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
 VThreadState MToonElement::startPlayingTask(const StartPlayingTaskData &taskData) {
 	if (_rateTimes100000 < 0)
 		_cel = _playRange.max;
