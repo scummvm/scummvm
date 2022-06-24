@@ -29,7 +29,7 @@
 #define HPL_WIDGET_H
 
 #include "hpl1/engine/gui/GuiTypes.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 #include <list>
 #include <vector>
 

@@ -28,7 +28,7 @@
 #include "hpl1/engine/resources/ConfigFile.h"
 #include "hpl1/engine/impl/tinyXML/tinyxml.h"
 #include "hpl1/engine/resources/FileSearcher.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
 #include "common/file.h"
 #include "hpl1/debug.h"

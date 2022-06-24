@@ -27,7 +27,7 @@
 
 #include "hpl1/engine/scene/Scene.h"
 #include "hpl1/engine/game/Updater.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 #include "hpl1/engine/graphics/Graphics.h"
 #include "hpl1/engine/graphics/GraphicsDrawer.h"

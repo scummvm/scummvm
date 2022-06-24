@@ -27,7 +27,7 @@
 
 #include "hpl1/engine/impl/CGProgram.h"
 #include "hpl1/engine/impl/SDLTexture.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 #include "hpl1/engine/system/String.h"
 

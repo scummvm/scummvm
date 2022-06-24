@@ -30,15 +30,15 @@
 
 namespace hpl {
 
-class iLowLevelSystem;
+class LowLevelSystem;
 class cLogicTimer;
 
 class cSystem {
 public:
-	cSystem(iLowLevelSystem *apLowLevelSystem);
+	cSystem(LowLevelSystem *apLowLevelSystem);
 	~cSystem();
 
-	iLowLevelSystem *GetLowLevel();
+	LowLevelSystem *GetLowLevel();
 
 	/**
 	 * Creates a logic timer.
@@ -48,7 +48,7 @@ public:
 	cLogicTimer *CreateLogicTimer(unsigned int alUpdatesPerSec);
 
 private:
-	iLowLevelSystem *mpLowLevelSystem;
+	LowLevelSystem *mpLowLevelSystem;
 };
 
 };     // namespace hpl

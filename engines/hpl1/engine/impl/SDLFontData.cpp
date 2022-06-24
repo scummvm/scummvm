@@ -29,7 +29,7 @@
 #include "hpl1/engine/graphics/GraphicsDrawer.h"
 #include "hpl1/engine/graphics/bitmap2D.h"
 #include "hpl1/engine/impl/tinyXML/tinyxml.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

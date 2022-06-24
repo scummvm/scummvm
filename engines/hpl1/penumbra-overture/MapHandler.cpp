@@ -325,7 +325,7 @@ bool cMapHandler::Load(const tString &asFile, const tString &asStartPos) {
 	}
 #endif
 
-	unsigned long lStartTime = mpInit->mpGame->GetSystem()->GetLowLevel()->GetTime();
+	unsigned long lStartTime = mpInit->mpGame->GetSystem()->GetLowLevel()->getTime();
 
 	if (sMapName != msCurrentMap) {
 		////////////////////////////////////////
@@ -499,7 +499,7 @@ bool cMapHandler::Load(const tString &asFile, const tString &asStartPos) {
 
 	// Log("After load and before preupdate:\n");
 
-	unsigned long lTime = mpInit->mpGame->GetSystem()->GetLowLevel()->GetTime() - lStartTime;
+	unsigned long lTime = mpInit->mpGame->GetSystem()->GetLowLevel()->getTime() - lStartTime;
 	Log("Loading map '%s' took: %d ms\n", pWorld->GetFileName().c_str(), lTime);
 
 	PreUpdate(fTimeSinceVisit);
@@ -1644,7 +1644,7 @@ void cMapHandler::PreUpdate(double afTimeSinceVisit) {
 
 	mbPreUpdating = true;
 
-	unsigned long lStart = mpInit->mpGame->GetSystem()->GetLowLevel()->GetTime();
+	unsigned long lStart = mpInit->mpGame->GetSystem()->GetLowLevel()->getTime();
 
 	// Enable all physic bodies
 	cPhysicsBodyIterator bodyIt = pPhysicsWorld->GetBodyIterator();
@@ -1682,7 +1682,7 @@ void cMapHandler::PreUpdate(double afTimeSinceVisit) {
 		mpInit->mpGame->GetSound()->GetSoundHandler()->SetSilent(false);
 	}
 
-	unsigned long lTime = mpInit->mpGame->GetSystem()->GetLowLevel()->GetTime() - lStart;
+	unsigned long lTime = mpInit->mpGame->GetSystem()->GetLowLevel()->getTime() - lStart;
 
 	// Log("PREUPDATE time: %d\n",lTime);
 

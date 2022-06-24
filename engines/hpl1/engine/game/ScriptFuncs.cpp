@@ -62,7 +62,7 @@
 #include "hpl1/engine/sound/SoundData.h"
 #include "hpl1/engine/sound/SoundEntityData.h"
 #include "hpl1/engine/sound/SoundHandler.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/Script.h"
 #include "hpl1/engine/system/String.h"
 #include "hpl1/engine/system/System.h"
@@ -1349,92 +1349,92 @@ void cScriptFuncs::Init(cGraphics *apGraphics,
 	gpGame = apGame;
 
 	// General
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(Print));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(FloatToString));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(IntToString));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(RandFloat));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(RandInt));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(StringContains));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(Print));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(FloatToString));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(IntToString));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(RandFloat));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(RandInt));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(StringContains));
 
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(ResetLogicTimer));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(ResetLogicTimer));
 
 	// Renderer
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetAmbientColor));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetAmbientColor));
 
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetSkybox));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetSkyboxActive));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetSkyboxColor));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetSkybox));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetSkyboxActive));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetSkyboxColor));
 
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(CreateParticleSystemOnCamera));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetFogActive));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetFogCulling));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetFogProperties));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(CreateParticleSystemOnCamera));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetFogActive));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetFogCulling));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetFogProperties));
 
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetSectorProperties));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetSectorPortalActive));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetSectorProperties));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetSectorPortalActive));
 
 	// Resources
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(PreloadSound));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(Translate));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(PreloadSound));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(Translate));
 
 	// Mesh Entity
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetMeshActive));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetMeshActive));
 
 	// Beams
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(CreateBeam));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(DestroyBeam));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(CreateBeam));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(DestroyBeam));
 
 	// Particle systems
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetParticleSystemActive));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(CreateParticleSystem));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(KillParticleSystem));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetParticleSystemActive));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(CreateParticleSystem));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(KillParticleSystem));
 
 	// Light
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(FadeLight3D));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(AttachBillboardToLight3D));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(FadeLight3D));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(AttachBillboardToLight3D));
 
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetLight3DVisible));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetLight3DFlickerActive));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetLight3DFlicker));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetLight3DOnlyAffectInSector));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetLight3DVisible));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetLight3DFlickerActive));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetLight3DFlicker));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetLight3DOnlyAffectInSector));
 
 	// Sound
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(PlayMusic));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(StopMusic));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(PlaySoundEntity));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(StopSoundEntity));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(FadeInSoundEntity));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(FadeOutSoundEntity));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(PlayGuiSound));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(CreateSoundEntity));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(PlayMusic));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(StopMusic));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(PlaySoundEntity));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(StopSoundEntity));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(FadeInSoundEntity));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(FadeOutSoundEntity));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(PlayGuiSound));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(CreateSoundEntity));
 
 	// Physics
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetJointCallback));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(BreakJoint));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(GetJointProperty));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(GetBodyProperty));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetBodyProperty));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetJointProperty));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(AttachBodiesWithJoint));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetJointCallback));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(BreakJoint));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(GetJointProperty));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(GetBodyProperty));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetBodyProperty));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetJointProperty));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(AttachBodiesWithJoint));
 
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetJointControllerActive));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(ChangeJointController));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetJointControllerPropertyFloat));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetJointControllerActive));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(ChangeJointController));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetJointControllerPropertyFloat));
 
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddBodyForce));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddBodyImpulse));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(AddBodyForce));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(AddBodyImpulse));
 
 	// Local vars
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(CreateLocalVar));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetLocalVar));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddLocalVar));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(GetLocalVar));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(CreateLocalVar));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetLocalVar));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(AddLocalVar));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(GetLocalVar));
 
 	// Global vars
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(CreateGlobalVar));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetGlobalVar));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddGlobalVar));
-	gpSystem->GetLowLevel()->AddScriptFunc(SCRIPT_REGISTER_FUNC(GetGlobalVar));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(CreateGlobalVar));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(SetGlobalVar));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(AddGlobalVar));
+	gpSystem->GetLowLevel()->addScriptFunc(SCRIPT_REGISTER_FUNC(GetGlobalVar));
 }
 
 //-----------------------------------------------------------------------

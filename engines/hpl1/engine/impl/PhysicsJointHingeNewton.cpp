@@ -27,7 +27,7 @@
 
 #include "hpl1/engine/impl/PhysicsJointHingeNewton.h"
 
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 #include "hpl1/engine/impl/PhysicsBodyNewton.h"
 #include "hpl1/engine/impl/PhysicsWorldNewton.h"

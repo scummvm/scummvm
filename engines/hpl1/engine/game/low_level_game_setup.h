@@ -56,7 +56,7 @@ public:
 	cAI *createAi();
 	cHaptic *createHaptic();
 private:
-	iLowLevelSystem *_lowLevelSystem;
+	LowLevelSystem *_lowLevelSystem;
 	iLowLevelGraphics *_lowLevelGraphics;
 	iLowLevelInput *_lowLevelInput;
 	LowLevelResources *_lowLevelResources;

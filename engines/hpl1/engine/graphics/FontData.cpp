@@ -29,7 +29,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 #include "hpl1/engine/graphics/GfxObject.h"
 #include "hpl1/engine/graphics/GraphicsDrawer.h"

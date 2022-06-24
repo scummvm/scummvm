@@ -29,7 +29,7 @@
 
 #include "hpl1/engine/impl/tinyXML/tinyxml.h"
 #include "hpl1/engine/scene/World3D.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
 
 #include "hpl1/engine/physics/CollideShape.h"

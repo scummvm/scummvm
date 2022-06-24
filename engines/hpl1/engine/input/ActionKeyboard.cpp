@@ -29,7 +29,7 @@
 #include "hpl1/engine/input/Input.h"
 #include "hpl1/engine/input/Keyboard.h"
 
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 namespace hpl {
 //////////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS

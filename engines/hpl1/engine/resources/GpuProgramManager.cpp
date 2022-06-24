@@ -28,7 +28,7 @@
 #include "hpl1/engine/resources/GpuProgramManager.h"
 #include "hpl1/engine/graphics/GPUProgram.h"
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
 
 namespace hpl {
@@ -40,7 +40,7 @@ namespace hpl {
 //-----------------------------------------------------------------------
 
 cGpuProgramManager::cGpuProgramManager(cFileSearcher *apFileSearcher, iLowLevelGraphics *apLowLevelGraphics,
-									   LowLevelResources *apLowLevelResources, iLowLevelSystem *apLowLevelSystem)
+									   LowLevelResources *apLowLevelResources, LowLevelSystem *apLowLevelSystem)
 	: iResourceManager(apFileSearcher, apLowLevelResources, apLowLevelSystem) {
 	mpLowLevelGraphics = apLowLevelGraphics;
 }

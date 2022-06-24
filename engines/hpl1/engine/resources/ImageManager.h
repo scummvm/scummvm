@@ -48,7 +48,7 @@ typedef tFrameTextureMap::iterator tFrameTextureMapIt;
 class cImageManager : public iResourceManager {
 public:
 	cImageManager(cFileSearcher *apFileSearcher, iLowLevelGraphics *apLowLevelGraphics,
-				  LowLevelResources *apLowLevelResources, iLowLevelSystem *apLowLevelSystem);
+				  LowLevelResources *apLowLevelResources, LowLevelSystem *apLowLevelSystem);
 	~cImageManager();
 
 	iResourceBase *Create(const tString &asName);

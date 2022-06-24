@@ -27,7 +27,7 @@
 
 #include "hpl1/engine/resources/FrameBitmap.h"
 #include "hpl1/engine/math/Math.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/resources/FrameTexture.h"
 #include "hpl1/engine/resources/ResourceImage.h"
 #include "hpl1/engine/graphics/bitmap2D.h"

@@ -27,7 +27,7 @@
 
 #include "hpl1/engine/gui/WidgetImage.h"
 
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 #include "hpl1/engine/math/Math.h"
 

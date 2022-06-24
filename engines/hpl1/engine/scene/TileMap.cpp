@@ -35,7 +35,7 @@
 #include "hpl1/engine/resources/TileSetManager.h"
 #include "hpl1/engine/scene/TileMapLineIt.h"
 #include "hpl1/engine/scene/TileMapRectIt.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

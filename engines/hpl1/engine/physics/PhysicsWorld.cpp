@@ -38,7 +38,7 @@
 #include "hpl1/engine/physics/SurfaceData.h"
 #include "hpl1/engine/scene/PortalContainer.h"
 #include "hpl1/engine/scene/World3D.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/System.h"
 
 namespace hpl {

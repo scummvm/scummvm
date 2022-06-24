@@ -28,7 +28,7 @@
 #include "hpl1/engine/game/Updater.h"
 
 #include "hpl1/engine/game/Updateable.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 
@@ -38,7 +38,7 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cUpdater::cUpdater(iLowLevelSystem *apLowLevelSystem) {
+cUpdater::cUpdater(LowLevelSystem *apLowLevelSystem) {
 	mpCurrentUpdates = NULL;
 
 	mpLowLevelSystem = apLowLevelSystem;

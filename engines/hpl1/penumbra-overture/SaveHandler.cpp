@@ -218,7 +218,7 @@ cSaveHandler::cSaveHandler(cInit *apInit) : iUpdateable("SaveHandler") {
 	//////////////////////////////////////////////
 	// Create directories
 	msSaveDir = _W("");
-	iLowLevelSystem *pLowLevelSystem = mpInit->mpGame->GetSystem()->GetLowLevel();
+	LowLevelSystem *pLowLevelSystem = mpInit->mpGame->GetSystem()->GetLowLevel();
 
 	tWString sPeronalDir = GetSystemSpecialPath(eSystemPath_Personal);
 
@@ -604,7 +604,7 @@ void cSaveHandler::AutoSave(const tWString &asDir, int alMaxSaves) {
 	tWString sMapName = mpInit->mpMapHandler->GetMapGameName();
 	sMapName = cString::ReplaceCharToW(sMapName, _W("\n"), _W(" "));
 	sMapName = cString::ReplaceCharToW(sMapName, _W(":"), _W(" "));
-	cDate date = mpInit->mpGame->GetSystem()->GetLowLevel()->GetDate();
+	cDate date = mpInit->mpGame->GetSystem()->GetLowLevel()->getDate();
 	wchar_t sTemp[512];
 	swprintf(sTemp, 512, _W("save/%ls/%ls %d-%02d-%02d_%02d.%02d.%02d_%02d.sav"),
 			 asDir.c_str(),
@@ -669,7 +669,7 @@ void cSaveHandler::OnExit() {
 
 void cSaveHandler::DeleteOldestIfMax(const tWString &asDir, const tWString &asMask, int alMaxFiles) {
 	LowLevelResources *pLowLevelResources = mpInit->mpGame->GetResources()->GetLowLevel();
-	iLowLevelSystem *pLowLevelSystem = mpInit->mpGame->GetSystem()->GetLowLevel();
+	LowLevelSystem *pLowLevelSystem = mpInit->mpGame->GetSystem()->GetLowLevel();
 
 	tWString sPath = msSaveDir + asDir;
 
@@ -698,7 +698,7 @@ void cSaveHandler::DeleteOldestIfMax(const tWString &asDir, const tWString &asMa
 
 tWString cSaveHandler::GetLatest(const tWString &asDir, const tWString &asMask) {
 	LowLevelResources *pLowLevelResources = mpInit->mpGame->GetResources()->GetLowLevel();
-	iLowLevelSystem *pLowLevelSystem = mpInit->mpGame->GetSystem()->GetLowLevel();
+	LowLevelSystem *pLowLevelSystem = mpInit->mpGame->GetSystem()->GetLowLevel();
 
 	tWString sPath = msSaveDir + asDir;
 

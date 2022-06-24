@@ -27,7 +27,7 @@
 
 #include "hpl1/engine/impl/SqScript.h"
 #include "hpl1/engine/math/Math.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
 #include "common/file.h"
 #include "hpl1/debug.h"
@@ -184,5 +184,36 @@ char *cSqScript::LoadCharBuffer(const tString &asFileName, int &alLength) {
 //-----------------------------------------------------------------------
 
 //-----------------------------------------------------------------------
+
+void cScriptOutput::AddMessage(const asSMessageInfo *msg) {
+	char sMess[1024];
+
+	tString type = "ERR ";
+	if (msg->type == asMSGTYPE_WARNING)
+		type = "WARN";
+	else if (msg->type == asMSGTYPE_INFORMATION)
+		type = "INFO";
+
+	sprintf(sMess, "%s (%d, %d) : %s : %s\n", msg->section, msg->row, msg->col, type.c_str(), msg->message);
+
+	msMessage += sMess;
+}
+
+void cScriptOutput::Display() {
+	if (msMessage.size() > 500) {
+		while (msMessage.size() > 500) {
+			tString sSub = msMessage.substr(0, 500);
+			msMessage = msMessage.substr(500);
+			Log(sSub.c_str());
+		}
+		Log(msMessage.c_str());
+	} else {
+		Log(msMessage.c_str());
+	}
+}
+
+void cScriptOutput::Clear() {
+	msMessage = "";
+}
 
 } // namespace hpl

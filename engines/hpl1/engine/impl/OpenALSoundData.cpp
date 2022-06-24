@@ -27,7 +27,7 @@
 
 #include "hpl1/engine/impl/OpenALSoundData.h"
 #include "hpl1/engine/impl/OpenALSoundChannel.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 namespace hpl {
 
 //////////////////////////////////////////////////////////////////////////

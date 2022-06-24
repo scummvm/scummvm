@@ -30,7 +30,7 @@
 #include "hpl1/engine/impl/KeyboardSDL.h"
 #include "hpl1/engine/impl/MouseSDL.h"
 
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

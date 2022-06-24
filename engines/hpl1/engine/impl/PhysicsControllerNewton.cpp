@@ -30,7 +30,7 @@
 #include "hpl1/engine/physics/PhysicsBody.h"
 #include "hpl1/engine/physics/PhysicsWorld.h"
 
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

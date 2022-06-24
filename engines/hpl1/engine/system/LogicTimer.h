@@ -30,7 +30,7 @@
 
 namespace hpl {
 
-class iLowLevelSystem;
+class LowLevelSystem;
 
 class cLogicTimer {
 public:
@@ -40,7 +40,7 @@ public:
 	 * \param *apLowLevelSystem
 	 * \return
 	 */
-	cLogicTimer(int alUpdatesPerSec, iLowLevelSystem *apLowLevelSystem);
+	cLogicTimer(int alUpdatesPerSec, LowLevelSystem *apLowLevelSystem);
 	~cLogicTimer();
 
 	/**
@@ -88,7 +88,7 @@ private:
 	int mlMaxUpdates;
 	int mlUpdateCount;
 
-	iLowLevelSystem *mpLowLevelSystem;
+	LowLevelSystem *mpLowLevelSystem;
 };
 
 };     // namespace hpl

@@ -26,7 +26,7 @@
  */
 
 #include "hpl1/engine/system/LogicTimer.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 
@@ -36,7 +36,7 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cLogicTimer::cLogicTimer(int alUpdatesPerSec, iLowLevelSystem *apLowLevelSystem) {
+cLogicTimer::cLogicTimer(int alUpdatesPerSec, LowLevelSystem *apLowLevelSystem) {
 	mlMaxUpdates = alUpdatesPerSec;
 	mlUpdateCount = 0;
 

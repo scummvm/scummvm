@@ -1570,177 +1570,177 @@ SCRIPT_DEFINE_FUNC_4(void, CreateSoundEntityAt, string, string, string, string)
 //-----------------------------------------------------------------------
 
 void cGameScripts::Init() {
-	iLowLevelSystem *pLowLevelSystem = gpInit->mpGame->GetSystem()->GetLowLevel();
+	LowLevelSystem *pLowLevelSystem = gpInit->mpGame->GetSystem()->GetLowLevel();
 
 	// Game helper
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddToTempString));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddToTempStringTrans));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddToTempStringAction));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddToTempString));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddToTempStringTrans));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddToTempStringAction));
 
 	// Game general
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(ResetGame));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(StartCredits));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(StartDemoEndText));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(ClearSavedMaps));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(GetActionKeyString));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(ResetGame));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(StartCredits));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(StartDemoEndText));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(ClearSavedMaps));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(GetActionKeyString));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddMessageTrans));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddMessage));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddMessageTempString));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddMessageTrans));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddMessage));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddMessageTempString));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddSubTitleTrans));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddSubTitle));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddSubTitleTempString));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddSubTitleTrans));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddSubTitle));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddSubTitleTempString));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddRadioMessage));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetRadioOnEndCallback));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddRadioMessage));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetRadioOnEndCallback));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetMessagesOverCallback));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetMessagesOverCallback));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(ChangeMap));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(ChangeMap));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetMapGameName));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetMapGameNameTrans));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetMapGameName));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetMapGameNameTrans));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddNotebookTaskText));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddNotebookTask));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(RemoveNotebookTask));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddNotebookTaskText));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddNotebookTask));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(RemoveNotebookTask));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddNotebookNote));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(StartNumericalPanel));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetInventoryActive));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(FadeIn));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(FadeOut));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(IsFading));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetWideScreenActive));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddNotebookNote));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(StartNumericalPanel));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetInventoryActive));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(FadeIn));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(FadeOut));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(IsFading));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetWideScreenActive));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AutoSave));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AutoSave));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(StartFlash));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(StartFlash));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetWaveGravityActive));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetupWaveGravity));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetWaveGravityActive));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetupWaveGravity));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetDepthOfFieldActive));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetupDepthOfField));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(FocusOnEntity));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetConstantFocusOnEntity));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetDepthOfFieldActive));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetupDepthOfField));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(FocusOnEntity));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetConstantFocusOnEntity));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(PlayGameMusic));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(StopGameMusic));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(PlayGameMusic));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(StopGameMusic));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(StartScreenShake));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(StartScreenShake));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(CreateLightFlashAtArea));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(CreateLightFlashAtArea));
 
 	// Attack
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(CreateSplashDamage));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(CreateSplashDamage));
 
 	// Game timer
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(CreateTimer));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(DestroyTimer));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetTimerPaused));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetTimerTime));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddTimerTime));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(GetTimerTime));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(CreateTimer));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(DestroyTimer));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetTimerPaused));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetTimerTime));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddTimerTime));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(GetTimerTime));
 
 	// Player
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(GivePlayerDamage));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetPlayerHealth));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(GetPlayerHealth));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetPlayerPose));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetPlayerActive));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(StartPlayerLookAt));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(StopPlayerLookAt));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(StartPlayerFearFilter));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(StopPlayerFearFilter));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetFlashlightDisabled));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(GivePlayerDamage));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetPlayerHealth));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(GetPlayerHealth));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetPlayerPose));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetPlayerActive));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(StartPlayerLookAt));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(StopPlayerLookAt));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(StartPlayerFearFilter));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(StopPlayerFearFilter));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetFlashlightDisabled));
 
 	// Inventory
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddPickupCallback));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddUseCallback));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddCombineCallback));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddPickupCallback));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddUseCallback));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddCombineCallback));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(RemovePickupCallback));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(RemoveUseCallback));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(RemoveCombineCallback));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(RemovePickupCallback));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(RemoveUseCallback));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(RemoveCombineCallback));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(HasItem));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(RemoveItem));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(GiveItem));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(HasItem));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(RemoveItem));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(GiveItem));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetInventoryMessage));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetInventoryMessageTrans));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetInventoryMessage));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetInventoryMessageTrans));
 
 	// Game entity properties
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(ReplaceEntity));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(ReplaceEntity));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetGameEntityActive));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(GetGameEntityActive));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetGameEntityActive));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(GetGameEntityActive));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetGameEntityMaxExamineDist));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetGameEntityMaxInteractDist));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetGameEntityMaxExamineDist));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetGameEntityMaxInteractDist));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(CreateGameEntityVar));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetGameEntityVar));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddGameEntityVar));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(GetGameEntityVar));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(CreateGameEntityVar));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetGameEntityVar));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddGameEntityVar));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(GetGameEntityVar));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetGameEntityDescriptionTrans));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetGameEntityDescriptionOnceTrans));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetGameEntityDescription));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetGameEntityDescriptionTrans));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetGameEntityDescriptionOnceTrans));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetGameEntityDescription));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetGameEntityGameNameTrans));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetGameEntityGameNameTrans));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(ChangeEntityAnimation));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(ChangeEntityAnimation));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetEntityHealth));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(DamageEntity));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetEntityHealth));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(DamageEntity));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetDoorState));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetDoorState));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetObjectInteractMode));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetObjectInteractMode));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetupLink));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetupLinkLoadText));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetupLink));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetupLinkLoadText));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetAreaCustomIcon));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetAreaCustomIcon));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddEnemyPatrolNode));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(ClearEnemyPatrolNodes));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetEnemyDeathCallback));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetEnemyAttackCallback));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(GetEnemyHealth));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetEnemyUseTriggers));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(ShowEnemyPlayer));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddEnemyPatrolNode));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(ClearEnemyPatrolNodes));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetEnemyDeathCallback));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetEnemyAttackCallback));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(GetEnemyHealth));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetEnemyUseTriggers));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(ShowEnemyPlayer));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetDoorLocked));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetDoorLocked));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetupStickArea));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AllowAttachment));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetupStickArea));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AllowAttachment));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetLampLit));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetLampLitChangeCallback));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetLampFlicker));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetLampLit));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetLampLitChangeCallback));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetLampFlicker));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetupLadder));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetupLadder));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetupDamageArea));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetupForceArea));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetupDamageArea));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetupForceArea));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetupLiquidArea));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetupLiquidArea));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(SetupSaveArea));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(SetupSaveArea));
 
 	// Game entity callbacks
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddEntityCollideCallback));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(RemoveEntityCollideCallback));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddEntityCollideCallback));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(RemoveEntityCollideCallback));
 
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(AddEntityCallback));
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(RemoveEntityCallback));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddEntityCallback));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(RemoveEntityCallback));
 
 	// Game sound
-	pLowLevelSystem->AddScriptFunc(SCRIPT_REGISTER_FUNC(CreateSoundEntityAt));
+	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(CreateSoundEntityAt));
 }
 
 //-----------------------------------------------------------------------

@@ -32,7 +32,7 @@
 #include "hpl1/engine/physics/PhysicsMaterial.h"
 #include "hpl1/engine/physics/PhysicsWorld.h"
 #include "hpl1/engine/physics/SurfaceData.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 #include "hpl1/engine/game/Game.h"
 #include "hpl1/engine/scene/Scene.h"
