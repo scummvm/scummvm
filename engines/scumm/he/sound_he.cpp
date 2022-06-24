@@ -581,7 +581,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 
 		if (_vm->_game.heversion == 70) {
 			// Try to load high quality audio file if found
-			tryLoadSoundOverride(soundID, &stream);
+			stream = maybeLoadSoundOverride(soundID);
 
 			if (!stream) {
 				stream = Audio::makeRawStream(spoolPtr, size, 11025, flags, DisposeAfterUse::NO);
@@ -727,7 +727,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 
 		// Try to load high quality audio file if found
 		int newDuration;
-		tryLoadSoundOverride(soundID, &stream, &newDuration);
+		stream = maybeLoadSoundOverride(soundID, &newDuration);
 		if (stream != nullptr && soundID == 1) {
 			// Disable lip sync if the speech audio was overriden
 			codeOffs = -1;
@@ -796,9 +796,9 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 	}
 }
 
-void SoundHE::tryLoadSoundOverride(int soundID, Audio::RewindableAudioStream **stream, int *duration) {
+Audio::RewindableAudioStream *SoundHE::maybeLoadSoundOverride(int soundID, int *duration) {
 	if (!_vm->_enableEnhancements) {
-		return;
+		return nullptr;
 	}
 
 	const char *formats[] = {
@@ -862,17 +862,19 @@ void SoundHE::tryLoadSoundOverride(int soundID, Audio::RewindableAudioStream **s
 			soundFileOverride.close();
 
 			Audio::SeekableAudioStream *seekStream = formatDecoders[i](oStr, DisposeAfterUse::YES);
-			*stream = seekStream;
 			if (duration != nullptr) {
 				*duration = seekStream->getLength().msecs();
 			}
 
 			debug(5, "tryLoadSoundOverride: %s loaded from %s", formats[i], soundFileOverride.getName());
-			return;
+
+			return seekStream;
 		}
 	}
 
 	debug(5, "tryLoadSoundOverride: file not found");
+
+	return nullptr;
 }
 
 void SoundHE::startHETalkSound(uint32 offset) {
