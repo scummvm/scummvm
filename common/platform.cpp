@@ -64,6 +64,7 @@ const PlatformDescription g_platforms[] = {
 	{ "pippin", "pippin", "pippin", "Pippin", kPlatformPippin },
 	{ "macintosh2", "macintosh2", "mac2", "Macintosh II", kPlatformMacintoshII },
 	{ "shockwave", "shockwave", "shock", "Shockwave", kPlatformShockwave },
+	{ "zx", "zx", "zx", "ZX Spectrum", kPlatformZX },
 
 	{ nullptr, nullptr, nullptr, "Default", kPlatformUnknown }
 };
