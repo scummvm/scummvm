@@ -983,6 +983,7 @@ VThreadState MovieElement::startPlayingTask(const StartPlayingTaskData &taskData
 		_currentPlayState = kMediaStateStopped;
 		_needsReset = true;
 		_contentsDirty = true;
+		_currentTimestamp = _reversed ? _playRange.max : _playRange.min;
 
 		_shouldPlayIfNotPaused = true;
 		_paused = false;
