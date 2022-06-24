@@ -323,7 +323,7 @@ void InventoryScreen::Draw(Bitmap *ds) {
 	if (top_item > 0)
 		wputblock(ds, windowwid - ARROWBUTTONWID, buttonyp + get_fixed_pixel_size(2), arrowblock, 1);
 	if (top_item + num_visible_items < numitems)
-		arrowblock->FlipBlt(arrowblock, windowwid - ARROWBUTTONWID, buttonyp + get_fixed_pixel_size(4) + ARROWBUTTONWID, Shared::kBitmap_VFlip);
+		arrowblock->FlipBlt(arrowblock, windowwid - ARROWBUTTONWID, buttonyp + get_fixed_pixel_size(4) + ARROWBUTTONWID, Shared::kFlip_Vertical);
 	delete arrowblock;
 }
 

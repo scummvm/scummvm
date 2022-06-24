@@ -495,7 +495,7 @@ void ScummVMRendererGraphicsDriver::BlitToScreen() {
 		_screen->update();
 }
 
-void ScummVMRendererGraphicsDriver::Render(int /*xoff*/, int /*yoff*/, GlobalFlipType flip) {
+void ScummVMRendererGraphicsDriver::Render(int /*xoff*/, int /*yoff*/, GraphicFlip flip) {
 	switch (flip) {
 	case kFlip_Both:
 		_renderFlip = (RendererFlip)(FLIP_HORIZONTAL | FLIP_VERTICAL);

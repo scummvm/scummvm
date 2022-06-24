@@ -282,16 +282,16 @@ void Bitmap::LitBlendBlt(Bitmap *src, int dst_x, int dst_y, int light_amount) {
 	draw_lit_sprite(_alBitmap, al_src_bmp, dst_x, dst_y, light_amount);
 }
 
-void Bitmap::FlipBlt(Bitmap *src, int dst_x, int dst_y, BitmapFlip flip) {
+void Bitmap::FlipBlt(Bitmap *src, int dst_x, int dst_y, GraphicFlip flip) {
 	BITMAP *al_src_bmp = src->_alBitmap;
 	switch (flip) {
-	case kBitmap_HFlip:
+	case kFlip_Horizontal:
 		draw_sprite_h_flip(_alBitmap, al_src_bmp, dst_x, dst_y);
 		break;
-	case kBitmap_VFlip:
+	case kFlip_Vertical:
 		draw_sprite_v_flip(_alBitmap, al_src_bmp, dst_x, dst_y);
 		break;
-	case kBitmap_HVFlip:
+	case kFlip_Both:
 		draw_sprite_vh_flip(_alBitmap, al_src_bmp, dst_x, dst_y);
 		break;
 	default: // blit with no transform

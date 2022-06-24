@@ -685,7 +685,7 @@ void render_black_borders() {
 void render_to_screen() {
 	// Stage: final plugin callback (still drawn on game screen
 	if (pl_any_want_hook(AGSE_FINALSCREENDRAW)) {
-		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform(), Point(0, _GP(play).shake_screen_yoff), (GlobalFlipType)_GP(play).screen_flipped);
+		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform(), Point(0, _GP(play).shake_screen_yoff), (GraphicFlip)_GP(play).screen_flipped);
 		_G(gfxDriver)->DrawSprite(AGSE_FINALSCREENDRAW, 0, nullptr);
 		_G(gfxDriver)->EndSpriteBatch();
 	}
@@ -703,7 +703,7 @@ void render_to_screen() {
 		const Rect &viewport = _GP(play).GetMainViewport();
 		if (_GP(play).shake_screen_yoff > 0 && !_G(gfxDriver)->RequiresFullRedrawEachFrame())
 			_G(gfxDriver)->ClearRectangle(viewport.Left, viewport.Top, viewport.GetWidth() - 1, _GP(play).shake_screen_yoff, nullptr);
-		_G(gfxDriver)->Render(0, _GP(play).shake_screen_yoff, (GlobalFlipType)_GP(play).screen_flipped);
+		_G(gfxDriver)->Render(0, _GP(play).shake_screen_yoff, (GraphicFlip)_GP(play).screen_flipped);
 
 #if AGS_PLATFORM_OS_ANDROID
 		if (_GP(game).color_depth == 1)
@@ -1090,8 +1090,8 @@ void apply_tint_or_light(int actspsindex, int light_level,
 	}
 }
 
-Bitmap *transform_sprite(Bitmap *src, bool src_has_alpha, std::unique_ptr<Bitmap> &dst, const Size dst_sz, BitmapFlip flip) {
-	if ((src->GetSize() == dst_sz) && (flip == kBitmap_NoFlip))
+Bitmap *transform_sprite(Bitmap *src, bool src_has_alpha, std::unique_ptr<Bitmap> &dst, const Size dst_sz, GraphicFlip flip) {
+	if ((src->GetSize() == dst_sz) && (flip == kFlip_None))
 		return src; // No transform: return source image
 
 	recycle_bitmap(dst, src->GetColorDepth(), dst_sz.Width, dst_sz.Height, true);
@@ -1105,14 +1105,14 @@ Bitmap *transform_sprite(Bitmap *src, bool src_has_alpha, std::unique_ptr<Bitmap
 		if (_G(in_new_room) > 0)
 			select_palette(_G(palette));
 
-		if (flip != kBitmap_NoFlip) {
+		if (flip != kFlip_None) {
 			Bitmap tempbmp;
 			tempbmp.CreateTransparent(dst_sz.Width, dst_sz.Height, src->GetColorDepth());
 			if ((IS_ANTIALIAS_SPRITES) && !src_has_alpha)
 				tempbmp.AAStretchBlt(src, RectWH(dst_sz), kBitmap_Transparency);
 			else
 				tempbmp.StretchBlt(src, RectWH(dst_sz), kBitmap_Transparency);
-			dst->FlipBlt(&tempbmp, 0, 0, kBitmap_HFlip);
+			dst->FlipBlt(&tempbmp, 0, 0, kFlip_Horizontal);
 		} else {
 			if ((IS_ANTIALIAS_SPRITES) && !src_has_alpha)
 				dst->AAStretchBlt(src, RectWH(dst_sz), kBitmap_Transparency);
@@ -1124,7 +1124,7 @@ Bitmap *transform_sprite(Bitmap *src, bool src_has_alpha, std::unique_ptr<Bitmap
 			unselect_palette();
 	} else {
 		// If not scaled, then simply blit mirrored
-		dst->FlipBlt(src, 0, 0, kBitmap_HFlip);
+		dst->FlipBlt(src, 0, 0, kFlip_Horizontal);
 	}
 	return dst.get(); // return transformed result
 }
@@ -1136,7 +1136,7 @@ Bitmap *transform_sprite(Bitmap *src, bool src_has_alpha, std::unique_ptr<Bitmap
 static bool scale_and_flip_sprite(int useindx, int sppic, int newwidth, int newheight, bool hmirror) {
 	Bitmap *src = _GP(spriteset)[sppic];
 	Bitmap *result = transform_sprite(src, (_GP(game).SpriteInfos[sppic].Flags & SPF_ALPHACHANNEL) != 0,
-		_GP(actsps)[useindx].Bmp, Size(newwidth, newheight), hmirror ? kBitmap_HFlip : kBitmap_NoFlip);
+		_GP(actsps)[useindx].Bmp, Size(newwidth, newheight), hmirror ? kFlip_Horizontal : kFlip_None);
 	return result != src;
 }
 
@@ -2066,7 +2066,7 @@ static void construct_room_view() {
 		                           0.f);
 		if (_G(gfxDriver)->RequiresFullRedrawEachFrame()) {
 			// we draw everything as a sprite stack
-			_G(gfxDriver)->BeginSpriteBatch(view_rc, room_trans, Point(0, _GP(play).shake_screen_yoff), (GlobalFlipType)_GP(play).screen_flipped);
+			_G(gfxDriver)->BeginSpriteBatch(view_rc, room_trans, Point(0, _GP(play).shake_screen_yoff), (GraphicFlip)_GP(play).screen_flipped);
 		} else {
 			if (_GP(CameraDrawData)[viewport->GetID()].Frame == nullptr && _GP(CameraDrawData)[viewport->GetID()].IsOverlap) {
 				// room background is prepended to the sprite stack
@@ -2095,7 +2095,7 @@ static void construct_room_view() {
 
 // Schedule ui rendering
 static void construct_ui_view() {
-	_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetUIViewportAbs(), SpriteTransform(), Point(0, _GP(play).shake_screen_yoff), (GlobalFlipType)_GP(play).screen_flipped);
+	_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetUIViewportAbs(), SpriteTransform(), Point(0, _GP(play).shake_screen_yoff), (GraphicFlip)_GP(play).screen_flipped);
 	draw_gui_and_overlays();
 	_G(gfxDriver)->EndSpriteBatch();
 	clear_draw_list();
@@ -2198,7 +2198,7 @@ void construct_game_screen_overlay(bool draw_mouse) {
 	if (pl_any_want_hook(AGSE_POSTSCREENDRAW)) {
 		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(),
 			SpriteTransform(), Point(0, _GP(play).shake_screen_yoff),
-			(GlobalFlipType)_GP(play).screen_flipped);
+			(GraphicFlip)_GP(play).screen_flipped);
 		_G(gfxDriver)->DrawSprite(AGSE_POSTSCREENDRAW, 0, nullptr);
 		_G(gfxDriver)->EndSpriteBatch();
 	}
@@ -2237,7 +2237,7 @@ void construct_game_screen_overlay(bool draw_mouse) {
 
 	if (_GP(play).screen_is_faded_out == 0) {
 		// Stage: mouse cursor
-		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform(), Point(0, _GP(play).shake_screen_yoff), (GlobalFlipType)_GP(play).screen_flipped);
+		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform(), Point(0, _GP(play).shake_screen_yoff), (GraphicFlip)_GP(play).screen_flipped);
 		if (draw_mouse && !_GP(play).mouse_cursor_hidden) {
 			_G(gfxDriver)->DrawSprite(_G(mousex) - _G(hotx), _G(mousey) - _G(hoty), _G(mouseCursor));
 			invalidate_sprite(_G(mousex) - _G(hotx), _G(mousey) - _G(hoty), _G(mouseCursor), false);
@@ -2400,7 +2400,7 @@ void render_graphics(IDriverDependantBitmap *extraBitmap, int extraX, int extraY
 	// TODO: extraBitmap is a hack, used to place an additional gui element
 	// on top of the screen. Normally this should be a part of the game UI stage.
 	if (extraBitmap != nullptr) {
-		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetUIViewportAbs(), SpriteTransform(), Point(0, _GP(play).shake_screen_yoff), (GlobalFlipType)_GP(play).screen_flipped);
+		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetUIViewportAbs(), SpriteTransform(), Point(0, _GP(play).shake_screen_yoff), (GraphicFlip)_GP(play).screen_flipped);
 		invalidate_sprite(extraX, extraY, extraBitmap, false);
 		_G(gfxDriver)->DrawSprite(extraX, extraY, extraBitmap);
 		_G(gfxDriver)->EndSpriteBatch();

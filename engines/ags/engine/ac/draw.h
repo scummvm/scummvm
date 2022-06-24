@@ -184,7 +184,7 @@ void draw_gui_sprite(Shared::Bitmap *ds, bool use_alpha, int xpos, int ypos,
 // * if transformation is necessary - writes into dst and returns dst;
 // * if no transformation is necessary - simply returns src;
 Shared::Bitmap *transform_sprite(Shared::Bitmap *src, bool src_has_alpha, std::unique_ptr<Shared::Bitmap> &dst,
-	const Size dst_sz, Shared::BitmapFlip flip = Shared::kBitmap_NoFlip);
+	const Size dst_sz, Shared::GraphicFlip flip = Shared::kFlip_None);
 // Render game on screen
 void render_to_screen();
 // Callbacks for the graphics driver

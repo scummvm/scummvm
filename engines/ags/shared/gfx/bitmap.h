@@ -28,6 +28,7 @@
 #ifndef AGS_SHARED_GFX_BITMAP_H
 #define AGS_SHARED_GFX_BITMAP_H
 
+#include "ags/shared/gfx/gfx_def.h"
 #include "ags/shared/util/geometry.h"
 #include "ags/shared/util/string.h"
 
@@ -41,13 +42,6 @@ enum BitmapMaskOption {
 	kBitmap_Copy,
 	// Consider mask color fully transparent and do not copy pixels having it
 	kBitmap_Transparency
-};
-
-enum BitmapFlip {
-	kBitmap_NoFlip,
-	kBitmap_HFlip,
-	kBitmap_VFlip,
-	kBitmap_HVFlip
 };
 
 } // namespace Shared

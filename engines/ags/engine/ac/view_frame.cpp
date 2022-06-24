@@ -156,14 +156,14 @@ void DrawViewFrame(Bitmap *ds, const ViewFrame *vframe, int x, int y, bool alpha
 		Bitmap *src = vf_bmp;
 		if (vframe->flags & VFLG_FLIPSPRITE) {
 			src = new Bitmap(vf_bmp->GetWidth(), vf_bmp->GetHeight(), vf_bmp->GetColorDepth());
-			src->FlipBlt(vf_bmp, 0, 0, Shared::kBitmap_HFlip);
+			src->FlipBlt(vf_bmp, 0, 0, Shared::kFlip_Horizontal);
 		}
 		draw_sprite_support_alpha(ds, true, x, y, src, (_GP(game).SpriteInfos[vframe->pic].Flags & SPF_ALPHACHANNEL) != 0);
 		if (src != vf_bmp)
 			delete src;
 	} else {
 		if (vframe->flags & VFLG_FLIPSPRITE)
-			ds->FlipBlt(_GP(spriteset)[vframe->pic], x, y, Shared::kBitmap_HFlip);
+			ds->FlipBlt(_GP(spriteset)[vframe->pic], x, y, Shared::kFlip_Horizontal);
 		else
 			ds->Blit(_GP(spriteset)[vframe->pic], x, y, Shared::kBitmap_Transparency);
 	}

@@ -32,6 +32,7 @@
 #include "engines/ags/lib/std/map.h"
 #include "ags/lib/std/vector.h"
 #include "ags/engine/gfx/ddb.h"
+#include "ags/shared/gfx/gfx_def.h"
 #include "ags/engine/gfx/graphics_driver.h"
 #include "ags/shared/util/scaling.h"
 
@@ -53,13 +54,13 @@ struct SpriteBatchDesc {
 	// Global node offset applied to the whole batch as the last transform
 	Point                    Offset;
 	// Global node flip applied to the whole batch as the last transform
-	GlobalFlipType           Flip = kFlip_None;
+	Shared::GraphicFlip      Flip = Shared::kFlip_None;
 	// Optional bitmap to draw sprites upon. Used exclusively by the software rendering mode.
 	PBitmap                  Surface;
 
 	SpriteBatchDesc() = default;
 	SpriteBatchDesc(uint32_t parent, const Rect viewport, const SpriteTransform & transform, const Point offset = Point(),
-		GlobalFlipType flip = kFlip_None, PBitmap surface = nullptr)
+		Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr)
 		: Parent(parent)
 		, Viewport(viewport)
 		, Transform(transform)
@@ -104,7 +105,7 @@ public:
 	Rect        GetRenderDestination() const override;
 
 	void        BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
-	                             const Point offset = Point(), GlobalFlipType flip = kFlip_None, PBitmap surface = nullptr) override;
+	                             const Point offset = Point(), Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr) override;
 	void        EndSpriteBatch() override;
 	void        ClearDrawLists() override;
 
