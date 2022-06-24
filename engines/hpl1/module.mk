@@ -223,6 +223,8 @@ MODULE_OBJS := \
 	engine/sound/LowLevelSound.o \
 	engine/sound/MusicHandler.o \
 	engine/sound/Sound.o \
+	engine/sound/SoundEntityData.o \
+	engine/sound/SoundHandler.o \
 	engine/system/Container.o \
 	engine/system/LogicTimer.o \
 	engine/system/MemoryManager.o \

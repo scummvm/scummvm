@@ -100,6 +100,7 @@ namespace hpl {
 //-----------------------------------------------------------------------
 
 cLowLevelSystemSDL::cLowLevelSystemSDL() {
+#if 0
 	mpScriptEngine = asCreateScriptEngine(ANGELSCRIPT_VERSION);
 
 	mpScriptOutput = hplNew(cScriptOutput, ());
@@ -114,6 +115,7 @@ cLowLevelSystemSDL::cLowLevelSystemSDL() {
 	mlHandleCount = 0;
 
 	Log("-------- THE HPL ENGINE LOG ------------\n\n");
+#endif
 }
 
 //-----------------------------------------------------------------------
