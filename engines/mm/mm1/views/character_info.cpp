@@ -443,8 +443,42 @@ void CharacterInfo::howMuchAborted() {
 	redraw();
 }
 
-void CharacterInfo::howMuchEntered(int amount) {
+void CharacterInfo::howMuchEntered(uint amount) {
+	Character &src = *g_globals->_currCharacter;
+	Character &dest = g_globals->_party[_tradeWith];
 
+	switch (_tradeKind) {
+	case TK_GEMS:
+		if (amount > src._gems || ((int)dest._gems + amount) > 0xffff) {
+			Sound::sound(SOUND_2);
+		} else {
+			src._gems -= amount;
+			dest._gems += amount;
+		}
+		break;
+	case TK_GOLD:
+		if (amount > src._gold || (dest._gold + amount) > 0xffffff) {
+			Sound::sound(SOUND_2);
+		} else {
+			src._gold -= amount;
+			dest._gold += amount;
+		}
+		break;
+	case TK_FOOD:
+		if (amount > src._food || (dest._food + amount) > 40) {
+			Sound::sound(SOUND_2);
+		} else {
+			src._food -= amount;
+			dest._food += amount;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	_state = DISPLAY;
+	redraw();
 }
 
 } // namespace Views
