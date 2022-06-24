@@ -29,13 +29,7 @@ namespace MM {
 namespace MM1 {
 
 struct Party : public Common::Array<Character> {
-	/**
-	 * Shares gems, gold or food
-	 */
-	enum ShareType {
-		GEMS = 0, GOLD = 1, FOOD = 2
-	};
-	static void share(ShareType shareType);
+	static void share(TransferKind shareType);
 };
 
 } // namespace MM1

@@ -40,11 +40,13 @@
 		cursed: "*** CURSED ***"
 		share_all: "SHARE ALL:"
 		gather_all: "GATHER ALL:"
+		trade_with: "TRADE WITH: '1'-'%d'"
 		trade_which: "TRADE WHICH:"
 		gems: "1) GEMS"
 		gold: "2) GOLD"
 		food: "3) FOOD"
 		item: "4) ITEM"
+		how_much: "HOW MUCH:"
 	create_characters:
 		title: "CREATE NEW CHARACTERS"
 		intellect: "INTELLECT...="
@@ -246,7 +248,7 @@
 		full: "*** BACKPACK FULL ***"
 stats:
 	none: "NONE"
-	inventory: "-----<EQUIPPED>----------<BACKPACK>----".
+	inventory: "-----<EQUIPPED>----------<BACKPACK>----"
 	classes:
 		1: "KNIGHT"
 		2: "PALADIN"

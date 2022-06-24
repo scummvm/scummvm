@@ -19,66 +19,36 @@
  *
  */
 
-#ifndef MM1_VIEWS_CHARACTER_INFO_H
-#define MM1_VIEWS_CHARACTER_INFO_H
+#ifndef MM1_VIEWS_TEXT_ENTRY_H
+#define MM1_VIEWS_TEXT_ENTRY_H
 
-#include "common/array.h"
-#include "mm/mm1/views/character_base.h"
-#include "mm/mm1/data/items.h"
-#include "mm/mm1/views/text_entry.h"
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 
 /**
- * In-game character dialog
+ * Text or numeric entry.
  */
-class CharacterInfo : public CharacterBase {
-private:
-	enum ViewState {
-		DISPLAY, EQUIP, GATHER, REMOVE, SHARE,
-		TRADE_WITH, TRADE_KIND, TRADE_WHAT };
-	ViewState _state = DISPLAY;
-	Common::String _newName;
-private:
-	int _tradeWith = -1;
-	TransferKind _tradeKind = TK_GEMS;
-	TextEntry _textEntry;
-private:
-	/**
-	 * Equips the item at the given index
-	 */
-	void equipItem(uint index);
-
-	/**
-	 * Removes the equipped item at the given index
-	 */
-	void removeItem(uint index);
-
-	/**
-	 * Draw options for gems, gold, and food
-	 */
-	void drawGemsGoldFood();
+class TextEntry : public TextView {
 public:
-	CharacterInfo() : CharacterBase("CharacterInfo") {}
-	virtual ~CharacterInfo() {}
+	typedef void (*Abort)();
+	typedef void (*Enter)(const Common::String &text);
+	Abort _abortFn;
+	Enter _enterFn;
+	bool _isNumeric = false;
+	Common::String _text;
+	size_t _maxLen = 0;
+public:
+	TextEntry() : TextView("TextEntry") {}
+	virtual ~TextEntry() {}
 
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-
-	/**
-	 * How much entry aborted
-	 */
-	void howMuchAborted();
-
-	/**
-	 * How much entered for a trade
-	 */
-	void howMuchEntered(int amount);
+	void display(int x, int y, int maxLen, bool isNumeric,
+		Abort abortFn, Enter enterFn);
 };
-
 
 } // namespace Views
 } // namespace MM1

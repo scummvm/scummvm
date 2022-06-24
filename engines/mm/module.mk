@@ -54,6 +54,7 @@ MODULE_OBJS := \
 	mm1/views/quick_ref.o \
 	mm1/views/statue.o \
 	mm1/views/title.o \
+	mm1/views/text_entry.o \
 	mm1/views/text_view.o \
 	mm1/views_enh/button_container.o \
 	mm1/views_enh/dialogs.o \
