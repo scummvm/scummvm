@@ -223,6 +223,8 @@ Common::Error FreescapeEngine::run() {
 	_nearClipPlane = 1.f;
 
 	if (_binaryBits == 16) {
+		// Do not render face if color is zero
+		_gfx->_keyColor = 0;
 		// the 16-bit kit permits the range 0-8192 to be used along all three axes and from that comes the far plane distance of 14189.
 		_farClipPlane = 14189.f;
 	} else {
