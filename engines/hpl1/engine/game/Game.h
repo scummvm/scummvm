@@ -33,7 +33,7 @@
 namespace hpl {
 
 class cUpdater;
-class iLowLevelGameSetup;
+class LowLevelGameSetup;
 class iLowLevelSystem;
 class cLogicTimer;
 
@@ -91,13 +91,13 @@ private:
 
 class cGame {
 public:
-	cGame(iLowLevelGameSetup *apGameSetup, cSetupVarContainer &aVars);
-	cGame(iLowLevelGameSetup *apGameSetup, int alWidth, int alHeight, int alBpp, bool abFullscreen,
+	cGame(LowLevelGameSetup *apGameSetup, cSetupVarContainer &aVars);
+	cGame(LowLevelGameSetup *apGameSetup, int alWidth, int alHeight, int alBpp, bool abFullscreen,
 		  unsigned int alUpdateRate = 60, int alMultisampling = 0);
 	~cGame();
 
 private:
-	void GameInit(iLowLevelGameSetup *apGameSetup, cSetupVarContainer &aVars);
+	void GameInit(LowLevelGameSetup *apGameSetup, cSetupVarContainer &aVars);
 
 public:
 	/**
@@ -207,7 +207,7 @@ private:
 
 	double mfGameTime;
 
-	iLowLevelGameSetup *mpGameSetup;
+	LowLevelGameSetup *mpGameSetup;
 	cUpdater *mpUpdater;
 	cLogicTimer *mpLogicTimer;
 
