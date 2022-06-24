@@ -2576,11 +2576,22 @@ void LB::b_inside(int nargs) {
 }
 
 void LB::b_map(int nargs) {
-	g_lingo->printSTUBWithArglist("b_map", nargs);
+	Datum toRect = g_lingo->pop();
+	Datum fromRect = g_lingo->pop();
+	Datum srcPnt = g_lingo->pop();
 
-	g_lingo->dropStack(nargs);
+	int toWidth = toRect.u.farr->arr[2].u.i - toRect.u.farr->arr[0].u.i;
+	int toHeight = toRect.u.farr->arr[3].u.i - toRect.u.farr->arr[1].u.i;
+	int fromWidth = fromRect.u.farr->arr[2].u.i - fromRect.u.farr->arr[0].u.i;
+	int fromHeight = fromRect.u.farr->arr[3].u.i - fromRect.u.farr->arr[1].u.i;
 
-	g_lingo->push(Datum(0));
+	Datum d;
+	d.type = POINT;
+	d.u.farr = new FArray();
+	d.u.farr->arr.push_back(-((fromRect.u.farr->arr[2].u.i - srcPnt.u.farr->arr[0].u.i) * (toWidth / fromWidth)) + (fromRect.u.farr->arr[0].u.i) + toRect.u.farr->arr[0].u.i);
+	d.u.farr->arr.push_back(-((fromRect.u.farr->arr[3].u.i - srcPnt.u.farr->arr[1].u.i) * (toHeight / fromHeight)) + (fromRect.u.farr->arr[3].u.i));
+
+	g_lingo->push(d);
 }
 
 void LB::b_offsetRect(int nargs) {
