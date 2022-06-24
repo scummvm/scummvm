@@ -1549,6 +1549,8 @@ public:
 	void removeCollider(ICollider *collider);
 	void checkCollisions();
 
+	const Common::String *resolveAttributeIDName(uint32 attribID) const;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
 	void debugBreak();
@@ -1751,6 +1753,8 @@ private:
 	uint32 _collisionCheckTime;
 
 	Hacks _hacks;
+
+	Common::HashMap<uint32, Common::String> _getSetAttribIDsToAttribName;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	Common::SharedPtr<Debugger> _debugger;

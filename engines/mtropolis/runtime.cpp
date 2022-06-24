@@ -2882,6 +2882,53 @@ VThreadState Structural::consumeCommand(Runtime *runtime, const Common::SharedPt
 
 		return kVThreadReturn;
 	}
+	if (msg->getEvent().eventType == EventIDs::kAttribSet) {
+		const uint32 attribID = msg->getEvent().eventInfo;
+
+		const Common::String *attribName = runtime->resolveAttributeIDName(attribID);
+		if (attribName == nullptr) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+			if (Debugger *debugger = runtime->debugGetDebugger())
+				debugger->notifyFmt(kDebugSeverityError, "Attribute ID '%i' couldn't be resolved for Set Attribute message", static_cast<int>(attribID));
+#endif
+			return kVThreadError;
+		}
+
+		MiniscriptThread miniscriptThread(runtime, msg, nullptr, nullptr, nullptr);
+
+		DynamicValueWriteProxy writeProxy;
+		MiniscriptInstructionOutcome outcome = this->writeRefAttribute(&miniscriptThread, writeProxy, *attribName);
+		if (outcome == kMiniscriptInstructionOutcomeFailed)
+			return kVThreadError;
+
+		outcome = writeProxy.pod.ifc->write(&miniscriptThread, msg->getValue(), writeProxy.pod.objectRef, writeProxy.pod.ptrOrOffset);
+		if (outcome == kMiniscriptInstructionOutcomeFailed)
+			return kVThreadError;
+
+		return kVThreadReturn;
+	}
+	if (msg->getEvent().eventType == EventIDs::kAttribGet) {
+		const uint32 attribID = msg->getEvent().eventInfo;
+
+		const Common::String *attribName = runtime->resolveAttributeIDName(attribID);
+		if (attribName == nullptr) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+			if (Debugger *debugger = runtime->debugGetDebugger())
+				debugger->notifyFmt(kDebugSeverityError, "Attribute ID '%i' couldn't be resolved for Get Attribute message", static_cast<int>(attribID));
+#endif
+			return kVThreadError;
+		}
+
+		MiniscriptThread miniscriptThread(runtime, msg, nullptr, nullptr, nullptr);
+
+		DynamicValue result;
+		if (!readAttribute(&miniscriptThread, result, *attribName))
+			return kVThreadError;
+
+		msg->setValue(result);
+
+		return kVThreadReturn;
+	}
 
 	warning("Command type %i was ignored", msg->getEvent().eventType);
 	return kVThreadReturn;
@@ -3515,6 +3562,29 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 
 	_systemInterface.reset(new SystemInterface());
 	_systemInterface->setSelfReference(_systemInterface);
+
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribCache] = "cache";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribDirect] = "direct";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribVisible] = "visible";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribLayer] = "layer";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribPaused] = "paused";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribVisible] = "loop";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribPosition] = "position";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribWidth] = "width";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribHeight] = "height";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribRate] = "rate";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribRange] = "range";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribCel] = "cel";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribLoopBackForth] = "loopbackforth";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribPlayEveryFrame] = "playeveryframe";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribTimeValue] = "timevalue";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribTrackDisable] = "trackdisable";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribTrackEnable] = "trackenable";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribVolume] = "volume";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribBalance] = "balance";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribText] = "text";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribMasterVolume] = "mastervolume";
+	_getSetAttribIDsToAttribName[AttributeIDs::kAttribUserTimeout] = "usertimeout";
 }
 
 bool Runtime::runFrame() {
@@ -5184,6 +5254,14 @@ bool Runtime::sortColliderPredicate(const ColliderInfo &a, const ColliderInfo &b
 	if (a.layer != b.layer)
 		return a.layer < b.layer;
 	return a.sceneStackDepth < b.sceneStackDepth;
+}
+
+const Common::String *Runtime::resolveAttributeIDName(uint32 attribID) const {
+	Common::HashMap<uint32, Common::String>::const_iterator it = _getSetAttribIDsToAttribName.find(attribID);
+	if (it == _getSetAttribIDsToAttribName.end())
+		return nullptr;
+	else
+		return &it->_value;
 }
 
 void Runtime::ensureMainWindowExists() {
