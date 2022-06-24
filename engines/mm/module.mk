@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	mm1/data/char.o \
 	mm1/data/game_state.o \
 	mm1/data/items.o \
+	mm1/data/party.o \
 	mm1/data/roster.o \
 	mm1/game/search.o \
 	mm1/game/view_base.o \

@@ -19,51 +19,36 @@
  *
  */
 
-#ifndef MM1_VIEWS_CHARACTER_INFO_H
-#define MM1_VIEWS_CHARACTER_INFO_H
-
-#include "common/array.h"
-#include "mm/mm1/views/character_base.h"
+#include "mm/mm1/data/party.h"
+#include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
 
-/**
- * In-game character dialog
- */
-class CharacterInfo : public CharacterBase {
-private:
-	enum ViewState { DISPLAY, EQUIP, GATHER, REMOVE, SHARE };
-	ViewState _state = DISPLAY;
-	Common::String _newName;
-private:
-	/**
-	 * Equips the item at the given index
-	 */
-	void equipItem(uint index);
+#define SHARE_FIELD(FIELD) \
+	for (uint i = 0; i < party.size(); ++i) \
+		total += party[i].FIELD; \
+	avg = total / party.size(); \
+	party[0].FIELD = avg + (total % party.size()); \
+	for (uint i = 1; i < party.size(); ++i) \
+		party[i].FIELD = avg;
 
-	/**
-	 * Removes the equipped item at the given index
-	 */
-	void removeItem(uint index);
+void Party::share(ShareType shareType) {
+	auto &party = g_globals->_party;
+	int total = 0, avg;
 
-	/**
-	 * Draw options for gems, gold, and food
-	 */
-	void drawGemsGoldFood();
-public:
-	CharacterInfo() : CharacterBase("CharacterInfo") {}
-	virtual ~CharacterInfo() {}
+	switch (shareType) {
+	case GEMS:
+		SHARE_FIELD(_gems);
+		break;
+	case GOLD:
+		SHARE_FIELD(_gold);
+		break;
+	case FOOD:
+		SHARE_FIELD(_food);
+		break;
+	}
+}
 
-	void draw() override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-};
-
-
-} // namespace Views
 } // namespace MM1
 } // namespace MM
-
-#endif

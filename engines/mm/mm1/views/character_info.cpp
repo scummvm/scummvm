@@ -121,7 +121,7 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 	case SHARE:
 		if (msg.keycode >= Common::KEYCODE_1 &&
 			msg.keycode <= Common::KEYCODE_3) {
-			share((ShareType)(msg.keycode - Common::KEYCODE_1));
+			Party::share((Party::ShareType)(msg.keycode - Common::KEYCODE_1));
 			_state = DISPLAY;
 			redraw();
 			break;
@@ -365,31 +365,6 @@ void CharacterInfo::removeItem(uint index) {
 		c._acBase = MAX((int)c._acBase - (int)item._val17, 0);
 		break;
 	default:
-		break;
-	}
-}
-
-#define SHARE_FIELD(FIELD) \
-	for (uint i = 0; i < party.size(); ++i) \
-		total += party[i].FIELD; \
-	avg = total / party.size(); \
-	party[0].FIELD = avg + (total % party.size()); \
-	for (uint i = 1; i < party.size(); ++i) \
-		party[i].FIELD = avg;
-
-void CharacterInfo::share(ShareType shareType) {
-	auto &party = g_globals->_party;
-	int total = 0, avg;
-
-	switch (shareType) {
-	case GEMS:
-		SHARE_FIELD(_gems);
-		break;
-	case GOLD:
-		SHARE_FIELD(_gold);
-		break;
-	case FOOD:
-		SHARE_FIELD(_food);
 		break;
 	}
 }

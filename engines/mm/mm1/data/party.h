@@ -19,50 +19,25 @@
  *
  */
 
-#ifndef MM1_VIEWS_CHARACTER_INFO_H
-#define MM1_VIEWS_CHARACTER_INFO_H
+#ifndef MM1_DATA_PARTY_H
+#define MM1_DATA_PARTY_H
 
 #include "common/array.h"
-#include "mm/mm1/views/character_base.h"
+#include "mm/mm1/data/char.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
 
-/**
- * In-game character dialog
- */
-class CharacterInfo : public CharacterBase {
-private:
-	enum ViewState { DISPLAY, EQUIP, GATHER, REMOVE, SHARE };
-	ViewState _state = DISPLAY;
-	Common::String _newName;
-private:
+struct Party : public Common::Array<Character> {
 	/**
-	 * Equips the item at the given index
+	 * Shares gems, gold or food
 	 */
-	void equipItem(uint index);
-
-	/**
-	 * Removes the equipped item at the given index
-	 */
-	void removeItem(uint index);
-
-	/**
-	 * Draw options for gems, gold, and food
-	 */
-	void drawGemsGoldFood();
-public:
-	CharacterInfo() : CharacterBase("CharacterInfo") {}
-	virtual ~CharacterInfo() {}
-
-	void draw() override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
+	enum ShareType {
+		GEMS = 0, GOLD = 1, FOOD = 2
+	};
+	static void share(ShareType shareType);
 };
 
-
-} // namespace Views
 } // namespace MM1
 } // namespace MM
 
