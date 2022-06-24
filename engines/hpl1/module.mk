@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	engine/game/SaveGame.o \
 	engine/game/ScriptFuncs.o \
 	engine/game/Updater.o \
+	engine/game/low_level_game_setup.o \
 	engine/graphics/Animation.o \
 	engine/graphics/AnimationTrack.o \
 	engine/graphics/BackgroundImage.o \
@@ -117,7 +118,6 @@ MODULE_OBJS := \
 	engine/impl/PhysicsMaterialNewton.o \
 	engine/impl/PhysicsWorldNewton.o \
 	engine/impl/SDLFontData.o \
-	engine/impl/SDLGameSetup.o \
 	engine/impl/SDLTexture.o \
 	engine/impl/SqScript.o \
 	engine/impl/VertexBufferOGL.o \

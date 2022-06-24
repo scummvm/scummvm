@@ -41,7 +41,7 @@
 
 #include "hpl1/engine/gui/Gui.h"
 
-#include "hpl1/engine/game/LowLevelGameSetup.h"
+#include "hpl1/engine/game/low_level_game_setup.h"
 #include "hpl1/engine/system/LowLevelSystem.h"
 
 namespace hpl {
@@ -144,13 +144,13 @@ bool cSetupVarContainer::GetBool(const tString &asName, bool abDefault) {
 
 //-----------------------------------------------------------------------
 
-cGame::cGame(iLowLevelGameSetup *apGameSetup, cSetupVarContainer &aVars) {
+cGame::cGame(LowLevelGameSetup *apGameSetup, cSetupVarContainer &aVars) {
 	GameInit(apGameSetup, aVars);
 }
 
 //-----------------------------------------------------------------------
 
-cGame::cGame(iLowLevelGameSetup *apGameSetup, int alWidth, int alHeight, int alBpp, bool abFullscreen,
+cGame::cGame(LowLevelGameSetup *apGameSetup, int alWidth, int alHeight, int alBpp, bool abFullscreen,
 			 unsigned int alUpdateRate, int alMultisampling) {
 	cSetupVarContainer Vars;
 	Vars.AddInt("ScreenWidth", alWidth);
@@ -164,7 +164,7 @@ cGame::cGame(iLowLevelGameSetup *apGameSetup, int alWidth, int alHeight, int alB
 
 //-----------------------------------------------------------------------
 
-void cGame::GameInit(iLowLevelGameSetup *apGameSetup, cSetupVarContainer &aVars) {
+void cGame::GameInit(LowLevelGameSetup *apGameSetup, cSetupVarContainer &aVars) {
 	mpGameSetup = apGameSetup;
 
 	Log("Creating Engine Modules\n");
@@ -172,25 +172,25 @@ void cGame::GameInit(iLowLevelGameSetup *apGameSetup, cSetupVarContainer &aVars)
 
 	// Create the modules that game connects to and init them!
 	Log(" Creating graphics module\n");
-	mpGraphics = mpGameSetup->CreateGraphics();
+	mpGraphics = mpGameSetup->createGraphics();
 
 	Log(" Creating system module\n");
-	mpSystem = mpGameSetup->CreateSystem();
+	mpSystem = mpGameSetup->createSystem();
 
 	Log(" Creating resource module\n");
-	mpResources = mpGameSetup->CreateResources(mpGraphics);
+	mpResources = mpGameSetup->createResources(mpGraphics);
 
 	Log(" Creating input module\n");
-	mpInput = mpGameSetup->CreateInput(mpGraphics);
+	mpInput = mpGameSetup->createInput(mpGraphics);
 
 	Log(" Creating sound module\n");
-	mpSound = mpGameSetup->CreateSound();
+	mpSound = mpGameSetup->createSound();
 
 	Log(" Creating physics module\n");
-	mpPhysics = mpGameSetup->CreatePhysics();
+	mpPhysics = mpGameSetup->createPhysics();
 
 	Log(" Creating ai module\n");
-	mpAI = mpGameSetup->CreateAI();
+	mpAI = mpGameSetup->createAi();
 
 	Log(" Creating gui module\n");
 	mpGui = hplNew(cGui, ());
@@ -203,7 +203,7 @@ void cGame::GameInit(iLowLevelGameSetup *apGameSetup, cSetupVarContainer &aVars)
 #endif
 
 	Log(" Creating scene module\n");
-	mpScene = mpGameSetup->CreateScene(mpGraphics, mpResources, mpSound, mpPhysics, mpSystem, mpAI, mpHaptic);
+	mpScene = mpGameSetup->createScene(mpGraphics, mpResources, mpSound, mpPhysics, mpSystem, mpAI, mpHaptic);
 
 	Log("--------------------------------------------------------\n\n");
 

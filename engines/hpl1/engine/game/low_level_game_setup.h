@@ -40,20 +40,29 @@
 
 namespace hpl {
 
-class iLowLevelGameSetup {
+class LowLevelGameSetup {
 public:
-	virtual ~iLowLevelGameSetup() {}
+	LowLevelGameSetup();
+	~LowLevelGameSetup();
 
-	virtual cInput *CreateInput(cGraphics *apGraphics) = 0;
-	virtual cSystem *CreateSystem() = 0;
-	virtual cGraphics *CreateGraphics() = 0;
-	virtual cResources *CreateResources(cGraphics *apGraphics) = 0;
-	virtual cScene *CreateScene(cGraphics *apGraphics, cResources *apResources, cSound *apSound,
-								cPhysics *apPhysics, cSystem *apSystem, cAI *apAI, cHaptic *apHaptic) = 0;
-	virtual cSound *CreateSound() = 0;
-	virtual cPhysics *CreatePhysics() = 0;
-	virtual cAI *CreateAI() = 0;
-	virtual cHaptic *CreateHaptic() = 0;
+	cInput *createInput(cGraphics *graphics);
+	cSystem *createSystem();
+	cGraphics *createGraphics();
+	cResources *createResources(cGraphics *graphics);
+	cScene *createScene(cGraphics *graphics, cResources *resources, cSound *sound,
+								cPhysics *physics, cSystem *system, cAI *ai, cHaptic *haptic);
+	cSound *createSound();
+	cPhysics *createPhysics();
+	cAI *createAi();
+	cHaptic *createHaptic();
+private:
+	iLowLevelSystem *_lowLevelSystem;
+	iLowLevelGraphics *_lowLevelGraphics;
+	iLowLevelInput *_lowLevelInput;
+	LowLevelResources *_lowLevelResources;
+	iLowLevelSound *_lowLevelSound;
+	iLowLevelPhysics *_lowLevelPhysics;
+	iLowLevelHaptic *_lowLevelHaptic;
 };
 };     // namespace hpl
 #endif // HPL_LOWLEVELGAMESETUP_H
