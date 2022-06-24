@@ -162,8 +162,8 @@ void cResources::Init(cGraphics *apGraphics, cSystem *apSystem, cSound *apSound,
 
 	mpMeshLoaderHandler = hplNew(cMeshLoaderHandler, (this, apScene));
 
-	mpLowLevelResources->AddMeshLoaders(mpMeshLoaderHandler);
-	mpLowLevelResources->AddVideoLoaders(mpVideoManager);
+	mpLowLevelResources->addMeshLoaders(mpMeshLoaderHandler);
+	mpLowLevelResources->addVideoLoaders(mpVideoManager);
 
 	Log("--------------------------------------------------------\n\n");
 }

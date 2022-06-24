@@ -50,7 +50,7 @@ cTextureManager::cTextureManager(cGraphics *apGraphics, cResources *apResources)
 	mpGraphics = apGraphics;
 	mpResources = apResources;
 
-	mpLowLevelResources->GetSupportedImageFormats(mlstFileFormats);
+	mpLowLevelResources->getSupportedImageFormats(mlstFileFormats);
 
 	mvCubeSideSuffixes.push_back("_pos_x");
 	mvCubeSideSuffixes.push_back("_neg_x");
@@ -129,7 +129,7 @@ iTexture *cTextureManager::CreateAnim2D(const tString &asName, bool abUseMipMaps
 
 		tBitmap2DVec vBitmaps;
 		for (size_t i = 0; i < vPaths.size(); ++i) {
-			Bitmap2D *pBmp = mpResources->GetLowLevel()->LoadBitmap2D(vPaths[i]);
+			Bitmap2D *pBmp = mpResources->GetLowLevel()->loadBitmap2D(vPaths[i]);
 			if (pBmp == NULL) {
 				Error("Couldn't load bitmap '%s'!\n", vPaths[i].c_str());
 
@@ -210,7 +210,7 @@ iTexture *cTextureManager::CreateCubeMap(const tString &asPathName, bool abUseMi
 		// Load bitmaps for all faces
 		tBitmap2DVec vBitmaps;
 		for (int i = 0; i < 6; i++) {
-			Bitmap2D *pBmp = mpResources->GetLowLevel()->LoadBitmap2D(vPaths[i]);
+			Bitmap2D *pBmp = mpResources->GetLowLevel()->loadBitmap2D(vPaths[i]);
 			if (pBmp == NULL) {
 				Error("Couldn't load bitmap '%s'!\n", vPaths[i].c_str());
 				for (int j = 0; j < (int)vBitmaps.size(); j++)
@@ -314,7 +314,7 @@ iTexture *cTextureManager::CreateAttenuation(const tString &asFallOffName) {
 		return NULL;
 	}
 
-	Bitmap2D *pBmp = mpResources->GetLowLevel()->LoadBitmap2D(sPath);
+	Bitmap2D *pBmp = mpResources->GetLowLevel()->loadBitmap2D(sPath);
 	if (pBmp == NULL) {
 		Log("Couldn't load bitmap '%s'\n", asFallOffName.c_str());
 		return NULL;
@@ -390,7 +390,7 @@ iTexture *cTextureManager::CreateFlatTexture(const tString &asName, bool abUseMi
 	if (pTexture == NULL && sPath != "") {
 		// Load the bitmap
 		Bitmap2D *pBmp;
-		pBmp = mpLowLevelResources->LoadBitmap2D(sPath);
+		pBmp = mpLowLevelResources->loadBitmap2D(sPath);
 		if (pBmp == NULL) {
 			Error("Texturemanager Couldn't load bitmap '%s'\n", sPath.c_str());
 			EndLoad();

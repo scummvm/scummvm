@@ -39,29 +39,29 @@ static tString getImageType(const tString &filepath) {
 	return "";
 }
 
-Bitmap2D *LowLevelResources::LoadBitmap2D(const tString &filepath) {
+Bitmap2D *LowLevelResources::loadBitmap2D(const tString &filepath) {
 	return new Bitmap2D(filepath, getImageType(filepath));
 }
 
-void LowLevelResources::GetSupportedImageFormats(tStringList &formats) {
+void LowLevelResources::getSupportedImageFormats(tStringList &formats) {
 	formats.insert(formats.end(), {
 		"BMP","GIF","JPEG","PNG","JPG","TGA"}); 
 }
 
-void LowLevelResources::AddMeshLoaders(cMeshLoaderHandler *ml) {
+void LowLevelResources::addMeshLoaders(cMeshLoaderHandler *ml) {
 #if 0
 	ml->AddLoader(hplNew(cMeshLoaderMSH, (mpLowLevelGraphics)));
 	ml->AddLoader(hplNew(cMeshLoaderCollada, (mpLowLevelGraphics)));
 #endif
 }
 
-void LowLevelResources::AddVideoLoaders(cVideoManager *vm) {
+void LowLevelResources::addVideoLoaders(cVideoManager *vm) {
 #ifdef INCLUDE_THORA
 	apManager->AddVideoLoader(hplNew(cVideoStreamTheora_Loader, ()));
 #endif
 }
 
-void LowLevelResources::FindFilesInDir(tStringList &alstStrings, tString asDir, tString asMask) {
+void LowLevelResources::findFilesInDir(tStringList &alstStrings, tString asDir, tString asMask) {
 	//FIXME: use consistent string types
 	Common::String pattern = Common::String(asDir.c_str()) + '/' +  Common::String(asMask.c_str()); 
 	Common::ArchiveMemberList ls; 

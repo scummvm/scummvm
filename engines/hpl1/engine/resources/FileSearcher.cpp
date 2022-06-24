@@ -67,7 +67,7 @@ void cFileSearcher::AddDirectory(tString asPath, tString asMask) {
 	if (it == m_setLoadedDirs.end()) {
 		m_setLoadedDirs.insert(asPath);
 
-		mpLowLevelResources->FindFilesInDir(lstFileNames, asPath, asMask);
+		mpLowLevelResources->findFilesInDir(lstFileNames, asPath, asMask);
 		for (const auto &f : lstFileNames) {
 			m_mapFiles.insert(tFilePathMap::value_type(
 				cString::ToLowerCase(f),

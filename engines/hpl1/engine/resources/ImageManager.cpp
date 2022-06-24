@@ -47,7 +47,7 @@ cImageManager::cImageManager(cFileSearcher *apFileSearcher, iLowLevelGraphics *a
 	: iResourceManager(apFileSearcher, apLowLevelResources, apLowLevelSystem) {
 	mpLowLevelGraphics = apLowLevelGraphics;
 
-	mpLowLevelResources->GetSupportedImageFormats(mlstFileFormats);
+	mpLowLevelResources->getSupportedImageFormats(mlstFileFormats);
 
 	mvFrameSize = cVector2l(512, 512);
 	mlFrameHandle = 0;
@@ -83,7 +83,7 @@ iResourceBase *cImageManager::CreateInFrame(const tString &asName, int alFrameHa
 	if (!pImage) {
 		if (sPath != "") {
 			Bitmap2D *pBmp;
-			pBmp = mpLowLevelResources->LoadBitmap2D(sPath);
+			pBmp = mpLowLevelResources->loadBitmap2D(sPath);
 			if (pBmp == NULL) {
 				Error("Imagemanager Couldn't load bitmap '%s'\n", sPath.c_str());
 				EndLoad();
