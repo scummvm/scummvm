@@ -13,7 +13,7 @@
 Object *Area::objectWithIDFromMap(ObjectMap *map, uint16 objectID) {
 	if (!map)
 		return nullptr;
-	if(!map->contains(objectID)) 
+	if(!map->contains(objectID))
 		return nullptr;
 	return (*map)[objectID];
 }
@@ -89,18 +89,18 @@ void Area::show() {
 }
 
 void Area::draw(Freescape::Renderer *gfx) {
-	if (palette) 
+	if (palette)
 		gfx->_palette = palette;
 
 	gfx->clear();
-	gfx->drawSky(skyColor);
+	//gfx->drawSky(skyColor);
 	assert(drawableObjects.size() > 0);
 	for (Common::Array<Object *>::iterator it = drawableObjects.begin(); it != drawableObjects.end(); it++) {
-		if (!(*it)->isInvisible()) 
+		if (!(*it)->isInvisible() && !(*it)->isPlanar())
 			(*it)->draw(gfx);
 	}
 	for (Common::Array<Object *>::iterator it = drawableObjects.begin(); it != drawableObjects.end(); it++) {
-		if (!(*it)->isInvisible() && (*it)->isPlanar()) 
+		if (!(*it)->isInvisible() && (*it)->isPlanar())
 			(*it)->draw(gfx);
 	}
 	gfx->drawFloor(groundColor);

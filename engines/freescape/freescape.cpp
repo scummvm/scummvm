@@ -163,6 +163,7 @@ void FreescapeEngine::processInput() {
 
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RETURN_TO_LAUNCHER:
+			quitGame();
 			return;
 			break;
 
@@ -206,7 +207,8 @@ Common::Error FreescapeEngine::run() {
 		_scaleVector = Math::Vector3d(scale, scale, scale);
 	} else
 		_scaleVector = _scale;
-	debug("scale: %f, %f, %f", _scaleVector.x(), _scaleVector.y(), _scaleVector.z());
+	debug("entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
+	debug("player height: %d", _playerHeight);
 	_position.setValue(1, _position.y() + _playerHeight);
 
 	Math::Vector3d rotation = entrance->getRotation();
@@ -224,7 +226,7 @@ Common::Error FreescapeEngine::run() {
 		// the 16-bit kit permits the range 0-8192 to be used along all three axes and from that comes the far plane distance of 14189.
 		_farClipPlane = 14189.f;
 	} else {
-		_farClipPlane = 1024.f; // wild guess
+		_farClipPlane = 4096.f; // wild guess
 	}
 
 	//g_system->lockMouse(true);

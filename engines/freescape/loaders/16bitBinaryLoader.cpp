@@ -35,7 +35,7 @@ static Object *load16bitObject(StreamLoader &stream) {
 
 	/*
 		Notes to self:
-		
+
 			0 = no flags
 			128 = Movable, Animated
 			134 = Movable, Animated, Default invis, invis
@@ -191,7 +191,7 @@ Area *load16bitArea(StreamLoader &stream) {
 	stream.get16();
 	stream.get16();
 	stream.get16();
-	
+
 
 	uint8 skyColor = stream.get8();
 	skyColor = (stream.get8() << 4) | skyColor;
@@ -379,7 +379,7 @@ void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 	// file format, could this be shading information by
 	// analogy with that?
 	/*cout << "global unknown:";
-	int i; 
+	int i;
 	int j;
 	for (i = 0; i < 106/2; i++)
 		cout << streamLoader.get16() << endl;*/
@@ -482,11 +482,11 @@ void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 				error("Unexpected size of image %d", chunkSize);
 
 			raw_border = streamLoader.nextBytes(chunkSize);
-			raw_palette = new Common::Array<uint8>(); 
+			raw_palette = new Common::Array<uint8>();
 			debug("Palete follows at %x", streamLoader.getFileOffset());
 			for (i = 0; i < colorNumber*3; i++)
 				raw_palette->push_back(streamLoader.get8() << 2);
-			
+
 			debug("Palete finishes at %x", streamLoader.getFileOffset());
 			chunkSize = streamLoader.rget16();
 			debug("Something else of size %x at %x??", chunkSize, streamLoader.getFileOffset());
@@ -520,7 +520,7 @@ void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 	_startEntrance = startEntrance;
 	_colorNumber = colorNumber;
 	_areasByAreaID = areaMap;
-	_scale = Math::Vector3d(scaleX, scaleY, scaleZ);
+	_scale = Math::Vector3d(1, 1, 1);
 	_binaryBits = 16;
 	//return Binary{16, startArea, areaMap, raw_border, raw_palette, colorNumber};
 }
