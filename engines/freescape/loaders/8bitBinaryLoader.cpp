@@ -98,7 +98,7 @@ static Object *load8bitObject(StreamLoader &stream) {
 		// create an entrance
 		return new Entrance(
 			objectID,
-			position,
+			32 * position,
 			v); // rotation
 	} break;
 
@@ -209,7 +209,7 @@ Area *load8bitArea(StreamLoader &stream, uint16 ncolors) {
 		debug("%s", detokenise8bitCondition(*conditionData)->c_str());
 	}
 
-	return (new Area(areaNumber, objectsByID, entrancesByID, scale, 0, 1, palette));
+	return (new Area(areaNumber, objectsByID, entrancesByID, scale, 255, 255, palette));
 }
 
 // struct BinaryTable {
@@ -298,7 +298,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 			(*areaMap)[newArea->getAreaID()] = newArea;
 		}
 	}
-	_playerHeight = 32;
+	_playerHeight = 64;
 	_areasByAreaID = areaMap;
 	_startArea = startArea;
 	_startEntrance = startEntrance;

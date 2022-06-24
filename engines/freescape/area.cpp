@@ -93,7 +93,8 @@ void Area::draw(Freescape::Renderer *gfx) {
 		gfx->_palette = palette;
 
 	gfx->clear();
-	//gfx->drawSky(skyColor);
+	if (skyColor != 255)
+		gfx->drawSky(skyColor);
 	assert(drawableObjects.size() > 0);
 	for (Common::Array<Object *>::iterator it = drawableObjects.begin(); it != drawableObjects.end(); it++) {
 		if (!(*it)->isInvisible() && !(*it)->isPlanar())
@@ -103,5 +104,6 @@ void Area::draw(Freescape::Renderer *gfx) {
 		if (!(*it)->isInvisible() && (*it)->isPlanar())
 			(*it)->draw(gfx);
 	}
-	gfx->drawFloor(groundColor);
+	if (groundColor != 255)
+		gfx->drawFloor(groundColor);
 }

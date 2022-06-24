@@ -293,6 +293,7 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 	// Make sure the user stays at the ground level
 	// this one-liner keeps the user at the ground level (xz plane)
 	_position.set(_position.x(), positionY, _position.z());
+	debug("player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 }
 
 bool FreescapeEngine::hasFeature(EngineFeature f) const {
