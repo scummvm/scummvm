@@ -57,7 +57,7 @@ Set::~Set() {
 }
 
 bool Set::open(const Common::String &name) {
-	Common::ScopedPtr<Common::SeekableReadStream> s(_vm->getResourceStream(name));
+	Common::ScopedPtr<Common::SeekableReadStream> s(_vm->getResourceStream(_vm->_enhancedEdition ? ("scenes/" + name) : name));
 
 	uint32 sig = s->readUint32BE();
 	if (sig != kSet0)

@@ -32,7 +32,7 @@
 namespace BladeRunner {
 
 bool VQAPlayer::open() {
-	_s = _vm->getResourceStream(_name);
+	_s = _vm->getResourceStream(_vm->_enhancedEdition ? ("video/" + _name) : _name);
 	if (!_s) {
 		return false;
 	}

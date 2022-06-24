@@ -88,6 +88,8 @@
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/translation.h"
+#include "common/unzip.h"
+
 #include "gui/message.h"
 
 #include "engines/util.h"
@@ -127,6 +129,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_framesPerSecondMax           = false;
 	_disableStaminaDrain          = false;
 	_cutContent                   = Common::String(desc->gameId).contains("bladerunner-final");
+	_enhancedEdition              = Common::String(desc->gameId).contains("bladerunner-ee");
 	_validBootParam               = false;
 
 	_playerLosesControlCounter = 0;
@@ -246,6 +249,8 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_customEventRepeatTimeDelay = 0;
 
 	_isNonInteractiveDemo = desc->flags & ADGF_DEMO;
+
+	_archive = nullptr;
 }
 
 BladeRunnerEngine::~BladeRunnerEngine() {
@@ -516,23 +521,28 @@ bool BladeRunnerEngine::checkFiles(Common::Array<Common::String> &missingFiles) 
 	missingFiles.clear();
 
 	Common::Array<Common::String> requiredFiles;
-	requiredFiles.push_back("1.TLK");
-	requiredFiles.push_back("2.TLK");
-	requiredFiles.push_back("3.TLK");
-	requiredFiles.push_back("A.TLK");
+
+	if (_enhancedEdition) {
+		requiredFiles.push_back("BladeRunner.kpf");
+	} else {
+		requiredFiles.push_back("1.TLK");
+		requiredFiles.push_back("2.TLK");
+		requiredFiles.push_back("3.TLK");
+		requiredFiles.push_back("A.TLK");
+		requiredFiles.push_back("MODE.MIX");
+		requiredFiles.push_back("MUSIC.MIX");
+		requiredFiles.push_back("OUTTAKE1.MIX");
+		requiredFiles.push_back("OUTTAKE2.MIX");
+		requiredFiles.push_back("OUTTAKE3.MIX");
+		requiredFiles.push_back("OUTTAKE4.MIX");
+		requiredFiles.push_back("SFX.MIX");
+		requiredFiles.push_back("SPCHSFX.TLK");
+		requiredFiles.push_back("STARTUP.MIX");
+		requiredFiles.push_back("VQA1.MIX");
+		requiredFiles.push_back("VQA2.MIX");
+		requiredFiles.push_back("VQA3.MIX");
+	}
 	requiredFiles.push_back("COREANIM.DAT");
-	requiredFiles.push_back("MODE.MIX");
-	requiredFiles.push_back("MUSIC.MIX");
-	requiredFiles.push_back("OUTTAKE1.MIX");
-	requiredFiles.push_back("OUTTAKE2.MIX");
-	requiredFiles.push_back("OUTTAKE3.MIX");
-	requiredFiles.push_back("OUTTAKE4.MIX");
-	requiredFiles.push_back("SFX.MIX");
-	requiredFiles.push_back("SPCHSFX.TLK");
-	requiredFiles.push_back("STARTUP.MIX");
-	requiredFiles.push_back("VQA1.MIX");
-	requiredFiles.push_back("VQA2.MIX");
-	requiredFiles.push_back("VQA3.MIX");
 
 	for (uint i = 0; i < requiredFiles.size(); ++i) {
 		if (!Common::File::exists(requiredFiles[i])) {
@@ -655,7 +665,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 		_debugger = new Debugger(this);
 		setDebugger(_debugger);
 
-		bool r = openArchive("STARTUP.MIX");
+		bool r = _enhancedEdition ? openArchiveEnhancedEdition() : openArchive("STARTUP.MIX");
 		if (!r)
 			return false;
 
@@ -1042,6 +1052,9 @@ void BladeRunnerEngine::shutdown() {
 	if (isArchiveOpen("STARTUP.MIX")) {
 		closeArchive("STARTUP.MIX");
 	}
+
+	delete _archive;
+	_archive = nullptr;
 
 	if (isArchiveOpen("SUBTITLES.MIX")) {
 		closeArchive("SUBTITLES.MIX");
@@ -2337,6 +2350,10 @@ void BladeRunnerEngine::outtakePlay(const Common::String &basenameNoExt, bool no
 }
 
 bool BladeRunnerEngine::openArchive(const Common::String &name) {
+	if (_enhancedEdition) {
+		return true;
+	}
+
 	int i;
 
 	// If archive is already open, return true
@@ -2364,6 +2381,10 @@ bool BladeRunnerEngine::openArchive(const Common::String &name) {
 }
 
 bool BladeRunnerEngine::closeArchive(const Common::String &name) {
+	if (_enhancedEdition) {
+		return true;
+	}
+
 	for (int i = 0; i != kArchiveCount; ++i) {
 		if (_archives[i].isOpen() && _archives[i].getName() == name) {
 			_archives[i].close();
@@ -2376,12 +2397,20 @@ bool BladeRunnerEngine::closeArchive(const Common::String &name) {
 }
 
 bool BladeRunnerEngine::isArchiveOpen(const Common::String &name) const {
+	if (_enhancedEdition) {
+		return false;
+	}
 	for (int i = 0; i != kArchiveCount; ++i) {
 		if (_archives[i].isOpen() && _archives[i].getName() == name)
 			return true;
 	}
 
 	return false;
+}
+
+bool BladeRunnerEngine::openArchiveEnhancedEdition() {
+	_archive = Common::makeZipArchive("BladeRunner.kpf");
+	return _archive != nullptr;
 }
 
 void BladeRunnerEngine::syncSoundSettings() {
@@ -2447,6 +2476,11 @@ Common::SeekableReadStream *BladeRunnerEngine::getResourceStream(const Common::S
 			directFile.close();
 			return stream;
 		}
+	}
+
+	if (_enhancedEdition) {
+		assert(_archive != nullptr);
+		return _archive->createReadStreamForMember(name);
 	}
 
 	for (int i = 0; i != kArchiveCount; ++i) {

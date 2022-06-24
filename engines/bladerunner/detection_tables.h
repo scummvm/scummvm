@@ -134,6 +134,17 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO6(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GAMEOPTION_DISABLE_STAMINA_DRAIN, GUIO_NOMIDI)
 	},
 
+	// BladeRunner - Enhanced edition
+	{
+		"bladerunner-ee",
+		_s("Enhanced edition not supported, use the original files which are part of the release."),
+		AD_ENTRY1s("BladeRunner.kpf", "c42766a9337c828f0d98383f72636fb3", 1163268364),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSUPPORTED,
+		GUIO6(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GAMEOPTION_DISABLE_STAMINA_DRAIN, GUIO_NOMIDI)
+	},
+
 	// Versions with restored content
 
 	// BladeRunner (English) - ENG

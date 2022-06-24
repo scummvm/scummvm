@@ -86,6 +86,8 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 		gameDesc = "Blade Runner";
 	} else if (gameId == "bladerunner-final") {
 		gameDesc = "Blade Runner (Restored Content)";
+	} else if (gameId == "bladerunner-ee") {
+		gameDesc = "Blade Runner: Enhanced Edition";
 	}
 
 	if (gameDesc.empty()) {

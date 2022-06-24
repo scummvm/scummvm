@@ -42,6 +42,7 @@ namespace BladeRunner {
 static const PlainGameDescriptor bladeRunnerGames[] = {
 	{"bladerunner", "Blade Runner"},
 	{"bladerunner-final", "Blade Runner with restored content"},
+	{"bladerunner-ee", "Blade Runner: Enhanced Edition"},
 	{nullptr, nullptr}
 };
 
