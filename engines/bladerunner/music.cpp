@@ -401,7 +401,7 @@ void Music::mixerChannelEnded(int channel, void *data) {
 
 byte *Music::getData(const Common::String &name) {
 	// NOTE: This is not part original game, loading data is done in the mixer and its using buffering to limit memory usage
-	Common::SeekableReadStream *stream = _vm->getResourceStream(name);
+	Common::SeekableReadStream *stream = _vm->getResourceStream(_vm->_enhancedEdition ? ("audio/" + name) : name);
 
 	if (stream == nullptr) {
 		return nullptr;
