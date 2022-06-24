@@ -33,23 +33,23 @@ namespace hpl {
 
 template<typename Loader>
 static Loader *loadImage(const tString &filepath) {
-	//FIXME: string types 
-	Common::File imgFile; 
+	//FIXME: string types
+	Common::File imgFile;
 	if (!imgFile.open(filepath.c_str())) {
 		error("Could not open file: %s", filepath.c_str());
-		return nullptr; 
+		return nullptr;
 	}
-	Loader *imgLoader = new Loader(); 
+	Loader *imgLoader = new Loader();
 	if (!imgLoader->loadStream(imgFile)) {
 		error("Could not load image at %s", filepath.c_str());
 	}
-	return imgLoader; 
+	return imgLoader;
 }
 
-Bitmap2D::Bitmap2D(const tString &filepath, const tString &type) 
-	: iLowLevelPicture(type), isSurfaceActive(false) {
+Bitmap2D::Bitmap2D(const tString &filepath, const tString &type)
+	: iLowLevelPicture(type), _isSurfaceActive(false) {
 	if (type == "png")
-		_decoder.reset(loadImage<Image::PNGDecoder>(filepath)); 
+		_decoder.reset(loadImage<Image::PNGDecoder>(filepath));
 	if (type == "bmp")
 		_decoder.reset(loadImage<Image::BitmapDecoder>(filepath));
 	if (type == "tga")
@@ -62,18 +62,18 @@ Bitmap2D::Bitmap2D(const tString &filepath, const tString &type)
 	error("trying to load unsupported image format %s", type.c_str());
 }
 
-Bitmap2D::Bitmap2D(const tString &type, const cVector2l &size, const Graphics::PixelFormat &format) 
-: iLowLevelPicture(type), isSurfaceActive(true) {
+Bitmap2D::Bitmap2D(const tString &type, const cVector2l &size, const Graphics::PixelFormat &format)
+: iLowLevelPicture(type), _isSurfaceActive(true) {
 	create(size, format);
 }
 
 
 void Bitmap2D::drawToBitmap(Bitmap2D &dest, const cVector2l &pos) {
-	if(!dest.isSurfaceActive)
+	if(!dest._isSurfaceActive)
 		dest.copyDecoder();
-	
+
 	if (activeSurface().format != dest._surface.format)
-		error("call to Bitmap2D::drawToBitmap with different pixel formats"); 
+		error("call to Bitmap2D::drawToBitmap with different pixel formats");
 	if (activeSurface().w + pos.x > dest._surface.w || activeSurface().h + pos.y > dest._surface.h)
 		error("call to Bitmap2D::drawToBitmap would go out of bounds");
 
@@ -82,8 +82,8 @@ void Bitmap2D::drawToBitmap(Bitmap2D &dest, const cVector2l &pos) {
 
 bool Bitmap2D::create(const cVector2l &size, const Graphics::PixelFormat &format) {
 	_surface.create(size.x, size.y, format);
-	isSurfaceActive = true;
-	_decoder.release(); 
+	_isSurfaceActive = true;
+	_decoder.release();
 	return true;
 }
 
@@ -96,16 +96,16 @@ static uint32 quantizeColor(const cColor &col, const Graphics::PixelFormat &form
 }
 
 void Bitmap2D::fillRect(const cRect2l &rect, const cColor &color) {
-	if(!isSurfaceActive)
+	if(!_isSurfaceActive)
 		copyDecoder();
-	
+
 	const uint32 qcol = quantizeColor(color, _surface.format);
 	const Common::Rect surfaceRect(
-		rect.x, 
+		rect.x,
 		rect.y,
-		rect.w <= 0 ? rect.x + _surface.w : rect.x + rect.w, 
+		rect.w <= 0 ? rect.x + _surface.w : rect.x + rect.w,
 		rect.h <= 0 ? rect.y + _surface.w : rect.y + rect.h
-	);  
+	);
 	_surface.fillRect(surfaceRect, qcol);
 }
 
@@ -118,23 +118,23 @@ int Bitmap2D::getNumChannels() {
 }
 
 bool Bitmap2D::HasAlpha() {
-	return activeSurface().format.aBits() > 0; 
+	return activeSurface().format.aBits() > 0;
 }
 
 void Bitmap2D::copyDecoder() {
-	_surface.copyFrom(*( _decoder->getSurface())); 
-	isSurfaceActive = true;
-	_decoder.release(); 
+	_surface.copyFrom(*( _decoder->getSurface()));
+	_isSurfaceActive = true;
+	_decoder.release();
 }
 
 const Graphics::Surface &Bitmap2D::activeSurface() const {
-	if(isSurfaceActive)
+	if(_isSurfaceActive)
 		return _surface;
 	return *(_decoder->getSurface());
 }
 
 Bitmap2D::~Bitmap2D() {
-	if(isSurfaceActive)
+	if(_isSurfaceActive)
 		_surface.free();
 }
 

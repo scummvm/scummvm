@@ -40,10 +40,10 @@ namespace hpl {
 
 class Bitmap2D : public iLowLevelPicture {
 public:
-	Bitmap2D(const tString &type, const cVector2l &size, const Graphics::PixelFormat &format); 
-	Bitmap2D(const tString &filename, const tString &type); 
+	Bitmap2D(const tString &type, const cVector2l &size, const Graphics::PixelFormat &format);
+	Bitmap2D(const tString &filename, const tString &type);
 
-	~Bitmap2D(); 
+	~Bitmap2D();
 
 	void drawToBitmap(Bitmap2D &dest, const cVector2l &pos);
 
@@ -57,13 +57,13 @@ public:
 
 	bool HasAlpha() override;
 
-private: 
-	void copyDecoder(); 
+private:
+	void copyDecoder();
 	const Graphics::Surface &activeSurface() const;
 
-	Graphics::Surface _surface; 
+	Graphics::Surface _surface;
 	Common::ScopedPtr<Image::ImageDecoder> _decoder;
-	bool isSurfaceActive; 
+	bool _isSurfaceActive;
 };
 
 typedef std::vector<Bitmap2D *> tBitmap2DVec;
