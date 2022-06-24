@@ -45,7 +45,7 @@ Renderer::Renderer(OSystem *system)
 	_currentPixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	_originalPixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 	_palettePixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
-
+	_keyColor = -1;
 }
 
 Renderer::~Renderer() {}

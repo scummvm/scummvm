@@ -250,7 +250,7 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vec
 	// tglEnable(TGL_POLYGON_OFFSET_LINE);
 	// tglEnable(TGL_POLYGON_OFFSET_POINT);
 	tglPolygonOffset(1.f, 1.f);
-	if ((*colours)[0] > 0) {
+	if ((*colours)[0] != _keyColor) {
 		_palette->getRGBAt((*colours)[0], r, g, b);
 		tglColor3ub(r, g, b);
 		for (int i = 0; i < ordinates->size(); i = i + 3) {
@@ -259,7 +259,7 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vec
 		renderFace(vertices);
 	}
 	vertices.clear();
-	if ((*colours)[1] > 0) {
+	if ((*colours)[1] != _keyColor) {
 		_palette->getRGBAt((*colours)[1], r, g, b);
 		tglColor3ub(r, g, b);
 		for (int i = ordinates->size(); i > 0; i = i - 3) {
@@ -286,7 +286,7 @@ void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::V
 	for (int i = 0; i < 2; i++) {
 
 		//debug("rec color: %d", (*colours)[i]);
-		if ((*colours)[i] > 0) {
+		if ((*colours)[i] != _keyColor) {
 			_palette->getRGBAt((*colours)[i], r, g, b);
 			tglColor3ub(r, g, b);
 			vertices.clear();
@@ -360,7 +360,7 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	uint8 r, g, b;
 
 	// Face 0
-	if ((*colours)[0] > 0) {
+	if ((*colours)[0] != _keyColor) {
 		_palette->getRGBAt((*colours)[0], r, g, b);
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
@@ -375,7 +375,7 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	}
 
 	// Face 1
-	if ((*colours)[1] > 0) {
+	if ((*colours)[1] != _keyColor) {
 		_palette->getRGBAt((*colours)[1], r, g, b);
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
@@ -390,7 +390,7 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	}
 
 	// Face 2
-	if ((*colours)[2] > 0) {
+	if ((*colours)[2] != _keyColor) {
 		_palette->getRGBAt((*colours)[2], r, g, b);
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
@@ -405,7 +405,7 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	}
 
 	// Face 3
-	if ((*colours)[3] > 0) {
+	if ((*colours)[3] != _keyColor) {
 		_palette->getRGBAt((*colours)[3], r, g, b);
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
@@ -420,7 +420,7 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	}
 
 	// Face 1
-	if ((*colours)[4] > 0) {
+	if ((*colours)[4] != _keyColor) {
 		_palette->getRGBAt((*colours)[4], r, g, b);
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
@@ -435,7 +435,7 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	}
 
 	// Face 0
-	if ((*colours)[5] > 0) {
+	if ((*colours)[5] != _keyColor) {
 		_palette->getRGBAt((*colours)[5], r, g, b);
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);

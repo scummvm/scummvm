@@ -95,6 +95,7 @@ public:
 
 	Common::Rect viewport() const;
 	Graphics::PixelBuffer *_palette = nullptr;
+	int _keyColor;
 
 	/**
 	 * Select the window where to render
