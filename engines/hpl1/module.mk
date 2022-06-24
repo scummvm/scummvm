@@ -226,7 +226,7 @@ MODULE_OBJS := \
 	engine/sound/SoundHandler.o \
 	engine/system/Container.o \
 	engine/system/LogicTimer.o \
-	engine/system/low_level_system.cpp \
+	engine/system/low_level_system.o \
 	engine/system/MemoryManager.o \
 	engine/system/SerializeClass.o \
 	engine/system/String.o \
