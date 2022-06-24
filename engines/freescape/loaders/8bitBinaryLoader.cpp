@@ -99,7 +99,7 @@ static Object *load8bitObject(StreamLoader &stream) {
 		return new Entrance(
 			objectID,
 			32 * position,
-			v); // rotation
+			5 * v); // rotation
 	} break;
 
 	case Object::Sensor:
