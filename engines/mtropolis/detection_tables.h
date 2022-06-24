@@ -45,7 +45,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GID_OBSIDIAN,
@@ -73,7 +73,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GID_OBSIDIAN,
@@ -100,7 +100,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GID_OBSIDIAN,
@@ -126,7 +126,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GID_OBSIDIAN,
