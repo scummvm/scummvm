@@ -2398,7 +2398,7 @@ public:
 	bool isDirectToScreen() const;
 	uint16 getLayer() const;
 
-	bool isMouseInsideBox(int32 relativeX, int32 relativeY) const;
+	bool isMouseInsideDrawableArea(int32 relativeX, int32 relativeY) const;
 
 	// Returns true if there is mouse collision at a specified point, assuming it has already passed isMouseInsideBox
 	virtual bool isMouseCollisionAtPoint(int32 relativeX, int32 relativeY) const;

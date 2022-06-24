@@ -4292,7 +4292,7 @@ void Runtime::recursiveFindMouseCollision(Structural *&bestResult, int32 &bestLa
 					}
 				}
 
-				if (isInFront && visual->isMouseInsideBox(relativeX, relativeY) && isStructuralMouseInteractive(visual, testType) && visual->isMouseCollisionAtPoint(relativeX, relativeY)) {
+				if (isInFront && visual->isMouseInsideDrawableArea(relativeX, relativeY) && isStructuralMouseInteractive(visual, testType) && visual->isMouseCollisionAtPoint(relativeX, relativeY)) {
 					bestResult = candidate;
 					bestLayer = layer;
 					bestStackHeight = stackHeight;
@@ -4802,7 +4802,7 @@ VThreadState Runtime::updateMousePositionTask(const UpdateMousePositionTaskData 
 		Common::Point parentOrigin = visual->getParentOrigin();
 		int32 relativeX = data.x - parentOrigin.x;
 		int32 relativeY = data.y - parentOrigin.y;
-		bool mouseOutside = !visual->isMouseInsideBox(relativeX, relativeY) || !visual->isMouseCollisionAtPoint(relativeX, relativeY);
+		bool mouseOutside = !visual->isMouseInsideDrawableArea(relativeX, relativeY) || !visual->isMouseCollisionAtPoint(relativeX, relativeY);
 
 		if (mouseOutside != _trackedMouseOutside) {
 			if (mouseOutside) {
@@ -6718,8 +6718,128 @@ VThreadState VisualElement::consumeCommand(Runtime *runtime, const Common::Share
 	return Element::consumeCommand(runtime, msg);
 }
 
-bool VisualElement::isMouseInsideBox(int32 relativeX, int32 relativeY) const {
-	return relativeX >= _rect.left && relativeX < _rect.right && relativeY >= _rect.top && relativeY < _rect.bottom;
+bool VisualElement::isMouseInsideDrawableArea(int32 relativeX, int32 relativeY) const {
+	if (relativeX < _rect.left || relativeX >= _rect.right || relativeY < _rect.top || relativeY >= _rect.bottom)
+		return false;
+
+	// NOTE: This is actually incomplete, graphic modifiers are supposed to mask out the drawable area for non-rect
+	// shapes, so what we SHOULD be doing here is generating a mask and hoisting the mask gen code out of
+	// GraphicModifier to more common code, and check the mask here.
+	//
+	// For now, we just use this for click detection.
+	relativeX -= _rect.left;
+	relativeY -= _rect.top;
+
+	switch (_renderProps.getShape()) {
+	case VisualElementRenderProperties::kShapePolygon:
+	case VisualElementRenderProperties::kShapeStar: {
+		Common::Point starPoints[10];
+			const Common::Point *polyPoints = nullptr;
+			size_t numPolyPoints = 0;
+
+			if (_renderProps.getShape() == VisualElementRenderProperties::kShapeStar) {
+				int16 width = _rect.width();
+				int16 height = _rect.height();
+				starPoints[0] = Common::Point(width / 2, 0);
+				starPoints[1] = Common::Point(width * 2 / 3, height / 3);
+				starPoints[2] = Common::Point(width, height / 3);
+				starPoints[3] = Common::Point(width * 3 / 4, height / 2);
+				starPoints[4] = Common::Point(width, height);
+				starPoints[5] = Common::Point(width / 2, height * 2 / 3);
+				starPoints[6] = Common::Point(0, height);
+				starPoints[7] = Common::Point(width / 4, height / 2);
+				starPoints[8] = Common::Point(0, height / 3);
+				starPoints[9] = Common::Point(width / 3, height / 3);
+				polyPoints = starPoints;
+				numPolyPoints = 10;
+			} else {
+				numPolyPoints = _renderProps.getPolyPoints().size();
+				if (numPolyPoints > 0)
+					polyPoints = &_renderProps.getPolyPoints()[0];
+				else
+					return false;
+			}
+
+			bool insideMask = false;
+			for (size_t edgeIndex = 2; edgeIndex < numPolyPoints; edgeIndex++) {
+				const Common::Point *points[3] = {&polyPoints[0], &polyPoints[edgeIndex - 1], &polyPoints[edgeIndex]};
+
+				int32 rays[3][2];
+				int32 normals[3][2];
+
+				for (int i = 0; i < 3; i++) {
+					const Common::Point *nextPoint = points[(i + 1) % 3];
+					rays[i][0] = nextPoint->x - points[i]->x;
+					rays[i][1] = nextPoint->y - points[i]->y;
+
+					normals[i][0] = -rays[i][1];
+					normals[i][1] = rays[i][0];
+				}
+
+				int32 cDist = rays[1][0] * normals[0][0] + rays[1][1] * normals[0][1];
+				if (cDist == 0)
+					continue;	// Degenerate triangle
+
+				if (cDist < 0) {
+					// Counter-clockwise triangle, flip normals
+					for (int i = 0; i < 3; i++) {
+						normals[i][0] = -normals[i][0];
+						normals[i][1] = -normals[i][1];
+					}
+				}
+
+				bool inFrontOfAll = true;
+				for (int i = 0; i < 3; i++) {
+					int32 nx = normals[i][0];
+					int32 ny = normals[i][1];
+					int32 dist = (relativeX - points[i]->x) * nx + (relativeY - points[i]->y) * ny;
+					bool isInFront = (dist > 0);
+					if (dist == 0) {
+						if (nx != 0)
+							isInFront = (nx >= 0);
+						else
+							isInFront = (ny >= 0);
+					}
+
+					if (!isInFront) {
+						inFrontOfAll = false;
+						break;
+					}
+				}
+
+				if (inFrontOfAll)
+					insideMask = !insideMask;
+			}
+
+			return insideMask;
+		} break;
+	case VisualElementRenderProperties::kShapeRect:
+		// Rect is always in collision if inside of the rect
+		return true;
+
+	case VisualElementRenderProperties::kShapeOval: {
+			int32 w = _rect.width();
+			int32 h = _rect.height();
+
+			int32 dcx = relativeX * 2 - w;
+			int32 dcy = relativeY * 2 - h;
+			dcx *= h;
+			dcy *= w;
+
+			int32 expandedRadius = w * h;
+
+			return (dcx * dcx + dcy * dcy <= expandedRadius * expandedRadius);
+		} break;
+
+	case VisualElementRenderProperties::kShapeRoundedRect:
+		// Rounded rect corners are 13x13 at maximum
+
+	default:
+		warning("Unsupported shape type for checking mouse collision");
+		return false;
+	};
+
+	return true;
 }
 
 bool VisualElement::isMouseCollisionAtPoint(int32 relativeX, int32 relativeY) const {
