@@ -28,7 +28,7 @@
 #include "hpl1/engine/gui/GuiSet.h"
 
 #include "hpl1/engine/math/Math.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 #include "hpl1/engine/graphics/FontData.h"
 #include "hpl1/engine/graphics/Graphics.h"

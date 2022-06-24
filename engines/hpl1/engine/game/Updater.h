@@ -36,7 +36,7 @@
 namespace hpl {
 
 class iUpdateable;
-class iLowLevelSystem;
+class LowLevelSystem;
 
 typedef std::list<iUpdateable *> tUpdateableList;
 typedef tUpdateableList::iterator tUpdateableListIt;
@@ -46,7 +46,7 @@ typedef tUpdateContainerMap::iterator tUpdateContainerMapIt;
 
 class cUpdater {
 public:
-	cUpdater(iLowLevelSystem *apLowLevelSystem);
+	cUpdater(LowLevelSystem *apLowLevelSystem);
 	~cUpdater();
 
 	void Reset();
@@ -100,7 +100,7 @@ private:
 
 	tUpdateContainerMap m_mapUpdateContainer;
 
-	iLowLevelSystem *mpLowLevelSystem;
+	LowLevelSystem *mpLowLevelSystem;
 
 	tUpdateableList *mpCurrentUpdates;
 	tUpdateableList mlstGlobalUpdateableList;

@@ -42,7 +42,7 @@
 #include "hpl1/engine/scene/TileData.h"
 #include "hpl1/engine/scene/TileMap.h"
 #include "hpl1/engine/scene/World2D.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

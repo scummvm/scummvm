@@ -30,7 +30,7 @@
 #include "hpl1/engine/graphics/MeshCreator.h"
 #include "hpl1/engine/impl/tinyXML/tinyxml.h"
 #include "hpl1/engine/resources/Resources.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 #include <assert.h>
 
 namespace hpl {

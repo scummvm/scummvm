@@ -43,7 +43,7 @@ class cImageEntity;
 
 class LowLevelResources;
 class iLowLevelGraphics;
-class iLowLevelSystem;
+class LowLevelSystem;
 class cSystem;
 class iResourceManager;
 class cFileSearcher;
@@ -205,12 +205,12 @@ public:
 	cAnimationManager *GetAnimationManager() { return mpAnimationManager; }
 	cVideoManager *GetVideoManager() { return mpVideoManager; }
 
-	iLowLevelSystem *GetLowLevelSystem() { return mpLowLevelSystem; }
+	LowLevelSystem *GetLowLevelSystem() { return mpLowLevelSystem; }
 
 private:
 	LowLevelResources *mpLowLevelResources;
 	iLowLevelGraphics *mpLowLevelGraphics;
-	iLowLevelSystem *mpLowLevelSystem;
+	LowLevelSystem *mpLowLevelSystem;
 	cFileSearcher *mpFileSearcher;
 
 	tResourceManagerList mlstManagers;

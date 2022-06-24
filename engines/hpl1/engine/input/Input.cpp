@@ -32,7 +32,7 @@
 #include "hpl1/engine/input/Keyboard.h"
 #include "hpl1/engine/input/LowLevelInput.h"
 #include "hpl1/engine/input/Mouse.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 //////////////////////////////////////////////////////////////////////////

@@ -28,7 +28,7 @@
 #include "hpl1/engine/math/Quaternion.h"
 
 #include "hpl1/engine/math/Math.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

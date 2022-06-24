@@ -31,6 +31,8 @@
 #include "hpl1/engine/system/MemoryManager.h"
 #include "hpl1/engine/system/SystemTypes.h"
 
+class asIScriptEngine;
+
 namespace hpl {
 
 #ifdef UPDATE_TIMING_ENABLED
@@ -55,7 +57,7 @@ namespace hpl {
 
 class iScript;
 
-extern void SetLogFile(const tWString &asFile);
+extern void SetLogFile(const tWString &File);
 extern void FatalError(const char *fmt, ...);
 extern void Error(const char *fmt, ...);
 extern void Warning(const char *fmt, ...);
@@ -64,76 +66,81 @@ extern void Log(const char *fmt, ...);
 extern void SetUpdateLogActive(bool abX);
 extern void LogUpdate(const char *fmt, ...);
 
-extern void CreateMessageBoxW(const wchar_t *asCaption, const wchar_t *fmt, ...);
-extern void CreateMessageBoxW(eMsgBoxType eType, const wchar_t *asCaption, const wchar_t *fmt, ...);
+extern void CreateMessageBoxW(const wchar_t *caption, const wchar_t *fmt, ...);
+extern void CreateMessageBoxW(eMsgBoxType eType, const wchar_t *caption, const wchar_t *fmt, ...);
 
-extern void OpenBrowserWindow(const tWString &asURL);
+extern void OpenBrowserWindow(const tWString &URL);
 
-extern void CopyTextToClipboard(const tWString &asText);
+extern void CopyTextToClipboard(const tWString &text);
 extern tWString LoadTextFromClipboard();
 
-extern tWString GetSystemSpecialPath(eSystemPath aPathType);
+extern tWString GetSystemSpecialPath(eSystemPath pathType);
 
-extern bool FileExists(const tWString &asFileName);
-extern void RemoveFile(const tWString &asFileName);
-extern bool CloneFile(const tWString &asSrcFileName, const tWString &asDestFileName,
-					  bool abFailIfExists);
-extern bool CreateFolder(const tWString &asPath);
-extern bool FolderExists(const tWString &asPath);
-extern bool IsFileLink(const tWString &asPath);
-extern bool LinkFile(const tWString &asPointsTo, const tWString &asLink);
-extern bool RenameFile(const tWString &asFrom, const tWString &asTo);
-extern cDate FileModifiedDate(const tWString &asFilePath);
-extern cDate FileCreationDate(const tWString &asFilePath);
+extern bool FileExists(const tWString &fileName);
+extern void RemoveFile(const tWString &fileName);
+extern bool CloneFile(const tWString &srcFileName, const tWString &destFileName,
+					  bool failIfExists);
+extern bool CreateFolder(const tWString &path);
+extern bool FolderExists(const tWString &path);
+extern bool IsFileLink(const tWString &path);
+extern bool LinkFile(const tWString &pointsTo, const tWString &link);
+extern bool RenameFile(const tWString &from, const tWString &to);
+extern cDate FileModifiedDate(const tWString &filePath);
+extern cDate FileCreationDate(const tWString &filePath);
 
-extern void SetWindowCaption(const tString &asName);
-
-extern bool HasWindowFocus(const tWString &asWindowCaption);
+extern void SetWindowCaption(const tString &name);
 
 extern unsigned long GetApplicationTime();
 
-class iLowLevelSystem {
+class cScriptOutput;
+
+class LowLevelSystem {
 public:
-	virtual ~iLowLevelSystem() {}
+	LowLevelSystem();
+	~LowLevelSystem();
 
 	/**
 	 * Remark: Usually not finer then 10ms accuracy.
 	 * \return Number of millisecs since start of app.
 	 */
-	virtual unsigned long GetTime() = 0;
+	unsigned long getTime();
 
 	/**
 	 * Gets the current date.
 	 */
-	virtual cDate GetDate() = 0;
+	cDate getDate();
 
 	/**
 	 * Creates a ne script
-	 * \param asName name of the script.
+	 * \param name name of the script.
 	 * \return
 	 */
-	virtual iScript *CreateScript(const tString &asName) = 0;
+	iScript *createScript(const tString &name);
 
 	/**
 	 * Add a function to the script vm. Example: "void test(float x)"
-	 * \param asFuncDecl the declaration.
+	 * \param funcDecl the declaration.
 	 * \return
 	 */
-	virtual bool AddScriptFunc(const tString &asFuncDecl, void *pFunc, int callConv) = 0;
+	bool addScriptFunc(const tString &funcDecl, void *func, int callConv);
 
 	/**
 	 * Add a variable to the script vm. Example: "int MyVar"
-	 * \param asVarDecl the declartion
+	 * \param varDecl the declartion
 	 * \param *pVar the variable
 	 * \return
 	 */
-	virtual bool AddScriptVar(const tString &asVarDecl, void *pVar) = 0;
+	bool addScriptVar(const tString &varDecl, void *var);
 
 	/**
 	 * Sets the main thread to rest for a number of milliseconds.
 	 * \param alMillisecs
 	 */
-	virtual void Sleep(const unsigned int alMillisecs) = 0;
+	void sleep(const unsigned int millisecs);
+private:
+	asIScriptEngine *_scriptEngine;
+	cScriptOutput *_scriptOutput;
+	int _handleCount;
 };
 };     // namespace hpl
 #endif // HPL_LOWLEVELSYSTEM_H

@@ -28,11 +28,24 @@
 #ifndef HPL_SQ_SCRIPT_H
 #define HPL_SQ_SCRIPT_H
 
-#include "hpl1/engine/impl/LowLevelSystemSDL.h"
 #include "hpl1/engine/libraries/angelscript/angelscript.h"
 #include "hpl1/engine/system/Script.h"
 
 namespace hpl {
+
+class cScriptOutput // : public  asIOutputStream
+{
+public:
+	cScriptOutput() : msMessage("") {}
+	~cScriptOutput() {}
+
+	void AddMessage(const asSMessageInfo *msg);
+	void Display();
+	void Clear();
+
+private:
+	tString msMessage;
+};
 
 class cSqScript : public iScript {
 public:

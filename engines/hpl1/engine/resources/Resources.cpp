@@ -49,7 +49,7 @@
 #include "hpl1/engine/scene/Area2D.h"
 #include "hpl1/engine/system/System.h"
 
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 #include "hpl1/engine/impl/tinyXML/tinyxml.h"
 

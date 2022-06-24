@@ -30,7 +30,7 @@
 #include "hpl1/engine/sound/LowLevelSound.h"
 #include "hpl1/engine/sound/MusicHandler.h"
 #include "hpl1/engine/sound/SoundHandler.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

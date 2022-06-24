@@ -31,7 +31,7 @@
 #include "hpl1/engine/haptic/HapticShape.h"
 #include "hpl1/engine/haptic/HapticSurface.h"
 
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/SystemTypes.h"
 
 #include "hpl1/engine/math/Math.h"

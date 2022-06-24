@@ -30,7 +30,7 @@
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/resources/Resources.h"
 #include "hpl1/engine/scene/Camera3D.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 #include "hpl1/engine/game/Game.h"
 #include "hpl1/engine/scene/Scene.h"

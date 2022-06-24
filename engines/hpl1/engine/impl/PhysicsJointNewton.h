@@ -32,7 +32,7 @@
 #include "hpl1/engine/impl/PhysicsWorldNewton.h"
 #include "hpl1/engine/libraries/newton/Newton.h"
 
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

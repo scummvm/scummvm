@@ -31,7 +31,7 @@
 #include "hpl1/engine/resources/FrameTexture.h"
 #include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/resources/ResourceImage.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
 
 namespace hpl {
@@ -43,7 +43,7 @@ namespace hpl {
 //-----------------------------------------------------------------------
 
 cImageManager::cImageManager(cFileSearcher *apFileSearcher, iLowLevelGraphics *apLowLevelGraphics,
-							 LowLevelResources *apLowLevelResources, iLowLevelSystem *apLowLevelSystem)
+							 LowLevelResources *apLowLevelResources, LowLevelSystem *apLowLevelSystem)
 	: iResourceManager(apFileSearcher, apLowLevelResources, apLowLevelSystem) {
 	mpLowLevelGraphics = apLowLevelGraphics;
 

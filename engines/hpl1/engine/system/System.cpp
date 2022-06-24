@@ -27,7 +27,7 @@
 
 #include "hpl1/engine/system/System.h"
 #include "hpl1/engine/system/LogicTimer.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
 
 namespace hpl {
@@ -38,7 +38,7 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cSystem::cSystem(iLowLevelSystem *apLowLevelSystem) {
+cSystem::cSystem(LowLevelSystem *apLowLevelSystem) {
 	mpLowLevelSystem = apLowLevelSystem;
 }
 
@@ -64,7 +64,7 @@ cLogicTimer *cSystem::CreateLogicTimer(unsigned int alUpdatesPerSec) {
 
 //-----------------------------------------------------------------------
 
-iLowLevelSystem *cSystem::GetLowLevel() {
+LowLevelSystem *cSystem::GetLowLevel() {
 	return mpLowLevelSystem;
 }
 

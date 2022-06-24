@@ -34,7 +34,7 @@ namespace hpl {
 
 class cUpdater;
 class LowLevelGameSetup;
-class iLowLevelSystem;
+class LowLevelSystem;
 class cLogicTimer;
 
 class cSystem;
@@ -50,7 +50,7 @@ class cGui;
 
 class cFPSCounter {
 public:
-	cFPSCounter(iLowLevelSystem *apLowLevelSystem);
+	cFPSCounter(LowLevelSystem *apLowLevelSystem);
 
 	void AddFrame();
 
@@ -58,7 +58,7 @@ public:
 	float mfUpdateRate;
 
 private:
-	iLowLevelSystem *mpLowLevelSystem;
+	LowLevelSystem *mpLowLevelSystem;
 	int mlFramecounter;
 	float mfFrametimestart;
 	float mfFrametime;

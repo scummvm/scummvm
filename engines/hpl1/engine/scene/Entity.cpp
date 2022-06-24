@@ -28,7 +28,7 @@
 #include "hpl1/engine/scene/Entity.h"
 
 #include "hpl1/engine/scene/Node.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

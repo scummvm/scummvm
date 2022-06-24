@@ -34,7 +34,7 @@
 #include "hpl1/engine/scene/Camera.h"
 #include "hpl1/engine/scene/Light.h"
 #include "hpl1/engine/scene/Light3DSpot.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
 
 //#include <GL/GLee.h>

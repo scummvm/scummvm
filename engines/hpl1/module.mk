@@ -98,7 +98,6 @@ MODULE_OBJS := \
 	engine/impl/LowLevelInputSDL.o \
 	engine/impl/LowLevelPhysicsNewton.o \
 	engine/impl/LowLevelSoundOpenAL.o \
-	engine/impl/LowLevelSystemSDL.o \
 	engine/impl/MeshLoaderCollada.o \
 	engine/impl/MeshLoaderColladaHelpers.o \
 	engine/impl/MeshLoaderColladaLoader.o \
@@ -227,6 +226,7 @@ MODULE_OBJS := \
 	engine/sound/SoundHandler.o \
 	engine/system/Container.o \
 	engine/system/LogicTimer.o \
+	engine/system/low_level_system.cpp \
 	engine/system/MemoryManager.o \
 	engine/system/SerializeClass.o \
 	engine/system/String.o \

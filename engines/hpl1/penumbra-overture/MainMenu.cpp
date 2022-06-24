@@ -2612,7 +2612,7 @@ void cMainMenu::CreateWidgets() {
 		AddWidgetToState(state, gpSaveGameList[i]);
 
 		LowLevelResources *pLowLevelResources = mpInit->mpGame->GetResources()->GetLowLevel();
-		iLowLevelSystem *pLowLevelSystem = mpInit->mpGame->GetSystem()->GetLowLevel();
+		LowLevelSystem *pLowLevelSystem = mpInit->mpGame->GetSystem()->GetLowLevel();
 
 		tStringList lstFiles;
 		tTempFileAndDataSet setTempFiles;

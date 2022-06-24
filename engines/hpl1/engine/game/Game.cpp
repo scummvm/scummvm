@@ -42,7 +42,7 @@
 #include "hpl1/engine/gui/Gui.h"
 
 #include "hpl1/engine/game/low_level_game_setup.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 
@@ -50,7 +50,7 @@ namespace hpl {
 // FPS COUNTER
 //////////////////////////////////////////////////////////////////////////
 
-cFPSCounter::cFPSCounter(iLowLevelSystem *apLowLevelSystem) {
+cFPSCounter::cFPSCounter(LowLevelSystem *apLowLevelSystem) {
 	mfFPS = 60;
 
 	mlFramecounter = 0;

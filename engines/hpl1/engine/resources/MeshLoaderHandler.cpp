@@ -30,7 +30,7 @@
 #include "hpl1/engine/resources/MeshLoader.h"
 #include "hpl1/engine/resources/Resources.h"
 #include "hpl1/engine/scene/Scene.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
 
 namespace hpl {

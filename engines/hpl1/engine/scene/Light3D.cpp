@@ -44,7 +44,7 @@
 #include "hpl1/engine/scene/PortalContainer.h"
 #include "hpl1/engine/scene/SectorVisibility.h"
 #include "hpl1/engine/scene/World3D.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

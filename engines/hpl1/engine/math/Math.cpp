@@ -28,7 +28,7 @@
 #include <stdlib.h>
 
 #include "hpl1/engine/math/Math.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 #include <map>
 #include <math.h>
 #include <stdlib.h>

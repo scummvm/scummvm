@@ -27,7 +27,7 @@
 
 #include "hpl1/engine/resources/ScriptManager.h"
 #include "hpl1/engine/resources/Resources.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/Script.h"
 #include "hpl1/engine/system/String.h"
 #include "hpl1/engine/system/System.h"
@@ -72,7 +72,7 @@ iScript *cScriptManager::CreateScript(const tString &asName) {
 	pScript = static_cast<iScript *>(this->FindLoadedResource(asNewName, sPath));
 
 	if (pScript == NULL && sPath != "") {
-		pScript = mpSystem->GetLowLevel()->CreateScript(asNewName);
+		pScript = mpSystem->GetLowLevel()->createScript(asNewName);
 
 		if (pScript->CreateFromFile(sPath) == false) {
 			hplDelete(pScript);
