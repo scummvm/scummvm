@@ -34,7 +34,7 @@ namespace Views {
  */
 class CharacterInfo : public CharacterBase {
 private:
-	enum ViewState { DISPLAY = 0, EQUIP = 1, REMOVE = 2 };
+	enum ViewState { DISPLAY, EQUIP, GATHER, REMOVE, SHARE };
 	ViewState _state = DISPLAY;
 	Common::String _newName;
 private:
@@ -47,6 +47,17 @@ private:
 	 * Removes the equipped item at the given index
 	 */
 	void removeItem(uint index);
+
+	/**
+	 * Shares gems, gold or food
+	 */
+	enum ShareType { GEMS = 0, GOLD = 1, FOOD = 2 };
+	void share(ShareType shareType);
+
+	/**
+	 * Draw options for gems, gold, and food
+	 */
+	void drawGemsGoldFood();
 public:
 	CharacterInfo() : CharacterBase("CharacterInfo") {}
 	virtual ~CharacterInfo() {}

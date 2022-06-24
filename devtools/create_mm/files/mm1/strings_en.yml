@@ -1,4 +1,4 @@
-dialogs:
+ dialogs:
 	location:
 		titles:
 			0: "--TRAINING--"
@@ -38,6 +38,13 @@ dialogs:
 		have_missile: "*** AREADY HAVE MISSILE WEAPON ***"
 		wrong_alignment: "*** WRONG ALIGNMENT ***"
 		cursed: "*** CURSED ***"
+		share_all: "SHARE ALL:"
+		gather_all: "GATHER ALL:"
+		trade_which: "TRADE WHICH:"
+		gems: "1) GEMS"
+		gold: "2) GOLD"
+		food: "3) FOOD"
+		item: "4) ITEM"
 	create_characters:
 		title: "CREATE NEW CHARACTERS"
 		intellect: "INTELLECT...="

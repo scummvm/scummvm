@@ -38,6 +38,10 @@ struct KeybindingRecord {
 
 static const KeybindingRecord MENU_KEYS[] = {
 	{ KEYBIND_ESCAPE, "ESCAPE", "Escape", "ESC", nullptr },
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
+};
+
+static const KeybindingRecord PARTY_KEYS[] = {
 	{ KEYBIND_VIEW_PARTY1, "PARTY1", "View Party Member 1", "1", nullptr },
 	{ KEYBIND_VIEW_PARTY2, "PARTY2", "View Party Member 2", "2", nullptr },
 	{ KEYBIND_VIEW_PARTY3, "PARTY3", "View Party Member 3", "3", nullptr },
@@ -63,12 +67,6 @@ static const KeybindingRecord NORMAL_KEYS[] = {
 	{ KEYBIND_BASH, "BASH", "Bash", "b", nullptr },
 	{ KEYBIND_UNLOCK, "UNLOCK", "Unlock", "u", nullptr },
 	{ KEYBIND_QUICKREF, "QUICKREF", "Quick Reference", "q", nullptr },
-	{ KEYBIND_VIEW_PARTY1, "PARTY1", "View Party Member 1", "1", nullptr },
-	{ KEYBIND_VIEW_PARTY2, "PARTY2", "View Party Member 2", "2", nullptr },
-	{ KEYBIND_VIEW_PARTY3, "PARTY3", "View Party Member 3", "3", nullptr },
-	{ KEYBIND_VIEW_PARTY4, "PARTY4", "View Party Member 4", "4", nullptr },
-	{ KEYBIND_VIEW_PARTY5, "PARTY5", "View Party Member 5", "5", nullptr },
-	{ KEYBIND_VIEW_PARTY6, "PARTY6", "View Party Member 6", "6", nullptr },
 
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
@@ -89,15 +87,24 @@ static const KeysRecord MENU_RECORDS[] = {
 	{ nullptr, nullptr, nullptr }
 };
 
+static const KeysRecord PARTY_MENU_RECORDS[] = {
+	{ "mm1", "Might and Magic 1 - Menus", MENU_KEYS },
+	{ "mm1_party", "Might and Magic 1 - Party", PARTY_KEYS },
+	{ nullptr, nullptr, nullptr }
+};
+
 static const KeysRecord NORMAL_RECORDS[] = {
 	{ "mm1", "Might and Magic 1", NORMAL_KEYS },
+	{ "mm1_party", "Might and Magic 1 - Party", PARTY_KEYS },
 	{ "mm1_cheats", "Might and Magic 1 - Cheats", CHEAT_KEYS },
 	{ nullptr, nullptr, nullptr }
 };
 
-static const KeysRecord *MODE_RECORDS[2] = {
+static const KeysRecord *MODE_RECORDS[4] = {
 	MENU_RECORDS,
-	NORMAL_RECORDS
+	PARTY_MENU_RECORDS,
+	NORMAL_RECORDS,
+	nullptr		// TODO: combat keybindings
 };
 
 Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {
