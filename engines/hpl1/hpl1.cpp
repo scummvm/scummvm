@@ -19,6 +19,7 @@
  *
  */
 
+#include "engine/engine.h"
 #include "hpl1/hpl1.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -29,6 +30,8 @@
 #include "graphics/palette.h"
 #include "hpl1/console.h"
 #include "hpl1/detection.h"
+
+extern int hplMain(const hpl::tString &asCommandLine);
 
 namespace Hpl1 {
 
@@ -52,6 +55,7 @@ Common::String Hpl1Engine::getGameId() const {
 }
 
 Common::Error Hpl1Engine::run() {
+	hplMain("");
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(320, 200);
 	_screen = new Graphics::Screen();
