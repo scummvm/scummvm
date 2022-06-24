@@ -142,7 +142,7 @@ struct GlkDetectionEntry {
 #define DT_ENTRYLP0(ID, LANG, MD5, FILESIZE, PLATFORM) { ID, "", MD5, FILESIZE, LANG, PLATFORM}
 #define DT_ENTRYLP1(ID, LANG, EXTRA, MD5, FILESIZE, PLATFORM) { ID, EXTRA, MD5, FILESIZE, LANG, PLATFORM }
 
-#define DT_END_MARKER { nullptr, nullptr, nullptr, 0, Common::EN_ANY }
+#define DT_END_MARKER { nullptr, nullptr, nullptr, 0, Common::EN_ANY, Common::kPlatformUnknown }
 
 } // End of namespace Glk
 

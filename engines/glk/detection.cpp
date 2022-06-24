@@ -90,7 +90,7 @@ GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const Common:
 }
 
 GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const Common::String &filename,
-		Common::Language lang, Common::Platform platform, GameSupportLevel supportLevel) : DetectedGame("glk", id, desc, lang, platform) {
+		Common::Language lang, Common::Platform p, GameSupportLevel supportLevel) : DetectedGame("glk", id, desc, lang, p) {
 	setGUIOptions(getGlkGUIOptions());
 	gameSupportLevel = supportLevel;
 	addExtraEntry("filename", filename);
