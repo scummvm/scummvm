@@ -76,7 +76,7 @@ public:
 	/**
 	 * How much entered for a trade
 	 */
-	void howMuchEntered(int amount);
+	void howMuchEntered(uint amount);
 };
 
 
