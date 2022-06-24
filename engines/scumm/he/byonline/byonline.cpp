@@ -261,9 +261,11 @@ void BYOnline::processLine(Common::String line) {
 			int relay = root["relay"]->asIntegerNumber();
 			handleGameRelay(relay);
 		} else if (command == "teams") {
+			long long int error = root["error"]->asIntegerNumber();
+			Common::String message = root["message"]->asString();
 			Common::JSONArray userTeam = root["user"]->asArray();
 			Common::JSONArray opponentTeam = root["opponent"]->asArray();
-			handleTeams(userTeam, opponentTeam);
+			handleTeams(userTeam, opponentTeam, (int)error, message);
 		}
 	}
 }
@@ -525,7 +527,11 @@ void BYOnline::handleProfileInfo(Common::JSONArray profile) {
 	_vm->writeVar(111, 1);
 }
 
-void BYOnline::handleTeams(Common::JSONArray userTeam, Common::JSONArray opponentTeam) {
+void BYOnline::handleTeams(Common::JSONArray userTeam, Common::JSONArray opponentTeam, int error, Common::String message) {
+	if (error == 1) {
+		warning("BYOnline: Unable to retrieve custom teams: %s", message.c_str());
+		return;
+	}
 	// We're going to store our team in array 748, which seems to be otherwise unused
 	// Then we'll pull from that array as needed later
 	int userTeamArray = 0;
