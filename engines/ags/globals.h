@@ -1284,10 +1284,10 @@ public:
 	unsigned _timeoutCheckMs = 60u;
 	// Critical timeout: how much time may pass without any engine update
 	// before we abort or post a warning
-	unsigned _timeoutAbortMs = 60u * 10;
+	unsigned _timeoutAbortMs = 0u;
 	// Maximal while loops without any engine update in between,
 	// after which the interpreter will abort
-	unsigned _maxWhileLoops = 150000u;
+	unsigned _maxWhileLoops = 0u;
 	ccInstance *_loadedInstances[MAX_LOADED_INSTANCES];
 
 	/**@}*/

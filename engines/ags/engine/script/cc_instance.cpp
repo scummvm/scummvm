@@ -437,7 +437,7 @@ int ccInstance::Run(int32_t curpc) {
 	int32_t thisbase[MAXNEST], funcstart[MAXNEST];
 	int was_just_callas = -1;
 	int curnest = 0;
-	int loopIterations = 0;
+	unsigned loopIterations = 0;
 	int num_args_to_func = -1;
 	int next_call_needs_object = 0;
 	int loopIterationCheckDisabled = 0;
@@ -794,12 +794,12 @@ int ccInstance::Run(int32_t curpc) {
 					_lastAliveTs = now;
 					timeout_warn = false;
 					loopIterations = 0;
-				} else if ((loopIterationCheckDisabled == 0) && (++loopIterations > (int)_G(maxWhileLoops))) {
-					cc_error("!Script appears to be hung (a while loop ran %d times). The problem may be in a calling function; check the call stack.", loopIterations);
+				} else if ((loopIterationCheckDisabled == 0) && (_G(maxWhileLoops) > 0) && (++loopIterations > _G(maxWhileLoops))) {
+					cc_error("!Script appears to be hung (a while loop ran %d times). The problem may be in a calling function; check the call stack.", (int)loopIterations);
 					return -1;
 				} else if (test_dur > timeout) {
 					// minimal timeout occured
-					if (test_dur.count() > timeout_abort.count()) {
+					if ((timeout_abort.count() > 0) && (test_dur.count() > timeout_abort.count())) {
 						// critical timeout occured
 						/* CHECKME: disabled, because not working well
 						if (loopIterationCheckDisabled == 0) {
