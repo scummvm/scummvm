@@ -410,11 +410,11 @@ int check_for_messages_from_editor() {
 			int lineNumber = atoi(msgPtr);
 
 			if (isDelete) {
-				for (i = 0; i < _G(numBreakpoints); i++) {
-					if ((_G(breakpoints)[i].lineNumber == lineNumber) &&
-					        (strcmp(_G(breakpoints)[i].scriptName, scriptNameBuf) == 0)) {
+				for (int j = 0; j < _G(numBreakpoints); j++) {
+					if ((_G(breakpoints)[j].lineNumber == lineNumber) &&
+					        (strcmp(_G(breakpoints)[j].scriptName, scriptNameBuf) == 0)) {
 						_G(numBreakpoints)--;
-						_G(breakpoints).erase(_G(breakpoints).begin() + i);
+						_G(breakpoints).erase(_G(breakpoints).begin() + j);
 						break;
 					}
 				}
