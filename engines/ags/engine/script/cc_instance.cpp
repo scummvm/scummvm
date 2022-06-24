@@ -794,7 +794,7 @@ int ccInstance::Run(int32_t curpc) {
 					_lastAliveTs = now;
 					timeout_warn = false;
 					loopIterations = 0;
-				} else if ((loopIterationCheckDisabled == 0) && (++loopIterations > _G(maxWhileLoops))) {
+				} else if ((loopIterationCheckDisabled == 0) && (++loopIterations > (int)_G(maxWhileLoops))) {
 					cc_error("!Script appears to be hung (a while loop ran %d times). The problem may be in a calling function; check the call stack.", loopIterations);
 					return -1;
 				} else if (test_dur > timeout) {
