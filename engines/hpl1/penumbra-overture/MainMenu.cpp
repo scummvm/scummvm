@@ -1206,7 +1206,7 @@ public:
 	cMainMenuWidget_Language(cInit *apInit, const cVector3f &avPos, const tWString &asText, cVector2f avFontSize, eFontAlign aAlignment)
 		: cMainMenuWidget_Button(apInit, avPos, asText, eMainMenuState_LastEnum, avFontSize, aAlignment) {
 		tStringList lstStrings;
-		apInit->mpGame->GetResources()->GetLowLevel()->FindFilesInDir(lstStrings, "config/", "*.lang");
+		apInit->mpGame->GetResources()->GetLowLevel()->findFilesInDir(lstStrings, "config/", "*.lang");
 
 		mlCurrentFile = 0;
 		int lIdx = 0;
@@ -2618,7 +2618,7 @@ void cMainMenu::CreateWidgets() {
 		tTempFileAndDataSet setTempFiles;
 
 		tWString sFullPath = mpInit->mpSaveHandler->GetSaveDir() + sDir;
-		pLowLevelResources->FindFilesInDir(lstFiles, cString::To8Char(sFullPath), "*.sav");
+		pLowLevelResources->findFilesInDir(lstFiles, cString::To8Char(sFullPath), "*.sav");
 
 		tStringListIt fileIt = lstFiles.begin();
 		for (; fileIt != lstFiles.end(); ++fileIt) {
