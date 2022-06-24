@@ -5,6 +5,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  New games:
    - Added support for Soldier Boyz.
+   - Added support for C64 and ZX Spectrum versions of GLK Scott Adams
+     Interactive Fiction games
 
  General:
    - Reduced amount of false positives in Mass Add.
