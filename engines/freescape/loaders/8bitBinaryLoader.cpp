@@ -19,9 +19,9 @@ static Object *load8bitObject(StreamLoader &stream) {
 	Object::Type objectType = (Object::Type)(stream.get8() & 0x1F);
 	Math::Vector3d position, v;
 
-	position.x() = stream.get8() * 32;
-	position.y() = stream.get8() * 32;
-	position.z() = stream.get8() * 32;
+	position.x() = stream.get8();
+	position.y() = stream.get8();
+	position.z() = stream.get8();
 
 	v.x() = stream.get8();
 	v.y() = stream.get8();
@@ -85,8 +85,8 @@ static Object *load8bitObject(StreamLoader &stream) {
 			objectType,
 			objectID,
 			0, // flags
-			64 * position,
-			64 * v, // size
+			32 * position,
+			32 * v, // size
 			colours,
 			ordinates,
 			instructions);
