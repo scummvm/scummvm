@@ -32,6 +32,11 @@ void CharacterInfo::draw() {
 	assert(g_globals->_currCharacter);
 	CharacterBase::draw();
 
+	MetaEngine::setKeybindingMode(_state == DISPLAY ?
+		KeybindingMode::KBMODE_PARTY_MENUS :
+		KeybindingMode::KBMODE_MENUS
+	);
+
 	switch (_state) {
 	case DISPLAY:
 		writeString(0, 21, STRING["dialogs.character.legend1"]);
@@ -48,6 +53,14 @@ void CharacterInfo::draw() {
 	case REMOVE:
 		writeString(0, 20, STRING["dialogs.chracter.remove"]);
 		escToGoBack(0);
+		break;
+
+	case SHARE:
+		writeString(8, 20, STRING["dialogs.character.share_all"]);
+		drawGemsGoldFood();
+		break;
+
+	default:
 		break;
 	}
 }
@@ -70,6 +83,7 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 		case Common::KEYCODE_e:
 			if (!g_globals->_currCharacter->_backpack.empty())
 				_state = EQUIP;
+			redraw();
 			break;
 		case Common::KEYCODE_g:
 			g_globals->_currCharacter->gatherGold();
@@ -81,6 +95,11 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 		case Common::KEYCODE_r:
 			if (!g_globals->_currCharacter->_equipped.empty())
 				_state = REMOVE;
+			redraw();
+			break;
+		case Common::KEYCODE_s:
+			_state = SHARE;
+			redraw();
 			break;
 		default:
 			break;
@@ -94,6 +113,19 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 		break;
 
 	case REMOVE:
+		if (msg.keycode >= Common::KEYCODE_1 &&
+			msg.keycode <= Common::KEYCODE_6)
+			removeItem(msg.keycode - Common::KEYCODE_1);
+		break;
+
+	case SHARE:
+		if (msg.keycode >= Common::KEYCODE_1 &&
+			msg.keycode <= Common::KEYCODE_3) {
+			share((ShareType)(msg.keycode - Common::KEYCODE_1));
+			_state = DISPLAY;
+			redraw();
+			break;
+		}
 		break;
 
 	default:
@@ -335,6 +367,37 @@ void CharacterInfo::removeItem(uint index) {
 	default:
 		break;
 	}
+}
+
+#define SHARE_FIELD(FIELD) \
+	for (uint i = 0; i < party.size(); ++i) \
+		total += party[i].FIELD; \
+	avg = total / party.size(); \
+	party[0].FIELD = avg + (total % party.size()); \
+	for (uint i = 1; i < party.size(); ++i) \
+		party[i].FIELD = avg;
+
+void CharacterInfo::share(ShareType shareType) {
+	auto &party = g_globals->_party;
+	int total = 0, avg;
+
+	switch (shareType) {
+	case GEMS:
+		SHARE_FIELD(_gems);
+		break;
+	case GOLD:
+		SHARE_FIELD(_gold);
+		break;
+	case FOOD:
+		SHARE_FIELD(_food);
+		break;
+	}
+}
+
+void CharacterInfo::drawGemsGoldFood() {
+	writeString(20, 20, STRING["dialogs.character.gems"]);
+	writeString(20, 21, STRING["dialogs.character.gold"]);
+	writeString(20, 22, STRING["dialogs.character.food"]);
 }
 
 } // namespace Views
