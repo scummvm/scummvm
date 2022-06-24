@@ -2930,6 +2930,11 @@ VThreadState Structural::consumeCommand(Runtime *runtime, const Common::SharedPt
 		return kVThreadReturn;
 	}
 
+	if (Event::create(EventIDs::kPreloadMedia, 0).respondsTo(msg->getEvent()) || Event::create(EventIDs::kFlushMedia, 0).respondsTo(msg->getEvent()) || Event::create(EventIDs::kPrerollMedia, 0).respondsTo(msg->getEvent())) {
+		// Just ignore these
+		return kVThreadReturn;
+	}
+
 	warning("Command type %i was ignored", msg->getEvent().eventType);
 	return kVThreadReturn;
 }
