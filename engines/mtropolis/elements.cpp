@@ -1602,7 +1602,7 @@ MiniscriptInstructionOutcome TextLabelElement::writeRefAttributeIndexed(Miniscri
 			return kMiniscriptInstructionOutcomeFailed;
 		}
 
-		writeProxy.pod.ifc = &TextLabelLineWriteInterface::_instance;
+		writeProxy.pod.ifc = DynamicValueWriteInterfaceGlue<TextLabelLineWriteInterface>::getInstance();
 		writeProxy.pod.objectRef = this;
 		writeProxy.pod.ptrOrOffset = asInteger - 1;
 		return kMiniscriptInstructionOutcomeContinue;
@@ -1872,20 +1872,17 @@ size_t TextLabelElement::countLines() const {
 	return numLines;
 }
 
-MiniscriptInstructionOutcome TextLabelElement::TextLabelLineWriteInterface::write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset) const {
+MiniscriptInstructionOutcome TextLabelElement::TextLabelLineWriteInterface::write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset) {
 	return static_cast<TextLabelElement *>(objectRef)->scriptSetLine(thread, ptrOrOffset, dest);
 }
 
-MiniscriptInstructionOutcome TextLabelElement::TextLabelLineWriteInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const {
+MiniscriptInstructionOutcome TextLabelElement::TextLabelLineWriteInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) {
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
-MiniscriptInstructionOutcome TextLabelElement::TextLabelLineWriteInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+MiniscriptInstructionOutcome TextLabelElement::TextLabelLineWriteInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) {
 	return kMiniscriptInstructionOutcomeFailed;
 }
-
-TextLabelElement::TextLabelLineWriteInterface TextLabelElement::TextLabelLineWriteInterface::_instance;
-
 
 SoundElement::SoundElement() : _finishTime(0), _shouldPlayIfNotPaused(true), _needsReset(true) {
 }

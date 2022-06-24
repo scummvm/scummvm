@@ -1933,28 +1933,26 @@ bool MiniscriptThread::evaluateTruthOfResult(bool &isTrue) {
 }
 
 void MiniscriptThread::createWriteIncomingDataProxy(DynamicValueWriteProxy &proxy) {
-	proxy.pod.ifc = &IncomingDataWriteInterface::_instance;
+	proxy.pod.ifc = DynamicValueWriteInterfaceGlue<IncomingDataWriteInterface>::getInstance();
 	proxy.pod.objectRef = this;
 	proxy.pod.ptrOrOffset = 0;
 }
 
-MiniscriptInstructionOutcome MiniscriptThread::IncomingDataWriteInterface::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) const {
+MiniscriptInstructionOutcome MiniscriptThread::IncomingDataWriteInterface::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) {
 	thread->_msgProps->setValue(value);
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
-MiniscriptInstructionOutcome MiniscriptThread::IncomingDataWriteInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const {
+MiniscriptInstructionOutcome MiniscriptThread::IncomingDataWriteInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) {
 	// TODO: Generic refAttrib for dynamic values
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
-MiniscriptInstructionOutcome MiniscriptThread::IncomingDataWriteInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+MiniscriptInstructionOutcome MiniscriptThread::IncomingDataWriteInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) {
 	// TODO: Generic refAttribIndexed for dynamic values
 	return kMiniscriptInstructionOutcomeFailed;
 }
-
-MiniscriptThread::IncomingDataWriteInterface MiniscriptThread::IncomingDataWriteInterface::_instance;
 
 
 VThreadState MiniscriptThread::resumeTask(const ResumeTaskData &data) {

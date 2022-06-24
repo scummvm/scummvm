@@ -340,9 +340,6 @@ ColorRGB8 ColorRGB8::create(uint8 r, uint8 g, uint8 b) {
 MessageFlags::MessageFlags() : relay(true), cascade(true), immediate(true) {
 }
 
-IDynamicValueWriteInterface::~IDynamicValueWriteInterface() {
-}
-
 Common::Point Point16POD::toScummVMPoint() const {
 	return Common::Point(x, y);
 }
@@ -904,7 +901,7 @@ Common::SharedPtr<DynamicList> DynamicList::clone() const {
 }
 
 void DynamicList::createWriteProxyForIndex(size_t index, DynamicValueWriteProxy &proxy) {
-	proxy.pod.ifc = &WriteProxyInterface::_instance;
+	proxy.pod.ifc = DynamicValueWriteInterfaceGlue<WriteProxyInterface>::getInstance();
 	proxy.pod.objectRef = this;
 	proxy.pod.ptrOrOffset = index;
 }
@@ -986,13 +983,13 @@ void DynamicList::initFromOther(const DynamicList &other) {
 	}
 }
 
-MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) const {
+MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) {
 	if (!static_cast<DynamicList *>(objectRef)->setAtIndex(ptrOrOffset, value))
 		return kMiniscriptInstructionOutcomeFailed;
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
-MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const {
+MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) {
 	DynamicList *list = static_cast<DynamicList *>(objectRef);
 
 	switch (list->getType()) {
@@ -1025,7 +1022,7 @@ MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::refAttrib(Miniscr
 	}
 }
 
-MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) {
 	DynamicList *list = static_cast<DynamicList *>(objectRef);
 	switch (list->getType()) {
 	case DynamicValueTypes::kList: {
@@ -1059,8 +1056,6 @@ MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::refAttribIndexed(
 
 	return kMiniscriptInstructionOutcomeFailed;
 }
-
-DynamicList::WriteProxyInterface DynamicList::WriteProxyInterface::_instance;
 
 DynamicValue::DynamicValue() : _type(DynamicValueTypes::kNull) {
 }
@@ -1580,7 +1575,7 @@ void DynamicValue::initFromOther(const DynamicValue &other) {
 	_type = other._type;
 }
 
-MiniscriptInstructionOutcome DynamicValueWriteStringHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) const {
+MiniscriptInstructionOutcome DynamicValueWriteStringHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) {
 	Common::String &dest = *static_cast<Common::String *>(objectRef);
 	switch (value.getType()) {
 	case DynamicValueTypes::kString:
@@ -1591,23 +1586,21 @@ MiniscriptInstructionOutcome DynamicValueWriteStringHelper::write(MiniscriptThre
 	}
 }
 
-MiniscriptInstructionOutcome DynamicValueWriteStringHelper::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const {
+MiniscriptInstructionOutcome DynamicValueWriteStringHelper::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) {
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
-MiniscriptInstructionOutcome DynamicValueWriteStringHelper::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+MiniscriptInstructionOutcome DynamicValueWriteStringHelper::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) {
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
 void DynamicValueWriteStringHelper::create(Common::String *strValue, DynamicValueWriteProxy &proxy) {
 	proxy.pod.ptrOrOffset = 0;
 	proxy.pod.objectRef = strValue;
-	proxy.pod.ifc = &_instance;
+	proxy.pod.ifc = DynamicValueWriteInterfaceGlue<DynamicValueWriteStringHelper>::getInstance();
 }
 
-DynamicValueWriteStringHelper DynamicValueWriteStringHelper::_instance;
-
-MiniscriptInstructionOutcome DynamicValueWritePointHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) const {
+MiniscriptInstructionOutcome DynamicValueWritePointHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) {
 	if (value.getType() != DynamicValueTypes::kPoint) {
 		thread->error("Can't set point to invalid type");
 		return kMiniscriptInstructionOutcomeFailed;
@@ -1618,7 +1611,7 @@ MiniscriptInstructionOutcome DynamicValueWritePointHelper::write(MiniscriptThrea
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
-MiniscriptInstructionOutcome DynamicValueWritePointHelper::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const {
+MiniscriptInstructionOutcome DynamicValueWritePointHelper::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) {
 	if (attrib == "x") {
 		DynamicValueWriteIntegerHelper<int16>::create(&static_cast<Common::Point *>(objectRef)->x, proxy);
 		return kMiniscriptInstructionOutcomeContinue;
@@ -1632,19 +1625,17 @@ MiniscriptInstructionOutcome DynamicValueWritePointHelper::refAttrib(MiniscriptT
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
-MiniscriptInstructionOutcome DynamicValueWritePointHelper::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+MiniscriptInstructionOutcome DynamicValueWritePointHelper::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) {
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
 void DynamicValueWritePointHelper::create(Common::Point *pointValue, DynamicValueWriteProxy &proxy) {
 	proxy.pod.ptrOrOffset = 0;
 	proxy.pod.objectRef = pointValue;
-	proxy.pod.ifc = &_instance;
+	proxy.pod.ifc = DynamicValueWriteInterfaceGlue<DynamicValueWritePointHelper>::getInstance();
 }
 
-DynamicValueWritePointHelper DynamicValueWritePointHelper::_instance;
-
-MiniscriptInstructionOutcome DynamicValueWriteBoolHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) const {
+MiniscriptInstructionOutcome DynamicValueWriteBoolHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) {
 	bool &dest = *static_cast<bool *>(objectRef);
 	switch (value.getType()) {
 	case DynamicValueTypes::kBoolean:
@@ -1655,23 +1646,21 @@ MiniscriptInstructionOutcome DynamicValueWriteBoolHelper::write(MiniscriptThread
 	}
 }
 
-MiniscriptInstructionOutcome DynamicValueWriteBoolHelper::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const {
+MiniscriptInstructionOutcome DynamicValueWriteBoolHelper::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) {
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
-MiniscriptInstructionOutcome DynamicValueWriteBoolHelper::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+MiniscriptInstructionOutcome DynamicValueWriteBoolHelper::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) {
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
 void DynamicValueWriteBoolHelper::create(bool *boolValue, DynamicValueWriteProxy &proxy) {
 	proxy.pod.ptrOrOffset = 0;
 	proxy.pod.objectRef = boolValue;
-	proxy.pod.ifc = &_instance;
+	proxy.pod.ifc = DynamicValueWriteInterfaceGlue<DynamicValueWriteBoolHelper>::getInstance();
 }
 
-DynamicValueWriteBoolHelper DynamicValueWriteBoolHelper::_instance;
-
-MiniscriptInstructionOutcome DynamicValueWriteObjectHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) const {
+MiniscriptInstructionOutcome DynamicValueWriteObjectHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) {
 	RuntimeObject *obj = static_cast<RuntimeObject *>(objectRef);
 	if (obj->isModifier() && static_cast<Modifier *>(obj)->isVariable()) {
 		VariableModifier *var = static_cast<VariableModifier *>(obj);
@@ -1687,22 +1676,20 @@ MiniscriptInstructionOutcome DynamicValueWriteObjectHelper::write(MiniscriptThre
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
-MiniscriptInstructionOutcome DynamicValueWriteObjectHelper::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const {
+MiniscriptInstructionOutcome DynamicValueWriteObjectHelper::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) {
 	return static_cast<RuntimeObject *>(objectRef)->writeRefAttribute(thread, proxy, attrib);
 }
 
-MiniscriptInstructionOutcome DynamicValueWriteObjectHelper::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+MiniscriptInstructionOutcome DynamicValueWriteObjectHelper::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) {
 	return static_cast<RuntimeObject *>(objectRef)->writeRefAttributeIndexed(thread, proxy, attrib, index);
 }
 
 void DynamicValueWriteObjectHelper::create(RuntimeObject *obj, DynamicValueWriteProxy &proxy) {
 	proxy.containerList.reset();	// Object references are always anchored while threads are running, so don't need to preserve the container
-	proxy.pod.ifc = &DynamicValueWriteObjectHelper::_instance;
+	proxy.pod.ifc = DynamicValueWriteInterfaceGlue<DynamicValueWriteObjectHelper>::getInstance();
 	proxy.pod.objectRef = obj;
 	proxy.pod.ptrOrOffset = 0;
 }
-
-DynamicValueWriteObjectHelper DynamicValueWriteObjectHelper::_instance;
 
 MessengerSendSpec::MessengerSendSpec() : destination(0), _linkType(kLinkTypeNotYetLinked) {
 }
@@ -7328,25 +7315,23 @@ DynamicValueWriteProxy VariableModifier::createWriteProxy() {
 	DynamicValueWriteProxy proxy;
 	proxy.pod.objectRef = this;
 	proxy.pod.ptrOrOffset = 0;
-	proxy.pod.ifc = &VariableModifier::WriteProxyInterface::_instance;
+	proxy.pod.ifc = DynamicValueWriteInterfaceGlue<VariableModifier::WriteProxyInterface>::getInstance();
 	return proxy;
 }
 
-MiniscriptInstructionOutcome VariableModifier::WriteProxyInterface::write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset) const {
+MiniscriptInstructionOutcome VariableModifier::WriteProxyInterface::write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset) {
 	if (!static_cast<VariableModifier *>(objectRef)->varSetValue(thread, dest))
 		return kMiniscriptInstructionOutcomeFailed;
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
-MiniscriptInstructionOutcome VariableModifier::WriteProxyInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &dest, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const {
+MiniscriptInstructionOutcome VariableModifier::WriteProxyInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &dest, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) {
 	return static_cast<VariableModifier *>(objectRef)->writeRefAttribute(thread, dest, attrib);
 }
 
-MiniscriptInstructionOutcome VariableModifier::WriteProxyInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &dest, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+MiniscriptInstructionOutcome VariableModifier::WriteProxyInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &dest, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) {
 	return static_cast<VariableModifier *>(objectRef)->writeRefAttributeIndexed(thread, dest, attrib, index);
 }
-
-VariableModifier::WriteProxyInterface VariableModifier::WriteProxyInterface::_instance;
 
 bool Modifier::loadTypicalHeader(const Data::TypicalModifierHeader &typicalHeader) {
 	if (!_modifierFlags.load(typicalHeader.modifierFlags))

@@ -630,7 +630,7 @@ MiniscriptInstructionOutcome ObjectReferenceVariableModifier::writeRefAttribute(
 	if (attrib == "object") {
 		result.pod.ptrOrOffset = 0;
 		result.pod.objectRef = this;
-		result.pod.ifc = &ObjectWriteInterface::_instance;
+		result.pod.ifc = DynamicValueWriteInterfaceGlue<ObjectWriteInterface>::getInstance();
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -896,23 +896,21 @@ RuntimeObject *ObjectReferenceVariableModifier::getObjectParent(RuntimeObject *o
 	return nullptr;
 }
 
-MiniscriptInstructionOutcome ObjectReferenceVariableModifier::ObjectWriteInterface::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) const {
+MiniscriptInstructionOutcome ObjectReferenceVariableModifier::ObjectWriteInterface::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) {
 	return static_cast<ObjectReferenceVariableModifier *>(objectRef)->scriptSetObject(thread, value);
 }
 
-MiniscriptInstructionOutcome ObjectReferenceVariableModifier::ObjectWriteInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const {
+MiniscriptInstructionOutcome ObjectReferenceVariableModifier::ObjectWriteInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) {
 	return static_cast<ObjectReferenceVariableModifier *>(objectRef)->scriptObjectRefAttrib(thread, proxy, attrib);
 }
 
-MiniscriptInstructionOutcome ObjectReferenceVariableModifier::ObjectWriteInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+MiniscriptInstructionOutcome ObjectReferenceVariableModifier::ObjectWriteInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) {
 	return static_cast<ObjectReferenceVariableModifier *>(objectRef)->scriptObjectRefAttribIndexed(thread, proxy, attrib, index);
 }
 
 ObjectReferenceVariableModifier::SaveLoad::SaveLoad(ObjectReferenceVariableModifier *modifier) : _modifier(modifier) {
 	_objectPath = _modifier->_objectPath;
 }
-
-ObjectReferenceVariableModifier::ObjectWriteInterface ObjectReferenceVariableModifier::ObjectWriteInterface::_instance;
 
 void ObjectReferenceVariableModifier::SaveLoad::commitLoad() const {
 	_modifier->_object.reset();
@@ -1069,7 +1067,7 @@ MiniscriptInstructionOutcome MidiModifier::writeRefAttributeIndexed(MiniscriptTh
 
 		result.pod.objectRef = this;
 		result.pod.ptrOrOffset = asInteger - 1;
-		result.pod.ifc = &MuteTrackProxyInterface::_instance;
+		result.pod.ifc = DynamicValueWriteInterfaceGlue<MuteTrackProxyInterface>::getInstance();
 
 		return kMiniscriptInstructionOutcomeContinue;
 	}
@@ -1213,7 +1211,7 @@ MiniscriptInstructionOutcome MidiModifier::scriptSetMuteTrack(MiniscriptThread *
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
-MiniscriptInstructionOutcome MidiModifier::MuteTrackProxyInterface::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) const {
+MiniscriptInstructionOutcome MidiModifier::MuteTrackProxyInterface::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) {
 	if (value.getType() != DynamicValueTypes::kBoolean) {
 		thread->error("Invalid type for mutetrack");
 		return kMiniscriptInstructionOutcomeFailed;
@@ -1222,15 +1220,13 @@ MiniscriptInstructionOutcome MidiModifier::MuteTrackProxyInterface::write(Minisc
 	return static_cast<MidiModifier *>(objectRef)->scriptSetMuteTrack(thread, ptrOrOffset, value.getBool());
 }
 
-MiniscriptInstructionOutcome MidiModifier::MuteTrackProxyInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const {
+MiniscriptInstructionOutcome MidiModifier::MuteTrackProxyInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) {
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
-MiniscriptInstructionOutcome MidiModifier::MuteTrackProxyInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+MiniscriptInstructionOutcome MidiModifier::MuteTrackProxyInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) {
 	return kMiniscriptInstructionOutcomeFailed;
 }
-
-MidiModifier::MuteTrackProxyInterface MidiModifier::MuteTrackProxyInterface::_instance;
 
 ListVariableModifier::ListVariableModifier() : _list(new DynamicList()), _preferredContentType(DynamicValueTypes::kInteger) {
 }
