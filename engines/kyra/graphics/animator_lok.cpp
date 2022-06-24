@@ -338,7 +338,7 @@ void Animator_LoK::prepDrawAllObjects() {
 	}
 }
 
-void Animator_LoK::copyChangedObjectsForward(int refreshFlag) {
+void Animator_LoK::copyChangedObjectsForward(int refreshFlag, bool refreshScreen) {
 	for (AnimObject *curObject = _objectQueue; curObject; curObject = curObject->nextAnimObject) {
 		if (curObject->active) {
 			if (curObject->refreshFlag || refreshFlag) {
@@ -370,14 +370,15 @@ void Animator_LoK::copyChangedObjectsForward(int refreshFlag) {
 		}
 	}
 
-	_screen->updateScreen();
+	if (refreshScreen)
+		_screen->updateScreen();
 }
 
-void Animator_LoK::updateAllObjectShapes() {
+void Animator_LoK::updateAllObjectShapes(bool refreshScreen) {
 	restoreAllObjectBackgrounds();
 	preserveAnyChangedBackgrounds();
 	prepDrawAllObjects();
-	copyChangedObjectsForward(0);
+	copyChangedObjectsForward(0, refreshScreen);
 }
 
 void Animator_LoK::animRemoveGameItem(int index) {

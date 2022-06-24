@@ -517,21 +517,25 @@ void KyraEngine_LoK::mainLoop() {
 }
 
 void KyraEngine_LoK::delayUntil(uint32 timestamp, bool updateTimers, bool update, bool isMainLoop) {
-	while (_system->getMillis() < timestamp && !shouldQuit() && !skipFlag()) {
+	uint32 ct = _system->getMillis();
+	while (ct < timestamp && !shouldQuit()) {
 		if (updateTimers)
 			_timer->update();
 
-		if (timestamp - _system->getMillis() >= 10)
+		ct = skipFlag() ? ct + _tickLength : _system->getMillis();
+
+		if (timestamp - ct >= 10)
 			delay(10, update, isMainLoop);
 	}
 }
 
 void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
 	uint32 start = _system->getMillis();
+	uint32 ct = start;
 	do {
 		if (update) {
 			_sprites->updateSceneAnims();
-			_animator->updateAllObjectShapes();
+			_animator->updateAllObjectShapes(!skipFlag());
 			updateTextFade();
 			updateMousePointer();
 		} else {
@@ -565,7 +569,8 @@ void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
 
 		if (skipFlag())
 			snd_stopVoice();
-	} while (!skipFlag() && _system->getMillis() < start + amount && !shouldQuit());
+		ct = skipFlag() ? ct + _tickLength : _system->getMillis();
+	} while (ct < start + amount && !shouldQuit());
 }
 
 bool KyraEngine_LoK::skipFlag() const {
