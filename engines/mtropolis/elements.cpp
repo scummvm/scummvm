@@ -630,6 +630,26 @@ VThreadState MovieElement::consumeCommand(Runtime *runtime, const Common::Shared
 
 		return kVThreadReturn;
 	}
+	if (Event::create(EventIDs::kStop, 0).respondsTo(msg->getEvent())) {
+		if (!_paused) {
+			_paused = true;
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPause, 0), DynamicValue(), getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+			runtime->sendMessageOnVThread(dispatch);
+		}
+
+		{
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kStop, 0), DynamicValue(), getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+			runtime->sendMessageOnVThread(dispatch);
+		}
+
+		ChangeFlagTaskData *becomeVisibleTaskData = runtime->getVThread().pushTask("MovieElement::changeVisibilityTask", static_cast<VisualElement *>(this), &MovieElement::changeVisibilityTask);
+		becomeVisibleTaskData->desiredFlag = false;
+		becomeVisibleTaskData->runtime = runtime;
+
+		return kVThreadReturn;
+	}
 
 	return Structural::consumeCommand(runtime, msg);
 }
@@ -1199,6 +1219,10 @@ VThreadState MToonElement::consumeCommand(Runtime *runtime, const Common::Shared
 	}
 	if (Event::create(EventIDs::kStop, 0).respondsTo(msg->getEvent())) {
 		// Works differently from movies: Needs to hide the element and pause
+#ifdef MTROPOLIS_DEBUG_ENABLE
+		if (Debugger *debugger = runtime->debugGetDebugger())
+			debugger->notify(kDebugSeverityError, "mToon element was commanded to stop, but that's not implemented yet");
+#endif
 		warning("mToon element stops are not implemented");
 		return kVThreadReturn;
 	}
