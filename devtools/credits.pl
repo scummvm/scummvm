@@ -776,7 +776,7 @@ begin_credits("Credits");
 
 			begin_section("MorphOS");
 				add_person("", "BeWorld", "");
-				add_person("Fabien Coeurjoly", "fab1", "");
+				add_person("Fabien Coeurjoly", "fab1", "(retired)");
 				add_person("R&uuml;diger Hanke", "", "(retired)");
 			end_section();
 
