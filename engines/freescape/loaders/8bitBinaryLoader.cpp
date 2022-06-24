@@ -159,50 +159,40 @@ Graphics::PixelBuffer *getPaletteGradient(uint8 c1, uint8 c2, uint16 ncolors) {
 
 	for(int c = 0; c < ncolors; c++)
 	{
-		if (c1 == 4 && c2 == 3 && c == 0) {
-			y0 = 0x00;
-			y1 = 0x00;
-			y2 = 0x00;
-		} else 	if (c1 == 4 && c2 == 3 && c == 1) {
-			y0 = 0x00;
-			y1 = 0x00;
-			y2 = 0x00;
-		} else if (c1 == 4 && c2 == 3 && c == 2) {
-			y0 = 0x00;
-			y1 = 0xaa;
-			y2 = 0xaa;
-		} else if (c1 == 4 && c2 == 3 && c == 3) {
-			y0 = 0xaa;
-			y1 = 0x00;
-			y2 = 0xaa;
-		} else if (c1 == 4 && c2 == 3 && c == 4) {
-			y0 = 0xff;
-			y1 = 0xff;
-			y2 = 0xff;
-		} else if (c1 == 4 && c2 == 3 && c == 5) {
-			y0 = 0x55;
-			y1 = 0x55;
-			y2 = 0x55;
-		} else if (c1 == 4 && c2 == 3 && c == 6) {
-			y0 = 0x00;
-			y1 = 0x00;
-			y2 = 0xaa;
-		} else if (c1 == 4 && c2 == 3 && c == 7) {
-			y0 = 0xaa;
-			y1 = 0x55;
-			y2 = 0x00;
-		} else if (c1 == 4 && c2 == 3 && c == 9) {
-			y0 = 0xaa;
-			y1 = 0x00;
-			y2 = 0x00;
-		} else if (c1 == 4 && c2 == 3 && c == 0xa) {
-			y0 = 0xff;
-			y1 = 0x55;
-			y2 = 0xff;
-		} else { // A different color
-			y0 = 0x12;
-			y1 = 0xf3;
-			y2 = 0x56;
+		if (true /*c1 == 4 && c2 == 3*/) {
+			switch (c) {
+				case 0:
+				case 1:
+				y0 = 0x00; y1 = 0x00; y2 = 0x00;
+				break;
+				case 2:
+				y0 = 0x00; y1 = 0xaa; y2 = 0xaa;
+				break;
+				case 3:
+				y0 = 0xaa; y1 = 0x00; y2 = 0xaa;
+				break;
+				case 4:
+				y0 = 0xff; y1 = 0xff; y2 = 0xff;
+				break;
+				case 5:
+				y0 = 0x55; y1 = 0x55; y2 = 0x55;
+				break;
+				case 6:
+				y0 = 0x00; y1 = 0x00; y2 = 0xaa;
+				break;
+				case 7:
+				y0 = 0xaa; y1 = 0x55; y2 = 0x00;
+				break;
+				case 9:
+				y0 = 0xaa; y1 = 0x00; y2 = 0x00;
+				break;
+				case 0xa:
+				y0 = 0xff; y1 = 0x55; y2 = 0xff;
+				break;
+				default:
+				y0 = 0x12; y1 = 0xf3; y2 = 0x56;
+				break;
+			}
 		}
 		raw_palette->push_back(y0);
 		raw_palette->push_back(y1);
