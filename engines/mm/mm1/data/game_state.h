@@ -26,6 +26,7 @@
 #include "common/rect.h"
 #include "common/serializer.h"
 #include "mm/mm1/data/char.h"
+#include "mm/mm1/data/party.h"
 
 namespace MM {
 namespace MM1 {
@@ -63,7 +64,7 @@ union ActiveSpells {
  * that is persisted to savegames
  */
 struct GameState {
-	Common::Array<Character> _party;
+	Party _party;
 	ActiveSpells _spells;
 
 	GameState();
