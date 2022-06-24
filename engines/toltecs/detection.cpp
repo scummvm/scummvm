@@ -23,6 +23,7 @@
 
 #include "engines/advancedDetector.h"
 
+#include "common/config-manager.h"
 #include "common/translation.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
@@ -203,6 +204,19 @@ static const ToltecsGameDescription gameDescriptions[] = {
 		},
 	},
 
+	{
+		// Fenimore Fillmore: 3 Skulls of the Toltecs, 2019 Casual Brothers remaster (GOG, Steam)
+		{
+			"toltecs",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1s("RData.lzma", "e0adae53ab5e821595a64032a4c2d5bc", 653477695),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_REMASTERED | ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NONE)
+		}
+	},
+
 	{ AD_TABLE_END_MARKER }
 };
 
@@ -239,7 +253,10 @@ public:
 
 const ExtraGuiOptions ToltecsMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
-	options.push_back(toltecsExtraGuiOption);
+
+	if (target.empty() || ConfMan.get("platform", target) != "windows")
+		options.push_back(toltecsExtraGuiOption);
+
 	return options;
 }
 
