@@ -46,10 +46,10 @@ static Object *load8bitObject(StreamLoader &stream) {
 		debug("Number of colors: %d", numberOfColours/2);
 		for (uint8 colour = 0; colour < numberOfColours/2; colour++) {
 			uint8 c = stream.get8();
-			colours->push_back(c >> 4);
-			debug("color[%d] = %x", 2*colour, c >> 4);
 			colours->push_back(c & 0xf);
-			debug("color[%d] = %x", 2*colour+1, c & 0xf);
+			debug("color[%d] = %x", 2*colour, c & 0xf);
+			colours->push_back(c >> 4);
+			debug("color[%d] = %x", 2*colour+1, c >> 4);
 			byteSizeOfObject--;
 		}
 
@@ -160,9 +160,9 @@ Graphics::PixelBuffer *getPaletteGradient(uint8 c1, uint8 c2, uint16 ncolors) {
 	for(int c = 0; c < ncolors; c++)
 	{
 		if (c1 == 4 && c2 == 3 && c == 0) {
-			y0 = 0xff;
-			y1 = 0xff;
-			y2 = 0xff;
+			y0 = 0x00;
+			y1 = 0x00;
+			y2 = 0x00;
 		} else 	if (c1 == 4 && c2 == 3 && c == 1) {
 			y0 = 0x00;
 			y1 = 0x00;
@@ -176,25 +176,33 @@ Graphics::PixelBuffer *getPaletteGradient(uint8 c1, uint8 c2, uint16 ncolors) {
 			y1 = 0x00;
 			y2 = 0xaa;
 		} else if (c1 == 4 && c2 == 3 && c == 4) {
-			y0 = 0x00;
-			y1 = 0xaa;
-			y2 = 0xaa;
+			y0 = 0xff;
+			y1 = 0xff;
+			y2 = 0xff;
 		} else if (c1 == 4 && c2 == 3 && c == 5) {
 			y0 = 0x55;
 			y1 = 0x55;
 			y2 = 0x55;
 		} else if (c1 == 4 && c2 == 3 && c == 6) {
 			y0 = 0x00;
-			y1 = 0xaa;
-			y2 = 0x00;
-		} else if (c1 == 4 && c2 == 3 && c == 7) {
-			y0 = 0x00;
 			y1 = 0x00;
 			y2 = 0xaa;
-		} else {
+		} else if (c1 == 4 && c2 == 3 && c == 7) {
+			y0 = 0xaa;
+			y1 = 0x55;
+			y2 = 0x00;
+		} else if (c1 == 4 && c2 == 3 && c == 9) {
 			y0 = 0xaa;
 			y1 = 0x00;
 			y2 = 0x00;
+		} else if (c1 == 4 && c2 == 3 && c == 0xa) {
+			y0 = 0xff;
+			y1 = 0x55;
+			y2 = 0xff;
+		} else { // A different color
+			y0 = 0x12;
+			y1 = 0xf3;
+			y2 = 0x56;
 		}
 		raw_palette->push_back(y0);
 		raw_palette->push_back(y1);
