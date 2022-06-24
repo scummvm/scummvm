@@ -153,6 +153,60 @@ Graphics::PixelBuffer *getPaletteGradient(float *c1, float *c2, uint16 ncolors) 
 	return palette;
 }
 
+Graphics::PixelBuffer *getPaletteGradient(uint8 c1, uint8 c2, uint16 ncolors) {
+	Common::Array <uint8> *raw_palette = new Common::Array <uint8>();
+	uint16 y0, y1, y2;
+
+	for(int c = 0; c < ncolors; c++)
+	{
+		if (c1 == 4 && c2 == 3 && c == 0) {
+			y0 = 0xff;
+			y1 = 0xff;
+			y2 = 0xff;
+		} else 	if (c1 == 4 && c2 == 3 && c == 1) {
+			y0 = 0x00;
+			y1 = 0x00;
+			y2 = 0x00;
+		} else if (c1 == 4 && c2 == 3 && c == 2) {
+			y0 = 0x00;
+			y1 = 0xaa;
+			y2 = 0xaa;
+		} else if (c1 == 4 && c2 == 3 && c == 3) {
+			y0 = 0xaa;
+			y1 = 0x00;
+			y2 = 0xaa;
+		} else if (c1 == 4 && c2 == 3 && c == 4) {
+			y0 = 0x00;
+			y1 = 0xaa;
+			y2 = 0xaa;
+		} else if (c1 == 4 && c2 == 3 && c == 5) {
+			y0 = 0x55;
+			y1 = 0x55;
+			y2 = 0x55;
+		} else if (c1 == 4 && c2 == 3 && c == 6) {
+			y0 = 0x00;
+			y1 = 0xaa;
+			y2 = 0x00;
+		} else if (c1 == 4 && c2 == 3 && c == 7) {
+			y0 = 0x00;
+			y1 = 0x00;
+			y2 = 0xaa;
+		} else {
+			y0 = 0xaa;
+			y1 = 0x00;
+			y2 = 0x00;
+		}
+		raw_palette->push_back(y0);
+		raw_palette->push_back(y1);
+		raw_palette->push_back(y2);
+	}
+	assert(ncolors == 16);
+	assert(raw_palette->size() == ncolors * 3);
+	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
+	Graphics::PixelBuffer *palette = new Graphics::PixelBuffer(pixelFormat, ncolors, DisposeAfterUse::NO); //TODO
+	*palette = raw_palette->data();
+	return palette;
+}
 
 Area *load8bitArea(StreamLoader &stream, uint16 ncolors) {
 	uint32 base = stream.getFileOffset();
@@ -171,11 +225,11 @@ Area *load8bitArea(StreamLoader &stream, uint16 ncolors) {
 
 	debug("Colors: %d %d %d %d", ci1, ci2, ci3, ci4);
 
-	float *f1, *f2;
-	f1 = specColors[ci3];
-	f2 = specColors[ci4];
+	//float *f1, *f2;
+	//f1 = specColors[ci3];
+	//f2 = specColors[ci4];
 
-	Graphics::PixelBuffer *palette = getPaletteGradient(f1, f2, ncolors);
+	Graphics::PixelBuffer *palette = getPaletteGradient(ci3, ci4, ncolors);
 
 	debug("Area %d", areaNumber);
 	debug("Objects: %d", numberOfObjects);

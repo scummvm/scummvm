@@ -275,7 +275,7 @@ void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::V
 
 	assert(size.x() == 0 || size.y() == 0 || size.z() == 0);
 
-	tglPolygonOffset(250, 250);
+	tglPolygonOffset(1, 1);
 	//debug("origin: %f, %f, %f", origin.x(), origin.y(), origin.z());
 	//debug("size: %f, %f, %f", size.x(), size.y(), size.z());
 

@@ -228,7 +228,7 @@ Common::Error FreescapeEngine::run() {
 		// the 16-bit kit permits the range 0-8192 to be used along all three axes and from that comes the far plane distance of 14189.
 		_farClipPlane = 14189.f;
 	} else {
-		_farClipPlane = 4096.f; // wild guess
+		_farClipPlane = 8192.f;
 	}
 
 	//g_system->lockMouse(true);
