@@ -33,18 +33,18 @@ namespace MM1 {
 	for (uint i = 1; i < party.size(); ++i) \
 		party[i].FIELD = avg;
 
-void Party::share(ShareType shareType) {
+void Party::share(TransferKind shareType) {
 	auto &party = g_globals->_party;
 	int total = 0, avg;
 
 	switch (shareType) {
-	case GEMS:
+	case TK_GEMS:
 		SHARE_FIELD(_gems);
 		break;
-	case GOLD:
+	case TK_GOLD:
 		SHARE_FIELD(_gold);
 		break;
-	case FOOD:
+	case TK_FOOD:
 		SHARE_FIELD(_food);
 		break;
 	}

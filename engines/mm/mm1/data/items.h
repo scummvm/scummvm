@@ -44,6 +44,11 @@ enum EquipMode {
 	EQUIP_CURSED = 0xff
 };
 
+enum TransferKind {
+	TK_GEMS = 1, TK_GOLD = 2, TK_FOOD = 3, TK_ITEM = 4
+};
+
+
 struct ItemData {
 	byte _disablements;
 	EquipMode _equipMode;

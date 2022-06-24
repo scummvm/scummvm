@@ -32,7 +32,8 @@ void CharacterInfo::draw() {
 	assert(g_globals->_currCharacter);
 	CharacterBase::draw();
 
-	MetaEngine::setKeybindingMode(_state == DISPLAY ?
+	MetaEngine::setKeybindingMode(
+		_state == DISPLAY || _state == TRADE_WITH ?
 		KeybindingMode::KBMODE_PARTY_MENUS :
 		KeybindingMode::KBMODE_MENUS
 	);
@@ -46,18 +47,44 @@ void CharacterInfo::draw() {
 		break;
 
 	case EQUIP:
-		writeString(0, 20, STRING["dialogs.chracter.equip"]);
+		writeString(0, 20, STRING["dialogs.character.equip"]);
 		escToGoBack(0);
 		break;
 
 	case REMOVE:
-		writeString(0, 20, STRING["dialogs.chracter.remove"]);
+		writeString(0, 20, STRING["dialogs.character.remove"]);
 		escToGoBack(0);
 		break;
 
 	case SHARE:
 		writeString(8, 20, STRING["dialogs.character.share_all"]);
 		drawGemsGoldFood();
+		break;
+
+	case TRADE_WITH:
+		// Print party
+		clearLines(13, 24);
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			const Character &c = g_globals->_party[i];
+			_textPos.x = (i % 2) == 0 ? 1 : 22;
+			_textPos.y = 15 + (i / 2);
+			writeChar(c._condition ? '*' : ' ');
+			writeChar('1' + i);
+			writeString(") ");
+			writeString(c._name);
+		}
+
+		writeString(10, 20, Common::String::format(
+			STRING["dialogs.character.trade_with"].c_str(),
+			(int)g_globals->_party.size()
+		));
+		break;
+
+	case TRADE_KIND:
+		writeString(6, 20, STRING["dialogs.character.trade_which"]);
+		drawGemsGoldFood();
+		writeString(20, 23, STRING["dialogs.character.item"]);
+		escToGoBack(0);
 		break;
 
 	default:
@@ -101,6 +128,10 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 			_state = SHARE;
 			redraw();
 			break;
+		case Common::KEYCODE_t:
+			_state = TRADE_WITH;
+			redraw();
+			break;
 		default:
 			break;
 		 }
@@ -121,10 +152,37 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 	case SHARE:
 		if (msg.keycode >= Common::KEYCODE_1 &&
 			msg.keycode <= Common::KEYCODE_3) {
-			Party::share((Party::ShareType)(msg.keycode - Common::KEYCODE_1));
+			Party::share((TransferKind)(msg.keycode - Common::KEYCODE_0));
 			_state = DISPLAY;
 			redraw();
 			break;
+		}
+		break;
+
+	case TRADE_KIND:
+		if (msg.keycode >= Common::KEYCODE_1 &&
+				msg.keycode <= Common::KEYCODE_3) {
+			_tradeKind = (TransferKind)(msg.keycode - Common::KEYCODE_0);
+
+			clearLines(20, 24);
+			escToGoBack(0);
+			writeString(10, 20, STRING["dialogs.character.how_much"]);
+
+			_textEntry.display(20, 20, 5, true,
+				[]() {
+					CharacterInfo *view =
+						(CharacterInfo *)g_events->focusedView();
+					view->howMuchAborted();
+				},
+				[](const Common::String &text) {
+					CharacterInfo *view =
+						(CharacterInfo *)g_events->focusedView();
+					view->howMuchEntered(atoi(text.c_str()));
+				}
+			);
+
+		} else if (msg.keycode == Common::KEYCODE_4) {
+			// TODO: Trade item
 		}
 		break;
 
@@ -137,14 +195,19 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 
 bool CharacterInfo::msgAction(const ActionMessage &msg) {
 	if (msg._action >= KEYBIND_VIEW_PARTY1 &&
-			msg._action <= KEYBIND_VIEW_PARTY6 &&
-			_state == DISPLAY) {
-		g_globals->_currCharacter = &g_globals->_party[
-			msg._action - KEYBIND_VIEW_PARTY1];
-		addView();
-		return true;
+			msg._action <= KEYBIND_VIEW_PARTY6) {
+		if (_state == DISPLAY) {
+			g_globals->_currCharacter = &g_globals->_party[
+				msg._action - KEYBIND_VIEW_PARTY1];
+			addView();
+			return true;
+		} else if (_state == TRADE_WITH) {
+			_state = TRADE_KIND;
+			_tradeWith = msg._action - KEYBIND_VIEW_PARTY1;
+			redraw();
+			return true;
+		}
 	}
-
 	return false;
 }
 
@@ -373,6 +436,15 @@ void CharacterInfo::drawGemsGoldFood() {
 	writeString(20, 20, STRING["dialogs.character.gems"]);
 	writeString(20, 21, STRING["dialogs.character.gold"]);
 	writeString(20, 22, STRING["dialogs.character.food"]);
+}
+
+void CharacterInfo::howMuchAborted() {
+	_state = TRADE_WITH;
+	redraw();
+}
+
+void CharacterInfo::howMuchEntered(int amount) {
+
 }
 
 } // namespace Views
