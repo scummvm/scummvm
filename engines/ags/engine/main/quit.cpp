@@ -208,8 +208,6 @@ void quit_free() {
 
 	_G(our_eip) = 9016;
 
-	pl_stop_plugins();
-
 	quit_check_dynamic_sprites(qreason);
 
 	if (_G(use_cdplayer))
