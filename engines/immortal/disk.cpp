@@ -88,7 +88,7 @@ int ProDOSFile::parseIndexBlock(byte *memOffset, int blockNum, int rem) const {
         diskPos = _disk->pos();
 
         _disk->skip(255);                       // The high bytes are stored at the end of the block instead because reasons???
-        dataOffset += (_disk->readByte() << 8) * ProDOSDisk::kBlockSize;    // High byte is second
+        dataOffset = (dataOffset + (_disk->readByte() << 8)) * ProDOSDisk::kBlockSize;    // High byte is second
 
         getDataBlock(memOffset + readSize, dataOffset, dataSize);
         readSize += dataSize;
@@ -155,7 +155,7 @@ Common::SeekableReadStream *ProDOSFile::createReadStream() const {
             int diskPos = _disk->pos();
 
             _disk->skip(255);
-            indexOffset += (_disk->readByte() << 8) * ProDOSDisk::kBlockSize;
+            indexOffset = (indexOffset + (_disk->readByte() << 8)) * ProDOSDisk::kBlockSize;
 
             _disk->seek(indexOffset);
             readSize += parseIndexBlock(finalData + readSize, blockNum, remainder);
