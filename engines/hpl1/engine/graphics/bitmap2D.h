@@ -33,6 +33,7 @@
 #include "hpl1/engine/math/MathTypes.h"
 #include "graphics/pixelformat.h"
 #include "common/ptr.h"
+#include "common/rect.h"
 #include "graphics/surface.h"
 #include "image/image_decoder.h"
 
@@ -40,12 +41,12 @@ namespace hpl {
 
 class Bitmap2D : public iLowLevelPicture {
 public:
-	Bitmap2D(const tString &type, const cVector2l &size, const Graphics::PixelFormat &format);
+	Bitmap2D(const cVector2l &size, const Graphics::PixelFormat &format);
 	Bitmap2D(const tString &filename, const tString &type);
 
 	~Bitmap2D();
 
-	void drawToBitmap(Bitmap2D &dest, const cVector2l &pos);
+	void drawToBitmap(Bitmap2D &dest, const cVector2l &at, Common::Rect srcSubrect = {});
 
 	bool create(const cVector2l &size, const Graphics::PixelFormat &format);
 
@@ -54,6 +55,8 @@ public:
 	const void *getRawData() const;
 
 	int getNumChannels();
+
+	const Graphics::PixelFormat &format() const;
 
 	bool HasAlpha() override;
 
