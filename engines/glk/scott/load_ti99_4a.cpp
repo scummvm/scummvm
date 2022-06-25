@@ -68,7 +68,7 @@ struct DataHeader {
 };
 
 uint16_t fixAddress(uint16_t ina) {
-	return 0;
+	return (ina - 0x380 + _G(_fileBaselineOffset));
 }
 
 uint16_t fixWord(uint16_t word) {
