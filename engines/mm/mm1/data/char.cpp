@@ -173,6 +173,22 @@ void Character::gatherGold() {
 	_gold = total;
 }
 
+Character::TradeResult Character::trade(int whoTo, int itemIndex) {
+	Character &dest = g_globals->_party[whoTo];
+	if (&dest == this)
+		return TRADE_SUCCESS;
+
+	if (dest._backpack.full())
+		return TRADE_FULL;
+	if (!_backpack[itemIndex])
+		return TRADE_NO_ITEM;
+
+	// TODO: do the trade
+
+	return TRADE_SUCCESS;
+}
+
+
 Character::LevelIncrease Character::increaseLevel() {
 	_level = ++_levelBase;
 	_age = ++_ageBase;

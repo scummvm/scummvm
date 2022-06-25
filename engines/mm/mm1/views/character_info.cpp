@@ -87,6 +87,11 @@ void CharacterInfo::draw() {
 		escToGoBack(0);
 		break;
 
+	case TRADE_ITEM:
+		writeString(10, 20, STRING["dialogs.character.which"]);
+		escToGoBack(0);
+		break;
+
 	default:
 		break;
 	}
@@ -182,7 +187,36 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 			);
 
 		} else if (msg.keycode == Common::KEYCODE_4) {
-			// TODO: Trade item
+			if (g_globals->_party[_tradeWith]._backpack.full()) {
+				writeString(14, 21, STRING["dialogs.character.full"]);
+				Sound::sound(SOUND_2);
+				_state = DISPLAY;
+				delaySeconds(3);
+			} else {
+				_state = TRADE_ITEM;
+				redraw();
+			}
+		}
+		break;
+
+	case TRADE_ITEM:
+		if (msg.keycode >= Common::KEYCODE_a &&
+				msg.keycode <= Common::KEYCODE_f) {
+			switch (g_globals->_currCharacter->trade(_tradeWith,
+				msg.keycode - Common::KEYCODE_a)) {
+			case Character::TRADE_FULL:
+				writeString(14, 21, STRING["dialogs.character.full"]);
+				_state = DISPLAY;
+				delaySeconds(3);
+				break;
+			case Character::TRADE_SUCCESS:
+				_state = DISPLAY;
+				redraw();
+				break;
+			default:
+				// Do nothing, no item at selected index
+				break;
+			}
 		}
 		break;
 
