@@ -209,7 +209,7 @@ Common::Error FreescapeEngine::run() {
 		_scaleVector = _scale;
 	debug("entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
 	debug("player height: %d", _playerHeight);
-	_position.setValue(0, _position.x() - 8192);
+	_position.setValue(0, _position.x() - 4096);
 	_position.setValue(1, _position.y() + _playerHeight);
 
 	Math::Vector3d rotation = entrance->getRotation();

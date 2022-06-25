@@ -14,25 +14,25 @@
 
 namespace Freescape {
 
-static Object *load8bitObject(StreamLoader &stream) {
+static Object *load8bitObject(Common::SeekableReadStream *file) {
 
-	Object::Type objectType = (Object::Type)(stream.get8() & 0x1F);
+	Object::Type objectType = (Object::Type)(file->readByte() & 0x1F);
 	Math::Vector3d position, v;
 
-	position.x() = stream.get8();
-	position.y() = stream.get8();
-	position.z() = stream.get8();
+	position.x() = file->readByte();
+	position.y() = file->readByte();
+	position.z() = file->readByte();
 
-	v.x() = stream.get8();
-	v.y() = stream.get8();
-	v.z() = stream.get8();
+	v.x() = file->readByte();
+	v.y() = file->readByte();
+	v.z() = file->readByte();
 
 	// object ID
-	uint16 objectID = stream.get8();
+	uint16 objectID = file->readByte();
 	// size of object on disk; we've accounted for 8 bytes
 	// already so we can subtract that to get the remaining
 	// length beyond here
-	uint8 byteSizeOfObject = stream.get8();
+	uint8 byteSizeOfObject = file->readByte();
 	assert(byteSizeOfObject >= 9);
 	byteSizeOfObject = byteSizeOfObject - 9;
 	debug("Object %d ; type %d ; size %d", objectID, (int)objectType, byteSizeOfObject);
@@ -45,7 +45,7 @@ static Object *load8bitObject(StreamLoader &stream) {
 		Common::Array<uint8> *colours = new Common::Array<uint8>;
 		debug("Number of colors: %d", numberOfColours/2);
 		for (uint8 colour = 0; colour < numberOfColours/2; colour++) {
-			uint8 c = stream.get8();
+			uint8 c = file->readByte();
 			colours->push_back(c & 0xf);
 			debug("color[%d] = %x", 2*colour, c & 0xf);
 			colours->push_back(c >> 4);
@@ -63,7 +63,7 @@ static Object *load8bitObject(StreamLoader &stream) {
 			uint16 ord = 0;
 
 			for (int ordinate = 0; ordinate < numberOfOrdinates; ordinate++) {
-				ord = stream.get8();
+				ord = file->readByte();
 				debug("ord: %x", ord);
 				ordinates->push_back(ord);
 				byteSizeOfObject--;
@@ -73,9 +73,10 @@ static Object *load8bitObject(StreamLoader &stream) {
 		// grab the object condition, if there is one
 		FCLInstructionVector instructions;
 		if (byteSizeOfObject) {
-			Common::Array<uint8> *conditionData = stream.nextBytes(byteSizeOfObject);
-
-			Common::String *conditionSource = detokenise8bitCondition(*conditionData);
+			byte *conditionData = (byte*)malloc(byteSizeOfObject);
+			file->read(conditionData, byteSizeOfObject);
+			Common::Array<uint8> conditionArray(conditionData, byteSizeOfObject);
+			Common::String *conditionSource = detokenise8bitCondition(conditionArray);
 			//instructions = getInstructions(conditionSource);
 			debug("%s", conditionSource->c_str());
 		}
@@ -107,7 +108,7 @@ static Object *load8bitObject(StreamLoader &stream) {
 		break;
 	}
 
-	stream.skipBytes(byteSizeOfObject);
+	file->seek(byteSizeOfObject, SEEK_CUR);
 	return nullptr;
 }
 
@@ -206,20 +207,21 @@ Graphics::PixelBuffer *getPaletteGradient(uint8 c1, uint8 c2, uint16 ncolors) {
 	return palette;
 }
 
-Area *load8bitArea(StreamLoader &stream, uint16 ncolors) {
-	uint32 base = stream.getFileOffset();
-	uint8 skippedValue = stream.get8();
-	uint8 numberOfObjects = stream.get8();
-	uint8 areaNumber = stream.get8();
+Area *load8bitArea(Common::SeekableReadStream *file, uint16 ncolors) {
 
-	uint16 cPtr = stream.rget16();
-	uint8 scale = stream.get8();
+	uint32 base = file->pos();
+	uint8 skippedValue = file->readByte();
+	uint8 numberOfObjects = file->readByte();
+	uint8 areaNumber = file->readByte();
+
+	uint16 cPtr = file->readUint16LE();
+	uint8 scale = file->readByte();
 	debug("Scale: %d", scale);
 
-	uint8 ci1 = stream.get8()&15;
-	uint8 ci2 = stream.get8()&15;
-	uint8 ci3 = stream.get8()&15;
-	uint8 ci4 = stream.get8()&15;
+	uint8 ci1 = file->readByte() & 15;
+	uint8 ci2 = file->readByte() & 15;
+	uint8 ci3 = file->readByte() & 15;
+	uint8 ci4 = file->readByte() & 15;
 
 	debug("Colors: %d %d %d %d", ci1, ci2, ci3, ci4);
 
@@ -233,12 +235,11 @@ Area *load8bitArea(StreamLoader &stream, uint16 ncolors) {
 	debug("Objects: %d", numberOfObjects);
 	debug("Condition Ptr: %x", cPtr);
 
-	stream.skipBytes(15);
+	file->seek(15, SEEK_CUR);
 	ObjectMap *objectsByID = new ObjectMap;
 	ObjectMap *entrancesByID = new ObjectMap;
-
 	for (uint8 object = 0; object < numberOfObjects; object++) {
-		Object *newObject = load8bitObject(stream);
+		Object *newObject = load8bitObject(file);
 
 		if (newObject) {
 			if (newObject->getType() == Object::Entrance) {
@@ -248,17 +249,18 @@ Area *load8bitArea(StreamLoader &stream, uint16 ncolors) {
 			}
 		}
 	}
-	stream.setFileOffset(base+cPtr);
-	uint8 numConditions = stream.get8();
+	file->seek(base + cPtr);
+	uint8 numConditions = file->readByte();
 	debug("%d area conditions", numConditions);
 	while (numConditions--) {
 		// get the length
-		uint32 lengthOfCondition = stream.get8();
+		uint32 lengthOfCondition = file->readByte();
 		debug("length of condition: %d", lengthOfCondition);
 		// get the condition
-		Common::Array<uint8> *conditionData = stream.nextBytes(lengthOfCondition);
-
-		debug("%s", detokenise8bitCondition(*conditionData)->c_str());
+		byte *conditionData = (byte*)malloc(lengthOfCondition);
+		file->read(conditionData, lengthOfCondition);
+		Common::Array<uint8> conditionArray(conditionData, lengthOfCondition);
+		debug("%s", detokenise8bitCondition(conditionArray)->c_str());
 	}
 
 	return (new Area(areaNumber, objectsByID, entrancesByID, scale, 255, 255, palette));
@@ -279,63 +281,54 @@ Area *load8bitArea(StreamLoader &stream, uint16 ncolors) {
 // };
 
 void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offset, int ncolors) {
-	const uint32 fileSize = file->size();
-	byte *buf = (byte *)malloc(fileSize);
-	file->read(buf, fileSize);
-
-	Common::Array<uint8> binary;
-
-	uint32 i = 0;
-	while (i < fileSize) {
-		binary.push_back(buf[i]);
-		i++;
-	}
-
-	StreamLoader streamLoader(binary);
-	streamLoader.skipBytes(0x210);
-	uint16 frameSize = streamLoader.get16();
-	Common::Array<uint8> *raw_border = streamLoader.nextBytes(frameSize);
+	//const uint32 fileSize = file->size();
+	file->seek(0x210);
+	uint16 frameSize = file->readUint16BE();
+	//Common::Array<uint8> *raw_border = streamLoader.nextBytes(frameSize);
 	debug("Found border image of size %x", frameSize);
 
-	streamLoader.setFileOffset(offset);
-	uint8 numberOfAreas = streamLoader.get8();
-	uint16 dbSize = streamLoader.rget16();
+	file->seek(offset);
+	uint8 numberOfAreas = file->readByte();
+	uint16 dbSize = file->readUint16LE();
 	debug("Database ends at %x", dbSize);
 
 	debug("Number of areas: %d", numberOfAreas);
-	uint8 startArea = streamLoader.get8();
+
+	uint8 startArea = file->readByte();
 	debug("Start area: %d", startArea);
-	uint8 startEntrance = streamLoader.get8();
+	uint8 startEntrance = file->readByte();
 	debug("Entrace area: %d", startEntrance);
 
-	streamLoader.skipBytes(66);
+	//streamLoader.skipBytes(66);
+	file->seek(66, SEEK_CUR);
 
 	uint16 globalSomething;
-	globalSomething = streamLoader.get16();
+	globalSomething = file->readUint16BE();
 	debug("Pointer to something: %x\n", globalSomething);
 
 	uint16 globalByteCodeTable;
-	globalByteCodeTable = streamLoader.get16();
+	globalByteCodeTable = file->readUint16BE();
 	debug("GBCT: %d\n", globalByteCodeTable);
 
-	streamLoader.setFileOffset(offset + globalByteCodeTable);
-	uint8 numConditions = streamLoader.get8();
+	file->seek(offset + globalByteCodeTable);
+	uint8 numConditions = file->readByte();
 	debug("%d global conditions", numConditions);
 	while (numConditions--) {
 		// get the length
-		uint32 lengthOfCondition = streamLoader.get8();
+		uint32 lengthOfCondition = file->readByte();
 		debug("length of condition: %d", lengthOfCondition);
 		// get the condition
-		Common::Array<uint8> *conditionData = streamLoader.nextBytes(lengthOfCondition);
-
+		byte *conditionData = (byte*)malloc(lengthOfCondition);
+		file->read(conditionData, lengthOfCondition);
+		Common::Array<uint8> conditionArray(conditionData, lengthOfCondition);
 		//debug("Global condition %d", numCondition + 1);
-		debug("%s", detokenise8bitCondition(*conditionData)->c_str());
+		debug("%s", detokenise8bitCondition(conditionArray)->c_str());
 	}
 
-	streamLoader.setFileOffset(offset + 200);
+	file->seek(offset + 200);
 	uint16 *fileOffsetForArea = new uint16[numberOfAreas];
 	for (uint16 area = 0; area < numberOfAreas; area++) {
-		fileOffsetForArea[area] = streamLoader.rget16();
+		fileOffsetForArea[area] = file->readUint16LE();
 	}
 
 	// grab the areas
@@ -343,8 +336,8 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	for (uint16 area = 0; area < numberOfAreas; area++) {
 		debug("Area offset %d", fileOffsetForArea[area]);
 
-		streamLoader.setFileOffset(offset + fileOffsetForArea[area]);
-		Area *newArea = load8bitArea(streamLoader, ncolors);
+		file->seek(offset + fileOffsetForArea[area]);
+		Area *newArea = load8bitArea(file, ncolors);
 
 		if (newArea) {
 			(*areaMap)[newArea->getAreaID()] = newArea;
