@@ -157,8 +157,10 @@ bool AdActor3DX::update() {
 			_nextState = STATE_READY;
 		} else {
 			// set animation
-			if (_directTurnMode != DIRECT_TURN_NONE) {
-				if (_directTurnAnim.empty()) {
+			if (_directWalkMode != DIRECT_WALK_NONE) {
+				// disabled in original code
+			} else if (_directTurnMode != DIRECT_TURN_NONE) {
+				if (!_directTurnAnim.empty()) {
 					_modelX->playAnim(0, _directTurnAnim, _defaultTransTime, false, _defaultStopTransTime);
 				} else {
 					_modelX->playAnim(0, _idleAnimName, _defaultTransTime, false, _defaultStopTransTime);
