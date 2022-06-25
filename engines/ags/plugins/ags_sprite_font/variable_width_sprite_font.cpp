@@ -31,9 +31,17 @@ VariableWidthSpriteFontRenderer::VariableWidthSpriteFontRenderer(IAGSEngine *eng
 }
 
 VariableWidthSpriteFontRenderer::~VariableWidthSpriteFontRenderer(void) {
-	for (int i = 0; i < (int)_fonts.size(); i++)
-		delete _fonts[i];
-	_fonts.clear();
+}
+
+void VariableWidthSpriteFontRenderer::FreeMemory(int fontNum) {
+	for(auto it = _fonts.begin(); it != _fonts.end() ; ++it) {
+		VariableWidthFont *font = *it;
+		if (font->FontReplaced == fontNum) {
+			_fonts.erase(it);
+			delete font;
+			return;
+		}
+	}
 }
 
 bool VariableWidthSpriteFontRenderer::SupportsExtendedCharacters(int fontNumber) {
