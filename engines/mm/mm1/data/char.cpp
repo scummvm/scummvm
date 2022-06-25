@@ -191,7 +191,9 @@ Character::TradeResult Character::trade(int whoTo, int itemIndex) {
 	if (!_backpack[itemIndex])
 		return TRADE_NO_ITEM;
 
-	// TODO: do the trade
+	Inventory::Entry e = _backpack[itemIndex];
+	_backpack.removeAt(itemIndex);
+	dest._backpack.add(e._id, e._field14);
 
 	return TRADE_SUCCESS;
 }
