@@ -83,6 +83,12 @@ public:
 	//! \param fail if true, fail the processes instead of terminating them
 	void killProcessesNotOfType(ObjId objid, uint16 processtype, bool fail);
 
+	//! kill (fail) processes not of a certain type, regardless of object ID
+	//! except for the current running process (for switching levels in Crusader)
+	//! \param type the type not to kill
+	//! \param fail if true, fail the processes instead of terminating them
+	void killAllProcessesNotOfTypeExcludeCurrent(uint16 processtype, bool fail);
+
 	//! get an iterator of the process list.
 	ProcessIter getProcessBeginIterator() {
 		return _processes.begin();

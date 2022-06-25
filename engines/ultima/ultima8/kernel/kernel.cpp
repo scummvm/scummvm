@@ -323,6 +323,8 @@ void Kernel::killProcessesNotOfType(ObjId objid, uint16 processtype, bool fail) 
 	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
 		Process *p = *it;
 
+		// * If objid is 0, terminate procs for all objects.
+		// * Never terminate procs with objid 0
 		if (p->_itemNum != 0 && (objid == 0 || objid == p->_itemNum) &&
 		        (p->_type != processtype) &&
 		        !(p->_flags & Process::PROC_TERMINATED) &&
@@ -334,6 +336,26 @@ void Kernel::killProcessesNotOfType(ObjId objid, uint16 processtype, bool fail) 
 		}
 	}
 }
+
+void Kernel::killAllProcessesNotOfTypeExcludeCurrent(uint16 processtype, bool fail) {
+	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
+		Process *p = *it;
+
+		// Don't kill the running process
+		if (p == _runningProcess)
+			continue;
+
+		if ((p->_type != processtype) &&
+				!(p->_flags & Process::PROC_TERMINATED) &&
+				!(p->_flags & Process::PROC_TERM_DEFERRED)) {
+			if (fail)
+				p->fail();
+			else
+				p->terminate();
+		}
+	}
+}
+
 
 void Kernel::save(Common::WriteStream *ws) {
 	ws->writeUint32LE(_tickNum);
