@@ -9,9 +9,12 @@
 #ifndef __Phantasma__Area__
 #define __Phantasma__Area__
 
-#include "math/vector3d.h"
 #include "common/hashmap.h"
 #include "common/array.h"
+
+#include "math/vector3d.h"
+#include "math/ray.h"
+
 #include "freescape/gfx.h"
 #include "freescape/objects/object.h"
 
@@ -36,6 +39,8 @@ public:
 	uint8 getScale();
 	void draw(Freescape::Renderer *gfx);
 	void show();
+
+	Object *shootRay(const Math::Ray &ray);
 
 private:
 	uint16 areaID;

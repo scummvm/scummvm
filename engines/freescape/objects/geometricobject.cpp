@@ -90,6 +90,21 @@ GeometricObject::GeometricObject(
 	if (_ordinates)
 		ordinates = new Common::Array<uint16>(*_ordinates);
 	condition = _condition;
+
+	if (_type == Cube) {
+		Math::Vector3d v;
+		v = origin;
+		_boundingBox.expand(v);
+
+		for (int i = 0; i < 3; i++) {
+			v = origin;
+			v.setValue(i, origin.getValue(i) + size.getValue(i));
+			_boundingBox.expand(v);
+		}
+
+		v = size;
+		_boundingBox.expand(v);
+	}
 }
 
 GeometricObject::~GeometricObject() {

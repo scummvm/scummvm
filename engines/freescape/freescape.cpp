@@ -6,12 +6,14 @@
 #include "common/error.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/math.h"
 #include "common/fs.h"
 #include "common/system.h"
 
 #include "engines/util.h"
 
 #include "graphics/renderer.h"
+#include "math/ray.h"
 
 #include "freescape/freescape.h"
 #include "freescape/gfx.h"
@@ -34,7 +36,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	// Do not initialize graphics here
 	// Do not initialize audio devices here
 	_hasReceivedTime = false;
-
+	_currentArea = nullptr;
 	_rotation = Math::Vector3d(0.f, 0.f, 0.f);
 	_position = Math::Vector3d(0.f, 0.f, 0.f);
 	_velocity = Math::Vector3d(0.f, 0.f, 0.f);
@@ -132,11 +134,25 @@ void FreescapeEngine::loadAssets() {
 
 }
 
-void FreescapeEngine::drawFrame(Area *area) {
+// Taken from the Myst 3 codebase, it should be abstracted
+Math::Vector3d FreescapeEngine::directionToVector(float pitch, float heading) {
+	Math::Vector3d v;
+
+	float radHeading = Common::deg2rad(heading);
+	float radPitch = Common::deg2rad(pitch);
+
+	v.setValue(0, cos(radPitch) * cos(radHeading));
+	v.setValue(1, sin(radPitch));
+	v.setValue(2, cos(radPitch) * sin(radHeading));
+
+	return v;
+}
+
+void FreescapeEngine::drawFrame() {
 	_gfx->updateProjectionMatrix(60.0, _nearClipPlane, _farClipPlane);
 	_gfx->positionCamera(_position, _position + _cameraFront);
 	_gfx->scale(_scaleVector);
-	area->draw(_gfx);
+	_currentArea->draw(_gfx);
 	//drawBorder();
 	_gfx->flipBuffer();
 }
@@ -176,6 +192,11 @@ void FreescapeEngine::processInput() {
 				_lastMousePos.y = mousePos.y;
 			}
 			break;
+
+		case Common::EVENT_LBUTTONDOWN:
+			shoot();
+			break;
+
 		default:
 			break;
 
@@ -184,26 +205,38 @@ void FreescapeEngine::processInput() {
 
 }
 
+void FreescapeEngine::shoot() {
+	debug("dir: %f %f", _pitch, 90.0 - _yaw);
+	Math::Vector3d direction = directionToVector(_pitch, 90.0 - _yaw);
+	Math::Ray ray(_position, direction);
+	Object *shooted = _currentArea->shootRay(ray);
+	if (shooted) {
+		Math::Vector3d origin = shooted->getOrigin();
+		debug("shoot to %d at %f %f!", shooted->getObjectID(), origin.x(), origin.z());
+	}
+	//debug("camera front: %f %f %f", _cameraFront.x(), _rotation.y(), _rotation.z());
+}
+
+
 Common::Error FreescapeEngine::run() {
 	// Initialize graphics:
 	_gfx = Freescape::createRenderer(_system);
 	_gfx->init();
 	_gfx->clear();
 	loadAssets();
-	Area *area = nullptr;
 	Entrance *entrance = nullptr;
 	assert(_areasByAreaID);
 	if (_startArea == 14)
 		_startArea = 1;
 	assert(_areasByAreaID->contains(_startArea));
-	area = (*_areasByAreaID)[_startArea];
-	assert(area);
-	entrance = (Entrance*) area->entranceWithID(_startEntrance);
-	area->show();
+	_currentArea = (*_areasByAreaID)[_startArea];
+	assert(_currentArea);
+	entrance = (Entrance*) _currentArea->entranceWithID(_startEntrance);
+	_currentArea->show();
 	assert(entrance);
 	_position = entrance->getOrigin();
 	if (_scale == Math::Vector3d(0, 0, 0)) {
-		uint8 scale = area->getScale();
+		uint8 scale = _currentArea->getScale();
 		_scaleVector = Math::Vector3d(scale, scale, scale);
 	} else
 		_scaleVector = _scale;
@@ -236,7 +269,7 @@ Common::Error FreescapeEngine::run() {
 
 	while (!shouldQuit()) {
 		processInput();
-		drawFrame(area);
+		drawFrame();
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
@@ -261,17 +294,11 @@ void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos)
 	if (_pitch < -180.0f)
 		_pitch = -180.0f;
 
-	Math::Vector3d v;
-	float x = cos(_yaw  * M_PI / 180.0) * cos(_pitch  * M_PI / 180.0);
-	float y = sin(_pitch * M_PI / 180.0);
-	float z = sin(_yaw * M_PI / 180.0) * cos(_pitch * M_PI / 180.0);
-	v.set(x, y, z);
-	v.normalize();
-	_cameraFront = v;
+	_cameraFront = directionToVector(_pitch, _yaw);
 
 	// // _right = _front x _up;
 	Math::Vector3d up(0, 1, 0); // this should be const
-	v = Math::Vector3d::crossProduct(_cameraFront, up);
+	Math::Vector3d v = Math::Vector3d::crossProduct(_cameraFront, up);
 	v.normalize();
 	_cameraRight = v;
 }
