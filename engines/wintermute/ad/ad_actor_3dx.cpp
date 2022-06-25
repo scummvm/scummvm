@@ -1136,14 +1136,14 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BLOCKED_REGION: {
 			delete _blockRegion;
+			_blockRegion = nullptr;
 			delete _currentBlockRegion;
+			_currentBlockRegion = nullptr;
 			BaseRegion *rgn = new BaseRegion(_gameRef);
 			BaseRegion *crgn = new BaseRegion(_gameRef);
 			if (!rgn || !crgn || !rgn->loadBuffer((char *)params, false)) {
 				delete rgn;
 				delete crgn;
-				_blockRegion = nullptr;
-				_currentBlockRegion = nullptr;
 				cmd = PARSERR_GENERIC;
 			} else {
 				_blockRegion = rgn;
