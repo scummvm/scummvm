@@ -99,7 +99,22 @@ void getMaxTI99Items(DataHeader dh) {
 }
 
 uint8_t *getTI994AWord(uint8_t* string, uint8_t** result, size_t* length) {
-	return nullptr;
+	uint8_t *msg;
+
+	msg = string;
+	*length = msg[0];
+	if (*length == 0 || *length > 100) {
+		*length = 0;
+		*result = nullptr;
+		return nullptr;
+	}
+	msg++;
+	*result = new uint8_t[*length];
+	memcpy(*result, msg, *length);
+
+	msg += *length;
+
+	return (msg);
 }
 
 char *getTI994AString(uint16_t table, int tableOffset) {
