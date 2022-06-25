@@ -2714,7 +2714,37 @@ bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 #ifdef ENABLE_WME3D
 	if (_sceneGeometry) {
-		// TODO: save scene geometry
+		if (_sceneGeometry->getFilename())
+			buffer->putTextIndent(indent + 2, "GEOMETRY=\"%s\"\n", _sceneGeometry->getFilename());
+
+		Camera3D *activeCamera = _sceneGeometry->getActiveCamera();
+		if (activeCamera != nullptr) {
+			buffer->putTextIndent(indent + 2, "CAMERA=\"%s\"\n", activeCamera->getName());
+		}
+
+		if (_fov >= 0.0f)
+			buffer->putTextIndent(indent + 2, "FOV_OVERRIDE=%f\n", _fov);
+
+		if (_nearPlane >= 0.0f)
+			buffer->putTextIndent(indent + 2, "NEAR_CLIPPING_PLANE=%f\n", _nearPlane);
+
+		if (_farPlane >= 0.0f)
+			buffer->putTextIndent(indent + 2, "FAR_CLIPPING_PLANE=%f\n", _farPlane);
+
+		if (_showGeometry)
+			buffer->putTextIndent(indent + 2, "EDITOR_SHOW_GEOMETRY=%s\n", "TRUE");
+
+		if (_2DPathfinding)
+			buffer->putTextIndent(indent + 2, "2D_PATHFINDING=%s\n", "TRUE");
+
+		buffer->putTextIndent(indent + 2, "MAX_SHADOW_TYPE=%d\n", _maxShadowType);
+
+		if (_ambientLightColor != 0x00000000)
+			buffer->putTextIndent(indent + 2, "AMBIENT_LIGHT_COLOR { %d,%d,%d }\n", RGBCOLGetR(_ambientLightColor), RGBCOLGetG(_ambientLightColor), RGBCOLGetB(_ambientLightColor));
+
+		buffer->putTextIndent(indent + 2, "WAYPOINT_HEIGHT=%f\n", _waypointHeight);
+
+		buffer->putTextIndent(indent + 2, "\n");
 	}
 #endif
 
