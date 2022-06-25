@@ -2116,31 +2116,6 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 
 		return STATUS_OK;
 	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// EnableFog
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "EnableFog") == 0) {
-		stack->correctParams(3);
-		_fogParameters._enabled = true;
-		_fogParameters._color = stack->pop()->getInt();
-		_fogParameters._start = stack->pop()->getFloat();
-		_fogParameters._end = stack->pop()->getFloat();
-
-		stack->pushNULL();
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// DisableFog
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "DisableFog") == 0) {
-		stack->correctParams(0);
-		_fogParameters._enabled = false;
-
-		stack->pushNULL();
-		return STATUS_OK;
-	}
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
@@ -2275,6 +2250,11 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "EnableFog") == 0) {
 		stack->correctParams(3);
+		_fogParameters._enabled = true;
+		_fogParameters._color = stack->pop()->getInt();
+		_fogParameters._start = stack->pop()->getFloat();
+		_fogParameters._end = stack->pop()->getFloat();
+
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -2284,6 +2264,8 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DisableFog") == 0) {
 		stack->correctParams(0);
+		_fogParameters._enabled = false;
+
 		stack->pushNULL();
 		return STATUS_OK;
 	}
