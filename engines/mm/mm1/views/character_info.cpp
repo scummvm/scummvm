@@ -247,8 +247,8 @@ bool CharacterInfo::msgAction(const ActionMessage &msg) {
 
 void CharacterInfo::equipItem(uint index) {
 	Character &c = *g_globals->_currCharacter;
-	uint itemId = c._backpack[index];
-	uint item14 = c._backpack14[index];
+	uint itemId = c._backpack[index]._id;
+	uint item14 = c._backpack[index]._field14;
 
 	int classBit = 0;
 	Common::String equipError;
@@ -352,18 +352,14 @@ void CharacterInfo::equipItem(uint index) {
 	if (equipError.empty()) {
 		// All checks passed, can equip item
 		c._backpack.removeAt(index);
-		c._backpack14.removeAt(index);
-
-		int freeIndex = c._equipped.getFreeSlot();
-		c._equipped[freeIndex] = itemId;
-		c._equipped14[freeIndex] = item14;
+		uint freeIndex = c._equipped.add(itemId, item14);
 
 		if (item._equipMode != EQUIPMODE_0) {
 			if (item._equipMode == NOT_EQUIPPABLE) {
 				equipError = STRING["dialogs.character.not_equipped"];
 				_textPos.x = 10;
 			} else if (item._equipMode == EQUIP_CURSED) {
-				c._equipped14[freeIndex] += item._val10;
+				c._equipped[freeIndex]._field14 += item._val10;
 			}
 		}
 	}
@@ -408,8 +404,8 @@ void CharacterInfo::equipItem(uint index) {
 
 void CharacterInfo::removeItem(uint index) {
 	Character &c = *g_globals->_currCharacter;
-	uint itemId = c._equipped[index];
-	uint item14 = c._equipped14[index];
+	uint itemId = c._equipped[index]._id;
+	uint item14 = c._equipped[index]._field14;
 
 	Common::String removeError;
 
@@ -436,11 +432,8 @@ void CharacterInfo::removeItem(uint index) {
 	}
 
 	// Shift item to backpack
-	int freeIndex = c._backpack.getFreeSlot();
-	c._backpack[freeIndex] = itemId;
-	c._backpack14[freeIndex] = item14;
-	c._equipped[index] = 0;
-	c._equipped14[index] = 0;
+	c._equipped.removeAt(index);
+	c._backpack.add(itemId, item14);
 
 	if (item._val10) {
 		// TODO: This block doesn't make sense in the original.

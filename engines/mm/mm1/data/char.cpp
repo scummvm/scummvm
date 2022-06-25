@@ -35,8 +35,9 @@ void Inventory::clear() {
 	_items.resize(INVENTORY_COUNT);
 }
 
-void Inventory::synchronize(Common::Serializer &s) {
-	s.syncBytes(&_items[0], INVENTORY_COUNT);
+void Inventory::synchronize(Common::Serializer &s, bool ids) {
+	for (int i = 0; i < INVENTORY_COUNT; ++i)
+		s.syncAsByte(ids ? _items[i]._id : _items[i]._field14);
 }
 
 bool Inventory::empty() const {
@@ -55,6 +56,14 @@ bool Inventory::full() const {
 	return true;
 }
 
+uint Inventory::add(byte id, byte field14) {
+	uint idx = getFreeSlot();
+	_items[idx]._id = id;
+	_items[idx]._field14 = field14;
+
+	return idx;
+}
+
 int Inventory::getFreeSlot() const {
 	for (uint i = 0; i < INVENTORY_COUNT; ++i) {
 		if (!_items[i])
@@ -68,12 +77,12 @@ int Inventory::getFreeSlot() const {
 
 void Inventory::removeAt(uint idx) {
 	_items.remove_at(idx);
-	_items.push_back(0);
+	_items.push_back(Entry());
 }
 
 bool Inventory::hasCategory(CategoryFn fn) const {
 	for (uint i = 0; i < INVENTORY_COUNT; ++i) {
-		if (fn(_items[i]))
+		if (fn(_items[i]._id))
 			return true;
 	}
 	return false;
@@ -123,10 +132,10 @@ void Character::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_food);
 	s.syncAsByte(_condition);
 
-	_equipped.synchronize(s);
-	_backpack.synchronize(s);
-	_equipped14.synchronize(s);
-	_backpack14.synchronize(s);
+	_equipped.synchronize(s, true);
+	_backpack.synchronize(s, true);
+	_equipped.synchronize(s, false);
+	_backpack.synchronize(s, false);
 
 	// TODO: Figure purpose of remaining unknown fields
 	s.skip(39);
@@ -154,7 +163,6 @@ void Character::clear() {
 	_condition = 0;
 	_equipped.clear();
 	_backpack.clear();
-	_backpack14.clear();
 
 	_alignmentInitial = GOOD;
 	_alignment = GOOD;
@@ -281,8 +289,7 @@ Character::BuyResult Character::buyItem(byte itemId) {
 
 	// Add the item
 	_gold -= item._cost;
-	_backpack[slotIndex] = itemId;
-	_backpack14[slotIndex] = item._val13;
+	_backpack.add(itemId, item._val13);
 
 	return BUY_SUCCESS;
 }
