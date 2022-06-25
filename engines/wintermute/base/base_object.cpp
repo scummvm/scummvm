@@ -39,6 +39,7 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
+#include "engines/wintermute/base/gfx/x/modelx.h"
 #include "engines/wintermute/wintermute.h"
 #endif
 
@@ -150,6 +151,18 @@ bool BaseObject::cleanup() {
 		delete[] _caption[i];
 		_caption[i] = nullptr;
 	}
+
+#ifdef ENABLE_WME3D
+	delete _modelX;
+	_modelX = nullptr;
+	delete _shadowModel;
+	_shadowModel = nullptr;
+
+	if (_shadowImage) {
+		_gameRef->_surfaceStorage->removeSurface(_shadowImage);
+		_shadowImage = nullptr;
+	}
+#endif
 
 	_sFXType = SFX_NONE;
 	_sFXParam1 = _sFXParam2 = _sFXParam3 = _sFXParam4 = 0;
