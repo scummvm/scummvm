@@ -2439,6 +2439,13 @@ load_game:
 	towns_processPalCycleField();
 #endif
 
+#ifdef ENABLE_SCUMM_7_8
+	// Dequeue the stamp shots for the main menu of COMI
+	if (_game.version == 8) {
+		((ScummEngine_v8 *)this)->stampShotDequeue();
+	}
+#endif
+
 	if (_currentRoom == 0) {
 		if (_game.version > 3)
 			CHARSET_1();
@@ -2787,6 +2794,10 @@ void ScummEngine_v6::scummLoop_handleSaveLoad() {
 
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::scummLoop_handleSaveLoad() {
+	if (_saveLoadFlag == 1) {
+		createInternalSaveStateThumbnail();
+	}
+
 	ScummEngine::scummLoop_handleSaveLoad();
 
 	removeBlastObjects();

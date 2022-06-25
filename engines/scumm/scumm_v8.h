@@ -37,6 +37,20 @@ protected:
 	int _objectIDMapSize;
 	ObjectNameId *_objectIDMap;
 
+	struct StampShot {
+		int slot;
+		int boxX;
+		int boxY;
+		int boxWidth;
+		int boxHeight;
+		int brightness;
+	};
+
+	int _savegameThumbnailPalette[256];
+	byte _savegameThumbnail[160 * 120]; // One fourth of the nominal 640x480 resolution
+	StampShot _stampShots[20];
+	int _stampShotsInQueue = 0;
+
 	int _keyScriptKey, _keyScriptNo;
 
 public:
@@ -44,6 +58,7 @@ public:
 	~ScummEngine_v8() override;
 
 	void setKeyScriptVars(int _keyScriptKey, int _keyScriptNo);
+	void stampShotDequeue();
 
 protected:
 	void setupOpcodes() override;
@@ -73,6 +88,11 @@ protected:
 	void setCursorTransparency(int a) override;
 	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
 
+	void stampShotEnqueue(int slot, int boxX, int boxY, int boxWidth, int boxHeight, int brightness);
+	void stampScreenShot(int slot, int boxX, int boxY, int boxWidth, int boxHeight, int brightness);
+	void saveLoadWithSerializer(Common::Serializer &s) override;
+	void createInternalSaveStateThumbnail();
+	bool fetchInternalSaveStateThumbnail(int slotId, bool isHeapSave);
 
 	/* Version 8 script opcodes */
 	void o8_mod();

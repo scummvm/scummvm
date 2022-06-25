@@ -1012,7 +1012,7 @@ protected:
 	void drawRoomObject(int i, int arg);
 	void drawBox(int x, int y, int x2, int y2, int color);
 	void drawLine(int x1, int y1, int x2, int y2, int color);
-	void drawPixel(VirtScreen *vs, int x, int y, int16 color);
+	void drawPixel(VirtScreen *vs, int x, int y, int16 color, bool useBackbuffer = false);
 
 	void moveScreen(int dx, int dy, int height);
 
@@ -1056,6 +1056,7 @@ public:
 	uint8 *getHEPaletteSlot(uint16 palSlot);
 	uint16 get16BitColor(uint8 r, uint8 g, uint8 b);
 	uint32 getPaletteColorFromRGB(byte *palette, byte r, byte g, byte b);
+	uint32 getPackedRGBColorFromPalette(byte *palette, uint32 color);
 	void fetchBlackAndWhite(uint32 &black, uint32 &white, byte *palette, int paletteEntries);
 	int remapPaletteColor(int r, int g, int b, int threshold);		// Used by Actor::remapActorPalette
 	void readPCEPalette(const byte **ptr, byte **dest, int numEntries);

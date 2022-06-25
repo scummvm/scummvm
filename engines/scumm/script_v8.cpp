@@ -1138,8 +1138,9 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		_saveLoadFlag = 2;
 		_saveTemporaryState = false;
 		break;
-	case 28:	// saveGameStampScreenshot
-		debug(0, "o8_kernelSetFunctions: saveGameStampScreenshot(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
+	case 28:	// stampShotEnqueue
+		debug(0, "o8_kernelSetFunctions: stampShotEnqueue(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
+		stampShotEnqueue(args[1], args[2], args[3], args[4], args[5], args[6]);
 		break;
 	case 29:	// setKeyScript
 		setKeyScriptVars(args[1], args[2]);

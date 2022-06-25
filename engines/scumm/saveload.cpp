@@ -201,9 +201,155 @@ void ScummEngine::copyHeapSaveGameToFile(int slot, const char *saveName) {
 		debug(1, "State save as '%s' FAILED", fileName.c_str());
 	else
 		debug(1, "State saved as '%s'", fileName.c_str());
-
-
 }
+
+#ifdef ENABLE_SCUMM_7_8
+void ScummEngine_v8::stampShotEnqueue(int slot, int boxX, int boxY, int boxWidth, int boxHeight, int brightness) {
+	if (_stampShotsInQueue >= sizeof(_stampShots))
+		error("ScummEngine_v8::stampShotEnqueue(): overflow in the queue");
+
+	_stampShots[_stampShotsInQueue].slot = slot;
+	_stampShots[_stampShotsInQueue].boxX = boxX;
+	_stampShots[_stampShotsInQueue].boxY = boxY;
+	_stampShots[_stampShotsInQueue].boxWidth = boxWidth;
+	_stampShots[_stampShotsInQueue].boxHeight = boxHeight;
+	_stampShots[_stampShotsInQueue].brightness = brightness;
+	_stampShotsInQueue++;
+}
+
+void ScummEngine_v8::stampShotDequeue() {
+	for (int i = 0; i < _stampShotsInQueue; i++) {
+		stampScreenShot(
+			_stampShots[i].slot,
+			_stampShots[i].boxX,
+			_stampShots[i].boxY,
+			_stampShots[i].boxWidth,
+			_stampShots[i].boxHeight,
+			_stampShots[i].brightness);
+	}
+
+	_stampShotsInQueue = 0;
+}
+
+void ScummEngine_v8::stampScreenShot(int slot, int boxX, int boxY, int boxWidth, int boxHeight, int brightness) {
+	int pixelX, pixelY;
+	int color, pixelColor, rgb;
+	int heightSlice, widthSlice;
+
+	bool success = false;
+	byte tmpPalette[256];
+
+	VirtScreen *vs = &_virtscr[kMainVirtScreen];
+
+	success = fetchInternalSaveStateThumbnail(slot == 0 ? 1 : slot, slot == 0);
+
+	if (success) {
+		for (int i = 0; i < 256; i++) {
+			rgb = _savegameThumbnailPalette[i];
+			tmpPalette[i] = remapPaletteColor(
+				brightness * ((rgb & 0xFF)     >> 0)  / 0xFF,
+				brightness * ((rgb & 0xFF00)   >> 8)  / 0xFF,
+				brightness * ((rgb & 0xFF0000) >> 16) / 0xFF,
+				-1);
+		}
+
+		heightSlice = 0;
+		for (int i = 0; i < boxHeight; i++) {
+			pixelY = boxY + i;
+			widthSlice = 0;
+			for (int j = 0; j < boxWidth; j++) {
+				color = _savegameThumbnail[160 * (heightSlice / boxHeight) + (widthSlice / boxWidth)];
+				pixelX = j + boxX;
+				pixelColor = tmpPalette[color + 0];
+				drawPixel(vs, pixelX, pixelY, pixelColor, false); // In the frontbuffer
+				drawPixel(vs, pixelX, pixelY, pixelColor, true);  // In the backbuffer
+				widthSlice += 160;
+			}
+			heightSlice += 120;
+		}
+
+	}
+}
+
+void ScummEngine_v8::createInternalSaveStateThumbnail() {
+	byte *tempBitmap = (byte *)malloc(_screenWidth * _screenHeight * sizeof(byte));
+	VirtScreen *vs = &_virtscr[kMainVirtScreen];
+
+
+	byte *screen = vs->getPixels(0, _screenTop);
+
+	if (tempBitmap) {
+		for (int i = 0; i < _screenHeight; i++) {
+			screen = vs->getPixels(0, _screenTop + i);
+			memcpy(&tempBitmap[_screenWidth * i], screen, _screenWidth * sizeof(byte));
+		}
+
+		for (int i = 0; i < 256; i++) {
+			_savegameThumbnailPalette[i] = getPackedRGBColorFromPalette(_currentPalette, i);
+		}
+
+		for (int i = 0; i < 120; i++) {
+			for (int j = 0; j < 160; j++) {
+				_savegameThumbnail[i * 160 + j] = tempBitmap[4 * (i * _screenWidth + j)];
+			}
+		}
+
+		free(tempBitmap);
+	}
+}
+
+bool ScummEngine_v8::fetchInternalSaveStateThumbnail(int slotId, bool isHeapSave) {
+	SaveGameHeader hdr;
+	int sb, sh;
+	Common::String filename;
+	Common::SeekableReadStream *in = openSaveFileForReading(slotId, isHeapSave, filename);
+	if (!in)
+		return false;
+
+	// In order to fetch the internal COMI thumbnail, we perform the same routine
+	// used during normal loading, stripped down to support only version 106 onwards...
+	hdr.type = in->readUint32BE();
+	hdr.size = in->readUint32LE();
+	hdr.ver = in->readUint32LE();
+	in->read(hdr.name, sizeof(hdr.name));
+
+	if (in->err() || hdr.type != MKTAG('S', 'C', 'V', 'M')) {
+		warning("Invalid savegame header for savegame '%s'", filename.c_str());
+		delete in;
+		return false;
+	}
+
+	if (hdr.ver > 0xFFFFFF)
+		hdr.ver = SWAP_BYTES_32(hdr.ver);
+
+	// Reject save games which do not contain the internal thumbnail...
+	if (hdr.ver < VER(106)) {
+		return false;
+	}
+
+	Graphics::skipThumbnail(*in);
+
+	SaveStateMetaInfos infos;
+	if (!loadInfos(in, &infos)) {
+		warning("Info section could not be found");
+		delete in;
+		return false;
+	}
+
+	hdr.name[sizeof(hdr.name) - 1] = 0;
+	_saveLoadDescription = hdr.name;
+
+
+	// Now do the actual loading
+	Common::Serializer ser(in, nullptr);
+	ser.setVersion(hdr.ver);
+	ser.syncArray(_savegameThumbnail, 19200, Common::Serializer::Byte, VER(106));
+	ser.syncArray(_savegameThumbnailPalette, 256, Common::Serializer::Uint32LE, VER(106));
+
+	delete in;
+	return true;
+}
+#endif
 
 Common::SeekableReadStream *ScummEngine::openSaveFileForReading(int slot, bool compat, Common::String &fileName) {
 	fileName = makeSavegameName(slot, compat);
@@ -1692,6 +1838,17 @@ void syncWithSerializer(Common::Serializer &s, ScummEngine_v7::SubtitleText &st)
 	s.syncAsSint16LE(st.xpos, VER(61));
 	s.syncAsSint16LE(st.ypos, VER(61));
 	s.syncAsByte(st.actorSpeechMsg, VER(61));
+}
+
+void ScummEngine_v8::saveLoadWithSerializer(Common::Serializer &s) {
+	// Save/load the savegame thumbnail for COMI
+	s.syncArray(_savegameThumbnail, 19200, Common::Serializer::Byte, VER(106));
+	s.syncArray(_savegameThumbnailPalette, 256, Common::Serializer::Uint32LE, VER(106));
+
+	// Also save the banner colors for the GUI
+	s.syncArray(_bannerColors, 50, Common::Serializer::Uint32LE, VER(106));
+
+	ScummEngine_v7::saveLoadWithSerializer(s);
 }
 
 void ScummEngine_v7::saveLoadWithSerializer(Common::Serializer &s) {

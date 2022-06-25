@@ -1649,9 +1649,13 @@ void ScummEngine::drawLine(int x1, int y1, int x2, int y2, int color) {
 	}
 }
 
-void ScummEngine::drawPixel(VirtScreen *vs, int x, int y, int16 color) {
+void ScummEngine::drawPixel(VirtScreen *vs, int x, int y, int16 color, bool useBackbuffer) {
 	if (x >= 0 && y >= 0 && _screenWidth + 8 > x && _screenHeight > y) {
-		memset(vs->getPixels(x, y + _screenTop), color, 1);
+		if (useBackbuffer)
+			memset(vs->getBackPixels(x, y + _screenTop), color, 1);
+		else
+			memset(vs->getPixels(x, y + _screenTop), color, 1);
+
 		markRectAsDirty(vs->number, x, x + 1, y + _screenTop, y + 1 + _screenTop);
 	}
 }
