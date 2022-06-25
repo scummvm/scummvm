@@ -469,7 +469,7 @@ bool AdActor3DX::displayShadowVolume() {
 	Math::Vector3d lightVector = Math::Vector3d(_shadowLightPos.x() * _scale3D,
 	                                            _shadowLightPos.y() * _scale3D,
 	                                            _shadowLightPos.z() * _scale3D);
-	float extrusionDepth = lightVector.getMagnitude() * 1.5f;
+	float extrusionDepth = lightVector.length() * 1.5f;
 	lightVector.normalize();
 
 	getShadowVolume()->setColor(_shadowColor);
