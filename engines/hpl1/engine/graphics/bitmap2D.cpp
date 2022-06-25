@@ -62,22 +62,24 @@ Bitmap2D::Bitmap2D(const tString &filepath, const tString &type)
 	error("trying to load unsupported image format %s", type.c_str());
 }
 
-Bitmap2D::Bitmap2D(const tString &type, const cVector2l &size, const Graphics::PixelFormat &format)
-: iLowLevelPicture(type), _isSurfaceActive(true) {
+Bitmap2D::Bitmap2D(const cVector2l &size, const Graphics::PixelFormat &format)
+: iLowLevelPicture("none"), _isSurfaceActive(true) {
 	create(size, format);
 }
 
 
-void Bitmap2D::drawToBitmap(Bitmap2D &dest, const cVector2l &pos) {
+void Bitmap2D::drawToBitmap(Bitmap2D &dest, const cVector2l &at, Common::Rect srcSubrect) {
 	if(!dest._isSurfaceActive)
 		dest.copyDecoder();
+	if(srcSubrect.right == 0 && srcSubrect.bottom == 0)
+		srcSubrect = Common::Rect(activeSurface().w, activeSurface().h);
 
 	if (activeSurface().format != dest._surface.format)
 		error("call to Bitmap2D::drawToBitmap with different pixel formats");
-	if (activeSurface().w + pos.x > dest._surface.w || activeSurface().h + pos.y > dest._surface.h)
+	if (srcSubrect.width() > dest._surface.w || srcSubrect.height() > dest._surface.h)
 		error("call to Bitmap2D::drawToBitmap would go out of bounds");
 
-	dest._surface.copyRectToSurface(activeSurface(), pos.x, pos.y, Common::Rect(0, 0, activeSurface().w, activeSurface().h));
+	dest._surface.copyRectToSurface(activeSurface(), at.x, at.y, srcSubrect);
 }
 
 bool Bitmap2D::create(const cVector2l &size, const Graphics::PixelFormat &format) {
@@ -115,6 +117,10 @@ const void *Bitmap2D::getRawData() const {
 
 int Bitmap2D::getNumChannels() {
 	return activeSurface().format.bpp() / _surface.format.bytesPerPixel;
+}
+
+const Graphics::PixelFormat &Bitmap2D::format() const {
+	return activeSurface().format;
 }
 
 bool Bitmap2D::HasAlpha() {
