@@ -334,7 +334,20 @@ bool Channel::isVideoDirectToStage() {
 
 Common::Rect Channel::getBbox(bool unstretched) {
 	Common::Rect result(unstretched ? _sprite->_width : _width,
-											unstretched ? _sprite->_height : _height);
+						unstretched ? _sprite->_height : _height);
+	result.moveTo(getPosition());
+
+	if (_constraint) {
+		Common::Rect constraintBbox = g_director->getCurrentMovie()->getScore()->_channels[_constraint]->getBbox();
+		if (result.top < constraintBbox.top)
+			_currentPoint.y = constraintBbox.top;
+		if (result.left < constraintBbox.left)
+			_currentPoint.x = constraintBbox.left;
+		if (result.top > constraintBbox.bottom)
+			_currentPoint.y = constraintBbox.bottom;
+		if (result.left > constraintBbox.right)
+			_currentPoint.x = constraintBbox.right;
+	}
 	result.moveTo(getPosition());
 
 	return result;
@@ -663,14 +676,14 @@ void Channel::addDelta(Common::Point pos) {
 		if (!constraintBbox.contains(currentBbox)) {
 			if (currentBbox.top < constraintBbox.top) {
 				pos.y += constraintBbox.top - currentBbox.top;
-			} else if (currentBbox.bottom > constraintBbox.bottom) {
-				pos.y += constraintBbox.bottom - currentBbox.bottom;
+			} else if (currentBbox.top > constraintBbox.bottom) {
+				pos.y += constraintBbox.bottom;
 			}
 
 			if (currentBbox.left < constraintBbox.left) {
 				pos.x += constraintBbox.left - currentBbox.left;
-			} else if (currentBbox.right > constraintBbox.right) {
-				pos.x += constraintBbox.right - currentBbox.right;
+			} else if (currentBbox.left > constraintBbox.right) {
+				pos.x += constraintBbox.right;
 			}
 		}
 	}

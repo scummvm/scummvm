@@ -350,6 +350,9 @@ bool Sprite::respondsToMouse() {
 }
 
 bool Sprite::isActive() {
+	if (_moveable)
+		return true;
+
 	if (_cast && _cast->_type == kCastButton)
 		return true;
 
