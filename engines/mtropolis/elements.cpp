@@ -761,7 +761,7 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 		if (_shouldPlayIfNotPaused) {
 			if (_paused) {
 				// Goal state is paused
-				if (_videoDecoder->isPlaying()) {
+				if (_videoDecoder->isPlaying() && !_videoDecoder->isPaused()) {
 					_videoDecoder->pauseVideo(true);
 					_currentPlayState = kMediaStatePaused;
 				}
