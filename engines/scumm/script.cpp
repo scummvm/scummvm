@@ -567,7 +567,7 @@ int ScummEngine::readVar(uint var) {
 		if (
 			_game.id == GID_BASEBALL2001 &&
 			var == 586 &&
-			readVar(399) == 1
+			readVar(399) == 1 &&
 			!(
 				_currentRoom == 4 && (
 					vm.slot[_currentScript].number == 2150 || vm.slot[_currentScript].number == 2208 || vm.slot[_currentScript].number == 2210
