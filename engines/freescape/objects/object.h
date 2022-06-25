@@ -11,6 +11,7 @@
 
 #include "common/system.h"
 #include "math/vector3d.h"
+#include "math/aabb.h"
 
 #include "freescape/gfx.h"
 
@@ -56,6 +57,7 @@ public:
 	Type _type;
 	uint16 _objectID;
 	Math::Vector3d _origin, _size, _rotation;
+	Math::AABB _boundingBox;
 };
 
 #endif

@@ -107,3 +107,13 @@ void Area::draw(Freescape::Renderer *gfx) {
 	if (groundColor != 255)
 		gfx->drawFloor(groundColor);
 }
+
+Object *Area::shootRay(const Math::Ray &ray) {
+	debug("drawable size: %d", drawableObjects.size());
+	for (Common::Array<Object *>::iterator it = drawableObjects.begin(); it != drawableObjects.end(); it++) {
+		if (!(*it)->isInvisible() && (*it)->_boundingBox.isValid() && ray.intersectAABB((*it)->_boundingBox))
+			return (*it);
+	}
+
+	return nullptr;
+}

@@ -68,7 +68,6 @@ public:
 	void drawBorder();
 	Texture *_borderTexture;
 
-
 	// Parsing
 	void loadAssets();
 	void load16bitBinary(Common::SeekableReadStream *file);
@@ -81,6 +80,7 @@ public:
 	// Areas
 	uint16 _startArea;
 	AreaMap *_areasByAreaID;
+	Area *_currentArea;
 	Math::Vector3d _scale;
 	// Entrance
 	uint16 _startEntrance;
@@ -93,9 +93,14 @@ public:
 	float _lastFrame;
 	Common::Point _lastMousePos;
 
+	// Interaction
+	void shoot();
+
 	// Eular Angles
 	float _yaw;
 	float _pitch;
+	Math::Vector3d directionToVector(float pitch, float heading);
+
 	// Camera options
 	float _mouseSensitivity;
 	float _movementSpeed;
@@ -105,7 +110,7 @@ public:
 
 
 	// Rendering
-	void drawFrame(Area *area);
+	void drawFrame();
 	uint8 _colorNumber;
 	Math::Vector3d _scaleVector;
 	float _nearClipPlane;
