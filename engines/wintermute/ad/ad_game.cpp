@@ -415,25 +415,6 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		}
 		return STATUS_OK;
 	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// UnloadActor3D
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "UnloadActor3D") == 0) {
-		// this does the same as UnloadActor etc. ..
-		// even WmeLite has this script call in AdScene
-		stack->correctParams(1);
-		ScValue *val = stack->pop();
-		AdObject *obj = static_cast<AdObject *>(val->getNative());
-
-		removeObject(obj);
-		if (val->getType() == VAL_VARIABLE_REF) {
-			val->setNULL();
-		}
-
-		stack->pushNULL();
-		return STATUS_OK;
-	}
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
@@ -454,9 +435,13 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// UnloadObject / UnloadActor / UnloadEntity / DeleteEntity
+	// UnloadObject / UnloadActor / UnloadEntity / UnloadActor3D / DeleteEntity
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "UnloadObject") == 0 || strcmp(name, "UnloadActor") == 0 || strcmp(name, "UnloadEntity") == 0 || strcmp(name, "DeleteEntity") == 0) {
+	else if (strcmp(name, "UnloadObject") == 0 || strcmp(name, "UnloadActor") == 0 || strcmp(name, "UnloadEntity") == 0 ||
+#ifdef ENABLE_WME3D
+	         strcmp(name, "UnloadActor3D") == 0 ||
+#endif
+	         strcmp(name, "DeleteEntity") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		AdObject *obj = (AdObject *)val->getNative();
