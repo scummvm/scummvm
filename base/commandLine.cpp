@@ -55,7 +55,7 @@ namespace Base {
 
 #ifndef DISABLE_COMMAND_LINE
 
-#if defined(__DS__)
+#if !defined(__DS__)
 static const char USAGE_STRING[] =
 	"%s: %s\n"
 	"Usage: %s [OPTIONS]... [GAME]\n"
@@ -248,7 +248,7 @@ static void usage(const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-#if defined(__DS__)
+#if !defined(__DS__)
 	printf(USAGE_STRING, s_appName, buf, s_appName, s_appName);
 #endif
 	exit(1);
