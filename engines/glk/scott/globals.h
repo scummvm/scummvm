@@ -214,6 +214,8 @@ public:
 	// load TI994A
 	int _maxMessages = 0;
 	int _maxItemDescr = 0;
+	size_t _ti99ImplicitExtent = 0;
+	uint8_t *_ti99ImplicitActions = nullptr;
 
 public:
 	Globals();
