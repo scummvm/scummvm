@@ -2060,6 +2060,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			break;
 
 		case SHADOW_FLAT:
+			_renderer3D->enableShadows();
 			stack->pushBool(_supportsRealTimeShadows);
 			break;
 
