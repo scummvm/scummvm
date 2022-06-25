@@ -317,9 +317,9 @@ void UCMachine::execProcess(UCProcess *p) {
 			cs->read(str, ui16a);
 			str[ui16a] = 0;
 
-			// REALLY MAJOR HACK:
-			// see docs/u8bugs.txt and
-			// https://sourceforge.net/p/pentagram/bugs/196/
+			// WORKAROUND: German U8: When the candles are not in the right positions
+			// for a sorcery spell, the string does not match, causing a crash.
+			// Original bug: https://sourceforge.net/p/pentagram/bugs/196/
 			if (GAME_IS_U8 && p->_classId == 0x7C) {
 				if (!strcmp(str, " Irgendetwas stimmt nicht!")) {
 					str[25] = '.'; // ! to .
@@ -410,9 +410,12 @@ void UCMachine::execProcess(UCProcess *p) {
 				delete[] argbuf;
 			}
 
-			// REALLY MAJOR HACK:
-			// see docs/u8bugs.txt and
-			// https://sourceforge.net/p/pentagram/feature-requests/6/
+			// WORKAROUND: In U8, the flag 'startedConvo' [0000 01] which acts
+			// as a mutex is set too late in the script, allowing two copies of
+			// of the Ancient Ones script (each spawned by a different egg) to
+			// run simultaneously. Set the flag when the avatar is put in stasis
+			// to avoid this.
+			// Original bug: https://sourceforge.net/p/pentagram/feature-requests/6/
 			if (GAME_IS_U8 && p->_classId == 0x48B && func == 0xD0) {
 				// 0xD0 = setAvatarInStasis
 				_globals->setEntries(0, 1, 1);
