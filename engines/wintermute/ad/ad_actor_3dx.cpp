@@ -698,7 +698,7 @@ void AdActor3DX::getNextStep2D() {
 	origVec = currentPoint - _posVector;
 	newVec = currentPoint - newPos;
 
-	if (origVec.getSquareMagnitude() < newVec.getSquareMagnitude()) {
+	if (origVec.length() < newVec.length()) {
 		_posVector = currentPoint;
 
 		if (_path2D->getNext() == nullptr) {
