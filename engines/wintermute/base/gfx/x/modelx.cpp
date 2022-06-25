@@ -246,6 +246,10 @@ bool ModelX::loadFromFile(const Common::String &filename, ModelX *parentModel) {
 }
 
 bool ModelX::mergeFromFile(const Common::String &filename) {
+	if (!_rootFrame) {
+		return false;
+	}
+
 	uint32 fileSize = 0;
 	byte *buffer = BaseFileManager::getEngineInstance()->getEngineInstance()->readWholeFile(filename, &fileSize);
 	XFileLexer lexer = createXFileLexer(buffer, fileSize);

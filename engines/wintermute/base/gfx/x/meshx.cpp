@@ -411,6 +411,9 @@ bool MeshX::pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir) {
 		Math::Vector3d v2;
 		v2.setData(&_vertexData[index3 * kVertexComponentCount + kPositionOffset]);
 
+		if (isnan(v0.x()))
+			continue;
+
 		Math::Vector3d intersection;
 		if (lineIntersectsTriangle(*pickRayOrig, *pickRayDir, v0, v1, v2, intersection.x(), intersection.y(), intersection.z())) {
 			res = true;

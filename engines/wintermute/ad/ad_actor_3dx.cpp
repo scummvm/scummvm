@@ -1908,8 +1908,11 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		stack->pop();
 
 		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
-
-		stack->pushBool(false);
+		if (_modelX) {
+			stack->pushBool(true);
+		} else {
+			stack->pushBool(false);
+		}
 		return true;
 	}
 
