@@ -72,7 +72,7 @@ uint16_t fixAddress(uint16_t ina) {
 }
 
 uint16_t fixWord(uint16_t word) {
-	return 0;
+	return (((word & 0xFF) << 8) | ((word >> 8) & 0xFF));
 }
 
 uint16_t getWord(uint8_t *mem) {
