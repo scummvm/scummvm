@@ -100,6 +100,7 @@ public:
 	const char *_battleMessages[33];
 	int _options = 0; ///< Option flags set
 	Common::String _titleScreen;
+	int _shouldLookInTranscript = 0;
 
 	// sagadraw
 	int _drawToBuffer = 0;

@@ -150,7 +150,6 @@ private:
 	bool _splitScreen = true;
 	int _saveSlot = -1;   ///< Save slot when loading savegame from launcher
 
-	int _shouldLookInTranscript = 0;
 	int _printLookToTranscript = 0;
 	int _pauseNextRoomDescription = 0;
 
@@ -161,10 +160,7 @@ private:
 	 * Initialization code
 	 */
 	void initialize();
-
-	void delay(double seconds);
 	void clearScreen(void);
-	int countCarried(void);
 	int matchUpItem(int noun, int loc);
 	Common::String readString(Common::SeekableReadStream *f);
 	void loadDatabase(Common::SeekableReadStream *f, bool loud);
@@ -192,17 +188,6 @@ private:
 	void transcriptOff();
 	int yesOrNo();
 	void lookWithPause();
-	void doneIt();
-	int printScore();
-	void printNoun();
-	void moveItemAToLocOfItemB(int itemA, int itemB);
-	void goToStoredLoc();
-	void swapLocAndRoomFlag(int index);
-	void swapItemLocations(int itemA, int itemB);
-	void putItemAInRoomB(int itemA, int roomB);
-	void swapCounters(int index);
-	void printMessage(int index);
-	void playerIsDead();
 	void printTakenOrDropped(int index);
 	void printTitleScreenBuffer();
 	void printTitleScreenGrid();
@@ -226,6 +211,19 @@ public:
 	void updateSettings();
 	uint getRandomNumber(uint max);
 	bool randomPercent(uint n);
+	int countCarried(void);
+	void playerIsDead();
+	void doneIt();
+	void putItemAInRoomB(int itemA, int roomB);
+	int printScore();
+	void swapItemLocations(int itemA, int itemB);
+	void moveItemAToLocOfItemB(int itemA, int itemB);
+	void goToStoredLoc();
+	void swapLocAndRoomFlag(int index);
+	void swapCounters(int index);
+	void printNoun();
+	void delay(double seconds);
+	void printMessage(int index);
 
 public:
 	/**
