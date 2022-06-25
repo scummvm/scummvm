@@ -92,18 +92,23 @@ GeometricObject::GeometricObject(
 	condition = _condition;
 
 	if (_type == Cube) {
-		Math::Vector3d v;
-		v = origin;
-		_boundingBox.expand(v);
+		Math::Vector3d torigin = origin;
+		torigin.setValue(0, origin.x() - 4096);
 
+		_boundingBox.expand(torigin);
 		for (int i = 0; i < 3; i++) {
-			v = origin;
-			v.setValue(i, origin.getValue(i) + size.getValue(i));
+			Math::Vector3d v = torigin;
+			v.setValue(i, v.getValue(i) + size.getValue(i));
 			_boundingBox.expand(v);
 		}
 
-		v = size;
-		_boundingBox.expand(v);
+		for (int i = 0; i < 3; i++) {
+			Math::Vector3d v = torigin + size;
+			v.setValue(i, v.getValue(i) - size.getValue(i));
+			_boundingBox.expand(v);
+		}
+		_boundingBox.expand(torigin + size);
+		assert(_boundingBox.isValid());
 	}
 }
 

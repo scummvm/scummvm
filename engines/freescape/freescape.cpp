@@ -186,10 +186,14 @@ void FreescapeEngine::processInput() {
 		case Common::EVENT_MOUSEMOVE:
 			rotate(_lastMousePos, mousePos);
 			_lastMousePos = mousePos;
-			if (mousePos.x <= 5 || mousePos.x >= 315) {
+			if (mousePos.x <= 5 || mousePos.x >= _screenW - 5) {
 				g_system->warpMouse(_screenW/2, mousePos.y);
 				_lastMousePos.x = _screenW/2;
 				_lastMousePos.y = mousePos.y;
+			} else if (mousePos.y <= 5 || mousePos.y >= _screenH - 5) {
+				g_system->warpMouse(mousePos.x, _screenH/2);
+				_lastMousePos.x = mousePos.x;
+				_lastMousePos.y = _screenH/2;
 			}
 			break;
 
@@ -206,8 +210,7 @@ void FreescapeEngine::processInput() {
 }
 
 void FreescapeEngine::shoot() {
-	debug("dir: %f %f", _pitch, 90.0 - _yaw);
-	Math::Vector3d direction = directionToVector(_pitch, 90.0 - _yaw);
+	Math::Vector3d direction = directionToVector(_pitch, 90.f - _yaw);
 	Math::Ray ray(_position, direction);
 	Object *shooted = _currentArea->shootRay(ray);
 	if (shooted) {
@@ -265,8 +268,6 @@ Common::Error FreescapeEngine::run() {
 		_farClipPlane = 8192.f;
 	}
 
-	//g_system->lockMouse(true);
-
 	while (!shouldQuit()) {
 		processInput();
 		drawFrame();
@@ -289,10 +290,10 @@ void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos)
 	_pitch += yoffset;
 
 	// Make sure that when pitch is out of bounds, screen doesn't get flipped
-	if (_pitch > 180.0f)
-		_pitch = 180.0f;
-	if (_pitch < -180.0f)
-		_pitch = -180.0f;
+	if (_pitch > 360.0f)
+		_pitch -= 360.0f;
+	if (_pitch < 0.0f)
+		_pitch += 360.0f;
 
 	_cameraFront = directionToVector(_pitch, _yaw);
 
