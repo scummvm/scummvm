@@ -93,7 +93,7 @@ void loadTI994A(Common::SeekableReadStream *f) {
 	if (result != _G(_fileLength))
 		g_scott->fatal("File empty or read error!");
 
-	_G(_fallbackGame)._gameID = detectTI994A(&_G(_entireFile), &_G(_fileLength));
+	_G(_fallbackGame)._gameID = detectTI994A(f, &_G(_entireFile), &_G(_fileLength));
 }
 
 void loadGameFile(Common::SeekableReadStream *f) {
