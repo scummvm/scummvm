@@ -143,14 +143,12 @@ class Scott : public GlkAPI {
 private:
 	Globals _globals;
 	char _nounText[16];
-	int _options = 0;   ///< Option flags set
 	//int _width = 0;     ///< Terminal width
 	int _topHeight = 0; ///< Height of top window
 	int _topWidth = 0;
 
 	bool _splitScreen = true;
 	int _saveSlot = -1;   ///< Save slot when loading savegame from launcher
-	Common::String _titleScreen;
 
 	int _shouldLookInTranscript = 0;
 	int _printLookToTranscript = 0;

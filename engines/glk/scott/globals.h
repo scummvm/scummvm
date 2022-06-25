@@ -98,6 +98,8 @@ public:
 	int _animationFlag = 0;
 	uint8_t _enemyTable[126];
 	const char *_battleMessages[33];
+	int _options = 0; ///< Option flags set
+	Common::String _titleScreen;
 
 	// sagadraw
 	int _drawToBuffer = 0;
