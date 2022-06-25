@@ -80,7 +80,7 @@ void Scott::runGame() {
 
 	const char **dictpointer;
 
-	if (_options & YOUARE)
+	if (_G(_options) & YOUARE)
 		dictpointer = g_sysDict;
 	else
 		dictpointer = g_sysDictIAm;
@@ -92,28 +92,28 @@ void Scott::runGame() {
 	loadGameFile(&_gameFile);
 
 	if (CURRENT_GAME == SCOTTFREE)
-		loadDatabase(&_gameFile, (_options & DEBUGGING) ? 1 : 0);
+		loadDatabase(&_gameFile, (_G(_options) & DEBUGGING) ? 1 : 0);
 
 	if (!CURRENT_GAME)
 		fatal("Unsupported game!");
 
 	if (CURRENT_GAME != SCOTTFREE && CURRENT_GAME != TI994A) {
-		_options |= SPECTRUM_STYLE;
+		_G(_options) |= SPECTRUM_STYLE;
 		_splitScreen = 1;
 	} else {
 		if (CURRENT_GAME != TI994A)
-			_options |= TRS80_STYLE;
+			_G(_options) |= TRS80_STYLE;
 		_splitScreen = 1;
 	}
 
-	if (!_titleScreen.empty()) {
+	if (!_G(_titleScreen).empty()) {
 		if (_splitScreen)
 			printTitleScreenGrid();
 		else
 			printTitleScreenBuffer();
 	}
 
-	if (_options & TRS80_STYLE) {
+	if (_G(_options) & TRS80_STYLE) {
 		_topWidth = 64;
 		_topHeight = 11;
 	} else {
@@ -192,11 +192,11 @@ void Scott::runGame() {
 				if (_G(_items)[LIGHT_SOURCE]._location == CARRIED || _G(_items)[LIGHT_SOURCE]._location == MY_LOC) {
 					output(_G(_sys)[LIGHT_HAS_RUN_OUT]);
 				}
-				if ((_options & PREHISTORIC_LAMP) || (_G(_game)->_subType & MYSTERIOUS) || CURRENT_GAME == TI994A)
+				if ((_G(_options) & PREHISTORIC_LAMP) || (_G(_game)->_subType & MYSTERIOUS) || CURRENT_GAME == TI994A)
 					_G(_items)[LIGHT_SOURCE]._location = DESTROYED;
 			} else if (_G(_gameHeader)->_lightTime < 25) {
 				if (_G(_items)[LIGHT_SOURCE]._location == CARRIED || _G(_items)[LIGHT_SOURCE]._location == MY_LOC) {
-					if ((_options & SCOTTLIGHT) || (_G(_game)->_subType & MYSTERIOUS)) {
+					if ((_G(_options) & SCOTTLIGHT) || (_G(_game)->_subType & MYSTERIOUS)) {
 						display(_G(_bottomWindow), "%s %d %s\n", _G(_sys)[LIGHT_RUNS_OUT_IN].c_str(), _G(_gameHeader)->_lightTime, _G(_sys)[TURNS].c_str());
 					} else {
 						if (_G(_gameHeader)->_lightTime % 5 == 0)
@@ -213,18 +213,18 @@ void Scott::runGame() {
 void Scott::initialize() {
 	if (ConfMan.hasKey("YOUARE")) {
 		if (ConfMan.getBool("YOUARE"))
-			_options |= YOUARE;
+			_G(_options) |= YOUARE;
 		else
-			_options &= ~YOUARE;
+			_G(_options) &= ~YOUARE;
 	}
 	if (gDebugLevel > 0)
-		_options |= DEBUGGING;
+		_G(_options) |= DEBUGGING;
 	if (ConfMan.hasKey("SCOTTLIGHT") && ConfMan.getBool("SCOTTLIGHT"))
-		_options |= SCOTTLIGHT;
+		_G(_options) |= SCOTTLIGHT;
 	if (ConfMan.hasKey("TRS80_STYLE") && ConfMan.getBool("TRS80_STYLE"))
-		_options |= TRS80_STYLE;
+		_G(_options) |= TRS80_STYLE;
 	if (ConfMan.hasKey("PREHISTORIC_LAMP") && ConfMan.getBool("PREHISTORIC_LAMP"))
-		_options |= PREHISTORIC_LAMP;
+		_G(_options) |= PREHISTORIC_LAMP;
 }
 
 void Scott::display(winid_t w, const char *fmt, ...) {
@@ -258,9 +258,9 @@ void Scott::updateSettings() {
 		glk_request_timer_events(20);
 
 	PaletteType previousPal = _G(_palChosen);
-	if (_options & FORCE_PALETTE_ZX)
+	if (_G(_options) & FORCE_PALETTE_ZX)
 		_G(_palChosen) = ZXOPT;
-	else if (_options & FORCE_PALETTE_C64) {
+	else if (_G(_options) & FORCE_PALETTE_C64) {
 		if (_G(_game)->_pictureFormatVersion == 99)
 			_G(_palChosen) = C64A;
 		else
@@ -311,7 +311,7 @@ void Scott::updates(event_t ev) {
 }
 
 void Scott::delay(double seconds) {
-	if (_options & NO_DELAYS)
+	if (_G(_options) & NO_DELAYS)
 		return;
 
 	event_t ev;
@@ -592,7 +592,7 @@ void Scott::look(void) {
 		writeToRoomDescriptionStream("%s%s", _G(_sys)[YOU_ARE].c_str(), r->_text.c_str());
 	}
 
-	if (!(_options & SPECTRUM_STYLE)) {
+	if (!(_G(_options) & SPECTRUM_STYLE)) {
 		listExits();
 		writeToRoomDescriptionStream(".\n");
 	}
@@ -609,30 +609,30 @@ void Scott::look(void) {
 			if (f == 0) {
 				writeToRoomDescriptionStream("%s", _G(_sys)[YOU_SEE].c_str());
 				f++;
-				if (_options & SPECTRUM_STYLE)
+				if (_G(_options) & SPECTRUM_STYLE)
 					writeToRoomDescriptionStream("\n");
-			} else if (!(_options & (TRS80_STYLE | SPECTRUM_STYLE))) {
+			} else if (!(_G(_options) & (TRS80_STYLE | SPECTRUM_STYLE))) {
 				writeToRoomDescriptionStream("%s", _G(_sys)[ITEM_DELIMITER].c_str());
 			}
 			writeToRoomDescriptionStream("%s", _G(_items)[ct]._text.c_str());
-			if (_options & (TRS80_STYLE | SPECTRUM_STYLE)) {
+			if (_G(_options) & (TRS80_STYLE | SPECTRUM_STYLE)) {
 				writeToRoomDescriptionStream("%s", _G(_sys)[ITEM_DELIMITER].c_str());
 			}
 		}
 		ct++;
 	}
 
-	if ((_options & TI994A_STYLE) && f) {
+	if ((_G(_options) & TI994A_STYLE) && f) {
 		writeToRoomDescriptionStream("%s", ".");
 	}
 
-	if (_options & SPECTRUM_STYLE) {
+	if (_G(_options) & SPECTRUM_STYLE) {
 		listExitsSpectrumStyle();
 	} else if (f) {
 		writeToRoomDescriptionStream("\n");
 	}
 
-	if ((_G(_autoInventory) || (_options & FORCE_INVENTORY)) && !(_options & FORCE_INVENTORY_OFF))
+	if ((_G(_autoInventory) || (_G(_options) & FORCE_INVENTORY)) && !(_G(_options) & FORCE_INVENTORY_OFF))
 		listInventoryInUpperWindow();
 
 	flushRoomDescription(buf);
@@ -1094,7 +1094,7 @@ ActionResultType Scott::performLine(int ct) {
 				output("\n");
 				break;
 			case 86:
-				if (!(_options & SPECTRUM_STYLE))
+				if (!(_G(_options) & SPECTRUM_STYLE))
 					output("\n");
 				break;
 			case 87:
@@ -1192,7 +1192,7 @@ ExplicitResultType Scott::performActions(int vb, int no) {
 			/* Seas of Blood needs this to be able to flee back to the last room */
 			if (_G(_game)->_type == SEAS_OF_BLOOD_VARIANT)
 				_G(_savedRoom) = MY_LOC;
-			if (_options & (SPECTRUM_STYLE | TI994A_STYLE))
+			if (_G(_options) & (SPECTRUM_STYLE | TI994A_STYLE))
 				output(_G(_sys)[OK]);
 			MY_LOC = nl;
 			_shouldLookInTranscript = 1;
@@ -1409,7 +1409,7 @@ void Scott::flushRoomDescription(char *buf) {
 	if (!_printLookToTranscript)
 		_G(_transcript) = nullptr;
 
-	int printDelimiter = (_options & (TRS80_STYLE | SPECTRUM_STYLE | TI994A_STYLE));
+	int printDelimiter = (_G(_options) & (TRS80_STYLE | SPECTRUM_STYLE | TI994A_STYLE));
 
 	if (_splitScreen) {
 		glk_window_clear(_G(_topWindow));
@@ -1477,7 +1477,7 @@ void Scott::printWindowDelimiter() {
 	glk_window_get_size(_G(_topWindow), (uint *)&_topWidth, (uint *)&_topHeight);
 	glk_window_move_cursor(_G(_topWindow), 0, _topHeight - 1);
 	glk_stream_set_current(glk_window_get_stream(_G(_topWindow)));
-	if (_options & SPECTRUM_STYLE)
+	if (_G(_options) & SPECTRUM_STYLE)
 		for (int i = 0; i < _topWidth; i++)
 			glk_put_char('*');
 	else {
@@ -1542,12 +1542,12 @@ void Scott::listInventoryInUpperWindow() {
 				i++;
 				continue;
 			}
-			if (lastitem > -1 && (_options & (TRS80_STYLE | SPECTRUM_STYLE)) == 0) {
+			if (lastitem > -1 && (_G(_options) & (TRS80_STYLE | SPECTRUM_STYLE)) == 0) {
 				writeToRoomDescriptionStream("%s", _G(_sys)[ITEM_DELIMITER].c_str());
 			}
 			lastitem = i;
 			writeToRoomDescriptionStream("%s", _G(_items)[i]._text.c_str());
-			if (_options & (TRS80_STYLE | SPECTRUM_STYLE)) {
+			if (_G(_options) & (TRS80_STYLE | SPECTRUM_STYLE)) {
 				writeToRoomDescriptionStream("%s", _G(_sys)[ITEM_DELIMITER].c_str());
 			}
 		}
@@ -1556,7 +1556,7 @@ void Scott::listInventoryInUpperWindow() {
 	if (lastitem == -1) {
 		writeToRoomDescriptionStream("%s\n", _G(_sys)[NOTHING].c_str());
 	} else {
-		if (_options & TI994A_STYLE && !itemEndsWithPeriod(lastitem))
+		if (_G(_options) & TI994A_STYLE && !itemEndsWithPeriod(lastitem))
 			writeToRoomDescriptionStream(".");
 		writeToRoomDescriptionStream("\n");
 	}
@@ -1957,12 +1957,12 @@ void Scott::listInventory() {
 				i++;
 				continue;
 			}
-			if (lastitem > -1 && (_options & (TRS80_STYLE | SPECTRUM_STYLE)) == 0) {
+			if (lastitem > -1 && (_G(_options) & (TRS80_STYLE | SPECTRUM_STYLE)) == 0) {
 				output(_G(_sys)[ITEM_DELIMITER]);
 			}
 			lastitem = i;
 			output(_G(_items)[i]._text);
-			if (_options & (TRS80_STYLE | SPECTRUM_STYLE)) {
+			if (_G(_options) & (TRS80_STYLE | SPECTRUM_STYLE)) {
 				output(_G(_sys)[ITEM_DELIMITER]);
 			}
 		}
@@ -1970,7 +1970,7 @@ void Scott::listInventory() {
 	}
 	if (lastitem == -1)
 		output(_G(_sys)[NOTHING]);
-	else if (_options & TI994A_STYLE) {
+	else if (_G(_options) & TI994A_STYLE) {
 		if (!itemEndsWithPeriod(lastitem))
 			output(".");
 		output(" ");
@@ -2130,17 +2130,17 @@ void Scott::printTitleScreenBuffer() {
 	glk_stream_set_current(glk_window_get_stream(_G(_bottomWindow)));
 	glk_set_style(style_User1);
 	clearScreen();
-	output(_titleScreen);
+	output(_G(_titleScreen));
 	glk_set_style(style_Normal);
 	hitEnter();
 	clearScreen();
 }
 
 void Scott::printTitleScreenGrid() {
-	int titleLength = _titleScreen.size();
+	int titleLength = _G(_titleScreen).size();
 	int rows = 0;
 	for (int i = 0; i < titleLength; i++)
-		if (_titleScreen[i] == '\n')
+		if (_G(_titleScreen)[i] == '\n')
 			rows++;
 	winid_t titlewin = glk_window_open(_G(_bottomWindow), winmethod_Above | winmethod_Fixed, rows + 2,
 									   wintype_TextGrid, 0);
@@ -2155,8 +2155,8 @@ void Scott::printTitleScreenGrid() {
 	int pos = 0;
 	for (int i = 1; i <= rows; i++) {
 		glk_window_move_cursor(titlewin, offset, i);
-		while (_titleScreen[pos] != '\n' && pos < titleLength)
-			display(titlewin, "%c", _titleScreen[pos++]);
+		while (_G(_titleScreen)[pos] != '\n' && pos < titleLength)
+			display(titlewin, "%c", _G(_titleScreen)[pos++]);
 		pos++;
 	}
 	hitEnter();

@@ -33,6 +33,7 @@
 #include "glk/scott/scott.h"
 #include "glk/scott/globals.h"
 #include "glk/scott/resource.h"
+#include "glk/scott/game_info.h"
 #include "glk/scott/load_ti99_4a.h"
 
 namespace Glk {
@@ -96,8 +97,189 @@ void getMaxTI99Items(DataHeader dh) {
 	_G(_maxItemDescr) = (msg1 - fixAddress(fixWord(dh._pObjDescr))) / 2;
 }
 
+char *getTI994AString(uint16_t table, int tableOffset) {
+	return nullptr;
+}
+
+void loadTI994ADict(int vorn, uint16_t table, int numWords, Common::StringArray dict) {
+
+}
+
+void readTI99ImplicitActions(DataHeader dh) {
+
+}
+
+void readTI99ExplicitActions(DataHeader dh) {
+
+}
+
+uint8_t *loadTitleScreen() {
+	return nullptr;
+}
+
 int tryLoadingTI994A(DataHeader dh, int loud) {
-	return 0;
+	int ni, nw, nr, mc, pr, tr, wl, lt, mn, trm;
+	int ct;
+
+	Room *rp;
+	Item *ip;
+	/* Load the header */
+
+	ni = dh._numObjects;
+	nw = MAX(dh._numVerbs, dh._numNouns);
+	nr = dh._redRoom;
+	mc = dh._maxItemsCarried;
+	pr = dh._beginLocn;
+	tr = 0;
+	trm = dh._treasureLocn;
+	wl = dh._cmdLength;
+	lt = fixWord(dh._lightTurns);
+	mn = _G(_maxMessages);
+
+	uint8_t *ptr = _G(_entireFile);
+
+	_G(_gameHeader)->_numItems = ni;
+	_G(_items).resize(ni + 1);
+	_G(_gameHeader)->_numActions = 0;
+	_G(_gameHeader)->_numWords = nw;
+	_G(_gameHeader)->_wordLength = wl;
+	_G(_verbs).resize(nw + 2);
+	_G(_nouns).resize(nw + 2);
+	_G(_gameHeader)->_numRooms = nr;
+	_G(_rooms).resize(nr + 1);
+	_G(_gameHeader)->_maxCarry = mc;
+	_G(_gameHeader)->_playerRoom = pr;
+	_G(_gameHeader)->_lightTime = lt;
+	_G(_lightRefill) = lt;
+	_G(_gameHeader)->_numMessages = mn;
+	_G(_messages).resize(mn + 1);
+	_G(_gameHeader)->_treasureRoom = trm;
+
+	int offset;
+
+	if (seekIfNeeded(fixAddress(fixWord(dh._pRoomDescr)), &offset, &ptr) == 0)
+		return 0;
+
+	ct = 0;
+	rp = &_G(_rooms)[0];
+
+	do {
+		rp->_text = getTI994AString(dh._pRoomDescr, ct);
+		if (rp->_text.size() == 0)
+			rp->_text = ".\0";
+		if (loud)
+			debug("Room %d: %s", ct, rp->_text.c_str());
+		rp->_image = 255;
+		ct++;
+		rp++;
+	} while (ct < nr + 1);
+
+	ct = 0;
+	while (ct < mn + 1) {
+		_G(_messages)[ct] = getTI994AString(dh._pMessage, ct);
+		if (_G(_messages)[ct].size() == 0)
+			_G(_messages)[ct] = ".\0";
+		if (loud)
+			debug("Message %d: %s", ct, _G(_messages)[ct].c_str());
+		ct++;
+	}
+
+	ct = 0;
+	ip = &_G(_items)[0];
+	do {
+		ip->_text = getTI994AString(dh._pObjDescr, ct);
+		if (ip->_text.size() == 0)
+			ip->_text = ".\0";
+		if (ip->_text.size() && ip->_text[0] == '*')
+			tr++;
+		if (loud)
+			debug("Item %d: %s", ct, ip->_text.c_str());
+		ct++;
+		ip++;
+	} while (ct < ni + 1);
+
+	_G(_gameHeader)->_treasures = tr;
+	if (loud)
+		debug("Number of treasures %d", _G(_gameHeader)->_treasures);
+
+	if (seekIfNeeded(fixAddress(fixWord(dh._pRoomExit)), &offset, &ptr) == 0)
+		return 0;
+
+	ct = 0;
+	rp = &_G(_rooms)[0];
+
+	while (ct < nr + 1) {
+		for (int j = 0; j < 6; j++) {
+			rp->_exits[j] = *(ptr++ - _G(_fileBaselineOffset));
+		}
+		ct++;
+		rp++;
+	}
+
+	if (seekIfNeeded(fixAddress(fixWord(dh._pOrigItems)), &offset, &ptr) == 0)
+		return 0;
+
+	ct = 0;
+	ip = &_G(_items)[0];
+	while (ct < ni + 1) {
+		ip->_location = *(ptr++ - _G(_fileBaselineOffset));
+		ip->_initialLoc = ip->_location;
+		ip++;
+		ct++;
+	}
+
+	loadTI994ADict(0, dh._pVerbTable, dh._numVerbs + 1, _G(_verbs));
+	loadTI994ADict(1, dh._pNounTable, dh._numNouns + 1, _G(_nouns));
+
+	for (int i = 1; i <= dh._numNouns - dh._numVerbs; i++)
+		_G(_verbs)[dh._numVerbs + i] = ".\0";
+
+	for (int i = 1; i <= dh._numVerbs - dh._numNouns; i++)
+		_G(_nouns)[dh._numNouns + i] = ".\0";
+
+	if (loud) {
+		for (int i = 0; i <= _G(_gameHeader)->_numWords; i++)
+			debug("Verb %d: %s", i, _G(_verbs)[i].c_str());
+		for (int i = 0; i <= _G(_gameHeader)->_numWords; i++)
+			debug("Noun %d: %s", i, _G(_nouns)[i].c_str());
+	}
+
+	ct = 0;
+	ip = &_G(_items)[0];
+
+	int *objectlinks = new int[ni + 1];
+
+	if (seekIfNeeded(fixAddress(fixWord(dh._pObjLink)), &offset, &ptr) == 0)
+		return 0;
+
+	do {
+		objectlinks[ct] = *(ptr++ - _G(_fileBaselineOffset));
+		if (objectlinks[ct] && objectlinks[ct] <= nw) {
+			ip->_autoGet = _G(_nouns)[objectlinks[ct]];
+			if (ct == 3 && scumm_strnicmp("bird", _G(_items)[ct]._text.c_str(), 4) == 0)
+				ip->_autoGet = "BIRD";
+		} else {
+			ip->_autoGet = "";
+		}
+		ct++;
+		ip++;
+	} while (ct < ni + 1);
+
+	readTI99ImplicitActions(dh);
+	readTI99ExplicitActions(dh);
+
+	_G(_autoInventory) = 1;
+	_G(_sys)[INVENTORY] = "I'm carrying: ";
+
+	_G(_titleScreen) = (char *)loadTitleScreen();
+	delete[] _G(_entireFile);
+
+	for (int i = 0; i < MAX_SYSMESS && g_sysDictTI994A[i] != nullptr; i++) {
+		_G(_sys)[i] = g_sysDictTI994A[i];
+	}
+
+	_G(_options) |= TI994A_STYLE;
+	return TI994A;
 }
 
 void readHeader(Common::SeekableReadStream *f, DataHeader &dh) {
