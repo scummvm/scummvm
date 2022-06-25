@@ -119,8 +119,12 @@ void Button_AnimateEx(GUIButton *butt, int view, int loop, int speed,
 }
 
 void Button_Animate(GUIButton *butt, int view, int loop, int speed, int repeat) {
-	Button_AnimateEx(butt, view, loop, speed, repeat, IN_BACKGROUND, FORWARDS, 0, -1);
+	Button_AnimateEx(butt, view, loop, speed, repeat, IN_BACKGROUND, FORWARDS, 0, 100);
 }
+
+void Button_Animate7(GUIButton *butt, int view, int loop, int speed, int repeat, int blocking, int direction, int sframe) {
+	 Button_AnimateEx(butt, view, loop, speed, repeat, blocking, direction, sframe, 100);
+ }
 
 const char *Button_GetText_New(GUIButton *butt) {
 	return CreateNewScriptString(butt->GetText().GetCStr());
@@ -344,7 +348,11 @@ RuntimeScriptValue Sc_Button_Animate(void *self, const RuntimeScriptValue *param
 	API_OBJCALL_VOID_PINT4(GUIButton, Button_Animate);
 }
 
-RuntimeScriptValue Sc_Button_AnimateEx(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Button_Animate7(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID_PINT7(GUIButton, Button_Animate7);
+}
+
+RuntimeScriptValue Sc_Button_Animate8(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT8(GUIButton, Button_AnimateEx);
 }
 
@@ -458,7 +466,8 @@ RuntimeScriptValue Sc_Button_GetView(void *self, const RuntimeScriptValue *param
 
 void RegisterButtonAPI() {
 	ccAddExternalObjectFunction("Button::Animate^4", Sc_Button_Animate);
-	ccAddExternalObjectFunction("Button::Animate^8", Sc_Button_AnimateEx);
+	ccAddExternalObjectFunction("Button::Animate^7", Sc_Button_Animate7);
+	ccAddExternalObjectFunction("Button::Animate^8", Sc_Button_Animate8);
 	ccAddExternalObjectFunction("Button::Click^1", Sc_Button_Click);
 	ccAddExternalObjectFunction("Button::GetText^1", Sc_Button_GetText);
 	ccAddExternalObjectFunction("Button::SetText^1", Sc_Button_SetText);
