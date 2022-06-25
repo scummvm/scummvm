@@ -317,6 +317,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("dump_scripts", false);
 	ConfMan.registerDefault("save_slot", -1);
 	ConfMan.registerDefault("autosave_period", 5 * 60); // By default, trigger autosave every 5 minutes
+	ConfMan.registerDefault("engine_speed", 60); // FPS limit for 3D games
 
 #if defined(ENABLE_SCUMM) || defined(ENABLE_SWORD2)
 	ConfMan.registerDefault("object_labels", true);
