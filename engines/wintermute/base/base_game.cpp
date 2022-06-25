@@ -111,6 +111,9 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 	_surfaceStorage = nullptr;
 	_fontStorage = nullptr;
 	_renderer = nullptr;
+#ifdef ENABLE_WME3D
+	_renderer3D = nullptr;
+#endif
 	_soundMgr = nullptr;
 	_transMgr = nullptr;
 	_scEngine = nullptr;
@@ -153,11 +156,7 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 
 #ifdef ENABLE_WME3D
 	_useD3D = true;
-	_renderer3D = nullptr;
 	_playing3DGame = false;
-
-	_supportsRealTimeShadows = false;
-	_maxShadowType = SHADOW_STENCIL;
 #else
 	_useD3D = false;
 #endif
@@ -200,6 +199,11 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 	// sized for the GMM (expecting 4:3 ratio)
 	_thumbnailWidth = kThumbnailWidth;
 	_thumbnailHeight = kThumbnailHeight2;
+
+#ifdef ENABLE_WME3D
+	_maxShadowType = SHADOW_STENCIL;
+	_supportsRealTimeShadows = false;
+#endif
 
 	_localSaveDir = "saves";
 

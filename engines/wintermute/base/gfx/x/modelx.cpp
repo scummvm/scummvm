@@ -149,14 +149,19 @@ static XFileLexer createXFileLexer(byte *&buffer, uint32 fileSize) {
 IMPLEMENT_PERSISTENT(ModelX, false)
 
 //////////////////////////////////////////////////////////////////////////
-ModelX::ModelX(BaseGame *inGame, BaseObject *owner) : BaseObject(inGame),
-	                                              _owner(owner), _lastOffsetX(0), _lastOffsetY(0),
-	                                              _BBoxStart(0.0f, 0.0f, 0.0f), _BBoxEnd(0.0f, 0.0f, 0.0f),
-	                                              _rootFrame(nullptr) {
+ModelX::ModelX(BaseGame *inGame, BaseObject *owner) : BaseObject(inGame) {
+	_owner = owner;
+
+	_rootFrame = nullptr;
+
 	_drawingViewport.setEmpty();
 	_lastWorldMat.setToIdentity();
 	_lastViewMat.setToIdentity();
 	_lastProjMat.setToIdentity();
+	_lastOffsetX = _lastOffsetY = 0;
+
+	_BBoxStart = Math::Vector3d(0.0f, 0.0f, 0.0f);
+	_BBoxEnd = Math::Vector3d(0.0f, 0.0f, 0.0f);
 	_boundingRect.setEmpty();
 
 	for (int i = 0; i < X_NUM_ANIMATION_CHANNELS; i++) {

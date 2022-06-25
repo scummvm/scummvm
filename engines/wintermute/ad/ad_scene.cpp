@@ -96,23 +96,7 @@ void AdScene::setDefaults() {
 	_mainLayer = nullptr;
 #ifdef ENABLE_WME3D
 	_sceneGeometry = nullptr;
-	_showGeometry = false;
-
-	_fov = -1.0f;
-	_nearPlane = -1.0f;
-	_farPlane = -1.0f;
-
-	_maxShadowType = SHADOW_FLAT;
-	_ambientLightColor = 0x00000000;
-
-	_fogParameters._enabled = false;
-	_fogParameters._color = 0x00FFFFFF;
-	_fogParameters._start = 0.0f;
-	_fogParameters._end = 0.0f;
-
-	_2DPathfinding = false;
 #endif
-
 	_pfPointsNum = 0;
 	_persistentState = false;
 	_persistentStateSprites = true;
@@ -128,6 +112,10 @@ void AdScene::setDefaults() {
 	_pfMaxTime = 15;
 
 	_paralaxScrolling = true;
+
+#ifdef ENABLE_WME3D
+	_showGeometry = false;
+#endif
 
 	// editor settings
 	_editorMarginH = _editorMarginV = 100;
@@ -156,7 +144,23 @@ void AdScene::setDefaults() {
 	_fader = new BaseFader(_gameRef);
 	_gameRef->registerObject(_fader);
 
+#ifdef ENABLE_WME3D
+	_fov = -1.0f;
+#endif
 	_viewport = nullptr;
+
+	_nearPlane = -1.0f;
+	_farPlane = -1.0f;
+
+	_2DPathfinding = false;
+	_maxShadowType = SHADOW_FLAT;
+
+	_ambientLightColor = 0x00000000;
+
+	_fogParameters._enabled = false;
+	_fogParameters._color = 0x00FFFFFF;
+	_fogParameters._start = 0.0f;
+	_fogParameters._end = 0.0f;
 }
 
 

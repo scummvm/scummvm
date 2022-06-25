@@ -37,10 +37,16 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-Light3D::Light3D(BaseGame *inGame) : BaseScriptable(inGame, false, false),
-                                     _diffuseColor(BYTETORGBA(255, 255, 255, 255)),
-                                     _position(0, 0, 0), _target(0, 0, 0), _isSpotlight(false),
-                                     _active(true), _falloff(0), _distance(0.0f), _isAvailable(false) {
+Light3D::Light3D(BaseGame *inGame) : BaseScriptable(inGame, false, false) {
+	_diffuseColor = BYTETORGBA(255, 255, 255, 255);
+	_position = Math::Vector3d(0, 0, 0);
+	_target = Math::Vector3d(0, 0, 0);
+	_isSpotlight = false;
+	_falloff = 0;
+	_active = true;
+
+	_distance = 0.0f;
+	_isAvailable = false;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -33,11 +33,17 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-ActiveAnimation::ActiveAnimation(BaseGame *inGame, ModelX *model) : BaseClass(inGame),
-	_model(model), _currentFrame(-1),
-	_startTime(0), _looping(false),
-	_finished(true), _lastLocalTime(0),
-	_animation(nullptr) {
+ActiveAnimation::ActiveAnimation(BaseGame *inGame, ModelX *model) : BaseClass(inGame) {
+	_model = model;
+
+	_animation = nullptr;
+
+	_looping = false;
+	_finished = true;
+	_startTime = 0;
+	_lastLocalTime = 0;
+
+	_currentFrame = -1;
 }
 
 //////////////////////////////////////////////////////////////////////////

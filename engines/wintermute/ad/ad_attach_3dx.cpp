@@ -40,7 +40,8 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(AdAttach3DX, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdAttach3DX::AdAttach3DX(BaseGame *inGame, BaseObject *owner) : AdObject3D(inGame), _owner(owner) {
+AdAttach3DX::AdAttach3DX(BaseGame *inGame, BaseObject *owner) : AdObject3D(inGame) {
+	_owner = owner;
 	_dropToFloor = false;
 }
 

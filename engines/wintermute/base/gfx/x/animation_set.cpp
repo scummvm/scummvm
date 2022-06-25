@@ -34,8 +34,11 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-AnimationSet::AnimationSet(BaseGame *inGame, ModelX *model) : BaseNamedObject(inGame),
-	_looping(false), _frameTime(-1), _totalTime(0), _model(model) {
+AnimationSet::AnimationSet(BaseGame *inGame, ModelX *model) : BaseNamedObject(inGame) {
+	_frameTime = -1;
+	_totalTime = 0;
+	_looping = false;
+	_model = model;
 }
 
 //////////////////////////////////////////////////////////////////////////

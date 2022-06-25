@@ -39,15 +39,14 @@ BaseActiveRect::BaseActiveRect(BaseGame *inGame) : BaseClass(inGame) {
 	_rect.setEmpty();
 	_owner = nullptr;
 	_frame = nullptr;
+#ifdef ENABLE_WME3D
+	_modelX = nullptr;
+#endif
 	_region = nullptr;
 	_zoomX = 100;
 	_zoomY = 100;
 	_offsetX = _offsetY = 0;
 	clipRect();
-
-#ifdef ENABLE_WME3D
-	_modelX = nullptr;
-#endif
 }
 
 

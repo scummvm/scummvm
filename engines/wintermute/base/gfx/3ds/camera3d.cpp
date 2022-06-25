@@ -40,10 +40,12 @@ namespace Wintermute {
 //////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////
-Camera3D::Camera3D(BaseGame *inGame) : BaseNamedObject(inGame),
-                                       _position(0.0f, 0.0f, 0.0f), _target(0.0f, 0.0f, 0.0f), _bank(0.0f),
-                                       _fov(Math::Angle(45.0f).getRadians()), _originalFOV(Math::Angle(45.0f).getRadians()),
-                                       _nearClipPlane(-1.0f), _farClipPlane(-1.0f) {
+Camera3D::Camera3D(BaseGame *inGame) : BaseNamedObject(inGame) {
+	_position = Math::Vector3d(0.0f, 0.0f, 0.0f);
+	_target = Math::Vector3d(0.0f, 0.0f, 0.0f);
+	_bank = 0.0f;
+	_fov = _originalFOV = Math::Angle(45.0f).getRadians();
+	_nearClipPlane = _farClipPlane = -1.0f;
 }
 
 //////////////////////////////////////////////////////////////////////////

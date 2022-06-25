@@ -38,10 +38,17 @@ namespace Wintermute {
 // define constant to make it available to the linker
 const uint32 MeshX::kNullIndex;
 
-MeshX::MeshX(Wintermute::BaseGame *inGame) : BaseNamedObject(inGame),
-	_BBoxStart(0.0f, 0.0f, 0.0f), _BBoxEnd(0.0f, 0.0f, 0.0f),
-	_vertexData(nullptr), _vertexPositionData(nullptr), _vertexNormalData(nullptr),
-	_vertexCount(0), _numAttrs(0), _skinnedMesh(false) {
+MeshX::MeshX(Wintermute::BaseGame *inGame) : BaseNamedObject(inGame) {
+	_numAttrs = 0;
+	_skinnedMesh = false;
+
+	_BBoxStart = Math::Vector3d(0.0f, 0.0f, 0.0f);
+	_BBoxEnd = Math::Vector3d(0.0f, 0.0f, 0.0f);
+
+	_vertexData = nullptr;
+	_vertexPositionData = nullptr;
+	_vertexNormalData = nullptr;
+	_vertexCount = 0;
 }
 
 MeshX::~MeshX() {

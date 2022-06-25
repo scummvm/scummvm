@@ -36,7 +36,8 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-Animation::Animation(BaseGame *inGame) : BaseClass(inGame), _targetFrame(nullptr) {
+Animation::Animation(BaseGame *inGame) : BaseClass(inGame) {
+	_targetFrame = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////

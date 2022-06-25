@@ -60,29 +60,42 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(AdActor3DX, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdActor3DX::AdActor3DX(BaseGame *inGame) : AdObject3D(inGame),
-										   _partOffset(0.0f, 0.0f, 0.0f),
-										   _stateAnimChannel(-1),
-										   _defaultTransTime(200),
-										   _defaultStopTransTime(200),
-										   _afterWalkAngle(-1.0f),
-										   _talkAnimName("talk"),
-										   _idleAnimName("idle"),
-										   _walkAnimName("walk"),
-										   _turnLeftAnimName("turnleft"),
-										   _turnRightAnimName("turnright"),
-										   _talkAnimChannel(0),
-										   _directWalkMode(DIRECT_WALK_NONE),
-										   _directTurnMode(DIRECT_TURN_NONE),
-										   _directWalkVelocity(0.0f),
-										   _directTurnVelocity(0.0f),
-										   _goToTolerance(2),
-										   _targetPoint3D(0.0f, 0.0f, 0.0f),
-										   _targetPoint2D(new BasePoint),
-										   _targetAngle(0.0f),
-										   _path3D(new AdPath3D(inGame)),
-										   _path2D(new AdPath(inGame)) {
+AdActor3DX::AdActor3DX(BaseGame *inGame) : AdObject3D(inGame) {
+	_targetPoint3D = Math::Vector3d(0.0f, 0.0f, 0.0f);
+	_targetPoint2D = new BasePoint;
+
+	_targetAngle = 0.0f;
+	_afterWalkAngle = -1.0f;
+
+	_path3D = new AdPath3D(inGame);
+	_path2D = new AdPath(inGame);
+
+	_talkAnimName = Common::String("talk");
+
+	_idleAnimName = Common::String("idle");
+
+	_walkAnimName = Common::String("walk");
+
+	_turnLeftAnimName = Common::String("turnleft");
+
+	_turnRightAnimName = Common::String("turnright");
+
+	_talkAnimChannel = 0;
+
 	_gameRef->_renderer3D->enableShadows();
+
+	_directWalkMode = DIRECT_WALK_NONE;
+	_directTurnMode = DIRECT_TURN_NONE;
+	_directWalkVelocity = 0.0f;
+	_directTurnVelocity = 0.0f;
+
+	_defaultTransTime = 200;
+	_defaultStopTransTime = 200;
+	_stateAnimChannel = -1;
+
+	_goToTolerance = 2;
+
+	_partOffset = Math::Vector3d(0.0f, 0.0f, 0.0f);
 }
 
 //////////////////////////////////////////////////////////////////////////

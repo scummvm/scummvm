@@ -95,14 +95,6 @@ BaseObject::BaseObject(BaseGame *inGame) : BaseScriptHolder(inGame) {
 	}
 	_saveState = true;
 
-	_nonIntMouseEvents = false;
-
-	// sound FX
-	_sFXType = SFX_NONE;
-	_sFXParam1 = _sFXParam2 = _sFXParam3 = _sFXParam4 = 0;
-
-	_blendMode = Graphics::BLEND_NORMAL;
-
 #ifdef ENABLE_WME3D
 	_modelX = nullptr;
 	_shadowModel = nullptr;
@@ -114,11 +106,18 @@ BaseObject::BaseObject(BaseGame *inGame) : BaseScriptHolder(inGame) {
 	_shadowImage = nullptr;
 	_shadowSize = 10.0f;
 	_shadowType = SHADOW_NONE;
-	// argb value
 	_shadowColor = 0x80000000;
 	_shadowLightPos = Math::Vector3d(-40.0f, 200.0f, -40.0f);
 	_drawBackfaces = true;
 #endif
+
+	_nonIntMouseEvents = false;
+
+	// sound FX
+	_sFXType = SFX_NONE;
+	_sFXParam1 = _sFXParam2 = _sFXParam3 = _sFXParam4 = 0;
+
+	_blendMode = Graphics::BLEND_NORMAL;
 }
 
 
