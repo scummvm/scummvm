@@ -5479,7 +5479,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("putlestory", "", "PutlestorY", "552992fb31c736ca67ffd403096596d6", 720654, Common::JA_JPN, 501),
 	WINGAME1t_l("putlestory", "", "PUTLE32.EXE", "74c72ab0fcdb4c69114047c74cef486e", 1403206, Common::JA_JPN, 501),
 
-	// Disc contains an audio track, not used by the game 
+	// Disc contains an audio track, not used by the game
 	// Mac version requires installation, 'PYST Installer' / 'MACINTOSH/Installer PYST(MAC)' (FR) / 'MACINTOSH/Installieren PYST(MAC)' (DE), VISE
 	// Win version requires installation, 'HDINST/PROGRAM.Z' / 'PC_WIN95/HDINST/PROGRAM.Z' (FR, DE), InstallShield v3
 	MACGAME2("pyst", "",	"PYST PPC",	  "56418baf7647cf3d7759cab01570ae52", 105599,
@@ -5692,8 +5692,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Original Mac filename is "天楼都市フォルダ/天楼都市 for Mac"
 	// "0_tenrou.exe" doesn't add "Opning" to the search path, Readme.txt says to use "tenrou.exe"
-	MACGAME1("tenroutoshi", "", "xn--jck3b1c9dp66v0cguuvth6e/xn-- for Mac-n00o010bmx4alc3h", "dabaeab8b01bece0610362ff5f8416b3", 108480, Common::JA_JPN, 501),
-	WINGAME1t("tenroutoshi", "", "tenrou.exe", "c6bd12ec20e510dd7b6c8a8268999d59", 1411066, Common::JA_JPN, 501),
+	MACGAME1_l("tenroutoshi", "", "xn--jck3b1c9dp66v0cguuvth6e/xn-- for Mac-n00o010bmx4alc3h", "dabaeab8b01bece0610362ff5f8416b3", 108480, Common::JA_JPN, 501),
+	WINGAME1t_l("tenroutoshi", "", "tenrou.exe", "c6bd12ec20e510dd7b6c8a8268999d59", 1411066, Common::JA_JPN, 501),
 
 	MACGAME1("texas", "", "Texas Tourism", "ad32f236d2637602b7299e6b748a7571", 705417, 500),
 	WINGAME1t("texas", "", "TEXAS32.EXE", "ac6cf1ba40918db9d7fa1dd837169834", 1410513, 501),
@@ -5966,7 +5966,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 							   "START.DXR",  "f69996bd5a1dea3971c7647e86b4ee30", 190436, 602),
 
 	// Developed by Funnybone Interactive
-	// 1995 release (developed by The Learning Company) doesn't use Director 
+	// 1995 release (developed by The Learning Company) doesn't use Director
 	WINGAME1("fpgacastle2", "", "CASTLE32.EX_", "518a98696fe1122e08410b0f157f21bf", 1563605, 602),
 	MACDEMO1("fpgacastle2", "Crocodile Kitchen Demo", "Castle Demo", "1d9149b9745e35ef93ed4cdf08ec3af7", 1032634, 602),
 	WINDEMO1("fpgacastle2", "Crocodile Kitchen Demo", "CASDEM95.EXE", "518a98696fe1122e08410b0f157f21bf", 1512624, 602),
