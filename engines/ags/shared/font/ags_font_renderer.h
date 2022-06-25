@@ -39,7 +39,7 @@ public:
 	virtual void EnsureTextValidForFont(char *text, int fontNumber) = 0;
 protected:
 	IAGSFontRenderer() {}
-	~IAGSFontRenderer() {}
+	virtual ~IAGSFontRenderer() {}
 };
 
 // Font render params, mainly for dealing with various compatibility issues.
@@ -70,7 +70,7 @@ public:
 	virtual void AdjustFontForAntiAlias(int fontNumber, bool aa_mode) = 0;
 protected:
 	IAGSFontRenderer2() {}
-	~IAGSFontRenderer2() {}
+	virtual ~IAGSFontRenderer2() {}
 };
 
 } // namespace AGS3

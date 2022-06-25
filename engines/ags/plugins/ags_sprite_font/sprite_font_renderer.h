@@ -39,7 +39,7 @@ protected:
 
 public:
 	SpriteFontRenderer(IAGSEngine *engine);
-	virtual ~SpriteFontRenderer();
+	~SpriteFontRenderer() override;
 
 	bool LoadFromDisk(int fontNumber, int fontSize) override {
 		return true;

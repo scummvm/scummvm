@@ -39,7 +39,7 @@ protected:
 	void Draw(BITMAP *src, BITMAP *dest, int destx, int desty, int srcx, int srcy, int width, int height);
 public:
 	VariableWidthSpriteFontRenderer(IAGSEngine *engine);
-	virtual ~VariableWidthSpriteFontRenderer();
+	~VariableWidthSpriteFontRenderer() override;
 
 	bool LoadFromDisk(int fontNumber, int fontSize) override {
 		return true;
