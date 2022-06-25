@@ -497,7 +497,8 @@ bool AdActor3DX::displayShadowVolume() {
 			continue;
 		}
 
-		at->displayShadowVol(_worldMatrix * (*boneMat), lightVector, extrusionDepth, true);
+		Math::Matrix4 viewMat = *boneMat;
+		at->displayShadowVol(viewMat, lightVector, extrusionDepth, true);
 	}
 
 	_gameRef->_renderer3D->setWorldTransform(_worldMatrix);

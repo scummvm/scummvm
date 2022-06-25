@@ -1170,7 +1170,7 @@ bool AdScene::traverseNodes(bool doUpdate) {
 
 #ifdef ENABLE_WME3D
 		if (!doUpdate && _sceneGeometry && _layers[j]->_main) {
-			if (_gameRef->getMaxShadowType(nullptr) >= SHADOW_STENCIL) {
+			if (_gameRef->getMaxShadowType() >= SHADOW_STENCIL) {
 				_sceneGeometry->renderShadowGeometry();
 			}
 		}
