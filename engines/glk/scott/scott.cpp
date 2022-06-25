@@ -155,9 +155,9 @@ void Scott::runGame() {
 			break;
 
 		if (!(_G(_currentCommand) && _G(_currentCommand)->_allFlag && !(_G(_currentCommand)->_allFlag & LASTALL))) {
-			_printLookToTranscript = _shouldLookInTranscript;
+			_printLookToTranscript = _G(_shouldLookInTranscript);
 			look();
-			_printLookToTranscript = _shouldLookInTranscript = 0;
+			_printLookToTranscript = _G(_shouldLookInTranscript) = 0;
 			if (!_G(_stopTime) && !_G(_shouldRestart))
 				saveUndo();
 		}
@@ -932,7 +932,7 @@ ActionResultType Scott::performLine(int ct) {
 					  _G(_items)[param[pptr]].Text);
 #endif
 				_G(_items)[param[pptr++]]._location = MY_LOC;
-				_shouldLookInTranscript = 1;
+				_G(_shouldLookInTranscript) = 1;
 				break;
 			case 54:
 #ifdef DEBUG_ACTIONS
@@ -940,7 +940,7 @@ ActionResultType Scott::performLine(int ct) {
 					  _G(_rooms)[param[pptr]].Text);
 #endif
 				MY_LOC = param[pptr++];
-				_shouldLookInTranscript = 1;
+				_G(_shouldLookInTranscript) = 1;
 				look();
 				break;
 			case 55:
@@ -1044,7 +1044,7 @@ ActionResultType Scott::performLine(int ct) {
 #endif
 				if (_splitScreen)
 					look();
-				_shouldLookInTranscript = 1;
+				_G(_shouldLookInTranscript) = 1;
 				break;
 			case 77:
 				if (_G(_currentCounter) >= 1)
@@ -1196,7 +1196,7 @@ ExplicitResultType Scott::performActions(int vb, int no) {
 			if (_G(_options) & (SPECTRUM_STYLE | TI994A_STYLE))
 				output(_G(_sys)[OK]);
 			MY_LOC = nl;
-			_shouldLookInTranscript = 1;
+			_G(_shouldLookInTranscript) = 1;
 			if (_G(_currentCommand) && _G(_currentCommand)->_next) {
 				lookWithPause();
 			}
@@ -1983,7 +1983,7 @@ void Scott::lookWithPause() {
 	char fc = _G(_rooms)[MY_LOC]._text[0];
 	if (_G(_rooms)[MY_LOC]._text.empty() || MY_LOC == 0 || fc == 0 || fc == '.' || fc == ' ')
 		return;
-	_shouldLookInTranscript = 1;
+	_G(_shouldLookInTranscript) = 1;
 	_pauseNextRoomDescription = 1;
 	look();
 }
@@ -2028,7 +2028,7 @@ void Scott::moveItemAToLocOfItemB(int itemA, int itemB) {
 	_G(_items)
 	[itemA]._location = _G(_items)[itemB]._location;
 	if (_G(_items)[itemB]._location == MY_LOC)
-		_shouldLookInTranscript = 1;
+		_G(_shouldLookInTranscript) = 1;
 }
 
 void Scott::goToStoredLoc() {
@@ -2039,7 +2039,7 @@ void Scott::goToStoredLoc() {
 	int t = MY_LOC;
 	MY_LOC = _G(_savedRoom);
 	_G(_savedRoom) = t;
-	_shouldLookInTranscript = 1;
+	_G(_shouldLookInTranscript) = 1;
 }
 
 void Scott::swapLocAndRoomFlag(int index) {
@@ -2049,7 +2049,7 @@ void Scott::swapLocAndRoomFlag(int index) {
 	int temp = MY_LOC;
 	MY_LOC = _G(_roomSaved)[index];
 	_G(_roomSaved)[index] = temp;
-	_shouldLookInTranscript = 1;
+	_G(_shouldLookInTranscript) = 1;
 	look();
 }
 
@@ -2058,7 +2058,7 @@ void Scott::swapItemLocations(int itemA, int itemB) {
 	_G(_items)[itemA]._location = _G(_items)[itemB]._location;
 	_G(_items)[itemB]._location = temp;
 	if (_G(_items)[itemA]._location == MY_LOC || _G(_items)[itemB]._location == MY_LOC)
-		_shouldLookInTranscript = 1;
+		_G(_shouldLookInTranscript) = 1;
 }
 
 void Scott::putItemAInRoomB(int itemA, int roomB) {
