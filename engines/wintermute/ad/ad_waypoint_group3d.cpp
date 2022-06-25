@@ -26,6 +26,7 @@
  */
 
 #include "common/util.h"
+
 #include "engines/wintermute/ad/ad_waypoint_group3d.h"
 #include "engines/wintermute/base/gfx/3ds/mesh3ds.h"
 

@@ -263,7 +263,7 @@ bool BaseRenderer::setup2D(bool Force) {
 
 #ifdef ENABLE_WME3D
 //////////////////////////////////////////////////////////////////////////
-bool BaseRenderer::setup3D(Camera3D* camera, bool force) {
+bool BaseRenderer::setup3D(Camera3D *camera, bool force) {
 	return STATUS_FAILED;
 }
 #endif

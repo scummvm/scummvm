@@ -27,6 +27,7 @@
 
 #include "common/math.h"
 #include "common/util.h"
+
 #include "engines/wintermute/ad/ad_actor_3dx.h"
 #include "engines/wintermute/ad/ad_attach_3dx.h"
 #include "engines/wintermute/ad/ad_entity.h"
@@ -104,7 +105,6 @@ AdActor3DX::~AdActor3DX() {
 	for (uint32 i = 0; i < _attachments.size(); i++) {
 		delete _attachments[i];
 	}
-
 	_attachments.clear();
 
 	// delete transition times
@@ -969,7 +969,6 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_SHADOW_COLOR: {
 			int r, g, b, a;
 			parser.scanStr((char *)params, "%d,%d,%d,%d", &r, &g, &b, &a);
-			// TODO: not sure if this is correct
 			_shadowColor = BYTETORGBA(r, g, b, a);
 
 			break;
@@ -1254,7 +1253,6 @@ bool AdActor3DX::playAnim3DX(int channel, const char *name, bool setState) {
 	}
 
 	bool res = _modelX->playAnim(channel, name, _defaultTransTime, true, _defaultStopTransTime);
-
 	if (res && setState) {
 		_state = STATE_PLAYING_ANIM;
 		_stateAnimChannel = channel;
@@ -2495,6 +2493,7 @@ bool AdActor3DX::parseEffect(byte *buffer) {
 	}
 
 	if (effectFile && material) {
+		// TODO: Implement
 	}
 
 	delete[] effectFile;

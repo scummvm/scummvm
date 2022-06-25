@@ -23,6 +23,7 @@
 #define WINTERMUTE_MESH_3DS_H
 
 #include "common/memstream.h"
+
 #include "math/vector4d.h"
 
 namespace Wintermute {

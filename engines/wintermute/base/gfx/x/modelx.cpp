@@ -188,14 +188,12 @@ void ModelX::cleanup(bool complete) {
 	for (uint32 i = 0; i < _animationSets.size(); i++) {
 		delete _animationSets[i];
 	}
-
 	_animationSets.clear();
 
 	if (complete) {
 		for (uint i = 0; i < _mergedModels.size(); ++i) {
 			delete[] _mergedModels[i];
 		}
-
 		_mergedModels.clear();
 	}
 
@@ -203,13 +201,11 @@ void ModelX::cleanup(bool complete) {
 		delete _matSprites[i];
 		_matSprites[i] = nullptr;
 	}
-
 	_matSprites.clear();
 
 	for (uint i = 0; i < _materialReferences.size(); ++i) {
 		delete _materialReferences[i]._material;
 	}
-
 	_materialReferences.clear();
 
 	// remove root frame

@@ -27,6 +27,7 @@
 #include "engines/wintermute/dctypes.h"
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/math/vector2.h"
+
 #include "graphics/transform_struct.h"
 
 #include "math/matrix4.h"

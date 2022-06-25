@@ -59,7 +59,6 @@ bool AdAttach3DX::init(const char *modelFile, const char *name, const char *pare
 	setName(name);
 
 	_modelX = new ModelX(_gameRef, _owner);
-
 	if (!_modelX) {
 		return false;
 	}

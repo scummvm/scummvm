@@ -111,7 +111,7 @@ bool Animation::loadFromX(XFileLexer &lexer, AnimationSet *parentAnimSet) {
 			lexer.advanceToNextToken();
 			lexer.advanceOnOpenBraces();
 
-			// I think we can ignore these for the moment)
+			// I think we can ignore these for the moment
 			lexer.readInt(); // whether animation is open or closed
 			lexer.readInt(); // position quality
 			lexer.advanceToNextToken(); // skip closed braces

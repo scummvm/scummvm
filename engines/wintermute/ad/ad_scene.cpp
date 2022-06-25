@@ -211,7 +211,6 @@ void AdScene::cleanup() {
 #ifdef ENABLE_WME3D
 	delete _sceneGeometry;
 #endif
-
 	delete _viewport;
 	_viewport = nullptr;
 
@@ -813,17 +812,15 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
+
 #ifdef ENABLE_WME3D
 		case TOKEN_GEOMETRY:
 			delete _sceneGeometry;
-
 			if (!_gameRef->_useD3D) {
 				break;
 			}
-
 			_sceneGeometry = new AdSceneGeometry(_gameRef);
-
-			if(_sceneGeometry == nullptr || !_sceneGeometry->loadFile(params)) {
+			if (_sceneGeometry == nullptr || !_sceneGeometry->loadFile(params)) {
 				delete _sceneGeometry;
 				cmd = PARSERR_GENERIC;
 			}
@@ -862,6 +859,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			parser.scanStr(params, "%b", &_2DPathfinding);
 			break;
 #endif
+
 		case TOKEN_CAMERA:
 			Common::strlcpy(camera, params, MAX_PATH_LENGTH);
 			break;
@@ -1017,8 +1015,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			_sceneGeometry->dropWaypoints();
 		}
 
-		Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
-
+		Camera3D *activeCamera = _sceneGeometry->getActiveCamera();
 		if (activeCamera != nullptr) {
 			_gameRef->_renderer->setup3D(activeCamera);
 		}
@@ -1285,7 +1282,6 @@ bool AdScene::updateFreeObjects() {
 #ifdef ENABLE_WME3D
 		if (adGame->_objects[i]->_is3D && _sceneGeometry) {
 			Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
-
 			if (activeCamera != nullptr) {
 				_gameRef->_renderer->setup3D(activeCamera, !is3DSet);
 				is3DSet = true;
@@ -1304,7 +1300,6 @@ bool AdScene::updateFreeObjects() {
 #ifdef ENABLE_WME3D
 		if (_objects[i]->_is3D && _sceneGeometry) {
 			Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
-
 			if (activeCamera != nullptr) {
 				_gameRef->_renderer->setup3D(activeCamera, !is3DSet);
 				is3DSet = true;
@@ -2652,7 +2647,6 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 
 		return STATUS_OK;
 	}
-
 
 #ifdef ENABLE_WME3D
 	//////////////////////////////////////////////////////////////////////////

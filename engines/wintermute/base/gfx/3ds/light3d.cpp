@@ -31,7 +31,9 @@
 #include "engines/wintermute/base/gfx/3ds/loader3ds.h"
 #include "engines/wintermute/math/math_util.h"
 #include "engines/wintermute/wintypes.h"
+
 #include "graphics/opengl/system_headers.h"
+
 #include "math/glmath.h"
 
 namespace Wintermute {

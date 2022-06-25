@@ -234,9 +234,7 @@ enum TShadowType {
 #ifdef ENABLE_WME3D
 
 struct FogParameters {
-	FogParameters() : _start(0.0f), _end(0.0f), _color(0x00000000), _enabled(false) {
-
-	}
+	FogParameters() : _start(0.0f), _end(0.0f), _color(0x00000000), _enabled(false) {}
 
 	float _start;
 	float _end;

@@ -27,6 +27,7 @@
 
 #include "common/math.h"
 #include "common/util.h"
+
 #include "engines/wintermute/ad/ad_block.h"
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/ad/ad_generic.h"
@@ -50,6 +51,7 @@
 #include "engines/wintermute/math/math_util.h"
 #include "engines/wintermute/system/sys_class_registry.h"
 #include "engines/wintermute/wintermute.h"
+
 #include "math/glmath.h"
 
 namespace Wintermute {

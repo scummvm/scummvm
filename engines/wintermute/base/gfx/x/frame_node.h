@@ -32,6 +32,7 @@
 #include "engines/wintermute/base/gfx/x/meshx.h"
 #include "engines/wintermute/base/gfx/x/modelx.h"
 #include "engines/wintermute/coll_templ.h"
+
 #include "math/matrix4.h"
 #include "math/quat.h"
 #include "math/vector3d.h"
