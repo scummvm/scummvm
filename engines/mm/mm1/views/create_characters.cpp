@@ -124,7 +124,7 @@ void CreateCharacters::NewCharacter::save() {
 	}
 
 	re._food = 10;
-	re._backpack[0] = 1;
+	re._backpack[0]._id = 1;
 	const int ALIGNMENT_VALS[3] = { 0, 0x10, 0x20 };
 	re._v6f = ALIGNMENT_VALS[re._alignmentInitial];
 

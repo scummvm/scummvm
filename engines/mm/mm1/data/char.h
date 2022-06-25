@@ -57,23 +57,37 @@ enum Condition {
 };
 
 class Inventory {
+public:
+	struct Entry {
+		byte _id = 0;
+		byte _field14 = 0;
+		operator bool() const { return _id != 0; }
+//		bool operator!() const { return !_id; }
+//		operator byte() const { return _id; }
+	};
 private:
-	Common::Array<byte> _items;
+	Common::Array<Entry> _items;
 
 	/**
 	 * Used to test if the inventory has a category of item
 	 */
 	typedef bool (*CategoryFn)(byte id);
 	bool hasCategory(CategoryFn fn) const;
+
+	/**
+	 * Returns the index of a free slot
+	 */
+	int getFreeSlot() const;
+
 public:
 	Inventory() {
 		clear();
 	}
-	byte &operator[](uint idx) {
+	Entry &operator[](uint idx) {
 		assert(idx < INVENTORY_COUNT);
 		return _items[idx];
 	}
-	const byte &operator[](uint idx) const {
+	const Entry &operator[](uint idx) const {
 		assert(idx < INVENTORY_COUNT);
 		return _items[idx];
 	}
@@ -81,7 +95,7 @@ public:
 	/**
 	 * Saves or loads the inventory data
 	 */
-	void synchronize(Common::Serializer &s);
+	void synchronize(Common::Serializer &s, bool ids);
 
 	/**
 	 * Clears the inventory
@@ -99,9 +113,9 @@ public:
 	bool full() const;
 
 	/**
-	 * Returns the index of a free slot
+	 * Adds an item to the inventory
 	 */
-	int getFreeSlot() const;
+	uint add(byte id, byte field14);
 
 	/**
 	 * Removes an index from the inventory
@@ -149,8 +163,6 @@ struct Character {
 	uint8 _condition = 0;
 	Inventory _equipped;
 	Inventory _backpack;
-	Inventory _equipped14;
-	Inventory _backpack14;
 
 	// TODO: Figure out what these are
 	int _v58, _v59, _v62, _v63, _v64, _v65;

@@ -64,11 +64,10 @@ void BlacksmithSellItem::selectItem(uint index) {
 	if (index == INVENTORY_COUNT)
 		return;
 
-	// Clear the slot
-	int itemId = c._backpack[index];
-	c._backpack[index] = 0;
-	int v14 = c._backpack14[index];
-	c._backpack14[index] = 0;
+	// Remove the item
+	int itemId = c._backpack[index]._id;
+	int v14 = c._backpack[index]._field14;
+	c._backpack.removeAt(index);
 
 	getItem(itemId);
 	if (!v14 && g_globals->_currItem._val13)
