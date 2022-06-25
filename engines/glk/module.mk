@@ -248,6 +248,7 @@ MODULE_OBJS := \
 	scott/hulk.o \
 	scott/layout_text.o \
 	scott/line_drawing.o \
+	scott/load_ti99_4a.o \
 	scott/resource.o \
 	scott/restore_state.o \
 	scott/ring_buffer.o \
