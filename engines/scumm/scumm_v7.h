@@ -110,7 +110,7 @@ protected:
 	int _subtitleQueuePos;
 	SubtitleText _subtitleQueue[20];
 
-	int32 bannerColors[50]; // Colors for the original GUI
+	int32 _bannerColors[50]; // Colors for the original GUI
 	byte *_bannerMem = nullptr;
 	uint32 _bannerMemSize = 0;
 	InternalGUIControl _internalGUIControls[30];

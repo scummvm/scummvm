@@ -3293,15 +3293,15 @@ void ScummEngine_v7::setBannerColors(int bannerId, byte r, byte g, byte b) {
 		return;
 	}
 
-	bannerColors[bannerId] = r | (b << 16) | (g << 8);
+	_bannerColors[bannerId] = r | (b << 16) | (g << 8);
 }
 
 int ScummEngine_v7::getBannerColor(int bannerId) {
 	byte r, g, b;
 	byte *palette = isSmushActive() ? _splayer->getVideoPalette() : _currentPalette;
-	r = (bannerColors[bannerId] >> 0) & 0xFF;
-	g = (bannerColors[bannerId] >> 8) & 0xFF;
-	b = (bannerColors[bannerId] >> 16) & 0xFF;
+	r = (_bannerColors[bannerId] >> 0) & 0xFF;
+	g = (_bannerColors[bannerId] >> 8) & 0xFF;
+	b = (_bannerColors[bannerId] >> 16) & 0xFF;
 	return getPaletteColorFromRGB(palette, r, g, b);
 }
 

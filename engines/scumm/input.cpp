@@ -482,7 +482,7 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 	if (isUsingOriginalGUI() &&
 		(lastKeyHit.keycode == Common::KEYCODE_b && lastKeyHit.hasFlags(Common::KBD_CTRL))) {
 		int curBufferCount = _imuseDigital->roundRobinSetBufferCount();
-		// iMuse buffer count changed to %d
+		// "iMuse buffer count changed to %d"
 		showBannerAndPause(0, 90, d.getPlainEngineString(25), curBufferCount);
 		return;
 	}
