@@ -5690,6 +5690,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("teddybear", "", "Teddy Bear", "f117b8395c4859d11b9c02c741e22cea", 704793, Common::FR_FRA, 500),
 	WINGAME1_l("teddybear", "", "BEAR95.EXE", "3460ad87d2ba57104e2810a77b53c220", 1394051, Common::FR_FRA, 500),
 
+	// Original Mac filename is "天楼都市フォルダ/天楼都市 for Mac"
+	// "0_tenrou.exe" doesn't add "Opning" to the search path, Readme.txt says to use "tenrou.exe"
+	MACGAME1("tenroutoshi", "", "xn--jck3b1c9dp66v0cguuvth6e/xn-- for Mac-n00o010bmx4alc3h", "dabaeab8b01bece0610362ff5f8416b3", 108480, Common::JA_JPN, 501),
+	WINGAME1t("tenroutoshi", "", "tenrou.exe", "c6bd12ec20e510dd7b6c8a8268999d59", 1411066, Common::JA_JPN, 501),
+
 	MACGAME1("texas", "", "Texas Tourism", "ad32f236d2637602b7299e6b748a7571", 705417, 500),
 	WINGAME1t("texas", "", "TEXAS32.EXE", "ac6cf1ba40918db9d7fa1dd837169834", 1410513, 501),
 
