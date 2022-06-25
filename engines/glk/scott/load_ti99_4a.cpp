@@ -162,11 +162,57 @@ char *getTI994AString(uint16_t table, int tableOffset) {
 }
 
 void loadTI994ADict(int vorn, uint16_t table, int numWords, Common::StringArray dict) {
+	uint16_t *wtable;
+	int i;
+	int wordLen;
+	char *w1;
+	char *w2;
 
+	/* table is either verb or noun table */
+	wtable = (uint16_t *)(_G(_entireFile) + fixAddress(fixWord(table)));
+
+	for (i = 0; i <= numWords; i++) {
+		do {
+			w1 = (char *)_G(_entireFile) + fixAddress(getWord((uint8_t *)wtable + (i * 2)));
+			w2 = (char *)_G(_entireFile) + fixAddress(getWord((uint8_t *)wtable + ((1 + i) * 2)));
+		} while (w1 == w2);
+
+		wordLen = w2 - w1;
+
+		if (wordLen < 20) {
+			char *text = new char[wordLen + 1];
+			strncpy(text, w1, wordLen);
+			text[wordLen] = 0;
+			dict[i] = text;
+		}
+	}
 }
 
 void readTI99ImplicitActions(DataHeader dh) {
+	uint8_t *ptr, *implicitStart;
+	int loopFlag;
 
+	implicitStart = _G(_entireFile) + fixAddress(fixWord(dh._pImplicit));
+	ptr = implicitStart;
+	loopFlag = 0;
+
+	/* fall out, if no auto acts in the game. */
+	if (*ptr == 0x0)
+		loopFlag = 1;
+
+	while (loopFlag == 0) {
+		if (ptr[1] == 0)
+			loopFlag = 1;
+
+		/* skip code chunk */
+		ptr += 1 + ptr[1];
+	}
+
+	_G(_ti99ImplicitExtent) = MIN(static_cast<long long>(_G(_fileLength)), ptr - _G(_entireFile));
+	if (_G(_ti99ImplicitExtent)) {
+		_G(_ti99ImplicitActions) = new uint8_t[_G(_ti99ImplicitExtent)];
+		memcpy(_G(_ti99ImplicitActions), implicitStart, _G(_ti99ImplicitExtent));
+	}
 }
 
 void readTI99ExplicitActions(DataHeader dh) {
