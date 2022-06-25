@@ -280,6 +280,7 @@ void Inventory::menu() {
 				if (!menuFirstFl) {
 					_G(cur)->show_cur();
 					while (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE) {
+						SHOULD_QUIT_RETURN;
 						setupScreen(NO_SETUP);
 						inv_rand_x = -1;
 						inv_rand_y = -1;

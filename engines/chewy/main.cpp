@@ -210,6 +210,7 @@ bool mainLoop(int16 mode) {
 		case Common::KEYCODE_F1:
 			_G(gameState).inv_cur = false;
 			_G(menu_item) = CUR_WALK;
+			_G(cur)->show_cur();
 			cursorChoice(_G(menu_item));
 			if (_G(menu_display) == MENU_DISPLAY)
 				_G(menu_display) = MENU_HIDE;
@@ -218,6 +219,7 @@ bool mainLoop(int16 mode) {
 		case Common::KEYCODE_F2:
 			_G(gameState).inv_cur = false;
 			_G(menu_item) = CUR_USE;
+			_G(cur)->show_cur();
 			cursorChoice(_G(menu_item));
 			if (_G(menu_display) == MENU_DISPLAY)
 				_G(menu_display) = MENU_HIDE;
@@ -226,6 +228,7 @@ bool mainLoop(int16 mode) {
 		case Common::KEYCODE_F3:
 			_G(gameState).inv_cur = false;
 			_G(menu_item) = CUR_LOOK;
+			_G(cur)->show_cur();
 			cursorChoice(_G(menu_item));
 			if (_G(menu_display) == MENU_DISPLAY)
 				_G(menu_display) = MENU_HIDE;
@@ -234,6 +237,7 @@ bool mainLoop(int16 mode) {
 		case Common::KEYCODE_F4:
 			_G(gameState).inv_cur = false;
 			_G(menu_item) = CUR_TALK;
+			_G(cur)->show_cur();
 			cursorChoice(_G(menu_item));
 			if (_G(menu_display) == MENU_DISPLAY)
 				_G(menu_display) = MENU_HIDE;
