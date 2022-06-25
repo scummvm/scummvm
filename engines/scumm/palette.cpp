@@ -1517,6 +1517,10 @@ uint32 ScummEngine::getPaletteColorFromRGB(byte *palette, byte r, byte g, byte b
 	return color;
 }
 
+uint32 ScummEngine::getPackedRGBColorFromPalette(byte *palette, uint32 color) {
+	return palette[3 * color] | (palette[3 * color + 1] << 8) | (palette[3 * color + 2] << 16);
+}
+
 void ScummEngine::fetchBlackAndWhite(uint32 &black, uint32 &white, byte *palette, int paletteEntries) {
 	int max = 0;
 	int r, g, b;
