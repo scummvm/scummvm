@@ -33,13 +33,14 @@
 #ifndef GLK_SCOTT_LOAD_TI99_4A_H
 #define GLK_SCOTT_LOAD_TI99_4A_H
 
+#include "common/file.h"
 #include "glk/scott/types.h"
 #include "glk/scott/definitions.h"
 
 namespace Glk {
 namespace Scott {
 
-GameIDType detectTI994A(uint8_t **sf, size_t *extent);
+GameIDType detectTI994A(Common::SeekableReadStream *f, uint8_t **sf, size_t *extent);
 
 } // End of namespace Scott
 } // End of namespace Glk
