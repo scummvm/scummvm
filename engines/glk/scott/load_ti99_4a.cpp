@@ -66,8 +66,25 @@ struct DataHeader {
 	uint16_t _pImplicit;			/* pointer to implicit actions */
 };
 
+uint16_t fixAddress(uint16_t ina) {
+	return 0;
+}
+
+uint16_t fixWord(uint16_t word) {
+	return 0;
+}
+
+uint16_t getWord(uint8_t *mem) {
+	return 0;
+}
+
 void getMaxTI99Messages(DataHeader dh) {
-	
+	uint8_t *msg;
+	uint16_t msg1;
+
+	msg = _G(_entireFile) + fixAddress(fixWord(dh._pMessage));
+	msg1 = fixAddress(getWord(msg));
+	_G(_maxMessages) = (msg1 - fixAddress(fixWord(dh._pMessage))) / 2;
 }
 
 void getMaxTI99Items(DataHeader dh) {

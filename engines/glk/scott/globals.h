@@ -209,6 +209,9 @@ public:
 	uint8_t *_saveIslandAppendix2 = nullptr;
 	int _saveIslandAppendix2Length = 0;
 
+	// load TI994A
+	int _maxMessages = 0;
+
 public:
 	Globals();
 	~Globals();
