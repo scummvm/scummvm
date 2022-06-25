@@ -76,7 +76,8 @@ uint16_t fixWord(uint16_t word) {
 }
 
 uint16_t getWord(uint8_t *mem) {
-	return 0;
+	uint16_t x = *(uint16_t *)mem;
+	return fixWord(x);
 }
 
 void getMaxTI99Messages(DataHeader dh) {
@@ -97,8 +98,52 @@ void getMaxTI99Items(DataHeader dh) {
 	_G(_maxItemDescr) = (msg1 - fixAddress(fixWord(dh._pObjDescr))) / 2;
 }
 
-char *getTI994AString(uint16_t table, int tableOffset) {
+uint8_t *getTI994AWord(uint8_t* string, uint8_t** result, size_t* length) {
 	return nullptr;
+}
+
+char *getTI994AString(uint16_t table, int tableOffset) {
+	uint8_t *msgx, *msgy, *nextword;
+	char *result;
+	uint16_t msg1, msg2;
+	uint8_t buffer[1024];
+	size_t length, totalLength = 0;
+
+	uint8_t *game = _G(_entireFile);
+
+	msgx = game + fixAddress(fixWord(table));
+
+	msgx += tableOffset * 2;
+	msg1 = fixAddress(getWord((uint8_t *)msgx));
+	msg2 = fixAddress(getWord((uint8_t *)msgx + 2));
+
+	msgy = game + msg2;
+	msgx = game + msg1;
+
+	while (msgx < msgy) {
+		msgx = getTI994AWord(msgx, &nextword, &length);
+		if (length == 0 || nextword == nullptr) {
+			return nullptr;
+		}
+		if (length > 100) {
+			delete[] nextword;
+			return nullptr;
+		}
+		memcpy(buffer + totalLength, nextword, length);
+		delete[] nextword;
+		totalLength += length;
+		if (totalLength > 1000)
+			break;
+		if (msgx < msgy)
+			buffer[totalLength++] = ' ';
+	}
+	if (totalLength == 0)
+		return nullptr;
+	totalLength++;
+	result = new char[totalLength];
+	memcpy(result, buffer, totalLength);
+	result[totalLength - 1] = '\0';
+	return result;
 }
 
 void loadTI994ADict(int vorn, uint16_t table, int numWords, Common::StringArray dict) {
