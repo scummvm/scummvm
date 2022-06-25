@@ -1829,12 +1829,15 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetEffect") == 0) {
 		stack->correctParams(2);
-//		const char *materialName = stack->pop()->getString();
-//		const char *effectFilename = stack->pop()->getString();
+		/*const char *materialName =*/ stack->pop()->getString();
+		/*const char *effectFilename =*/ stack->pop()->getString();
 
 		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
-
-		stack->pushBool(false);
+		if (_modelX) {
+			stack->pushBool(true);
+		} else {
+			stack->pushBool(false);
+		}
 		return true;
 	}
 
@@ -1843,13 +1846,15 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RemoveEffect") == 0) {
 		stack->correctParams(1);
-//		const char *materialName = stack->pop()->getString();
+		/*const char *materialName =*/ stack->pop()->getString();
 		stack->pop();
 
 		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
-
-		stack->pushBool(false);
-
+		if (_modelX) {
+			stack->pushBool(true);
+		} else {
+			stack->pushBool(false);
+		}
 		return true;
 	}
 
@@ -1858,16 +1863,16 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetEffectParam") == 0) {
 		stack->correctParams(3);
-//		const char *materialName = stack->pop()->getString();
-//		const char *paramName = stack->pop()->getString();
-//		ScValue *val = stack->pop();
-		stack->pop();
-		stack->pop();
-		stack->pop();
+		/*const char *materialName =*/ stack->pop()->getString();
+		/*const char *paramName =*/ stack->pop()->getString();
+		/*ScValue *val =*/ stack->pop();
 
 		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
-
-		stack->pushBool(false);
+		if (_modelX) {
+			stack->pushBool(true);
+		} else {
+			stack->pushBool(false);
+		}
 		return true;
 	}
 
@@ -1876,22 +1881,19 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetEffectParamVector") == 0) {
 		stack->correctParams(6);
-//		const char *materialName = stack->pop()->getString();
-//		const char *paramName = stack->pop()->getString();
-//		float x = stack->pop()->getFloat();
-//		float y = stack->pop()->getFloat();
-//		float z = stack->pop()->getFloat();
-//		float w = stack->pop()->getFloat();
-		stack->pop();
-		stack->pop();
-		stack->pop();
-		stack->pop();
-		stack->pop();
-		stack->pop();
+		/*const char *materialName =*/ stack->pop()->getString();
+		/*const char *paramName =*/ stack->pop()->getString();
+		/*float x =*/ stack->pop()->getFloat();
+		/*float y =*/ stack->pop()->getFloat();
+		/*float z =*/ stack->pop()->getFloat();
+		/*float w =*/ stack->pop()->getFloat();
 
 		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
-
-		stack->pushBool(false);
+		if (_modelX) {
+			stack->pushBool(true);
+		} else {
+			stack->pushBool(false);
+		}
 		return true;
 	}
 
@@ -1900,12 +1902,9 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetEffectParamColor") == 0) {
 		stack->correctParams(3);
-//		const char *materialName = stack->pop()->getString();
-//		const char *paramName = stack->pop()->getString();
-//		uint32 color = stack->pop()->getInt();
-		stack->pop();
-		stack->pop();
-		stack->pop();
+		/*const char *materialName =*/ stack->pop()->getString();
+		/*const char *paramName =*/ stack->pop()->getString();
+		/*uint32 color =*/ stack->pop()->getInt();
 
 		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
 		if (_modelX) {
