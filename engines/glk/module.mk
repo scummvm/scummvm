@@ -256,6 +256,7 @@ MODULE_OBJS := \
 	scott/saga_draw.o \
 	scott/scott.o \
 	scott/seas_of_blood.o \
+	scott/ti99_4a_terp.o \
 	scott/unp64/unp64.o \
 	scott/unp64/6502_emu.o \
 	scott/unp64/exo_util.o \

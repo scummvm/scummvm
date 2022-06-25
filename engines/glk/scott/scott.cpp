@@ -49,6 +49,7 @@
 #include "glk/scott/gremlins.h"
 #include "glk/scott/seas_of_blood.h"
 #include "glk/scott/game_specific.h"
+#include "glk/scott/ti99_4a_terp.h"
 
 namespace Glk {
 namespace Scott {
@@ -1269,12 +1270,10 @@ ExplicitResultType Scott::performActions(int vb, int no) {
 		}
 	} else {
 		if (vb == 0) {
-			// TODO
-			// RunImplicitTI99Actions();
+			runImplicitTI99Actions();
 			return ER_NO_RESULT;
 		} else {
-			// TODO
-			// flag = RunExplicitTI99Actions(vb, no);
+			flag = runExplicitTI99Actions(vb, no);
 		}
 	}
 
