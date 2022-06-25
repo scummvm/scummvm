@@ -88,7 +88,12 @@ void getMaxTI99Messages(DataHeader dh) {
 }
 
 void getMaxTI99Items(DataHeader dh) {
+	uint8_t *msg;
+	uint16_t msg1;
 
+	msg = _G(_entireFile) + fixAddress(fixWord(dh._pObjDescr));
+	msg1 = fixAddress(getWord(msg));
+	_G(_maxItemDescr) = (msg1 - fixAddress(fixWord(dh._pObjDescr))) / 2;
 }
 
 int tryLoadingTI994A(DataHeader dh, int loud) {

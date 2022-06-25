@@ -211,6 +211,7 @@ public:
 
 	// load TI994A
 	int _maxMessages = 0;
+	int _maxItemDescr = 0;
 
 public:
 	Globals();
