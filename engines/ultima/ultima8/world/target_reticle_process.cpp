@@ -238,6 +238,8 @@ bool TargetReticleProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	if (GAME_IS_REGRET)
 		_reticleStyle = rs->readUint16LE();
 
+	_type = 1; // should be persistant but older savegames may not know that.
+
 	return true;
 }
 

@@ -44,6 +44,7 @@ public:
 
 	void addEgg(Item *item);
 	void removeEgg(Item *item);
+	void clearEggs();
 
 	static SnapProcess *get_instance();
 
