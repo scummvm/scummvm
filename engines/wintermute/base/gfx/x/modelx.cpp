@@ -221,24 +221,24 @@ void ModelX::cleanup(bool complete) {
 bool ModelX::loadFromFile(const Common::String &filename, ModelX *parentModel) {
 	cleanup(false);
 
+	_parentModel = parentModel;
+
 	uint32 fileSize = 0;
 	byte *buffer = BaseFileManager::getEngineInstance()->getEngineInstance()->readWholeFile(filename, &fileSize);
 	XFileLexer lexer = createXFileLexer(buffer, fileSize);
 
-	bool res = true;
-
-	_parentModel = parentModel;
 	_rootFrame = new FrameNode(_gameRef);
-	res = _rootFrame->loadFromXAsRoot(filename, lexer, this, _materialReferences);
-	setFilename(filename.c_str());
+
+	bool res = _rootFrame->loadFromXAsRoot(filename, lexer, this, _materialReferences);
+	if (res) {
+		findBones(false, parentModel);
+	}
 
 	for (int i = 0; i < X_NUM_ANIMATION_CHANNELS; ++i) {
 		_channels[i] = new AnimationChannel(_gameRef, this);
 	}
 
-	if (res) {
-		findBones(false, parentModel);
-	}
+	setFilename(filename.c_str());
 
 	delete[] buffer;
 
