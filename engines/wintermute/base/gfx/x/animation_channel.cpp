@@ -45,7 +45,9 @@ AnimationChannel::AnimationChannel(BaseGame *inGame, ModelX *model) : BaseClass(
 //////////////////////////////////////////////////////////////////////////
 AnimationChannel::~AnimationChannel() {
 	delete _anim[0];
+	_anim[0] = nullptr;
 	delete _anim[1];
+	_anim[1] = nullptr;
 
 	_model = nullptr; // ref only
 }
@@ -62,8 +64,8 @@ bool AnimationChannel::playAnim(AnimationSet *animSet, uint32 transitionTime, ui
 
 	if (transitionTime == 0) {
 		delete _anim[0];
-		delete _anim[1];
 		_anim[0] = nullptr;
+		delete _anim[1];
 		_anim[1] = nullptr;
 
 		_anim[0] = anim;
@@ -93,8 +95,8 @@ bool AnimationChannel::stopAnim(uint32 transitionTime) {
 	if (transitionTime == 0 || !_anim[0]) {
 		_transitioning = false;
 		delete _anim[0];
-		delete _anim[1];
 		_anim[0] = nullptr;
+		delete _anim[1];
 		_anim[1] = nullptr;
 	} else {
 		delete _anim[1];

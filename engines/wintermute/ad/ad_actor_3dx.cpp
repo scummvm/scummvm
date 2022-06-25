@@ -114,11 +114,12 @@ AdActor3DX::~AdActor3DX() {
 	_transitionTimes.clear();
 
 	delete _path2D;
+	_path2D = nullptr;
 	delete _path3D;
+	_path3D = nullptr;
 
 	delete _targetPoint2D;
-
-	delete _modelX;
+	_targetPoint2D = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1154,13 +1155,15 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_WAYPOINTS: {
 			delete _wptGroup;
+			_wptGroup = nullptr;
 			delete _currentWptGroup;
+			_currentWptGroup = nullptr;
 			AdWaypointGroup *wpt = new AdWaypointGroup(_gameRef);
 			AdWaypointGroup *cwpt = new AdWaypointGroup(_gameRef);
 			if (!wpt || !cwpt || !wpt->loadBuffer((char *)params, false)) {
 				delete _wptGroup;
-				delete _currentWptGroup;
 				_wptGroup = nullptr;
+				delete _currentWptGroup;
 				_currentWptGroup = nullptr;
 				cmd = PARSERR_GENERIC;
 			} else {

@@ -67,6 +67,7 @@ AdObject3D::AdObject3D(BaseGame *inGame) : AdObject(inGame) {
 AdObject3D::~AdObject3D() {
 	_tempSkelAnim = nullptr; // ref only
 	delete _shadowVolume;
+	_shadowVolume = nullptr;
 
 	clearIgnoredLights();
 }

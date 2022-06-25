@@ -64,6 +64,7 @@
 #include "engines/wintermute/ad/ad_actor_3dx.h"
 #include "engines/wintermute/ad/ad_scene_geometry.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
+#include "engines/wintermute/base/gfx/3ds/camera3d.h"
 #include "engines/wintermute/base/gfx/3ds/light3d.h"
 #endif
 
@@ -210,6 +211,7 @@ void AdScene::cleanup() {
 	_objects.clear();
 #ifdef ENABLE_WME3D
 	delete _sceneGeometry;
+	_sceneGeometry = nullptr;
 #endif
 	delete _viewport;
 	_viewport = nullptr;
@@ -816,6 +818,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 #ifdef ENABLE_WME3D
 		case TOKEN_GEOMETRY:
 			delete _sceneGeometry;
+			_sceneGeometry = nullptr;
 			if (!_gameRef->_useD3D) {
 				break;
 			}
