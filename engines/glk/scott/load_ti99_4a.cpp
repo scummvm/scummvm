@@ -265,7 +265,53 @@ void readTI99ExplicitActions(DataHeader dh) {
 }
 
 uint8_t *loadTitleScreen() {
-	return nullptr;
+	char buf[3074];
+	int offset = 0;
+	uint8_t *p;
+	int lines;
+
+	/* title screen offset starts at 0x80 */
+	p = _G(_entireFile) + 0x80 + _G(_fileBaselineOffset);
+	if (p - _G(_entireFile) > _G(_fileLength))
+		return nullptr;
+	int parens = 0;
+	for (lines = 0; lines < 24; lines++) {
+		for (int i = 0; i < 40; i++) {
+			char c = *(p++);
+			if (p - _G(_entireFile) >= _G(_fileLength))
+				return nullptr;
+			if (!((c <= 127) && (c >= 0))) /* isascii() */
+				c = '?';
+			switch (c) {
+			case '\\':
+				c = ' ';
+				break;
+			case '(':
+				parens = 1;
+				break;
+			case ')':
+				if (!parens)
+					c = '@';
+				parens = 0;
+				break;
+			case '|':
+				if (*p != ' ')
+					c = 12;
+				break;
+			default:
+				break;
+			}
+			buf[offset++] = c;
+			if (offset >= 3072)
+				return nullptr;
+		}
+		buf[offset++] = '\n';
+	}
+
+	buf[offset] = '\0';
+	uint8_t *result = new uint8_t[offset + 1];
+	memcpy(result, buf, offset + 1);
+	return result;
 }
 
 int tryLoadingTI994A(DataHeader dh, int loud) {
