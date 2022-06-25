@@ -560,6 +560,7 @@ void ScummEngine_v6::o6_eq() {
 	// checks that we are playing on the Windows version.  These scripts check VAR_PLATFORM (b) against the value (2)
 	// of the Macintosh platform (a).
 #ifdef USE_BYONLINE
+	int offset = _scriptPointer - _scriptOrgPointer;
 	if (_game.id == GID_FOOTBALL && _currentRoom == 2 && (vm.slot[_currentScript].number == 2049 || vm.slot[_currentScript].number == 2050 ||
 		vm.slot[_currentScript].number == 498) && a == 2 && b == 2) {
 		push(0);
@@ -587,6 +588,14 @@ void ScummEngine_v6::o6_eq() {
 		fetchScriptWord();
 		pop();
 		stopObjectCode();
+	// BYOnline: This script doesn't allow Super Colossal Dome to be chosen for online play, by checking if the selected
+	// field's value is 5 (SCD's number) and incrementing/decrementing if it is. To allow SCD to be used, we return 0
+	// for those checks.
+	} else if (_game.id == GID_BASEBALL2001 && _currentRoom == 40 && vm.slot[_currentScript].number == 2106 && a == 5 && (
+		offset == 16754 || offset == 16791
+		)
+	) {
+		push(0);
 	}
 
 	// WORKAROUND: Forces the game version string set via script 1 to be used in both Macintosh and Windows versions,
