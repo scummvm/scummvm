@@ -521,29 +521,31 @@ bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 #endif
 			0;
 
-	/* When playing 2D, TinyGL is not really TinyGL but software and is always available */
+#if defined(USE_TINYGL)
+	// When playing 2D, TinyGL is not really TinyGL but software and is always available
 	if (!_playing3DGame) {
 		availableRendererTypes |= Graphics::kRendererTypeTinyGL;
 	}
+#endif
 
 	Graphics::RendererType matchingRendererType = Graphics::Renderer::getBestMatchingType(desiredRendererType, availableRendererTypes);
 
- #if defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_SHADERS)
 	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
 		initGraphics3d(_settings->getResWidth(), _settings->getResHeight());
 		_renderer3D = makeOpenGL3DShaderRenderer(this);
 	}
- #endif // defined(USE_OPENGL_SHADERS)
- #if defined(USE_OPENGL_GAME)
+#endif // defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_GAME)
 	if (matchingRendererType == Graphics::kRendererTypeOpenGL) {
 		initGraphics3d(_settings->getResWidth(), _settings->getResHeight());
 		_renderer3D = makeOpenGL3DRenderer(this);
 	}
- #endif // defined(USE_OPENGL)
+#endif // defined(USE_OPENGL)
 	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
 		if (_playing3DGame) {
 			_renderer3D = nullptr;// TODO: makeTinyGL3DRenderer(this);
-			error("3D software renderered is not supported yet");
+			warning("3D software renderer is not supported yet");
 		}
 	}
 	_renderer = _renderer3D;
