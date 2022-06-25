@@ -38,7 +38,7 @@ class CharacterInfo : public CharacterBase {
 private:
 	enum ViewState {
 		DISPLAY, EQUIP, GATHER, REMOVE, SHARE,
-		TRADE_WITH, TRADE_KIND, TRADE_WHAT };
+		TRADE_WITH, TRADE_KIND, TRADE_ITEM };
 	ViewState _state = DISPLAY;
 	Common::String _newName;
 private:

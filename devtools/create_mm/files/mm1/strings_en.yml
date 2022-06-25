@@ -27,6 +27,7 @@
 		legend4: "'ESC' TO GO BACK  'G' GATHER  'U' USE"
 		equip: "EQUIP WHICH ITEM: 'A'-'F'?"
 		remove: "REMOVE WHICH ITEM: '1'-'6'?"
+		which: "WHICH ITEM: 'A'-'F'?"
 		wrong_class: "*** WRONG CLASS ***"
 		have_armor: "*** ALREADY WEARING ARMOR ***"
 		not_equipped: "*** NOT EQUIPPED ***"

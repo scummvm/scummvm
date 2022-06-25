@@ -183,6 +183,12 @@ struct Character {
 	void gatherGold();
 
 	/**
+	 * Trade an item to another
+	 */
+	enum TradeResult { TRADE_SUCCESS, TRADE_NO_ITEM, TRADE_FULL };
+	TradeResult trade(int whoTo, int itemIndex);
+
+	/**
 	 * Increase the character's level by 1 at a trainer
 	 */
 	struct LevelIncrease {
