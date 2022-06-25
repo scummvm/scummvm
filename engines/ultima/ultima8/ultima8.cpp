@@ -1508,7 +1508,7 @@ bool Ultima8Engine::load(Common::ReadStream *rs, uint32 version) {
 	_avatarInStasis = (rs->readByte() != 0);
 
 	if (GAME_IS_CRUSADER) {
-		_crusaderTeleporting  = (rs->readByte() != 0);
+		_crusaderTeleporting = (rs->readByte() != 0);
 		_cruStasis = false;
 	}
 
