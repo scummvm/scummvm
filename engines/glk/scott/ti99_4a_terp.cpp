@@ -76,7 +76,42 @@ void runImplicitTI99Actions() {
 }
 
 ExplicitResultType runExplicitTI99Actions(int verbNum, int nounNum) {
-	return ER_NO_RESULT;
+	uint8_t *p;
+	ExplicitResultType flag = ER_NO_RESULT;
+	int match = 0;
+	ActionResultType runcode;
+
+	p = _G(_verbActionOffsets)[verbNum];
+
+	/* process all code blocks for this verb
+	 until success or end. */
+
+	while (flag == ER_NO_RESULT) {
+		/* we match VERB NOUN or VERB ANY */
+		if (p != nullptr && (p[0] == nounNum || p[0] == 0)) {
+			match = 1;
+			runcode = performTI99Line(p + 2);
+
+			if (runcode == ACT_SUCCESS) {
+				return ER_SUCCESS;
+			} else { /* failure */
+				if (p[1] == 0)
+					flag = ER_RAN_ALL_LINES;
+				else
+					p += 1 + p[1];
+			}
+		} else {
+			if (p == nullptr || p[1] == 0)
+				flag = ER_RAN_ALL_LINES_NO_MATCH;
+			else
+				p += 1 + p[1];
+		}
+	}
+
+	if (match)
+		flag = ER_RAN_ALL_LINES;
+
+	return flag;
 }
 
 } // End of namespace Scott
