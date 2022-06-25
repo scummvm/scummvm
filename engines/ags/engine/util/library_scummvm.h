@@ -55,18 +55,24 @@ public:
 		if (error)
 			AGS::Shared::Debug::Printf("pluginOpen returned: %s", error);
 
-		return (_library != nullptr);
+		if (_library == nullptr)
+			return false;
+		_name = libraryName;
+		_path = GetFilenameForLib(libraryName);;
+		return true;
 	}
 
-	bool Unload() override {
+	void Unload() override {
 		if (_library) {
-			Plugins::PluginBase *lib = _library;
+			Plugins::pluginClose(_library);
 			_library = nullptr;
-
-			return (Plugins::pluginClose(lib) == 0);
-		} else {
-			return true;
+			_name = "";
+			_path = "";
 		}
+	}
+
+	bool IsLoaded() const override {
+		return _library != nullptr;
 	}
 
 	Plugins::PluginBase *getPlugin() const {

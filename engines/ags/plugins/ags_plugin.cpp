@@ -858,12 +858,11 @@ Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> 
 			apl->filename = "ags_snowrain";
 		}
 
-		String expect_filename = apl->library.GetFilenameForLib(apl->filename);
 		if (apl->library.Load(apl->filename)) {
 			apl->_plugin = apl->library.getPlugin();
-			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' loaded as '%s', resolving imports...", apl->filename.GetCStr(), expect_filename.GetCStr());
-
+			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' loaded from '%s', resolving imports...", apl->filename.GetCStr(), apl->library.GetFilePath().GetCStr());
 		} else {
+			String expect_filename = apl->library.GetFilenameForLib(apl->filename);
 			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' could not be loaded (expected '%s')",
 			                           apl->filename.GetCStr(), expect_filename.GetCStr());
 			_GP(plugins).pop_back();
