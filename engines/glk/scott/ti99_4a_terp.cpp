@@ -31,13 +31,48 @@
  * https://github.com/angstsmurf/spatterlight/tree/master/terps/scott
  */
 
+#include "glk/scott/scott.h"
+#include "glk/scott/types.h"
+#include "glk/scott/globals.h"
 #include "glk/scott/ti99_4a_terp.h"
 
 namespace Glk {
 namespace Scott {
 
-void runImplicitTI99Actions() {
+ActionResultType performTI99Line(uint8_t *actionLine) {
+	return ACT_SUCCESS;
+}
 
+void runImplicitTI99Actions() {
+	int probability;
+	uint8_t *ptr;
+	int loopFlag;
+
+	ptr = _G(_ti99ImplicitActions);
+	loopFlag = 0;
+
+	/* bail if no auto acts in the game. */
+	if (*ptr == 0x0)
+		loopFlag = 1;
+
+	while (loopFlag == 0) {
+		/*
+		 p + 0 = chance of happening
+		 p + 1 = size of code chunk
+		 p + 2 = start of code
+		 */
+
+		probability = ptr[0];
+
+		if (g_scott->randomPercent(probability))
+			performTI99Line(ptr + 2);
+
+		if (ptr[1] == 0 || ptr - _G(_ti99ImplicitActions) >= _G(_ti99ImplicitExtent))
+			loopFlag = 1;
+
+		/* skip code chunk */
+		ptr += 1 + ptr[1];
+	}
 }
 
 ExplicitResultType runExplicitTI99Actions(int verbNum, int nounNum) {

@@ -164,7 +164,6 @@ private:
 
 	void delay(double seconds);
 	void clearScreen(void);
-	bool randomPercent(uint n);
 	int countCarried(void);
 	int matchUpItem(int noun, int loc);
 	Common::String readString(Common::SeekableReadStream *f);
@@ -226,6 +225,7 @@ public:
 	void listInventory();
 	void updateSettings();
 	uint getRandomNumber(uint max);
+	bool randomPercent(uint n);
 
 public:
 	/**
