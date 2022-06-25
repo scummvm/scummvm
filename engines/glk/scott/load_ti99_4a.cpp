@@ -216,7 +216,52 @@ void readTI99ImplicitActions(DataHeader dh) {
 }
 
 void readTI99ExplicitActions(DataHeader dh) {
+	uint8_t *ptr, *start, *end, *blockstart;
+	uint16_t address;
+	int loopFlag;
+	int i;
 
+	start = _G(_entireFile) + _G(_fileLength);
+	end = _G(_entireFile);
+
+	size_t explicitOffset = fixAddress(fixWord(dh._pExplicit));
+	blockstart = _G(_entireFile) + explicitOffset;
+
+	_G(_verbActionOffsets) = new uint8_t*[dh._numVerbs + 1];
+
+	for (i = 0; i <= dh._numVerbs; i++) {
+		ptr = blockstart;
+		address = getWord(ptr + ((i)*2));
+
+		_G(_verbActionOffsets)[i] = nullptr;
+
+		if (address != 0) {
+			ptr = _G(_entireFile) + fixAddress(address);
+			if (ptr < start)
+				start = ptr;
+			_G(_verbActionOffsets)[i] = ptr;
+			loopFlag = 0;
+
+			while (loopFlag != 1) {
+				if (ptr[1] == 0)
+					loopFlag = 1;
+
+				/* go to next block. */
+				ptr += 1 + ptr[1];
+				if (ptr > end)
+					end = ptr;
+			}
+		}
+	}
+
+	_G(_ti99ExplicitExtent) = end - start;
+	_G(_ti99ExplicitActions) = new uint8_t[_G(_ti99ExplicitExtent)];
+	memcpy(_G(_ti99ExplicitActions), start, _G(_ti99ExplicitExtent));
+	for (i = 0; i <= dh._numVerbs; i++) {
+		if (_G(_verbActionOffsets)[i] != nullptr) {
+			_G(_verbActionOffsets)[i] = _G(_ti99ExplicitActions) + (_G(_verbActionOffsets)[i] - start);
+		}
+	}
 }
 
 uint8_t *loadTitleScreen() {

@@ -215,7 +215,10 @@ public:
 	int _maxMessages = 0;
 	int _maxItemDescr = 0;
 	size_t _ti99ImplicitExtent = 0;
+	size_t _ti99ExplicitExtent = 0;
 	uint8_t *_ti99ImplicitActions = nullptr;
+	uint8_t *_ti99ExplicitActions = nullptr;
+	uint8_t **_verbActionOffsets = nullptr;
 
 public:
 	Globals();
