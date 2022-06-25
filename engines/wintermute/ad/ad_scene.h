@@ -105,6 +105,10 @@ public:
 	bool sortScaleLevels();
 	bool sortRotLevels();
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
+#ifdef ENABLE_WME3D
+	AdSceneGeometry *_sceneGeometry;
+	bool _showGeometry;
+#endif
 	uint32 getAlphaAt(int x, int y, bool colorCheck = false);
 	bool _paralaxScrolling;
 	void skipTo(int offsetX, int offsetY);
@@ -140,10 +144,6 @@ public:
 	BaseArray<AdLayer *> _layers;
 	BaseArray<AdObject *> _objects;
 	BaseArray<AdWaypointGroup *> _waypointGroups;
-#ifdef ENABLE_WME3D
-	AdSceneGeometry* _sceneGeometry;
-	bool _showGeometry;
-#endif
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
 	int32 _width;

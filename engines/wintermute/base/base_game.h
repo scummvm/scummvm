@@ -76,6 +76,11 @@ class BaseGame: public BaseObject {
 public:
 	DECLARE_PERSISTENT(BaseGame, BaseObject)
 
+#ifdef ENABLE_WME3D
+	virtual uint32 getAmbientLightColor();
+	virtual bool getFogParams(FogParameters &fogParameters);
+#endif
+
 	virtual bool onScriptShutdown(ScScript *script);
 
 	virtual bool onActivate(bool activate, bool refreshMouse);
@@ -119,6 +124,14 @@ public:
 	void DEBUG_DumpClassRegistry();
 	bool setWaitCursor(const char *filename);
 
+#ifdef ENABLE_WME3D
+	bool _supportsRealTimeShadows;
+	TShadowType _maxShadowType;
+
+	bool setMaxShadowType(TShadowType maxShadowType);
+	virtual TShadowType getMaxShadowType(BaseObject *object = nullptr);
+#endif
+
 	uint32 getSaveThumbWidth() const { return _thumbnailWidth; }
 	uint32 getSaveThumbHeight() const { return _thumbnailHeight; }
 
@@ -161,17 +174,8 @@ public:
 #ifdef ENABLE_WME3D
 	BaseRenderer3D *_renderer3D;
 	bool _playing3DGame;
-
-	bool _supportsRealTimeShadows;
-	TShadowType _maxShadowType;
-
-	bool setMaxShadowType(TShadowType maxShadowType);
-	virtual TShadowType getMaxShadowType(BaseObject *object);
-
-	virtual uint32 getAmbientLightColor();
-
-	virtual bool getFogParams(FogParameters &fogParameters);
 #endif
+
 	BaseSoundMgr *_soundMgr;
 #if EXTENDED_DEBUGGER_ENABLED
 	DebuggableScEngine *_scEngine;

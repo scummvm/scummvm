@@ -827,39 +827,6 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 				delete _sceneGeometry;
 				cmd = PARSERR_GENERIC;
 			}
-
-			break;
-
-		case TOKEN_WAYPOINT_HEIGHT:
-			parser.scanStr(params, "%f", &_waypointHeight);
-			break;
-
-		case TOKEN_FOV_OVERRIDE:
-			parser.scanStr(params, "%f", &_fov);
-			break;
-
-		case TOKEN_NEAR_CLIPPING_PLANE:
-			parser.scanStr(params, "%f", &_nearPlane);
-			break;
-
-		case TOKEN_FAR_CLIPPING_PLANE:
-			parser.scanStr(params, "%f", &_farPlane);
-			break;
-
-		case TOKEN_MAX_SHADOW_TYPE: {
-			int maxShadowType = SHADOW_NONE;
-			parser.scanStr(params, "%d", &maxShadowType);
-			setMaxShadowType(static_cast<TShadowType>(maxShadowType));
-		}
-		break;
-
-		case TOKEN_AMBIENT_LIGHT_COLOR:
-			parser.scanStr(params, "%d,%d,%d", &ar, &ag, &ab);
-			_ambientLightColor = BYTETORGBA(ar, ag, ab, 255);
-			break;
-
-		case TOKEN_2D_PATHFINDING:
-			parser.scanStr(params, "%b", &_2DPathfinding);
 			break;
 #endif
 
@@ -986,6 +953,40 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 		case TOKEN_EDITOR_PROPERTY:
 			parseEditorProperty(params, false);
 			break;
+
+#ifdef ENABLE_WME3D
+		case TOKEN_FOV_OVERRIDE:
+			parser.scanStr(params, "%f", &_fov);
+			break;
+
+		case TOKEN_WAYPOINT_HEIGHT:
+			parser.scanStr(params, "%f", &_waypointHeight);
+			break;
+
+		case TOKEN_NEAR_CLIPPING_PLANE:
+			parser.scanStr(params, "%f", &_nearPlane);
+			break;
+
+		case TOKEN_FAR_CLIPPING_PLANE:
+			parser.scanStr(params, "%f", &_farPlane);
+			break;
+
+		case TOKEN_2D_PATHFINDING:
+			parser.scanStr(params, "%b", &_2DPathfinding);
+			break;
+
+		case TOKEN_MAX_SHADOW_TYPE: {
+			int maxShadowType = SHADOW_NONE;
+			parser.scanStr(params, "%d", &maxShadowType);
+			setMaxShadowType(static_cast<TShadowType>(maxShadowType));
+		}
+		break;
+
+		case TOKEN_AMBIENT_LIGHT_COLOR:
+			parser.scanStr(params, "%d,%d,%d", &ar, &ag, &ab);
+			_ambientLightColor = BYTETORGBA(ar, ag, ab, 255);
+			break;
+#endif
 
 		default:
 			break;
@@ -2488,6 +2489,18 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Height (RO)
+	//////////////////////////////////////////////////////////////////////////
+	else if (name == "Height") {
+		if (_mainLayer) {
+			_scValue->setInt(_mainLayer->_height);
+		} else {
+			_scValue->setInt(0);
+		}
+		return _scValue;
+	}
+
 #ifdef ENABLE_WME3D
 	//////////////////////////////////////////////////////////////////////////
 	// MaxShadowType
@@ -2519,17 +2532,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	}
 #endif
 
-	//////////////////////////////////////////////////////////////////////////
-	// Height (RO)
-	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Height") {
-		if (_mainLayer) {
-			_scValue->setInt(_mainLayer->_height);
-		} else {
-			_scValue->setInt(0);
-		}
-		return _scValue;
-	} else {
+	else {
 		return BaseObject::scGetProperty(name);
 	}
 }
