@@ -1239,6 +1239,7 @@ struct LowLevelSceneStateTransitionAction {
 		kLoad,
 		kUnload,
 		kSendMessage,
+		kAutoResetCursor,
 	};
 
 	explicit LowLevelSceneStateTransitionAction(const Common::SharedPtr<MessageDispatch> &msg);
@@ -1526,6 +1527,7 @@ public:
 	void setModifierCursorOverride(uint32 cursorID);
 	void clearModifierCursorOverride();
 	void forceCursorRefreshOnce();
+	void setAutoResetCursor(bool enabled);
 
 	bool isAwaitingSceneTransition() const;
 
@@ -1739,6 +1741,7 @@ private:
 	Common::Point _mouseTrackingObjectInitialOrigin;
 	bool _trackedMouseOutside;
 	bool _forceCursorRefreshOnce;
+	bool _autoResetCursor;
 
 	uint32 _modifierOverrideCursorID;
 	bool _haveModifierOverrideCursor;
@@ -1852,6 +1855,7 @@ public:
 private:
 	MiniscriptInstructionOutcome setCurrentScene(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome setRefreshCursor(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome setAutoResetCursor(MiniscriptThread *thread, const DynamicValue &value);
 };
 
 class AssetManagerInterface : public RuntimeObject {
