@@ -63,7 +63,7 @@ Text and Speech
 .. _talkspeed:
 
 Subtitle speed
-	Adjusts the length of time that the subtitles are displayed on screen. The lower the speed is set, the longer the subtitles are displayed.
+	Adjusts the length of time that the subtitles are displayed on screen. The higher the value, the longer the subtitles are displayed.
 
 	*talkspeed*
 
