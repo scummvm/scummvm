@@ -105,6 +105,7 @@ void MTropolisEngine::handleEvents() {
 Common::Error MTropolisEngine::run() {
 	int preferredWidth = 1024;
 	int preferredHeight = 768;
+
 	ColorDepthMode preferredColorDepthMode = kColorDepthMode8Bit;
 	ColorDepthMode enhancedColorDepthMode = kColorDepthMode8Bit;
 
@@ -119,6 +120,21 @@ Common::Error MTropolisEngine::run() {
 		enhancedColorDepthMode = kColorDepthMode32Bit;
 
 		_runtime->getHacks().ignoreMismatchedProjectNameInObjectLookups = true;
+
+		if (ConfMan.getBool("mtropolis_enh_obsidian_widescreen")) {
+			preferredHeight = 420;
+
+			_runtime->getHacks().mainWindowOffset = Common::Point(0, -30);
+			_runtime->getHacks().reportDisplaySize = Common::Point(640, 480);
+
+			if (ConfMan.getBool("mtropolis_enh_obsidian_widescreen_improved")) {
+				preferredHeight = 360;
+
+				_runtime->getHacks().mainWindowOffset = Common::Point(0, 0);
+
+				HackSuites::addObsidianImprovedWidescreen(*_gameDescription, _runtime->getHacks());
+			}
+		}
 	}
 
 	_runtime->queueProject(projectDesc);

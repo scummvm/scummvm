@@ -1634,7 +1634,15 @@ bool SysInfoModifier::readAttribute(MiniscriptThread *thread, DynamicValue &resu
 		return true;
 	} else if (attrib == "screensize") {
 		uint16 width, height;
+
 		thread->getRuntime()->getDisplayResolution(width, height);
+
+		Common::Point hacksSize = thread->getRuntime()->getHacks().reportDisplaySize;
+		if (hacksSize.x != 0)
+			width = hacksSize.x;
+		if (hacksSize.y != 0)
+			height = hacksSize.y;
+
 		result.setPoint(Common::Point(width, height));
 		return true;
 	}

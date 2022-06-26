@@ -1886,6 +1886,14 @@ private:
 	int _masterVolume;
 };
 
+class StructuralHooks {
+public:
+	virtual ~StructuralHooks();
+
+	virtual void onCreate(Structural *structural);
+	virtual void onSetPosition(Structural *structural, Common::Point &pt);
+};
+
 class Structural : public RuntimeObject, public IModifierContainer, public IMessageConsumer, public Debuggable {
 public:
 	Structural();
@@ -1931,6 +1939,9 @@ public:
 
 	void recursiveCollectObjectsMatchingCriteria(Common::Array<Common::WeakPtr<RuntimeObject> > &results, bool (*evalFunc)(void *userData, RuntimeObject *object), void *userData, bool onlyEnabled);
 
+	void setHooks(const Common::SharedPtr<StructuralHooks> &hooks);
+	const Common::SharedPtr<StructuralHooks> &getHooks() const;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	SupportStatus debugGetSupportStatus() const override;
 	const Common::String &debugGetName() const override;
@@ -1964,6 +1975,8 @@ protected:
 	// "loop" appears to have been made available on everything in 1.2.  Obsidian depends on it
 	// being available for sound indexes to be properly set up.
 	bool _loop;
+
+	Common::SharedPtr<StructuralHooks> _hooks;
 };
 
 struct ProjectPresentationSettings {
@@ -2402,6 +2415,7 @@ public:
 
 	bool isVisible() const;
 	bool isDirectToScreen() const;
+	void setDirectToScreen(bool directToScreen);
 	uint16 getLayer() const;
 
 	bool isMouseInsideDrawableArea(int32 relativeX, int32 relativeY) const;
@@ -2415,6 +2429,8 @@ public:
 	Common::Point getParentOrigin() const;
 	Common::Point getGlobalPosition() const;
 	const Common::Rect &getRelativeRect() const;
+
+	void setRelativeRect(const Common::Rect &rect);
 
 	// The cached absolute origin is from the last time the element was rendered.
 	// Do not rely on it mid-frame.
@@ -2524,6 +2540,13 @@ protected:
 	virtual bool loadInternal(Common::ReadStream *stream) = 0;
 };
 
+class ModifierHooks {
+public:
+	virtual ~ModifierHooks();
+
+	virtual void onCreate(Modifier *modifier);
+};
+
 class Modifier : public RuntimeObject, public IMessageConsumer, public Debuggable {
 public:
 	Modifier();
@@ -2576,6 +2599,9 @@ public:
 
 	Structural *findStructuralOwner() const;
 
+	void setHooks(const Common::SharedPtr<ModifierHooks> &hooks);
+	const Common::SharedPtr<ModifierHooks> &getHooks() const;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	SupportStatus debugGetSupportStatus() const override;
 	const Common::String &debugGetName() const override;
@@ -2592,6 +2618,8 @@ protected:
 	Common::String _name;
 	ModifierFlags _modifierFlags;
 	Common::WeakPtr<RuntimeObject> _parent;
+
+	Common::SharedPtr<ModifierHooks> _hooks;
 };
 
 class VariableModifier : public Modifier {

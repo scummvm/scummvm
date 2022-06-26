@@ -19,10 +19,25 @@
  *
  */
 
+#ifndef MTROPOLIS_HACKS_H
+#define MTROPOLIS_HACKS_H
+
+#include "common/rect.h"
+#include "common/ptr.h"
+#include "common/hashmap.h"
+
 namespace MTropolis {
+
+class StructuralHooks;
+class ModifierHooks;
+struct MTropolisGameDescription;
 
 struct Hacks {
 	Hacks();
+	~Hacks();
+
+	void addStructuralHooks(uint32 guid, const Common::SharedPtr<StructuralHooks> &hooks);
+	void addModifierHooks(uint32 guid, const Common::SharedPtr<ModifierHooks> &hooks);
 
 	// Workaround for bug in Obsidian:
 	// When opening the journal in the intro, a script checks if cGSt.cfst.binjournal is false and if so,
@@ -34,6 +49,20 @@ struct Hacks {
 	// cJournalConst is unloaded if the player leaves the journal.  This causes a progression blocker if
 	// the player leaves the journal without clicking Continue.
 	bool ignoreMismatchedProjectNameInObjectLookups;
+
+	Common::Point reportDisplaySize;	// If X or Y is non-zero, report this as the display size
+	Common::Point mainWindowOffset;		// Coordinate offset of the main window
+
+	Common::HashMap<uint32, Common::SharedPtr<StructuralHooks> > *structuralHooks;
+	Common::HashMap<uint32, Common::SharedPtr<ModifierHooks> > *modifierHooks;
 };
 
+namespace HackSuites {
+
+void addObsidianImprovedWidescreen(const MTropolisGameDescription &desc, Hacks &hacks);
+
+} // End of namespace HackSuites
+
 } // End of namespace MTropolis
+
+#endif

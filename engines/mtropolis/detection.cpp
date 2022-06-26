@@ -66,6 +66,28 @@ public:
 const ExtraGuiOptions MTropolisMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 
+	Common::String gameid = ConfMan.get("gameid", target);
+
+	if (gameid == "obsidian") {
+		static const ExtraGuiOption widescreenOption = {
+			_s("Widescreen"),
+			_s("Removes upper letterbox bar"),
+			"mtropolis_enh_obsidian_widescreen",
+			false,
+			0,
+			1};
+		static const ExtraGuiOption widescreenImprovedOption = {
+			_s("Enhanced Widescreen"),
+			_s("Removes the upper and lower letterbox bars and relocates inventory item graphics"),
+			"mtropolis_enh_obsidian_widescreen_improved",
+			false,
+			1,
+			0};
+
+		options.push_back(widescreenOption);
+		options.push_back(widescreenImprovedOption);
+	}
+
 	static const ExtraGuiOption launchDebugOption = {
 		_s("Start with debugger"),
 		_s("Starts with the debugger dashboard active"),

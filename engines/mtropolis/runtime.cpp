@@ -2551,13 +2551,30 @@ MiniscriptInstructionOutcome SystemInterface::setVolumeName(MiniscriptThread *th
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
+StructuralHooks::~StructuralHooks() {
+}
+
+void StructuralHooks::onCreate(Structural *structural) {
+}
+
+void StructuralHooks::onSetPosition(Structural *structural, Common::Point &pt) {
+}
+
+ProjectPresentationSettings::ProjectPresentationSettings() : width(640), height(480), bitsPerPixel(8) {
+}
+
 Structural::Structural() : _parent(nullptr), _paused(false), _loop(false) {
 }
 
 Structural::~Structural() {
 }
 
-ProjectPresentationSettings::ProjectPresentationSettings() : width(640), height(480), bitsPerPixel(8) {
+void Structural::setHooks(const Common::SharedPtr<StructuralHooks> &hooks) {
+	_hooks = hooks;
+}
+
+const Common::SharedPtr<StructuralHooks> &Structural::getHooks() const {
+	return _hooks;
 }
 
 bool Structural::isStructural() const {
@@ -5326,6 +5343,10 @@ void Runtime::ensureMainWindowExists() {
 
 		int32 centeredX = (static_cast<int32>(_displayWidth) - static_cast<int32>(presentationSettings.width)) / 2;
 		int32 centeredY = (static_cast<int32>(_displayHeight) - static_cast<int32>(presentationSettings.height)) / 2;
+
+		centeredX += _hacks.mainWindowOffset.x;
+		centeredY += _hacks.mainWindowOffset.y;
+
 		Common::SharedPtr<Window> mainWindow(new MainWindow(WindowParameters(this, centeredX, centeredY, presentationSettings.width, presentationSettings.height, _displayModePixelFormats[_realDisplayMode])));
 		addWindow(mainWindow);
 		_mainWindow.reset(mainWindow);
@@ -6228,6 +6249,16 @@ Common::SharedPtr<Modifier> Project::loadModifierObject(ModifierLoaderContext &l
 	if (!modifier)
 		error("Modifier object failed to load");
 
+	uint32 guid = modifier->getStaticGUID();
+	const Common::HashMap<uint32, Common::SharedPtr<ModifierHooks> > *hooksMap = _runtime->getHacks().modifierHooks;
+	if (hooksMap) {
+		Common::HashMap<uint32, Common::SharedPtr<ModifierHooks> >::const_iterator it = hooksMap->find(guid);
+		if (it != hooksMap->end()) {
+			modifier->setHooks(it->_value);
+			it->_value->onCreate(modifier.get());
+		}
+	}
+
 	return modifier;
 }
 
@@ -6449,6 +6480,16 @@ void Project::loadContextualObject(size_t streamIndex, ChildLoaderStack &stack, 
 				ElementLoaderContext elementLoaderContext(_runtime, streamIndex);
 				Common::SharedPtr<Element> element = elementFactory->createElement(elementLoaderContext, dataObject);
 
+				uint32 guid = element->getStaticGUID();
+				const Common::HashMap<uint32, Common::SharedPtr<StructuralHooks> > *hooksMap = _runtime->getHacks().structuralHooks;
+				if (hooksMap) {
+					Common::HashMap<uint32, Common::SharedPtr<StructuralHooks> >::const_iterator it = hooksMap->find(guid);
+					if (it != hooksMap->end()) {
+						element->setHooks(it->_value);
+						it->_value->onCreate(element.get());
+					}
+				}
+
 				container->addChild(element);
 
 				if (structuralDef.structuralFlags & Data::StructuralFlags::kNoMoreSiblings)
@@ -6599,7 +6640,6 @@ bool Element::resolveMediaMarkerLabel(const Label& label, int32 &outResolution) 
 	return false;
 }
 
-
 VisualElementRenderProperties::VisualElementRenderProperties()
 	: _inkMode(kInkModeDefault), _shape(kShapeRect), _foreColor(ColorRGB8::create(0, 0, 0)), _backColor(ColorRGB8::create(255, 255, 255)),
 	  _borderColor(ColorRGB8::create(0, 0, 0)), _shadowColor(ColorRGB8::create(0, 0, 0)), _borderSize(0), _shadowSize(0), _isDirty(true) {
@@ -6732,6 +6772,10 @@ bool VisualElement::isVisible() const {
 
 bool VisualElement::isDirectToScreen() const {
 	return _directToScreen;
+}
+
+void VisualElement::setDirectToScreen(bool directToScreen) {
+	_directToScreen = directToScreen;
 }
 
 uint16 VisualElement::getLayer() const {
@@ -6957,6 +7001,10 @@ const Common::Rect &VisualElement::getRelativeRect() const {
 	return _rect;
 }
 
+void VisualElement::setRelativeRect(const Common::Rect &rect) {
+	_rect = rect;
+}
+
 Common::Point VisualElement::getParentOrigin() const {
 	Common::Point pos = Common::Point(0, 0);
 	if (_parent && _parent->isElement()) {
@@ -7114,6 +7162,10 @@ MiniscriptInstructionOutcome VisualElement::scriptSetDirect(MiniscriptThread *th
 MiniscriptInstructionOutcome VisualElement::scriptSetPosition(MiniscriptThread *thread, const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kPoint) {
 		Common::Point destPoint = value.getPoint().toScummVMPoint();
+
+		if (_hooks)
+			_hooks->onSetPosition(this, destPoint);
+
 		int32 xDelta = destPoint.x - _rect.left;
 		int32 yDelta = destPoint.y - _rect.top;
 
@@ -7133,10 +7185,14 @@ MiniscriptInstructionOutcome VisualElement::scriptSetPositionX(MiniscriptThread 
 	if (!dest.roundToInt(asInteger))
 		return kMiniscriptInstructionOutcomeFailed;
 
-	int32 xDelta = asInteger - _rect.left;
+	Common::Point updatedPoint = Common::Point(asInteger, _rect.top);
+	if (_hooks)
+		_hooks->onSetPosition(this, updatedPoint);
+	int32 xDelta = updatedPoint.x - _rect.left;
+	int32 yDelta = updatedPoint.y - _rect.top;
 
-	if (xDelta != 0)
-		offsetTranslate(xDelta, 0, false);
+	if (xDelta != 0 || yDelta != 0)
+		offsetTranslate(xDelta, yDelta, false);
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
@@ -7146,10 +7202,15 @@ MiniscriptInstructionOutcome VisualElement::scriptSetPositionY(MiniscriptThread 
 	if (!dest.roundToInt(asInteger))
 		return kMiniscriptInstructionOutcomeFailed;
 
-	int32 yDelta = asInteger - _rect.top;
+	Common::Point updatedPoint = Common::Point(_rect.left, asInteger);
+	if (_hooks)
+		_hooks->onSetPosition(this, updatedPoint);
 
-	if (yDelta != 0)
-		offsetTranslate(0, yDelta, false);
+	int32 xDelta = updatedPoint.x - _rect.left;
+	int32 yDelta = updatedPoint.y - _rect.top;
+
+	if (xDelta != 0 || yDelta != 0)
+		offsetTranslate(xDelta, yDelta, false);
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
@@ -7378,6 +7439,12 @@ bool ModifierSaveLoad::load(Modifier *modifier, Common::ReadStream *stream) {
 	return loadInternal(stream);
 }
 
+ModifierHooks::~ModifierHooks() {
+}
+
+void ModifierHooks::onCreate(Modifier *modifier) {
+}
+
 Modifier::Modifier() : _parent(nullptr) {
 }
 
@@ -7535,6 +7602,14 @@ void Modifier::recursiveCollectObjectsMatchingCriteria(Common::Array<Common::Wea
 		for (const Common::SharedPtr<Modifier> &child : childContainer->getModifiers())
 			child->recursiveCollectObjectsMatchingCriteria(results, evalFunc, userData, onlyEnabled);
 	}
+}
+
+void Modifier::setHooks(const Common::SharedPtr<ModifierHooks> &hooks) {
+	_hooks = hooks;
+}
+
+const Common::SharedPtr<ModifierHooks> &Modifier::getHooks() const {
+	return _hooks;
 }
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
