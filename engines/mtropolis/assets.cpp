@@ -436,16 +436,12 @@ void CachedMToon::loadUncompressedFrame(const Common::Array<uint8> &data, size_t
 void CachedMToon::decompressQuickTimeFrame(const Common::Array<uint8> &data, size_t frameIndex) {
 	const MToonMetadata::FrameDef &frameDef = _metadata->frames[frameIndex];
 
-	uint16 bpp = _metadata->bitsPerPixel;
-	size_t w = frameDef.rect.width();
-	size_t h = frameDef.rect.height();
-
-	if (_metadata->codecData.size() < 86) {
-		error("Unknown codec data block size");
-	}
-	if (READ_BE_UINT16(&_metadata->codecData[32]) != w || READ_BE_UINT16(&_metadata->codecData[34]) != h || READ_BE_UINT16(&_metadata->codecData[82]) != bpp) {
-		error("Codec data block didn't match mToon metadata");
-	}
+	// We used to validate that these match the sample desc, but that actually breaks in Obsidian
+	// on the Bureau Immediate Action clock puzzle, because the frames have different sizes and
+	// the codec data encodes the size of the last frame.
+	uint16 w = frameDef.rect.width();
+	uint16 h = frameDef.rect.height();
+	uint16 bpp = READ_BE_UINT16(&_metadata->codecData[82]);
 
 	Image::Codec *codec = Image::createQuickTimeCodec(_metadata->codecID, w, h, bpp);
 	if (!codec) {
