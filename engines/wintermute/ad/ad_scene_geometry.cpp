@@ -119,9 +119,6 @@ void AdSceneGeometry::cleanup() {
 	_waypointGroups.clear();
 
 	for (i = 0; i < _cameras.size(); i++) {
-		//		CBRenderD3D* _renderer = (CBRenderD3D*)_gameRef->_renderer;
-		//		if(m_Renderer->m_Camera == _cameras[i]) m_Renderer->m_Camera = NULL;
-
 		delete _cameras[i];
 	}
 	_cameras.clear();
