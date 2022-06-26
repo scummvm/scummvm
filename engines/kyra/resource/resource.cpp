@@ -147,10 +147,7 @@ bool Resource::reset() {
 			loadPakFile("OTHER.PAK");
 		}
 	} else if (_vm->game() == GI_KYRA3) {
-		if (_vm->gameFlags().useInstallerPackage) {
-			if (!loadPakFile("WESTWOOD.001"))
-				error("Couldn't load file: 'WESTWOOD.001'");
-		}
+		loadPakFile("WESTWOOD.001");
 
 		if (!loadFileList("FILEDATA.FDT"))
 			error("Couldn't load file: 'FILEDATA.FDT'");
