@@ -420,8 +420,13 @@ void CachedMToon::loadUncompressedFrame(const Common::Array<uint8> &data, size_t
 					static_cast<uint16 *>(outDataUntyped)[col] = (inData[col * 2 + 1] << 8) | (inData[col * 2]);
 			}
 		} else if (bpp == 32) {
-			for (size_t col = 0; col < w; col++)
-				static_cast<uint32 *>(outDataUntyped)[col] = (0xff000000 | (inData[col * 4]) | (inData[col * 4 + 1] << 8) | (inData[col * 4 + 2] << 16));
+			if (_metadata->imageFormat == MToonMetadata::kImageFormatMac) {
+				for (size_t col = 0; col < w; col++)
+					static_cast<uint32 *>(outDataUntyped)[col] = (0xff000000 | (inData[col * 4 + 1]) | (inData[col * 4 + 2] << 8) | (inData[col * 4 + 3] << 16));
+			} else if (_metadata->imageFormat == MToonMetadata::kImageFormatWindows) {
+				for (size_t col = 0; col < w; col++)
+					static_cast<uint32 *>(outDataUntyped)[col] = (0xff000000 | (inData[col * 4 + 2]) | (inData[col * 4 + 1] << 8) | (inData[col * 4 + 0] << 16));
+			}
 		}
 	}
 
@@ -430,7 +435,6 @@ void CachedMToon::loadUncompressedFrame(const Common::Array<uint8> &data, size_t
 
 void CachedMToon::decompressQuickTimeFrame(const Common::Array<uint8> &data, size_t frameIndex) {
 	const MToonMetadata::FrameDef &frameDef = _metadata->frames[frameIndex];
-	uint16 stride = frameDef.decompressedBytesPerRow;
 
 	uint16 bpp = _metadata->bitsPerPixel;
 	size_t w = frameDef.rect.width();
