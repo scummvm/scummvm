@@ -225,6 +225,11 @@ struct Character {
 	 * Updates the character's AC
 	 */
 	void updateAC();
+
+	/**
+	 * Cast a spell
+	 */
+	void castSpell(int lvl, int num);
 };
 
 } // namespace MM1

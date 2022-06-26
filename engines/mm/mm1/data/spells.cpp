@@ -19,31 +19,11 @@
  *
  */
 
-#ifndef MM1_DATA_GAME_STATE_H
-#define MM1_DATA_GAME_STATE_H
-
-#include "common/array.h"
-#include "common/rect.h"
-#include "common/serializer.h"
-#include "mm/mm1/data/char.h"
-#include "mm/mm1/data/party.h"
 #include "mm/mm1/data/spells.h"
+#include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
 
-/**
- * This acts as a container for everything in the game
- * that is persisted to savegames
- */
-struct GameState {
-	Party _party;
-	ActiveSpells _spells;
-
-	GameState();
-};
-
 } // namespace MM1
 } // namespace MM
-
-#endif

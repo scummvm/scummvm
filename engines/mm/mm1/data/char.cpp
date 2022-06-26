@@ -30,6 +30,27 @@ static const int CLASS_HP_PER_LEVEL[6] = {
 	12, 10, 10, 8, 6, 8
 };
 
+static const int8 SPELLS_SP[2][47] = {
+	{
+		 0, 0, 0, 0, 0, -1, 0, 0,
+		 0, 1, 0, 0, 0,  0, 0, 0,
+		 1, 0, 0, 0, 0,  0, 0, 1,
+		 0, 0, 0, 0, 2,  0, 2, 2,
+		 0, 0, 0, 3, 3,
+		 4, 4, 4, 4, 4,
+		10, 5, 5, 5, 5
+	},
+	{
+		 0,   0, -1,  0, 0, 0, 0, 0,
+		 0,   0,  1,  0, 0, 0, 0, 0,
+		-1,   0,  1, -1, 0, 0, 1, 0,
+		 0,   0,  2,  0, 0, 2, 2, 2,
+		 0,   0,  3,  3, 3,
+		 4,   4,  4,  4, 4,
+		 5, 100,  5,  5, 5
+	}
+};
+
 void Inventory::clear() {
 	_items.clear();
 	_items.resize(INVENTORY_COUNT);
@@ -339,6 +360,26 @@ void Character::updateAC() {
 		ac = MAX(ac - 3, 0);
 
 	_ac = ac;
+}
+
+void Character::castSpell(int lvl, int num) {
+	int lvlNum;
+	int setNum = _class == ARCHER || _class == SORCERER ? 1 : 0;
+
+	// Figure the offset in the spell list
+	int spellNum = 0;
+	for (lvlNum = 2; lvlNum < MIN(lvl, 5); ++lvlNum)
+		spellNum += 8;
+	for (lvlNum = 5; lvlNum < lvl; ++lvlNum)
+		spellNum += 5;
+
+	// Get required SP
+	int requiredSp = SPELLS_SP[setNum][spellNum];
+	if (requiredSp < 0)
+		// required SP increases with character's level
+		requiredSp = _level;
+
+
 }
 
 } // namespace MM1
