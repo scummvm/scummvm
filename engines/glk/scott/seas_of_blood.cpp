@@ -256,7 +256,7 @@ glui32 optimalDicePixelSize(glui32 *width, glui32 *height) {
 	*width = idealWidth;
 	*height = idealHeight;
 	int multiplier = 1;
-	glui32 graphwidth, graphheight;
+	uint graphwidth, graphheight;
 	g_scott->glk_window_get_size(_G(_leftDiceWin), &graphwidth, &graphheight);
 	multiplier = graphheight / idealHeight;
 	if ((glui32)(idealWidth * multiplier) > graphwidth)
@@ -274,7 +274,7 @@ glui32 optimalDicePixelSize(glui32 *width, glui32 *height) {
 }
 
 static void drawBorder(winid_t win) {
-	glui32 width, height;
+	uint width, height;
 	g_scott->glk_stream_set_current(g_scott->glk_window_get_stream(win));
 	g_scott->glk_window_get_size(win, &width, &height);
 	height--;
@@ -312,7 +312,7 @@ static void redrawStaticText(winid_t win, int boatFlag) {
 	}
 
 	if (win == _G(_battleRight)) {
-		glui32 width;
+		uint width;
 		g_scott->glk_window_get_size(_G(_battleRight), &width, 0);
 		g_scott->glk_window_move_cursor(_G(_battleRight), width - 6, 1);
 		g_scott->glk_put_string("YOU");
@@ -320,7 +320,8 @@ static void redrawStaticText(winid_t win, int boatFlag) {
 }
 
 static void redrawBattleScreen(int boatFlag) {
-	glui32 graphwidth, graphheight, optimal_width, optimal_height;
+	uint graphwidth, graphheight;
+	glui32 optimal_width, optimal_height;
 
 	g_scott->glk_window_get_size(_G(_leftDiceWin), &graphwidth, &graphheight);
 
@@ -517,7 +518,7 @@ void updateResult(int ourTurn, int strike, int stamina, int boatFlag) {
 void clearResult(void) {
 	winid_t win = _G(_topWindow);
 
-	glui32 width;
+	uint width;
 	for (int j = 0; j < 2; j++) {
 		g_scott->glk_window_get_size(win, &width, 0);
 		g_scott->glk_stream_set_current(g_scott->glk_window_get_stream(win));
@@ -533,7 +534,7 @@ void clearResult(void) {
 void clearStamina(void) {
 	winid_t win = _G(_topWindow);
 
-	glui32 width;
+	uint width;
 	for (int j = 0; j < 2; j++) {
 		g_scott->glk_window_get_size(win, &width, 0);
 		g_scott->glk_stream_set_current(g_scott->glk_window_get_stream(win));

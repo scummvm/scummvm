@@ -196,7 +196,7 @@ public:
 	winid_t _leftDiceWin = nullptr;
 	winid_t _rightDiceWin = nullptr;
 	winid_t _battleRight = nullptr;
-	glui32 _backgroundColour = 0;
+	uint _backgroundColour = 0;
 	uint8_t *_bloodImageData = nullptr;
 	glui32 _dicePixelSize = 0;
 	glui32 _diceXOffset = 0;
