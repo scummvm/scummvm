@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	utils/bitmap_font.o \
 	utils/engine_data.o \
 	utils/strings_data.o \
+	utils/xeen_font.o \
 	mm1/console.o \
 	mm1/events.o \
 	mm1/globals.o \
