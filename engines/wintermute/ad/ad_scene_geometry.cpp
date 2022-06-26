@@ -62,8 +62,6 @@ IMPLEMENT_PERSISTENT(AdSceneGeometry, false)
 AdSceneGeometry::AdSceneGeometry(BaseGame *gameRef) : BaseObject(gameRef) {
 	_activeCamera = _activeLight = -1;
 	_viewMatrix.setToIdentity();
-	//m_WaypointHeight = 5.0f;
-	//m_WaypointHeight = 1.0f;
 	_waypointHeight = 10.0f;
 	_wptMarker = NULL;
 
@@ -209,42 +207,44 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 
 		switch (ExtNode->_type) {
 		case GEOM_WALKPLANE: {
-			AdWalkplane *plane = new AdWalkplane(_gameRef);
-			plane->setName(meshNames[i].c_str());
-			plane->_mesh = meshes[i];
-			// TODO: These constants are endianness dependent
-			plane->_mesh->fillVertexBuffer(0xFF0000FF);
-			plane->_receiveShadows = ExtNode->_receiveShadows;
-			_planes.add(plane);
-			} break;
+				AdWalkplane *plane = new AdWalkplane(_gameRef);
+				plane->setName(meshNames[i].c_str());
+				plane->_mesh = meshes[i];
+				plane->_mesh->fillVertexBuffer(0xFF0000FF);
+				plane->_receiveShadows = ExtNode->_receiveShadows;
+				_planes.add(plane);
+			}
+			break;
 
 		case GEOM_BLOCKED: {
-			AdBlock *block = new AdBlock(_gameRef);
-			block->setName(meshNames[i].c_str());
-			block->_mesh = meshes[i];
-			block->_mesh->fillVertexBuffer(0xFFFF0000);
-			block->_receiveShadows = ExtNode->_receiveShadows;
-			_blocks.add(block);
-			} break;
+				AdBlock *block = new AdBlock(_gameRef);
+				block->setName(meshNames[i].c_str());
+				block->_mesh = meshes[i];
+				block->_mesh->fillVertexBuffer(0xFFFF0000);
+				block->_receiveShadows = ExtNode->_receiveShadows;
+				_blocks.add(block);
+			}
+			break;
 
 		case GEOM_WAYPOINT: {
-			Mesh3DS *mesh = meshes[i];
-			// TODO: groups
-			if (_waypointGroups.size() == 0) {
-				_waypointGroups.add(new AdWaypointGroup3D(_gameRef));
+				Mesh3DS *mesh = meshes[i];
+				if (_waypointGroups.size() == 0) {
+					_waypointGroups.add(new AdWaypointGroup3D(_gameRef));
+				}
+				_waypointGroups[0]->addFromMesh(mesh);
+				delete mesh;
 			}
-			_waypointGroups[0]->addFromMesh(mesh);
-			delete mesh;
-			} break;
+			break;
 
 		case GEOM_GENERIC: {
-			AdGeneric *generic = new AdGeneric(_gameRef);
-			generic->setName(meshNames[i].c_str());
-			generic->_mesh = meshes[i];
-			generic->_mesh->fillVertexBuffer(0xFF00FF00);
-			generic->_receiveShadows = ExtNode->_receiveShadows;
-			_generics.add(generic);
-			} break;
+				AdGeneric *generic = new AdGeneric(_gameRef);
+				generic->setName(meshNames[i].c_str());
+				generic->_mesh = meshes[i];
+				generic->_mesh->fillVertexBuffer(0xFF00FF00);
+				generic->_receiveShadows = ExtNode->_receiveShadows;
+				_generics.add(generic);
+			}
+			break;
 		}
 	}
 
