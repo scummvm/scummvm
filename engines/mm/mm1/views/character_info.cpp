@@ -574,6 +574,6 @@ void CharacterInfo::spellNumberEntered(uint num) {
 	g_globals->_currCharacter->castSpell(_spellLevel, num);
 }
 
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM

@@ -50,6 +50,7 @@ public:
 	Xeen::SpriteResource _mainIcons;
 	Xeen::SpriteResource _globalSprites;
 	Xeen::SpriteResource _tileSprites;
+	byte SYMBOLS[20][64];
 public:
 	Globals();
 	virtual ~Globals();

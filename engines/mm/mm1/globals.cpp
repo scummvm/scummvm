@@ -59,6 +59,12 @@ bool Globals::load(bool isEnhanced) {
 		_mainIcons.load("main.icn");
 		_globalSprites.load("global.icn");
 		_tileSprites.load("town.til");
+
+		Common::File f;
+		if (!f.open("symbols.bin"))
+			error("Could not load symbols.bin");
+		f.read(SYMBOLS, 20 * 64);
+		f.close();
 	}
 
 	return true;

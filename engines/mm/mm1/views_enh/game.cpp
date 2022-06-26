@@ -63,6 +63,29 @@ bool Game::msgKeypress(const KeypressMessage &msg) {
 	return true;
 }
 
+bool Game::msgAction(const ActionMessage &msg) {
+	switch (msg._action) {
+	case KEYBIND_VIEW_PARTY1:
+	case KEYBIND_VIEW_PARTY2:
+	case KEYBIND_VIEW_PARTY3:
+	case KEYBIND_VIEW_PARTY4:
+	case KEYBIND_VIEW_PARTY5:
+	case KEYBIND_VIEW_PARTY6:
+	{
+		uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
+		if (charNum < g_globals->_party.size()) {
+			g_globals->_currCharacter = &g_globals->_party[charNum];
+			addView("CharacterInfo");
+		}
+		break;
+	}
+	default:
+		break;
+	}
+
+	return TextView::msgAction(msg);
+}
+
 bool Game::msgGame(const GameMessage &msg) {
 	if (msg._name == "DISPLAY") {
 		replaceView(this);
