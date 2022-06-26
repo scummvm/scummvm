@@ -1591,7 +1591,8 @@ gestartet werden -- siehe nächster Abschnitt.
                            pce, segacd, windows).
   --savepath=PFAD          Pfad zu gespeicherten Spielständen
   --extrapath=PFAD         Extrapfad zu zusätzlichen Spieldaten
-  --iconspath=PFAD         <Path to additional icons for the launcher grid view>
+  --iconspath=PFAD         Pfad zu zusätzlichen Icons für die Raster-Übersicht
+                           der ScummVM-Oberfläche
   --soundfont=DATEI        Wählt SoundFont für MIDI-Wiedergabe (wird nur
                            von einigen MIDI-Treibern unterstützt).
   --multi-midi             Aktiviert Kombinierung von AdLib und MIDI.
