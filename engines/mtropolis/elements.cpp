@@ -1387,6 +1387,15 @@ void MToonElement::playMedia(Runtime *runtime, Project *project) {
 	if (_paused)
 		return;
 
+	// TODO: This is semi-accurate: mTropolis Player will advance mToon time while
+	// the element is hidden and can then fire a barrage of frame advances and events
+	// if it's revealed again.  However, we're not fully handling that here yet,
+	// and we actually miss events if frame advance overruns the last cel, which can
+	// cause problems sometimes (e.g. lag in the Spider air puzzle in Obsidian when
+	// the board is revealed)
+	if (!_visible)
+		return;
+
 	int32 minCel = _playRange.min;
 	int32 maxCel = _playRange.max;
 	int32 sanitizeMaxCel = _metadata->frames.size();
@@ -1421,6 +1430,7 @@ void MToonElement::playMedia(Runtime *runtime, Project *project) {
 		// which case the timing of "at last cel"/"at first cel" triggers based on where the timer would be
 		// in the invalid range, so mTropolis Player apparently keeps a play cel independent of the actual
 		// cel?
+
 		bool ranPastEnd = false;
 
 		size_t framesRemainingToOnePastEnd = isReversed ? (_cel - minCel + 1) : (maxCel + 1 - _cel);
