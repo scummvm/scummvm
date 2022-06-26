@@ -581,7 +581,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 
 		if (_vm->_game.heversion == 70) {
 			// Try to load high quality audio file if found
-			stream = maybeLoadSoundOverride(soundID);
+			stream = tryLoadAudioOverride(soundID);
 
 			if (!stream) {
 				stream = Audio::makeRawStream(spoolPtr, size, 11025, flags, DisposeAfterUse::NO);
@@ -727,7 +727,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 
 		// Try to load high quality audio file if found
 		int newDuration;
-		stream = maybeLoadSoundOverride(soundID, &newDuration);
+		stream = tryLoadAudioOverride(soundID, &newDuration);
 		if (stream != nullptr && soundID == 1) {
 			// Disable lip sync if the speech audio was overriden
 			codeOffs = -1;
@@ -796,7 +796,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 	}
 }
 
-Audio::RewindableAudioStream *SoundHE::maybeLoadSoundOverride(int soundID, int *duration) {
+Audio::RewindableAudioStream *SoundHE::tryLoadAudioOverride(int soundID, int *duration) {
 	if (!_vm->_enableAudioOverride) {
 		return nullptr;
 	}
@@ -848,7 +848,7 @@ Audio::RewindableAudioStream *SoundHE::maybeLoadSoundOverride(int soundID, int *
 		Common::Path pathDir(Common::String::format("%s%d.%s", type, soundID, formats[i]));
 		Common::Path pathSub(Common::String::format("%s/%d.%s", type, soundID, formats[i]));
 
-		debug(5, "tryLoadSoundOverride: %s or %s", pathSub.toString().c_str(), pathDir.toString().c_str());
+		debug(5, "tryLoadAudioOverride: %s or %s", pathSub.toString().c_str(), pathDir.toString().c_str());
 
 		// First check if the file exists before opening it to
 		// reduce the amount of "opening %s failed" in the console.
@@ -866,13 +866,13 @@ Audio::RewindableAudioStream *SoundHE::maybeLoadSoundOverride(int soundID, int *
 				*duration = seekStream->getLength().msecs();
 			}
 
-			debug(5, "tryLoadSoundOverride: %s loaded from %s", formats[i], soundFileOverride.getName());
+			debug(5, "tryLoadAudioOverride: %s loaded from %s", formats[i], soundFileOverride.getName());
 
 			return seekStream;
 		}
 	}
 
-	debug(5, "tryLoadSoundOverride: file not found");
+	debug(5, "tryLoadAudioOverride: file not found");
 
 	return nullptr;
 }
