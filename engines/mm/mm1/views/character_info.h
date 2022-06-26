@@ -45,6 +45,7 @@ private:
 	int _tradeWith = -1;
 	TransferKind _tradeKind = TK_GEMS;
 	TextEntry _textEntry;
+	int _spellLevel = -1;
 private:
 	/**
 	 * Equips the item at the given index
@@ -60,6 +61,17 @@ private:
 	 * Draw options for gems, gold, and food
 	 */
 	void drawGemsGoldFood();
+
+	/**
+	 * Selects how much for gems/gold/food trades
+	 */
+	void tradeHowMuch();
+
+	/**
+	 * Starts selection of a spell to cast
+	 */
+	void castSpell();
+
 public:
 	CharacterInfo() : CharacterBase("CharacterInfo") {}
 	virtual ~CharacterInfo() {}
@@ -77,6 +89,16 @@ public:
 	 * How much entered for a trade
 	 */
 	void howMuchEntered(uint amount);
+
+	/**
+	 * Spell level entered for casting
+	 */
+	void spellLevelEntered(uint level);
+
+	/**
+	 * Spell number within the level entered for casting
+	 */
+	void spellNumberEntered(uint num);
 };
 
 

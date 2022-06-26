@@ -112,6 +112,9 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 	switch (_state) {
 	case DISPLAY:
 		switch (msg.keycode) {
+		case Common::KEYCODE_c:
+			castSpell();
+			break;
 		case Common::KEYCODE_e:
 			if (!g_globals->_currCharacter->_backpack.empty())
 				_state = EQUIP;
@@ -168,23 +171,7 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 		if (msg.keycode >= Common::KEYCODE_1 &&
 				msg.keycode <= Common::KEYCODE_3) {
 			_tradeKind = (TransferKind)(msg.keycode - Common::KEYCODE_0);
-
-			clearLines(20, 24);
-			escToGoBack(0);
-			writeString(10, 20, STRING["dialogs.character.how_much"]);
-
-			_textEntry.display(20, 20, 5, true,
-				[]() {
-					CharacterInfo *view =
-						(CharacterInfo *)g_events->focusedView();
-					view->howMuchAborted();
-				},
-				[](const Common::String &text) {
-					CharacterInfo *view =
-						(CharacterInfo *)g_events->focusedView();
-					view->howMuchEntered(atoi(text.c_str()));
-				}
-			);
+			tradeHowMuch();
 
 		} else if (msg.keycode == Common::KEYCODE_4) {
 			if (g_globals->_party[_tradeWith]._backpack.full()) {
@@ -506,6 +493,85 @@ void CharacterInfo::howMuchEntered(uint amount) {
 
 	_state = DISPLAY;
 	redraw();
+}
+
+void CharacterInfo::tradeHowMuch() {
+	clearLines(20, 24);
+	escToGoBack(0);
+	writeString(10, 20, STRING["dialogs.character.how_much"]);
+
+	_textEntry.display(20, 20, 5, true,
+		[]() {
+			CharacterInfo *view =
+				(CharacterInfo *)g_events->focusedView();
+			view->howMuchAborted();
+		},
+		[](const Common::String &text) {
+			CharacterInfo *view =
+				(CharacterInfo *)g_events->focusedView();
+			view->howMuchEntered(atoi(text.c_str()));
+		}
+	);
+}
+
+void CharacterInfo::castSpell() {
+	if (g_globals->_currCharacter->_slvl == 0 ||
+		g_globals->_currCharacter->_sp == 0) {
+		// Character can't cast spells, so exit
+		redraw();
+		return;
+	}
+
+	clearLines(20, 24);
+	escToGoBack(0);
+	writeString(7, 20, STRING["dialogs.character.cast_spell"]);
+
+	_textEntry.display(27, 20, 1, true,
+		[]() {
+			CharacterInfo *view =
+				(CharacterInfo *)g_events->focusedView();
+			view->redraw();
+		},
+		[](const Common::String &text) {
+			CharacterInfo *view =
+				(CharacterInfo *)g_events->focusedView();
+			view->spellLevelEntered(atoi(text.c_str()));
+		}
+	);
+}
+
+void CharacterInfo::spellLevelEntered(uint level) {
+	// Ensure the spell level is valid
+	if (level < 1 || level > 7 ||
+			level > g_globals->_currCharacter->_slvl) {
+		redraw();
+		return;
+	}
+
+	clearLines(21, 21);
+	writeString(19, 21, STRING["dialogs.character.number"]);
+
+	_textEntry.display(27, 21, 1, true,
+		[]() {
+			CharacterInfo *view =
+				(CharacterInfo *)g_events->focusedView();
+			view->redraw();
+		},
+		[](const Common::String &text) {
+			CharacterInfo *view =
+				(CharacterInfo *)g_events->focusedView();
+			view->spellNumberEntered(atoi(text.c_str()));
+		}
+	);
+}
+
+void CharacterInfo::spellNumberEntered(uint num) {
+	if (num < 1 || num > 8 || (_spellLevel >= 5 && num >= 6)) {
+		redraw();
+		return;
+	}
+
+	g_globals->_currCharacter->castSpell(_spellLevel, num);
 }
 
 } // namespace Views

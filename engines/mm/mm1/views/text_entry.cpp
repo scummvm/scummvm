@@ -45,14 +45,11 @@ void TextEntry::draw() {
 }
 
 bool TextEntry::msgKeypress(const KeypressMessage &msg) {
+	Common::KeyCode kc = msg.keycode;
+
 	if (msg.keycode == Common::KEYCODE_ESCAPE) {
 		close();
 		_abortFn();
-		return true;
-	} else if (msg.keycode == Common::KEYCODE_RETURN &&
-			!_text.empty()) {
-		close();
-		_enterFn(_text);
 		return true;
 	} else if (msg.keycode == Common::KEYCODE_BACKSPACE &&
 			!_text.empty()) {
@@ -66,6 +63,17 @@ bool TextEntry::msgKeypress(const KeypressMessage &msg) {
 
 		_text += msg.ascii;
 		redraw();
+
+		// Single character numeric fields, particular spell
+		// level/number selection, return immediately
+		if (_isNumeric && _maxLen == 1)
+			kc = Common::KEYCODE_RETURN;
+	}
+
+	if (kc == Common::KEYCODE_RETURN && !_text.empty()) {
+		close();
+		_enterFn(_text);
+		return true;
 	}
 
 	return false;

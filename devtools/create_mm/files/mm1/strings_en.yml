@@ -48,6 +48,8 @@
 		food: "3) FOOD"
 		item: "4) ITEM"
 		how_much: "HOW MUCH:"
+		cast_spell: "CAST SPELL:  LEVEL="
+		number: "NUMBER="
 	create_characters:
 		title: "CREATE NEW CHARACTERS"
 		intellect: "INTELLECT...="
