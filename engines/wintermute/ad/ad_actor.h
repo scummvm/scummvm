@@ -28,13 +28,13 @@
 #ifndef WINTERMUTE_ADACTOR_H
 #define WINTERMUTE_ADACTOR_H
 
-
 #include "engines/wintermute/dctypes.h"    // Added by ClassView
 #include "engines/wintermute/ad/ad_types.h"    // Added by ClassView
 #include "engines/wintermute/ad/ad_talk_holder.h"
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/base/base_point.h" // Added by ClassView
 #include "engines/wintermute/persistent.h"
+
 #include "common/str.h"
 
 namespace Wintermute {

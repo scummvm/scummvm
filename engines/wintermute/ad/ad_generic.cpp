@@ -32,8 +32,10 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-AdGeneric::AdGeneric(BaseGame *inGame) : BaseScriptable(inGame, false, false),
-										 _receiveShadows(false), _active(true), _mesh(nullptr) {
+AdGeneric::AdGeneric(BaseGame *inGame) : BaseScriptable(inGame, false, false) {
+	_mesh = nullptr;
+	_active = true;
+	_receiveShadows = false;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -32,8 +32,6 @@
 
 namespace Wintermute {
 
-//IMPLEMENT_PERSISTENT(AdWaypointGroup3D, false);
-
 //////////////////////////////////////////////////////////////////////////
 AdWaypointGroup3D::AdWaypointGroup3D(BaseGame *inGame) : BaseClass(inGame) {
 	_active = true;
@@ -75,17 +73,5 @@ bool AdWaypointGroup3D::addFromMesh(Mesh3DS *mesh) {
 
 	return true;
 }
-
-/*
-//////////////////////////////////////////////////////////////////////////
-HRESULT AdWaypointGroup3D::Persist(CBPersistMgr* PersistMgr){
-
-	PersistMgr->Transfer(TMEMBER(Game));
-	PersistMgr->Transfer(TMEMBER(m_Active));
-	//_points.Persist(PersistMgr);
-
-	return S_OK;
-}
-*/
 
 } // namespace Wintermute

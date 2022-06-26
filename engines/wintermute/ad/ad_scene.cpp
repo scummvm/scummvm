@@ -146,14 +146,18 @@ void AdScene::setDefaults() {
 	_gameRef->registerObject(_fader);
 
 #ifdef ENABLE_WME3D
-	_ambientLightColor = 0x00000000;
-	_maxShadowType = SHADOW_FLAT;
-
-	_2DPathfinding = false;
-
 	_fov = -1.0f;
+#endif
+	_viewport = nullptr;
+
+#ifdef ENABLE_WME3D
 	_nearPlane = -1.0f;
 	_farPlane = -1.0f;
+
+	_2DPathfinding = false;
+	_maxShadowType = SHADOW_FLAT;
+
+	_ambientLightColor = 0x00000000;
 
 	_fogParameters._enabled = false;
 	_fogParameters._color = 0x00FFFFFF;
@@ -2102,16 +2106,15 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 
 		const char *cameraName = stack->pop()->getString();
 
-		if (_sceneGeometry) {
-			bool res = _sceneGeometry->setActiveCamera(cameraName, _fov, _nearPlane, _farPlane);
-
-			if (!res) {
-				script->runtimeError("Scene.SetActiveCamera failed");
-				stack->pushBool(res);
-			}
-		} else {
+		if (!_sceneGeometry) {
 			script->runtimeError("Scene.SetActiveCamera: Scene doesn't contain any geometry");
 			stack->pushBool(false);
+		} else {
+			bool res = _sceneGeometry->setActiveCamera(cameraName, _fov, _nearPlane, _farPlane);
+			if (!res) {
+				script->runtimeError("Scene.SetActiveCamera failed");
+			}
+			stack->pushBool(res);
 		}
 
 		return STATUS_OK;
