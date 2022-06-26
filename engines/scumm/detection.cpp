@@ -234,6 +234,15 @@ static const ExtraGuiOption enableEnhancements {
 	0
 };
 
+static const ExtraGuiOption audioOverride {
+	_s("Use external audio"),
+	_s("Replace music, sound effects, and speech clips with external audio files if available"),
+	"audio_override",
+	true,
+	0,
+	0
+};
+
 const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
@@ -245,6 +254,9 @@ const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common:
 
 	if (target.empty() || guiOptions.contains(GUIO_ENHANCEMENTS)) {
 		options.push_back(enableEnhancements);
+	}
+	if (target.empty() || guiOptions.contains(GUIO_AUDIO_OVERRIDE)) {
+		options.push_back(audioOverride);
 	}
 	if (target.empty() || gameid == "comi") {
 		options.push_back(comiObjectLabelsOption);

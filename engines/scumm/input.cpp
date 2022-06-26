@@ -563,6 +563,9 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 		openMainMenuDialog();		// Display global main menu
 
+		// reload options
+		_enableAudioOverride = ConfMan.getBool("audio_override");
+
 		if (VAR_SAVELOAD_SCRIPT2 != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, nullptr);
 

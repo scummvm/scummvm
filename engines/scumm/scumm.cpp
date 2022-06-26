@@ -817,6 +817,7 @@ Common::Error ScummEngine::init() {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
 	_enableEnhancements = ConfMan.getBool("enable_enhancements");
+	_enableAudioOverride = ConfMan.getBool("audio_override");
 
 	// Add default file directories.
 	if (((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST)) && (_game.version <= 4)) {
