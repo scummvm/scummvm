@@ -1693,6 +1693,11 @@ struct MToonAsset : public DataObject {
 
 	Common::Array<FrameDef> frames;
 
+	// Codec data appears to be a 16-byte header followed by a QuickTime sample description
+	// The 16-byte header is:
+	// uint32be size of codec data
+	// char[4] codec ID
+	// byte[8] unknown (all 0?)
 	Common::Array<uint8> codecData;
 
 	struct FrameRangePart {

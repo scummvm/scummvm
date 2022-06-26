@@ -25,6 +25,9 @@
 #include "audio/audiostream.h"
 
 #include "common/endian.h"
+#include "common/memstream.h"
+
+#include "image/codecs/codec.h"
 
 #include "mtropolis/assets.h"
 #include "mtropolis/asset_factory.h"
@@ -160,8 +163,10 @@ void CachedMToon::decompressFrames(const Common::Array<uint8> &data) {
 	for (size_t i = 0; i < numFrames; i++) {
 		if (_metadata->codecID == kMToonRLECodecID) {
 			decompressRLEFrame(i);
-		} else {
+		} else if (_metadata->codecID == 0) {
 			loadUncompressedFrame(data, i);
+		} else {
+			decompressQuickTimeFrame(data, i);
 		}
 	}
 
@@ -421,6 +426,46 @@ void CachedMToon::loadUncompressedFrame(const Common::Array<uint8> &data, size_t
 	}
 
 	_decompressedFrames[frameIndex] = surface;
+}
+
+void CachedMToon::decompressQuickTimeFrame(const Common::Array<uint8> &data, size_t frameIndex) {
+	const MToonMetadata::FrameDef &frameDef = _metadata->frames[frameIndex];
+	uint16 stride = frameDef.decompressedBytesPerRow;
+
+	uint16 bpp = _metadata->bitsPerPixel;
+	size_t w = frameDef.rect.width();
+	size_t h = frameDef.rect.height();
+
+	if (_metadata->codecData.size() < 86) {
+		error("Unknown codec data block size");
+	}
+	if (READ_BE_UINT16(&_metadata->codecData[32]) != w || READ_BE_UINT16(&_metadata->codecData[34]) != h || READ_BE_UINT16(&_metadata->codecData[82]) != bpp) {
+		error("Codec data block didn't match mToon metadata");
+	}
+
+	Image::Codec *codec = Image::createQuickTimeCodec(_metadata->codecID, w, h, bpp);
+	if (!codec) {
+		error("Unknown QuickTime codec for mToon frame");
+	}
+
+	if (frameDef.dataOffset > data.size())
+		error("Invalid framedef offset");
+
+	if (frameDef.compressedSize > data.size())
+		error("Invalid compressed size");
+
+	if (frameDef.compressedSize - data.size() < frameDef.dataOffset)
+		error("Not enough available bytes for compressed data");
+
+	Common::MemoryReadStream stream(&data[frameDef.dataOffset], frameDef.compressedSize);
+
+	const Graphics::Surface *surface = codec->decodeFrame(stream);
+	if (!surface) {
+		error("mToon QuickTime frame failed to decompress");
+	}
+
+	// Clone the decompressed frame
+	_decompressedFrames[frameIndex] = Common::SharedPtr<Graphics::Surface>(new Graphics::Surface(*surface));
 }
 
 template<class TSrcNumber, uint32 TSrcLiteralMask, uint32 TSrcTransparentSkipMask, class TDestNumber, uint32 TDestLiteralMask, uint32 TDestTransparentSkipMask>
