@@ -111,6 +111,9 @@
 #define GUIO7(a,b,c,d,e,f,g) (a b c d e f g)
 #define GUIO8(a,b,c,d,e,f,g,h) (a b c d e f g h)
 #define GUIO9(a,b,c,d,e,f,g,h,i) (a b c d e f g h i)
+#define GUIO10(a,b,c,d,e,f,g,h,i,j) (a b c d e f g h i j)
+#define GUIO11(a,b,c,d,e,f,g,h,i,j,k) (a b c d e f g h i j k)
+#define GUIO12(a,b,c,d,e,f,g,h,i,j,k,l) (a b c d e f g h i j k l)
 
 namespace Common {
 
