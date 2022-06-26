@@ -28,7 +28,13 @@
 namespace MTropolis {
 
 Hacks::Hacks() {
-	memset(this, 0, sizeof(*this));
+	ignoreMismatchedProjectNameInObjectLookups = false;
+
+	// reportDisplaySize set by Common::Point constructor
+	// mainWindowOffset set by Common::Point constructor
+
+	structuralHooks = nullptr;
+	modifierHooks = nullptr;
 }
 
 Hacks::~Hacks() {
