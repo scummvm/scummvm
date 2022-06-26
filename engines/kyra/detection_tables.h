@@ -46,11 +46,8 @@ namespace {
 #define KYRA2_TOWNS_SJIS_FLAGS FLAGS(false, false, false, false, true, false, false, false, false, false, Kyra::GI_KYRA2)
 
 #define KYRA3_CD_FLAGS FLAGS(false, false, true, false, false, false, false, true, true, false, Kyra::GI_KYRA3)
-#define KYRA3_CD_INS_FLAGS FLAGS(false, false, true, false, false, false, false, true, false, false, Kyra::GI_KYRA3)
 #define KYRA3_CD_4LANG_FLAGS FLAGS(false, false, true, false, false, false, false, true, true, true, Kyra::GI_KYRA3)
-#define KYRA3_CD_INS_4LANG_FLAGS FLAGS(false, false, true, false, false, false, false, true, false, true, Kyra::GI_KYRA3)
 #define KYRA3_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, false, true, false, false, Kyra::GI_KYRA3)
-#define KYRA3_CD_INS_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, false, true, true, false, Kyra::GI_KYRA3)
 
 #define LOL_CD_FLAGS FLAGS(false, false, true, false, false, false, false, false, false, false, Kyra::GI_LOL)
 #define LOL_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, false, false, false, false, Kyra::GI_LOL)
@@ -976,12 +973,11 @@ const KYRAGameDescription adGameDescs[] = {
 
 	// Kyra3
 
-	{ // non installed version
+	{
 		{
 			"kyra3",
 			0,
-			AD_ENTRY2s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1,
-					   "WESTWOOD.001", 0, -1),
+			AD_ENTRY1s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -994,8 +990,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			AD_ENTRY2s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1,
-					   "WESTWOOD.001", 0, -1),
+			AD_ENTRY1s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -1008,8 +1003,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			AD_ENTRY2s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1,
-					   "WESTWOOD.001", 0, -1),
+			AD_ENTRY1s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -1029,50 +1023,7 @@ const KYRAGameDescription adGameDescs[] = {
 			ADGF_DROPLANGUAGE,
 			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
 		},
-		KYRA3_CD_INS_FAN_FLAGS(Common::HE_ISR, Common::EN_ANY)
-	},
-
-	// installed version
-	{
-		{
-			"kyra3",
-			0,
-			AD_ENTRY2s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1,
-					   "AUD.PAK", 0, -1),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_DROPLANGUAGE,
-			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
-		},
-		KYRA3_CD_INS_FLAGS
-	},
-
-	{
-		{
-			"kyra3",
-			0,
-			AD_ENTRY2s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1,
-					   "AUD.PAK", 0, -1),
-			Common::DE_DEU,
-			Common::kPlatformDOS,
-			ADGF_DROPLANGUAGE,
-			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
-		},
-		KYRA3_CD_INS_FLAGS
-	},
-
-	{
-		{
-			"kyra3",
-			0,
-			AD_ENTRY2s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1,
-					   "AUD.PAK", 0, -1),
-			Common::FR_FRA,
-			Common::kPlatformDOS,
-			ADGF_DROPLANGUAGE,
-			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
-		},
-		KYRA3_CD_INS_FLAGS
+		KYRA3_CD_FAN_FLAGS(Common::HE_ISR, Common::EN_ANY)
 	},
 
 	// Mac version
@@ -1080,42 +1031,39 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			AD_ENTRY2s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1,
-					   "AUD.PAK", 0, -1),
+			AD_ENTRY1s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_DROPLANGUAGE,
 			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
 		},
-		KYRA3_CD_INS_FLAGS
+		KYRA3_CD_FLAGS
 	},
 
 	{
 		{
 			"kyra3",
 			0,
-			AD_ENTRY2s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1,
-					   "AUD.PAK", 0, -1),
+			AD_ENTRY1s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1),
 			Common::DE_DEU,
 			Common::kPlatformMacintosh,
 			ADGF_DROPLANGUAGE,
 			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
 		},
-		KYRA3_CD_INS_FLAGS
+		KYRA3_CD_FLAGS
 	},
 
 	{
 		{
 			"kyra3",
 			0,
-			AD_ENTRY2s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1,
-					   "AUD.PAK", 0, -1),
+			AD_ENTRY1s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1),
 			Common::FR_FRA,
 			Common::kPlatformMacintosh,
 			ADGF_DROPLANGUAGE,
 			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
 		},
-		KYRA3_CD_INS_FLAGS
+		KYRA3_CD_FLAGS
 	},
 
 	// Spanish fan translation, see bug #7637 "KYRA3: Add support for Spanish fan translation"
@@ -1123,8 +1071,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			AD_ENTRY2s("ONETIME.PAK", "9aaca21d2a205ca02ec53132f2911794", -1,
-					   "AUD.PAK", 0, -1),
+			AD_ENTRY1s("ONETIME.PAK", "9aaca21d2a205ca02ec53132f2911794", -1),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -1137,8 +1084,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			AD_ENTRY2s("ONETIME.PAK", "9aaca21d2a205ca02ec53132f2911794", -1,
-					   "AUD.PAK", 0, -1),
+			AD_ENTRY1s("ONETIME.PAK", "9aaca21d2a205ca02ec53132f2911794", -1),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -1151,8 +1097,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			AD_ENTRY2s("ONETIME.PAK", "9aaca21d2a205ca02ec53132f2911794", -1,
-					   "AUD.PAK", 0, -1),
+			AD_ENTRY1s("ONETIME.PAK", "9aaca21d2a205ca02ec53132f2911794", -1),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -1166,8 +1111,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			AD_ENTRY2s("ONETIME.PAK", "ee2d4d056a5de5333a3c6bda055b3cb4", -1,
-					   "AUD.PAK", 0, -1),
+			AD_ENTRY1s("ONETIME.PAK", "ee2d4d056a5de5333a3c6bda055b3cb4", -1),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -1180,8 +1124,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			AD_ENTRY2s("ONETIME.PAK", "ee2d4d056a5de5333a3c6bda055b3cb4", -1,
-					   "AUD.PAK", 0, -1),
+			AD_ENTRY1s("ONETIME.PAK", "ee2d4d056a5de5333a3c6bda055b3cb4", -1),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -1194,8 +1137,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			AD_ENTRY2s("ONETIME.PAK", "ee2d4d056a5de5333a3c6bda055b3cb4", -1,
-					   "AUD.PAK", 0, -1),
+			AD_ENTRY1s("ONETIME.PAK", "ee2d4d056a5de5333a3c6bda055b3cb4", -1),
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -1211,7 +1153,6 @@ const KYRAGameDescription adGameDescs[] = {
 			{
 				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
 				{ "ALBUM.TRG", 0, "5e40de0c74cc2321928a15019252d468", -1 },
-				{ "AUD.PAK", 0, 0, -1 },
 				AD_LISTEND
 			},
 			Common::RU_RUS,
@@ -1226,8 +1167,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			AD_ENTRY2s("ONETIME.PAK", "93b4ca2847ab7cfe52188cbde2ffe561", -1,
-					   "WESTWOOD.001", "c782e09a3b80510962af1426acf5a130", -1),
+			AD_ENTRY1s("ONETIME.PAK", "93b4ca2847ab7cfe52188cbde2ffe561", -1),
 			Common::ZH_CHN,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -1240,8 +1180,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			AD_ENTRY2s("ONETIME.PAK", "4fe8ff05002f3a4d645f11cd326fcef2", -1,
-					   "WESTWOOD.001", "99d4b13576ced18a072a7590eac3cc37", -1),
+			AD_ENTRY1s("ONETIME.PAK", "4fe8ff05002f3a4d645f11cd326fcef2", -1),
 			Common::ZH_TWN,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -1254,8 +1193,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			AD_ENTRY2s("ONETIME.PAK", "93b4ca2847ab7cfe52188cbde2ffe561", -1,
-					   "WESTWOOD.001", "c782e09a3b80510962af1426acf5a130", -1),
+			AD_ENTRY1s("ONETIME.PAK", "93b4ca2847ab7cfe52188cbde2ffe561", -1),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -1268,8 +1206,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			AD_ENTRY2s("ONETIME.PAK", "93b4ca2847ab7cfe52188cbde2ffe561", -1,
-					   "WESTWOOD.001", "c782e09a3b80510962af1426acf5a130", -1),
+			AD_ENTRY1s("ONETIME.PAK", "93b4ca2847ab7cfe52188cbde2ffe561", -1),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -1282,104 +1219,13 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			AD_ENTRY2s("ONETIME.PAK", "93b4ca2847ab7cfe52188cbde2ffe561", -1,
-					   "WESTWOOD.001", "c782e09a3b80510962af1426acf5a130", -1),
+			AD_ENTRY1s("ONETIME.PAK", "93b4ca2847ab7cfe52188cbde2ffe561", -1),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
 			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
 		},
 		KYRA3_CD_4LANG_FLAGS
-	},
-
-	{ // installed version
-		{
-			"kyra3",
-			0,
-			{
-				{ "ONETIME.PAK", 0, "93b4ca2847ab7cfe52188cbde2ffe561", -1 },
-				{ "MALCOLM.PAK", 0, "a31bd451f50f38b2bac9bebbca1d14cb", -1 },
-				{ "AUD.PAK", 0, 0, -1 },
-				AD_LISTEND
-			},
-			Common::ZH_CHN,
-			Common::kPlatformDOS,
-			ADGF_DROPLANGUAGE,
-			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
-		},
-		KYRA3_CD_INS_4LANG_FLAGS
-	},
-
-	{ // installed version
-		{
-			"kyra3",
-			0,
-			{
-				{ "ONETIME.PAK", 0, "4fe8ff05002f3a4d645f11cd326fcef2", -1 },
-				{ "MALCOLM.PAK", 0, "c01eaf3b5568b207b22ea1c0637fe193", -1 },
-				{ "AUD.PAK", 0, 0, -1 },
-				AD_LISTEND
-			},
-			Common::ZH_TWN,
-			Common::kPlatformDOS,
-			ADGF_DROPLANGUAGE,
-			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
-		},
-		KYRA3_CD_INS_4LANG_FLAGS
-	},
-
-	{
-		{
-			"kyra3",
-			0,
-			{
-				{ "ONETIME.PAK", 0, "93b4ca2847ab7cfe52188cbde2ffe561", -1 },
-				{ "MALCOLM.PAK", 0, "a31bd451f50f38b2bac9bebbca1d14cb", -1 },
-				{ "AUD.PAK", 0, 0, -1 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_DROPLANGUAGE,
-			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
-		},
-		KYRA3_CD_INS_4LANG_FLAGS
-	},
-
-	{
-		{
-			"kyra3",
-			0,
-			{
-				{ "ONETIME.PAK", 0, "93b4ca2847ab7cfe52188cbde2ffe561", -1 },
-				{ "MALCOLM.PAK", 0, "a31bd451f50f38b2bac9bebbca1d14cb", -1 },
-				{ "AUD.PAK", 0, 0, -1 },
-				AD_LISTEND
-			},
-			Common::FR_FRA,
-			Common::kPlatformDOS,
-			ADGF_DROPLANGUAGE,
-			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
-		},
-		KYRA3_CD_INS_4LANG_FLAGS
-	},
-
-	{
-		{
-			"kyra3",
-			0,
-			{
-				{ "ONETIME.PAK", 0, "93b4ca2847ab7cfe52188cbde2ffe561", -1 },
-				{ "MALCOLM.PAK", 0, "a31bd451f50f38b2bac9bebbca1d14cb", -1 },
-				{ "AUD.PAK", 0, 0, -1 },
-				AD_LISTEND
-			},
-			Common::DE_DEU,
-			Common::kPlatformDOS,
-			ADGF_DROPLANGUAGE,
-			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
-		},
-		KYRA3_CD_INS_4LANG_FLAGS
 	},
 
 	// Lands of Lore CD
