@@ -36,9 +36,28 @@ static const PlainGameDescriptor madeGames[] = {
 
 #include "made/detection_tables.h"
 
+namespace Made {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_INTRO_MUSIC_DIGITAL,
+		{
+			_s("Play a digital soundtrack during the opening movie"),
+			_s("If selected, the game will use a digital soundtrack during the introduction. Otherwise, it will play MIDI music."),
+			"intro_music_digital",
+			true,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+} // End of namespace Made
+
 class MadeMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	MadeMetaEngineDetection() : AdvancedMetaEngineDetection(Made::gameDescriptions, sizeof(Made::MadeGameDescription), madeGames) {
+	MadeMetaEngineDetection() : AdvancedMetaEngineDetection(Made::gameDescriptions, sizeof(Made::MadeGameDescription), madeGames, Made::optionsList) {
 	}
 
 	const char *getEngineId() const override {
@@ -53,30 +72,8 @@ public:
 		return "MADE Engine (C) Activision";
 	}
 
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
-
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override;
 };
-
-static const ExtraGuiOption introMusicDigital = {
-	_s("Play a digital soundtrack during the opening movie"),
-	_s("If selected, the game will use a digital soundtrack during the introduction. Otherwise, it will play MIDI music."),
-	"intro_music_digital",
-	true,
-	0,
-	0
-};
-
-const ExtraGuiOptions MadeMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
-	const Common::String gameid = ConfMan.get("gameid", target);
-	const Common::String extra = ConfMan.get("extra", target);
-
-	ExtraGuiOptions options;
-	if (target.empty() || (gameid == "rtz" && extra.contains("CD"))) {
-		options.push_back(introMusicDigital);
-	}
-	return options;
-}
 
 ADDetectedGame MadeMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
 	// Set the default values for the fallback descriptor's ADGameDescription part.
