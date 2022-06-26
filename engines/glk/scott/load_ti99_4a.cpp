@@ -161,7 +161,7 @@ char *getTI994AString(uint16_t table, int tableOffset) {
 	return result;
 }
 
-void loadTI994ADict(int vorn, uint16_t table, int numWords, Common::StringArray dict) {
+void loadTI994ADict(int vorn, uint16_t table, int numWords, Common::StringArray &dict) {
 	uint16_t *wtable;
 	int i;
 	int wordLen;
@@ -361,9 +361,8 @@ int tryLoadingTI994A(DataHeader dh, int loud) {
 	rp = &_G(_rooms)[0];
 
 	do {
-		rp->_text = getTI994AString(dh._pRoomDescr, ct);
-		if (rp->_text.size() == 0)
-			rp->_text = ".\0";
+		char *res = getTI994AString(dh._pRoomDescr, ct);
+		rp->_text = res ? res : ".\0";
 		if (loud)
 			debug("Room %d: %s", ct, rp->_text.c_str());
 		rp->_image = 255;
@@ -373,9 +372,8 @@ int tryLoadingTI994A(DataHeader dh, int loud) {
 
 	ct = 0;
 	while (ct < mn + 1) {
-		_G(_messages)[ct] = getTI994AString(dh._pMessage, ct);
-		if (_G(_messages)[ct].size() == 0)
-			_G(_messages)[ct] = ".\0";
+		char *res = getTI994AString(dh._pMessage, ct);
+		_G(_messages)[ct] = res ? res : ".\0";
 		if (loud)
 			debug("Message %d: %s", ct, _G(_messages)[ct].c_str());
 		ct++;
@@ -384,9 +382,8 @@ int tryLoadingTI994A(DataHeader dh, int loud) {
 	ct = 0;
 	ip = &_G(_items)[0];
 	do {
-		ip->_text = getTI994AString(dh._pObjDescr, ct);
-		if (ip->_text.size() == 0)
-			ip->_text = ".\0";
+		char *res = getTI994AString(dh._pObjDescr, ct);
+		ip->_text = res ? res : ".\0";
 		if (ip->_text.size() && ip->_text[0] == '*')
 			tr++;
 		if (loud)
