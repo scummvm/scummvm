@@ -365,6 +365,24 @@ void ScummEngine::processInput() {
 		} else if (_game.version >= 7) {
 			VAR(VAR_LEFTBTN_DOWN) = (_leftBtnPressed & msClicked) != 0;
 			VAR(VAR_RIGHTBTN_DOWN) = (_rightBtnPressed & msClicked) != 0;
+
+			// WORKAROUND: In COMI main menu, sometimes clicks are not registered
+			// correctly; in particular there usually a situation in which both
+			// states for a mouse button (msClicked and msDown) are being captured.
+			// Apparently this is not what the script expects: it asks for the
+			// mouse button being held down (why?) but not clicked (again, why?).
+			//
+			// Instead of mangling our very sturdy input system just for this use
+			// case, we just insert this little hack to make sure that the menu
+			// works as intended. After all, this all just might be caused by the
+			// difference between the (very slow...) mouse polling rate of the original
+			// and ours.
+			if (isUsingOriginalGUI() && _game.id == GID_CMI && _currentRoom == 92) {
+				VAR(VAR_LEFTBTN_HOLD) = (_leftBtnPressed & msDown) != 0;
+				VAR(VAR_RIGHTBTN_HOLD) = (_rightBtnPressed & msDown) != 0;
+				VAR(VAR_LEFTBTN_DOWN) = 0;
+				VAR(VAR_RIGHTBTN_DOWN) = 0;
+			}
 		}
 	}
 
