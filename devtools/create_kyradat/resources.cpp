@@ -104,6 +104,7 @@
 #include "resources/mr_dos_cd_italian.h"
 #include "resources/mr_dos_cd_spanish.h"
 #include "resources/mr_dos_cd_russian.h"
+#include "resources/mr_dos_cd_hebrew.h"
 #include "resources/mr_dos_cd_chinese_simplified.h"
 #include "resources/mr_dos_cd_chinese_trad.h"
 
@@ -1173,6 +1174,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ k3MainMenuStrings, kKyra3, kPlatformDOS, kTalkieVersion, IT_ITA, &k3MainMenuStringsDOSCDItalianProvider },
 	{ k3MainMenuStrings, kKyra3, kPlatformDOS, kTalkieVersion, ES_ESP, &k3MainMenuStringsDOSCDSpanishProvider },
 	{ k3MainMenuStrings, kKyra3, kPlatformDOS, kTalkieVersion, RU_RUS, &k3MainMenuStringsDOSCDRussianProvider },
+	{ k3MainMenuStrings, kKyra3, kPlatformDOS, kTalkieVersion, HE_ISR, &k3MainMenuStringsDOSCDHebrewProvider },
 	{ k3MainMenuStrings, kKyra3, kPlatformDOS, kTalkieVersion, ZH_CHN, &k3MainMenuStringsDOSCDChineseSmplProvider },
 	{ k3MainMenuStrings, kKyra3, kPlatformDOS, kTalkieVersion, ZH_TWN, &k3MainMenuStringsDOSCDChineseTradProvider },
 	{ k3MusicFiles, kKyra3, kPlatformDOS, kTalkieVersion, UNK_LANG, &k3MusicFilesDOSCDProvider },
@@ -1188,6 +1190,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ k2FontData, kKyra3, kPlatformDOS, kTalkieVersion, IT_ITA, &k3DummyDataDOSCDProvider },
 	{ k2FontData, kKyra3, kPlatformDOS, kTalkieVersion, ES_ESP, &k3DummyDataDOSCDProvider },
 	{ k2FontData, kKyra3, kPlatformDOS, kTalkieVersion, RU_RUS, &k3DummyDataDOSCDProvider },
+	{ k2FontData, kKyra3, kPlatformDOS, kTalkieVersion, HE_ISR, &k3DummyDataDOSCDProvider },
 	{ k2FontData, kKyra3, kPlatformDOS, kTalkieVersion, ZH_CHN, &k3FontDataDOSCDChineseSmplProvider },
 	{ k2FontData, kKyra3, kPlatformDOS, kTalkieVersion, ZH_TWN, &k3FontDataDOSCDChineseTradProvider },
 	{ k3VqaSubtitlesIntro, kKyra3, kPlatformDOS, kTalkieVersion, EN_ANY, &k3VqaSubtitlesIntroDOSCDEnglishProvider },
@@ -1196,6 +1199,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ k3VqaSubtitlesIntro, kKyra3, kPlatformDOS, kTalkieVersion, IT_ITA, &k3VqaSubtitlesIntroDOSCDItalianProvider },
 	{ k3VqaSubtitlesIntro, kKyra3, kPlatformDOS, kTalkieVersion, ES_ESP, &k3VqaSubtitlesIntroDOSCDSpanishProvider },
 	{ k3VqaSubtitlesIntro, kKyra3, kPlatformDOS, kTalkieVersion, RU_RUS, &k3VqaSubtitlesIntroDOSCDRussianProvider },
+	{ k3VqaSubtitlesIntro, kKyra3, kPlatformDOS, kTalkieVersion, HE_ISR, &k3VqaSubtitlesIntroDOSCDHebrewProvider },
 	{ k3VqaSubtitlesIntro, kKyra3, kPlatformDOS, kTalkieVersion, ZH_CHN, &k3VqaSubtitlesIntroDOSCDChineseSmplProvider },
 	{ k3VqaSubtitlesIntro, kKyra3, kPlatformDOS, kTalkieVersion, ZH_TWN, &k3VqaSubtitlesIntroDOSCDChineseTradProvider },
 	{ k3VqaSubtitlesBoat, kKyra3, kPlatformDOS, kTalkieVersion, EN_ANY, &k3VqaSubtitlesBoatDOSCDEnglishProvider },
@@ -1204,6 +1208,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ k3VqaSubtitlesBoat, kKyra3, kPlatformDOS, kTalkieVersion, IT_ITA, &k3VqaSubtitlesBoatDOSCDItalianProvider },
 	{ k3VqaSubtitlesBoat, kKyra3, kPlatformDOS, kTalkieVersion, ES_ESP, &k3VqaSubtitlesBoatDOSCDSpanishProvider },
 	{ k3VqaSubtitlesBoat, kKyra3, kPlatformDOS, kTalkieVersion, RU_RUS, &k3VqaSubtitlesBoatDOSCDRussianProvider },
+	{ k3VqaSubtitlesBoat, kKyra3, kPlatformDOS, kTalkieVersion, HE_ISR, &k3VqaSubtitlesBoatDOSCDHebrewProvider },
 	{ k3VqaSubtitlesBoat, kKyra3, kPlatformDOS, kTalkieVersion, ZH_CHN, &k3VqaSubtitlesBoatDOSCDChineseSmplProvider },
 	{ k3VqaSubtitlesBoat, kKyra3, kPlatformDOS, kTalkieVersion, ZH_TWN, &k3VqaSubtitlesBoatDOSCDChineseTradProvider },
 	{ kEoBBaseNpcPresetsNames, kEoB1, kPlatformDOS, kNoSpecial, EN_ANY, &kEoB1NpcPresetsNamesDOSEnglishProvider },
