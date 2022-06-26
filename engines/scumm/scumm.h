@@ -386,6 +386,7 @@ public:
 	ResourceManager *_res = nullptr;
 
 	bool _enableEnhancements = false;
+	bool _enableAudioOverride = false;
 
 protected:
 	VirtualMachineState vm;

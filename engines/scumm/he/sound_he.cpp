@@ -797,7 +797,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 }
 
 Audio::RewindableAudioStream *SoundHE::maybeLoadSoundOverride(int soundID, int *duration) {
-	if (!_vm->_enableEnhancements) {
+	if (!_vm->_enableAudioOverride) {
 		return nullptr;
 	}
 
