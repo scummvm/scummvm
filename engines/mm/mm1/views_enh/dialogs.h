@@ -31,6 +31,7 @@
 #include "mm/mm1/views/quick_ref.h"
 #include "mm/mm1/views/title.h"
 //#include "mm/mm1/views/char.h"
+#include "mm/mm1/views_enh/character_info.h"
 #include "mm/mm1/views_enh/game.h"
 
 namespace MM {
@@ -39,6 +40,7 @@ namespace ViewsEnh {
 
 struct Dialogs {
 private:
+	ViewsEnh::CharacterInfo _characterInfo;
 	ViewsEnh::Game _game;
 
 	// Unenhanced views

@@ -19,36 +19,41 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_GAME_H
-#define MM1_VIEWS_ENH_GAME_H
+#ifndef MM1_VIEWS_ENH_SCROLL_VIEW_H
+#define MM1_VIEWS_ENH_SCROLL_VIEW_H
 
-#include "graphics/managed_surface.h"
-#include "mm/mm1/events.h"
-#include "mm/mm1/views/game_view.h"
-#include "mm/mm1/views_enh/game_commands.h"
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-class Game : public Views::TextView {
-private:
-	Graphics::ManagedSurface _bg;
-	Views::GameView _view;
-	GameCommands _commands;
-public:
-	Game();
-	virtual ~Game() {}
+class ScrollView : public Views::TextView {
+protected:
+	Common::Point _symbolPos;
+protected:
+	/**
+	 * Draw the scroll frame
+	 */
+	void frame();
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
+	/**
+	 * Fill the scroll background
+	 */
+	void fill();
+
+	/**
+	 * Draw a special symbol
+	 */
+	void writeSymbol(int symbolId);
+public:
+	ScrollView(const Common::String &name);
+	virtual ~ScrollView() {}
+
 	void draw() override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
 };
 
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
 
