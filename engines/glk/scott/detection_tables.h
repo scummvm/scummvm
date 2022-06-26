@@ -232,6 +232,21 @@ const GlkDetectionEntry SCOTT_GAMES[] = {
 	DT_ENTRYP1("perseus",		"C64", "96a1ccb3212808eee03e74cdc1f0d1a4", 20523,	Common::kPlatformC64),
 	DT_ENTRYP1("10indians",		"C64", "79ee3669ccfff7338dfc1810228005dc", 20383,	Common::kPlatformC64),
 	DT_ENTRYP1("waxworks11",	"C64", "facc11aa8b51e88a807236b765203eb0", 18961,	Common::kPlatformC64),
+
+	// TI99 Games
+	// Scott Adams
+	DT_ENTRYP1("adventureland",		"TI99", "c677576bd33a0fe0ff95a9d5c0e3b3ba", 10774, Common::kPlatformTI99),
+	DT_ENTRYP1("pirateadventure",	"TI99", "6f293ad8fcce6b0adf56e98fdfe3eaf4", 10488, Common::kPlatformTI99),
+	DT_ENTRYP1("missionimpossible", "TI99", "ac977babc6d7cce815b05be42deeec55", 10562, Common::kPlatformTI99),
+	DT_ENTRYP1("voodoocastle",		"TI99", "ff8383afe5addf2f302975b0085b5d5e", 10424, Common::kPlatformTI99),
+	DT_ENTRYP1("thecount",			"TI99", "c75701c886bc476e1cbb5321ebd594b2", 10326, Common::kPlatformTI99),
+	DT_ENTRYP1("strangeodyssey",	"TI99", "46dbc05fc0177cfee1e9ccd3ec4a9a4c", 10170, Common::kPlatformTI99),
+	DT_ENTRYP1("mysteryfunhouse",	"TI99", "9f236bd084f5d1fabb7f9591b6ad1c44", 10594, Common::kPlatformTI99),
+	DT_ENTRYP1("pyramidofdoom",		"TI99", "2912111425d87af5b156f95e5766206d", 10242, Common::kPlatformTI99),
+	DT_ENTRYP1("ghosttown",			"TI99", "34feb31e2265fd8721d2192443595a8c", 10170, Common::kPlatformTI99),
+	DT_ENTRYP1("savageisland1",		"TI99", "a59c7841037fce63cf54899e8f562f25", 10170, Common::kPlatformTI99),
+	DT_ENTRYP1("savageisland2",		"TI99", "b40ec602d4c4c442b910b4f109929562", 12616, Common::kPlatformTI99),
+	DT_ENTRYP1("goldenvoyage",		"TI99", "ce4a136b4c2f3d56ce0341d830760bb5", 10346, Common::kPlatformTI99),
 	DT_END_MARKER
 };
 
