@@ -27,6 +27,19 @@
 #include "twine/detection.h"
 #include "twine/shared.h"
 
+#define GAMEOPTION_WALL_COLLISION GUIO_GAMEOPTIONS1
+#define GAMEOPTION_DISABLE_SAVE_MENU GUIO_GAMEOPTIONS2
+#define GAMEOPTION_DEBUG GUIO_GAMEOPTIONS3
+#define GAMEOPTION_AUDIO_CD GUIO_GAMEOPTIONS4
+#define GAMEOPTION_SOUND GUIO_GAMEOPTIONS5
+#define GAMEOPTION_VOICES GUIO_GAMEOPTIONS6
+#define GAMEOPTION_TEXT GUIO_GAMEOPTIONS7
+#define GAMEOPTION_MOVIES GUIO_GAMEOPTIONS8
+#define GAMEOPTION_MOUSE GUIO_GAMEOPTIONS9
+#define GAMEOPTION_USA_VERSION GUIO_GAMEOPTIONS10
+#define GAMEOPTION_HIGH_RESOLUTION GUIO_GAMEOPTIONS11
+#define GAMEOPTION_TEXT_TO_SPEECH GUIO_GAMEOPTIONS12
+
 static const PlainGameDescriptor twineGames[] = {
 	{ "lba", "Little Big Adventure" },
 	{ "lbashow", "Little Big Adventure Freeware Slide Show" },
@@ -994,120 +1007,149 @@ static const ADGameDescription twineGameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-static const ExtraGuiOption OptWallCollision = {
-	_s("Enable wall collisions"),
-	_s("Enable the original wall collision damage"),
-	"wallcollision",
-	false,
-	0,
-	0
-};
-
-// this only changes the menu and doesn't change the autosave behaviour - as scummvm is handling this now
-static const ExtraGuiOption OptDisableSaveMenu = {
-	_s("Disable save menu"),
-	_s("The original only had autosaves. This allows you to save whenever you want."),
-	"useautosaving",
-	false,
-	0,
-	0
-};
-
-static const ExtraGuiOption OptDebug = {
-	_s("Enable debug mode"),
-	_s("Enable the debug mode"),
-	"debug",
-	false,
-	0,
-	0
-};
-
-static const ExtraGuiOption OptUseCD = {
-	_s("Enable audio CD"),
-	_s("Enable the original audio cd track"),
-	"usecd",
-	false,
-	0,
-	0
-};
-
-static const ExtraGuiOption OptSound = {
-	_s("Enable sound"),
-	_s("Enable the sound for the game"),
-	"sound",
-	true,
-	0,
-	0
-};
-
-static const ExtraGuiOption OptVoices = {
-	_s("Enable voices"),
-	_s("Enable the voices for the game"),
-	"voice",
-	true,
-	0,
-	0
-};
-
-static const ExtraGuiOption OptText = {
-	_s("Enable text"),
-	_s("Enable the text for the game"),
-	"displaytext",
-	true,
-	0,
-	0
-};
-
-static const ExtraGuiOption OptMovies = {
-	_s("Enable movies"),
-	_s("Enable the cutscenes for the game"),
-	"movie",
-	true,
-	0,
-	0
-};
-
-static const ExtraGuiOption OptMouse = {
-	_s("Enable mouse"),
-	_s("Enable the mouse for the UI"),
-	"mouse",
-	true,
-	0,
-	0
-};
-
-static const ExtraGuiOption OptUSAVersion = {
-	_s("Use the USA version"),
-	_s("Enable the USA specific version flags"),
-	"version",
-	false,
-	0,
-	0
-};
-
-static const ExtraGuiOption OptHighRes = {
-	_s("Enable high resolution"),
-	_s("Enable a higher resolution for the game"),
-	"usehighres",
-	false,
-	0,
-	0
-};
-
+static const ADExtraGuiOptionsMap twineOptionsList[] = {
+	{
+		GAMEOPTION_WALL_COLLISION,
+		{
+			_s("Enable wall collisions"),
+			_s("Enable the original wall collision damage"),
+			"wallcollision",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		// this only changes the menu and doesn't change the autosave behaviour - as scummvm is handling this now
+		GAMEOPTION_DISABLE_SAVE_MENU,
+		{
+			_s("Disable save menu"),
+			_s("The original only had autosaves. This allows you to save whenever you want."),
+			"useautosaving",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_DEBUG,
+		{
+			_s("Enable debug mode"),
+			_s("Enable the debug mode"),
+			"debug",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_AUDIO_CD,
+		{
+			_s("Enable audio CD"),
+			_s("Enable the original audio cd track"),
+			"usecd",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_SOUND,
+		{
+			_s("Enable sound"),
+			_s("Enable the sound for the game"),
+			"sound",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_VOICES,
+		{
+			_s("Enable voices"),
+			_s("Enable the voices for the game"),
+			"voice",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_TEXT,
+		{
+			_s("Enable text"),
+			_s("Enable the text for the game"),
+			"displaytext",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_MOVIES,
+		{
+			_s("Enable movies"),
+			_s("Enable the cutscenes for the game"),
+			"movie",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_MOUSE,
+		{
+			_s("Enable mouse"),
+			_s("Enable the mouse for the UI"),
+			"mouse",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_USA_VERSION,
+		{
+			_s("Use the USA version"),
+			_s("Enable the USA specific version flags"),
+			"version",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_HIGH_RESOLUTION,
+		{
+			_s("Enable high resolution"),
+			_s("Enable a higher resolution for the game"),
+			"usehighres",
+			false,
+			0,
+			0
+		}
+	},
 #ifdef USE_TTS
-static const ExtraGuiOption OptTextToSpeech = {
-	_s("TTS Narrator"),
-	_s("Use TTS to read the descriptions (if TTS is available)"),
-	"tts_narrator",
-	false,
-	0,
-	0
-};
+	{
+		GAMEOPTION_TEXT_TO_SPEECH,
+		{
+			_s("TTS Narrator"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_narrator",
+			false,
+			0,
+			0
+		}
+	},
 #endif
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 class TwinEMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	TwinEMetaEngineDetection() : AdvancedMetaEngineDetection(twineGameDescriptions, sizeof(ADGameDescription), twineGames) {
+	TwinEMetaEngineDetection() : AdvancedMetaEngineDetection(twineGameDescriptions, sizeof(ADGameDescription), twineGames, twineOptionsList) {
+		_guiOptions = GUIO12(GAMEOPTION_WALL_COLLISION, GAMEOPTION_DISABLE_SAVE_MENU,  GAMEOPTION_DEBUG, GAMEOPTION_AUDIO_CD, GAMEOPTION_SOUND, GAMEOPTION_VOICES, GAMEOPTION_TEXT, GAMEOPTION_MOVIES, GAMEOPTION_MOUSE, GAMEOPTION_USA_VERSION, GAMEOPTION_HIGH_RESOLUTION, GAMEOPTION_TEXT_TO_SPEECH);
 	}
 
 	const char *getEngineId() const override {
@@ -1125,27 +1167,6 @@ public:
 	const DebugChannelDef *getDebugChannels() const override {
 		return debugFlagList;
 	}
-
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 };
-
-const ExtraGuiOptions TwinEMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
-	ExtraGuiOptions options;
-	options.push_back(OptWallCollision);
-	options.push_back(OptDisableSaveMenu);
-	options.push_back(OptMouse);
-	options.push_back(OptHighRes);
-	options.push_back(OptSound);
-	options.push_back(OptUseCD);
-	options.push_back(OptMovies);
-	options.push_back(OptUSAVersion);
-	options.push_back(OptVoices);
-	options.push_back(OptText);
-	options.push_back(OptDebug);
-#ifdef USE_TTS
-	options.push_back(OptTextToSpeech);
-#endif
-	return options;
-}
 
 REGISTER_PLUGIN_STATIC(TWINE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, TwinEMetaEngineDetection);
