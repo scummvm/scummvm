@@ -22,6 +22,8 @@
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 
+#include "graphics/opengl/system_headers.h"
+
 #if defined(USE_OPENGL) && !USE_FORCED_GLES
 
 #include "graphics/opengl/shader.h"
