@@ -32,7 +32,7 @@ namespace ViewsEnh {
 #define FONT_HEIGHT 8
 
 ScrollView::ScrollView(const Common::String &name) :
-	Views::TextView(name, g_engine) {
+	TextView(name, g_engine) {
 }
 
 void ScrollView::draw() {

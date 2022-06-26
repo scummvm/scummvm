@@ -194,6 +194,10 @@ void UIElement::draw() {
 }
 
 bool UIElement::tick() {
+	if (_timeoutCtr && --_timeoutCtr == 0) {
+		timeout();
+	}
+
 	for (size_t i = 0; i < _children.size(); ++i) {
 		if (_children[i]->tick())
 			return true;
@@ -237,6 +241,14 @@ void UIElement::addView() {
 
 Graphics::ManagedSurface UIElement::getSurface() const {
 	return Graphics::ManagedSurface(*g_events->getScreen(), _bounds);
+}
+
+void UIElement::delaySeconds(uint seconds) {
+	_timeoutCtr = seconds * FRAME_RATE;
+}
+
+void UIElement::timeout() {
+	redraw();
 }
 
 } // namespace MM1

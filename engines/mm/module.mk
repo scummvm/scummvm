@@ -64,6 +64,7 @@ MODULE_OBJS := \
 	mm1/views_enh/game.o \
 	mm1/views_enh/map.o \
 	mm1/views_enh/scroll_view.o \
+	mm1/views_enh/text_view.o \
 	mm1/maps/maps.o \
 	mm1/maps/map.o \
 	mm1/maps/map00.o \
