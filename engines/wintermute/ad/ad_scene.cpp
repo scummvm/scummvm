@@ -146,22 +146,22 @@ void AdScene::setDefaults() {
 	_gameRef->registerObject(_fader);
 
 #ifdef ENABLE_WME3D
-	_fov = -1.0f;
-#endif
-	_viewport = nullptr;
-
-	_nearPlane = -1.0f;
-	_farPlane = -1.0f;
-
-	_2DPathfinding = false;
+	_ambientLightColor = 0x00000000;
 	_maxShadowType = SHADOW_FLAT;
 
-	_ambientLightColor = 0x00000000;
+	_2DPathfinding = false;
+
+	_fov = -1.0f;
+	_nearPlane = -1.0f;
+	_farPlane = -1.0f;
 
 	_fogParameters._enabled = false;
 	_fogParameters._color = 0x00FFFFFF;
 	_fogParameters._start = 0.0f;
 	_fogParameters._end = 0.0f;
+#endif
+
+	_viewport = nullptr;
 }
 
 
