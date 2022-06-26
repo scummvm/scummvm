@@ -73,6 +73,7 @@ class AssetManagerInterface;
 class CursorGraphic;
 class CursorGraphicCollection;
 class Element;
+class GraphicModifier;
 class KeyboardInputEvent;
 class MessageDispatch;
 class MiniscriptThread;
@@ -2427,8 +2428,9 @@ public:
 
 	VThreadState offsetTranslateTask(const OffsetTranslateTaskData &data);
 
-	void setRenderProperties(const VisualElementRenderProperties &props);
+	void setRenderProperties(const VisualElementRenderProperties &props, const Common::WeakPtr<GraphicModifier> &primaryGraphicModifier);
 	const VisualElementRenderProperties &getRenderProperties() const;
+	const Common::WeakPtr<GraphicModifier> &getPrimaryGraphicModifier() const;
 
 	bool needsRender() const;
 	virtual void render(Window *window) = 0;
@@ -2477,7 +2479,10 @@ protected:
 
 	Common::SharedPtr<DragMotionProperties> _dragProps;
 
+	// Quirk: When a graphic modifier is applied, it needs to be 
 	VisualElementRenderProperties _renderProps;
+	Common::WeakPtr<GraphicModifier> _primaryGraphicModifier;
+
 	Common::Rect _prevRect;
 	bool _contentsDirty;
 };

@@ -1612,10 +1612,18 @@ VThreadState GraphicModifier::consumeMessage(Runtime *runtime, const Common::Sha
 	if (!element->isVisual())
 		return kVThreadReturn;
 
-	if (_applyWhen.respondsTo(msg->getEvent()))
-		static_cast<VisualElement *>(element)->setRenderProperties(_renderProps);
-	if (_removeWhen.respondsTo(msg->getEvent()))
-		static_cast<VisualElement *>(element)->setRenderProperties(VisualElementRenderProperties());
+	VisualElement *visual = static_cast<VisualElement *>(element);
+
+	// If a graphic modifier is the active graphic modifier, then it may be removed, but removing it resets to default, not to
+	// any other graphic modifier.  If it is not the active graphic modifier, then removing it has no effect.
+	// This is required for correct rendering of the beaker when freeing Max in Obsidian.
+	if (_applyWhen.respondsTo(msg->getEvent())) {
+		visual->setRenderProperties(_renderProps, this->getSelfReference().staticCast<GraphicModifier>());
+	}
+	if (_removeWhen.respondsTo(msg->getEvent())) {
+		if (visual->getPrimaryGraphicModifier().lock().get() == this)
+			static_cast<VisualElement *>(element)->setRenderProperties(VisualElementRenderProperties(), Common::WeakPtr<GraphicModifier>());
+	}
 
 	return kVThreadReturn;
 }

@@ -1115,11 +1115,14 @@ void ImageElement::deactivate() {
 
 void ImageElement::render(Window *window) {
 	if (_cachedImage) {
+		VisualElementRenderProperties::InkMode inkMode = _renderProps.getInkMode();
+
+		if (inkMode == VisualElementRenderProperties::kInkModeInvisible)
+			return;
+
 		Common::SharedPtr<Graphics::Surface> optimized = _cachedImage->optimize(_runtime);
 		Common::Rect srcRect(optimized->w, optimized->h);
 		Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.width(), _cachedAbsoluteOrigin.y + _rect.height());
-
-		VisualElementRenderProperties::InkMode inkMode = _renderProps.getInkMode();
 
 		if (inkMode == VisualElementRenderProperties::kInkModeBackgroundMatte || inkMode == VisualElementRenderProperties::kInkModeBackgroundTransparent) {
 			const ColorRGB8 transColorRGB8 = _renderProps.getBackColor();
@@ -1269,6 +1272,7 @@ bool MToonElement::canAutoPlay() const {
 
 void MToonElement::render(Window *window) {
 	if (_cachedMToon) {
+
 		_cachedMToon->optimize(_runtime);
 
 		uint32 frame = _cel - 1;
@@ -1278,11 +1282,19 @@ void MToonElement::render(Window *window) {
 
 		_renderedFrame = frame;
 
-		Common::Rect frameRect = _metadata->frames[frame].rect;
+		// This is a bit suboptimal since we don't need to render the frame if invisible, but
+		// we do need some things here to be up to date because isMouseCollisionAtPoint depends on
+		// invisible mToon frames still being clickable.
+		VisualElementRenderProperties::InkMode inkMode = _renderProps.getInkMode();
+
+		if (inkMode == VisualElementRenderProperties::kInkModeInvisible)
+			return;
 
 		if (_renderSurface) {
 			Common::Rect srcRect;
 			Common::Rect destRect;
+
+			Common::Rect frameRect = _metadata->frames[frame].rect;
 
 			if (frameRect.width() == _renderSurface->w && frameRect.height() == _renderSurface->h) {
 				// Frame rect is the size of the render surface, meaning the frame rect is an offset
@@ -1293,7 +1305,6 @@ void MToonElement::render(Window *window) {
 			}
 			destRect = Common::Rect(_cachedAbsoluteOrigin.x + frameRect.left, _cachedAbsoluteOrigin.y + frameRect.top, _cachedAbsoluteOrigin.x + frameRect.right, _cachedAbsoluteOrigin.y + frameRect.bottom);
 
-			VisualElementRenderProperties::InkMode inkMode = _renderProps.getInkMode();
 			if (inkMode == VisualElementRenderProperties::kInkModeBackgroundMatte || inkMode == VisualElementRenderProperties::kInkModeBackgroundTransparent) {
 				ColorRGB8 transColorRGB8 = _renderProps.getBackColor();
 				uint32 transColor = _renderSurface->format.ARGBToColor(255, transColorRGB8.r, transColorRGB8.g, transColorRGB8.b);

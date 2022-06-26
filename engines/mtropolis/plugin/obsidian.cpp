@@ -600,7 +600,7 @@ VThreadState XorModModifier::consumeMessage(Runtime *runtime, const Common::Shar
 	else
 		renderProps.setShape(static_cast<VisualElementRenderProperties::Shape>(VisualElementRenderProperties::kShapeObsidianCanvasPuzzleTri1 + _shapeID - 1));
 
-	visual->setRenderProperties(renderProps);
+	visual->setRenderProperties(renderProps, Common::WeakPtr<GraphicModifier>());
 
 	return kVThreadReturn;
 }

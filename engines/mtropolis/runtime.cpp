@@ -6989,12 +6989,17 @@ VThreadState VisualElement::offsetTranslateTask(const OffsetTranslateTaskData &d
 	return kVThreadReturn;
 }
 
-void VisualElement::setRenderProperties(const VisualElementRenderProperties &props) {
+void VisualElement::setRenderProperties(const VisualElementRenderProperties &props, const Common::WeakPtr<GraphicModifier> &primaryGraphicModifier) {
 	_renderProps = props;
+	_primaryGraphicModifier = primaryGraphicModifier;
 }
 
 const VisualElementRenderProperties &VisualElement::getRenderProperties() const {
 	return _renderProps;
+}
+
+const Common::WeakPtr<GraphicModifier> &VisualElement::getPrimaryGraphicModifier() const {
+	return _primaryGraphicModifier;
 }
 
 bool VisualElement::needsRender() const {
