@@ -65,6 +65,7 @@ const PlatformDescription g_platforms[] = {
 	{ "macintosh2", "macintosh2", "mac2", "Macintosh II", kPlatformMacintoshII },
 	{ "shockwave", "shockwave", "shock", "Shockwave", kPlatformShockwave },
 	{ "zx", "zx", "zx", "ZX Spectrum", kPlatformZX },
+	{ "ti", "ti", "ti", "TI-99/4A", kPlatformTI99 },
 
 	{ nullptr, nullptr, nullptr, "Default", kPlatformUnknown }
 };
