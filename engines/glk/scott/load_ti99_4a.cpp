@@ -208,7 +208,7 @@ void readTI99ImplicitActions(DataHeader dh) {
 		ptr += 1 + ptr[1];
 	}
 
-	_G(_ti99ImplicitExtent) = MIN(static_cast<long long>(_G(_fileLength)), ptr - _G(_entireFile));
+	_G(_ti99ImplicitExtent) = MIN(_G(_fileLength), static_cast<size_t>(ptr - _G(_entireFile)));
 	if (_G(_ti99ImplicitExtent)) {
 		_G(_ti99ImplicitActions) = new uint8_t[_G(_ti99ImplicitExtent)];
 		memcpy(_G(_ti99ImplicitActions), implicitStart, _G(_ti99ImplicitExtent));
