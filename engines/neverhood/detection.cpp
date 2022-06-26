@@ -27,6 +27,10 @@
 
 #include "neverhood/detection.h"
 
+#define GAMEOPTION_ORIGINAL_SAVELOAD      GUIO_GAMEOPTIONS1
+#define GAMEOPTION_SKIP_HALL_OF_RECORDS   GUIO_GAMEOPTIONS2
+#define GAMEOPTION_SCALE_MAKING_OF_VIDEOS GUIO_GAMEOPTIONS3
+
 static const PlainGameDescriptor neverhoodGames[] = {
 	{"neverhood", "The Neverhood Chronicles"},
 	{nullptr, nullptr}
@@ -128,40 +132,50 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"originalsaveload",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_SKIP_HALL_OF_RECORDS,
+		{
+			_s("Skip the Hall of Records storyboard scenes"),
+			_s("Allows the player to skip past the Hall of Records storyboard scenes"),
+			"skiphallofrecordsscenes",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_SCALE_MAKING_OF_VIDEOS,
+		{
+			_s("Scale the making of videos to full screen"),
+			_s("Scale the making of videos, so that they use the whole screen"),
+			"scalemakingofvideos",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 } // End of namespace Neverhood
-
-static const ExtraGuiOption neverhoodExtraGuiOption1 = {
-	_s("Use original save/load screens"),
-	_s("Use the original save/load screens instead of the ScummVM ones"),
-	"originalsaveload",
-	false,
-	0,
-	0
-};
-
-static const ExtraGuiOption neverhoodExtraGuiOption2 = {
-	_s("Skip the Hall of Records storyboard scenes"),
-	_s("Allows the player to skip past the Hall of Records storyboard scenes"),
-	"skiphallofrecordsscenes",
-	false,
-	0,
-	0
-};
-
-static const ExtraGuiOption neverhoodExtraGuiOption3 = {
-	_s("Scale the making of videos to full screen"),
-	_s("Scale the making of videos, so that they use the whole screen"),
-	"scalemakingofvideos",
-	false,
-	0,
-	0
-};
 
 
 class NeverhoodMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	NeverhoodMetaEngineDetection() : AdvancedMetaEngineDetection(Neverhood::gameDescriptions, sizeof(ADGameDescription), neverhoodGames) {
-		_guiOptions = GUIO2(GUIO_NOSUBTITLES, GUIO_NOMIDI);
+	NeverhoodMetaEngineDetection() : AdvancedMetaEngineDetection(Neverhood::gameDescriptions, sizeof(ADGameDescription), neverhoodGames, Neverhood::optionsList) {
+		_guiOptions = GUIO5(GUIO_NOSUBTITLES, GUIO_NOMIDI, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_SKIP_HALL_OF_RECORDS, GAMEOPTION_SCALE_MAKING_OF_VIDEOS);
 	}
 
 	const char *getEngineId() const override {
@@ -175,16 +189,6 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "The Neverhood Chronicles (C) The Neverhood, Inc.";
 	}
-
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 };
-
-const ExtraGuiOptions NeverhoodMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
-	ExtraGuiOptions options;
-	options.push_back(neverhoodExtraGuiOption1);
-	options.push_back(neverhoodExtraGuiOption2);
-	options.push_back(neverhoodExtraGuiOption3);
-	return options;
-}
 
 REGISTER_PLUGIN_STATIC(NEVERHOOD_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, NeverhoodMetaEngineDetection);
