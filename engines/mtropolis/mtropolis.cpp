@@ -121,19 +121,11 @@ Common::Error MTropolisEngine::run() {
 
 		_runtime->getHacks().ignoreMismatchedProjectNameInObjectLookups = true;
 
-		if (ConfMan.getBool("mtropolis_enh_obsidian_widescreen")) {
-			preferredHeight = 420;
-
-			_runtime->getHacks().mainWindowOffset = Common::Point(0, -30);
+		if (ConfMan.getBool("mtropolis_mod_obsidian_widescreen")) {
 			_runtime->getHacks().reportDisplaySize = Common::Point(640, 480);
 
-			if (ConfMan.getBool("mtropolis_enh_obsidian_widescreen_improved")) {
-				preferredHeight = 360;
-
-				_runtime->getHacks().mainWindowOffset = Common::Point(0, 0);
-
-				HackSuites::addObsidianImprovedWidescreen(*_gameDescription, _runtime->getHacks());
-			}
+			preferredHeight = 360;
+			HackSuites::addObsidianImprovedWidescreen(*_gameDescription, _runtime->getHacks());
 		}
 	}
 

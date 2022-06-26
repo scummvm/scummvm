@@ -70,22 +70,14 @@ const ExtraGuiOptions MTropolisMetaEngineDetection::getExtraGuiOptions(const Com
 
 	if (gameid == "obsidian") {
 		static const ExtraGuiOption widescreenOption = {
-			_s("Widescreen"),
-			_s("Removes upper letterbox bar"),
-			"mtropolis_enh_obsidian_widescreen",
+			_s("16:9 Widescreen Mod"),
+			_s("Removes letterboxing and moves some display elements, improving coverage on widescreen displays"),
+			"mtropolis_mod_obsidian_widescreen",
 			false,
 			0,
-			1};
-		static const ExtraGuiOption widescreenImprovedOption = {
-			_s("Enhanced Widescreen"),
-			_s("Removes the upper and lower letterbox bars and relocates inventory item graphics"),
-			"mtropolis_enh_obsidian_widescreen_improved",
-			false,
-			1,
 			0};
 
 		options.push_back(widescreenOption);
-		options.push_back(widescreenImprovedOption);
 	}
 
 	static const ExtraGuiOption launchDebugOption = {
