@@ -23,17 +23,32 @@
 #define MM1_VIEWS_ENH_CHARACTER_INFO_H
 
 #include "mm/mm1/views_enh/scroll_view.h"
+#include "mm/xeen/sprites.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
+#define CHAR_ICONS_COUNT 22
+
 class CharacterInfo : public ScrollView {
+	struct IconPos {
+		int _frame; int _x; int _y;
+	};
+private:
+	Xeen::SpriteResource _viewIcon;
+	static const IconPos ICONS[CHAR_ICONS_COUNT];
+	const char *ICONS_TEXT[CHAR_ICONS_COUNT];
+
+private:
+	void drawIcons();
 public:
 	CharacterInfo();
 	virtual ~CharacterInfo() {}
 
-//	void draw() override;
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
+	void draw() override;
 };
 
 } // namespace ViewsEnh

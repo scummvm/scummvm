@@ -43,7 +43,7 @@ void TextView::writeChar(char c) {
 	} else {
 		Graphics::ManagedSurface s = getSurface();
 		g_globals->_font.drawChar(&s, c,
-			_textPos.x * FONT_SIZE, _textPos.y * FONT_SIZE, 0xff);
+			_textPos.x * FONT_SIZE, _textPos.y * FONT_SIZE, _bgColor);
 
 		if (++_textPos.x == TEXT_W) {
 			_textPos.x = 0;

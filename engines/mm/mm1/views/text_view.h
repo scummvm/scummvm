@@ -37,6 +37,14 @@ private:
 	int _timeoutCtr = 0;
 protected:
 	Common::Point _textPos;
+	byte _bgColor = 0xff;
+
+	/**
+	 * Set the text color
+	 */
+	void setTextColor(byte col) {
+		_bgColor = col;
+	}
 
 	/**
 	 * Write a character
