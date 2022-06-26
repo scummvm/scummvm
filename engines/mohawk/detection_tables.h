@@ -1528,6 +1528,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Just Grandma and Me 2.0
+	// Hebrew CD
+	{
+		{
+			"grandma",
+			"v2.0",
+			AD_ENTRY1("LBPLAY32.LB", "28f6d88dae354a3c17ea0e59c771bff7"),
+			Common::HE_ISR,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
 	// Just Grandma and Me
 	// From bug Trac #6745
 	{
