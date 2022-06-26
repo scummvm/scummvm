@@ -63,7 +63,7 @@ Text and Speech
 .. _talkspeed:
 
 Subtitle speed
-	Adjusts the length of time that the subtitles are displayed on screen. The higher the value, the longer the subtitles are displayed.
+	Adjusts the length of time that the subtitles are displayed on screen. The meaning of this value depends on the games. Some games treat it as a delay (a higher value means the subtitles are displayed for longer) while others treat it as a speed. Games that treat it as a delay include all LucasArts games, with the exception of Grim Fandango and Escape from Monkey Island, all Sierra games, and the Discworld games. Most other games treat it as a speed.
 
 	*talkspeed*
 
