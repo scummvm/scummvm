@@ -2671,6 +2671,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// Wanderful Interactive Storybooks version, unknown if identical to iOS and Mac versions
+	{
+		{
+			"lbsampler",
+			"Wanderful",
+			AD_ENTRY1s("Outline.txt", "131d3a3c7158345153776693de4d45d0", 2574),
+			Common::EN_ANY,
+			Common::kPlatformAndroid,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0,
+	},
+
 	{
 		{
 			"bearfight",
@@ -3042,6 +3058,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	{
+		{
+			"create",
+			"",
+			AD_ENTRY1s("BookOutline", "922698932c5ac78276484c563cb7ae10", 1135),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
 	// From sev
 	{
 		{
@@ -3082,6 +3113,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("DANIELD.LB", "4220631d9f677f694fa9d59a7c242dbe", 651),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
+	{
+		{
+			"daniel",
+			"Demo",
+			AD_ENTRY1s("DanielBO", "6a020cca6405936c35c4e4f4bf94740f", 543),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
 			ADGF_DEMO,
 			GUIO1(GUIO_NOASPECT)
 		},
