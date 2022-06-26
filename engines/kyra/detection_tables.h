@@ -50,6 +50,7 @@ namespace {
 #define KYRA3_CD_4LANG_FLAGS FLAGS(false, false, true, false, false, false, false, true, true, true, Kyra::GI_KYRA3)
 #define KYRA3_CD_INS_4LANG_FLAGS FLAGS(false, false, true, false, false, false, false, true, false, true, Kyra::GI_KYRA3)
 #define KYRA3_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, false, true, false, false, Kyra::GI_KYRA3)
+#define KYRA3_CD_INS_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, false, true, true, false, Kyra::GI_KYRA3)
 
 #define LOL_CD_FLAGS FLAGS(false, false, true, false, false, false, false, false, false, false, Kyra::GI_LOL)
 #define LOL_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, false, false, false, false, Kyra::GI_LOL)
@@ -1015,6 +1016,20 @@ const KYRAGameDescription adGameDescs[] = {
 			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
 		},
 		KYRA3_CD_FLAGS
+	},
+
+	{ // Hebrew fan translation
+		{
+			"kyra3",
+			0,
+			AD_ENTRY2s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1,
+					   "8FAT.FNT", "12424362a537e1335b10323c4013bb1d", -1),
+			Common::HE_ISR,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE,
+			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
+		},
+		KYRA3_CD_INS_FAN_FLAGS(Common::HE_ISR, Common::EN_ANY)
 	},
 
 	// installed version

@@ -161,7 +161,16 @@ void TextDisplayer_MR::printText(const Common::String &str, int x, int y, uint8 
 	colorMap[3] = c1;
 	_screen->setTextColor(colorMap, 0, 3);
 	_screen->_charSpacing = -2;
-	_screen->printText(str.c_str(), x, y, c0, c2);
+
+	Common::String revBuffer;
+	const char *cstr = str.c_str();
+	if (_vm->gameFlags().lang == Common::HE_ISR) {
+		for (int i = str.size() - 1; i >= 0; --i)
+			revBuffer += str[i];
+		cstr = revBuffer.c_str();
+	}
+
+	_screen->printText(cstr, x, y, c0, c2);
 	_screen->_charSpacing = 0;
 }
 
