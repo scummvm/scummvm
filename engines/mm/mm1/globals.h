@@ -25,6 +25,7 @@
 #include "graphics/font.h"
 #include "mm/utils/bitmap_font.h"
 #include "mm/utils/strings_data.h"
+#include "mm/utils/xeen_font.h"
 #include "mm/xeen/sprites.h"
 #include "mm/mm1/data/game_state.h"
 #include "mm/mm1/data/items.h"
@@ -51,6 +52,8 @@ public:
 	Xeen::SpriteResource _globalSprites;
 	Xeen::SpriteResource _tileSprites;
 	byte SYMBOLS[20][64];
+	XeenFont _fontFixed;
+	XeenFont _fontVariable;
 public:
 	Globals();
 	virtual ~Globals();

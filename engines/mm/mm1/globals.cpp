@@ -60,11 +60,31 @@ bool Globals::load(bool isEnhanced) {
 		_globalSprites.load("global.icn");
 		_tileSprites.load("town.til");
 
-		Common::File f;
-		if (!f.open("symbols.bin"))
-			error("Could not load symbols.bin");
-		f.read(SYMBOLS, 20 * 64);
-		f.close();
+		{
+			Common::File f;
+			if (!f.open("symbols.bin"))
+				error("Could not load symbols.bin");
+			f.read(SYMBOLS, 20 * 64);
+			f.close();
+		}
+
+		{
+			Common::File f;
+			if (!f.open("fnt"))
+				error("Could not open font");
+			_fontFixed.load(&f, 0, 0x1000);
+			_fontVariable.load(&f, 0x800, 0x1080);
+			f.close();
+		}
+
+		{
+			Common::File f;
+			if (!f.open("text_colors.bin"))
+				error("Could not open text colors");
+			XeenFont::loadColors(&f);
+			XeenFont::setColors(0);
+			f.close();
+		}
 	}
 
 	return true;
