@@ -19,40 +19,64 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_SCROLL_VIEW_H
-#define MM1_VIEWS_ENH_SCROLL_VIEW_H
+#ifndef MM1_VIEWS_ENH_TEXT_VIEW_H
+#define MM1_VIEWS_ENH_TEXT_VIEW_H
 
-#include "mm/mm1/views_enh/text_view.h"
+#include "mm/mm1/events.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-#define FRAME_BORDER_SIZE 8
-
-class ScrollView : public TextView {
+class TextView : public UIElement {
 protected:
-	Common::Point _symbolPos;
-protected:
-	/**
-	 * Draw the scroll frame
-	 */
-	void frame();
+	Common::Point _textPos;
+	bool _fontVariableWidth = false;
 
 	/**
-	 * Fill the scroll background
+	 * Set the text color
 	 */
-	void fill();
+	void setTextColor(byte col);
 
 	/**
-	 * Draw a special symbol
+	 * Set whether to use fixed width or variable width font
 	 */
-	void writeSymbol(int symbolId);
+	void setProportinateFont(bool flag) {
+		_fontVariableWidth = flag;
+	}
+
+	/**
+	 * Write a character
+	 */
+	void writeChar(char c);
+	void writeChar(int x, int y, char c);
+
+	/**
+	 * Write some text
+	 */
+	void writeString(const Common::String &str);
+	void writeString(int x, int y, const Common::String &str);
+
+	/**
+	 * Write a number
+	 */
+	void writeNumber(int val);
+	void writeNumber(int x, int y, int val);
+
+	/**
+	 * Move the text position to the next line
+	 */
+	void newLine();
+
+	/**
+	 * Clear the surface
+	 */
+	void clearSurface() override;
+
 public:
-	ScrollView(const Common::String &name);
-	virtual ~ScrollView() {}
-
-	void draw() override;
+	TextView(const Common::String &name);
+	TextView(const Common::String &name, UIElement *owner);
+	virtual ~TextView() {}
 };
 
 } // namespace ViewsEnh

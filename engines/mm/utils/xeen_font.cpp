@@ -65,14 +65,18 @@ void XeenFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32
 	if (chr == 'g' || chr == 'p' || chr == 'q' || chr == 'y')
 		++y;
 
-	const uint16 *src = &_data[chr * 16];
-	for (int yCtr = 0; yCtr < 8; ++yCtr, ++y, ++src) {
+	const uint16 *src = &_data[chr * FONT_HEIGHT];
+	for (int yCtr = 0; yCtr < FONT_HEIGHT; ++yCtr, ++src) {
+		if ((y + yCtr) < 0 || (y + yCtr) > dst->h)
+			continue;
+
 		uint16 srcVal = *src;
 		byte *dest = (byte *)dst->getBasePtr(x, y + yCtr);
 
 		for (int xCtr = 0; xCtr < _widths[chr];
 				++xCtr, ++dest, srcVal >>= 2) {
-			*dest = _colors[srcVal & 3];
+			if ((srcVal & 3) && (x + xCtr) >= 0 && (x + xCtr) < dst->w)
+				*dest = _colors[srcVal & 3];
 		}
 	}
 }

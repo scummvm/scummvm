@@ -38,6 +38,8 @@ class Events;
 
 class UIElement {
 	friend class Events;
+private:
+	int _timeoutCtr = 0;
 protected:
 	UIElement *_parent;
 	Common::Array<UIElement *> _children;
@@ -48,6 +50,17 @@ protected:
 	Common::Rect getLineBounds(int line1, int line2) const {
 		return Common::Rect(0, line1 * 8, 320, (line2 + 1) * 8);
 	}
+
+	/**
+	 * Set a delay countdown
+	 */
+	void delaySeconds(uint seconds);
+
+	/**
+	 * Called when an active timeout countdown expired
+	 */
+	virtual void timeout();
+
 private:
 	/**
 	 * Outer method for doing drawing

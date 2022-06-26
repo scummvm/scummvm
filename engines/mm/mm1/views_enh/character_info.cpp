@@ -96,6 +96,7 @@ void CharacterInfo::drawIcons() {
 
 	// Write text
 	setTextColor(0);
+	_textPos = Common::Point(8, 8);
 	writeString(5, 4, ICONS_TEXT[0]);
 }
 
