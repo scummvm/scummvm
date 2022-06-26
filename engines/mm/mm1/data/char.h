@@ -133,6 +133,37 @@ public:
 	bool hasShield() const { return hasCategory(isShield); }
 };
 
+/**
+ * Attribute pair representing it's base value and the
+ * current temporary value
+ */
+struct AttributePair {
+	uint8 _current = 0;
+	uint8 _base = 0;
+
+	operator uint8() const { return _current; }
+	AttributePair &operator=(byte v) {
+		_base = _current = v;
+		return *this;
+	}
+	AttributePair &operator++() {
+		if (_base < 255)
+			_current = ++_base;
+		return *this;
+	}
+	AttributePair &operator--() {
+		if (_base > 0)
+			_current = --_base;
+		return *this;
+	}
+	void clear() { _current = _base = 0; }
+	void reset() { _current = _base; }
+	void synchronize(Common::Serializer &s) {
+		s.syncAsByte(_base);
+		s.syncAsByte(_current);
+	}
+};
+
 struct Character {
 	char _name[16] = { 0 };
 	Sex _sex = MALE;
@@ -141,24 +172,24 @@ struct Character {
 	Race _race = HUMAN;
 	CharacterClass _class = NONE;
 
-	uint8 _int = 0, _mgt = 0, _per = 0, _end = 0;
-	uint8 _spd = 0, _acy = 0, _luc = 0;
-	uint8 _intBase = 0, _mgtBase = 0, _perBase = 0;
-	uint8 _endBase = 0, _spdBase = 0, _acyBase = 0;
-	uint8 _lucBase = 0;
+	AttributePair _intelligence;
+	AttributePair _might;
+	AttributePair _personality;
+	AttributePair _endurance;
+	AttributePair _speed;
+	AttributePair _accuracy;
+	AttributePair _luck;
 
-	uint8 _levelBase = 0;
-	uint8 _level = 0;
-	uint8 _ageBase = 0;
-	uint8 _age = 0;
+	AttributePair _level;
+	AttributePair _age;
+	AttributePair _sp;
+	AttributePair _slvl;
+	AttributePair _ac;
+
 	uint32 _exp = 0;
-	uint16 _sp = 0, _spMax = 0;
-	uint8 _slvlBase = 0, _slvl = 0;
-
 	uint16 _gems = 0;
 	uint16 _hpBase = 0, _hp = 0, _hpMax = 0;
 	uint32 _gold = 0;
-	byte _acBase = 0, _ac = 0;
 	uint8 _food = 0;
 	uint8 _condition = 0;
 	Inventory _equipped;

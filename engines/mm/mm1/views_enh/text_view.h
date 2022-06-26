@@ -31,7 +31,8 @@ namespace ViewsEnh {
 class TextView : public UIElement {
 protected:
 	Common::Point _textPos;
-	bool _fontVariableWidth = false;
+	int _colorsNum = 0;
+	bool _fontReduced = false;
 
 	/**
 	 * Set the text color
@@ -39,10 +40,10 @@ protected:
 	void setTextColor(byte col);
 
 	/**
-	 * Set whether to use fixed width or variable width font
+	 * Set whether to use the standard large sized font or reduced one
 	 */
-	void setProportinateFont(bool flag) {
-		_fontVariableWidth = flag;
+	void setReduced(bool flag) {
+		_fontReduced = flag;
 	}
 
 	/**

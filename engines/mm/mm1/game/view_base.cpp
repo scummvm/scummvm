@@ -275,7 +275,7 @@ void ViewBase::bash() {
 
 			uint might = g_engine->getRandomNumber(100);
 			for (uint i = 0; i < g_globals->_party.size(); ++i)
-				might += g_globals->_party[i]._mgt;
+				might += g_globals->_party[i]._might;
 			might = MIN(might, 255U);
 
 			// Check for busting

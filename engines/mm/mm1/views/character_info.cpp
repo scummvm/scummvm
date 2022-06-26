@@ -367,7 +367,7 @@ void CharacterInfo::equipItem(uint index) {
 			break;
 		case ITEMCAT_ARMOR:
 		case ITEMCAT_SHIELD:
-			c._acBase += item._val17;
+			c._ac._base += item._val17;
 			break;
 		default:
 			break;
@@ -439,7 +439,7 @@ void CharacterInfo::removeItem(uint index) {
 		break;
 	case ITEMCAT_ARMOR:
 	case ITEMCAT_SHIELD:
-		c._acBase = MAX((int)c._acBase - (int)item._val17, 0);
+		c._ac._base = MAX((int)c._ac._base - (int)item._val17, 0);
 		break;
 	default:
 		break;

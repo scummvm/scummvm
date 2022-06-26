@@ -87,7 +87,7 @@ void Tavern::haveADrink() {
 	} else if (subtractGold(1)) {
 		if (++g_globals->_currCharacter->_numDrinks < 3 ||
 				g_engine->getRandomNumber(10) <
-				g_globals->_currCharacter->_end) {
+				g_globals->_currCharacter->_endurance) {
 			displayMessage(STRING["dialogs.tavern.great_stuff"]);
 		} else {
 			if (!(g_globals->_currCharacter->_condition & BAD_CONDITION))

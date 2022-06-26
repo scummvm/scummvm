@@ -81,9 +81,33 @@ bool CharacterInfo::msgUnfocus(const UnfocusMessage &msg) {
 	return ScrollView::msgUnfocus(msg);
 }
 
+bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
+	if (msg.keycode == Common::KEYCODE_ESCAPE) {
+		close();
+		return true;
+	}
+
+	return false;
+}
+
 void CharacterInfo::draw() {
 	ScrollView::draw();
+	drawTitle();
 	drawIcons();
+	drawStats();
+}
+
+void CharacterInfo::drawTitle() {
+	const Character &c = *g_globals->_currCharacter;
+	Common::String msg = Common::String::format(
+		"%s : %s %s %s",
+		c._name,
+		"X",
+		"Y",
+		"Z"
+	);
+
+	writeString(8, 8, msg);
 }
 
 void CharacterInfo::drawIcons() {
@@ -93,11 +117,58 @@ void CharacterInfo::drawIcons() {
 			Common::Point(ICONS[i]._x + FRAME_BORDER_SIZE,
 				ICONS[i]._y + FRAME_BORDER_SIZE));
 	}
+}
 
-	// Write text
-	setTextColor(0);
-	_textPos = Common::Point(8, 8);
-	writeString(5, 4, ICONS_TEXT[0]);
+void CharacterInfo::drawStats() {
+	// Draw stat titles
+	for (int i = 0; i < 18; ++i) {
+		writeString(ICONS[i]._x + 35, ICONS[i]._y + 10,
+			ICONS_TEXT[i]);
+	}
+
+	// Draw stat values
+	const Character &c = *g_globals->_currCharacter;
+	const uint CURR[17] = {
+		c._might._current, c._intelligence._current,
+		c._personality._current, c._endurance._current,
+		c._speed._current, c._accuracy._current,
+		c._luck._current, c._age._base, c._level._current,
+		c._ac._current, c._hp, c._sp._current, 0,
+		c._exp, c._gold, c._gems, c._food
+	};
+	const uint BASE[17] = {
+		c._might._base, c._intelligence._base,
+		c._personality._base, c._endurance._base,
+		c._speed._base, c._accuracy._base,
+		c._luck._base, c._age._base, c._level._base,
+		c._ac._base, c._hp, c._sp._base, 0,
+		c._exp, c._gold, c._gems, c._food
+	};
+
+	for (int i = 0; i < 17; ++i) {
+		if (i == 12)
+			continue;
+
+		Common::Point pt(ICONS[i]._x + 35, ICONS[i]._y + 19);
+		if (i < 10)
+			pt.x += 8 + (CURR[i] < 10 ? 8 : 0);
+
+		setTextColor(statColor(CURR[i], BASE[i]));
+		writeNumber(pt.x, pt.y, CURR[i]);
+	}
+}
+
+int CharacterInfo::statColor(int amount, int threshold) {
+	if (amount < 1)
+		return 6;
+	else if (amount > threshold)
+		return 2;
+	else if (amount == threshold)
+		return 15;
+	else if (amount >= (threshold / 4))
+		return 9;
+	else
+		return 32;
 }
 
 } // namespace Views

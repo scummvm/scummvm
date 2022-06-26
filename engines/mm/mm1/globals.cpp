@@ -72,8 +72,8 @@ bool Globals::load(bool isEnhanced) {
 			Common::File f;
 			if (!f.open("fnt"))
 				error("Could not open font");
-			_fontFixed.load(&f, 0, 0x1000);
-			_fontVariable.load(&f, 0x800, 0x1080);
+			_fontNormal.load(&f, 0, 0x1000);
+			_fontReduced.load(&f, 0x800, 0x1080);
 			f.close();
 		}
 

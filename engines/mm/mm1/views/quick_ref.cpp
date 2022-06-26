@@ -51,7 +51,7 @@ void QuickRef::draw() {
 		writeNumber(c._sp);
 		_textPos.x = 32;
 		writeChar('/');
-		writeNumber(c._spMax);
+		writeNumber(c._sp._base);
 
 		// AC
 		_textPos.x = 38;

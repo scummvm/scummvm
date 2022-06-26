@@ -119,37 +119,30 @@ void Character::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_race);
 	s.syncAsByte(_class);
 
-	s.syncAsByte(_intBase);
-	s.syncAsByte(_int);
-	s.syncAsByte(_mgtBase);
-	s.syncAsByte(_mgt);
-	s.syncAsByte(_perBase);
-	s.syncAsByte(_per);
-	s.syncAsByte(_endBase);
-	s.syncAsByte(_end);
-	s.syncAsByte(_spdBase);
-	s.syncAsByte(_spd);
-	s.syncAsByte(_acyBase);
-	s.syncAsByte(_acy);
-	s.syncAsByte(_lucBase);
-	s.syncAsByte(_luc);
+	_intelligence.synchronize(s);
+	_might.synchronize(s);
+	_personality.synchronize(s);
+	_endurance.synchronize(s);
+	_speed.synchronize(s);
+	_accuracy.synchronize(s);
+	_luck.synchronize(s);
+	_level.synchronize(s);
+	_age.synchronize(s);
 
-	s.syncAsByte(_levelBase);
-	s.syncAsByte(_level);
-	s.syncAsByte(_ageBase);
-	s.syncAsByte(_age);
 	s.syncAsUint32LE(_exp);
-	s.syncAsUint16LE(_sp);
-	s.syncAsUint16LE(_spMax);
-	s.syncAsByte(_slvlBase);
-	s.syncAsByte(_slvl);
+	s.syncAsByte(_sp._base);
+	s.skip(1);
+	s.syncAsByte(_sp._current);
+	s.skip(1);
+	_slvl.synchronize(s);
+
 	s.syncAsUint16LE(_gems);
 	s.syncAsUint16LE(_hpBase);
 	s.syncAsUint16LE(_hp);
 	s.syncAsUint16LE(_hpMax);
 	s.syncAsUint16LE(_gold);
 	s.skip(2);
-	s.syncAsByte(_ac);
+	_ac.synchronize(s);
 	s.syncAsByte(_food);
 	s.syncAsByte(_condition);
 
@@ -169,13 +162,13 @@ void Character::clear() {
 	_alignment = (Alignment)0;
 	_race = (Race)0;
 	_class = (CharacterClass)0;
-	_int = _mgt = _per = _end = 0;
-	_spd = _acy = _luc = 0;
+	_intelligence = _might = _personality = _endurance = 0;
+	_speed = _accuracy = _luck = 0;
 	_level = 0;
 	_age = 0;
 	_exp = 0;
-	_sp = _spMax = 0;
-	_slvl = _slvlBase = 0;
+	_sp = 0;
+	_slvl = 0;
 	_gems = 0;
 	_hpBase = _hp = _hpMax = 0;
 	_gold = 0;
@@ -221,40 +214,40 @@ Character::TradeResult Character::trade(int whoTo, int itemIndex) {
 
 
 Character::LevelIncrease Character::increaseLevel() {
-	_level = ++_levelBase;
-	_age = ++_ageBase;
-	if (_ageBase > 220)
-		_ageBase = 220;
+	++_level;
+	++_age;
+	if (_age._base > 220)
+		_age._base = 220;
 	_v6c += 2;
 
 	int classNum = _class == NONE ? ROBBER : _class;
 	int newHP = g_engine->getRandomNumber(CLASS_HP_PER_LEVEL[classNum - 1]);
 
-	if (_endBase >= 40)
+	if (_endurance._base >= 40)
 		newHP += 10;
-	else if (_endBase >= 35)
+	else if (_endurance._base >= 35)
 		newHP += 9;
-	else if (_endBase >= 30)
+	else if (_endurance._base >= 30)
 		newHP += 8;
-	else if (_endBase >= 27)
+	else if (_endurance._base >= 27)
 		newHP += 7;
-	else if (_endBase >= 24)
+	else if (_endurance._base >= 24)
 		newHP += 6;
-	else if (_endBase >= 21)
+	else if (_endurance._base >= 21)
 		newHP += 5;
-	else if (_endBase >= 19)
+	else if (_endurance._base >= 19)
 		newHP += 4;
-	else if (_endBase >= 17)
+	else if (_endurance._base >= 17)
 		newHP += 3;
-	else if (_endBase >= 15)
+	else if (_endurance._base >= 15)
 		newHP += 2;
-	else if (_endBase >= 13)
+	else if (_endurance._base >= 13)
 		newHP += 1;
-	else if (_endBase >= 9)
+	else if (_endurance._base >= 9)
 		newHP += 0;
-	else if (_endBase >= 7)
+	else if (_endurance._base >= 7)
 		newHP = MAX(newHP - 1, 1);
-	else if (_endBase >= 5)
+	else if (_endurance._base >= 5)
 		newHP = MAX(newHP - 2, 1);
 	else
 		newHP = MAX(newHP - 3, 1);
@@ -264,28 +257,28 @@ Character::LevelIncrease Character::increaseLevel() {
 
 	int gainedSpells = 0;
 	if (classNum < ARCHER) {
-		if (_levelBase < 7)
+		if (_level._base < 7)
 			gainedSpells = 0;
-		else if (_levelBase == 7)
+		else if (_level._base == 7)
 			gainedSpells = 1;
-		else if (_levelBase == 9)
+		else if (_level._base == 9)
 			gainedSpells = 2;
-		else if (_levelBase == 11)
+		else if (_level._base == 11)
 			gainedSpells = 3;
-		else if (_levelBase == 13)
+		else if (_level._base == 13)
 			gainedSpells = 4;
 	} else if (classNum < SORCERER) {
-		if (_levelBase == 3)
+		if (_level._base == 3)
 			gainedSpells = 2;
-		else if (_levelBase == 5)
+		else if (_level._base == 5)
 			gainedSpells = 3;
-		else if (_levelBase == 7)
+		else if (_level._base == 7)
 			gainedSpells = 4;
-		else if (_levelBase == 9)
+		else if (_level._base == 9)
 			gainedSpells = 5;
-		else if (_levelBase == 11)
+		else if (_level._base == 11)
 			gainedSpells = 6;
-		else if (_levelBase == 13)
+		else if (_level._base == 13)
 			gainedSpells = 7;
 	}
 
@@ -318,48 +311,51 @@ Character::BuyResult Character::buyItem(byte itemId) {
 }
 
 void Character::updateAttributes() {
-	_int = _intBase;
-	_mgt = _mgtBase;
-	_per = _perBase;
-	_end = _endBase;
-	_spd = _spdBase;
-	_acy = _acyBase;
-	_luc = _lucBase;
-	_level = _levelBase;
-	_slvl = _slvlBase;
+	_intelligence.reset();
+	_might.reset();
+	_personality.reset();
+	_endurance.reset();
+	_speed.reset();
+	_personality.reset();
+	_endurance.reset();
+	_speed.reset();
+	_accuracy.reset();
+	_luck.reset();
+	_level.reset();
+	_slvl.reset();
 }
 
 void Character::updateAC() {
-	int ac = _acBase;
+	int ac = _ac._base;
 
-	if (_spd >= 40)
+	if (_speed >= 40)
 		ac += 9;
-	else if (_spd >= 35)
+	else if (_speed >= 35)
 		ac += 8;
-	else if (_spd >= 30)
+	else if (_speed >= 30)
 		ac += 7;
-	else if (_spd >= 25)
+	else if (_speed >= 25)
 		ac += 6;
-	else if (_spd >= 21)
+	else if (_speed >= 21)
 		ac += 5;
-	else if (_spd >= 19)
+	else if (_speed >= 19)
 		ac += 4;
-	else if (_spd >= 17)
+	else if (_speed >= 17)
 		ac += 3;
-	else if (_spd >= 15)
+	else if (_speed >= 15)
 		ac += 2;
-	else if (_spd >= 13)
+	else if (_speed >= 13)
 		ac += 1;
-	else if (_spd >= 9)
+	else if (_speed >= 9)
 		ac += 0;
-	else if (_spd >= 7)
+	else if (_speed >= 7)
 		ac = MAX(ac - 1, 0);
-	else if (_spd >= 5)
+	else if (_speed >= 5)
 		ac = MAX(ac - 2, 0);
 	else
 		ac = MAX(ac - 3, 0);
 
-	_ac = ac;
+	_ac._current = ac;
 }
 
 void Character::castSpell(int lvl, int num) {

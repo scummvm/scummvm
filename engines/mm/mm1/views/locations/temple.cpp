@@ -158,9 +158,8 @@ void Temple::restoreHealth() {
 		c._hpBase = c._hp;
 
 		if (_isEradicated) {
-			c._age += 10;
-			if (c._endBase)
-				c._end = --c._endBase;
+			c._age._current += 10;
+			--c._endurance;
 		}
 
 		redraw();
