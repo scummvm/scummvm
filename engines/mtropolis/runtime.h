@@ -119,6 +119,7 @@ class DebugPrimaryTaskList;
 char invariantToLower(char c);
 Common::String toCaseInsensitive(const Common::String &str);
 bool caseInsensitiveEqual(const Common::String &str1, const Common::String &str2);
+size_t caseInsensitiveFind(const Common::String &stringToSearch, const Common::String &stringToFind);
 
 enum ColorDepthMode {
 	kColorDepthMode1Bit,

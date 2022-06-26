@@ -220,7 +220,6 @@ Common::String toCaseInsensitive(const Common::String &str) {
 	return Common::String(&lowered[0], strLen);
 }
 
-
 bool caseInsensitiveEqual(const Common::String& str1, const Common::String& str2) {
 	size_t length1 = str1.size();
 	size_t length2 = str2.size();
@@ -233,6 +232,31 @@ bool caseInsensitiveEqual(const Common::String& str1, const Common::String& str2
 	}
 
 	return true;
+}
+
+size_t caseInsensitiveFind(const Common::String &strToSearch, const Common::String &stringToFind) {
+	if (stringToFind.size() > strToSearch.size())
+		return Common::String::npos;
+
+	size_t lastValidStart = strToSearch.size() - stringToFind.size();
+	size_t searchLength = stringToFind.size();
+
+	for (size_t startIndex = 0; startIndex <= lastValidStart; startIndex++) {
+		bool matches = true;
+		for (size_t i = 0; i < searchLength; i++) {
+			char ca = strToSearch[i + startIndex];
+			char cb = stringToFind[i];
+			if (ca != cb && invariantToLower(ca) != invariantToLower(cb)) {
+				matches = false;
+				break;
+			}
+		}
+
+		if (matches)
+			return startIndex;
+	}
+
+	return Common::String::npos;
 }
 
 bool EventIDs::isCommand(EventID eventID) {
