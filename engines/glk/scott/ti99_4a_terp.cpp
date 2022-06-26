@@ -450,7 +450,7 @@ void runImplicitTI99Actions() {
 		if (g_scott->randomPercent(probability))
 			performTI99Line(ptr + 2);
 
-		if (ptr[1] == 0 || ptr - _G(_ti99ImplicitActions) >= _G(_ti99ImplicitExtent))
+		if (ptr[1] == 0 || static_cast<size_t>(ptr - _G(_ti99ImplicitActions)) >= _G(_ti99ImplicitExtent))
 			loopFlag = 1;
 
 		/* skip code chunk */

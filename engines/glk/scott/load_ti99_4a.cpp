@@ -272,13 +272,13 @@ uint8_t *loadTitleScreen() {
 
 	/* title screen offset starts at 0x80 */
 	p = _G(_entireFile) + 0x80 + _G(_fileBaselineOffset);
-	if (p - _G(_entireFile) > _G(_fileLength))
+	if (static_cast<size_t>(p - _G(_entireFile)) > _G(_fileLength))
 		return nullptr;
 	int parens = 0;
 	for (lines = 0; lines < 24; lines++) {
 		for (int i = 0; i < 40; i++) {
 			char c = *(p++);
-			if (p - _G(_entireFile) >= _G(_fileLength))
+			if (static_cast<size_t>(p - _G(_entireFile)) >= _G(_fileLength))
 				return nullptr;
 			if (!((c <= 127) && (c >= 0))) /* isascii() */
 				c = '?';
