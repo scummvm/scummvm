@@ -96,7 +96,8 @@ void ScrollView::frame() {
 
 void ScrollView::fill() {
 	Graphics::ManagedSurface s = getSurface();
-	s.fillRect(Common::Rect(8, 8, s.w - 8, s.h - 8), 153);
+	s.fillRect(Common::Rect(FRAME_BORDER_SIZE, FRAME_BORDER_SIZE,
+		s.w - FRAME_BORDER_SIZE, s.h - FRAME_BORDER_SIZE), 153);
 }
 
 void ScrollView::writeSymbol(int symbolId) {

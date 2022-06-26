@@ -28,6 +28,8 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
+#define FRAME_BORDER_SIZE 8
+
 class ScrollView : public Views::TextView {
 protected:
 	Common::Point _symbolPos;
