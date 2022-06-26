@@ -52,7 +52,7 @@ void Training::timeout() {
 void Training::checkCharacter() {
 	Character &c = *g_globals->_currCharacter;
 
-	_currLevel = c._levelBase;
+	_currLevel = c._level._base;
 	if (_currLevel >= MAX_LEVEL)
 		return;
 
@@ -164,7 +164,7 @@ void Training::train() {
 
 		clearSurface();
 		writeString(0, 3, STRING["dialogs.training.congrats"]);
-		writeNumber(c._levelBase);
+		writeNumber(c._level._base);
 
 		writeString(7, 5, Common::String::format(
 			STRING["dialogs.training.hp"].c_str(), lvl._numHP));

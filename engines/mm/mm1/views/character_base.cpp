@@ -33,7 +33,7 @@ void CharacterBase::printStats() {
 
 	newLine();
 	writeString(STRING["stats.attributes.int"]);
-	writeNumber(re._int);
+	writeNumber(re._intelligence);
 	_textPos.x = 8;
 	writeString(STRING["stats.attributes.level"]);
 	writeNumber(re._level);
@@ -46,20 +46,20 @@ void CharacterBase::printStats() {
 
 	newLine();
 	writeString(STRING["stats.attributes.mgt"]);
-	writeNumber(re._mgt);
+	writeNumber(re._might);
 
 	newLine();
 	writeString(STRING["stats.attributes.per"]);
-	writeNumber(re._per);
+	writeNumber(re._personality);
 	_textPos.x = 8;
 	writeString(STRING["stats.attributes.sp"]);
-	writeNumber(re._sp);
+	writeNumber(re._sp._current);
 	_textPos.x = 16;
 	writeChar('/');
-	writeNumber(re._spMax);
+	writeNumber(re._sp._base);
 	_textPos.x = 22;
 	writeChar('(');
-	writeNumber(re._slvl);
+	writeNumber(re._slvl._current);
 	writeChar(')');
 	_textPos.x = 26;
 	writeString(STRING["stats.attributes.gems"]);
@@ -67,11 +67,11 @@ void CharacterBase::printStats() {
 
 	newLine();
 	writeString(STRING["stats.attributes.end"]);
-	writeNumber(re._end);
+	writeNumber(re._endurance);
 
 	newLine();
 	writeString(STRING["stats.attributes.spd"]);
-	writeNumber(re._spd);
+	writeNumber(re._speed);
 	_textPos.x = 8;
 	writeString(STRING["stats.attributes.hp"]);
 	writeNumber(re._hp);
@@ -84,11 +84,11 @@ void CharacterBase::printStats() {
 
 	newLine();
 	writeString(STRING["stats.attributes.acy"]);
-	writeNumber(re._acy);
+	writeNumber(re._accuracy);
 
 	newLine();
 	writeString(STRING["stats.attributes.luc"]);
-	writeNumber(re._luc);
+	writeNumber(re._luck);
 	_textPos.x = 8;
 	writeString(STRING["stats.attributes.ac"]);
 	writeNumber(re._ac);

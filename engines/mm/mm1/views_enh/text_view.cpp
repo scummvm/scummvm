@@ -37,12 +37,13 @@ TextView::TextView(const Common::String &name, UIElement *owner) :
 }
 
 void TextView::setTextColor(byte col) {
-	XeenFont::setColors(col);
+	_colorsNum = col;
 }
 
 void TextView::writeChar(char c) {
-	Graphics::Font &font = _fontVariableWidth ?
-		g_globals->_fontVariable : g_globals->_fontFixed;
+	XeenFont::setColors(_colorsNum);
+	Graphics::Font &font = _fontReduced ?
+		g_globals->_fontReduced : g_globals->_fontNormal;
 
 	if (c == '\r' || c == '\n') {
 		_textPos.x = 0;

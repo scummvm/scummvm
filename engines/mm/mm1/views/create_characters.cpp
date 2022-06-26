@@ -72,13 +72,13 @@ void CreateCharacters::NewCharacter::save() {
 	re._alignment = re._alignmentInitial = _alignment;
 	re._race = _race;
 	re._class = _class;
-	re._int = _attribs1[INTELLECT];
-	re._mgt = _attribs1[MIGHT];
-	re._per = _attribs1[PERSONALITY];
-	re._end = _attribs1[ENDURANCE];
-	re._spd = _attribs1[SPEED];
-	re._acy = _attribs1[ACCURACY];
-	re._luc = _attribs1[LUCK];
+	re._intelligence = _attribs1[INTELLECT];
+	re._might = _attribs1[MIGHT];
+	re._personality = _attribs1[PERSONALITY];
+	re._endurance = _attribs1[ENDURANCE];
+	re._speed = _attribs1[SPEED];
+	re._accuracy = _attribs1[ACCURACY];
+	re._luck = _attribs1[LUCK];
 
 	switch (_class) {
 	case KNIGHT:
@@ -175,8 +175,8 @@ void CreateCharacters::NewCharacter::setSP(int amount) {
 	else if (amount >= 13)
 		level = 1;
 
-	re._sp = re._spMax = level + 3;
-	re._slvl = re._slvlBase = 1;
+	re._sp = level + 3;
+	re._slvl = 1;
 }
 
 /*------------------------------------------------------------------------*/

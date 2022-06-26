@@ -41,13 +41,17 @@ private:
 	const char *ICONS_TEXT[CHAR_ICONS_COUNT];
 
 private:
+	void drawTitle();
 	void drawIcons();
+	void drawStats();
+	int statColor(int amount, int threshold);
 public:
 	CharacterInfo();
 	virtual ~CharacterInfo() {}
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
 };
 

@@ -52,8 +52,8 @@ public:
 	Xeen::SpriteResource _globalSprites;
 	Xeen::SpriteResource _tileSprites;
 	byte SYMBOLS[20][64];
-	XeenFont _fontFixed;
-	XeenFont _fontVariable;
+	XeenFont _fontNormal;
+	XeenFont _fontReduced;
 public:
 	Globals();
 	virtual ~Globals();
