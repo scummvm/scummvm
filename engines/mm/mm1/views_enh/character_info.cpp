@@ -63,6 +63,8 @@ const CharacterInfo::IconPos CharacterInfo::ICONS[CHAR_ICONS_COUNT] = {
 
 CharacterInfo::CharacterInfo() : ScrollView("CharacterInfo") {
 	_bounds = Common::Rect(0, 0, 320, 146);
+	_statInfo.setReduced(true);
+
 	static const char *FIELDS[CHAR_ICONS_COUNT] = {
 		"might", "intelligence", "personality",
 		"endurance", "speed",
@@ -133,11 +135,14 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 		_cursorCell = EXPANDED_TO_REDUCED(idx);
 		showCursor(true);
 		break;
+	case Common::KEYCODE_RETURN:
+		showAttribute(_cursorCell);
+		break;
 	default:
 		break;
 	}
 
-	return false;
+	return true;
 }
 
 bool CharacterInfo::msgAction(const ActionMessage &msg) {
@@ -294,6 +299,166 @@ void CharacterInfo::showAttribute(int attrNum) {
 	g_events->getScreen()->update();
 
 	// Display the info dialog
+	const int STAT_POS[2][20] = {
+		{
+			61, 61, 61, 61, 61, 112, 112, 112, 112, 112,
+			177, 177, 177, 177, 177, 34, 34, 34, 34, 34
+		}, {
+			24, 47, 70, 93, 116, 24, 47, 70, 93, 116,
+			24, 47, 70, 93, 116, 24, 47, 70, 93, 116
+		}
+	};
+
+	int attrib = REDUCED_TO_EXPANDED(attrNum);
+	assert(attrib < 20);
+
+	Common::Rect bounds(STAT_POS[0][attrib], STAT_POS[1][attrib],
+		STAT_POS[0][attrib] + 143, STAT_POS[1][attrib] + 52);
+	_statInfo.setBounds(bounds);
+
+	const Character &c = *g_globals->_currCharacter;
+	const uint CURR[12] = {
+		c._might._current, c._intelligence._current,
+		c._personality._current, c._endurance._current,
+		c._speed._current, c._accuracy._current,
+		c._luck._current, c._age._base, c._level._current,
+		c._ac._current, c._hp, c._sp._current
+	};
+	const uint BASE[12] = {
+		c._might._base, c._intelligence._base,
+		c._personality._base, c._endurance._base,
+		c._speed._base, c._accuracy._base,
+		c._luck._base, c._age._base, c._level._base,
+		c._ac._current, c._hp, c._sp._base
+	};
+	const char *TITLES[12] = {
+		"might", "intelligence", "personality",
+		"endurance", "speed", "accuracy", "luck",
+		"age", "level", "ac", "hp", "sp"
+	};
+
+	if (attrib < 12) {
+		_statInfo.clear();
+		_statInfo.addLine(
+			STRING[Common::String::format("enhdialogs.character.long.%s",
+				TITLES[attrib]).c_str()],
+			ALIGN_MIDDLE);
+
+		int xc = (bounds.width() - FRAME_BORDER_SIZE * 2) / 2;
+		_statInfo.addText(STRING["enhdialogs.character.long.current"],
+			1, 0, ALIGN_RIGHT, xc - 8);
+		_statInfo.addText("/", 1, 0, ALIGN_MIDDLE);
+		_statInfo.addText(STRING["enhdialogs.character.long.base"],
+			1, 0, ALIGN_LEFT, xc + 8);
+
+		_statInfo.addText(Common::String::format("%u", CURR[attrib]),
+			2, 0, ALIGN_RIGHT, xc - 8);
+		_statInfo.addText("/", 2, 0, ALIGN_MIDDLE);
+		_statInfo.addText(Common::String::format("%u", BASE[attrib]),
+			2, 0, ALIGN_LEFT, xc + 8);
+	}
+
+	/*
+	case 15:
+		// Experience
+		stat1 = c.getCurrentExperience();
+		stat2 = c.experienceToNextLevel();
+		msg = Common::String::format(Res.EXPERIENCE_TEXT,
+			Res.STAT_NAMES[attrib], stat1,
+			stat2 == 0 ? Res.ELIGIBLE : Common::String::format("%d", stat2).c_str()
+		);
+		bounds.setHeight(43);
+		break;
+
+	case 16:
+		// Gold
+		msg = Common::String::format(Res.IN_PARTY_IN_BANK, Res.CONSUMABLE_NAMES[0],
+			party._gold, party._bankGold);
+		bounds.setHeight(43);
+		break;
+
+	case 17:
+		// Gems
+		msg = Common::String::format(Res.IN_PARTY_IN_BANK, Res.CONSUMABLE_NAMES[1],
+			party._gems, party._bankGems);
+		bounds.setHeight(43);
+		break;
+
+	case 18:
+	{
+		// Food
+		int food = (party._food / party._activeParty.size()) / 3;
+		msg = Common::String::format(Res.FOOD_TEXT, Res.CONSUMABLE_NAMES[2],
+			party._food, getFoodOnHandPlurals(food), food, getDaysPlurals(food));
+		break;
+	}
+
+	case 19:
+	{
+		// Conditions
+		Common::String lines[20];
+		const char **_tmpConditions = c._sex == FEMALE ? (const char **)Res.CONDITION_NAMES_F : (const char **)Res.CONDITION_NAMES_M;
+		int total = 0;
+		for (int condition = CURSED; condition <= ERADICATED; ++condition) {
+			if (c._conditions[condition]) {
+				if (condition >= UNCONSCIOUS) {
+					lines[condition] = Common::String::format("\n\t020%s",
+						_tmpConditions[condition]);
+				} else {
+					lines[condition] = Common::String::format("\n\t020%s\t095-%d",
+						_tmpConditions[condition], c._conditions[condition]);
+				}
+
+				++total;
+			}
+		}
+
+		Condition condition = c.worstCondition();
+		if (condition == NO_CONDITION) {
+			lines[0] = Common::String::format("\n\t020%s", Res.GOOD);
+			++total;
+		}
+
+		if (party._blessed) {
+			lines[16] = Common::String::format(Res.BLESSED, party._blessed);
+			++total;
+		}
+		if (party._powerShield) {
+			lines[17] = Common::String::format(Res.POWER_SHIELD, party._powerShield);
+			++total;
+		}
+		if (party._holyBonus) {
+			lines[18] = Common::String::format(Res.HOLY_BONUS, party._holyBonus);
+			++total;
+		}
+		if (party._heroism) {
+			lines[19] = Common::String::format(Res.HEROISM, party._heroism);
+			++total;
+		}
+
+		msg = Common::String::format("\x2\x3""c%s\x3l%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\x1",
+			Res.CONSUMABLE_NAMES[3], lines[0].c_str(), lines[1].c_str(),
+			lines[2].c_str(), lines[3].c_str(), lines[4].c_str(),
+			lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
+			lines[8].c_str(), lines[9].c_str(), lines[10].c_str(),
+			lines[11].c_str(), lines[12].c_str(), lines[13].c_str(),
+			lines[14].c_str(), lines[15].c_str(), lines[16].c_str(),
+			lines[17].c_str(), lines[18].c_str(), lines[19].c_str()
+		);
+
+		bounds.top -= ((total - 1) / 2) * 8;
+		bounds.setHeight(total * 9 + 26);
+		if (bounds.bottom >= SCREEN_HEIGHT)
+			bounds.moveTo(bounds.left, SCREEN_HEIGHT - bounds.height() - 1);
+		break;
+	}
+
+	default:
+		break;
+	}
+	*/
+
+	_statInfo.addView();
 }
 
 } // namespace Views

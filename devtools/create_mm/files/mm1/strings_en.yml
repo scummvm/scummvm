@@ -273,6 +273,8 @@ enhdialogs:
 			days: "Days"
 			day: "Day"
 		long:
+			current: "Current"
+			base: "Base"
 			might: "Might"
 			intelligence: "Intelligence"
 			personality: "Personality"

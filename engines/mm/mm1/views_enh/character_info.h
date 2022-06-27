@@ -23,6 +23,7 @@
 #define MM1_VIEWS_ENH_CHARACTER_INFO_H
 
 #include "mm/mm1/views_enh/scroll_view.h"
+#include "mm/mm1/views_enh/scroll_text.h"
 #include "mm/xeen/sprites.h"
 
 namespace MM {
@@ -41,7 +42,7 @@ private:
 	const char *ICONS_TEXT[CHAR_ICONS_COUNT];
 	int _cursorCell = 0;
 	bool _cursorVisible = false;
-
+	ScrollText _statInfo;
 private:
 	/**
 	 * Draw the title text
@@ -71,7 +72,7 @@ private:
 	/**
 	 * Show the details of a given attribute
 	 */
-	void showAttribute(int attrNum);
+	void showAttribute(int attrib);
 
 protected:
 	void timeout() override;

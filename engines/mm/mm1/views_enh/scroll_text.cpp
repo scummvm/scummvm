@@ -29,43 +29,55 @@ namespace ViewsEnh {
 #define FONT_HEIGHT 8
 
 ScrollText::ScrollText() : ScrollView("ScrollText") {
-	_font = &g_globals->_fontNormal;
 }
 
 void ScrollText::setBounds(const Common::Rect &r) {
-	ScrollView::setBounds(_bounds);
-	_innerBounds = _bounds;
+	ScrollView::setBounds(r);
+	_innerBounds = r;
 	_innerBounds.grow(-FRAME_BORDER_SIZE);
 	_rowCount = _innerBounds.height() / FONT_HEIGHT;
-}
-
-void ScrollText::setReduced(bool flag) {
-	_font = flag ? &g_globals->_fontReduced :
-		&g_globals->_fontReduced;
 }
 
 void ScrollText::addLine(const Common::String &str,
 		TextAlignment align, byte color) {
 	if (_lines.size() < _rowCount) {
-		Common::Point pt(0, _lines.size() * 8);
-
-		if (align != ALIGN_LEFT) {
-			size_t strWidth = _font->getStringWidth(str);
-			if (align == ALIGN_RIGHT)
-				pt.x = _innerBounds.right - strWidth;
-			else
-				pt.x = _innerBounds.left +
-					(_innerBounds.width() + strWidth) / 2;
+		switch (align) {
+		case ALIGN_LEFT:
+			addText(str, _lines.size(), color, align);
+			break;
+		case ALIGN_RIGHT:
+			addText(str, _lines.size(), color, align);
+			break;
+		case ALIGN_MIDDLE:
+			addText(str, _lines.size(), color, align);
+			break;
 		}
-
-		_lines.push_back(Line(str, pt, color));
 	}
 }
 
 void ScrollText::addText(const Common::String &str,
-		int lineNum, byte color, int xp) {
-	_lines.push_back(Line(str,
-		Common::Point(xp, lineNum * FONT_HEIGHT), color));
+		int lineNum, byte color, TextAlignment align, int xp) {
+	Common::Point pt(xp, lineNum * 8);
+	Graphics::Font &font = _fontReduced ?
+		g_globals->_fontReduced : g_globals->_fontNormal;
+
+	if (align != ALIGN_LEFT) {
+		size_t strWidth = font.getStringWidth(str);
+
+		if (align == ALIGN_RIGHT) {
+			// Right alignment
+			if (xp == 0)
+				xp = _innerBounds.width();
+			pt.x = xp - strWidth;
+		} else {
+			// Middle alignment
+			if (xp == 0)
+				xp = _innerBounds.width() / 2;
+			pt.x = xp - strWidth / 2;
+		}
+	}
+
+	_lines.push_back(Line(str, pt, color));
 }
 
 void ScrollText::draw() {
@@ -76,9 +88,7 @@ void ScrollText::draw() {
 		i != end(); ++i) {
 		setTextColor(i->_color);
 		writeString(i->_pos.x + FRAME_BORDER_SIZE,
-			i->_pos.y + FRAME_BORDER_SIZE,
-			i->_str
-		);
+			i->_pos.y + FRAME_BORDER_SIZE, i->_str);
 	}
 }
 
@@ -89,6 +99,11 @@ bool ScrollText::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	return false;
+}
+
+bool ScrollText::msgMouseUp(const MouseUpMessage &msg) {
+	close();
+	return true;
 }
 
 } // namespace ViewsEnh

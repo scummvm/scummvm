@@ -52,7 +52,6 @@ class ScrollText : public ScrollView {
 public:
 	typedef Common::Array<Line> Lines;
 private:
-	Graphics::Font *_font;
 	size_t _rowCount = 0;
 	Lines _lines;
 	Common::Rect _innerBounds;
@@ -68,11 +67,6 @@ public:
 	Lines::iterator end() { return _lines.end(); }
 	Lines::const_iterator begin() const { return _lines.begin(); }
 	Lines::const_iterator end() const { return _lines.end(); }
-
-	/**
-	 * Sets the font mode
-	 */
-	void setReduced(bool flag);
 
 	/**
 	 * Clear the lines
@@ -91,7 +85,8 @@ public:
 	 * Add a new line fragment for a given position
 	 */
 	void addText(const Common::String &str,
-		int lineNum, byte color = 0, int xp = 0);
+		int lineNum, byte color = 0,
+		TextAlignment align = ALIGN_LEFT, int xp = 0);
 
 	/**
 	 * Draw the view
@@ -102,6 +97,11 @@ public:
 	 * Handle keypress events
 	 */
 	bool msgKeypress(const KeypressMessage &msg) override;
+
+	/**
+	 * Handle mouse clicks
+	 */
+	bool msgMouseUp(const MouseUpMessage &msg) override;
 };
 
 } // namespace ViewsEnh
