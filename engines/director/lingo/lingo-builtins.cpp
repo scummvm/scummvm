@@ -1048,7 +1048,7 @@ void LB::b_sort(int nargs) {
 // Files
 ///////////////////
 void LB::b_closeDA(int nargs) {
-	warning("STUB: b_closeDA");
+	warning("BUILDBOT: closeDA is not supported in ScummVM");
 }
 
 void LB::b_closeResFile(int nargs) {
@@ -1114,7 +1114,7 @@ void LB::b_open(int nargs) {
 void LB::b_openDA(int nargs) {
 	Datum d = g_lingo->pop();
 
-	warning("STUB: b_openDA(%s)", d.asString().c_str());
+	warning("BUILDBOT: openDA is not supported in ScummVM");
 }
 
 void LB::b_openResFile(int nargs) {
@@ -1513,7 +1513,7 @@ void LB::b_param(int nargs) {
 }
 
 void LB::b_printFrom(int nargs) {
-	g_lingo->printSTUBWithArglist("b_printFrom", nargs);
+	warning("BUILDBOT: printFrom is not supported in ScummVM");
 
 	g_lingo->dropStack(nargs);
 }
