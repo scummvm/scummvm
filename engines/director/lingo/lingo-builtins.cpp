@@ -2706,11 +2706,27 @@ void LB::b_map(int nargs) {
 }
 
 void LB::b_offsetRect(int nargs) {
-	g_lingo->printSTUBWithArglist("b_offsetRect", nargs);
+	Datum vert = g_lingo->pop();
+	Datum hori = g_lingo->pop();
+	Datum rect = g_lingo->pop();
 
-	g_lingo->dropStack(nargs);
+	if (vert.type != INT ||
+		hori.type != INT ||
+		!(rect.type == RECT || (rect.type == ARRAY && rect.u.farr->arr.size() >= 4))) {
+		warning(" LB::b_offsetRect(): Invalid DatumType of inputs");
+		g_lingo->push(rect);
+	}
 
-	g_lingo->push(Datum(0));
+	//When vert is positive, rect moves higher
+	//When hori is positive, rect moves towards right
+
+	rect.u.farr->arr[0].u.i += hori.u.i;
+	rect.u.farr->arr[2].u.i += hori.u.i;
+	rect.u.farr->arr[1].u.i -= vert.u.i;
+	rect.u.farr->arr[3].u.i -= vert.u.i;
+	
+
+	g_lingo->push(rect);
 }
 
 void LB::b_union(int nargs) {
