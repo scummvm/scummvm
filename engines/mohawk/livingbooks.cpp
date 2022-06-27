@@ -1415,7 +1415,7 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 		debug(2, "kLBNotifyChangeMode: v2 type %d", event.param);
 		switch (event.param) {
 		case 1:
-			debug(2, "kLBNotifyChangeMode:, mode %d, page %d.%d",
+			debug(2, "kLBNotifyChangeMode: mode %d, page %d.%d",
 				event.newMode, event.newPage, event.newSubpage);
 			// TODO: what is entry.newUnknown?
 			if (!event.newMode)
@@ -1728,7 +1728,8 @@ bool LBAnimationNode::transparentAt(int x, int y) {
 LBAnimation::LBAnimation(MohawkEngine_LivingBooks *vm, LBAnimationItem *parent, uint16 resourceId) : _vm(vm), _parent(parent) {
 	Common::SeekableSubReadStreamEndian *aniStream = _vm->wrapStreamEndian(ID_ANI, resourceId);
 
-	if (aniStream->size() != 30)
+	// ANI records in the Wanderful sampler are 32 bytes, extra bytes are just NULs
+	if (aniStream->size() != 30 && aniStream->size() != 32)
 		warning("ANI Record size mismatch");
 
 	uint16 version = aniStream->readUint16();
@@ -1746,6 +1747,9 @@ LBAnimation::LBAnimation(MohawkEngine_LivingBooks *vm, LBAnimationItem *parent, 
 	debug(5, "ANI clip: (%d, %d), (%d, %d)", _clip.left, _clip.top, _clip.right, _clip.bottom);
 	debug(5, "ANI color id: %d", colorId);
 	debug(5, "ANI SPRResourceId: %d, offset %d", sprResourceId, sprResourceOffset);
+	if (aniStream->size() == 32) {
+		debug(5, "ANI extra bytes: (%d)", aniStream->readUint16());
+	}
 
 	if (aniStream->pos() != aniStream->size())
 		error("Still %d bytes at the end of anim stream", (int)(aniStream->size() - aniStream->pos()));
