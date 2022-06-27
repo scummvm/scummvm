@@ -671,11 +671,11 @@ void cEffect_SubTitle::OnDraw() {
 		float fAlpha = subTitle.mfAlpha * (1 - mpInit->mpInventory->GetAlpha());
 
 		if (subTitle.mbActive) {
-			mpFont->DrawWordWrap(cVector3f(25, 500, 47), 750, 16, 15, cColor(1, fAlpha),
+			mpFont->drawWordWrap(cVector3f(25, 500, 47), 750, 16, 15, cColor(1, fAlpha),
 								 eFontAlign_Left, subTitle.msMessage);
-			mpFont->DrawWordWrap(cVector3f(25, 500, 46) + cVector3f(1, 1, 0), 750, 16, 15, cColor(0, fAlpha),
+			mpFont->drawWordWrap(cVector3f(25, 500, 46) + cVector3f(1, 1, 0), 750, 16, 15, cColor(0, fAlpha),
 								 eFontAlign_Left, subTitle.msMessage);
-			mpFont->DrawWordWrap(cVector3f(25, 500, 46) + cVector3f(-1, -1, 0), 750, 16, 15, cColor(0, fAlpha),
+			mpFont->drawWordWrap(cVector3f(25, 500, 46) + cVector3f(-1, -1, 0), 750, 16, 15, cColor(0, fAlpha),
 								 eFontAlign_Left, subTitle.msMessage);
 		}
 	}

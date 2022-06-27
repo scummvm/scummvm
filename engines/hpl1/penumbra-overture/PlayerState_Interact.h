@@ -122,7 +122,7 @@ private:
 	float mfMinThrowImpulse;
 	float mfMaxThrowImpulse;
 
-	iFontData *mpFont;
+	FontData *mpFont;
 };
 
 //-----------------------------------------------------------------

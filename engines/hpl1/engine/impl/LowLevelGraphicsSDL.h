@@ -88,7 +88,7 @@ public:
 	void SetVirtualSize(cVector2f avSize);
 
 	Bitmap2D *CreateBitmap2D(const cVector2l &avSize, unsigned int alBpp);
-	iFontData *CreateFontData(const tString &asName);
+	FontData *CreateFontData(const tString &asName);
 
 	iTexture *CreateTexture(bool abUseMipMaps, eTextureType aType, eTextureTarget aTarget);
 	iTexture *CreateTexture(const tString &asName, bool abUseMipMaps, eTextureType aType, eTextureTarget aTarget);

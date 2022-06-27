@@ -55,7 +55,7 @@ cCredits::cCredits(cInit *apInit) : iUpdateable("Credits") {
 
 	// Load text
 	tWString sText = kTranslate("MainMenu", "CreditsText");
-	mpFont->GetWordWrapRows(750, 19, 17, sText, &mvTextRows);
+	mpFont->getWordWrapRows(750, 19, 17, sText, &mvTextRows);
 
 	Reset();
 }
@@ -108,10 +108,10 @@ void cCredits::OnDraw() {
 				fAlpha = (2 - fAlpha);
 
 			if (lSize == 0)
-				mpFont->Draw(cVector3f(400, fY, 10), fSize[lSize], cColor(1, fAlpha), eFontAlign_Center,
+				mpFont->draw(cVector3f(400, fY, 10), fSize[lSize], cColor(1, fAlpha), eFontAlign_Center,
 							 mvTextRows[i].c_str());
 			else
-				mpFont->Draw(cVector3f(400, fY, 10), fSize[lSize], cColor(0.8f, fAlpha), eFontAlign_Center,
+				mpFont->draw(cVector3f(400, fY, 10), fSize[lSize], cColor(0.8f, fAlpha), eFontAlign_Center,
 							 mvTextRows[i].substr(1).c_str());
 		}
 		fY += fSize[lSize];

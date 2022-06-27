@@ -146,16 +146,16 @@ void cRadioHandler::OnDraw() {
 
 	if (mpInit->mbSubtitles) {
 		if (msCurrentText != _W("")) {
-			mpFont->DrawWordWrap(cVector3f(25, 500, 47), 750, 16, 15, cColor(1, fAlpha),
+			mpFont->drawWordWrap(cVector3f(25, 500, 47), 750, 16, 15, cColor(1, fAlpha),
 								 eFontAlign_Left, msCurrentText);
-			mpFont->DrawWordWrap(cVector3f(25, 500, 46) + cVector3f(2, 2, 0), 750, 16, 15, cColor(0, fAlpha),
+			mpFont->drawWordWrap(cVector3f(25, 500, 46) + cVector3f(2, 2, 0), 750, 16, 15, cColor(0, fAlpha),
 								 eFontAlign_Left, msCurrentText);
 		}
 
 		if (msPrevText != _W("") && msPrevText != msCurrentText && mfAlpha < 1) {
-			mpFont->DrawWordWrap(cVector3f(25, 500, 47), 750, 16, 15, cColor(1, 1 - fAlpha),
+			mpFont->drawWordWrap(cVector3f(25, 500, 47), 750, 16, 15, cColor(1, 1 - fAlpha),
 								 eFontAlign_Left, msPrevText);
-			mpFont->DrawWordWrap(cVector3f(25, 500, 46) + cVector3f(2, 2, 0), 750, 16, 15, cColor(0, 1 - fAlpha),
+			mpFont->drawWordWrap(cVector3f(25, 500, 46) + cVector3f(2, 2, 0), 750, 16, 15, cColor(0, 1 - fAlpha),
 								 eFontAlign_Left, msPrevText);
 		}
 	}

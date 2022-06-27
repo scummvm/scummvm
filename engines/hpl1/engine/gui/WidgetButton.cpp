@@ -38,7 +38,7 @@
 #include "hpl1/engine/gui/GuiSet.h"
 #include "hpl1/engine/gui/GuiSkin.h"
 
-#include "hpl1/engine/graphics/FontData.h"
+#include "hpl1/engine/graphics/font_data.h"
 
 namespace hpl {
 

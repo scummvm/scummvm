@@ -31,7 +31,7 @@
 
 #include "hpl1/engine/math/Math.h"
 
-#include "hpl1/engine/graphics/FontData.h"
+#include "hpl1/engine/graphics/font_data.h"
 
 #include "hpl1/engine/gui/Gui.h"
 #include "hpl1/engine/gui/GuiSet.h"
@@ -61,8 +61,8 @@ cGuiPopUpMessageBox::cGuiPopUpMessageBox(cGuiSet *apSet,
 
 	cGuiSkinFont *pFont = mpSkin->GetFont(eGuiSkinFont_Default);
 
-	float fWindowMinLength = pFont->mpFont->GetLength(pFont->mvSize, asLabel.c_str());
-	float fTextLength = pFont->mpFont->GetLength(pFont->mvSize, asText.c_str());
+	float fWindowMinLength = pFont->mpFont->getLength(pFont->mvSize, asLabel.c_str());
+	float fTextLength = pFont->mpFont->getLength(pFont->mvSize, asText.c_str());
 
 	if (fTextLength > fWindowMinLength)
 		fWindowMinLength = fTextLength;

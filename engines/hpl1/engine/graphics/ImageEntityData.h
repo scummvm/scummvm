@@ -73,9 +73,9 @@ public:
 	~cImageEntityData();
 
 	// resource stuff:
-	bool Reload() { return false; }
-	void Unload() {}
-	void Destroy() {}
+	bool reload() { return false; }
+	void unload() {}
+	void destroy() {}
 
 	bool CreateFromFile(const tString &asFile, tUIntVec &avImageHandle);
 

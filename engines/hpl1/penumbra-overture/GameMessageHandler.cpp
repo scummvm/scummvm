@@ -95,24 +95,24 @@ void cGameMessage::Update(float afTimeStep) {
 
 //-----------------------------------------------------------------------
 
-void cGameMessage::Draw(iFontData *apFont) {
+void cGameMessage::Draw(FontData *apFont) {
 	if (mbActive == false)
 		return;
 
 	float fSide = 30;
 	if (mpMessHandler->mbBlackText) {
-		apFont->DrawWordWrap(cVector3f(fSide, 300, 152), 800 - fSide * 2, 16, 14, cColor(0, mfFade),
+		apFont->drawWordWrap(cVector3f(fSide, 300, 152), 800 - fSide * 2, 16, 14, cColor(0, mfFade),
 							 eFontAlign_Left, msText);
 	} else {
-		apFont->DrawWordWrap(cVector3f(fSide, 300, 152), 800 - fSide * 2, 16, 14, cColor(1, 1, 1, mfFade),
+		apFont->drawWordWrap(cVector3f(fSide, 300, 152), 800 - fSide * 2, 16, 14, cColor(1, 1, 1, mfFade),
 							 eFontAlign_Left, msText);
-		apFont->DrawWordWrap(cVector3f(fSide, 300, 151) + cVector3f(1, 1, -1), 800 - fSide * 2, 16, 14, cColor(0, 0, 0, mfFade),
+		apFont->drawWordWrap(cVector3f(fSide, 300, 151) + cVector3f(1, 1, -1), 800 - fSide * 2, 16, 14, cColor(0, 0, 0, mfFade),
 							 eFontAlign_Left, msText);
-		apFont->DrawWordWrap(cVector3f(fSide, 300, 151) + cVector3f(-1, -1, -1), 800 - fSide * 2, 16, 14, cColor(0, 0, 0, mfFade),
+		apFont->drawWordWrap(cVector3f(fSide, 300, 151) + cVector3f(-1, -1, -1), 800 - fSide * 2, 16, 14, cColor(0, 0, 0, mfFade),
 							 eFontAlign_Left, msText);
-		apFont->DrawWordWrap(cVector3f(fSide, 300, 151) + cVector3f(1, -1, -1), 800 - fSide * 2, 16, 14, cColor(0, 0, 0, mfFade),
+		apFont->drawWordWrap(cVector3f(fSide, 300, 151) + cVector3f(1, -1, -1), 800 - fSide * 2, 16, 14, cColor(0, 0, 0, mfFade),
 							 eFontAlign_Left, msText);
-		apFont->DrawWordWrap(cVector3f(fSide, 300, 151) + cVector3f(-1, 1, -1), 800 - fSide * 2, 16, 14, cColor(0, 0, 0, mfFade),
+		apFont->drawWordWrap(cVector3f(fSide, 300, 151) + cVector3f(-1, 1, -1), 800 - fSide * 2, 16, 14, cColor(0, 0, 0, mfFade),
 							 eFontAlign_Left, msText);
 	}
 }

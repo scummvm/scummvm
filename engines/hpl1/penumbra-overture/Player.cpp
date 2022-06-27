@@ -1493,7 +1493,7 @@ void cPlayer::OnDraw() {
 
 	// DEBUG: health
 	if (mbShowHealth) {
-		mpFont->Draw(cVector3f(5, 5, 0), 12, cColor(1, 1, 1, 1), eFontAlign_Left, _W("Health: %.0f"),
+		mpFont->draw(cVector3f(5, 5, 0), 12, cColor(1, 1, 1, 1), eFontAlign_Left, _W("Health: %.0f"),
 					 mfHealth);
 	}
 
@@ -1532,7 +1532,7 @@ void cPlayer::OnDraw() {
 			vEntries.push_back(&(*it));
 		}
 
-		mpFont->Draw(cVector3f(5, 18, 0), 10, cColor(1, 1, 1, 1), eFontAlign_Left, _W("Num of sounds: %d"), vSoundNames.size() - 1);
+		mpFont->draw(cVector3f(5, 18, 0), 10, cColor(1, 1, 1, 1), eFontAlign_Left, _W("Num of sounds: %d"), vSoundNames.size() - 1);
 
 		int lRow = 0, lCol = 0;
 		for (int i = 0; i < (int)vSoundNames.size(); i++) {
@@ -1542,7 +1542,7 @@ void cPlayer::OnDraw() {
 				lCol = 0;
 				continue;
 			}
-			mpFont->Draw(cVector3f((float)lCol * 250, 26 + (float)lRow * 11, 0), 10, cColor(1, 1, 1, 1), eFontAlign_Left,
+			mpFont->draw(cVector3f((float)lCol * 250, 26 + (float)lRow * 11, 0), 10, cColor(1, 1, 1, 1), eFontAlign_Left,
 						 _W("%ls(%.2f (%.2f %.2f)->%.2f"), cString::To16Char(vSoundNames[i]).c_str(),
 						 //_W("%ls(%.2f (%.2f %.2f)->%.2f %d %.2f/%.2f)"),cString::To16Char(vSoundNames[i]).c_str(),
 						 pEntry->mpSound->GetVolume(),
@@ -1569,7 +1569,7 @@ void cPlayer::OnDraw() {
 		cMusicEntry *pMusic = mpInit->mpGame->GetSound()->GetMusicHandler()->GetCurrentSong();
 		if (pMusic) {
 			iSoundChannel *pChannel = pMusic->mpStream;
-			mpFont->Draw(cVector3f(5, 18 + 70, 0), 10, cColor(1, 1, 1, 1), eFontAlign_Left,
+			mpFont->draw(cVector3f(5, 18 + 70, 0), 10, cColor(1, 1, 1, 1), eFontAlign_Left,
 						 _W("Music: '%ls' vol: %.2f playing: %d prio: %d elapsed: %.2f total time: %.2f"),
 						 cString::To16Char(pChannel->GetData()->GetName()).c_str(),
 						 pChannel->GetVolume(),

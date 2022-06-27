@@ -41,7 +41,7 @@ class cGraphics;
 class cSound;
 class cScene;
 
-class iFontData;
+class FontData;
 
 class cGui;
 class cGuiSkin;
@@ -136,7 +136,7 @@ public:
 				 const cColor &aColor = cColor(1, 1),
 				 eGuiMaterial aMaterial = eGuiMaterial_LastEnum);
 	void DrawFont(const tWString &asText,
-				  iFontData *apFont, const cVector3f &avPos,
+				  FontData *apFont, const cVector3f &avPos,
 				  const cVector2f &avSize, const cColor &aColor,
 				  eFontAlign aAlign = eFontAlign_Left,
 				  eGuiMaterial aMaterial = eGuiMaterial_FontNormal);

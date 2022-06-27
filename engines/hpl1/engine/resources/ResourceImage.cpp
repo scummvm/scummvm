@@ -113,18 +113,18 @@ tVertexVec cResourceImage::GetVertexVecCopy(const cVector2f &avPos, const cVecto
 
 //-----------------------------------------------------------------------
 
-bool cResourceImage::Reload() {
+bool cResourceImage::reload() {
 	return false;
 }
 
 //-----------------------------------------------------------------------
 
-void cResourceImage::Unload() {
+void cResourceImage::unload() {
 }
 
 //-----------------------------------------------------------------------
 
-void cResourceImage::Destroy() {
+void cResourceImage::destroy() {
 }
 
 //-----------------------------------------------------------------------

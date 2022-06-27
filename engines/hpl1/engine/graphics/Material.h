@@ -163,9 +163,9 @@ public:
 
 	eGpuProgramType GetType() { return mProgramType; }
 
-	bool Reload() { return false; }
-	void Unload() {}
-	void Destroy() {}
+	bool reload() { return false; }
+	void unload() {}
+	void destroy() {}
 
 protected:
 	iLowLevelGraphics *mpLowGfx;
@@ -208,9 +208,9 @@ public:
 	virtual ~iMaterial();
 
 	// resources stuff.
-	bool Reload() { return false; }
-	void Unload() {}
-	void Destroy() {}
+	bool reload() { return false; }
+	void unload() {}
+	void destroy() {}
 
 	virtual void Compile() = 0;
 

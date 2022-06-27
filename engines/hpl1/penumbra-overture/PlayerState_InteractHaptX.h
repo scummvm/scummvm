@@ -132,7 +132,7 @@ private:
 
 	float mfHapticTorqueMul;
 
-	iFontData *mpFont;
+	FontData *mpFont;
 };
 
 //-----------------------------------------------------------------

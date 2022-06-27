@@ -44,17 +44,17 @@ public:
 	 * virtual bool Reload()=0;
 	 * \return true is reload was succesful, else false.
 	 */
-	virtual bool Reload() = 0;
+	virtual bool reload() = 0;
 
 	/**
 	 * Free most the memory, save info to get started again.
 	 */
-	virtual void Unload() = 0;
+	virtual void unload() = 0;
 
 	/**
 	 * Free all memory.
 	 */
-	virtual void Destroy() = 0;
+	virtual void destroy() = 0;
 
 	tString GetName() { return msName; }
 	unsigned long GetHandle() { return mlHandle; }

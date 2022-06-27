@@ -111,7 +111,7 @@ cMainMenuWidget_MainButton::cMainMenuWidget_MainButton(cInit *apInit, const cVec
 	mfOverTimer = 0;
 	mfAlpha = 0;
 
-	mRect.w = mpFont->GetLength(mvFontSize, msText.c_str());
+	mRect.w = mpFont->getLength(mvFontSize, msText.c_str());
 	mRect.h = mvFontSize.y + 8;
 	mRect.x = avPos.x - mRect.w / 2;
 	mRect.y = avPos.y + 3;
@@ -158,13 +158,13 @@ void cMainMenuWidget_MainButton::OnMouseDown(eMButton aButton) {
 //-----------------------------------------------------------------------
 
 void cMainMenuWidget_MainButton::OnDraw() {
-	mpFont->Draw(mvPositon, mvFontSize, cColor(0.62f + mfAlpha * 0.3f, 1), eFontAlign_Center, msText.c_str());
+	mpFont->draw(mvPositon, mvFontSize, cColor(0.62f + mfAlpha * 0.3f, 1), eFontAlign_Center, msText.c_str());
 
 	float fAdd = sin(mfOverTimer) * 16.0f;
 
 	if (mfAlpha > 0) {
-		mpFont->Draw(mvPositon + cVector3f(fAdd, 0, -1), mvFontSize, cColor(0.56f, 0.35f * mfAlpha), eFontAlign_Center, msText.c_str());
-		mpFont->Draw(mvPositon + cVector3f(-fAdd, 0, -1), mvFontSize, cColor(0.56f, 0.35f * mfAlpha), eFontAlign_Center, msText.c_str());
+		mpFont->draw(mvPositon + cVector3f(fAdd, 0, -1), mvFontSize, cColor(0.56f, 0.35f * mfAlpha), eFontAlign_Center, msText.c_str());
+		mpFont->draw(mvPositon + cVector3f(-fAdd, 0, -1), mvFontSize, cColor(0.56f, 0.35f * mfAlpha), eFontAlign_Center, msText.c_str());
 	}
 }
 
@@ -191,7 +191,7 @@ cMainMenuWidget_Button::cMainMenuWidget_Button(cInit *apInit, const cVector3f &a
 	mfAlpha = 0;
 	mfOverTimer = 0;
 
-	mRect.w = mpFont->GetLength(mvFontSize, msText.c_str());
+	mRect.w = mpFont->getLength(mvFontSize, msText.c_str());
 	mRect.h = mvFontSize.y + 3;
 	mRect.y = avPos.y + 3;
 
@@ -243,16 +243,16 @@ void cMainMenuWidget_Button::OnMouseDown(eMButton aButton) {
 //-----------------------------------------------------------------------
 
 void cMainMenuWidget_Button::OnDraw() {
-	mpFont->Draw(mvPositon, mvFontSize, cColor(0.62f, 1), mAlignment, msText.c_str());
+	mpFont->draw(mvPositon, mvFontSize, cColor(0.62f, 1), mAlignment, msText.c_str());
 
 	if (mfAlpha > 0) {
 		float fX = 0.8f + sin(mfOverTimer) * 0.2f;
 
-		mpFont->Draw(mvPositon + cVector3f(0, 0, 1), mvFontSize, cColor(0.9f, 0.95f, 1.0f, mfAlpha * fX), mAlignment, msText.c_str());
-		mpFont->Draw(mvPositon + cVector3f(2, 2, -1), mvFontSize, cColor(0.1f, 0.32f, 1.0f, mfAlpha * fX), mAlignment, msText.c_str());
-		mpFont->Draw(mvPositon + cVector3f(-2, -2, -1), mvFontSize, cColor(0.1f, 0.32f, 1.0f, mfAlpha * fX), mAlignment, msText.c_str());
-		mpFont->Draw(mvPositon + cVector3f(3, 3, -2), mvFontSize, cColor(0.1f, 0.32f, 1.0f, mfAlpha * 0.5f * fX), mAlignment, msText.c_str());
-		mpFont->Draw(mvPositon + cVector3f(-3, -3, -2), mvFontSize, cColor(0.1f, 0.32f, 1.0f, mfAlpha * 0.5f * fX), mAlignment, msText.c_str());
+		mpFont->draw(mvPositon + cVector3f(0, 0, 1), mvFontSize, cColor(0.9f, 0.95f, 1.0f, mfAlpha * fX), mAlignment, msText.c_str());
+		mpFont->draw(mvPositon + cVector3f(2, 2, -1), mvFontSize, cColor(0.1f, 0.32f, 1.0f, mfAlpha * fX), mAlignment, msText.c_str());
+		mpFont->draw(mvPositon + cVector3f(-2, -2, -1), mvFontSize, cColor(0.1f, 0.32f, 1.0f, mfAlpha * fX), mAlignment, msText.c_str());
+		mpFont->draw(mvPositon + cVector3f(3, 3, -2), mvFontSize, cColor(0.1f, 0.32f, 1.0f, mfAlpha * 0.5f * fX), mAlignment, msText.c_str());
+		mpFont->draw(mvPositon + cVector3f(-3, -3, -2), mvFontSize, cColor(0.1f, 0.32f, 1.0f, mfAlpha * 0.5f * fX), mAlignment, msText.c_str());
 	}
 }
 
@@ -277,7 +277,7 @@ cMainMenuWidget_Text::cMainMenuWidget_Text(cInit *apInit, const cVector3f &avPos
 
 	mAlignment = aAlignment;
 
-	mRect.w = mpFont->GetLength(mvFontSize, msText.c_str());
+	mRect.w = mpFont->getLength(mvFontSize, msText.c_str());
 	mRect.h = mvFontSize.y + 3;
 	mRect.y = avPos.y + 3;
 
@@ -300,14 +300,14 @@ cMainMenuWidget_Text::~cMainMenuWidget_Text() {
 //-----------------------------------------------------------------------
 
 void cMainMenuWidget_Text::UpdateSize() {
-	mRect.w = mpFont->GetLength(mvFontSize, msText.c_str());
+	mRect.w = mpFont->getLength(mvFontSize, msText.c_str());
 }
 
 void cMainMenuWidget_Text::OnDraw() {
 	if (mfMaxWidth <= 0)
-		mpFont->Draw(mvPositon, mvFontSize, cColor(0.9f, 1), mAlignment, _W("%ls"), msText.c_str());
+		mpFont->draw(mvPositon, mvFontSize, cColor(0.9f, 1), mAlignment, _W("%ls"), msText.c_str());
 	else
-		mpFont->DrawWordWrap(mvPositon, mfMaxWidth, mvFontSize.y + 1,
+		mpFont->drawWordWrap(mvPositon, mfMaxWidth, mvFontSize.y + 1,
 							 mvFontSize, cColor(0.9f, 1), mAlignment, msText.c_str());
 }
 
@@ -499,12 +499,12 @@ void cMainMenuWidget_List::OnDraw() {
 			break;
 
 		if (mlSelected == i) {
-			mpFont->Draw(vPos, mvFontSize, cColor(0.95f, 1), eFontAlign_Left, mvEntries[i].c_str());
+			mpFont->draw(vPos, mvFontSize, cColor(0.95f, 1), eFontAlign_Left, mvEntries[i].c_str());
 			mpDrawer->DrawGfxObject(mpBackGfx, vPos + cVector3f(0, 2, -1),
 									cVector2f(mvSize.x - 5, mvFontSize.y),
 									cColor(0.0f, 0.0f, 0.73f, 1));
 		} else
-			mpFont->Draw(vPos, mvFontSize, cColor(0.7f, 1), eFontAlign_Left, mvEntries[i].c_str());
+			mpFont->draw(vPos, mvFontSize, cColor(0.7f, 1), eFontAlign_Left, mvEntries[i].c_str());
 
 		vPos.y += mvFontSize.y + 2;
 	}
@@ -1912,7 +1912,7 @@ void cMainMenu::OnDraw() {
 	////////////////////////////
 	// Draw tip
 	if (msButtonTip != _W("")) {
-		mpTipFont->DrawWordWrap(cVector3f(10, 570, 150), 780, 13, 12, cColor(1, 1),
+		mpTipFont->drawWordWrap(cVector3f(10, 570, 150), 780, 13, 12, cColor(1, 1),
 								eFontAlign_Left, msButtonTip.c_str());
 	}
 

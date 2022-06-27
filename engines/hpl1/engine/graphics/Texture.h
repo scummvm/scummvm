@@ -103,9 +103,9 @@ public:
 	void SetSizeLevel(unsigned int alLevel) { mlSizeLevel = alLevel; }
 	void SetMinLevelSize(const cVector2l &avSize) { mvMinLevelSize = avSize; }
 
-	bool Reload() { return false; }
-	void Unload() {}
-	void Destroy() {}
+	bool reload() { return false; }
+	void unload() {}
+	void destroy() {}
 
 	/**
 	 * Create a texture from a bitmap, work only for 1D, 2D and Rect targets. Doesn't work with render targets.

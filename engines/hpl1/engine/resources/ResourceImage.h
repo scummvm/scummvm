@@ -50,9 +50,9 @@ public:
 				   cRect2l aRect,
 				   cVector2l avSrcSize, int alHandle);
 
-	bool Reload();
-	void Unload();
-	void Destroy();
+	bool reload();
+	void unload();
+	void destroy();
 
 	// Image specific
 	int GetHeight() const { return mRect.h; }

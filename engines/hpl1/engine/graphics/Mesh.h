@@ -319,9 +319,9 @@ public:
 	cNode3D *GetNode(int alIdx);
 
 	// Resources implementation
-	bool Reload() { return false; }
-	void Unload() {}
-	void Destroy() {}
+	bool reload() { return false; }
+	void unload() {}
+	void destroy() {}
 
 private:
 	cMaterialManager *mpMaterialManager;

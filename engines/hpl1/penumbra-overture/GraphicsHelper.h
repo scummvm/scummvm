@@ -58,7 +58,7 @@ private:
 
 	cGraphicsDrawer *mpDrawer;
 
-	iFontData *mpFont;
+	FontData *mpFont;
 };
 
 //---------------------------------------------

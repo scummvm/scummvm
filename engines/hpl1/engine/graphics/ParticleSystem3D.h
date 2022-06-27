@@ -53,9 +53,9 @@ public:
 
 	void AddEmitterData(iParticleEmitterData *apData);
 
-	bool Reload() { return false; }
-	void Unload() {}
-	void Destroy() {}
+	bool reload() { return false; }
+	void unload() {}
+	void destroy() {}
 
 	iParticleEmitterData *GetEmitterData(int alIdx) const { return mvEmitterData[alIdx]; }
 

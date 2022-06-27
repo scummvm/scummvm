@@ -40,7 +40,7 @@
 
 #include "hpl1/engine/gui/WidgetButton.h"
 
-#include "hpl1/engine/graphics/FontData.h"
+#include "hpl1/engine/graphics/font_data.h"
 
 namespace hpl {
 

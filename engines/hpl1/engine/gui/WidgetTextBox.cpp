@@ -31,7 +31,7 @@
 
 #include "hpl1/engine/math/Math.h"
 
-#include "hpl1/engine/graphics/FontData.h"
+#include "hpl1/engine/graphics/font_data.h"
 
 #include "hpl1/engine/system/String.h"
 
@@ -141,17 +141,17 @@ void cWidgetTextBox::SetCanEdit(bool abX) {
 int cWidgetTextBox::GetLastCharInSize(int alStartPos, float afMaxSize, float afLengthAdd) {
 	int lCharPos = (int)msText.size();
 	float fLength = 0;
-	int lFirst = mpDefaultFontType->GetFirstChar();
-	int lLast = mpDefaultFontType->GetLastChar();
+	int lFirst = mpDefaultFontType->getFirstChar();
+	int lLast = mpDefaultFontType->getLastChar();
 	for (int i = alStartPos; i < (int)msText.size(); ++i) {
 		if (i < lFirst || i > lLast)
 			continue;
 
-		cGlyph *pGlyph = mpDefaultFontType->GetGlyph(msText[i] - lFirst);
+		Glyph *pGlyph = mpDefaultFontType->getGlyph(msText[i] - lFirst);
 		if (pGlyph == NULL)
 			continue;
 
-		fLength += pGlyph->mfAdvance * mvDefaultFontSize.x;
+		fLength += pGlyph->_advance * mvDefaultFontSize.x;
 		if (fLength + afLengthAdd >= afMaxSize) {
 			lCharPos = i;
 			break;
@@ -166,17 +166,17 @@ int cWidgetTextBox::GetLastCharInSize(int alStartPos, float afMaxSize, float afL
 int cWidgetTextBox::GetFirstCharInSize(int alStartPos, float afMaxSize, float afLengthAdd) {
 	int lCharPos = 0;
 	float fLength = 0;
-	int lFirst = mpDefaultFontType->GetFirstChar();
-	int lLast = mpDefaultFontType->GetLastChar();
+	int lFirst = mpDefaultFontType->getFirstChar();
+	int lLast = mpDefaultFontType->getLastChar();
 	for (int i = alStartPos; i >= 0; --i) {
 		if (i < lFirst || i > lLast)
 			continue;
 
-		cGlyph *pGlyph = mpDefaultFontType->GetGlyph(msText[i] - lFirst);
+		Glyph *pGlyph = mpDefaultFontType->getGlyph(msText[i] - lFirst);
 		if (pGlyph == NULL)
 			continue;
 
-		fLength += pGlyph->mfAdvance * mvDefaultFontSize.x;
+		fLength += pGlyph->_advance * mvDefaultFontSize.x;
 		if (fLength + afLengthAdd >= afMaxSize) {
 			lCharPos = i;
 			break;
@@ -207,7 +207,7 @@ int cWidgetTextBox::WorldToCharPos(const cVector2f &avWorldPos) {
 float cWidgetTextBox::CharToLocalPos(int alChar) {
 	float fMarkerPos = -2;
 	if (alChar > 0 && alChar - mlFirstVisibleChar > 0) {
-		fMarkerPos = mpDefaultFontType->GetLength(mvDefaultFontSize,
+		fMarkerPos = mpDefaultFontType->getLength(mvDefaultFontSize,
 												  cString::SubW(msText, mlFirstVisibleChar, alChar - mlFirstVisibleChar).c_str());
 	}
 	return fMarkerPos;
@@ -569,13 +569,13 @@ bool cWidgetTextBox::OnKeyPress(cGuiMessageData &aData) {
 	//////////////////////////////////
 	// Character
 	else {
-		int lFirstFontChar = mpDefaultFontType->GetFirstChar();
-		int lLastFontChar = mpDefaultFontType->GetLastChar();
+		int lFirstFontChar = mpDefaultFontType->getFirstChar();
+		int lLastFontChar = mpDefaultFontType->getLastChar();
 		wchar_t unicode = aData.mKeyPress.mlUnicode;
 
 		// Check so press is valid
 		if (unicode >= lFirstFontChar && unicode <= lLastFontChar &&
-			mpDefaultFontType->GetGlyph(unicode - lFirstFontChar)) {
+			mpDefaultFontType->getGlyph(unicode - lFirstFontChar)) {
 			if (mlSelectedTextEnd < 0) {
 				if (mlMaxCharacters == -1 || (int)msText.size() < mlMaxCharacters) {
 					SetText(cString::SubW(msText, 0, mlMarkerCharPos) + unicode +

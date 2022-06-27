@@ -48,9 +48,9 @@ public:
 	cCGProgram(tString asName, CGcontext aContext, eGpuProgramType aType);
 	~cCGProgram();
 
-	bool Reload();
-	void Unload();
-	void Destroy();
+	bool reload();
+	void unload();
+	void destroy();
 
 	tString GetProgramName() { return msName; }
 
