@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef PINK_DIRECTOR_H
-#define PINK_DIRECTOR_H
+#ifndef PINK_SCREEN_H
+#define PINK_SCREEN_H
 
 #include "common/array.h"
 #include "common/rect.h"

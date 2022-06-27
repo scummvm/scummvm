@@ -23,7 +23,7 @@
 
 #include "pink/archive.h"
 #include "pink/pink.h"
-#include "pink/director.h"
+#include "pink/screen.h"
 #include "pink/sound.h"
 #include "pink/objects/actions/action_sound.h"
 #include "pink/objects/actors/actor.h"

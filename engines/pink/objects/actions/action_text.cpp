@@ -25,7 +25,7 @@
 #include "graphics/transparent_surface.h"
 
 #include "pink/archive.h"
-#include "pink/director.h"
+#include "pink/screen.h"
 #include "pink/pink.h"
 #include "pink/objects/actors/actor.h"
 #include "pink/objects/actions/action_text.h"
