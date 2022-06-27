@@ -42,7 +42,7 @@ namespace Pink {
 PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
 	: Engine(system), _rnd("pink"), _exeResources(nullptr),
 	_desc(desc), _bro(nullptr), _menu(nullptr), _actor(nullptr),
-	_module(nullptr), _director(nullptr), _pdaMgr(this) {
+	_module(nullptr), _screen(nullptr), _pdaMgr(this) {
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
@@ -58,7 +58,7 @@ PinkEngine::~PinkEngine() {
 	for (uint j = 0; j < _cursors.size(); ++j) {
 		delete _cursors[j];
 	}
-	delete _director;
+	delete _screen;
 }
 
 Common::Error PinkEngine::init() {
@@ -72,7 +72,7 @@ Common::Error PinkEngine::init() {
 	}
 
 	setDebugger(new Console(this));
-	_director = new Director(this);
+	_screen = new Screen(this);
 
 	initMenu();
 
@@ -123,7 +123,7 @@ Common::Error Pink::PinkEngine::run() {
 	while (!shouldQuit()) {
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
-			if (_director->processEvent(event))
+			if (_screen->processEvent(event))
 				continue;
 
 			switch (event.type) {
@@ -152,7 +152,7 @@ Common::Error Pink::PinkEngine::run() {
 		}
 
 		_actor->update();
-		_director->update();
+		_screen->update();
 		_system->delayMillis(10);
 	}
 
@@ -180,7 +180,7 @@ void PinkEngine::initModule(const Common::String &moduleName, const Common::Stri
 
 void PinkEngine::changeScene() {
 	setCursor(kLoadingCursor);
-	_director->clear();
+	_screen->clear();
 
 	if (!_nextModule.empty() && _nextModule != _module->getName())
 		initModule(_nextModule, _nextPage, nullptr);
@@ -286,7 +286,7 @@ bool PinkEngine::hasFeature(Engine::EngineFeature f) const {
 
 void PinkEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
-	_director->pause(pause);
+	_screen->pause(pause);
 }
 
 bool PinkEngine::isPeril() const {

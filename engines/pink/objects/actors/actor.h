@@ -31,7 +31,7 @@ namespace Pink {
 class Page;
 class Action;
 class Sequencer;
-class Director;
+class Screen;
 class CursorMgr;
 class InventoryItem;
 class InventoryMgr;
@@ -47,7 +47,7 @@ public:
 	void saveState(Archive &archive);
 
 	virtual void init(bool paused);
-	bool initPalette(Director *director);
+	bool initPalette(Screen *screen);
 
 	void toConsole() const override;
 

@@ -70,7 +70,7 @@ struct WinCursorGroup;
 namespace Pink {
 
 class Console;
-class Director;
+class Screen;
 class Archive;
 class NamedObject;
 class Module;
@@ -125,7 +125,7 @@ public:
 	OrbFile *getOrb()  { return &_orb; }
 	BroFile *getBro()  { return _bro; }
 	Common::RandomSource &getRnd() { return _rnd; };
-	Director *getDirector() { return _director; }
+	Screen *getScreen() { return _screen; }
 	PDAMgr &getPdaMgr() { return _pdaMgr; }
 
 	void setNextExecutors(const Common::String &nextModule, const Common::String &nextPage) { _nextModule = nextModule; _nextPage = nextPage; }
@@ -158,7 +158,7 @@ private:
 	BroFile *_bro;
 
 	Graphics::MacMenu *_menu;
-	Director *_director;
+	Screen *_screen;
 	LeadActor *_actor;
 
 	Module *_module;

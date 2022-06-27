@@ -28,13 +28,13 @@
 namespace Pink {
 
 class Actor;
-class Director;
+class Screen;
 
 class Action : public NamedObject {
 public:
 	void deserialize(Archive &archive) override;
 
-	virtual bool initPalette(Director *director);
+	virtual bool initPalette(Screen *screen);
 
 	virtual void start() = 0;
 	virtual void end() = 0;
