@@ -105,7 +105,7 @@ void FrameBuffer::drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2) {
 	int sr, sg, sb;
 
 	if (kInterpZ) {
-		if (!n)
+		if (n == 0)
 			return
 		sz = (p2->z - p1->z) / n;
 		z = p1->z;
