@@ -640,21 +640,82 @@ union SwapDouble {
 };
 #endif
 
-#ifndef __DC__
-STATIC_ASSERT(sizeof(double) == sizeof(uint64), Unexpected_size_of_double);
-#endif
+STATIC_ASSERT(sizeof(double) == sizeof(uint64) || sizeof(double) == sizeof(uint32), Unexpected_size_of_double);
+
+template<size_t n> inline double READ_DOUBLE(const SwapDouble& sw);
+template<size_t n> inline void WRITE_DOUBLE(SwapDouble &sw, double d);
+
+// 64-bit double
+template<> inline double READ_DOUBLE<sizeof(uint64)>(const SwapDouble& sd)
+{
+  return sd.d;
+}
+
+template<> inline void WRITE_DOUBLE<sizeof(uint64)>(SwapDouble &sd, double d)
+{
+  sd.d = d;
+}
+
+// 32-bit double
+template<> inline double READ_DOUBLE<sizeof(uint32)>(const SwapDouble& sd)
+{
+  SwapFloat sf;
+  uint32 e = (sd.u32.high >> 20) & 0x7ff;
+  if (e <= 896) {
+    // Too small for normalized, create a zero with the correct sign
+    // (FIXME: Create denormalized numbers instead when possible?)
+    sf.u32 = (sd.u32.high & 0x80000000U); // sign bit
+    return sf.f;
+  } else if(e >= 1151) {
+    // Overflow, infinity or NaN
+    if (e < 2047) {
+      // Overflow; make sure result is infinity and not NaN
+      sf.u32 = (sd.u32.high & 0x80000000U) | // sign bit
+        (255 << 23); // exponent
+      return sf.f;
+    }
+    e = 255;
+  } else
+    e -= 896;
+  sf.u32 = (sd.u32.high & 0x80000000U) | // sign bit
+    (e << 23) | // exponent
+    ((sd.u32.high & 0xfffff) << 3) | (sd.u32.low >> 29); // mantissa
+  return sf.f;
+}
+
+template<> inline void WRITE_DOUBLE<sizeof(uint32)>(SwapDouble &sd, double d)
+{
+  SwapFloat sf;
+  sf.f = d;
+  uint32 e = (sf.u32 >> 23) & 0xff;
+  if (!e) {
+    // Denormalized or zero, create a zero with the correct sign
+    // (FIXME: Convert denormalized 32-bit to normalized 64-bit?)
+    sd.u32.high = (sf.u32 & 0x80000000U); // sign bit
+    sd.u32.low = 0;
+    return;
+  } else if (e == 255) {
+    // Infinity or NaN
+    e = 2047;
+  } else
+    e += 896;
+  sd.u32.high = (sf.u32 & 0x80000000U) | // sign bit
+    (e << 20) | // exponent
+    ((sf.u32 >> 3) & 0xfffff); // mantissa
+  sd.u32.low = sf.u32 << 29;
+}
 
 inline double READ_LE_FLOAT64(const void *ptr) {
 	SwapDouble swap;
 	const uint8 *b = (const uint8 *)ptr;
 	swap.u32.low  = READ_LE_UINT32(b);
 	swap.u32.high = READ_LE_UINT32(b + 4);
-	return swap.d;
+	return READ_DOUBLE<sizeof(double)>(swap);
 }
 
 inline void WRITE_LE_FLOAT64(void *ptr, double value) {
 	SwapDouble swap;
-	swap.d = value;
+	WRITE_DOUBLE<sizeof(double)>(swap, value);
 	uint8 *b = (uint8 *)ptr;
 	WRITE_LE_UINT32(b,     swap.u32.low);
 	WRITE_LE_UINT32(b + 4, swap.u32.high);
@@ -665,12 +726,12 @@ inline double READ_BE_FLOAT64(const void *ptr) {
 	const uint8 *b = (const uint8 *)ptr;
 	swap.u32.high = READ_BE_UINT32(b);
 	swap.u32.low  = READ_BE_UINT32(b + 4);
-	return swap.d;
+	return READ_DOUBLE<sizeof(double)>(swap);
 }
 
 inline void WRITE_BE_FLOAT64(void *ptr, double value) {
 	SwapDouble swap;
-	swap.d = value;
+	WRITE_DOUBLE<sizeof(double)>(swap, value);
 	uint8 *b = (uint8 *)ptr;
 	WRITE_BE_UINT32(b,     swap.u32.high);
 	WRITE_BE_UINT32(b + 4, swap.u32.low);
@@ -681,12 +742,12 @@ inline double READ_FPA_FLOAT64(const void *ptr) {
 	const uint8 *b = (const uint8 *)ptr;
 	swap.u32.high = READ_LE_UINT32(b);
 	swap.u32.low  = READ_LE_UINT32(b + 4);
-	return swap.d;
+	return READ_DOUBLE<sizeof(double)>(swap);
 }
 
 inline void WRITE_FPA_FLOAT64(void *ptr, double value) {
 	SwapDouble swap;
-	swap.d = value;
+	WRITE_DOUBLE<sizeof(double)>(swap, value);
 	uint8 *b = (uint8 *)ptr;
 	WRITE_LE_UINT32(b,     swap.u32.high);
 	WRITE_LE_UINT32(b + 4, swap.u32.low);
@@ -695,12 +756,12 @@ inline void WRITE_FPA_FLOAT64(void *ptr, double value) {
 inline double READ_FLOAT64(const void *ptr) {
 	SwapDouble swap;
 	swap.u64 = READ_UINT64(ptr);
-	return swap.d;
+	return READ_DOUBLE<sizeof(double)>(swap);
 }
 
 inline void WRITE_FLOAT64(void *ptr, double value) {
 	SwapDouble swap;
-	swap.d = value;
+	WRITE_DOUBLE<sizeof(double)>(swap, value);
 	WRITE_UINT64(ptr, swap.u64);
 }
 
