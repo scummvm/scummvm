@@ -73,7 +73,8 @@ public:
 	bool hasFeature(EngineFeature f) const override {
 		return (f == kSupportsLoadingDuringRuntime) ||
 			   (f == kSupportsSavingDuringRuntime) ||
-			   (f == kSupportsReturnToLauncher);
+			   (f == kSupportsReturnToLauncher) ||
+			   (f == kSupportsArbitraryResolutions);
 	};
 
 	bool canLoadGameStateCurrently() override {
