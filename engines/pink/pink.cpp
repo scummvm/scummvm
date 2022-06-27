@@ -33,7 +33,7 @@
 
 #include "pink/pink.h"
 #include "pink/console.h"
-#include "pink/director.h"
+#include "pink/surface.h"
 #include "pink/objects/module.h"
 #include "pink/objects/actors/lead_actor.h"
 

@@ -6,7 +6,7 @@ MODULE_OBJS = \
 	cel_decoder.o \
 	console.o \
 	cursor_mgr.o \
-	director.o \
+	surface.o \
 	file.o \
 	gui.o \
 	metaengine.o \

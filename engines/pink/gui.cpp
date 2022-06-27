@@ -28,7 +28,7 @@
 #include "gui/message.h"
 
 #include "pink/pink.h"
-#include "pink/director.h"
+#include "pink/surface.h"
 #include "pink/objects/actors/lead_actor.h"
 
 namespace Pink {
