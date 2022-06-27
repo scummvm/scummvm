@@ -43,19 +43,25 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-static const ExtraGuiOption sword25ExtraGuiOption = {
-	_s("Use English speech"),
-	_s("Use English speech instead of German for every language other than German"),
-	"english_speech",
-	false,
-	0,
-	0
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ENGLISH_SPEECH,
+		{
+			_s("Use English speech"),
+			_s("Use English speech instead of German for every language other than German"),
+			"english_speech",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
 class Sword25MetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	Sword25MetaEngineDetection() : AdvancedMetaEngineDetection(Sword25::gameDescriptions, sizeof(ADGameDescription), sword25Game) {
-		_guiOptions = GUIO1(GUIO_NOMIDI);
+	Sword25MetaEngineDetection() : AdvancedMetaEngineDetection(Sword25::gameDescriptions, sizeof(ADGameDescription), sword25Game, optionsList) {
+		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_ENGLISH_SPEECH);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -75,14 +81,6 @@ public:
 	const DebugChannelDef *getDebugChannels() const override {
 		return debugFlagList;
 	}
-
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 };
-
-const ExtraGuiOptions Sword25MetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
-	ExtraGuiOptions options;
-	options.push_back(sword25ExtraGuiOption);
-	return options;
-}
 
 REGISTER_PLUGIN_STATIC(SWORD25_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Sword25MetaEngineDetection);
