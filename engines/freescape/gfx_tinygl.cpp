@@ -241,7 +241,8 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vec
 	else if (size.z() == 0)
 		dz = 2;
 	else {
-		if (ordinates->size() != 6) {
+		if (ordinates->size() % 3 > 0) {
+			//return;
 			error("Invalid polygon: %f %f %f", size.x(), size.y(), size.z());
 		}
 	}

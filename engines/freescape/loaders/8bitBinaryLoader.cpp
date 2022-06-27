@@ -16,7 +16,10 @@ namespace Freescape {
 
 static Object *load8bitObject(Common::SeekableReadStream *file) {
 
-	Object::Type objectType = (Object::Type)(file->readByte() & 0x1F);
+	byte rawType = file->readByte();
+	debug("Raw object type: %d", rawType);
+	Object::Type objectType = (Object::Type)(rawType & 0x1F);
+
 	Math::Vector3d position, v;
 
 	position.x() = file->readByte();
@@ -33,6 +36,13 @@ static Object *load8bitObject(Common::SeekableReadStream *file) {
 	// already so we can subtract that to get the remaining
 	// length beyond here
 	uint8 byteSizeOfObject = file->readByte();
+	debug("Raw object %d ; type %d ; size %d", objectID, (int)objectType, byteSizeOfObject);
+	if (byteSizeOfObject < 9) {
+		error("Not enough bytes %d to read object %d with type %d", byteSizeOfObject, objectID, objectType);
+		//file->seek(byteSizeOfObject, SEEK_CUR);
+		//return nullptr;
+	}
+
 	assert(byteSizeOfObject >= 9);
 	byteSizeOfObject = byteSizeOfObject - 9;
 	debug("Object %d ; type %d ; size %d", objectID, (int)objectType, byteSizeOfObject);
@@ -61,7 +71,11 @@ static Object *load8bitObject(Common::SeekableReadStream *file) {
 		if (numberOfOrdinates) {
 			ordinates = new Common::Array<uint16>;
 			uint16 ord = 0;
-
+			if (byteSizeOfObject < numberOfOrdinates) {
+				error("Not enough bytes to read all the ordinates");
+				//file->seek(byteSizeOfObject, SEEK_CUR);
+				//return nullptr;
+			}
 			for (int ordinate = 0; ordinate < numberOfOrdinates; ordinate++) {
 				ord = file->readByte();
 				debug("ord: %x", ord);
@@ -78,7 +92,7 @@ static Object *load8bitObject(Common::SeekableReadStream *file) {
 			Common::Array<uint8> conditionArray(conditionData, byteSizeOfObject);
 			Common::String *conditionSource = detokenise8bitCondition(conditionArray);
 			//instructions = getInstructions(conditionSource);
-			debug("%s", conditionSource->c_str());
+			//debug("%s", conditionSource->c_str());
 		}
 
 		// create an object
@@ -92,9 +106,13 @@ static Object *load8bitObject(Common::SeekableReadStream *file) {
 			ordinates,
 			instructions);
 	} break;
-
 	case Object::Entrance: {
 		debug("rotation: %f %f %f", v.x(), v.y(), v.z());
+		if (byteSizeOfObject > 0) {
+			error("Extra bytes in entrance");
+			//file->seek(byteSizeOfObject, SEEK_CUR);
+			//return nullptr;
+		}
 		assert(byteSizeOfObject == 0);
 		// create an entrance
 		return new Entrance(
@@ -199,7 +217,7 @@ Graphics::PixelBuffer *getPaletteGradient(uint8 c1, uint8 c2, uint16 ncolors) {
 		raw_palette->push_back(y1);
 		raw_palette->push_back(y2);
 	}
-	assert(ncolors == 16);
+	//assert(ncolors == 16);
 	assert(raw_palette->size() == ncolors * 3);
 	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
 	Graphics::PixelBuffer *palette = new Graphics::PixelBuffer(pixelFormat, ncolors, DisposeAfterUse::NO); //TODO
@@ -210,6 +228,7 @@ Graphics::PixelBuffer *getPaletteGradient(uint8 c1, uint8 c2, uint16 ncolors) {
 Area *load8bitArea(Common::SeekableReadStream *file, uint16 ncolors) {
 
 	uint32 base = file->pos();
+	debug("Area base: %x", base);
 	uint8 skippedValue = file->readByte();
 	uint8 numberOfObjects = file->readByte();
 	uint8 areaNumber = file->readByte();
@@ -232,16 +251,22 @@ Area *load8bitArea(Common::SeekableReadStream *file, uint16 ncolors) {
 	Graphics::PixelBuffer *palette = getPaletteGradient(ci3, ci4, ncolors);
 
 	debug("Area %d", areaNumber);
-	debug("Objects: %d", numberOfObjects);
+	debug("Skipped: %d Objects: %d", skippedValue, numberOfObjects);
 	debug("Condition Ptr: %x", cPtr);
+	debug("Pos before first object: %lx", file->pos());
 
 	file->seek(15, SEEK_CUR);
+	//file->seek(4, SEEK_CUR);
+
 	ObjectMap *objectsByID = new ObjectMap;
 	ObjectMap *entrancesByID = new ObjectMap;
 	for (uint8 object = 0; object < numberOfObjects; object++) {
+		debug("Reading object: %d", object);
 		Object *newObject = load8bitObject(file);
 
 		if (newObject) {
+			//if (newObject->getObjectID() == 255) // TODO: fix me?
+			//	break;
 			if (newObject->getType() == Object::Entrance) {
 				(*entrancesByID)[newObject->getObjectID() & 0x7fff] = newObject;
 			} else {
@@ -260,7 +285,7 @@ Area *load8bitArea(Common::SeekableReadStream *file, uint16 ncolors) {
 		byte *conditionData = (byte*)malloc(lengthOfCondition);
 		file->read(conditionData, lengthOfCondition);
 		Common::Array<uint8> conditionArray(conditionData, lengthOfCondition);
-		debug("%s", detokenise8bitCondition(conditionArray)->c_str());
+		//debug("%s", detokenise8bitCondition(conditionArray)->c_str());
 	}
 
 	return (new Area(areaNumber, objectsByID, entrancesByID, scale, 255, 255, palette));
@@ -322,30 +347,40 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		file->read(conditionData, lengthOfCondition);
 		Common::Array<uint8> conditionArray(conditionData, lengthOfCondition);
 		//debug("Global condition %d", numCondition + 1);
-		debug("%s", detokenise8bitCondition(conditionArray)->c_str());
+		//debug("%s", detokenise8bitCondition(conditionArray)->c_str());
 	}
 
 	file->seek(offset + 200);
+	debug("areas index at: %lx", file->pos());
 	uint16 *fileOffsetForArea = new uint16[numberOfAreas];
 	for (uint16 area = 0; area < numberOfAreas; area++) {
 		fileOffsetForArea[area] = file->readUint16LE();
+		debug("offset: %x", fileOffsetForArea[area]);
 	}
 
 	// grab the areas
 	AreaMap *areaMap = new AreaMap;
+	Area *newArea = nullptr;
 	for (uint16 area = 0; area < numberOfAreas; area++) {
 		debug("Area offset %d", fileOffsetForArea[area]);
 
 		file->seek(offset + fileOffsetForArea[area]);
-		Area *newArea = load8bitArea(file, ncolors);
+		newArea = load8bitArea(file, ncolors);
 
 		if (newArea) {
-			(*areaMap)[newArea->getAreaID()] = newArea;
-		}
+			if (!areaMap->contains(newArea->getAreaID()))
+				(*areaMap)[newArea->getAreaID()] = newArea;
+			else
+				error("WARNING: area ID repeated: %d", newArea->getAreaID());
+		} else
+			error("Invalid area?");
 	}
 	_playerHeight = 64;
 	_areasByAreaID = areaMap;
-	_startArea = startArea;
+	if (!areaMap->contains(startArea))
+		_startArea = newArea->getAreaID();
+	else
+		_startArea = startArea;
 	_startEntrance = startEntrance;
 	_colorNumber = ncolors;
 	_binaryBits = 8;

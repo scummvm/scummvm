@@ -128,7 +128,14 @@ void FreescapeEngine::loadAssets() {
 			error("Invalid render mode %s for Driller", renderMode.c_str());
 
 	   } else if (_targetName == "Castle") {
-			error("Unsupported game");
+			file = gameDir.createReadStreamForMember("castle.sna");
+
+			if (file == nullptr)
+				error("Failed to open castle.sna");
+			// Courtyard -> 0x93c1
+			// Beds -> 0x867d
+			// All? -> 0x845d or 0x80ed?
+			load8bitBinary(file, 0x93c1, 16);
 	   } else
 		error("'%s' is an invalid game", _targetName.c_str());
 
@@ -236,8 +243,13 @@ Common::Error FreescapeEngine::run() {
 	assert(_currentArea);
 	entrance = (Entrance*) _currentArea->entranceWithID(_startEntrance);
 	_currentArea->show();
-	assert(entrance);
-	_position = entrance->getOrigin();
+	Math::Vector3d rotation;
+
+	if (entrance) {
+		_position = entrance->getOrigin();
+		rotation = entrance->getRotation();
+	}
+	//assert(entrance);
 	if (_scale == Math::Vector3d(0, 0, 0)) {
 		uint8 scale = _currentArea->getScale();
 		_scaleVector = Math::Vector3d(scale, scale, scale);
@@ -248,7 +260,6 @@ Common::Error FreescapeEngine::run() {
 	_position.setValue(0, _position.x() - 4096);
 	_position.setValue(1, _position.y() + _playerHeight);
 
-	Math::Vector3d rotation = entrance->getRotation();
 	_pitch = rotation.x() - 180.f;
 	_yaw = rotation.y() - 180.f;
 
@@ -267,7 +278,7 @@ Common::Error FreescapeEngine::run() {
 	} else {
 		_farClipPlane = 8192.f;
 	}
-
+	debug("Starting area %d", _currentArea->getAreaID());
 	while (!shouldQuit()) {
 		processInput();
 		drawFrame();

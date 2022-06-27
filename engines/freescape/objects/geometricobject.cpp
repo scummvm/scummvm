@@ -128,7 +128,7 @@ void GeometricObject::draw(Freescape::Renderer *gfx) {
 		gfx->renderCube(_origin, _size, colours);
 	} else if (this->getType() == Rectangle) {
 		gfx->renderRectangle(_origin, _size, colours);
-	} else if (this->isPlanar()) {
+	} else if (this->isPlanar() && _type <= 14) {
 		//debug("Drawing %d of type %d", this->getObjectID(), this->getType());
 		gfx->renderPolygon(_origin, _size, ordinates, colours);
 	}
