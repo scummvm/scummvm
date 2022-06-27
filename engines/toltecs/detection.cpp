@@ -32,6 +32,7 @@
 #include "toltecs/toltecs.h"
 #include "toltecs/detection.h"
 
+#define GAMEOPTION_ORIGINAL_SAVELOAD      GUIO_GAMEOPTIONS1
 
 static const PlainGameDescriptor toltecsGames[] = {
 	{"toltecs", "3 Skulls of the Toltecs"},
@@ -52,7 +53,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 	},
 
@@ -66,7 +67,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 	},
 
@@ -80,7 +81,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_PIRATED,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 	},
 
@@ -93,7 +94,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 	},
 
@@ -106,7 +107,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 	},
 
@@ -120,7 +121,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			Common::PL_POL,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 	},
 
@@ -133,7 +134,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 	},
 
@@ -146,7 +147,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 	},
 
@@ -160,7 +161,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			Common::HU_HUN,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 	},
 
@@ -174,7 +175,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			Common::CS_CZE,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 	},
 
@@ -187,7 +188,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 	},
 
@@ -200,7 +201,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
-			GUIO1(GUIO_NONE)
+			GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 	},
 
@@ -220,20 +221,26 @@ static const ToltecsGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER }
 };
 
-} // End of namespace Toltecs
-
-static const ExtraGuiOption toltecsExtraGuiOption = {
-	_s("Use original save/load screens"),
-	_s("Use the original save/load screens instead of the ScummVM ones"),
-	"originalsaveload",
-	false,
-	0,
-	0
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"originalsaveload",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
+
+} // End of namespace Toltecs
 
 class ToltecsMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	ToltecsMetaEngineDetection() : AdvancedMetaEngineDetection(Toltecs::gameDescriptions, sizeof(Toltecs::ToltecsGameDescription), toltecsGames) {
+	ToltecsMetaEngineDetection() : AdvancedMetaEngineDetection(Toltecs::gameDescriptions, sizeof(Toltecs::ToltecsGameDescription), toltecsGames, Toltecs::optionsList) {
 	}
 
 	const char *getEngineId() const override {
@@ -247,17 +254,6 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "3 Skulls of the Toltecs (C) Revistronic 1996";
 	}
-
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 };
-
-const ExtraGuiOptions ToltecsMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
-	ExtraGuiOptions options;
-
-	if (target.empty() || ConfMan.get("platform", target) != "windows")
-		options.push_back(toltecsExtraGuiOption);
-
-	return options;
-}
 
 REGISTER_PLUGIN_STATIC(TOLTECS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, ToltecsMetaEngineDetection);
