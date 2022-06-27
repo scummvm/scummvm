@@ -23,7 +23,6 @@
 #define MM1_VIEWS_ENH_SCROLL_VIEW_H
 
 #include "mm/mm1/views_enh/text_view.h"
-#include "mm/mm1/views_enh/scroll_text.h"
 
 namespace MM {
 namespace MM1 {
@@ -34,7 +33,6 @@ namespace ViewsEnh {
 class ScrollView : public TextView {
 protected:
 	Common::Point _symbolPos;
-	ScrollText _text;
 protected:
 	/**
 	 * Draw the scroll frame
@@ -55,37 +53,9 @@ public:
 	virtual ~ScrollView() {}
 
 	/**
-	 * Sets the element's bounds
-	 */
-	void setBounds(const Common::Rect &r) override;
-
-	/**
 	 * Draw the view
 	 */
 	void draw() override;
-
-	/**
-	 * Clear text lines
-	 */
-	void clearText() {
-		_text.clear();
-	}
-
-	/**
-	 * Simplest form that adds lines one at a time
-	 */
-	void addLine(const Common::String &str,
-			TextAlignment align = ALIGN_LEFT, byte color = 0) {
-		_text.addLine(str, align, color);
-	}
-
-	/**
-	 * Add a new line fragment for a given position
-	 */
-	void addText(const Common::String &str,
-			int lineNum, byte color = 0, int xp = 0) {
-		_text.addText(str, lineNum, color, xp);
-	}
 };
 
 } // namespace ViewsEnh

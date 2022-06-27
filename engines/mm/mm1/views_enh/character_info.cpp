@@ -284,6 +284,18 @@ void CharacterInfo::timeout() {
 	delayFrames(CURSOR_BLINK_FRAMES);
 }
 
+void CharacterInfo::showAttribute(int attrNum) {
+	// Switch the cursor to the selected attribute
+	showCursor(false);
+	_cursorCell = attrNum;
+	showCursor(true);
+
+	getSurface().markAllDirty();
+	g_events->getScreen()->update();
+
+	// Display the info dialog
+}
+
 } // namespace Views
 } // namespace MM1
 } // namespace MM
