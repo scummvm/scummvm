@@ -2578,18 +2578,38 @@ void LB::b_inside(int nargs) {
 void LB::b_map(int nargs) {
 	Datum toRect = g_lingo->pop();
 	Datum fromRect = g_lingo->pop();
-	Datum srcPnt = g_lingo->pop();
+	Datum srcArr = g_lingo->pop();
+
+	if (!(toRect.type == RECT || (toRect.type == ARRAY && toRect.u.farr->arr.size() == 4)) ||
+		!(fromRect.type == RECT || (fromRect.type == ARRAY && fromRect.u.farr->arr.size() == 4))) {
+		warning("LB::b_map(): Invalid Datum Type of source and destination Rects");
+		return;
+	}
 
 	int toWidth = toRect.u.farr->arr[2].u.i - toRect.u.farr->arr[0].u.i;
 	int toHeight = toRect.u.farr->arr[3].u.i - toRect.u.farr->arr[1].u.i;
 	int fromWidth = fromRect.u.farr->arr[2].u.i - fromRect.u.farr->arr[0].u.i;
 	int fromHeight = fromRect.u.farr->arr[3].u.i - fromRect.u.farr->arr[1].u.i;
 
+	if (!(srcArr.type == POINT ||
+		srcArr.type == RECT ||
+		(srcArr.type == ARRAY && (srcArr.u.farr->arr.size() == 2 || srcArr.u.farr->arr.size() == 4)))) {
+		warning("LB::b_map(): Invalid Datum type of input Point / Rect");
+		return;
+	}
+
 	Datum d;
 	d.type = POINT;
 	d.u.farr = new FArray();
-	d.u.farr->arr.push_back(-((fromRect.u.farr->arr[2].u.i - srcPnt.u.farr->arr[0].u.i) * (toWidth / fromWidth)) + (fromRect.u.farr->arr[0].u.i) + toRect.u.farr->arr[0].u.i);
-	d.u.farr->arr.push_back(-((fromRect.u.farr->arr[3].u.i - srcPnt.u.farr->arr[1].u.i) * (toHeight / fromHeight)) + (fromRect.u.farr->arr[3].u.i));
+	d.u.farr->arr.push_back((srcArr.u.farr->arr[0].u.i - fromRect.u.farr->arr[0].u.i) * (toWidth / fromWidth) + toRect.u.farr->arr[0].u.i);
+	d.u.farr->arr.push_back((srcArr.u.farr->arr[1].u.i - fromRect.u.farr->arr[1].u.i) * (toHeight / fromHeight) + toRect.u.farr->arr[1].u.i);
+
+	if (srcArr.type == RECT ||
+		(srcArr.type == ARRAY && srcArr.u.farr->arr.size() == 4)) {
+		d.type = RECT;
+		d.u.farr->arr.push_back((srcArr.u.farr->arr[2].u.i - srcArr.u.farr->arr[0].u.i) * (toWidth / fromWidth) + d.u.farr->arr[0].u.i);
+		d.u.farr->arr.push_back((srcArr.u.farr->arr[3].u.i - srcArr.u.farr->arr[1].u.i) * (toWidth / fromWidth) + d.u.farr->arr[1].u.i);
+	}
 
 	g_lingo->push(d);
 }
