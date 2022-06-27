@@ -189,6 +189,10 @@ void CharacterInfo::drawStats() {
 			writeNumber(pt.x, pt.y, CURR[i]);
 		}
 	}
+
+	// Condition string
+	setTextColor(15);
+	writeString(204, 128, camelCase(c.getConditionString()));
 }
 
 int CharacterInfo::statColor(int amount, int threshold) {

@@ -365,6 +365,44 @@ void Character::updateAC() {
 	_ac._current = ac;
 }
 
+Common::String Character::getConditionString() const {
+	Common::String result;
+	int cond = _condition;
+
+	if (cond == 0) {
+		result += STRING["stats.conditions.good"];
+	} else if (cond == ERADICATED) {
+		result += STRING["stats.conditions.eradicated"];
+	} else {
+		if (cond & BAD_CONDITION) {
+			// Fatal conditions
+			if (cond & DEAD)
+				result += STRING["stats.conditions.dead"];
+			if (cond & STONE)
+				result += STRING["stats.conditions.stone"];
+		} else {
+			if (cond & UNCONSCIOUS)
+				result += STRING["stats.conditions.unconscious"];
+			if (cond & PARALYZED)
+				result += STRING["stats.conditions.paralyzed"];
+			if (cond & POISONED)
+				result += STRING["stats.conditions.poisoned"];
+			if (cond & DISEASED)
+				result += STRING["stats.conditions.diseased"];
+			if (cond & SILENCED)
+				result += STRING["stats.conditions.silenced"];
+			if (cond & BLINDED)
+				result += STRING["stats.conditions.blinded"];
+			if (cond & ASLEEP)
+				result += STRING["stats.conditions.asleep"];
+		}
+
+		result.deleteLastChar();
+	}
+
+	return result;
+}
+
 void Character::castSpell(int lvl, int num) {
 	int lvlNum;
 	int setNum = _class == ARCHER || _class == SORCERER ? 1 : 0;
