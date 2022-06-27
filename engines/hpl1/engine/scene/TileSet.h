@@ -51,9 +51,9 @@ public:
 	~cTileSet();
 
 	// resource stuff:
-	bool Reload() { return false; }
-	void Unload() {}
-	void Destroy() {}
+	bool reload() { return false; }
+	void unload() {}
+	void destroy() {}
 
 	void Add(iTileData *apData);
 	iTileData *Get(int alNum);

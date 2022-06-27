@@ -95,10 +95,10 @@ void cNumericalButton::OnDraw() {
 		sChar = cString::To16Char(cString::ToString(mlNum));
 
 	if (mbOver && mpPanel->mbMouseIsDown) {
-		mpInit->mpDefaultFont->Draw(vFontPos + cVector3f(1, 1, 0), 17, cColor(0, 0, 0, 0.9f * mpPanel->mfAlpha), eFontAlign_Center,
+		mpInit->mpDefaultFont->draw(vFontPos + cVector3f(1, 1, 0), 17, cColor(0, 0, 0, 0.9f * mpPanel->mfAlpha), eFontAlign_Center,
 									sChar.c_str());
 	} else {
-		mpInit->mpDefaultFont->Draw(vFontPos, 17, cColor(0, 0, 0, 0.9f * mpPanel->mfAlpha), eFontAlign_Center,
+		mpInit->mpDefaultFont->draw(vFontPos, 17, cColor(0, 0, 0, 0.9f * mpPanel->mfAlpha), eFontAlign_Center,
 									sChar.c_str());
 	}
 }

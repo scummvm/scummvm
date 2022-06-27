@@ -124,7 +124,7 @@ public:
 	cGraphicsDrawer *mpDrawer;
 	cGfxObject *mpTextBack;
 
-	iFontData *mpFrontFont;
+	FontData *mpFrontFont;
 	std::vector<cNoteBook_Option> mvOptions;
 	int mlSelected;
 	cVector2f mvFontSize;
@@ -155,7 +155,7 @@ public:
 
 	void OnExit();
 
-	iFontData *mpTextFont;
+	FontData *mpTextFont;
 
 	float mfFontSize;
 
@@ -191,7 +191,7 @@ public:
 
 	int mlSelected;
 
-	iFontData *mpTextFont;
+	FontData *mpTextFont;
 	tWString msUnread;
 	cVector2f mvSize;
 	cNotebook_Note *mpSelectedNote;
@@ -220,8 +220,8 @@ public:
 	void OnMouseDown(eMButton aButton);
 	void OnExit();
 
-	iFontData *mpTextFont;
-	iFontData *mpNavigateFont;
+	FontData *mpTextFont;
+	FontData *mpNavigateFont;
 	tWStringVec mvRows;
 
 	std::vector<cNotePage> mvPages;

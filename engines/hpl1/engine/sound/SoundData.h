@@ -53,9 +53,9 @@ public:
 	void SetLoopStream(bool abX) { mbLoopStream = abX; }
 	bool GetLoopStream() { return mbLoopStream; }
 
-	bool Reload() { return false; }
-	void Unload() {}
-	void Destroy() {}
+	bool reload() { return false; }
+	void unload() {}
+	void destroy() {}
 
 	void SetSoundManager(cSoundManager *apSoundManager) {
 		mpSoundManger = apSoundManager;

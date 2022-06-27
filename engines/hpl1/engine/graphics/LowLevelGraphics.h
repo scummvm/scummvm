@@ -194,7 +194,7 @@ typedef tFlag tVtxBatchFlag;
 
 #define kMaxClipPlanes (6)
 
-class iFontData;
+class FontData;
 class iOcclusionQuery;
 
 class iLowLevelGraphics {
@@ -253,7 +253,7 @@ public:
 	virtual void SetClipPlaneActive(int alIdx, bool abX) = 0;
 
 	virtual Bitmap2D *CreateBitmap2D(const cVector2l &avSize, unsigned int alBpp) = 0;
-	virtual iFontData *CreateFontData(const tString &asName) = 0;
+	virtual FontData *CreateFontData(const tString &asName) = 0;
 
 	virtual iTexture *CreateTexture(bool abUseMipMaps, eTextureType aType, eTextureTarget aTarget) = 0;
 	virtual iTexture *CreateTexture(const tString &asName, bool abUseMipMaps, eTextureType aType, eTextureTarget aTarget) = 0;

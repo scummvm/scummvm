@@ -864,7 +864,7 @@ void cGameEnemyState_Dog_Hunt::OnDraw() {
 
 	float fDist = mpMover->DistanceToChar2D(mpPlayer->GetCharacterBody());
 
-	mpInit->mpDefaultFont->Draw(cVector3f(0, 110, 100), 14, cColor(1, 1, 1, 1), eFontAlign_Left,
+	mpInit->mpDefaultFont->draw(cVector3f(0, 110, 100), 14, cColor(1, 1, 1, 1), eFontAlign_Left,
 								_W("LostPlayerCount: %f FreePath: %d NoPath: %d MaxStuck: %d Dist: %f / %f"),
 								mfLostPlayerCount, mbFreePlayerPath,
 								mbFoundNoPath,

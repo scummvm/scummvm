@@ -385,7 +385,7 @@ private:
 	cGraphicsDrawer *mpGfxDrawer;
 	iLowLevelHaptic *mpLowLevelHaptic;
 
-	iFontData *mpFont;
+	FontData *mpFont;
 
 	cNode3D mFeetNode;
 

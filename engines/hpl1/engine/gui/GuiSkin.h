@@ -36,7 +36,7 @@ namespace hpl {
 
 class cGui;
 class cGuiGfxElement;
-class iFontData;
+class FontData;
 class iGuiMaterial;
 
 //-------------------------------------
@@ -46,7 +46,7 @@ public:
 	cGuiSkinFont(cGui *apGui);
 	~cGuiSkinFont();
 
-	iFontData *mpFont;
+	FontData *mpFont;
 	cVector2f mvSize;
 	cColor mColor;
 	iGuiMaterial *mpMaterial;

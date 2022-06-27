@@ -60,9 +60,9 @@ public:
 	tString &GetFileName() { return msFileName; }
 
 	// Resources implementation
-	bool Reload() { return false; }
-	void Unload() {}
-	void Destroy() {}
+	bool reload() { return false; }
+	void unload() {}
+	void destroy() {}
 
 private:
 	tString msAnimName;

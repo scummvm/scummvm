@@ -72,7 +72,7 @@ public:
 private:
 	cInit *mpInit;
 	cSoundHandler *mpSoundHandler;
-	iFontData *mpFont;
+	FontData *mpFont;
 
 	cRadioMessage *mpCurrentMessage;
 

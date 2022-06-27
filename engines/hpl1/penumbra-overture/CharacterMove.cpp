@@ -542,7 +542,7 @@ void cCharacterMove::OnDraw(cInit *apInit) {
 		"Break: %f",mfCurrentBreak);*/
 
 	if (mbMoving)
-		apInit->mpDefaultFont->Draw(cVector3f(5, 79, 100), 14, cColor(1, 1, 1, 1), eFontAlign_Left,
+		apInit->mpDefaultFont->draw(cVector3f(5, 79, 100), 14, cColor(1, 1, 1, 1), eFontAlign_Left,
 									_W("NodeDistAvg: %f"), mfNodeDistAvg);
 
 	/*apInit->mpDefaultFont->Draw(cVector3f(5,64,100),14,cColor(1,1,1,1),eFontAlign_Left,

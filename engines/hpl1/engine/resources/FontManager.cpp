@@ -33,7 +33,7 @@
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
 #include "hpl1/engine/resources/ImageManager.h"
 
-#include "hpl1/engine/graphics/FontData.h"
+#include "hpl1/engine/graphics/font_data.h"
 
 
 namespace hpl {
@@ -67,30 +67,30 @@ namespace hpl {
 
 	//-----------------------------------------------------------------------
 
-	iFontData* cFontManager::CreateFontData(const tString& asName, int alSize,unsigned short alFirstChar,
+	FontData* cFontManager::CreateFontData(const tString& asName, int alSize,unsigned short alFirstChar,
 											unsigned short alLastChar)
 	{
 		tString sPath;
-		iFontData* pFont;
+		FontData* pFont;
 		tString asNewName = cString::ToLowerCase(asName);
 
 		BeginLoad(asName);
 
 		//asNewName = cString::SetFileExt(asName,"ttf");
 
-		pFont = static_cast<iFontData*>(this->FindLoadedResource(asNewName,sPath));
+		pFont = static_cast<FontData*>(this->FindLoadedResource(asNewName,sPath));
 
 		if(pFont==NULL && sPath!="")
 		{
 			pFont = mpGraphics->GetLowLevel()->CreateFontData(asNewName);
-			pFont->SetUp(mpGraphics->GetDrawer(),mpLowLevelResources,mpGui);
+			pFont->setUp(mpGraphics->GetDrawer(),mpLowLevelResources,mpGui);
 
 			tString sExt = cString::ToLowerCase(cString::GetFileExt(asName));
 
 			//True Type Font
 			if(sExt == "ttf")
 			{
-				if(pFont->CreateFromFontFile(sPath,alSize,alFirstChar,alLastChar)==false){
+				if(pFont->createFromFontFile(sPath,alSize,alFirstChar,alLastChar)==false){
 					hplDelete(pFont);
 					EndLoad();
 					return NULL;
@@ -99,7 +99,7 @@ namespace hpl {
 			//Angel code font type
 			else if(sExt == "fnt")
 			{
-				if(pFont->CreateFromBitmapFile(sPath)==false){
+				if(pFont->createFromBitmapFile(sPath)==false){
 					hplDelete(pFont);
 					EndLoad();
 					return NULL;

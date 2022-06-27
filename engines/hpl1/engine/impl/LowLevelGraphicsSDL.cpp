@@ -37,13 +37,13 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#include "hpl1/engine/graphics/FontData.h"
+#include "hpl1/engine/graphics/font_data.h"
 #include "hpl1/engine/impl/LowLevelGraphicsSDL.h"
 
 //#include "graphics/opengl/glad.h"
 #include "hpl1/engine/impl/CGProgram.h"
 #include "hpl1/engine/graphics/bitmap2D.h"
-#include "hpl1/engine/impl/SDLFontData.h"
+#include "hpl1/engine/graphics/font_data.h"
 #include "hpl1/engine/impl/SDLTexture.h"
 #include "hpl1/engine/impl/VertexBufferOGL.h"
 #include "hpl1/engine/impl/VertexBufferVBO.h"
@@ -628,8 +628,8 @@ Bitmap2D *cLowLevelGraphicsSDL::CreateBitmap2D(const cVector2l &avSize, unsigned
 
 //-----------------------------------------------------------------------
 
-iFontData *cLowLevelGraphicsSDL::CreateFontData(const tString &asName) {
-	return hplNew(cSDLFontData, (asName, this));
+FontData *cLowLevelGraphicsSDL::CreateFontData(const tString &asName) {
+	return hplNew(FontData, (asName, this));
 }
 
 //-----------------------------------------------------------------------

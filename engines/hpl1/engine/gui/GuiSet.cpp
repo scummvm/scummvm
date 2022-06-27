@@ -30,7 +30,7 @@
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/system/low_level_system.h"
 
-#include "hpl1/engine/graphics/FontData.h"
+#include "hpl1/engine/graphics/font_data.h"
 #include "hpl1/engine/graphics/Graphics.h"
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
 
@@ -373,7 +373,7 @@ void cGuiSet::DrawGfx(cGuiGfxElement *apGfx, const cVector3f &avPos, const cVect
 //-----------------------------------------------------------------------
 
 void cGuiSet::DrawFont(const tWString &asText,
-					   iFontData *apFont, const cVector3f &avPos,
+					   FontData *apFont, const cVector3f &avPos,
 					   const cVector2f &avSize, const cColor &aColor,
 					   eFontAlign aAlign, eGuiMaterial aMaterial) {
 	int lCount = 0;
@@ -381,28 +381,28 @@ void cGuiSet::DrawFont(const tWString &asText,
 	cVector3f vPos = avPos;
 
 	if (aAlign == eFontAlign_Center) {
-		vPos.x -= apFont->GetLength(avSize, asText.c_str()) / 2;
+		vPos.x -= apFont->getLength(avSize, asText.c_str()) / 2;
 	} else if (aAlign == eFontAlign_Right) {
-		vPos.x -= apFont->GetLength(avSize, asText.c_str());
+		vPos.x -= apFont->getLength(avSize, asText.c_str());
 	}
 
 	while (asText[lCount] != 0) {
 		wchar_t lGlyphNum = ((wchar_t)asText[lCount]);
-		if (lGlyphNum < apFont->GetFirstChar() ||
-			lGlyphNum > apFont->GetLastChar()) {
+		if (lGlyphNum < apFont->getFirstChar() ||
+			lGlyphNum > apFont->getLastChar()) {
 			lCount++;
 			continue;
 		}
-		lGlyphNum -= apFont->GetFirstChar();
+		lGlyphNum -= apFont->getFirstChar();
 
-		cGlyph *pGlyph = apFont->GetGlyph(lGlyphNum);
+		Glyph *pGlyph = apFont->getGlyph(lGlyphNum);
 		if (pGlyph) {
-			cVector2f vOffset(pGlyph->mvOffset * avSize);
-			cVector2f vSize(pGlyph->mvSize * avSize); // *apFont->GetSizeRatio());
+			cVector2f vOffset(pGlyph->_offset * avSize);
+			cVector2f vSize(pGlyph->_size * avSize); // *apFont->GetSizeRatio());
 
-			DrawGfx(pGlyph->mpGuiGfx, vPos + vOffset, vSize, aColor, aMaterial);
+			DrawGfx(pGlyph->_guiGfx, vPos + vOffset, vSize, aColor, aMaterial);
 
-			vPos.x += pGlyph->mfAdvance * avSize.x;
+			vPos.x += pGlyph->_advance * avSize.x;
 		}
 		lCount++;
 	}

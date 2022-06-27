@@ -33,7 +33,11 @@
 #include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/resources/ResourceBase.h"
 #include "hpl1/engine/system/SystemTypes.h"
+#include "common/array.h"
+#include "common/ptr.h"
 #include <vector>
+
+class TiXmlElement;
 
 namespace hpl {
 
@@ -45,46 +49,44 @@ class Bitmap2D;
 class cGuiGfxElement;
 class cGui;
 
-//------------------------------------------------
-
-class cGlyph {
+class Glyph {
 public:
-	cGlyph(cGfxObject *apObject, cGuiGfxElement *apGuiGfx, const cVector2f &avOffset,
+	Glyph(cGfxObject *apObject, cGuiGfxElement *apGuiGfx, const cVector2f &avOffset,
 		   const cVector2f &avSize, float afAdvance);
-	~cGlyph();
+	~Glyph();
 
-	cGfxObject *mpGfxObject;
-	cGuiGfxElement *mpGuiGfx;
-	cVector2f mvOffset;
-	cVector2f mvSize;
-	float mfAdvance;
+	cGfxObject *_gfxObject;
+	cGuiGfxElement *_guiGfx;
+	cVector2f _offset;
+	cVector2f _size;
+	float _advance;
 };
 
-typedef std::vector<cGlyph *> tGlyphVec;
+typedef std::vector<Glyph *> tGlyphVec;
 typedef tGlyphVec::iterator tGlyphVecIt;
 
-class iFontData : public iResourceBase {
+class FontData : public iResourceBase {
 public:
-	iFontData(const tString &asName, iLowLevelGraphics *apLowLevelGraphics);
-	~iFontData();
+	FontData(const tString &asName, iLowLevelGraphics *apLowLevelGraphics);
+	~FontData();
 
-	virtual bool CreateFromFontFile(const tString &asFileName, int alSize, unsigned short alFirstChar,
-									unsigned short alLastChar) = 0;
+	bool createFromFontFile(const tString &asFileName, int alSize, unsigned short alFirstChar,
+									unsigned short alLastChar);
 
-	virtual bool CreateFromBitmapFile(const tString &asFileName) = 0;
+	bool createFromBitmapFile(const tString &asFileName);
 
-	bool Reload() { return false; }
-	void Unload() {}
-	void Destroy() {}
+	bool reload() { return false; }
+	void unload() {}
+	void destroy() {}
 
 	/**
 	 * Used internally
 	 */
-	void SetUp(cGraphicsDrawer *apGraphicsDrawer, LowLevelResources *apLowLevelResources,
+	void setUp(cGraphicsDrawer *apGraphicsDrawer, LowLevelResources *apLowLevelResources,
 			   cGui *apGui) {
-		mpGraphicsDrawer = apGraphicsDrawer;
-		mpLowLevelResources = apLowLevelResources;
-		mpGui = apGui;
+		_graphicsDrawer = apGraphicsDrawer;
+		_lowLevelResources = apLowLevelResources;
+		_gui = apGui;
 	}
 
 	/**
@@ -92,12 +94,12 @@ public:
 	 * \param alNum
 	 * \return
 	 */
-	inline cGlyph *GetGlyph(int alNum) const { return mvGlyphs[alNum]; }
+	inline Glyph *getGlyph(int alNum) const { return _glyphs[alNum]; }
 
-	inline unsigned short GetFirstChar() { return mlFirstChar; }
-	inline unsigned short GetLastChar() { return mlLastChar; }
+	inline unsigned short getFirstChar() { return _firstChar; }
+	inline unsigned short getLastChar() { return _lastChar; }
 
-	inline const cVector2f &GetSizeRatio() const { return mvSizeRatio; }
+	inline const cVector2f &getSizeRatio() const { return _sizeRatio; }
 
 	/**
 	 * Draw a string.
@@ -108,7 +110,7 @@ public:
 	 * \param fmt
 	 * \param ...
 	 */
-	void Draw(const cVector3f &avPos, const cVector2f &avSize, const cColor &aCol, eFontAlign mAlign,
+	void draw(const cVector3f &avPos, const cVector2f &avSize, const cColor &aCol, eFontAlign mAlign,
 			  const wchar_t *fmt, ...);
 	/**
 	 * Draw a string  with word wrap.
@@ -121,51 +123,53 @@ public:
 	 * \param asString
 	 * \return Extra number of rows generated.
 	 */
-	int DrawWordWrap(cVector3f avPos, float afLength, float afFontHeight, cVector2f avSize, const cColor &aCol,
+	int drawWordWrap(cVector3f avPos, float afLength, float afFontHeight, cVector2f avSize, const cColor &aCol,
 					 eFontAlign aAlign, const tWString &asString);
 
-	void GetWordWrapRows(float afLength, float afFontHeight, cVector2f avSize, const tWString &asString,
+	void getWordWrapRows(float afLength, float afFontHeight, cVector2f avSize, const tWString &asString,
 						 tWStringVec *apRowVec);
 
 	/**
 	 * Get height of the font.
 	 * \return
 	 */
-	inline float GetHeight() const { return mfHeight; }
+	inline float getHeight() const { return _height; }
 
 	/**
-	 * Get the length in virtual screen size "pixels" of a formated string
+	 * Get the length in screen size "pixels" of a formated string
 	 * \param avSize size of the characters
 	 * \param fmt
 	 * \param ...
 	 * \return
 	 */
-	float GetLengthFmt(const cVector2f &avSize, const wchar_t *fmt, ...);
+	float getLengthFmt(const cVector2f &avSize, const wchar_t *fmt, ...);
 	/**
-	 * Get the length in virtual screen size "pixels" of a string
+	 * Get the length in screen size "pixels" of a string
 	 * \param avSize size of the characters
 	 * \param sText
 	 * \return
 	 */
-	float GetLength(const cVector2f &avSize, const wchar_t *sText);
+	float getLength(const cVector2f &avSize, const wchar_t *sText);
 
-protected:
-	iLowLevelGraphics *mpLowLevelGraphics;
-	LowLevelResources *mpLowLevelResources;
-	cGraphicsDrawer *mpGraphicsDrawer;
-	cGui *mpGui;
+private:
+	iLowLevelGraphics *_lowLevelGraphics;
+	LowLevelResources *_lowLevelResources;
+	cGraphicsDrawer *_graphicsDrawer;
+	cGui *_gui;
 
-	tGlyphVec mvGlyphs;
+	tGlyphVec _glyphs;
 
-	float mfHeight;
-	unsigned short mlFirstChar;
-	unsigned short mlLastChar;
+	float _height;
+	unsigned short _firstChar;
+	unsigned short _lastChar;
 
-	cVector2f mvSizeRatio;
+	cVector2f _sizeRatio;
 
-	cGlyph *CreateGlyph(Bitmap2D *apBmp, const cVector2l &avOffset, const cVector2l &avSize,
+	Glyph *createGlyph(Bitmap2D *apBmp, const cVector2l &avOffset, const cVector2l &avSize,
 						const cVector2l &avFontSize, int alAdvance);
-	void AddGlyph(cGlyph *apGlyph);
+	void addGlyph(Glyph *apGlyph);
+	void loadGlyphs(const TiXmlElement *charsRoot, Common::Array<Common::SharedPtr<Bitmap2D>> &bitmaps, const cVector2l &fontSize);
+	void loadNextGlyph(const TiXmlElement *charIt, Common::Array<Common::SharedPtr<Bitmap2D>> &bitmaps, const cVector2l &fontSize);
 };
 
 };     // namespace hpl

@@ -82,9 +82,9 @@ public:
 	int GetPriority() { return mlPriority; }
 
 	// Resource implementation
-	bool Reload() { return false; }
-	void Unload() {}
-	void Destroy() {}
+	bool reload() { return false; }
+	void unload() {}
+	void destroy() {}
 
 protected:
 	tString msMainSound;

@@ -23,7 +23,7 @@ MODULE_OBJS := \
 	engine/graphics/Bone.o \
 	engine/graphics/BoneState.o \
 	engine/graphics/Color.o \
-	engine/graphics/FontData.o \
+	engine/graphics/font_data.o \
 	engine/graphics/GPUProgram.o \
 	engine/graphics/GfxObject.o \
 	engine/graphics/Graphics.o \
@@ -117,7 +117,6 @@ MODULE_OBJS := \
 	engine/impl/PhysicsJointSliderNewton.o \
 	engine/impl/PhysicsMaterialNewton.o \
 	engine/impl/PhysicsWorldNewton.o \
-	engine/impl/SDLFontData.o \
 	engine/impl/SDLTexture.o \
 	engine/impl/SqScript.o \
 	engine/impl/VertexBufferOGL.o \

@@ -43,7 +43,7 @@ class cGuiSkinFont;
 class cGuiGfxElement;
 class cGuiClipRegion;
 
-class iFontData;
+class FontData;
 
 //--------------------------------
 
@@ -111,8 +111,8 @@ public:
 	void SetText(const tWString &asText);
 	const tWString &GetText() { return msText; }
 
-	iFontData *GetDefaultFontType() { return mpDefaultFontType; }
-	void SetDefaultFontType(iFontData *apFont) { mpDefaultFontType = apFont; }
+	FontData *GetDefaultFontType() { return mpDefaultFontType; }
+	void SetDefaultFontType(FontData *apFont) { mpDefaultFontType = apFont; }
 
 	const cColor &GetDefaultFontColor() { return mDefaultFontColor; }
 	void SetDefaultFontColor(const cColor &aColor) { mDefaultFontColor = aColor; }
@@ -210,7 +210,7 @@ protected:
 	int mlPositionCount;
 
 	cGuiSkinFont *mpDefaultFont;
-	iFontData *mpDefaultFontType;
+	FontData *mpDefaultFontType;
 	cColor mDefaultFontColor;
 	cVector2f mvDefaultFontSize;
 

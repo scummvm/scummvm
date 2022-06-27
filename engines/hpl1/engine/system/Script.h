@@ -232,9 +232,9 @@ public:
 	iScript(const tString &asName) : iResourceBase(asName, 0) {}
 	virtual ~iScript() {}
 
-	bool Reload() { return false; }
-	void Unload() {}
-	void Destroy() {}
+	bool reload() { return false; }
+	void unload() {}
+	void destroy() {}
 
 	virtual bool CreateFromFile(const tString &asFile) = 0;
 

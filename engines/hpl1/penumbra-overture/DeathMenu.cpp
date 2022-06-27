@@ -52,7 +52,7 @@ cDeathMenuButton::cDeathMenuButton(cInit *apInit, cVector2f avPos, const tWStrin
 
 	mpFont = mpInit->mpGame->GetResources()->GetFontManager()->CreateFontData("verdana.fnt");
 
-	mRect.w = mpFont->GetLength(mvFontSize, msText.c_str());
+	mRect.w = mpFont->getLength(mvFontSize, msText.c_str());
 	mRect.h = mvFontSize.y + 3;
 	mRect.x = avPos.x - mRect.w / 2;
 	mRect.y = avPos.y + 3;
@@ -84,9 +84,9 @@ void cDeathMenuButton::OnUpdate(float afTimeStep) {
 void cDeathMenuButton::OnDraw() {
 	float fAlpha = mpInit->mpDeathMenu->mfAlpha;
 
-	mpFont->Draw(mvPositon, mvFontSize, cColor(0.8f, 0.7f, 0.7f, fAlpha), eFontAlign_Center, msText.c_str());
+	mpFont->draw(mvPositon, mvFontSize, cColor(0.8f, 0.7f, 0.7f, fAlpha), eFontAlign_Center, msText.c_str());
 
-	mpFont->Draw(mvPositon + cVector3f(0, 0, 1), mvFontSize, cColor(1, 0, 0, fAlpha * mfAlpha), eFontAlign_Center, msText.c_str());
+	mpFont->draw(mvPositon + cVector3f(0, 0, 1), mvFontSize, cColor(1, 0, 0, fAlpha * mfAlpha), eFontAlign_Center, msText.c_str());
 }
 
 //-----------------------------------------------------------------------
@@ -199,7 +199,7 @@ void cDeathMenu::OnDraw() {
 
 	mpDrawer->DrawGfxObject(mpGfxBackground, cVector3f(0, 0, 0), cVector2f(800, 600), cColor(1, mfAlpha));
 
-	mpFont->DrawWordWrap(cVector3f(400, 210, 40), 500, 25, 24, cColor(0.7f, 0.3f, 0.3f), eFontAlign_Center,
+	mpFont->drawWordWrap(cVector3f(400, 210, 40), 500, 25, 24, cColor(0.7f, 0.3f, 0.3f), eFontAlign_Center,
 						 kTranslate("DeathMenu", "YouAreDead").c_str());
 
 	////////////////////////////////

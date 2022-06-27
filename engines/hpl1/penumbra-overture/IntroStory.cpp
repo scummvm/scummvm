@@ -437,15 +437,15 @@ void cIntroStory::OnDraw() {
 
 	if (msCentreText != _W("")) {
 		float fAlpha = mvImages[5].mfBrightness;
-		mpFont->Draw(cVector3f(400, 300, 2), 18, cColor(1, 1, 1, fAlpha),
+		mpFont->draw(cVector3f(400, 300, 2), 18, cColor(1, 1, 1, fAlpha),
 					 eFontAlign_Center, msCentreText.c_str());
-		mpFont->Draw(cVector3f(400 + 1, 300 + 1, 1), 18, cColor(0, fAlpha),
+		mpFont->draw(cVector3f(400 + 1, 300 + 1, 1), 18, cColor(0, fAlpha),
 					 eFontAlign_Center, msCentreText.c_str());
-		mpFont->Draw(cVector3f(400 - 1, 300 - 1, 1), 18, cColor(0, fAlpha),
+		mpFont->draw(cVector3f(400 - 1, 300 - 1, 1), 18, cColor(0, fAlpha),
 					 eFontAlign_Center, msCentreText.c_str());
-		mpFont->Draw(cVector3f(400 - 1, 300 + 1, 1), 18, cColor(0, fAlpha),
+		mpFont->draw(cVector3f(400 - 1, 300 + 1, 1), 18, cColor(0, fAlpha),
 					 eFontAlign_Center, msCentreText.c_str());
-		mpFont->Draw(cVector3f(400 + 1, 300 - 1, 1), 18, cColor(0, fAlpha),
+		mpFont->draw(cVector3f(400 + 1, 300 - 1, 1), 18, cColor(0, fAlpha),
 					 eFontAlign_Center, msCentreText.c_str());
 	}
 
@@ -453,7 +453,7 @@ void cIntroStory::OnDraw() {
 	// mpFont->DrawWordWrap(vPos + cVector3f(-2,-2,-1),760,21,vSize,cColor(1,0),eFontAlign_Left,msMessage);
 
 	if (mpInit->mbSubtitles) {
-		mpFont->DrawWordWrap(vPos, 760, 18, vSize, cColor(1, 1, 1, 1), eFontAlign_Left, msMessage);
+		mpFont->drawWordWrap(vPos, 760, 18, vSize, cColor(1, 1, 1, 1), eFontAlign_Left, msMessage);
 	}
 }
 

@@ -80,9 +80,9 @@ public:
 
 	//////////////////////////////////
 	// ResourceBase implementation
-	bool Reload() { return false; }
-	void Unload() {}
-	void Destroy() {}
+	bool reload() { return false; }
+	void unload() {}
+	void destroy() {}
 
 protected:
 	tString msFilePath;

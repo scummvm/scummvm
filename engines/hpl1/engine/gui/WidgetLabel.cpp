@@ -30,7 +30,7 @@
 #include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
 
-#include "hpl1/engine/graphics/FontData.h"
+#include "hpl1/engine/graphics/font_data.h"
 
 #include "hpl1/engine/math/Math.h"
 
@@ -103,7 +103,7 @@ void cWidgetLabel::OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion) {
 		bool bEnabled = IsEnabled();
 		float fHeight = mvDefaultFontSize.y + 2;
 		tWStringVec vRows;
-		mpDefaultFontType->GetWordWrapRows(mvSize.x, fHeight,
+		mpDefaultFontType->getWordWrapRows(mvSize.x, fHeight,
 										   mvDefaultFontSize, msText,
 										   &vRows);
 

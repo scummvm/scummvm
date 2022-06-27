@@ -596,10 +596,10 @@ void iGameEnemy::OnDraw() {
 	if (mbActive == false)
 		return;
 	if (mbCanSeePlayer) {
-		mpInit->mpDefaultFont->Draw(cVector3f(5, 15, 100), 14, cColor(1, 1, 1, 1), eFontAlign_Left,
+		mpInit->mpDefaultFont->draw(cVector3f(5, 15, 100), 14, cColor(1, 1, 1, 1), eFontAlign_Left,
 									_W("Player is seen!"));
 	} else {
-		mpInit->mpDefaultFont->Draw(cVector3f(5, 15, 100), 14, cColor(1, 1, 1, 1), eFontAlign_Left,
+		mpInit->mpDefaultFont->draw(cVector3f(5, 15, 100), 14, cColor(1, 1, 1, 1), eFontAlign_Left,
 									_W("Can NOT see player..."));
 	}
 	// mpInit->mpDefaultFont->Draw(cVector3f(5,29,100),14,cColor(1,1,1,1),eFontAlign_Left,
@@ -608,13 +608,13 @@ void iGameEnemy::OnDraw() {
 	tWString sStateName = _W("NONE");
 	if (mlCurrentState >= 0)
 		sStateName = cString::To16Char(gvStateName[mlCurrentState]);
-	mpInit->mpDefaultFont->Draw(cVector3f(5, 48, 100), 14, cColor(1, 1, 1, 1), eFontAlign_Left,
+	mpInit->mpDefaultFont->draw(cVector3f(5, 48, 100), 14, cColor(1, 1, 1, 1), eFontAlign_Left,
 								_W("Health: %f State: %ls Moving: %d Stuck: %f MaxViewDist: %f"), mfHealth,
 								sStateName.c_str(),
 								mpMover->IsMoving(),
 								mpMover->GetStuckCounter(),
 								gfCurrentMaxViewDist);
-	mpInit->mpDefaultFont->Draw(cVector3f(5, 64, 100), 14, cColor(1, 1, 1, 1), eFontAlign_Left,
+	mpInit->mpDefaultFont->draw(cVector3f(5, 64, 100), 14, cColor(1, 1, 1, 1), eFontAlign_Left,
 								_W("Speed: %f"), mpMover->GetCharBody()->GetMoveSpeed(eCharDir_Forward));
 
 	mpMover->OnDraw(mpInit);
