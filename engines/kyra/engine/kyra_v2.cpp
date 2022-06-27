@@ -28,7 +28,7 @@
 
 namespace Kyra {
 
-KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const EngineDesc &desc) : KyraEngine_v1(system, flags), _desc(desc), _langIntern(0), _numLang(flags.hasExtraLanguage ? 4 : 3) {
+KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const EngineDesc &desc) : KyraEngine_v1(system, flags), _desc(desc), _langIntern(0), _numLang(flags.extraLang != Common::UNK_LANG ? 4 : 3) {
 	memset(&_sceneAnims, 0, sizeof(_sceneAnims));
 	memset(&_sceneAnimMovie, 0, sizeof(_sceneAnimMovie));
 
@@ -81,6 +81,9 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 	if (lang == _flags.fanLang && _flags.replacedLang != Common::UNK_LANG)
 		lang = _flags.replacedLang;
 
+	if (_flags.extraLang == Common::ZH_TWN)
+		_langIntern = 1;
+
 	switch (lang) {
 	case Common::EN_ANY:
 	case Common::EN_USA:
@@ -98,7 +101,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 
 	case Common::ZH_TWN:
 		_langIntern = 1;
-		if (!_flags.hasExtraLanguage) // HOF Floppy uses ENG extensions...
+		if (_flags.extraLang == Common::UNK_LANG) // HOF Floppy uses ENG extensions...
 			break;
 		// fall through
 

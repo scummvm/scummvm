@@ -359,7 +359,7 @@ void KyraEngine_MR::drawMalcolmsMoodText() {
 		_text->printText(string, x + 1, y, 0xFF, 0x00, 0x00);
 		_screen->setFontStyles(_screen->_currentFont, Font::kStyleBorder);
 	} else {
-		_text->printText(string, x, y + (_flags.hasExtraLanguage ? 3 : 1), 0xFF, 0xF0, 0x00);
+		_text->printText(string, x, y + (_flags.extraLang != Common::UNK_LANG ? 3 : 1), 0xFF, 0xF0, 0x00);
 	}
 	_screen->_curPage = pageBackUp;
 }

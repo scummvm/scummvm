@@ -62,11 +62,11 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_gamePlayBuffer = nullptr;
 	_interface = _interfaceCommandLine = nullptr;
 	// The slightly larger interface is used in the Chinese version regardless of the actual language setting.
-	_interfaceCommandLineSize = flags.hasExtraLanguage ? 4800 : 3840;
+	_interfaceCommandLineSize = flags.extraLang != Common::UNK_LANG ? 4800 : 3840;
 	_interfaceCommandLineH = _interfaceCommandLineSize / Screen::SCREEN_W;
 	_interfaceCommandLineY1 = Screen::SCREEN_H - _interfaceCommandLineH;
 	_interfaceCommandLineY2 = 156 - _interfaceCommandLineH;
-	_interfaceSize = flags.hasExtraLanguage ? 18880 : 17920;
+	_interfaceSize = flags.extraLang != Common::UNK_LANG ? 18880 : 17920;
 	_interfaceH = _interfaceSize / Screen::SCREEN_W;
 	_costPalBuffer = nullptr;
 	memset(_sceneShapes, 0, sizeof(_sceneShapes));
@@ -213,6 +213,13 @@ Common::Error KyraEngine_MR::init() {
 
 	setDebugger(new Debugger_v2(this));
 
+	// Unfortunately, if this is a Chinese version, but the language has been set to English, French or German
+	// we still don't know at this point if this is a Simplified or Traditional Chinese version. We just analyze
+	// some file...
+	if (_flags.extraLang != Common::UNK_LANG && _flags.extraLang != _flags.lang) {
+
+	}
+
 	KyraEngine_v1::init();
 	initStaticResource();
 
@@ -229,14 +236,12 @@ Common::Error KyraEngine_MR::init() {
 	_screen->loadFont(Screen::FID_BOOKFONT_FNT, "BOOKFONT.FNT");
 	_screen->setFont(Screen::FID_8_FNT);
 
-	if (_flags.hasExtraLanguage) {
-		// We don't check the language setting here, since we want to load the file even if the language is currently set to English, French or German.
-		if (_res->exists("MALCOLM.PAK")) {
-			_screen->loadFont(Screen::FID_CHINESE_FNT, "MALCOLM.PAK");
-			if (_lang == 3) {
-				_screen->setFont(Screen::FID_CHINESE_FNT);
-				_screen->_lineSpacing = 2;
-			}
+	// We don't check the language setting here, since we want to load the file even if the language is currently set to English, French or German.
+	if (_res->exists("MALCOLM.PAK")) {
+		_screen->loadFont(Screen::FID_CHINESE_FNT, "MALCOLM.PAK");
+		if (_lang == 3) {
+			_screen->setFont(Screen::FID_CHINESE_FNT);
+			_screen->_lineSpacing = 2;
 		}
 	}
 
