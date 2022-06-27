@@ -261,6 +261,11 @@ struct Character {
 	 * Cast a spell
 	 */
 	void castSpell(int lvl, int num);
+
+	/**
+	 * Gets a character's condition string
+	 */
+	Common::String getConditionString() const;
 };
 
 } // namespace MM1

@@ -129,42 +129,11 @@ void CharacterBase::printSummary() {
 }
 
 void CharacterBase::printCondition() {
-	Character &re = *g_globals->_currCharacter;
+	Character &c = *g_globals->_currCharacter;
 	writeString(STRING["stats.attributes.cond"]);
 	_textPos.x++;
-	int cond = re._condition;
 
-	if (cond == 0) {
-		writeString(STRING["stats.conditions.good"]);
-	} else if (cond == ERADICATED) {
-		writeString(STRING["stats.conditions.eradicated"]);
-	} else {
-		if (cond & BAD_CONDITION) {
-			// Fatal conditions
-			if (cond & DEAD)
-				writeString(STRING["stats.conditions.dead"]);
-			if (cond & STONE)
-				writeString(STRING["stats.conditions.stone"]);
-		} else {
-			if (cond & UNCONSCIOUS)
-				writeString(STRING["stats.conditions.unconscious"]);
-			if (cond & PARALYZED)
-				writeString(STRING["stats.conditions.paralyzed"]);
-			if (cond & POISONED)
-				writeString(STRING["stats.conditions.poisoned"]);
-			if (cond & DISEASED)
-				writeString(STRING["stats.conditions.diseased"]);
-			if (cond & SILENCED)
-				writeString(STRING["stats.conditions.silenced"]);
-			if (cond & BLINDED)
-				writeString(STRING["stats.conditions.blinded"]);
-			if (cond & ASLEEP)
-				writeString(STRING["stats.conditions.asleep"]);
-		}
-
-		--_textPos.x;
-		writeChar(' ');
-	}
+	writeString(c.getConditionString());
 }
 
 void CharacterBase::printInventory() {
