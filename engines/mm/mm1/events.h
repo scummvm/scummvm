@@ -118,7 +118,7 @@ public:
 	/**
 	 * Sets the element's bounds
 	 */
-	void setBounds(const Common::Rect &r) {
+	virtual void setBounds(const Common::Rect &r) {
 		_bounds = r;
 	}
 

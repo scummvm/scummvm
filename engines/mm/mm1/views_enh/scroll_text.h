@@ -19,73 +19,75 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_SCROLL_VIEW_H
-#define MM1_VIEWS_ENH_SCROLL_VIEW_H
+#ifndef MM1_VIEWS_ENH_SCROLL_TEXT_H
+#define MM1_VIEWS_ENH_SCROLL_TEXT_H
 
-#include "mm/mm1/views_enh/text_view.h"
-#include "mm/mm1/views_enh/scroll_text.h"
+#include "common/rect.h"
+#include "common/str.h"
+#include "graphics/font.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-#define FRAME_BORDER_SIZE 8
+enum TextAlignment {
+	ALIGN_LEFT, ALIGN_RIGHT, ALIGN_MIDDLE
+};
 
-class ScrollView : public TextView {
-protected:
-	Common::Point _symbolPos;
-	ScrollText _text;
-protected:
-	/**
-	 * Draw the scroll frame
-	 */
-	void frame();
+class ScrollText {
+	struct Line {
+		Common::String _str;
+		Common::Point _pos;
+		byte _color = 0;
 
-	/**
-	 * Fill the scroll background
-	 */
-	void fill();
-
-	/**
-	 * Draw a special symbol
-	 */
-	void writeSymbol(int symbolId);
+		Line(const Common::String &str,
+			const Common::Point &pos, byte color = 0) :
+			_str(str), _pos(pos), _color(color) {
+		}
+	};
 public:
-	ScrollView(const Common::String &name);
-	virtual ~ScrollView() {}
+	typedef Common::Array<Line> Lines;
+private:
+	Graphics::Font *_font;
+	Common::Point _size;
+	size_t _rowCount = 0;
+	Lines _lines;
+public:
+	ScrollText();
 
 	/**
-	 * Sets the element's bounds
+	 * Sets the size for the text area
 	 */
-	void setBounds(const Common::Rect &r) override;
+	void setSize(int w, int h);
+
+	Lines::iterator begin() { return _lines.begin(); }
+	Lines::iterator end() { return _lines.end(); }
+	Lines::const_iterator begin() const { return _lines.begin(); }
+	Lines::const_iterator end() const { return _lines.end(); }
 
 	/**
-	 * Draw the view
+	 * Sets the font mode
 	 */
-	void draw() override;
+	void setReduced(bool flag);
 
 	/**
-	 * Clear text lines
+	 * Clear the lines
 	 */
-	void clearText() {
-		_text.clear();
+	void clear() {
+		_lines.clear();
 	}
 
 	/**
 	 * Simplest form that adds lines one at a time
 	 */
 	void addLine(const Common::String &str,
-			TextAlignment align = ALIGN_LEFT, byte color = 0) {
-		_text.addLine(str, align, color);
-	}
+		TextAlignment align = ALIGN_LEFT, byte color = 0);
 
 	/**
 	 * Add a new line fragment for a given position
 	 */
 	void addText(const Common::String &str,
-			int lineNum, byte color = 0, int xp = 0) {
-		_text.addText(str, lineNum, color, xp);
-	}
+		int lineNum, byte color = 0, int xp = 0);
 };
 
 } // namespace ViewsEnh

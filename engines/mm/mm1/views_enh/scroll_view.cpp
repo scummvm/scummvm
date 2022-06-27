@@ -28,22 +28,39 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-#define FONT_WIDTH 8
-#define FONT_HEIGHT 8
+#define SYMBOL_WIDTH FRAME_BORDER_SIZE
+#define SYMBOL_HEIGHT FRAME_BORDER_SIZE
 
 ScrollView::ScrollView(const Common::String &name) :
 	TextView(name, g_engine) {
+}
+
+void ScrollView::setBounds(const Common::Rect &r) {
+	_bounds = r;
+	Common::Rect inner = r;
+	inner.grow(-FRAME_BORDER_SIZE);
+	_text.setSize(r.width(), r.height());
 }
 
 void ScrollView::draw() {
 	frame();
 	fill();
 	setTextColor(0);
+
+	// Iterate through displaying any text
+	for (ScrollText::Lines::const_iterator i = _text.begin();
+			i != _text.end(); ++i) {
+		setTextColor(i->_color);
+		writeString(i->_pos.x + FRAME_BORDER_SIZE,
+			i->_pos.y + FRAME_BORDER_SIZE,
+			i->_str
+		);
+	}
 }
 
 void ScrollView::frame() {
-	int xCount = (_bounds.width() - 9) / FONT_WIDTH;
-	int yCount = (_bounds.height() - 9) / FONT_HEIGHT;
+	int xCount = (_bounds.width() - 9) / SYMBOL_WIDTH;
+	int yCount = (_bounds.height() - 9) / SYMBOL_HEIGHT;
 
 	// Write the top line
 	_symbolPos = Common::Point(0, 0);
@@ -58,19 +75,19 @@ void ScrollView::frame() {
 		}
 	}
 
-	_symbolPos.x = _bounds.width() - FONT_WIDTH;
+	_symbolPos.x = _bounds.width() - SYMBOL_WIDTH;
 	writeSymbol(5);
 
 	// Write the vertical edges
 	if (yCount > 0) {
 		int symbolId = 6;
 		for (int i = 0; i < yCount; ++i) {
-			_symbolPos.y += FONT_HEIGHT;
+			_symbolPos.y += SYMBOL_HEIGHT;
 
 			_symbolPos.x = 0;
 			writeSymbol(symbolId);
 
-			_symbolPos.x = _bounds.width() - FONT_WIDTH;
+			_symbolPos.x = _bounds.width() - SYMBOL_WIDTH;
 			writeSymbol(symbolId + 4);
 
 			if (++symbolId == 10)
@@ -79,7 +96,7 @@ void ScrollView::frame() {
 	}
 
 	// Write the bottom line
-	_symbolPos = Common::Point(0, _bounds.height() - FONT_HEIGHT);
+	_symbolPos = Common::Point(0, _bounds.height() - SYMBOL_HEIGHT);
 	writeSymbol(14);
 
 	if (xCount > 0) {
@@ -91,7 +108,7 @@ void ScrollView::frame() {
 		}
 	}
 
-	_symbolPos.x = _bounds.width() - FONT_WIDTH;
+	_symbolPos.x = _bounds.width() - SYMBOL_WIDTH;
 	writeSymbol(19);
 }
 
@@ -105,20 +122,20 @@ void ScrollView::writeSymbol(int symbolId) {
 	Graphics::ManagedSurface s = getSurface();
 	const byte *srcP = &g_globals->SYMBOLS[symbolId][0];
 	s.addDirtyRect(Common::Rect(_symbolPos.x, _symbolPos.y,
-		_symbolPos.x + FONT_WIDTH, _symbolPos.y + FONT_HEIGHT));
+		_symbolPos.x + SYMBOL_WIDTH, _symbolPos.y + SYMBOL_HEIGHT));
 
-	for (int yp = 0; yp < FONT_HEIGHT; ++yp) {
+	for (int yp = 0; yp < SYMBOL_HEIGHT; ++yp) {
 		byte *destP = (byte *)s.getBasePtr(
 			_symbolPos.x, _symbolPos.y + yp);
 
-		for (int xp = 0; xp < FONT_WIDTH; ++xp, ++destP) {
+		for (int xp = 0; xp < SYMBOL_WIDTH; ++xp, ++destP) {
 			byte b = *srcP++;
 			if (b)
 				*destP = b;
 		}
 	}
 
-	_symbolPos.x += FONT_WIDTH;
+	_symbolPos.x += SYMBOL_WIDTH;
 }
 
 } // namespace ViewsEnh
