@@ -1202,8 +1202,12 @@ void LB::b_showXlib(int nargs) {
 
 void LB::b_xFactoryList(int nargs) {
 	Datum d = g_lingo->pop();
+	d.type = STRING;
+	d.u.s = new Common::String();
 
-	warning("STUB: b_xFactoryList(%s)", d.asString().c_str());
+	for (auto it = g_lingo->_openXLibs.begin(); it != g_lingo->_openXLibs.end(); it++)
+		*d.u.s += it->_key + "\n";
+	g_lingo->push(d);
 }
 
 ///////////////////
