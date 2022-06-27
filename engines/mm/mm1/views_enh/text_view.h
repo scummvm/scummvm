@@ -40,13 +40,6 @@ protected:
 	byte setTextColor(byte col);
 
 	/**
-	 * Set whether to use the standard large sized font or reduced one
-	 */
-	void setReduced(bool flag) {
-		_fontReduced = flag;
-	}
-
-	/**
 	 * Write a character
 	 */
 	void writeChar(char c);
@@ -78,6 +71,13 @@ public:
 	TextView(const Common::String &name);
 	TextView(const Common::String &name, UIElement *owner);
 	virtual ~TextView() {}
+
+	/**
+	 * Set whether to use the standard large sized font or reduced one
+	 */
+	void setReduced(bool flag) {
+		_fontReduced = flag;
+	}
 };
 
 } // namespace ViewsEnh
