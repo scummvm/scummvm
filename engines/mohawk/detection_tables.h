@@ -3085,7 +3085,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
 		},
-		GType_LIVINGBOOKSV2,
+		GType_LIVINGBOOKSV3,
 		0,
 		0,
 	},
@@ -3148,7 +3148,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_DEMO,
 			GUIO1(GUIO_NOASPECT)
 		},
-		GType_LIVINGBOOKSV2,
+		GType_LIVINGBOOKSV3,
 		0,
 		0,
 	},
