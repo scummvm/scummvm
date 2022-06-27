@@ -140,8 +140,15 @@ void Character::synchronize(Common::Serializer &s) {
 	s.syncAsUint16LE(_hpBase);
 	s.syncAsUint16LE(_hp);
 	s.syncAsUint16LE(_hpMax);
-	s.syncAsUint16LE(_gold);
-	s.skip(2);
+
+	// Gold field is annoying by being 3 bytes
+	uint goldLo = _gold & 0xffff;
+	uint goldHi = _gold >> 16;
+	s.syncAsUint16LE(goldLo);
+	s.syncAsByte(goldHi);
+	if (s.isLoading())
+		_gold = goldLo | (goldHi << 16);
+
 	_ac.synchronize(s);
 	s.syncAsByte(_food);
 	s.syncAsByte(_condition);

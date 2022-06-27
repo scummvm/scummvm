@@ -22,6 +22,7 @@
 #include "common/array.h"
 #include "common/file.h"
 #include "mm/utils/strings_data.h"
+#include "mm/utils/strings.h"
 
 namespace MM {
 
@@ -73,11 +74,14 @@ bool StringsData::load(const Common::String &filename) {
 				value[i + 1] == 'r')) {
 				value.deleteChar(i);
 				value.setChar('\n', i);
-			} else if (!strncmp(value.c_str() + i, "\\x8B", 4)) {
+			} else if (!strncmp(value.c_str() + i, "\\x", 2)) {
+				Common::String hex(value.c_str() + i + 2,
+					value.c_str() + i + 4);
+
 				value.deleteChar(i);
 				value.deleteChar(i);
 				value.deleteChar(i);
-				value.setChar('\x8B', i);
+				value.setChar((char)hexToInt(hex), i);
 			} else if (value[i] == '"' && value[i + 1] == '"') {
 				value.deleteChar(i);
 			}

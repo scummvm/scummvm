@@ -22,28 +22,13 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "mm/utils/strings.h"
 #include "mm/mm1/console.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/events.h"
 
 namespace MM {
 namespace MM1 {
-
-static int strToInt(const char *s) {
-	if (!*s)
-		// No string at all
-		return 0;
-	else if (toupper(s[strlen(s) - 1]) != 'H')
-		// Standard decimal string
-		return atoi(s);
-
-	// Hexadecimal string
-	uint tmp = 0;
-	int read = sscanf(s, "%xh", &tmp);
-	if (read < 1)
-		error("strToInt failed on string \"%s\"", s);
-	return (int)tmp;
-}
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("dump_map", WRAP_METHOD(Console, cmdDumpMap));

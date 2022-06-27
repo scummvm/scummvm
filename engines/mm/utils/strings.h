@@ -19,45 +19,18 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_CHARACTER_INFO_H
-#define MM1_VIEWS_ENH_CHARACTER_INFO_H
+#ifndef MM_UTILS_STRINGS_H
+#define MM_UTILS_STRINGS_H
 
-#include "mm/mm1/views_enh/scroll_view.h"
-#include "mm/xeen/sprites.h"
+#include "common/str.h"
 
 namespace MM {
-namespace MM1 {
-namespace ViewsEnh {
 
-#define CHAR_ICONS_COUNT 22
+extern Common::String capitalize(const Common::String &str);
+extern Common::String camelCase(const Common::String &str);
+extern int strToInt(const Common::String &str);
+extern int hexToInt(const Common::String &str);
 
-class CharacterInfo : public ScrollView {
-	struct IconPos {
-		int _frame; int _x; int _y;
-	};
-private:
-	Xeen::SpriteResource _viewIcon;
-	static const IconPos ICONS[CHAR_ICONS_COUNT];
-	const char *ICONS_TEXT[CHAR_ICONS_COUNT];
-
-private:
-	void drawTitle();
-	void drawIcons();
-	void drawStats();
-	int statColor(int amount, int threshold);
-public:
-	CharacterInfo();
-	virtual ~CharacterInfo() {}
-
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	void draw() override;
-};
-
-} // namespace ViewsEnh
-} // namespace MM1
 } // namespace MM
 
 #endif
