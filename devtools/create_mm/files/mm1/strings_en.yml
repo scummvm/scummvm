@@ -269,6 +269,8 @@ enhdialogs:
 		gold: "Gold"
 		gems: "Gems"
 		food: "Food"
+		days: "Days"
+		day: "Day"
 		item: "\x01""37Item"
 		quick: "\x01""37Quick"
 		exchange: "\x01""37Exch"

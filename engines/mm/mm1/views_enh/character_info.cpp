@@ -150,21 +150,21 @@ void CharacterInfo::drawStats() {
 
 	// Draw stat values
 	const Character &c = *g_globals->_currCharacter;
-	const uint CURR[17] = {
+	const uint CURR[16] = {
 		c._might._current, c._intelligence._current,
 		c._personality._current, c._endurance._current,
 		c._speed._current, c._accuracy._current,
 		c._luck._current, c._age._base, c._level._current,
 		c._ac._current, c._hp, c._sp._current, 0,
-		c._exp, c._gold, c._gems, c._food
+		c._exp, c._gold, c._gems
 	};
-	const uint BASE[17] = {
+	const uint BASE[16] = {
 		c._might._base, c._intelligence._base,
 		c._personality._base, c._endurance._base,
 		c._speed._base, c._accuracy._base,
 		c._luck._base, c._age._base, c._level._base,
 		c._ac._current, c._hp, c._sp._base, 0,
-		c._exp, c._gold, c._gems, c._food
+		c._exp, c._gold, c._gems
 	};
 
 	for (int i = 0; i < 17; ++i) {
@@ -176,7 +176,18 @@ void CharacterInfo::drawStats() {
 			pt.x += 8 + (CURR[i] < 10 ? 8 : 0);
 
 		setTextColor(statColor(CURR[i], BASE[i]));
-		writeNumber(pt.x, pt.y, CURR[i]);
+
+		if (i == 16) {
+			// Food
+			Common::String str = Common::String::format("%d %s",
+				c._food,
+				STRING[c._food == 1 ? "enhdialogs.character.day" :
+					"enhdialogs.character.days"].c_str());
+			setTextColor(15);
+			writeString(pt.x, pt.y, str);
+		} else {
+			writeNumber(pt.x, pt.y, CURR[i]);
+		}
 	}
 }
 
