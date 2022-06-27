@@ -5,17 +5,28 @@ Understanding the interface
 The Launcher
 ===============
 
-The main ScummVM window is called the Launcher. The Launcher opens whenever you start ScummVM, unless you launch a game directly from the command line.
+The main ScummVM window is called the Launcher. The Launcher opens whenever you start ScummVM, unless you launch a game directly from the command line. Use the buttons on the bottom left of the screen to toggle between list and grid view. 
 
-.. figure:: ../images/Launcher/launcher.png
+.. figure:: ../images/Launcher/launcher_list.jpg
 
-   The Launcher, with labels for each GUI element.
+   The Launcher in list view.
+
+.. figure:: ../images/Launcher/launcher_grid.jpg
+
+   The Launcher in grid view.
 
 
 The games list
 ********************
 
-The pane on the left is the games list, which lists all the games that have been added to ScummVM. The games list usually offers some additional information about each game, such as original platform and language. To highlight any game on the list, type the first letter(s) of its title, or click on it.
+The pane on the left, when the Launcher is in list view, shows the games list, which shows all the games that have been added to ScummVM. The games list usually offers some additional information about each game, such as original platform and language. To highlight any game on the list, type the first letter(s) of its title, or click on it.
+
+In grid view, all game icons are in the pane below the buttons, and show the game artwork. See :ref:`Update Icons <updateicons>` for information on how to update these. Use the **Icons per row** slider at the bottom of the page to change the size of the icons. Click on a game to select it. Click on the play icon in the pop-up menu to start the game, the gear icon to open the Game Options menu, or the export icon to load a saved game. 
+
+.. figure:: ../images/Launcher/launcher_popup.jpg
+
+   Game pop-up menu in grid view
+
 
 .. _search_box:
 
@@ -26,17 +37,29 @@ The search box lets you filter the games list. It is located at the top of the p
 
 There are many ways to filter games. For example, you can type "Monkey Island" to locate all "Monkey Island" games on the list, or you can type "lang:de" to find German games. For a comprehensive look at how to use the search box, check out our :doc:`../advanced_topics/understand_search_box` guide.
 
+The grouping menu
+******************
+
+.. _group:
+
+To the right of the search box is the grouping menu. Use this menu to group games in alphabetical order, or by engine, series, publisher, language or platform. Hide or show groups of games by clicking on the black arrow to the left of each group heading. 
+
+.. figure:: ../images/Launcher/launcher_group.jpg
+   
+   The grouping menu. 
+
+
 The buttons
 ************************
 
-To the right of the games list there are a number of buttons. Their functions are as follows:
+To the right of the games list in list view, or above the games list in grid view, there are a number of buttons. Their functions are as follows:
 
-Start
-^^^^^^^^
+Start (list view only)
+^^^^^^^^^^^^^^^^^^^^^^^
 Launches the highlighted game.
 
-Load
-^^^^^^^
+Load (list view only)
+^^^^^^^^^^^^^^^^^^^^^
 
 Opens the load game window, from which you can go to a saved game without having to start the game first.
 
@@ -49,8 +72,8 @@ Opens a file browser. To add a game, select a folder containing game files.
 
 See the :doc:`add_play_games` page.
 
-Edit Game
-^^^^^^^^^^^^
+Game Options (list view only)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Opens the game settings window. This window also opens whenever a game is added to the games list in the Launcher.
 
@@ -63,8 +86,8 @@ Remove Game
 Removes the highlighted game from the list. This does not remove any saved games, so if you add a game to the games list again, you are able to resume where you left off.
 
 
-Options
-^^^^^^^^^^^
+Global Options
+^^^^^^^^^^^^^^^^^^^^
 
 Opens the global settings window. Use this window to define global game settings, as well as change a number of the ScummVM Launcher settings. For more information, see the :doc:`../use_scummvm/how_to_settings` page.
 

@@ -6,12 +6,12 @@ Use the LAN tab to control the Local Area Network (local web server).
 
 For a comprehensive look at how to use ScummVM's built-in LAN functionality, check out our :doc:`../use_scummvm/LAN` guide.
 
-From the Launcher, select **Options**, click the **>** scroll arrow until the LAN tab is visible, and then select the **LAN** tab.
+From the Launcher, select **Global Options**, if necessary click the **>** scroll arrow until the LAN tab is visible, and then select the **LAN** tab.
 
 
 .. figure:: ../images/cloud_and_lan/LAN.png
 
-    The LAN tab in the global settings
+    The LAN tab in the Global Options menu
 
 All settings can also be changed in the :doc:`../advanced_topics/configuration_file`. The configuration key is listed in italics after each setting description.
 

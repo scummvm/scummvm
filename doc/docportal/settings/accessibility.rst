@@ -4,13 +4,13 @@ Accessibility
 
 Use the Accessibility tab to change accessibility settings.
 
-From the Launcher, select **Options**, click the **>** scroll arrow until the LAN tab is visible, and then select the **LAN** tab.
+From the Launcher, select **Global Options**, if necessary click the **>** scroll arrow until the Accessibility tab is visible, and then select the **Accessibility** tab.
 
 
 
 .. figure:: ../images/settings/accessibility.png
 
-	The Accessibility tab in the global settings.
+	The Accessibility tab in the Global Options menu.
 
 All settings can also be changed in the :doc:`../advanced_topics/configuration_file`. The configuration key is listed in italics after each setting description.
 

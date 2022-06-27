@@ -9,14 +9,13 @@ The taskbar integration has several features:
 - Shows a progress bar when doing a mass add of games, and shows the number of games found at the end (Windows, macOS and Linux).
 - Shows an error state in the taskbar if an error occurs when running a game (Windows only).
 
-.. _iconspath:
 
 Setting up the icon overlay
 ================================
 
 Icons for many games can be found on our `Github repository <https://github.com/scummvm/scummvm-icons>`__.
 
-Place the icons in a folder, and either change the *iconspath* in the :doc:`configuration file <../advanced_topics/configuration_file>` to point to this folder, or add the folder to the :ref:`Extra Path <extra>` on the Paths settings tab.
+Place the icons in a folder, and change either the :ref:`Icon Path <iconspath>` or the :ref:`Extra Path <extra>` to point to this folder. 
 
 The icon files must be ICO files for Windows, or PNG files for macOS. They must follow one of these naming conventions, where xxx is the file extension:
 
