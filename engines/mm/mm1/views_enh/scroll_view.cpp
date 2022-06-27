@@ -38,6 +38,7 @@ ScrollView::ScrollView(const Common::String &name) :
 void ScrollView::draw() {
 	frame();
 	fill();
+	setTextColor(0);
 }
 
 void ScrollView::frame() {

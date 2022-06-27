@@ -20,33 +20,13 @@
  */
 
 #include "common/file.h"
+#include "mm/utils/strings.h"
 #include "mm/xeen/xeen.h"
 #include "mm/xeen/debugger.h"
 #include "mm/xeen/files.h"
 
 namespace MM {
 namespace Xeen {
-
-static int strToInt(const char *s) {
-	size_t size = strlen(s);
-
-	if (size == 0)
-		// No string at all
-		return 0;
-
-	if (toupper(s[size - 1]) != 'H')
-		// Standard decimal string
-		return atoi(s);
-
-	// Hexadecimal string
-	uint tmp = 0;
-	int read = sscanf(s, "%xh", &tmp);
-	if (read < 1)
-		error("strToInt failed on string \"%s\"", s);
-	return (int)tmp;
-}
-
-/*------------------------------------------------------------------------*/
 
 Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm),
 		_spellId(-1), _invincible(false), _intangible(false), _superStrength(false) {

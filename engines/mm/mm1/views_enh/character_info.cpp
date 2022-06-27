@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/character_info.h"
+#include "mm/utils/strings.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
@@ -73,6 +74,9 @@ CharacterInfo::CharacterInfo() : ScrollView("CharacterInfo") {
 
 bool CharacterInfo::msgFocus(const FocusMessage &msg) {
 	_viewIcon.load("view.icn");
+	MetaEngine::setKeybindingMode(
+		KeybindingMode::KBMODE_PARTY_MENUS);
+
 	return ScrollView::msgFocus(msg);
 }
 
@@ -90,6 +94,18 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 	return false;
 }
 
+bool CharacterInfo::msgAction(const ActionMessage &msg) {
+	if (msg._action >= KEYBIND_VIEW_PARTY1 &&
+			msg._action <= KEYBIND_VIEW_PARTY6) {
+		g_globals->_currCharacter = &g_globals->_party[
+				msg._action - KEYBIND_VIEW_PARTY1];
+		redraw();
+		return true;
+	}
+
+	return false;
+}
+
 void CharacterInfo::draw() {
 	ScrollView::draw();
 	drawTitle();
@@ -101,10 +117,10 @@ void CharacterInfo::drawTitle() {
 	const Character &c = *g_globals->_currCharacter;
 	Common::String msg = Common::String::format(
 		"%s : %s %s %s",
-		c._name,
-		"X",
-		"Y",
-		"Z"
+		camelCase(c._name).c_str(),
+		capitalize(STRING[Common::String::format("stats.alignments.%d", (int)c._alignment)]).c_str(),
+		capitalize(STRING[Common::String::format("stats.races.%d", (int)c._race)]).c_str(),
+		capitalize(STRING[Common::String::format("stats.classes.%d", (int)c._class)]).c_str()
 	);
 
 	writeString(8, 8, msg);
@@ -141,7 +157,7 @@ void CharacterInfo::drawStats() {
 		c._personality._base, c._endurance._base,
 		c._speed._base, c._accuracy._base,
 		c._luck._base, c._age._base, c._level._base,
-		c._ac._base, c._hp, c._sp._base, 0,
+		c._ac._current, c._hp, c._sp._base, 0,
 		c._exp, c._gold, c._gems, c._food
 	};
 
@@ -149,7 +165,7 @@ void CharacterInfo::drawStats() {
 		if (i == 12)
 			continue;
 
-		Common::Point pt(ICONS[i]._x + 35, ICONS[i]._y + 19);
+		Common::Point pt(ICONS[i]._x + 35, ICONS[i]._y + 20);
 		if (i < 10)
 			pt.x += 8 + (CURR[i] < 10 ? 8 : 0);
 
