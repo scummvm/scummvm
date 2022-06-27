@@ -1191,13 +1191,21 @@ void LB::b_setCallBack(int nargs) {
 }
 
 void LB::b_showResFile(int nargs) {
-	g_lingo->dropStack(nargs);
-	warning("LB: b_showResFile: showResFile is not supported by ScummVM");
+	if (nargs)
+		g_lingo->pop();
+	Common::String out;
+	for (auto it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); it++)
+		out += it->_key + "\n";
+	g_debugger->debugLogFile(out, false);
 }
 
 void LB::b_showXlib(int nargs) {
-	g_lingo->dropStack(nargs);
-	warning("LB: b_showXlib: showXlib is not supported by ScummVM");
+	if (nargs)
+		g_lingo->pop();
+	Common::String out;
+	for (auto it = g_lingo->_openXLibs.begin(); it != g_lingo->_openXLibs.end(); it++)
+		out += it->_key + "\n";
+	g_debugger->debugLogFile(out, false);
 }
 
 void LB::b_xFactoryList(int nargs) {
