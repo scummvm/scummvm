@@ -19,6 +19,8 @@
  *
  */
 
+#define GAMEOPTION_ENGLISH_SPEECH GUIO_GAMEOPTIONS1
+
 namespace Sword25 {
 
 static const ADGameDescription gameDescriptions[] = {
