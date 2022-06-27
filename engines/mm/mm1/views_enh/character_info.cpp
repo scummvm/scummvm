@@ -327,8 +327,9 @@ void CharacterInfo::showAttribute(int attrNum) {
 	assert(attrib < 20);
 
 	Common::Rect bounds(STAT_POS[0][attrib], STAT_POS[1][attrib],
-		STAT_POS[0][attrib] + 143, STAT_POS[1][attrib] + 52);
+		STAT_POS[0][attrib] + 143, STAT_POS[1][attrib] + 44);
 	_statInfo.setBounds(bounds);
+	_statInfo.clear();
 
 	const Character &c = *g_globals->_currCharacter;
 	const uint CURR[12] = {
@@ -352,7 +353,6 @@ void CharacterInfo::showAttribute(int attrNum) {
 	};
 
 	if (attrib < 12) {
-		_statInfo.clear();
 		_statInfo.addLine(
 			STRING[Common::String::format("enhdialogs.character.long.%s",
 				TITLES[attrib]).c_str()],
@@ -370,6 +370,24 @@ void CharacterInfo::showAttribute(int attrNum) {
 		_statInfo.addText("/", 2, 0, ALIGN_MIDDLE);
 		_statInfo.addText(Common::String::format("%u", BASE[attrib]),
 			2, 0, ALIGN_LEFT, xc + 8);
+	} else if (attrib >= 16 && attrib <= 18) {
+		bounds.bottom -= 8;
+		_statInfo.setBounds(bounds);
+
+		uint value = c._gold;
+		Common::String title = STRING["enhdialogs.character.stats.gold"];
+		if (attrib == 17) {
+			value = c._gems;
+			title = STRING["enhdialogs.character.stats.gems"];
+		} else if (attrib == 18) {
+			value = c._food;
+			title = STRING["enhdialogs.character.stats.food"];
+		}
+
+		_statInfo.addLine(title, ALIGN_MIDDLE);
+		_statInfo.addLine(Common::String::format("%u %s",
+			value, STRING["enhdialogs.character.long.on_hand"].c_str()),
+			ALIGN_MIDDLE);
 	}
 
 	/*
@@ -383,29 +401,6 @@ void CharacterInfo::showAttribute(int attrNum) {
 		);
 		bounds.setHeight(43);
 		break;
-
-	case 16:
-		// Gold
-		msg = Common::String::format(Res.IN_PARTY_IN_BANK, Res.CONSUMABLE_NAMES[0],
-			party._gold, party._bankGold);
-		bounds.setHeight(43);
-		break;
-
-	case 17:
-		// Gems
-		msg = Common::String::format(Res.IN_PARTY_IN_BANK, Res.CONSUMABLE_NAMES[1],
-			party._gems, party._bankGems);
-		bounds.setHeight(43);
-		break;
-
-	case 18:
-	{
-		// Food
-		int food = (party._food / party._activeParty.size()) / 3;
-		msg = Common::String::format(Res.FOOD_TEXT, Res.CONSUMABLE_NAMES[2],
-			party._food, getFoodOnHandPlurals(food), food, getDaysPlurals(food));
-		break;
-	}
 
 	case 19:
 	{

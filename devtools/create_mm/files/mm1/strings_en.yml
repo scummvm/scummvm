@@ -291,6 +291,7 @@ enhdialogs:
 			next_level: "Next Level"
 			eligible: "Eligible"
 			ineligible: "Ineligible"
+			on_hand: "on hand"
 		item: "\x01""37Item"
 		quick: "\x01""37Quick"
 		exchange: "\x01""37Exch"
