@@ -27,6 +27,11 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
+#define CURSOR_BLINK_FRAMES 6
+#define ICONS_COUNT 18
+#define REDUCED_TO_EXPANDED(IDX) ((IDX >= 13) ? IDX + 2 : IDX)
+#define EXPANDED_TO_REDUCED(IDX) ((IDX >= 13) ? IDX - 2 : IDX)
+
 const CharacterInfo::IconPos CharacterInfo::ICONS[CHAR_ICONS_COUNT] = {
 	{ 0, 2, 16 },
 	{ 2, 2, 39 },
@@ -66,7 +71,7 @@ CharacterInfo::CharacterInfo() : ScrollView("CharacterInfo") {
 		"experience", "gold", "gems", "food", "condition"
 	};
 
-	for (int i = 0; i < 18; ++i) {
+	for (int i = 0; i < ICONS_COUNT; ++i) {
 		ICONS_TEXT[i] = STRING[Common::String::format(
 			"enhdialogs.character.%s", FIELDS[i])].c_str();
 	}
@@ -77,6 +82,10 @@ bool CharacterInfo::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(
 		KeybindingMode::KBMODE_PARTY_MENUS);
 
+	_cursorCell = 0;
+	showCursor(true);
+	delayFrames(CURSOR_BLINK_FRAMES);
+
 	return ScrollView::msgFocus(msg);
 }
 
@@ -86,9 +95,46 @@ bool CharacterInfo::msgUnfocus(const UnfocusMessage &msg) {
 }
 
 bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
+	int idx;
+
+	switch (msg.keycode) {
+	case Common::KEYCODE_ESCAPE:
 		close();
 		return true;
+	case Common::KEYCODE_UP:
+		showCursor(false);
+		if (--_cursorCell < 0)
+			_cursorCell = ICONS_COUNT - 1;
+		showCursor(true);
+		break;
+	case Common::KEYCODE_DOWN:
+		showCursor(false);
+		if (++_cursorCell >= ICONS_COUNT)
+			_cursorCell = 0;
+		showCursor(true);
+		break;
+	case Common::KEYCODE_LEFT:
+		showCursor(false);
+		idx = REDUCED_TO_EXPANDED(_cursorCell) - 5;
+		if (idx == 13 || idx == 14)
+			idx -= 5;
+		if (idx < 0)
+			idx += 20;
+		_cursorCell = EXPANDED_TO_REDUCED(idx);
+		showCursor(true);
+		break;
+	case Common::KEYCODE_RIGHT:
+		showCursor(false);
+		idx = REDUCED_TO_EXPANDED(_cursorCell) + 5;
+		if (idx == 13 || idx == 14)
+			idx += 5;
+		if (idx >= 20)
+			idx -= 20;
+		_cursorCell = EXPANDED_TO_REDUCED(idx);
+		showCursor(true);
+		break;
+	default:
+		break;
 	}
 
 	return false;
@@ -215,6 +261,27 @@ int CharacterInfo::statColor(int amount, int threshold) {
 		return 9;
 	else
 		return 32;
+}
+
+void CharacterInfo::showCursor(bool flag) {
+	const int CURSOR_X[4] = { 9, 60, 111, 176 };
+	const int CURSOR_Y[5] = { 23, 46, 69, 92, 115 };
+
+	if (flag == _cursorVisible)
+		return;
+
+	int idx = REDUCED_TO_EXPANDED(_cursorCell);
+	_cursorVisible = flag;
+
+	Graphics::ManagedSurface s = getSurface();
+	_viewIcon.draw(&s, flag ? 49 : 48,
+		Common::Point(CURSOR_X[idx / 5], CURSOR_Y[idx % 5]));
+	s.markAllDirty();
+}
+
+void CharacterInfo::timeout() {
+	showCursor(!_cursorVisible);
+	delayFrames(CURSOR_BLINK_FRAMES);
 }
 
 } // namespace Views

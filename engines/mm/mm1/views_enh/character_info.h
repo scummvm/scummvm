@@ -39,12 +39,23 @@ private:
 	Xeen::SpriteResource _viewIcon;
 	static const IconPos ICONS[CHAR_ICONS_COUNT];
 	const char *ICONS_TEXT[CHAR_ICONS_COUNT];
+	int _cursorCell = 0;
+	bool _cursorVisible = false;
 
 private:
 	void drawTitle();
 	void drawIcons();
 	void drawStats();
 	int statColor(int amount, int threshold);
+
+	/**
+	 * Toggle display of cursor
+	 */
+	void showCursor(bool flag);
+
+protected:
+	void timeout() override;
+
 public:
 	CharacterInfo();
 	virtual ~CharacterInfo() {}

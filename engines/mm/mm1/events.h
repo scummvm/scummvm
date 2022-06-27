@@ -52,9 +52,14 @@ protected:
 	}
 
 	/**
-	 * Set a delay countdown
+	 * Set a delay countdown in seconds
 	 */
 	void delaySeconds(uint seconds);
+
+	/**
+	 * Set a delay countdown in frames
+	 */
+	void delayFrames(uint frames);
 
 	/**
 	 * Called when an active timeout countdown expired

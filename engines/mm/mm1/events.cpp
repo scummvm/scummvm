@@ -247,6 +247,10 @@ void UIElement::delaySeconds(uint seconds) {
 	_timeoutCtr = seconds * FRAME_RATE;
 }
 
+void UIElement::delayFrames(uint frames) {
+	_timeoutCtr = frames;
+}
+
 void UIElement::timeout() {
 	redraw();
 }
