@@ -25,6 +25,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 #include "graphics/font.h"
+#include "mm/mm1/views_enh/scroll_view.h"
 
 namespace MM {
 namespace MM1 {
@@ -34,7 +35,10 @@ enum TextAlignment {
 	ALIGN_LEFT, ALIGN_RIGHT, ALIGN_MIDDLE
 };
 
-class ScrollText {
+/**
+ * Derived scroll class for displaying static text
+ */
+class ScrollText : public ScrollView {
 	struct Line {
 		Common::String _str;
 		Common::Point _pos;
@@ -49,16 +53,16 @@ public:
 	typedef Common::Array<Line> Lines;
 private:
 	Graphics::Font *_font;
-	Common::Point _size;
 	size_t _rowCount = 0;
 	Lines _lines;
+	Common::Rect _innerBounds;
 public:
 	ScrollText();
 
 	/**
-	 * Sets the size for the text area
+	 * Sets the element's bounds
 	 */
-	void setSize(int w, int h);
+	void setBounds(const Common::Rect &r) override;
 
 	Lines::iterator begin() { return _lines.begin(); }
 	Lines::iterator end() { return _lines.end(); }
@@ -88,6 +92,16 @@ public:
 	 */
 	void addText(const Common::String &str,
 		int lineNum, byte color = 0, int xp = 0);
+
+	/**
+	 * Draw the view
+	 */
+	void draw() override;
+
+	/**
+	 * Handle keypress events
+	 */
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 } // namespace ViewsEnh

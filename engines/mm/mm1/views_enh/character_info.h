@@ -43,15 +43,35 @@ private:
 	bool _cursorVisible = false;
 
 private:
+	/**
+	 * Draw the title text
+	 */
 	void drawTitle();
+
+	/**
+	 * Draw the icons
+	 */
 	void drawIcons();
+
+	/**
+	 * Draw the stats
+	 */
 	void drawStats();
+
+	/**
+	 * Return the color for a given stat
+	 */
 	int statColor(int amount, int threshold);
 
 	/**
 	 * Toggle display of cursor
 	 */
 	void showCursor(bool flag);
+
+	/**
+	 * Show the details of a given attribute
+	 */
+	void showAttribute(int attrNum);
 
 protected:
 	void timeout() override;

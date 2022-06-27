@@ -35,27 +35,10 @@ ScrollView::ScrollView(const Common::String &name) :
 	TextView(name, g_engine) {
 }
 
-void ScrollView::setBounds(const Common::Rect &r) {
-	_bounds = r;
-	Common::Rect inner = r;
-	inner.grow(-FRAME_BORDER_SIZE);
-	_text.setSize(r.width(), r.height());
-}
-
 void ScrollView::draw() {
 	frame();
 	fill();
 	setTextColor(0);
-
-	// Iterate through displaying any text
-	for (ScrollText::Lines::const_iterator i = _text.begin();
-			i != _text.end(); ++i) {
-		setTextColor(i->_color);
-		writeString(i->_pos.x + FRAME_BORDER_SIZE,
-			i->_pos.y + FRAME_BORDER_SIZE,
-			i->_str
-		);
-	}
 }
 
 void ScrollView::frame() {

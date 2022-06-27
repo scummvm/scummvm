@@ -28,14 +28,15 @@ namespace ViewsEnh {
 
 #define FONT_HEIGHT 8
 
-ScrollText::ScrollText() {
+ScrollText::ScrollText() : ScrollView("ScrollText") {
 	_font = &g_globals->_fontNormal;
 }
 
-void ScrollText::setSize(int w, int h) {
-	_size.x = w;
-	_size.y = h;
-	_rowCount = h / 8;
+void ScrollText::setBounds(const Common::Rect &r) {
+	ScrollView::setBounds(_bounds);
+	_innerBounds = _bounds;
+	_innerBounds.grow(-FRAME_BORDER_SIZE);
+	_rowCount = _innerBounds.height() / FONT_HEIGHT;
 }
 
 void ScrollText::setReduced(bool flag) {
@@ -51,9 +52,10 @@ void ScrollText::addLine(const Common::String &str,
 		if (align != ALIGN_LEFT) {
 			size_t strWidth = _font->getStringWidth(str);
 			if (align == ALIGN_RIGHT)
-				pt.x = _size.x - strWidth;
+				pt.x = _innerBounds.right - strWidth;
 			else
-				pt.x = (_size.x - strWidth) / 2;
+				pt.x = _innerBounds.left +
+					(_innerBounds.width() + strWidth) / 2;
 		}
 
 		_lines.push_back(Line(str, pt, color));
@@ -66,6 +68,28 @@ void ScrollText::addText(const Common::String &str,
 		Common::Point(xp, lineNum * FONT_HEIGHT), color));
 }
 
+void ScrollText::draw() {
+	ScrollView::draw();
+
+	// Iterate through displaying any text
+	for (Lines::const_iterator i = begin();
+		i != end(); ++i) {
+		setTextColor(i->_color);
+		writeString(i->_pos.x + FRAME_BORDER_SIZE,
+			i->_pos.y + FRAME_BORDER_SIZE,
+			i->_str
+		);
+	}
+}
+
+bool ScrollText::msgKeypress(const KeypressMessage &msg) {
+	if (msg.keycode == Common::KEYCODE_ESCAPE) {
+		close();
+		return true;
+	}
+
+	return false;
+}
 
 } // namespace ViewsEnh
 } // namespace MM1
