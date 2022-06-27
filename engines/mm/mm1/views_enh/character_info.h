@@ -85,6 +85,7 @@ public:
 	bool msgUnfocus(const UnfocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
+	bool msgMouseUp(const MouseUpMessage &msg) override;
 	void draw() override;
 };
 

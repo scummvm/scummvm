@@ -157,6 +157,20 @@ bool CharacterInfo::msgAction(const ActionMessage &msg) {
 	return false;
 }
 
+bool CharacterInfo::msgMouseUp(const MouseUpMessage &msg) {
+	// Check if a stat icon was clicked
+	Common::Rect r(16, 16);
+	for (int i = 0; i < ICONS_COUNT; ++i) {
+		r.moveTo(ICONS[i]._x + 8, ICONS[i]._y + 8);
+		if (r.contains(msg._pos)) {
+			showAttribute(i);
+			return true;
+		}
+	}
+
+	return ScrollView::msgMouseUp(msg);
+}
+
 void CharacterInfo::draw() {
 	ScrollView::draw();
 	drawTitle();
@@ -304,8 +318,8 @@ void CharacterInfo::showAttribute(int attrNum) {
 			61, 61, 61, 61, 61, 112, 112, 112, 112, 112,
 			177, 177, 177, 177, 177, 34, 34, 34, 34, 34
 		}, {
-			24, 47, 70, 93, 116, 24, 47, 70, 93, 116,
-			24, 47, 70, 93, 116, 24, 47, 70, 93, 116
+			24, 47, 70, 93, 93, 24, 47, 70, 93, 93,
+			24, 47, 70, 93, 93, 24, 47, 70, 93, 93
 		}
 	};
 
