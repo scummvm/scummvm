@@ -4,11 +4,11 @@ Control
 
 Use the Control tab to change settings for joysticks, game controllers, and touch screens.  This tab is not always available.
 
-From the Launcher, select **Options**, and then select the **Control** tab.
+From the Launcher, select **Global Options**, and then select the **Control** tab.
 
 .. figure:: ../images/settings/control.png
 
-    The Control tab in the global settings
+    The Control tab in the Global Options menu
 
 All settings can also be changed in the :doc:`../advanced_topics/configuration_file`. The configuration key is listed in italics after each setting description.
 
