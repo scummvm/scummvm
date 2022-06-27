@@ -1113,9 +1113,10 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 }
 
 void LB::b_open(int nargs) {
-	g_lingo->printSTUBWithArglist("b_open", nargs);
-
-	g_lingo->dropStack(nargs);
+	Datum d = g_lingo->pop();
+	if (nargs == 2)
+		g_lingo->pop();
+	warning("LB::b_open(): Unsupported command open encountered -> The movie tried to open %s", d.asString().c_str());
 }
 
 void LB::b_openDA(int nargs) {
