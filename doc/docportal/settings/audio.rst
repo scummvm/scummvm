@@ -8,11 +8,11 @@ Audio settings are found on four tabs:
 
 **To change settings globally:**
 
- 	From the Launcher, select **Options**, then select the applicable tab.
+ 	From the Launcher, select **Global Options**, then select the applicable tab.
 
 **To change settings for a specific game:**
 
-	From the Launcher, highlight the game in the games list, select **Edit Game**, and then select the applicable tab.
+	From the Launcher, highlight the game in the games list, and select the **Game Options** button. If the Launcher is in grid view, select the game and then select the gear icon in the popup window. Select the applicable tab.
 
 For a comprehensive look at how to use ScummVM's extensive audio settings, check out our :doc:`../advanced_topics/understand_audio` guide.
 
@@ -23,15 +23,15 @@ All settings can also be changed in the :doc:`../advanced_topics/configuration_f
 The Audio tab
 -----------------
 
-Use the Audio tab to change the sound output for games.
+Use the Audio tab to change the sound output of games.
 
 .. figure:: ../images/settings/audio.png
 
-    The Audio tab in the global settings
+    The Audio tab in the Global Options menu.
 
 .. figure:: ../images/settings/audio_game.png
 
-    The Audio tab in the game-specific settings.
+    The Audio tab in the Game Options menu.
 
 
 ,,,,,,,,,,,,,,,,
@@ -79,7 +79,7 @@ Use the Volume tab to set the relative volumes for various in-game sounds.
 
 .. figure:: ../images/settings/volume_game.png
 
-    The Volume tab in the game-specific settings.
+    The Volume tab in the Game Options menu.
 
 ,,,,,,,,,,,,,
 
@@ -125,7 +125,7 @@ Use the MIDI tab to change the settings of General MIDI (GM) devices.
 
 .. figure:: ../images/settings/MIDI.png
 
-    The MIDI tab in the global settings.
+    The MIDI tab in the Global Options menu
 
 ,,,,,,,,,,,,,
 
@@ -286,7 +286,7 @@ Use the MT-32 tab to change the settings of Roland MT-32 devices.
 
 .. figure:: ../images/settings/MT32.png
 
-    The MT-32 tab in the global settings.
+    The MT-32 tab in the Global Options menu
 
 ,,,,,,,,,,,,,
 
