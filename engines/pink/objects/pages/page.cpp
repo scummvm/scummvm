@@ -19,7 +19,7 @@
  *
  */
 
-#include "pink/director.h"
+#include "pink/screen.h"
 #include "pink/pink.h"
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/pages/page.h"

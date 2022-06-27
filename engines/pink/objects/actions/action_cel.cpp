@@ -24,7 +24,7 @@
 
 #include "pink/archive.h"
 #include "pink/cel_decoder.h"
-#include "pink/director.h"
+#include "pink/screen.h"
 #include "pink/pink.h"
 #include "pink/objects/actions/action_cel.h"
 #include "pink/objects/actors/actor.h"

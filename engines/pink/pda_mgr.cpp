@@ -21,7 +21,7 @@
 
 #include "pink/pda_mgr.h"
 #include "pink/pink.h"
-#include "pink/director.h"
+#include "pink/screen.h"
 #include "pink/objects/actors/pda_button_actor.h"
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/pages/pda_page.h"
