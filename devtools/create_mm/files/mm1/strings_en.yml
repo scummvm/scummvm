@@ -269,12 +269,13 @@ enhdialogs:
 		gold: "Gold"
 		gems: "Gems"
 		food: "Food"
-		item: "\x01Item"
-		quick: "\x01Quick"
-		exchange: "\x01Exch"
-		exit: "Exit"
+		item: "\x01""37Item"
+		quick: "\x01""37Quick"
+		exchange: "\x01""37Exch"
 		conditions:
 			good: "Good"
+	misc:
+		exit: "Exit"
 stats:
 	none: "NONE"
 	inventory: "-----<EQUIPPED>----------<BACKPACK>----"
