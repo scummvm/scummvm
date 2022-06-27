@@ -73,7 +73,7 @@ CharacterInfo::CharacterInfo() : ScrollView("CharacterInfo") {
 
 	for (int i = 0; i < ICONS_COUNT; ++i) {
 		ICONS_TEXT[i] = STRING[Common::String::format(
-			"enhdialogs.character.%s", FIELDS[i])].c_str();
+			"enhdialogs.character.stats.%s", FIELDS[i])].c_str();
 	}
 }
 
@@ -227,8 +227,8 @@ void CharacterInfo::drawStats() {
 			// Food
 			Common::String str = Common::String::format("%d %s",
 				c._food,
-				STRING[c._food == 1 ? "enhdialogs.character.day" :
-					"enhdialogs.character.days"].c_str());
+				STRING[c._food == 1 ? "enhdialogs.character.stats.day" :
+					"enhdialogs.character.stats.days"].c_str());
 			setTextColor(15);
 			writeString(pt.x, pt.y, str);
 		} else {
