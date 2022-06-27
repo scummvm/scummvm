@@ -241,9 +241,13 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vec
 	else if (size.z() == 0)
 		dz = 2;
 	else {
-		if (ordinates->size() != 6)
+		if (ordinates->size() != 6) {
 			error("Invalid polygon: %f %f %f", size.x(), size.y(), size.z());
+		}
 	}
+
+	if (ordinates->size() % 3 > 0)
+		error("Invalid polygon using %d ordinates", ordinates->size());
 
 	Common::Array<Math::Vector3d> vertices;
 	tglEnable(TGL_POLYGON_OFFSET_FILL);
