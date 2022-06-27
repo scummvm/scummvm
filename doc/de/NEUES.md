@@ -17,6 +17,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Kyra:
    - Unterstützung für die koreanische Version von Legend of Kyrandia 1 hinzugefügt.
+   - Unterstützung für die koreanische Version von Legend of Kyrandia 3 hinzugefügt.
 
  SCUMM:
    - Ein Workaround in der FM-Towns-Version von Monkey Island 2 ist jetzt als
