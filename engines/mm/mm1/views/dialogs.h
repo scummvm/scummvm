@@ -25,6 +25,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/views/are_you_ready.h"
 #include "mm/mm1/views/create_characters.h"
+#include "mm/mm1/views/encounter.h"
 #include "mm/mm1/views/game.h"
 #include "mm/mm1/views/main_menu.h"
 #include "mm/mm1/views/order.h"
@@ -33,6 +34,7 @@
 #include "mm/mm1/views/title.h"
 #include "mm/mm1/views/character_info.h"
 #include "mm/mm1/views/characters.h"
+#include "mm/mm1/views/encounter.h"
 #include "mm/mm1/views/locations/blacksmith.h"
 #include "mm/mm1/views/locations/inn.h"
 #include "mm/mm1/views/locations/market.h"
@@ -49,6 +51,7 @@ struct Dialogs {
 private:
 	Views::AreYouReady _areYouReady;
 	Views::CreateCharacters _createCharacters;
+	Views::Encounter _encounter;
 	Views::Game _game;
 	Views::MainMenu _mainMenu;
 	Views::Order _order;
