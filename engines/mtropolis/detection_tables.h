@@ -26,6 +26,11 @@
 
 #include "mtropolis/detection.h"
 
+#define GAMEOPTION_WIDESCREEN_MOD GUIO_GAMEOPTIONS1
+#define GAMEOPTION_DYNAMIC_MIDI   GUIO_GAMEOPTIONS2
+#define GAMEOPTION_LAUNCH_DEBUG   GUIO_GAMEOPTIONS3
+#define GAMEOPTION_LAUNCH_BREAK   GUIO_GAMEOPTIONS4
+
 namespace MTropolis {
 
 static const MTropolisGameDescription gameDescriptions[] = {
@@ -46,7 +51,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
 		},
 		GID_OBSIDIAN,
 		0,
@@ -73,7 +78,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
 		},
 		GID_OBSIDIAN,
 		0,
@@ -100,7 +105,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
 		},
 		GID_OBSIDIAN,
 		0,
@@ -126,7 +131,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO0()
+			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
 		},
 		GID_OBSIDIAN,
 		0,
@@ -153,7 +158,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO0()
+			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
 		},
 		GID_OBSIDIAN,
 		0,
@@ -176,7 +181,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO0()
+			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
 		},
 		GID_OBSIDIAN,
 		0,
@@ -247,7 +252,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO0()
+			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
 		},
 		GID_OBSIDIAN,
 		0,
@@ -270,7 +275,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO0()
+			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
 		},
 		GID_OBSIDIAN,
 		0,

@@ -34,6 +34,58 @@ static const PlainGameDescriptor mTropolisGames[] = {
 
 #include "mtropolis/detection_tables.h"
 
+namespace MTropolis {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_WIDESCREEN_MOD,
+		{
+			_s("16:9 Widescreen Mod"),
+			_s("Removes letterboxing and moves some display elements, improving coverage on widescreen displays"),
+			"mtropolis_mod_obsidian_widescreen",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_DYNAMIC_MIDI,
+		{
+			_s("Improved Music Mixing"),
+			_s("Enables dynamic MIDI mixer, improving quality, but behaving less like mTropolis Player."),
+			"mtropolis_mod_dynamic_midi",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_LAUNCH_DEBUG,
+		{
+			_s("Start with debugger"),
+			_s("Starts with the debugger dashboard active"),
+			"mtropolis_debug_at_start",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_LAUNCH_BREAK,
+		{
+			_s("Start debugging immediately"),
+			_s("Halts progress and stops at the debugger immediately"),
+			"mtropolis_pause_at_start",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+} // End of namespace MTropolis
+
 static const char *directoryGlobs[] = {
 	"Obsidian",
 	"RESOURCE",
@@ -43,7 +95,8 @@ static const char *directoryGlobs[] = {
 
 class MTropolisMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	MTropolisMetaEngineDetection() : AdvancedMetaEngineDetection(MTropolis::gameDescriptions, sizeof(MTropolis::MTropolisGameDescription), mTropolisGames) {
+	MTropolisMetaEngineDetection() : AdvancedMetaEngineDetection(MTropolis::gameDescriptions, sizeof(MTropolis::MTropolisGameDescription), mTropolisGames, MTropolis::optionsList) {
+		_guiOptions = GUIO3(GAMEOPTION_DYNAMIC_MIDI, GAMEOPTION_LAUNCH_DEBUG, GAMEOPTION_LAUNCH_BREAK);
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -59,57 +112,6 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "mTropolis (C) mFactory/Quark";
 	}
-
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 };
-
-const ExtraGuiOptions MTropolisMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
-	ExtraGuiOptions options;
-
-	Common::String gameid = ConfMan.get("gameid", target);
-
-	if (gameid == "obsidian") {
-		static const ExtraGuiOption widescreenOption = {
-			_s("16:9 Widescreen Mod"),
-			_s("Removes letterboxing and moves some display elements, improving coverage on widescreen displays"),
-			"mtropolis_mod_obsidian_widescreen",
-			false,
-			0,
-			0};
-
-		options.push_back(widescreenOption);
-	}
-
-	static const ExtraGuiOption dynamicMIDIOption = {
-		_s("Improved Music Mixing"),
-		_s("Enables dynamic MIDI mixer, improving quality, but behaving less like mTropolis Player."),
-		"mtropolis_mod_dynamic_midi",
-		true,
-		0,
-		0};
-
-	static const ExtraGuiOption launchDebugOption = {
-		_s("Start with debugger"),
-		_s("Starts with the debugger dashboard active"),
-		"mtropolis_debug_at_start",
-		false,
-		0,
-		0
-	};
-	static const ExtraGuiOption launchBreakOption = {
-		_s("Start debugging immediately"),
-		_s("Halts progress and stops at the debugger immediately"),
-		"mtropolis_pause_at_start",
-		false,
-		0,
-		0
-	};
-
-	options.push_back(dynamicMIDIOption);
-	options.push_back(launchDebugOption);
-	options.push_back(launchBreakOption);
-
-	return options;
-}
 
 REGISTER_PLUGIN_STATIC(MTROPOLIS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, MTropolisMetaEngineDetection);
