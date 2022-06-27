@@ -71,9 +71,9 @@ void Actor::init(bool paused) {
 	}
 }
 
-bool Actor::initPalette(Director *director) {
+bool Actor::initPalette(Surface *surface) {
 	for (uint i = 0; i < _actions.size(); ++i) {
-		if (_actions[i]->initPalette(director))
+		if (_actions[i]->initPalette(surface))
 			return true;
 	}
 	return false;

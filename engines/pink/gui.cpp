@@ -134,9 +134,9 @@ static void menuCommandsCallback(int action, Common::U32String &, void *data) {
 }
 
 void PinkEngine::initMenu() {
-	_director->getWndManager().setEngine(this);
+	_surface->getWndManager().setEngine(this);
 
-	_menu = Graphics::MacMenu::createMenuFromPEexe(_exeResources, &_director->getWndManager());
+	_menu = Graphics::MacMenu::createMenuFromPEexe(_exeResources, &_surface->getWndManager());
 	if (getLanguage() == Common::HE_ISR) {
 		_menu->setAlignment(Graphics::kTextAlignRight);
 	}

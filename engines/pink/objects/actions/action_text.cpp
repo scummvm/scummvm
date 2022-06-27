@@ -77,7 +77,7 @@ void ActionText::toConsole() const {
 
 void ActionText::start() {
 	findColorsInPalette();
-	Director *director = _actor->getPage()->getGame()->getDirector();
+	Surface *surface = _actor->getPage()->getGame()->getSurface();
 	Graphics::TextAlign align = _centered ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft;
 	Common::SeekableReadStream *stream = _actor->getPage()->getResourceStream(_fileName);
 
@@ -125,7 +125,7 @@ void ActionText::start() {
 		_text.deleteLastChar();
 
 	if (_scrollBar) {
-		_txtWnd = director->getWndManager().addTextWindow(director->getTextFont(), _textColorIndex, _backgroundColorIndex,
+		_txtWnd = surface->getWndManager().addTextWindow(surface->getTextFont(), _textColorIndex, _backgroundColorIndex,
 														  _xRight - _xLeft, align, nullptr, false);
 		_txtWnd->setTextColorRGB(_textRGB);
 		_txtWnd->enableScrollbar(true);
@@ -137,12 +137,12 @@ void ActionText::start() {
 		_txtWnd->setSelectable(false);
 
 		_txtWnd->appendText(_text);
-		director->addTextWindow(_txtWnd);
+		surface->addTextWindow(_txtWnd);
 
 	} else {
-		director->addTextAction(this);
+		surface->addTextAction(this);
 
-		_macText = new Graphics::MacText(_text, &director->getWndManager(), director->getTextFont(), _textColorIndex, _backgroundColorIndex, _xRight - _xLeft, align);
+		_macText = new Graphics::MacText(_text, &surface->getWndManager(), surface->getTextFont(), _textColorIndex, _backgroundColorIndex, _xRight - _xLeft, align);
 	}
 }
 
@@ -151,13 +151,13 @@ Common::Rect ActionText::getBound() {
 }
 
 void ActionText::end() {
-	Director *director = _actor->getPage()->getGame()->getDirector();
+	Surface *surface = _actor->getPage()->getGame()->getSurface();
 	if (_scrollBar && _txtWnd) {
-		director->getWndManager().removeWindow(_txtWnd);
-		director->removeTextWindow(_txtWnd);
+		surface->getWndManager().removeWindow(_txtWnd);
+		surface->removeTextWindow(_txtWnd);
 		_txtWnd = nullptr;
 	} else {
-		director->removeTextAction(this);
+		surface->removeTextAction(this);
 		delete _macText;
 	}
 }

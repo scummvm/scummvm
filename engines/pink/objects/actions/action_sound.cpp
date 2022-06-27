@@ -54,8 +54,8 @@ void ActionSound::start() {
 
 	Page *page = _actor->getPage();
 	if (!_isLoop) {
-		Director *director = page->getGame()->getDirector();
-		director->addSound(this);
+		Surface *surface = page->getGame()->getSurface();
+		surface->addSound(this);
 	} else
 		_actor->endAction();
 
@@ -67,8 +67,8 @@ void ActionSound::start() {
 void ActionSound::end() {
 	_sound.stop();
 	if (!_isLoop) {
-		Director *director = _actor->getPage()->getGame()->getDirector();
-		director->removeSound(this);
+		Surface *surface = _actor->getPage()->getGame()->getSurface();
+		surface->removeSound(this);
 	}
 
 	debugC(6, kPinkDebugActions, "ActionSound %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
