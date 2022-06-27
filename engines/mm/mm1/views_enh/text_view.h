@@ -37,7 +37,7 @@ protected:
 	/**
 	 * Set the text color
 	 */
-	void setTextColor(byte col);
+	byte setTextColor(byte col);
 
 	/**
 	 * Set whether to use the standard large sized font or reduced one

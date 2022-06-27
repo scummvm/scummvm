@@ -36,11 +36,14 @@ TextView::TextView(const Common::String &name, UIElement *owner) :
 		UIElement(name, owner) {
 }
 
-void TextView::setTextColor(byte col) {
+byte TextView::setTextColor(byte col) {
+	byte oldColor = _colorsNum;
 	_colorsNum = col;
+	return oldColor;
 }
 
 void TextView::writeChar(char c) {
+	assert((unsigned char)c < 0x80);
 	XeenFont::setColors(_colorsNum);
 	Graphics::Font &font = _fontReduced ?
 		g_globals->_fontReduced : g_globals->_fontNormal;
@@ -67,12 +70,20 @@ void TextView::writeChar(int x, int y, char c) {
 }
 
 void TextView::writeString(const Common::String &str) {
-	for (const unsigned char *s = (const unsigned char *)str.c_str(); *s; ++s) {
-		if (*s & 0x80)
-			warning("TODO: Unknown high-bit set in string character");
+	for (const char *s = (const char *)str.c_str(); *s; ++s) {
+		char c = *s;
 
-		char c = (char)(*s & 0x7f);
-		writeChar(c);
+		if (c == '\x01') {
+			// Highlight next character for buttons
+			int colNum = atoi(Common::String(s + 1, s + 3).c_str());
+			byte oldCol = setTextColor(colNum);
+			s += 3;
+			writeChar(*s);
+			setTextColor(oldCol);
+
+		} else {
+			writeChar(c);
+		}
 	}
 }
 

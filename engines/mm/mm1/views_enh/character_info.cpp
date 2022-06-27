@@ -133,6 +133,12 @@ void CharacterInfo::drawIcons() {
 			Common::Point(ICONS[i]._x + FRAME_BORDER_SIZE,
 				ICONS[i]._y + FRAME_BORDER_SIZE));
 	}
+
+	// Text for buttons
+	writeString(285, 33, STRING["enhdialogs.character.item"]);
+	writeString(282, 65, STRING["enhdialogs.character.quick"]);
+	writeString(284, 98, STRING["enhdialogs.character.exchange"]);
+	writeString(286, 130, STRING["enhdialogs.misc.exit"]);
 }
 
 void CharacterInfo::drawStats() {

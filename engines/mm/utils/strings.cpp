@@ -62,6 +62,25 @@ Common::String camelCase(const Common::String &str) {
 	return result;
 }
 
+Common::String searchAndReplace(const Common::String &str,
+		const Common::String &find, const Common::String &replace) {
+	Common::String result = str;
+	const char *p = result.c_str();
+
+	while ((p = strstr(p, find.c_str())) != nullptr) {
+		uint idx = p - result.c_str();
+		result = Common::String::format("%s%s%s",
+			Common::String(result.c_str(), p).c_str(),
+			replace.c_str(),
+			Common::String(p + find.size()).c_str()
+		);
+
+		p = result.c_str() + idx + replace.size();
+	}
+
+	return result;
+}
+
 int strToInt(const Common::String &str) {
 	const char *s = str.c_str();
 	size_t size = strlen(s);
