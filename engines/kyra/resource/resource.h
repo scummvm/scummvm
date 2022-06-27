@@ -1280,9 +1280,11 @@ public:
 	// can't be loaded and it breaks then the first res
 	// can't be loaded
 	bool prefetchId(int id);
+	bool renewPrefetchIdWithCustomLanguage(int id, Common::Language lang);
 	void unloadId(int id);
 private:
 	bool tryKyraDatLoad();
+	Common::SeekableReadStream *loadIdMap(Common::Language lang);
 
 	KyraEngine_v1 *_vm;
 

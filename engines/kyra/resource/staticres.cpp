@@ -100,8 +100,8 @@ const IndexTable iLanguageTable[] = {
 	{ -1, -1 }
 };
 
-byte getLanguageID(const GameFlags &flags) {
-	return Common::find(iLanguageTable, ARRAYEND(iLanguageTable) - 1, flags.lang)->value;
+byte getLanguageID(Common::Language lang) {
+	return Common::find(iLanguageTable, ARRAYEND(iLanguageTable) - 1, lang)->value;
 }
 
 const IndexTable iPlatformTable[] = {
@@ -174,50 +174,7 @@ bool StaticResource::loadStaticResourceFile() {
 }
 
 bool StaticResource::tryKyraDatLoad() {
-	Common::SeekableReadStream *index = _vm->resource()->createReadStream("INDEX");
-	if (!index)
-		return false;
-
-	const uint32 version = index->readUint32BE();
-
-	if (version != RESFILE_VERSION) {
-		delete index;
-		return false;
-	}
-
-	const uint32 includedGames = index->readUint32BE();
-
-	if (includedGames * 2 + 8 != (uint32)index->size()) {
-		delete index;
-		return false;
-	}
-
-	const GameFlags &flags = _vm->gameFlags();
-	const byte game = getGameID(flags) & 0xF;
-	const byte platform = getPlatformID(flags) & 0xF;
-	const byte special = getSpecialID(flags) & 0xF;
-	const byte lang = getLanguageID(flags) & 0xF;
-
-	const uint16 gameDef = (game << 12) | (platform << 8) | (special << 4) | (lang << 0);
-
-	bool found = false;
-	for (uint32 i = 0; i < includedGames; ++i) {
-		if (index->readUint16BE() == gameDef) {
-			found = true;
-			break;
-		}
-	}
-
-	delete index;
-	index = nullptr;
-
-	if (!found)
-		return false;
-
-
-	// load the ID map for our game
-	const Common::String filenamePattern = Common::String::format("0%01X%01X%01X000%01X", game, platform, special, lang);
-	Common::SeekableReadStream *idMap = _vm->resource()->createReadStream(filenamePattern);
+	Common::SeekableReadStream *idMap = loadIdMap(_vm->gameFlags().lang);
 	if (!idMap)
 		return false;
 
@@ -240,6 +197,53 @@ bool StaticResource::tryKyraDatLoad() {
 		return false;
 
 	return true;
+}
+
+Common::SeekableReadStream *StaticResource::loadIdMap(Common::Language lang) {
+	Common::SeekableReadStream *index = _vm->resource()->createReadStream("INDEX");
+	if (!index)
+		return 0;
+
+	const uint32 version = index->readUint32BE();
+
+	if (version != RESFILE_VERSION) {
+		delete index;
+		return 0;
+	}
+
+	const uint32 includedGames = index->readUint32BE();
+
+	if (includedGames * 2 + 8 != (uint32)index->size()) {
+		delete index;
+		return 0;
+	}
+
+	const GameFlags &flags = _vm->gameFlags();
+	const byte game = getGameID(flags) & 0xF;
+	const byte platform = getPlatformID(flags) & 0xF;
+	const byte special = getSpecialID(flags) & 0xF;
+	const byte lng = getLanguageID(lang) & 0xF;
+
+	const uint16 gameDef = (game << 12) | (platform << 8) | (special << 4) | (lng << 0);
+
+	bool found = false;
+	for (uint32 i = 0; i < includedGames; ++i) {
+		if (index->readUint16BE() == gameDef) {
+			found = true;
+			break;
+		}
+	}
+
+	delete index;
+	index = nullptr;
+
+	if (!found)
+		return 0;
+
+
+	// load the ID map for our game
+	const Common::String filenamePattern = Common::String::format("0%01X%01X%01X000%01X", game, platform, special, lng);
+	return _vm->resource()->createReadStream(filenamePattern);
 }
 
 bool StaticResource::init() {
@@ -368,6 +372,35 @@ bool StaticResource::prefetchId(int id) {
 	_resList.push_back(data);
 
 	return true;
+}
+
+bool StaticResource::renewPrefetchIdWithCustomLanguage(int id, Common::Language lang) {
+	if (lang != Common::UNK_LANG) {
+		unloadId(id);
+
+		// load the ID map for our game
+		Common::SeekableReadStream *idMap = loadIdMap(lang);
+		if (!idMap)
+			return false;
+
+		uint16 numIDs = idMap->readUint16BE();
+		while (numIDs--) {
+			uint16 id2 = idMap->readUint16BE();
+			uint8 type = idMap->readByte();
+			uint32 filename = idMap->readUint32BE();
+			if (id2 != id)
+				continue;
+			_dataTable[id] = DataDescriptor(filename, type);
+			break;
+		}
+
+		const bool fileError = idMap->err();
+		delete idMap;
+		if (!numIDs || fileError)
+			return false;
+	}
+
+	return prefetchId(id);
 }
 
 void StaticResource::unloadId(int id) {
