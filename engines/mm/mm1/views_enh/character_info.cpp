@@ -191,8 +191,17 @@ void CharacterInfo::drawStats() {
 	}
 
 	// Condition string
-	setTextColor(15);
-	writeString(204, 128, camelCase(c.getConditionString()));
+	Common::String condStr = camelCase(c.getConditionString());
+	setTextColor(!c._condition ? 15 : 19);
+
+	uint i = condStr.findFirstOf(',');
+	if (i != Common::String::npos) {
+		// More than one condition
+		condStr = Common::String(condStr.c_str(), i);
+		setTextColor(32);
+	}
+
+	writeString(204, 128, condStr);
 }
 
 int CharacterInfo::statColor(int amount, int threshold) {
