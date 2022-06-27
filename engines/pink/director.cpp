@@ -81,7 +81,7 @@ static const Graphics::MacMenuData menuSubItems[] = {
 */
 
 static void redrawCallback(void *ref) {
-	Director *dir = (Director *)ref;
+	Screen *dir = (Screen *)ref;
 
 	if (dir->getWndManager().isMenuActive()) {
 		dir->addDirtyRect(Common::Rect(0, 0, 640, 480));
@@ -89,7 +89,7 @@ static void redrawCallback(void *ref) {
 	}
 }
 
-Director::Director(PinkEngine *vm)
+Screen::Screen(PinkEngine *vm)
 	: _surface(640, 480), _textRendered(false) {
 	uint32 wmMode = Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu
 		| Graphics::kWMModalMenuMode | Graphics::kWMModeForceBuiltinFonts
@@ -124,14 +124,14 @@ Director::Director(PinkEngine *vm)
 	}
 }
 
-Director::~Director() {
+Screen::~Screen() {
 	delete _wm;
 
 	if (_textFontCleanup)
 		delete _textFont;
 }
 
-void Director::update() {
+void Screen::update() {
 	if (_wm->isMenuActive()) {
 		_wm->draw();
 		g_system->updateScreen();
@@ -152,22 +152,22 @@ void Director::update() {
 	_wm->draw();
 }
 
-bool Director::processEvent(Common::Event &event) {
+bool Screen::processEvent(Common::Event &event) {
 	return _wm->processEvent(event);
 }
 
-void Director::setPalette(const byte *palette) {
+void Screen::setPalette(const byte *palette) {
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 
 	_wm->passPalette(palette, 256);
 }
 
-void Director::addTextAction(ActionText *txt) {
+void Screen::addTextAction(ActionText *txt) {
 	_textActions.push_back(txt);
 	_textRendered = false;
 }
 
-void Director::removeTextAction(ActionText *action) {
+void Screen::removeTextAction(ActionText *action) {
 	for (uint i = 0; i < _textActions.size(); ++i) {
 		if (_textActions[i] == action) {
 			_textActions.remove_at(i);
@@ -176,11 +176,11 @@ void Director::removeTextAction(ActionText *action) {
 	}
 }
 
-void Director::addTextWindow(Graphics::MacTextWindow *window) {
+void Screen::addTextWindow(Graphics::MacTextWindow *window) {
 	_textWindows.push_back(window);
 }
 
-void Director::removeTextWindow(Graphics::MacTextWindow *window) {
+void Screen::removeTextWindow(Graphics::MacTextWindow *window) {
 	for (uint i = 0; i < _textWindows.size(); i++) {
 		if (_textWindows[i] == window) {
 			_textWindows.remove_at(i);
@@ -189,7 +189,7 @@ void Director::removeTextWindow(Graphics::MacTextWindow *window) {
 	}
 }
 
-void Director::addSprite(ActionCEL *sprite) {
+void Screen::addSprite(ActionCEL *sprite) {
 	_sprites.push_back(sprite);
 	int i;
 	for (i = _sprites.size() - 1; i > 0 ; --i) {
@@ -201,7 +201,7 @@ void Director::addSprite(ActionCEL *sprite) {
 	_sprites[i] = sprite;
 }
 
-void Director::removeSprite(ActionCEL *sprite) {
+void Screen::removeSprite(ActionCEL *sprite) {
 	for (uint i = 0; i < _sprites.size(); ++i) {
 		if (sprite == _sprites[i]) {
 			_sprites.remove_at(i);
@@ -211,38 +211,38 @@ void Director::removeSprite(ActionCEL *sprite) {
 	_dirtyRects.push_back(sprite->getBounds());
 }
 
-void Director::removeSound(ActionSound *sound) {
+void Screen::removeSound(ActionSound *sound) {
 	for (uint i = 0; i < _sounds.size(); ++i) {
 		if (_sounds[i] == sound)
 			_sounds.remove_at(i);
 	}
 }
 
-void Director::clear() {
+void Screen::clear() {
 	_dirtyRects.push_back(Common::Rect(0, 0, 640, 480));
 	_sprites.resize(0);
 	draw();
 }
 
-void Director::pause(bool pause_) {
+void Screen::pause(bool pause_) {
 	for (uint i = 0; i < _sprites.size() ; ++i) {
 		_sprites[i]->pause(pause_);
 	}
 }
 
-void Director::saveStage() {
+void Screen::saveStage() {
 	_savedSprites = _sprites;
 	clear();
 }
 
-void Director::loadStage() {
+void Screen::loadStage() {
 	assert(_sprites.empty());
 	_dirtyRects.push_back(Common::Rect(0, 0, 640, 480));
 	_sprites = _savedSprites;
 	_savedSprites.clear();
 }
 
-Actor *Director::getActorByPoint(Common::Point point) {
+Actor *Screen::getActorByPoint(Common::Point point) {
 	for (int i = _sprites.size() - 1; i >= 0; --i) {
 		if (_sprites[i]->getActor()->isCursor())
 			continue;
@@ -259,7 +259,7 @@ Actor *Director::getActorByPoint(Common::Point point) {
 	return nullptr;
 }
 
-void Director::draw(bool blit) {
+void Screen::draw(bool blit) {
 	if (!_dirtyRects.empty() || !_textRendered) {
 		mergeDirtyRects();
 
@@ -282,7 +282,7 @@ void Director::draw(bool blit) {
 		g_system->updateScreen();
 }
 
-void Director::mergeDirtyRects() {
+void Screen::mergeDirtyRects() {
 	Common::Array<Common::Rect>::iterator rOuter, rInner;
 	for (rOuter = _dirtyRects.begin(); rOuter != _dirtyRects.end(); ++rOuter) {
 		rInner = rOuter;
@@ -301,11 +301,11 @@ void Director::mergeDirtyRects() {
 	}
 }
 
-void Director::addDirtyRect(const Common::Rect &rect) {
+void Screen::addDirtyRect(const Common::Rect &rect) {
 	_dirtyRects.push_back(rect);
 }
 
-void Director::addDirtyRects(ActionCEL *sprite) {
+void Screen::addDirtyRects(ActionCEL *sprite) {
 	const Common::Rect spriteRect = sprite->getBounds();
 	const Common::List<Common::Rect> *dirtyRects = sprite->getDecoder()->getDirtyRects();
 	if (dirtyRects->size() > 100) {
@@ -320,7 +320,7 @@ void Director::addDirtyRects(ActionCEL *sprite) {
 	sprite->getDecoder()->clearDirtyRects();
 }
 
-void Director::drawRect(const Common::Rect &rect) {
+void Screen::drawRect(const Common::Rect &rect) {
 	_surface.fillRect(rect, 0);
 	for (uint i = 0; i < _sprites.size(); ++i) {
 		const Common::Rect &spriteRect = _sprites[i]->getBounds();

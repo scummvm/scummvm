@@ -62,7 +62,7 @@ void Page::init() {
 
 void Page::initPalette() {
 	for (uint i = 0; i < _actors.size(); ++i) {
-		if (_actors[i]->initPalette(getGame()->getDirector()))
+		if (_actors[i]->initPalette(getGame()->getScreen()))
 			break;
 	}
 }

@@ -42,13 +42,13 @@ void ActionCEL::deserialize(Archive &archive) {
 	_z = archive.readDWORD();
 }
 
-bool ActionCEL::initPalette(Director *director) {
+bool ActionCEL::initPalette(Screen *screen) {
 	loadDecoder();
 	if (_decoder.getCurFrame() == -1) {
 		_decoder.decodeNextFrame();
 		_decoder.rewind();
 	}
-	director->setPalette(_decoder.getPalette());
+	screen->setPalette(_decoder.getPalette());
 	return true;
 }
 
@@ -56,11 +56,11 @@ void ActionCEL::start() {
 	loadDecoder();
 	_decoder.start();
 	this->onStart();
-	_actor->getPage()->getGame()->getDirector()->addSprite(this);
+	_actor->getPage()->getGame()->getScreen()->addSprite(this);
 }
 
 void ActionCEL::end() {
-	_actor->getPage()->getGame()->getDirector()->removeSprite(this);
+	_actor->getPage()->getGame()->getScreen()->removeSprite(this);
 	_decoder.close();
 }
 
@@ -94,18 +94,18 @@ void ActionCEL::setFrame(uint frame) {
 	}
 
 	_decoder.clearDirtyRects();
-	_actor->getPage()->getGame()->getDirector()->addDirtyRect(_bounds);
+	_actor->getPage()->getGame()->getScreen()->addDirtyRect(_bounds);
 }
 
 void ActionCEL::decodeNext() {
 	_decoder.decodeNextFrame();
-	_actor->getPage()->getGame()->getDirector()->addDirtyRects(this);
+	_actor->getPage()->getGame()->getScreen()->addDirtyRects(this);
 }
 
 void ActionCEL::setCenter(Common::Point center) {
-	_actor->getPage()->getGame()->getDirector()->addDirtyRect(_bounds);
+	_actor->getPage()->getGame()->getScreen()->addDirtyRect(_bounds);
 	_bounds = Common::Rect::center(center.x, center.y, _decoder.getWidth(), _decoder.getHeight());
-	_actor->getPage()->getGame()->getDirector()->addDirtyRect(_bounds);
+	_actor->getPage()->getGame()->getScreen()->addDirtyRect(_bounds);
 }
 
 } // End of namespace Pink

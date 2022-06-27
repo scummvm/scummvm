@@ -41,10 +41,10 @@ class ActionSound;
 class ActionText;
 class PinkEngine;
 
-class Director {
+class Screen {
 public:
-	Director(PinkEngine *vm);
-	~Director();
+	Screen(PinkEngine *vm);
+	~Screen();
 
 	void update();
 	bool processEvent(Common::Event &event);

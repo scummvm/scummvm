@@ -108,7 +108,7 @@ void LeadActor::start(bool isHandler) {
 	case kPDA:
 		if (_stateBeforePDA == kInventory)
 			startInventory(1);
-		_page->getGame()->getDirector()->saveStage();
+		_page->getGame()->getScreen()->saveStage();
 		loadPDA(_page->getGame()->getPdaMgr().getSavedPageName());
 		break;
 	default:
@@ -161,7 +161,7 @@ void LeadActor::loadPDA(const Common::String &pageName) {
 
 		_stateBeforePDA = _state;
 		_state = kPDA;
-		_page->getGame()->getDirector()->saveStage();
+		_page->getGame()->getScreen()->saveStage();
 	}
 	_page->getGame()->getPdaMgr().setLead(this);
 	_page->getGame()->getPdaMgr().goToPage(pageName);
@@ -314,7 +314,7 @@ void LeadActor::onWalkEnd(const Common::String &stopName) {
 
 void LeadActor::onPDAClose() {
 	_page->initPalette();
-	_page->getGame()->getDirector()->loadStage();
+	_page->getGame()->getScreen()->loadStage();
 
 	_state = _stateBeforePDA;
 	if (_state != kInventory)
@@ -337,7 +337,7 @@ void LeadActor::setNextExecutors(const Common::String &nextModule, const Common:
 
 void LeadActor::forceUpdateCursor() {
 	PinkEngine *vm =_page->getGame();
-	vm->getDirector()->update(); // we have actions, that should be drawn to properly update cursor
+	vm->getScreen()->update(); // we have actions, that should be drawn to properly update cursor
 	Common::Point point = vm->getEventManager()->getMousePos();
 	updateCursor(point);
 }
@@ -397,7 +397,7 @@ WalkLocation *LeadActor::getWalkDestination() {
 }
 
 Actor *LeadActor::getActorByPoint(Common::Point point) {
-	return _page->getGame()->getDirector()->getActorByPoint(point);
+	return _page->getGame()->getScreen()->getActorByPoint(point);
 }
 
 void LeadActor::startInventory(bool paused) {
