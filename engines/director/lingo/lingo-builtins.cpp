@@ -1191,15 +1191,13 @@ void LB::b_setCallBack(int nargs) {
 }
 
 void LB::b_showResFile(int nargs) {
-	Datum d = g_lingo->pop();
-
-	warning("STUB: b_showResFile(%s)", d.asString().c_str());
+	g_lingo->dropStack(nargs);
+	warning("LB: b_showResFile: showResFile is not supported by ScummVM");
 }
 
 void LB::b_showXlib(int nargs) {
-	Datum d = g_lingo->pop();
-
-	warning("STUB: b_showXlib(%s)", d.asString().c_str());
+	g_lingo->dropStack(nargs);
+	warning("LB: b_showXlib: showXlib is not supported by ScummVM");
 }
 
 void LB::b_xFactoryList(int nargs) {
@@ -1212,7 +1210,7 @@ void LB::b_xFactoryList(int nargs) {
 // Control
 ///////////////////
 void LB::b_abort(int nargs) {
-	warning("STUB: b_abort");
+	g_lingo->_abort = true;
 }
 
 void LB::b_continue(int nargs) {
