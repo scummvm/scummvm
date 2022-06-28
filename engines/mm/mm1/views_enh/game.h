@@ -26,6 +26,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/views/game_view.h"
 #include "mm/mm1/views_enh/game_commands.h"
+#include "mm/mm1/views_enh/game_messages.h"
 
 namespace MM {
 namespace MM1 {
@@ -36,6 +37,7 @@ private:
 	Graphics::ManagedSurface _bg;
 	Views::GameView _view;
 	GameCommands _commands;
+	GameMessages _messages;
 public:
 	Game();
 	virtual ~Game() {}

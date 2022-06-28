@@ -19,44 +19,28 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_SCROLL_VIEW_H
-#define MM1_VIEWS_ENH_SCROLL_VIEW_H
+#ifndef MM1_VIEWS_ENH_GAME_MESSAGES_H
+#define MM1_VIEWS_ENH_GAME_MESSAGES_H
 
-#include "mm/mm1/views_enh/text_view.h"
+#include "mm/mm1/messages.h"
+#include "mm/mm1/views_enh/scroll_text.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-#define FRAME_BORDER_SIZE 8
-
-class ScrollView : public TextView {
-protected:
-	Common::Point _symbolPos;
-protected:
-	/**
-	 * Draw the scroll frame
-	 */
-	void frame();
-
-	/**
-	 * Fill the scroll background
-	 */
-	void fill();
-
-	/**
-	 * Draw a special symbol
-	 */
-	void writeSymbol(int symbolId);
+class GameMessages : public ScrollText {
+private:
+	bool _show = false;
+	YNCallback _ynCallback = nullptr;
+	KeyCallback _keyCallback = nullptr;
 public:
-	ScrollView(const Common::String &name);
-	ScrollView(const Common::String &name, UIElement *owner);
-	virtual ~ScrollView() {}
+	GameMessages(UIElement *owner);
+	virtual ~GameMessages() {}
 
-	/**
-	 * Draw the view
-	 */
 	void draw() override;
+	bool msgInfo(const InfoMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 } // namespace ViewsEnh

@@ -35,6 +35,10 @@ ScrollView::ScrollView(const Common::String &name) :
 	TextView(name, g_engine) {
 }
 
+ScrollView::ScrollView(const Common::String &name,
+		UIElement *owner) : TextView(name, owner) {
+}
+
 void ScrollView::draw() {
 	frame();
 	fill();
