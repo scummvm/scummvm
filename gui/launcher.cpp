@@ -1477,6 +1477,9 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		ConfMan.flushToDisk();
 		reflowLayout();
 		break;
+	case kIconsSetLoadedCmd:
+		rebuild();
+		break;
 	default:
 		LauncherDialog::handleCommand(sender, cmd, data);
 	}
