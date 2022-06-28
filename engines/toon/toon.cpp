@@ -2239,6 +2239,8 @@ void ToonEngine::clickEvent() {
 			else
 				characterTalk(1104);
 		}
+		// Don't walk to Flux after clicking on him
+		return;
 	}
 	if (_currentHotspotItem == -4) {
 		if (_gameState->_mouseState >= 0) {
