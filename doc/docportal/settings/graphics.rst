@@ -17,7 +17,7 @@ For a comprehensive look at how to use these settings, check out our :doc:`../ad
 
 .. figure:: ../images/settings/graphics.png
 
-    The Graphics tab in the global settings
+    The Graphics tab in the Global Options menu
 
 All settings can also be changed in the :doc:`../advanced_topics/configuration_file`. The configuration key is listed in italics after each setting description.
 
