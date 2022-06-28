@@ -82,7 +82,7 @@ enum SetupScreenMode {
 #define CUR_HOWARD 19
 #define CUR_ZEIGE 20
 #define CUR_NICHELLE 21
-#define CUR_22 22
+#define CUR_BLASTER 22
 #define EXIT_LEFT_SPR 26
 #define EXIT_RIGHT_SPR 27
 #define EXIT_ABOVE_SPR 28

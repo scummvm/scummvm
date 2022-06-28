@@ -104,7 +104,7 @@ void Room91::setup_func() {
 		
 		_G(menu_item) = CUR_USE;
 		cur_2_inventory();
-		cursorChoice(CUR_22);
+		cursorChoice(CUR_BLASTER);
 
 		if (_G(mouseLeftClick) == 0 || _click)
 			return;
