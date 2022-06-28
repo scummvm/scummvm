@@ -50,16 +50,16 @@ Bitmap2D::Bitmap2D(const tString &filepath, const tString &type)
 	: iLowLevelPicture(type), _isSurfaceActive(false) {
 	if (type == "png")
 		_decoder.reset(loadImage<Image::PNGDecoder>(filepath));
-	if (type == "bmp")
+	else if (type == "bmp")
 		_decoder.reset(loadImage<Image::BitmapDecoder>(filepath));
-	if (type == "tga")
+	else if (type == "tga")
 		_decoder.reset(loadImage<Image::TGADecoder>(filepath));
-	if (type == "jpg" || type == "jpeg")
+	else if (type == "jpg" || type == "jpeg")
 		_decoder.reset(loadImage<Image::JPEGDecoder>(filepath));
-	if (type == "gif")
+	else if (type == "gif")
 		_decoder.reset(loadImage<Image::GIFDecoder>(filepath));
-
-	error("trying to load unsupported image format %s", type.c_str());
+	else
+		error("trying to load unsupported image format %s", type.c_str());
 }
 
 Bitmap2D::Bitmap2D(const cVector2l &size, const Graphics::PixelFormat &format)
