@@ -111,8 +111,6 @@ static Object *load16bitObject(StreamLoader &stream) {
 			byteSizeOfObject = 0;
 		// 	//instructions = getInstructions(conditionSource);
 		}
-		// if (objectType == 11)
-		// 	error("triangle!");
 
 		debug("Skipping %d bytes", byteSizeOfObject);
 		stream.skipBytes(byteSizeOfObject);

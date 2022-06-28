@@ -217,7 +217,7 @@ void FreescapeEngine::processInput() {
 }
 
 void FreescapeEngine::shoot() {
-	Math::Vector3d direction = directionToVector(_pitch, 90.f - _yaw);
+	Math::Vector3d direction = directionToVector(_pitch, _yaw);
 	Math::Ray ray(_position, direction);
 	Object *shooted = _currentArea->shootRay(ray);
 	if (shooted) {
@@ -257,7 +257,6 @@ Common::Error FreescapeEngine::run() {
 		_scaleVector = _scale;
 	debug("entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
 	debug("player height: %d", _playerHeight);
-	_position.setValue(0, _position.x() - 4096);
 	_position.setValue(1, _position.y() + _playerHeight);
 
 	_pitch = rotation.x() - 180.f;
@@ -297,7 +296,7 @@ void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos)
 	xoffset *= _mouseSensitivity;
 	yoffset *= _mouseSensitivity;
 
-	_yaw += xoffset;
+	_yaw -= xoffset;
 	_pitch += yoffset;
 
 	// Make sure that when pitch is out of bounds, screen doesn't get flipped
@@ -326,10 +325,10 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 		_position = _position - _cameraFront * velocity;
 		break;
 	case RIGHT:
-		_position = _position + _cameraRight * velocity;
+		_position = _position - _cameraRight * velocity;
 		break;
 	case LEFT:
-		_position = _position - _cameraRight * velocity;
+		_position = _position + _cameraRight * velocity;
 		break;
 	}
 	// Make sure the user stays at the ground level
