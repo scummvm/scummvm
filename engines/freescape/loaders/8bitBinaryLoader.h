@@ -13,10 +13,4 @@
 
 #include "../freescape.h"
 
-namespace Freescape {
-
-//Binary load8bitBinary(Common::String filename);
-
-}
-
-#endif /* defined(__Phantasma___8bitBinaryLoader__) */
+#endif
