@@ -45,6 +45,10 @@ namespace Common {
 
 namespace GUI {
 
+enum {
+	kIconsSetLoadedCmd  = 'icns'
+};
+
 class Dialog;
 class ThemeEval;
 class GuiObject;
@@ -65,7 +69,7 @@ typedef Common::FixedStack<Dialog *> DialogStack;
 /**
  * GUI manager singleton.
  */
-class GuiManager : public Common::Singleton<GuiManager> {
+class GuiManager : public Common::Singleton<GuiManager>, public CommandSender {
 	friend class Dialog;
 	friend class Common::Singleton<SingletonBaseType>;
 	GuiManager();
@@ -168,6 +172,7 @@ protected:
 
 	Common::Mutex _iconsMutex;
 	Common::SearchSet _iconsSet;
+	bool _iconsSetChanged;
 
 	// position and time of last mouse click (used to detect double clicks)
 	struct MousePos {
