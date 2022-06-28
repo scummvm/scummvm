@@ -443,6 +443,10 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 295:
+					case 386:
+						retValue = Room45::use_taxi();
+						break;
+
 					case 297:
 						retValue = Room45::use_boy();
 						break;
@@ -561,10 +565,6 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 
 					case 385:
 						retValue = Room63::use_schalter();
-						break;
-
-					case 386:
-						retValue = Room45::use_taxi();
 						break;
 
 					case 394:
