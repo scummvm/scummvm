@@ -25,6 +25,8 @@
 #include "chewy/room.h"
 
 #include "chewy/rooms/room82.h"
+
+#include "chewy/cursor.h"
 #include "chewy/rooms/room66.h"
 #include "chewy/sound.h"
 
@@ -241,7 +243,7 @@ void Room82::proc8() {
 }
 
 int Room82::proc9() {
-	if (_G(gameState).inv_cur || !_G(gameState).flags30_40)
+	if (_G(cur)->usingInventoryCursors() || !_G(gameState).flags30_40)
 		return 0;
 
 	autoMove(7, P_CHEWY);

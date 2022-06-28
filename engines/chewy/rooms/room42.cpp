@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -97,10 +98,10 @@ int16 Room42::useMailBag() {
 		return action_flag;
 
 	hideCur();
-	if (!_G(gameState).R42BeamterWach && !_G(gameState).inv_cur) {
+	if (!_G(gameState).R42BeamterWach && !_G(cur)->usingInventoryCursors()) {
 		action_flag = true;
 		getPumpkin(136);
-	} else if (_G(gameState).R42HoToBeamter && !_G(gameState).inv_cur && !_G(gameState).R42MarkeOk) {
+	} else if (_G(gameState).R42HoToBeamter && !_G(cur)->usingInventoryCursors() && !_G(gameState).R42MarkeOk) {
 		action_flag = true;
 		autoMove(3, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;

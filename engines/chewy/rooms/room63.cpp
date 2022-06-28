@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -217,7 +218,7 @@ int16 Room63::use_fx_man() {
 
 int16 Room63::use_schalter() {
 	int16 action_ret = false;
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		action_ret = true;
 		if (_G(gameState).R63FxMannWeg) {
 			if (_G(gameState).R62LauraVerwandlung) {

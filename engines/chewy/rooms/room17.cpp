@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -202,7 +203,7 @@ void Room17::calc_seil() {
 	if (_G(gameState).R17Seil) {
 		if (_G(gameState).R17Location == 2) {
 			startAadWait(619);
-		} else if (!_G(flags).AutoAniPlay && !_G(gameState).inv_cur) {
+		} else if (!_G(flags).AutoAniPlay && !_G(cur)->usingInventoryCursors()) {
 			close_door();
 			_G(flags).AutoAniPlay = true;
 			_G(mov_phasen)[CHEWY_OBJ].AtsText = 0;
@@ -279,12 +280,12 @@ int16 Room17::energie_hebel() {
 			_G(gameState).R17HebelOk = true;
 			startAadWait(38);
 			action_flag = true;
-		} else if (!_G(gameState).inv_cur) {
+		} else if (!_G(cur)->usingInventoryCursors()) {
 			startAadWait(37);
 			action_flag = true;
 		}
 
-	} else if (!_G(gameState).inv_cur) {
+	} else if (!_G(cur)->usingInventoryCursors()) {
 		action_flag = true;
 
 		_G(obj)->calc_rsi_flip_flop(SIB_HEBEL_R17);
@@ -316,7 +317,7 @@ int16 Room17::get_oel() {
 	int16 action_flag = false;
 	hideCur();
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		action_flag = true;
 		autoMove(4, P_CHEWY);
 		start_spz_wait(CH_EKEL, 3, false, P_CHEWY);

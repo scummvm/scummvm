@@ -50,13 +50,7 @@ void standard_init() {
 	_G(out)->cls();
 	_G(scr_width) = 0;
 
-	// WORKAROUND: Moved from init_load because the original
-	// uses _G(curtaf)->_image below before _G(curtaf) was initialized
-	_G(curtaf) = _G(mem)->taf_adr(CURSOR_TAF);
-
-	_G(curblk).sprite = _G(curtaf)->image;
-	
-	_G(cur) = new Cursor(&_G(curblk));
+	_G(cur) = new Cursor();
 	_G(cur)->setAnimation(0, 0, 0);
 
 	alloc_buffers();

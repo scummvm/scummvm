@@ -174,7 +174,7 @@ void Cinema::execute() {
 		txt_anz = 0;
 
 		if (!txt_anz) {
-			_G(cur)->plot_cur();
+			_G(cur)->updateCursor();
 
 			if (flag) {
 				flag = false;

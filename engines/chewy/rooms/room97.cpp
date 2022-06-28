@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -413,7 +414,7 @@ int Room97::proc5() {
 }
 
 int Room97::proc6() {
-	if (_G(gameState).inv_cur)
+	if (_G(cur)->usingInventoryCursors())
 		return 0;
 
 	hideCur();
@@ -447,7 +448,7 @@ int Room97::proc6() {
 }
 
 int Room97::proc7() {
-	if (_G(gameState).inv_cur)
+	if (_G(cur)->usingInventoryCursors())
 		return 0;
 
 	hideCur();
@@ -528,7 +529,7 @@ int Room97::proc8() {
 }
 
 int Room97::proc9() {
-	if (_G(gameState).inv_cur)
+	if (_G(cur)->usingInventoryCursors())
 		return 0;
 
 	hideCur();
@@ -556,7 +557,7 @@ int Room97::proc9() {
 }
 
 int Room97::proc10() {
-	if (_G(gameState).inv_cur)
+	if (_G(cur)->usingInventoryCursors())
 		return 0;
 
 	hideCur();
@@ -576,7 +577,7 @@ int Room97::proc10() {
 }
 
 int Room97::proc11() {
-	if (_G(gameState).inv_cur)
+	if (_G(cur)->usingInventoryCursors())
 		return 0;
 
 	hideCur();
@@ -686,7 +687,7 @@ void Room97::sensorAnim() {
 	while (_G(det)->get_ani_status(16)) {
 		get_user_key(NO_SETUP);
 		if (_G(minfo).button == 1 || _G(in)->getSwitchCode() == 28) {
-			if (_G(gameState).inv_cur)
+			if (_G(cur)->usingInventoryCursors())
 				_G(mouseLeftClick) = true;
 		}
 

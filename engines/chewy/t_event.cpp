@@ -20,6 +20,7 @@
  */
 
 #include "chewy/chewy.h"
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/dialogs/inventory.h"
 #include "chewy/events.h"
@@ -134,7 +135,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 					case 71:
 						if (isCurInventory(ZANGE_INV))
 							Room8::hole_kohle();
-						else if (!_G(gameState).inv_cur)
+						else if (!_G(cur)->usingInventoryCursors())
 							Room8::start_verbrennen();
 						break;
 
@@ -150,7 +151,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 
 
 					case 77:
-						if (!_G(gameState).R10SurimyOk && !_G(gameState).inv_cur) {
+						if (!_G(gameState).R10SurimyOk && !_G(cur)->usingInventoryCursors()) {
 							hideCur();
 							autoMove(3, P_CHEWY);
 							flic_cut(FCUT_004);
@@ -167,7 +168,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 80:
-						if (_G(gameState).inv_cur)
+						if (_G(cur)->usingInventoryCursors())
 							autoMove(3, P_CHEWY);
 						break;
 

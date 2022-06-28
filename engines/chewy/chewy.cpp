@@ -23,8 +23,8 @@
 #include "common/fs.h"
 #include "common/system.h"
 #include "engines/util.h"
-#include "graphics/palette.h"
 #include "chewy/chewy.h"
+#include "chewy/cursor.h"
 #include "chewy/console.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -108,7 +108,7 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 		_G(flags).LoadGame = true;
 
-		if (_G(gameState).inv_cur && _G(gameState).AkInvent != -1) {
+		if (_G(cur)->usingInventoryCursors() && _G(gameState).AkInvent != -1) {
 			_G(menu_item) = CUR_USE;
 		}
 

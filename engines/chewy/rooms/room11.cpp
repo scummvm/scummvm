@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -157,7 +158,7 @@ int16 Room11::scanner() {
 			startAadWait(12);
 			showCur();
 			loadDialogCloseup(3);
-		} else if (!_G(gameState).inv_cur) {
+		} else if (!_G(cur)->usingInventoryCursors()) {
 			if (!_G(gameState).R11TerminalOk) {
 				actionFl = true;
 				flic_cut(FCUT_009);

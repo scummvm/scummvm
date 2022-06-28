@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/detail.h"
 #include "chewy/events.h"
@@ -27,7 +28,6 @@
 #include "chewy/mcga_graphics.h"
 #include "chewy/menus.h"
 #include "chewy/mouse.h"
-#include "chewy/dialogs/inventory.h"
 
 namespace Chewy {
 
@@ -336,7 +336,7 @@ void cur_2_inventory() {
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(_G(menu_item));
 	}
-	_G(gameState).inv_cur = false;
+	_G(cur)->setInventoryCursors(false);
 }
 
 void inventory_2_cur(int16 nr) {

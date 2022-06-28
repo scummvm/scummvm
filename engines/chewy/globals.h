@@ -177,7 +177,6 @@ public:
 	RoomDetailInfo *_Rdi = nullptr;
 	StaticDetailInfo *_Sdi = nullptr;
 	AniDetailInfo *_Adi = nullptr;
-	TafInfo *_curtaf = nullptr;
 	TafInfo *_menutaf = nullptr;
 	TafSeqInfo *_howard_taf = nullptr;
 	TafInfo *_chewy = nullptr;
@@ -204,7 +203,6 @@ public:
 	bool _ani_stand_flag[MAX_PERSON] = { false };
 
 	MouseInfo _minfo;
-	CurBlk _curblk;
 	RaumBlk _room_blk;
 	Flags _flags = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 					0, 0, 0, 0, 0, 0, 0, 0, 0 };

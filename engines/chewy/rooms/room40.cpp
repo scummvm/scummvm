@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -316,7 +317,7 @@ int16 Room40::use_mr_pumpkin() {
 	if (_G(menu_item) != CUR_HOWARD) {
 		hideCur();
 
-		if (!_G(gameState).inv_cur) {
+		if (!_G(cur)->usingInventoryCursors()) {
 			action_ret = use_schalter(205);
 
 		} else {
@@ -602,7 +603,7 @@ bool Room40::use_police() {
 int16 Room40::use_tele() {
 	int16 action_flag = false;
 
-	if (!_G(gameState).inv_cur && _G(gameState).R40PoliceWeg == false) {
+	if (!_G(cur)->usingInventoryCursors() && _G(gameState).R40PoliceWeg == false) {
 		action_flag = true;
 		hideCur();
 

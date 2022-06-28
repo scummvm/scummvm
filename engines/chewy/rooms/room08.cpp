@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -84,7 +85,7 @@ void Room8::hole_kohle() {
 void Room8::start_verbrennen() {
 	hideCur();
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		autoMove(3, P_CHEWY);
 		start_aad(102, 0);
 		_G(gameState)._personHide[P_CHEWY] = true;

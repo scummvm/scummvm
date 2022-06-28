@@ -218,7 +218,7 @@ void Options::execute(TafInfo *ti) {
 			break;
 		}
 
-		_G(cur)->plot_cur();
+		_G(cur)->updateCursor();
 		_G(out)->copyToScreen();
 		EVENTS_UPDATE;
 		SHOULD_QUIT_RETURN;

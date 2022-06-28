@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -80,7 +81,7 @@ void Room33::look_schublade() {
 int16 Room33::use_schublade() {
 	int16 action_flag = false;
 
-	if (_G(gameState).R33SchubFirst && !_G(gameState).inv_cur && !_G(gameState).R33Messer) {
+	if (_G(gameState).R33SchubFirst && !_G(cur)->usingInventoryCursors() && !_G(gameState).R33Messer) {
 		hideCur();
 		action_flag = true;
 		_G(gameState).R33Messer = true;
@@ -105,7 +106,7 @@ void Room33::use_maschine() {
 		autoMove(4, P_CHEWY);
 
 		bool hocker = false;
-		if (_G(gameState).inv_cur) {
+		if (_G(cur)->usingInventoryCursors()) {
 			bool action = true;
 
 			switch (_G(gameState).AkInvent) {
@@ -198,7 +199,7 @@ bool Room33::calc_muntermacher() {
 int16 Room33::get_munter() {
 	int16 action_flag = false;
 
-	if (!_G(gameState).inv_cur && !_G(gameState).R33MunterGet && _G(gameState).R33MunterOk) {
+	if (!_G(cur)->usingInventoryCursors() && !_G(gameState).R33MunterGet && _G(gameState).R33MunterOk) {
 		action_flag = true;
 		hideCur();
 		_G(gameState).R33MunterGet = true;

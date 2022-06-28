@@ -84,20 +84,21 @@ void free_buffers() {
 	free(_G(menutaf));
 	free(_G(chewy));
 
-	free(_G(curtaf));
 	free(_G(Ci).tempArea);
 	free(_G(pal));
 	free(_G(workpage));
 }
 
 void cursorChoice(int16 nr) {
-	int16 ok = true;
 	int16 delay = -1;
 
 	if (nr != CUR_USER) {
-		_G(curblk).sprite = _G(curtaf)->image;
 		delay = (1 + _G(gameState).DelaySpeed) * 5;
+		_G(cur)->clearCustomCursor();
 	}
+
+	_G(cur)->setInventoryCursors(false);
+
 	switch (nr) {
 	case CUR_WALK:
 		_G(cur)->setAnimation(0, 3, delay);
@@ -131,8 +132,7 @@ void cursorChoice(int16 nr) {
 		break;
 	case CUR_AK_INVENT:
 		_G(cur)->setAnimation(_G(gameState).AkInvent, _G(gameState).AkInvent, delay);
-		_G(curblk).sprite = &_G(inv_spr)[0];
-		_G(gameState).inv_cur = true;
+		_G(cur)->setInventoryCursors(true);
 		break;
 	case CUR_SAVE:
 		_G(cur)->setAnimation(25, 25, delay);
@@ -164,13 +164,7 @@ void cursorChoice(int16 nr) {
 	case CUR_USER:
 		break;
 	default:
-		ok = false;
 		break;
-	}
-
-	if (ok) {
-		_G(gameState)._curWidth = READ_LE_INT16(_G(curblk).sprite[_G(cur)->getAnimStart()]);
-		_G(gameState)._curHeight = READ_LE_INT16(_G(curblk).sprite[_G(cur)->getAnimStart()] + 2);
 	}
 }
 
@@ -178,14 +172,14 @@ void hideCur() {
 	if (!_G(cur_hide_flag)) {
 		_G(cur_hide_flag) = true;
 		_G(flags).ShowAtsInvTxt = false;
-		_G(cur)->hide_cur();
+		_G(cur)->hideCursor();
 		_G(flags).CursorStatus = false;
 	}
 }
 
 void showCur() {
 	_G(flags).ShowAtsInvTxt = true;
-	_G(cur)->show_cur();
+	_G(cur)->showCursor();
 	_G(flags).CursorStatus = true;
 }
 
@@ -208,36 +202,36 @@ bool mainLoop(int16 mode) {
 	if (_G(flags).MainInput) {
 		switch (g_events->_kbInfo._scanCode) {
 		case Common::KEYCODE_F1:
-			_G(gameState).inv_cur = false;
+			_G(cur)->setInventoryCursors(false);
 			_G(menu_item) = CUR_WALK;
-			_G(cur)->show_cur();
+			_G(cur)->showCursor();
 			cursorChoice(_G(menu_item));
 			if (_G(menu_display) == MENU_DISPLAY)
 				_G(menu_display) = MENU_HIDE;
 			break;
 
 		case Common::KEYCODE_F2:
-			_G(gameState).inv_cur = false;
+			_G(cur)->setInventoryCursors(false);
 			_G(menu_item) = CUR_USE;
-			_G(cur)->show_cur();
+			_G(cur)->showCursor();
 			cursorChoice(_G(menu_item));
 			if (_G(menu_display) == MENU_DISPLAY)
 				_G(menu_display) = MENU_HIDE;
 			break;
 
 		case Common::KEYCODE_F3:
-			_G(gameState).inv_cur = false;
+			_G(cur)->setInventoryCursors(false);
 			_G(menu_item) = CUR_LOOK;
-			_G(cur)->show_cur();
+			_G(cur)->showCursor();
 			cursorChoice(_G(menu_item));
 			if (_G(menu_display) == MENU_DISPLAY)
 				_G(menu_display) = MENU_HIDE;
 			break;
 
 		case Common::KEYCODE_F4:
-			_G(gameState).inv_cur = false;
+			_G(cur)->setInventoryCursors(false);
 			_G(menu_item) = CUR_TALK;
-			_G(cur)->show_cur();
+			_G(cur)->showCursor();
 			cursorChoice(_G(menu_item));
 			if (_G(menu_display) == MENU_DISPLAY)
 				_G(menu_display) = MENU_HIDE;
@@ -250,7 +244,7 @@ bool mainLoop(int16 mode) {
 			_G(maus_old_y) = g_events->_mousePos.y;
 			_G(menu_item) = CUR_USE;
 			menuEntry();
-			_G(cur)->show_cur();
+			_G(cur)->showCursor();
 			Dialogs::Inventory::menu();
 			menuExit();
 			_G(menu_display) = 0;
@@ -258,7 +252,7 @@ bool mainLoop(int16 mode) {
 			if (_G(gameState).AkInvent == -1) {
 				_G(menu_item) = _G(tmp_menu_item);
 				cursorChoice(_G(menu_item));
-				_G(gameState).inv_cur = false;
+				_G(cur)->setInventoryCursors(false);
 			} else {
 				_G(menu_item) = CUR_USE;
 				cursorChoice(CUR_AK_INVENT);
@@ -279,20 +273,20 @@ bool mainLoop(int16 mode) {
 				retValue = true;
 				_G(fx_blend) = BLEND4;
 			}
-			if (_G(gameState).inv_cur && _G(gameState).AkInvent != -1 && _G(menu_item) == CUR_USE) {
+			if (_G(cur)->usingInventoryCursors() && _G(gameState).AkInvent != -1 && _G(menu_item) == CUR_USE) {
 				cursorChoice(CUR_AK_INVENT);
 			} else
 				cursorChoice(_G(menu_item));
 			_G(cur_display) = true;
 			_G(flags).SaveMenu = false;
-			_G(cur)->show_cur();
+			_G(cur)->showCursor();
 			_G(out)->setPointer(_G(workptr));
 			break;
 
 		case Common::KEYCODE_ESCAPE:
 			if (_G(menu_display) == 0) {
 				menuEntry();
-				_G(cur)->hide_cur();
+				_G(cur)->hideCursor();
 				_G(tmp_menu_item) = _G(menu_item);
 				_G(maus_old_x) = g_events->_mousePos.x;
 				_G(maus_old_y) = g_events->_mousePos.y;
@@ -301,10 +295,10 @@ bool mainLoop(int16 mode) {
 				_G(cur)->move((MOUSE_MENU_MAX_X / 5) * (_G(menu_item)), 100);
 			} else {
 				menuExit();
-				_G(cur)->show_cur();
+				_G(cur)->showCursor();
 				_G(menu_item) = _G(tmp_menu_item);
 				_G(menu_display) = MENU_HIDE;
-				if (_G(gameState).inv_cur && _G(gameState).AkInvent != -1 && _G(menu_item) == CUR_USE) {
+				if (_G(cur)->usingInventoryCursors() && _G(gameState).AkInvent != -1 && _G(menu_item) == CUR_USE) {
 					cursorChoice(CUR_AK_INVENT);
 				} else
 					cursorChoice(_G(menu_item));
@@ -317,7 +311,7 @@ bool mainLoop(int16 mode) {
 
 				_G(menu_item) = CUR_USE;
 				menuEntry();
-				_G(cur)->show_cur();
+				_G(cur)->showCursor();
 				Dialogs::Inventory::menu();
 				menuExit();
 				_G(menu_display) = 0;
@@ -325,7 +319,7 @@ bool mainLoop(int16 mode) {
 				if (_G(gameState).AkInvent == -1) {
 					_G(menu_item) = _G(tmp_menu_item);
 					cursorChoice(_G(menu_item));
-					_G(gameState).inv_cur = false;
+					_G(cur)->setInventoryCursors(false);
 				} else {
 					_G(menu_item) = CUR_USE;
 					cursorChoice(CUR_AK_INVENT);
@@ -353,27 +347,27 @@ bool mainLoop(int16 mode) {
 				_G(menu_item) = _G(tmp_menu_item);
 				_G(menu_display) = MENU_HIDE;
 
-				if (_G(gameState).inv_cur && _G(gameState).AkInvent != -1 && _G(menu_item) == CUR_USE) {
+				if (_G(cur)->usingInventoryCursors() && _G(gameState).AkInvent != -1 && _G(menu_item) == CUR_USE) {
 					cursorChoice(CUR_AK_INVENT);
 				} else
 					cursorChoice(_G(tmp_menu_item));
 				_G(cur_display) = true;
 
 				_G(flags).SaveMenu = false;
-				_G(cur)->show_cur();
+				_G(cur)->showCursor();
 				}
 				break;
 
 			default:
 				if (_G(menu_display) != 0) {
 					menuExit();
-					_G(cur)->show_cur();
+					_G(cur)->showCursor();
 					_G(menu_display) = 0;
 					_G(cur_display) = true;
 					_G(cur)->move(_G(maus_old_x), _G(maus_old_y));
 					g_events->_mousePos.x = _G(maus_old_x);
 					g_events->_mousePos.y = _G(maus_old_y);
-					_G(gameState).inv_cur = false;
+					_G(cur)->setInventoryCursors(false);
 					cursorChoice(_G(menu_item));
 				}
 				break;
@@ -555,12 +549,18 @@ void setupScreen(SetupScreenMode mode) {
 					calc_mouse_person(g_events->_mousePos.x, g_events->_mousePos.y);
 			}
 		}
-		if (_G(cur_display) == true && mode == DO_SETUP) {
-			_G(cur)->plot_cur();
+		if (_G(cur_display) && mode == DO_SETUP) {
+			_G(cur)->updateCursor();
 
-			if ((_G(gameState).inv_cur) && (_G(flags).CursorStatus == true))
-				_G(out)->spriteSet(_G(curtaf)->image[_G(pfeil_ani) + 32], g_events->_mousePos.x, g_events->_mousePos.y,
-				                _G(scr_width));
+			if (_G(cur)->usingInventoryCursors() && _G(flags).CursorStatus)
+				_G(out)->spriteSet(
+					_G(cur)->getCursorSprite(),
+					g_events->_mousePos.x,
+					g_events->_mousePos.y,
+				    _G(scr_width),
+					_G(cur)->getCursorWidth(),
+					_G(cur)->getCursorHeight()
+				);
 			if (_G(pfeil_delay) == 0) {
 				_G(pfeil_delay) = _G(gameState).DelaySpeed;
 				if (_G(pfeil_ani) < 4)
@@ -657,7 +657,7 @@ void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
 		if (_G(menu_item) != CUR_USE)
 			Dialogs::Inventory::look_screen(txt_mode, txt_nr);
 		else {
-			if (_G(gameState).inv_cur) {
+			if (_G(cur)->usingInventoryCursors()) {
 				evaluateObj(nr, txt_mode);
 			} else {
 				if (txt_mode == INVENTORY_NORMAL) {
@@ -678,7 +678,7 @@ void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
 							_G(gameState)._personHide[P_CHEWY] = false;
 						}
 
-						_G(gameState).inv_cur = false;
+						_G(cur)->setInventoryCursors(false);
 						_G(menu_item) = CUR_WALK;
 						cursorChoice(_G(menu_item));
 						_G(moveState)[P_CHEWY]._delayCount = 0;
@@ -700,7 +700,7 @@ void kb_mov(int16 mode) {
 	while (!ende) {
 		switch (_G(in)->getSwitchCode()) {
 		case Common::KEYCODE_RIGHT:
-			if (g_events->_mousePos.x < 320 - _G(gameState)._curWidth)
+			if (g_events->_mousePos.x < 320 - _G(cur)->getCursorWidth())
 				_G(cur)->move(g_events->_mousePos.x + 2, g_events->_mousePos.y);
 			break;
 
@@ -715,7 +715,7 @@ void kb_mov(int16 mode) {
 			break;
 
 		case Common::KEYCODE_DOWN:
-			if (g_events->_mousePos.y < 210 - _G(gameState)._curHeight)
+			if (g_events->_mousePos.y < 210 - _G(cur)->getCursorHeight())
 				_G(cur)->move(g_events->_mousePos.x, g_events->_mousePos.y + 2);
 			break;
 
@@ -781,12 +781,12 @@ void mouseAction() {
 	        x < invent_display[_G(gameState).InvDisp][0] + 48 &&
 	        y > invent_display[_G(gameState).InvDisp][1] &&
 	        y < invent_display[_G(gameState).InvDisp][1] + 48) {
-		if (!_G(gameState).inv_cur && !_G(inv_disp_ok) && _G(gameState).AkInvent != -1) {
+		if (!_G(cur)->usingInventoryCursors() && !_G(inv_disp_ok) && _G(gameState).AkInvent != -1) {
 			cursorChoice(CUR_USE);
 		}
 		_G(inv_disp_ok) = true;
 	} else {
-		if (!_G(gameState).inv_cur && _G(inv_disp_ok)) {
+		if (!_G(cur)->usingInventoryCursors() && _G(inv_disp_ok)) {
 			cursorChoice(_G(menu_item));
 		}
 		_G(inv_disp_ok) = false;
@@ -804,10 +804,10 @@ void mouseAction() {
 						g_events->_kbInfo._scanCode = Common::KEYCODE_RETURN;
 					else if (_G(gameState).AkInvent != -1) {
 						if (_G(inv_disp_ok)) {
-							if (_G(gameState).inv_cur) {
+							if (_G(cur)->usingInventoryCursors()) {
 								_G(menu_item) = CUR_USE;
 								cursorChoice(_G(menu_item));
-								_G(gameState).inv_cur = false;
+								_G(cur)->setInventoryCursors(false);
 							} else {
 								_G(menu_item) = CUR_USE;
 								cursorChoice(CUR_AK_INVENT);
@@ -884,7 +884,7 @@ void evaluateObj(int16 testNr, int16 mode) {
 			showCur();
 			sib_event_inv(testNr);
 
-			if (!_G(gameState).inv_cur) {
+			if (!_G(cur)->usingInventoryCursors()) {
 				_G(menu_item) = _G(menu_item_vorwahl);
 				cursorChoice(_G(menu_item));
 			}
@@ -931,7 +931,7 @@ void evaluateObj(int16 testNr, int16 mode) {
 
 			_G(obj)->calc_all_static_detail();
 
-			if (!_G(gameState).inv_cur) {
+			if (!_G(cur)->usingInventoryCursors()) {
 
 				if (sib_ret || action_flag) {
 					_G(menu_item) = _G(menu_item_vorwahl);
@@ -972,7 +972,7 @@ void evaluateObj(int16 testNr, int16 mode) {
 			showCur();
 			sib_event_no_inv(testNr);
 			_G(obj)->calc_all_static_detail();
-			if (!_G(gameState).inv_cur) {
+			if (!_G(cur)->usingInventoryCursors()) {
 				_G(menu_item) = _G(menu_item_vorwahl);
 				cursorChoice(_G(menu_item));
 			}
@@ -1299,7 +1299,7 @@ int16 calcMouseText(int16 x, int16 y, int16 mode) {
 					case CUR_USER:
 					case CUR_USE:
 						txtMode = TXT_MARK_USE;
-						if (_G(gameState).inv_cur)
+						if (_G(cur)->usingInventoryCursors())
 							ok = false;
 						break;
 
@@ -1445,9 +1445,9 @@ void calc_mouse_person(int16 x, int16 y) {
 				char *str_ = ch_txt[p_nr];
 				calcTxtXy(&x, &y, str_, 1);
 				printShadowed(x, y, 255, 300, 0, _G(scr_width), str_);
-				if (_G(mouseLeftClick) == 1) {
+				if (_G(mouseLeftClick)) {
 					int16 def_nr = -1;
-					if (!_G(gameState).inv_cur) {
+					if (!_G(cur)->usingInventoryCursors()) {
 						int16 txt_nr = calc_person_txt(p_nr);
 						switch (_G(menu_item)) {
 						case CUR_LOOK:
@@ -1583,7 +1583,7 @@ void get_user_key(int16 mode) {
 			if (_G(gameState).AkInvent == -1) {
 				_G(menu_item) = _G(tmp_menu_item);
 				cursorChoice(_G(menu_item));
-				_G(gameState).inv_cur = false;
+				_G(cur)->setInventoryCursors(false);
 			} else {
 				_G(menu_item) = CUR_USE;
 				cursorChoice(CUR_AK_INVENT);
@@ -1617,7 +1617,7 @@ void set_ani_screen() {
 
 void delInventory(int16 nr) {
 	_G(obj)->delInventory(nr, &_G(room_blk));
-	_G(gameState).inv_cur = false;
+	_G(cur)->setInventoryCursors(false);
 	_G(menu_item) = CUR_WALK;
 	_G(gameState).AkInvent = -1;
 	cursorChoice(_G(menu_item));
@@ -1628,7 +1628,7 @@ void delInventory(int16 nr) {
 bool isCurInventory(int16 nr) {
 	int16 ret = false;
 
-	if (_G(gameState).AkInvent == nr && _G(gameState).inv_cur)
+	if (_G(gameState).AkInvent == nr && _G(cur)->usingInventoryCursors())
 		ret = true;
 
 	return ret;

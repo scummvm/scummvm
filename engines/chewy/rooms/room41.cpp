@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -176,7 +177,7 @@ void Room41::stop_hoggy() {
 int16 Room41::use_kasse() {
 	int16 action_flag = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		action_flag = true;
 		stop_hoggy();
 		autoMove(1, P_CHEWY);
@@ -190,7 +191,7 @@ int16 Room41::use_kasse() {
 int16 Room41::use_lola() {
 	int16 action_flag = false;
 
-	if (!_G(gameState).inv_cur && !_G(gameState).R41LolaOk && _G(gameState).R41RepairInfo) {
+	if (!_G(cur)->usingInventoryCursors() && !_G(gameState).R41LolaOk && _G(gameState).R41RepairInfo) {
 		hideCur();
 		action_flag = true;
 		_G(gameState).R41LolaOk = true;

@@ -261,7 +261,7 @@ enter:
 				const int16 slotNum = text_off + active_slot;
 				for (uint j = 0; j < saveList.size(); ++j) {
 					if (saveList[j].getSaveSlot() == slotNum) {
-						_G(cur)->hide_cur();
+						_G(cur)->hideCursor();
 						g_engine->loadGameState(slotNum);
 						key = Common::KEYCODE_ESCAPE;
 						break;
@@ -288,7 +288,7 @@ enter:
 			break;
 		}
 
-		_G(cur)->plot_cur();
+		_G(cur)->updateCursor();
 		_G(out)->copyToScreen();
 
 		EVENTS_UPDATE;

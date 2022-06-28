@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -170,7 +171,7 @@ int16 Room45::use_taxi() {
 	hideCur();
 	autoMove(1, P_CHEWY);
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		if (_G(gameState).ChewyAni == CHEWY_PUMPKIN) {
 			action_ret = true;
 			talk_taxi(254);

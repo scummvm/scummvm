@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -84,7 +85,7 @@ void Room69::look_schild() {
 
 int16 Room69::use_bruecke() {
 	int16 action_flag = false;
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		hideCur();
 		action_flag = true;
 

@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -150,7 +151,7 @@ void Room85::setup_func() {
 }
 
 int Room85::proc2() {
-	if (_G(gameState).inv_cur)
+	if (_G(cur)->usingInventoryCursors())
 		return 0;
 
 	autoMove(2, P_CHEWY);

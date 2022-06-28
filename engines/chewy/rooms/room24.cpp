@@ -43,8 +43,12 @@ void Room24::entry() {
 	setPersonPos(0, 0, P_CHEWY, -1);
 	_G(gameState).scrollx = 0;
 	_G(gameState).scrolly = 0;
-	_G(curblk).sprite = _G(room_blk)._detImage;
+
+	// TODO: There are 4 cursor frames here, but we only support
+	// a single custom cursor frame
+	_G(cur)->setCustomRoomCursor(_G(room_blk)._detImage[7]);
 	_G(cur)->setAnimation(7, 10, -1);
+
 	_G(menu_item) = CUR_USER;
 	cursorChoice(CUR_USER);
 

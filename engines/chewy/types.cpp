@@ -19,6 +19,8 @@
  *
  */
 
+#include "chewy/globals.h"
+#include "chewy/cursor.h"
 #include "chewy/types.h"
 #include "chewy/detail.h"
 #include "common/algorithm.h"
@@ -52,6 +54,8 @@ bool GameState::synchronize(Common::Serializer &s) {
 		error("Invalid flags structure size");
 
 	byte dummy = 0;
+	int16 dummy16 = 0;
+	byte inventoryCursors = _G(cur)->usingInventoryCursors();
 
 	// Sync the structure's bitflags
 	s.syncBytes((byte *)_flags, SPIELER_FLAGS_SIZE);
@@ -70,9 +74,9 @@ bool GameState::synchronize(Common::Serializer &s) {
 	syncArray(s, InventSlot, MAX_MOV_OBJ);
 
 	s.syncAsSint16LE(AkInvent);
-	s.syncAsByte(inv_cur);
-	s.syncAsSint16LE(_curWidth);
-	s.syncAsSint16LE(_curHeight);
+	s.syncAsByte(inventoryCursors);
+	s.syncAsSint16LE(dummy16);	// curWidth
+	s.syncAsSint16LE(dummy16);	// curHeight
 
 	for (int i = 0; i < MAX_MOV_OBJ; ++i)
 		room_m_obj[i].synchronize(s);
@@ -156,6 +160,8 @@ bool GameState::synchronize(Common::Serializer &s) {
 	s.syncAsByte(dummy);	// speech switch
 	s.syncAsByte(FramesPerSecond);
 	s.syncAsByte(dummy);	// subtitles switch
+
+	_G(cur)->setInventoryCursors(inventoryCursors);
 
 	return true;
 }

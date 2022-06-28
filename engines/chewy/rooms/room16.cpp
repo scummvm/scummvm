@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -46,7 +47,7 @@ void Room16::entry() {
 int16 Room16::use_gleiter() {
 	int16 action_flag = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		action_flag = true;
 		autoMove(6, P_CHEWY);
 		_G(gameState).R23GleiterExit = 16;
