@@ -102,7 +102,7 @@ void FreescapeEngine::loadAssets() {
 
 		file = files.begin()->get()->createReadStream();
 		load16bitBinary(file);
-	} else if (_targetName == "driller") {
+	} else if (_targetName == "driller" || _targetName == "spacestationoblivion") {
 		if (!ConfMan.hasKey("render_mode"))
 			renderMode = "ega";
 		else
