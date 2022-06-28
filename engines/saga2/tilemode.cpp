@@ -49,10 +49,6 @@
 
 namespace Saga2 {
 
-#define TEST1           1           //  enable test code
-#define TEST2           1
-#define TEST3           1
-
 #define CHEATMOVE       1           // For moving with keypad in 8 directions
 
 /* ===================================================================== *
@@ -110,13 +106,6 @@ void navigatePath(TilePoint pick);
 void moveActors(int32 deltaTime);
 
 void updateMainDisplay();
-
-#if DEBUG
-void soundTest1();
-void soundTest2();
-void voiceTest1();
-void voiceTest2();
-#endif
 
 void toggleMusic();
 
@@ -990,19 +979,10 @@ void TileModeHandleKey(int16 key, int16 qual) {
 		toggleMusic();
 		break;
 
-
-#if DEBUG
-	case 'q':
-	case 0x1b:
-		endGame();
-		break;
-
-#else
-	case 0x1b:
+	case 0x1b: // Escape key
 		if (uiKeysEnabled)
 			OptionsDialog();
 		break;
-#endif
 
 	default:
 		if (uiKeysEnabled)
@@ -1010,19 +990,6 @@ void TileModeHandleKey(int16 key, int16 qual) {
 
 	}
 }
-
-//  A debugging function to show the queue of recent mouse events.
-
-#if DEBUG
-static char mouseHistory[33];
-
-void showMouseEvent(char eventType) {
-	memmove(mouseHistory + 1, mouseHistory, 31);
-	mouseHistory[0] = eventType;
-	mouseHistory[32] = '\0';
-	WriteStatusF(5, mouseHistory);
-}
-#endif
 
 //-----------------------------------------------------------------------
 //	Handle mouse actions on the tile map "control".
@@ -1226,12 +1193,6 @@ static APPFUNC(cmdClickTileMap) {
 						((gGenericControl *)ev.panel)->disableDblClick();
 					}
 				}
-
-#if DEBUG && TEST1
-				if (isActor(pickedObject))
-					pickedActor = pickedObject;
-#endif
-
 			}
 			//  We're not pointing at an object and the mouse cursor
 			//  does not have an object
