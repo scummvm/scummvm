@@ -45,7 +45,7 @@ static int strToInt(const char *s) {
 }
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("room", WRAP_METHOD(Console, Cmd_GotoRoom));
+	registerCmd("room", WRAP_METHOD(Console, Cmd_Room));
 	registerCmd("item", WRAP_METHOD(Console, Cmd_Item));
 	registerCmd("play_sound", WRAP_METHOD(Console, Cmd_PlaySound));
 	registerCmd("play_speech", WRAP_METHOD(Console, Cmd_PlaySpeech));
@@ -58,9 +58,10 @@ Console::Console() : GUI::Debugger() {
 Console::~Console() {
 }
 
-bool Console::Cmd_GotoRoom(int argc, const char **argv) {
+bool Console::Cmd_Room(int argc, const char **argv) {
 	if (argc == 1) {
 		debugPrintf("%s <roomNum>\n", argv[0]);
+		debugPrintf("Current room is %d\n", _G(gameState)._personRoomNr[P_CHEWY]);
 		return true;
 	} else {
 		int roomNum = strToInt(argv[1]);
