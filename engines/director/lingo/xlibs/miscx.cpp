@@ -84,7 +84,7 @@ void MiscX::open(int type) {
 	if (type == kXObj) {
 		MiscXObject::initMethods(xlibMethods);
 		MiscXObject *xobj = new MiscXObject(kXObj);
-		g_lingo->_globalvars[xlibName] = xobj;
+		g_lingo->exposeXObject(xlibName, xobj);
 	}
 }
 

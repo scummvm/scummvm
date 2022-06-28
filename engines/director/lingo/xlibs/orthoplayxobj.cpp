@@ -121,7 +121,7 @@ void OrthoPlayXObj::open(int type) {
 	if (type == kXObj) {
 		OrthoPlayXObject::initMethods(xlibMethods);
 		OrthoPlayXObject *xobj = new OrthoPlayXObject(kXObj);
-		g_lingo->_globalvars[xlibName] = xobj;
+		g_lingo->exposeXObject(xlibName, xobj);
 	}
 }
 

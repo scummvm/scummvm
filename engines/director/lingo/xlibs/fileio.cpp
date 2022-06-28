@@ -62,7 +62,7 @@ void FileIO::open(int type) {
 	if (type == kXObj) {
 		FileObject::initMethods(xlibMethods);
 		FileObject *xobj = new FileObject(kXObj);
-		g_lingo->_globalvars[xlibName] = xobj;
+		g_lingo->exposeXObject(xlibName, xobj);
 	} else if (type == kXtraObj) {
 		// TODO - Implement Xtra
 	}

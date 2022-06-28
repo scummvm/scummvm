@@ -153,7 +153,7 @@ void CDROMXObj::open(int type) {
 	if (type == kXObj) {
 		CDROMXObject::initMethods(xlibMethods);
 		CDROMXObject *xobj = new CDROMXObject(kXObj);
-		g_lingo->_globalvars[xlibName] = xobj;
+		g_lingo->exposeXObject(xlibName, xobj);
 	}
 }
 

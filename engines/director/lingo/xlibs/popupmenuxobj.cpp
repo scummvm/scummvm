@@ -74,7 +74,7 @@ void PopUpMenuXObj::open(int type) {
 	if (type == kXObj) {
 		PopUpMenuXObject::initMethods(xlibMethods);
 		PopUpMenuXObject *xobj = new PopUpMenuXObject(kXObj);
-		g_lingo->_globalvars[xlibName] = xobj;
+		g_lingo->exposeXObject(xlibName, xobj);
 	}
 }
 

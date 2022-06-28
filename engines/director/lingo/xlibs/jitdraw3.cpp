@@ -93,7 +93,7 @@ void JITDraw3XObj::open(int type) {
 	if (type == kXObj) {
 		JITDraw3XObject::initMethods(xlibMethods);
 		JITDraw3XObject *xobj = new JITDraw3XObject(kXObj);
-		g_lingo->_globalvars[xlibName] = xobj;
+		g_lingo->exposeXObject(xlibName, xobj);
 	}
 }
 

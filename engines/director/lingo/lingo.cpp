@@ -1513,4 +1513,9 @@ CastMemberID Lingo::resolveCastMember(const Datum &memberID, const Datum &castLi
 	return CastMemberID(-1, castLib.asInt());
 }
 
+void Lingo::exposeXObject(const char *name, Datum obj) {
+	_globalvars[name] = obj;
+	_globalvars[name].ignoreGlobal = true;
+}
+
 } // End of namespace Director

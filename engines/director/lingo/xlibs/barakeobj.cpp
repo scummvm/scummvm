@@ -60,7 +60,7 @@ void BarakeObj::open(int type) {
 	if (type == kXObj) {
 		BarakeObject::initMethods(xlibMethods);
 		BarakeObject *xobj = new BarakeObject(kXObj);
-		g_lingo->_globalvars[xlibName] = xobj;
+		g_lingo->exposeXObject(xlibName, xobj);
 	}
 }
 

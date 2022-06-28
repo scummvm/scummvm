@@ -69,7 +69,7 @@ void JourneyWareXINIXObj::open(int type) {
    if (type == kXObj) {
 	   JourneyWareXINIXObject::initMethods(xlibMethods);
 	   JourneyWareXINIXObject *xobj = new JourneyWareXINIXObject(kXObj);
-	   g_lingo->_globalvars[xlibName] = xobj;
+	   g_lingo->exposeXObject(xlibName, xobj);
    }
 }
 

@@ -68,7 +68,7 @@ void FlushXObj::open(int type) {
 		FlushXObject::initMethods(xlibMethods);
 		FlushXObject *xobj = new FlushXObject(kXObj);
 		for (uint i = 0; xlibNames[i]; i++) {
-			g_lingo->_globalvars[xlibNames[i]] = xobj;
+			g_lingo->exposeXObject(xlibNames[i], xobj);
 		}
 	}
 }

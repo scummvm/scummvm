@@ -71,7 +71,7 @@ void AiffXObj::open(int type) {
 	if (type == kXObj) {
 		AiffXObject::initMethods(xlibMethods);
 		AiffXObject *xobj = new AiffXObject(kXObj);
-		g_lingo->_globalvars[xlibName] = xobj;
+		g_lingo->exposeXObject(xlibName, xobj);
 	}
 }
 

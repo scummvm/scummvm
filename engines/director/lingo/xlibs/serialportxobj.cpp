@@ -60,7 +60,7 @@ void SerialPortXObj::open(int type) {
 	if (type == kXObj) {
 		SerialPortXObject::initMethods(xlibMethods);
 		SerialPortXObject *xobj = new SerialPortXObject(kXObj);
-		g_lingo->_globalvars[xlibName] = xobj;
+		g_lingo->exposeXObject(xlibName, xobj);
 	}
 }
 

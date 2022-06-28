@@ -114,7 +114,7 @@ void MovUtilsXObj::open(int type) {
 	if (type == kXObj) {
 		MovieUtilsXObject::initMethods(xlibMethods);
 		MovieUtilsXObject *xobj = new MovieUtilsXObject(kXObj);
-		g_lingo->_globalvars[xlibName] = xobj;
+		g_lingo->exposeXObject(xlibName, xobj);
 	}
 }
 

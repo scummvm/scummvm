@@ -52,7 +52,7 @@ void MoveMouseXObj::open(int type) {
 	if (type == kXObj) {
 		MoveMouseXObject::initMethods(xlibMethods);
 		MoveMouseXObject *xobj = new MoveMouseXObject(kXObj);
-		g_lingo->_globalvars[xlibName] = xobj;
+		g_lingo->exposeXObject(xlibName, xobj);
 	} else if (type == kXtraObj) {
 		// TODO - Implement Xtra
 	}

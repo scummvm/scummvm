@@ -66,7 +66,7 @@ void GpidXObj::open(int type) {
 	if (type == kXObj) {
 		ProductIdXObject::initMethods(xlibMethods);
 		ProductIdXObject *xobj = new ProductIdXObject(kXObj);
-		g_lingo->_globalvars[xlibName] = xobj;
+		g_lingo->exposeXObject(xlibName, xobj);
 	}
 }
 

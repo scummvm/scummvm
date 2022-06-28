@@ -108,7 +108,7 @@ void AppleCDXObj::open(int type) {
 	if (type == kXObj) {
 		AppleCDXObject::initMethods(xlibMethods);
 		AppleCDXObject *xobj = new AppleCDXObject(kXObj);
-		g_lingo->_globalvars[xlibName] = xobj;
+		g_lingo->exposeXObject(xlibName, xobj);
 	}
 }
 

@@ -62,7 +62,7 @@ void PalXObj::open(int type) {
 	if (type == kXObj) {
 		PalXObject::initMethods(xlibMethods);
 		PalXObject *xobj = new PalXObject(kXObj);
-		g_lingo->_globalvars[xlibName] = xobj;
+		g_lingo->exposeXObject(xlibName, xobj);
 	}
 }
 
