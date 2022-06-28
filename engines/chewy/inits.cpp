@@ -179,6 +179,10 @@ void new_game() {
 		_G(gameState).Ats[i * MAX_ATS_STATUS] = f.readByte();
 	f.close();
 
+	// WORKAROUND: For English version, taxi hotspot in
+	// room 45 (Big City) isn't turned on by default
+	_G(gameState).Ats[295 * MAX_ATS_STATUS] = ATS_ACTION_BIT;
+
 	if (!f.open(INV_ATS_STEUER))
 		error("Error reading file: %s", INV_ATS_STEUER);
 	for (int16 i = 0; i < MAX_MOV_OBJ; i++)
