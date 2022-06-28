@@ -263,8 +263,6 @@ void Score::startPlay() {
 		return;
 	}
 
-	warning("FRAMES: %d", _frames.size());
-
 	_lastPalette = _frames[_currentFrame]->_palette.paletteId;
 	_vm->setPalette(resolvePaletteId(_lastPalette));
 
