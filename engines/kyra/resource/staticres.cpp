@@ -155,7 +155,7 @@ bool StaticResource::loadStaticResourceFile() {
 		if (!res->loadPakFile(staticDataFilename(), *i))
 			continue;
 
-		if (tryKyraDatLoad()) {
+		if ((setLanguage(_vm->gameFlags().lang) && prefetchId(-1))) {
 			foundWorkingKyraDat = true;
 			break;
 		}
@@ -169,32 +169,6 @@ bool StaticResource::loadStaticResourceFile() {
 		GUIErrorMessage(errorMessage);
 		error("%s", errorMessage.c_str());
 	}
-
-	return true;
-}
-
-bool StaticResource::tryKyraDatLoad() {
-	Common::SeekableReadStream *idMap = loadIdMap(_vm->gameFlags().lang);
-	if (!idMap)
-		return false;
-
-	uint16 numIDs = idMap->readUint16BE();
-	while (numIDs--) {
-		uint16 id = idMap->readUint16BE();
-		uint8 type = idMap->readByte();
-		uint32 filename = idMap->readUint32BE();
-
-		_dataTable[id] = DataDescriptor(filename, type);
-	}
-
-	const bool fileError = idMap->err();
-	delete idMap;
-	if (fileError)
-		return false;
-
-	// load all tables for now
-	if (!prefetchId(-1))
-		return false;
 
 	return true;
 }
@@ -334,6 +308,38 @@ const uint16 *StaticResource::loadRawDataBe16(int id, int &entries) {
 	return (const uint16 *)getData(id, kRawDataBe16, entries);
 }
 
+bool StaticResource::setLanguage(Common::Language lang, int id) {
+	if (lang == Common::UNK_LANG)
+		lang = _vm->gameFlags().lang;
+	
+	unloadId(id);
+
+	// load the ID map for our game
+	Common::SeekableReadStream *idMap = loadIdMap(lang);
+	if (!idMap)
+		return false;
+
+
+	int numIDs = idMap->readUint16BE();
+	while (numIDs--) {
+		uint16 id2 = idMap->readUint16BE();
+		uint8 type = idMap->readByte();
+		uint32 filename = idMap->readUint32BE();
+		if (id == -1 || id == id2) {
+			_dataTable[id2] = DataDescriptor(filename, type);
+			if (id == id2)
+				break;
+		}
+	}
+
+	const bool fileError = idMap->err();
+	delete idMap;
+	if (fileError || (id != -1 && numIDs == -1))
+		return false;
+
+	return true;
+}
+
 bool StaticResource::prefetchId(int id) {
 	if (id == -1) {
 		for (DataMap::const_iterator i = _dataTable.begin(); i != _dataTable.end(); ++i) {
@@ -372,35 +378,6 @@ bool StaticResource::prefetchId(int id) {
 	_resList.push_back(data);
 
 	return true;
-}
-
-bool StaticResource::renewPrefetchIdWithCustomLanguage(int id, Common::Language lang) {
-	if (lang != Common::UNK_LANG) {
-		unloadId(id);
-
-		// load the ID map for our game
-		Common::SeekableReadStream *idMap = loadIdMap(lang);
-		if (!idMap)
-			return false;
-
-		uint16 numIDs = idMap->readUint16BE();
-		while (numIDs--) {
-			uint16 id2 = idMap->readUint16BE();
-			uint8 type = idMap->readByte();
-			uint32 filename = idMap->readUint32BE();
-			if (id2 != id)
-				continue;
-			_dataTable[id] = DataDescriptor(filename, type);
-			break;
-		}
-
-		const bool fileError = idMap->err();
-		delete idMap;
-		if (!numIDs || fileError)
-			return false;
-	}
-
-	return prefetchId(id);
 }
 
 void StaticResource::unloadId(int id) {

@@ -1275,15 +1275,18 @@ public:
 	const EoBCharacter *loadEoBNpcData(int id, int &entries);
 #endif // ENABLE_EOB
 
+	// This sets up the internal resource mapping for the selected language. It should
+	// usually called with id '-1' so as to map all resources for the game, because the
+	// mapping is necessary to load a resource. Calling this will automatically unload
+	// the resource (all of them for id '-1').
+	bool setLanguage(Common::Language lang, int id = -1);
 	// use '-1' to prefetch/unload all ids
 	// prefetchId retruns false if only on of the resources
 	// can't be loaded and it breaks then the first res
 	// can't be loaded
 	bool prefetchId(int id);
-	bool renewPrefetchIdWithCustomLanguage(int id, Common::Language lang);
 	void unloadId(int id);
 private:
-	bool tryKyraDatLoad();
 	Common::SeekableReadStream *loadIdMap(Common::Language lang);
 
 	KyraEngine_v1 *_vm;

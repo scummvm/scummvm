@@ -1391,7 +1391,7 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 				fa->push_back(fn1);
 				fa->push_back(fn2);
 				fnt = new MultiSubsetFont(fa);
-				_vm->staticres()->renewPrefetchIdWithCustomLanguage(k2FontData, _vm->gameFlags().extraLang);
+				_vm->staticres()->setLanguage(_vm->gameFlags().extraLang, k2FontData);
 				const uint8 *oneByteData = _vm->staticres()->loadRawData(k2FontData, temp);
 				Common::MemoryReadStream str(oneByteData, temp);
 				fnt->load(str);
