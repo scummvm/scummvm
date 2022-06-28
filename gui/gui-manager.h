@@ -27,6 +27,7 @@
 #include "common/stack.h"
 #include "common/str.h"
 #include "common/list.h"
+#include "common/mutex.h"
 
 #include "gui/ThemeEngine.h"
 #include "gui/widget.h"
@@ -91,7 +92,10 @@ public:
 
 	ThemeEval *xmlEval() { return _theme->getEvaluator(); }
 
-	Common::SearchSet &getIconsSet() { return _iconsSet; }
+	Common::SearchSet &getIconsSet() {
+		Common::StackLock lock(_iconsMutex);
+		return _iconsSet;
+	}
 
 	int16 getGUIWidth() const { return _baseWidth; }
 	int16 getGUIHeight() const { return _baseHeight; }
@@ -162,6 +166,7 @@ protected:
 	int			_topDialogLeftPadding;
 	int			_topDialogRightPadding;
 
+	Common::Mutex _iconsMutex;
 	Common::SearchSet _iconsSet;
 
 	// position and time of last mouse click (used to detect double clicks)

@@ -114,6 +114,7 @@ struct ArchiveMemberListBackComparator {
 	}
 };
 void GuiManager::initIconsSet() {
+	Common::StackLock lock(_iconsMutex);
 	Common::Archive *dat;
 
 	_iconsSet.clear();
