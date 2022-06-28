@@ -14,7 +14,7 @@
 
 namespace Freescape {
 
-static Object *load8bitObject(Common::SeekableReadStream *file) {
+Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 
 	byte rawType = file->readByte();
 	debug("Raw object type: %d", rawType);
@@ -225,7 +225,7 @@ Graphics::PixelBuffer *getPaletteGradient(uint8 c1, uint8 c2, uint16 ncolors) {
 	return palette;
 }
 
-Area *load8bitArea(Common::SeekableReadStream *file, uint16 ncolors) {
+Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 ncolors) {
 
 	uint32 base = file->pos();
 	debug("Area base: %x", base);
@@ -233,30 +233,27 @@ Area *load8bitArea(Common::SeekableReadStream *file, uint16 ncolors) {
 	uint8 numberOfObjects = file->readByte();
 	uint8 areaNumber = file->readByte();
 
-	uint16 cPtr = file->readUint16LE();
+	uint16 cPtr = 0;
+	if (_targetName != "castlemaster")
+		cPtr = file->readUint16LE();
 	uint8 scale = file->readByte();
 	debug("Scale: %d", scale);
 
-	uint8 ci1 = file->readByte() & 15;
-	uint8 ci2 = file->readByte() & 15;
-	uint8 ci3 = file->readByte() & 15;
-	uint8 ci4 = file->readByte() & 15;
+	uint8 ci1 = file->readByte(); //& 15;
+	uint8 ci2 = file->readByte(); //& 15;
+	uint8 ci3 = file->readByte(); //& 15;
+	uint8 ci4 = file->readByte(); //& 15;
 
 	debug("Colors: %d %d %d %d", ci1, ci2, ci3, ci4);
-
-	//float *f1, *f2;
-	//f1 = specColors[ci3];
-	//f2 = specColors[ci4];
-
-	Graphics::PixelBuffer *palette = getPaletteGradient(ci3, ci4, ncolors);
+	Graphics::PixelBuffer *palette = getPaletteGradient(1, 1, ncolors);
 
 	debug("Area %d", areaNumber);
 	debug("Skipped: %d Objects: %d", skippedValue, numberOfObjects);
-	debug("Condition Ptr: %x", cPtr);
+	//debug("Condition Ptr: %x", cPtr);
 	debug("Pos before first object: %lx", file->pos());
 
-	file->seek(15, SEEK_CUR);
-	//file->seek(4, SEEK_CUR);
+	if (_targetName != "castlemaster")
+		file->seek(15, SEEK_CUR);
 
 	ObjectMap *objectsByID = new ObjectMap;
 	ObjectMap *entrancesByID = new ObjectMap;
@@ -274,7 +271,7 @@ Area *load8bitArea(Common::SeekableReadStream *file, uint16 ncolors) {
 			}
 		}
 	}
-	file->seek(base + cPtr);
+	/*file->seek(base + cPtr);
 	uint8 numConditions = file->readByte();
 	debug("%d area conditions", numConditions);
 	while (numConditions--) {
@@ -286,7 +283,7 @@ Area *load8bitArea(Common::SeekableReadStream *file, uint16 ncolors) {
 		file->read(conditionData, lengthOfCondition);
 		Common::Array<uint8> conditionArray(conditionData, lengthOfCondition);
 		//debug("%s", detokenise8bitCondition(conditionArray)->c_str());
-	}
+	}*/
 
 	return (new Area(areaNumber, objectsByID, entrancesByID, scale, 255, 255, palette));
 }
@@ -314,6 +311,8 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 
 	file->seek(offset);
 	uint8 numberOfAreas = file->readByte();
+	//if (numberOfAreas < 10) // TODO: just for testing
+	//	numberOfAreas = 10;
 	uint16 dbSize = file->readUint16LE();
 	debug("Database ends at %x", dbSize);
 
@@ -371,9 +370,11 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 			if (!areaMap->contains(newArea->getAreaID()))
 				(*areaMap)[newArea->getAreaID()] = newArea;
 			else
-				error("WARNING: area ID repeated: %d", newArea->getAreaID());
+				debug("WARNING: area ID repeated: %d", newArea->getAreaID());
 		} else
 			error("Invalid area?");
+		if (_targetName == "castlemaster")
+			break;
 	}
 	_playerHeight = 64;
 	_areasByAreaID = areaMap;

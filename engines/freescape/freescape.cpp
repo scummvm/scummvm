@@ -102,7 +102,7 @@ void FreescapeEngine::loadAssets() {
 
 		file = files.begin()->get()->createReadStream();
 		load16bitBinary(file);
-	} else if (_targetName == "Driller") {
+	} else if (_targetName == "driller") {
 		if (!ConfMan.hasKey("render_mode"))
 			renderMode = "ega";
 		else
@@ -127,15 +127,15 @@ void FreescapeEngine::loadAssets() {
 		} else
 			error("Invalid render mode %s for Driller", renderMode.c_str());
 
-	   } else if (_targetName == "Castle") {
+	   } else if (_targetName == "castlemaster") {
 			file = gameDir.createReadStreamForMember("castle.sna");
 
 			if (file == nullptr)
 				error("Failed to open castle.sna");
-			// Courtyard -> 0x93c1
+			// Courtyard -> 0x93c1 -> 0x8cbc,3
 			// Beds -> 0x867d
 			// All? -> 0x845d or 0x80ed?
-			load8bitBinary(file, 0x93c1, 16);
+			load8bitBinary(file, 0x659c, 16);
 	   } else
 		error("'%s' is an invalid game", _targetName.c_str());
 

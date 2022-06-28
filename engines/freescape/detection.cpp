@@ -5,7 +5,7 @@ namespace Freescape {
 static const PlainGameDescriptor freescapeGames[] = {
 	{"3dkit", "The 3D Kit Game"},
 	{"driller", "Driller"},
-	{"castle", "Castle Master"},
+	{"castlemaster", "Castle Master"},
 	{"menace", "Menace of Dr. Spoil Sport"},
 	{0, 0}};
 
@@ -53,16 +53,16 @@ static const ADGameDescription gameDescriptions[] = {
 	 Common::kPlatformDOS,
 	 ADGF_NO_FLAGS,
 	 GUIO1(GUIO_NOMIDI)},
-	{"Driller",
-	 "",
+	{"driller",
+	 "Driller",
 	 AD_ENTRY1s("DRILLER.EXE", "cafc0ea0d3424640a7723af87f8bfc0b", 17427),
 	 Common::EN_ANY,
 	 Common::kPlatformDOS,
 	 ADGF_NO_FLAGS,
 	 GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)},
 
-	{"Castle",
-	 0,
+	{"castlemaster",
+	 "Castle Master",
 	 AD_ENTRY1s("CME.EXE", "99d8b4dbaad1fd73c9afdde550dc5195", 92320),
 	 Common::EN_ANY,
 	 Common::kPlatformDOS,
