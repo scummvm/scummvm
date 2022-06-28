@@ -335,7 +335,22 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 	// this one-liner keeps the user at the ground level (xz plane)
 	_position.set(_position.x(), positionY, _position.z());
 	debug("player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
+	checkCollisions();
 }
+
+void FreescapeEngine::checkCollisions() {
+
+	Math::Vector3d v1(_position.x() - _playerWidth / 2, _playerHeight / 2                , _position.z() - _playerDepth / 2);
+	Math::Vector3d v2(_position.x() + _playerWidth / 2, _position.y() + _playerHeight / 2, _position.z() + _playerDepth / 2);
+
+	const Math::AABB boundingBox(v1, v2);
+	Object *obj = _currentArea->checkCollisions(boundingBox);
+
+	if (obj != nullptr)
+		error("Collided with object of size %f %f %f", obj->getSize().x(), obj->getSize().y(), obj->getSize().z());
+}
+
+
 
 bool FreescapeEngine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsReturnToLauncher) ||

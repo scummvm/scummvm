@@ -73,13 +73,10 @@ public:
 	void loadAssets();
 	void load16bitBinary(Common::SeekableReadStream *file);
 
-
 	// 8-bits
 	void load8bitBinary(Common::SeekableReadStream *file, int offset, int ncolors);
 	Area *load8bitArea(Common::SeekableReadStream *file, uint16 ncolors);
 	Object *load8bitObject(Common::SeekableReadStream *file);
-	// Player
-	uint16 _playerHeight;
 
 	// Areas
 	uint16 _startArea;
@@ -111,7 +108,12 @@ public:
 	Math::Vector3d _cameraFront, _cameraUp, _cameraRight;
 	// Spacial attributes
 	Math::Vector3d _position, _rotation, _velocity;
+	uint16 _playerHeight;
+	uint16 _playerWidth;
+	uint16 _playerDepth;
 
+	// Effects
+	void checkCollisions();
 
 	// Rendering
 	void drawFrame();

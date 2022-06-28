@@ -7,6 +7,7 @@
 //
 
 #include "freescape/area.h"
+#include "freescape/objects/geometricobject.h"
 #include "common/algorithm.h"
 #include "freescape/objects/object.h"
 
@@ -109,11 +110,22 @@ void Area::draw(Freescape::Renderer *gfx) {
 }
 
 Object *Area::shootRay(const Math::Ray &ray) {
-	debug("drawable size: %d", drawableObjects.size());
 	for (Common::Array<Object *>::iterator it = drawableObjects.begin(); it != drawableObjects.end(); it++) {
 		if (!(*it)->isInvisible() && (*it)->_boundingBox.isValid() && ray.intersectAABB((*it)->_boundingBox))
 			return (*it);
 	}
-
 	return nullptr;
+}
+
+Object *Area::checkCollisions(const Math::AABB &boundingBox) {
+	for (Common::Array<Object *>::iterator it = drawableObjects.begin(); it != drawableObjects.end(); it++) {
+		if ((*it)->isDrawable()) {
+			GeometricObject *obj = (GeometricObject*) (*it);
+			if (obj->collides(boundingBox))
+				return (*it);
+		}
+	}
+	return nullptr;
+
+
 }

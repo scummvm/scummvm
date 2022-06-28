@@ -41,6 +41,8 @@ public:
 	void show();
 
 	Object *shootRay(const Math::Ray &ray);
+	Object *checkCollisions(const Math::AABB &boundingBox);
+
 
 private:
 	uint16 areaID;

@@ -514,6 +514,9 @@ void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 
 	delete[] fileOffsetForArea;
 	_playerHeight = playerHeight;
+	_playerWidth = 32;
+	_playerDepth = 32;
+
 	_startArea = startArea;
 	_startEntrance = startEntrance;
 	_colorNumber = colorNumber;
