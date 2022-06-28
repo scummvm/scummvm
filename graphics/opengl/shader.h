@@ -63,67 +63,88 @@ public:
 
 	void use(bool forceReload = false);
 
-	void setUniform(const char *uniform, const Math::Matrix4 &m) {
+	bool setUniform(const Common::String &uniform, const Math::Matrix4 &m) {
 		GLint pos = getUniformLocation(uniform);
 		if (pos != -1) {
 			use();
 			glUniformMatrix4fv(pos, 1, GL_FALSE, m.getData());
+			return true;
+		} else {
+			return false;
 		}
 	}
 
-	void setUniform(const char* uniform, const Math::Matrix3 &m) {
+	bool setUniform(const Common::String &uniform, const Math::Matrix3 &m) {
 		GLint pos = getUniformLocation(uniform);
 		if (pos != -1) {
 			use();
 			glUniformMatrix3fv(pos, 1, GL_FALSE, m.getData());
+			return true;
+		} else {
+			return false;
 		}
 	}
 
-	void setUniform(const char *uniform, const Math::Vector4d &v) {
+	bool setUniform(const Common::String &uniform, const Math::Vector4d &v) {
 		GLint pos = getUniformLocation(uniform);
 		if (pos != -1) {
 			use();
 			glUniform4fv(pos, 1, v.getData());
+			return true;
+		} else {
+			return false;
 		}
 	}
 
-	void setUniform(const char *uniform, const Math::Vector3d &v) {
+	bool setUniform(const Common::String &uniform, const Math::Vector3d &v) {
 		GLint pos = getUniformLocation(uniform);
 		if (pos != -1) {
 			use();
 			glUniform3fv(pos, 1, v.getData());
+			return true;
+		} else {
+			return false;
 		}
 	}
 
-	void setUniform(const char *uniform, const Math::Vector2d &v) {
+	bool setUniform(const Common::String &uniform, const Math::Vector2d &v) {
 		GLint pos = getUniformLocation(uniform);
 		if (pos != -1) {
 			use();
 			glUniform2fv(pos, 1, v.getData());
+			return true;
+		} else {
+			return false;
 		}
 	}
 
-	void setUniform(const char *uniform, unsigned int x) {
+	bool setUniform(const Common::String &uniform, unsigned int x) {
 		GLint pos = getUniformLocation(uniform);
 		if (pos != -1) {
 			use();
 			glUniform1i(pos, x);
+			return true;
+		} else {
+			return false;
 		}
 	}
 
 	// Different name to avoid overload ambiguity
-	void setUniform1f(const char *uniform, float f) {
+	bool setUniform1f(const Common::String &uniform, float f) {
 		GLint pos = getUniformLocation(uniform);
 		if (pos != -1) {
 			use();
 			glUniform1f(pos, f);
+			return true;
+		} else {
+			return false;
 		}
 	}
 
-	GLint getUniformLocation(const char *uniform) const {
+	GLint getUniformLocation(const Common::String &uniform) const {
 		UniformsMap::iterator kv = _uniforms->find(uniform);
 		if (kv == _uniforms->end()) {
-			GLint ret = glGetUniformLocation(*_shaderNo, uniform);
+			GLint ret = glGetUniformLocation(*_shaderNo, uniform.c_str());
 			_uniforms->setVal(uniform, ret);
 			return ret;
 		} else {
