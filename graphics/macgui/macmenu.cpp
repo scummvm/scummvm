@@ -1000,7 +1000,7 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 
 
 	for (uint i = 0; i < _menustack.size(); i++) {
-		renderSubmenu(_menustack[i], (i == _menustack.size() - 1));
+		renderSubmenu(g, _menustack[i], (i == _menustack.size() - 1));
 	}
 
 	if (g)
@@ -1012,7 +1012,7 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 	return true;
 }
 
-void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
+void MacMenu::renderSubmenu(ManagedSurface *g, MacMenuSubMenu *menu, bool recursive) {
 	Common::Rect *r = &menu->bbox;
 
 	if (r->width() == 0 || r->height() == 0)
@@ -1123,7 +1123,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 	}
 
 	if (recursive && menu->highlight != -1 && menu->items[menu->highlight]->submenu != nullptr)
-		renderSubmenu(menu->items[menu->highlight]->submenu, false);
+		renderSubmenu(g, menu->items[menu->highlight]->submenu, false);
 
 	if (_wm->_mode & kWMModalMenuMode) {
 		// TODO: Instead of cropping, reposition the submenu
@@ -1135,7 +1135,8 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 		if (r->top + h >= _screen.h)
 			h = _screen.h - 1 - r->top;
 
-		g_system->copyRectToScreen(_screen.getBasePtr(r->left, r->top), _screen.pitch, r->left, r->top, w, h);
+		g->transBlitFrom(_screen, _wm->_colorGreen);
+		g_system->copyRectToScreen(g->getBasePtr(r->left, r->top), g->pitch, r->left, r->top, w, h);
 	}
 }
 
