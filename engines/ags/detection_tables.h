@@ -3352,8 +3352,10 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_GOG("geminirue", "gemini rue.exe", "5f747ea1c5f624d3716926fe1ca5135d", 73450387),  // Win v2.0
 	GAME_ENTRY_GOG("geminirue", "gemini rue.exe", "5f747ea1c5f624d3716926fe1ca5135d", 73486515),  // Win v2.1
 	GAME_ENTRY_GOG("geminirue", "gemini rue.exe", "5f747ea1c5f624d3716926fe1ca5135d", 73505075),  // Win v2.2
+	GAME_ENTRY_GOG("geminirue", "gemini rue.exe", "5f747ea1c5f624d3716926fe1ca5135d", 73541907),  // Win v2.3
 	GAME_ENTRY_GOG("geminirue", "ac2game.dat", "056239de34dfa52cfe1b645eee4eacb7", 70356639), // Mac v2.1
 	GAME_ENTRY_GOG("geminirue", "ac2game.dat", "056239de34dfa52cfe1b645eee4eacb7", 70375199), // Mac v2.2
+	GAME_ENTRY_GOG("geminirue", "ac2game.dat", "056239de34dfa52cfe1b645eee4eacb7", 70412031), // Mac v2.3
 	GAME_ENTRY_GOG("geminirue", "agsgame.dat", "f3c0c7d3892bdd8963e8ce017f73de08", 62069353), // Linux
 	GAME_ENTRY("geminirue", "gemini rue.exe", "0bdfb2139abaae5ae2dc85f1aacfd3f6", 61926695),
 	DETECTION_ENTRY("geminirue", "gemini rue.exe", "0bdfb2139abaae5ae2dc85f1aacfd3f6", 64650419, Common::DE_DEU, nullptr, nullptr, GAMEFLAG_FORCE_AA), // German retail
