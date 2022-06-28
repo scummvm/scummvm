@@ -21,3 +21,17 @@ scummVMAssert(objectp(FlushXObj) = 0)
 scummVMAssert(objectp(RearWindow) = 1)
 closeXlib()
 scummVMAssert(objectp(RearWindow) = 0)
+
+-- test showGlobals and clearGlobals on XObjects
+clearGlobals()
+openXLib("FileIO")
+scummVMAssert(objectp(FileIO))
+
+showGlobals() -- FileIO should not be listed
+clearGlobals()
+scummVMAssert(objectp(FileIO)) -- FileIO should not be cleared
+
+set FileIO = "test"
+showGlobals() -- FileIO should be listed
+clearGlobals()
+scummVMAssert(voidp(FileIO)) -- FileIO should be cleared
