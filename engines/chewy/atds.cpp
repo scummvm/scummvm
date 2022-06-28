@@ -1017,7 +1017,13 @@ uint32 Atdsys::getAtdsStreamSize() const {
 }
 
 Common::StringArray Atdsys::getTextArray(uint dialogNum, uint entryNum, int type, int subEntry) {
-	if (!getControlBit(entryNum, ATS_ACTIVE_BIT))
+	if (dialogNum == 45 && entryNum == 295 && type == 1 && subEntry == -1 &&
+			g_engine->getLanguage() == Common::EN_ANY) {
+		// WORKAROUND: Taxi hotspot in room 45 (Big City)
+		Common::StringArray results;
+		results.push_back("Taxi");
+		return results;
+	} else if (!getControlBit(entryNum, ATS_ACTIVE_BIT))
 		return _text->getTextArray(dialogNum, entryNum, type, subEntry);
 	else
 		return Common::StringArray();
