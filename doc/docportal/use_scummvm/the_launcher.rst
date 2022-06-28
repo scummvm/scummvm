@@ -7,11 +7,11 @@ The Launcher
 
 The main ScummVM window is called the Launcher. The Launcher opens whenever you start ScummVM, unless you launch a game directly from the command line. Use the buttons on the bottom left of the screen to toggle between list and grid view. 
 
-.. figure:: ../images/Launcher/launcher_list.jpg
+.. figure:: ../images/Launcher/launcher_list.png
 
    The Launcher in list view.
 
-.. figure:: ../images/Launcher/launcher_grid.jpg
+.. figure:: ../images/Launcher/launcher_grid.png
 
    The Launcher in grid view.
 
@@ -23,7 +23,7 @@ The pane on the left, when the Launcher is in list view, shows the games list, w
 
 In grid view, all game icons are in the pane below the buttons, and show the game artwork. See :ref:`Update Icons <updateicons>` for information on how to update these. Use the **Icons per row** slider at the bottom of the page to change the size of the icons. Click on a game to select it. Click on the play icon in the pop-up menu to start the game, the gear icon to open the Game Options menu, or the export icon to load a saved game. 
 
-.. figure:: ../images/Launcher/launcher_popup.jpg
+.. figure:: ../images/Launcher/launcher_popup.png
 
    Game pop-up menu in grid view
 
@@ -44,7 +44,7 @@ The grouping menu
 
 To the right of the search box is the grouping menu. Use this menu to group games in alphabetical order, or by engine, series, publisher, language or platform. Hide or show groups of games by clicking on the black arrow to the left of each group heading. 
 
-.. figure:: ../images/Launcher/launcher_group.jpg
+.. figure:: ../images/Launcher/launcher_group.png
    
    The grouping menu. 
 
@@ -143,7 +143,7 @@ Displays the ScummVM **About** dialog. This is also available from the Launcher.
 Help
 ^^^^^^
 
-Displays a list of keyboard shortcuts for the game.
+Displays a list of keyboard shortcuts for the game. Note that this is not available for all games; refer to the :doc:`../settings/keymaps` tab for keyboard shortcuts.
 
 Return to Launcher
 ^^^^^^^^^^^^^^^^^^^^^
