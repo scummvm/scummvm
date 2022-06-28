@@ -922,10 +922,13 @@ enum AsylumAction {
 //////////////////////////////////////////////////////////////////////////
 // Sub-integer partial access macros
 //////////////////////////////////////////////////////////////////////////
+#if   defined SCUMM_LITTLE_ENDIAN
 #define LOBYTE(d)   (*((char *)&(d)))
 #define BYTE1(d)    (*((char *)&(d) + 1))   // Same as HIBYTE()
-#define BYTE2(d)    (*((char *)&(d) + 2))
-#define LOWORD(x)   (*((int16 *)&(x)))
+#elif defined SCUMM_BIG_ENDIAN
+#define LOBYTE(d)   (*((char *)&(d) + sizeof(d) - 1))
+#define BYTE1(d)    (*((char *)&(d) + sizeof(d) - 2))
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 // Resource ID macros
