@@ -13,7 +13,7 @@ Use the Paths tab to tell ScummVM where to look for files.
 
 	From the Launcher, highlight the game in the games list, and select the **Game Options** button. If the Launcher is in grid view, select the game and then select the gear icon in the popup window. Select the **Paths** tab.
 
-.. figure:: ../images/settings/paths.jpg
+.. figure:: ../images/settings/paths.png
 
     The Paths tab in the Global Options menu
 

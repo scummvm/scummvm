@@ -8,7 +8,7 @@ identified by ScummVM.
 From the Launcher, highlight the game in the games list, and select the **Game Options** button. If the Launcher is in grid view, select the game and then select the gear icon in the popup window. The menu opens on the **Game** tab. 
 
 
-.. figure:: ../images/settings/game.jpg
+.. figure:: ../images/settings/game.png
 
     The Game tab in the Game Options menu
 
