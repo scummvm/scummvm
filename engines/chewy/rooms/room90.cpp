@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -234,7 +235,7 @@ void Room90::proc2() {
 }
 
 int Room90::getHubcaps() {
-	if (_G(gameState).inv_cur)
+	if (_G(cur)->usingInventoryCursors())
 		return 0;
 
 	hideCur();

@@ -56,12 +56,26 @@ int16 Room4::comp_probe() {
 	switchRoom(4);
 	_G(cur_display) = true;
 	bool endLoop = false;
-	_G(curblk).sprite = _G(room_blk)._detImage;
+
+	// TODO: The original limited the cursor height to 16 pixels
+	//WRITE_LE_INT16(_G(room_blk)._detImage[HAND_NORMAL] + 2, 16);
+	//WRITE_LE_INT16(_G(room_blk)._detImage[HAND_CLICK] + 2, 16);
+
+	_G(cur)->setCustomRoomCursor(_G(room_blk)._detImage[HAND_NORMAL]);
+
+	byte curCursor = HAND_NORMAL;
 	int16 curX = 1;
 	int16 sprNr = RED_FRAME;
 	_G(cur)->move(160, 160);
 
+	// Clear any pending keys
+	g_events->_kbInfo._keyCode = '\0';
+	g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
+	_G(minfo).button = 0;
+	_G(mouseLeftClick) = false;
+
 	start_aad(46);
+
 	while (!endLoop) {
 		// WORKAROUND: The original constrained the mouse area.
 		// We don't do that in ScummVM so the below prevents
@@ -106,12 +120,19 @@ int16 Room4::comp_probe() {
 		_G(spr_info)[0]._y = CUR_POS[curX][1];
 
 		if (_G(minfo).button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
-			_G(cur)->setAnimation(HAND_CLICK, HAND_CLICK, -1);
+			if (curCursor != HAND_CLICK) {
+				_G(cur)->setCustomRoomCursor(_G(room_blk)._detImage[HAND_CLICK]);
+				_G(cur)->setAnimation(HAND_CLICK, HAND_CLICK, -1);
+				curCursor = HAND_CLICK;
+			}
 		} else {
-			_G(cur)->setAnimation(HAND_NORMAL, HAND_NORMAL, -1);
+			if (curCursor != HAND_NORMAL) {
+				_G(cur)->setCustomRoomCursor(_G(room_blk)._detImage[HAND_NORMAL]);
+				_G(cur)->setAnimation(HAND_NORMAL, HAND_NORMAL, -1);
+				curCursor = HAND_NORMAL;
+			}
 		}
 		cursorChoice(CUR_USER);
-		_G(gameState)._curHeight = 16;
 
 		if (g_events->_mousePos.y < 124)
 			g_events->_mousePos.y = 123;

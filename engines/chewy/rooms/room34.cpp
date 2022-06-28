@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -36,7 +37,7 @@ void Room34::entry() {
 bool Room34::use_kuehlschrank() {
 	bool result = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		result = true;
 
 		if (!_G(flags).LoadGame) {

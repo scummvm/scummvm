@@ -405,9 +405,6 @@ struct GameState : public GameFlags {
 	int16 InventSlot[MAX_MOV_OBJ] = { 0 };
 
 	int16 AkInvent = 0;
-	bool inv_cur = 0;
-	int16 _curWidth = 0;
-	int16 _curHeight = 0;
 
 	RoomMovObject room_m_obj[MAX_MOV_OBJ];
 	RoomStaticInventory room_s_obj[MAX_FEST_OBJ];

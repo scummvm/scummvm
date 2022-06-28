@@ -22,27 +22,49 @@
 #ifndef CHEWY_CURSOR_H
 #define CHEWY_CURSOR_H
 
-#include "chewy/mcga_graphics.h"
-#include "chewy/ngstypes.h"
 #include "chewy/mouse.h"
 
 namespace Chewy {
 
+struct CursorSprite {
+	uint16 width;
+	uint16 height;
+	byte *data;
+};
+
 class Cursor {
 public:
 	Cursor();
-	Cursor(CurBlk *curblk);
 	~Cursor();
 
-	void plot_cur();
-	void show_cur();
-	void hide_cur();
+	void updateCursor();
+	void showCursor();
+	void hideCursor();
 	void setAnimation(uint8 start, uint8 end, int16 delay);
+	void setCustomCursor(byte *data, uint16 width, uint16 height);
+	void setCustomRoomCursor(byte *roomSprite);
+	void clearCustomCursor();
 	void move(int16 x, int16 y);
 	uint8 getAnimStart() const { return _animStart; }
 
-	CurBlk *_curblk = nullptr;
-	int _scrWidth = 0;
+	byte *getCursorSprite() const { return _currentCursor.data; }
+	uint16 getCursorWidth() const { return _currentCursor.width; }
+	uint16 getCursorHeight() const { return _currentCursor.height; }
+	byte *getCursorSprite(uint num) const { return _curSprites[num].data; }
+	uint16 getCursorWidth(uint num) const { return _curSprites[num].width; }
+	uint16 getCursorHeight(uint num) const { return _curSprites[num].height; }
+
+	void setInventoryCursors(bool inventory) { _cursorOffset = !inventory ? 0 : _cursorCount; }
+	bool usingInventoryCursors() const { return _cursorOffset > 0; }
+
+private:
+	CursorSprite *_curSprites = nullptr;
+	CursorSprite _customCursor;
+	CursorSprite _currentCursor;
+	uint32 _cursorCount = 0;
+	uint32 _invCursorCount = 0;
+	uint32 _cursorOffset = 0;
+
 	int16 _curAniCountdown = 0;
 	int16 _aniCount = 0;
 

@@ -89,8 +89,14 @@ void Inventory::plot_menu() {
 			y = 3;
 		else
 			y = 0;
-		_G(out)->spriteSet(_G(curtaf)->image[_G(ani_count)[i]],
-			WIN_INF_X + 8 + i * 32, WIN_INF_Y + 12 - y, _G(scr_width));
+		_G(out)->spriteSet(
+			_G(cur)->getCursorSprite(_G(ani_count)[i]),
+			WIN_INF_X + 8 + i * 32,
+			WIN_INF_Y + 12 - y,
+			_G(scr_width),
+			_G(cur)->getCursorWidth(_G(ani_count)[i]),
+			_G(cur)->getCursorHeight(_G(ani_count)[i])
+		);
 	}
 
 	for (int16 i = 0; i < 2; i++) {
@@ -278,14 +284,14 @@ void Inventory::menu() {
 
 			case Common::KEYCODE_ESCAPE:
 				if (!menuFirstFl) {
-					_G(cur)->show_cur();
+					_G(cur)->showCursor();
 					while (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE) {
 						SHOULD_QUIT_RETURN;
 						setupScreen(NO_SETUP);
 						inv_rand_x = -1;
 						inv_rand_y = -1;
 						plot_menu();
-						_G(cur)->plot_cur();
+						_G(cur)->updateCursor();
 						_G(out)->copyToScreen();
 					}
 				} else {
@@ -297,7 +303,7 @@ void Inventory::menu() {
 				break;
 
 			case Common::KEYCODE_RIGHT:
-				if (g_events->_mousePos.x < 320 - _G(gameState)._curWidth)
+				if (g_events->_mousePos.x < 320 - _G(cur)->getCursorWidth())
 					g_events->_mousePos.x += 3;
 				break;
 
@@ -312,7 +318,7 @@ void Inventory::menu() {
 				break;
 
 			case Common::KEYCODE_DOWN:
-				if (g_events->_mousePos.y < 197 - _G(gameState)._curHeight)
+				if (g_events->_mousePos.y < 197 - _G(cur)->getCursorHeight())
 					g_events->_mousePos.y += 3;
 				break;
 
@@ -342,7 +348,7 @@ void Inventory::menu() {
 				plot_menu();
 			}
 			if (menu_flag1 == false)
-				_G(cur)->plot_cur();
+				_G(cur)->updateCursor();
 			_G(out)->setPointer(nullptr);
 			if (menu_flag1 == MENU_DISPLAY) {
 				_G(fx)->blende1(_G(workptr), nullptr, 0, 300);
@@ -362,7 +368,7 @@ void Inventory::menu() {
 
 	while (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE && !SHOULD_QUIT) {
 		setupScreen(NO_SETUP);
-		_G(cur)->plot_cur();
+		_G(cur)->updateCursor();
 		_G(out)->copyToScreen();
 	}
 
@@ -530,7 +536,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 			}
 		}
 
-		_G(cur)->plot_cur();
+		_G(cur)->updateCursor();
 		_G(out)->copyToScreen();
 		SHOULD_QUIT_RETURN0;
 	}
@@ -538,7 +544,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 	while (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE) {
 		setupScreen(NO_SETUP);
 		plot_menu();
-		_G(cur)->plot_cur();
+		_G(cur)->updateCursor();
 		_G(out)->copyToScreen();
 		SHOULD_QUIT_RETURN0;
 	}
@@ -566,7 +572,7 @@ void Inventory::look_screen(int16 txt_mode, int16 txt_nr) {
 				case CUR_HOWARD:
 				case CUR_NICHELLE:
 					m_mode = TXT_MARK_USE;
-					if (_G(gameState).inv_cur)
+					if (_G(cur)->usingInventoryCursors())
 						ok = false;
 					break;
 

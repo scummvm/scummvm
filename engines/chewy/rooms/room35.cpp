@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -44,7 +45,7 @@ int16 Room35::schublade() {
 	int16 action_flag = false;
 	hideCur();
 
-	if (_G(gameState).ChewyAni != CHEWY_ROCKER && !_G(gameState).inv_cur) {
+	if (_G(gameState).ChewyAni != CHEWY_ROCKER && !_G(cur)->usingInventoryCursors()) {
 		if (!_G(gameState).R35Schublade) {
 			action_flag = true;
 			autoMove(3, P_CHEWY);

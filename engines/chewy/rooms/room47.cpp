@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -46,7 +47,7 @@ int16 Room47::use_button(int16 txt_nr) {
 	int16 k_nr = 0;
 	int16 action_ret = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		action_ret = true;
 
 		switch (txt_nr) {

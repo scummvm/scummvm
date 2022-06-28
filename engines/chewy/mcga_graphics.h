@@ -52,7 +52,7 @@ public:
 
 	void spriteSave(byte *spritePtr, int16 x, int16 y, int16 width,
 	                int16 height);
-	void spriteSet(byte *sptr, int16 x, int16 y, int16 scrWidth);
+	void spriteSet(byte *sptr, int16 x, int16 y, int16 scrWidth, uint16 spriteWidth = 0, uint16 spriteHeight = 0);
 	void scale_set(byte *sptr, int16 x, int16 y, int16 xdiff,
 	               int16 ydiff, int16 scrwidth);
 	void map_spr2screen(byte *sptr, int16 x, int16 y);

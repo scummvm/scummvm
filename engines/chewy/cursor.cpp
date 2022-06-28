@@ -26,17 +26,42 @@
 
 namespace Chewy {
 
-Cursor::Cursor(CurBlk *curblkp) {
-	_curblk = curblkp;
+Cursor::Cursor() {
+	const auto res = new SpriteResource(CURSOR_TAF);
+	const auto invRes = new SpriteResource(INVENTORY_TAF);
+	_cursorCount = res->getChunkCount();
+	_invCursorCount = invRes->getChunkCount();
+	_curSprites = new CursorSprite[_cursorCount + _invCursorCount];
 
-	_curAniCountdown = 0;
-	_aniCount = 0;
+	for (uint32 i = 0; i < _cursorCount + _invCursorCount; i++) {
+		const TAFChunk *sprite = (i < _cursorCount) ? res->getSprite(i) : invRes->getSprite(i - _cursorCount);
+		_curSprites[i].width = sprite->width;
+		_curSprites[i].height = sprite->height;
+		_curSprites[i].data = new byte[sprite->width * sprite->height];
+		memcpy(_curSprites[i].data, sprite->data, sprite->width * sprite->height);
+		delete sprite;
+	}
+
+	delete invRes;
+	delete res;
+
+	_currentCursor.data = _customCursor.data = nullptr;
+	_currentCursor.width = _customCursor.width = 0;
+	_currentCursor.height = _customCursor.height = 0;
+
+	clearCustomCursor();
 }
 
 Cursor::~Cursor() {
+	for (uint32 i = 0; i < _cursorCount + _invCursorCount; i++) {
+		delete[] _curSprites[i].data;
+		_curSprites[i].data = nullptr;
+	}
+
+	delete[] _curSprites;
 }
 
-void Cursor::plot_cur() {
+void Cursor::updateCursor() {
 	if (CursorMan.isVisible()) {
 		--_curAniCountdown;
 		if (_curAniCountdown <= 0) {
@@ -46,18 +71,27 @@ void Cursor::plot_cur() {
 				_aniCount = _animStart;
 		}
 
-		const uint16 w = READ_LE_INT16(_curblk->sprite[_aniCount]);
-		const uint16 h = READ_LE_INT16(_curblk->sprite[_aniCount] + 2);
-		CursorMan.replaceCursor(_curblk->sprite[_aniCount] + 4,	w, h, 0, 0, 0);
+		if (_customCursor.data != nullptr) {
+			CursorMan.replaceCursor(_customCursor.data, _customCursor.width, _customCursor.height, 0, 0, 0);
+			_currentCursor.data = _customCursor.data;
+			_currentCursor.width = _customCursor.width;
+			_currentCursor.height = _customCursor.height;
+		} else {
+			const CursorSprite s = _curSprites[_aniCount + _cursorOffset];
+			CursorMan.replaceCursor(s.data, s.width, s.height, 0, 0, 0);
+			_currentCursor.data = s.data;
+			_currentCursor.width = s.width;
+			_currentCursor.height = s.height;
+		}
 	}
 }
 
-void Cursor::show_cur() {
+void Cursor::showCursor() {
 	CursorMan.showMouse(true);
-	plot_cur();
+	updateCursor();
 }
 
-void Cursor::hide_cur() {
+void Cursor::hideCursor() {
 	CursorMan.showMouse(false);
 }
 
@@ -67,6 +101,34 @@ void Cursor::setAnimation(uint8 start, uint8 end, int16 delay) {
 	if (delay >= 0)
 		_animDelay = delay;
 	_curAniCountdown = 0;
+}
+
+void Cursor::setCustomRoomCursor(byte *roomSprite) {
+	const uint16 width = READ_LE_INT16(roomSprite);
+	const uint16 height = READ_LE_INT16(roomSprite + 2);
+	setCustomCursor(roomSprite + 4, width, height);
+}
+
+void Cursor::setCustomCursor(byte *data, uint16 width, uint16 height) {
+	_currentCursor.data = _customCursor.data = data;
+	_currentCursor.width = _customCursor.width = width;
+	_currentCursor.height = _customCursor.height = height;
+
+	CursorMan.replaceCursor(_customCursor.data, _customCursor.width, _customCursor.height, 0, 0, 0);
+}
+
+void Cursor::clearCustomCursor() {
+	if (_customCursor.data) {
+		const CursorSprite s = _curSprites[_aniCount + _cursorOffset];
+		CursorMan.replaceCursor(s.data, s.width, s.height, 0, 0, 0);
+		_currentCursor.data = s.data;
+		_currentCursor.width = s.width;
+		_currentCursor.height = s.height;
+
+		_customCursor.data = nullptr;
+		_customCursor.width = 0;
+		_customCursor.height = 0;
+	}
 }
 
 void Cursor::move(int16 x, int16 y) {

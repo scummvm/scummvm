@@ -57,7 +57,7 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 	bool keepPlaying = true;
 
 	g_system->getPaletteManager()->grabPalette(curPalette, 0, 256);
-	_G(cur)->hide_cur();
+	_G(cur)->hideCursor();
 
 	// Clear events
 	Common::Event event;
@@ -101,7 +101,7 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 	cfoDecoder->close();
 
 	g_system->getPaletteManager()->setPalette(curPalette, 0, 256);
-	_G(cur)->show_cur();
+	_G(cur)->showCursor();
 	g_engine->_sound->popVolume();
 
 	delete videoResource;

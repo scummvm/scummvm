@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -96,7 +97,7 @@ void Room32::use_schreibmaschine() {
 
 	hideCur();
 	if (_G(gameState).R32HowardWeg) {
-		if (_G(gameState).inv_cur) {
+		if (_G(cur)->usingInventoryCursors()) {
 			switch (_G(gameState).AkInvent) {
 			case CYB_KRONE_INV:
 				if (!_G(gameState).R32UseSchreib) {
@@ -151,7 +152,7 @@ void Room32::use_schreibmaschine() {
 int16 Room32::get_script() {
 	int16 action_flag = false;
 
-	if (!_G(gameState).inv_cur && !_G(gameState).R32Script && _G(gameState).R32UseSchreib) {
+	if (!_G(cur)->usingInventoryCursors() && !_G(gameState).R32Script && _G(gameState).R32UseSchreib) {
 		action_flag = true;
 		_G(gameState).R32Script = true;
 		autoMove(4, P_CHEWY);

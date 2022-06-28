@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -74,7 +75,7 @@ short Room39::use_howard() {
 
 	if (!_G(gameState).R39HowardWach) {
 		int16 dia_nr;
-		if (_G(gameState).inv_cur) {
+		if (_G(cur)->usingInventoryCursors()) {
 			if (isCurInventory(MANUSKRIPT_INV)) {
 				hideCur();
 				_G(gameState).R39HowardWach = true;

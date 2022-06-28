@@ -186,7 +186,7 @@ void Room46::kloppe() {
 int16 Room46::use_schloss() {
 	int16 action_ret = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		action_ret = true;
 
 		if (!_G(gameState).R46GetLeder) {

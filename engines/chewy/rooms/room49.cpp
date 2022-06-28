@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -241,7 +242,7 @@ void Room49::look_hotel() {
 int16 Room49::use_taxi() {
 	int16 action_ret = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		action_ret = true;
 		hideCur();
 		startAniBlock(2, ABLOCK34);

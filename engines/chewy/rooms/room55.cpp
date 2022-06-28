@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -131,7 +132,7 @@ int16 Room55::use_stapel1() {
 	int16 action_ret = false;
 	hideCur();
 	
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		if (!_G(gameState).R55ScriptWeg) {
 			action_ret = true;
 			_G(gameState).R55ScriptWeg = true;
@@ -180,7 +181,7 @@ int16 Room55::use_stapel2() {
 int16 Room55::use_telefon() {
 	int16 action_ret = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		action_ret = true;
 		if (_G(gameState).R55EscScriptOk) {
 			if (!_G(gameState).R55RaumOk) {
@@ -341,7 +342,7 @@ void Room55::verleger_mov(int16 mode) {
 }
 
 void Room55::strasse(int16 mode) {
-	if (!_G(gameState).inv_cur || mode) {
+	if (!_G(cur)->usingInventoryCursors() || mode) {
 		_G(gameState)._personHide[P_CHEWY] = true;
 		_G(room)->set_timer_status(4, TIMER_STOP);
 		_G(det)->del_static_ani(4);

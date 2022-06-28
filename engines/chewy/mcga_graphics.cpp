@@ -243,15 +243,23 @@ static bool mspr_set_mcga_clip(int x, int y, int pitch, int &width, int &height,
 	return true;
 }
 
-void McgaGraphics::spriteSet(byte *sptr, int16 x, int16 y, int16 scrWidth) {
+void McgaGraphics::spriteSet(byte *sptr, int16 x, int16 y, int16 scrWidth, uint16 spriteWidth, uint16 spriteHeight) {
 	if (!sptr)
 		return;
 
 	byte *destP;
-	int width = *((const int16 *)sptr);
-	sptr += 2;
-	int height = *((const int16 *)sptr);
-	sptr += 2;
+	int width, height;
+
+	if (spriteWidth == 0 && spriteHeight == 0) {
+		width = *((const int16 *)sptr);
+		sptr += 2;
+		height = *((const int16 *)sptr);
+		sptr += 2;
+	} else {
+		width = spriteWidth;
+		height = spriteHeight;
+	}
+
 	const byte *srcP = sptr;
 	_G(spriteWidth) = width;
 

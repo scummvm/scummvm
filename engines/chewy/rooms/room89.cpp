@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -168,7 +169,7 @@ void Room89::talk1() {
 }
 
 int Room89::proc2() {
-	if (_G(gameState).inv_cur || _G(gameState).flags33_2)
+	if (_G(cur)->usingInventoryCursors() || _G(gameState).flags33_2)
 		return 0;
 
 	hideCur();
@@ -192,7 +193,7 @@ int Room89::proc2() {
 }
 
 int Room89::proc4() {
-	if (_G(gameState).inv_cur || _G(gameState).flags32_80)
+	if (_G(cur)->usingInventoryCursors() || _G(gameState).flags32_80)
 		return 0;
 
 	hideCur();
@@ -218,7 +219,7 @@ int Room89::proc4() {
 }
 
 int Room89::proc5() {
-	if (_G(gameState).inv_cur)
+	if (_G(cur)->usingInventoryCursors())
 		return 0;
 
 	if (!_G(gameState).flags32_80 || !_G(gameState).flags33_1 || !_G(gameState).flags33_2)

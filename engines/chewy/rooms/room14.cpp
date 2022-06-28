@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -72,7 +73,7 @@ void Room14::eremit_feuer(int16 t_nr, int16 ani_nr) {
 int16 Room14::use_schrott() {
 	int16 action_flag = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		autoMove(3, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(12, 1, ANI_FRONT);
@@ -91,7 +92,7 @@ int16 Room14::use_schrott() {
 int16 Room14::use_gleiter() {
 	int16 action_flag = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		action_flag = true;
 		autoMove(4, P_CHEWY);
 
@@ -131,7 +132,7 @@ void Room14::talk_eremit()  {
 int16 Room14::use_schleim() {
 	int16 action_flag = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		autoMove(2, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(11, 1, ANI_FRONT);

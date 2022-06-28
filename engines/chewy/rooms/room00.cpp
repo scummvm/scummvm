@@ -123,7 +123,7 @@ bool Room0::timer(int16 timerNr, int16 aniNr) {
 bool Room0::getPillow() {
 	bool retval = false;
 	
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		hideCur();
 		_G(flags).AutoAniPlay = true;
 		autoMove(1, P_CHEWY);
@@ -144,7 +144,7 @@ bool Room0::getPillow() {
 
 bool Room0::pullSlime() {
 	bool retval = false;
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		hideCur();
 		
 		_G(flags).AutoAniPlay = true;
@@ -234,7 +234,7 @@ void Room0::eyeStart(EyeMode mode) {
 		setupScreen(NO_SETUP);
 		SHOULD_QUIT_RETURN;
 
-		_G(cur)->plot_cur();
+		_G(cur)->updateCursor();
 		calcEyeClick(3);
 		_G(out)->copyToScreen();
 
@@ -279,7 +279,7 @@ void Room0::eyeWait() {
 		_G(spr_info)[2]._zLevel = 192;
 		get_user_key(NO_SETUP);
 		setupScreen(NO_SETUP);
-		_G(cur)->plot_cur();
+		_G(cur)->updateCursor();
 		calcEyeClick(2);
 		_G(out)->copyToScreen();
 
@@ -487,7 +487,7 @@ void Room0::feederStart(int16 mode) {
 		SHOULD_QUIT_RETURN;
 
 		setupScreen(NO_SETUP);
-		_G(cur)->plot_cur();
+		_G(cur)->updateCursor();
 		if (!mode)
 			calcPillowClick(1);
 
@@ -528,7 +528,7 @@ void Room0::feederExtend() {
 		_G(spr_info)[1]._zLevel = 191;
 		get_user_key(NO_SETUP);
 		setupScreen(NO_SETUP);
-		_G(cur)->plot_cur();
+		_G(cur)->updateCursor();
 		calcPillowClick(1);
 		_G(out)->copyToScreen();
 	}

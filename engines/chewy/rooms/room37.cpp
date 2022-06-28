@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -102,7 +103,7 @@ void Room37::setup_func() {
 short Room37::use_wippe() {
 	int16 action_flag = false;
 
-	if (_G(gameState).inv_cur) {
+	if (_G(cur)->usingInventoryCursors()) {
 		action_flag = true;
 
 		if (isCurInventory(H_FUTTER_INV)) {
@@ -302,7 +303,7 @@ void Room37::use_hahn() {
 			inventory_2_cur(EIER_INV);
 			showCur();
 		}
-	} else if (_G(gameState).inv_cur) {
+	} else if (_G(cur)->usingInventoryCursors()) {
 		startAadWait(143);
 	}
 }

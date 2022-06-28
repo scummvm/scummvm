@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -126,7 +127,7 @@ void Room54::setup_func() {
 int16 Room54::use_schalter() {
 	int16 action_ret = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		hideCur();
 		action_ret = true;
 
@@ -228,7 +229,7 @@ int16 Room54::use_zelle() {
 	int16 action_ret = false;
 	hideCur();
 
-	if (_G(gameState).inv_cur) {
+	if (_G(cur)->usingInventoryCursors()) {
 		if (isCurInventory(JMKOST_INV)) {
 			action_ret = true;
 
@@ -271,7 +272,7 @@ int16 Room54::use_zelle() {
 int16 Room54::use_azug() {
 	int16 action_ret = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		action_ret = true;
 		hideCur();
 
@@ -361,7 +362,7 @@ void Room54::aufzug_ab() {
 short Room54::use_taxi() {
 	int16 action_ret = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursors()) {
 		action_ret = true;
 		hideCur();
 		autoMove(7, P_CHEWY);

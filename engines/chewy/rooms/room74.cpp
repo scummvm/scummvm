@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -103,7 +104,7 @@ int Room74::proc1() {
 		_G(gameState).flags29_1 = true;
 		_G(atds)->set_ats_str(435, 1, ATS_DATA);
 
-	} else if (!_G(gameState).inv_cur && _G(gameState).R74CutRubberPlant) {
+	} else if (!_G(cur)->usingInventoryCursors() && _G(gameState).R74CutRubberPlant) {
 		_G(atds)->setControlBit(435, ATS_ACTIVE_BIT);
 		autoMove(5, P_CHEWY);
 		start_spz_wait(13, 1, false, P_CHEWY);
