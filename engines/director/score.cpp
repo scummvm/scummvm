@@ -256,13 +256,17 @@ void Score::startPlay() {
 	_playState = kPlayStarted;
 	_nextFrameTime = 0;
 
-	_lastPalette = _frames[_currentFrame]->_palette.paletteId;
-	_vm->setPalette(resolvePaletteId(_lastPalette));
-
 	if (_frames.size() <= 1) {	// We added one empty sprite
 		warning("Score::startLoop(): Movie has no frames");
 		_playState = kPlayStopped;
+
+		return;
 	}
+
+	warning("FRAMES: %d", _frames.size());
+
+	_lastPalette = _frames[_currentFrame]->_palette.paletteId;
+	_vm->setPalette(resolvePaletteId(_lastPalette));
 
 	// All frames in the same movie have the same number of channels
 	if (_playState != kPlayStopped)
