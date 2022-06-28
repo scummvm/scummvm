@@ -136,7 +136,7 @@ private:
 
 	int calcSubMenuWidth(MacMenuSubMenu *menu);
 	void calcSubMenuBounds(MacMenuSubMenu *menu, int x, int y);
-	void renderSubmenu(MacMenuSubMenu *menu, bool recursive = true);
+	void renderSubmenu(ManagedSurface *g, MacMenuSubMenu *menu, bool recursive = true);
 
 	bool keyEvent(Common::Event &event);
 	bool mouseClick(int x, int y);
