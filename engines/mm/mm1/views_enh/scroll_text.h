@@ -56,7 +56,8 @@ private:
 	Lines _lines;
 	Common::Rect _innerBounds;
 public:
-	ScrollText();
+	ScrollText(const Common::String &name);
+	ScrollText(const Common::String &name, UIElement *owner);
 
 	/**
 	 * Sets the element's bounds

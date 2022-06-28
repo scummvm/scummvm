@@ -61,7 +61,8 @@ const CharacterInfo::IconPos CharacterInfo::ICONS[CHAR_ICONS_COUNT] = {
 };
 
 
-CharacterInfo::CharacterInfo() : ScrollView("CharacterInfo") {
+CharacterInfo::CharacterInfo() :
+		ScrollView("CharacterInfo"), _statInfo("ScrollText") {
 	_bounds = Common::Rect(0, 0, 320, 146);
 	_statInfo.setReduced(true);
 

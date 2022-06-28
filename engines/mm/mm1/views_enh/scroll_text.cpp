@@ -28,7 +28,12 @@ namespace ViewsEnh {
 
 #define FONT_HEIGHT 8
 
-ScrollText::ScrollText() : ScrollView("ScrollText") {
+ScrollText::ScrollText(const Common::String &name) :
+		ScrollView(name) {
+}
+
+ScrollText::ScrollText(const Common::String &name, UIElement *owner) :
+	ScrollView(name, owner) {
 }
 
 void ScrollText::setBounds(const Common::Rect &r) {
