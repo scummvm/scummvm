@@ -93,7 +93,6 @@ GeometricObject::GeometricObject(
 
 	if (_type == Cube) {
 		Math::Vector3d torigin = origin;
-		torigin.setValue(0, origin.x() - 4096);
 
 		_boundingBox.expand(torigin);
 		for (int i = 0; i < 3; i++) {
@@ -124,7 +123,6 @@ bool GeometricObject::isPlanar() {
 void GeometricObject::draw(Freescape::Renderer *gfx) {
 	//debug("Drawing %d of type %d", this->getObjectID(), this->getType());
 	if (this->getType() == Cube) {
-		//debug("Drawing cube!");
 		gfx->renderCube(_origin, _size, colours);
 	} else if (this->getType() == Rectangle) {
 		gfx->renderRectangle(_origin, _size, colours);

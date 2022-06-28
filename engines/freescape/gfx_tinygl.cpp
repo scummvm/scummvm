@@ -175,7 +175,7 @@ void TinyGLRenderer::draw2DText(const Common::String &text, const Common::Point 
 }
 
 void TinyGLRenderer::scale(const Math::Vector3d &scale) {
-	tglScalef(-1, 1, 1);
+	tglScalef(1, 1, 1);
 }
 
 void TinyGLRenderer::updateProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) {
@@ -188,7 +188,7 @@ void TinyGLRenderer::updateProjectionMatrix(float fov, float nearClipPlane, floa
 	float ymaxValue = xmaxValue / aspectRatio;
 	//debug("max values: %f %f", xmaxValue, ymaxValue);
 
-	tglFrustum(-xmaxValue, xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);
+	tglFrustum(xmaxValue, -xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
 }
