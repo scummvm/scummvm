@@ -39,7 +39,7 @@ namespace OpenGL {
 struct VertexAttrib {
 	VertexAttrib(uint32 idx, const char *name) :
 		_enabled(false), _idx(idx), _name(name), _vbo(0), _size(0),
-		_type(GL_FLOAT), _normalized(false), _stride(0), _offset(0) {}
+		_type(GL_FLOAT), _normalized(false), _stride(0), _pointer(nullptr) {}
 	bool _enabled;
 	uint32 _idx;
 	Common::String _name;
@@ -48,7 +48,7 @@ struct VertexAttrib {
 	GLenum _type;
 	bool _normalized;
 	GLsizei _stride;
-	size_t _offset;
+	const void *_pointer;
 	float _const[4];
 };
 
@@ -152,6 +152,7 @@ public:
 		}
 	}
 
+	void enableVertexAttribute(const char *attrib, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer);
 	void enableVertexAttribute(const char *attrib, GLuint vbo, GLint size, GLenum type, GLboolean normalized, GLsizei stride, uint32 offset);
 	void disableVertexAttribute(const char *attrib, int size, const float *data);
 	template <int r>
