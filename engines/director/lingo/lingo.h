@@ -147,6 +147,8 @@ struct Datum {	/* interpreter stack type */
 
 	int *refCount;
 
+	bool ignoreGlobal; // True if this Datum should be ignored by showGlobals and clearGlobals
+
 	Datum();
 	Datum(const Datum &d);
 	Datum& operator=(const Datum &d);

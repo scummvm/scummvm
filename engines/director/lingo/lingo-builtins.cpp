@@ -1660,7 +1660,11 @@ void LB::b_alert(int nargs) {
 }
 
 void LB::b_clearGlobals(int nargs) {
-	g_lingo->_globalvars.clear();
+	for (DatumHash::iterator it = g_lingo->_globalvars.begin(); it != g_lingo->_globalvars.end(); it++) {
+		if (!it->_value.ignoreGlobal) {
+			g_lingo->_globalvars.erase(it);
+		}
+	}
 }
 
 void LB::b_cursor(int nargs) {
@@ -1691,7 +1695,9 @@ void LB::b_showGlobals(int nargs) {
 	global_out += ver.asString() + "\n";
 	if (g_lingo->_globalvars.size()) {
 		for (auto it = g_lingo->_globalvars.begin(); it != g_lingo->_globalvars.end(); it++) {
-			global_out += it->_key + " = " + it->_value.asString() + "\n";
+			if (!it->_value.ignoreGlobal) {
+				global_out += it->_key + " = " + it->_value.asString() + "\n";
+			}
 		}
 	}
 	g_debugger->debugPrintf("%s", global_out.c_str());
