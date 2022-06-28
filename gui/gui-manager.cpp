@@ -59,7 +59,7 @@ enum {
 };
 
 // Constructor
-GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
+GuiManager::GuiManager() : CommandSender(nullptr), _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
 	_cursorAnimateCounter(0), _cursorAnimateTimer(0) {
 	_theme = nullptr;
 	_useStdCursor = false;
@@ -72,6 +72,8 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
 	_launched = false;
 
 	_useRTL = false;
+
+	_iconsSetChanged = false;
 
 	_topDialogLeftPadding = 0;
 	_topDialogRightPadding = 0;
@@ -170,6 +172,7 @@ void GuiManager::initIconsSet() {
 	}
 
 	_iconsSet.add(fname, dat);
+	_iconsSetChanged = true;
 
 	debug(2, "GUI: Loaded icon file: %s", fname);
 }
@@ -504,6 +507,18 @@ void GuiManager::runLoop() {
 			}
 
 			processEvent(event, activeDialog);
+		}
+
+		// If iconsSet was modified, notify dialogs so that they can be  updated if needed
+		_iconsMutex.lock();
+		bool iconsChanged = _iconsSetChanged;
+		_iconsSetChanged = false;
+		_iconsMutex.unlock();
+		if (iconsChanged) {
+			for (DialogStack::size_type i = 0; i < _dialogStack.size(); ++i) {
+				setTarget(_dialogStack[i]);
+				sendCommand(kIconsSetLoadedCmd, 0);
+			}
 		}
 
 		// Delete GuiObject that have been added to the trash for a delayed deletion

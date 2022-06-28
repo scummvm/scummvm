@@ -2991,12 +2991,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 #ifdef USE_LIBCURL
 	case kUpdateIconsCmd: {
 		DownloadIconsDialog dia;
-
-		if (dia.runModal() > 0) {
-			if (_launcher && _launcher->getType() == kLauncherDisplayGrid)
-				_launcher->rebuild();
-		}
-
+		dia.runModal();
 		break;
 	}
 #endif
