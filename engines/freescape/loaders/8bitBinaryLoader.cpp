@@ -377,6 +377,9 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 			break;
 	}
 	_playerHeight = 64;
+	_playerWidth = 32;
+	_playerDepth = 32;
+
 	_areasByAreaID = areaMap;
 	if (!areaMap->contains(startArea))
 		_startArea = newArea->getAreaID();

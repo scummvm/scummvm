@@ -90,24 +90,39 @@ GeometricObject::GeometricObject(
 	if (_ordinates)
 		ordinates = new Common::Array<uint16>(*_ordinates);
 	condition = _condition;
+	createBoundingBox();
+}
 
-	if (_type == Cube) {
-		Math::Vector3d torigin = origin;
-
-		_boundingBox.expand(torigin);
+void GeometricObject::createBoundingBox() {
+	switch (_type) {
+	default:
+	break;
+	case Cube:
+		_boundingBox.expand(_origin);
 		for (int i = 0; i < 3; i++) {
-			Math::Vector3d v = torigin;
-			v.setValue(i, v.getValue(i) + size.getValue(i));
+			Math::Vector3d v = _origin;
+			v.setValue(i, v.getValue(i) + _size.getValue(i));
 			_boundingBox.expand(v);
 		}
 
 		for (int i = 0; i < 3; i++) {
-			Math::Vector3d v = torigin + size;
-			v.setValue(i, v.getValue(i) - size.getValue(i));
+			Math::Vector3d v = _origin + _size;
+			v.setValue(i, v.getValue(i) - _size.getValue(i));
 			_boundingBox.expand(v);
 		}
-		_boundingBox.expand(torigin + size);
+		_boundingBox.expand(_origin + _size);
 		assert(_boundingBox.isValid());
+		break;
+	case Rectangle:
+		_boundingBox.expand(_origin);
+
+		Math::Vector3d v = _origin + _size;
+		for (int i = 0; i < 3; i++) {
+			if (_size.getValue(i) == 0)
+				v.setValue(i, v.getValue(i) + 10);
+		}
+		_boundingBox.expand(v);
+		break;
 	}
 }
 
@@ -118,6 +133,18 @@ bool GeometricObject::isDrawable() { return true; }
 bool GeometricObject::isPlanar() {
 	Type type = this->getType();
 	return (type >= Object::Line) || !_size.x() || !_size.y() || !_size.z();
+}
+
+bool GeometricObject::collides(const Math::AABB &boundingBox) {
+	if (!_boundingBox.isValid() || !boundingBox.isValid())
+		return false;
+
+	return(	_boundingBox.getMax().x() > boundingBox.getMin().x() &&
+			_boundingBox.getMin().x() < boundingBox.getMax().x() &&
+			_boundingBox.getMax().y() > boundingBox.getMin().y() &&
+			_boundingBox.getMin().y() < boundingBox.getMax().y() &&
+			_boundingBox.getMax().z() > boundingBox.getMin().z() &&
+			_boundingBox.getMin().z() < boundingBox.getMax().z());
 }
 
 void GeometricObject::draw(Freescape::Renderer *gfx) {

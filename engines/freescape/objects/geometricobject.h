@@ -28,6 +28,8 @@ public:
 		Common::Array<uint16> *ordinates,
 		FCLInstructionVector condition);
 	virtual ~GeometricObject();
+	void createBoundingBox();
+	bool collides(const Math::AABB &boundingBox);
 	void draw(Freescape::Renderer *gfx) override;
 	bool isDrawable();
 	bool isPlanar();
