@@ -116,11 +116,15 @@ public:
 	static const byte MIDI_CONTROLLER_MODULATION = 0x01;
 	static const byte MIDI_CONTROLLER_DATA_ENTRY_MSB = 0x06;
 	static const byte MIDI_CONTROLLER_VOLUME = 0x07;
+	static const byte MIDI_CONTROLLER_BALANCE = 0x08;
 	static const byte MIDI_CONTROLLER_PANNING = 0x0A;
 	static const byte MIDI_CONTROLLER_EXPRESSION = 0x0B;
 	static const byte MIDI_CONTROLLER_BANK_SELECT_LSB = 0x20;
 	static const byte MIDI_CONTROLLER_DATA_ENTRY_LSB = 0x26;
 	static const byte MIDI_CONTROLLER_SUSTAIN = 0x40;
+	static const byte MIDI_CONTROLLER_PORTAMENTO = 0x41;
+	static const byte MIDI_CONTROLLER_SOSTENUTO = 0x42;
+	static const byte MIDI_CONTROLLER_SOFT = 0x43;
 	static const byte MIDI_CONTROLLER_REVERB = 0x5B;
 	static const byte MIDI_CONTROLLER_CHORUS = 0x5D;
 	static const byte MIDI_CONTROLLER_RPN_LSB = 0x64;
