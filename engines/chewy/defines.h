@@ -79,7 +79,7 @@ enum SetupScreenMode {
 
 #define CUR_DISK 18
 #define CUR_HOWARD 19
-#define CUR_ZEIGE 20
+#define CUR_POINT 20
 #define CUR_NICHELLE 21
 #define CUR_BLASTER 22
 #define EXIT_LEFT_SPR 26

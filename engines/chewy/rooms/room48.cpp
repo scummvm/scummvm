@@ -93,7 +93,7 @@ void Room48::setup_func() {
 		if (_G(menu_display) == 0) {
 			_G(menu_item) = CUR_USE;
 			cur_2_inventory();
-			cursorChoice(CUR_ZEIGE);
+			cursorChoice(CUR_POINT);
 			const int16 idx = _G(det)->maus_vector(g_events->_mousePos.x, g_events->_mousePos.y);
 
 			if (idx != -1) {
