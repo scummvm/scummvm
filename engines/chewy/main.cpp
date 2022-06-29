@@ -157,6 +157,9 @@ void cursorChoice(int16 nr) {
 	case CUR_POINT:
 		_G(cur)->setAnimation(9, 9, delay);
 		break;
+	case CUR_BLASTER:
+		_G(cur)->setAnimation(40, 40, delay);
+		break;
 	case CUR_USER:
 		break;
 	default:
