@@ -123,7 +123,6 @@ endif
 # OpenGL specific source files.
 ifdef USE_OPENGL
 MODULE_OBJS += \
-	graphics/opengl/debug.o \
 	graphics/opengl/framebuffer.o \
 	graphics/opengl/opengl-graphics.o \
 	graphics/opengl/shader.o \

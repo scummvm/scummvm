@@ -117,17 +117,18 @@ static const GLchar *readFile(const Common::String &filename) {
 }
 
 static GLuint createDirectShader(const char *shaderSource, GLenum shaderType, const Common::String &name) {
-	GLuint shader = glCreateShader(shaderType);
-	glShaderSource(shader, 1, &shaderSource, NULL);
-	glCompileShader(shader);
+	GLuint shader;
+	GL_ASSIGN(shader, glCreateShader(shaderType));
+	GL_CALL(glShaderSource(shader, 1, &shaderSource, NULL));
+	GL_CALL(glCompileShader(shader));
 
 	GLint status;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+	GL_CALL(glGetShaderiv(shader, GL_COMPILE_STATUS, &status));
 	if (status != GL_TRUE) {
 		GLint logSize;
-		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize);
+		GL_CALL(glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize));
 		GLchar *log = new GLchar[logSize];
-		glGetShaderInfoLog(shader, logSize, nullptr, log);
+		GL_CALL(glGetShaderInfoLog(shader, logSize, nullptr, log));
 		error("Could not compile shader %s: %s", name.c_str(), log);
 	}
 
@@ -173,17 +174,18 @@ static GLuint createCompatShader(const char *shaderSource, GLenum shaderType, co
 		shaderSource
 	};
 
-	GLuint shader = glCreateShader(shaderType);
-	glShaderSource(shader, 4, shaderSources, NULL);
-	glCompileShader(shader);
+	GLuint shader;
+	GL_ASSIGN(shader, glCreateShader(shaderType));
+	GL_CALL(glShaderSource(shader, 4, shaderSources, NULL));
+	GL_CALL(glCompileShader(shader));
 
 	GLint status;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+	GL_CALL(glGetShaderiv(shader, GL_COMPILE_STATUS, &status));
 	if (status != GL_TRUE) {
 		GLint logSize;
-		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize);
+		GL_CALL(glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize));
 		GLchar *log = new GLchar[logSize];
-		glGetShaderInfoLog(shader, logSize, nullptr, log);
+		GL_CALL(glGetShaderInfoLog(shader, logSize, nullptr, log));
 		error("Could not compile shader %s: %s", name.c_str(), log);
 	}
 
@@ -212,7 +214,7 @@ static GLuint loadShaderFromFile(const char *base, const char *extension, GLenum
 struct SharedPtrProgramDeleter {
 	void operator()(GLuint *ptr) {
 		if (ptr) {
-			glDeleteProgram(*ptr);
+			GL_CALL(glDeleteProgram(*ptr));
 		}
 		delete ptr;
 	}
@@ -225,31 +227,32 @@ uint32 Shader::previousNumAttributes = 0;
 Shader::Shader(const Common::String &name, GLuint vertexShader, GLuint fragmentShader, const char *const *attributes)
 	: _name(name) {
 	assert(attributes);
-	GLuint shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
+	GLuint shaderProgram;
+	GL_ASSIGN(shaderProgram, glCreateProgram());
+	GL_CALL(glAttachShader(shaderProgram, vertexShader));
+	GL_CALL(glAttachShader(shaderProgram, fragmentShader));
 
 	for (int idx = 0; attributes[idx]; ++idx) {
-		glBindAttribLocation(shaderProgram, idx, attributes[idx]);
+		GL_CALL(glBindAttribLocation(shaderProgram, idx, attributes[idx]));
 		_attributes.push_back(VertexAttrib(idx, attributes[idx]));
 	}
-	glLinkProgram(shaderProgram);
+	GL_CALL(glLinkProgram(shaderProgram));
 
 	GLint status;
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &status);
+	GL_CALL(glGetProgramiv(shaderProgram, GL_LINK_STATUS, &status));
 	if (status != GL_TRUE) {
 		GLint logSize;
-		glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &logSize);
+		GL_CALL(glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &logSize));
 		GLchar *log = new GLchar[logSize];
-		glGetProgramInfoLog(shaderProgram, logSize, nullptr, log);
+		GL_CALL(glGetProgramInfoLog(shaderProgram, logSize, nullptr, log));
 		error("Could not link shader %s: %s", name.c_str(), log);
 	}
 
-	glDetachShader(shaderProgram, vertexShader);
-	glDetachShader(shaderProgram, fragmentShader);
+	GL_CALL(glDetachShader(shaderProgram, vertexShader));
+	GL_CALL(glDetachShader(shaderProgram, fragmentShader));
 
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+	GL_CALL(glDeleteShader(vertexShader));
+	GL_CALL(glDeleteShader(fragmentShader));
 
 	_shaderNo = Common::SharedPtr<GLuint>(new GLuint(shaderProgram), SharedPtrProgramDeleter());
 	_uniforms = Common::SharedPtr<UniformsMap>(new UniformsMap());
@@ -283,49 +286,49 @@ void Shader::use(bool forceReload) {
 	// The previous shader might have had more attributes. Disable any extra ones.
 	if (_attributes.size() < previousNumAttributes) {
 		for (uint32 i = _attributes.size(); i < previousNumAttributes; ++i) {
-			glDisableVertexAttribArray(i);
+			GL_CALL(glDisableVertexAttribArray(i));
 		}
 	}
 
 	_previousShader = this;
 	previousNumAttributes = _attributes.size();
 
-	glUseProgram(*_shaderNo);
+	GL_CALL(glUseProgram(*_shaderNo));
 	for (uint32 i = 0; i < _attributes.size(); ++i) {
 		VertexAttrib &attrib = _attributes[i];
 		if (attrib._enabled) {
-			glEnableVertexAttribArray(i);
-			glBindBuffer(GL_ARRAY_BUFFER, attrib._vbo);
-			glVertexAttribPointer(i, attrib._size, attrib._type, attrib._normalized, attrib._stride, attrib._pointer);
+			GL_CALL(glEnableVertexAttribArray(i));
+			GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, attrib._vbo));
+			GL_CALL(glVertexAttribPointer(i, attrib._size, attrib._type, attrib._normalized, attrib._stride, attrib._pointer));
 		} else {
-			glDisableVertexAttribArray(i);
+			GL_CALL(glDisableVertexAttribArray(i));
 			switch (attrib._size) {
 			case 2:
-				glVertexAttrib2fv(i, attrib._const);
+				GL_CALL(glVertexAttrib2fv(i, attrib._const));
 				break;
 			case 3:
-				glVertexAttrib3fv(i, attrib._const);
+				GL_CALL(glVertexAttrib3fv(i, attrib._const));
 				break;
 			case 4:
-				glVertexAttrib4fv(i, attrib._const);
+				GL_CALL(glVertexAttrib4fv(i, attrib._const));
 				break;
 			}
 		}
 	}
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
 GLuint Shader::createBuffer(GLenum target, GLsizeiptr size, const GLvoid *data, GLenum usage) {
 	GLuint vbo;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(target, vbo);
-	glBufferData(target, size, data, usage);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	GL_CALL(glGenBuffers(1, &vbo));
+	GL_CALL(glBindBuffer(target, vbo));
+	GL_CALL(glBufferData(target, size, data, usage));
+	GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 	return vbo;
 }
 
 void Shader::freeBuffer(GLuint vbo) {
-	glDeleteBuffers(1, &vbo);
+	GL_CALL(glDeleteBuffers(1, &vbo));
 }
 
 VertexAttrib &Shader::getAttributeAt(uint32 idx) {
@@ -372,12 +375,12 @@ void Shader::disableVertexAttribute(const char *attrib, int size, const float *d
 }
 
 void Shader::unbind() {
-	glUseProgram(0);
+	GL_CALL(glUseProgram(0));
 	_previousShader = nullptr;
 
 	// Disable all vertex attributes as well
 	for (uint32 i = 0; i < previousNumAttributes; ++i) {
-		glDisableVertexAttribArray(i);
+		GL_CALL(glDisableVertexAttribArray(i));
 	}
 	previousNumAttributes = 0;
 }

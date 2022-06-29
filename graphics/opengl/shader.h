@@ -32,6 +32,7 @@
 #include "math/vector3d.h"
 #include "math/vector4d.h"
 
+#include "graphics/opengl/debug.h"
 #include "graphics/opengl/system_headers.h"
 
 namespace OpenGL {
@@ -67,7 +68,7 @@ public:
 		GLint pos = getUniformLocation(uniform);
 		if (pos != -1) {
 			use();
-			glUniformMatrix4fv(pos, 1, GL_FALSE, m.getData());
+			GL_CALL(glUniformMatrix4fv(pos, 1, GL_FALSE, m.getData()));
 			return true;
 		} else {
 			return false;
@@ -78,7 +79,7 @@ public:
 		GLint pos = getUniformLocation(uniform);
 		if (pos != -1) {
 			use();
-			glUniformMatrix3fv(pos, 1, GL_FALSE, m.getData());
+			GL_CALL(glUniformMatrix3fv(pos, 1, GL_FALSE, m.getData()));
 			return true;
 		} else {
 			return false;
@@ -89,7 +90,7 @@ public:
 		GLint pos = getUniformLocation(uniform);
 		if (pos != -1) {
 			use();
-			glUniform4fv(pos, 1, v.getData());
+			GL_CALL(glUniform4fv(pos, 1, v.getData()));
 			return true;
 		} else {
 			return false;
@@ -100,7 +101,7 @@ public:
 		GLint pos = getUniformLocation(uniform);
 		if (pos != -1) {
 			use();
-			glUniform3fv(pos, 1, v.getData());
+			GL_CALL(glUniform3fv(pos, 1, v.getData()));
 			return true;
 		} else {
 			return false;
@@ -111,7 +112,7 @@ public:
 		GLint pos = getUniformLocation(uniform);
 		if (pos != -1) {
 			use();
-			glUniform2fv(pos, 1, v.getData());
+			GL_CALL(glUniform2fv(pos, 1, v.getData()));
 			return true;
 		} else {
 			return false;
@@ -122,7 +123,7 @@ public:
 		GLint pos = getUniformLocation(uniform);
 		if (pos != -1) {
 			use();
-			glUniform1i(pos, x);
+			GL_CALL(glUniform1i(pos, x));
 			return true;
 		} else {
 			return false;
@@ -134,7 +135,7 @@ public:
 		GLint pos = getUniformLocation(uniform);
 		if (pos != -1) {
 			use();
-			glUniform1f(pos, f);
+			GL_CALL(glUniform1f(pos, f));
 			return true;
 		} else {
 			return false;
@@ -144,7 +145,8 @@ public:
 	GLint getUniformLocation(const Common::String &uniform) const {
 		UniformsMap::iterator kv = _uniforms->find(uniform);
 		if (kv == _uniforms->end()) {
-			GLint ret = glGetUniformLocation(*_shaderNo, uniform.c_str());
+			GLint ret;
+			GL_ASSIGN(ret, glGetUniformLocation(*_shaderNo, uniform.c_str()));
 			_uniforms->setVal(uniform, ret);
 			return ret;
 		} else {

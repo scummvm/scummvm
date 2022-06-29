@@ -20,7 +20,7 @@
  */
 
 #include "backends/graphics/opengl/shader.h"
-#include "backends/graphics/opengl/debug.h"
+#include "graphics/opengl/debug.h"
 
 #if !USE_FORCED_GLES
 

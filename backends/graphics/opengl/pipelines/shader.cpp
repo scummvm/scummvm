@@ -20,9 +20,9 @@
  */
 
 #include "backends/graphics/opengl/pipelines/shader.h"
-#include "backends/graphics/opengl/debug.h"
 #include "backends/graphics/opengl/shader.h"
 #include "backends/graphics/opengl/framebuffer.h"
+#include "graphics/opengl/debug.h"
 
 namespace OpenGL {
 

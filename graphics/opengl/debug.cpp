@@ -19,12 +19,14 @@
  *
  */
 
-#include "backends/graphics/opengl/debug.h"
+#include "graphics/opengl/debug.h"
 
 #include "common/str.h"
 #include "common/textconsole.h"
 
 #include "graphics/opengl/system_headers.h"
+
+#if defined(USE_OPENGL)
 
 #ifdef OPENGL_DEBUG
 
@@ -63,5 +65,7 @@ void checkGLError(const char *expr, const char *file, int line) {
 	}
 }
 } // End of namespace OpenGL
+
+#endif
 
 #endif

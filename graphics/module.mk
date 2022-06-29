@@ -31,6 +31,7 @@ MODULE_OBJS := \
 	managed_surface.o \
 	nine_patch.o \
 	opengl/context.o \
+	opengl/debug.o \
 	opengl/shader.o \
 	pixelformat.o \
 	primitives.o \

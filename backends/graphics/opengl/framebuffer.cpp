@@ -19,10 +19,10 @@
  *
  */
 
-#include "backends/graphics/opengl/debug.h"
 #include "backends/graphics/opengl/framebuffer.h"
 #include "backends/graphics/opengl/texture.h"
 #include "backends/graphics/opengl/pipelines/pipeline.h"
+#include "graphics/opengl/debug.h"
 
 namespace OpenGL {
 
