@@ -896,10 +896,10 @@ bool ScriptBase::Item_Query_Visible(int itemId) {
 
 // Show text as subtitles mainly for debugging purposes
 // eg. display debug data on screen as subtitles
-void ScriptBase::Set_Subtitle_Text_On_Screen(Common::String displayText) {
-	debugC(kDebugScript, "Set_Subtitle_Text_On_Screen(%s)", displayText.c_str());
-	_vm->_subtitles->setGameSubsText(displayText, true);
-	_vm->_subtitles->show();
+void ScriptBase::Set_Subtitle_Text_On_Screen(int subtitlesRole, Common::String displayText) {
+	debugC(kDebugScript, "Set_Subtitle_Text_On_Screen(%d, %s)", subtitlesRole, displayText.c_str());
+	_vm->_subtitles->setGameSubsText(subtitlesRole, displayText, true);
+	_vm->_subtitles->show(subtitlesRole);
 }
 
 #if BLADERUNNER_ORIGINAL_BUGS

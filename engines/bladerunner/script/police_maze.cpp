@@ -153,8 +153,8 @@ void PoliceMaze::tick() {
 	}
 
 	if (_vm->_debugger->_showMazeScore && _isActive && !_isEnding) {
-		_vm->_subtitles->setGameSubsText(Common::String::format("Score: %02d", Global_Variable_Query(kVariablePoliceMazeScore)), true);
-		_vm->_subtitles->show();
+		_vm->_subtitles->setGameSubsText(BladeRunner::Subtitles::kSubtitlesSecondary, Common::String::format("Score: %02d", Global_Variable_Query(kVariablePoliceMazeScore)), true);
+		_vm->_subtitles->show(BladeRunner::Subtitles::kSubtitlesSecondary);
 	}
 
 	if (notFound && _isActive && !_isEnding) {
