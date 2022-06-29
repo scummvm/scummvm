@@ -154,7 +154,7 @@ void cursorChoice(int16 nr) {
 	case CUR_NICHELLE:
 		_G(cur)->setAnimation(37, 37, delay);
 		break;
-	case CUR_ZEIGE:
+	case CUR_POINT:
 		_G(cur)->setAnimation(9, 9, delay);
 		break;
 	case CUR_USER:

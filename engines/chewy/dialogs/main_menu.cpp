@@ -62,7 +62,7 @@ void MainMenu::execute() {
 		g_engine->_sound->stopAllSounds();
 		_G(SetUpScreenFunc) = screenFunc;
 
-		cursorChoice(CUR_ZEIGE);
+		cursorChoice(CUR_POINT);
 		_selection = -1;
 		_G(gameState).scrollx = _G(gameState).scrolly = 0;
 		_G(gameState)._personRoomNr[P_CHEWY] = 98;
