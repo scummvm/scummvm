@@ -50,7 +50,7 @@ void TextView::writeChar(char c) {
 
 	if (c == '\r' || c == '\n') {
 		_textPos.x = 0;
-		_textPos.y++;
+		_textPos.y += font.getFontHeight();
 	} else {
 		Graphics::ManagedSurface s = getSurface();
 		if (c != ' ')

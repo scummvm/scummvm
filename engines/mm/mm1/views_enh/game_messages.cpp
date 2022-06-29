@@ -59,6 +59,7 @@ bool GameMessages::msgInfo(const InfoMessage &msg) {
 	clear();
 	for (auto line : msg._lines) {
 		Common::String str = capitalize(line._text);
+		str = searchAndReplace(str, "\n", " ");
 		addText(str, line.y, 0, ALIGN_LEFT, line.x * 8);
 	}
 
