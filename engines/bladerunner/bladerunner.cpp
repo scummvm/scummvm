@@ -119,6 +119,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_actorSpeakStopIsRequested = false;
 
 	_subtitlesEnabled             = false;
+	_showSubtitlesForTextCrawl    = false;
 
 	_surfaceFrontCreated          = false;
 	_surfaceBackCreated           = false;
@@ -635,6 +636,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	if (!_isNonInteractiveDemo) {
 		ConfMan.registerDefault("subtitles", "true");
+		ConfMan.registerDefault("use_crawl_subs", "true");
 		ConfMan.registerDefault("sitcom", "false");
 		ConfMan.registerDefault("shorty", "false");
 		ConfMan.registerDefault("disable_stamina_drain", "false");
@@ -2417,6 +2419,7 @@ void BladeRunnerEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
 	_subtitlesEnabled = ConfMan.getBool("subtitles");
+	_showSubtitlesForTextCrawl = ConfMan.getBool("use_crawl_subs");
 
 	_mixer->setVolumeForSoundType(_mixer->kMusicSoundType, ConfMan.getInt("music_volume"));
 	_mixer->setVolumeForSoundType(_mixer->kSFXSoundType, ConfMan.getInt("sfx_volume"));

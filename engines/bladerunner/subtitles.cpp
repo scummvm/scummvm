@@ -270,6 +270,15 @@ void Subtitles::loadOuttakeSubsText(const Common::String &outtakesName, int fram
 		return;
 	}
 
+	if (!_vm->_showSubtitlesForTextCrawl
+		&& (fileIdx == 1
+			|| fileIdx == 2
+			|| (fileIdx == 3 && (uint32)frame < 1200))) {
+		// "WSTLGO" or "BRLOGO" or "INTRO" affected
+		// NOTE fileIdx indexes the SUBTITLES_FILENAME_PREFIXES array
+		return;
+	}
+
 	// Search in the requested TextResource at the fileIdx index of the _vqaSubsTextResourceEntries table for a quote that corresponds to the specified video frame
 	// debug("Number of resource quotes to search: %d, requested frame: %u", _vqaSubsTextResourceEntries[fileIdx]->getCount(), (uint32)frame );
 	const char *text = _vqaSubsTextResourceEntries[fileIdx]->getOuttakeTextByFrame((uint32)frame);
