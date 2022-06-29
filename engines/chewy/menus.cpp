@@ -355,11 +355,10 @@ void new_invent_2_cur(int16 inv_nr) {
 }
 
 void invent_2_slot(int16 nr) {
-	int16 ok = 0;
-	for (int16 i = 0; i < MAX_MOV_OBJ && !ok; i++) {
+	for (int16 i = 0; i < MAX_MOV_OBJ; i++) {
 		if (_G(gameState).InventSlot[i] == -1) {
 			_G(gameState).InventSlot[i] = nr;
-			ok = true;
+			break;
 		}
 	}
 	_G(obj)->addInventory(nr, &_G(room_blk));
