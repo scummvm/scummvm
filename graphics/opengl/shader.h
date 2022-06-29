@@ -161,6 +161,7 @@ public:
 	void disableVertexAttribute(const char *attrib, const Math::Matrix<r,1> &m) {
 		disableVertexAttribute(attrib, r, m.getData());
 	}
+	bool addAttribute(const char *attrib);
 	VertexAttrib & getAttributeAt(uint32 idx);
 	VertexAttrib & getAttribute(const char *attrib);
 
