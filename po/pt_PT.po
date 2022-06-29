@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-28 16:52+0000\n"
+"POT-Creation-Date: 2022-06-29 08:58+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -2691,7 +2691,8 @@ msgid "Default game keymap"
 msgstr "Mapeamento padrão"
 
 #: engines/metaengine.cpp:60 backends/platform/maemo/maemo.cpp:161
-#: engines/hdb/metaengine.cpp:187 engines/parallaction/metaengine.cpp:114
+#: engines/asylum/metaengine.cpp:115 engines/hdb/metaengine.cpp:187
+#: engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:114
 msgid "Left Click"
 msgstr "Clique esquerdo"
@@ -2704,7 +2705,7 @@ msgid "Middle Click"
 msgstr "Clique do meio"
 
 #: engines/metaengine.cpp:71 backends/platform/maemo/maemo.cpp:169
-#: engines/parallaction/metaengine.cpp:120
+#: engines/asylum/metaengine.cpp:121 engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:120
 msgid "Right Click"
 msgstr "Clique direito"
@@ -4298,34 +4299,34 @@ msgid ""
 "your version of ScummVM yet."
 msgstr ""
 
-#: engines/asylum/metaengine.cpp:114
+#: engines/asylum/metaengine.cpp:127
 msgid "Show version"
 msgstr "Mostrar versão"
 
-#: engines/asylum/metaengine.cpp:119 engines/wintermute/keymapper_tables.h:950
+#: engines/asylum/metaengine.cpp:132 engines/wintermute/keymapper_tables.h:950
 msgid "Quick load"
 msgstr "Carregar rápido"
 
-#: engines/asylum/metaengine.cpp:124 engines/wintermute/keymapper_tables.h:930
+#: engines/asylum/metaengine.cpp:137 engines/wintermute/keymapper_tables.h:930
 msgid "Quick save"
 msgstr "Guardar rápido"
 
-#: engines/asylum/metaengine.cpp:129
+#: engines/asylum/metaengine.cpp:142
 #, fuzzy
 msgid "Switch to Sarah"
 msgstr "Mudar para o Jogo"
 
-#: engines/asylum/metaengine.cpp:134
+#: engines/asylum/metaengine.cpp:147
 #, fuzzy
 msgid "Switch to Grimwall"
 msgstr "Mudar para o Jogo"
 
-#: engines/asylum/metaengine.cpp:139
+#: engines/asylum/metaengine.cpp:152
 #, fuzzy
 msgid "Switch to Olmec"
 msgstr "Mudar para o Jogo"
 
-#: engines/asylum/metaengine.cpp:144
+#: engines/asylum/metaengine.cpp:157
 #, fuzzy
 msgid "Open character inventory"
 msgstr "Abrir/Fechar inventário"

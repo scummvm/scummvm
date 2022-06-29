@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-28 16:52+0000\n"
+"POT-Creation-Date: 2022-06-29 08:58+0000\n"
 "PO-Revision-Date: 2022-06-15 23:28+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -2728,7 +2728,8 @@ msgid "Default game keymap"
 msgstr "Mapeamento de tecla padrão do jogo"
 
 #: engines/metaengine.cpp:60 backends/platform/maemo/maemo.cpp:161
-#: engines/hdb/metaengine.cpp:187 engines/parallaction/metaengine.cpp:114
+#: engines/asylum/metaengine.cpp:115 engines/hdb/metaengine.cpp:187
+#: engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:114
 msgid "Left Click"
 msgstr "Clique com Botão Esquerdo"
@@ -2741,7 +2742,7 @@ msgid "Middle Click"
 msgstr "Clique com Botão do Meio"
 
 #: engines/metaengine.cpp:71 backends/platform/maemo/maemo.cpp:169
-#: engines/parallaction/metaengine.cpp:120
+#: engines/asylum/metaengine.cpp:121 engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:120
 msgid "Right Click"
 msgstr "Clique com Botão Direito"
@@ -4361,31 +4362,31 @@ msgstr ""
 "O jogo selecionado tem um arquivo de dados maior que 2 Gb, o que ainda não é "
 "compatível com a sua versão do ScummVM."
 
-#: engines/asylum/metaengine.cpp:114
+#: engines/asylum/metaengine.cpp:127
 msgid "Show version"
 msgstr "Exibir versão"
 
-#: engines/asylum/metaengine.cpp:119 engines/wintermute/keymapper_tables.h:950
+#: engines/asylum/metaengine.cpp:132 engines/wintermute/keymapper_tables.h:950
 msgid "Quick load"
 msgstr "Carregamento rápido"
 
-#: engines/asylum/metaengine.cpp:124 engines/wintermute/keymapper_tables.h:930
+#: engines/asylum/metaengine.cpp:137 engines/wintermute/keymapper_tables.h:930
 msgid "Quick save"
 msgstr "Salvamento rápido"
 
-#: engines/asylum/metaengine.cpp:129
+#: engines/asylum/metaengine.cpp:142
 msgid "Switch to Sarah"
 msgstr "Alternar para Sarah"
 
-#: engines/asylum/metaengine.cpp:134
+#: engines/asylum/metaengine.cpp:147
 msgid "Switch to Grimwall"
 msgstr "Alternar para Grimwall"
 
-#: engines/asylum/metaengine.cpp:139
+#: engines/asylum/metaengine.cpp:152
 msgid "Switch to Olmec"
 msgstr "Alternar para Olmec"
 
-#: engines/asylum/metaengine.cpp:144
+#: engines/asylum/metaengine.cpp:157
 msgid "Open character inventory"
 msgstr "Abrir inventário do personagem"
 

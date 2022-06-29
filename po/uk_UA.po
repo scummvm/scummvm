@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-28 16:52+0000\n"
+"POT-Creation-Date: 2022-06-29 08:58+0000\n"
 "PO-Revision-Date: 2022-06-16 23:21+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -2726,7 +2726,8 @@ msgid "Default game keymap"
 msgstr "Мапа клавіш за замовчунням"
 
 #: engines/metaengine.cpp:60 backends/platform/maemo/maemo.cpp:161
-#: engines/hdb/metaengine.cpp:187 engines/parallaction/metaengine.cpp:114
+#: engines/asylum/metaengine.cpp:115 engines/hdb/metaengine.cpp:187
+#: engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:114
 msgid "Left Click"
 msgstr "Лівий клік"
@@ -2739,7 +2740,7 @@ msgid "Middle Click"
 msgstr "Середній клік"
 
 #: engines/metaengine.cpp:71 backends/platform/maemo/maemo.cpp:169
-#: engines/parallaction/metaengine.cpp:120
+#: engines/asylum/metaengine.cpp:121 engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:120
 msgid "Right Click"
 msgstr "Правий клік"
@@ -4364,31 +4365,31 @@ msgstr ""
 "Вибрана гра має файл даних завбільшки 2Гб і ще не підтримується цією версією "
 "ScummVM."
 
-#: engines/asylum/metaengine.cpp:114
+#: engines/asylum/metaengine.cpp:127
 msgid "Show version"
 msgstr "Показувати версію"
 
-#: engines/asylum/metaengine.cpp:119 engines/wintermute/keymapper_tables.h:950
+#: engines/asylum/metaengine.cpp:132 engines/wintermute/keymapper_tables.h:950
 msgid "Quick load"
 msgstr "Швидке завантаження"
 
-#: engines/asylum/metaengine.cpp:124 engines/wintermute/keymapper_tables.h:930
+#: engines/asylum/metaengine.cpp:137 engines/wintermute/keymapper_tables.h:930
 msgid "Quick save"
 msgstr "Швидке збереження"
 
-#: engines/asylum/metaengine.cpp:129
+#: engines/asylum/metaengine.cpp:142
 msgid "Switch to Sarah"
 msgstr "Переключитися на Сару"
 
-#: engines/asylum/metaengine.cpp:134
+#: engines/asylum/metaengine.cpp:147
 msgid "Switch to Grimwall"
 msgstr "Переключитися на Грімвела"
 
-#: engines/asylum/metaengine.cpp:139
+#: engines/asylum/metaengine.cpp:152
 msgid "Switch to Olmec"
 msgstr "Переключитися на Ольмека"
 
-#: engines/asylum/metaengine.cpp:144
+#: engines/asylum/metaengine.cpp:157
 msgid "Open character inventory"
 msgstr "Відкрити інвентар героя"
 
