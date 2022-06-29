@@ -215,7 +215,7 @@ void Room13::jmp_floor() {
 int16 Room13::monitor_button() {
 	int16 action_flag = false;
 	
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		if (_G(gameState).R13Band) {
 			action_flag = true;
 			startAadWait(620);

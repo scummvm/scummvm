@@ -80,7 +80,7 @@ void Room57::setup_func() {
 
 int16 Room57::use_taxi() {
 	int16 action_ret = false;
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_ret = true;
 		hideCur();
 		autoMove(3, P_CHEWY);
@@ -135,7 +135,7 @@ int16 Room57::use_pfoertner() {
 		if (_G(gameState).R56AbfahrtOk) {
 			startAadWait(341);
 			goAutoXy(176, 130, P_HOWARD, ANI_WAIT);
-			delInventory(_G(gameState).AkInvent);
+			delInventory(_G(cur)->getInventoryCursor());
 			_G(gameState).R57StudioAuf = true;
 			_G(gameState).room_e_obj[91].Attribut = EXIT_TOP;
 			_G(det)->hideStaticSpr(4);

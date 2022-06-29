@@ -171,7 +171,7 @@ int16 Room45::use_taxi() {
 	hideCur();
 	autoMove(1, P_CHEWY);
 
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		if (_G(gameState).ChewyAni == CHEWY_PUMPKIN) {
 			action_ret = true;
 			talk_taxi(254);

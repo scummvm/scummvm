@@ -169,7 +169,7 @@ void Room89::talk1() {
 }
 
 int Room89::proc2() {
-	if (_G(cur)->usingInventoryCursors() || _G(gameState).flags33_2)
+	if (_G(cur)->usingInventoryCursor() || _G(gameState).flags33_2)
 		return 0;
 
 	hideCur();
@@ -193,7 +193,7 @@ int Room89::proc2() {
 }
 
 int Room89::proc4() {
-	if (_G(cur)->usingInventoryCursors() || _G(gameState).flags32_80)
+	if (_G(cur)->usingInventoryCursor() || _G(gameState).flags32_80)
 		return 0;
 
 	hideCur();
@@ -219,7 +219,7 @@ int Room89::proc4() {
 }
 
 int Room89::proc5() {
-	if (_G(cur)->usingInventoryCursors())
+	if (_G(cur)->usingInventoryCursor())
 		return 0;
 
 	if (!_G(gameState).flags32_80 || !_G(gameState).flags33_1 || !_G(gameState).flags33_2)

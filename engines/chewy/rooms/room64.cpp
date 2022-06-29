@@ -146,7 +146,7 @@ void Room64::talk_man(int16 aad_nr) {
 int16 Room64::use_tasche() {
 	int16 action_ret = false;
 	hideCur();
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		if (_G(gameState).R64ManWeg) {
 			if (!_G(atds)->getControlBit(375, ATS_ACTIVE_BIT)) {
 				autoMove(3, P_CHEWY);

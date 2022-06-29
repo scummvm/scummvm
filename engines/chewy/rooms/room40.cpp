@@ -317,15 +317,14 @@ int16 Room40::use_mr_pumpkin() {
 	if (_G(menu_item) != CUR_HOWARD) {
 		hideCur();
 
-		if (!_G(cur)->usingInventoryCursors()) {
+		if (!_G(cur)->usingInventoryCursor()) {
 			action_ret = use_schalter(205);
-
 		} else {
-			switch (_G(gameState).AkInvent) {
+			switch (_G(cur)->getInventoryCursor()) {
 			case CENT_INV:
 				action_ret = true;
 				autoMove(5, P_CHEWY);
-				delInventory(_G(gameState).AkInvent);
+				delInventory(_G(cur)->getInventoryCursor());
 				startSetAILWait(15, 1, ANI_FRONT);
 				start_spz(CH_PUMP_TALK, 255, ANI_FRONT, P_CHEWY);
 				startAadWait(200);
@@ -341,7 +340,7 @@ int16 Room40::use_mr_pumpkin() {
 						hideCur();
 						autoMove(8, P_CHEWY);
 						start_spz_wait(CH_PUMP_GET1, 1, false, P_CHEWY);
-						delInventory(_G(gameState).AkInvent);
+						delInventory(_G(cur)->getInventoryCursor());
 						_G(out)->fadeOut();
 						Room43::catch_pg();
 						remove_inventory(LIKOER_INV);
@@ -603,7 +602,7 @@ bool Room40::use_police() {
 int16 Room40::use_tele() {
 	int16 action_flag = false;
 
-	if (!_G(cur)->usingInventoryCursors() && _G(gameState).R40PoliceWeg == false) {
+	if (!_G(cur)->usingInventoryCursor() && _G(gameState).R40PoliceWeg == false) {
 		action_flag = true;
 		hideCur();
 
@@ -635,7 +634,7 @@ int16 Room40::use_tele() {
 
 			if (dia_nr1 == 223) {
 				if (isCurInventory(DUENGER_INV)) {
-					delInventory(_G(gameState).AkInvent);
+					delInventory(_G(cur)->getInventoryCursor());
 				} else {
 					remove_inventory(DUENGER_INV);
 				}

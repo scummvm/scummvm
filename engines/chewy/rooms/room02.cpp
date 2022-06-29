@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -62,7 +63,7 @@ void Room2::electrifyWalkway1() {
 
 	_G(det)->startDetail(GRID_FLASHING, 12, ANI_FRONT);
 	_G(gameState).R2ElectrocutedBork = true;
-	delInventory(_G(gameState).AkInvent);
+	delInventory(_G(cur)->getInventoryCursor());
 
 	_G(atds)->delControlBit(11, ATS_COUNT_BIT);
 	_G(atds)->delControlBit(11, ATS_ACTION_BIT);

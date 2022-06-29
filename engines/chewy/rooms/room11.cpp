@@ -158,7 +158,7 @@ int16 Room11::scanner() {
 			startAadWait(12);
 			showCur();
 			loadDialogCloseup(3);
-		} else if (!_G(cur)->usingInventoryCursors()) {
+		} else if (!_G(cur)->usingInventoryCursor()) {
 			if (!_G(gameState).R11TerminalOk) {
 				actionFl = true;
 				flic_cut(FCUT_009);
@@ -182,9 +182,7 @@ void Room11::get_card() {
 		_G(gameState).R11CardOk = false;
 		_G(obj)->addInventory(_G(gameState).R11IdCardNr, &_G(room_blk));
 
-		_G(gameState).AkInvent = _G(gameState).R11IdCardNr;
-		cursorChoice(CUR_AK_INVENT);
-		cursorChoice(CUR_AK_INVENT);
+		_G(cur)->setInventoryCursor(_G(gameState).R11IdCardNr);
 		_G(det)->stop_detail(0);
 		_G(atds)->set_ats_str(83, TXT_MARK_LOOK, 0, ATS_DATA);
 		_G(atds)->set_ats_str(84, TXT_MARK_LOOK, 0, ATS_DATA);
@@ -193,7 +191,7 @@ void Room11::get_card() {
 
 void Room11::put_card() {
 	if (isCurInventory(RED_CARD_INV) || isCurInventory(YEL_CARD_INV)) {
-		_G(gameState).R11IdCardNr = _G(gameState).AkInvent;
+		_G(gameState).R11IdCardNr = _G(cur)->getInventoryCursor();
 		delInventory(_G(gameState).R11IdCardNr);
 		_G(det)->startDetail(0, 255, ANI_FRONT);
 		_G(atds)->set_ats_str(83, TXT_MARK_LOOK, 1, ATS_DATA);

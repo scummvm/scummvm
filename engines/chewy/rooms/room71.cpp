@@ -153,7 +153,7 @@ void Room71::setup_func() {
 }
 
 int Room71::proc1() {
-	if (_G(cur)->usingInventoryCursors()) {
+	if (_G(cur)->usingInventoryCursor()) {
 		_G(flags).NoScroll = false;
 		return 0;
 	}
@@ -259,7 +259,7 @@ void Room71::proc5(int16 val) {
 }
 
 int Room71::proc6() {
-	if (_G(cur)->usingInventoryCursors())
+	if (_G(cur)->usingInventoryCursor())
 		return 0;
 
 	hideCur();

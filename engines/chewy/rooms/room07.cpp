@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -50,7 +51,7 @@ void Room7::hook(int16 sibNr) {
 	int16 diaNr;
 
 	delInventory(8);
-	_G(gameState).AkInvent = -1;
+	_G(cur)->setInventoryCursor(-1);
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(_G(menu_item));
 

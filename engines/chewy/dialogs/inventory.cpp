@@ -135,10 +135,8 @@ void Inventory::menu() {
 	g_events->_mousePos.y = 92;
 
 	_G(invent_cur_mode) = CUR_USE;
-	if (_G(gameState).AkInvent != -1) {
-		cursorChoice(CUR_AK_INVENT);
 
-	} else {
+	if (!_G(cur)->usingInventoryCursor()) {
 		_G(invent_cur_mode) = CUR_USE;
 		cursorChoice(CUR_USE);
 	}
@@ -179,18 +177,16 @@ void Inventory::menu() {
 				case 0:
 					_G(invent_cur_mode) = CUR_USE;
 					_G(menu_item) = CUR_USE;
-					if (_G(gameState).AkInvent == -1) {
+					if (!_G(cur)->usingInventoryCursor()) {
 						cursorChoice(CUR_USE);
-					} else {
-						cursorChoice(CUR_AK_INVENT);
 					}
 					break;
 
 				case 1:
-					if (_G(gameState).AkInvent != -1) {
+					if (_G(cur)->usingInventoryCursor()) {
 						inv_rand_x = -1;
 						inv_rand_y = -1;
-						ret_look = look(_G(gameState).AkInvent, INV_ATS_MODE, -1);
+						ret_look = look(_G(cur)->getInventoryCursor(), INV_ATS_MODE, -1);
 
 						taste_flag = Common::KEYCODE_ESCAPE;
 					} else {
@@ -214,26 +210,25 @@ void Inventory::menu() {
 					k = inv_rand_x + (inv_rand_y * 5);
 					k += _G(gameState).InventY * 5;
 					if (_G(invent_cur_mode) == CUR_USE) {
-						if (_G(gameState).AkInvent == -1) {
+						if (!_G(cur)->usingInventoryCursor()) {
 							if (_G(gameState).InventSlot[k] != -1 && calc_use_invent(_G(gameState).InventSlot[k]) == false) {
 								_G(menu_item) = CUR_USE;
-								_G(gameState).AkInvent = _G(gameState).InventSlot[k];
-								cursorChoice(CUR_AK_INVENT);
+								_G(cur)->setInventoryCursor(_G(gameState).InventSlot[k]);
 								del_invent_slot(_G(gameState).InventSlot[k]);
 							}
 						} else if (_G(gameState).InventSlot[k] != -1)
 							evaluateObj(_G(gameState).InventSlot[k], INVENTORY_NORMAL);
 						else {
-							_G(gameState).InventSlot[k] = _G(gameState).AkInvent;
+							_G(gameState).InventSlot[k] = _G(cur)->getInventoryCursor();
 							_G(obj)->sort();
-							_G(gameState).AkInvent = -1;
+							_G(cur)->setInventoryCursor(-1);
 							_G(menu_item) = _G(invent_cur_mode);
 							cursorChoice(_G(invent_cur_mode));
 						}
 					} else if (_G(invent_cur_mode) == CUR_LOOK && _G(gameState).InventSlot[k] != -1 && calc_use_invent(_G(gameState).InventSlot[k]) == false) {
-						_G(gameState).AkInvent = _G(gameState).InventSlot[k];
+						_G(cur)->setInventoryCursor(_G(gameState).InventSlot[k]);
 						ret_look = look(_G(gameState).InventSlot[k], INV_ATS_MODE, -1);
-						_G(gameState).AkInvent = -1;
+						_G(cur)->setInventoryCursor(-1);
 						cursorChoice(_G(invent_cur_mode));
 						taste_flag = Common::KEYCODE_ESCAPE;
 					}
@@ -254,10 +249,8 @@ void Inventory::menu() {
 		if (ret_look == 0) {
 			_G(invent_cur_mode) = CUR_USE;
 			_G(menu_item) = CUR_USE;
-			if (_G(gameState).AkInvent == -1)
+			if (!_G(cur)->usingInventoryCursor())
 				cursorChoice(CUR_USE);
-			else
-				cursorChoice(CUR_AK_INVENT);
 		} else if (ret_look == 5) {
 			taste_flag = false;
 			mouseFl = false;
@@ -572,7 +565,7 @@ void Inventory::look_screen(int16 txt_mode, int16 txt_nr) {
 				case CUR_HOWARD:
 				case CUR_NICHELLE:
 					m_mode = TXT_MARK_USE;
-					if (_G(cur)->usingInventoryCursors())
+					if (_G(cur)->usingInventoryCursor())
 						ok = false;
 					break;
 

@@ -330,22 +330,21 @@ void stopDialogCloseupDialog() {
 }
 
 void cur_2_inventory() {
-	if (_G(gameState).AkInvent != -1) {
-		invent_2_slot(_G(gameState).AkInvent);
-		_G(gameState).AkInvent = -1;
+	if (_G(cur)->usingInventoryCursor()) {
+		invent_2_slot(_G(cur)->getInventoryCursor());
+		_G(cur)->setInventoryCursor(-1);
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(_G(menu_item));
 	}
-	_G(cur)->setInventoryCursors(false);
+	_G(cur)->setInventoryCursor(-1);
 }
 
 void inventory_2_cur(int16 nr) {
-	if (_G(gameState).AkInvent == -1 && _G(obj)->checkInventory(nr)) {
+	if (!_G(cur)->usingInventoryCursor() && _G(obj)->checkInventory(nr)) {
 		del_invent_slot(nr);
 		_G(menu_item) = CUR_USE;
-		_G(gameState).AkInvent = nr;
-		cursorChoice(CUR_AK_INVENT);
-		getDisplayCoord(&_G(gameState).DispZx, &_G(gameState).DispZy, _G(gameState).AkInvent);
+		_G(cur)->setInventoryCursor(nr);
+		getDisplayCoord(&_G(gameState).DispZx, &_G(gameState).DispZy, _G(cur)->getInventoryCursor());
 	}
 }
 
@@ -380,7 +379,7 @@ int16 del_invent_slot(int16 nr) {
 }
 
 void remove_inventory(int16 nr) {
-	if (nr == _G(gameState).AkInvent) {
+	if (nr == _G(cur)->getInventoryCursor()) {
 		delInventory(nr);
 	} else {
 		_G(obj)->delInventory(nr, &_G(room_blk));

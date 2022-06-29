@@ -85,7 +85,7 @@ void Room8::hole_kohle() {
 void Room8::start_verbrennen() {
 	hideCur();
 
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		autoMove(3, P_CHEWY);
 		start_aad(102, 0);
 		_G(gameState)._personHide[P_CHEWY] = true;

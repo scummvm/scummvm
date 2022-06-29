@@ -20,13 +20,12 @@
  */
 
 #include "common/system.h"
-#include "chewy/dialogs/main_menu.h"
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
 #include "chewy/ani_dat.h"
 #include "chewy/rooms/rooms.h"
-#include "chewy/main.h"
 #include "chewy/resource.h"
 #include "chewy/sound.h"
 #include "chewy/video/video_player.h"
@@ -55,7 +54,7 @@ void play_scene_ani(int16 nr, int16 mode) {
 		break;
 
 	case ROOM_18_20:
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		break;
 
 	default:
@@ -1181,7 +1180,7 @@ void sib_event_inv(int16 sib_nr) {
 		break;
 
 	case SIB_BOLA_BUTTON_R6:
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(gameState).R6BolaSchild = true;
 		_G(det)->showStaticSpr(2);
 		_G(obj)->calc_rsi_flip_flop(SIB_BOLA_BUTTON_R6);
@@ -1234,13 +1233,13 @@ void sib_event_inv(int16 sib_nr) {
 
 	case SIB_FLUXO_R23:
 		_G(gameState).R23FluxoFlex = true;
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(atds)->set_ats_str(112, 1, ATS_DATA);
 		_G(menu_item_vorwahl) = CUR_USE;
 		break;
 
 	case SIB_TRANSLATOR_23:
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(atds)->set_ats_str(113, 0, ATS_DATA);
 		_G(menu_item_vorwahl) = CUR_USE;
 		break;
@@ -1251,7 +1250,7 @@ void sib_event_inv(int16 sib_nr) {
 
 	case SIB_ROEHRE_R12:
 		_G(gameState).R12TalismanOk = true;
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(atds)->set_ats_str(118, TXT_MARK_LOOK, 1, ATS_DATA);
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
 		startAadWait(115);
@@ -1270,7 +1269,7 @@ void sib_event_inv(int16 sib_nr) {
 		_G(cur_hide_flag) = false;
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(gameState).R18CartFach = true;
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(det)->showStaticSpr(7);
 		_G(atds)->set_ats_str(157, TXT_MARK_LOOK, 1, ATS_DATA);
 

@@ -73,7 +73,7 @@ void Room14::eremit_feuer(int16 t_nr, int16 ani_nr) {
 int16 Room14::use_schrott() {
 	int16 action_flag = false;
 
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		autoMove(3, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(12, 1, ANI_FRONT);
@@ -92,7 +92,7 @@ int16 Room14::use_schrott() {
 int16 Room14::use_gleiter() {
 	int16 action_flag = false;
 
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 		autoMove(4, P_CHEWY);
 
@@ -132,7 +132,7 @@ void Room14::talk_eremit()  {
 int16 Room14::use_schleim() {
 	int16 action_flag = false;
 
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		autoMove(2, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(11, 1, ANI_FRONT);
@@ -151,7 +151,7 @@ int16 Room14::use_schleim() {
 
 void Room14::feuer() {
 	int16 waffe = false;
-	int16 tmp = _G(gameState).AkInvent;
+	int16 tmp = _G(cur)->getInventoryCursor();
 	_G(gameState).R14Feuer = true;
 	_G(cur_hide_flag) = false;
 	_G(flags).AutoAniPlay = true;

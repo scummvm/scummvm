@@ -81,7 +81,7 @@ void Room73::xit(int16 eib_nr) {
 }
 
 int Room73::proc1() {
-	if (_G(cur)->usingInventoryCursors() && !_G(gameState).flags28_20)
+	if (_G(cur)->usingInventoryCursor() && !_G(gameState).flags28_20)
 		return 0;
 
 	hideCur();
@@ -98,7 +98,7 @@ int Room73::proc1() {
 }
 
 int Room73::proc2() {
-	if (_G(cur)->usingInventoryCursors())
+	if (_G(cur)->usingInventoryCursor())
 		return 0;
 
 	hideCur();

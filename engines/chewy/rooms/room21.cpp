@@ -206,7 +206,7 @@ void Room21::chewy_kolli() {
 }
 
 void Room21::salto() {
-	if (!_G(cur)->usingInventoryCursors() && _G(atds)->get_ats_str(134, TXT_MARK_USE, ATS_DATA) == 8
+	if (!_G(cur)->usingInventoryCursor() && _G(atds)->get_ats_str(134, TXT_MARK_USE, ATS_DATA) == 8
 		&& !_G(gameState).R21Salto && !_G(flags).AutoAniPlay) {
 		_G(gameState).R21Salto = true;
 		_G(flags).AutoAniPlay = true;
@@ -241,7 +241,7 @@ void Room21::use_gitter_energie() {
 int16 Room21::use_fenster() {
 	int16 action_flag = false;
 
-	if (!_G(cur)->usingInventoryCursors() && !_G(flags).AutoAniPlay && _G(gameState).R21Laser1Weg) {
+	if (!_G(cur)->usingInventoryCursor() && !_G(flags).AutoAniPlay && _G(gameState).R21Laser1Weg) {
 		action_flag = true;
 		_G(flags).AutoAniPlay = true;
 		_G(gameState).R18Gitter = true;

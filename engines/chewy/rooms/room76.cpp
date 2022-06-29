@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -156,7 +157,7 @@ int Room76::proc6() {
 
 	if (isCurInventory(93)) {
 		hideCur();
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(gameState).flags29_8 = true;
 		retVal = 1;
 		autoMove(3, P_CHEWY);
@@ -187,7 +188,7 @@ int Room76::proc7() {
 		hideCur();
 		autoMove(6, P_CHEWY);
 		start_spz_wait(13, 1, false, P_CHEWY);
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		invent_2_slot(106);
 		invent_2_slot(105);
 		startAadWait(444);

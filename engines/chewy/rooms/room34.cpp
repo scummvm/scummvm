@@ -37,7 +37,7 @@ void Room34::entry() {
 bool Room34::use_kuehlschrank() {
 	bool result = false;
 
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		result = true;
 
 		if (!_G(flags).LoadGame) {

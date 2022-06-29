@@ -202,7 +202,7 @@ void Room18::monitor() {
 int16 Room18::sonden_moni() {
 	int16 action_flag = false;
 
-	if (!_G(cur)->usingInventoryCursors() && !_G(gameState).R18Gitter) {
+	if (!_G(cur)->usingInventoryCursor() && !_G(gameState).R18Gitter) {
 		action_flag = true;
 
 		hideCur();
@@ -231,7 +231,7 @@ int16 Room18::calc_surimy() {
 		action_flag = true;
 
 		hideCur();
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(gameState).R18SurimyWurf = true;
 		_G(det)->load_taf_seq(245, 50, nullptr);
 		_G(det)->load_taf_seq(116, 55, nullptr);
@@ -329,7 +329,7 @@ int16 Room18::calc_surimy() {
 int16 Room18::calc_schalter() {
 	int16 action_flag = false;
 
-	if (!_G(cur)->usingInventoryCursors() && !_G(gameState).R18Gitter) {
+	if (!_G(cur)->usingInventoryCursor() && !_G(gameState).R18Gitter) {
 		action_flag = true;
 
 		hideCur();
@@ -344,7 +344,7 @@ int16 Room18::calc_schalter() {
 short Room18::use_cart_moni() {
 	int16 action_flag = false;
 
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 
 		hideCur();
@@ -378,7 +378,7 @@ short Room18::use_cart_moni() {
 int16 Room18::go_cyberspace() {
 	int16 action_flag = false;
 
-	if (!_G(cur)->usingInventoryCursors() && !_G(gameState).R18Gitter) {
+	if (!_G(cur)->usingInventoryCursor() && !_G(gameState).R18Gitter) {
 		action_flag = true;
 
 		hideCur();

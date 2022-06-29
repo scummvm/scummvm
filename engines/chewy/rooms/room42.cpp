@@ -98,10 +98,10 @@ int16 Room42::useMailBag() {
 		return action_flag;
 
 	hideCur();
-	if (!_G(gameState).R42BeamterWach && !_G(cur)->usingInventoryCursors()) {
+	if (!_G(gameState).R42BeamterWach && !_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 		getPumpkin(136);
-	} else if (_G(gameState).R42HoToBeamter && !_G(cur)->usingInventoryCursors() && !_G(gameState).R42MarkeOk) {
+	} else if (_G(gameState).R42HoToBeamter && !_G(cur)->usingInventoryCursor() && !_G(gameState).R42MarkeOk) {
 		action_flag = true;
 		autoMove(3, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;
@@ -123,7 +123,7 @@ int16 Room42::useMailBag() {
 		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(10, 1, ANI_FRONT);
 		_G(gameState)._personHide[P_CHEWY] = false;
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		startAadWait(183);
 		_G(obj)->calc_rsi_flip_flop(SIB_BKASTEN_R28);
 		_G(atds)->set_ats_str(206, 1, ATS_DATA);

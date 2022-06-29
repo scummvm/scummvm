@@ -133,7 +133,7 @@ int Room87::proc2(int16 txt_nr) {
 		startAadWait(diaNr);
 	} else {
 		autoMove(movNr, P_CHEWY);
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		start_spz_wait(14, 1, false, P_CHEWY);
 		_G(atds)->set_ats_str(txt_nr, 1, ATS_DATA);
 		_G(det)->showStaticSpr(movNr);
@@ -145,7 +145,7 @@ int Room87::proc2(int16 txt_nr) {
 }
 
 int Room87::proc4() {
-	if (_G(cur)->usingInventoryCursors())
+	if (_G(cur)->usingInventoryCursor())
 		return 0;
 
 	hideCur();

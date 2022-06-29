@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/detail.h"
 #include "chewy/events.h"
@@ -152,7 +153,7 @@ int Room86::proc2() {
 	_G(det)->startDetail(0, 255, false);
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0);
-	delInventory(_G(gameState).AkInvent);
+	delInventory(_G(cur)->getInventoryCursor());
 	autoMove(3, P_CHEWY);
 	proc3(true);
 	_G(atds)->delControlBit(499, ATS_ACTIVE_BIT);

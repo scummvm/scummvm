@@ -158,7 +158,7 @@ int Room82::proc3() {
 	_G(det)->set_static_ani(0, -1);
 	start_spz_wait(13, 1, false, P_CHEWY);
 
-	delInventory(_G(gameState).AkInvent);
+	delInventory(_G(cur)->getInventoryCursor());
 	new_invent_2_cur(104);
 	showCur();
 
@@ -209,7 +209,7 @@ int Room82::proc6() {
 		Room66::proc8(2, 7, 7, 451);
 		_G(gameState).flags30_20 = true;
 		_G(gameState).flags37_20 = true;
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		remove_inventory(105);
 		remove_inventory(106);
 	} else {
@@ -243,7 +243,7 @@ void Room82::proc8() {
 }
 
 int Room82::proc9() {
-	if (_G(cur)->usingInventoryCursors() || !_G(gameState).flags30_40)
+	if (_G(cur)->usingInventoryCursor() || !_G(gameState).flags30_40)
 		return 0;
 
 	autoMove(7, P_CHEWY);

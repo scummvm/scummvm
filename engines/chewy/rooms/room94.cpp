@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -136,7 +137,7 @@ int Room94::giveGhostBottle() {
 	hideCur();
 	autoMove(2, P_CHEWY);
 	auto_scroll(216, 0);
-	delInventory(_G(gameState).AkInvent);
+	delInventory(_G(cur)->getInventoryCursor());
 	_G(out)->setPointer(nullptr);
 	_G(out)->cls();
 	_G(flags).NoPalAfterFlc = true;

@@ -57,7 +57,7 @@ void Room23::cockpit() {
 int16 Room23::start_gleiter() {
 	int16 action_flag = false;
 
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 		if (!_G(gameState).R23FluxoFlex)
 			startAadWait(23);
@@ -129,7 +129,7 @@ int16 Room23::start_gleiter() {
 }
 
 void Room23::use_cartridge() {
-	delInventory(_G(gameState).AkInvent);
+	delInventory(_G(cur)->getInventoryCursor());
 	_G(gameState).R23Cartridge = true;
 
 	if (_G(gameState).R18CartSave) {

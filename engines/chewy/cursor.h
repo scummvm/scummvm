@@ -22,6 +22,7 @@
 #ifndef CHEWY_CURSOR_H
 #define CHEWY_CURSOR_H
 
+#include "chewy/globals.h"
 #include "chewy/mouse.h"
 
 namespace Chewy {
@@ -54,8 +55,13 @@ public:
 	uint16 getCursorWidth(uint num) const { return _curSprites[num].width; }
 	uint16 getCursorHeight(uint num) const { return _curSprites[num].height; }
 
-	void setInventoryCursors(bool inventory) { _cursorOffset = !inventory ? 0 : _cursorCount; }
-	bool usingInventoryCursors() const { return _cursorOffset > 0; }
+	void setInventoryCursor(int num) {
+		_invCursor = num;
+		if (num >= 0)
+			setAnimation(num, num, (1 + _G(gameState).DelaySpeed) * 5);
+	}
+	int getInventoryCursor() const { return _invCursor; }
+	bool usingInventoryCursor() const { return _invCursor >= 0; }
 
 private:
 	CursorSprite *_curSprites = nullptr;
@@ -63,7 +69,7 @@ private:
 	CursorSprite _currentCursor;
 	uint32 _cursorCount = 0;
 	uint32 _invCursorCount = 0;
-	uint32 _cursorOffset = 0;
+	int _invCursor = 0;
 
 	int16 _curAniCountdown = 0;
 	int16 _aniCount = 0;

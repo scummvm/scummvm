@@ -87,7 +87,7 @@ void var_init() {
 	new_game();
 	_G(gameState).MainMenuY = MENU_Y;
 	_G(gameState).DispFlag = true;
-	_G(gameState).AkInvent = -1;
+	_G(cur)->setInventoryCursor(-1);
 	_G(gameState).ScrollxStep = 1;
 	_G(gameState).ScrollyStep = 1;
 

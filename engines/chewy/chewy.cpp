@@ -108,20 +108,20 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 		_G(flags).LoadGame = true;
 
-		if (_G(cur)->usingInventoryCursors() && _G(gameState).AkInvent != -1) {
+		if (_G(cur)->usingInventoryCursor()) {
 			_G(menu_item) = CUR_USE;
 		}
 
-		if (_G(gameState).AkInvent != -1)
-			_G(gameState).room_m_obj[_G(gameState).AkInvent].RoomNr = -1;
+		if (_G(cur)->usingInventoryCursor())
+			_G(gameState).room_m_obj[_G(cur)->getInventoryCursor()].RoomNr = -1;
 		_G(room)->loadRoom(&_G(room_blk), _G(gameState)._personRoomNr[P_CHEWY], &_G(gameState));
 		load_chewy_taf(_G(gameState).ChewyAni);
 
 		_G(fx_blend) = BLEND1;
 		_G(room)->calc_invent(&_G(room_blk), &_G(gameState));
 
-		if (_G(gameState).AkInvent != -1)
-			_G(gameState).room_m_obj[_G(gameState).AkInvent].RoomNr = 255;
+		if (_G(cur)->usingInventoryCursor())
+			_G(gameState).room_m_obj[_G(cur)->getInventoryCursor()].RoomNr = 255;
 		_G(obj)->sort();
 
 		for (int i = 0; i < MAX_PERSON; i++) {

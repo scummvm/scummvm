@@ -192,7 +192,7 @@ void Room12::bork_ok() {
 
 int16 Room12::use_terminal() {
 	int16 action_flag = false;
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 
 		if (!_G(gameState).R12ChewyBork) {
@@ -249,7 +249,7 @@ void Room12::use_linke_rohr() {
 
 int16 Room12::chewy_trans() {
 	int16 action_flag = false;
-	if (!_G(cur)->usingInventoryCursors() && _G(gameState).R12TransOn) {
+	if (!_G(cur)->usingInventoryCursor() && _G(gameState).R12TransOn) {
 		action_flag = true;
 		_G(flags).AutoAniPlay = true;
 		autoMove(9, P_CHEWY);
@@ -266,7 +266,7 @@ int16 Room12::chewy_trans() {
 int16 Room12::useTransformerTube() {
 	bool result = false;
 
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		result = true;
 
 		if (_G(gameState).R12ChainLeft) {

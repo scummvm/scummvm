@@ -85,7 +85,7 @@ void Room69::look_schild() {
 
 int16 Room69::use_bruecke() {
 	int16 action_flag = false;
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		hideCur();
 		action_flag = true;
 

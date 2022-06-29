@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -187,7 +188,7 @@ int16 Room68::use_indigo() {
 			hideCur();
 			autoMove(3, P_CHEWY);
 			auto_scroll(78, 0);
-			delInventory(_G(gameState).AkInvent);
+			delInventory(_G(cur)->getInventoryCursor());
 			talk_indigo(394);
 			_G(cur_hide_flag) = false;
 			hideCur();
@@ -246,7 +247,7 @@ int16 Room68::use_papagei() {
 		hideCur();
 		action_flag = true;
 		_G(gameState).R68Papagei = true;
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		autoMove(5, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(det)->showStaticSpr(12);
@@ -285,7 +286,7 @@ int16 Room68::use_keeper() {
 	int16 action_flag = false;
 	if (isCurInventory(BAR_GUT_INV)) {
 		hideCur();
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		action_flag = true;
 		autoMove(2, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
@@ -304,7 +305,7 @@ int16 Room68::use_diva() {
 	int16 action_flag;
 	hideCur();
 	if (isCurInventory(B_MARY_INV)) {
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		action_flag = 1;
 		autoMove(4, P_CHEWY);
 		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
@@ -313,7 +314,7 @@ int16 Room68::use_diva() {
 		_G(gameState).R68Gutschein = false;
 		_G(det)->showStaticSpr(3);
 	} else if (isCurInventory(B_MARY2_INV)) {
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		action_flag = 1;
 		autoMove(4, P_CHEWY);
 		_G(det)->hideStaticSpr(3);
@@ -348,7 +349,7 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		startAadWait(389);
 	else {
 		_G(SetUpScreenFunc) = nullptr;
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		goAutoXy(150, -13, P_NICHELLE, ANI_WAIT);
 		_G(gameState)._personHide[P_NICHELLE] = true;
 		goAutoXy(161, 59, P_HOWARD, ANI_GO);

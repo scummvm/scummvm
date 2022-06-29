@@ -66,9 +66,9 @@ void Room25::entry() {
 			_G(atds)->set_ats_str(113, 0, ATS_DATA);
 
 			remove_inventory(TRANSLATOR_INV);
-			_G(cur)->setInventoryCursors(false);
+			_G(cur)->setInventoryCursor(-1);
 			_G(menu_item) = CUR_WALK;
-			_G(gameState).AkInvent = -1;
+			_G(cur)->setInventoryCursor(-1);
 			cursorChoice(_G(menu_item));
 		}
 
@@ -100,7 +100,7 @@ int16 Room25::gleiter_loesch() {
 	hideCur();
 
 	if (!_G(gameState).R25GleiteLoesch && _G(gameState).R29Schlauch2) {
-		if (!_G(cur)->usingInventoryCursors()) {
+		if (!_G(cur)->usingInventoryCursor()) {
 			action_flag = true;
 			_G(gameState).R25GleiteLoesch = true;
 			autoMove(2, P_CHEWY);
@@ -120,7 +120,7 @@ int16 Room25::gleiter_loesch() {
 			autoMove(2, P_CHEWY);
 			start_spz_wait((_G(gameState).ChewyAni == CHEWY_ROCKER) ? 28 : 14, 1, false, P_CHEWY);
 
-			delInventory(_G(gameState).AkInvent);
+			delInventory(_G(cur)->getInventoryCursor());
 			_G(obj)->addInventory(MILCH_WAS_INV, &_G(room_blk));
 			inventory_2_cur(MILCH_WAS_INV);
 			startAadWait(253);
@@ -134,7 +134,7 @@ int16 Room25::gleiter_loesch() {
 int16 Room25::use_gleiter() {
 	int16 action_flag = false;
 
-	if (!_G(cur)->usingInventoryCursors() && _G(gameState).R25GleiteLoesch) {
+	if (!_G(cur)->usingInventoryCursor() && _G(gameState).R25GleiteLoesch) {
 		action_flag = true;
 		hideCur();
 		autoMove(3, P_CHEWY);

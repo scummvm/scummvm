@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -169,7 +170,7 @@ int16 Room50::use_gutschein() {
 			_G(room)->set_timer_status(1, TIMER_STOP);
 			_wasser = false;
 			stop_page();
-			delInventory(_G(gameState).AkInvent);
+			delInventory(_G(cur)->getInventoryCursor());
 			startAniBlock(2, ABLOCK36);
 			aad_page(274, 8);
 		} else {
@@ -199,7 +200,7 @@ int16 Room50::use_gum() {
 		goAutoXy(112, 57, P_HOWARD, ANI_WAIT);
 
 		setPersonSpr(P_LEFT, P_HOWARD);
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		hide_person();
 		startSetAILWait(2, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(4);

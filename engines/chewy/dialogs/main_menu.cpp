@@ -53,7 +53,7 @@ void MainMenu::execute() {
 	_G(cur)->move(152, 92);
 	g_events->_mousePos.x = 152;
 	g_events->_mousePos.y = 92;
-	_G(cur)->setInventoryCursors(false);
+	_G(cur)->setInventoryCursor(-1);
 	_G(menu_display) = 0;
 	_G(gameState).soundLoopMode = 1;
 
@@ -205,10 +205,9 @@ bool MainMenu::loadGame() {
 	g_events->_mousePos.x = 152;
 	g_events->_mousePos.y = 92;
 	_G(savegameFlag) = true;
-	int result = Dialogs::Files::execute(false);
+	int result = Files::execute(false);
 
-	cursorChoice((_G(cur)->usingInventoryCursors() && _G(gameState).AkInvent != -1 &&
-		_G(menu_item) == CUR_USE) ? 8 : 0);
+	cursorChoice((_G(cur)->usingInventoryCursor() && _G(menu_item) == CUR_USE) ? 8 : 0);
 	_G(cur_display) = true;
 	restorePersonAni();
 	_G(flags).SaveMenu = false;

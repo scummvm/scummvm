@@ -103,7 +103,7 @@ void Room37::setup_func() {
 short Room37::use_wippe() {
 	int16 action_flag = false;
 
-	if (_G(cur)->usingInventoryCursors()) {
+	if (_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 
 		if (isCurInventory(H_FUTTER_INV)) {
@@ -113,7 +113,7 @@ short Room37::use_wippe() {
 			auto_scroll(129, 0);
 			start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(159);
-			delInventory(_G(gameState).AkInvent);
+			delInventory(_G(cur)->getInventoryCursor());
 			flic_cut(FCUT_047);
 			_G(flags).NoScroll = false;
 			showCur();
@@ -144,7 +144,7 @@ int16 Room37::use_glas() {
 			auto_scroll(146, 0);
 			start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(147);
-			delInventory(_G(gameState).AkInvent);
+			delInventory(_G(cur)->getInventoryCursor());
 			flic_cut(FCUT_048);
 			flic_cut(FCUT_049);
 			invent_2_slot(GEBISS_INV);
@@ -303,7 +303,7 @@ void Room37::use_hahn() {
 			inventory_2_cur(EIER_INV);
 			showCur();
 		}
-	} else if (_G(cur)->usingInventoryCursors()) {
+	} else if (_G(cur)->usingInventoryCursor()) {
 		startAadWait(143);
 	}
 }

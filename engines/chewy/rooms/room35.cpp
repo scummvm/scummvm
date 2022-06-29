@@ -45,7 +45,7 @@ int16 Room35::schublade() {
 	int16 action_flag = false;
 	hideCur();
 
-	if (_G(gameState).ChewyAni != CHEWY_ROCKER && !_G(cur)->usingInventoryCursors()) {
+	if (_G(gameState).ChewyAni != CHEWY_ROCKER && !_G(cur)->usingInventoryCursor()) {
 		if (!_G(gameState).R35Schublade) {
 			action_flag = true;
 			autoMove(3, P_CHEWY);
@@ -91,7 +91,7 @@ int16 Room35::use_cat() {
 			autoMove(4, P_CHEWY);
 			_G(gameState).R35CatEat = true;
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-			delInventory(_G(gameState).AkInvent);
+			delInventory(_G(cur)->getInventoryCursor());
 			_G(det)->stop_detail(0);
 			_G(det)->del_static_ani(0);
 			startSetAILWait(1, 1, ANI_FRONT);

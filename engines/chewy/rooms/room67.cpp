@@ -106,7 +106,7 @@ void Room67::look_brief() {
 
 int16 Room67::use_kommode() {
 	int16 action_flag = false;
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		hideCur();
 		if (!_G(gameState).R67KommodeAuf) {
 			action_flag = true;
@@ -139,7 +139,7 @@ void Room67::kostuem_aad(int16 aad_nr) {
 
 int16 Room67::talk_papagei() {
 	int16 action_flag = false;
-	if (!_G(gameState).R67PapageiWeg && !_G(cur)->usingInventoryCursors()) {
+	if (!_G(gameState).R67PapageiWeg && !_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 		hideCur();
 		_G(room)->set_timer_status(1, TIMER_STOP);
