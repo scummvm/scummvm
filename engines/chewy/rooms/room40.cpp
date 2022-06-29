@@ -183,10 +183,15 @@ void Room40::move_train(int16 mode) {
 
 	while (ax < 560) {
 		_G(det)->setDetailPos(7, lx, 46);
+		// Train sprite
 		_G(det)->setStaticPos(11, ax, 62, false, false);
 
+		// Chewy and Howard sprite
+		// The original offsets were ax and 62, which for some reason
+		// aren't shown correctly here (perhaps bad correction coords).
+		// Thus, adjust the coordinates here.
 		if (mode && _G(gameState).ChewyAni == CHEWY_PUMPKIN)
-			_G(det)->setStaticPos(12, ax, 62, false, true);
+			_G(det)->setStaticPos(12, ax + 27, 161, false, true);
 
 		if (!delay) {
 			lx += SPEED;
