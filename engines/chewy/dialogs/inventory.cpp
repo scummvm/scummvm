@@ -33,9 +33,6 @@
 namespace Chewy {
 namespace Dialogs {
 
-static const int16 ANI_INVENT_END[3] = { 7, 16, 24 };
-
-
 int16 Inventory::inv_rand_x;
 int16 Inventory::inv_rand_y;
 int Inventory::keyVal;
@@ -45,36 +42,69 @@ void Inventory::plot_menu() {
 	_G(out)->setPointer(_G(workptr));
 	buildMenu(WIN_INVENTORY);
 
+	// Draw inventory slots grid
 	for (int16 j = 0; j < 3; j++) {
-		for (int16 i = 0; i < 5; i++)
-			_G(out)->boxFill(WIN_INF_X + 14 + i * 54, WIN_INF_Y + 6 + 30 + j * 32,
-				WIN_INF_X + 14 + i * 54 + 40, WIN_INF_Y + 6 + 30 + j * 32 + 24, 12);
+		for (int16 i = 0; i < 5; i++) {
+			_G(out)->boxFill(
+				WIN_INF_X + 14 + i * 54,
+				WIN_INF_Y + 6 + 30 + j * 32,
+				WIN_INF_X + 14 + i * 54 + 40,
+				WIN_INF_Y + 6 + 30 + j * 32 + 24,
+				12
+			);
+		}
 	}
 
 	int16 y;
-	int16 k = _G(in)->findHotspot(_G(inventoryHotspots));
-	if (k != -1) {
-		if (k < 5)
-			_G(out)->boxFill(_G(inventoryHotspots)[k].left, _G(inventoryHotspots)[k].top,
-	  						 _G(inventoryHotspots)[k].right + 1, _G(inventoryHotspots)[k].bottom + 5, 41);
-		else {
-			int16 x = (g_events->_mousePos.x - (WIN_INF_X)) / 54;
+	int16 hotspotId = _G(in)->findHotspot(_G(inventoryHotspots));
+
+	// Highlight hotspots
+	if (hotspotId != -1) {
+		if (hotspotId < 5) {
+			_G(out)->boxFill(
+				_G(inventoryHotspots)[hotspotId].left,
+				_G(inventoryHotspots)[hotspotId].top,
+				_G(inventoryHotspots)[hotspotId].right + 1,
+				_G(inventoryHotspots)[hotspotId].bottom + 5,
+				41
+			);
+		} else {
+			const int16 x = (g_events->_mousePos.x - (WIN_INF_X)) / 54;
 			y = (g_events->_mousePos.y - (WIN_INF_Y + 4 + 30)) / 30;
-			k = x + (y * 5);
-			k += _G(gameState).InventY * 5;
-			if (k < (_G(gameState).InventY + 3) * 5)
-				_G(out)->boxFill(WIN_INF_X + 14 + x * 54, WIN_INF_Y + 6 + 30 + y * 32,
-					WIN_INF_X + 14 + x * 54 + 40, WIN_INF_Y + 6 + 30 + y * 32 + 24, 41);
+			hotspotId = x + (y * 5);
+			hotspotId += _G(gameState).InventY * 5;
+			if (hotspotId < (_G(gameState).InventY + 3) * 5) {
+				_G(out)->boxFill(
+					WIN_INF_X + 14 + x * 54,
+					WIN_INF_Y + 6 + 30 + y * 32,
+					WIN_INF_X + 14 + x * 54 + 40,
+					WIN_INF_Y + 6 + 30 + y * 32 + 24,
+					41
+				);
+			}
 		}
 	}
 
 	if (inv_rand_x != -1) {
-		_G(out)->boxFill(WIN_INF_X + 14 + inv_rand_x * 54, WIN_INF_Y + 6 + 30 + inv_rand_y * 32,
-			WIN_INF_X + 14 + inv_rand_x * 54 + 40, WIN_INF_Y + 6 + 30 + inv_rand_y * 32 + 24, 41);
-		_G(out)->box(WIN_INF_X + 14 + inv_rand_x * 54 - 1, WIN_INF_Y + 6 + 30 + inv_rand_y * 32 - 1,
-			WIN_INF_X + 14 + inv_rand_x * 54 + 40 + 1, WIN_INF_Y + 6 + 30 + inv_rand_y * 32 + 24 + 1, 14);
+		_G(out)->boxFill(
+			WIN_INF_X + 14 + inv_rand_x * 54,
+			WIN_INF_Y + 6 + 30 + inv_rand_y * 32,
+			WIN_INF_X + 14 + inv_rand_x * 54 + 40,
+			WIN_INF_Y + 6 + 30 + inv_rand_y * 32 + 24,
+			41
+		);
+		_G(out)->box(
+			WIN_INF_X + 14 + inv_rand_x * 54 - 1,
+			WIN_INF_Y + 6 + 30 + inv_rand_y * 32 - 1,
+			WIN_INF_X + 14 + inv_rand_x * 54 + 40 + 1,
+			WIN_INF_Y + 6 + 30 + inv_rand_y * 32 + 24 + 1,
+			14
+		);
 	}
 
+	const int16 ANI_INVENT_END[3] = {7, 16, 24};
+
+	// Draw inventory action icons (look and use, to the left of the dialog)
 	for (int16 i = 0; i < 2; i++) {
 		_G(ani_invent_delay)[i][0] -= 1;
 		if (_G(ani_invent_delay)[i][0] <= 0) {
@@ -85,10 +115,9 @@ void Inventory::plot_menu() {
 				_G(ani_invent_delay)[i][0] = 30000;
 			}
 		}
-		if (i == 2)
-			y = 3;
-		else
-			y = 0;
+
+		y = (i == 2) ? 3 : 0;
+
 		_G(out)->spriteSet(
 			_G(cur)->getCursorSprite(_G(ani_count)[i]),
 			WIN_INF_X + 8 + i * 32,
@@ -99,24 +128,50 @@ void Inventory::plot_menu() {
 		);
 	}
 
+	// Draw inventory arrows (up and down, to the right of the dialog)
 	for (int16 i = 0; i < 2; i++) {
-		_G(out)->spriteSet(_G(menutaf)->image[PFEIL_UP + i],
-			WIN_INF_X + 200 + i * 40, WIN_INF_Y + 12, _G(scr_width));
+		_G(out)->spriteSet(
+			_G(menutaf)->image[ARROW_UP + i],
+			WIN_INF_X + 200 + i * 40,
+			WIN_INF_Y + 12,
+			_G(scr_width)
+		);
 	}
 
 	y = WIN_INF_Y + 6 + 30;
+
+	// Draw inventory items
 	for (int16 j = 0; j < 3; j++) {
 		for (int16 i = 0; i < 5; i++) {
-			if (_G(gameState).InventSlot[(_G(gameState).InventY + j) * 5 + i] != -1) {
-				int16 *xy = (int16 *)_G(inv_spr)[_G(gameState).InventSlot[(_G(gameState).InventY + j) * 5 + i]];
-				int16 x1 = 40 - xy[0];
-				x1 /= 2;
-				int16 y1 = 24 - xy[1];
-				y1 /= 2;
-				_G(out)->spriteSet(_G(inv_spr)[_G(gameState).InventSlot[(_G(gameState).InventY + j) * 5 + i]],
+			const int slot = (_G(gameState).InventY + j) * 5 + i;
+			const int16 invSlot = _G(gameState).InventSlot[slot];
+			if (invSlot != -1) {
+				const int16 *xy = (const int16 *)_G(inv_spr)[invSlot];
+				const int16 x1 = (40 - xy[0]) / 2;
+				const int16 y1 = (24 - xy[1]) / 2;
+
+				_G(out)->spriteSet(
+					_G(inv_spr)[invSlot],
 					x1 + WIN_INF_X + 14 + i * 54,
-					y1 + y + 32 * j, _G(scr_width));
+					y1 + y + 32 * j,
+					_G(scr_width)
+				);
 			}
+		}
+	}
+
+	// Show up arrow, if needed
+	if (_G(gameState).InventY) {
+		const char c[2] = { 24, 0 };
+		_G(out)->printxy(225, 32, 19, 300, _G(scr_width), c);
+	}
+
+	// Show down arrow, if needed
+	for (int i = 5 * (_G(gameState).InventY + 3); i < 140; ++i) {
+		if (_G(gameState).InventSlot[i] != -1) {
+			const char c[2] = {25, 0};
+			_G(out)->printxy(265, 29, 19, 300, _G(scr_width), c);
+			break;
 		}
 	}
 }
