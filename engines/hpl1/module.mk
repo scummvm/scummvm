@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	console.o \
 	detection.o \
 	string.o \
+	debug.o \
 	engine/ai/AI.o \
 	engine/ai/AINodeContainer.o \
 	engine/ai/AINodeGenerator.o \

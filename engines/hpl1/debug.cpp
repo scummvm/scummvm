@@ -19,32 +19,29 @@
  *
  */
 
-#ifndef HPL1_DEBUG_H
-#define HPL1_DEBUG_H
-
-#include "common/debug.h"
+#include "hpl1/debug.h"
 
 namespace Hpl1 {
 
-enum DebugChannels {
-	kDebugGraphics = 1 << 0,
-	kDebugResourceLoading = 1 << 1,
-	kDebugFilePath = 1 << 2,
-	kDebugOpenGL = 1 << 3
-};
-
-enum DebugLevels {
-	kDebugLevelError = 1,
-	kDebugLevelWarning = 2,
-	kDebugLevelLog = 3
-};
-
-void logError(int channel, const char *fmt, ...);
-
-void logWarning(int channel, const char *fmt, ...);
-
-void logInfo(int channel, const char *fmt, ...);
-
+void logError(int channel, const char *fmt, ...) {
+	va_list vl;
+	va_start(vl, fmt);
+	debugCN(Hpl1::kDebugLevelError, channel, fmt, vl);
+	va_end(vl);
 }
 
-#endif
+void logWarning(int channel, const char *fmt, ...) {
+	va_list vl;
+	va_start(vl, fmt);
+	debugCN(Hpl1::kDebugLevelWarning, channel, fmt, vl);
+	va_end(vl);
+}
+
+void logInfo(int channel, const char *fmt, ...) {
+	va_list vl;
+	va_start(vl, fmt);
+	debugCN(Hpl1::kDebugLevelLog, channel, fmt, vl);
+	va_end(vl);
+}
+
+}
