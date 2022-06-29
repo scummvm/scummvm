@@ -182,7 +182,7 @@ void Room40::move_train(int16 mode) {
 	int16 delay = 0;
 
 	while (ax < 560) {
-		_G(det)->setSetailPos(7, lx, 46);
+		_G(det)->setDetailPos(7, lx, 46);
 		_G(det)->setStaticPos(11, ax, 62, false, false);
 
 		if (mode && _G(gameState).ChewyAni == CHEWY_PUMPKIN)

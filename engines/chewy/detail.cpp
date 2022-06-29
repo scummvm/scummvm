@@ -322,7 +322,7 @@ void Detail::setStaticPos(int16 detNr, int16 x, int16 y, bool hideFl, bool corre
 	_rdi.Sinfo[detNr].Hide = hideFl;
 }
 
-void Detail::setSetailPos(int16 detNr, int16 x, int16 y) {
+void Detail::setDetailPos(int16 detNr, int16 x, int16 y) {
 	_rdi.Ainfo[detNr].x = x;
 	_rdi.Ainfo[detNr].y = y;
 }
