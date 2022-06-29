@@ -45,8 +45,8 @@ static const uint8 CINEMA_FLICS[35] = {
 void Cinema::execute() {
 	int16 txt_anz = 0;
 	int topIndex = 0;
-	int selected = -1;
-	bool flag = false;
+	int selected = 0;
+	bool flag = true;
 	int delay = 0;
 	Common::Array<int> cutscenes;
 	Common::String cutsceneName;
@@ -68,7 +68,11 @@ void Cinema::execute() {
 			// Render cut-scene list
 
 			for (int i = 0; i < CINEMA_LINES; ++i) {
-				cutsceneName = _G(atds)->getTextEntry(98, 546 + i + topIndex, ATS_DATA);
+				if ((topIndex + i) >= cutscenes.size())
+					continue;
+
+				cutsceneName = _G(atds)->getTextEntry(98,
+					546 + cutscenes[topIndex + i], ATS_DATA);
 				int yp = i * 10 + 68;
 
 				if (i == selected)
@@ -86,23 +90,17 @@ void Cinema::execute() {
 			switch (_G(in)->findHotspot(_G(cinematicsHotspots))) {
 			case 0:
 				g_events->_kbInfo._scanCode = Common::KEYCODE_UP;
-				if (!endLoop)
-					endLoop = true;
-
 				break;
 
 			case 1:
 				g_events->_kbInfo._scanCode = Common::KEYCODE_DOWN;
-				if (!endLoop)
-					endLoop = true;
-
 				break;
 
-			case 2:
-			{
-				int selIndex = (g_events->_mousePos.y - 68) / 10 + topIndex;
+			case 2: {
+				int selLine = (g_events->_mousePos.y - 68) / 10;
+				int selIndex = topIndex + selLine;
 				if (selIndex < (int)cutscenes.size()) {
-					selected = selIndex;
+					selected = selLine;
 					g_events->_kbInfo._scanCode = Common::KEYCODE_RETURN;
 				}
 				break;
@@ -115,7 +113,6 @@ void Cinema::execute() {
 			g_events->_kbInfo._scanCode = Common::KEYCODE_ESCAPE;
 			flag = true;
 		} else if (_G(minfo).button != 1) {
-			flag = false;
 			delay = 0;
 		} else if (flag) {
 			g_events->update();
@@ -160,7 +157,7 @@ void Cinema::execute() {
 			_G(out)->setPointer((byte *)g_screen->getPixels());
 			_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 
-			flic_cut(CINEMA_FLICS[topIndex + selected]);
+			flic_cut(CINEMA_FLICS[cutscenes[topIndex + selected]]);
 			_G(fontMgr)->setFont(_G(font6));
 			showCur();
 			delay = 0;
