@@ -7,7 +7,6 @@
 #include "freescape/language/instruction.h"
 #include "freescape/language/parser.h"
 #include "freescape/loaders/8bitBinaryLoader.h"
-#include "freescape/loaders/loader.h"
 #include "freescape/objects/geometricobject.h"
 #include "freescape/objects/entrance.h"
 #include "freescape/objects/object.h"

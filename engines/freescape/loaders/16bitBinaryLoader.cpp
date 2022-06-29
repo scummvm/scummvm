@@ -17,7 +17,6 @@
 #include "freescape/language/instruction.h"
 #include "freescape/language/parser.h"
 #include "freescape/loaders/16bitBinaryLoader.h"
-#include "freescape/loaders/loader.h"
 #include "freescape/objects/geometricobject.h"
 #include "freescape/objects/object.h"
 
@@ -28,10 +27,10 @@ typedef enum {
 		Border = 0x4524,
 } ChunkType;
 
-static Object *load16bitObject(StreamLoader &stream) {
+static Object *load16bitObject(Common::SeekableReadStream *file) {
 	// get object flags and type
-	uint8 objectFlags = stream.get8();
-	Object::Type objectType = (Object::Type)stream.get8();
+	uint8 objectFlags = file->readByte();
+	Object::Type objectType = (Object::Type)file->readByte();
 
 	/*
 		Notes to self:
@@ -44,25 +43,25 @@ static Object *load16bitObject(StreamLoader &stream) {
 	*/
 
 	// get unknown value
-	uint16 skippedShort = stream.get16();
+	uint16 skippedShort = file->readUint16BE();
 	debug("skippedShort: %d", skippedShort);
 
 	// grab location, size
 	Math::Vector3d position, size;
-	position.x() = stream.get16();
-	position.y() = stream.get16();
-	position.z() = stream.get16();
-	size.x() = stream.get16();
-	size.y() = stream.get16();
-	size.z() = stream.get16();
+	position.x() = file->readUint16BE();
+	position.y() = file->readUint16BE();
+	position.z() = file->readUint16BE();
+	size.x() = file->readUint16BE();
+	size.y() = file->readUint16BE();
+	size.z() = file->readUint16BE();
 
 	// object ID
-	uint16 objectID = stream.get16();
+	uint16 objectID = file->readUint16BE();
 
 	// size of object on disk; we've accounted for 20 bytes
 	// already so we can subtract that to get the remaining
 	// length beyond here
-	uint32 byteSizeOfObject = (uint32)(stream.get16() << 1) - 20;
+	uint32 byteSizeOfObject = (uint32)(file->readUint16BE() << 1) - 20;
 
 	debug("Object %d ; type %d ; flags %d ; size %d", (int)objectID, (int)objectType, (int)objectFlags, byteSizeOfObject);
 	debug("Location: %f, %f, %f", position.x(), position.y(), position.z());
@@ -74,9 +73,9 @@ static Object *load16bitObject(StreamLoader &stream) {
 		int numberOfColours = GeometricObject::numberOfColoursForObjectOfType(objectType);
 		Common::Array<uint8> *colours = new Common::Array<uint8>;
 		for (uint8 colour = 0; colour < numberOfColours/2; colour++) {
-			uint8 c1 = stream.get8();
+			uint8 c1 = file->readByte();
 			byteSizeOfObject--;
-			uint8 c2 = stream.get8();
+			uint8 c2 = file->readByte();
 			byteSizeOfObject--;
 			colours->push_back( (c1 & 0x0f) | ((c2 & 0x0f) << 4));
 			debug("color[%d] = %d", 2*colour, (c1 & 0x0f) | ((c2 & 0x0f) << 4));
@@ -94,7 +93,7 @@ static Object *load16bitObject(StreamLoader &stream) {
 			ordinates = new Common::Array<uint16>;
 
 			for (int ordinate = 0; ordinate < numberOfOrdinates; ordinate++) {
-				ordinates->push_back(stream.get16());
+				ordinates->push_back(file->readUint16BE());
 				byteSizeOfObject -= 2;
 			}
 		}
@@ -102,19 +101,19 @@ static Object *load16bitObject(StreamLoader &stream) {
 		// grab the object condition, if there is one
 		FCLInstructionVector instructions;
 		if (byteSizeOfObject > 0) {
-		// 	uint32 offset = stream.getFileOffset();
-		    Common::Array<uint8> *conditionData = stream.nextBytes(byteSizeOfObject);
-		// 	byteSizeOfObject = byteSizeOfObject - (offset - stream.getFileOffset());
-
-			Common::String *conditionSource = detokenise16bitCondition(*conditionData);
+			// get the condition
+			byte *conditionData = (byte*)malloc(byteSizeOfObject);
+			file->read(conditionData, byteSizeOfObject);
+			Common::Array<uint8> conditionArray(conditionData, byteSizeOfObject);
+			Common::String *conditionSource = detokenise16bitCondition(conditionArray);
 		 	debug("Condition: %s", conditionSource->c_str());
 			byteSizeOfObject = 0;
 		// 	//instructions = getInstructions(conditionSource);
 		}
 
 		debug("Skipping %d bytes", byteSizeOfObject);
-		stream.skipBytes(byteSizeOfObject);
-		debug("End of object at %x", stream.getFileOffset());
+		file->seek(byteSizeOfObject, SEEK_CUR);
+		debug("End of object at %lx", file->pos());
 
 		// create an object
 		return new GeometricObject(
@@ -130,8 +129,8 @@ static Object *load16bitObject(StreamLoader &stream) {
 
 	case Object::Entrance:
 		debug("Skipping %d bytes", byteSizeOfObject);
-		stream.skipBytes(byteSizeOfObject);
-		debug("End of object at %x", stream.getFileOffset());
+		file->seek(byteSizeOfObject, SEEK_CUR);
+		debug("End of object at %lx", file->pos());
 		return new Entrance(objectID, position, size); // size will be always 0,0,0?
 		break;
 	case Object::Sensor:
@@ -145,13 +144,13 @@ static Object *load16bitObject(StreamLoader &stream) {
 	//int j = 0;
 	//for (i = 0; i < byteSizeOfObject/2; i++)
 	//	cout << i << stream.get16() << endl;
-	stream.skipBytes(byteSizeOfObject);
-	debug("End of object at %x", stream.getFileOffset());
+	file->seek(byteSizeOfObject, SEEK_CUR);
+	debug("End of object at %lx", file->pos());
 
 	return nullptr;
 }
 
-void load16bitInstrument(StreamLoader &stream) {
+/*void load16bitInstrument(StreamLoader &stream) {
 	uint16 zero = stream.get16();
 	assert( zero == 0);
 	uint16 type = stream.get16();
@@ -172,33 +171,32 @@ void load16bitInstrument(StreamLoader &stream) {
 	stream.get16();
 	stream.get16();
 	debug("type %d ; x %d ; y %d ; length %d ; height %d ; lb %d ; rt %d ; variable: %d", type, x, y, length, height, lb, rt, v);
-}
+}*/
 
-Area *load16bitArea(StreamLoader &stream) {
+Area *load16bitArea(Common::SeekableReadStream *file) {
 	// the lowest bit of this value seems to indicate
 	// horizon on or off; this is as much as I currently know
-	uint16 skippedValue = stream.get16();
-	uint16 numberOfObjects = stream.get16();
-	uint16 areaNumber = stream.get16();
+	uint16 skippedValue = file->readUint16BE();
+	uint16 numberOfObjects = file->readUint16BE();
+	uint16 areaNumber = file->readUint16BE();
 
 	debug("Area %d", areaNumber);
 	debug("Skipped value %d", skippedValue);
 	debug("Objects: %d", numberOfObjects);
 
 	// I've yet to decipher this fully
-	stream.get16();
-	stream.get16();
-	stream.get16();
+	file->readUint16BE();
+	file->readUint16BE();
+	file->readUint16BE();
 
-
-	uint8 skyColor = stream.get8();
-	skyColor = (stream.get8() << 4) | skyColor;
+	uint8 skyColor = file->readByte();
+	skyColor = (file->readByte() << 4) | skyColor;
 
 	debug("Sky color %x", skyColor);
-	uint8 groundColor = stream.get8();
-	groundColor = (stream.get8() << 4) | groundColor;
+	uint8 groundColor = file->readByte();
+	groundColor = (file->readByte() << 4) | groundColor;
 	debug("Ground color %x", groundColor);
-	stream.skipBytes(14);
+	file->seek(14, SEEK_CUR);
 
 	// this is just a complete guess
 	/*Common::Array<uint8> palette;
@@ -223,7 +221,7 @@ Area *load16bitArea(StreamLoader &stream) {
 	// get the objects or whatever; entrances use a unique numbering
 	// system and have the high bit of their IDs set in the original file
 	for (uint16 object = 0; object < numberOfObjects; object++) {
-		Object *newObject = load16bitObject(stream);
+		Object *newObject = load16bitObject(file);
 
 		if (newObject) {
 			if (newObject->getType() == Object::Entrance) {
@@ -234,52 +232,41 @@ Area *load16bitArea(StreamLoader &stream) {
 		}
 	}
 
-	uint16 numberOfLocalConditions = stream.get16();
+	uint16 numberOfLocalConditions = file->readUint16BE();
 	debug("Number of conditions: %d", numberOfLocalConditions);
 	for (uint16 localCondition = 0; localCondition < numberOfLocalConditions; localCondition++) {
 		// 12 bytes for the name of the condition;
 		// we don't care
-		stream.skipBytes(12);
+		file->seek(12, SEEK_CUR);
 
 		// get the length and the data itself, converting from
 		// shorts to bytes
-		uint32 lengthOfCondition = (uint32)stream.get16() << 1;
+		uint32 lengthOfCondition = (uint32)file->readUint16BE() << 1;
+
 		debug("Length of condition: %d", lengthOfCondition);
 		if (lengthOfCondition == 0) {
 			break;
 		}
 
 		// get the condition
-		Common::Array<uint8> *conditionData = stream.nextBytes(lengthOfCondition);
+		byte *conditionData = (byte*)malloc(lengthOfCondition);
+		file->read(conditionData, lengthOfCondition);
+		Common::Array<uint8> conditionArray(conditionData, lengthOfCondition);
 
-		debug("Local condition %d at %x", localCondition + 1, stream.getFileOffset());
-		debug("%s", detokenise16bitCondition(*conditionData)->c_str());
+		debug("Local condition %d at %lx", localCondition + 1, file->pos());
+		debug("%s", detokenise16bitCondition(conditionArray)->c_str());
 	}
 
 	return (new Area(areaNumber, objectsByID, entrancesByID, 1, skyColor, groundColor));
 }
 
 void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
-	const uint32 fileSize = file->size();
-	byte *buf = (byte *)malloc(fileSize);
-	file->read(buf, fileSize);
-
-	Common::Array<uint8> binary;
-
-	uint32 i = 0;
-	while (i < fileSize) {
-		binary.push_back(buf[i]);
-		i++;
-	}
-
-	StreamLoader streamLoader(binary);
-
 	Common::Array<uint8>::size_type baseOffset = 0;
 
 	// check whether this looks like an Amiga game; if so it'll start with AM
 	// XOR'd with the repeating byte pattern 0x71, 0xc1 or with the pattern
 	// 0x88 0x2c if it's on the ST (though the signature will still be AM)
-	uint16 platformID = streamLoader.get16();
+	uint16 platformID = file->readUint16BE();
 	debug("%d", platformID);
 
 	if (
@@ -287,88 +274,89 @@ void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 		(platformID == 12428) || (platformID == 51553)) {
 		// TODO: record original platform type, so we can decode the palette
 		// and possibly the border properly
+		debug("Loading an Amiga game");
 		//cout << "AMIGA" << endl;
 
-		streamLoader.setReadMask((platformID >> 8) ^ 'A', (platformID & 0xff) ^ 'M');
+		// TODO
+		//streamLoader.setReadMask((platformID >> 8) ^ 'A', (platformID & 0xff) ^ 'M');
 	} else {
-		debug("DOS");
+		debug("Loading a DOS game");
 		// find DOS end of file and consume it
-		while (!streamLoader.eof()) {
-			uint8 b = streamLoader.get8();
+		while (!file->eos()) {
+			uint8 b = file->readByte();
 			if (b == 0x1a)
 				break;
 		}
-		streamLoader.get8();
+		file->readByte();
 
 		// advance to the next two-byte boundary if necessary
-		streamLoader.alignPointer();
+		if (file->pos() % 2 > 0)
+			file->readByte();
 
 		// skip bytes with meaning unknown
-		streamLoader.get16();
+		file->readUint16BE();
 
 		// this brings us to the beginning of the embedded
 		// .KIT file, so we'll grab the base offset for
 		// finding areas later
-		baseOffset = streamLoader.getFileOffset();
+		baseOffset = file->pos(); //streamLoader.getFileOffset();
 
 		// check that the next two bytes are "PC", then
 		// skip the number that comes after
-		if (streamLoader.get8() != 'C' || streamLoader.get8() != 'P')
+		if (file->readByte() != 'C' || file->readByte() != 'P')
 			error("invalid header");
 	}
 
 	// skip an unknown meaning
-	streamLoader.get16();
+	file->readUint16BE();
 
 	// start grabbing some of the basics...
 
-	uint16 numberOfAreas = streamLoader.get16();
-	uint16 sm = streamLoader.get16();
+	uint16 numberOfAreas = file->readUint16BE();
+	uint16 sm = file->readUint16BE();
 	debug("Something??: %d", sm); // meaning unknown
-
 	debug("Number of areas: %d", numberOfAreas);
 
-	uint16 windowCentreX = streamLoader.get16();
-	uint16 windowCentreY = streamLoader.get16();
-	uint16 windowWidth = streamLoader.get16();
-	uint16 windowHeight = streamLoader.get16();
+	uint16 windowCentreX = file->readUint16BE();
+	uint16 windowCentreY = file->readUint16BE();
+	uint16 windowWidth = file->readUint16BE();
+	uint16 windowHeight = file->readUint16BE();
 
 	debug("Window centre: (%d, %d)", windowCentreX, windowCentreY);
 	debug("Window size: (%d, %d)", windowWidth, windowHeight);
 
-	uint16 scaleX = streamLoader.get16();
-	uint16 scaleY = streamLoader.get16();
-	uint16 scaleZ = streamLoader.get16();
+	uint16 scaleX = file->readUint16BE();
+	uint16 scaleY = file->readUint16BE();
+	uint16 scaleZ = file->readUint16BE();
 
 	debug("Scale %d, %d, %d", scaleX, scaleY, scaleZ);
-	uint16 timerReload = streamLoader.get16();
+	uint16 timerReload = file->readUint16BE();
 
 	debug("Timer: every %d 50Hz frames", timerReload);
 
-	uint16 maximumActivationDistance = streamLoader.get16();
-	uint16 maximumFallDistance = streamLoader.get16();
-	uint16 maximumClimbDistance = streamLoader.get16();
+	uint16 maximumActivationDistance = file->readUint16BE();
+	uint16 maximumFallDistance = file->readUint16BE();
+	uint16 maximumClimbDistance = file->readUint16BE();
 
 	debug("Maximum activation distance: %d", maximumActivationDistance);
 	debug("Maximum fall distance: %d", maximumFallDistance);
 	debug("Maximum climb distance: %d", maximumClimbDistance);
 
-	uint16 startArea = streamLoader.get16();
-	uint16 startEntrance = streamLoader.get16();
+	uint16 startArea = file->readUint16BE();
+	uint16 startEntrance = file->readUint16BE();
 
 	debug("Start at entrance %d in area %d", startEntrance, startArea);
 
-	uint16 playerHeight = streamLoader.get16();
-	uint16 playerStep = streamLoader.get16();
-	uint16 playerAngle = streamLoader.get16();
+	uint16 playerHeight = file->readUint16BE();
+	uint16 playerStep = file->readUint16BE();
+	uint16 playerAngle = file->readUint16BE();
 
 	debug("Height %d, step %d, angle %d", playerHeight, playerStep, playerAngle);
 
-	uint16 startVehicle = streamLoader.get16();
-	uint16 executeGlobalCondition = streamLoader.get16();
+	uint16 startVehicle = file->readUint16BE();
+	uint16 executeGlobalCondition = file->readUint16BE();
 
 	debug("Start vehicle %d, execute global condition %d", startVehicle, executeGlobalCondition);
-
 	// I haven't figured out what the next 106
 	// bytes mean, so we'll skip them — global objects
 	// maybe? Likely not 106 bytes in every file.
@@ -382,7 +370,7 @@ void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 	for (i = 0; i < 106/2; i++)
 		cout << streamLoader.get16() << endl;*/
 
-	streamLoader.skipBytes(106);
+	file->seek(106, SEEK_CUR);
 
 	// at this point I should properly load the border/key/mouse
 	// bindings, but I'm not worried about it for now.
@@ -405,31 +393,33 @@ void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 	//for (i = 0; i < 350/2; i++)
 	//	cout << streamLoader.get16() << endl;
 
-	streamLoader.skipBytes(350);
+	file->seek(350, SEEK_CUR);
 
 	// there are then file pointers for every area — these are
 	// the number of shorts from the 'PC' tag, so multiply by
 	// two for bytes. Each is four bytes
 	uint32 *fileOffsetForArea = new uint32[numberOfAreas];
 	for (uint16 area = 0; area < numberOfAreas; area++)
-		fileOffsetForArea[area] = (uint32)streamLoader.get32() << 1;
+		fileOffsetForArea[area] = file->readUint32BE() << 1;
 
 	// now come the global conditions
-	uint16 numberOfGlobalConditions = streamLoader.get16();
+	uint16 numberOfGlobalConditions = file->readUint16BE();
 	for (uint16 globalCondition = 0; globalCondition < numberOfGlobalConditions; globalCondition++) {
 		// 12 bytes for the name of the condition;
 		// we don't care
-		streamLoader.skipBytes(12);
+		file->seek(12, SEEK_CUR);
 
 		// get the length and the data itself, converting from
 		// shorts to bytes
-		uint32 lengthOfCondition = (uint32)streamLoader.get16() << 1;
+		uint32 lengthOfCondition = (uint32)file->readUint16BE() << 1;
 
 		// get the condition
-		Common::Array<uint8> *conditionData = streamLoader.nextBytes(lengthOfCondition);
+		byte *conditionData = (byte*)malloc(lengthOfCondition);
+		file->read(conditionData, lengthOfCondition);
+		Common::Array<uint8> conditionArray(conditionData, lengthOfCondition);
 
-		debug("Global condition %d at %x", globalCondition + 1, streamLoader.getFileOffset());
-		debug("%s", detokenise16bitCondition(*conditionData)->c_str());
+		debug("Global condition %d at %lx", globalCondition + 1, file->pos());
+		debug("%s", detokenise16bitCondition(conditionArray)->c_str());
 	}
 
 	// grab the areas
@@ -437,13 +427,14 @@ void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 	for (uint16 area = 0; area < numberOfAreas; area++) {
 		debug("Area offset %d", fileOffsetForArea[area]);
 
-		streamLoader.setFileOffset(fileOffsetForArea[area] + baseOffset);
-		Area *newArea = load16bitArea(streamLoader);
+		file->seek(fileOffsetForArea[area] + baseOffset);
+		Area *newArea = load16bitArea(file);
 
 		if (newArea) {
 			(*areaMap)[newArea->getAreaID()] = newArea;
 		}
 	}
+	// TODO
 	//load16bitInstrument(streamLoader);
 
 	Common::Array<uint8>::size_type o;
@@ -452,22 +443,22 @@ void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 	uint16 chunkType = 0;
 	uint16 chunkSize = 0;
 	uint16 colorNumber = 0;
-	debug("End of areas at %x", streamLoader.getFileOffset());
-	while (!streamLoader.eof()) {
-		o = streamLoader.getFileOffset();
-		chunkType = streamLoader.get16();
+	debug("End of areas at %lx", file->pos());
+	while (!file->eos()) {
+		o = file->pos();
+		chunkType = file->readUint16BE();
 		if (chunkType == First) {
-			chunkSize = streamLoader.rget16();
+			chunkSize = file->readUint16LE();
 			if (chunkSize != 0xac) {
 				debug("skip %x", chunkType);
-				streamLoader.setFileOffset(o+2);
+				file->seek(o+2);
 			} else {
 				debug("First chunk found at %x with size %x", o, chunkSize);
-				streamLoader.skipBytes(chunkSize-2);
+				file->seek(chunkSize-2, SEEK_CUR);
 			}
 		}
 		else if (chunkType == Border) {
-			chunkSize = streamLoader.rget16();
+			chunkSize = file->readUint16LE();
 			debug("Border found at %x with size %x", o, chunkSize);
 
 			if (chunkSize == 320*200 / 4)
@@ -479,16 +470,19 @@ void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 			else
 				error("Unexpected size of image %d", chunkSize);
 
-			raw_border = streamLoader.nextBytes(chunkSize);
-			raw_palette = new Common::Array<uint8>();
-			debug("Palete follows at %x", streamLoader.getFileOffset());
-			for (i = 0; i < colorNumber*3; i++)
-				raw_palette->push_back(streamLoader.get8() << 2);
+			byte *borderData = (byte*)malloc(chunkSize);
+			file->read(borderData, chunkSize);
+			raw_border = new Common::Array<uint8>(borderData, chunkSize);
 
-			debug("Palete finishes at %x", streamLoader.getFileOffset());
-			chunkSize = streamLoader.rget16();
-			debug("Something else of size %x at %x??", chunkSize, streamLoader.getFileOffset());
-			streamLoader.skipBytes(chunkSize);
+			raw_palette = new Common::Array<uint8>();
+			debug("Palete follows at %lx", file->pos());
+			for (int i = 0; i < colorNumber*3; i++)
+				raw_palette->push_back(file->readByte() << 2);
+
+			debug("Palete finishes at %lx", file->pos());
+			chunkSize = file->readUint16LE();
+			debug("Something else of size %x at %lx??", chunkSize, file->pos());
+			file->seek(chunkSize, SEEK_CUR);
 		}
 		else {
 			debug("skip %x", chunkType);
