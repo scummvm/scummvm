@@ -1474,13 +1474,13 @@ void Actor::speechPlay(int sentenceId, bool voiceOver) {
 	}
 
 	_vm->_subtitles->loadInGameSubsText(_id, sentenceId);
-	_vm->_subtitles->show();
+	_vm->_subtitles->show(BladeRunner::Subtitles::kSubtitlesPrimary);
 
 	_vm->_audioSpeech->playSpeech(name, pan);
 }
 
 void Actor::speechStop() {
-	_vm->_subtitles->hide();
+	_vm->_subtitles->hide(BladeRunner::Subtitles::kSubtitlesPrimary);
 	_vm->_audioSpeech->stopSpeech();
 }
 

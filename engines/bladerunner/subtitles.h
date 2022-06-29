@@ -44,6 +44,7 @@ class Subtitles {
 	// with corresponding _vm->_languageCode values: "E", "G", "F", "I", "E", "S" (Russian version is built on top of English one)
 	static const uint kPreferedLine            = 2;      // Prefer drawing from this line (the bottom-most of available subtitle lines index is 0) by default
 	static const int  kMarginBottom            = 12;     // In pixels. This is the bottom margin beneath the subtitles space
+	static const int  kMarginTop               = 12;     // In pixels. This is the top margin before secondary subtitles
 	static const int  kTextMaxWidth            = 610;    // In pixels
 	static const int  kMaxTextResourceEntries  = 27;     // Support in-game subs (1) and all possible VQAs (26) with spoken dialogue or translatable text
 	static const int  kMaxLanguageSelectionNum = 1024;   // Max allowed number of languages to select from (should be available in the MIX file)
@@ -51,6 +52,8 @@ class Subtitles {
 	static const char *SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries];
 	static const char *SUBTITLES_FONT_FILENAME_EXTERNAL;
 	static const char *SUBTITLES_VERSION_TRENAME;
+
+	static const int  kNumOfSubtitleRoles       = 2;
 
 	BladeRunnerEngine *_vm;
 
@@ -66,6 +69,27 @@ class Subtitles {
 		Common::String    credits;
 		SubtitlesFontType fontType;
 		Common::String    fontName;
+
+		SubtitlesInfo() : versionStr(""), dateOfCompile(""), languageMode(""), credits(""), fontName("")  { fontType = kSubtitlesFontTypeInternal; };
+	};
+
+	struct SubtitlesData {
+		bool isVisible;
+		bool forceShowWhenNoSpeech;
+		// U32String for when we use an external font that supports UTF-32 encoding
+		Common::U32String currentText32;
+		Common::U32String prevText32;
+		Common::Array<Common::U32String> lines32;
+
+		// For now, we're using the original game's FON format for native font
+		// and the original MIX for file for text resources.
+		// This means that when not explicitly using an external font,
+		// the text resources are in extended ASCII format that index the native font FON.
+		// FUTURE On a next revision we should support UTF-8 text in the MIX files which
+		// would work with external font.
+		Common::String currentText;
+		Common::String prevText;
+		Common::Array<Common::String> lines;
 	};
 
 	SubtitlesInfo  _subtitlesInfo;
@@ -74,15 +98,7 @@ class Subtitles {
 	Graphics::Font *_font;
 	bool            _useUTF8;
 
-	bool              _isVisible;
-	bool              _forceShowWhenNoSpeech;
-	Common::U32String _currentText32;
-	Common::U32String _prevText32;
-	Common::String    _currentText;
-	Common::String    _prevText;
-
-	Common::Array<Common::U32String> _lines32;
-	Common::Array<Common::String> _lines;
+	Common::Array<SubtitlesData> _subtitlesData;
 
 	bool _gameSubsResourceEntriesFound[kMaxTextResourceEntries]; // false if a TRE file did not open successfully
 	bool _isSystemActive;                                        // true if the whole subtitles subsystem should be disabled (due to missing required resources)
@@ -98,22 +114,29 @@ public:
 	void loadInGameSubsText(int actorId, int speech_id);                     // get the text for actorId, quoteId (in-game subs)
 	void loadOuttakeSubsText(const Common::String &outtakesName, int frame); // get the text for this frame if any
 
-	void setGameSubsText(Common::String dbgQuote, bool force); // for debugging - explicit set subs text
-	bool show();
-	bool hide();
-	bool isVisible() const;
+	void setGameSubsText(int subsRole, Common::String dbgQuote, bool force); // for debugging - explicit set subs text
+
+	bool show(int subsRole);
+	bool hide(int subsRole);
+	void clear();
+
+	bool isVisible(int subsRole) const;
 	void tick(Graphics::Surface &s);
 	void tickOuttakes(Graphics::Surface &s);
+
+	enum SubtitlesRole {
+		kSubtitlesPrimary,
+		kSubtitlesSecondary
+	};
 
 private:
 	void draw(Graphics::Surface &s);
 
 	int getIdxForSubsTreName(const Common::String &treName) const;
 
-	void clear();
 	void reset();
 
-	bool isNotEmptyCurrentSubsText();
+	bool isNotEmptyCurrentSubsText(int subsRole);
 };
 
 } // End of namespace BladeRunner

@@ -772,7 +772,7 @@ bool SceneScriptPS13::ClickedOnExit(int exitId) {
 			Police_Maze_Decrement_Score(kPoliceMazePS13TargetCount - Global_Variable_Query(kVariablePoliceMazePS13TargetCounter));
 			Set_Score(kActorMcCoy, Police_Maze_Query_Score());
 //			Common::String scoreString = Common::String::format("Final: %03d", Global_Variable_Query(kVariablePoliceMazeScore)); // Display final score as subtitles
-//			Set_Subtitle_Text_On_Screen(scoreString); // Display final score as subtitles
+//			Set_Subtitle_Text_On_Screen(BladeRunner::Subtitles::kSubtitlesSecondary, scoreString); // Display final score as subtitles
 			Global_Variable_Reset(kVariablePoliceMazePS10TargetCounter);
 			Global_Variable_Reset(kVariablePoliceMazePS11TargetCounter);
 			Global_Variable_Reset(kVariablePoliceMazePS12TargetCounter);

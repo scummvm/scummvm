@@ -192,13 +192,9 @@ void VK::tick() {
 	draw();
 
 	if ( _vm->_debugger->_showStatsVk
-		&& !_vm->_actors[_actorId]->isSpeeching()
-		&& !_vm->_actors[kActorMcCoy]->isSpeeching()
-		&& !_vm->_actors[kActorAnsweringMachine]->isSpeeching()
-		&& !_isClosing
-	) {
-		_vm->_subtitles->setGameSubsText(Common::String::format("Adjustment: %03d Calibration: %02d Ratio: %02d\nAnxiety: %02d%% Replicant: %02d%% Human: %02d%%", _adjustment, _calibration, _calibrationRatio, _anxiety, _replicantProbability, _humanProbability), true);
-		_vm->_subtitles->show();
+	    && !_isClosing) {
+		_vm->_subtitles->setGameSubsText(BladeRunner::Subtitles::kSubtitlesSecondary, Common::String::format("Adjustment: %03d Calibration: %02d Ratio: %02d\nAnxiety: %02d%% Replicant: %02d%% Human: %02d%%", _adjustment, _calibration, _calibrationRatio, _anxiety, _replicantProbability, _humanProbability), true);
+		_vm->_subtitles->show(BladeRunner::Subtitles::kSubtitlesSecondary);
 	}
 
 	_vm->_subtitles->tick(_vm->_surfaceFront);
@@ -207,6 +203,10 @@ void VK::tick() {
 
 	// unsigned difference is intentional
 	if (_isClosing && (_vm->_time->current() - _timeCloseStart >= 3000u) && !_script->isInsideScript()) {
+		if ( _vm->_debugger->_showStatsVk) {
+			_vm->_subtitles->setGameSubsText(BladeRunner::Subtitles::kSubtitlesSecondary, "", false);
+			_vm->_subtitles->hide(BladeRunner::Subtitles::kSubtitlesSecondary);
+		}
 		close();
 		_vm->_mouse->enable();
 		reset();

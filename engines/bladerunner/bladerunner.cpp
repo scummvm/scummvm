@@ -439,6 +439,8 @@ Common::Error BladeRunnerEngine::run() {
 		_gameJustLaunched = true;
 		// reset ammo amounts
 		_settings->reset();
+		// clear subtitles
+		_subtitles->clear();
 		// need to clear kFlagKIAPrivacyAddon to remove Bob's Privacy Addon for KIA
 		// so it won't appear here after end credits
 		_gameFlags->reset(kFlagKIAPrivacyAddon);
@@ -2545,6 +2547,9 @@ void BladeRunnerEngine::playerDied() {
 	_ambientSounds->removeAllLoopingSounds(4u);
 	_music->stop(4u);
 	_audioSpeech->stopSpeech();
+	// clear subtitles
+	_subtitles->clear();
+
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
 	uint32 timeWaitStart = _time->current();
@@ -2654,6 +2659,9 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream, int version
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	_audioSpeech->stopSpeech();
 	_actorDialogueQueue->flush(true, false);
+	// clear subtitles
+	_subtitles->clear();
+
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	_screenEffects->toggleEntry(-1, false); // clear the skip list
@@ -2748,6 +2756,9 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream, int version
 void BladeRunnerEngine::newGame(int difficulty) {
 	_settings->reset();
 	_combat->reset();
+
+	// clear subtitles
+	_subtitles->clear();
 
 	for (uint i = 0; i < _gameInfo->getActorCount(); ++i) {
 		_actors[i]->setup(i);
