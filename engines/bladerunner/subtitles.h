@@ -76,10 +76,13 @@ class Subtitles {
 
 	bool              _isVisible;
 	bool              _forceShowWhenNoSpeech;
-	Common::U32String _currentText;
-	Common::U32String _prevText;
+	Common::U32String _currentText32;
+	Common::U32String _prevText32;
+	Common::String    _currentText;
+	Common::String    _prevText;
 
-	Common::Array<Common::U32String> lines;
+	Common::Array<Common::U32String> _lines32;
+	Common::Array<Common::String> _lines;
 
 	bool _gameSubsResourceEntriesFound[kMaxTextResourceEntries]; // false if a TRE file did not open successfully
 	bool _isSystemActive;                                        // true if the whole subtitles subsystem should be disabled (due to missing required resources)
@@ -110,6 +113,7 @@ private:
 	void clear();
 	void reset();
 
+	bool isNotEmptyCurrentSubsText();
 };
 
 } // End of namespace BladeRunner

@@ -1415,6 +1415,19 @@ bool Debugger::cmdSubtitle(int argc, const char **argv) {
 
 		} else if (subtitleText == "reset") {
 			_vm->_subtitles->setGameSubsText("", false);
+		} else if (subtitleText == "printExtAscii") {
+			// Test displaying all glyphs in subtitles font
+			Common::String allGlyphQuote;
+			int strpos = 0;
+			for (int j = 1; j < 8; ++j) {
+				for (int i = j * 32; i < (j + 1) * 32 && i < 255 ; ++i) {
+					allGlyphQuote.insertChar((char)i, strpos++);
+					allGlyphQuote.insertChar(' ', strpos++);
+				}
+				if (j < 7) allGlyphQuote.insertChar('\n', strpos++);
+			}
+			_vm->_subtitles->setGameSubsText(allGlyphQuote, true);
+			_vm->_subtitles->show();
 		} else {
 			debugPrintf("Showing text: %s\n", subtitleText.c_str());
 			_vm->_subtitles->setGameSubsText(subtitleText, true);
@@ -1425,7 +1438,7 @@ bool Debugger::cmdSubtitle(int argc, const char **argv) {
 	if (invalidSyntax) {
 		debugPrintf("Show subtitles info, or display and clear (reset) a specified text as subtitle or clear the current subtitle.\n");
 		debugPrintf("Use double quotes to encapsulate the text.\n");
-		debugPrintf("Usage: %s (\"<text_to_display>\" | info | reset)\n", argv[0]);
+		debugPrintf("Usage: %s (info | \"<text_to_display>\" | printExtAscii | reset)\n", argv[0]);
 	}
 	return true;
 
