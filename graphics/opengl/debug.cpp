@@ -55,6 +55,13 @@ Common::String getGLErrStr(GLenum error) {
 }
 } // End of anonymous namespace
 
+void clearGLError() {
+	GLenum error;
+
+	while ((error = glGetError()) != GL_NO_ERROR)
+		;
+}
+
 void checkGLError(const char *expr, const char *file, int line) {
 	GLenum error;
 
