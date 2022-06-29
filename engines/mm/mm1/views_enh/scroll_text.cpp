@@ -65,24 +65,52 @@ void ScrollText::addText(const Common::String &str,
 	Common::Point pt(xp, lineNum * 8);
 	Graphics::Font &font = _fontReduced ?
 		g_globals->_fontReduced : g_globals->_fontNormal;
+	size_t strWidth = font.getStringWidth(str);
+	char *startP = const_cast<char *>(str.c_str());
+	char *endP;
 
-	if (align != ALIGN_LEFT) {
-		size_t strWidth = font.getStringWidth(str);
+	switch (align) {
+	case ALIGN_LEFT:
+		// We have extra logic for standard left aligned strings to
+		// insert extra newlines as necessary to word-wrap any text
+		// that would go over the edge of the dialog
+		while (*startP && strWidth > _innerBounds.width()) {
+			// Find the last space before a full line
+			endP = startP + strlen(startP) - 1;
+			while (strWidth > _innerBounds.width()) {
+				// Move back to a prior space
+				for (--endP; endP > startP && *endP != ' '; --endP) {
+				}
+				assert(endP > startP);
 
-		if (align == ALIGN_RIGHT) {
-			// Right alignment
-			if (xp == 0)
-				xp = _innerBounds.width();
-			pt.x = xp - strWidth;
-		} else {
-			// Middle alignment
-			if (xp == 0)
-				xp = _innerBounds.width() / 2;
-			pt.x = xp - strWidth / 2;
+				strWidth = font.getStringWidth(
+					Common::String(startP, endP));
+			}
+
+			// Add a newline
+			*endP = '\n';
+			startP = endP + 1;
+			strWidth = font.getStringWidth(startP);
 		}
+		break;
+
+	case ALIGN_MIDDLE:
+		// Middle alignment
+		if (xp == 0)
+			xp = _innerBounds.width() / 2;
+		pt.x = xp - strWidth / 2;
+		break;
+
+	case ALIGN_RIGHT:
+		// Right alignment
+		if (xp == 0)
+			xp = _innerBounds.width();
+		pt.x = xp - strWidth;
+		break;
 	}
 
-	_lines.push_back(Line(str, pt, color));
+	if (!str.empty())
+		_lines.push_back(Line(str, pt, color));
 }
 
 void ScrollText::draw() {
