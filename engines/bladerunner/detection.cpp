@@ -102,6 +102,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_SHOW_SUBS_IN_CRAWL,
+		{
+			_s("Show subtitles during text crawl"),
+			_s("During the intro cutscene, show subtitles during the text crawl"),
+			"use_crawl_subs",
+			true,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
