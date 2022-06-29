@@ -137,6 +137,7 @@ private:
 	void reset();
 
 	bool isNotEmptyCurrentSubsText(int subsRole);
+	void mergeSubtitleQuotes(int actorId, int quoteFirst, int quoteSecond);
 };
 
 } // End of namespace BladeRunner

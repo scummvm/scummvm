@@ -246,14 +246,25 @@ void Subtitles::loadInGameSubsText(int actorId, int speech_id)  {
 		return;
 	}
 
-	// Search in the first TextResource of the _vqaSubsTextResourceEntries table,
-	// which is the TextResource for in-game dialogue (i.e. not VQA dialogue)
-	int32 id = 10000 * actorId + speech_id;
-	const char *text = _vqaSubsTextResourceEntries[0]->getText((uint32)id);
-	if (_useUTF8) {
-		_subtitlesData[kSubtitlesPrimary].currentText32 = Common::convertUtf8ToUtf32(text);
-	} else {
-		_subtitlesData[kSubtitlesPrimary].currentText = text;
+	bool specialSubtitleCase = false;
+	if (_vm->_language == Common::DE_DEU) {
+		// Special cases for some localizations
+		if (actorId == kActorVoiceOver && speech_id == 1850) {
+			mergeSubtitleQuotes(actorId, 1850, 1860);
+			specialSubtitleCase = true;
+		}
+	}
+
+	if (!specialSubtitleCase) {
+		// Search in the first TextResource of the _vqaSubsTextResourceEntries table,
+		// which is the TextResource for in-game dialogue (i.e. not VQA dialogue)
+		int32 id = 10000 * actorId + speech_id;
+		const char *text = _vqaSubsTextResourceEntries[0]->getText((uint32)id);
+		if (_useUTF8) {
+			_subtitlesData[kSubtitlesPrimary].currentText32 = Common::convertUtf8ToUtf32(text);
+		} else {
+			_subtitlesData[kSubtitlesPrimary].currentText = text;
+		}
 	}
 }
 
@@ -401,6 +412,20 @@ bool Subtitles::isNotEmptyCurrentSubsText(int subsRole) {
 		return true;
 	} else {
 		return false;
+	}
+}
+
+void Subtitles::mergeSubtitleQuotes(int actorId, int quoteFirst, int quoteSecond) {
+	int32 idFirst = 10000 * actorId + quoteFirst;
+	int32 idSecond = 10000 * actorId + quoteSecond;
+	const char *textFirst = _vqaSubsTextResourceEntries[0]->getText((uint32)idFirst);
+	const char *textSecond = _vqaSubsTextResourceEntries[0]->getText((uint32)idSecond);
+	if (_useUTF8) {
+		_subtitlesData[kSubtitlesPrimary].currentText32 = Common::convertUtf8ToUtf32(textFirst);
+		_subtitlesData[kSubtitlesPrimary].currentText32 += " " + Common::convertUtf8ToUtf32(textSecond);
+	} else {
+		_subtitlesData[kSubtitlesPrimary].currentText = textFirst;
+		_subtitlesData[kSubtitlesPrimary].currentText += " " + Common::String(textSecond);
 	}
 }
 
