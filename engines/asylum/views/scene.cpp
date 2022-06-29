@@ -448,7 +448,7 @@ bool Scene::action(AsylumAction a) {
 		break;
 
 	case kAsylumActionOpenInventory:
-		if (getActor()->inventory[0] && getActor()->getStatus() == kActorStatusEnabled) {
+		if (getActor()->inventory[0] && getActor()->getStatus() == kActorStatusEnabled && !getActor()->inventory.getSelectedItem()) {
 			getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 2));
 			getActor()->changeStatus(kActorStatusShowingInventory);
 		} else if (getActor()->getStatus() == kActorStatusShowingInventory || getActor()->getStatus() == kActorStatus10) {
