@@ -339,7 +339,7 @@ cResourceImage *cImageManager::AddToFrame(Bitmap2D *apBmp, int alFrameHandle) {
 cFrameBitmap *cImageManager::CreateBitmapFrame(cVector2l avSize) {
 	iTexture *pTex = mpLowLevelGraphics->CreateTexture(false, eTextureType_Normal, eTextureTarget_2D);
 	cFrameTexture *pTFrame = hplNew(cFrameTexture, (pTex, mlFrameHandle));
-	Bitmap2D *pBmp = mpLowLevelGraphics->CreateBitmap2D(avSize, 32);
+	Bitmap2D *pBmp = mpLowLevelGraphics->CreateBitmap2D(avSize);
 	cFrameBitmap *pBFrame = hplNew(cFrameBitmap, (pBmp, pTFrame, mlFrameHandle));
 
 	mlstBitmapFrames.push_back(pBFrame);

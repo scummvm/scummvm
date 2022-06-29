@@ -6,15 +6,12 @@ using CGprogram = int;
 using CGprofile = int;
 using CGparameter = int;
 using CGtype = int;
-using GLenum = int;
 using Uint16 = int;
 using CGcontext = int;
-using SDL_Surface = int;
 using SDL_Event = int;
 using cOAL_Sample = int;
 using cOAL_Stream = int;
 using NewtonContact = int;
-using SDL_PixelFormat = int;
 using TTF_Font = int;
 using cPBuffer = int;
 
