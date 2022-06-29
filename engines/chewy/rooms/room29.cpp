@@ -81,7 +81,7 @@ int16 Room29::use_pumpe() {
 			_G(det)->showStaticSpr(7);
 			_G(atds)->delControlBit(218, ATS_ACTIVE_BIT);
 			delInventory(SCHLAUCH_INV);
-		} else if (!_G(cur)->usingInventoryCursors()) {
+		} else if (!_G(cur)->usingInventoryCursor()) {
 			action_flag = true;
 			startAadWait(62);
 		}
@@ -94,7 +94,7 @@ int16 Room29::use_pumpe() {
 
 int16 Room29::get_schlauch() {
 	int16 action_flag = false;
-	if (_G(gameState).R29Schlauch1 && !_G(cur)->usingInventoryCursors()) {
+	if (_G(gameState).R29Schlauch1 && !_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 		hideCur();
 
@@ -161,7 +161,7 @@ void Room29::schlitz_sitz() {
 int16 Room29::zaun_sprung() {
 	int16 action_flag = false;
 
-	if (_G(gameState).R29AutoSitz && !_G(cur)->usingInventoryCursors()) {
+	if (_G(gameState).R29AutoSitz && !_G(cur)->usingInventoryCursor()) {
 		hideCur();
 		
 		action_flag = true;

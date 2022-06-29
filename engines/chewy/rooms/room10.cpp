@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -59,7 +60,7 @@ void Room10::get_surimy() {
 	_G(atds)->set_ats_str(77, TXT_MARK_LOOK, 1, ATS_DATA);
 	invent_2_slot(18);
 
-	delInventory(_G(gameState).AkInvent);
+	delInventory(_G(cur)->getInventoryCursor());
 	showCur();
 }
 

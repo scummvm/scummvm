@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -80,7 +81,7 @@ int16 Room53::use_man() {
 		action_ret = true;
 		hideCur();
 		_G(gameState).R53Kostuem = true;
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		autoMove(2, P_CHEWY);
 		startAadWait(271);
 		_G(room)->set_timer_status(1, TIMER_STOP);

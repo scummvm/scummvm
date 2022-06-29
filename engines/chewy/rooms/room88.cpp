@@ -57,7 +57,7 @@ void Room88::xit() {
 }
 
 int Room88::proc1() {
-	if (_G(cur)->usingInventoryCursors())
+	if (_G(cur)->usingInventoryCursor())
 		return 0;
 
 	hideCur();
@@ -71,7 +71,7 @@ int Room88::proc1() {
 }
 
 int Room88::proc2() {
-	if (_G(cur)->usingInventoryCursors())
+	if (_G(cur)->usingInventoryCursor())
 		return 0;
 
 	hideCur();
@@ -90,7 +90,7 @@ int Room88::proc2() {
 }
 
 int Room88::proc3() {
-	if (_G(cur)->usingInventoryCursors())
+	if (_G(cur)->usingInventoryCursor())
 		return 0;
 
 	hideCur();

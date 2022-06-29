@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -116,7 +117,7 @@ int Room81::proc2() {
 		start_spz_wait(13, 1, false, P_CHEWY);
 		aniId = 5;
 		diaNr = 462;
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(gameState).flags30_2 = true;
 	} else if (isCurInventory(104)) {
 		aniId = 4;

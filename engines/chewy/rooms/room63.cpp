@@ -200,7 +200,7 @@ int16 Room63::use_fx_man() {
 		action_ret = true;
 		hideCur();
 		autoMove(1, P_CHEWY);
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		remove_inventory(34);
 		startAadWait(359);
 		_G(det)->del_static_ani(5);
@@ -218,7 +218,7 @@ int16 Room63::use_fx_man() {
 
 int16 Room63::use_schalter() {
 	int16 action_ret = false;
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_ret = true;
 		if (_G(gameState).R63FxMannWeg) {
 			if (_G(gameState).R62LauraVerwandlung) {
@@ -267,7 +267,7 @@ int16 Room63::use_girl() {
 		action_ret = true;
 		hideCur();
 		autoMove(2, P_CHEWY);
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(det)->stop_detail(12);
 		startSetAILWait(13, 1, ANI_FRONT);
 		_G(det)->set_static_ani(14, -1);
@@ -300,7 +300,7 @@ int16 Room63::use_aschenbecher() {
 		if (_G(gameState).R63Uhr) {
 			if (_G(gameState).R63FxMannWeg) {
 				autoMove(5, P_CHEWY);
-				delInventory(_G(gameState).AkInvent);
+				delInventory(_G(cur)->getInventoryCursor());
 				_G(flags).NoScroll = true;
 				auto_scroll(70, 0);
 				autoMove(1, P_CHEWY);

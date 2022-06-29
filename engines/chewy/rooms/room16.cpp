@@ -47,7 +47,7 @@ void Room16::entry() {
 int16 Room16::use_gleiter() {
 	int16 action_flag = false;
 
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 		autoMove(6, P_CHEWY);
 		_G(gameState).R23GleiterExit = 16;

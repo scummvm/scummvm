@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -356,7 +357,7 @@ void Room3::probeTransfer() {
 							else
 								start_aad(44);
 
-							delInventory(_G(gameState).AkInvent);
+							delInventory(_G(cur)->getInventoryCursor());
 							_G(gameState).R2FussSchleim = true;
 							_G(mov_phasen)[SONDE_OBJ1].Phase[0][0] = 142;
 							_G(mov_phasen)[SONDE_OBJ1].Phase[0][1] = 149;

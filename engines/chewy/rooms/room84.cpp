@@ -186,7 +186,7 @@ void Room84::talk2() {
 }
 
 int Room84::proc4() {
-	if (_G(cur)->usingInventoryCursors())
+	if (_G(cur)->usingInventoryCursor())
 		return 0;
 
 	hideCur();

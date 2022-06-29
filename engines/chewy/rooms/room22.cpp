@@ -79,7 +79,7 @@ bool Room22::timer(int16 t_nr, int16 ani_nr) {
 
 int16 Room22::chewy_amboss() {
 	int16 action_flag = false;
-	if (!_G(gameState).R22ChewyPlatt && !_G(cur)->usingInventoryCursors() && !_G(flags).AutoAniPlay) {
+	if (!_G(gameState).R22ChewyPlatt && !_G(cur)->usingInventoryCursor() && !_G(flags).AutoAniPlay) {
 		action_flag = true;
 		_G(flags).AutoAniPlay = true;
 		hideCur();
@@ -191,7 +191,7 @@ int16 Room22::malen() {
 		_G(gameState).R22Paint = true;
 		_G(obj)->calc_rsi_flip_flop(SIB_PAINT_R22);
 		_G(obj)->hide_sib(SIB_PAINT_R22);
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(obj)->calc_all_static_detail();
 		_G(flags).AutoAniPlay = false;
 

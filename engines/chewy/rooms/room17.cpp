@@ -142,7 +142,7 @@ int16 Room17::use_seil() {
 		action_flag = true;
 		hideCur();
 
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(flags).AutoAniPlay = true;
 		autoMove(5, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;
@@ -203,7 +203,7 @@ void Room17::calc_seil() {
 	if (_G(gameState).R17Seil) {
 		if (_G(gameState).R17Location == 2) {
 			startAadWait(619);
-		} else if (!_G(flags).AutoAniPlay && !_G(cur)->usingInventoryCursors()) {
+		} else if (!_G(flags).AutoAniPlay && !_G(cur)->usingInventoryCursor()) {
 			close_door();
 			_G(flags).AutoAniPlay = true;
 			_G(mov_phasen)[CHEWY_OBJ].AtsText = 0;
@@ -276,16 +276,16 @@ int16 Room17::energie_hebel() {
 
 	if (!_G(gameState).R17HebelOk) {
 		if (isCurInventory(BECHER_VOLL_INV)) {
-			delInventory(_G(gameState).AkInvent);
+			delInventory(_G(cur)->getInventoryCursor());
 			_G(gameState).R17HebelOk = true;
 			startAadWait(38);
 			action_flag = true;
-		} else if (!_G(cur)->usingInventoryCursors()) {
+		} else if (!_G(cur)->usingInventoryCursor()) {
 			startAadWait(37);
 			action_flag = true;
 		}
 
-	} else if (!_G(cur)->usingInventoryCursors()) {
+	} else if (!_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 
 		_G(obj)->calc_rsi_flip_flop(SIB_HEBEL_R17);
@@ -317,7 +317,7 @@ int16 Room17::get_oel() {
 	int16 action_flag = false;
 	hideCur();
 
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 		autoMove(4, P_CHEWY);
 		start_spz_wait(CH_EKEL, 3, false, P_CHEWY);
@@ -329,7 +329,7 @@ int16 Room17::get_oel() {
 		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(13, 1, ANI_FRONT);
 		_G(gameState)._personHide[P_CHEWY] = false;
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(obj)->addInventory(BECHER_VOLL_INV, &_G(room_blk));
 		inventory_2_cur(BECHER_VOLL_INV);
 	}

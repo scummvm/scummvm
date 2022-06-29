@@ -55,7 +55,7 @@ bool GameState::synchronize(Common::Serializer &s) {
 
 	byte dummy = 0;
 	int16 dummy16 = 0;
-	byte inventoryCursors = _G(cur)->usingInventoryCursors();
+	int inventoryCursor = _G(cur)->getInventoryCursor();
 
 	// Sync the structure's bitflags
 	s.syncBytes((byte *)_flags, SPIELER_FLAGS_SIZE);
@@ -73,8 +73,8 @@ bool GameState::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(InventY);
 	syncArray(s, InventSlot, MAX_MOV_OBJ);
 
-	s.syncAsSint16LE(AkInvent);
-	s.syncAsByte(inventoryCursors);
+	s.syncAsSint16LE(inventoryCursor);
+	s.syncAsByte(dummy);			// obsolete inventoryCursor flag
 	s.syncAsSint16LE(dummy16);	// curWidth
 	s.syncAsSint16LE(dummy16);	// curHeight
 
@@ -161,7 +161,7 @@ bool GameState::synchronize(Common::Serializer &s) {
 	s.syncAsByte(FramesPerSecond);
 	s.syncAsByte(dummy);	// subtitles switch
 
-	_G(cur)->setInventoryCursors(inventoryCursors);
+	_G(cur)->setInventoryCursor(inventoryCursor);
 
 	return true;
 }

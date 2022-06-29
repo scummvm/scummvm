@@ -62,27 +62,29 @@ Cursor::~Cursor() {
 }
 
 void Cursor::updateCursor() {
-	if (CursorMan.isVisible()) {
-		--_curAniCountdown;
-		if (_curAniCountdown <= 0) {
-			_curAniCountdown = _animDelay;
-			++_aniCount;
-			if (_aniCount > _animEnd)
-				_aniCount = _animStart;
-		}
+	if (!CursorMan.isVisible())
+		return;
 
-		if (_customCursor.data != nullptr) {
-			CursorMan.replaceCursor(_customCursor.data, _customCursor.width, _customCursor.height, 0, 0, 0);
-			_currentCursor.data = _customCursor.data;
-			_currentCursor.width = _customCursor.width;
-			_currentCursor.height = _customCursor.height;
-		} else {
-			const CursorSprite s = _curSprites[_aniCount + _cursorOffset];
-			CursorMan.replaceCursor(s.data, s.width, s.height, 0, 0, 0);
-			_currentCursor.data = s.data;
-			_currentCursor.width = s.width;
-			_currentCursor.height = s.height;
-		}
+	--_curAniCountdown;
+	if (_curAniCountdown <= 0) {
+		_curAniCountdown = _animDelay;
+		++_aniCount;
+		if (_aniCount > _animEnd)
+			_aniCount = _animStart;
+	}
+
+	if (_customCursor.data != nullptr) {
+		CursorMan.replaceCursor(_customCursor.data, _customCursor.width, _customCursor.height, 0, 0, 0);
+		_currentCursor.data = _customCursor.data;
+		_currentCursor.width = _customCursor.width;
+		_currentCursor.height = _customCursor.height;
+	} else {
+		const uint32 cursorOffset = _invCursor >= 0 ? _cursorCount : 0;
+		const CursorSprite s = _curSprites[_aniCount + cursorOffset];
+		CursorMan.replaceCursor(s.data, s.width, s.height, 0, 0, 0);
+		_currentCursor.data = s.data;
+		_currentCursor.width = s.width;
+		_currentCursor.height = s.height;
 	}
 }
 
@@ -119,15 +121,11 @@ void Cursor::setCustomCursor(byte *data, uint16 width, uint16 height) {
 
 void Cursor::clearCustomCursor() {
 	if (_customCursor.data) {
-		const CursorSprite s = _curSprites[_aniCount + _cursorOffset];
-		CursorMan.replaceCursor(s.data, s.width, s.height, 0, 0, 0);
-		_currentCursor.data = s.data;
-		_currentCursor.width = s.width;
-		_currentCursor.height = s.height;
-
 		_customCursor.data = nullptr;
 		_customCursor.width = 0;
 		_customCursor.height = 0;
+
+		updateCursor();
 	}
 }
 

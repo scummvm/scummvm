@@ -318,7 +318,7 @@ void Room28::get_pump() {
 int16 Room28::use_breifkasten() {
 	int16 action_flag = false;
 
-	if (_G(gameState).R28Briefkasten && !_G(cur)->usingInventoryCursors()) {
+	if (_G(gameState).R28Briefkasten && !_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 		hideCur();
 		_G(gameState).R28Briefkasten = false;

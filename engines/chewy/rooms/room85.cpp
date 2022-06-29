@@ -151,7 +151,7 @@ void Room85::setup_func() {
 }
 
 int Room85::proc2() {
-	if (_G(cur)->usingInventoryCursors())
+	if (_G(cur)->usingInventoryCursor())
 		return 0;
 
 	autoMove(2, P_CHEWY);

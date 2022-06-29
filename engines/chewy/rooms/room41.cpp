@@ -177,7 +177,7 @@ void Room41::stop_hoggy() {
 int16 Room41::use_kasse() {
 	int16 action_flag = false;
 
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 		stop_hoggy();
 		autoMove(1, P_CHEWY);
@@ -191,7 +191,7 @@ int16 Room41::use_kasse() {
 int16 Room41::use_lola() {
 	int16 action_flag = false;
 
-	if (!_G(cur)->usingInventoryCursors() && !_G(gameState).R41LolaOk && _G(gameState).R41RepairInfo) {
+	if (!_G(cur)->usingInventoryCursor() && !_G(gameState).R41LolaOk && _G(gameState).R41RepairInfo) {
 		hideCur();
 		action_flag = true;
 		_G(gameState).R41LolaOk = true;
@@ -224,7 +224,7 @@ int16 Room41::use_brief() {
 	} else if (isCurInventory(BRIEF2_INV)) {
 		action_flag = true;
 		autoMove(6, P_CHEWY);
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		stop_hoggy();
 		startAadWait(186);
 		start_hoggy();

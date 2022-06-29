@@ -81,7 +81,7 @@ void Room33::look_schublade() {
 int16 Room33::use_schublade() {
 	int16 action_flag = false;
 
-	if (_G(gameState).R33SchubFirst && !_G(cur)->usingInventoryCursors() && !_G(gameState).R33Messer) {
+	if (_G(gameState).R33SchubFirst && !_G(cur)->usingInventoryCursor() && !_G(gameState).R33Messer) {
 		hideCur();
 		action_flag = true;
 		_G(gameState).R33Messer = true;
@@ -106,10 +106,10 @@ void Room33::use_maschine() {
 		autoMove(4, P_CHEWY);
 
 		bool hocker = false;
-		if (_G(cur)->usingInventoryCursors()) {
+		if (_G(cur)->usingInventoryCursor()) {
 			bool action = true;
 
-			switch (_G(gameState).AkInvent) {
+			switch (_G(cur)->getInventoryCursor()) {
 			case MILCH_INV:
 				_G(gameState).R33Munter[3] = true;
 				invent_2_slot(MILCH_LEER_INV);
@@ -140,7 +140,7 @@ void Room33::use_maschine() {
 				setPersonPos(128, 65, P_CHEWY, P_LEFT);
 				start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 				hocker = true;
-				delInventory(_G(gameState).AkInvent);
+				delInventory(_G(cur)->getInventoryCursor());
 				ani_nr = CH_TALK12;
 
 				if (calc_muntermacher()) {
@@ -199,7 +199,7 @@ bool Room33::calc_muntermacher() {
 int16 Room33::get_munter() {
 	int16 action_flag = false;
 
-	if (!_G(cur)->usingInventoryCursors() && !_G(gameState).R33MunterGet && _G(gameState).R33MunterOk) {
+	if (!_G(cur)->usingInventoryCursor() && !_G(gameState).R33MunterGet && _G(gameState).R33MunterOk) {
 		action_flag = true;
 		hideCur();
 		_G(gameState).R33MunterGet = true;

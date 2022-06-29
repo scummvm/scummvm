@@ -123,7 +123,7 @@ bool Room0::timer(int16 timerNr, int16 aniNr) {
 bool Room0::getPillow() {
 	bool retval = false;
 	
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		hideCur();
 		_G(flags).AutoAniPlay = true;
 		autoMove(1, P_CHEWY);
@@ -144,7 +144,7 @@ bool Room0::getPillow() {
 
 bool Room0::pullSlime() {
 	bool retval = false;
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		hideCur();
 		
 		_G(flags).AutoAniPlay = true;
@@ -313,7 +313,7 @@ void Room0::calcEyeClick(int16 aniNr) {
 			}
 		} else if (_G(minfo).button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 			if (isCurInventory(SLIME_INV)) {
-				delInventory(_G(gameState).AkInvent);
+				delInventory(_G(cur)->getInventoryCursor());
 				_G(gameState).R0SlimeUsed = true;
 			} else if (isCurInventory(PILLOW_INV)) {
 				startAtsWait(172, TXT_MARK_WALK, 14, ATS_DATA);
@@ -551,7 +551,7 @@ void Room0::calcPillowClick(int16 aniNr) {
 			}
 		} else if (_G(minfo).button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 			if (isCurInventory(PILLOW_INV) && _G(gameState).R0SlimeUsed) {
-				delInventory(_G(gameState).AkInvent);
+				delInventory(_G(cur)->getInventoryCursor());
 				_G(gameState).R0PillowThrow = true;
 			} else if (isCurInventory(SLIME_INV)) {
 				startAtsWait(173, TXT_MARK_WALK, 14, ATS_DATA);

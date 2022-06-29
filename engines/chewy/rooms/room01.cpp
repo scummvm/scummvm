@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -40,9 +41,9 @@ void Room1::gedAction(int index) {
 
 	if (index == 0 && !_G(gameState).R2ElectrocutedBork) {
 		bool flag = false;
-		if (_G(gameState).AkInvent == KABEL_INV) {
+		if (_G(cur)->getInventoryCursor() == KABEL_INV) {
 			flag = true;
-			delInventory(_G(gameState).AkInvent);
+			delInventory(_G(cur)->getInventoryCursor());
 		} else if (_G(obj)->checkInventory(KABEL_INV)) {
 			flag = true;
 			_G(obj)->del_obj_use(KABEL_INV);

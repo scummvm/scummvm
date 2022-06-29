@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -77,7 +78,7 @@ int16 Room52::use_hot_dog() {
 		autoMove(3, P_CHEWY);
 		start_spz_wait(CH_ROCK_GET1, 1, false, P_CHEWY);
 		_G(det)->showStaticSpr(0);
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		autoMove(4, P_CHEWY);
 		_G(gameState).R52HotDogOk = true;
 		plot_armee(20);

@@ -47,7 +47,7 @@ int16 Room47::use_button(int16 txt_nr) {
 	int16 k_nr = 0;
 	int16 action_ret = false;
 
-	if (!_G(cur)->usingInventoryCursors()) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_ret = true;
 
 		switch (txt_nr) {

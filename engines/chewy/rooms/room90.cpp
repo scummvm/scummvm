@@ -235,7 +235,7 @@ void Room90::proc2() {
 }
 
 int Room90::getHubcaps() {
-	if (_G(cur)->usingInventoryCursors())
+	if (_G(cur)->usingInventoryCursor())
 		return 0;
 
 	hideCur();
@@ -285,7 +285,7 @@ int Room90::shootControlUnit() {
 		return 0;
 
 	hideCur();
-	delInventory(_G(gameState).AkInvent);
+	delInventory(_G(cur)->getInventoryCursor());
 	_G(HowardMov) = 2;
 	_G(flags).ZoomMov = false;
 	autoMove(5, P_CHEWY);

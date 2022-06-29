@@ -24,6 +24,8 @@
 #include "chewy/memory.h"
 #include "chewy/resource.h"
 #include "chewy/room.h"
+
+#include "cursor.h"
 #include "chewy/sound.h"
 
 namespace Chewy {
@@ -285,9 +287,10 @@ void Room::calc_invent(RaumBlk *Rb, GameState *player) {
 			free(tmp_inv_spr[i]);
 	}
 
-	if (player->AkInvent != -1) {
-		if (Rb->InvSprAdr[player->AkInvent] == nullptr) {
-			spriteRes->getSpriteData(player->AkInvent, &Rb->InvSprAdr[player->AkInvent], true);
+	if (_G(cur)->usingInventoryCursor()) {
+		const int cursor = _G(cur)->getInventoryCursor();
+		if (Rb->InvSprAdr[cursor] == nullptr) {
+			spriteRes->getSpriteData(cursor, &Rb->InvSprAdr[cursor], true);
 		}
 	}
 

@@ -92,7 +92,7 @@ int Room95::proc2() {
 	hideCur();
 	autoMove(3, P_CHEWY);
 	if (isCurInventory(113)) {
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 
 		start_spz_wait(14, 1, false, P_CHEWY);
 		_G(gameState).flags35_20 = true;
@@ -102,7 +102,7 @@ int Room95::proc2() {
 		return 1;
 	}
 
-	if (_G(cur)->usingInventoryCursors()) {
+	if (_G(cur)->usingInventoryCursor()) {
 		showCur();
 		return 0;
 	}
