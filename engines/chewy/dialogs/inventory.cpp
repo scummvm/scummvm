@@ -169,7 +169,7 @@ void Inventory::plot_menu() {
 	// Show down arrow, if needed
 	for (int i = 5 * (_G(gameState).InventY + 3); i < 140; ++i) {
 		if (_G(gameState).InventSlot[i] != -1) {
-			const char c[2] = {25, 0};
+			const char c[2] = { 25, 0 };
 			_G(out)->printxy(265, 29, 19, 300, _G(scr_width), c);
 			break;
 		}
