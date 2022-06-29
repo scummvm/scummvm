@@ -54,7 +54,6 @@ public:
 private:
 	size_t _rowCount = 0;
 	Lines _lines;
-	Common::Rect _innerBounds;
 public:
 	ScrollText(const Common::String &name);
 	ScrollText(const Common::String &name, UIElement *owner);

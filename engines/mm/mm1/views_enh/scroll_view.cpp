@@ -32,11 +32,13 @@ namespace ViewsEnh {
 #define SYMBOL_HEIGHT FRAME_BORDER_SIZE
 
 ScrollView::ScrollView(const Common::String &name) :
-	TextView(name, g_engine) {
+		TextView(name, g_engine) {
+	_bounds.setBorderSize(FRAME_BORDER_SIZE);
 }
 
 ScrollView::ScrollView(const Common::String &name,
 		UIElement *owner) : TextView(name, owner) {
+	_bounds.setBorderSize(FRAME_BORDER_SIZE);
 }
 
 void ScrollView::draw() {

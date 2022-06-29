@@ -145,9 +145,29 @@ void Events::popView() {
 
 /*------------------------------------------------------------------------*/
 
+Bounds::Bounds(Common::Rect &innerBounds) :
+		Common::Rect(0, 0, 320, 200),
+		_innerBounds(innerBounds) {
+}
+
+Bounds &Bounds::operator=(const Common::Rect &r) {
+	Common::Rect::operator=(r);
+	_innerBounds = r;
+	_innerBounds.grow(-_borderSize);
+	return *this;
+}
+
+void Bounds::setBorderSize(size_t borderSize) {
+	_borderSize = borderSize;
+	_innerBounds = *this;
+	_innerBounds.grow(-_borderSize);
+}
+
+/*------------------------------------------------------------------------*/
+
 UIElement::UIElement(const Common::String &name, UIElement *uiParent) :
 		_name(name), _parent(uiParent),
-		_bounds(0, 0, SCREEN_W, SCREEN_H) {
+		_bounds(_innerBounds) {
 	if (_parent)
 		_parent->_children.push_back(this);
 }

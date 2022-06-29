@@ -54,10 +54,13 @@ void TextView::writeChar(char c) {
 	} else {
 		Graphics::ManagedSurface s = getSurface();
 		if (c != ' ')
-			font.drawChar(&s, c, _textPos.x, _textPos.y, 0xff);
+			font.drawChar(&s, c,
+				_bounds.borderSize() + _textPos.x,
+				_bounds.borderSize() + _textPos.y,
+				0xff);
 
 		_textPos.x += font.getCharWidth(c);
-		if (_textPos.x >= s.w) {
+		if (_textPos.x >= _innerBounds.width()) {
 			_textPos.x = 0;
 			_textPos.y += font.getFontHeight();
 		}
