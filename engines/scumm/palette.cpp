@@ -1504,12 +1504,11 @@ uint32 ScummEngine::getPaletteColorFromRGB(byte *palette, byte r, byte g, byte b
 	if ((r == 0xFF && b == 0xFF && g == 0xFF) || (r == 0x00 && g == 0x00 && b == 0x00)) {
 		fetchBlackAndWhite(black, white, palette, 256);
 
-		if (r) {
+		if (!r) {
 			color = black;
 		} else {
 			color = white;
 		}
-		color = 0xFF;
 	} else {
 		color = findClosestPaletteColor(palette, 256, r, g, b);
 	}
