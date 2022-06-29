@@ -23,7 +23,7 @@
 #ifndef BACKENDS_GRAPHICS_OPENGL_PIPELINES_LIBRETRO_H
 #define BACKENDS_GRAPHICS_OPENGL_PIPELINES_LIBRETRO_H
 
-#include "backends/graphics/opengl/opengl-sys.h"
+#include "graphics/opengl/system_headers.h"
 
 #if !USE_FORCED_GLES
 #include "backends/graphics/opengl/pipelines/shader.h"
@@ -51,7 +51,7 @@ public:
 	LibRetroPipeline(const Common::String &presetFileName);
 	virtual ~LibRetroPipeline();
 
-	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates);
+	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords);
 
 	virtual void setProjectionMatrix(const GLfloat *projectionMatrix);
 
@@ -97,10 +97,10 @@ private:
 
 	struct Pass {
 		Pass()
-		    : shaderPass(nullptr), shader(nullptr), target(nullptr), vertexCoordLocation(-1),
+		    : shaderPass(nullptr), shader(nullptr), target(nullptr),
 		      texCoords(), texSamplers(), inputTexture(nullptr), vertexCoord() {}
 		Pass(const LibRetro::ShaderPass *sP, Shader *s, TextureTarget *t)
-		    : shaderPass(sP), shader(s), target(t), vertexCoordLocation(-1), texCoords(),
+		    : shaderPass(sP), shader(s), target(t), texCoords(),
 		      texSamplers(), inputTexture(nullptr), vertexCoord() {}
 
 		const LibRetro::ShaderPass *shaderPass;
@@ -108,18 +108,13 @@ private:
 		TextureTarget *target;
 
 		/**
-		 * Attribute location for vertex data.
-		 */
-		GLint vertexCoordLocation;
-
-		/**
 		 * Description of texture coordinates bound to attribute.
 		 */
 		struct TexCoordAttribute {
 			/**
-			 * Attribute location to bind data to.
+			 * Attribute name to bind data to.
 			 */
-			GLint location;
+			Common::String name;
 
 			enum Type {
 				/**
@@ -148,8 +143,8 @@ private:
 			 */
 			uint index;
 
-			TexCoordAttribute() : location(-1), type(), index() {}
-			TexCoordAttribute(GLint l, Type t, uint i) : location(l), type(t), index(i) {}
+			TexCoordAttribute() : name(), type(), index() {}
+			TexCoordAttribute(const Common::String &n, Type t, uint i) : name(n), type(t), index(i) {}
 		};
 
 		typedef Common::Array<TexCoordAttribute> TexCoordAttributeArray;
@@ -215,7 +210,7 @@ private:
 		 */
 		void buildTexSamplers(const uint id, const TextureArray &textures);
 
-		void addTexSampler(const Common::String &prefix, uint *unit, const TextureSampler::Type type, const uint index, const bool prefixIsId = false);
+		void addTexSampler(const Common::String &name, uint *unit, const TextureSampler::Type type, const uint index, const bool prefixIsId = false);
 
 		/**
 		 * Input texture of the pass.
@@ -233,7 +228,6 @@ private:
 
 	void renderPass(const Pass &pass);
 	void renderPassSetupCoordinates(const Pass &pass);
-	void renderPassCleanupCoordinates(const Pass &pass);
 	void renderPassSetupTextures(const Pass &pass);
 };
 
