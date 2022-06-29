@@ -20,7 +20,7 @@
  */
 
 #include "backends/graphics/opengl/pipelines/fixed.h"
-#include "backends/graphics/opengl/debug.h"
+#include "graphics/opengl/debug.h"
 
 namespace OpenGL {
 

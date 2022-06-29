@@ -20,11 +20,11 @@
  */
 
 #include "backends/graphics/opengl/texture.h"
-#include "backends/graphics/opengl/debug.h"
 #include "backends/graphics/opengl/shader.h"
 #include "backends/graphics/opengl/pipelines/pipeline.h"
 #include "backends/graphics/opengl/pipelines/clut8.h"
 #include "backends/graphics/opengl/framebuffer.h"
+#include "graphics/opengl/debug.h"
 
 #include "common/algorithm.h"
 #include "common/endian.h"
