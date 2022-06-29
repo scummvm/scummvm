@@ -125,7 +125,7 @@ from struct import *
 from subtlsVersTextResource import *
 
 COMPANY_EMAIL = "classic.adventures.in.greek@gmail.com"
-APP_VERSION = "1.70"
+APP_VERSION = "1.80"
 APP_NAME = "packBladeRunnerMIXFromPCTLKXLS"
 APP_WRAPPER_NAME = "mixResourceCreator.py"
 APP_NAME_SPACED = "Blade Runner MIX Resource Creator"
@@ -672,34 +672,9 @@ def translateQuoteToAsciiProper(cellObj, pSheetName):
 					pertinentListOfOutOfOrderGlyphs = tmpOOOList
 					break
 
-	#newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u0386", u"\u00A3")
 	for repTuple in pertinentListOfOutOfOrderGlyphs:
 		newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(repTuple[0], repTuple[1])
-	# WORKAROUND, we re-replace the Spanish i delegate again here!
-	#newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u'\xa2', u'\u0386')   # this is needed for spanish i because in utf-8 it's actually the u'\u0386' that's assigned to A tonomeno which is the delegate.
-	#newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u0386", u"\u00A3")
-	##newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u0386", u"\u00A3")	 # greek alpha tonomeno -- TODO which character is this in the excel (utf value) ???
-	#newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u00ed", u"\u00A2")	 # spanish i
-	#newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u00f1", u"\u00A5")	 # spanish n
-	##newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u00A4", u"\u00A5")  # spanish n
-	#newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u00e2", u"\u00A6")	 # a from pate -- todo this is not confirmed in-game font (but it is in our external font as of	 yet)
-	#newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u00e9", u"\u00A7")	 # e from pate -- todo this is not confirmed in-game font (but it is in our external font as of	 yet)
-	## other replacements.
-	newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u2019", u"\u0027")	 # right single quote
-	newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u2018", u"\u0027")	 # left single quote
-	newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u2026", u"\u002e\u002e\u002e")	 # three dots together (changes length)
-	newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u201D", u"\u0022")	 # right double quote
-	newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u201C", u"\u0022")	 # left double quote
-	# TODO? replace new line ???	with another char (maybe |)?
 
-	#newQuoteReplaceSpecialsUnicode = unicode(newQuoteReplaceSpecials, 'utf-8')
-	#newQuoteReplaceSpecialsStr = unicode.encode("%s" % newQuoteReplaceSpecials, localTargetEncoding)
-	#if gTraceModeEnabled:
-	#	print '[Debug] ', type(newQuoteReplaceSpecials)                 # type is unicode
-	#	print '[Debug] ', type(newQuoteReplaceSpecials.encode('utf-8')) # type is str
-	#	print '[Debug] ', localTargetEncoding
-	#	print '[Debug] ', newQuoteReplaceSpecials
-	#newQuoteReplaceSpecialsDec = newQuoteReplaceSpecials.decode(localTargetEncoding)
 	newQuoteReplaceSpecialsRetStr = ''
 	try:
 		newQuoteReplaceSpecialsRetStr = newQuoteReplaceSpecials.encode(localTargetEncoding)
