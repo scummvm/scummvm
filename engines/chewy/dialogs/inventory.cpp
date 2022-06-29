@@ -641,12 +641,14 @@ bool Inventory::calc_use_invent(int16 invNr) {
 	return retVal;
 }
 
+// Shows the Hermit's diary
 void Inventory::showDiary() {
 	int16 scrollx = _G(gameState).scrollx,
 		scrolly = _G(gameState).scrolly;
 	_G(gameState).scrollx = 0;
 	_G(gameState).scrolly = 0;
 
+	_G(cur)->hideCursor();
 	_G(room)->load_tgp(DIARY_START, &_G(room_blk), GBOOK_TGP, false, GBOOK);
 	_G(out)->setPointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(gameState).scrollx, _G(gameState).scrolly);
@@ -659,10 +661,6 @@ void Inventory::showDiary() {
 		g_events->update();
 		SHOULD_QUIT_RETURN;
 	}
-	while (_G(in)->getSwitchCode() != Common::KEYCODE_INVALID) {
-		g_events->update();
-		SHOULD_QUIT_RETURN;
-	}
 
 	_G(room)->load_tgp(_G(gameState)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, true, EPISODE1);
 	_G(gameState).scrollx = scrollx;
@@ -672,6 +670,7 @@ void Inventory::showDiary() {
 	_G(out)->setPointer(nullptr);
 	_G(room)->set_ak_pal(&_G(room_blk));
 	_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
+	_G(cur)->showCursor();
 }
 
 } // namespace Dialogs
