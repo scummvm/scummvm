@@ -93,6 +93,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			//instructions = getInstructions(conditionSource);
 			//debug("%s", conditionSource->c_str());
 		}
+		debug("End of object at %lx", file->pos());
 
 		// create an object
 		return new GeometricObject(
@@ -113,6 +114,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			//return nullptr;
 		}
 		assert(byteSizeOfObject == 0);
+		debug("End of object at %lx", file->pos());
 		// create an entrance
 		return new Entrance(
 			objectID,
@@ -266,6 +268,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 			if (newObject->getType() == Object::Entrance) {
 				(*entrancesByID)[newObject->getObjectID() & 0x7fff] = newObject;
 			} else {
+				assert(!(objectsByID->contains(newObject->getObjectID())));
 				(*objectsByID)[newObject->getObjectID()] = newObject;
 			}
 		}

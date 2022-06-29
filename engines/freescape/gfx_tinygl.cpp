@@ -252,9 +252,7 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vec
 
 	Common::Array<Math::Vector3d> vertices;
 	tglEnable(TGL_POLYGON_OFFSET_FILL);
-	// tglEnable(TGL_POLYGON_OFFSET_LINE);
-	// tglEnable(TGL_POLYGON_OFFSET_POINT);
-	tglPolygonOffset(1.f, 1.f);
+	tglPolygonOffset(-2.0f, 1.f);
 	if ((*colours)[0] != _keyColor) {
 		_palette->getRGBAt((*colours)[0], r, g, b);
 		tglColor3ub(r, g, b);
@@ -279,8 +277,8 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vec
 void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::Vector3d &size, Common::Array<uint8> *colours) {
 
 	assert(size.x() == 0 || size.y() == 0 || size.z() == 0);
-
-	tglPolygonOffset(1, 1);
+	tglEnable(TGL_POLYGON_OFFSET_FILL);
+	tglPolygonOffset(-2.0f, 1.0f);
 	//debug("origin: %f, %f, %f", origin.x(), origin.y(), origin.z());
 	//debug("size: %f, %f, %f", size.x(), size.y(), size.z());
 
@@ -349,9 +347,7 @@ void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::V
 	}
 
 	tglPolygonOffset(0, 0);
-	//tglDepthMask(TGL_TRUE);
-	//tglColorMask(TGL_FALSE, TGL_FALSE, TGL_FALSE, TGL_FALSE);
-	//tglDisable(TGL_POLYGON_OFFSET_FILL);
+	tglDisable(TGL_POLYGON_OFFSET_FILL);
 }
 
 
