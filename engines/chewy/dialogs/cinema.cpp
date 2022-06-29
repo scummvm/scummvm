@@ -68,7 +68,7 @@ void Cinema::execute() {
 			// Render cut-scene list
 
 			for (int i = 0; i < CINEMA_LINES; ++i) {
-				if ((topIndex + i) >= cutscenes.size())
+				if ((topIndex + i) >= (int)cutscenes.size())
 					continue;
 
 				cutsceneName = _G(atds)->getTextEntry(98,
