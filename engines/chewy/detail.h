@@ -172,7 +172,7 @@ public:
 	void load_rdi_taf(const char *fname, int16 load_flag);
 
 	void setStaticPos(int16 detNr, int16 x, int16 y, bool hideFl, bool correctionFlag);
-	void setSetailPos(int16 detNr, int16 x, int16 y);
+	void setDetailPos(int16 detNr, int16 x, int16 y);
 	void hideStaticSpr(int16 detNr);
 	void showStaticSpr(int16 detNr);
 	void freezeAni();

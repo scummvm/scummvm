@@ -263,8 +263,8 @@ int16 Room18::calc_surimy() {
 		_G(gameState)._personHide[P_CHEWY] = false;
 		wait_auto_obj(SURIMY_OBJ);
 
-		_G(det)->setSetailPos(21, 392, 170);
-		_G(det)->setSetailPos(22, 447, 154);
+		_G(det)->setDetailPos(21, 392, 170);
+		_G(det)->setDetailPos(22, 447, 154);
 		startDetailFrame(21, 1, ANI_FRONT, 14);
 		_G(det)->startDetail(22, 1, ANI_FRONT);
 		waitDetail(21);
@@ -289,8 +289,8 @@ int16 Room18::calc_surimy() {
 		auto_scroll(70, 0);
 		wait_auto_obj(SURIMY_OBJ);
 
-		_G(det)->setSetailPos(21, 143, 170);
-		_G(det)->setSetailPos(22, 198, 154);
+		_G(det)->setDetailPos(21, 143, 170);
+		_G(det)->setDetailPos(22, 198, 154);
 		startDetailFrame(21, 1, ANI_FRONT, 14);
 		_G(det)->startDetail(22, 1, ANI_FRONT);
 		waitDetail(21);

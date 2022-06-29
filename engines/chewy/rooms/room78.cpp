@@ -49,7 +49,7 @@ void Room78::entry() {
 
 		int destX = 592;
 		while (destX > 0) {
-			_G(det)->setSetailPos(3, destX, 77);
+			_G(det)->setDetailPos(3, destX, 77);
 			if (delay)
 				--delay;
 			else {
@@ -71,8 +71,8 @@ void Room78::entry() {
 		bool flag2 = false;
 
 		while (exitLoopFlag == 0) {
-			_G(det)->setSetailPos(0, det0DestX, 93);
-			_G(det)->setSetailPos(4, det4DestX, 57);
+			_G(det)->setDetailPos(0, det0DestX, 93);
+			_G(det)->setDetailPos(4, det4DestX, 57);
 			
 			if (delay)
 				--delay;

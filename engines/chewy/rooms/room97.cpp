@@ -82,7 +82,7 @@ void Room97::entry() {
 	}
 
 	if (_G(gameState).flags36_20) {
-		_G(det)->setSetailPos(27, 272, 110);
+		_G(det)->setDetailPos(27, 272, 110);
 		for (int i = 0; i < 2; ++i) {
 			_G(det)->stop_detail(23 + i);
 			_G(det)->startDetail(27 + i, 255, ANI_FRONT);
@@ -194,7 +194,7 @@ void Room97::setup_func() {
 
 		_G(det)->setStaticPos(16, 699, _word18DB38, false, false);
 		if (_G(gameState).flags36_10) {
-			_G(det)->setSetailPos(12, _word18DB34, _word18DB36);
+			_G(det)->setDetailPos(12, _word18DB34, _word18DB36);
 		} else {
 			_G(det)->setStaticPos(14, _word18DB34, _word18DB36, false, false);
 		}
@@ -513,7 +513,7 @@ int Room97::proc8() {
 		_G(det)->stop_detail(27);
 		_G(gameState).flags36_20 = true;
 		_G(det)->startDetail(28, 255, false);
-		_G(det)->setSetailPos(27, 272, 110);
+		_G(det)->setDetailPos(27, 272, 110);
 		_G(det)->startDetail(27, 255, false);
 		_G(atds)->setControlBit(533, ATS_ACTIVE_BIT);
 		_G(atds)->setControlBit(534, ATS_ACTIVE_BIT);

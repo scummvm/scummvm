@@ -170,7 +170,7 @@ void Room12::bork_ok() {
 	wait_auto_obj(R12_BORK_OBJ);
 
 	_G(gameState).R12BorkInRohr = true;
-	_G(det)->setSetailPos(3, 170, 145);
+	_G(det)->setDetailPos(3, 170, 145);
 	_G(det)->startDetail(3, 255, ANI_FRONT);
 	startAadWait(57);
 	_G(det)->stop_detail(3);
