@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-29 08:58+0000\n"
-"PO-Revision-Date: 2022-06-05 19:03+0000\n"
+"PO-Revision-Date: 2022-06-29 20:10+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -986,7 +986,7 @@ msgstr "Alle"
 
 #: gui/launcher.cpp:1596
 msgid "Icons per row:"
-msgstr ""
+msgstr "Ikoner per rad:"
 
 #: gui/massadd.cpp:75 gui/massadd.cpp:78
 msgid "... progress ..."
@@ -3710,45 +3710,37 @@ msgstr "Vis kontroll på skjermen"
 
 #: backends/platform/android/options.cpp:94
 msgid "Choose the preferred touch mode:"
-msgstr ""
+msgstr "Velg foretrukket berøringsmodi:"
 
 #: backends/platform/android/options.cpp:96
-#, fuzzy
-#| msgid "Enable Venus"
 msgid "In menus"
-msgstr "Aktiver Venus"
+msgstr "På menyer"
 
 #: backends/platform/android/options.cpp:98
 #: backends/platform/android/options.cpp:116
 #: backends/platform/android/options.cpp:117
-#, fuzzy
-#| msgid "TV emulation"
 msgid "Touchpad emulation"
-msgstr "TV-emulering"
+msgstr "Emulering av berøringsplate"
 
 #: backends/platform/android/options.cpp:99
 #: backends/platform/android/options.cpp:119
 #: backends/platform/android/options.cpp:120
-#, fuzzy
-#| msgid "Virtual mouse up"
 msgid "Direct mouse"
-msgstr "Virtuell mus opp"
+msgstr "Direktemus"
 
 #: backends/platform/android/options.cpp:100
 #: backends/platform/android/options.cpp:122
 #: backends/platform/android/options.cpp:123
-#, fuzzy
-#| msgid "TV emulation"
 msgid "Gamepad emulation"
-msgstr "TV-emulering"
+msgstr "Emulering av håndkontroll"
 
 #: backends/platform/android/options.cpp:106
 msgid "In 2D games"
-msgstr ""
+msgstr "I 2D-spill"
 
 #: backends/platform/android/options.cpp:108
 msgid "In 3D games"
-msgstr ""
+msgstr "I 3D-spill"
 
 #. I18N: Show a button to revoke Storage Access Framework permissions for Android
 #: backends/platform/android/options.cpp:128
@@ -4381,9 +4373,8 @@ msgid "Switch to Olmec"
 msgstr "Bytt til Olmec"
 
 #: engines/asylum/metaengine.cpp:157
-#, fuzzy
 msgid "Open character inventory"
-msgstr "Åpne/Lukke utstyrsliste"
+msgstr "Åpne karakterens utstyrsliste"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:200
@@ -7895,7 +7886,6 @@ msgid "Could not quick load the saved game #%d"
 msgstr "Kunne ikke hurtiglaste lagret spill #%d"
 
 #: engines/toon/toon.cpp:1502
-#, fuzzy
 msgid "Are you sure you want to exit?"
 msgstr "Er du sikker på at du vil avslutte?"
 
