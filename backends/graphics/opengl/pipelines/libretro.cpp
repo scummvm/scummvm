@@ -20,13 +20,14 @@
  *
  */
 
-#include "backends/graphics/opengl/opengl-sys.h"
+#include "graphics/opengl/system_headers.h"
 
 #if !USE_FORCED_GLES
 #include "backends/graphics/opengl/pipelines/libretro.h"
 #include "backends/graphics/opengl/pipelines/libretro/parser.h"
 #include "backends/graphics/opengl/shader.h"
 #include "backends/graphics/opengl/framebuffer.h"
+#include "graphics/opengl/debug.h"
 
 #include "common/textconsole.h"
 #include "common/fs.h"
@@ -78,6 +79,10 @@ static const ImageLoader s_imageLoaders[] = {
 	{ nullptr, nullptr }
 };
 
+const char *const g_libretroShaderAttributes[] = {
+	"VertexCoord", nullptr
+};
+
 LibRetroPipeline::LibRetroPipeline(const Common::String &presetFileName)
     : ShaderPipeline(ShaderMan.query(ShaderManager::kDefault)),
       _shaderPreset(LibRetro::parsePreset(presetFileName)), _applyProjectionChanges(false),
@@ -102,7 +107,7 @@ LibRetroPipeline::~LibRetroPipeline() {
 	delete _shaderPreset;
 }
 
-void LibRetroPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates) {
+void LibRetroPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
 	Framebuffer *const targetBuffer = _activeFramebuffer;
 
 	// Set input texture for 1st pass to texture to draw.
@@ -134,7 +139,7 @@ void LibRetroPipeline::drawTexture(const GLTexture &texture, const GLfloat *coor
 	_applyProjectionChanges = false;
 
 	ShaderPipeline::activateInternal();
-	ShaderPipeline::drawTexture(*_passes[_passes.size() - 1].target->getTexture(), coordinates);
+	ShaderPipeline::drawTexture(*_passes[_passes.size() - 1].target->getTexture(), coordinates, texcoords);
 	ShaderPipeline::deactivateInternal();
 }
 
@@ -211,14 +216,16 @@ void LibRetroPipeline::loadPasses() {
 			// TODO: Error handling
 		}
 
-		Shader *shader = new Shader("#define VERTEX\n" + Common::String(shaderFileContents.begin()),
-		                            "#define FRAGMENT\n" + Common::String(shaderFileContents.begin()));
+		Shader *shader = Shader::fromStrings(fileName,
+		                                     ("#define VERTEX\n" + Common::String(shaderFileContents.begin())).c_str(),
+		                                     ("#define FRAGMENT\n" + Common::String(shaderFileContents.begin())).c_str(),
+		                                     g_libretroShaderAttributes);
 
 		// Set uniforms with fixed value throughout lifetime.
 		// We do not support rewinding, thus fix 'forward'.
-		shader->setUniform1I("FrameDirection", 1);
+		shader->setUniform("FrameDirection", 1);
 		// Input texture is always bound at sampler 0.
-		shader->setUniform1I("Texture", 0);
+		shader->setUniform("Texture", 0);
 
 		TextureTarget *target = nullptr;
 		// TODO: float and sRGB FBO handling.
@@ -228,7 +235,6 @@ void LibRetroPipeline::loadPasses() {
 		Pass &pass = _passes[_passes.size() - 1];
 		const uint passId = _passes.size() - 1;
 
-		pass.vertexCoordLocation = shader->getAttributeLocation("VertexCoord");
 		pass.buildTexCoords(passId);
 		pass.buildTexSamplers(passId, _textures);
 		if (passId > 0) {
@@ -280,7 +286,9 @@ void LibRetroPipeline::setupFBOs() {
 		pass.vertexCoord[7] = (uint)sourceH;
 
 		// Set projection matrix in passes's shader.
-		pass.shader->setUniform("MVPMatrix", new ShaderUniformMatrix44(pass.target->getProjectionMatrix()));
+		Math::Matrix4 m4;
+		m4.setData(pass.target->getProjectionMatrix());
+		pass.shader->setUniform("MVPMatrix", m4);
 	}
 }
 
@@ -289,7 +297,7 @@ void LibRetroPipeline::setupPassUniforms(const uint id) {
 	Shader *const shader = pass.shader;
 
 	// Set output dimensions.
-	shader->setUniform2F("OutputSize", _outputWidth, _outputHeight);
+	shader->setUniform("OutputSize", Math::Vector2d(_outputWidth, _outputHeight));
 
 	// Set texture dimensions for input, original, and the passes.
 	setShaderTexUniforms(Common::String(), shader, *pass.inputTexture);
@@ -307,8 +315,8 @@ void LibRetroPipeline::setupPassUniforms(const uint id) {
 }
 
 void LibRetroPipeline::setShaderTexUniforms(const Common::String &prefix, Shader *shader, const GLTexture &texture) {
-	shader->setUniform2F(prefix + "InputSize", texture.getLogicalWidth(), texture.getLogicalHeight());
-	shader->setUniform2F(prefix + "TextureSize", texture.getWidth(), texture.getHeight());
+	shader->setUniform(prefix + "InputSize", Math::Vector2d(texture.getLogicalWidth(), texture.getLogicalHeight()));
+	shader->setUniform(prefix + "TextureSize", Math::Vector2d(texture.getWidth(), texture.getHeight()));
 }
 
 LibRetroPipeline::Texture LibRetroPipeline::loadTexture(const Common::String &fileName) {
@@ -347,24 +355,23 @@ LibRetroPipeline::Texture LibRetroPipeline::loadTexture(const Common::String &fi
 void LibRetroPipeline::Pass::buildTexCoords(const uint id) {
 	texCoords.clear();
 
-	addTexCoord(Common::String(), TexCoordAttribute::kTypePass, id);
-	addTexCoord("Orig", TexCoordAttribute::kTypePass, 0);
-	addTexCoord("LUT", TexCoordAttribute::kTypeTexture, 0);
+	addTexCoord("TexCoord", TexCoordAttribute::kTypePass, id);
+	addTexCoord("OrigTexCoord", TexCoordAttribute::kTypePass, 0);
+	addTexCoord("LUTTexCoord", TexCoordAttribute::kTypeTexture, 0);
 
 	for (uint pass = 1; id >= 2 && pass <= id - 1; ++pass) {
-		addTexCoord(Common::String::format("Pass%u", pass), TexCoordAttribute::kTypePass, pass);
+		addTexCoord(Common::String::format("Pass%uTexCoord", pass), TexCoordAttribute::kTypePass, pass);
 	}
 
-	addTexCoord("Prev", TexCoordAttribute::kTypePrev, 0);
+	addTexCoord("PrevTexCoord", TexCoordAttribute::kTypePrev, 0);
 	for (uint prevId = 1; prevId <= 6; ++prevId) {
-		addTexCoord(Common::String::format("Prev%u", prevId), TexCoordAttribute::kTypePrev, prevId);
+		addTexCoord(Common::String::format("Prev%uTexCoord", prevId), TexCoordAttribute::kTypePrev, prevId);
 	}
 }
 
-void LibRetroPipeline::Pass::addTexCoord(const Common::String &prefix, const TexCoordAttribute::Type type, const uint index) {
-	GLint location = shader->getAttributeLocation(prefix + "TexCoord");
-	if (location != -1) {
-		texCoords.push_back(TexCoordAttribute(location, type, index));
+void LibRetroPipeline::Pass::addTexCoord(const Common::String &name, const TexCoordAttribute::Type type, const uint index) {
+	if (shader->addAttribute(name.c_str())) {
+		texCoords.push_back(TexCoordAttribute(name, type, index));
 	}
 }
 
@@ -395,14 +402,14 @@ void LibRetroPipeline::Pass::buildTexSamplers(const uint id, const TextureArray 
 void LibRetroPipeline::Pass::addTexSampler(const Common::String &prefix, uint *unit, const TextureSampler::Type type, const uint index, const bool prefixIsId) {
 	const Common::String id = prefixIsId ? prefix : (prefix + "Texture");
 
-	if (shader->setUniform1I(id, *unit)) {
+	if (shader->setUniform(id, *unit)) {
 		texSamplers.push_back(TextureSampler((*unit)++, type, index));
 	}
 }
 
 void LibRetroPipeline::renderPass(const Pass &pass) {
 	// Activate shader and framebuffer to be used for rendering.
-	pass.shader->activate();
+	pass.shader->use();
 	setFramebuffer(pass.target);
 
 	// Activate attribute arrays and setup matching attributes.
@@ -414,16 +421,12 @@ void LibRetroPipeline::renderPass(const Pass &pass) {
 	// Actually draw something.
 	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
 
-	// Deactivate attribute arrays.
-	renderPassCleanupCoordinates(pass);
-
-	// Deactivate shader.
-	pass.shader->deactivate();
+	// Unbind shader.
+	pass.shader->unbind();
 }
 
 void LibRetroPipeline::renderPassSetupCoordinates(const Pass &pass) {
-	GL_CALL(glEnableVertexAttribArray(pass.vertexCoordLocation));
-	GL_CALL(glVertexAttribPointer(pass.vertexCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, pass.vertexCoord));
+	pass.shader->enableVertexAttribute("VertexCoord", 2, GL_FLOAT, GL_FALSE, 0, pass.vertexCoord);
 
 	for (Pass::TexCoordAttributeArray::const_iterator i = pass.texCoords.begin(), end = pass.texCoords.end();
 	     i != end; ++i) {
@@ -448,17 +451,7 @@ void LibRetroPipeline::renderPassSetupCoordinates(const Pass &pass) {
 			continue;
 		}
 
-		GL_CALL(glEnableVertexAttribArray(i->location));
-		GL_CALL(glVertexAttribPointer(i->location, 2, GL_FLOAT, GL_FALSE, 0, texCoords));
-	}
-}
-
-void LibRetroPipeline::renderPassCleanupCoordinates(const Pass &pass) {
-	GL_CALL(glDisableVertexAttribArray(pass.vertexCoordLocation));
-
-	for (Pass::TexCoordAttributeArray::const_iterator i = pass.texCoords.begin(), end = pass.texCoords.end();
-	     i != end; ++i) {
-		GL_CALL(glDisableVertexAttribArray(i->location));
+		pass.shader->enableVertexAttribute(i->name.c_str(), 2, GL_FLOAT, GL_FALSE, 0, texCoords);
 	}
 }
 

@@ -23,7 +23,7 @@
 #ifndef BACKENDS_GRAPHICS_OPENGL_PIPELINES_LIBRETRO_TYPES_H
 #define BACKENDS_GRAPHICS_OPENGL_PIPELINES_LIBRETRO_TYPES_H
 
-#include "backends/graphics/opengl/opengl-sys.h"
+#include "graphics/opengl/system_headers.h"
 
 #if !USE_FORCED_GLES
 #include "common/str.h"

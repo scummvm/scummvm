@@ -20,7 +20,7 @@
  *
  */
 
-#include "backends/graphics/opengl/opengl-sys.h"
+#include "graphics/opengl/system_headers.h"
 
 #if !USE_FORCED_GLES
 #include "backends/graphics/opengl/pipelines/libretro/parser.h"
