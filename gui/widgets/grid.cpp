@@ -291,9 +291,11 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int re
 #ifdef USE_PNG
 		const Graphics::Surface *srcSurface = nullptr;
 		Image::PNGDecoder decoder;
+		g_gui.lockIconsSet();
 		if (g_gui.getIconsSet().hasFile(name)) {
 			Common::SeekableReadStream *stream = g_gui.getIconsSet().createReadStreamForMember(name);
 			if (!decoder.loadStream(*stream)) {
+				g_gui.unlockIconsSet();
 				warning("Error decoding PNG");
 				return surf;
 			}
@@ -308,10 +310,12 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int re
 		} else {
 			debug(5, "GridWidget: Cannot read file '%s'", name.c_str());
 		}
+		g_gui.unlockIconsSet();
 #else
 		error("No PNG support compiled");
 #endif
 	} else if (name.hasSuffix(".svg")) {
+		g_gui.lockIconsSet();
 		if (g_gui.getIconsSet().hasFile(name)) {
 			Common::SeekableReadStream *stream = g_gui.getIconsSet().createReadStreamForMember(name);
 			Graphics::SVGBitmap *image = nullptr;
@@ -325,6 +329,7 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int re
 		} else {
 			debug(5, "GridWidget: Cannot read file '%s'", name.c_str());
 		}
+		g_gui.unlockIconsSet();
 	}
 	return surf;
 }

@@ -96,10 +96,9 @@ public:
 
 	ThemeEval *xmlEval() { return _theme->getEvaluator(); }
 
-	Common::SearchSet &getIconsSet() {
-		Common::StackLock lock(_iconsMutex);
-		return _iconsSet;
-	}
+	void lockIconsSet() { _iconsMutex.lock(); }
+	void unlockIconsSet()  { _iconsMutex.unlock(); }
+	Common::SearchSet &getIconsSet() { return _iconsSet; }
 
 	int16 getGUIWidth() const { return _baseWidth; }
 	int16 getGUIHeight() const { return _baseHeight; }

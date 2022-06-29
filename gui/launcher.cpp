@@ -183,6 +183,7 @@ LauncherDialog::LauncherDialog(const Common::String &dialogName, LauncherChooser
 
 	Common::ArchiveMemberList mdFiles;
 
+	g_gui.lockIconsSet();
 	g_gui.getIconsSet().listMatchingMembers(mdFiles, "*.xml");
 	for (Common::ArchiveMemberList::iterator md = mdFiles.begin(); md != mdFiles.end(); ++md) {
 		if (_metadataParser.loadStream((*md)->createReadStream()) == false) {
@@ -194,6 +195,7 @@ LauncherDialog::LauncherDialog(const Common::String &dialogName, LauncherChooser
 		}
 		_metadataParser.close();
 	}
+	g_gui.unlockIconsSet();
 }
 
 LauncherDialog::~LauncherDialog() {
