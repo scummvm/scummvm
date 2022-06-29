@@ -1953,7 +1953,7 @@ Graphics::Surface *ChewyFont::getLine(const Common::String &texts) {
 	line->fillRect(Common::Rect(line->w, line->h), 0xFF);
 
 	for (uint i = 0; i < texts.size(); i++) {
-		subrect.moveTo((texts[i] - _first) * _dataWidth, 0);
+		subrect.moveTo(((byte)texts[i] - _first) * _dataWidth, 0);
 		line->copyRectToSurface(_fontSurface, i * (_deltaX - 2), 0, subrect);
 	}
 
