@@ -235,19 +235,22 @@ void Subtitles::loadInGameSubsText(int actorId, int speech_id)  {
 		return;
 	}
 
-	int32 id = 10000 * actorId + speech_id;
 	if (!_gameSubsResourceEntriesFound[0]) {
 		_currentText.clear();
+		_currentText32.clear();
+		_prevText.clear();
+		_prevText32.clear();
 		return;
 	}
 
 	// Search in the first TextResource of the _vqaSubsTextResourceEntries table, which is the TextResource for in-game dialogue (i.e. not VQA dialogue)
+	int32 id = 10000 * actorId + speech_id;
 	const char *text = _vqaSubsTextResourceEntries[0]->getText((uint32)id);
-	// Use of Common::kWindows1252 codepage to fix bug whereby accented characters
-	// would not show for subtitles.
-	// TODO maybe the codepage here should be determined based on some subtitles property per language
-	//      especially for non-latin languages that still use a FON font rather than a TTF font (eg. Greek would need Common::kWindows1253)
-	_currentText = _useUTF8 ? Common::convertUtf8ToUtf32(text) : Common::U32String(text, Common::kWindows1252);
+	if (_useUTF8) {
+		_currentText32 = Common::convertUtf8ToUtf32(text);
+	} else {
+		_currentText = text;
+	}
 }
 
 /**
@@ -261,17 +264,20 @@ void Subtitles::loadOuttakeSubsText(const Common::String &outtakesName, int fram
 	int fileIdx = getIdxForSubsTreName(outtakesName);
 	if (fileIdx == -1 || !_gameSubsResourceEntriesFound[fileIdx]) {
 		_currentText.clear();
+		_currentText32.clear();
+		_prevText.clear();
+		_prevText32.clear();
 		return;
 	}
 
 	// Search in the requested TextResource at the fileIdx index of the _vqaSubsTextResourceEntries table for a quote that corresponds to the specified video frame
 	// debug("Number of resource quotes to search: %d, requested frame: %u", _vqaSubsTextResourceEntries[fileIdx]->getCount(), (uint32)frame );
 	const char *text = _vqaSubsTextResourceEntries[fileIdx]->getOuttakeTextByFrame((uint32)frame);
-	// Use of Common::kWindows1252 codepage to fix bug whereby accented characters
-	// would not show for subtitles.
-	// TODO maybe the codepage here should be determined based on some subtitles property per language
-	//      especially for non-latin languages that still use a FON font rather than a TTF font (eg. Greek would need Common::kWindows1253)
-	_currentText = _useUTF8 ? Common::convertUtf8ToUtf32(text) : Common::U32String(text, Common::kWindows1252);
+	if (_useUTF8) {
+		_currentText32 = Common::convertUtf8ToUtf32(text);
+	} else {
+		_currentText = text;
+	}
 }
 
 /**
@@ -279,8 +285,11 @@ void Subtitles::loadOuttakeSubsText(const Common::String &outtakesName, int fram
  * Used for debug purposes mainly.
  */
 void Subtitles::setGameSubsText(Common::String dbgQuote, bool forceShowWhenNoSpeech) {
-	// TODO is Common::kWindows1252 correct here?
-	_currentText = _useUTF8 ? Common::convertUtf8ToUtf32(dbgQuote) : Common::U32String(dbgQuote, Common::kWindows1252);
+	if (_useUTF8) {
+		_currentText32 = Common::convertUtf8ToUtf32(dbgQuote);
+	} else {
+		_currentText = dbgQuote;
+	}
 	_forceShowWhenNoSpeech = forceShowWhenNoSpeech; // overrides not showing subtitles when no one is speaking
 }
 
@@ -334,10 +343,10 @@ void Subtitles::tickOuttakes(Graphics::Surface &s) {
 		return;
 	}
 
-	if (_currentText.empty()) {
-		_vm->_subtitles->hide();
-	} else {
+	if (isNotEmptyCurrentSubsText()) {
 		_vm->_subtitles->show();
+	} else {
+		_vm->_subtitles->hide();
 	}
 
 	if (!_isVisible) { // keep it as a separate if
@@ -366,36 +375,58 @@ void Subtitles::tick(Graphics::Surface &s) {
 	draw(s);
 }
 
+bool Subtitles::isNotEmptyCurrentSubsText() {
+	if ((_useUTF8 && !_currentText32.empty())
+		|| (!_useUTF8 && !_currentText.empty())) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
 /**
  * Draw method for drawing the subtitles on the display surface
  */
 void Subtitles::draw(Graphics::Surface &s) {
-	if (!_isSystemActive || !_isVisible || _currentText.empty()) {
+	if (!_isSystemActive || !_isVisible || !isNotEmptyCurrentSubsText()) {
 		return;
 	}
 
-	// This check is done so that lines won't be re-calculated multiple times for the same text
-	if (_currentText != _prevText) {
-		lines.clear();
-		_prevText = _currentText;
-		_font->wordWrapText(_currentText, kTextMaxWidth, lines, 0, Graphics::kWordWrapEvenWidthLines | Graphics::kWordWrapOnExplicitNewLines);
+	uint linesNum = 0;
+	if (_useUTF8) {
+		// This check is done so that lines won't be re-calculated multiple times for the same text
+		if (_currentText32 != _prevText32) {
+			_lines32.clear();
+			_prevText32 = _currentText32;
+			_font->wordWrapText(_currentText32, kTextMaxWidth, _lines32, 0, Graphics::kWordWrapEvenWidthLines | Graphics::kWordWrapOnExplicitNewLines);
+		}
+		linesNum = _lines32.size();
+	} else {
+		// This check is done so that lines won't be re-calculated multiple times for the same text
+		if (_currentText != _prevText) {
+			_lines.clear();
+			_prevText = _currentText;
+			_font->wordWrapText(_currentText, kTextMaxWidth, _lines, 0, Graphics::kWordWrapEvenWidthLines | Graphics::kWordWrapOnExplicitNewLines);
+		}
+		linesNum = _lines.size();
 	}
 
-	int y = s.h - (kMarginBottom + MAX(kPreferedLine, lines.size()) * _font->getFontHeight());
+	int y = s.h - (kMarginBottom + MAX(kPreferedLine, linesNum) * _font->getFontHeight());
 
-	for (uint i = 0; i < lines.size(); ++i, y += _font->getFontHeight()) {
+	for (uint i = 0; i < linesNum; ++i, y += _font->getFontHeight()) {
 		switch (_subtitlesInfo.fontType) {
 			case Subtitles::kSubtitlesFontTypeInternal:
 				// shadow/outline is part of the font color data
-				_font->drawString(&s, lines[i], 0, y, s.w, 0, Graphics::kTextAlignCenter);
+				_font->drawString(&s, _lines[i], 0, y, s.w, 0, Graphics::kTextAlignCenter);
 				break;
 			case Subtitles::kSubtitlesFontTypeTTF:
-				_font->drawString(&s, lines[i], -1, y    , s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
-				_font->drawString(&s, lines[i],  0, y - 1, s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
-				_font->drawString(&s, lines[i],  1, y    , s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
-				_font->drawString(&s, lines[i],  0, y + 1, s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
+				_font->drawString(&s, _lines32[i], -1, y    , s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
+				_font->drawString(&s, _lines32[i],  0, y - 1, s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
+				_font->drawString(&s, _lines32[i],  1, y    , s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
+				_font->drawString(&s, _lines32[i],  0, y + 1, s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
 
-				_font->drawString(&s, lines[i],  0, y    , s.w, s.format.RGBToColor(255, 255, 255), Graphics::kTextAlignCenter);
+				_font->drawString(&s, _lines32[i],  0, y    , s.w, s.format.RGBToColor(255, 255, 255), Graphics::kTextAlignCenter);
 				break;
 		}
 	}
@@ -408,6 +439,11 @@ void Subtitles::clear() {
 	_isVisible = false;
 	_forceShowWhenNoSpeech = false;
 	_currentText.clear();
+	_currentText32.clear();
+	_prevText.clear();
+	_prevText32.clear();
+	_lines.clear();
+	_lines32.clear();
 }
 
 /**
