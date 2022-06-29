@@ -227,7 +227,6 @@ void FreescapeEngine::shoot() {
 	//debug("camera front: %f %f %f", _cameraFront.x(), _rotation.y(), _rotation.z());
 }
 
-
 Common::Error FreescapeEngine::run() {
 	// Initialize graphics:
 	_gfx = Freescape::createRenderer(_system);
@@ -347,10 +346,8 @@ void FreescapeEngine::checkCollisions() {
 	Object *obj = _currentArea->checkCollisions(boundingBox);
 
 	if (obj != nullptr)
-		error("Collided with object of size %f %f %f", obj->getSize().x(), obj->getSize().y(), obj->getSize().z());
+		debug("Collided with object of size %f %f %f", obj->getSize().x(), obj->getSize().y(), obj->getSize().z());
 }
-
-
 
 bool FreescapeEngine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsReturnToLauncher) ||
