@@ -331,6 +331,22 @@ void Shader::freeBuffer(GLuint vbo) {
 	GL_CALL(glDeleteBuffers(1, &vbo));
 }
 
+bool Shader::addAttribute(const char *attrib) {
+	uint32 i;
+	for (i = 0; i < _attributes.size(); ++i)
+		if (_attributes[i]._name.equals(attrib))
+			return true;
+
+	GLint result = -1;
+	GL_ASSIGN(result, glGetAttribLocation(*_shaderNo, attrib));
+	if (result == -1)
+		return false;
+
+	GL_CALL(glBindAttribLocation(*_shaderNo, i, attrib));
+	_attributes.push_back(VertexAttrib(i, attrib));
+	return true;
+}
+
 VertexAttrib &Shader::getAttributeAt(uint32 idx) {
 	assert(idx < _attributes.size());
 	return _attributes[idx];
