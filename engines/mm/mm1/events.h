@@ -36,6 +36,17 @@ namespace MM1 {
 
 class Events;
 
+struct Bounds : public Common::Rect {
+private:
+	Common::Rect &_innerBounds;
+	int _borderSize = 0;
+public:
+	Bounds(Common::Rect &innerBounds);
+	Bounds &operator=(const Common::Rect &r);
+	void setBorderSize(size_t borderSize);
+	size_t borderSize() const { return _borderSize; }
+};
+
 class UIElement {
 	friend class Events;
 private:
@@ -43,7 +54,8 @@ private:
 protected:
 	UIElement *_parent;
 	Common::Array<UIElement *> _children;
-	Common::Rect _bounds;
+	Common::Rect _innerBounds;
+	Bounds _bounds;
 	bool _needsRedraw = true;
 	Common::String _name;
 protected:

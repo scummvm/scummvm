@@ -38,8 +38,6 @@ ScrollText::ScrollText(const Common::String &name, UIElement *owner) :
 
 void ScrollText::setBounds(const Common::Rect &r) {
 	ScrollView::setBounds(r);
-	_innerBounds = r;
-	_innerBounds.grow(-FRAME_BORDER_SIZE);
 	_rowCount = _innerBounds.height() / FONT_HEIGHT;
 }
 
@@ -65,7 +63,7 @@ void ScrollText::addText(const Common::String &str,
 	Common::Point pt(xp, lineNum * 8);
 	Graphics::Font &font = _fontReduced ?
 		g_globals->_fontReduced : g_globals->_fontNormal;
-	size_t strWidth = font.getStringWidth(str);
+	int strWidth = font.getStringWidth(str);
 	char *startP = const_cast<char *>(str.c_str());
 	char *endP;
 
