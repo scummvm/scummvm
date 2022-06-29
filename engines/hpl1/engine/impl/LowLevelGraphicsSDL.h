@@ -38,23 +38,20 @@
 // Unix's X11 Defines DestoryAll which collides with methods
 #undef DestroyAll
 
-//--scummvm-temporary--
-#include "temp-types.h"
-//--scummvm-temporary--
-
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
 #include "graphics/pixelformat.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "graphics/surface.h"
 #include "common/ptr.h"
+#include "hpl1/opengl.h"
 
 namespace hpl {
 
 //-------------------------------------------------
 
-GLenum ColorFormatToGL(eColorDataFormat aFormat);
+GLenum ColorFormatToGL(eColorDataFormat format);
 
-GLenum TextureTargetToGL(eTextureTarget aTarget);
+GLenum TextureTargetToGL(eTextureTarget target);
 
 //-------------------------------------------------
 
@@ -66,7 +63,7 @@ public:
 	bool Init(int alWidth, int alHeight, int alBpp, int abFullscreen, int alMultisampling,
 			  const tString &asWindowCaption);
 
-	int GetCaps(eGraphicCaps aType);
+	int GetCaps(eGraphicCaps aType) const;
 
 	void ShowCursor(bool abX);
 
@@ -87,7 +84,7 @@ public:
 	cVector2f GetVirtualSize();
 	void SetVirtualSize(cVector2f avSize);
 
-	Bitmap2D *CreateBitmap2D(const cVector2l &avSize, unsigned int alBpp);
+	Bitmap2D *CreateBitmap2D(const cVector2l &avSize);
 	FontData *CreateFontData(const tString &asName);
 
 	iTexture *CreateTexture(bool abUseMipMaps, eTextureType aType, eTextureTarget aTarget);
@@ -175,7 +172,7 @@ public:
 	void SetTexture(unsigned int alUnit, iTexture *apTex);
 	void SetActiveTextureUnit(unsigned int alUnit);
 	void SetTextureEnv(eTextureParam aParam, int alVal);
-	void SetTextureConstantColor(const cColor &aColor);
+	void SetTextureConstantColor(const cColor &color);
 
 	void SetColor(const cColor &aColor);
 
@@ -237,10 +234,6 @@ public:
 
 	///// SDL Specific ////////////////////////////
 
-	Bitmap2D *CreateBitmap2DFromSurface(SDL_Surface *apSurface, const tString &asType);
-
-	CGcontext GetGC_Context() { return mCG_Context; }
-
 	void SetupGL();
 
 	GLenum GetGLTextureTargetEnum(eTextureTarget aType);
@@ -251,28 +244,15 @@ private:
 	int mlMultisampling;
 	int mlBpp;
 
-	// Windows stuff
-#if 0
-#if defined(WIN32)
-			HGLRC mGLContext;
-			HDC   mDeviceContext;
-			HINSTANCE mhKeyTrapper;
-#elif defined(__linux__)
-			Display *gDpy;
-			GLXContext glCtx;
-			GLXPbuffer gPBuffer;
-#endif
-#endif
-
 	// Gamma
-	Uint16 mvStartGammaArray[3][256];
+	uint16 mvStartGammaArray[3][256];
 	float mfGammaCorrection;
 
 	// Clipping
 	cPlanef mvClipPlanes[kMaxClipPlanes];
 
 	// SDL Variables
-	SDL_Surface *mpScreen;
+	//SDL_Surface *mpScreen;
 	Graphics::PixelFormat *mpPixelFormat;
 
 	// Vertex Array variables
@@ -302,14 +282,10 @@ private:
 	iTexture *mpCurrentTexture[MAX_TEXTUREUNITS];
 
 	// CG Compiler Variables
-	CGcontext mCG_Context;
+	//CGcontext mCG_Context;
 
 	// Multisample
 	void CheckMultisampleCaps();
-
-	// CG Helper
-	void InitCG();
-	void ExitCG();
 
 	// Batch helper
 	void SetUpBatchArrays();
@@ -337,7 +313,7 @@ private:
 	GLenum GetGLBlendEnum(eBlendFunc aType);
 
 	// Vtx helper
-	void SetVtxBatchStates(tVtxBatchFlag aFlags);
+	void SetVtxBatchStates(tVtxBatchFlag flags);
 };
 };     // namespace hpl
 #endif // HPL_LOWLEVELGRAPHICS_SDL_H

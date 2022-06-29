@@ -179,6 +179,8 @@ enum eGraphicCaps {
 	eGraphicCaps_GL_NVRegisterCombiners,
 	eGraphicCaps_GL_NVRegisterCombiners_MaxStages,
 	eGraphicCaps_GL_ATIFragmentShader,
+	eGraphicCaps_GL_BlendFunctionSeparate,
+	eGraphicCaps_GL_MultiTexture,
 
 	eGraphicCaps_LastEnum
 };
@@ -217,7 +219,7 @@ public:
 	 * \param aType
 	 * \return
 	 */
-	virtual int GetCaps(eGraphicCaps aType) = 0;
+	virtual int GetCaps(eGraphicCaps aType) const = 0;
 	/**
 	 * Show the cursor or not. Default is false
 	 * \param aX
@@ -252,7 +254,7 @@ public:
 	virtual cPlanef GetClipPlane(int alIdx, const cPlanef &aPlane) = 0;
 	virtual void SetClipPlaneActive(int alIdx, bool abX) = 0;
 
-	virtual Bitmap2D *CreateBitmap2D(const cVector2l &avSize, unsigned int alBpp) = 0;
+	virtual Bitmap2D *CreateBitmap2D(const cVector2l &avSize) = 0;
 	virtual FontData *CreateFontData(const tString &asName) = 0;
 
 	virtual iTexture *CreateTexture(bool abUseMipMaps, eTextureType aType, eTextureTarget aTarget) = 0;
