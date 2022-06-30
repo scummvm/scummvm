@@ -290,6 +290,11 @@ private:
 	 */
 	Pipeline *_pipeline;
 
+	/**
+	 * OpenGL pipeline used for post-processing.
+	 */
+	Pipeline *_libretroPipeline;
+
 protected:
 	/**
 	 * Try to determine the internal parameters for a given pixel format.
@@ -327,6 +332,12 @@ protected:
 	 * The game palette if in CLUT8 mode.
 	 */
 	byte _gamePalette[3 * 256];
+
+	/**
+	 * The render target for the virtual game screen. Used when
+	 * LibRetro shaders are enabled.
+	 */
+	TextureTarget *_gameScreenTarget;
 
 	//
 	// Overlay
