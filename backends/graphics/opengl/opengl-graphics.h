@@ -44,6 +44,9 @@ namespace OpenGL {
 
 class Surface;
 class Pipeline;
+#if !USE_FORCED_GLES
+class LibRetroPipeline;
+#endif
 
 enum {
 	GFX_OPENGL = 0
@@ -290,10 +293,12 @@ private:
 	 */
 	Pipeline *_pipeline;
 
+#if !USE_FORCED_GLES
 	/**
 	 * OpenGL pipeline used for post-processing.
 	 */
-	Pipeline *_libretroPipeline;
+	LibRetroPipeline *_libretroPipeline;
+#endif
 
 protected:
 	/**
@@ -333,11 +338,13 @@ protected:
 	 */
 	byte _gamePalette[3 * 256];
 
+#if !USE_FORCED_GLES
 	/**
 	 * The render target for the virtual game screen. Used when
 	 * LibRetro shaders are enabled.
 	 */
 	TextureTarget *_gameScreenTarget;
+#endif
 
 	//
 	// Overlay
