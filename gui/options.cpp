@@ -3271,10 +3271,12 @@ void GlobalOptionsDialog::reflowLayout() {
 	if (_midiTabId != -1) {
 		_tabWidget->setActiveTab(_midiTabId);
 
+		bool enabled = _soundFontClearButton->isEnabled();
 		_tabWidget->removeWidget(_soundFontClearButton);
 		_soundFontClearButton->setNext(nullptr);
 		delete _soundFontClearButton;
 		_soundFontClearButton = addClearButton(_tabWidget, "GlobalOptions_MIDI.mcFontClearButton", kClearSoundFontCmd);
+		_soundFontClearButton->setEnabled(enabled);
 	}
 
 	if (_pathsTabId != -1) {
