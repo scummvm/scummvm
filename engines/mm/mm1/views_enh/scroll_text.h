@@ -78,13 +78,13 @@ public:
 	/**
 	 * Simplest form that adds lines one at a time
 	 */
-	void addLine(const Common::String &str,
+	void addLine(const Common::String &msg,
 		TextAlignment align = ALIGN_LEFT, byte color = 0);
 
 	/**
 	 * Add a new line fragment for a given position
 	 */
-	void addText(const Common::String &str,
+	void addText(const Common::String &msg,
 		int lineNum, byte color = 0,
 		TextAlignment align = ALIGN_LEFT, int xp = 0);
 

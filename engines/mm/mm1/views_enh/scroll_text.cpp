@@ -21,6 +21,7 @@
 
 #include "mm/mm1/views_enh/scroll_text.h"
 #include "mm/mm1/globals.h"
+#include "mm/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -41,29 +42,32 @@ void ScrollText::setBounds(const Common::Rect &r) {
 	_rowCount = _innerBounds.height() / FONT_HEIGHT;
 }
 
-void ScrollText::addLine(const Common::String &str,
+void ScrollText::addLine(const Common::String &msg,
 		TextAlignment align, byte color) {
 	if (_lines.size() < _rowCount) {
 		switch (align) {
 		case ALIGN_LEFT:
-			addText(str, _lines.size(), color, align);
+			addText(msg, _lines.size(), color, align);
 			break;
 		case ALIGN_RIGHT:
-			addText(str, _lines.size(), color, align);
+			addText(msg, _lines.size(), color, align);
 			break;
 		case ALIGN_MIDDLE:
-			addText(str, _lines.size(), color, align);
+			addText(msg, _lines.size(), color, align);
 			break;
 		}
 	}
 }
 
-void ScrollText::addText(const Common::String &str,
+void ScrollText::addText(const Common::String &msg,
 		int lineNum, byte color, TextAlignment align, int xp) {
 	Common::Point pt(xp, lineNum * 8);
 	Graphics::Font &font = _fontReduced ?
 		g_globals->_fontReduced : g_globals->_fontNormal;
-	int strWidth = font.getStringWidth(str);
+	int strWidth = font.getStringWidth(msg);
+
+	Common::String str = capitalize(msg);
+	str = searchAndReplace(str, "\n", " ");
 	char *startP = const_cast<char *>(str.c_str());
 	char *endP;
 
@@ -85,9 +89,18 @@ void ScrollText::addText(const Common::String &str,
 					Common::String(startP, endP));
 			}
 
-			// Add a newline
-			*endP = '\n';
-			startP = endP + 1;
+			if (strWidth == _innerBounds.width()) {
+				// Word break exactly at the line end.
+				// So simply get rid of the space
+				uint i = (const char *)endP - str.c_str();
+				str.deleteChar(i);
+				startP = const_cast<char *>(str.c_str() + i);
+			} else {
+				// Add a newline
+				*endP = '\n';
+				startP = endP + 1;
+			}
+
 			strWidth = font.getStringWidth(startP);
 		}
 		break;
