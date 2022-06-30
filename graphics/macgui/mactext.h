@@ -278,6 +278,8 @@ public:
 
 	void setSelRange(int selStart, int selEnd);
 
+	void scroll(int delta);
+
 private:
 	void init();
 	bool isCutAllowed();
@@ -307,8 +309,6 @@ private:
 	void render(int from, int to);
 	void recalcDims();
 	void reallocSurface();
-
-	void scroll(int delta);
 
 	void drawSelection(int xoff, int yoff);
 	void updateCursorPos();

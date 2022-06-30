@@ -447,6 +447,7 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 		setHighlight(kBorderScrollUp);
 		scroll(-2);
 		calcScrollBar();
+		_mactext->scroll(-2);
 		return true;
 	}
 
@@ -454,6 +455,7 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 		setHighlight(kBorderScrollDown);
 		scroll(2);
 		calcScrollBar();
+		_mactext->scroll(2);
 		return true;
 	}
 
@@ -466,9 +468,11 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 			switch (click) {
 			case kBorderScrollUp:
 				scroll(-1);
+				_mactext->scroll(-1);
 				break;
 			case kBorderScrollDown:
 				scroll(1);
+				_mactext->scroll(1);
 				break;
 			default:
 				return false;
