@@ -46,6 +46,7 @@ class OptionsContainerWidget;
 
 namespace Common {
 class EventManager;
+class FSNode;
 class MutexInternal;
 struct Rect;
 class SaveFileManager;
@@ -483,7 +484,7 @@ public:
 		/**
 		* Shaders.
 		*/
-		kFeatureShader,
+		kFeatureShaders,
 
 		/**
 		* Support for using the native system file browser dialog
@@ -765,65 +766,15 @@ public:
 #endif
 
 	/**
-	 * Retrieve a list of all hardware shaders supported by this backend.
+	 * Load the specified shader.
 	 *
-	 * This can be only hardware shaders.
-	 * It is completely up to the backend maintainer to decide what is
-	 * appropriate here and what not.
-	 * The list is terminated by an all-zero entry.
+	 * If loading the new shader fails, this method returns false.
 	 *
-	 * @return List of supported shaders.
-	 */
-	virtual const GraphicsMode *getSupportedShaders() const {
-		static const OSystem::GraphicsMode no_shader[2] = {{"NONE", "Normal (no shader)", 0}, {nullptr, nullptr, 0}};
-		return no_shader;
-	}
-
-	/**
-	 * Return the ID of the 'default' shader mode.
-	 *
-	 * What exactly this means is up to the backend.
-	 * This mode is set by the client code when no user overrides
-	 * are present (i.e. if no custom shader mode is selected using
-	 * the command line or a config file).
-	 *
-	 * @return ID of the 'default' shader mode.
-	 */
-	virtual int getDefaultShader() const { return 0; }
-
-	/**
-	 * Switch to the specified shader mode.
-	 *
-	 * If switching to the new mode fails, this method returns false.
-	 *
-	 * @param id ID of the new shader mode.
+	 * @param fileNode File node of the new shader.
 	 *
 	 * @return True if the switch was successful, false otherwise.
 	 */
-	virtual bool setShader(int id) { return false; }
-
-	/**
-	 * Switch to the shader mode with the given name.
-	 *
-	 * If @p name is unknown, or if switching to the new mode fails,
-	 * this method returns false.
-	 *
-	 * @param name Name of the new shader mode.
-	 *
-	 * @return True if the switch was successful, false otherwise.
-	 *
-	 * @note This is implemented using the setShader(int) method, as well
-	 *       as getSupportedShaders() and getDefaultShader().
-	 *       In particular, backends do not have to overload this!
-	 */
-	bool setShader(const char *name);
-
-	/**
-	 * Determine which shader is currently active.
-	 *
-	 * @return ID of the active shader.
-	 */
-	virtual int getShader() const { return 0; }
+	virtual bool setShader(const Common::FSNode &fileNode) { return false; }
 
 	/**
 	 * Retrieve a list of all stretch modes supported by this backend.
@@ -899,8 +850,8 @@ public:
 	 * Return the 'default' scale factor.
 	 *
 	 * This mode is set by the client code when no user overrides
-	 * are present (i.e. if no custom shader mode is selected using
-	 * the command line or a config file).
+	 * are present (i.e. if no custom scaler is selected using the
+	 * command line or a config file).
 	 *
 	 * @return The 'default' scale factor.
 	 */

@@ -92,8 +92,8 @@ enum {
 	kPluginsPathClearCmd	= 'clpl',
 	kChooseThemeCmd			= 'chtf',
 	kUpdateIconsCmd			= 'upic',
-	kChooseShaderDirCmd     = 'chsh',
-	kShaderPathClearCmd     = 'chsc',
+	kChooseShaderCmd        = 'chsh',
+	kClearShaderCmd         = 'clsh',
 	kUpdatesCheckCmd		= 'updc',
 	kKbdMouseSpeedChanged	= 'kmsc',
 	kJoystickDeadzoneChanged= 'jodc',
@@ -157,12 +157,12 @@ static const int guiBaseValues[] = { 150, 125, 100, 75, -1 };
 static const char *kbdMouseSpeedLabels[] = { "3", "5", "8", "10", "13", "15", "18", "20", nullptr };
 
 OptionsDialog::OptionsDialog(const Common::String &domain, int x, int y, int w, int h)
-	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(nullptr) {
+	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _shaderTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(nullptr) {
 	init();
 }
 
 OptionsDialog::OptionsDialog(const Common::String &domain, const Common::String &name)
-	: Dialog(name), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(nullptr) {
+	: Dialog(name), _domain(domain), _graphicsTabId(-1), _shaderTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(nullptr) {
 	init();
 }
 
@@ -195,8 +195,9 @@ void OptionsDialog::init() {
 	_filteringCheckbox = nullptr;
 	_aspectCheckbox = nullptr;
 	_enableShaderSettings = false;
-	_shaderPopUpDesc = nullptr;
-	_shaderPopUp = nullptr;
+	_shader = nullptr;
+	_shaderButton = nullptr;
+	_shaderClearButton = nullptr;
 	_vsyncCheckbox = nullptr;
 	_rendererTypePopUpDesc = nullptr;
 	_rendererTypePopUp = nullptr;
@@ -420,24 +421,23 @@ void OptionsDialog::build() {
 	}
 
 	// Shader options
-	if (_shaderPopUp) {
-		_shaderPopUp->setSelected(0);
-
-		if (g_system->hasFeature(OSystem::kFeatureShader)) {
-			if (ConfMan.hasKey("shader", _domain)) {
-				const OSystem::GraphicsMode *sm = g_system->getSupportedShaders();
-				Common::String shader(ConfMan.get("shader", _domain));
-				int shaderCount = 1;
-				while (sm->name) {
-					shaderCount++;
-					if (scumm_stricmp(sm->name, shader.c_str()) == 0)
-						_shaderPopUp->setSelected(shaderCount);
-					sm++;
-				}
+	if (_shader) {
+		if (g_system->hasFeature(OSystem::kFeatureShaders)) {
+			Common::String shader(ConfMan.get("shader", _domain));
+			if (ConfMan.isKeyTemporary("shader")) {
+				_shader->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
+			}
+			if (shader.empty() || !ConfMan.hasKey("shader", _domain)) {
+				_shader->setLabel(_c("None", "shader"));
+				_shaderClearButton->setEnabled(false);
+			} else {
+				_shader->setLabel(shader);
+				_shaderClearButton->setEnabled(true);
 			}
 		} else {
-			_shaderPopUpDesc->setVisible(false);
-			_shaderPopUp->setVisible(false);
+			_shader->setVisible(false);
+			_shaderButton->setVisible(false);
+			_shaderClearButton->setVisible(false);
 		}
 	}
 
@@ -708,28 +708,27 @@ void OptionsDialog::apply() {
 	}
 
 	// Shader options
-	if (_shaderPopUp) {
+	if (_shader) {
 		if (_enableShaderSettings) {
-			bool isSet = false;
+			bool isSet;
 
-			if ((int32)_shaderPopUp->getSelectedTag() >= 0) {
-				const OSystem::GraphicsMode *sm = g_system->getSupportedShaders();
-				while (sm->name) {
-					if (sm->id == (int)_shaderPopUp->getSelectedTag()) {
-						if (ConfMan.get("shader", _domain) != sm->name)
-							graphicsModeChanged = true;
-						ConfMan.set("shader", sm->name, _domain);
-						isSet = true;
-						break;
-					}
-					sm++;
-				}
-			}
-			if (!isSet) {
-				ConfMan.removeKey("shader", _domain);
-				if (g_system->getShader() != g_system->getDefaultShader())
+			Common::U32String shader(_shader->getLabel());
+			if (shader.empty() || (shader == _c("None", "shader")))
+				isSet = false;
+			else
+				isSet = true;
+
+			if (isSet) {
+				if (!ConfMan.hasKey("shader", _domain) || shader != ConfMan.get("shader", _domain))
 					graphicsModeChanged = true;
+				ConfMan.set("shader", shader.encode(), _domain);
+			} else {
+				if (ConfMan.hasKey("shader", _domain) && !ConfMan.get("shader", _domain).empty())
+					graphicsModeChanged = true;
+				ConfMan.removeKey("shader", _domain);
 			}
+
+			_shader->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 		} else {
 			ConfMan.removeKey("shader", _domain);
 		}
@@ -741,6 +740,7 @@ void OptionsDialog::apply() {
 		g_system->setGraphicsMode(ConfMan.get("gfx_mode", _domain).c_str());
 		g_system->setStretchMode(ConfMan.get("stretch_mode", _domain).c_str());
 		g_system->setScaler(ConfMan.get("scaler", _domain).c_str(), ConfMan.getInt("scale_factor", _domain));
+		g_system->setShader(Common::FSNode(ConfMan.get("shader", _domain)));
 
 		if (ConfMan.hasKey("aspect_ratio"))
 			g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio", _domain));
@@ -748,8 +748,6 @@ void OptionsDialog::apply() {
 			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen", _domain));
 		if (ConfMan.hasKey("filtering"))
 			g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering", _domain));
-
-		g_system->setShader(ConfMan.get("shader", _domain).c_str());
 
 		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
@@ -1007,6 +1005,11 @@ void OptionsDialog::close() {
 
 void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
+	case kClearShaderCmd:
+		_shader->setLabel(_c("None", "shader"));
+		_shaderClearButton->setEnabled(false);
+		g_gui.scheduleTopDialogRedraw();
+		break;
 	case kMidiGainChanged:
 		_midiGainLabel->setLabel(Common::String::format("%.2f", (double)_midiGainSlider->getValue() / 100.0));
 		_midiGainLabel->markAsDirty();
@@ -1171,8 +1174,16 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 void OptionsDialog::setShaderSettingsState(bool enabled) {
 	_enableShaderSettings = enabled;
 
-	_shaderPopUpDesc->setEnabled(enabled);
-	_shaderPopUp->setEnabled(enabled);
+	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
+		_shader->setEnabled(enabled);
+		_shaderButton->setEnabled(enabled);
+		_shaderClearButton->setEnabled(enabled);
+
+		if (enabled && !_shader->getLabel().empty() && (_shader->getLabel() != _c("None", "shader")))
+			_shaderClearButton->setEnabled(enabled);
+		else
+			_shaderClearButton->setEnabled(false);
+	}
 }
 
 void OptionsDialog::setAudioSettingsState(bool enabled) {
@@ -1423,24 +1434,14 @@ void OptionsDialog::addStatisticsControls(GuiObject *boss, const Common::String 
 }
 
 void OptionsDialog::addShaderControls(GuiObject *boss, const Common::String &prefix) {
-	Common::String context;
-	if (g_system->getOverlayWidth() <= 320)
-		context = "lowres";
-
 	// Shader selector
 	if (g_system->getOverlayWidth() > 320)
-		_shaderPopUpDesc = new StaticTextWidget(boss, prefix + "grShaderPopUpDesc", _("HW Shader:"), _("Different hardware shaders give different visual effects"));
+		_shaderButton = new ButtonWidget(boss, prefix + "grShaderButton", _("Shader Path:"), _("Specifies path to the shaders used for scaling ScummVM"), kChooseShaderCmd);
 	else
-		_shaderPopUpDesc = new StaticTextWidget(boss, prefix + "grShaderPopUpDesc", _c("HW Shader:", "lowres"), _("Different hardware shaders give different visual effects"));
-	_shaderPopUp = new PopUpWidget(boss, prefix + "grShaderPopUp", _("Different shaders give different visual effects"));
-	const OSystem::GraphicsMode *p = g_system->getSupportedShaders();
+		_shaderButton = new ButtonWidget(boss, prefix + "grShaderButton", _c("Shader Path:", "lowres"), _("Specifies path to the shaders used for scaling ScummVM"), kChooseShaderCmd);
+	_shader = new StaticTextWidget(boss, prefix + "grShader", _c("None", "shader"), _("Specifies path to the shaders used for scaling ScummVM"));
 
-	_shaderPopUp->appendEntry(_("<default>"));
-	_shaderPopUp->appendEntry(Common::U32String());
-	while (p->name) {
-		_shaderPopUp->appendEntry(_c(p->description, context), p->id);
-		p++;
-	}
+	_shaderClearButton = addClearButton(boss, prefix + "grShaderClearButton", kClearShaderCmd);
 
 	_enableShaderSettings = true;
 }
@@ -1949,8 +1950,6 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_iconPathClearButton = nullptr;
 	_extraPath = nullptr;
 	_extraPathClearButton = nullptr;
-	//_shaderPath = nullptr;
-	//_shaderPathClearButton = nullptr;
 #ifdef DYNAMIC_MODULES
 	_pluginsPath = nullptr;
 	_pluginsPathClearButton = nullptr;
@@ -2049,11 +2048,11 @@ void GlobalOptionsDialog::build() {
 	addGraphicControls(graphicsContainer, "GlobalOptions_Graphics_Container.");
 
 	//
-	// The shader tab (currently visible only for Vita platform), visibility checking by features
+	// The shader tab, visibility checking by features
 	//
 
-	if (g_system->hasFeature(OSystem::kFeatureShader)) {
-		tab->addTab(_("Shader"), "GlobalOptions_Shader");
+	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
+		_shaderTabId = tab->addTab(_("Shader"), "GlobalOptions_Shader");
 		addShaderControls(tab, "GlobalOptions_Shader.");
 	}
 
@@ -2222,7 +2221,6 @@ void GlobalOptionsDialog::build() {
 	setPath(_themePath, "themepath", _c("None", "path"));
 	setPath(_iconPath, "iconspath", _("Default"));
 	setPath(_extraPath, "extrapath", _c("None", "path"));
-	// setPath(_shaderPath, "shaderpath", _c("None", "path"));
 
 #ifdef DYNAMIC_MODULES
 	Common::String pluginsPath(ConfMan.get("pluginspath", _domain));
@@ -2320,14 +2318,6 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 	_extraPath = new StaticTextWidget(boss, prefix + "ExtraPath", _c("None", "path"), _("Specifies path to additional data used by all games or ScummVM"));
 
 	_extraPathClearButton = addClearButton(boss, prefix + "ExtraPathClearButton", kExtraPathClearCmd);
-
-	//if (!lowres)
-	//	new ButtonWidget(boss, prefix + "ShaderButton", _("Shader Path:"), _("Specifies path to the shaders used for scaling ScummVM"), kChooseShaderDirCmd);
-	//else
-	//		new ButtonWidget(boss, prefix + "ShaderButton", _c("Shader Path:", "lowres"), _("Specifies path to the shaders used for scaling ScummVM"), kChooseShaderDirCmd);
-	//_shaderPath = new StaticTextWidget(boss, prefix + "ShaderPath", _c("None", "path"), _("Specifies path to the shaders used for scaling ScummVM"));
-
-	//_shaderPathClearButton = addClearButton(boss, prefix + "ShaderPathClearButton", kShaderPathClearCmd);
 
 #ifdef DYNAMIC_MODULES
 	if (!lowres)
@@ -2725,12 +2715,6 @@ void GlobalOptionsDialog::apply() {
 	changePath(_iconPath, "iconspath", _("Default"));
 	changePath(_extraPath, "extrapath", _c("None", "path")); 
 
-	//Common::U32String shaderPath(_shaderPath->getLabel());
-	//if (!shaderPath.empty() && (shaderPath != _c("None", "path")))
-	//	ConfMan.set("shaderpath", shaderPath.encode(), _domain);
-	//else
-	//	ConfMan.removeKey("shaderpath", _domain);
-
 #ifdef DYNAMIC_MODULES
 	Common::U32String pluginsPath(_pluginsPath->getLabel());
 	if (!pluginsPath.empty() && (pluginsPath != _c("None", "path")))
@@ -2978,16 +2962,6 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		}
 		break;
 	}
-	//case kChooseShaderDirCmd: {
-	//	BrowserDialog browser(_("Select directory for scaling shaders"), true);
-	//	if (browser.runModal() > 0) {
-	//		Common::FSNode dir(browser.getResult());
-	//		_shaderPath->setLabel(dir.getPath());
-	//		g_gui.scheduleTopDialogRedraw();
-	//		warning("Dialog triggered, there be dragons and the scaling scanner dialog!");
-	//	}
-	//	break;
-	//}
 #ifdef DYNAMIC_MODULES
 	case kChoosePluginsDirCmd: {
 		BrowserDialog browser(_("Select directory for plugins"), true);
@@ -3038,8 +3012,6 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	case kSavePathClearCmd:
 		_savePath->setLabel(_("Default"));
 		break;
-	//case kShaderPathClearCmd:
-	//	_shaderPath->setLabel(_("Default"));
 #ifdef DYNAMIC_MODULES
 	case kPluginsPathClearCmd:
 		_pluginsPath->setLabel(_c("None", "path"));
@@ -3058,6 +3030,22 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 #endif
 #endif
+	case kChooseShaderCmd: {
+		BrowserDialog browser(_("Select shader"), false);
+		if (browser.runModal() > 0) {
+			// User made his choice...
+			Common::FSNode file(browser.getResult());
+			_shader->setLabel(file.getPath());
+
+			if (!file.getPath().empty() && (file.getPath().decode() != _c("None", "path")))
+				_shaderClearButton->setEnabled(true);
+			else
+				_shaderClearButton->setEnabled(false);
+
+			g_gui.scheduleTopDialogRedraw();
+		}
+		break;
+	}
 	case kChooseSoundFontCmd: {
 		BrowserDialog browser(_("Select SoundFont"), false);
 		if (browser.runModal() > 0) {
@@ -3294,6 +3282,17 @@ void GlobalOptionsDialog::reflowLayout() {
 	int firstVisible = _tabWidget->getFirstVisible();
 	int activeTab = _tabWidget->getActiveTab();
 
+	if (_shaderTabId != -1) {
+		_tabWidget->setActiveTab(_shaderTabId);
+
+		bool enabled = _shaderClearButton->isEnabled();
+		_tabWidget->removeWidget(_shaderClearButton);
+		_shaderClearButton->setNext(nullptr);
+		delete _shaderClearButton;
+		_shaderClearButton = addClearButton(_tabWidget, "GlobalOptions_Shader.grShaderClearButton", kClearShaderCmd);
+		_shaderClearButton->setEnabled(enabled);
+	}
+
 	if (_midiTabId != -1) {
 		_tabWidget->setActiveTab(_midiTabId);
 
@@ -3332,11 +3331,6 @@ void GlobalOptionsDialog::reflowLayout() {
 		_browserPathClearButton->setNext(nullptr);
 		delete _browserPathClearButton;
 		_browserPathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.BrowserPathClearButton", kBrowserPathClearCmd);
-
-		//_tabWidget->removeWidget(_shaderPathClearButton);
-		//_shaderPathClearButton->setNext(nullptr);
-		//delete _shaderPathClearButton;
-		//_shaderPathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.ShaderPathClearButton", kShaderPathClearCmd);
 	}
 
 	_tabWidget->setActiveTab(activeTab);

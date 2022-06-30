@@ -353,8 +353,8 @@ static void setupGraphics(OSystem &system) {
 		// Set the user specified graphics mode (if any).
 		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 		system.setStretchMode(ConfMan.get("stretch_mode").c_str());
-		system.setShader(ConfMan.get("shader").c_str());
 		system.setScaler(ConfMan.get("scaler").c_str(), ConfMan.getInt("scale_factor"));
+		system.setShader(Common::FSNode(ConfMan.get("shader")));
 
 		system.initSize(320, 200);
 
