@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-30 12:15+0000\n"
-"PO-Revision-Date: 2022-06-30 14:25+0000\n"
+"PO-Revision-Date: 2022-06-30 14:51+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -4553,14 +4553,14 @@ msgstr ""
 "σταματήσει να κάνει κλικ με το ποντίκι"
 
 #: engines/bladerunner/detection.cpp:108
-#, fuzzy
-#| msgid "Show subtitles and play speech"
 msgid "Show subtitles during text crawl"
-msgstr "Προβολή υποτίτλων και αναπαραγωγή φωνής"
+msgstr "Προβολή υποτίτλων μαζί με το κρόουλ"
 
 #: engines/bladerunner/detection.cpp:109
 msgid "During the intro cutscene, show subtitles during the text crawl"
 msgstr ""
+"Κατά τη διάρκεια του εισαγωγικού βίντεου, να προβάλλονται υπότιτλοι μαζί με "
+"το κρόουλ (κείμενο που διατρέχει την οθόνη)"
 
 #: engines/bladerunner/detection_tables.h:96
 #: engines/bladerunner/detection_tables.h:107
