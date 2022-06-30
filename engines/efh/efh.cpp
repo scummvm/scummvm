@@ -3801,7 +3801,7 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 						if (!var6)
 							continue;
 
-						if (var2 > computeMonsterGroupDistance(counter1))
+						if (computeMonsterGroupDistance(counter1) > var2)
 							continue;
 
 						if (sub1BC74(counter1, var4))
