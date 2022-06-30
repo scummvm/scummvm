@@ -60,6 +60,8 @@ Bitmap2D::Bitmap2D(const tString &filepath, const tString &type)
 		_decoder.reset(loadImage<Image::GIFDecoder>(filepath));
 	else
 		error("trying to load unsupported image format %s", type.c_str());
+	mlWidth = _decoder->getSurface()->w;
+	mlHeight = _decoder->getSurface()->h;
 }
 
 Bitmap2D::Bitmap2D(const cVector2l &size, const Graphics::PixelFormat &format)
@@ -86,6 +88,9 @@ bool Bitmap2D::create(const cVector2l &size, const Graphics::PixelFormat &format
 	_surface.create(size.x, size.y, format);
 	_isSurfaceActive = true;
 	_decoder.release();
+	mlWidth = size.x;
+	mlHeight = size.y;
+	mlBpp = format.bpp();
 	return true;
 }
 
@@ -116,7 +121,7 @@ const void *Bitmap2D::getRawData() const {
 }
 
 int Bitmap2D::getNumChannels() {
-	return activeSurface().format.bpp() / _surface.format.bytesPerPixel;
+	return activeSurface().format.bpp() / activeSurface().format.bytesPerPixel;
 }
 
 const Graphics::PixelFormat &Bitmap2D::format() const {
