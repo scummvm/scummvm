@@ -657,6 +657,12 @@ void BYOnline::enterArea(int32 areaId) {
 		return;
 	}
 
+	// Bugfix: If a single-player game is played with pitch locator on, it
+	// remains on for a subsequently played online game even though the areas'
+	// stated rules do not allow it. Here we fix this bug/exploit by writing to
+	// the variable that determines whether to use pitch locator
+	_vm->writeVar(440, 0);
+
 	debugC(DEBUG_BYONLINE, "BYOnline: Entering area %d", int(areaId));
 
 	Common::JSONObject enterAreaRequest;
