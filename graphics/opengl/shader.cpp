@@ -363,7 +363,7 @@ void Shader::enableVertexAttribute(const char *attrib, GLuint vbo, GLint size, G
 	va._type = type;
 	va._normalized = normalized;
 	va._stride = stride;
-	va._pointer = (const void *)offset;
+	va._pointer = (const void *)(long)offset;
 }
 
 void Shader::disableVertexAttribute(const char *attrib, int size, const float *data) {
