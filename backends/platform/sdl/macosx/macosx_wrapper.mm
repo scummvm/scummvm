@@ -118,3 +118,14 @@ Common::String getResourceAppBundlePathMacOSX() {
 		return Common::String();
 	return Common::String([bundlePath fileSystemRepresentation]);
 }
+
+Common::String getAppSupportPathMacOSX() {
+	// See comments in getDesktopPathMacOSX() as we use the same methods
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+	if ([paths count] == 0)
+		return Common::String();
+	NSString *path = [paths objectAtIndex:0];
+	if (path == nil)
+		return Common::String();
+	return Common::String([path fileSystemRepresentation]) + "/ScummVM";
+}
