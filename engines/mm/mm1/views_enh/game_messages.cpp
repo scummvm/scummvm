@@ -81,11 +81,8 @@ bool GameMessages::msgInfo(const InfoMessage &msg) {
 
 	// Process the lines
 	clear();
-	for (auto line : msg._lines) {
-		Common::String str = capitalize(line._text);
-		str = searchAndReplace(str, "\n", " ");
-		addText(str, line.y, 0, ALIGN_LEFT, line.x * 8);
-	}
+	for (auto line : msg._lines)
+		addText(line._text, line.y, 0, ALIGN_LEFT, line.x * 8);
 
 	redraw();
 	return true;
