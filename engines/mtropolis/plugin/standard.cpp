@@ -50,11 +50,34 @@ public:
 	virtual ~MidiFilePlayer();
 };
 
+class MidiCombinerSource : public MidiDriver_BASE {
+public:
+	virtual ~MidiCombinerSource();
+	
+	// Do not call this directly, it's not thread-safe, expose via MultiMidiPlayer
+	virtual void setVolume(uint8 volume) = 0;
+	virtual void detach() = 0;
+};
+
+
+MidiCombinerSource::~MidiCombinerSource() {
+}
+
+class MidiCombiner {
+public:
+	virtual ~MidiCombiner();
+
+	virtual Common::SharedPtr<MidiCombinerSource> createSource() = 0;
+};
+
+MidiCombiner::~MidiCombiner() {
+}
+
 // This extends MidiDriver_BASE because we need to intercept commands to modulate the volume
 // separately for each input.
-class MidiFilePlayerImpl : public MidiFilePlayer, public MidiDriver_BASE {
+class MidiFilePlayerImpl : public MidiFilePlayer {
 public:
-	explicit MidiFilePlayerImpl(MidiDriver_BASE *outputDriver, const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint32 baseTempo, uint8 volume, bool loop, uint16 mutedTracks);
+	explicit MidiFilePlayerImpl(const Common::SharedPtr<MidiCombinerSource> &outputDriver, const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint32 baseTempo, uint8 volume, bool loop, uint16 mutedTracks);
 	~MidiFilePlayerImpl();
 
 	// Do not call any of these directly since they're not thread-safe, expose them via MultiMidiPlayer
@@ -69,13 +92,11 @@ public:
 	void onTimer();
 
 private:
-	void send(uint32 b) override;
 
 	Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> _file;
 	Common::SharedPtr<MidiParser> _parser;
-	MidiDriver_BASE *_outputDriver;
+	Common::SharedPtr<MidiCombinerSource> _outputDriver;
 	uint16 _mutedTracks;
-	uint8 _volume;
 	bool _loop;
 };
 
@@ -106,19 +127,20 @@ private:
 
 	Common::Mutex _mutex;
 	Common::Array<Common::SharedPtr<MidiFilePlayerImpl> > _players;
+	Common::SharedPtr<MidiCombiner> _combiner;
 };
 
 MidiFilePlayer::~MidiFilePlayer() {
 }
 
-MidiFilePlayerImpl::MidiFilePlayerImpl(MidiDriver_BASE *outputDriver, const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint32 baseTempo, uint8 volume, bool loop, uint16 mutedTracks)
-	: _file(file), _outputDriver(outputDriver), _parser(nullptr), _volume(255), _loop(loop), _mutedTracks(mutedTracks) {
+MidiFilePlayerImpl::MidiFilePlayerImpl(const Common::SharedPtr<MidiCombinerSource> &outputDriver, const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint32 baseTempo, uint8 volume, bool loop, uint16 mutedTracks)
+	: _file(file), _outputDriver(outputDriver), _parser(nullptr), _loop(loop), _mutedTracks(mutedTracks) {
 	Common::SharedPtr<MidiParser> parser(MidiParser::createParser_SMF());
 
 	if (file->contents.size() != 0 && parser->loadMusic(&file->contents[0], file->contents.size())) {
 		parser->setTrack(0);
 		parser->startPlaying();
-		parser->setMidiDriver(this);
+		parser->setMidiDriver(outputDriver.get());
 		parser->setTimerRate(baseTempo);
 
 		_parser = parser;
@@ -146,7 +168,7 @@ void MidiFilePlayerImpl::resume() {
 }
 
 void MidiFilePlayerImpl::setVolume(uint8 volume) {
-	_volume = volume;
+	_outputDriver->setVolume(volume);
 }
 
 void MidiFilePlayerImpl::setMutedTracks(uint16 mutedTracks) {
@@ -162,6 +184,11 @@ void MidiFilePlayerImpl::detach() {
 		_parser->setMidiDriver(nullptr);
 		_parser.reset();
 	}
+
+	if (_outputDriver) {
+		_outputDriver->detach();
+		_outputDriver.reset();
+	}
 }
 
 void MidiFilePlayerImpl::onTimer() {
@@ -169,7 +196,47 @@ void MidiFilePlayerImpl::onTimer() {
 		_parser->onTimer();
 }
 
-void MidiFilePlayerImpl::send(uint32 b) {
+// Simple combiner - Behaves "QuickTime-like" and all commands are passed through directly.
+// This applies volume by modulating note velocity.
+class MidiCombinerSimple;
+
+class MidiCombinerSourceSimple : public MidiCombinerSource {
+public:
+	explicit MidiCombinerSourceSimple(MidiCombinerSimple *combiner);
+
+	void setVolume(uint8 volume) override;
+	void detach() override;
+	void send(uint32 b) override;
+
+private:
+	MidiCombinerSimple *_combiner;
+	uint8 _volume;
+};
+
+class MidiCombinerSimple : public MidiCombiner {
+public:
+	explicit MidiCombinerSimple(MidiDriver_BASE *outputDriver);
+
+	Common::SharedPtr<MidiCombinerSource> createSource() override;
+
+	void send(uint32 b);
+
+private:
+	MidiDriver_BASE *_outputDriver;
+};
+
+
+MidiCombinerSourceSimple::MidiCombinerSourceSimple(MidiCombinerSimple *combiner) : _combiner(combiner), _volume(255) {
+}
+
+void MidiCombinerSourceSimple::setVolume(uint8 volume) {
+	_volume = volume;
+}
+
+void MidiCombinerSourceSimple::detach() {
+}
+
+void MidiCombinerSourceSimple::send(uint32 b) {
 	byte command = (b & 0xF0);
 
 	if (command == MIDI_COMMAND_NOTE_ON || command == MIDI_COMMAND_NOTE_OFF) {
@@ -178,10 +245,850 @@ void MidiFilePlayerImpl::send(uint32 b) {
 		b = (b & 0xff00ffff) | (velocity << 16);
 	}
 
+	_combiner->send(b);
+}
+
+MidiCombinerSimple::MidiCombinerSimple(MidiDriver_BASE *outputDriver) : _outputDriver(outputDriver) {
+}
+
+Common::SharedPtr<MidiCombinerSource> MidiCombinerSimple::createSource() {
+	return Common::SharedPtr<MidiCombinerSource>(new MidiCombinerSourceSimple(this));
+}
+
+void MidiCombinerSimple::send(uint32 b) {
 	_outputDriver->send(b);
 }
 
+
+// Dynamic combiner - Dynamic channel allocation, accurate volume control
+class MidiCombinerDynamic;
+
+class MidiCombinerSourceDynamic : public MidiCombinerSource {
+public:
+	MidiCombinerSourceDynamic(MidiCombinerDynamic *combiner, uint sourceID);
+	~MidiCombinerSourceDynamic();
+
+	void setVolume(uint8 volume) override;
+	void send(uint32 b) override;
+
+	void detach() override;
+
+private:
+	MidiCombinerDynamic *_combiner;
+	uint _sourceID;
+};
+
+class MidiCombinerDynamic : public MidiCombiner {
+public:
+	MidiCombinerDynamic(MidiDriver_BASE *outputDriver);
+
+	Common::SharedPtr<MidiCombinerSource> createSource() override;
+
+	void deallocateSource(uint sourceID);
+
+	void setSourceVolume(uint sourceID, uint8 volume);
+	void sendFromSource(uint sourceID, uint32 b);
+	void sendFromSource(uint sourceID, uint8 cmd, uint8 channel, uint8 param1, uint8 param2);
+
+private:
+	static const uint kMSBMask = 0x3f80u;
+	static const uint kLSBMask = 0x7fu;
+	static const uint kLRControllerStart = 64;
+	static const uint kSostenutoOnThreshold = 64;
+	static const uint kSustainOnThreshold = 64;
+
+	enum DataEntryState {
+		kDataEntryStateNone,
+		kDataEntryStateRPN,
+		kDataEntryStateNRPN,
+	};
+
+	struct MidiChannelState {
+		MidiChannelState();
+
+		void reset();
+		void softReset();	// Executes changes corresponding to Reset All Controllers message
+
+		uint16 _program;
+		uint16 _aftertouch;
+		uint16 _pitchBend;
+		uint16 _rpnNumber;
+		uint16 _nrpnNumber;
+		DataEntryState _dataEntryState;
+
+		uint16 _hrControllers[32];
+		uint8 _lrControllers[32];
+
+		uint16 _registeredParams[5];
+	};
+
+	struct SourceChannelState {
+		SourceChannelState();
+		void reset();
+
+		MidiChannelState _midiChannelState;
+	};
+
+	struct SourceState {
+		SourceState();
+
+		void allocate();
+		void deallocate();
+
+		SourceChannelState _sourceChannelState[MidiDriver_BASE::MIDI_CHANNEL_COUNT];
+		uint8 _masterVolume;
+		bool _isAllocated;
+	};
+
+	struct OutputChannelState {
+		OutputChannelState();
+
+		bool _hasSource;
+		bool _volumeIsAmbiguous;
+		uint _sourceID;
+		uint _channelID;
+		uint _noteOffCounter;
+
+		MidiChannelState _midiChannelState;
+
+		uint _numActiveNotes;
+	};
+
+	struct MidiActiveNote {
+		uint8 _outputChannel;
+		uint16 _tone;
+		bool _affectedBySostenuto;
+
+		// If either of these are set, then the note is off, but is sustained by a pedal
+		bool _isSustainedBySustain;
+		bool _isSustainedBySostenuto;
+	};
+
+	void doNoteOn(uint sourceID, uint8 channel, uint8 param1, uint8 param2);
+	void doNoteOff(uint sourceID, uint8 channel, uint8 param1, uint8 param2);
+	void doPolyphonicAftertouch(uint sourceID, uint8 channel, uint8 param1, uint8 param2);
+	void doControlChange(uint sourceID, uint8 channel, uint8 param1, uint8 param2);
+	void doProgramChange(uint sourceID, uint8 channel, uint8 param1, uint8 param2);
+	void doChannelAftertouch(uint sourceID, uint8 channel, uint8 param1, uint8 param2);
+	void doPitchBend(uint sourceID, uint8 channel, uint8 param1, uint8 param2);
+
+	void doHighRangeControlChange(uint sourceID, uint8 channel, uint8 hrParam, uint16 value);
+	void doLowRangeControlChange(uint sourceID, uint8 channel, uint8 lrParam, uint8 value);
+
+	void doDataEntry(uint sourceID, uint8 channel, int16 existingValueMask, int16 offset);
+	void doChannelMode(uint sourceID, uint8 channel, uint8 param1, uint8 param2);
+	void doAllNotesOff(uint sourceID, uint8 channel, uint8 param2);
+	void doAllSoundOff(uint sourceID, uint8 channel, uint8 param2);
+	void doResetAllControllers(uint sourceID, uint8 channel, uint8 param2);
+
+	void sendToOutput(uint8 command, uint8 channel, uint8 param1, uint8 param2);
+
+	void syncSourceConfiguration(uint outputChannel, OutputChannelState &outChState, const SourceState &sourceState, const SourceChannelState &sourceChState);
+	void syncSourceHRController(uint outputChannel, OutputChannelState &outChState, const SourceState &sourceState, const SourceChannelState &sourceChState, uint hrController);
+	void syncSourceLRController(uint outputChannel, OutputChannelState &outChState, const SourceChannelState &sourceChState, uint lrController);
+	void syncSourceRegisteredParam(uint outputChannel, OutputChannelState &outChState, const SourceChannelState &sourceChState, uint rpn);
+
+	void tryCleanUpUnsustainedNote(uint noteIndex);
+
+	Common::Array<SourceState> _sources;
+	Common::Array<MidiActiveNote> _notes;
+	OutputChannelState _outputChannels[MidiDriver_BASE::MIDI_CHANNEL_COUNT];
+	uint _noteOffCounter;
+
+	MidiDriver_BASE *_outputDriver;
+};
+
+MidiCombinerSourceDynamic::MidiCombinerSourceDynamic(MidiCombinerDynamic *combiner, uint sourceID) : _combiner(combiner), _sourceID(sourceID) {
+}
+
+MidiCombinerSourceDynamic::~MidiCombinerSourceDynamic() {
+	assert(_combiner == nullptr);	// Call detach first!
+}
+
+void MidiCombinerSourceDynamic::detach() {
+	_combiner->deallocateSource(_sourceID);
+	_combiner = nullptr;
+}
+
+void MidiCombinerSourceDynamic::setVolume(uint8 volume) {
+	_combiner->setSourceVolume(_sourceID, volume);
+}
+
+void MidiCombinerSourceDynamic::send(uint32 b) {
+	_combiner->sendFromSource(_sourceID, b);
+}
+
+MidiCombinerDynamic::MidiCombinerDynamic(MidiDriver_BASE *outputDriver) : _outputDriver(outputDriver), _noteOffCounter(1) {
+}
+
+Common::SharedPtr<MidiCombinerSource> MidiCombinerDynamic::createSource() {
+	uint sourceID = _sources.size();
+
+	for (uint i = 0; i < _sources.size(); i++) {
+		if (!_sources[i]._isAllocated) {
+			sourceID = i;
+			break;
+		}
+	}
+
+	if (sourceID == _sources.size())
+		_sources.push_back(SourceState());
+
+	_sources[sourceID].allocate();
+
+	return Common::SharedPtr<MidiCombinerSource>(new MidiCombinerSourceDynamic(this, sourceID));
+}
+
+void MidiCombinerDynamic::deallocateSource(uint sourceID) {
+	for (uint i = 0; i < ARRAYSIZE(_outputChannels); i++) {
+		OutputChannelState &ch = _outputChannels[i];
+		if (!ch._hasSource || ch._sourceID != sourceID)
+			continue;
+
+		// Stop any outputs and release sustain
+		sendFromSource(sourceID, MidiDriver_BASE::MIDI_COMMAND_CONTROL_CHANGE, i, MidiDriver_BASE::MIDI_CONTROLLER_SUSTAIN, 0);
+		sendFromSource(sourceID, MidiDriver_BASE::MIDI_COMMAND_CONTROL_CHANGE, i, MidiDriver_BASE::MIDI_CONTROLLER_SOSTENUTO, 0);
+		sendFromSource(sourceID, MidiDriver_BASE::MIDI_COMMAND_CONTROL_CHANGE, i, MidiDriver_BASE::MIDI_CONTROLLER_ALL_NOTES_OFF, 0);
+
+		ch._hasSource = false;
+		assert(ch._numActiveNotes == 0);
+	}
+
+	_sources[sourceID].deallocate();
+}
+
+void MidiCombinerDynamic::setSourceVolume(uint sourceID, uint8 volume) {
+	SourceState &src = _sources[sourceID];
+	src._masterVolume = volume;
+
+	for (uint i = 0; i < ARRAYSIZE(_outputChannels); i++) {
+		OutputChannelState &ch = _outputChannels[i];
+		if (!ch._hasSource || ch._sourceID != sourceID)
+			continue;
+
+		// Synchronize volume control
+		syncSourceHRController(i, ch, src, src._sourceChannelState[ch._channelID], MidiDriver_BASE::MIDI_CONTROLLER_VOLUME);
+	}
+}
+
+void MidiCombinerDynamic::sendFromSource(uint sourceID, uint32 b) {
+	uint8 cmd = static_cast<uint8>(b & 0xf0);
+	uint8 channel = static_cast<uint8>(b & 0x0f);
+	uint8 param1 = static_cast<uint8>((b >> 8) & 0xff);
+	uint8 param2 = static_cast<uint8>((b >> 16) & 0xff);
+
+	sendFromSource(sourceID, cmd, channel, param1, param2);
+}
+
+void MidiCombinerDynamic::sendFromSource(uint sourceID, uint8 cmd, uint8 channel, uint8 param1, uint8 param2) {
+	switch (cmd) {
+	case MidiDriver_BASE::MIDI_COMMAND_NOTE_ON:
+		doNoteOn(sourceID, channel, param1, param2);
+		break;
+	case MidiDriver_BASE::MIDI_COMMAND_NOTE_OFF:
+		doNoteOff(sourceID, channel, param1, param2);
+		break;
+	case MidiDriver_BASE::MIDI_COMMAND_POLYPHONIC_AFTERTOUCH:
+		doPolyphonicAftertouch(sourceID, channel, param1, param2);
+		break;
+	case MidiDriver_BASE::MIDI_COMMAND_CONTROL_CHANGE:
+		doControlChange(sourceID, channel, param1, param2);
+		break;
+	case MidiDriver_BASE::MIDI_COMMAND_PROGRAM_CHANGE:
+		doProgramChange(sourceID, channel, param1, param2);
+		break;
+	case MidiDriver_BASE::MIDI_COMMAND_CHANNEL_AFTERTOUCH:
+		doChannelAftertouch(sourceID, channel, param1, param2);
+		break;
+	case MidiDriver_BASE::MIDI_COMMAND_PITCH_BEND:
+		doPitchBend(sourceID, channel, param1, param2);
+		break;
+	case MidiDriver_BASE::MIDI_COMMAND_SYSTEM:
+		break;
+	}
+}
+
+void MidiCombinerDynamic::doNoteOn(uint sourceID, uint8 channel, uint8 param1, uint8 param2) {
+	uint outputChannel = 0;
+
+	if (channel == MidiDriver_BASE::MIDI_RHYTHM_CHANNEL) {
+		outputChannel = MidiDriver_BASE::MIDI_RHYTHM_CHANNEL;
+	} else {
+		bool foundChannel = false;
+
+		// Find an existing exactly-matching channel
+		for (uint i = 0; i < ARRAYSIZE(_outputChannels); i++) {
+			OutputChannelState &ch = _outputChannels[i];
+			if (ch._hasSource && ch._sourceID == sourceID && ch._channelID == channel) {
+				foundChannel = true;
+				outputChannel = i;
+				break;
+			}
+		}
+
+		if (!foundChannel) {
+			// Find an inactive channel
+			for (uint i = 0; i < ARRAYSIZE(_outputChannels); i++) {
+				if (i == MidiDriver_BASE::MIDI_RHYTHM_CHANNEL)
+					continue;
+
+				if (!_outputChannels[i]._hasSource) {
+					foundChannel = true;
+					outputChannel = i;
+					break;
+				}
+			}
+		}
+
+		if (!foundChannel) {
+			uint bestOffCounter = 0xffffffffu;
+
+			// Find the channel that went quiet the longest time ago
+			for (uint i = 0; i < ARRAYSIZE(_outputChannels); i++) {
+				if (i == MidiDriver_BASE::MIDI_RHYTHM_CHANNEL)
+					continue;
+
+				if (_outputChannels[i]._numActiveNotes == 0 && _outputChannels[i]._noteOffCounter < bestOffCounter) {
+					foundChannel = true;
+					outputChannel = i;
+					bestOffCounter = _outputChannels[i]._noteOffCounter;
+				}
+			}
+		}
+
+		// All eligible channels are playing already
+		if (!foundChannel)
+			return;
+	}
+
+	OutputChannelState &ch = _outputChannels[outputChannel];
+
+	if (!ch._hasSource || ch._sourceID != sourceID || ch._channelID != channel) {
+		ch._sourceID = sourceID;
+		ch._channelID = channel;
+		ch._hasSource = true;
+
+		const SourceState &sourceState = _sources[sourceID];
+		syncSourceConfiguration(outputChannel, ch, sourceState, sourceState._sourceChannelState[channel]);
+	}
+
+	sendToOutput(MidiDriver_BASE::MIDI_COMMAND_NOTE_ON, outputChannel, param1, param2);
+
+	MidiActiveNote note;
+	note._outputChannel = outputChannel;
+	note._tone = param1;
+	note._affectedBySostenuto = (ch._midiChannelState._lrControllers[MidiDriver_BASE::MIDI_CONTROLLER_SOSTENUTO - kLRControllerStart] >= kSostenutoOnThreshold);
+	note._isSustainedBySostenuto = false;
+	note._isSustainedBySustain = false;
+	_notes.push_back(note);
+
+	ch._numActiveNotes++;
+}
+
+void MidiCombinerDynamic::doNoteOff(uint sourceID, uint8 channel, uint8 param1, uint8 param2) {
+	for (uint i = 0; i < ARRAYSIZE(_outputChannels); i++) {
+		OutputChannelState &ch = _outputChannels[i];
+
+		if (ch._hasSource && ch._sourceID == sourceID && ch._channelID == channel) {
+			sendToOutput(MidiDriver_BASE::MIDI_COMMAND_NOTE_OFF, i, param1, param2);
+
+			for (uint ani = 0; ani < _notes.size(); ani++) {
+				MidiActiveNote &note = _notes[ani];
+				if (note._outputChannel == i && note._tone == param1 && !note._isSustainedBySostenuto && !note._isSustainedBySustain) {
+					if (ch._midiChannelState._lrControllers[MidiDriver_BASE::MIDI_CONTROLLER_SUSTAIN - kLRControllerStart] >= kSustainOnThreshold)
+						note._isSustainedBySustain = true;
+
+					if (note._affectedBySostenuto && ch._midiChannelState._lrControllers[MidiDriver_BASE::MIDI_CONTROLLER_SOSTENUTO - kLRControllerStart] >= kSostenutoOnThreshold)
+						note._isSustainedBySostenuto = true;
+
+					tryCleanUpUnsustainedNote(ani);
+					break;
+				}
+			}
+
+			break;
+		}
+	}
+}
+
+void MidiCombinerDynamic::doPolyphonicAftertouch(uint sourceID, uint8 channel, uint8 param1, uint8 param2) {
+	for (uint i = 0; i < ARRAYSIZE(_outputChannels); i++) {
+		const OutputChannelState &ch = _outputChannels[i];
+
+		if (ch._hasSource && ch._sourceID == sourceID && ch._channelID == channel) {
+			sendToOutput(MidiDriver_BASE::MIDI_COMMAND_POLYPHONIC_AFTERTOUCH, i, param1, param2);
+			break;
+		}
+	}
+}
+
+void MidiCombinerDynamic::doControlChange(uint sourceID, uint8 channel, uint8 param1, uint8 param2) {
+	SourceState &src = _sources[sourceID];
+	SourceChannelState &sch = src._sourceChannelState[channel];
+
+	if (param1 == MidiDriver_BASE::MIDI_CONTROLLER_DATA_ENTRY_MSB) {
+		doDataEntry(sourceID, channel, kLSBMask, param2 << 7);
+		return;
+	} else if (param1 == MidiDriver_BASE::MIDI_CONTROLLER_DATA_ENTRY_LSB) {
+		doDataEntry(sourceID, channel, kMSBMask, param2);
+		return;
+	} else if (param1 < 32) {
+		uint16 ctrl = ((sch._midiChannelState._hrControllers[param1 - 32] & kLSBMask) | ((param2 & 0x7f)) << 7);
+		doHighRangeControlChange(sourceID, channel, param1, ctrl);
+		return;
+	} else if (param1 < 64) {
+		uint16 ctrl = ((sch._midiChannelState._hrControllers[param1] & kMSBMask) | (param2 & 0x7f));
+		doHighRangeControlChange(sourceID, channel, param1 - 32, ctrl);
+		return;
+	} else if (param1 < 96) {
+		doLowRangeControlChange(sourceID, channel, param1 - 64, param2);
+		return;
+	}
+
+	switch (param1) {
+	case 96:
+		// Data increment
+		doDataEntry(sourceID, channel, 0x3fff, 1);
+		break;
+	case 97:
+		// Data decrement
+		doDataEntry(sourceID, channel, 0x3fff, -1);
+		break;
+	case 98:
+		// NRPN LSB
+		sch._midiChannelState._nrpnNumber = ((sch._midiChannelState._nrpnNumber & kMSBMask) | (param2 & 0x7f));
+		sch._midiChannelState._dataEntryState = kDataEntryStateNRPN;
+		break;
+	case 99:
+		// NRPN MSB
+		sch._midiChannelState._nrpnNumber = ((sch._midiChannelState._nrpnNumber & kLSBMask) | ((param2 & 0x7f) << 7));
+		sch._midiChannelState._dataEntryState = kDataEntryStateNRPN;
+		break;
+	case 100:
+		// RPN LSB
+		sch._midiChannelState._rpnNumber = ((sch._midiChannelState._rpnNumber & kMSBMask) | (param2 & 0x7f));
+		sch._midiChannelState._dataEntryState = kDataEntryStateRPN;
+		break;
+	case 101:
+		// RPN MSB
+		sch._midiChannelState._rpnNumber = ((sch._midiChannelState._rpnNumber & kLSBMask) | ((param2 & 0x7f) << 7));
+		sch._midiChannelState._dataEntryState = kDataEntryStateRPN;
+		break;
+	default:
+		if (param1 >= 120 && param1 < 128)
+			doChannelMode(sourceID, channel, param1, param2);
+		break;
+	};
+}
+
+void MidiCombinerDynamic::doProgramChange(uint sourceID, uint8 channel, uint8 param1, uint8 param2) {
+	for (uint i = 0; i < ARRAYSIZE(_outputChannels); i++) {
+		OutputChannelState &ch = _outputChannels[i];
+
+		if (ch._hasSource && ch._sourceID == sourceID && ch._channelID == channel) {
+			sendToOutput(MidiDriver_BASE::MIDI_COMMAND_PROGRAM_CHANGE, i, param1, param2);
+			ch._midiChannelState._program = param1;
+			break;
+		}
+	}
+
+	_sources[sourceID]._sourceChannelState[channel]._midiChannelState._program = param1;
+}
+
+void MidiCombinerDynamic::doChannelAftertouch(uint sourceID, uint8 channel, uint8 param1, uint8 param2) {
+	for (uint i = 0; i < ARRAYSIZE(_outputChannels); i++) {
+		OutputChannelState &ch = _outputChannels[i];
+
+		if (ch._hasSource && ch._sourceID == sourceID && ch._channelID == channel) {
+			sendToOutput(MidiDriver_BASE::MIDI_COMMAND_CHANNEL_AFTERTOUCH, i, param1, param2);
+			ch._midiChannelState._aftertouch = param1;
+			break;
+		}
+	}
+}
+
+void MidiCombinerDynamic::doPitchBend(uint sourceID, uint8 channel, uint8 param1, uint8 param2) {
+	uint16 pitchBend = (param1 & 0x7f) | ((param2 & 0x7f) << 7);
+	for (uint i = 0; i < ARRAYSIZE(_outputChannels); i++) {
+		OutputChannelState &ch = _outputChannels[i];
+
+		if (ch._hasSource && ch._sourceID == sourceID && ch._channelID == channel) {
+			sendToOutput(MidiDriver_BASE::MIDI_COMMAND_PITCH_BEND, i, param1, param2);
+			ch._midiChannelState._pitchBend = pitchBend;
+			break;
+		}
+	}
+
+	_sources[sourceID]._sourceChannelState[channel]._midiChannelState._pitchBend = pitchBend;
+}
+
+void MidiCombinerDynamic::doHighRangeControlChange(uint sourceID, uint8 channel, uint8 hrParam, uint16 value) {
+	SourceState &src = _sources[sourceID];
+	SourceChannelState &srcCh = src._sourceChannelState[channel];
+	srcCh._midiChannelState._hrControllers[hrParam] = value;
+
+	for (uint i = 0; i < ARRAYSIZE(_outputChannels); i++) {
+		OutputChannelState &ch = _outputChannels[i];
+
+		if (ch._hasSource && ch._sourceID == sourceID && ch._channelID == channel) {
+			syncSourceHRController(i, ch, src, srcCh, hrParam);
+			break;
+		}
+	}
+}
+
+void MidiCombinerDynamic::doLowRangeControlChange(uint sourceID, uint8 channel, uint8 lrParam, uint8 value) {
+	SourceChannelState &srcCh = _sources[sourceID]._sourceChannelState[channel];
+	srcCh._midiChannelState._lrControllers[lrParam] = value;
+
+	for (uint i = 0; i < ARRAYSIZE(_outputChannels); i++) {
+		OutputChannelState &ch = _outputChannels[i];
+
+		if (ch._hasSource && ch._sourceID == sourceID && ch._channelID == channel) {
+			if (lrParam == MidiDriver_BASE::MIDI_CONTROLLER_SUSTAIN - kLRControllerStart && value < kSustainOnThreshold) {
+				for (uint rni = _notes.size(); rni > 0; rni--) {
+					uint noteIndex = rni - 1;
+					MidiActiveNote &note = _notes[noteIndex];
+					if (note._isSustainedBySustain) {
+						note._isSustainedBySustain = false;
+						tryCleanUpUnsustainedNote(noteIndex);
+					}
+				}
+			} else if (lrParam == MidiDriver_BASE::MIDI_CONTROLLER_SOSTENUTO - kLRControllerStart && value < kSostenutoOnThreshold) {
+				for (uint rni = _notes.size(); rni > 0; rni--) {
+					uint noteIndex = rni - 1;
+					MidiActiveNote &note = _notes[noteIndex];
+					if (note._isSustainedBySostenuto) {
+						note._isSustainedBySostenuto = false;
+						tryCleanUpUnsustainedNote(noteIndex);
+					}
+				}
+			}
+
+			syncSourceLRController(i, ch, srcCh, lrParam);
+			break;
+		}
+	}
+}
+
+void MidiCombinerDynamic::doDataEntry(uint sourceID, uint8 channel, int16 existingValueMask, int16 offset) {
+	SourceChannelState &srcCh = _sources[sourceID]._sourceChannelState[channel];
+
+	if (srcCh._midiChannelState._dataEntryState == kDataEntryStateRPN && srcCh._midiChannelState._rpnNumber < ARRAYSIZE(srcCh._midiChannelState._registeredParams)) {
+		int32 rp = srcCh._midiChannelState._registeredParams[srcCh._midiChannelState._rpnNumber];
+		rp &= existingValueMask;
+		rp += offset;
+
+		srcCh._midiChannelState._registeredParams[srcCh._midiChannelState._rpnNumber] = (rp & existingValueMask) + offset;
+
+		for (uint i = 0; i < ARRAYSIZE(_outputChannels); i++) {
+			OutputChannelState &ch = _outputChannels[i];
+
+			if (ch._hasSource && ch._sourceID == sourceID && ch._channelID == channel) {
+				syncSourceRegisteredParam(i, ch, srcCh, srcCh._midiChannelState._rpnNumber);
+				break;
+			}
+		}
+	}
+}
+
+void MidiCombinerDynamic::doChannelMode(uint sourceID, uint8 channel, uint8 param1, uint8 param2) {
+	// Remap omni/poly/mono modes to all notes off, since we don't do anything with omni/poly
+	switch (param1) {
+	case MidiDriver_BASE::MIDI_CONTROLLER_OMNI_OFF:
+	case MidiDriver_BASE::MIDI_CONTROLLER_OMNI_ON:
+	case MidiDriver_BASE::MIDI_CONTROLLER_MONO_ON:
+	case MidiDriver_BASE::MIDI_CONTROLLER_POLY_ON:
+	case MidiDriver_BASE::MIDI_CONTROLLER_ALL_NOTES_OFF:
+		doAllNotesOff(sourceID, channel, param2);
+		break;
+	case MidiDriver_BASE::MIDI_CONTROLLER_ALL_SOUND_OFF:
+		doAllSoundOff(sourceID, channel, param2);
+		break;
+	case MidiDriver_BASE::MIDI_CONTROLLER_RESET_ALL_CONTROLLERS:
+		doResetAllControllers(sourceID, channel, param2);
+		break;
+	case 122: // Local control (ignore)
+	default:
+		break;
+	}
+}
+
+void MidiCombinerDynamic::doAllNotesOff(uint sourceID, uint8 channel, uint8 param2) {
+	uint outputChannel = 0;
+	bool foundChannel = false;
+
+	for (uint i = 0; i < ARRAYSIZE(_outputChannels); i++) {
+		OutputChannelState &ch = _outputChannels[i];
+		if (ch._hasSource && ch._sourceID == sourceID && ch._channelID == channel) {
+			foundChannel = true;
+			outputChannel = i;
+			break;
+		}
+	}
+
+	if (!foundChannel)
+		return;
+
+	OutputChannelState &ch = _outputChannels[outputChannel];
+
+	bool sustainOn = (ch._midiChannelState._lrControllers[MidiDriver_BASE::MIDI_CONTROLLER_SUSTAIN - kLRControllerStart] >= kSustainOnThreshold);
+	bool sostenutoOn = (ch._midiChannelState._lrControllers[MidiDriver_BASE::MIDI_CONTROLLER_SOSTENUTO - kLRControllerStart] >= kSostenutoOnThreshold);
+
+	for (uint rni = _notes.size(); rni > 0; rni--) {
+		uint noteIndex = rni - 1;
+		MidiActiveNote &note = _notes[noteIndex];
+		if (note._outputChannel == outputChannel) {
+			if (note._affectedBySostenuto && sostenutoOn)
+				note._isSustainedBySostenuto = true;
+			if (sustainOn)
+				note._isSustainedBySustain = true;
+
+			tryCleanUpUnsustainedNote(rni);
+		}
+	}
+
+	sendToOutput(MidiDriver_BASE::MIDI_COMMAND_CONTROL_CHANGE, outputChannel, MidiDriver_BASE::MIDI_CONTROLLER_ALL_NOTES_OFF, param2);
+}
+
+void MidiCombinerDynamic::doAllSoundOff(uint sourceID, uint8 channel, uint8 param2) {
+	uint outputChannel = 0;
+	bool foundChannel = false;
+
+	for (uint i = 0; i < ARRAYSIZE(_outputChannels); i++) {
+		OutputChannelState &ch = _outputChannels[i];
+		if (ch._hasSource && ch._sourceID == sourceID && ch._channelID == channel) {
+			foundChannel = true;
+			outputChannel = i;
+			break;
+		}
+	}
+
+	if (!foundChannel)
+		return;
+
+	OutputChannelState &ch = _outputChannels[outputChannel];
+
+	for (uint rni = _notes.size(); rni > 0; rni--) {
+		uint noteIndex = rni - 1;
+		MidiActiveNote &note = _notes[noteIndex];
+		if (note._outputChannel == outputChannel) {
+			note._isSustainedBySostenuto = false;
+			note._isSustainedBySustain = false;
+
+			tryCleanUpUnsustainedNote(rni);
+		}
+	}
+
+	sendToOutput(MidiDriver_BASE::MIDI_COMMAND_CONTROL_CHANGE, outputChannel, MidiDriver_BASE::MIDI_CONTROLLER_ALL_SOUND_OFF, param2);
+	ch._noteOffCounter = 0;	// All sound is off so this can be recycled quickly
+}
+
+void MidiCombinerDynamic::doResetAllControllers(uint sourceID, uint8 channel, uint8 param2) {
+	SourceChannelState &srcCh = _sources[sourceID]._sourceChannelState[channel];
+
+	srcCh._midiChannelState.softReset();
+
+	uint outputChannel = 0;
+	bool foundChannel = false;
+
+	for (uint i = 0; i < ARRAYSIZE(_outputChannels); i++) {
+		OutputChannelState &ch = _outputChannels[i];
+		if (ch._hasSource && ch._sourceID == sourceID && ch._channelID == channel) {
+			foundChannel = true;
+			outputChannel = i;
+			break;
+		}
+	}
+
+	if (!foundChannel)
+		return;
+
+	OutputChannelState &ch = _outputChannels[outputChannel];
+	ch._midiChannelState.softReset();
+
+	// Release all sustained notes
+	for (uint rni = _notes.size(); rni > 0; rni--) {
+		uint noteIndex = rni - 1;
+		MidiActiveNote &note = _notes[noteIndex];
+		if (note._outputChannel == outputChannel) {
+			if (note._isSustainedBySostenuto || note._isSustainedBySustain) {
+				note._isSustainedBySostenuto = false;
+				note._isSustainedBySustain = false;
+				tryCleanUpUnsustainedNote(rni);
+			}
+		}
+	}
+
+	sendToOutput(MidiDriver_BASE::MIDI_COMMAND_CONTROL_CHANGE, outputChannel, MidiDriver_BASE::MIDI_CONTROLLER_RESET_ALL_CONTROLLERS, 0);
+}
+
+void MidiCombinerDynamic::sendToOutput(uint8 command, uint8 channel, uint8 param1, uint8 param2) {
+	uint32 output = static_cast<uint32>(command) | static_cast<uint32>(channel) | static_cast<uint32>(param1 << 8) | static_cast<uint32>(param2 << 16);
+	_outputDriver->send(output);
+}
+
+void MidiCombinerDynamic::syncSourceConfiguration(uint outputChannel, OutputChannelState &outChState, const SourceState &srcState, const SourceChannelState &sourceChState) {
+	const MidiChannelState &srcMidiChState = sourceChState._midiChannelState;
+	MidiChannelState &outState = outChState._midiChannelState;
+
+	if (outState._program != srcMidiChState._program) {
+		outState._program = srcMidiChState._program;
+		sendToOutput(MidiDriver_BASE::MIDI_COMMAND_PROGRAM_CHANGE, outputChannel, srcMidiChState._program, 0);
+	}
+
+	if (outState._aftertouch != srcMidiChState._aftertouch) {
+		outState._aftertouch = srcMidiChState._aftertouch;
+		sendToOutput(MidiDriver_BASE::MIDI_COMMAND_CHANNEL_AFTERTOUCH, outputChannel, srcMidiChState._aftertouch, 0);
+	}
+
+	if (outState._pitchBend != srcMidiChState._pitchBend) {
+		outState._pitchBend = srcMidiChState._pitchBend;
+		sendToOutput(MidiDriver_BASE::MIDI_COMMAND_PITCH_BEND, outputChannel, (srcMidiChState._pitchBend & kLSBMask), (srcMidiChState._pitchBend & kMSBMask) >> 7);
+	}
+
+	for (uint i = 0; i < ARRAYSIZE(srcMidiChState._hrControllers); i++)
+		syncSourceHRController(outputChannel, outChState, srcState, sourceChState, i);
+
+	for (uint i = 0; i < ARRAYSIZE(srcMidiChState._lrControllers); i++)
+		syncSourceLRController(outputChannel, outChState, sourceChState, i);
+
+	for (uint i = 0; i < ARRAYSIZE(srcMidiChState._registeredParams); i++)
+		syncSourceRegisteredParam(outputChannel, outChState, sourceChState, i);
+}
+
+void MidiCombinerDynamic::syncSourceHRController(uint outputChannel, OutputChannelState &outChState, const SourceState &srcState, const SourceChannelState &sourceChState, uint hrController) {
+	const MidiChannelState &srcMidiChState = sourceChState._midiChannelState;
+	MidiChannelState &outState = outChState._midiChannelState;
+
+	uint16 effectiveValue = srcMidiChState._hrControllers[hrController];
+
+	if (hrController == MidiDriver_BASE::MIDI_CONTROLLER_VOLUME)
+		effectiveValue = effectiveValue * srcState._masterVolume / 255;
+
+	if (outState._hrControllers[hrController] == effectiveValue)
+		return;
+
+	uint16 deltaBits = (outState._hrControllers[hrController] ^ effectiveValue);
+
+	if (deltaBits & kMSBMask)
+		sendToOutput(MidiDriver_BASE::MIDI_COMMAND_CONTROL_CHANGE, outputChannel, hrController, (effectiveValue & kMSBMask) >> 7);
+	if (deltaBits & kLSBMask)
+		sendToOutput(MidiDriver_BASE::MIDI_COMMAND_CONTROL_CHANGE, outputChannel, hrController + 32, effectiveValue & kLSBMask);
+
+	outState._hrControllers[hrController] = effectiveValue;
+}
+
+void MidiCombinerDynamic::syncSourceLRController(uint outputChannel, OutputChannelState &outChState, const SourceChannelState &sourceChState, uint lrController) {
+	const MidiChannelState &srcState = sourceChState._midiChannelState;
+	MidiChannelState &outState = outChState._midiChannelState;
+
+	if (outState._lrControllers[lrController] == srcState._lrControllers[lrController])
+		return;
+
+	sendToOutput(MidiDriver_BASE::MIDI_COMMAND_CONTROL_CHANGE, outputChannel, lrController + kLRControllerStart, srcState._lrControllers[lrController] & kLSBMask);
+
+	outState._lrControllers[lrController] = srcState._lrControllers[lrController];
+}
+
+void MidiCombinerDynamic::syncSourceRegisteredParam(uint outputChannel, OutputChannelState &outChState, const SourceChannelState &sourceChState, uint rpn) {
+	const MidiChannelState &srcState = sourceChState._midiChannelState;
+	MidiChannelState &outState = outChState._midiChannelState;
+
+	if (outState._registeredParams[rpn] == srcState._registeredParams[rpn])
+		return;
+
+	outState._registeredParams[rpn] = srcState._registeredParams[rpn];
+
+	if (outState._dataEntryState != kDataEntryStateRPN || outState._rpnNumber != srcState._rpnNumber) {
+		outState._dataEntryState = kDataEntryStateRPN;
+		outState._rpnNumber = srcState._rpnNumber;
+		sendToOutput(MidiDriver_BASE::MIDI_COMMAND_CONTROL_CHANGE, outputChannel, MidiDriver_BASE::MIDI_CONTROLLER_RPN_LSB, rpn & kLSBMask);
+		sendToOutput(MidiDriver_BASE::MIDI_COMMAND_CONTROL_CHANGE, outputChannel, MidiDriver_BASE::MIDI_CONTROLLER_RPN_MSB, (rpn & kMSBMask) >> 7);
+	}
+
+	sendToOutput(MidiDriver_BASE::MIDI_COMMAND_CONTROL_CHANGE, outputChannel, MidiDriver_BASE::MIDI_CONTROLLER_DATA_ENTRY_LSB, srcState._registeredParams[rpn] & kLSBMask);
+	sendToOutput(MidiDriver_BASE::MIDI_COMMAND_CONTROL_CHANGE, outputChannel, MidiDriver_BASE::MIDI_CONTROLLER_DATA_ENTRY_MSB, (srcState._registeredParams[rpn] & kMSBMask) >> 7);
+}
+
+void MidiCombinerDynamic::tryCleanUpUnsustainedNote(uint noteIndex) {
+	MidiActiveNote &note = _notes[noteIndex];
+
+	if (!note._isSustainedBySostenuto && !note._isSustainedBySustain) {
+		OutputChannelState &outCh = _outputChannels[note._outputChannel];
+		assert(outCh._numActiveNotes > 0);
+		outCh._numActiveNotes--;
+		if (!outCh._numActiveNotes)
+			outCh._noteOffCounter = _noteOffCounter++;
+
+		_notes.remove_at(noteIndex);
+	}
+}
+
+MidiCombinerDynamic::MidiChannelState::MidiChannelState() {
+	reset();
+}
+
+void MidiCombinerDynamic::MidiChannelState::reset() {
+	_program = 0;
+	_aftertouch = 0;
+	_pitchBend = 0x2000;
+
+	for (uint i = 0; i < ARRAYSIZE(_hrControllers); i++)
+		_hrControllers[i] = 0;
+	for (uint i = 0; i < ARRAYSIZE(_lrControllers); i++)
+		_lrControllers[i] = 0;
+	for (uint i = 0; i < ARRAYSIZE(_registeredParams); i++)
+		_registeredParams[i] = 0;
+
+	_hrControllers[MidiDriver_BASE::MIDI_CONTROLLER_BALANCE] = (64 << 7);
+	_hrControllers[MidiDriver_BASE::MIDI_CONTROLLER_PANNING] = (64 << 7);
+	_hrControllers[MidiDriver_BASE::MIDI_CONTROLLER_VOLUME] = (127 << 7);
+
+	_dataEntryState = kDataEntryStateNone;
+	_rpnNumber = 0;
+	_nrpnNumber = 0;
+}
+
+void MidiCombinerDynamic::MidiChannelState::softReset() {
+	_hrControllers[MidiDriver_BASE::MIDI_CONTROLLER_MODULATION] = 0;
+	_lrControllers[MidiDriver_BASE::MIDI_CONTROLLER_SUSTAIN - kLRControllerStart] = 0;
+	_lrControllers[MidiDriver_BASE::MIDI_CONTROLLER_PORTAMENTO - kLRControllerStart] = 0;
+	_lrControllers[MidiDriver_BASE::MIDI_CONTROLLER_SOSTENUTO - kLRControllerStart] = 0;
+	_lrControllers[MidiDriver_BASE::MIDI_CONTROLLER_SOFT - kLRControllerStart] = 0;
+	_dataEntryState = kDataEntryStateNone;
+	_rpnNumber = 0;
+	_nrpnNumber = 0;
+	_aftertouch = 0;
+	_hrControllers[MidiDriver_BASE::MIDI_CONTROLLER_EXPRESSION] = (127 << 7);
+	_pitchBend = (64 << 7);
+}
+
+MidiCombinerDynamic::SourceChannelState::SourceChannelState() {
+	reset();
+}
+
+void MidiCombinerDynamic::SourceChannelState::reset() {
+}
+
+MidiCombinerDynamic::SourceState::SourceState() : _isAllocated(false), _masterVolume(255) {
+}
+
+void MidiCombinerDynamic::SourceState::allocate() {
+	_isAllocated = true;
+}
+
+void MidiCombinerDynamic::SourceState::deallocate() {
+	_isAllocated = false;
+}
+
+MidiCombinerDynamic::OutputChannelState::OutputChannelState() : _sourceID(0), _volumeIsAmbiguous(true), _channelID(0), _hasSource(false), _noteOffCounter(0), _numActiveNotes(0) {
+}
+
 MultiMidiPlayer::MultiMidiPlayer() {
+	//_combiner.reset(new MidiCombinerSimple(this));
+	_combiner.reset(new MidiCombinerDynamic(this));
+
 	createDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 
 	if (_driver->open() != 0) {
@@ -212,7 +1119,10 @@ void MultiMidiPlayer::onTimer() {
 
 
 MidiFilePlayer *MultiMidiPlayer::createFilePlayer(const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint8 volume, bool loop, uint16 mutedTracks) {
-	Common::SharedPtr<MidiFilePlayerImpl> filePlayer(new MidiFilePlayerImpl(this, file, getBaseTempo(), volume, loop, mutedTracks));
+	Common::SharedPtr<MidiCombinerSource> combinerSource = _combiner->createSource();
+	combinerSource->setVolume(volume);
+
+	Common::SharedPtr<MidiFilePlayerImpl> filePlayer(new MidiFilePlayerImpl(combinerSource, file, getBaseTempo(), volume, loop, mutedTracks));
 
 	{
 		Common::StackLock lock(_mutex);
@@ -368,7 +1278,6 @@ MiniscriptInstructionOutcome STransCtModifier::writeRefAttribute(MiniscriptThrea
 	}
 
 	return Modifier::writeRefAttribute(thread, result, attrib);
-;
 }
 
 
@@ -943,7 +1852,7 @@ bool ObjectReferenceVariableModifier::SaveLoad::loadInternal(Common::ReadStream 
 	return true;
 }
 
-MidiModifier::MidiModifier() : _plugIn(nullptr), _filePlayer(nullptr), _mutedTracks(0) {
+MidiModifier::MidiModifier() : _plugIn(nullptr), _filePlayer(nullptr), _mutedTracks(0), _isActive(false) {
 }
 
 MidiModifier::~MidiModifier() {

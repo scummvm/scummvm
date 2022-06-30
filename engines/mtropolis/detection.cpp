@@ -80,6 +80,14 @@ const ExtraGuiOptions MTropolisMetaEngineDetection::getExtraGuiOptions(const Com
 		options.push_back(widescreenOption);
 	}
 
+	static const ExtraGuiOption dynamicMIDIOption = {
+		_s("Improved Music Mixing"),
+		_s("Enables dynamic MIDI mixer, improving quality, but behaving less like mTropolis Player."),
+		"mtropolis_mod_dynamic_midi",
+		false,
+		0,
+		0};
+
 	static const ExtraGuiOption launchDebugOption = {
 		_s("Start with debugger"),
 		_s("Starts with the debugger dashboard active"),
@@ -97,6 +105,7 @@ const ExtraGuiOptions MTropolisMetaEngineDetection::getExtraGuiOptions(const Com
 		0
 	};
 
+	options.push_back(dynamicMIDIOption);
 	options.push_back(launchDebugOption);
 	options.push_back(launchBreakOption);
 
