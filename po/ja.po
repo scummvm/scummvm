@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-29 20:08+0000\n"
-"PO-Revision-Date: 2022-06-15 15:46+0000\n"
+"PO-Revision-Date: 2022-06-30 14:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4455,7 +4455,7 @@ msgstr "ゲームコードがありません"
 msgid ""
 "Enhanced edition not supported, use the original files which are part of the "
 "release."
-msgstr ""
+msgstr "エンハンスド版非対応のため、リリース同梱のオリジナルファイルをご利用下さい。"
 
 #. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
 #: engines/bladerunner/metaengine.cpp:109
