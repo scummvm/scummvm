@@ -22,11 +22,30 @@
 #include "common/util.h"
 #include "mm/utils/strings.h"
 #include "mm/mm1/views_enh/game_messages.h"
+#include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
+
+GameMessages::YesNo::YesNo() :
+		ScrollView("MessagesYesNo", g_events) {
+	_bounds = Common::Rect(234, 18 * 8, 320, 200);
+	addButton(&g_globals->_confirmIcons,
+		Common::Point(14, 10), 0,
+		Common::KeyState(Common::KEYCODE_y, 'y'));
+	addButton(&g_globals->_confirmIcons,
+		Common::Point(40, 10), 2,
+		Common::KeyState(Common::KEYCODE_n, 'n'));
+}
+
+bool GameMessages::YesNo::msgKeypress(const KeypressMessage &msg) {
+	// Pass on any Y/N button presses to the messages area
+	return send("GameMessages", msg);
+}
+
+/*------------------------------------------------------------------------*/
 
 GameMessages::GameMessages(UIElement *owner) :
 		ScrollText("GameMessages", owner) {
@@ -36,6 +55,11 @@ void GameMessages::draw() {
 	// Only draw non-focused messages for a single turn
 	if (_show || g_events->focusedView() == this) {
 		ScrollText::draw();
+		if (_ynCallback) {
+			_yesNo.resetSelectedButton();
+			_yesNo.draw();
+		}
+
 		_show = false;
 	}
 }
@@ -81,6 +105,20 @@ bool GameMessages::msgKeypress(const KeypressMessage &msg) {
 		return true;
 	}
 
+	return false;
+}
+
+bool GameMessages::msgMouseDown(const MouseDownMessage &msg) {
+	// If yes/no prompting, also pass events to buttons view
+	if (_ynCallback)
+		return send("MessagesYesNo", msg);
+	return false;
+}
+
+bool GameMessages::msgMouseUp(const MouseUpMessage &msg) {
+	// If yes/no prompting, also pass events to buttons view
+	if (_ynCallback)
+		return send("MessagesYesNo", msg);
 	return false;
 }
 

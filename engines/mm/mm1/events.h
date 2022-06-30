@@ -36,17 +36,35 @@ namespace MM1 {
 
 class Events;
 
-struct Bounds : public Common::Rect {
+/**
+ * Implements a thunk layer around an element's
+ * bounds, allowing access to it as if it were
+ * a simple Common::Rect, but any changes to it
+ * will also be applied to a linked inner bounds
+ */
+struct Bounds {
 private:
+	Common::Rect _bounds;
 	Common::Rect &_innerBounds;
 	int _borderSize = 0;
 public:
+	const int16 &left;
+	const int16 &top;
+	const int16 &right;
+	const int16 &bottom;
+public:
 	Bounds(Common::Rect &innerBounds);
+	operator const Common::Rect &() const { return _bounds; }
 	Bounds &operator=(const Common::Rect &r);
 	void setBorderSize(size_t borderSize);
 	size_t borderSize() const { return _borderSize; }
+	int16 width() const { return _bounds.width(); }
+	int16 height() const { return _bounds.height(); }
 };
 
+/**
+ * User interface element
+ */
 class UIElement {
 	friend class Events;
 private:
@@ -200,6 +218,9 @@ public:
 	#undef MESSAGE
 };
 
+/**
+ * Main events and view manager
+ */
 class Events : public UIElement, public Mouse {
 private:
 	Graphics::Screen *_screen = nullptr;

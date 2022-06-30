@@ -41,10 +41,30 @@ ScrollView::ScrollView(const Common::String &name,
 	_bounds.setBorderSize(FRAME_BORDER_SIZE);
 }
 
+void ScrollView::addButton(Xeen::SpriteResource *sprites,
+		const Common::Point &pos, int frame,
+		const Common::KeyState &key) {
+	_buttons.push_back(Button(sprites, pos, frame, key));
+}
+
+void ScrollView::resetSelectedButton() {
+	_selectedButton = -1;
+	redraw();
+}
+
 void ScrollView::draw() {
 	frame();
 	fill();
 	setTextColor(0);
+
+	Graphics::ManagedSurface s = getSurface();
+	for (uint i = 0; i < _buttons.size(); ++i) {
+		const Button &btn = _buttons[i];
+		btn._sprites->draw(&s,
+			btn._frame + (_selectedButton == (int)i ? 1 : 0),
+			Common::Point(btn._pos.x + _bounds.borderSize(),
+				btn._pos.y + _bounds.borderSize()));
+	}
 }
 
 void ScrollView::frame() {
@@ -125,6 +145,48 @@ void ScrollView::writeSymbol(int symbolId) {
 	}
 
 	_symbolPos.x += SYMBOL_WIDTH;
+}
+
+bool ScrollView::msgFocus(const FocusMessage &msg) {
+	_selectedButton = -1;
+	return TextView::msgFocus(msg);
+}
+
+bool ScrollView::msgMouseDown(const MouseDownMessage &msg) {
+	_selectedButton = getButtonAt(msg._pos);
+	if (_selectedButton != -1) {
+		draw();
+		return true;
+	}
+
+	return false;
+}
+
+bool ScrollView::msgMouseUp(const MouseUpMessage &msg) {
+	// Reset button depressed state
+	if (_selectedButton != -1)
+		draw();
+
+	// If the highlighted button remains the same, trigger it's key
+	int selectedButton = getButtonAt(msg._pos);
+	if (selectedButton != -1 && selectedButton == _selectedButton) {
+		msgKeypress(KeypressMessage(_buttons[selectedButton]._key));
+		return true;
+	}
+
+	return false;
+}
+
+int ScrollView::getButtonAt(const Common::Point &pos) {
+	Common::Rect r(16, 16);
+	for (uint i = 0; i < _buttons.size(); ++i) {
+		r.moveTo(_innerBounds.left + _buttons[i]._pos.x,
+			_innerBounds.top + _buttons[i]._pos.y);
+		if (r.contains(pos))
+			return i;
+	}
+
+	return -1;
 }
 
 } // namespace ViewsEnh
