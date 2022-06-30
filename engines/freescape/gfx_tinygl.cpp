@@ -350,6 +350,126 @@ void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::V
 	tglDisable(TGL_POLYGON_OFFSET_FILL);
 }
 
+void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours, int type) {
+	Math::Vector3d vertices[8] = {
+		origin,		origin,		origin,		origin,
+		origin,		origin,		origin,		origin,
+	};
+	PyramidType pyramidType = (PyramidType)type;
+	switch(pyramidType) {
+		default: break;
+		case EastPyramid:
+			vertices[0] += Math::Vector3d(0, 0, size.z());
+			vertices[1] += Math::Vector3d(0, size.y(), size.z());
+			vertices[2] += Math::Vector3d(0, size.y(), 0);
+
+			vertices[4] += Math::Vector3d(size.x(), (*ordinates)[0], (*ordinates)[3]);
+			vertices[5] += Math::Vector3d(size.x(), (*ordinates)[2], (*ordinates)[3]);
+			vertices[6] += Math::Vector3d(size.x(), (*ordinates)[2], (*ordinates)[1]);
+			vertices[7] += Math::Vector3d(size.x(), (*ordinates)[0], (*ordinates)[1]);
+			break;
+		case WestPyramid:
+
+			vertices[0] += Math::Vector3d(size.x(), 0, 0);
+			vertices[1] += Math::Vector3d(size.x(), size.y(), 0);
+			vertices[2] += Math::Vector3d(size.x(), size.y(), size.z());
+			vertices[3] += Math::Vector3d(size.x(), 0, size.z());
+
+			vertices[4] += Math::Vector3d(0, (*ordinates)[0], (*ordinates)[1]);
+			vertices[5] += Math::Vector3d(0, (*ordinates)[2], (*ordinates)[1]);
+			vertices[6] += Math::Vector3d(0, (*ordinates)[2], (*ordinates)[3]);
+			vertices[7] += Math::Vector3d(0, (*ordinates)[0], (*ordinates)[3]);
+			break;
+
+		case UpPyramid:
+			vertices[1] += Math::Vector3d(size.x(), 0, 0);
+			vertices[2] += Math::Vector3d(size.x(), 0, size.z());
+			vertices[3] += Math::Vector3d(0, 0, size.z());
+
+			vertices[4] += Math::Vector3d((*ordinates)[0], size.y(), (*ordinates)[1]);
+			vertices[5] += Math::Vector3d((*ordinates)[2], size.y(), (*ordinates)[1]);
+			vertices[6] += Math::Vector3d((*ordinates)[2], size.y(), (*ordinates)[3]);
+			vertices[7] += Math::Vector3d((*ordinates)[0], size.y(), (*ordinates)[3]);
+			break;
+
+		case DownPyramid:
+
+			vertices[0] += Math::Vector3d(size.x(), size.y(), 0);
+			vertices[1] += Math::Vector3d(0, size.y(), 0);
+			vertices[2] += Math::Vector3d(0, size.y(), size.z());
+			vertices[3] += Math::Vector3d(size.x(), size.y(), size.z());
+
+			vertices[4] += Math::Vector3d((*ordinates)[2], 0, (*ordinates)[1]);
+			vertices[5] += Math::Vector3d((*ordinates)[0], 0, (*ordinates)[1]);
+			vertices[6] += Math::Vector3d((*ordinates)[0], 0, (*ordinates)[3]);
+			vertices[7] += Math::Vector3d((*ordinates)[2], 0, (*ordinates)[3]);
+			break;
+
+		case NorthPyramid:
+			vertices[0] += Math::Vector3d(0, size.y(), 0);
+			vertices[1] += Math::Vector3d(size.x(), size.y(), 0);
+			vertices[2] += Math::Vector3d(size.x(), 0, 0);
+
+			vertices[4] += Math::Vector3d((*ordinates)[0], (*ordinates)[3], size.z());
+			vertices[5] += Math::Vector3d((*ordinates)[2], (*ordinates)[3], size.z());
+			vertices[6] += Math::Vector3d((*ordinates)[2], (*ordinates)[1], size.z());
+			vertices[7] += Math::Vector3d((*ordinates)[0], (*ordinates)[1], size.z());
+			break;
+		case SouthPyramid:
+			vertices[0] += Math::Vector3d(0, 0, size.z());
+			vertices[1] += Math::Vector3d(size.x(), 0, size.z());
+			vertices[2] += Math::Vector3d(size.x(), size.y(), size.z());
+
+			vertices[3] += Math::Vector3d(0, size.y(), size.z());
+			vertices[4] += Math::Vector3d((*ordinates)[0], (*ordinates)[1], 0);
+			vertices[5] += Math::Vector3d((*ordinates)[2], (*ordinates)[1], 0);
+			vertices[6] += Math::Vector3d((*ordinates)[2], (*ordinates)[3], 0);
+			vertices[7] += Math::Vector3d((*ordinates)[0], (*ordinates)[3], 0);
+			break;
+	}
+
+	Common::Array<Math::Vector3d> face;
+	face.push_back(vertices[5]);
+	face.push_back(vertices[6]);
+	face.push_back(vertices[2]);
+	face.push_back(vertices[1]);
+	renderFace(face);
+	face.clear();
+
+	face.push_back(vertices[7]);
+	face.push_back(vertices[4]);
+	face.push_back(vertices[0]);
+	face.push_back(vertices[3]);
+	renderFace(face);
+	face.clear();
+
+	face.push_back(vertices[4]);
+	face.push_back(vertices[5]);
+	face.push_back(vertices[1]);
+	face.push_back(vertices[0]);
+	renderFace(face);
+	face.clear();
+
+	face.push_back(vertices[6]);
+	face.push_back(vertices[7]);
+	face.push_back(vertices[3]);
+	face.push_back(vertices[2]);
+	renderFace(face);
+	face.clear();
+
+	face.push_back(vertices[0]);
+	face.push_back(vertices[1]);
+	face.push_back(vertices[2]);
+	face.push_back(vertices[3]);
+	renderFace(face);
+	face.clear();
+
+	face.push_back(vertices[7]);
+	face.push_back(vertices[6]);
+	face.push_back(vertices[5]);
+	face.push_back(vertices[4]);
+	renderFace(face);
+}
 
 void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector3d &size, Common::Array<uint8> *colours) {
 	assert(size.x() > 0);

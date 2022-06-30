@@ -358,6 +358,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		fileOffsetForArea[area] = file->readUint16LE();
 		debug("offset: %x", fileOffsetForArea[area]);
 	}
+	//fileOffsetForArea[0] = 0x89a6 - offset; // For testing
 
 	// grab the areas
 	AreaMap *areaMap = new AreaMap;
@@ -386,7 +387,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	if (!areaMap->contains(startArea))
 		_startArea = newArea->getAreaID();
 	else
-		_startArea = startArea;
+		_startArea = startArea + 1;
 	_startEntrance = startEntrance;
 	_colorNumber = ncolors;
 	_binaryBits = 8;

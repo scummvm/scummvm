@@ -67,6 +67,21 @@ int GeometricObject::numberOfOrdinatesForType(Type type) {
 	}
 }
 
+bool GeometricObject::isPyramid(Type type) {
+	switch (type) {
+	default:
+		return false;
+
+	case EastPyramid:
+	case WestPyramid:
+	case UpPyramid:
+	case DownPyramid:
+	case NorthPyramid:
+	case SouthPyramid:
+		return true;
+	}
+}
+
 #pragma mark -
 #pragma mark Construction/Destruction
 
@@ -153,6 +168,8 @@ void GeometricObject::draw(Freescape::Renderer *gfx) {
 		gfx->renderCube(_origin, _size, colours);
 	} else if (this->getType() == Rectangle) {
 		gfx->renderRectangle(_origin, _size, colours);
+	} else if (isPyramid(this->getType())) {
+		gfx->renderPyramid(_origin, _size, ordinates, colours, this->getType());
 	} else if (this->isPlanar() && _type <= 14) {
 		//debug("Drawing %d of type %d", this->getObjectID(), this->getType());
 		gfx->renderPolygon(_origin, _size, ordinates, colours);
