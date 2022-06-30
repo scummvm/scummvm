@@ -300,7 +300,7 @@ void cRendererPostEffects::RenderBlurTexture(iTexture *apDestination, iTexture *
 		bProgramsLoaded = true;
 
 	iLowLevelGraphics *pLowLevel = mpLowLevelGraphics;
-	cVector2l vBlurSize = cVector2l(apDestination->GetWidth(), apDestination->GetHeight());
+	cVector2l vBlurSize = cVector2l(apDestination->getWidth(), apDestination->getHeight());
 	cVector2f vBlurDrawSize;
 	vBlurDrawSize.x = ((float)vBlurSize.x / mvScreenSize.x) * mpLowLevelGraphics->GetVirtualSize().x;
 	vBlurDrawSize.y = ((float)vBlurSize.y / mvScreenSize.y) * mpLowLevelGraphics->GetVirtualSize().y;
@@ -554,8 +554,8 @@ void cRendererPostEffects::RenderMotionBlur() {
 
 	mpMotionBlurFP->Bind();
 	mpMotionBlurFP->SetVec2f("halfScreenSize",
-							 cVector2f((float)pScreenTexture->GetWidth() / 2.0f,
-									   (float)pScreenTexture->GetHeight() / 2.0f));
+							 cVector2f((float)pScreenTexture->getWidth() / 2.0f,
+									   (float)pScreenTexture->getHeight() / 2.0f));
 
 	mpLowLevelGraphics->SetTexture(0, pScreenTexture);
 
@@ -646,7 +646,7 @@ void cRendererPostEffects::RenderBloom() {
 	RenderBlurTexture(mpBloomBlurTexture, pScreenTexture, mfBloomSpread);
 
 	// Size of blur texture
-	cVector2f vBlurSize = cVector2f((float)mpBloomBlurTexture->GetWidth(), (float)mpBloomBlurTexture->GetHeight());
+	cVector2f vBlurSize = cVector2f((float)mpBloomBlurTexture->getWidth(), (float)mpBloomBlurTexture->getHeight());
 
 	// Size of the virtual screen
 	cVector2f vVirtSize = mpLowLevelGraphics->GetVirtualSize();

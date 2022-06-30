@@ -85,18 +85,18 @@ enum eTextureAnimMode {
 
 class iLowLevelGraphics;
 
-class iTexture : public iLowLevelPicture, public iResourceBase {
+class iTexture : public LowLevelPicture, public iResourceBase {
 public:
 	iTexture(tString asName, tString asType, Graphics::PixelFormat *apPxlFmt, iLowLevelGraphics *apLowLevelGraphics,
 			 eTextureType aType, bool abUseMipMaps, eTextureTarget aTarget,
 			 bool abCompress = false)
-		: iLowLevelPicture(asType), iResourceBase(asName, 0),
+		: LowLevelPicture(asType), iResourceBase(asName, 0),
 		  mType(aType), mbUseMipMaps(abUseMipMaps),
 		  mpLowLevelGraphics(apLowLevelGraphics), mbCompress(abCompress),
 		  mTarget(aTarget),
 		  mWrapS(eTextureWrap_Repeat), mWrapT(eTextureWrap_Repeat), mWrapR(eTextureWrap_Repeat),
 		  mfFrameTime(1), mAnimMode(eTextureAnimMode_Loop), mlSizeLevel(0), mvMinLevelSize(16, 16),
-		  mfAnisotropyDegree(1.0f), mFilter(eTextureFilter_Bilinear) {}
+		  mfAnisotropyDegree(1.0f), mFilter(eTextureFilter_Bilinear), _bpp(apPxlFmt->bpp()) {}
 
 	virtual ~iTexture() {}
 
@@ -147,7 +147,8 @@ public:
 	virtual void SetGamma(float afGamma) = 0;
 	virtual int GetHandle() = 0;
 
-	virtual bool HasAlpha() { return false; }
+	virtual bool hasAlpha() { return false; }
+	uint32 getBpp() const override { return _bpp; }
 
 	virtual void SetWrapS(eTextureWrap aMode) = 0;
 	virtual void SetWrapT(eTextureWrap aMode) = 0;
@@ -191,6 +192,7 @@ protected:
 	float mfFrameTime;
 	eTextureAnimMode mAnimMode;
 	unsigned int mlSizeLevel;
+	uint32 _bpp;
 	cVector2l mvMinLevelSize;
 };
 

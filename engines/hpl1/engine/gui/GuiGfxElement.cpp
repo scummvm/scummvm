@@ -227,8 +227,8 @@ void cGuiGfxElement::AddTexture(iTexture *apTexture) {
 	mvTextures[mlTextureNum] = apTexture;
 
 	if (mlTextureNum == 0) {
-		mvImageSize.x = (float)apTexture->GetWidth();
-		mvImageSize.y = (float)apTexture->GetHeight();
+		mvImageSize.x = (float)apTexture->getWidth();
+		mvImageSize.y = (float)apTexture->getHeight();
 	}
 
 	mvActiveSize = GetImageSize();

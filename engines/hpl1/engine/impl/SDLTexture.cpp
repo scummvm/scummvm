@@ -64,8 +64,6 @@ cSDLTexture::cSDLTexture(const tString &asName, Graphics::PixelFormat *apPxlFmt,
 	mfTimeCount = 0;
 
 	mfTimeDir = 1;
-
-	mlBpp = 0;
 }
 
 cSDLTexture::~cSDLTexture() {
@@ -148,7 +146,7 @@ bool cSDLTexture::CreateCubeFromBitmapVec(tBitmap2DVec *avBitmaps) {
 		GLenum format;
 		GetSettings(pSrc, lChannels, format);
 
-		glTexImage2D(target, 0, lChannels, pSrc->GetWidth(), pSrc->GetHeight(),
+		glTexImage2D(target, 0, lChannels, pSrc->getWidth(), pSrc->getHeight(),
 					 0, format, GL_UNSIGNED_BYTE, pSrc->getRawData());
 
 		// No mip maps for cubemap
@@ -158,11 +156,11 @@ bool cSDLTexture::CreateCubeFromBitmapVec(tBitmap2DVec *avBitmaps) {
 		//		GL_RGBA, GL_UNSIGNED_BYTE, pSrc->GetSurface()->pixels);
 		// }
 
-		mlWidth = pSrc->GetWidth();
-		mlHeight = pSrc->GetHeight();
-		mlBpp = lChannels * 8;
+		_width = pSrc->getWidth();
+		_height = pSrc->getHeight();
+		_bpp = lChannels * 8;
 
-		if (!cMath::IsPow2(mlHeight) || !cMath::IsPow2(mlWidth)) {
+		if (!cMath::IsPow2(_height) || !cMath::IsPow2(_width)) {
 			Hpl1::logWarning(Hpl1::kDebugGraphics, "Texture '%s' does not have a pow2 size", msName.c_str());
 		}
 	}
@@ -214,20 +212,19 @@ bool cSDLTexture::CreateFromArray(unsigned char *apPixelData, int alChannels, co
 		break;
 	}
 
-	mlWidth = avSize.x;
-	mlHeight = avSize.y;
-	mlDepth = avSize.z;
-	mlBpp = lChannels * 8;
+	_width = avSize.x;
+	_height = avSize.y;
+	_bpp = lChannels * 8;
 
-	if (!cMath::IsPow2(mlHeight) || !cMath::IsPow2(mlWidth) || !cMath::IsPow2(mlDepth)) {
+	if (!cMath::IsPow2(_height) || !cMath::IsPow2(_width) || !cMath::IsPow2(avSize.z)) {
 		Hpl1::logWarning(Hpl1::kDebugGraphics, "Texture '%s' does not have a pow2 size", msName.c_str());
 	}
 
 	if (mTarget == eTextureTarget_1D) {
-		GL_CHECK(glTexImage1D(GLTarget, 0, lChannels, mlWidth, 0, format,
+		GL_CHECK(glTexImage1D(GLTarget, 0, lChannels, _width, 0, format,
 							  GL_UNSIGNED_BYTE, apPixelData));
 	} else if (mTarget == eTextureTarget_2D) {
-		GL_CHECK(glTexImage2D(GLTarget, 0, lChannels, mlWidth, mlHeight,
+		GL_CHECK(glTexImage2D(GLTarget, 0, lChannels, _width, _height,
 							  0, format, GL_UNSIGNED_BYTE, apPixelData));
 	} else if (mTarget == eTextureTarget_3D) {
 		GL_CHECK(glTexImage3D(GLTarget, 0, lChannels, avSize.x, avSize.y, avSize.z,
@@ -481,44 +478,44 @@ bool cSDLTexture::CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx) {
 
 	Bitmap2D *pBitmapSrc = pBmp;
 
-	mlWidth = pBitmapSrc->GetWidth();
-	mlHeight = pBitmapSrc->GetHeight();
+	_width = pBitmapSrc->getWidth();
+	_height = pBitmapSrc->getHeight();
 
-	if ((!cMath::IsPow2(mlHeight) || !cMath::IsPow2(mlWidth)) && mTarget != eTextureTarget_Rect)
+	if ((!cMath::IsPow2(_height) || !cMath::IsPow2(_width)) && mTarget != eTextureTarget_Rect)
 		Hpl1::logWarning(Hpl1::kDebugGraphics, "Texture '%s' does not have a pow2 size", msName.c_str());
 
 	int lChannels = 0;
 	GLenum format = 0;
 	GetSettings(pBitmapSrc, lChannels, format);
 
-	mlBpp = lChannels * 8;
+	_bpp = lChannels * 8;
 
 	const unsigned char *pPixelSrc = (const unsigned char *)pBitmapSrc->getRawData();
 
 	unsigned char *pNewSrc = nullptr;
-	if (mlSizeLevel > 0 && (int)mlWidth > mvMinLevelSize.x * 2) {
+	if (mlSizeLevel > 0 && (int)_width > mvMinLevelSize.x * 2) {
 		// Log("OldSize: %d x %d ",mlWidth,mlHeight);
 
-		int lOldW = mlWidth;
-		int lOldH = mlHeight;
+		int lOldW = _width;
+		int lOldH = _height;
 
 		int lSizeDiv = (int)pow((float)2, (int)mlSizeLevel);
 
-		mlWidth /= lSizeDiv;
-		mlHeight /= lSizeDiv;
+		_width /= lSizeDiv;
+		_height /= lSizeDiv;
 
-		while (mlWidth < (unsigned int)mvMinLevelSize.x) {
-			mlWidth *= 2;
-			mlHeight *= 2;
+		while (_width < (unsigned int)mvMinLevelSize.x) {
+			_width *= 2;
+			_height *= 2;
 			lSizeDiv /= 2;
 		}
 
 		// Log("NewSize: %d x %d SizeDiv: %d\n",mlWidth,mlHeight,lSizeDiv);
 
-		pNewSrc = hplNewArray(unsigned char, lChannels *mlWidth *mlHeight);
+		pNewSrc = hplNewArray(unsigned char, lChannels *_width *_height);
 
-		int lWidthCount = mlWidth;
-		int lHeightCount = mlHeight;
+		int lWidthCount = _width;
+		int lHeightCount = _height;
 		int lOldAdd = lChannels * lSizeDiv;
 		int lOldHeightAdd = lChannels * lOldW * (lSizeDiv - 1);
 
@@ -533,7 +530,7 @@ bool cSDLTexture::CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx) {
 
 			lWidthCount--;
 			if (!lWidthCount) {
-				lWidthCount = mlWidth;
+				lWidthCount = _width;
 				lHeightCount--;
 				pOldPixel += lOldHeightAdd;
 			}
@@ -549,10 +546,10 @@ bool cSDLTexture::CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx) {
 	GL_CHECK_FN();
 
 	if (mTarget == eTextureTarget_1D)
-		glTexImage1D(GLTarget, 0, format, mlWidth, 0, format,
+		glTexImage1D(GLTarget, 0, format, _width, 0, format,
 					 GL_UNSIGNED_BYTE, pPixelSrc);
 	else
-		glTexImage2D(GLTarget, 0, format, mlWidth, mlHeight,
+		glTexImage2D(GLTarget, 0, format, _width, _height,
 					0, format, GL_UNSIGNED_BYTE, pPixelSrc);
 
 	if (glGetError() != GL_NO_ERROR)
@@ -607,7 +604,7 @@ void cSDLTexture::GetSettings(Bitmap2D *apSrc, int &alChannels, GLenum &aFormat)
 	alChannels = apSrc->getNumChannels();
 	aFormat = GL_RGBA;
 
-	tString sType = cString::ToLowerCase(apSrc->GetType());
+	tString sType = cString::ToLowerCase(apSrc->getType());
 
 	if (alChannels == 4) {
 		if (sType == "tga") {
