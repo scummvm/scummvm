@@ -668,7 +668,9 @@ void BYOnline::enterArea(int32 areaId) {
 	// remains on for a subsequently played online game even though the areas'
 	// stated rules do not allow it. Here we fix this bug/exploit by writing to
 	// the variable that determines whether to use pitch locator
-	_vm->writeVar(440, 0);
+	if (_vm->_game.id == GID_BASEBALL2001) {
+		_vm->writeVar(440, 0);
+	}
 
 	debugC(DEBUG_BYONLINE, "BYOnline: Entering area %d", int(areaId));
 
