@@ -301,7 +301,7 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_ongoingFightFl = false;
 	_statusMenuActive = false;
 	_menuDepth = 0;
-	_word2D0BA = 0;
+	_menuItemCounter = 0;
 
 	for (int i = 0; i < 15; ++i) {
 		_word3273A[i] = 0;
@@ -5336,7 +5336,7 @@ void EfhEngine::countRightWindowItems(int16 menuId, int16 charId) {
 
 	int16 var2 = 0;
 	int16 var4 = 0;
-	_word2D0BA = 0;
+	_menuItemCounter = 0;
 
 	switch (menuId) {
 	case 0:
@@ -5361,20 +5361,20 @@ void EfhEngine::countRightWindowItems(int16 menuId, int16 charId) {
 		break;
 	default: // Case 8 + Default
 		var4 = -1;
-		_word2D0BA = 0;
+		_menuItemCounter = 0;
 		break;
 	}
 
 	if (var4 == -1) {
 		for (int16 counter = 0; counter < 10; ++counter) {
 			if (_npcBuf[charId]._inventory[counter]._ref != 0x7FFF) {
-				_word3273A[_word2D0BA++] = counter;
+				_word3273A[_menuItemCounter++] = counter;
 			}
 		}
 	} else {
 		for (int16 counter = var4; counter < var2; ++counter) {
 			if (_npcBuf[charId]._activeScore[counter] != 0) {
-				_word3273A[_word2D0BA++] = counter;
+				_word3273A[_menuItemCounter++] = counter;
 			}
 		}
 	}
@@ -5434,7 +5434,7 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 	displayStringAtTextPos(buffer1);
 	displayCenteredString("Inventory", 144, 310, 72);
 
-	if (_word2D0BA == 0) {
+	if (_menuItemCounter == 0) {
 		if (curMenuLine != -1)
 			setTextColorWhite();
 
@@ -5443,7 +5443,7 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 		return;
 	}
 
-	for (int16 counter = 0; counter < _word2D0BA; ++counter) {
+	for (int16 counter = 0; counter < _menuItemCounter; ++counter) {
 		if (_menuDepth == 0)
 			setTextColorGrey();
 		else {
@@ -5513,7 +5513,7 @@ void EfhEngine::displayCharacterInformationOrSkills(int16 curMenuLine, int16 cha
 	setTextPos(146, 27);
 	displayStringAtTextPos("Name: ");
 	displayStringAtTextPos(buffer);
-	if (_word2D0BA <= 0) {
+	if (_menuItemCounter <= 0) {
 		if (curMenuLine != -1)
 			setTextColorWhite();
 		displayCenteredString("No Skills To Select", 144, 310, 96);
@@ -5521,7 +5521,7 @@ void EfhEngine::displayCharacterInformationOrSkills(int16 curMenuLine, int16 cha
 		return;
 	}
 
-	for (int16 counter = 0; counter < _word2D0BA; ++counter) {
+	for (int16 counter = 0; counter < _menuItemCounter; ++counter) {
 		if (counter == curMenuLine)
 			setTextColorWhite();
 		int16 textPosY = 38 + counter * 9;
@@ -5679,7 +5679,7 @@ void EfhEngine::sub191FF(int16 charId, int16 objectId, int16 windowId, int16 men
 		int16 var2 = _items[itemId].field_18;
 		if (var2 != 4) {
 			for (int16 counter = 0; counter < 10; ++counter) {
-				if (var2 != _items[_npcBuf[charId]._inventory[counter]._ref].field_18)
+				if (var2 == _items[_npcBuf[charId]._inventory[counter]._ref].field_18)
 					equipCursedItem(charId, objectId, windowId, menuId, curMenuLine);
 			}
 		}
@@ -6317,7 +6317,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 	debug("handleStatusMenu %d %d", gameMode, charId);
 
 	int16 menuId = 9;
-	int16 var16 = -1;
+	int16 selectedLine = -1;
 	int16 windowId = -1;
 	int16 curMenuLine = -1;
 	bool var10 = false;
@@ -6341,10 +6341,8 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			if (_menuDepth == 0) {
 				switch (var19) {
 				case Common::KEYCODE_ESCAPE:
-					if (_menuDepth == 0) { // ?? Useless case ?
-						windowId = 8;
-						var19 = Common::KEYCODE_RETURN;
-					}
+					windowId = 8;
+					var19 = Common::KEYCODE_RETURN;
 					break;
 				case Common::KEYCODE_a:
 					windowId = 7;
@@ -6388,9 +6386,10 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					break;
 				}
 			} else if (_menuDepth == 1) {
+				// in the sub-menus, only a list of selectable items is displayed
 				if (var19 >= Common::KEYCODE_a && var19 <= Common::KEYCODE_z) {
 					int16 var8 = var19 - Common::KEYCODE_a;
-					if (var8 < _word2D0BA) {
+					if (var8 < _menuItemCounter) {
 						curMenuLine = var8;
 						var19 = Common::KEYCODE_RETURN;
 					}
@@ -6410,13 +6409,13 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 						curMenuLine = 0;
 					}
 				} else if (_menuDepth == 1) {
-					if (_word2D0BA == 0) {
+					if (_menuItemCounter == 0) {
 						_menuDepth = 0;
 						curMenuLine = -1;
 						menuId = 9;
 						unk_StatusMenu(windowId, menuId, curMenuLine, charId, true, true);
 					} else {
-						var16 = curMenuLine;
+						selectedLine = curMenuLine;
 						var10 = true;
 					}
 				}
@@ -6439,9 +6438,9 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					if (++windowId > 8)
 						windowId = 0;
 				} else if (_menuDepth == 1) {
-					if (_word2D0BA != 0) {
+					if (_menuItemCounter != 0) {
 						++curMenuLine;
-						if (curMenuLine > _word2D0BA - 1)
+						if (curMenuLine > _menuItemCounter - 1)
 							curMenuLine = 0;
 					}
 				}
@@ -6458,10 +6457,10 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					if (--windowId < 0)
 						windowId = 8;
 				} else if (_menuDepth == 1) {
-					if (_word2D0BA != 0) {
+					if (_menuItemCounter != 0) {
 						--curMenuLine;
 						if (curMenuLine < 0)
-							curMenuLine = _word2D0BA - 1;
+							curMenuLine = _menuItemCounter - 1;
 					}
 				}
 				break;
@@ -6482,7 +6481,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 		int16 itemId;
 		switch (menuId) {
 		case 0:
-			objectId = _word3273A[var16];
+			objectId = _word3273A[selectedLine];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
 			sub191FF(charId, objectId, windowId, menuId, curMenuLine);
 			if (gameMode == 2) {
@@ -6492,23 +6491,23 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			}
 			break;
 		case 1:
-			objectId = _word3273A[var16];
+			objectId = _word3273A[selectedLine];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
 			if (gameMode == 2) {
 				restoreAnimImageSetId();
 				_statusMenuActive = false;
 				return objectId;
-			} else {
-				if (sub22293(_mapPosX, _mapPosY, charId, itemId, 2, -1)) {
-					_statusMenuActive = false;
-					return -1;
-				} else {
-					sub19E2E(charId, objectId, windowId, menuId, curMenuLine, 2);
-				}
 			}
+
+			if (sub22293(_mapPosX, _mapPosY, charId, itemId, 2, -1)) {
+				_statusMenuActive = false;
+				return -1;
+			}
+
+			sub19E2E(charId, objectId, windowId, menuId, curMenuLine, 2);
 			break;
 		case 2:
-			objectId = _word3273A[var16];
+			objectId = _word3273A[selectedLine];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
 			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
 				displayString_3("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
@@ -6534,7 +6533,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 
 			break;
 		case 3:
-			objectId = _word3273A[var16];
+			objectId = _word3273A[selectedLine];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
 			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
 				displayString_3("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
@@ -6592,7 +6591,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			}
 			break;
 		case 4:
-			objectId = _word3273A[var16];
+			objectId = _word3273A[selectedLine];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
 			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
 				displayString_3("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
@@ -6619,7 +6618,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			}
 			break;
 		case 5:
-			objectId = _word3273A[var16];
+			objectId = _word3273A[selectedLine];
 			if (gameMode == 2) {
 				displayString_3("Not a Combat Option!", true, charId, windowId, menuId, curMenuLine);
 			} else {
@@ -6631,7 +6630,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			}
 			break;
 		case 6: // Identical to case 5?
-			objectId = _word3273A[var16];
+			objectId = _word3273A[selectedLine];
 			if (gameMode == 2) {
 				displayString_3("Not a Combat Option!", true, charId, windowId, menuId, curMenuLine);
 			} else {
@@ -6643,7 +6642,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			}
 			break;
 		case 7: // Identical to case 5?
-			objectId = _word3273A[var16];
+			objectId = _word3273A[selectedLine];
 			if (gameMode == 2) {
 				displayString_3("Not a Combat Option!", true, charId, windowId, menuId, curMenuLine);
 			} else {
@@ -6662,7 +6661,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			var10 = false;
 			_menuDepth = 0;
 			menuId = 9;
-			var16 = -1;
+			selectedLine = -1;
 			curMenuLine = -1;
 		}
 
