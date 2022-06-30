@@ -29,6 +29,10 @@ Common::String capitalize(const Common::String &str) {
 	bool capitalize = true;
 
 	for (uint i = 0; i < str.size(); ++i) {
+		if (!scumm_strnicmp(result.c_str() - 1, " i ", 3))
+			// the word 'I' is always capitalized
+			capitalize = true;
+
 		if (capitalize) {
 			result.setChar(toupper(result[i]), i);
 			capitalize = false;
