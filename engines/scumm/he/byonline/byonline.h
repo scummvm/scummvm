@@ -107,6 +107,7 @@ private:
 	void disconnect(bool lost = false);
 
 	void send(Common::JSONObject data);
+	void sendWithVersion(Common::JSONObject data);
 
 	void handleHeartbeat();
 

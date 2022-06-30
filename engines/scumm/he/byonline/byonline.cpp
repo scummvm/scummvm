@@ -34,6 +34,8 @@
 
 namespace Scumm {
 
+#define BYONLINE_VERSION "v2.0"
+
 BYOnline::BYOnline(ScummEngine_v90he *s) {
 	_vm = s;
 
@@ -112,7 +114,7 @@ void BYOnline::disconnect(bool lost) {
 	if (!lost) {
 		Common::JSONObject disconnectObject;
 		disconnectObject.setVal("cmd", new Common::JSONValue("disconnect"));
-		send(disconnectObject);
+		sendWithVersion(disconnectObject);
 	} else {
 		systemAlert(901, "You have been disconnected from BYOnline. Returning to login screen.");
 	}
@@ -153,6 +155,11 @@ void BYOnline::send(Common::JSONObject data) {
 		// connectionLost();
 	}
 
+}
+
+void BYOnline::sendWithVersion(Common::JSONObject data) {
+	data.setVal("version", new Common::JSONValue((Common::String)BYONLINE_VERSION));
+	send(data);
 }
 
 void BYOnline::startOfFrame() {
@@ -273,7 +280,7 @@ void BYOnline::processLine(Common::String line) {
 void BYOnline::handleHeartbeat() {
 	Common::JSONObject heartbeat;
 	heartbeat.setVal("cmd", new Common::JSONValue("heartbeat"));
-	send(heartbeat);
+	sendWithVersion(heartbeat);
 }
 
 bool BYOnline::connected() {
@@ -451,7 +458,7 @@ void BYOnline::login(int32 *args) {
 			loginRequestParameters.setVal("pass", new Common::JSONValue((Common::String)password));
 			loginRequestParameters.setVal("game", new Common::JSONValue((Common::String)((_vm->_game.id == GID_FOOTBALL) ? "football" : "baseball")));
 
-			send(loginRequestParameters);
+			sendWithVersion(loginRequestParameters);
 		}
 	}
 }
@@ -468,7 +475,7 @@ void BYOnline::loginCallback(Common::JSONValue *response) {
 			loginTokenRequest.setVal("token", new Common::JSONValue(token));
 			loginTokenRequest.setVal("game", new Common::JSONValue((Common::String)((_vm->_game.id == GID_FOOTBALL) ? "football" : "baseball")));
 
-			send(loginTokenRequest);
+			sendWithVersion(loginTokenRequest);
 
 			_vm->writeVar(110, 7); // Verifying Clearance
 		}
@@ -508,7 +515,7 @@ void BYOnline::handleGetProfile(int32 *args) {
 		getProfileRequest.setVal("user_id", new Common::JSONValue((long long int)args[0]));
 	}
 
-	send(getProfileRequest);
+	sendWithVersion(getProfileRequest);
 }
 
 void BYOnline::handleProfileInfo(Common::JSONArray profile) {
@@ -572,7 +579,7 @@ void BYOnline::setProfile(Common::String field, int32 value) {
 	Common::JSONObject setProfileRequest;
 	setProfileRequest.setVal("cmd", new Common::JSONValue("set_icon"));
 	setProfileRequest.setVal(field, new Common::JSONValue((long long int)value));
-	send(setProfileRequest);
+	sendWithVersion(setProfileRequest);
 }
 
 void BYOnline::sendGameResults(int userId, int arrayIndex, int unknown) {
@@ -596,7 +603,7 @@ void BYOnline::sendGameResults(int userId, int arrayIndex, int unknown) {
 		arrayData.push_back(new Common::JSONValue((long long int)data));
 	}
 	setProfileRequest.setVal("fields", new Common::JSONValue(arrayData));
-	send(setProfileRequest);
+	sendWithVersion(setProfileRequest);
 }
 
 void BYOnline::getPopulation(int areaId, int unknown) {
@@ -605,7 +612,7 @@ void BYOnline::getPopulation(int areaId, int unknown) {
 	Common::JSONObject getPopulationRequest;
 	getPopulationRequest.setVal("cmd", new Common::JSONValue("get_population"));
 	getPopulationRequest.setVal("area", new Common::JSONValue((long long int)areaId));
-	send(getPopulationRequest);
+	sendWithVersion(getPopulationRequest);
 }
 
 void BYOnline::handlePopulation(int areaId, int population) {
@@ -627,7 +634,7 @@ void BYOnline::locatePlayer(int usernameArray) {
 	Common::JSONObject locatePlayerRequest;
 	locatePlayerRequest.setVal("cmd", new Common::JSONValue("locate_player"));
 	locatePlayerRequest.setVal("user", new Common::JSONValue((Common::String)userName));
-	send(locatePlayerRequest);
+	sendWithVersion(locatePlayerRequest);
 }
 
 void BYOnline::handleLocateResp(int code, int areaId, Common::String area) {
@@ -668,7 +675,7 @@ void BYOnline::enterArea(int32 areaId) {
 	Common::JSONObject enterAreaRequest;
 	enterAreaRequest.setVal("cmd", new Common::JSONValue("enter_area"));
 	enterAreaRequest.setVal("area", new Common::JSONValue((long long int)areaId));
-	send(enterAreaRequest);
+	sendWithVersion(enterAreaRequest);
 
 	_inArea = true;
 }
@@ -680,7 +687,7 @@ void BYOnline::leaveArea() {
 	if (connected()) {
 		Common::JSONObject leaveAreaRequest;
 		leaveAreaRequest.setVal("cmd", new Common::JSONValue("leave_area"));
-		send(leaveAreaRequest);
+		sendWithVersion(leaveAreaRequest);
 
 		_inArea = false;
 	}
@@ -696,7 +703,7 @@ void BYOnline::getPlayersList(int start, int end) {
 	playersListRequest.setVal("cmd", new Common::JSONValue("get_players"));
 	playersListRequest.setVal("start", new Common::JSONValue((long long int)start));
 	playersListRequest.setVal("end", new Common::JSONValue((long long int)end));
-	send(playersListRequest);
+	sendWithVersion(playersListRequest);
 
 }
 
@@ -764,7 +771,7 @@ void BYOnline::setPhoneStatus(int status) {
 	Common::JSONObject phoneStatus;
 	phoneStatus.setVal("cmd", new Common::JSONValue("set_phone_status"));
 	phoneStatus.setVal("status", new Common::JSONValue((long long int)status));
-	send(phoneStatus);
+	sendWithVersion(phoneStatus);
 }
 
 void BYOnline::challengePlayer(int32 playerId, int32 stadium) {
@@ -777,7 +784,7 @@ void BYOnline::challengePlayer(int32 playerId, int32 stadium) {
 	challengePlayerRequest.setVal("cmd", new Common::JSONValue("challenge_player"));
 	challengePlayerRequest.setVal("user", new Common::JSONValue((long long int)playerId));
 	challengePlayerRequest.setVal("stadium", new Common::JSONValue((long long int)stadium));
-	send(challengePlayerRequest);
+	sendWithVersion(challengePlayerRequest);
 }
 
 void BYOnline::handleReceiveChallenge(int playerId, int stadium, Common::String name) {
@@ -805,7 +812,7 @@ void BYOnline::challengeTimeout(int playerId) {
 	Common::JSONObject challengeTimeoutRequuest;
 	challengeTimeoutRequuest.setVal("cmd", new Common::JSONValue("challenge_timeout"));
 	challengeTimeoutRequuest.setVal("user", new Common::JSONValue((long long int)playerId));
-	send(challengeTimeoutRequuest);
+	sendWithVersion(challengeTimeoutRequuest);
 }
 
 void BYOnline::sendBusy(int playerId) {
@@ -816,7 +823,7 @@ void BYOnline::sendBusy(int playerId) {
 	Common::JSONObject busyRequest;
 	busyRequest.setVal("cmd", new Common::JSONValue("receiver_busy"));
 	busyRequest.setVal("user", new Common::JSONValue((long long int)playerId));
-	send(busyRequest);
+	sendWithVersion(busyRequest);
 }
 
 void BYOnline::handleReceiverBusy() {
@@ -839,7 +846,7 @@ int32 BYOnline::answerPhone(int playerId) {
 	Common::JSONObject answerPhoneRequest;
 	answerPhoneRequest.setVal("cmd", new Common::JSONValue("considering_challenge"));
 	answerPhoneRequest.setVal("user", new Common::JSONValue((long long int)playerId));
-	send(answerPhoneRequest);
+	sendWithVersion(answerPhoneRequest);
 
 	if (_playersList.size()) {
 		for (uint i = 0; i < _playersList.size(); i++) {
@@ -874,7 +881,7 @@ void BYOnline::counterChallenge(int stadium) {
 	Common::JSONObject counterChallengeRequest;
 	counterChallengeRequest.setVal("cmd", new Common::JSONValue("counter_challenge"));
 	counterChallengeRequest.setVal("stadium", new Common::JSONValue((long long int)stadium));
-	send(counterChallengeRequest);
+	sendWithVersion(counterChallengeRequest);
 }
 
 void BYOnline::handleCounterChallenge(int stadium) {
@@ -898,7 +905,7 @@ void BYOnline::declineChallenge(int playerId) {
 	Common::JSONObject declineChallengeRequest;
 	declineChallengeRequest.setVal("cmd", new Common::JSONValue("decline_challenge"));
 	declineChallengeRequest.setVal("user", new Common::JSONValue((long long int)playerId));
-	send(declineChallengeRequest);
+	sendWithVersion(declineChallengeRequest);
 }
 
 void BYOnline::handleDeclineChallenge(int notResponding) {
@@ -924,7 +931,7 @@ void BYOnline::acceptChallenge(int playerId) {
 	Common::JSONObject acceptChallengeRequest;
 	acceptChallengeRequest.setVal("cmd", new Common::JSONValue("accept_challenge"));
 	acceptChallengeRequest.setVal("user", new Common::JSONValue((long long int)playerId));
-	send(acceptChallengeRequest);
+	sendWithVersion(acceptChallengeRequest);
 }
 
 void BYOnline::handleAcceptChallenge() {
@@ -960,7 +967,7 @@ void BYOnline::sendSession(int sessionId) {
 	sendSessionRequest.setVal("cmd", new Common::JSONValue("send_session"));
 	sendSessionRequest.setVal("user", new Common::JSONValue((long long int)_playerId));
 	sendSessionRequest.setVal("session", new Common::JSONValue((long long int)sessionId));
-	send(sendSessionRequest);
+	sendWithVersion(sendSessionRequest);
 }
 
 void BYOnline::handleGameSession(int sessionId) {
@@ -978,7 +985,7 @@ void BYOnline::sendRelay(int relayId) {
 	sendRelayRequest.setVal("cmd", new Common::JSONValue("send_relay"));
 	sendRelayRequest.setVal("user", new Common::JSONValue((long long int)_playerId));
 	sendRelayRequest.setVal("relay", new Common::JSONValue((long long int)relayId));
-	send(sendRelayRequest);
+	sendWithVersion(sendRelayRequest);
 }
 
 void BYOnline::handleGameRelay(int relayId) {
@@ -1012,7 +1019,7 @@ void BYOnline::gameStarted(int hoster, int player, int playerNameArray) {
 		Common::JSONObject getTeamsRequest;
 		getTeamsRequest.setVal("cmd", new Common::JSONValue("get_teams"));
 		getTeamsRequest.setVal("opponent_id", new Common::JSONValue((long long int)player));
-		send(getTeamsRequest);
+		sendWithVersion(getTeamsRequest);
 	}
 
 	char playerName[16];
@@ -1027,7 +1034,7 @@ void BYOnline::gameStarted(int hoster, int player, int playerNameArray) {
 	gameStartedRequest.setVal("cmd", new Common::JSONValue("game_started"));
 	gameStartedRequest.setVal("user", new Common::JSONValue((long long int)player));
 
-	send(gameStartedRequest);
+	sendWithVersion(gameStartedRequest);
 }
 
 void BYOnline::gameFinished() {
@@ -1036,7 +1043,7 @@ void BYOnline::gameFinished() {
 	Common::JSONObject gameFinishedRequest;
 	gameFinishedRequest.setVal("cmd", new Common::JSONValue("game_finished"));
 
-	send(gameFinishedRequest);
+	sendWithVersion(gameFinishedRequest);
 }
 
 }
