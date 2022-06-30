@@ -270,7 +270,6 @@ void GridItemTray::handleMouseDown(int x, int y, int button, int clickCount) {
 }
 
 void GridItemTray::handleMouseWheel(int x, int y, int direction) {
-	Dialog::handleMouseWheel(x, y, direction);
 	close();
 }
 
