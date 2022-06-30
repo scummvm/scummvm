@@ -965,7 +965,7 @@ void OptionsDialog::apply() {
 					break;
 				}
 
-				if (subtitles != ConfMan.getBool("subtitles")) {
+				if (subtitles != ConfMan.getBool("subtitles", _domain)) {
 					ConfMan.setBool("subtitles", subtitles, _domain);
 					_subToggleDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
 				}
