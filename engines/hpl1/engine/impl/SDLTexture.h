@@ -33,13 +33,6 @@
 #include "hpl1/engine/impl/PBuffer.h"
 #include "hpl1/engine/graphics/bitmap2D.h"
 
-//#include <GL/GLee.h>
-//#if defined(__APPLE__)&&defined(__MACH__)
-//#include <OpenGL/glu.h>
-//#else
-//#include <GL/glu.h>
-//#endif
-//#include "SDL/SDL.h"
 #include "temp-types.h"
 
 namespace hpl {
@@ -87,7 +80,7 @@ public:
 	/// SDL / OGL Specific ///////////
 
 	unsigned int GetTextureHandle();
-	cPBuffer *GetPBuffer() { return mpPBuffer; }
+	//cPBuffer *GetPBuffer() { return mpPBuffer; }
 
 private:
 	bool CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx);
