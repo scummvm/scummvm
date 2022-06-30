@@ -146,12 +146,14 @@ void Events::popView() {
 /*------------------------------------------------------------------------*/
 
 Bounds::Bounds(Common::Rect &innerBounds) :
-		Common::Rect(0, 0, 320, 200),
-		_innerBounds(innerBounds) {
+		_bounds(0, 0, 320, 200),
+		_innerBounds(innerBounds),
+		left(_bounds.left), top(_bounds.top),
+		right(_bounds.right), bottom(_bounds.bottom) {
 }
 
 Bounds &Bounds::operator=(const Common::Rect &r) {
-	Common::Rect::operator=(r);
+	_bounds = r;
 	_innerBounds = r;
 	_innerBounds.grow(-_borderSize);
 	return *this;

@@ -30,10 +30,16 @@ namespace MM1 {
 namespace ViewsEnh {
 
 class GameMessages : public ScrollText {
+	class YesNo : public ScrollView {
+	public:
+		YesNo();
+		bool msgKeypress(const KeypressMessage &msg) override;
+	};
 private:
 	bool _show = false;
 	YNCallback _ynCallback = nullptr;
 	KeyCallback _keyCallback = nullptr;
+	YesNo _yesNo;
 public:
 	GameMessages(UIElement *owner);
 	virtual ~GameMessages() {}
@@ -41,6 +47,8 @@ public:
 	void draw() override;
 	bool msgInfo(const InfoMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgMouseDown(const MouseDownMessage &msg) override;
+	bool msgMouseUp(const MouseUpMessage &msg) override;
 };
 
 } // namespace ViewsEnh

@@ -31,6 +31,21 @@ namespace ViewsEnh {
 #define FRAME_BORDER_SIZE 8
 
 class ScrollView : public TextView {
+	struct Button {
+		Xeen::SpriteResource *_sprites;
+		Common::Point _pos;
+		int _frame;
+		Common::KeyState _key;
+
+		Button(Xeen::SpriteResource *sprites,
+			const Common::Point &pos, int frame,
+			const Common::KeyState &key) :
+			_sprites(sprites), _pos(pos), _frame(frame), _key(key) {
+		}
+	};
+private:
+	Common::Array<Button> _buttons;
+	int _selectedButton = -1;
 protected:
 	Common::Point _symbolPos;
 protected:
@@ -48,15 +63,54 @@ protected:
 	 * Draw a special symbol
 	 */
 	void writeSymbol(int symbolId);
+
+	/**
+	 * Get the button at the given position
+	 */
+	int getButtonAt(const Common::Point &pos);
 public:
 	ScrollView(const Common::String &name);
 	ScrollView(const Common::String &name, UIElement *owner);
 	virtual ~ScrollView() {}
 
 	/**
+	 * Clear the buttons list
+	 */
+	void clearButtons() {
+		_buttons.clear();
+	}
+
+	/**
+	 * Add a button for display
+	 */
+	void addButton(Xeen::SpriteResource *sprites,
+		const Common::Point &pos, int frame,
+		const Common::KeyState &key);
+
+	/**
+	 * Reset selected button
+	 */
+	void resetSelectedButton();
+
+	/**
 	 * Draw the view
 	 */
 	void draw() override;
+
+	/**
+	 * View is focused
+	 */
+	bool msgFocus(const FocusMessage &msg) override;
+
+	/**
+	 * Mouse down messages
+	 */
+	bool msgMouseDown(const MouseDownMessage &msg) override;
+
+	/**
+	 * Mouse up messages
+	 */
+	bool msgMouseUp(const MouseUpMessage &msg) override;
 };
 
 } // namespace ViewsEnh

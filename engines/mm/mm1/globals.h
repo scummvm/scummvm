@@ -49,6 +49,7 @@ public:
 public:
 	// Enhanced mode globals
 	Xeen::SpriteResource _mainIcons;
+	Xeen::SpriteResource _confirmIcons;
 	Xeen::SpriteResource _globalSprites;
 	Xeen::SpriteResource _tileSprites;
 	byte SYMBOLS[20][64];

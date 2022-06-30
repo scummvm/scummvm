@@ -57,6 +57,7 @@ bool Globals::load(bool isEnhanced) {
 
 	if (isEnhanced) {
 		_mainIcons.load("main.icn");
+		_confirmIcons.load("confirm.icn");
 		_globalSprites.load("global.icn");
 		_tileSprites.load("town.til");
 
