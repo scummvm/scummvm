@@ -28,6 +28,7 @@
 #include "hpl1/engine/impl/VertexBufferVBO.h"
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/system/low_level_system.h"
+#include "hpl1/opengl.h"
 
 #include <memory.h>
 
@@ -71,20 +72,16 @@ cVertexBufferVBO::cVertexBufferVBO(iLowLevelGraphics *apLowLevelGraphics, tVerte
 }
 
 cVertexBufferVBO::~cVertexBufferVBO() {
-#if 0
-  		for(int i=0;i< klNumOfVertexFlags; i++)
-		{
-			mvVertexArray[i].clear();
-			if(mVertexFlags & kvVertexFlags[i])
-			{
-				glDeleteBuffersARB(1,(GLuint *)&mvArrayHandle[i]);
-			}
+	for (int i = 0; i < klNumOfVertexFlags; i++) {
+		mvVertexArray[i].clear();
+		if (mVertexFlags & kvVertexFlags[i]) {
+			glDeleteBuffers(1, (GLuint *)&mvArrayHandle[i]);
 		}
+	}
+	GL_CHECK_FN();
+	mvIndexArray.clear();
 
-		mvIndexArray.clear();
-
-		glDeleteBuffersARB(1,(GLuint *)&mlElementHandle);
-#endif
+	GL_CHECK(glDeleteBuffers(1, (GLuint *)&mlElementHandle));
 }
 
 //-----------------------------------------------------------------------
@@ -138,108 +135,102 @@ cBoundingVolume cVertexBufferVBO::CreateBoundingVolume() {
 //-----------------------------------------------------------------------
 
 bool cVertexBufferVBO::Compile(tVertexCompileFlag aFlags) {
-#if 0
-  		if(mbCompiled) return false;
-		mbCompiled = true;
+	if (mbCompiled)
+		return false;
+	mbCompiled = true;
 
-		//Create tangents
-		if(aFlags & eVertexCompileFlag_CreateTangents)
-		{
-			mbTangents = true;
+	// Create tangents
+	if (aFlags & eVertexCompileFlag_CreateTangents) {
+		mbTangents = true;
 
-			mVertexFlags |= eVertexFlag_Texture1;
+		mVertexFlags |= eVertexFlag_Texture1;
 
-			int idx = cMath::Log2ToInt((int)eVertexFlag_Texture1);
+		int idx = cMath::Log2ToInt((int)eVertexFlag_Texture1);
 
-			int lSize = GetVertexNum()*4;
-			mvVertexArray[idx].resize(lSize);
+		int lSize = GetVertexNum() * 4;
+		mvVertexArray[idx].resize(lSize);
 
-			cMath::CreateTriTangentVectors(&(mvVertexArray[cMath::Log2ToInt((int)eVertexFlag_Texture1)][0]),
-				&mvIndexArray[0], GetIndexNum(),
+		cMath::CreateTriTangentVectors(&(mvVertexArray[cMath::Log2ToInt((int)eVertexFlag_Texture1)][0]),
+									   &mvIndexArray[0], GetIndexNum(),
 
-				&(mvVertexArray[cMath::Log2ToInt((int)eVertexFlag_Position)][0]),
-				kvVertexElements[cMath::Log2ToInt((int)eVertexFlag_Position)],
+									   &(mvVertexArray[cMath::Log2ToInt((int)eVertexFlag_Position)][0]),
+									   kvVertexElements[cMath::Log2ToInt((int)eVertexFlag_Position)],
 
-				&(mvVertexArray[cMath::Log2ToInt((int)eVertexFlag_Texture0)][0]),
-				&(mvVertexArray[cMath::Log2ToInt((int)eVertexFlag_Normal)][0]),
-				GetVertexNum()
-				);
+									   &(mvVertexArray[cMath::Log2ToInt((int)eVertexFlag_Texture0)][0]),
+									   &(mvVertexArray[cMath::Log2ToInt((int)eVertexFlag_Normal)][0]),
+									   GetVertexNum());
+	}
+
+	GLenum usageType = GL_STATIC_DRAW;
+	if (mUsageType == eVertexBufferUsageType_Dynamic)
+		usageType = GL_DYNAMIC_DRAW;
+	else if (mUsageType == eVertexBufferUsageType_Stream)
+		usageType = GL_STREAM_DRAW;
+
+	// Create the VBO vertex arrays
+	for (int i = 0; i < klNumOfVertexFlags; i++) {
+		if (mVertexFlags & kvVertexFlags[i]) {
+			glGenBuffers(1, (GLuint *)&mvArrayHandle[i]);
+			glBindBuffer(GL_ARRAY_BUFFER, mvArrayHandle[i]);
+
+			glBufferData(GL_ARRAY_BUFFER, mvVertexArray[i].size() * sizeof(float),
+						 &(mvVertexArray[i][0]), usageType);
+
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+			// Log("%d-Handle: %d, size: %d \n",i,mvArrayHandle[i], mvVertexArray);
 		}
+	}
+	GL_CHECK_FN();
+	// Create the VBO index array
+	GL_CHECK(glGenBuffers(1, (GLuint *)&mlElementHandle));
+	GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mlElementHandle));
+	GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, GetIndexNum() * sizeof(unsigned int),
+						  &mvIndexArray[0], usageType));
+	GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
-		GLenum usageType = GL_STATIC_DRAW_ARB;
-		if(mUsageType== eVertexBufferUsageType_Dynamic) usageType = GL_DYNAMIC_DRAW_ARB;
-		else if(mUsageType== eVertexBufferUsageType_Stream) usageType = GL_STREAM_DRAW_ARB;
+	// Log("VBO compile done!\n");
 
-		//Create the VBO vertex arrays
-		for(int i=0;i< klNumOfVertexFlags; i++)
-		{
-			if(mVertexFlags & kvVertexFlags[i])
-			{
-				glGenBuffersARB(1,(GLuint *)&mvArrayHandle[i]);
-				glBindBufferARB(GL_ARRAY_BUFFER_ARB, mvArrayHandle[i]);
-
-				glBufferDataARB(GL_ARRAY_BUFFER_ARB, mvVertexArray[i].size()*sizeof(float),
-						&(mvVertexArray[i][0]), usageType);
-
-				glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-
-				//Log("%d-Handle: %d, size: %d \n",i,mvArrayHandle[i], mvVertexArray);
-			}
-		}
-
-		//Create the VBO index array
-		glGenBuffersARB(1,(GLuint *)&mlElementHandle);
-		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB,mlElementHandle);
-		glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, GetIndexNum()*sizeof(unsigned int),
-														&mvIndexArray[0], usageType);
-		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB,0);
-
-		//Log("VBO compile done!\n");
-
-		return true;
-#endif
-	return false;
+	return true;
 }
 
 //-----------------------------------------------------------------------
 
 void cVertexBufferVBO::UpdateData(tVertexFlag aTypes, bool abIndices) {
-#if 0
-  		GLenum usageType = GL_STATIC_DRAW_ARB;
-		if(mUsageType== eVertexBufferUsageType_Dynamic) usageType = GL_DYNAMIC_DRAW_ARB;
-		else if(mUsageType== eVertexBufferUsageType_Stream) usageType = GL_STREAM_DRAW_ARB;
+	GLenum usageType = GL_STATIC_DRAW;
+	if (mUsageType == eVertexBufferUsageType_Dynamic)
+		usageType = GL_DYNAMIC_DRAW;
+	else if (mUsageType == eVertexBufferUsageType_Stream)
+		usageType = GL_STREAM_DRAW;
 
-		//Create the VBO vertex arrays
-		for(int i=0;i< klNumOfVertexFlags; i++)
-		{
-			if((mVertexFlags & kvVertexFlags[i]) && (aTypes & kvVertexFlags[i]))
-			{
-				glBindBufferARB(GL_ARRAY_BUFFER_ARB, mvArrayHandle[i]);
+	// Create the VBO vertex arrays
+	for (int i = 0; i < klNumOfVertexFlags; i++) {
+		if ((mVertexFlags & kvVertexFlags[i]) && (aTypes & kvVertexFlags[i])) {
+			glBindBuffer(GL_ARRAY_BUFFER, mvArrayHandle[i]);
 
-				//This was apparently VERY slow.
-				glBufferDataARB(GL_ARRAY_BUFFER_ARB, mvVertexArray[i].size()*sizeof(float),
-					NULL, usageType);//Clear memory
+			// This was apparently VERY slow.
+			glBufferData(GL_ARRAY_BUFFER, mvVertexArray[i].size() * sizeof(float),
+						 NULL, usageType); // Clear memory
 
-				glBufferDataARB(GL_ARRAY_BUFFER_ARB, mvVertexArray[i].size()*sizeof(float),
-					&(mvVertexArray[i][0]), usageType);
-			}
+			glBufferData(GL_ARRAY_BUFFER, mvVertexArray[i].size() * sizeof(float),
+						 &(mvVertexArray[i][0]), usageType);
 		}
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+	}
+	GL_CHECK_FN();
+	GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
-		//Create the VBO index array
-		if(abIndices)
-		{
-			glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB,mlElementHandle);
+	// Create the VBO index array
+	if (abIndices) {
+		GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mlElementHandle));
 
-			//glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB,GetIndexNum()*sizeof(unsigned int),
-			//	NULL, usageType);
+		// glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER,GetIndexNum()*sizeof(unsigned int),
+		//	NULL, usageType);
 
-			glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, GetIndexNum()*sizeof(unsigned int),
-				&mvIndexArray[0], usageType);
+		GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, GetIndexNum() * sizeof(unsigned int),
+							  &mvIndexArray[0], usageType));
 
-			glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB,0);
-		}
-#endif
+		GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+	}
 }
 
 //-----------------------------------------------------------------------
@@ -328,44 +319,45 @@ void cVertexBufferVBO::Transform(const cMatrixf &a_mtxTransform) {
 //-----------------------------------------------------------------------
 
 void cVertexBufferVBO::Draw(eVertexBufferDrawType aDrawType) {
-#if 0
-  		eVertexBufferDrawType drawType = aDrawType == eVertexBufferDrawType_LastEnum ? mDrawType : aDrawType;
+	eVertexBufferDrawType drawType = aDrawType == eVertexBufferDrawType_LastEnum ? mDrawType : aDrawType;
 
-		///////////////////////////////
-		//Get the draw type
-		GLenum mode = GL_TRIANGLES;
-		if(drawType==eVertexBufferDrawType_Quad)		mode = GL_QUADS;
-		else if(drawType==eVertexBufferDrawType_Lines)	mode = GL_LINE_STRIP;
+	///////////////////////////////
+	// Get the draw type
+	GLenum mode = GL_TRIANGLES;
+	if (drawType == eVertexBufferDrawType_Quad)
+		mode = GL_QUADS;
+	else if (drawType == eVertexBufferDrawType_Lines)
+		mode = GL_LINE_STRIP;
 
-		//////////////////////////////////
-		//Bind and draw the buffer
-		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB,mlElementHandle);
+	//////////////////////////////////
+	// Bind and draw the buffer
+	GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mlElementHandle));
 
-		int lSize = mlElementNum;
-		if(mlElementNum<0) lSize = GetIndexNum();
+	int lSize = mlElementNum;
+	if (mlElementNum < 0)
+		lSize = GetIndexNum();
 
-		glDrawElements(mode,lSize,GL_UNSIGNED_INT, (char*) NULL);
+	GL_CHECK(glDrawElements(mode, lSize, GL_UNSIGNED_INT, (char *)NULL));
 
-		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB,0);
-#endif
+	GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 }
 
 //-----------------------------------------------------------------------
 
 void cVertexBufferVBO::DrawIndices(unsigned int *apIndices, int alCount, eVertexBufferDrawType aDrawType) {
-#if 0
-  		eVertexBufferDrawType drawType = aDrawType == eVertexBufferDrawType_LastEnum ? mDrawType : aDrawType;
+	eVertexBufferDrawType drawType = aDrawType == eVertexBufferDrawType_LastEnum ? mDrawType : aDrawType;
 
-		///////////////////////////////
-		//Get the draw type
-		GLenum mode = GL_TRIANGLES;
-		if(drawType==eVertexBufferDrawType_Quad)		mode = GL_QUADS;
-		else if(drawType==eVertexBufferDrawType_Lines)	mode = GL_LINE_STRIP;
+	///////////////////////////////
+	// Get the draw type
+	GLenum mode = GL_TRIANGLES;
+	if (drawType == eVertexBufferDrawType_Quad)
+		mode = GL_QUADS;
+	else if (drawType == eVertexBufferDrawType_Lines)
+		mode = GL_LINE_STRIP;
 
-		//////////////////////////////////
-		//Bind and draw the buffer
-		glDrawElements(mode, alCount, GL_UNSIGNED_INT, apIndices);
-#endif
+	//////////////////////////////////
+	// Bind and draw the buffer
+	GL_CHECK(glDrawElements(mode, alCount, GL_UNSIGNED_INT, apIndices));
 }
 
 //-----------------------------------------------------------------------
@@ -377,9 +369,7 @@ void cVertexBufferVBO::Bind() {
 //-----------------------------------------------------------------------
 
 void cVertexBufferVBO::UnBind() {
-#if 0
-  		glBindBufferARB(GL_ARRAY_BUFFER_ARB,0);
-#endif
+	GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
 //-----------------------------------------------------------------------
@@ -509,125 +499,110 @@ int cVertexBufferVBO::GetElementNum(tVertexFlag aFlag) {
 //-----------------------------------------------------------------------
 
 void cVertexBufferVBO::SetVertexStates(tVertexFlag aFlags) {
-#if 0
-  		/// COLOR 0 /////////////////////////
-		if(aFlags & eVertexFlag_Color0)
-		{
-			glEnableClientState(GL_COLOR_ARRAY );
+	/// COLOR 0 /////////////////////////
+	if (aFlags & eVertexFlag_Color0) {
+		GL_CHECK(glEnableClientState(GL_COLOR_ARRAY));
 
-			int idx = cMath::Log2ToInt(eVertexFlag_Color0);
-			glBindBufferARB(GL_ARRAY_BUFFER_ARB,mvArrayHandle[idx]);
-			glColorPointer(kvVertexElements[idx],GL_FLOAT, 0, (char*)NULL);
+		int idx = cMath::Log2ToInt(eVertexFlag_Color0);
+		GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, mvArrayHandle[idx]));
+		GL_CHECK(glColorPointer(kvVertexElements[idx], GL_FLOAT, 0, (char *)NULL));
+	} else {
+		GL_CHECK(glDisableClientState(GL_COLOR_ARRAY));
+	}
+
+	/// NORMAL /////////////////////////
+	if (aFlags & eVertexFlag_Normal) {
+		GL_CHECK(glEnableClientState(GL_NORMAL_ARRAY));
+
+		int idx = cMath::Log2ToInt(eVertexFlag_Normal);
+		GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, mvArrayHandle[idx]));
+		GL_CHECK(glNormalPointer(GL_FLOAT, 0, (char *)NULL));
+	} else {
+		GL_CHECK(glDisableClientState(GL_NORMAL_ARRAY));
+	}
+
+	/// TEXTURE 0 /////////////////////////
+	if (aFlags & eVertexFlag_Texture0) {
+		GL_CHECK(glClientActiveTexture(GL_TEXTURE0));
+		GL_CHECK(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+
+		int idx = cMath::Log2ToInt(eVertexFlag_Texture0);
+		GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, mvArrayHandle[idx]));
+		GL_CHECK(glTexCoordPointer(kvVertexElements[idx], GL_FLOAT, 0, (char *)NULL));
+	} else {
+		GL_CHECK(glClientActiveTexture(GL_TEXTURE0));
+		GL_CHECK(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
+	}
+
+	/// TEXTURE 1 /////////////////////////
+	if (aFlags & eVertexFlag_Texture1) {
+		GL_CHECK(glClientActiveTexture(GL_TEXTURE1));
+		GL_CHECK(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+
+		int idx = cMath::Log2ToInt(eVertexFlag_Texture1);
+		GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, mvArrayHandle[idx]));
+
+		if (mbTangents) {
+			GL_CHECK(glTexCoordPointer(4, GL_FLOAT, 0, (char *)NULL));
+		} else {
+			GL_CHECK(glTexCoordPointer(kvVertexElements[idx], GL_FLOAT, 0, (char *)NULL));
 		}
-		else
-		{
-			glDisableClientState(GL_COLOR_ARRAY );
-		}
+	} else {
+		GL_CHECK(glClientActiveTexture(GL_TEXTURE1));
+		GL_CHECK(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
+	}
 
-		/// NORMAL /////////////////////////
-		if(aFlags & eVertexFlag_Normal)
-		{
-			glEnableClientState(GL_NORMAL_ARRAY );
+	/// TEXTURE 2 /////////////////////////
+	if (aFlags & eVertexFlag_Texture2) {
+		GL_CHECK(glClientActiveTexture(GL_TEXTURE2));
+		GL_CHECK(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
 
-			int idx = cMath::Log2ToInt(eVertexFlag_Normal);
-			glBindBufferARB(GL_ARRAY_BUFFER_ARB,mvArrayHandle[idx]);
-			glNormalPointer(GL_FLOAT, 0, (char*)NULL);
-		}
-		else
-		{
-			glDisableClientState(GL_NORMAL_ARRAY );
-		}
+		int idx = cMath::Log2ToInt(eVertexFlag_Texture2);
+		GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, mvArrayHandle[idx]));
+		GL_CHECK(glTexCoordPointer(kvVertexElements[idx], GL_FLOAT, 0, (char *)NULL));
+	} else {
+		GL_CHECK(glClientActiveTexture(GL_TEXTURE2));
+		GL_CHECK(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
+	}
 
-		/// TEXTURE 0 /////////////////////////
-		if(aFlags & eVertexFlag_Texture0)
-		{
-			glClientActiveTextureARB(GL_TEXTURE0_ARB);
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY );
+	/// TEXTURE 3 /////////////////////////
+	if (aFlags & eVertexFlag_Texture3) {
+		GL_CHECK(glClientActiveTexture(GL_TEXTURE3));
+		GL_CHECK(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
 
-			int idx =  cMath::Log2ToInt(eVertexFlag_Texture0);
-			glBindBufferARB(GL_ARRAY_BUFFER_ARB,mvArrayHandle[idx]);
-			glTexCoordPointer(kvVertexElements[idx],GL_FLOAT,0,(char*)NULL );
-		}
-		else {
-			glClientActiveTextureARB(GL_TEXTURE0_ARB);
-			glDisableClientState(GL_TEXTURE_COORD_ARRAY );
-		}
+		int idx = cMath::Log2ToInt(eVertexFlag_Texture3);
+		GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, mvArrayHandle[idx]));
+		GL_CHECK(glTexCoordPointer(kvVertexElements[idx], GL_FLOAT, 0, (char *)NULL));
+	} else {
+		GL_CHECK(glClientActiveTexture(GL_TEXTURE3));
+		GL_CHECK(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
+	}
 
-		/// TEXTURE 1 /////////////////////////
-		if(aFlags & eVertexFlag_Texture1){
-			glClientActiveTextureARB(GL_TEXTURE1_ARB);
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY );
+	/// TEXTURE 4 /////////////////////////
+	if (aFlags & eVertexFlag_Texture4) {
+		GL_CHECK(glClientActiveTexture(GL_TEXTURE4));
+		GL_CHECK(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
 
-			int idx =  cMath::Log2ToInt(eVertexFlag_Texture1);
-			glBindBufferARB(GL_ARRAY_BUFFER_ARB,mvArrayHandle[idx]);
+		int idx = cMath::Log2ToInt(eVertexFlag_Texture4);
+		GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, mvArrayHandle[idx]));
+		GL_CHECK(glTexCoordPointer(kvVertexElements[idx], GL_FLOAT, 0, (char *)NULL));
+	} else {
+		GL_CHECK(glClientActiveTexture(GL_TEXTURE4));
+		GL_CHECK(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
+	}
 
-			if(mbTangents)
-				glTexCoordPointer(4,GL_FLOAT,0,(char*)NULL );
-			else
-				glTexCoordPointer(kvVertexElements[idx],GL_FLOAT,0,(char*)NULL );
-		}
-		else {
-			glClientActiveTextureARB(GL_TEXTURE1_ARB);
-			glDisableClientState(GL_TEXTURE_COORD_ARRAY );
-		}
+	/// POSITION /////////////////////////
+	if (aFlags & eVertexFlag_Position) {
+		GL_CHECK(glEnableClientState(GL_VERTEX_ARRAY));
 
-		/// TEXTURE 2 /////////////////////////
-		if(aFlags & eVertexFlag_Texture2){
-			glClientActiveTextureARB(GL_TEXTURE2_ARB);
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY );
+		int idx = cMath::Log2ToInt(eVertexFlag_Position);
+		GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, mvArrayHandle[idx]));
+		GL_CHECK(glVertexPointer(kvVertexElements[idx], GL_FLOAT, 0, (char *)NULL));
+	} else {
+		GL_CHECK(glDisableClientState(GL_VERTEX_ARRAY));
+	}
 
-			int idx =  cMath::Log2ToInt(eVertexFlag_Texture2);
-			glBindBufferARB(GL_ARRAY_BUFFER_ARB,mvArrayHandle[idx]);
-			glTexCoordPointer(kvVertexElements[idx],GL_FLOAT,0,(char*)NULL );
-		}
-		else {
-			glClientActiveTextureARB(GL_TEXTURE2_ARB);
-			glDisableClientState(GL_TEXTURE_COORD_ARRAY );
-		}
-
-		/// TEXTURE 3 /////////////////////////
-		if(aFlags & eVertexFlag_Texture3){
-			glClientActiveTextureARB(GL_TEXTURE3_ARB);
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY );
-
-			int idx =  cMath::Log2ToInt(eVertexFlag_Texture3);
-			glBindBufferARB(GL_ARRAY_BUFFER_ARB,mvArrayHandle[idx]);
-			glTexCoordPointer(kvVertexElements[idx],GL_FLOAT,0,(char*)NULL );
-		}
-		else {
-			glClientActiveTextureARB(GL_TEXTURE3_ARB);
-			glDisableClientState(GL_TEXTURE_COORD_ARRAY );
-		}
-
-		/// TEXTURE 4 /////////////////////////
-		if(aFlags & eVertexFlag_Texture4){
-			glClientActiveTextureARB(GL_TEXTURE4_ARB);
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY );
-
-			int idx =  cMath::Log2ToInt(eVertexFlag_Texture4);
-			glBindBufferARB(GL_ARRAY_BUFFER_ARB,mvArrayHandle[idx]);
-			glTexCoordPointer(kvVertexElements[idx],GL_FLOAT,0,(char*)NULL );
-		}
-		else {
-			glClientActiveTextureARB(GL_TEXTURE4_ARB);
-			glDisableClientState(GL_TEXTURE_COORD_ARRAY );
-		}
-
-		/// POSITION /////////////////////////
-		if(aFlags & eVertexFlag_Position){
-			glEnableClientState(GL_VERTEX_ARRAY );
-
-			int idx = cMath::Log2ToInt(eVertexFlag_Position);
-			glBindBufferARB(GL_ARRAY_BUFFER_ARB,mvArrayHandle[idx]);
-			glVertexPointer(kvVertexElements[idx],GL_FLOAT, 0, (char*)NULL);
-		}
-		else
-		{
-			glDisableClientState(GL_VERTEX_ARRAY );
-		}
-
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB,0);
-#endif
+	GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
 //-----------------------------------------------------------------------
