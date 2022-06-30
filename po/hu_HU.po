@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-30 12:15+0000\n"
+"POT-Creation-Date: 2022-06-30 14:47+0000\n"
 "PO-Revision-Date: 2022-06-30 13:33+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -4496,10 +4496,16 @@ msgstr ""
 msgid "Missing game code"
 msgstr "Hiányzik a játék kódja"
 
-#: engines/bladerunner/detection_tables.h:141
+#. I18N: Blade Runner Enhanced Edition is a trademark, so please keep the capitalization
+#. for Enhanced Edition as is.
+#: engines/bladerunner/detection_tables.h:143
+#, fuzzy
+#| msgid ""
+#| "Enhanced edition not supported, use the original files which are part of "
+#| "the release."
 msgid ""
-"Enhanced edition not supported, use the original files which are part of the "
-"release."
+"Enhanced Edition not supported. Please, use the original files which are "
+"part of the release."
 msgstr ""
 "A bővített kiadás nem támogatott, használd az eredeti fájlokat, melyek a "
 "kiadás részei."

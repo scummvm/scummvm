@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-30 12:15+0000\n"
+"POT-Creation-Date: 2022-06-30 14:47+0000\n"
 "PO-Revision-Date: 2022-06-16 23:21+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -4525,10 +4525,12 @@ msgstr "Автор перекладу проти того, щоб його пе�
 msgid "Missing game code"
 msgstr "Відсутній код для гри"
 
-#: engines/bladerunner/detection_tables.h:141
+#. I18N: Blade Runner Enhanced Edition is a trademark, so please keep the capitalization
+#. for Enhanced Edition as is.
+#: engines/bladerunner/detection_tables.h:143
 msgid ""
-"Enhanced edition not supported, use the original files which are part of the "
-"release."
+"Enhanced Edition not supported. Please, use the original files which are "
+"part of the release."
 msgstr ""
 
 #. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-30 12:15+0000\n"
+"POT-Creation-Date: 2022-06-30 14:47+0000\n"
 "PO-Revision-Date: 2022-06-30 14:51+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -4588,10 +4588,16 @@ msgstr ""
 msgid "Missing game code"
 msgstr "Λείπουν τμήματα απαραίτητου κώδικα για αυτή την έκδοση του παιχνιδιού"
 
-#: engines/bladerunner/detection_tables.h:141
+#. I18N: Blade Runner Enhanced Edition is a trademark, so please keep the capitalization
+#. for Enhanced Edition as is.
+#: engines/bladerunner/detection_tables.h:143
+#, fuzzy
+#| msgid ""
+#| "Enhanced edition not supported, use the original files which are part of "
+#| "the release."
 msgid ""
-"Enhanced edition not supported, use the original files which are part of the "
-"release."
+"Enhanced Edition not supported. Please, use the original files which are "
+"part of the release."
 msgstr ""
 "Η Enhanced Edition έκδοση δεν υποστηρίζεται. Παρακαλούμε χρησιμοποιήστε τα "
 "αρχεία του αρχικού (original) παιχνιδιού που εμπεριέχονται στην νέα έκδοση."

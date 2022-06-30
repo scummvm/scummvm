@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-30 12:15+0000\n"
+"POT-Creation-Date: 2022-06-30 14:47+0000\n"
 "PO-Revision-Date: 2022-06-30 14:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -4461,10 +4461,16 @@ msgstr "ファンの翻訳者は、ScummVMに翻訳が組み込まれる事を�
 msgid "Missing game code"
 msgstr "ゲームコードがありません"
 
-#: engines/bladerunner/detection_tables.h:141
+#. I18N: Blade Runner Enhanced Edition is a trademark, so please keep the capitalization
+#. for Enhanced Edition as is.
+#: engines/bladerunner/detection_tables.h:143
+#, fuzzy
+#| msgid ""
+#| "Enhanced edition not supported, use the original files which are part of "
+#| "the release."
 msgid ""
-"Enhanced edition not supported, use the original files which are part of the "
-"release."
+"Enhanced Edition not supported. Please, use the original files which are "
+"part of the release."
 msgstr ""
 "エンハンスド版非対応のため、リリース同梱のオリジナルファイルをご利用下さい。"
 
