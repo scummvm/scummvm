@@ -87,6 +87,9 @@ Area::~Area() {
 void Area::show() {
 	for (ObjectMap::iterator it = objectsByID->begin(); it != objectsByID->end(); it++)
 		debug("objID: %d, type: %d", (*it)._value->getObjectID(), (*it)._value->getType());
+
+	for (ObjectMap::iterator it = entrancesByID->begin(); it != entrancesByID->end(); it++)
+		debug("objID: %d, type: %d (entrance)", (*it)._value->getObjectID(), (*it)._value->getType());
 }
 
 void Area::draw(Freescape::Renderer *gfx) {
