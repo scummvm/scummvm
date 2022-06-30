@@ -28,12 +28,12 @@
 #if !USE_FORCED_GLES
 #include "backends/graphics/opengl/pipelines/libretro/types.h"
 
-#include "common/str.h"
+#include "common/fs.h"
 
 namespace OpenGL {
 namespace LibRetro {
 
-ShaderPreset *parsePreset(const Common::String &fileName);
+ShaderPreset *parsePreset(const Common::FSNode &shaderPreset);
 
 } // End of namespace LibRetro
 } // End of namespace OpenGL

@@ -28,6 +28,7 @@
 #if !USE_FORCED_GLES
 #include "common/str.h"
 #include "common/array.h"
+#include "common/fs.h"
 
 namespace OpenGL {
 namespace LibRetro {
@@ -107,7 +108,7 @@ struct ShaderPass {
 };
 
 struct ShaderPreset {
-	Common::String basePath;
+	Common::FSNode basePath;
 
 	typedef Common::Array<ShaderTexture> TextureArray;
 	TextureArray textures;

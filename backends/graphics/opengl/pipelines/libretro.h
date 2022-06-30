@@ -29,6 +29,7 @@
 #include "backends/graphics/opengl/pipelines/shader.h"
 
 #include "common/array.h"
+#include "common/fs.h"
 
 namespace Graphics {
 struct Surface;
@@ -48,7 +49,8 @@ class TextureTarget;
  */
 class LibRetroPipeline : public ShaderPipeline {
 public:
-	LibRetroPipeline(const Common::String &presetFileName);
+	LibRetroPipeline();
+	LibRetroPipeline(const Common::FSNode &shaderPreset);
 	virtual ~LibRetroPipeline();
 
 	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords);
@@ -57,21 +59,23 @@ public:
 
 	void setOutputSize(uint outputWidth, uint outputHeight);
 
+	bool open(const Common::FSNode &shaderPreset);
+	void close();
+
 	bool isInitialized() const { return _shaderPreset != nullptr; }
 private:
 	virtual void activateInternal();
 	virtual void deactivateInternal();
 
-	void initialize();
-	void loadTextures();
-	void loadPasses();
+	bool loadTextures();
+	bool loadPasses();
 
 	void setPipelineState();
 	void setupFBOs();
 	void setupPassUniforms(const uint id);
 	void setShaderTexUniforms(const Common::String &prefix, Shader *shader, const GLTexture &texture);
 
-	const LibRetro::ShaderPreset *const _shaderPreset;
+	const LibRetro::ShaderPreset *_shaderPreset;
 
 	bool _applyProjectionChanges;
 
@@ -90,7 +94,7 @@ private:
 		Graphics::Surface *textureData;
 		GLTexture *glTexture;
 	};
-	Texture loadTexture(const Common::String &fileName);
+	Texture loadTexture(const Common::FSNode &fileNode);
 
 	typedef Common::Array<Texture> TextureArray;
 	TextureArray _textures;

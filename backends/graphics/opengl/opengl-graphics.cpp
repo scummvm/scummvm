@@ -1125,16 +1125,8 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 		if (ConfMan.hasKey("shader_scaler", Common::ConfigManager::kApplicationDomain)) {
 			Common::FSNode shaderPreset(ConfMan.get("shader_scaler", Common::ConfigManager::kApplicationDomain));
 			if (shaderPreset.isReadable()) {
-				_libretroPipeline = new LibRetroPipeline(ConfMan.get("shader_scaler", Common::ConfigManager::kApplicationDomain));
-			} else {
-				// FIXME FIXME FIXME
-				_libretroPipeline = new LibRetroPipeline("nearest.glslp");
-				warning("Loaded fallback shader since requested shader is not available");
+				_libretroPipeline = new LibRetroPipeline(shaderPreset);
 			}
-		} else {
-			// FIXME FIXME FIXME
-			_libretroPipeline = new LibRetroPipeline("nearest.glslp");
-			warning("Loaded fallback shader since requested shader is not available");
 		}
 	}
 #endif
