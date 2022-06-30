@@ -88,6 +88,7 @@ cLowLevelGraphicsSDL::cLowLevelGraphicsSDL() {
 		mvVirtualSize.y = 600;
 		mfGammaCorrection = 1.0;
 		mpRenderTarget = nullptr;
+		mpPixelFormat = Graphics::createPixelFormat<8888>();
 
 		Common::fill(mpCurrentTexture, mpCurrentTexture + MAX_TEXTUREUNITS, nullptr);
 
@@ -333,7 +334,7 @@ void cLowLevelGraphicsSDL::SaveScreenToBMP(const tString &asFile) {
 //-----------------------------------------------------------------------
 
 Bitmap2D *cLowLevelGraphicsSDL::CreateBitmap2D(const cVector2l &size) {
-	return hplNew(Bitmap2D, (size, *mpPixelFormat));
+	return hplNew(Bitmap2D, (size, mpPixelFormat));
 }
 
 //-----------------------------------------------------------------------
@@ -352,26 +353,26 @@ iGpuProgram *cLowLevelGraphicsSDL::CreateGpuProgram(const tString &asName, eGpuP
 //-----------------------------------------------------------------------
 
 Graphics::PixelFormat *cLowLevelGraphicsSDL::GetPixelFormat() {
-	return mpPixelFormat;
+	return &mpPixelFormat;
 }
 
 //-----------------------------------------------------------------------
 
 iTexture *cLowLevelGraphicsSDL::CreateTexture(bool abUseMipMaps, eTextureType aType, eTextureTarget aTarget) {
-	return hplNew(cSDLTexture, ("", mpPixelFormat, this, aType, abUseMipMaps, aTarget));
+	return hplNew(cSDLTexture, ("", &mpPixelFormat, this, aType, abUseMipMaps, aTarget));
 }
 
 //-----------------------------------------------------------------------
 
 iTexture *cLowLevelGraphicsSDL::CreateTexture(const tString &asName, bool abUseMipMaps, eTextureType aType, eTextureTarget aTarget) {
-	return hplNew(cSDLTexture, (asName, mpPixelFormat, this, aType, abUseMipMaps, aTarget));
+	return hplNew(cSDLTexture, (asName, &mpPixelFormat, this, aType, abUseMipMaps, aTarget));
 }
 
 //-----------------------------------------------------------------------
 
 iTexture *cLowLevelGraphicsSDL::CreateTexture(Bitmap2D *apBmp, bool abUseMipMaps, eTextureType aType,
 											  eTextureTarget aTarget) {
-	cSDLTexture *pTex = hplNew(cSDLTexture, ("", mpPixelFormat, this, aType, abUseMipMaps, aTarget));
+	cSDLTexture *pTex = hplNew(cSDLTexture, ("", &mpPixelFormat, this, aType, abUseMipMaps, aTarget));
 	pTex->CreateFromBitmap(apBmp);
 
 	return pTex;
@@ -384,13 +385,13 @@ iTexture *cLowLevelGraphicsSDL::CreateTexture(const cVector2l &avSize, int alBpp
 	cSDLTexture *pTex = NULL;
 
 	if (aType == eTextureType_RenderTarget) {
-		pTex = hplNew(cSDLTexture, ("", mpPixelFormat, this, aType, abUseMipMaps, aTarget));
+		pTex = hplNew(cSDLTexture, ("", &mpPixelFormat, this, aType, abUseMipMaps, aTarget));
 		pTex->Create(avSize.x, avSize.y, aFillCol);
 	} else {
 		Bitmap2D *pBmp = CreateBitmap2D(avSize);
 		pBmp->fillRect(cRect2l(0, 0, 0, 0), aFillCol);
 
-		pTex = hplNew(cSDLTexture, ("", mpPixelFormat, this, aType, abUseMipMaps, aTarget));
+		pTex = hplNew(cSDLTexture, ("", &mpPixelFormat, this, aType, abUseMipMaps, aTarget));
 		bool bRet = pTex->CreateFromBitmap(pBmp);
 
 		hplDelete(pBmp);
