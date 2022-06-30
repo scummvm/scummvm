@@ -47,7 +47,7 @@ static Loader *loadImage(const tString &filepath) {
 }
 
 Bitmap2D::Bitmap2D(const tString &filepath, const tString &type)
-	: iLowLevelPicture(type), _isSurfaceActive(false) {
+	: LowLevelPicture(type), _isSurfaceActive(false) {
 	if (type == "png")
 		_decoder.reset(loadImage<Image::PNGDecoder>(filepath));
 	else if (type == "bmp")
@@ -60,12 +60,12 @@ Bitmap2D::Bitmap2D(const tString &filepath, const tString &type)
 		_decoder.reset(loadImage<Image::GIFDecoder>(filepath));
 	else
 		error("trying to load unsupported image format %s", type.c_str());
-	mlWidth = _decoder->getSurface()->w;
-	mlHeight = _decoder->getSurface()->h;
+	_width = _decoder->getSurface()->w;
+	_height = _decoder->getSurface()->h;
 }
 
 Bitmap2D::Bitmap2D(const cVector2l &size, const Graphics::PixelFormat &format)
-: iLowLevelPicture("none"), _isSurfaceActive(true) {
+: LowLevelPicture("none"), _isSurfaceActive(true) {
 	create(size, format);
 }
 
@@ -88,9 +88,8 @@ bool Bitmap2D::create(const cVector2l &size, const Graphics::PixelFormat &format
 	_surface.create(size.x, size.y, format);
 	_isSurfaceActive = true;
 	_decoder.release();
-	mlWidth = size.x;
-	mlHeight = size.y;
-	mlBpp = format.bpp();
+	_width = size.x;
+	_height = size.y;
 	return true;
 }
 
@@ -128,8 +127,12 @@ const Graphics::PixelFormat &Bitmap2D::format() const {
 	return activeSurface().format;
 }
 
-bool Bitmap2D::HasAlpha() {
+bool Bitmap2D::hasAlpha() {
 	return activeSurface().format.aBits() > 0;
+}
+
+uint32 Bitmap2D::getBpp() const {
+	return format().bpp();
 }
 
 void Bitmap2D::copyDecoder() {

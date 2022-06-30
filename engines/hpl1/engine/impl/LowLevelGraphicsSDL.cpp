@@ -1343,7 +1343,7 @@ void cLowLevelGraphicsSDL::CopyContextToTexure(iTexture *apTex, const cVector2l 
 			return;
 
 		int lScreenY = (mvScreenSize.y - avSize.y) - avPos.y;
-		int lTexY = (apTex->GetHeight() - avSize.y) - avTexOffset.y;
+		int lTexY = (apTex->getHeight() - avSize.y) - avTexOffset.y;
 
 		//Log("TExoffset: %d %d\n",avTexOffset.x,lTexY);
 		//Log("ScreenOffset: %d %d (h: %d s: %d p: %d)\n",avPos.x,lScreenY,mvScreenSize.y,

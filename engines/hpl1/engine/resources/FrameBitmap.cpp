@@ -53,7 +53,7 @@ namespace hpl {
 		mbIsLocked = false;
 
 		//Root node in rect tree
-		mRects.Insert(cFBitmapRect(0,0,mpBitmap->GetWidth(), mpBitmap->GetHeight(),-1));
+		mRects.Insert(cFBitmapRect(0,0,mpBitmap->getWidth(), mpBitmap->getHeight(),-1));
 	}
 
 	cFrameBitmap::~cFrameBitmap()

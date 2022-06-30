@@ -30,37 +30,35 @@
 
 #include "hpl1/engine/system/String.h"
 #include "hpl1/engine/system/SystemTypes.h"
+#include "common/system.h"
 
 namespace hpl {
 
-class iLowLevelPicture {
+class LowLevelPicture {
 public:
-	iLowLevelPicture(tString asType) : msType(asType) {}
-	virtual ~iLowLevelPicture() {}
+	LowLevelPicture(const tString &type) : _type(type) {}
+	virtual ~LowLevelPicture() = default;
 
-	tString GetType() { return msType; }
+	tString getType() { return _type; }
 
-	unsigned int GetHeight() { return mlHeight; }
-	unsigned int GetWidth() { return mlWidth; }
-	unsigned int GetDepth() { return mlDepth; }
+	uint32 getHeight() const { return _height; }
+	uint32 getWidth() const { return _width; }
 
-	unsigned int GetBpp() { return mlBpp; }
+	virtual uint32 getBpp() const = 0;
 
-	virtual bool HasAlpha() = 0;
+	virtual bool hasAlpha() = 0;
 
-	void SetPath(tString asPath) { msPath = asPath; }
-	tString GetPath() { return msPath; }
-	tString GetFileName() { return cString::GetFileName(msPath); }
+	void setPath(const tString &path) { _path = path; }
+	tString getPath() { return _path; }
+	tString getFileName() const { return cString::GetFileName(_path); }
 
 protected:
-	unsigned int mlHeight;
-	unsigned int mlWidth;
-	unsigned int mlDepth;
-	unsigned int mlBpp;
+	uint32 _height;
+	uint32 _width;
 
 private:
-	tString msType;
-	tString msPath;
+	tString _type;
+	tString _path;
 };
 
 };     // namespace hpl
