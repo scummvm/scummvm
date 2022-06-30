@@ -32,7 +32,6 @@
 #include "common/tokenizer.h"
 #include "common/ptr.h"
 #include "common/util.h"
-#include "common/config-manager.h"
 
 #include "common/textconsole.h"
 
@@ -443,21 +442,19 @@ bool PresetParser::parsePassScale(const uint id, ShaderPass *pass) {
 }
 #undef passKey
 
-ShaderPreset *parsePreset(const Common::String &fileName) {
-	Common::String _shaderPath = ConfMan.get("shaderpath");
-	Common::FSNode fileNode(_shaderPath + fileName);
-	if (!fileNode.exists() || !fileNode.isReadable() || fileNode.isDirectory()) {
-		warning("LibRetro Preset Parsing: No such readable file '%s'", fileName.c_str());
+ShaderPreset *parsePreset(const Common::FSNode &shaderPreset) {
+	if (!shaderPreset.exists() || !shaderPreset.isReadable() || shaderPreset.isDirectory()) {
+		warning("LibRetro Preset Parsing: No such readable file '%s'", shaderPreset.getName().c_str());
 		return nullptr;
 	}
 
-	Common::FSNode basePath(_shaderPath);
+	Common::FSNode basePath(shaderPreset.getParent());
 	if (!basePath.exists() || !basePath.isReadable() || !basePath.isDirectory()) {
-		warning("LibRetro Preset Parsing: Base path '%s' to file '%s' invalid", basePath.getPath().c_str(), fileName.c_str());
+		warning("LibRetro Preset Parsing: Base path '%s' to file '%s' invalid", basePath.getName().c_str(), shaderPreset.getName().c_str());
 		return nullptr;
 	}
 
-	Common::SeekableReadStream *stream = fileNode.createReadStream();
+	Common::SeekableReadStream *stream = shaderPreset.createReadStream();
 	if (!stream) {
 		return nullptr;
 	}
@@ -468,11 +465,11 @@ ShaderPreset *parsePreset(const Common::String &fileName) {
 	stream = nullptr;
 
 	if (!shader) {
-		warning("LibRetro Preset Parsing: Error while parsing file '%s': %s", fileName.c_str(), parser.getErrorDesc().c_str());
+		warning("LibRetro Preset Parsing: Error while parsing file '%s': %s", shaderPreset.getName().c_str(), parser.getErrorDesc().c_str());
 		return nullptr;
 	}
 
-	shader->basePath = basePath.getPath();
+	shader->basePath = basePath;
 	return shader;
 }
 
