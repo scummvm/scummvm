@@ -68,6 +68,15 @@ public:
 	virtual void init() = 0;
 	virtual void clear() = 0;
 
+	typedef enum {
+		EastPyramid = 4,
+		WestPyramid = 5,
+		UpPyramid = 6,
+		DownPyramid = 7,
+		NorthPyramid = 8,
+		SouthPyramid = 9,
+	} PyramidType;
+
 	/**
 	 *  Swap the buffers, making the drawn screen visible
 	 */
@@ -88,6 +97,7 @@ public:
 	virtual void renderCube(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) = 0;
 	virtual void renderRectangle(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) = 0;
 	virtual void renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours) = 0;
+	virtual void renderPyramid(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours, int type) = 0;
 	virtual void renderFace(const Common::Array<Math::Vector3d> &vertices) = 0;
 
 	virtual void drawSky(uint8 color) = 0;
