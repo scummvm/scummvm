@@ -225,6 +225,9 @@ void Screen::clear() {
 }
 
 void Screen::pause(bool pause_) {
+	if (!pause_) {
+		_dirtyRects.push_back(Common::Rect(0, 0, 640, 480));
+	}
 	for (uint i = 0; i < _sprites.size() ; ++i) {
 		_sprites[i]->pause(pause_);
 	}
