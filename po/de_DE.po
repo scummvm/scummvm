@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-30 12:15+0000\n"
-"PO-Revision-Date: 2022-06-26 07:14+0000\n"
+"PO-Revision-Date: 2022-06-30 17:36+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -4503,14 +4503,13 @@ msgstr ""
 "aufhört, mit der Maus zu klicken"
 
 #: engines/bladerunner/detection.cpp:108
-#, fuzzy
-#| msgid "Show subtitles and play speech"
 msgid "Show subtitles during text crawl"
-msgstr "Untertitel anzeigen und Sprachausgabe aktivieren"
+msgstr "Untertitel anzeigen, während der Text durchläuft"
 
 #: engines/bladerunner/detection.cpp:109
 msgid "During the intro cutscene, show subtitles during the text crawl"
 msgstr ""
+"Zeige Untertitel an, während in der Intro-Zwischensequenz der Text durchläuft"
 
 #: engines/bladerunner/detection_tables.h:96
 #: engines/bladerunner/detection_tables.h:107
