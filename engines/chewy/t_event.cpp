@@ -30,9 +30,13 @@
 
 namespace Chewy {
 
-int16 loadDialogCloseup(int16 diaNr) {
-	if (_G(flags).DialogCloseup == false) {
+void loadDialogCloseup(int16 diaNr) {
+	if (!_G(flags).DialogCloseup) {
 		if (_G(atds)->startDialogCloseup(diaNr)) {
+			_G(minfo).button = 0;
+			g_events->_kbInfo._keyCode = '\0';
+			g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
+
 			_G(ads_blk_nr) = 0;
 			_G(dialogCloseupItemPtr) = _G(atds)->dialogCloseupItemPtr(diaNr, _G(ads_blk_nr), &_G(ads_item_nr));
 			_G(flags).DialogCloseup = true;
@@ -44,10 +48,8 @@ int16 loadDialogCloseup(int16 diaNr) {
 			_G(ads_dia_nr) = diaNr;
 			_G(talk_start_ani) = -1;
 			_G(talk_hide_static) = -1;
-			return true;
 		}
 	}
-	return false;
 }
 
 void setSsiPos() {

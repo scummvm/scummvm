@@ -437,7 +437,7 @@ uint16 exit_flip_flop(int16 ani_nr, int16 eib_nr1, int16 eib_nr2,
                         int16 ats_nr1, int16 ats_nr2, int16 sib_nr,
                         int16 spr_nr1, int16 spr_nr2, int16 flag);
 
-int16 loadDialogCloseup(int16 diaNr);
+void loadDialogCloseup(int16 diaNr);
 
 void setSsiPos();
 
