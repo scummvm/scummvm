@@ -234,18 +234,26 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	uint8 numberOfObjects = file->readByte();
 	uint8 areaNumber = file->readByte();
 
-	uint16 cPtr = 0;
-	if (_targetName != "castlemaster")
-		cPtr = file->readUint16LE();
+	uint16 cPtr = file->readUint16LE();
+	debug("Condition pointer: %x", cPtr);
 	uint8 scale = file->readByte();
 	debug("Scale: %d", scale);
 
-	uint8 ci1 = file->readByte(); //& 15;
-	uint8 ci2 = file->readByte(); //& 15;
-	uint8 ci3 = file->readByte(); //& 15;
-	uint8 ci4 = file->readByte(); //& 15;
-
-	debug("Colors: %d %d %d %d", ci1, ci2, ci3, ci4);
+	uint8 ci1 = 0;
+	uint8 ci2 = 0;
+	uint8 ci3 = 0;
+	uint8 ci4 = 0;
+	if (_targetName != "castlemaster") {
+		ci1 = file->readByte() & 15;
+		ci2 = file->readByte() & 15;
+		ci3 = file->readByte() & 15;
+		ci4 = file->readByte() & 15;
+		debug("Colors: %d %d %d %d", ci1, ci2, ci3, ci4);
+	} else {
+		ci3 = file->readByte();
+		ci4 = file->readByte();
+		debug("Colors: %d %d", ci3, ci4);
+	}
 	Graphics::PixelBuffer *palette = getPaletteGradient(1, 1, ncolors);
 
 	debug("Area %d", areaNumber);
@@ -268,12 +276,16 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 			if (newObject->getType() == Object::Entrance) {
 				(*entrancesByID)[newObject->getObjectID() & 0x7fff] = newObject;
 			} else {
-				assert(!(objectsByID->contains(newObject->getObjectID())));
+				if (objectsByID->contains(newObject->getObjectID()))
+					debug("WARNING: replacing object id %d", newObject->getObjectID());
 				(*objectsByID)[newObject->getObjectID()] = newObject;
 			}
 		}
 	}
-	/*file->seek(base + cPtr);
+	long int endLastObject = file->pos();
+	debug("Last position %lx", endLastObject);
+	assert(endLastObject <= base + cPtr);
+	file->seek(base + cPtr);
 	uint8 numConditions = file->readByte();
 	debug("%d area conditions", numConditions);
 	while (numConditions--) {
@@ -284,8 +296,8 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		byte *conditionData = (byte*)malloc(lengthOfCondition);
 		file->read(conditionData, lengthOfCondition);
 		Common::Array<uint8> conditionArray(conditionData, lengthOfCondition);
-		//debug("%s", detokenise8bitCondition(conditionArray)->c_str());
-	}*/
+		debug("%s", detokenise8bitCondition(conditionArray)->c_str());
+	}
 
 	return (new Area(areaNumber, objectsByID, entrancesByID, scale, 255, 255, palette));
 }
@@ -313,8 +325,8 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 
 	file->seek(offset);
 	uint8 numberOfAreas = file->readByte();
-	//if (numberOfAreas < 10) // TODO: just for testing
-	//	numberOfAreas = 10;
+	if (numberOfAreas < 2) // TODO: just for testing
+		numberOfAreas = 20;
 	uint16 dbSize = file->readUint16LE();
 	debug("Database ends at %x", dbSize);
 
@@ -358,7 +370,13 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		fileOffsetForArea[area] = file->readUint16LE();
 		debug("offset: %x", fileOffsetForArea[area]);
 	}
-	//fileOffsetForArea[0] = 0x89a6 - offset; // For testing
+	//fileOffsetForArea[0] = 0x9e75 - offset - 8 - 12; // Table?
+	//fileOffsetForArea[0] = 0x9571 - offset;
+	//fileOffsetForArea[0] = 0xaba5 - offset - 8 - 16; // ???
+
+	//fileOffsetForArea[0] = 0x959b - offset - 16; // Church? (22 elements)
+	//fileOffsetForArea[0] = 0x94b7 - offset; // For testing
+	//fileOffsetForArea[0] = 0x97cb - offset; // For testing
 
 	// grab the areas
 	AreaMap *areaMap = new AreaMap;
@@ -387,7 +405,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	if (!areaMap->contains(startArea))
 		_startArea = newArea->getAreaID();
 	else
-		_startArea = startArea + 1;
+		_startArea = startArea;
 	_startEntrance = startEntrance;
 	_colorNumber = ncolors;
 	_binaryBits = 8;
