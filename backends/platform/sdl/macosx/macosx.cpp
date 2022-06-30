@@ -262,18 +262,13 @@ Common::String OSystem_MacOSX::getDefaultLogFileName() {
 }
 
 Common::String OSystem_MacOSX::getDefaultIconsPath() {
-	const char *prefix = getenv("HOME");
-	if (prefix == nullptr) {
+	const Common::String defaultIconsPath = getAppSupportPathMacOSX() + "/Icons";
+
+	if (!Posix::assureDirectoryExists(defaultIconsPath)) {
 		return Common::String();
 	}
 
-	const Common::String appSupportFolder = Common::String(prefix) + "/Library/Application Support/ScummVM";
-
-	if (!Posix::assureDirectoryExists(appSupportFolder)) {
-		return Common::String();
-	}
-
-	return appSupportFolder;
+	return defaultIconsPath;
 }
 
 Common::String OSystem_MacOSX::getScreenshotsPath() {
