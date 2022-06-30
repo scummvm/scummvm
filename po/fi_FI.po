@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-29 20:08+0000\n"
+"POT-Creation-Date: 2022-06-30 12:15+0000\n"
 "PO-Revision-Date: 2022-06-16 20:42+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4380,15 +4380,15 @@ msgstr "VAROITUS: Pelitallennus on aiemmasta versiosta: Versio %s / Build %d"
 msgid "Load anyway"
 msgstr "Lataa silti"
 
-#: engines/bladerunner/bladerunner.cpp:395
+#: engines/bladerunner/bladerunner.cpp:396
 msgid "Failed to initialize resources"
 msgstr "Resurssien alustus epäonnistui"
 
-#: engines/bladerunner/bladerunner.cpp:1156
+#: engines/bladerunner/bladerunner.cpp:1160
 msgid "A required game resource was not found"
 msgstr "Pakollista pelin resurssia ei löydetty"
 
-#: engines/bladerunner/bladerunner.cpp:2698
+#: engines/bladerunner/bladerunner.cpp:2709
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -4399,7 +4399,7 @@ msgstr ""
 "Pelisessio muutetaan 'Leikatut kohtaukset palautettu'-tilaan ja se on "
 "voimassa kunnes poistut kokonaan pelistä."
 
-#: engines/bladerunner/bladerunner.cpp:2700
+#: engines/bladerunner/bladerunner.cpp:2711
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -4410,7 +4410,7 @@ msgstr ""
 "muutetaan 'Alkuperäinen sisältö'-tilaan ja se on voimassa kunnes poistut "
 "kokonaan pelistä."
 
-#: engines/bladerunner/bladerunner.cpp:2702
+#: engines/bladerunner/bladerunner.cpp:2713
 msgid "Continue"
 msgstr "Jatka"
 
@@ -4465,8 +4465,18 @@ msgstr ""
 "McCoy ei juostessaan ala hidastamaan heti kun pelaaja lakkaa klikkaamasta "
 "hiirellä"
 
-#: engines/bladerunner/detection_tables.h:95
-#: engines/bladerunner/detection_tables.h:106
+#: engines/bladerunner/detection.cpp:108
+#, fuzzy
+#| msgid "Show subtitles and play speech"
+msgid "Show subtitles during text crawl"
+msgstr "Näytä tekstitys ja käytä puhetta"
+
+#: engines/bladerunner/detection.cpp:109
+msgid "During the intro cutscene, show subtitles during the text crawl"
+msgstr ""
+
+#: engines/bladerunner/detection_tables.h:96
+#: engines/bladerunner/detection_tables.h:107
 #: engines/kyra/detection_tables.h:84
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
@@ -4474,7 +4484,7 @@ msgid ""
 msgstr ""
 "Fanikääntäjä ei halua että hänen käännöstyönsä lisätään osaksi ScummvM:ää."
 
-#: engines/bladerunner/detection_tables.h:128 engines/cge/detection.cpp:56
+#: engines/bladerunner/detection_tables.h:129 engines/cge/detection.cpp:56
 #: engines/cge/detection.cpp:62 engines/cge/detection.cpp:68
 #: engines/groovie/detection.cpp:104 engines/kyra/detection_tables.h:303
 #: engines/lure/detection.cpp:251 engines/mohawk/detection_tables.h:988
@@ -4490,7 +4500,7 @@ msgstr ""
 msgid "Missing game code"
 msgstr "Pelimoottori puuttuu"
 
-#: engines/bladerunner/detection_tables.h:140
+#: engines/bladerunner/detection_tables.h:141
 msgid ""
 "Enhanced edition not supported, use the original files which are part of the "
 "release."

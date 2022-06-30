@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-29 20:08+0000\n"
+"POT-Creation-Date: 2022-06-30 12:15+0000\n"
 "PO-Revision-Date: 2022-06-30 14:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -4348,15 +4348,15 @@ msgstr "警告: 旧バージョンのセーブをロードしようとしてい�
 msgid "Load anyway"
 msgstr "とにかくロードする"
 
-#: engines/bladerunner/bladerunner.cpp:395
+#: engines/bladerunner/bladerunner.cpp:396
 msgid "Failed to initialize resources"
 msgstr "リソースの初期化に失敗しました"
 
-#: engines/bladerunner/bladerunner.cpp:1156
+#: engines/bladerunner/bladerunner.cpp:1160
 msgid "A required game resource was not found"
 msgstr "必要なゲームリソースが見つかりませんでした"
 
-#: engines/bladerunner/bladerunner.cpp:2698
+#: engines/bladerunner/bladerunner.cpp:2709
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -4366,7 +4366,7 @@ msgstr ""
 "ナルモードでプレイ中です。ゲームを完全に終了するまで、ディレクターズカット"
 "モードとして調整されます。"
 
-#: engines/bladerunner/bladerunner.cpp:2700
+#: engines/bladerunner/bladerunner.cpp:2711
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -4376,7 +4376,7 @@ msgstr ""
 "カットモードでプレイ中です。ゲームを完全に終了するまで、オリジナルモードとし"
 "て調整されます。"
 
-#: engines/bladerunner/bladerunner.cpp:2702
+#: engines/bladerunner/bladerunner.cpp:2713
 msgid "Continue"
 msgstr "つづく"
 
@@ -4427,15 +4427,25 @@ msgid ""
 "clicking the mouse"
 msgstr "実行中、プレイヤーがクリックを止めてもMcCoyが減速しないようにする"
 
-#: engines/bladerunner/detection_tables.h:95
-#: engines/bladerunner/detection_tables.h:106
+#: engines/bladerunner/detection.cpp:108
+#, fuzzy
+#| msgid "Show subtitles and play speech"
+msgid "Show subtitles during text crawl"
+msgstr "字幕を表示して音声を再生する"
+
+#: engines/bladerunner/detection.cpp:109
+msgid "During the intro cutscene, show subtitles during the text crawl"
+msgstr ""
+
+#: engines/bladerunner/detection_tables.h:96
+#: engines/bladerunner/detection_tables.h:107
 #: engines/kyra/detection_tables.h:84
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
 msgstr "ファンの翻訳者は、ScummVMに翻訳が組み込まれる事を望んでいません。"
 
-#: engines/bladerunner/detection_tables.h:128 engines/cge/detection.cpp:56
+#: engines/bladerunner/detection_tables.h:129 engines/cge/detection.cpp:56
 #: engines/cge/detection.cpp:62 engines/cge/detection.cpp:68
 #: engines/groovie/detection.cpp:104 engines/kyra/detection_tables.h:303
 #: engines/lure/detection.cpp:251 engines/mohawk/detection_tables.h:988
@@ -4451,11 +4461,12 @@ msgstr "ファンの翻訳者は、ScummVMに翻訳が組み込まれる事を�
 msgid "Missing game code"
 msgstr "ゲームコードがありません"
 
-#: engines/bladerunner/detection_tables.h:140
+#: engines/bladerunner/detection_tables.h:141
 msgid ""
 "Enhanced edition not supported, use the original files which are part of the "
 "release."
-msgstr "エンハンスド版非対応のため、リリース同梱のオリジナルファイルをご利用下さい。"
+msgstr ""
+"エンハンスド版非対応のため、リリース同梱のオリジナルファイルをご利用下さい。"
 
 #. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
 #: engines/bladerunner/metaengine.cpp:109

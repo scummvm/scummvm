@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-29 20:08+0000\n"
+"POT-Creation-Date: 2022-06-30 12:15+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4359,15 +4359,15 @@ msgstr "경고: 이전 버전에서 저장한 게임을 로드하려고 시도�
 msgid "Load anyway"
 msgstr "확인"
 
-#: engines/bladerunner/bladerunner.cpp:395
+#: engines/bladerunner/bladerunner.cpp:396
 msgid "Failed to initialize resources"
 msgstr "리소스 초기화 실패"
 
-#: engines/bladerunner/bladerunner.cpp:1156
+#: engines/bladerunner/bladerunner.cpp:1160
 msgid "A required game resource was not found"
 msgstr "필요한 게임 리소스를 찾을 수 없습니다"
 
-#: engines/bladerunner/bladerunner.cpp:2698
+#: engines/bladerunner/bladerunner.cpp:2709
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -4377,7 +4377,7 @@ msgstr ""
 "Original Content 모드로 플레이 중입니다. 게임을 완전히 종료하기 전까지 "
 "Restored Cut Content 모드가 활성화됩니다."
 
-#: engines/bladerunner/bladerunner.cpp:2700
+#: engines/bladerunner/bladerunner.cpp:2711
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -4387,7 +4387,7 @@ msgstr ""
 "Cut Content 모드로 플레이 중입니다. 게임을 완전히 종료하기 전까지 Original "
 "Content 모드가 활성화됩니다."
 
-#: engines/bladerunner/bladerunner.cpp:2702
+#: engines/bladerunner/bladerunner.cpp:2713
 msgid "Continue"
 msgstr "계속"
 
@@ -4442,15 +4442,25 @@ msgstr ""
 "달리기 상태에서 플레이어가 마우스 클릭을 중단하자마자 McCoy가 느려지지 않게 "
 "합니다"
 
-#: engines/bladerunner/detection_tables.h:95
-#: engines/bladerunner/detection_tables.h:106
+#: engines/bladerunner/detection.cpp:108
+#, fuzzy
+#| msgid "Show subtitles and play speech"
+msgid "Show subtitles during text crawl"
+msgstr "자막을 표시하고 음성을 재생"
+
+#: engines/bladerunner/detection.cpp:109
+msgid "During the intro cutscene, show subtitles during the text crawl"
+msgstr ""
+
+#: engines/bladerunner/detection_tables.h:96
+#: engines/bladerunner/detection_tables.h:107
 #: engines/kyra/detection_tables.h:84
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
 msgstr "패치 제작자가 번역물이 ScummVM에서 구동되길 원하지 않습니다."
 
-#: engines/bladerunner/detection_tables.h:128 engines/cge/detection.cpp:56
+#: engines/bladerunner/detection_tables.h:129 engines/cge/detection.cpp:56
 #: engines/cge/detection.cpp:62 engines/cge/detection.cpp:68
 #: engines/groovie/detection.cpp:104 engines/kyra/detection_tables.h:303
 #: engines/lure/detection.cpp:251 engines/mohawk/detection_tables.h:988
@@ -4466,7 +4476,7 @@ msgstr "패치 제작자가 번역물이 ScummVM에서 구동되길 원하지 �
 msgid "Missing game code"
 msgstr "게임 코드 없음"
 
-#: engines/bladerunner/detection_tables.h:140
+#: engines/bladerunner/detection_tables.h:141
 msgid ""
 "Enhanced edition not supported, use the original files which are part of the "
 "release."
