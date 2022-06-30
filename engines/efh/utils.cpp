@@ -270,12 +270,25 @@ Common::KeyCode EfhEngine::handleAndMapInput(bool animFl) {
 	Common::Event event;
 	_system->getEventManager()->pollEvent(event);
 	Common::KeyCode retVal = Common::KEYCODE_INVALID;
-	if (event.type == Common::EVENT_KEYUP) {
-		retVal = event.kbd.keycode;
-	}
 
-	if (animFl) {
-		warning("STUB - handleAndMapInput - animFl");
+	uint32 lastMs = _system->getMillis(); 
+	while (retVal == Common::KEYCODE_INVALID) {
+		_system->getEventManager()->pollEvent(event);
+
+		if (event.type == Common::EVENT_KEYUP) {
+			retVal = event.kbd.keycode;
+		}
+
+		if (animFl) {
+			_system->delayMillis(20);
+			uint32 newMs = _system->getMillis();
+
+			if (newMs - lastMs >= 200) {
+				lastMs = newMs;
+				unkFct_anim();
+			}
+		} else
+			break;
 	}
 	return retVal;
 }
