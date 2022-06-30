@@ -549,11 +549,11 @@ bool cSDLTexture::CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx) {
 	GL_CHECK_FN();
 
 	if (mTarget == eTextureTarget_1D)
-		glTexImage1D(GLTarget, 0, lChannels, mlWidth, 0, format,
+		glTexImage1D(GLTarget, 0, format, mlWidth, 0, format,
 					 GL_UNSIGNED_BYTE, pPixelSrc);
 	else
-		glTexImage2D(GLTarget, 0, lChannels, mlWidth, mlHeight,
-					 0, format, GL_UNSIGNED_BYTE, pPixelSrc);
+		glTexImage2D(GLTarget, 0, format, mlWidth, mlHeight,
+					0, format, GL_UNSIGNED_BYTE, pPixelSrc);
 
 	if (glGetError() != GL_NO_ERROR)
 		return false;
