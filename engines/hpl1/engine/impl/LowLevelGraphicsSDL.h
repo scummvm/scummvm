@@ -253,7 +253,7 @@ private:
 
 	// SDL Variables
 	//SDL_Surface *mpScreen;
-	Graphics::PixelFormat *mpPixelFormat;
+	Graphics::PixelFormat mpPixelFormat;
 
 	// Vertex Array variables
 	// The vertex arrays used:
