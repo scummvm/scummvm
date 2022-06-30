@@ -257,7 +257,7 @@ Common::String OSystem_POSIX::getDefaultIconsPath() {
 		return Common::String();
 	}
 
-	return iconsPath;
+	return Common::String::format("%s/%s", prefix, iconsPath.c_str());
 }
 
 Common::String OSystem_POSIX::getScreenshotsPath() {
