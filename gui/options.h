@@ -79,6 +79,10 @@ protected:
 	/** Config domain this dialog is used to edit. */
 	Common::String _domain;
 
+	ButtonWidget *_shaderButton;
+	StaticTextWidget *_shader;
+	ButtonWidget *_shaderClearButton;
+
 	ButtonWidget *_soundFontButton;
 	StaticTextWidget *_soundFont;
 	ButtonWidget *_soundFontClearButton;
@@ -118,6 +122,7 @@ protected:
 
 	TabWidget *_tabWidget;
 	int _graphicsTabId;
+	int _shaderTabId;
 	int _midiTabId;
 	int _pathsTabId;
 
@@ -167,8 +172,6 @@ private:
 	// Shader controls
 	//
 	bool _enableShaderSettings;
-	StaticTextWidget *_shaderPopUpDesc;
-	PopUpWidget *_shaderPopUp;
 
 	//
 	// Audio controls
@@ -285,8 +288,6 @@ protected:
 	ButtonWidget	 *_iconPathClearButton;
 	StaticTextWidget *_extraPath;
 	ButtonWidget	 *_extraPathClearButton;
-	StaticTextWidget *_shaderPath;
-	ButtonWidget	 *_shaderPathClearButton;
 #ifdef DYNAMIC_MODULES
 	StaticTextWidget *_pluginsPath;
 	ButtonWidget	 *_pluginsPathClearButton;

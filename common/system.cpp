@@ -141,27 +141,6 @@ bool OSystem::setGraphicsMode(const char *name) {
 	return false;
 }
 
-bool OSystem::setShader(const char *name) {
-	if (!name)
-		return false;
-
-	// Special case for the 'default' filter
-	if (!scumm_stricmp(name, "default")) {
-		return setShader(getDefaultShader());
-	}
-
-	const GraphicsMode *sm = getSupportedShaders();
-
-	while (sm->name) {
-		if (!scumm_stricmp(sm->name, name)) {
-			return setShader(sm->id);
-		}
-		sm++;
-	}
-
-	return false;
-}
-
 bool OSystem::setStretchMode(const char *name) {
 	if (!name)
 		return false;

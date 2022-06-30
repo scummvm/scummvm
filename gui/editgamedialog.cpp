@@ -221,7 +221,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	//
 
 	_globalShaderOverride = nullptr;
-	if (g_system->hasFeature(OSystem::kFeatureShader)) {
+	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
 		tab->addTab(_("Shader"), "GameOptions_Shader");
 
 		if (g_system->getOverlayWidth() > 320)
@@ -421,7 +421,7 @@ void EditGameDialog::open() {
 		ConfMan.hasKey("antialiasing", _domain);
 	_globalGraphicsOverride->setState(e);
 
-	if (g_system->hasFeature(OSystem::kFeatureShader)) {
+	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
 		e = ConfMan.hasKey("shader", _domain);
 		_globalShaderOverride->setState(e);
 	}
