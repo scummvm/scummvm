@@ -63,6 +63,12 @@ public:
 	void close();
 
 	bool isInitialized() const { return _shaderPreset != nullptr; }
+
+	static bool isSupportedByContext() {
+		return OpenGLContext.shadersSupported
+		    && OpenGLContext.multitextureSupported
+		    && OpenGLContext.framebufferObjectSupported;
+	}
 private:
 	virtual void activateInternal();
 	virtual void deactivateInternal();

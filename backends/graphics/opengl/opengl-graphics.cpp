@@ -61,19 +61,24 @@
 
 #include "common/text-to-speech.h"
 
+#if !USE_FORCED_GLES
 #include "backends/graphics/opengl/pipelines/libretro/parser.h"
+#endif
 
 namespace OpenGL {
 
 OpenGLGraphicsManager::OpenGLGraphicsManager()
 	: _currentState(), _oldState(), _transactionMode(kTransactionNone), _screenChangeID(1 << (sizeof(int) * 8 - 2)),
-	  _pipeline(nullptr), _libretroPipeline(nullptr), _stretchMode(STRETCH_FIT),
+	  _pipeline(nullptr), _stretchMode(STRETCH_FIT),
 	  _defaultFormat(), _defaultFormatAlpha(),
-	  _gameScreen(nullptr), _gameScreenTarget(nullptr), _overlay(nullptr),
+	  _gameScreen(nullptr), _overlay(nullptr),
 	  _cursor(nullptr),
 	  _cursorHotspotX(0), _cursorHotspotY(0),
 	  _cursorHotspotXScaled(0), _cursorHotspotYScaled(0), _cursorWidthScaled(0), _cursorHeightScaled(0),
 	  _cursorKeyColor(0), _cursorDontScale(false), _cursorPaletteEnabled(false), _shakeOffsetScaled()
+#if !USE_FORCED_GLES
+	  , _libretroPipeline(nullptr), _gameScreenTarget(nullptr)
+#endif
 #ifdef USE_OSD
 	  , _osdMessageChangeRequest(false), _osdMessageAlpha(0), _osdMessageFadeStartTime(0), _osdMessageSurface(nullptr),
 	  _osdIconSurface(nullptr)
@@ -87,7 +92,6 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 }
 
 OpenGLGraphicsManager::~OpenGLGraphicsManager() {
-	delete _gameScreenTarget;
 	delete _gameScreen;
 	delete _overlay;
 	delete _cursor;
@@ -96,6 +100,7 @@ OpenGLGraphicsManager::~OpenGLGraphicsManager() {
 	delete _osdIconSurface;
 #endif
 #if !USE_FORCED_GLES
+	delete _gameScreenTarget;
 	ShaderManager::destroy();
 #endif
 }
@@ -456,11 +461,13 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		delete _gameScreen;
 		_gameScreen = nullptr;
 
+#if !USE_FORCED_GLES
 		if (_gameScreenTarget != nullptr) {
 			_gameScreenTarget->destroy();
 			delete _gameScreenTarget;
 			_gameScreenTarget = nullptr;
 		}
+#endif
 
 		bool wantScaler = _currentState.scaleFactor > 1;
 
@@ -493,11 +500,13 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		_gameScreen->fill(0);
 #endif
 
+#if !USE_FORCED_GLES
 		if (_libretroPipeline) {
 			_gameScreenTarget = new TextureTarget();
 			_gameScreenTarget->create();
 			_gameScreenTarget->setSize(_currentState.gameWidth, _currentState.gameHeight);
 		}
+#endif
 	}
 
 	// Update our display area and cursor scaling. This makes sure we pick up
@@ -603,25 +612,31 @@ void OpenGLGraphicsManager::updateScreen() {
 	// Alpha blending is disabled when drawing the screen
 	_backBuffer.enableBlend(Framebuffer::kBlendModeDisabled);
 
+	bool needsCursor = _cursorVisible && _cursor;
+
 	// First step: Draw the (virtual) game screen.
-	if (_libretroPipeline) {
+#if !USE_FORCED_GLES
+	if (_libretroPipeline && _libretroPipeline->isInitialized()) {
 		Framebuffer *lastFramebuffer = Pipeline::getActivePipeline()->setFramebuffer(_gameScreenTarget);
 		_gameScreenTarget->enableBlend(Framebuffer::kBlendModeDisabled);
 		Pipeline::getActivePipeline()->drawTexture(_gameScreen->getGLTexture(), 0, 0, _gameScreen->getWidth(), _gameScreen->getHeight());
 
 		// Draw the cursor if necessary.
-		if (_cursorVisible && _cursor && !_overlayVisible) {
+		if (needsCursor && !_overlayVisible) {
 			int gameScreenCursorX = (_cursorX - _gameDrawRect.left) * _gameScreen->getWidth() / _gameDrawRect.width() - _cursorHotspotX;
 			int gameScreenCursorY = (_cursorY - _gameDrawRect.top) * _gameScreen->getHeight() / _gameDrawRect.height() - _cursorHotspotY;
 			_gameScreenTarget->enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
 			Pipeline::getActivePipeline()->drawTexture(_cursor->getGLTexture(), gameScreenCursorX, gameScreenCursorY, _cursor->getWidth(), _cursor->getHeight());
+			needsCursor = false;
 		}
 		Pipeline::getActivePipeline()->setFramebuffer(lastFramebuffer);
 
 		Pipeline *lastPipeline = Pipeline::setPipeline(_libretroPipeline);
 		Pipeline::getActivePipeline()->drawTexture(*_gameScreenTarget->getTexture(), _gameDrawRect.left, _gameDrawRect.top, _gameDrawRect.width(), _gameDrawRect.height());
 		Pipeline::setPipeline(lastPipeline);
-	} else {
+	} else
+#endif
+	{
 		Pipeline::getActivePipeline()->drawTexture(_gameScreen->getGLTexture(), _gameDrawRect.left, _gameDrawRect.top, _gameDrawRect.width(), _gameDrawRect.height());
 	}
 
@@ -634,7 +649,7 @@ void OpenGLGraphicsManager::updateScreen() {
 	}
 
 	// Third step: Draw the cursor if necessary.
-	if (_cursorVisible && _cursor && (_overlayVisible || !_libretroPipeline)) {
+	if (needsCursor) {
 		_backBuffer.enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
 
 		Pipeline::getActivePipeline()->drawTexture(_cursor->getGLTexture(),
@@ -1109,10 +1124,12 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 	delete _pipeline;
 	_pipeline = nullptr;
 
+#if !USE_FORCED_GLES
 	if (_libretroPipeline) {
 		delete _libretroPipeline;
 		_libretroPipeline = nullptr;
 	}
+#endif
 
 	OpenGLContext.initialize(type);
 
@@ -1120,14 +1137,6 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 	if (OpenGLContext.shadersSupported) {
 		ShaderMan.notifyCreate();
 		_pipeline = new ShaderPipeline(ShaderMan.query(ShaderManager::kDefault));
-
-		// Load selected shader preset from config file
-		if (ConfMan.hasKey("shader_scaler", Common::ConfigManager::kApplicationDomain)) {
-			Common::FSNode shaderPreset(ConfMan.get("shader_scaler", Common::ConfigManager::kApplicationDomain));
-			if (shaderPreset.isReadable()) {
-				_libretroPipeline = new LibRetroPipeline(shaderPreset);
-			}
-		}
 	}
 #endif
 
@@ -1144,10 +1153,6 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 
 	_pipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-	if (_libretroPipeline) {
-		_libretroPipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
-	}
-
 	// Setup backbuffer state.
 
 	// Default to black as clear color.
@@ -1155,9 +1160,26 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 
 	_pipeline->setFramebuffer(&_backBuffer);
 
-	if (_libretroPipeline) {
+	// Setup LibRetro pipeline.
+
+#if !USE_FORCED_GLES
+	if (LibRetroPipeline::isSupportedByContext()) {
+		_libretroPipeline = new LibRetroPipeline();
+
+		// Load selected shader preset from config file
+		// TODO: Handle this in endGFXTransaction()
+		if (ConfMan.hasKey("shader_scaler", Common::ConfigManager::kApplicationDomain)) {
+			Common::FSNode shaderPreset(ConfMan.get("shader_scaler", Common::ConfigManager::kApplicationDomain));
+			if (shaderPreset.isReadable()) {
+				if (!_libretroPipeline->open(shaderPreset))
+					warning("Failed to load %s", shaderPreset.getName().c_str());
+			}
+		}
+
+		_libretroPipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
 		_libretroPipeline->setFramebuffer(&_backBuffer);
 	}
+#endif
 
 	// We use a "pack" alignment (when reading from textures) to 4 here,
 	// since the only place where we really use it is the BMP screenshot
@@ -1179,9 +1201,11 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 		_gameScreen->recreate();
 	}
 
+#if !USE_FORCED_GLES
 	if (_gameScreenTarget) {
 		_gameScreenTarget->create();
 	}
+#endif
 
 	if (_overlay) {
 		_overlay->recreate();
@@ -1211,9 +1235,11 @@ void OpenGLGraphicsManager::notifyContextDestroy() {
 		_gameScreen->destroy();
 	}
 
+#if !USE_FORCED_GLES
 	if (_gameScreenTarget) {
 		_gameScreenTarget->destroy();
 	}
+#endif
 
 	if (_overlay) {
 		_overlay->destroy();
@@ -1244,10 +1270,12 @@ void OpenGLGraphicsManager::notifyContextDestroy() {
 	delete _pipeline;
 	_pipeline = nullptr;
 
+#if !USE_FORCED_GLES
 	if (_libretroPipeline) {
 		delete _libretroPipeline;
 		_libretroPipeline = nullptr;
 	}
+#endif
 
 	// Rest our context description since the context is gone soon.
 	OpenGLContext.reset();
