@@ -135,10 +135,12 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO7(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GAMEOPTION_DISABLE_STAMINA_DRAIN, GAMEOPTION_SHOW_SUBS_IN_CRAWL, GUIO_NOMIDI)
 	},
 
-	// BladeRunner - Enhanced edition
+	// BladeRunner - Enhanced Edition
 	{
 		"bladerunner-ee",
-		_s("Enhanced edition not supported, use the original files which are part of the release."),
+		// I18N: Blade Runner Enhanced Edition is a trademark, so please keep the capitalization
+		// for Enhanced Edition as is.
+		_s("Enhanced Edition not supported. Please, use the original files which are part of the release."),
 		AD_ENTRY1s("BladeRunner.kpf", "c42766a9337c828f0d98383f72636fb3", 1163268364),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
