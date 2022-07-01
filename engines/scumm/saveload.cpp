@@ -209,7 +209,7 @@ void ScummEngine::copyHeapSaveGameToFile(int slot, const char *saveName) {
 
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::stampShotEnqueue(int slot, int boxX, int boxY, int boxWidth, int boxHeight, int brightness) {
-	if (_stampShotsInQueue >= sizeof(_stampShots))
+	if (_stampShotsInQueue >= (int)ARRAYSIZE(_stampShots))
 		error("ScummEngine_v8::stampShotEnqueue(): overflow in the queue");
 
 	_stampShots[_stampShotsInQueue].slot = slot;
