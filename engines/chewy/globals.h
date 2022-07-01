@@ -86,7 +86,6 @@ public:
 
 	int16 _pfeil_ani = 0;
 	int16 _pfeil_delay = 0;
-	int16 _cur_hide_flag = 0;
 	int16 _auto_p_nr = 0;
 
 	int16 _zoom_horizont = 0;

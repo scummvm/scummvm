@@ -35,7 +35,6 @@ void Room62::entry() {
 	_G(gameState).room_e_obj[91].Attribut = 255;
 	if (!_G(gameState).R62FirstEntry) {
 		_G(gameState).R62TShow = false;
-		_G(cur_hide_flag) = false;
 		hideCur();
 		_G(gameState).R62FirstEntry = true;
 		setPersonPos(49, 113, P_HOWARD, P_RIGHT);

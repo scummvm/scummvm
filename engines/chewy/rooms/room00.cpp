@@ -53,7 +53,6 @@ void Room0::entry() {
 
 	if (!_G(flags).LoadGame) {
 		setPersonPos(150, 100, P_CHEWY, P_RIGHT);
-		_G(cur_hide_flag) = 0;
 		hideCur();
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 3);
 

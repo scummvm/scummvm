@@ -37,7 +37,6 @@ void Room63::entry() {
 	if (_G(gameState).R63FxMannWeg)
 		_G(det)->del_static_ani(5);
 	if (!_G(gameState).R63Uhr) {
-		_G(cur_hide_flag) = false;
 		hideCur();
 		_G(det)->startDetail(12, 255, ANI_FRONT);
 		_G(det)->startDetail(10, 255, ANI_FRONT);
@@ -295,7 +294,6 @@ int16 Room63::use_aschenbecher() {
 	int16 action_ret = false;
 	if (isCurInventory(ASCHE_INV)) {
 		action_ret = true;
-		_G(cur_hide_flag) = false;
 		hideCur();
 		if (_G(gameState).R63Uhr) {
 			if (_G(gameState).R63FxMannWeg) {

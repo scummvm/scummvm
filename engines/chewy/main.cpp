@@ -168,12 +168,9 @@ void cursorChoice(int16 nr) {
 }
 
 void hideCur() {
-	if (!_G(cur_hide_flag)) {
-		_G(cur_hide_flag) = true;
-		_G(flags).ShowAtsInvTxt = false;
-		_G(cur)->hideCursor();
-		_G(flags).CursorStatus = false;
-	}
+	_G(flags).ShowAtsInvTxt = false;
+	_G(cur)->hideCursor();
+	_G(flags).CursorStatus = false;
 }
 
 void showCur() {
@@ -601,7 +598,6 @@ void setupScreen(SetupScreenMode mode) {
 	if (g_engine->_showWalkAreas)
 		showWalkAreas();
 
-	_G(cur_hide_flag) = false;
 	int16 *ScrXy = (int16 *)_G(ablage)[_G(room_blk).AkAblage];
 	if (!_G(menu_display))
 		calc_scroll(_G(moveState)[P_CHEWY].Xypos[0] + _G(spieler_mi)[P_CHEWY].HotX,
@@ -1650,7 +1646,6 @@ void calc_ausgang(int16 x, int16 y) {
 				_G(menu_item) = CUR_DISK;
 				cursorChoice(CUR_DISK);
 				setupScreen(DO_SETUP);
-				_G(cur_hide_flag) = true;
 				exit_room(nr);
 				_G(gameState)._personRoomNr[P_CHEWY] = _G(gameState).room_e_obj[nr].Exit;
 				_G(room)->loadRoom(&_G(room_blk), _G(gameState)._personRoomNr[P_CHEWY], &_G(gameState));

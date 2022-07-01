@@ -2761,7 +2761,6 @@ void calc_person_dia(int16 p_nr) {
 
 			} else if (p_nr == P_NICHELLE) {
 				if (_G(gameState).PersonDia[P_NICHELLE] < 10000) {
-					_G(cur_hide_flag) = false;
 					hideCur();
 					startAadWait(_G(gameState).PersonDia[P_NICHELLE]);
 					_G(stopAutoMove)[P_NICHELLE] = _G(gameState).PersonDiaRoom[P_NICHELLE];

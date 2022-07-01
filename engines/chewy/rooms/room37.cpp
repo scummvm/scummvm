@@ -242,7 +242,6 @@ void Room37::talk_hahn() {
 	showCur();
 
 	if (!_G(gameState).R37TransHahn) {
-		_G(cur_hide_flag) = 0;
 		hideCur();
 		startAadWait(145);
 		showCur();
