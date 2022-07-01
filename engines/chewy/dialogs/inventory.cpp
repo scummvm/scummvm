@@ -314,14 +314,14 @@ void Inventory::menu() {
 		}
 
 		ret_look = -1;
-		int16 abfrage = _G(in)->getSwitchCode();
+		int16 keyCode = _G(in)->getSwitchCode();
 		// The original hid the cursor here
 
 		if (taste_flag) {
-			if (abfrage != taste_flag)
+			if (keyCode != taste_flag)
 				taste_flag = 0;
 		} else {
-			switch (abfrage) {
+			switch (keyCode) {
 			case Common::KEYCODE_F1:
 				keyVal = Common::KEYCODE_F1;
 				break;
