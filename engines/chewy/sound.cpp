@@ -95,25 +95,26 @@ bool Sound::isSoundActive(uint channel) const {
 }
 
 void Sound::setSoundVolume(uint volume) {
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume);
+	_userSoundVolume = volume;
+	if (soundEnabled())
+		ConfMan.setInt("sfx_volume", volume);
 }
 
 int Sound::getSoundVolume() const {
-	return _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
+	return _userSoundVolume;
 }
 
 void Sound::pushVolume() {
-	_soundVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
+	/* _soundVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
 	_speechVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
-	_musicVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
+	_musicVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);*/
 }
 
 void Sound::popVolume() {
-	assert(_soundVolume >= 0 && _speechVolume >= 0 && _musicVolume >= 0);
+	/* assert(_soundVolume >= 0 && _speechVolume >= 0 && _musicVolume >= 0);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, _soundVolume);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, _speechVolume);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _musicVolume);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _musicVolume);*/
 }
 
 void Sound::setSoundChannelVolume(uint channel, uint volume) {
@@ -162,11 +163,13 @@ bool Sound::isMusicActive() const {
 }
 
 void Sound::setMusicVolume(uint volume) {
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
+	_userMusicVolume = volume;
+	if (musicEnabled())
+		ConfMan.setInt("music_volume", volume);
 }
 
 int Sound::getMusicVolume() const {
-	return _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
+	return _userMusicVolume;
 }
 
 void Sound::playSpeech(int num, bool waitForFinish) {
@@ -227,19 +230,19 @@ void Sound::waitForSpeechToFinish() {
 }
 
 bool Sound::soundEnabled() const {
-	return !ConfMan.getBool("sfx_mute");
+	return ConfMan.getInt("sfx_volume") > 0;
 }
 
 void Sound::toggleSound(bool enable) {
-	return ConfMan.setBool("sfx_mute", !enable);
+	ConfMan.setInt("sfx_volume", enable ? _userSoundVolume : 0);
 }
 
 bool Sound::musicEnabled() const {
-	return !ConfMan.getBool("music_mute");
+	return ConfMan.getInt("music_volume") > 0;
 }
 
 void Sound::toggleMusic(bool enable) {
-	return ConfMan.setBool("music_mute", !enable);
+	ConfMan.setInt("music_volume", enable ? _userSoundVolume : 0);
 }
 
 bool Sound::speechEnabled() const {
@@ -247,7 +250,7 @@ bool Sound::speechEnabled() const {
 }
 
 void Sound::toggleSpeech(bool enable) {
-	return ConfMan.setBool("speech_mute", !enable);
+	ConfMan.setBool("speech_mute", !enable);
 }
 
 bool Sound::subtitlesEnabled() const {
@@ -255,7 +258,31 @@ bool Sound::subtitlesEnabled() const {
 }
 
 void Sound::toggleSubtitles(bool enable) {
-	return ConfMan.setBool("subtitles", enable);
+	ConfMan.setBool("subtitles", enable);
+}
+
+void Sound::syncSoundSettings() {
+	int confSoundVolume = ConfMan.getInt("sfx_volume");
+	int confMusicVolume = ConfMan.getInt("music_volume");
+
+	if (confSoundVolume == 0) {
+		// Sound is muted.
+		if (_userSoundVolume == 0)
+			// Set a default value.
+			_userSoundVolume = 192;
+		// Otherwise leave _soundVolume at the last value set by the user.
+	} else {
+		_userSoundVolume = confSoundVolume;
+	}
+	if (confMusicVolume == 0) {
+		// Music is muted.
+		if (_userMusicVolume == 0)
+			// Set a default value.
+			_userMusicVolume = 192;
+		// Otherwise leave _musicVolume at the last value set by the user.
+	} else {
+		_userMusicVolume = confMusicVolume;
+	}
 }
 
 struct RoomMusic {
