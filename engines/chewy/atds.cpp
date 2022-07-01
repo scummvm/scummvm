@@ -55,16 +55,6 @@ void AadInfoArray::load(const void *data, size_t count) {
 		(*this)[i].load(&src);
 }
 
-bool AadTxtHeader::load(const void *src) {
-	Common::MemoryReadStream rs((const byte *)src, 8);
-
-	_diaNr = rs.readSint16LE();
-	_perNr = rs.readSint16LE();
-	_aMov = rs.readSint16LE();
-	_curNr = rs.readSint16LE();
-	return true;
-}
-
 bool DialogCloseupTxtHeader::load(const void *src) {
 	Common::MemoryReadStream rs((const byte *)src, 8);
 
@@ -756,10 +746,10 @@ void Atdsys::aad_search_dia(int16 diaNr, char **ptr) {
 			uint16 *pos = (uint16 *)start_ptr;
 			if (pos[0] == diaNr) {
 				ende = true;
-				_aadv._txtHeader = (AadTxtHeader *)start_ptr;
-				*ptr = start_ptr + sizeof(AadTxtHeader);
+				_aadv._txtHeader = (DialogCloseupTxtHeader *)start_ptr;
+				*ptr = start_ptr + sizeof(DialogCloseupTxtHeader);
 			} else {
-				start_ptr += sizeof(AadTxtHeader) + pos[1] * sizeof(AadInfo);
+				start_ptr += sizeof(DialogCloseupTxtHeader) + pos[1] * sizeof(AadInfo);
 				bool ende1 = false;
 				for (; !ende1; ++start_ptr) {
 					if (*start_ptr != ATDS_END_TEXT)
