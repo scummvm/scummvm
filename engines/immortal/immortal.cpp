@@ -22,6 +22,7 @@
 #include "immortal/immortal.h"
 #include "immortal/detection.h"
 #include "immortal/disk.h"
+#include "immortal/compression.h"
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
@@ -36,9 +37,6 @@
 #include "engines/util.h"
 #include "audio/mixer.h"
 
-#include "graphics/palette.h"
-#include "graphics/surface.h"
-
 namespace Immortal {
 
 ImmortalEngine *g_engine;
@@ -49,80 +47,170 @@ ImmortalEngine::ImmortalEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	, _randomSource("Immortal") {
 	g_engine = this;
 
+	// Add the game folder to the search manager path variable
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "game");
 
+	// Confirm that the engine was created
 	debug("ImmortalEngine::ImmortalEngine");
 }
 
 ImmortalEngine::~ImmortalEngine() {
+	_window.close();
+	_font.close();
+
+	// Confirm that the engine was destroyed
 	debug("ImmortalEngine::~ImmortalEngine");
 }
 
+// --- Functions to make things a little more simple ---
+
+uint16 ImmortalEngine::xba(uint16 ab) {
+	/* XBA in 65816 swaps the low and high bits of a given word in A.
+	 * This is used very frequently, so this function just makes
+	 * initial translation a little more straightforward. Eventually,
+	 * logic should be refactored to not require this.
+	 */
+	return ((ab & kMaskLow) << 8) + ((ab & kMaskHigh) >> 8);
+}
+
+uint16 ImmortalEngine::rol(uint16 ab, int n) {
+	/* Oops, another opcode that doesn't have a nice translation.
+	 * This just replicates bit rotation because apparently C
+	 * doesn't have this natively??? This assumes a 16 bit
+	 * unsigned int because that's all we need for the 65816.
+	 */
+	return (ab << n) | (ab >> (16 - n));
+}
+
+uint16 ImmortalEngine::ror(uint16 ab, int n) {
+	/* The way this works is very straightforward. We start by
+	 * performing the bit shift like normal:
+	 * 0001 -> 0000
+	 * Then we need an easy way to apply the bit whether it fell
+	 * off the end or not, so we bit shift the opposite direction
+	 * for the length of the word. If the bit wouldn't have
+	 * fallen off, then it applies a 0, but if it would have,
+	 * then we get a 1 on the opposite bit, just like the carry.
+	 */
+	return (ab >> n) | (ab << (16 - n));
+}
+
+uint16 ImmortalEngine::mult16(uint16 a, uint16 b) {
+	/* We aren't using the game's multiplication function (mult16), but we do want
+	 * to retain the ability to drop the second word, without doing (uint16) every time
+	 */
+	return (uint16) (a * b);
+}
+// -----------------------------------------------------
+
 uint32 ImmortalEngine::getFeatures() const {
+	// No specific features currently
 	return _gameDescription->flags;
 }
 
 Common::String ImmortalEngine::getGameId() const {
+	// No game ID currently
 	return _gameDescription->gameId;
 }
 
-Common::Error ImmortalEngine::run() {
-	initGraphics(320, 200);
-
+Common::ErrorCode ImmortalEngine::initDisks() {
+	// Check for the boot disk
 	if (SearchMan.hasFile("IMMORTAL.dsk")) {
-		ProDosDisk *diskBoot  = new ProDosDisk("IMMORTAL.dsk");
+
+		// Instantiate the disk as an object. The disk will then open and parse itself
+		ProDOSDisk *diskBoot  = new ProDOSDisk("IMMORTAL.dsk");
 		if (diskBoot) {
+
+			// With the disk successfully parsed, it can be added to the search manager
 			debug("Boot disk found");
 			SearchMan.add("IMMORTAL.dsk", diskBoot, 0, true);
 		}
+	} else {
+		debug("Please insert Boot disk...");
+		return Common::kPathDoesNotExist;
 	}
 
+	// Check for the gfx disk
 	if (SearchMan.hasFile("IMMORTAL_GFX.dsk")) {
-		ProDosDisk *diskGFX  = new ProDosDisk("IMMORTAL_GFX.dsk");
+		ProDOSDisk *diskGFX  = new ProDOSDisk("IMMORTAL_GFX.dsk");
 		if (diskGFX) {
 			debug("Gfx disk found");
 			SearchMan.add("IMMORTAL_GFX.dsk", diskGFX, 0, true);
 		}
+	} else {
+		debug("Please insert GFX disk...");
+		return Common::kPathDoesNotExist;
 	}
 
-	Common::File f;
-	if (!f.open("LOAD.OBJ")) {
-		debug("oh no :(");
+	// All good, return with no error
+	return Common::kNoError;
+}
+
+Common::Error ImmortalEngine::run() {
+	initGraphics(_resH, _resV);
+
+	_mainSurface = new Graphics::Surface();
+	_mainSurface->create(_resH, _resV, Graphics::PixelFormat::createFormatCLUT8());
+	
+	_screenBuff = new byte[_screenSize];
+
+	if (initDisks() != Common::kNoError) {
+		debug("Some kind of disc error!");
+		return Common::kPathDoesNotExist;
 	}
 
-	debug("first file loaded");
-	f.close();
+	//Main:
+		   _zero = 0;
+			_dim = 0;
+	_usingNormal = 0;
+		   _draw = 1;
 
-	Common::File f2;
-	if (!f2.open("GOBLIN.SPR")) {
-		debug("oh no :((");
-	}
-
-	debug("second file loaded");
-	f2.close();
-
+	loadPalette();							// We need to grab the palette from the disk first
+	useNormal();							// The first palette will be the default
+	loadFont();								// Load the font sprite
+	loadWindow();							// Load the window background
+	loadSingles("Song A");					// Music
+	loadSprites();							// Get all the sprite data into memory
+	// playing = kPlayingNothing;
+	// themepaused = 0;
+	clearSprites();							// Clear the sprites before we start
+	logicInit();							// Init the game logic
 
 	while (!shouldQuit()) {
-	
+
+	/* The game loop runs at 60fps, which is 16 milliseconds per frame.
+	 * This loop keeps that time by getting the time in milliseconds at the start of the loop,
+	 * then again at the end, and the difference between them is the remainder
+	 * of the frame budget. If that remainder is within the 16 millisecond budget,
+	 * then it delays ScummVM for the remainder. If it is 0 or negative, then it continues.
+	 */
 		int64 loopStart = g_system->getMillis();
-		Common::Event event;
-		g_system->getEventManager()->pollEvent(event);
+
+		// Kernal main function
+		int err = main();
+
+		if (err != Common::kNoError) {
+			debug("To err is human, to really screw up you need an Apple IIGS!");
+			return Common::kUnknownError;
+		}
 
 		int64 loopEnd = 16 - (g_system->getMillis() - loopStart);
-		if (loopEnd > 0)
+		if (loopEnd > 0) {
+			//debug("remaining budget: %d", loopEnd);
 			g_system->delayMillis(loopEnd);
+		}
 	}
 
 	return Common::kNoError;
-
 }
 
 Common::Error ImmortalEngine::syncGame(Common::Serializer &s) {
-	// The Serializer has methods isLoading() and isSaving()
-	// if you need to specific steps; for example setting
-	// an array size after reading it's length, whereas
-	// for saving it would write the existing array's length
+	/* The Serializer has methods isLoading() and isSaving()
+	 * if you need to specific steps; for example setting
+	 * an array size after reading it's length, whereas
+	 * for saving it would write the existing array's length
+	 */
 	int dummy = 0;
 	s.syncAsUint32LE(dummy);
 
