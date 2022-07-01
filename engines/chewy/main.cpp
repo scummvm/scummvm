@@ -775,6 +775,7 @@ void mouseAction() {
 
 	if (_G(minfo).button || g_events->_kbInfo._keyCode == Common::KEYCODE_ESCAPE || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 		if (_G(minfo).button == 2 || g_events->_kbInfo._keyCode == Common::KEYCODE_ESCAPE) {
+			g_events->_kbInfo._keyCode = '\0';
 			if (!_G(flags).mainMouseFlag) {
 				g_events->_kbInfo._scanCode = Common::KEYCODE_ESCAPE;
 			}
