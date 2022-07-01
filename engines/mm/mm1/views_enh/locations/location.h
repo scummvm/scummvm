@@ -19,71 +19,23 @@
  *
  */
 
-#ifndef MM1_VIEWS_LOCATIONS_BUSINESS_H
-#define MM1_VIEWS_LOCATIONS_BUSINESS_H
+#ifndef MM1_VIEWS_ENH_LOCATIONS_LOCATION_H
+#define MM1_VIEWS_ENH_LOCATIONS_LOCATION_H
 
-#include "mm/mm1/views/text_view.h"
+#include "mm/mm1/views_enh/scroll_view.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace ViewsEnh {
 namespace Locations {
 
-class Location : public TextView {
-protected:
-	Common::String _modeString;
-protected:
-	/**
-	 * Clears the bottom part of the window and
-	 * displays a message
-	 */
-	void displayMessage(int x, const Common::String &msg);
-	void displayMessage(const Common::String &msg) {
-		displayMessage(0, msg);
-	}
-
-	/**
-	 * Move text position to the next line
-	 */
-	void newLine();
-
-	/**
-	 * Leave the business
-	 */
-	void leave();
-
-	/**
-	 * Subtract gold from current character
-	 */
-	bool subtractGold(uint amount);
-
-	/**
-	 * Displays not enough gold
-	 */
-	void notEnoughGold();
-
-	/**
-	 * Displays backpack is full
-	 */
-	void backpackFull();
-
-	/**
-	 * Change character
-	 */
-	virtual void changeCharacter(uint index);
-
+class Location : public ScrollView {
 public:
 	Location(const Common::String &name);
-	virtual ~Location() {}
-
-	/**
-	 * Draws the initial display for the business
-	 */
-	void draw() override;
 };
 
 } // namespace Locations
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
 
