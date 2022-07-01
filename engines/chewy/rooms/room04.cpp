@@ -52,9 +52,7 @@ int16 Room4::comp_probe() {
 
 	cur_2_inventory();
 	_G(gameState)._personHide[P_CHEWY] = true;
-	_G(cur_display) = false;
 	switchRoom(4);
-	_G(cur_display) = true;
 	bool endLoop = false;
 
 	// TODO: The original limited the cursor height to 16 pixels
