@@ -267,7 +267,6 @@ void handleDialogCloseupMenu() {
 
 		if (_G(atds)->aadGetStatus() == -1 && _G(ads_push) == false &&
 		        _G(flags).NoDiaBox == false) {
-			_G(cur_display) = true;
 
 			buildMenu(ADS_WIN);
 			_G(fontMgr)->setFont(_G(font6));
@@ -288,7 +287,6 @@ void handleDialogCloseupMenu() {
 		case 255:
 		case Common::KEYCODE_RETURN:
 			if (curY < _G(ads_item_nr) && curY >= 0 && _G(ads_push) == false) {
-				_G(cur_display) = false;
 				_G(ads_push) = true;
 				g_events->_mousePos.y = 159;
 				DialogCloseupNextBlock *an_blk = _G(atds)->dialogCloseupItemChoice(_G(ads_dia_nr), _G(ads_blk_nr), curY);
@@ -319,7 +317,6 @@ void handleDialogCloseupMenu() {
 void stopDialogCloseupDialog() {
 	aadWait(-1);
 	_G(gameState).DispFlag = _G(ads_tmp_dsp);
-	_G(cur_display) = true;
 	_G(flags).ShowAtsInvTxt = true;
 	_G(flags).MainInput = true;
 	_G(flags).DialogCloseup = false;

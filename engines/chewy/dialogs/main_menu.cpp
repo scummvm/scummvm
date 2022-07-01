@@ -208,7 +208,6 @@ bool MainMenu::loadGame() {
 	int result = Files::execute(false);
 
 	cursorChoice((_G(cur)->usingInventoryCursor() && _G(menu_item) == CUR_USE) ? 8 : 0);
-	_G(cur_display) = true;
 	restorePersonAni();
 	_G(flags).SaveMenu = false;
 
@@ -223,7 +222,6 @@ bool MainMenu::loadGame() {
 void MainMenu::playGame() {
 	// unused1 = 0;
 	_G(inv_disp_ok) = false;
-	_G(cur_display) = true;
 	_G(tmp_menu_item) = 0;
 	_G(mouseLeftClick) = false;
 	g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;

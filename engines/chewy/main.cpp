@@ -242,7 +242,6 @@ bool mainLoop(int16 mode) {
 			Dialogs::Inventory::menu();
 			menuExit();
 			_G(menu_display) = 0;
-			_G(cur_display) = true;
 			if (!_G(cur)->usingInventoryCursor()) {
 				_G(menu_item) = _G(tmp_menu_item);
 				cursorChoice(_G(menu_item));
@@ -268,7 +267,6 @@ bool mainLoop(int16 mode) {
 			}
 			if (!(_G(cur)->usingInventoryCursor() && _G(menu_item) == CUR_USE))
 				cursorChoice(_G(menu_item));
-			_G(cur_display) = true;
 			_G(flags).SaveMenu = false;
 			_G(cur)->showCursor();
 			_G(out)->setPointer(_G(workptr));
@@ -282,7 +280,6 @@ bool mainLoop(int16 mode) {
 				_G(maus_old_x) = g_events->_mousePos.x;
 				_G(maus_old_y) = g_events->_mousePos.y;
 				_G(menu_display) = MENU_DISPLAY;
-				_G(cur_display) = false;
 				_G(cur)->move((MOUSE_MENU_MAX_X / 5) * (_G(menu_item)), 100);
 			} else {
 				menuExit();
@@ -304,7 +301,6 @@ bool mainLoop(int16 mode) {
 				Dialogs::Inventory::menu();
 				menuExit();
 				_G(menu_display) = 0;
-				_G(cur_display) = true;
 				if (!_G(cur)->usingInventoryCursor()) {
 					_G(menu_item) = _G(tmp_menu_item);
 					cursorChoice(_G(menu_item));
@@ -337,7 +333,6 @@ bool mainLoop(int16 mode) {
 
 				if (!(_G(cur)->usingInventoryCursor() && _G(menu_item) == CUR_USE))
 					cursorChoice(_G(tmp_menu_item));
-				_G(cur_display) = true;
 
 				_G(flags).SaveMenu = false;
 				_G(cur)->showCursor();
@@ -349,7 +344,6 @@ bool mainLoop(int16 mode) {
 					menuExit();
 					_G(cur)->showCursor();
 					_G(menu_display) = 0;
-					_G(cur_display) = true;
 					_G(cur)->move(_G(maus_old_x), _G(maus_old_y));
 					g_events->_mousePos.x = _G(maus_old_x);
 					g_events->_mousePos.y = _G(maus_old_y);
@@ -387,7 +381,6 @@ bool mainLoop(int16 mode) {
 		if (_G(menu_display) == MENU_HIDE) {
 			menuExit();
 			_G(menu_display) = 0;
-			_G(cur_display) = true;
 			_G(cur)->move(_G(maus_old_x), _G(maus_old_y));
 			g_events->_mousePos.x = _G(maus_old_x);
 			g_events->_mousePos.y = _G(maus_old_y);
@@ -535,7 +528,7 @@ void setupScreen(SetupScreenMode mode) {
 					calc_mouse_person(g_events->_mousePos.x, g_events->_mousePos.y);
 			}
 		}
-		if (_G(cur_display) && mode == DO_SETUP) {
+		if (mode == DO_SETUP) {
 			_G(cur)->updateCursor();
 
 			if (_G(cur)->usingInventoryCursor() && _G(cur)->isCursorVisible())
@@ -776,37 +769,38 @@ void mouseAction() {
 		}
 		_G(inv_disp_ok) = false;
 	}
-	if (_G(atds)->aadGetStatus() == -1) {
-		if (_G(minfo).button || g_events->_kbInfo._keyCode == Common::KEYCODE_ESCAPE || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 
-			if (_G(minfo).button == 2 || g_events->_kbInfo._keyCode == Common::KEYCODE_ESCAPE) {
-				if (!_G(flags).mainMouseFlag) {
-					g_events->_kbInfo._scanCode = Common::KEYCODE_ESCAPE;
-				}
-			} else if (_G(minfo).button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
-				if (!_G(flags).mainMouseFlag) {
-					if (_G(menu_display) == MENU_DISPLAY)
-						g_events->_kbInfo._scanCode = Common::KEYCODE_RETURN;
-					else if (_G(cur)->usingInventoryCursor()) {
-						if (_G(inv_disp_ok)) {
-							if (_G(cur)->usingInventoryCursor()) {
-								_G(menu_item) = CUR_USE;
-								cursorChoice(_G(menu_item));
-								_G(cur)->setInventoryCursor(-1);
-							} else {
-								_G(menu_item) = CUR_USE;
-								g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
-							}
-						} else if (!_G(flags).MouseLeft)
-							_G(mouseLeftClick) = true;
+	if (_G(atds)->aadGetStatus() != -1)
+		return;
+
+	if (_G(minfo).button || g_events->_kbInfo._keyCode == Common::KEYCODE_ESCAPE || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
+		if (_G(minfo).button == 2 || g_events->_kbInfo._keyCode == Common::KEYCODE_ESCAPE) {
+			if (!_G(flags).mainMouseFlag) {
+				g_events->_kbInfo._scanCode = Common::KEYCODE_ESCAPE;
+			}
+		} else if (_G(minfo).button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
+			if (!_G(flags).mainMouseFlag) {
+				if (_G(menu_display) == MENU_DISPLAY)
+					g_events->_kbInfo._scanCode = Common::KEYCODE_RETURN;
+				else if (_G(cur)->usingInventoryCursor()) {
+					if (_G(inv_disp_ok)) {
+						if (_G(cur)->usingInventoryCursor()) {
+							_G(menu_item) = CUR_USE;
+							cursorChoice(_G(menu_item));
+							_G(cur)->setInventoryCursor(-1);
+						} else {
+							_G(menu_item) = CUR_USE;
+							g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
+						}
 					} else if (!_G(flags).MouseLeft)
 						_G(mouseLeftClick) = true;
-				}
+				} else if (!_G(flags).MouseLeft)
+					_G(mouseLeftClick) = true;
 			}
-			_G(flags).mainMouseFlag = 1;
-		} else
-			_G(flags).mainMouseFlag = 0;
-	}
+		}
+		_G(flags).mainMouseFlag = 1;
+	} else
+		_G(flags).mainMouseFlag = 0;
 }
 
 void evaluateObj(int16 objectId, int16 mode) {
@@ -1545,7 +1539,6 @@ void get_user_key(int16 mode) {
 			_G(menu_item) = CUR_USE;
 			Dialogs::Inventory::menu();
 			_G(menu_display) = 0;
-			_G(cur_display) = true;
 			if (!_G(cur)->usingInventoryCursor()) {
 				_G(menu_item) = _G(tmp_menu_item);
 				cursorChoice(_G(menu_item));
