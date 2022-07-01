@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-30 14:47+0000\n"
-"PO-Revision-Date: 2022-06-16 20:42+0000\n"
+"PO-Revision-Date: 2022-07-01 19:28+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -4466,14 +4466,12 @@ msgstr ""
 "hiirellä"
 
 #: engines/bladerunner/detection.cpp:108
-#, fuzzy
-#| msgid "Show subtitles and play speech"
 msgid "Show subtitles during text crawl"
-msgstr "Näytä tekstitys ja käytä puhetta"
+msgstr "Näytä tekstitys introteksteille"
 
 #: engines/bladerunner/detection.cpp:109
 msgid "During the intro cutscene, show subtitles during the text crawl"
-msgstr ""
+msgstr "Näytä käännösteksitys introssa oleville teksteille"
 
 #: engines/bladerunner/detection_tables.h:96
 #: engines/bladerunner/detection_tables.h:107
@@ -4507,6 +4505,8 @@ msgid ""
 "Enhanced Edition not supported. Please, use the original files which are "
 "part of the release."
 msgstr ""
+"Enhanced Edition ei ole tuettu. Ole hyvä ja käytä julkaisusta löytyviä "
+"alkuperäisen version tiedostoja."
 
 #. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
 #: engines/bladerunner/metaengine.cpp:109
