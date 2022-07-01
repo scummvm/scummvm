@@ -85,11 +85,12 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 
 		// grab the object condition, if there is one
 		FCLInstructionVector instructions;
+		Common::String *conditionSource = nullptr;
 		if (byteSizeOfObject) {
 			byte *conditionData = (byte*)malloc(byteSizeOfObject);
 			file->read(conditionData, byteSizeOfObject);
 			Common::Array<uint8> conditionArray(conditionData, byteSizeOfObject);
-			Common::String *conditionSource = detokenise8bitCondition(conditionArray);
+			conditionSource = detokenise8bitCondition(conditionArray, nullptr);
 			//instructions = getInstructions(conditionSource);
 			//debug("%s", conditionSource->c_str());
 		}
@@ -104,7 +105,8 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			32 * v, // size
 			colours,
 			ordinates,
-			instructions);
+			instructions,
+			conditionSource);
 	} break;
 	case Object::Entrance: {
 		debug("rotation: %f %f %f", v.x(), v.y(), v.z());
@@ -296,7 +298,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		byte *conditionData = (byte*)malloc(lengthOfCondition);
 		file->read(conditionData, lengthOfCondition);
 		Common::Array<uint8> conditionArray(conditionData, lengthOfCondition);
-		debug("%s", detokenise8bitCondition(conditionArray)->c_str());
+		debug("%s", detokenise8bitCondition(conditionArray, nullptr)->c_str(), nullptr);
 	}
 
 	return (new Area(areaNumber, objectsByID, entrancesByID, scale, 255, 255, palette));
@@ -359,8 +361,9 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		byte *conditionData = (byte*)malloc(lengthOfCondition);
 		file->read(conditionData, lengthOfCondition);
 		Common::Array<uint8> conditionArray(conditionData, lengthOfCondition);
-		//debug("Global condition %d", numCondition + 1);
-		//debug("%s", detokenise8bitCondition(conditionArray)->c_str());
+		//debug("Global condition %d", numConditions + 1);
+		Common::String *conditions = detokenise8bitCondition(conditionArray, nullptr);
+		//debug("%s", conditions->c_str());
 	}
 
 	file->seek(offset + 200);

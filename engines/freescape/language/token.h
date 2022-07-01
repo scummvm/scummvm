@@ -88,17 +88,23 @@ public:
 	int32_t getValue(CGameState &, int32_t suggestedValue = 0);
 	Type getType();
 
-	Token();
-	Token(Type type);
-	Token(Common::String &string);
-	Token(Type type, int32_t value);
-	Token(const Token &other);
-	Token &operator=(const Token &rhs);
+	Token() {
+		type = UNKNOWN;
+		value = 0;
+	}
+	Token(Type _type) {
+		type = _type;
+		value = 0;
+	}
+	//Token(Common::String &string);
+	//Token(Type type, int32_t value);
+	//Token(const Token &other);
+	//Token &operator=(const Token &rhs);
 
 private:
 	Type type;
 
-	int32_t value;
+	int32 value;
 	Common::String string;
 };
 

@@ -93,7 +93,8 @@ GeometricObject::GeometricObject(
 	const Math::Vector3d &size,
 	Common::Array<uint8> *_colours,
 	Common::Array<uint16> *_ordinates,
-	FCLInstructionVector _condition) {
+	FCLInstructionVector _conditionInstructions,
+	Common::String *_conditionSource) {
 	_type = type;
 	_flags = flags;
 	_objectID = objectID;
@@ -104,7 +105,8 @@ GeometricObject::GeometricObject(
 		colours = new Common::Array<uint8>(*_colours);
 	if (_ordinates)
 		ordinates = new Common::Array<uint16>(*_ordinates);
-	condition = _condition;
+	condition = _conditionInstructions;
+	conditionSource = _conditionSource;
 	createBoundingBox();
 }
 

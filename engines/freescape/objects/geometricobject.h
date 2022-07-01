@@ -27,13 +27,16 @@ public:
 		const Math::Vector3d &size,
 		Common::Array<uint8> *colours,
 		Common::Array<uint16> *ordinates,
-		FCLInstructionVector condition);
+		FCLInstructionVector conditionInstructions,
+		Common::String *conditionSource = nullptr);
 	virtual ~GeometricObject();
 	void createBoundingBox();
 	bool collides(const Math::AABB &boundingBox);
 	void draw(Freescape::Renderer *gfx) override;
 	bool isDrawable();
 	bool isPlanar();
+
+	Common::String *conditionSource;
 
 private:
 

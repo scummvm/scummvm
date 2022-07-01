@@ -17,6 +17,7 @@
 
 #include "freescape/freescape.h"
 #include "freescape/gfx.h"
+#include "freescape/objects/geometricobject.h"
 
 #include "freescape/loaders/16bitBinaryLoader.h"
 #include "freescape/loaders/8bitBinaryLoader.h"
@@ -369,8 +370,12 @@ void FreescapeEngine::checkCollisions() {
 	const Math::AABB boundingBox(v1, v2);
 	Object *obj = _currentArea->checkCollisions(boundingBox);
 
-	if (obj != nullptr)
+	if (obj != nullptr) {
 		debug("Collided with object of size %f %f %f", obj->getSize().x(), obj->getSize().y(), obj->getSize().z());
+		GeometricObject *gobj = (GeometricObject*) obj;
+		if (gobj->conditionSource != nullptr)
+			debug("Must use collision = true when executing: %s", gobj->conditionSource->c_str());
+	}
 }
 
 bool FreescapeEngine::hasFeature(EngineFeature f) const {
