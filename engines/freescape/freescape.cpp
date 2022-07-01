@@ -259,34 +259,7 @@ Common::Error FreescapeEngine::run() {
 	_gfx->init();
 	_gfx->clear();
 	loadAssets();
-	Entrance *entrance = nullptr;
-	assert(_areasByAreaID);
-	//if (_startArea == 14)
-	//	_startArea = 1;
-	assert(_areasByAreaID->contains(_startArea));
-	_currentArea = (*_areasByAreaID)[_startArea];
-	assert(_currentArea);
-	entrance = (Entrance*) _currentArea->entranceWithID(_startEntrance);
-	_currentArea->show();
-	Math::Vector3d rotation;
-
-	if (entrance) {
-		_position = entrance->getOrigin();
-		rotation = entrance->getRotation();
-	}
-	//assert(entrance);
-	if (_scale == Math::Vector3d(0, 0, 0)) {
-		uint8 scale = _currentArea->getScale();
-		_scaleVector = Math::Vector3d(scale, scale, scale);
-	} else
-		_scaleVector = _scale;
-	debug("entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
-	debug("player height: %d", _playerHeight);
-	_position.setValue(1, _position.y() + _playerHeight);
-
-	_pitch = rotation.x() - 180.f;
-	_yaw = rotation.y() - 180.f;
-
+	gotoArea(_startArea, _startEntrance);
 	debug("FreescapeEngine::init");
 	// Simple main event loop
 	_lastMousePos = Common::Point(0, 0);
@@ -381,6 +354,29 @@ void FreescapeEngine::checkCollisions() {
 	}
 }
 
+void FreescapeEngine::gotoArea(uint16 areaID, uint16 entranceID) {
+	debug("go to area: %d, entrance: %d", areaID, entranceID);
+
+	assert(_areasByAreaID->contains(areaID));
+	_currentArea = (*_areasByAreaID)[areaID];
+
+	Entrance *entrance = (Entrance*) _currentArea->entranceWithID(entranceID);
+	if (!entrance)
+		entrance = (Entrance*) _currentArea->firstEntrance();
+
+	_position = entrance->getOrigin();
+	_rotation = entrance->getRotation();
+	int scale = _currentArea->getScale();
+	assert(scale > 0);
+
+	debug("entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
+	debug("player height: %d", scale * _playerHeight);
+	_position.setValue(1, _position.y() + scale * _playerHeight);
+
+	_pitch = _rotation.x() - 180.f;
+	_yaw = _rotation.y() - 180.f;
+}
+
 void FreescapeEngine::executeCode(FCLInstructionVector &code) {
 	int ip = 0;
 	int codeSize = code.size();
@@ -403,17 +399,9 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code) {
 }
 
 void FreescapeEngine::executeGoto(FCLInstruction &instruction) {
-	int areaID = instruction.source;
-	int entranceID = instruction.destination;
-	assert(_areasByAreaID->contains(areaID));
-	_currentArea = (*_areasByAreaID)[areaID];
-
-	Entrance *entrance = (Entrance*) _currentArea->entranceWithID(entranceID);
-	if (!entrance)
-		entrance = (Entrance*) _currentArea->firstEntrance();
-
-
-	_position = entrance->getOrigin();
+	uint16 areaID = instruction.source;
+	uint16 entranceID = instruction.destination;
+	gotoArea(areaID, entranceID);
 }
 
 bool FreescapeEngine::hasFeature(EngineFeature f) const {
