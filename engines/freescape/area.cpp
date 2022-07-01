@@ -126,14 +126,12 @@ Object *Area::shootRay(const Math::Ray &ray) {
 }
 
 Object *Area::checkCollisions(const Math::AABB &boundingBox) {
-	for (Common::Array<Object *>::iterator it = drawableObjects.begin(); it != drawableObjects.end(); it++) {
-		if ((*it)->isDrawable()) {
-			GeometricObject *obj = (GeometricObject*) (*it);
+	for (int i = drawableObjects.size() - 1; i >= 0; i--) {
+		if (drawableObjects[i]->isDrawable()) {
+			GeometricObject *obj = (GeometricObject*) drawableObjects[i];
 			if (obj->collides(boundingBox))
-				return (*it);
+				return drawableObjects[i];
 		}
 	}
 	return nullptr;
-
-
 }
