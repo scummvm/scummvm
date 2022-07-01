@@ -143,6 +143,9 @@ void Room89::entry() {
 		_G(out)->fadeOut();
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
+
+		// Quit the game
+		g_engine->quitGame();
 	}
 
 	_G(gameState).SVal2 = 0;
