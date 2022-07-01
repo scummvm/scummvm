@@ -29,6 +29,11 @@
 static const byte commandLengths[8] = { 3, 3, 3, 3, 2, 2, 3, 0 };
 static const byte specialLengths[16] = { 0, 2, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 };
 
+MidiParser_SMF::MidiParser_SMF(int8 source) : MidiParser(source), _buffer(nullptr) {
+	for (int i = 0; i < ARRAYSIZE(_noteChannelToTrack); i++)
+		_noteChannelToTrack[i] = -1;
+}
+
 MidiParser_SMF::~MidiParser_SMF() {
 	free(_buffer);
 }
@@ -295,6 +300,8 @@ uint32 MidiParser_SMF::compressToType0(byte *tracks[], byte numTracks, byte *buf
 
 		if (commandLengths[(event >> 4) - 8] > 0) {
 			copyBytes = commandLengths[(event >> 4) - 8];
+			if ((event & 0xf0) == MidiDriver_BASE::MIDI_COMMAND_NOTE_ON)
+				_noteChannelToTrack[event & 0x0f] = bestTrack;
 		} else if (specialLengths[(event & 0x0F)] > 0) {
 			copyBytes = specialLengths[(event & 0x0F)];
 		} else if (event == 0xF0) {
