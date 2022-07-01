@@ -48,6 +48,8 @@
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
 
+#include "image/pict.h"
+
 namespace Director {
 
 static BuiltinProto builtins[] = {
@@ -1878,9 +1880,16 @@ void LB::b_findEmpty(int nargs) {
 }
 
 void LB::b_importFileInto(int nargs) {
-	g_lingo->printSTUBWithArglist("b_importFileInto", nargs);
-
-	g_lingo->dropStack(nargs);
+	Datum d = g_lingo->pop();
+	Datum d2 = g_lingo->pop();
+	Common::String path = ConfMan.get("path") + d.asString();
+	Common::FSNode in(path);
+	Common::SeekableReadStream *str = in.createReadStream();
+	Image::PICTDecoder *k = new Image::PICTDecoder();
+	k->loadStream(*str);
+	g_system->copyRectToScreen(k->getSurface()->getPixels(), k->getSurface()->pitch, 100, 100, 166, 182);
+	while (true)
+		g_system->updateScreen();
 }
 
 void menuCommandsCallback(int action, Common::String &text, void *data) {
