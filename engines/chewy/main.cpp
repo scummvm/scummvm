@@ -815,28 +815,28 @@ void mouseAction() {
 	}
 }
 
-void evaluateObj(int16 testNr, int16 mode) {
-	int16 ani_nr;
+void evaluateObj(int16 objectId, int16 mode) {
+	int16 animationId;
 	int16 txt_nr;
-	int16 tmp;
+	int16 direction;
 	int16 ret = NO_ACTION;
 	int16 action_flag = false;
 
 	switch (mode) {
 	case INVENTORY_NORMAL:
-		ret = _G(obj)->action_iib_iib(_G(cur)->getInventoryCursor(), testNr);
+		ret = _G(obj)->action_iib_iib(_G(cur)->getInventoryCursor(), objectId);
 		if (ret != NO_ACTION) {
 			hideCur();
 			if (_G(flags).InventMenu == false) {
 				if (_G(gameState).room_m_obj[_G(cur)->getInventoryCursor()].AutoMov != 255) {
 					_G(mouseLeftClick) = false;
-					autoMove(_G(gameState).room_m_obj[testNr].AutoMov, P_CHEWY);
+					autoMove(_G(gameState).room_m_obj[objectId].AutoMov, P_CHEWY);
 				}
-				txt_nr = _G(obj)->iib_txt_nr(testNr);
+				txt_nr = _G(obj)->iib_txt_nr(objectId);
 				Dialogs::Inventory::look_screen(INVENTORY_NORMAL, txt_nr);
-				if (_G(gameState).room_m_obj[testNr].AniFlag != 255) {
-					_G(gameState)._personHide[P_CHEWY] = _G(gameState).room_m_obj[testNr].HeldHide;
-					play_scene_ani(_G(gameState).room_m_obj[testNr].AniFlag, ANI_FRONT);
+				if (_G(gameState).room_m_obj[objectId].AniFlag != 255) {
+					_G(gameState)._personHide[P_CHEWY] = _G(gameState).room_m_obj[objectId].HeldHide;
+					play_scene_ani(_G(gameState).room_m_obj[objectId].AniFlag, ANI_FRONT);
 					_G(gameState)._personHide[P_CHEWY] = false;
 				}
 			}
@@ -845,34 +845,34 @@ void evaluateObj(int16 testNr, int16 mode) {
 		break;
 
 	case INVENTORY_STATIC:
-		ret = _G(obj)->action_iib_sib(_G(cur)->getInventoryCursor(), testNr);
+		ret = _G(obj)->action_iib_sib(_G(cur)->getInventoryCursor(), objectId);
 		if (ret != NO_ACTION) {
 			_G(mouseLeftClick) = false;
 			hideCur();
 			if (_G(gameState).room_m_obj[_G(cur)->getInventoryCursor()].AutoMov != 255) {
-				autoMove(_G(gameState).room_s_obj[testNr].AutoMov, P_CHEWY);
+				autoMove(_G(gameState).room_s_obj[objectId].AutoMov, P_CHEWY);
 			}
-			txt_nr = _G(obj)->sib_txt_nr(testNr);
+			txt_nr = _G(obj)->sib_txt_nr(objectId);
 			Dialogs::Inventory::look_screen(INVENTORY_STATIC, txt_nr);
-			if (_G(gameState).room_s_obj[testNr].AniFlag != 255) {
-				_G(gameState)._personHide[P_CHEWY] = _G(gameState).room_s_obj[testNr].HeldHide;
-				tmp = getAniDirection((int16)_G(gameState).room_s_obj[testNr].ZustandAk);
-				ani_nr = _G(gameState).room_s_obj[testNr].AniFlag;
+			if (_G(gameState).room_s_obj[objectId].AniFlag != 255) {
+				_G(gameState)._personHide[P_CHEWY] = _G(gameState).room_s_obj[objectId].HeldHide;
+				direction = getAniDirection((int16)_G(gameState).room_s_obj[objectId].ZustandAk);
+				animationId = _G(gameState).room_s_obj[objectId].AniFlag;
 
-				if (ani_nr >= 150) {
-					start_spz_wait(ani_nr - 150, 1, false, P_CHEWY);
-					ani_nr = -1;
-				} else if (ani_nr >= 100) {
-					ani_nr -= 100;
-					_G(obj)->calc_static_detail(testNr);
+				if (animationId >= 150) {
+					start_spz_wait(animationId - 150, 1, false, P_CHEWY);
+					animationId = -1;
+				} else if (animationId >= 100) {
+					animationId -= 100;
+					_G(obj)->calc_static_detail(objectId);
 				}
-				if (ani_nr != -1)
-					play_scene_ani(ani_nr, tmp);
+				if (animationId != -1)
+					play_scene_ani(animationId, direction);
 				_G(gameState)._personHide[P_CHEWY] = false;
 			}
 			_G(menu_item_vorwahl) = CUR_WALK;
 			showCur();
-			sib_event_inv(testNr);
+			sib_event_inv(objectId);
 
 			if (!_G(cur)->usingInventoryCursor()) {
 				_G(menu_item) = _G(menu_item_vorwahl);
@@ -883,41 +883,41 @@ void evaluateObj(int16 testNr, int16 mode) {
 		break;
 
 	case STATIC_USE:
-		ret = _G(obj)->calc_static_use(testNr);
+		ret = _G(obj)->calc_static_use(objectId);
 		if (ret == OBJECT_1) {
 			_G(mouseLeftClick) = false;
 			hideCur();
-			if (_G(gameState).room_s_obj[testNr].AutoMov != 255) {
+			if (_G(gameState).room_s_obj[objectId].AutoMov != 255) {
 
-				autoMove(_G(gameState).room_s_obj[testNr].AutoMov, P_CHEWY);
+				autoMove(_G(gameState).room_s_obj[objectId].AutoMov, P_CHEWY);
 			}
-			txt_nr = _G(obj)->sib_txt_nr(testNr);
+			txt_nr = _G(obj)->sib_txt_nr(objectId);
 			Dialogs::Inventory::look_screen(INVENTORY_STATIC, txt_nr);
-			if (_G(gameState).room_s_obj[testNr].AniFlag != 255) {
-				_G(gameState)._personHide[P_CHEWY] = _G(gameState).room_s_obj[testNr].HeldHide;
-				tmp = getAniDirection((int16)_G(gameState).room_s_obj[testNr].ZustandAk);
+			if (_G(gameState).room_s_obj[objectId].AniFlag != 255) {
+				_G(gameState)._personHide[P_CHEWY] = _G(gameState).room_s_obj[objectId].HeldHide;
+				direction = getAniDirection((int16)_G(gameState).room_s_obj[objectId].ZustandAk);
 
-				ani_nr = _G(gameState).room_s_obj[testNr].AniFlag;
+				animationId = _G(gameState).room_s_obj[objectId].AniFlag;
 
-				if (ani_nr >= 150) {
-					start_spz_wait(ani_nr - 150, 1, false, P_CHEWY);
-					ani_nr = -1;
-				} else if (ani_nr >= 100) {
-					ani_nr -= 100;
-					_G(obj)->calc_static_detail(testNr);
+				if (animationId >= 150) {
+					start_spz_wait(animationId - 150, 1, false, P_CHEWY);
+					animationId = -1;
+				} else if (animationId >= 100) {
+					animationId -= 100;
+					_G(obj)->calc_static_detail(objectId);
 				}
-				if (ani_nr != -1)
-					play_scene_ani(ani_nr, tmp);
+				if (animationId != -1)
+					play_scene_ani(animationId, direction);
 				_G(gameState)._personHide[P_CHEWY] = false;
 			}
 
-			if (_G(gameState).room_s_obj[testNr].InvNr != -1) {
-				invent_2_slot(_G(gameState).room_s_obj[testNr].InvNr);
+			if (_G(gameState).room_s_obj[objectId].InvNr != -1) {
+				invent_2_slot(_G(gameState).room_s_obj[objectId].InvNr);
 				action_flag = true;
 			}
 			_G(menu_item_vorwahl) = CUR_WALK;
 			showCur();
-			int16 sib_ret = sib_event_no_inv(testNr);
+			int16 sib_ret = sib_event_no_inv(objectId);
 
 			_G(obj)->calc_all_static_detail();
 
@@ -931,43 +931,43 @@ void evaluateObj(int16 testNr, int16 mode) {
 		} else if (ret == SIB_GET_INV) {
 			_G(mouseLeftClick) = false;
 			hideCur();
-			if (_G(gameState).room_s_obj[testNr].AutoMov != 255) {
-				autoMove(_G(gameState).room_s_obj[testNr].AutoMov, P_CHEWY);
+			if (_G(gameState).room_s_obj[objectId].AutoMov != 255) {
+				autoMove(_G(gameState).room_s_obj[objectId].AutoMov, P_CHEWY);
 			}
-			txt_nr = _G(obj)->sib_txt_nr(testNr);
+			txt_nr = _G(obj)->sib_txt_nr(objectId);
 			Dialogs::Inventory::look_screen(INVENTORY_STATIC, txt_nr);
-			if (_G(gameState).room_s_obj[testNr].AniFlag != 255) {
-				_G(gameState)._personHide[P_CHEWY] = _G(gameState).room_s_obj[testNr].HeldHide;
-				tmp = getAniDirection((int16)_G(gameState).room_s_obj[testNr].ZustandAk);
+			if (_G(gameState).room_s_obj[objectId].AniFlag != 255) {
+				_G(gameState)._personHide[P_CHEWY] = _G(gameState).room_s_obj[objectId].HeldHide;
+				direction = getAniDirection((int16)_G(gameState).room_s_obj[objectId].ZustandAk);
 
-				ani_nr = _G(gameState).room_s_obj[testNr].AniFlag;
+				animationId = _G(gameState).room_s_obj[objectId].AniFlag;
 
-				if (ani_nr >= 150) {
-					start_spz_wait(ani_nr - 150, 1, false, P_CHEWY);
-					ani_nr = -1;
-				} else if (ani_nr >= 100) {
-					ani_nr -= 100;
-					_G(obj)->calc_static_detail(testNr);
+				if (animationId >= 150) {
+					start_spz_wait(animationId - 150, 1, false, P_CHEWY);
+					animationId = -1;
+				} else if (animationId >= 100) {
+					animationId -= 100;
+					_G(obj)->calc_static_detail(objectId);
 				}
-				if (ani_nr != -1) {
-					play_scene_ani(ani_nr, tmp);
+				if (animationId != -1) {
+					play_scene_ani(animationId, direction);
 				}
 				_G(gameState)._personHide[P_CHEWY] = false;
 			}
 
-			if (_G(gameState).room_s_obj[testNr].InvNr != -1)
-				invent_2_slot(_G(gameState).room_s_obj[testNr].InvNr);
-			_G(obj)->calc_rsi_flip_flop(testNr);
+			if (_G(gameState).room_s_obj[objectId].InvNr != -1)
+				invent_2_slot(_G(gameState).room_s_obj[objectId].InvNr);
+			_G(obj)->calc_rsi_flip_flop(objectId);
 			_G(menu_item_vorwahl) = CUR_WALK;
 			showCur();
-			sib_event_no_inv(testNr);
+			sib_event_no_inv(objectId);
 			_G(obj)->calc_all_static_detail();
 			if (!_G(cur)->usingInventoryCursor()) {
 				_G(menu_item) = _G(menu_item_vorwahl);
 				cursorChoice(_G(menu_item));
 			}
 		} else if (ret == NO_ACTION) {
-			txt_nr = _G(obj)->sib_txt_nr(testNr);
+			txt_nr = _G(obj)->sib_txt_nr(objectId);
 			Dialogs::Inventory::look_screen(INVENTORY_STATIC, txt_nr);
 		}
 		break;
@@ -980,14 +980,14 @@ void evaluateObj(int16 testNr, int16 mode) {
 	case OBJECT_1:
 	case OBJECT_2:
 		if (mode == INVENTORY_NORMAL)
-			calc_inv_use_txt(testNr);
+			calc_inv_use_txt(objectId);
 		break;
 
 	case NO_ACTION:
 		if (mode == STATIC_USE && _G(flags).StaticUseTxt == true)
 			_G(flags).StaticUseTxt = false;
 		else if (mode != STATIC_USE)
-			calc_inv_no_use(testNr, mode);
+			calc_inv_no_use(objectId, mode);
 
 		break;
 

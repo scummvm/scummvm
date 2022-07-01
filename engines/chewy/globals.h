@@ -323,7 +323,7 @@ void kb_mov(int16 mode);
 void kb_cur_action(int16 key, int16 mode);
 void mouseAction();
 
-void evaluateObj(int16 testNr, int16 txt_nr);
+void evaluateObj(int16 objectId, int16 txt_nr);
 
 void swap_if_l(int16 *x1, int16 *x2);
 
@@ -417,7 +417,7 @@ void handleDialogCloseupMenu();
 
 void stopDialogCloseupDialog();
 
-void play_scene_ani(int16 nr, int16 mode);
+void play_scene_ani(int16 nr, int16 direction);
 
 void timer_action(int16 t_nr);
 
