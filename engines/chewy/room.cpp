@@ -103,7 +103,6 @@ static const uint8 CHEWY_JM_PHASES[8][8] = {
 static const uint8 CHEWY_JM_PHASE_NR[] = {8, 8, 8, 8, 8, 8, 8, 8};
 
 void JungleRoom::topEntry() {
-	_G(cur_hide_flag) = 0;
 	hideCur();
 	setPersonPos(236, 110, P_CHEWY, P_RIGHT);
 	setPersonPos(263, 85, P_NICHELLE, P_RIGHT);

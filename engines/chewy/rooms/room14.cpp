@@ -153,7 +153,6 @@ void Room14::feuer() {
 	int16 waffe = false;
 	int16 tmp = _G(cur)->getInventoryCursor();
 	_G(gameState).R14Feuer = true;
-	_G(cur_hide_flag) = false;
 	_G(flags).AutoAniPlay = true;
 	hideCur();
 

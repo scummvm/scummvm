@@ -46,7 +46,6 @@ void Room65::entry() {
 	_G(moveState)[P_HOWARD].Xypos[0] = 150;
 	_G(moveState)[P_HOWARD].Xypos[1] = 10;
 	if (_G(gameState).PersonDia[P_HOWARD] < 10000) {
-		_G(cur_hide_flag) = false;
 		hideCur();
 		startAadWait(_G(gameState).PersonDia[P_HOWARD]);
 		showCur();

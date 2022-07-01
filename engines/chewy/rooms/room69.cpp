@@ -49,7 +49,6 @@ void Room69::entry(int16 eib_nr) {
 	if (_G(flags).LoadGame)
 		return;
 
-	_G(cur_hide_flag) = false;
 	hideCur();
 
 	if (eib_nr == 102)

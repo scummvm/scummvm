@@ -194,7 +194,6 @@ void enter_room(int16 eib_nr) {
 	_G(flags).AutoAniPlay = false;
 	_G(SetUpScreenFunc) = nullptr;
 	_G(HowardMov) = 0;
-	_G(cur_hide_flag) = false;
 
 #define ENTRY(NUM) case NUM: Room##NUM::entry(); break
 #define ENTRY_NR(NUM) case NUM: Room##NUM::entry(eib_nr); break
@@ -1129,7 +1128,6 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 	case 94:
 		_G(det)->showStaticSpr(7);
-		_G(cur_hide_flag) = false;
 		hideCur();
 		startAadWait(406);
 		if (_G(gameState)._personRoomNr[P_HOWARD] == 66)
@@ -1266,7 +1264,6 @@ void sib_event_inv(int16 sib_nr) {
 		break;
 
 	case SIB_CART_FACH_R18:
-		_G(cur_hide_flag) = false;
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(gameState).R18CartFach = true;
 		delInventory(_G(cur)->getInventoryCursor());

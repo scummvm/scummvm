@@ -190,7 +190,6 @@ int16 Room68::use_indigo() {
 			auto_scroll(78, 0);
 			delInventory(_G(cur)->getInventoryCursor());
 			talk_indigo(394);
-			_G(cur_hide_flag) = false;
 			hideCur();
 			_G(room)->set_timer_status(8, TIMER_STOP);
 			_G(det)->del_static_ani(8);
@@ -199,7 +198,6 @@ int16 Room68::use_indigo() {
 			startSetAILWait(25, 1, ANI_FRONT);
 			_G(det)->set_static_ani(12, -1);
 			talk_indigo(398);
-			_G(cur_hide_flag) = false;
 			hideCur();
 			_G(room)->set_timer_status(8, TIMER_STOP);
 			_G(det)->del_static_ani(8);
@@ -232,7 +230,6 @@ void Room68::talk_keeper() {
 	int16 y = _G(moveState)[P_CHEWY].Xypos[1] - _G(gameState).scrolly;
 	_G(atds)->set_split_win(3, x, y);
 	startDialogCloseupWait(20);
-	_G(cur_hide_flag) = false;
 	hideCur();
 	_G(det)->del_static_ani(16);
 	startSetAILWait(15, 1, ANI_BACK);

@@ -42,7 +42,6 @@ void Room66::entry(int16 eib_nr) {
 	if (!_G(gameState).flags26_4) {
 		_G(det)->showStaticSpr(4);
 		_G(det)->showStaticSpr(8);
-		_G(cur_hide_flag) = false;
 		hideCur();
 		_G(gameState).flags26_4 = true;
 		_G(gameState).scrollx = 476;
@@ -193,7 +192,6 @@ int Room66::proc7() {
 	}
 
 	proc8(7, 2, 3, 411 + (_G(gameState).flags26_10 ? 1 : 0));
-	_G(cur_hide_flag) = 0;
 	hideCur();
 	if (_G(gameState).flags26_20)
 		startSetAILWait(4, 1, ANI_FRONT);
