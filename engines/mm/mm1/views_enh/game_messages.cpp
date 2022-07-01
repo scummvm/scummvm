@@ -94,8 +94,10 @@ bool GameMessages::msgKeypress(const KeypressMessage &msg) {
 			_keyCallback(msg);
 		} else if (msg.keycode == Common::KEYCODE_n) {
 			close();
+			g_events->drawElements();
 		} else if (msg.keycode == Common::KEYCODE_y) {
 			close();
+			g_events->drawElements();
 			_ynCallback();
 		}
 
