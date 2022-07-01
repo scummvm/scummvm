@@ -118,8 +118,7 @@ void Room54::setup_func() {
 				}
 			}
 
-			if (!_G(flags).SaveMenu)
-				goAutoXy(x, y, P_HOWARD, ANI_GO);
+			goAutoXy(x, y, P_HOWARD, ANI_GO);
 		}
 	}
 }
