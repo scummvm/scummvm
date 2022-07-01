@@ -97,6 +97,10 @@ void Cursor::hideCursor() {
 	CursorMan.showMouse(false);
 }
 
+bool Cursor::isCursorVisible() const {
+	return CursorMan.isVisible();
+}
+
 void Cursor::setAnimation(uint8 start, uint8 end, int16 delay) {
 	_aniCount = _animStart = start;
 	_animEnd = end;

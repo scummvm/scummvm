@@ -133,7 +133,6 @@ void var_init() {
 	_G(pfeil_delay) = 0;
 	_G(pfeil_ani) = 0;
 	_G(timer_action_ctr) = 0;
-	_G(flags).CursorStatus = true;
 	_G(savegameFlag) = false;
 }
 

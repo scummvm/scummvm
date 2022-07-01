@@ -41,6 +41,7 @@ public:
 	void updateCursor();
 	void showCursor();
 	void hideCursor();
+	bool isCursorVisible() const;
 	void setAnimation(uint8 start, uint8 end, int16 delay);
 	void setCustomCursor(byte *data, uint16 width, uint16 height);
 	void setCustomRoomCursor(byte *roomSprite);
