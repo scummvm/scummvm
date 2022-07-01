@@ -42,6 +42,7 @@ ProDOSFile::ProDOSFile(char name[15], uint8 type, uint16 tBlk, uint32 eof, uint1
 void ProDOSFile::printInfo() {
     debug("File: %s", _name);
     debug("Type: %02X", _type);
+    debug("data: %d", _blockPtr);
     debug("Blocks: %d", _totalBlocks);
     debug("Size: %u\n", _eof);
 }
@@ -288,14 +289,14 @@ void ProDOSDisk::searchDirectory(DirHeader *h, uint16 p, uint16 n, Common::Strin
 
         FileEntry fileEntry;
         getFileEntry(&fileEntry);
-
+        //debug("%s", fileEntry._name);
         parsedFiles++;
         currPos = _disk.pos();
 
         // It is a regular file if (dead < file type < pascal) and the file has a size
         if ((kFileTypeDead < fileEntry._type) && (fileEntry._type < kFileTypePascal) && (fileEntry._eof > 0)) {
-            Common::String fileName = path + fileEntry._name;
-            debug("%s", fileName.c_str());
+             Common::String fileName = path + fileEntry._name;
+            debug("%s, %08X", fileName.c_str(), fileEntry._eof);
             ProDOSFile *currFile = new ProDOSFile(fileEntry._name, fileEntry._type, fileEntry._totalBlocks, fileEntry._eof, fileEntry._blockPtr, &_disk);
 
             _files.setVal(fileName, Common::SharedPtr<ProDOSFile>(currFile));
@@ -358,7 +359,6 @@ bool ProDOSDisk::open(const Common::String filename) {
     VolHeader header;
     getVolumeHeader(&header);
     debug("volume name: %s", header._name);
-    //debug("volume created %d/%d/19%d", header._date._day, header._date._month, header._date._year);
 
     getVolumeBitmap(&header);
 
@@ -381,11 +381,12 @@ ProDOSDisk::ProDOSDisk(const Common::String filename) {
 ProDOSDisk::~ProDOSDisk() {
     _disk.close();
     _files.clear();
-    delete _volBitmap;              // Should this be free() instead?
+    free(_volBitmap);                               // Should this be free() or delete?
 }
 
 // --- Common::Archive methods ---
 
+// Very simple, just checks if the dictionary contains the path name
 bool ProDOSDisk::hasFile(const Common::Path &path) const {
     Common::String name = path.toString();
     return _files.contains(name);
@@ -406,6 +407,7 @@ int ProDOSDisk::listMembers(Common::ArchiveMemberList &list) const {
     return f;
 }
 
+// If the dictionary contains the path name (could probably call hasFile() instead), get the object
 const Common::ArchiveMemberPtr ProDOSDisk::getMember(const Common::Path &path) const {
     Common::String name = path.toString();
     if (!_files.contains(name)) {
