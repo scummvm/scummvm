@@ -1113,7 +1113,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 	case SIB_LAMPE_R52:
 		_G(atds)->delControlBit(338, ATS_ACTIVE_BIT);
 		_G(gameState).R52LichtAn ^= 1;
-		checkShadow(2 * (_G(gameState).R52LichtAn + 1), 1);
+		setShadowPalette(2 * (_G(gameState).R52LichtAn + 1), true);
 		break;
 
 	case SIB_KAUTABAK_R56:

@@ -512,7 +512,7 @@ void setupScreen(SetupScreenMode mode) {
 			const int16 paletteId = _G(barriers)->getBarrierId(
 				_G(moveState)[P_CHEWY].Xypos[0] + _G(spieler_mi)[P_CHEWY].HotX,
 				_G(moveState)[P_CHEWY].Xypos[1] + _G(spieler_mi)[P_CHEWY].HotY);
-			checkShadow(paletteId, 0);
+			setShadowPalette(paletteId, false);
 		} else {
 			for (i = 0; i < MAX_PERSON; i++) {
 				mov_objekt(&_G(moveState)[i], &_G(spieler_mi)[i]);
@@ -1009,31 +1009,24 @@ void swap_if_l(int16 *x1, int16 *x2) {
 	}
 }
 
-void palcopy(byte *destPal, const byte *srcPal, int16 destStartIndex, int16 srcStartIndex, int16 colorNbr) {
-	int16 j = srcStartIndex;
-	for (int16 i = destStartIndex; i < destStartIndex + colorNbr; ++i) {
-		destPal[i * 3] = srcPal[j * 3];
-		destPal[i * 3 + 1] = srcPal[j * 3 + 1];
-		destPal[i * 3 + 2] = srcPal[j * 3 + 2];
-		++j;
-	}
-}
-
-void checkShadow(int16 palIdx, int16 mode) {
+void setShadowPalette(int16 palIdx, bool setPartialPalette) {
 	static const uint8 PAL_0[] = {
 		0, 0, 0,
 		39, 0, 26,
 		43, 0, 29,
 		51, 42, 29,
+
 		51, 0, 34,
 		49, 13, 34,
 		55, 0, 37,
 		63, 54, 40,
+
 		63, 0, 42,
 		63, 30, 42,
 		63, 12, 46,
 		63, 24, 50
 	};
+
 	static const uint8 PAL_1[] = {
 		0, 0, 0,
 		34, 0, 21,
@@ -1050,6 +1043,7 @@ void checkShadow(int16 palIdx, int16 mode) {
 		58, 7, 41,
 		58, 19, 45
 	};
+
 	static const uint8 PAL_2[] = {
 		0, 0, 0,
 		26, 0, 13,
@@ -1066,6 +1060,7 @@ void checkShadow(int16 palIdx, int16 mode) {
 		50, 0, 33,
 		50, 11, 37
 	};
+
 	static const uint8 PAL_3[] = {
 		0, 0, 0,
 		21, 3, 8,
@@ -1083,34 +1078,21 @@ void checkShadow(int16 palIdx, int16 mode) {
 		45, 6, 32
 	};
 
-	switch (palIdx) {
-	case 1:
-		if (mode)
-			_G(out)->set_partialpalette(PAL_1, 1, 11);
-		palcopy(_G(pal), PAL_1, 0, 0, 12);
-		break;
+	const uint8 *palette;
+	if (palIdx == 1)
+		palette = PAL_1;
+	else if (palIdx == 2)
+		palette = PAL_2;
+	else if (palIdx == 3)
+		palette = PAL_3;
+	else if (palIdx == 4)
+		palette = PAL_0;
+	else
+		return;
 
-	case 2:
-		if (mode)
-			_G(out)->set_partialpalette(PAL_2, 1, 11);
-		palcopy(_G(pal), PAL_2, 0, 0, 12);
-		break;
-
-	case 3:
-		if (mode)
-			_G(out)->set_partialpalette(PAL_3, 1, 11);
-		palcopy(_G(pal), PAL_3, 0, 0, 12);
-		break;
-
-	case 4:
-		if (mode)
-			_G(out)->set_partialpalette(PAL_0, 1, 11);
-		palcopy(_G(pal), PAL_0, 0, 0, 12);
-		break;
-
-	default:
-		break;
-	}
+	if (setPartialPalette)
+		_G(out)->set_partialpalette(palette, 1, 11);
+	memcpy(_G(pal), palette, 12 * 3);
 }
 
 void printShadowed(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 shadowFgCol, int16 scrWidth, const char *txtPtr) {
@@ -1684,7 +1666,7 @@ void calc_ausgang(int16 x, int16 y) {
 
 				const int16 paletteId = _G(barriers)->getBarrierId(_G(moveState)[P_CHEWY].Xypos[0] + _G(spieler_mi)[P_CHEWY].HotX,
 				                                              _G(moveState)[P_CHEWY].Xypos[1] + _G(spieler_mi)[P_CHEWY].HotY);
-				checkShadow(paletteId, 0);
+				setShadowPalette(paletteId, false);
 				setPersonSpr(_G(Rdi)->AutoMov[_G(gameState).room_e_obj[nr].ExitMov]._sprNr, P_CHEWY);
 				_G(moveState)[P_CHEWY]._delayCount = 0;
 				_G(fx_blend) = BLEND1;

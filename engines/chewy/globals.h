@@ -340,7 +340,7 @@ void delInventory(int16 nr);
 
 bool isCurInventory(int16 nr);
 
-void checkShadow(int16 palIdx, int16 mode);
+void setShadowPalette(int16 palIdx, bool setPartialPalette);
 
 void get_scroll_off(int16 x, int16 y, int16 pic_x, int16 pic_y,
                     int16 *sc_x, int16 *sc_y);
