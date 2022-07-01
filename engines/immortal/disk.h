@@ -25,6 +25,7 @@
 #include "common/memstream.h"
 #include "common/file.h"
 #include "common/debug.h"
+#include "common/error.h"
 
 /* Quick note about ProDOS:
  * This disk code handles inactive, seedling, sapling, tree, and subdirectory files.
@@ -61,6 +62,7 @@ enum FileExt {
     kFileExtDB       = 0x19,
     kFileExtWord     = 0x1A,
     kFileExtSpread   = 0x1B,
+    kFileExtSTART    = 0xB3,
     kFileExtPascal   = 0xEF,
     kFileExtPDCI     = 0xF0,
     kFileExtPDRes    = 0xF9,
@@ -69,7 +71,7 @@ enum FileExt {
     kFileExtAPSProg  = 0xFC,
     kFileExtAPSVar   = 0xFD,
     kFileExtEDASM    = 0xFE,
-    kFileExtPDSys    = 0xFF
+    kFileExtSYS      = 0xFF
 };
 
 /* A ProDOS file simply contains meta data about the file and the ability to
@@ -83,22 +85,22 @@ public:
     ProDOSFile(char name[16], uint8 type, uint16 tBlk, uint32 eof, uint16 bPtr, Common::File *disk);
     ~ProDOSFile() {};
 
-    // These are the Common::ArchiveMember related functions
-    Common::String getName() const override;
-    Common::SeekableReadStream *createReadStream() const override;
-    void getDataBlock(byte *memOffset, int offset, int size) const;
-    int parseIndexBlock(byte *memOffset, int blockNum, int cSize) const;
+    // -- These are the Common::ArchiveMember related functions --
+    Common::String getName() const override;                              // Returns _name
+    Common::SeekableReadStream *createReadStream() const override;        // This is what the archive needs to create a file
+    void getDataBlock(byte *memOffset, int offset, int size) const;       // Gets data up to the size of a single data block (512 bytes)
+    int parseIndexBlock(byte *memOffset, int blockNum, int cSize) const;  // Uses getDataBlock() on every pointer in the index file, adding them to byte * memory block
 
-    // Mostly for debugging purposes, just prints the metadata
+    // For debugging purposes, just prints the metadata
     void printInfo();
 
 private:
             char  _name[16];
-           uint8  _type;
-          uint16  _blockPtr;
+           uint8  _type;                     // As defined by enum FileType
+          uint16  _blockPtr;                 // Block index in volume of index block or data
           uint16  _totalBlocks;
-          uint32  _eof;
-    Common::File *_disk;
+          uint32  _eof;                      // End Of File, used generally as size (exception being sparse files)
+    Common::File *_disk;                     // This is a pointer because it is the same _disk as in ProDosDisk, passed to the file object
 };
 
 /* This class defines the entire disk volume. Upon using the open() method,
@@ -109,10 +111,10 @@ private:
 
 class ProDOSDisk : public Common::Archive {
 public:
-    static const int kBlockSize = 512;      // A ProDOS block is always 512 bytes
+    static const int kBlockSize = 512;       // A ProDOS block is always 512 bytes (should this be an enum?)
 
     ProDOSDisk(const Common::String filename);
-    ~ProDOSDisk();
+    ~ProDOSDisk();                           // Frees the memory used in the dictionary and the volume bitmap
 
     // Called from the constructor, it parses the volume and fills the hashmap with files
     bool open(const Common::String filename);
@@ -124,8 +126,8 @@ public:
     Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 
 private:
-          byte  _loader1[512];               // There's no reason these would be needed, but why not include them just in case
-          byte  _loader2[512];
+          byte  _loader1[kBlockSize];        // There's not much reason for these to be needed, but I included them just in case
+          byte  _loader2[kBlockSize];
 Common::String  _name;                       // Name of volume
   Common::File  _disk;                       // The volume file itself
            int  _volBlocks;                  // Total blocks in volume
