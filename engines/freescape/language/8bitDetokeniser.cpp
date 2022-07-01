@@ -17,7 +17,7 @@ static const int k8bitVariableShield = 256;
 static const int k8bitVariableEnergy = 257;
 static const int k8bitVariableScore = 258;
 
-Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition) {
+Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition, FCLInstructionVector *instructions) {
 	Common::String detokenisedStream;
 	Common::Array<uint8>::size_type bytePointer = 0;
 	Common::Array<uint8>::size_type sizeOfTokenisedContent = tokenisedCondition.size();
@@ -68,6 +68,8 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			detokenisedStream += "<UNKNOWN 8 bit: ";
 			detokenisedStream += Common::String::format("%x", (int)opcode);
 			detokenisedStream += " > ";
+			if (opcode != 0x18)
+				error("Unknown FCL instruction: 0x%x", (int)opcode);
 			break;
 
 		case 0:

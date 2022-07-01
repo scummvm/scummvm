@@ -12,6 +12,8 @@
 #include "common/array.h"
 #include "common/str.h"
 
-Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition);
+#include "freescape/language/instruction.h"
+
+Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition, FCLInstructionVector *instructions);
 
 #endif /* defined(__Phantasma___8bitDetokeniser__) */
