@@ -18,6 +18,7 @@
 #include "freescape/freescape.h"
 #include "freescape/gfx.h"
 #include "freescape/objects/geometricobject.h"
+#include "freescape/language/token.h"
 
 #include "freescape/loaders/16bitBinaryLoader.h"
 #include "freescape/loaders/8bitBinaryLoader.h"
@@ -260,8 +261,8 @@ Common::Error FreescapeEngine::run() {
 	loadAssets();
 	Entrance *entrance = nullptr;
 	assert(_areasByAreaID);
-	if (_startArea == 14)
-		_startArea = 1;
+	//if (_startArea == 14)
+	//	_startArea = 1;
 	assert(_areasByAreaID->contains(_startArea));
 	_currentArea = (*_areasByAreaID)[_startArea];
 	assert(_currentArea);
@@ -371,11 +372,48 @@ void FreescapeEngine::checkCollisions() {
 	Object *obj = _currentArea->checkCollisions(boundingBox);
 
 	if (obj != nullptr) {
-		debug("Collided with object of size %f %f %f", obj->getSize().x(), obj->getSize().y(), obj->getSize().z());
+		debug("Collided with object id %d of size %f %f %f", obj->getObjectID(), obj->getSize().x(), obj->getSize().y(), obj->getSize().z());
 		GeometricObject *gobj = (GeometricObject*) obj;
-		if (gobj->conditionSource != nullptr)
+		if (gobj->conditionSource != nullptr) {
 			debug("Must use collision = true when executing: %s", gobj->conditionSource->c_str());
+			executeCode(gobj->condition);
+		}
 	}
+}
+
+void FreescapeEngine::executeCode(FCLInstructionVector &code) {
+	int ip = 0;
+	int codeSize = code.size();
+	while (ip <= codeSize - 1) {
+		FCLInstruction &instruction = code[ip];
+		debug("Executing ip: %d in code with size: %d", ip, codeSize);
+		switch (instruction.getType()) {
+			default:
+			break;
+			case Token::COLLIDEDQ:
+			executeCode(*instruction.thenInstructions);
+			break;
+			case Token::GOTO:
+			executeGoto(instruction);
+			break;
+		}
+		ip++;
+	}
+	return;
+}
+
+void FreescapeEngine::executeGoto(FCLInstruction &instruction) {
+	int areaID = instruction.source;
+	int entranceID = instruction.destination;
+	assert(_areasByAreaID->contains(areaID));
+	_currentArea = (*_areasByAreaID)[areaID];
+
+	Entrance *entrance = (Entrance*) _currentArea->entranceWithID(entranceID);
+	if (!entrance)
+		entrance = (Entrance*) _currentArea->firstEntrance();
+
+
+	_position = entrance->getOrigin();
 }
 
 bool FreescapeEngine::hasFeature(EngineFeature f) const {

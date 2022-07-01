@@ -11,6 +11,7 @@
 
 #include "freescape/area.h"
 #include "freescape/objects/entrance.h"
+#include "freescape/language/instruction.h"
 #include "freescape/gfx.h"
 
 namespace Freescape {
@@ -114,6 +115,11 @@ public:
 
 	// Effects
 	void checkCollisions();
+	void executeCode(FCLInstructionVector &code);
+
+	// Instructions
+	void executeGoto(FCLInstruction &instruction);
+	void executeIfThenElse(FCLInstruction &instruction);
 
 	// Rendering
 	void drawFrame();

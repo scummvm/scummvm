@@ -85,7 +85,7 @@ public:
 		VARNOTEQ
 	};
 
-	int32_t getValue(CGameState &, int32_t suggestedValue = 0);
+	int32_t getValue(CGameState &, int32 suggestedValue = 0);
 	Type getType();
 
 	Token() {
@@ -96,6 +96,7 @@ public:
 		type = _type;
 		value = 0;
 	}
+
 	//Token(Common::String &string);
 	//Token(Type type, int32_t value);
 	//Token(const Token &other);
