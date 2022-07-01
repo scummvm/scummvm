@@ -84,10 +84,6 @@ namespace Chewy {
 struct KbdMouseInfo;
 class Text;
 
-struct AdsDiaHeaders {
-	int16 _nr;
-};
-
 struct AtdsVar {
 	int16 _silent = 0;
 	int16 _delay = 1;
@@ -122,31 +118,9 @@ public:
 	void load(const void *data, size_t count);
 };
 
-struct AadTxtHeader {
-	int16 _diaNr;
-	int16 _perNr;
-	int16 _aMov;
-	int16 _curNr;
-
-	bool load(const void *src);
-	static constexpr int SIZE() { return 8; }
-};
-
 struct AadStrHeader {
 	int16 _akPerson;
 	int16 _vocNr;
-};
-
-struct AadVar {
-	int16 _dialog;
-
-	AadTxtHeader *_txtHeader;
-	AadStrHeader *_strHeader;
-	AadInfoArray _person;
-	char *_ptr;
-	int16 _strNr;
-	int16 _delayCount;
-	int16 _silentCount;
 };
 
 // ADS (dialog closeup) header
@@ -175,6 +149,18 @@ struct DialogCloseupVariables {
 struct DialogCloseupNextBlock {
 	int16 _blkNr;
 	int16 _endNr;
+};
+
+struct AadVar {
+	int16 _dialog;
+
+	DialogCloseupTxtHeader *_txtHeader;
+	AadStrHeader *_strHeader;
+	AadInfoArray _person;
+	char *_ptr;
+	int16 _strNr;
+	int16 _delayCount;
+	int16 _silentCount;
 };
 
 struct AtsTxtHeader {
