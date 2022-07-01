@@ -844,7 +844,7 @@ void MidiCombinerDynamic::doAllNotesOff(uint sourceID, uint8 channel, uint8 para
 			if (sustainOn)
 				note._isSustainedBySustain = true;
 
-			tryCleanUpUnsustainedNote(rni);
+			tryCleanUpUnsustainedNote(noteIndex);
 		}
 	}
 
@@ -876,7 +876,7 @@ void MidiCombinerDynamic::doAllSoundOff(uint sourceID, uint8 channel, uint8 para
 			note._isSustainedBySostenuto = false;
 			note._isSustainedBySustain = false;
 
-			tryCleanUpUnsustainedNote(rni);
+			tryCleanUpUnsustainedNote(noteIndex);
 		}
 	}
 
@@ -915,7 +915,7 @@ void MidiCombinerDynamic::doResetAllControllers(uint sourceID, uint8 channel, ui
 			if (note._isSustainedBySostenuto || note._isSustainedBySustain) {
 				note._isSustainedBySostenuto = false;
 				note._isSustainedBySustain = false;
-				tryCleanUpUnsustainedNote(rni);
+				tryCleanUpUnsustainedNote(noteIndex);
 			}
 		}
 	}
