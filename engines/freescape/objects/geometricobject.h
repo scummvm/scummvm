@@ -37,14 +37,11 @@ public:
 	bool isPlanar();
 
 	Common::String *conditionSource;
+	FCLInstructionVector condition;
 
 private:
-
-	FCLInstructionVector condition;
 	Common::Array<uint8> *colours;
 	Common::Array<uint16> *ordinates;
-
-	size_t drawElementsStartIndex;
 };
 
 #endif /* defined(__Phantasma__GeometricObject__) */

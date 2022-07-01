@@ -20,7 +20,6 @@
 
 typedef Common::HashMap<uint16, Object *> ObjectMap;
 
-class BatchDrawer;
 class Area {
 public:
 	Area(
@@ -35,6 +34,7 @@ public:
 
 	Object *objectWithID(uint16 objectID);
 	Object *entranceWithID(uint16 objectID);
+	Object *firstEntrance();
 	uint16 getAreaID();
 	uint8 getScale();
 	void draw(Freescape::Renderer *gfx);

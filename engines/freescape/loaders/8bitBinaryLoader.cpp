@@ -90,7 +90,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			byte *conditionData = (byte*)malloc(byteSizeOfObject);
 			file->read(conditionData, byteSizeOfObject);
 			Common::Array<uint8> conditionArray(conditionData, byteSizeOfObject);
-			conditionSource = detokenise8bitCondition(conditionArray, nullptr);
+			conditionSource = detokenise8bitCondition(conditionArray, instructions);
 			//instructions = getInstructions(conditionSource);
 			//debug("%s", conditionSource->c_str());
 		}
@@ -291,6 +291,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	uint8 numConditions = file->readByte();
 	debug("%d area conditions", numConditions);
 	while (numConditions--) {
+		FCLInstructionVector instructions;
 		// get the length
 		uint32 lengthOfCondition = file->readByte();
 		debug("length of condition: %d", lengthOfCondition);
@@ -298,7 +299,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		byte *conditionData = (byte*)malloc(lengthOfCondition);
 		file->read(conditionData, lengthOfCondition);
 		Common::Array<uint8> conditionArray(conditionData, lengthOfCondition);
-		debug("%s", detokenise8bitCondition(conditionArray, nullptr)->c_str(), nullptr);
+		debug("%s", detokenise8bitCondition(conditionArray, instructions)->c_str(), nullptr);
 	}
 
 	return (new Area(areaNumber, objectsByID, entrancesByID, scale, 255, 255, palette));
@@ -354,6 +355,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	uint8 numConditions = file->readByte();
 	debug("%d global conditions", numConditions);
 	while (numConditions--) {
+		FCLInstructionVector instructions;
 		// get the length
 		uint32 lengthOfCondition = file->readByte();
 		debug("length of condition: %d", lengthOfCondition);
@@ -362,7 +364,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		file->read(conditionData, lengthOfCondition);
 		Common::Array<uint8> conditionArray(conditionData, lengthOfCondition);
 		//debug("Global condition %d", numConditions + 1);
-		Common::String *conditions = detokenise8bitCondition(conditionArray, nullptr);
+		Common::String *conditions = detokenise8bitCondition(conditionArray, instructions);
 		//debug("%s", conditions->c_str());
 	}
 

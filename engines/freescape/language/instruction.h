@@ -15,37 +15,25 @@
 class CGameState;
 
 class FCLInstruction;
-typedef Common::Array<FCLInstruction> *FCLInstructionVector;
+typedef Common::Array<FCLInstruction> FCLInstructionVector;
 
 class FCLInstruction {
 public:
+	FCLInstruction();
 	FCLInstruction(Token::Type type);
-	FCLInstruction(const FCLInstruction &source);
-
-	void setArguments(Token &);
-	void setArguments(Token &, Token &);
-	void setArguments(Token &, Token &, Token &);
+	void setSource(int32 _source);
+	void setDestination(int32 _destination);
 
 	Token::Type getType();
+	void setBranches(FCLInstructionVector *thenBranch, FCLInstructionVector *elseBranch);
 
-	void getValue(CGameState &, int32_t &);
-	void getValue(CGameState &, int32_t &, int32_t &);
-	void getValue(CGameState &, int32_t &, int32_t &, int32 &);
+	int32 source;
+	int32 destination;
 
-	void setBranches(FCLInstructionVector thenBranch, FCLInstructionVector elseBranch);
-
+	FCLInstructionVector *thenInstructions;
+	FCLInstructionVector *elseInstructions;
 private:
 	enum Token::Type type;
-
-	struct
-	{
-		Token source, destination, option;
-	} arguments;
-
-	struct
-	{
-		FCLInstructionVector thenInstructions, elseInstructions;
-	} conditional;
 };
 
 #endif /* defined(__Phantasma__Instruction__) */

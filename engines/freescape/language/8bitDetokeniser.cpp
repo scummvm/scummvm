@@ -12,12 +12,13 @@
 */
 
 #include "8bitDetokeniser.h"
+#include "token.h"
 
 static const int k8bitVariableShield = 256;
 static const int k8bitVariableEnergy = 257;
 static const int k8bitVariableScore = 258;
 
-Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition, FCLInstructionVector *instructions) {
+Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition, FCLInstructionVector &instructions) {
 	Common::String detokenisedStream;
 	Common::Array<uint8>::size_type bytePointer = 0;
 	Common::Array<uint8>::size_type sizeOfTokenisedContent = tokenisedCondition.size();
@@ -26,6 +27,8 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 	// we'll want to convert them into runs of "if shot? then" and "if collided? then",
 	// and we'll want to start that from the top
 	uint8 conditionalIsShot = 0x1;
+	FCLInstructionVector *conditionalInstructions = new FCLInstructionVector();
+	FCLInstruction currentInstruction;
 
 	// this lookup table tells us how many argument bytes to read per opcode
 	uint8 argumentsRequiredByOpcode[32] =
@@ -42,6 +45,15 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		// if the conditional type has changed then end the old conditional,
 		// if we were in one, and begin a new one
 		if (newConditionalIsShot != conditionalIsShot) {
+			FCLInstruction branch;
+			if (conditionalIsShot)
+				branch = FCLInstruction(Token::SHOTQ);
+			else
+				branch = FCLInstruction(Token::COLLIDEDQ);
+
+			branch.setBranches(conditionalInstructions, nullptr);
+			instructions.push_back(branch);
+
 			conditionalIsShot = newConditionalIsShot;
 			if (bytePointer)
 				detokenisedStream += "ENDIF\n";
@@ -50,6 +62,9 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 				detokenisedStream += "IF SHOT? THEN\n";
 			else
 				detokenisedStream += "IF COLLIDED? THEN\n";
+
+			// Allocate the next vector of instructions
+			conditionalInstructions = new FCLInstructionVector();
 		}
 
 		// get the actual operation
@@ -163,6 +178,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			break;
 		case 18:
 			detokenisedStream += "GOTO (";
+			currentInstruction = FCLInstruction(Token::GOTO);
 			break;
 
 		case 21:
@@ -198,6 +214,13 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		// if there are any regular arguments to add, do so
 		if (numberOfArguments) {
 			for (uint8 argumentNumber = 0; argumentNumber < numberOfArguments; argumentNumber++) {
+				if (argumentNumber == 0)
+					currentInstruction.setSource(tokenisedCondition[bytePointer]);
+				else if (argumentNumber == 1)
+					currentInstruction.setDestination(tokenisedCondition[bytePointer]);
+				else
+					error("Unexpected number of arguments!");
+
 				detokenisedStream += Common::String::format("%d", (int)tokenisedCondition[bytePointer]);
 				bytePointer++;
 
@@ -206,11 +229,27 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			}
 
 			detokenisedStream += ")";
+			conditionalInstructions->push_back(currentInstruction);
+			currentInstruction = FCLInstruction(Token::UNKNOWN);
 		}
 
 		// throw in a newline
 		detokenisedStream += "\n";
 	}
+
+	//if (!conditionalInstructions)
+	//	conditionalInstructions = new FCLInstructionVector();
+
+	//conditionalInstructions->push_back(currentInstruction);
+
+	FCLInstruction branch;
+	if (conditionalIsShot)
+		branch = FCLInstruction(Token::SHOTQ);
+	else
+		branch = FCLInstruction(Token::COLLIDEDQ);
+
+	branch.setBranches(conditionalInstructions, nullptr);
+	instructions.push_back(branch);
 
 	return (new Common::String(detokenisedStream));
 }
