@@ -5195,7 +5195,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 										if (damagePointsAbsorbed <= 1)
 											sprintf(buffer, "  %s%s's armor absorbs 1 point!", _characterNamePt1, _characterNamePt2);
 										else
-											sprintf(buffer, "  %s%s',27h,'s armor absorbs %d points!", _characterNamePt1, _characterNamePt2, damagePointsAbsorbed);
+											sprintf(buffer, "  %s%s's armor absorbs %d points!", _characterNamePt1, _characterNamePt2, damagePointsAbsorbed);
 
 										strcat((char *)_messageToBePrinted, buffer);
 										varInt = (originalDamage + damagePointsAbsorbed) / 10;
