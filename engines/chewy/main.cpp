@@ -1704,31 +1704,17 @@ void calc_ausgang(int16 x, int16 y) {
 }
 
 void get_scroll_off(int16 x, int16 y, int16 pic_x, int16 pic_y, int16 *sc_x, int16 *sc_y) {
-	if (pic_x == SCREEN_WIDTH)
-		*sc_x = 0;
-	else {
-		if ((pic_x - x) > (SCREEN_WIDTH / 2)) {
-			*sc_x = (((pic_x - 1) / SCREEN_WIDTH) - 1) * SCREEN_WIDTH;
-			if (!*sc_x && x > (SCREEN_WIDTH / 2)) {
+	*sc_x = 0;
+	*sc_y = 0;
 
-				*sc_x = x - (SCREEN_WIDTH / 2);
-			}
-		} else {
-			*sc_x = pic_x - SCREEN_WIDTH;
-		}
+	if (x >= SCREEN_WIDTH) {
+		*sc_x = MIN(x - (SCREEN_WIDTH / 2),
+			pic_x - SCREEN_WIDTH);
 	}
 
-	if (pic_y == SCREEN_HEIGHT)
-		*sc_y = 0;
-	else {
-		if ((pic_y - y) > (SCREEN_HEIGHT / 2)) {
-			*sc_y = (((pic_y - 1) / SCREEN_HEIGHT) - 1) * SCREEN_HEIGHT;
-			if (!*sc_y && y > (SCREEN_HEIGHT / 2))
-
-				*sc_y = y - (SCREEN_HEIGHT / 2);
-		} else {
-			*sc_y = pic_y - SCREEN_HEIGHT;
-		}
+	if (y >= SCREEN_HEIGHT) {
+		*sc_y = MIN(y - (SCREEN_HEIGHT / 2),
+			pic_y - SCREEN_HEIGHT);
 	}
 }
 
