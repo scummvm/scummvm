@@ -2565,7 +2565,7 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 		bool success;
 		Common::U32String errMsg;
 
-		if (_game.version == 8 && (_saveTemporaryState || isUsingOriginalGUI()))
+		if (_game.version == 8 && VAR_GAME_LOADED != 0xFF)
 			VAR(VAR_GAME_LOADED) = 0;
 
 		Common::String filename;
@@ -2584,7 +2584,7 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 			if (!success)
 				errMsg = _("Failed to load saved game from file:\n\n%s");
 
-			if (success && (_saveTemporaryState || isUsingOriginalGUI()) && VAR_GAME_LOADED != 0xFF)
+			if (success && (_saveTemporaryState || _game.version == 8) && VAR_GAME_LOADED != 0xFF)
 				VAR(VAR_GAME_LOADED) = (_game.version == 8) ? 1 : 203;
 		}
 
@@ -2796,6 +2796,13 @@ void ScummEngine_v6::scummLoop_handleSaveLoad() {
 void ScummEngine_v8::scummLoop_handleSaveLoad() {
 	if (_saveLoadFlag == 1) {
 		createInternalSaveStateThumbnail();
+	}
+
+	// Needed for newer savegames saved within the original GUI
+	if (_loadFromLauncher && VAR_GAME_LOADED != 0xFF) {
+		_loadFromLauncher = false;
+		VAR(VAR_GAME_LOADED) = 1;
+		return;
 	}
 
 	ScummEngine::scummLoop_handleSaveLoad();

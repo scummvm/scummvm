@@ -304,7 +304,6 @@ void ScummEngine_v8::createInternalSaveStateThumbnail() {
 
 bool ScummEngine_v8::fetchInternalSaveStateThumbnail(int slotId, bool isHeapSave) {
 	SaveGameHeader hdr;
-	int sb, sh;
 	Common::String filename;
 	Common::SeekableReadStream *in = openSaveFileForReading(slotId, isHeapSave, filename);
 	if (!in)
