@@ -53,7 +53,7 @@ void Room52::entry() {
 		autoMove(2, P_CHEWY);
 		_G(gameState).R52TuerAuf = false;
 		_G(det)->hideStaticSpr(4);
-		checkShadow(2, 1);
+		setShadowPalette(2, true);
 	}
 }
 
