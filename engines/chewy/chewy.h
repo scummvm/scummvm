@@ -93,6 +93,8 @@ public:
 		_canSave = canLoadSave;
 	}
 
+	void syncSoundSettings() override;
+
 	/**
 	 * Load savegame data
 	 */

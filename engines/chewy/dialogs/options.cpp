@@ -26,6 +26,8 @@
 #include "chewy/mcga_graphics.h"
 #include "chewy/sound.h"
 
+#include "common/config-manager.h"
+
 namespace Chewy {
 namespace Dialogs {
 
@@ -37,7 +39,7 @@ namespace Dialogs {
 #define MUND_END 11
 #define SCHNULL_OFF 23
 #define TDISP_START 12
-#define TDISP_END 19
+#define TDISP_END 13
 #define TDISP_EIN 20
 #define TDISP_AUS 21
 #define MUSIC_OFF 24
@@ -60,9 +62,6 @@ void Options::execute(TafInfo *ti) {
 	int16 mund_ani = MUND_START;
 	int16 mund_delay = 3;
 	int16 mund_count = mund_delay;
-	int16 tdisp_ani = TDISP_START;
-	int16 tdisp_delay = 3;
-	int16 tdisp_count = tdisp_delay;
 	_G(FrameSpeed) = 0;
 	int16 delay_count = _G(gameState).DelaySpeed;
 	//warning("stop_clock = (clock() / CLK_TCK) + 1;");
@@ -85,7 +84,7 @@ void Options::execute(TafInfo *ti) {
 		Common::String fps = Common::String::format("%d", _G(gameState).FramesPerSecond << 1);
 		_G(out)->printxy(36 + bar_off, 65, 255, 300, 0, fps.c_str());
 
-		if (g_engine->_sound->soundEnabled()) {
+		if (g_engine->_sound->speechEnabled()) {
 			_G(out)->spriteSet(ti->image[mund_ani],
 				18 + ti->correction[mund_ani << 1],
 				8 + ti->correction[(mund_ani << 1) + 1], 0);
@@ -101,15 +100,15 @@ void Options::execute(TafInfo *ti) {
 				8 + ti->correction[(SCHNULL_BAND << 1) + 1], 0);
 		}
 
-		const int soundVolume = g_engine->_sound->getSoundVolume() * Audio::Mixer::kMaxChannelVolume / 120;
+		const int soundVolume = MAX(1, g_engine->_sound->getSoundVolume() * 32 / Audio::Mixer::kMaxMixerVolume);
 		_G(out)->pop_box(32 - 2, 104 - 12, 42 + 4, 136 + 2, 192, 183, 182);
 		_G(out)->printxy(32 + 3, 104 - 10, 15, 300, 0, "S");
-		_G(out)->boxFill(33, 136 - (soundVolume >> 1), 42, 136, 15);
+		_G(out)->boxFill(33, 136 - soundVolume, 42, 136, 15);
 
-		const int musicVolume = g_engine->_sound->getSoundVolume() * Audio::Mixer::kMaxChannelVolume / 120;
+		const int musicVolume = MAX(1, g_engine->_sound->getMusicVolume() * 32 / Audio::Mixer::kMaxMixerVolume);
 		_G(out)->pop_box(52 - 2, 104 - 12, 62 + 4, 136 + 2, 192, 183, 182);
 		_G(out)->printxy(52 + 3, 104 - 10, 31, 300, 0, "M");
-		_G(out)->boxFill(53, 136 - (musicVolume >> 1), 62, 136, 31);
+		_G(out)->boxFill(53, 136 - musicVolume, 62, 136, 31);
 
 		if (g_engine->_sound->musicEnabled()) {
 			_G(out)->spriteSet(ti->image[MUSIC_ON1],
@@ -123,17 +122,21 @@ void Options::execute(TafInfo *ti) {
 				18 + ti->correction[MUSIC_OFF << 1],
 				8 + ti->correction[(MUSIC_OFF << 1) + 1], 0);
 
-		if (g_engine->_sound->subtitlesEnabled()) {
-			_G(out)->spriteSet(ti->image[tdisp_ani],
-				18 + ti->correction[tdisp_ani << 1],
-				8 + ti->correction[(tdisp_ani << 1) + 1], 0);
+		if (g_engine->_sound->soundEnabled()) {
+			_G(out)->spriteSet(ti->image[TDISP_START],
+				ti->correction[TDISP_START << 1],
+				ti->correction[(TDISP_START << 1) + 1], 0);
 			_G(out)->spriteSet(ti->image[TDISP_EIN],
 				18 + ti->correction[TDISP_EIN << 1],
 				8 + ti->correction[(TDISP_EIN << 1) + 1], 0);
-		} else
+		} else {
+			_G(out)->spriteSet(ti->image[TDISP_END],
+				ti->correction[TDISP_END << 1],
+				ti->correction[(TDISP_END << 1) + 1], 0);
 			_G(out)->spriteSet(ti->image[TDISP_AUS],
 				18 + ti->correction[TDISP_AUS << 1],
 				8 + ti->correction[(TDISP_AUS << 1) + 1], 0);
+		}
 
 		_G(out)->spriteSet(ti->image[EXIT],
 			18 + ti->correction[EXIT << 1],
@@ -141,19 +144,32 @@ void Options::execute(TafInfo *ti) {
 
 		key = _G(in)->getSwitchCode();
 		if ((_G(minfo).button == 1) || (key == Common::KEYCODE_RETURN)) {
-			WAIT_TASTE_LOS
+			// TODO This line breaks screen updates. Not sure what it does
+			// otherwise; options screen seems to work without it.
+			//WAIT_TASTE_LOS
 
 			int16 rect = _G(in)->findHotspot(_G(optionHotspots));
 			switch (rect) {
-			case 0:
+			case 0: // Hamster wheel arrow left (speed down)
 				if (_G(gameState).FramesPerSecond > 6)
 					--_G(gameState).FramesPerSecond;
 				break;
-			case 1:
+			case 1: // Hamster wheel arrow right (speed up)
 				if (_G(gameState).FramesPerSecond < 10)
 					++_G(gameState).FramesPerSecond;
 				break;
-			case 2:
+			case 2: // Mouth (speech/subtitles)
+				if (!g_engine->_sound->speechEnabled()) {
+					g_engine->_sound->toggleSubtitles(false);
+					g_engine->_sound->toggleSpeech(true);
+				} else {
+					g_engine->_sound->toggleSubtitles(true);
+					g_engine->_sound->toggleSpeech(false);
+				}
+				g_engine->syncSoundSettings();
+				break;
+			case 3:
+			case 4: // Speaker (sound)
 				if (g_engine->_sound->soundEnabled()) {
 					g_engine->_sound->toggleSound(false);
 					_G(det)->disable_room_sound();
@@ -161,18 +177,9 @@ void Options::execute(TafInfo *ti) {
 					g_engine->_sound->toggleSound(true);
 					_G(det)->enable_room_sound();
 				}
+				g_engine->syncSoundSettings();
 				break;
-			case 3:
-			case 4:
-				if (g_engine->_sound->subtitlesEnabled()) {
-					g_engine->_sound->toggleSubtitles(false);
-					g_engine->_sound->toggleSpeech(true);
-				} else {
-					g_engine->_sound->toggleSubtitles(true);
-					g_engine->_sound->toggleSpeech(false);
-				}
-				break;
-			case 5:
+			case 5: // Guitarist (music)
 				if (g_engine->_sound->musicEnabled()) {
 					g_engine->_sound->toggleMusic(false);
 					g_engine->_sound->stopMusic();
@@ -180,15 +187,18 @@ void Options::execute(TafInfo *ti) {
 					g_engine->_sound->toggleMusic(true);
 					g_engine->_sound->playRoomMusic(_G(gameState)._personRoomNr[P_CHEWY]);
 				}
+				g_engine->syncSoundSettings();
 				break;
-			case 6:
+			case 6: // Door (exit)
 				key = Common::KEYCODE_ESCAPE;
 				break;
-			case 7:
-				g_engine->_sound->setSoundVolume(((136 - g_events->_mousePos.y) << 1) * Audio::Mixer::kMaxChannelVolume / 120);
+			case 7: // S volume gauge
+				g_engine->_sound->setSoundVolume(MIN(32, 136 - g_events->_mousePos.y) * Audio::Mixer::kMaxMixerVolume / 32);
+				g_engine->syncSoundSettings();
 				break;
-			case 8:
-				g_engine->_sound->setMusicVolume(((136 - g_events->_mousePos.y) << 1) * Audio::Mixer::kMaxChannelVolume / 120);
+			case 8: // M volume gauge
+				g_engine->_sound->setMusicVolume(MIN(32, 136 - g_events->_mousePos.y) * Audio::Mixer::kMaxMixerVolume / 32);
+				g_engine->syncSoundSettings();
 				break;
 
 			default:
@@ -236,15 +246,6 @@ void Options::execute(TafInfo *ti) {
 				else
 					mund_ani = MUND_START;
 				mund_count = mund_delay;
-			}
-			if (tdisp_count > 0)
-				--tdisp_count;
-			else {
-				if (tdisp_ani < TDISP_END)
-					++tdisp_ani;
-				else
-					tdisp_ani = TDISP_START;
-				tdisp_count = tdisp_delay;
 			}
 			delay_count = _G(gameState).DelaySpeed;
 		} else

@@ -92,6 +92,12 @@ Common::Error ChewyEngine::run() {
 
 #define SCUMMVM_TAG MKTAG('S', 'C', 'V', 'M')
 
+void ChewyEngine::syncSoundSettings() {
+	_sound->syncSoundSettings();
+
+	Engine::syncSoundSettings();
+}
+
 Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	exit_room(-1);
 

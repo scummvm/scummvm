@@ -92,13 +92,16 @@ public:
 	bool subtitlesEnabled() const;
 	void toggleSubtitles(bool enable);
 
+	void syncSoundSettings();
+
 private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle[MAX_SOUND_EFFECTS];
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _speechHandle;
 	int16 _curMusic = -1;
-	int _soundVolume = -1, _speechVolume = -1, _musicVolume = -1;
+	// Volume settings in the in-game options screen.
+	int _userSoundVolume = -1, _userMusicVolume = -1;
 
 	SoundResource *_speechRes;
 	SoundResource *_soundRes;
