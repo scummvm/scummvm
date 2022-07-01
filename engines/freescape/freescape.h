@@ -84,6 +84,8 @@ public:
 	AreaMap *_areasByAreaID;
 	Area *_currentArea;
 	Math::Vector3d _scale;
+
+	void gotoArea(uint16 areaID, uint16 entranceID);
 	// Entrance
 	uint16 _startEntrance;
 
