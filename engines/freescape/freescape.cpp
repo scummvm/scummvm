@@ -127,6 +127,30 @@ void FreescapeEngine::loadAssets() {
 		} else
 			error("Invalid render mode %s for Driller", renderMode.c_str());
 
+	} else if (_targetName == "totaleclipse") {
+		if (!ConfMan.hasKey("render_mode"))
+			renderMode = "ega";
+		else
+			renderMode = ConfMan.get("render_mode");
+
+		Common::File exe;
+		debug("renderMode: %s", renderMode.c_str());
+		bool success = false;
+		if (renderMode == "ega") {
+			file = gameDir.createReadStreamForMember("TOTEE.EXE");
+
+			if (file == nullptr)
+				error("Failed to open TOTEE.EXE");
+
+			load8bitBinary(file, 0xcdb7, 16);
+		} else if (renderMode == "cga") {
+			file = gameDir.createReadStreamForMember("TOTEC.EXE");
+
+			if (file == nullptr)
+				error("Failed to open TOTEC.EXE");
+			load8bitBinary(file, 0x7bb0, 4); // TODO
+		} else
+			error("Invalid render mode %s for Total Eclipse", renderMode.c_str());
 	   } else if (_targetName == "castlemaster") {
 			file = gameDir.createReadStreamForMember("castle.sna");
 
@@ -135,7 +159,7 @@ void FreescapeEngine::loadAssets() {
 			// Courtyard -> 0x93c1 -> 0x8cbc,3
 			// Beds -> 0x867d
 			// All? -> 0x845d or 0x80ed?
-			load8bitBinary(file, 0x8cbc, 16);
+			load8bitBinary(file, 0x1000, 16);
 	   } else
 		error("'%s' is an invalid game", _targetName.c_str());
 

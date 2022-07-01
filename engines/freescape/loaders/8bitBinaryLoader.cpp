@@ -277,7 +277,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 				(*entrancesByID)[newObject->getObjectID() & 0x7fff] = newObject;
 			} else {
 				if (objectsByID->contains(newObject->getObjectID()))
-					debug("WARNING: replacing object id %d", newObject->getObjectID());
+					error("WARNING: replacing object id %d", newObject->getObjectID());
 				(*objectsByID)[newObject->getObjectID()] = newObject;
 			}
 		}
@@ -376,7 +376,9 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 
 	//fileOffsetForArea[0] = 0x959b - offset - 16; // Church? (22 elements)
 	//fileOffsetForArea[0] = 0x94b7 - offset; // For testing
-	//fileOffsetForArea[0] = 0x97cb - offset; // For testing
+	//fileOffsetForArea[0] = 0x97cb - offset; // Courtyard
+	//fileOffsetForArea[0] = 0x92cc - offset ; // Pool?
+	//fileOffsetForArea[0] = 0x866b - offset - 8; // Pool?
 
 	// grab the areas
 	AreaMap *areaMap = new AreaMap;

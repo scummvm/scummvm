@@ -6,6 +6,7 @@ static const PlainGameDescriptor freescapeGames[] = {
 	{"3dkit", "The 3D Kit Game"},
 	{"driller", "Driller"},
 	{"spacestationoblivion", "Space Station Oblivion"},
+	{"totaleclipse", "Total Eclipse"},
 	{"castlemaster", "Castle Master"},
 	{"menace", "Menace of Dr. Spoil Sport"},
 	{0, 0}};
@@ -69,6 +70,20 @@ static const ADGameDescription gameDescriptions[] = {
 		{"DRILLT.EXE", 0, "afce0e5e0ad8c508e0c31c3e0b18b9a5", 51096},
 		{"DRILLE.EXE", 0, "eb7e9e0acb72e30cf6e9ed20a6480e7a", 51944},
 		{"DRILLH.EXE", 0, "033d2d45390886d0bff78cf53e83b6ed", 47496},
+		AD_LISTEND
+	 },
+	 Common::EN_ANY,
+	 Common::kPlatformDOS,
+	 ADGF_NO_FLAGS,
+	 GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)},
+	{"totaleclipse",
+	 "Total Eclipse",
+	 {
+		{"TOTAL.EXE", 0, "959703c1cd37b0d9744c492240a8178b", 13327},
+		{"TOTEH.EXE", 0, "c68d59874ab2a93cc9cc1b1d3aed8f17", 60628},
+		{"TOTEC.EXE", 0, "6c058c48255945a12479c8420321db75", 56900},
+		{"TOTET.EXE", 0, "2bc2b0892ca91a77c58e9bedabf45afe", 63732},
+		{"TOTEE.EXE", 0, "2ba865d2bdcda0c934baec7b31fb4ab2", 64196},
 		AD_LISTEND
 	 },
 	 Common::EN_ANY,
