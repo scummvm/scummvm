@@ -19,48 +19,21 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_DIALOGS_H
-#define MM1_VIEWS_ENH_DIALOGS_H
-
-#include "mm/mm1/events.h"
-#include "mm/mm1/views/are_you_ready.h"
-#include "mm/mm1/views/create_characters.h"
-#include "mm/mm1/views/locations/inn.h"
-#include "mm/mm1/views/main_menu.h"
-#include "mm/mm1/views/protect.h"
-#include "mm/mm1/views/quick_ref.h"
-#include "mm/mm1/views/title.h"
-//#include "mm/mm1/views/char.h"
-#include "mm/mm1/views_enh/character_info.h"
-#include "mm/mm1/views_enh/game.h"
-#include "mm/mm1/views_enh/locations/market.h"
+#include "mm/mm1/views_enh/locations/location.h"
+#include "mm/mm1/globals.h"
+#include "mm/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
+namespace Locations {
 
-struct Dialogs {
-private:
-	ViewsEnh::CharacterInfo _characterInfo;
-	ViewsEnh::Game _game;
+Location::Location(const Common::String &name) :
+	ScrollView(name) {
+	_bounds = Common::Rect(232, 0, 320, 146);
+}
 
-	// Unenhanced views
-	Views::AreYouReady _areYouReady;
-	Views::CreateCharacters _createCharacters;
-	Views::Locations::Inn _inn;
-	Views::MainMenu _mainMenu;
-	Views::Protect _protect;
-	Views::QuickRef _quickRef;
-	Views::Title _title;
-//	Views::ViewCharacters _viewCharacters;
-//	Views::ViewCharacter _viewCharacter;
-	ViewsEnh::Locations::Market _market;
-public:
-	Dialogs() {}
-};
-
+} // namespace Locations
 } // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
-
-#endif
