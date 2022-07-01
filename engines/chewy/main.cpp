@@ -170,13 +170,11 @@ void cursorChoice(int16 nr) {
 void hideCur() {
 	_G(flags).ShowAtsInvTxt = false;
 	_G(cur)->hideCursor();
-	_G(flags).CursorStatus = false;
 }
 
 void showCur() {
 	_G(flags).ShowAtsInvTxt = true;
 	_G(cur)->showCursor();
-	_G(flags).CursorStatus = true;
 }
 
 void menuEntry() {
@@ -540,7 +538,7 @@ void setupScreen(SetupScreenMode mode) {
 		if (_G(cur_display) && mode == DO_SETUP) {
 			_G(cur)->updateCursor();
 
-			if (_G(cur)->usingInventoryCursor() && _G(flags).CursorStatus)
+			if (_G(cur)->usingInventoryCursor() && _G(cur)->isCursorVisible())
 				_G(out)->spriteSet(
 					_G(cur)->getCursorSprite(),
 					g_events->_mousePos.x,

@@ -580,8 +580,6 @@ struct Flags {
 	uint16 NoDiaBox : 1;
 	uint16 NoEndPosMovObj: 1;
 	uint16 SavePersonRnr : 1;
-
-	uint16 CursorStatus : 1;
 };
 
 extern void *MALLOC(size_t size);

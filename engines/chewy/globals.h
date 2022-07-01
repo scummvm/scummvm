@@ -204,7 +204,7 @@ public:
 	MouseInfo _minfo;
 	RaumBlk _room_blk;
 	Flags _flags = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-					0, 0, 0, 0, 0, 0, 0, 0, 0 };
+					0, 0, 0, 0, 0, 0, 0, 0 };
 	CustomInfo _Ci;
 	GotoPkt _gpkt;
 
