@@ -32,7 +32,7 @@
 
 namespace Chewy {
 
-void play_scene_ani(int16 nr, int16 mode) {
+void play_scene_ani(int16 nr, int16 direction) {
 #define ROOM_1_1 101
 #define ROOM_1_2 102
 #define ROOM_1_5 105
@@ -61,7 +61,7 @@ void play_scene_ani(int16 nr, int16 mode) {
 		break;
 	}
 
-	startSetAILWait(nr, 1, mode);
+	startSetAILWait(nr, 1, direction);
 
 	switch (r_nr) {
 	case ROOM_1_1:
