@@ -2546,7 +2546,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINDEMO1("trekfinalunity", "Demo", "PLAYDEMO.EXE", "65d06b5fef155a2473434571aff5bc29", 370018, 310),
 
-	MACDEMO1_l("ttw", "Demo", "T.T.W.Demo", "51e8b81db434a6dcae723f6b7724143d", 691332, Common::JA_JPN, 302),
+	MACDEMO1_l("ttw", "Demo", "T.T.W.Demo", "51e8b81db434a6dcae723f6b7724143d", 691076, Common::JA_JPN, 302),
+	MACGAME1_l("ttw", "", "whales", "e184bbb4cc78e49733829ea7e2dc728a", 67777, Common::JA_JPN, 302),
 
 	// Full version is D4
 	MACDEMO2_l("ukiuki1", "Demo", "DEMO",	   "f5277c53bacd27936158dd3867e587e2", 392508,
