@@ -243,7 +243,7 @@ static const ExtraGuiOption audioOverride {
 	0
 };
 
-static const ExtraGuiOption enableOriginalGUI{
+static const ExtraGuiOption enableOriginalGUI = {
 	_s("Enable the original GUI and Menu"),
 	_s("Allow the game to use the in-engine graphical interface and the original save/load menu."),
 	"original_gui",
