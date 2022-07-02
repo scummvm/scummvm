@@ -49,11 +49,6 @@
 
 namespace Director {
 
-const uint32 wmModeDesktop = Graphics::kWMModalMenuMode | Graphics::kWMModeManualDrawWidgets;
-const uint32 wmModeFullscreen = Graphics::kWMModalMenuMode | Graphics::kWMModeNoDesktop
-	| Graphics::kWMModeManualDrawWidgets | Graphics::kWMModeFullscreen;
-uint32 wmMode = 0;
-
 DirectorEngine *g_director;
 
 DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
@@ -90,6 +85,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_version = getDescriptionVersion();
 	_fixStageSize = false;
 	_fixStageRect = Common::Rect();
+	_wmMode = debugChannelSet(-1, kDebugDesktop) ? wmModeDesktop : wmModeFullscreen;
 
 	_wm = nullptr;
 
@@ -178,12 +174,10 @@ Common::Error DirectorEngine::run() {
 
 	_currentPalette = nullptr;
 
-	wmMode = debugChannelSet(-1, kDebugDesktop) ? wmModeDesktop : wmModeFullscreen;
-
 	if (debugChannelSet(-1, kDebug32bpp))
-		wmMode |= Graphics::kWMMode32bpp;
+		_wmMode |= Graphics::kWMMode32bpp;
 
-	_wm = new Graphics::MacWindowManager(wmMode, &_director3QuickDrawPatterns, getLanguage());
+	_wm = new Graphics::MacWindowManager(_wmMode, &_director3QuickDrawPatterns, getLanguage());
 	_wm->setEngine(this);
 
 	_pixelformat = _wm->_pixelformat;

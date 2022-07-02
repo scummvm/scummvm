@@ -55,6 +55,10 @@ class ManagedSurface;
 
 namespace Director {
 
+const uint32 wmModeDesktop = Graphics::kWMModalMenuMode | Graphics::kWMModeManualDrawWidgets;
+const uint32 wmModeFullscreen = Graphics::kWMModalMenuMode | Graphics::kWMModeNoDesktop
+	| Graphics::kWMModeManualDrawWidgets | Graphics::kWMModeFullscreen;
+
 class Archive;
 class Cast;
 class DirectorSound;
@@ -235,6 +239,7 @@ public:
 	const DirectorGameDescription *_gameDescription;
 	Common::FSNode _gameDataDir;
 	CastMemberID *_clipBoard;
+	uint32 _wmMode;
 
 private:
 	byte *_currentPalette;
@@ -323,7 +328,6 @@ struct DirectorPlotData {
 
 extern DirectorEngine *g_director;
 extern Debugger *g_debugger;
-extern uint32 wmMode;
 
 } // End of namespace Director
 

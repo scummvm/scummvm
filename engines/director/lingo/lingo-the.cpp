@@ -999,9 +999,9 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		break;
 	case kTheButtonStyle:
 		if (d.asInt())
-			g_director->_wm->_mode = Director::wmMode | Graphics::kWMModeButtonDialogStyle;
+			g_director->_wm->_mode = g_director->_wmMode | Graphics::kWMModeButtonDialogStyle;
 		else
-			g_director->_wm->_mode = Director::wmMode;
+			g_director->_wm->_mode = g_director->_wmMode;
 		break;
 	case kTheCast:
 		setTheCast(id, field, d);
