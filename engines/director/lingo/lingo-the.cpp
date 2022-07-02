@@ -1078,6 +1078,11 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		Graphics::MacMenuItem *menu, *menuItem;
 		menu = nullptr, menuItem = nullptr;
 
+		if (!g_director->_wm->getMenu()) {
+			warning("Lingo::setTheEntity() : Menu does not exist!");
+			break;
+		}
+
 		if (id.u.menu->menuIdNum == -1) {
 			menu = g_director->_wm->getMenu()->getMenuItem(*id.u.menu->menuIdStr);
 		} else {
