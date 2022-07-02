@@ -3099,8 +3099,16 @@ void ObjectLinkingScope::setParent(ObjectLinkingScope *parent) {
 void ObjectLinkingScope::addObject(uint32 guid, const Common::String &name, const Common::WeakPtr<RuntimeObject> &object) {
 	_guidToObject[guid] = object;
 
-	if (name.size() > 0)
-		_nameToObject[toCaseInsensitive(name)] = object;
+	if (name.size() > 0) {
+		// Have to keep the first instance we find and ignore later instances.
+		// Obsidian depends on this to properly resolve the scene destination when returning to the plane from the Statue
+		// because there are two "sDest" variables but the first one is the correct one (and the one matching the GUID
+		// link from the script that assigns to it)
+		Common::WeakPtr<RuntimeObject> &objRef = _nameToObject[toCaseInsensitive(name)];
+
+		if (objRef.expired())
+			objRef = object;
+	}
 }
 
 Common::WeakPtr<RuntimeObject> ObjectLinkingScope::resolve(uint32 staticGUID) const {
