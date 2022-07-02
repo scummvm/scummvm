@@ -164,6 +164,8 @@ public:
 	MidiFilePlayer *createFilePlayer(const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, bool hasTempoOverride, double tempoOverride, uint8 volume, bool loop, uint16 mutedTracks);
 	void deleteFilePlayer(MidiFilePlayer *player);
 
+	Common::SharedPtr<MidiCombinerSource> createSource();
+
 	void setPlayerVolume(MidiFilePlayer *player, uint8 volume);
 	void setPlayerLoop(MidiFilePlayer *player, bool loop);
 	void setPlayerTempo(MidiFilePlayer *player, double tempo);
@@ -1183,7 +1185,7 @@ void MultiMidiPlayer::onTimer() {
 
 
 MidiFilePlayer *MultiMidiPlayer::createFilePlayer(const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, bool hasTempoOverride, double tempoOverride, uint8 volume, bool loop, uint16 mutedTracks) {
-	Common::SharedPtr<MidiCombinerSource> combinerSource = _combiner->createSource();
+	Common::SharedPtr<MidiCombinerSource> combinerSource = createSource();
 	combinerSource->setVolume(volume);
 
 	Common::SharedPtr<MidiFilePlayerImpl> filePlayer(new MidiFilePlayerImpl(combinerSource, file, getBaseTempo(), hasTempoOverride, tempoOverride, volume, loop, mutedTracks));
@@ -1194,6 +1196,10 @@ MidiFilePlayer *MultiMidiPlayer::createFilePlayer(const Common::SharedPtr<Data::
 	}
 
 	return filePlayer.get();
+}
+
+Common::SharedPtr<MidiCombinerSource> MultiMidiPlayer::createSource() {
+	return _combiner->createSource();
 }
 
 void MultiMidiPlayer::deleteFilePlayer(MidiFilePlayer *player) {
@@ -1921,12 +1927,19 @@ bool ObjectReferenceVariableModifier::SaveLoad::loadInternal(Common::ReadStream 
 	return true;
 }
 
-MidiModifier::MidiModifier() : _plugIn(nullptr), _filePlayer(nullptr), _mutedTracks(0), _isActive(false) {
+MidiModifier::MidiModifier() : _plugIn(nullptr), _filePlayer(nullptr), _mutedTracks(0), _isSingleNoteActive(false),
+	_singleNoteChannel(0), _singleNoteNote(0), _runtime(nullptr), _volume(100) {
 }
 
 MidiModifier::~MidiModifier() {
 	if (_filePlayer)
 		_plugIn->getMidi()->deleteFilePlayer(_filePlayer);
+
+	if (_isSingleNoteActive)
+		stopSingleNote();
+
+	if (_singleNoteSource)
+		_singleNoteSource->detach();
 }
 
 bool MidiModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::MidiModifier &data) {
@@ -1992,6 +2005,8 @@ VThreadState MidiModifier::consumeMessage(Runtime *runtime, const Common::Shared
 			} else {
 				debug(2, "MIDI (%x '%s'): Digested execute event but don't have anything to play", getStaticGUID(), getName().c_str());
 			}
+		} else if (_mode == kModeSingleNote) {
+			playSingleNote(runtime);
 		}
 	}
 	if (_terminateWhen.respondsTo(msg->getEvent())) {
@@ -1999,6 +2014,9 @@ VThreadState MidiModifier::consumeMessage(Runtime *runtime, const Common::Shared
 			_plugIn->getMidi()->deleteFilePlayer(_filePlayer);
 			_filePlayer = nullptr;
 		}
+
+		if (_mode == kModeSingleNote)
+			stopSingleNote();
 	}
 
 	return kVThreadReturn;
@@ -2058,10 +2076,62 @@ MiniscriptInstructionOutcome MidiModifier::writeRefAttributeIndexed(MiniscriptTh
 	return Modifier::writeRefAttributeIndexed(thread, result, attrib, index);
 }
 
+void MidiModifier::playSingleNote(Runtime *runtime) {
+	if (_isSingleNoteActive)
+		stopSingleNote();
+
+	if (!_singleNoteSource)
+		_singleNoteSource = _plugIn->getMidi()->createSource();
+
+	const SingleNotePart &snPart = _modeSpecific.singleNote;
+
+	_isSingleNoteActive = true;
+	_singleNoteChannel = snPart.channel;
+	_singleNoteNote = snPart.note;
+	_runtime = runtime;
+
+	_singleNoteSource->setVolume(_volume * 255 / 100);
+
+	const uint32 changeProgramCmd = (MidiDriver_BASE::MIDI_COMMAND_PROGRAM_CHANGE | _singleNoteChannel) | (snPart.program << 8);
+	const uint32 noteOnCmd = (MidiDriver_BASE::MIDI_COMMAND_NOTE_ON | _singleNoteChannel) | (snPart.note << 8) | (snPart.velocity << 16);
+
+	// Should we reset controllers too?
+	_singleNoteSource->send(changeProgramCmd);
+	_singleNoteSource->send(noteOnCmd);
+
+	double delayMS = snPart.duration * 1000.0;
+	if (delayMS < 1.0)
+		delayMS = 1.0;
+
+	_singleNodeScheduledOffEvent = _runtime->getScheduler().scheduleMethod<MidiModifier, &MidiModifier::stopSingleNoteCallback>(_runtime->getPlayTime() + static_cast<uint64>(delayMS), this);
+}
+
+void MidiModifier::stopSingleNote() {
+	if (_isSingleNoteActive) {
+		// Should we include velocity?
+		const uint32 noteOffCmd = (MidiDriver_BASE::MIDI_COMMAND_NOTE_OFF | _singleNoteChannel) | (_singleNoteNote << 8);
+
+		_singleNoteSource->send(noteOffCmd);
+
+		_isSingleNoteActive = false;
+		if (_singleNodeScheduledOffEvent) {
+			_singleNodeScheduledOffEvent->cancel();
+			_singleNodeScheduledOffEvent.reset();
+		}
+	}
+}
+
+void MidiModifier::stopSingleNoteCallback(Runtime *runtime) {
+	_singleNodeScheduledOffEvent.reset();
+	stopSingleNote();
+}
+
 Common::SharedPtr<Modifier> MidiModifier::shallowClone() const {
 	Common::SharedPtr<MidiModifier> clone(new MidiModifier(*this));
 
-	clone->_isActive = false;
+	clone->_isSingleNoteActive = false;
+	clone->_filePlayer = nullptr;
+	clone->_singleNoteSource.reset();
 
 	return clone;
 }
@@ -2186,7 +2256,14 @@ MiniscriptInstructionOutcome MidiModifier::scriptSetTempo(MiniscriptThread *thre
 }
 
 MiniscriptInstructionOutcome MidiModifier::scriptSetPlayNote(MiniscriptThread *thread, const DynamicValue &value) {
-	warning("MIDI PlayNote is not yet implemented!");
+	if (value.getType() != DynamicValueTypes::kBoolean)
+		return kMiniscriptInstructionOutcomeFailed;
+
+	if (value.getBool())
+		playSingleNote(thread->getRuntime());
+	else
+		stopSingleNote();
+
 	return kMiniscriptInstructionOutcomeContinue;
 }
 

@@ -38,6 +38,7 @@ namespace Standard {
 class StandardPlugIn;
 class MidiFilePlayer;
 class MultiMidiPlayer;
+class MidiCombinerSource;
 
 class CursorModifier : public Modifier {
 public:
@@ -218,6 +219,9 @@ public:
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib, const DynamicValue &index) override;
 
+	void playSingleNote(Runtime *runtime);
+	void stopSingleNote();
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "MIDI Modifier"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
@@ -242,6 +246,8 @@ private:
 	MiniscriptInstructionOutcome scriptSetTempo(MiniscriptThread *thread, const DynamicValue &value);
 
 	MiniscriptInstructionOutcome scriptSetMuteTrack(MiniscriptThread *thread, size_t trackIndex, bool muted);
+
+	void stopSingleNoteCallback(Runtime *runtime);
 
 	struct FilePart {
 		bool loop;
@@ -279,10 +285,16 @@ private:
 	Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> _embeddedFile;
 
 	uint16 _mutedTracks;
-	bool _isActive;
+	bool _isSingleNoteActive;
+	uint8 _singleNoteChannel;
+	uint8 _singleNoteNote;
 
 	StandardPlugIn *_plugIn;
 	MidiFilePlayer *_filePlayer;
+
+	Common::SharedPtr<MidiCombinerSource> _singleNoteSource;
+	Common::SharedPtr<ScheduledEvent> _singleNodeScheduledOffEvent;
+	Runtime *_runtime;
 };
 
 class ListVariableModifier : public VariableModifier {
