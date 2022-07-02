@@ -124,6 +124,7 @@ public:
 	void executeIfThenElse(FCLInstruction &instruction);
 	void executeMakeInvisible(FCLInstruction &instruction);
 	void executeMakeVisible(FCLInstruction &instruction);
+	void executeToggleVisibility(FCLInstruction &instruction);
 
 	// Rendering
 	void drawFrame();

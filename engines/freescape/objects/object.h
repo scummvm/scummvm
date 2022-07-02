@@ -52,6 +52,7 @@ public:
 	bool isInvisible();
 	void makeInvisible();
 	void makeVisible();
+	void toggleVisibility();
 
 	virtual ~Object();
 

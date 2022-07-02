@@ -405,6 +405,9 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			case Token::GOTO:
 			executeGoto(instruction);
 			break;
+			case Token::TOGVIS:
+			executeToggleVisibility(instruction);
+			break;
 			case Token::INVIS:
 			executeMakeInvisible(instruction);
 			break;
@@ -430,6 +433,13 @@ void FreescapeEngine::executeMakeVisible(FCLInstruction &instruction) {
 	debug("Making obj %d visible!", objectID);
 	Object *obj = _currentArea->objectWithID(objectID);
 	obj->makeVisible();
+}
+
+void FreescapeEngine::executeToggleVisibility(FCLInstruction &instruction) {
+	uint16 objectID = instruction.source;
+	debug("Toggling obj %d visibility!", objectID);
+	Object *obj = _currentArea->objectWithID(objectID);
+	obj->toggleVisibility();
 }
 
 void FreescapeEngine::executeGoto(FCLInstruction &instruction) {
