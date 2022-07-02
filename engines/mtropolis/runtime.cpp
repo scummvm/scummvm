@@ -2641,12 +2641,43 @@ bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, c
 				Structural *parent = static_cast<Structural *>(possibleScene)->getParent();
 				if (parent->isSubsection())
 					break;
-				else
+				else {
 					possibleScene = parent;
+					continue;
+				}
 			}
+
+			assert(false);
+			break;
 		}
 		if (possibleScene)
 			result.setObject(possibleScene->getSelfReference());
+		else
+			result.clear();
+		return true;
+	} else if (attrib == "subsection") {
+		result.clear();
+
+		RuntimeObject *possibleSubsection = this;
+		while (possibleSubsection) {
+			if (possibleSubsection->isSubsection())
+				break;
+
+			if (possibleSubsection->isModifier()) {
+				possibleSubsection = static_cast<Modifier *>(possibleSubsection)->getParent().lock().get();
+				continue;
+			}
+
+			if (possibleSubsection->isStructural()) {
+				possibleSubsection = static_cast<Structural *>(possibleSubsection)->getParent();
+				continue;
+			}
+
+			assert(false);
+			break;
+		}
+		if (possibleSubsection)
+			result.setObject(possibleSubsection->getSelfReference());
 		else
 			result.clear();
 		return true;
