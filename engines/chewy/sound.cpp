@@ -46,18 +46,18 @@ Sound::~Sound() {
 	delete _speechRes;
 }
 
-void Sound::playSound(int num, uint channel, bool loop) {
+void Sound::playSound(int num, uint channel, bool loop, uint16 volume, uint16 balance) {
 	SoundChunk *sound = _soundRes->getSound(num);
 	uint8 *data = (uint8 *)MALLOC(sound->size);
 	memcpy(data, sound->data, sound->size);
 
-	playSound(data, sound->size, channel, loop);
+	playSound(data, sound->size, channel, loop, volume, balance);
 
 	delete[] sound->data;
 	delete sound;
 }
 
-void Sound::playSound(uint8 *data, uint32 size, uint channel, bool loop, DisposeAfterUse::Flag dispose) {
+void Sound::playSound(uint8 *data, uint32 size, uint channel, bool loop, uint16 volume, uint16 balance, DisposeAfterUse::Flag dispose) {
 	stopSound(channel);
 
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
@@ -66,7 +66,11 @@ void Sound::playSound(uint8 *data, uint32 size, uint channel, bool loop, Dispose
 			dispose),
 		loop ? 0 : 1);
 
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle[channel], stream);
+	assert(volume >= 0 && volume < 64);
+	assert(balance >= 0 && balance < 128);
+
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle[channel], stream, -1,
+		volume * Audio::Mixer::kMaxChannelVolume / 63, MIN(127, (balance - 63) * 2));
 }
 
 void Sound::pauseSound(uint channel) {
@@ -172,7 +176,7 @@ int Sound::getMusicVolume() const {
 	return _userMusicVolume;
 }
 
-void Sound::playSpeech(int num, bool waitForFinish) {
+void Sound::playSpeech(int num, bool waitForFinish, uint16 balance) {
 	if (isSpeechActive())
 		stopSpeech();
 
@@ -190,8 +194,10 @@ void Sound::playSpeech(int num, bool waitForFinish) {
 		new Common::MemorySeekableReadWriteStream(data, size, DisposeAfterUse::YES),
 		DisposeAfterUse::YES);
 
-	_mixer->playStream(Audio::Mixer::kSpeechSoundType,
-		&_speechHandle, stream);
+	assert(balance >= 0 && balance < 128);
+
+	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream,
+		-1 , 255, MIN(127, (balance - 63) * 2));
 
 	if (waitForFinish) {
 		// Wait for speech to finish
@@ -226,6 +232,12 @@ void Sound::waitForSpeechToFinish() {
 		while (isSpeechActive() && !SHOULD_QUIT) {
 			setupScreen(DO_SETUP);
 		}
+	}
+}
+
+void Sound::setSpeechBalance(uint16 balance) {
+	if (isSpeechActive()) {
+		_mixer->setChannelBalance(_speechHandle, balance);
 	}
 }
 

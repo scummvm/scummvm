@@ -43,8 +43,8 @@ public:
 	Sound(Audio::Mixer *mixer);
 	virtual ~Sound();
 
-	void playSound(int num, uint channel = 0, bool loop = false);
-	void playSound(uint8 *data, uint32 size, uint channel = 0, bool loop = false, DisposeAfterUse::Flag dispose = DisposeAfterUse::YES);
+	void playSound(int num, uint channel = 0, bool loop = false, uint16 volume = 63, uint16 balance = 63);
+	void playSound(uint8 *data, uint32 size, uint channel = 0, bool loop = false, uint16 volume = 63, uint16 balance = 63, DisposeAfterUse::Flag dispose = DisposeAfterUse::YES);
 	void pauseSound(uint channel);
 	void resumeSound(uint channel);
 	void stopSound(uint channel = 0);
@@ -67,11 +67,12 @@ public:
 	int getMusicVolume() const;
 	void playRoomMusic(int16 roomNum);
 
-	void playSpeech(int num, bool waitForFinish);
+	void playSpeech(int num, bool waitForFinish, uint16 balance = 63);
 	void pauseSpeech();
 	void resumeSpeech();
 	void stopSpeech();
 	bool isSpeechActive() const;
+	void setSpeechBalance(uint16 balance = 63);
 
 	void stopAll();
 

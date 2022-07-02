@@ -404,9 +404,7 @@ void Detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 					if ((adiptr->sfx.sound_start[k] == adiptr->ani_count) &&
 					        (!adiptr->delay_count)) {
 						const uint channel = adiptr->sfx.kanal[k] & 7;
-						sound->setSoundChannelBalance(channel, adiptr->sfx.stereo[k]);
-						sound->setSoundChannelVolume(channel, adiptr->sfx.volume[k]);
-						sound->playSound(soundEffect, channel,	adiptr->sfx.repeats[k]);
+						sound->playSound(soundEffect, channel, adiptr->sfx.repeats[k], adiptr->sfx.volume[k], adiptr->sfx.stereo[k]);
 					}
 				}
 			}
@@ -545,9 +543,7 @@ SprInfo Detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr, int16 s
 		        (_rdi.sample[soundEffect])) {
 			if (adiptr->sfx.sound_start[k] == spr_nr) {
 				const uint channel = adiptr->sfx.kanal[k] & 7;
-				sound->setSoundChannelBalance(channel, adiptr->sfx.stereo[k]);
-				sound->setSoundChannelVolume(channel, adiptr->sfx.volume[k]);
-				sound->playSound(soundEffect, channel, adiptr->sfx.repeats[k]);
+				sound->playSound(soundEffect, channel, adiptr->sfx.repeats[k], adiptr->sfx.volume[k], adiptr->sfx.stereo[k]);
 			}
 		}
 	}
@@ -594,9 +590,7 @@ void Detail::play_detail_sound(int16 nr) {
 		if ((sdb->sound_enable[k]) && (sdb->sound_index[k] != -1) &&
 		        (_rdi.sample[sdb->sound_index[k]])) {
 			const uint channel = sdb->kanal[k] & 7;
-			sound->setSoundChannelBalance(channel, sdb->stereo[k]);
-			sound->setSoundChannelVolume(channel, sdb->volume[k]);
-			sound->playSound(sdb->sound_index[k], channel, sdb->repeats[k]);
+			sound->playSound(sdb->sound_index[k], channel, sdb->repeats[k], sdb->volume[k], sdb->stereo[k]);
 		}
 	}
 }
