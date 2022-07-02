@@ -118,11 +118,17 @@ void Area::draw(Freescape::Renderer *gfx) {
 }
 
 Object *Area::shootRay(const Math::Ray &ray) {
+	float distance = 16 * 8192; // TODO: check if this is max distance
+	Object *collided = nullptr;
 	for (int i = drawableObjects.size() - 1; i >= 0; i--) {
-		if (!drawableObjects[i]->isInvisible() && drawableObjects[i]->_boundingBox.isValid() && ray.intersectAABB(drawableObjects[i]->_boundingBox))
-			return drawableObjects[i];
+		if (!drawableObjects[i]->isInvisible() && drawableObjects[i]->_boundingBox.isValid() && ray.intersectAABB(drawableObjects[i]->_boundingBox)) {
+			if (ray.getOrigin().getDistanceTo(drawableObjects[i]->getOrigin()) < distance ) {
+				collided = drawableObjects[i];
+				distance = ray.getOrigin().getDistanceTo(collided->getOrigin());
+			}
+		}
 	}
-	return nullptr;
+	return collided;
 }
 
 Object *Area::checkCollisions(const Math::AABB &boundingBox) {
