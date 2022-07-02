@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-30 14:47+0000\n"
-"PO-Revision-Date: 2022-06-16 23:21+0000\n"
+"PO-Revision-Date: 2022-07-02 10:15+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -3717,49 +3717,37 @@ msgstr "Показувати екранне керування"
 
 #: backends/platform/android/options.cpp:94
 msgid "Choose the preferred touch mode:"
-msgstr ""
+msgstr "Оберіть уподобаний режим дотику:"
 
 #: backends/platform/android/options.cpp:96
-#, fuzzy
-#| msgid "Enable Venus"
 msgid "In menus"
-msgstr "Ввімкнути Venus"
+msgstr "В меню"
 
 #: backends/platform/android/options.cpp:98
 #: backends/platform/android/options.cpp:116
 #: backends/platform/android/options.cpp:117
-#, fuzzy
-#| msgid "TV emulation"
 msgid "Touchpad emulation"
-msgstr "Емулятор ТВ"
+msgstr "Емуляція тачпаду"
 
 #: backends/platform/android/options.cpp:99
 #: backends/platform/android/options.cpp:119
 #: backends/platform/android/options.cpp:120
-#, fuzzy
-#| msgid "Virtual mouse up"
 msgid "Direct mouse"
-msgstr "Віртуальна миша уверх"
+msgstr "Віртуальна миша"
 
 #: backends/platform/android/options.cpp:100
 #: backends/platform/android/options.cpp:122
 #: backends/platform/android/options.cpp:123
-#, fuzzy
-#| msgid "TV emulation"
 msgid "Gamepad emulation"
-msgstr "Емулятор ТВ"
+msgstr "Емуляція геймпаду"
 
 #: backends/platform/android/options.cpp:106
-#, fuzzy
-#| msgid "V-Sync in 3D Games"
 msgid "In 2D games"
-msgstr "Вертикальна синхронізація у 3D іграх"
+msgstr "У 2D іграх"
 
 #: backends/platform/android/options.cpp:108
-#, fuzzy
-#| msgid "V-Sync in 3D Games"
 msgid "In 3D games"
-msgstr "Вертикальна синхронізація у 3D іграх"
+msgstr "У 3D іграх"
 
 #. I18N: Show a button to revoke Storage Access Framework permissions for Android
 #: backends/platform/android/options.cpp:128
@@ -4492,14 +4480,13 @@ msgstr ""
 "мишею"
 
 #: engines/bladerunner/detection.cpp:108
-#, fuzzy
-#| msgid "Show subtitles and play speech"
 msgid "Show subtitles during text crawl"
-msgstr "Показувати субтитри і відтворювати мову"
+msgstr "Показувати субтитри під час прокручуванного тексту"
 
 #: engines/bladerunner/detection.cpp:109
 msgid "During the intro cutscene, show subtitles during the text crawl"
 msgstr ""
+"Показувати субтитри під час прокручуванного тексту у початковій заставці"
 
 #: engines/bladerunner/detection_tables.h:96
 #: engines/bladerunner/detection_tables.h:107
@@ -4532,6 +4519,8 @@ msgid ""
 "Enhanced Edition not supported. Please, use the original files which are "
 "part of the release."
 msgstr ""
+"Enhanced Edition не підтримується. Будь-ласка, викроистовуйте оригінальні "
+"файли, які також входять до релізу."
 
 #. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
 #: engines/bladerunner/metaengine.cpp:109
