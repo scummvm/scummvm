@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-02 19:54+0000\n"
+"POT-Creation-Date: 2022-07-02 20:40+0000\n"
 "PO-Revision-Date: 2022-07-01 10:05+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -244,11 +244,11 @@ msgstr "Téléchargement terminé, %d packs téléchargés, %s %S"
 msgid "Close"
 msgstr "Fermer"
 
-#: gui/downloadiconsdialog.cpp:373
+#: gui/downloadiconsdialog.cpp:374
 msgid "ERROR: No icons path set"
 msgstr "ERREUR : Chemin d'accès des icônes non défini"
 
-#: gui/downloadiconsdialog.cpp:403
+#: gui/downloadiconsdialog.cpp:405
 msgid "No new icons packs available"
 msgstr "Pas de nouveau pack d'icônes disponible"
 
@@ -487,19 +487,18 @@ msgstr "Statistiques"
 
 #: gui/editgamedialog.cpp:398 gui/editgamedialog.cpp:504
 #: gui/editgamedialog.cpp:570 gui/editgamedialog.cpp:637 gui/options.cpp:2218
-#: gui/options.cpp:2219 gui/options.cpp:2220 gui/options.cpp:2225
-#: gui/options.cpp:2256 gui/options.cpp:2299 gui/options.cpp:2307
-#: gui/options.cpp:2315 gui/options.cpp:2324 gui/options.cpp:2711
-#: gui/options.cpp:2712 gui/options.cpp:2713 gui/options.cpp:2717
-#: gui/options.cpp:2726 gui/options.cpp:3001 gui/options.cpp:3004
-#: gui/options.cpp:3007 gui/options.cpp:3014 gui/options.cpp:3026
-#: gui/options.cpp:3037
+#: gui/options.cpp:2220 gui/options.cpp:2225 gui/options.cpp:2256
+#: gui/options.cpp:2299 gui/options.cpp:2315 gui/options.cpp:2324
+#: gui/options.cpp:2711 gui/options.cpp:2713 gui/options.cpp:2717
+#: gui/options.cpp:2726 gui/options.cpp:3001 gui/options.cpp:3007
+#: gui/options.cpp:3014 gui/options.cpp:3026 gui/options.cpp:3037
 msgctxt "path"
 msgid "None"
 msgstr "Aucun"
 
 #: gui/editgamedialog.cpp:403 gui/editgamedialog.cpp:510
-#: gui/editgamedialog.cpp:641 gui/options.cpp:2217 gui/options.cpp:2710
+#: gui/editgamedialog.cpp:641 gui/options.cpp:2217 gui/options.cpp:2219
+#: gui/options.cpp:2710 gui/options.cpp:2712 gui/options.cpp:3004
 #: gui/options.cpp:3010 backends/platform/wii/options.cpp:55
 msgid "Default"
 msgstr "Défaut"
@@ -1523,6 +1522,13 @@ msgstr "Icônes :"
 msgctxt "lowres"
 msgid "Icon Path:"
 msgstr "Icônes :"
+
+#: gui/options.cpp:2307
+#, fuzzy
+#| msgid "Default"
+msgctxt "path"
+msgid "Default"
+msgstr "Défaut"
 
 #: gui/options.cpp:2312 gui/options.cpp:2314 gui/options.cpp:2315
 msgid "Specifies path to additional data used by all games or ScummVM"
