@@ -16,10 +16,11 @@ uint16 Object::getObjectFlags() { return _flags; }
 Math::Vector3d Object::getOrigin() { return _origin; }
 Math::Vector3d Object::getSize() { return _size; }
 
-//void Object::draw(Freescape::Renderer *gfx) {
-//	gfx;
-//}
 bool Object::isDrawable() { return false; }
 bool Object::isPlanar() { return false; }
+
+bool Object::isInvisible() { return _flags & 0x80; }
+void Object::makeInvisible() { _flags = _flags | 0x80; }
+void Object::makeVisible() { _flags = _flags & ~0x80; }
 
 Object::~Object() {}

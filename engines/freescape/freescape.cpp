@@ -408,6 +408,9 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			case Token::INVIS:
 			executeMakeInvisible(instruction);
 			break;
+			case Token::VIS:
+			executeMakeVisible(instruction);
+			break;
 
 		}
 		ip++;
@@ -420,6 +423,13 @@ void FreescapeEngine::executeMakeInvisible(FCLInstruction &instruction) {
 	debug("Making obj %d invisible!", objectID);
 	Object *obj = _currentArea->objectWithID(objectID);
 	obj->makeInvisible();
+}
+
+void FreescapeEngine::executeMakeVisible(FCLInstruction &instruction) {
+	uint16 objectID = instruction.source;
+	debug("Making obj %d visible!", objectID);
+	Object *obj = _currentArea->objectWithID(objectID);
+	obj->makeVisible();
 }
 
 void FreescapeEngine::executeGoto(FCLInstruction &instruction) {

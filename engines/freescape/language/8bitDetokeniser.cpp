@@ -120,6 +120,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		case 7:
 		case 4:
 			detokenisedStream += "VIS (";
+			currentInstruction = FCLInstruction(Token::VIS);
 			break; // hence each getting two case statement entries
 		case 8:
 		case 5:
