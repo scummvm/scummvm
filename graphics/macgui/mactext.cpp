@@ -1236,7 +1236,7 @@ void MacText::appendText(const Common::U32String &str, const Font *font, uint16 
 	if (!skipAdd)
 		_str += strWithFont;
 
-	appendText_(str, oldLen);
+	appendText_(strWithFont, oldLen);
 }
 
 void MacText::appendText_(const Common::U32String &strWithFont, uint oldLen) {
