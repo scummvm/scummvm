@@ -115,6 +115,7 @@ public:
 	void setShowFPS(bool enabled) { _debugShowFPS = enabled; }
 	bool getBilinearFiltering() { return _bilinearFiltering; }
 	bool getSuspendedRendering() const { return _suspendedRendering; }
+	virtual bool renderShadowGeometry();
 
 	TTextEncoding _textEncoding;
 	bool _textRTL;

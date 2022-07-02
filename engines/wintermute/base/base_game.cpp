@@ -4349,6 +4349,11 @@ bool BaseGame::drawCursor(BaseSprite *cursor) {
 }
 
 //////////////////////////////////////////////////////////////////////////
+bool BaseGame::renderShadowGeometry() {
+	return STATUS_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////
 bool BaseGame::storeSaveThumbnail() {
 	delete _cachedThumbnail;
 	_cachedThumbnail = new SaveThumbHelper(this);
