@@ -1161,10 +1161,8 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 			AdWaypointGroup *wpt = new AdWaypointGroup(_gameRef);
 			AdWaypointGroup *cwpt = new AdWaypointGroup(_gameRef);
 			if (!wpt || !cwpt || !wpt->loadBuffer((char *)params, false)) {
-				delete _wptGroup;
-				_wptGroup = nullptr;
-				delete _currentWptGroup;
-				_currentWptGroup = nullptr;
+				delete wpt;
+				delete cwpt;
 				cmd = PARSERR_GENERIC;
 			} else {
 				_wptGroup = wpt;
