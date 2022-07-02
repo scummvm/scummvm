@@ -103,16 +103,6 @@ public:
 	 * Draw the view
 	 */
 	void draw() override;
-
-	/**
-	 * Handle keypress events
-	 */
-	bool msgKeypress(const KeypressMessage &str) override;
-
-	/**
-	 * Handle mouse clicks
-	 */
-	bool msgMouseUp(const MouseUpMessage &str) override;
 };
 
 } // namespace ViewsEnh

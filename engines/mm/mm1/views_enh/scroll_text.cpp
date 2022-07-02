@@ -139,20 +139,6 @@ void ScrollText::draw() {
 	}
 }
 
-bool ScrollText::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		close();
-		return true;
-	}
-
-	return false;
-}
-
-bool ScrollText::msgMouseUp(const MouseUpMessage &msg) {
-	close();
-	return true;
-}
-
 } // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
