@@ -23,6 +23,7 @@
 #define MM1_VIEWS_ENH_LOCATIONS_MARKET_H
 
 #include "mm/mm1/views_enh/locations/location.h"
+#include "mm/mm1/data/char.h"
 #include "mm/mm1/data/locations.h"
 
 namespace MM {
@@ -32,16 +33,23 @@ namespace Locations {
 
 class Market : public Location, public MarketData {
 private:
-	int _foodCost = 0;
+	uint _foodCost = 0;
+private:
+	/**
+	 * Buys food for party
+	 */
+	void buyFood();
+
+	/**
+	 * Has a single character buy food
+	 */
+	bool buyFood(Character *c);
+
 public:
 	Market();
 
 	bool msgFocus(const FocusMessage &msg) override;
-
-	/**
-	 * Draw the view
-	 */
-	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 } // namespace Locations

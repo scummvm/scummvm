@@ -57,9 +57,69 @@ bool Market::msgFocus(const FocusMessage &msg) {
 	return true;
 }
 
-void Market::draw() {
-	Location::draw();
+bool Market::msgKeypress(const KeypressMessage &msg) {
+	if (isDelayActive()) {
+		// Any keypress after purchase made closes
+		leave();
+		return true;
+	} else {
+		switch (msg.keycode) {
+		case Common::KEYCODE_y:
+			buyFood();
+			return true;
+		case Common::KEYCODE_n:
+		case Common::KEYCODE_ESCAPE:
+			leave();
+			return true;
+		default:
+			break;
+		}
+	}
 
+	return false;
+}
+
+void Market::buyFood() {
+	int numPurchases = 0;
+
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		if (buyFood(&g_globals->_party[i]))
+			++numPurchases;
+	}
+
+	clearSurface();
+	writeString(10, 2, numPurchases ?
+		STRING["dialogs.market.thankyou"] :
+		STRING["dialogs.market.no_gold"]
+	);
+
+	delaySeconds(3);
+}
+
+bool Market::buyFood(Character *c) {
+	if (c->_food == MAX_FOOD)
+		return true;
+
+	int tempGold = (int)c->_gold - _foodCost;
+	if (tempGold >= 0) {
+		// Reduce character's gold
+		c->_gold = tempGold;
+	} else {
+		// Fall back on any one in the party with gold
+		uint i;
+		for (i = 0; i < g_globals->_party.size(); ++i) {
+			if (g_globals->_party[i]._gold >= _foodCost) {
+				g_globals->_party[i]._gold -= _foodCost;
+				break;
+			}
+		}
+		if (i == g_globals->_party.size())
+			return false;
+	}
+
+	// Food purchased
+	c->_food = MAX_FOOD;
+	return true;
 }
 
 } // namespace Location
