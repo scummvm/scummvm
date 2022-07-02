@@ -358,10 +358,12 @@ bool BaseGame::cleanup() {
 	_fontStorage->removeFont(_videoFont);
 	_videoFont = nullptr;
 
+#ifdef ENABLE_WME3D
 	if (_shadowImage) {
 		_surfaceStorage->removeSurface(_shadowImage);
 		_shadowImage = nullptr;
 	}
+#endif
 
 	for (uint32 i = 0; i < _quickMessages.size(); i++) {
 		delete _quickMessages[i];
@@ -1055,9 +1057,11 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 	if (!_systemFont) {
 		_systemFont = _gameRef->_fontStorage->addFont("system_font.fnt");
 	}
+#ifdef ENABLE_WME3D
 	if (!_shadowImage) {
 		_shadowImage = _gameRef->_surfaceStorage->addSurface("shadow.png");
 	}
+#endif
 
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		_gameRef->LOG(0, "Syntax error in GAME definition");
