@@ -665,8 +665,7 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 					_atdsv._vocNr = _aadv._strHeader->_vocNr - ATDS_VOC_OFFSET;
 					const int16 vocx = _G(moveState)[personId].Xypos[0] -
 								 _G(gameState).scrollx + _G(spieler_mi)[personId].HotX;
-					g_engine->_sound->setSoundChannelBalance(0, getStereoPos(vocx));
-					g_engine->_sound->playSpeech(_atdsv._vocNr, false);
+					g_engine->_sound->playSpeech(_atdsv._vocNr, false, getStereoPos(vocx));
 				}
 
 				if (_atdsv._vocNr >= 0 && !g_engine->_sound->isSpeechActive())
@@ -991,7 +990,7 @@ int16 Atdsys::calc_inv_no_use(int16 curInv, int16 testNr) {
 }
 
 int8 Atdsys::getStereoPos(int16 x) {
-	return floor(x / 2.5) * 2 - 127;
+	return floor(x / 2.5);
 }
 
 void Atdsys::saveAtdsStream(Common::WriteStream *stream) {
