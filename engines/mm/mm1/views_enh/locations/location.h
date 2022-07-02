@@ -32,6 +32,11 @@ namespace Locations {
 class Location : public ScrollText {
 public:
 	Location(const Common::String &name);
+
+	/**
+	 * Leave the location, turning around
+	 */
+	void leave();
 };
 
 } // namespace Locations

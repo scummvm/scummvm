@@ -33,6 +33,12 @@ Location::Location(const Common::String &name) :
 	_bounds = Common::Rect(232, 0, 320, 146);
 }
 
+void Location::leave() {
+	g_maps->turnAround();
+	close();
+	g_events->redraw();
+}
+
 } // namespace Locations
 } // namespace ViewsEnh
 } // namespace MM1
