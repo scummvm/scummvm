@@ -49,7 +49,8 @@ public:
 
 	virtual bool isDrawable();
 	virtual bool isPlanar();
-	bool isInvisible() { return _flags & 0x4; }
+	bool isInvisible() { return _flags & 0x80; }
+	void makeInvisible() { _flags = _flags | 0x80; }
 
 	virtual ~Object();
 

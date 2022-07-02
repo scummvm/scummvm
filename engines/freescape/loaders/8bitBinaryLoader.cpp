@@ -15,9 +15,9 @@ namespace Freescape {
 
 Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 
-	byte rawType = file->readByte();
-	debug("Raw object type: %d", rawType);
-	Object::Type objectType = (Object::Type)(rawType & 0x1F);
+	byte rawFlagsAndType = file->readByte();
+	debug("Raw object data flags and type: %d", rawFlagsAndType);
+	Object::Type objectType = (Object::Type)(rawFlagsAndType & 0x1F);
 
 	Math::Vector3d position, v;
 
@@ -100,7 +100,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		return new GeometricObject(
 			objectType,
 			objectID,
-			0, // flags
+			rawFlagsAndType, // flags
 			32 * position,
 			32 * v, // size
 			colours,

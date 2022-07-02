@@ -124,6 +124,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		case 8:
 		case 5:
 			detokenisedStream += "INVIS (";
+			currentInstruction = FCLInstruction(Token::INVIS);
 			break;
 
 		case 9:
