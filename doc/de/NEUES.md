@@ -7,6 +7,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Soldier Boyz hinzugefügt.
    - Unterstützung für die C64- und ZX Spectrum-Versionen der GLK Scott Adams Interactive Fiction-Spiele
      hinzugefügt.
+   - Unterstützung für die TI99/4A-Versionen der GLK Scott Adams-Spiele 1-12 hinzugefügt.
 
  Allgemein:
    - Anzahl an falsch-positiven Einträgen reduziert, wenn das Gerät nach Spielen durchsucht wird.
