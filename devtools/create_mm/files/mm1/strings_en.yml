@@ -297,6 +297,12 @@ enhdialogs:
 		exchange: "\x01""37Exch"
 		conditions:
 			good: "Good"
+	location:
+		store: "store"
+		options: "options"
+		gold: "gold"
+	market:
+		buy_food: "Buy food"
 	misc:
 		exit: "Exit"
 stats:

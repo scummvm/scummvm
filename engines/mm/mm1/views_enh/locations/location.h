@@ -22,14 +22,14 @@
 #ifndef MM1_VIEWS_ENH_LOCATIONS_LOCATION_H
 #define MM1_VIEWS_ENH_LOCATIONS_LOCATION_H
 
-#include "mm/mm1/views_enh/scroll_view.h"
+#include "mm/mm1/views_enh/scroll_text.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 namespace Locations {
 
-class Location : public ScrollView {
+class Location : public ScrollText {
 public:
 	Location(const Common::String &name);
 };

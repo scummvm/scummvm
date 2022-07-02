@@ -69,6 +69,12 @@ public:
 	Lines::const_iterator end() const { return _lines.end(); }
 
 	/**
+	 * Helper function for formatting original game
+	 * capitals only text into normal upper/lowercase text
+	 */
+	static Common::String format(const Common::String &str);
+
+	/**
 	 * Clear the lines
 	 */
 	void clear() {
@@ -78,15 +84,20 @@ public:
 	/**
 	 * Simplest form that adds lines one at a time
 	 */
-	void addLine(const Common::String &msg,
+	void addLine(const Common::String &str,
 		TextAlignment align = ALIGN_LEFT, byte color = 0);
 
 	/**
 	 * Add a new line fragment for a given position
 	 */
-	void addText(const Common::String &msg,
+	void addText(const Common::String &str,
 		int lineNum, byte color = 0,
 		TextAlignment align = ALIGN_LEFT, int xp = 0);
+	void addText(const Common::String &str,
+			int lineNum, TextAlignment align = ALIGN_LEFT,
+			int xp = 0) {
+		addText(str, lineNum, 0, align, xp);
+	}
 
 	/**
 	 * Draw the view
@@ -96,12 +107,12 @@ public:
 	/**
 	 * Handle keypress events
 	 */
-	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &str) override;
 
 	/**
 	 * Handle mouse clicks
 	 */
-	bool msgMouseUp(const MouseUpMessage &msg) override;
+	bool msgMouseUp(const MouseUpMessage &str) override;
 };
 
 } // namespace ViewsEnh

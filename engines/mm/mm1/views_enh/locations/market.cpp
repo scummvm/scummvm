@@ -31,6 +31,24 @@ namespace Locations {
 Market::Market() : Location("Market") {
 }
 
+bool Market::msgFocus(const FocusMessage &msg) {
+	Maps::Map &map = *g_maps->_currentMap;
+	_foodCost = FOOD_COST[map[0] - 1];
+
+	clear();
+	addText(STRING["enhdialogs.location.store"], 0, ALIGN_MIDDLE);
+	addText(STRING["enhdialogs.location.options"], 1, ALIGN_MIDDLE);
+	addText(STRING["enhdialogs.market.buy_food"], 6, ALIGN_MIDDLE);
+	addText(Common::String::format("%d %s",
+		_foodCost, STRING["dialogs.market.gp"].c_str()),
+		7, ALIGN_MIDDLE);
+	addText(STRING["enhdialogs.location.gold"], 10, ALIGN_LEFT);
+
+	uint gold = g_globals->_party.getPartyGold();
+	addText(Common::String::format("%d", gold), 10, ALIGN_RIGHT);
+	return true;
+}
+
 void Market::draw() {
 	Location::draw();
 
