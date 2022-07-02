@@ -245,10 +245,13 @@ void FreescapeEngine::processInput() {
 void FreescapeEngine::shoot() {
 	Math::Vector3d direction = directionToVector(_pitch, _yaw);
 	Math::Ray ray(_position, direction);
-	Object *shooted = _currentArea->shootRay(ray);
-	if (shooted) {
-		Math::Vector3d origin = shooted->getOrigin();
-		debug("shoot to %d at %f %f!", shooted->getObjectID(), origin.x(), origin.z());
+	Object *shot = _currentArea->shootRay(ray);
+	if (shot) {
+		GeometricObject *gobj = (GeometricObject*) shot;
+		if (gobj->conditionSource != nullptr) {
+			debug("Must use shot = true when executing: %s", gobj->conditionSource->c_str());
+			executeCode(gobj->condition, true, false);
+		}
 	}
 	//debug("camera front: %f %f %f", _cameraFront.x(), _rotation.y(), _rotation.z());
 }
@@ -349,7 +352,7 @@ void FreescapeEngine::checkCollisions() {
 		GeometricObject *gobj = (GeometricObject*) obj;
 		if (gobj->conditionSource != nullptr) {
 			debug("Must use collision = true when executing: %s", gobj->conditionSource->c_str());
-			executeCode(gobj->condition);
+			executeCode(gobj->condition, false, true);
 		}
 	}
 }
@@ -377,7 +380,8 @@ void FreescapeEngine::gotoArea(uint16 areaID, uint16 entranceID) {
 	_yaw = _rotation.y() - 180.f;
 }
 
-void FreescapeEngine::executeCode(FCLInstructionVector &code) {
+void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool collided) {
+	assert(!(shot && collided));
 	int ip = 0;
 	int codeSize = code.size();
 	while (ip <= codeSize - 1) {
@@ -387,15 +391,35 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code) {
 			default:
 			break;
 			case Token::COLLIDEDQ:
-			executeCode(*instruction.thenInstructions);
+			if (collided)
+				executeCode(*instruction.thenInstructions, shot, collided);
+			// else branch is always empty
+			assert(instruction.elseInstructions == nullptr);
+			break;
+			case Token::SHOTQ:
+			if (shot)
+				executeCode(*instruction.thenInstructions, shot, collided);
+			// else branch is always empty
+			assert(instruction.elseInstructions == nullptr);
 			break;
 			case Token::GOTO:
 			executeGoto(instruction);
 			break;
+			case Token::INVIS:
+			executeMakeInvisible(instruction);
+			break;
+
 		}
 		ip++;
 	}
 	return;
+}
+
+void FreescapeEngine::executeMakeInvisible(FCLInstruction &instruction) {
+	uint16 objectID = instruction.source;
+	debug("Making obj %d invisible!", objectID);
+	Object *obj = _currentArea->objectWithID(objectID);
+	obj->makeInvisible();
 }
 
 void FreescapeEngine::executeGoto(FCLInstruction &instruction) {

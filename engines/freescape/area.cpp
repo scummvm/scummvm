@@ -118,9 +118,9 @@ void Area::draw(Freescape::Renderer *gfx) {
 }
 
 Object *Area::shootRay(const Math::Ray &ray) {
-	for (Common::Array<Object *>::iterator it = drawableObjects.begin(); it != drawableObjects.end(); it++) {
-		if (!(*it)->isInvisible() && (*it)->_boundingBox.isValid() && ray.intersectAABB((*it)->_boundingBox))
-			return (*it);
+	for (int i = drawableObjects.size() - 1; i >= 0; i--) {
+		if (!drawableObjects[i]->isInvisible() && drawableObjects[i]->_boundingBox.isValid() && ray.intersectAABB(drawableObjects[i]->_boundingBox))
+			return drawableObjects[i];
 	}
 	return nullptr;
 }

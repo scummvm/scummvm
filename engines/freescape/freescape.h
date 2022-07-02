@@ -117,11 +117,13 @@ public:
 
 	// Effects
 	void checkCollisions();
-	void executeCode(FCLInstructionVector &code);
+	void executeCode(FCLInstructionVector &code, bool shot, bool collided);
 
 	// Instructions
 	void executeGoto(FCLInstruction &instruction);
 	void executeIfThenElse(FCLInstruction &instruction);
+	void executeMakeInvisible(FCLInstruction &instruction);
+
 
 	// Rendering
 	void drawFrame();
