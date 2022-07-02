@@ -65,9 +65,18 @@ void ActionText::deserialize(Archive &archive) {
 
 	_centered = archive.readDWORD();
 	_scrollBar = archive.readDWORD();
-	_textRGB = archive.readDWORD();
-	_textRGB = ((_textRGB >> 16) & 0xFF) | (((_textRGB >> 8) & 0xFF) << 8) | ((_textRGB & 0xFF) << 16);
-	_backgroundRGB = archive.readDWORD();
+
+	byte r = archive.readByte();
+	byte g = archive.readByte();
+	byte b = archive.readByte();
+	(void)archive.readByte(); // skip Alpha
+	_textRGB = r << 16 | g << 8 | b;
+
+	r = archive.readByte();
+	g = archive.readByte();
+	b = archive.readByte();
+	(void)archive.readByte(); // skip Alpha
+	_backgroundRGB = r << 16 | g << 8 | b;
 }
 
 void ActionText::toConsole() const {
