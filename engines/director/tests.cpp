@@ -38,6 +38,8 @@
 #include "director/window.h"
 #include "director/lingo/lingo.h"
 
+#include "image/pict.h"
+
 namespace Director {
 
 //////////////////////
@@ -99,15 +101,27 @@ void Window::testFontScaling() {
 		}
 	}
 
+	#if 0
 	x = 10;
 	for (int i = 0; i < kNumBuiltinTiles; i++) {
 		Image::ImageDecoder *tile = g_director->getTile(i);
-		surface.blitFrom(tile->getSurface(), Common::Point(x, 250));
 
-		x += tile->getSurface()->w + 10;
-	}
+			x += tile->getSurface()->w + 10;
+		}
+	#endif
+		Common::String path = pathMakeRelative("blend2.pic");
+		Common::File in;
+		in.open(path);
+		if (!in.isOpen()) {
+			warning("b_importFileInto(): Cannot open file %s", path.c_str());
+			return;
+		}
+		Image::PICTDecoder *k = new Image::PICTDecoder();
+		k->loadStream(in);
+		surface.blitFrom(k->getSurface(), Common::Point(5, 280));
+		in.close();
 
-	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, w, h); // testing fonts
+			g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, w, h); // testing fonts
 
 	Common::Event event;
 
