@@ -2012,6 +2012,12 @@ VThreadState SoundElement::consumeCommand(Runtime *runtime, const Common::Shared
 
 		return kVThreadReturn;
 	}
+	if (Event::create(EventIDs::kStop, 0).respondsTo(msg->getEvent())) {
+		StartPlayingTaskData *startPlayingTaskData = runtime->getVThread().pushTask("SoundElement::stopPlayingTask", this, &SoundElement::stopPlayingTask);
+		startPlayingTaskData->runtime = runtime;
+
+		return kVThreadReturn;
+	}
 
 	return NonVisualElement::consumeCommand(runtime, msg);
 }
@@ -2180,6 +2186,18 @@ VThreadState SoundElement::startPlayingTask(const StartPlayingTaskData &taskData
 	_needsReset = true;
 
 	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
+	Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+	taskData.runtime->sendMessageOnVThread(dispatch);
+
+	return kVThreadReturn;
+}
+
+VThreadState SoundElement::stopPlayingTask(const StartPlayingTaskData &taskData) {
+	_paused = false;
+	_shouldPlayIfNotPaused = false;
+	_needsReset = true;
+
+	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kStop, 0), DynamicValue(), getSelfReference()));
 	Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
 	taskData.runtime->sendMessageOnVThread(dispatch);
 

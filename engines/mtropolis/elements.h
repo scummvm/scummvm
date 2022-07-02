@@ -352,6 +352,7 @@ private:
 	};
 
 	VThreadState startPlayingTask(const StartPlayingTaskData &taskData);
+	VThreadState stopPlayingTask(const StartPlayingTaskData &taskData);
 
 	void setLoop(bool loop);
 	void setVolume(uint16 volume);
