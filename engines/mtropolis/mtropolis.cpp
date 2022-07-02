@@ -246,7 +246,7 @@ Common::Error MTropolisEngine::run() {
 		_system->delayMillis(10);
 	}
 
-	_runtime.release();
+	_runtime.reset();
 
 	return Common::kNoError;
 }
