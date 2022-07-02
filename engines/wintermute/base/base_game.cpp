@@ -358,6 +358,11 @@ bool BaseGame::cleanup() {
 	_fontStorage->removeFont(_videoFont);
 	_videoFont = nullptr;
 
+	if (_shadowImage) {
+		_surfaceStorage->removeSurface(_shadowImage);
+		_shadowImage = nullptr;
+	}
+
 	for (uint32 i = 0; i < _quickMessages.size(); i++) {
 		delete _quickMessages[i];
 	}
@@ -794,6 +799,9 @@ TOKEN_DEF(SAVE_IMAGE)
 TOKEN_DEF(LOAD_IMAGE_X)
 TOKEN_DEF(LOAD_IMAGE_Y)
 TOKEN_DEF(LOAD_IMAGE)
+#ifdef ENABLE_WME3D
+TOKEN_DEF(SHADOW_IMAGE)
+#endif
 TOKEN_DEF(LOCAL_SAVE_DIR)
 TOKEN_DEF(RICH_SAVED_GAMES)
 TOKEN_DEF(SAVED_GAME_EXT)
@@ -833,6 +841,9 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE(LOAD_IMAGE_X)
 	TOKEN_TABLE(LOAD_IMAGE_Y)
 	TOKEN_TABLE(LOAD_IMAGE)
+#ifdef ENABLE_WME3D
+	TOKEN_TABLE(SHADOW_IMAGE)
+#endif
 	TOKEN_TABLE(LOCAL_SAVE_DIR)
 	TOKEN_TABLE(COMPAT_KILL_METHOD_THREADS)
 	TOKEN_TABLE_END
@@ -897,6 +908,17 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 			_videoFont = _gameRef->_fontStorage->addFont(params);
 			break;
 
+
+#ifdef ENABLE_WME3D
+		case TOKEN_SHADOW_IMAGE:
+			if (_shadowImage) {
+				_surfaceStorage->removeSurface(_shadowImage);
+			}
+			_shadowImage = nullptr;
+
+			_shadowImage = _gameRef->_surfaceStorage->addSurface(params);
+			break;
+#endif
 
 		case TOKEN_CURSOR:
 			delete _cursor;
@@ -1033,7 +1055,9 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 	if (!_systemFont) {
 		_systemFont = _gameRef->_fontStorage->addFont("system_font.fnt");
 	}
-
+	if (!_shadowImage) {
+		_shadowImage = _gameRef->_surfaceStorage->addSurface("shadow.png");
+	}
 
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		_gameRef->LOG(0, "Syntax error in GAME definition");
