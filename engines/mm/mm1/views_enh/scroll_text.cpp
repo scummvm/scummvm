@@ -42,32 +42,36 @@ void ScrollText::setBounds(const Common::Rect &r) {
 	_rowCount = _innerBounds.height() / FONT_HEIGHT;
 }
 
-void ScrollText::addLine(const Common::String &msg,
+void ScrollText::addLine(const Common::String &str,
 		TextAlignment align, byte color) {
 	if (_lines.size() < _rowCount) {
 		switch (align) {
 		case ALIGN_LEFT:
-			addText(msg, _lines.size(), color, align);
+			addText(str, _lines.size(), color, align);
 			break;
 		case ALIGN_RIGHT:
-			addText(msg, _lines.size(), color, align);
+			addText(str, _lines.size(), color, align);
 			break;
 		case ALIGN_MIDDLE:
-			addText(msg, _lines.size(), color, align);
+			addText(str, _lines.size(), color, align);
 			break;
 		}
 	}
 }
 
-void ScrollText::addText(const Common::String &msg,
+Common::String ScrollText::format(const Common::String &str) {
+	Common::String s = capitalize(str);
+	return searchAndReplace(s, "\n", " ");
+}
+
+void ScrollText::addText(const Common::String &s,
 		int lineNum, byte color, TextAlignment align, int xp) {
+	Common::String str = s;
 	Common::Point pt(xp, lineNum * 8);
 	Graphics::Font &font = _fontReduced ?
 		g_globals->_fontReduced : g_globals->_fontNormal;
-	int strWidth = font.getStringWidth(msg);
 
-	Common::String str = capitalize(msg);
-	str = searchAndReplace(str, "\n", " ");
+	int strWidth = font.getStringWidth(str);
 	char *startP = const_cast<char *>(str.c_str());
 	char *endP;
 
@@ -131,8 +135,7 @@ void ScrollText::draw() {
 	for (Lines::const_iterator i = begin();
 		i != end(); ++i) {
 		setTextColor(i->_color);
-		writeString(i->_pos.x + FRAME_BORDER_SIZE,
-			i->_pos.y + FRAME_BORDER_SIZE, i->_str);
+		writeString(i->_pos.x, i->_pos.y, i->_str);
 	}
 }
 

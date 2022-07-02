@@ -23,15 +23,20 @@
 #define MM1_VIEWS_ENH_LOCATIONS_MARKET_H
 
 #include "mm/mm1/views_enh/locations/location.h"
+#include "mm/mm1/data/locations.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 namespace Locations {
 
-class Market : public Location {
+class Market : public Location, public MarketData {
+private:
+	int _foodCost = 0;
 public:
 	Market();
+
+	bool msgFocus(const FocusMessage &msg) override;
 
 	/**
 	 * Draw the view

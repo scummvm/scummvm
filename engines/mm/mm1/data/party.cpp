@@ -50,5 +50,13 @@ void Party::share(TransferKind shareType) {
 	}
 }
 
+uint Party::getPartyGold() const {
+	uint total = 0;
+	for (uint i = 0; i < size(); ++i)
+		total += (*this)[i]._gold;
+
+	return total;
+}
+
 } // namespace MM1
 } // namespace MM

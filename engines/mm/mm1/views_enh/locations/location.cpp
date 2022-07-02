@@ -29,7 +29,7 @@ namespace ViewsEnh {
 namespace Locations {
 
 Location::Location(const Common::String &name) :
-	ScrollView(name) {
+		ScrollText(name) {
 	_bounds = Common::Rect(232, 0, 320, 146);
 }
 

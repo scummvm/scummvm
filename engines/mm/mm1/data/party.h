@@ -29,7 +29,15 @@ namespace MM {
 namespace MM1 {
 
 struct Party : public Common::Array<Character> {
+	/**
+	 * Share food, gold, gems between entire party
+	 */
 	static void share(TransferKind shareType);
+
+	/**
+	 * Get the party gold combined
+	 */
+	uint getPartyGold() const;
 };
 
 } // namespace MM1
