@@ -1889,18 +1889,15 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetSavingScreen") == 0) {
 		stack->correctParams(3);
-		/* ScValue *val = */stack->pop();
+		ScValue *val = stack->pop();
 		int saveImageX = stack->pop()->getInt();
 		int saveImageY = stack->pop()->getInt();
 
-		// FIXME: Dead code or bug?
-#if 0
 		if (val->isNULL()) {
 			_renderer->setSaveImage(NULL, saveImageX, saveImageY);
 		} else {
-#endif
-			_renderer->setSaveImage(NULL, saveImageX, saveImageY);
-		//}
+			_renderer->setSaveImage(val->getString(), saveImageX, saveImageY);
+		}
 		stack->pushNULL();
 		return STATUS_OK;
 	}

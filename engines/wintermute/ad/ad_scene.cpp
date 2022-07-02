@@ -926,6 +926,14 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			parser.scanStr(params, "%b", &_editorShowScale);
 			break;
 
+#ifdef ENABLE_WME3D
+		case TOKEN_EDITOR_SHOW_GEOMETRY:
+			parser.scanStr(params, "%b", &_showGeometry);
+			if (!_gameRef->_editorMode)
+				_showGeometry = false;
+			break;
+#endif
+
 		case TOKEN_SCRIPT:
 			addScript(params);
 			break;
@@ -1026,6 +1034,8 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 		Camera3D *activeCamera = _sceneGeometry->getActiveCamera();
 		if (activeCamera != nullptr) {
 			_gameRef->_renderer->setup3D(activeCamera);
+			_gameRef->_renderer->setScreenViewport();
+			_sceneGeometry->render(false);
 		}
 	}
 #endif
@@ -1133,8 +1143,10 @@ bool AdScene::traverseNodes(bool doUpdate) {
 	_gameRef->_renderer->setup2D();
 
 	// for each layer
-	/* int mainOffsetX = 0; */
-	/* int mainOffsetY = 0; */
+#ifdef ENABLE_WME3D
+	int mainOffsetX = 0;
+	int mainOffsetY = 0;
+#endif
 
 	for (uint32 j = 0; j < _layers.size(); j++) {
 		if (!_layers[j]->_active) {
@@ -1174,6 +1186,8 @@ bool AdScene::traverseNodes(bool doUpdate) {
 
 #ifdef ENABLE_WME3D
 		if (!doUpdate && _sceneGeometry && _layers[j]->_main) {
+			_gameRef->getOffset(&mainOffsetX, &mainOffsetY);
+
 			if (_gameRef->getMaxShadowType() >= SHADOW_STENCIL) {
 				_sceneGeometry->renderShadowGeometry();
 			}
@@ -1196,7 +1210,7 @@ bool AdScene::traverseNodes(bool doUpdate) {
 					}
 #else
 					if (node->_entity->_is3D) {
-						// prepare 3d rendering
+						_gameRef->_renderer->setup3D();
 					} else {
 						_gameRef->_renderer->setup2D();
 					}
@@ -1243,7 +1257,7 @@ bool AdScene::traverseNodes(bool doUpdate) {
 
 #ifdef ENABLE_WME3D
 	if (!doUpdate && _sceneGeometry) {
-		// always display geometry for the moment
+		_gameRef->setOffset(mainOffsetX, mainOffsetY);
 		_sceneGeometry->render(_showGeometry);
 	}
 #endif
@@ -1440,8 +1454,16 @@ bool AdScene::displayRegionContentOld(AdRegion *region) {
 
 
 		if (obj != nullptr) {
+#ifndef ENABLE_WME3D
 			_gameRef->_renderer->setup2D();
-
+#else
+			Camera3D *activeCamera = _sceneGeometry->getActiveCamera();
+			if (activeCamera != nullptr) {
+				_gameRef->_renderer->setup3D(activeCamera);
+			} else {
+				_gameRef->_renderer->setup2D();
+			}
+#endif
 			if (_gameRef->_editorMode || !obj->_editorOnly) {
 				obj->display();
 			}

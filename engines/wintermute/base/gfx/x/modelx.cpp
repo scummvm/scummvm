@@ -930,6 +930,9 @@ bool ModelX::persist(BasePersistenceManager *persistMgr) {
 		}
 	}
 
+	if (!persistMgr->getIsSaving())
+		initializeSimple();
+
 	return true;
 }
 
