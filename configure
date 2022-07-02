@@ -3838,12 +3838,16 @@ if test "$_sdl" = yes ; then
 	append_var INCLUDES "$SDL_CFLAGS"
 	append_var LIBS "$SDL_LIBS"
 	case $_sdlversion in
-		2.0.*)
+		2.*.*)
 			add_line_to_config_mk "USE_SDL2 = 1"
 			_sdlMajorVersionNumber=2
 			;;
-		*)
+		1.2.*)
 			_sdlMajorVersionNumber=1
+			;;
+		*)
+			echo "support for SDL $_sdlversion not implemented yet"
+			exit 1
 			;;
 	esac
 fi
@@ -5413,7 +5417,7 @@ if test "$_opengl_mode" != none ; then
 					_opengl_mode=gl
 					;;
 
-				2.0.*)
+				*)
 					# SDL2 supports both OpenGL + OpenGL ES contexts.
 					# However, macOS only allows OpenGL context creation at
 					# this time, thus we limit us to OpenGL on that platform.
@@ -5539,12 +5543,6 @@ fi
 
 _opengl=yes
 case $_opengl_mode in
-	auto)
-		# This case should never occur but better safe than sorry.
-		echo "no"
-		_opengl=no
-		;;
-
 	none)
 		echo "no"
 		_opengl=no
