@@ -61,7 +61,6 @@ public:
 	void setMaxShadowType(TShadowType shadowType);
 
 	bool _2DPathfinding;
-	float _waypointHeight;
 
 	float _fov;
 	float _nearPlane;

@@ -722,7 +722,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 
 	int ar, ag, ab, aa;
 	char camera[MAX_PATH_LENGTH] = "";
-	/* float waypointHeight = -1.0f; */
+	float waypointHeight = -1.0f;
 
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
@@ -964,7 +964,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_WAYPOINT_HEIGHT:
-			parser.scanStr(params, "%f", &_waypointHeight);
+			parser.scanStr(params, "%f", &waypointHeight);
 			break;
 
 		case TOKEN_NEAR_CLIPPING_PLANE:
@@ -1018,8 +1018,8 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 
 #ifdef ENABLE_WME3D
 	if (_sceneGeometry) {
-		if (_waypointHeight >= 0.0f) {
-			_sceneGeometry->_waypointHeight = _waypointHeight;
+		if (waypointHeight >= 0.0f) {
+			_sceneGeometry->_waypointHeight = waypointHeight;
 			_sceneGeometry->dropWaypoints();
 		}
 
@@ -2744,7 +2744,7 @@ bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		if (_ambientLightColor != 0x00000000)
 			buffer->putTextIndent(indent + 2, "AMBIENT_LIGHT_COLOR { %d,%d,%d }\n", RGBCOLGetR(_ambientLightColor), RGBCOLGetG(_ambientLightColor), RGBCOLGetB(_ambientLightColor));
 
-		buffer->putTextIndent(indent + 2, "WAYPOINT_HEIGHT=%f\n", _waypointHeight);
+		buffer->putTextIndent(indent + 2, "WAYPOINT_HEIGHT=%f\n", _sceneGeometry->_waypointHeight);
 
 		buffer->putTextIndent(indent + 2, "\n");
 	}
