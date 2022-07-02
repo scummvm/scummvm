@@ -2718,6 +2718,9 @@ MiniscriptInstructionOutcome Structural::writeRefAttribute(MiniscriptThread *thr
 	} else if (attrib == "loop") {
 		DynamicValueWriteFuncHelper<Structural, &Structural::scriptSetLoop>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "debug") {
+		DynamicValueWriteFuncHelper<Structural, &Structural::scriptSetDebug>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	// Attempt to resolve as a child object
@@ -3083,6 +3086,10 @@ MiniscriptInstructionOutcome Structural::scriptSetLoop(MiniscriptThread *thread,
 
 	_loop = value.getBool();
 
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome Structural::scriptSetDebug(MiniscriptThread *thread, const DynamicValue &value) {
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
