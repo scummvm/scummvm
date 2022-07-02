@@ -116,6 +116,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		case 6:
 		case 3:
 			detokenisedStream += "TOGVIS (";
+			currentInstruction = FCLInstruction(Token::TOGVIS);
 			break; // these all come in unary and binary versions,
 		case 7:
 		case 4:

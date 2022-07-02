@@ -22,5 +22,6 @@ bool Object::isPlanar() { return false; }
 bool Object::isInvisible() { return _flags & 0x80; }
 void Object::makeInvisible() { _flags = _flags | 0x80; }
 void Object::makeVisible() { _flags = _flags & ~0x80; }
+void Object::toggleVisibility() { _flags = _flags ^ 0x80; }
 
 Object::~Object() {}
