@@ -1117,6 +1117,13 @@ void LB::b_open(int nargs) {
 	if (nargs == 2)
 		g_lingo->pop();
 	warning("LB::b_open(): Unsupported command open encountered -> The movie tried to open %s", d.asString().c_str());
+
+	if (!debugChannelSet(-1, kDebugFewFramesOnly) &&
+		!(g_director->getGameGID() == GID_TEST || g_director->getGameGID() == GID_TESTALL)) {
+		Common::U32String message = Common::String::format("Unsupported command open encountered -> The movie tried to execute open %s!", d.asString().c_str());
+		GUI::MessageDialog dialog(message, _("Ok"));
+		dialog.runModal();
+	}
 }
 
 void LB::b_openDA(int nargs) {
