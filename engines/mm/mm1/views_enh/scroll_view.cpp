@@ -163,8 +163,9 @@ bool ScrollView::msgMouseDown(const MouseDownMessage &msg) {
 }
 
 bool ScrollView::msgMouseUp(const MouseUpMessage &msg) {
-	// Reset button depressed state
-	if (_selectedButton != -1)
+	int oldSelection = _selectedButton;
+	_selectedButton = -1;
+	if (oldSelection != -1)
 		draw();
 
 	// If the highlighted button remains the same, trigger it's key
