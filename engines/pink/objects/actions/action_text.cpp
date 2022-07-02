@@ -66,6 +66,7 @@ void ActionText::deserialize(Archive &archive) {
 	_centered = archive.readDWORD();
 	_scrollBar = archive.readDWORD();
 	_textRGB = archive.readDWORD();
+	_textRGB = ((_textRGB >> 16) & 0xFF) | (((_textRGB >> 8) & 0xFF) << 8) | ((_textRGB & 0xFF) << 16);
 	_backgroundRGB = archive.readDWORD();
 }
 
