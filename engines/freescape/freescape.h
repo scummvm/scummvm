@@ -123,7 +123,7 @@ public:
 	void executeGoto(FCLInstruction &instruction);
 	void executeIfThenElse(FCLInstruction &instruction);
 	void executeMakeInvisible(FCLInstruction &instruction);
-
+	void executeMakeVisible(FCLInstruction &instruction);
 
 	// Rendering
 	void drawFrame();
