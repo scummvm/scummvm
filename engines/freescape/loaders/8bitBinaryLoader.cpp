@@ -78,7 +78,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			for (int ordinate = 0; ordinate < numberOfOrdinates; ordinate++) {
 				ord = file->readByte();
 				debug("ord: %x", ord);
-				ordinates->push_back(ord);
+				ordinates->push_back(32 * ord);
 				byteSizeOfObject--;
 			}
 		}
