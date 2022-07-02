@@ -1956,12 +1956,11 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		stack->correctParams(1);
 		const char *nodeName = stack->pop()->getString();
 
-		if (!_sceneGeometry) {
-			script->runtimeError("Scene.EnableNode3D: Scene doesn't contain any geometry");
-			stack->pushBool(false);
-		} else {
+		if (_sceneGeometry) {
 			bool ret = _sceneGeometry->isNodeEnabled(nodeName);
 			stack->pushBool(ret);
+		} else {
+			stack->pushBool(false);
 		}
 
 		return STATUS_OK;
@@ -1976,6 +1975,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		const char *lightName = stack->pop()->getString();
 
 		if (!_sceneGeometry) {
+			script->runtimeError("Scene.EnableLight: Scene doesn't contain any geometry");
 			stack->pushBool(false);
 		} else {
 			bool res = _sceneGeometry->enableLight(lightName);
@@ -1994,6 +1994,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		const char *lightName = stack->pop()->getString();
 
 		if (!_sceneGeometry) {
+			script->runtimeError("Scene.DisableLight: Scene doesn't contain any geometry");
 			stack->pushBool(false);
 		} else {
 			bool res = _sceneGeometry->enableLight(lightName, false);
@@ -2048,6 +2049,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		uint32 color = static_cast<uint32>(stack->pop()->getInt());
 
 		if (!_sceneGeometry) {
+			script->runtimeError("Scene.SetLightColor: Scene doesn't contain any geometry");
 			stack->pushBool(false);
 		} else {
 			bool ret = _sceneGeometry->setLightColor(lightName, color);
@@ -2064,10 +2066,11 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		stack->correctParams(1);
 		const char *lightName = stack->pop()->getString();
 
-		if (_sceneGeometry) {
-			stack->pushInt(_sceneGeometry->getLightColor(lightName));
-		} else {
+		if (!_sceneGeometry) {
+			script->runtimeError("Scene.GetLightColor: Scene doesn't contain any geometry");
 			stack->pushInt(0);
+		} else {
+			stack->pushInt(_sceneGeometry->getLightColor(lightName));
 		}
 
 		return STATUS_OK;
@@ -2081,6 +2084,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		const char *lightName = stack->pop()->getString();
 
 		if (!_sceneGeometry) {
+			script->runtimeError("Scene.GetLightPosition: Scene doesn't contain any geometry");
 			stack->pushInt(0);
 		} else {
 			Math::Vector3d pos = _sceneGeometry->getLightPos(lightName);

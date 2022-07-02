@@ -4089,7 +4089,7 @@ void BaseGame::setWindowTitle() {
 		if (title[0] != '\0') {
 			Common::strlcat(title, " - ", 512);
 		}
-		Common::strlcat(title, "WME Lite", 512);
+		Common::strlcat(title, "Wintermute Engine", 512);
 
 
 		Utf8String utf8Title;
