@@ -92,6 +92,13 @@ protected:
 	void delayFrames(uint frames);
 
 	/**
+	 * Returns true if a delay is active
+	 */
+	bool isDelayActive() const {
+		return _timeoutCtr != 0;
+	}
+
+	/**
 	 * Called when an active timeout countdown expired
 	 */
 	virtual void timeout();

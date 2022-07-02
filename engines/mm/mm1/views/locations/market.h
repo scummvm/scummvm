@@ -34,7 +34,6 @@ namespace Locations {
 class Market : public Location, public MarketData {
 private:
 	int _foodCost = 0;
-	int _displayCtr = 0;
 private:
 	/**
 	 * Buys food
@@ -52,7 +51,11 @@ public:
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
-	bool tick() override;
+
+	/**
+	 * Leaves market after displaying result message
+	 */
+	void timeout() override;
 };
 
 } // namespace Locations

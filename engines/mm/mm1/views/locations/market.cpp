@@ -30,9 +30,6 @@ namespace MM1 {
 namespace Views {
 namespace Locations {
 
-#define TOTAL_FOOD 40
-#define DISPLAY_TIMEOUT (3 * FRAME_RATE)
-
 Market::Market() : Location("Market") {
 	_bounds = getLineBounds(21, 24);
 }
@@ -53,8 +50,7 @@ bool Market::msgKeypress(const KeypressMessage &msg) {
 		leave();
 		break;
 	case Common::KEYCODE_y:
-		if (!_displayCtr)
-			buyFood();
+		buyFood();
 		break;
 	default:
 		break;
@@ -72,12 +68,6 @@ void Market::draw() {
 	writeString(10, 2, STRING["dialogs.market.will_you_pay"]);
 }
 
-bool Market::tick() {
-	if (_displayCtr && --_displayCtr == 0)
-		leave();
-	return false;
-}
-
 void Market::buyFood() {
 	int foodPurchased = 0;
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
@@ -91,7 +81,7 @@ void Market::buyFood() {
 		STRING["dialogs.market.no_gold"]
 	);
 
-	_displayCtr = DISPLAY_TIMEOUT;
+	delaySeconds(3);
 }
 
 bool Market::buyFood(Character *c) {
@@ -100,9 +90,13 @@ bool Market::buyFood(Character *c) {
 		return false;
 
 	c->_gold = tempGold;
-	c->_food = TOTAL_FOOD;
+	c->_food = MAX_FOOD;
 
 	return true;
+}
+
+void Market::timeout() {
+	leave();
 }
 
 } // namespace Locations
