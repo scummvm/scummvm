@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Thomas Harte. All rights reserved.
 //
 
-#ifndef __Phantasma__Area__
-#define __Phantasma__Area__
+#ifndef FREESCAPE_AREA_H
+#define FREESCAPE_AREA_H
 
 #include "common/hashmap.h"
 #include "common/array.h"
@@ -17,6 +17,8 @@
 
 #include "freescape/gfx.h"
 #include "freescape/objects/object.h"
+
+namespace Freescape {
 
 typedef Common::HashMap<uint16, Object *> ObjectMap;
 
@@ -37,7 +39,7 @@ public:
 	Object *firstEntrance();
 	uint16 getAreaID();
 	uint8 getScale();
-	void draw(Freescape::Renderer *gfx);
+	void draw(Renderer *gfx);
 	void show();
 
 	Object *shootRay(const Math::Ray &ray);
@@ -56,4 +58,6 @@ private:
 	Object *objectWithIDFromMap(ObjectMap *map, uint16 objectID);
 };
 
-#endif /* defined(__Phantasma__Area__) */
+} // End of namespace Freescape
+
+#endif

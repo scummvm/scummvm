@@ -11,6 +11,8 @@
 
 #include "freescape/objects/object.h"
 
+namespace Freescape {
+
 class Entrance : public Object {
 public:
 
@@ -24,8 +26,10 @@ public:
 	bool isPlanar();
 	Type getType() override { return Type::Entrance; };
 	Math::Vector3d getRotation() { return _rotation; }
-	
+
 	void draw(Freescape::Renderer *gfx) override { error("cannot render Entrance"); };
 };
+
+} // End of namespace Freescape
 
 #endif

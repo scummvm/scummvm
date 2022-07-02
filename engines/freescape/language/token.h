@@ -6,12 +6,14 @@
 //  Copyright (c) 2013 Thomas Harte. All rights reserved.
 //
 
-#ifndef __Phantasma__Token__
-#define __Phantasma__Token__
+#ifndef FREESCAPE_TOKEN_H
+#define FREESCAPE_TOKEN_H
 
 #include "common/str.h"
 
 #include "freescape/gamestate.h"
+
+namespace Freescape {
 
 struct Token {
 public:
@@ -108,5 +110,7 @@ private:
 	int32 value;
 	Common::String string;
 };
+
+} // End of namespace Freescape
 
 #endif /* defined(__Phantasma__Token__) */

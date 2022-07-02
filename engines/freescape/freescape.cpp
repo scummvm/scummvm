@@ -20,9 +20,6 @@
 #include "freescape/objects/geometricobject.h"
 #include "freescape/language/token.h"
 
-#include "freescape/loaders/16bitBinaryLoader.h"
-#include "freescape/loaders/8bitBinaryLoader.h"
-
 
 namespace Freescape {
 

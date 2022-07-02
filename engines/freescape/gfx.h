@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GFX_H_
-#define GFX_H_
+#ifndef FREESCAPE_GFX_H
+#define FREESCAPE_GFX_H
 
 #include "common/rect.h"
 #include "common/system.h"
@@ -172,6 +172,6 @@ Renderer *CreateGfxOpenGLShader(OSystem *system);
 Renderer *CreateGfxTinyGL(OSystem *system);
 Renderer *createRenderer(OSystem *system);
 
-} // End of namespace Myst3
+} // End of namespace Freescape
 
 #endif // GFX_H_

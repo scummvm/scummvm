@@ -665,4 +665,4 @@ void TinyGLRenderer::flipBuffer() {
 	}
 }
 
-} // End of namespace Myst3
+} // End of namespace Freescape

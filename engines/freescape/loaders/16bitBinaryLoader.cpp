@@ -12,11 +12,10 @@
 #include "common/debug.h"
 #include "common/file.h"
 
+#include "freescape/freescape.h"
 #include "freescape/area.h"
 #include "freescape/language/16bitDetokeniser.h"
 #include "freescape/language/instruction.h"
-#include "freescape/language/parser.h"
-#include "freescape/loaders/16bitBinaryLoader.h"
 #include "freescape/objects/geometricobject.h"
 #include "freescape/objects/object.h"
 

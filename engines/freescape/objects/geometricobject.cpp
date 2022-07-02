@@ -12,6 +12,8 @@
 #pragma mark -
 #pragma mark Static Getters
 
+namespace Freescape {
+
 int GeometricObject::numberOfColoursForObjectOfType(Type type) {
 	switch (type) {
 	default:
@@ -177,3 +179,5 @@ void GeometricObject::draw(Freescape::Renderer *gfx) {
 		gfx->renderPolygon(_origin, _size, ordinates, colours);
 	}
 }
+
+} // End of namespace Freescape
