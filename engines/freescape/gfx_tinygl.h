@@ -52,6 +52,7 @@ public:
 	virtual void draw2DText(const Common::String &text, const Common::Point &position) override;
 
 	virtual void renderCrossair(byte color) override;
+	virtual void renderShoot(byte color) override;
 	virtual void renderCube(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) override;
 	virtual void renderRectangle(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) override;
 	virtual void renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours) override;

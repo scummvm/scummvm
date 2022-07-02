@@ -225,7 +225,42 @@ void TinyGLRenderer::renderCrossair(byte color) {
 	tglEnd();
 
 	tglDepthMask(TGL_TRUE);
-	tglEnable(TGL_DEPTH_TEST);}
+	tglEnable(TGL_DEPTH_TEST);
+}
+
+void TinyGLRenderer::renderShoot(byte color) {
+	uint8 r, g, b;
+	_palette->getRGBAt(color, r, g, b);
+
+	tglMatrixMode(TGL_PROJECTION);
+	tglLoadIdentity();
+	tglOrtho(0, kOriginalWidth, kOriginalHeight, 0, 0, 1);
+	tglMatrixMode(TGL_MODELVIEW);
+	tglLoadIdentity();
+
+	tglDisable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_FALSE);
+
+	tglColor3ub(r, g, b);
+
+	tglBegin(TGL_LINES);
+	tglVertex2f(0, kOriginalHeight - 2);
+	tglVertex2f(kOriginalWidth / 2, kOriginalHeight / 2);
+
+	tglVertex2f(0, kOriginalHeight);
+	tglVertex2f(kOriginalWidth / 2, kOriginalHeight / 2);
+
+	tglVertex2f(kOriginalWidth, kOriginalHeight - 2);
+	tglVertex2f(kOriginalWidth / 2, kOriginalHeight / 2);
+
+	tglVertex2f(kOriginalWidth, kOriginalHeight);
+	tglVertex2f(kOriginalWidth / 2, kOriginalHeight / 2);
+
+	tglEnd();
+
+	tglEnable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_TRUE);
+}
 
 void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 	assert(vertices.size() >= 2);

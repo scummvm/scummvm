@@ -96,6 +96,7 @@ public:
 	virtual void scale(const Math::Vector3d &scale) = 0;
 
 	virtual void renderCrossair(byte color) = 0;
+	virtual void renderShoot(byte color) = 0;
 	virtual void renderCube(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) = 0;
 	virtual void renderRectangle(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) = 0;
 	virtual void renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours) = 0;
