@@ -94,6 +94,7 @@ public:
 	int32 _texTalkLifeTime;
 
 	TTalkSkipButton _talkSkipButton;
+	TVideoSkipButton _videoSkipButton;
 
 #ifdef ENABLE_WME3D
 	uint32 getAmbientLightColor() override;

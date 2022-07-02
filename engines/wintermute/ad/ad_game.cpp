@@ -99,6 +99,7 @@ AdGame::AdGame(const Common::String &gameId) : BaseGame(gameId) {
 	_texTalkLifeTime = 10000;
 
 	_talkSkipButton = TALK_SKIP_LEFT;
+	_videoSkipButton = VIDEO_SKIP_LEFT;
 
 	_sceneViewport = nullptr;
 
@@ -1092,16 +1093,13 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
-#ifdef ENABLE_WME3D
 	//////////////////////////////////////////////////////////////////////////
 	// VideoSkipButton
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "VideoSkipButton") {
-		warning("AdGame::scGetProperty VideoSkipButton not implemented");
-		_scValue->setInt(0);
+		_scValue->setInt(_videoSkipButton);
 		return _scValue;
 	}
-#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// ChangingScene
@@ -1225,15 +1223,20 @@ bool AdGame::scSetProperty(const char *name, ScValue *value) {
 		return STATUS_OK;
 	}
 
-#ifdef ENABLE_WME3D
 	//////////////////////////////////////////////////////////////////////////
 	// VideoSkipButton
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "VideoSkipButton") == 0) {
-		warning("AdGame::scSetProperty VideoSkipButton not implemented");
+		int val = value->getInt();
+		if (val < 0) {
+			val = 0;
+		}
+		if (val > VIDEO_SKIP_NONE) {
+			val = VIDEO_SKIP_NONE;
+		}
+		_videoSkipButton = (TVideoSkipButton)val;
 		return STATUS_OK;
 	}
-#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// StartupScene
@@ -1351,6 +1354,7 @@ TOKEN_DEF(INVENTORY_BOX)
 TOKEN_DEF(ITEMS)
 TOKEN_DEF(ITEM)
 TOKEN_DEF(TALK_SKIP_BUTTON)
+TOKEN_DEF(VIDEO_SKIP_BUTTON)
 TOKEN_DEF(SCENE_VIEWPORT)
 TOKEN_DEF(ENTITY_CONTAINER)
 TOKEN_DEF(EDITOR_PROPERTY)
@@ -1432,6 +1436,15 @@ bool AdGame::loadBuffer(char *buffer, bool complete) {
 					} else {
 						_talkSkipButton = TALK_SKIP_LEFT;
 					}
+					break;
+
+				case TOKEN_VIDEO_SKIP_BUTTON:
+					if (scumm_stricmp(params2, "right") == 0)
+						_videoSkipButton = VIDEO_SKIP_RIGHT;
+					else if (scumm_stricmp(params2, "both") == 0)
+						_videoSkipButton = VIDEO_SKIP_BOTH;
+					else
+						_videoSkipButton = VIDEO_SKIP_LEFT;
 					break;
 
 				case TOKEN_SCENE_VIEWPORT: {
