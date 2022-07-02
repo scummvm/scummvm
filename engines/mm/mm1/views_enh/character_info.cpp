@@ -160,7 +160,7 @@ bool CharacterInfo::msgAction(const ActionMessage &msg) {
 
 bool CharacterInfo::msgMouseUp(const MouseUpMessage &msg) {
 	// Check if a stat icon was clicked
-	Common::Rect r(16, 16);
+	Common::Rect r(25, 22);
 	for (int i = 0; i < ICONS_COUNT; ++i) {
 		r.moveTo(_innerBounds.left + ICONS[i]._x,
 			_innerBounds.top + ICONS[i]._y);
