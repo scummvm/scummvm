@@ -231,19 +231,6 @@ enum TShadowType {
 	SHADOW_STENCIL  = 3
 };
 
-#ifdef ENABLE_WME3D
-
-struct FogParameters {
-	FogParameters() : _start(0.0f), _end(0.0f), _color(0x00000000), _enabled(false) {}
-
-	float _start;
-	float _end;
-	uint32 _color;
-	bool _enabled;
-};
-
-#endif
-
 } // End of namespace Wintermute
 
 #endif

@@ -67,7 +67,10 @@ public:
 	float _nearPlane;
 	float _farPlane;
 
-	FogParameters _fogParameters;
+	bool _fogEnabled;
+	uint32 _fogColor;
+	float _fogStart;
+	float _fogEnd;
 #endif
 	bool afterLoad();
 

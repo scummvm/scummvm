@@ -78,7 +78,7 @@ public:
 
 #ifdef ENABLE_WME3D
 	virtual uint32 getAmbientLightColor();
-	virtual bool getFogParams(FogParameters &fogParameters);
+	virtual bool getFogParams(bool *fogEnabled, uint32 *fogColor, float *start, float *end);
 #endif
 
 	virtual bool onScriptShutdown(ScScript *script);

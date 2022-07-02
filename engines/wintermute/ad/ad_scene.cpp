@@ -159,10 +159,10 @@ void AdScene::setDefaults() {
 
 	_ambientLightColor = 0x00000000;
 
-	_fogParameters._enabled = false;
-	_fogParameters._color = 0x00FFFFFF;
-	_fogParameters._start = 0.0f;
-	_fogParameters._end = 0.0f;
+	_fogEnabled = false;
+	_fogColor = 0x00FFFFFF;
+	_fogStart = 0.0f;
+	_fogEnd = 0.0f;
 #endif
 
 	_viewport = nullptr;
@@ -2252,10 +2252,10 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "EnableFog") == 0) {
 		stack->correctParams(3);
-		_fogParameters._enabled = true;
-		_fogParameters._color = stack->pop()->getInt();
-		_fogParameters._start = stack->pop()->getFloat();
-		_fogParameters._end = stack->pop()->getFloat();
+		_fogEnabled = true;
+		_fogColor = stack->pop()->getInt();
+		_fogStart = stack->pop()->getFloat();
+		_fogEnd = stack->pop()->getFloat();
 
 		stack->pushNULL();
 		return STATUS_OK;
@@ -2266,7 +2266,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DisableFog") == 0) {
 		stack->correctParams(0);
-		_fogParameters._enabled = false;
+		_fogEnabled = false;
 
 		stack->pushNULL();
 		return STATUS_OK;
@@ -2984,13 +2984,13 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 		persistMgr->transferFloat(TMEMBER(_farPlane));
 		persistMgr->transferSint32(TMEMBER_INT(_maxShadowType));
 		persistMgr->transferUint32(TMEMBER(_ambientLightColor));
-		persistMgr->transferBool(TMEMBER(_fogParameters._enabled));
-		persistMgr->transferUint32(TMEMBER(_fogParameters._color));
-		persistMgr->transferFloat(TMEMBER(_fogParameters._start));
-		persistMgr->transferFloat(TMEMBER(_fogParameters._end));
+		persistMgr->transferBool(TMEMBER(_fogEnabled));
+		persistMgr->transferUint32(TMEMBER(_fogColor));
+		persistMgr->transferFloat(TMEMBER(_fogStart));
+		persistMgr->transferFloat(TMEMBER(_fogEnd));
 	} else {
 		_sceneGeometry = nullptr;
-		_fogParameters._enabled = false;
+		_fogEnabled = false;
 	}
 #endif
 
