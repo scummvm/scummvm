@@ -1880,16 +1880,20 @@ void LB::b_findEmpty(int nargs) {
 }
 
 void LB::b_importFileInto(int nargs) {
-	Datum d = g_lingo->pop();
-	Datum d2 = g_lingo->pop();
-	Common::String path = ConfMan.get("path") + d.asString();
-	Common::FSNode in(path);
-	Common::SeekableReadStream *str = in.createReadStream();
+	Common::String path = pathMakeRelative("blend2.pic");
+	Common::File in;
+	in.open(path);
+	if (!in.isOpen()) {
+		warning("b_importFileInto(): Cannot open file %s", path.c_str());
+		return;
+	}
 	Image::PICTDecoder *k = new Image::PICTDecoder();
-	k->loadStream(*str);
-	g_system->copyRectToScreen(k->getSurface()->getPixels(), k->getSurface()->pitch, 100, 100, 166, 182);
-	while (true)
-		g_system->updateScreen();
+	k->loadStream(in);
+	((BitmapCastMember *)(g_director->getCurrentMovie()->getCast()->_loadedCast->getVal(1)))->_img = k;
+	((BitmapCastMember *)(g_director->getCurrentMovie()->getCast()->_loadedCast->getVal(1)))->setModified(true);
+	g_director->getCurrentMovie()->getScore()->_channels[1]->_dirty = true;
+	in.close();
+	g_lingo->dropStack(nargs);
 }
 
 void menuCommandsCallback(int action, Common::String &text, void *data) {
