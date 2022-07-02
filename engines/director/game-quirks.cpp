@@ -23,6 +23,14 @@
 
 namespace Director {
 
+static void quirkKidsBox() {
+    // Kids Box opens with a 320x150 splash screen before switching to
+    // a full screen 640x480 game window. If desktop mode is off, ScummVM
+    // will pick a game window that fits the splash screen and then try
+    // to squish the full size game window into it.
+    g_director->_wmMode = Director::wmModeDesktop;
+}
+
 static void quirkLzone() {
 	SearchMan.addSubDirectoryMatching(g_director->_gameDataDir, "win_data", 0, 2);
 }
@@ -47,6 +55,7 @@ struct Quirk {
 	Common::Platform platform;
 	void (*quirk)();
 } quirks[] = {
+    { "kidsbox", Common::kPlatformMacintosh, &quirkKidsBox },
 	{ "lzone", Common::kPlatformWindows, &quirkLzone },
 	{ "mediaband", Common::kPlatformUnknown, &quirkMediaband },
 	{ "warlock", Common::kPlatformUnknown, &quirkWarlock },
