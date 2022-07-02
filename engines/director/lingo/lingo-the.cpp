@@ -1290,6 +1290,11 @@ int Lingo::getMenuItemsNum(Datum &d) {
 
 	Graphics::MacMenuItem *menu = nullptr;
 
+	if (!g_director->_wm->getMenu()) {
+		warning("Lingo::getMenuItemsNum() : Menu does not exist!");
+		return 0;
+	}
+
 	if (d.u.menu->menuIdNum == -1) {
 		menu = g_director->_wm->getMenu()->getMenuItem(*d.u.menu->menuIdStr);
 	} else {

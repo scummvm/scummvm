@@ -337,7 +337,7 @@ Common::Rect Channel::getBbox(bool unstretched) {
 						unstretched ? _sprite->_height : _height);
 	result.moveTo(getPosition());
 
-	if (_constraint) {
+	if (_constraint > 0 && _constraint <= g_director->getCurrentMovie()->getScore()->_channels.size()) {
 		Common::Rect constraintBbox = g_director->getCurrentMovie()->getScore()->_channels[_constraint]->getBbox();
 		if (result.top < constraintBbox.top)
 			_currentPoint.y = constraintBbox.top;

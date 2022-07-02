@@ -312,9 +312,6 @@ int MacMenu::numberOfMenus() {
 MacMenuItem *MacMenu::getMenuItem(const Common::String &menuId) {
 	MacMenuItem *menu = nullptr;
 
-	if (!this)
-		return menu;
-
 	for (uint i = 0; i < _items.size(); i++) {
 		// TODO: support unicode text menu
 		// didn't support unicode item finding yet
