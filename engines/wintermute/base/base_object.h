@@ -87,6 +87,9 @@ protected:
 	char *_soundEvent;
 public:
 	Graphics::TSpriteBlendMode _blendMode;
+#ifdef ENABLE_WME3D
+	virtual bool renderModel();
+#endif
 	virtual bool afterMove();
 	float _scale;
 	uint32 _alphaColor;

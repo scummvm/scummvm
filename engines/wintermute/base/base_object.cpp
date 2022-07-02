@@ -39,6 +39,7 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
+#include "engines/wintermute/base/gfx/base_renderer3d.h"
 #include "engines/wintermute/base/gfx/x/modelx.h"
 #include "engines/wintermute/wintermute.h"
 #endif
@@ -1390,6 +1391,19 @@ bool BaseObject::getMatrix(Math::Matrix4 *modelMatrix, Math::Vector3d *posVect) 
 
 	*modelMatrix = translation * rotation * scale;
 	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseObject::renderModel() {
+	Math::Matrix4 objectMat;
+	getMatrix(&objectMat);
+
+	_gameRef->_renderer3D->setWorldTransform(objectMat);
+
+	if (_modelX)
+		return _modelX->render();
+	else
+		return false;
 }
 #endif
 
