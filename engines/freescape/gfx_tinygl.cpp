@@ -201,6 +201,31 @@ void TinyGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vecto
 	tglTranslatef(-pos.x(), -pos.y(), -pos.z());
 }
 
+void TinyGLRenderer::renderCrossair(byte color) {
+	uint8 r, g, b;
+	_palette->getRGBAt(color, r, g, b);
+
+	tglMatrixMode(TGL_PROJECTION);
+	tglLoadIdentity();
+	tglOrtho(0, kOriginalWidth, kOriginalHeight, 0, 0, 1);
+	tglMatrixMode(TGL_MODELVIEW);
+	tglLoadIdentity();
+
+	tglDisable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_FALSE);
+
+	tglColor3ub(r, g, b);
+
+	tglBegin(TGL_LINES);
+	tglVertex2f(kOriginalWidth / 2 - 2, kOriginalHeight / 2);
+	tglVertex2f(kOriginalWidth / 2 + 3, kOriginalHeight / 2);
+
+	tglVertex2f(kOriginalWidth / 2, kOriginalHeight / 2 - 2);
+	tglVertex2f(kOriginalWidth / 2, kOriginalHeight / 2 + 3);
+	tglEnd();
+
+	tglDepthMask(TGL_TRUE);
+	tglEnable(TGL_DEPTH_TEST);}
 
 void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 	assert(vertices.size() >= 2);

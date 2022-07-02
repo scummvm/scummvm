@@ -186,6 +186,7 @@ void FreescapeEngine::drawFrame() {
 	_gfx->positionCamera(_position, _position + _cameraFront);
 	_gfx->scale(_scaleVector);
 	_currentArea->draw(_gfx);
+	_gfx->renderCrossair(0);
 	//drawBorder();
 	_gfx->flipBuffer();
 }
