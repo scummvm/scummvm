@@ -33,8 +33,6 @@ namespace Views {
 #define TEXT_H 25
 
 class TextView : public UIElement {
-private:
-	int _timeoutCtr = 0;
 protected:
 	Common::Point _textPos;
 	byte _bgColor = 0xff;
@@ -90,11 +88,6 @@ protected:
 	void escToGoBack(int x = 12);
 
 	/**
-	 * Set a delay countdown
-	 */
-	void delaySeconds(uint seconds);
-
-	/**
 	 * Called when an active timeout countdown expired
 	 */
 	virtual void timeout();
@@ -103,13 +96,6 @@ public:
 	TextView(const Common::String &name);
 	TextView(const Common::String &name, UIElement *owner);
 	virtual ~TextView() {}
-
-	/**
-	 * Frame tick
-	 */
-	bool tick() override;
-
-
 };
 
 } // namespace Views
