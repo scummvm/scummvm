@@ -23,7 +23,7 @@
 #define MM1_VIEWS_ENH_CHARACTER_INFO_H
 
 #include "mm/mm1/views_enh/scroll_view.h"
-#include "mm/mm1/views_enh/scroll_text.h"
+#include "mm/mm1/views_enh/scroll_popup.h"
 #include "mm/xeen/sprites.h"
 
 namespace MM {
@@ -42,7 +42,7 @@ private:
 	const char *ICONS_TEXT[CHAR_ICONS_COUNT];
 	int _cursorCell = 0;
 	bool _cursorVisible = false;
-	ScrollText _statInfo;
+	ScrollPopup _statInfo;
 private:
 	/**
 	 * Draw the title text
