@@ -239,6 +239,7 @@ private:
 	MiniscriptInstructionOutcome scriptSetNoteNum(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetLoop(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetPlayNote(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetTempo(MiniscriptThread *thread, const DynamicValue &value);
 
 	MiniscriptInstructionOutcome scriptSetMuteTrack(MiniscriptThread *thread, size_t trackIndex, bool muted);
 

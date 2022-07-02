@@ -22,6 +22,7 @@
 #include "audio/mididrv.h"
 #include "audio/midiplayer.h"
 #include "audio/midiparser.h"
+#include "audio/midiparser_smf.h"
 
 #include "common/random.h"
 
@@ -73,11 +74,68 @@ public:
 MidiCombiner::~MidiCombiner() {
 }
 
+class MidiParser_MTropolis : public MidiParser_SMF {
+public:
+	MidiParser_MTropolis(bool hasTempoOverride, double tempoOverride, uint16 mutedTracks);
+
+	void setTempo(uint32 tempo) override;
+
+	void setTempoOverride(double tempoOverride);
+	void setMutedTracks(uint16 mutedTracks);
+
+protected:
+	bool processEvent(const EventInfo &info, bool fireEvents) override;
+
+private:
+	double _tempoOverride;
+	uint16 _mutedTracks;
+	bool _hasTempoOverride;
+};
+
+
+MidiParser_MTropolis::MidiParser_MTropolis(bool hasTempoOverride, double tempoOverride, uint16 mutedTracks)
+	: _hasTempoOverride(hasTempoOverride), _tempoOverride(tempoOverride), _mutedTracks(mutedTracks) {
+}
+
+void MidiParser_MTropolis::setTempo(uint32 tempo) {
+	if (_hasTempoOverride)
+		return;
+
+	MidiParser_SMF::setTempo(tempo);
+}
+
+void MidiParser_MTropolis::setTempoOverride(double tempoOverride) {
+	_hasTempoOverride = true;
+
+	if (tempoOverride < 1.0)
+		tempoOverride = 1.0;
+
+	_tempoOverride = tempoOverride;
+
+	uint32 convertedTempo = static_cast<uint32>(60000000.0 / tempoOverride);
+
+	MidiParser_SMF::setTempo(convertedTempo);
+}
+
+void MidiParser_MTropolis::setMutedTracks(uint16 mutedTracks) {
+	_mutedTracks = mutedTracks;
+}
+
+bool MidiParser_MTropolis::processEvent(const EventInfo &info, bool fireEvents) {
+	if ((info.event & 0xf0) == MidiDriver_BASE::MIDI_COMMAND_NOTE_ON) {
+		int track = _noteChannelToTrack[info.event & 0xf];
+		if (track >= 0 && (_mutedTracks & (1 << track)))
+			return true;
+	}
+
+	return MidiParser_SMF::processEvent(info, fireEvents);
+}
+
 // This extends MidiDriver_BASE because we need to intercept commands to modulate the volume
 // separately for each input.
 class MidiFilePlayerImpl : public MidiFilePlayer {
 public:
-	explicit MidiFilePlayerImpl(const Common::SharedPtr<MidiCombinerSource> &outputDriver, const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint32 baseTempo, uint8 volume, bool loop, uint16 mutedTracks);
+	explicit MidiFilePlayerImpl(const Common::SharedPtr<MidiCombinerSource> &outputDriver, const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint32 baseTempo, bool hasTempoOverride, double tempoOverride, uint8 volume, bool loop, uint16 mutedTracks);
 	~MidiFilePlayerImpl();
 
 	// Do not call any of these directly since they're not thread-safe, expose them via MultiMidiPlayer
@@ -87,14 +145,16 @@ public:
 	void resume();
 	void setVolume(uint8 volume);
 	void setLoop(bool loop);
+	void setTempoOverride(double tempo);
 	void setMutedTracks(uint16 mutedTracks);
 	void detach();
 	void onTimer();
 
 private:
+	static double computeTempoScale(double tempo);
 
 	Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> _file;
-	Common::SharedPtr<MidiParser> _parser;
+	Common::SharedPtr<MidiParser_MTropolis> _parser;
 	Common::SharedPtr<MidiCombinerSource> _outputDriver;
 	uint16 _mutedTracks;
 	bool _loop;
@@ -105,11 +165,12 @@ public:
 	MultiMidiPlayer();
 	~MultiMidiPlayer();
 
-	MidiFilePlayer *createFilePlayer(const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint8 volume, bool loop, uint16 mutedTracks);
+	MidiFilePlayer *createFilePlayer(const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, bool hasTempoOverride, double tempoOverride, uint8 volume, bool loop, uint16 mutedTracks);
 	void deleteFilePlayer(MidiFilePlayer *player);
 
 	void setPlayerVolume(MidiFilePlayer *player, uint8 volume);
 	void setPlayerLoop(MidiFilePlayer *player, bool loop);
+	void setPlayerTempo(MidiFilePlayer *player, double tempo);
 	void setPlayerMutedTracks(MidiFilePlayer *player, uint16 mutedTracks);
 	void stopPlayer(MidiFilePlayer *player);
 	void playPlayer(MidiFilePlayer *player);
@@ -133,17 +194,18 @@ private:
 MidiFilePlayer::~MidiFilePlayer() {
 }
 
-MidiFilePlayerImpl::MidiFilePlayerImpl(const Common::SharedPtr<MidiCombinerSource> &outputDriver, const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint32 baseTempo, uint8 volume, bool loop, uint16 mutedTracks)
+MidiFilePlayerImpl::MidiFilePlayerImpl(const Common::SharedPtr<MidiCombinerSource> &outputDriver, const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint32 baseTempo, bool hasTempoOverride, double tempo, uint8 volume, bool loop, uint16 mutedTracks)
 	: _file(file), _outputDriver(outputDriver), _parser(nullptr), _loop(loop), _mutedTracks(mutedTracks) {
-	Common::SharedPtr<MidiParser> parser(MidiParser::createParser_SMF());
+	Common::SharedPtr<MidiParser_MTropolis> parser(new MidiParser_MTropolis(hasTempoOverride, tempo, mutedTracks));
 
 	if (file->contents.size() != 0 && parser->loadMusic(&file->contents[0], file->contents.size())) {
+		_parser = parser;
+
 		parser->setTrack(0);
 		parser->startPlaying();
 		parser->setMidiDriver(outputDriver.get());
 		parser->setTimerRate(baseTempo);
-
-		_parser = parser;
+		parser->property(MidiParser::mpAutoLoop, loop ? 1 : 0);
 	}
 }
 
@@ -173,10 +235,16 @@ void MidiFilePlayerImpl::setVolume(uint8 volume) {
 
 void MidiFilePlayerImpl::setMutedTracks(uint16 mutedTracks) {
 	_mutedTracks = mutedTracks;
+	_parser->setMutedTracks(mutedTracks);
 }
 
 void MidiFilePlayerImpl::setLoop(bool loop) {
 	_loop = loop;
+	_parser->property(MidiParser::mpAutoLoop, loop ? 1 : 0);
+}
+
+void MidiFilePlayerImpl::setTempoOverride(double tempo) {
+	_parser->setTempoOverride(tempo);
 }
 
 void MidiFilePlayerImpl::detach() {
@@ -194,6 +262,12 @@ void MidiFilePlayerImpl::detach() {
 void MidiFilePlayerImpl::onTimer() {
 	if (_parser)
 		_parser->onTimer();
+}
+
+double MidiFilePlayerImpl::computeTempoScale(double tempo) {
+	if (tempo <= 0.0)
+		return 1.0;
+	return 120.0 / tempo;
 }
 
 // Simple combiner - Behaves "QuickTime-like" and all commands are passed through directly.
@@ -1118,11 +1192,11 @@ void MultiMidiPlayer::onTimer() {
 }
 
 
-MidiFilePlayer *MultiMidiPlayer::createFilePlayer(const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint8 volume, bool loop, uint16 mutedTracks) {
+MidiFilePlayer *MultiMidiPlayer::createFilePlayer(const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, bool hasTempoOverride, double tempoOverride, uint8 volume, bool loop, uint16 mutedTracks) {
 	Common::SharedPtr<MidiCombinerSource> combinerSource = _combiner->createSource();
 	combinerSource->setVolume(volume);
 
-	Common::SharedPtr<MidiFilePlayerImpl> filePlayer(new MidiFilePlayerImpl(combinerSource, file, getBaseTempo(), volume, loop, mutedTracks));
+	Common::SharedPtr<MidiFilePlayerImpl> filePlayer(new MidiFilePlayerImpl(combinerSource, file, getBaseTempo(), hasTempoOverride, tempoOverride, volume, loop, mutedTracks));
 
 	{
 		Common::StackLock lock(_mutex);
@@ -1159,6 +1233,11 @@ void MultiMidiPlayer::setPlayerVolume(MidiFilePlayer *player, uint8 volume) {
 void MultiMidiPlayer::setPlayerLoop(MidiFilePlayer *player, bool loop) {
 	Common::StackLock lock(_mutex);
 	static_cast<MidiFilePlayerImpl *>(player)->setLoop(loop);
+}
+
+void MultiMidiPlayer::setPlayerTempo(MidiFilePlayer *player, double tempo) {
+	Common::StackLock lock(_mutex);
+	static_cast<MidiFilePlayerImpl *>(player)->setTempoOverride(tempo);
 }
 
 void MultiMidiPlayer::setPlayerMutedTracks(MidiFilePlayer *player, uint16 mutedTracks) {
@@ -1915,8 +1994,10 @@ VThreadState MidiModifier::consumeMessage(Runtime *runtime, const Common::Shared
 		if (_mode == kModeFile) {
 			if (_embeddedFile) {
 				debug(2, "MIDI (%x '%s'): Playing embedded file", getStaticGUID(), getName().c_str());
+
+				const double tempo = _modeSpecific.file.overrideTempo ? _modeSpecific.file.tempo : 120.0;
 				if (!_filePlayer)
-					_filePlayer = _plugIn->getMidi()->createFilePlayer(_embeddedFile, _volume * 255 / 100, _modeSpecific.file.loop, _mutedTracks);
+					_filePlayer = _plugIn->getMidi()->createFilePlayer(_embeddedFile, _modeSpecific.file.overrideTempo, tempo, _volume * 255 / 100, _modeSpecific.file.loop, _mutedTracks);
 				_plugIn->getMidi()->playPlayer(_filePlayer);
 			} else {
 				debug(2, "MIDI (%x '%s'): Digested execute event but don't have anything to play", getStaticGUID(), getName().c_str());
@@ -1960,6 +2041,9 @@ MiniscriptInstructionOutcome MidiModifier::writeRefAttribute(MiniscriptThread *t
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "playnote") {
 		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetPlayNote>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "tempo") {
+		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetTempo>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -2086,6 +2170,26 @@ MiniscriptInstructionOutcome MidiModifier::scriptSetLoop(MiniscriptThread *threa
 			if (_filePlayer)
 				_plugIn->getMidi()->setPlayerLoop(_filePlayer, loop);
 		}
+	}
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome MidiModifier::scriptSetTempo(MiniscriptThread *thread, const DynamicValue &value) {
+	double tempo = 0.0;
+	if (value.getType() == DynamicValueTypes::kInteger)
+		tempo = value.getInt();
+	else if (value.getType() == DynamicValueTypes::kFloat)
+		tempo = value.getFloat();
+	else
+		return kMiniscriptInstructionOutcomeFailed;
+
+	if (_mode == kModeFile) {
+		debug(2, "MIDI (%x '%s'): Changing tempo to %g", getStaticGUID(), getName().c_str(), tempo);
+
+		if (_filePlayer)
+			_plugIn->getMidi()->setPlayerTempo(_filePlayer, tempo);
+
 	}
 
 	return kMiniscriptInstructionOutcomeContinue;
