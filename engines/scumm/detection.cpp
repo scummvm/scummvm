@@ -235,8 +235,8 @@ static const ExtraGuiOption enableEnhancements {
 };
 
 static const ExtraGuiOption audioOverride {
-	_s("Use external audio"),
-	_s("Replace music, sound effects, and speech clips with external audio files if available"),
+	_s("Load modded audio"),
+	_s("Replace music, sound effects, and speech clips with modded audio files, if available."),
 	"audio_override",
 	true,
 	0,
