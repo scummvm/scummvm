@@ -133,7 +133,7 @@ Object *Area::shootRay(const Math::Ray &ray) {
 
 Object *Area::checkCollisions(const Math::AABB &boundingBox) {
 	for (int i = drawableObjects.size() - 1; i >= 0; i--) {
-		if (drawableObjects[i]->isDrawable()) {
+		if (drawableObjects[i]->isDrawable() && !drawableObjects[i]->isInvisible()) {
 			GeometricObject *obj = (GeometricObject*) drawableObjects[i];
 			if (obj->collides(boundingBox))
 				return drawableObjects[i];
