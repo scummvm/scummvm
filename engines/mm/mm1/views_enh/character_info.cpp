@@ -162,7 +162,8 @@ bool CharacterInfo::msgMouseUp(const MouseUpMessage &msg) {
 	// Check if a stat icon was clicked
 	Common::Rect r(16, 16);
 	for (int i = 0; i < ICONS_COUNT; ++i) {
-		r.moveTo(ICONS[i]._x + 8, ICONS[i]._y + 8);
+		r.moveTo(_innerBounds.left + ICONS[i]._x,
+			_innerBounds.top + ICONS[i]._y);
 		if (r.contains(msg._pos)) {
 			showAttribute(i);
 			return true;
@@ -189,28 +190,28 @@ void CharacterInfo::drawTitle() {
 		capitalize(STRING[Common::String::format("stats.classes.%d", (int)c._class)]).c_str()
 	);
 
-	writeString(8, 8, msg);
+	writeString(0, 0, msg);
 }
 
 void CharacterInfo::drawIcons() {
 	Graphics::ManagedSurface s = getSurface();
 	for (int i = 0; i < CHAR_ICONS_COUNT; ++i) {
 		_viewIcon.draw(&s, ICONS[i]._frame,
-			Common::Point(ICONS[i]._x + FRAME_BORDER_SIZE,
-				ICONS[i]._y + FRAME_BORDER_SIZE));
+			Common::Point(ICONS[i]._x + _bounds.borderSize(),
+				ICONS[i]._y + _bounds.borderSize()));
 	}
 
 	// Text for buttons
-	writeString(285, 33, STRING["enhdialogs.character.item"]);
-	writeString(282, 65, STRING["enhdialogs.character.quick"]);
-	writeString(284, 98, STRING["enhdialogs.character.exchange"]);
-	writeString(286, 130, STRING["enhdialogs.misc.exit"]);
+	writeString(277, 25, STRING["enhdialogs.character.item"]);
+	writeString(275, 57, STRING["enhdialogs.character.quick"]);
+	writeString(276, 90, STRING["enhdialogs.character.exchange"]);
+	writeString(278, 122, STRING["enhdialogs.misc.exit"]);
 }
 
 void CharacterInfo::drawStats() {
 	// Draw stat titles
 	for (int i = 0; i < 18; ++i) {
-		writeString(ICONS[i]._x + 35, ICONS[i]._y + 10,
+		writeString(ICONS[i]._x + 27, ICONS[i]._y + 2,
 			ICONS_TEXT[i]);
 	}
 
@@ -237,7 +238,7 @@ void CharacterInfo::drawStats() {
 		if (i == 12)
 			continue;
 
-		Common::Point pt(ICONS[i]._x + 35, ICONS[i]._y + 20);
+		Common::Point pt(ICONS[i]._x + 27, ICONS[i]._y + 12);
 		if (i < 10)
 			pt.x += 8 + (CURR[i] < 10 ? 8 : 0);
 
@@ -267,7 +268,7 @@ void CharacterInfo::drawStats() {
 		setTextColor(32);
 	}
 
-	writeString(204, 128, condStr);
+	writeString(196, 120, condStr);
 }
 
 int CharacterInfo::statColor(int amount, int threshold) {
