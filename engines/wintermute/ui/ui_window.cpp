@@ -152,6 +152,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 	}
 
 	if (_fadeBackground) {
+		// TODO: This should be handled on renderer side
 		Graphics::PixelFormat format = _gameRef->_renderer->getPixelFormat();
 		byte fadeR, fadeG, fadeB, fadeA;
 		// First convert from the internal format to the screen-format

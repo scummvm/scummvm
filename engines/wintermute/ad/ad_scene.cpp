@@ -1289,7 +1289,7 @@ bool AdScene::updateFreeObjects() {
 
 #ifdef ENABLE_WME3D
 		if (adGame->_objects[i]->_is3D && _sceneGeometry) {
-			Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
+			Camera3D *activeCamera = _sceneGeometry->getActiveCamera();
 			if (activeCamera != nullptr) {
 				_gameRef->_renderer->setup3D(activeCamera, !is3DSet);
 				is3DSet = true;
@@ -1307,7 +1307,7 @@ bool AdScene::updateFreeObjects() {
 		}
 #ifdef ENABLE_WME3D
 		if (_objects[i]->_is3D && _sceneGeometry) {
-			Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
+			Camera3D *activeCamera = _sceneGeometry->getActiveCamera();
 			if (activeCamera != nullptr) {
 				_gameRef->_renderer->setup3D(activeCamera, !is3DSet);
 				is3DSet = true;
@@ -1366,8 +1366,7 @@ bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 		_gameRef->_renderer->setup2D();
 #else
 		if (objects[i]->_is3D && _sceneGeometry) {
-			Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
-
+			Camera3D *activeCamera = _sceneGeometry->getActiveCamera();
 			if (activeCamera != nullptr) {
 				_gameRef->_renderer->setup3D(activeCamera);
 			}
@@ -2920,12 +2919,6 @@ float AdScene::getScaleAt(int Y) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::persist(BasePersistenceManager *persistMgr) {
-	// TODO: Persist scene geometry as well.
-	// Keep in mind that this might create incompabilities
-	// between savegames from ScummVM and ResidualVM
-	// Suggestions of potential fixes by somaen:
-	// 1) Give ResidualVM savegames a special tag
-	// 2) Don't serialize 3d stuff (which might mean more work than just ignoring them here)
 	BaseObject::persist(persistMgr);
 
 	persistMgr->transferBool(TMEMBER(_autoScroll));
@@ -3665,4 +3658,5 @@ void Wintermute::AdScene::setMaxShadowType(Wintermute::TShadowType shadowType) {
 Common::String AdScene::debuggerToString() const {
 	return Common::String::format("%p: Scene \"%s\", paralax: %d, autoscroll: %d", (const void *)this, getName(), _paralaxScrolling, _autoScroll);
 }
+
 } // End of namespace Wintermute

@@ -54,7 +54,7 @@ bool AdWaypointGroup3D::addFromMesh(Mesh3DS *mesh) {
 		min = max = mesh->getVertexPosition(0);
 	}
 
-	for (int i = 0; i < mesh->vertexCount(); i++){
+	for (int i = 0; i < mesh->vertexCount(); i++) {
 		min.x() = MIN(min.x(), mesh->getVertexPosition(i)[0]);
 		min.y() = MIN(min.y(), mesh->getVertexPosition(i)[1]);
 		min.z() = MIN(min.z(), mesh->getVertexPosition(i)[2]);

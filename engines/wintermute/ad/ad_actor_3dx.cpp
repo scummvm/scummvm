@@ -475,6 +475,7 @@ bool AdActor3DX::displayShadowVolume() {
 	lightVector.normalize();
 
 	getShadowVolume()->setColor(_shadowColor);
+
 	getShadowVolume()->reset();
 
 	ModelX *shadowModel;
@@ -798,7 +799,6 @@ bool AdActor3DX::turnToStep(float velocity) {
 	}
 
 	// done turning?
-	// comparison between floating point numbers?
 	if (_angle == _targetAngle) {
 		_angle.normalize(0.0f);
 		_targetAngle = _angle;
@@ -923,8 +923,8 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 	}
 
 	delete _modelX;
-	delete _shadowModel;
 	_modelX = nullptr;
+	delete _shadowModel;
 	_shadowModel = nullptr;
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
@@ -1055,7 +1055,6 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 					_shadowType = SHADOW_STENCIL;
 				}
 			}
-
 			break;
 		}
 
@@ -1078,7 +1077,6 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_SHADOW_MODEL:
 			if (_modelX) {
 				delete _shadowModel;
-				_shadowModel = nullptr;
 				_shadowModel = new ModelX(_gameRef, this);
 
 				if (!_shadowModel || !_shadowModel->loadFromFile((char *)params, _modelX)) {
@@ -1152,7 +1150,6 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 				_currentBlockRegion = crgn;
 				_currentBlockRegion->mimic(_blockRegion);
 			}
-
 			break;
 		}
 
@@ -1174,9 +1171,9 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 				_currentWptGroup = cwpt;
 				_currentWptGroup->mimic(_wptGroup);
 			}
-
 			break;
 		}
+
 		}
 	}
 
@@ -1291,7 +1288,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	if (strcmp(name, "PlayAnim") == 0 || strcmp(name, "PlayAnimAsync") == 0) {
 		bool async = strcmp(name, "PlayAnimAsync") == 0;
 		stack->correctParams(1);
-		if (!playAnim3DX(stack->pop()->getString(), true /*!Async*/)) {
+		if (!playAnim3DX(stack->pop()->getString(), true)) {
 			stack->pushBool(false);
 		} else {
 			if (!async)

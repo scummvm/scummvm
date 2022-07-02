@@ -275,7 +275,6 @@ bool Console::Cmd_Print(int argc, const char **argv) {
 	}
 }
 
-
 bool Console::Cmd_Set(int argc, const char **argv) {
 	if (argc == 4 && !strncmp("=", argv[2], 1)) {
 		ScValue *val = nullptr;
@@ -340,7 +339,6 @@ bool Console::Cmd_DumpFile(int argc, const char **argv) {
 	return true;
 }
 
-
 bool Console::Cmd_SourcePath(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Usage: %s <source path>\n", argv[0]);
@@ -377,7 +375,6 @@ void Console::notifyWatch(const char *filename, const char *symbol, const char *
 }
 
 Error Console::printSource(int n) {
-
 	Error* error = nullptr;
 	Listing *listing = CONTROLLER->getListing(error);
 	Error err(*error);
@@ -416,4 +413,5 @@ bool Console::Cmd_Top(int argc, const char **argv) {
 void Console::printError(const Common::String &command, Error error) {
 	debugPrintf("%s: %s\n", command.c_str(), error.getErrorDisplayStr().c_str());
 }
+
 } // End of namespace Wintermute

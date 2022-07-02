@@ -824,6 +824,7 @@ bool ModelX::initializeSimple() {
 			_rootFrame->setMaterialSprite(_matSprites[i]->_matName, _matSprites[i]->_sprite);
 		}
 	}
+	// TODO: Effects
 
 	if (_parentModel) {
 		findBones(false, _parentModel);

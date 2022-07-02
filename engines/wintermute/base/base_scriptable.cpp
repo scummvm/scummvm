@@ -107,7 +107,7 @@ const char *BaseScriptable::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 void *BaseScriptable::scToMemBuffer() {
-	return (void *)NULL;
+	return (void *)nullptr;
 }
 
 

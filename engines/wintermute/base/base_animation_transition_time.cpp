@@ -31,9 +31,10 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-BaseAnimationTransitionTime::BaseAnimationTransitionTime(const Common::String &from, const Common::String &to, uint32 time) :
-	_animFrom(from), _animTo(to), _time(time) {
-
+BaseAnimationTransitionTime::BaseAnimationTransitionTime(const Common::String &from, const Common::String &to, uint32 time) {
+	_animFrom = from;
+	_animTo = to;
+	_time = time;
 }
 
 //////////////////////////////////////////////////////////////////////////
