@@ -6,12 +6,14 @@
 //  Copyright (c) 2013 Thomas Harte. All rights reserved.
 //
 
-#ifndef __Phantasma__GeometricObject__
-#define __Phantasma__GeometricObject__
+#ifndef FREESCAPE_GEOMETRICOBJECT_H
+#define FREESCAPE_GEOMETRICOBJECT_H
 
 #include "common/array.h"
 #include "freescape/language/instruction.h"
 #include "freescape/objects/object.h"
+
+namespace Freescape {
 
 class GeometricObject : public Object {
 public:
@@ -44,4 +46,6 @@ private:
 	Common::Array<uint16> *ordinates;
 };
 
-#endif /* defined(__Phantasma__GeometricObject__) */
+} // End of namespace Freescape
+
+#endif

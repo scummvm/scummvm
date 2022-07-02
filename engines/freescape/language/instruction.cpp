@@ -8,6 +8,8 @@
 
 #include "freescape/language/instruction.h"
 
+namespace Freescape {
+
 FCLInstruction::FCLInstruction(Token::Type _type) {
 	// TODO: learn modern constructor syntax
 	type = _type;
@@ -69,3 +71,5 @@ void FCLInstruction::getValue(CGameState &gameState, int32_t &source, int32_t &d
 Token::Type FCLInstruction::getType() {
 	return type;
 }
+
+} // End of namespace Freescape

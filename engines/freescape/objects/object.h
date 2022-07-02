@@ -15,6 +15,8 @@
 
 #include "freescape/gfx.h"
 
+namespace Freescape {
+
 class Object {
 public:
 	typedef enum {
@@ -62,5 +64,7 @@ public:
 	Math::Vector3d _origin, _size, _rotation;
 	Math::AABB _boundingBox;
 };
+
+} // End of namespace Freescape
 
 #endif

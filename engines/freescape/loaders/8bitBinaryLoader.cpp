@@ -2,11 +2,10 @@
 #include "common/debug.h"
 #include "common/file.h"
 
+#include "freescape/freescape.h"
 #include "freescape/area.h"
 #include "freescape/language/8bitDetokeniser.h"
 #include "freescape/language/instruction.h"
-#include "freescape/language/parser.h"
-#include "freescape/loaders/8bitBinaryLoader.h"
 #include "freescape/objects/geometricobject.h"
 #include "freescape/objects/entrance.h"
 #include "freescape/objects/object.h"

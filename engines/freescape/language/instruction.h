@@ -6,13 +6,13 @@
 //  Copyright (c) 2013 Thomas Harte. All rights reserved.
 //
 
-#ifndef __Phantasma__Instruction__
-#define __Phantasma__Instruction__
+#ifndef FREESCAPE_INSTRUCTION_H
+#define FREESCAPE_INSTRUCTION_H
 
 #include "common/array.h"
 #include "freescape/language/token.h"
 
-class CGameState;
+namespace Freescape {
 
 class FCLInstruction;
 typedef Common::Array<FCLInstruction> FCLInstructionVector;
@@ -36,4 +36,6 @@ private:
 	enum Token::Type type;
 };
 
-#endif /* defined(__Phantasma__Instruction__) */
+} // End of namespace Freescape
+
+#endif

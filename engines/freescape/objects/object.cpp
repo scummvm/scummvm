@@ -10,6 +10,8 @@
 #include "freescape/freescape.h"
 #include "freescape/gfx.h"
 
+namespace Freescape {
+
 Object::Type Object::getType() { return _type; }
 uint16 Object::getObjectID() { return _objectID; }
 uint16 Object::getObjectFlags() { return _flags; }
@@ -25,3 +27,5 @@ void Object::makeVisible() { _flags = _flags & ~0x80; }
 void Object::toggleVisibility() { _flags = _flags ^ 0x80; }
 
 Object::~Object() {}
+
+} // End of namespace Freescape

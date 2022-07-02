@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GFX_TINYGL_H_
-#define GFX_TINYGL_H_
+#ifndef FREESCAPE_GFX_TINYGL_H_
+#define FREESCAPE_GFX_TINYGL_H_
 
 #include "common/rect.h"
 #include "common/system.h"
@@ -65,6 +65,6 @@ public:
 	virtual void drawFloor(uint8 color) override;
 };
 
-} // End of namespace Myst3
+} // End of namespace Freescape
 
 #endif // GFX_H_

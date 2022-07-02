@@ -11,6 +11,8 @@
 #include "common/algorithm.h"
 #include "freescape/objects/object.h"
 
+namespace Freescape {
+
 Object *Area::objectWithIDFromMap(ObjectMap *map, uint16 objectID) {
 	if (!map)
 		return nullptr;
@@ -141,3 +143,5 @@ Object *Area::checkCollisions(const Math::AABB &boundingBox) {
 	}
 	return nullptr;
 }
+
+} // End of namespace Freescape

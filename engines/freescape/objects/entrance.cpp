@@ -11,6 +11,8 @@
 #pragma mark -
 #pragma mark Construction/Destruction
 
+namespace Freescape {
+
 Entrance::Entrance(
 	uint16 objectID,
 	const Math::Vector3d &origin,
@@ -24,3 +26,5 @@ Entrance::~Entrance() {}
 
 bool Entrance::isDrawable() { return false; }
 bool Entrance::isPlanar() { return true; }
+
+} // End of namespace Freescape

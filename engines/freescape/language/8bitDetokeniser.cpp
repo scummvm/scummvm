@@ -14,6 +14,8 @@
 #include "8bitDetokeniser.h"
 #include "token.h"
 
+namespace Freescape {
+
 static const int k8bitVariableShield = 256;
 static const int k8bitVariableEnergy = 257;
 static const int k8bitVariableScore = 258;
@@ -256,3 +258,5 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 
 	return (new Common::String(detokenisedStream));
 }
+
+} // End of namespace Freescape
