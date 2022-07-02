@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-30 14:47+0000\n"
+"POT-Creation-Date: 2022-07-02 19:54+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -56,7 +56,7 @@ msgctxt "lowres"
 msgid "Go up"
 msgstr "위로"
 
-#: gui/browser.cpp:81 gui/chooser.cpp:45 gui/downloadiconsdialog.cpp:161
+#: gui/browser.cpp:81 gui/chooser.cpp:45 gui/downloadiconsdialog.cpp:255
 #: gui/editgamedialog.cpp:384 gui/editrecorddialog.cpp:66
 #: gui/filebrowser-dialog.cpp:68 gui/fluidsynth-dialog.cpp:152
 #: gui/massadd.cpp:91 gui/options.cpp:2193 gui/predictivedialog.cpp:68
@@ -94,7 +94,7 @@ msgstr "선택"
 msgid "Select directory where to download game data"
 msgstr "게임 데이터를 다운로드할 디렉토리를 선택"
 
-#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:583 gui/launcher.cpp:275
+#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:583 gui/launcher.cpp:277
 msgid "Select directory with game data"
 msgstr "게임 데이터가 있는 디렉토리를 선택"
 
@@ -106,9 +106,9 @@ msgstr "리모트: "
 msgid "To: "
 msgstr "로컬: "
 
-#: gui/downloaddialog.cpp:63 gui/downloadiconsdialog.cpp:93
-#: gui/downloadiconsdialog.cpp:136 gui/downloadiconsdialog.cpp:146
-#: gui/downloadiconsdialog.cpp:168 gui/downloadiconsdialog.cpp:182
+#: gui/downloaddialog.cpp:63 gui/downloadiconsdialog.cpp:187
+#: gui/downloadiconsdialog.cpp:230 gui/downloadiconsdialog.cpp:240
+#: gui/downloadiconsdialog.cpp:262 gui/downloadiconsdialog.cpp:276
 msgid "Cancel download"
 msgstr "다운로드 취소"
 
@@ -117,8 +117,8 @@ msgctxt "lowres"
 msgid "Cancel download"
 msgstr "다운로드 취소"
 
-#: gui/downloaddialog.cpp:67 gui/downloadiconsdialog.cpp:94
-#: gui/downloadiconsdialog.cpp:172
+#: gui/downloaddialog.cpp:67 gui/downloadiconsdialog.cpp:188
+#: gui/downloadiconsdialog.cpp:266
 msgid "Hide"
 msgstr "숨김"
 
@@ -130,8 +130,8 @@ msgstr "인터넷 연결에 제한이 있는 것 같습니다. 다운로드를 �
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
-#: gui/launcher.cpp:399 gui/launcher.cpp:428 gui/launcher.cpp:471
-#: gui/options.cpp:3138 gui/options.cpp:3176
+#: gui/launcher.cpp:401 gui/launcher.cpp:430 gui/launcher.cpp:473
+#: gui/options.cpp:3133 gui/options.cpp:3171
 #: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:580
 #: engines/director/events.cpp:91 engines/grim/grim.cpp:357
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
@@ -142,8 +142,8 @@ msgstr "예"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
-#: gui/launcher.cpp:399 gui/launcher.cpp:428 gui/launcher.cpp:471
-#: gui/options.cpp:3138 gui/options.cpp:3176 engines/buried/buried.cpp:580
+#: gui/launcher.cpp:401 gui/launcher.cpp:430 gui/launcher.cpp:473
+#: gui/options.cpp:3133 gui/options.cpp:3171 engines/buried/buried.cpp:580
 #: engines/director/events.cpp:91 engines/grim/grim.cpp:357
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:151
@@ -151,7 +151,7 @@ msgstr "예"
 msgid "No"
 msgstr "아니오"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:573
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:575
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM이 지정된 디렉토리를 열 수 없습니다!"
 
@@ -165,7 +165,7 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:385
 #: gui/editrecorddialog.cpp:67 gui/fluidsynth-dialog.cpp:153
-#: gui/launcher.cpp:527 gui/launcher.cpp:531 gui/massadd.cpp:88
+#: gui/launcher.cpp:529 gui/launcher.cpp:533 gui/massadd.cpp:88
 #: gui/options.cpp:2195 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1173 engines/engine.cpp:526 engines/engine.cpp:550
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
@@ -196,59 +196,59 @@ msgstr ""
 "지정된 디렉토리에 \"%s\" 파일이 이미 존재합니다.\n"
 "정말로 해당 디렉토리에 파일을 다운로드하시겠습니까?"
 
-#: gui/downloaddialog.cpp:214 gui/downloadiconsdialog.cpp:254
+#: gui/downloaddialog.cpp:214 gui/downloadiconsdialog.cpp:346
 #, c-format
 msgid "Downloaded %s %S / %s %S"
 msgstr "%s %S / %s %S 다운로드 됨"
 
-#: gui/downloaddialog.cpp:221 gui/downloadiconsdialog.cpp:261
+#: gui/downloaddialog.cpp:221 gui/downloadiconsdialog.cpp:353
 #, c-format
 msgid "Download speed: %s %S"
 msgstr "다운로드 속도: %s %S"
 
-#: gui/downloadiconsdialog.cpp:81 gui/downloadiconsdialog.cpp:135
+#: gui/downloadiconsdialog.cpp:149
+#, c-format
+msgid "ERROR %d: %s"
+msgstr "에러 %d: %s"
+
+#: gui/downloadiconsdialog.cpp:175 gui/downloadiconsdialog.cpp:229
 msgid "Downloading icons list..."
 msgstr "아이콘 목록을 다운로드하는 중..."
 
-#: gui/downloadiconsdialog.cpp:145
+#: gui/downloadiconsdialog.cpp:239
 #, c-format
 msgid "Downloading icons list... %d entries"
 msgstr "아이콘 목록을 다운로드하는 중... %d개 항목"
 
-#: gui/downloadiconsdialog.cpp:155
+#: gui/downloadiconsdialog.cpp:249
 #, c-format
 msgid "Detected %d new packs, %s %S"
 msgstr "%d개의 새 팩을 발견했습니다, %s %S"
 
-#: gui/downloadiconsdialog.cpp:157
+#: gui/downloadiconsdialog.cpp:251
 msgid "Download"
 msgstr "다운로드"
 
-#: gui/downloadiconsdialog.cpp:180
+#: gui/downloadiconsdialog.cpp:274
 #, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
 msgstr ""
 "다운로드 완료.\n"
 "%d팩을 다운로드했습니다, %s %S."
 
-#: gui/downloadiconsdialog.cpp:186 gui/downloadiconsdialog.cpp:303
-#: gui/gui-manager.cpp:221 gui/unknown-game-dialog.cpp:53
+#: gui/downloadiconsdialog.cpp:280 gui/downloadiconsdialog.cpp:367
+#: gui/gui-manager.cpp:225 gui/unknown-game-dialog.cpp:53
 #: engines/nancy/dialogs.cpp:313 engines/scumm/help.cpp:124
 #: engines/scumm/help.cpp:139 engines/scumm/help.cpp:164
 #: engines/scumm/help.cpp:190 engines/scumm/help.cpp:208
 msgid "Close"
 msgstr "닫기"
 
-#: gui/downloadiconsdialog.cpp:308
-#, c-format
-msgid "ERROR %d: %s"
-msgstr "에러 %d: %s"
-
-#: gui/downloadiconsdialog.cpp:325
+#: gui/downloadiconsdialog.cpp:373
 msgid "ERROR: No icons path set"
 msgstr "에러: 아이콘 경로가 설정되지 않음"
 
-#: gui/downloadiconsdialog.cpp:355
+#: gui/downloadiconsdialog.cpp:403
 msgid "No new icons packs available"
 msgstr "사용 가능한 새 아이콘 팩 없음"
 
@@ -301,7 +301,7 @@ msgstr "게임의 언어. 선택한 언어로 게임이 번역되지는 않음"
 #: gui/options.cpp:1458 gui/options.cpp:1473 gui/options.cpp:1489
 #: gui/options.cpp:1501 gui/options.cpp:1521 gui/options.cpp:1535
 #: gui/options.cpp:1929 gui/options.cpp:2338 gui/options.cpp:2412
-#: gui/options.cpp:2592 gui/options.cpp:3025 audio/null.cpp:40
+#: gui/options.cpp:2592 gui/options.cpp:3020 audio/null.cpp:40
 #: backends/platform/android/options.cpp:112
 #: backends/platform/android/options.cpp:113 engines/ags/dialogs.cpp:62
 msgid "<default>"
@@ -486,20 +486,20 @@ msgstr "통계"
 #: gui/options.cpp:2256 gui/options.cpp:2299 gui/options.cpp:2307
 #: gui/options.cpp:2315 gui/options.cpp:2324 gui/options.cpp:2711
 #: gui/options.cpp:2712 gui/options.cpp:2713 gui/options.cpp:2717
-#: gui/options.cpp:2726 gui/options.cpp:3006 gui/options.cpp:3009
-#: gui/options.cpp:3012 gui/options.cpp:3019 gui/options.cpp:3031
-#: gui/options.cpp:3042
+#: gui/options.cpp:2726 gui/options.cpp:3001 gui/options.cpp:3004
+#: gui/options.cpp:3007 gui/options.cpp:3014 gui/options.cpp:3026
+#: gui/options.cpp:3037
 msgctxt "path"
 msgid "None"
 msgstr "없음"
 
 #: gui/editgamedialog.cpp:403 gui/editgamedialog.cpp:510
 #: gui/editgamedialog.cpp:641 gui/options.cpp:2217 gui/options.cpp:2710
-#: gui/options.cpp:3015 backends/platform/wii/options.cpp:55
+#: gui/options.cpp:3010 backends/platform/wii/options.cpp:55
 msgid "Default"
 msgstr "기본값"
 
-#: gui/editgamedialog.cpp:563 gui/options.cpp:3036
+#: gui/editgamedialog.cpp:563 gui/options.cpp:3031
 msgid "Select SoundFont"
 msgstr "SoundFont 선택"
 
@@ -638,16 +638,16 @@ msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr "FluidSynth의 모든 설정을 기본값으로 되돌리겠습니까?"
 
-#: gui/gui-manager.cpp:212
+#: gui/gui-manager.cpp:216
 msgid "GUI"
 msgstr "GUI"
 
-#: gui/gui-manager.cpp:216 engines/mohawk/myst.cpp:573
+#: gui/gui-manager.cpp:220 engines/mohawk/myst.cpp:573
 #: engines/mohawk/riven.cpp:837
 msgid "Interact"
 msgstr "상호작용"
 
-#: gui/gui-manager.cpp:227 engines/metaengine.cpp:115
+#: gui/gui-manager.cpp:231 engines/metaengine.cpp:115
 #: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:95
 #: engines/grim/grim.cpp:455 engines/grim/grim.cpp:536
 #: engines/twine/metaengine.cpp:329 engines/twine/metaengine.cpp:396
@@ -658,7 +658,7 @@ msgstr "상호작용"
 msgid "Up"
 msgstr "위"
 
-#: gui/gui-manager.cpp:232 engines/metaengine.cpp:121
+#: gui/gui-manager.cpp:236 engines/metaengine.cpp:121
 #: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:101
 #: engines/grim/grim.cpp:460 engines/grim/grim.cpp:541
 #: engines/twine/metaengine.cpp:336 engines/twine/metaengine.cpp:404
@@ -669,7 +669,7 @@ msgstr "위"
 msgid "Down"
 msgstr "아래"
 
-#: gui/gui-manager.cpp:237 engines/metaengine.cpp:127
+#: gui/gui-manager.cpp:241 engines/metaengine.cpp:127
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:107
 #: engines/grim/grim.cpp:465 engines/grim/grim.cpp:546
 #: engines/twine/metaengine.cpp:351 engines/twine/metaengine.cpp:419
@@ -681,7 +681,7 @@ msgstr "아래"
 msgid "Left"
 msgstr "왼쪽"
 
-#: gui/gui-manager.cpp:242 engines/metaengine.cpp:133
+#: gui/gui-manager.cpp:246 engines/metaengine.cpp:133
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:113
 #: engines/grim/grim.cpp:470 engines/grim/grim.cpp:551
 #: engines/twine/metaengine.cpp:343 engines/twine/metaengine.cpp:412
@@ -693,7 +693,7 @@ msgstr "왼쪽"
 msgid "Right"
 msgstr "오른쪽"
 
-#: gui/gui-manager.cpp:247 engines/pegasus/pegasus.cpp:2814
+#: gui/gui-manager.cpp:251 engines/pegasus/pegasus.cpp:2814
 #: engines/wintermute/keymapper_tables.h:305
 #: engines/wintermute/keymapper_tables.h:346
 #: engines/wintermute/keymapper_tables.h:381
@@ -757,99 +757,99 @@ msgctxt "group"
 msgid "Platform"
 msgstr "플랫폼"
 
-#: gui/launcher.cpp:211
+#: gui/launcher.cpp:213
 msgid "Select Group by"
 msgstr "그룹 선택 기준"
 
-#: gui/launcher.cpp:216
+#: gui/launcher.cpp:218
 msgid "Group by: "
 msgstr "그룹화 기준: "
 
-#: gui/launcher.cpp:218
+#: gui/launcher.cpp:220
 msgid "Select a criteria to group the entries"
 msgstr "항목을 그룹화할 기준을 선택"
 
-#: gui/launcher.cpp:241 engines/dialogs.cpp:94
+#: gui/launcher.cpp:243 engines/dialogs.cpp:94
 msgid "~Q~uit"
 msgstr "종료(~Q~)"
 
-#: gui/launcher.cpp:241 backends/platform/sdl/macosx/appmenu_osx.mm:229
+#: gui/launcher.cpp:243 backends/platform/sdl/macosx/appmenu_osx.mm:229
 msgid "Quit ScummVM"
 msgstr "ScummVM 종료"
 
-#: gui/launcher.cpp:243
+#: gui/launcher.cpp:245
 msgid "A~b~out"
 msgstr "프로그램 정보(~b~)"
 
-#: gui/launcher.cpp:243 backends/platform/sdl/macosx/appmenu_osx.mm:223
+#: gui/launcher.cpp:245 backends/platform/sdl/macosx/appmenu_osx.mm:223
 msgid "About ScummVM"
 msgstr "ScummVM 정보"
 
-#: gui/launcher.cpp:244
+#: gui/launcher.cpp:246
 msgid "Global ~O~ptions..."
 msgstr "전역 옵션(~O~)..."
 
-#: gui/launcher.cpp:244
+#: gui/launcher.cpp:246
 msgid "Change global ScummVM options"
 msgstr "전역 ScummVM 설정을 수정합니다"
 
-#: gui/launcher.cpp:244
+#: gui/launcher.cpp:246
 #, fuzzy
 msgctxt "lowres"
 msgid "Global ~O~pts..."
 msgstr "전역 옵션(~O~)..."
 
-#: gui/launcher.cpp:248
+#: gui/launcher.cpp:250
 msgid "~A~dd Game..."
 msgstr "게임 추가(~A~)..."
 
-#: gui/launcher.cpp:248
+#: gui/launcher.cpp:250
 msgid "Add games to the list"
 msgstr "게임을 목록에 추가합니다"
 
-#: gui/launcher.cpp:248
+#: gui/launcher.cpp:250
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "게임 추가(~A~)..."
 
-#: gui/launcher.cpp:251
-msgid "~R~emove Game"
-msgstr "게임 제거(~R~)"
-
-#: gui/launcher.cpp:251
-msgid "Remove game from the list. The game data files stay intact"
-msgstr "목록에서 게임을 제거합니다. 게임 데이터 파일은 남겨둡니다"
-
-#: gui/launcher.cpp:251
-msgctxt "lowres"
+#: gui/launcher.cpp:253
 msgid "~R~emove Game"
 msgstr "게임 제거(~R~)"
 
 #: gui/launcher.cpp:253
+msgid "Remove game from the list. The game data files stay intact"
+msgstr "목록에서 게임을 제거합니다. 게임 데이터 파일은 남겨둡니다"
+
+#: gui/launcher.cpp:253
+msgctxt "lowres"
+msgid "~R~emove Game"
+msgstr "게임 제거(~R~)"
+
+#: gui/launcher.cpp:255
 msgid "Mass Add..."
 msgstr "대량 추가..."
 
-#: gui/launcher.cpp:255
+#: gui/launcher.cpp:257
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "대량 추가..."
 
-#: gui/launcher.cpp:263
+#: gui/launcher.cpp:265
 msgid "Search in game list"
 msgstr "게임 리스트에서 검색"
 
-#: gui/launcher.cpp:267 gui/launcher.cpp:780
+#: gui/launcher.cpp:269 gui/launcher.cpp:782
 msgid "Search:"
 msgstr "검색:"
 
-#: gui/launcher.cpp:278 engines/dialogs.cpp:97 engines/engine.cpp:885
+#: gui/launcher.cpp:280 engines/dialogs.cpp:97 engines/engine.cpp:885
 #: engines/pegasus/pegasus.cpp:383 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:630 engines/wage/saveload.cpp:741
 #: engines/xeen/saves.cpp:255
 msgid "Load game:"
 msgstr "게임 불러오기:"
 
-#: gui/launcher.cpp:278 engines/dialogs.cpp:97 engines/engine.cpp:885
+#: gui/launcher.cpp:280 engines/dialogs.cpp:97 engines/engine.cpp:885
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:383
 #: engines/scumm/dialogs.cpp:176 engines/trecision/saveload.cpp:253
@@ -858,11 +858,11 @@ msgstr "게임 불러오기:"
 msgid "Load"
 msgstr "불러오기"
 
-#: gui/launcher.cpp:387
+#: gui/launcher.cpp:389
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr "이 디렉토리는 아직 사용할 수 없습니다. 여기로 다운로드 중입니다!"
 
-#: gui/launcher.cpp:398
+#: gui/launcher.cpp:400
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -870,76 +870,76 @@ msgstr ""
 "대량 추가 탐지기를 실행하겠습니까? 매우 많은 수의 게임이 추가될 수도 있습니"
 "다."
 
-#: gui/launcher.cpp:428
+#: gui/launcher.cpp:430
 msgid "Do you really want to remove this game configuration?"
 msgstr "이 게임의 설정을 제거하겠습니까?"
 
-#: gui/launcher.cpp:470
+#: gui/launcher.cpp:472
 msgid "Do you want to load saved game?"
 msgstr "세이브 파일을 불러오겠습니까?"
 
-#: gui/launcher.cpp:527
+#: gui/launcher.cpp:529
 msgid "This game does not support loading games from the launcher."
 msgstr "이 게임은 런처에서 불러오기를 지원하지 않습니다."
 
-#: gui/launcher.cpp:531
+#: gui/launcher.cpp:533
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM은 선택한 게임을 실행할 수 있는 엔진을 찾지 못했습니다!"
 
-#: gui/launcher.cpp:592
+#: gui/launcher.cpp:594
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM은 선택한 디렉토리에서 아무 게임도 찾지 못했습니다!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:608
+#: gui/launcher.cpp:610
 msgid "Unknown variant"
 msgstr "알려지지 않은 버전"
 
-#: gui/launcher.cpp:614
+#: gui/launcher.cpp:616
 msgid "Pick the game:"
 msgstr "게임을 선택하세요:"
 
-#: gui/launcher.cpp:789
+#: gui/launcher.cpp:791
 msgid "Group by:"
 msgstr "그룹화 기준:"
 
-#: gui/launcher.cpp:829 gui/saveload-dialog.cpp:355
+#: gui/launcher.cpp:831 gui/saveload-dialog.cpp:355
 msgid "List view"
 msgstr "리스트로 표시"
 
-#: gui/launcher.cpp:830 gui/saveload-dialog.cpp:356
+#: gui/launcher.cpp:832 gui/saveload-dialog.cpp:356
 msgid "Grid view"
 msgstr "그리드로 표시"
 
-#: gui/launcher.cpp:1004
+#: gui/launcher.cpp:1006
 msgid "~S~tart"
 msgstr "시작(~S~)"
 
-#: gui/launcher.cpp:1004
+#: gui/launcher.cpp:1006
 msgid "Start selected game"
 msgstr "선택한 게임을 시작합니다"
 
-#: gui/launcher.cpp:1007
+#: gui/launcher.cpp:1009
 msgid "~L~oad..."
 msgstr "불러오기(~L~)..."
 
-#: gui/launcher.cpp:1007
+#: gui/launcher.cpp:1009
 msgid "Load saved game for selected game"
 msgstr "선택된 게임의 저장 데이터를 불러옵니다"
 
-#: gui/launcher.cpp:1009
+#: gui/launcher.cpp:1011
 msgid "Record..."
 msgstr "녹화..."
 
-#: gui/launcher.cpp:1015
+#: gui/launcher.cpp:1017
 msgid "~G~ame Options..."
 msgstr "게임 옵션(~G~)..."
 
-#: gui/launcher.cpp:1015
+#: gui/launcher.cpp:1017
 msgid "Change game options"
 msgstr "게임 옵션을 변경합니다"
 
-#: gui/launcher.cpp:1015
+#: gui/launcher.cpp:1017
 #, fuzzy
 msgctxt "lowres"
 msgid "~G~ame Opts..."
@@ -947,39 +947,39 @@ msgstr "게임 옵션(~G~)..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1136 gui/launcher.cpp:1331
+#: gui/launcher.cpp:1138 gui/launcher.cpp:1333
 msgid "Unknown Engine"
 msgstr "알려지지 않은 엔진"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1154 gui/launcher.cpp:1363
+#: gui/launcher.cpp:1156 gui/launcher.cpp:1365
 msgid "Unknown Publisher"
 msgstr "알 수 없는 배급사"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1172 gui/launcher.cpp:1349
+#: gui/launcher.cpp:1174 gui/launcher.cpp:1351
 msgid "No Series"
 msgstr "시리즈 없음"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1187 gui/launcher.cpp:1382
+#: gui/launcher.cpp:1189 gui/launcher.cpp:1384
 msgid "Language not detected"
 msgstr "언어가 감지되지 않음"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1202 gui/launcher.cpp:1397
+#: gui/launcher.cpp:1204 gui/launcher.cpp:1399
 msgid "Platform not detected"
 msgstr "플랫폼이 감지되지 않음"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1408 gui/widgets/groupedlist.cpp:80
+#: gui/launcher.cpp:1410 gui/widgets/groupedlist.cpp:80
 msgid "All"
 msgstr "모두"
 
-#: gui/launcher.cpp:1596
+#: gui/launcher.cpp:1601
 msgid "Icons per row:"
 msgstr ""
 
@@ -1519,7 +1519,7 @@ msgid "ScummVM config path: "
 msgstr "ScummVM 설정 경로: "
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2343 gui/options.cpp:3025
+#: gui/options.cpp:2343 gui/options.cpp:3020
 msgid "Last browser path: "
 msgstr "마지막 접근 경로: "
 
@@ -1681,7 +1681,7 @@ msgstr "최근 동기화:"
 msgid "When was the last time saved games were synced with this storage"
 msgstr "세이브 파일이 이 스토리지와 마지막으로 동기화된 시점"
 
-#: gui/options.cpp:2503 gui/options.cpp:3381
+#: gui/options.cpp:2503 gui/options.cpp:3376
 msgid "<never>"
 msgstr "<없음>"
 
@@ -1782,7 +1782,7 @@ msgstr "서버 실행"
 msgid "Run local webserver"
 msgstr "로컬 웹 서버를 실행"
 
-#: gui/options.cpp:2544 gui/options.cpp:3496
+#: gui/options.cpp:2544 gui/options.cpp:3491
 msgid "Not running"
 msgstr "실행되지 않음"
 
@@ -1921,7 +1921,7 @@ msgstr "플러그인 디렉토리를 선택"
 msgid "Select directory for Files Manager /root/"
 msgstr "파일 매니저 /root/ 디렉토리를 선택"
 
-#: gui/options.cpp:3113
+#: gui/options.cpp:3108
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1929,47 +1929,47 @@ msgstr ""
 "URL을 여는데 실패했습니다!\n"
 "해당 페이지로 직접 이동해 주세요."
 
-#: gui/options.cpp:3138
+#: gui/options.cpp:3133
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "다른 스토리지가 현재 동작 중입니다. 중단할까요?"
 
-#: gui/options.cpp:3147 gui/options.cpp:3185
+#: gui/options.cpp:3142 gui/options.cpp:3180
 msgid "Wait until current Storage finishes up and try again."
 msgstr "현재 스토리지 작업이 완료될 때까지 기다린 후 다시 시도해 주세요."
 
-#: gui/options.cpp:3160
+#: gui/options.cpp:3155
 msgid "Connecting..."
 msgstr "연결 중..."
 
-#: gui/options.cpp:3176
+#: gui/options.cpp:3171
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "이 스토리지가 현재 동작 중입니다. 중단할까요?"
 
-#: gui/options.cpp:3379 backends/cloud/cloudmanager.cpp:156
+#: gui/options.cpp:3374 backends/cloud/cloudmanager.cpp:156
 msgid "<right now>"
 msgstr "<지금>"
 
-#: gui/options.cpp:3488
+#: gui/options.cpp:3483
 msgid "Stop server"
 msgstr "서버 정지"
 
-#: gui/options.cpp:3489
+#: gui/options.cpp:3484
 msgid "Stop local webserver"
 msgstr "내부 웹서버를 정지합니다"
 
-#: gui/options.cpp:3541
+#: gui/options.cpp:3536
 msgid "Storage connected."
 msgstr "스토리지가 연결되었습니다."
 
-#: gui/options.cpp:3543
+#: gui/options.cpp:3538
 msgid "Failed to connect storage."
 msgstr "스토리지 연결에 실패했습니다."
 
-#: gui/options.cpp:3545
+#: gui/options.cpp:3540
 msgid "Failed to connect storage: "
 msgstr "스토리지 연결에 실패했습니다: "
 
-#: gui/options.cpp:3565
+#: gui/options.cpp:3560
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
