@@ -1311,6 +1311,10 @@ private:
 			kStageSendToStructuralModifiers,
 			kStageSendToStructuralChildren,
 
+			kStageCheckAndSendToModifier,
+			kStageCheckAndSendToStructural,
+			kStageCheckAndSendCommand,
+
 			kStageSendCommand,
 		};
 
@@ -1321,6 +1325,9 @@ private:
 
 	Common::Array<PropagationStack> _propagationStack;
 	Common::SharedPtr<MessageProperties> _msg;
+
+	Common::WeakPtr<RuntimeObject> _root;
+
 	bool _cascade; // Traverses structure tree
 	bool _relay;   // Fire on multiple modifiers
 	bool _terminated;

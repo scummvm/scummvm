@@ -3212,18 +3212,20 @@ MessageDispatch::MessageDispatch(const Common::SharedPtr<MessageProperties> &msg
 
 		PropagationStack topEntry;
 		topEntry.index = 0;
-		topEntry.propagationStage = PropagationStack::kStageSendCommand;
+		topEntry.propagationStage = PropagationStack::kStageCheckAndSendCommand;
 		topEntry.ptr.structural = root;
 
 		_propagationStack.push_back(topEntry);
 	} else {
 		PropagationStack topEntry;
 		topEntry.index = 0;
-		topEntry.propagationStage = PropagationStack::kStageSendToStructuralSelf;
+		topEntry.propagationStage = PropagationStack::kStageCheckAndSendToStructural;
 		topEntry.ptr.structural = root;
 
 		_propagationStack.push_back(topEntry);
 	}
+
+	_root = root->getSelfReference();
 }
 
 MessageDispatch::MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Modifier *root, bool cascade, bool relay, bool couldBeCommand)
@@ -3234,13 +3236,15 @@ MessageDispatch::MessageDispatch(const Common::SharedPtr<MessageProperties> &msg
 	} else {
 		PropagationStack topEntry;
 		topEntry.index = 0;
-		topEntry.propagationStage = PropagationStack::kStageSendToModifier;
+		topEntry.propagationStage = PropagationStack::kStageCheckAndSendToModifier;
 		topEntry.ptr.modifier = root;
 
 		_isCommand = (couldBeCommand && EventIDs::isCommand(msgProps->getEvent().eventType));
 
 		_propagationStack.push_back(topEntry);
 	}
+
+	_root = root->getSelfReference();
 }
 
 bool MessageDispatch::isTerminated() const {
@@ -3255,6 +3259,21 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 		PropagationStack &stackTop = _propagationStack.back();
 
 		switch (stackTop.propagationStage) {
+		case PropagationStack::kStageCheckAndSendCommand:
+			if (_root.expired())
+				return kVThreadReturn;
+			stackTop.propagationStage = PropagationStack::kStageSendCommand;
+			break;
+		case PropagationStack::kStageCheckAndSendToStructural:
+			if (_root.expired())
+				return kVThreadReturn;
+			stackTop.propagationStage = PropagationStack::kStageSendToStructuralSelf;
+			break;
+		case PropagationStack::kStageCheckAndSendToModifier:
+			if (_root.expired())
+				return kVThreadReturn;
+			stackTop.propagationStage = PropagationStack::kStageSendToModifier;
+			break;
 		case PropagationStack::kStageSendToModifier: {
 				Modifier *modifier = stackTop.ptr.modifier;
 				_propagationStack.pop_back();
@@ -3786,15 +3805,7 @@ bool Runtime::runFrame() {
 			continue;
 		}
 
-		if (_messageQueue.size() > 0) {
-			Common::SharedPtr<MessageDispatch> msg = _messageQueue[0];
-			_messageQueue.remove_at(0);
-
-			sendMessageOnVThread(msg);
-			continue;
-		}
-
-		// Teardowns must only occur during idle conditions where there are no queued message and no VThread tasks
+		// Teardowns must only occur during idle conditions where there are no VThread tasks
 		if (_pendingTeardowns.size() > 0) {
 			for (Common::Array<Teardown>::const_iterator it = _pendingTeardowns.begin(), itEnd = _pendingTeardowns.end(); it != itEnd; ++it) {
 				executeTeardown(*it);
@@ -3809,6 +3820,27 @@ bool Runtime::runFrame() {
 			_pendingLowLevelTransitions.remove_at(0);
 
 			executeLowLevelSceneStateTransition(transition);
+			continue;
+		}
+
+		// This has to be in this specific spot: Queued messages that occur from scene transitions are normally discharged
+		// after the "Scene Started" event, but before scene transition.
+		// 
+		// Obsidian depends on this behavior in several scripts, most notably setting up conditional ambience correctly.
+		// For example, in Inspiration chapter, on exiting the plane into the statue:
+		// Shared scene fires Parent Enabled which triggers "GEN_SND_Start_Ambience on PE" which sends GEN_SND_Start_Ambience
+		// but not immediately, so it goes into the queue.
+		// After the main scene loads, it fires Scene Started and which in turn triggers "NAV_setup_navigation on SS" which
+		// sends NAV_setup_navigation immediately, which sets the current nav node variable.
+		// Then, the queued GEN_SND_Start_Ambience can read the nav node variable to set up ambience correctly.
+		//
+		// If messages are discharged before low-level scene transitions, then the music plays in the lower level of the
+		// statue on disembarking because the nav node variable is set to the wrong value.
+		if (_messageQueue.size() > 0) {
+			Common::SharedPtr<MessageDispatch> msg = _messageQueue[0];
+			_messageQueue.remove_at(0);
+
+			sendMessageOnVThread(msg);
 			continue;
 		}
 
