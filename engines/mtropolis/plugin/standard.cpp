@@ -1594,7 +1594,7 @@ bool ObjectReferenceVariableModifier::readAttribute(MiniscriptThread *thread, Dy
 	}
 	if (attrib == "object") {
 		if (_object.object.expired())
-			resolve();
+			resolve(thread->getRuntime());
 
 		if (_object.object.expired())
 			result.clear();
@@ -1690,7 +1690,7 @@ MiniscriptInstructionOutcome ObjectReferenceVariableModifier::scriptSetObject(Mi
 }
 
 MiniscriptInstructionOutcome ObjectReferenceVariableModifier::scriptObjectRefAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib) {
-	resolve();
+	resolve(thread->getRuntime());
 
 	if (_object.object.expired()) {
 		thread->error("Attempted to reference an attribute of an object variable object, but the reference is dead");
@@ -1701,7 +1701,7 @@ MiniscriptInstructionOutcome ObjectReferenceVariableModifier::scriptObjectRefAtt
 }
 
 MiniscriptInstructionOutcome ObjectReferenceVariableModifier::scriptObjectRefAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib, const DynamicValue &index) {
-	resolve();
+	resolve(thread->getRuntime());
 
 	if (_object.object.expired()) {
 		thread->error("Attempted to reference an attribute of an object variable object, but the reference is dead");
@@ -1711,7 +1711,7 @@ MiniscriptInstructionOutcome ObjectReferenceVariableModifier::scriptObjectRefAtt
 	return _object.object.lock()->writeRefAttributeIndexed(thread, proxy, attrib, index);
 }
 
-void ObjectReferenceVariableModifier::resolve() {
+void ObjectReferenceVariableModifier::resolve(Runtime *runtime) {
 	if (!_object.object.expired())
 		return;
 
@@ -1722,7 +1722,7 @@ void ObjectReferenceVariableModifier::resolve() {
 		return;
 
 	if (_objectPath[0] == '/')
-		resolveAbsolutePath();
+		resolveAbsolutePath(runtime);
 	else if (_objectPath[0] == '.')
 		resolveRelativePath(this, _objectPath, 0);
 	else
@@ -1800,7 +1800,7 @@ void ObjectReferenceVariableModifier::resolveRelativePath(RuntimeObject *obj, co
 	_object.object = obj->getSelfReference();
 }
 
-void ObjectReferenceVariableModifier::resolveAbsolutePath() {
+void ObjectReferenceVariableModifier::resolveAbsolutePath(Runtime *runtime) {
 	assert(_objectPath[0] == '/');
 
 	RuntimeObject *project = this;
@@ -1814,18 +1814,27 @@ void ObjectReferenceVariableModifier::resolveAbsolutePath() {
 	if (!project->isProject())
 		return; // Some sort of detached object
 
-	Common::String projectPrefixes[2] = {
-		"/" + static_cast<Structural *>(project)->getName(),
-		"/<project>"};
-
 	size_t prefixEnd = 0;
 
 	bool foundPrefix = false;
-	for (const Common::String &prefix : projectPrefixes) {
-		if (_objectPath.size() >= prefix.size() && caseInsensitiveEqual(_objectPath.substr(0, prefix.size()), prefix)) {
-			prefixEnd = prefix.size();
+
+	if (runtime->getHacks().ignoreMismatchedProjectNameInObjectLookups) {
+		size_t slashOffset = _objectPath.findFirstOf('/', 1);
+		if (slashOffset != Common::String::npos) {
+			prefixEnd = slashOffset;
 			foundPrefix = true;
-			break;
+		}
+	} else {
+		Common::String projectPrefixes[2] = {
+			"/" + static_cast<Structural *>(project)->getName(),
+			"/<project>"};
+
+		for (const Common::String &prefix : projectPrefixes) {
+			if (_objectPath.size() >= prefix.size() && caseInsensitiveEqual(_objectPath.substr(0, prefix.size()), prefix)) {
+				prefixEnd = prefix.size();
+				foundPrefix = true;
+				break;
+			}
 		}
 	}
 
