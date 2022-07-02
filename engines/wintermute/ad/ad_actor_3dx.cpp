@@ -637,7 +637,7 @@ void AdActor3DX::getNextStep3D() {
 		newVec = *currentPos - newPos;
 	}
 
-	if (currentPos == nullptr || origVec.getSquareMagnitude() < newVec.getSquareMagnitude()) {
+	if (currentPos == nullptr || origVec.length() < newVec.length()) {
 		if (currentPos != nullptr) {
 			_posVector = *currentPos;
 		}
