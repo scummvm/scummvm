@@ -29,6 +29,14 @@ namespace ViewsEnh {
 namespace Locations {
 
 Market::Market() : Location("Market") {
+	addButton(&g_globals->_confirmIcons,
+		Common::Point(_innerBounds.width() / 2 - 24,
+			_innerBounds.height() - 32),
+		0, Common::KEYCODE_y);
+	addButton(&g_globals->_confirmIcons,
+		Common::Point(_innerBounds.width() / 2 + 4,
+			_innerBounds.height() - 32),
+		2, Common::KEYCODE_n);
 }
 
 bool Market::msgFocus(const FocusMessage &msg) {
