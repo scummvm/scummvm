@@ -1835,32 +1835,6 @@ AdSceneState *AdGame::getSceneState(const char *filename, bool saving) {
 	}
 }
 
-#ifdef ENABLE_WME3D
-//////////////////////////////////////////////////////////////////////////
-uint32 Wintermute::AdGame::getAmbientLightColor() {
-	if (_scene) {
-		return _scene->_ambientLightColor;
-	} else {
-		return BaseGame::getAmbientLightColor();
-	}
-}
-
-Wintermute::TShadowType Wintermute::AdGame::getMaxShadowType(Wintermute::BaseObject *object) {
-	TShadowType ret = BaseGame::getMaxShadowType(object);
-
-	return MIN(ret, _scene->_maxShadowType);
-}
-
-bool Wintermute::AdGame::getFogParams(FogParameters &fogParameters) {
-	if (_scene) {
-		fogParameters = _scene->_fogParameters;
-		return true;
-	} else {
-		return BaseGame::getFogParams(fogParameters);
-	}
-}
-#endif
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::windowLoadHook(UIWindow *win, char **buffer, char **params) {
@@ -2516,6 +2490,38 @@ bool AdGame::displayDebugInfo() {
 	}
 	return BaseGame::displayDebugInfo();
 }
+
+
+#ifdef ENABLE_WME3D
+//////////////////////////////////////////////////////////////////////////
+Wintermute::TShadowType Wintermute::AdGame::getMaxShadowType(Wintermute::BaseObject *object) {
+	TShadowType ret = BaseGame::getMaxShadowType(object);
+
+	return MIN(ret, _scene->_maxShadowType);
+}
+
+//////////////////////////////////////////////////////////////////////////
+uint32 Wintermute::AdGame::getAmbientLightColor() {
+	if (_scene) {
+		return _scene->_ambientLightColor;
+	} else {
+		return BaseGame::getAmbientLightColor();
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool Wintermute::AdGame::getFogParams(bool *fogEnabled, uint32 *fogColor, float *start, float *end) {
+	if (_scene) {
+		*fogEnabled = _scene->_fogEnabled;
+		*fogColor = _scene->_fogColor;
+		*start = _scene->_fogStart;
+		*end = _scene->_fogEnd;
+		return true;
+	} else {
+		return BaseGame::getFogParams(fogEnabled, fogColor, start, end);
+	}
+}
+#endif
 
 
 //////////////////////////////////////////////////////////////////////////

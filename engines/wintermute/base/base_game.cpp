@@ -637,43 +637,6 @@ void BaseGame::LOG(bool res, const char *fmt, ...) {
 	//QuickMessage(buff);
 }
 
-#ifdef ENABLE_WME3D
-bool BaseGame::setMaxShadowType(TShadowType maxShadowType) {
-	if (maxShadowType > SHADOW_STENCIL) {
-		maxShadowType = SHADOW_STENCIL;
-	}
-
-	if (maxShadowType < 0) {
-		maxShadowType = SHADOW_NONE;
-	}
-
-	if (maxShadowType == SHADOW_FLAT && !_supportsRealTimeShadows) {
-		maxShadowType = SHADOW_SIMPLE;
-	}
-
-	_maxShadowType = maxShadowType;
-
-	return STATUS_OK;
-}
-
-TShadowType BaseGame::getMaxShadowType(BaseObject *object) {
-	if (object) {
-		return MIN(_maxShadowType, object->_shadowType);
-	} else {
-		return _maxShadowType;
-	}
-}
-
-uint32 BaseGame::getAmbientLightColor() {
-	return 0x00000000;
-}
-
-bool BaseGame::getFogParams(FogParameters &fogParameters) {
-	fogParameters._enabled = false;
-	return true;
-}
-#endif
-
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::setEngineLogCallback(ENGINE_LOG_CALLBACK callback, void *data) {
 	_engineLogCallback = callback;
@@ -4612,6 +4575,42 @@ bool BaseGame::displayDebugInfo() {
 	return STATUS_OK;
 }
 
+#ifdef ENABLE_WME3D
+//////////////////////////////////////////////////////////////////////////
+bool BaseGame::setMaxShadowType(TShadowType maxShadowType) {
+	if (maxShadowType > SHADOW_STENCIL) {
+		maxShadowType = SHADOW_STENCIL;
+	}
+
+	if (maxShadowType < 0) {
+		maxShadowType = SHADOW_NONE;
+	}
+
+	if (maxShadowType == SHADOW_FLAT && !_supportsRealTimeShadows) {
+		maxShadowType = SHADOW_SIMPLE;
+	}
+
+	_maxShadowType = maxShadowType;
+
+	return STATUS_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////
+TShadowType BaseGame::getMaxShadowType(BaseObject *object) {
+	if (object) {
+		return MIN(_maxShadowType, object->_shadowType);
+	} else {
+		return _maxShadowType;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+uint32 BaseGame::getAmbientLightColor() {
+	return 0x00000000;
+}
+
+#endif
+
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::getMousePos(Point32 *pos) {
 	BasePlatform::getCursorPos(pos);
@@ -4649,6 +4648,14 @@ void BaseGame::getMousePos(Point32 *pos) {
 		}
 	}
 }
+
+#ifdef ENABLE_WME3D
+//////////////////////////////////////////////////////////////////////////
+bool BaseGame::getFogParams(bool *fogEnabled, uint32 *, float *, float *) {
+	*fogEnabled = false;
+	return true;
+}
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::miniUpdate() { // TODO: Is this really necessary, it used to update sound, but the mixer does that now.
