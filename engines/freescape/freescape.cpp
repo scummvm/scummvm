@@ -188,7 +188,6 @@ void FreescapeEngine::drawFrame() {
 	_currentArea->draw(_gfx);
 	_gfx->renderCrossair(0);
 	//drawBorder();
-	_gfx->flipBuffer();
 }
 
 void FreescapeEngine::processInput() {
@@ -244,6 +243,7 @@ void FreescapeEngine::processInput() {
 }
 
 void FreescapeEngine::shoot() {
+	_gfx->renderShoot(0);
 	Math::Vector3d direction = directionToVector(_pitch, _yaw);
 	Math::Ray ray(_position, direction);
 	Object *shot = _currentArea->shootRay(ray);
@@ -281,8 +281,9 @@ Common::Error FreescapeEngine::run() {
 	}
 	debug("Starting area %d", _currentArea->getAreaID());
 	while (!shouldQuit()) {
-		processInput();
 		drawFrame();
+		processInput();
+		_gfx->flipBuffer();
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
