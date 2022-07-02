@@ -96,8 +96,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 		SearchMan.addSubDirectoryMatching(_gameDataDir, directoryGlob);
 	}
 
-	gameQuirks(_gameDescription->desc.gameId, _gameDescription->desc.platform);
-
 	if (debugChannelSet(-1, kDebug32bpp))
 		_colorDepth = 32;
 	else
@@ -124,6 +122,8 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 	_surface = nullptr;
 	_tickBaseline = 0;
+
+	gameQuirks(_gameDescription->desc.gameId, _gameDescription->desc.platform);
 }
 
 DirectorEngine::~DirectorEngine() {
