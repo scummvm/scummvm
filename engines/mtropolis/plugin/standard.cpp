@@ -131,8 +131,6 @@ bool MidiParser_MTropolis::processEvent(const EventInfo &info, bool fireEvents) 
 	return MidiParser_SMF::processEvent(info, fireEvents);
 }
 
-// This extends MidiDriver_BASE because we need to intercept commands to modulate the volume
-// separately for each input.
 class MidiFilePlayerImpl : public MidiFilePlayer {
 public:
 	explicit MidiFilePlayerImpl(const Common::SharedPtr<MidiCombinerSource> &outputDriver, const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint32 baseTempo, bool hasTempoOverride, double tempoOverride, uint8 volume, bool loop, uint16 mutedTracks);
@@ -151,8 +149,6 @@ public:
 	void onTimer();
 
 private:
-	static double computeTempoScale(double tempo);
-
 	Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> _file;
 	Common::SharedPtr<MidiParser_MTropolis> _parser;
 	Common::SharedPtr<MidiCombinerSource> _outputDriver;
@@ -262,12 +258,6 @@ void MidiFilePlayerImpl::detach() {
 void MidiFilePlayerImpl::onTimer() {
 	if (_parser)
 		_parser->onTimer();
-}
-
-double MidiFilePlayerImpl::computeTempoScale(double tempo) {
-	if (tempo <= 0.0)
-		return 1.0;
-	return 120.0 / tempo;
 }
 
 // Simple combiner - Behaves "QuickTime-like" and all commands are passed through directly.
