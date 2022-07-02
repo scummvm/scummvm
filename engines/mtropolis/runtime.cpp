@@ -2984,9 +2984,17 @@ VThreadState Structural::consumeCommand(Runtime *runtime, const Common::SharedPt
 		return kVThreadReturn;
 	}
 
-	if (Event::create(EventIDs::kPreloadMedia, 0).respondsTo(msg->getEvent()) || Event::create(EventIDs::kFlushMedia, 0).respondsTo(msg->getEvent()) || Event::create(EventIDs::kPrerollMedia, 0).respondsTo(msg->getEvent())) {
-		// Just ignore these
-		return kVThreadReturn;
+	// Just ignore these
+	const EventIDs::EventID ignoredIDs[] = {
+		EventIDs::kPreloadMedia,
+		EventIDs::kFlushMedia,
+		EventIDs::kFlushAllMedia,
+		EventIDs::kPrerollMedia
+	};
+
+	for (EventIDs::EventID evtID : ignoredIDs) {
+		if (Event::create(evtID, 0).respondsTo(msg->getEvent()))
+			return kVThreadReturn;
 	}
 
 	warning("Command type %i was ignored", msg->getEvent().eventType);
