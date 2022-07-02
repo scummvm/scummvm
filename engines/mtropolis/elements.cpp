@@ -2181,25 +2181,36 @@ void SoundElement::setBalance(int16 balance) {
 }
 
 VThreadState SoundElement::startPlayingTask(const StartPlayingTaskData &taskData) {
-	_paused = false;
+	// Pushed in reverse order, actual order is Unpaused -> Played
+	{
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+		taskData.runtime->sendMessageOnVThread(dispatch);
+	}
+
+	if (_paused) {
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kUnpause, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+		taskData.runtime->sendMessageOnVThread(dispatch);
+
+		_paused = false;
+	}
+
 	_shouldPlayIfNotPaused = true;
 	_needsReset = true;
-
-	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
-	Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-	taskData.runtime->sendMessageOnVThread(dispatch);
 
 	return kVThreadReturn;
 }
 
 VThreadState SoundElement::stopPlayingTask(const StartPlayingTaskData &taskData) {
-	_paused = false;
-	_shouldPlayIfNotPaused = false;
-	_needsReset = true;
+	if (_shouldPlayIfNotPaused) {
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kStop, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+		taskData.runtime->sendMessageOnVThread(dispatch);
 
-	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kStop, 0), DynamicValue(), getSelfReference()));
-	Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-	taskData.runtime->sendMessageOnVThread(dispatch);
+		_shouldPlayIfNotPaused = false;
+		_needsReset = true;
+	}
 
 	return kVThreadReturn;
 }
