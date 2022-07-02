@@ -1251,6 +1251,8 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 				out.createWriteStream();
 			if (out.isWritable())
 				g_director->_traceLogFile = logPath;
+			else
+				warning("traceLogFile '%s' is not writeable", logPath.c_str());
 		} else {
 			g_director->_traceLogFile.clear();
 		}
