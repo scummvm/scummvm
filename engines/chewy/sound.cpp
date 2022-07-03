@@ -314,7 +314,7 @@ const RoomMusic roomMusic[] = {
 	{  89, 38 }, {  92, 38 }, {  33, 35 }, {  37,  8 }, {  39,  9 },
 	{  42, 41 }, {  45, 44 }, {  46, 21 }, {  50, 21 }, {  73, 21 },
 	{  74, 21 }, {  48, 22 }, {  49,  3 }, {  51, 27 }, {  52, 27 },
-	{  53, 26 }, {  55, 23 }, {  57, 23 }, {  56, 52 }, {  62, 25 },
+	{  53, 26 }, {  55, 23 }, {  57, 23 }, {  56,  7 }, {  62, 25 },
 	{  64, 51 }, {  66, 34 }, {  68, 34 }, {  67, 28 }, {  69, 28 },
 	{  70, 28 }, {  75, 28 }, {  72, 31 }, {  76, 46 }, {  79,  6 },
 	{  80, 29 }, {  81, 45 }, {  82, 50 }, {  84, 24 }, {  85, 32 },
@@ -335,11 +335,9 @@ void Sound::playRoomMusic(int16 roomNum) {
 		}
 	}
 	
-	// TODO: Extra checks for two flags in room 56
-	//if ((spieler.flags32 & SpielerFlags32_10) != 0 && spieler.flags33 >= 0)
-	//  musicIndex = 52;
-	//else
-	//  musicIndex = 7;
+	// Room 56 music (first vs second visit)
+	if (roomNum == 56 && _G(gameState).flags32_10 && _G(gameState).flags33_80)
+		musicIndex = 52;
 
 	if (musicIndex != _curMusic) {
 		stopMusic();
