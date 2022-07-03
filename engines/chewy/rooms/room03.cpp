@@ -395,7 +395,7 @@ void Room3::probeTransfer() {
 
 		case 1:
 			g_engine->_sound->waitForSpeechToFinish();
-			_G(atds)->set_ats_str(24, 0, 1);
+			_G(atds)->set_ats_str(24, 0, ATS_DATA);
 			_G(mov_phasen)[0].AtsText = 544;
 			switchRoom(1);
 			break;
