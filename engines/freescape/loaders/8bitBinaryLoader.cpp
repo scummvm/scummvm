@@ -105,12 +105,15 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		}
 		debug("End of object at %lx", file->pos());
 
+		if (!GeometricObject::isPolygon(objectType))
+			position = 32 * position;
+
 		// create an object
 		return new GeometricObject(
 			objectType,
 			objectID,
 			rawFlagsAndType, // flags
-			32 * position,
+			position,
 			32 * v, // size
 			colours,
 			ordinates,

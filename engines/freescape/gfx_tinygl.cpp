@@ -290,18 +290,18 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vec
 	float dx, dy, dz;
 	dx = dy = dz = 0;
 
-	if (size.x() == 0)
+	/*if (size.x() == 0)
 		dx = 2;
 	else if (size.y() == 0)
 		dy = 2;
 	else if (size.z() == 0)
 		dz = 2;
-	else {
+	else {*/
 		if (ordinates->size() % 3 > 0) {
 			//return;
 			error("Invalid polygon: %f %f %f", size.x(), size.y(), size.z());
 		}
-	}
+	//}
 
 	if (ordinates->size() % 3 > 0)
 		error("Invalid polygon using %d ordinates", ordinates->size());

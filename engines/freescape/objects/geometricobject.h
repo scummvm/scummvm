@@ -20,6 +20,7 @@ public:
 	static int numberOfColoursForObjectOfType(Type type);
 	static int numberOfOrdinatesForType(Type type);
 	static bool isPyramid(Type type);
+	static bool isPolygon(Type type);
 
 	GeometricObject(
 		Type type,
