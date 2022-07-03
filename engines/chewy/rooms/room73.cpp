@@ -43,8 +43,12 @@ void Room73::entry(int16 eib_nr) {
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	_G(SetUpScreenFunc) = setup_func;
+
 	if (_G(gameState).flags28_20)
-		_G(det)->showStaticSpr(3+ (_G(gameState).R63Feuer ? 1 : 0)); // flags25_40
+		moveBushes();
+
+	if (_G(gameState).flags28_40)
+		pickupMachete();
 
 	if (_G(flags).LoadGame)
 		return;
@@ -55,6 +59,7 @@ void Room73::entry(int16 eib_nr) {
 		break;
 	case 115:
 		leftEntry();
+		break;
 	default:
 		break;
 	}
@@ -80,24 +85,21 @@ void Room73::xit(int16 eib_nr) {
 	}
 }
 
-int Room73::proc1() {
-	if (_G(cur)->usingInventoryCursor() && !_G(gameState).flags28_20)
+int Room73::procMoveBushes() {
+	if (_G(cur)->usingInventoryCursor() || _G(gameState).flags28_20)
 		return 0;
 
 	hideCur();
 	_G(gameState).flags28_20 = true;
 	autoMove(3, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
-	_G(atds)->delControlBit(433, ATS_ACTIVE_BIT);
-	_G(atds)->delControlBit(432, ATS_ACTIVE_BIT);
-	_G(atds)->set_ats_str(430, 1, ATS_DATA);
-	_G(det)->showStaticSpr(3);
+	moveBushes();
 	showCur();
 
 	return 1;	
 }
 
-int Room73::proc2() {
+int Room73::procPickupMachete() {
 	if (_G(cur)->usingInventoryCursor())
 		return 0;
 
@@ -105,13 +107,26 @@ int Room73::proc2() {
 	_G(gameState).flags28_40 = true;
 	autoMove(4, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
-	_G(det)->hideStaticSpr(3);
-	_G(det)->hideStaticSpr(4);
-	_G(atds)->setControlBit(433, ATS_ACTIVE_BIT);
+	pickupMachete();
 	new_invent_2_cur(99);
 	showCur();
 
 	return 1;
+}
+
+void Room73::moveBushes() {
+	_G(atds)->delControlBit(433, ATS_ACTIVE_BIT);	// show machete hotspot
+	_G(atds)->delControlBit(432, ATS_ACTIVE_BIT);	// show skeleton hotspot
+	_G(det)->showStaticSpr(3);								// show skeleton + machete
+	_G(det)->hideStaticSpr(4);								// hide skeleton
+	_G(atds)->set_ats_str(430, 1, ATS_DATA);
+}
+
+void Room73::pickupMachete() {
+	_G(atds)->setControlBit(433, ATS_ACTIVE_BIT);	// hide machete hotspot
+	_G(atds)->setControlBit(432, ATS_ACTIVE_BIT);	// show skeleton hotspot
+	_G(det)->hideStaticSpr(3);								// hide skeleton + machete
+	_G(det)->showStaticSpr(4);								// show skeleton
 }
 
 } // namespace Rooms

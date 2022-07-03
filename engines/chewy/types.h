@@ -280,8 +280,8 @@ struct GameFlags {
 	bool flags28_4 : 1;
 	bool flags28_8 : 1;
 	bool flags28_10 : 1;
-	bool flags28_20 : 1;
-	bool flags28_40 : 1;
+	bool flags28_20 : 1;	// bushes moved
+	bool flags28_40 : 1;	// machete picked up
 	bool R74CutRubberPlant : 1;
 
 	bool flags29_1 : 1;
