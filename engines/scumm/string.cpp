@@ -95,7 +95,7 @@ void ScummEngine::printString(int m, const byte *msg) {
 					if (a)
 						a->setAnimSpeed(2);
 					a = derefActorSafe(10, "printString");
-				if (a)
+					if (a)
 						a->setAnimSpeed(2);
 				}
 			}
@@ -1165,6 +1165,18 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 					*dst++ = chr;
 					*dst++ = src[num+0];
 					*dst++ = src[num+1];
+
+					// WORKAROUND: In some versions of Sam & Max, talking to Evelyn Morrison
+					// while wearing the bigfoot costume misattributes some lines to Max even
+					// though Sam is the one actually speaking. For example, the French and
+					// German releases use `startAnim(8)` while the English release correctly
+					// uses `startAnim(7)` for this.
+					if (_game.id == GID_SAMNMAX && _currentRoom == 52 && vm.slot[_currentScript].number == 102 &&
+						chr == 9 && readVar(0x8000 + 95) != 0 && (VAR(171) == 997 || VAR(171) == 998) &&
+						dst[-2] == 8 && _enableEnhancements) {
+						dst[-2] = 7;
+					}
+
 					if (_game.version == 8) {
 						*dst++ = src[num+2];
 						*dst++ = src[num+3];
