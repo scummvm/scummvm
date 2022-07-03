@@ -1378,8 +1378,8 @@ void Actor::speechPlay(int sentenceId, bool voiceOver) {
 			// x: 149 --> pan: -41
 			// PS05 TV
 			// x: 527 --> pan:  48
-			// These quotes only play in kSetMA04 and kSetPS05
-			pan = (_vm->_playerActor->getSetId() == kSetMA04) ? -41 : 48;
+			// These quotes only play in MA04 scene and kSetPS05
+			pan = (_vm->_playerActor->getSetId() == kSetPS05) ? 48 : -41;
 		} else if ((_id == kActorLucy     && sentenceId >= 500  && sentenceId <= 640)
 		        || (_id == kActorClovis   && sentenceId >= 310  && sentenceId <= 540)
 		        || (_id == kActorDektora  && sentenceId >= 220  && sentenceId <= 490)
@@ -1387,7 +1387,7 @@ void Actor::speechPlay(int sentenceId, bool voiceOver) {
 		        || (_id == kActorGuzza    && sentenceId >= 0    && sentenceId <= 70)) {
 			// MA04 phone
 			// x: 351 --> pan: 7
-			// These quotes only play in kSetMA04
+			// These quotes only play in MA04 scene
 			pan = 7;
 		} else if (_id == kActorGuzza     && sentenceId >= 1380 && sentenceId <= 1480) {
 			// NR02 phone (Taffy's)
