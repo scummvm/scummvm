@@ -66,11 +66,8 @@ void Sound::playSound(uint8 *data, uint32 size, uint channel, bool loop, uint16 
 			dispose),
 		loop ? 0 : 1);
 
-	assert(volume >= 0 && volume < 64);
-	assert(balance >= 0 && balance < 128);
-
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle[channel], stream, -1,
-		volume * Audio::Mixer::kMaxChannelVolume / 63, MIN(127, (balance - 63) * 2));
+		convertVolume(volume), convertBalance(balance));
 }
 
 void Sound::pauseSound(uint channel) {
@@ -98,37 +95,24 @@ bool Sound::isSoundActive(uint channel) const {
 	return _mixer->isSoundHandleActive(_soundHandle[channel]);
 }
 
-void Sound::setSoundVolume(uint volume) {
+void Sound::setUserSoundVolume(uint volume) {
 	_userSoundVolume = volume;
 	if (soundEnabled())
 		ConfMan.setInt("sfx_volume", volume);
 }
 
-int Sound::getSoundVolume() const {
+int Sound::getUserSoundVolume() const {
 	return _userSoundVolume;
-}
-
-void Sound::pushVolume() {
-	/* _soundVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
-	_speechVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
-	_musicVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);*/
-}
-
-void Sound::popVolume() {
-	/* assert(_soundVolume >= 0 && _speechVolume >= 0 && _musicVolume >= 0);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, _soundVolume);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, _speechVolume);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _musicVolume);*/
 }
 
 void Sound::setSoundChannelVolume(uint channel, uint volume) {
 	assert(channel < MAX_SOUND_EFFECTS);
-	_mixer->setChannelVolume(_soundHandle[channel], volume);
+	_mixer->setChannelVolume(_soundHandle[channel], convertVolume(volume));
 }
 
 void Sound::setSoundChannelBalance(uint channel, int8 balance) {
 	assert(channel < MAX_SOUND_EFFECTS);
-	_mixer->setChannelBalance(_soundHandle[channel], balance);
+	_mixer->setChannelBalance(_soundHandle[channel], convertBalance(balance));
 }
 
 void Sound::playMusic(int16 num, bool loop) {
@@ -142,11 +126,11 @@ void Sound::playMusic(int16 num, bool loop) {
 	delete[] data;
 }
 
-void Sound::playMusic(uint8 *data, uint32 size) {
+void Sound::playMusic(uint8 *data, uint32 size, uint8 volume) {
 	TMFStream *stream = new TMFStream(new Common::MemoryReadStream(data, size), 0);
 	_curMusic = -1;
 
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, stream);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, stream, -1, convertVolume(volume));
 }
 
 void Sound::pauseMusic() {
@@ -166,14 +150,19 @@ bool Sound::isMusicActive() const {
 	return _mixer->isSoundHandleActive(_musicHandle);
 }
 
-void Sound::setMusicVolume(uint volume) {
+void Sound::setUserMusicVolume(uint volume) {
 	_userMusicVolume = volume;
 	if (musicEnabled())
 		ConfMan.setInt("music_volume", volume);
 }
 
-int Sound::getMusicVolume() const {
+int Sound::getUserMusicVolume() const {
 	return _userMusicVolume;
+}
+
+void Sound::setActiveMusicVolume(uint8 volume) {
+	if (isMusicActive())
+		_mixer->setChannelVolume(_musicHandle, convertVolume(volume));
 }
 
 void Sound::playSpeech(int num, bool waitForFinish, uint16 balance) {
@@ -194,10 +183,8 @@ void Sound::playSpeech(int num, bool waitForFinish, uint16 balance) {
 		new Common::MemorySeekableReadWriteStream(data, size, DisposeAfterUse::YES),
 		DisposeAfterUse::YES);
 
-	assert(balance >= 0 && balance < 128);
-
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream,
-		-1 , 255, MIN(127, (balance - 63) * 2));
+		-1, Audio::Mixer::kMaxChannelVolume, convertBalance(balance));
 
 	if (waitForFinish) {
 		// Wait for speech to finish
@@ -237,7 +224,7 @@ void Sound::waitForSpeechToFinish() {
 
 void Sound::setSpeechBalance(uint16 balance) {
 	if (isSpeechActive()) {
-		_mixer->setChannelBalance(_speechHandle, balance);
+		_mixer->setChannelBalance(_speechHandle, convertBalance(balance));
 	}
 }
 
@@ -344,6 +331,16 @@ void Sound::playRoomMusic(int16 roomNum) {
 		if (musicIndex >= 0)
 			playMusic(musicIndex, true);
 	}
+}
+
+uint8 Sound::convertVolume(uint16 volume) {
+	assert(volume >= 0 && volume < 64);
+	return volume * Audio::Mixer::kMaxChannelVolume / 63;
+}
+
+int8 Sound::convertBalance(uint16 balance) {
+	assert(balance >= 0 && balance < 128);
+	return MIN(127, (balance - 63) * 2);
 }
 
 } // namespace Chewy

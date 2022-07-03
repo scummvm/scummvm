@@ -83,6 +83,10 @@ CfoDecoder::CfoVideoTrack::CfoVideoTrack(Common::SeekableReadStream *stream, uin
 
 	_musicData = nullptr;
 	_musicSize = 0;
+
+	Common::fill(_sfxBalances, _sfxBalances + ARRAYSIZE(_sfxBalances), 63);
+	_sfxGlobalVolume = 63;
+	_musicVolume = 63;
 }
 
 CfoDecoder::CfoVideoTrack::~CfoVideoTrack() {
@@ -219,7 +223,7 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			break;
 		case kChunkPlayMusic:
 			// Used in videos 0, 18, 34, 71
-			_sound->playMusic(_musicData, _musicSize);
+			_sound->playMusic(_musicData, _musicSize, _musicVolume);
 			break;
 		case kChunkPlaySeq:
 			error("Unused chunk kChunkPlaySeq found");
@@ -246,8 +250,10 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			} while (_sound->isMusicActive() && musicLoops < 100);
 			break;
 		case kChunkSetMusicVolume:
-			volume = _fileStream->readUint16LE() * Audio::Mixer::kMaxChannelVolume / 63;
-			_sound->setMusicVolume(volume);
+			volume = _fileStream->readUint16LE();
+
+			_musicVolume = volume;
+			_sound->setActiveMusicVolume(volume);
 			break;
 		case kChunkSetLoopMode:
 			error("Unused chunk kChunkSetLoopMode found");
@@ -262,18 +268,21 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			repeat = _fileStream->readUint16LE();
 			assert(number < MAX_SOUND_EFFECTS);
 
-			//_sound->setSoundVolume(volume);
-			_sound->playSound(_soundEffects[number], _soundEffectSize[number], channel, repeat, volume, 63, DisposeAfterUse::NO);
+			_sound->playSound(_soundEffects[number], _soundEffectSize[number], channel, repeat,
+				volume * _sfxGlobalVolume / 63, _sfxBalances[channel], DisposeAfterUse::NO);
 			break;
 		case kChunkSetSoundVolume:
-			volume = _fileStream->readUint16LE() * Audio::Mixer::kMaxChannelVolume / 63;
-			_sound->setSoundVolume(volume);
+			volume = _fileStream->readUint16LE();
+			assert(volume >= 0 && volume < 64);
+			_sfxGlobalVolume = volume;
+			// This is only used once in the credits video, before any sounds
+			// are played, so no need to update volume of active sounds.
 			break;
 		case kChunkSetChannelVolume:
 			channel = _fileStream->readUint16LE();
-			volume = _fileStream->readUint16LE() * Audio::Mixer::kMaxChannelVolume / 63;
+			volume = _fileStream->readUint16LE();
 
-			_sound->setSoundChannelVolume(channel, volume);
+			_sound->setSoundChannelVolume(channel, volume * _sfxGlobalVolume / 63);
 			break;
 		case kChunkFreeSoundEffect:
 			number = _fileStream->readUint16LE();
@@ -293,7 +302,9 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			break;
 		case kChunkSetBalance:
 			channel = _fileStream->readUint16LE();
-			balance = (_fileStream->readUint16LE() * 2) - 127;
+			balance = _fileStream->readUint16LE();
+
+			_sfxBalances[channel] = balance;
 			_sound->setSoundChannelBalance(channel, balance);
 			break;
 		case kChunkSetSpeed:

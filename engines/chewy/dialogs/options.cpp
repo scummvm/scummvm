@@ -100,12 +100,12 @@ void Options::execute(TafInfo *ti) {
 				8 + ti->correction[(SCHNULL_BAND << 1) + 1], 0);
 		}
 
-		const int soundVolume = MAX(1, g_engine->_sound->getSoundVolume() * 32 / Audio::Mixer::kMaxMixerVolume);
+		const int soundVolume = MAX(1, g_engine->_sound->getUserSoundVolume() * 32 / Audio::Mixer::kMaxMixerVolume);
 		_G(out)->pop_box(32 - 2, 104 - 12, 42 + 4, 136 + 2, 192, 183, 182);
 		_G(out)->printxy(32 + 3, 104 - 10, 15, 300, 0, "S");
 		_G(out)->boxFill(33, 136 - soundVolume, 42, 136, 15);
 
-		const int musicVolume = MAX(1, g_engine->_sound->getMusicVolume() * 32 / Audio::Mixer::kMaxMixerVolume);
+		const int musicVolume = MAX(1, g_engine->_sound->getUserMusicVolume() * 32 / Audio::Mixer::kMaxMixerVolume);
 		_G(out)->pop_box(52 - 2, 104 - 12, 62 + 4, 136 + 2, 192, 183, 182);
 		_G(out)->printxy(52 + 3, 104 - 10, 31, 300, 0, "M");
 		_G(out)->boxFill(53, 136 - musicVolume, 62, 136, 31);
@@ -193,11 +193,11 @@ void Options::execute(TafInfo *ti) {
 				key = Common::KEYCODE_ESCAPE;
 				break;
 			case 7: // S volume gauge
-				g_engine->_sound->setSoundVolume(MIN(32, 136 - g_events->_mousePos.y) * Audio::Mixer::kMaxMixerVolume / 32);
+				g_engine->_sound->setUserSoundVolume(MIN(32, 136 - g_events->_mousePos.y) * Audio::Mixer::kMaxMixerVolume / 32);
 				g_engine->syncSoundSettings();
 				break;
 			case 8: // M volume gauge
-				g_engine->_sound->setMusicVolume(MIN(32, 136 - g_events->_mousePos.y) * Audio::Mixer::kMaxMixerVolume / 32);
+				g_engine->_sound->setUserMusicVolume(MIN(32, 136 - g_events->_mousePos.y) * Audio::Mixer::kMaxMixerVolume / 32);
 				g_engine->syncSoundSettings();
 				break;
 
