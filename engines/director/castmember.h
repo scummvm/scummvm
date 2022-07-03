@@ -149,6 +149,7 @@ public:
 
 private:
 	void ditherImage();
+	void ditherFloydImage();
 
 	Graphics::PaletteLookup _paletteLookup;
 };
