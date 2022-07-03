@@ -645,7 +645,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 
 					case 467:
 					case 473:
-						retValue = Room82::proc9();
+						retValue = Room82::procClimbLadderToGorilla();
 						break;
 
 					case 468:
@@ -977,11 +977,11 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 468:
-						Room82::talk1();
+						Room82::talkWithDirector();
 						break;
 
 					case 469:
-						Room82::talk2();
+						Room82::talkWithFilmDiva();
 						break;
 
 					case 471:

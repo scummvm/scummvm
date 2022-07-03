@@ -110,7 +110,7 @@ void Room82::setup_func() {
 	goAutoXy(nicDestX, 110, P_NICHELLE, ANI_GO);
 }
 
-void Room82::talk1() {
+void Room82::talkWithDirector() {
 	if (_G(gameState).flags30_40)
 		return;
 
@@ -133,7 +133,7 @@ void Room82::talk1() {
 	Room66::proc8(2, 7, transitionAniNr, transitionDiaNr);
 }
 
-void Room82::talk2() {
+void Room82::talkWithFilmDiva() {
 	hideCur();
 	autoMove(3, P_CHEWY);
 	startAadWait(453);
@@ -242,7 +242,7 @@ void Room82::proc8() {
 	showCur();
 }
 
-int Room82::proc9() {
+int Room82::procClimbLadderToGorilla() {
 	if (_G(cur)->usingInventoryCursor() || !_G(gameState).flags30_40)
 		return 0;
 
