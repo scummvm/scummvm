@@ -319,6 +319,9 @@ void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos)
 }
 
 void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTime) {
+	Math::Vector3d previousPosition = _position;
+	int previousAreaID = _currentArea->getAreaID();
+
 	float velocity = _movementSpeed * deltaTime;
 	float positionY = _position.y();
 	switch (direction) {
@@ -338,11 +341,13 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 	// Make sure the user stays at the ground level
 	// this one-liner keeps the user at the ground level (xz plane)
 	_position.set(_position.x(), positionY, _position.z());
+	bool collided = checkCollisions();
+	if (collided && previousAreaID == _currentArea->getAreaID())
+		_position = previousPosition;
 	debug("player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
-	checkCollisions();
 }
 
-void FreescapeEngine::checkCollisions() {
+bool FreescapeEngine::checkCollisions() {
 
 	Math::Vector3d v1(_position.x() - _playerWidth / 2, _playerHeight / 2                , _position.z() - _playerDepth / 2);
 	Math::Vector3d v2(_position.x() + _playerWidth / 2, _position.y() + _playerHeight / 2, _position.z() + _playerDepth / 2);
@@ -357,7 +362,9 @@ void FreescapeEngine::checkCollisions() {
 			debug("Must use collision = true when executing: %s", gobj->conditionSource->c_str());
 			executeCode(gobj->condition, false, true);
 		}
+		return true;
 	}
+	return false;
 }
 
 void FreescapeEngine::gotoArea(uint16 areaID, uint16 entranceID) {
