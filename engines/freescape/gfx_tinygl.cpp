@@ -174,10 +174,6 @@ void TinyGLRenderer::draw2DText(const Common::String &text, const Common::Point 
 	tglDepthMask(TGL_TRUE);
 }
 
-void TinyGLRenderer::scale(const Math::Vector3d &scale) {
-	tglScalef(1, 1, 1);
-}
-
 void TinyGLRenderer::updateProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) {
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
@@ -489,12 +485,19 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 	}
 
 	Common::Array<Math::Vector3d> face;
+	uint8 r, g, b;
+	_palette->getRGBAt((*colours)[1], r, g, b);
+	tglColor3ub(r, g, b);
+
 	face.push_back(vertices[5]);
 	face.push_back(vertices[6]);
 	face.push_back(vertices[2]);
 	face.push_back(vertices[1]);
 	renderFace(face);
 	face.clear();
+
+	_palette->getRGBAt((*colours)[0], r, g, b);
+	tglColor3ub(r, g, b);
 
 	face.push_back(vertices[7]);
 	face.push_back(vertices[4]);
@@ -503,12 +506,18 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 	renderFace(face);
 	face.clear();
 
+	_palette->getRGBAt((*colours)[3], r, g, b);
+	tglColor3ub(r, g, b);
+
 	face.push_back(vertices[4]);
 	face.push_back(vertices[5]);
 	face.push_back(vertices[1]);
 	face.push_back(vertices[0]);
 	renderFace(face);
 	face.clear();
+
+	_palette->getRGBAt((*colours)[2], r, g, b);
+	tglColor3ub(r, g, b);
 
 	face.push_back(vertices[6]);
 	face.push_back(vertices[7]);
@@ -517,12 +526,18 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 	renderFace(face);
 	face.clear();
 
+	_palette->getRGBAt((*colours)[5], r, g, b);
+	tglColor3ub(r, g, b);
+
 	face.push_back(vertices[0]);
 	face.push_back(vertices[1]);
 	face.push_back(vertices[2]);
 	face.push_back(vertices[3]);
 	renderFace(face);
 	face.clear();
+
+	_palette->getRGBAt((*colours)[4], r, g, b);
+	tglColor3ub(r, g, b);
 
 	face.push_back(vertices[7]);
 	face.push_back(vertices[6]);

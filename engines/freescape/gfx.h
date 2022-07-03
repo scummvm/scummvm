@@ -93,7 +93,6 @@ public:
 									float transparency = -1.0, bool additiveBlending = false) = 0;
 
 	virtual void draw2DText(const Common::String &text, const Common::Point &position) = 0;
-	virtual void scale(const Math::Vector3d &scale) = 0;
 
 	virtual void renderCrossair(byte color) = 0;
 	virtual void renderShoot(byte color) = 0;

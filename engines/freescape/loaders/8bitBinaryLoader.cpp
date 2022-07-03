@@ -151,7 +151,7 @@ float specColors[16][3] = {
 	{1, 1, 1}
 };
 
-Graphics::PixelBuffer *getPaletteGradient(float *c1, float *c2, uint16 ncolors) {
+/*Graphics::PixelBuffer *getPaletteGradient(float *c1, float *c2, uint16 ncolors) {
 	Common::Array <uint8> *raw_palette = new Common::Array <uint8>();
 	uint16 y0, y1, y2;
 	for(int c = 0; c < ncolors; c++)
@@ -172,58 +172,35 @@ Graphics::PixelBuffer *getPaletteGradient(float *c1, float *c2, uint16 ncolors) 
 	Graphics::PixelBuffer *palette = new Graphics::PixelBuffer(pixelFormat, ncolors, DisposeAfterUse::NO); //TODO
 	*palette = raw_palette->data();
 	return palette;
-}
+}*/
 
-Graphics::PixelBuffer *getPaletteGradient(uint8 c1, uint8 c2, uint16 ncolors) {
-	Common::Array <uint8> *raw_palette = new Common::Array <uint8>();
-	uint16 y0, y1, y2;
+byte drillerEGA[16][3] = {
+	{0x00, 0x00, 0x00},
+	{0x00, 0x00, 0x00},
+	{0x00, 0xaa, 0xaa},
+	{0xaa, 0x00, 0xaa},
+	{0xff, 0xff, 0xff},
+	{0x55, 0x55, 0x55},
+	{0x00, 0x00, 0xaa},
+	{0xaa, 0x55, 0x00},
+	{0x12, 0xf3, 0x56},
+	{0xaa, 0x00, 0x00},
+	{0xff, 0x55, 0xff},
+	{0x12, 0xf3, 0x56},
+	{0x12, 0xf3, 0x56},
+	{0x12, 0xf3, 0x56},
+	{0x12, 0xf3, 0x56},
+	{0x12, 0xf3, 0x56}
+};
 
-	for(int c = 0; c < ncolors; c++)
-	{
-		if (true /*c1 == 4 && c2 == 3*/) {
-			switch (c) {
-				case 0:
-				case 1:
-				y0 = 0x00; y1 = 0x00; y2 = 0x00;
-				break;
-				case 2:
-				y0 = 0x00; y1 = 0xaa; y2 = 0xaa;
-				break;
-				case 3:
-				y0 = 0xaa; y1 = 0x00; y2 = 0xaa;
-				break;
-				case 4:
-				y0 = 0xff; y1 = 0xff; y2 = 0xff;
-				break;
-				case 5:
-				y0 = 0x55; y1 = 0x55; y2 = 0x55;
-				break;
-				case 6:
-				y0 = 0x00; y1 = 0x00; y2 = 0xaa;
-				break;
-				case 7:
-				y0 = 0xaa; y1 = 0x55; y2 = 0x00;
-				break;
-				case 9:
-				y0 = 0xaa; y1 = 0x00; y2 = 0x00;
-				break;
-				case 0xa:
-				y0 = 0xff; y1 = 0x55; y2 = 0xff;
-				break;
-				default:
-				y0 = 0x12; y1 = 0xf3; y2 = 0x56;
-				break;
-			}
-		}
-		raw_palette->push_back(y0);
-		raw_palette->push_back(y1);
-		raw_palette->push_back(y2);
-	}
-	//assert(ncolors == 16);
-	assert(raw_palette->size() == ncolors * 3);
+Graphics::PixelBuffer *getPaletteGradient(uint8 areaNumber, uint8 c1, uint8 c2, uint16 ncolors) {
 	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
-	Graphics::PixelBuffer *palette = new Graphics::PixelBuffer(pixelFormat, ncolors, DisposeAfterUse::NO); //TODO
-	*palette = raw_palette->data();
+	Graphics::PixelBuffer *palette = nullptr;
+	switch (areaNumber) {
+		default:
+		palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&drillerEGA);
+		break;
+	}
 	return palette;
 }
 
@@ -255,7 +232,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		ci4 = file->readByte();
 		debug("Colors: %d %d", ci3, ci4);
 	}
-	Graphics::PixelBuffer *palette = getPaletteGradient(1, 1, ncolors);
+	Graphics::PixelBuffer *palette = getPaletteGradient(areaNumber, 1, 1, ncolors);
 
 	debug("Area %d", areaNumber);
 	debug("Skipped: %d Objects: %d", skippedValue, numberOfObjects);

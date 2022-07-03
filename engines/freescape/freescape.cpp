@@ -43,7 +43,6 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	_cameraRight = Math::Vector3d(0.f, 0.f, 0.f);
 	_movementSpeed = 4.5f;
 	_mouseSensitivity = 0.1f;
-	_scale = Math::Vector3d(0, 0, 0);
 	_borderTexture = nullptr;
 
 	// Here is the right place to set up the engine specific debug channels
@@ -181,7 +180,6 @@ Math::Vector3d FreescapeEngine::directionToVector(float pitch, float heading) {
 void FreescapeEngine::drawFrame() {
 	_gfx->updateProjectionMatrix(60.0, _nearClipPlane, _farClipPlane);
 	_gfx->positionCamera(_position, _position + _cameraFront);
-	_gfx->scale(_scaleVector);
 	_currentArea->draw(_gfx);
 	_gfx->renderCrossair(0);
 	//drawBorder();
