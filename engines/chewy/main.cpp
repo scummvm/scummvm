@@ -347,6 +347,8 @@ bool mainLoop(int16 mode) {
 					_G(cur)->move(_G(maus_old_x), _G(maus_old_y));
 					g_events->_mousePos.x = _G(maus_old_x);
 					g_events->_mousePos.y = _G(maus_old_y);
+					if (_G(cur)->usingInventoryCursor())
+						invent_2_slot(_G(cur)->getInventoryCursor());
 					_G(cur)->setInventoryCursor(-1);
 					cursorChoice(_G(menu_item));
 				}
