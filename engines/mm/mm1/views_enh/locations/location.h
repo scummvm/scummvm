@@ -30,6 +30,14 @@ namespace ViewsEnh {
 namespace Locations {
 
 class Location : public ScrollView {
+protected:
+	/**
+	 * Called when an active timeout countdown expired
+	 */
+	void timeout() override {
+		leave();
+	}
+
 public:
 	Location(const Common::String &name);
 
@@ -37,6 +45,11 @@ public:
 	 * Leave the location, turning around
 	 */
 	void leave();
+
+	/**
+	 * Display a message
+	 */
+	void displayMessage(const Common::String &msg);
 };
 
 } // namespace Locations

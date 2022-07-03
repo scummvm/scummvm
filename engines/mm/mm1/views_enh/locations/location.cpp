@@ -39,6 +39,12 @@ void Location::leave() {
 	g_events->redraw();
 }
 
+void Location::displayMessage(const Common::String &msg) {
+	Location::draw();
+
+	writeLine(3, msg, ALIGN_MIDDLE);
+}
+
 } // namespace Locations
 } // namespace ViewsEnh
 } // namespace MM1

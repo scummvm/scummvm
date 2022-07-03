@@ -91,9 +91,9 @@ void Market::buyFood() {
 	}
 
 	clearSurface();
-	writeString(10, 2, numPurchases ?
-		STRING["dialogs.market.thankyou"] :
-		STRING["dialogs.market.no_gold"]
+	displayMessage(numPurchases ?
+		STRING["enhdialogs.market.thankyou"] :
+		STRING["enhdialogs.market.no_gold"]
 	);
 
 	delaySeconds(3);

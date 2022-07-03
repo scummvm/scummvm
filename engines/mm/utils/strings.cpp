@@ -113,4 +113,20 @@ int hexToInt(const Common::String &str) {
 	return (int)tmp;
 }
 
+Common::StringArray splitLines(const Common::String &str) {
+	Common::StringArray results;
+	size_t start = 0, end;
+
+	while ((end = str.findFirstOf('\n', start)) != Common::String::npos) {
+		results.push_back(Common::String(
+			str.c_str() + start, str.c_str() + end));
+		start = end + 1;
+	}
+
+	results.push_back(str.c_str() + start);
+
+
+	return results;
+}
+
 } // namespace MM
