@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-02 20:40+0000\n"
-"PO-Revision-Date: 2022-06-30 19:29+0000\n"
+"PO-Revision-Date: 2022-07-03 14:28+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -1505,8 +1505,6 @@ msgid "Icon Path:"
 msgstr "Ikon Útvonal:"
 
 #: gui/options.cpp:2307
-#, fuzzy
-#| msgid "Default"
 msgctxt "path"
 msgid "Default"
 msgstr "Alapértelmezett"
@@ -4468,14 +4466,12 @@ msgstr ""
 "kattintást"
 
 #: engines/bladerunner/detection.cpp:108
-#, fuzzy
-#| msgid "Show subtitles and play speech"
 msgid "Show subtitles during text crawl"
-msgstr "Hang és feliratok megjelenítése"
+msgstr "Feliratok megjelenítése szöveg becsúszás közben"
 
 #: engines/bladerunner/detection.cpp:109
 msgid "During the intro cutscene, show subtitles during the text crawl"
-msgstr ""
+msgstr "A bevezető alatt jelenítse meg a feliratokat a szöveg becsúszása közben"
 
 #: engines/bladerunner/detection_tables.h:96
 #: engines/bladerunner/detection_tables.h:107
