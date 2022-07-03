@@ -82,6 +82,21 @@ bool GeometricObject::isPyramid(Type type) {
 	case SouthPyramid:
 		return true;
 	}
+
+}
+
+bool GeometricObject::isPolygon(Type type) {
+	switch (type) {
+	default:
+		return false;
+
+	case Line:
+	case Triangle:
+	case Quadrilateral:
+	case Pentagon:
+	case Hexagon:
+		return true;
+	}
 }
 
 #pragma mark -
