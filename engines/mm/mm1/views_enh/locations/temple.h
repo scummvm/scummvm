@@ -19,62 +19,46 @@
  *
  */
 
+#ifndef MM1_VIEWS_ENH_LOCATIONS_TEMPLE_H
+#define MM1_VIEWS_ENH_LOCATIONS_TEMPLE_H
+
 #include "mm/mm1/views_enh/locations/location.h"
-#include "mm/mm1/globals.h"
-#include "mm/mm1/sound.h"
-#include "mm/utils/strings.h"
+#include "mm/mm1/data/char.h"
+#include "mm/mm1/data/locations.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 namespace Locations {
 
-Location::Location(const Common::String &name) :
-		ScrollView(name) {
-	_bounds = Common::Rect(232, 0, 320, 146);
-}
+class Temple : public Location, public TempleData {
+private:
+	bool _isEradicated = false;
+	int _healCost = 0, _uncurseCost = 0;
+	int _alignmentCost = 0, _donateCost = 0;
+private:
+	void restoreHealth();
+	void uncurseItems();
+	void restoreAlignment();
+	void donate();
 
-void Location::leave() {
-	g_maps->turnAround();
-	close();
-	g_events->redraw();
-}
+protected:
+	/**
+	 * Change character
+	 */
+	void changeCharacter(uint index) override;
 
-void Location::displayMessage(const Common::String &msg) {
-	Location::draw();
+public:
+	Temple();
 
-	writeLine(3, msg, ALIGN_MIDDLE);
-}
-
-void Location::changeCharacter(uint index) {
-	if (index >= g_globals->_party.size())
-		return;
-
-	g_globals->_currCharacter = &g_globals->_party[index];
-	redraw();
-}
-
-bool Location::subtractGold(uint amount) {
-	if (g_globals->_currCharacter->_gold < amount) {
-		notEnoughGold();
-		return false;
-	} else {
-		g_globals->_currCharacter->_gold -= amount;
-		return true;
-	}
-}
-
-void Location::notEnoughGold() {
-	Sound::sound(SOUND_2);
-	displayMessage(STRING["dialogs.misc.not_enough_gold"]);
-}
-
-void Location::backpackFull() {
-	Sound::sound(SOUND_2);
-	displayMessage(STRING["dialogs.misc.backpack_full"]);
-}
+	bool msgFocus(const FocusMessage &msg) override;
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+};
 
 } // namespace Locations
 } // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
+
+#endif

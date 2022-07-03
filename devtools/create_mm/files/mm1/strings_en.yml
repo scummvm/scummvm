@@ -298,15 +298,22 @@ enhdialogs:
 		conditions:
 			good: "Good"
 	location:
-		store: "store"
-		options: "options"
-		gold: "gold"
+		store: "Store"
+		options: "Options"
+		options_for: "Options for"
+		gold: "Gold"
 	market:
 		buy_food: "Buy food"
 		thankyou: "Thank you,\ncome again!"
 		no_gold: "No gold,\nno food!"
 	misc:
 		exit: "Exit"
+	temple:
+		title: "Temple"
+		heal: "\x01""37Heal"
+		donate: "\x01""37Donate"
+		uncurse: "\x01""37Uncurse"
+		realign: "\x01""37Re-align"
 stats:
 	none: "NONE"
 	inventory: "-----<EQUIPPED>----------<BACKPACK>----"

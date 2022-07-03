@@ -34,6 +34,7 @@
 #include "mm/mm1/views_enh/character_info.h"
 #include "mm/mm1/views_enh/game.h"
 #include "mm/mm1/views_enh/locations/market.h"
+#include "mm/mm1/views_enh/locations/temple.h"
 
 namespace MM {
 namespace MM1 {
@@ -55,6 +56,7 @@ private:
 //	Views::ViewCharacters _viewCharacters;
 //	Views::ViewCharacter _viewCharacter;
 	ViewsEnh::Locations::Market _market;
+	ViewsEnh::Locations::Temple _temple;
 public:
 	Dialogs() {}
 };

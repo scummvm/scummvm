@@ -38,6 +38,31 @@ protected:
 		leave();
 	}
 
+	/**
+	 * Change character
+	 */
+	virtual void changeCharacter(uint index);
+
+	/**
+	 * Subtract gold from current character
+	 */
+	bool subtractGold(uint amount);
+
+	/**
+	 * Display a message
+	 */
+	void displayMessage(const Common::String &msg);
+
+	/**
+	 * Displays not enough gold
+	 */
+	void notEnoughGold();
+
+	/**
+	 * Displays backpack is full
+	 */
+	void backpackFull();
+
 public:
 	Location(const Common::String &name);
 
@@ -45,11 +70,6 @@ public:
 	 * Leave the location, turning around
 	 */
 	void leave();
-
-	/**
-	 * Display a message
-	 */
-	void displayMessage(const Common::String &msg);
 };
 
 } // namespace Locations
