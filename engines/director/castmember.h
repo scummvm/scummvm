@@ -64,6 +64,7 @@ class Stxt;
 class CastMember : public Object<CastMember> {
 public:
 	CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream);
+	CastMember(Cast *cast, uint16 castId);
 	virtual ~CastMember() {}
 
 	Cast *getCast() { return _cast; }
@@ -118,6 +119,7 @@ protected:
 class BitmapCastMember : public CastMember {
 public:
 	BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint32 castTag, uint16 version, uint8 flags1 = 0);
+	BitmapCastMember(Cast *cast, uint16 castId, Image::ImageDecoder *img, uint8 flags1 = 0);
 	~BitmapCastMember();
 	Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
 
