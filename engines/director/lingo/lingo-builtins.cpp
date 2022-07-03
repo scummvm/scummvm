@@ -1880,32 +1880,40 @@ void LB::b_findEmpty(int nargs) {
 }
 
 void LB::b_importFileInto(int nargs) {
+
 	Datum file = g_lingo->pop();
 	Datum dst = g_lingo->pop();
+
 	if (!dst.isCastRef()) {
 		warning("b_importFileInto(): bad cast ref field type: %s", dst.type2str());
 		return;
 	}
+
 	CastMemberID memberID = *dst.u.cast;
-	CastMember *member = g_director->getCurrentMovie()->getCastMember(memberID);
 	Common::String path = pathMakeRelative(file.asString());
 	Common::File in;
 	in.open(path);
+
 	if (!in.isOpen()) {
 		warning("b_importFileInto(): Cannot open file %s", path.c_str());
 		return;
 	}
+
 	Image::PICTDecoder *img = new Image::PICTDecoder();
 	img->loadStream(in);
 	in.close();
-	BitmapCastMember *bitmapCast = (BitmapCastMember *)member;
-	bitmapCast->_img = img;
+
+	Cast *cast = g_director->getCurrentMovie()->getCast();
+	BitmapCastMember *bitmapCast = new BitmapCastMember(cast, memberID.member, img);
+	cast->_loadedCast->setVal(memberID.member, bitmapCast);
 	bitmapCast->setModified(true);
 	const Graphics::Surface *surf = img->getSurface();
 	bitmapCast->_size = surf->pitch * surf->h + img->getPaletteColorCount() * 3;
 	auto channels = g_director->getCurrentMovie()->getScore()->_channels;
+
 	for (uint i = 0; i < channels.size(); i++) {
 		if (channels[i]->_sprite->_castId == dst.asMemberID()) {
+			channels[i]->setCast(memberID);
 			channels[i]->_dirty = true;
 		}
 	}
