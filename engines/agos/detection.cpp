@@ -73,45 +73,72 @@ static const char *const directoryGlobs[] = {
 
 using namespace AGOS;
 
-static const ExtraGuiOption opl3Mode = {
-	_s("AdLib OPL3 mode"),
-	_s("When AdLib is selected, OPL3 features will be used. Depending on the game, this will prevent cut-off notes, add extra notes or instruments and/or add stereo."),
-	"opl3_mode",
-	false,
-	0,
-	0
+namespace AGOS {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_OPL3_MODE,
+		{
+			_s("AdLib OPL3 mode"),
+			_s("When AdLib is selected, OPL3 features will be used. Depending on the game, this will prevent cut-off notes, add extra notes or instruments and/or add stereo."),
+			"opl3_mode",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_DOS_TEMPOS,
+		{
+			_s("Use DOS version music tempos"),
+			_s("Selecting this option will play the music using the tempos used by the DOS version of the game. Otherwise, the faster tempos of the Windows version will be used."),
+			"dos_music_tempos",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_WINDOWS_TEMPOS,
+		{
+			_s("Use DOS version music tempos"),
+			_s("Selecting this option will play the music using the tempos used by the DOS version of the game. Otherwise, the faster tempos of the Windows version will be used."),
+			"dos_music_tempos",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_PREFER_DIGITAL_SFX,
+		{
+			_s("Prefer digital sound effects"),
+			_s("Prefer digital sound effects instead of synthesized ones"),
+			"prefer_digitalsfx",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_DISABLE_FADE_EFFECTS,
+		{
+			_s("Disable fade-out effects"),
+			_s("Don't fade every screen to black when leaving a room."),
+			"disable_fade_effects",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-static const ExtraGuiOption useDosTempos = {
-	_s("Use DOS version music tempos"),
-	_s("Selecting this option will play the music using the tempos used by the DOS version of the game. Otherwise, the faster tempos of the Windows version will be used."),
-	"dos_music_tempos",
-	false,
-	0,
-	0
-};
-
-static const ExtraGuiOption preferDigitalSfx = {
-	_s("Prefer digital sound effects"),
-	_s("Prefer digital sound effects instead of synthesized ones"),
-	"prefer_digitalsfx",
-	true,
-	0,
-	0
-};
-
-static const ExtraGuiOption disableFadeEffects = {
-	_s("Disable fade-out effects"),
-	_s("Don't fade every screen to black when leaving a room."),
-	"disable_fade_effects",
-	false,
-	0,
-	0
-};
+} // End of namespace AGOS
 
 class AgosMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	AgosMetaEngineDetection() : AdvancedMetaEngineDetection(AGOS::gameDescriptions, sizeof(AGOS::AGOSGameDescription), agosGames) {
+	AgosMetaEngineDetection() : AdvancedMetaEngineDetection(AGOS::gameDescriptions, sizeof(AGOS::AGOSGameDescription), agosGames, AGOS::optionsList) {
 		_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
@@ -135,38 +162,6 @@ public:
 
 	const DebugChannelDef *getDebugChannels() const override {
 		return debugFlagList;
-	}
-
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override {
-		const Common::String gameid = ConfMan.get("gameid", target);
-		const Common::String platform = ConfMan.get("platform", target);
-		const Common::String extra = ConfMan.get("extra", target);
-
-		ExtraGuiOptions options;
-		if (target.empty() || ((gameid == "elvira1" || gameid == "elvira2" || gameid == "waxworks" || gameid == "simon1") && platform == "pc")) {
-			// DOS versions of Elvira 1 and 2, Waxworks and Simon 1 can
-			// optionally make use of AdLib OPL3 features.
-			options.push_back(opl3Mode);
-		}
-		if (target.empty() || (gameid == "simon1" && ((platform == "pc" && extra != "Floppy Demo") || platform == "windows" ||
-				(platform == "acorn" && extra.contains("CD"))))) {
-			// Simon 1 DOS (except the floppy demo), Windows and Acorn CD can
-			// choose between the DOS or Windows music tempos.
-			ExtraGuiOption dosTemposOption = useDosTempos;
-			// DOS tempos are default for the DOS versions; other versions use
-			// the Windows tempos by default.
-			dosTemposOption.defaultState = platform == "pc";
-			options.push_back(dosTemposOption);
-		}
-		if (target.empty() || ((gameid == "elvira2" || gameid == "waxworks") && platform == "pc")) {
-			// DOS versions of Elvira 2 and Waxworks can use either Adlib or
-			// digital SFX.
-			options.push_back(preferDigitalSfx);
-		}
-		if (target.empty() || gameid == "simon1" || gameid == "simon2") {
-			options.push_back(disableFadeEffects);
-		}
-		return options;
 	}
 };
 
