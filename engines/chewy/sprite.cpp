@@ -505,14 +505,8 @@ bool startAtsWait(int16 txtNr, int16 txtMode, int16 col, int16 mode) {
 			shown = _G(atds)->start_ats(txtNr, txtMode, col, mode, &vocNr);
 
 			if (g_engine->_sound->speechEnabled())  {
-				const int16 vocx = _G(moveState)[P_CHEWY].Xypos[0] - _G(gameState).scrollx + _G(spieler_mi)[P_CHEWY].HotX;
-
 				if (vocNr >= 0) {
-					g_engine->_sound->playSpeech(vocNr, false, _G(atds)->getStereoPos(vocx));
-				} else {
-					// Not sure if the game alters speech balance while speech
-					// plays, but the old code behaved this way.
-					g_engine->_sound->setSpeechBalance(_G(atds)->getStereoPos(vocx));
+					g_engine->_sound->playSpeech(vocNr, false);
 				}
 
 				setupScreen(DO_SETUP);

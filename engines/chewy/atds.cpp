@@ -607,17 +607,8 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 			if (g_engine->_sound->speechEnabled() &&
 					_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET != -1) {
 				if (_atdsv._vocNr != _aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) {
-					// TODO Panning does not work properly during cutscenes.
-					// The x position seems to be fixed, probably that of the
-					// character in the (now invisible) game screen, so all
-					// cutscene voices are panned to the same position. I don't
-					// know if the x position of the character speaking in the
-					// cutscene is available somehow; otherwise panning must be
-					// disabled (fixed center) during cutscenes.
 					_atdsv._vocNr = _aadv._strHeader->_vocNr - ATDS_VOC_OFFSET;
-					const int16 vocx = _G(moveState)[personId].Xypos[0] -
-								 _G(gameState).scrollx + _G(spieler_mi)[personId].HotX;
-					g_engine->_sound->playSpeech(_atdsv._vocNr, false, getStereoPos(vocx));
+					g_engine->_sound->playSpeech(_atdsv._vocNr, false);
 				}
 
 				if (_atdsv._vocNr >= 0 && !g_engine->_sound->isSpeechActive())
