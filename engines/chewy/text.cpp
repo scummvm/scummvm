@@ -320,7 +320,8 @@ uint8 Text::updateTextStatus(int16 entry, int16 subEntry, int16 strNr, int16 typ
 
 	const uint8 status = buffer[(entry * MAX_ATS_STATUS) + (subEntry + 1) / 2];
 	if (strNr >= 0) {
-		buffer[(entry * MAX_ATS_STATUS) + (subEntry + 1) / 2] = strNr; // getTextStatus(status, subEntry, strNr);
+		// TODO: This is buggy
+		//buffer[(entry * MAX_ATS_STATUS) + (subEntry + 1) / 2] = strNr; // getTextStatus(status, subEntry, strNr);
 		return strNr;
 	}
 
