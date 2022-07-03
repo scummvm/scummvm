@@ -415,11 +415,21 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			case Token::VIS:
 			executeMakeVisible(instruction);
 			break;
-
+			case Token::DESTROY:
+			executeDestroy(instruction);
+			break;
 		}
 		ip++;
 	}
 	return;
+}
+
+void FreescapeEngine::executeDestroy(FCLInstruction &instruction) {
+	uint16 objectID = instruction.source;
+	debug("Destroying obj %d!", objectID);
+	Object *obj = _currentArea->objectWithID(objectID);
+	assert(!obj->isDestroyed());
+	obj->destroy();
 }
 
 void FreescapeEngine::executeMakeInvisible(FCLInstruction &instruction) {

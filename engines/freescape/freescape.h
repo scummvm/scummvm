@@ -125,6 +125,7 @@ public:
 	void executeMakeInvisible(FCLInstruction &instruction);
 	void executeMakeVisible(FCLInstruction &instruction);
 	void executeToggleVisibility(FCLInstruction &instruction);
+	void executeDestroy(FCLInstruction &instruction);
 
 	// Rendering
 	Common::String _renderMode;
