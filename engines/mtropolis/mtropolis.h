@@ -42,7 +42,7 @@ namespace MTropolis {
 class Runtime;
 class RuntimeObject;
 
-class MTropolisEngine : public ::Engine, public ISaveUIProvider, public ILoadUIProvider {
+class MTropolisEngine : public ::Engine, public ISaveUIProvider, public ILoadUIProvider, public IAutoSaveProvider {
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -60,6 +60,7 @@ public:
 	Common::Platform getPlatform() const;
 
 	bool promptSave(ISaveWriter *writer) override;
+	bool autoSave(ISaveWriter *writer) override;
 	bool promptLoad(ISaveReader *reader) override;
 
 public:

@@ -25,8 +25,35 @@
 #include "gui/saveload.h"
 
 #include "mtropolis/mtropolis.h"
+#include "mtropolis/runtime.h"
 
 namespace MTropolis {
+
+
+CompoundVarSaver::CompoundVarSaver(RuntimeObject *object) : _object(object) {
+}
+
+bool CompoundVarSaver::writeSave(Common::WriteStream *stream) {
+	if (_object == nullptr || !_object->isModifier())
+		return false;
+
+	Modifier *modifier = static_cast<Modifier *>(_object);
+	Common::SharedPtr<ModifierSaveLoad> saveLoad = modifier->getSaveLoad();
+	if (!saveLoad)
+		return false;
+
+	saveLoad->save(modifier, stream);
+	return !stream->err();
+}
+
+SaveLoadHooks::~SaveLoadHooks() {
+}
+
+void SaveLoadHooks::onLoad(Runtime *runtime, Modifier *saveLoadModifier, Modifier *varModifier) {
+}
+
+void SaveLoadHooks::onSave(Runtime *runtime, Modifier *saveLoadModifier, Modifier *varModifier) {
+}
 
 bool MTropolisEngine::promptSave(ISaveWriter *writer) {
 	Common::String desc;
@@ -73,6 +100,19 @@ bool MTropolisEngine::promptLoad(ISaveReader *reader) {
 		warning("An error occurred while reading file '%s'", saveFileName.c_str());
 		return false;
 	}
+
+	return true;
+}
+
+bool MTropolisEngine::autoSave(ISaveWriter *writer) {
+	const int slot = 0;
+
+	Common::String saveFileName = getSaveStateName(slot);
+	Common::SharedPtr<Common::OutSaveFile> out(_saveFileMan->openForSaving(saveFileName, false));
+	if (!writer->writeSave(out.get()) || out->err())
+		warning("An error occurred while writing file '%s'", saveFileName.c_str());
+
+	getMetaEngine()->appendExtendedSave(out.get(), getTotalPlayTime(), "Auto Save", true);
 
 	return true;
 }

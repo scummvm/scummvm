@@ -33,6 +33,8 @@ class WriteStream;
 
 namespace MTropolis {
 
+class Modifier;
+class Runtime;
 class RuntimeObject;
 
 struct ISaveWriter : public IInterfaceBase {
@@ -49,6 +51,28 @@ struct ISaveUIProvider : public IInterfaceBase {
 
 struct ILoadUIProvider : public IInterfaceBase {
 	virtual bool promptLoad(ISaveReader *reader) = 0;
+};
+
+struct IAutoSaveProvider : public IInterfaceBase {
+	virtual bool autoSave(ISaveWriter *writer) = 0;
+};
+
+class CompoundVarSaver : public ISaveWriter {
+public:
+	explicit CompoundVarSaver(RuntimeObject *object);
+
+	bool writeSave(Common::WriteStream *stream) override;
+
+private:
+	RuntimeObject *_object;
+};
+
+class SaveLoadHooks {
+public:
+	virtual ~SaveLoadHooks();
+
+	virtual void onLoad(Runtime *runtime, Modifier *saveLoadModifier, Modifier *varModifier);
+	virtual void onSave(Runtime *runtime, Modifier *saveLoadModifier, Modifier *varModifier);
 };
 
 } // End of namespace MTropolis

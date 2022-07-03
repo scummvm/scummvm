@@ -3662,6 +3662,12 @@ const Common::KeyState &KeyboardInputEvent::getKeyState() const {
 Runtime::SceneStackEntry::SceneStackEntry() {
 }
 
+SceneTransitionHooks::~SceneTransitionHooks() {
+}
+
+void SceneTransitionHooks::onSceneTransitionEnded(Runtime *runtime, const Common::WeakPtr<Structural> &newScene) {
+}
+
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProvider, ILoadUIProvider *loadProvider)
 	: _system(system), _mixer(mixer), _saveProvider(saveProvider), _loadProvider(loadProvider),
 	_nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
@@ -3907,6 +3913,9 @@ bool Runtime::runFrame() {
 
 			for (const SceneStackEntry &sceneStackEntry : _sceneStack)
 				recursiveAutoPlayMedia(sceneStackEntry.scene.get());
+
+			for (const Common::SharedPtr<SceneTransitionHooks> &hooks : _hacks.sceneTransitionHooks)
+				hooks->onSceneTransitionEnded(this, _activeMainScene);
 
 			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneTransitionEnded, 0), _activeMainScene.get(), true, true);
 			continue;

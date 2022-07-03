@@ -30,16 +30,6 @@
 
 namespace MTropolis {
 
-class CompoundVarSaver : public ISaveWriter {
-public:
-	explicit CompoundVarSaver(RuntimeObject *object);
-
-	bool writeSave(Common::WriteStream *stream) override;
-
-private:
-	RuntimeObject *_object;
-};
-
 class CompoundVarLoader : public ISaveReader {
 public:
 	explicit CompoundVarLoader(RuntimeObject *object);
@@ -49,22 +39,6 @@ public:
 private:
 	RuntimeObject *_object;
 };
-
-CompoundVarSaver::CompoundVarSaver(RuntimeObject *object) : _object(object) {
-}
-
-bool CompoundVarSaver::writeSave(Common::WriteStream *stream) {
-	if (_object == nullptr || !_object->isModifier())
-		return false;
-
-	Modifier *modifier = static_cast<Modifier *>(_object);
-	Common::SharedPtr<ModifierSaveLoad> saveLoad = modifier->getSaveLoad();
-	if (!saveLoad)
-		return false;
-
-	saveLoad->save(modifier, stream);
-	return !stream->err();
-}
 
 CompoundVarLoader::CompoundVarLoader(RuntimeObject *object) : _object(object) {
 }
@@ -292,19 +266,29 @@ VThreadState SaveAndRestoreModifier::consumeMessage(Runtime *runtime, const Comm
 	var.resolve(this, objWeak);
 
 	if (objWeak.expired()) {
-		warning("Save failed, couldn't resolve compound var");
+		warning("Save/load failed, couldn't resolve compound var");
 		return kVThreadError;
 	}
 
 	RuntimeObject *obj = objWeak.lock().get();
+	if (!obj->isModifier()) {
+		warning("Save/load failed, source wasn't a modifier");
+		return kVThreadError;
+	}
 
 	if (_saveWhen.respondsTo(msg->getEvent())) {
 		CompoundVarSaver saver(obj);
-		runtime->getSaveProvider()->promptSave(&saver);
+		if (runtime->getSaveProvider()->promptSave(&saver)) {
+			for (const Common::SharedPtr<SaveLoadHooks> &hooks : runtime->getHacks().saveLoadHooks)
+				hooks->onSave(runtime, this, static_cast<Modifier *>(obj));
+		}
 		return kVThreadReturn;
 	} else if (_restoreWhen.respondsTo(msg->getEvent())) {
 		CompoundVarLoader loader(obj);
-		runtime->getLoadProvider()->promptLoad(&loader);
+		if (runtime->getLoadProvider()->promptLoad(&loader)) {
+			for (const Common::SharedPtr<SaveLoadHooks> &hooks : runtime->getHacks().saveLoadHooks)
+				hooks->onLoad(runtime, this, static_cast<Modifier *>(obj));
+		}
 		return kVThreadReturn;
 	}
 

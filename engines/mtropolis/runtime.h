@@ -1452,6 +1452,13 @@ struct DragMotionProperties {
 	bool constrainToParent;
 };
 
+class SceneTransitionHooks {
+public:
+	virtual ~SceneTransitionHooks();
+
+	virtual void onSceneTransitionEnded(Runtime *runtime, const Common::WeakPtr<Structural> &newScene);
+};
+
 class Runtime {
 public:
 	explicit Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProvider, ILoadUIProvider *loadProvider);

@@ -20,11 +20,14 @@
  */
 
 #include "common/system.h"
+#include "common/hashmap.h"
 
 #include "mtropolis/assets.h"
 #include "mtropolis/detection.h"
 #include "mtropolis/hacks.h"
 #include "mtropolis/runtime.h"
+#include "mtropolis/modifiers.h"
+#include "mtropolis/saveload.h"
 
 namespace MTropolis {
 
@@ -45,6 +48,14 @@ void Hacks::addModifierHooks(uint32 guid, const Common::SharedPtr<ModifierHooks>
 
 void Hacks::addAssetHooks(const Common::SharedPtr<AssetHooks> &hooks) {
 	assetHooks.push_back(hooks);
+}
+
+void Hacks::addSceneTransitionHooks(const Common::SharedPtr<SceneTransitionHooks> &hooks) {
+	sceneTransitionHooks.push_back(hooks);
+}
+
+void Hacks::addSaveLoadHooks(const Common::SharedPtr<SaveLoadHooks> &hooks) {
+	saveLoadHooks.push_back(hooks);
 }
 
 namespace HackSuites {
@@ -229,6 +240,343 @@ void addObsidianImprovedWidescreen(const MTropolisGameDescription &desc, Hacks &
 		for (uint32 guid : inventoryItemGUIDs)
 			hacks.addStructuralHooks(guid, invItemHooks);
 	}
+}
+
+// Auto-save triggers for Obsidian.  Basically, we auto-save on reaching specific scenes when conditions are met.
+// There are two types of condition: One is the player reaches the scene from a one-way scene that can not be
+// revisited, such as a chapter transition.
+//
+// The other is a variable latch, which happens if the variable became true since the last time the reset scene
+// (the opening credits) was reached, or since the last time the game was loaded.
+//
+// Variable latches don't work if the latch becomes true and the player saves+reloads their game before they hit
+// the auto-save checkpoint, but that's okay.
+
+struct ObsidianAutoSaveTrigger {
+	const char *sceneName;
+	const char *priorSceneName; // If set, only save when transitioning from this scene
+	const char *varTrueLatch;   // If set, only save when this variable was set to
+};
+
+static ObsidianAutoSaveTrigger kObsidianAutoSaveTriggers[] = {
+	// Arrive at campsite
+	{
+		"103.2L",
+		"102_103_Credits",
+		nullptr,
+	},
+	// Bureau start
+	{
+		"102.0L",
+		nullptr,
+		"cgst.clst.cl100st.bbossspoken"
+	},
+	// Win cube maze from side room
+	{
+		"445.2L",
+		nullptr,
+		"cgst.clst.cl400st.bcubiclewon",
+	},
+	// Win cube maze from back room
+	{
+		"445.0L",
+		nullptr,
+		"cgst.clst.cl400st.bcubiclewon",
+	},
+	// Stamp document and back away
+	{
+		"445.2L",
+		nullptr,
+		"cgst.clst.cinv.bstampedsd",
+	},
+	// Get repair document from cabinet + back away (English version)
+	{
+		"218.4L",
+		nullptr,
+		"cgst.clst.cinv.bhavesd",
+	},
+	// Get repair document from Bridge Repair + back away (non-English versions)
+	{
+		"109.6L",
+		nullptr,
+		"cgst.clst.cinv.bhavesd",
+	},
+	// Give document to Immediate Action + return to light
+	{
+		"306.6L",
+		nullptr,
+		"cgst.clst.cinv.bgavesd",
+	},
+	// Get rebel document + leave cabinet (English version)
+	{
+		"227.4L",
+		nullptr,
+		"cgst.clst.cinv.bhaveom",
+	},
+	// Solve dial puzzle
+	{
+		"699.0L",
+		nullptr,
+		"cgst.clst.cl308st.bwon",
+	},
+
+	// Spider start
+	{
+		"101.2L",
+		"710.0L",
+		nullptr,
+	},
+	// Leave elevator after completing any Spider puzzle
+	{
+		"121.0L",
+		"118.0L_121.0L-s1",
+		nullptr,
+	},
+
+	// Inspiration start
+	{
+		"101.4L",
+		"121.0L_Lunch_Time",
+		nullptr,
+	},
+	// Complete propulsion puzzle and leave engine room
+	{
+		"201.4L",
+		nullptr,
+		"cgst.cbst.cb2st.bengineon",
+	},
+	// Complete Church puzzle and leave robot
+	{
+		"412.4L",
+		nullptr,
+		"cgst.cbst.cb4st.bwon",
+	},
+	// Complete statue canvas puzzle
+	{
+		"523.2L_from_521.2L-s2",
+		nullptr,
+		"cgst.cbst.cb5st.bpaintedblank",
+	},
+
+	// Conductor start
+	{
+		"101.6L",
+		"203.4L_WIN",
+		nullptr,
+	},
+	// Freed Max
+	{
+		"104.0L_Max_Freed",
+		nullptr,
+		"cgst.ccst.cc1st.bmaxfreed",
+	},
+};
+
+class ObsidianAutoSaveVarsState {
+public:
+	ObsidianAutoSaveVarsState();
+
+	static const VariableModifier *findVar(Runtime *runtime, const Common::String &str);
+
+	bool getVarState(const Common::String &varName) const;
+	void resyncAllVars(Runtime *runtime);
+
+private:
+	Common::HashMap<Common::String, bool> _varState;
+};
+
+ObsidianAutoSaveVarsState::ObsidianAutoSaveVarsState() {
+	for (const ObsidianAutoSaveTrigger &trigger : kObsidianAutoSaveTriggers) {
+		if (trigger.varTrueLatch)
+			_varState[trigger.varTrueLatch] = false;
+	}
+}
+
+const VariableModifier *ObsidianAutoSaveVarsState::findVar(Runtime *runtime, const Common::String &str) {
+	size_t scanStartPos = 0;
+
+	const Modifier *modifierScan = nullptr;
+	const IModifierContainer *container = runtime->getProject();
+
+	for (;;) {
+		size_t dotPos = str.findFirstOf('.', scanStartPos);
+		if (dotPos == Common::String::npos)
+			dotPos = str.size();
+
+		Common::String childName = str.substr(scanStartPos, dotPos - scanStartPos);
+		if (!container)
+			return nullptr;
+
+		modifierScan = nullptr;
+		for (const Common::SharedPtr<Modifier> &modifier : container->getModifiers()) {
+			if (caseInsensitiveEqual(childName, modifier->getName())) {
+				modifierScan = modifier.get();
+				break;
+			}
+		}
+
+		if (!modifierScan)
+			return nullptr;
+
+		if (modifierScan->isCompoundVariable())
+			container = static_cast<const CompoundVariableModifier *>(modifierScan);
+
+		if (dotPos == str.size())
+			break;
+
+		scanStartPos = dotPos + 1;
+	}
+
+	if (modifierScan && modifierScan->isVariable())
+		return static_cast<const VariableModifier *>(modifierScan);
+
+	return nullptr;
+}
+
+bool ObsidianAutoSaveVarsState::getVarState(const Common::String &varName) const {
+	Common::HashMap<Common::String, bool>::const_iterator it = _varState.find(varName);
+	if (it == _varState.end())
+		return false;
+	return it->_value;
+}
+
+void ObsidianAutoSaveVarsState::resyncAllVars(Runtime *runtime) {
+	for (Common::HashMap<Common::String, bool>::iterator it = _varState.begin(), itEnd = _varState.end(); it != itEnd; ++it) {
+		const VariableModifier *var = findVar(runtime, it->_key);
+		if (var) {
+			DynamicValue varValue;
+			var->varGetValue(nullptr, varValue);
+			assert(varValue.getType() == DynamicValueTypes::kBoolean);
+
+			it->_value = varValue.getBool();
+		}
+	}
+}
+
+class ObsidianAutoSaveSceneTransitionHooks : public SceneTransitionHooks {
+public:
+	explicit ObsidianAutoSaveSceneTransitionHooks(const Common::SharedPtr<ObsidianAutoSaveVarsState> &vars, IAutoSaveProvider *autoSaveProvider);
+
+	void onSceneTransitionEnded(Runtime *runtime, const Common::WeakPtr<Structural> &newScene) override;
+
+private:
+	Common::SharedPtr<ObsidianAutoSaveVarsState> _varsState;
+	IAutoSaveProvider *_autoSaveProvider;
+
+	Common::String _currentSceneName;
+	Common::String _prevSceneName;
+
+	Common::String _resetSceneName;
+	Common::String _saveVarName;
+};
+
+ObsidianAutoSaveSceneTransitionHooks::ObsidianAutoSaveSceneTransitionHooks(const Common::SharedPtr<ObsidianAutoSaveVarsState> &vars, IAutoSaveProvider *autoSaveProvider)
+	: _varsState(vars), _autoSaveProvider(autoSaveProvider) {
+
+	_resetSceneName = Common::String("101_102_Credits");
+	_saveVarName = Common::String("cgst");
+}
+
+void ObsidianAutoSaveSceneTransitionHooks::onSceneTransitionEnded(Runtime *runtime, const Common::WeakPtr<Structural> &newScene) {
+	bool triggerAutoSave = false;
+
+	if (newScene.expired())
+		return;
+
+	_prevSceneName = _currentSceneName;
+	_currentSceneName = newScene.lock()->getName();
+
+	for (const ObsidianAutoSaveTrigger &trigger : kObsidianAutoSaveTriggers) {
+		Common::String triggerSceneName(trigger.sceneName);
+
+		if (!caseInsensitiveEqual(triggerSceneName, _currentSceneName))
+			continue;
+
+		if (trigger.priorSceneName && !caseInsensitiveEqual(trigger.priorSceneName, _prevSceneName))
+			continue;
+
+		if (trigger.varTrueLatch) {
+			Common::String varName(trigger.varTrueLatch);
+
+			// Variable must must have been false since the last game load or reset
+			if (_varsState->getVarState(varName))
+				continue;
+
+			bool passedLatchTest = false;
+
+			const VariableModifier *var = _varsState->findVar(runtime, varName);
+			if (var) {
+				DynamicValue varValue;
+				var->varGetValue(nullptr, varValue);
+				assert(varValue.getType() == DynamicValueTypes::kBoolean);
+
+				passedLatchTest = varValue.getBool();
+			}
+
+			if (!passedLatchTest)
+				continue;
+		}
+
+		triggerAutoSave = true;
+		break;
+	}
+
+	if (triggerAutoSave) {
+		Common::SharedPtr<Modifier> saveVar;
+
+		for (const Common::SharedPtr<Modifier> &child : runtime->getProject()->getModifiers()) {
+			if (caseInsensitiveEqual(child->getName(), _saveVarName)) {
+				saveVar = child;
+				break;
+			}
+		}
+
+		if (saveVar || saveVar->isModifier()) {
+			Modifier *modifier = static_cast<Modifier *>(saveVar.get());
+			Common::SharedPtr<ModifierSaveLoad> saveLoad = modifier->getSaveLoad();
+
+			if (saveLoad) {
+				CompoundVarSaver saver(saveVar.get());
+				_autoSaveProvider->autoSave(&saver);
+
+				_varsState->resyncAllVars(runtime);
+			}
+		}
+	}
+
+	if (caseInsensitiveEqual(_currentSceneName, _resetSceneName))
+		_varsState->resyncAllVars(runtime);
+}
+
+class ObsidianAutoSaveSaveLoadHooks : public SaveLoadHooks {
+public:
+	explicit ObsidianAutoSaveSaveLoadHooks(const Common::SharedPtr<ObsidianAutoSaveVarsState> &vars);
+
+	void onSave(Runtime *runtime, Modifier *saveLoadModifier, Modifier *varModifier) override;
+	void onLoad(Runtime *runtime, Modifier *saveLoadModifier, Modifier *varModifier) override;
+
+private:
+	Common::SharedPtr<ObsidianAutoSaveVarsState> _varsState;
+};
+
+
+ObsidianAutoSaveSaveLoadHooks::ObsidianAutoSaveSaveLoadHooks(const Common::SharedPtr<ObsidianAutoSaveVarsState> &vars) : _varsState(vars) {
+}
+
+void ObsidianAutoSaveSaveLoadHooks::onSave(Runtime *runtime, Modifier *saveLoadModifier, Modifier *varModifier) {
+	// Reset all variable latches on save
+	_varsState->resyncAllVars(runtime);
+}
+
+void ObsidianAutoSaveSaveLoadHooks::onLoad(Runtime *runtime, Modifier *saveLoadModifier, Modifier *varModifier) {
+	// Reset all variable latches on load
+	_varsState->resyncAllVars(runtime);
+}
+
+void addObsidianAutoSaves(const MTropolisGameDescription &desc, Hacks &hacks, IAutoSaveProvider *autoSaveProvider) {
+	Common::SharedPtr<ObsidianAutoSaveVarsState> varsState(new ObsidianAutoSaveVarsState());
+	hacks.addSceneTransitionHooks(Common::SharedPtr<SceneTransitionHooks>(new ObsidianAutoSaveSceneTransitionHooks(varsState, autoSaveProvider)));
+	hacks.addSaveLoadHooks(Common::SharedPtr<SaveLoadHooks>(new ObsidianAutoSaveSaveLoadHooks(varsState)));
 }
 
 } // End of namespace HackSuites
