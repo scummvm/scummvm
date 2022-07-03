@@ -231,12 +231,12 @@ public:
 	 * Return Top Window containing a point
 	 * @param x x coordinate of point
 	 * @param y y coordiante of point
-	 */ 
+	 */
 	MacWindow *findWindowAtPoint(int16 x, int16 y);
 	/**
 	 * Return Top Window containing a point
 	 * @param point Point
-	 */ 
+	 */
 	MacWindow *findWindowAtPoint(Common::Point point);
 
 	/**
@@ -442,7 +442,7 @@ private:
 	PauseToken *_screenCopyPauseToken;
 
 	Common::Array<ZoomBox *> _zoomBoxes;
-	Common::HashMap<uint, uint> _colorHash;
+	Graphics::PaletteLookup _paletteLookup;
 	Common::HashMap<uint, uint> _invertColorHash;
 
 	Common::Archive *_dataBundle;

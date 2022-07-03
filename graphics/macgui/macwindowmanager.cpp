@@ -215,6 +215,7 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::L
 		_palette = (byte *)malloc(_paletteSize * 3);
 		memcpy(_palette, palette, _paletteSize * 3);
 	}
+	_paletteLookup.setPalette(_palette, _paletteSize);
 
 	_fontMan = new MacFontManager(mode, language);
 
@@ -794,7 +795,7 @@ void MacWindowManager::drawDesktop() {
 					byte r, g, b;
 					_desktopBmp->format.colorToRGB(color, r, g, b);
 					if (color > 0) {
-						*((byte *)_desktop->getBasePtr(i, j)) = findBestColor(r, g, b);
+						*((byte *)_desktop->getBasePtr(i, j)) = _paletteLookup.findBestColor(r, g, b);
 					}
 				} else {
 					*((uint32 *)_desktop->getBasePtr(i, j)) = color;
@@ -1269,7 +1270,7 @@ void MacWindowManager::popCursor() {
 ///////////////////
 // Palette stuff
 ///////////////////
-#define LOOKUPCOLOR(x) _color ## x = findBestColor(palette[kColor ## x * 3], palette[kColor ## x  * 3 + 1], palette[kColor ## x * 3 + 2]);
+#define LOOKUPCOLOR(x) _color ## x = _paletteLookup.findBestColor(palette[kColor ## x * 3], palette[kColor ## x  * 3 + 1], palette[kColor ## x * 3 + 2]);
 
 void MacWindowManager::passPalette(const byte *pal, uint size) {
 	if (_palette)
@@ -1281,8 +1282,7 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 	}
 	_paletteSize = size;
 
-	_colorHash.clear();
-	_invertColorHash.clear();
+	_paletteLookup.setPalette(pal, size);
 
 	LOOKUPCOLOR(White);
 	LOOKUPCOLOR(Gray80);
@@ -1299,37 +1299,14 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 uint MacWindowManager::findBestColor(uint32 color) {
 	byte r, g, b;
 	decomposeColor(color, r, g, b);
-	return findBestColor(r, g, b);
+	return _paletteLookup.findBestColor(r, g, b);
 }
 
 uint MacWindowManager::findBestColor(byte cr, byte cg, byte cb) {
 	if (_pixelformat.bytesPerPixel == 4)
 		return _pixelformat.RGBToColor(cr, cg, cb);
 
-	uint bestColor = 0;
-	double min = 0xFFFFFFFF;
-
-	uint32 color = cr << 16 | cg << 8 | cb;
-
-	if (_colorHash.contains(color))
-		return _colorHash[color];
-
-	for (uint i = 0; i < _paletteSize; ++i) {
-		int rmean = (*(_palette + 3 * i + 0) + cr) / 2;
-		int r = *(_palette + 3 * i + 0) - cr;
-		int g = *(_palette + 3 * i + 1) - cg;
-		int b = *(_palette + 3 * i + 2) - cb;
-
-		double dist = sqrt((((512 + rmean) * r * r) >> 8) + 4 * g * g + (((767 - rmean) * b * b) >> 8));
-		if (min > dist) {
-			bestColor = i;
-			min = dist;
-		}
-	}
-
-	_colorHash[color] = bestColor;
-
-	return bestColor;
+	return _paletteLookup.findBestColor(cr, cg, cb);
 }
 
 void MacWindowManager::decomposeColor(uint32 color, byte &r, byte &g, byte &b) {
@@ -1352,7 +1329,7 @@ uint MacWindowManager::inverter(uint src) {
 		r = ~r;
 		g = ~g;
 		b = ~b;
-		_invertColorHash[src] = findBestColor(r, g, b);
+		_invertColorHash[src] = _paletteLookup.findBestColor(r, g, b);
 	} else {
 		uint32 alpha = _pixelformat.ARGBToColor(255, 0, 0, 0);
 		_invertColorHash[src] = ~(src & ~alpha) | alpha;
