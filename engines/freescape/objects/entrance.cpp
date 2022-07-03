@@ -15,10 +15,10 @@ namespace Freescape {
 
 Entrance::Entrance(
 	uint16 objectID,
-	const Math::Vector3d &origin,
+	const Math::Vector3d &_origin,
 	const Math::Vector3d &rotation) {
 	_objectID = objectID;
-	_origin = origin;
+	origin = _origin;
 	_rotation = rotation;
 }
 
