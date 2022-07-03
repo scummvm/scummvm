@@ -127,6 +127,8 @@ public:
 	void executeToggleVisibility(FCLInstruction &instruction);
 
 	// Rendering
+	Common::String _renderMode;
+	Graphics::PixelBuffer *getPalette(uint8 areaNumber, uint8 c1, uint8 c2, uint8 c3, uint8 c4, uint16 ncolors);
 	void drawFrame();
 	uint8 _colorNumber;
 	Math::Vector3d _scaleVector;

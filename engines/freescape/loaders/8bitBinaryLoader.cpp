@@ -52,12 +52,22 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		int numberOfColours = GeometricObject::numberOfColoursForObjectOfType(objectType);
 		Common::Array<uint8> *colours = new Common::Array<uint8>;
 		debug("Number of colors: %d", numberOfColours/2);
+		uint8 entry;
 		for (uint8 colour = 0; colour < numberOfColours/2; colour++) {
-			uint8 c = file->readByte();
-			colours->push_back(c & 0xf);
-			debug("color[%d] = %x", 2*colour, c & 0xf);
-			colours->push_back(c >> 4);
-			debug("color[%d] = %x", 2*colour+1, c >> 4);
+			uint8 data = file->readByte();
+			entry = data & 0xf;
+			if (_renderMode == "cga")
+				entry = entry % 4; // TODO: use dithering
+
+			colours->push_back(entry);
+			debug("color[%d] = %x", 2*colour, entry);
+
+			entry = data >> 4;
+			if (_renderMode == "cga")
+				entry = entry % 4; // TODO: use dithering
+
+			colours->push_back(entry);
+			debug("color[%d] = %x", 2*colour+1, entry);
 			byteSizeOfObject--;
 		}
 
@@ -132,48 +142,6 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 	return nullptr;
 }
 
-float specColors[16][3] = {
-    {0, 0, 0},
-	{0, 0, 0.75},
-	{0.75, 0, 0},
-	{0.75, 0, 0.75},
-	{0, 0.75, 0},
-	{0, 0.75, 0.75},
-	{0.75, 0.75, 0},
-	{0.75, 0.75, 0.75},
-    {0, 0, 0},
-	{0, 0, 1},
-	{1, 0, 0},
-	{1, 0, 1},
-	{0, 1, 0},
-	{0, 1, 1},
-	{1, 1, 0},
-	{1, 1, 1}
-};
-
-/*Graphics::PixelBuffer *getPaletteGradient(float *c1, float *c2, uint16 ncolors) {
-	Common::Array <uint8> *raw_palette = new Common::Array <uint8>();
-	uint16 y0, y1, y2;
-	for(int c = 0; c < ncolors; c++)
-	{
-		float ic = (float)c / float(ncolors-1);
-		ic = sqrt(ic);
-		y0  = 255*(ic*c2[0] + (1-ic)*c1[0]);
-		y1  = 255*(ic*c2[1] + (1-ic)*c1[1]);
-		y2  = 255*(ic*c2[2] + (1-ic)*c1[2]);
-		//debug("%x %x %x", y0, y1, y2);
-		raw_palette->push_back(y0);
-		raw_palette->push_back(y1);
-		raw_palette->push_back(y2);
-	}
-	assert(ncolors == 16);
-	assert(raw_palette->size() == ncolors * 3);
-	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
-	Graphics::PixelBuffer *palette = new Graphics::PixelBuffer(pixelFormat, ncolors, DisposeAfterUse::NO); //TODO
-	*palette = raw_palette->data();
-	return palette;
-}*/
-
 byte drillerEGA[16][3] = {
 	{0x00, 0x00, 0x00},
 	{0x00, 0x00, 0x00},
@@ -193,13 +161,21 @@ byte drillerEGA[16][3] = {
 	{0x12, 0xf3, 0x56}
 };
 
-Graphics::PixelBuffer *getPaletteGradient(uint8 areaNumber, uint8 c1, uint8 c2, uint16 ncolors) {
-	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
+byte drillerCGA[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0xff, 0xff, 0xff},
+	{0xa8, 0x00, 0xa8},
+	{0x00, 0xa8, 0xa8},
+};
+
+Graphics::PixelBuffer *FreescapeEngine::getPalette(uint8 areaNumber, uint8 c1, uint8 c2, uint8 c3, uint8 c4, uint16 ncolors) {
+	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, ncolors, 0);
 	Graphics::PixelBuffer *palette = nullptr;
-	switch (areaNumber) {
-		default:
-		palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&drillerEGA);
-		break;
+	if (_targetName.hasPrefix("driller")) {
+		if (_renderMode == "ega")
+			palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&drillerEGA);
+		else if (_renderMode == "cga")
+			palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&drillerCGA);
 	}
 	return palette;
 }
@@ -232,7 +208,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		ci4 = file->readByte();
 		debug("Colors: %d %d", ci3, ci4);
 	}
-	Graphics::PixelBuffer *palette = getPaletteGradient(areaNumber, 1, 1, ncolors);
+	Graphics::PixelBuffer *palette = getPalette(areaNumber, ci1, ci2, ci3, ci4, ncolors);
 
 	debug("Area %d", areaNumber);
 	debug("Skipped: %d Objects: %d", skippedValue, numberOfObjects);
