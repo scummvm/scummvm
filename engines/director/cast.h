@@ -97,6 +97,7 @@ public:
 	void copyCastStxts();
 	Common::Rect getCastMemberInitialRect(int castId);
 	void setCastMemberModified(int castId);
+	CastMember *setCastMember(CastMemberID castId, CastMember *cast);
 	CastMember *getCastMember(int castId);
 	CastMember *getCastMemberByName(const Common::String &name);
 	CastMember *getCastMemberByScriptId(int scriptId);

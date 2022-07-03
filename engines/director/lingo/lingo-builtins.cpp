@@ -1890,6 +1890,12 @@ void LB::b_importFileInto(int nargs) {
 	}
 
 	CastMemberID memberID = *dst.u.cast;
+
+	if (!(file.asString().matchString("*.pic") || file.asString().matchString("*.pict"))) {
+		warning("LB::b_importFileInto : %s is not a valid PICT file", file.asString().c_str());
+		return;
+	}
+
 	Common::String path = pathMakeRelative(file.asString());
 	Common::File in;
 	in.open(path);
@@ -1903,9 +1909,9 @@ void LB::b_importFileInto(int nargs) {
 	img->loadStream(in);
 	in.close();
 
-	Cast *cast = g_director->getCurrentMovie()->getCast();
-	BitmapCastMember *bitmapCast = new BitmapCastMember(cast, memberID.member, img);
-	cast->_loadedCast->setVal(memberID.member, bitmapCast);
+	Movie *movie = g_director->getCurrentMovie();
+	BitmapCastMember *bitmapCast = new BitmapCastMember(movie->getCast(), memberID.member, img);
+	movie->createOrReplaceCastMember(memberID, bitmapCast);
 	bitmapCast->setModified(true);
 	const Graphics::Surface *surf = img->getSurface();
 	bitmapCast->_size = surf->pitch * surf->h + img->getPaletteColorCount() * 3;

@@ -101,16 +101,13 @@ void Window::testFontScaling() {
 		}
 	}
 
-	#if 0
-
 	x = 10;
-
 	for (int i = 0; i < kNumBuiltinTiles; i++) {
 		Image::ImageDecoder *tile = g_director->getTile(i);
+		surface.blitFrom(tile->getSurface(), Common::Point(x, 250));
+
 		x += tile->getSurface()->w + 10;
 	}
-
-	#endif
 
 	Common::String path = pathMakeRelative("blend2.pic");
 	Common::File in;
