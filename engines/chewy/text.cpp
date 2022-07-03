@@ -30,7 +30,7 @@
 namespace Chewy {
 
 Text::Text() : Resource("atds.tap") {
-	memset(_hotspotStrings, sizeof(_hotspotStrings), 0);
+	memset(_hotspotStrings, 0, sizeof(_hotspotStrings));
 
 	Common::File f;
 
