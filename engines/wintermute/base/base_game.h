@@ -76,6 +76,7 @@ class BaseGame: public BaseObject {
 public:
 	DECLARE_PERSISTENT(BaseGame, BaseObject)
 
+	virtual bool getLayerSize(int *LayerWidth, int *LayerHeight, Rect32 *viewport, bool *customViewport);
 #ifdef ENABLE_WME3D
 	virtual uint32 getAmbientLightColor();
 	virtual bool getFogParams(bool *fogEnabled, uint32 *fogColor, float *start, float *end);
@@ -131,6 +132,9 @@ public:
 
 	bool setMaxShadowType(TShadowType maxShadowType);
 	virtual TShadowType getMaxShadowType(BaseObject *object = nullptr);
+
+	int _editorResolutionWidth;
+	int _editorResolutionHeight;
 #endif
 
 	uint32 getSaveThumbWidth() const { return _thumbnailWidth; }

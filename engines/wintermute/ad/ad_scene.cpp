@@ -140,6 +140,11 @@ void AdScene::setDefaults() {
 	_editorShowEntities = true;
 	_editorShowScale    = true;
 
+#ifdef ENABLE_WME3D
+	_editorResolutionWidth = 0;
+	_editorResolutionHeight = 0;
+#endif
+
 	_shieldWindow = nullptr;
 
 	_fader = new BaseFader(_gameRef);
@@ -157,6 +162,7 @@ void AdScene::setDefaults() {
 	_2DPathfinding = false;
 	_maxShadowType = SHADOW_FLAT;
 
+	_scroll3DCompatibility = false;
 	_ambientLightColor = 0x00000000;
 
 	_fogEnabled = false;
@@ -649,7 +655,7 @@ TOKEN_DEF(NEAR_CLIPPING_PLANE) // WME3D
 TOKEN_DEF(FAR_CLIPPING_PLANE) // WME3D
 TOKEN_DEF(2D_PATHFINDING) // WME3D
 TOKEN_DEF(MAX_SHADOW_TYPE) // WME3D
-TOKEN_DEF(SCROLL_3D_COMPABILITY) // WME3D
+TOKEN_DEF(SCROLL_3D_COMPATIBILITY) // WME3D
 TOKEN_DEF(AMBIENT_LIGHT_COLOR) // WME3D
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
@@ -702,7 +708,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE(FAR_CLIPPING_PLANE) // WME3D
 	TOKEN_TABLE(2D_PATHFINDING) // WME3D
 	TOKEN_TABLE(MAX_SHADOW_TYPE) // WME3D
-	TOKEN_TABLE(SCROLL_3D_COMPABILITY) // WME3D
+	TOKEN_TABLE(SCROLL_3D_COMPATIBILITY) // WME3D
 	TOKEN_TABLE(AMBIENT_LIGHT_COLOR) // WME3D
 	TOKEN_TABLE_END
 
@@ -722,7 +728,9 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 
 	int ar, ag, ab, aa;
 	char camera[MAX_PATH_LENGTH] = "";
+#ifdef ENABLE_WME3D
 	float waypointHeight = -1.0f;
+#endif
 
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
@@ -967,6 +975,14 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			break;
 
 #ifdef ENABLE_WME3D
+		case TOKEN_EDITOR_RESOLUTION_WIDTH:
+			parser.scanStr(params, "%d", &_editorResolutionWidth);
+			break;
+
+		case TOKEN_EDITOR_RESOLUTION_HEIGHT:
+			parser.scanStr(params, "%d", &_editorResolutionHeight);
+			break;
+
 		case TOKEN_FOV_OVERRIDE:
 			parser.scanStr(params, "%f", &_fov);
 			break;
@@ -991,8 +1007,12 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			int maxShadowType = SHADOW_NONE;
 			parser.scanStr(params, "%d", &maxShadowType);
 			setMaxShadowType(static_cast<TShadowType>(maxShadowType));
-		}
-		break;
+			}
+			break;
+
+		case TOKEN_SCROLL_3D_COMPATIBILITY:
+			parser.scanStr(params, "%b", &_scroll3DCompatibility);
+			break;
 
 		case TOKEN_AMBIENT_LIGHT_COLOR:
 			parser.scanStr(params, "%d,%d,%d", &ar, &ag, &ab);
@@ -1037,6 +1057,13 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			_gameRef->_renderer->setScreenViewport();
 			_sceneGeometry->render(false);
 		}
+	}
+
+	if (_mainLayer) {
+		if (_editorResolutionWidth <= 0)
+			_editorResolutionWidth = _mainLayer->_width;
+		if (_editorResolutionHeight <= 0)
+			_editorResolutionHeight = _mainLayer->_height;
 	}
 #endif
 
@@ -2766,11 +2793,16 @@ bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 			buffer->putTextIndent(indent + 2, "2D_PATHFINDING=%s\n", "TRUE");
 
 		buffer->putTextIndent(indent + 2, "MAX_SHADOW_TYPE=%d\n", _maxShadowType);
+		if (_scroll3DCompatibility)
+			buffer->putTextIndent(indent + 2, "SCROLL_3D_COMPATIBILITY=%s\n", "TRUE");
 
 		if (_ambientLightColor != 0x00000000)
 			buffer->putTextIndent(indent + 2, "AMBIENT_LIGHT_COLOR { %d,%d,%d }\n", RGBCOLGetR(_ambientLightColor), RGBCOLGetG(_ambientLightColor), RGBCOLGetB(_ambientLightColor));
 
 		buffer->putTextIndent(indent + 2, "WAYPOINT_HEIGHT=%f\n", _sceneGeometry->_waypointHeight);
+
+		buffer->putTextIndent(indent + 2, "EDITOR_RESOLUTION_WIDTH=%d\n", _editorResolutionWidth);
+		buffer->putTextIndent(indent + 2, "EDITOR_RESOLUTION_HEIGHT=%d\n", _editorResolutionHeight);
 
 		buffer->putTextIndent(indent + 2, "\n");
 	}
@@ -2968,6 +3000,13 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_editorShowRegions));
 	persistMgr->transferBool(TMEMBER(_editorShowScale));
 	persistMgr->transferPtr(TMEMBER_PTR(_fader));
+#ifdef ENABLE_WME3D
+	if (BaseEngine::instance().getFlags() & GF_3D) {
+		persistMgr->transferPtr(TMEMBER(_sceneGeometry));
+	} else {
+		_sceneGeometry = nullptr;
+	}
+#endif
 	persistMgr->transferSint32(TMEMBER(_height));
 	persistMgr->transferBool(TMEMBER(_initialized));
 	persistMgr->transferUint32(TMEMBER(_lastTimeH));
@@ -2994,6 +3033,13 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferUint32(TMEMBER(_scrollTimeH));
 	persistMgr->transferUint32(TMEMBER(_scrollTimeV));
 	persistMgr->transferPtr(TMEMBER_PTR(_shieldWindow));
+#ifdef ENABLE_WME3D
+	if (BaseEngine::instance().getFlags() & GF_3D) {
+		persistMgr->transferBool(TMEMBER(_showGeometry));
+	} else {
+		_showGeometry = false;
+	}
+#endif
 	persistMgr->transferSint32(TMEMBER(_targetOffsetLeft));
 	persistMgr->transferSint32(TMEMBER(_targetOffsetTop));
 	_waypointGroups.persist(persistMgr);
@@ -3002,20 +3048,26 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 
 #ifdef ENABLE_WME3D
 	if (BaseEngine::instance().getFlags() & GF_3D) {
-		persistMgr->transferPtr(TMEMBER(_sceneGeometry));
-		persistMgr->transferBool(TMEMBER(_2DPathfinding));
-		persistMgr->transferBool(TMEMBER(_showGeometry));
+		persistMgr->transferSint32(TMEMBER(_editorResolutionWidth));
+		persistMgr->transferSint32(TMEMBER(_editorResolutionHeight));
 		persistMgr->transferFloat(TMEMBER(_fov));
 		persistMgr->transferFloat(TMEMBER(_nearPlane));
 		persistMgr->transferFloat(TMEMBER(_farPlane));
+		persistMgr->transferBool(TMEMBER(_2DPathfinding));
 		persistMgr->transferSint32(TMEMBER_INT(_maxShadowType));
+		persistMgr->transferBool(TMEMBER(_scroll3DCompatibility));
 		persistMgr->transferUint32(TMEMBER(_ambientLightColor));
 		persistMgr->transferBool(TMEMBER(_fogEnabled));
 		persistMgr->transferUint32(TMEMBER(_fogColor));
 		persistMgr->transferFloat(TMEMBER(_fogStart));
 		persistMgr->transferFloat(TMEMBER(_fogEnd));
 	} else {
-		_sceneGeometry = nullptr;
+		_editorResolutionWidth = _editorResolutionHeight = 0;
+		_fov = _nearPlane = _farPlane = -1.0f;
+		_2DPathfinding = false;
+		_maxShadowType = SHADOW_SIMPLE;
+		_scroll3DCompatibility = false;
+		_ambientLightColor = 0x00000000;
 		_fogEnabled = false;
 	}
 #endif
@@ -3028,7 +3080,6 @@ bool AdScene::afterLoad() {
 #ifdef ENABLE_WME3D
 	if (_sceneGeometry) {
 		int activeCamera = _sceneGeometry->_activeCamera;
-
 		if (activeCamera >= 0 && static_cast<uint>(activeCamera) < _sceneGeometry->_cameras.size()) {
 			_sceneGeometry->setActiveCamera(activeCamera, _fov, _nearPlane, _farPlane);
 		}

@@ -49,30 +49,36 @@ class AdSceneGeometry;
 class AdScene : public BaseObject {
 public:
 
-	BaseObject *getNextAccessObject(BaseObject *currObject);
-	BaseObject *getPrevAccessObject(BaseObject *currObject);
-	bool getSceneObjects(BaseArray<AdObject *> &objects, bool interactiveOnly);
-	bool getRegionObjects(AdRegion *region, BaseArray<AdObject *> &objects, bool interactiveOnly);
-
 #ifdef ENABLE_WME3D
 	uint32 _ambientLightColor;
 	TShadowType _maxShadowType;
-
-	void setMaxShadowType(TShadowType shadowType);
-
-	bool _2DPathfinding;
-
-	float _fov;
-	float _nearPlane;
-	float _farPlane;
+	bool _scroll3DCompatibility;
 
 	bool _fogEnabled;
 	uint32 _fogColor;
 	float _fogStart;
 	float _fogEnd;
 #endif
+
+	BaseObject *getNextAccessObject(BaseObject *currObject);
+	BaseObject *getPrevAccessObject(BaseObject *currObject);
+	bool getSceneObjects(BaseArray<AdObject *> &objects, bool interactiveOnly);
+	bool getRegionObjects(AdRegion *region, BaseArray<AdObject *> &objects, bool interactiveOnly);
+
+#ifdef ENABLE_WME3D
+	bool _2DPathfinding;
+#endif
 	bool afterLoad();
 
+	void setMaxShadowType(TShadowType shadowType);
+
+#ifdef ENABLE_WME3D
+	float _nearPlane;
+	float _farPlane;
+	float _fov;
+	int _editorResolutionWidth;
+	int _editorResolutionHeight;
+#endif
 	bool getRegionsAt(int x, int y, AdRegion **regionList, int numRegions);
 	bool handleItemAssociations(const char *itemName, bool show);
 	UIWindow *_shieldWindow;

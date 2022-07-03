@@ -96,6 +96,7 @@ public:
 	TTalkSkipButton _talkSkipButton;
 	TVideoSkipButton _videoSkipButton;
 
+	virtual bool getLayerSize(int *layerWidth, int *layerHeight, Rect32 *viewport, bool *customViewport) override;
 #ifdef ENABLE_WME3D
 	uint32 getAmbientLightColor() override;
 

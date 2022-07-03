@@ -203,6 +203,9 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 #ifdef ENABLE_WME3D
 	_maxShadowType = SHADOW_STENCIL;
 	_supportsRealTimeShadows = false;
+
+	_editorResolutionWidth = 0;
+	_editorResolutionHeight = 0;
 #endif
 
 	_localSaveDir = "saves";
@@ -3888,6 +3891,16 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 
 	_renderer->persistSaveLoadImages(persistMgr);
 
+#ifdef ENABLE_WME3D
+	if (BaseEngine::instance().getFlags() & GF_3D) {
+		persistMgr->transferSint32(TMEMBER_INT(_maxShadowType));
+		persistMgr->transferSint32(TMEMBER(_editorResolutionWidth));
+		persistMgr->transferSint32(TMEMBER(_editorResolutionHeight));
+	} else {
+		_editorResolutionWidth = _editorResolutionHeight = 0;
+	}
+#endif
+
 	persistMgr->transferSint32(TMEMBER_INT(_textEncoding));
 	persistMgr->transferBool(TMEMBER(_textRTL));
 
@@ -3912,12 +3925,6 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	if (!persistMgr->getIsSaving()) {
 		_quitting = false;
 	}
-
-#ifdef ENABLE_WME3D
-	if (BaseEngine::instance().getFlags() & GF_3D) {
-		persistMgr->transferSint32(TMEMBER_INT(_maxShadowType));
-	}
-#endif
 
 	return STATUS_OK;
 }
@@ -4633,12 +4640,25 @@ TShadowType BaseGame::getMaxShadowType(BaseObject *object) {
 		return _maxShadowType;
 	}
 }
+#endif
 
+//////////////////////////////////////////////////////////////////////////
+bool BaseGame::getLayerSize(int *layerWidth, int *layerHeight, Rect32 *viewport, bool *customViewport) {
+	if (_renderer) {
+		*layerWidth = _renderer->getWidth();
+		*layerHeight = _renderer->getHeight();
+		*customViewport = false;
+		viewport->setRect(0, 0, _renderer->getWidth(), _renderer->getHeight());
+		return true;
+	} else
+		return false;
+}
+
+#ifdef ENABLE_WME3D
 //////////////////////////////////////////////////////////////////////////
 uint32 BaseGame::getAmbientLightColor() {
 	return 0x00000000;
 }
-
 #endif
 
 //////////////////////////////////////////////////////////////////////////

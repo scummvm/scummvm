@@ -34,6 +34,7 @@
 #include "engines/wintermute/ad/ad_inventory.h"
 #include "engines/wintermute/ad/ad_inventory_box.h"
 #include "engines/wintermute/ad/ad_item.h"
+#include "engines/wintermute/ad/ad_layer.h"
 #include "engines/wintermute/ad/ad_response.h"
 #include "engines/wintermute/ad/ad_response_box.h"
 #include "engines/wintermute/ad/ad_response_context.h"
@@ -2494,14 +2495,47 @@ bool AdGame::displayDebugInfo() {
 
 #ifdef ENABLE_WME3D
 //////////////////////////////////////////////////////////////////////////
-Wintermute::TShadowType Wintermute::AdGame::getMaxShadowType(Wintermute::BaseObject *object) {
+Wintermute::TShadowType AdGame::getMaxShadowType(Wintermute::BaseObject *object) {
 	TShadowType ret = BaseGame::getMaxShadowType(object);
 
 	return MIN(ret, _scene->_maxShadowType);
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////
-uint32 Wintermute::AdGame::getAmbientLightColor() {
+bool AdGame::getLayerSize(int *layerWidth, int *layerHeight, Rect32 *viewport, bool *customViewport) {
+	if (_scene && _scene->_mainLayer) {
+		int portX, portY, portWidth, portHeight;
+		_scene->getViewportOffset(&portX, &portY);
+		_scene->getViewportSize(&portWidth, &portHeight);
+		*customViewport = _sceneViewport || _scene->_viewport;
+
+		viewport->setRect(portX, portY, portX + portWidth, portY + portHeight);
+
+#ifdef ENABLE_WME3D
+		if (_scene->_scroll3DCompatibility) {
+			// backward compatibility hack
+			// WME pre-1.7 expects the camera to only view the top-left part of the scene
+			*layerWidth = _gameRef->_renderer->getWidth();
+			*layerHeight = _gameRef->_renderer->getHeight();
+			if (_gameRef->_editorResolutionWidth > 0)
+				*layerWidth = _gameRef->_editorResolutionWidth;
+			if (_gameRef->_editorResolutionHeight > 0)
+				*layerHeight = _gameRef->_editorResolutionHeight;
+		} else
+#endif
+		{
+			*layerWidth = _scene->_mainLayer->_width;
+			*layerHeight = _scene->_mainLayer->_height;
+		}
+		return true;
+	} else
+		return BaseGame::getLayerSize(layerWidth, layerHeight, viewport, customViewport);
+}
+
+#ifdef ENABLE_WME3D
+//////////////////////////////////////////////////////////////////////////
+uint32 AdGame::getAmbientLightColor() {
 	if (_scene) {
 		return _scene->_ambientLightColor;
 	} else {
@@ -2510,7 +2544,7 @@ uint32 Wintermute::AdGame::getAmbientLightColor() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool Wintermute::AdGame::getFogParams(bool *fogEnabled, uint32 *fogColor, float *start, float *end) {
+bool AdGame::getFogParams(bool *fogEnabled, uint32 *fogColor, float *start, float *end) {
 	if (_scene) {
 		*fogEnabled = _scene->_fogEnabled;
 		*fogColor = _scene->_fogColor;
