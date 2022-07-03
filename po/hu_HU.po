@@ -4471,7 +4471,8 @@ msgstr "Feliratok megjelenítése szöveg becsúszás közben"
 
 #: engines/bladerunner/detection.cpp:109
 msgid "During the intro cutscene, show subtitles during the text crawl"
-msgstr "A bevezető alatt jelenítse meg a feliratokat a szöveg becsúszása közben"
+msgstr ""
+"A bevezető alatt jelenítse meg a feliratokat a szöveg becsúszása közben"
 
 #: engines/bladerunner/detection_tables.h:96
 #: engines/bladerunner/detection_tables.h:107
