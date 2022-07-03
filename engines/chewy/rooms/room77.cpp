@@ -108,7 +108,7 @@ int Room77::proc2() {
 	if (_G(gameState).flags29_8) {
 		start_spz_wait(14, 1, false, P_CHEWY);
 		delInventory(_G(cur)->getInventoryCursor());
-		_G(atds)->set_ats_str(464, 1, 1);
+		_G(atds)->set_ats_str(464, 1, ATS_DATA);
 		_G(gameState).flags29_20 = true;
 		_G(gameState).flags29_40 = true;
 		diaNr = 442;

@@ -2280,14 +2280,14 @@ void calc_inv_use_txt(int16 test_nr) {
 
 	case 105:
 		delInventory(_G(cur)->getInventoryCursor());
-		_G(atds)->set_ats_str(105, 0, 1, 6);
+		_G(atds)->set_ats_str(105, 0, 1, INV_ATS_DATA);
 		_G(menu_item) = CUR_USE;
 		cursorChoice(CUR_USE);
 		break;
 
 	case 106:
 		del_invent_slot(106);
-		_G(atds)->set_ats_str(105, 0, 1, 6);
+		_G(atds)->set_ats_str(105, 0, 1, INV_ATS_DATA);
 		break;
 
 	default:
