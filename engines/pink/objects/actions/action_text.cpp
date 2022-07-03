@@ -173,15 +173,14 @@ void ActionText::end() {
 }
 
 void ActionText::draw(Graphics::ManagedSurface *surface) {
-	int xOffset = 0, yOffset = 0;
+	int yOffset = 0;
 	// we need to first fill this area with backgroundColor, in order to wash away the previous text
 	surface->fillRect(Common::Rect(_xLeft, _yTop, _xRight, _yBottom), _backgroundColorIndex);
 
 	if (_centered) {
-		xOffset = (_xRight - _xLeft) / 2 - _macText->getTextMaxWidth() / 2;
 		yOffset = (_yBottom - _yTop) / 2 - _macText->getTextHeight() / 2;
 	}
-	_macText->drawToPoint(surface, Common::Rect(0, 0, _xRight - _xLeft, _yBottom - _yTop), Common::Point(_xLeft + xOffset, _yTop + yOffset));
+	_macText->drawToPoint(surface, Common::Rect(0, 0, _xRight - _xLeft, _yBottom - _yTop), Common::Point(_xLeft, _yTop + yOffset));
 }
 
 #define BLUE(rgb) ((rgb) & 0xFF)
