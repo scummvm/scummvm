@@ -23,7 +23,10 @@
 #define CHEWY_TEXT_H
 
 #include "common/list.h"
+#include "common/serializer.h"
+#include "chewy/atds.h"
 #include "chewy/chewy.h"
+#include "chewy/defines.h"
 #include "chewy/resource.h"
 
 namespace Chewy {
@@ -65,6 +68,8 @@ struct TextEntry {
 
 typedef Common::List<TextEntry> TextEntryList;
 
+#define ROOM_ATS_MAX 1000
+
 class Text : public Resource {
 public:
 	Text();
@@ -93,8 +98,25 @@ public:
 
 	const char *strPos(const char *txtAdr, int16 pos);
 
+	void syncHotspotStrings(Common::Serializer &s);
+	void syncInventoryStrings(Common::Serializer &s);
+	void syncInventoryUseStrings(Common::Serializer &s);
+
+	bool getControlBit(int16 txtNr, int16 bitIdx);
+	void setControlBit(int16 txtNr, int16 bitIdx);
+	void delControlBit(int16 txtNr, int16 bitIdx);
+
+	void setTextId(int16 entry, int16 subEntry, int16 strNr, int16 type);
+
 private:
 	int16 _lastSpeechId = -1;
+	byte _hotspotStrings[ROOM_ATS_MAX * 3] = { 0 };
+	uint8 _inventoryStrings[MAX_MOV_OBJ * 3] = {0};
+	uint8 _inventoryUseStrings[INV_USE_ATS_MAX * 3] = {0};
+
+	//uint8 getTextStatus(uint8 status, int16 subEntry, int16 strNr);
+	uint8 getTextId(uint entry, uint subEntry, int type);
+	uint8 updateTextStatus(int16 entry, int16 subEntry, int16 strNr, int16 type);
 };
 
 } // namespace Chewy

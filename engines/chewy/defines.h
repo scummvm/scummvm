@@ -404,7 +404,6 @@ enum SetupScreenMode {
 #define AUTO_OBJ4 4
 #define MAX_OBJ_MOV 3
 
-#define ROOM_ATS_MAX 1000
 #define INV_USE_ATS_MAX 500
 #define ATS_ACTION_VOR 0
 #define ATS_ACTION_NACH 1
