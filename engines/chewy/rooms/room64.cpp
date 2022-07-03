@@ -34,7 +34,7 @@ void Room64::entry() {
 	_G(r62Delay) = 0;
 	_G(r64TalkAni) = _G(gameState).R64Moni1Ani;
 
-	if (_G(gameState).flags38_1)
+	if (!_G(gameState).R64AshtrayTaken)
 		_G(det)->startDetail(0, 255, false);
 	
 	if (!_G(gameState).R64ManWeg) {
