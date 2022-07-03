@@ -90,7 +90,6 @@ void Market::buyFood() {
 			++numPurchases;
 	}
 
-	clearSurface();
 	displayMessage(numPurchases ?
 		STRING["enhdialogs.market.thankyou"] :
 		STRING["enhdialogs.market.no_gold"]

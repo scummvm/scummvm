@@ -29,6 +29,8 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
+#define ROW_HEIGHT 9
+
 TextView::TextView(const Common::String &name) :
 		UIElement(name, g_engine) {
 }
@@ -132,12 +134,12 @@ void TextView::writeNumber(int x, int y, int val) {
 
 void TextView::writeLine(int lineNum, const Common::String &str,
 		TextAlign align, int xp) {
-	writeString(xp, lineNum * 8, str, align);
+	writeString(xp, lineNum * ROW_HEIGHT, str, align);
 }
 
 void TextView::newLine() {
 	_textPos.x = 0;
-	_textPos.y += 8;
+	_textPos.y += ROW_HEIGHT;
 }
 
 void TextView::clearSurface() {
