@@ -795,7 +795,7 @@ void MacWindowManager::drawDesktop() {
 					byte r, g, b;
 					_desktopBmp->format.colorToRGB(color, r, g, b);
 					if (color > 0) {
-						*((byte *)_desktop->getBasePtr(i, j)) = _paletteLookup.findBestColor(r, g, b);
+						*((byte *)_desktop->getBasePtr(i, j)) = findBestColor(r, g, b);
 					}
 				} else {
 					*((uint32 *)_desktop->getBasePtr(i, j)) = color;
@@ -1270,7 +1270,7 @@ void MacWindowManager::popCursor() {
 ///////////////////
 // Palette stuff
 ///////////////////
-#define LOOKUPCOLOR(x) _color ## x = _paletteLookup.findBestColor(palette[kColor ## x * 3], palette[kColor ## x  * 3 + 1], palette[kColor ## x * 3 + 2]);
+#define LOOKUPCOLOR(x) _color ## x = findBestColor(palette[kColor ## x * 3], palette[kColor ## x  * 3 + 1], palette[kColor ## x * 3 + 2]);
 
 void MacWindowManager::passPalette(const byte *pal, uint size) {
 	if (_palette)
@@ -1329,7 +1329,7 @@ uint MacWindowManager::inverter(uint src) {
 		r = ~r;
 		g = ~g;
 		b = ~b;
-		_invertColorHash[src] = _paletteLookup.findBestColor(r, g, b);
+		_invertColorHash[src] = findBestColor(r, g, b);
 	} else {
 		uint32 alpha = _pixelformat.ARGBToColor(255, 0, 0, 0);
 		_invertColorHash[src] = ~(src & ~alpha) | alpha;
