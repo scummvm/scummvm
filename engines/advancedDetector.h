@@ -382,7 +382,7 @@ public:
 	 *
 	 * @return A list of extra GUI options for an engine plugin and target.
 	 */
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override final;
 
 	static Common::StringArray getPathsFromEntry(const ADGameDescription *g);
 
