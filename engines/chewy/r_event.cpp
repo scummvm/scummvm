@@ -754,9 +754,9 @@ void flic_cut(int16 nr) {
 		break;
 
 	case FCUT_112:
-		g_engine->_sound->setMusicVolume(32 * Audio::Mixer::kMaxChannelVolume / 120);
+		g_engine->_sound->setActiveMusicVolume(32);
 		g_engine->_video->playVideo(nr);
-		g_engine->_sound->setMusicVolume(5 * Audio::Mixer::kMaxChannelVolume / 120);
+		g_engine->_sound->setActiveMusicVolume(5);
 		break;
 
 	case FCUT_133:

@@ -36,7 +36,6 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 	CfoDecoder *cfoDecoder = new CfoDecoder(g_engine->_sound);
 	VideoResource *videoResource = new VideoResource("cut.tap");
 	Common::SeekableReadStream *videoStream = videoResource->getVideoStream(num);
-	g_engine->_sound->pushVolume();
 	_playCount = 0;
 
 	if (stopMusic) {
@@ -102,7 +101,6 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 
 	g_system->getPaletteManager()->setPalette(curPalette, 0, 256);
 	_G(cur)->showCursor();
-	g_engine->_sound->popVolume();
 
 	delete videoResource;
 	delete cfoDecoder;

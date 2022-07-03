@@ -50,21 +50,26 @@ public:
 	void stopSound(uint channel = 0);
 	void stopAllSounds();
 	bool isSoundActive(uint channel) const;
-	void setSoundVolume(uint volume);
-	int getSoundVolume() const;
+	void setUserSoundVolume(uint volume);
+	int getUserSoundVolume() const;
+	// Sets the volume of the sound effect curently active on the specified
+	// channel. Does not affect the next sound effect played on the channel.
 	void setSoundChannelVolume(uint channel, uint volume);
+	// Sets the balance of the sound effect curently active on the specified
+	// channel. Does not affect the next sound effect played on the channel.
 	void setSoundChannelBalance(uint channel, int8 balance);
-	void pushVolume();
-	void popVolume();
 
 	void playMusic(int16 num, bool loop = false);
-	void playMusic(uint8 *data, uint32 size);
+	void playMusic(uint8 *data, uint32 size, uint8 volume = 63);
 	void pauseMusic();
 	void resumeMusic();
 	void stopMusic();
 	bool isMusicActive() const;
-	void setMusicVolume(uint volume);
-	int getMusicVolume() const;
+	void setUserMusicVolume(uint volume);
+	int getUserMusicVolume() const;
+	// Sets the volume of the currently active music track. Does not affect the
+	// next music track played.
+	void setActiveMusicVolume(uint8 volume);
 	void playRoomMusic(int16 roomNum);
 
 	void playSpeech(int num, bool waitForFinish, uint16 balance = 63);
@@ -72,6 +77,8 @@ public:
 	void resumeSpeech();
 	void stopSpeech();
 	bool isSpeechActive() const;
+	// Sets the balance of the currently playing speech sample. Does not affect
+	// the next speech sample played.
 	void setSpeechBalance(uint16 balance = 63);
 
 	void stopAll();
@@ -96,6 +103,13 @@ public:
 	void syncSoundSettings();
 
 private:
+	// Converts volume from the scale used by the game data (0 - 63) to the
+	// ScummVM mixer channel scale (0 - 255).
+	uint8 convertVolume(uint16 volume);
+	// Converts balance from the scale used by the game data (0 - 127) to the
+	// ScummVM mixer channel scale (-127 - 127).
+	int8 convertBalance(uint16 balance);
+
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle[MAX_SOUND_EFFECTS];
 	Audio::SoundHandle _musicHandle;

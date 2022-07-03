@@ -62,6 +62,10 @@ private:
 		uint32 _soundEffectSize[MAX_SOUND_EFFECTS];
 		uint8 *_musicData;
 		uint32 _musicSize;
+
+		uint8 _sfxBalances[MAX_SOUND_EFFECTS];
+		uint8 _sfxGlobalVolume;
+		uint8 _musicVolume;
 	};
 };
 
