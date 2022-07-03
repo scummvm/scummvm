@@ -187,7 +187,7 @@ Common::Error DirectorEngine::run() {
 	_stage = new Window(_wm->getNextId(), false, false, false, _wm, this, true);
 	*_stage->_refCount += 1;
 
-	if (!debugChannelSet(-1, kDebugDesktop))
+	if (!desktopEnabled())
 		_stage->disableBorder();
 
 	_surface = new Graphics::ManagedSurface(1, 1);
@@ -317,6 +317,10 @@ StartMovie DirectorEngine::getStartMovie() const {
 
 Common::String DirectorEngine::getStartupPath() const {
 	return _options.startupPath;
+}
+
+bool DirectorEngine::desktopEnabled() {
+	return !(_wmMode & Graphics::kWMModeNoDesktop);
 }
 
 } // End of namespace Director

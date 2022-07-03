@@ -150,8 +150,8 @@ bool Movie::loadArchive() {
 
 	// TODO: Add more options for desktop dimensions
 	if (_window == _vm->getStage()) {
-		uint16 windowWidth = debugChannelSet(-1, kDebugDesktop) ? 1024 : _movieRect.width();
-		uint16 windowHeight = debugChannelSet(-1, kDebugDesktop) ? 768 : _movieRect.height();
+		uint16 windowWidth = g_director->desktopEnabled() ? 1024 : _movieRect.width();
+		uint16 windowHeight = g_director->desktopEnabled() ? 768 : _movieRect.height();
 		if (_vm->_wm->_screenDims.width() != windowWidth || _vm->_wm->_screenDims.height() != windowHeight) {
 			_vm->_wm->resizeScreen(windowWidth, windowHeight);
 			recenter = true;
@@ -160,7 +160,7 @@ bool Movie::loadArchive() {
 		}
 	}
 
-	if (recenter && debugChannelSet(-1, kDebugDesktop))
+	if (recenter && g_director->desktopEnabled())
 		_window->center(g_director->_centerStage);
 
 	_window->setStageColor(_stageColor, true);
