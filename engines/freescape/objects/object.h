@@ -55,6 +55,8 @@ public:
 	void makeInvisible();
 	void makeVisible();
 	void toggleVisibility();
+	bool isDestroyed();
+	void destroy();
 
 	virtual ~Object();
 

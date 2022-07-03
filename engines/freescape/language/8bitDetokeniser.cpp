@@ -180,6 +180,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		case 17:
 		case 16:
 			detokenisedStream += "DESTROY (";
+			currentInstruction = FCLInstruction(Token::DESTROY);
 			break;
 		case 18:
 			detokenisedStream += "GOTO (";

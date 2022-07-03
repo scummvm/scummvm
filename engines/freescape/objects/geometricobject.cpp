@@ -234,7 +234,7 @@ bool GeometricObject::isPlanar() {
 }
 
 bool GeometricObject::collides(const Math::AABB &boundingBox) {
-	if (isInvisible() || !_boundingBox.isValid() || !boundingBox.isValid())
+	if (isDestroyed() || isInvisible() || !_boundingBox.isValid() || !boundingBox.isValid())
 		return false;
 
 	return(	_boundingBox.getMax().x() > boundingBox.getMin().x() &&
