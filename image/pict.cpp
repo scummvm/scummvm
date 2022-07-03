@@ -70,6 +70,7 @@ void PICTDecoder::setupOpcodesCommon() {
 	OPCODE(0x00A1, o_longComment, "LongComment");
 	OPCODE(0x00FF, o_opEndPic, "OpEndPic");
 	OPCODE(0x0C00, o_headerOp, "HeaderOp");
+	OPCODE(0x1101, o_versionOp1, "VersionOp1");
 }
 
 void PICTDecoder::setupOpcodesNormal() {
@@ -95,7 +96,20 @@ void PICTDecoder::o_nop(Common::SeekableReadStream &) {
 
 void PICTDecoder::o_clip(Common::SeekableReadStream &stream) {
 	// Ignore
-	stream.skip(stream.readUint16BE() - 2);
+	int size = stream.readUint16BE();
+	debug(3, "CLIP: size is %d", size);
+	if (size >= 10) {
+		int x1 = stream.readSint16BE();
+		int y1 = stream.readSint16BE();
+		int x2 = stream.readSint16BE();
+		int y2 = stream.readSint16BE();
+		debug(3, "CLIP: RECT encountered: %d %d %d %d", x1, y1, x2, y2);
+		stream.skip(size - 10);
+		debug(3, "CLIP: skipped %d bytes", size - 10);
+	} else {
+		stream.skip(size - 2);
+		debug(3, "CLIP: skipped %d bytes", size - 2);
+	}
 }
 
 void PICTDecoder::o_txFont(Common::SeekableReadStream &stream) {
@@ -131,6 +145,12 @@ void PICTDecoder::o_versionOp(Common::SeekableReadStream &stream) {
 	// We only support v2 extended
 	if (stream.readUint16BE() != 0x02FF)
 		error("Unknown PICT version");
+	else
+		_version = 2;
+}
+
+void PICTDecoder::o_versionOp1(Common::SeekableReadStream& stream) {
+	_version = 1;
 }
 
 void PICTDecoder::o_longText(Common::SeekableReadStream &stream) {
@@ -238,12 +258,17 @@ bool PICTDecoder::loadStream(Common::SeekableReadStream &stream) {
 	//     - DirectBitsRect/PackBitsRect compressed data is supported
 	for (uint32 opNum = 0; !stream.eos() && !stream.err() && stream.pos() < stream.size() && _continueParsing; opNum++) {
 		// PICT v2 opcodes are two bytes
-		uint16 opcode = stream.readUint16BE();
+		uint16 opcode;
 
-		if (opNum == 0 && opcode != 0x0011) {
+		if (_version != 1)
+			opcode = stream.readUint16BE();
+		else
+			opcode = stream.readByte();
+
+		if (opNum == 0 && (opcode != 0x0011 && opcode != 0x1101)) {
 			warning("Cannot find PICT version opcode");
 			return false;
-		} else if (opNum == 1 && opcode != 0x0C00) {
+		} else if (opNum == 1 && _version == 2 && opcode != 0x0C00) {
 			warning("Cannot find PICT header opcode");
 			return false;
 		}
@@ -264,7 +289,8 @@ bool PICTDecoder::loadStream(Common::SeekableReadStream &stream) {
 		}
 
 		// Align
-		stream.skip((stream.pos() - startPos) & 1);
+		if (_version == 2)
+			stream.skip((stream.pos() - startPos) & 1);
 	}
 
 	return _outputSurface;
@@ -273,7 +299,7 @@ bool PICTDecoder::loadStream(Common::SeekableReadStream &stream) {
 PICTDecoder::PixMap PICTDecoder::readPixMap(Common::SeekableReadStream &stream, bool hasBaseAddr) {
 	PixMap pixMap;
 	pixMap.baseAddr = hasBaseAddr ? stream.readUint32BE() : 0;
-	pixMap.rowBytes = stream.readUint16BE() & 0x3fff;
+	pixMap.rowBytes = stream.readUint16BE() & 0x7fff;
 	pixMap.bounds.top = stream.readUint16BE();
 	pixMap.bounds.left = stream.readUint16BE();
 	pixMap.bounds.bottom = stream.readUint16BE();
@@ -520,7 +546,7 @@ void PICTDecoder::skipBitsRect(Common::SeekableReadStream &stream, bool withPale
 			stream.skip((stream.readUint16BE() + 1) * 8);
 		}
 
-		rowBytes &= 0x3FFF;
+		rowBytes &= 0x7FFF;
 	} else {
 		// BitMap
 		packType = 0;
