@@ -1123,6 +1123,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 	case SIB_ASCHE_R64:
 		_G(det)->stop_detail(0);
 		_G(obj)->hide_sib(sib_nr);
+		_G(gameState).R64AshtrayTaken = true;
 		Room64::talk_man(351);
 		break;
 

@@ -366,7 +366,7 @@ struct GameFlags {
 	bool flags37_40 : 1;
 	bool flags37_80 : 1;
 
-	bool flags38_1 : 1;
+	bool R64AshtrayTaken : 1;
 	bool flags38_2 : 1;
 	uint8 flags38_unused : 6;
 
