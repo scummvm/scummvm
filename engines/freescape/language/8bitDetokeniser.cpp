@@ -214,6 +214,18 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			bytePointer += 2;
 			numberOfArguments = 0;
 			break;
+
+		case 23:
+			detokenisedStream += "UNKNOWN(23)(..) ";
+			bytePointer += 2;
+			numberOfArguments = 0;
+			break;
+
+		case 22:
+			detokenisedStream += "UNKNOWN(22)(..) ";
+			bytePointer += 2;
+			numberOfArguments = 0;
+			break;
 		}
 
 		// if there are any regular arguments to add, do so

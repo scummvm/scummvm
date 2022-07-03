@@ -275,6 +275,9 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 			//if (newObject->getObjectID() == 255) // TODO: fix me?
 			//	break;
 			if (newObject->getType() == Object::Entrance) {
+				if (entrancesByID->contains(newObject->getObjectID() & 0x7fff))
+					error("WARNING: replacing object id %d (%d)", newObject->getObjectID(), newObject->getObjectID() & 0x7fff);
+
 				(*entrancesByID)[newObject->getObjectID() & 0x7fff] = newObject;
 			} else {
 				if (objectsByID->contains(newObject->getObjectID()))
@@ -288,7 +291,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	assert(endLastObject <= base + cPtr);
 	file->seek(base + cPtr);
 	uint8 numConditions = file->readByte();
-	debug("%d area conditions", numConditions);
+	debug("%d area conditions at %x", numConditions, base + cPtr);
 	while (numConditions--) {
 		FCLInstructionVector instructions;
 		// get the length
@@ -298,7 +301,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		byte *conditionData = (byte*)malloc(lengthOfCondition);
 		file->read(conditionData, lengthOfCondition);
 		Common::Array<uint8> conditionArray(conditionData, lengthOfCondition);
-		debug("%s", detokenise8bitCondition(conditionArray, instructions)->c_str(), nullptr);
+		debug("%s", detokenise8bitCondition(conditionArray, instructions)->c_str());
 	}
 
 	return (new Area(areaNumber, objectsByID, entrancesByID, scale, 255, 255, palette));
@@ -377,12 +380,19 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	//fileOffsetForArea[0] = 0x9e75 - offset - 8 - 12; // Table?
 	//fileOffsetForArea[0] = 0x9571 - offset;
 	//fileOffsetForArea[0] = 0xaba5 - offset - 8 - 16; // ???
+	//fileOffsetForArea[0] = 0x87c7 - offset - 8; // ???
+	//fileOffsetForArea[0] = 0x9304 - offset - 8 - 12 - 12 - 12; // ???
+	//fileOffsetForArea[0] = 0x92cc - offset; // Pool, 20
+	//fileOffsetForArea[0] = 0x9f40 - offset - 8;
+	//fileOffsetForArea[0] = 0x9f35 - offset; // Another Church, 12
+	//fileOffsetForArea[0] = 0xa06e - offset - 8; // Cornisa? 37
 
 	//fileOffsetForArea[0] = 0x959b - offset - 16; // Church? (22 elements)
 	//fileOffsetForArea[0] = 0x94b7 - offset; // For testing
 	//fileOffsetForArea[0] = 0x97cb - offset; // Courtyard
 	//fileOffsetForArea[0] = 0x92cc - offset ; // Pool?
-	//fileOffsetForArea[0] = 0x866b - offset - 8; // Pool?
+	//fileOffsetForArea[0] = 0x8e0a - offset - 8; // Pool?
+	//fileOffsetForArea[0] = 0x92d8 - offset; // ??
 
 	// grab the areas
 	AreaMap *areaMap = new AreaMap;

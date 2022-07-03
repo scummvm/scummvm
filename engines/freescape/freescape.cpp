@@ -205,6 +205,10 @@ void FreescapeEngine::processInput() {
 				move(LEFT, _scaleVector.y(), deltaTime);
 			else if (event.kbd.keycode == Common::KEYCODE_d || event.kbd.keycode == Common::KEYCODE_RIGHT)
 				move(RIGHT, _scaleVector.y(), deltaTime);
+			else if (event.kbd.keycode == Common::KEYCODE_f)
+				_position.setValue(1, _position.y() + 12);
+			else if (event.kbd.keycode == Common::KEYCODE_v)
+				_position.setValue(1, _position.y() - 12);
 			break;
 
 		case Common::EVENT_QUIT:
@@ -361,6 +365,7 @@ void FreescapeEngine::gotoArea(uint16 areaID, uint16 entranceID) {
 
 	assert(_areasByAreaID->contains(areaID));
 	_currentArea = (*_areasByAreaID)[areaID];
+	_currentArea->show();
 
 	Entrance *entrance = (Entrance*) _currentArea->entranceWithID(entranceID);
 	if (!entrance)
