@@ -39,6 +39,8 @@
 
 namespace Pink {
 
+Graphics::PaletteLookup *g_paletteLookup;
+
 PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
 	: Engine(system), _rnd("pink"), _exeResources(nullptr),
 	_desc(desc), _bro(nullptr), _menu(nullptr), _actor(nullptr),
@@ -46,6 +48,8 @@ PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
+
+	g_paletteLookup = new Graphics::PaletteLookup;
 }
 
 PinkEngine::~PinkEngine() {
@@ -59,6 +63,8 @@ PinkEngine::~PinkEngine() {
 		delete _cursors[j];
 	}
 	delete _screen;
+
+	delete g_paletteLookup;
 }
 
 Common::Error PinkEngine::init() {

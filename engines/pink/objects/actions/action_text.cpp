@@ -188,35 +188,15 @@ void ActionText::draw(Graphics::ManagedSurface *surface) {
 #define GREEN(rgb) (((rgb) >> 8) & 0xFF)
 #define RED(rgb) (((rgb) >> 16) & 0xFF)
 
-static uint findBestColor(byte *palette, uint32 rgb) {
-	uint bestColor = 0;
-	double min = 0xFFFFFFFF;
-	for (uint i = 0; i < 256; ++i) {
-		int rmean = (*(palette + 3 * i + 0) + RED(rgb)) / 2;
-		int r = *(palette + 3 * i + 0) - RED(rgb);
-		int g = *(palette + 3 * i + 1) - GREEN(rgb);
-		int b = *(palette + 3 * i + 2) - BLUE(rgb);
-
-		double dist = sqrt((((512 + rmean) * r * r) >> 8) + 4 * g * g + (((767 - rmean) * b * b) >> 8));
-		if (min > dist) {
-			bestColor = i;
-			min = dist;
-		}
-	}
-
-	debug(2, "for color %06x the best color is %02x%02x%02x", rgb, palette[bestColor * 3], palette[bestColor * 3 + 1], palette[bestColor * 3 + 2]);
-
-	return bestColor;
-}
-
 void ActionText::findColorsInPalette() {
 	byte palette[256 * 3];
 	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+	g_paletteLookup->setPalette(palette, 256);
 
 	debug(2, "textcolorindex: %06x", _textRGB);
-	_textColorIndex = findBestColor(palette, _textRGB);
+	_textColorIndex = g_paletteLookup->findBestColor(RED(_textRGB), GREEN(_textRGB), BLUE(_textRGB));
 	debug(2, "backgroundColorIndex: %06x", _backgroundRGB);
-	_backgroundColorIndex = findBestColor(palette, _backgroundRGB);
+	_backgroundColorIndex = g_paletteLookup->findBestColor(RED(_backgroundRGB), GREEN(_backgroundRGB), BLUE(_backgroundRGB));
 }
 
 } // End of namespace Pink

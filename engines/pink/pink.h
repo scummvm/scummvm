@@ -65,6 +65,7 @@ namespace Common {
 namespace Graphics {
 class MacMenu;
 struct WinCursorGroup;
+class PaletteLookup;
 }
 
 namespace Pink {
@@ -84,6 +85,8 @@ enum {
 	kPinkDebugScripts = 1 << 3,
 	kPinkDebugActions = 1 << 4
 };
+
+extern Graphics::PaletteLookup *g_paletteLookup;
 
 class PinkEngine : public Engine {
 public:
