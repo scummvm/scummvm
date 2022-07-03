@@ -15,8 +15,8 @@ namespace Freescape {
 Object::Type Object::getType() { return _type; }
 uint16 Object::getObjectID() { return _objectID; }
 uint16 Object::getObjectFlags() { return _flags; }
-Math::Vector3d Object::getOrigin() { return _origin; }
-Math::Vector3d Object::getSize() { return _size; }
+Math::Vector3d Object::getOrigin() { return origin; }
+Math::Vector3d Object::getSize() { return size; }
 
 bool Object::isDrawable() { return false; }
 bool Object::isPlanar() { return false; }

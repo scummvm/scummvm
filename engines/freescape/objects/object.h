@@ -61,7 +61,7 @@ public:
 	uint16 _flags;
 	Type _type;
 	uint16 _objectID;
-	Math::Vector3d _origin, _size, _rotation;
+	Math::Vector3d origin, size, _rotation;
 	Math::AABB _boundingBox;
 };
 
