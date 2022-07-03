@@ -204,6 +204,8 @@ public:
 
 	Archive *createArchive();
 
+	bool desktopEnabled();
+
 	// events.cpp
 	bool processEvents(bool captureClick = false);
 	void processEventQUIT();
