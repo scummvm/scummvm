@@ -42,6 +42,7 @@ static void syncArray(Common::Serializer &s, uint8 *arr, size_t count) {
 	for (size_t i = 0; i < count; ++i)
 		s.syncAsByte(arr[i]);
 }
+
 static void syncArray(Common::Serializer &s, int16 *arr, size_t count) {
 	for (size_t i = 0; i < count; ++i)
 		s.syncAsSint16LE(arr[i]);
@@ -55,14 +56,15 @@ bool GameState::synchronize(Common::Serializer &s) {
 
 	byte dummy = 0;
 	int16 dummy16 = 0;
+	uint8 InvUseDef[40 * 3] = {0};	// dummy
 	int inventoryCursor = _G(cur)->getInventoryCursor();
 
 	// Sync the structure's bitflags
 	s.syncBytes((byte *)_flags, SPIELER_FLAGS_SIZE);
 
-	syncArray(s, Ats, ROOM_ATS_MAX * 3);
-	syncArray(s, InvAts, MAX_MOV_OBJ * 3);
-	syncArray(s, InvUse, INV_USE_ATS_MAX * 3);
+	_G(txt)->syncHotspotStrings(s);
+	_G(txt)->syncInventoryStrings(s);
+	_G(txt)->syncInventoryUseStrings(s);
 	syncArray(s, InvUseDef, 40 * 3);
 
 	s.syncAsSint16LE(MainMenuY);

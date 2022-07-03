@@ -228,8 +228,6 @@ public:
 	void delControlBit(int16 txtNr, int16 bitIdx);
 	void set_ats_str(int16 txtNr, int16 txtMode, int16 strNr, int16 mode);
 	void set_ats_str(int16 txtNr, int16 strNr, int16 mode);
-	int16 get_ats_str(int16 txtNr, int16 txtMode, int16 mode);
-	void set_ats_mem(int16 mode);
 	int16 start_aad(int16 diaNr);
 	void stopAad();
 	void print_aad(int16 scrX, int16 scrY);
@@ -263,7 +261,7 @@ public:
 
 	Common::StringArray getTextArray(uint dialogNum, uint entryNum, int type, int subEntry = -1);
 	Common::String getTextEntry(uint dialogNum, uint entryNum, int type, int subEntry = -1);
-	int16 getLastSpeechId() { return _text->getLastSpeechId(); }
+	int16 getLastSpeechId();
 
 private:
 	void init();
@@ -273,8 +271,6 @@ private:
 	Common::File *_atdsHandle = nullptr;
 	char *_atdsMem[MAX_HANDLE] = { nullptr };
 	int16 _atdsPoolOff[MAX_HANDLE] = { 0 };
-	char *_atsMem = nullptr;
-	uint8 *_ats_sheader = nullptr;
 	AadVar _aadv;
 	AtsVar _atsv;
 	DialogCloseupVariables _dialogCloseup;

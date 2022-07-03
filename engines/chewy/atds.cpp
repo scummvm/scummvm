@@ -352,38 +352,10 @@ void Atdsys::load_atds(int16 chunkNr, int16 mode) {
 	}
 }
 
-void Atdsys::set_ats_mem(int16 mode) {
-	switch (mode) {
-	case ATS_DATA:
-		_ats_sheader = _G(gameState).Ats;
-		_atsMem = _atdsMem[mode];
-		break;
-
-	case INV_USE_DATA:
-		_ats_sheader = _G(gameState).InvUse;
-		_atsMem = _atdsMem[mode];
-		break;
-
-	case INV_USE_DEF:
-		error("set_ats_mem() called with mode INV_USE_DEF");
-
-	case INV_ATS_DATA:
-		_ats_sheader = _G(gameState).InvAts;
-		_atsMem = _atdsMem[mode];
-		break;
-
-	default:
-		break;
-	}
-}
-
 bool Atdsys::start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int16 *vocNr) {
 	assert(mode == ATS_DATA || mode == INV_USE_DATA || mode == INV_USE_DEF);
 
 	*vocNr = -1;
-
-	if (mode != INV_USE_DEF)
-		set_ats_mem(mode);
 
 	_atsv.shown = false;
 
@@ -501,19 +473,7 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
 }
 
 void Atdsys::set_ats_str(int16 txtNr, int16 txtMode, int16 strNr, int16 mode) {
-	set_ats_mem(mode);
-	uint8 status = _ats_sheader[(txtNr * MAX_ATS_STATUS) + (txtMode + 1) / 2];
-	int16 ak_nybble = (txtMode + 1) % 2;
-
-	uint8 lo_hi[2];
-	lo_hi[1] = status >> 4;
-	lo_hi[0] = status &= 15;
-	lo_hi[ak_nybble] = strNr;
-	status = 0;
-	lo_hi[1] <<= 4;
-	status |= lo_hi[0];
-	status |= lo_hi[1];
-	_ats_sheader[(txtNr * MAX_ATS_STATUS) + (txtMode + 1) / 2] = status;
+	_text->setTextId(txtNr, txtMode, strNr, mode);
 }
 
 void Atdsys::set_ats_str(int16 txtNr, int16 strNr, int16 mode) {
@@ -521,31 +481,16 @@ void Atdsys::set_ats_str(int16 txtNr, int16 strNr, int16 mode) {
 		set_ats_str(txtNr, i, strNr, mode);
 }
 
-int16 Atdsys::get_ats_str(int16 txtNr, int16 txtMode, int16 mode) {
-	set_ats_mem(mode);
-	uint8 status = _ats_sheader[(txtNr * MAX_ATS_STATUS) + (txtMode + 1) / 2];
-	int16 ak_nybble = (txtMode + 1) % 2;
-
-	uint8 lo_hi[2];
-	lo_hi[1] = status >> 4;
-	lo_hi[0] = status &= 15;
-
-	return (int16)lo_hi[ak_nybble];
-}
-
 int16 Atdsys::getControlBit(int16 txtNr, int16 bitIdx) {
-	set_ats_mem(ATS_DATA);
-	return (_ats_sheader[txtNr * MAX_ATS_STATUS] & bitIdx) != 0;
+	return _text->getControlBit(txtNr, bitIdx);
 }
 
 void Atdsys::setControlBit(int16 txtNr, int16 bitIdx) {
-	set_ats_mem(ATS_DATA);
-	_ats_sheader[txtNr * MAX_ATS_STATUS] |= bitIdx;
+	_text->setControlBit(txtNr, bitIdx);
 }
 
 void Atdsys::delControlBit(int16 txtNr, int16 bitIdx) {
-	set_ats_mem(ATS_DATA);
-	_ats_sheader[txtNr * MAX_ATS_STATUS] &= ~bitIdx;
+	_text->delControlBit(txtNr, bitIdx);
 }
 
 int16 Atdsys::start_aad(int16 diaNr) {
@@ -1023,6 +968,10 @@ Common::String Atdsys::getTextEntry(uint dialogNum, uint entryNum, int type, int
 		return _text->getTextEntry(dialogNum, entryNum, type, subEntry);
 	else
 		return Common::String();
+}
+
+int16 Atdsys::getLastSpeechId() {
+	return _text->getLastSpeechId();
 }
 
 } // namespace Chewy

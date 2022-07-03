@@ -22,12 +22,35 @@
 #include "common/system.h"
 #include "chewy/resource.h"
 #include "chewy/text.h"
+
+#include "types.h"
 #include "chewy/atds.h"
 #include "chewy/defines.h"
 
 namespace Chewy {
 
 Text::Text() : Resource("atds.tap") {
+	memset(_hotspotStrings, sizeof(_hotspotStrings), 0);
+
+	Common::File f;
+
+	if (!f.open(ROOM_ATS_STEUER))
+		error("Error reading file: %s", ROOM_ATS_STEUER);
+	for (int16 i = 0; i < ROOM_ATS_MAX; i++)
+		_hotspotStrings[i * MAX_ATS_STATUS] = f.readByte();
+
+	f.close();
+
+	if (!f.open(INV_ATS_STEUER))
+		error("Error reading file: %s", INV_ATS_STEUER);
+	for (int16 i = 0; i < MAX_MOV_OBJ; i++)
+		_inventoryStrings[i * MAX_ATS_STATUS] = f.readByte();
+
+	f.close();
+
+	// WORKAROUND: For English version, taxi hotspot in
+	// room 45 (Big City) isn't turned on by default
+	_hotspotStrings[295] = ATS_ACTION_BIT;
 }
 
 Text::~Text() {
@@ -85,6 +108,11 @@ TextEntry *Text::getText(uint chunk, uint entry, int type, int subEntry) {
 	bool isText = false;
 	bool isAutoDialog = false;
 	bool isInvDesc = false;
+
+	//int subEntryNew = -1;
+
+	//if (subEntry >= 0)
+	//	subEntryNew = getTextId(entry, subEntry, type);
 
 	switch (type) {
 	case AAD_DATA:
@@ -230,6 +258,87 @@ const char *Text::strPos(const char *txtAdr, int16 pos) {
 	}
 
 	return ptr;
+}
+
+void Text::syncHotspotStrings(Common::Serializer &s) {
+	for (size_t i = 0; i < sizeof(_hotspotStrings); ++i)
+		s.syncAsByte(_hotspotStrings[i]);
+}
+
+void Text::syncInventoryStrings(Common::Serializer &s) {
+	for (size_t i = 0; i < sizeof(_inventoryStrings); ++i)
+		s.syncAsByte(_inventoryStrings[i]);
+}
+
+void Text::syncInventoryUseStrings(Common::Serializer &s) {
+	for (size_t i = 0; i < sizeof(_inventoryUseStrings); ++i)
+		s.syncAsByte(_inventoryUseStrings[i]);
+}
+
+bool Text::getControlBit(int16 txtNr, int16 bitIdx) {
+	return (_hotspotStrings[txtNr * MAX_ATS_STATUS] & bitIdx) != 0;
+}
+
+void Text::setControlBit(int16 txtNr, int16 bitIdx) {
+	_hotspotStrings[txtNr * MAX_ATS_STATUS] |= bitIdx;
+}
+
+void Text::delControlBit(int16 txtNr, int16 bitIdx) {
+	_hotspotStrings[txtNr * MAX_ATS_STATUS] &= ~bitIdx;
+}
+
+/*uint8 Text::getTextStatus(uint8 status, int16 subEntry, int16 strNr) {
+	const int16 hotspotActionStr = (subEntry + 1) % 2;
+	uint8 lo_hi[2];
+	lo_hi[0] = status &= 15;
+	lo_hi[1] = status >> 4;
+	lo_hi[hotspotActionStr] = strNr;
+	status = 0;
+	lo_hi[1] <<= 4;
+	status |= lo_hi[0];
+	status |= lo_hi[1];
+
+	return status;
+}*/
+
+uint8 Text::updateTextStatus(int16 entry, int16 subEntry, int16 strNr, int16 type) {
+	byte *buffer;
+
+	switch (type) {
+	case ATS_DATA:
+		buffer = _hotspotStrings;
+		break;
+	case INV_USE_DATA:
+		buffer = _inventoryUseStrings;
+		break;
+	case INV_ATS_DATA:
+		buffer = _inventoryStrings;
+		break;
+	default:
+		error("setTextId called for type %d", type);
+	}
+
+	const uint8 status = buffer[(entry * MAX_ATS_STATUS) + (subEntry + 1) / 2];
+	if (strNr >= 0) {
+		buffer[(entry * MAX_ATS_STATUS) + (subEntry + 1) / 2] = strNr; // getTextStatus(status, subEntry, strNr);
+		return strNr;
+	}
+
+	return status;
+}
+
+uint8 Text::getTextId(uint entry, uint subEntry, int type) {
+	uint8 status = updateTextStatus(entry, subEntry, -1, type);
+
+	const int16 hotspotActionStr = (subEntry + 1) % 2;
+	uint8 lo_hi[2];
+	lo_hi[0] = status &= 15;
+	lo_hi[1] = status >> 4;
+	return lo_hi[hotspotActionStr];
+}
+
+void Text::setTextId(int16 entry, int16 subEntry, int16 strNr, int16 type) {
+	updateTextStatus(entry, subEntry, strNr, type);
 }
 
 } // namespace Chewy

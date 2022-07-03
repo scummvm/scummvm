@@ -391,10 +391,6 @@ struct GameState : public GameFlags {
 	bool synchronize(Common::Serializer &s);
 
 	GameFlags *_flags = nullptr;
-	uint8 Ats[ROOM_ATS_MAX * 3] = { 0 };
-	uint8 InvAts[MAX_MOV_OBJ * 3] = { 0 };
-	uint8 InvUse[INV_USE_ATS_MAX * 3] = { 0 };
-	uint8 InvUseDef[40 * 3] = { 0 };
 
 	int16 MainMenuY = 0;
 	int16 InvDisp = 0;
