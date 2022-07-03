@@ -35,6 +35,11 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	// Do not initialize graphics here
 	// Do not initialize audio devices here
 	_hasReceivedTime = false;
+	if (!ConfMan.hasKey("render_mode"))
+		_renderMode = "ega";
+	else
+		_renderMode = ConfMan.get("render_mode");
+
 	_currentArea = nullptr;
 	_rotation = Math::Vector3d(0.f, 0.f, 0.f);
 	_position = Math::Vector3d(0.f, 0.f, 0.f);
@@ -83,7 +88,6 @@ void FreescapeEngine::drawBorder() {
 }
 
 void FreescapeEngine::loadAssets() {
-	Common::String renderMode = "";
 	Common::SeekableReadStream *file = nullptr;
 	Common::String path = ConfMan.get("path");
 	Common::FSDirectory gameDir(path);
@@ -100,55 +104,43 @@ void FreescapeEngine::loadAssets() {
 
 		file = files.begin()->get()->createReadStream();
 		load16bitBinary(file);
-	} else if (_targetName == "driller" || _targetName == "spacestationoblivion") {
-		if (!ConfMan.hasKey("render_mode"))
-			renderMode = "ega";
-		else
-			renderMode = ConfMan.get("render_mode");
-
+	} else if (_targetName.hasPrefix("driller") || _targetName.hasPrefix("spacestationoblivion")) {
 		Common::File exe;
-		debug("renderMode: %s", renderMode.c_str());
 		bool success = false;
-		if (renderMode == "ega") {
+		if (_renderMode == "ega") {
 			file = gameDir.createReadStreamForMember("DRILLE.EXE");
 
 			if (file == nullptr)
 				error("Failed to open DRILLE.EXE");
 
 			load8bitBinary(file, 0x9b40, 16);
-		} else if (renderMode == "cga") {
+		} else if (_renderMode == "cga") {
 			file = gameDir.createReadStreamForMember("DRILLC.EXE");
 
 			if (file == nullptr)
 				error("Failed to open DRILLC.EXE");
 			load8bitBinary(file, 0x7bb0, 4);
 		} else
-			error("Invalid render mode %s for Driller", renderMode.c_str());
+			error("Invalid render mode %s for Driller", _renderMode.c_str());
 
 	} else if (_targetName == "totaleclipse") {
-		if (!ConfMan.hasKey("render_mode"))
-			renderMode = "ega";
-		else
-			renderMode = ConfMan.get("render_mode");
-
 		Common::File exe;
-		debug("renderMode: %s", renderMode.c_str());
 		bool success = false;
-		if (renderMode == "ega") {
+		if (_renderMode == "ega") {
 			file = gameDir.createReadStreamForMember("TOTEE.EXE");
 
 			if (file == nullptr)
 				error("Failed to open TOTEE.EXE");
 
 			load8bitBinary(file, 0xcdb7, 16);
-		} else if (renderMode == "cga") {
+		} else if (_renderMode == "cga") {
 			file = gameDir.createReadStreamForMember("TOTEC.EXE");
 
 			if (file == nullptr)
 				error("Failed to open TOTEC.EXE");
 			load8bitBinary(file, 0x7bb0, 4); // TODO
 		} else
-			error("Invalid render mode %s for Total Eclipse", renderMode.c_str());
+			error("Invalid render mode %s for Total Eclipse", _renderMode.c_str());
 	   } else if (_targetName == "castlemaster") {
 			file = gameDir.createReadStreamForMember("castle.sna");
 
