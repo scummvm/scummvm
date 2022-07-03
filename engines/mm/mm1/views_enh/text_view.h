@@ -22,13 +22,20 @@
 #ifndef MM1_VIEWS_ENH_TEXT_VIEW_H
 #define MM1_VIEWS_ENH_TEXT_VIEW_H
 
+#include "graphics/font.h"
 #include "mm/mm1/events.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
+enum TextAlign {
+	ALIGN_LEFT, ALIGN_RIGHT, ALIGN_MIDDLE
+};
+
 class TextView : public UIElement {
+private:
+	Graphics::Font *getFont() const;
 protected:
 	Common::Point _textPos;
 	int _colorsNum = 0;
@@ -49,13 +56,20 @@ protected:
 	 * Write some text
 	 */
 	void writeString(const Common::String &str);
-	void writeString(int x, int y, const Common::String &str);
+	void writeString(int x, int y, const Common::String &str,
+		TextAlign align = ALIGN_LEFT);
 
 	/**
 	 * Write a number
 	 */
 	void writeNumber(int val);
 	void writeNumber(int x, int y, int val);
+
+	/**
+	 * Write a line
+	 */
+	void writeLine(int lineNum, const Common::String &str,
+		TextAlign align = ALIGN_LEFT, int xp = 0);
 
 	/**
 	 * Move the text position to the next line

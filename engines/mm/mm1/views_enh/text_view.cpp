@@ -42,11 +42,15 @@ byte TextView::setTextColor(byte col) {
 	return oldColor;
 }
 
+Graphics::Font *TextView::getFont() const {
+	return _fontReduced ? &g_globals->_fontReduced :
+		&g_globals->_fontNormal;
+}
+
 void TextView::writeChar(char c) {
 	assert((unsigned char)c < 0x80);
 	XeenFont::setColors(_colorsNum);
-	Graphics::Font &font = _fontReduced ?
-		g_globals->_fontReduced : g_globals->_fontNormal;
+	Graphics::Font &font = *getFont();
 
 	if (c == '\r' || c == '\n') {
 		_textPos.x = 0;
@@ -91,9 +95,20 @@ void TextView::writeString(const Common::String &str) {
 	}
 }
 
-void TextView::writeString(int x, int y, const Common::String &str) {
+void TextView::writeString(int x, int y, const Common::String &str,
+		TextAlign align) {
 	_textPos.x = x;
 	_textPos.y = y;
+
+	if (align != ALIGN_LEFT && x == 0) {
+		int strWidth = getFont()->getStringWidth(str);
+
+		if (align == ALIGN_MIDDLE)
+			_textPos.x = MAX((_innerBounds.width() - strWidth) / 2, 0);
+		else
+			_textPos.x = MAX(_innerBounds.width() - strWidth, 0);
+	}
+
 	writeString(str);
 }
 
@@ -105,6 +120,11 @@ void TextView::writeNumber(int x, int y, int val) {
 	_textPos.x = x;
 	_textPos.y = y;
 	writeNumber(val);
+}
+
+void TextView::writeLine(int lineNum, const Common::String &str,
+		TextAlign align, int xp) {
+	writeString(xp, lineNum * 8, str, align);
 }
 
 void TextView::newLine() {

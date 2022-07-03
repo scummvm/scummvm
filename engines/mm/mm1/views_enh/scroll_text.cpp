@@ -43,7 +43,7 @@ void ScrollText::setBounds(const Common::Rect &r) {
 }
 
 void ScrollText::addLine(const Common::String &str,
-		TextAlignment align, byte color) {
+		TextAlign align, byte color) {
 	if (_lines.size() < _rowCount) {
 		switch (align) {
 		case ALIGN_LEFT:
@@ -65,7 +65,7 @@ Common::String ScrollText::format(const Common::String &str) {
 }
 
 void ScrollText::addText(const Common::String &s,
-		int lineNum, byte color, TextAlignment align, int xp) {
+		int lineNum, byte color, TextAlign align, int xp) {
 	Common::String str = s;
 	Common::Point pt(xp, lineNum * 8);
 	Graphics::Font &font = _fontReduced ?

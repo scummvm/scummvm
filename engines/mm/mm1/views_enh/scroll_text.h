@@ -31,10 +31,6 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-enum TextAlignment {
-	ALIGN_LEFT, ALIGN_RIGHT, ALIGN_MIDDLE
-};
-
 /**
  * Derived scroll class for displaying static text
  */
@@ -85,16 +81,16 @@ public:
 	 * Simplest form that adds lines one at a time
 	 */
 	void addLine(const Common::String &str,
-		TextAlignment align = ALIGN_LEFT, byte color = 0);
+		TextAlign align = ALIGN_LEFT, byte color = 0);
 
 	/**
 	 * Add a new line fragment for a given position
 	 */
 	void addText(const Common::String &str,
 		int lineNum, byte color = 0,
-		TextAlignment align = ALIGN_LEFT, int xp = 0);
+		TextAlign align = ALIGN_LEFT, int xp = 0);
 	void addText(const Common::String &str,
-			int lineNum, TextAlignment align = ALIGN_LEFT,
+			int lineNum, TextAlign align = ALIGN_LEFT,
 			int xp = 0) {
 		addText(str, lineNum, 0, align, xp);
 	}

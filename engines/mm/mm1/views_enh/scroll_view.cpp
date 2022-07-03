@@ -170,7 +170,7 @@ bool ScrollView::msgMouseUp(const MouseUpMessage &msg) {
 
 	// If the highlighted button remains the same, trigger it's key
 	int selectedButton = getButtonAt(msg._pos);
-	if (selectedButton != -1 && selectedButton == _selectedButton) {
+	if (selectedButton != -1 && selectedButton == oldSelection) {
 		msgKeypress(KeypressMessage(_buttons[selectedButton]._key));
 		return true;
 	}
