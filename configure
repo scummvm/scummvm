@@ -2877,12 +2877,12 @@ EOF
 	emscripten)
 		# mandatory emscripten flags
 		append_var LDFLAGS "-s ALLOW_MEMORY_GROWTH=1 -s ASYNCIFY -s FORCE_FILESYSTEM=1"
-	
+
 		append_var DEFINES "-DEMSCRIPTEN"
 		add_line_to_config_mk 'EMSCRIPTEN = 1'
 
 		if test "$_debug_build" = yes; then
-			_optimization_level=-O2 
+			_optimization_level=-O2
 			append_var LDFLAGS "-O2 -g3 -s ASSERTIONS=2"
 		else
 			_optimization_level=-O3
@@ -2896,13 +2896,13 @@ EOF
 			_freetypepath="$EMSCRIPTEN/cache/ports-builds/freetype/"
 			FREETYPE2_CFLAGS="-I$_freetypepath/include" # there were link errors / missing symbols without this
 			_freetype_found="true"
-		else 
+		else
 			#use link time optimization to further reduce exe size (this can't be used with setjmp whcih freetype requires)
 			# TODO: Figure out why this is a conflict and/or if freetype can be built without setjmp
 			append_var CXXFLAGS "-flto"
 			append_var LDFLAGS "-flto"
 		fi
-		if test "$_jpeg" != no; then 
+		if test "$_jpeg" != no; then
 			append_var LDFLAGS "-s USE_LIBJPEG=1"
 		fi
 		if test "$_png" != no; then
@@ -2910,8 +2910,8 @@ EOF
 		fi
 		if test "$_sdl" != no; then
 			append_var LDFLAGS "-s USE_SDL=2 "
-		fi 
-		if test "$_vorbis" != no; then 
+		fi
+		if test "$_vorbis" != no; then
 			append_var LDFLAGS "-s USE_OGG=1" # vorbis needs to be linked against OGG (even if we use an external vorbis lib)
 		fi
 		if test "$_zlib" != no; then
