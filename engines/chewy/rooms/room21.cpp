@@ -206,8 +206,7 @@ void Room21::chewy_kolli() {
 }
 
 void Room21::salto() {
-	if (!_G(cur)->usingInventoryCursor() && _G(atds)->get_ats_str(134, TXT_MARK_USE, ATS_DATA) == 8
-		&& !_G(gameState).R21Salto && !_G(flags).AutoAniPlay) {
+	if (!_G(cur)->usingInventoryCursor() && !_G(gameState).R21Salto && !_G(flags).AutoAniPlay) {
 		_G(gameState).R21Salto = true;
 		_G(flags).AutoAniPlay = true;
 		_G(gameState)._personHide[P_CHEWY] = true;
