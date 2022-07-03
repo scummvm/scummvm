@@ -29,8 +29,11 @@ class Room73 : public JungleRoom {
 public:
 	static void entry(int16 eib_nr);
 	static void xit(int16 eib_nr);
-	static int proc1();
-	static int proc2();
+	static int procMoveBushes();
+	static int procPickupMachete();
+private:
+	static void moveBushes();
+	static void pickupMachete();
 };
 
 } // namespace Rooms

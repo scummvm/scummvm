@@ -608,11 +608,11 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 430:
-						retValue = Room73::proc1();
+						retValue = Room73::procMoveBushes();
 						break;
 
 					case 433:
-						retValue = Room73::proc2();
+						retValue = Room73::procPickupMachete();
 						break;
 
 					case 435:
