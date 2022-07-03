@@ -102,6 +102,7 @@ public:
 	void loadSharedCastsFrom(Common::String filename);
 
 	CastMember *getCastMember(CastMemberID memberID);
+	CastMember *createOrReplaceCastMember(CastMemberID memberID, CastMember *cast);
 	CastMember *getCastMemberByName(const Common::String &name, int castLib);
 	CastMemberInfo *getCastMemberInfo(CastMemberID memberID);
 	const Stxt *getStxt(CastMemberID memberID);

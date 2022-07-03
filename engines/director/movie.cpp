@@ -322,6 +322,18 @@ CastMember *Movie::getCastMember(CastMemberID memberID) {
 	return result;
 }
 
+CastMember* Movie::createOrReplaceCastMember(CastMemberID memberID, CastMember* cast) {
+	CastMember *result = nullptr;
+
+	if (memberID.castLib == 0) {
+		result = _cast->setCastMember(memberID, cast);
+	} else if (memberID.castLib == 1) {
+		result = _sharedCast->setCastMember(memberID, cast);
+	}
+
+	return result;
+}
+
 CastMember *Movie::getCastMemberByName(const Common::String &name, int castLib) {
 	CastMember *result = nullptr;
 	if (castLib == 0) {

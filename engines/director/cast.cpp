@@ -192,6 +192,15 @@ void Cast::setCastMemberModified(int castId) {
 	cast->setModified(true);
 }
 
+CastMember *Cast::setCastMember(CastMemberID castId, CastMember *cast) {
+	if (_loadedCast->contains(castId.member)) {
+		_loadedCast->erase(castId.member);
+	}
+
+	_loadedCast->setVal(castId.member, cast);
+	return cast;
+}
+
 void Cast::setArchive(Archive *archive) {
 	_castArchive = archive;
 
