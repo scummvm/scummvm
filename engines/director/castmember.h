@@ -132,6 +132,7 @@ public:
 	bool setField(int field, const Datum &value) override;
 
 	Image::ImageDecoder *_img;
+	Graphics::Surface *_ditheredImg;
 	Graphics::FloodFill *_matte;
 
 	uint16 _pitch;
@@ -145,6 +146,11 @@ public:
 
 	uint32 _tag;
 	bool _noMatte;
+
+private:
+	void ditherImage();
+
+	Graphics::PaletteLookup _paletteLookup;
 };
 
 class DigitalVideoCastMember : public CastMember {
