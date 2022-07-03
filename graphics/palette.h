@@ -128,8 +128,10 @@ public:
 	 *
 	 * @param palette   the palette data, in interleaved RGB format
 	 * @param len       the number of palette entries to be read
+	 *
+	 * @return true if palette was changed and false if it was the same
 	 */
-	void setPalette(const byte *palette, uint len);
+	bool setPalette(const byte *palette, uint len);
 
 	/**
 	 * @brief This method returns closest color from the palette

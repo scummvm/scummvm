@@ -32,14 +32,16 @@ PaletteLookup::PaletteLookup(const byte *palette, uint len)  {
 	memcpy(_palette, palette, len * 3);
 }
 
-void PaletteLookup::setPalette(const byte *palette, uint len)  {
+bool PaletteLookup::setPalette(const byte *palette, uint len)  {
 	// Check if the passed palette matched the one we have
 	if (len == _paletteSize && !memcmp(_palette, palette, len * 3))
-		return;
+		return false;
 
 	_paletteSize = len;
 	memcpy(_palette, palette, len * 3);
 	_colorHash.clear();
+
+	return true;
 }
 
 byte PaletteLookup::findBestColor(byte cr, byte cg, byte cb) {
