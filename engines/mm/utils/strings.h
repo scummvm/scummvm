@@ -23,6 +23,7 @@
 #define MM_UTILS_STRINGS_H
 
 #include "common/str.h"
+#include "common/str-array.h"
 
 namespace MM {
 
@@ -32,6 +33,7 @@ extern Common::String searchAndReplace(const Common::String &str,
 	const Common::String &find, const Common::String &replace);
 extern int strToInt(const Common::String &str);
 extern int hexToInt(const Common::String &str);
+extern Common::StringArray splitLines(const Common::String &str);
 
 } // namespace MM
 

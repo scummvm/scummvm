@@ -303,6 +303,8 @@ enhdialogs:
 		gold: "gold"
 	market:
 		buy_food: "Buy food"
+		thankyou: "Thank you,\ncome again!"
+		no_gold: "No gold,\nno food!"
 	misc:
 		exit: "Exit"
 stats:

@@ -23,6 +23,7 @@
 #include "mm/mm1/gfx/gfx.h"
 #include "mm/mm1/views_enh/text_view.h"
 #include "mm/mm1/mm1.h"
+#include "mm/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -100,16 +101,23 @@ void TextView::writeString(int x, int y, const Common::String &str,
 	_textPos.x = x;
 	_textPos.y = y;
 
-	if (align != ALIGN_LEFT && x == 0) {
-		int strWidth = getFont()->getStringWidth(str);
+	Common::StringArray lines = splitLines(str);
 
-		if (align == ALIGN_MIDDLE)
-			_textPos.x = MAX((_innerBounds.width() - strWidth) / 2, 0);
-		else
-			_textPos.x = MAX(_innerBounds.width() - strWidth, 0);
+	for (auto line : lines) {
+		if (line != lines.front())
+			newLine();
+
+		if (align != ALIGN_LEFT && x == 0) {
+			int strWidth = getFont()->getStringWidth(line);
+
+			if (align == ALIGN_MIDDLE)
+				_textPos.x = MAX((_innerBounds.width() - strWidth) / 2, 0);
+			else
+				_textPos.x = MAX(_innerBounds.width() - strWidth, 0);
+		}
+
+		writeString(line);
 	}
-
-	writeString(str);
 }
 
 void TextView::writeNumber(int val) {
@@ -129,7 +137,7 @@ void TextView::writeLine(int lineNum, const Common::String &str,
 
 void TextView::newLine() {
 	_textPos.x = 0;
-	_textPos.y++;
+	_textPos.y += 8;
 }
 
 void TextView::clearSurface() {
