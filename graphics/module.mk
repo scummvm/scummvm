@@ -33,6 +33,7 @@ MODULE_OBJS := \
 	opengl/context.o \
 	opengl/debug.o \
 	opengl/shader.o \
+	palette.o \
 	pixelformat.o \
 	primitives.o \
 	renderer.o \
