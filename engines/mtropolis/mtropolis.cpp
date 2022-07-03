@@ -119,7 +119,7 @@ Common::Error MTropolisEngine::run() {
 		preferredColorDepthMode = kColorDepthMode16Bit;
 		enhancedColorDepthMode = kColorDepthMode32Bit;
 
-		_runtime->getHacks().ignoreMismatchedProjectNameInObjectLookups = true;
+		HackSuites::addObsidianBugFixes(*_gameDescription, _runtime->getHacks());
 
 		if (ConfMan.getBool("mtropolis_mod_obsidian_widescreen")) {
 			_runtime->getHacks().reportDisplaySize = Common::Point(640, 480);

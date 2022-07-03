@@ -375,7 +375,7 @@ struct StandardPlugInHacks {
 
 class StandardPlugIn : public MTropolis::PlugIn {
 public:
-	StandardPlugIn();
+	explicit StandardPlugIn(bool useDynamicMidi);
 	~StandardPlugIn();
 
 	void registerModifiers(IPlugInModifierRegistrar *registrar) const override;

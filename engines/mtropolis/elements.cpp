@@ -684,6 +684,7 @@ void MovieElement::activate() {
 	qtDecoder->setVolume(_volume * 255 / 100);
 
 	_videoDecoder.reset(qtDecoder);
+	_damagedFrames = movieAsset->getDamagedFrames();
 
 	Common::SafeSeekableSubReadStream *movieDataStream = new Common::SafeSeekableSubReadStream(stream, movieAsset->getMovieDataPos(), movieAsset->getMovieDataPos() + movieAsset->getMovieDataSize(), DisposeAfterUse::NO);
 
@@ -793,6 +794,21 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 			while (_videoDecoder->needsUpdate()) {
 				if (_playEveryFrame && framesDecodedThisFrame > 0)
 					break;
+
+				if (_damagedFrames.size()) {
+					bool frameIsDamaged = false;
+					int thisFrameNumber = _videoDecoder->getCurFrame() + framesDecodedThisFrame + 1;
+
+					for (int damagedFrame : _damagedFrames) {
+						if (static_cast<int>(damagedFrame) == thisFrameNumber) {
+							frameIsDamaged = true;
+							break;
+						}
+					}
+
+					if (frameIsDamaged)
+						_videoDecoder->seekToFrame(thisFrameNumber + 1);
+				}
 
 				const Graphics::Surface *decodedFrame = _videoDecoder->decodeNextFrame();
 

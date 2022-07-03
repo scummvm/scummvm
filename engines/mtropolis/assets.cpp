@@ -34,6 +34,12 @@
 
 namespace MTropolis {
 
+AssetHooks::~AssetHooks() {
+}
+
+void AssetHooks::onLoaded(Asset *asset, const Common::String &name) {
+}
+
 Asset::Asset() : _assetID(0) {
 }
 
@@ -737,6 +743,14 @@ const Common::String &MovieAsset::getExtFileName() const {
 
 size_t MovieAsset::getStreamIndex() const {
 	return _streamIndex;
+}
+
+void MovieAsset::addDamagedFrame(int frame) {
+	_damagedFrames.push_back(frame);
+}
+
+const Common::Array<int> &MovieAsset::getDamagedFrames() const {
+	return _damagedFrames;
 }
 
 

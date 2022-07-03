@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 
+#include "mtropolis/assets.h"
 #include "mtropolis/detection.h"
 #include "mtropolis/hacks.h"
 #include "mtropolis/runtime.h"
@@ -29,35 +30,35 @@ namespace MTropolis {
 
 Hacks::Hacks() {
 	ignoreMismatchedProjectNameInObjectLookups = false;
-
-	// reportDisplaySize set by Common::Point constructor
-	// mainWindowOffset set by Common::Point constructor
-
-	structuralHooks = nullptr;
-	modifierHooks = nullptr;
 }
 
 Hacks::~Hacks() {
-	if (structuralHooks)
-		delete structuralHooks;
-	if (modifierHooks)
-		delete modifierHooks;
 }
 
 void Hacks::addStructuralHooks(uint32 guid, const Common::SharedPtr<StructuralHooks> &hooks) {
-	if (!structuralHooks)
-		structuralHooks = new Common::HashMap<uint32, Common::SharedPtr<StructuralHooks> >();
-	(*structuralHooks)[guid] = hooks;
+	structuralHooks[guid] = hooks;
 }
 
 void Hacks::addModifierHooks(uint32 guid, const Common::SharedPtr<ModifierHooks> &hooks) {
-	if (!modifierHooks)
-		modifierHooks = new Common::HashMap<uint32, Common::SharedPtr<ModifierHooks> >();
-	(*modifierHooks)[guid] = hooks;
+	modifierHooks[guid] = hooks;
 }
 
+void Hacks::addAssetHooks(const Common::SharedPtr<AssetHooks> &hooks) {
+	assetHooks.push_back(hooks);
+}
 
 namespace HackSuites {
+
+class ObsidianCorruptedAirTowerTransitionFix : public AssetHooks {
+public:
+	void onLoaded(Asset *asset, const Common::String &name) override;
+};
+
+void ObsidianCorruptedAirTowerTransitionFix::onLoaded(Asset *asset, const Common::String &name) {
+	if (asset->getAssetType() == kAssetTypeMovie && name == "A105_132.01Fxx.trn") {
+		static_cast<MovieAsset *>(asset)->addDamagedFrame(35);
+	}
+}
 
 class ObsidianInventoryWindscreenHooks : public StructuralHooks {
 public:
@@ -72,6 +73,23 @@ void ObsidianInventoryWindscreenHooks::onSetPosition(Structural *structural, Com
 		// Move in-bounds
 		pt.y -= 60;
 	}
+}
+
+void addObsidianBugFixes(const MTropolisGameDescription &desc, Hacks &hacks) {
+	// Workaround for bug in Obsidian:
+	// When opening the journal in the intro, a script checks if cGSt.cfst.binjournal is false and if so,
+	// sets cGSt.cfst.binjournal to true and then sets including setting cJournalConst.aksjournpath to the
+	// main journal scene path.  That scene path is used to resolve the scene to go to after clicking
+	// the "Continue" button on the warning that pops up.
+	//
+	// The problem is that cJournalConst uses a project name that doesn't match the retail data, and
+	// cJournalConst is unloaded if the player leaves the journal.  This causes a progression blocker if
+	// the player leaves the journal without clicking Continue.
+	hacks.ignoreMismatchedProjectNameInObjectLookups = true;
+
+	// Fix for corrupted frame in transition from the outer edge in Spider to the air puzzle tower.
+	// The data is corrupted in both Mac and Win retail versions.
+	hacks.addAssetHooks(Common::SharedPtr<AssetHooks>(new ObsidianCorruptedAirTowerTransitionFix()));
 }
 
 void addObsidianImprovedWidescreen(const MTropolisGameDescription &desc, Hacks &hacks) {

@@ -84,7 +84,7 @@ const ExtraGuiOptions MTropolisMetaEngineDetection::getExtraGuiOptions(const Com
 		_s("Improved Music Mixing"),
 		_s("Enables dynamic MIDI mixer, improving quality, but behaving less like mTropolis Player."),
 		"mtropolis_mod_dynamic_midi",
-		false,
+		true,
 		0,
 		0};
 

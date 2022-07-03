@@ -3806,7 +3806,7 @@ bool Runtime::runFrame() {
 			_project.reset(new Project(this));
 			_project->setSelfReference(_project);
 
-			_project->loadFromDescription(*desc);
+			_project->loadFromDescription(*desc, getHacks());
 
 			ensureMainWindowExists();
 
@@ -4473,7 +4473,7 @@ void Runtime::loadScene(const Common::SharedPtr<Structural>& scene) {
 
 	Subsection *subsection = static_cast<Subsection *>(scene->getParent());
 
-	_project->loadSceneFromStream(scene, streamID);
+	_project->loadSceneFromStream(scene, streamID, getHacks());
 	debug(1, "Scene loaded OK, materializing objects...");
 	scene->materializeDescendents(this, subsection->getSceneLoadMaterializeScope());
 	debug(1, "Scene materialized OK");
@@ -5840,7 +5840,7 @@ VThreadState Project::consumeCommand(Runtime *runtime, const Common::SharedPtr<M
 	return Structural::consumeCommand(runtime, msg);
 }
 
-void Project::loadFromDescription(const ProjectDescription& desc) {
+void Project::loadFromDescription(const ProjectDescription &desc, const Hacks &hacks) {
 	_resources = desc.getResources();
 	_cursorGraphics = desc.getCursorGraphics();
 
@@ -5945,12 +5945,12 @@ void Project::loadFromDescription(const ProjectDescription& desc) {
 
 	debug(1, "Loading boot stream");
 
-	loadBootStream(bootStreamIndex);
+	loadBootStream(bootStreamIndex, hacks);
 
 	debug(1, "Boot stream loaded successfully");
 }
 
-void Project::loadSceneFromStream(const Common::SharedPtr<Structural>& scene, uint32 streamID) {
+void Project::loadSceneFromStream(const Common::SharedPtr<Structural> &scene, uint32 streamID, const Hacks &hacks) {
 	if (streamID == 0 || streamID > _streams.size()) {
 		error("Invalid stream ID");
 	}
@@ -6020,7 +6020,7 @@ void Project::loadSceneFromStream(const Common::SharedPtr<Structural>& scene, ui
 	}
 
 	scene->holdAssets(assetDefLoader.assets);
-	assignAssets(assetDefLoader.assets);
+	assignAssets(assetDefLoader.assets, hacks);
 }
 
 Common::SharedPtr<Modifier> Project::resolveAlias(uint32 aliasID) const {
@@ -6161,7 +6161,7 @@ const Common::SharedPtr<CursorGraphicCollection> &Project::getCursorGraphics() c
 	return _cursorGraphics;
 }
 
-void Project::loadBootStream(size_t streamIndex) {
+void Project::loadBootStream(size_t streamIndex, const Hacks &hacks) {
 	const StreamDesc &streamDesc = _streams[streamIndex];
 
 	size_t segmentIndex = streamDesc.segmentIndex;
@@ -6243,7 +6243,7 @@ void Project::loadBootStream(size_t streamIndex) {
 	}
 
 	holdAssets(assetDefLoader.assets);
-	assignAssets(assetDefLoader.assets);
+	assignAssets(assetDefLoader.assets, hacks);
 }
 
 void Project::loadPresentationSettings(const Data::PresentationSettings &presentationSettings) {
@@ -6336,13 +6336,11 @@ Common::SharedPtr<Modifier> Project::loadModifierObject(ModifierLoaderContext &l
 		error("Modifier object failed to load");
 
 	uint32 guid = modifier->getStaticGUID();
-	const Common::HashMap<uint32, Common::SharedPtr<ModifierHooks> > *hooksMap = _runtime->getHacks().modifierHooks;
-	if (hooksMap) {
-		Common::HashMap<uint32, Common::SharedPtr<ModifierHooks> >::const_iterator it = hooksMap->find(guid);
-		if (it != hooksMap->end()) {
-			modifier->setHooks(it->_value);
-			it->_value->onCreate(modifier.get());
-		}
+	const Common::HashMap<uint32, Common::SharedPtr<ModifierHooks> > &hooksMap = _runtime->getHacks().modifierHooks;
+	Common::HashMap<uint32, Common::SharedPtr<ModifierHooks> >::const_iterator hooksIt = hooksMap.find(guid);
+	if (hooksIt != hooksMap.end()) {
+		modifier->setHooks(hooksIt->_value);
+		hooksIt->_value->onCreate(modifier.get());
 	}
 
 	return modifier;
@@ -6414,7 +6412,7 @@ ObjectLinkingScope *Project::getPersistentModifierScope() {
 	return &_modifierScope;
 }
 
-void Project::assignAssets(const Common::Array<Common::SharedPtr<Asset> >& assets) {
+void Project::assignAssets(const Common::Array<Common::SharedPtr<Asset> >& assets, const Hacks &hacks) {
 	for (Common::Array<Common::SharedPtr<Asset> >::const_iterator it = assets.begin(), itEnd = assets.end(); it != itEnd; ++it) {
 		Common::SharedPtr<Asset> asset = *it;
 		uint32 assetID = asset->getAssetID();
@@ -6430,8 +6428,12 @@ void Project::assignAssets(const Common::Array<Common::SharedPtr<Asset> >& asset
 			continue;
 		}
 
-		if (desc->asset.expired())
+		if (desc->asset.expired()) {
 			desc->asset = asset;
+
+			for (const Common::SharedPtr<AssetHooks> &hook : hacks.assetHooks)
+				hook->onLoaded(asset.get(), desc->name);
+		}
 	}
 }
 
@@ -6567,13 +6569,11 @@ void Project::loadContextualObject(size_t streamIndex, ChildLoaderStack &stack, 
 				Common::SharedPtr<Element> element = elementFactory->createElement(elementLoaderContext, dataObject);
 
 				uint32 guid = element->getStaticGUID();
-				const Common::HashMap<uint32, Common::SharedPtr<StructuralHooks> > *hooksMap = _runtime->getHacks().structuralHooks;
-				if (hooksMap) {
-					Common::HashMap<uint32, Common::SharedPtr<StructuralHooks> >::const_iterator it = hooksMap->find(guid);
-					if (it != hooksMap->end()) {
-						element->setHooks(it->_value);
-						it->_value->onCreate(element.get());
-					}
+				const Common::HashMap<uint32, Common::SharedPtr<StructuralHooks> > &hooksMap = _runtime->getHacks().structuralHooks;
+				Common::HashMap<uint32, Common::SharedPtr<StructuralHooks> >::const_iterator hooksIt = hooksMap.find(guid);
+				if (hooksIt != hooksMap.end()) {
+					element->setHooks(hooksIt->_value);
+					hooksIt->_value->onCreate(element.get());
 				}
 
 				container->addChild(element);

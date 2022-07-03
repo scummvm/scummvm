@@ -19,12 +19,13 @@
  *
  */
 
+#include "common/random.h"
+#include "common/config-manager.h"
+
 #include "audio/mididrv.h"
 #include "audio/midiplayer.h"
 #include "audio/midiparser.h"
 #include "audio/midiparser_smf.h"
-
-#include "common/random.h"
 
 #include "mtropolis/plugin/standard.h"
 #include "mtropolis/plugins.h"
@@ -158,7 +159,7 @@ private:
 
 class MultiMidiPlayer : public Audio::MidiPlayer {
 public:
-	MultiMidiPlayer();
+	explicit MultiMidiPlayer(bool useDynamicMidiMixer);
 	~MultiMidiPlayer();
 
 	MidiFilePlayer *createFilePlayer(const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, bool hasTempoOverride, double tempoOverride, uint8 volume, bool loop, uint16 mutedTracks);
@@ -1151,9 +1152,11 @@ void MidiCombinerDynamic::SourceState::deallocate() {
 MidiCombinerDynamic::OutputChannelState::OutputChannelState() : _sourceID(0), _volumeIsAmbiguous(true), _channelID(0), _hasSource(false), _noteOffCounter(0), _numActiveNotes(0) {
 }
 
-MultiMidiPlayer::MultiMidiPlayer() {
-	//_combiner.reset(new MidiCombinerSimple(this));
-	_combiner.reset(new MidiCombinerDynamic(this));
+MultiMidiPlayer::MultiMidiPlayer(bool dynamicMidiMixer) {
+	if (dynamicMidiMixer)
+		_combiner.reset(new MidiCombinerDynamic(this));
+	else
+		_combiner.reset(new MidiCombinerSimple(this));
 
 	createDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 
@@ -2751,7 +2754,7 @@ const char *SysInfoModifier::getDefaultName() const {
 StandardPlugInHacks::StandardPlugInHacks() : allowGarbledListModData(false) {
 }
 
-StandardPlugIn::StandardPlugIn()
+StandardPlugIn::StandardPlugIn(bool useDynamicMidi)
 	: _cursorModifierFactory(this)
 	, _sTransCtModifierFactory(this)
 	, _mediaCueModifierFactory(this)
@@ -2759,7 +2762,7 @@ StandardPlugIn::StandardPlugIn()
 	, _midiModifierFactory(this)
 	, _listVarModifierFactory(this)
 	, _sysInfoModifierFactory(this) {
-	_midi.reset(new MultiMidiPlayer());
+	_midi.reset(new MultiMidiPlayer(useDynamicMidi));
 }
 
 StandardPlugIn::~StandardPlugIn() {
@@ -2792,7 +2795,9 @@ MultiMidiPlayer *StandardPlugIn::getMidi() const {
 namespace PlugIns {
 
 Common::SharedPtr<PlugIn> createStandard() {
-	return Common::SharedPtr<PlugIn>(new Standard::StandardPlugIn());
+	const bool useDynamicMidi = ConfMan.getBool("mtropolis_mod_dynamic_midi");
+
+	return Common::SharedPtr<PlugIn>(new Standard::StandardPlugIn(useDynamicMidi));
 }
 
 } // End of namespace MTropolis

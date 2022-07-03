@@ -145,6 +145,8 @@ private:
 	Common::SharedPtr<SegmentUnloadSignaller> _unloadSignaller;
 	Common::SharedPtr<PlayMediaSignaller> _playMediaSignaller;
 
+	Common::Array<int> _damagedFrames;
+
 	Runtime *_runtime;
 };
 

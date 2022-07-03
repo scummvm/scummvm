@@ -2129,8 +2129,8 @@ public:
 
 	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg);
 
-	void loadFromDescription(const ProjectDescription &desc);
-	void loadSceneFromStream(const Common::SharedPtr<Structural> &structural, uint32 streamID);
+	void loadFromDescription(const ProjectDescription &desc, const Hacks &hacks);
+	void loadSceneFromStream(const Common::SharedPtr<Structural> &structural, uint32 streamID, const Hacks &hacks);
 
 	Common::SharedPtr<Modifier> resolveAlias(uint32 aliasID) const;
 	void materializeGlobalVariables(Runtime *runtime, ObjectLinkingScope *scope);
@@ -2212,7 +2212,7 @@ private:
 		Common::WeakPtr<Asset> asset;
 	};
 
-	void loadBootStream(size_t streamIndex);
+	void loadBootStream(size_t streamIndex, const Hacks &hacks);
 
 	void loadPresentationSettings(const Data::PresentationSettings &presentationSettings);
 	void loadAssetCatalog(const Data::AssetCatalog &assetCatalog);
@@ -2226,7 +2226,7 @@ private:
 	ObjectLinkingScope *getPersistentStructuralScope() override;
 	ObjectLinkingScope *getPersistentModifierScope() override;
 
-	void assignAssets(const Common::Array<Common::SharedPtr<Asset> > &assets);
+	void assignAssets(const Common::Array<Common::SharedPtr<Asset> > &assets, const Hacks &hacks);
 
 	Common::Array<Segment> _segments;
 	Common::Array<StreamDesc> _streams;
@@ -2658,6 +2658,13 @@ enum AssetType {
 	kAssetTypeImage,
 	kAssetTypeText,
 	kAssetTypeMToon,
+};
+
+class AssetHooks {
+public:
+	virtual ~AssetHooks();
+
+	virtual void onLoaded(Asset *asset, const Common::String &name);
 };
 
 class Asset {
