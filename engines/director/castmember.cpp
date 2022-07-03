@@ -195,7 +195,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 	_tag = castTag;
 }
 
-BitmapCastMember::BitmapCastMember(Cast* cast, uint16 castId, Image::ImageDecoder* img, uint8 flags1)
+BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Image::ImageDecoder *img, uint8 flags1)
 	: CastMember(cast, castId) {
 	_type = kCastBitmap;
 	_matte = nullptr;
