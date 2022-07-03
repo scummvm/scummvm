@@ -80,6 +80,12 @@ RM      ?= rm -f
 RM_REC  ?= $(RM) -r
 ZIP     ?= zip -q
 
+ifeq ($(VERBOSE_BUILD),1)
+	LS := ls -l
+else
+	LS := true
+endif
+
 #######################################################################
 # Misc stuff - you should never have to edit this                     #
 #######################################################################

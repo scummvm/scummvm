@@ -84,6 +84,7 @@ $(MODULE_LIB-$(MODULE)): $(MODULE_OBJS-$(MODULE))
 	$(QUIET)-$(RM) $@
 	$(QUIET_AR)$(AR) $@ $+
 	$(QUIET_RANLIB)$(RANLIB) $@
+	$(QUIET)$(LS) $@
 
 # Pseudo target for comfort, allows for "make common", "make gui" etc.
 $(MODULE): $(MODULE_LIB-$(MODULE))
