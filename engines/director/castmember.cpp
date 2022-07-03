@@ -56,6 +56,24 @@ CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndi
 	_erase = false;
 }
 
+CastMember::CastMember(Cast *cast, uint16 castId) : Object<CastMember>("CastMember") {
+	_type = kCastTypeNull;
+	_cast = cast;
+	_castId = castId;
+	_hilite = false;
+	_purgePriority = 3;
+	_size = 0;
+	_flags1 = 0;
+
+	_modified = true;
+	_isChanged = false;
+
+	_objType = kCastMemberObj;
+
+	_widget = nullptr;
+	_erase = false;
+}
+
 CastMemberInfo *CastMember::getInfo() {
 	return _cast->getCastMemberInfo(_castId);
 }
@@ -175,6 +193,23 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 	}
 
 	_tag = castTag;
+}
+
+BitmapCastMember::BitmapCastMember(Cast* cast, uint16 castId, Image::ImageDecoder* img, uint8 flags1)
+	: CastMember(cast, castId) {
+	_type = kCastBitmap;
+	_matte = nullptr;
+	_noMatte = false;
+	_bytes = 0;
+	_img = img;
+	_clut = -1;
+	_initialRect = Common::Rect(0, 0, img->getSurface()->w, img->getSurface()->h);
+	_pitch = img->getSurface()->pitch;
+	_bitsPerPixel = img->getSurface()->format.bytesPerPixel * 8;
+	_regY = img->getSurface()->h / 2;
+	_regX = img->getSurface()->w / 2;
+	_flags1 = flags1;
+	_flags2 = 0;
 }
 
 BitmapCastMember::~BitmapCastMember() {

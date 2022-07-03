@@ -1880,20 +1880,35 @@ void LB::b_findEmpty(int nargs) {
 }
 
 void LB::b_importFileInto(int nargs) {
-	Common::String path = pathMakeRelative("blend2.pic");
+	Datum file = g_lingo->pop();
+	Datum dst = g_lingo->pop();
+	if (!dst.isCastRef()) {
+		warning("b_importFileInto(): bad cast ref field type: %s", dst.type2str());
+		return;
+	}
+	CastMemberID memberID = *dst.u.cast;
+	CastMember *member = g_director->getCurrentMovie()->getCastMember(memberID);
+	Common::String path = pathMakeRelative(file.asString());
 	Common::File in;
 	in.open(path);
 	if (!in.isOpen()) {
 		warning("b_importFileInto(): Cannot open file %s", path.c_str());
 		return;
 	}
-	Image::PICTDecoder *k = new Image::PICTDecoder();
-	k->loadStream(in);
-	((BitmapCastMember *)(g_director->getCurrentMovie()->getCast()->_loadedCast->getVal(1)))->_img = k;
-	((BitmapCastMember *)(g_director->getCurrentMovie()->getCast()->_loadedCast->getVal(1)))->setModified(true);
-	g_director->getCurrentMovie()->getScore()->_channels[1]->_dirty = true;
+	Image::PICTDecoder *img = new Image::PICTDecoder();
+	img->loadStream(in);
 	in.close();
-	g_lingo->dropStack(nargs);
+	BitmapCastMember *bitmapCast = (BitmapCastMember *)member;
+	bitmapCast->_img = img;
+	bitmapCast->setModified(true);
+	const Graphics::Surface *surf = img->getSurface();
+	bitmapCast->_size = surf->pitch * surf->h + img->getPaletteColorCount() * 3;
+	auto channels = g_director->getCurrentMovie()->getScore()->_channels;
+	for (uint i = 0; i < channels.size(); i++) {
+		if (channels[i]->_sprite->_castId == dst.asMemberID()) {
+			channels[i]->_dirty = true;
+		}
+	}
 }
 
 void menuCommandsCallback(int action, Common::String &text, void *data) {
