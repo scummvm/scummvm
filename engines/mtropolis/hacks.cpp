@@ -301,6 +301,18 @@ static ObsidianAutoSaveTrigger kObsidianAutoSaveTriggers[] = {
 		nullptr,
 		"cgst.clst.cinv.bhavesd",
 	},
+	// Fix Immediate Action clock + exit left side
+	{
+		"504.0L",
+		nullptr,
+		"cgst.clst.cl500st.bwonl505",
+	},
+	// Fix Immediate Action clock + exit right side
+	{
+		"504.4L",
+		nullptr,
+		"cgst.clst.cl500st.bwonl505",
+	},
 	// Give document to Immediate Action + return to light
 	{
 		"306.6L",
