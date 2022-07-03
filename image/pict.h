@@ -63,6 +63,7 @@ public:
 	void destroy();
 	const Graphics::Surface *getSurface() const { return _outputSurface; }
 	const byte *getPalette() const { return _palette; }
+	const int getPaletteSize() const { return 256; }
 	uint16 getPaletteColorCount() const { return _paletteColorCount; }
 
 	struct PixMap {
@@ -91,6 +92,7 @@ private:
 	uint16 _paletteColorCount;
 	Graphics::Surface *_outputSurface;
 	bool _continueParsing;
+	int _version;
 
 	// Utility Functions
 	void unpackBitsRect(Common::SeekableReadStream &stream, bool withPalette);
@@ -124,6 +126,7 @@ private:
 	DECLARE_OPCODE(o_longComment);
 	DECLARE_OPCODE(o_opEndPic);
 	DECLARE_OPCODE(o_headerOp);
+	DECLARE_OPCODE(o_versionOp1);
 
 	// Regular-mode Opcodes
 	void setupOpcodesNormal();
