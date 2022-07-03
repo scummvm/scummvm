@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-02 20:40+0000\n"
-"PO-Revision-Date: 2022-07-02 09:06+0000\n"
+"PO-Revision-Date: 2022-07-03 06:19+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1521,8 +1521,6 @@ msgid "Icon Path:"
 msgstr "Icon-Pfad:"
 
 #: gui/options.cpp:2307
-#, fuzzy
-#| msgid "Default"
 msgctxt "path"
 msgid "Default"
 msgstr "Standard"
