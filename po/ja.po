@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-02 20:40+0000\n"
-"PO-Revision-Date: 2022-07-01 19:28+0000\n"
+"PO-Revision-Date: 2022-07-03 14:28+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -1501,11 +1501,9 @@ msgid "Icon Path:"
 msgstr "アイコン:"
 
 #: gui/options.cpp:2307
-#, fuzzy
-#| msgid "Default"
 msgctxt "path"
 msgid "Default"
-msgstr "デフォルト"
+msgstr "初期パス"
 
 #: gui/options.cpp:2312 gui/options.cpp:2314 gui/options.cpp:2315
 msgid "Specifies path to additional data used by all games or ScummVM"
