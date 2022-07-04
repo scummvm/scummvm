@@ -282,7 +282,8 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	Image::BitmapDecoder decoder;
 	Common::File borderFile;
 
-	if (_renderMode == "ega" && borderFile.open("ega.bmp")) {
+	if ((_renderMode == "ega" && borderFile.open("ega.bmp")) ||
+	    (_renderMode == "cga" && borderFile.open("cga.bmp"))) {
 		decoder.loadStream(borderFile);
 		_border = new Graphics::Surface();
 		_border->copyFrom(*decoder.getSurface());
