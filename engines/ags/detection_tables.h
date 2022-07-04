@@ -223,6 +223,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 
 	// Commercial games
 	{ "3geeks", "3 GEEKS" },
+	{ "aboardtheadventure","Aboard the Adventure" },
 	{ "alemmo", "Al Emmo And The Lost Dutchman's Mine" },
 	{ "alemmoanozira", "Al Emmo's Postcards from Anozira" },
 	{ "alum", "Alum" },
@@ -231,6 +232,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "atotk", "A Tale Of Two Kingdoms" },
 	{ "avcsurvivalguide", "AVC's Survival Guide / Guía de supervivencia en CAV" },
 	{ "beer", "Beer!" },
+	{ "beyondowlsgard","Beyond the Edge of Owlsgard" },
 	{ "blackwell1", "The Blackwell Legacy" },
 	{ "blackwell2", "Blackwell Unbound" },
 	{ "blackwell3", "The Blackwell Convergence" },
@@ -240,6 +242,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "castledornstein", "Castle Dornstein" },
 	{ "charnelhousetrilogy", "The Charnel House Trilogy" },
 	{ "chronicleofinnsmouth", "Chronicle of Innsmouth" },
+	{ "crimsondiamond","The Crimson Diamond" },
 	{ "crystalshardadventurebundle", "Crystal Shard Adventure Bundle" },
 	{ "danewguys2", "Da New Guys: Day of the Jackass" },
 	{ "detectivegallo", "Detective Gallo" },
@@ -247,6 +250,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "docapocalypse", "Doc Apocalypse" },
 	{ "downfall2009", "Downfall (2009)" },
 	{ "downfall2016", "Downfall (2016)" },
+	{ "dreamswitchhouse","Dreams in the Witch House" },
 	{ "dustbowl", "Dustbowl" },
 	{ "falconcity", "Falcon City" },
 	{ "feriadarles", "Feria d'Arles" },
@@ -258,6 +262,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "grandmabadass", "GrandMa Badass" },
 	{ "guardduty", "Guard Duty" },
 	{ "herdiscoming", "Herd is Coming" },
+	{ "incantamentum","Incantamentum" },
 	{ "jorry", "JORRY" },
 	{ "justignorethem", "Just Ignore Them" },
 	{ "justignorethembrea1", "Just Ignore Them: Brea's Story Tape 1" },
@@ -266,6 +271,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "lamplightcity", "Lamplight City" },
 	{ "lancelothangover", "Lancelot's Hangover" },
 	{ "larrylotter", "Larry Lotter and the Test of Time" }, // aka Warthogs
+	{ "lastpirateadventure","The Last Pirate Adventure: Drake's Treasure" },
 	{ "legendofhand", "Legend of Hand" },
 	{ "mage", "Mage's Initiation: Reign of the Elements" },
 	{ "metaldead", "Metal Dead" },
@@ -274,8 +280,8 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "neofeud", "Neofeud" },
 	{ "odissea", "Odissea - An Almost True Story" },
 	{ "oott", "Order of the Thorne: The King's Challenge" },
-	{ "perfidiouspetrolstation", "The Perfidious Petrol Station" },
 	{ "perfecttides", "Perfect Tides" },
+	{ "perfidiouspetrolstation", "The Perfidious Petrol Station" },
 	{ "phantomfellows", "The Phantom Fellows" },
 	{ "primordia", "Primordia" },
 	{ "qfi", "Quest for Infamy" },
@@ -291,6 +297,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "shivah", "The Shivah" },
 	{ "shoaly", "Shoaly You Can't Be Serious!" },
 	{ "sisterssecret", "Sisters' Secret" },
+	{ "smallsister","Small Sister" },
 	{ "sphonx", "Sphonx" },
 	{ "starshipquasar", "Starship Quasar" },
 	{ "strangeland", "Strangeland" },
@@ -311,13 +318,15 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "thesecretofhuttongrammarschoolvga", "The Secret of Hutton Grammar School VGA" },
 	{ "thesecretsofjesus", "The Secrets of Jesus" },
 	{ "theterribleoldman", "The Terrible Old Man" },
-	{ "timegentlemenplease", "Time Gentlemen, Please" },
+	{ "timegentlemenplease", "Time Gentlemen, Please!" },
 	{ "unavowed", "Unavowed" },
 	{ "untilihaveyou", "Until I Have You" },
 	{ "waitingfortheloop", "Waiting For the Loop" },
 	{ "welcometosunnymunarvagir", "Welcome to Sunny Munarvagir" },
 	{ "whispersofamachine", "Whispers of a Machine" },
+	{ "wingman","WingMan" },
 	{ "zniwadventure", "Zniw Adventure" },
+
 	// Commercial Italian games
 	{ "onironauta", "Onironauta" },
 
@@ -2247,6 +2256,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "sepulchre", "Sepulchre" },
 	{ "serum", "Serum" },
 	{ "sevendoors", "The Seven Doors" },
+	{ "sevgilim","Sevgilim Olur musun?" },
 	{ "shadesofgreye", "Shades of Greye" },
 	{ "shadowgate", "Shadowgate Remake" },
 	{ "shadowsofron", "Shadows of Reality-on-the-Norm" },
@@ -3564,6 +3574,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY("3geeks", "3GEEKS_Demo.exe", "7ddb9e776648faed5a51170d087074e9", 512546851), // itch.io  En-Fr
 	DEMO_ENTRY_EN("99species", "99Species.exe", "615e73fc1874e92d60a1996c2330ea36", 23870894),
 	DEMO_ENTRY_EN("aazor", "aazor.exe", "465f972675db2da6040518221af5b0ba", 4956212),
+	DEMO_ENTRY_EN("aboardtheadventure", "Aboard.exe", 0, "3c3f8f6c6fdcc519464477d3627b60f6", 125789038), // Voice: En-Es(LA), Subs: De-En-Es(La)-Pt(Br)
+	DEMO_ENTRY_EN("aboardtheadventure", "Aboard.exe", 0, "3c3f8f6c6fdcc519464477d3627b60f6", 125813308),
 	DEMO_ENTRY_EN("absurdistan", "Absurdistan - Demo.exe", "4588012d3077d6b6791fce8cd4b15885", 35712363),  // v1.3
 	DEMO_ENTRY_EN("acaixa", "A caixa.exe", "f434ba41ed68ef8d5224254027aad1f4", 48866212),
 	DEMO_ENTRY_EN("acuriouspastime", "Curious.exe", "3e46b32a00fd4e6b9f68754f854695c5", 27346489),
@@ -3576,6 +3588,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("alemmo", "emmo_demo.exe", "2fb17c4382f2f54ef6d040b6493fec4b", 8943213), // Official website
 	DEMO_ENTRY_EN("allhallowseve", "hallows.exe", "a9d8eb8963b4d3b8ed4f7e74edcb6ccd", 8904536),
 	DEMO_ENTRY_EN("alphax", "alphax.exe", "06a03fe35791b0578068ab1873455463", 17879795),
+	DEMO_ENTRY_EN("alum", "Alum Demo.exe", "6d2f8e80c5f2372b705fdd4cc32f3579", 236891240),
 	DEMO_ENTRY_EN("annaquest", "AnnasQuest-DEMO.exe", "9257c91ee6cda3796d8af6856cf883bb", 69313413),
 	DEMO_ENTRY_EN("anentertainingspeech", "An Entertaining Speech.exe", "a8971dcd9a97994a0b8fe9160ebad777", 171300529),
 	DEMO_ENTRY_EN("animalcruelty", "Animal Cruelty Demo 1.2.exe", "495d45fb8adfd49690ae3b97921feec6", 41830978),  // v1.2
@@ -3593,6 +3606,10 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("bananaman", "banana man demo.exe", "615e806856b7730afadf1fea9a756b70", 53524952),
 	DEMO_ENTRY("battlewarriorsrt", "battle.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 16314318),  //En-Ru
 	DEMO_ENTRY_EN("beforeww2", "beforeww.exe", "4d17844029d8910fbaae1bdc99e250f2", 9759616),
+	DEMO_ENTRY_EN("beyondowlsgard", "Owlsgard Demo.exe", "ef70606d7030e9f6fa7c39f6437391c1", 783490949),
+	DEMO_ENTRY_EN("beyondowlsgard", "Owlsgard Demo.ags", "7c5ebe409626b03744ac569970917a68", 766792869), // Linux
+	DEMO_ENTRY_LANG("beyondowlsgard", "Owlsgard Demo.exe", "ef70606d7030e9f6fa7c39f6437391c1", 769684661, Common::DE_DEU),
+	DEMO_ENTRY_LANG("beyondowlsgard", "Owlsgard Demo.ags", "718eb3e5534d254ebf0647c6dee66475", 780599157, Common::DE_DEU), // Linux
 	DEMO_ENTRY_EN("bizarreearthquake", "bizarre.exe", "7e7c92d697b3cc9610d86854a00e517b", 29387739),
 	DEMO_ENTRY_EN("blackmorph", "liechi.exe", "46859c6f77bdb311266daa589561fa6b", 14476030),  // MAGS
 	DEMO_ENTRY("blackmorph", "Black Morph.exe", "cd37b1dbdff2c7092e05f5abed2f5dee", 16333092),  // v1.0 En-Fr
@@ -3620,6 +3637,25 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("clubmidget", "midget2.exe", "4d17844029d8910fbaae1bdc99e250f2", 1593937),
 	DEMO_ENTRY_EN("coelldeckaflight", "coell deca.exe", "a524cbb1c51589903c4043b98917f1d9", 5497572),
 	DEMO_ENTRY_EN("crimmsson", "Crimm's Son.exe", "618d7dce9631229b4579340b964c6810", 9039508),
+	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond Demo.exe", "69414fa4aa2cc5414a38cc166d44338b", 51640494),
+	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond Demo.exe", "69414fa4aa2cc5414a38cc166d44338b", 53471704),  // v10
+	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond Demo.exe", "69414fa4aa2cc5414a38cc166d44338b", 53472267),
+	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond DEMO.exe", "69414fa4aa2cc5414a38cc166d44338b", 53489221),
+	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond DEMO.exe", "69414fa4aa2cc5414a38cc166d44338b", 53489518),
+	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond DEMO.exe", "69414fa4aa2cc5414a38cc166d44338b", 59100513),
+	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond DEMO.exe", "69414fa4aa2cc5414a38cc166d44338b", 59894296),
+	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond DEMO.exe", "69414fa4aa2cc5414a38cc166d44338b", 59901863),
+	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond DEMO.exe", "69414fa4aa2cc5414a38cc166d44338b", 60144256),
+	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond DEMO.exe", "69414fa4aa2cc5414a38cc166d44338b", 60147146),
+	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond DEMO.exe", "69414fa4aa2cc5414a38cc166d44338b", 78606556),
+	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond DEMO.exe", "69414fa4aa2cc5414a38cc166d44338b", 78610191),
+	DEMO_ENTRY_EN("crimsondiamond", "TheCrimsonDiamond_demo_v16.exe", "69414fa4aa2cc5414a38cc166d44338b", 129741433),
+	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond Demo.exe", "69414fa4aa2cc5414a38cc166d44338b", 129741433),
+	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond Demo.exe", "69414fa4aa2cc5414a38cc166d44338b", 129741431),
+	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond Demo.exe", "69414fa4aa2cc5414a38cc166d44338b", 129741340),
+	DEMO_ENTRY_EN("crimsondiamond", "ac2game.dat", "69414fa4aa2cc5414a38cc166d44338b", 60147146),  // macOS
+	DEMO_ENTRY_EN("crimsondiamond", "ac2game.dat", "69414fa4aa2cc5414a38cc166d44338b", 78610191),  // macOS
+	DEMO_ENTRY_EN("crimsondiamond", "ac2game.dat", "69414fa4aa2cc5414a38cc166d44338b", 129741431),  // macOS
 	DEMO_ENTRY_EN("cybermemory", "CybermemoryNotFound.exe", "7971a7c02d414dc8cb33b6ec36080b91", 3851249),  // Windows
 	DEMO_ENTRY_EN("cybermemory", "CybermemoryNotFound.ags", "49416a0d45607a9a352fec6788ed712f", 1354209),  // Linux
 	DEMO_ENTRY_EN("cyberpunk97ep1", "zone - Copy.exe", "78dd4ca028ee0156b6a093d6d780aa65", 717217747),
@@ -3636,6 +3672,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("doses", "PN.exe", "615e73fc1874e92d60a1996c2330ea36", 3945217),  // v1.2
 	DEMO_ENTRY_EN("downfall2016", "downfall_demo.exe", "7c87b99ce309a46085e40ac1a2b20e75", 97968746), // Steam
 	DEMO_ENTRY("dragonsfang", "DraciZub_hra.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 27463584),  // Eng-Cze
+	DEMO_ENTRY_EN("dreamswitchhouse", "Dreams in the Witch House Demo.exe", "b7996387269db9b8a17bc358eaf37464", 508137287), // 1.03
+	DEMO_ENTRY_EN("dreamswitchhouse", "Dreams in the Witch House Demo.exe", "08f3fe1967f45209a939d9c36365b06a", 508229620), // 1.04
+	DEMO_ENTRY_EN("dreamswitchhouse", "Dreams in the Witch House Demo.exe", "08f3fe1967f45209a939d9c36365b06a", 508230379), // 1.05
 	DEMO_ENTRY_EN("drevil", "drevil.exe", "0394af1c29e1060fcdbacf2a3dd9b231", 1371668),
 	DEMO_ENTRY_EN("dumbassdrivers", "dumbass.exe", "f120690b506dd63cd7d1112ea6af2f77", 40580988),
 	DEMO_ENTRY_EN("dustbowl", "Dustbowl - DEMO.exe", "b9f4b6df0ab98d27d1bf8b874b8d12b6", 15285362),
@@ -3676,6 +3715,11 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("hpunk", "H_punk.exe", "7971a7c02d414dc8cb33b6ec36080b91", 37544988),
 	DEMO_ENTRY_EN("hpunk", "H_punk.ags", "a6d34e62d2584acb00cea1a45d88c2b5", 35047948),
 	DEMO_ENTRY_EN("huxzadventure", "Huxsadv.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 2053897),
+	DEMO_ENTRY_EN("incantamentum", "INCANTAMENTUM.exe", "889b7abe9e3b5eccbf9188822340d506", 196455383),  // Steam Game Festival: Autumn Edition Demo
+	DEMO_ENTRY_EN("incantamentum", "INCANTAMENTUM.exe", "889b7abe9e3b5eccbf9188822340d506", 211349826),  // The Big Adventure Event Demo
+	DEMO_ENTRY_EN("incantamentum", "INCANTAMENTUM.exe", "889b7abe9e3b5eccbf9188822340d506", 299412317),  // Steam Next Fest Demo
+	DEMO_ENTRY_EN("incantamentum", "INCANTAMENTUM.exe", "889b7abe9e3b5eccbf9188822340d506", 293619654),  // Steam Next Fest Demo
+	DEMO_ENTRY_EN("incantamentum", "INCANTAMENTUM.exe", "889b7abe9e3b5eccbf9188822340d506", 332439302),
 	DEMO_ENTRY_EN("indycrownofsolomon", "IndyCoS.exe", "f120690b506dd63cd7d1112ea6af2f77", 5483592),
 	DEMO_ENTRY_LANG("indycrownofsolomon", "cosdemo2.1-it.exe", "f120690b506dd63cd7d1112ea6af2f77", 5772985, Common::IT_ITA),  //Italian
 	DEMO_ENTRY_LANG("indycrownofsolomon", "CoSdemo2.1.exe", "f120690b506dd63cd7d1112ea6af2f77", 6178327, Common::DE_DEU),  //German
@@ -3704,6 +3748,10 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("kq9vga", "KQ9DEMO1.exe", "06a03fe35791b0578068ab1873455463", 2635933),
 	DEMO_ENTRY_EN("kumastory", "Kuma Story.exe", "54e966a013d104bf23603c780438d089", 2893472),
 	DEMO_ENTRY_EN("laportenoire", "proute.exe", "06a03fe35791b0578068ab1873455463", 17087125),
+	DEMO_ENTRY_EN("lastpirateadventure", "DrakeTreasureDemo.exe", "7971a7c02d414dc8cb33b6ec36080b91", 554164470),
+	DEMO_ENTRY_EN("lastpirateadventure", "DrakeTreasureDemo.exe", "7971a7c02d414dc8cb33b6ec36080b91", 554166474),
+	DEMO_ENTRY_LANG("lastpirateadventure", "DrakeTreasureDemo.exe", "7971a7c02d414dc8cb33b6ec36080b91", 554449052, Common::ES_ESP),
+	DEMO_ENTRY_LANG("lastpirateadventure", "DrakeTreasureDemo.exe", "7971a7c02d414dc8cb33b6ec36080b91", 554451160, Common::ES_ESP),
 	DEMO_ENTRY_EN("lazytownthenewkid", "newkiddemo1.2.exe", "9cb3c8dc7a8ab9c44815955696be2677", 15515508),
 	DEMO_ENTRY_EN("legendofhand", "legend of hand.exe", "fc478dd7564c908615c9366398d995c8", 75795600),
 	DEMO_ENTRY_EN("leisuresuitlarrylil", "LSL.exe", "34cf71d28e1e9c55934f624969011c7e", 18440862),
@@ -3823,6 +3871,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("simonthesorcerer3", "simon3.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 8189928),
 	DEMO_ENTRY_EN("simonthesorcerersbrother", "stsb-trailer.exe", "06a03fe35791b0578068ab1873455463", 2283838),
 	DEMO_ENTRY_EN("sisterssecret", "SistersSecret.exe", "f8d06c339ca2af5160b662c7a19572d6", 18660074),  // v1.0.1
+	DEMO_ENTRY_EN("smallsister", "sister.exe", "78dd4ca028ee0156b6a093d6d780aa65", 18528035),
 	DEMO_ENTRY_LANG("spacefreakers", "Space Freakers v2.exe", "7a3096ac0237cb6aa8e1718e28caf039", 64527091, Common::FR_FRA),
 	DEMO_ENTRY_EN("spacepirates", "Space Pirates.exe", "95dcf736be87cf7d40bf64d5b078c4b7", 3006210),
 	DEMO_ENTRY_EN("spacesim", "space_3d.exe", "8538afa638531020f79df88aec0fb797", 1667537),
@@ -3884,6 +3933,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("welcometodarklake", "mystery.exe", "18b284c22010850f79bc5c20054a70c4", 5438912),
 	DEMO_ENTRY_EN("whattimeisit", "Wtii-demo.exe", "13a143130096b8d6baae1a7ccca52ac4", 4044338),  // 2002-09-09
 	DEMO_ENTRY_EN("whiskeyweather", "sword-denz-wjam2013.exe", "19467230b9a39aea9f711e83ccf4c984", 14336391),
+	DEMO_ENTRY_EN("wingman", "wingman.exe", "e98b37edea8765aa9afe6d1434767d68", 540112243),
 	DEMO_ENTRY_EN("withoutaprayer", "prayerDemo.exe", "28f82e420b82d07651b68114f90223c8", 8745149),
 	DEMO_ENTRY_EN("wolfcountry", "MYST.exe", "3128b9f90e2f954ba704414ae854d10b", 4633153),
 	DEMO_ENTRY_EN("wretcher", "Wretcher.exe", "80076b2aad3170f5781c6a8a69a457fe", 20299824),
@@ -6035,6 +6085,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("sepulchre", "sepulchre.exe", "38dce17f7f7b96badf3a88e11e7a9797", 28412866),
 	GAME_ENTRY_EN("serum", "Infected.exe", "06a03fe35791b0578068ab1873455463", 2226020),
 	GAME_ENTRY_EN("sevendoors", "7DOORS.exe", "18b284c22010850f79bc5c20054a70c4", 113716886),
+	GAME_ENTRY_LANG("sevgilim", "sevgilim.exe", "49c3b4aa0287206f199e7bbf19d5600e", 6585836, Common::TR_TUR),
 	GAME_ENTRY_EN("shadesofgreye", "Shades of Greye.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 16125855),
 	GAME_ENTRY_EN("shadowgate", "Shadowgate Remake.exe", "9608c428fb58ab5ef3c0d74c14578be6", 111307080),
 	GAME_ENTRY_EN("shadowsofron", "Shadows.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 13891684),
