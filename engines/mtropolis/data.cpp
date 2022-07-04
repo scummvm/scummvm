@@ -1765,10 +1765,12 @@ DataReadErrorCode TextAsset::load(DataReader &reader) {
 	haveWinPart = false;
 	if (reader.getProjectFormat() == kProjectFormatMacintosh) {
 		haveMacPart = true;
+		isBottomUp = false;
 		if (!reader.readBytes(platform.mac.unknown3))
 			return kDataReadErrorReadFailed;
 	} else if (reader.getProjectFormat() == kProjectFormatWindows) {
 		haveWinPart = true;
+		isBottomUp = true;
 		if (!reader.readBytes(platform.win.unknown4))
 			return kDataReadErrorReadFailed;
 	} else

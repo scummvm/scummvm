@@ -1119,6 +1119,9 @@ bool MToonMetadata::FrameRangeDef::load(AssetLoaderContext &context, const Data:
 bool TextAsset::load(AssetLoaderContext &context, const Data::TextAsset &data) {
 	_assetID = data.assetID;
 
+	_isBitmap = ((data.isBitmap & 1) != 0);
+
+	// Bitmaps may contain garbled alignment
 	switch (data.alignment) {
 	case Data::kTextAlignmentCodeLeft:
 		_alignment = kTextAlignmentLeft;
@@ -1130,10 +1133,12 @@ bool TextAsset::load(AssetLoaderContext &context, const Data::TextAsset &data) {
 		_alignment = kTextAlignmentCenter;
 		break;
 	default:
-		return false;
+		if (_isBitmap)
+			_alignment = kTextAlignmentLeft;
+		else
+			return false;
+		break;
 	};
-
-	_isBitmap = ((data.isBitmap & 1) != 0);
 
 	if (_isBitmap) {
 		if (!data.bitmapRect.toScummVMRect(_bitmapRect))
@@ -1160,7 +1165,11 @@ bool TextAsset::load(AssetLoaderContext &context, const Data::TextAsset &data) {
 		_bitmapData->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
 		for (int row = 0; row < height; row++) {
-			uint8 *outRow = static_cast<uint8 *>(_bitmapData->getBasePtr(0, row));
+			int outRowY = row;
+			if (data.isBottomUp)
+				outRowY = height - 1 - row;
+
+			uint8 *outRow = static_cast<uint8 *>(_bitmapData->getBasePtr(0, outRowY));
 			const uint8 *inRow = &data.bitmapData[row * pitch];
 			for (int col = 0; col < width; col++) {
 				int bit = ((inRow[col / 8] >> (7 - (col & 7))) & 1);

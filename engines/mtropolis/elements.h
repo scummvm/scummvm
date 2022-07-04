@@ -22,6 +22,8 @@
 #ifndef MTROPOLIS_ELEMENTS_H
 #define MTROPOLIS_ELEMENTS_H
 
+#include "graphics/fontman.h"
+
 #include "mtropolis/data.h"
 #include "mtropolis/runtime.h"
 #include "mtropolis/render.h"
@@ -277,6 +279,9 @@ public:
 	void render(Window *window) override;
 
 	void setTextStyle(uint16 macFontID, const Common::String &fontFamilyName, uint size, TextAlignment alignment, const TextStyleFlags &styleFlags);
+
+	Graphics::FontManager::FontUsage getDefaultUsageForMacFont(uint16 macFontID, uint size);
+	Graphics::FontManager::FontUsage getDefaultUsageForNamedFont(const Common::String &fontFamilyName, uint size);
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Text Label Element"; }

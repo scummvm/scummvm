@@ -1714,7 +1714,7 @@ void TextLabelElement::activate() {
 
 	TextAsset *textAsset = static_cast<TextAsset *>(asset.get());
 
-	if (textAsset->isBitmap()) {
+	if (textAsset->isBitmap()) { 
 		_renderedText = textAsset->getBitmapSurface();
 		_needsRender = false;
 	} else {
@@ -1750,6 +1750,8 @@ void TextLabelElement::render(Window *window) {
 		const Graphics::Font *font = nullptr;
 		if (_fontFamilyName.size() > 0) {
 			font = FontMan.getFontByName(_fontFamilyName.c_str());
+			if (!font)
+				font = FontMan.getFontByUsage(getDefaultUsageForNamedFont(_fontFamilyName, _size));
 		} else if (_macFontID != 0) {
 			// TODO: Formatting spans
 			int slant = 0;
@@ -1769,12 +1771,10 @@ void TextLabelElement::render(Window *window) {
 			if (_styleFlags.expanded)
 				slant |= 64;
 
-			// FIXME/HACK: This is a stupid way to make getFont return null on failure
-			font = _runtime->getMacFontManager()->getFont(Graphics::MacFont(_macFontID, _size, slant, static_cast<Graphics::FontManager::FontUsage>(-1)));
-		}
+			const Graphics::FontManager::FontUsage defaultUsage = getDefaultUsageForMacFont(_macFontID, _size);
 
-		if (!font)
-			font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+			font = _runtime->getMacFontManager()->getFont(Graphics::MacFont(_macFontID, _size, slant, defaultUsage));
+		}
 
 		int height = font->getFontHeight();
 		int ascent = font->getFontAscent();
@@ -1865,7 +1865,9 @@ void TextLabelElement::render(Window *window) {
 	Common::Rect srcRect(0, 0, renderWidth, renderHeight);
 	Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.width(), _cachedAbsoluteOrigin.y + _rect.height());
 
-	const uint32 opaqueColor = 0xff000000;
+	// TODO: Need to handle more modes
+	const ColorRGB8 &color = _renderProps.getForeColor();
+	const uint32 opaqueColor = target->format.RGBToColor(color.r, color.g, color.b);
 	const uint32 drawPalette[2] = {0, opaqueColor};
 
 	if (_renderedText) {
@@ -1875,14 +1877,43 @@ void TextLabelElement::render(Window *window) {
 }
 
 void TextLabelElement::setTextStyle(uint16 macFontID, const Common::String &fontFamilyName, uint size, TextAlignment alignment, const TextStyleFlags &styleFlags) {
-	_needsRender = true;
-	_contentsDirty = true;
+	if (!_text.empty()) {
+		_needsRender = true;
+		_contentsDirty = true;
+	}
 
 	_macFontID = macFontID;
 	_fontFamilyName = fontFamilyName;
 	_size = size;
 	_alignment = alignment;
 	_styleFlags = styleFlags;
+}
+
+Graphics::FontManager::FontUsage TextLabelElement::getDefaultUsageForMacFont(uint16 macFontID, uint size) {
+	switch (macFontID) {
+	case Graphics::kMacFontCourier:
+		return Graphics::FontManager::kConsoleFont;
+	default:
+		break;
+	}
+
+	warning("Unhandled font ID %i default, this might not render well", static_cast<int>(macFontID));
+	return Graphics::FontManager::kGUIFont;
+}
+
+Graphics::FontManager::FontUsage TextLabelElement::getDefaultUsageForNamedFont(const Common::String &fontFamilyName, uint size) {
+	if (fontFamilyName == "Courier New") {
+		if (size == 8)
+			return Graphics::FontManager::kConsoleFont;
+	} else if (fontFamilyName == "Arial") {
+		if (size == 10)
+			return Graphics::FontManager::kGUIFont;
+		if (size == 14)
+			return Graphics::FontManager::kBigGUIFont;
+	}
+
+	warning("Unhandled font name '%s' default, this might not render well", fontFamilyName.c_str());
+	return Graphics::FontManager::kGUIFont;
 }
 
 MiniscriptInstructionOutcome TextLabelElement::scriptSetText(MiniscriptThread *thread, const DynamicValue &value) {

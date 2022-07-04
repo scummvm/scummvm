@@ -1768,6 +1768,8 @@ struct TextAsset : public DataObject {
 	Common::String text;
 	Common::Array<uint8> bitmapData;
 
+	bool isBottomUp;
+
 	Common::Array<MacFormattingSpan> macFormattingSpans;
 
 protected:
