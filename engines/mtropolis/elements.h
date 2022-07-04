@@ -103,6 +103,8 @@ public:
 private:
 	void onSegmentUnloaded(int segmentIndex) override;
 
+	IntRange computeRealRange() const;
+
 	MiniscriptInstructionOutcome scriptSetRange(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetRangeStart(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetRangeEnd(MiniscriptThread *thread, const DynamicValue &value);

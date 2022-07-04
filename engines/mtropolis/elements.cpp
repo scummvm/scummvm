@@ -545,7 +545,7 @@ void GraphicElement::render(Window *window) {
 MovieElement::MovieElement()
 	: _cacheBitmap(false), _reversed(false), _haveFiredAtFirstCel(false), _haveFiredAtLastCel(false)
 	, _alternate(false), _playEveryFrame(false), _assetID(0), _runtime(nullptr), _displayFrame(nullptr)
-	, _shouldPlayIfNotPaused(true), _needsReset(true), _currentPlayState(kMediaStateStopped) {
+	, _shouldPlayIfNotPaused(true), _needsReset(true), _currentPlayState(kMediaStateStopped), _playRange(IntRange::create(0, 0)) {
 }
 
 MovieElement::~MovieElement() {
@@ -697,7 +697,7 @@ void MovieElement::activate() {
 	_playMediaSignaller = project->notifyOnPlayMedia(this);
 
 	_maxTimestamp = qtDecoder->getDuration().convertToFramerate(qtDecoder->getTimeScale()).totalNumberOfFrames();
-	_playRange = IntRange::create(0, _maxTimestamp);
+	_playRange = IntRange::create(0, 0);
 	_currentTimestamp = 0;
 
 	if (_name.empty())
@@ -733,10 +733,12 @@ void MovieElement::queueAutoPlayEvents(Runtime *runtime, bool isAutoPlaying) {
 }
 
 void MovieElement::render(Window *window) {
+	const IntRange realRange = computeRealRange();
+
 	if (_needsReset) {
 		_videoDecoder->setReverse(_reversed);
 		_videoDecoder->seek(Audio::Timestamp(0, _timeScale).addFrames(_currentTimestamp));
-		_videoDecoder->setEndTime(Audio::Timestamp(0, _timeScale).addFrames(_reversed ? _playRange.min : _playRange.max));
+		_videoDecoder->setEndTime(Audio::Timestamp(0, _timeScale).addFrames(_reversed ? realRange.min : realRange.max));
 		const Graphics::Surface *decodedFrame = _videoDecoder->decodeNextFrame();
 		if (decodedFrame)
 			_displayFrame = decodedFrame;
@@ -785,8 +787,10 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 			_currentPlayState = kMediaStateStopped;
 		}
 
-		uint32 minTS = _playRange.min;
-		uint32 maxTS = _playRange.max;
+		const IntRange realRange = computeRealRange();
+
+		uint32 minTS = realRange.min;
+		uint32 maxTS = realRange.max;
 		uint32 targetTS = _currentTimestamp;
 
 		int framesDecodedThisFrame = 0;
@@ -825,7 +829,7 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 			}
 
 			if (_videoDecoder->endOfVideo())
-				targetTS = _reversed ? _playRange.min : _playRange.max;
+				targetTS = _reversed ? realRange.min : realRange.max;
 			else
 				targetTS = (_videoDecoder->getTime() * _timeScale + 500) / 1000;
 		}
@@ -884,7 +888,7 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 
 			if (_loop) {
 				_needsReset = true;
-				_currentTimestamp = _reversed ? _playRange.max : _playRange.min;
+				_currentTimestamp = _reversed ? realRange.max : realRange.min;
 				_contentsDirty = true;
 			}
 		}
@@ -893,6 +897,13 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 
 void MovieElement::onSegmentUnloaded(int segmentIndex) {
 	_videoDecoder.reset();
+}
+
+IntRange MovieElement::computeRealRange() const {
+	// The default range for movies is 0..0, which is interpreted as unset
+	if (_playRange.min == 0 && _playRange.max == 0)
+		return IntRange::create(0, _maxTimestamp);
+	return _playRange;
 }
 
 MiniscriptInstructionOutcome MovieElement::scriptSetRange(MiniscriptThread *thread, const DynamicValue &value) {
@@ -953,7 +964,11 @@ MiniscriptInstructionOutcome MovieElement::scriptSetRangeStart(MiniscriptThread 
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	return scriptSetRangeTyped(thread, IntRange::create(asInteger, _playRange.max));
+	int32 rangeMax = _playRange.max;
+	if (rangeMax < asInteger)
+		rangeMax = asInteger;
+
+	return scriptSetRangeTyped(thread, IntRange::create(asInteger, rangeMax));
 }
 
 MiniscriptInstructionOutcome MovieElement::scriptSetRangeEnd(MiniscriptThread *thread, const DynamicValue &value) {
@@ -963,7 +978,11 @@ MiniscriptInstructionOutcome MovieElement::scriptSetRangeEnd(MiniscriptThread *t
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	return scriptSetRangeTyped(thread, IntRange::create(_playRange.min, asInteger));
+	int32 rangeMin = _playRange.min;
+	if (rangeMin > asInteger)
+		rangeMin = asInteger;
+
+	return scriptSetRangeTyped(thread, IntRange::create(rangeMin, asInteger));
 }
 
 MiniscriptInstructionOutcome MovieElement::scriptRangeWriteRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
@@ -984,23 +1003,22 @@ MiniscriptInstructionOutcome MovieElement::scriptSetRangeTyped(MiniscriptThread 
 
 	if (_playRange.min < 0)
 		_playRange.min = 0;
-	else if (_playRange.min > (int32)_maxTimestamp)
-		_playRange.min = _maxTimestamp;
 
 	if (_playRange.max > (int32)_maxTimestamp)
 		_playRange.max = _maxTimestamp;
 
+	// Tested that this is the correct logic for inverted ranges
 	if (_playRange.max < _playRange.min)
-		_playRange.max = _playRange.min;
+		_playRange.min = _playRange.max;
 
 	uint32 minTS = _playRange.min;
 	uint32 maxTS = _playRange.max;
 	uint32 targetTS = _currentTimestamp;
 
-	if (targetTS < minTS)
-		targetTS = minTS;
-	if (targetTS > maxTS)
-		targetTS = maxTS;
+	// If the current timestamp is out of range then it goes to the start of the range
+	// Obsidian needs this for the cube maze security booth
+	if (targetTS < minTS || targetTS > maxTS)
+		targetTS = _reversed ? maxTS : minTS;
 
 	if (targetTS != _currentTimestamp) {
 		SeekToTimeTaskData *taskData = thread->getRuntime()->getVThread().pushTask("MovieElement::seekToTimeTask", this, &MovieElement::seekToTimeTask);
