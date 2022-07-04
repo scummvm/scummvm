@@ -16,6 +16,12 @@
 
 namespace Freescape {
 
+enum {
+	k8bitVariableShield = 256,
+	k8bitVariableEnergy = 257,
+	k8bitVariableScore = 258
+};
+
 Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition, FCLInstructionVector &instructions);
 
 } // End of namespace Freescape

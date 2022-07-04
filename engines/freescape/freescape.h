@@ -120,6 +120,7 @@ public:
 	void executeCode(FCLInstructionVector &code, bool shot, bool collided);
 
 	// Instructions
+	void executeIncrementVariable(FCLInstruction &instruction);
 	void executeGoto(FCLInstruction &instruction);
 	void executeIfThenElse(FCLInstruction &instruction);
 	void executeMakeInvisible(FCLInstruction &instruction);
@@ -135,6 +136,10 @@ public:
 	Math::Vector3d _scaleVector;
 	float _nearClipPlane;
 	float _farClipPlane;
+
+	// Game state
+	void initGameState();
+	Common::HashMap<uint16, int32> _gameState;
 
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return true; }
