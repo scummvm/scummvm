@@ -182,7 +182,7 @@ struct GameFlags {
 	bool R40TrainOk : 1;
 	bool R40Geld : 1;
 	bool R40PoliceStart : 1;
-	bool R40PoliceWeg : 1;
+	bool R40PoliceAway : 1;
 
 	bool R40PoliceAb : 1;
 	bool R40Wettbewerb : 1;
@@ -253,12 +253,12 @@ struct GameFlags {
 	bool R62Flucht : 1;
 	bool R62FirstEntry : 1;
 	bool R62TShow : 1;
-	bool R62LauraVerwandlung : 1;
-	bool R63Feuer : 1;
-	bool R63FxMannWeg : 1;
+	bool R62LauraTransformation : 1;
+	bool R63Fire : 1;
+	bool R63FxManAway : 1;
 
 	bool R63Uhr : 1;
-	bool R64ManWeg : 1;
+	bool R64ManAway : 1;
 	bool flags26_4 : 1;
 	bool flags26_8 : 1;
 	bool flags26_10 : 1;
@@ -366,7 +366,7 @@ struct GameFlags {
 	bool flags37_40 : 1;
 	bool flags37_80 : 1;
 
-	bool R64AshtrayTaken : 1;
+	bool R64AshtrayTaken : 1;	// picked up ashtray in TV room
 	bool flags38_2 : 1;
 	uint8 flags38_unused : 6;
 
