@@ -108,6 +108,7 @@ bool loadNextBitmap(BitmapArray &bitmaps, const Common::String &file, const Comm
 		return false;
 	}
 	bitmaps.push_back(bitmap);
+	return true;
 }
 
 bool loadBitmaps(BitmapArray &bitmaps, const TiXmlElement *pagesRoot, const Common::String &fontDir, LowLevelResources *resources) {
@@ -117,6 +118,7 @@ bool loadBitmaps(BitmapArray &bitmaps, const TiXmlElement *pagesRoot, const Comm
 		if (!loadNextBitmap(bitmaps, pageIt->Attribute("file"), fontDir, resources))
 			return false;
 	}
+	return true;
 }
 
 void FontData::loadNextGlyph(const TiXmlElement *charIt, BitmapArray &bitmaps, const cVector2l &fontSize) {
@@ -132,10 +134,10 @@ void FontData::loadNextGlyph(const TiXmlElement *charIt, BitmapArray &bitmaps, c
 
 	cVector2l size(w, h);
 	Bitmap2D &src = *bitmaps[page];
-	Bitmap2D charBmp(size, src.format());
-	src.drawToBitmap(charBmp, {0,0}, Common::Rect(x, y, x + w, y + h));
+	Common::ScopedPtr<Bitmap2D> charBmp(_lowLevelGraphics->CreateBitmap2D(size));
+	src.drawToBitmap(*charBmp, {0,0}, Common::Rect(x, y, x + w, y + h));
 
-	_glyphs[id] = createGlyph(&charBmp, {xOffset, yOffset}, {w, h}, fontSize, advance);
+	_glyphs[id] = createGlyph(charBmp.get(), {xOffset, yOffset}, {w, h}, fontSize, advance);
 }
 
 void FontData::loadGlyphs(const TiXmlElement *charsRoot, BitmapArray &bitmaps, const cVector2l &fontSize) {
