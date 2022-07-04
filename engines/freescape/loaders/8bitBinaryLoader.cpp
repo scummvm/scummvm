@@ -1,6 +1,7 @@
 #include "common/array.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include "image/bmp.h"
 
 #include "freescape/freescape.h"
 #include "freescape/area.h"
@@ -278,11 +279,14 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 // };
 
 void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offset, int ncolors) {
-	//const uint32 fileSize = file->size();
-	file->seek(0x210);
-	uint16 frameSize = file->readUint16BE();
-	//Common::Array<uint8> *raw_border = streamLoader.nextBytes(frameSize);
-	debug("Found border image of size %x", frameSize);
+	Image::BitmapDecoder decoder;
+	Common::File borderFile;
+
+	if (_renderMode == "ega" && borderFile.open("ega.bmp")) {
+		decoder.loadStream(borderFile);
+		_border = new Graphics::Surface();
+		_border->copyFrom(*decoder.getSurface());
+	}
 
 	file->seek(offset);
 	uint8 numberOfAreas = file->readByte();

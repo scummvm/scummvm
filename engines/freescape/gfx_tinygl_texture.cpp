@@ -30,24 +30,6 @@ TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface) {
 	height = surface->h;
 	format = surface->format;
 
-	if (format.bytesPerPixel == 4) {
-		internalFormat = TGL_RGBA;
-		sourceFormat = TGL_UNSIGNED_BYTE;
-	} else if (format.bytesPerPixel == 2) {
-		internalFormat = TGL_RGB;
-		sourceFormat = TGL_UNSIGNED_SHORT_5_6_5;
-	} else
-		error("Unknown pixel format");
-
-	tglGenTextures(1, &id);
-	tglBindTexture(TGL_TEXTURE_2D, id);
-	tglTexImage2D(TGL_TEXTURE_2D, 0, 3, width, height, 0, internalFormat, sourceFormat, 0);
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
-
-	// NOTE: TinyGL doesn't have issues with white lines so doesn't need use TGL_CLAMP_TO_EDGE
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
 	_blitImage = tglGenBlitImage();
 
 	update(surface);
@@ -59,10 +41,7 @@ TinyGLTexture::~TinyGLTexture() {
 }
 
 void TinyGLTexture::update(const Graphics::Surface *surface) {
-	tglBindTexture(TGL_TEXTURE_2D, id);
-	tglTexImage2D(TGL_TEXTURE_2D, 0, 3, width, height, 0,
-			internalFormat, sourceFormat, const_cast<void *>(surface->getPixels())); // TESTME: Not sure if it works.
-	tglUploadBlitImage(_blitImage, *surface, 0, false);
+	tglUploadBlitImage(_blitImage, *surface, 0xA0A0A0FF, true);
 }
 
 void TinyGLTexture::updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) {
