@@ -134,6 +134,13 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 			setPersonPos(_G(gameState).X[i], _G(gameState).Y[i], i, _G(gameState).Phase[i]);
 		}
 
+		// WORKAROUND: The original doesn't allow saving in room 47
+		// (combination lock close-up). This workaround fixes loading
+		if (_G(gameState)._personRoomNr[P_CHEWY] == 47) {
+			_G(gameState)._personHide[P_CHEWY] = false;
+			_G(gameState)._personHide[P_HOWARD] = false;
+		}
+
 		_G(auto_obj) = 0;
 
 		enter_room(-1);
