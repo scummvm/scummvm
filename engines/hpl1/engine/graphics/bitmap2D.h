@@ -42,7 +42,7 @@ namespace hpl {
 class Bitmap2D : public LowLevelPicture {
 public:
 	Bitmap2D(const cVector2l &size, const Graphics::PixelFormat &format);
-	Bitmap2D(const tString &filename, const tString &type);
+	Bitmap2D(const tString &filename, const tString &type, const Graphics::PixelFormat &desiredFormat = {});
 
 	~Bitmap2D();
 
@@ -63,7 +63,7 @@ public:
 	uint32 getBpp() const override;
 
 private:
-	void copyDecoder();
+	void copyDecoder(const Graphics::PixelFormat &format = {});
 	const Graphics::Surface &activeSurface() const;
 
 	Graphics::Surface _surface;
