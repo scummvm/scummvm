@@ -209,7 +209,9 @@ TextEntry *Text::getText(uint chunk, uint entry, int type, int subEntry) {
 		if (isAutoDialog)
 			ptr += 3;
 
-		if (txtNum == entry && curSubEntry == subEntry) {
+		d->_text.trim();
+
+		if (txtNum == entry && curSubEntry == subEntry && d->_text.size() > 1) {
 			// Found
 			delete[] data;
 			return d;
