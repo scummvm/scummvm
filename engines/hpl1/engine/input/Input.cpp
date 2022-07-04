@@ -76,6 +76,7 @@ cInput::~cInput() {
 //-----------------------------------------------------------------------
 
 void cInput::Update(float afTimeStep) {
+#if 0
 	mpLowLevelInput->BeginInputUpdate();
 
 	for (tInputDeviceListIt it = mlstInputDevices.begin(); it != mlstInputDevices.end(); ++it) {
@@ -87,6 +88,7 @@ void cInput::Update(float afTimeStep) {
 	for (tActionMapIt it = m_mapActions.begin(); it != m_mapActions.end(); ++it) {
 		it->second->Update(afTimeStep);
 	}
+#endif
 }
 
 //-----------------------------------------------------------------------

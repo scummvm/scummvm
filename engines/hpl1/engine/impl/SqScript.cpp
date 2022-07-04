@@ -47,7 +47,7 @@ cSqScript::cSqScript(const tString &asName, asIScriptEngine *apScriptEngine,
 	mpScriptOutput = apScriptOutput;
 	mlHandle = alHandle;
 
-	mpContext = mpScriptEngine->CreateContext();
+	//mpContext = mpScriptEngine->CreateContext();
 
 	// Create a unique module name
 	msModuleName = "Module_" + cString::ToString(cMath::RandRectl(0, 1000000)) +

@@ -47,7 +47,7 @@ cSoundManager::cSoundManager(cSound *apSound, cResources *apResources)
 	mpSound = apSound;
 	mpResources = apResources;
 
-	mpSound->GetLowLevel()->GetSupportedFormats(mlstFileFormats);
+	//mpSound->GetLowLevel()->GetSupportedFormats(mlstFileFormats);
 }
 
 cSoundManager::~cSoundManager() {

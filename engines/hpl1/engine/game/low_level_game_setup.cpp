@@ -34,9 +34,9 @@ namespace hpl {
 LowLevelGameSetup::LowLevelGameSetup() {
 	_lowLevelSystem = hplNew( LowLevelSystem, () );
 	_lowLevelGraphics = hplNew( cLowLevelGraphicsSDL,() );
-	//_lowLevelInput = hplNew( cLowLevelInputSDL,(_lowLevelGraphics) );
+	_lowLevelInput = hplNew( cLowLevelInputSDL,(_lowLevelGraphics) );
 	_lowLevelResources = hplNew( LowLevelResources,(_lowLevelGraphics) );
-	//_lowLevelSound	= hplNew( cLowLevelSoundOpenAL,() );
+	_lowLevelSound	= hplNew( cLowLevelSoundOpenAL,() );
 	//_lowLevelPhysics = hplNew( cLowLevelPhysicsNewton,() );
 	_lowLevelHaptic = nullptr;
 }

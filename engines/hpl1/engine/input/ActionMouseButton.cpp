@@ -50,7 +50,11 @@ cActionMouseButton::cActionMouseButton(tString asName, cInput *apInput, eMButton
 //-----------------------------------------------------------------------
 
 bool cActionMouseButton::IsTriggerd() {
-	return mpInput->GetMouse()->ButtonIsDown(mButton);
+#if 0
+  	return mpInput->GetMouse()->ButtonIsDown(mButton);
+#endif
+	return false;
+
 }
 
 //-----------------------------------------------------------------------

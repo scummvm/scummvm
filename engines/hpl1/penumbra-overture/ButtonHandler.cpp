@@ -306,7 +306,7 @@ void cButtonHandler::Update(float afTimeStep) {
 			mpInit->mpMainMenu->AddMousePos(vRel * mfMouseSensitivity);
 		} else {
 			/// Mouse Movement
-			cVector2f vRel = mpInput->GetMouse()->GetRelPosition();
+  			cVector2f vRel = mpInput->GetMouse()->GetRelPosition();
 			mpInit->mpMainMenu->AddMousePos(vRel * mfMouseSensitivity);
 		}
 

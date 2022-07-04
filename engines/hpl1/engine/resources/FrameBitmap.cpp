@@ -74,16 +74,15 @@ namespace hpl {
 
 	cResourceImage *cFrameBitmap::AddBitmap(Bitmap2D *apSrc)
 	{
-#if 0
   		cResourceImage *pImage=NULL;
 		//source size
 		//+2 because we are gonna have a border to get rid if some antialiasing problems
-		int lSW = apSrc->GetWidth()+2;
-		int lSH = apSrc->GetHeight()+2;
+		int lSW = apSrc->getWidth()+2;
+		int lSH = apSrc->getHeight()+2;
 
 		//destination size
-		int lDW = mpBitmap->GetWidth();
-		int lDH = mpBitmap->GetHeight();
+		int lDW = mpBitmap->getWidth();
+		int lDH = mpBitmap->getHeight();
 
 		cVector2l vPos;
 
@@ -160,15 +159,15 @@ namespace hpl {
 
 					//Draw 4 times so we get a nice extra border
 					for(int i=0;i<2;i++)for(int j=0;j<2;j++){
-						apSrc->drawToBitmap(mpBitmap,cVector2l(NewRect.x+i*2,NewRect.y+j*2));
+						apSrc->drawToBitmap(*mpBitmap,cVector2l(NewRect.x+i*2,NewRect.y+j*2));
 					}
 					//Fix the border a little more:
 					for(int i=-1;i<2;i++)for(int j=-1;j<2;j++)
 						if((i==0 || j==0) && (i!=j)){
-						apSrc->drawToBitmap(mpBitmap,cVector2l(NewRect.x+1+i,NewRect.y+1+j));
+						apSrc->drawToBitmap(*mpBitmap,cVector2l(NewRect.x+1+i,NewRect.y+1+j));
 					}
 					//Draw the final
-					apSrc->drawToBitmap(mpBitmap,cVector2l(NewRect.x+1,NewRect.y+1));
+					apSrc->drawToBitmap(*mpBitmap,cVector2l(NewRect.x+1,NewRect.y+1));
 
 
 					mlPicCount++;
@@ -182,9 +181,9 @@ namespace hpl {
 		if(bFoundNode)
 		{
 			//Create the image resource
-			pImage = hplNew( cResourceImage, (apSrc->GetFileName(),mpFrameTexture, this,
+			pImage = hplNew( cResourceImage, (apSrc->getFileName(),mpFrameTexture, this,
 				cRect2l(vPos,cVector2l(lSW-2,lSH-2)),//-2 to get the correct size.
-				cVector2l(mpBitmap->GetWidth(),mpBitmap->GetHeight()),
+				cVector2l(mpBitmap->getWidth(),mpBitmap->getHeight()),
 				mlHandle) );
 
 			if(!bFoundEmptyNode)
@@ -230,8 +229,6 @@ namespace hpl {
 
 
 		return pImage;
-#endif
-		return nullptr; 
 	}
 
 	//-----------------------------------------------------------------------
