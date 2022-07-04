@@ -2688,7 +2688,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
-	// Wanderful Interactive Storybooks version, unknown if identical to iOS and Mac versions
+	// Wanderful Interactive Storybooks version for Android
 	{
 		{
 			"lbsampler",
@@ -2696,6 +2696,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("Outline.txt", "131d3a3c7158345153776693de4d45d0", 2574),
 			Common::EN_ANY,
 			Common::kPlatformAndroid,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0,
+	},
+
+	// Wanderful Interactive Storybooks version for macOS
+	{
+		{
+			"lbsampler",
+			"Wanderful",
+			AD_ENTRY1s("Outline.txt", "e3630ec2e66e0aea98a2d31dbd710745", 2975),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOASPECT)
 		},
