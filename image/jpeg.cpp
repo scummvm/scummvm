@@ -271,6 +271,9 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 		break;
 	}
 
+	if (cinfo.num_components == 4)
+		cinfo.out_color_space = JCS_CMYK;
+
 	// Actually start decompressing the image
 	jpeg_start_decompress(&cinfo);
 
