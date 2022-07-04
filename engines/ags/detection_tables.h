@@ -1543,6 +1543,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "memoriae", "Memoriae" },
 	{ "memoriesfade", "Memories Fade" },
 	{ "memoriesofasnake", "Memories of a Snake / Memoires d'un Serpent" },
+	{ "memory", "This Game Might Improve Your Memory" },
 	{ "meninhats", "Men In Hats: Attack of the Evangelists" },
 	{ "merrychristmas", "Merry Christmas, Alfred Robbins" },
 	{ "meshumba", "Meshumba's Reckoning" },
@@ -5299,6 +5300,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("memoriesfade", "MemoriesFade.ags", "38a889fdcc95f2d0dbe6852ffcfe6359", 5487369),  // 1.1.0 Linux
 	GAME_ENTRY_EN("memoriesfade", "MemoriesFade.ags", "4e327e87af5db477ec5c665b64ccd990", 5483607),
 	GAME_ENTRY("memoriesofasnake", "Memoires d'un Serpent.exe", "615e73fc1874e92d60a1996c2330ea36", 111088941),  //En-Fr
+	GAME_ENTRY_EN("memory", "MemoryAGSGame.exe", "a91d6931844b676411d8afe4698e9ff8", 405820699),
 	GAME_ENTRY_EN("meninhats", "GAME.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 1646510),
 	GAME_ENTRY_EN("merrychristmas", "Merry Christmas.exe", "172b30c282856b382464bed5fcb61e29", 4812266),
 	GAME_ENTRY_EN("meshumba", "meshumba3.exe", "615e73fc1874e92d60a1996c2330ea36", 265700112),
