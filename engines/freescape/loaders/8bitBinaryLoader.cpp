@@ -248,7 +248,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	assert(endLastObject <= base + cPtr);
 	file->seek(base + cPtr);
 	uint8 numConditions = file->readByte();
-	debug("%d area conditions at %x", numConditions, base + cPtr);
+	debug("%d area conditions at %x of area %d", numConditions, base + cPtr, areaNumber);
 	while (numConditions--) {
 		FCLInstructionVector instructions;
 		// get the length
@@ -303,15 +303,16 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	uint8 startEntrance = file->readByte();
 	debug("Entrace area: %d", startEntrance);
 
-	//streamLoader.skipBytes(66);
-	file->seek(66, SEEK_CUR);
+	file->seek(0x42, SEEK_CUR);
 
 	uint16 globalSomething;
 	globalSomething = file->readUint16BE();
 	debug("Pointer to something: %x\n", globalSomething);
 
+	file->seek(offset + 0x48);
+
 	uint16 globalByteCodeTable;
-	globalByteCodeTable = file->readUint16BE();
+	globalByteCodeTable = file->readUint16LE();
 	debug("GBCT: %d\n", globalByteCodeTable);
 
 	file->seek(offset + globalByteCodeTable);
@@ -328,7 +329,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		Common::Array<uint8> conditionArray(conditionData, lengthOfCondition);
 		//debug("Global condition %d", numConditions + 1);
 		Common::String *conditions = detokenise8bitCondition(conditionArray, instructions);
-		//debug("%s", conditions->c_str());
+		debug("%s", conditions->c_str());
 	}
 
 	file->seek(offset + 200);
