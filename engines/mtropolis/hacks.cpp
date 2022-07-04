@@ -543,7 +543,7 @@ void ObsidianAutoSaveSceneTransitionHooks::onSceneTransitionEnded(Runtime *runti
 			}
 		}
 
-		if (saveVar || saveVar->isModifier()) {
+		if (saveVar && saveVar->isModifier()) {
 			Modifier *modifier = static_cast<Modifier *>(saveVar.get());
 			Common::SharedPtr<ModifierSaveLoad> saveLoad = modifier->getSaveLoad();
 
