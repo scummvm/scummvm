@@ -103,6 +103,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"local.pak", 0, "bf5da4c03f78ffbd643f12122319366e", 3250841},
 			{"wacexdbl.emc", 0, "cfbc2156a31b294b038204888407ebc8", 6974},
 			{"generic.svl", 0, "5eb99850ada22f0b8cf6392262d4dd07", 9404599},
+			{"onetime.pak", 0, "b344aee5fd43b7438c322fb29f860205", 468667 },
 			AD_LISTEND
 		},
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_DEMO, GUIO1(GUIO_NOMIDI)
