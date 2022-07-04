@@ -63,7 +63,7 @@ public:
 	void destroy();
 	const Graphics::Surface *getSurface() const { return _outputSurface; }
 	const byte *getPalette() const { return _palette; }
-	const int getPaletteSize() const { return 256; }
+	int getPaletteSize() const { return 256; }
 	uint16 getPaletteColorCount() const { return _paletteColorCount; }
 
 	struct PixMap {
