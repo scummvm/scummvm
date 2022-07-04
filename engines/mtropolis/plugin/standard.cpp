@@ -1408,12 +1408,14 @@ bool MediaCueMessengerModifier::load(const PlugInModifierLoaderContext &context,
 	if (data.enableWhen.type != Data::PlugInTypeTaggedValue::kEvent)
 		return false;
 
-	_enableWhen.load(data.enableWhen.value.asEvent);
+	if (!_enableWhen.load(data.enableWhen.value.asEvent))
+		return false;
 
 	if (data.disableWhen.type != Data::PlugInTypeTaggedValue::kEvent)
 		return false;
 
-	_disableWhen.load(data.disableWhen.value.asEvent);
+	if (!_disableWhen.load(data.disableWhen.value.asEvent))
+		return false;
 
 	if (data.triggerTiming.type != Data::PlugInTypeTaggedValue::kInteger)
 		return false;
@@ -1563,7 +1565,7 @@ void MediaCueMessengerModifier::visitInternalReferences(IStructuralReferenceVisi
 	_mediaCue.send.visitInternalReferences(visitor);
 }
 
-ObjectReferenceVariableModifier::ObjectReferenceVariableModifier() {
+ObjectReferenceVariableModifier::ObjectReferenceVariableModifier() : _setToSourceParentWhen(Event::create()) {
 }
 
 bool ObjectReferenceVariableModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::ObjectReferenceVariableModifier &data) {
@@ -1960,11 +1962,14 @@ bool MidiModifier::load(const PlugInModifierLoaderContext &context, const Data::
 	if (data.executeWhen.type != Data::PlugInTypeTaggedValue::kEvent)
 		return false;
 
-	_executeWhen.load(data.executeWhen.value.asEvent);
+	if (!_executeWhen.load(data.executeWhen.value.asEvent))
+		return false;
+
 	if (data.terminateWhen.type != Data::PlugInTypeTaggedValue::kEvent)
 		return false;
 
-	_terminateWhen.load(data.terminateWhen.value.asEvent);
+	if (!_terminateWhen.load(data.terminateWhen.value.asEvent))
+		return false;
 
 	if (data.embeddedFlag) {
 		_mode = kModeFile;

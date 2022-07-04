@@ -1142,7 +1142,10 @@ const char *BoundaryDetectionMessengerModifier::getDefaultName() const {
 	return "Boundary Detection Messenger";
 }
 
-CollisionDetectionMessengerModifier::CollisionDetectionMessengerModifier() : _runtime(nullptr), _isActive(false) {
+CollisionDetectionMessengerModifier::CollisionDetectionMessengerModifier()
+	: _runtime(nullptr), _isActive(false),
+	  _enableWhen(Event::create()), _disableWhen(Event::create()), _detectionMode(kDetectionModeFirstContact),
+	  _detectInFront(true), _detectBehind(true), _ignoreParent(true), _sendToCollidingElement(false) {
 }
 
 CollisionDetectionMessengerModifier::~CollisionDetectionMessengerModifier() {

@@ -537,7 +537,8 @@ DataObjectTypes::DataObjectType DataObject::getType() const {
 	return _type;
 }
 
-ProjectLabelMap::ProjectLabelMap() : superGroups(nullptr) {
+ProjectLabelMap::ProjectLabelMap()
+	: superGroups(nullptr), persistFlags(0), unknown1(0), numSuperGroups(0), nextAvailableID(0) {
 }
 
 ProjectLabelMap::~ProjectLabelMap() {

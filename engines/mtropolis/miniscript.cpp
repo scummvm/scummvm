@@ -1931,7 +1931,10 @@ bool MiniscriptThread::evaluateTruthOfResult(bool &isTrue) {
 		return false;
 	}
 
-	dereferenceRValue(0, false);
+	if (!dereferenceRValue(0, false)) {
+		this->error("Failed to dereference Miniscript RValue for truth evaluation");
+		return false;
+	}
 
 	isTrue = miniscriptEvaluateTruth(_stack[0].value);
 	return true;

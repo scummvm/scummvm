@@ -3985,20 +3985,22 @@ void Runtime::drawFrame() {
 	Common::Array<WindowSortingBucket> multipleBuckets;
 	WindowSortingBucket *sortedBuckets = &singleBucket;
 
-	if (numWindows < 2)
+	if (numWindows < 2) {
 		sortedBuckets = &singleBucket;
-	else {
+
+		singleBucket.originalIndex = 0;
+		singleBucket.window = _windows[0].get();
+	} else {
 		multipleBuckets.resize(numWindows);
 		sortedBuckets = &multipleBuckets[0];
-	}
 
-	for (size_t i = 0; i < numWindows; i++) {
-		sortedBuckets[i].originalIndex = i;
-		sortedBuckets[i].window = _windows[i].get();
-	}
+		for (size_t i = 0; i < numWindows; i++) {
+			sortedBuckets[i].originalIndex = i;
+			sortedBuckets[i].window = _windows[i].get();
+		}
 
-	if (numWindows > 1)	// Quiet Coverity warning
 		Common::sort(sortedBuckets, sortedBuckets + numWindows, WindowSortingBucket::sortPredicate);
+	}
 	
 	for (size_t i = 0; i < numWindows; i++) {
 		const Window &window = *sortedBuckets[i].window;
