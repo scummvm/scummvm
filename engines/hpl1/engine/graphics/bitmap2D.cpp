@@ -46,7 +46,23 @@ static Loader *loadImage(const tString &filepath) {
 	return imgLoader;
 }
 
-Bitmap2D::Bitmap2D(const tString &filepath, const tString &type)
+template<>
+static Image::JPEGDecoder *loadImage(const tString &filepath) {
+	// FIXME: string types
+	Common::File imgFile;
+	if (!imgFile.open(filepath.c_str())) {
+		error("Could not open file: %s", filepath.c_str());
+		return nullptr;
+	}
+	Image::JPEGDecoder *imgLoader = new Image::JPEGDecoder();
+	imgLoader->setOutputPixelFormat(g_system->getScreenFormat());
+	if (!imgLoader->loadStream(imgFile)) {
+		error("Could not load image at %s", filepath.c_str());
+	}
+	return imgLoader;
+}
+
+Bitmap2D::Bitmap2D(const tString &filepath, const tString &type, const Graphics::PixelFormat &desiredFormat)
 	: LowLevelPicture(type), _isSurfaceActive(false) {
 	if (type == "png")
 		_decoder.reset(loadImage<Image::PNGDecoder>(filepath));
@@ -62,6 +78,8 @@ Bitmap2D::Bitmap2D(const tString &filepath, const tString &type)
 		error("trying to load unsupported image format %s", type.c_str());
 	_width = _decoder->getSurface()->w;
 	_height = _decoder->getSurface()->h;
+	if (desiredFormat.bytesPerPixel != 0 && desiredFormat != _decoder->getSurface()->format)
+		copyDecoder(desiredFormat);
 }
 
 Bitmap2D::Bitmap2D(const cVector2l &size, const Graphics::PixelFormat &format)
@@ -71,8 +89,10 @@ Bitmap2D::Bitmap2D(const cVector2l &size, const Graphics::PixelFormat &format)
 
 
 void Bitmap2D::drawToBitmap(Bitmap2D &dest, const cVector2l &at, Common::Rect srcSubrect) {
-	if(!dest._isSurfaceActive)
+	if (!dest._isSurfaceActive)
 		dest.copyDecoder();
+	if (dest._surface.w == 0 || dest._surface.h == 0 || activeSurface().w == 0 || activeSurface().h == 0)
+		return; // font loading can use bitmaps with 0 width
 	if(srcSubrect.right == 0 && srcSubrect.bottom == 0)
 		srcSubrect = Common::Rect(activeSurface().w, activeSurface().h);
 
@@ -135,8 +155,10 @@ uint32 Bitmap2D::getBpp() const {
 	return format().bpp();
 }
 
-void Bitmap2D::copyDecoder() {
+void Bitmap2D::copyDecoder(const Graphics::PixelFormat &format) {
 	_surface.copyFrom(*( _decoder->getSurface()));
+	if (format.bytesPerPixel != 0)
+		_surface.convertToInPlace(format);
 	_isSurfaceActive = true;
 	_decoder.release();
 }

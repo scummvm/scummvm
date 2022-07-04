@@ -40,7 +40,7 @@ static tString getImageType(const tString &filepath) {
 }
 
 Bitmap2D *LowLevelResources::loadBitmap2D(const tString &filepath) {
-	return new Bitmap2D(filepath, getImageType(filepath));
+	return new Bitmap2D(filepath, getImageType(filepath), *_lowLevelGraphics->GetPixelFormat());
 }
 
 void LowLevelResources::getSupportedImageFormats(tStringList &formats) {
