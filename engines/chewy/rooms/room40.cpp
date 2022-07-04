@@ -54,7 +54,7 @@ void Room40::entry(int16 eib_nr) {
 		_G(room)->set_timer_status(4, TIMER_STOP);
 	}
 
-	if (_G(gameState).R40PoliceWeg == false) {
+	if (_G(gameState).R40PoliceAway == false) {
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 10);
 		_G(atds)->delControlBit(275, ATS_ACTIVE_BIT);
 	} else {
@@ -244,7 +244,7 @@ void Room40::setup_func() {
 		goAutoXy(x, y, P_HOWARD, ANI_GO);
 	}
 
-	if (_G(gameState).R40PoliceWeg == false) {
+	if (_G(gameState).R40PoliceAway == false) {
 		if (_G(gameState).R40PoliceStart) {
 			_G(gameState).R40PoliceStart = false;
 			_G(gameState).R40PoliceAniStatus = POLICE_LEFT;
@@ -286,7 +286,7 @@ void Room40::setup_func() {
 				_G(det)->hideStaticSpr(0);
 				if (_G(gameState).R40DuengerTele) {
 					hideCur();
-					_G(gameState).R40PoliceWeg = true;
+					_G(gameState).R40PoliceAway = true;
 					_G(det)->startDetail(17, 255, ANI_FRONT);
 					startAadWait(226);
 					_G(det)->stop_detail(17);
@@ -295,7 +295,7 @@ void Room40::setup_func() {
 					startSetAILWait(10, 1, ANI_FRONT);
 					_G(person_end_phase)[P_HOWARD] = P_RIGHT;
 					startAadWait(224);
-					_G(gameState).R40PoliceWeg = true;
+					_G(gameState).R40PoliceAway = true;
 					showCur();
 
 					_G(flags).MouseLeft = false;
@@ -339,7 +339,7 @@ int16 Room40::use_mr_pumpkin() {
 				action_ret = true;
 
 				if (_G(gameState).R39TvRecord == 6) {
-					if (_G(gameState).R40PoliceWeg == false)
+					if (_G(gameState).R40PoliceAway == false)
 						use_schalter(227);
 					else {
 						hideCur();
@@ -373,7 +373,7 @@ int16 Room40::use_mr_pumpkin() {
 int16 Room40::use_schalter(int16 aad_nr) {
 	int16 action_flag = false;
 
-	if (_G(menu_item) != CUR_HOWARD &&_G(gameState).R40PoliceWeg == false) {
+	if (_G(menu_item) != CUR_HOWARD &&_G(gameState).R40PoliceAway == false) {
 		action_flag = true;
 
 		hideCur();
@@ -417,7 +417,7 @@ int16 Room40::use_schalter(int16 aad_nr) {
 }
 
 void Room40::talk_police() {
-	if (!_G(gameState).R40PoliceWeg && _G(gameState).R40PoliceAniStatus == 255) {
+	if (!_G(gameState).R40PoliceAway && _G(gameState).R40PoliceAniStatus == 255) {
 		hideCur();
 		_G(gameState).R40PoliceStart = false;
 		_G(room)->set_timer_status(255, TIMER_STOP);
@@ -577,7 +577,7 @@ bool Room40::use_police() {
 	bool result = false;
 
 	if (_G(menu_item) == CUR_HOWARD) {
-		if (!_G(gameState).R40PoliceWeg && _G(gameState).R40PoliceAniStatus == 255) {
+		if (!_G(gameState).R40PoliceAway && _G(gameState).R40PoliceAniStatus == 255) {
 			result = true;
 			_G(gameState).R40PoliceAb = true;
 			hideCur();
@@ -607,7 +607,7 @@ bool Room40::use_police() {
 int16 Room40::use_tele() {
 	int16 action_flag = false;
 
-	if (!_G(cur)->usingInventoryCursor() && _G(gameState).R40PoliceWeg == false) {
+	if (!_G(cur)->usingInventoryCursor() && _G(gameState).R40PoliceAway == false) {
 		action_flag = true;
 		hideCur();
 

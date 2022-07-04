@@ -37,13 +37,13 @@ void Room64::entry() {
 	if (!_G(gameState).R64AshtrayTaken)
 		_G(det)->startDetail(0, 255, false);
 	
-	if (!_G(gameState).R64ManWeg) {
+	if (!_G(gameState).R64ManAway) {
 		_G(timer_nr)[0] = _G(room)->set_timer(1, 10);
 		_G(det)->set_static_ani(1, -1);
 		chewy_entry();
-		if (_G(gameState).R63Feuer) {
+		if (_G(gameState).R63Fire) {
 			flic_cut(FCUT_078);
-			_G(gameState).R64ManWeg = true;
+			_G(gameState).R64ManAway = true;
 			_G(det)->del_static_ani(1);
 			_G(room)->set_timer_status(1, TIMER_STOP);
 			_G(atds)->setControlBit(376, ATS_ACTIVE_BIT);
@@ -123,12 +123,8 @@ void Room64::setup_func() {
 		--_G(r62Delay);
 }
 
-void Room64::talk_man() {
-	talk_man(350);
-}
-
 void Room64::talk_man(int16 aad_nr) {
-	if (!_G(gameState).R64ManWeg) {
+	if (!_G(gameState).R64ManAway) {
 		hideCur();
 		autoMove(4, P_CHEWY);
 		_G(room)->set_timer_status(1, TIMER_STOP);
@@ -143,11 +139,11 @@ void Room64::talk_man(int16 aad_nr) {
 	}
 }
 
-int16 Room64::use_tasche() {
+int16 Room64::useBag() {
 	int16 action_ret = false;
 	hideCur();
 	if (!_G(cur)->usingInventoryCursor()) {
-		if (_G(gameState).R64ManWeg) {
+		if (_G(gameState).R64ManAway) {
 			if (!_G(atds)->getControlBit(375, ATS_ACTIVE_BIT)) {
 				autoMove(3, P_CHEWY);
 				start_spz_wait(CH_ROCK_GET1, 1, false, P_CHEWY);

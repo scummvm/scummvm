@@ -31,7 +31,7 @@ namespace Rooms {
 void Room62::entry() {
 	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
-	_G(gameState).R62LauraVerwandlung = 0;
+	_G(gameState).R62LauraTransformation = 0;
 	_G(gameState).room_e_obj[91].Attribut = 255;
 	if (!_G(gameState).R62FirstEntry) {
 		_G(gameState).R62TShow = false;
@@ -114,7 +114,7 @@ int16 Room62::use_laura() {
 		_G(gameState).R64Moni1Ani = 0;
 		_G(gameState).R64Moni2Ani = 0;
 		_G(gameState).R62TShow = false;
-		_G(gameState).R62LauraVerwandlung = true;
+		_G(gameState).R62LauraTransformation = true;
 		switchRoom(63);
 	}
 	return action_ret;

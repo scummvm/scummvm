@@ -551,7 +551,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 375:
-						retValue = Room64::use_tasche();
+						retValue = Room64::useBag();
 						break;
 
 					case 380:
@@ -916,7 +916,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 376:
-						Room64::talk_man();
+						Room64::talk_man(350);
 						break;
 
 					case 380:
