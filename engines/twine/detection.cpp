@@ -639,6 +639,55 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Little Big Adventure - Steam Version (3.2.2)
+	// TLBA1C.exe
+	// 1 Jul 2022
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "58a7fba8a556196bb14d4f492017fb2b", 4416000),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "58a7fba8a556196bb14d4f492017fb2b", 4416000),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "58a7fba8a556196bb14d4f492017fb2b", 4416000),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "58a7fba8a556196bb14d4f492017fb2b", 4416000),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "58a7fba8a556196bb14d4f492017fb2b", 4416000),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Little Big Adventure - GOG Version 3.2.0 (56122)
 	// TLBA1C.exe
 	// 1st June 2022 02:18
@@ -731,6 +780,55 @@ static const ADGameDescription twineGameDescriptions[] = {
 		"lba",
 		"GOG Classic Version",
 		AD_ENTRY1s("TLBA1C.exe", "e86192e4a491805dc011dda5ca83c608", 4404736),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Little Big Adventure - GOG Version 3.2.2
+	// TLBA1C.exe
+	// 1 Jul 2022
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "76b227e87038c17a3376b1c681f15474", 4402688),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "76b227e87038c17a3376b1c681f15474", 4402688),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "76b227e87038c17a3376b1c681f15474", 4402688),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "76b227e87038c17a3376b1c681f15474", 4402688),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "76b227e87038c17a3376b1c681f15474", 4402688),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		TwinE::TF_LBA1_CLASSIC,
