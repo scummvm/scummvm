@@ -238,20 +238,24 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 	// Check if we need to dither the image
 	int dstBpp = g_director->_wm->_pixelformat.bytesPerPixel;
 	int srcBpp = _img->getSurface()->format.bytesPerPixel;
-	int palSize = g_director->_wm->getPaletteSize();
+	int palSize = _img->getPaletteColorCount();
+
+	const byte *pal = _img->getPalette();
 
 	if (dstBpp == 1) {
 		if (srcBpp > 1 || (srcBpp == 1 &&
-			(palSize != _img->getPaletteColorCount()
-			|| memcmp(g_director->_wm->getPalette(), _img->getPalette(), palSize * 3)))) {
+			memcmp(g_director->_wm->getPalette(), _img->getPalette(), palSize * 3))) {
+
 			ditherFloydImage();
+
+			pal = g_director->_wm->getPalette();
 		}
 	}
 
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 
 	// scale for drawing a different size sprite
-	copyStretchImg(widget->getSurface()->surfacePtr(), bbox, _img->getPalette());
+	copyStretchImg(widget->getSurface()->surfacePtr(), bbox, pal);
 
 	return widget;
 }
@@ -313,7 +317,7 @@ void BitmapCastMember::ditherImage() {
 	int h = _initialRect.height();
 
 	_ditheredImg = new Graphics::Surface;
-	_ditheredImg->create(w, h, g_director->_pixelformat);
+	_ditheredImg->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 
 	for (int y = 0; y < h; y++) {
 		const byte *src = (const byte *)_img->getSurface()->getBasePtr(0, y);
@@ -323,6 +327,10 @@ void BitmapCastMember::ditherImage() {
 			uint32 color;
 
 			switch (bpp) {
+			case 1:
+				color = *((const byte *)src);
+				src += 1;
+				break;
 			case 2:
 				color = *((const uint16 *)src);
 				src += 2;
@@ -366,29 +374,36 @@ void BitmapCastMember::ditherFloydImage() {
 	byte *tmpSurf = (byte *)malloc(w * h * 3);
 
 	int bpp = _img->getSurface()->format.bytesPerPixel;
+	const byte *pal = _img->getPalette();
 
 	for (int y = 0; y < h; y++) {
 		const byte *src = (const byte *)_img->getSurface()->getBasePtr(0, y);
 		byte *dst = &tmpSurf[y * w * 3];
 
+		byte r, g, b;
+
 		for (int x = 0; x < w; x++) {
 			uint32 color;
 
 			switch (bpp) {
+			case 1:
+				color = *src * 3;
+				src += 1;
+				r = pal[color + 0]; g = pal[color + 1]; b = pal[color + 2];
+				break;
 			case 2:
 				color = *((const uint16 *)src);
 				src += 2;
+				_img->getSurface()->format.colorToRGB(color, r, g, b);
 				break;
 			case 4:
 				color = *((const uint32 *)src);
 				src += 4;
+				_img->getSurface()->format.colorToRGB(color, r, g, b);
 				break;
 			default:
-				error("BitmapCastMember::ditherImage(): Unsupported bit depth: %d", bpp);
+				error("BitmapCastMember::ditherFloydImage(): Unsupported bit depth: %d", bpp);
 			}
-
-			byte r, g, b;
-			_img->getSurface()->format.colorToRGB(color, r, g, b);
 
 			dst[0] = r; dst[1] = g; dst[2] = b;
 			dst += 3;
@@ -396,9 +411,9 @@ void BitmapCastMember::ditherFloydImage() {
 	}
 
 	_ditheredImg = new Graphics::Surface;
-	_ditheredImg->create(w, h, g_director->_pixelformat);
+	_ditheredImg->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 
-	const byte *pal = g_director->_wm->getPalette();
+	pal = g_director->_wm->getPalette();
 
 	for (int y = 0; y < h; y++) {
 		const byte *src = &tmpSurf[y * w * 3];
@@ -411,8 +426,8 @@ void BitmapCastMember::ditherFloydImage() {
 			*dst = col;
 
 			int qr = r - pal[col * 3 + 0];
-			int qg = g = pal[col * 3 + 1];
-			int qb = b = pal[col * 3 + 2];
+			int qg = g - pal[col * 3 + 1];
+			int qb = b - pal[col * 3 + 2];
 
 			updatePixel(tmpSurf, x + 1, y,     w, h, qr, qg, qb, 7);
 			updatePixel(tmpSurf, x - 1, y + 1, w, h, qr, qg, qb, 3);
