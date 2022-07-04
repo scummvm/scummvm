@@ -31,7 +31,7 @@ namespace Hpl1 {
 	void checkOGLErrors(const char *function, int line);
 }
 
-#define GL_CHECK(x) {::Hpl1::checkOGLErrors(__func__, __LINE__); x;}
+#define GL_CHECK(x) {x; ::Hpl1::checkOGLErrors(__func__, __LINE__);}
 #define GL_CHECK_FN() GL_CHECK()
 
 #endif
