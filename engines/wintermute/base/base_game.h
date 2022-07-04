@@ -133,8 +133,8 @@ public:
 	bool setMaxShadowType(TShadowType maxShadowType);
 	virtual TShadowType getMaxShadowType(BaseObject *object = nullptr);
 
-	int _editorResolutionWidth;
-	int _editorResolutionHeight;
+	int32 _editorResolutionWidth;
+	int32 _editorResolutionHeight;
 #endif
 
 	uint32 getSaveThumbWidth() const { return _thumbnailWidth; }

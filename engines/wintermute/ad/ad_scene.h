@@ -76,8 +76,8 @@ public:
 	float _nearPlane;
 	float _farPlane;
 	float _fov;
-	int _editorResolutionWidth;
-	int _editorResolutionHeight;
+	int32 _editorResolutionWidth;
+	int32 _editorResolutionHeight;
 #endif
 	bool getRegionsAt(int x, int y, AdRegion **regionList, int numRegions);
 	bool handleItemAssociations(const char *itemName, bool show);
