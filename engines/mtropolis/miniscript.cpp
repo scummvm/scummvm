@@ -1533,6 +1533,11 @@ MiniscriptInstructionOutcome GetChild::readRValueAttribIndexed(MiniscriptThread 
 				thread->error("Unable to list value at specified index");
 				return kMiniscriptInstructionOutcomeFailed;
 			}
+
+			if (!list->getAtIndex(realIndex, valueSrcDest)) {
+				thread->error("List read index out of bounds");
+				return kMiniscriptInstructionOutcomeFailed;
+			}
 		} else {
 			thread->error("Unable to read list attribute '" + attrib + "'");
 			return kMiniscriptInstructionOutcomeFailed;
