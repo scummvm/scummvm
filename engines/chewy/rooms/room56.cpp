@@ -162,7 +162,6 @@ void Room56::entry() {
 	case 1:
 		_G(gameState)._personRoomNr[P_HOWARD] = 66;
 		_G(gameState)._personRoomNr[P_NICHELLE] = 66;
-		_G(gameState).r88DestRoom = 82;
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
