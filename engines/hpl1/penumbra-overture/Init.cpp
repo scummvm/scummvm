@@ -112,7 +112,7 @@ void CheckTimeLimit() {
 bool CheckSupport(cInit *apInit) {
 	iLowLevelGraphics *pLowLevelGraphics = apInit->mpGame->GetGraphics()->GetLowLevel();
 	cInit *mpInit = apInit;
-
+	return true;
 	// Vertex shader support.
 	if (pLowLevelGraphics->GetCaps(eGraphicCaps_GL_VertexProgram) == 0) {
 		apInit->msErrorMessage = kTranslate("StartUp", "Error_NoVertexShader") + _W("\n") +

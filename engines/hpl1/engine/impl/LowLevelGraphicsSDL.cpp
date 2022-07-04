@@ -242,14 +242,14 @@ int cLowLevelGraphicsSDL::GetCaps(eGraphicCaps type) const {
 
 	//GL Vertex program
 	case eGraphicCaps_GL_VertexProgram:
-		return 1; //gl 2.0
+		return 0; //gl 2.0
 
 	//GL Fragment program
 	case eGraphicCaps_GL_FragmentProgram:
-		return 1; //gl 2.0
+		return 0; //gl 2.0
 
 	case eGraphicCaps_GL_ATIFragmentShader:
-		return 1;
+		return 0;
 
 	//GL ATI Fragment Shader
 	case eGraphicCaps_GL_BlendFunctionSeparate:
@@ -346,8 +346,7 @@ FontData *cLowLevelGraphicsSDL::CreateFontData(const tString &asName) {
 //-----------------------------------------------------------------------
 
 iGpuProgram *cLowLevelGraphicsSDL::CreateGpuProgram(const tString &asName, eGpuProgramType aType) {
-	//return hplNew(cCGProgram, (asName, mCG_Context, aType));
-	return nullptr;
+	return hplNew(cCGProgram, (asName, 0, aType));
 }
 
 //-----------------------------------------------------------------------
@@ -859,7 +858,7 @@ void cLowLevelGraphicsSDL::SetStencilTwoSide(eStencilFunc aFrontFunc, eStencilFu
 
 void cLowLevelGraphicsSDL::SetStencilTwoSide(bool abX) {
 	if (GetCaps(eGraphicCaps_TwoSideStencil))
-	Hpl1::logError(Hpl1::kDebugOpenGL, "call to setStencilTwoSide with two side stencil enabled");
+		Hpl1::logError(Hpl1::kDebugOpenGL, "call to setStencilTwoSide with two side stencil enabled");
 }
 
 //-----------------------------------------------------------------------

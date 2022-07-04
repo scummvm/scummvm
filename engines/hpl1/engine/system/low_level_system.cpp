@@ -38,8 +38,8 @@ LowLevelSystem::LowLevelSystem() {
 #if 0
 	mpScriptEngine = asCreateScriptEngine(ANGELSCRIPT_VERSION);
 #endif
-	_scriptOutput = hplNew(cScriptOutput, ());
-	_scriptEngine->SetMessageCallback(asMETHOD(cScriptOutput, AddMessage), _scriptOutput, asCALL_THISCALL);
+	//_scriptOutput = hplNew(cScriptOutput, ());
+	//_scriptEngine->SetMessageCallback(asMETHOD(cScriptOutput, AddMessage), _scriptOutput, asCALL_THISCALL);
 #if 0
 #ifdef AS_MAX_PORTABILITY
 	RegisterScriptString(mpScriptEngine);
@@ -386,13 +386,16 @@ iScript *LowLevelSystem::createScript(const tString &name) {
 }
 
 bool LowLevelSystem::addScriptFunc(const tString &funcDecl, void *pFunc, int callConv) {
-	if (_scriptEngine->RegisterGlobalFunction(funcDecl.c_str(),
+#if 0
+  	if (_scriptEngine->RegisterGlobalFunction(funcDecl.c_str(),
 											   asFUNCTION(pFunc), callConv) < 0) {
 		Error("Couldn't add func '%s'\n", funcDecl.c_str());
 		return false;
 	}
 
 	return true;
+#endif
+	return false;
 }
 
 bool LowLevelSystem::addScriptVar(const tString &varDecl, void *pVar) {

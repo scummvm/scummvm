@@ -73,6 +73,7 @@ cLowLevelSoundOpenAL::~cLowLevelSoundOpenAL() {
 
 iSoundData *cLowLevelSoundOpenAL::LoadSoundData(const tString &asName, const tString &asFilePath,
 												const tString &asType, bool abStream, bool abLoopStream) {
+#if 0
 	cOpenALSoundData *pSoundData = hplNew(cOpenALSoundData, (asName, abStream));
 
 	pSoundData->SetLoopStream(abLoopStream);
@@ -83,6 +84,8 @@ iSoundData *cLowLevelSoundOpenAL::LoadSoundData(const tString &asName, const tSt
 	}
 
 	return pSoundData;
+#endif
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------
@@ -107,6 +110,7 @@ void cLowLevelSoundOpenAL::UpdateSound(float afTimeStep) {
 
 void cLowLevelSoundOpenAL::SetListenerAttributes(const cVector3f &avPos, const cVector3f &avVel,
 												 const cVector3f &avForward, const cVector3f &avUp) {
+#if 0
 	mvListenerPosition = avPos;
 	mvListenerVelocity = avVel;
 	mvListenerForward = avForward;
@@ -128,7 +132,6 @@ void cLowLevelSoundOpenAL::SetListenerAttributes(const cVector3f &avPos, const c
 	m_mtxListener.SetTranslation(mvListenerPosition);
 
 	float fVel[3] = {0, 0, 0};
-#if 0
   		OAL_Listener_SetAttributes ( avPos.v, avVel.v, (avForward*(-1)).v, avUp.v );
 #endif
 }
@@ -343,7 +346,8 @@ void cLowLevelSoundOpenAL::SetEnvVolume(float afEnvVolume) {
 //-----------------------------------------------------------------------
 
 iSoundEnvironment *cLowLevelSoundOpenAL::LoadSoundEnvironment(const tString &asFilePath) {
-	if (!mbEnvAudioEnabled)
+#if 0
+  	if (!mbEnvAudioEnabled)
 		return NULL;
 
 	/////////////////////////////////////////////
@@ -368,6 +372,8 @@ iSoundEnvironment *cLowLevelSoundOpenAL::LoadSoundEnvironment(const tString &asF
 	// Log(" Created %d '%s'\n",pSoundEnv, pSoundEnv->GetName().c_str());
 
 	return pSoundEnv;
+#endif
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------
@@ -468,7 +474,8 @@ void cLowLevelSoundOpenAL::SetSoundEnvironment(iSoundEnvironment *apSoundEnv) {
 //-----------------------------------------------------------------------
 
 void cLowLevelSoundOpenAL::FadeSoundEnvironment(iSoundEnvironment *apSourceSoundEnv, iSoundEnvironment *apDestSoundEnv, float afT) {
-	if (!mbEnvAudioEnabled)
+#if 0
+  	if (!mbEnvAudioEnabled)
 		return;
 
 	if (afT < 0)
@@ -562,6 +569,8 @@ void cLowLevelSoundOpenAL::FadeSoundEnvironment(iSoundEnvironment *apSourceSound
 	}
 
 	SetSoundEnvironment(&pEnv);
+#endif
+
 }
 
 } // namespace hpl
