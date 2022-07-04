@@ -121,6 +121,7 @@ public:
 
 	// Instructions
 	void executeIncrementVariable(FCLInstruction &instruction);
+	void executeDecrementVariable(FCLInstruction &instruction);
 	void executeGoto(FCLInstruction &instruction);
 	void executeIfThenElse(FCLInstruction &instruction);
 	void executeMakeInvisible(FCLInstruction &instruction);

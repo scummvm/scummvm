@@ -152,6 +152,12 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			break;
 		case 10:
 			detokenisedStream += "SUBVAR (1, v";
+			currentInstruction = FCLInstruction(Token::SUBVAR);
+			currentInstruction.setSource(tokenisedCondition[bytePointer]);
+			currentInstruction.setDestination(1);
+			conditionalInstructions->push_back(currentInstruction);
+			currentInstruction = FCLInstruction(Token::UNKNOWN);
+			break;
 			break;
 
 		case 11: // end condition if a variable doesn't have a particular value

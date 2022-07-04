@@ -425,6 +425,9 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			case Token::ADDVAR:
 			executeIncrementVariable(instruction);
 			break;
+			case Token::SUBVAR:
+			executeDecrementVariable(instruction);
+			break;
 			case Token::GOTO:
 			executeGoto(instruction);
 			break;
@@ -454,6 +457,16 @@ void FreescapeEngine::executeIncrementVariable(FCLInstruction &instruction) {
 		debug("Score incremented by %d up to %d", increment, _gameState[variable]);
 	} else
 		debug("Variable %d by %d incremented up to %d!", variable, increment, _gameState[variable]);
+}
+
+void FreescapeEngine::executeDecrementVariable(FCLInstruction &instruction) {
+	uint16 variable = instruction.source;
+	uint16 decrement = instruction.destination;
+	_gameState[variable] = _gameState[variable] - decrement;
+	if (variable == k8bitVariableEnergy) {
+		debug("Energy decrement by %d up to %d", decrement, _gameState[variable]);
+	} else
+		debug("Variable %d by %d incremented up to %d!", variable, decrement, _gameState[variable]);
 }
 
 void FreescapeEngine::executeDestroy(FCLInstruction &instruction) {
