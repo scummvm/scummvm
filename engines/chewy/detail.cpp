@@ -313,7 +313,7 @@ void Detail::showStaticSpr(int16 nr) {
 
 void Detail::setStaticPos(int16 detNr, int16 x, int16 y, bool hideFl, bool correctionFlag) {
 	if (correctionFlag) {
-		int16 *Cxy = &_rdi.dptr->correction[_rdi.Sinfo[detNr].SprNr];
+		int16 *Cxy = &_rdi.dptr->correction[_rdi.Sinfo[detNr].SprNr * 2];
 		x += Cxy[0];
 		y += Cxy[1];
 	}
