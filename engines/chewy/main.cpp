@@ -419,6 +419,11 @@ void setupScreen(SetupScreenMode mode) {
 	int16 i;
 	int16 txt_nr;
 
+	if (_G(disableScreen)) {
+		EVENTS_UPDATE;
+		return;
+	}
+
 	bool isMainLoop = mode == DO_MAIN_LOOP;
 	if (isMainLoop)
 		mode = DO_SETUP;
