@@ -700,11 +700,11 @@ void MidiCombinerDynamic::doControlChange(uint sourceID, uint8 channel, uint8 pa
 		doDataEntry(sourceID, channel, kMSBMask, param2);
 		return;
 	} else if (param1 < 32) {
-		uint16 ctrl = ((sch._midiChannelState._hrControllers[param1 - 32] & kLSBMask) | ((param2 & 0x7f)) << 7);
+		uint16 ctrl = ((sch._midiChannelState._hrControllers[param1] & kLSBMask) | ((param2 & 0x7f)) << 7);
 		doHighRangeControlChange(sourceID, channel, param1, ctrl);
 		return;
 	} else if (param1 < 64) {
-		uint16 ctrl = ((sch._midiChannelState._hrControllers[param1] & kMSBMask) | (param2 & 0x7f));
+		uint16 ctrl = ((sch._midiChannelState._hrControllers[param1 - 32] & kMSBMask) | (param2 & 0x7f));
 		doHighRangeControlChange(sourceID, channel, param1 - 32, ctrl);
 		return;
 	} else if (param1 < 96) {
