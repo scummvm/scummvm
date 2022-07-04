@@ -54,8 +54,13 @@ static Image::JPEGDecoder *loadImage(const tString &filepath) {
 		error("Could not open file: %s", filepath.c_str());
 		return nullptr;
 	}
+#ifdef SCUMM_BIG_ENDIAN
+	Graphics::PixelFormat pixFmt(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#else
+	Graphics::PixelFormat pixFmt(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#endif
 	Image::JPEGDecoder *imgLoader = new Image::JPEGDecoder();
-	imgLoader->setOutputPixelFormat(g_system->getScreenFormat());
+	imgLoader->setOutputPixelFormat(pixFmt);
 	if (!imgLoader->loadStream(imgFile)) {
 		error("Could not load image at %s", filepath.c_str());
 	}
