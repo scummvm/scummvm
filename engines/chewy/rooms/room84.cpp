@@ -39,7 +39,7 @@ void Room84::entry() {
 	_G(zoom_mov_fak) = 3;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
-	_G(gameState).R84GoonsPresent = false;
+	_G(gameState).R84GoonsPresent = !_G(gameState).R88UsedMonkey;
 	_flag = false;
 	g_engine->_sound->playSound(0, 0);
 
@@ -49,7 +49,11 @@ void Room84::entry() {
 		_G(gameState).room_e_obj[124].Attribut = EXIT_TOP;
 		_G(atds)->setControlBit(478, ATS_ACTIVE_BIT);
 		_G(atds)->setControlBit(479, ATS_ACTIVE_BIT);
-		_G(atds)->set_ats_str(485, 1, ATS_DATA);	
+		_G(atds)->set_ats_str(485, 1, ATS_DATA);
+
+		_G(det)->showStaticSpr(7);
+		_G(atds)->delControlBit(481, ATS_ACTIVE_BIT);
+		_G(atds)->delControlBit(482, ATS_ACTIVE_BIT);
 	}
 
 	if (_G(gameState).flags32_10) {
@@ -57,12 +61,6 @@ void Room84::entry() {
 		_G(atds)->delControlBit(504, ATS_ACTIVE_BIT);
 		_G(gameState).room_e_obj[124].Attribut = 255;
 		_G(atds)->set_ats_str(485, 2, ATS_DATA);
-	}
-
-	if (_G(gameState).r88DestRoom == 84) {
-		_G(det)->showStaticSpr(7);
-		_G(atds)->delControlBit(481, ATS_ACTIVE_BIT);
-		_G(atds)->delControlBit(482, ATS_ACTIVE_BIT);
 	}
 
 	if (_G(gameState).flags32_40) {

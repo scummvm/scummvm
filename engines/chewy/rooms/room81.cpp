@@ -38,7 +38,8 @@ void Room81::entry() {
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	_G(gameState).DiaAMov = 0;
-	if (_G(gameState).r88DestRoom == 84) {
+
+	if (_G(gameState).R88UsedMonkey) {
 		_G(det)->showStaticSpr(0);
 		_G(atds)->delControlBit(488, ATS_ACTIVE_BIT);
 	}
