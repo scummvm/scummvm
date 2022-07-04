@@ -103,38 +103,19 @@ void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint
 	tglDisable(TGL_BLEND);
 }
 
-void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect,
-		Texture *texture, float transparency, bool additiveBlending) {
+void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture) {
 	const float sLeft = screenRect.left;
 	const float sTop = screenRect.top;
 	const float sWidth = screenRect.width();
 	const float sHeight = screenRect.height();
 
-	if (transparency >= 0.0) {
-		if (additiveBlending) {
-			tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE);
-		} else {
-			tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
-		}
-		tglEnable(TGL_BLEND);
-	} else {
-		transparency = 1.0;
-	}
-
 	// HACK: tglBlit is not affected by the viewport, so we offset the draw coordinates here
 	int viewPort[4];
 	tglGetIntegerv(TGL_VIEWPORT, viewPort);
 
-	tglEnable(TGL_TEXTURE_2D);
-	tglDepthMask(TGL_FALSE);
-
 	TinyGL::BlitTransform transform(sLeft + viewPort[0], sTop + viewPort[1]);
 	transform.sourceRectangle(textureRect.left, textureRect.top, sWidth, sHeight);
-	transform.tint(transparency);
 	tglBlit(((TinyGLTexture *)texture)->getBlitTexture(), transform);
-
-	tglDisable(TGL_BLEND);
-	tglDepthMask(TGL_TRUE);
 }
 
 void TinyGLRenderer::draw2DText(const Common::String &text, const Common::Point &position) {

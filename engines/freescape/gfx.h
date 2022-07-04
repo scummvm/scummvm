@@ -89,8 +89,7 @@ public:
 	virtual void freeTexture(Texture *texture) = 0;
 
 	virtual void drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) = 0;
-	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture,
-									float transparency = -1.0, bool additiveBlending = false) = 0;
+	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture) = 0;
 
 	virtual void draw2DText(const Common::String &text, const Common::Point &position) = 0;
 

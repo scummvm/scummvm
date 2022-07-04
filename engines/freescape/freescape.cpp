@@ -80,11 +80,7 @@ void FreescapeEngine::drawBorder() {
 	if (!_borderTexture)
 		_borderTexture = _gfx->createTexture(_border);
 	const Common::Rect rect(0, 0, _screenW, _screenH);
-
-	_gfx->drawTexturedRect2D(rect, rect, _borderTexture, 1.0, false);
-	// _gfx->flipBuffer();
-	// _system->updateScreen();
-	// _gfx->freeTexture(t);
+	_gfx->drawTexturedRect2D(rect, rect, _borderTexture);
 }
 
 void FreescapeEngine::loadAssets() {
@@ -149,7 +145,7 @@ void FreescapeEngine::loadAssets() {
 			// Courtyard -> 0x93c1 -> 0x8cbc,3
 			// Beds -> 0x867d
 			// All? -> 0x845d or 0x80ed?
-			load8bitBinary(file, 0x1000, 16);
+			load8bitBinary(file, 0x8465, 16);
 	   } else
 		error("'%s' is an invalid game", _targetName.c_str());
 
@@ -174,7 +170,7 @@ void FreescapeEngine::drawFrame() {
 	_gfx->positionCamera(_position, _position + _cameraFront);
 	_currentArea->draw(_gfx);
 	_gfx->renderCrossair(0);
-	//drawBorder();
+	drawBorder();
 }
 
 void FreescapeEngine::processInput() {
@@ -270,6 +266,17 @@ Common::Error FreescapeEngine::run() {
 	} else {
 		_farClipPlane = 8192.f;
 	}
+
+	drawBorder();
+	_gfx->flipBuffer();
+	g_system->updateScreen();
+	g_system->delayMillis(1000);
+
+	_borderTexture = nullptr;
+
+	Common::Rect viewArea(40, 16, 279, 116);
+	_border->fillRect(viewArea, 0xA0A0A0FF);
+
 	debug("Starting area %d", _currentArea->getAreaID());
 	while (!shouldQuit()) {
 		drawFrame();
