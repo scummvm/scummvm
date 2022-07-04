@@ -236,19 +236,27 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 		return nullptr;
 
 	// Check if we need to dither the image
-	if (g_director->_wm->_pixelformat.bytesPerPixel == 1 && _img->getSurface()->format.bytesPerPixel > 1) {
-		ditherFloydImage();
+	int dstBpp = g_director->_wm->_pixelformat.bytesPerPixel;
+	int srcBpp = _img->getSurface()->format.bytesPerPixel;
+	int palSize = g_director->_wm->getPaletteSize();
+
+	if (dstBpp == 1) {
+		if (srcBpp > 1 || (srcBpp == 1 &&
+			(palSize != _img->getPaletteColorCount()
+			|| memcmp(g_director->_wm->getPalette(), _img->getPalette(), palSize * 3)))) {
+			ditherFloydImage();
+		}
 	}
 
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 
 	// scale for drawing a different size sprite
-	copyStretchImg(widget->getSurface()->surfacePtr(), bbox);
+	copyStretchImg(widget->getSurface()->surfacePtr(), bbox, _img->getPalette());
 
 	return widget;
 }
 
-void BitmapCastMember::copyStretchImg(Graphics::Surface *surface, const Common::Rect &bbox) {
+void BitmapCastMember::copyStretchImg(Graphics::Surface *surface, const Common::Rect &bbox, const byte *pal) {
 	const Graphics::Surface *srcSurf;
 
 	if (_ditheredImg)
@@ -269,8 +277,24 @@ void BitmapCastMember::copyStretchImg(Graphics::Surface *surface, const Common::
 				}
 			} else {
 				for (int x = 0, scaleXCtr = 0; x < bbox.width(); x++, scaleXCtr += scaleX) {
-					const int *src = (const int *)srcSurf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD);
-					*(int *)surface->getBasePtr(x, y) = *src;
+					const void *ptr = srcSurf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD);
+					int32 color;
+
+					switch (srcSurf->format.bytesPerPixel) {
+					case 1:
+						{
+							color = *(const byte *)ptr * 3;
+							color = surface->format.RGBToColor(pal[color], pal[color + 1], pal[color + 2]);
+						}
+						break;
+					case 4:
+						color = *(const int32 *)ptr;
+						break;
+					default:
+						error("Unimplemented src bpp: %d", srcSurf->format.bytesPerPixel);
+					}
+
+					*(int32 *)surface->getBasePtr(x, y) = color;
 				}
 			}
 		}
