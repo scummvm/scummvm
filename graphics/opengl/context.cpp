@@ -257,10 +257,13 @@ void Context::initialize(ContextType contextType) {
 		warning("OpenGL: Unknown context initialized");
 	}
 
+	const char *glslVersionString = (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
+
 	// Log features supported by GL context.
 	debug(5, "OpenGL vendor: %s", glGetString(GL_VENDOR));
 	debug(5, "OpenGL renderer: %s", glGetString(GL_RENDERER));
 	debug(5, "OpenGL: version %d.%d", majorVersion, minorVersion);
+	debug(5, "OpenGL: GLSL version string: %s", glslVersionString ? glslVersionString : "<none>");
 	debug(5, "OpenGL: GLSL version: %d", glslVersion);
 	debug(5, "OpenGL: Max texture size: %d", maxTextureSize);
 	debug(5, "OpenGL: NPOT texture support: %d", NPOTSupported);
