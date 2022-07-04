@@ -19,7 +19,7 @@
 #include "freescape/gfx.h"
 #include "freescape/objects/geometricobject.h"
 #include "freescape/language/token.h"
-
+#include "freescape/language/8bitDetokeniser.h"
 
 namespace Freescape {
 
@@ -245,8 +245,10 @@ void FreescapeEngine::shoot() {
 }
 
 Common::Error FreescapeEngine::run() {
-	// Initialize graphics:
-	_gfx = Freescape::createRenderer(_system);
+	initGameState();
+
+	// Initialize graphics
+	_gfx = createRenderer(_system);
 	_gfx->init();
 	_gfx->clear();
 	loadAssets();
@@ -288,6 +290,15 @@ Common::Error FreescapeEngine::run() {
 	}
 
 	return Common::kNoError;
+}
+
+void FreescapeEngine::initGameState() {
+	/*for (int16 i = 0; i < 256; i++) {
+		_gameState[i] = 0;
+	}*/
+
+	_gameState[k8bitVariableEnergy] = 100;
+	_gameState[k8bitVariableShield] = 100;
 }
 
 void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos) {
@@ -411,6 +422,9 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			// else branch is always empty
 			assert(instruction.elseInstructions == nullptr);
 			break;
+			case Token::ADDVAR:
+			executeIncrementVariable(instruction);
+			break;
 			case Token::GOTO:
 			executeGoto(instruction);
 			break;
@@ -430,6 +444,16 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 		ip++;
 	}
 	return;
+}
+
+void FreescapeEngine::executeIncrementVariable(FCLInstruction &instruction) {
+	uint16 variable = instruction.source;
+	uint16 increment = instruction.destination;
+	_gameState[variable] = _gameState[variable] + increment;
+	if (variable == k8bitVariableScore) {
+		debug("Score incremented by %d up to %d", increment, _gameState[variable]);
+	} else
+		debug("Variable %d by %d incremented up to %d!", variable, increment, _gameState[variable]);
 }
 
 void FreescapeEngine::executeDestroy(FCLInstruction &instruction) {

@@ -16,10 +16,6 @@
 
 namespace Freescape {
 
-static const int k8bitVariableShield = 256;
-static const int k8bitVariableEnergy = 257;
-static const int k8bitVariableScore = 258;
-
 Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition, FCLInstructionVector &instructions) {
 	Common::String detokenisedStream;
 	Common::Array<uint8>::size_type bytePointer = 0;
@@ -99,18 +95,33 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 				(tokenisedCondition[bytePointer + 2] << 16);
 			detokenisedStream += "ADDVAR";
 			detokenisedStream += Common::String::format("(%d, v%d)", additionValue, k8bitVariableScore);
+			currentInstruction = FCLInstruction(Token::ADDVAR);
+			currentInstruction.setSource(k8bitVariableScore);
+			currentInstruction.setDestination(additionValue);
+			conditionalInstructions->push_back(currentInstruction);
+			currentInstruction = FCLInstruction(Token::UNKNOWN);
 			bytePointer += 3;
 			numberOfArguments = 0;
 		} break;
 		case 2: // add one-byte value to energy
 			detokenisedStream += "ADDVAR ";
 			detokenisedStream += Common::String::format("(%d, v%d)", (int)tokenisedCondition[bytePointer], k8bitVariableEnergy);
+			currentInstruction = FCLInstruction(Token::ADDVAR);
+			currentInstruction.setSource(k8bitVariableEnergy);
+			currentInstruction.setDestination(tokenisedCondition[bytePointer]);
+			conditionalInstructions->push_back(currentInstruction);
+			currentInstruction = FCLInstruction(Token::UNKNOWN);
 			bytePointer++;
 			numberOfArguments = 0;
 			break;
 		case 19: // add one-byte value to shield
 			detokenisedStream += "ADDVAR ";
 			detokenisedStream += Common::String::format("(%d, v%d)", (int)tokenisedCondition[bytePointer], k8bitVariableShield);
+			currentInstruction = FCLInstruction(Token::ADDVAR);
+			currentInstruction.setSource(k8bitVariableShield);
+			currentInstruction.setDestination(tokenisedCondition[bytePointer]);
+			conditionalInstructions->push_back(currentInstruction);
+			currentInstruction = FCLInstruction(Token::UNKNOWN);
 			bytePointer++;
 			numberOfArguments = 0;
 			break;
@@ -133,6 +144,11 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 
 		case 9:
 			detokenisedStream += "ADDVAR (1, v";
+			currentInstruction = FCLInstruction(Token::ADDVAR);
+			currentInstruction.setSource(tokenisedCondition[bytePointer]);
+			currentInstruction.setDestination(1);
+			conditionalInstructions->push_back(currentInstruction);
+			currentInstruction = FCLInstruction(Token::UNKNOWN);
 			break;
 		case 10:
 			detokenisedStream += "SUBVAR (1, v";
