@@ -206,6 +206,7 @@ public:
 					0, 0, 0, 0, 0, 0, 0, 0 };
 	CustomInfo _Ci;
 	GotoPkt _gpkt;
+	bool _disableScreen = false;
 
 	int16 _r45_pinfo[R45_MAX_PERSON][4] = {
 	   { 0, 4, 1490, 1500 },
