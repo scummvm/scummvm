@@ -1931,8 +1931,9 @@ bool MiniscriptThread::evaluateTruthOfResult(bool &isTrue) {
 		return false;
 	}
 
-	if (!dereferenceRValue(0, false)) {
-		this->error("Failed to dereference Miniscript RValue for truth evaluation");
+	MiniscriptInstructionOutcome outcome = dereferenceRValue(0, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue) {
+		this->error("Miniscript program result couldn't be dereferenced");
 		return false;
 	}
 
