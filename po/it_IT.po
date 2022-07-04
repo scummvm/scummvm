@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-04 06:00+0000\n"
-"PO-Revision-Date: 2022-06-15 16:07+0000\n"
-"Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
+"PO-Revision-Date: 2022-07-04 21:58+0000\n"
+"Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
 "Language: it_IT\n"
@@ -1518,8 +1518,6 @@ msgid "Icon Path:"
 msgstr "Icone:"
 
 #: gui/options.cpp:2307
-#, fuzzy
-#| msgid "Default"
 msgctxt "path"
 msgid "Default"
 msgstr "Predefinito"
@@ -4526,14 +4524,12 @@ msgstr ""
 "del mouse"
 
 #: engines/bladerunner/detection.cpp:108
-#, fuzzy
-#| msgid "Show subtitles and play speech"
 msgid "Show subtitles during text crawl"
-msgstr "Mostra i sottotitoli e attiva le voci"
+msgstr "Mostra sottotitoli durante l'introduzione"
 
 #: engines/bladerunner/detection.cpp:109
 msgid "During the intro cutscene, show subtitles during the text crawl"
-msgstr ""
+msgstr "Mostra i sottotitoli per la schermata testuale dell'introduzione"
 
 #: engines/bladerunner/detection_tables.h:96
 #: engines/bladerunner/detection_tables.h:107
@@ -4568,6 +4564,8 @@ msgid ""
 "Enhanced Edition not supported. Please, use the original files which are "
 "part of the release."
 msgstr ""
+"La versione di Blade Runner \"Enhanced Edition\" non è supportata. "
+"Cortesemente, utilizza i files presenti nella versione originale."
 
 #. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
 #: engines/bladerunner/metaengine.cpp:109
