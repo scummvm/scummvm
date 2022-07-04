@@ -136,8 +136,6 @@ private:
 	bool _isRetail;
 	bool _isEnglish;
 
-	bool _useDynamicMidi;
-
 	void unpackMacRetailInstaller(Common::Array<Common::SharedPtr<ProjectPersistentResource> > &persistentResources, Common::Array<FileIdentification> &files);
 	Common::SharedPtr<Obsidian::WordGameData> loadWinWordGameData();
 	Common::SharedPtr<Obsidian::WordGameData> loadMacWordGameData();
