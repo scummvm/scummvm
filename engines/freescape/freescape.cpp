@@ -74,7 +74,7 @@ FreescapeEngine::~FreescapeEngine() {
 }
 
 void FreescapeEngine::drawBorder() {
-	if (_border == nullptr)
+	if (!_border)
 		return;
 
 	if (!_borderTexture)
@@ -267,15 +267,16 @@ Common::Error FreescapeEngine::run() {
 		_farClipPlane = 8192.f;
 	}
 
-	drawBorder();
-	_gfx->flipBuffer();
-	g_system->updateScreen();
-	g_system->delayMillis(1000);
+	if (_border) {
+		drawBorder();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(1000);
 
-	_borderTexture = nullptr;
-
-	Common::Rect viewArea(40, 16, 279, 116);
-	_border->fillRect(viewArea, 0xA0A0A0FF);
+		_borderTexture = nullptr;
+		Common::Rect viewArea(40, 16, 279, 116);
+		_border->fillRect(viewArea, 0xA0A0A0FF);
+	}
 
 	debug("Starting area %d", _currentArea->getAreaID());
 	while (!shouldQuit()) {
