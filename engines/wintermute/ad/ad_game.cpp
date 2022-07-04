@@ -2505,7 +2505,7 @@ Wintermute::TShadowType AdGame::getMaxShadowType(Wintermute::BaseObject *object)
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::getLayerSize(int *layerWidth, int *layerHeight, Rect32 *viewport, bool *customViewport) {
 	if (_scene && _scene->_mainLayer) {
-		int portX, portY, portWidth, portHeight;
+		int32 portX, portY, portWidth, portHeight;
 		_scene->getViewportOffset(&portX, &portY);
 		_scene->getViewportSize(&portWidth, &portHeight);
 		*customViewport = _sceneViewport || _scene->_viewport;
