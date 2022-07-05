@@ -234,6 +234,54 @@ U32String punycode_decode(const String &src1) {
 
 	size_t di = src.findLastOf('-');
 
+	Common::String tail;
+
+	// Sometimes strings could contain garbage at the end, like '.zip' added
+	// We try to detect these tails and keep it as is
+
+	// First, try to chop off any extensions
+	size_t dotPos = src.findLastOf('.');
+
+	while (dotPos != String::npos && dotPos > di) {
+		tail = String(src.c_str() + dotPos) + tail;
+		src = String(src.c_str(), dotPos);
+		srclen = src.size();
+
+		dotPos = src.findLastOf('.');
+
+		debug(9, "punycode_decode: src is: '%s', tail is: '%s'", src.c_str(), tail.c_str());
+	}
+
+	// And now scan for the illegal characters as a whole
+	while (di != 0) {
+		bool noncode = false;
+
+		// Scan string to the end for illegal characters
+		for (size_t i = di + 1; i < srclen; i++) {
+			if (!((src[i] >= '0' && src[i] <= '9') || (src[i] >= 'a' && src[i] <= 'z'))) {
+				noncode = true;
+				break;
+			}
+		}
+
+		if (noncode) {
+			tail = String(src.c_str() + di) + tail;
+			src = String(src.c_str(), di);
+			srclen = src.size();
+
+			debug(9, "punycode_decode: src is: '%s', tail is: '%s'", src.c_str(), tail.c_str());
+
+			di = src.findLastOf('-');
+
+			if (di == String::npos) {
+				warning("punycode_decode: malformed string");
+				return src1;
+			}
+		} else {
+			break;
+		}
+	}
+
 	// If we have no '-', the entire string is non-ASCII character insertions.
 	if (di == String::npos)
 		di = 0;
@@ -312,6 +360,11 @@ U32String punycode_decode(const String &src1) {
 		dst = dst1;
 		i++;
 	}
+
+	// If we chopped off tail, readd it here
+	dst += tail;
+
+	debug(9, "punycode_decode: returning %s", Common::U32String(dst).encode().c_str());
 
 	return dst;
 }
