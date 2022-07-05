@@ -1794,6 +1794,10 @@ void TextLabelElement::render(Window *window) {
 			font = _runtime->getMacFontManager()->getFont(Graphics::MacFont(_macFontID, _size, slant, defaultUsage));
 		}
 
+		// Some weird cases (like the Immediate Action entryway in Obsidian) have no font info at all
+		if (!font)
+			font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+
 		int height = font->getFontHeight();
 		int ascent = font->getFontAscent();
 
