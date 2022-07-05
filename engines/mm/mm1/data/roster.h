@@ -23,7 +23,7 @@
 #define MM1_DATA_ROSTER_H
 
 #include "common/serializer.h"
-#include "mm/mm1/data/char.h"
+#include "mm/mm1/data/character.h"
 #include "mm/mm1/maps/maps.h"
 
 namespace MM {

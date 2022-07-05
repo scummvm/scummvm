@@ -22,7 +22,7 @@
 #ifndef MM1_VIEWS_LOCATIONS_MARKET_H
 #define MM1_VIEWS_LOCATIONS_MARKET_H
 
-#include "mm/mm1/data/char.h"
+#include "mm/mm1/data/character.h"
 #include "mm/mm1/views/locations/location.h"
 #include "mm/mm1/data/locations.h"
 
