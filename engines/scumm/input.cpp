@@ -397,6 +397,8 @@ void ScummEngine::processInput() {
 
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
+	char tempStr[64];
+
 	// F1 (the trigger for the original save/load dialog) is mapped to F5,
 	// unless we chose to use the original GUI.
 	if (!(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F1 && lastKeyHit.hasFlags(0)) {
@@ -451,7 +453,8 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 	if (isUsingOriginalGUI() &&
 		(lastKeyHit.keycode == Common::KEYCODE_c && lastKeyHit.hasFlags(Common::KBD_CTRL))) {
 		if (_game.features & GF_DEMO) {
-			Common::KeyState ks = showBannerAndPause(0, -1, d.getPlainEngineString(6));
+			// "Are you sure you want to quit?  (Y-N)"
+			Common::KeyState ks = showBannerAndPause(0, -1, d.getPlainEngineString(30));
 			if (ks.keycode == Common::KEYCODE_y) {
 				quitGame();
 			}
@@ -502,6 +505,137 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 		int curBufferCount = _imuseDigital->roundRobinSetBufferCount();
 		// "iMuse buffer count changed to %d"
 		showBannerAndPause(0, 90, d.getPlainEngineString(25), curBufferCount);
+		return;
+	}
+
+	// "Music Volume  Low  =========  High"
+	if (isUsingOriginalGUI() &&
+		(lastKeyHit.keycode == Common::KEYCODE_o || lastKeyHit.keycode == Common::KEYCODE_p)) {
+		Common::KeyState ks = lastKeyHit;
+
+		int volume = _imuseDigital->diMUSEGetMusicGroupVol();
+		do {
+			if (ks.keycode == Common::KEYCODE_o) {
+				volume -= 16;
+				if (volume < 0)
+					volume = 0;
+			} else {
+				volume += 16;
+				if (volume > 127)
+					volume = 127;
+			}
+
+			strcpy_s(tempStr, d.getPlainEngineString(32));
+			char *ptrToChar = strchr(tempStr, '=');
+			memset(ptrToChar, '\v', 9);
+			ptrToChar[volume / 15] = '\f';
+
+			showBannerAndPause(0, 0, tempStr);
+			ks = Common::KEYCODE_INVALID;
+			bool leftBtnPressed = false, rightBtnPressed = false;
+			waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+		} while (ks.keycode == Common::KEYCODE_o || ks.keycode == Common::KEYCODE_p);
+		clearBanner();
+		_imuseDigital->diMUSESetMusicGroupVol(volume);
+		return;
+	}
+
+	// "Voice Volume  Low  =========  High"
+	if (isUsingOriginalGUI() &&
+		(lastKeyHit.keycode == Common::KEYCODE_k || lastKeyHit.keycode == Common::KEYCODE_l)) {
+		Common::KeyState ks = lastKeyHit;
+
+		int volume = _imuseDigital->diMUSEGetVoiceGroupVol();
+		do {
+			if (ks.keycode == Common::KEYCODE_k) {
+				volume -= 16;
+				if (volume < 0)
+					volume = 0;
+			} else {
+				volume += 16;
+				if (volume > 127)
+					volume = 127;
+			}
+
+			strcpy_s(tempStr, d.getPlainEngineString(33));
+			char *ptrToChar = strchr(tempStr, '=');
+			memset(ptrToChar, '\v', 9);
+			ptrToChar[volume / 15] = '\f';
+
+			showBannerAndPause(0, 0, tempStr);
+			ks = Common::KEYCODE_INVALID;
+			bool leftBtnPressed = false, rightBtnPressed = false;
+			waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+		} while (ks.keycode == Common::KEYCODE_k || ks.keycode == Common::KEYCODE_l);
+		clearBanner();
+		_imuseDigital->diMUSESetVoiceGroupVol(volume);
+		return;
+	}
+
+	// "Sfx Volume  Low  =========  High"
+	if (isUsingOriginalGUI() &&
+		(lastKeyHit.keycode == Common::KEYCODE_n || lastKeyHit.keycode == Common::KEYCODE_m)) {
+		Common::KeyState ks = lastKeyHit;
+
+		int volume = _imuseDigital->diMUSEGetSFXGroupVol();
+		do {
+			if (ks.keycode == Common::KEYCODE_n) {
+				volume -= 16;
+				if (volume < 0)
+					volume = 0;
+			} else {
+				volume += 16;
+				if (volume > 127)
+					volume = 127;
+			}
+
+			strcpy_s(tempStr, d.getPlainEngineString(34));
+			char *ptrToChar = strchr(tempStr, '=');
+			memset(ptrToChar, '\v', 9);
+			ptrToChar[volume / 15] = '\f';
+
+			showBannerAndPause(0, 0, tempStr);
+			ks = Common::KEYCODE_INVALID;
+			bool leftBtnPressed = false, rightBtnPressed = false;
+			waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+		} while (ks.keycode == Common::KEYCODE_n || ks.keycode == Common::KEYCODE_m);
+		clearBanner();
+		_imuseDigital->diMUSESetSFXGroupVol(volume);
+		return;
+	}
+
+	// "Text Speed  Slow  ==========  Fast"
+	if (isUsingOriginalGUI() &&
+		(lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-')) {
+		if (VAR_CHARINC == 0xFF)
+			return;
+
+		Common::KeyState ks = lastKeyHit;
+
+		int volume = _imuseDigital->diMUSEGetSFXGroupVol();
+		do {
+			if (ks.ascii == '+') {
+				VAR(VAR_CHARINC) -= 1;
+				if (VAR(VAR_CHARINC) < 0)
+					VAR(VAR_CHARINC) = 0;
+			} else {
+				VAR(VAR_CHARINC) += 1;
+				if (VAR(VAR_CHARINC) > 9)
+					VAR(VAR_CHARINC) = 9;
+			}
+
+			strcpy_s(tempStr, d.getPlainEngineString(31));
+			char *ptrToChar = strchr(tempStr, '=');
+			memset(ptrToChar, '\v', 10);
+			ptrToChar[9 - VAR(VAR_CHARINC)] = '\f';
+
+			showBannerAndPause(0, 0, tempStr);
+			ks = Common::KEYCODE_INVALID;
+			bool leftBtnPressed = false, rightBtnPressed = false;
+			waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+		} while (ks.ascii == '+' || ks.ascii == '-');
+		clearBanner();
+		_imuseDigital->diMUSESetSFXGroupVol(volume);
 		return;
 	}
 
