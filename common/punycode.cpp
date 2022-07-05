@@ -48,7 +48,7 @@
 
 namespace Common {
 
-/* punycode parameters, see https://datatracker.ietf.org/doc/html/rfc3492#section-5 */
+// punycode parameters, see https://datatracker.ietf.org/doc/html/rfc3492#section-5
 #define BASE 36
 #define TMIN 1
 #define TMAX 26
@@ -66,7 +66,7 @@ static uint32 adapt_bias(uint32 delta, unsigned n_points, int is_first) {
 	delta /= is_first ? DAMP : 2;
 	delta += delta / n_points;
 
-	/* while delta > 455: delta /= 35 */
+	// while delta > 455: delta /= 35
 	for (k = 0; delta > ((BASE - TMIN) * TMAX) / 2; k += BASE) {
 		delta /= (BASE - TMIN);
 	}
@@ -77,13 +77,13 @@ static uint32 adapt_bias(uint32 delta, unsigned n_points, int is_first) {
 static char encode_digit(int c) {
 	assert(c >= 0 && c <= BASE - TMIN);
 	if (c > 25) {
-		return c + 22; /* '0'..'9' */
+		return c + 22; // '0'..'9'
 	} else {
-		return c + 0x61; /* 'a'..'z' */
+		return c + 0x61; // 'a'..'z'
 	}
 }
 
-/* Encode as a generalized variable-length integer. Returns number of bytes written. */
+// Encode as a generalized variable-length integer. Returns number of bytes written.
 static String encode_var_int(const size_t bias, const size_t delta) {
 	size_t k, q, t;
 	String dst;
@@ -164,7 +164,7 @@ String punycode_encode(const U32String &src) {
 	size_t m;
 
 	for (; h < srclen; n++, delta++) {
-		/* Find next smallest non-basic code point. */
+		// Find next smallest non-basic code point.
 		for (m = SMAX, si = 0; si < srclen; si++) {
 			if (src[si] >= n && src[si] < m) {
 				m = src[si];
@@ -172,7 +172,7 @@ String punycode_encode(const U32String &src) {
 		}
 
 		if ((m - n) > (SMAX - delta) / (h + 1)) {
-			/* OVERFLOW */
+			// OVERFLOW
 			warning("punycode_encode: overflow1");
 			return src;
 		}
@@ -183,7 +183,7 @@ String punycode_encode(const U32String &src) {
 		for (si = 0; si < srclen; si++) {
 			if (src[si] < n) {
 				if (++delta == 0) {
-					/* OVERFLOW */
+					// OVERFLOW
 					warning("punycode_encode: overflow2");
 					return src;
 				}
@@ -196,7 +196,7 @@ String punycode_encode(const U32String &src) {
 		}
 	}
 
-	/* Return how many Unicode code points were converted. */
+	// Return how many Unicode code points were converted.
 	return dst;
 }
 
@@ -225,7 +225,7 @@ U32String punycode_decode(const String &src1) {
 	String src(&src1.c_str()[4]); // Skip the prefix for simplification
 	int srclen = src.size();
 
-	/* Ensure that the input contains only ASCII characters. */
+	// Ensure that the input contains only ASCII characters.
 	for (int si = 0; si < srclen; si++) {
 		if (src[si] & 0x80) {
 			return src1;
@@ -266,7 +266,7 @@ U32String punycode_decode(const String &src1) {
 			}
 
 			if (digit > (SMAX - i) / w) {
-				/* OVERFLOW */
+				// OVERFLOW
 				warning("punycode_decode: overflow1");
 				return src1;
 			}
@@ -287,7 +287,7 @@ U32String punycode_decode(const String &src1) {
 			}
 
 			if (w > SMAX / (BASE - t)) {
-				/* OVERFLOW */
+				// OVERFLOW
 				warning("punycode_decode: overflow2");
 				return src1;
 			}
@@ -298,7 +298,7 @@ U32String punycode_decode(const String &src1) {
 		bias = adapt_bias(i - org_i, di + 1, org_i == 0);
 
 		if (i / (di + 1) > SMAX - n) {
-			/* OVERFLOW */
+			// OVERFLOW
 				warning("punycode_decode: overflow3");
 			return src1;
 		}
