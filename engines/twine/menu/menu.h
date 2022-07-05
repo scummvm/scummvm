@@ -239,7 +239,7 @@ public:
 	int32 optionsMenu();
 
 	/** Process hero behaviour menu */
-	void processBehaviourMenu();
+	void processBehaviourMenu(bool behaviourMenu);
 
 	int32 newGameClassicMenu();
 
