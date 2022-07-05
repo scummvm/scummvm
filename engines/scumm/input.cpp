@@ -397,250 +397,237 @@ void ScummEngine::processInput() {
 
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
-	char tempStr[64];
+	if (isUsingOriginalGUI()) {
+		// Set up an InfoDialog object for fetching the internal strings.
+		InfoDialog d(this, 0);
+		char tempStr[64];
 
-	// F1 (the trigger for the original save/load dialog) is mapped to F5,
-	// unless we chose to use the original GUI.
-	if (!(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F1 && lastKeyHit.hasFlags(0)) {
-		if (isUsingOriginalGUI()) {
+		// Main menu (allow both F1 and F5) mapping; unlike in
+		// the past we choose not to enable it without the
+		// original GUI selected as an option
+		if (!(_game.features & GF_DEMO) &&
+			(lastKeyHit.keycode == Common::KEYCODE_F1 || lastKeyHit.keycode == Common::KEYCODE_F5) &&
+			lastKeyHit.hasFlags(0)) {
 			lastKeyHit = Common::KeyState(Common::KEYCODE_F1, 315);
-		} else {
-			lastKeyHit = Common::KeyState(Common::KEYCODE_F5, 319);
-		}
-	}
-
-	// If we are using the original GUI, remap F5 to F1.
-	if (isUsingOriginalGUI() && lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(0)) {
-		lastKeyHit = Common::KeyState(Common::KEYCODE_F1, 315);
-	}
-
-	// Alt-F5 should bring up the original save/load dialog, so map it to F1,
-	// again, unless we chose to use the original GUI.
-	if (!isUsingOriginalGUI() && lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(Common::KBD_ALT)) {
-		lastKeyHit = Common::KeyState(Common::KEYCODE_F1, 315);
-	}
-
-	// If a key script was specified (a V8 feature), and it's trigger
-	// key was pressed, run it. Usually used to display the built-in menu.
-	if (!(_game.features & GF_DEMO) && !isSmushActive() && _keyScriptNo && (_keyScriptKey == lastKeyHit.ascii)) {
-		runScript(_keyScriptNo, 0, 0, 0);
-		return;
-	}
-
-	// Set up an InfoDialog object for fetching the internal strings.
-	InfoDialog d(this, 0);
-
-	if (isUsingOriginalGUI() && lastKeyHit.keycode == VAR(VAR_PAUSE_KEY)) {
-		// Force the cursor OFF...
-		int8 oldCursorState = _cursor.state;
-		_cursor.state = 0;
-		CursorMan.showMouse(_cursor.state > 0);
-		// "Game Paused.  Press SPACE to Continue."
-		showBannerAndPause(0, -1, d.getPlainEngineString(4));
-		_cursor.state = oldCursorState;
-		return;
-	}
-
-	if (isUsingOriginalGUI() && VAR(VAR_VERSION_KEY) != 0 &&
-		lastKeyHit.keycode == Common::KEYCODE_v && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
-		showBannerAndPause(0, -1, _dataFileVersionString);
-		// This is not the string being used by the interpreter, which is instead hardcoded
-		// in the executable. The one used here is found in the data files.
-		showBannerAndPause(0, -1, _engineVersionString);
-		return;
-	}
-
-	if (isUsingOriginalGUI() &&
-		(lastKeyHit.keycode == Common::KEYCODE_c && lastKeyHit.hasFlags(Common::KBD_CTRL))) {
-		if (_game.features & GF_DEMO) {
-			// "Are you sure you want to quit?  (Y-N)"
-			Common::KeyState ks = showBannerAndPause(0, -1, d.getPlainEngineString(30));
-			if (ks.keycode == Common::KEYCODE_y) {
-				quitGame();
-			}
-		} else {
-			// Force the cursor to be ON...
-			int8 oldCursorState = _cursor.state;
-			_cursor.state = 1;
-			CursorMan.showMouse(_cursor.state > 0);
-
-			confirmExitDialog();
-
-			// Restore the old cursor state...
-			_cursor.state = oldCursorState;
-			CursorMan.showMouse(_cursor.state > 0);
 		}
 
-		return;
-	}
-
-	if (isUsingOriginalGUI() &&
-		(lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.hasFlags(Common::KBD_CTRL))) {
-		int voiceMode = VAR(VAR_VOICE_MODE);
-
-		voiceMode++;
-		if (voiceMode >= 3) {
-			voiceMode = 0;
-		}
-
-		switch (voiceMode) {
-		case 0: // "Voice Only"
-			showBannerAndPause(0, 120, d.getPlainEngineString(28));
-			break;
-		case 1: // "Voice and Text"
-			showBannerAndPause(0, 120, d.getPlainEngineString(26));
-			break;
-		default: // "Text Display Only"
-			showBannerAndPause(0, 120, d.getPlainEngineString(27));
-		}
-
-		ConfMan.setInt("original_gui_text_status", voiceMode);
-		ConfMan.flushToDisk();
-		syncSoundSettings();
-		return;
-	}
-
-	if (isUsingOriginalGUI() &&
-		(lastKeyHit.keycode == Common::KEYCODE_b && lastKeyHit.hasFlags(Common::KBD_CTRL))) {
-		int curBufferCount = _imuseDigital->roundRobinSetBufferCount();
-		// "iMuse buffer count changed to %d"
-		showBannerAndPause(0, 90, d.getPlainEngineString(25), curBufferCount);
-		return;
-	}
-
-	// "Music Volume  Low  =========  High"
-	if (isUsingOriginalGUI() &&
-		(lastKeyHit.keycode == Common::KEYCODE_o || lastKeyHit.keycode == Common::KEYCODE_p)) {
-		Common::KeyState ks = lastKeyHit;
-
-		int volume = _imuseDigital->diMUSEGetMusicGroupVol();
-		do {
-			if (ks.keycode == Common::KEYCODE_o) {
-				volume -= 16;
-				if (volume < 0)
-					volume = 0;
-			} else {
-				volume += 16;
-				if (volume > 127)
-					volume = 127;
-			}
-
-			strcpy(tempStr, d.getPlainEngineString(32));
-			char *ptrToChar = strchr(tempStr, '=');
-			memset(ptrToChar, '\v', 9);
-			ptrToChar[volume / 15] = '\f';
-
-			showBannerAndPause(0, 0, tempStr);
-			ks = Common::KEYCODE_INVALID;
-			bool leftBtnPressed = false, rightBtnPressed = false;
-			waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
-		} while (ks.keycode == Common::KEYCODE_o || ks.keycode == Common::KEYCODE_p);
-		clearBanner();
-		_imuseDigital->diMUSESetMusicGroupVol(volume);
-		return;
-	}
-
-	// "Voice Volume  Low  =========  High"
-	if (isUsingOriginalGUI() &&
-		(lastKeyHit.keycode == Common::KEYCODE_k || lastKeyHit.keycode == Common::KEYCODE_l)) {
-		Common::KeyState ks = lastKeyHit;
-
-		int volume = _imuseDigital->diMUSEGetVoiceGroupVol();
-		do {
-			if (ks.keycode == Common::KEYCODE_k) {
-				volume -= 16;
-				if (volume < 0)
-					volume = 0;
-			} else {
-				volume += 16;
-				if (volume > 127)
-					volume = 127;
-			}
-
-			strcpy(tempStr, d.getPlainEngineString(33));
-			char *ptrToChar = strchr(tempStr, '=');
-			memset(ptrToChar, '\v', 9);
-			ptrToChar[volume / 15] = '\f';
-
-			showBannerAndPause(0, 0, tempStr);
-			ks = Common::KEYCODE_INVALID;
-			bool leftBtnPressed = false, rightBtnPressed = false;
-			waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
-		} while (ks.keycode == Common::KEYCODE_k || ks.keycode == Common::KEYCODE_l);
-		clearBanner();
-		_imuseDigital->diMUSESetVoiceGroupVol(volume);
-		return;
-	}
-
-	// "Sfx Volume  Low  =========  High"
-	if (isUsingOriginalGUI() &&
-		(lastKeyHit.keycode == Common::KEYCODE_n || lastKeyHit.keycode == Common::KEYCODE_m)) {
-		Common::KeyState ks = lastKeyHit;
-
-		int volume = _imuseDigital->diMUSEGetSFXGroupVol();
-		do {
-			if (ks.keycode == Common::KEYCODE_n) {
-				volume -= 16;
-				if (volume < 0)
-					volume = 0;
-			} else {
-				volume += 16;
-				if (volume > 127)
-					volume = 127;
-			}
-
-			strcpy(tempStr, d.getPlainEngineString(34));
-			char *ptrToChar = strchr(tempStr, '=');
-			memset(ptrToChar, '\v', 9);
-			ptrToChar[volume / 15] = '\f';
-
-			showBannerAndPause(0, 0, tempStr);
-			ks = Common::KEYCODE_INVALID;
-			bool leftBtnPressed = false, rightBtnPressed = false;
-			waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
-		} while (ks.keycode == Common::KEYCODE_n || ks.keycode == Common::KEYCODE_m);
-		clearBanner();
-		_imuseDigital->diMUSESetSFXGroupVol(volume);
-		return;
-	}
-
-	// "Text Speed  Slow  ==========  Fast"
-	if (isUsingOriginalGUI() &&
-		(lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-')) {
-		if (VAR_CHARINC == 0xFF)
+		// Actually show the main menu screen...
+		if (!(_game.features & GF_DEMO) && !isSmushActive() && _keyScriptNo && (_keyScriptKey == lastKeyHit.ascii)) {
+			runScript(_keyScriptNo, 0, 0, 0);
 			return;
+		}
 
-		Common::KeyState ks = lastKeyHit;
+		if (lastKeyHit.keycode == VAR(VAR_PAUSE_KEY)) {
+			// Force the cursor OFF...
+			int8 oldCursorState = _cursor.state;
+			_cursor.state = 0;
+			CursorMan.showMouse(_cursor.state > 0);
+			// "Game Paused.  Press SPACE to Continue."
+			showBannerAndPause(0, -1, d.getPlainEngineString(4));
+			_cursor.state = oldCursorState;
+			return;
+		}
 
-		int volume = _imuseDigital->diMUSEGetSFXGroupVol();
-		do {
-			if (ks.ascii == '+') {
-				VAR(VAR_CHARINC) -= 1;
-				if (VAR(VAR_CHARINC) < 0)
-					VAR(VAR_CHARINC) = 0;
+		if (VAR(VAR_VERSION_KEY) != 0 &&
+			lastKeyHit.keycode == Common::KEYCODE_v && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+			showBannerAndPause(0, -1, _dataFileVersionString);
+			// This is not the string being used by the interpreter, which is instead hardcoded
+			// in the executable. The one used here is found in the data files.
+			showBannerAndPause(0, -1, _engineVersionString);
+			return;
+		}
+
+		if (lastKeyHit.keycode == Common::KEYCODE_c && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+			if (_game.features & GF_DEMO) {
+				// "Are you sure you want to quit?  (Y-N)"
+				Common::KeyState ks = showBannerAndPause(0, -1, d.getPlainEngineString(30));
+				if (ks.keycode == Common::KEYCODE_y) {
+					quitGame();
+				}
 			} else {
-				VAR(VAR_CHARINC) += 1;
-				if (VAR(VAR_CHARINC) > 9)
-					VAR(VAR_CHARINC) = 9;
+				// Force the cursor to be ON...
+				int8 oldCursorState = _cursor.state;
+				_cursor.state = 1;
+				CursorMan.showMouse(_cursor.state > 0);
+
+				confirmExitDialog();
+
+				// Restore the old cursor state...
+				_cursor.state = oldCursorState;
+				CursorMan.showMouse(_cursor.state > 0);
+			}
+			return;
+		}
+
+		if (lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+			int voiceMode = VAR(VAR_VOICE_MODE);
+
+			voiceMode++;
+			if (voiceMode >= 3) {
+				voiceMode = 0;
 			}
 
-			strcpy(tempStr, d.getPlainEngineString(31));
-			char *ptrToChar = strchr(tempStr, '=');
-			memset(ptrToChar, '\v', 10);
-			ptrToChar[9 - VAR(VAR_CHARINC)] = '\f';
+			switch (voiceMode) {
+			case 0: // "Voice Only"
+				showBannerAndPause(0, 120, d.getPlainEngineString(28));
+				break;
+			case 1: // "Voice and Text"
+				showBannerAndPause(0, 120, d.getPlainEngineString(26));
+				break;
+			default: // "Text Display Only"
+				showBannerAndPause(0, 120, d.getPlainEngineString(27));
+			}
 
-			showBannerAndPause(0, 0, tempStr);
-			ks = Common::KEYCODE_INVALID;
-			bool leftBtnPressed = false, rightBtnPressed = false;
-			waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
-		} while (ks.ascii == '+' || ks.ascii == '-');
-		clearBanner();
-		_imuseDigital->diMUSESetSFXGroupVol(volume);
-		return;
+			ConfMan.setInt("original_gui_text_status", voiceMode);
+			ConfMan.flushToDisk();
+			syncSoundSettings();
+			return;
+		}
+
+		if (lastKeyHit.keycode == Common::KEYCODE_b && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+			int curBufferCount = _imuseDigital->roundRobinSetBufferCount();
+			// "iMuse buffer count changed to %d"
+			showBannerAndPause(0, 90, d.getPlainEngineString(25), curBufferCount);
+			return;
+		}
+
+		// "Music Volume  Low  =========  High"
+		if (isUsingOriginalGUI() &&
+			(lastKeyHit.keycode == Common::KEYCODE_o || lastKeyHit.keycode == Common::KEYCODE_p)) {
+			Common::KeyState ks = lastKeyHit;
+
+			int volume = _imuseDigital->diMUSEGetMusicGroupVol();
+			do {
+				if (ks.keycode == Common::KEYCODE_o) {
+					volume -= 16;
+					if (volume < 0)
+						volume = 0;
+				} else {
+					volume += 16;
+					if (volume > 127)
+						volume = 127;
+				}
+
+				strcpy(tempStr, d.getPlainEngineString(32));
+				char *ptrToChar = strchr(tempStr, '=');
+				memset(ptrToChar, '\v', 9);
+				ptrToChar[volume / 15] = '\f';
+
+				showBannerAndPause(0, 0, tempStr);
+				ks = Common::KEYCODE_INVALID;
+				bool leftBtnPressed = false, rightBtnPressed = false;
+				waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+			} while (ks.keycode == Common::KEYCODE_o || ks.keycode == Common::KEYCODE_p);
+			clearBanner();
+			_imuseDigital->diMUSESetMusicGroupVol(volume);
+			return;
+		}
+
+		// "Voice Volume  Low  =========  High"
+		if (lastKeyHit.keycode == Common::KEYCODE_k || lastKeyHit.keycode == Common::KEYCODE_l) {
+			Common::KeyState ks = lastKeyHit;
+
+			int volume = _imuseDigital->diMUSEGetVoiceGroupVol();
+			do {
+				if (ks.keycode == Common::KEYCODE_k) {
+					volume -= 16;
+					if (volume < 0)
+						volume = 0;
+				} else {
+					volume += 16;
+					if (volume > 127)
+						volume = 127;
+				}
+
+				strcpy(tempStr, d.getPlainEngineString(33));
+				char *ptrToChar = strchr(tempStr, '=');
+				memset(ptrToChar, '\v', 9);
+				ptrToChar[volume / 15] = '\f';
+
+				showBannerAndPause(0, 0, tempStr);
+				ks = Common::KEYCODE_INVALID;
+				bool leftBtnPressed = false, rightBtnPressed = false;
+				waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+			} while (ks.keycode == Common::KEYCODE_k || ks.keycode == Common::KEYCODE_l);
+			clearBanner();
+			_imuseDigital->diMUSESetVoiceGroupVol(volume);
+			return;
+		}
+
+		// "Sfx Volume  Low  =========  High"
+		if (lastKeyHit.keycode == Common::KEYCODE_n || lastKeyHit.keycode == Common::KEYCODE_m) {
+			Common::KeyState ks = lastKeyHit;
+
+			int volume = _imuseDigital->diMUSEGetSFXGroupVol();
+			do {
+				if (ks.keycode == Common::KEYCODE_n) {
+					volume -= 16;
+					if (volume < 0)
+						volume = 0;
+				} else {
+					volume += 16;
+					if (volume > 127)
+						volume = 127;
+				}
+
+				strcpy(tempStr, d.getPlainEngineString(34));
+				char *ptrToChar = strchr(tempStr, '=');
+				memset(ptrToChar, '\v', 9);
+				ptrToChar[volume / 15] = '\f';
+
+				showBannerAndPause(0, 0, tempStr);
+				ks = Common::KEYCODE_INVALID;
+				bool leftBtnPressed = false, rightBtnPressed = false;
+				waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+			} while (ks.keycode == Common::KEYCODE_n || ks.keycode == Common::KEYCODE_m);
+			clearBanner();
+			_imuseDigital->diMUSESetSFXGroupVol(volume);
+			return;
+		}
+
+		// "Text Speed  Slow  ==========  Fast"
+		if (lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-') {
+			if (VAR_CHARINC == 0xFF)
+				return;
+
+			Common::KeyState ks = lastKeyHit;
+
+			int volume = _imuseDigital->diMUSEGetSFXGroupVol();
+			do {
+				if (ks.ascii == '+') {
+					VAR(VAR_CHARINC) -= 1;
+					if (VAR(VAR_CHARINC) < 0)
+						VAR(VAR_CHARINC) = 0;
+				} else {
+					VAR(VAR_CHARINC) += 1;
+					if (VAR(VAR_CHARINC) > 9)
+						VAR(VAR_CHARINC) = 9;
+				}
+
+				strcpy(tempStr, d.getPlainEngineString(31));
+				char *ptrToChar = strchr(tempStr, '=');
+				memset(ptrToChar, '\v', 10);
+				ptrToChar[9 - VAR(VAR_CHARINC)] = '\f';
+
+				showBannerAndPause(0, 0, tempStr);
+				ks = Common::KEYCODE_INVALID;
+				bool leftBtnPressed = false, rightBtnPressed = false;
+				waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+			} while (ks.ascii == '+' || ks.ascii == '-');
+			clearBanner();
+			_imuseDigital->diMUSESetSFXGroupVol(volume);
+			return;
+		}
+	}
+
+	// F1 (the trigger for the original save/load dialog) is mapped to F5
+	if (!(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F1 && lastKeyHit.hasFlags(0)) {
+		lastKeyHit = Common::KeyState(Common::KEYCODE_F5, 319);
 	}
 
 	// Fall back to V7 behavior...
 	ScummEngine_v7::processKeyboard(lastKeyHit);
+
 }
 
 void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
