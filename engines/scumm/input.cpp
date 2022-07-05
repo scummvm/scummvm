@@ -525,7 +525,7 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 					volume = 127;
 			}
 
-			strcpy_s(tempStr, d.getPlainEngineString(32));
+			strcpy(tempStr, d.getPlainEngineString(32));
 			char *ptrToChar = strchr(tempStr, '=');
 			memset(ptrToChar, '\v', 9);
 			ptrToChar[volume / 15] = '\f';
@@ -557,7 +557,7 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 					volume = 127;
 			}
 
-			strcpy_s(tempStr, d.getPlainEngineString(33));
+			strcpy(tempStr, d.getPlainEngineString(33));
 			char *ptrToChar = strchr(tempStr, '=');
 			memset(ptrToChar, '\v', 9);
 			ptrToChar[volume / 15] = '\f';
@@ -589,7 +589,7 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 					volume = 127;
 			}
 
-			strcpy_s(tempStr, d.getPlainEngineString(34));
+			strcpy(tempStr, d.getPlainEngineString(34));
 			char *ptrToChar = strchr(tempStr, '=');
 			memset(ptrToChar, '\v', 9);
 			ptrToChar[volume / 15] = '\f';
@@ -624,7 +624,7 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 					VAR(VAR_CHARINC) = 9;
 			}
 
-			strcpy_s(tempStr, d.getPlainEngineString(31));
+			strcpy(tempStr, d.getPlainEngineString(31));
 			char *ptrToChar = strchr(tempStr, '=');
 			memset(ptrToChar, '\v', 10);
 			ptrToChar[9 - VAR(VAR_CHARINC)] = '\f';
