@@ -416,33 +416,142 @@ void BitmapCastMember::ditherFloydImage() {
 	pal = g_director->_wm->getPalette();
 
 	struct DitherParams {
-		int dx, dy, qq, qdiv;
+		int dy, dx, qq;
 	};
 
 	DitherParams paramsNaive[] = {
-		{  0, 0, 0, 0 }
+		{ 0, 0, 0 }
 	};
 
 	DitherParams paramsFloyd[] = {
-		{ +1,  0, 7, 16 },
-		{ -1, +1, 3, 16 },
-		{  0, +1, 5, 16 },
-		{ +1, +1, 1, 16 },
-		{  0,  0, 0,  0 }
+		{ 0, +1, 7 },
+		{ 1, -1, 3 },
+		{ 1,  0, 5 },
+		{ 1, +1, 1 },
+		{ 0,  0, 0 }
 	};
+
+	DitherParams paramsAtkinson[] = {
+		{ 0, +1, 1 },
+		{ 0, +2, 1 },
+		{ 1, -1, 1 },
+		{ 1,  0, 1 },
+		{ 1, +1, 1 },
+		{ 2,  0, 1 },
+		{ 0,  0, 0 }
+	};
+
+	DitherParams paramsBurkes[] = {
+		{ 0, +1, 8 },
+		{ 0, +2, 4 },
+		{ 1, -2, 2 },
+		{ 1, -1, 4 },
+		{ 1,  0, 8 },
+		{ 1, +1, 4 },
+		{ 1, +2, 2 },
+		{ 0,  0, 0 }
+	};
+
+	DitherParams paramsFalseFloyd[] = {
+		{ 0, +1, 3 },
+		{ 1,  0, 3 },
+		{ 1, +1, 2 },
+		{ 0,  0, 0 }
+	};
+
+    DitherParams paramsSierra[] = {
+		{ 0,  1, 5 },
+		{ 0,  2, 3 },
+		{ 1, -2, 2 },
+		{ 1, -1, 4 },
+		{ 1,  0, 5 },
+		{ 1,  1, 4 },
+		{ 1,  2, 2 },
+		{ 2, -1, 2 },
+		{ 2,  0, 3 },
+		{ 2,  1, 2 },
+		{ 0,  0, 0 }
+    };
+
+    DitherParams paramsSierraTwoRow[] = {
+		{ 0,  1, 4 },
+		{ 0,  2, 3 },
+		{ 1, -2, 1 },
+		{ 1, -1, 2 },
+		{ 1,  0, 3 },
+		{ 1,  1, 2 },
+		{ 1,  2, 1 },
+		{ 0,  0, 0 }
+    };
+
+    DitherParams paramsSierraLite[] = {
+		{ 0,  1, 2 },
+		{ 1, -1, 1 },
+		{ 1,  0, 1 },
+		{ 0,  0, 0 }
+    };
+
+    DitherParams paramsStucki[] = {
+		{ 0,  1, 8 },
+		{ 0,  2, 4 },
+		{ 1, -2, 2 },
+		{ 1, -1, 4 },
+		{ 1,  0, 8 },
+		{ 1,  1, 4 },
+		{ 1,  2, 2 },
+		{ 2, -2, 1 },
+		{ 2, -1, 2 },
+		{ 2,  0, 4 },
+		{ 2,  1, 2 },
+		{ 2,  2, 1 },
+		{ 0,  0, 0 }
+    };
+
+    DitherParams paramsJarvis[] = {
+		{ 0,  1, 7 },
+		{ 0,  2, 5 },
+		{ 1, -2, 3 },
+		{ 1, -1, 5 },
+		{ 1,  0, 7 },
+		{ 1,  1, 5 },
+		{ 1,  2, 3 },
+		{ 2, -2, 1 },
+		{ 2, -1, 3 },
+		{ 2,  0, 5 },
+		{ 2,  1, 3 },
+		{ 2,  2, 1 },
+		{ 0,  0, 0 }
+    };
 
 	struct DitherAlgos {
 		const char *name;
 		DitherParams *params;
+		int qdiv;
 	} const algos[] = {
-		{ "Naive", paramsNaive },
-		{ "Floyd-Steinberg", paramsFloyd },
-		{ nullptr, nullptr }
+		{ "Naive",                paramsNaive,         1 },
+		{ "Floyd-Steinberg",      paramsFloyd,        16 },
+		{ "Atkinson",             paramsAtkinson,      8 },
+		{ "Burkes",               paramsBurkes,       32 },
+		{ "False Floyd-Steinberg",paramsFalseFloyd,    8 },
+		{ "Sierra",               paramsSierra,       32 },
+		{ "Sierra 2",             paramsSierraTwoRow, 16 },
+		{ "Sierra Lite",          paramsSierraLite,    4 },
+		{ "Stucki",               paramsStucki,       42 },
+		{ "Jarvis-Judice-Ninke ", paramsJarvis,       48 },
+		{ nullptr, nullptr, 0 }
 	};
 
 	enum {
 		kDitherNaive,
-		kDitherFloyd
+		kDitherFloyd,
+		kDitherAtkinson,
+		kDitherBurkes,
+		kDitherFalseFloyd,
+		kDitherSierra,
+		kDitherSierraTwoRow,
+		kDitherSierraLite,
+		kDitherStucki,
+		kDitherJarvis,
 	};
 
 	for (int y = 0; y < h; y++) {
@@ -463,7 +572,7 @@ void BitmapCastMember::ditherFloydImage() {
 			DitherParams *params = algos[algo].params;
 
 			for (int i = 0; params[i].dx != 0 || params[i].dy != 0; i++)
-				updatePixel(tmpSurf, x + params[i].dx, y + params[i].dy, w, h, qr, qg, qb, params[i].qq, params[i].qdiv);
+				updatePixel(tmpSurf, x + params[i].dx, y + params[i].dy, w, h, qr, qg, qb, params[i].qq, algos[algo].qdiv);
 
 			src += 3;
 			dst++;
