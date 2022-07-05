@@ -109,7 +109,7 @@ def decode_macjapanese(text: ByteString) -> str:
                     f"MacJapanese sequence missing second byte 0x{hi:02x}, decoding as MacRoman"
                 )
                 return text.decode("mac-roman")
-            if 0xF0 <= hi <= 0xFC:  # Shift+JIS mapping
+            if 0xF0 <= hi <= 0xFC:  # Shift-JIS mapping
                 logging.warning(
                     f"MacJapanese sequence has high first byte 0x{hi:02x}, mapping to Shift-JIS"
                 )
@@ -296,7 +296,6 @@ def extract_volume(args: argparse.Namespace) -> int:
     """Extract an HFS volume"""
     source_volume: Path = args.src
     destination_dir: Path = args.dir
-    punify: bool = args.punycode
     japanese: bool = args.japanese
     dryrun: bool = args.dryrun
     rawtext: bool = args.nopunycode
@@ -336,16 +335,29 @@ def extract_volume(args: argparse.Namespace) -> int:
 
     if not dryrun:
         destination_dir.mkdir(parents=True, exist_ok=True)
+    maybe_not_jp = False
+    maybe_not_jp_warned = False
     for hpath, obj in vol.iter_paths():
         # Encode the path
         upath = destination_dir
         for el in hpath:
             if japanese:
                 el = decode_macjapanese(el.encode("mac_roman"))
-            if punify or (not rawtext and needs_punyencoding(el)):
+            else:
+                if decode_macjapanese(el.encode("mac_roman")) != el and not isinstance(
+                    obj, machfs.Folder
+                ):
+                    maybe_not_jp = True
+            if not rawtext:
                 el = punyencode(el)
 
             upath /= el
+
+        if maybe_not_jp and not maybe_not_jp_warned:
+            logging.warning(
+                "Possible Mac-Japanese string detected, did you mean to use --japanese?"
+            )
+            maybe_not_jp_warned = True
 
         # Write the file to disk
         if isinstance(obj, machfs.Folder):
@@ -553,9 +565,6 @@ def generate_parser() -> argparse.ArgumentParser:
 
     parser_iso.add_argument("src", metavar="INPUT", type=Path, help="Disk image")
     parser_iso.add_argument(
-        "--punycode", action="store_true", help="encode pathnames into punycode"
-    )
-    parser_iso.add_argument(
         "--nopunycode", action="store_true", help="never encode pathnames into punycode"
     )
     parser_iso.add_argument(
@@ -602,6 +611,7 @@ def generate_parser() -> argparse.ArgumentParser:
             "--punycode",
             action="store_true",
             help="encode pathnames into punycode",
+            default=True,
         )
         parser_macbinary.add_argument(
             "--source-encoding",
