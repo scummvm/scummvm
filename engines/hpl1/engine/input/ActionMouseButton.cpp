@@ -88,6 +88,8 @@ tString cActionMouseButton::GetInputName() {
 		return "Mouse8";
 	case eMButton_9:
 		return "Mouse9";
+	default:
+		break;
 	}
 	return "Unknown";
 }

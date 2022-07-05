@@ -59,6 +59,8 @@ GLenum ColorFormatToGL(eColorDataFormat format) {
 		return GL_BGR;
 	case eColorDataFormat_BGRA:
 		return GL_BGRA;
+	default:
+		break;
 	}
 	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid color format (%d)", format);
 }
@@ -75,6 +77,8 @@ GLenum TextureTargetToGL(eTextureTarget target) {
 		return GL_TEXTURE_CUBE_MAP;
 	case eTextureTarget_3D:
 		return GL_TEXTURE_3D;
+	default:
+		break;
 	}
 	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid texture target (%d)", target);
 }
@@ -106,8 +110,7 @@ cLowLevelGraphicsSDL::cLowLevelGraphicsSDL() {
 	mpVertexArray = (float*)hplMalloc(sizeof(float) * mlBatchStride * mlBatchArraySize);
 	mpIndexArray = (unsigned int*)hplMalloc(sizeof(unsigned int) * mlBatchArraySize); //Index is one int.
 
-	for(int i=0;i<MAX_TEXTUREUNITS;i++)
-	{
+	for (int i = 0; i < MAX_TEXTUREUNITS; i++) {
 		mpTexCoordArray[i] = (float*)hplMalloc(sizeof(float) * 3 * mlBatchArraySize);
 		mbTexCoordArrayActive[i] = false;
 		mlTexCoordArrayCount[i]=0;
@@ -119,7 +122,7 @@ cLowLevelGraphicsSDL::~cLowLevelGraphicsSDL() {
 
 	hplFree(mpVertexArray);
 	hplFree(mpIndexArray);
-	for(int i=0;i<MAX_TEXTUREUNITS;i++)
+	for (int i = 0; i < MAX_TEXTUREUNITS; i++)
 		hplFree(mpTexCoordArray[i]);
 }
 
@@ -261,6 +264,9 @@ int cLowLevelGraphicsSDL::GetCaps(eGraphicCaps type) const {
 
 	case eGraphicCaps_GL_MultiTexture:
 		return GLAD_GL_ARB_multitexture; //gl 1.4
+
+	default:
+		break;
 	}
 	Hpl1::logWarning(Hpl1::kDebugGraphics, "graphic options %d is not supported", type);
 	return 0;
@@ -282,10 +288,10 @@ void cLowLevelGraphicsSDL::SetVsyncActive(bool toggle) {
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::SetMultisamplingActive(bool toggle) {
-	if(!GetCaps(eGraphicCaps_Multisampling) || mlMultisampling<=0)
+	if (!GetCaps(eGraphicCaps_Multisampling) || mlMultisampling<=0)
 		return;
 
-	if(toggle)
+	if (toggle)
 		glEnable(GL_MULTISAMPLE);
 	else
 		glDisable(GL_MULTISAMPLE);
@@ -321,7 +327,7 @@ cPlanef cLowLevelGraphicsSDL::GetClipPlane(int alIdx, const cPlanef &aPlane) {
 }
 
 void cLowLevelGraphicsSDL::SetClipPlaneActive(int alIdx, bool toggle) {
-	if(toggle)
+	if (toggle)
 		glEnable(GL_CLIP_PLANE0 + alIdx);
 	else
 		glDisable(GL_CLIP_PLANE0 + alIdx);
@@ -475,10 +481,10 @@ void cLowLevelGraphicsSDL::SetTexture(unsigned int alUnit, iTexture *apTex) {
 	if(apTex == mpCurrentTexture[alUnit]) return;
 
 	GLenum NewTarget=0;
-	if(apTex)
+	if (apTex)
 		NewTarget = GetGLTextureTargetEnum(apTex->GetTarget());
 	GLenum LastTarget=0;
-	if(mpCurrentTexture[alUnit])
+	if (mpCurrentTexture[alUnit])
 		LastTarget = GetGLTextureTargetEnum(mpCurrentTexture[alUnit]->GetTarget());
 
 	//Check if multi texturing is supported.
@@ -487,9 +493,8 @@ void cLowLevelGraphicsSDL::SetTexture(unsigned int alUnit, iTexture *apTex) {
 	}
 
 	//If the current texture in this unit is a render target, unbind it.
-	if(mpCurrentTexture[alUnit]){
-		if(mpCurrentTexture[alUnit]->GetTextureType() == eTextureType_RenderTarget)
-		{
+	if (mpCurrentTexture[alUnit]){
+		if(mpCurrentTexture[alUnit]->GetTextureType() == eTextureType_RenderTarget) {
 			error("render target not supported");
 #if 0
 			cSDLTexture *pSDLTex = static_cast<cSDLTexture *> (mpCurrentTexture[alUnit]);
@@ -502,15 +507,12 @@ void cLowLevelGraphicsSDL::SetTexture(unsigned int alUnit, iTexture *apTex) {
 	}
 
 	//Disable this unit if NULL
-	if(apTex == NULL)
-	{
+	if (apTex == NULL) {
 		glDisable(LastTarget);
 		//glBindTexture(LastTarget,0);
-	}
 	//Enable the unit, set the texture handle and bind the pbuffer
-	else
-	{
-		if(NewTarget != LastTarget) glDisable(LastTarget);
+	} else {
+		if (NewTarget != LastTarget) glDisable(LastTarget);
 
 		cSDLTexture *pSDLTex = static_cast<cSDLTexture*> (apTex);
 
@@ -518,8 +520,7 @@ void cLowLevelGraphicsSDL::SetTexture(unsigned int alUnit, iTexture *apTex) {
 		glEnable(NewTarget);
 
 		//if it is a render target we need to do some more binding.
-		if(pSDLTex->GetTextureType() == eTextureType_RenderTarget)
-		{
+		if (pSDLTex->GetTextureType() == eTextureType_RenderTarget) {
 			error("render target not supported");
 #if 0
 			cPBuffer* pBuffer = pSDLTex->GetPBuffer();
@@ -1539,6 +1540,8 @@ GLenum cLowLevelGraphicsSDL::GetGLBlendEnum(eBlendFunc type) {
 		return GL_ONE_MINUS_DST_ALPHA;
 	case eBlendFunc_SrcAlphaSaturate:
 		return GL_SRC_ALPHA_SATURATE;
+	default:
+		break;
 	}
 	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid blend op (%d)", type);
 	return 0;
@@ -1580,6 +1583,8 @@ GLenum cLowLevelGraphicsSDL::GetGLTextureParamEnum(eTextureParam type) {
 		return GL_RGB_SCALE;
 	case eTextureParam_AlphaScale:
 		return GL_ALPHA_SCALE;
+	default:
+		break;
 	}
 	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid texture parameter (%d)", type);
 	return 0;
@@ -1597,6 +1602,8 @@ GLenum cLowLevelGraphicsSDL::GetGLTextureOpEnum(eTextureOp type) {
 		return GL_SRC_ALPHA;
 	case eTextureOp_OneMinusAlpha:
 		return GL_ONE_MINUS_SRC_ALPHA;
+	default:
+		break;
 	}
 	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid texture op (%d)", type);
 	return 0;
@@ -1614,6 +1621,8 @@ GLenum cLowLevelGraphicsSDL::GetGLTextureSourceEnum(eTextureSource type) {
 		return GL_PRIMARY_COLOR;
 	case eTextureSource_Previous:
 		return GL_PREVIOUS;
+	default:
+		break;
 	}
 	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid texture source (%d)", type);
 	return 0;
@@ -1632,6 +1641,8 @@ GLenum cLowLevelGraphicsSDL::GetGLTextureTargetEnum(eTextureTarget type) {
 		return GL_TEXTURE_CUBE_MAP;
 	case eTextureTarget_3D:
 		return GL_TEXTURE_3D;
+	default:
+		break;
 	}
 	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid texture target (%d)", type);
 	return 0;
@@ -1657,6 +1668,8 @@ GLenum cLowLevelGraphicsSDL::GetGLTextureFuncEnum(eTextureFunc type) {
 		return GL_DOT3_RGB;
 	case eTextureFunc_Dot3RGBA:
 		return GL_DOT3_RGBA;
+	default:
+		break;
 	}
 	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid texture function (%d)", type);
 	return 0;
@@ -1681,6 +1694,8 @@ GLenum cLowLevelGraphicsSDL::GetGLDepthTestFuncEnum(eDepthTestFunc type) {
 		return GL_NOTEQUAL;
 	case eDepthTestFunc_Always:
 		return GL_ALWAYS;
+	default:
+		break;
 	}
 	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid depth test function (%d)", type);
 	return 0;
@@ -1706,6 +1721,8 @@ GLenum cLowLevelGraphicsSDL::GetGLAlphaTestFuncEnum(eAlphaTestFunc type) {
 		return GL_NOTEQUAL;
 	case eAlphaTestFunc_Always:
 		return GL_ALWAYS;
+	default:
+		break;
 	}
 	Hpl1::logError(Hpl1::kDebugOpenGL ,"invalid alpha test function (%d)", type);
 	return 0;
@@ -1731,6 +1748,8 @@ GLenum cLowLevelGraphicsSDL::GetGLStencilFuncEnum(eStencilFunc type) {
 		return GL_NOTEQUAL;
 	case eStencilFunc_Always:
 		return GL_ALWAYS;
+	default:
+		break;
 	}
 	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid stencil function (%d)", type);
 	return 0;
@@ -1756,6 +1775,8 @@ GLenum cLowLevelGraphicsSDL::GetGLStencilOpEnum(eStencilOp type) {
 		return GL_INCR_WRAP;
 	case eStencilOp_DecrementWrap:
 		return GL_DECR_WRAP;
+	default:
+		break;
 	}
 	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid stencil op (%d)", type);
 	return 0;

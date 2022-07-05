@@ -492,6 +492,8 @@ tString cActionKeyboard::GetInputName() {
 	case eKey_NONE:
 		tsKey.append("None");
 		break;
+	default:
+		break;
 	}
 	if (tsKey != "") {
 		return tsKey;
