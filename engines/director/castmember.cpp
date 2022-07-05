@@ -352,15 +352,15 @@ void BitmapCastMember::ditherImage() {
 	}
 }
 
-static void updatePixel(byte *surf, int x, int y, int w, int h, int qr, int qg, int qb, int qq) {
+static void updatePixel(byte *surf, int x, int y, int w, int h, int qr, int qg, int qb, int qq, int qdiv) {
 	if (x >= w || y >= h)
 		return;
 
 	byte *ptr = &surf[x * 3 + y * w * 3];
 
-	ptr[0] = CLIP(ptr[0] + qr * qq / 16, 0, 255);
-	ptr[1] = CLIP(ptr[1] + qg * qq / 16, 0, 255);
-	ptr[2] = CLIP(ptr[2] + qb * qq / 16, 0, 255);
+	ptr[0] = CLIP(ptr[0] + qr * qq / qdiv, 0, 255);
+	ptr[1] = CLIP(ptr[1] + qg * qq / qdiv, 0, 255);
+	ptr[2] = CLIP(ptr[2] + qb * qq / qdiv, 0, 255);
 }
 
 void BitmapCastMember::ditherFloydImage() {
@@ -415,6 +415,36 @@ void BitmapCastMember::ditherFloydImage() {
 
 	pal = g_director->_wm->getPalette();
 
+	struct DitherParams {
+		int dx, dy, qq, qdiv;
+	};
+
+	DitherParams paramsNaive[] = {
+		{  0, 0, 0, 0 }
+	};
+
+	DitherParams paramsFloyd[] = {
+		{ +1,  0, 7, 16 },
+		{ -1, +1, 3, 16 },
+		{  0, +1, 5, 16 },
+		{ +1, +1, 1, 16 },
+		{  0,  0, 0,  0 }
+	};
+
+	struct DitherAlgos {
+		const char *name;
+		DitherParams *params;
+	} const algos[] = {
+		{ "Naive", paramsNaive },
+		{ "Floyd-Steinberg", paramsFloyd },
+		{ nullptr, nullptr }
+	};
+
+	enum {
+		kDitherNaive,
+		kDitherFloyd
+	};
+
 	for (int y = 0; y < h; y++) {
 		const byte *src = &tmpSurf[y * w * 3];
 		byte *dst = (byte *)_ditheredImg->getBasePtr(0, y);
@@ -429,10 +459,11 @@ void BitmapCastMember::ditherFloydImage() {
 			int qg = g - pal[col * 3 + 1];
 			int qb = b - pal[col * 3 + 2];
 
-			updatePixel(tmpSurf, x + 1, y,     w, h, qr, qg, qb, 7);
-			updatePixel(tmpSurf, x - 1, y + 1, w, h, qr, qg, qb, 3);
-			updatePixel(tmpSurf, x,     y + 1, w, h, qr, qg, qb, 5);
-			updatePixel(tmpSurf, x + 1, y + 1, w, h, qr, qg, qb, 1);
+			int algo = kDitherFloyd;
+			DitherParams *params = algos[algo].params;
+
+			for (int i = 0; params[i].dx != 0 || params[i].dy != 0; i++)
+				updatePixel(tmpSurf, x + params[i].dx, y + params[i].dy, w, h, qr, qg, qb, params[i].qq, params[i].qdiv);
 
 			src += 3;
 			dst++;
