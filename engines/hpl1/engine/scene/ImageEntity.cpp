@@ -328,7 +328,7 @@ bool cImageEntity::LoadEntityData(tString asDataName, int alAnimNum) {
 	cImageEntityData *pImageData = mpResources->GetImageEntityManager()->CreateData(asDataName);
 
 	if (pImageData == NULL) {
-		FatalError("Couldn't load Data '%s' for entity '%s'!", asDataName.c_str(), msName.c_str());
+		error("Couldn't load Data '%s' for entity '%s'", asDataName.c_str(), msName.c_str());
 		return false;
 	}
 

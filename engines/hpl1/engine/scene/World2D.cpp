@@ -303,13 +303,13 @@ bool cWorld2D::CreateFromFile(tString asFile) {
 	tString sPath = mpResources->GetFileSearcher()->GetFilePath(asFile);
 
 	if (sPath == "") {
-		FatalError("Couldn't find map '%s'!\n", asFile.c_str());
+		error("Couldn't find map '%s'", asFile.c_str());
 		return false;
 	}
 
 	TiXmlDocument *pDoc = hplNew(TiXmlDocument, (sPath.c_str()));
 	if (!pDoc->LoadFile()) {
-		FatalError("Couldn't load map '%s'!\n", asFile.c_str());
+		error("Couldn't load map '%s'", asFile.c_str());
 		return false;
 	}
 
@@ -317,7 +317,7 @@ bool cWorld2D::CreateFromFile(tString asFile) {
 	asFile = cString::SetFileExt(asFile, "hps");
 	mpScript = mpResources->GetScriptManager()->CreateScript(asFile);
 	if (mpScript == NULL) {
-		Error("Couldn't load script '%s'\n", asFile.c_str());
+		Error("Couldn't load script '%s'", asFile.c_str());
 	}
 
 	TiXmlElement *pHplMapElem = pDoc->RootElement();
@@ -411,10 +411,10 @@ bool cWorld2D::CreateFromFile(tString asFile) {
 						}
 					} else {
 						hplDelete(pEntity);
-						Error("Couldn't load data for entity '%s'!\n", pEntity->GetName().c_str());
+						Error("Couldn't load data for entity '%s'", pEntity->GetName().c_str());
 					}
 				} else {
-					FatalError("No other Render mode for entity exist!!");
+					error("No other Render mode for entity exist!!");
 				}
 
 				pEntityElem = pEntityElem->NextSiblingElement();
@@ -547,11 +547,11 @@ bool cWorld2D::CreateFromFile(tString asFile) {
 						// Log("Layer Children\n");
 
 						if (pLayerChildElem->Attribute("Width") == NULL)
-							FatalError("Can't Load Width\n");
+							error("Can't Load Width");
 						int lW = cString::ToInt(pLayerChildElem->Attribute("Width"), 0);
 
 						if (pLayerChildElem->Attribute("Height") == NULL)
-							FatalError("Can't Load Height\n");
+							error("Can't Load Height");
 						int lH = cString::ToInt(pLayerChildElem->Attribute("Height"), 0);
 						bool bCollide = cString::ToBool(pLayerChildElem->Attribute("Collide"), true);
 						bool bLit = cString::ToBool(pLayerChildElem->Attribute("Lit"), true);
@@ -781,7 +781,7 @@ int cWorld2D::LoadTileData(cTile *apTile, tString *asData, int alStart) {
 
 					pSet = mpTileMap->GetTileSet(lSet);
 					if (pSet == NULL)
-						FatalError("Error getting tileset%d\n", lSet);
+						error("Error getting tileset%d", lSet);
 					pData = static_cast<cTileDataNormal *>(pSet->Get(lNum));
 
 					apTile->SetTileData(pData);

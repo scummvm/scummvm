@@ -87,7 +87,7 @@ iTileData *cTileSet::Get(int alNum) {
 bool cTileSet::CreateFromFile(const tString &asFile) {
 	TiXmlDocument *pDoc = hplNew(TiXmlDocument, (asFile.c_str()));
 	if (!pDoc->LoadFile()) {
-		FatalError("Couldn't load tileset '%s'!\n", asFile.c_str());
+		error("Couldn't load tileset '%s'", asFile.c_str());
 		return false;
 	}
 

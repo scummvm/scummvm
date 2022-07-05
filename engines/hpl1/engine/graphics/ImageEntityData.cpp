@@ -106,7 +106,7 @@ bool cImageEntityData::CreateFromFile(const tString &asFile, tUIntVec &avImageHa
 	bool bGotAnim = false;
 	TiXmlDocument *pDoc = hplNew(TiXmlDocument, (asFile.c_str()));
 	if (!pDoc->LoadFile()) {
-		FatalError("Couldn't load tileset '%s'!\n", asFile.c_str());
+		error("Couldn't load tileset '%s'", asFile.c_str());
 		return false;
 	}
 
@@ -241,7 +241,7 @@ bool cImageEntityData::CreateFromFile(const tString &asFile, tUIntVec &avImageHa
 				sFile + it->msSuffix,
 				avImageHandle[it->mType]);
 			if (pImage == NULL) {
-				FatalError("Can't load texture '%s%s'!\n", sFile.c_str(), it->msSuffix.c_str());
+				error("Can't load texture '%s%s'", sFile.c_str(), it->msSuffix.c_str());
 				return false;
 			}
 

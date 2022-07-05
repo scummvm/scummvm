@@ -63,7 +63,7 @@ cRenderer2D::cRenderer2D(iLowLevelGraphics *apLowLevelGraphics, cResources *apRe
 	/// LIGHTING SETUP
 	mpLightMap[0] = mpResources->GetTextureManager()->Create2D("PointLight2D.bmp", false);
 	if (mpLightMap[0] == NULL)
-		FatalError("Couldn't load PointLight2D");
+		error("Couldn't load PointLight2D");
 
 	mpLightMap[0]->SetWrapS(eTextureWrap_ClampToEdge);
 	mpLightMap[0]->SetWrapT(eTextureWrap_ClampToEdge);

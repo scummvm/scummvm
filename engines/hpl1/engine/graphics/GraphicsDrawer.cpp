@@ -271,13 +271,13 @@ cGfxObject *cGraphicsDrawer::CreateGfxObject(const tString &asFileName, const tS
 											 bool abAddToList) {
 	cResourceImage *pImage = mpResources->GetImageManager()->CreateImage(asFileName);
 	if (pImage == NULL) {
-		FatalError("Couldn't load image '%s'!\n", asFileName.c_str());
+		error("Couldn't load image '%s'", asFileName.c_str());
 		return NULL;
 	}
 
 	iMaterial *pMat = mpMaterialHandler->Create(asMaterialName, eMaterialPicture_Image);
 	if (pMat == NULL) {
-		FatalError("Couldn't create material '%s'!\n", asMaterialName.c_str());
+		error("Couldn't create material '%s'", asMaterialName.c_str());
 		return NULL;
 	}
 	// mpResources->GetImageManager()->FlushAll();
@@ -298,13 +298,13 @@ cGfxObject *cGraphicsDrawer::CreateGfxObject(Bitmap2D *apBmp, const tString &asM
 											 bool abAddToList) {
 	cResourceImage *pImage = mpResources->GetImageManager()->CreateFromBitmap("", apBmp);
 	if (pImage == NULL) {
-		FatalError("Couldn't create image\n");
+		error("Couldn't create image");
 		return NULL;
 	}
 
 	iMaterial *pMat = mpMaterialHandler->Create(asMaterialName, eMaterialPicture_Image);
 	if (pMat == NULL) {
-		FatalError("Couldn't create material '%s'!\n", asMaterialName.c_str());
+		error("Couldn't create material '%s'", asMaterialName.c_str());
 		return NULL;
 	}
 	// mpResources->GetImageManager()->FlushAll();
@@ -325,13 +325,13 @@ cGfxObject *cGraphicsDrawer::CreateGfxObjectFromTexture(const tString &asFileNam
 														bool abAddToList) {
 	iTexture *pTex = mpResources->GetTextureManager()->Create2D(asFileName, false);
 	if (pTex == NULL) {
-		FatalError("Couldn't create texture '%s'!\n", asFileName.c_str());
+		error("Couldn't create texture '%s'", asFileName.c_str());
 		return NULL;
 	}
 
 	iMaterial *pMat = mpMaterialHandler->Create(asMaterialName, eMaterialPicture_Texture);
 	if (pMat == NULL) {
-		FatalError("Couldn't create material '%s'!\n", asMaterialName.c_str());
+		error("Couldn't create material '%s'", asMaterialName.c_str());
 		return NULL;
 	}
 	// mpResources->GetImageManager()->FlushAll();
@@ -360,13 +360,13 @@ cBackgroundImage *cGraphicsDrawer::AddBackgroundImage(const tString &asFileName,
 													  bool abTile, const cVector2f &avSize, const cVector2f &avPosPercent, const cVector2f &avVel) {
 	cResourceImage *pImage = mpResources->GetImageManager()->CreateImage(asFileName);
 	if (pImage == NULL) {
-		FatalError("Couldn't load image '%s'!\n", asFileName.c_str());
+		error("Couldn't load image '%s'", asFileName.c_str());
 		return NULL;
 	}
 
 	iMaterial *pMat = mpMaterialHandler->Create(asMaterialName, eMaterialPicture_Image);
 	if (pMat == NULL) {
-		FatalError("Couldn't create material '%s'!\n", asMaterialName.c_str());
+		error("Couldn't create material '%s'", asMaterialName.c_str());
 		return NULL;
 	}
 	// mpResources->GetImageManager()->FlushAll();

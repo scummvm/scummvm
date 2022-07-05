@@ -32,6 +32,7 @@
 #include "hpl1/engine/scene/World2D.h"
 #include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
+#include "hpl1/debug.h"
 
 namespace hpl {
 
@@ -74,7 +75,7 @@ cMultiImageEntity::~cMultiImageEntity() {
 bool cMultiImageEntity::Add(tString asName, tString asFile, cVector3f avLocalPos, tFlag alPartId) {
 	cImageEntity *pEntity = mpScene->GetWorld2D()->CreateImageEntity(asName, asFile);
 	if (pEntity == NULL) {
-		FatalError("Couldn't load image entity '%s'\n", asFile.c_str());
+		error("Couldn't load image entity '%s'", asFile.c_str());
 		return false;
 	}
 
