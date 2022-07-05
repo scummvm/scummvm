@@ -1348,14 +1348,7 @@ bool MToonElement::isMouseCollisionAtPoint(int32 relativeX, int32 relativeY) con
 	if (_renderSurface) {
 		Common::Rect frameRect = _metadata->frames[_renderedFrame].rect;
 
-		if (frameRect.width() == _renderSurface->w && frameRect.height() == _renderSurface->h) {
-			// Frame rect is the size of the render surface, meaning the frame rect is an offset
-			relativeX -= frameRect.left;
-			relativeY -= frameRect.top;
-		}
-		// ... otherwise it's a sub-area of the rendered rect, meaning we shouldn't adjust coordinates
-
-		if (relativeX < 0 || relativeY < 0 || relativeX >= frameRect.width() || relativeY >= frameRect.height())
+		if (relativeX < frameRect.left || relativeY < frameRect.top || relativeX >= frameRect.right || relativeY >= frameRect.bottom)
 			return false;
 
 		if (_renderProps.getInkMode() == VisualElementRenderProperties::kInkModeBackgroundMatte) {
@@ -1363,8 +1356,15 @@ bool MToonElement::isMouseCollisionAtPoint(int32 relativeX, int32 relativeY) con
 			ColorRGB8 transColorRGB8 = _renderProps.getBackColor();
 			uint32 transColor = _renderSurface->format.ARGBToColor(255, transColorRGB8.r, transColorRGB8.g, transColorRGB8.b);
 
+			if (frameRect.width() == _renderSurface->w && frameRect.height() == _renderSurface->h) {
+				// Frame rect is the size of the render surface, meaning the frame is floating and we need to adjust to its coordinates
+				relativeX -= frameRect.left;
+				relativeY -= frameRect.top;
+			}
+			// ... otherwise it's a sub-area of the rendered rect, meaning we shouldn't adjust coordinates
+
 			// Sanity-check
-			if (relativeX >= _renderSurface->w || relativeY >= _renderSurface->h)
+			if (relativeX < 0 || relativeY < 0 || relativeX >= _renderSurface->w || relativeY >= _renderSurface->h)
 				return false;
 
 			// Check if the pixel is transparent
