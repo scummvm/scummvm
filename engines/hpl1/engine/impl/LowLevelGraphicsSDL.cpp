@@ -80,34 +80,38 @@ GLenum TextureTargetToGL(eTextureTarget target) {
 }
 
 cLowLevelGraphicsSDL::cLowLevelGraphicsSDL() {
-  		mlBatchArraySize = 20000;
-		mlVertexCount = 0;
-		mlIndexCount =0;
-		mlMultisampling =0;
-		mvVirtualSize.x = 800;
-		mvVirtualSize.y = 600;
-		mfGammaCorrection = 1.0;
-		mpRenderTarget = nullptr;
-		mpPixelFormat = Graphics::createPixelFormat<8888>();
+	mlBatchArraySize = 20000;
+	mlVertexCount = 0;
+	mlIndexCount =0;
+	mlMultisampling =0;
+	mvVirtualSize.x = 800;
+	mvVirtualSize.y = 600;
+	mfGammaCorrection = 1.0;
+	mpRenderTarget = nullptr;
+#ifdef SCUMM_BIG_ENDIAN
+	mpPixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#else
+	mpPixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#endif
 
-		Common::fill(mpCurrentTexture, mpCurrentTexture + MAX_TEXTUREUNITS, nullptr);
+	Common::fill(mpCurrentTexture, mpCurrentTexture + MAX_TEXTUREUNITS, nullptr);
 
-		mbClearColor = true;
-		mbClearDepth = true;
-		mbClearStencil = false;
+	mbClearColor = true;
+	mbClearDepth = true;
+	mbClearStencil = false;
 
-		//Create the batch arrays:
-		mlBatchStride = 13;
-		//3 Pos floats, 4 color floats, 3 Tex coord floats .
-		mpVertexArray = (float*)hplMalloc(sizeof(float) * mlBatchStride * mlBatchArraySize);
-		mpIndexArray = (unsigned int*)hplMalloc(sizeof(unsigned int) * mlBatchArraySize); //Index is one int.
+	//Create the batch arrays:
+	mlBatchStride = 13;
+	//3 Pos floats, 4 color floats, 3 Tex coord floats .
+	mpVertexArray = (float*)hplMalloc(sizeof(float) * mlBatchStride * mlBatchArraySize);
+	mpIndexArray = (unsigned int*)hplMalloc(sizeof(unsigned int) * mlBatchArraySize); //Index is one int.
 
-		for(int i=0;i<MAX_TEXTUREUNITS;i++)
-		{
-			mpTexCoordArray[i] = (float*)hplMalloc(sizeof(float) * 3 * mlBatchArraySize);
-			mbTexCoordArrayActive[i] = false;
-			mlTexCoordArrayCount[i]=0;
-		}
+	for(int i=0;i<MAX_TEXTUREUNITS;i++)
+	{
+		mpTexCoordArray[i] = (float*)hplMalloc(sizeof(float) * 3 * mlBatchArraySize);
+		mbTexCoordArrayActive[i] = false;
+		mlTexCoordArrayCount[i]=0;
+	}
 }
 
 cLowLevelGraphicsSDL::~cLowLevelGraphicsSDL() {
