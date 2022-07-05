@@ -422,6 +422,10 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			// else branch is always empty
 			assert(instruction.elseInstructions == nullptr);
 			break;
+			case Token::VARNOTEQ:
+			if (executeEndIfNotEqual(instruction))
+				ip = codeSize;
+			break;
 			case Token::ADDVAR:
 			executeIncrementVariable(instruction);
 			break;
@@ -447,6 +451,13 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 		ip++;
 	}
 	return;
+}
+
+bool FreescapeEngine::executeEndIfNotEqual(FCLInstruction &instruction) {
+	uint16 variable1 = instruction.source;
+	uint16 variable2 = instruction.destination;
+	debug("End condition if variable %d is not equal to variable %d!", variable1, variable2);
+	return (_gameState[variable1] != _gameState[variable2]);
 }
 
 void FreescapeEngine::executeIncrementVariable(FCLInstruction &instruction) {
