@@ -210,7 +210,7 @@ void Archive::dumpChunk(Resource &res, Common::DumpFile &out) {
 	if (!resStream) {
 		return;
 	}
-	uint32 len = res.size;
+	uint32 len = resStream->size();
 
 	if (dataSize < len) {
 		free(data);
