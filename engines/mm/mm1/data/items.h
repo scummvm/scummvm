@@ -54,7 +54,7 @@ struct ItemData {
 	EquipMode _equipMode;
 	byte _val10;
 	byte _val11;
-	byte _val12;
+	byte _spellId;
 	byte _val13;
 	uint16 _cost;
 	byte _val16;

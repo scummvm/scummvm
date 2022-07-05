@@ -248,7 +248,13 @@
 		no_characters: "NO AVAILABLE CHARACTERS"
 		some_characters: "AVAILABLE CHARACTERS"
 		not_enough_gold: "*** NOT ENOUGH GOLD ***"
+		not_enough_gems: "*** NOT ENOUGH GEMS ***"
+		not_enough_sp: "*** NOT ENOUGH SPELL POINTS ***"
+		combat_only: "*** COMBAT ONLY ***
+		magic_doesnt_work: "*** MAGIC DOESN'T WORK HERE ***"
+		outdoors_only: "*** OUTDOOR ONLY ***"
 		full: "*** BACKPACK FULL ***"
+		done: "*** DONE ***"
 enhdialogs:
 	character:
 		stats:

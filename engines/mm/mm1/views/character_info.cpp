@@ -571,7 +571,40 @@ void CharacterInfo::spellNumberEntered(uint num) {
 		return;
 	}
 
-	g_globals->_currCharacter->castSpell(_spellLevel, num);
+	Common::String msg;
+	int xp;
+	switch (g_globals->_currCharacter->castSpell(_spellLevel, num)) {
+	case SR_NOT_ENOUGH_SP:
+		msg = STRING["dialogs.misc.not_enough_sp"];
+		xp = 5;
+		break;
+	case SR_NOT_ENOUGH_GEMS:
+		msg = STRING["dialogs.misc.not_enough_gems"];
+		xp = 9;
+		break;
+	case SR_COMBAT_ONLY:
+		msg = STRING["dialogs.misc.combat_only"];
+		xp = 10;
+		break;
+	case SR_DOESNT_WORK:
+		msg = STRING["dialogs.misc.magic_doesnt_work"];
+		xp = 5;
+		break;
+	case SR_OUTDOORS_ONLY:
+		msg = STRING["dialogs.misc.outdoors_only"];
+		xp = 10;
+		break;
+	default:
+		msg = STRING["dialogs.misc.done"];
+		xp = 14;
+		break;
+	}
+
+	Sound::sound(SOUND_2);
+	clearSurface();
+	writeString(5, 21, msg);
+	_state = DISPLAY;
+	delaySeconds(3);
 }
 
 } // namespace ViewsEnh
