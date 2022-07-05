@@ -257,7 +257,7 @@ U32String punycode_decode(const String &src1) {
 		bool noncode = false;
 
 		// Scan string to the end for illegal characters
-		for (size_t i = di + 1; i < srclen; i++) {
+		for (int i = di + 1; i < srclen; i++) {
 			if (!((src[i] >= '0' && src[i] <= '9') || (src[i] >= 'a' && src[i] <= 'z'))) {
 				noncode = true;
 				break;
@@ -301,7 +301,7 @@ U32String punycode_decode(const String &src1) {
 		size_t org_i = i;
 
 		for (size_t w = 1, k = BASE; true; k += BASE) {
-			if (si >= src.size()) {
+			if (si >= (int)src.size()) {
 				warning("punycode_decode: incorrect digit");
 				return src1;
 			}
