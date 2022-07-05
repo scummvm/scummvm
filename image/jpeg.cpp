@@ -271,8 +271,13 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 		break;
 	}
 
-	if (cinfo.num_components == 4)
+	// Semi-hack:
+	// In case 4 components jpeglib expect CMYK or CYYK color space output.
+	// To avoid any color space conversion, CMYK must be used.
+	// HPL1 engine use it to pass RGBA jpeg bitmaps.
+	if (cinfo.num_components == 4) {
 		cinfo.out_color_space = JCS_CMYK;
+	}
 
 	// Actually start decompressing the image
 	jpeg_start_decompress(&cinfo);
@@ -296,6 +301,10 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 		break;
 	default:
 		break;
+	}
+	// Size of output pixel must match 4 bytes.
+	if (cinfo.out_color_space == JCS_CMYK) {
+		assert(_surface.format.bytesPerPixel == 4);
 	}
 
 	// Allocate buffer for one scanline
