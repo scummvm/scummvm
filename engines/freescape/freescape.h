@@ -128,6 +128,8 @@ public:
 	void executeMakeVisible(FCLInstruction &instruction);
 	void executeToggleVisibility(FCLInstruction &instruction);
 	void executeDestroy(FCLInstruction &instruction);
+	void executeRedraw(FCLInstruction &instruction);
+	void executeDelay(FCLInstruction &instruction);
 	bool executeEndIfNotEqual(FCLInstruction &instruction);
 
 

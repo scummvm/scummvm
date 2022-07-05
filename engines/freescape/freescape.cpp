@@ -447,10 +447,27 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			case Token::DESTROY:
 			executeDestroy(instruction);
 			break;
+			case Token::REDRAW:
+			executeRedraw(instruction);
+			break;
+			case Token::DELAY:
+			executeDelay(instruction);
+			break;
 		}
 		ip++;
 	}
 	return;
+}
+
+void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
+	debug("Redrawing screen");
+	drawFrame();
+}
+
+void FreescapeEngine::executeDelay(FCLInstruction &instruction) {
+	uint16 delay = instruction.source;
+	debug("Delaying %d * 1/50 seconds", delay);
+	g_system->delayMillis(20 * delay);
 }
 
 bool FreescapeEngine::executeEndIfNotEqual(FCLInstruction &instruction) {
