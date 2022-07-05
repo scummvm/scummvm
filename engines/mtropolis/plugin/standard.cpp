@@ -27,6 +27,7 @@
 #include "audio/midiparser.h"
 #include "audio/midiparser_smf.h"
 
+#include "mtropolis/miniscript.h"
 #include "mtropolis/plugin/standard.h"
 #include "mtropolis/plugins.h"
 
@@ -2273,10 +2274,7 @@ MiniscriptInstructionOutcome MidiModifier::scriptSetTempo(MiniscriptThread *thre
 }
 
 MiniscriptInstructionOutcome MidiModifier::scriptSetPlayNote(MiniscriptThread *thread, const DynamicValue &value) {
-	if (value.getType() != DynamicValueTypes::kBoolean)
-		return kMiniscriptInstructionOutcomeFailed;
-
-	if (value.getBool())
+	if (miniscriptEvaluateTruth(value))
 		playSingleNote(thread->getRuntime());
 	else
 		stopSingleNote();

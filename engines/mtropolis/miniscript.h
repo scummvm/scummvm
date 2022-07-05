@@ -31,6 +31,8 @@ class MiniscriptThread;
 struct MiniscriptStackValue;
 struct IMiniscriptInstructionFactory;
 
+bool miniscriptEvaluateTruth(const DynamicValue &value);
+
 class MiniscriptInstruction {
 public:
 	virtual ~MiniscriptInstruction();

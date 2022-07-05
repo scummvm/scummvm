@@ -28,7 +28,7 @@
 
 namespace MTropolis {
 
-static bool miniscriptEvaluateTruth(const DynamicValue& value) {
+bool miniscriptEvaluateTruth(const DynamicValue &value) {
 	// NOTE: Comparing equal to "true" only passes for 1 exactly, but for conditions,
 	// any non-zero value is true.
 	switch (value.getType()) {
