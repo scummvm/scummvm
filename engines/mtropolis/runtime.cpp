@@ -6867,6 +6867,10 @@ bool VisualElement::isVisible() const {
 	return _visible;
 }
 
+void VisualElement::setVisible(bool visible) {
+	_visible = visible;
+}
+
 bool VisualElement::isDirectToScreen() const {
 	return _directToScreen;
 }
@@ -6877,6 +6881,10 @@ void VisualElement::setDirectToScreen(bool directToScreen) {
 
 uint16 VisualElement::getLayer() const {
 	return _layer;
+}
+
+void VisualElement::setLayer(uint16 layer) {
+	_layer = layer;
 }
 
 VThreadState VisualElement::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {

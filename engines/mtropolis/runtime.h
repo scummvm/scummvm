@@ -2429,9 +2429,13 @@ public:
 	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg);
 
 	bool isVisible() const;
+	void setVisible(bool visible);
+
 	bool isDirectToScreen() const;
 	void setDirectToScreen(bool directToScreen);
+
 	uint16 getLayer() const;
+	void setLayer(uint16 layer);
 
 	bool isMouseInsideDrawableArea(int32 relativeX, int32 relativeY) const;
 
