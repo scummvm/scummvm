@@ -124,9 +124,10 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 	case Object::Entrance: {
 		debug("rotation: %f %f %f", v.x(), v.y(), v.z());
 		if (byteSizeOfObject > 0) {
-			error("Extra bytes in entrance");
-			//file->seek(byteSizeOfObject, SEEK_CUR);
-			//return nullptr;
+			// TODO: there is something here
+			debug("Warning: extra %d bytes in entrance", byteSizeOfObject);
+			file->seek(byteSizeOfObject, SEEK_CUR);
+			byteSizeOfObject = 0;
 		}
 		assert(byteSizeOfObject == 0);
 		debug("End of object at %lx", file->pos());
@@ -262,7 +263,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		Common::Array<uint8> conditionArray(conditionData, lengthOfCondition);
 		debug("%s", detokenise8bitCondition(conditionArray, instructions)->c_str());
 	}
-
+	debug("End of area at %lx", file->pos());
 	return (new Area(areaNumber, objectsByID, entrancesByID, scale, 255, 255, palette));
 }
 
@@ -344,18 +345,31 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	//fileOffsetForArea[0] = 0x9571 - offset;
 	//fileOffsetForArea[0] = 0xaba5 - offset - 8 - 16; // ???
 	//fileOffsetForArea[0] = 0x87c7 - offset - 8; // ???
-	//fileOffsetForArea[0] = 0x9304 - offset - 8 - 12 - 12 - 12; // ???
-	//fileOffsetForArea[0] = 0x92cc - offset; // Pool, 20
 	//fileOffsetForArea[0] = 0x9f40 - offset - 8;
 	//fileOffsetForArea[0] = 0x9f35 - offset; // Another Church, 12
 	//fileOffsetForArea[0] = 0xa06e - offset - 8; // Cornisa? 37
 
-	//fileOffsetForArea[0] = 0x959b - offset - 16; // Church? (22 elements)
-	//fileOffsetForArea[0] = 0x94b7 - offset; // For testing
-	//fileOffsetForArea[0] = 0x97cb - offset; // Courtyard
-	//fileOffsetForArea[0] = 0x92cc - offset ; // Pool?
+	// Complete Areas:
+	//fileOffsetForArea[0] = 0x87bf - offset; // Beds?
+	//fileOffsetForArea[0] = 0x8ccc - offset; // Wizard hut
+	//fileOffsetForArea[0] = 0x8dac - offset; // Horse
+	//fileOffsetForArea[0] = 0x8e78 - offset; // Corridor
+	//fileOffsetForArea[0] = 0x8f3a - offset; // chimney
+	//fileOffsetForArea[0] = 0x904e - offset; // master bed?
+	//fileOffsetForArea[0] = 0x90e1 - offset; // Dragon?
+	//fileOffsetForArea[0] = 0x9238 - offset; // ????
+	//fileOffsetForArea[0] = 0x92a7 - offset; // Pool
+	//fileOffsetForArea[0] = 0x93e3 - offset; // Doors
+	//fileOffsetForArea[0] = 0x94e5 - offset; // More doors
+	//fileOffsetForArea[0] = 0x9580 - offset; // Church? !!!
+	//fileOffsetForArea[0] = 0x96c8 - offset; // Another area !!!
+	//fileOffsetForArea[0] = 0x974a - offset; // Another area !!!
+	//fileOffsetForArea[0] = 0x97cb - offset; // Courtyard !!!
+	//fileOffsetForArea[0] = 0x9a5c - offset; // Stable !!!
+	//fileOffsetForArea[0] = 0x9b4b - offset; // Another area !!!
+
+
 	//fileOffsetForArea[0] = 0x8e0a - offset - 8; // Pool?
-	//fileOffsetForArea[0] = 0x92d8 - offset; // ??
 
 	// grab the areas
 	AreaMap *areaMap = new AreaMap;
