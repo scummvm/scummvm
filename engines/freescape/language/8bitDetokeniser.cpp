@@ -219,9 +219,13 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			break;
 		case 26:
 			detokenisedStream += "REDRAW";
+			currentInstruction = FCLInstruction(Token::REDRAW);
+			conditionalInstructions->push_back(currentInstruction);
+			currentInstruction = FCLInstruction(Token::UNKNOWN);
 			break;
 		case 27:
 			detokenisedStream += "DELAY (";
+			currentInstruction = FCLInstruction(Token::DELAY);
 			break;
 		case 28:
 			detokenisedStream += "SYNCSND (";
