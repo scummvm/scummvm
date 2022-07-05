@@ -25,7 +25,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/serializer.h"
-#include "mm/mm1/data/char.h"
+#include "mm/mm1/data/character.h"
 #include "mm/mm1/data/party.h"
 #include "mm/mm1/data/spells.h"
 

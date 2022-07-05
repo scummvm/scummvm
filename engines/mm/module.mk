@@ -14,7 +14,7 @@ MODULE_OBJS := \
 	mm1/meta_engine.o \
 	mm1/mm1.o \
 	mm1/sound.o \
-	mm1/data/char.o \
+	mm1/data/character.o \
 	mm1/data/game_state.o \
 	mm1/data/items.o \
 	mm1/data/party.o \

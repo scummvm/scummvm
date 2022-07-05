@@ -20,7 +20,7 @@
  */
 
 #include "common/algorithm.h"
-#include "mm/mm1/data/char.h"
+#include "mm/mm1/data/character.h"
 #include "mm/mm1/mm1.h"
 
 namespace MM {

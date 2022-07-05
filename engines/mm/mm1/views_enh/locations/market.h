@@ -23,7 +23,7 @@
 #define MM1_VIEWS_ENH_LOCATIONS_MARKET_H
 
 #include "mm/mm1/views_enh/locations/location.h"
-#include "mm/mm1/data/char.h"
+#include "mm/mm1/data/character.h"
 #include "mm/mm1/data/locations.h"
 
 namespace MM {

@@ -23,7 +23,7 @@
 #define MM1_DATA_PARTY_H
 
 #include "common/array.h"
-#include "mm/mm1/data/char.h"
+#include "mm/mm1/data/character.h"
 
 namespace MM {
 namespace MM1 {
