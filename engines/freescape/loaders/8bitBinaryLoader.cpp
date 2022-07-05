@@ -180,7 +180,9 @@ Graphics::PixelBuffer *FreescapeEngine::getPalette(uint8 areaNumber, uint8 c1, u
 			palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&drillerEGA);
 		else if (_renderMode == "cga")
 			palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&drillerCGA);
-	}
+	} else
+		palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&drillerEGA);
+
 	return palette;
 }
 
@@ -245,7 +247,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	}
 	long int endLastObject = file->pos();
 	debug("Last position %lx", endLastObject);
-	assert(endLastObject <= base + cPtr);
+	assert(endLastObject == base + cPtr);
 	file->seek(base + cPtr);
 	uint8 numConditions = file->readByte();
 	debug("%d area conditions at %x of area %d", numConditions, base + cPtr, areaNumber);

@@ -290,23 +290,41 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vec
 	Common::Array<Math::Vector3d> vertices;
 	tglEnable(TGL_POLYGON_OFFSET_FILL);
 	tglPolygonOffset(-2.0f, 1.f);
-	if ((*colours)[0] != _keyColor) {
+
+	if (ordinates->size() == 6) { // Line
 		_palette->getRGBAt((*colours)[0], r, g, b);
 		tglColor3ub(r, g, b);
-		for (int i = 0; i < ordinates->size(); i = i + 3) {
-			vertices.push_back(Math::Vector3d(origin.x() + (*ordinates)[i] + dx, origin.y() + (*ordinates)[i + 1] + dy,	origin.z() + (*ordinates)[i + 2] + dz));
-		}
+		for (int i = 0; i < ordinates->size(); i = i + 3)
+			vertices.push_back(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1],	(*ordinates)[i + 2]));
 		renderFace(vertices);
-	}
-	vertices.clear();
-	if ((*colours)[1] != _keyColor) {
+
+		vertices.clear();
 		_palette->getRGBAt((*colours)[1], r, g, b);
 		tglColor3ub(r, g, b);
-		for (int i = ordinates->size(); i > 0; i = i - 3) {
-			vertices.push_back(Math::Vector3d(origin.x() + (*ordinates)[i-3] - dx, origin.y() + (*ordinates)[i-2] - dy,	origin.z() + (*ordinates)[i-1] - dz));
-		}
+		for (int i = ordinates->size(); i > 0; i = i - 3)
+			vertices.push_back(Math::Vector3d((*ordinates)[i-3], (*ordinates)[i-2],	(*ordinates)[i-1]));
 		renderFace(vertices);
+
+	} else {
+		if ((*colours)[0] != _keyColor) {
+			_palette->getRGBAt((*colours)[0], r, g, b);
+			tglColor3ub(r, g, b);
+			for (int i = 0; i < ordinates->size(); i = i + 3) {
+				vertices.push_back(Math::Vector3d(origin.x() + (*ordinates)[i] + dx, origin.y() + (*ordinates)[i + 1] + dy,	origin.z() + (*ordinates)[i + 2] + dz));
+			}
+			renderFace(vertices);
+		}
+		vertices.clear();
+		if ((*colours)[1] != _keyColor) {
+			_palette->getRGBAt((*colours)[1], r, g, b);
+			tglColor3ub(r, g, b);
+			for (int i = ordinates->size(); i > 0; i = i - 3) {
+				vertices.push_back(Math::Vector3d(origin.x() + (*ordinates)[i-3] - dx, origin.y() + (*ordinates)[i-2] - dy,	origin.z() + (*ordinates)[i-1] - dz));
+			}
+			renderFace(vertices);
+		}
 	}
+
 	tglPolygonOffset(0, 0);
 	tglDisable(TGL_POLYGON_OFFSET_FILL);
 }

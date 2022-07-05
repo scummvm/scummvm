@@ -111,10 +111,6 @@ void Area::draw(Freescape::Renderer *gfx) {
 			(*it)->draw(gfx);
 		}
 	}
-	/*for (Common::Array<Object *>::iterator it = drawableObjects.begin(); it != drawableObjects.end(); it++) {
-		if (!(*it)->isInvisible() && (*it)->isPlanar())
-			(*it)->draw(gfx);
-	}*/
 	if (groundColor != 255)
 		gfx->drawFloor(groundColor);
 }

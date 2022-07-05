@@ -71,6 +71,11 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 
 		// figure out how many argument bytes we're going to need,
 		// check we have enough bytes left to read
+		if (opcode > 32) {
+			debug("ERROR: failed to read opcode: %x", opcode);
+			break;
+		}
+
 		uint8 numberOfArguments = argumentsRequiredByOpcode[opcode];
 		if (bytePointer + numberOfArguments > sizeOfTokenisedContent)
 			break;

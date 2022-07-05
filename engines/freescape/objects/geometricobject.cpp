@@ -254,6 +254,9 @@ void GeometricObject::draw(Freescape::Renderer *gfx) {
 	} else if (isPyramid(this->getType())) {
 		gfx->renderPyramid(origin, size, ordinates, colours, this->getType());
 	} else if (this->isPlanar() && _type <= 14) {
+		if (this->getType() == Triangle)
+			assert(ordinates->size() == 9);
+
 		//debug("Drawing %d of type %d", this->getObjectID(), this->getType());
 		gfx->renderPolygon(origin, size, ordinates, colours);
 	}
