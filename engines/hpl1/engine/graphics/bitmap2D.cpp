@@ -31,54 +31,37 @@
 
 namespace hpl {
 
-template<typename Loader>
-static Loader *loadImage(const tString &filepath) {
+static Image::ImageDecoder *loadImage(const tString &filepath, Image::ImageDecoder *decoder) {
 	//FIXME: string types
 	Common::File imgFile;
-	if (!imgFile.open(filepath.c_str())) {
+	if (!imgFile.open(filepath.c_str()))
 		error("Could not open file: %s", filepath.c_str());
-		return nullptr;
-	}
-	Loader *imgLoader = new Loader();
-	if (!imgLoader->loadStream(imgFile)) {
+	if (!decoder->loadStream(imgFile))
 		error("Could not load image at %s", filepath.c_str());
-	}
-	return imgLoader;
+	return decoder;
 }
 
-template<>
-static Image::JPEGDecoder *loadImage(const tString &filepath) {
-	// FIXME: string types
-	Common::File imgFile;
-	if (!imgFile.open(filepath.c_str())) {
-		error("Could not open file: %s", filepath.c_str());
-		return nullptr;
-	}
+Image::JPEGDecoder *setupJPEGDecoder(Image::JPEGDecoder *jpeg) {
 #ifdef SCUMM_BIG_ENDIAN
-	Graphics::PixelFormat pixFmt(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	jpeg->setOutputPixelFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 #else
-	Graphics::PixelFormat pixFmt(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	jpeg->setOutputPixelFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 #endif
-	Image::JPEGDecoder *imgLoader = new Image::JPEGDecoder();
-	imgLoader->setOutputPixelFormat(pixFmt);
-	if (!imgLoader->loadStream(imgFile)) {
-		error("Could not load image at %s", filepath.c_str());
-	}
-	return imgLoader;
+	return jpeg;
 }
 
 Bitmap2D::Bitmap2D(const tString &filepath, const tString &type, const Graphics::PixelFormat &desiredFormat)
 	: LowLevelPicture(type), _isSurfaceActive(false) {
 	if (type == "png")
-		_decoder.reset(loadImage<Image::PNGDecoder>(filepath));
+		_decoder.reset(loadImage(filepath, new Image::PNGDecoder));
 	else if (type == "bmp")
-		_decoder.reset(loadImage<Image::BitmapDecoder>(filepath));
+		_decoder.reset(loadImage(filepath, new Image::BitmapDecoder));
 	else if (type == "tga")
-		_decoder.reset(loadImage<Image::TGADecoder>(filepath));
+		_decoder.reset(loadImage(filepath, new Image::TGADecoder));
 	else if (type == "jpg" || type == "jpeg")
-		_decoder.reset(loadImage<Image::JPEGDecoder>(filepath));
+		_decoder.reset(loadImage(filepath, setupJPEGDecoder(new Image::JPEGDecoder)));
 	else if (type == "gif")
-		_decoder.reset(loadImage<Image::GIFDecoder>(filepath));
+		_decoder.reset(loadImage(filepath, new Image::GIFDecoder));
 	else
 		error("trying to load unsupported image format %s", type.c_str());
 	_width = _decoder->getSurface()->w;
