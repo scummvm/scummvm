@@ -208,7 +208,7 @@ void ScummEngine_v7::setDefaultCursor() {
 		white = getPaletteColorFromRGB(palette, inverseRgbIdx, inverseRgbIdx, inverseRgbIdx);
 	} while (white == 1 && rgbIdx != 100);
 
-	for (int i = 0; i < sizeof(default_v8_cursor); ++i) {
+	for (int i = 0; i < ARRAYSIZE(default_v8_cursor); i++) {
 		cursorPixel = default_v8_cursor[i];
 
 		if (isSmushActive() && cursorPixel == 0x0F)

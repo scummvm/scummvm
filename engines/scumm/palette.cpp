@@ -1559,9 +1559,9 @@ uint32 ScummEngine::findClosestPaletteColor(byte *palette, int numOfSlots, byte 
 		blueSquareDiff  = (b - palette[2]) * (b - palette[2]);
 
 		weightedColorError = 3 * redSquareDiff + 5 * greenSquareDiff + 2 * blueSquareDiff;
-		if (3 * redSquareDiff + 5 * greenSquareDiff + 2 * blueSquareDiff < minErr) {
+		if (weightedColorError < minErr) {
 			color = i;
-			minErr = 3 * redSquareDiff + 5 * greenSquareDiff + 2 * blueSquareDiff;
+			minErr = weightedColorError;
 		}
 		palette += 3;
 	}

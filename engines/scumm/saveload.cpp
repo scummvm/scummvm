@@ -165,7 +165,6 @@ void ScummEngine::copyHeapSaveGameToFile(int slot, const char *saveName) {
 	Common::String fileName;
 	SaveGameHeader hdr;
 	bool saveFailed = false;
-	uint32 heapFileSize;
 
 	Common::SeekableReadStream *heapSaveFile = openSaveFileForReading(1, true, fileName);
 	hdr.type = heapSaveFile->readUint32BE();
@@ -174,7 +173,6 @@ void ScummEngine::copyHeapSaveGameToFile(int slot, const char *saveName) {
 	heapSaveFile->read(hdr.name, sizeof(hdr.name));
 	Common::strlcpy(hdr.name, saveName, sizeof(hdr.name));
 
-	heapFileSize = (uint32)heapSaveFile->size();
 	if (heapSaveFile->err() || hdr.type != MKTAG('S','C','V','M')) {
 		saveFailed = true;
 	} else {
