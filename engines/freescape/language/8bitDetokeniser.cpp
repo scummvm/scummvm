@@ -10,7 +10,7 @@
 	This has been implemented based on John Elliott's 2001
 	reverse engineering of Driller; see http://www.seasip.demon.co.uk/ZX/Driller/
 */
-
+#include "common/debug.h"
 #include "8bitDetokeniser.h"
 #include "token.h"
 
@@ -29,12 +29,12 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 	FCLInstruction currentInstruction;
 
 	// this lookup table tells us how many argument bytes to read per opcode
-	uint8 argumentsRequiredByOpcode[32] =
+	uint8 argumentsRequiredByOpcode[33] =
 		{
 			0, 3, 1, 1, 1, 1, 2, 2,
 			2, 1, 1, 2, 1, 1, 2, 1,
 			1, 2, 2, 1, 2, 0, 0, 0,
-			0, 1, 0, 1, 1, 1, 1, 1};
+			1, 1, 0, 1, 1, 1, 1, 1, 2};
 
 	while (bytePointer < sizeOfTokenisedContent) {
 		// get the conditional type of the next operation
@@ -66,7 +66,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		}
 
 		// get the actual operation
-		uint8 opcode = tokenisedCondition[bytePointer] & 0x1f;
+		uint16 opcode = tokenisedCondition[bytePointer] & 0x7f;
 		bytePointer++;
 
 		// figure out how many argument bytes we're going to need,
@@ -194,6 +194,14 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			numberOfArguments = 0;
 			break;
 
+		case 32: // end condition if an object is visible in another area
+			detokenisedStream += "IF RVIS? ";
+			detokenisedStream += Common::String::format("(%d), (%d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
+			detokenisedStream += "THEN END ENDIF";
+			bytePointer += 2;
+			numberOfArguments = 0;
+			break;
+
 		case 12:
 			detokenisedStream += "SETBIT (";
 			break;
@@ -234,11 +242,10 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			detokenisedStream += "TOGBIT (";
 			break;
 
-		case 25: {
-			// this should toggle border colour; it's therefore a no-op
-			bytePointer++;
-			numberOfArguments = 0;
-		} break;
+		case 25:
+			// this should toggle border colour or the room palette
+			detokenisedStream += "SPFX (";
+		break;
 
 		case 20:
 			detokenisedStream += "SETVAR ";

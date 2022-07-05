@@ -322,7 +322,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		FCLInstructionVector instructions;
 		// get the length
 		uint32 lengthOfCondition = file->readByte();
-		debug("length of condition: %d", lengthOfCondition);
+		debug("length of condition: %d at %lx", lengthOfCondition, file->pos());
 		// get the condition
 		byte *conditionData = (byte*)malloc(lengthOfCondition);
 		file->read(conditionData, lengthOfCondition);
@@ -331,7 +331,6 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		Common::String *conditions = detokenise8bitCondition(conditionArray, instructions);
 		debug("%s", conditions->c_str());
 	}
-
 	file->seek(offset + 200);
 	debug("areas index at: %lx", file->pos());
 	uint16 *fileOffsetForArea = new uint16[numberOfAreas];
