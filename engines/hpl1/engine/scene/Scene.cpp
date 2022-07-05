@@ -185,7 +185,7 @@ cScriptVar *cScene::CreateLocalVar(const tString &asName) {
 		m_mapLocalVars.insert(tScriptVarMap::value_type(cString::ToLowerCase(asName), Var));
 		pVar = GetLocalVar(asName);
 		if (pVar == NULL)
-			FatalError("Very strange error when creating script var!\n");
+			error("Very strange error when creating script var!");
 	}
 	return pVar;
 }
@@ -217,7 +217,7 @@ cScriptVar *cScene::CreateGlobalVar(const tString &asName) {
 		m_mapGlobalVars.insert(tScriptVarMap::value_type(cString::ToLowerCase(asName), Var));
 		pVar = GetGlobalVar(asName);
 		if (pVar == NULL)
-			FatalError("Very strange error when creating script var!\n");
+			error("Very strange error when creating script var!");
 	}
 	return pVar;
 }

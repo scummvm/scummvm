@@ -355,7 +355,7 @@ void cIntroStory::SetActive(bool abX) {
 		for (int i = 0; i < INTRO_IMAGE_NUM; ++i) {
 			mvImages[i].mpTexture = mpTexManager->Create2D("intro_image0" + cString::ToString(i + 1), false);
 			if (mvImages[i].mpTexture == NULL) {
-				FatalError("Couldn't load an intro image!\n");
+				error("Couldn't load an intro image");
 			}
 			mvImages[i].mbActive = false;
 			mvImages[i].mlstPrevPos.clear();

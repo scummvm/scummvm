@@ -61,13 +61,6 @@ LowLevelSystem::~LowLevelSystem() {
 	// gpLogWriter = NULL;
 }
 
-void FatalError(const char *fmt, ...) {
-	va_list vl;
-	va_start(vl, fmt);
-	error(fmt, vl);
-	va_end(vl);
-}
-
 void Error(const char *fmt, ...) {
 	va_list vl;
 	va_start(vl, fmt);

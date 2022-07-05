@@ -1694,7 +1694,7 @@ cPlayerNoiseFilter::cPlayerNoiseFilter(cInit *apInit) {
 		tString sFileName = "effect_noise0" + cString::ToString(i);
 		cGfxObject *pObject = mpDrawer->CreateGfxObject(sFileName, "smoke2d");
 		if (pObject == NULL) {
-			FatalError("Error loading noise filter!\n");
+			error("Error loading noise filter");
 		}
 
 		mvGfxNoise.push_back(pObject);

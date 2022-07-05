@@ -251,7 +251,7 @@ void cLowLevelSoundOpenAL::Init(bool abUseHardware, bool abForceGeneric, bool ab
 		}
 		if (!mbInitialized)
 		{
-			FatalError("Failed! Check your OpenAL installation\n");
+			error("Failed! Check your OpenAL installation");
 			return;
 		}
 
