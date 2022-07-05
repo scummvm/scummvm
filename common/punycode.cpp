@@ -253,6 +253,11 @@ U32String punycode_decode(const String &src1) {
 		size_t org_i = i;
 
 		for (size_t w = 1, k = BASE; true; k += BASE) {
+			if (si >= src.size()) {
+				warning("punycode_decode: incorrect digit");
+				return src1;
+			}
+
 			size_t digit = decode_digit(src[si++]);
 
 			if (digit == SMAX) {
