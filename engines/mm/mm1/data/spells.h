@@ -56,6 +56,10 @@ union ActiveSpells {
 	byte _arr[ACTIVE_SPELLS_COUNT];
 };
 
+class Spells {
+public:
+	static void cast() {}
+};
 
 } // namespace MM1
 } // namespace MM

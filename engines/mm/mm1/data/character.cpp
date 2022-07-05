@@ -30,25 +30,45 @@ static const int CLASS_HP_PER_LEVEL[6] = {
 	12, 10, 10, 8, 6, 8
 };
 
-static const int8 SPELLS_SP[2][47] = {
-	{
-		 0, 0, 0, 0, 0, -1, 0, 0,
-		 0, 1, 0, 0, 0,  0, 0, 0,
-		 1, 0, 0, 0, 0,  0, 0, 1,
-		 0, 0, 0, 0, 2,  0, 2, 2,
-		 0, 0, 0, 3, 3,
-		 4, 4, 4, 4, 4,
-		10, 5, 5, 5, 5
-	},
-	{
-		 0,   0, -1,  0, 0, 0, 0, 0,
-		 0,   0,  1,  0, 0, 0, 0, 0,
-		-1,   0,  1, -1, 0, 0, 1, 0,
-		 0,   0,  2,  0, 0, 2, 2, 2,
-		 0,   0,  3,  3, 3,
-		 4,   4,  4,  4, 4,
-		 5, 100,  5,  5, 5
-	}
+static const int8 SPELLS_SP_GEMS[47 * 2] = {
+	 0, 0, 0, 0, 0, -1, 0, 0,
+	 0, 1, 0, 0, 0,  0, 0, 0,
+	 1, 0, 0, 0, 0,  0, 0, 1,
+	 0, 0, 0, 0, 2,  0, 2, 2,
+	 0, 0, 0, 3, 3,
+	 4, 4, 4, 4, 4,
+	10, 5, 5, 5, 5,
+
+	 0,   0, -1,  0, 0, 0, 0, 0,
+	 0,   0,  1,  0, 0, 0, 0, 0,
+	-1,   0,  1, -1, 0, 0, 1, 0,
+	 0,   0,  2,  0, 0, 2, 2, 2,
+	 0,   0,  3,  3, 3,
+	 4,   4,  4,  4, 4,
+	 5, 100,  5,  5, 5
+};
+
+static const byte SPELL_FLAGS[47 * 2] = {
+	 1,  1,  9,  4,  2,  4,  0,  1,
+	 4,  5,  9,  0,  0,  0,  9,  9,
+	 2,  4,  4,  2,  9,  9,  2,  2,
+	 6,  6,  0,  0,  6, 25,  5,  2,
+	17,  0,  1,  4,  4,
+	17,  4,  6,  4,  2,
+	 1,  1,  0,  6, 25,
+
+	 1,  2,  9,  9,  0,  2,  2,  9,
+	 9,  9,  9,  2,  2,  5,  5,  9,
+	 9, 18,  1,  9,  1,  1,  1,  9,
+	 9,  9,  9,  9,  2,  0,  1,  1,
+	17,  0,  9,  2,  2,
+	 1,  9,  2,  0,  2,
+	 2,  2, 17,  1,  1
+};
+
+enum SpellFlag {
+	SF_COMBAT_ONLY = 1,
+	SF_OUTDOORS_ONLY = 0x10
 };
 
 void Inventory::clear() {
@@ -130,10 +150,10 @@ void Character::synchronize(Common::Serializer &s) {
 	_age.synchronize(s);
 
 	s.syncAsUint32LE(_exp);
-	s.syncAsByte(_sp._base);
-	s.skip(1);
 	s.syncAsByte(_sp._current);
-	s.skip(1);
+	s.syncAsByte(_v2c);
+	s.syncAsByte(_sp._base);
+	s.syncAsByte(_v2e);
 	_slvl.synchronize(s);
 
 	s.syncAsUint16LE(_gems);
@@ -403,7 +423,7 @@ Common::String Character::getConditionString() const {
 	return result;
 }
 
-void Character::castSpell(int lvl, int num) {
+SpellResult Character::castSpell(int lvl, int num) {
 	int lvlNum;
 	int setNum = _class == ARCHER || _class == SORCERER ? 1 : 0;
 
@@ -415,11 +435,41 @@ void Character::castSpell(int lvl, int num) {
 		spellNum += 5;
 
 	// Get required SP
-	int requiredSp = SPELLS_SP[setNum][spellNum];
-	if (requiredSp < 0)
+	int spellIndex = setNum * 47 + spellNum;
+	int requiredSp = lvl - 1;
+
+	if (SPELLS_SP_GEMS[spellIndex] < 0)
 		// required SP increases with character's level
 		requiredSp = _level;
 
+	if (!_v2c) {
+		if (SPELLS_SP_GEMS[spellIndex] < 0 && _sp._current < _level._current)
+			return SR_NOT_ENOUGH_SP;
+		if ((lvl - 1) > _sp._current)
+			return SR_NOT_ENOUGH_SP;
+	}
+
+	int requiredGems = (uint8)SPELLS_SP_GEMS[spellIndex] & 0x7f;
+	if (requiredGems && requiredGems > _gems)
+		return SR_NOT_ENOUGH_GEMS;
+
+	return performSpell(spellNum, requiredSp, requiredGems);
+}
+
+SpellResult Character::performSpell(int spellIndex, int requiredSp, int baseSp) {
+	const Maps::Map &map = *g_maps->_currentMap;
+
+	if (SPELL_FLAGS[spellIndex] & SF_COMBAT_ONLY)
+		return SR_COMBAT_ONLY;
+	if ((SPELL_FLAGS[spellIndex] & SF_OUTDOORS_ONLY) && !(map[0] & 0x80))
+		return SR_OUTDOORS_ONLY;
+
+	// TODO: Selection of cast on
+
+	return SR_OK;
+}
+
+void Character::cast2() {
 
 }
 
