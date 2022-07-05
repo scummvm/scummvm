@@ -320,7 +320,7 @@ int ScummEngine_v7::getInternalGUIControlFromCoordinates(int x, int y) {
 		   _internalGUIControls[id].yPos < y) {
 
 		id++;
-		if (id >= sizeof(_internalGUIControls))
+		if (id >= ARRAYSIZE(_internalGUIControls))
 			return -1;
 	}
 	return id;
@@ -453,7 +453,7 @@ void ScummEngine_v7::confirmExitDialog() {
 				 (ks.keycode == Common::KEYCODE_c && ks.hasFlags(Common::KBD_CTRL)));
 
 		ctrlId = getInternalGUIControlFromCoordinates(_mouse.x, _mouse.y);
-		if (leftBtnPressed && ctrlId == 0 || (toupper(ks.ascii) == yesLabelPtr[0]))
+		if ((leftBtnPressed && ctrlId == 0) || (toupper(ks.ascii) == yesLabelPtr[0]))
 			quitGame();
 
 		// Restore the previous cursor...
