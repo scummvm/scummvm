@@ -162,6 +162,7 @@ Common::Rect ActionText::getBound() {
 
 void ActionText::end() {
 	Screen *screen = _actor->getPage()->getGame()->getScreen();
+	screen->addDirtyRect(this->getBound());
 	if (_scrollBar && _txtWnd) {
 		screen->getWndManager().removeWindow(_txtWnd);
 		screen->removeTextWindow(_txtWnd);
