@@ -164,6 +164,11 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			detokenisedStream += "IF VAR!=? ";
 			detokenisedStream += Common::String::format("(v%d, v%d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
 			detokenisedStream += "THEN END ENDIF";
+			currentInstruction = FCLInstruction(Token::VARNOTEQ);
+			currentInstruction.setSource(tokenisedCondition[bytePointer]);
+			currentInstruction.setDestination(tokenisedCondition[bytePointer + 1]);
+			conditionalInstructions->push_back(currentInstruction);
+			currentInstruction = FCLInstruction(Token::UNKNOWN);
 			bytePointer += 2;
 			numberOfArguments = 0;
 			break;

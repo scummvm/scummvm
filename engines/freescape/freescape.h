@@ -128,6 +128,8 @@ public:
 	void executeMakeVisible(FCLInstruction &instruction);
 	void executeToggleVisibility(FCLInstruction &instruction);
 	void executeDestroy(FCLInstruction &instruction);
+	bool executeEndIfNotEqual(FCLInstruction &instruction);
+
 
 	// Rendering
 	Common::String _renderMode;
