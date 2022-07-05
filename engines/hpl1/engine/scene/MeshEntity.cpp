@@ -1285,6 +1285,8 @@ void cMeshEntity::HandleAnimationEvent(cAnimationEvent *apEvent) {
 		}
 		break;
 	}
+	defzult:
+		break;
 	}
 }
 

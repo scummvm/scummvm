@@ -1149,6 +1149,8 @@ static void SetJointProperty(std::string asJointName, std::string asProp, float 
 			pSliderJoint->SetMinDistance(afVal);
 			break;
 		}
+		default:
+			break;
 		}
 	}
 	/////////////////////////////
@@ -1170,6 +1172,8 @@ static void SetJointProperty(std::string asJointName, std::string asProp, float 
 			pSliderJoint->SetMaxDistance(afVal);
 			break;
 		}
+		default:
+			break;
 		}
 
 	} else {

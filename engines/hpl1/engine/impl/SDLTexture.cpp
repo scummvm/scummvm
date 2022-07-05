@@ -637,6 +637,8 @@ GLenum cSDLTexture::GetGLWrap(eTextureWrap aMode) {
 		return GL_CLAMP_TO_EDGE;
 	case eTextureWrap_ClampToBorder:
 		return GL_CLAMP_TO_BORDER;
+	default:
+		break;
 	}
 
 	return GL_REPEAT;

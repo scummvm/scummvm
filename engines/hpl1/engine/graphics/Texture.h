@@ -103,9 +103,9 @@ public:
 	void SetSizeLevel(unsigned int alLevel) { mlSizeLevel = alLevel; }
 	void SetMinLevelSize(const cVector2l &avSize) { mvMinLevelSize = avSize; }
 
-	bool reload() { return false; }
-	void unload() {}
-	void destroy() {}
+	bool reload() override { return false; }
+	void unload() override {}
+	void destroy() override {}
 
 	/**
 	 * Create a texture from a bitmap, work only for 1D, 2D and Rect targets. Doesn't work with render targets.
@@ -147,7 +147,7 @@ public:
 	virtual void SetGamma(float afGamma) = 0;
 	virtual int GetHandle() = 0;
 
-	virtual bool hasAlpha() { return false; }
+	virtual bool hasAlpha() override { return false; }
 	uint32 getBpp() const override { return _bpp; }
 
 	virtual void SetWrapS(eTextureWrap aMode) = 0;
