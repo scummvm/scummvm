@@ -60,7 +60,7 @@ static const ResString string_map_table_v8[] = {
 	{0, "/BT__004/Error reading disk %c, (%c%d) Press Button."},
 	{0, "/BT__002/Game Paused.  Press SPACE to Continue."},
 	{0, "/BT__005/Are you sure you want to restart?  (Y/N)"}, //BOOT.004
-	{0, "/BT__006/Are you sure you want to quit?  (Y/N)"}, //BOOT.005
+	{0, "/BT__006/Are you sure you want to quit?  (Y/N)"},    //BOOT.005
 	{0, "/BT__008/Save"},
 	{0, "/BT__009/Load"},
 	{0, "/BT__010/Play"},
@@ -84,6 +84,11 @@ static const ResString string_map_table_v8[] = {
 	{0, "/BT_105/Text Display Only"},
 	{0, "/BT_103/Voice Only"},
 	{0, "/SYST300/y"},
+	{0, "/BOOT.005/Are you sure you want to quit?  (Y-N)"}, // Demo strings
+	{0, "/NEW.23/Text Speed  Slow  ==========  Fast"},
+	{0, "/NEW.24/Music Volume  Low  =========  High"},
+	{0, "/NEW.25/Voice Volume  Low  =========  High"},
+	{0, "/NEW.26/Sfx Volume  Low  =========  High"}
 };
 
 static const ResString string_map_table_v7[] = {
