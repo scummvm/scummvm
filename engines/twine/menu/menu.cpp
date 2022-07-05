@@ -1099,7 +1099,7 @@ void Menu::drawBehaviourMenu(int32 left, int32 top, int32 angle) {
 	drawInfoMenu(titleRect.left, titleRect.bottom + 10, titleRect.width());
 }
 
-void Menu::processBehaviourMenu() {
+void Menu::processBehaviourMenu(bool behaviourMenu) {
 	_engine->exitSceneryView();
 	if (_engine->_actor->_heroBehaviour == HeroBehaviourType::kProtoPack) {
 		_engine->_sound->stopSamples();
@@ -1122,7 +1122,8 @@ void Menu::processBehaviourMenu() {
 
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 
-	if (_engine->isLba1Classic()) {
+	// quick actions to change behaviour don't show the menu in classic edition
+	if (!behaviourMenu && _engine->isLba1Classic()) {
 		char text[256];
 		_engine->_text->getMenuText(_engine->_actor->getTextIdForBehaviour(), text, sizeof(text));
 		_engine->_redraw->setRenderText(text);
