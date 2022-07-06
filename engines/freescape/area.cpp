@@ -130,14 +130,19 @@ Object *Area::shootRay(const Math::Ray &ray) {
 }
 
 Object *Area::checkCollisions(const Math::AABB &boundingBox) {
+	float size = 16 * 8192; // TODO: check if this is max size
+	Object *collided = nullptr;
 	for (int i = drawableObjects.size() - 1; i >= 0; i--) {
 		if (drawableObjects[i]->isDrawable() && !drawableObjects[i]->isDestroyed() && !drawableObjects[i]->isInvisible()) {
 			GeometricObject *obj = (GeometricObject*) drawableObjects[i];
-			if (obj->collides(boundingBox))
-				return drawableObjects[i];
+			float objSize = obj->getSize().length();
+			if (obj->collides(boundingBox) && size > objSize) {
+				collided = obj;
+				size = objSize;
+			}
 		}
 	}
-	return nullptr;
+	return collided;
 }
 
 } // End of namespace Freescape

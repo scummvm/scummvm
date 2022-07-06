@@ -6,6 +6,7 @@ static const PlainGameDescriptor freescapeGames[] = {
 	{"3dkit", "The 3D Kit Game"},
 	{"driller", "Driller"},
 	{"spacestationoblivion", "Space Station Oblivion"},
+	{"darkside", "Dark Side"},
 	{"totaleclipse", "Total Eclipse"},
 	{"castlemaster", "Castle Master"},
 	{"menace", "Menace of Dr. Spoil Sport"},
@@ -70,6 +71,19 @@ static const ADGameDescription gameDescriptions[] = {
 		{"DRILLT.EXE", 0, "afce0e5e0ad8c508e0c31c3e0b18b9a5", 51096},
 		{"DRILLE.EXE", 0, "eb7e9e0acb72e30cf6e9ed20a6480e7a", 51944},
 		{"DRILLH.EXE", 0, "033d2d45390886d0bff78cf53e83b6ed", 47496},
+		AD_LISTEND
+	 },
+	 Common::EN_ANY,
+	 Common::kPlatformDOS,
+	 ADGF_NO_FLAGS,
+	 GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)},
+	{"darkside",
+	 "Dark Side",
+	 {
+		{"DARKSIDE.EXE", 0, "c6c0d0186ec45e6cecd72bf5550c7f98", 1600},
+		{"DSIDEC.EXE", 0, "31e6c169d9270b6de8c1c2e746ac238e", 49504},
+		{"DSIDEH.EXE", 0, "5e18e0746647bd04f43b9db24b6a036d", 53232},
+		{"DSIDEE.EXE", 0, "524281f7d2dc49e0a41fcb1d38ee2559", 56800},
 		AD_LISTEND
 	 },
 	 Common::EN_ANY,
