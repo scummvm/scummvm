@@ -234,7 +234,7 @@ void KIASectionPogo::open() {
 
 	for (int i = 0; i < kStringCount; ++i) {
 		int j = _vm->_rnd.getRandomNumberRng(i, kStringCount - 1);
-		SWAP(_strings[i], kStrings[j]);
+		SWAP<const char *>(_strings[i], kStrings[j]);
 	}
 
 	for (int i = 0; i < kLineCount; ++i) {
