@@ -367,19 +367,38 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 		_position = _position + _cameraRight * velocity;
 		break;
 	}
-	// Make sure the user stays at the ground level
-	// this one-liner keeps the user at the ground level (xz plane)
-	_position.set(_position.x(), positionY, _position.z());
+	// Is threre some floor under the player?
+	_position.set(_position.x(), positionY - 16, _position.z());
 	bool collided = checkCollisions();
-	if (collided && previousAreaID == _currentArea->getAreaID())
-		_position = previousPosition;
-	debug("player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
+
+	if (!collided) {  // Player is falling, let's try to step down
+		_position.set(_position.x(), positionY - 16 - 64, _position.z());
+		collided = checkCollisions();
+		assert(collided);
+
+		// restore position
+		_position.set(_position.x(), positionY - 64, _position.z());
+	} else {
+		// restore position
+		_position.set(_position.x(), positionY, _position.z());
+
+		collided = checkCollisions();
+		if (collided && previousAreaID == _currentArea->getAreaID()) {
+			// We found a collisions, let's try to step up
+			_position.set(_position.x(), positionY + 64, _position.z());
+			collided = checkCollisions();
+			if (collided)
+				_position = previousPosition;
+		}
+	}
+
+	debug("new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 }
 
 bool FreescapeEngine::checkCollisions() {
 
-	Math::Vector3d v1(_position.x() - _playerWidth / 2, _playerHeight / 2                , _position.z() - _playerDepth / 2);
-	Math::Vector3d v2(_position.x() + _playerWidth / 2, _position.y() + _playerHeight / 2, _position.z() + _playerDepth / 2);
+	Math::Vector3d v1(_position.x() - _playerWidth / 2, _position.y() - _playerHeight     , _position.z() - _playerDepth / 2);
+	Math::Vector3d v2(_position.x() + _playerWidth / 2, _position.y(), _position.z() + _playerDepth / 2);
 
 	const Math::AABB boundingBox(v1, v2);
 	Object *obj = _currentArea->checkCollisions(boundingBox);
