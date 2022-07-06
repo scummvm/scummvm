@@ -150,8 +150,8 @@ bool Movie::loadArchive() {
 
 	// TODO: Add more options for desktop dimensions
 	if (_window == _vm->getStage()) {
-		uint16 windowWidth = g_director->desktopEnabled() ? 1024 : _movieRect.width();
-		uint16 windowHeight = g_director->desktopEnabled() ? 768 : _movieRect.height();
+		uint16 windowWidth = g_director->desktopEnabled() ? g_director->_wmWidth : _movieRect.width();
+		uint16 windowHeight = g_director->desktopEnabled() ? g_director->_wmHeight : _movieRect.height();
 		if (_vm->_wm->_screenDims.width() != windowWidth || _vm->_wm->_screenDims.height() != windowHeight) {
 			_vm->_wm->resizeScreen(windowWidth, windowHeight);
 			recenter = true;
