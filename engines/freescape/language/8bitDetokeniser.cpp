@@ -181,6 +181,11 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			detokenisedStream += "IF BIT!=? ";
 			detokenisedStream += Common::String::format("(%d, %d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
 			detokenisedStream += "THEN END ENDIF";
+			currentInstruction = FCLInstruction(Token::BITNOTEQ);
+			currentInstruction.setSource(tokenisedCondition[bytePointer]);
+			currentInstruction.setDestination(tokenisedCondition[bytePointer + 1]);
+			conditionalInstructions->push_back(currentInstruction);
+			currentInstruction = FCLInstruction(Token::UNKNOWN);
 			bytePointer += 2;
 			numberOfArguments = 0;
 			break;
@@ -209,9 +214,11 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 
 		case 12:
 			detokenisedStream += "SETBIT (";
+			currentInstruction = FCLInstruction(Token::SETBIT);
 			break;
 		case 13:
 			detokenisedStream += "CLRBIT (";
+			currentInstruction = FCLInstruction(Token::CLEARBIT);
 			break;
 
 		case 15:
@@ -244,7 +251,8 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			detokenisedStream += "SYNCSND (";
 			break;
 		case 29:
-			detokenisedStream += "TOGBIT (";
+			detokenisedStream += "TOGGLEBIT (";
+			currentInstruction = FCLInstruction(Token::TOGGLEBIT);
 			break;
 
 		case 25:

@@ -312,9 +312,10 @@ Common::Error FreescapeEngine::run() {
 }
 
 void FreescapeEngine::initGameState() {
-	/*for (int16 i = 0; i < 256; i++) {
-		_gameState[i] = 0;
-	}*/
+	_areaBits.resize(33);
+	for (int16 i = 0; i <= 32; i++) {
+		_areaBits[i] = false;
+	}
 
 	_gameState[k8bitVariableEnergy] = 100;
 	_gameState[k8bitVariableShield] = 100;
@@ -418,6 +419,10 @@ void FreescapeEngine::gotoArea(uint16 areaID, uint16 entranceID) {
 
 	_pitch = _rotation.x() - 180.f;
 	_yaw = _rotation.y() - 180.f;
+
+	for (int16 i = 0; i <= 32; i++) {
+		_areaBits[i] = false;
+	}
 }
 
 bool FreescapeEngine::hasFeature(EngineFeature f) const {
