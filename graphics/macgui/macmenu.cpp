@@ -127,7 +127,7 @@ MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 
 	_dimensionsDirty = true;
 
-	if (_wm->_mode & kWMModeWin95) {
+	if (_wm->_mode & kWMModeWin95 && !(_wm->_mode & kWMModeForceMacFontsInWin95)) {
 		_menuDropdownItemHeight = kMenuWin95DropdownItemHeight;
 		_menuLeftDropdownPadding = kMenuWin95LeftDropdownPadding;
 		_menuRightDropdownPadding = kMenuWin95RightDropdownPadding;
@@ -722,7 +722,7 @@ void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
 
 const Font *MacMenu::getMenuFont(int slant) {
 #ifdef USE_FREETYPE2
-	if (_wm->_mode & kWMModeWin95) {
+	if (_wm->_mode & kWMModeWin95 && !(_wm->_mode & kWMModeForceMacFontsInWin95)) {
 		if (!_loadedFont) {
 			_loadedFont = Graphics::loadTTFFontFromArchive("ms_sans_serif.ttf", 16);
 
