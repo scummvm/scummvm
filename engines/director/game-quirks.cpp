@@ -29,6 +29,10 @@ static void quirkKidsBox() {
     // will pick a game window that fits the splash screen and then try
     // to squish the full size game window into it.
     g_director->_wmMode = Director::wmModeDesktop;
+    // Game runs in 640x480; clipping it to this size ensures the main
+    // game window takes up the full screen, and only the splash is windowed.
+    g_director->_wmWidth = 640;
+    g_director->_wmHeight = 480;
 }
 
 static void quirkLzone() {
