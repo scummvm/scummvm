@@ -62,6 +62,8 @@ public:
 
 	uint32 getBpp() const override;
 
+	void copyRedToAlpha();
+
 private:
 	void copyDecoder(const Graphics::PixelFormat &format = {});
 	const Graphics::Surface &activeSurface() const;

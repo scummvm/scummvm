@@ -128,7 +128,8 @@ const void *Bitmap2D::getRawData() const {
 }
 
 int Bitmap2D::getNumChannels() {
-	return activeSurface().format.bpp() / activeSurface().format.bytesPerPixel;
+	const Graphics::PixelFormat &format = activeSurface().format;
+	return (format.rBits() > 0) + (format.gBits() > 0) + (format.bBits() > 0) + (format.aBits() > 0);
 }
 
 const Graphics::PixelFormat &Bitmap2D::format() const {
@@ -140,7 +141,25 @@ bool Bitmap2D::hasAlpha() {
 }
 
 uint32 Bitmap2D::getBpp() const {
-	return format().bpp();
+	return format().bytesPerPixel;
+}
+
+static uint32 alphaToRed(const uint32 pixel, const Graphics::PixelFormat &format) {
+	byte r, g, b;
+	format.colorToRGB(pixel, r, g, b);
+	byte a = r;
+	return format.ARGBToColor(a, r, g, b);
+}
+
+void Bitmap2D::copyRedToAlpha() {
+	if (!_isSurfaceActive)
+		copyDecoder();
+	for (uint y = 0; y < _surface.h; y++) {
+		uint32 *rowPtr = (uint32 *)_surface.getBasePtr(0, y);
+		for (uint x = 0; x < _surface.w; ++x, ++rowPtr) {
+			*rowPtr = alphaToRed(*rowPtr, _surface.format);
+		}
+	}
 }
 
 void Bitmap2D::copyDecoder(const Graphics::PixelFormat &format) {

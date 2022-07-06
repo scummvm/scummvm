@@ -137,6 +137,7 @@ void FontData::loadNextGlyph(const TiXmlElement *charIt, BitmapArray &bitmaps, c
 	Common::ScopedPtr<Bitmap2D> charBmp(_lowLevelGraphics->CreateBitmap2D(size));
 	src.drawToBitmap(*charBmp, {0,0}, Common::Rect(x, y, x + w, y + h));
 
+	charBmp->copyRedToAlpha();
 	_glyphs[id] = createGlyph(charBmp.get(), {xOffset, yOffset}, {w, h}, fontSize, advance);
 }
 
