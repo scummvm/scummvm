@@ -24,6 +24,7 @@
 
 #include "bladerunner/bladerunner.h"
 
+#include "bladerunner/color.h"
 #include "common/str.h"
 #include "common/ustr.h"
 
@@ -52,8 +53,21 @@ class Subtitles {
 	static const char *SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries];
 	static const char *SUBTITLES_FONT_FILENAME_EXTERNAL;
 	static const char *SUBTITLES_VERSION_TRENAME;
+	static const char *EXTRA_TRENAME;
+
+	static const Color256 kTextColors[];
 
 	static const int  kNumOfSubtitleRoles       = 2;
+
+	static const int  kxcLineCount              = 22;
+	static const int  kxcStringCount            = 14; // 15 - 1
+	Common::String    _xcStrings[kxcStringCount];
+	int               _xcStringIndex;
+
+	Common::String    _xcLineTexts[kxcLineCount];
+	int               _xcLineTimeouts[kxcLineCount];
+	int               _xcLineOffsets[kxcLineCount];
+	uint32            _xcTimeLast;
 
 	BladeRunnerEngine *_vm;
 
@@ -90,6 +104,8 @@ class Subtitles {
 		Common::String currentText;
 		Common::String prevText;
 		Common::Array<Common::String> lines;
+
+		SubtitlesData() : isVisible(false), forceShowWhenNoSpeech(false) { };
 	};
 
 	SubtitlesInfo  _subtitlesInfo;
@@ -97,8 +113,12 @@ class Subtitles {
 
 	Graphics::Font *_font;
 	bool            _useUTF8;
-
-	Common::Array<SubtitlesData> _subtitlesData;
+	bool            _useHDC;
+	Common::Array<Common::String>       _subtitlesEXC;
+	Common::Array<SubtitlesData>        _subtitlesDataActive;
+	Common::String                      _loadAvgStr;
+	Common::String                      _excTitlStr;
+	Common::String                      _goVib;
 
 	bool _gameSubsResourceEntriesFound[kMaxTextResourceEntries]; // false if a TRE file did not open successfully
 	bool _isSystemActive;                                        // true if the whole subtitles subsystem should be disabled (due to missing required resources)
@@ -119,6 +139,10 @@ public:
 	bool show(int subsRole);
 	bool hide(int subsRole);
 	void clear();
+	bool isHDCPresent();
+	void xcReload();
+	Common::String getLoadAvgStr() const { return _loadAvgStr; }
+	const char *getGoVib() const { return _goVib.c_str(); }
 
 	bool isVisible(int subsRole) const;
 	void tick(Graphics::Surface &s);

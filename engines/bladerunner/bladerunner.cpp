@@ -134,6 +134,8 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_validBootParam               = false;
 
 	_playerLosesControlCounter = 0;
+	_extraCPos = 0;
+	_extraCNotify = 0;
 
 	_playerActorIdle = false;
 	_playerDead      = false;
@@ -1686,6 +1688,35 @@ void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 		_scores->handleKeyDown(event.kbd);
 		return;
 	}
+
+	if ((_scene->getSetId() == kSetMA02_MA04 || _scene->getSetId() == kSetMA04)
+	    && _scene->getSceneId() == kSceneMA04
+	    && _subtitles->isHDCPresent()
+	    && _extraCNotify == 0) {
+		if (toupper(event.kbd.ascii) != _subtitles->getGoVib()[_extraCPos]) {
+			setExtraCNotify(0);
+		}
+		if (toupper(event.kbd.ascii) == _subtitles->getGoVib()[_extraCPos]) {
+			++_extraCPos;
+			if (!_subtitles->getGoVib()[_extraCPos]) {
+				_subtitles->xcReload();
+				playerLosesControl();
+				setExtraCNotify(1);
+				_extraCPos = 0;
+			}
+		}
+	}
+}
+
+uint8 BladeRunnerEngine::getExtraCNotify() {
+	return _extraCNotify;
+}
+
+void BladeRunnerEngine::setExtraCNotify(uint8 val) {
+	if (val == 0) {
+		_extraCPos = 0;
+	}
+	_extraCNotify = val;
 }
 
 // Check if an polled event belongs to a currently disabled keymap and, if so, drop it.

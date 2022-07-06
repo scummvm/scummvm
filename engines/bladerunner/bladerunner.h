@@ -135,6 +135,8 @@ public:
 	bool _gameIsRunning;
 	bool _windowIsActive;
 	int  _playerLosesControlCounter;
+	int  _extraCPos;
+	uint8 _extraCNotify;
 
 	Common::String   _languageCode;
 	Common::Language _language;
@@ -437,6 +439,9 @@ public:
 	Graphics::Surface generateThumbnail() const;
 
 	Common::String getTargetName() const;
+
+	uint8 getExtraCNotify();
+	void  setExtraCNotify(uint8 val);
 };
 
 static inline const Graphics::PixelFormat gameDataPixelFormat() {
