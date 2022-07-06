@@ -573,7 +573,7 @@ void SceneScriptUG18::talkWithGuzza() {
 		Actor_Says(kActorGuzza, 1030, 14);
 	} else if (Global_Variable_Query(kVariableAffectionTowards) > 1
 			|| Player_Query_Agenda() == kPlayerAgendaSurly
-	) {
+	) { // Affection towards Lucy or Dektora, or Surly Agenda
 		Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, 20);
 		Actor_Modify_Friendliness_To_Other(kActorSadik, kActorMcCoy, 10);
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -117.13f, 0.0f, -284.47f, 0, false, false, false);
