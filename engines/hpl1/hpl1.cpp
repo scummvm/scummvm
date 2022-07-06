@@ -56,8 +56,7 @@ Common::String Hpl1Engine::getGameId() const {
 
 Common::Error Hpl1Engine::run() {
 	hplMain("");
-	// Initialize 320x200 paletted graphics mode
-	initGraphics(320, 200);
+
 	_screen = new Graphics::Screen();
 
 	// Set the engine's debugger console
