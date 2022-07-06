@@ -28,6 +28,7 @@
 #include "bladerunner/audio_player.h"
 #include "bladerunner/audio_speech.h"
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/debugger.h"
 #include "bladerunner/crimes_database.h"
 #include "bladerunner/combat.h"
 #include "bladerunner/dialogue_menu.h"
@@ -1442,6 +1443,11 @@ int ScriptBase::Police_Maze_Query_Score() {
 void ScriptBase::Police_Maze_Zero_Score() {
 	debugC(kDebugScript, "Police_Maze_Zero_Score()");
 	Global_Variable_Reset(kVariablePoliceMazeScore);
+	// Police_Maze_Zero_Score is called when exiting from the maze
+	if (_vm->_debugger->_showMazeScore) {
+		_vm->_subtitles->setGameSubsText(BladeRunner::Subtitles::kSubtitlesSecondary, "", false);
+		_vm->_subtitles->hide(BladeRunner::Subtitles::kSubtitlesSecondary);
+	}
 }
 
 void ScriptBase::Police_Maze_Increment_Score(int delta) {
