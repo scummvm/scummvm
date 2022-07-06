@@ -22,11 +22,11 @@
 namespace Hpl1 {
 
 const PlainGameDescriptor GAME_NAMES[] = {
-	{"penumbra_overture", "Penumbra: Overture"},
+	{"penumbraoverture", "Penumbra: Overture"},
 	{0, 0}};
 
 const ADGameDescription GAME_DESCRIPTIONS[] = {
-	{"penumbra_overture",
+	{"penumbraoverture",
 	 nullptr,
 	 AD_ENTRY1s("Penumbra.exe", nullptr, -1),
 	 Common::Language::EN_ANY,
