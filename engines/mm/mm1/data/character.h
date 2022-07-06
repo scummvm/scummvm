@@ -56,12 +56,6 @@ enum Condition {
 	DISEASED = 8,  SILENCED = 4, BLINDED = 2, ASLEEP = 1
 };
 
-enum SpellResult {
-	SR_OK, SR_NOT_ENOUGH_SP, SR_NOT_ENOUGH_GEMS,
-	SR_COMBAT_ONLY, SR_DOESNT_WORK,
-	SR_MAGIC_DOESNT_WORK, SR_OUTDOORS_ONLY
-};
-
 class Inventory {
 public:
 	struct Entry {
@@ -264,18 +258,6 @@ struct Character {
 	 * Updates the character's AC
 	 */
 	void updateAC();
-
-	/**
-	 * Cast a spell
-	 */
-	SpellResult castSpell(int lvl, int num);
-
-	/**
-	 * Inner handler to perform a spell
-	 */
-	SpellResult performSpell(int spellIndex, int requiredSp, int baseSp);
-
-	void cast2();
 
 	/**
 	 * Gets a character's condition string

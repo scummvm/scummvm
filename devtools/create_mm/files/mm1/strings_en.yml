@@ -255,6 +255,7 @@
 		outdoors_only: "*** OUTDOOR ONLY ***"
 		full: "*** BACKPACK FULL ***"
 		done: "*** DONE ***"
+		enter_to_cast: "'ENTER' TO CAST"
 enhdialogs:
 	character:
 		stats:
