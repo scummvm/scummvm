@@ -178,7 +178,7 @@ void Room40::move_train(int16 mode) {
 	if (mode && _G(gameState).ChewyAni == CHEWY_PUMPKIN)
 		_G(det)->showStaticSpr(12);
 
-	g_engine->_sound->playSound(7, 0);
+	_G(det)->playSound(7, 0);
 	int16 delay = 0;
 
 	while (ax < 560) {

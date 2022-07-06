@@ -34,10 +34,8 @@ int Room76::_state;
 
 
 void Room76::entry() {
-	g_engine->_sound->playSound(0,0);
-	g_engine->_sound->playSound(0, 1);
-	g_engine->_sound->playSound(0);
-	g_engine->_sound->playSound(0, 1, false);
+	_G(det)->playSound(0,0);
+	_G(det)->playSound(0, 1);
 	_G(gameState).ScrollxStep = 2;
 	_G(SetUpScreenFunc) = setup_func;
 	_state = 0;

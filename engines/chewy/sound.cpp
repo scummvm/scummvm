@@ -47,6 +47,9 @@ Sound::~Sound() {
 }
 
 void Sound::playSound(int num, uint channel, bool loop, uint16 volume, uint16 balance) {
+	if (num < 0)
+		return;
+
 	SoundChunk *sound = _soundRes->getSound(num);
 	uint8 *data = (uint8 *)MALLOC(sound->size);
 	memcpy(data, sound->data, sound->size);

@@ -74,10 +74,10 @@ struct SprInfo {
 };
 
 struct SoundDefBlk {
-	bool sound_enable[MAX_SOUNDS];
+	// 2 * MAX_SOUNDS sound_enable flags
 	int16 sound_index[MAX_SOUNDS];
 	int16 sound_start[MAX_SOUNDS];
-	int16 kanal[MAX_SOUNDS];
+	int16 channel[MAX_SOUNDS];
 	int16 volume[MAX_SOUNDS];
 	int16 repeats[MAX_SOUNDS];
 	int16 stereo[MAX_SOUNDS];
@@ -119,7 +119,7 @@ struct StaticDetailInfo {
 	int16 y;
 	int16 SprNr;
 	int16 z_ebene;
-	bool Hide;
+	bool hide;
 	uint8 Dummy;
 
 	bool load(Common::SeekableReadStream *src);
@@ -133,13 +133,12 @@ struct RoomDetailInfo {
 	int16 _aniDetailNr = 0;
 	TafInfo *dptr = nullptr;
 	AniDetailInfo Ainfo[MAXDETAILS];
-	StaticDetailInfo Sinfo[MAXDETAILS];
+	StaticDetailInfo staticSprite[MAXDETAILS];
 	int16 mvect[MAX_M_ITEMS * 4] = { 0 };
 	int16 mtxt[MAX_M_ITEMS] = { 0 };
 	RoomInfo Ri;
-	RoomAutoMov AutoMov[MAX_AUTO_MOV];
-	int16 tvp_index[MAXDETAILS * MAX_SOUNDS] = { 0 };
-	byte *sample[MAXDETAILS * MAX_SOUNDS] = { 0 };
+	RoomAutoMov autoMove[MAX_AUTO_MOV];
+	int16 detailSfxIndex[MAXDETAILS * MAX_SOUNDS] = { 0 };
 
 	bool load(Common::SeekableReadStream *src);
 	static constexpr int SIZE() {
@@ -176,7 +175,7 @@ public:
 	void hideStaticSpr(int16 detNr);
 	void showStaticSpr(int16 detNr);
 	void freezeAni();
-	void unfreeze_ani();
+	void unfreezeAni();
 	void getAniValues(int16 aniNr, int16 *start, int16 *end);
 	AniDetailInfo *getAniDetail(int16 aniNr);
 	void init_taf(TafInfo *dptr);
@@ -188,6 +187,8 @@ public:
 	void del_static_ani(int16 ani_nr);
 	void startDetail(int16 nr, int16 rep, int16 reverse);
 	void stop_detail(int16 nr);
+	void playSound(int16 nr, int16 slot);
+	void stopSound(int16 slot);
 	void plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end,
 	                      int16 zoomx, int16 zoomy);
 	void plot_static_details(int16 scrx, int16 scry, int16 start, int16 end);
@@ -216,19 +217,11 @@ public:
 	int16 mouse_on_detail(int16 mouse_x, int16 mouse_y,
 	                      int16 scrx, int16 scry);
 
-	void disable_detail_sound(int16 nr);
-	void enable_detail_sound(int16 nr);
-	void clear_detail_sound(int16 nr);
-	void play_detail_sound(int16 nr);
-	void disable_room_sound();
-	void enable_room_sound();
-	void clear_room_sound();
 	void set_taf_ani_mem(byte *load_area);
 
 private:
 	void load_taf_ani_sprite(int16 nr);
 
-	void removeUnusedSamples();
 	RoomDetailInfo _rdi;
 	RdiDataHeader _rdiDataHeader;
 	SprInfo _sprInfo;

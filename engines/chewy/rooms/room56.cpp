@@ -57,12 +57,12 @@ void Room56::entry() {
 			_G(zoom_horizont) = 0;
 			setPersonPos(-6, 16, P_HOWARD, P_RIGHT);
 			setPersonPos(3, 42, P_CHEWY, P_RIGHT);
-			g_engine->_sound->stopSound(0);
-			g_engine->_sound->playSound(7, 1);
+			_G(det)->stopSound(0);
+			_G(det)->playSound(7, 1);
 			startSetAILWait(7, 1, ANI_BACK);
 			startSetAILWait(8, 1, ANI_FRONT);
-			g_engine->_sound->stopSound(1);
-			g_engine->_sound->playSound(7, 0);
+			_G(det)->stopSound(1);
+			_G(det)->playSound(7, 0);
 			startSetAILWait(7, 1, ANI_FRONT);
 			setupScreen(DO_SETUP);
 
@@ -188,8 +188,7 @@ void Room56::entry() {
 		break;
 	}
 
-	g_engine->_sound->playSound(9, 0);
-	g_engine->_sound->playSound(9);
+	_G(det)->playSound(9, 0);
 }
 
 void Room56::xit() {
@@ -212,8 +211,8 @@ int16 Room56::use_taxi() {
 		action_ret = true;
 		hideCur();
 		autoMove(1, P_CHEWY);
-		g_engine->_sound->stopSound(0);
-		g_engine->_sound->playSound(7, 1);
+		_G(det)->stopSound(0);
+		_G(det)->playSound(7, 1);
 		startSetAILWait(7, 1, ANI_BACK);
 		_G(det)->startDetail(8, 1, ANI_FRONT);
 		_G(zoom_horizont) = 0;
@@ -302,12 +301,12 @@ int16 Room56::use_kneipe() {
 				auto_scroll(0, 0);
 				startSetAILWait(12, 3, ANI_FRONT);
 				flic_cut(FCUT_075);
-				g_engine->_sound->stopSound(0);
-				g_engine->_sound->playSound(9);
+				_G(det)->stopSound(0);
+				_G(det)->playSound(9, 0);
 				_G(det)->startDetail(10, 6, ANI_FRONT);
 				startAadWait(307);
 				_G(det)->stop_detail(10);
-				g_engine->_sound->playSound(10, 0);
+				_G(det)->playSound(10, 0);
 				_G(out)->fadeOut();
 				setupScreen(DO_SETUP);
 				_G(gameState)._personHide[P_CHEWY] = false;
@@ -361,8 +360,7 @@ int16 Room56::use_kneipe() {
 		setupScreen(NO_SETUP);
 		_G(fx_blend) = BLEND3;
 		showCur();
-		g_engine->_sound->playSound(9, 0);
-		g_engine->_sound->playSound(9);
+		_G(det)->playSound(9, 0);
 	}
 	return action_ret;
 }

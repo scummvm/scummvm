@@ -32,12 +32,9 @@ void Room80::entry() {
 	_G(mouseLeftClick) = false;
 	_G(gameState).scrollx = 0;
 	_G(gameState).scrolly = 0;
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0, 1);
-	g_engine->_sound->playSound(0, 2);
-	g_engine->_sound->playSound(0);
-	g_engine->_sound->playSound(0, 1, false);
-	g_engine->_sound->playSound(0, 2, false);
+	_G(det)->playSound(0, 0);
+	_G(det)->playSound(0, 1);
+	_G(det)->playSound(0, 2);
 
 	if (_G(gameState).gottenDiary) {
 		_G(atds)->delControlBit(476, ATS_ACTIVE_BIT);

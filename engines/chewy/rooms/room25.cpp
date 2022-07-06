@@ -47,7 +47,7 @@ static const MovLine SURIMY_MPKT[2] = {
 
 void Room25::entry() {
 	if (!_G(gameState).R25GleiteLoesch) {
-		g_engine->_sound->playSound(0, 0);
+		_G(det)->playSound(0, 0);
 
 		for (int i = 0; i < 9; ++i)
 			_G(det)->startDetail(i, 255, ANI_FRONT);
@@ -75,7 +75,7 @@ void Room25::entry() {
 		_G(gameState).R25FirstEntry = true;
 		_G(gameState)._personHide[P_CHEWY] = true;
 		flic_cut(FCUT_029);
-		g_engine->_sound->playSound(0, 0);
+		_G(det)->playSound(0, 0);
 		_G(fx_blend) = BLEND_NONE;
 		setPersonPos(219, 141, P_CHEWY, P_RIGHT);
 		_G(gameState)._personHide[P_CHEWY] = false;
@@ -108,7 +108,7 @@ int16 Room25::gleiter_loesch() {
 			_G(obj)->calc_rsi_flip_flop(SIB_SCHLAUCH_R25);
 			_G(atds)->set_ats_str(219, 1, ATS_DATA);
 			_G(atds)->set_ats_str(187, 1, ATS_DATA);
-			g_engine->_sound->stopSound(0);
+			_G(det)->stopSound(0);
 
 			for (int i = 0; i < 9; ++i)
 				_G(det)->stop_detail(i);

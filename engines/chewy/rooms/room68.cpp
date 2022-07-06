@@ -102,8 +102,8 @@ void Room68::setup_func() {
 		if (_G(det)->get_ani_status(_G(r68HohesC)) == false) {
 			_G(r68HohesC) = 2;
 			if (g_engine->_sound->speechEnabled()) {
-				g_engine->_sound->playSound(2, 0);
-				g_engine->_sound->playSound(_G(r68HohesC));
+				_G(det)->playSound(2, 0);
+				_G(det)->playSound(_G(r68HohesC), 0);
 				_G(det)->startDetail(_G(r68HohesC), 255, ANI_FRONT);
 
 				// TODO
@@ -360,7 +360,7 @@ void Room68::kostuem_aad(int16 aad_nr) {
 			startSetAILWait(23, 3, ANI_FRONT);
 		else {
 			_G(det)->startDetail(23, 255, ANI_FRONT);
-			g_engine->_sound->playSound(109, 1, false);
+			_G(det)->playSound(109, 1);
 			waitShowScreen(2);
 
 			g_engine->_sound->waitForSpeechToFinish();
@@ -368,7 +368,7 @@ void Room68::kostuem_aad(int16 aad_nr) {
 			_G(det)->stop_detail(23);
 		}
 
-		g_engine->_sound->playSound(108, 1, false);
+		_G(det)->playSound(108, 1);
 		
 		_G(det)->startDetail(24, 255, ANI_FRONT);
 		setPersonPos(26, 40, P_NICHELLE, P_RIGHT);

@@ -164,8 +164,6 @@ void Room::loadRoom(RaumBlk *Rb, int16 room_nr, GameState *player) {
 	clear_prog_ani();
 	_G(det)->load_rdi(Rb->DetFile, room_nr);
 
-	if (!g_engine->_sound->soundEnabled())
-		_G(det)->disable_room_sound();
 	RoomDetailInfo *Rdi_ = _G(det)->getRoomDetailInfo();
 	_roomInfo = &Rdi_->Ri;
 	if (_roomInfo->_tafLoad != 255) {

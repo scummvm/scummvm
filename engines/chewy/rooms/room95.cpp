@@ -31,8 +31,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room95::entry(int16 eib_nr) {
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0);
+	_G(det)->playSound(0, 0);
 	_G(SetUpScreenFunc) = setup_func;	
 	_G(zoom_horizont) = 140;
 	_G(gameState).ScrollxStep = 2;

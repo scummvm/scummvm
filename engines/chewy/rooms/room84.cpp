@@ -41,7 +41,7 @@ void Room84::entry() {
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(gameState).R84GoonsPresent = !_G(gameState).R88UsedMonkey;
 	_flag = false;
-	g_engine->_sound->playSound(0, 0);
+	_G(det)->playSound(0, 0);
 
 	if (_G(gameState).R88UsedMonkey) {
 		_G(det)->del_static_ani(3);

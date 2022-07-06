@@ -33,7 +33,7 @@ namespace Rooms {
 
 void Room42::entry() {
 	if (!_G(gameState).R42BeamterWach) {
-		g_engine->_sound->playSound(0);
+		_G(det)->playSound(0, 0);
 		_G(det)->startDetail(0, 255, ANI_FRONT);
 	}
 
@@ -45,7 +45,7 @@ void Room42::entry() {
 			_G(timer_nr)[0] = _G(room)->set_timer(8, 5);
 			_G(det)->set_static_ani(8, -1);
 			_G(gameState).R42BeamterWach = true;
-			g_engine->_sound->stopSound(0);
+			_G(det)->stopSound(0);
 
 			_G(SetUpScreenFunc) = setup_func;
 
@@ -194,7 +194,7 @@ void Room42::dialogWithStationEmployee(int16 str_end_nr) {
 			break;
 
 		case 2:
-			g_engine->_sound->playSound(4);
+			_G(det)->playSound(4, 0);
 			startSetAILWait(4, 13, ANI_FRONT);
 			break;
 
@@ -212,7 +212,7 @@ void Room42::dialogWithStationEmployee(int16 str_end_nr) {
 		}
 
 		_G(det)->stop_detail(0);
-		g_engine->_sound->stopSound(0);
+		_G(det)->stopSound(0);
 		startSetAILWait(1, 1, ANI_FRONT);
 		_G(det)->startDetail(2, 255, ANI_FRONT);
 
@@ -223,8 +223,8 @@ void Room42::dialogWithStationEmployee(int16 str_end_nr) {
 
 		_G(det)->stop_detail(2);
 		_G(det)->startDetail(0, 255, ANI_FRONT);
-		g_engine->_sound->playSound(0, 0);
-		g_engine->_sound->playSound(0);
+		_G(det)->playSound(0, 0);
+		_G(det)->playSound(0, 0);
 	}
 
 	_G(gameState)._personHide[P_CHEWY] = true;

@@ -32,10 +32,8 @@ namespace Chewy {
 namespace Rooms {
 
 void Room85::entry(int16 eib_nr) {
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0);
-	g_engine->_sound->playSound(0, 1);
-	g_engine->_sound->playSound(0, 1, false);
+	_G(det)->playSound(0, 0);
+	_G(det)->playSound(0, 1);
 	_G(gameState).ScrollxStep = 2;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler_mi)[P_HOWARD].Mode = true;

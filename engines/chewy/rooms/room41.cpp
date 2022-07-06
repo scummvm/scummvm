@@ -40,7 +40,7 @@ void Room41::entry() {
 	hideCur();
 
 	if (!_G(gameState).R41LolaOk) {
-		g_engine->_sound->playSound(6);
+		_G(det)->playSound(6, 0);
 
 		if (!_G(flags).LoadGame) {
 			_G(room)->set_timer_status(0, TIMER_STOP);
@@ -196,7 +196,7 @@ int16 Room41::use_lola() {
 		action_flag = true;
 		_G(gameState).R41LolaOk = true;
 		autoMove(4, P_CHEWY);
-		g_engine->_sound->stopSound(0);
+		_G(det)->stopSound(0);
 		flic_cut(FCUT_057);
 		setPersonPos(127, 112, P_CHEWY, P_LEFT);
 		_G(det)->stop_detail(6);

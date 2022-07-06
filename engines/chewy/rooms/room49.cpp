@@ -261,7 +261,7 @@ int16 Room49::use_taxi() {
 
 		_G(det)->hideStaticSpr(7);
 		startSetAILWait(5, 1, ANI_FRONT);
-		g_engine->_sound->stopSound(0);
+		_G(det)->stopSound(0);
 		switchRoom(48);
 	}
 

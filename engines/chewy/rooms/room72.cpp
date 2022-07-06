@@ -30,8 +30,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room72::entry(int16 eib_nr) {
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0);
+	_G(det)->playSound(0, 0);
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	

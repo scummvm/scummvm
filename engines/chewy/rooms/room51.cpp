@@ -237,8 +237,7 @@ int16 Room51::use_door(int16 txt_nr) {
 			autoMove(9, P_CHEWY);
 
 			if (!_G(gameState).R51KillerWeg) {
-				g_engine->_sound->playSound(2, 0);
-				g_engine->_sound->playSound(2);
+				_G(det)->playSound(2, 0);
 				_G(det)->showStaticSpr(1);
 				startSetAILWait(2, 1, ANI_FRONT);
 				_G(det)->startDetail(5, 255, ANI_FRONT);
@@ -249,12 +248,12 @@ int16 Room51::use_door(int16 txt_nr) {
 					_G(det)->stop_detail(5);
 					startAniBlock(5, ABLOCK37);
 					_G(det)->hideStaticSpr(1);
-					g_engine->_sound->stopSound(0);
+					_G(det)->stopSound(0);
 					startAadWait(284);
 				} else {
 					_G(gameState).R51KillerWeg = true;
 					startAadWait(290);
-					g_engine->_sound->stopSound(0);
+					_G(det)->stopSound(0);
 					_G(out)->fadeOut();
 					_G(out)->setPointer(nullptr);
 					_G(out)->cls();
