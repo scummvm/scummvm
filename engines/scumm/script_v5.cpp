@@ -744,6 +744,19 @@ void ScummEngine_v5::o5_animateActor() {
 }
 
 void ScummEngine_v5::o5_breakHere() {
+	// WORKAROUND: The PC Engine shows a Turbo Technologies loading screen.
+	// In the Mednafen emulator it's shown for about 10 seconds while the
+	// game is loading resources. ScummVM does that in the blink of an eye.
+	//
+	// Injecting the delay into the breakHere instruction seems like the
+	// least intrusive way of adding the delay. The script calls it a number
+	// of times, but only once from room 69.
+
+	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && vm.slot[_currentScript].number == 44 && _currentRoom == 69) {
+		vm.slot[_currentScript].delay = 120;
+		vm.slot[_currentScript].status = ssPaused;
+	}
+
 	updateScriptPtr();
 	_currentScript = 0xFF;
 }
