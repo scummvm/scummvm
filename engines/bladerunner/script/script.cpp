@@ -1725,6 +1725,19 @@ void ScriptBase::Autosave_Game(int textId) {
 void ScriptBase::I_Sez(const char *str) {
 	debugC(kDebugScript, "I_Sez(%s)", str);
 	_vm->ISez(str);
+//	Add_Subtitle_To_Queue(str, 2000);
+}
+
+void ScriptBase::Add_Subtitle_To_Queue(Common::String dbgQuote, uint32 duration) {
+	debugC(kDebugScript, "Add_Subtitle_To_Queue(%s, %u)", dbgQuote.c_str(), duration);
+	if (!dbgQuote.empty()) {
+		_vm->_subtitles->addGameSubsTextToQueue(dbgQuote, duration);
+	}
+}
+
+void ScriptBase::Clear_Subtitle_Queue() {
+	debugC(kDebugScript, "Clear_Subtitle_Queue()");
+	_vm->_subtitles->clearQueue();
 }
 
 void ScriptBase::AI_Countdown_Timer_Start(int actorId, signed int timer, int32 seconds) {

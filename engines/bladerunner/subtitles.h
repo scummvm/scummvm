@@ -49,6 +49,7 @@ class Subtitles {
 	static const int  kTextMaxWidth            = 610;    // In pixels
 	static const int  kMaxTextResourceEntries  = 27;     // Support in-game subs (1) and all possible VQAs (26) with spoken dialogue or translatable text
 	static const int  kMaxLanguageSelectionNum = 1024;   // Max allowed number of languages to select from (should be available in the MIX file)
+	static const uint32  kMinDuration          = 1000;    // Min allowed duration for a queued subtitle
 
 	static const char *SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries];
 	static const char *SUBTITLES_FONT_FILENAME_EXTERNAL;
@@ -108,6 +109,16 @@ class Subtitles {
 		SubtitlesData() : isVisible(false), forceShowWhenNoSpeech(false) { };
 	};
 
+	struct SubtitlesQueueEntry {
+		Common::String quote;
+		uint32 timeStarted;
+		uint32 duration;
+		//uint8 subsRole; // only support secondary subtitles to be queued
+		bool  started;
+
+		SubtitlesQueueEntry() : timeStarted(0), duration(kMinDuration), started(false) { };
+	};
+
 	SubtitlesInfo  _subtitlesInfo;
 	TextResource  *_vqaSubsTextResourceEntries[kMaxTextResourceEntries];
 
@@ -116,6 +127,7 @@ class Subtitles {
 	bool            _useHDC;
 	Common::Array<Common::String>       _subtitlesEXC;
 	Common::Array<SubtitlesData>        _subtitlesDataActive;
+	Common::Array<SubtitlesQueueEntry>  _subtitlesDataQueue;
 	Common::String                      _loadAvgStr;
 	Common::String                      _excTitlStr;
 	Common::String                      _goVib;
@@ -135,6 +147,8 @@ public:
 	void loadOuttakeSubsText(const Common::String &outtakesName, int frame); // get the text for this frame if any
 
 	void setGameSubsText(int subsRole, Common::String dbgQuote, bool force); // for debugging - explicit set subs text
+	void addGameSubsTextToQueue(Common::String dbgQuote, uint32 duration);
+	void clearQueue();
 
 	bool show(int subsRole);
 	bool hide(int subsRole);

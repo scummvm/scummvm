@@ -156,6 +156,7 @@ Subtitles::Subtitles(BladeRunnerEngine *vm) {
 Subtitles::~Subtitles() {
 	reset();
 	_subtitlesDataActive.clear();
+	clearQueue();
 	_subtitlesEXC.clear();
 }
 
@@ -429,6 +430,20 @@ void Subtitles::setGameSubsText(int subsRole, Common::String dbgQuote, bool forc
 	_subtitlesDataActive[subsRole].forceShowWhenNoSpeech = forceShowWhenNoSpeech; // overrides not showing subtitles when no one is speaking
 }
 
+
+void Subtitles::addGameSubsTextToQueue(Common::String dbgQuote, uint32 duration) {
+	SubtitlesQueueEntry tmpItem;
+	if (duration > kMinDuration) {
+		tmpItem.duration = duration;
+	}
+	tmpItem.quote = dbgQuote;
+	_subtitlesDataQueue.insert_at(0, tmpItem);
+}
+
+void Subtitles::clearQueue() {
+	_subtitlesDataQueue.clear();
+}
+
 /**
  * Sets the _isVisible member var to true if it's not already set
  * @return true if the member was set now, false if the member was already set
@@ -499,6 +514,22 @@ void Subtitles::tickOuttakes(Graphics::Surface &s) {
 void Subtitles::tick(Graphics::Surface &s) {
 	bool proceedToDraw = false;
 	if (_isSystemActive && _vm->isSubtitlesEnabled()) {
+		// Check and handle queue first
+		if (!_subtitlesDataQueue.empty()) {
+			if (!_subtitlesDataQueue.back().started) {
+				_subtitlesDataQueue.back().started = true;
+				_subtitlesDataQueue.back().timeStarted = _vm->_time->currentSystem();
+				setGameSubsText(kSubtitlesSecondary, _subtitlesDataQueue.back().quote, true);
+				show(kSubtitlesSecondary);
+			} else {
+				if (_vm->_time->currentSystem() - _subtitlesDataQueue.back().timeStarted >= _subtitlesDataQueue.back().duration) {
+					setGameSubsText(kSubtitlesSecondary, "", false);
+					hide(kSubtitlesSecondary);
+					_subtitlesDataQueue.pop_back();
+				}
+			}
+		}
+
 		if (_subtitlesDataActive[kSubtitlesPrimary].isVisible
 		    && !_subtitlesDataActive[kSubtitlesPrimary].forceShowWhenNoSpeech
 		    && !_vm->_audioSpeech->isPlaying()) {

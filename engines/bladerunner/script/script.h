@@ -274,6 +274,8 @@ protected:
 	bool Game_Over();
 	void Autosave_Game(int textId);
 	void I_Sez(const char *str);
+	void Add_Subtitle_To_Queue(Common::String dbgQuote, uint32 duration);
+	void Clear_Subtitle_Queue();
 
 	void AI_Countdown_Timer_Start(int actorId, signed int timer, int32 seconds);
 	void AI_Countdown_Timer_Reset(int actorId, int timer);
