@@ -76,18 +76,19 @@ enum MacCursorType {
 };
 
 enum {
-	kWMModeNone         	= 0,
-	kWMModeNoDesktop    	= (1 << 0),
-	kWMModeAutohideMenu 	= (1 << 1),
-	kWMModalMenuMode 		= (1 << 2),
-	kWMModeForceBuiltinFonts= (1 << 3),
-	kWMModeUnicode			= (1 << 4),
-	kWMModeManualDrawWidgets= (1 << 5),
-	kWMModeFullscreen       = (1 << 6),
-	kWMModeButtonDialogStyle= (1 << 7),
-	kWMMode32bpp			= (1 << 8),
-	kWMNoScummVMWallpaper   = (1 << 9),
-	kWMModeWin95            = (1 << 10)
+	kWMModeNone         		= 0,
+	kWMModeNoDesktop    		= (1 << 0),
+	kWMModeAutohideMenu 		= (1 << 1),
+	kWMModalMenuMode 			= (1 << 2),
+	kWMModeForceBuiltinFonts	= (1 << 3),
+	kWMModeUnicode				= (1 << 4),
+	kWMModeManualDrawWidgets	= (1 << 5),
+	kWMModeFullscreen			= (1 << 6),
+	kWMModeButtonDialogStyle	= (1 << 7),
+	kWMMode32bpp				= (1 << 8),
+	kWMNoScummVMWallpaper		= (1 << 9),
+	kWMModeWin95				= (1 << 10),
+	kWMModeForceMacFontsInWin95 = (1 << 11) // Enforce Mac font for languages which don't have glyphs in ms_sans_serif.ttf
 };
 
 }
