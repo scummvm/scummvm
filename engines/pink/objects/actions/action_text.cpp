@@ -129,6 +129,7 @@ void ActionText::start() {
 		break;
 	}
 
+	_text.trim();
 	delete[] str;
 
 	while ( _text.size() > 0 && (_text[ _text.size() - 1 ] == '\n' || _text[ _text.size() - 1 ] == '\r') )
