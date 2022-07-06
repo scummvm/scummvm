@@ -1385,6 +1385,10 @@ bool MacMenu::mouseRelease(int x, int y) {
 
 	bool haveCallBack = false;
 	if (_activeItem != -1 && _activeSubItem != -1 && _menustack.back()->items[_activeSubItem]->enabled) {
+		// no action if item has submenu
+		if (_menustack.back()->items[_activeSubItem]->submenu) {
+			return false;
+		}
 		if (_menustack.back()->items[_activeSubItem]->unicode) {
 			if (checkCallback(true)) {
 				(*_unicodeccallback)(_menustack.back()->items[_activeSubItem]->action,
