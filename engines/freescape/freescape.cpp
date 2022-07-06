@@ -46,7 +46,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	_velocity = Math::Vector3d(0.f, 0.f, 0.f);
 	_cameraFront = Math::Vector3d(0.f, 0.f, 0.f);
 	_cameraRight = Math::Vector3d(0.f, 0.f, 0.f);
-	_movementSpeed = 4.5f;
+	_movementSpeed = 2.5f;
 	_mouseSensitivity = 0.1f;
 	_borderTexture = nullptr;
 
@@ -119,6 +119,25 @@ void FreescapeEngine::loadAssets() {
 		} else
 			error("Invalid render mode %s for Driller", _renderMode.c_str());
 
+	} else if (_targetName.hasPrefix("darkside")) {
+		Common::File exe;
+		bool success = false;
+		if (_renderMode == "ega") {
+			file = gameDir.createReadStreamForMember("DSIDEE.EXE");
+
+			if (file == nullptr)
+				error("Failed to open DSIDEE.EXE");
+
+			load8bitBinary(file, 0x9b40, 16);
+		} else if (_renderMode == "cga") {
+			file = gameDir.createReadStreamForMember("DSIDEC.EXE");
+
+			if (file == nullptr)
+				error("Failed to open DSIDE.EXE");
+			load8bitBinary(file, 0x7bb0, 4);
+		} else
+			error("Invalid render mode %s for Driller", _renderMode.c_str());
+
 	} else if (_targetName == "totaleclipse") {
 		Common::File exe;
 		bool success = false;
@@ -128,7 +147,7 @@ void FreescapeEngine::loadAssets() {
 			if (file == nullptr)
 				error("Failed to open TOTEE.EXE");
 
-			load8bitBinary(file, 0xcdb7, 16);
+			load8bitBinary(file, 0x9b40, 16);
 		} else if (_renderMode == "cga") {
 			file = gameDir.createReadStreamForMember("TOTEC.EXE");
 
@@ -380,6 +399,7 @@ void FreescapeEngine::gotoArea(uint16 areaID, uint16 entranceID) {
 	debug("go to area: %d, entrance: %d", areaID, entranceID);
 
 	assert(_areasByAreaID->contains(areaID));
+	assert(entranceID > 0);
 	_currentArea = (*_areasByAreaID)[areaID];
 	_currentArea->show();
 
