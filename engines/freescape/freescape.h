@@ -131,6 +131,10 @@ public:
 	void executeRedraw(FCLInstruction &instruction);
 	void executeDelay(FCLInstruction &instruction);
 	bool executeEndIfNotEqual(FCLInstruction &instruction);
+	void executeSetBit(FCLInstruction &instruction);
+	void executeClearBit(FCLInstruction &instruction);
+	void executeToggleBit(FCLInstruction &instruction);
+	bool executeEndIfBitNotEqual(FCLInstruction &instruction);
 
 
 	// Rendering
@@ -145,6 +149,7 @@ public:
 	// Game state
 	void initGameState();
 	Common::HashMap<uint16, int32> _gameState;
+	Common::Array<bool> _areaBits;
 
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return true; }

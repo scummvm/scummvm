@@ -95,6 +95,16 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			case Token::DELAY:
 			executeDelay(instruction);
 			break;
+			case Token::SETBIT:
+			executeSetBit(instruction);
+			break;
+			case Token::CLEARBIT:
+			executeClearBit(instruction);
+			break;
+			case Token::BITNOTEQ:
+			if (executeEndIfBitNotEqual(instruction))
+				ip = codeSize;
+			break;
 		}
 		ip++;
 	}
@@ -175,5 +185,29 @@ void FreescapeEngine::executeGoto(FCLInstruction &instruction) {
 	gotoArea(areaID, entranceID);
 }
 
+void FreescapeEngine::executeSetBit(FCLInstruction &instruction) {
+	uint16 index = instruction.source;
+	_areaBits[index] = true;
+	debug("Setting bit %d", index);
+}
+
+void FreescapeEngine::executeClearBit(FCLInstruction &instruction) {
+	uint16 index = instruction.source;
+	_areaBits[index] = false;
+	debug("Clearing bit %d", index);
+}
+
+void FreescapeEngine::executeToggleBit(FCLInstruction &instruction) {
+	uint16 index = instruction.source;
+	_areaBits[index] = ~_areaBits[index];
+	debug("Toggling bit %d", index);
+}
+
+bool FreescapeEngine::executeEndIfBitNotEqual(FCLInstruction &instruction) {
+	uint16 index = instruction.source;
+	uint16 value = instruction.destination;
+	debug("End condition if bit %d is not equal to %d!", index, value);
+	return (_areaBits[index] != value);
+}
 
 } // End of namespace Freescape
