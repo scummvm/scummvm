@@ -21,6 +21,12 @@ This page explains how to install ScummVM on a computer. For all other platforms
         Download the Windows zip file for your operating system (32bit or 64bit). To extract the files, right-click the folder and select **Extract All**.
 
         To run ScummVM from the extracted folder, find the ``scummvm.exe`` file and double click it.
+    
+    .. dropdown:: Running ScummVM in portable mode
+
+        Starting with ScummVM 2.6.0, ScummVM offers a portable mode. Instead of storing saved games, icons and screenshots in your user's directory, they are stored in the same folder as the ScummVM executable.
+
+        To run ScummVM in portable mode, create an empty file called ``scummvm.ini`` in the folder where you extracted the ScummVM zipfile.
 
 .. tabbed:: macOS
 
