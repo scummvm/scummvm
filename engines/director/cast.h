@@ -95,9 +95,11 @@ public:
 	void loadSoundCasts();
 
 	void copyCastStxts();
+	int getCastSize();
 	Common::Rect getCastMemberInitialRect(int castId);
 	void setCastMemberModified(int castId);
 	CastMember *setCastMember(CastMemberID castId, CastMember *cast);
+	bool eraseCastMember(CastMemberID castId);
 	CastMember *getCastMember(int castId);
 	CastMember *getCastMemberByName(const Common::String &name);
 	CastMember *getCastMemberByScriptId(int scriptId);

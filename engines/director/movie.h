@@ -94,7 +94,7 @@ public:
 	Common::String getMacName() const { return _macName; }
 	Window *getWindow() const { return _window; }
 	DirectorEngine *getVM() const { return _vm; }
-	Cast *getCast() const { return _cast; }
+	Cast *getCast() const { return _casts.getValOrDefault(0, nullptr); }
 	Cast *getSharedCast() const { return _sharedCast; }
 	Score *getScore() const { return _score; }
 
@@ -103,6 +103,7 @@ public:
 
 	CastMember *getCastMember(CastMemberID memberID);
 	CastMember *createOrReplaceCastMember(CastMemberID memberID, CastMember *cast);
+	bool eraseCastMember(CastMemberID memberID);
 	CastMember *getCastMemberByName(const Common::String &name, int castLib);
 	CastMemberInfo *getCastMemberInfo(CastMemberID memberID);
 	const Stxt *getStxt(CastMemberID memberID);
