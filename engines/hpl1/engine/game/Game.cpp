@@ -442,6 +442,8 @@ void cGame::Run() {
 		g_system->getEventManager()->pollEvent(event);
 		if (event.type == Common::EVENT_QUIT)
 			break;
+
+		g_system->delayMillis(10);
 	}
 	Log("--------------------------------------------------------\n\n");
 
