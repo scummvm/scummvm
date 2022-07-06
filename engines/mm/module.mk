@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	mm1/data/roster.o \
 	mm1/data/spells.o \
 	mm1/game/search.o \
+	mm1/game/spell_casting.o \
 	mm1/game/view_base.o \
 	mm1/gfx/dta.o \
 	mm1/gfx/gfx.o \
@@ -41,6 +42,7 @@ MODULE_OBJS := \
 	mm1/views/locations/temple.o \
 	mm1/views/locations/training.o \
 	mm1/views/are_you_ready.o \
+	mm1/views/cast_spell.o \
 	mm1/views/character_base.o \
 	mm1/views/character_info.o \
 	mm1/views/character_manage.o \

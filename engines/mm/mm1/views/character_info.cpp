@@ -113,7 +113,7 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 	case DISPLAY:
 		switch (msg.keycode) {
 		case Common::KEYCODE_c:
-			castSpell();
+			send("CastSpell", ValueMessage(0));
 			break;
 		case Common::KEYCODE_e:
 			if (!g_globals->_currCharacter->_backpack.empty())
@@ -514,98 +514,6 @@ void CharacterInfo::tradeHowMuch() {
 	);
 }
 
-void CharacterInfo::castSpell() {
-	if (g_globals->_currCharacter->_slvl == 0 ||
-		g_globals->_currCharacter->_sp == 0) {
-		// Character can't cast spells, so exit
-		redraw();
-		return;
-	}
-
-	clearLines(20, 24);
-	escToGoBack(0);
-	writeString(7, 20, STRING["dialogs.character.cast_spell"]);
-
-	_textEntry.display(27, 20, 1, true,
-		[]() {
-			CharacterInfo *view =
-				(CharacterInfo *)g_events->focusedView();
-			view->redraw();
-		},
-		[](const Common::String &text) {
-			CharacterInfo *view =
-				(CharacterInfo *)g_events->focusedView();
-			view->spellLevelEntered(atoi(text.c_str()));
-		}
-	);
-}
-
-void CharacterInfo::spellLevelEntered(uint level) {
-	// Ensure the spell level is valid
-	if (level < 1 || level > 7 ||
-			level > g_globals->_currCharacter->_slvl) {
-		redraw();
-		return;
-	}
-
-	clearLines(21, 21);
-	writeString(19, 21, STRING["dialogs.character.number"]);
-
-	_textEntry.display(27, 21, 1, true,
-		[]() {
-			CharacterInfo *view =
-				(CharacterInfo *)g_events->focusedView();
-			view->redraw();
-		},
-		[](const Common::String &text) {
-			CharacterInfo *view =
-				(CharacterInfo *)g_events->focusedView();
-			view->spellNumberEntered(atoi(text.c_str()));
-		}
-	);
-}
-
-void CharacterInfo::spellNumberEntered(uint num) {
-	if (num < 1 || num > 8 || (_spellLevel >= 5 && num >= 6)) {
-		redraw();
-		return;
-	}
-
-	Common::String msg;
-	int xp;
-	switch (g_globals->_currCharacter->castSpell(_spellLevel, num)) {
-	case SR_NOT_ENOUGH_SP:
-		msg = STRING["dialogs.misc.not_enough_sp"];
-		xp = 5;
-		break;
-	case SR_NOT_ENOUGH_GEMS:
-		msg = STRING["dialogs.misc.not_enough_gems"];
-		xp = 9;
-		break;
-	case SR_COMBAT_ONLY:
-		msg = STRING["dialogs.misc.combat_only"];
-		xp = 10;
-		break;
-	case SR_DOESNT_WORK:
-		msg = STRING["dialogs.misc.magic_doesnt_work"];
-		xp = 5;
-		break;
-	case SR_OUTDOORS_ONLY:
-		msg = STRING["dialogs.misc.outdoors_only"];
-		xp = 10;
-		break;
-	default:
-		msg = STRING["dialogs.misc.done"];
-		xp = 14;
-		break;
-	}
-
-	Sound::sound(SOUND_2);
-	clearSurface();
-	writeString(5, 21, msg);
-	_state = DISPLAY;
-	delaySeconds(3);
-}
 
 } // namespace ViewsEnh
 } // namespace MM1

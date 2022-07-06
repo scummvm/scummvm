@@ -32,6 +32,7 @@
 #include "mm/mm1/views/protect.h"
 #include "mm/mm1/views/quick_ref.h"
 #include "mm/mm1/views/title.h"
+#include "mm/mm1/views/cast_spell.h"
 #include "mm/mm1/views/character_info.h"
 #include "mm/mm1/views/characters.h"
 #include "mm/mm1/views/encounter.h"
@@ -50,6 +51,7 @@ namespace Views {
 struct Dialogs {
 private:
 	Views::AreYouReady _areYouReady;
+	Views::CastSpell _castSpell;
 	Views::CreateCharacters _createCharacters;
 	Views::Encounter _encounter;
 	Views::Game _game;
