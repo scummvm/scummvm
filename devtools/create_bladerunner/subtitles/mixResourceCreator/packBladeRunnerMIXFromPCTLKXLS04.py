@@ -123,9 +123,10 @@ from xlrd import *
 # for pack
 from struct import *
 from subtlsVersTextResource import *
+from extracsTextResource import *
 
 COMPANY_EMAIL = "classic.adventures.in.greek@gmail.com"
-APP_VERSION = "1.80"
+APP_VERSION = "1.95"
 APP_NAME = "packBladeRunnerMIXFromPCTLKXLS"
 APP_WRAPPER_NAME = "mixResourceCreator.py"
 APP_NAME_SPACED = "Blade Runner MIX Resource Creator"
@@ -139,6 +140,7 @@ DEFAULT_SUBTITLES_FONT_NAME = SUBTITLES_FONT_NAME_CATEGORY + '.FON'
 DEFAULT_SUBTITLES_MIX_OUTPUT_NAME = u'SUBTITLES.MIX'
 
 SUPPORTED_DIALOGUE_VERSION_SHEET = 'SBTLVERS.TRE'
+SUPPORTED_EX_CR_SHEET = 'EXTRA.TRE'
 # all dialogue sheets get the SUBTLS_E.FON for translation to a Text Resource (TRx)
 # In-game dialogue sheet
 # TODO- maybe the '_E' part is not needed, since we use the suffix (x) of the extension (TRx) to signify the language
@@ -170,12 +172,13 @@ SUPPORTED_TRANSLATION_SHEETS = [('OPTIONS.TR', 'KIA6PT'),
 								('CLUETYPE.TR', 'KIA6PT'),
 								('ENDCRED.TR', 'TAHOMA'),
 								('POGO.TR', 'KIA6PT'),
-								(SUPPORTED_DIALOGUE_VERSION_SHEET[:-1], SUBTITLES_FONT_NAME_CATEGORY)]
+								(SUPPORTED_DIALOGUE_VERSION_SHEET[:-1], SUBTITLES_FONT_NAME_CATEGORY),
+								(SUPPORTED_EX_CR_SHEET[:-1], 'KIA6PT')]
 # The FON files that are identically named to the originals are supposed to override them (needs ScummVM compatible functionality for that)
 # We don't deal with 10PT.FON since it's not used.
 # Also we don't deal with the SYSTEM (external OS font) that ERRORMSG.TRx uses!
 # TODO we probably could skip importing ERRORMSG.TRx (to SUBTITLES.MIX) altogether, since translating that has no point! In that case SYSTEM.FON should be removed from here since it's currently of no use otherwise and support for it is not really required.
-SUPPORTED_OTHER_FILES_FOR_MIX = [DEFAULT_SUBTITLES_FONT_NAME, 'KIA6PT.FON', 'TAHOMA18.FON', 'TAHOMA24.FON', 'SYSTEM.FON']
+SUPPORTED_OTHER_FILES_FOR_MIX = [DEFAULT_SUBTITLES_FONT_NAME, 'KIA6PT.FON', 'TAHOMA18.FON', 'TAHOMA24.FON', 'SYSTEM.FON', 'SUBTLSHD.FON']
 
 # v1.10: Russian code (RU_RUS) now corresponds to 'E' suffix instead of 'R' since the unofficial Russian version supported uses the English resources without renaming them, and this is how the ScummVM engine handles that version currently.
 SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST = [('EN_ANY', 'E', 'English'), ('DE_DEU', 'G', 'German'), ('FR_FRA', 'F', 'French'), ('IT_ITA', 'I', 'Italian'), ('ES_ESP', 'S', 'Spanish'), ('RU_RUS', 'E', 'Russian'), ('EFIGS', '#', 'EFIGS')]
@@ -471,17 +474,20 @@ def getSupportedSubtitleSheetsList():
 
 def getSupportedTranslatedTrxFilenamesList():
 	listOfSupportedTranslatedTrxFilenames = []
+
+	# First handle cases of the sheets we only have few or one version of:
+	tmpActiveLanguageDescriptionCodeTuple = ('EN_ANY', 'E', 'English')
+	for translatedTRxFileName in [ (x[0] + '%s' % (tmpActiveLanguageDescriptionCodeTuple[1])) for x in SUPPORTED_TRANSLATION_SHEETS]:
+		if (translatedTRxFileName[:-1] == SUPPORTED_DIALOGUE_VERSION_SHEET[:-1] or translatedTRxFileName[:-1] == SUPPORTED_EX_CR_SHEET[:-1]):
+			listOfSupportedTranslatedTrxFilenames.append(translatedTRxFileName)
+
 	for tmpActiveLanguageDescriptionCodeTuple in SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST:
 		if (gActiveLanguageDescriptionCodeTuple[1] != '#' and tmpActiveLanguageDescriptionCodeTuple[1] == gActiveLanguageDescriptionCodeTuple[1]) \
 			or (gActiveLanguageDescriptionCodeTuple[1] == '#' and tmpActiveLanguageDescriptionCodeTuple[1] != '#' and tmpActiveLanguageDescriptionCodeTuple[0] != 'RU_RUS'):
-			for translatedTRxFileName in [ (x[0] + '%s' % (tmpActiveLanguageDescriptionCodeTuple[1])) for x in SUPPORTED_TRANSLATION_SHEETS] :
-				if translatedTRxFileName[:-1] != SUPPORTED_DIALOGUE_VERSION_SHEET[:-1] \
-					or (gActiveLanguageDescriptionCodeTuple[1] == '#' and tmpActiveLanguageDescriptionCodeTuple[1] == 'E') \
+			for translatedTRxFileName in [ (x[0] + '%s' % (tmpActiveLanguageDescriptionCodeTuple[1])) for x in SUPPORTED_TRANSLATION_SHEETS[:-2]]:
+				if (gActiveLanguageDescriptionCodeTuple[1] == '#' and tmpActiveLanguageDescriptionCodeTuple[1] == 'E') \
 					or (gActiveLanguageDescriptionCodeTuple[1] != '#'):
-					if translatedTRxFileName[:-1] == SUPPORTED_DIALOGUE_VERSION_SHEET[:-1]:
-						listOfSupportedTranslatedTrxFilenames.append(SUPPORTED_DIALOGUE_VERSION_SHEET)
-					else:
-						listOfSupportedTranslatedTrxFilenames.append(translatedTRxFileName)
+					listOfSupportedTranslatedTrxFilenames.append(translatedTRxFileName)
 	return listOfSupportedTranslatedTrxFilenames
 #
 def outputMIX():
@@ -751,6 +757,8 @@ def inputXLS(pathtoInputExcelFilename):
 	mergedListOfSupportedSubtitleSheets = getSupportedSubtitleSheetsList()
 	supportedTranslatedTrxFilenamesList = getSupportedTranslatedTrxFilenamesList()
 
+	#print '[Debug] mergedListOfSupportedSubtitleSheets: ', mergedListOfSupportedSubtitleSheets
+	#print '[Debug] supportedTranslatedTrxFilenamesList: ', supportedTranslatedTrxFilenamesList
 	mergedListOfSupportedSubtitleSheetsAndTranslatedTREs = mergedListOfSupportedSubtitleSheets + supportedTranslatedTrxFilenamesList
 
 	# Check for a version info sheet and create one if it does not exist
@@ -805,6 +813,59 @@ def inputXLS(pathtoInputExcelFilename):
 		inputXLS(pathtoInputExcelFilename)
 		return
 	# end of check for a version info sheet
+
+	# Check for an extra info sheet and create one if it does not exist
+	xl_sheet = None
+	try:
+		if gTraceModeEnabled:
+			print '[Debug] Checking for existence of sheet: ' + SUPPORTED_EX_CR_SHEET
+		xl_sheet = xl_workbook.sheet_by_name(SUPPORTED_EX_CR_SHEET)
+	except Exception as e:
+		if gTraceModeEnabled:
+			print '[Debug] Could not open requested sheet: ' + SUPPORTED_EX_CR_SHEET + ' in Excel::' + str(e)
+
+	if xl_sheet is None:
+		# we didn't find a sheet for extra info, so we should auto-create a Sheet for it
+		if gTraceModeEnabled:
+			print '[Debug] Sheet: %s was not found. Creating a temporary sheet for version info...' % (SUPPORTED_EX_CR_SHEET)
+		excrTRInstance = extracTextResource(gTraceModeEnabled)
+		bookCopy = copy(xl_workbook)
+		xl_sheet = bookCopy.add_sheet(SUPPORTED_EX_CR_SHEET)
+		n = 0
+		col1_name = 'Extra Info'
+		xl_sheet.write(n, 0, col1_name)
+		# Second Row
+		n = 1
+		col1_name = 'ID'
+		col2_name = 'Value'
+		col3_name = 'Notes'
+		xl_sheet.write(n, 0, col1_name)
+		xl_sheet.write(n, 1, col2_name)
+		xl_sheet.write(n, 2, col3_name)
+		n += 1
+		objUTF8Unicode = None
+		for m, e1 in enumerate(excrTRInstance.getExtracEntriesList(), n):
+			xl_sheet.write(m, 0, e1[0])
+			for i1 in range(1,3):
+				objStr = e1[i1]
+				try:
+					# We assume utf-8 charset (since we get the text from a python script)
+					objUTF8Unicode = unicode(objStr, 'utf-8')
+				except Exception as e:
+					print '[Error] Failed to create unicode string: ' + str(e)
+					objUTF8Unicode = unicode("???", 'utf-8')
+				xl_sheet.write(m, i1, objUTF8Unicode)
+		try:
+			bookCopy.save(pathtoInputExcelFilename)
+		except Exception as e:
+			print "[Error] Giving up: Could not save to output Excel file:: " + str(e)
+			sys.exit(1) # Terminate if we couldn't write to output Excel file
+
+		if gTraceModeEnabled:
+			print '[Debug] Sheet: %s was created successfully.' % (SUPPORTED_EX_CR_SHEET)
+		inputXLS(pathtoInputExcelFilename)
+		return
+	# end of check for a extra info sheet
 
 	if gTraceModeEnabled:
 		print '[Debug] mergedListOfSupportedSubtitleSheetsAndTranslatedTREs: ', mergedListOfSupportedSubtitleSheetsAndTranslatedTREs
