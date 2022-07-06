@@ -25,6 +25,7 @@
 #include "bladerunner/text_resource.h"
 #include "bladerunner/audio_speech.h"
 #include "bladerunner/game_constants.h"
+#include "bladerunner/time.h"
 
 #include "common/debug.h"
 
@@ -61,6 +62,27 @@ namespace BladeRunner {
 const char *Subtitles::SUBTITLES_FONT_FILENAME_EXTERNAL = "SUBTLS_E.FON";
 
 const char *Subtitles::SUBTITLES_VERSION_TRENAME        = "SBTLVERS"; // addon resource file for Subtitles version info - can only be SBTLVERS.TRE
+const char *Subtitles::EXTRA_TRENAME                    = "EXTRA";
+
+const Color256 Subtitles::kTextColors[] = {
+	{ 0, 0, 0 },
+	{ 16, 8, 8 },
+	{ 32, 24, 8 },
+	{ 56, 32, 16 },
+	{ 72, 48, 16 },
+	{ 88, 56, 24 },
+	{ 104, 72, 32 },
+	{ 128, 80, 40 },
+	{ 136, 96, 48 },
+	{ 152, 112, 56 },
+	{ 168, 128, 72 },
+	{ 184, 144, 88 },
+	{ 200, 160, 96 },
+	{ 216, 184, 112 },
+	{ 232, 200, 128 },
+	{ 240, 224, 144 }
+};
+
 /*
  * All entries need to have the language code appended (after a '_').
  * And all entries should get the suffix extension ".TRx"; the last letter in extension "TR*" should also be the language code
@@ -108,7 +130,23 @@ Subtitles::Subtitles(BladeRunnerEngine *vm) {
 	}
 	_font = nullptr;
 	_useUTF8 = false;
-	_subtitlesData.resize(kNumOfSubtitleRoles);
+	_useHDC = false;
+	_subtitlesDataActive.resize(kNumOfSubtitleRoles);
+	_loadAvgStr = "";
+	_excTitlStr = "";
+	_goVib = "";
+	_xcStringIndex = 0;
+	_xcTimeLast    = 0;
+
+	for (int i = 0; i < kxcStringCount; ++i) {
+		_xcStrings[i] = "";
+	}
+
+	for (int i = 0; i < kxcLineCount; ++i) {
+		_xcLineTexts[i]    = "";
+		_xcLineTimeouts[i] = 0;
+		_xcLineOffsets[i]  = 0;
+	}
 	reset();
 }
 
@@ -117,7 +155,8 @@ Subtitles::Subtitles(BladeRunnerEngine *vm) {
  */
 Subtitles::~Subtitles() {
 	reset();
-	_subtitlesData.clear();
+	_subtitlesDataActive.clear();
+	_subtitlesEXC.clear();
 }
 
 //
@@ -153,6 +192,59 @@ void Subtitles::init(void) {
 
 	} else {
 		debug("Subtitles version info: N/A");
+	}
+
+	TextResource extraTxtResource(_vm);
+	if ( extraTxtResource.open(EXTRA_TRENAME, false) && extraTxtResource.getCount() > 0) {
+		_subtitlesEXC.resize(extraTxtResource.getCount());
+		for (uint8 i = 0; i < extraTxtResource.getCount(); ++i) {
+			_subtitlesEXC[i] = extraTxtResource.getText((uint32)i);
+		}
+		_loadAvgStr = "";
+		_excTitlStr = "";
+		_goVib = "";
+		if (extraTxtResource.getCount() == kxcStringCount + 1) {
+			_loadAvgStr.insertChar(_subtitlesEXC[3][13], 0);
+			_loadAvgStr.insertChar(_subtitlesEXC[3][12], 0);
+			_loadAvgStr.insertChar(_subtitlesEXC[0][7],  0);
+			_loadAvgStr.insertChar(_subtitlesEXC[14][1], 0);
+			_loadAvgStr.insertChar(_subtitlesEXC[10][7], 0);
+			_loadAvgStr.insertChar(_subtitlesEXC[1][8],  0);
+			_loadAvgStr.insertChar(_subtitlesEXC[0][5],  0);
+			_loadAvgStr.insertChar(_subtitlesEXC[2][12], 0);
+			_loadAvgStr.insertChar(_subtitlesEXC[1][2],  0);
+			_loadAvgStr.insertChar(_subtitlesEXC[7][5],  0);
+			_loadAvgStr.insertChar(_subtitlesEXC[2][1],  0);
+			_loadAvgStr.insertChar(_subtitlesEXC[2][7],  0);
+			_loadAvgStr.toUppercase();
+			_excTitlStr.insertChar(_subtitlesEXC[14][0], 0);
+			_excTitlStr.insertChar(_subtitlesEXC[0][2],  0);
+			_excTitlStr.insertChar(_subtitlesEXC[1][2],  0);
+			_excTitlStr.insertChar(_subtitlesEXC[3][8],  0);
+			_excTitlStr.insertChar(_subtitlesEXC[2][7],  0);
+			_excTitlStr.insertChar(_subtitlesEXC[7][3],  0);
+			_excTitlStr.insertChar(_subtitlesEXC[2][4],  0);
+			_excTitlStr.insertChar(_subtitlesEXC[0][8],  0);
+			_excTitlStr.insertChar(_subtitlesEXC[1][8],  0);
+			_excTitlStr.insertChar(_subtitlesEXC[3][11], 0);
+			_excTitlStr.insertChar(_subtitlesEXC[2][6],  0);
+			_excTitlStr.insertChar(_subtitlesEXC[8][7],  0);
+			_excTitlStr.insertChar(_subtitlesEXC[6][8],  0);
+			_excTitlStr.insertChar(_subtitlesEXC[4][3],  0);
+			_excTitlStr.insertChar(_subtitlesEXC[5][2],  0);
+			_excTitlStr.insertChar(_subtitlesEXC[7][6],  0);
+			_excTitlStr.insertChar(_subtitlesEXC[0][12], 0);
+			_excTitlStr.insertChar(_subtitlesEXC[10][9], 0);
+			_excTitlStr.insertChar(_subtitlesEXC[1][5],  0);
+			_excTitlStr.insertChar(_subtitlesEXC[8][10], 0);
+			_excTitlStr.insertChar(_subtitlesEXC[6][2],  0);
+			_excTitlStr.insertChar(_subtitlesEXC[5][3],  0);
+			_excTitlStr.insertChar(_subtitlesEXC[11][1], 0);
+			_excTitlStr.insertChar(_subtitlesEXC[4][4],  0);
+			_goVib = extraTxtResource.getText((uint32)9);
+			_goVib.toUppercase();
+			_useHDC = true;
+		}
 	}
 
 	//
@@ -210,6 +302,26 @@ Subtitles::SubtitlesInfo Subtitles::getSubtitlesInfo() const {
 	return _subtitlesInfo;
 }
 
+void Subtitles::xcReload() {
+	_xcStringIndex = 0;
+	for (int i = 0; i < kxcStringCount; ++i) {
+		_xcStrings[i] = _subtitlesEXC[i];
+	}
+
+	for (int i = 0; i < kxcStringCount; ++i) {
+		int j = _vm->_rnd.getRandomNumberRng(i, kxcStringCount - 1);
+		SWAP<Common::String>(_xcStrings[i], _subtitlesEXC[j]);
+	}
+
+	for (int i = 0; i < kxcLineCount; ++i) {
+		_xcLineTexts[i] = "";
+		_xcLineTimeouts[i] = _vm->_rnd.getRandomNumberRng(0, 63);
+		_xcLineOffsets[i] = 0;
+	}
+
+	_xcTimeLast = _vm->_time->currentSystem();
+}
+
 /**
  * Returns the index of the specified Text Resource filename in the SUBTITLES_FILENAME_PREFIXES table
  */
@@ -239,10 +351,10 @@ void Subtitles::loadInGameSubsText(int actorId, int speech_id)  {
 	}
 
 	if (!_gameSubsResourceEntriesFound[0]) {
-		_subtitlesData[kSubtitlesPrimary].currentText.clear();
-		_subtitlesData[kSubtitlesPrimary].currentText32.clear();
-		_subtitlesData[kSubtitlesPrimary].prevText.clear();
-		_subtitlesData[kSubtitlesPrimary].prevText32.clear();
+		_subtitlesDataActive[kSubtitlesPrimary].currentText.clear();
+		_subtitlesDataActive[kSubtitlesPrimary].currentText32.clear();
+		_subtitlesDataActive[kSubtitlesPrimary].prevText.clear();
+		_subtitlesDataActive[kSubtitlesPrimary].prevText32.clear();
 		return;
 	}
 
@@ -261,9 +373,9 @@ void Subtitles::loadInGameSubsText(int actorId, int speech_id)  {
 		int32 id = 10000 * actorId + speech_id;
 		const char *text = _vqaSubsTextResourceEntries[0]->getText((uint32)id);
 		if (_useUTF8) {
-			_subtitlesData[kSubtitlesPrimary].currentText32 = Common::convertUtf8ToUtf32(text);
+			_subtitlesDataActive[kSubtitlesPrimary].currentText32 = Common::convertUtf8ToUtf32(text);
 		} else {
-			_subtitlesData[kSubtitlesPrimary].currentText = text;
+			_subtitlesDataActive[kSubtitlesPrimary].currentText = text;
 		}
 	}
 }
@@ -278,10 +390,10 @@ void Subtitles::loadOuttakeSubsText(const Common::String &outtakesName, int fram
 
 	int fileIdx = getIdxForSubsTreName(outtakesName);
 	if (fileIdx == -1 || !_gameSubsResourceEntriesFound[fileIdx]) {
-		_subtitlesData[kSubtitlesPrimary].currentText.clear();
-		_subtitlesData[kSubtitlesPrimary].currentText32.clear();
-		_subtitlesData[kSubtitlesPrimary].prevText.clear();
-		_subtitlesData[kSubtitlesPrimary].prevText32.clear();
+		_subtitlesDataActive[kSubtitlesPrimary].currentText.clear();
+		_subtitlesDataActive[kSubtitlesPrimary].currentText32.clear();
+		_subtitlesDataActive[kSubtitlesPrimary].prevText.clear();
+		_subtitlesDataActive[kSubtitlesPrimary].prevText32.clear();
 		return;
 	}
 
@@ -298,9 +410,9 @@ void Subtitles::loadOuttakeSubsText(const Common::String &outtakesName, int fram
 	// debug("Number of resource quotes to search: %d, requested frame: %u", _vqaSubsTextResourceEntries[fileIdx]->getCount(), (uint32)frame );
 	const char *text = _vqaSubsTextResourceEntries[fileIdx]->getOuttakeTextByFrame((uint32)frame);
 	if (_useUTF8) {
-		_subtitlesData[kSubtitlesPrimary].currentText32 = Common::convertUtf8ToUtf32(text);
+		_subtitlesDataActive[kSubtitlesPrimary].currentText32 = Common::convertUtf8ToUtf32(text);
 	} else {
-		_subtitlesData[kSubtitlesPrimary].currentText = text;
+		_subtitlesDataActive[kSubtitlesPrimary].currentText = text;
 	}
 }
 
@@ -310,11 +422,11 @@ void Subtitles::loadOuttakeSubsText(const Common::String &outtakesName, int fram
  */
 void Subtitles::setGameSubsText(int subsRole, Common::String dbgQuote, bool forceShowWhenNoSpeech) {
 	if (_useUTF8) {
-		_subtitlesData[subsRole].currentText32 = Common::convertUtf8ToUtf32(dbgQuote);
+		_subtitlesDataActive[subsRole].currentText32 = Common::convertUtf8ToUtf32(dbgQuote);
 	} else {
-		_subtitlesData[subsRole].currentText = dbgQuote;
+		_subtitlesDataActive[subsRole].currentText = dbgQuote;
 	}
-	_subtitlesData[subsRole].forceShowWhenNoSpeech = forceShowWhenNoSpeech; // overrides not showing subtitles when no one is speaking
+	_subtitlesDataActive[subsRole].forceShowWhenNoSpeech = forceShowWhenNoSpeech; // overrides not showing subtitles when no one is speaking
 }
 
 /**
@@ -326,10 +438,10 @@ bool Subtitles::show(int subsRole) {
 		return false;
 	}
 
-	if (_subtitlesData[subsRole].isVisible) {
+	if (_subtitlesDataActive[subsRole].isVisible) {
 		return false;
 	} else {
-		_subtitlesData[subsRole].isVisible = true;
+		_subtitlesDataActive[subsRole].isVisible = true;
 		return true;
 	}
 }
@@ -343,10 +455,10 @@ bool Subtitles::hide(int subsRole) {
 		return false;
 	}
 
-	if (!_subtitlesData[subsRole].isVisible) {
+	if (!_subtitlesDataActive[subsRole].isVisible) {
 		return false;
 	} else {
-		_subtitlesData[subsRole].isVisible = false;
+		_subtitlesDataActive[subsRole].isVisible = false;
 		return true;
 	}
 }
@@ -357,58 +469,60 @@ bool Subtitles::hide(int subsRole) {
  */
 bool Subtitles::isVisible(int subsRole) const {
 	return _isSystemActive
-	       && _subtitlesData[subsRole].isVisible;
+	       && _subtitlesDataActive[subsRole].isVisible;
 }
 
 /**
  * Tick method specific for outtakes (VQA videos)
  */
 void Subtitles::tickOuttakes(Graphics::Surface &s) {
-	if (!_isSystemActive || !_vm->isSubtitlesEnabled()) {
-		return;
-	}
+	if (_isSystemActive && _vm->isSubtitlesEnabled()) {
+		for (int i = 0; i < kNumOfSubtitleRoles; ++i) {
+			if (isNotEmptyCurrentSubsText(i)) {
+				_vm->_subtitles->show(i);
+			} else {
+				_vm->_subtitles->hide(i);
+			}
+		}
 
-	for (int i = 0; i < kNumOfSubtitleRoles; ++i) {
-		if (isNotEmptyCurrentSubsText(i)) {
-			_vm->_subtitles->show(i);
-		} else {
-			_vm->_subtitles->hide(i);
+		// keep this as a separate if clause
+		if (isVisible(kSubtitlesPrimary) && isVisible(kSubtitlesSecondary)) {
+			draw(s);
 		}
 	}
 
-	// keep this as a separate if clause
-	if (!isVisible(kSubtitlesPrimary) && !isVisible(kSubtitlesSecondary)) {
-		return;
-	}
-
-	draw(s);
 }
 
 /**
  * Tick method for in-game subtitles -- Not for outtake cutscenes (VQA videos)
  */
 void Subtitles::tick(Graphics::Surface &s) {
-	if (!_isSystemActive || !_vm->isSubtitlesEnabled()) {
-		return;
+	bool proceedToDraw = false;
+	if (_isSystemActive && _vm->isSubtitlesEnabled()) {
+		if (_subtitlesDataActive[kSubtitlesPrimary].isVisible
+		    && !_subtitlesDataActive[kSubtitlesPrimary].forceShowWhenNoSpeech
+		    && !_vm->_audioSpeech->isPlaying()) {
+			_vm->_subtitles->hide(kSubtitlesPrimary); // TODO might need a better system. Don't call it always.
+		}
+
+		// keep this as a separate if clause
+		if (isVisible(kSubtitlesPrimary) || isVisible(kSubtitlesSecondary)) {
+			proceedToDraw = true;
+		}
 	}
 
-	if (_subtitlesData[kSubtitlesPrimary].isVisible
-	    && !_subtitlesData[kSubtitlesPrimary].forceShowWhenNoSpeech
-	    && !_vm->_audioSpeech->isPlaying()) {
-		_vm->_subtitles->hide(kSubtitlesPrimary); // TODO might need a better system. Don't call it always.
+	if (_vm->getExtraCNotify() == 3) {
+		proceedToDraw = true;
 	}
 
-	// keep this as a separate if clause
-	if (!isVisible(kSubtitlesPrimary) && !isVisible(kSubtitlesSecondary)) {
-		return;
+	if (proceedToDraw) {
+		draw(s);
 	}
-
-	draw(s);
 }
 
 bool Subtitles::isNotEmptyCurrentSubsText(int subsRole) {
-	if ((_useUTF8 && !_subtitlesData[subsRole].currentText32.empty())
-	    || (!_useUTF8 && !_subtitlesData[subsRole].currentText.empty())) {
+	if ((_useUTF8 && !_subtitlesDataActive[subsRole].currentText32.empty())
+	    || (!_useUTF8 && !_subtitlesDataActive[subsRole].currentText.empty())) {
 		return true;
 	} else {
 		return false;
@@ -421,11 +535,11 @@ void Subtitles::mergeSubtitleQuotes(int actorId, int quoteFirst, int quoteSecond
 	const char *textFirst = _vqaSubsTextResourceEntries[0]->getText((uint32)idFirst);
 	const char *textSecond = _vqaSubsTextResourceEntries[0]->getText((uint32)idSecond);
 	if (_useUTF8) {
-		_subtitlesData[kSubtitlesPrimary].currentText32 = Common::convertUtf8ToUtf32(textFirst);
-		_subtitlesData[kSubtitlesPrimary].currentText32 += " " + Common::convertUtf8ToUtf32(textSecond);
+		_subtitlesDataActive[kSubtitlesPrimary].currentText32 = Common::convertUtf8ToUtf32(textFirst);
+		_subtitlesDataActive[kSubtitlesPrimary].currentText32 += " " + Common::convertUtf8ToUtf32(textSecond);
 	} else {
-		_subtitlesData[kSubtitlesPrimary].currentText = textFirst;
-		_subtitlesData[kSubtitlesPrimary].currentText += " " + Common::String(textSecond);
+		_subtitlesDataActive[kSubtitlesPrimary].currentText = textFirst;
+		_subtitlesDataActive[kSubtitlesPrimary].currentText += " " + Common::String(textSecond);
 	}
 }
 
@@ -433,6 +547,46 @@ void Subtitles::mergeSubtitleQuotes(int actorId, int quoteFirst, int quoteSecond
  * Draw method for drawing the subtitles on the display surface
  */
 void Subtitles::draw(Graphics::Surface &s) {
+	if (_isSystemActive && _vm->getExtraCNotify() == 3) {
+		// Timing fixed for 60Hz by ScummVM team
+		uint32 timeNow = _vm->_time->currentSystem();
+		bool updateTimeout = false;
+		// unsigned difference is intentional
+		if (timeNow - _xcTimeLast > (1000u / 60u)) {
+			updateTimeout = true;
+			_xcTimeLast = timeNow;
+		}
+
+		_vm->_mainFont->drawString(&s, _excTitlStr, 313 - _vm->_mainFont->getStringWidth(_excTitlStr) / 2, 143, s.w, s.format.RGBToColor(240, 232, 192));
+
+		int y = 158;
+		int lineTextWidth;
+		for (int i = 0; i < kxcLineCount; ++i) {
+			if (updateTimeout) {
+				if (_xcLineTimeouts[i] > 0) {
+					--_xcLineTimeouts[i];
+				} else {
+					_xcLineTexts[i] = _xcStrings[_xcStringIndex];
+					_xcLineTimeouts[i] = 63;
+					lineTextWidth = _vm->_mainFont->getStringWidth(_xcLineTexts[i]);
+					_xcLineOffsets[i] = _vm->_rnd.getRandomNumberRng(0, (306 -  lineTextWidth) > 0 ? (306 - lineTextWidth) : 0) + 155;
+
+					_xcStringIndex = (_xcStringIndex + 1) % kxcStringCount;
+				}
+			}
+
+			if (!_xcLineTexts[i].empty()) {
+				int colorIndex = _xcLineTimeouts[i];
+				if (colorIndex >= 32) {
+					colorIndex = 63 - colorIndex;
+				}
+				colorIndex /= 2;
+				_vm->_mainFont->drawString(&s, _xcLineTexts[i], _xcLineOffsets[i], y, s.w, s.format.RGBToColor(kTextColors[colorIndex].r, kTextColors[colorIndex].g, kTextColors[colorIndex].b));
+			}
+			y += 10;
+		}
+	}
+
 	if (!_isSystemActive
 	    || (!isVisible(kSubtitlesPrimary) && !isVisible(kSubtitlesSecondary))
 	    || (!isNotEmptyCurrentSubsText(kSubtitlesPrimary) && !isNotEmptyCurrentSubsText(kSubtitlesSecondary))) {
@@ -444,20 +598,20 @@ void Subtitles::draw(Graphics::Surface &s) {
 			uint linesNum = 0;
 			if (_useUTF8) {
 				// This check is done so that lines won't be re-calculated multiple times for the same text
-				if (_subtitlesData[i].currentText32 != _subtitlesData[i].prevText32) {
-					_subtitlesData[i].lines32.clear();
-					_subtitlesData[i].prevText32 = _subtitlesData[i].currentText32;
-					_font->wordWrapText(_subtitlesData[i].currentText32, kTextMaxWidth, _subtitlesData[i].lines32, 0, Graphics::kWordWrapEvenWidthLines | Graphics::kWordWrapOnExplicitNewLines);
+				if (_subtitlesDataActive[i].currentText32 != _subtitlesDataActive[i].prevText32) {
+					_subtitlesDataActive[i].lines32.clear();
+					_subtitlesDataActive[i].prevText32 = _subtitlesDataActive[i].currentText32;
+					_font->wordWrapText(_subtitlesDataActive[i].currentText32, kTextMaxWidth, _subtitlesDataActive[i].lines32, 0, Graphics::kWordWrapEvenWidthLines | Graphics::kWordWrapOnExplicitNewLines);
 				}
-				linesNum = _subtitlesData[i].lines32.size();
+				linesNum = _subtitlesDataActive[i].lines32.size();
 			} else {
 				// This check is done so that lines won't be re-calculated multiple times for the same text
-				if (_subtitlesData[i].currentText != _subtitlesData[i].prevText) {
-					_subtitlesData[i].lines.clear();
-					_subtitlesData[i].prevText = _subtitlesData[i].currentText;
-					_font->wordWrapText(_subtitlesData[i].currentText, kTextMaxWidth, _subtitlesData[i].lines, 0, Graphics::kWordWrapEvenWidthLines | Graphics::kWordWrapOnExplicitNewLines);
+				if (_subtitlesDataActive[i].currentText != _subtitlesDataActive[i].prevText) {
+					_subtitlesDataActive[i].lines.clear();
+					_subtitlesDataActive[i].prevText = _subtitlesDataActive[i].currentText;
+					_font->wordWrapText(_subtitlesDataActive[i].currentText, kTextMaxWidth, _subtitlesDataActive[i].lines, 0, Graphics::kWordWrapEvenWidthLines | Graphics::kWordWrapOnExplicitNewLines);
 				}
-				linesNum = _subtitlesData[i].lines.size();
+				linesNum = _subtitlesDataActive[i].lines.size();
 			}
 
 			int y = kMarginTop;
@@ -470,15 +624,15 @@ void Subtitles::draw(Graphics::Surface &s) {
 				switch (_subtitlesInfo.fontType) {
 				case Subtitles::kSubtitlesFontTypeInternal:
 					// shadow/outline is part of the font color data
-					_font->drawString(&s, _subtitlesData[i].lines[j], 0, y, s.w, 0, Graphics::kTextAlignCenter);
+					_font->drawString(&s, _subtitlesDataActive[i].lines[j], 0, y, s.w, 0, Graphics::kTextAlignCenter);
 					break;
 				case Subtitles::kSubtitlesFontTypeTTF:
-					_font->drawString(&s, _subtitlesData[i].lines32[j], -1, y    , s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
-					_font->drawString(&s, _subtitlesData[i].lines32[j],  0, y - 1, s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
-					_font->drawString(&s, _subtitlesData[i].lines32[j],  1, y    , s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
-					_font->drawString(&s, _subtitlesData[i].lines32[j],  0, y + 1, s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
+					_font->drawString(&s, _subtitlesDataActive[i].lines32[j], -1, y    , s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
+					_font->drawString(&s, _subtitlesDataActive[i].lines32[j],  0, y - 1, s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
+					_font->drawString(&s, _subtitlesDataActive[i].lines32[j],  1, y    , s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
+					_font->drawString(&s, _subtitlesDataActive[i].lines32[j],  0, y + 1, s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
 
-					_font->drawString(&s, _subtitlesData[i].lines32[j],  0, y    , s.w, s.format.RGBToColor(255, 255, 255), Graphics::kTextAlignCenter);
+					_font->drawString(&s, _subtitlesDataActive[i].lines32[j],  0, y    , s.w, s.format.RGBToColor(255, 255, 255), Graphics::kTextAlignCenter);
 					break;
 				}
 			}
@@ -491,16 +645,20 @@ void Subtitles::draw(Graphics::Surface &s) {
  */
 void Subtitles::clear() {
 	for (uint8 i = 0; i < kNumOfSubtitleRoles; ++i) {
-		_subtitlesData[i].isVisible = false;
-		_subtitlesData[i].forceShowWhenNoSpeech = false;
-		_subtitlesData[i].currentText32.clear();
-		_subtitlesData[i].prevText32.clear();
-		_subtitlesData[i].lines32.clear();
+		_subtitlesDataActive[i].isVisible = false;
+		_subtitlesDataActive[i].forceShowWhenNoSpeech = false;
+		_subtitlesDataActive[i].currentText32.clear();
+		_subtitlesDataActive[i].prevText32.clear();
+		_subtitlesDataActive[i].lines32.clear();
 
-		_subtitlesData[i].currentText.clear();
-		_subtitlesData[i].prevText.clear();
-		_subtitlesData[i].lines.clear();
+		_subtitlesDataActive[i].currentText.clear();
+		_subtitlesDataActive[i].prevText.clear();
+		_subtitlesDataActive[i].lines.clear();
 	}
+}
+
+bool Subtitles::isHDCPresent() {
+	return _useHDC;
 }
 
 /**
@@ -530,6 +688,7 @@ void Subtitles::reset() {
 	}
 
 	_useUTF8 = false;
+	_useHDC = false;
 }
 
 } // End of namespace BladeRunner

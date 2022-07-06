@@ -133,6 +133,11 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 
 	_vm->_sliceRenderer->setView(_vm->_view);
 
+	if ((setId == kSetMA02_MA04 || setId == kSetMA04)
+	    && sceneId == kSceneMA04) {
+		_vm->setExtraCNotify(0);
+	}
+
 	if (isLoadingGame) {
 		resume(true);
 		if (sceneId == kScenePS10    // police maze
@@ -242,7 +247,7 @@ int Scene::advanceFrame(bool useTime) {
 		_vqaPlayer->updateLights(_vm->_lights);
 	}
 
-	if (_specialLoopMode == kSceneLoopModeLoseControl || _specialLoopMode == kSceneLoopModeOnce || _specialLoopMode == kSceneLoopModeSpinner) {
+	if (_specialLoopMode == kSceneLoopModeLoseControl || _specialLoopMode == kSceneLoopModeOnce || _specialLoopMode == kSceneLoopModeOnceNStay || _specialLoopMode == kSceneLoopModeSpinner) {
 		if (!_defaultLoopSet) {
 			_vqaPlayer->setLoop(_defaultLoop, -1, kLoopSetModeEnqueue, &Scene::loopEndedStatic, this);
 			_defaultLoopSet = true;
@@ -345,7 +350,7 @@ void Scene::loopStartSpecial(int specialLoopMode, int loopId, bool immediately) 
 	_specialLoop = loopId;
 
 	int repeats = -1;
-	if (_specialLoopMode == kSceneLoopModeChangeSet) {
+	if (_specialLoopMode == kSceneLoopModeChangeSet || _specialLoopMode == kSceneLoopModeOnceNStay) {
 		repeats = 0;
 	}
 

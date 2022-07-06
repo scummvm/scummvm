@@ -19,6 +19,9 @@
  *
  */
 
+#include "bladerunner/ambient_sounds.h"
+#include "bladerunner/audio_player.h"
+#include "bladerunner/subtitles.h"
 #include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
@@ -75,6 +78,7 @@ void SceneScriptMA04::InitializeScene() {
 		Ambient_Sounds_Add_Sound(kSfxVIDFONE1, 3, 3, 100, 100, 0, 0, 0, 0, 99, 0);
 	}
 	Scene_Loop_Set_Default(kMA04LoopMainLoop);
+	_vm->setExtraCNotify(0);
 }
 
 void SceneScriptMA04::SceneLoaded() {
@@ -89,6 +93,7 @@ void SceneScriptMA04::SceneLoaded() {
 		Clickable_Object("BED-TV-1");
 		Clickable_Object("BED-TV-2");
 	}
+	_vm->setExtraCNotify(0);
 }
 
 bool SceneScriptMA04::MouseClick(int x, int y) {
@@ -247,8 +252,16 @@ void SceneScriptMA04::SceneFrameAdvanced(int frame) {
 	} else {
 		Set_Fade_Density(0.0f);
 	}
-	if (frame == 121 && (Game_Flag_Query(kFlagZubenRetired) || Game_Flag_Query(kFlagZubenSpared)) && !Game_Flag_Query(kFlagPS04GuzzaTalkZubenRetired)) {
+	if (frame == 121 && _vm->getExtraCNotify() == 0 && (Game_Flag_Query(kFlagZubenRetired) || Game_Flag_Query(kFlagZubenSpared)) && !Game_Flag_Query(kFlagPS04GuzzaTalkZubenRetired)) {
 		Sound_Play(kSfxVIDFONE1, 50, 0, 0, 50);
+	}
+
+	if (frame >= 30 && frame < 91 && _vm->getExtraCNotify() == 1) {
+		_vm->setExtraCNotify(2);
+		blip();
+	}
+	if (frame >= 100 && frame < 121 && _vm->getExtraCNotify() == 2) {
+		_vm->setExtraCNotify(3);
 	}
 }
 
@@ -586,6 +599,34 @@ void SceneScriptMA04::turnOnTV() {
 		ADQ_Add(kActorNewscaster, 240, kAnimationModeTalk);
 		break;
 	}
+}
+
+void SceneScriptMA04::blip() {
+	Music_Stop(2u);
+	_vm->_ambientSounds->playSound(kSfxMUSVOL8, 22, 46, 46, 99, Audio::Mixer::kSFXSoundType);
+	ADQ_Flush();
+	if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7191.52f, 954.11f, 1834.47f, 0, false, false, false)) {
+		Actor_Face_Current_Camera(kActorMcCoy, true);
+		if (isPhoneMessageWaiting() || isPhoneRinging()) {
+			Overlay_Remove("MA04OVER");
+			if (isPhoneRinging()) {
+				Ambient_Sounds_Remove_Sound(kSfxVIDFONE1, true);
+			}
+		}
+		Scene_Loop_Start_Special(kSceneLoopModeOnceNStay, kMA04LoopSleep, false);
+		_vm->_audioPlayer->playAud(_vm->_subtitles->getLoadAvgStr(), 100, 0, 0, 50, kAudioPlayerOverrideVolume, Audio::Mixer::kSpeechSoundType);
+		Delay(40000);
+		Scene_Loop_Start_Special(kSceneLoopModeOnce, kMA04LoopWakeup, true);
+		Delay(1000);
+		if (isPhoneMessageWaiting() || isPhoneRinging()) {
+			Overlay_Play("MA04OVER", 0, true, false, 0);
+			if (isPhoneRinging()) {
+				Ambient_Sounds_Add_Sound(kSfxVIDFONE1, 3, 3, 100, 100, 0, 0, 0, 0, 99, 0);
+			}
+		}
+	}
+	_vm->setExtraCNotify(0);
+	Player_Gains_Control();
 }
 
 void SceneScriptMA04::sleep() {
