@@ -44,6 +44,8 @@
 #include "hpl1/engine/game/low_level_game_setup.h"
 #include "hpl1/engine/system/low_level_system.h"
 
+#include "common/events.h"
+
 namespace hpl {
 
 //////////////////////////////////////////////////////////////////////////
@@ -433,6 +435,13 @@ void cGame::Run() {
 		// cMemoryManager::SetLogCreation(false);
 		// Log("----\nCreations made: %d\n------\n",cMemoryManager::GetCreationCount());
 		//}
+
+		// FIXME: TODO: Remove once events are being processed
+		Common::Event event;
+
+		g_system->getEventManager()->pollEvent(event);
+		if (event.type == Common::EVENT_QUIT)
+			break;
 	}
 	Log("--------------------------------------------------------\n\n");
 
