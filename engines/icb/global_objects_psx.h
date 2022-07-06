@@ -62,16 +62,6 @@ extern int32 slineRed;
 extern int32 slineGreen;
 extern int32 slineBlue;
 
-// Colour of the z-fragments outlines
-extern int32 zfragRed;
-extern int32 zfragGreen;
-extern int32 zfragBlue;
-
-// Colour of the z-layers outlines
-extern int32 zoverRed;
-extern int32 zoverGreen;
-extern int32 zoverBlue;
-
 // Colour of the wire-frame man
 extern int32 wfrmRed;
 extern int32 wfrmGreen;

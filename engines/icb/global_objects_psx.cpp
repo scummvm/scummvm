@@ -45,18 +45,6 @@ psxActor *g_av_actor;
 // Lighting structure and coordinates, colour components
 PSXLamp *g_av_Light;
 
-#if CD_BUILD == 0
-// Colour of the z-fragments outlines
-int32 zfragRed = 255;
-int32 zfragGreen = 0;
-int32 zfragBlue = 0;
-
-// Colour of the z-layers outlines
-int32 zoverRed = 255;
-int32 zoverGreen = 0;
-int32 zoverBlue = 255;
-#endif // #if CD_BUILD == 0
-
 // Colour of the actors bounding box
 int32 bboxRed = 0;
 int32 bboxGreen = 255;
