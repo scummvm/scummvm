@@ -176,6 +176,7 @@ private:
 	DirectorEngine *_vm;
 	Lingo *_lingo;
 	Cast *_cast;
+	Common::HashMap<int, Cast *> _casts;
 	Score *_score;
 
 	uint32 _flags;
