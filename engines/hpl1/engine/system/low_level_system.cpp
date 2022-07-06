@@ -62,24 +62,12 @@ LowLevelSystem::~LowLevelSystem() {
 }
 
 void Error(const char *fmt, ...) {
-	va_list vl;
-	va_start(vl, fmt);
-	debugN(Hpl1::kDebugLevelError, fmt, vl);
-	va_end(vl);
 }
 
 void Warning(const char *fmt, ...) {
-	va_list vl;
-	va_start(vl, fmt);
-	debugN(Hpl1::kDebugLevelWarning, fmt, vl);
-	va_end(vl);
 }
 
 void Log(const char *fmt, ...) {
-	va_list vl;
-	va_start(vl, fmt);
-	debugN(Hpl1::kDebugLevelLog, fmt, vl);
-	va_end(vl);
 }
 
 static bool gbUpdateLogIsActive;
