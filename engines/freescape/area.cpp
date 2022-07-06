@@ -77,6 +77,23 @@ Area::Area(
 	} compareObjects;
 
 	Common::sort(drawableObjects.begin(), drawableObjects.end(), compareObjects);
+	/*FCLInstructionVector empty;
+
+	Common::Array<uint8> *floorColors = new Common::Array<uint8>;
+	for (int i = 0; i < 6; i++)
+		floorColors->push_back(0);
+
+	GeometricObject *floor = new GeometricObject(
+		(Object::Type) 1,
+		200,
+		0, // flags
+		Math::Vector3d(0, -1, 0), // Position
+		Math::Vector3d(8128, 1, 8128), // size
+		floorColors,
+		nullptr,
+		empty
+	);
+	drawableObjects.push_back(floor);*/
 }
 
 Area::~Area() {

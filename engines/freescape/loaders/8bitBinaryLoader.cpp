@@ -173,6 +173,25 @@ byte drillerCGA[4][3] = {
 	{0x00, 0xa8, 0xa8},
 };
 
+byte eclipseEGA[16][3] = {
+	{0xfc, 0xfc, 0x54},
+	{0x54, 0xfc, 0xfc},
+	{0x00, 0xaa, 0xaa},
+	{0xaa, 0x00, 0xaa},
+	{0xff, 0xff, 0xff},
+	{0x00, 0x00, 0xA8},
+	{0x00, 0x00, 0xaa},
+	{0xaa, 0x55, 0x00},
+	{0x12, 0xf3, 0x56},
+	{0xaa, 0x00, 0x00},
+	{0xff, 0x55, 0xff},
+	{0xa8, 0x54, 0x00},
+	{0x12, 0xf3, 0x56},
+	{0x54, 0x54, 0x54},
+	{0x54, 0x54, 0x54},
+	{0x12, 0xf3, 0x56}
+};
+
 Graphics::PixelBuffer *FreescapeEngine::getPalette(uint8 areaNumber, uint8 c1, uint8 c2, uint8 c3, uint8 c4, uint16 ncolors) {
 	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, ncolors, 0);
 	Graphics::PixelBuffer *palette = nullptr;
@@ -181,6 +200,8 @@ Graphics::PixelBuffer *FreescapeEngine::getPalette(uint8 areaNumber, uint8 c1, u
 			palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&drillerEGA);
 		else if (_renderMode == "cga")
 			palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&drillerCGA);
+	} else if (_targetName.hasPrefix("totaleclipse")) {
+		palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&eclipseEGA);
 	} else
 		palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&drillerEGA);
 
@@ -222,7 +243,9 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	//debug("Condition Ptr: %x", cPtr);
 	debug("Pos before first object: %lx", file->pos());
 
-	if (_targetName != "castlemaster")
+	if (_targetName == "totaleclipse")
+		file->seek(5, SEEK_CUR);
+	else if (_targetName != "castlemaster")
 		file->seek(15, SEEK_CUR);
 
 	ObjectMap *objectsByID = new ObjectMap;
