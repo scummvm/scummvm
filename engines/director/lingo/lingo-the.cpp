@@ -392,7 +392,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheCastMembers:
 		d.type = INT;
-		d.u.i = movie->getCast()->_loadedCast->size() + (movie->_sharedCast ? movie->_sharedCast->_loadedCast->size() : 0);
+		d.u.i = movie->getCast()->getCastSize() + (movie->_sharedCast ? movie->_sharedCast->getCastSize() : 0);
 		break;
 	case kTheCenterStage:
 		d.type = INT;

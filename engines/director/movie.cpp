@@ -95,7 +95,6 @@ Movie::Movie(Window *window) {
 Movie::~Movie() {
 	// _movieArchive is shared with the cast, so the cast will free it
 	delete _cast;
-
 	delete _sharedCast;
 	delete _score;
 }
@@ -331,6 +330,14 @@ CastMember* Movie::createOrReplaceCastMember(CastMemberID memberID, CastMember* 
 	}
 
 	return result;
+}
+
+bool Movie::eraseCastMember(CastMemberID memberID) {
+	if (_casts.contains(memberID.castLib)) {
+		return _casts.getVal(memberID.castLib)->eraseCastMember(memberID);
+	}
+
+	return false;
 }
 
 CastMember *Movie::getCastMemberByName(const Common::String &name, int castLib) {

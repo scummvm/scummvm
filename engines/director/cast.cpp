@@ -170,6 +170,10 @@ const Stxt *Cast::getStxt(int castId) {
 	return result;
 }
 
+int Cast::getCastSize() {
+	return _loadedCast->size();
+}
+
 Common::Rect Cast::getCastMemberInitialRect(int castId) {
 	CastMember *cast = _loadedCast->getVal(castId);
 
@@ -199,6 +203,15 @@ CastMember *Cast::setCastMember(CastMemberID castId, CastMember *cast) {
 
 	_loadedCast->setVal(castId.member, cast);
 	return cast;
+}
+
+bool Cast::eraseCastMember(CastMemberID castId) {
+	if (_loadedCast->contains(castId.member)) {
+		_loadedCast->erase(castId.member);
+		return true;
+	}
+
+	return false;
 }
 
 void Cast::setArchive(Archive *archive) {

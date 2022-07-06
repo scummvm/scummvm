@@ -562,14 +562,8 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 				_window->addDirtyRect(channel->getBbox());
 
 			if (currentSprite->_cast && currentSprite->_cast->_erase) {
-				auto cast = currentSprite->_cast->getCast()->_loadedCast;
-				for (auto it = cast->begin(); it != cast->end(); ++it) {
-					if (it->_value == currentSprite->_cast) {
-						cast->erase(it);
-						currentSprite->_cast->_erase = false;
-						break;
-					}
-				}
+				_movie->eraseCastMember(currentSprite->_castId);
+				currentSprite->_cast->_erase = false;
 
 				currentSprite->setCast(currentSprite->_castId);
 				nextSprite->setCast(nextSprite->_castId);
