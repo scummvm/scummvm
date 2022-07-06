@@ -93,10 +93,10 @@ Screen::Screen(PinkEngine *vm)
 	: _surface(640, 480), _textRendered(false) {
 	uint32 wmMode = Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu
 		| Graphics::kWMModalMenuMode | Graphics::kWMModeForceBuiltinFonts
-		| Graphics::kWMModeUnicode;
+		| Graphics::kWMModeUnicode	 | Graphics::kWMModeWin95;
 
-	if (vm->getLanguage() != Common::HE_ISR) // We do not have Hebrew font in MS fonts :(
-		wmMode |= Graphics::kWMModeWin95;
+	if (vm->getLanguage() == Common::HE_ISR) // We do not have Hebrew font in MS fonts :(
+		wmMode |= Graphics::kWMModeForceMacFontsInWin95;
 
 	_wm = new Graphics::MacWindowManager(wmMode);
 
