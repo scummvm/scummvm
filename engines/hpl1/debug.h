@@ -39,11 +39,20 @@ enum DebugLevels {
 	kDebugLevelLog = 3
 };
 
-void logError(int channel, const char *fmt, ...);
+template<typename... Args>
+void logError(int channel, const char *fmt, Args... args) {
+	debugCN(kDebugLevelError, channel, fmt, args...);
+}
 
-void logWarning(int channel, const char *fmt, ...);
+template<typename... Args>
+void logWarning(int channel, const char *fmt, Args... args) {
+	debugCN(kDebugLevelWarning, channel, fmt, args...);
+}
 
-void logInfo(int channel, const char *fmt, ...);
+template<typename... Args>
+void logInfo(int channel, const char *fmt, Args... args) {
+	debugCN(kDebugLevelLog, channel, fmt, args...);
+}
 
 }
 
