@@ -172,10 +172,8 @@ void Options::execute(TafInfo *ti) {
 			case 4: // Speaker (sound)
 				if (g_engine->_sound->soundEnabled()) {
 					g_engine->_sound->toggleSound(false);
-					_G(det)->disable_room_sound();
 				} else {
 					g_engine->_sound->toggleSound(true);
-					_G(det)->enable_room_sound();
 				}
 				g_engine->syncSoundSettings();
 				break;

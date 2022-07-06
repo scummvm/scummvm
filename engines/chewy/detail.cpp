@@ -55,14 +55,15 @@ bool RoomAutoMov::load(Common::SeekableReadStream *src) {
 bool SoundDefBlk::load(Common::SeekableReadStream *src) {
 	int i;
 
-	for (i = 0; i < MAX_SOUNDS; ++i)
-		sound_enable[i] = src->readSint16LE();
-	for (i = 0; i < MAX_SOUNDS; ++i)
+	src->skip(MAX_SOUNDS * 2);	// sound_enable flags
+	for (i = 0; i < MAX_SOUNDS; ++i) {
 		sound_index[i] = src->readSint16LE();
+		debug("Sound %d: %d", i, sound_index[i]);
+	}
 	for (i = 0; i < MAX_SOUNDS; ++i)
 		sound_start[i] = src->readSint16LE();
 	for (i = 0; i < MAX_SOUNDS; ++i)
-		kanal[i] = src->readSint16LE();
+		channel[i] = src->readSint16LE();
 	for (i = 0; i < MAX_SOUNDS; ++i)
 		volume[i] = src->readSint16LE();
 	for (i = 0; i < MAX_SOUNDS; ++i)
@@ -100,7 +101,7 @@ bool StaticDetailInfo::load(Common::SeekableReadStream *src) {
 	y = src->readSint16LE();
 	SprNr = src->readSint16LE();
 	z_ebene = src->readSint16LE();
-	Hide = src->readByte();
+	hide = src->readByte();
 	Dummy = src->readByte();
 
 	return true;
@@ -115,17 +116,17 @@ bool RoomDetailInfo::load(Common::SeekableReadStream *src) {
 	for (i = 0; i < MAXDETAILS; ++i)
 		Ainfo[i].load(src);
 	for (i = 0; i < MAXDETAILS; ++i)
-		Sinfo[i].load(src);
+		staticSprite[i].load(src);
 	for (i = 0; i < MAX_M_ITEMS * 4; ++i)
 		mvect[i] = src->readSint16LE();
 	for (i = 0; i < MAX_M_ITEMS; ++i)
 		mtxt[i] = src->readSint16LE();
 	Ri.load(src);
 	for (i = 0; i < MAX_AUTO_MOV; ++i)
-		AutoMov[i].load(src);
+		autoMove[i].load(src);
 	for (i = 0; i < MAXDETAILS * MAX_SOUNDS; ++i)
-		tvp_index[i] = src->readSint16LE();
-	src->skip(4 * MAXDETAILS * MAX_SOUNDS); // sample
+		detailSfxIndex[i] = src->readSint16LE();
+	src->skip(4 * MAXDETAILS * MAX_SOUNDS); // sample offsets
 
 	return true;
 }
@@ -146,7 +147,7 @@ Detail::Detail() {
 		*tptr++ = 0;
 
 	for (int16 i = 0; i < MAXDETAILS; i++) {
-		_rdi.Sinfo[i].SprNr = -1;
+		_rdi.staticSprite[i].SprNr = -1;
 		_rdi.Ainfo[i].start_ani = -1;
 	}
 
@@ -159,8 +160,7 @@ Detail::Detail() {
 	_rdi.dptr = nullptr;
 	_tafName = "";
 	for (int16 i = 0; i < (MAXDETAILS * MAX_SOUNDS); i++) {
-		_rdi.sample[i] = nullptr;
-		_rdi.tvp_index[i] = -1;
+		_rdi.detailSfxIndex[i] = -1;
 	}
 	_directTafAni = OFF;
 }
@@ -239,8 +239,8 @@ void Detail::load_taf_tbl(TafInfo *fti) {
 
 	if (fti) {
 		for (int16 i = 0; i < MAXDETAILS; i++) {
-			if (_rdi.Sinfo[i].SprNr != -1)
-				load_taf_seq(_rdi.Sinfo[i].SprNr, 1, fti);
+			if (_rdi.staticSprite[i].SprNr != -1)
+				load_taf_seq(_rdi.staticSprite[i].SprNr, 1, fti);
 			if (_rdi.Ainfo[i].start_ani != -1 &&
 					_rdi.Ainfo[i].end_ani != -1 && !_rdi.Ainfo[i].load_flag)
 				load_taf_seq(_rdi.Ainfo[i].start_ani, (_rdi.Ainfo[i].end_ani - _rdi.Ainfo[i].start_ani) + 1, fti);
@@ -273,8 +273,8 @@ void Detail::del_taf_tbl(TafInfo *Tt) {
 	for (int16 i = 0; i < Tt->count; i++) {
 		free(Tt->image[i]);
 	}
-	free((char *) Tt->correction);
-	free((char *) Tt);
+	free(Tt->correction);
+	free(Tt);
 }
 
 void Detail::del_taf_tbl(int16 start, int16 nr, TafInfo *Tt) {
@@ -303,23 +303,23 @@ void Detail::load_taf_seq(int16 sprNr, int16 sprCount, TafInfo *Tt) {
 
 void Detail::hideStaticSpr(int16 nr) {
 	if (nr >= 0 && nr < MAXDETAILS)
-		_rdi.Sinfo[nr].Hide = true;
+		_rdi.staticSprite[nr].hide = true;
 }
 
 void Detail::showStaticSpr(int16 nr) {
 	if (nr >= 0 && nr < MAXDETAILS)
-		_rdi.Sinfo[nr].Hide = false;
+		_rdi.staticSprite[nr].hide = false;
 }
 
 void Detail::setStaticPos(int16 detNr, int16 x, int16 y, bool hideFl, bool correctionFlag) {
 	if (correctionFlag) {
-		int16 *Cxy = &_rdi.dptr->correction[_rdi.Sinfo[detNr].SprNr * 2];
+		int16 *Cxy = &_rdi.dptr->correction[_rdi.staticSprite[detNr].SprNr * 2];
 		x += Cxy[0];
 		y += Cxy[1];
 	}
-	_rdi.Sinfo[detNr].x = x;
-	_rdi.Sinfo[detNr].y = y;
-	_rdi.Sinfo[detNr].Hide = hideFl;
+	_rdi.staticSprite[detNr].x = x;
+	_rdi.staticSprite[detNr].y = y;
+	_rdi.staticSprite[detNr].hide = hideFl;
 }
 
 void Detail::setDetailPos(int16 detNr, int16 x, int16 y) {
@@ -333,8 +333,7 @@ void Detail::getAniValues(int16 aniNr, int16 *start, int16 *end) {
 }
 
 AniDetailInfo *Detail::getAniDetail(int16 aniNr) {
-	AniDetailInfo *ret = &_rdi.Ainfo[aniNr];
-	return ret;
+	return &_rdi.Ainfo[aniNr];
 }
 
 void Detail::init_taf(TafInfo *dptr) {
@@ -342,8 +341,7 @@ void Detail::init_taf(TafInfo *dptr) {
 }
 
 TafInfo *Detail::get_taf_info() {
-	TafInfo *ret = _rdi.dptr;
-	return ret;
+	return _rdi.dptr;
 }
 
 RoomDetailInfo *Detail::getRoomDetailInfo() {
@@ -354,7 +352,7 @@ void Detail::freezeAni() {
 	_aniFreezeflag = true;
 }
 
-void Detail::unfreeze_ani() {
+void Detail::unfreezeAni() {
 	_aniFreezeflag = false;
 }
 
@@ -398,13 +396,13 @@ void Detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 			Sound *sound = g_engine->_sound;
 
 			for (int16 k = 0; k < MAX_SOUNDS; k++) {
-				int16 soundEffect = adiptr->sfx.sound_index[k];
-				if ((adiptr->sfx.sound_enable[k]) && (soundEffect != -1) &&
-				        (_rdi.sample[soundEffect])) {
-					if ((adiptr->sfx.sound_start[k] == adiptr->ani_count) &&
-					        (!adiptr->delay_count)) {
-						const uint channel = adiptr->sfx.kanal[k] & 7;
-						sound->playSound(soundEffect, channel, adiptr->sfx.repeats[k], adiptr->sfx.volume[k], adiptr->sfx.stereo[k]);
+				const int16 sfxSlot = adiptr->sfx.sound_index[k];
+				if (sfxSlot != -1) {
+					const int16 sfxIndex = _rdi.detailSfxIndex[sfxSlot];
+					if (adiptr->sfx.sound_start[k] == adiptr->ani_count &&
+					        !adiptr->delay_count) {
+						const uint channel = adiptr->sfx.channel[k] & 7;
+						sound->playSound(sfxIndex, channel, false /*adiptr->sfx.repeats[k]*/, adiptr->sfx.volume[k], adiptr->sfx.stereo[k]);
 					}
 				}
 			}
@@ -444,9 +442,9 @@ void Detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 		} else {
 			adiptr->start_flag = 0;
 			if (adiptr->show_1_phase) {
-				_rdi.Sinfo[adiptr->phase_nr].Hide = false;
+				_rdi.staticSprite[adiptr->phase_nr].hide = false;
 				plot_static_details(scrx, scry, adiptr->phase_nr, adiptr->phase_nr);
-				_rdi.Sinfo[adiptr->phase_nr].Hide = true;
+				_rdi.staticSprite[adiptr->phase_nr].hide = true;
 			}
 		}
 	}
@@ -463,11 +461,11 @@ void Detail::plot_static_details(int16 scrx, int16 scry, int16 start, int16 end)
 		end = MAXDETAILS - 1;
 
 	for (int16 i = start; i <= end; i++) {
-		if (_rdi.Sinfo[i].SprNr != -1 && !_rdi.Sinfo[i].Hide) {
-			int16 x = _rdi.Sinfo[i].x - scrx;
-			int16 y = _rdi.Sinfo[i].y - scry;
-			byte *simage = _rdi.dptr->image[_rdi.Sinfo[i].SprNr];
-			_G(out)->spriteSet(simage, x, y, 0);
+		if (_rdi.staticSprite[i].SprNr != -1 && !_rdi.staticSprite[i].hide) {
+			int16 x = _rdi.staticSprite[i].x - scrx;
+			int16 y = _rdi.staticSprite[i].y - scry;
+			byte *spriteImage = _rdi.dptr->image[_rdi.staticSprite[i].SprNr];
+			_G(out)->spriteSet(spriteImage, x, y, 0);
 		}
 	}
 }
@@ -490,9 +488,20 @@ void Detail::startDetail(int16 nr, int16 rep, int16 reverse) {
 
 void Detail::stop_detail(int16 nr) {
 	if (nr >= 0 && nr < 32) {
-		AniDetailInfo *adiptr = &_rdi.Ainfo[nr];
-		adiptr->start_flag = 0;
+		_rdi.Ainfo[nr].start_flag = 0;
 	}
+}
+
+void Detail::playSound(int16 nr, int16 slot) {
+	const int16 sfxSlot = _rdi.Ainfo[nr].sfx.sound_index[slot];
+	if (sfxSlot != -1) {
+		const int16 sfxIndex = _rdi.detailSfxIndex[sfxSlot];
+		g_engine->_sound->playSound(sfxIndex, slot);
+	}
+}
+
+void Detail::stopSound(int16 slot) {
+	g_engine->_sound->stopSound(slot);
 }
 
 int16 Detail::maus_vector(int16 x, int16 y) {
@@ -509,12 +518,7 @@ int16 Detail::maus_vector(int16 x, int16 y) {
 }
 
 int16 Detail::get_ani_status(int16 det_nr) {
-	int16 ret;
-	if (_rdi.Ainfo[det_nr].start_flag > 0)
-		ret = 1;
-	else
-		ret = 0;
-	return ret;
+	return (_rdi.Ainfo[det_nr].start_flag > 0) ? 1 : 0;
 }
 
 SprInfo Detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr, int16 spr_nr, int16 mode) {
@@ -539,10 +543,9 @@ SprInfo Detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr, int16 s
 
 	for (int16 k = 0; k < MAX_SOUNDS; k++) {
 		int16 soundEffect = adiptr->sfx.sound_index[k];
-		if ((adiptr->sfx.sound_enable[k]) && (soundEffect != -1) &&
-		        (_rdi.sample[soundEffect])) {
+		if (soundEffect != -1) {
 			if (adiptr->sfx.sound_start[k] == spr_nr) {
-				const uint channel = adiptr->sfx.kanal[k] & 7;
+				const uint channel = adiptr->sfx.channel[k] & 7;
 				sound->playSound(soundEffect, channel, adiptr->sfx.repeats[k], adiptr->sfx.volume[k], adiptr->sfx.stereo[k]);
 			}
 		}
@@ -552,8 +555,7 @@ SprInfo Detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr, int16 s
 }
 
 void Detail::set_global_delay(int16 delay) {
-	_globalDelay = delay;
-	_globalDelay -= 2;
+	_globalDelay = delay - 2;
 }
 
 void Detail::calc_zoom_kor(int16 *kx, int16 *ky, int16 xzoom, int16 yzoom) {
@@ -568,92 +570,6 @@ void Detail::calc_zoom_kor(int16 *kx, int16 *ky, int16 xzoom, int16 yzoom) {
 		++tmpy;
 	*kx += (int16)tmpx;
 	*ky += (int16)tmpy;
-}
-
-void Detail::disable_detail_sound(int16 nr) {
-	SoundDefBlk *sdb = &_rdi.Ainfo[nr].sfx;
-	for (int16 i = 0; i < MAX_SOUNDS; i++)
-		sdb->sound_enable[i] = false;
-}
-
-void Detail::enable_detail_sound(int16 nr) {
-	SoundDefBlk *sdb = &_rdi.Ainfo[nr].sfx;
-	for (int16 i = 0; i < MAX_SOUNDS; i++)
-		if (sdb->sound_index[i] != -1)
-			sdb->sound_enable[i] = true;
-}
-
-void Detail::play_detail_sound(int16 nr) {
-	SoundDefBlk *sdb = &_rdi.Ainfo[nr].sfx;
-	Sound *sound = g_engine->_sound;
-	for (int16 k = 0; k < MAX_SOUNDS; k++) {
-		if ((sdb->sound_enable[k]) && (sdb->sound_index[k] != -1) &&
-		        (_rdi.sample[sdb->sound_index[k]])) {
-			const uint channel = sdb->kanal[k] & 7;
-			sound->playSound(sdb->sound_index[k], channel, sdb->repeats[k], sdb->volume[k], sdb->stereo[k]);
-		}
-	}
-}
-
-void Detail::clear_detail_sound(int16 nr) {
-	SoundDefBlk *sdb = &_rdi.Ainfo[nr].sfx;
-	for (short i = 0; i < MAX_SOUNDS; i++) {
-		sdb->sound_enable[i] = false;
-		sdb->sound_index[i] = -1;
-		sdb->sound_start[i] = 0;
-		sdb->kanal[i] = 0;
-		sdb->volume[i] = 0;
-		sdb->repeats[i] = 0;
-		sdb->stereo[i] = 0;
-	}
-	removeUnusedSamples();
-}
-
-void Detail::disable_room_sound() {
-	for (int16 i = 0; i < MAXDETAILS; i++)
-		disable_detail_sound(i);
-	g_engine->_sound->stopAllSounds();
-}
-
-void Detail::enable_room_sound() {
-	for (int16 i = 0; i < MAXDETAILS; i++)
-		enable_detail_sound(i);
-}
-
-void Detail::clear_room_sound() {
-	for (int16 j = 0; j < MAXDETAILS; j++) {
-		SoundDefBlk *sdb = &_rdi.Ainfo[j].sfx;
-		for (int16 i = 0; i < MAX_SOUNDS; i++) {
-			sdb->sound_enable[i] = false;
-			sdb->sound_index[i] = -1;
-			sdb->sound_start[i] = 0;
-			sdb->kanal[i] = 0;
-			sdb->volume[i] = 0;
-			sdb->repeats[i] = 0;
-			sdb->stereo[i] = 0;
-		}
-	}
-	for (int16 i = 0; i < MAXDETAILS * MAX_SOUNDS; i++) {
-		_rdi.tvp_index[i] = -1;
-		_rdi.sample[i] = nullptr;
-	}
-}
-
-void Detail::removeUnusedSamples() {
-	for (int16 k = 0; k < MAXDETAILS * MAX_SOUNDS; k++) {
-		if (_rdi.tvp_index[k] != -1) {
-			bool found = false;
-			for (int16 i = 0; (i < MAXDETAILS) && (found == false); i++) {
-				for (int16 j = 0; (j < MAX_SOUNDS) && (found == false); j++)
-					if (_rdi.Ainfo[i].sfx.sound_index[j] == k)
-						found = true;
-			}
-			if (!found) {
-				_rdi.tvp_index[k] = -1;
-				_rdi.sample[k] = nullptr;
-			}
-		}
-	}
 }
 
 int16 Detail::mouse_on_detail(int16 mouse_x, int16 mouse_y, int16 scrx, int16 scry) {

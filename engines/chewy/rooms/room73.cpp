@@ -30,8 +30,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room73::entry(int16 eib_nr) {
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0);
+	_G(det)->playSound(0, 0);
 	_G(gameState).ScrollxStep = 2;
 	_G(gameState).ZoomXy[P_HOWARD][0] = 70;
 	_G(gameState).ZoomXy[P_HOWARD][1] = 100;

@@ -67,8 +67,7 @@ int16 Room47::use_button(int16 txt_nr) {
 			break;
 		}
 
-		g_engine->_sound->playSound(0, 0);
-		g_engine->_sound->playSound(0);
+		_G(det)->playSound(0, 0);
 		++_G(gameState).R47Schloss[k_nr];
 
 		if (_G(gameState).R47Schloss[k_nr] > 9)

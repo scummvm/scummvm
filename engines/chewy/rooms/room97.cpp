@@ -40,8 +40,7 @@ int Room97::_word18DB38;
 bool Room97::_bool18DB3A;
 
 void Room97::entry() {
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0);
+	_G(det)->playSound(0, 0);
 	_G(SetUpScreenFunc) = setup_func;
 	_G(zoom_horizont) = 0;
 
@@ -87,9 +86,9 @@ void Room97::entry() {
 			_G(det)->stop_detail(23 + i);
 			_G(det)->startDetail(27 + i, 255, ANI_FRONT);
 		}
-		g_engine->_sound->stopSound(0);
-		g_engine->_sound->stopSound(0);
-		g_engine->_sound->stopSound(0);
+		_G(det)->stopSound(0);
+		_G(det)->stopSound(0);
+		_G(det)->stopSound(0);
 	}
 
 	if (_G(gameState).flags37_1)
@@ -339,8 +338,8 @@ void Room97::proc4() {
 		hideCur();
 		_G(spieler_mi)[P_CHEWY].Mode = true;
 		stopPerson(P_CHEWY);
-		g_engine->_sound->playSound(9, 0);
-		g_engine->_sound->stopSound(1);
+		_G(det)->playSound(9, 0);
+		_G(det)->stopSound(1);
 		startSetAILWait(9, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(21);
 
@@ -361,8 +360,8 @@ void Room97::proc4() {
 
 		startSetAILWait(29, 1, ANI_FRONT);
 		_G(det)->hideStaticSpr(21);
-		g_engine->_sound->playSound(9, 1);
-		g_engine->_sound->stopSound(0);
+		_G(det)->playSound(9, 1);
+		_G(det)->stopSound(0);
 		startSetAILWait(9, 0, ANI_BACK);
 
 		goAutoXy(1008, 93, P_CHEWY, ANI_WAIT);
@@ -395,8 +394,7 @@ int Room97::proc5() {
 	flic_cut(FCUT_122);
 	register_cutscene(34);
 
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0);
+	_G(det)->playSound(0, 0);
 	_G(gameState).scrollx = 720;
 	setPersonPos(822, 98, P_CHEWY, P_LEFT);
 	setPersonPos(861, 81, P_HOWARD, P_LEFT);
@@ -405,8 +403,8 @@ int Room97::proc5() {
 	_G(gameState).flags35_80 = true;
 	startAadWait(546);
 	_G(det)->hideStaticSpr(21);
-	g_engine->_sound->playSound(9, 1);
-	g_engine->_sound->stopSound(0);
+	_G(det)->playSound(9, 1);
+	_G(det)->stopSound(0);
 	startSetAILWait(9, 0, ANI_GO);
 	
 	showCur();
@@ -497,8 +495,7 @@ int Room97::proc8() {
 		auto_scroll(406, 0);
 		waitShowScreen(40);
 		_G(det)->stop_detail(24);
-		g_engine->_sound->playSound(26, 0);
-		g_engine->_sound->playSound(26);
+		_G(det)->playSound(26, 0);
 		startSetAILWait(25, 1, ANI_FRONT);
 		_G(det)->startDetail(26, 255, false);
 		_G(det)->stop_detail(23);
@@ -563,8 +560,8 @@ int Room97::proc10() {
 	hideCur();
 	autoMove(8, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
-	g_engine->_sound->playSound(7, 0);
-	g_engine->_sound->stopSound(1);
+	_G(det)->playSound(7, 0);
+	_G(det)->stopSound(1);
 	startSetAILWait(7, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(19);
 	_G(gameState).flags37_1 = true;
@@ -592,8 +589,7 @@ int Room97::proc11() {
 		autoMove(7, P_CHEWY);
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
 		startAadWait(571);
-		g_engine->_sound->playSound(4, 0);
-		g_engine->_sound->playSound(4);
+		_G(det)->playSound(4, 0);
 		_G(det)->startDetail(4, 1, false);
 		autoMove(12, P_CHEWY);
 		start_spz_wait(64, 1, false, P_CHEWY);
@@ -713,8 +709,8 @@ void Room97::sensorAnim() {
 		_G(det)->hideStaticSpr(27);
 		startSetAILWait(18, 1, ANI_FRONT);
 
-		g_engine->_sound->playSound(8, 0);
-		g_engine->_sound->stopSound(1);
+		_G(det)->playSound(8, 0);
+		_G(det)->stopSound(1);
 		startSetAILWait(8, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(20);
 		autoMove(10, P_CHEWY);

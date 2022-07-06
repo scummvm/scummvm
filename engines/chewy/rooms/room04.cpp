@@ -90,13 +90,13 @@ int16 Room4::comp_probe() {
 					--curX;
 				else
 					curX = 2;
-				g_engine->_sound->playSound(0, 1);
+				_G(det)->playSound(0, 1);
 				break;
 
 			case 1:
 				endLoop = true;
 				sprNr = YELLOW_FRAME;
-				g_engine->_sound->playSound(0, 0);
+				_G(det)->playSound(0, 0);
 				break;
 
 			case 2:
@@ -104,7 +104,7 @@ int16 Room4::comp_probe() {
 					++curX;
 				else
 					curX = 0;
-				g_engine->_sound->playSound(0, 2);
+				_G(det)->playSound(0, 2);
 				break;
 
 			default:

@@ -137,7 +137,7 @@ void Room48::setup_func() {
 							_G(det)->stop_detail(0);
 							_G(det)->del_static_ani(0);
 							startSetAILWait(2, 1, ANI_FRONT);
-							g_engine->_sound->stopSound(0);
+							_G(det)->stopSound(0);
 							_G(menu_item) = CUR_WALK;
 							cursorChoice(_G(menu_item));
 							showCur();

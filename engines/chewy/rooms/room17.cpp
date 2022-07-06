@@ -300,12 +300,12 @@ int16 Room17::energie_hebel() {
 
 		_G(atds)->set_ats_str(142, _G(gameState).R17EnergieOut ? 1 : 0, ATS_DATA);
 		_G(atds)->set_ats_str(140, _G(gameState).R17EnergieOut ? 1 : 0, ATS_DATA);
-		g_engine->_sound->playSound(12);
+		_G(det)->playSound(12, 0);
 
 		if (_G(gameState).R17EnergieOut) {
-			g_engine->_sound->stopSound(0);
+			_G(det)->stopSound(0);
 		} else {
-			g_engine->_sound->playSound(15, 0);
+			_G(det)->playSound(15, 0);
 		}
 	}
 

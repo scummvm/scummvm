@@ -84,8 +84,7 @@ int16 Room57::use_taxi() {
 		action_ret = true;
 		hideCur();
 		autoMove(3, P_CHEWY);
-		g_engine->_sound->playSound(3, 0);
-		g_engine->_sound->playSound(3);
+		_G(det)->playSound(3, 0);
 		_G(det)->showStaticSpr(7);
 		goAutoXy(16, 160, P_CHEWY, ANI_WAIT);
 		_G(gameState)._personHide[P_CHEWY] = true;
@@ -98,12 +97,12 @@ int16 Room57::use_taxi() {
 			_G(gameState)._personRoomNr[P_HOWARD] = 48;
 		}
 		_G(det)->hideStaticSpr(7);
-		g_engine->_sound->playSound(3, 1);
-		g_engine->_sound->playSound(3);
+		_G(det)->playSound(3, 1);
+		_G(det)->playSound(3, 0);
 		_G(room)->set_timer_status(3, TIMER_STOP);
 		_G(det)->del_static_ani(3);
 		startSetAILWait(5, 1, ANI_FRONT);
-		g_engine->_sound->stopSound(0);
+		_G(det)->stopSound(0);
 		switchRoom(48);
 	}
 	return action_ret;
@@ -140,7 +139,7 @@ int16 Room57::use_pfoertner() {
 			_G(gameState).room_e_obj[91].Attribut = EXIT_TOP;
 			_G(det)->hideStaticSpr(4);
 			startSetAILWait(6, 1, ANI_WAIT);
-			g_engine->_sound->stopSound(0);
+			_G(det)->stopSound(0);
 			_G(atds)->setControlBit(358, ATS_ACTIVE_BIT);
 		} else {
 			startAadWait(349);

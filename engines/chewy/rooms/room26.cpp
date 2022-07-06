@@ -30,9 +30,9 @@ namespace Rooms {
 
 void Room26::entry() {
 	if (_G(gameState).R25GleiteLoesch)
-		g_engine->_sound->stopSound(0);
+		_G(det)->stopSound(0);
 	else
-		g_engine->_sound->playSound(0, 0);
+		_G(det)->playSound(0, 0);
 }
 
 } // namespace Rooms

@@ -138,9 +138,9 @@ int16 Room54::use_schalter() {
 			start_spz_wait(CH_ROCK_GET2, 1, false, P_CHEWY);
 			_G(det)->showStaticSpr(0);
 			autoMove(2, P_CHEWY);
-			g_engine->_sound->playSound(1, 0);
-			g_engine->_sound->playSound(0, 1);
-			g_engine->_sound->stopSound(2);
+			_G(det)->playSound(1, 0);
+			_G(det)->playSound(0, 1);
+			_G(det)->stopSound(2);
 
 			startSetAILWait(1, 1, ANI_FRONT);
 			_G(det)->startDetail(3, 255, ANI_FRONT);
@@ -152,11 +152,11 @@ int16 Room54::use_schalter() {
 			if (_G(gameState).R54LiftCount < 3) {
 				startSetAILWait(2, 1, ANI_FRONT);
 				_G(det)->hideStaticSpr(0);
-				g_engine->_sound->stopSound(0);
-				g_engine->_sound->stopSound(1);
-				g_engine->_sound->playSound(1, 2);
+				_G(det)->stopSound(0);
+				_G(det)->stopSound(1);
+				_G(det)->playSound(1, 2);
 				startSetAILWait(1, 1, ANI_BACK);
-				g_engine->_sound->stopSound(2);
+				_G(det)->stopSound(2);
 				aad_nr = 295;
 
 			} else {
@@ -285,8 +285,7 @@ int16 Room54::use_azug() {
 				_G(gameState).R55Location = true;
 				_G(SetUpScreenFunc) = nullptr;
 				goAutoXy(91, 62, P_HOWARD, ANI_WAIT);
-				g_engine->_sound->playSound(1, 0);
-				g_engine->_sound->playSound(1);
+				_G(det)->playSound(1, 0);
 
 				int16 ch_y = 68;
 				int16 ay = 0;
@@ -326,8 +325,7 @@ void Room54::aufzug_ab() {
 	_G(gameState).scrollx = 0;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(det)->showStaticSpr(12);
-	g_engine->_sound->playSound(1, 0);
-	g_engine->_sound->playSound(1);
+	_G(det)->playSound(1, 0);
 
 	int16 ch_y = -40;
 	int16 ay = -108;
@@ -349,7 +347,7 @@ void Room54::aufzug_ab() {
 		SHOULD_QUIT_RETURN;
 	}
 
-	g_engine->_sound->stopSound(0);
+	_G(det)->stopSound(0);
 	_G(det)->hideStaticSpr(12);
 	setPersonPos(99, 82, P_CHEWY, P_RIGHT);
 	_G(gameState)._personHide[P_CHEWY] = false;

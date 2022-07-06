@@ -183,7 +183,7 @@ void menuEntry() {
 }
 
 void menuExit() {
-	_G(det)->unfreeze_ani();
+	_G(det)->unfreezeAni();
 	_G(uhr)->setAllStatus(TIMER_UNFREEZE);
 	_G(uhr)->resetTimer(0, 0);
 	_G(FrameSpeed) = 0;
@@ -455,7 +455,7 @@ void setupScreen(SetupScreenMode mode) {
 			plotMainMenu();
 	} else {
 		kb_mov(1);
-		_G(det)->unfreeze_ani();
+		_G(det)->unfreezeAni();
 		check_mouse_ausgang(g_events->_mousePos.x + _G(gameState).scrollx, g_events->_mousePos.y + _G(gameState).scrolly);
 
 		if (!_G(flags).SaveMenu)
@@ -1106,9 +1106,9 @@ bool autoMove(int16 movNr, int16 playerNum) {
 			_G(auto_p_nr) = playerNum;
 			int16 tmp = _G(mouseLeftClick);
 			_G(mouseLeftClick) = false;
-			_G(gpkt).Dx = _G(Rdi)->AutoMov[movNr]._x -
+			_G(gpkt).Dx = _G(Rdi)->autoMove[movNr]._x -
 						  _G(spieler_mi)[playerNum].HotMovX + _G(spieler_mi)[playerNum].HotX;
-			_G(gpkt).Dy = _G(Rdi)->AutoMov[movNr]._y -
+			_G(gpkt).Dy = _G(Rdi)->autoMove[movNr]._y -
 						  _G(spieler_mi)[playerNum].HotMovY + _G(spieler_mi)[playerNum].HotY;
 			_G(gpkt).Sx = _G(moveState)[playerNum].Xypos[0] + _G(spieler_mi)[playerNum].HotX;
 			_G(gpkt).Sy = _G(moveState)[playerNum].Xypos[1] + _G(spieler_mi)[playerNum].HotY;
@@ -1159,7 +1159,7 @@ bool autoMove(int16 movNr, int16 playerNum) {
 
 								setPersonPos(_G(spieler_mi)[playerNum].XyzEnd[0],
 								               _G(spieler_mi)[playerNum].XyzEnd[1],
-								               playerNum, _G(Rdi)->AutoMov[movNr]._sprNr);
+								               playerNum, _G(Rdi)->autoMove[movNr]._sprNr);
 							}
 						}
 						endLoopFl = true;
@@ -1648,9 +1648,9 @@ void calc_ausgang(int16 x, int16 y) {
 				exit_room(nr);
 				_G(gameState)._personRoomNr[P_CHEWY] = _G(gameState).room_e_obj[nr].Exit;
 				_G(room)->loadRoom(&_G(room_blk), _G(gameState)._personRoomNr[P_CHEWY], &_G(gameState));
-				setPersonPos(_G(Rdi)->AutoMov[_G(gameState).room_e_obj[nr].ExitMov]._x -
+				setPersonPos(_G(Rdi)->autoMove[_G(gameState).room_e_obj[nr].ExitMov]._x -
 				               _G(spieler_mi)[_G(auto_p_nr)].HotMovX,
-				               _G(Rdi)->AutoMov[_G(gameState).room_e_obj[nr].ExitMov]._y - _G(spieler_mi)[_G(auto_p_nr)].HotMovY
+				               _G(Rdi)->autoMove[_G(gameState).room_e_obj[nr].ExitMov]._y - _G(spieler_mi)[_G(auto_p_nr)].HotMovY
 				               , P_CHEWY, -1);
 				int16 *ScrXy = (int16 *)_G(ablage)[_G(room_blk).AkAblage];
 				get_scroll_off(_G(moveState)[P_CHEWY].Xypos[0] + _G(spieler_mi)[P_CHEWY].HotX,
@@ -1661,7 +1661,7 @@ void calc_ausgang(int16 x, int16 y) {
 				const int16 paletteId = _G(barriers)->getBarrierId(_G(moveState)[P_CHEWY].Xypos[0] + _G(spieler_mi)[P_CHEWY].HotX,
 				                                              _G(moveState)[P_CHEWY].Xypos[1] + _G(spieler_mi)[P_CHEWY].HotY);
 				setShadowPalette(paletteId, false);
-				setPersonSpr(_G(Rdi)->AutoMov[_G(gameState).room_e_obj[nr].ExitMov]._sprNr, P_CHEWY);
+				setPersonSpr(_G(Rdi)->autoMove[_G(gameState).room_e_obj[nr].ExitMov]._sprNr, P_CHEWY);
 				_G(moveState)[P_CHEWY]._delayCount = 0;
 				_G(fx_blend) = BLEND1;
 				_G(auto_obj) = 0;

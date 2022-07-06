@@ -218,7 +218,7 @@ void enter_room(int16 eib_nr) {
 		Room17::entry();
 		if (g_engine->_sound->soundEnabled()) {
 			if (!_G(gameState).R17EnergieOut)
-				g_engine->_sound->playSound(15);
+				_G(det)->playSound(15, 0);
 		}
 		break;
 
@@ -231,7 +231,7 @@ void enter_room(int16 eib_nr) {
 	case 24:
 		Room24::entry();
 		if (g_engine->_sound->soundEnabled())
-			g_engine->_sound->playSound(17);
+			_G(det)->playSound(17, 0);
 		break;
 
 	ENTRY(25);
@@ -317,7 +317,7 @@ void enter_room(int16 eib_nr) {
 
 void exit_room(int16 eib_nr) {
 	bool no_exit = false;
-	_G(det)->disable_room_sound();
+	g_engine->_sound->stopAllSounds();
 
 	switch (_G(gameState)._personRoomNr[P_CHEWY]) {
 	case 6:
@@ -709,7 +709,6 @@ void flic_cut(int16 nr) {
 	bool keepPlaying = true;
 
 	_G(out)->setPointer(nullptr);
-	_G(det)->disable_room_sound();
 	g_engine->_sound->stopAllSounds();
 	g_events->delay(50);
 
@@ -783,7 +782,7 @@ void flic_cut(int16 nr) {
 		break;
 	}
 
-	g_engine->_sound->stopSound();
+	_G(det)->stopSound(0);
 	SHOULD_QUIT_RETURN;
 
 	g_events->delay(50);
@@ -791,7 +790,6 @@ void flic_cut(int16 nr) {
 	if (nr != FCUT_135) {
 		g_engine->_sound->playRoomMusic(_G(gameState)._personRoomNr[0]);
 
-		_G(det)->enable_room_sound();
 		_G(uhr)->resetTimer(0, 0);
 	}
 
@@ -1028,11 +1026,11 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 	case SIB_DOORKNOB_R18:
 		if (_G(gameState).R18DoorBruecke) {
-			g_engine->_sound->stopSound(0);
-			g_engine->_sound->playSound(19, 1);
+			_G(det)->stopSound(0);
+			_G(det)->playSound(19, 1);
 		} else {
-			g_engine->_sound->playSound(19, 0);
-			g_engine->_sound->stopSound(1);
+			_G(det)->playSound(19, 0);
+			_G(det)->stopSound(1);
 		}
 
 		if (!_G(gameState).R6DoorLeftF) {

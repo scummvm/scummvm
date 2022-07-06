@@ -101,7 +101,7 @@ int16 Room31::open_luke() {
 		autoMove(2, P_CHEWY);
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
 		_G(gameState).R31KlappeZu = false;
-		g_engine->_sound->playSound(3);
+		_G(det)->playSound(3, 0);
 		calc_luke();
 		showCur();
 	}
@@ -118,7 +118,7 @@ int16 Room31::close_luke_proc1() {
 		autoMove(2, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(gameState).R31KlappeZu = true;
-		g_engine->_sound->playSound(3);
+		_G(det)->playSound(3, 0);
 		calc_luke();
 		showCur();
 	}
@@ -132,8 +132,8 @@ void Room31::close_luke_proc3() {
 		autoMove(2, P_CHEWY);
 		start_spz_wait(13, 1, false, P_CHEWY);
 		_G(gameState).R31KlappeZu = true;
-		g_engine->_sound->playSound(3);
-		g_engine->_sound->playSound(3, 1, false);
+		_G(det)->playSound(3, 0);
+		_G(det)->playSound(3, 1);
 		calc_luke();
 		showCur();
 	}

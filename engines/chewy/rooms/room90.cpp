@@ -68,8 +68,7 @@ void Room90::entry(int16 eib_nr) {
 	if (_G(gameState).flags34_40 && !_G(gameState).flags33_40) {
 		_G(det)->setDetailPos(12, 329, 15);
 		_G(det)->startDetail(12, 255, false);
-		g_engine->_sound->playSound(12, 0);
-		g_engine->_sound->playSound(12);
+		_G(det)->playSound(12, 0);
 	}
 
 	if (_G(gameState).flags33_40 && !_G(gameState).flags34_10) {
@@ -259,8 +258,7 @@ int Room90::getHubcaps() {
 	auto_scroll(176, 0);
 	_G(det)->setDetailPos(12, 495, 15);
 	_G(det)->startDetail(12, 255, false);
-	g_engine->_sound->playSound(12, 0);
-	g_engine->_sound->playSound(12);
+	_G(det)->playSound(12, 0);
 
 	int destX = 495;
 

@@ -290,7 +290,7 @@ enum SetupScreenMode {
 #define PILLOW_INV 0
 #define SLIME_INV 1
 #define RED_CARD_INV 2
-#define KABEL_INV 3
+#define CABLE_INV 3
 #define MONOCLE_INV 4
 #define NOTEBOOK_INV 5
 #define NOTEBOOK_OPEN_INV 6

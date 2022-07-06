@@ -58,7 +58,7 @@ void Room37::entry() {
 		if (!_G(gameState).R37HundScham) {
 			_G(timer_nr)[0] = _G(room)->set_timer(3, 4);
 			_G(det)->set_static_ani(3, -1);
-			g_engine->_sound->playSound(3, 0);
+			_G(det)->playSound(3, 0);
 		}
 	}
 
@@ -158,7 +158,7 @@ int16 Room37::use_glas() {
 			startAadWait(146);
 			showCur();
 			_G(flags).NoScroll = false;
-			g_engine->_sound->playSound(3);
+			_G(det)->playSound(3, 0);
 		} else {
 			autoMove(4, P_CHEWY);
 		}
@@ -174,7 +174,7 @@ void Room37::dog_bell() {
 
 	if (!_G(flags).AutoAniPlay) {
 		_G(flags).AutoAniPlay = true;
-		g_engine->_sound->stopSound(0); // nr 3, sslot 0
+		_G(det)->stopSound(0); // nr 3, sslot 0
 
 		if (!_G(gameState).R37Gebiss) {
 			stopPerson(P_CHEWY);
@@ -198,8 +198,8 @@ void Room37::dog_bell() {
 			_G(det)->showStaticSpr(9);
 			startAniBlock(3, ABLOCK31);
 			_G(det)->set_static_ani(3, -1);
-			g_engine->_sound->playSound(3, 0);
-//			g_engine->_sound->playSound(3);
+			_G(det)->playSound(3, 0);
+//			_G(det)->playSound(3);
 			enable_timer();
 			dia_nr = 149;
 			ani_nr = CH_TALK12;

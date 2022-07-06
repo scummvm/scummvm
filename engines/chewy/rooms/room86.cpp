@@ -151,8 +151,7 @@ int Room86::proc2() {
 	autoMove(2, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(det)->startDetail(0, 255, false);
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0);
+	_G(det)->playSound(0, 0);
 	delInventory(_G(cur)->getInventoryCursor());
 	autoMove(3, P_CHEWY);
 	proc3(true);
@@ -184,10 +183,8 @@ void Room86::proc3(bool cond) {
 
 	_G(det)->setStaticPos(0, 352, destY, false, false);
 	_G(det)->showStaticSpr(0);
-	g_engine->_sound->playSound(0, 1);
-	g_engine->_sound->playSound(0, 2);
-	g_engine->_sound->playSound(0, 1, false);
-	g_engine->_sound->playSound(0, 2, false);
+	_G(det)->playSound(0, 1);
+	_G(det)->playSound(0, 2);
 
 	for (int i = 0; i < 48; ++i) {
 		setupScreen(NO_SETUP);
@@ -197,8 +194,8 @@ void Room86::proc3(bool cond) {
 		_G(out)->copyToScreen();
 	}
 
-	g_engine->_sound->stopSound(1);
-	g_engine->_sound->stopSound(2);
+	_G(det)->stopSound(1);
+	_G(det)->stopSound(2);
 	_G(flags).NoScroll = false;
 }
 

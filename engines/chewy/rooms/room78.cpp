@@ -31,8 +31,7 @@ namespace Rooms {
 
 void Room78::entry() {
 	_G(gameState).r76State = -1;
-	g_engine->_sound->playSound(0, 1);
-	g_engine->_sound->playSound(0, 1, false);
+	_G(det)->playSound(0, 1);
 	hideCur();
 	_G(gameState).ScrollxStep = 1;
 	_G(gameState)._personHide[P_CHEWY] = true;
