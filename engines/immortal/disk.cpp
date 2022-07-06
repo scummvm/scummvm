@@ -278,9 +278,8 @@ void ProDOSDisk::searchDirectory(DirHeader *h, uint16 p, uint16 n, Common::Strin
     int parsedFiles = 0;
 
     for (int i = 0; i < h->_fileCount; i++) {
-
         // When we have read all the files for a given block (_entriesPerBlock), we need to change to the next block of the directory
-        if (parsedFiles > h->_entriesPerBlock) {
+        if (parsedFiles == h->_entriesPerBlock) {
             parsedFiles = 0;      
             _disk.seek(n * kBlockSize);
             p = _disk.readUint16LE();
@@ -295,8 +294,8 @@ void ProDOSDisk::searchDirectory(DirHeader *h, uint16 p, uint16 n, Common::Strin
 
         // It is a regular file if (dead < file type < pascal) and the file has a size
         if ((kFileTypeDead < fileEntry._type) && (fileEntry._type < kFileTypePascal) && (fileEntry._eof > 0)) {
-             Common::String fileName = path + fileEntry._name;
-            debug("%s, %08X", fileName.c_str(), fileEntry._eof);
+            Common::String fileName = path + fileEntry._name;
+            debug("%s", fileName.c_str());
             ProDOSFile *currFile = new ProDOSFile(fileEntry._name, fileEntry._type, fileEntry._totalBlocks, fileEntry._eof, fileEntry._blockPtr, &_disk);
 
             _files.setVal(fileName, Common::SharedPtr<ProDOSFile>(currFile));
@@ -313,8 +312,8 @@ void ProDOSDisk::searchDirectory(DirHeader *h, uint16 p, uint16 n, Common::Strin
             DirHeader subHead;
             getDirectoryHeader(&subHead);
 
-            path += Common::String(subHead._name);
-            path +=  '/';
+            // Give it a temporary new path name by sticking the name of the subdirectory on to the end of the current path
+            Common::String subPath = Common::String(path + subHead._name + '/');
             searchDirectory(&subHead, subP, subN, path);
 
             debug("--- surfacing to parent directory ---");
