@@ -242,6 +242,8 @@ public:
 	Common::FSNode _gameDataDir;
 	CastMemberID *_clipBoard;
 	uint32 _wmMode;
+	uint16 _wmWidth;
+	uint16 _wmHeight;
 
 private:
 	byte *_currentPalette;
