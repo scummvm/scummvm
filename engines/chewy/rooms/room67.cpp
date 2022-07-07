@@ -167,7 +167,7 @@ int16 Room67::talk_papagei() {
 			_G(det)->stopDetail(1);
 			_G(det)->del_static_ani(1);
 			_G(det)->showStaticSpr(0);
-			invent_2_slot(PAPAGEI_INV);
+			invent_2_slot(PARROT_INV);
 			showCur();
 			_G(atds)->setControlBit(394, ATS_ACTIVE_BIT);
 		}

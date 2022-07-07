@@ -377,8 +377,8 @@ enum SetupScreenMode {
 #define SCHALL_INV 87
 #define ARTE_INV 88
 #define GALA_INV 89
-#define PAPAGEI_INV 90
-#define BAR_GUT_INV 91
+#define PARROT_INV 90
+#define DRINK_COUPON_INV 91
 #define CLINT_500_INV 92
 #define CLINT_1500_INV 93
 #define CLINT_3000_INV 94

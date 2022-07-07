@@ -264,18 +264,18 @@ struct GameFlags {
 	bool flags26_10 : 1;
 	bool flags26_20 : 1;
 	bool flags26_40 : 1;
-	bool R67LiedOk : 1;
+	bool R67SongOk : 1;
 
 	bool R67KommodeAuf : 1;
 	bool R67KostuemWeg : 1;
 	bool R67PapageiWeg : 1;
 	bool R68KarteDa : 1;
-	bool R68Papagei : 1;
-	bool R68DivaWeg : 1;
-	bool R68Lied : 1;
+	bool R68Parrot : 1;
+	bool R68DivaAway : 1;
+	bool R68Song : 1;
 	bool R68IndigoDia : 1;
 
-	bool R68Gutschein : 1;
+	bool R68DrinkCoupon : 1;
 	bool R71LeopardVined : 1;
 	bool flags28_4 : 1;
 	bool flags28_8 : 1;

@@ -113,7 +113,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 416:
-						Room68::look_kaktus();
+						Room68::lookAtCactus();
 						break;
 
 					default:
@@ -587,19 +587,19 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 406:
-						retValue = Room68::use_papagei();
+						retValue = Room68::useParrot();
 						break;
 
 					case 407:
-						retValue = Room68::use_diva();
+						retValue = Room68::useDiva();
 						break;
 
 					case 410:
-						retValue = Room68::use_keeper();
+						retValue = Room68::useBartender();
 						break;
 
 					case 414:
-						retValue = Room68::use_indigo();
+						retValue = Room68::useIndigo();
 						break;
 
 					case 425:
@@ -939,15 +939,15 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 408:
-						Room68::talk_papagei();
+						Room68::talkWithParrot();
 						break;
 
 					case 410:
-						Room68::talk_keeper();
+						Room68::talkToBartender();
 						break;
 
 					case 414:
-						Room68::talk_indigo();
+						Room68::talkToIndigo();
 						break;
 
 					case 419:
@@ -1191,7 +1191,7 @@ void selectDialogOption(int16 diaNr, int16 blkNr, int16 strEndNr) {
 		case 18:
 		case 19:
 			if (blkNr == 0 && strEndNr == 4)
-				_G(gameState).R67LiedOk = true;
+				_G(gameState).R67SongOk = true;
 
 			break;
 
@@ -2502,7 +2502,7 @@ int16 calc_person_click(int16 p_nr) {
 				Room67::kostuem_aad(377);
 				action_ret = true;
 			} else if (_G(gameState)._personRoomNr[P_CHEWY] == 68) {
-				Room68::kostuem_aad(387);
+				Room68::useDressOnNichelle(387);
 				action_ret = true;
 			}
 			break;
