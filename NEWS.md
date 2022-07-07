@@ -152,11 +152,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      Jones and the Last Crusade after loading a savegame.
    - It is now possible to replace the music in the floppy versions of Loom
      with audio tracks. The ScummVM Wiki has a list of which parts of the Swan
-     Lake ballet the game uses.
-   - Some enhancements that ScummVM makes to games can now be disabled in the
-     game's settings. The old option to use correct character spacing in the
-     16-color Mac version of Indiana Jones and the Last Crusade is now included
-     in this setting instead.
+     Lake ballet the game uses: <https://wiki.scummvm.org/index.php/Loom>.
    - Fixed some MIDI music looping when it shouldn't in EGA/VGA floppy versions
      of The Secret of Monkey Island.
    - Fixed the lava flowing in the wrong direction in the VGA floppy version
@@ -172,9 +168,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Rewrote timer handling routines to better approximate both the original
      hardware behavior and the intepreters' quirks.
    - Fix lip syncing in Backyard Baseball 2003.
-   - Fixed original game bugs in Day of the Tentacle, Indy 3, Loom, Maniac
-     Mansion, Monkey Island 1, Monkey Island 2 Amiga, Sam&Max and Zak
-     McKracken FM-TOWNS.
+   - Fixed various original game bugs and oversights in most of the LucasArts
+     titles: <https://wiki.scummvm.org/index.php?title=SCUMM/Game_Enhancements>.
+     Most of these enhancements can now be disabled in the game's settings if
+     one prefers playing with the original behavior.
    - Added sliders for tweaking the CD audio playback in the MI1 CD intro, as
      well as VGA CD Loom in general. Loom is particularly sensitive to the
      amount of silence at the start of the track, and the CD version of MI1
