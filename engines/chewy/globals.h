@@ -203,7 +203,7 @@ public:
 	RaumBlk _room_blk;
 	Flags _flags = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 					0, 0, 0, 0, 0, 0, 0, 0 };
-	CustomInfo _Ci;
+	byte *_tempArea = nullptr;
 	GotoPkt _gpkt;
 	bool _disableScreen = false;
 

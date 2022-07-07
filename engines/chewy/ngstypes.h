@@ -52,10 +52,6 @@ struct MusicInfo {
 	char *cur_pattern = nullptr;
 };
 
-struct CustomInfo {
-	byte *tempArea = 0;
-};
-
 } // namespace Chewy
 
 #endif
