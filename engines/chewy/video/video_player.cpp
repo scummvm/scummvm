@@ -291,7 +291,7 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 			cfoDecoder->rewind();
 			_playCount++;
 		}
-		return (g_events->getSwitchCode() == 1) ? false : true;
+		return (g_events->getSwitchCode() == Common::KEYCODE_ESCAPE) ? false : true;
 	case FCUT_116:
 		if (cfoDecoder->endOfVideo() && _playCount < 6) {
 			cfoDecoder->rewind();

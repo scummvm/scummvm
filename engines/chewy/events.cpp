@@ -220,7 +220,7 @@ void EventsManager::warpMouse(const Common::Point &newPos) {
 }
 
 int16 EventsManager::getSwitchCode() {
-	int16 switch_code = 0;
+	int16 switch_code = -1;
 
 	if (_G(minfo).button == 2)
 		switch_code = Common::KEYCODE_ESCAPE;
@@ -237,6 +237,8 @@ int16 EventsManager::getSwitchCode() {
 		switch_code = _hotkey;
 		_hotkey = Common::KEYCODE_INVALID;
 	}
+
+	//debug("Mouse button: %d, key: %d, hotkey: %d", _G(minfo).button, g_events->_kbInfo._keyCode, _hotkey);
 
 	return switch_code;
 }
