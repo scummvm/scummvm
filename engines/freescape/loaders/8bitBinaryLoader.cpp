@@ -230,12 +230,10 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		ci2 = file->readByte() & 15;
 		skyColor = file->readByte() & 15;
 		groundColor = file->readByte() & 15;
-		skyColor = 2;
-		groundColor = 0;
 		debug("Colors: %d %d %d %d", ci1, ci2, skyColor, groundColor);
 	} else {
-		skyColor = file->readByte();
-		groundColor = file->readByte();
+		skyColor = file->readByte() & 15;
+		groundColor = file->readByte() & 15;
 		debug("Colors: %d %d", skyColor, groundColor);
 	}
 	Graphics::PixelBuffer *palette = getPalette(areaNumber, ci1, ci2, skyColor, groundColor, ncolors);
@@ -353,9 +351,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		debug("offset: %x", fileOffsetForArea[area]);
 	}
 	//fileOffsetForArea[0] = 0x9e75 - offset - 8 - 12; // Table?
-	//fileOffsetForArea[0] = 0x9571 - offset;
 	//fileOffsetForArea[0] = 0xaba5 - offset - 8 - 16; // ???
-	//fileOffsetForArea[0] = 0x87c7 - offset - 8; // ???
 	//fileOffsetForArea[0] = 0x9f40 - offset - 8;
 	//fileOffsetForArea[0] = 0x9f35 - offset; // Another Church, 12
 	//fileOffsetForArea[0] = 0xa06e - offset - 8; // Cornisa? 37
@@ -379,8 +375,25 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	//fileOffsetForArea[0] = 0x9a5c - offset; // Stable !!!
 	//fileOffsetForArea[0] = 0x9b4b - offset; // Another area !!!
 
+	/*fileOffsetForArea[0] = 0x9d1a - offset; // Soccer field
+	fileOffsetForArea[0] = 0x9e43 - offset; // Workshop?
+	fileOffsetForArea[0] = 0x9f22 - offset; // Church
+	fileOffsetForArea[0] = 0x9fcd - offset; // ???
 
-	//fileOffsetForArea[0] = 0x8e0a - offset - 8; // Pool?
+	fileOffsetForArea[0] = 0xa03c - offset; // Tower
+	fileOffsetForArea[0] = 0xa25e - offset; // Room?
+
+	fileOffsetForArea[0] = 0xa30f - offset; // ???
+	fileOffsetForArea[0] = 0xa394 - offset; // ???
+	fileOffsetForArea[0] = 0xa3f8 - offset;
+	fileOffsetForArea[0] = 0xa48c - offset;
+	fileOffsetForArea[0] = 0xa4fa - offset;
+	fileOffsetForArea[0] = 0xa593 - offset;
+	fileOffsetForArea[0] = 0xa5ef - offset;
+	fileOffsetForArea[0] = 0xa64a - offset;
+	fileOffsetForArea[0] = 0xa695 - offset;
+	fileOffsetForArea[0] = 0xa71d - offset;*/
+	//fileOffsetForArea[0] = 0xa77e - offset; <- fails
 
 	// grab the areas
 	AreaMap *areaMap = new AreaMap;

@@ -131,6 +131,34 @@ static const ADGameDescription gameDescriptions[] = {
 	 Common::kPlatformDOS,
 	 ADGF_NO_FLAGS,
 	 GUIO1(GUIO_NOMIDI)},
+	{"castlemaster",
+	 "Castle Master/VirtualWords",
+	 {
+		{"CASTLE.EXE", 0, "f1a141df0e47860246716db20d2ba061", 2806},
+		{"CMC.EXE", 0, "7b9275df446f82fdd0c377f6ec2db546", 57168},
+		{"CMT.EXE", 0, "5814e68a175f74ebce0773a73e7488c7", 78768},
+		{"CME.EXE", 0, "d563ae1475752e6a9a81b1350abebef3", 89248},
+		{"CMH.EXE", 0, "26337adc7861300e5395e992e42b6329", 59968},
+		AD_LISTEND
+	 },
+	 Common::EN_ANY,
+	 Common::kPlatformDOS,
+	 ADGF_NO_FLAGS,
+	 GUIO1(GUIO_NOMIDI)},
+	{"castlemaster",
+	 "Castle Master",
+	 {
+		{"CASTLE.EXE", 0, "42a7d46b418d68e75e31c1cb9d89af14", 2678},
+		{"CMC.EXE", 0, "9015c244dc8a97fe55df7b235b31e00c", 57168},
+		{"CMT.EXE", 0, "5814e68a175f74ebce0773a73e7488c7", 78768},
+		{"CME.EXE", 0, "d563ae1475752e6a9a81b1350abebef3", 89248},
+		{"CMH.EXE", 0, "cc68c42d254b3aa0f208cd08731c6805", 59968},
+		AD_LISTEND
+	 },
+	 Common::ES_ESP,
+	 Common::kPlatformDOS,
+	 ADGF_NO_FLAGS,
+	 GUIO1(GUIO_NOMIDI)},
 	AD_TABLE_END_MARKER};
 } // End of namespace Freescape
 

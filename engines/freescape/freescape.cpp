@@ -156,7 +156,7 @@ void FreescapeEngine::loadAssets() {
 			load8bitBinary(file, 0x7bb0, 4); // TODO
 		} else
 			error("Invalid render mode %s for Total Eclipse", _renderMode.c_str());
-	   } else if (_targetName == "castlemaster") {
+	   } else if (_targetName.hasPrefix("castlemaster")) {
 			file = gameDir.createReadStreamForMember("castle.sna");
 
 			if (file == nullptr)
