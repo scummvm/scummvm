@@ -380,7 +380,7 @@ void Detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 		AniDetailInfo *adiptr = &_rdi.Ainfo[i];
 		if ((adiptr->start_flag) && (adiptr->start_ani != -1) && (adiptr->end_ani != -1)) {
 			int16 sprnr = adiptr->ani_count;
-			int16 *Cxy = _rdi.dptr->correction + (sprnr << 1);
+			int16 *Cxy = _rdi.dptr->correction + sprnr * 2;
 			int16 kx = Cxy[0];
 			int16 ky = Cxy[1];
 			if (zoomx != 0 || zoomy != 0)

@@ -94,7 +94,7 @@ void timer_action(int16 t_nr) {
 	if (g_engine->_sound->isSpeechActive())
 		return;
 
-#define TIMER(NUM) case NUM: Room##NUM::timer(t_nr, ani_nr); break;
+#define TIMER(NUM) case NUM: default_flag = Room##NUM::timer(t_nr, ani_nr); break;
 	switch (_G(gameState)._personRoomNr[P_CHEWY]) {
 	TIMER(0);
 	TIMER(11);
