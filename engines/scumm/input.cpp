@@ -493,8 +493,7 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 		}
 
 		// "Music Volume  Low  =========  High"
-		if (isUsingOriginalGUI() &&
-			(lastKeyHit.keycode == Common::KEYCODE_o || lastKeyHit.keycode == Common::KEYCODE_p)) {
+		if (lastKeyHit.keycode == Common::KEYCODE_o || lastKeyHit.keycode == Common::KEYCODE_p) {
 			Common::KeyState ks = lastKeyHit;
 
 			int volume = _imuseDigital->diMUSEGetMusicGroupVol();
