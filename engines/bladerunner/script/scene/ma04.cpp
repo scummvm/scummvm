@@ -181,7 +181,15 @@ bool SceneScriptMA04::ClickedOn2DRegion(int region) {
 				Actor_Says(kActorMcCoy, 2680, 0);
 				Ambient_Sounds_Remove_Sound(kSfxVIDFONE1, true);
 				Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50);
+#if BLADERUNNER_ORIGINAL_BUGS
 				Overlay_Remove("MA04OVER");
+#else
+				// There's a case where the player has not listened to any pending phone message
+				// from the end of Act 1, so the blinking led indicator should still be active.
+				if (!isPhoneMessageWaiting()) {
+					Overlay_Remove("MA04OVER");
+				}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 				Delay(500);
 				if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 					if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora) {
@@ -203,6 +211,8 @@ bool SceneScriptMA04::ClickedOn2DRegion(int region) {
 			}
 			if (Actor_Clue_Query(kActorClovis, kClueMcCoyRetiredZuben) && !Game_Flag_Query(kFlagMA04PhoneMessageFromClovis)) {
 				Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50);
+				// No point in checking if there's more messages waiting here,
+				// since this is always the first and remaining one (in this case when Clovis learns about Zuben being Retired)
 				Overlay_Remove("MA04OVER");
 				Delay(500);
 				Actor_Says(kActorClovis, 310, 3);
@@ -216,9 +226,10 @@ bool SceneScriptMA04::ClickedOn2DRegion(int region) {
 				Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50);
 				Game_Flag_Set(kFlagMA04PhoneMessageFromClovis);
 				return true;
-			}
-			if (Actor_Clue_Query(kActorLucy, kClueMcCoyLetZubenEscape) && !Game_Flag_Query(kFlagMA04PhoneMessageFromLucy)) {
+			} else if (Actor_Clue_Query(kActorLucy, kClueMcCoyLetZubenEscape) && !Game_Flag_Query(kFlagMA04PhoneMessageFromLucy)) {
 				Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50);
+				// No point in checking if there's more messages waiting here,
+				// since this is always the first and remaining one (in this case when Lucy learns about Zuben having Escaped)
 				Overlay_Remove("MA04OVER");
 				Delay(500);
 				Actor_Says(kActorLucy, 500, 3);
