@@ -28,7 +28,7 @@ namespace MM1 {
 namespace Views {
 
 CastSpell::CastSpell() : TextView("CastSpell") {
-	_bounds = getLineBounds(21, 24);
+	_bounds = getLineBounds(20, 24);
 }
 
 bool CastSpell::msgValue(const ValueMessage &msg) {
@@ -36,14 +36,16 @@ bool CastSpell::msgValue(const ValueMessage &msg) {
 		// Ensure current character can cast spells
 		if (g_globals->_currCharacter->_slvl != 0 &&
 			g_globals->_currCharacter->_sp != 0) {
-			startCasting();
+			addView();
+			setState(SELECT_SPELL);
 		}
 	} else {
 		// Spell bound to an item
+		addView();
 		setSpell(msg._value, 0, 0);
 
 		if (canCast()) {
-			_state = STATE_ENTER;
+			setState(PRESS_ENTER);
 		} else {
 			spellDone();
 		}
@@ -52,48 +54,75 @@ bool CastSpell::msgValue(const ValueMessage &msg) {
 	return true;
 }
 
-void CastSpell::startCasting() {
-	clearLines(20, 24);
-	escToGoBack(0);
-	writeString(7, 20, STRING["dialogs.character.cast_spell"]);
+void CastSpell::setState(State state) {
+	_state = state;
 
-	_textEntry.display(27, 20, 1, true,
-		[]() {
-			CastSpell *view =
-				(CastSpell *)g_events->focusedView();
-			view->close();
-		},
-		[](const Common::String &text) {
-			CastSpell *view =
-				(CastSpell *)g_events->focusedView();
-			view->spellLevelEntered(atoi(text.c_str()));
-		}
+	MetaEngine::setKeybindingMode(
+		_state == SELECT_CHAR ?
+		KeybindingMode::KBMODE_PARTY_MENUS :
+		KeybindingMode::KBMODE_MENUS
+	);
+	draw();
+}
+
+void CastSpell::draw() {
+	switch (_state) {
+	case SELECT_SPELL:
+		clearSurface();
+		escToGoBack(0);
+		writeString(7, 0, STRING["dialogs.character.cast_spell"]);
+
+		_textEntry.display(27, 20, 1, true,
+			[]() {
+				CastSpell *view =
+					(CastSpell *)g_events->focusedView();
+				view->close();
+			},
+			[](const Common::String &text) {
+				CastSpell *view =
+					(CastSpell *)g_events->focusedView();
+				view->spellLevelEntered(atoi(text.c_str()));
+			}
 		);
+		break;
+
+	case SELECT_NUMBER:
+		clearLines(1, 1);
+		writeString(19, 1, STRING["dialogs.character.number"]);
+
+		_textEntry.display(27, 21, 1, true,
+			[]() {
+				CastSpell *view =
+					(CastSpell *)g_events->focusedView();
+				view->close();
+			},
+			[](const Common::String &text) {
+				CastSpell *view =
+					(CastSpell *)g_events->focusedView();
+				view->spellNumberEntered(atoi(text.c_str()));
+			}
+		);
+		break;
+
+	case PRESS_ENTER:
+		clearSurface();
+		writeString(24, 3, STRING["dialogs.misc.enter_to_cast"]);
+		break;
+
+	default:
+		break;
+	}
 }
 
 void CastSpell::spellLevelEntered(uint level) {
 	// Ensure the spell level is valid
 	if (level < 1 || level > 7 ||
 		level > g_globals->_currCharacter->_slvl) {
-		redraw();
+		close();
 		return;
 	}
 
-	clearLines(21, 21);
-	writeString(19, 21, STRING["dialogs.character.number"]);
-
-	_textEntry.display(27, 21, 1, true,
-		[]() {
-			CastSpell *view =
-				(CastSpell *)g_events->focusedView();
-			view->close();
-		},
-		[](const Common::String &text) {
-			CastSpell *view =
-				(CastSpell *)g_events->focusedView();
-			view->spellNumberEntered(atoi(text.c_str()));
-		}
-	);
+	setState(SELECT_NUMBER);
 }
 
 void CastSpell::spellNumberEntered(uint num) {
@@ -106,22 +135,15 @@ void CastSpell::spellNumberEntered(uint num) {
 	if (!canCast())
 		spellDone();
 	else if (hasCharTarget())
-		_state = STATE_SELECT_CHAR;
+		_state = SELECT_CHAR;
 	else
-		_state = STATE_ENTER;
+		_state = PRESS_ENTER;
 
 	draw();
 }
 
-void CastSpell::draw() {
-	if (_state == STATE_ENTER) {
-		clearSurface();
-		writeString(24, 23, STRING["dialogs.misc.enter_to_cast"]);
-	}
-}
-
 bool CastSpell::msgKeypress(const KeypressMessage &msg) {
-	if (_state == STATE_ENTER) {
+	if (_state == PRESS_ENTER) {
 		if (msg.keycode == Common::KEYCODE_ESCAPE) {
 			close();
 		} else if (msg.keycode == Common::KEYCODE_RETURN) {
@@ -130,6 +152,7 @@ bool CastSpell::msgKeypress(const KeypressMessage &msg) {
 			c._sp._current = MAX(c._sp._current - _requiredSp, 0);
 			c._gems = MAX(c._gems - _requiredGems, 0);
 
+			// TODO: Cast the spell
 		}
 	}
 
@@ -151,6 +174,7 @@ void CastSpell::spellDone() {
 	default: break;
 	}
 
+	_state = ENDING;
 	Sound::sound(SOUND_2);
 	clearSurface();
 	writeString(xp, 21, msg);
