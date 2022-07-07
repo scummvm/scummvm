@@ -26,11 +26,11 @@
  */
 
 #include "hpl1/engine/impl/MouseSDL.h"
-
-//#include "SDL/SDL.h"
-
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
 #include "hpl1/engine/impl/LowLevelInputSDL.h"
+#include "hpl1/engine/input/InputTypes.h"
+#include "common/bitarray.h"
+#include "common/events.h"
 
 namespace hpl {
 
@@ -45,17 +45,13 @@ cMouseSDL::cMouseSDL(cLowLevelInputSDL *apLowLevelInputSDL, iLowLevelGraphics *a
 	mfMinPercent = 0.1f;
 	mlBufferSize = 6;
 
-	mvMButtonArray.resize(eMButton_LastEnum);
-	mvMButtonArray.assign(mvMButtonArray.size(), false);
+	_buttonState.set_size(eMButton_LastEnum);
 
-	mpLowLevelInputSDL = apLowLevelInputSDL;
-	mpLowLevelGraphics = apLowLevelGraphics;
+	_lowLevelInputSDL = apLowLevelInputSDL;
+	_lowLevelGraphics = apLowLevelGraphics;
 
-	mvMouseRelPos = cVector2f(0, 0);
-	mvMouseAbsPos = cVector2f(0, 0);
-
-	mbWheelUpMoved = false;
-	mbWheelDownMoved = false;
+	_relMousePos = cVector2f(0, 0);
+	_absMousePos = cVector2f(0, 0);
 }
 
 //-----------------------------------------------------------------------
@@ -66,88 +62,63 @@ cMouseSDL::cMouseSDL(cLowLevelInputSDL *apLowLevelInputSDL, iLowLevelGraphics *a
 
 //-----------------------------------------------------------------------
 
+static void setMouseState(const int state, Common::BitArray &states) {
+	if (state != Common::EVENT_WHEELDOWN)
+		states.unset(eMButton_WheelDown);
+	if (state != Common::EVENT_WHEELUP)
+		states.unset(eMButton_WheelUp);
+
+	switch (state) {
+	case Common::EVENT_LBUTTONDOWN:
+		return states.set(eMButton_Left);
+	case Common::EVENT_LBUTTONUP:
+		return states.unset(eMButton_Left);
+	case Common::EVENT_RBUTTONDOWN:
+		return states.set(eMButton_Right);
+	case Common::EVENT_RBUTTONUP:
+		return states.unset(eMButton_Right);
+	case Common::EVENT_MBUTTONDOWN:
+		return states.set(eMButton_Middle);
+	case Common::EVENT_MBUTTONUP:
+		return states.unset(eMButton_Middle);
+	case Common::EVENT_WHEELUP:
+		return states.set(eMButton_WheelUp);
+	case Common::EVENT_WHEELDOWN:
+		return states.set(eMButton_WheelDown);
+	}
+}
+
+void cMouseSDL::processEvent(const Common::Event &ev) {
+	if (!Common::isMouseEvent(ev))
+		return;
+	const cVector2f screenSize = _lowLevelGraphics->GetScreenSize();
+	const cVector2f virtualSize = _lowLevelGraphics->GetVirtualSize();
+	if (ev.type == Common::EVENT_MOUSEMOVE) {
+		_absMousePos = cVector2f(ev.mouse.x, ev.mouse.y);
+		//mvMouseAbsPos = (mvMouseAbsPos / screenSize) * virtualSize;
+	} else {
+		setMouseState(ev.type, _buttonState);
+	}
+	_relMousePos = cVector2f(ev.relMouse.x, ev.relMouse.y);
+	//mvMouseRelPos = (mvMouseRelPos / screenSize) * virtualSize;
+}
+
 void cMouseSDL::Update() {
-#if 0
-  cVector2f vScreenSize = mpLowLevelGraphics->GetScreenSize();
-		cVector2f vVirtualSize = mpLowLevelGraphics->GetVirtualSize();
-
-		//mvMouseRelPos = cVector2f(0,0);
-
-		//Log("Input start\n");
-		mbWheelUpMoved = false;
-		mbWheelDownMoved = false;
-
-		std::list<SDL_Event>::iterator it = mpLowLevelInputSDL->mlstEvents.begin();
-		for(; it != mpLowLevelInputSDL->mlstEvents.end(); ++it)
-		{
-			SDL_Event *pEvent = &(*it);
-
-			if(	pEvent->type != SDL_MOUSEMOTION &&
-				pEvent->type != SDL_MOUSEBUTTONDOWN &&
-				pEvent->type != SDL_MOUSEBUTTONUP)
-			{
-				continue;
-			}
-
-			if(pEvent->type == SDL_MOUSEMOTION)
-			{
-				mvMouseAbsPos = cVector2f((float)pEvent->motion.x,(float)pEvent->motion.y);
-				mvMouseAbsPos = (mvMouseAbsPos/vScreenSize)*vVirtualSize;
-
-				Uint8 buttonState = pEvent->motion.state;
-
-				//Set button here as well just to be sure
-				/*if(buttonState & SDL_BUTTON(1)) mvMButtonArray[eMButton_Left] = true;
-				if(buttonState & SDL_BUTTON(2)) mvMButtonArray[eMButton_Middle] = true;
-				if(buttonState & SDL_BUTTON(3)) mvMButtonArray[eMButton_Right] = true;*/
-			}
-			else
-			{
-				bool bButtonIsDown = pEvent->type==SDL_MOUSEBUTTONDOWN;
-
-				//if(pEvent->button.button == SDL_BUTTON_WHEELUP)Log(" Wheel %d!\n",bButtonIsDown);
-
-				switch(pEvent->button.button)
-				{
-					case SDL_BUTTON_LEFT: mvMButtonArray[eMButton_Left] = bButtonIsDown;break;
-					case SDL_BUTTON_MIDDLE: mvMButtonArray[eMButton_Middle] = bButtonIsDown;break;
-					case SDL_BUTTON_RIGHT: mvMButtonArray[eMButton_Right] = bButtonIsDown;break;
-					case SDL_BUTTON_WHEELUP:
-						mvMButtonArray[eMButton_WheelUp] = bButtonIsDown;
-						if(bButtonIsDown) mbWheelUpMoved = true;
-						break;
-					case SDL_BUTTON_WHEELDOWN:
-						mvMButtonArray[eMButton_WheelDown] = bButtonIsDown;
-						if(bButtonIsDown) mbWheelDownMoved = true;
-						break;
-				}
-			}
-		}
-
-		if(mbWheelDownMoved)	mvMButtonArray[eMButton_WheelDown] = true;
-		else					mvMButtonArray[eMButton_WheelDown] = false;
-		if(mbWheelUpMoved)		mvMButtonArray[eMButton_WheelUp] = true;
-		else					mvMButtonArray[eMButton_WheelUp] = false;
-
-		int lX,lY;
-		SDL_GetRelativeMouseState(&lX, &lY);
-
-		mvMouseRelPos = cVector2f((float)lX,(float)lY);
-		mvMouseRelPos = (mvMouseRelPos/vScreenSize)*vVirtualSize;
-#endif
+	for (const Common::Event &ev : _lowLevelInputSDL->_events)
+		processEvent(ev);
 }
 
 //-----------------------------------------------------------------------
 
 bool cMouseSDL::ButtonIsDown(eMButton mButton) {
-	return mvMButtonArray[mButton];
+	return _buttonState.get(mButton);
 }
 
 //-----------------------------------------------------------------------
 
 cVector2f cMouseSDL::GetAbsPosition() {
 	// Do a transform with the screen-size to the the float coordinates.
-	cVector2f vPos = mvMouseAbsPos;
+	cVector2f vPos = _absMousePos;
 
 	return vPos;
 }
@@ -156,9 +127,9 @@ cVector2f cMouseSDL::GetAbsPosition() {
 
 cVector2f cMouseSDL::GetRelPosition() {
 	// Do a transform with the screen-size to the the float coordinates.
-	cVector2f vPos = mvMouseRelPos;
+	cVector2f vPos = _relMousePos;
 	// Ok this is?
-	mvMouseRelPos = cVector2f(0, 0);
+	_relMousePos = cVector2f(0, 0);
 
 	return vPos;
 	/*cVector2f vNew;
@@ -194,15 +165,7 @@ cVector2f cMouseSDL::GetRelPosition() {
 //-----------------------------------------------------------------------
 
 void cMouseSDL::Reset() {
-#if 0
-  		mlstMouseCoord.clear();
-		mvMouseRelPos = cVector2f(0,0);
-
-		int lX,lY; //Just to clear the rel pos.
-
-		SDL_PumpEvents();
-		SDL_GetRelativeMouseState(&lX, &lY);
-#endif
+	error("call to unimplemented function Mouse::Reset");
 }
 
 //-----------------------------------------------------------------------

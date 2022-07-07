@@ -29,7 +29,11 @@
 #define HPL_MOUSE_SDL_H
 
 #include "hpl1/engine/input/Mouse.h"
-#include <vector>
+#include "common/bitarray.h"
+
+namespace Common {
+	class Event;
+}
 
 namespace hpl {
 
@@ -69,22 +73,15 @@ public:
 							 float afMaxPercent, unsigned int alBufferSize);
 
 private:
-	cVector2f mvMouseAbsPos;
-	cVector2f mvMouseRelPos;
-
-	std::vector<bool> mvMButtonArray;
-
-	tVector2fList mlstMouseCoord;
-
+	void processEvent(const Common::Event &ev);
+	cVector2f _absMousePos;
+	cVector2f _relMousePos;
+	Common::BitArray _buttonState;
 	float mfMaxPercent;
 	float mfMinPercent;
 	int mlBufferSize;
-
-	cLowLevelInputSDL *mpLowLevelInputSDL;
-	iLowLevelGraphics *mpLowLevelGraphics;
-
-	bool mbWheelUpMoved;
-	bool mbWheelDownMoved;
+	cLowLevelInputSDL *_lowLevelInputSDL;
+	iLowLevelGraphics *_lowLevelGraphics;
 };
 
 }; // namespace hpl
