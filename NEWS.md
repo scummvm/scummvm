@@ -151,6 +151,10 @@ For a more comprehensive changelog of the latest experimental code, see:
      the default DISK4 image, which is corrupted. It's possible to recover a
      working image from the KryoFlux dumps they also provided.
    - Fixed random number generation which fixes throwing in Backyard Baseball.
+   - Marked a workaround in Monkey Island 2 (FM-Towns version) as an
+     enhancement; this workaround originally restored a portion of the
+     map chasing puzzle in Booty Island which had been cut in the
+     FM-Towns version of the game.
 
  Sherlock:
    - Fixed slowdown in Serrated Scalpel intro when playing the game from a small
