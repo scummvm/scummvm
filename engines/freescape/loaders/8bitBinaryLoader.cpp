@@ -175,20 +175,20 @@ byte drillerCGA[4][3] = {
 
 byte eclipseEGA[16][3] = {
 	{0xfc, 0xfc, 0x54},
+	{0x00, 0x00, 0x00},
 	{0x54, 0xfc, 0xfc},
-	{0x00, 0xaa, 0xaa},
 	{0xaa, 0x00, 0xaa},
-	{0xff, 0xff, 0xff},
+	{0x54, 0xfc, 0xfc},
 	{0x00, 0x00, 0xA8},
 	{0x00, 0x00, 0xaa},
 	{0xaa, 0x55, 0x00},
 	{0x12, 0xf3, 0x56},
 	{0xaa, 0x00, 0x00},
 	{0xff, 0x55, 0xff},
-	{0xa8, 0x54, 0x00},
+	{0xa8, 0x00, 0x00},
 	{0x12, 0xf3, 0x56},
 	{0x54, 0x54, 0x54},
-	{0x54, 0x54, 0x54},
+	{0xa8, 0x54, 0x00},
 	{0x12, 0xf3, 0x56}
 };
 
@@ -223,29 +223,31 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 
 	uint8 ci1 = 0;
 	uint8 ci2 = 0;
-	uint8 ci3 = 0;
-	uint8 ci4 = 0;
+	uint8 skyColor = 255;
+	uint8 groundColor = 255;
 	if (_targetName != "castlemaster") {
 		ci1 = file->readByte() & 15;
 		ci2 = file->readByte() & 15;
-		ci3 = file->readByte() & 15;
-		ci4 = file->readByte() & 15;
-		debug("Colors: %d %d %d %d", ci1, ci2, ci3, ci4);
+		skyColor = file->readByte() & 15;
+		groundColor = file->readByte() & 15;
+		skyColor = 2;
+		groundColor = 0;
+		debug("Colors: %d %d %d %d", ci1, ci2, skyColor, groundColor);
 	} else {
-		ci3 = file->readByte();
-		ci4 = file->readByte();
-		debug("Colors: %d %d", ci3, ci4);
+		skyColor = file->readByte();
+		groundColor = file->readByte();
+		debug("Colors: %d %d", skyColor, groundColor);
 	}
-	Graphics::PixelBuffer *palette = getPalette(areaNumber, ci1, ci2, ci3, ci4, ncolors);
+	Graphics::PixelBuffer *palette = getPalette(areaNumber, ci1, ci2, skyColor, groundColor, ncolors);
 
 	debug("Area %d", areaNumber);
 	debug("Skipped: %d Objects: %d", skippedValue, numberOfObjects);
 	//debug("Condition Ptr: %x", cPtr);
 	debug("Pos before first object: %lx", file->pos());
 
-	if (_targetName == "totaleclipse")
+	if (_targetName == "totaleclipse") {
 		file->seek(5, SEEK_CUR);
-	else if (_targetName != "castlemaster")
+	} else if (_targetName != "castlemaster")
 		file->seek(15, SEEK_CUR);
 
 	ObjectMap *objectsByID = new ObjectMap;
@@ -287,22 +289,8 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		debug("%s", detokenise8bitCondition(conditionArray, instructions)->c_str());
 	}
 	debug("End of area at %lx", file->pos());
-	return (new Area(areaNumber, objectsByID, entrancesByID, scale, 255, 255, palette));
+	return (new Area(areaNumber, objectsByID, entrancesByID, scale, skyColor, groundColor, palette));
 }
-
-// struct BinaryTable {
-// 	const char *filename;
-// 	int ncolors;
-// 	int offset;
-// };
-
-// static const BinaryTable binaryTable[] = {
-// 	{ "DRILLE.EXE",  16,  0x9b40},
-// 	{ "DRILLC.EXE",  4,  0x7bb0},
-// 	{ "TOTE.EXE",    16,  0xcdb7},
-//  { "TOTC.EXE",    16,  ??????},
-// 	{ nullptr,       0,  0  }
-// };
 
 void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offset, int ncolors) {
 	Image::BitmapDecoder decoder;

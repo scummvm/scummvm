@@ -128,7 +128,7 @@ void FreescapeEngine::loadAssets() {
 			if (file == nullptr)
 				error("Failed to open DSIDEE.EXE");
 
-			load8bitBinary(file, 0x9b40, 16);
+			load8bitBinary(file, 0xa280, 16);
 		} else if (_renderMode == "cga") {
 			file = gameDir.createReadStreamForMember("DSIDEC.EXE");
 
@@ -371,7 +371,7 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 	_position.set(_position.x(), positionY - 16, _position.z());
 	bool collided = checkCollisions();
 
-	if (!collided) {  // Player is falling, let's try to step down
+	if (!collided && _targetName == "driller") {  // Player is falling, let's try to step down
 		_position.set(_position.x(), positionY - 16 - 64, _position.z());
 		collided = checkCollisions();
 		assert(collided);
