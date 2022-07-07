@@ -24,6 +24,7 @@
 #include "chewy/chewy.h"
 #include "chewy/cursor.h"
 #include "chewy/events.h"
+#include "chewy/font.h"
 #include "chewy/mcga_graphics.h"
 #include "chewy/menus.h"
 #include "chewy/dialogs/files.h"
@@ -475,7 +476,7 @@ void setupScreen(SetupScreenMode mode) {
 		if (_G(mouseLeftClick)) {
 			if (_G(menu_item) == CUR_WALK) {
 				if (_G(cur_ausgang_flag)) {
-					calc_ausgang(g_events->_mousePos.x + _G(gameState).scrollx, g_events->_mousePos.y + _G(gameState).scrolly);
+					calcExit(g_events->_mousePos.x + _G(gameState).scrollx, g_events->_mousePos.y + _G(gameState).scrolly);
 				} else {
 					if (!_G(flags).ChewyDontGo) {
 						_G(gpkt).Dx = g_events->_mousePos.x - _G(spieler_mi)[P_CHEWY].HotMovX +
@@ -1634,7 +1635,7 @@ void check_mouse_ausgang(int16 x, int16 y) {
 	}
 }
 
-void calc_ausgang(int16 x, int16 y) {
+void calcExit(int16 x, int16 y) {
 	if (!_G(flags).ExitMov) {
 		_G(mouseLeftClick) = false;
 		int16 nr = _G(obj)->is_exit(x, y);
@@ -1829,85 +1830,6 @@ bool is_chewy_busy() {
 	}
 
 	return ret;
-}
-
-
-ChewyFont::ChewyFont(Common::String filename) {
-	const uint32 headerFont = MKTAG('T', 'F', 'F', '\0');
-	Common::File stream;
-
-	stream.open(filename);
-
-	uint32 header = stream.readUint32BE();
-
-	if (header != headerFont)
-		error("Invalid resource - %s", filename.c_str());
-
-	stream.skip(4);	// total memory
-	_count = stream.readUint16LE();
-	_first = stream.readUint16LE();
-	_last = stream.readUint16LE();
-	_deltaX = _dataWidth = stream.readUint16LE();
-	_dataHeight = stream.readUint16LE();
-
-	_displayWidth = _dataWidth;
-	_displayHeight = _dataHeight;
-
-	_fontSurface.create(_dataWidth * _count, _dataHeight, Graphics::PixelFormat::createFormatCLUT8());
-
-	int bitIndex = 7;
-
-	byte curr = stream.readByte();
-
-	for (uint n = 0; n < _count; n++) {
-		for (uint y = 0; y < _dataHeight; y++) {
-			byte *p = (byte *)_fontSurface.getBasePtr(n * _dataWidth, y);
-
-			for (uint x = n * _dataWidth; x < n * _dataWidth + _dataWidth; x++) {
-				*p++ = (curr & (1 << bitIndex)) ? 0 : 0xFF;
-
-				bitIndex--;
-				if (bitIndex < 0) {
-					bitIndex = 7;
-					curr = stream.readByte();
-				}
-			}
-		}
-	}
-}
-
-ChewyFont::~ChewyFont() {
-	_fontSurface.free();
-}
-
-void ChewyFont::setDisplaySize(uint16 width, uint16 height) {
-	_displayWidth = width;
-	_displayHeight = height;
-}
-
-void ChewyFont::setDeltaX(uint16 deltaX) {
-	_deltaX = deltaX;
-}
-
-Graphics::Surface *ChewyFont::getLine(const Common::String &texts) {
-	Graphics::Surface *line = new Graphics::Surface();
-	if (texts.size() == 0)
-		return line;
-
-	Common::Rect subrect(0, 0, _dataWidth, _dataHeight);
-	line->create(texts.size() * _deltaX, _dataHeight, Graphics::PixelFormat::createFormatCLUT8());
-	line->fillRect(Common::Rect(line->w, line->h), 0xFF);
-
-	for (uint i = 0; i < texts.size(); i++) {
-		subrect.moveTo(((byte)texts[i] - _first) * _dataWidth, 0);
-		line->copyRectToSurface(_fontSurface, i * (_deltaX - 2), 0, subrect);
-	}
-
-	return line;
-}
-
-Graphics::Surface *FontMgr::getLine(const Common::String &texts) {
-	return _font->getLine(texts);
 }
 
 } // namespace Chewy

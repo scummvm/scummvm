@@ -353,7 +353,7 @@ int16 calc_mouse_mov_obj(int16 *auto_nr);
 
 void check_mouse_ausgang(int16 x, int16 y);
 
-void calc_ausgang(int16 x, int16 y);
+void calcExit(int16 x, int16 y);
 
 void goAutoXy(int16 x, int16 y, int16 personNum, int16 mode);
 

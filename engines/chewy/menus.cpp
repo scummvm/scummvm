@@ -23,6 +23,7 @@
 #include "chewy/defines.h"
 #include "chewy/detail.h"
 #include "chewy/events.h"
+#include "chewy/font.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
 #include "chewy/mcga_graphics.h"
