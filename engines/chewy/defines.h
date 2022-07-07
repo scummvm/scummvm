@@ -574,7 +574,7 @@ enum SetupScreenMode {
 #define EXIT_RIGHT 2
 #define EXIT_TOP 3
 #define EXIT_BOTTOM 4
-#define WAIT_TASTE_LOS while (_G(in)->getSwitchCode() != 0 \
+#define WAIT_TASTE_LOS while (g_events->getSwitchCode() != 0 \
 	&& !SHOULD_QUIT) { g_events->update(); }
 
 } // namespace Chewy

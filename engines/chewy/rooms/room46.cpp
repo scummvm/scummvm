@@ -168,7 +168,7 @@ void Room46::kloppe() {
 		if (g_engine->_sound->speechEnabled()) {
 			g_engine->_sound->waitForSpeechToFinish();
 		} else {
-			while (_G(in)->getSwitchCode() == Common::KEYCODE_INVALID && delay) {
+			while (g_events->getSwitchCode() == Common::KEYCODE_INVALID && delay) {
 				--delay;
 				EVENTS_UPDATE;
 				SHOULD_QUIT_RETURN;

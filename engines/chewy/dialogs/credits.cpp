@@ -24,7 +24,6 @@
 #include "chewy/font.h"
 #include "chewy/globals.h"
 #include "chewy/mcga_graphics.h"
-#include "chewy/mouse.h"
 #include "chewy/text.h"
 
 namespace Chewy {
@@ -217,7 +216,7 @@ void Credits::execute() {
 	_G(gameState).DelaySpeed = 2;
 
 	for (;;) {
-		if (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE || SHOULD_QUIT)
+		if (g_events->getSwitchCode() == Common::KEYCODE_ESCAPE || SHOULD_QUIT)
 			break;
 
 		// Display the starfield background
@@ -229,7 +228,7 @@ void Credits::execute() {
 		if (++_G(gameState).scrollx >= 320)
 			_G(gameState).scrollx = 0;
 
-		if (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE)
+		if (g_events->getSwitchCode() == Common::KEYCODE_ESCAPE)
 			break;
 
 		++lineScrolled;

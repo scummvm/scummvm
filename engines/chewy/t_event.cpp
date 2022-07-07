@@ -25,7 +25,6 @@
 #include "chewy/dialogs/inventory.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
-#include "chewy/mouse.h"
 #include "chewy/rooms/rooms.h"
 
 namespace Chewy {
@@ -2173,11 +2172,11 @@ void calc_inv_use_txt(int16 test_nr) {
 		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(gameState).scrollx, _G(gameState).scrolly);
 		_G(out)->copyToScreen();
 
-		while (_G(in)->getSwitchCode() != Common::KEYCODE_ESCAPE) {
+		while (g_events->getSwitchCode() != Common::KEYCODE_ESCAPE) {
 			g_events->update();
 			SHOULD_QUIT_RETURN;
 		}
-		while (_G(in)->getSwitchCode() != Common::KEYCODE_INVALID) {
+		while (g_events->getSwitchCode() != Common::KEYCODE_INVALID) {
 			g_events->update();
 			SHOULD_QUIT_RETURN;
 		}

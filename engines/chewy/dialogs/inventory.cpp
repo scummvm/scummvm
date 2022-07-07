@@ -27,7 +27,6 @@
 #include "chewy/font.h"
 #include "chewy/globals.h"
 #include "chewy/menus.h"
-#include "chewy/mouse.h"
 #include "chewy/sound.h"
 
 namespace Chewy {
@@ -56,7 +55,7 @@ void Inventory::plot_menu() {
 	}
 
 	int16 y;
-	int16 hotspotId = _G(in)->findHotspot(_G(inventoryHotspots));
+	int16 hotspotId = _G(out)->findHotspot(_G(inventoryHotspots));
 
 	// Highlight hotspots
 	if (hotspotId != -1) {
@@ -218,7 +217,7 @@ void Inventory::menu() {
 				mouseFl = true;
 				g_events->_kbInfo._keyCode = '\0';
 
-				int16 k = _G(in)->findHotspot(_G(inventoryHotspots));
+				int16 k = _G(out)->findHotspot(_G(inventoryHotspots));
 				if (keyVal == Common::KEYCODE_F1)
 					k = 0;
 				else if (keyVal == Common::KEYCODE_F2)
@@ -252,11 +251,11 @@ void Inventory::menu() {
 					break;
 
 				case 3:
-					_G(in)->_hotkey = Common::KEYCODE_PAGEUP;
+					g_events->setHotKey(Common::KEYCODE_PAGEUP);
 					break;
 
 				case 4:
-					_G(in)->_hotkey = Common::KEYCODE_PAGEDOWN;
+					g_events->setHotKey(Common::KEYCODE_PAGEDOWN);
 					break;
 
 				case 5:
@@ -296,7 +295,7 @@ void Inventory::menu() {
 		} else if (_G(minfo).button == 2 || g_events->_kbInfo._keyCode == Common::KEYCODE_ESCAPE) {
 			if (!mouseFl) {
 				// Set virtual key
-				_G(in)->_hotkey = Common::KEYCODE_ESCAPE;
+				g_events->setHotKey(Common::KEYCODE_ESCAPE);
 				mouseFl = true;
 			}
 		}
@@ -314,7 +313,7 @@ void Inventory::menu() {
 		}
 
 		ret_look = -1;
-		int16 keyCode = _G(in)->getSwitchCode();
+		int16 keyCode = g_events->getSwitchCode();
 		// The original hid the cursor here
 
 		if (taste_flag) {
@@ -333,7 +332,7 @@ void Inventory::menu() {
 			case Common::KEYCODE_ESCAPE:
 				if (!menuFirstFl) {
 					_G(cur)->showCursor();
-					while (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE) {
+					while (g_events->getSwitchCode() == Common::KEYCODE_ESCAPE) {
 						SHOULD_QUIT_RETURN;
 						setupScreen(NO_SETUP);
 						inv_rand_x = -1;
@@ -414,7 +413,7 @@ void Inventory::menu() {
 	g_events->_mousePos.y = _G(maus_old_y);
 	_G(minfo).button = 0;
 
-	while (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE && !SHOULD_QUIT) {
+	while (g_events->getSwitchCode() == Common::KEYCODE_ESCAPE && !SHOULD_QUIT) {
 		setupScreen(NO_SETUP);
 		_G(cur)->updateCursor();
 		_G(out)->copyToScreen();
@@ -469,7 +468,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 	const int16 speechId = _G(atds)->getLastSpeechId();
 
 	while (!endLoop) {
-		int16 rect = _G(in)->findHotspot(_G(inventoryHotspots));
+		int16 rect = _G(out)->findHotspot(_G(inventoryHotspots));
 
 		if (_G(minfo).button) {
 			if (_G(minfo).button == 2) {
@@ -516,8 +515,11 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 
 		switch (g_events->_kbInfo._scanCode) {
 		case Common::KEYCODE_F1:
+			g_events->setHotKey(Common::KEYCODE_F1);
+			break;
+
 		case Common::KEYCODE_F2:
-			_G(in)->_hotkey = g_events->_kbInfo._scanCode;
+			g_events->setHotKey(Common::KEYCODE_F2);
 			break;
 
 		case Common::KEYCODE_ESCAPE:
@@ -589,7 +591,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		SHOULD_QUIT_RETURN0;
 	}
 
-	while (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE) {
+	while (g_events->getSwitchCode() == Common::KEYCODE_ESCAPE) {
 		setupScreen(NO_SETUP);
 		plot_menu();
 		_G(cur)->updateCursor();
@@ -712,7 +714,7 @@ void Inventory::showDiary() {
 	_G(out)->setPointer(nullptr);
 	_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 
-	while (_G(in)->getSwitchCode() != Common::KEYCODE_ESCAPE) {
+	while (g_events->getSwitchCode() != Common::KEYCODE_ESCAPE) {
 		g_events->update();
 		SHOULD_QUIT_RETURN;
 	}

@@ -46,7 +46,6 @@ extern const uint8 RAND_NO_USE[MAX_RAND_NO_USE];
 class ChewyFont;
 class Cursor;
 class FontMgr;
-class InputMgr;
 class McgaGraphics;
 class Memory;
 
@@ -228,7 +227,6 @@ public:
 	int16 _cur_ausgang_flag = 0;
 	int16 _room_start_nr = 0;
 	int16 _TmpFrameSpeed = 0;
-	InputMgr *_in = nullptr;
 	Memory *_mem = nullptr;
 	McgaGraphics *_out = nullptr;
 	Cursor *_cur = nullptr;

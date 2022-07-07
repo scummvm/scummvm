@@ -55,6 +55,7 @@ private:
 	TimerList _timers;
 	Common::Queue<Common::Event> _pendingEvents;
 	Common::Queue<Common::Event> _pendingKeyEvents;
+	int16 _hotkey = Common::KEYCODE_INVALID;
 
 	/**
 	 * Checks for timer expiries
@@ -146,6 +147,9 @@ public:
 	 * Clear any pending events
 	 */
 	void clearEvents();
+
+	void setHotKey(Common::KeyCode key) { _hotkey = key; }
+	int16 getSwitchCode();
 };
 
 extern EventsManager *g_events;

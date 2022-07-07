@@ -63,6 +63,7 @@ public:
 	void printxy(int16 x, int16 y, int16 fgCol, int16 bgCol, int16 scrwidth,
 	    const char *format);
 	void move(int16 x, int16 y);
+	int16 findHotspot(const Common::Rect *hotspots);
 
 private:
 	int16 devices();

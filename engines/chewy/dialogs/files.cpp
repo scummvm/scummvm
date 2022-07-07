@@ -126,7 +126,7 @@ bool Files::execute(bool isInGame) {
 			}
 		}
 
-		key = _G(in)->getSwitchCode();
+		key = g_events->getSwitchCode();
 
 		if (mode[SCROLL_UP])
 			--mode[SCROLL_UP];
@@ -160,7 +160,7 @@ bool Files::execute(bool isInGame) {
 		}
 
 		if (!flag && _G(minfo).button == 1) {
-			int16 rect = _G(in)->findHotspot(_G(fileHotspots));
+			int16 rect = _G(out)->findHotspot(_G(fileHotspots));
 			flag = true;
 			key = 0;
 

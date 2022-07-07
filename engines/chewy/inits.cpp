@@ -35,7 +35,6 @@ namespace Chewy {
 void standard_init() {
 	_G(mem) = new Memory();
 	_G(out) = new McgaGraphics();
-	_G(in) = new InputMgr();
 	_G(fx) = new Effect();
 	_G(txt) = new Text();
 	_G(barriers) = new Barriers();
@@ -208,7 +207,6 @@ void tidy() {
 	delete _G(barriers);
 	delete _G(txt);
 	delete _G(fx);
-	delete _G(in);
 	delete _G(out);
 	delete _G(mem);
 
@@ -222,7 +220,6 @@ void tidy() {
 	_G(barriers) = nullptr;
 	_G(txt) = nullptr;
 	_G(fx) = nullptr;
-	_G(in) = nullptr;
 	_G(out) = nullptr;
 	_G(mem) = nullptr;
 }
