@@ -50,12 +50,12 @@ void Room68::entry() {
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	
-	if (_G(gameState).R68Papagei) {
+	if (_G(gameState).R68Parrot) {
 		_G(det)->showStaticSpr(12);
 		_G(det)->startDetail(21, 255, ANI_FRONT);
 	}
 
-	if (!_G(gameState).R68DivaWeg) {
+	if (!_G(gameState).R68DivaAway) {
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 10);
 		_G(det)->set_static_ani(18, -1);
 	} else
@@ -82,7 +82,7 @@ void Room68::xit() {
 
 bool Room68::timer(int16 t_nr, int16 ani_nr) {
 	if (t_nr == _G(timer_nr)[0])
-		calc_diva();
+		calcDiva();
 	else
 		return true;
 
@@ -148,18 +148,18 @@ void Room68::setup_func() {
 	goAutoXy(ni_x, ni_y, P_NICHELLE, ANI_GO);
 }
 
-void Room68::look_kaktus() {
+void Room68::lookAtCactus() {
 	hideCur();
 	autoMove(6, P_CHEWY);
 	startAadWait(383);
 	showCur();
 }
 
-void Room68::talk_indigo() {
-	talk_indigo(-1);
+void Room68::talkToIndigo() {
+	talkToIndigo(-1);
 }
 
-void Room68::talk_indigo(int16 aad_nr) {
+void Room68::talkToIndigo(int16 aad_nr) {
 	hideCur();
 	autoMove(3, P_CHEWY);
 	_G(room)->set_timer_status(8, TIMER_STOP);
@@ -179,17 +179,17 @@ void Room68::talk_indigo(int16 aad_nr) {
 	showCur();
 }
 
-int16 Room68::use_indigo() {
+int16 Room68::useIndigo() {
 	int16 action_flag = false;
 	hideCur();
 	if (isCurInventory(CLINT_500_INV)) {
 		action_flag = true;
-		if (_G(gameState).R68Lied) {
+		if (_G(gameState).R68Song) {
 			hideCur();
 			autoMove(3, P_CHEWY);
 			auto_scroll(78, 0);
 			delInventory(_G(cur)->getInventoryCursor());
-			talk_indigo(394);
+			talkToIndigo(394);
 			hideCur();
 			_G(room)->set_timer_status(8, TIMER_STOP);
 			_G(det)->del_static_ani(8);
@@ -197,7 +197,7 @@ int16 Room68::use_indigo() {
 			startSetAILWait(13, 3, ANI_FRONT);
 			startSetAILWait(25, 1, ANI_FRONT);
 			_G(det)->set_static_ani(12, -1);
-			talk_indigo(398);
+			talkToIndigo(398);
 			hideCur();
 			_G(room)->set_timer_status(8, TIMER_STOP);
 			_G(det)->del_static_ani(8);
@@ -208,7 +208,7 @@ int16 Room68::use_indigo() {
 			new_invent_2_cur(KARTE_INV);
 			_G(gameState).R68KarteDa = true;
 		} else {
-			talk_indigo(397);
+			talkToIndigo(397);
 		}
 	} else if (isCurInventory(CLINT_1500_INV) || isCurInventory(CLINT_3000_INV)) {
 		action_flag = true;
@@ -218,7 +218,7 @@ int16 Room68::use_indigo() {
 	return action_flag;
 }
 
-void Room68::talk_keeper() {
+void Room68::talkToBartender() {
 	hideCur();
 	autoMove(2, P_CHEWY);
 	_G(room)->set_timer_status(20, TIMER_STOP);
@@ -238,12 +238,12 @@ void Room68::talk_keeper() {
 	showCur();
 }
 
-int16 Room68::use_papagei() {
+int16 Room68::useParrot() {
 	int16 action_flag = false;
-	if (isCurInventory(PAPAGEI_INV)) {
+	if (isCurInventory(PARROT_INV)) {
 		hideCur();
 		action_flag = true;
-		_G(gameState).R68Papagei = true;
+		_G(gameState).R68Parrot = true;
 		delInventory(_G(cur)->getInventoryCursor());
 		autoMove(5, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
@@ -256,9 +256,9 @@ int16 Room68::use_papagei() {
 	return action_flag;
 }
 
-void Room68::calc_diva() {
-	if (!_G(gameState).R68DivaWeg) {
-		if (!_G(gameState).R68Papagei) {
+void Room68::calcDiva() {
+	if (!_G(gameState).R68DivaAway) {
+		if (!_G(gameState).R68Parrot) {
 			if (_G(r68HohesC) == -1) {
 				_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 				_G(r68HohesC) = 0;
@@ -266,22 +266,22 @@ void Room68::calc_diva() {
 				_G(det)->startDetail(_G(r68HohesC), 1, ANI_BACK);
 				_G(det)->startDetail(18, 255, ANI_FRONT);
 			}
-		} else if (!_G(gameState).R68Gutschein && !is_chewy_busy()) {
+		} else if (!_G(gameState).R68DrinkCoupon && !is_chewy_busy()) {
 			hideCur();
-			_G(gameState).R68Gutschein = true;
+			_G(gameState).R68DrinkCoupon = true;
 			autoMove(4, P_CHEWY);
 			startAadWait(386);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-			new_invent_2_cur(BAR_GUT_INV);
+			new_invent_2_cur(DRINK_COUPON_INV);
 			_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 			showCur();
 		}
 	}
 }
 
-int16 Room68::use_keeper() {
+int16 Room68::useBartender() {
 	int16 action_flag = false;
-	if (isCurInventory(BAR_GUT_INV)) {
+	if (isCurInventory(DRINK_COUPON_INV)) {
 		hideCur();
 		delInventory(_G(cur)->getInventoryCursor());
 		action_flag = true;
@@ -298,7 +298,7 @@ int16 Room68::use_keeper() {
 	return action_flag;
 }
 
-int16 Room68::use_diva() {
+int16 Room68::useDiva() {
 	int16 action_flag;
 	hideCur();
 	if (isCurInventory(B_MARY_INV)) {
@@ -308,14 +308,14 @@ int16 Room68::use_diva() {
 		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 		_G(det)->hideStaticSpr(3);
 		startSetAILWait(4, 1, ANI_FRONT);
-		_G(gameState).R68Gutschein = false;
+		_G(gameState).R68DrinkCoupon = false;
 		_G(det)->showStaticSpr(3);
 	} else if (isCurInventory(B_MARY2_INV)) {
 		delInventory(_G(cur)->getInventoryCursor());
 		action_flag = 1;
 		autoMove(4, P_CHEWY);
 		_G(det)->hideStaticSpr(3);
-		_G(gameState).R68DivaWeg = true;
+		_G(gameState).R68DivaAway = true;
 		startAniBlock(2, ABLOCK38);
 		flic_cut(FCUT_083);
 		_G(det)->del_static_ani(18);
@@ -327,12 +327,12 @@ int16 Room68::use_diva() {
 		setPersonSpr(P_RIGHT, P_CHEWY);
 		startAadWait(402);
 	} else
-		action_flag = use_papagei();
+		action_flag = useParrot();
 	showCur();
 	return action_flag;
 }
 
-void Room68::kostuem_aad(int16 aad_nr) {
+void Room68::useDressOnNichelle(int16 aad_nr) {
 	hideCur();
 	if (_G(gameState).DiaAMov != -1) {
 		autoMove(_G(gameState).DiaAMov, P_CHEWY);
@@ -340,9 +340,9 @@ void Room68::kostuem_aad(int16 aad_nr) {
 
 	startAadWait(aad_nr);
 
-	if (!_G(gameState).R68DivaWeg)
+	if (!_G(gameState).R68DivaAway)
 		startAadWait(388);
-	else if (!_G(gameState).R67LiedOk)
+	else if (!_G(gameState).R67SongOk)
 		startAadWait(389);
 	else {
 		_G(SetUpScreenFunc) = nullptr;
@@ -356,23 +356,24 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		_G(gameState)._personHide[P_HOWARD] = true;
 		_G(det)->startDetail(27, 255, ANI_FRONT);
 
-		if (g_engine->_sound->subtitlesEnabled())
-			startSetAILWait(23, 3, ANI_FRONT);
-		else {
-			_G(det)->startDetail(23, 255, ANI_FRONT);
-			_G(det)->playSound(109, 1);
-			waitShowScreen(2);
+		g_engine->_sound->stopMusic();
 
-			g_engine->_sound->waitForSpeechToFinish();
+		_G(det)->startDetail(23, 255, ANI_FRONT);
+		g_engine->_sound->playSound(109, 1);	// piano intro
+		waitShowScreen(150);
 
-			_G(det)->stopDetail(23);
-		}
+		g_engine->_sound->waitForSpeechToFinish();
 
-		_G(det)->playSound(108, 1);
-		
+		_G(det)->stopDetail(23);
+
+		g_engine->_sound->playSound(108, 1);	// Nichelle singing
+
 		_G(det)->startDetail(24, 255, ANI_FRONT);
 		setPersonPos(26, 40, P_NICHELLE, P_RIGHT);
-		startAadWait(391);
+
+		waitShowScreen(100);
+		startAadWait(602);
+		waitShowScreen(100);
 
 		_G(room)->set_timer_status(8, TIMER_STOP);
 		_G(det)->del_static_ani(8);
@@ -391,24 +392,25 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		startAadWait(392);
 
 		g_engine->_sound->waitForSpeechToFinish();
-		
+		_G(det)->stopSound(1);
+
 		_G(gameState)._personHide[P_HOWARD] = false;
 		_G(det)->stopDetail(27);
 		_G(det)->stopDetail(24);
 		_G(det)->showStaticSpr(13);
-		_G(gameState).R68Lied = true;
+		_G(gameState).R68Song = true;
 		autoMove(1, P_CHEWY);
 		auto_scroll(216, 0);
 		_G(det)->hideStaticSpr(13);
 		_G(gameState)._personHide[P_NICHELLE] = false;
-		setPersonPos(150, -13, P_NICHELLE, P_RIGHT);
+		setPersonPos(140, 59, P_NICHELLE, P_RIGHT);
 
-		g_engine->_sound->playRoomMusic(_G(gameState)._personRoomNr[0]);
+		g_engine->_sound->playRoomMusic(_G(gameState)._personRoomNr[P_CHEWY]);
 	}
 	showCur();
 }
 
-void Room68::talk_papagei() {
+void Room68::talkWithParrot() {
 	hideCur();
 	autoMove(5, P_CHEWY);
 	showCur();
