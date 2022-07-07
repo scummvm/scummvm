@@ -22,4 +22,4 @@ See the :doc:`configuration file <../advanced_topics/configuration_file>` page f
 From the command line
 ======================
 
-Some settings can be specified in the command line (the complete list can be found at :doc:`command line <../advanced_topics/command_line>`). These are valid for the duration of the program and don't get saved to the configuration file unless modified. They are also marked by a special color in the launcher tabs mentioned above. 
+Some settings can be specified in the command line (the complete list can be found at :doc:`command line <../advanced_topics/command_line>`). These are valid for the duration of the program and don't get saved to the configuration file unless modified. They are also marked by a special color in the launcher tabs mentioned above.

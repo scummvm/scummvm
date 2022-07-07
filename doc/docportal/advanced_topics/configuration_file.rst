@@ -367,14 +367,14 @@ There are many recognized configuration keys. In the table below, each key is ei
 	- macintosh "
 		":ref:`retrowaveopl3_bus <adlib>`",string,,"
 	Specifies how the RetroWave OPL3 is connected:
-	
+
 	- serial (connected to a USB port using a PotatoPi)
 	- spi (connected as a HAT using SPI) "
 		":ref:`retrowaveopl3_disable_buffer <adlib>`",boolean,false,
 		":ref:`retrowaveopl3_port <adlib>`",string,,"
 	Specifies the serial port that the RetroWave OPL3 is connected to.
 	For example:
-	
+
 	- COM3
 	- ttyACM2 "
 		":ref:`retrowaveopl3_spi_cs <adlib>`",string,,"Specifies the GPIO chip and line that the RetroWave OPL3 is connected to. Use the format <chip>,<line>."
@@ -456,11 +456,5 @@ Screenshot path
 			:column: col-lg-12 mb-2
 
 			In the current directory.
-
-
-
-
-
-
 
 

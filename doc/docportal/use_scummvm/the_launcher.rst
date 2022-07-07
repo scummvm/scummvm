@@ -24,7 +24,7 @@ The search box
 
 The search box lets you filter the games list. It is located at the top of the page next to the magnifying glass icon. The filter is applied as you type, and is not case sensitive. To clear the filter, click **X**.
 
-There are many ways to filter games. For example, you can type "Monkey Island" to locate all "Monkey Island" games on the list, or you can type "lang:de" to find German games. For a comprehensive look at how to use the search box, check out our :doc:`../advanced_topics/understand_search_box` guide.  
+There are many ways to filter games. For example, you can type "Monkey Island" to locate all "Monkey Island" games on the list, or you can type "lang:de" to find German games. For a comprehensive look at how to use the search box, check out our :doc:`../advanced_topics/understand_search_box` guide.
 
 The buttons
 ************************
