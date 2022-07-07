@@ -97,7 +97,6 @@ bool8 FxManager::Poll() {
 			if (m_effects[id].delay != 0)
 				break;
 			// falls through
-			// FIXME: fallthrough intentional?
 
 		// It's waiting to play
 		case Effect::QUEUED: {
