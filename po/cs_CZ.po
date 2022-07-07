@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-04 06:00+0000\n"
+"POT-Creation-Date: 2022-07-07 12:34+0000\n"
 "PO-Revision-Date: 2022-05-01 15:27+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -4454,30 +4454,30 @@ msgstr ""
 msgid "Load anyway"
 msgstr "Přesto přidat"
 
-#: engines/bladerunner/bladerunner.cpp:396
+#: engines/bladerunner/bladerunner.cpp:398
 #, fuzzy
 msgid "Failed to initialize resources"
 msgstr "Připojení úložiště selhalo."
 
-#: engines/bladerunner/bladerunner.cpp:1160
+#: engines/bladerunner/bladerunner.cpp:1162
 msgid "A required game resource was not found"
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2709
+#: engines/bladerunner/bladerunner.cpp:2740
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2711
+#: engines/bladerunner/bladerunner.cpp:2742
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2713
+#: engines/bladerunner/bladerunner.cpp:2744
 msgid "Continue"
 msgstr ""
 

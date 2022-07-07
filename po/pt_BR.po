@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-04 06:00+0000\n"
+"POT-Creation-Date: 2022-07-07 12:34+0000\n"
 "PO-Revision-Date: 2022-07-06 00:28+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -4408,15 +4408,15 @@ msgstr ""
 msgid "Load anyway"
 msgstr "Carregar mesmo assim"
 
-#: engines/bladerunner/bladerunner.cpp:396
+#: engines/bladerunner/bladerunner.cpp:398
 msgid "Failed to initialize resources"
 msgstr "Falha ao inicializar recursos"
 
-#: engines/bladerunner/bladerunner.cpp:1160
+#: engines/bladerunner/bladerunner.cpp:1162
 msgid "A required game resource was not found"
 msgstr "Um recurso de jogo necessário não foi encontrado"
 
-#: engines/bladerunner/bladerunner.cpp:2709
+#: engines/bladerunner/bladerunner.cpp:2740
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -4427,7 +4427,7 @@ msgstr ""
 "Restauração de Conteúdo Cortado para esta sessão até que você Saia "
 "totalmente do jogo."
 
-#: engines/bladerunner/bladerunner.cpp:2711
+#: engines/bladerunner/bladerunner.cpp:2742
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -4438,7 +4438,7 @@ msgstr ""
 "modo de Conteúdo Original para esta sessão até que você Saia completamente "
 "do jogo."
 
-#: engines/bladerunner/bladerunner.cpp:2713
+#: engines/bladerunner/bladerunner.cpp:2744
 msgid "Continue"
 msgstr "Continuar"
 
