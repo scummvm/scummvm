@@ -9,6 +9,7 @@ MODULE_OBJS = \
 	detail.o \
 	effect.o \
 	events.o \
+	font.o \
 	globals.o \
 	inits.o \
 	main.o \

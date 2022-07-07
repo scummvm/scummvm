@@ -22,6 +22,7 @@
 #include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
+#include "chewy/font.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
 #include "chewy/room.h"
