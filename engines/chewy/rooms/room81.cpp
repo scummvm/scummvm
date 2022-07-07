@@ -85,7 +85,7 @@ void Room81::proc1() {
 		startSetAILWait(0, 1, ANI_FRONT);
 		_G(det)->startDetail(1, 255, false);
 		startAadWait(459);
-		_G(det)->stop_detail(1);
+		_G(det)->stopDetail(1);
 		startSetAILWait(0, 1, ANI_GO);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		goAutoXy(171, 93, P_CHEWY, ANI_WAIT);
@@ -147,7 +147,7 @@ void Room81::proc3() {
 	for (int i = 0; i < 3; ++i)
 		_G(det)->startDetail(3 + i, 255, false);
 
-	_G(det)->stop_detail(2);
+	_G(det)->stopDetail(2);
 	_G(atds)->delControlBit(486, ATS_ACTIVE_BIT);
 	_G(atds)->setControlBit(490, ATS_ACTIVE_BIT);
 }

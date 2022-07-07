@@ -66,7 +66,7 @@ void Room6::entry() {
 
 		if (_G(gameState).R6RaumBetreten == 2) {
 			hideCur();
-			_G(det)->stop_detail(7);
+			_G(det)->stopDetail(7);
 			init_robo();
 			wait_auto_obj(0);
 			_G(gameState).R6BolaOk = true;

@@ -484,7 +484,7 @@ void Detail::startDetail(int16 nr, int16 rep, int16 reverse) {
 	}
 }
 
-void Detail::stop_detail(int16 nr) {
+void Detail::stopDetail(int16 nr) {
 	if (nr >= 0 && nr < 32) {
 		_rdi.Ainfo[nr].start_flag = 0;
 	}

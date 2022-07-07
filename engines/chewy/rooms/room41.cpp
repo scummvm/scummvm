@@ -169,7 +169,7 @@ void Room41::stop_hoggy() {
 	for (int16 i = 0; i < 2; i++) {
 		_G(room)->set_timer_status(i, TIMER_STOP);
 		_G(det)->del_static_ani(i);
-		_G(det)->stop_detail(i);
+		_G(det)->stopDetail(i);
 		_G(det)->set_static_ani(i + 3, -1);
 	}
 }
@@ -199,7 +199,7 @@ int16 Room41::use_lola() {
 		_G(det)->stopSound(0);
 		flic_cut(FCUT_057);
 		setPersonPos(127, 112, P_CHEWY, P_LEFT);
-		_G(det)->stop_detail(6);
+		_G(det)->stopDetail(6);
 
 		_G(atds)->delControlBit(267, ATS_ACTIVE_BIT);
 		_G(atds)->set_ats_str(267, 1, ATS_DATA);

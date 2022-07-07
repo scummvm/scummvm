@@ -186,7 +186,7 @@ public:
 
 	void del_static_ani(int16 ani_nr);
 	void startDetail(int16 nr, int16 rep, int16 reverse);
-	void stop_detail(int16 nr);
+	void stopDetail(int16 nr);
 	void playSound(int16 nr, int16 slot);
 	void stopSound(int16 slot);
 	void plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end,

@@ -145,7 +145,7 @@ void Room24::calc_animation(int16 kristall_nr) {
 			int16 ani_nr = KRISTALL_SPR[kristall_nr][_G(gameState).R24Hebel[kristall_nr]] == 13 ? 7 : 8;
 			_G(det)->stopSound(0);
 			_G(det)->playSound(5 + ani_nr + kristall_nr * 4, 0);
-			_G(det)->stop_detail(5 + kristall_nr * 4);
+			_G(det)->stopDetail(5 + kristall_nr * 4);
 			startSetAILWait(6 + kristall_nr * 4, 1, ANI_FRONT);
 			startSetAILWait(ani_nr + kristall_nr * 4, 1, ANI_FRONT);
 		}

@@ -41,7 +41,7 @@ void Room42::entry() {
 		_G(SetUpScreenFunc) = setup_func;
 
 		if (!_G(flags).LoadGame) {
-			_G(det)->stop_detail(0);
+			_G(det)->stopDetail(0);
 			_G(timer_nr)[0] = _G(room)->set_timer(8, 5);
 			_G(det)->set_static_ani(8, -1);
 			_G(gameState).R42BeamterWach = true;
@@ -211,7 +211,7 @@ void Room42::dialogWithStationEmployee(int16 str_end_nr) {
 			SHOULD_QUIT_RETURN;
 		}
 
-		_G(det)->stop_detail(0);
+		_G(det)->stopDetail(0);
 		_G(det)->stopSound(0);
 		startSetAILWait(1, 1, ANI_FRONT);
 		_G(det)->startDetail(2, 255, ANI_FRONT);
@@ -221,7 +221,7 @@ void Room42::dialogWithStationEmployee(int16 str_end_nr) {
 			SHOULD_QUIT_RETURN;
 		}
 
-		_G(det)->stop_detail(2);
+		_G(det)->stopDetail(2);
 		_G(det)->startDetail(0, 255, ANI_FRONT);
 		_G(det)->playSound(0, 0);
 		_G(det)->playSound(0, 0);
@@ -230,7 +230,7 @@ void Room42::dialogWithStationEmployee(int16 str_end_nr) {
 	_G(gameState)._personHide[P_CHEWY] = true;
 	_G(det)->startDetail(6, 255, ANI_FRONT);
 	startAadWait(135);
-	_G(det)->stop_detail(6);
+	_G(det)->stopDetail(6);
 	_G(flags).NoDiaBox = false;
 	_G(gameState)._personHide[P_CHEWY] = false;
 	showCur();

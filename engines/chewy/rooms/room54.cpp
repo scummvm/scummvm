@@ -145,7 +145,7 @@ int16 Room54::use_schalter() {
 			startSetAILWait(1, 1, ANI_FRONT);
 			_G(det)->startDetail(3, 255, ANI_FRONT);
 			startAadWait(292 + _G(gameState).R54LiftCount);
-			_G(det)->stop_detail(3);
+			_G(det)->stopDetail(3);
 			++_G(gameState).R54LiftCount;
 
 			int16 aad_nr;
@@ -204,12 +204,12 @@ void Room54::talk_verkauf() {
 		_G(det)->startDetail(8, 255, ANI_FRONT);
 		startAadWait(310);
 
-		_G(det)->stop_detail(8);
+		_G(det)->stopDetail(8);
 		startSetAILWait(9, 1, ANI_FRONT);
 		startSetAILWait(10, 1, ANI_FRONT);
 		_G(det)->startDetail(11, 255, ANI_FRONT);
 		startAadWait(311);
-		_G(det)->stop_detail(11);
+		_G(det)->stopDetail(11);
 		_G(room)->set_timer_status(6, TIMER_START);
 		_G(det)->set_static_ani(6, -1);
 		autoMove(4, P_CHEWY);

@@ -42,7 +42,7 @@ void Room52::entry() {
 	}
 
 	if (_G(gameState).R52KakerWeg)
-		_G(det)->stop_detail(0);
+		_G(det)->stopDetail(0);
 
 	if (!_G(flags).LoadGame) {
 		_G(det)->showStaticSpr(4);
@@ -97,12 +97,12 @@ int16 Room52::use_hot_dog() {
 
 		for (int16 i = 0; i < 5; i++) {
 			waitShowScreen(20);
-			_G(det)->stop_detail(2 + i);
+			_G(det)->stopDetail(2 + i);
 		}
 
 		_G(det)->stopSound(0);
-		_G(det)->stop_detail(0);
-		_G(det)->stop_detail(8);
+		_G(det)->stopDetail(0);
+		_G(det)->stopDetail(8);
 		startSetAILWait(7, 1, ANI_BACK);
 		_G(det)->stopSound(0);
 		_G(gameState)._personHide[P_CHEWY] = false;

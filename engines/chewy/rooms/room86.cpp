@@ -78,7 +78,7 @@ void Room86::entry(int16 eib_nr) {
 		start_spz_wait(13, 1, false, P_CHEWY);
 		_G(flags).NoScroll = false;
 		_G(spieler_mi)[P_CHEWY].Vorschub = 8;
-		_G(det)->stop_detail(0);
+		_G(det)->stopDetail(0);
 		_G(det)->showStaticSpr(4);
 		_G(det)->showStaticSpr(5);
 		invent_2_slot(94);

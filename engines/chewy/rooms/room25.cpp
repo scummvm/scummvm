@@ -111,7 +111,7 @@ int16 Room25::gleiter_loesch() {
 			_G(det)->stopSound(0);
 
 			for (int i = 0; i < 9; ++i)
-				_G(det)->stop_detail(i);
+				_G(det)->stopDetail(i);
 		}
 
 	} else if (_G(gameState).R25GleiteLoesch) {

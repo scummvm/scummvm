@@ -52,7 +52,7 @@ void Room8::entry() {
 
 void Room8::start_folter() {
 	_G(atds)->set_ats_str(67, 1, ATS_DATA);
-	_G(det)->stop_detail(19);
+	_G(det)->stopDetail(19);
 	_G(det)->startDetail(13, 255, ANI_FRONT);
 }
 
@@ -60,7 +60,7 @@ void Room8::stop_folter() {
 	_G(atds)->set_ats_str(67, 0, ATS_DATA);
 	_G(det)->startDetail(19, 255, ANI_FRONT);
 
-	_G(det)->stop_detail(13);
+	_G(det)->stopDetail(13);
 
 	_G(gameState).R8Folter = true;
 	_G(obj)->hide_sib(SIB_FOLTER_R8);
@@ -102,7 +102,7 @@ void Room8::start_verbrennen() {
 			}
 		}
 
-		_G(det)->stop_detail(9);
+		_G(det)->stopDetail(9);
 		setPersonPos(129, 246, P_CHEWY, P_RIGHT);
 		startAniBlock(2, ABLOCK13);
 		_G(atds)->set_ats_str(60, TXT_MARK_LOOK, 1, ATS_DATA);

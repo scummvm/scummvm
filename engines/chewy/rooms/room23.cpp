@@ -83,7 +83,7 @@ int16 Room23::start_gleiter() {
 				waitShowScreen(30);
 
 				for (int16 i = 0; i < 4; i++)
-					_G(det)->stop_detail(i);
+					_G(det)->stopDetail(i);
 
 				if (_G(gameState).R23GleiterExit == 14) {
 					_G(out)->setPointer(nullptr);

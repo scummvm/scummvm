@@ -109,7 +109,7 @@ void Room68::setup_func() {
 				// TODO
 				//while (_G(sndPlayer)->getSampleStatus(1) == 4)
 				//	setupScreen(DO_SETUP);
-				_G(det)->stop_detail(_G(r68HohesC));
+				_G(det)->stopDetail(_G(r68HohesC));
 			} else {
 				_G(det)->startDetail(_G(r68HohesC), 3, ANI_FRONT);
 			}
@@ -122,7 +122,7 @@ void Room68::setup_func() {
 	case 2:
 		if (_G(det)->get_ani_status(_G(r68HohesC)) == false) {
 			_G(r68HohesC) = -1;
-			_G(det)->stop_detail(18);
+			_G(det)->stopDetail(18);
 			_G(det)->showStaticSpr(3);
 			_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 		}
@@ -193,7 +193,7 @@ int16 Room68::use_indigo() {
 			hideCur();
 			_G(room)->set_timer_status(8, TIMER_STOP);
 			_G(det)->del_static_ani(8);
-			_G(det)->stop_detail(8);
+			_G(det)->stopDetail(8);
 			startSetAILWait(13, 3, ANI_FRONT);
 			startSetAILWait(25, 1, ANI_FRONT);
 			_G(det)->set_static_ani(12, -1);
@@ -201,7 +201,7 @@ int16 Room68::use_indigo() {
 			hideCur();
 			_G(room)->set_timer_status(8, TIMER_STOP);
 			_G(det)->del_static_ani(8);
-			_G(det)->stop_detail(8);
+			_G(det)->stopDetail(8);
 			startSetAILWait(26, 1, ANI_FRONT);
 			_G(room)->set_timer_status(8, TIMER_START);
 			_G(det)->set_static_ani(8, -1);
@@ -365,7 +365,7 @@ void Room68::kostuem_aad(int16 aad_nr) {
 
 			g_engine->_sound->waitForSpeechToFinish();
 
-			_G(det)->stop_detail(23);
+			_G(det)->stopDetail(23);
 		}
 
 		_G(det)->playSound(108, 1);
@@ -379,13 +379,13 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		startSetAILWait(10, 1, ANI_FRONT);
 		_G(det)->startDetail(11, 255, ANI_FRONT);
 		startAadWait(396);
-		_G(det)->stop_detail(11);
+		_G(det)->stopDetail(11);
 		_G(det)->set_static_ani(12, -1);
 		startAadWait(611);
 		_G(det)->del_static_ani(12);
 		_G(det)->startDetail(14, 255, ANI_FRONT);
 		startAadWait(395);
-		_G(det)->stop_detail(14);
+		_G(det)->stopDetail(14);
 		_G(room)->set_timer_status(8, TIMER_START);
 		_G(det)->set_static_ani(8, -1);
 		startAadWait(392);
@@ -393,8 +393,8 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		g_engine->_sound->waitForSpeechToFinish();
 		
 		_G(gameState)._personHide[P_HOWARD] = false;
-		_G(det)->stop_detail(27);
-		_G(det)->stop_detail(24);
+		_G(det)->stopDetail(27);
+		_G(det)->stopDetail(24);
 		_G(det)->showStaticSpr(13);
 		_G(gameState).R68Lied = true;
 		autoMove(1, P_CHEWY);

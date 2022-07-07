@@ -183,7 +183,7 @@ void Room37::dog_bell() {
 			_G(flags).NoScroll = true;
 			auto_scroll(178, 0);
 			disable_timer();
-			_G(det)->stop_detail(3);
+			_G(det)->stopDetail(3);
 			_G(det)->del_static_ani(3);
 			startSetAILWait(5, 1, ANI_FRONT);
 			_G(det)->hideStaticSpr(9);
@@ -192,7 +192,7 @@ void Room37::dog_bell() {
 			_G(det)->startDetail(11, 255, ANI_FRONT);
 			flic_cut(FCUT_050);
 			startSetAILWait(6, 1, ANI_BACK);
-			_G(det)->stop_detail(11);
+			_G(det)->stopDetail(11);
 			setPersonPos(326, 85, P_CHEWY, P_LEFT);
 			_G(gameState)._personHide[P_CHEWY] = false;
 			_G(det)->showStaticSpr(9);
@@ -211,7 +211,7 @@ void Room37::dog_bell() {
 			auto_scroll(178, 0);
 			_G(room)->set_timer_status(3, TIMER_STOP);
 			_G(det)->del_static_ani(3);
-			_G(det)->stop_detail(3);
+			_G(det)->stopDetail(3);
 			startSetAILWait(4, 1, ANI_FRONT);
 			flic_cut(FCUT_051);
 			_G(gameState).scrollx = 104;
@@ -270,7 +270,7 @@ void Room37::use_hahn() {
 			autoMove(6, P_CHEWY);
 			g_engine->_sound->playRoomMusic(256);
 			_G(room)->set_timer_status(7, TIMER_STOP);
-			_G(det)->stop_detail(7);
+			_G(det)->stopDetail(7);
 			_G(det)->del_static_ani(7);
 			_G(det)->startDetail(9, 1, ANI_FRONT);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
@@ -288,7 +288,7 @@ void Room37::use_hahn() {
 			_G(det)->startDetail(10, 10, ANI_FRONT);
 			autoMove(8, P_CHEWY);
 			flic_cut(FCUT_053);
-			_G(det)->stop_detail(10);
+			_G(det)->stopDetail(10);
 
 			_G(gameState).scrollx = 320;
 			_G(flags).NoScroll = false;

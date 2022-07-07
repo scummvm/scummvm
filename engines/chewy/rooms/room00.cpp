@@ -578,7 +578,7 @@ void Room0::checkFeed() {
 		if (adi->ani_count == 136) {
 			_G(gameState)._personHide[P_CHEWY] = true;
 			if (!_G(gameState).R0SlimeUsed)
-				_G(det)->stop_detail(16);
+				_G(det)->stopDetail(16);
 		}
 
 		if (adi->ani_count > 138) {

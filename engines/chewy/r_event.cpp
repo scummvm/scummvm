@@ -854,7 +854,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 	case SIB_TERMINAL_R5:
 		if (_G(gameState).R5Terminal) {
 			_G(gameState).R5Terminal = 0;
-			_G(det)->stop_detail(6);
+			_G(det)->stopDetail(6);
 			_G(atds)->set_ats_str(27, TXT_MARK_LOOK, 0, ATS_DATA);
 			_G(atds)->set_ats_str(30, TXT_MARK_LOOK, 0, ATS_DATA);
 		}
@@ -957,7 +957,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 				_G(det)->startDetail(i, 255, ANI_FRONT);
 		} else {
 			for (int i = 0; i < 5; ++i)
-				_G(det)->stop_detail(i);
+				_G(det)->stopDetail(i);
 		}
 
 		_G(atds)->set_ats_str(94, TXT_MARK_LOOK, _G(gameState).R13Bandlauf, ATS_DATA);
@@ -1120,7 +1120,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 	case SIB_ASHTRAY_R64:
 		// Pick up ashtray
-		_G(det)->stop_detail(0);
+		_G(det)->stopDetail(0);
 		_G(obj)->hide_sib(sib_nr);
 		_G(gameState).R64AshtrayTaken = true;
 		Room64::talk_man(351);

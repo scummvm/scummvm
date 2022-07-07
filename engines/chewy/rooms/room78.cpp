@@ -83,7 +83,7 @@ void Room78::entry() {
 							flag1 = true;
 					} else {
 						flag1 = true;
-						_G(det)->stop_detail(0);
+						_G(det)->stopDetail(0);
 						_G(det)->startDetail(1, 1, false);
 					}
 				}
@@ -93,7 +93,7 @@ void Room78::entry() {
 				if (det4DestX <= 222 && flag2 == 0) {
 					if (_G(gameState).flags29_10) {
 						flag2 = true;
-						_G(det)->stop_detail(4);
+						_G(det)->stopDetail(4);
 						if (flag1 == 0) {
 							_G(det)->startDetail(5, 1, false);
 						} else {

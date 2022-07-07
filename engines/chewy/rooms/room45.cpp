@@ -111,13 +111,13 @@ void Room45::setup_func() {
 						x -= _G(r45_pinfo)[i][1];
 						if (x < -30) {
 							_G(r45_pinfo)[i][0] = 0;
-							_G(det)->stop_detail(3 + i);
+							_G(det)->stopDetail(3 + i);
 						}
 					} else {
 						x += _G(r45_pinfo)[i][1];
 						if (x > 540) {
 							_G(r45_pinfo)[i][0] = 0;
-							_G(det)->stop_detail(3 + i);
+							_G(det)->stopDetail(3 + i);
 						}
 					}
 					_G(det)->setDetailPos(3 + i, x, y);

@@ -148,7 +148,7 @@ void Room29::schlitz_sitz() {
 		_G(det)->startDetail(2, 255, ANI_FRONT);
 		startAadWait(63);
 
-		_G(det)->stop_detail(2);
+		_G(det)->stopDetail(2);
 		_G(atds)->delControlBit(212, ATS_ACTIVE_BIT);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		_G(mouseLeftClick) = false;

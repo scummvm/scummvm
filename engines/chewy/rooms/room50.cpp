@@ -112,7 +112,7 @@ void Room50::stop_cigar() {
 	_G(room)->set_timer_status(0, TIMER_STOP);
 	_G(det)->del_static_ani(0);
 	_G(atds)->set_ats_str(328, 1, ATS_DATA);
-	_G(det)->stop_detail(0);
+	_G(det)->stopDetail(0);
 	_G(gameState).R50Zigarre = true;
 }
 
@@ -127,8 +127,8 @@ void Room50::calc_wasser() {
 void Room50::stop_page() {
 	_G(room)->set_timer_status(3, TIMER_STOP);
 	_G(det)->del_static_ani(3);
-	_G(det)->stop_detail(3);
-	_G(det)->stop_detail(4);
+	_G(det)->stopDetail(3);
+	_G(det)->stopDetail(4);
 }
 
 void Room50::go_page() {
