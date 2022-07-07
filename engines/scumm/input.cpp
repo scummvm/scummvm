@@ -412,8 +412,9 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 		}
 
 		// Actually show the main menu screen...
-		if (!(_game.features & GF_DEMO) && !isSmushActive() && _keyScriptNo && (_keyScriptKey == lastKeyHit.ascii)) {
-			runScript(_keyScriptNo, 0, 0, 0);
+		if (!(_game.features & GF_DEMO) && _keyScriptNo && (_keyScriptKey == lastKeyHit.ascii)) {
+			if (!isSmushActive())
+				runScript(_keyScriptNo, 0, 0, 0);
 			return;
 		}
 
