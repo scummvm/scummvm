@@ -6,17 +6,17 @@ This section explains how to access game data files from Macintosh media. For ge
 
 Background
 ==============
-There are three main aspects of Macintosh floppy or CD media that can make it difficult to extract the game data: the file system, forks, and file name encoding. 
+There are three main aspects of Macintosh floppy or CD media that can make it difficult to extract the game data: the file system, forks, and file name encoding.
 
 **HFS and HFS+ file system**
 
-The Macintosh uses a different file system to other operating systems; HFS for older media, and HFS+ for more recent ones. 
+The Macintosh uses a different file system to other operating systems; HFS for older media, and HFS+ for more recent ones.
 
 HFS (`Hierarchical File System <https://en.wikipedia.org/wiki/Hierarchical_File_System>`_), also known as Mac OS Standard, was used on Macintosh hard disk, floppy disks, and CDs until the late 90s. It was superseded by `HFS+ <https://en.wikipedia.org/wiki/HFS_Plus>`_, or Mac OS Extended, with the release of Mac OS 8.1 in 1998. Most game CDs released before the mid-2000 still use HFS. Modern macOS computers can still access HFS+ media, but support for reading HFS media was dropped in macOS 10.15 (Catalina).
 
-To view and copy the files from HFS and HFS+ floppy disks and CDs on a Windows or Linux system, you need to install additional software. 
+To view and copy the files from HFS and HFS+ floppy disks and CDs on a Windows or Linux system, you need to install additional software.
 
-Most, if not all, Macintosh games supported by ScummVM were released on an HFS medium, but if you do have a HFS+ CD then check out the :ref:`macfileaccessother` section for ways to access these files. ScummVM's :ref:`Python-based dumper <python_dumper>` also supports the HFS+ format if you are using it on macOS. 
+Most, if not all, Macintosh games supported by ScummVM were released on an HFS medium, but if you do have a HFS+ CD then check out the :ref:`macfileaccessother` section for ways to access these files. ScummVM's :ref:`Python-based dumper <python_dumper>` also supports the HFS+ format if you are using it on macOS.
 
 **Forks**
 
@@ -38,7 +38,7 @@ Files that contain prohibited characters are always puny-encoded.
 
     Windows, MacOS and Linux can store these files and do not need punycode enabled.
 
-For more information, see the `Windows naming conventions <https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file#naming-conventions>`_ for a list of prohibited characters. 
+For more information, see the `Windows naming conventions <https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file#naming-conventions>`_ for a list of prohibited characters.
 
 .. _macfiledumper:
 
@@ -47,7 +47,7 @@ How to extract Macintosh game files
 
 The simplest way to extract the correct game files is to use the dumper companion created and supplied by ScummVM. The dumper can extract files from an HFS medium, encode files to the MacBinary format, and rename files with Punycode if needed.
 
-There are two versions of the dumper: a disk/ISO image version that runs in a browser, and a full-fledged version which uses Python. The browser-based version is the preferred method since this will work in the majority of cases, and it is less hassle because there is nothing to install. 
+There are two versions of the dumper: a disk/ISO image version that runs in a browser, and a full-fledged version which uses Python. The browser-based version is the preferred method since this will work in the majority of cases, and it is less hassle because there is nothing to install.
 
 The first step is to create an ISO image of your floppy or CD medium.
 
@@ -80,7 +80,7 @@ Creating the ISO image
         Alternatively, find this information using the Disk Utility application. Select the CD partition and look at the name under the *device* section.
 
         Unmount the disk if needed:
-        - By default disks are mounted when they are inserted, and they need to be unmounted so that you can create the ISO file.  
+        - By default disks are mounted when they are inserted, and they need to be unmounted so that you can create the ISO file.
         - HFS is no longer supported on macOS 10.15 and above, therefore those disk cannot be mounted and do not need to be unmounted.
 
         .. code-block::
@@ -171,8 +171,8 @@ The `browser based dumper companion <https://www.scummvm.org/dumper-companion>`_
 
 
 #. Upload the disk/ISO image file
-#. Select the options:  
-   
+#. Select the options:
+
 - Choose Japanese when dumping Japanese disks
 - Deselect unicode if the platform does not support it
 
@@ -183,7 +183,7 @@ The `browser based dumper companion <https://www.scummvm.org/dumper-companion>`_
 
 .. figure:: ../images/dumper/browser_dumper.png
 
-    The browser based dumper companion. 
+    The browser based dumper companion.
 
 .. note::
 
@@ -193,16 +193,16 @@ The `browser based dumper companion <https://www.scummvm.org/dumper-companion>`_
 
 Using the Python dumper companion
 ----------------------------------
-The Python dumper companion supports HFS disks, unless you are running it on a Mac, in which case MAC mode also supports HFS+. 
+The Python dumper companion supports HFS disks, unless you are running it on a Mac, in which case MAC mode also supports HFS+.
 
 Prerequisites
 *************
 - Python3 with pip installed. Information on how to install Python can be found `here <https://wiki.python.org/moin/BeginnersGuide/Download>`_.
-- The dumper file `downloaded <https://github.com/scummvm/scummvm/blob/master/devtools/dumper-companion.py>`_ from the repository.  
+- The dumper file `downloaded <https://github.com/scummvm/scummvm/blob/master/devtools/dumper-companion.py>`_ from the repository.
 
 Installation
 *************
-Install machfs, and xattr if using macOS: 
+Install machfs, and xattr if using macOS:
 
 .. tabbed:: macOS
 
@@ -235,7 +235,7 @@ The dumper companion supports three modes: ISO, DIR and MAC. The MAC mode is spe
     .. code-block::
 
         ./dumper-companion.py --help
-    
+
 
 **ISO mode**
 
@@ -281,7 +281,7 @@ Options:
 
 .. _macfileaccessother:
 
-Other methods 
+Other methods
 --------------
 
 There are other ways to access HFS and HFS+ media on Windows, macOS, and Linux. These methods require you to copy the files manually.
