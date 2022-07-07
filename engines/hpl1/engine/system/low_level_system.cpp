@@ -19,8 +19,6 @@
  *
  */
 
-#include <stdarg.h>
-
 #include "hpl1/engine/libraries/angelscript/angelscript.h"
 #include "hpl1/engine/impl/SqScript.h"
 #include "hpl1/engine/impl/scriptstring.h"
@@ -61,13 +59,31 @@ LowLevelSystem::~LowLevelSystem() {
 	// gpLogWriter = NULL;
 }
 
+static void commonLog(int level, const char* fmt, va_list args) {
+	char buffer[256];
+	vsnprintf(buffer, 256, fmt, args);
+	debugN(level, buffer);
+}
+
 void Error(const char *fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	commonLog(Hpl1::kDebugLevelError, fmt, args);
+	va_end(args);
 }
 
 void Warning(const char *fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	commonLog(Hpl1::kDebugLevelWarning, fmt, args);
+	va_end(args);
 }
 
 void Log(const char *fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	commonLog(Hpl1::kDebugLevelLog, fmt, args);
+	va_end(args);
 }
 
 static bool gbUpdateLogIsActive;
