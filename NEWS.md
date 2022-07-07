@@ -20,10 +20,6 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for the Korean version of Legend of Kyrandia 1.
    - Added support for the Hebrew version of Legend of Kyrandia 3.
 
- SCUMM:
-   - Made the sentence line in Maniac Mansion work like the manual says, i.e.
-     you can click on it to execute the command.
-
  Toon:
    - Made game menus behave like in the original.
 
@@ -182,6 +178,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      enhancement; this workaround originally restored a portion of the
      map chasing puzzle in Booty Island which had been cut in the
      FM-Towns version of the game.
+   - Made the sentence line in Maniac Mansion work like the manual says, i.e.
+     you can click on it to execute the command.
 
  Sherlock:
    - Fixed slowdown in Serrated Scalpel intro when playing the game from a small
