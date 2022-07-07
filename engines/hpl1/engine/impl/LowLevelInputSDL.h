@@ -29,16 +29,18 @@
 #define HPL_LOWLEVELINPUT_SDL_H
 
 #include "hpl1/engine/input/LowLevelInput.h"
-#include <list>
-
-//#include "SDL/SDL.h"
-#include "temp-types.h"
+#include "common/events.h"
+#include "common/array.h"
 
 namespace hpl {
 
 class iLowLevelGraphics;
+class iMouse;
+class iKeyboard;
 
 class cLowLevelInputSDL : public iLowLevelInput {
+	friend class cKeyboardSDL;
+	friend class cMouseSDL;
 public:
 	cLowLevelInputSDL(iLowLevelGraphics *apLowLevelGraphics);
 	~cLowLevelInputSDL();
@@ -51,11 +53,9 @@ public:
 	iMouse *CreateMouse();
 	iKeyboard *CreateKeyboard();
 
-public:
-	std::list<SDL_Event> mlstEvents;
-
 private:
-	iLowLevelGraphics *mpLowLevelGraphics;
+	Common::Array<Common::Event> _events;
+	iLowLevelGraphics *_lowLevelGraphics;
 };
 };     // namespace hpl
 #endif // HPL_LOWLEVELINPUT_SDL_H
