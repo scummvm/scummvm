@@ -32,13 +32,19 @@ namespace Views {
 
 class CastSpell : public TextView, public MM1::Game::SpellCasting {
 	enum State {
-		STATE_INITIAL, STATE_SELECT_CHAR, STATE_ENTER
+		SELECT_SPELL, SELECT_NUMBER, SELECT_CHAR, PRESS_ENTER,
+		ENDING
 	};
 private:
-	State _state = STATE_INITIAL;
+	State _state = SELECT_SPELL;
 	TextEntry _textEntry;
 	int _spellLevel = -1;
 private:
+	/**
+	 * Set the current state
+	 */
+	void setState(State state);
+
 	/**
 	 * Start the selection of spell to cast
 	 */
