@@ -55,7 +55,6 @@ void MainMenu::execute() {
 	g_events->_mousePos.y = 92;
 	_G(cur)->setInventoryCursor(-1);
 	_G(menu_display) = 0;
-	_G(gameState).soundLoopMode = 1;
 
 	bool done = false;
 	while (!done && !SHOULD_QUIT) {
@@ -174,12 +173,10 @@ void MainMenu::startGame() {
 	exit_room(-1);
 
 	uint8 framesPerSecond = _G(gameState).FramesPerSecond;
-	int sndLoopMode = _G(gameState).soundLoopMode;
 
 	var_init();
 
 	_G(gameState).FramesPerSecond = framesPerSecond;
-	_G(gameState).soundLoopMode = sndLoopMode;
 
 	_G(gameState)._personRoomNr[P_CHEWY] = 0;
 	_G(room)->loadRoom(&_G(room_blk), 0, &_G(gameState));

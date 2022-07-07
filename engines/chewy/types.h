@@ -505,7 +505,6 @@ struct GameState : public GameFlags {
 	int16 SVal2 = 0;
 	int16 SVal3 = 0;
 	int16 SVal4 = 0;
-	int16 soundLoopMode = 0;
 	uint8 FramesPerSecond = 0;
 };
 
