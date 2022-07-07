@@ -192,7 +192,7 @@ int16 Room55::use_telefon() {
 				startSetAILWait(10, 1, ANI_FRONT);
 				_G(det)->startDetail(11, 255, ANI_FRONT);
 				startAadWait(329);
-				_G(det)->stop_detail(11);
+				_G(det)->stopDetail(11);
 				startSetAILWait(10, 1, ANI_BACK);
 
 				_G(gameState)._personHide[P_CHEWY] = false;
@@ -204,7 +204,7 @@ int16 Room55::use_telefon() {
 				startSetAILWait(0, 1, ANI_FRONT);
 				_G(det)->startDetail(1, 255, ANI_FRONT);
 				startAadWait(331);
-				_G(det)->stop_detail(1);
+				_G(det)->stopDetail(1);
 
 				_G(det)->showStaticSpr(16);
 				startAadWait(608);
@@ -346,7 +346,7 @@ void Room55::strasse(int16 mode) {
 		_G(gameState)._personHide[P_CHEWY] = true;
 		_G(room)->set_timer_status(4, TIMER_STOP);
 		_G(det)->del_static_ani(4);
-		_G(det)->stop_detail(4);
+		_G(det)->stopDetail(4);
 		_G(atds)->setControlBit(340, ATS_ACTIVE_BIT);
 		startSetAILWait(3, 1, ANI_BACK);
 
@@ -373,7 +373,7 @@ int16 Room55::use_kammeraus() {
 		
 			const int aniNr = 19 + (_G(gameState).R55Entry ? 1 : 0);
 			_G(room)->set_timer_status(aniNr, TIMER_STOP);
-			_G(det)->stop_detail(aniNr);
+			_G(det)->stopDetail(aniNr);
 			_G(det)->del_static_ani(aniNr);
 			_G(det)->hideStaticSpr(10);
 			_G(gameState).R55ExitDia = 322;
@@ -429,7 +429,7 @@ void Room55::talk_line() {
 		_G(gameState).R55ExitDia = 321;
 		const int aniNr = 19 + (_G(gameState).R55Entry ? 1 : 0);
 		_G(room)->set_timer_status(aniNr, TIMER_STOP);
-		_G(det)->stop_detail(aniNr);
+		_G(det)->stopDetail(aniNr);
 		_G(det)->del_static_ani(aniNr);
 		startSetAILWait(22, 1, ANI_FRONT);
 		_G(det)->set_static_ani(21, -1);

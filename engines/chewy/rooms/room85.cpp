@@ -153,7 +153,7 @@ int Room85::proc2() {
 		return 0;
 
 	autoMove(2, P_CHEWY);
-	_G(det)->stop_detail(1);
+	_G(det)->stopDetail(1);
 	startSetAILWait(2, 1, ANI_FRONT);
 	_G(gameState)._personRoomNr[P_HOWARD] = 89;
 	cur_2_inventory();

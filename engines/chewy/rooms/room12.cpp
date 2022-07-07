@@ -173,7 +173,7 @@ void Room12::bork_ok() {
 	_G(det)->setDetailPos(3, 170, 145);
 	_G(det)->startDetail(3, 255, ANI_FRONT);
 	startAadWait(57);
-	_G(det)->stop_detail(3);
+	_G(det)->stopDetail(3);
 
 	_G(mov_phasen)[R12_BORK_OBJ].Repeat = 1;
 	_G(mov_phasen)[R12_BORK_OBJ].Lines = 3;

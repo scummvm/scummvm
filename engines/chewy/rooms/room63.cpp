@@ -42,11 +42,11 @@ void Room63::entry() {
 		_G(det)->startDetail(10, 255, ANI_FRONT);
 		_G(det)->startDetail(18, 255, ANI_FRONT);
 		autoMove(4, P_CHEWY);
-		_G(det)->stop_detail(10);
+		_G(det)->stopDetail(10);
 		_G(det)->startDetail(11, 255, ANI_FRONT);
 		auto_scroll(58, 0);
 		startAadWait(355);
-		_G(det)->stop_detail(11);
+		_G(det)->stopDetail(11);
 		_G(det)->startDetail(10, 255, ANI_FRONT);
 		showCur();
 	} else if (!_G(gameState).R63Fire) {
@@ -164,7 +164,7 @@ void Room63::talk_hunter() {
 	startAadWait(356);
 	if (_G(gameState).R63Uhr) {
 		_G(det)->showStaticSpr(10);
-		_G(det)->stop_detail(10);
+		_G(det)->stopDetail(10);
 	}
 	showCur();
 }
@@ -174,10 +174,10 @@ void Room63::talk_regie() {
 	autoMove(3, P_CHEWY);
 	if (_G(gameState).R63Uhr)
 		_G(det)->hideStaticSpr(12);
-	_G(det)->stop_detail(18);
+	_G(det)->stopDetail(18);
 	_G(det)->startDetail(19, 255, ANI_FRONT);
 	startAadWait(357);
-	_G(det)->stop_detail(19);
+	_G(det)->stopDetail(19);
 	if (_G(gameState).R63Uhr) {
 		_G(det)->showStaticSpr(12);
 	} else {
@@ -206,7 +206,7 @@ int16 Room63::use_fx_man() {
 		startSetAILWait(6, 1, ANI_FRONT);
 		_G(det)->startDetail(7, 255, ANI_FRONT);
 		startAadWait(362);
-		_G(det)->stop_detail(7);
+		_G(det)->stopDetail(7);
 		startSetAILWait(8, 1, ANI_FRONT);
 		_G(gameState).R63FxManAway = true;
 		_G(atds)->setControlBit(384, ATS_ACTIVE_BIT);
@@ -252,7 +252,7 @@ int16 Room63::use_schalter() {
 
 void Room63::talk_girl() {
 	autoMove(2, P_CHEWY);
-	_G(det)->stop_detail(12);
+	_G(det)->stopDetail(12);
 	startSetAILWait(13, 1, ANI_FRONT);
 	_G(det)->set_static_ani(14, -1);
 	startDialogCloseupWait(17);
@@ -267,18 +267,18 @@ int16 Room63::use_girl() {
 		hideCur();
 		autoMove(2, P_CHEWY);
 		delInventory(_G(cur)->getInventoryCursor());
-		_G(det)->stop_detail(12);
+		_G(det)->stopDetail(12);
 		startSetAILWait(13, 1, ANI_FRONT);
 		_G(det)->set_static_ani(14, -1);
 		startAadWait(365);
 		_G(det)->del_static_ani(14);
 		_G(det)->startDetail(15, 255, ANI_FRONT);
 		startAadWait(360);
-		_G(det)->stop_detail(15);
+		_G(det)->stopDetail(15);
 		startSetAILWait(16, 1, ANI_FRONT);
 		_G(gameState).R63Uhr = true;
-		_G(det)->stop_detail(10);
-		_G(det)->stop_detail(18);
+		_G(det)->stopDetail(10);
+		_G(det)->stopDetail(18);
 		_G(det)->showStaticSpr(10);
 		_G(det)->showStaticSpr(12);
 		_G(atds)->set_ats_str(381, 1, ATS_DATA);

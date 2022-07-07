@@ -114,7 +114,7 @@ void Room91::setup_func() {
 		_click = 1;
 		const int aniNr = 1 + (g_events->_mousePos.y <= 100 ? 1 : 0);
 		hideCur();
-		_G(det)->stop_detail(0);
+		_G(det)->stopDetail(0);
 		startSetAILWait(aniNr, 1, ANI_FRONT);
 		_click = oldClick;
 		_G(det)->startDetail(0, 255, false);
@@ -124,7 +124,7 @@ void Room91::setup_func() {
 		_G(gameState).SVal3 += 1;
 		showCur();
 		if (_G(gameState).SVal3 == 4) {
-			_G(det)->stop_detail(0);
+			_G(det)->stopDetail(0);
 			_G(gameState)._personHide[P_CHEWY] = false;
 			hideCur();
 			autoMove(1, P_CHEWY);

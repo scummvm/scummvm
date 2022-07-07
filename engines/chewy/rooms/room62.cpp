@@ -40,22 +40,22 @@ void Room62::entry() {
 		setPersonPos(49, 113, P_HOWARD, P_RIGHT);
 		_G(det)->startDetail(6, 255, ANI_FRONT);
 		startAadWait(345);
-		_G(det)->stop_detail(6);
+		_G(det)->stopDetail(6);
 		_G(det)->set_static_ani(5, -1);
 		goAutoXy(199, 59, P_HOWARD, ANI_WAIT);
 		setPersonSpr(0, P_HOWARD);
 		_G(det)->del_static_ani(5);
 		_G(det)->startDetail(5, 255, ANI_FRONT);
 		startAadWait(346);
-		_G(det)->stop_detail(5);
+		_G(det)->stopDetail(5);
 		_G(det)->startDetail(6, 255, ANI_FRONT);
 		startAadWait(347);
-		_G(det)->stop_detail(6);
+		_G(det)->stopDetail(6);
 		startSetAILWait(7, 1, ANI_FRONT);
 		_G(det)->set_static_ani(5, -1);
 		_G(det)->startDetail(0, 255, ANI_FRONT);
 		startAadWait(348);
-		_G(det)->stop_detail(0);
+		_G(det)->stopDetail(0);
 		_G(det)->del_static_ani(0);
 		_G(det)->startDetail(1, 1, ANI_FRONT);
 		autoMove(0, P_CHEWY);
@@ -84,7 +84,7 @@ void Room62::entry() {
 void Room62::setup_func() {
 	if (_G(r62Delay) <= 0 && _G(gameState).R62TShow) {
 		_G(r62Delay) = (_G(gameState).DelaySpeed + 1) * 60;
-		_G(det)->stop_detail(_G(r62TalkAni));
+		_G(det)->stopDetail(_G(r62TalkAni));
 		if (_G(r62TalkAni) == 4)
 			_G(r62TalkAni) = 8;
 		else
@@ -103,7 +103,7 @@ int16 Room62::use_laura() {
 		auto_scroll(0, 0);
 		_G(SetUpScreenFunc) = nullptr;
 		_G(det)->del_static_ani(8);
-		_G(det)->stop_detail(8);
+		_G(det)->stopDetail(8);
 		_G(gameState)._personHide[P_CHEWY] = true;
 		_G(det)->startDetail(2, 255, ANI_FRONT);
 		_G(det)->startDetail(6, 255, ANI_FRONT);

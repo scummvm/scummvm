@@ -45,7 +45,7 @@ void Room84::entry() {
 
 	if (_G(gameState).R88UsedMonkey) {
 		_G(det)->del_static_ani(3);
-		_G(det)->stop_detail(0);
+		_G(det)->stopDetail(0);
 		_G(gameState).room_e_obj[124].Attribut = EXIT_TOP;
 		_G(atds)->setControlBit(478, ATS_ACTIVE_BIT);
 		_G(atds)->setControlBit(479, ATS_ACTIVE_BIT);
@@ -191,7 +191,7 @@ int Room84::proc4() {
 	autoMove(5, P_CHEWY);
 
 	if (_G(gameState).flags32_10) {
-		_G(det)->stop_detail(7);
+		_G(det)->stopDetail(7);
 		startSetAILWait(8, 1, ANI_FRONT);
 	} else {
 		_G(gameState)._personRoomNr[P_NICHELLE] = 88;

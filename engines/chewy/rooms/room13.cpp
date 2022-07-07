@@ -107,7 +107,7 @@ void Room13::talk_bork() {
 		_G(det)->setStaticPos(12, _G(moveState)[P_CHEWY].Xypos[0], _G(moveState)[P_CHEWY].Xypos[1], false, true);
 		_G(gameState)._personHide[P_CHEWY] = true;
 		startAadWait(33);
-		_G(det)->stop_detail(9);
+		_G(det)->stopDetail(9);
 		_G(det)->load_taf_seq(86, 12, nullptr);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		_G(det)->hideStaticSpr(12);

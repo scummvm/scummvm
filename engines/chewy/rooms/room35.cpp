@@ -92,7 +92,7 @@ int16 Room35::use_cat() {
 			_G(gameState).R35CatEat = true;
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			delInventory(_G(cur)->getInventoryCursor());
-			_G(det)->stop_detail(0);
+			_G(det)->stopDetail(0);
 			_G(det)->del_static_ani(0);
 			startSetAILWait(1, 1, ANI_FRONT);
 			_G(det)->startDetail(2, 1, ANI_FRONT);

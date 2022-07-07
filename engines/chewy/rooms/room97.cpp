@@ -67,7 +67,7 @@ void Room97::entry() {
 	
 	if (_G(gameState).flags36_10) {
 		_G(det)->startDetail(11, 255, ANI_FRONT);
-		_G(det)->stop_detail(5);
+		_G(det)->stopDetail(5);
 		_G(det)->startDetail(6, 255, ANI_FRONT);
 		_G(det)->startDetail(12, 255, ANI_FRONT);
 	}
@@ -83,7 +83,7 @@ void Room97::entry() {
 	if (_G(gameState).flags36_20) {
 		_G(det)->setDetailPos(27, 272, 110);
 		for (int i = 0; i < 2; ++i) {
-			_G(det)->stop_detail(23 + i);
+			_G(det)->stopDetail(23 + i);
 			_G(det)->startDetail(27 + i, 255, ANI_FRONT);
 		}
 		_G(det)->stopSound(0);
@@ -431,7 +431,7 @@ int Room97::proc6() {
 	start_spz(CH_TALK5, 255, false, P_CHEWY);
 	startAadWait(558);
 	_G(det)->hideStaticSpr(28);
-	_G(det)->stop_detail(5);
+	_G(det)->stopDetail(5);
 	_G(det)->showStaticSpr(15);
 	_G(gameState).flags36_2 = true;
 	_G(atds)->delControlBit(538, ATS_ACTIVE_BIT);
@@ -494,11 +494,11 @@ int Room97::proc8() {
 		autoMove(3, P_CHEWY);
 		auto_scroll(406, 0);
 		waitShowScreen(40);
-		_G(det)->stop_detail(24);
+		_G(det)->stopDetail(24);
 		_G(det)->playSound(26, 0);
 		startSetAILWait(25, 1, ANI_FRONT);
 		_G(det)->startDetail(26, 255, false);
-		_G(det)->stop_detail(23);
+		_G(det)->stopDetail(23);
 		_G(det)->startDetail(27, 255, false);
 		waitShowScreen(80);
 		autoMove(4, P_CHEWY);
@@ -506,8 +506,8 @@ int Room97::proc8() {
 		startAadWait(566);
 		waitShowScreen(60);
 		startAadWait(567);
-		_G(det)->stop_detail(26);
-		_G(det)->stop_detail(27);
+		_G(det)->stopDetail(26);
+		_G(det)->stopDetail(27);
 		_G(gameState).flags36_20 = true;
 		_G(det)->startDetail(28, 255, false);
 		_G(det)->setDetailPos(27, 272, 110);

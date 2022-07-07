@@ -47,7 +47,7 @@ void Room2::jump_out_r1(int16 nr) {
 	_G(gameState)._personHide[P_CHEWY] = true;
 	startSetAILWait(nr, 1, ANI_FRONT);
 	setupScreen(DO_SETUP);
-	_G(det)->stop_detail(6);
+	_G(det)->stopDetail(6);
 	setPersonPos(32, 127, P_CHEWY, P_LEFT);
 	_G(gameState)._personHide[P_CHEWY] = false;
 	clear_prog_ani();
@@ -59,7 +59,7 @@ void Room2::electrifyWalkway1() {
 	_G(det)->startDetail(ANI_5, 255, ANI_FRONT);
 	start_spz(CH_TALK6, 255, false, ANI_FRONT);
 	startAadWait(49);
-	_G(det)->stop_detail(ANI_5);
+	_G(det)->stopDetail(ANI_5);
 
 	_G(det)->startDetail(GRID_FLASHING, 12, ANI_FRONT);
 	_G(gameState).R2ElectrocutedBork = true;
@@ -80,7 +80,7 @@ void Room2::electrifyWalkway2() {
 
 void Room2::gedAction(int index) {
 	if (index == 0) {
-		_G(det)->stop_detail(5);
+		_G(det)->stopDetail(5);
 		if (!_G(gameState).R2ElectrocutedBork)
 			_G(det)->startDetail(6, 2, ANI_FRONT);
 		else

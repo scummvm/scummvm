@@ -110,7 +110,7 @@ void Room64::setup_func() {
 	if (_G(r62Delay) <= 0 && _G(gameState).R62TShow) {
 		_G(r62Delay) = (_G(gameState).DelaySpeed + 1) * 60;
 		if (_G(r64TalkAni) == 3 || _G(r64TalkAni) == 4)
-			_G(det)->stop_detail(_G(r64TalkAni));
+			_G(det)->stopDetail(_G(r64TalkAni));
 		
 		if (_G(r64TalkAni) == 4)
 			_G(r64TalkAni) = _G(gameState).R64Moni1Ani;
@@ -129,7 +129,7 @@ void Room64::talk_man(int16 aad_nr) {
 		autoMove(4, P_CHEWY);
 		_G(room)->set_timer_status(1, TIMER_STOP);
 		_G(det)->del_static_ani(1);
-		_G(det)->stop_detail(1);
+		_G(det)->stopDetail(1);
 		_G(det)->set_static_ani(2, -1);
 		startAadWait(aad_nr);
 		_G(det)->del_static_ani(2);
@@ -158,10 +158,10 @@ int16 Room64::useBag() {
 			autoMove(3, P_CHEWY);
 			_G(room)->set_timer_status(1, TIMER_STOP);
 			_G(det)->del_static_ani(1);
-			_G(det)->stop_detail(1);
+			_G(det)->stopDetail(1);
 			_G(det)->startDetail(6, 255, false);
 			startAadWait(352);
-			_G(det)->stop_detail(6);
+			_G(det)->stopDetail(6);
 			_G(room)->set_timer_status(0, TIMER_START);
 			_G(det)->set_static_ani(1, -1);
 		}

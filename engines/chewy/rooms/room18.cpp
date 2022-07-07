@@ -109,7 +109,7 @@ void Room18::entry() {
 		_G(det)->hideStaticSpr(19);
 	
 	if (_G(gameState).R17EnergieOut) {
-		_G(det)->stop_detail(0);
+		_G(det)->stopDetail(0);
 		_G(atds)->set_ats_str(150, TXT_MARK_LOOK, 1, ATS_DATA);
 	} else {
 		_G(atds)->set_ats_str(150, TXT_MARK_LOOK, 0, ATS_DATA);
@@ -192,7 +192,7 @@ void Room18::monitor() {
 		startAniBlock(2, ABLOCK21);
 		nr = (_G(gameState).R17EnergieOut) ? 2 : 1;
 	} else {
-		_G(det)->stop_detail(23);
+		_G(det)->stopDetail(23);
 		_G(atds)->set_ats_str(41, TXT_MARK_LOOK, 1, ATS_DATA);
 	}
 

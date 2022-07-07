@@ -826,7 +826,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 					switch (txtNr) {
 					case 11:
 						autoMove(3, P_CHEWY);
-						_G(det)->stop_detail(5);
+						_G(det)->stopDetail(5);
 						_G(det)->startDetail(6, 2, ANI_FRONT);
 						Room2::jump_out_r1(9);
 						break;
@@ -1262,13 +1262,13 @@ void endDialogCloseup(int16 diaNr, int16 blkNr, int16 strEndNr) {
 	if (mode == AAD_STR_START) \
 		talkAni = tmp; \
 	else \
-		_G(det)->stop_detail(tmp)
+		_G(det)->stopDetail(tmp)
 
 #define START_STOP(NUM) \
 	if (mode == AAD_STR_START) \
 		talkAni = NUM; \
 	else \
-		_G(det)->stop_detail(NUM) \
+		_G(det)->stopDetail(NUM) \
 
 
 void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
@@ -1469,7 +1469,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 				talkAni = 1;
 			} else {
 				_G(room)->set_timer_status(0, TIMER_START);
-				_G(det)->stop_detail(1);
+				_G(det)->stopDetail(1);
 				_G(det)->set_static_ani(0, -1);
 			}
 			break;
@@ -1489,7 +1489,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 				talkAni = 0;
 			} else {
 				_G(room)->set_timer_status(1, TIMER_START);
-				_G(det)->stop_detail(0);
+				_G(det)->stopDetail(0);
 				_G(det)->set_static_ani(1, -1);
 			}
 		}
@@ -1510,7 +1510,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 			if (mode == AAD_STR_START) {
 				_G(det)->startDetail(5, 255, ANI_FRONT);
 			} else {
-				_G(det)->stop_detail(5);
+				_G(det)->stopDetail(5);
 			}
 			break;
 
@@ -1564,7 +1564,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 				if (mode == AAD_STR_START) {
 					_G(det)->startDetail(tmp, 255, ANI_FRONT);
 				} else {
-					_G(det)->stop_detail(tmp);
+					_G(det)->stopDetail(tmp);
 				}
 				++tmp;
 			}
@@ -1771,7 +1771,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 
 		case P_3:
 			if (mode == AAD_STR_START) {
-				_G(det)->stop_detail(2);
+				_G(det)->stopDetail(2);
 			} else {
 				stop_spz();
 			}
@@ -1818,7 +1818,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 					talkAni = 2;
 				} else {
 					_G(room)->set_timer_status(8, TIMER_START);
-					_G(det)->stop_detail(2);
+					_G(det)->stopDetail(2);
 					_G(det)->set_static_ani(8, -1);
 				}
 				break;
@@ -1834,7 +1834,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 						talkAni = 2;
 					} else {
 						_G(room)->set_timer_status(0, TIMER_START);
-						_G(det)->stop_detail(2);
+						_G(det)->stopDetail(2);
 						_G(det)->set_static_ani(0, -1);
 					}
 					break;
@@ -1954,7 +1954,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 					if (diaNr != 376)
 						talkAni = 1;
 				} else if (diaNr != 376)
-					_G(det)->stop_detail(1);
+					_G(det)->stopDetail(1);
 
 				break;
 
@@ -2105,7 +2105,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 		if (mode == AAD_STR_START) {
 			_G(det)->startDetail(personNr, 255, ANI_FRONT);
 		} else {
-			_G(det)->stop_detail(personNr);
+			_G(det)->stopDetail(personNr);
 		}
 		break;
 
@@ -2128,7 +2128,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 				_G(gameState)._personHide[P_CHEWY] = true;
 				talkAni = 29;
 			} else {
-				_G(det)->stop_detail(29);
+				_G(det)->stopDetail(29);
 				_G(gameState)._personHide[P_CHEWY] = false;
 			}
 			break;
@@ -2144,12 +2144,12 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 
 	if (oldFormat) {
 		_G(det)->startDetail(_G(talk_start_ani), 255, ANI_FRONT);
-		_G(det)->stop_detail(talkStopAni);
+		_G(det)->stopDetail(talkStopAni);
 		_G(det)->hideStaticSpr(_G(talk_hide_static));
 		_G(det)->showStaticSpr(talkShowStatic);
 	} else {
 		_G(det)->startDetail(talkAni, 255, ANI_FRONT);
-		_G(det)->stop_detail(stopAni);
+		_G(det)->stopDetail(stopAni);
 	}
 }
 

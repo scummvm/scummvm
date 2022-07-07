@@ -128,13 +128,13 @@ void Room90::setup_func() {
 					destX += _G(gameState).r90_Array187030[i][1];
 					if (destX > 540) {
 						_G(gameState).r90_Array187030[i][0] = 0;
-						_G(det)->stop_detail(i + 4);
+						_G(det)->stopDetail(i + 4);
 					}
 				} else {
 					destX -= _G(gameState).r90_Array187030[i][1];
 					if (destX < -30) {
 						_G(gameState).r90_Array187030[i][0] = 0;
-						_G(det)->stop_detail(i + 4);
+						_G(det)->stopDetail(i + 4);
 					}
 				}
 				_G(det)->setDetailPos(i + 4, destX, destY);
@@ -305,7 +305,7 @@ int Room90::shootControlUnit() {
 	_G(flags).NoScroll = false;
 	_G(HowardMov) = 0;
 	_G(gameState).flags33_40 = true;
-	_G(det)->stop_detail(12);
+	_G(det)->stopDetail(12);
 	_G(atds)->setControlBit(519, ATS_ACTIVE_BIT);
 	_G(atds)->delControlBit(520, ATS_ACTIVE_BIT);
 	_G(flags).ZoomMov = true;

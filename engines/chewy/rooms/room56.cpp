@@ -305,7 +305,7 @@ int16 Room56::use_kneipe() {
 				_G(det)->playSound(9, 0);
 				_G(det)->startDetail(10, 6, ANI_FRONT);
 				startAadWait(307);
-				_G(det)->stop_detail(10);
+				_G(det)->stopDetail(10);
 				_G(det)->playSound(10, 0);
 				_G(out)->fadeOut();
 				setupScreen(DO_SETUP);

@@ -245,7 +245,7 @@ int16 Room51::use_door(int16 txt_nr) {
 				if (!_G(gameState).R52HotDogOk) {
 					startAadWait(287);
 					autoMove(12, P_CHEWY);
-					_G(det)->stop_detail(5);
+					_G(det)->stopDetail(5);
 					startAniBlock(5, ABLOCK37);
 					_G(det)->hideStaticSpr(1);
 					_G(det)->stopSound(0);
@@ -264,7 +264,7 @@ int16 Room51::use_door(int16 txt_nr) {
 
 					_G(det)->hideStaticSpr(16);
 					_G(flags).NoPalAfterFlc = false;
-					_G(det)->stop_detail(5);
+					_G(det)->stopDetail(5);
 					_G(obj)->show_sib(SIB_AUSRUEST_R52);
 					_G(obj)->calc_rsi_flip_flop(SIB_AUSRUEST_R52);
 					_G(det)->hideStaticSpr(1);

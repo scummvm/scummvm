@@ -106,7 +106,7 @@ void Room3::terminal() {
 		_G(spr_info)[0]._zLevel = 0;
 
 		if (!_G(gameState).R2ElectrocutedBork) {
-			_G(det)->stop_detail(5);
+			_G(det)->stopDetail(5);
 			startAniBlock(2, ABLOCK3);
 			if (_G(gameState).R2FussSchleim) {
 				_G(gameState).R2FussSchleim = false;
@@ -115,7 +115,7 @@ void Room3::terminal() {
 			_G(gameState)._personHide[P_CHEWY] = true;
 			startSetAILWait(8, 1, ANI_FRONT);
 			setupScreen(DO_SETUP);
-			_G(det)->stop_detail(6);
+			_G(det)->stopDetail(6);
 			clear_prog_ani();
 			switchRoom(1);
 			startAniBlock(2, ABLOCK0);

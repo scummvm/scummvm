@@ -91,7 +91,7 @@ int16 Room67::use_grammo() {
 			startAadWait(614);
 
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-		_G(det)->stop_detail(0);
+		_G(det)->stopDetail(0);
 		showCur();
 	}
 	return action_flag;
@@ -164,7 +164,7 @@ int16 Room67::talk_papagei() {
 			autoMove(4, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			_G(gameState).R67PapageiWeg = true;
-			_G(det)->stop_detail(1);
+			_G(det)->stopDetail(1);
 			_G(det)->del_static_ani(1);
 			_G(det)->showStaticSpr(0);
 			invent_2_slot(PAPAGEI_INV);

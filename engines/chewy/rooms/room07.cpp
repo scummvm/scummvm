@@ -87,7 +87,7 @@ void Room7::bell() {
 		startSetAILWait(12, 1, ANI_FRONT);
 		startSetAILWait(11, 1, ANI_FRONT);
 		_G(det)->hideStaticSpr(7);
-		_G(det)->stop_detail(5);
+		_G(det)->stopDetail(5);
 		setPersonPos(95, 94, P_CHEWY, P_RIGHT);
 		_G(gameState)._personHide[P_CHEWY] = false;
 	} else if (_G(gameState).R7BellCount == 1) {
@@ -98,7 +98,7 @@ void Room7::bell() {
 		startSetAILWait(10, 1, ANI_FRONT);
 		_G(det)->startDetail(13, 1, ANI_FRONT);
 		setPersonPos(95, 94, P_CHEWY, P_RIGHT);
-		_G(det)->stop_detail(5);
+		_G(det)->stopDetail(5);
 
 		_G(gameState)._personHide[P_CHEWY] = false;
 		_G(flags).NoScroll = true;
@@ -108,7 +108,7 @@ void Room7::bell() {
 		_G(det)->startDetail(0, 255, ANI_FRONT);
 		startSetAILWait(13, 1, ANI_FRONT);
 		flic_cut(FCUT_001);
-		_G(det)->stop_detail(0);
+		_G(det)->stopDetail(0);
 		_G(gameState).scrollx = 0;
 		_G(gameState).scrolly = 0;
 		setPersonPos(114, 138, P_CHEWY, -1);
@@ -133,7 +133,7 @@ void Room7::bell() {
 		_G(det)->load_taf_seq(192, 74, nullptr);
 		_G(det)->startDetail(14, 1, ANI_FRONT);
 		setPersonPos(95, 94, P_CHEWY, P_RIGHT);
-		_G(det)->stop_detail(5);
+		_G(det)->stopDetail(5);
 		_G(gameState)._personHide[P_CHEWY] = false;
 
 		_G(flags).NoScroll = true;
@@ -143,7 +143,7 @@ void Room7::bell() {
 		waitDetail(14);
 		startAniBlock(4, ABLOCK10);
 		_G(det)->hideStaticSpr(7);
-		_G(det)->stop_detail(0);
+		_G(det)->stopDetail(0);
 		setPersonPos(181, 130, P_CHEWY, P_RIGHT);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		_G(flags).NoScroll = false;

@@ -300,7 +300,7 @@ void handleDialogCloseupMenu() {
 					_G(ads_blk_nr) = an_blk->_blkNr;
 					_G(dialogCloseupItemPtr) = _G(atds)->dialogCloseupItemPtr(_G(ads_dia_nr), _G(ads_blk_nr), &_G(ads_item_nr));
 				}
-				_G(det)->stop_detail(_G(talk_start_ani));
+				_G(det)->stopDetail(_G(talk_start_ani));
 				_G(det)->showStaticSpr(_G(talk_hide_static));
 				_G(talk_start_ani) = -1;
 				_G(talk_hide_static) = -1;

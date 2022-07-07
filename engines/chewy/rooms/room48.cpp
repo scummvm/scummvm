@@ -134,7 +134,7 @@ void Room48::setup_func() {
 							hideCur();
 							_G(room)->set_timer_status(255, TIMER_STOP);
 							_G(room)->set_timer_status(0, TIMER_STOP);
-							_G(det)->stop_detail(0);
+							_G(det)->stopDetail(0);
 							_G(det)->del_static_ani(0);
 							startSetAILWait(2, 1, ANI_FRONT);
 							_G(det)->stopSound(0);

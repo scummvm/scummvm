@@ -168,7 +168,7 @@ void Room22::get_bork() {
 		startAniBlock(2, ABLOCK14);
 		setPersonPos(171, 120, P_CHEWY, P_LEFT);
 		startAadWait(11);
-		_G(det)->stop_detail(3);
+		_G(det)->stopDetail(3);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		_G(atds)->setControlBit(81, ATS_ACTIVE_BIT);
 		invent_2_slot(BORK_INV);

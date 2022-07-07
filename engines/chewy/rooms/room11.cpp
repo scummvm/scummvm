@@ -66,7 +66,7 @@ void Room11::entry() {
 			startAniBlock(2, ABLOCK17);
 			autoMove(8, P_CHEWY);
 			startAadWait(31);
-			_G(det)->stop_detail(9);
+			_G(det)->stopDetail(9);
 		}
 		_G(det)->showStaticSpr(8);
 		if (!_G(flags).LoadGame)
@@ -125,7 +125,7 @@ void Room11::chewy_bo_use() {
 		_G(det)->hideStaticSpr(8);
 		startAniBlock(2, ABLOCK17);
 		startAadWait(32);
-		_G(det)->stop_detail(9);
+		_G(det)->stopDetail(9);
 		_G(det)->showStaticSpr(8);
 		autoMove(6, P_CHEWY);
 
@@ -183,7 +183,7 @@ void Room11::get_card() {
 		_G(obj)->addInventory(_G(gameState).R11IdCardNr, &_G(room_blk));
 
 		_G(cur)->setInventoryCursor(_G(gameState).R11IdCardNr);
-		_G(det)->stop_detail(0);
+		_G(det)->stopDetail(0);
 		_G(atds)->set_ats_str(83, TXT_MARK_LOOK, 0, ATS_DATA);
 		_G(atds)->set_ats_str(84, TXT_MARK_LOOK, 0, ATS_DATA);
 	}

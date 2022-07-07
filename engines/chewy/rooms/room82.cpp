@@ -232,7 +232,7 @@ void Room82::proc8() {
 	_G(gameState)._personHide[P_NICHELLE] = true;
 	_G(det)->startDetail(10, 255, false);
 	startAadWait(625);
-	_G(det)->stop_detail(10);
+	_G(det)->stopDetail(10);
 	_G(gameState)._personHide[P_NICHELLE] = false;
 	startAadWait(448);
 	_G(det)->del_static_ani(4);
