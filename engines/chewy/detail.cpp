@@ -56,10 +56,8 @@ bool SoundDefBlk::load(Common::SeekableReadStream *src) {
 	int i;
 
 	src->skip(MAX_SOUNDS * 2);	// sound_enable flags
-	for (i = 0; i < MAX_SOUNDS; ++i) {
+	for (i = 0; i < MAX_SOUNDS; ++i)
 		sound_index[i] = src->readSint16LE();
-		debug("Sound %d: %d", i, sound_index[i]);
-	}
 	for (i = 0; i < MAX_SOUNDS; ++i)
 		sound_start[i] = src->readSint16LE();
 	for (i = 0; i < MAX_SOUNDS; ++i)
