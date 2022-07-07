@@ -354,6 +354,11 @@ void Atdsys::load_atds(int16 chunkNr, int16 mode) {
 bool Atdsys::start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int16 *vocNr) {
 	assert(mode == ATS_DATA || mode == INV_USE_DATA || mode == INV_USE_DEF);
 
+	EVENTS_CLEAR;
+	g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
+	g_events->_kbInfo._keyCode = '\0';
+	_G(minfo).button = 0;
+
 	*vocNr = -1;
 
 	_atsv.shown = false;
@@ -397,11 +402,14 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
 			case Common::KEYCODE_RETURN:
 			case Common::MOUSE_BUTTON_LEFT:
 				if (!_mousePush) {
+					EVENTS_CLEAR;
+					g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
+					g_events->_kbInfo._keyCode = '\0';
+					_G(minfo).button = 0;
+
 					if (_atsv._silentCount <= 0 && _atsv._delayCount > _printDelayCount1) {
 						_mousePush = true;
 						_atsv._delayCount = 0;
-						g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
-						g_events->_kbInfo._keyCode = '\0';
 					}
 				}
 				break;
@@ -496,6 +504,11 @@ int16 Atdsys::start_aad(int16 diaNr) {
 	if (_aadv._dialog)
 		stopAad();
 
+	EVENTS_CLEAR;
+	g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
+	g_events->_kbInfo._keyCode = '\0';
+	_G(minfo).button = 0;
+
 	if (_atdsMem[AAD_HANDLE]) {
 		_aadv._ptr = _atdsMem[AAD_HANDLE];
 		aad_search_dia(diaNr, &_aadv._ptr);
@@ -540,14 +553,15 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_RETURN:
 			case Common::MOUSE_BUTTON_LEFT:
-				EVENTS_CLEAR;
-
 				if (!_mousePush) {
+					EVENTS_CLEAR;
+					g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
+					g_events->_kbInfo._keyCode = '\0';
+					_G(minfo).button = 0;
+
 					if (_aadv._silentCount <= 0 && _aadv._delayCount > _printDelayCount1) {
 						_mousePush = true;
 						_aadv._delayCount = 0;
-						g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
-						g_events->_kbInfo._keyCode = '\0';
 					}
 				}
 				break;
@@ -716,9 +730,9 @@ void Atdsys::aad_search_dia(int16 diaNr, char **ptr) {
 
 bool  Atdsys::startDialogCloseup(int16 diaNr) {
 	bool ret = false;
+	bool end = false;
 
 	load_atds(diaNr, DIALOG_CLOSEUP_DATA);
-	bool end = false;
 
 	if (_atdsMem[ADS_HANDLE][0] == (char)BLOCKENDE &&
 		    _atdsMem[ADS_HANDLE][1] == (char)BLOCKENDE &&
