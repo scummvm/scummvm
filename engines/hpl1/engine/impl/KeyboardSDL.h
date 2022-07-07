@@ -30,8 +30,14 @@
 
 #include "hpl1/engine/input/Keyboard.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include <list>
-#include <vector>
+#include "common/bitarray.h"
+#include "common/queue.h"
+
+namespace Common {
+
+class Event;
+
+}
 
 namespace hpl {
 
@@ -54,16 +60,13 @@ public:
 	eKey StringToKey(tString);
 
 private:
-	eKey SDLToKey(int alKey);
-	void ClearKeyList();
+	void processEvent(const Common::Event &ev);
 	eKey AsciiToKey(int alChar);
-	eKeyModifier mModifier;
 
-	std::vector<bool> mvKeyArray;
-
-	std::list<cKeyPress> mlstKeysPressed;
-
-	cLowLevelInputSDL *mpLowLevelInputSDL;
+	eKeyModifier _modifiers;
+	Common::BitArray _downKeys;
+	Common::Queue<cKeyPress> _pressedKeys;
+	cLowLevelInputSDL *_lowLevelSystem;
 };
 
 }; // namespace hpl
