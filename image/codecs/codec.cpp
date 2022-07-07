@@ -205,7 +205,7 @@ Codec *createBitmapCodec(uint32 tag, uint32 streamTag, int width, int height, in
 
 	switch (tag) {
 	case SWAP_CONSTANT_32(0):
-		return new BitmapRawDecoder(width, height, bitsPerPixel, true);
+		return new BitmapRawDecoder(width, height, bitsPerPixel, false);
 	case SWAP_CONSTANT_32(1):
 		return new MSRLEDecoder(width, height, bitsPerPixel);
 	case SWAP_CONSTANT_32(2):
