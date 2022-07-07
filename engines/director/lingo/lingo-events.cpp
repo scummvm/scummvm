@@ -127,12 +127,15 @@ void Movie::queueSpriteEvent(Common::Queue<LingoEvent> &queue, LEvent event, int
 	if (sprite->_scriptId.member) {
 		ScriptContext *script = getScriptContext(kScoreScript, sprite->_scriptId);
 		if (script) {
-			// In D3 the event lingo is not contained in a handler
-			// If sprite is immediate, its script is run on mouseDown, otherwise on mouseUp
-			if (((event == kEventMouseDown && sprite->_immediate) || (event == kEventMouseUp && !sprite->_immediate))
-					&& script->_eventHandlers.contains(kEventGeneric)) {
-				queue.push(LingoEvent(kEventGeneric, eventId, kScoreScript, sprite->_scriptId, false, spriteId));
+			if (script->_eventHandlers.contains(kEventGeneric)) {
+				// D3-style sprite script, not contained in a handler
+				// If sprite is immediate, its script is run on mouseDown, otherwise on mouseUp
+				if ((event == kEventMouseDown && sprite->_immediate) || (event == kEventMouseUp && !sprite->_immediate)) {
+					queue.push(LingoEvent(kEventGeneric, eventId, kScoreScript, sprite->_scriptId, false, spriteId));
+				}
+				return; // Do not execute the cast script if there is a D3-style sprite script
 			} else if (script->_eventHandlers.contains(event)) {
+				// D4-style event handler
 				queue.push(LingoEvent(event, eventId, kScoreScript, sprite->_scriptId, false, spriteId));
 			}
 		}
