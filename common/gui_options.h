@@ -59,6 +59,7 @@
 #define GUIO_RENDERATARIST		"\x22"
 #define GUIO_RENDERMACINTOSH	"\x23"
 #define GUIO_RENDERMACINTOSHBW	"\x28"	// Setting this to 0x28 is not ideal, but there is no free slot left. Maybe we need to migrate to 3-digit numbers...
+#define GUIO_RENDERCGACOMP		"\x29"
 
 #define GUIO_LINKSPEECHTOSFX "\x24"
 #define GUIO_LINKMUSICTOSFX  "\x25"

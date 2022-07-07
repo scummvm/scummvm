@@ -63,12 +63,13 @@ const struct GameOpt {
 	{ GUIO_RENDERHERCGREEN,		"hercGreen" },
 	{ GUIO_RENDERHERCAMBER,		"hercAmber" },
 	{ GUIO_RENDERCGA,			"cga" },
+	{ GUIO_RENDERCGACOMP,		"cgacomp" },
 	{ GUIO_RENDEREGA,			"ega" },
 	{ GUIO_RENDERVGA,			"vga" },
 	{ GUIO_RENDERAMIGA,			"amiga" },
 	{ GUIO_RENDERFMTOWNS,		"fmtowns" },
 	{ GUIO_RENDERPC9821,		"pc9821" },
-	{ GUIO_RENDERPC9801,		 "pc9801" },
+	{ GUIO_RENDERPC9801,		"pc9801" },
 	{ GUIO_RENDERAPPLE2GS,		"2gs" },
 	{ GUIO_RENDERATARIST,		"atari" },
 	{ GUIO_RENDERMACINTOSH,		"macintosh" },
@@ -145,7 +146,7 @@ const String getGameGUIOptionsDescription(const String &options) {
 	String res;
 
 	for (int i = 0; g_gameOptions[i].desc; i++)
-		if (options.contains(g_gameOptions[i].option[0]))
+		if (options.contains(g_gameOptions[i].option[0])) 
 			res += String(g_gameOptions[i].desc) + " ";
 
 	res.trim();
