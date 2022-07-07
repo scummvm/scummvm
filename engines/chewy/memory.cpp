@@ -55,7 +55,7 @@ TafInfo *Memory::taf_adr(const char *filename) {
 }
 
 TafSeqInfo *Memory::taf_seq_adr(int16 image_start, int16 image_anz) {
-	TafSeqInfo *ts_info = nullptr;
+	TafSeqInfo *ts_info;
 	SpriteResource *res = new SpriteResource(CH_SPZ_FILE);
 	uint32 size = 0;
 
@@ -74,7 +74,7 @@ TafSeqInfo *Memory::taf_seq_adr(int16 image_start, int16 image_anz) {
 	ts_info->count = image_anz;
 	ts_info->image = (byte **)(tmp1 + sizeof(TafSeqInfo));
 	ts_info->correction = (int16 *)(tmp1 + size);
-	byte *sp_ptr = tmp1 + (((uint32)sizeof(TafSeqInfo)) + (image_anz * sizeof(char *)));
+	byte *sp_ptr = tmp1 + ((sizeof(TafSeqInfo)) + (image_anz * sizeof(char *)));
 
 	for (int16 i = 0; i < image_anz; i++) {
 		ts_info->image[i] = sp_ptr;
