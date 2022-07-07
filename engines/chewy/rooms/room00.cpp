@@ -113,8 +113,9 @@ bool Room0::timer(int16 timerNr, int16 aniNr) {
 			_G(uhr)->resetTimer(timerNr, 0);
 			_G(flags).AutoAniPlay = false;
 		}
-	} else if (timerNr == 3)
+	} else if (timerNr != 3) {
 		retval = true;
+	}
 
 	return retval;
 }
