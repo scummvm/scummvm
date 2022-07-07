@@ -51,9 +51,6 @@ private:
 };
 
 class FontMgr {
-private:
-	ChewyFont *_font;
-
 public:
 	FontMgr() : _font(nullptr) {};
 	virtual ~FontMgr() {};
@@ -62,6 +59,9 @@ public:
 
 	void setFont(ChewyFont *font) { _font = font; }
 	ChewyFont *getFont() { return _font; }
+
+private:
+	ChewyFont *_font;
 };
 
 } // namespace Chewy
