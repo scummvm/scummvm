@@ -127,11 +127,11 @@ Common::SeekableReadStream *LibFile::createReadStreamForMember(const Common::Pat
 
 	_libfile->seek(entry->start);
 	_libfile->read(data, entry->size);
+	name.toLowercase(); // just in case
 
 	if (name.hasSuffix(".raw")) {
 		for (uint32 i = 0; i < entry->size; i++) {
-			if (data[i] == '\n')
-				data[i] = data[i] ^ 0xfe;
+			data[i] = data[i] ^ 0xfe;
 		}
 	} else if (_encrypted) {
 		for (uint32 i = 0; i < entry->size; i++) {
