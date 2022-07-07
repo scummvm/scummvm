@@ -154,6 +154,7 @@ protected:
 
 	void createTextRenderer(GlyphRenderer_v7 *gr) override;
 	void enqueueText(const byte *text, int x, int y, byte color, byte charset, TextStyleFlags flags);
+	void drawTextImmediately(const byte *text, int x, int y, byte color, byte charset, TextStyleFlags flags);
 	void drawBlastTexts() override;
 	void showMessageDialog(const byte *msg) override;
 

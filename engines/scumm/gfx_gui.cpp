@@ -147,7 +147,7 @@ Common::KeyState ScummEngine_v7::showBannerAndPause(int bannerId, int32 waitTime
 
 	// Draw it!
 	drawInternalGUIControl(0, 0);
-	drawDirtyScreenParts();
+	ScummEngine::drawDirtyScreenParts();
 
 	// Wait until the engine receives a new Keyboard or Mouse input,
 	// unless we have specified a positive waitTime: in that case, the banner
@@ -190,7 +190,8 @@ void ScummEngine_v7::clearBanner() {
 		}
 
 		markRectAsDirty(_virtscr[kMainVirtScreen].number, 0, _screenWidth + 8, _screenTop, _screenHeight + _screenTop);
-		drawDirtyScreenParts();
+		ScummEngine::drawDirtyScreenParts();
+		_system->updateScreen();
 	}
 }
 
@@ -292,7 +293,7 @@ void ScummEngine_v7::drawInternalGUIControl(int id, bool useSecondaryColor) {
 
 		textYPos = relCentY + (boxSizeY - textHeight) / 2 + 1;
 
-		// Finally, choose the color and enqueue the text message
+		// Finally, choose the color and draw the text message
 		if (useSecondaryColor)
 			lineColor = ctrl->secondaryLineColor;
 		else
@@ -303,7 +304,7 @@ void ScummEngine_v7::drawInternalGUIControl(int id, bool useSecondaryColor) {
 		else
 			strcpy(buttonString, "null button");
 
-		enqueueText((const byte *)buttonString, textXPos, textYPos, lineColor, 1, (TextStyleFlags)centerFlag);
+		drawTextImmediately((const byte *)buttonString, textXPos, textYPos, lineColor, 1, (TextStyleFlags)centerFlag);
 
 		// Restore the previous charset
 		if (oldId)
@@ -364,7 +365,7 @@ void ScummEngine_v7::confirmExitDialog() {
 		int oldId = _charset->getCurID();
 		_charset->setCurID(1);
 
-		boxWidth = ((_textV7->getStringHeight(msgLabelPtr) + 32) & 0xFFF0) + 8;
+		boxWidth = ((_textV7->getStringWidth(msgLabelPtr) + 32) & 0xFFF0) + 8;
 		if (boxWidth <= 400)
 			boxWidth = 400;
 
@@ -386,10 +387,23 @@ void ScummEngine_v7::confirmExitDialog() {
 			_emptyMsg,
 			true);
 
+		// Save the pixels which will be overwritten by the dialog,
+		// so that we can restore them later. Note that the interpreter
+		// doesn't do this, but we have to...
+		if (!_bannerMem) {
+			_bannerMemSize = _screenWidth * _screenHeight;
+			_bannerMem = (byte *)malloc(_bannerMemSize * sizeof(byte));
+			if (_bannerMem)
+				memcpy(
+					_bannerMem,
+					_virtscr[kMainVirtScreen].getPixels(0, _screenTop),
+					_bannerMemSize);
+		}
+
 		drawInternalGUIControl(0, 0);
 
 		// The text is drawn as a separate entity
-		enqueueText((const byte *)msgLabelPtr, 320, 200, getBannerColor(32), 1, (TextStyleFlags) true);
+		drawTextImmediately((const byte *)msgLabelPtr, 320, 200, getBannerColor(32), 1, (TextStyleFlags) true);
 
 		// Now set up and draw the Yes and No buttons...
 		if (_textV7->getStringWidth(noLabelPtr) <= _textV7->getStringWidth(yesLabelPtr)) {
@@ -439,7 +453,7 @@ void ScummEngine_v7::confirmExitDialog() {
 		drawInternalGUIControl(0, 0);
 
 		// Done, draw everything to screen!
-		drawDirtyScreenParts();
+		ScummEngine::drawDirtyScreenParts();
 
 		// Stay in the dialog while we keep pressing CTRL-C...
 		Common::KeyState ks;
@@ -467,8 +481,24 @@ void ScummEngine_v7::confirmExitDialog() {
 		// let's wait half that time...
 		waitForTimer(45 * 2);
 
-		// Since we're not explicitly clearing the dialog graphics, set up a full redraw...
-		_fullRedraw = true;
+		// Again, he interpreter does not explicitly restore the screen
+		// after finishing displaying this query dialog, but we have to...
+		if (_bannerMem) {
+			memcpy(
+				_virtscr[kMainVirtScreen].getPixels(0, _screenTop),
+				_bannerMem,
+				_bannerMemSize);
+			free(_bannerMem);
+			_bannerMem = nullptr;
+
+			if (isSmushActive()) {
+				return;
+			}
+
+			markRectAsDirty(_virtscr[kMainVirtScreen].number, 0, _screenWidth + 8, _screenTop, _screenHeight + _screenTop);
+			ScummEngine::drawDirtyScreenParts();
+			_system->updateScreen();
+		}
 
 		// Finally, resume the engine, clear the input state, and restore the charset.
 		pt.clear();

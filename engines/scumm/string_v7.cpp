@@ -428,6 +428,32 @@ void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byt
 	bt.flags = flags;
 }
 
+void ScummEngine_v7::drawTextImmediately(const byte *text, int x, int y, byte color, byte charset, TextStyleFlags flags) {
+	// This function allows for a string to be immediately
+	// drawn on the screen without having to enqueueing it.
+	byte msg[256];
+	Common::Rect rect = _defaultTextClipRect;
+	int effX = x;
+	TextStyleFlags effFlags = flags;
+	VirtScreen *vs = &_virtscr[kMainVirtScreen];
+
+	convertMessageToString(text, msg, sizeof(msg));
+
+	_charset->setCurID(charset);
+
+	// If a Hebrew String comes up that is still marked as kStyleAlignLeft we fix it here...
+	if (_language == Common::HE_ISR && !(flags & (kStyleAlignCenter | kStyleAlignRight))) {
+		effFlags = (TextStyleFlags)(flags | kStyleAlignRight);
+		effX = _screenWidth - 1 - effX;
+	}
+
+	_textV7->drawString((const char *)msg, (byte *)vs->getPixels(0, _screenTop), rect, effX, y, vs->pitch, color, effFlags);
+
+	rect.top += _screenTop;
+	rect.bottom += _screenTop;
+	markRectAsDirty(vs->number, rect);
+}
+
 void ScummEngine_v7::drawBlastTexts() {
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 
