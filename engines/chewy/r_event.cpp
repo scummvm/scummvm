@@ -672,7 +672,7 @@ static void playIntroSequence() {
 			g_engine->_sound->playRoomMusic(260);
 
 		if (introDialog[i] != -1)
-			start_aad(introDialog[i], -1);
+			start_aad(introDialog[i], -1, true);
 
 		ret = g_engine->_video->playVideo(introVideo[i], false) ? 0 : -1;
 		_G(atds)->stopAad();
@@ -734,7 +734,7 @@ void flic_cut(int16 nr) {
 		if (!_G(gameState).R43GetPgLady) {
 			g_engine->_video->playVideo(FCUT_060);
 		} else {
-			start_aad(623, -1);
+			start_aad(623, -1, true);
 			g_engine->_video->playVideo(FCUT_061);
 			g_engine->_video->playVideo(FCUT_062);
 		}

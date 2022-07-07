@@ -500,9 +500,11 @@ void Atdsys::delControlBit(int16 txtNr, int16 bitIdx) {
 	_text->delControlBit(txtNr, bitIdx);
 }
 
-int16 Atdsys::start_aad(int16 diaNr) {
+int16 Atdsys::start_aad(int16 diaNr, bool continueWhenSpeechEnds) {
 	if (_aadv._dialog)
 		stopAad();
+
+	_continueWhenSpeechEnds = continueWhenSpeechEnds;
 
 	EVENTS_CLEAR;
 	g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
@@ -624,7 +626,7 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 					g_engine->_sound->playSpeech(_atdsv._vocNr, false);
 				}
 
-				if (_atdsv._vocNr >= 0 && !g_engine->_sound->isSpeechActive())
+				if (_continueWhenSpeechEnds && _atdsv._vocNr >= 0 && !g_engine->_sound->isSpeechActive())
 					stopAad();
 			}
 
