@@ -72,8 +72,8 @@ void game_main() {
 void alloc_buffers() {
 	_G(workpage) = (byte *)MALLOC(64004l);
 	_G(pal) = (byte *)MALLOC(768l);
-	_G(Ci).tempArea = (byte *)MALLOC(64004l);
-	_G(det)->set_taf_ani_mem(_G(Ci).tempArea);
+	_G(tempArea) = (byte *)MALLOC(64004l);
+	_G(det)->set_taf_ani_mem(_G(tempArea));
 }
 
 void free_buffers() {
@@ -85,7 +85,7 @@ void free_buffers() {
 	free(_G(menutaf));
 	free(_G(chewy));
 
-	free(_G(Ci).tempArea);
+	free(_G(tempArea));
 	free(_G(pal));
 	free(_G(workpage));
 }

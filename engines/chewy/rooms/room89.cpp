@@ -95,13 +95,13 @@ void Room89::entry() {
 		// Squash screen into a single point at the center
 		int edi = -20;
 		int var24 = 0;
-		_G(out)->spriteSave(_G(Ci).tempArea, 0, 0, 320, 200);
+		_G(out)->spriteSave(_G(tempArea), 0, 0, 320, 200);
 		for (int esi = 0; esi < 100; ++esi) {
 			edi -= 3;
 			var24 -= 2;
 			_G(out)->setPointer(_G(workptr));
 			_G(out)->cls();
-			_G(out)->scale_set(_G(Ci).tempArea, ABS(edi) / 2, ABS(var24) / 2, edi, var24, _G(scr_width));
+			_G(out)->scale_set(_G(tempArea), ABS(edi) / 2, ABS(var24) / 2, edi, var24, _G(scr_width));
 			_G(out)->setPointer(nullptr);
 			_G(out)->copyToScreen();
 			g_events->delay(30);
@@ -114,7 +114,7 @@ void Room89::entry() {
 		// Those strings are also displayed in the the German version
 		_G(out)->printxy(70, 80, 15, 0, 0, "Thank you for playing");
 		_G(out)->printxy(70, 100, 15, 0, 0, "  CHEWY Esc from F5");
-		_G(out)->spriteSave(_G(Ci).tempArea, 0, 0, 320, 200);
+		_G(out)->spriteSave(_G(tempArea), 0, 0, 320, 200);
 		edi = -300;
 		int var30 = -200;
 
@@ -123,7 +123,7 @@ void Room89::entry() {
 			var30 += 2;
 			_G(out)->setPointer(_G(workptr));
 			_G(out)->cls();
-			_G(out)->scale_set(_G(Ci).tempArea, ABS(edi) / 2, ABS(var30) / 2, edi, var30, _G(scr_width));
+			_G(out)->scale_set(_G(tempArea), ABS(edi) / 2, ABS(var30) / 2, edi, var30, _G(scr_width));
 			_G(out)->setPointer(nullptr);
 			_G(out)->copyToScreen();
 			g_events->delay(30);
