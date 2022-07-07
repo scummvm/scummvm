@@ -378,26 +378,6 @@ void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::V
 			vertices.push_back(Math::Vector3d(origin.x() + dx,	origin.y() + dy, origin.z() + dz));
 			vertices.push_back(Math::Vector3d(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z()));
 			renderFace(vertices);
-
-			// tglBegin(TGL_TRIANGLES);
-			// tglVertex3f(origin.x(),	origin.y(),	origin.z());
-			// if (size.x() == 0)
-			// 	tglVertex3f(origin.x(),	origin.y() + size.y(), origin.z());
-			// else if (size.y() == 0)
-			// 	tglVertex3f(origin.x() + size.x(),	origin.y(), origin.z());
-			// else
-			// 	tglVertex3f(origin.x() + size.x(),	origin.y(), origin.z());
-			// tglVertex3f(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z());
-
-			// tglVertex3f(origin.x(),	origin.y(),	origin.z());
-			// if (size.x() == 0)
-			// 	tglVertex3f(origin.x(),	origin.y(), origin.z()  + size.z());
-			// else if (size.y() == 0)
-			// 	tglVertex3f(origin.x() + size.x(),	origin.y(), origin.z() + size.y());
-			// else
-			// 	tglVertex3f(origin.x(),	origin.y() + size.y(), origin.z());
-			// tglVertex3f(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z());
-			// tglEnd();
 		}
 	}
 
@@ -485,7 +465,7 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 
 	Common::Array<Math::Vector3d> face;
 	uint8 r, g, b;
-	_palette->getRGBAt((*colours)[1], r, g, b);
+	_palette->getRGBAt((*colours)[0], r, g, b);
 	tglColor3ub(r, g, b);
 
 	face.push_back(vertices[5]);
@@ -495,29 +475,29 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 	renderFace(face);
 	face.clear();
 
-	_palette->getRGBAt((*colours)[0], r, g, b);
+	_palette->getRGBAt((*colours)[1], r, g, b);
 	tglColor3ub(r, g, b);
 
 	face.push_back(vertices[7]);
 	face.push_back(vertices[4]);
 	face.push_back(vertices[0]);
 	face.push_back(vertices[3]);
-	renderFace(face);
-	face.clear();
-
-	_palette->getRGBAt((*colours)[3], r, g, b);
-	tglColor3ub(r, g, b);
-
-	face.push_back(vertices[4]);
-	face.push_back(vertices[5]);
-	face.push_back(vertices[1]);
-	face.push_back(vertices[0]);
 	renderFace(face);
 	face.clear();
 
 	_palette->getRGBAt((*colours)[2], r, g, b);
 	tglColor3ub(r, g, b);
 
+	face.push_back(vertices[4]);
+	face.push_back(vertices[5]);
+	face.push_back(vertices[1]);
+	face.push_back(vertices[0]);
+	renderFace(face);
+	face.clear();
+
+	_palette->getRGBAt((*colours)[3], r, g, b);
+	tglColor3ub(r, g, b);
+
 	face.push_back(vertices[6]);
 	face.push_back(vertices[7]);
 	face.push_back(vertices[3]);
@@ -525,7 +505,7 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 	renderFace(face);
 	face.clear();
 
-	_palette->getRGBAt((*colours)[5], r, g, b);
+	_palette->getRGBAt((*colours)[4], r, g, b);
 	tglColor3ub(r, g, b);
 
 	face.push_back(vertices[0]);
@@ -535,7 +515,7 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 	renderFace(face);
 	face.clear();
 
-	_palette->getRGBAt((*colours)[4], r, g, b);
+	_palette->getRGBAt((*colours)[5], r, g, b);
 	tglColor3ub(r, g, b);
 
 	face.push_back(vertices[7]);
