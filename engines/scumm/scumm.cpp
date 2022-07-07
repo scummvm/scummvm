@@ -2391,8 +2391,6 @@ void ScummEngine::scummLoop(int delta) {
 		}
 	}
 
-	if (VAR_GAME_LOADED != 0xFF)
-		VAR(VAR_GAME_LOADED) = 0;
 load_game:
 	scummLoop_handleSaveLoad();
 
