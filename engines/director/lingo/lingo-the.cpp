@@ -827,7 +827,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 
 			if (channel->_widget) {
 				d.type = STRING;
-				d.u.s = new Common::String(Common::convertFromU32String(((Graphics::MacText *)channel->_widget)->getSelection()));
+				d.u.s = new Common::String(Common::convertFromU32String(((Graphics::MacText *)channel->_widget)->getSelection(false, false)));
 			}
 		}
 		break;
