@@ -436,13 +436,6 @@ void cGame::Run() {
 		// Log("----\nCreations made: %d\n------\n",cMemoryManager::GetCreationCount());
 		//}
 
-		// FIXME: TODO: Remove once events are being processed
-		Common::Event event;
-
-		g_system->getEventManager()->pollEvent(event);
-		if (event.type == Common::EVENT_QUIT)
-			break;
-
 		g_system->delayMillis(10);
 	}
 	Log("--------------------------------------------------------\n\n");
