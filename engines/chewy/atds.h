@@ -228,7 +228,7 @@ public:
 	void delControlBit(int16 txtNr, int16 bitIdx);
 	void set_ats_str(int16 txtNr, int16 txtMode, int16 strNr, int16 mode);
 	void set_ats_str(int16 txtNr, int16 strNr, int16 mode);
-	int16 start_aad(int16 diaNr);
+	int16 start_aad(int16 diaNr, bool continueWhenSpeechEnds = false);
 	void stopAad();
 	void print_aad(int16 scrX, int16 scrY);
 	int16 aadGetStatus();
@@ -280,6 +280,7 @@ private:
 	DialogCloseupNextBlock _dialogCloseupNextBlock;
 	uint8 _dialogCloseupStack[DIALOG_CLOSEUP_STACK_SIZE] = { 0 };
 	int16 _dialogCloseupStackPtr;
+	bool _continueWhenSpeechEnds = false;
 
 	SplitStringInit _ssi[AAD_MAX_PERSON] = {
 		{ 0, 100, 0 },

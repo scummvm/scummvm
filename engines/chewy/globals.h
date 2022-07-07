@@ -477,7 +477,7 @@ void startAadWait(int16 diaNr);
 void start_aad(int16 diaNr);
 void aadWait(int16 strNr);
 void startDialogCloseupWait(int16 diaNr);
-void start_aad(int16 diaNr, int16 ssiNr);
+void start_aad(int16 diaNr, int16 ssiNr, bool continueWhenSpeechEnds = false);
 void wait_auto_obj(int16 nr);
 
 void stop_auto_obj(int16 nr);

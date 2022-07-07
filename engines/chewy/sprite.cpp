@@ -558,14 +558,14 @@ void aadWait(int16 strNr) {
 	g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
 }
 
-void start_aad(int16 diaNr, int16 ssiNr) {
+void start_aad(int16 diaNr, int16 ssiNr, bool continueWhenSpeechEnds) {
 	if (ssiNr == 0) {
 		int16 x = _G(moveState)[P_CHEWY].Xypos[0] - _G(gameState).scrollx + _G(spieler_mi)[P_CHEWY].HotX;
 		int16 y = _G(moveState)[P_CHEWY].Xypos[1] - _G(gameState).scrolly;
 		_G(atds)->set_split_win(0, x, y);
 	}
 
-	_G(atds)->start_aad(diaNr);
+	_G(atds)->start_aad(diaNr, continueWhenSpeechEnds);
 }
 
 void startDialogCloseupWait(int16 diaNr) {

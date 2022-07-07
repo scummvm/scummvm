@@ -119,7 +119,7 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 		// Room10::cut_serv
 		_G(atds)->print_aad(scrollx, scrolly);
 		if (frame == 31)
-			start_aad(107, 0);
+			start_aad(107, 0, true);
 		break;
 	case FCUT_009:
 	case FCUT_010:
@@ -136,7 +136,7 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 		if (num == FCUT_010) {
 			_G(atds)->print_aad(scrollx, scrolly);
 			if (frame == 43)
-				start_aad(106, 0);
+				start_aad(106, 0, true);
 		}
 		break;
 	case FCUT_032:
@@ -162,13 +162,13 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 
 		switch (frame) {
 		case 121:
-			start_aad(599, -1);
+			start_aad(599, -1, true);
 			break;
 		case 247:
-			start_aad(600, -1);
+			start_aad(600, -1, true);
 			break;
 		case 267:
-			start_aad(601, 0);
+			start_aad(601, 0, true);
 			break;
 		case 297:
 			//_G(in)->_hotkey = 1;
