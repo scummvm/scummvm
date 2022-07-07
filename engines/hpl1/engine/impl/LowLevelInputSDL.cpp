@@ -25,23 +25,19 @@
  * This file is part of HPL1 Engine.
  */
 
-#include "hpl1/engine/impl/LowLevelInputSDL.h"
-
 #include "hpl1/engine/impl/KeyboardSDL.h"
+#include "hpl1/engine/impl/LowLevelInputSDL.h"
 #include "hpl1/engine/impl/MouseSDL.h"
-
 #include "hpl1/engine/system/low_level_system.h"
+#include "common/events.h"
+#include "common/system.h"
 
 namespace hpl {
-
-//////////////////////////////////////////////////////////////////////////
-// CONSTRUCTORS
-//////////////////////////////////////////////////////////////////////////
 
 //-----------------------------------------------------------------------
 
 cLowLevelInputSDL::cLowLevelInputSDL(iLowLevelGraphics *apLowLevelGraphics) {
-	mpLowLevelGraphics = apLowLevelGraphics;
+	_lowLevelGraphics = apLowLevelGraphics;
 	LockInput(true);
 }
 
@@ -52,43 +48,29 @@ cLowLevelInputSDL::~cLowLevelInputSDL() {
 
 //-----------------------------------------------------------------------
 
-//////////////////////////////////////////////////////////////////////////
-// PUBLIC METHOD
-//////////////////////////////////////////////////////////////////////////
-
-//-----------------------------------------------------------------------
-
 void cLowLevelInputSDL::LockInput(bool abX) {
-#if 0
-  		SDL_WM_GrabInput(abX ? SDL_GRAB_ON : SDL_GRAB_OFF);
-#endif
+	g_system->lockMouse(abX);
 }
 
 //-----------------------------------------------------------------------
 
 void cLowLevelInputSDL::BeginInputUpdate() {
-#if 0
-  		//SDL_PumpEvents();
-
-		SDL_Event sdlEvent;
-
-		while(SDL_PollEvent(&sdlEvent)!=0)
-		{
-			mlstEvents.push_back(sdlEvent);
-		}
-#endif
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		_events.push_back(event);
+	}
 }
 
 //-----------------------------------------------------------------------
 
 void cLowLevelInputSDL::EndInputUpdate() {
-	mlstEvents.clear();
+	_events.clear();
 }
 
 //-----------------------------------------------------------------------
 
 iMouse *cLowLevelInputSDL::CreateMouse() {
-	return hplNew(cMouseSDL, (this, mpLowLevelGraphics));
+	return hplNew(cMouseSDL, (this, _lowLevelGraphics));
 }
 
 //-----------------------------------------------------------------------
