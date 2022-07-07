@@ -132,7 +132,7 @@ void MainMenu::execute() {
 void MainMenu::screenFunc() {
 	int vec = _G(det)->maus_vector(g_events->_mousePos.x + _G(gameState).scrollx, g_events->_mousePos.y + _G(gameState).scrolly);
 
-	if (_G(in)->getSwitchCode() == 28 || _G(minfo).button == 1) {
+	if (g_events->getSwitchCode() == 28 || _G(minfo).button == 1) {
 		_selection = vec;
 	}
 }

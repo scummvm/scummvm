@@ -26,7 +26,6 @@
 #include "chewy/events.h"
 #include "chewy/font.h"
 #include "chewy/globals.h"
-#include "chewy/main.h"
 #include "chewy/mcga_graphics.h"
 
 namespace Chewy {
@@ -929,6 +928,18 @@ void McgaGraphics::zoom_set(byte *source, int16 x, int16 y, int16 xDiff, int16 y
 			}
 		}
 	}
+}
+
+int16 McgaGraphics::findHotspot(const Common::Rect *hotspots) {
+	int16 i = 0;
+
+	do {
+		if (hotspots[i].contains(g_events->_mousePos))
+			return i;
+		i++;
+	} while (hotspots[i].left != -1);
+
+	return -1;
 }
 
 } // namespace Chewy

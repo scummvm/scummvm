@@ -88,7 +88,7 @@ void Cinema::execute() {
 
 		if (_G(minfo).button == 1 && !flag) {
 			flag = true;
-			switch (_G(in)->findHotspot(_G(cinematicsHotspots))) {
+			switch (_G(out)->findHotspot(_G(cinematicsHotspots))) {
 			case 0:
 				g_events->_kbInfo._scanCode = Common::KEYCODE_UP;
 				break;

@@ -25,9 +25,7 @@
 #include "chewy/events.h"
 #include "chewy/font.h"
 #include "chewy/globals.h"
-#include "chewy/main.h"
 #include "chewy/mcga_graphics.h"
-#include "chewy/mouse.h"
 #include "chewy/sound.h"
 #include "chewy/text.h"
 
@@ -394,10 +392,10 @@ void Atdsys::stop_ats() {
 void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
 	if (_atsv.shown) {
 		if (_atdsv._eventsEnabled) {
-			switch (_G(in)->getSwitchCode()) {
+			switch (g_events->getSwitchCode()) {
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_RETURN:
-			case MOUSE_LEFT:
+			case Common::MOUSE_BUTTON_LEFT:
 				if (!_mousePush) {
 					if (_atsv._silentCount <= 0 && _atsv._delayCount > _printDelayCount1) {
 						_mousePush = true;
@@ -538,10 +536,10 @@ void Atdsys::stopAad() {
 void Atdsys::print_aad(int16 scrX, int16 scrY) {
 	if (_aadv._dialog) {
 		if (_atdsv._eventsEnabled) {
-			switch (_G(in)->getSwitchCode()) {
+			switch (g_events->getSwitchCode()) {
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_RETURN:
-			case MOUSE_LEFT:
+			case Common::MOUSE_BUTTON_LEFT:
 				EVENTS_CLEAR;
 
 				if (!_mousePush) {

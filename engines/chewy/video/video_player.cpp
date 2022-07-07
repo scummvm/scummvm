@@ -24,7 +24,6 @@
 #include "chewy/cursor.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
-#include "chewy/mouse.h"
 #include "chewy/resource.h"
 #include "chewy/sound.h"
 #include "common/events.h"
@@ -89,7 +88,7 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 		// FIXME: We ignore mouse events because the game checks
 		// for left mouse down, instead of up, so releasing the
 		// mouse button results in video skipping
-		if (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE)
+		if (g_events->getSwitchCode() == Common::KEYCODE_ESCAPE)
 			skipVideo = true;
 
 		// Clear any pending keys
@@ -292,7 +291,7 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 			cfoDecoder->rewind();
 			_playCount++;
 		}
-		return (_G(in)->getSwitchCode() == 1) ? false : true;
+		return (g_events->getSwitchCode() == 1) ? false : true;
 	case FCUT_116:
 		if (cfoDecoder->endOfVideo() && _playCount < 6) {
 			cfoDecoder->rewind();

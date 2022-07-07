@@ -28,7 +28,6 @@
 #include "chewy/main.h"
 #include "chewy/mcga_graphics.h"
 #include "chewy/menus.h"
-#include "chewy/mouse.h"
 
 namespace Chewy {
 
@@ -284,8 +283,8 @@ void handleDialogCloseupMenu() {
 			}
 		}
 
-		switch (_G(in)->getSwitchCode()) {
-		case 255:
+		switch (g_events->getSwitchCode()) {
+		case Common::MOUSE_BUTTON_LEFT:
 		case Common::KEYCODE_RETURN:
 			if (curY < _G(ads_item_nr) && curY >= 0 && _G(ads_push) == false) {
 				_G(ads_push) = true;

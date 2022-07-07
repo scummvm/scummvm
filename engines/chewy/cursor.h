@@ -23,7 +23,6 @@
 #define CHEWY_CURSOR_H
 
 #include "chewy/globals.h"
-#include "chewy/mouse.h"
 
 namespace Chewy {
 

@@ -684,7 +684,7 @@ void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
 void kb_mov(int16 mode) {
 	bool ende = false;
 	while (!ende) {
-		switch (_G(in)->getSwitchCode()) {
+		switch (g_events->getSwitchCode()) {
 		case Common::KEYCODE_RIGHT:
 			if (g_events->_mousePos.x < 320 - _G(cur)->getCursorWidth())
 				_G(cur)->move(g_events->_mousePos.x + 2, g_events->_mousePos.y);
@@ -1129,7 +1129,7 @@ bool autoMove(int16 movNr, int16 playerNum) {
 				while (_G(mov)->auto_go_status()) {
 					if (SHOULD_QUIT)
 						return 0;
-					if (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE) {
+					if (g_events->getSwitchCode() == Common::KEYCODE_ESCAPE) {
 						if (_G(flags).ExitMov || _G(flags).BreakAMov) {
 							key = Common::KEYCODE_ESCAPE;
 							_G(mov)->stop_auto_go();
@@ -1148,7 +1148,7 @@ bool autoMove(int16 movNr, int16 playerNum) {
 				_G(mov)->get_mov_vector((int16 *)_G(spieler_mi)[playerNum].XyzStart, (int16 *)_G(spieler_mi)[playerNum].XyzEnd, _G(spieler_mi)[playerNum].Vorschub, &_G(moveState)[playerNum]);
 				get_phase(&_G(moveState)[playerNum], &_G(spieler_mi)[playerNum]);
 				while (!endLoopFl) {
-					if (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE || key == Common::KEYCODE_ESCAPE) {
+					if (g_events->getSwitchCode() == Common::KEYCODE_ESCAPE || key == Common::KEYCODE_ESCAPE) {
 						if (_G(flags).ExitMov || _G(flags).BreakAMov) {
 							_G(moveState)[playerNum].Count = 0;
 							movingFl = false;
@@ -1196,7 +1196,7 @@ void goAutoXy(int16 x, int16 y, int16 personNum, int16 mode) {
 		if (mode == ANI_WAIT) {
 			bool endLoopFl = false;
 			while (!endLoopFl) {
-				if (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE) {
+				if (g_events->getSwitchCode() == Common::KEYCODE_ESCAPE) {
 					if (_G(flags).ExitMov || _G(flags).BreakAMov) {
 						_G(moveState)[personNum].Count = 0;
 						move_status = false;
@@ -1537,7 +1537,7 @@ void get_user_key(int16 mode) {
 	_G(mouseLeftClick) = false;
 
 	if (!_G(inv_disp_ok)) {
-		switch (_G(in)->getSwitchCode()) {
+		switch (g_events->getSwitchCode()) {
 		case Common::KEYCODE_F5:
 		case Common::KEYCODE_SPACE:
 		case Common::KEYCODE_ESCAPE:

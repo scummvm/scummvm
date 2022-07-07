@@ -13,7 +13,6 @@ MODULE_OBJS = \
 	globals.o \
 	inits.o \
 	main.o \
-	mouse.o \
 	mcga_graphics.o \
 	memory.o \
 	menus.o \

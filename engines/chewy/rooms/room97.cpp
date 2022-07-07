@@ -23,7 +23,6 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
-#include "chewy/mouse.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room97.h"
 #include "chewy/sound.h"
@@ -682,7 +681,7 @@ void Room97::sensorAnim() {
 	
 	while (_G(det)->get_ani_status(16)) {
 		get_user_key(NO_SETUP);
-		if (_G(minfo).button == 1 || _G(in)->getSwitchCode() == 28) {
+		if (_G(minfo).button == 1 || g_events->getSwitchCode() == 28) {
 			if (_G(cur)->usingInventoryCursor())
 				_G(mouseLeftClick) = true;
 		}
