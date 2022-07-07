@@ -154,7 +154,7 @@ bool GameState::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(SVal2);
 	s.syncAsSint16LE(SVal3);
 	s.syncAsSint16LE(SVal4);
-	s.syncAsSint16LE(soundLoopMode);
+	s.syncAsSint16LE(dummy16);	// sound loop mode
 	s.syncAsByte(dummy);	// sound switch
 	s.syncAsByte(dummy);	// sound volume
 	s.syncAsByte(dummy);	// music switch
