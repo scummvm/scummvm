@@ -39,22 +39,27 @@ void TextEntry::display(int x, int y, int maxLen,
 }
 
 void TextEntry::draw() {
+	drawText();
+	writeChar('_');
+}
+
+void TextEntry::drawText() {
 	clearSurface();
 	writeString(_text);
-	writeChar('_');
 }
 
 bool TextEntry::msgKeypress(const KeypressMessage &msg) {
 	Common::KeyCode kc = msg.keycode;
 
 	if (msg.keycode == Common::KEYCODE_ESCAPE) {
+		drawText();
 		close();
 		_abortFn();
 		return true;
 	} else if (msg.keycode == Common::KEYCODE_BACKSPACE &&
 			!_text.empty()) {
 		_text.deleteLastChar();
-		redraw();
+		drawText();
 		return true;
 	} else if (msg.ascii >= 32 && msg.ascii <= 127 &&
 			_text.size() < _maxLen) {
@@ -62,7 +67,7 @@ bool TextEntry::msgKeypress(const KeypressMessage &msg) {
 			return true;
 
 		_text += msg.ascii;
-		redraw();
+		drawText();
 
 		// Single character numeric fields, particular spell
 		// level/number selection, return immediately
@@ -71,6 +76,7 @@ bool TextEntry::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	if (kc == Common::KEYCODE_RETURN && !_text.empty()) {
+		drawText();
 		close();
 		_enterFn(_text);
 		return true;

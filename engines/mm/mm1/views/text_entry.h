@@ -32,6 +32,12 @@ namespace Views {
  * Text or numeric entry.
  */
 class TextEntry : public TextView {
+private:
+	/**
+	 * Draw the entered text
+	 */
+	void drawText();
+
 public:
 	typedef void (*Abort)();
 	typedef void (*Enter)(const Common::String &text);
