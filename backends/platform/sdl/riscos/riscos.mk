@@ -14,7 +14,12 @@ riscosdist: all
 	mkdir -p $(APP_NAME)
 	elf2aif $(EXECUTABLE) $(APP_NAME)/scummvm,ff8
 	cp ${srcdir}/dists/riscos/!Help,feb $(APP_NAME)/!Help,feb
+ifdef MAKERUN
+	$(MAKERUN) $(APP_NAME)/scummvm,ff8 ${srcdir}/dists/riscos/!Run,feb $(APP_NAME)/!Run,feb
+else
 	cp ${srcdir}/dists/riscos/!Run,feb $(APP_NAME)/!Run,feb
+	sed -i -e "s/WIMPSLOT/WimpSlot -min `du -k $(APP_NAME)/scummvm,ff8 | cut -f1`K/g" $(APP_NAME)/!Run,feb
+endif
 ifeq ($(APP_NAME),$(BASE_APP_NAME))
 	cp ${srcdir}/dists/riscos/!Boot,feb $(APP_NAME)/!Boot,feb
 	cp ${srcdir}/dists/riscos/!Sprites,ff9 $(APP_NAME)/!Sprites,ff9
@@ -24,7 +29,6 @@ else
 	cp ${srcdir}/dists/riscos/$(APP_NAME)/!Sprites,ff9 $(APP_NAME)/!Sprites,ff9
 	cp ${srcdir}/dists/riscos/$(APP_NAME)/!Sprites11,ff9 $(APP_NAME)/!Sprites11,ff9
 endif
-	sed -i -e "s/|WimpSlot/WimpSlot -min `du -k $(APP_NAME)/scummvm,ff8 | cut -f1`K/g" $(APP_NAME)/!Run,feb
 	mkdir -p $(BASE_APP_NAME)/data
 	cp $(DIST_FILES_THEMES) $(BASE_APP_NAME)/data/
 ifdef DIST_FILES_NETWORKING
