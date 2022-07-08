@@ -303,8 +303,6 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 
 	file->seek(offset);
 	uint8 numberOfAreas = file->readByte();
-	if (numberOfAreas < 2) // TODO: just for testing
-		numberOfAreas = 20;
 	uint16 dbSize = file->readUint16LE();
 	debug("Database ends at %x", dbSize);
 
@@ -343,57 +341,18 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		Common::String *conditions = detokenise8bitCondition(conditionArray, instructions);
 		debug("%s", conditions->c_str());
 	}
-	file->seek(offset + 200);
+
+	if (_targetName != "castlemaster")
+		file->seek(offset + 0xc8);
+	else
+		file->seek(offset + 0x4f);
+
 	debug("areas index at: %lx", file->pos());
 	uint16 *fileOffsetForArea = new uint16[numberOfAreas];
 	for (uint16 area = 0; area < numberOfAreas; area++) {
 		fileOffsetForArea[area] = file->readUint16LE();
 		debug("offset: %x", fileOffsetForArea[area]);
 	}
-	//fileOffsetForArea[0] = 0x9e75 - offset - 8 - 12; // Table?
-	//fileOffsetForArea[0] = 0xaba5 - offset - 8 - 16; // ???
-	//fileOffsetForArea[0] = 0x9f40 - offset - 8;
-	//fileOffsetForArea[0] = 0x9f35 - offset; // Another Church, 12
-	//fileOffsetForArea[0] = 0xa06e - offset - 8; // Cornisa? 37
-
-	// Complete Areas:
-	//fileOffsetForArea[0] = 0x87bf - offset; // Beds?
-	//fileOffsetForArea[0] = 0x8ccc - offset; // Wizard hut
-	//fileOffsetForArea[0] = 0x8dac - offset; // Horse
-	//fileOffsetForArea[0] = 0x8e78 - offset; // Corridor
-	//fileOffsetForArea[0] = 0x8f3a - offset; // chimney
-	//fileOffsetForArea[0] = 0x904e - offset; // master bed?
-	//fileOffsetForArea[0] = 0x90e1 - offset; // Dragon?
-	//fileOffsetForArea[0] = 0x9238 - offset; // ????
-	//fileOffsetForArea[0] = 0x92a7 - offset; // Pool
-	//fileOffsetForArea[0] = 0x93e3 - offset; // Doors
-	//fileOffsetForArea[0] = 0x94e5 - offset; // More doors
-	//fileOffsetForArea[0] = 0x9580 - offset; // Church? !!!
-	//fileOffsetForArea[0] = 0x96c8 - offset; // Another area !!!
-	//fileOffsetForArea[0] = 0x974a - offset; // Another area !!!
-	//fileOffsetForArea[0] = 0x97cb - offset; // Courtyard !!!
-	//fileOffsetForArea[0] = 0x9a5c - offset; // Stable !!!
-	//fileOffsetForArea[0] = 0x9b4b - offset; // Another area !!!
-
-	/*fileOffsetForArea[0] = 0x9d1a - offset; // Soccer field
-	fileOffsetForArea[0] = 0x9e43 - offset; // Workshop?
-	fileOffsetForArea[0] = 0x9f22 - offset; // Church
-	fileOffsetForArea[0] = 0x9fcd - offset; // ???
-
-	fileOffsetForArea[0] = 0xa03c - offset; // Tower
-	fileOffsetForArea[0] = 0xa25e - offset; // Room?
-
-	fileOffsetForArea[0] = 0xa30f - offset; // ???
-	fileOffsetForArea[0] = 0xa394 - offset; // ???
-	fileOffsetForArea[0] = 0xa3f8 - offset;
-	fileOffsetForArea[0] = 0xa48c - offset;
-	fileOffsetForArea[0] = 0xa4fa - offset;
-	fileOffsetForArea[0] = 0xa593 - offset;
-	fileOffsetForArea[0] = 0xa5ef - offset;
-	fileOffsetForArea[0] = 0xa64a - offset;
-	fileOffsetForArea[0] = 0xa695 - offset;
-	fileOffsetForArea[0] = 0xa71d - offset;*/
-	//fileOffsetForArea[0] = 0xa77e - offset; <- fails
 
 	// grab the areas
 	AreaMap *areaMap = new AreaMap;
@@ -411,8 +370,6 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 				debug("WARNING: area ID repeated: %d", newArea->getAreaID());
 		} else
 			error("Invalid area?");
-		if (_targetName == "castlemaster")
-			break;
 	}
 	_playerHeight = 64;
 	_playerWidth = 32;
