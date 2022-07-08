@@ -157,11 +157,12 @@ void FreescapeEngine::loadAssets() {
 		} else
 			error("Invalid render mode %s for Total Eclipse", _renderMode.c_str());
 	   } else if (_targetName.hasPrefix("castlemaster")) {
+			_renderMode = "cga";
 			file = gameDir.createReadStreamForMember("castle.sna");
 
 			if (file == nullptr)
 				error("Failed to open castle.sna");
-			load8bitBinary(file, 0x84da, 16);
+			load8bitBinary(file, 0x84da, 4);
 	   } else
 		error("'%s' is an invalid game", _targetName.c_str());
 

@@ -102,7 +102,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			Common::Array<uint8> conditionArray(conditionData, byteSizeOfObject);
 			conditionSource = detokenise8bitCondition(conditionArray, instructions);
 			//instructions = getInstructions(conditionSource);
-			//debug("%s", conditionSource->c_str());
+			debug("%s", conditionSource->c_str());
 		}
 		debug("End of object at %lx", file->pos());
 
@@ -173,6 +173,13 @@ byte drillerCGA[4][3] = {
 	{0x00, 0xa8, 0xa8},
 };
 
+byte castleCGA[4][3] = {
+	{0x83, 0x85, 0x83},
+	{0x00, 0x00, 0x00},
+	{0x00, 0x85, 0x00},
+	{0xff, 0xfb, 0xff},
+};
+
 byte eclipseEGA[16][3] = {
 	{0xfc, 0xfc, 0x54},
 	{0x00, 0x00, 0x00},
@@ -193,18 +200,24 @@ byte eclipseEGA[16][3] = {
 };
 
 Graphics::PixelBuffer *FreescapeEngine::getPalette(uint8 areaNumber, uint8 c1, uint8 c2, uint8 c3, uint8 c4, uint16 ncolors) {
-	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, ncolors, 0);
+	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
 	Graphics::PixelBuffer *palette = nullptr;
 	if (_targetName.hasPrefix("driller")) {
 		if (_renderMode == "ega")
 			palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&drillerEGA);
 		else if (_renderMode == "cga")
 			palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&drillerCGA);
+	} else if (_targetName.hasPrefix("castlemaster")) {
+		if (_renderMode == "ega")
+			palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&drillerEGA); // TODO
+		else if (_renderMode == "cga")
+			palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&castleCGA);
 	} else if (_targetName.hasPrefix("totaleclipse")) {
 		palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&eclipseEGA);
 	} else
 		palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&drillerEGA);
 
+	assert(palette);
 	return palette;
 }
 
@@ -236,6 +249,12 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		groundColor = file->readByte() & 15;
 		debug("Colors: %d %d", skyColor, groundColor);
 	}
+
+	if (_renderMode == "cga") {
+		skyColor = skyColor % 4;
+		groundColor = groundColor % 4;
+	}
+
 	Graphics::PixelBuffer *palette = getPalette(areaNumber, ci1, ci2, skyColor, groundColor, ncolors);
 
 	debug("Area %d", areaNumber);
