@@ -145,11 +145,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Fehlender Cursor nach dem Laden eines gespeicherten Spielstands in der 16-Farben-Version (Macintosh)
      in Loom und Indiana Jones and the Last Crusade behoben.
    - Es ist nun möglich, die Musik in den Disketten-Versionen von Loom durch eigene Audio-Tracks
-     zu ersetzen. Im ScummVM-Wiki findest Du eine Liste, welche Teile von Schwanensee im Spiel verwendet werden.
-   - Einige Verbesserungen, die ScummVM zu Spielen hinzufügt, können jetzt
-     in den Spiel-Einstellungen deaktiviert werden. Die Option zur Korrektur des Zeichen-
-     Abstands in den 16-Farben-Versionen für Macintosh von Indiana Jones and the Last Crusade
-     findest du jetzt dort.
+     zu ersetzen. Im ScummVM-Wiki findest Du unter <https://wiki.scummvm.org/index.php/Loom>
+     eine Liste, welche Teile von Schwanensee im Spiel verwendet werden.
    - Fehler bei der Wiedergabe von MIDI-Musik in der EGA/VGA-Diskettenversion von The Secret of Monkey Island behoben.
    - In der VGA-Diskettenversion von The Secret of Monkey Island fließt die Lava nun nicht mehr in die falsche Richtung.
    - Fehlerhafte Grafik-Darstellung in Full Throttle korrigiert, die auftritt, wenn Ben am Eingang von Corley Motors vorbeiläuft.
@@ -162,8 +159,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Die Timing-Routinen wurden angepasst, um das ursprüngliche Hardware-Verhalten und die Eigenheiten des originalen
      Interpreters besser abzubilden.
    - Lippensynchronisation in Backyard Baseball 2003 korrigiert.
-   - Spiele-Fehler in Day of the Tentacle, Indy 3, Loom, Monkey Island 1, Monkey Island 2 Amiga,
-     Sam&Max und Zak McKracken FM-TOWNS korrigiert. Diese Fehler sind auch in den Original-Spielen enthalten.
+   - Verschiedene Fehler, die in den Original-Versionen der meisten LucasArts-Spielen vorhanden sind,
+     wurden korrigiert: <https://wiki.scummvm.org/index.php?title=SCUMM/Game_Enhancements>.
+     Die meisten dieser Verbesserungen können nun in den Spiel-Einstellungen deaktiviert werden,
+     falls Du das originale Spiel-Verhalten bevorzugst.
    - Die Wiedergabe der CD-Audiospuren im Intro von Monkey Island 1 sowie in der CD-Version von Loom im Allgemeinen
      kann nun über einen Schieberegler angepasst werden. Loom ist auf eine korrekte Wiedergabe der "stillen" Sequenzen
      am Beginn einer Audiospur angewiesen, während die CD-Version von Monkey Island 1 die Intro-Musik
