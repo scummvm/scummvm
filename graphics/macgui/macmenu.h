@@ -79,6 +79,7 @@ public:
 	int addMenuItem(MacMenuSubMenu *submenu, const Common::U32String &text, int action = 0, int style = 0, char shortcut = 0, bool enabled = true, bool checked = false);
 	void insertMenuItem(MacMenuSubMenu *submenu, const Common::String &text, int pos, int action = -1, int style = 0, char shortcut = 0, bool enabled = true, bool checked = false);
 	void insertMenuItem(MacMenuSubMenu *submenu, const Common::U32String &text, int pos, int action = 0, int style = 0, char shortcut = 0, bool enabled = true, bool checked = false);
+	void removeMenuItem(MacMenuSubMenu *submenu, uint pos);
 	void loadMenuResource(Common::MacResManager *resFork, uint16 id);
 	void loadMenuBarResource(Common::MacResManager *resFork, uint16 id);
 	void createSubMenuFromString(int id, const char *string, int commandId);
