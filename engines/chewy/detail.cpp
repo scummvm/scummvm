@@ -400,7 +400,7 @@ void Detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 					if (adiptr->sfx.sound_start[k] == adiptr->ani_count &&
 					        !adiptr->delay_count) {
 						const uint channel = adiptr->sfx.channel[k] & 7;
-						sound->playSound(sfxIndex, channel, false /*adiptr->sfx.repeats[k]*/, adiptr->sfx.volume[k], adiptr->sfx.stereo[k]);
+						sound->playSound(sfxIndex, channel, adiptr->sfx.repeats[k], adiptr->sfx.volume[k], adiptr->sfx.stereo[k]);
 					}
 				}
 			}
@@ -494,7 +494,8 @@ void Detail::playSound(int16 nr, int16 slot) {
 	const int16 sfxSlot = _rdi.Ainfo[nr].sfx.sound_index[slot];
 	if (sfxSlot != -1) {
 		const int16 sfxIndex = _rdi.detailSfxIndex[sfxSlot];
-		g_engine->_sound->playSound(sfxIndex, slot);
+		g_engine->_sound->playSound(sfxIndex, slot,
+			_rdi.Ainfo[nr].sfx.repeats[slot], _rdi.Ainfo[nr].sfx.volume[slot], _rdi.Ainfo[nr].sfx.stereo[slot]);
 	}
 }
 
