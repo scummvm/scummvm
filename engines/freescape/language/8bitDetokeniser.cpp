@@ -29,12 +29,12 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 	FCLInstruction currentInstruction;
 
 	// this lookup table tells us how many argument bytes to read per opcode
-	uint8 argumentsRequiredByOpcode[33] =
+	uint8 argumentsRequiredByOpcode[35] =
 		{
 			0, 3, 1, 1, 1, 1, 2, 2,
 			2, 1, 1, 2, 1, 1, 2, 1,
 			1, 2, 2, 1, 2, 0, 0, 0,
-			1, 1, 0, 1, 1, 1, 1, 1, 2};
+			1, 1, 0, 1, 1, 1, 1, 1, 2, 0, 1};
 
 	while (bytePointer < sizeOfTokenisedContent) {
 		// get the conditional type of the next operation
@@ -71,7 +71,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 
 		// figure out how many argument bytes we're going to need,
 		// check we have enough bytes left to read
-		if (opcode > 32) {
+		if (opcode > 34) {
 			debug("ERROR: failed to read opcode: %x", opcode);
 			break;
 		}
@@ -210,6 +210,10 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			detokenisedStream += "THEN END ENDIF";
 			bytePointer += 2;
 			numberOfArguments = 0;
+			break;
+
+		case 34: // show a message on screen
+			detokenisedStream += "MESSAGE (";
 			break;
 
 		case 12:
