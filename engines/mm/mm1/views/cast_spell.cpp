@@ -131,6 +131,7 @@ void CastSpell::spellLevelEntered(uint level) {
 		return;
 	}
 
+	_spellLevel = level;
 	setState(SELECT_NUMBER);
 }
 
@@ -192,7 +193,7 @@ void CastSpell::performSpell(Character *chr) {
 		spellDone(STRING["dialogs.misc.magic_doesnt_work"], 5);
 	} else {
 		// Cast the spell
-		castSpell(chr);
+		Spells::cast(_spellIndex, chr);
 
 		// Display spell done
 		clearSurface();

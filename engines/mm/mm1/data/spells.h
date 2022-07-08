@@ -22,12 +22,13 @@
 #ifndef MM1_DATA_SPELLS_H
 #define MM1_DATA_SPELLS_H
 
-#include "common/scummsys.h"
+#include "mm/mm1/data/character.h"
 
 namespace MM {
 namespace MM1 {
 
-
+//define SPELLS_COUNT (47 * 2)
+#define SPELLS_COUNT 5
 #define ACTIVE_SPELLS_COUNT 18
 
 struct ActiveSpellsStruct {
@@ -57,8 +58,15 @@ union ActiveSpells {
 };
 
 class Spells {
+	typedef void (*SpellFn)(Character *chr);
+private:
+	static void placeholder(Character *chr) {}
+	static void spell04_firstAid(Character *chr);
+	static void spell05_light(Character *chr);
+
+	static SpellFn SPELLS[SPELLS_COUNT];
 public:
-	static void cast() {}
+	static void cast(int spell, Character *chr);
 };
 
 } // namespace MM1
