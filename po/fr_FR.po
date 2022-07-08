@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-07 12:34+0000\n"
+"POT-Creation-Date: 2022-07-08 14:25+0000\n"
 "PO-Revision-Date: 2022-07-03 14:28+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -177,9 +177,9 @@ msgstr ""
 #: engines/groovie/script.cpp:652 engines/nancy/dialogs.cpp:101
 #: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:99
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:926
-#: engines/scumm/dialogs.cpp:180 engines/scumm/scumm.cpp:1048
-#: engines/scumm/scumm.cpp:1074 engines/scumm/scumm.cpp:1096
-#: engines/scumm/scumm.cpp:1375 engines/scumm/scumm.cpp:1846
+#: engines/scumm/dialogs.cpp:180 engines/scumm/scumm.cpp:1049
+#: engines/scumm/scumm.cpp:1075 engines/scumm/scumm.cpp:1097
+#: engines/scumm/scumm.cpp:1376 engines/scumm/scumm.cpp:1847
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:531
 #: engines/sword1/animation.cpp:552 engines/sword1/animation.cpp:568
 #: engines/sword1/animation.cpp:576 engines/sword1/control.cpp:888
@@ -4266,7 +4266,7 @@ msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 "Le chargement ou sauvegarde rapide du jeu n'est pas possible à cet endroit"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2563
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2564
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4277,7 +4277,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2553
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2554
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4288,7 +4288,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2576
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2577
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6851,6 +6851,18 @@ msgstr ""
 "Permet à ScummVM d'apporter de petites améliorations au jeu, généralement "
 "basées sur d'autres versions du même jeu."
 
+#: engines/scumm/detection.cpp:238
+#, fuzzy
+#| msgid "Load modded assets"
+msgid "Load modded audio"
+msgstr "Charger des ressources modifiées"
+
+#: engines/scumm/detection.cpp:239
+msgid ""
+"Replace music, sound effects, and speech clips with modded audio files, if "
+"available."
+msgstr ""
+
 #: engines/scumm/detection_internal.h:358
 msgid ""
 "This version of Monkey Island can't be played, because Limited Run Games "
@@ -7545,23 +7557,23 @@ msgstr "Voler vers la droite"
 msgid "Fly to lower right"
 msgstr "Voler vers la bas à droite"
 
-#: engines/scumm/input.cpp:590
+#: engines/scumm/input.cpp:593
 msgid "Snap scroll on"
 msgstr "Défilement par à-coups"
 
-#: engines/scumm/input.cpp:592
+#: engines/scumm/input.cpp:595
 msgid "Snap scroll off"
 msgstr "Défilement régulier"
 
-#: engines/scumm/input.cpp:605
+#: engines/scumm/input.cpp:608
 msgid "Music volume: "
 msgstr "Volume Musique : "
 
-#: engines/scumm/input.cpp:622
+#: engines/scumm/input.cpp:625
 msgid "Subtitle speed: "
 msgstr "Vitesse des ST : "
 
-#: engines/scumm/metaengine.cpp:330
+#: engines/scumm/metaengine.cpp:334
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -7571,11 +7583,11 @@ msgstr ""
 "éviter le piratage.\n"
 "La version complète peut être achetée sur l'iTunes Store."
 
-#: engines/scumm/metaengine.cpp:427
+#: engines/scumm/metaengine.cpp:431
 msgid "HE v71+ support is not compiled in"
 msgstr "La prise en charge de HE V71+ n'est pas incluse"
 
-#: engines/scumm/metaengine.cpp:451
+#: engines/scumm/metaengine.cpp:455
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "La prise en charge de SCUMM V7-8 n'est pas incluse"
 
@@ -7592,7 +7604,7 @@ msgstr ""
 "La correction du rapport d'aspect peut être obtenue en rognant la résolution "
 "à 320x200, sous l'onglet \"moteur\"."
 
-#: engines/scumm/scumm.cpp:1047
+#: engines/scumm/scumm.cpp:1048
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
@@ -7600,7 +7612,7 @@ msgstr ""
 "L'exécutable Macintosh de 'Indy' n'a pas été trouvé. Les polices haute\n"
 "résolution seront désactivées."
 
-#: engines/scumm/scumm.cpp:1073
+#: engines/scumm/scumm.cpp:1074
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
@@ -7608,7 +7620,7 @@ msgstr ""
 "L'exécutable Macintosh de 'Loom' n'a pas été trouvé. La musique ainsi que\n"
 "les versions haute résolution des polices et du curseur seront désactivées."
 
-#: engines/scumm/scumm.cpp:1095
+#: engines/scumm/scumm.cpp:1096
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -7616,7 +7628,7 @@ msgstr ""
 "L'exécutable Macintosh de 'Monkey Island' n'a pas été trouvé pour\n"
 "y lire les instruments. La musique sera désactivée."
 
-#: engines/scumm/scumm.cpp:1372
+#: engines/scumm/scumm.cpp:1373
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -7628,7 +7640,7 @@ msgstr ""
 "désactivé.\n"
 "Veuillez copier le jeu à partir du support original sans compression."
 
-#: engines/scumm/scumm.cpp:1844
+#: engines/scumm/scumm.cpp:1845
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -7637,7 +7649,7 @@ msgstr ""
 "Le support MIDI natif requiert la mise à jour Roland de LucasArts,\n"
 "mais %s est manquant. AdLib sera utilisé."
 
-#: engines/scumm/scumm.cpp:2875
+#: engines/scumm/scumm.cpp:2876
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
