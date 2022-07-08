@@ -25,5 +25,28 @@
 namespace MM {
 namespace MM1 {
 
+Spells::SpellFn Spells::SPELLS[SPELLS_COUNT] = {
+	// Cleric spells
+	placeholder,
+	placeholder,
+	placeholder,
+	spell04_firstAid,
+	spell05_light
+};
+
+void Spells::cast(int spell, Character *chr) {
+	assert(spell < SPELLS_COUNT);
+	SPELLS[spell](chr);
+}
+
+void Spells::spell04_firstAid(Character *chr) {
+
+}
+
+void Spells::spell05_light(Character *chr) {
+	g_globals->_spells._s.light++;
+	g_events->send("Game", GameMessage("UPDATE"));
+}
+
 } // namespace MM1
 } // namespace MM

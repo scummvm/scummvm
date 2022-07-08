@@ -81,11 +81,6 @@ public:
 	 * Returns the error message
 	 */
 	Common::String getSpellError() const;
-
-	/**
-	 * Actually cast the spell
-	 */
-	void castSpell(Character *destChar = nullptr);
 };
 
 } // namespace Game

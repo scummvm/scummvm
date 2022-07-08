@@ -116,8 +116,7 @@ void SpellCasting::setSpell(int spellIndex, int requiredSp, int requiredGems) {
 }
 
 bool SpellCasting::hasCharTarget() const {
-	return true; //**DEBUG**
-	//return (SPELL_FLAGS[_spellIndex] & SF_CAST_ON) != 0;
+	return (SPELL_FLAGS[_spellIndex] & SF_CAST_ON) != 0;
 }
 
 bool SpellCasting::isMagicAllowed() const {
@@ -137,11 +136,6 @@ Common::String SpellCasting::getSpellError() const {
 	default:
 		return STRING["dialogs.misc.done"];
 	}
-}
-
-void SpellCasting::castSpell(Character *destChar) {
-	// TODO
-	error("TODO: cast");
 }
 
 } // namespace Game
