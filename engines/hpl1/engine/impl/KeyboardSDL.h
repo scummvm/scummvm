@@ -35,7 +35,7 @@
 
 namespace Common {
 
-class Event;
+struct Event;
 
 }
 
