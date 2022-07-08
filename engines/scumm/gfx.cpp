@@ -572,8 +572,10 @@ void ScummEngine_v6::drawDirtyScreenParts() {
 	ScummEngine::drawDirtyScreenParts();
 
 	// Remove all blasted objects/text again.
-	removeBlastTexts();
-	removeBlastObjects();
+	if (_game.version < 8) {
+		removeBlastTexts();
+		removeBlastObjects();
+	}
 }
 
 /**
