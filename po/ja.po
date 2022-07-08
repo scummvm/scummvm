@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-08 14:25+0000\n"
-"PO-Revision-Date: 2022-07-03 14:28+0000\n"
+"PO-Revision-Date: 2022-07-09 06:32+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -6658,16 +6658,14 @@ msgstr ""
 "す。"
 
 #: engines/scumm/detection.cpp:238
-#, fuzzy
-#| msgid "Load modded assets"
 msgid "Load modded audio"
-msgstr "MODアセットをロード"
+msgstr "改造オーディオをロード"
 
 #: engines/scumm/detection.cpp:239
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
-msgstr ""
+msgstr "可能なら、BGM・SE・スピーチクリップを改造ファイルに置き換えて下さい。"
 
 #: engines/scumm/detection_internal.h:358
 msgid ""
