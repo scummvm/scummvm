@@ -2373,6 +2373,17 @@ void ScummEngine::scummLoop(int delta) {
 
 	processInput();
 
+	// Saving is performed here in v8; this is important when saving the thumbnail,
+	// which would otherwise miss blastObjects (and possibly more) on the bitmap.
+	// Speaking of the devil, blastObjects are removed right after this operation...
+	// We also remove blastTexts here, being that this isn't done explicitly in the
+	// original, but we still need to...
+	if (_game.version == 8) {
+		scummLoop_handleSaveLoad();
+		((ScummEngine_v6 *)this)->removeBlastObjects();
+		((ScummEngine_v7 *)this)->removeBlastTexts();
+	}
+
 	scummLoop_updateScummVars();
 
 	if (_game.features & GF_AUDIOTRACKS) {
@@ -2391,8 +2402,9 @@ void ScummEngine::scummLoop(int delta) {
 		}
 	}
 
+	if (_game.version < 8)
 load_game:
-	scummLoop_handleSaveLoad();
+		scummLoop_handleSaveLoad();
 
 	if (_completeScreenRedraw) {
 		clearCharsetMask();

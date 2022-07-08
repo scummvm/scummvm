@@ -130,6 +130,7 @@ protected:
 	int findFreeArrayId();
 public: // FIXME. TODO
 	void nukeArray(int array);
+	void removeBlastObjects();
 
 protected:
 	virtual int readArray(int array, int index, int base);
@@ -154,7 +155,7 @@ protected:
 	                   int objectHeight, int scaleX, int scaleY, int image, int mode);
 	void drawBlastObjects();
 	void drawBlastObject(BlastObject *eo);
-	void removeBlastObjects();
+
 	void removeBlastObject(BlastObject *eo);
 
 	void clearDrawQueues() override;
