@@ -60,16 +60,16 @@ Sometimes, ScummVM detects multiple versions of a single game. In this case, hig
 
 If you are adding an unknown version of a game, ScummVM is not able to add the game to the games list. An error message appears to warn you that the game has not been added.
 
-4. The **Edit Game** dialog opens to allow configuration of various settings for the game. These can be reconfigured at any time, but for now everything should be OK at the default settings. Any settings changed here override the global settings. Click **Ok**.
+4. The **Game Options** window opens to allow configuration of various settings for the game. These can be reconfigured at any time, but for now everything should be OK at the default settings. Any settings changed here override the global settings. Click **Ok**.
 
 .. image:: ../images/Launcher/game_settings.png
    :class: with-shadow
 
 .. note::
 
-   The **Edit Game** dialog does not open when **Mass Add** is used.
+   The **Game Options** window does not open when **Mass Add** is used.
 
-6. Games are now ready to play! To play, highlight a game in the games list and click **Start**, or double-click the game in the games list.
+5. Games are now ready to play! To play, either double-click on the game in the games list, or highlight the game by clicking on it, and then click **Start**. In grid view, either double-click on a game to start it, or select the game and click the play icon in the pop-up window. 
 
 .. image:: ../images/Launcher/start_game.png
    :class: with-shadow
