@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-08 14:25+0000\n"
-"PO-Revision-Date: 2022-07-03 06:19+0000\n"
+"PO-Revision-Date: 2022-07-08 16:47+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -6846,16 +6846,16 @@ msgstr ""
 "basierend auf anderen Versionen des gleichen Spiels."
 
 #: engines/scumm/detection.cpp:238
-#, fuzzy
-#| msgid "Load modded assets"
 msgid "Load modded audio"
-msgstr "Modifizierte Assets laden"
+msgstr "Modifizierte Audiospuren laden"
 
 #: engines/scumm/detection.cpp:239
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
 msgstr ""
+"Ersetze Musik, Sound-Effekte und die Sprachwiedergabe mit modifizierten "
+"Audio-Dateien, sofern diese verfügbar sind."
 
 #: engines/scumm/detection_internal.h:358
 msgid ""
