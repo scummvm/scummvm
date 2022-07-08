@@ -32,7 +32,7 @@
 #include "common/bitarray.h"
 
 namespace Common {
-	class Event;
+struct Event;
 }
 
 namespace hpl {
