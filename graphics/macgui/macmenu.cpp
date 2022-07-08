@@ -553,6 +553,25 @@ void MacMenu::insertMenuItem(MacMenuSubMenu *submenu, const Common::U32String &t
 	submenu->items.insert(submenu->items.begin() + pos, new MacMenuItem(res, action, style, shortcut, shortcutPos, enabled, checked));
 }
 
+void MacMenu::removeMenuItem(MacMenuSubMenu *submenu, uint pos) {
+	_dimensionsDirty = true;
+
+	if (submenu == nullptr) {
+		if (pos >= _items.size()) {
+			_dimensionsDirty = false;
+		} else {
+			delete _items.remove_at(pos);
+		}
+		return;
+	}
+
+	if (pos >= submenu->items.size()) {
+		_dimensionsDirty = false;
+		return;
+	}
+	delete submenu->items.remove_at(pos);
+}
+
 void MacMenu::calcDimensions() {
 	// Calculate menu dimensions
 	int y = 1;
