@@ -154,14 +154,12 @@ static SaveStateList listSaves(bool isPeril) {
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 2 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + file->size() - 2);
-		if (slotNum >= 0 && slotNum <= 10) {
-			Common::ScopedPtr<Common::InSaveFile> in(saveFileMan->openForLoading(*file));
-			if (in) {
-				SaveStateDescriptor desc;
-				desc.setSaveSlot(slotNum);
-				if (Pink::readSaveHeader(*in.get(), desc))
-					saveList.push_back(desc);
-			}
+		Common::ScopedPtr<Common::InSaveFile> in(saveFileMan->openForLoading(*file));
+		if (in) {
+			SaveStateDescriptor desc;
+			desc.setSaveSlot(slotNum);
+			if (Pink::readSaveHeader(*in.get(), desc))
+				saveList.push_back(desc);
 		}
 	}
 
