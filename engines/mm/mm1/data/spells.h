@@ -27,8 +27,7 @@
 namespace MM {
 namespace MM1 {
 
-//define SPELLS_COUNT (47 * 2)
-#define SPELLS_COUNT 5
+#define SPELLS_COUNT (47 * 2)
 #define ACTIVE_SPELLS_COUNT 18
 
 struct ActiveSpellsStruct {
@@ -58,15 +57,69 @@ union ActiveSpells {
 };
 
 class Spells {
-	typedef void (*SpellFn)(Character *chr);
+	typedef bool (*SpellFn)(Character *chr);
 private:
-	static void placeholder(Character *chr) {}
-	static void spell04_firstAid(Character *chr);
-	static void spell05_light(Character *chr);
+	static bool placeholder(Character *chr) { return false; }
+	static bool cleric14_firstAid(Character *chr);
+	static bool cleric15_light(Character *chr);
+	static bool cleric16_powerCure(Character *chr);
+	static bool cleric17_protectionFromFear(Character *chr);
+	static bool cleric21_cureWounds(Character *chr);
+	static bool cleric24_protectionFromCold(Character *chr);
+	static bool cleric25_protectionFromIce(Character *chr);
+	static bool cleric26_protectionFromPoison(Character *chr);
+	static bool cleric31_createFood(Character *chr);
+	static bool cleric32_cureBlindness(Character *chr);
+	static bool cleric33_cureParalysis(Character *chr);
+	static bool cleric34_lastingLight(Character *chr);
+	static bool cleric37_removeQuest(Character *chr);
+	static bool cleric38_walkOnWater(Character *chr);
+	static bool cleric41_cureDisease(Character *chr);
+	static bool cleric42_neutralizePoison(Character *chr);
+	static bool cleric43_protectionFromAcid(Character *chr);
+	static bool cleric44_protectionFromElectricity(Character *chr);
+	static bool cleric45_restoreAlignment(Character *chr);
+	static bool cleric48_surface(Character *chr);
+	static bool cleric52_dispelMagic(Character *chr);
+	static bool cleric54_removeCondition(Character *chr);
+	static bool cleric55_restoreEnergy(Character *chr);
+	static bool cleric62_raiseDead(Character *chr);
+	static bool cleric63_rejuvinate(Character *chr);
+	static bool cleric64_stoneToFlesh(Character *chr);
+	static bool cleric65_townPortal(Character *chr);
+	static bool cleric73_protectionFromElements(Character *chr);
+	static bool cleric74_resurrection(Character *chr);
+
+	static bool wizard12_detectMagic(Character *chr);
+	static bool wizard15_leatherSkin(Character *chr);
+	static bool wizard16_light(Character *chr) {
+		return cleric15_light(chr);
+	}
+	static bool wizard17_location(Character *chr);
+	static bool wizard24_jump(Character *chr);
+	static bool wizard25_levitate(Character *chr);
+	static bool wizard32_fly(Character *chr);
+	static bool wizard45_guardDog(Character *chr);
+	static bool wizard46_psychicProtection(Character *chr);
+	static bool wizard52_dispelMagic(Character *chr) {
+		return cleric52_dispelMagic(chr);
+	}
+	static bool wizard54_shelter(Character *chr);
+	static bool wizard55_teleport(Character *chr);
+	static bool wizard63_etherialize(Character *chr);
+	static bool wizard64_protectionFromMagic(Character *chr);
+	static bool wizard65_rechargeItem(Character *chr);
+	static bool wizard71_astralSpell(Character *chr);
+	static bool wizard72_duplication(Character *chr);
 
 	static SpellFn SPELLS[SPELLS_COUNT];
 public:
-	static void cast(int spell, Character *chr);
+	/**
+	 * Casts a spell
+	 * @returns If false, display a 'Done' message.
+	 * If true, spell has done it's own UI display
+	 */
+	static bool cast(int spell, Character *chr);
 };
 
 } // namespace MM1
