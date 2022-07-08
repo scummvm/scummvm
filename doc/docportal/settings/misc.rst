@@ -75,7 +75,11 @@ Ask for confirmation on exit
 .. _updateicons:
 
 Update Icons
-	Downloads updated artwork for game icons. The Icon Path must be set on the :doc:`../settings/paths` tab. ScummVM comes preloaded with the icons for all the freeware games on the `ScummVM Downloads page <https://www.scummvm.org/games/#games>`_ .
+	Click on the Update Icons button to download new or updated artwork for game icons. ScummVM will scan to find applicable icons; once these have been found, click on the **Download** button in the pop up window to start the download. Click the **Hide** button to close the window and continue the download in the background. Use the **Cancel download** button to cancel the download.
+	
+.. figure:: ../images/settings/update_icons.png
+	
+	The Update Icons window
 
 Enable Discord Integration
 	Use this option to automatically check for updates to ScummVM. Click the Check now button to manually check for updates. 
