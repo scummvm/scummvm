@@ -250,12 +250,13 @@
 		not_enough_gold: "*** NOT ENOUGH GOLD ***"
 		not_enough_gems: "*** NOT ENOUGH GEMS ***"
 		not_enough_sp: "*** NOT ENOUGH SPELL POINTS ***"
-		combat_only: "*** COMBAT ONLY ***
+		combat_only: "*** COMBAT ONLY ***"
 		magic_doesnt_work: "*** MAGIC DOESN'T WORK HERE ***"
 		outdoors_only: "*** OUTDOOR ONLY ***"
 		full: "*** BACKPACK FULL ***"
 		done: "*** DONE ***"
 		enter_to_cast: "'ENTER' TO CAST"
+		cast_on: "CAST ON: '1'-'%d'?"
 enhdialogs:
 	character:
 		stats:

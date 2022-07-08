@@ -46,11 +46,6 @@ private:
 	void setState(State state);
 
 	/**
-	 * Start the selection of spell to cast
-	 */
-	void startCasting();
-
-	/**
 	 * Spell level number entered
 	 */
 	void spellLevelEntered(uint level);
@@ -61,9 +56,15 @@ private:
 	void spellNumberEntered(uint num);
 
 	/**
+	 * Cast the spell
+	 */
+	void performSpell(Character *chr = nullptr);
+
+	/**
 	 * Spell done or failed
 	 */
 	void spellDone();
+	void spellDone(const Common::String &msg, int xp);
 public:
 	CastSpell();
 	virtual ~CastSpell() {}
@@ -71,6 +72,7 @@ public:
 	bool msgValue(const ValueMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 	void timeout() override;
 };
 

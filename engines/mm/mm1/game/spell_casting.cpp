@@ -75,7 +75,7 @@ void SpellCasting::setSpell(Character *chr, int lvl, int num) {
 	_spellState = SS_OK;
 
 	// Figure the offset in the spell list
-	int spellNum = 0;
+	int spellNum = num - 1;
 	for (lvlNum = 2; lvlNum < MIN(lvl, 5); ++lvlNum)
 		spellNum += 8;
 	for (lvlNum = 5; lvlNum < lvl; ++lvlNum)
@@ -113,12 +113,15 @@ void SpellCasting::setSpell(int spellIndex, int requiredSp, int requiredGems) {
 		_spellState = SS_COMBAT_ONLY;
 	else if ((SPELL_FLAGS[spellIndex] & SF_OUTDOORS_ONLY) && !(map[0] & 0x80))
 		_spellState = SS_OUTDOORS_ONLY;
-	else if (g_maps->_currentState & 2)
-		_spellState = SS_MAGIC_DOESNT_WORK;
 }
 
 bool SpellCasting::hasCharTarget() const {
-	return (SPELL_FLAGS[_spellIndex] & SF_CAST_ON) != 0;
+	return true; //**DEBUG**
+	//return (SPELL_FLAGS[_spellIndex] & SF_CAST_ON) != 0;
+}
+
+bool SpellCasting::isMagicAllowed() const {
+	return !(g_maps->_currentState & 2);
 }
 
 Common::String SpellCasting::getSpellError() const {
@@ -129,8 +132,6 @@ Common::String SpellCasting::getSpellError() const {
 		return STRING["dialogs.misc.not_enough_gems"];
 	case SS_COMBAT_ONLY:
 		return STRING["dialogs.misc.combat_only"];
-	case SS_DOESNT_WORK:
-		return STRING["dialogs.misc.magic_doesnt_work"];
 	case SS_OUTDOORS_ONLY:
 		return STRING["dialogs.misc.outdoors_only"];
 	default:
@@ -138,8 +139,9 @@ Common::String SpellCasting::getSpellError() const {
 	}
 }
 
-void SpellCasting::castSpell(int spellIndex, Character *destChar) {
+void SpellCasting::castSpell(Character *destChar) {
 	// TODO
+	error("TODO: cast");
 }
 
 } // namespace Game

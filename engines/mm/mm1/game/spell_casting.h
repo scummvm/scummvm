@@ -30,8 +30,7 @@ namespace Game {
 
 enum SpellState {
 	SS_OK, SS_NOT_ENOUGH_SP, SS_NOT_ENOUGH_GEMS,
-	SS_COMBAT_ONLY, SS_DOESNT_WORK,
-	SS_MAGIC_DOESNT_WORK, SS_OUTDOORS_ONLY
+	SS_COMBAT_ONLY, SS_DOESNT_WORK, SS_OUTDOORS_ONLY
 };
 
 /**
@@ -59,11 +58,17 @@ public:
 	bool hasCharTarget() const;
 
 	/**
-	 * Returns true if a spell can be cast
+	 * Returns true if a spell can be cast, with the exception
+	 * of magic not being allowed at the current location.
 	 */
 	bool canCast() const {
 		return _spellState == SS_OK;
 	}
+
+	/**
+	 * Returns if magic is allowed at the current location
+	 */
+	bool isMagicAllowed() const;
 
 	/**
 	 * Returns the spell error
@@ -80,7 +85,7 @@ public:
 	/**
 	 * Actually cast the spell
 	 */
-	void castSpell(int spellIndex, Character *destChar = nullptr);
+	void castSpell(Character *destChar = nullptr);
 };
 
 } // namespace Game

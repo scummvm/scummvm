@@ -381,5 +381,9 @@ Common::String Character::getConditionString() const {
 	return result;
 }
 
+void Character::castUnknown() {
+	warning("TODO: castUnknown method");
+}
+
 } // namespace MM1
 } // namespace MM
