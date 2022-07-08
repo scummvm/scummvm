@@ -63,7 +63,7 @@ bool TextEntry::msgKeypress(const KeypressMessage &msg) {
 		return true;
 	} else if (msg.ascii >= 32 && msg.ascii <= 127 &&
 			_text.size() < _maxLen) {
-		if (_isNumeric && (msg.ascii <= '0' || msg.ascii >= '9'))
+		if (_isNumeric && (msg.ascii < '0' || msg.ascii > '9'))
 			return true;
 
 		_text += msg.ascii;

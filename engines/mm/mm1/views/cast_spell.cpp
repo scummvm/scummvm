@@ -44,10 +44,12 @@ bool CastSpell::msgValue(const ValueMessage &msg) {
 		addView();
 		setSpell(msg._value, 0, 0);
 
-		if (canCast()) {
-			setState(PRESS_ENTER);
-		} else {
+		if (!canCast()) {
 			spellDone();
+		} else if (hasCharTarget()) {
+			setState(SELECT_CHAR);
+		} else {
+			setState(PRESS_ENTER);
 		}
 	}
 
@@ -104,6 +106,13 @@ void CastSpell::draw() {
 		);
 		break;
 
+	case SELECT_CHAR:
+		writeString(22, 3, Common::String::format(
+			STRING["dialogs.misc.cast_on"].c_str(),
+			(int)g_globals->_party.size()
+		));
+		break;
+
 	case PRESS_ENTER:
 		clearSurface();
 		writeString(24, 3, STRING["dialogs.misc.enter_to_cast"]);
@@ -135,32 +144,64 @@ void CastSpell::spellNumberEntered(uint num) {
 	if (!canCast())
 		spellDone();
 	else if (hasCharTarget())
-		_state = SELECT_CHAR;
+		setState(SELECT_CHAR);
 	else
-		_state = PRESS_ENTER;
+		setState(PRESS_ENTER);
 
 	draw();
 }
 
 bool CastSpell::msgKeypress(const KeypressMessage &msg) {
-	if (_state == PRESS_ENTER) {
-		if (msg.keycode == Common::KEYCODE_ESCAPE) {
-			close();
-		} else if (msg.keycode == Common::KEYCODE_RETURN) {
+	if (msg.keycode == Common::KEYCODE_ESCAPE) {
+		close();
+	} else if (_state == PRESS_ENTER) {
+		if (msg.keycode == Common::KEYCODE_RETURN) {
 			// Time to execute the spell
-			Character &c = *g_globals->_currCharacter;
-			c._sp._current = MAX(c._sp._current - _requiredSp, 0);
-			c._gems = MAX(c._gems - _requiredGems, 0);
-
-			// TODO: Cast the spell
+			performSpell();
 		}
 	}
 
 	return true;
 }
 
+bool CastSpell::msgAction(const ActionMessage &msg) {
+	if (_state == SELECT_CHAR &&
+			msg._action >= KEYBIND_VIEW_PARTY1 &&
+			msg._action <= KEYBIND_VIEW_PARTY6) {
+		uint charIndex = (int)(msg._action - KEYBIND_VIEW_PARTY1);
+		if (charIndex < g_globals->_party.size())
+			performSpell(&g_globals->_party[charIndex]);
+	}
+
+	return true;
+}
+
+
 void CastSpell::timeout() {
 	close();
+}
+
+void CastSpell::performSpell(Character *chr) {
+	Character &c = *g_globals->_currCharacter;
+	c._sp._current = MAX(c._sp._current - _requiredSp, 0);
+	c._gems = MAX(c._gems - _requiredGems, 0);
+
+	c.castUnknown();
+
+	if (!isMagicAllowed()) {
+		spellDone(STRING["dialogs.misc.magic_doesnt_work"], 5);
+	} else {
+		// Cast the spell
+		castSpell(chr);
+
+		// Display spell done
+		clearSurface();
+		writeString(14, 2, STRING["dialogs.misc.done"]);
+		Sound::sound(SOUND_2);
+
+		g_globals->_party.updateAC();
+		delaySeconds(3);
+	}
 }
 
 void CastSpell::spellDone() {
@@ -174,10 +215,14 @@ void CastSpell::spellDone() {
 	default: break;
 	}
 
+	spellDone(msg, xp);
+}
+
+void CastSpell::spellDone(const Common::String &msg, int xp) {
 	_state = ENDING;
 	Sound::sound(SOUND_2);
 	clearSurface();
-	writeString(xp, 21, msg);
+	writeString(xp, 1, msg);
 	delaySeconds(3);
 }
 

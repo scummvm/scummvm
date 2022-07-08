@@ -58,5 +58,10 @@ uint Party::getPartyGold() const {
 	return total;
 }
 
+void Party::updateAC() {
+	for (uint i = 0; i < size(); ++i)
+		(*this)[i].updateAC();
+}
+
 } // namespace MM1
 } // namespace MM

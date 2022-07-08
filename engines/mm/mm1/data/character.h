@@ -263,6 +263,8 @@ struct Character {
 	 * Gets a character's condition string
 	 */
 	Common::String getConditionString() const;
+
+	void castUnknown();
 };
 
 } // namespace MM1

@@ -38,6 +38,11 @@ struct Party : public Common::Array<Character> {
 	 * Get the party gold combined
 	 */
 	uint getPartyGold() const;
+
+	/**
+	 * Update the entire party AC
+	 */
+	void updateAC();
 };
 
 } // namespace MM1
