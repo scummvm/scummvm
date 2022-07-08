@@ -44,9 +44,9 @@ The grouping menu
 
 To the right of the search box is the grouping menu. Use this menu to group games in alphabetical order, or by engine, series, publisher, language or platform. Hide or show groups of games by clicking on the black arrow to the left of each group heading. 
 
-.. figure:: ../images/Launcher/launcher_group.png
+.. figure:: ../images/Launcher/launcher_list_group.png
    
-   The grouping menu. 
+   The grouping menu, with the Launcher in list view
 
 
 The buttons
