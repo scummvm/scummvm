@@ -46,7 +46,7 @@ Sound::~Sound() {
 	delete _speechRes;
 }
 
-void Sound::playSound(int num, uint channel, bool loop, uint16 volume, uint16 balance) {
+void Sound::playSound(int num, uint channel, uint16 loops, uint16 volume, uint16 balance) {
 	if (num < 0)
 		return;
 
@@ -54,20 +54,20 @@ void Sound::playSound(int num, uint channel, bool loop, uint16 volume, uint16 ba
 	uint8 *data = (uint8 *)MALLOC(sound->size);
 	memcpy(data, sound->data, sound->size);
 
-	playSound(data, sound->size, channel, loop, volume, balance);
+	playSound(data, sound->size, channel, loops, volume, balance);
 
 	delete[] sound->data;
 	delete sound;
 }
 
-void Sound::playSound(uint8 *data, uint32 size, uint channel, bool loop, uint16 volume, uint16 balance, DisposeAfterUse::Flag dispose) {
+void Sound::playSound(uint8 *data, uint32 size, uint channel, uint16 loops, uint16 volume, uint16 balance, DisposeAfterUse::Flag dispose) {
 	stopSound(channel);
 
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
 		new ChewyVocStream(
 			new Common::MemorySeekableReadWriteStream(data, size, dispose),
 			dispose),
-		loop ? 0 : 1);
+		loops);
 
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle[channel], stream, -1,
 		convertVolume(volume), convertBalance(balance));

@@ -43,8 +43,8 @@ public:
 	Sound(Audio::Mixer *mixer);
 	virtual ~Sound();
 
-	void playSound(int num, uint channel = 0, bool loop = false, uint16 volume = 63, uint16 balance = 63);
-	void playSound(uint8 *data, uint32 size, uint channel = 0, bool loop = false, uint16 volume = 63, uint16 balance = 63, DisposeAfterUse::Flag dispose = DisposeAfterUse::YES);
+	void playSound(int num, uint channel = 0, uint16 loops = 1, uint16 volume = 63, uint16 balance = 63);
+	void playSound(uint8 *data, uint32 size, uint channel = 0, uint16 loops = 1, uint16 volume = 63, uint16 balance = 63, DisposeAfterUse::Flag dispose = DisposeAfterUse::YES);
 	void pauseSound(uint channel);
 	void resumeSound(uint channel);
 	void stopSound(uint channel = 0);

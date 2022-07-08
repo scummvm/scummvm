@@ -264,11 +264,13 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 		case kChunkPlayVoc:
 			number = _fileStream->readUint16LE();
 			channel = _fileStream->readUint16LE();
-			volume = _fileStream->readUint16LE();// * Audio::Mixer::kMaxChannelVolume / 63;
+			volume = _fileStream->readUint16LE();
 			repeat = _fileStream->readUint16LE();
 			assert(number < MAX_SOUND_EFFECTS);
 
-			_sound->playSound(_soundEffects[number], _soundEffectSize[number], channel, repeat,
+			// Repeat is the number of times the sound should be repeated, so
+			// 0 means play once, 1 twice etc. 255 means repeat until stopped.
+			_sound->playSound(_soundEffects[number], _soundEffectSize[number], channel, repeat == 255 ? 0 : repeat + 1,
 				volume * _sfxGlobalVolume / 63, _sfxBalances[channel], DisposeAfterUse::NO);
 			break;
 		case kChunkSetSoundVolume:
