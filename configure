@@ -1857,6 +1857,12 @@ riscos)
 	elif `which tokenize >/dev/null 2>&1`; then
 		add_line_to_config_mk "TOKENIZE := tokenize"
 	fi
+	if test -e "$GCCSDK_INSTALL_ENV/bin/makerun"; then
+		add_line_to_config_mk "MAKERUN := $GCCSDK_INSTALL_ENV/bin/makerun"
+	elif `which makerun >/dev/null 2>&1`; then
+		add_line_to_config_mk "MAKERUN := makerun"
+	fi
+	echo Over here!
 	;;
 *)
 	;;
