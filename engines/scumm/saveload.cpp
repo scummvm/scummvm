@@ -739,11 +739,6 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	sh = _screenH;
 
 #ifdef ENABLE_SCUMM_7_8
-	// Remove any blast text leftovers
-	if (_game.version >= 7) {
-		((ScummEngine_v7 *)this)->removeBlastTexts();
-	}
-
 	if (_game.version == 8 && isUsingOriginalGUI()) {
 		// If we are loading a savegame from the ScummVM launcher these two
 		// variables are going to be unassigned, since the game does not save these
