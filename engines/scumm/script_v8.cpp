@@ -1183,7 +1183,9 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		break;
 	case 34:	// queryQuit
 		if (isUsingOriginalGUI()) {
-			confirmExitDialog();
+			// Create an artificial CTRL-C keyPress
+			_keyPressed = Common::KEYCODE_c;
+			_keyPressed.flags |= Common::KBD_CTRL;
 		} else {
 			if (ConfMan.getBool("confirm_exit"))
 				confirmExitDialog();
