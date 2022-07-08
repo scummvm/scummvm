@@ -492,131 +492,133 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 			return;
 		}
 
-		// "Music Volume  Low  =========  High"
-		if (lastKeyHit.keycode == Common::KEYCODE_o || lastKeyHit.keycode == Common::KEYCODE_p) {
-			Common::KeyState ks = lastKeyHit;
+		if (_game.features & GF_DEMO) {
+			// "Music Volume  Low  =========  High"
+			if (lastKeyHit.keycode == Common::KEYCODE_o || lastKeyHit.keycode == Common::KEYCODE_p) {
+				Common::KeyState ks = lastKeyHit;
 
-			int volume = _imuseDigital->diMUSEGetMusicGroupVol();
-			do {
-				if (ks.keycode == Common::KEYCODE_o) {
-					volume -= 16;
-					if (volume < 0)
-						volume = 0;
-				} else {
-					volume += 16;
-					if (volume > 127)
-						volume = 127;
-				}
+				int volume = _imuseDigital->diMUSEGetMusicGroupVol();
+				do {
+					if (ks.keycode == Common::KEYCODE_o) {
+						volume -= 16;
+						if (volume < 0)
+							volume = 0;
+					} else {
+						volume += 16;
+						if (volume > 127)
+							volume = 127;
+					}
 
-				strcpy(tempStr, d.getPlainEngineString(32));
-				char *ptrToChar = strchr(tempStr, '=');
-				memset(ptrToChar, '\v', 9);
-				ptrToChar[volume / 15] = '\f';
+					strcpy(tempStr, d.getPlainEngineString(32));
+					char *ptrToChar = strchr(tempStr, '=');
+					memset(ptrToChar, '\v', 9);
+					ptrToChar[volume / 15] = '\f';
 
-				showBannerAndPause(0, 0, tempStr);
-				ks = Common::KEYCODE_INVALID;
-				bool leftBtnPressed = false, rightBtnPressed = false;
-				waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
-			} while (ks.keycode == Common::KEYCODE_o || ks.keycode == Common::KEYCODE_p);
-			clearBanner();
-			_imuseDigital->diMUSESetMusicGroupVol(volume);
-			return;
-		}
-
-		// "Voice Volume  Low  =========  High"
-		if (lastKeyHit.keycode == Common::KEYCODE_k || lastKeyHit.keycode == Common::KEYCODE_l) {
-			Common::KeyState ks = lastKeyHit;
-
-			int volume = _imuseDigital->diMUSEGetVoiceGroupVol();
-			do {
-				if (ks.keycode == Common::KEYCODE_k) {
-					volume -= 16;
-					if (volume < 0)
-						volume = 0;
-				} else {
-					volume += 16;
-					if (volume > 127)
-						volume = 127;
-				}
-
-				strcpy(tempStr, d.getPlainEngineString(33));
-				char *ptrToChar = strchr(tempStr, '=');
-				memset(ptrToChar, '\v', 9);
-				ptrToChar[volume / 15] = '\f';
-
-				showBannerAndPause(0, 0, tempStr);
-				ks = Common::KEYCODE_INVALID;
-				bool leftBtnPressed = false, rightBtnPressed = false;
-				waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
-			} while (ks.keycode == Common::KEYCODE_k || ks.keycode == Common::KEYCODE_l);
-			clearBanner();
-			_imuseDigital->diMUSESetVoiceGroupVol(volume);
-			return;
-		}
-
-		// "Sfx Volume  Low  =========  High"
-		if (lastKeyHit.keycode == Common::KEYCODE_n || lastKeyHit.keycode == Common::KEYCODE_m) {
-			Common::KeyState ks = lastKeyHit;
-
-			int volume = _imuseDigital->diMUSEGetSFXGroupVol();
-			do {
-				if (ks.keycode == Common::KEYCODE_n) {
-					volume -= 16;
-					if (volume < 0)
-						volume = 0;
-				} else {
-					volume += 16;
-					if (volume > 127)
-						volume = 127;
-				}
-
-				strcpy(tempStr, d.getPlainEngineString(34));
-				char *ptrToChar = strchr(tempStr, '=');
-				memset(ptrToChar, '\v', 9);
-				ptrToChar[volume / 15] = '\f';
-
-				showBannerAndPause(0, 0, tempStr);
-				ks = Common::KEYCODE_INVALID;
-				bool leftBtnPressed = false, rightBtnPressed = false;
-				waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
-			} while (ks.keycode == Common::KEYCODE_n || ks.keycode == Common::KEYCODE_m);
-			clearBanner();
-			_imuseDigital->diMUSESetSFXGroupVol(volume);
-			return;
-		}
-
-		// "Text Speed  Slow  ==========  Fast"
-		if (lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-') {
-			if (VAR_CHARINC == 0xFF)
+					showBannerAndPause(0, 0, tempStr);
+					ks = Common::KEYCODE_INVALID;
+					bool leftBtnPressed = false, rightBtnPressed = false;
+					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+				} while (ks.keycode == Common::KEYCODE_o || ks.keycode == Common::KEYCODE_p);
+				clearBanner();
+				_imuseDigital->diMUSESetMusicGroupVol(volume);
 				return;
+			}
 
-			Common::KeyState ks = lastKeyHit;
+			// "Voice Volume  Low  =========  High"
+			if (lastKeyHit.keycode == Common::KEYCODE_k || lastKeyHit.keycode == Common::KEYCODE_l) {
+				Common::KeyState ks = lastKeyHit;
 
-			int volume = _imuseDigital->diMUSEGetSFXGroupVol();
-			do {
-				if (ks.ascii == '+') {
-					VAR(VAR_CHARINC) -= 1;
-					if (VAR(VAR_CHARINC) < 0)
-						VAR(VAR_CHARINC) = 0;
-				} else {
-					VAR(VAR_CHARINC) += 1;
-					if (VAR(VAR_CHARINC) > 9)
-						VAR(VAR_CHARINC) = 9;
-				}
+				int volume = _imuseDigital->diMUSEGetVoiceGroupVol();
+				do {
+					if (ks.keycode == Common::KEYCODE_k) {
+						volume -= 16;
+						if (volume < 0)
+							volume = 0;
+					} else {
+						volume += 16;
+						if (volume > 127)
+							volume = 127;
+					}
 
-				strcpy(tempStr, d.getPlainEngineString(31));
-				char *ptrToChar = strchr(tempStr, '=');
-				memset(ptrToChar, '\v', 10);
-				ptrToChar[9 - VAR(VAR_CHARINC)] = '\f';
+					strcpy(tempStr, d.getPlainEngineString(33));
+					char *ptrToChar = strchr(tempStr, '=');
+					memset(ptrToChar, '\v', 9);
+					ptrToChar[volume / 15] = '\f';
 
-				showBannerAndPause(0, 0, tempStr);
-				ks = Common::KEYCODE_INVALID;
-				bool leftBtnPressed = false, rightBtnPressed = false;
-				waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
-			} while (ks.ascii == '+' || ks.ascii == '-');
-			clearBanner();
-			_imuseDigital->diMUSESetSFXGroupVol(volume);
-			return;
+					showBannerAndPause(0, 0, tempStr);
+					ks = Common::KEYCODE_INVALID;
+					bool leftBtnPressed = false, rightBtnPressed = false;
+					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+				} while (ks.keycode == Common::KEYCODE_k || ks.keycode == Common::KEYCODE_l);
+				clearBanner();
+				_imuseDigital->diMUSESetVoiceGroupVol(volume);
+				return;
+			}
+
+			// "Sfx Volume  Low  =========  High"
+			if (lastKeyHit.keycode == Common::KEYCODE_n || lastKeyHit.keycode == Common::KEYCODE_m) {
+				Common::KeyState ks = lastKeyHit;
+
+				int volume = _imuseDigital->diMUSEGetSFXGroupVol();
+				do {
+					if (ks.keycode == Common::KEYCODE_n) {
+						volume -= 16;
+						if (volume < 0)
+							volume = 0;
+					} else {
+						volume += 16;
+						if (volume > 127)
+							volume = 127;
+					}
+
+					strcpy(tempStr, d.getPlainEngineString(34));
+					char *ptrToChar = strchr(tempStr, '=');
+					memset(ptrToChar, '\v', 9);
+					ptrToChar[volume / 15] = '\f';
+
+					showBannerAndPause(0, 0, tempStr);
+					ks = Common::KEYCODE_INVALID;
+					bool leftBtnPressed = false, rightBtnPressed = false;
+					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+				} while (ks.keycode == Common::KEYCODE_n || ks.keycode == Common::KEYCODE_m);
+				clearBanner();
+				_imuseDigital->diMUSESetSFXGroupVol(volume);
+				return;
+			}
+
+			// "Text Speed  Slow  ==========  Fast"
+			if (lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-') {
+				if (VAR_CHARINC == 0xFF)
+					return;
+
+				Common::KeyState ks = lastKeyHit;
+
+				int volume = _imuseDigital->diMUSEGetSFXGroupVol();
+				do {
+					if (ks.ascii == '+') {
+						VAR(VAR_CHARINC) -= 1;
+						if (VAR(VAR_CHARINC) < 0)
+							VAR(VAR_CHARINC) = 0;
+					} else {
+						VAR(VAR_CHARINC) += 1;
+						if (VAR(VAR_CHARINC) > 9)
+							VAR(VAR_CHARINC) = 9;
+					}
+
+					strcpy(tempStr, d.getPlainEngineString(31));
+					char *ptrToChar = strchr(tempStr, '=');
+					memset(ptrToChar, '\v', 10);
+					ptrToChar[9 - VAR(VAR_CHARINC)] = '\f';
+
+					showBannerAndPause(0, 0, tempStr);
+					ks = Common::KEYCODE_INVALID;
+					bool leftBtnPressed = false, rightBtnPressed = false;
+					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+				} while (ks.ascii == '+' || ks.ascii == '-');
+				clearBanner();
+				_imuseDigital->diMUSESetSFXGroupVol(volume);
+				return;
+			}
 		}
 	}
 
