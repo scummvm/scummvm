@@ -781,27 +781,6 @@ void ScummEngine_v6::o6_startScript() {
 		return;
 	}
 
-	// WORKAROUND bug #3591: When turning pages in the recipe book
-	// (found on Blood Island), there is a brief moment where it displays
-	// text from two different pages at the same time.
-	//
-	// The content of the books is drawing (in an endless loop) by local
-	// script 2007. Changing the page is handled by script 2006, which
-	// first stops script 2007; then switches the page; then restarts
-	// script 2007. But it fails to clear the blast texts beforehand.
-	// Hence, the next time blast text is drawn, both the old one (from
-	// the old instance of script 2007) and the new text (from the new
-	// instance) are briefly drawn simultaneously.
-	//
-	// This looks like a script bug to me (a missing call to clearTextQueue).
-	// But this could also hint at a subtle bug in ScummVM; we should check
-	// whether this bug occurs with the original engine or not.
-	if (_game.id == GID_CMI && script == 2007 &&
-		_currentRoom == 62 && vm.slot[_currentScript].number == 2006) {
-
-		removeBlastTexts();
-	}
-
 	runScript(script, (flags & 1) != 0, (flags & 2) != 0, args);
 }
 

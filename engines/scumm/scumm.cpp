@@ -2373,13 +2373,19 @@ void ScummEngine::scummLoop(int delta) {
 
 	processInput();
 
+	// In v7-8 this function is executed at the end of processInput().
+	// we emulate the same behavior by calling it here...
+	if (_game.version >= 7)
+		checkExecVerbs();
+
 	// Saving is performed here in v8; this is important when saving the thumbnail,
-	// which would otherwise miss blastObjects (and possibly more) on the bitmap.
-	// Speaking of the devil, blastObjects are removed right after this operation...
-	// We also remove blastTexts here, being that this isn't done explicitly in the
-	// original, but we still need to...
+	// which would otherwise miss blastObjects/Texts on the bitmap.
 	if (_game.version == 8) {
 		scummLoop_handleSaveLoad();
+	}
+
+	// BlastObjects/Texts are removed in this moment of the codepath, in v7-8...
+	if (_game.version >= 7) {
 		((ScummEngine_v6 *)this)->removeBlastObjects();
 #ifdef ENABLE_SCUMM_7_8
 		((ScummEngine_v7 *)this)->removeBlastTexts();
@@ -2432,8 +2438,15 @@ load_game:
 	if (_game.heversion >= 80) {
 		((SoundHE *)_sound)->processSoundCode();
 	}
+
 	runAllScripts();
-	checkExecVerbs();
+
+	// SCUMM v7-8 executes checkExecVerbs inside the function
+	// which processes keyboard inputs, so we handle it above
+	// in that case.
+	if (_game.version < 7)
+		checkExecVerbs();
+
 	checkAndRunSentenceScript();
 
 	if (shouldQuit())
