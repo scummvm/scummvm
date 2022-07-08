@@ -501,7 +501,7 @@ void Subtitles::tickOuttakes(Graphics::Surface &s) {
 		}
 
 		// keep this as a separate if clause
-		if (isVisible(kSubtitlesPrimary) && isVisible(kSubtitlesSecondary)) {
+		if (isVisible(kSubtitlesPrimary) || isVisible(kSubtitlesSecondary)) {
 			draw(s);
 		}
 	}
