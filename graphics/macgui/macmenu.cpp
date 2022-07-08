@@ -964,7 +964,7 @@ int MacMenu::calcSubMenuWidth(MacMenuSubMenu *submenu) {
 			}
 		}
 	}
-	return maxWidth;
+	return maxWidth > 200 ? 200 : maxWidth;
 }
 
 void MacMenu::calcSubMenuBounds(MacMenuSubMenu *submenu, int x, int y) {
