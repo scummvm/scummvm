@@ -199,7 +199,16 @@ void ScummEngine::parseEvent(Common::Event event) {
 		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 			_mouse.x -= (kHercWidth - _screenWidth * 2) / 2;
 			_mouse.x >>= 1;
-			_mouse.y = _mouse.y * 4 / 7;
+			if (_game.version == 1) {
+				if (_mouse.y >= _virtscr[kMainVirtScreen].topline)
+					_mouse.y = _mouse.y / 2 + _virtscr[kMainVirtScreen].topline / 2;
+				if (_mouse.y > _virtscr[kVerbVirtScreen].topline)
+					_mouse.y += (_mouse.y - _virtscr[kVerbVirtScreen].topline);
+					
+			} else {
+				_mouse.y = _mouse.y * 4 / 7;
+			}
+			
 		} else if (_macScreen || (_useCJKMode && _textSurfaceMultiplier == 2)) {
 			_mouse.x >>= 1;
 			_mouse.y >>= 1;

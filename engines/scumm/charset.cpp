@@ -943,6 +943,10 @@ void CharsetRendererV3::drawChar(int chr, Graphics::Surface &s, int x, int y) {
 }
 
 void CharsetRenderer::translateColor() {
+	// Don't do anything for v1 here.
+	if (_vm->_game.version == 1)
+		return;
+
 	// Based on disassembly
 	if (_vm->_renderMode == Common::kRenderCGA) {
 		static const byte CGAtextColorMap[16] = {0,  3, 3, 3, 5, 5, 5,  15,

@@ -247,10 +247,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 			dialog.runModal();
 		}
 
-	// Check some render mode restrictions
-	if (_game.version <= 1)
-		_renderMode = Common::kRenderDefault;
-
 	switch (_renderMode) {
 	case Common::kRenderHercA:
 	case Common::kRenderHercG:
@@ -258,6 +254,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 			_renderMode = Common::kRenderDefault;
 		break;
 
+	case Common::kRenderCGAComp:
 	case Common::kRenderCGA:
 	case Common::kRenderEGA:
 	case Common::kRenderAmiga:
@@ -323,6 +320,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 		_herculesBuf = (byte *)malloc(kHercWidth * kHercHeight);
 	}
+	updateColorTableV1(_renderMode);
 
 	_isRTL = (_language == Common::HE_ISR && _game.heversion == 0)
 			&& (_game.id == GID_MANIAC || (_game.version >= 4 && _game.version < 7));
@@ -390,6 +388,7 @@ ScummEngine::~ScummEngine() {
 
 	free(_compositeBuf);
 	free(_herculesBuf);
+	delete[] _ditheringTableV1;
 
 	free(_16BitPalette);
 

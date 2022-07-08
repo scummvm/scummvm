@@ -319,9 +319,11 @@ byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	return drawFlag;
 }
 
+// Skin colors
 static const int v1MMActorPalatte1[25] = {
 	8, 8, 8, 8, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8
 };
+// Suit colors
 static const int v1MMActorPalatte2[25] = {
 	0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5, 4, 1, 0, 5, 4, 2, 2, 7, 7
 };
@@ -359,16 +361,16 @@ void ClassicCostumeRenderer::procC64(Codec1 &v1, int actor) {
 	byte palette[4] = { 0, 0, 0, 0 };
 	if (_vm->getCurrentLights() & LIGHTMODE_actor_use_colors) {
 		if (_vm->_game.id == GID_MANIAC) {
-			palette[1] = v1MMActorPalatte1[actor];
-			palette[2] = v1MMActorPalatte2[actor];
+			palette[1] = _vm->_gdi->remapColorToRenderMode(v1MMActorPalatte1[actor]);
+			palette[2] = _vm->_gdi->remapColorToRenderMode(v1MMActorPalatte2[actor]);
 		} else {
 			// Adjust for C64 version of Zak McKracken
-			palette[1] = (_vm->_game.platform == Common::kPlatformC64) ? 10 : 8;
-			palette[2] = _palette[actor];
+			palette[1] = _vm->_gdi->remapColorToRenderMode(_vm->_game.platform == Common::kPlatformC64 ? 10 : 8);
+			palette[2] = _vm->_gdi->remapColorToRenderMode(_palette[actor]);
 		}
 	} else {
-		palette[2] = 11;
-		palette[3] = 11;
+		palette[2] = _vm->_gdi->remapColorToRenderMode(11);
+		palette[3] = _vm->_gdi->remapColorToRenderMode(11);
 	}
 	mask = v1.mask_ptr;
 

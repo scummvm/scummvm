@@ -791,7 +791,7 @@ void ScummEngine::resetScummVars() {
 		// Value only used by the Amiga version of Monkey Island 2
 		else if (_game.platform == Common::kPlatformAmiga)
 			VAR(VAR_VIDEOMODE) = 82;
-		else if (_renderMode == Common::kRenderCGA)
+		else if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp)
 			VAR(VAR_VIDEOMODE) = 4;
 		else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG)
 			VAR(VAR_VIDEOMODE) = 30;

@@ -849,13 +849,13 @@ void ScummEngine_v2::o2_verbOps() {
 			vs->color = 1;
 			vs->hicolor = 1;
 			vs->dimcolor = 1;
-		} else if (_game.version == 1) {
-			vs->color = (_game.id == GID_MANIAC && (_game.features & GF_DEMO)) ? 16 : 5;
+		} else if (_game.platform == Common::kPlatformC64) {
+			vs->color = 5;
 			vs->hicolor = 7;
 			vs->dimcolor = 11;
 		} else {
 			vs->color = (_game.id == GID_MANIAC && (_game.features & GF_DEMO)) ? 13 : 2;
-			vs->hicolor = 14;
+			vs->hicolor = _hiLiteColorVerbArrow;
 			vs->dimcolor = 8;
 		}
 		vs->type = kTextVerbType;
@@ -1088,10 +1088,11 @@ void ScummEngine_v2::o2_drawSentence() {
 	if (_game.platform == Common::kPlatformNES) {
 		_string[2].xpos = 16;
 		_string[2].color = 0;
-	} else if (_game.version == 1)
+	} else if (_game.platform == Common::kPlatformC64) {
 		_string[2].color = 16;
-	else
+	} else {
 		_string[2].color = 13;
+	}
 
 	byte string[80];
 	const char *ptr = _sentenceBuf.c_str();

@@ -194,16 +194,20 @@ void ScummEngine_v0::switchActor(int slot) {
 
 void ScummEngine_v2::initV2MouseOver() {
 	int i;
-	int arrow_color, color, hi_color;
+	int arrow_color, color;
+	_hiLiteColorVerbArrow = _hiLiteColorInvSentence = 14;
+	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp)
+		_hiLiteColorInvSentence = 15;
+	else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG)
+		_hiLiteColorVerbArrow = _hiLiteColorInvSentence = 15;
 
-	if (_game.version == 2) {
-		color = 13;
-		hi_color = 14;
-		arrow_color = 1;
-	} else {
+	if (_game.platform == Common::kPlatformC64) {
 		color = 16;
-		hi_color = 7;
+		_hiLiteColorVerbArrow = _hiLiteColorInvSentence = 7;
 		arrow_color = 6;
+	} else {
+		color = 13;
+		arrow_color = 1;
 	}
 
 	_mouseOverBoxV2 = -1;
@@ -217,7 +221,7 @@ void ScummEngine_v2::initV2MouseOver() {
 		_mouseOverBoxesV2[2 * i].rect.bottom = _mouseOverBoxesV2[2 * i].rect.top + 8;
 
 		_mouseOverBoxesV2[2 * i].color = color;
-		_mouseOverBoxesV2[2 * i].hicolor = hi_color;
+		_mouseOverBoxesV2[2 * i].hicolor = _hiLiteColorInvSentence;
 
 		_mouseOverBoxesV2[2 * i + 1].rect.left = 176;
 		_mouseOverBoxesV2[2 * i + 1].rect.right = 320;
@@ -225,7 +229,7 @@ void ScummEngine_v2::initV2MouseOver() {
 		_mouseOverBoxesV2[2 * i + 1].rect.bottom = _mouseOverBoxesV2[2 * i].rect.bottom;
 
 		_mouseOverBoxesV2[2 * i + 1].color = color;
-		_mouseOverBoxesV2[2 * i + 1].hicolor = hi_color;
+		_mouseOverBoxesV2[2 * i + 1].hicolor = _hiLiteColorInvSentence;
 	}
 
 	// Inventory arrows
@@ -236,7 +240,7 @@ void ScummEngine_v2::initV2MouseOver() {
 	_mouseOverBoxesV2[kInventoryUpArrow].rect.bottom = 40;
 
 	_mouseOverBoxesV2[kInventoryUpArrow].color = arrow_color;
-	_mouseOverBoxesV2[kInventoryUpArrow].hicolor = hi_color;
+	_mouseOverBoxesV2[kInventoryUpArrow].hicolor = _hiLiteColorVerbArrow;
 
 	_mouseOverBoxesV2[kInventoryDownArrow].rect.left = 144;
 	_mouseOverBoxesV2[kInventoryDownArrow].rect.right = 176;
@@ -244,7 +248,7 @@ void ScummEngine_v2::initV2MouseOver() {
 	_mouseOverBoxesV2[kInventoryDownArrow].rect.bottom = 48;
 
 	_mouseOverBoxesV2[kInventoryDownArrow].color = arrow_color;
-	_mouseOverBoxesV2[kInventoryDownArrow].hicolor = hi_color;
+	_mouseOverBoxesV2[kInventoryDownArrow].hicolor = _hiLiteColorVerbArrow;
 
 	// Sentence line
 
@@ -254,7 +258,7 @@ void ScummEngine_v2::initV2MouseOver() {
 	_mouseOverBoxesV2[kSentenceLine].rect.bottom = 8;
 
 	_mouseOverBoxesV2[kSentenceLine].color = color;
-	_mouseOverBoxesV2[kSentenceLine].hicolor = hi_color;
+	_mouseOverBoxesV2[kSentenceLine].hicolor = _hiLiteColorInvSentence;
 }
 
 void ScummEngine_v2::initNESMouseOver() {

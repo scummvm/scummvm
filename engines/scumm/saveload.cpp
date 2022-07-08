@@ -67,7 +67,7 @@ struct SaveInfoSection {
 
 #define SaveInfoSectionSize (4+4+4 + 4+4 + 4+2)
 
-#define CURRENT_VER 105
+#define CURRENT_VER 106
 #define INFOSECTION_VERSION 2
 
 #pragma mark -
@@ -1567,6 +1567,19 @@ void ScummEngine_v2::saveLoadWithSerializer(Common::Serializer &s) {
 
 	s.syncAsByte(_flashlight.xStrips, VER(99));
 	s.syncAsByte(_flashlight.yStrips, VER(99));
+
+	// Old saves are based on a diffenrent color mapping, so the verb
+	// colors need to be adjusted.
+	if (s.getVersion() < VER(106) && s.isLoading()) {
+		initV2MouseOver();
+		for (int i = 0; i < _numVerbs; ++i) {
+			if (!_verbs[i].verbid)
+				continue;
+			_verbs[i].color = 2;
+			_verbs[i].hicolor = _hiLiteColorVerbArrow;
+			_verbs[i].dimcolor = 8;
+		}
+	}
 }
 
 void ScummEngine_v5::saveLoadWithSerializer(Common::Serializer &s) {

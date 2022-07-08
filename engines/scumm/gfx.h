@@ -270,6 +270,9 @@ public:
 	Gdi(ScummEngine *vm);
 	virtual ~Gdi();
 
+	virtual void setRenderModeColorMap(const byte *map) {}
+	virtual byte remapColorToRenderMode(byte col) const { return col; }
+
 	virtual void init();
 	virtual void roomChanged(byte *roomptr);
 	virtual void loadTiles(byte *roomptr);
@@ -404,6 +407,8 @@ protected:
 		byte maskMap[4096], maskChar[4096];
 	} _V1;
 
+	const byte *_colorMap;
+
 protected:
 	void decodeV1Gfx(const byte *src, byte *dst, int size) const;
 
@@ -425,6 +430,9 @@ protected:
 
 public:
 	GdiV1(ScummEngine *vm);
+
+	void setRenderModeColorMap(const byte *map) override;
+	byte remapColorToRenderMode(byte col) const override;
 
 	void roomChanged(byte *roomptr) override;
 };
