@@ -96,6 +96,7 @@ public:
 	void enableCommand(int menunum, int action, bool state);
 	void enableCommand(const char *menuitem, const char *menuaction, bool state);
 	void enableCommand(const Common::U32String &menuitem, const Common::U32String &menuaction, bool state);
+	void enableAllMenus();
 	void disableAllMenus();
 
 	bool isVisible() { return _isVisible; }

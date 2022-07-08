@@ -73,6 +73,8 @@ struct MacMenuSubMenu {
 
 	~MacMenuSubMenu();
 
+	void enableAllItems();
+
 	int ytoItem(int y, int itemHeight) { return MIN<int>((y - bbox.top) / itemHeight, items.size() - 1); }
 };
 
@@ -106,6 +108,15 @@ struct MacMenuItem {
 MacMenuSubMenu::~MacMenuSubMenu() {
 	for (uint i = 0; i < items.size(); i++)
 		delete items[i];
+}
+
+void MacMenuSubMenu::enableAllItems() {
+	for (uint i = 0; i < items.size(); ++i) {
+		items[i]->enabled = true;
+		if (items[i]->submenu) {
+			items[i]->submenu->enableAllItems();
+		}
+	}
 }
 
 MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
@@ -279,6 +290,9 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources *exe, MacWindowManager
 
 	if (gDebugLevel > 5)
 		menu->printMenu();
+
+	if (wm->_mode & Graphics::kWMModeWin95)
+		menu->enableAllMenus();
 
 	return menu;
 }
@@ -1566,6 +1580,14 @@ void MacMenu::enableCommand(const Common::U32String &menuitem, const Common::U32
 			if (_items[menunum]->submenu->items[i]->unicodeText.equals(menuaction))
 				_items[menunum]->submenu->items[i]->enabled = state;
 		}
+
+	_contentIsDirty = true;
+}
+
+void MacMenu::enableAllMenus() {
+	for (uint i = 0; i < _items.size(); i++)
+		if (_items[i]->submenu != nullptr)
+			_items[i]->submenu->enableAllItems();
 
 	_contentIsDirty = true;
 }
