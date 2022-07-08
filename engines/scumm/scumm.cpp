@@ -2381,7 +2381,9 @@ void ScummEngine::scummLoop(int delta) {
 	if (_game.version == 8) {
 		scummLoop_handleSaveLoad();
 		((ScummEngine_v6 *)this)->removeBlastObjects();
+#ifdef ENABLE_SCUMM_7_8
 		((ScummEngine_v7 *)this)->removeBlastTexts();
+#endif
 	}
 
 	scummLoop_updateScummVars();
