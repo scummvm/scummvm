@@ -161,10 +161,7 @@ void FreescapeEngine::loadAssets() {
 
 			if (file == nullptr)
 				error("Failed to open castle.sna");
-			// Courtyard -> 0x93c1 -> 0x8cbc,3
-			// Beds -> 0x867d
-			// All? -> 0x845d or 0x80ed?
-			load8bitBinary(file, 0x8465, 16);
+			load8bitBinary(file, 0x84da, 16);
 	   } else
 		error("'%s' is an invalid game", _targetName.c_str());
 
