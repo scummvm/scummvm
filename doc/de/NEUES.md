@@ -20,14 +20,6 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für die koreanische Version von Legend of Kyrandia 1 hinzugefügt.
    - Unterstützung für die hebräische Version von Legend of Kyrandia 3 hinzugefügt.
 
- SCUMM:
-   - Ein Workaround in der FM-Towns-Version von Monkey Island 2 ist jetzt als
-     Verbesserung gekennzeichnet. Dieser Workaround hat ursprünglich einen
-     Abschnitt im Karten-Puzzle auf Booty Island, welche in der FM-Towns-Version
-     des Spiels entfernt wurde, wiederhergestellt.
-   - Dialog-Zeilen können nun wie im Handbuch beschrieben bedient werden. Du kannst beispielsweise
-     auf die Dialog-Zeile klicken, um den jeweiligen Befehl auszuführen.
-    
  Toon:
    - Die Spiel-Menüs verhalten sich nun wie das Original.
 
@@ -172,6 +164,12 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      das enthaltene Abbild von DISK4 defekt ist. Es ist möglich, ein funktionierendes Image
      anhand der bereitgestellten KryoFlux-Dumps zu erzeugen.
    - Fehlerhafter Zufallsgenerator in Backyard Baseball korrigiert.
+   - Ein Workaround in der FM-Towns-Version von Monkey Island 2 ist jetzt als
+     Verbesserung gekennzeichnet. Dieser Workaround hat ursprünglich einen
+     Abschnitt im Karten-Puzzle auf Booty Island, welche in der FM-Towns-Version
+     des Spiels entfernt wurde, wiederhergestellt.
+   - Dialog-Zeilen können nun wie im Handbuch beschrieben bedient werden. Du kannst beispielsweise
+     auf die Dialog-Zeile klicken, um den jeweiligen Befehl auszuführen.
 
  Sherlock:
    - Fehler in der Wiedergabegeschwindigkeit im Intro von Serrated Scalpel behoben, der auftritt,
