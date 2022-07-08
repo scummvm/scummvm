@@ -492,6 +492,67 @@ int MacMenu::addMenuItem(MacMenuSubMenu *submenu, const Common::U32String &text,
 	return submenu->items.size() - 1;
 }
 
+void MacMenu::insertMenuItem(MacMenuSubMenu *submenu, const Common::String &text, int pos, int action, int style, char shortcut, bool enabled, bool checked) {
+	_dimensionsDirty = true;
+
+	if (submenu == nullptr) {
+		if (pos >= _items.size()) {
+			_dimensionsDirty = false;
+		} else {
+			MacMenuItem *i = new MacMenuItem(text);
+			_items.insert(_items.begin() + pos, i);
+		}
+		return;
+	}
+
+	if (pos >= submenu->items.size()) {
+		_dimensionsDirty = false;
+		return;
+	}
+
+	_dimensionsDirty = true;
+
+	submenu->items.insert(submenu->items.begin() + pos, new MacMenuItem(text, action, style, shortcut, -1, enabled, checked));
+}
+
+void MacMenu::insertMenuItem(MacMenuSubMenu *submenu, const Common::U32String &text, int pos, int action, int style, char shortcut, bool enabled, bool checked) {
+	_dimensionsDirty = true;
+
+	Common::U32String amp("&");
+	Common::U32String res;
+	int shortcutPos = -1;
+
+	for (uint i = 0; i < text.size(); i++)
+		if (text[i] == amp[0]) {
+			if (i < text.size() - 1) {
+				if ((text[i + 1] & 0xff) != '&') {
+					shortcut = text[i + 1] & 0xff;
+					shortcutPos = i;
+				} else {
+					res += text[i];
+				}
+			}
+		} else {
+			res += text[i];
+		}
+
+	if (submenu == nullptr) {
+		if (pos >= _items.size()) {
+			_dimensionsDirty = false;
+		} else {
+			_items.insert(_items.begin() + pos, new MacMenuItem(res, -1, 0, shortcut, shortcutPos));
+		}
+		return;
+	}
+
+	if (pos >= submenu->items.size()) {
+		_dimensionsDirty = false;
+		return;
+	}
+
+	submenu->items.insert(submenu->items.begin() + pos, new MacMenuItem(res, action, style, shortcut, shortcutPos, enabled, checked));
+}
+
 void MacMenu::calcDimensions() {
 	// Calculate menu dimensions
 	int y = 1;
