@@ -250,7 +250,7 @@ bool PICTDecoder::loadStream(Common::SeekableReadStream &stream) {
 	_imageRect.left = stream.readUint16BE();
 	_imageRect.bottom = stream.readUint16BE();
 	_imageRect.right = stream.readUint16BE();
-	_imageRect.debugPrint(0, "PICT Rect:");
+	_imageRect.debugPrint(8, "PICTDecoder::loadStream(): loaded rect: ");
 
 	// NOTE: This is only a subset of the full PICT format.
 	//     - Only V2 (Extended) Images Supported
