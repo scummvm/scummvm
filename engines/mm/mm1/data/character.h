@@ -202,6 +202,8 @@ struct Character {
 	int _v66, _v67, _v68, _v69, _v6a, _v6b,
 		_v6c, _v6e, _v6f;
 
+	byte _quest = 0;
+
 	// Non persistent fields
 	byte _numDrinks = 0;
 
