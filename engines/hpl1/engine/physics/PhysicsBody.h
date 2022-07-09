@@ -168,12 +168,14 @@ public:
 	virtual bool GetEnabled() const = 0;
 	virtual void SetAutoDisable(bool abEnabled) = 0;
 	virtual bool GetAutoDisable() const = 0;
+#if 0
 	virtual void SetAutoDisableLinearThreshold(float afThresold) = 0;
 	virtual float GetAutoDisableLinearThreshold() const = 0;
 	virtual void SetAutoDisableAngularThreshold(float afThresold) = 0;
 	virtual float GetAutoDisableAngularThreshold() const = 0;
 	virtual void SetAutoDisableNumSteps(int alNum) = 0;
 	virtual int GetAutoDisableNumSteps() const = 0;
+#endif
 	virtual void SetContinuousCollision(bool abOn) = 0;
 	virtual bool GetContinuousCollision() = 0;
 

@@ -31,7 +31,11 @@
 #include "hpl1/engine/impl/CollideShapeNewton.h"
 #include "hpl1/engine/impl/PhysicsMaterialNewton.h"
 #include "hpl1/engine/impl/PhysicsWorldNewton.h"
+#include "hpl1/engine/libraries/angelscript/angelscript.h"
+#include "hpl1/engine/libraries/newton/Newton.h"
 #include "hpl1/engine/math/Math.h"
+#include "hpl1/engine/math/MathTypes.h"
+#include "hpl1/engine/math/Vector3.h"
 #include "hpl1/engine/scene/Node3D.h"
 #include "hpl1/engine/system/low_level_system.h"
 
@@ -47,38 +51,36 @@ bool cPhysicsBodyNewton::mbUseCallback = true;
 
 cPhysicsBodyNewton::cPhysicsBodyNewton(const tString &asName, iPhysicsWorld *apWorld, iCollideShape *apShape)
 	: iPhysicsBody(asName, apWorld, apShape) {
-#if 0
-  		cPhysicsWorldNewton *pWorldNewton = static_cast<cPhysicsWorldNewton*>(apWorld);
-		cCollideShapeNewton *pShapeNewton = static_cast<cCollideShapeNewton*>(apShape);
+	cPhysicsWorldNewton *pWorldNewton = static_cast<cPhysicsWorldNewton *>(apWorld);
+	cCollideShapeNewton *pShapeNewton = static_cast<cCollideShapeNewton *>(apShape);
 
-		mpNewtonWorld = pWorldNewton->GetNewtonWorld();
-		mpNewtonBody = NewtonCreateBody(pWorldNewton->GetNewtonWorld(),
-										pShapeNewton->GetNewtonCollision());
+	mpNewtonWorld = pWorldNewton->GetNewtonWorld();
+	mpNewtonBody = NewtonCreateBody(pWorldNewton->GetNewtonWorld(),
+									pShapeNewton->GetNewtonCollision(), cMatrixf::Identity.v);
 
-		mpCallback = hplNew( cPhysicsBodyNewtonCallback, () );
+	mpCallback = hplNew(cPhysicsBodyNewtonCallback, ());
 
-		AddCallback(mpCallback);
+	AddCallback(mpCallback);
 
-		// Setup the callbacks and set this body as user data
-		// This is so that the transform gets updated and
-		// to add gravity, forces and user sink.
-		NewtonBodySetForceAndTorqueCallback(mpNewtonBody,OnUpdateCallback);
-		NewtonBodySetTransformCallback(mpNewtonBody, OnTransformCallback);
-		NewtonBodySetUserData(mpNewtonBody, this);
+	// Setup the callbacks and set this body as user data
+	// This is so that the transform gets updated and
+	// to add gravity, forces and user sink.
+	NewtonBodySetForceAndTorqueCallback(mpNewtonBody, OnUpdateCallback);
+	NewtonBodySetTransformCallback(mpNewtonBody, OnTransformCallback);
+	NewtonBodySetUserData(mpNewtonBody, this);
 
-		//Set default property settings
-		mbGravity = true;
+	// Set default property settings
+	mbGravity = true;
 
-		mfMaxLinearSpeed =0;
-		mfMaxAngularSpeed =0;
-		mfMass =0;
+	mfMaxLinearSpeed = 0;
+	mfMaxAngularSpeed = 0;
+	mfMass = 0;
 
-		mfAutoDisableLinearThreshold = 0.01f;
-		mfAutoDisableAngularThreshold = 0.01f;
-		mlAutoDisableNumSteps = 10;
+	mfAutoDisableLinearThreshold = 0.01f;
+	mfAutoDisableAngularThreshold = 0.01f;
+	mlAutoDisableNumSteps = 10;
 
-		//Log("Creating newton body '%s' %d\n",msName.c_str(),(size_t)this);
-#endif
+	// Log("Creating newton body '%s' %d\n",msName.c_str(),(size_t)this);
 }
 
 //-----------------------------------------------------------------------
@@ -90,12 +92,10 @@ cPhysicsBodyNewton::~cPhysicsBodyNewton() {
 //-----------------------------------------------------------------------
 
 void cPhysicsBodyNewton::DeleteLowLevel() {
-#if 0
-  		//Log(" Newton body %d\n", (size_t)mpNewtonBody);
-		NewtonDestroyBody(mpNewtonWorld,mpNewtonBody);
-		//Log(" Callback\n");
-		hplDelete(mpCallback);
-#endif
+	// Log(" Newton body %d\n", (size_t)mpNewtonBody);
+	NewtonDestroyBody(mpNewtonWorld, mpNewtonBody);
+	// Log(" Callback\n");
+	hplDelete(mpCallback);
 }
 
 //-----------------------------------------------------------------------
@@ -140,8 +140,8 @@ void cPhysicsBodyNewton::SetMaterial(iPhysicsMaterial *apMaterial) {
 //-----------------------------------------------------------------------
 
 void cPhysicsBodyNewton::SetLinearVelocity(const cVector3f &avVel) {
-	const float arrayVec[] = {avVel.x, avVel.y, avVel.y};
-	NewtonBodySetVelocity(mpNewtonBody, arrayVec);
+	VEC3_CONST_ARRAY(vel, avVel);
+	NewtonBodySetVelocity(mpNewtonBody, vel);
 }
 cVector3f cPhysicsBodyNewton::GetLinearVelocity() const {
 	float arrayVec[3];
@@ -156,9 +156,9 @@ void cPhysicsBodyNewton::SetAngularVelocity(const cVector3f &avVel) {
 	NewtonBodySetOmega(mpNewtonBody, faVel);
 }
 cVector3f cPhysicsBodyNewton::GetAngularVelocity() const {
-	float faVel[3];
-	NewtonBodyGetOmega(mpNewtonBody, faVel);
-	return {faVel[0], faVel[1], faVel[2]};
+	float vel[3];
+	NewtonBodyGetOmega(mpNewtonBody, vel);
+	return {vel[0], vel[1], vel[2]};
 }
 
 //-----------------------------------------------------------------------
@@ -173,8 +173,8 @@ float cPhysicsBodyNewton::GetLinearDamping() const {
 //-----------------------------------------------------------------------
 
 void cPhysicsBodyNewton::SetAngularDamping(float afDamping) {
-	float fDamp[3] = {afDamping, afDamping, afDamping};
-	NewtonBodySetAngularDamping(mpNewtonBody, fDamp);
+	float damp[3] = {afDamping, afDamping, afDamping};
+	NewtonBodySetAngularDamping(mpNewtonBody, damp);
 }
 float cPhysicsBodyNewton::GetAngularDamping() const {
 	float fDamp[3];
@@ -240,8 +240,8 @@ float cPhysicsBodyNewton::GetMass() const {
 }
 
 void cPhysicsBodyNewton::SetMassCentre(const cVector3f &avCentre) {
-	const float faCenter[3] = {avCentre.x, avCentre.y, avCentre.z};
-	NewtonBodySetCentreOfMass(mpNewtonBody, faCenter);
+	VEC3_CONST_ARRAY(ctr, avCentre);
+	NewtonBodySetCentreOfMass(mpNewtonBody, ctr);
 }
 
 cVector3f cPhysicsBodyNewton::GetMassCentre() const {
@@ -287,67 +287,48 @@ void cPhysicsBodyNewton::AddTorque(const cVector3f &avTorque) {
 //-----------------------------------------------------------------------
 
 void cPhysicsBodyNewton::AddImpulse(const cVector3f &avImpulse) {
-#if 0
-  		cVector3f vMassCentre = GetMassCentre();
-		if(vMassCentre != cVector3f(0,0,0))
-		{
-			cVector3f vCentreOffset = cMath::MatrixMul( GetWorldMatrix().GetRotation(),
-														vMassCentre);
-
-			cVector3f vWorldPosition = GetWorldPosition() + vCentreOffset;
-			NewtonAddBodyImpulse(mpNewtonBody, avImpulse.v, vWorldPosition.v);
-		}
-		else
-		{
-			NewtonAddBodyImpulse(mpNewtonBody, avImpulse.v, GetWorldPosition().v);
-		}
-#endif
+	cVector3f vMassCentre = GetMassCentre();
+	VEC3_CONST_ARRAY(impulse, avImpulse);
+	if (vMassCentre != cVector3f(0, 0, 0)) {
+		cVector3f vCentreOffset = cMath::MatrixMul(GetWorldMatrix().GetRotation(),
+												   vMassCentre);
+		VEC3_CONST_ARRAY(worldPosition, (GetWorldPosition() + vCentreOffset));
+		NewtonBodyAddImpulse(mpNewtonBody, impulse, worldPosition);
+	} else {
+		VEC3_CONST_ARRAY(worldPosition, GetWorldPosition());
+		NewtonBodyAddImpulse(mpNewtonBody, impulse, worldPosition);
+	}
 }
 void cPhysicsBodyNewton::AddImpulseAtPosition(const cVector3f &avImpulse, const cVector3f &avPos) {
-#if 0
-  		NewtonAddBodyImpulse(mpNewtonBody, avImpulse.v, avPos.v);
-#endif
+	VEC3_CONST_ARRAY(impulse, avImpulse);
+	VEC3_CONST_ARRAY(pos, avPos);
+	NewtonBodyAddImpulse(mpNewtonBody, impulse, pos);
 }
 
 //-----------------------------------------------------------------------
 
 void cPhysicsBodyNewton::SetEnabled(bool abEnabled) {
-#if 0
-  		if (abEnabled)
-			NewtonWorldUnfreezeBody(mpNewtonWorld, mpNewtonBody);
-		else
-			NewtonWorldFreezeBody(mpNewtonWorld, mpNewtonBody);
-#endif
+	NewtonBodySetFreezeState(mpNewtonBody, abEnabled);
 }
 bool cPhysicsBodyNewton::GetEnabled() const {
-#if 0
-  		return NewtonBodyGetSleepingState(mpNewtonBody) ==0?false: true;
-#endif
-	return false;
+	return NewtonBodyGetSleepState(mpNewtonBody) == 0 ? false : true;
 }
 
 //-----------------------------------------------------------------------
 
 void cPhysicsBodyNewton::SetAutoDisable(bool abEnabled) {
-#if 0
-  		NewtonBodySetAutoFreeze(mpNewtonBody, abEnabled ? 1 : 0);
-#endif
+	NewtonBodySetAutoSleep(mpNewtonBody, abEnabled);
 }
 bool cPhysicsBodyNewton::GetAutoDisable() const {
-#if 0
-  		return NewtonBodyGetAutoFreeze(mpNewtonBody) == 0 ? false : true;
-#endif
-	return false;
+	return NewtonBodyGetAutoSleep(mpNewtonBody) == 0 ? false : true;
 }
 
 //-----------------------------------------------------------------------
-
-void cPhysicsBodyNewton::SetAutoDisableLinearThreshold(float afThresold) {
 #if 0
-  		mfAutoDisableLinearThreshold = afThresold;
-		NewtonBodySetFreezeTreshold(mpNewtonBody, mfAutoDisableLinearThreshold,
-			mfAutoDisableAngularThreshold, mlAutoDisableNumSteps);
-#endif
+void cPhysicsBodyNewton::SetAutoDisableLinearThreshold(float afThresold) {
+	mfAutoDisableLinearThreshold = afThresold;
+	NewtonBodySetFreezeTreshold(mpNewtonBody, mfAutoDisableLinearThreshold,
+								mfAutoDisableAngularThreshold, mlAutoDisableNumSteps);
 }
 float cPhysicsBodyNewton::GetAutoDisableLinearThreshold() const {
 	return mfAutoDisableLinearThreshold;
@@ -356,11 +337,9 @@ float cPhysicsBodyNewton::GetAutoDisableLinearThreshold() const {
 //-----------------------------------------------------------------------
 
 void cPhysicsBodyNewton::SetAutoDisableAngularThreshold(float afThresold) {
-#if 0
-  		mfAutoDisableAngularThreshold = afThresold;
-		NewtonBodySetFreezeTreshold(mpNewtonBody, mfAutoDisableLinearThreshold,
-			mfAutoDisableAngularThreshold, mlAutoDisableNumSteps);
-#endif
+	mfAutoDisableAngularThreshold = afThresold;
+	NewtonBodySetFreezeTreshold(mpNewtonBody, mfAutoDisableLinearThreshold,
+								mfAutoDisableAngularThreshold, mlAutoDisableNumSteps);
 }
 float cPhysicsBodyNewton::GetAutoDisableAngularThreshold() const {
 	return mfAutoDisableAngularThreshold;
@@ -369,17 +348,14 @@ float cPhysicsBodyNewton::GetAutoDisableAngularThreshold() const {
 //-----------------------------------------------------------------------
 
 void cPhysicsBodyNewton::SetAutoDisableNumSteps(int anNum) {
-#if 0
-  		mlAutoDisableNumSteps = anNum;
-		NewtonBodySetFreezeTreshold(mpNewtonBody, mfAutoDisableLinearThreshold,
-			mfAutoDisableAngularThreshold, mlAutoDisableNumSteps);
-#endif
+	mlAutoDisableNumSteps = anNum;
+	NewtonBodySetFreezeTreshold(mpNewtonBody, mfAutoDisableLinearThreshold,
+								mfAutoDisableAngularThreshold, mlAutoDisableNumSteps);
 }
-
 int cPhysicsBodyNewton::GetAutoDisableNumSteps() const {
 	return mlAutoDisableNumSteps;
 }
-
+#endif
 //-----------------------------------------------------------------------
 
 void cPhysicsBodyNewton::SetContinuousCollision(bool abOn) {
@@ -446,7 +422,7 @@ void cPhysicsBodyNewton::ClearForces() {
 
 //-----------------------------------------------------------------------
 
-void cPhysicsBodyNewton::OnTransformCallback(const NewtonBody *apBody, const dFloat *apMatrix) {
+void cPhysicsBodyNewton::OnTransformCallback(const NewtonBody *apBody, const dFloat *apMatrix, int) {
 	cPhysicsBodyNewton *pRigidBody = (cPhysicsBodyNewton *)NewtonBodyGetUserData(apBody);
 
 	pRigidBody->m_mtxLocalTransform.FromTranspose(apMatrix);
@@ -472,73 +448,67 @@ static int BuoyancyPlaneCallback(const int alCollisionID, void *apContext,
 	return 1;
 }
 
-void cPhysicsBodyNewton::OnUpdateCallback(const NewtonBody *apBody) {
-#if 0
-  float fMass;
-		float fX,fY,fZ;
+void cPhysicsBodyNewton::OnUpdateCallback(const NewtonBody *apBody, float, int) {
+	float fMass;
+	float fX, fY, fZ;
 
-		cPhysicsBodyNewton* pRigidBody = (cPhysicsBodyNewton*) NewtonBodyGetUserData(apBody);
+	cPhysicsBodyNewton *pRigidBody = (cPhysicsBodyNewton *)NewtonBodyGetUserData(apBody);
 
-		if(pRigidBody->IsActive()==false) return;
+	if (pRigidBody->IsActive() == false)
+		return;
 
-		cVector3f vGravity = pRigidBody->mpWorld->GetGravity();
+	cVector3f vGravity = pRigidBody->mpWorld->GetGravity();
 
-		//Create some gravity
-		if (pRigidBody->mbGravity)
-		{
-			NewtonBodyGetMassMatrix(apBody, &fMass, &fX, &fY, &fZ);
+	// Create some gravity
+	if (pRigidBody->mbGravity) {
+		NewtonBodyGetMassMatrix(apBody, &fMass, &fX, &fY, &fZ);
+		VEC3_CONST_ARRAY(force, (vGravity * fMass));
+		NewtonBodyAddForce(apBody, force);
+	}
 
-			float fForce[3] = { fMass * vGravity.x, fMass * vGravity.y, fMass * vGravity.z};
+	// Create Buoyancy
+	if (pRigidBody->mBuoyancy.mbActive) {
+		gSurfacePlane = pRigidBody->mBuoyancy.mSurface;
+		VEC3_CONST_ARRAY(gravity, vGravity);
+		NewtonBodyAddBuoyancyForce(apBody,
+								   pRigidBody->mBuoyancy.mfDensity,
+								   pRigidBody->mBuoyancy.mfLinearViscosity,
+								   pRigidBody->mBuoyancy.mfAngularViscosity,
+								   gravity, BuoyancyPlaneCallback,
+								   pRigidBody);
+	}
 
-			NewtonBodyAddForce(apBody, &fForce[0]);
+	// Add forces from calls to Addforce(..), etc
+	VEC3_CONST_ARRAY(totForce, pRigidBody->mvTotalForce);
+	NewtonBodyAddForce(apBody, totForce);
+	VEC3_CONST_ARRAY(totTorque, pRigidBody->mvTotalTorque);
+	NewtonBodyAddTorque(apBody, totTorque);
+
+	// Check so that all speeds are within thresholds
+	// Linear
+	if (pRigidBody->mfMaxLinearSpeed > 0) {
+		cVector3f vVel = pRigidBody->GetLinearVelocity();
+		float fSpeed = vVel.Length();
+		if (fSpeed > pRigidBody->mfMaxLinearSpeed) {
+			vVel = cMath::Vector3Normalize(vVel) * pRigidBody->mfMaxLinearSpeed;
+			pRigidBody->SetLinearVelocity(vVel);
 		}
-
-		// Create Buoyancy
-		if (pRigidBody->mBuoyancy.mbActive)
-		{
-			gSurfacePlane = pRigidBody->mBuoyancy.mSurface;
-			NewtonBodyAddBuoyancyForce( apBody,
-										pRigidBody->mBuoyancy.mfDensity,
-										pRigidBody->mBuoyancy.mfLinearViscosity,
-										pRigidBody->mBuoyancy.mfAngularViscosity,
-										vGravity.v, BuoyancyPlaneCallback,
-										pRigidBody);
+	}
+	// Angular
+	if (pRigidBody->mfMaxAngularSpeed > 0) {
+		cVector3f vVel = pRigidBody->GetAngularVelocity();
+		float fSpeed = vVel.Length();
+		if (fSpeed > pRigidBody->mfMaxAngularSpeed) {
+			vVel = cMath::Vector3Normalize(vVel) * pRigidBody->mfMaxAngularSpeed;
+			pRigidBody->SetAngularVelocity(vVel);
 		}
+	}
 
-		// Add forces from calls to Addforce(..), etc
-		NewtonBodyAddForce(apBody, pRigidBody->mvTotalForce.v);
-		NewtonBodyAddTorque(apBody, pRigidBody->mvTotalTorque.v);
-
-		// Check so that all speeds are within thresholds
-		// Linear
-		if (pRigidBody->mfMaxLinearSpeed > 0)
-		{
-			cVector3f vVel = pRigidBody->GetLinearVelocity();
-			float fSpeed = vVel.Length();
-			if (fSpeed > pRigidBody->mfMaxLinearSpeed)
-			{
-				vVel = cMath::Vector3Normalize(vVel) * pRigidBody->mfMaxLinearSpeed;
-				pRigidBody->SetLinearVelocity(vVel);
-			}
-		}
-		// Angular
-		if (pRigidBody->mfMaxAngularSpeed > 0)
-		{
-			cVector3f vVel = pRigidBody->GetAngularVelocity();
-			float fSpeed = vVel.Length();
-			if (fSpeed > pRigidBody->mfMaxAngularSpeed)
-			{
-				vVel = cMath::Vector3Normalize(vVel) * pRigidBody->mfMaxAngularSpeed;
-				pRigidBody->SetAngularVelocity(vVel);
-			}
-		}
-
-		//cVector3f vForce;
-		//NewtonBodyGetForce(apBody,vForce.v);
-		//Log("Engine force %s\n",pRigidBody->mvTotalForce.ToString().c_str());
-		//Log("Engine force %s, body force: %s \n",pRigidBody->mvTotalForce.ToString().c_str(),
-		//										vForce.ToString().c_str());
-#endif
+	// cVector3f vForce;
+	// NewtonBodyGetForce(apBody,vForce.v);
+	// Log("Engine force %s\n",pRigidBody->mvTotalForce.ToString().c_str());
+	// Log("Engine force %s, body force: %s \n",pRigidBody->mvTotalForce.ToString().c_str(),
+	//										vForce.ToString().c_str());
 }
 
 //-----------------------------------------------------------------------

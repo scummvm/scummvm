@@ -29,8 +29,8 @@
 
 #include "hpl1/engine/impl/tinyXML/tinyxml.h"
 #include "hpl1/engine/scene/World3D.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 #include "hpl1/engine/physics/CollideShape.h"
 #include "hpl1/engine/physics/PhysicsBody.h"
@@ -640,11 +640,11 @@ void cEntityLoader_Object::SetBodyProperties(iPhysicsBody *apBody, TiXmlElement 
 	apBody->SetCanAttachCharacter(bCanAttachCharacter);
 
 	apBody->SetContinuousCollision(bContinuousCollision);
-
+#if 0
 	apBody->SetAutoDisableLinearThreshold(fAutoDisableLinearThreshold);
 	apBody->SetAutoDisableAngularThreshold(fAutoDisableAngularThreshold);
 	apBody->SetAutoDisableNumSteps(lAutoDisableNumSteps);
-
+#endif
 	apBody->SetPushedByCharacterGravity(bPushedByCharacterGravity);
 
 	// Log("Body %s contin: %d\n",apBody->GetName().c_str(), apBody->GetContinuousCollision()?1:0);

@@ -76,12 +76,14 @@ public:
 	bool GetEnabled() const;
 	void SetAutoDisable(bool abEnabled);
 	bool GetAutoDisable() const;
+#if 0
 	void SetAutoDisableLinearThreshold(float afThresold);
 	float GetAutoDisableLinearThreshold() const;
 	void SetAutoDisableAngularThreshold(float afThresold);
 	float GetAutoDisableAngularThreshold() const;
 	void SetAutoDisableNumSteps(int alNum);
 	int GetAutoDisableNumSteps() const;
+#endif
 	void SetContinuousCollision(bool abOn);
 	bool GetContinuousCollision();
 
@@ -99,8 +101,8 @@ public:
 	static void SetUseCallback(bool abX) { mbUseCallback = abX; }
 
 private:
-	static void OnTransformCallback(const NewtonBody *apBody, const dFloat *apMatrix);
-	static void OnUpdateCallback(const NewtonBody *apBody);
+	static void OnTransformCallback(const NewtonBody *apBody, const dFloat *apMatrix, int);
+	static void OnUpdateCallback(const NewtonBody *apBody, float, int);
 
 	NewtonBody *mpNewtonBody;
 	NewtonWorld *mpNewtonWorld;
