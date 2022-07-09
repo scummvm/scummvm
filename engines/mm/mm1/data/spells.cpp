@@ -431,11 +431,13 @@ SpellResult Spells::cleric74_resurrection(Character *chr) {
 }
 
 SpellResult Spells::wizard12_detectMagic(Character *chr) {
+	error("TODO: detectMagic");
 	return SR_FAILED;
 }
 
 SpellResult Spells::wizard15_leatherSkin(Character *chr) {
-	return SR_FAILED;
+	g_globals->_spells._s.leather_skin = g_globals->_currCharacter->_level._current;
+	return SR_SUCCESS_DONE;
 }
 
 SpellResult Spells::wizard17_location(Character *chr) {
@@ -443,7 +445,36 @@ SpellResult Spells::wizard17_location(Character *chr) {
 }
 
 SpellResult Spells::wizard24_jump(Character *chr) {
-	return SR_FAILED;
+	Maps::Maps &maps = *g_maps;
+	Maps::Map &map = *maps._currentMap;
+
+	if ((maps._currentWalls & maps._forwardMask) != 0)
+		return SR_FAILED;
+	if ((map._states[maps._mapOffset] & maps._forwardMask & 0x55) != 0)
+		return SR_FAILED;
+	if ((map._walls[maps._mapOffset + maps._forwardOffset] &
+			maps._forwardMask) != 0)
+		return SR_FAILED;
+	if ((map._states[maps._mapOffset + maps._forwardOffset]
+			& maps._forwardMask & 0x55) != 0)
+		return SR_FAILED;
+
+	// The delta will be two steps in the facing direction.
+	// Ensure that that doesn't end up outside the map bounds
+	Common::Point delta = maps.getMoveDelta(maps._forwardMask);
+	delta.x *= 2;
+	delta.y *= 2;
+
+	Common::Point newPos = maps._mapPos + delta;
+	if (newPos.x < 0 || newPos.y < 0 ||
+		newPos.x >= MAP_W || newPos.y >= MAP_H)
+		return SR_FAILED;
+
+	// Move the two steps
+	g_maps->step(delta);
+	g_events->send("Game", GameMessage("UPDATE"));
+
+	return SR_SUCCESS_SILENT;
 }
 
 SpellResult Spells::wizard25_levitate(Character *chr) {

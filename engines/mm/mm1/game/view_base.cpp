@@ -146,7 +146,7 @@ void ViewBase::forward(KeybindingAction action) {
 	}
 
 	// Get the delta X/Y from the direction
-	Common::Point delta = getMoveDelta(mask);
+	Common::Point delta = g_maps->getMoveDelta(mask);
 
 	// Check for obstructions
 	if (!g_globals->_intangible) {
@@ -194,7 +194,7 @@ void ViewBase::forward(KeybindingAction action) {
 void ViewBase::backwards() {
 	Maps::Maps &maps = g_globals->_maps;
 	Maps::Map &map = *g_globals->_maps._currentMap;
-	Common::Point delta = getMoveDelta(maps._backwardsMask);
+	Common::Point delta = g_maps->getMoveDelta(maps._backwardsMask);
 
 	if (!g_globals->_intangible) {
 		if (maps._currentWalls & maps._backwardsMask) {
@@ -217,19 +217,6 @@ void ViewBase::backwards() {
 
 	g_globals->_maps.step(delta);
 	update();
-}
-
-Common::Point ViewBase::getMoveDelta(byte mask) const {
-	switch (mask) {
-	case Maps::DIRMASK_E:
-		return Common::Point(1, 0);
-	case Maps::DIRMASK_W:
-		return Common::Point(-1, 0);
-	case Maps::DIRMASK_S:
-		return Common::Point(0, -1);
-	default:
-		return Common::Point(0, 1);
-	}
 }
 
 void ViewBase::obstructed(byte mask) {

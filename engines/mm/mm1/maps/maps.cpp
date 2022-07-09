@@ -444,6 +444,19 @@ void Maps::clearSpecial() {
 	_currentMap->_states[_mapOffset] &= ~CELL_SPECIAL;
 }
 
+Common::Point Maps::getMoveDelta(byte mask) {
+	switch (mask) {
+	case DIRMASK_E:
+		return Common::Point(1, 0);
+	case DIRMASK_W:
+		return Common::Point(-1, 0);
+	case DIRMASK_S:
+		return Common::Point(0, -1);
+	default:
+		return Common::Point(0, 1);
+	}
+}
+
 } // namespace Maps
 } // namespace MM1
 } // namespace MM
