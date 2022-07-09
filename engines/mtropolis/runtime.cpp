@@ -4503,277 +4503,280 @@ void Runtime::loadScene(const Common::SharedPtr<Structural>& scene) {
 
 void Runtime::sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dispatch) {
 #ifndef DISABLE_TEXT_CONSOLE
-	const char *nameStr = "";
-	int srcID = 0;
-	const char *destStr = "";
-	int destID = 0;
-	Common::SharedPtr<RuntimeObject> src = dispatch->getMsg()->getSource().lock();
+	const int msgDebugLevel = 3;
 
-	if (src) {
-		srcID = src->getStaticGUID();
-		if (src->isStructural())
-			nameStr = static_cast<Structural *>(src.get())->getName().c_str();
-		else if (src->isModifier())
-			nameStr = static_cast<Modifier *>(src.get())->getName().c_str();
-	}
+	if (gDebugLevel >= msgDebugLevel) {
+		const char *nameStr = "";
+		int srcID = 0;
+		const char *destStr = "";
+		int destID = 0;
+		Common::SharedPtr<RuntimeObject> src = dispatch->getMsg()->getSource().lock();
 
-	RuntimeObject *dest = dispatch->getRootPropagator();
-	if (dest) {
-		destID = dest->getStaticGUID();
-		if (dest->isStructural())
-			destStr = static_cast<Structural *>(dest)->getName().c_str();
-		else if (dest->isModifier())
-			destStr = static_cast<Modifier *>(dest)->getName().c_str();
-
-	}
-
-	const Event evt = dispatch->getMsg()->getEvent();
-	bool cascade = dispatch->isCascade();
-	bool relay = dispatch->isRelay();
-
-	Common::String msgDebugString;
-	msgDebugString = Common::String::format("(%i,%i)", evt.eventType, evt.eventInfo);
-	if (evt.eventType == EventIDs::kAuthorMessage && _project) {
-		msgDebugString += " '";
-		msgDebugString += _project->findAuthorMessageName(evt.eventInfo);
-		msgDebugString += "'";
-	} else {
-		const char *extType = nullptr;
-		switch (evt.eventType) {
-		case EventIDs::kElementEnableEdit:
-			extType = "Element Enable Edit";
-			break;
-		case EventIDs::kElementDisableEdit:
-			extType = "Element Disable Edit";
-			break;
-		case EventIDs::kElementSelect:
-			extType = "Element Select";
-			break;
-		case EventIDs::kElementDeselect:
-			extType = "Element Deselect";
-			break;
-		case EventIDs::kElementToggleSelect:
-			extType = "Element Toggle Select";
-			break;
-		case EventIDs::kElementUpdatedCalculated:
-			extType = "Element Updated Calculated";
-			break;
-		case EventIDs::kElementShow:
-			extType = "Element Show";
-			break;
-		case EventIDs::kElementHide:
-			extType = "Element Hide";
-			break;
-		case EventIDs::kElementScrollUp:
-			extType = "Element Scroll Up";
-			break;
-		case EventIDs::kElementScrollDown:
-			extType = "Element Scroll Down";
-			break;
-		case EventIDs::kElementScrollRight:
-			extType = "Element Scroll Right";
-			break;
-		case EventIDs::kElementScrollLeft:
-			extType = "Element Scroll Left";
-			break;
-
-		case EventIDs::kMotionStarted:
-			extType = "Motion Ended";
-			break;
-		case EventIDs::kMotionEnded:
-			extType = "Motion Started";
-			break;
-
-		case EventIDs::kTransitionStarted:
-			extType = "Transition Started";
-			break;
-		case EventIDs::kTransitionEnded:
-			extType = "Transition Ended";
-			break;
-
-		case EventIDs::kMouseDown:
-			extType = "Mouse Down";
-			break;
-		case EventIDs::kMouseUp:
-			extType = "Mouse Up";
-			break;
-		case EventIDs::kMouseOver:
-			extType = "Mouse Over";
-			break;
-		case EventIDs::kMouseOutside:
-			extType = "Mouse Outside";
-			break;
-		case EventIDs::kMouseTrackedInside:
-			extType = "Mouse Tracked Inside";
-			break;
-		case EventIDs::kMouseTrackedOutside:
-			extType = "Mouse Tracked Outside";
-			break;
-		case EventIDs::kMouseTracking:
-			extType = "Mouse Tracking";
-			break;
-		case EventIDs::kMouseUpInside:
-			extType = "Mouse Up Inside";
-			break;
-		case EventIDs::kMouseUpOutside:
-			extType = "Mouse Up Outside";
-			break;
-
-		case EventIDs::kSceneStarted:
-			extType = "Scene Started";
-			break;
-		case EventIDs::kSceneEnded:
-			extType = "Scene Ended";
-			break;
-		case EventIDs::kSceneDeactivated:
-			extType = "Scene Deactivate";
-			break;
-		case EventIDs::kSceneReactivated:
-			extType = "Scene Reactivated";
-			break;
-		case EventIDs::kSceneTransitionEnded:
-			extType = "Scene Transition Ended";
-			break;
-
-		case EventIDs::kSharedSceneReturnedToScene:
-			extType = "Scene Returned To Scene";
-			break;
-		case EventIDs::kSharedSceneSceneChanged:
-			extType = "Scene Scene Changed";
-			break;
-		case EventIDs::kSharedSceneNoNextScene:
-			extType = "Shared Scene No Next Scene";
-			break;
-		case EventIDs::kSharedSceneNoPrevScene:
-			extType = "Shared Scene No Prev Scene";
-			break;
-
-		case EventIDs::kParentEnabled:
-			extType = "Parent Enabled";
-			break;
-		case EventIDs::kParentDisabled:
-			extType = "Parent Disabled";
-			break;
-		case EventIDs::kParentChanged:
-			extType = "Parent Changed";
-			break;
-
-		case EventIDs::kPreloadMedia:
-			extType = "Preload Media";
-			break;
-		case EventIDs::kFlushMedia:
-			extType = "Flush Media";
-			break;
-		case EventIDs::kPrerollMedia:
-			extType = "Preroll Media";
-			break;
-
-		case EventIDs::kCloseProject:
-			extType = "Close Project";
-			break;
-
-		case EventIDs::kUserTimeout:
-			extType = "User Timeout";
-			break;
-		case EventIDs::kProjectStarted:
-			extType = "Project Started";
-			break;
-		case EventIDs::kProjectEnded:
-			extType = "Project Ended";
-			break;
-		case EventIDs::kFlushAllMedia:
-			extType = "Flush All Media";
-			break;
-
-		case EventIDs::kAttribGet:
-			extType = "Attrib Get";
-			break;
-		case EventIDs::kAttribSet:
-			extType = "Attrib Set";
-			break;
-
-		case EventIDs::kClone:
-			extType = "Clone";
-			break;
-		case EventIDs::kKill:
-			extType = "Kill";
-			break;
-
-		case EventIDs::kPlay:
-			extType = "Play";
-			break;
-		case EventIDs::kStop:
-			extType = "Stop";
-			break;
-		case EventIDs::kPause:
-			extType = "Pause";
-			break;
-		case EventIDs::kUnpause:
-			extType = "Unpause";
-			break;
-		case EventIDs::kTogglePause:
-			extType = "Toggle Pause";
-			break;
-		case EventIDs::kAtFirstCel:
-			extType = "At First Cel";
-			break;
-		case EventIDs::kAtLastCel:
-			extType = "At Last Cell";
-			break;
-		default:
-			break;
+		if (src) {
+			srcID = src->getStaticGUID();
+			if (src->isStructural())
+				nameStr = static_cast<Structural *>(src.get())->getName().c_str();
+			else if (src->isModifier())
+				nameStr = static_cast<Modifier *>(src.get())->getName().c_str();
 		}
 
-		if (extType) {
+		RuntimeObject *dest = dispatch->getRootPropagator();
+		if (dest) {
+			destID = dest->getStaticGUID();
+			if (dest->isStructural())
+				destStr = static_cast<Structural *>(dest)->getName().c_str();
+			else if (dest->isModifier())
+				destStr = static_cast<Modifier *>(dest)->getName().c_str();
+		}
+
+		const Event evt = dispatch->getMsg()->getEvent();
+		bool cascade = dispatch->isCascade();
+		bool relay = dispatch->isRelay();
+
+		Common::String msgDebugString;
+		msgDebugString = Common::String::format("(%i,%i)", evt.eventType, evt.eventInfo);
+		if (evt.eventType == EventIDs::kAuthorMessage && _project) {
 			msgDebugString += " '";
-			msgDebugString += extType;
+			msgDebugString += _project->findAuthorMessageName(evt.eventInfo);
 			msgDebugString += "'";
+		} else {
+			const char *extType = nullptr;
+			switch (evt.eventType) {
+			case EventIDs::kElementEnableEdit:
+				extType = "Element Enable Edit";
+				break;
+			case EventIDs::kElementDisableEdit:
+				extType = "Element Disable Edit";
+				break;
+			case EventIDs::kElementSelect:
+				extType = "Element Select";
+				break;
+			case EventIDs::kElementDeselect:
+				extType = "Element Deselect";
+				break;
+			case EventIDs::kElementToggleSelect:
+				extType = "Element Toggle Select";
+				break;
+			case EventIDs::kElementUpdatedCalculated:
+				extType = "Element Updated Calculated";
+				break;
+			case EventIDs::kElementShow:
+				extType = "Element Show";
+				break;
+			case EventIDs::kElementHide:
+				extType = "Element Hide";
+				break;
+			case EventIDs::kElementScrollUp:
+				extType = "Element Scroll Up";
+				break;
+			case EventIDs::kElementScrollDown:
+				extType = "Element Scroll Down";
+				break;
+			case EventIDs::kElementScrollRight:
+				extType = "Element Scroll Right";
+				break;
+			case EventIDs::kElementScrollLeft:
+				extType = "Element Scroll Left";
+				break;
+
+			case EventIDs::kMotionStarted:
+				extType = "Motion Ended";
+				break;
+			case EventIDs::kMotionEnded:
+				extType = "Motion Started";
+				break;
+
+			case EventIDs::kTransitionStarted:
+				extType = "Transition Started";
+				break;
+			case EventIDs::kTransitionEnded:
+				extType = "Transition Ended";
+				break;
+
+			case EventIDs::kMouseDown:
+				extType = "Mouse Down";
+				break;
+			case EventIDs::kMouseUp:
+				extType = "Mouse Up";
+				break;
+			case EventIDs::kMouseOver:
+				extType = "Mouse Over";
+				break;
+			case EventIDs::kMouseOutside:
+				extType = "Mouse Outside";
+				break;
+			case EventIDs::kMouseTrackedInside:
+				extType = "Mouse Tracked Inside";
+				break;
+			case EventIDs::kMouseTrackedOutside:
+				extType = "Mouse Tracked Outside";
+				break;
+			case EventIDs::kMouseTracking:
+				extType = "Mouse Tracking";
+				break;
+			case EventIDs::kMouseUpInside:
+				extType = "Mouse Up Inside";
+				break;
+			case EventIDs::kMouseUpOutside:
+				extType = "Mouse Up Outside";
+				break;
+
+			case EventIDs::kSceneStarted:
+				extType = "Scene Started";
+				break;
+			case EventIDs::kSceneEnded:
+				extType = "Scene Ended";
+				break;
+			case EventIDs::kSceneDeactivated:
+				extType = "Scene Deactivate";
+				break;
+			case EventIDs::kSceneReactivated:
+				extType = "Scene Reactivated";
+				break;
+			case EventIDs::kSceneTransitionEnded:
+				extType = "Scene Transition Ended";
+				break;
+
+			case EventIDs::kSharedSceneReturnedToScene:
+				extType = "Scene Returned To Scene";
+				break;
+			case EventIDs::kSharedSceneSceneChanged:
+				extType = "Scene Scene Changed";
+				break;
+			case EventIDs::kSharedSceneNoNextScene:
+				extType = "Shared Scene No Next Scene";
+				break;
+			case EventIDs::kSharedSceneNoPrevScene:
+				extType = "Shared Scene No Prev Scene";
+				break;
+
+			case EventIDs::kParentEnabled:
+				extType = "Parent Enabled";
+				break;
+			case EventIDs::kParentDisabled:
+				extType = "Parent Disabled";
+				break;
+			case EventIDs::kParentChanged:
+				extType = "Parent Changed";
+				break;
+
+			case EventIDs::kPreloadMedia:
+				extType = "Preload Media";
+				break;
+			case EventIDs::kFlushMedia:
+				extType = "Flush Media";
+				break;
+			case EventIDs::kPrerollMedia:
+				extType = "Preroll Media";
+				break;
+
+			case EventIDs::kCloseProject:
+				extType = "Close Project";
+				break;
+
+			case EventIDs::kUserTimeout:
+				extType = "User Timeout";
+				break;
+			case EventIDs::kProjectStarted:
+				extType = "Project Started";
+				break;
+			case EventIDs::kProjectEnded:
+				extType = "Project Ended";
+				break;
+			case EventIDs::kFlushAllMedia:
+				extType = "Flush All Media";
+				break;
+
+			case EventIDs::kAttribGet:
+				extType = "Attrib Get";
+				break;
+			case EventIDs::kAttribSet:
+				extType = "Attrib Set";
+				break;
+
+			case EventIDs::kClone:
+				extType = "Clone";
+				break;
+			case EventIDs::kKill:
+				extType = "Kill";
+				break;
+
+			case EventIDs::kPlay:
+				extType = "Play";
+				break;
+			case EventIDs::kStop:
+				extType = "Stop";
+				break;
+			case EventIDs::kPause:
+				extType = "Pause";
+				break;
+			case EventIDs::kUnpause:
+				extType = "Unpause";
+				break;
+			case EventIDs::kTogglePause:
+				extType = "Toggle Pause";
+				break;
+			case EventIDs::kAtFirstCel:
+				extType = "At First Cel";
+				break;
+			case EventIDs::kAtLastCel:
+				extType = "At Last Cell";
+				break;
+			default:
+				break;
+			}
+
+			if (extType) {
+				msgDebugString += " '";
+				msgDebugString += extType;
+				msgDebugString += "'";
+			}
 		}
-	}
 
-	Common::String valueStr;
-	const DynamicValue &payload = dispatch->getMsg()->getValue();
+		Common::String valueStr;
+		const DynamicValue &payload = dispatch->getMsg()->getValue();
 
-	if (payload.getType() != DynamicValueTypes::kNull) {
-		switch (payload.getType()) {
-		case DynamicValueTypes::kBoolean:
-			valueStr = (payload.getBool() ? "true" : "false");
-			break;
-		case DynamicValueTypes::kInteger:
-			valueStr = Common::String::format("%i", payload.getInt());
-			break;
-		case DynamicValueTypes::kFloat:
-			valueStr = Common::String::format("%g", payload.getFloat());
-			break;
-		case DynamicValueTypes::kPoint:
-			valueStr = Common::String::format("(%i,%i)", payload.getPoint().x, payload.getPoint().y);
-			break;
-		case DynamicValueTypes::kIntegerRange:
-			valueStr = Common::String::format("(%i thru %i)", payload.getIntRange().min, payload.getIntRange().max);
-			break;
-		case DynamicValueTypes::kVector:
-			valueStr = Common::String::format("(%g deg %g mag)", payload.getVector().angleDegrees, payload.getVector().magnitude);
-			break;
-		case DynamicValueTypes::kString:
-			valueStr = "'" + payload.getString() + "'";
-			break;
-		case DynamicValueTypes::kList:
-			valueStr = "List";
-			break;
-		case DynamicValueTypes::kObject:
-			valueStr = "Object";
-			if (RuntimeObject *obj = payload.getObject().object.lock().get())
-				valueStr += Common::String::format(" %x", obj->getStaticGUID());
-			break;
-		default:
-			valueStr = "<BAD TYPE> (this is a bug!)";
-			break;
+		if (payload.getType() != DynamicValueTypes::kNull) {
+			switch (payload.getType()) {
+			case DynamicValueTypes::kBoolean:
+				valueStr = (payload.getBool() ? "true" : "false");
+				break;
+			case DynamicValueTypes::kInteger:
+				valueStr = Common::String::format("%i", payload.getInt());
+				break;
+			case DynamicValueTypes::kFloat:
+				valueStr = Common::String::format("%g", payload.getFloat());
+				break;
+			case DynamicValueTypes::kPoint:
+				valueStr = Common::String::format("(%i,%i)", payload.getPoint().x, payload.getPoint().y);
+				break;
+			case DynamicValueTypes::kIntegerRange:
+				valueStr = Common::String::format("(%i thru %i)", payload.getIntRange().min, payload.getIntRange().max);
+				break;
+			case DynamicValueTypes::kVector:
+				valueStr = Common::String::format("(%g deg %g mag)", payload.getVector().angleDegrees, payload.getVector().magnitude);
+				break;
+			case DynamicValueTypes::kString:
+				valueStr = "'" + payload.getString() + "'";
+				break;
+			case DynamicValueTypes::kList:
+				valueStr = "List";
+				break;
+			case DynamicValueTypes::kObject:
+				valueStr = "Object";
+				if (RuntimeObject *obj = payload.getObject().object.lock().get())
+					valueStr += Common::String::format(" %x", obj->getStaticGUID());
+				break;
+			default:
+				valueStr = "<BAD TYPE> (this is a bug!)";
+				break;
+			}
+
+			valueStr = " with value " + valueStr;
 		}
 
-		valueStr = " with value " + valueStr;
+		debug(msgDebugLevel, "Object %x '%s' posted message %s to %x '%s'%s  mod: %s   ele: %s", srcID, nameStr, msgDebugString.c_str(), destID, destStr, valueStr.c_str(), relay ? "all" : "first", cascade ? "all" : "targetOnly");
 	}
-
-	debug(3, "Object %x '%s' posted message %s to %x '%s'%s  mod: %s   ele: %s", srcID, nameStr, msgDebugString.c_str(), destID, destStr, valueStr.c_str(), relay ? "all" : "first", cascade ? "all" : "targetOnly");
 #endif
 
 	DispatchMethodTaskData *taskData = _vthread->pushTask("Runtime::dispatchMessageTask", this, &Runtime::dispatchMessageTask);
