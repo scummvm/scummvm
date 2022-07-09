@@ -161,6 +161,7 @@ void Character::clear() {
 	_ac = 0;
 	_food = 0;
 	_condition = 0;
+	_quest = 0;
 	_equipped.clear();
 	_backpack.clear();
 
