@@ -108,11 +108,9 @@ TextEntry *Text::getText(uint chunk, uint entry, int type, int subEntry) {
 	bool isText = false;
 	bool isAutoDialog = false;
 	bool isInvDesc = false;
+	uint origChunk = chunk;
 
-	//int subEntryNew = -1;
-
-	//if (subEntry >= 0)
-	//	subEntryNew = getTextId(entry, subEntry, type);
+	//debug("getText %d, %d, %d, %d", chunk, entry, type, subEntry);
 
 	switch (type) {
 	case AAD_DATA:
@@ -142,6 +140,9 @@ TextEntry *Text::getText(uint chunk, uint entry, int type, int subEntry) {
 		error("getText(): Invalid chunk number requested, %d (min %d)", chunk, kADSTextMax);
 
 	TextEntry *d = new TextEntry();
+	const uint8 altSubString = !isInvDesc ?
+		getTextId(entry, subEntry, type) :
+		getTextId(origChunk, 0, type);
 
 	byte *data = getChunkData(chunk);
 	byte *ptr = data;
@@ -182,16 +183,53 @@ TextEntry *Text::getText(uint chunk, uint entry, int type, int subEntry) {
 			else
 				ptr++;
 
-			if (*ptr == 0 && *(ptr + 1) != kEndText) {
+			if (*ptr == 0 && *(ptr + 1) != kEndText)
 				*ptr = '|';
-			}
 		} while (*ptr);
 
-		// FIXME: Skip other embedded strings for now
+		// Pick the appropriate substring
+		// Each substring starts with 0xf1 0xfe and ends with 0x0 0x0d
 		if (*(ptr + 1) == kEndText && *(ptr + 2) == 0xf1 && *(ptr + 3) == 0xfe) {
-			ptr += 5;
-			while (!(!*ptr && *(ptr + 1) == kEndText && *(ptr + 2) == kEndChunk)) {
+			ptr += 6;
+			uint curSubString = 0;
+			bool endOfSubString = (*ptr == 0 && *(ptr + 1) == kEndText);
+			bool endOfChunk = (endOfSubString && *(ptr + 2) == kEndChunk);
+
+			if (txtNum == entry && curSubEntry == subEntry && curSubString < altSubString) {
+				d->_text = "";
+				d->_speechId++;
+				curSubString++;
+
+				while (!endOfChunk && curSubString <= altSubString) {
+					d->_text += *ptr++;
+
+					endOfSubString = (*ptr == 0 && *(ptr + 1) == kEndText);
+					endOfChunk = (endOfSubString && *(ptr + 2) == kEndChunk);
+
+					if (*ptr == 0 && *(ptr + 1) != kEndText)
+						*ptr = '|';
+
+					if (endOfSubString) {
+						if (curSubString < altSubString) {
+							d->_text = "";
+							d->_speechId++;
+							curSubString++;
+							ptr += 6;
+						} else {
+							break;
+						}
+					}
+				}
+			}
+
+			endOfSubString = (*ptr == 0 && *(ptr + 1) == kEndText);
+			endOfChunk = (endOfSubString && *(ptr + 2) == kEndChunk);
+
+			// Keep going until the chunk ends
+			while (!endOfChunk) {
 				ptr++;
+				endOfSubString = (*ptr == 0 && *(ptr + 1) == kEndText);
+				endOfChunk = (endOfSubString && *(ptr + 2) == kEndChunk);
 			}
 		}
 
@@ -289,59 +327,49 @@ void Text::delControlBit(int16 txtNr, int16 bitIdx) {
 	_hotspotStrings[txtNr * MAX_ATS_STATUS] &= ~bitIdx;
 }
 
-/*uint8 Text::getTextStatus(uint8 status, int16 subEntry, int16 strNr) {
-	const int16 hotspotActionStr = (subEntry + 1) % 2;
-	uint8 lo_hi[2];
-	lo_hi[0] = status &= 15;
-	lo_hi[1] = status >> 4;
-	lo_hi[hotspotActionStr] = strNr;
-	status = 0;
-	lo_hi[1] <<= 4;
-	status |= lo_hi[0];
-	status |= lo_hi[1];
-
-	return status;
-}*/
-
-uint8 Text::updateTextStatus(int16 entry, int16 subEntry, int16 strNr, int16 type) {
-	byte *buffer;
-
+uint8 *Text::getBuffer(uint8 type) {
 	switch (type) {
 	case ATS_DATA:
-		buffer = _hotspotStrings;
-		break;
+		return _hotspotStrings;
 	case INV_USE_DATA:
-		buffer = _inventoryUseStrings;
-		break;
+		return _inventoryUseStrings;
 	case INV_ATS_DATA:
-		buffer = _inventoryStrings;
-		break;
+		return _inventoryStrings;
 	default:
-		error("setTextId called for type %d", type);
+		error("getBuffer called for type %d", type);
 	}
-
-	const uint8 status = buffer[(entry * MAX_ATS_STATUS) + (subEntry + 1) / 2];
-	if (strNr >= 0) {
-		// TODO: This is buggy
-		//buffer[(entry * MAX_ATS_STATUS) + (subEntry + 1) / 2] = strNr; // getTextStatus(status, subEntry, strNr);
-		return strNr;
-	}
-
-	return status;
 }
 
-uint8 Text::getTextId(uint entry, uint subEntry, int type) {
-	uint8 status = updateTextStatus(entry, subEntry, -1, type);
-
-	const int16 hotspotActionStr = (subEntry + 1) % 2;
-	uint8 lo_hi[2];
-	lo_hi[0] = status &= 15;
-	lo_hi[1] = status >> 4;
-	return lo_hi[hotspotActionStr];
+uint8 getNibble(uint8 value, uint8 subEntry) {
+	if ((subEntry + 1) % 2 == 0)
+		return value & 0x0F;
+	else
+		return (value >> 4) & 0x0F;
 }
 
-void Text::setTextId(int16 entry, int16 subEntry, int16 strNr, int16 type) {
-	updateTextStatus(entry, subEntry, strNr, type);
+uint8 setNibble(uint8 value, uint8 subEntry, uint8 nibble) {
+	if ((subEntry + 1) % 2 == 0)
+		return (nibble & 0x0F) | (value & 0xF0);
+	else
+		return (nibble << 4) | (value & 0x0F);
+}
+
+uint8 Text::getTextId(uint16 entry, uint8 subEntry, uint8 type) {
+	if (type != ATS_DATA && type != INV_USE_DATA && type != INV_ATS_DATA)
+		return 0;
+
+	const uint8 *buffer = getBuffer(type);
+	const uint8 value = buffer[(entry * MAX_ATS_STATUS) + (subEntry + 1) / 2];
+	return getNibble(value, subEntry);
+}
+
+void Text::setTextId(uint16 entry, uint8 subEntry, uint8 strNr, uint8 type) {
+	if (type != ATS_DATA && type != INV_USE_DATA && type != INV_ATS_DATA)
+		return;
+
+	uint8 *buffer = getBuffer(type);
+	const uint8 value = buffer[(entry * MAX_ATS_STATUS) + (subEntry + 1) / 2];
+	buffer[(entry * MAX_ATS_STATUS) + (subEntry + 1) / 2] = setNibble(value, subEntry, (uint8)strNr);
 }
 
 } // namespace Chewy
