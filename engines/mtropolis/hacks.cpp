@@ -33,6 +33,7 @@ namespace MTropolis {
 
 Hacks::Hacks() {
 	ignoreMismatchedProjectNameInObjectLookups = false;
+	midiVolumeScale = 256;
 }
 
 Hacks::~Hacks() {
@@ -152,6 +153,9 @@ void addObsidianBugFixes(const MTropolisGameDescription &desc, Hacks &hacks) {
 	// cJournalConst is unloaded if the player leaves the journal.  This causes a progression blocker if
 	// the player leaves the journal without clicking Continue.
 	hacks.ignoreMismatchedProjectNameInObjectLookups = true;
+
+	// Bump 70% volume musics to 100%
+	hacks.midiVolumeScale = (100 * 256 / 70);
 
 	// Fix for corrupted frame in transition from the outer edge in Spider to the air puzzle tower.
 	// The data is corrupted in both Mac and Win retail versions.

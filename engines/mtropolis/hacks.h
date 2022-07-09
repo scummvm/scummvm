@@ -47,6 +47,7 @@ struct Hacks {
 	void addSaveLoadHooks(const Common::SharedPtr<SaveLoadHooks> &hooks);
 
 	bool ignoreMismatchedProjectNameInObjectLookups;
+	uint midiVolumeScale;	// 256 = 1.0
 
 	Common::Point reportDisplaySize;	// If X or Y is non-zero, report this as the display size
 	Common::Point mainWindowOffset;		// Coordinate offset of the main window
