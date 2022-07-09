@@ -114,6 +114,8 @@ public:
 	void renderCursor(Common::Point pos, bool forceUpdate = false);
 	void updateWidgets(bool hasVideoPlayback);
 
+	void invalidateRectsForMember(CastMember *member);
+
 	void playSoundChannel(uint16 frameId);
 
 private:

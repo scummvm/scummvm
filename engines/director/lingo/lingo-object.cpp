@@ -927,14 +927,10 @@ bool BitmapCastMember::setField(int field, const Datum &d) {
 		return false;
 	case kTheRegPoint:
 		if (d.type == POINT || (d.type == ARRAY && d.u.farr->arr.size() >= 2)) {
-			auto temp = _img;
-			_modified = true;
 			Score *score = g_director->getCurrentMovie()->getScore();
-			score->renderSprites(score->getCurrentFrame(), kRenderForceUpdate);
-			_img = nullptr;
+			score->invalidateRectsForMember(this);
 			_regX = d.u.farr->arr[0].asInt();
 			_regY = d.u.farr->arr[1].asInt();
-			_img = temp;
 			_modified = true;
 		} else {
 			warning("BitmapCastMember::setField(): Wrong Datum type %d for kTheRegPoint", d.type);

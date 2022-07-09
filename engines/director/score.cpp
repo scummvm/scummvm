@@ -645,6 +645,15 @@ void Score::updateWidgets(bool hasVideoPlayback) {
 	}
 }
 
+void Score::invalidateRectsForMember(CastMember *member) {
+	for (uint16 i = 0; i < _channels.size(); i++) {
+		Channel *channel = _channels[i];
+		if (channel->_sprite->_cast == member) {
+			_window->addDirtyRect(channel->getBbox());
+		}
+	}
+}
+
 void Score::screenShot() {
 	Graphics::Surface rawSurface = _window->getSurface()->rawSurface();
 	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 0, 8, 16, 24);
