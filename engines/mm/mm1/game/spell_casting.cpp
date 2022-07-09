@@ -126,15 +126,15 @@ bool SpellCasting::isMagicAllowed() const {
 Common::String SpellCasting::getSpellError() const {
 	switch (_spellState) {
 	case SS_NOT_ENOUGH_SP:
-		return STRING["dialogs.misc.not_enough_sp"];
+		return STRING["spells.not_enough_sp"];
 	case SS_NOT_ENOUGH_GEMS:
-		return STRING["dialogs.misc.not_enough_gems"];
+		return STRING["spells.not_enough_gems"];
 	case SS_COMBAT_ONLY:
-		return STRING["dialogs.misc.combat_only"];
+		return STRING["spells.combat_only"];
 	case SS_OUTDOORS_ONLY:
-		return STRING["dialogs.misc.outdoors_only"];
+		return STRING["spells.outdoors_only"];
 	default:
-		return STRING["dialogs.misc.done"];
+		return STRING["spells.done"];
 	}
 }
 
