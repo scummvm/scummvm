@@ -4161,6 +4161,10 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("data.dcp", "9f4de2a53ef396cc70786a1dc0ab191d", 828351641,
 					"local.dcp", "a78f5353c6539b4ff9c39223202ba8d0", 433003083), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_8_9),
 
+	// Shadow of Nebula (Steam: Early Access Game, Mar 2016) (English)
+	WME_WINENTRY("shadowofnebula", "",
+		WME_ENTRY1s("data.dcp", "fd3631791e66885427ccdb6063752a6d", 1402609157), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Shadow of Nebula (Demo) (English)
 	WME_WINENTRY("shadowofnebula", "",
 		WME_ENTRY1s("data.dcp", "f16f8a354bd90cb233dafc6b1a318f26", 913267667), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
