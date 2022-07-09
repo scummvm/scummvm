@@ -280,9 +280,7 @@ void Inventory::menu() {
 							cursorChoice(_G(invent_cur_mode));
 						}
 					} else if (_G(invent_cur_mode) == CUR_LOOK && _G(gameState).InventSlot[k] != -1 && calc_use_invent(_G(gameState).InventSlot[k]) == false) {
-						_G(cur)->setInventoryCursor(_G(gameState).InventSlot[k]);
 						ret_look = look(_G(gameState).InventSlot[k], INV_ATS_MODE, -1);
-						_G(cur)->setInventoryCursor(-1);
 						cursorChoice(_G(invent_cur_mode));
 						taste_flag = Common::KEYCODE_ESCAPE;
 					}
