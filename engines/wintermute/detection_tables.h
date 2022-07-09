@@ -4163,7 +4163,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Shadow of Nebula (Demo) (English)
 	WME_WINENTRY("shadowofnebula", "",
-		WME_ENTRY1s("data.dcp", "f16f8a354bd90cb233dafc6b1a318f26", 913267667), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "f16f8a354bd90cb233dafc6b1a318f26", 913267667), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jul 2014) (German)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
