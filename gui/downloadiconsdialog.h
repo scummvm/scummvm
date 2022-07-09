@@ -54,6 +54,7 @@ class DownloadIconsDialog : public Dialog, public CommandSender {
 	SliderWidget *_progressBar;
 	ButtonWidget *_cancelButton;
 	ButtonWidget *_closeButton;
+	ButtonWidget *_clearCacheButton;
 
 	Common::String _localDirectory;
 	bool _close;
@@ -77,6 +78,7 @@ public:
 
 private:
 	void calculateList();
+	void clearCache();
 	void setState(IconProcessState state);
 };
 
