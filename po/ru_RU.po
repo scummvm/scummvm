@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-08 14:25+0000\n"
-"PO-Revision-Date: 2022-07-02 10:15+0000\n"
+"PO-Revision-Date: 2022-07-09 12:15+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -1512,8 +1512,6 @@ msgid "Icon Path:"
 msgstr "Путь к иконкам:"
 
 #: gui/options.cpp:2307
-#, fuzzy
-#| msgid "Default"
 msgctxt "path"
 msgid "Default"
 msgstr "По умолчанию"
@@ -6768,16 +6766,16 @@ msgstr ""
 "других версиях той же игры."
 
 #: engines/scumm/detection.cpp:238
-#, fuzzy
-#| msgid "Load modded assets"
 msgid "Load modded audio"
-msgstr "Загрузить данные мода"
+msgstr "Загрузить мод-аудио"
 
 #: engines/scumm/detection.cpp:239
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
 msgstr ""
+"Заменить музыку, звуковые эффекты и озвучку файлами из мода, если есть в "
+"наличии."
 
 #: engines/scumm/detection_internal.h:358
 msgid ""
