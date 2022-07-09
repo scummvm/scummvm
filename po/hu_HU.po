@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-08 14:25+0000\n"
-"PO-Revision-Date: 2022-07-03 14:28+0000\n"
+"PO-Revision-Date: 2022-07-09 06:32+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -6740,16 +6740,16 @@ msgstr ""
 "általában ugyanazon játék más verziói alapján."
 
 #: engines/scumm/detection.cpp:238
-#, fuzzy
-#| msgid "Load modded assets"
 msgid "Load modded audio"
-msgstr "Módosított eszközök betöltése"
+msgstr "Módosított audió betöltése"
 
 #: engines/scumm/detection.cpp:239
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
 msgstr ""
+"Cserélje ki a zenét, az effektusokat és a beszédklipeket módosított "
+"hangfájlokra, ha rendelkezésre állnak."
 
 #: engines/scumm/detection_internal.h:358
 msgid ""
