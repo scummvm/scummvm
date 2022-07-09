@@ -72,14 +72,14 @@ extern "C" {
 #define NEWTON_PROFILER_FORCE_CALLBACK_UPDATE			7
 
 
-typedef struct NewtonMesh{} NewtonMesh;
-typedef struct NewtonBody{} NewtonBody;
-typedef struct NewtonWorld{} NewtonWorld;
-typedef struct NewtonJoint{} NewtonJoint;
-typedef struct NewtonMaterial{} NewtonMaterial;
-typedef struct NewtonCollision{} NewtonCollision;
-typedef struct NewtonSceneProxy{} NewtonSceneProxy;
-typedef struct NewtonbreakableComponentMesh{} NewtonbreakableComponentMesh;
+class NewtonMesh;
+class NewtonBody;
+class NewtonWorld;
+class NewtonJoint;
+class NewtonMaterial;
+class NewtonCollision;
+class NewtonSceneProxy;
+class NewtonbreakableComponentMesh;
 
 //	typedef struct NewtonRagDoll{} NewtonRagDoll;
 //	typedef struct NewtonRagDollBone{} NewtonRagDollBone;
