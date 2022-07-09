@@ -294,6 +294,9 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	file->seek(base + cPtr);
 	uint8 numConditions = file->readByte();
 	debug("%d area conditions at %x of area %d", numConditions, base + cPtr, areaNumber);
+
+	Area *area = new Area(areaNumber, objectsByID, entrancesByID, scale, skyColor, groundColor, palette);
+
 	while (numConditions--) {
 		FCLInstructionVector instructions;
 		// get the length
@@ -303,10 +306,13 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		byte *conditionData = (byte*)malloc(lengthOfCondition);
 		file->read(conditionData, lengthOfCondition);
 		Common::Array<uint8> conditionArray(conditionData, lengthOfCondition);
-		debug("%s", detokenise8bitCondition(conditionArray, instructions)->c_str());
+		Common::String *conditionSource = detokenise8bitCondition(conditionArray, instructions);
+		area->conditions.push_back(instructions);
+		area->conditionSources.push_back(conditionSource);
+		debug("%s", conditionSource->c_str());
 	}
 	debug("End of area at %lx", file->pos());
-	return (new Area(areaNumber, objectsByID, entrancesByID, scale, skyColor, groundColor, palette));
+	return area;
 }
 
 void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offset, int ncolors) {

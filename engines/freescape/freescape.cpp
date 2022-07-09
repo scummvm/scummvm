@@ -243,7 +243,6 @@ void FreescapeEngine::processInput() {
 
 		}
 	}
-
 }
 
 void FreescapeEngine::shoot() {
@@ -258,6 +257,12 @@ void FreescapeEngine::shoot() {
 			executeCode(gobj->condition, true, false);
 		}
 	}
+
+	for (int i = 0; i < int(_currentArea->conditionSources.size()); i++) {
+		debug("Must use shot = true executing: %s", _currentArea->conditionSources[i]->c_str());
+		executeCode(_currentArea->conditions[i], true, false);
+	}
+
 	//debug("camera front: %f %f %f", _cameraFront.x(), _rotation.y(), _rotation.z());
 }
 
