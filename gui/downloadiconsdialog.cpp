@@ -376,7 +376,7 @@ void DownloadIconsDialog::calculateList() {
 		return;
 	}
 
-	// Scan all files in iconspath and remove present ones from the
+	// Scan all files in iconspath and remove present and incomplete ones from the
 	// donwloaded files list
 	Common::FSDirectory *iconDir = new Common::FSDirectory(iconsPath);
 
@@ -386,8 +386,11 @@ void DownloadIconsDialog::calculateList() {
 
 	for (auto ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
 		Common::String fname = (*ic)->getName();
+		Common::SeekableReadStream *str = (*ic)->createReadStream();
+		uint32 size = str->size();
+		delete str;
 
-		if (g_state->fileHash.contains(fname))
+		if (g_state->fileHash.contains(fname) && size == g_state->fileHash[fname])
 			g_state->fileHash.erase(fname);
 	}
 
