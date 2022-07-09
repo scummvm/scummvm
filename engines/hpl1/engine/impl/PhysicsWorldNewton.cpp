@@ -39,6 +39,7 @@
 
 #include "hpl1/engine/impl/PhysicsControllerNewton.h"
 
+#include "hpl1/engine/math/Vector3.h"
 #include "hpl1/engine/scene/PortalContainer.h"
 #include "hpl1/engine/scene/World3D.h"
 
@@ -138,12 +139,11 @@ float cPhysicsWorldNewton::GetMaxTimeStep() {
 //-----------------------------------------------------------------------
 
 void cPhysicsWorldNewton::SetWorldSize(const cVector3f &avMin, const cVector3f &avMax) {
-#if 0
-  		mvWorldSizeMin = avMin;
-		mvWorldSizeMax = avMax;
-
-		NewtonSetWorldSize(mpNewtonWorld,avMin.v, avMax.v);
-#endif
+	mvWorldSizeMin = avMin;
+	mvWorldSizeMax = avMax;
+	VEC3_CONST_ARRAY(min, avMin);
+	VEC3_CONST_ARRAY(max, avMax);
+	NewtonSetWorldSize(mpNewtonWorld, min, max);
 }
 
 cVector3f cPhysicsWorldNewton::GetWorldSizeMin() {
@@ -423,26 +423,24 @@ void cPhysicsWorldNewton::CastRay(iPhysicsRayCallback *apCallback,
 								  const cVector3f &avOrigin, const cVector3f &avEnd,
 								  bool abCalcDist, bool abCalcNormal, bool abCalcPoint,
 								  bool abUsePrefilter) {
-#if 0
-  		gbRayCalcPoint = abCalcPoint;
-		gbRayCalcNormal = abCalcNormal;
-		gbRayCalcDist = abCalcDist;
+	gbRayCalcPoint = abCalcPoint;
+	gbRayCalcNormal = abCalcNormal;
+	gbRayCalcDist = abCalcDist;
 
-		gvRayOrigin = avOrigin;
-		gvRayEnd = avEnd;
+	gvRayOrigin = avOrigin;
+	gvRayEnd = avEnd;
 
-		gvRayDelta = avEnd - avOrigin;
-		gfRayLength = gvRayDelta.Length();
+	gvRayDelta = avEnd - avOrigin;
+	gfRayLength = gvRayDelta.Length();
 
-		gpRayCallback = apCallback;
-		const float fOrigin[3] = { avOrigin.x,avOrigin.y, avOrigin.z};
-		const float fEnd[3] = {avEnd.x, avEnd.y, avEnd.z}; 
+	gpRayCallback = apCallback;
+	VEC3_CONST_ARRAY(origin, avOrigin);
+	VEC3_CONST_ARRAY(end, avEnd);
 
-		if(abUsePrefilter)
-			NewtonWorldRayCast(mpNewtonWorld, fOrigin, fEnd,RayCastFilterFunc, NULL, RayCastPrefilterFunc);
-		else
-			NewtonWorldRayCast(mpNewtonWorld, fOrigin, fEnd,RayCastFilterFunc, NULL, NULL);
-#endif
+	if (abUsePrefilter)
+		NewtonWorldRayCast(mpNewtonWorld, origin, end, RayCastFilterFunc, NULL, RayCastPrefilterFunc);
+	else
+		NewtonWorldRayCast(mpNewtonWorld, origin, end, RayCastFilterFunc, NULL, NULL);
 }
 
 //-----------------------------------------------------------------------
@@ -450,108 +448,101 @@ void cPhysicsWorldNewton::CastRay(iPhysicsRayCallback *apCallback,
 bool cPhysicsWorldNewton::CheckShapeCollision(iCollideShape *apShapeA, const cMatrixf &a_mtxA,
 											  iCollideShape *apShapeB, const cMatrixf &a_mtxB,
 											  cCollideData &aCollideData, int alMaxPoints) {
-#if 0
-  cCollideShapeNewton *pNewtonShapeA = static_cast<cCollideShapeNewton*>(apShapeA);
-		cCollideShapeNewton *pNewtonShapeB = static_cast<cCollideShapeNewton*>(apShapeB);
+	cCollideShapeNewton *pNewtonShapeA = static_cast<cCollideShapeNewton *>(apShapeA);
+	cCollideShapeNewton *pNewtonShapeB = static_cast<cCollideShapeNewton *>(apShapeB);
 
-		cMatrixf mtxTransposeA = a_mtxA.GetTranspose();
-		cMatrixf mtxTransposeB = a_mtxB.GetTranspose();
+	cMatrixf mtxTransposeA = a_mtxA.GetTranspose();
+	cMatrixf mtxTransposeB = a_mtxB.GetTranspose();
 
-		bool bLog = false;
-		//if(alMaxPoints== 1) bLog = true;
+	//////////////////////////////
+	// Check compound collision
+	if (pNewtonShapeA->GetType() == eCollideShapeType_Compound ||
+		pNewtonShapeB->GetType() == eCollideShapeType_Compound) {
+		int lACount = pNewtonShapeA->GetSubShapeNum();
+		int lBCount = pNewtonShapeB->GetSubShapeNum();
 
-		//////////////////////////////
-		//Check compound collision
-		if(pNewtonShapeA->GetType() == eCollideShapeType_Compound ||
-			pNewtonShapeB->GetType() == eCollideShapeType_Compound)
-		{
-			int lACount = pNewtonShapeA->GetSubShapeNum();
-			int lBCount = pNewtonShapeB->GetSubShapeNum();
+		bool bCollision = false;
+		aCollideData.mlNumOfPoints = 0;
+		int lCollideDataStart = 0;
 
-			bool bCollision = false;
-			aCollideData.mlNumOfPoints = 0;
-			int lCollideDataStart =0;
+		for (int a = 0; a < lACount; a++) {
+			for (int b = 0; b < lBCount; b++) {
+				cCollideShapeNewton *pSubShapeA = static_cast<cCollideShapeNewton *>(pNewtonShapeA->GetSubShape(a));
+				cCollideShapeNewton *pSubShapeB = static_cast<cCollideShapeNewton *>(pNewtonShapeB->GetSubShape(b));
 
-			for(int a=0; a< lACount; a++)
-			{
-				for(int b=0; b< lBCount; b++)
-				{
-					cCollideShapeNewton *pSubShapeA = static_cast<cCollideShapeNewton*>(pNewtonShapeA->GetSubShape(a));
-					cCollideShapeNewton *pSubShapeB = static_cast<cCollideShapeNewton*>(pNewtonShapeB->GetSubShape(b));
+				int lNum = NewtonCollisionCollide(mpNewtonWorld, alMaxPoints,
+												  pSubShapeA->GetNewtonCollision(), &(mtxTransposeA.m[0][0]),
+												  pSubShapeB->GetNewtonCollision(), &(mtxTransposeB.m[0][0]),
+												  mpTempPoints, mpTempNormals, mpTempDepths, 0);
+				if (lNum < 1)
+					continue;
+				if (lNum > alMaxPoints)
+					lNum = alMaxPoints;
 
-					int lNum = NewtonCollisionCollide(mpNewtonWorld, alMaxPoints,
-												pSubShapeA->GetNewtonCollision(), &(mtxTransposeA.m[0][0]),
-												pSubShapeB->GetNewtonCollision(), &(mtxTransposeB.m[0][0]),
-												mpTempPoints, mpTempNormals, mpTempDepths);
-					if(lNum<1) continue;
-					if(lNum > alMaxPoints )lNum = alMaxPoints;
+				bCollision = true;
 
-					bCollision = true;
+				// Log("Collided %d vs %d. Num: %d\n",a,b,lNum);
 
-					//Log("Collided %d vs %d. Num: %d\n",a,b,lNum);
+				// Negate for each iteration.
+				alMaxPoints -= lNum;
 
-					//Negate for each iteration.
-					alMaxPoints -= lNum;
+				for (int i = 0; i < lNum; i++) {
+					cCollidePoint &CollPoint = aCollideData.mvContactPoints[lCollideDataStart + i];
+					CollPoint.mfDepth = mpTempDepths[i];
 
-					for(int i=0; i<lNum; i++)
-					{
-						cCollidePoint &CollPoint = aCollideData.mvContactPoints[lCollideDataStart + i];
-						CollPoint.mfDepth =  mpTempDepths[i];
+					int lVertex = i * 3;
 
-						int lVertex = i*3;
+					CollPoint.mvNormal.x = mpTempNormals[lVertex + 0];
+					CollPoint.mvNormal.y = mpTempNormals[lVertex + 1];
+					CollPoint.mvNormal.z = mpTempNormals[lVertex + 2];
 
-						CollPoint.mvNormal.x = mpTempNormals[lVertex+0];
-						CollPoint.mvNormal.y = mpTempNormals[lVertex+1];
-						CollPoint.mvNormal.z = mpTempNormals[lVertex+2];
-
-						CollPoint.mvPoint.x = mpTempPoints[lVertex+0];
-						CollPoint.mvPoint.y = mpTempPoints[lVertex+1];
-						CollPoint.mvPoint.z = mpTempPoints[lVertex+2];
-					}
-
-					lCollideDataStart += lNum;
-					aCollideData.mlNumOfPoints += lNum;
-
-					if(alMaxPoints <= 0) break;
+					CollPoint.mvPoint.x = mpTempPoints[lVertex + 0];
+					CollPoint.mvPoint.y = mpTempPoints[lVertex + 1];
+					CollPoint.mvPoint.z = mpTempPoints[lVertex + 2];
 				}
-				if(alMaxPoints <= 0) break;
+
+				lCollideDataStart += lNum;
+				aCollideData.mlNumOfPoints += lNum;
+
+				if (alMaxPoints <= 0)
+					break;
 			}
-
-			return bCollision;
-		}
-		//////////////////////////////
-		//Check NON compound collision
-		else
-		{
-			int lNum = NewtonCollisionCollide(mpNewtonWorld, alMaxPoints,
-										pNewtonShapeA->GetNewtonCollision(), &(mtxTransposeA.m[0][0]),
-										pNewtonShapeB->GetNewtonCollision(), &(mtxTransposeB.m[0][0]),
-										mpTempPoints, mpTempNormals, mpTempDepths);
-
-			if(lNum<1) return false;
-			if(lNum > alMaxPoints )lNum = alMaxPoints;
-
-			for(int i=0; i<lNum; i++)
-			{
-				cCollidePoint &CollPoint = aCollideData.mvContactPoints[i];
-				CollPoint.mfDepth =  mpTempDepths[i];
-
-				int lVertex = i*3;
-
-				CollPoint.mvNormal.x = mpTempNormals[lVertex+0];
-				CollPoint.mvNormal.y = mpTempNormals[lVertex+1];
-				CollPoint.mvNormal.z = mpTempNormals[lVertex+2];
-
-				CollPoint.mvPoint.x = mpTempPoints[lVertex+0];
-				CollPoint.mvPoint.y = mpTempPoints[lVertex+1];
-				CollPoint.mvPoint.z = mpTempPoints[lVertex+2];
-			}
-
-			aCollideData.mlNumOfPoints = lNum;
+			if (alMaxPoints <= 0)
+				break;
 		}
 
-#endif
+		return bCollision;
+	}
+	//////////////////////////////
+	// Check NON compound collision
+	else {
+		int lNum = NewtonCollisionCollide(mpNewtonWorld, alMaxPoints,
+										  pNewtonShapeA->GetNewtonCollision(), &(mtxTransposeA.m[0][0]),
+										  pNewtonShapeB->GetNewtonCollision(), &(mtxTransposeB.m[0][0]),
+										  mpTempPoints, mpTempNormals, mpTempDepths, 0);
 
+		if (lNum < 1)
+			return false;
+		if (lNum > alMaxPoints)
+			lNum = alMaxPoints;
+
+		for (int i = 0; i < lNum; i++) {
+			cCollidePoint &CollPoint = aCollideData.mvContactPoints[i];
+			CollPoint.mfDepth = mpTempDepths[i];
+
+			int lVertex = i * 3;
+
+			CollPoint.mvNormal.x = mpTempNormals[lVertex + 0];
+			CollPoint.mvNormal.y = mpTempNormals[lVertex + 1];
+			CollPoint.mvNormal.z = mpTempNormals[lVertex + 2];
+
+			CollPoint.mvPoint.x = mpTempPoints[lVertex + 0];
+			CollPoint.mvPoint.y = mpTempPoints[lVertex + 1];
+			CollPoint.mvPoint.z = mpTempPoints[lVertex + 2];
+		}
+
+		aCollideData.mlNumOfPoints = lNum;
+	}
 	return true;
 }
 
