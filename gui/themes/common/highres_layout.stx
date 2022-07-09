@@ -1082,6 +1082,9 @@
 				<widget name = 'CloseButton'
 						type = 'Button'
 				/>
+				<widget name = 'ResetButton'
+						type = 'Button'
+				/>
 			</layout>
 		</layout>
 	</dialog>

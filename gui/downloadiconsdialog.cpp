@@ -42,7 +42,8 @@ namespace GUI {
 enum {
 	kDownloadProceedCmd = 'Dlpr',
 	kListDownloadFinishedCmd = 'DlLE',
-	kCleanupCmd = 'DlCL'
+	kCleanupCmd = 'DlCL',
+	kClearCacheCmd = 'DlCC'
 };
 
 struct DialogState {
@@ -186,6 +187,7 @@ DownloadIconsDialog::DownloadIconsDialog() :
 	_downloadSpeedLabel = new StaticTextWidget(this, "GlobalOptions_DownloadIconsDialog.DownloadSpeed", Common::U32String());
 	_cancelButton = new ButtonWidget(this, "GlobalOptions_DownloadIconsDialog.MainButton", _("Cancel download"), Common::U32String(), kCleanupCmd);
 	_closeButton = new ButtonWidget(this, "GlobalOptions_DownloadIconsDialog.CloseButton", _("Hide"), Common::U32String(), kCloseCmd);
+	_clearCacheButton = new ButtonWidget(this, "GlobalOptions_DownloadIconsDialog.ResetButton", _("Clear Cache"), Common::U32String(), kClearCacheCmd);
 
 	if (!g_state) {
 		g_state = new DialogState;
@@ -229,7 +231,7 @@ void DownloadIconsDialog::setState(IconProcessState state) {
 		_statusText->setLabel(_("Downloading icons list..."));
 		_cancelButton->setLabel(_("Cancel download"));
 		_cancelButton->setCmd(kCleanupCmd);
-		_closeButton->setVisible(false);
+		_closeButton->setVisible(true);
 
 		g_state->totalSize = 0;
 		g_state->fileHash.clear();
@@ -239,7 +241,7 @@ void DownloadIconsDialog::setState(IconProcessState state) {
 		_statusText->setLabel(Common::U32String::format(_("Downloading icons list... %d entries"), g_state->fileHash.size()));
 		_cancelButton->setLabel(_("Cancel download"));
 		_cancelButton->setCmd(kCleanupCmd);
-		_closeButton->setVisible(false);
+		_closeButton->setVisible(true);
 		break;
 
 	case kDownloadStateListCalculated: {
@@ -266,6 +268,7 @@ void DownloadIconsDialog::setState(IconProcessState state) {
 		_closeButton->setLabel(_("Hide"));
 		_closeButton->setCmd(kCloseCmd);
 		_closeButton->setEnabled(true);
+		_clearCacheButton->setEnabled(false);
 		break;
 
 	case kDownloadComplete: {
@@ -280,6 +283,7 @@ void DownloadIconsDialog::setState(IconProcessState state) {
 			_closeButton->setLabel(_("Close"));
 			_closeButton->setCmd(kCleanupCmd);
 			_closeButton->setEnabled(true);
+			_clearCacheButton->setEnabled(true);
 			break;
 		}
 	}
@@ -312,6 +316,10 @@ void DownloadIconsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	case kDownloadProceedCmd:
 		setState(kDownloadStateDownloading);
 		g_state->proceedDownload();
+		break;
+	case kClearCacheCmd:
+		_clearCacheButton->setEnabled(false);
+		clearCache();
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
@@ -406,6 +414,7 @@ void DownloadIconsDialog::calculateList() {
 
 	if (g_state->totalSize == 0) {
 		Common::U32String error(_("No new icons packs available"));
+		_closeButton->setEnabled(false);
 		setError(error);
 		return;
 	}
@@ -413,5 +422,58 @@ void DownloadIconsDialog::calculateList() {
 	setState(kDownloadStateListCalculated);
 }
 
+void DownloadIconsDialog::clearCache() {
+	Common::String sizeUnits;
+
+	Common::String iconsPath = ConfMan.get("iconspath");
+	if (iconsPath.empty()) {
+		Common::U32String str(_("ERROR: No icons path set"));
+		setError(str);
+		return;
+	}
+
+	Common::FSDirectory *iconDir = new Common::FSDirectory(iconsPath);
+
+	Common::ArchiveMemberList iconFiles;
+
+	iconDir->listMatchingMembers(iconFiles, "gui-icons*.dat");
+
+	for (auto ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
+		Common::String fname = (*ic)->getName();
+		Common::SeekableReadStream *str = (*ic)->createReadStream();
+		uint32 size = str->size();
+		delete str;
+
+		g_state->totalSize += size;
+	}
+
+	Common::String size = getHumanReadableBytes(g_state->totalSize, sizeUnits);
+
+	GUI::MessageDialog dialog(Common::U32String::format(_("You are about to remove %s %s of data, deleting all previously downloaded icon files. Do you want to proceed?"), size.c_str(), sizeUnits.c_str()), _("Proceed"), _("Cancel"));
+	if (dialog.runModal() == ::GUI::kMessageOK) {
+
+		// Build list of previously downloaded icon files
+		for (auto ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
+			Common::String fname = (*ic)->getName();
+			Common::FSNode fs(iconsPath + fname);
+			Common::WriteStream *str = fs.createWriteStream();
+
+			// Overwrite previously downloaded icon files with dummy data
+			str->writeByte(0);
+			str->finalize();
+		}
+		g_state->fileHash.clear();
+
+		// Reload (now empty) icons set
+		g_gui.initIconsSet();
+
+		// Fetch current icons list file and re-trigger downloads
+		g_state->downloadList();
+		calculateList();
+		_cancelButton->setVisible(true);
+	} else {
+		_clearCacheButton->setEnabled(true);
+	}
+}
 
 } // End of namespace GUI
