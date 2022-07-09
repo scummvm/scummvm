@@ -29,6 +29,7 @@
 
 #include "hpl1/engine/impl/PhysicsBodyNewton.h"
 #include "hpl1/engine/impl/PhysicsWorldNewton.h"
+#include "hpl1/engine/math/Vector3.h"
 
 namespace hpl {
 
@@ -45,9 +46,9 @@ cPhysicsJointScrewNewton::cPhysicsJointScrewNewton(const tString &asName,
 	mvPin = avPinDir;
 	mvPin.Normalise();
 
-	const float fPivotPoint[3] = {avPivotPoint.x, avPivotPoint.y, avPivotPoint.z};
-	const float fPinDir[3] = {avPinDir.x, avPinDir.y, avPinDir.z};
-	mpNewtonJoint = NewtonConstraintCreateCorkscrew(mpNewtonWorld, fPivotPoint, fPinDir, mpNewtonChildBody,
+	VEC3_CONST_ARRAY(pvPoint, avPivotPoint);
+	VEC3_CONST_ARRAY(pDir, avPinDir);
+	mpNewtonJoint = NewtonConstraintCreateCorkscrew(mpNewtonWorld, pvPoint, pDir, mpNewtonChildBody,
 													mpNewtonParentBody);
 
 	NewtonJointSetUserData(mpNewtonJoint, (void *)this);
