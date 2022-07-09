@@ -62,28 +62,26 @@ cCollideShapeNewton::cCollideShapeNewton(eCollideShapeType aType, const cVector3
 		////////////////////////////////////////////
 		// Create Newton collision
 
-#if 0
   		switch(aType)
 		{
 		case eCollideShapeType_Null:		mpNewtonCollision = NewtonCreateNull(apNewtonWorld); break;
 
 		case eCollideShapeType_Box:			mpNewtonCollision = NewtonCreateBox(apNewtonWorld,
 												mvSize.x, mvSize.y, mvSize.z,
-												pMtx, nullptr); break;
+												0, pMtx); break;
 
 		case eCollideShapeType_Sphere:		mpNewtonCollision = NewtonCreateSphere(apNewtonWorld,
 												mvSize.x, mvSize.y, mvSize.z,
-												pMtx, nullptr); break;
+												0, pMtx); break;
 
 		case eCollideShapeType_Cylinder:	mpNewtonCollision = NewtonCreateCylinder(apNewtonWorld,
 												mvSize.x, mvSize.y,
-												pMtx); break;
+												0, pMtx); break;
 
 		case eCollideShapeType_Capsule:		mpNewtonCollision = NewtonCreateCapsule(apNewtonWorld,
 												mvSize.x, mvSize.y,
-												pMtx); break;
+												0, pMtx); break;
 		}
-#endif
 
 	////////////////////////////////////////////
 	// Calculate Bounding volume and volume.
@@ -123,11 +121,8 @@ cCollideShapeNewton::cCollideShapeNewton(eCollideShapeType aType, const cVector3
 
 cCollideShapeNewton::~cCollideShapeNewton() {
 	// Release Newton Collision
-#if 0
-  		if(mpNewtonCollision)
-			NewtonReleaseCollision(mpNewtonWorld,mpNewtonCollision);
-#endif
-
+	if(mpNewtonCollision)
+		NewtonReleaseCollision(mpNewtonWorld,mpNewtonCollision);
 	// Release all subshapes (for compound objects)
 	for (int i = 0; i < (int)mvSubShapes.size(); i++) {
 		mpWorld->DestroyShape(mvSubShapes[i]);
@@ -225,10 +220,8 @@ void cCollideShapeNewton::CreateFromShapeVec(tCollideShapeVec &avShapes) {
 		mfVolume += pNewtonShape->GetVolume();
 	}
 
-#if 0
-  		mpNewtonCollision = NewtonCreateCompoundCollision(mpNewtonWorld, (int)vNewtonColliders.size(),
-															&vNewtonColliders[0]);
-#endif
+	mpNewtonCollision = NewtonCreateCompoundCollision(mpNewtonWorld, (int)vNewtonColliders.size(),
+														&vNewtonColliders[0], 0);
 
 	// Create bounding volume
 	cVector3f vFinalMax = avShapes[0]->GetBoundingVolume().GetMax();
