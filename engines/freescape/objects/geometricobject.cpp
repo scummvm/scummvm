@@ -150,14 +150,18 @@ void GeometricObject::createBoundingBox() {
 		break;
 	case Rectangle:
 		_boundingBox.expand(origin);
-
-		v = origin + size;
-		for (int i = 0; i < 3; i++) {
-			if (size.getValue(i) == 0)
-				v.setValue(i, v.getValue(i) + 10);
-		}
-		_boundingBox.expand(v);
+		_boundingBox.expand(origin + size);
 		break;
+	case Line:
+	case Triangle:
+	case Quadrilateral:
+	case Pentagon:
+	case Hexagon:
+		for (int i = 0; i < int(ordinates->size()); i = i + 3) {
+			_boundingBox.expand(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1], (*ordinates)[i + 2]));
+		}
+		break;
+
 	case EastPyramid:
 		_boundingBox.expand(origin + Math::Vector3d(0, 0, size.z()));
 		_boundingBox.expand(origin + Math::Vector3d(0, size.y(), size.z()));
