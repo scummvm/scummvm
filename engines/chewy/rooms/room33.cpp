@@ -90,7 +90,7 @@ int16 Room33::use_schublade() {
 		_G(atds)->set_ats_str(210, TXT_MARK_LOOK, 1, ATS_DATA);
 		_G(atds)->set_ats_str(210, TXT_MARK_USE, 2, ATS_DATA);
 		start_spz(CH_LGET_O, 1, ANI_FRONT, P_CHEWY);
-		invent_2_slot(MESSER_INV);
+		invent_2_slot(KNIFE_INV);
 		showCur();
 	}
 

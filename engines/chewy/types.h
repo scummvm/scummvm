@@ -261,7 +261,7 @@ struct GameFlags {
 	bool R64ManAway : 1;
 	bool flags26_4 : 1;
 	bool flags26_8 : 1;
-	bool flags26_10 : 1;
+	bool changedArtifactOrigin : 1;
 	bool flags26_20 : 1;
 	bool flags26_40 : 1;
 	bool R67SongOk : 1;
