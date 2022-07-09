@@ -116,15 +116,10 @@ void Area::draw(Freescape::Renderer *gfx) {
 }
 
 Object *Area::shootRay(const Math::Ray &ray) {
-	float distance = 16 * 8192; // TODO: check if this is max distance
 	Object *collided = nullptr;
-	for (int i = 0; i < drawableObjects.size(); i++) {
-		if (!drawableObjects[i]->isDestroyed() && !drawableObjects[i]->isInvisible() && drawableObjects[i]->_boundingBox.isValid() && ray.intersectAABB(drawableObjects[i]->_boundingBox)) {
-			if (ray.getOrigin().getDistanceTo(drawableObjects[i]->getOrigin()) <= distance ) {
-				collided = drawableObjects[i];
-				distance = ray.getOrigin().getDistanceTo(collided->getOrigin());
-			}
-		}
+	for (int i = drawableObjects.size() - 1; i >= 0; i--) {
+		if (!drawableObjects[i]->isDestroyed() && !drawableObjects[i]->isInvisible() && drawableObjects[i]->_boundingBox.isValid() && ray.intersectAABB(drawableObjects[i]->_boundingBox))
+			collided = drawableObjects[i];
 	}
 	return collided;
 }
@@ -132,8 +127,8 @@ Object *Area::shootRay(const Math::Ray &ray) {
 Object *Area::checkCollisions(const Math::AABB &boundingBox) {
 	float size = 16 * 8192; // TODO: check if this is max size
 	Object *collided = nullptr;
-	for (int i = drawableObjects.size() - 1; i >= 0; i--) {
-		if (drawableObjects[i]->isDrawable() && !drawableObjects[i]->isDestroyed() && !drawableObjects[i]->isInvisible()) {
+	for (int i = 0; i < int(drawableObjects.size()); i++) {
+		if (!drawableObjects[i]->isDestroyed() && !drawableObjects[i]->isInvisible()) {
 			GeometricObject *obj = (GeometricObject*) drawableObjects[i];
 			float objSize = obj->getSize().length();
 			if (obj->collides(boundingBox) && size > objSize) {

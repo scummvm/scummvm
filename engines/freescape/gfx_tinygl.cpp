@@ -294,7 +294,7 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vec
 			_palette->getRGBAt((*colours)[0], r, g, b);
 			tglColor3ub(r, g, b);
 			for (int i = 0; i < ordinates->size(); i = i + 3) {
-				vertices.push_back(Math::Vector3d(/*origin.x() +*/ (*ordinates)[i], /*origin.y() +*/ (*ordinates)[i + 1],	/*origin.z() +*/ (*ordinates)[i + 2]));
+				vertices.push_back(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1], (*ordinates)[i + 2]));
 			}
 			renderFace(vertices);
 		}
@@ -303,7 +303,7 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vec
 			_palette->getRGBAt((*colours)[1], r, g, b);
 			tglColor3ub(r, g, b);
 			for (int i = ordinates->size(); i > 0; i = i - 3) {
-				vertices.push_back(Math::Vector3d(/*origin.x() +*/ (*ordinates)[i-3], /*origin.y() +*/ (*ordinates)[i-2],	/*origin.z() +*/ (*ordinates)[i-1]));
+				vertices.push_back(Math::Vector3d((*ordinates)[i-3], (*ordinates)[i-2], (*ordinates)[i-1]));
 			}
 			renderFace(vertices);
 		}
