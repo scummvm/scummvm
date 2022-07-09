@@ -27,7 +27,17 @@
 #include "backends/plugins/riscos/riscos-provider.h"
 #include "base/main.h"
 
+#include <unixlib/local.h>
+#include <signal.h>
+#include <string.h>
+
+static void signal_handler(int signum) {
+	__write_backtrace(signum);
+	error("Received unexpected signal: %s, exiting", strsignal(signum));
+}
+
 int main(int argc, char *argv[]) {
+	signal(SIGSEGV, signal_handler);
 
 	// Create our OSystem instance
 	g_system = new OSystem_RISCOS();
