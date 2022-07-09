@@ -346,6 +346,7 @@ void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos)
 }
 
 void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTime) {
+	debug("old player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	Math::Vector3d previousPosition = _position;
 	int previousAreaID = _currentArea->getAreaID();
 
@@ -365,38 +366,50 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 		_position = _position + _cameraRight * velocity;
 		break;
 	}
+	int areaScale = _currentArea->getScale();
 	// Is threre some floor under the player?
-	_position.set(_position.x(), positionY - 16, _position.z());
-	bool collided = checkCollisions();
+	_position.set(_position.x(), positionY - 16 * areaScale, _position.z());
+	bool collided = checkCollisions(false);
 
 	if (!collided && _targetName == "driller") {  // Player is falling, let's try to step down
-		_position.set(_position.x(), positionY - 16 - 64, _position.z());
-		collided = checkCollisions();
+		debug("steping down from position: %f, %f, %f", _position.x(), _position.y(), _position.z());
+
+		_position.set(_position.x(), positionY - 16 * areaScale - 64 * areaScale, _position.z());
+
+		collided = checkCollisions(false);
+		if (!collided)
+			debug("falling from position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 		assert(collided);
 
 		// restore position
-		_position.set(_position.x(), positionY - 64, _position.z());
+		_position.set(_position.x(), positionY - 64 * areaScale, _position.z());
+
+		checkCollisions(true);
+		/*if (collided && previousAreaID == _currentArea->getAreaID()) {
+			_position = previousPosition;
+		}*/
 	} else {
 		// restore position
 		_position.set(_position.x(), positionY, _position.z());
 
-		collided = checkCollisions();
+		collided = checkCollisions(true);
 		if (collided && previousAreaID == _currentArea->getAreaID()) {
+			debug("steping down from position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 			// We found a collisions, let's try to step up
-			_position.set(_position.x(), positionY + 64, _position.z());
-			collided = checkCollisions();
+			_position.set(_position.x(), positionY + 64 * areaScale, _position.z());
+			collided = checkCollisions(false);
 			if (collided)
 				_position = previousPosition;
 		}
 	}
-
 	debug("new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 }
 
-bool FreescapeEngine::checkCollisions() {
+bool FreescapeEngine::checkCollisions(bool executeConditions) {
+	int areaScale = _currentArea->getScale();
 
-	Math::Vector3d v1(_position.x() - _playerWidth / 2, _position.y() - _playerHeight     , _position.z() - _playerDepth / 2);
-	Math::Vector3d v2(_position.x() + _playerWidth / 2, _position.y(), _position.z() + _playerDepth / 2);
+	Math::Vector3d v1(_position.x() - _playerWidth / 2, _position.y() - areaScale * _playerHeight , _position.z() - _playerDepth / 2);
+	Math::Vector3d v2(_position.x() + _playerWidth / 2, _position.y()                             , _position.z() + _playerDepth / 2);
 
 	const Math::AABB boundingBox(v1, v2);
 	Object *obj = _currentArea->checkCollisions(boundingBox);
@@ -404,7 +417,7 @@ bool FreescapeEngine::checkCollisions() {
 	if (obj != nullptr) {
 		debug("Collided with object id %d of size %f %f %f", obj->getObjectID(), obj->getSize().x(), obj->getSize().y(), obj->getSize().z());
 		GeometricObject *gobj = (GeometricObject*) obj;
-		if (gobj->conditionSource != nullptr) {
+		if (gobj->conditionSource != nullptr && executeConditions) {
 			debug("Must use collision = true when executing: %s", gobj->conditionSource->c_str());
 			executeCode(gobj->condition, false, true);
 		}
@@ -440,6 +453,7 @@ void FreescapeEngine::gotoArea(uint16 areaID, uint16 entranceID) {
 	for (int16 i = 0; i <= 32; i++) {
 		_areaBits[i] = false;
 	}
+	debug("starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 }
 
 bool FreescapeEngine::hasFeature(EngineFeature f) const {

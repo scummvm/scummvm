@@ -199,7 +199,7 @@ void FreescapeEngine::executeClearBit(FCLInstruction &instruction) {
 
 void FreescapeEngine::executeToggleBit(FCLInstruction &instruction) {
 	uint16 index = instruction.source;
-	_areaBits[index] = ~_areaBits[index];
+	_areaBits[index] = !_areaBits[index];
 	debug("Toggling bit %d", index);
 }
 
