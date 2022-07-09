@@ -250,13 +250,7 @@
 		not_enough_gold: "*** NOT ENOUGH GOLD ***"
 		not_enough_gems: "*** NOT ENOUGH GEMS ***"
 		not_enough_sp: "*** NOT ENOUGH SPELL POINTS ***"
-		combat_only: "*** COMBAT ONLY ***"
-		magic_doesnt_work: "*** MAGIC DOESN'T WORK HERE ***"
-		outdoors_only: "*** OUTDOOR ONLY ***"
 		full: "*** BACKPACK FULL ***"
-		done: "*** DONE ***"
-		enter_to_cast: "'ENTER' TO CAST"
-		cast_on: "CAST ON: '1'-'%d'?"
 enhdialogs:
 	character:
 		stats:
@@ -638,6 +632,27 @@ stats:
 		253: "KEY CARD"
 		254: "EYE OF GORDOS"
 		255: "(USELESS ITEM)"
+movement:
+	obstructed:
+		0: "   SOLID!   "
+		1: "   LOCKED!  "
+		2: " TOO DENSE! "
+		3: " IMPASSABLE "
+		4: " ROUGH SEAS "
+		5: " TOO WINDY! "
+		cant_swim: " CAN'T SWIM"
+		barrier: "  BARRIER!  "
+view:
+	darkness: "  DARKNESS"
+spells:
+	combat_only: "*** COMBAT ONLY ***"
+	magic_doesnt_work: "*** MAGIC DOESN'T WORK HERE ***"
+	outdoors_only: "*** OUTDOOR ONLY ***"
+	failed: "*** SPELL FAILED ***"
+	done: "*** DONE ***"
+	enter_to_cast: "'ENTER' TO CAST"
+	cast_on: "CAST ON: '1'-'%d'?"
+	which_town: "WHICH TOWN (1-5)?"
 maps:
 	map00:
 		sign: "A SIGN ABOVE THE DOOR READS: "
@@ -662,15 +677,3 @@ maps:
 		trapdoor: "TRAP DOOR!"
 		levitate: ", LEVITATION SAVES YOU!"
 		passage_outside: "A PASSAGE LEADS OUTSIDE, TAKE IT (Y/N)?"
-movement:
-	obstructed:
-		0: "   SOLID!   "
-		1: "   LOCKED!  "
-		2: " TOO DENSE! "
-		3: " IMPASSABLE "
-		4: " ROUGH SEAS "
-		5: " TOO WINDY! "
-		cant_swim: " CAN'T SWIM"
-		barrier: "  BARRIER!  "
-view:
-	darkness: "  DARKNESS"

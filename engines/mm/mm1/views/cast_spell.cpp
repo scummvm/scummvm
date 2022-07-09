@@ -108,7 +108,7 @@ void CastSpell::draw() {
 
 	case SELECT_CHAR:
 		writeString(22, 3, Common::String::format(
-			STRING["dialogs.misc.cast_on"].c_str(),
+			STRING["spells.cast_on"].c_str(),
 			(int)g_globals->_party.size()
 		));
 		break;
@@ -193,15 +193,30 @@ void CastSpell::performSpell(Character *chr) {
 		spellDone(STRING["dialogs.misc.magic_doesnt_work"], 5);
 	} else {
 		// Cast the spell
-		Spells::cast(_spellIndex, chr);
+		switch (Spells::cast(_spellIndex, chr)) {
+		case SR_FAILED:
+			// Spell failed
+			clearSurface();
+			writeString(10, 2, STRING["spells.failed"]);
 
-		// Display spell done
-		clearSurface();
-		writeString(14, 2, STRING["dialogs.misc.done"]);
-		Sound::sound(SOUND_2);
+			Sound::sound(SOUND_2);
+			delaySeconds(3);
+			break;
 
-		g_globals->_party.updateAC();
-		delaySeconds(3);
+		case SR_SUCCESS_DONE:
+			// Display spell done
+			clearSurface();
+			writeString(14, 2, STRING["dialogs.misc.done"]);
+			g_globals->_party.updateAC();
+
+			Sound::sound(SOUND_2);
+			delaySeconds(3);
+			break;
+
+		default:
+			// Spell done, but don't display done message
+			break;
+		}
 	}
 }
 

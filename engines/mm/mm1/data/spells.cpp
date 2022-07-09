@@ -368,6 +368,8 @@ SpellResult Spells::cleric64_stoneToFlesh(Character *chr) {
 }
 
 SpellResult Spells::cleric65_townPortal(Character *chr) {
+
+
 	return SR_FAILED;
 }
 
