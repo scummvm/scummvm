@@ -116,7 +116,7 @@ public:
 	uint16 _playerDepth;
 
 	// Effects
-	bool checkCollisions();
+	bool checkCollisions(bool executeConditions);
 	void executeCode(FCLInstructionVector &code, bool shot, bool collided);
 
 	// Instructions
