@@ -938,6 +938,25 @@ begin_credits("Credits");
 			end_persons();
 		end_section();
 
+		begin_section("Icons pack", "icons_pack");
+			begin_persons();
+				add_person("David Calvert", "davidcalvertfr", "");
+				add_person("Eugene Sandulenko", "sev", "");
+				add_person("J Moretti", "", "");
+				add_person("Jennifer McMurray", "", "");
+				add_person("Lothar Serra Mari", "rootfather", "");
+				add_person("Oleg Ermakov", "epushiron", "");
+				add_person("Olly Dean", "olly", "");
+				add_person("Stefan Philippsen", "", "");
+				add_person("", "Canuma", "");
+				add_person("", "SupSuper", "");
+				add_person("", "Thunderforge", "");
+				add_person("", "neuromancer", "");
+				add_person("", "nightm4re94", "");
+				add_person("", "trembyle", "");
+			end_persons();
+		end_section();
+
 		begin_section("Code contributions", "code_contrib");
 			begin_persons();
 				add_person("Ori Avtalion", "salty-horse", "Subtitle control options in the GUI; BASS GUI fixes");

@@ -125,6 +125,9 @@ ScummVM Team
        Paul Gilbert
 
     Chewy:
+       Paul Gilbert
+       Eugene Sandulenko
+       Arnaud Boutonne
        Filippos Karapetis
 
     Cine:
@@ -193,6 +196,7 @@ ScummVM Team
        Andrew Plotkin                 - Glulxe interpreter
        Alan Cox                       - ScottFree interpreter
        Michael J. Roberts             - TADS interpreter
+       Avijeet Maurya                 - Scott Sub-engine
 
     Gnap:
        Arnaud Boutonne
@@ -305,6 +309,9 @@ ScummVM Team
     Mortevielle:
        Arnaud Boutonne
        Paul Gilbert
+
+    mTropolis:
+       Eric Lasota
 
     MutationOfJB:
        Lubomir Remak
@@ -896,6 +903,23 @@ Other contributions
      Jean Marc Gimenez              - ScummVM logo
      David Jensen                   - SVG logo conversion
      Raina                          - ScummVM forum buttons
+
+  Icons pack
+  ----------
+     David Calvert
+     Eugene Sandulenko
+     J Moretti
+     Jennifer McMurray
+     Lothar Serra Mari
+     Oleg Ermakov
+     Olly Dean
+     Stefan Philippsen
+     Canuma
+     SupSuper
+     Thunderforge
+     neuromancer
+     nightm4re94
+     trembyle
 
   Code contributions
   ------------------
