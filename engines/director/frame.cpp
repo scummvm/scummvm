@@ -244,16 +244,20 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 		_palette.style = stream->readByte();
 
 		unk1 = stream->readByte();
-		warning("Frame::readChannels(): STUB: unk2: %d 0x%x", unk1, unk1);
+		if (unk1)
+			warning("Frame::readChannels(): STUB: unk2: %d 0x%x", unk1, unk1);
 		unk1 = stream->readUint16();
-		warning("Frame::readChannels(): STUB: unk3: %d 0x%x", unk1, unk1);
+		if (unk1)
+			warning("Frame::readChannels(): STUB: unk3: %d 0x%x", unk1, unk1);
 		unk1 = stream->readUint16();
-		warning("Frame::readChannels(): STUB: unk4: %d 0x%x", unk1, unk1);
+		if (unk1)
+			warning("Frame::readChannels(): STUB: unk4: %d 0x%x", unk1, unk1);
 
 		_palette.colorCode = stream->readByte();
 
 		unk1 = stream->readByte();
-		warning("Frame::readChannels(): STUB: unk5: %d 0x%x", unk1, unk1);
+		if (unk1)
+			warning("Frame::readChannels(): STUB: unk5: %d 0x%x", unk1, unk1);
 
 		debugC(8, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId.member, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1.member, _skipFrameFlag, _blend, _sound2.member, _soundType2);
 	} else if (version >= kFileVer500 && version < kFileVer600) {
