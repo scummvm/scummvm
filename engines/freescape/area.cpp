@@ -69,10 +69,10 @@ Area::Area(
 	{
 		bool operator()(Object *object1, Object *object2) {
 			if (!object1->isPlanar() && object2->isPlanar())
-				return true;
-			if (object1->isPlanar() && !object2->isPlanar())
 				return false;
-			return object1->getObjectID() < object2->getObjectID();
+			if (object1->isPlanar() && !object2->isPlanar())
+				return true;
+			return object1->getObjectID() > object2->getObjectID();
 		};
 	} compareObjects;
 
@@ -118,9 +118,9 @@ void Area::draw(Freescape::Renderer *gfx) {
 Object *Area::shootRay(const Math::Ray &ray) {
 	float distance = 16 * 8192; // TODO: check if this is max distance
 	Object *collided = nullptr;
-	for (int i = drawableObjects.size() - 1; i >= 0; i--) {
+	for (int i = 0; i < drawableObjects.size(); i++) {
 		if (!drawableObjects[i]->isDestroyed() && !drawableObjects[i]->isInvisible() && drawableObjects[i]->_boundingBox.isValid() && ray.intersectAABB(drawableObjects[i]->_boundingBox)) {
-			if (ray.getOrigin().getDistanceTo(drawableObjects[i]->getOrigin()) < distance ) {
+			if (ray.getOrigin().getDistanceTo(drawableObjects[i]->getOrigin()) <= distance ) {
 				collided = drawableObjects[i];
 				distance = ray.getOrigin().getDistanceTo(collided->getOrigin());
 			}
