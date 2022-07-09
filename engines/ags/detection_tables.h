@@ -239,6 +239,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "blackwell4", "The Blackwell Deception" },
 	{ "blackwell5", "The Blackwell Epiphany" },
 	{ "captaindisaster", "Captain Disaster in: Death Has A Million Stomping Boots" },
+	{ "captainhook", "Captain Hook and the Lost Girl" },
 	{ "castledornstein", "Castle Dornstein" },
 	{ "charnelhousetrilogy", "The Charnel House Trilogy" },
 	{ "chronicleofinnsmouth", "Chronicle of Innsmouth" },
@@ -741,6 +742,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "chaelle3", "Chaëlle chapitre 3 : La Bataille de Zahrasie" },
 	{ "chalkman", "Chalkman" },
 	{ "chalksquest", "Chalk's Quest" },
+	{ "challengetentacle", "Challenge of the Tentacle" },
 	{ "chanceofthedead", "Chance Of The Dead" },
 	{ "charamba1", "Charamba, Chapter 1: Bitches in the Desert" },
 	{ "charamba2", "Charamba, Chapter 2: Hallowe'en" },
@@ -753,6 +755,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "chessboard", "ChessBoard" },
 	{ "chezapa", "Chez Apa" },
 	{ "chickchaser", "Chick Chaser" },
+	{ "chicken", "Chicken" },
 	{ "chickenfraction", "Chicken Fraction" },
 	{ "chickenvsroad", "Chicken vs. Road" },
 	{ "chinesecheckers", "Chinese Checkers" },
@@ -1082,7 +1085,9 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "fixumdude", "Fixumdude's 3D Printing Adventure" },
 	{ "flamebarrels", "Flame Barrels" },
 	{ "flashbax", "Flashbax" },
+	{ "flashmccoy", "Flash McCoy" },
 	{ "flightrobots", "Flight from the Robots" },
+	{ "flightrobotsch2", "Flight from the Robots - Chapter 2" },
 	{ "floatyrog", "Floaty Rog'" },
 	{ "flophouse", "Flophouse Hijinks" },
 	{ "flowergirl", "Flower Girl" },
@@ -1498,7 +1503,8 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "lunarlander", "Lunar Lander" },
 	{ "lutherinhood", "Luther in the Hood" },
 	{ "lydia", "Lydia" },
-	{ "lydiaandthemysteryofnellrenomanor", "Lydia and the Mystery of Nellreno Manor" },
+	{ "lydianellreno", "Lydia and the Mystery of Nellreno Manor" },
+	{ "machinesdreams", "Machines Have Lucid Dreams" },
 	{ "maelstrom", "Maelstrom Obscura - Case 1: The Legend of the Loch Ness Monster" },
 	{ "mafaldawest", "Mafalda: The Strange and Unusual life of Mafalda West, Part 1" },
 	{ "magic8ball", "Magic-8-Ball" },
@@ -1920,6 +1926,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "osdanish", "Oceanspirit Danish" },
 	{ "osdarayofhope", "Oceanspirit Dennis: A Ray of Hope" },
 	{ "osdarchipelago", "Oceanspirit Dennis - Archipelago Adventures 1" },
+	{ "osddeath", "The Death of Oceanspirit Dennis" },
 	{ "osdenise", "Oceanspirit Denise: Heroics In The Nick Of Time!" },
 	{ "osdfamous", "Oceanspirit Dennis Sorta 99% FAMOUS" },
 	{ "osdholiday", "Oceanspirit Dennis's Holiday Havoc!" },
@@ -2438,6 +2445,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "studiomediocre", "Studio Mediocre: The Case of the Bedeaded Dramatist" },
 	{ "subatomic", "subAtomic" },
 	{ "subterra", "Subterra" },
+	{ "suenanfantasmas", "¿Sueñan Los Fantasmas?" },
 	{ "summerwoes", "Summer Woes" },
 	{ "sunriseparadise", "Sunrise Paradise" },
 	{ "supaevil", "Supa-EviL" },
@@ -2815,6 +2823,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "winamillion", "Win a Million!" },
 	{ "winnersdontdodrugs", "Winners Don't Do Drugs" },
 	{ "winterrose", "The Winter Rose" },
+	{ "witchlullaby", "The Witch's Lullaby" },
 	{ "witchnight", "Witch Night" },
 	{ "witchron", "Witch!" },
 	{ "witchwizardcup", "The Witch, the Wizard and the Blue Cup" },
@@ -3261,7 +3270,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("apotheosis", "the apotheosis project.exe", "0115a64ddec9396108f32da31d761ecb", 1144677502),
 	GAME_ENTRY_STEAM("apotheosis", "The Apotheosis Project.exe", "4c0c28d58ebd53823fc0248e5b777c52", 1144826071),
 	GAME_ENTRY_STEAM("apotheosis", "The Apotheosis Project.ags", "0d9ae5a4ffd3e3e968c6addb5d524954", 1142362222), // Linux
-	GAME_ENTRY_STEAM("astroloco", "astroloco1.exe", "c71919e3b0cc415ef725cf1a9818a515", 42894919),
+	GAME_ENTRY_EN_STEAM("astroloco", "astroloco1.exe", "c71919e3b0cc415ef725cf1a9818a515", 42894919),
 	GAME_ENTRY_EN("astroloco", "astroloco1.exe", "06e70a826fde73b3f86f974885d31abe", 42492070),
 	GAME_ENTRY_EN_STEAM("beer", "beer!.exe", "6f201fd7a19869c85f49c7c471d0479a", 5055091), // Windows
 	GAME_ENTRY_EN_STEAM("beer", "Beer!.ags", "6f201fd7a19869c85f49c7c471d0479a", 5042748), // Linux
@@ -3628,6 +3637,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("bytheswordconspiracy", "bts.exe", "7dc7f61f79ba7a77d4ef8168bfd3d173", 60246329),
 	DEMO_ENTRY_EN("byzantine", "byza.exe", "39d7a558298a9f1d40c1f415daf9bb74", 3708632),
 	DEMO_ENTRY_EN("captaindisaster", "cd-dhamsb-demo-1-3-0.exe", "9d991dd1f9e7fee653d3a9bb2546f968", 153646768),
+	DEMO_ENTRY("captainhook", "CaptainHookAndTheLostGirl - DEMO.exe", "776a62db4387dc68be92ef9933399fd5", 8731139),  // Windows En-Fr
+	DEMO_ENTRY("captainhook", "CaptainHookAndTheLostGirl - DEMO.ags", "c0ce7476116c0a81e1d8f01ccf87d79a", 5624815),  // Linux En-Fr
 	DEMO_ENTRY_EN("castledornstein", "Castle Dornstein Demo.exe", "4141c41c06c91ec8ab9fffafbc26df67", 53098143),
 	DEMO_ENTRY_EN("charnelhousetrilogy", "sepulchredemo.exe", "9ba3d9fbb098a26d7293ad3161c0f270", 139434513), // Steam
 	DEMO_ENTRY("chronicleofinnsmouth", "ChronicleOfInnsmouthTechDemo1.1.exe", "b5c41e08919834b549ca350a28f18f87", 43595582),  //En-It
@@ -3814,6 +3825,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("notravellerreturns", "Test.exe", "f120690b506dd63cd7d1112ea6af2f77", 19656975),
 	DEMO_ENTRY_EN("nostalgik", "NOLGASTIK.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 143891265),
 	DEMO_ENTRY_EN("oldskies", "OldSkies.exe", "0bdccc3f90f28de88de050672565cb5a", 1577321264), // Steam Windows
+	DEMO_ENTRY_EN("oldskies", "OldSkies.exe", "820aa7e78063aa8aaf5e7f495472089a", 1580456994), // Steam Windows v0.1.7.9
 	DEMO_ENTRY_EN("oldskies", "ac2game.dat", "008b1273459fa04425423c48ef655385", 1573980025), // Steam Mac
 	DEMO_ENTRY_EN("oott", "demo_tkc.exe", "54da0ce99f3e8b556db6d236c8ef76ba", 415137576), // Steam
 	DEMO_ENTRY_EN("osdlgs", "OSD - Leather Gear Smooth.exe", "82da2565c456dcfb265ded6fe3189c0b", 114550556),
@@ -3877,10 +3889,12 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("spacepirates", "Space Pirates.exe", "95dcf736be87cf7d40bf64d5b078c4b7", 3006210),
 	DEMO_ENTRY_EN("spacesim", "space_3d.exe", "8538afa638531020f79df88aec0fb797", 1667537),
 	DEMO_ENTRY("spacetrash", "SpaceTrash.exe", "615e73fc1874e92d60a1996c2330ea36", 7532576),  // En-Fr
-	DEMO_ENTRY_EN("sphonx", "Sphonx.exe", "7e4ab16deb62ffe46b9da2229672845c", 289696634),  // Windows
-	DEMO_ENTRY_EN("sphonx", "Sphonx.ags", "943c562d8a7d1c0266e9ae4aa9d955c7", 286649190),  // Linux
-	DEMO_ENTRY("sphonx", "Sphonx.exe", "7e4ab16deb62ffe46b9da2229672845c", 289700610),  // Windows Eng/Deu
-	DEMO_ENTRY("sphonx", "Sphonx.ags", "d51d6d1c979b7571c81b45f681be58da", 286653166),  // Linux Eng/Deu
+	DEMO_ENTRY_EN("sphonx", "Sphonx.exe", "7e4ab16deb62ffe46b9da2229672845c", 289696634),  // Windows  Tech Demo
+	DEMO_ENTRY_EN("sphonx", "Sphonx.ags", "943c562d8a7d1c0266e9ae4aa9d955c7", 286649190),  // Linux    "
+	DEMO_ENTRY("sphonx", "Sphonx.exe", "7e4ab16deb62ffe46b9da2229672845c", 289700610),     // Windows  " Eng/Deu
+	DEMO_ENTRY("sphonx", "Sphonx.ags", "d51d6d1c979b7571c81b45f681be58da", 286653166),     // Linux    " Eng/Deu
+	DEMO_ENTRY_EN("sphonx", "Sphonx - Demo.exe", "7e4ab16deb62ffe46b9da2229672845c", 279952170),  // Windows  Demo
+	DEMO_ENTRY_EN("sphonx", "Sphonx - Demo.ags", "47fe5f46944eba084fcbf812ffe8304f", 276904726),  // Linux    "
 	DEMO_ENTRY_EN("spoonsiii", "spoonsIII.exe", "2ca80bd50763378b72cd1e1cf25afac3", 7316512),
 	DEMO_ENTRY_EN("sq2svga", "sq2svga.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 3245872),
 	DEMO_ENTRY_EN("sq3vga", "sq3vgademo.exe", "64fcaf7da0b257ea831f89c54be0ad72", 3630019),
@@ -4211,7 +4225,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("beardychin", "beardychin.exe", "9d228b6578aa40ee302991f8a8935c7d", 119562726),
 	GAME_ENTRY_EN("bearinvenice", "Bear in Venice.exe", "7d2c5cddcac88662b24165b3a0dd77c9", 20615211),
 	GAME_ENTRY("beasts", "beasts.exe", "0500aacb6c176d47ac0f8158f055db83", 1295435),  //En-Fr
-	GAME_ENTRY_EN("beatthebuzzer", "Beat the Buzzer.exe", "4d5d25446373d4df71c6bda77a15230a", 149278067),
+	GAME_ENTRY_EN_PLATFORM("beatthebuzzer", "Beat the Buzzer.exe", "4d5d25446373d4df71c6bda77a15230a", 149278067, "GameJam Build"),  // v1.0
+	GAME_ENTRY_EN("beatthebuzzer", "Beat the Buzzer.exe", "4d5d25446373d4df71c6bda77a15230a", 227179876),  // v1.1 Post-Jam
 	GAME_ENTRY_EN("beautiesandbeasts", "beautiesandbeasts.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 6507202),
 	GAME_ENTRY("beforethedarkcrystal2", "Before the Dark Crystal II.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 59569723),  // En-Fr
 	GAME_ENTRY_EN("bellyofthebeast", "Belly of the beast.exe", "9f8a9d74c09f188af9af3e263f8b59bc", 22461502),  // Windows
@@ -4280,8 +4295,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("bladespassion", "blades_of_passion.exe", "3f29c1146aff735c61362fc5162f42e4", 13267106),
 	GAME_ENTRY_EN("blindsweeper", "BlindSweeper.exe", "495d45fb8adfd49690ae3b97921feec6", 3437862),
 	GAME_ENTRY_EN("blindtosiberia", "blindtosiberia.exe", "e8985d9ffbfa1eda77f2eb8d1331944a", 5899304),
-	GAME_ENTRY_EN("bloodedfields", "Murder.exe", "48038a476d99d23499229a28ac4490cd", 4034796),
-	GAME_ENTRY_EN("bloodedfields", "Clock.ags", "817d6fbba647f2f5dfcd91ebd4fff17c", 611037),
+	GAME_ENTRY_EN("bloodedfields", "Murder.exe", "48038a476d99d23499229a28ac4490cd", 4034796),  // Windows
+	GAME_ENTRY_EN("bloodedfields", "Murder.ags", "d3cbbba3cb0b6f0a6c2a7f6665c85e71", 936431),  // Linux
+	GAME_ENTRY_EN_PLATFORM("bloodedfields", "Clock.ags", "817d6fbba647f2f5dfcd91ebd4fff17c", 611037, "Beta"),  // Linux beta?
 	GAME_ENTRY_EN("bluelobe", "Blue Lobe Inc.exe", "4d4b6d6e560cf32f440c39f8d3896da5", 34413450),
 	GAME_ENTRY_EN("boardquest", "board quest.exe", "465f972675db2da6040518221af5b0ba", 3930325),
 	GAME_ENTRY_EN("bob", "bob.exe", "0b7529a76f38283d6e850b8d56526fc1", 2874144),
@@ -4385,6 +4401,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("chaelle3", "chaelle 3.exe", "776a62db4387dc68be92ef9933399fd5", 1123683160, Common::FR_FRA),
 	GAME_ENTRY_EN("chalkman", "Chalkman.exe", "d93777b4ac9542258ab4013ad14b271e", 102049536),
 	GAME_ENTRY_EN("chalksquest", "chalk.exe", "0710e2ec71042617f565c01824f0cf3c", 5138049),
+	GAME_ENTRY("challengetentacle", "Challenge of the Tentacle.exe", "44d2715f4d78a639a588e94cf19b5821", 489037337),  // Win En-De
+	GAME_ENTRY("challengetentacle", "Challenge of the Tentacle.ags", "b24cdc761ea244ed460f32329627cc45", 485577733),  // Linux En-De
 	GAME_ENTRY_EN("chanceofthedead", "chance.exe", "8418b150c267e4f1d462b9a5d60e507d", 5597569),
 	GAME_ENTRY_EN("charamba1", "Charamba.exe", "354e3016d64ac3378478d3d52ef0460d", 7468361),
 	GAME_ENTRY_EN("charamba2", "CharambaII.exe", "354e3016d64ac3378478d3d52ef0460d", 4975542),
@@ -4397,8 +4415,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("chessboard", "ChessBoard.exe", "82da2565c456dcfb265ded6fe3189c0b", 2638884),
 	GAME_ENTRY_EN("chezapa", "chezapa.exe", "9cf51833e787cc919837d9a8bd8fc14c", 2870327),
 	GAME_ENTRY_EN("chickchaser", "amy.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 7968024),
+	GAME_ENTRY_EN("chicken", "chicken.exe", "f120690b506dd63cd7d1112ea6af2f77", 1652888),
 	GAME_ENTRY_EN("chickenfraction", "chicken.exe", "0500aacb6c176d47ac0f8158f055db83", 3021315),
-	GAME_ENTRY_EN("chickenvsroad", "chicken.exe", "f120690b506dd63cd7d1112ea6af2f77", 1652888),
 	GAME_ENTRY_EN("chickenvsroad", "chicken.exe", "f120690b506dd63cd7d1112ea6af2f77", 30627567),  //v2.71
 	GAME_ENTRY_EN("chinesecheckers", "chinesecheckers.exe", "06a03fe35791b0578068ab1873455463", 3391826),
 	GAME_ENTRY_EN("chlorinde", "ChlorindeMAGS.exe", "3c5bd1713959ff469cb46ebe5542cfcf", 10118602),
@@ -4751,7 +4769,10 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("fistsofmurder", "mags1808.ags", "060b511dd9f501bae44d2cc37a18a05e", 52994031),  // Linux
 	GAME_ENTRY_EN("fixumdude", "fixumdude3dpa.exe", "3c886d441e027ff61bf641f4ed544a0e", 155902768),
 	GAME_ENTRY_EN("flamebarrels", "Flame barrel.exe", "06a03fe35791b0578068ab1873455463", 2298745),
+	GAME_ENTRY_EN("flashmccoy", "FlashMcCoy.exe", "0564de07d3fd5c16e6947a647061913c", 16314015),
 	GAME_ENTRY_EN("flightrobots", "FlightFromTheRobots.exe", "3ab9922a2ab7c5875af4c9794b33e012", 4517631),
+	GAME_ENTRY_EN("flightrobotsch2", "FlightFromTheRobots2.exe", "9bb70a54ea1c4063c6821c88c7427dfb", 4751416),
+	GAME_ENTRY_EN("flightrobotsch2", "FlightFromTheRobots2.ags", "ae9236152eef64bf635f7bb63c981a88", 1643556),
 	GAME_ENTRY_EN("floatyrog", "FloatyRog.exe", "6e6f33162242d74dd1fa042429f16562", 2592017),
 	GAME_ENTRY_EN("flophouse", "FlopHigh.exe", "0241777c2537fc5d077c05cde10bfa9f", 5807004),
 	GAME_ENTRY_EN_PLATFORM("flophouse", "FlopHigh.exe", "0241777c2537fc5d077c05cde10bfa9f", 9159785, "Deluxe"),
@@ -4937,8 +4958,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("herenosirens", "mags092018.ags", "558f2f3cb55d2045d164fe342f15ac99", 50133587),
 	GAME_ENTRY_EN("heroeswyrdale", "mags1904.exe", "7971a7c02d414dc8cb33b6ec36080b91", 195444903),  // Windows
 	GAME_ENTRY_EN("heroeswyrdale", "mags1904.ags", "51ff78da52b2873cacb5e9b21cc1c610", 192947863),  // Linux
-	GAME_ENTRY_STEAM("heroinesquest", "heroine's quest.exe", "35b93e905a5aeba8fafd0e5b0f4cb9b6", 7014402),	//Multilang
-	GAME_ENTRY_STEAM("heroinesquest", "heroine's quest.exe", "fa5b449d9d93a9055e0ab6caf0aee77c", 7020827), // v1.2.7
+	GAME_ENTRY_STEAM("heroinesquest", "heroine's quest.exe", "35b93e905a5aeba8fafd0e5b0f4cb9b6", 7014402),  // v1.2.6   Multilang
+	GAME_ENTRY_STEAM("heroinesquest", "heroine's quest.exe", "fa5b449d9d93a9055e0ab6caf0aee77c", 7020827),  // v1.2.7-8 "
 	GAME_ENTRY("heroinesquest", "heroine's quest.exe", "0b19953a0a879b5027c98b0cdd8142f1", 6825340),
 	GAME_ENTRY("heroinesquest", "heroine's quest.exe", "35b93e905a5aeba8fafd0e5b0f4cb9b6", 6952250),
 	GAME_ENTRY_EN("hesgonehistorical", "His.exe", "465f972675db2da6040518221af5b0ba", 5768754),
@@ -5246,7 +5267,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("lunarlander", "LunarLanderPrototype.ags", "0600d67c93fb0a1b07e9fdf716d9f020", 1029626),  // Linux
 	GAME_ENTRY_EN("lutherinhood", "afroTest4.exe", "2ca80bd50763378b72cd1e1cf25afac3", 26440699),
 	GAME_ENTRY_EN("lydia", "Kill The Lights.exe", "9b54ea3557373188d8388ec4d1ae5eed", 20416736),
-	GAME_ENTRY_EN("lydiaandthemysteryofnellrenomanor", "LydiaW.exe", "615e73fc1874e92d60a1996c2330ea36", 33971307),
+	GAME_ENTRY_EN("lydianellreno", "LydiaW.exe", "615e73fc1874e92d60a1996c2330ea36", 33971307),
+	GAME_ENTRY_EN("machinesdreams", "Machines Have Lucid Dreams v0.91.exe", "784c7fae35c6501eaa3673ea29391a7b", 653366138),
 	GAME_ENTRY_EN("mafaldawest", "realgame.exe", "be559b7205d41c3f3813cb8a7e8196f6", 16292195),
 	GAME_ENTRY_EN("magic8ball", "Magic-8-Ball.exe", "82da2565c456dcfb265ded6fe3189c0b", 4233735),
 	GAME_ENTRY_EN("magicalwhatevergirl", "mwg.exe", "b2b99b5b3dcaee0fa292343c5a2c429b", 7784104),
@@ -5713,6 +5735,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("osdarayofhope", "ray_of_hope.exe", "25976a689b0f4d73eac69b1728377ecb", 6595789),
 	GAME_ENTRY_EN("osdarayofhope", "ray_of_hope.exe", "25976a689b0f4d73eac69b1728377ecb", 6596689),
 	GAME_ENTRY_EN("osdarchipelago", "OSD Archipelago.exe", "510be04e5eec2aa92bb78b060f138d64", 131491224),
+	GAME_ENTRY_EN("osddeath", "DeathOfOSD.exe", "510be04e5eec2aa92bb78b060f138d64", 19600168),
 	GAME_ENTRY_EN("osdenise", "OSDHITNOT.exe", "82da2565c456dcfb265ded6fe3189c0b", 4471818),
 	GAME_ENTRY_EN("osdfamous", "OSD Famous.exe", "4e2abe054d3f40473fc1786a9f76e58e", 2569942),
 	GAME_ENTRY_EN("osdholiday", "holidayhavoc.exe", "a524cbb1c51589903c4043b98917f1d9", 3938420),
@@ -6131,7 +6154,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("sinbad", "SINBAD.exe", "afe40dc1416dd51e896ee0444d799f07", 40143412),
 	GAME_ENTRY_EN("sinking", "OROW_Sinking.exe", "615e73fc1874e92d60a1996c2330ea36", 13781179),
 	GAME_ENTRY_EN("sisterhelper", "Little Helper.exe", "615e73fc1874e92d60a1996c2330ea36", 8922861),
-	GAME_ENTRY_EN("sisyphus", "Sisyphus Reborn.exe", "059f968398cb58cb40908b217f406863", 98804803),
+	GAME_ENTRY_EN("sisyphus", "Sisyphus.exe", "c6496a18d39036c853da42b5888456d3", 98454819),  // itch.io 1.0 Win/Mac
+	GAME_ENTRY_EN("sisyphus", "Sisyphus Reborn.exe", "059f968398cb58cb40908b217f406863", 98804803),  // itch.io 1.0.1 Win
+	GAME_ENTRY_EN_STEAM("sisyphus", "SisyphusReborn.exe", "548f7dfee3c3567ee43792823532b5ff", 99531181),
 	GAME_ENTRY_EN("skippysavestheday", "First Game Test.exe", "06a03fe35791b0578068ab1873455463", 10473902),
 	GAME_ENTRY_EN("skumring", "Skumring.exe", "660bec8a9540e00fc8a61be3bfd54e0a", 855262786),  //v1.0.1
 	GAME_ENTRY_EN_PLATFORM("skumring", "Skumring Extra Noir Edition.exe", "d84cd417bf24f76e9c74ce1f01dc5f3b", 803654540, "Extra Noir Edition"),
@@ -6307,6 +6332,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("stuckonyou", "Stuck on you.ags", "e2416cf4eeb317fb2f6127b398ad0979", 82798497),  // Linux
 	GAME_ENTRY_EN("studiomediocre", "Studio.exe", "9cb3c8dc7a8ab9c44815955696be2677", 10524547),
 	GAME_ENTRY_EN("subatomic", "LD48-23.exe", "75f4c7f66b1be60af5b2d65f617b91a7", 25655660),
+	GAME_ENTRY_LANG("suenanfantasmas", "SueñanLosFantasmas.exe", "50a7ba44a0d5499628de2a46bb4a9e97", 71071264, Common::ES_ESP),  // Windows
+	GAME_ENTRY_LANG("suenanfantasmas", "SuenanLosFantasmas.ags", "4092234ccc703586b54d86900550baa0", 67828236, Common::ES_ESP),  // Linux
 	GAME_ENTRY_EN("summerwoes", "MAGSAugust.exe", "7921b41f852d8dd62922d87cc69d9e83", 4896812),
 	GAME_ENTRY_EN("sunriseparadise", "Sunrise Paradise.exe", "838f62e456d4fbab9c3754c9d70d2b89", 13430921),
 	GAME_ENTRY_EN_PLATFORM("sunriseparadise", "Sunrise Paradise.exe", "44f90e1b2f427fef02fc0d00420d2b6f", 12707470, "OROW"),
@@ -6769,6 +6796,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("winterrose", "Winter Rose.exe", "0500aacb6c176d47ac0f8158f055db83", 37444174),  //v1.1
 	GAME_ENTRY_EN("winterrose", "Winter Rose.exe", "0500aacb6c176d47ac0f8158f055db83", 37443633),  //v1.2
 	GAME_ENTRY_EN("winterrose", "Winter Rose.exe", "0500aacb6c176d47ac0f8158f055db83", 37444693),  //v1.3
+	GAME_ENTRY_EN("witchlullaby", "The Witch's Lullaby.exe", "ca511538e3e3244813db0f905a31810a", 70312050),  // v1.1
 	GAME_ENTRY_EN("witchnight", "wnight.exe", "9cf51833e787cc919837d9a8bd8fc14c", 2792150),
 	GAME_ENTRY_EN("witchron", "Witch!.exe", "b52d56422af9cb50fd5cf369af69388f", 1838433),
 	GAME_ENTRY_EN("witchwizardcup", "Witch.exe", "f120690b506dd63cd7d1112ea6af2f77", 2693486),
