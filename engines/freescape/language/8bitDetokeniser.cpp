@@ -140,11 +140,15 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		case 4:
 			detokenisedStream += "VIS (";
 			currentInstruction = FCLInstruction(Token::VIS);
+			currentInstruction.source = 0;
+			currentInstruction.destination = 0;
 			break; // hence each getting two case statement entries
 		case 8:
 		case 5:
 			detokenisedStream += "INVIS (";
 			currentInstruction = FCLInstruction(Token::INVIS);
+			currentInstruction.source = 0;
+			currentInstruction.destination = 0;
 			break;
 
 		case 9:
@@ -193,6 +197,11 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			detokenisedStream += "IF INVIS? ";
 			detokenisedStream += Common::String::format("(%d)", (int)tokenisedCondition[bytePointer]);
 			detokenisedStream += "THEN END ENDIF";
+			currentInstruction = FCLInstruction(Token::INVISQ);
+			currentInstruction.setSource(tokenisedCondition[bytePointer]);
+			currentInstruction.setDestination(true); // visible
+			conditionalInstructions->push_back(currentInstruction);
+			currentInstruction = FCLInstruction(Token::UNKNOWN);
 			bytePointer++;
 			numberOfArguments = 0;
 			break;
@@ -200,6 +209,11 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			detokenisedStream += "IF VIS? ";
 			detokenisedStream += Common::String::format("(%d)", (int)tokenisedCondition[bytePointer]);
 			detokenisedStream += "THEN END ENDIF";
+			currentInstruction = FCLInstruction(Token::INVISQ);
+			currentInstruction.setSource(tokenisedCondition[bytePointer]);
+			currentInstruction.setDestination(false); // visible
+			conditionalInstructions->push_back(currentInstruction);
+			currentInstruction = FCLInstruction(Token::UNKNOWN);
 			bytePointer++;
 			numberOfArguments = 0;
 			break;

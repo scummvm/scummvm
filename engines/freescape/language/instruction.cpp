@@ -105,6 +105,10 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			if (executeEndIfBitNotEqual(instruction))
 				ip = codeSize;
 			break;
+			case Token::INVISQ:
+			if (executeEndIfVisibilityIsNotEqual(instruction))
+				ip = codeSize;
+			break;
 		}
 		ip++;
 	}
@@ -121,6 +125,15 @@ void FreescapeEngine::executeDelay(FCLInstruction &instruction) {
 	uint16 delay = instruction.source;
 	debug("Delaying %d * 1/50 seconds", delay);
 	g_system->delayMillis(20 * delay);
+}
+
+bool FreescapeEngine::executeEndIfVisibilityIsNotEqual(FCLInstruction &instruction) {
+	uint16 objectID = instruction.source;
+	uint16 value = instruction.destination;
+	debug("End condition if visibility of obj with id %d is %d!", objectID, value);
+	Object *obj = _currentArea->objectWithID(objectID);
+	assert(obj);
+	return (obj->isInvisible() == value);
 }
 
 bool FreescapeEngine::executeEndIfNotEqual(FCLInstruction &instruction) {
@@ -159,16 +172,34 @@ void FreescapeEngine::executeDestroy(FCLInstruction &instruction) {
 }
 
 void FreescapeEngine::executeMakeInvisible(FCLInstruction &instruction) {
-	uint16 objectID = instruction.source;
-	debug("Making obj %d invisible!", objectID);
-	Object *obj = _currentArea->objectWithID(objectID);
+	uint16 objectID = 0;
+	uint16 areaID = _currentArea->getAreaID();
+
+	if (instruction.destination > 0) {
+		objectID = instruction.destination;
+		areaID = instruction.source;
+	} else {
+		objectID = instruction.source;
+	}
+
+	debug("Making obj %d invisible in area %d!", objectID, areaID);
+	Object *obj = (*_areasByAreaID)[areaID]->objectWithID(objectID);
 	obj->makeInvisible();
 }
 
 void FreescapeEngine::executeMakeVisible(FCLInstruction &instruction) {
-	uint16 objectID = instruction.source;
-	debug("Making obj %d visible!", objectID);
-	Object *obj = _currentArea->objectWithID(objectID);
+	uint16 objectID = 0;
+	uint16 areaID = _currentArea->getAreaID();
+
+	if (instruction.destination > 0) {
+		objectID = instruction.destination;
+		areaID = instruction.source;
+	} else {
+		objectID = instruction.source;
+	}
+
+	debug("Making obj %d visible in area %d!", objectID, areaID);
+	Object *obj = (*_areasByAreaID)[areaID]->objectWithID(objectID);
 	obj->makeVisible();
 }
 

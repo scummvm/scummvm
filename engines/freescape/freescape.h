@@ -135,6 +135,7 @@ public:
 	void executeClearBit(FCLInstruction &instruction);
 	void executeToggleBit(FCLInstruction &instruction);
 	bool executeEndIfBitNotEqual(FCLInstruction &instruction);
+	bool executeEndIfVisibilityIsNotEqual(FCLInstruction &instruction);
 
 
 	// Rendering

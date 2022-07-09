@@ -17,6 +17,7 @@
 
 #include "freescape/gfx.h"
 #include "freescape/objects/object.h"
+#include "freescape/language/instruction.h"
 
 namespace Freescape {
 
@@ -45,6 +46,8 @@ public:
 	Object *shootRay(const Math::Ray &ray);
 	Object *checkCollisions(const Math::AABB &boundingBox);
 
+	Common::Array<Common::String*> conditionSources;
+	Common::Array<FCLInstructionVector> conditions;
 
 private:
 	uint16 areaID;
