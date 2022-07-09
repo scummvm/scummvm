@@ -7520,7 +7520,7 @@ void ModifierSaveLoad::save(Modifier *modifier, Common::WriteStream *stream) {
 	saveInternal(stream);
 }
 
-bool ModifierSaveLoad::load(Modifier *modifier, Common::ReadStream *stream) {
+bool ModifierSaveLoad::load(Modifier *modifier, Common::ReadStream *stream, uint32 saveFileVersion) {
 	uint32 checkGUID = stream->readUint32BE();
 	uint16 nameLen = stream->readUint16BE();
 
@@ -7544,7 +7544,7 @@ bool ModifierSaveLoad::load(Modifier *modifier, Common::ReadStream *stream) {
 	if (modifier->getStaticGUID() != checkGUID)
 		return false;
 
-	return loadInternal(stream);
+	return loadInternal(stream, saveFileVersion);
 }
 
 ModifierHooks::~ModifierHooks() {

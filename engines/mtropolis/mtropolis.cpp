@@ -120,7 +120,9 @@ Common::Error MTropolisEngine::run() {
 		enhancedColorDepthMode = kColorDepthMode32Bit;
 
 		HackSuites::addObsidianBugFixes(*_gameDescription, _runtime->getHacks());
-		HackSuites::addObsidianAutoSaves(*_gameDescription, _runtime->getHacks(), this);		
+
+		if (ConfMan.getBool("mtropolis_mod_auto_save"))
+			HackSuites::addObsidianAutoSaves(*_gameDescription, _runtime->getHacks(), this);
 
 		if (ConfMan.getBool("mtropolis_mod_obsidian_widescreen")) {
 			_runtime->getHacks().reportDisplaySize = Common::Point(640, 480);

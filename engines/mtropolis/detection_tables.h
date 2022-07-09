@@ -30,6 +30,7 @@
 #define GAMEOPTION_DYNAMIC_MIDI   GUIO_GAMEOPTIONS2
 #define GAMEOPTION_LAUNCH_DEBUG   GUIO_GAMEOPTIONS3
 #define GAMEOPTION_LAUNCH_BREAK   GUIO_GAMEOPTIONS4
+#define GAMEOPTION_AUTO_SAVE      GUIO_GAMEOPTIONS5
 
 namespace MTropolis {
 
@@ -51,7 +52,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_UNSTABLE,
-			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
+			GUIO2(GAMEOPTION_WIDESCREEN_MOD, GAMEOPTION_AUTO_SAVE)
 		},
 		GID_OBSIDIAN,
 		0,
@@ -78,7 +79,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
+			GUIO2(GAMEOPTION_WIDESCREEN_MOD, GAMEOPTION_AUTO_SAVE)
 		},
 		GID_OBSIDIAN,
 		0,

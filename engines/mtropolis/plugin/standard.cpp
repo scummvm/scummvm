@@ -2201,7 +2201,7 @@ void ObjectReferenceVariableModifier::SaveLoad::saveInternal(Common::WriteStream
 	stream->writeString(_objectPath);
 }
 
-bool ObjectReferenceVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream) {
+bool ObjectReferenceVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
 	uint32 stringLen = stream->readUint32BE();
 	if (stream->err())
 		return false;
@@ -2805,7 +2805,7 @@ void ListVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) c
 	recursiveWriteList(_list.get(), stream);
 }
 
-bool ListVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream) {
+bool ListVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
 	Common::SharedPtr<DynamicList> list = recursiveReadList(stream);
 	if (list) {
 		_list = list;

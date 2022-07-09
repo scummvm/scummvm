@@ -20,8 +20,10 @@
  */
 
 #include "common/savefile.h"
+#include "common/system.h"
 #include "common/translation.h"
 
+#include "gui/message.h"
 #include "gui/saveload.h"
 
 #include "mtropolis/mtropolis.h"
@@ -74,6 +76,10 @@ bool MTropolisEngine::promptSave(ISaveWriter *writer) {
 
 	Common::String saveFileName = getSaveStateName(slot);
 	Common::SharedPtr<Common::OutSaveFile> out(_saveFileMan->openForSaving(saveFileName, false));
+
+	out->writeUint32BE(kSavegameSignature);
+	out->writeUint32BE(kCurrentSaveFileVersion);
+
 	if (!writer->writeSave(out.get()) || out->err())
 		warning("An error occurred while writing file '%s'", saveFileName.c_str());
 
@@ -96,7 +102,37 @@ bool MTropolisEngine::promptLoad(ISaveReader *reader) {
 
 	Common::String saveFileName = getSaveStateName(slot);
 	Common::SharedPtr<Common::InSaveFile> in(_saveFileMan->openForLoading(saveFileName));
-	if (!reader->readSave(in.get())) {
+
+	uint32 signature = in->readUint32BE();
+	uint32 saveFileVersion = in->readUint32BE();
+	if (in->err()) {
+		GUI::MessageDialog dialog(_("Failed to read version information from save file"));
+		dialog.runModal();
+
+		warning("An error occurred while reading the save file version from '%s'", saveFileName.c_str());
+		return false;
+	}
+
+	if (signature != kSavegameSignature) {
+		GUI::MessageDialog dialog(_("Failed to load save, the save file doesn't contain valid version information."));
+		dialog.runModal();
+
+		warning("Save file '%s' version is above the current save file version", saveFileName.c_str());
+		return false;
+	}
+
+	if (saveFileVersion > kCurrentSaveFileVersion) {
+		GUI::MessageDialog dialog(_("Failed to load save, the save file was created by a newer version of ScummVM."));
+		dialog.runModal();
+
+		warning("Save file '%s' version is above the current save file version", saveFileName.c_str());
+		return false;
+	}
+
+	if (!reader->readSave(in.get(), saveFileVersion)) {
+		GUI::MessageDialog dialog(_("Failed to load save, an error occurred when reading the save game data."));
+		dialog.runModal();
+
 		warning("An error occurred while reading file '%s'", saveFileName.c_str());
 		return false;
 	}
@@ -109,10 +145,16 @@ bool MTropolisEngine::autoSave(ISaveWriter *writer) {
 
 	Common::String saveFileName = getSaveStateName(slot);
 	Common::SharedPtr<Common::OutSaveFile> out(_saveFileMan->openForSaving(saveFileName, false));
+
+	out->writeUint32BE(kSavegameSignature);
+	out->writeUint32BE(kCurrentSaveFileVersion);
+
 	if (!writer->writeSave(out.get()) || out->err())
 		warning("An error occurred while writing file '%s'", saveFileName.c_str());
 
 	getMetaEngine()->appendExtendedSave(out.get(), getTotalPlayTime(), "Auto Save", true);
+
+	g_system->displayMessageOnOSD(_("Progress Saved"));
 
 	return true;
 }

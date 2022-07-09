@@ -2547,7 +2547,7 @@ public:
 	virtual ~ModifierSaveLoad();
 
 	void save(Modifier *modifier, Common::WriteStream *stream);
-	bool load(Modifier *modifier, Common::ReadStream *stream);
+	bool load(Modifier *modifier, Common::ReadStream *stream, uint32 saveFileVersion);
 	virtual void commitLoad() const = 0;
 
 protected:
@@ -2556,7 +2556,7 @@ protected:
 
 	// Loads the modifier state from a stream into the save/load state and returns true
 	// if successful.  This will not trigger any actual changes until "commit" is called.
-	virtual bool loadInternal(Common::ReadStream *stream) = 0;
+	virtual bool loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) = 0;
 };
 
 class ModifierHooks {

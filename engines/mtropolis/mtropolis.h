@@ -70,6 +70,9 @@ protected:
 	void pauseEngineIntern(bool pause) override;
 
 private:
+	static const uint kCurrentSaveFileVersion = 1;
+	static const uint kSavegameSignature = 0x6d545356;	// mTSV
+
 	Common::ScopedPtr<Runtime> _runtime;
 };
 

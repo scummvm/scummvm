@@ -60,6 +60,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 	{
+		GAMEOPTION_AUTO_SAVE,
+		{
+			_s("Save Progress Automatically"),
+			_s("Automatically saves the game at certain progress points."),
+			"mtropolis_mod_auto_save",
+			true,
+			0,
+			0
+		}
+	},
+	{
 		GAMEOPTION_LAUNCH_DEBUG,
 		{
 			_s("Start with debugger"),

@@ -178,7 +178,7 @@ private:
 	private:
 		void commitLoad() const override;
 		void saveInternal(Common::WriteStream *stream) const override;
-		bool loadInternal(Common::ReadStream *stream) override;
+		bool loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) override;
 
 		ObjectReferenceVariableModifier *_modifier;
 		Common::String _objectPath;
@@ -326,7 +326,7 @@ private:
 	private:
 		void commitLoad() const override;
 		void saveInternal(Common::WriteStream *stream) const override;
-		bool loadInternal(Common::ReadStream *stream) override;
+		bool loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) override;
 
 		static void recursiveWriteList(DynamicList *list, Common::WriteStream *stream);
 		static Common::SharedPtr<DynamicList> recursiveReadList(Common::ReadStream *stream);

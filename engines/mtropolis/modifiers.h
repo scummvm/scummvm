@@ -690,7 +690,7 @@ private:
 		explicit SaveLoad(CompoundVariableModifier *modifier);
 
 		void saveInternal(Common::WriteStream *stream) const override;
-		bool loadInternal(Common::ReadStream *stream) override;
+		bool loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) override;
 		void commitLoad() const override;
 
 	private:
@@ -744,7 +744,7 @@ private:
 	private:
 		void commitLoad() const override;
 		void saveInternal(Common::WriteStream *stream) const override;
-		bool loadInternal(Common::ReadStream *stream) override;
+		bool loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) override;
 
 		BooleanVariableModifier *_modifier;
 		bool _value;
@@ -779,7 +779,7 @@ private:
 	private:
 		void commitLoad() const override;
 		void saveInternal(Common::WriteStream *stream) const override;
-		bool loadInternal(Common::ReadStream *stream) override;
+		bool loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) override;
 
 		IntegerVariableModifier *_modifier;
 		int32 _value;
@@ -817,7 +817,7 @@ private:
 	private:
 		void commitLoad() const override;
 		void saveInternal(Common::WriteStream *stream) const override;
-		bool loadInternal(Common::ReadStream *stream) override;
+		bool loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) override;
 
 		IntegerRangeVariableModifier *_modifier;
 		IntRange _range;
@@ -855,7 +855,7 @@ private:
 	private:
 		void commitLoad() const override;
 		void saveInternal(Common::WriteStream *stream) const override;
-		bool loadInternal(Common::ReadStream *stream) override;
+		bool loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) override;
 
 		VectorVariableModifier *_modifier;
 		AngleMagVector _vector;
@@ -893,7 +893,7 @@ private:
 	private:
 		void commitLoad() const override;
 		void saveInternal(Common::WriteStream *stream) const override;
-		bool loadInternal(Common::ReadStream *stream) override;
+		bool loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) override;
 
 		PointVariableModifier *_modifier;
 		Common::Point _value;
@@ -928,7 +928,7 @@ private:
 	private:
 		void commitLoad() const override;
 		void saveInternal(Common::WriteStream *stream) const override;
-		bool loadInternal(Common::ReadStream *stream) override;
+		bool loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) override;
 
 		FloatingPointVariableModifier *_modifier;
 		double _value;
@@ -963,7 +963,7 @@ private:
 	private:
 		void commitLoad() const override;
 		void saveInternal(Common::WriteStream *stream) const override;
-		bool loadInternal(Common::ReadStream *stream) override;
+		bool loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) override;
 
 		StringVariableModifier *_modifier;
 		Common::String _value;

@@ -42,7 +42,7 @@ struct ISaveWriter : public IInterfaceBase {
 };
 
 struct ISaveReader : public IInterfaceBase {
-	virtual bool readSave(Common::ReadStream *stream) = 0;
+	virtual bool readSave(Common::ReadStream *stream, uint32 saveFileVersion) = 0;
 };
 
 struct ISaveUIProvider : public IInterfaceBase {
