@@ -268,24 +268,8 @@ void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours) {
 	//assert(size.x() == 0 || size.y() == 0 || size.z() == 0);
 	uint8 r, g, b;
-	float dx, dy, dz;
-	dx = dy = dz = 0;
-
-	/*if (size.x() == 0)
-		dx = 2;
-	else if (size.y() == 0)
-		dy = 2;
-	else if (size.z() == 0)
-		dz = 2;
-	else {*/
-		if (ordinates->size() % 3 > 0) {
-			//return;
-			error("Invalid polygon: %f %f %f", size.x(), size.y(), size.z());
-		}
-	//}
-
-	if (ordinates->size() % 3 > 0)
-		error("Invalid polygon using %d ordinates", ordinates->size());
+	if (ordinates->size() % 3 > 0 && ordinates->size() > 0)
+		error("Invalid polygon with size %f %f %f and ordinates %d", size.x(), size.y(), size.z(), ordinates->size());
 
 	Common::Array<Math::Vector3d> vertices;
 	tglEnable(TGL_POLYGON_OFFSET_FILL);
@@ -310,7 +294,7 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vec
 			_palette->getRGBAt((*colours)[0], r, g, b);
 			tglColor3ub(r, g, b);
 			for (int i = 0; i < ordinates->size(); i = i + 3) {
-				vertices.push_back(Math::Vector3d(origin.x() + (*ordinates)[i] + dx, origin.y() + (*ordinates)[i + 1] + dy,	origin.z() + (*ordinates)[i + 2] + dz));
+				vertices.push_back(Math::Vector3d(/*origin.x() +*/ (*ordinates)[i], /*origin.y() +*/ (*ordinates)[i + 1],	/*origin.z() +*/ (*ordinates)[i + 2]));
 			}
 			renderFace(vertices);
 		}
@@ -319,7 +303,7 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vec
 			_palette->getRGBAt((*colours)[1], r, g, b);
 			tglColor3ub(r, g, b);
 			for (int i = ordinates->size(); i > 0; i = i - 3) {
-				vertices.push_back(Math::Vector3d(origin.x() + (*ordinates)[i-3] - dx, origin.y() + (*ordinates)[i-2] - dy,	origin.z() + (*ordinates)[i-1] - dz));
+				vertices.push_back(Math::Vector3d(/*origin.x() +*/ (*ordinates)[i-3], /*origin.y() +*/ (*ordinates)[i-2],	/*origin.z() +*/ (*ordinates)[i-1]));
 			}
 			renderFace(vertices);
 		}
@@ -334,11 +318,8 @@ void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::V
 	assert(size.x() == 0 || size.y() == 0 || size.z() == 0);
 	tglEnable(TGL_POLYGON_OFFSET_FILL);
 	tglPolygonOffset(-2.0f, 1.0f);
-	//debug("origin: %f, %f, %f", origin.x(), origin.y(), origin.z());
-	//debug("size: %f, %f, %f", size.x(), size.y(), size.z());
 
 	float dx, dy, dz;
-	float offset = 0;
 	uint8 r, g, b;
 	Common::Array<Math::Vector3d> vertices;
 	for (int i = 0; i < 2; i++) {
