@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-08 14:25+0000\n"
+"POT-Creation-Date: 2022-07-09 11:56+0000\n"
 "PO-Revision-Date: 2022-04-24 20:27+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -248,7 +248,7 @@ msgstr "Tanca"
 msgid "ERROR: No icons path set"
 msgstr "ERROR: No s'ha definit cap camí per les icones"
 
-#: gui/downloadiconsdialog.cpp:405
+#: gui/downloadiconsdialog.cpp:408
 msgid "No new icons packs available"
 msgstr "No hi ha disponibles nous paquets d'icones"
 

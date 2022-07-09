@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-08 14:25+0000\n"
+"POT-Creation-Date: 2022-07-09 11:56+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -248,7 +248,7 @@ msgstr "닫기"
 msgid "ERROR: No icons path set"
 msgstr "에러: 아이콘 경로가 설정되지 않음"
 
-#: gui/downloadiconsdialog.cpp:405
+#: gui/downloadiconsdialog.cpp:408
 msgid "No new icons packs available"
 msgstr "사용 가능한 새 아이콘 팩 없음"
 

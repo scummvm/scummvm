@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-08 14:25+0000\n"
+"POT-Creation-Date: 2022-07-09 11:56+0000\n"
 "PO-Revision-Date: 2022-07-08 16:47+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -251,7 +251,7 @@ msgstr "Schließen"
 msgid "ERROR: No icons path set"
 msgstr "FEHLER: Kein Icon-Pfad gesetzt"
 
-#: gui/downloadiconsdialog.cpp:405
+#: gui/downloadiconsdialog.cpp:408
 msgid "No new icons packs available"
 msgstr "Keine neuen Icon-Packs verfügbar"
 
