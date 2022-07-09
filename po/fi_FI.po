@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-08 14:25+0000\n"
-"PO-Revision-Date: 2022-07-03 14:28+0000\n"
+"PO-Revision-Date: 2022-07-09 12:15+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -6738,16 +6738,16 @@ msgstr ""
 "pelin toisiin versioihin."
 
 #: engines/scumm/detection.cpp:238
-#, fuzzy
-#| msgid "Load modded assets"
 msgid "Load modded audio"
-msgstr "Lataa modattuja peliresursseja"
+msgstr "Lataa modattuja ääniresursseja"
 
 #: engines/scumm/detection.cpp:239
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
 msgstr ""
+"Korvaa musiikki, äänitehosteet sekä puhe modatuilla ääniresursseilla, jos "
+"niitä on saatavilla."
 
 #: engines/scumm/detection_internal.h:358
 msgid ""
