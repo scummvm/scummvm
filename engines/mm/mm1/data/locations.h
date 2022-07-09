@@ -93,6 +93,13 @@ struct TrainingData {
 	};
 };
 
+struct TownData {
+	static const byte TOWN_MAP_ID1[5];
+	static const byte TOWN_MAP_ID2[5];
+	static const byte TOWN_MAP_X[5];
+	static const byte TOWN_MAP_Y[5];
+};
+
 } // namespace MM1
 } // namespace MM
 
