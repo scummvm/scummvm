@@ -31,23 +31,15 @@
 #include "Vector2.h"
 #include <math.h>
 
+#define VEC3_CONST_ARRAY(name, vec) const float name[] = {vec.x, vec.y, vec.z}
+
 namespace hpl {
 
 template<class T>
 class cVector3 {
 public:
 	T x, y, z;
-#if 0
-		union{
-			struct {
-				T x,y,z;
-			};
-			T v[3];
-		};
-#endif
-	//////////////////////////////////////////
-	// Constructors
-	/////////////////////////////////////////
+
 	cVector3() {
 		x = 0;
 		y = 0;
@@ -74,6 +66,10 @@ public:
 		x = aVec.x;
 		y = aVec.y;
 		z = 0;
+	}
+
+	static cVector3 fromArray(const float vec[3]) {
+		return cVector3<T>(vec[0], vec[1], vec[2]);
 	}
 
 	//////////////////////////////////////////
