@@ -238,13 +238,18 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 	// Check if we need to dither the image
 	int dstBpp = g_director->_wm->_pixelformat.bytesPerPixel;
 	int srcBpp = _img->getSurface()->format.bytesPerPixel;
-	int palSize = _img->getPaletteColorCount();
 
 	const byte *pal = _img->getPalette();
 
 	if (dstBpp == 1) {
-		if (srcBpp > 1 || (srcBpp == 1 &&
-			memcmp(g_director->_wm->getPalette(), _img->getPalette(), palSize * 3))) {
+		if (srcBpp > 1
+		// At least early directors were not remapping 8bpp images. But in case it is
+		// needed, here is the code
+#if 0
+		|| (srcBpp == 1 &&
+			memcmp(g_director->_wm->getPalette(), _img->getPalette(), _img->getPaletteColorCount() * 3))
+#endif
+			) {
 
 			ditherFloydImage();
 
