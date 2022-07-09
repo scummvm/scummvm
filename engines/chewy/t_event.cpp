@@ -2205,7 +2205,7 @@ void calc_inv_use_txt(int16 test_nr) {
 		invent_2_slot(K_KERNE_INV);
 		break;
 
-	case MESSER_INV:
+	case KNIFE_INV:
 		if (_G(cur)->getInventoryCursor() == 40) {
 			delInventory(_G(cur)->getInventoryCursor());
 			_G(menu_item) = CUR_USE;
@@ -2214,7 +2214,7 @@ void calc_inv_use_txt(int16 test_nr) {
 			invent_2_slot(K_FLEISCH_INV);
 			invent_2_slot(K_KERNE_INV);
 		} else if (_G(cur)->getInventoryCursor() == 88) {
-			_G(gameState).flags26_10 = true;
+			_G(gameState).changedArtifactOrigin = true;
 			startAadWait(_G(gameState)._personRoomNr[P_CHEWY] + 350);
 		}
 		break;
@@ -2252,18 +2252,18 @@ void calc_inv_use_txt(int16 test_nr) {
 		break;
 
 	case 13:
-		_G(gameState).flags26_10 = true;
+		_G(gameState).changedArtifactOrigin = true;
 		_G(flags).InventMenu = false;
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
 		startAadWait(_G(gameState)._personRoomNr[P_CHEWY] + 350);
 		_G(flags).InventMenu = true;
-		_G(atds)->set_ats_str(ARTE_INV, 1, INV_ATS_DATA);
+		_G(atds)->set_ats_str(ARTIFACT_INV, 1, INV_ATS_DATA);
 		break;
 
 	case 88:
-		_G(gameState).flags26_10 = true;
+		_G(gameState).changedArtifactOrigin = true;
 		startAadWait(350);
-		_G(atds)->set_ats_str(ARTE_INV, 1, INV_ATS_DATA);
+		_G(atds)->set_ats_str(ARTIFACT_INV, 1, INV_ATS_DATA);
 		break;
 
 	case 102:

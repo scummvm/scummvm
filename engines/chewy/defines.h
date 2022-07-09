@@ -321,7 +321,7 @@ enum SetupScreenMode {
 #define TRICHTER_INV 31
 #define ANGEL_INV 32
 #define MILCH_INV 33
-#define MESSER_INV 34
+#define KNIFE_INV 34
 #define PUMPE_INV 35
 #define CENT_INV 36
 #define ANGEL2_INV 37
@@ -375,7 +375,7 @@ enum SetupScreenMode {
 #define ASCHE_INV 85
 #define PIRANHA_INV 86
 #define SCHALL_INV 87
-#define ARTE_INV 88
+#define ARTIFACT_INV 88
 #define GALA_INV 89
 #define PARROT_INV 90
 #define DRINK_COUPON_INV 91

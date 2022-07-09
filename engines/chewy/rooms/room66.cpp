@@ -178,12 +178,12 @@ int Room66::proc2() {
 }
 
 int Room66::proc7() {
-	if (!isCurInventory(ARTE_INV))
+	if (!isCurInventory(ARTIFACT_INV))
 		return 0;
 
 	hideCur();
 	autoMove(7, P_CHEWY);
-	if (_G(gameState).flags26_10) {
+	if (_G(gameState).changedArtifactOrigin) {
 		delInventory(_G(cur)->getInventoryCursor());
 		invent_2_slot(92);
 		invent_2_slot(93);
@@ -191,7 +191,7 @@ int Room66::proc7() {
 		_G(gameState).flags26_20 = true;
 	}
 
-	proc8(7, 2, 3, 411 + (_G(gameState).flags26_10 ? 1 : 0));
+	proc8(7, 2, 3, 411 + (_G(gameState).changedArtifactOrigin ? 1 : 0));
 	hideCur();
 	if (_G(gameState).flags26_20)
 		startSetAILWait(4, 1, ANI_FRONT);
