@@ -162,6 +162,11 @@ public:
 	 * that trigger combat after the first time
 	 */
 	void clearSpecial();
+
+	/**
+	 * Gets the moveement delta given a direction mask
+	 */
+	static Common::Point getMoveDelta(byte mask);
 };
 
 } // namespace Maps
