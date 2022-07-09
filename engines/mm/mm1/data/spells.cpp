@@ -368,17 +368,66 @@ SpellResult Spells::cleric64_stoneToFlesh(Character *chr) {
 }
 
 SpellResult Spells::cleric65_townPortal(Character *chr) {
+	Sound::sound(SOUND_2);
+	InfoMessage msg(
+		STRING["spells.which_town"],
+		[](const Common::KeyState &keyState) {
+			switch (keyState.keycode) {
+			case Common::KEYCODE_ESCAPE:
+				g_events->focusedView()->close();
+				break;
+			case Common::KEYCODE_1:
+			case Common::KEYCODE_2:
+			case Common::KEYCODE_3:
+			case Common::KEYCODE_4:
+			case Common::KEYCODE_5: {
+				Maps::Maps &maps = *g_maps;
+				int townIndex = keyState.keycode - Common::KEYCODE_1;
 
+				maps._mapPos.x = TownData::TOWN_MAP_X[townIndex];
+				maps._mapPos.y = TownData::TOWN_MAP_Y[townIndex];
+				maps.changeMap(
+					TownData::TOWN_MAP_ID1[townIndex] |
+					(TownData::TOWN_MAP_ID1[townIndex] << 8),
+					1);
 
-	return SR_FAILED;
+				g_events->close();
+				return;
+			}
+
+			default:
+				break;
+			}
+		}
+	);
+
+	return SR_SUCCESS_SILENT;
 }
 
 SpellResult Spells::cleric73_protectionFromElements(Character *chr) {
-	return SR_FAILED;
+	int amount = g_globals->_currCharacter->_level._current + 25;
+
+	for (int i = 0; i < 6; ++i)
+		g_globals->_spells._arr[i] = amount;
+
+	return SR_SUCCESS_DONE;
 }
 
 SpellResult Spells::cleric74_resurrection(Character *chr) {
-	return SR_FAILED;
+	if (chr->_condition == ERADICATED)
+		return SR_FAILED;
+
+	if (chr->_age._base < 10 || chr->_age._base > 200)
+		chr->_age._base = 200;
+
+	if (g_engine->getRandomNumber(100) > 75)
+		return SR_FAILED;
+
+	chr->_endurance._base = MAX((int)chr->_endurance._base - 1, 1);
+	chr->_condition = FINE;
+	restoreHp(chr, 1);
+
+	return SR_SUCCESS_DONE;
 }
 
 SpellResult Spells::wizard12_detectMagic(Character *chr) {
