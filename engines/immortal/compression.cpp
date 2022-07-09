@@ -19,10 +19,7 @@
  *
  */
 
-#include "common/debug.h"
-#include "common/file.h"
-#include "common/memstream.h"
-#include "immortal/compression.h"
+#include "immortal/immortal.h"
 
 /* Decompression:
  * This decompression algorithm follows the source assembly very closely,
@@ -30,17 +27,9 @@
  * In: Source data as File, size of data
  * Out: Pointer to uncompressed data as SeekableReadStream
  */
-namespace Compression {
+namespace Immortal {
 
-// There is a lot of bit masking that needs to happen, so this enum makes it a little easier to read
-enum BitMask : uint16 {
-    kMask12Bit = 0x0F9F,                    // Code (pos, 00, len) is stored in lower 12 bits of word
-    kMaskLow   = 0x00FF,
-    kMaskHigh  = 0xFF00,
-    kMaskLast  = 0xF000
-};
-
-Common::SeekableReadStream *unCompress(Common::File *src, int srcLen) {
+Common::SeekableReadStream *ImmortalEngine::unCompress(Common::File *src, int srcLen) {
     /* Note: this function does not seek() in the file, which means
      * that if there is a header on the data, the expectation is that
      * seek() was already used to move past the header before this function.
@@ -136,19 +125,20 @@ Common::SeekableReadStream *unCompress(Common::File *src, int srcLen) {
                 topStack--;
             }
 
-            topStack = 0;                   // Won't this always be 0 because of the while loop?
+            topStack = 0;
                 code = getMember(oldCode, finalChar, findEmpty, start, ptk);
              oldCode = inputCode;
         }
 
     }
 
-    // Return a readstream with a pointer to the data in the write stream.
-    // This one we do want to dispose after using, because it will be in the scope of the engine itself
+    /* Return a readstream with a pointer to the data in the write stream.
+     * This one we do want to dispose after using, because it will be in the scope of the engine itself
+     */
     return new Common::MemoryReadStream(dstW.getData(), dstW.size(), DisposeAfterUse::YES);
 }
 
-void setupDictionary(uint16 start[], uint16 ptk[], uint16 &findEmpty) {
+void ImmortalEngine::setupDictionary(uint16 start[], uint16 ptk[], uint16 &findEmpty) {
     // Clear the whole dictionary
     for (int i = 0x3FFF; i >= 0; i--) {
         start[i] = 0;
@@ -156,15 +146,15 @@ void setupDictionary(uint16 start[], uint16 ptk[], uint16 &findEmpty) {
     }
 
     // Set the initial 256 bytes to be value 256, these are the characters without extensions
-    for (int i = 0x0FF; i >= 0; i--) {
-          ptk[i] = 0x100;
+    for (int i = 255; i >= 0; i--) {
+          ptk[i] = 256;
     }
 
     // This shouldn't really be done inside the function, but for the sake of consistency with the source, we will
     findEmpty = 0x8000;
 }
 
-int getInputCode(bool &carry, Common::File *src, int &srcLen, uint16 &evenOdd) {
+int ImmortalEngine::getInputCode(bool &carry, Common::File *src, int &srcLen, uint16 &evenOdd) {
     // Check if we're at the end of the file
     if (srcLen == 0) {
         carry = false;
@@ -185,12 +175,15 @@ int getInputCode(bool &carry, Common::File *src, int &srcLen, uint16 &evenOdd) {
     return c;
 }
 
-uint16 getMember(uint16 codeW, uint16 k, uint16 &findEmpty, uint16 start[], uint16 ptk[]) {
+uint16 ImmortalEngine::getMember(uint16 codeW, uint16 k, uint16 &findEmpty, uint16 start[], uint16 ptk[]) {
     // This function is effectively void, as the return value is only used in compression
     
     // k and codeW are local variables with the value of oldCode and finalChar
 
     uint16 hash;
+    uint16 tmp;
+    bool ag = true;
+
     hash = (k << 3) ^ k;
     hash = (hash << 1) ^ codeW;
     hash <<= 1;
@@ -206,8 +199,6 @@ uint16 getMember(uint16 codeW, uint16 k, uint16 &findEmpty, uint16 start[], uint
     }
 
     // This loop is a bit wacky, due to the way the jumps were stuctured in the source
-    bool ag = true;
-    uint16 tmp;
     while (ag == true) {
         if ((start[hash] & kMask12Bit) == codeW) {
             if ((ptk[hash] & kMaskLow) == k) {
@@ -217,22 +208,20 @@ uint16 getMember(uint16 codeW, uint16 k, uint16 &findEmpty, uint16 start[], uint
 
         tmp = start[hash] & kMaskLast;
         if (tmp == 0) {
-
             // I've separated this into it's own function for the sake of this loop being readable
             appendList(codeW, k, hash, findEmpty, start, ptk, tmp);
             ag = false;
 
         } else {
-            tmp >>= 4;
-            hash = ptk[hash] & kMaskHigh;       // The 65816 can XBA to flip the bytes in a word, instead we have mask and shift over :(
-            hash >>= 8;
-            hash = (hash | tmp) << 1;
+            hash = xba(ptk[hash]);
+            hash = (hash & kMaskLow) | (tmp >> 4);
+            hash <<= 1;
         }
     }
     return hash;
 }
 
-void appendList(uint16 codeW, uint16 k, uint16 &hash, uint16 &findEmpty, uint16 start[], uint16 ptk[], uint16 &tmp) {
+void ImmortalEngine::appendList(uint16 codeW, uint16 k, uint16 &hash, uint16 &findEmpty, uint16 start[], uint16 ptk[], uint16 &tmp) {
     uint16 prev;
     uint16 link;
 
@@ -260,18 +249,17 @@ void appendList(uint16 codeW, uint16 k, uint16 &hash, uint16 &findEmpty, uint16 
                   ptk[hash] = k | 0x100;
 
                 link = hash >> 1;
-                 tmp = link & kMaskLow;         // Another classic XBA situation, although it's nicer this time
-                 tmp <<= 8;                     // Because we can just grab the low bytes and shift them forward (it's still much faster to XBA though)
 
-                  ptk[prev] = (ptk[prev] & kMaskLow) | tmp;
-                start[prev] = ((link >> 4) & kMaskLast) | start[prev];      // Yikes this statement is gross
+                  ptk[prev] = (link << 8) | (ptk[prev] & kMaskLow);
+                //start[prev] = ((link >> 4) & kMaskLast) | start[prev];      // Yikes this statement is gross
+                start[prev] |= (link >> 4) & kMaskLast;
                 found = true;
             }
         }
     }
 }
 
-} // namespace compression
+} // namespace immortal
 
 
 
