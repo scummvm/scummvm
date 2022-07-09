@@ -291,7 +291,76 @@ MODULE_OBJS := \
 	penumbra-overture/SaveHandler.o \
 	penumbra-overture/SaveTypes.o \
 	penumbra-overture/TriggerHandler.o \
-	penumbra-overture/Triggers.o
+	penumbra-overture/Triggers.o \
+	engine/libraries/newton/core/dg.o \
+	engine/libraries/newton/core/dgAABBPolygonSoup.o \
+	engine/libraries/newton/core/dgCRC.o \
+	engine/libraries/newton/core/dgConvexHull3d.o \
+	engine/libraries/newton/core/dgConvexHull4d.o \
+	engine/libraries/newton/core/dgDebug.o \
+	engine/libraries/newton/core/dgDelaunayTetrahedralization.o \
+	engine/libraries/newton/core/dgGeneralMatrix.o \
+	engine/libraries/newton/core/dgGeneralVector.o \
+	engine/libraries/newton/core/dgGoogol.o \
+	engine/libraries/newton/core/dgIntersections.o \
+	engine/libraries/newton/core/dgMatrix.o \
+	engine/libraries/newton/core/dgMemory.o \
+	engine/libraries/newton/core/dgNode.o \
+	engine/libraries/newton/core/dgPolygonSoupBuilder.o \
+	engine/libraries/newton/core/dgPolyhedra.o \
+	engine/libraries/newton/core/dgPolyhedraMassProperties.o \
+	engine/libraries/newton/core/dgQuaternion.o \
+	engine/libraries/newton/core/dgRandom.o \
+	engine/libraries/newton/core/dgRef.o \
+	engine/libraries/newton/core/dgRefCounter.o \
+	engine/libraries/newton/core/dgSPDMatrix.o \
+	engine/libraries/newton/core/dgSmallDeterminant.o \
+	engine/libraries/newton/core/dgSphere.o \
+	engine/libraries/newton/core/dgThreads.o \
+	engine/libraries/newton/core/dgTree.o \
+	engine/libraries/newton/core/dgTypes.o \
+	engine/libraries/newton/Newton.o \
+	engine/libraries/newton/NewtonClass.o \
+	engine/libraries/newton/physics/dgBallConstraint.o \
+	engine/libraries/newton/physics/dgBilateralConstraint.o \
+	engine/libraries/newton/physics/dgBody.o \
+	engine/libraries/newton/physics/dgBodyMasterList.o \
+	engine/libraries/newton/physics/dgBroadPhaseCollision.o \
+	engine/libraries/newton/physics/dgCollision.o \
+	engine/libraries/newton/physics/dgCollisionBVH.o \
+	engine/libraries/newton/physics/dgCollisionBox.o \
+	engine/libraries/newton/physics/dgCollisionCapsule.o \
+	engine/libraries/newton/physics/dgCollisionChamferCylinder.o \
+	engine/libraries/newton/physics/dgCollisionCompound.o \
+	engine/libraries/newton/physics/dgCollisionCompoundBreakable.o \
+	engine/libraries/newton/physics/dgCollisionCone.o \
+	engine/libraries/newton/physics/dgCollisionConvex.o \
+	engine/libraries/newton/physics/dgCollisionConvexHull.o \
+	engine/libraries/newton/physics/dgCollisionConvexModifier.o \
+	engine/libraries/newton/physics/dgCollisionCylinder.o \
+	engine/libraries/newton/physics/dgCollisionEllipse.o \
+	engine/libraries/newton/physics/dgCollisionHeightField.o \
+	engine/libraries/newton/physics/dgCollisionMesh.o \
+	engine/libraries/newton/physics/dgCollisionNull.o \
+	engine/libraries/newton/physics/dgCollisionScene.o \
+	engine/libraries/newton/physics/dgCollisionSphere.o \
+	engine/libraries/newton/physics/dgCollisionUserMesh.o \
+	engine/libraries/newton/physics/dgConnectorConstraint.o \
+	engine/libraries/newton/physics/dgConstraint.o \
+	engine/libraries/newton/physics/dgContact.o \
+	engine/libraries/newton/physics/dgCorkscrewConstraint.o \
+	engine/libraries/newton/physics/dgHingeConstraint.o \
+	engine/libraries/newton/physics/dgMeshEffect.o \
+	engine/libraries/newton/physics/dgMeshEffect2.o \
+	engine/libraries/newton/physics/dgMinkowskiConv.o \
+	engine/libraries/newton/physics/dgNarrowPhaseCollision.o \
+	engine/libraries/newton/physics/dgPointToCurveConstraint.o \
+	engine/libraries/newton/physics/dgSlidingConstraint.o \
+	engine/libraries/newton/physics/dgUniversalConstraint.o \
+	engine/libraries/newton/physics/dgUpVectorConstraint.o \
+	engine/libraries/newton/physics/dgUserConstraint.o \
+	engine/libraries/newton/physics/dgWorld.o \
+	engine/libraries/newton/physics/dgWorldDynamicUpdate.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_HPL1), DYNAMIC_PLUGIN)
