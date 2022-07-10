@@ -56,6 +56,11 @@ void Room25::entry() {
 	if (!_G(gameState).R29WaterHose) {
 		_G(det)->hideStaticSpr(0);
 		_G(det)->hideStaticSpr(1);
+		_G(atds)->setControlBit(219, ATS_ACTIVE_BIT);
+	} else {
+		_G(det)->showStaticSpr(0);
+		_G(det)->showStaticSpr(1);
+		_G(atds)->delControlBit(219, ATS_ACTIVE_BIT);
 	}
 
 	if (!_G(gameState).R25FirstEntry) {

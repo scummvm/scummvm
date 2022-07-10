@@ -108,6 +108,15 @@ void Room18::entry() {
 	if (_G(gameState).R16F5Exit) {
 		// Hide cyber crown
 		_G(det)->hideStaticSpr(19);
+		_G(atds)->setControlBit(158, ATS_ACTIVE_BIT);
+	} else {
+		// Show cyber crown
+		_G(det)->showStaticSpr(19);
+		_G(atds)->set_ats_str(153, 1, ATS_DATA);
+		_G(atds)->set_ats_str(149, TXT_MARK_LOOK, 1, ATS_DATA);
+
+		for (int16 i = 0; i < 3; i++)
+			_G(atds)->delControlBit(158 + i, ATS_ACTIVE_BIT);
 	}
 
 	if (_G(gameState).R17EnergyOut) {
