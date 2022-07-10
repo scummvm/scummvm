@@ -58,7 +58,8 @@ enum RenderMode {
 	kRenderAtariST = 11,
 	kRenderMacintosh = 12,
 	kRenderMacintoshBW = 13,
-	kRenderCGAComp = 14
+	kRenderCGAComp = 14,
+	kRenderCGA_BW = 15,
 };
 
 struct RenderModeDescription {
