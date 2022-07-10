@@ -714,16 +714,18 @@ void flic_cut(int16 nr) {
 
 	switch (nr) {
 	case FCUT_SPACECHASE_18:
-		// _G(sndPlayer)->setLoopMode(1)
+		// Play the space chase video, after escaping F5.
+		// The music is placed in the first video of the
+		// series, so we need to keep a copy of it and
+		// dispose it after the series of videos ends.
 		for (i = 0; i < 11 && keepPlaying; i++) {
-			keepPlaying = g_engine->_video->playVideo(FCUT_SPACECHASE_18 + i);
+			keepPlaying = g_engine->_video->playVideo(FCUT_SPACECHASE_18 + i, false, false);
 		}
 
-		// TODO: Reimplement
-		//_G(sndPlayer)->fadeOut(0);
+		g_engine->_sound->stopMusic();
+		g_engine->_sound->disposeMusicBuffer();
 		_G(out)->fadeOut();
 		_G(out)->cls();
-		//while (_G(sndPlayer)->musicPlaying()) {}
 		break;
 
 	case FCUT_058:

@@ -34,17 +34,18 @@ class Sound;
 // A FLIC decoder, with a modified header and additional custom frames
 class CfoDecoder : public Video::FlicDecoder {
 public:
-	CfoDecoder(Sound *sound) : Video::FlicDecoder(), _sound(sound) {}
+	CfoDecoder(Sound *sound, bool disposeMusic) : Video::FlicDecoder(), _sound(sound), _disposeMusic(disposeMusic) {}
 	~CfoDecoder() override {}
 
 	bool loadStream(Common::SeekableReadStream *stream) override;
 
 private:
 	Sound *_sound;
+	bool _disposeMusic;
 
 	class CfoVideoTrack : public Video::FlicDecoder::FlicVideoTrack {
 	public:
-		CfoVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, Sound *sound);
+		CfoVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, Sound *sound, bool disposeMusic);
 		~CfoVideoTrack() override;
 
 		void readHeader() override;
@@ -57,6 +58,7 @@ private:
 		void fadeOut();
 
 		Sound *_sound;
+		bool _disposeMusic;
 
 		uint8 *_soundEffects[MAX_SOUND_EFFECTS];
 		uint32 _soundEffectSize[MAX_SOUND_EFFECTS];
