@@ -30,17 +30,17 @@ namespace Rooms {
 class Room37 {
 private:
 	static void setup_func();
-	static void hahn_dia();
+	static void roosterDialog();
 	static void dog_bell();
 
 public:
 	static void entry();
 	static void gedAction(int index);
 
-	static short use_wippe();
-	static int16 use_glas();
-	static void talk_hahn();
-	static void use_hahn();
+	static short useSeesaw();
+	static int16 useGlass();
+	static void talkWithRooster();
+	static void useRooster();
 };
 
 } // namespace Rooms

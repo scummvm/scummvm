@@ -383,15 +383,15 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 249:
-						retValue = Room37::use_wippe();
+						retValue = Room37::useSeesaw();
 						break;
 
 					case 251:
-						Room37::use_hahn();
+						Room37::useRooster();
 						break;
 
 					case 256:
-						retValue = Room37::use_glas();
+						retValue = Room37::useGlass();
 						break;
 
 					case 263:
@@ -854,7 +854,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 251:
-						Room37::talk_hahn();
+						Room37::talkWithRooster();
 						break;
 
 					case 265:
@@ -2194,8 +2194,8 @@ void useItemWithInvItem(int16 itemId) {
 		_G(menu_item) = CUR_USE;
 		cursorChoice(_G(menu_item));
 		ret = del_invent_slot(itemId);
-		_G(gameState).InventSlot[ret] = ANGEL2_INV;
-		_G(obj)->changeInventory(itemId, ANGEL2_INV, &_G(room_blk));
+		_G(gameState).InventSlot[ret] = FISHING_ROD_INV;
+		_G(obj)->changeInventory(itemId, FISHING_ROD_INV, &_G(room_blk));
 		break;
 
 	case PUMPKIN_INV:

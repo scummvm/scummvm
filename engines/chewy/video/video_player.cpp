@@ -186,8 +186,8 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 		break;
 	case FCUT_047:
 		// Room37::cut_serv1
-		if (!_G(gameState).R37Kloppe) {
-			if (!_G(gameState).R37Gebiss) {
+		if (!_G(gameState).R37RoosterFoughtWithDog) {
+			if (!_G(gameState).R37TakenDenturesFromGlass) {
 				_G(det)->plot_static_details(scrollx, scrolly, 9, 9);
 				_G(det)->plot_static_details(scrollx, scrolly, 11, 11);
 				_G(det)->showStaticSpr(11);

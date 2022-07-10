@@ -119,7 +119,7 @@ void Room33::use_maschine() {
 				_G(gameState).R33Munter[1] = true;
 				break;
 
-			case EIER_INV:
+			case EGGS_INV:
 				_G(gameState).R33Munter[2] = true;
 				break;
 
