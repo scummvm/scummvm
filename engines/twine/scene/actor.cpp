@@ -116,7 +116,7 @@ void Actor::setBehaviour(HeroBehaviourType behaviour) {
 		_heroBehaviour = behaviour;
 		sceneHero->_entityDataPtr = &_heroEntityPROTOPACK;
 		break;
-	};
+	}
 
 	const BodyType bodyIdx = sceneHero->_genBody;
 
@@ -171,7 +171,7 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 
 	debug(1, "Load body %i for actor %i", (int)bodyIdx, actorIdx);
 
-	if (IS_HERO(actorIdx) && _heroBehaviour == HeroBehaviourType::kProtoPack && localActor->_genBody != BodyType::btTunic && localActor->_genBody != BodyType::btNormal) {
+	if (IS_HERO(actorIdx) && _heroBehaviour == HeroBehaviourType::kProtoPack && bodyIdx != BodyType::btTunic && bodyIdx != BodyType::btNormal) {
 		setBehaviour(HeroBehaviourType::kNormal);
 	}
 
