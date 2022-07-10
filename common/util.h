@@ -97,6 +97,12 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 #define ARRAYEND(x) ((x) + ARRAYSIZE((x)))
 
 /**
+ * Convert statement to string via pre-processor
+ */
+#define STRINGIFY_X(s) #s
+#define STRINGIFY(s) STRINGIFY_X(s)
+
+/**
  * Clear an array using the default or provided value.
  */
 template<typename T, size_t N> inline void ARRAYCLEAR(T (&array) [N], const T &value = T()) {

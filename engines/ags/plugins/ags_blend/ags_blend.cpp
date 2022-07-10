@@ -22,6 +22,7 @@
 #include "ags/plugins/ags_blend/ags_blend.h"
 #include "ags/shared/core/platform.h"
 #include "common/algorithm.h"
+#include "common/util.h"
 
 namespace AGS3 {
 namespace Plugins {
@@ -70,9 +71,6 @@ namespace AGSBlend {
 #define ChannelBlend_Phoenix(B,L)    ((uint8)(min(B,L) - max(B,L) + 255))
 #define ChannelBlend_Alpha(B,L,O)    ((uint8)(O * B + (1 - O) * L))
 #define ChannelBlend_AlphaF(B,L,F,O) (ChannelBlend_Alpha(F(B,L),B,O))
-
-#define STRINGIFY(s) STRINGIFY_X(s)
-#define STRINGIFY_X(s) #s
 
 #pragma endregion
 
