@@ -362,7 +362,7 @@ short Room18::use_cart_moni() {
 			startSetAILWait(20, 1, ANI_FRONT);
 			_G(det)->showStaticSpr(23);
 
-			if (_G(gameState).R18CartFach) {
+			if (_G(gameState).R18CartridgeInSlot) {
 				_G(gameState).R18CartSave = true;
 				_G(atds)->set_ats_str(CARTRIDGE_INV, TXT_MARK_LOOK, 1, INV_ATS_DATA);
 				startAadWait(120);

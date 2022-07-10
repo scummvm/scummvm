@@ -1045,9 +1045,9 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 	case SIB_CART_FACH_R18:
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-		_G(gameState).R18CartFach = 0;
+		_G(gameState).R18CartridgeInSlot = false;
 		cur_2_inventory();
-		_G(atds)->set_ats_str(157, 1, AAD_DATA);
+		_G(atds)->set_ats_str(157, TXT_MARK_LOOK, 0, ATS_DATA);
 		break;
 
 	case SIB_SCHLAUCH_R26:
@@ -1265,7 +1265,7 @@ void sib_event_inv(int16 sib_nr) {
 
 	case SIB_CART_FACH_R18:
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-		_G(gameState).R18CartFach = true;
+		_G(gameState).R18CartridgeInSlot = true;
 		delInventory(_G(cur)->getInventoryCursor());
 		_G(det)->showStaticSpr(7);
 		_G(atds)->set_ats_str(157, TXT_MARK_LOOK, 1, ATS_DATA);

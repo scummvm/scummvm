@@ -99,7 +99,7 @@ struct GameFlags {
 	bool R17EnergieOut : 1;
 	bool R17DoorKommand : 1;
 	bool R18DoorBruecke : 1;
-	bool R18CartFach : 1;
+	bool R18CartridgeInSlot : 1;
 	bool R18CartTerminal : 1;
 	bool R18CartSave : 1;
 
