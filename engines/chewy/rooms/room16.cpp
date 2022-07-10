@@ -50,7 +50,7 @@ int16 Room16::use_gleiter() {
 	if (!_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 		autoMove(6, P_CHEWY);
-		_G(gameState).R23GleiterExit = 16;
+		_G(gameState).R23GliderExit = 16;
 		Room23::cockpit();
 	}
 

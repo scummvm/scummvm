@@ -96,19 +96,19 @@ struct GameFlags {
 
 	bool R17Seil : 1;
 	bool R17HebelOk : 1;
-	bool R17EnergieOut : 1;
+	bool R17EnergyOut : 1;
 	bool R17DoorKommand : 1;
 	bool R18DoorBruecke : 1;
 	bool R18CartridgeInSlot : 1;
 	bool R18CartTerminal : 1;
 	bool R18CartSave : 1;
 
-	bool R18SurimyWurf : 1;
+	bool R18SurimyThrown : 1;
 	bool R18SondeMoni : 1;
-	bool R18MoniSwitch : 1;
-	bool R18Krone : 1;
+	bool R18MonitorSwitch : 1;
+	bool R18Crown : 1;
 	bool R18FirstEntry : 1;
-	bool R18Gitter : 1;
+	bool R18Grid : 1;
 	bool R21Salto : 1;
 	bool R21GitterEnergie : 1;
 
@@ -128,10 +128,10 @@ struct GameFlags {
 	bool R23Cartridge : 1;
 	bool R24FirstEntry : 1;
 	bool R25FirstEntry : 1;
-	bool R25GleiteLoesch : 1;
+	bool R25GliderFlamesExtinguished : 1;
 
 	bool R25SurimyLauf : 1;
-	bool R25GleiterExit : 1;
+	bool R25GliderExit : 1;
 	bool R27SurimyOk : 1;
 	bool R28SurimyCar : 1;
 	bool R28ChewyPump : 1;
@@ -144,7 +144,7 @@ struct GameFlags {
 	bool R28PostCar : 1;
 	bool R29Pumpe : 1;
 	bool R29Schlauch1 : 1;
-	bool R29Schlauch2 : 1;
+	bool R29WaterHose : 1;
 	bool R29AutoSitz : 1;
 	bool R31PflanzeWeg : 1;
 
@@ -435,9 +435,9 @@ struct GameState : public GameFlags {
 
 	uint8 R17Location = 0;
 
-	int16 R23GleiterExit = 0;
+	int16 R23GliderExit = 0;
 
-	uint8 R24Hebel[3] = { 0 };
+	uint8 R24Lever[3] = { 0 };
 	uint8 R24HebelDir[3] = { 0 };
 	uint8 R24KristallLast[3] = { 0 };
 	uint8 R25SurimyGo = 0;

@@ -31,7 +31,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room14::entry() {
-	_G(gameState).R23GleiterExit = 14;
+	_G(gameState).R23GliderExit = 14;
 	_G(zoom_horizont) = 310;
 	_G(gameState).ScrollxStep = 2;
 
@@ -104,7 +104,7 @@ int16 Room14::use_gleiter() {
 			_G(det)->showStaticSpr(6);
 			_G(atds)->set_ats_str(107, TXT_MARK_LOOK, 1, ATS_DATA);
 		} else {
-			_G(gameState).R23GleiterExit = 14;
+			_G(gameState).R23GliderExit = 14;
 			Room23::cockpit();
 		}
 	}

@@ -156,7 +156,7 @@ int16 Room31::use_topf() {
 				dia_nr = 150;
 				_G(atds)->set_ats_str(242, 2, ATS_DATA);
 
-			} else if (isCurInventory(MILCH_WAS_INV)) {
+			} else if (isCurInventory(WATER_FILLED_BOTTLE_INV)) {
 				if (_G(gameState).R31KoernerDa) {
 					_G(gameState).R31Wasser = true;
 					autoMove(1, P_CHEWY);
@@ -164,8 +164,8 @@ int16 Room31::use_topf() {
 					startAniBlock(3, ABLOCK30);
 					_G(gameState)._personHide[P_CHEWY] = false;
 					delInventory(_G(cur)->getInventoryCursor());
-					_G(obj)->addInventory(MILCH_LEER_INV, &_G(room_blk));
-					inventory_2_cur(MILCH_LEER_INV);
+					_G(obj)->addInventory(EMPTY_MILK_BOTTLE_INV, &_G(room_blk));
+					inventory_2_cur(EMPTY_MILK_BOTTLE_INV);
 					ani_nr = CH_TALK6;
 					dia_nr = 151;
 					_G(atds)->set_ats_str(242, 3, ATS_DATA);

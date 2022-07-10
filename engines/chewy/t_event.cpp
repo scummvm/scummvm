@@ -215,7 +215,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 114:
-						switchRoom(_G(gameState).R23GleiterExit);
+						switchRoom(_G(gameState).R23GliderExit);
 						break;
 
 					case 117:
@@ -260,7 +260,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 
 					case 149:
 					case 153:
-						retValue = Room18::calc_surimy();
+						retValue = Room18::calcSurimy();
 						break;
 
 					case 154:
@@ -272,7 +272,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 159:
-						retValue = Room18::calc_schalter();
+						retValue = Room18::calcMonitorControls();
 						break;
 
 					case 161:
@@ -303,7 +303,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 187:
-						retValue = Room25::use_gleiter();
+						retValue = Room25::useGlider();
 						break;
 
 					case 203:
@@ -323,7 +323,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 215:
-						retValue = Room29::use_schlauch();
+						retValue = Room29::useWaterHose();
 						break;
 
 					case 216:
@@ -331,11 +331,11 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 218:
-						retValue = Room29::get_schlauch();
+						retValue = Room29::getWaterHose();
 						break;
 
 					case 219:
-						retValue = Room25::gleiter_loesch();
+						retValue = Room25::extinguishGliderFlames();
 						break;
 
 					case 220:
@@ -785,7 +785,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 114:
-						switchRoom(_G(gameState).R23GleiterExit);
+						switchRoom(_G(gameState).R23GliderExit);
 						break;
 
 					case 227:

@@ -29,10 +29,10 @@
 namespace Chewy {
 namespace Rooms {
 
-static const int16 BORK_SPR[5] = { 15, 16, 17, 24, 25 };
-static const int16 BORK_SPR1[4] = { 20, 21, 18, 19 };
+static const int16 BORK_AWAKE_SPR[5] = { 15, 16, 17, 24, 25 };
+static const int16 BORK_FAINTED_SPR[4] = { 20, 21, 18, 19 };
 
-static const int16 SURIMY_PHASEN[4][2] = {
+static const int16 SURIMY_PHASES[4][2] = {
 	{ 245, 252 },
 	{ 0, 0 },
 	{ 0, 0 },
@@ -88,44 +88,46 @@ static const AniBlock ABLOCK24[2] = {
 
 
 void Room18::entry() {
-	_G(gameState).R18MoniSwitch = false;
+	_G(gameState).R18MonitorSwitch = false;
 	_G(atds)->set_ats_str(151, TXT_MARK_LOOK, 0, ATS_DATA);
 	_G(gameState).ScrollxStep = 2;
 
 	if (_G(gameState).R18CartTerminal)
 		_G(det)->showStaticSpr(23);
 
-	if (!_G(gameState).R18SurimyWurf) {
-		init_borks();
+	if (!_G(gameState).R18SurimyThrown) {
+		initBorks();
 	} else {
 		for (int16 i = 0; i < 5; i++)
-			_G(det)->hideStaticSpr(BORK_SPR[i]);
+			_G(det)->hideStaticSpr(BORK_AWAKE_SPR[i]);
 
-		for (int16 i = 0; i < (4 - (_G(gameState).R18Krone ? 1 : 0)); i++)
-			_G(det)->showStaticSpr(BORK_SPR1[i]);
+		for (int16 i = 0; i < (4 - (_G(gameState).R18Crown ? 1 : 0)); i++)
+			_G(det)->showStaticSpr(BORK_FAINTED_SPR[i]);
 	}
 
-	if (_G(gameState).R16F5Exit)
+	if (_G(gameState).R16F5Exit) {
+		// Hide cyber crown
 		_G(det)->hideStaticSpr(19);
-	
-	if (_G(gameState).R17EnergieOut) {
+	}
+
+	if (_G(gameState).R17EnergyOut) {
 		_G(det)->stopDetail(0);
 		_G(atds)->set_ats_str(150, TXT_MARK_LOOK, 1, ATS_DATA);
 	} else {
 		_G(atds)->set_ats_str(150, TXT_MARK_LOOK, 0, ATS_DATA);
 	}
 
-	if (!_G(gameState).R18FirstEntry && !_G(gameState).R18Gitter) {
+	if (!_G(gameState).R18FirstEntry && !_G(gameState).R18Grid) {
 		startAadWait(39);
 		_G(gameState).R18FirstEntry = true;
 	}
 
-	if (_G(gameState).R18Gitter)
+	if (_G(gameState).R18Grid)
 		_G(gameState).scrolly = 0;
 }
 
 bool Room18::timer(int16 t_nr, int16 ani_nr) {
-	if (!_G(gameState).R18SurimyWurf && !_G(flags).AutoAniPlay) {
+	if (!_G(gameState).R18SurimyThrown && !_G(flags).AutoAniPlay) {
 		_G(flags).AutoAniPlay = true;
 
 		if (t_nr == _G(timer_nr)[0]) {
@@ -163,19 +165,19 @@ bool Room18::timer(int16 t_nr, int16 ani_nr) {
 }
 
 void Room18::gedAction(int index) {
-	if (!index && !_G(gameState).R18SurimyWurf) {
+	if (!index && !_G(gameState).R18SurimyThrown) {
 		stopPerson(P_CHEWY);
 		autoMove(1, P_CHEWY);
 		start_aad(40, 0);
 	}
 }
 
-void Room18::init_borks() {
+void Room18::initBorks() {
 	for (int16 i = 0; i < 5; i++)
-		_G(det)->showStaticSpr(BORK_SPR[i]);
+		_G(det)->showStaticSpr(BORK_AWAKE_SPR[i]);
 	
 	for (int16 i = 0; i < 4; i++)
-		_G(det)->hideStaticSpr(BORK_SPR1[i]);
+		_G(det)->hideStaticSpr(BORK_FAINTED_SPR[i]);
 
 	_G(timer_nr)[0] = _G(room)->set_timer(255, 10);
 	_G(timer_nr)[1] = _G(room)->set_timer(255, 15);
@@ -185,12 +187,12 @@ void Room18::init_borks() {
 }
 
 void Room18::monitor() {
-	_G(gameState).R18MoniSwitch ^= 1;
+	_G(gameState).R18MonitorSwitch ^= 1;
 
 	int16 nr = 0;
-	if (_G(gameState).R18MoniSwitch) {
+	if (_G(gameState).R18MonitorSwitch) {
 		startAniBlock(2, ABLOCK21);
-		nr = (_G(gameState).R17EnergieOut) ? 2 : 1;
+		nr = (_G(gameState).R17EnergyOut) ? 2 : 1;
 	} else {
 		_G(det)->stopDetail(23);
 		_G(atds)->set_ats_str(41, TXT_MARK_LOOK, 1, ATS_DATA);
@@ -200,11 +202,7 @@ void Room18::monitor() {
 }
 
 int16 Room18::sonden_moni() {
-	int16 action_flag = false;
-
-	if (!_G(cur)->usingInventoryCursor() && !_G(gameState).R18Gitter) {
-		action_flag = true;
-
+	if (!_G(cur)->usingInventoryCursor() && !_G(gameState).R18Grid) {
 		hideCur();
 		autoMove(8, P_CHEWY);
 		startSetAILWait(3, 1, ANI_FRONT);
@@ -220,19 +218,18 @@ int16 Room18::sonden_moni() {
 			_G(det)->hideStaticSpr(i + 10);
 
 		showCur();
+
+		return true;
+	} else {
+		return false;
 	}
-	return action_flag;
 }
 
-int16 Room18::calc_surimy() {
-	int16 action_flag = false;
-
+int16 Room18::calcSurimy() {
 	if (isCurInventory(SURIMY_INV)) {
-		action_flag = true;
-
 		hideCur();
 		delInventory(_G(cur)->getInventoryCursor());
-		_G(gameState).R18SurimyWurf = true;
+		_G(gameState).R18SurimyThrown = true;
 		_G(det)->load_taf_seq(245, 50, nullptr);
 		_G(det)->load_taf_seq(116, 55, nullptr);
 		_G(auto_obj) = 1;
@@ -247,7 +244,7 @@ int16 Room18::calc_surimy() {
 		if (_G(moveState)[P_CHEWY].Xypos[1] < 150) {
 			startDetailFrame(18, 1, ANI_FRONT, 8);
 
-			init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT3);
+			init_auto_obj(SURIMY_OBJ, &SURIMY_PHASES[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT3);
 			waitDetail(18);
 		} else {
 			autoMove(1, P_CHEWY);
@@ -256,7 +253,7 @@ int16 Room18::calc_surimy() {
 			startDetailFrame(17, 1, ANI_FRONT, 12);
 			_G(mouseLeftClick) = false;
 
-			init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT);
+			init_auto_obj(SURIMY_OBJ, &SURIMY_PHASES[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT);
 			waitDetail(17);
 		}
 
@@ -285,7 +282,7 @@ int16 Room18::calc_surimy() {
 
 		_G(flags).NoScroll = true;
 		_G(mov_phasen)[SURIMY_OBJ].Repeat = 1;
-		init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT1);
+		init_auto_obj(SURIMY_OBJ, &SURIMY_PHASES[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT1);
 		auto_scroll(70, 0);
 		wait_auto_obj(SURIMY_OBJ);
 
@@ -303,7 +300,7 @@ int16 Room18::calc_surimy() {
 
 		_G(det)->hideStaticSpr(26);
 		_G(mov_phasen)[SURIMY_OBJ].Repeat = 1;
-		init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT2);
+		init_auto_obj(SURIMY_OBJ, &SURIMY_PHASES[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT2);
 		auto_scroll(0, 0);
 		wait_auto_obj(SURIMY_OBJ);
 		_G(gameState).ScrollxStep = 6;
@@ -321,32 +318,27 @@ int16 Room18::calc_surimy() {
 		_G(atds)->delControlBit(179, ATS_ACTIVE_BIT);
 		showCur();
 		_G(det)->del_taf_tbl(245, 50, nullptr);
-	}
 
-	return action_flag;
+		return true;
+	} else {
+		return false;
+	}
 }
 
-int16 Room18::calc_schalter() {
-	int16 action_flag = false;
-
-	if (!_G(cur)->usingInventoryCursor() && !_G(gameState).R18Gitter) {
-		action_flag = true;
-
+int16 Room18::calcMonitorControls() {
+	if (!_G(cur)->usingInventoryCursor() && !_G(gameState).R18Grid) {
 		hideCur();
 		autoMove(6, P_CHEWY);
 		monitor();
 		showCur();
+		return true;
+	} else {
+		return false;	
 	}
-
-	return action_flag;
 }
 
 short Room18::use_cart_moni() {
-	int16 action_flag = false;
-
 	if (!_G(cur)->usingInventoryCursor()) {
-		action_flag = true;
-
 		hideCur();
 		autoMove(9, P_CHEWY);
 		setPersonSpr(P_LEFT, P_CHEWY);
@@ -370,26 +362,24 @@ short Room18::use_cart_moni() {
 		}
 
 		showCur();
+		return true;
+	} else {
+		return false;
 	}
-
-	return action_flag;
 }
 
 int16 Room18::go_cyberspace() {
-	int16 action_flag = false;
-
-	if (!_G(cur)->usingInventoryCursor() && !_G(gameState).R18Gitter) {
-		action_flag = true;
-
+	if (!_G(cur)->usingInventoryCursor() && !_G(gameState).R18Grid) {
 		hideCur();
 		autoMove(7, P_CHEWY);
 		cur_2_inventory();
 		showCur();
 
 		switchRoom(24);
+		return true;
+	} else {
+		return false;
 	}
-
-	return action_flag;
 }
 
 } // namespace Rooms

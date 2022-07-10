@@ -243,7 +243,7 @@ int16 Room21::use_fenster() {
 	if (!_G(cur)->usingInventoryCursor() && !_G(flags).AutoAniPlay && _G(gameState).R21Laser1Weg) {
 		action_flag = true;
 		_G(flags).AutoAniPlay = true;
-		_G(gameState).R18Gitter = true;
+		_G(gameState).R18Grid = true;
 		autoMove(13, P_CHEWY);
 		setPersonPos(541, 66, P_CHEWY, P_LEFT);
 		switchRoom(18);

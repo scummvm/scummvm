@@ -217,7 +217,7 @@ void enter_room(int16 eib_nr) {
 	case 17:
 		Room17::entry();
 		if (g_engine->_sound->soundEnabled()) {
-			if (!_G(gameState).R17EnergieOut)
+			if (!_G(gameState).R17EnergyOut)
 				_G(det)->playSound(15, 0);
 		}
 		break;
@@ -340,7 +340,7 @@ void exit_room(int16 eib_nr) {
 			_G(gameState).R17Location = 3;
 		_G(gameState).ScrollxStep = 1;
 		_G(flags).NoScroll = false;
-		_G(gameState).R18Gitter = false;
+		_G(gameState).R18Grid = false;
 		_G(gameState).room_e_obj[50].Attribut = 255;
 		_G(gameState).room_e_obj[41].Attribut = EXIT_BOTTOM;
 		break;
@@ -363,13 +363,13 @@ void exit_room(int16 eib_nr) {
 
 	case 23:
 		_G(gameState)._personHide[P_CHEWY] = false;
-		switch (_G(gameState).R23GleiterExit) {
+		switch (_G(gameState).R23GliderExit) {
 		case 16:
 			setPersonPos(126, 110, P_CHEWY, P_RIGHT);
 			break;
 
 		case 25:
-			_G(gameState).R25GleiterExit = true;
+			_G(gameState).R25GliderExit = true;
 			break;
 
 		default:
