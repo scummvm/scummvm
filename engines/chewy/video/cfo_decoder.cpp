@@ -68,12 +68,12 @@ bool CfoDecoder::loadStream(Common::SeekableReadStream *stream) {
 	uint16 width = stream->readUint16LE();
 	uint16 height = stream->readUint16LE();
 
-	addTrack(new CfoVideoTrack(stream, frameCount, width, height, _sound));
+	addTrack(new CfoVideoTrack(stream, frameCount, width, height, _sound, _disposeMusic));
 	return true;
 }
 
-CfoDecoder::CfoVideoTrack::CfoVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, Sound *sound) :
-	Video::FlicDecoder::FlicVideoTrack(stream, frameCount, width, height, true), _sound(sound) {
+CfoDecoder::CfoVideoTrack::CfoVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, Sound *sound, bool disposeMusic) :
+	Video::FlicDecoder::FlicVideoTrack(stream, frameCount, width, height, true), _sound(sound), _disposeMusic(disposeMusic) {
 	readHeader();
 
 	for (int i = 0; i < MAX_SOUND_EFFECTS; i++) {
@@ -99,7 +99,8 @@ CfoDecoder::CfoVideoTrack::~CfoVideoTrack() {
 
 	// Only stop music if it is included in the video data.
 	if (_musicData) {
-		_sound->stopMusic();
+		if (_disposeMusic)
+			_sound->stopMusic();
 		delete[] _musicData;
 		_musicData = nullptr;
 	}

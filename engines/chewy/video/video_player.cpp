@@ -31,8 +31,8 @@
 
 namespace Chewy {
 
-bool VideoPlayer::playVideo(uint num, bool stopMusic) {
-	CfoDecoder *cfoDecoder = new CfoDecoder(g_engine->_sound);
+bool VideoPlayer::playVideo(uint num, bool stopMusic, bool disposeMusic) {
+	CfoDecoder *cfoDecoder = new CfoDecoder(g_engine->_sound, disposeMusic);
 	VideoResource *videoResource = new VideoResource("cut.tap");
 	Common::SeekableReadStream *videoStream = videoResource->getVideoStream(num);
 	_playCount = 0;

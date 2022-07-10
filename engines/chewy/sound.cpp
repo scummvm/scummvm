@@ -44,6 +44,7 @@ Sound::Sound(Audio::Mixer *mixer) {
 Sound::~Sound() {
 	delete _soundRes;
 	delete _speechRes;
+	delete _overridenMusicBuffer;
 }
 
 void Sound::playSound(int num, uint channel, uint16 loops, uint16 volume, uint16 balance) {
@@ -129,7 +130,13 @@ void Sound::playMusic(int16 num, bool loop) {
 	delete[] data;
 }
 
-void Sound::playMusic(uint8 *data, uint32 size, uint8 volume) {
+void Sound::playMusic(uint8 *data, uint32 size, uint8 volume, bool handleBuffer) {
+	if (handleBuffer) {
+		_overridenMusicBuffer = new uint8[size];
+		memcpy(_overridenMusicBuffer, data, size);
+		data = _overridenMusicBuffer;
+	}
+		
 	TMFStream *stream = new TMFStream(new Common::MemoryReadStream(data, size), 0);
 	_curMusic = -1;
 
@@ -147,6 +154,11 @@ void Sound::resumeMusic() {
 void Sound::stopMusic() {
 	_curMusic = -1;
 	_mixer->stopHandle(_musicHandle);
+}
+
+void Sound::disposeMusicBuffer() {
+	delete[] _overridenMusicBuffer;
+	_overridenMusicBuffer = nullptr;
 }
 
 bool Sound::isMusicActive() const {
