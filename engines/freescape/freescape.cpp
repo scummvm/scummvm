@@ -405,7 +405,14 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 			collided = checkCollisions(false);
 			if (collided)
 				_position = previousPosition;
+		} else {
+			_position.set(_position.x(), positionY - 16 * areaScale, _position.z());
+			collided = checkCollisions(true);
+			assert(collided); // This should not fail
+			// restore position
+			_position.set(_position.x(), positionY, _position.z());
 		}
+
 	}
 	debug("new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 }
@@ -465,6 +472,13 @@ bool FreescapeEngine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsReturnToLauncher) ||
 		   (f == kSupportsLoadingDuringRuntime) ||
 		   (f == kSupportsSavingDuringRuntime);
+}
+
+void FreescapeEngine::playSound(int index) {
+	debug("Playing sound %d", index);
+	_speaker.setVolume(Audio::Mixer::kMaxChannelVolume);
+	_speaker.play(Audio::PCSpeaker::kWaveFormSine, 2000, 100);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle, &_speaker);
 }
 
 Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream) {
