@@ -397,7 +397,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 			error("Invalid area?");
 	}
 	_playerHeight = 64;
-	_playerWidth = 32;
+	_playerWidth = 12;
 	_playerDepth = 32;
 
 	_areasByAreaID = areaMap;
