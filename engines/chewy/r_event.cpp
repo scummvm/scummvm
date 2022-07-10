@@ -723,7 +723,6 @@ void flic_cut(int16 nr) {
 		}
 
 		g_engine->_sound->stopMusic();
-		g_engine->_sound->disposeMusicBuffer();
 		_G(out)->fadeOut();
 		_G(out)->cls();
 		break;
