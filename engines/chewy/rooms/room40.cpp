@@ -108,7 +108,7 @@ void Room40::xit(int16 eib_nr) {
 			_G(gameState)._personRoomNr[P_HOWARD] = 28;
 
 		} else if (eib_nr == 72) {
-			if ((_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && _G(gameState).R42BriefOk && _G(gameState).R28Manuskript)
+			if ((_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && _G(gameState).R42LetterOk && _G(gameState).R28Manuskript)
 				|| _G(gameState).R40TrainOk) {
 				_G(gameState).R40TrainOk = true;
 				_G(gameState)._personRoomNr[P_HOWARD] = 45;

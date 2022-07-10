@@ -156,7 +156,7 @@ void Room39::ok() {
 	_G(obj)->show_sib(SIB_ZEITUNG_R27);
 	_G(obj)->calc_rsi_flip_flop(SIB_SURIMY_R27);
 	_G(obj)->calc_rsi_flip_flop(SIB_ZEITUNG_R27);
-	invent_2_slot(BRIEF_INV);
+	invent_2_slot(LETTER_INV);
 
 	switchRoom(27);
 	startAadWait(192);

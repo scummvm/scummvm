@@ -446,7 +446,7 @@ void endDialogCloseup(int16 diaNr, int16 blkNr, int16 strEndNr);
 
 void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr,
                        int16 mode);
-void calc_inv_use_txt(int16 test_nr);
+void useItemWithInvItem(int16 itemId);
 bool calc_inv_no_use(int16 test_nr, int16 mode);
 int16 calc_person_txt(int16 p_nr);
 int16 calc_person_click(int16 p_nr);

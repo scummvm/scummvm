@@ -32,7 +32,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room42::entry() {
-	if (!_G(gameState).R42BeamterWach) {
+	if (!_G(gameState).R42StationEmployeeAway) {
 		_G(det)->playSound(0, 0);
 		_G(det)->startDetail(0, 255, ANI_FRONT);
 	}
@@ -44,7 +44,7 @@ void Room42::entry() {
 			_G(det)->stopDetail(0);
 			_G(timer_nr)[0] = _G(room)->set_timer(8, 5);
 			_G(det)->set_static_ani(8, -1);
-			_G(gameState).R42BeamterWach = true;
+			_G(gameState).R42StationEmployeeAway = true;
 			_G(det)->stopSound(0);
 
 			_G(SetUpScreenFunc) = setup_func;
@@ -54,10 +54,10 @@ void Room42::entry() {
 			_G(atds)->set_ats_str(264, 1, ATS_DATA);
 		}
 
-		if (_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && !_G(gameState).R42BriefOk)
+		if (_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && !_G(gameState).R42LetterOk)
 			startAadWait(302);
 
-		if (_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && _G(gameState).R42BriefOk)
+		if (_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && _G(gameState).R42LetterOk)
 			startAadWait(301);
 	}
 }
@@ -98,10 +98,10 @@ int16 Room42::useMailBag() {
 		return action_flag;
 
 	hideCur();
-	if (!_G(gameState).R42BeamterWach && !_G(cur)->usingInventoryCursor()) {
+	if (!_G(gameState).R42StationEmployeeAway && !_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 		getPumpkin(136);
-	} else if (_G(gameState).R42HoToBeamter && !_G(cur)->usingInventoryCursor() && !_G(gameState).R42MarkeOk) {
+	} else if (_G(gameState).R42HoToBeamter && !_G(cur)->usingInventoryCursor() && !_G(gameState).R42StampOk) {
 		action_flag = true;
 		autoMove(3, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;
@@ -113,11 +113,11 @@ int16 Room42::useMailBag() {
 		_G(gameState)._personHide[P_CHEWY] = false;
 		new_invent_2_cur(BMARKE_INV);
 		startAadWait(181);
-		_G(gameState).R42MarkeOk = true;
+		_G(gameState).R42StampOk = true;
 		autoMove(4, P_CHEWY);
 		startAadWait(185);
 		_G(gameState).R42HoToBeamter = false;
-	} else if (isCurInventory(BRIEF2_INV)) {
+	} else if (isCurInventory(STAMPEDLETTER_INV)) {
 		action_flag = true;
 		autoMove(3, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;
@@ -127,12 +127,11 @@ int16 Room42::useMailBag() {
 		startAadWait(183);
 		_G(obj)->calc_rsi_flip_flop(SIB_BKASTEN_R28);
 		_G(atds)->set_ats_str(206, 1, ATS_DATA);
-		_G(gameState).R28Briefkasten = true;
+		_G(gameState).R28LetterBox = true;
 		_G(gameState).R40TrainMove = true;
 		_G(gameState).R28PostCar = true;
-		_G(gameState).R42BriefOk = true;
-
-	} else if (isCurInventory(BRIEF_INV)) {
+		_G(gameState).R42LetterOk = true;
+	} else if (isCurInventory(LETTER_INV)) {
 		action_flag = true;
 		startAadWait(182);
 	}
@@ -165,9 +164,9 @@ void Room42::talkToStationEmployee() {
 	int16 dia_nr;
 	autoMove(1, P_CHEWY);
 
-	if (!_G(gameState).R42BeamterWach) {
+	if (!_G(gameState).R42StationEmployeeAway) {
 		dia_nr = 10;
-	} else if (!_G(gameState).R42MarkeOk) {
+	} else if (!_G(gameState).R42StampOk) {
 		dia_nr = 13;
 	} else {
 		dia_nr = 14;

@@ -228,7 +228,7 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 		// Room28::cut_serv2 (FCUT_055)
 		if (num != FCUT_055 || frame < 23) {
 			// Room28::cut_serv1 (FCUT_056 / FCUT_064)
-			if (_G(gameState).R28Briefkasten)
+			if (_G(gameState).R28LetterBox)
 				_G(det)->plot_static_details(0, 0, 8, 9);
 			else
 				_G(det)->plot_static_details(0, 0, 7, 7);

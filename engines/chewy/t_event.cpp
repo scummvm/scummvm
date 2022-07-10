@@ -2155,11 +2155,11 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 #undef START_STOP
 #undef START_STOP_TMP
 
-void calc_inv_use_txt(int16 test_nr) {
+void useItemWithInvItem(int16 itemId) {
 	int scrollx, scrolly;
 	int16 ret;
 
-	switch (test_nr) {
+	switch (itemId) {
 	case NOTEBOOK_OPEN_INV:
 	case MONOCLE_INV:
 		scrollx = _G(gameState).scrollx;
@@ -2176,6 +2176,7 @@ void calc_inv_use_txt(int16 test_nr) {
 			g_events->update();
 			SHOULD_QUIT_RETURN;
 		}
+
 		while (g_events->getSwitchCode() != Common::KEYCODE_INVALID) {
 			g_events->update();
 			SHOULD_QUIT_RETURN;
@@ -2187,20 +2188,20 @@ void calc_inv_use_txt(int16 test_nr) {
 		_G(gameState).scrolly = scrolly;
 		break;
 
-	case ANGEL_INV:
-	case KNOCHEN_INV:
+	case FISHINGROD_INV:
+	case BONE_INV:
 		delInventory(_G(cur)->getInventoryCursor());
 		_G(menu_item) = CUR_USE;
 		cursorChoice(_G(menu_item));
-		ret = del_invent_slot(test_nr);
+		ret = del_invent_slot(itemId);
 		_G(gameState).InventSlot[ret] = ANGEL2_INV;
-		_G(obj)->changeInventory(test_nr, ANGEL2_INV, &_G(room_blk));
+		_G(obj)->changeInventory(itemId, ANGEL2_INV, &_G(room_blk));
 		break;
 
-	case KUERBIS1_INV:
-		ret = del_invent_slot(KUERBIS1_INV);
+	case PUMPKIN_INV:
+		ret = del_invent_slot(PUMPKIN_INV);
 		_G(gameState).InventSlot[ret] = K_MASKE_INV;
-		_G(obj)->changeInventory(KUERBIS1_INV, K_MASKE_INV, &_G(room_blk));
+		_G(obj)->changeInventory(PUMPKIN_INV, K_MASKE_INV, &_G(room_blk));
 		invent_2_slot(K_FLEISCH_INV);
 		invent_2_slot(K_KERNE_INV);
 		break;
@@ -2219,25 +2220,25 @@ void calc_inv_use_txt(int16 test_nr) {
 		}
 		break;
 
-	case BRIEF_INV:
+	case LETTER_INV:
 		delInventory(_G(cur)->getInventoryCursor());
 		_G(menu_item) = CUR_USE;
 		cursorChoice(_G(menu_item));
-		_G(gameState).R42BriefMarke = true;
-		ret = del_invent_slot(BRIEF_INV);
-		_G(gameState).InventSlot[ret] = BRIEF2_INV;
-		_G(obj)->changeInventory(BRIEF_INV, BRIEF2_INV, &_G(room_blk));
+		_G(gameState).R42LetterStamped = true;
+		ret = del_invent_slot(LETTER_INV);
+		_G(gameState).InventSlot[ret] = STAMPEDLETTER_INV;
+		_G(obj)->changeInventory(LETTER_INV, STAMPEDLETTER_INV, &_G(room_blk));
 		break;
 
-	case FLASCHE_INV:
+	case BOTTLE_INV:
 		delInventory(_G(cur)->getInventoryCursor());
 		_G(menu_item) = CUR_USE;
 		cursorChoice(_G(menu_item));
 		// fall through
 
-	case WOLLE_INV:
-		remove_inventory(WOLLE_INV);
-		_G(atds)->set_ats_str(FLASCHE_INV, 1, INV_ATS_DATA);
+	case WOOL_INV:
+		remove_inventory(WOOL_INV);
+		_G(atds)->set_ats_str(BOTTLE_INV, 1, INV_ATS_DATA);
 		_G(gameState).R56WhiskyMix = true;
 		break;
 
@@ -2246,9 +2247,9 @@ void calc_inv_use_txt(int16 test_nr) {
 		delInventory(_G(cur)->getInventoryCursor());
 		_G(menu_item) = CUR_USE;
 		cursorChoice(_G(menu_item));
-		ret = del_invent_slot(test_nr);
+		ret = del_invent_slot(itemId);
 		_G(gameState).InventSlot[ret] = B_MARY2_INV;
-		_G(obj)->changeInventory(test_nr, B_MARY2_INV, &_G(room_blk));
+		_G(obj)->changeInventory(itemId, B_MARY2_INV, &_G(room_blk));
 		break;
 
 	case 13:
@@ -2272,7 +2273,7 @@ void calc_inv_use_txt(int16 test_nr) {
 		_G(menu_item) = CUR_USE;
 		cursorChoice(CUR_USE);
 
-		ret = del_invent_slot(test_nr);
+		ret = del_invent_slot(itemId);
 		_G(gameState).InventSlot[ret] = 110;
 		_G(obj)->changeInventory(104, 110, &_G(room_blk));
 		break;
@@ -2406,7 +2407,7 @@ int16 calc_person_txt(int16 p_nr) {
 				break;
 
 			case 42:
-				if (!_G(gameState).R42MarkeOk && !_G(gameState).R42HoToBeamter) {
+				if (!_G(gameState).R42StampOk && !_G(gameState).R42HoToBeamter) {
 					_G(menu_item) = CUR_HOWARD;
 					cursorChoice(_G(menu_item));
 					txt_nr = 30000;

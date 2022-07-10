@@ -135,7 +135,7 @@ struct GameFlags {
 	bool R27SurimyOk : 1;
 	bool R28SurimyCar : 1;
 	bool R28ChewyPump : 1;
-	bool R28Briefkasten : 1;
+	bool R28LetterBox : 1;
 	bool R28EntryHaus : 1;
 	bool R28Manuskript : 1;
 
@@ -199,12 +199,12 @@ struct GameFlags {
 	bool R41RepairInfo : 1;
 	bool R41HowardDiaOK : 1;
 	bool R42FirstEntry : 1;
-	bool R42BriefOk : 1;
+	bool R42LetterOk : 1;
 	bool R42HoToBeamter : 1;
 
-	bool R42MarkeOk : 1;
-	bool R42BriefMarke : 1;
-	bool R42BeamterWach : 1;
+	bool R42StampOk : 1;
+	bool R42LetterStamped : 1;
+	bool R42StationEmployeeAway : 1;
 	bool R43GetPgLady : 1;
 	bool R45TaxiOk : 1;
 	bool R45MagOk : 1;

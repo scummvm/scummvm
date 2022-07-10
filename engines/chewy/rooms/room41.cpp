@@ -214,14 +214,14 @@ int16 Room41::use_brief() {
 	int16 action_flag = false;
 	hideCur();
 
-	if (isCurInventory(BRIEF_INV)) {
+	if (isCurInventory(LETTER_INV)) {
 		action_flag = true;
 		stop_hoggy();
 		autoMove(6, P_CHEWY);
 		startAadWait(126);
 		start_hoggy();
 
-	} else if (isCurInventory(BRIEF2_INV)) {
+	} else if (isCurInventory(STAMPEDLETTER_INV)) {
 		action_flag = true;
 		autoMove(6, P_CHEWY);
 		delInventory(_G(cur)->getInventoryCursor());
@@ -229,10 +229,10 @@ int16 Room41::use_brief() {
 		startAadWait(186);
 		start_hoggy();
 		_G(atds)->set_ats_str(206, 1, ATS_DATA);
-		_G(gameState).R28Briefkasten = true;
+		_G(gameState).R28LetterBox = true;
 		_G(gameState).R40TrainMove = true;
 		_G(gameState).R28PostCar = true;
-		_G(gameState).R42BriefOk = true;
+		_G(gameState).R42LetterOk = true;
 	}
 
 	showCur();
