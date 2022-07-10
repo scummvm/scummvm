@@ -204,9 +204,18 @@ void FreescapeEngine::executeMakeVisible(FCLInstruction &instruction) {
 }
 
 void FreescapeEngine::executeToggleVisibility(FCLInstruction &instruction) {
-	uint16 objectID = instruction.source;
-	debug("Toggling obj %d visibility!", objectID);
-	Object *obj = _currentArea->objectWithID(objectID);
+	uint16 objectID = 0;
+	uint16 areaID = _currentArea->getAreaID();
+
+	if (instruction.destination > 0) {
+		objectID = instruction.destination;
+		areaID = instruction.source;
+	} else {
+		objectID = instruction.source;
+	}
+
+	debug("Toggling obj %d visibility in area %d!", objectID, areaID);
+	Object *obj = (*_areasByAreaID)[areaID]->objectWithID(objectID);
 	obj->toggleVisibility();
 }
 
