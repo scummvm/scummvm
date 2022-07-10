@@ -20,6 +20,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für die koreanische Version von Legend of Kyrandia 1 hinzugefügt.
    - Unterstützung für die hebräische Version von Legend of Kyrandia 3 hinzugefügt.
 
+ SCUMM:
+   - Unterstützung von CGA-, CGA Composite- und Herkules-Grafikmodi für die
+     SCUMM 1-Versionen von Zak McKracken und Maniac Mansion hinzugefügt.
+
  Toon:
    - Die Spiel-Menüs verhalten sich nun wie das Original.
 
