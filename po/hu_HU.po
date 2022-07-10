@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-10 14:51+0000\n"
-"PO-Revision-Date: 2022-07-09 06:32+0000\n"
+"PO-Revision-Date: 2022-07-11 08:32+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -219,10 +219,8 @@ msgid "Downloading icons list..."
 msgstr "Ikonlista letöltése ..."
 
 #: gui/downloadiconsdialog.cpp:190
-#, fuzzy
-#| msgid "Clear value"
 msgid "Clear Cache"
-msgstr "Érték törlése"
+msgstr "Gyorsítótár Törlése"
 
 #: gui/downloadiconsdialog.cpp:241
 #, c-format
@@ -265,6 +263,8 @@ msgid ""
 "You are about to remove %s %s of data, deleting all previously downloaded "
 "icon files. Do you want to proceed?"
 msgstr ""
+"%s %s adat eltávolítására készülsz, ezzel törlöd az összes korábban "
+"letöltött ikonfájlt. Akarod folytatni?"
 
 #: gui/downloadiconsdialog.cpp:452 gui/updates-dialog.cpp:115
 msgid "Proceed"
