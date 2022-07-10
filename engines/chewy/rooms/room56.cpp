@@ -248,7 +248,7 @@ void Room56::talk_man() {
 
 int16 Room56::use_man() {
 	int16 action_ret = false;
-	if (_G(gameState).flags32_10 || !isCurInventory(FLASCHE_INV))
+	if (_G(gameState).flags32_10 || !isCurInventory(BOTTLE_INV))
 		return action_ret;
 	
 	action_ret = true;

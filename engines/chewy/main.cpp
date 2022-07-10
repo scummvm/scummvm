@@ -977,7 +977,7 @@ void evaluateObj(int16 objectId, int16 mode) {
 	case OBJECT_1:
 	case OBJECT_2:
 		if (mode == INVENTORY_NORMAL)
-			calc_inv_use_txt(objectId);
+			useItemWithInvItem(objectId);
 		break;
 
 	case NO_ACTION:
