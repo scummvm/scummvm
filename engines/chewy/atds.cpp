@@ -84,7 +84,7 @@ Atdsys::Atdsys() {
 	_invBlockNr = -1;
 
 	_dialogResource = new DialogResource(ADS_TXT_STEUER);
-	_text = new Text();
+	_text = _G(txt);
 
 	_dialogCloseupNextBlock._blkNr = 0;
 	_dialogCloseupNextBlock._endNr = 0;
