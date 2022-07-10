@@ -1568,9 +1568,8 @@ void ScummEngine_v2::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsByte(_flashlight.xStrips, VER(99));
 	s.syncAsByte(_flashlight.yStrips, VER(99));
 
-	// Old saves are based on a diffenrent color mapping, so the verb
-	// colors need to be adjusted.
-	if (s.getVersion() < VER(106) && s.isLoading()) {
+	// Old saves are based on a different color mapping, so the verb colors need to be adjusted.
+	if (s.getVersion() < VER(106) && s.isLoading() && _game.platform == Common::kPlatformDOS) {
 		initV2MouseOver();
 		for (int i = 0; i < _numVerbs; ++i) {
 			if (!_verbs[i].verbid)
