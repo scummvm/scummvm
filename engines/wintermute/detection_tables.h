@@ -33,6 +33,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"alavi",           "Alavi Detective - Murder of Miss Rojan"},
 	{"alimardan1",      "Alimardan's Mischief"},
 	{"alimardan2",      "Alimardan Meets Merlin"},
+	{"alone",           "Alone, Under Strange Night"},
 	{"alphapolaris",    "Alpha Polaris"},
 	{"apeiron",         "Apeiron"},
 	{"artofmurder1",    "Art of Murder 1: FBI Confidential"},
@@ -297,6 +298,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Alimardan Meets Merlin (Steam) (English)
 	WME_WINENTRY("alimardan2", "",
 		WME_ENTRY1s("data.dcp", "e3ffb5d177737a57bb391995d9361055", 413397623), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Alone, Under Strange Night (English)
+	WME_WINENTRY("alone", "",
+		WME_ENTRY1s("data.dcp", "af7638e15b5eeeedb92768d32e02e7f4", 66172118), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_5),
 
 	// Alpha Polaris (English)
 	WME_WINENTRY("alphapolaris", "",
