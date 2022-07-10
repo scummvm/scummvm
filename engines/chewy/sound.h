@@ -60,11 +60,10 @@ public:
 	void setSoundChannelBalance(uint channel, int8 balance);
 
 	void playMusic(int16 num, bool loop = false);
-	void playMusic(uint8 *data, uint32 size, uint8 volume = 63, bool handleBuffer = false);
+	void playMusic(uint8 *data, uint32 size, uint8 volume = 63);
 	void pauseMusic();
 	void resumeMusic();
 	void stopMusic();
-	void disposeMusicBuffer();
 	bool isMusicActive() const;
 	void setUserMusicVolume(uint volume);
 	int getUserMusicVolume() const;
@@ -121,7 +120,6 @@ private:
 
 	SoundResource *_speechRes;
 	SoundResource *_soundRes;
-	uint8 *_overridenMusicBuffer = nullptr;
 };
 
 } // End of namespace Chewy
