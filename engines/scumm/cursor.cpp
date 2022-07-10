@@ -469,10 +469,10 @@ void ScummEngine_v2::setBuiltinCursor(int idx) {
 		color = default_v0_cursor_colors[idx];
 	else if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp)
 		color = (idx & 1) * 3;
-	else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG)
+	else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG || _renderMode == Common::kRenderCGA_BW)
 		color = idx & 1;
 	else
-		color = default_cursor_colors[idx];	
+		color = default_cursor_colors[idx];
 
 	if (_game.platform == Common::kPlatformNES) {
 		_cursor.width = 8;
@@ -566,7 +566,7 @@ void ScummEngine_v2::setBuiltinCursor(int idx) {
 		*(hotspot + (_cursor.width * 5) - 1) = color;
 		*(hotspot + (_cursor.width * 5) + 1) = color;
 
-		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
+		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG || _renderMode == Common::kRenderCGA_BW) {
 			const byte *src = &_grabbedCursor[_cursor.width * _cursor.height - 1];
 
 			_cursor.width <<= 1;
@@ -579,10 +579,11 @@ void ScummEngine_v2::setBuiltinCursor(int idx) {
 
 			while (dst2 >= _grabbedCursor) {
 				for (i = _cursor.width >> 1; i; --i) {
+					uint8 col2 = (_renderMode == Common::kRenderCGA_BW) ? *src : 0xFF;
+					*dst1-- = col2;
+					*dst1-- = col2;
 					*dst2-- = *src;
 					*dst2-- = *src--;
-					*dst1-- = 0xFF;
-					*dst1-- = 0xFF;
 				}
 				dst1 -= _cursor.width;
 				dst2 -= _cursor.width;

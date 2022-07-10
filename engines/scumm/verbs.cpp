@@ -198,7 +198,7 @@ void ScummEngine_v2::initV2MouseOver() {
 	_hiLiteColorVerbArrow = _hiLiteColorInvSentence = 14;
 	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp)
 		_hiLiteColorInvSentence = 15;
-	else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG)
+	else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG || _renderMode == Common::kRenderCGA_BW)
 		_hiLiteColorVerbArrow = _hiLiteColorInvSentence = 15;
 
 	if (_game.platform == Common::kPlatformC64) {

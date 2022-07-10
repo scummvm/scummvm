@@ -21,8 +21,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for the Hebrew version of Legend of Kyrandia 3.
 
  SCUMM:
-   - Add support for CGA, CGA Composite and Hercules modes for SCUMM 1
-     versions of Zak McKracken and Maniac Mansion.
+   - Add support for CGA, CGA Composite, CGA black & white and Hercules modes
+     for SCUMM 1 versions of Zak McKracken and Maniac Mansion.
 
  Toon:
    - Made game menus behave like in the original.

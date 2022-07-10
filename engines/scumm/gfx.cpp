@@ -768,14 +768,11 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 				}
 			}
 		} else if (_game.version == 1) {
-			src = postProcessV1Graphics(vs, x, y, width, height);
-			if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG)
-				pitch = kHercWidth;
-
+			src = postProcessV1Graphics(vs, pitch, x, y, width, height);
 		} else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-			ditherHerc(_compositeBuf, _herculesBuf, width, &x, &y, &width, &height);
+			ditherHerc(_compositeBuf, _hercCGAScaleBuf, width, &x, &y, &width, &height);
 
-			src = _herculesBuf + x + y * kHercWidth;
+			src = _hercCGAScaleBuf + x + y * kHercWidth;
 			pitch = kHercWidth;
 
 			// center image on the screen
@@ -795,7 +792,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	_system->copyRectToScreen(src, pitch, x, y, width, height);
 }
 
-const byte *ScummEngine::postProcessV1Graphics(VirtScreen *vs, int &x, int &y, int &width, int &height) const {
+const byte *ScummEngine::postProcessV1Graphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const {
 	static const byte zakVrbColMap[] =	{ 0x0, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF, 0xF, 0x5, 0x5, 0x5, 0xA, 0xA, 0xF, 0xF };
 	static const byte zakTxtColMap[] =	{ 0x0, 0xF, 0xA, 0x5, 0xA, 0x5, 0x5, 0xF, 0xA, 0xA, 0xA, 0xA, 0xA, 0x5, 0x5, 0xF };
 	static const byte mmVrbColMap[] =	{ 0x0, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF, 0xA, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF };
@@ -807,10 +804,11 @@ const byte *ScummEngine::postProcessV1Graphics(VirtScreen *vs, int &x, int &y, i
 	byte *res = _compositeBuf;
 	byte *dst = _compositeBuf;
 	const byte *src = res;
+	bool renderHerc = (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG);
+
+	const byte *colMap = (_game.id == GID_ZAK) ? ((vs->number == kVerbVirtScreen || renderHerc) ? zakVrbColMap : zakTxtColMap) : (vs->number == kVerbVirtScreen ? mmVrbColMap : mmTxtColMap);
 
 	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp) {
-		const byte *colMap = (_game.id == GID_ZAK) ? (vs->number == kVerbVirtScreen ? zakVrbColMap : zakTxtColMap) : (vs->number == kVerbVirtScreen ? mmVrbColMap : mmTxtColMap);
-
 		if (vs->number == kMainVirtScreen) {
 			for (int h = height; h; --h) {
 				for (int w = width >> 1; w; --w) {
@@ -827,50 +825,79 @@ const byte *ScummEngine::postProcessV1Graphics(VirtScreen *vs, int &x, int &y, i
 			}
 		}
 
-	} else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-		const byte *colMap = (_game.id == GID_ZAK) ? zakVrbColMap : (vs->number == kVerbVirtScreen ? mmVrbColMap : mmTxtColMap);
-		dst = res = _herculesBuf;
+	} else if (renderHerc || _renderMode == Common::kRenderCGA_BW) {
+		// The monochrome rendering is very similiar for Hercules and CGA b/w.
+		// For Hercules we have to do some corrections to fit into the 350 pixels
+		// height. The text and verb vs are rendered in normal height, only the
+		// main vs gets scaled by leaving out every other line. And we center the
+		// image horizontally within the 720 pixels width.
+		// For CGA b/w the origial resolution is 640x200, so we just scale that
+		// to our 640x400 by repeating each line.
+		pitch = renderHerc ? kHercWidth : (_screenWidth << 1);
+		dst = res = _hercCGAScaleBuf;
+		int pitch1 = (pitch - width) << 1;
 
 		if (vs->number == kMainVirtScreen) {
-			uint32 *dst2 = (uint32*)(dst + kHercWidth);
-			int pitch = (kHercWidth - width) << 1;
-			int pitch2 = pitch >> 2;
-			y = (y - vs->topline) * 2 + vs->topline;
-			height = MIN<int>(height << 1, kHercHeight - y);
+			uint32 *dst2 = (uint32*)(dst + pitch);
+			int pitch2 = pitch1 >> 2;
+			int height2 = height;
 
-			for (int h = height >> 1; h; --h) {
+			if (renderHerc) {
+				y = (y - vs->topline) * 2 + vs->topline;
+				height = MIN<int>(height << 1, kHercHeight - y);
+				height2 = height >> 1;
+			}
+
+			for (int h = height2; h; --h) {
 				for (int w = width >> 1; w; --w) {
+					const uint32 *s = (const uint32*)dst;
 					*dst++ = (*src >> 3) & 1;
 					*dst++ = (*src >> 2) & 1;
 					*dst++ = (*src >> 1) & 1;
 					*dst++ = *src & 1;
-					*dst2++ = 0;
+					*dst2++ = renderHerc ? 0 : *s;
 					src += 2;
 				}
-				dst += pitch;
+				dst += pitch1;
 				dst2 += pitch2;
 			}
 
 		} else {
-			int pitch = kHercWidth - (width << 1);
-			y -= vs->topline;
-			if (vs->number == kVerbVirtScreen) {
-				y += vs->topline * 2 - 16;
-				height = MIN<int>(height, kHercHeight - y);
+			if (renderHerc) {
+				pitch1 = kHercWidth - (width << 1);
+				y -= vs->topline;
+				if (vs->number == kVerbVirtScreen) {
+					y += vs->topline * 2 - 16;
+					height = MIN<int>(height, kHercHeight - y);
+				}
 			}
+
+			uint16 *dst2 = (uint16*)(dst + pitch);
+			int pitch2 = pitch1 >> 1;
 
 			for (int h = height; h; --h) {
 				for (int w = width; w; --w) {
+					const uint16 *s = (const uint16*)dst;
 					uint8 col = colMap[*src++];
 					*dst++ = (col >> 1) & 1;
 					*dst++ = col & 1;
+					if (!renderHerc)
+						*dst2++ = *s;
 				}
-				dst += pitch;
+				dst += pitch1;
+				dst2 += pitch2;
 			}
 		}
 
-		x = x * 2 + 40;
-		width *= 2;
+		x <<= 1;
+		width <<= 1;
+
+		if (renderHerc) {
+			x += 40;
+		} else {
+			y <<= 1;
+			height <<= 1;
+		}
 
 	} else if (vs->number == kTextVirtScreen) {
 		// For EGA, the omly colors that need remapping are for the kTextVirtScreen.

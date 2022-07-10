@@ -793,6 +793,8 @@ void ScummEngine::resetScummVars() {
 			VAR(VAR_VIDEOMODE) = 82;
 		else if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp)
 			VAR(VAR_VIDEOMODE) = 4;
+		else if (_renderMode == Common::kRenderCGA_BW)
+			VAR(VAR_VIDEOMODE) = 6;
 		else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG)
 			VAR(VAR_VIDEOMODE) = 30;
 		else if (_renderMode == Common::kRenderEGA)

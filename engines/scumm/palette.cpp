@@ -207,6 +207,9 @@ void ScummEngine::resetPalette() {
 			setPaletteFromTable(tableHercGPalette, sizeof(tableHercGPalette) / 3);
 		} else if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp) {
 			setPaletteFromTable(_cgaColors[cgaPalIndex * 2 + cgaPalIntensity], sizeof(_cgaColors[0]) / 3);
+		} else if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGA_BW) {
+			setPalColor(0, 0x00, 0x00, 0x00);
+			setPalColor(1, 0xff, 0xff, 0xff);
 		} else {
 			setPaletteFromTable(tableEGAPalette, sizeof(tableEGAPalette) / 3);
 		}
@@ -479,7 +482,7 @@ void ScummEngine::updateColorTableV1(int renderMode) {
 	};
 
 	int tbl = (_game.platform == Common::kPlatformC64) ? 0 : (_game.id == GID_ZAK ? 1 : 3);
-	if (renderMode == Common::kRenderHercA || renderMode == Common::kRenderHercG || renderMode == Common::kRenderCGA)
+	if (renderMode == Common::kRenderHercA || renderMode == Common::kRenderHercG || renderMode == Common::kRenderCGA || renderMode == Common::kRenderCGA_BW)
 		++tbl;
 
 	assert(_gdi);

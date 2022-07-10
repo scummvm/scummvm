@@ -1059,8 +1059,7 @@ public:
 protected:
 	// Screen rendering
 	byte *_compositeBuf;
-	byte *_herculesBuf = nullptr;
-	const uint16 *_ditheringTableV1 = nullptr;
+	byte *_hercCGAScaleBuf = nullptr;
 
 	virtual void drawDirtyScreenParts();
 	void updateDirtyScreen(VirtScreenNumber slot);
@@ -1072,7 +1071,7 @@ protected:
 	void mac_undrawIndy3TextBox();
 	void mac_undrawIndy3CreditsText();
 
-	const byte *postProcessV1Graphics(VirtScreen *vs, int &x, int &y, int &width, int &height) const;
+	const byte *postProcessV1Graphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const;
 	void ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const;
 
 public:
