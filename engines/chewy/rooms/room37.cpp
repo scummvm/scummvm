@@ -1,4 +1,4 @@
-	/* ScummVM - Graphic Adventure Engine
+/* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -69,6 +69,9 @@ void Room37::entry() {
 			_G(det)->hideStaticSpr(8);
 		} else if (_G(gameState).R37DogAshamed) {
 			_G(det)->showStaticSpr(0);
+			_G(atds)->set_ats_str(250, 1, ATS_DATA);
+			_G(atds)->set_ats_str(256, 1, ATS_DATA);
+			_G(atds)->delControlBit(251, ATS_ACTIVE_BIT);
 		}
 	}
 }
