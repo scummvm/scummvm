@@ -93,6 +93,8 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 	_gameDataDir = Common::FSNode(ConfMan.get("path"));
 
+	SearchMan.addDirectory(_gameDataDir.getPath(), _gameDataDir, 0, 5);
+
 	for (uint i = 0; Director::directoryGlobs[i]; i++) {
 		Common::String directoryGlob = directoryGlobs[i];
 		SearchMan.addSubDirectoryMatching(_gameDataDir, directoryGlob);
