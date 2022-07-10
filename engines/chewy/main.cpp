@@ -342,11 +342,13 @@ bool mainLoop(int16 mode) {
 				}
 
 				_G(out)->setPointer(_G(workptr));
-				_G(menu_item) = _G(tmp_menu_item);
 				_G(menu_display) = MENU_HIDE;
 
-				if (!(_G(cur)->usingInventoryCursor() && _G(menu_item) == CUR_USE))
-					cursorChoice(_G(tmp_menu_item));
+				if (!_G(cur)->usingInventoryCursor()) {
+					_G(menu_item) = CUR_WALK;
+					cursorChoice(_G(menu_item));
+				} else
+					_G(menu_item) = CUR_USE;
 
 				_G(flags).SaveMenu = false;
 				_G(cur)->showCursor();
