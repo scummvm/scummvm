@@ -120,8 +120,6 @@ bool8 _game_session::IsPropSelected(const char *propName) {
 	return FALSE8;
 }
 
-#if CD_MODE == 0
-
 void _game_session::Render_3d_nicos() {
 	_feature_info *feature;
 	uint32 j;
@@ -171,11 +169,5 @@ void _game_session::Render_3d_nicos() {
 
 	surface_manager->Unlock_surface(working_buffer_id);
 }
-
-#else
-
-void _game_session::Render_3d_nicos() {}
-
-#endif // #if CD_MODE == 0
 
 } // End of namespace ICB

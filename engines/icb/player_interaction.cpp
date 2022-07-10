@@ -228,8 +228,6 @@ void _player::Find_current_player_interact_object() {
 	}
 }
 
-#if CD_MODE == 0
-
 void _player::Render_crude_interact_highlight() {
 	uint32 pitch; // backbuffer pitch
 	uint8 *ad;
@@ -279,12 +277,6 @@ void _player::Render_crude_interact_highlight() {
 
 	surface_manager->Unlock_surface(working_buffer_id);
 }
-
-#else
-
-void _player::Render_crude_interact_highlight() {}
-
-#endif // #if CD_MODE == 0
 
 __mode_return _player::Player_interact() {
 	// check if the player has pressed the interact button

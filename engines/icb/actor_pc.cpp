@@ -60,11 +60,8 @@ int32 hiertpc;
 int32 shadtpc;
 
 // Local prototypes
-#if CD_MODE == 0
 void drawBboxPC(SVECTOR *scrn, CVECTOR colour);
 void drawOutlinePC(SVECTOR *min, SVECTOR *max, CVECTOR colour);
-#endif // #if CD_MODE == 0
-
 void DrawModel4PC(rap_API *mrap, int32 poseBone, MATRIXPC *lw, MATRIXPC *local2screen, int32 uvframe, uint32 debug, SVECTOR *bbox, SVECTOR *minbbox, SVECTOR *maxbbox);
 
 // My home grown replacement for the DrawActor routine
@@ -465,44 +462,42 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 	actor->sPos.vx = (int16)sxy0.vx;
 	actor->sPos.vy = (int16)sxy0.vy;
 
-#if CD_MODE == 0
-	CVECTOR bboxColour = {(uint8)bboxRed, (uint8)bboxGreen, (uint8)bboxBlue, 0};
-	if (_drawBbox)
-		drawBboxPC(actor->bboxScrn, bboxColour);
-	CVECTOR sbColour = {240, 240, 240, 0};
-	if (_drawSolidBbox)
-		drawSolidBboxPC(actor->bboxScrn, &sbColour);
+	if (true) { // FIXME: Enable this with debug level / channel
+		CVECTOR bboxColour = {(uint8)bboxRed, (uint8)bboxGreen, (uint8)bboxBlue, 0};
+		if (_drawBbox)
+			drawBboxPC(actor->bboxScrn, bboxColour);
+		CVECTOR sbColour = {240, 240, 240, 0};
+		if (_drawSolidBbox)
+			drawSolidBboxPC(actor->bboxScrn, &sbColour);
 
-	bboxColour.r = 255;
-	bboxColour.g = 20;
-	bboxColour.b = 180;
-	if (_drawShadowBbox) {
-		for (b = 0; b < actor->nShadows; b++) {
-			drawBboxPC(shadowBox[b], bboxColour);
+		bboxColour.r = 255;
+		bboxColour.g = 20;
+		bboxColour.b = 180;
+		if (_drawShadowBbox) {
+			for (b = 0; b < actor->nShadows; b++) {
+				drawBboxPC(shadowBox[b], bboxColour);
+			}
+		}
+
+		// 2 LINE_F3's : e.g. a rectangle
+		CVECTOR slColour;
+		if (_drawSline) {
+			slColour.r = (uint8)slineRed;
+			slColour.g = (uint8)slineGreen;
+			slColour.b = (uint8)slineBlue;
+			drawOutlinePC(&actor->minBbox, &actor->maxBbox, slColour);
+		}
+		if (_drawShadowSline) {
+			for (b = 0; b < actor->nShadows; b++) {
+				slColour.r = (uint8)180;
+				slColour.g = (uint8)(20 + b * 70);
+				slColour.b = (uint8)255;
+				drawOutlinePC(actor->shadowMinBox + b, actor->shadowMaxBox + b, slColour);
+			}
 		}
 	}
-
-	// 2 LINE_F3's : e.g. a rectangle
-	CVECTOR slColour;
-	if (_drawSline) {
-		slColour.r = (uint8)slineRed;
-		slColour.g = (uint8)slineGreen;
-		slColour.b = (uint8)slineBlue;
-		drawOutlinePC(&actor->minBbox, &actor->maxBbox, slColour);
-	}
-	if (_drawShadowSline) {
-		for (b = 0; b < actor->nShadows; b++) {
-			slColour.r = (uint8)180;
-			slColour.g = (uint8)(20 + b * 70);
-			slColour.b = (uint8)255;
-			drawOutlinePC(actor->shadowMinBox + b, actor->shadowMaxBox + b, slColour);
-		}
-	}
-#endif // #if CD_MODE == 0
 }
 
-// dont bother in a cd mode
-#if CD_MODE == 0
 void drawOutlinePC(SVECTOR *min, SVECTOR *max, CVECTOR colour) {
 	LINE_F3 *line = (LINE_F3 *)drawpacket;
 	setLineF3(line);
@@ -520,7 +515,6 @@ void drawOutlinePC(SVECTOR *min, SVECTOR *max, CVECTOR colour) {
 	myAddPrimClip(min->vz, drawpacket);
 	myAddPacket(sizeof(LINE_F3));
 }
-#endif
 
 // New version using soft-skinning specific data-files
 void DrawModel4PC(rap_API *mrap, int32 poseBone, MATRIXPC *lw, MATRIXPC *local2screen, int32 uvframe, uint32 debug, SVECTOR *bbox, SVECTOR *minbbox, SVECTOR *maxbbox) {
@@ -630,90 +624,82 @@ void DrawModel4PC(rap_API *mrap, int32 poseBone, MATRIXPC *lw, MATRIXPC *local2s
 	nPolys = mrap->nFUS3;
 	if (nPolys != 0) {
 		polyStart = mrap->GetFUS3Ptr();
-// Do the drawing using internal C based debugging drawing code
-#if CD_MODE == 0
-		if (debug)
+		// Do the drawing using internal C based debugging drawing code
+		if (debug) {
 			drawFUS3PC(polyStart, nPolys, local);
-		else
-#endif // #if CD_MODE == 0
+		} else {
 			fastDrawFUS3PC(polyStart, nPolys, screen);
+		}
 	}
 	nPolys = mrap->nGUS3;
 	if (nPolys != 0) {
 		polyStart = mrap->GetGUS3Ptr();
-// Do the drawing using internal C based debugging drawing code
-#if CD_MODE == 0
-		if (debug)
+		// Do the drawing using internal C based debugging drawing code
+		if (debug) {
 			drawGUS3PC(polyStart, nPolys, local);
-		else
-#endif // #if CD_MODE == 0
+		} else {
 			fastDrawGUS3PC(polyStart, nPolys, screen);
+		}
 	}
 	nPolys = mrap->nFTS3;
 	if (nPolys != 0) {
 		polyStart = mrap->GetFTS3Ptr();
-// Do the drawing using internal C based debugging drawing code
-#if CD_MODE == 0
-		if (debug)
+		// Do the drawing using internal C based debugging drawing code
+		if (debug) {
 			drawFTS3PC(polyStart, nPolys, local);
-		else
-#endif // #if CD_MODE == 0
+		} else {
 			fastDrawFTS3PC(polyStart, nPolys, screen);
+		}
 	}
 	nPolys = mrap->nGTS3;
 	if (nPolys != 0) {
 		polyStart = mrap->GetGTS3Ptr();
-// Do the drawing using internal C based debugging drawing code
-#if CD_MODE == 0
-		if (debug)
+		// Do the drawing using internal C based debugging drawing code
+		if (debug) {
 			drawGTS3PC(polyStart, nPolys, local);
-		else
-#endif // #if CD_MODE == 0
+		} else {
 			fastDrawGTS3PC(polyStart, nPolys, screen);
+		}
 	}
 	nPolys = mrap->nFUL3;
 	if (nPolys != 0) {
 		polyStart = mrap->GetFUL3Ptr();
-// Do the drawing using internal C based debugging drawing code
-#if CD_MODE == 0
-		if (debug)
+		// Do the drawing using internal C based debugging drawing code
+		if (debug) {
 			drawFUL3PC(polyStart, nPolys, local, (SVECTOR *)pNormal);
-		else
-#endif // #if CD_MODE == 0
+		} else {
 			fastDrawFUL3PC(polyStart, nPolys, screen, (SVECTOR *)pNormal);
+		}
 	}
 	nPolys = mrap->nGUL3;
 	if (nPolys != 0) {
 		polyStart = mrap->GetGUL3Ptr();
-// Do the drawing using internal C based debugging drawing code
-#if CD_MODE == 0
-		if (debug)
+		// Do the drawing using internal C based debugging drawing code
+		if (debug) {
 			drawGUL3PC(polyStart, nPolys, local, (SVECTOR *)pNormal);
-		else
-#endif // #if CD_MODE == 0
+		} else {
 			fastDrawGUL3PC(polyStart, nPolys, screen, (SVECTOR *)pNormal);
+		}
 	}
 	nPolys = mrap->nFTL3;
 	if (nPolys != 0) {
 		polyStart = mrap->GetFTL3Ptr();
-// Do the drawing using internal C based debugging drawing code
-#if CD_MODE == 0
-		if (debug)
+		// Do the drawing using internal C based debugging drawing code
+		if (debug) {
 			drawFTL3PC(polyStart, nPolys, local, (SVECTOR *)pNormal);
-		else
-#endif // #if CD_MODE == 0
+		} else {
 			fastDrawFTL3PC(polyStart, nPolys, screen, (SVECTOR *)pNormal);
+		}
 	}
 	nPolys = mrap->nGTL3;
 	if (nPolys != 0) {
 		polyStart = mrap->GetGTL3Ptr();
-// Do the drawing using internal C based debugging drawing code
-#if CD_MODE == 0
-		if (debug)
+		// Do the drawing using internal C based debugging drawing code
+		if (debug) {
 			drawGTL3PC(polyStart, nPolys, local, (SVECTOR *)pNormal);
-		else
-#endif // #if CD_MODE == 0
+		} else {
 			fastDrawGTL3PC(polyStart, nPolys, screen, (SVECTOR *)pNormal);
+		}
 	}
 
 	// Now do the animating polygons
@@ -738,89 +724,81 @@ void DrawModel4PC(rap_API *mrap, int32 poseBone, MATRIXPC *lw, MATRIXPC *local2s
 			switch (*typePtr++) { // ++ skips the type field
 			case HMD_FUS3: {
 				nPolys = *typePtr++;
-#if CD_MODE == 0
-				if (debug)
+				if (debug) {
 					drawFUS3PC(polyStart, nPolys, local);
-				else
-#endif // #if CD_MODE == 0
+				} else {
 					fastDrawFUS3PC(polyStart, nPolys, screen);
+				}
 				polyStart += (nPolys * HMD_FUS3_SIZE); // skip to the next polygon
 				break;
 			}
 			case HMD_GUS3: {
 				nPolys = *typePtr++;
-#if CD_MODE == 0
-				if (debug)
+				if (debug) {
 					drawGUS3PC(polyStart, nPolys, local);
-				else
-#endif // #if CD_MODE == 0
+				} else {
 					fastDrawGUS3PC(polyStart, nPolys, screen);
+				}
 				polyStart += (nPolys * HMD_GUS3_SIZE); // skip to the next polygon
 				break;
 			}
 			case HMD_FTS3: {
 				nPolys = *typePtr++;
-#if CD_MODE == 0
-				if (debug)
+				if (debug) {
 					drawFTS3PC(polyStart, nPolys, local);
-				else
-#endif // #if CD_MODE == 0
+				} else {
 					fastDrawFTS3PC(polyStart, nPolys, screen);
+				}
 				polyStart += (nPolys * HMD_FTS3_SIZE); // skip to the next polygon
 				break;
 			}
 			case HMD_GTS3: {
 				nPolys = *typePtr++;
-#if CD_MODE == 0
-				if (debug)
+				if (debug) {
 					drawGTS3PC(polyStart, nPolys, local);
-				else
-#endif // #if CD_MODE == 0
+				} else {
 					fastDrawGTS3PC(polyStart, nPolys, screen);
+				}
 				polyStart += (nPolys * HMD_GTS3_SIZE); // skip to the next polygon
 				break;
 			}
 			case HMD_FUL3: {
 				nPolys = *typePtr++;
-#if CD_MODE == 0
-				if (debug)
+				if (debug) {
 					drawFUL3PC(polyStart, nPolys, local, (SVECTOR *)pNormal);
-				else
-#endif // #if CD_MODE == 0
+				} else {
 					fastDrawFUL3PC(polyStart, nPolys, screen, (SVECTOR *)pNormal);
+				}
 				polyStart += (nPolys * HMD_FUL3_SIZE); // skip to the next polygon
 				break;
 			}
 			case HMD_GUL3: {
 				nPolys = *typePtr++;
-#if CD_MODE == 0
-				if (debug)
+				if (debug) {
 					drawGUL3PC(polyStart, nPolys, local, (SVECTOR *)pNormal);
-				else
-#endif // #if CD_MODE == 0
+				} else {
 					fastDrawGUL3PC(polyStart, nPolys, screen, (SVECTOR *)pNormal);
+				}
 				polyStart += (nPolys * HMD_GUL3_SIZE); // skip to the next polygon
 				break;
 			}
 			case HMD_FTL3: {
 				nPolys = *typePtr++;
-#if CD_MODE == 0
-				if (debug)
+				if (debug) {
 					drawFTL3PC(polyStart, nPolys, local, (SVECTOR *)pNormal);
-				else
-#endif // #if CD_MODE == 0
+				} else {
 					fastDrawFTL3PC(polyStart, nPolys, screen, (SVECTOR *)pNormal);
+				}
 				polyStart += (nPolys * HMD_FTL3_SIZE); // skip to the next polygon
 				break;
 			}
 			case HMD_GTL3: {
 				nPolys = *typePtr++;
-#if CD_MODE == 0
-				if (debug)
+				if (debug) {
 					drawGTL3PC(polyStart, nPolys, local, (SVECTOR *)pNormal);
-				else
-#endif // #if CD_MODE == 0
+				} else {
 					fastDrawGTL3PC(polyStart, nPolys, screen, (SVECTOR *)pNormal);
+				}
 				polyStart += (nPolys * HMD_GTL3_SIZE); // skip to the next polygon
 				break;
 			}
@@ -934,8 +912,6 @@ void DrawActorTiePC(psxCamera *camera, SVECTORPC *pos, uint32 size, CVECTOR *) {
 	}
 }
 
-#if CD_MODE == 0
-
 void drawBboxPC(SVECTOR *scrn, CVECTOR colour) {
 	// 6 LINE_F3's i.e. 6 pairs of lines = 12 lines in total
 	// The 6 pairs of lines are the following vertex links:
@@ -996,7 +972,6 @@ void drawBboxPC(SVECTOR *scrn, CVECTOR colour) {
 	myAddPacket(sizeof(LINE_F3));
 }
 
-#endif
 void ConvertToScreenCoords(SVECTORPC *local, SVECTORPC *screen, int32 nVertices) {
 	int32 i;
 	SVECTORPC *in = local;

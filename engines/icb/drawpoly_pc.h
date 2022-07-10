@@ -36,8 +36,6 @@ extern CVECTOR unlitPoly;
 extern uint32 _drawBface;
 extern uint32 deadObject;
 
-#if CD_MODE == 0
-
 // Draw a cuboid
 void drawSolidBboxPC(SVECTOR *scrn, CVECTOR *rgbIn);
 
@@ -67,8 +65,6 @@ void drawGTL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECTOR *
 
 // Debug : Simple Flat, Un-Textured triangles with no colour in them
 void drawTRI3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex);
-
-#endif // #if CD_MODE == 0
 
 // Optimised : Flat, Un-Textured, Self-Luminous, triangles
 void fastDrawFUS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex);

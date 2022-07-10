@@ -1185,9 +1185,11 @@ void _mission::Create_display() {
 			if (g_px->mega_timer)
 				session->Display_mega_times();
 
-			// Crude Interaction Highlight
-			session->player.Render_crude_interact_highlight();
-			session->Show_lit_unlit_diagnostics();
+			if (true) { // FIXME: Enable this with debug level / channel
+				session->player.Render_crude_interact_highlight();
+				session->Show_lit_unlit_diagnostics();
+			}
+
 			session->player.DrawCompass();
 		}
 		break;

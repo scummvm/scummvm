@@ -353,12 +353,11 @@ void MakeShadowPC(rap_API *srap, SVECTORPC *local, int32 nVertices, SVECTORPC *p
 	if (nPolys != 0) {
 		polyStart = srap->GetTRI3Ptr();
 		// Do the drawing using internal C based debugging drawing code
-#if CD_MODE == 0
-		if (debug)
+		if (debug) {
 			drawTRI3PC(polyStart, nPolys, pvert);
-		else
-#endif // #if CD_MODE == 0
+		} else {
 			fastDrawTRI3PC(polyStart, nPolys, pvert);
+		}
 	}
 	st3pc = g_system->getMillis() - st3pc;
 }
