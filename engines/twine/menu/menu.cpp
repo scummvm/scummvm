@@ -1251,8 +1251,8 @@ void Menu::processInventoryMenu() {
 
 	if (_engine->_gameState->_inventoryNumLeafs > 0) {
 		_engine->_gameState->giveItem(InventoryItems::kiCloverLeaf);
-		// TODO: shouldn't this get reset? } else {
-		//	_engine->_gameState->removeItem(InventoryItems::kiCloverLeaf);
+	} else {
+		_engine->_gameState->removeItem(InventoryItems::kiCloverLeaf);
 	}
 
 	const int32 left = _engine->width() / 2 - 303;
