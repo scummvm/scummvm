@@ -423,8 +423,6 @@ void DownloadIconsDialog::calculateList() {
 }
 
 void DownloadIconsDialog::clearCache() {
-	Common::String sizeUnits;
-
 	Common::String iconsPath = ConfMan.get("iconspath");
 	if (iconsPath.empty()) {
 		Common::U32String str(_("ERROR: No icons path set"));
@@ -437,6 +435,7 @@ void DownloadIconsDialog::clearCache() {
 	Common::ArchiveMemberList iconFiles;
 
 	iconDir->listMatchingMembers(iconFiles, "gui-icons*.dat");
+	int totalSize = 0;
 
 	for (auto ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
 		Common::String fname = (*ic)->getName();
@@ -444,10 +443,11 @@ void DownloadIconsDialog::clearCache() {
 		uint32 size = str->size();
 		delete str;
 
-		g_state->totalSize += size;
+		totalSize += size;
 	}
 
-	Common::String size = getHumanReadableBytes(g_state->totalSize, sizeUnits);
+	Common::String sizeUnits;
+	Common::String size = getHumanReadableBytes(totalSize, sizeUnits);
 
 	GUI::MessageDialog dialog(Common::U32String::format(_("You are about to remove %s %s of data, deleting all previously downloaded icon files. Do you want to proceed?"), size.c_str(), sizeUnits.c_str()), _("Proceed"), _("Cancel"));
 	if (dialog.runModal() == ::GUI::kMessageOK) {
