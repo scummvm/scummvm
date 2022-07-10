@@ -117,8 +117,8 @@ bool GameState::synchronize(Common::Serializer &s) {
 	s.syncAsByte(R12BorkCount);
 	s.syncAsByte(R13MonitorStatus);
 	s.syncAsByte(R17Location);
-	s.syncAsSint16LE(R23GleiterExit);
-	syncArray(s, R24Hebel, 3);
+	s.syncAsSint16LE(R23GliderExit);
+	syncArray(s, R24Lever, 3);
 	syncArray(s, R24HebelDir, 3);
 	syncArray(s, R24KristallLast, 3);
 	s.syncAsByte(R25SurimyGo);

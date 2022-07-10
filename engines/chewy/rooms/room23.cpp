@@ -48,7 +48,7 @@ void Room23::cockpit() {
 	_G(mouseLeftClick) = false;
 	switchRoom(23);
 
-	if (!_G(gameState).R23Cartridge || !_G(gameState).R25GleiteLoesch)
+	if (!_G(gameState).R23Cartridge || !_G(gameState).R25GliderFlamesExtinguished)
 		_G(det)->hideStaticSpr(3);
 	else
 		_G(det)->showStaticSpr(3);
@@ -64,14 +64,14 @@ int16 Room23::start_gleiter() {
 		else {
 			bool start_ok = true;
 
-			if (_G(gameState).R23GleiterExit == 16) {
+			if (_G(gameState).R23GliderExit == 16) {
 				if (!_G(gameState).R16F5Exit) {
 					start_ok = false;
 					startAadWait(35);
 				} else if (!_G(gameState).R23Cartridge || !_G(gameState).R18CartSave) {
 					start_ok = false;
 					startAadWait(41);
-				} else if (!_G(gameState).R17EnergieOut) {
+				} else if (!_G(gameState).R17EnergyOut) {
 					start_ok = false;
 					startAadWait(300);
 				}
@@ -85,17 +85,17 @@ int16 Room23::start_gleiter() {
 				for (int16 i = 0; i < 4; i++)
 					_G(det)->stopDetail(i);
 
-				if (_G(gameState).R23GleiterExit == 14) {
+				if (_G(gameState).R23GliderExit == 14) {
 					_G(out)->setPointer(nullptr);
 					_G(out)->cls();
 					_G(flags).NoPalAfterFlc = true;
 					flic_cut(FCUT_011);
 					register_cutscene(7);
 					_G(out)->cls();
-					_G(gameState).R23GleiterExit = 16;
+					_G(gameState).R23GliderExit = 16;
 					setPersonPos(126, 110, P_CHEWY, P_RIGHT);
 
-					switchRoom(_G(gameState).R23GleiterExit);
+					switchRoom(_G(gameState).R23GliderExit);
 					start_spz_wait(CH_WONDER1, 2, false, P_CHEWY);
 					start_spz(CH_TALK2, 255, ANI_FRONT, P_CHEWY);
 
@@ -104,11 +104,11 @@ int16 Room23::start_gleiter() {
 					stopPerson(P_CHEWY);
 					_G(mouseLeftClick) = false;
 
-				} else if (_G(gameState).R23GleiterExit == 16) {
+				} else if (_G(gameState).R23GliderExit == 16) {
 					_G(out)->setPointer(nullptr);
 					_G(out)->cls();
 					flic_cut(FCUT_SPACECHASE_18);
-					_G(gameState).R23GleiterExit = 25;
+					_G(gameState).R23GliderExit = 25;
 					register_cutscene(9);
 
 					cur_2_inventory();
@@ -117,7 +117,7 @@ int16 Room23::start_gleiter() {
 					remove_inventory(4);
 					remove_inventory(15);
 					remove_inventory(16);
-					switchRoom(_G(gameState).R23GleiterExit);
+					switchRoom(_G(gameState).R23GliderExit);
 				}
 
 				showCur();

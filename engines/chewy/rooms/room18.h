@@ -27,7 +27,7 @@ namespace Rooms {
 
 class Room18 {
 private:
-	static void init_borks();
+	static void initBorks();
 	static void monitor();
 
 public:
@@ -35,8 +35,8 @@ public:
 	static bool timer(int16 t_nr, int16 ani_nr);
 	static void gedAction(int index);
 
-	static int16 calc_surimy();
-	static int16 calc_schalter();
+	static int16 calcSurimy();
+	static int16 calcMonitorControls();
 	static short use_cart_moni();
 	static int16 go_cyberspace();
 	static int16 sonden_moni();

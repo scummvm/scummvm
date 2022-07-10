@@ -52,7 +52,7 @@ static const MovLine CHEWY_MPKT1[2] = {
 };
 
 void Room17::entry() {
-	if (!_G(gameState).R17EnergieOut) {
+	if (!_G(gameState).R17EnergyOut) {
 		_G(det)->startDetail(1, 255, ANI_FRONT);
 		for (int i = 0; i < 3; ++i)
 			_G(det)->startDetail(6 + i, 255, ANI_FRONT);
@@ -111,7 +111,7 @@ void Room17::xit() {
 bool Room17::timer(int16 t_nr, int16 ani_nr) {
 	if (_G(room)->_roomTimer._objNr[ani_nr] == 2 ||
 		_G(room)->_roomTimer._objNr[ani_nr] == 3) {
-		if (_G(gameState).R17EnergieOut)
+		if (_G(gameState).R17EnergyOut)
 			_G(uhr)->resetTimer(t_nr, 0);
 		else
 			return true;
@@ -289,20 +289,20 @@ int16 Room17::energie_hebel() {
 		action_flag = true;
 
 		_G(obj)->calc_rsi_flip_flop(SIB_HEBEL_R17);
-		_G(gameState).R17EnergieOut ^= 1;
+		_G(gameState).R17EnergyOut ^= 1;
 
-		if (!_G(gameState).R17EnergieOut) {
+		if (!_G(gameState).R17EnergyOut) {
 			_G(det)->startDetail(1, 255, ANI_FRONT);
 
 			for (int i = 0; i < 3; ++i)
 				_G(det)->startDetail(i + 6, 255, ANI_FRONT);
 		}
 
-		_G(atds)->set_ats_str(142, _G(gameState).R17EnergieOut ? 1 : 0, ATS_DATA);
-		_G(atds)->set_ats_str(140, _G(gameState).R17EnergieOut ? 1 : 0, ATS_DATA);
+		_G(atds)->set_ats_str(142, _G(gameState).R17EnergyOut ? 1 : 0, ATS_DATA);
+		_G(atds)->set_ats_str(140, _G(gameState).R17EnergyOut ? 1 : 0, ATS_DATA);
 		_G(det)->playSound(12, 0);
 
-		if (_G(gameState).R17EnergieOut) {
+		if (_G(gameState).R17EnergyOut) {
 			_G(det)->stopSound(0);
 		} else {
 			_G(det)->playSound(15, 0);

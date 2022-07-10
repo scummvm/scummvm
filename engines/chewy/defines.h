@@ -339,8 +339,8 @@ enum SetupScreenMode {
 #define RECORDER_INV 49
 #define ZAPPER_INV 50
 #define MUNTER_INV 51
-#define MILCH_LEER_INV 52
-#define MILCH_WAS_INV 53
+#define EMPTY_MILK_BOTTLE_INV 52
+#define WATER_FILLED_BOTTLE_INV 53
 #define PAPIER_INV 54
 #define LETTER_INV 55
 #define TICKET_INV 56

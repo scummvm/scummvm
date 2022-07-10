@@ -30,8 +30,8 @@ public:
 	static void entry();
 	static void xit();
 	static int16 use_pumpe();
-	static int16 get_schlauch();
-	static bool use_schlauch();
+	static int16 getWaterHose();
+	static bool useWaterHose();
 	static void schlitz_sitz();
 	static int16 zaun_sprung();
 };

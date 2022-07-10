@@ -61,7 +61,7 @@ void Room24::entry() {
 	calc_animation(255);
 
 	for (int16 i = 0; i < 3; i++) {
-		if (KRISTALL_SPR[i][_G(gameState).R24Hebel[i]] == 20)
+		if (KRISTALL_SPR[i][_G(gameState).R24Lever[i]] == 20)
 			_G(det)->startDetail(5 + i * 4, 255, ANI_BACK);
 	}
 }
@@ -77,33 +77,32 @@ void Room24::xit() {
 }
 
 void Room24::use_hebel(int16 txt_nr) {
-	if (!_G(gameState).R24Hebel[txt_nr - 161] ||
-		_G(gameState).R24Hebel[txt_nr - 161] == 2) {
-		_G(gameState).R24Hebel[txt_nr - 161] = 1;
+	if (!_G(gameState).R24Lever[txt_nr - 161] ||
+		_G(gameState).R24Lever[txt_nr - 161] == 2) {
+		_G(gameState).R24Lever[txt_nr - 161] = 1;
 		_G(gameState).R24HebelDir[txt_nr - 161] ^= 1;
 	} else {
 		if (_G(gameState).R24HebelDir[txt_nr - 161])
-			_G(gameState).R24Hebel[txt_nr - 161] = 0;
+			_G(gameState).R24Lever[txt_nr - 161] = 0;
 		else
-			_G(gameState).R24Hebel[txt_nr - 161] = 2;
+			_G(gameState).R24Lever[txt_nr - 161] = 2;
 	}
 	calc_hebel_spr();
 	calc_animation(txt_nr - 161);
 
-	if (_G(gameState).R24Hebel[0] == 1 && _G(gameState).R24Hebel[1] == 0 && _G(gameState).R24Hebel[2] == 2) {
+	if (_G(gameState).R24Lever[0] == 1 && _G(gameState).R24Lever[1] == 0 && _G(gameState).R24Lever[2] == 2) {
 		_G(gameState).R16F5Exit = true;
 		_G(det)->playSound(1, 0);
 		_G(det)->stopSound(1);
 		_G(det)->startDetail(1, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(10);
 		_G(atds)->set_ats_str(164, TXT_MARK_NAME, 1, ATS_DATA);
-
 	} else if (_G(gameState).R16F5Exit) {
+		_G(gameState).R16F5Exit = false;
 		_G(det)->hideStaticSpr(10);
 		_G(det)->playSound(1, 1);
 		_G(det)->stopSound(0);
 		_G(det)->startDetail(1, 1, ANI_BACK);
-		_G(gameState).R16F5Exit = false;
 		_G(atds)->set_ats_str(164, TXT_MARK_NAME, 0, ATS_DATA);
 	}
 }
@@ -111,11 +110,11 @@ void Room24::use_hebel(int16 txt_nr) {
 void Room24::calc_hebel_spr() {
 	if (!_G(gameState).R24FirstEntry) {
 		_G(gameState).R24FirstEntry = true;
-		_G(gameState).R24Hebel[0] = 2;
+		_G(gameState).R24Lever[0] = 2;
 		_G(gameState).R24HebelDir[0] = 0;
-		_G(gameState).R24Hebel[1] = 1;
+		_G(gameState).R24Lever[1] = 1;
 		_G(gameState).R24HebelDir[1] = 0;
-		_G(gameState).R24Hebel[2] = 0;
+		_G(gameState).R24Lever[2] = 0;
 		_G(gameState).R24HebelDir[2] = 1;
 	}
 
@@ -123,8 +122,8 @@ void Room24::calc_hebel_spr() {
 		for (int16 j = 0; j < 3; j++)
 			_G(det)->hideStaticSpr(1 + j + i * 3);
 
-		_G(det)->showStaticSpr(1 + _G(gameState).R24Hebel[i] + i * 3);
-		_G(atds)->set_ats_str(166 + i, TXT_MARK_NAME, _G(gameState).R24Hebel[i], ATS_DATA);
+		_G(det)->showStaticSpr(1 + _G(gameState).R24Lever[i] + i * 3);
+		_G(atds)->set_ats_str(166 + i, TXT_MARK_NAME, _G(gameState).R24Lever[i], ATS_DATA);
 	}
 }
 
@@ -132,7 +131,7 @@ void Room24::calc_animation(int16 kristall_nr) {
 	if (kristall_nr != 255) {
 		hideCur();
 
-		if (KRISTALL_SPR[kristall_nr][_G(gameState).R24Hebel[kristall_nr]] == 20) {
+		if (KRISTALL_SPR[kristall_nr][_G(gameState).R24Lever[kristall_nr]] == 20) {
 			int16 ani_nr = _G(gameState).R24KristallLast[kristall_nr] == 13 ? 7 : 8;
 			_G(det)->playSound(ani_nr + kristall_nr * 4, 0);
 			_G(det)->stopSound(0);
@@ -142,7 +141,7 @@ void Room24::calc_animation(int16 kristall_nr) {
 			_G(det)->startDetail(5 + kristall_nr * 4, 255, ANI_BACK);
 
 		} else if (_G(gameState).R24KristallLast[kristall_nr] == 20) {
-			int16 ani_nr = KRISTALL_SPR[kristall_nr][_G(gameState).R24Hebel[kristall_nr]] == 13 ? 7 : 8;
+			int16 ani_nr = KRISTALL_SPR[kristall_nr][_G(gameState).R24Lever[kristall_nr]] == 13 ? 7 : 8;
 			_G(det)->stopSound(0);
 			_G(det)->playSound(5 + ani_nr + kristall_nr * 4, 0);
 			_G(det)->stopDetail(5 + kristall_nr * 4);
@@ -157,8 +156,8 @@ void Room24::calc_animation(int16 kristall_nr) {
 		_G(det)->hideStaticSpr(13 + i);
 
 	for (int16 i = 0; i < 3; i++) {
-		_G(det)->showStaticSpr(KRISTALL_SPR[i][_G(gameState).R24Hebel[i]] + i * 2);
-		_G(gameState).R24KristallLast[i] = KRISTALL_SPR[i][_G(gameState).R24Hebel[i]];
+		_G(det)->showStaticSpr(KRISTALL_SPR[i][_G(gameState).R24Lever[i]] + i * 2);
+		_G(gameState).R24KristallLast[i] = KRISTALL_SPR[i][_G(gameState).R24Lever[i]];
 	}
 }
 
