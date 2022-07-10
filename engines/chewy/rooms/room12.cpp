@@ -272,7 +272,7 @@ int16 Room12::useTransformerTube() {
 		if (_G(gameState).R12ChainLeft) {
 			_G(gameState).R12ChainLeft = false;
 			_G(uhr)->enableTimer();
-			_G(atds)->set_ats_str(117, 1, AAD_DATA);
+			_G(atds)->set_ats_str(117, TXT_MARK_LOOK, 0, ATS_DATA);
 		} else {
 			autoMove(7, P_CHEWY);
 			startAadWait(29);
