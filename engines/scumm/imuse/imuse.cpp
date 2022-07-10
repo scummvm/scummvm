@@ -27,6 +27,8 @@
 #include "common/system.h"
 #include "common/endian.h"
 
+#include "audio/mixer.h"
+
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse/imuse_internal.h"
 #include "scumm/imuse/instrument.h"
@@ -41,7 +43,7 @@ namespace Scumm {
 //
 ////////////////////////////////////////
 
-IMuseInternal::IMuseInternal() :
+IMuseInternal::IMuseInternal(Common::Mutex &mutex) :
 	_native_mt32(false),
 	_enable_gs(false),
 	_isAmiga(false),
@@ -63,7 +65,8 @@ IMuseInternal::IMuseInternal() :
 	_music_volume(0),
 	_trigger_count(0),
 	_snm_trigger_index(0),
-	_pcSpeaker(false) {
+	_pcSpeaker(false),
+	_mutex(mutex) {
 	memset(_channel_volume, 0, sizeof(_channel_volume));
 	memset(_channel_volume_eff, 0, sizeof(_channel_volume_eff));
 	memset(_volchan_table, 0, sizeof(_volchan_table));
@@ -1429,7 +1432,7 @@ int IMuseInternal::get_volchan_entry(uint a) {
 }
 
 IMuseInternal *IMuseInternal::create(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver) {
-	IMuseInternal *i = new IMuseInternal;
+	IMuseInternal *i = new IMuseInternal(syst->getMixer()->mutex());
 	i->initialize(syst, nativeMidiDriver, adlibMidiDriver);
 	return i;
 }
