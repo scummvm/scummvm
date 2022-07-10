@@ -137,10 +137,10 @@ bool FreescapeEngine::executeEndIfVisibilityIsNotEqual(FCLInstruction &instructi
 }
 
 bool FreescapeEngine::executeEndIfNotEqual(FCLInstruction &instruction) {
-	uint16 variable1 = instruction.source;
-	uint16 variable2 = instruction.destination;
-	debug("End condition if variable %d is not equal to variable %d!", variable1, variable2);
-	return (_gameState[variable1] != _gameState[variable2]);
+	uint16 variable = instruction.source;
+	uint16 value = instruction.destination;
+	debug("End condition if variable %d is not equal to %d!", variable, value);
+	return (_gameState[variable] != value);
 }
 
 void FreescapeEngine::executeIncrementVariable(FCLInstruction &instruction) {
