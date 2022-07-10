@@ -1359,6 +1359,9 @@ void Menu::processInventoryMenu() {
 	_engine->_gameState->initEngineProjections();
 
 	_engine->_text->initSceneTextBank();
+
+	// this is a hack to 'fix' https://bugs.scummvm.org/ticket/13677
+	_engine->_input->toggleActionIfActive(TwinEActionType::RecenterScreenOnTwinsen);
 }
 
 } // namespace TwinE
