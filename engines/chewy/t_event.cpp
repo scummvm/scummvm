@@ -2177,10 +2177,10 @@ void useItemWithInvItem(int16 itemId) {
 			SHOULD_QUIT_RETURN;
 		}
 
-		while (g_events->getSwitchCode() != Common::KEYCODE_INVALID) {
-			g_events->update();
-			SHOULD_QUIT_RETURN;
-		}
+		EVENTS_CLEAR;
+		g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
+		g_events->_kbInfo._keyCode = '\0';
+		_G(minfo).button = 0;
 
 		_G(room)->load_tgp(_G(gameState)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, true, EPISODE1);
 
