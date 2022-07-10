@@ -95,9 +95,6 @@ Atdsys::Atdsys() {
 }
 
 Atdsys::~Atdsys() {
-	delete _atdsHandle;
-	_atdsHandle = nullptr;
-
 	for (int16 i = 0; i < MAX_HANDLE; i++) {
 		if (_atdsMem[i])
 			free(_atdsMem[i]);
@@ -108,17 +105,8 @@ Atdsys::~Atdsys() {
 }
 
 void Atdsys::init() {
-	_atdsHandle = new Common::File();
-	_atdsHandle->open(ATDS_TXT);
-	if (!_atdsHandle->isOpen()) {
-		error("Error opening %s", ATDS_TXT);
-	}
-
-	set_handle(ATDS_TXT, ATS_DATA, ATS_TAP_OFF, ATS_TAP_MAX);
-	set_handle(ATDS_TXT, INV_ATS_DATA, INV_TAP_OFF, INV_TAP_MAX);
-	set_handle(ATDS_TXT, AAD_DATA, AAD_TAP_OFF, AAD_TAP_MAX);
-	set_handle(ATDS_TXT, DIALOG_CLOSEUP_DATA, ADS_TAP_OFF, ADS_TAP_MAX);
-	set_handle(ATDS_TXT, INV_USE_DATA, USE_TAP_OFF, USE_TAP_MAX);
+	set_handle(AAD_DATA, AAD_TAP_OFF, AAD_TAP_MAX);
+	set_handle(DIALOG_CLOSEUP_DATA, ADS_TAP_OFF, ADS_TAP_MAX);
 	_G(gameState).AadSilent = 10;
 	_G(gameState).DelaySpeed = 5;
 	_G(moveState)[P_CHEWY].Delay = _G(gameState).DelaySpeed;
@@ -327,7 +315,9 @@ void Atdsys::set_split_win(int16 nr, int16 x, int16 y) {
 	_ssi[nr]._y = y;
 }
 
-void Atdsys::set_handle(const char *fname, int16 mode, int16 chunkStart, int16 chunkNr) {
+void Atdsys::set_handle(int16 mode, int16 chunkStart, int16 chunkNr) {
+	assert(mode == AAD_DATA || mode == DIALOG_CLOSEUP_DATA);
+
 	uint32 size = _text->findLargestChunk(chunkStart, chunkStart + chunkNr);
 	char *tmp_adr = size ? (char *)MALLOC(size + 3) : nullptr;
 
@@ -338,9 +328,11 @@ void Atdsys::set_handle(const char *fname, int16 mode, int16 chunkStart, int16 c
 }
 
 void Atdsys::load_atds(int16 chunkNr, int16 mode) {
+	assert(mode == AAD_DATA || mode == DIALOG_CLOSEUP_DATA);
+
 	char *txt_adr = _atdsMem[mode];
 
-	if (_atdsHandle && txt_adr) {
+	if (txt_adr) {
 		const uint32 chunkSize = _text->getChunk(chunkNr + _atdsPoolOff[mode])->size;
 		const uint8 *chunkData = _text->getChunkData(chunkNr + _atdsPoolOff[mode]);
 		memcpy(txt_adr, chunkData, chunkSize);

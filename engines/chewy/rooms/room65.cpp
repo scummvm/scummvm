@@ -64,7 +64,6 @@ void Room65::xit() {
 	setPersonPos(_G(r65tmp_ch_x), _G(r65tmp_ch_y), P_CHEWY, -1);
 	setPersonPos(_G(r65tmp_ho_x), _G(r65tmp_ho_y), P_HOWARD, -1);
 	_G(room_blk).AadLoad = true;
-	_G(room_blk).AtsLoad = true;
 	_G(mouseLeftClick) = false;
 }
 

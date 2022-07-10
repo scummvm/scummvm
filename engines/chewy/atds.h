@@ -37,7 +37,7 @@ namespace Chewy {
 #define AAD_STR_END 1
 #define AAD_DATA 0
 #define ATS_DATA 1
-#define DIALOG_CLOSEUP_DATA 2
+#define DIALOG_CLOSEUP_DATA 2	// ADS_DATA
 #define INV_USE_DATA 4
 #define INV_ATS_DATA 6
 
@@ -218,7 +218,7 @@ public:
 	void str_null2leer(char *strStart, char *strEnd);
 	void load_atds(int16 chunkNr, int16 mode);
 
-	void set_handle(const char *fname, int16 mode, int16 chunkStart, int16 chunkNr);
+	void set_handle(int16 mode, int16 chunkStart, int16 chunkNr);
 	bool start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int16 *vocNr);
 	void stop_ats();
 	bool atsShown() { return _atsv.shown; }
@@ -268,7 +268,6 @@ private:
 	int16 get_delay(int16 txt_len);
 	void initItemUseWith();
 	
-	Common::File *_atdsHandle = nullptr;
 	char *_atdsMem[MAX_HANDLE] = { nullptr };
 	int16 _atdsPoolOff[MAX_HANDLE] = { 0 };
 	AadVar _aadv;
