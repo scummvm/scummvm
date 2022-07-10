@@ -38,7 +38,7 @@ enum Widget {
 	GAME = 4, QUIT = 5, OPTIONS = 6, W7 = 7, W8 = 8
 };
 
-
+// Returns true if the game should exit to main menu
 bool Files::execute(bool isInGame) {
 	int16 key = 0;
 	Common::Point pt[8];
@@ -51,7 +51,8 @@ bool Files::execute(bool isInGame) {
 		g_engine->showGmm(isInGame);
 		_G(flags).mainMouseFlag = false;
 		_G(minfo).button = 0;
-		return 0;
+		const int16 roomNum = _G(gameState)._personRoomNr[P_CHEWY];
+		return isInGame ? false : (roomNum == 98);
 	}
 
 	TafInfo *ti = _G(mem)->taf_adr(OPTION_TAF);

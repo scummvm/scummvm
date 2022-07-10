@@ -273,7 +273,7 @@ bool mainLoop(int16 mode) {
 				invent_2_slot(_G(cur)->getInventoryCursor());
 			_G(cur)->setInventoryCursor(-1);
 			cursorChoice(CUR_SAVE);
-			if (Dialogs::Files::execute(true) == 1) {
+			if (Dialogs::Files::execute(true)) {
 				retValue = true;
 				_G(fx_blend) = BLEND4;
 			}
