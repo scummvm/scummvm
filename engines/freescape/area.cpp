@@ -116,10 +116,18 @@ void Area::draw(Freescape::Renderer *gfx) {
 }
 
 Object *Area::shootRay(const Math::Ray &ray) {
+	float size = 16 * 8192; // TODO: check if this is max size
 	Object *collided = nullptr;
-	for (int i = drawableObjects.size() - 1; i >= 0; i--) {
-		if (!drawableObjects[i]->isDestroyed() && !drawableObjects[i]->isInvisible() && drawableObjects[i]->_boundingBox.isValid() && ray.intersectAABB(drawableObjects[i]->_boundingBox))
+	for (int i = 0; i < drawableObjects.size(); i++) {
+		float objSize = drawableObjects[i]->getSize().length();
+		if (!drawableObjects[i]->isDestroyed() && !drawableObjects[i]->isInvisible()
+		  && drawableObjects[i]->_boundingBox.isValid()
+		  && ray.intersectAABB(drawableObjects[i]->_boundingBox)
+		  && size >= objSize) {
+			debug("shot obj id: %d", drawableObjects[i]->getObjectID());
 			collided = drawableObjects[i];
+			size = objSize;
+		}
 	}
 	return collided;
 }
