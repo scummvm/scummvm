@@ -311,6 +311,10 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		area->conditionSources.push_back(conditionSource);
 		debug("%s", conditionSource->c_str());
 	}
+
+	if (_targetName.hasPrefix("castlemaster"))
+		area->addFloor();
+
 	debug("End of area at %lx", file->pos());
 	return area;
 }

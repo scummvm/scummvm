@@ -95,6 +95,9 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			case Token::DELAY:
 			executeDelay(instruction);
 			break;
+			case Token::SOUND:
+			executeSound(instruction);
+			break;
 			case Token::SETBIT:
 			executeSetBit(instruction);
 			break;
@@ -119,6 +122,11 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
 	debug("Redrawing screen");
 	drawFrame();
+}
+
+void FreescapeEngine::executeSound(FCLInstruction &instruction) {
+	uint16 index = instruction.source;
+	playSound(index);
 }
 
 void FreescapeEngine::executeDelay(FCLInstruction &instruction) {

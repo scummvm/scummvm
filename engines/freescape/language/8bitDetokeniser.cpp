@@ -243,6 +243,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 
 		case 15:
 			detokenisedStream += "SOUND (";
+			currentInstruction = FCLInstruction(Token::SOUND);
 			break;
 		case 17:
 		case 16:
@@ -269,6 +270,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			break;
 		case 28:
 			detokenisedStream += "SYNCSND (";
+			currentInstruction = FCLInstruction(Token::SOUND);
 			break;
 		case 29:
 			detokenisedStream += "TOGGLEBIT (";

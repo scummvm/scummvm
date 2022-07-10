@@ -45,6 +45,7 @@ public:
 
 	Object *shootRay(const Math::Ray &ray);
 	Object *checkCollisions(const Math::AABB &boundingBox);
+	void addFloor();
 
 	Common::Array<Common::String*> conditionSources;
 	Common::Array<FCLInstructionVector> conditions;

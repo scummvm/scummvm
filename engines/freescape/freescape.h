@@ -9,6 +9,9 @@
 #include "graphics/tinygl/pixelbuffer.h"
 #include "gui/debugger.h"
 
+#include "audio/mixer.h"
+#include "audio/softsynth/pcspk.h"
+
 #include "freescape/area.h"
 #include "freescape/objects/entrance.h"
 #include "freescape/language/instruction.h"
@@ -129,6 +132,7 @@ public:
 	void executeToggleVisibility(FCLInstruction &instruction);
 	void executeDestroy(FCLInstruction &instruction);
 	void executeRedraw(FCLInstruction &instruction);
+	void executeSound(FCLInstruction &instruction);
 	void executeDelay(FCLInstruction &instruction);
 	bool executeEndIfNotEqual(FCLInstruction &instruction);
 	void executeSetBit(FCLInstruction &instruction);
@@ -137,6 +141,10 @@ public:
 	bool executeEndIfBitNotEqual(FCLInstruction &instruction);
 	bool executeEndIfVisibilityIsNotEqual(FCLInstruction &instruction);
 
+	// Souund
+	Audio::SoundHandle _speakerHandle;
+	Audio::PCSpeaker _speaker;
+	void playSound(int index);
 
 	// Rendering
 	Common::String _renderMode;

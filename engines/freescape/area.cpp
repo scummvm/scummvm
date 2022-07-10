@@ -148,4 +148,22 @@ Object *Area::checkCollisions(const Math::AABB &boundingBox) {
 	return collided;
 }
 
+void Area::addFloor() {
+	FCLInstructionVector empty;
+	Common::Array<uint8> *gColors = new Common::Array<uint8>;
+	for (int i = 0; i < 6; i++)
+		gColors->push_back(groundColor);
+	GeometricObject *floor = new GeometricObject(
+		Object::Type::Cube,
+		200,
+		0, // flags
+		Math::Vector3d(0, -64, 0), // Position
+		Math::Vector3d(8128, 64, 8128), // size
+		gColors,
+		nullptr,
+		empty
+	);
+	drawableObjects.push_back(floor);
+}
+
 } // End of namespace Freescape
