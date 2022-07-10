@@ -33,7 +33,7 @@
 
 
 #include "gui/message.h"
-#include "backends/stacktraces/stacktrace.h"
+#include "backends/stacktrace/stacktrace.h"
 
 bool BaseBackend::setScaler(const char *name, int factor) {
 	if (!name)

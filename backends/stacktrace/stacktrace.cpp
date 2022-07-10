@@ -56,23 +56,23 @@
 // - g++/clang++ -lunwind
 // #define BACKWARD_HAS_LIBUNWIND 1
 
-#include "stacktrace.h"
+#include "backends/stacktrace/stacktrace.h"
 
-#if defined(USE_STACKTRACES_DW)
+#if defined(USE_STACKTRACE_DW)
 #define BACKWARD_HAS_DW 1
-#elif defined(USE_STACKTRACES_DWARF)
+#elif defined(USE_STACKTRACE_DWARF)
 #define BACKWARD_HAS_DWARF 1
-#elif defined(USE_STACKTRACES_BFD)
+#elif defined(USE_STACKTRACE_BFD)
 #define BACKWARD_HAS_BFD 1
-#elif defined(USE_STACKTRACES_UNWIND)
+#elif defined(USE_STACKTRACE_UNWIND)
 #define BACKWARD_HAS_LIBUNWIND 1
 #endif
 
-#include "backward.h"
+#include "backends/stacktrace/backward.h"
 
 // backward::SignalHandling sh;
 
-#ifdef USE_STACKTRACES
+#ifdef USE_STACKTRACE
 
 class logger_streambuf : public std::streambuf {
 public:
@@ -100,15 +100,9 @@ public:
 		return count;
 	}
 
-#ifdef BACKWARD_ATLEAST_CXX11
 public:
 	logger_streambuf(const logger_streambuf &) = delete;
 	logger_streambuf &operator=(const logger_streambuf &) = delete;
-#else
-private:
-	logger_streambuf(const logger_streambuf &);
-	logger_streambuf &operator=(const logger_streambuf &);
-#endif
 
 private:
 	void (*logger)(const char *);

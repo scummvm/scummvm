@@ -27,7 +27,7 @@
 #include "config.h"
 #endif
 
-#ifdef USE_STACKTRACES
+#ifdef USE_STACKTRACE
 void createStacktrace(void (*logger)(const char *));
 #else
 inline void createStacktrace(void (*logger)(const char *)) {}

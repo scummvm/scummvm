@@ -174,7 +174,7 @@ _tts=auto
 _gtk=auto
 _fribidi=auto
 _discord=auto
-_stacktraces=auto
+_stacktrace=auto
 _test_cxx11=no
 # Default option behavior yes/no
 _debug_build=auto
@@ -1188,7 +1188,7 @@ for ac_option in $@; do
 	--disable-bink)               _bink=no               ;;
 	--enable-discord)             _discord=yes           ;;
 	--disable-discord)            _discord=no            ;;
-	--disable-stacktraces)        _stacktraces=no        ;;
+	--disable-stacktrace)        _stacktrace=no          ;;
 	--enable-verbose-build)      _verbose_build=yes      ;;
 	--enable-plugins)            _dynamic_modules=yes    ;;
 	--default-dynamic)           _plugins_default=dynamic;;
@@ -5825,111 +5825,106 @@ echo "$_discord"
 #
 # Check for stacktrace support
 #
-if test "$_stacktraces" = auto ; then
-	_stacktraces=no
-	if test "$_use_cxx11" = yes ; then
-
-		#
-		# Check for libunwind
-		#
-		echocheck "libunwind"
-		_stacktraces_unwind=no
-		case "$_host_os" in
-		darwin*)
-			_stacktraces_unwind=yes
-			;;
-		*)
-			if test "$_pkg_config" = "yes" && $_pkgconfig --exists libunwind; then
-				_stacktraces_unwind=yes
-				prepend_var LIBS "`$_pkgconfig --libs libunwind`"
-				append_var INCLUDES "`$_pkgconfig --cflags libunwind`"
-			else
-				cat > $TMPC << EOF
+if test "$_stacktrace" = auto ; then
+	_stacktrace=no
+	#
+	# Check for libunwind
+	#
+	echocheck "libunwind"
+	_stacktrace_unwind=no
+	case "$_host_os" in
+	darwin*)
+		_stacktrace_unwind=yes
+		;;
+	*)
+		if test "$_pkg_config" = "yes" && $_pkgconfig --exists libunwind; then
+			_stacktrace_unwind=yes
+			prepend_var LIBS "`$_pkgconfig --libs libunwind`"
+			append_var INCLUDES "`$_pkgconfig --cflags libunwind`"
+		else
+			cat > $TMPC << EOF
 #include <libunwind.h>
 int main(void) { return 0; }
 EOF
-				cc_check -lunwind && _stacktraces_unwind=yes
-			fi
-			;;
-		esac
-		echo "$_stacktraces_unwind"
+			cc_check -lunwind && _stacktrace_unwind=yes
+		fi
+		;;
+	esac
+	echo "$_stacktrace_unwind"
 
-		if test "$_stacktraces_unwind" = no; then
-			#
-			# Check for libdw
-			#
-			echocheck "libdw"
-			_stacktraces_dw=no
-			cat > $TMPC << EOF
+	if test "$_stacktrace_unwind" = no; then
+		#
+		# Check for libdw
+		#
+		echocheck "libdw"
+		_stacktrace_dw=no
+		cat > $TMPC << EOF
 #include <elfutils/libdw.h>
 int main(void) { return 0; }
 EOF
-			cc_check -ldw && _stacktraces_dw=yes
-			if test "$_stacktraces_dw" = no ; then
-				cat > $TMPC << EOF
+		cc_check -ldw && _stacktrace_dw=yes
+		if test "$_stacktrace_dw" = no ; then
+			cat > $TMPC << EOF
 #include <elfutils/libdwfl.h>
 int main(void) { return 0; }
 EOF
-				cc_check -ldw && _stacktraces_dw=yes
-			fi
-			echo "$_stacktraces_dw"
+			cc_check -ldw && _stacktrace_dw=yes
+		fi
+		echo "$_stacktrace_dw"
 
-			if test "$_stacktraces_dw" = no; then
-				#
-				# Check for libbfd
-				#
-				echocheck "libbfd"
-				_stacktraces_bfd=no
-				cat > $TMPC << EOF
+		if test "$_stacktrace_dw" = no; then
+			#
+			# Check for libbfd
+			#
+			echocheck "libbfd"
+			_stacktrace_bfd=no
+			cat > $TMPC << EOF
 #include <bfd.h>
 int main(void) { return 0; }
 EOF
-				cc_check -lbfd && _stacktraces_bfd=yes
-				echo "$_stacktraces_bfd"
+			cc_check -lbfd && _stacktrace_bfd=yes
+			echo "$_stacktrace_bfd"
 
-				if test "$_stacktraces_bfd" = no; then
-					#
-					# Check for libdwarf
-					#
-					echocheck "libdwarf"
-					_stacktraces_dwarf=no
-					cat > $TMPC << EOF
+			if test "$_stacktrace_bfd" = no; then
+				#
+				# Check for libdwarf
+				#
+				echocheck "libdwarf"
+				_stacktrace_dwarf=no_stacktrace
+				cat > $TMPC << EOF
 #include <libdwarf.h>
 #include <libelf.h>
 int main(void) { return 0; }
 EOF
-					cc_check -ldwarf -lelf && _stacktraces_dwarf=yes
-					echo "$_stacktraces_dwarf"
-				else
-					_stacktraces=yes
-				fi
+				cc_check -ldwarf -lelf && _stacktrace_dwarf=yes
+				echo "$_stacktrace_dwarf"
 			else
-				_stacktraces=yes
+				_stacktrace=yes
 			fi
 		else
-			_stacktraces=yes
-		fi
-
-		if test "$_stacktraces_unwind" = yes; then
-			append_var LIBS "-lunwind"
-		elif test "$_stacktraces_dw" = yes; then
-			append_var LIBS "-ldw"
-		elif test "$_stacktraces_bfd" = yes; then
-			append_var LIBS "-lbfd"
-		elif test "$_stacktraces_dwarf" = yes; then
-			append_var LIBS "-lelf -ldwarf"
+			_stacktrace=yes
 		fi
 	else
-		_stacktraces=no
+		_stacktrace=yes
+	fi
+
+	if test "$_stacktrace_unwind" = yes; then
+		append_var LIBS "-lunwind"
+	elif test "$_stacktrace_dw" = yes; then
+		append_var LIBS "-ldw"
+	elif test "$_stacktrace_bfd" = yes; then
+		append_var LIBS "-lbfd"
+	elif test "$_stacktrace_dwarf" = yes; then
+		append_var LIBS "-lelf -ldwarf"
 	fi
 fi
-define_in_config_if_yes "$_stacktraces_dw" 'USE_STACKTRACES_DW'
-define_in_config_if_yes "$_stacktraces_bfd" 'USE_STACKTRACES_BFD'
-define_in_config_if_yes "$_stacktraces_dwarf" 'USE_STACKTRACES_DWARF'
-define_in_config_if_yes "$_stacktraces_unwind" 'USE_STACKTRACES_UNWIND'
-define_in_config_if_yes "$_stacktraces" 'USE_STACKTRACES'
-echocheck "Stacktraces"
-echo "$_stacktraces"
+define_in_config_if_yes "$_stacktrace_dw" 'USE_STACKTRACE_DW'
+define_in_config_if_yes "$_stacktrace_bfd" 'USE_STACKTRACE_BFD'
+define_in_config_if_yes "$_stacktrace_dwarf" 'USE_STACKTRACE_DWARF'
+define_in_config_if_yes "$_stacktrace_unwind" 'USE_STACKTRACE_UNWIND'
+define_in_config_if_yes "$_stacktrace" 'USE_STACKTRACE'
+echocheck "Stacktrace"
+echo "$_stacktrace"
 
 #
 # Enable vkeybd / event recorder
