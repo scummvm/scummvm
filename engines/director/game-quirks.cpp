@@ -39,16 +39,6 @@ static void quirkLzone() {
 	SearchMan.addSubDirectoryMatching(g_director->_gameDataDir, "win_data", 0, 2);
 }
 
-static void quirkMediaband() {
-	// Meet Mediaband could have up to 5 levels of directories
-	SearchMan.addDirectory(g_director->_gameDataDir.getPath(), g_director->_gameDataDir, 0, 5);
-}
-
-static void quirkWarlock() {
-	// Meet Mediaband could have up to 5 levels of directories
-	SearchMan.addDirectory(g_director->_gameDataDir.getPath(), g_director->_gameDataDir, 0, 5);
-}
-
 static void quirkMcLuhan() {
 	// TODO. Read fonts from MCLUHAN/SYSTEM directory
 	g_director->_extraSearchPath.push_back("mcluhan\\");
@@ -61,8 +51,6 @@ struct Quirk {
 } quirks[] = {
     { "kidsbox", Common::kPlatformMacintosh, &quirkKidsBox },
 	{ "lzone", Common::kPlatformWindows, &quirkLzone },
-	{ "mediaband", Common::kPlatformUnknown, &quirkMediaband },
-	{ "warlock", Common::kPlatformUnknown, &quirkWarlock },
 	{ "mcluhan", Common::kPlatformWindows, &quirkMcLuhan },
 	{ nullptr, Common::kPlatformUnknown, nullptr }
 };
