@@ -44,7 +44,6 @@ Sound::Sound(Audio::Mixer *mixer) {
 Sound::~Sound() {
 	delete _soundRes;
 	delete _speechRes;
-	delete _overridenMusicBuffer;
 }
 
 void Sound::playSound(int num, uint channel, uint16 loops, uint16 volume, uint16 balance) {
