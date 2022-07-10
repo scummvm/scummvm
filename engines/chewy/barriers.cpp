@@ -127,7 +127,7 @@ int16 Barriers::getBarrierId(int16 g_idx, const byte *buffer) {
 				return 3;
 
 		case 37:
-			if (!_G(gameState).R37Kloppe)
+			if (!_G(gameState).R37RoosterFoughtWithDog)
 				return 0;
 			break;
 

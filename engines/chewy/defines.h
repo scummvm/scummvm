@@ -324,14 +324,14 @@ enum SetupScreenMode {
 #define KNIFE_INV 34
 #define PUMPE_INV 35
 #define CENT_INV 36
-#define ANGEL2_INV 37
-#define GEBISS_INV 38
+#define FISHING_ROD_INV 37
+#define DENTURES_INV 38
 #define H_FUTTER_INV 39
 #define PUMPKIN_INV 40
 #define K_MASKE_INV 41
 #define K_FLEISCH_INV 42
 #define K_KERNE_INV 43
-#define EIER_INV 44
+#define EGGS_INV 44
 #define KAFFEE_INV 45
 #define PUTENKEULE_INV 46
 #define BONE_INV 47

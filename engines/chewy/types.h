@@ -166,10 +166,10 @@ struct GameFlags {
 	bool R35Schublade : 1;
 	bool R35CatEat : 1;
 
-	bool R37TransHahn : 1;
-	bool R37Gebiss : 1;
-	bool R37HundScham : 1;
-	bool R37Kloppe : 1;
+	bool R37UsedTranslatorOnRooster : 1;
+	bool R37TakenDenturesFromGlass : 1;
+	bool R37DogAshamed : 1;
+	bool R37RoosterFoughtWithDog : 1;
 	bool R37Mes : 1;
 	bool R39TranslatorUsed : 1;
 	bool R39TvOn : 1;
