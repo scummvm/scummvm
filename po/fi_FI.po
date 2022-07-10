@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-09 11:56+0000\n"
+"POT-Creation-Date: 2022-07-10 14:51+0000\n"
 "PO-Revision-Date: 2022-07-09 12:15+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -56,16 +56,17 @@ msgctxt "lowres"
 msgid "Go up"
 msgstr "Siirry ylös"
 
-#: gui/browser.cpp:81 gui/chooser.cpp:45 gui/downloadiconsdialog.cpp:255
-#: gui/editgamedialog.cpp:384 gui/editrecorddialog.cpp:66
-#: gui/filebrowser-dialog.cpp:68 gui/fluidsynth-dialog.cpp:152
-#: gui/massadd.cpp:91 gui/options.cpp:2193 gui/predictivedialog.cpp:68
-#: gui/recorderdialog.cpp:73 gui/recorderdialog.cpp:213
-#: gui/remotebrowser.cpp:59 gui/saveload-dialog.cpp:62
-#: gui/saveload-dialog.cpp:406 gui/saveload-dialog.cpp:477
-#: gui/saveload-dialog.cpp:779 gui/saveload-dialog.cpp:1172
-#: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53
-#: engines/engine.cpp:721 backends/dialogs/gtk/gtk-dialogs.cpp:63
+#: gui/browser.cpp:81 gui/chooser.cpp:45 gui/downloadiconsdialog.cpp:257
+#: gui/downloadiconsdialog.cpp:452 gui/editgamedialog.cpp:384
+#: gui/editrecorddialog.cpp:66 gui/filebrowser-dialog.cpp:68
+#: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:91 gui/options.cpp:2193
+#: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
+#: gui/recorderdialog.cpp:213 gui/remotebrowser.cpp:59
+#: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:406
+#: gui/saveload-dialog.cpp:477 gui/saveload-dialog.cpp:779
+#: gui/saveload-dialog.cpp:1172 gui/themebrowser.cpp:54
+#: gui/unknown-game-dialog.cpp:53 engines/engine.cpp:721
+#: backends/dialogs/gtk/gtk-dialogs.cpp:63
 #: backends/events/default/default-events.cpp:194
 #: backends/events/default/default-events.cpp:218
 #: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:201
@@ -106,9 +107,9 @@ msgstr "Lähde: "
 msgid "To: "
 msgstr "Kohde: "
 
-#: gui/downloaddialog.cpp:63 gui/downloadiconsdialog.cpp:187
-#: gui/downloadiconsdialog.cpp:230 gui/downloadiconsdialog.cpp:240
-#: gui/downloadiconsdialog.cpp:262 gui/downloadiconsdialog.cpp:276
+#: gui/downloaddialog.cpp:63 gui/downloadiconsdialog.cpp:188
+#: gui/downloadiconsdialog.cpp:232 gui/downloadiconsdialog.cpp:242
+#: gui/downloadiconsdialog.cpp:264 gui/downloadiconsdialog.cpp:279
 msgid "Cancel download"
 msgstr "Peruuta lataus"
 
@@ -117,8 +118,8 @@ msgctxt "lowres"
 msgid "Cancel download"
 msgstr "Peruuta lataus"
 
-#: gui/downloaddialog.cpp:67 gui/downloadiconsdialog.cpp:188
-#: gui/downloadiconsdialog.cpp:266
+#: gui/downloaddialog.cpp:67 gui/downloadiconsdialog.cpp:189
+#: gui/downloadiconsdialog.cpp:268
 msgid "Hide"
 msgstr "Piilota"
 
@@ -197,45 +198,51 @@ msgstr ""
 "\"%s\" on jo olemassa valitussa hakemistossa.\n"
 "Haluatko varmasti ladata tiedostoja tähän hakemistoon?"
 
-#: gui/downloaddialog.cpp:214 gui/downloadiconsdialog.cpp:346
+#: gui/downloaddialog.cpp:214 gui/downloadiconsdialog.cpp:354
 #, c-format
 msgid "Downloaded %s %S / %s %S"
 msgstr "Ladattu %s %S / %s %S"
 
-#: gui/downloaddialog.cpp:221 gui/downloadiconsdialog.cpp:353
+#: gui/downloaddialog.cpp:221 gui/downloadiconsdialog.cpp:361
 #, c-format
 msgid "Download speed: %s %S"
 msgstr "Latausnopeus: %s %S"
 
-#: gui/downloadiconsdialog.cpp:149
+#: gui/downloadiconsdialog.cpp:150
 #, c-format
 msgid "ERROR %d: %s"
 msgstr "VIRHE %d: %s"
 
-#: gui/downloadiconsdialog.cpp:175 gui/downloadiconsdialog.cpp:229
+#: gui/downloadiconsdialog.cpp:176 gui/downloadiconsdialog.cpp:231
 msgid "Downloading icons list..."
 msgstr "Ladataan ikonilistaa..."
 
-#: gui/downloadiconsdialog.cpp:239
+#: gui/downloadiconsdialog.cpp:190
+#, fuzzy
+#| msgid "Clear value"
+msgid "Clear Cache"
+msgstr "Tyhjennä arvo"
+
+#: gui/downloadiconsdialog.cpp:241
 #, c-format
 msgid "Downloading icons list... %d entries"
 msgstr "Ladataan ikonilistaa... %d kappaletta"
 
-#: gui/downloadiconsdialog.cpp:249
+#: gui/downloadiconsdialog.cpp:251
 #, c-format
 msgid "Detected %d new packs, %s %S"
 msgstr "Havaittiin %d uutta pakettia, %s %S"
 
-#: gui/downloadiconsdialog.cpp:251
+#: gui/downloadiconsdialog.cpp:253
 msgid "Download"
 msgstr "Lataa"
 
-#: gui/downloadiconsdialog.cpp:274
+#: gui/downloadiconsdialog.cpp:277
 #, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
 msgstr "Lataus valmis, ladattiin %d pakkausta, %s %S"
 
-#: gui/downloadiconsdialog.cpp:280 gui/downloadiconsdialog.cpp:367
+#: gui/downloadiconsdialog.cpp:283 gui/downloadiconsdialog.cpp:375
 #: gui/gui-manager.cpp:225 gui/unknown-game-dialog.cpp:53
 #: engines/nancy/dialogs.cpp:313 engines/scumm/help.cpp:124
 #: engines/scumm/help.cpp:139 engines/scumm/help.cpp:164
@@ -243,13 +250,24 @@ msgstr "Lataus valmis, ladattiin %d pakkausta, %s %S"
 msgid "Close"
 msgstr "Sulje"
 
-#: gui/downloadiconsdialog.cpp:374
+#: gui/downloadiconsdialog.cpp:382 gui/downloadiconsdialog.cpp:428
 msgid "ERROR: No icons path set"
 msgstr "VIRHE: Ikonipolkua ei ole asetettu"
 
-#: gui/downloadiconsdialog.cpp:408
+#: gui/downloadiconsdialog.cpp:416
 msgid "No new icons packs available"
 msgstr "Uusia ikonipaketteja ei ole saatavilla"
+
+#: gui/downloadiconsdialog.cpp:452
+#, c-format
+msgid ""
+"You are about to remove %s %s of data, deleting all previously downloaded "
+"icon files. Do you want to proceed?"
+msgstr ""
+
+#: gui/downloadiconsdialog.cpp:452 gui/updates-dialog.cpp:115
+msgid "Proceed"
+msgstr "Jatka"
 
 #: gui/editgamedialog.cpp:141 engines/dialogs.cpp:275
 msgid "Game"
@@ -2224,10 +2242,6 @@ msgid ""
 msgstr ""
 "Voit muuttaa tätä asetusta myöhemmin Muut-\n"
 "välilehden Asetukset-dialogista."
-
-#: gui/updates-dialog.cpp:115
-msgid "Proceed"
-msgstr "Jatka"
 
 #: gui/widget.cpp:440 gui/widget.cpp:442 gui/widget.cpp:448 gui/widget.cpp:450
 msgid "Clear value"
