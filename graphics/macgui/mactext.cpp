@@ -124,8 +124,9 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 	_macFontMode = true;
 
 	if (macFont) {
-		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
+		_defaultFormatting = MacFontRun(_wm);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
+		_defaultFormatting.setValues(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 	} else {
 		_defaultFormatting.font = NULL;
 	}

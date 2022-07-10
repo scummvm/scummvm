@@ -63,6 +63,15 @@ struct MacFontRun {
 		wordContinuation = false;
 	}
 
+	MacFontRun(MacWindowManager* wm_) {
+		wm = wm_;
+		fontId = textSlant = fontSize = 0;
+		palinfo1 = palinfo2 = palinfo3 = 0;
+		fgcolor = 0;
+		font = nullptr;
+		wordContinuation = false;
+	}
+
 	MacFontRun(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
 			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
 		setValues(wm_, fontId_, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
