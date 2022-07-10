@@ -89,7 +89,7 @@ public:
 	void doCornerReajust(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask);
 
 	/** Make actor to stop falling */
-	void receptionObj();
+	void receptionObj(int actorIdx);
 
 	/**
 	 * Check extra collision with actors

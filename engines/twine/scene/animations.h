@@ -62,8 +62,6 @@ private:
 public:
 	Animations(TwinEEngine *engine);
 
-	/** Current process actor index */
-	int16 _currentlyProcessedActorIdx = 0;
 	/** Current actor anim extra pointer */
 	AnimationTypes _currentActorAnimExtraPtr = AnimationTypes::kAnimNone;
 

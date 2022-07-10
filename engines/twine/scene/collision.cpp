@@ -417,8 +417,8 @@ void Collision::doCornerReajust(ActorStruct *actor, int32 x, int32 y, int32 z, i
 	processActor = _processCollision;
 }
 
-void Collision::receptionObj() {
-	if (IS_HERO(_engine->_animations->_currentlyProcessedActorIdx)) {
+void Collision::receptionObj(int actorIdx) {
+	if (IS_HERO(actorIdx)) {
 		const IVec3 &processActor = _engine->_actor->_processActorPtr->_processActor;
 		const int32 fall = _engine->_scene->_startYFalling - processActor.y;
 
@@ -430,21 +430,21 @@ void Collision::receptionObj() {
 			} else {
 				_engine->_actor->_processActorPtr->addLife(-1);
 			}
-			_engine->_animations->initAnim(AnimationTypes::kLandingHit, AnimType::kAnimationAllThen, AnimationTypes::kStanding, _engine->_animations->_currentlyProcessedActorIdx);
+			_engine->_animations->initAnim(AnimationTypes::kLandingHit, AnimType::kAnimationAllThen, AnimationTypes::kStanding, actorIdx);
 		} else if (fall > 2 * SIZE_BRICK_Y) {
-			_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationAllThen, AnimationTypes::kStanding, _engine->_animations->_currentlyProcessedActorIdx);
+			_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationAllThen, AnimationTypes::kStanding, actorIdx);
 		} else {
 			if (_engine->_actor->_processActorPtr->_dynamicFlags.bWasWalkingBeforeFalling) {
 				// try to not interrupt walk animation if Twinsen falls down from small height
-				_engine->_animations->initAnim(AnimationTypes::kForward, AnimType::kAnimationTypeLoop, AnimationTypes::kStanding, _engine->_animations->_currentlyProcessedActorIdx);
+				_engine->_animations->initAnim(AnimationTypes::kForward, AnimType::kAnimationTypeLoop, AnimationTypes::kStanding, actorIdx);
 			} else {
-				_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kStanding, _engine->_animations->_currentlyProcessedActorIdx);
+				_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kStanding, actorIdx);
 			}
 		}
 
 		_engine->_scene->_startYFalling = 0;
 	} else {
-		_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationAllThen, _engine->_actor->_processActorPtr->_animExtra, _engine->_animations->_currentlyProcessedActorIdx);
+		_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationAllThen, _engine->_actor->_processActorPtr->_animExtra, actorIdx);
 	}
 
 	_engine->_actor->_processActorPtr->_dynamicFlags.bIsFalling = 0;
