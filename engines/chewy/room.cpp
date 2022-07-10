@@ -180,9 +180,6 @@ void Room::loadRoom(RaumBlk *Rb, int16 room_nr, GameState *player) {
 	del_timer_old_room();
 	add_timer_new_room();
 
-	if (Rb->AtsLoad)
-		_G(atds)->load_atds(_roomInfo->_roomNr, ATS_DATA);
-
 	if (Rb->AadLoad)
 		_G(atds)->load_atds(_roomInfo->_roomNr, AAD_DATA);
 }

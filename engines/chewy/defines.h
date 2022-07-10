@@ -34,10 +34,7 @@ namespace Chewy {
 #define USE_TAP_MAX 140
 
 #define ADS_TAP_OFF 0
-#define ATS_TAP_OFF ADS_TAP_MAX	// 500
-#define AAD_TAP_OFF ATS_TAP_OFF+ATS_TAP_MAX	// 500 + 100
-#define INV_TAP_OFF AAD_TAP_OFF+AAD_TAP_MAX	// 500 + 100 + 100
-#define USE_TAP_OFF INV_TAP_OFF+INV_TAP_MAX	// 500 + 100 + 100 + 140
+#define AAD_TAP_OFF ADS_TAP_MAX + ATS_TAP_MAX // 500 + 100
 
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200
@@ -47,10 +44,6 @@ enum SetupScreenMode {
 	DO_SETUP = 1,
 	DO_MAIN_LOOP = 2
 };
-
-#define MIN_FAR_MEM 3000000
-#define MIN_LOW_MEM 100000
-#define SPEECH_HALF_BUF 25000
 
 #define JXDIFF 180
 #define JYDIFF 150

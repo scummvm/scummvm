@@ -61,7 +61,6 @@ struct RaumBlk {
 	int16 *DetKorrekt;
 	TafInfo *Fti;
 	int16 AadLoad;
-	int16 AtsLoad;
 };
 
 struct RaumTimer {

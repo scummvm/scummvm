@@ -2750,7 +2750,6 @@ void calc_person_dia(int16 p_nr) {
 			showCur();
 		} else {
 			_G(room_blk).AadLoad = false;
-			_G(room_blk).AtsLoad = false;
 			_G(gameState).PersonDiaTmpRoom[p_nr] = _G(gameState)._personRoomNr[P_CHEWY];
 			save_person_rnr();
 

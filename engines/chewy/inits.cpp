@@ -144,7 +144,6 @@ void init_room() {
 	_G(room_blk).Rmo = _G(gameState).room_m_obj;
 	_G(room_blk).Rsi = _G(gameState).room_s_obj;
 	_G(room_blk).AadLoad = true;
-	_G(room_blk).AtsLoad = true;
 }
 
 void new_game() {
