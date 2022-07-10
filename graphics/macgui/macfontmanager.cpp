@@ -633,7 +633,7 @@ int MacFontManager::getFontAliasForId(uint16 id) {
 
 Common::String MacFontManager::getFontName(uint16 id) {
 	if (!_fontInfo.contains(id)) {
-		warning("MacFontManager::getFontAliasForId: No _fontInfo entry for font %d", id);
+		warning("MacFontManager::getFontName: No _fontInfo entry for font %d", id);
 		return "";
 	}
 	if (_fontInfo[id]->aliasForId > -1) {
