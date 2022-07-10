@@ -41,6 +41,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"barrowhilldp",    "Barrow Hill - The Dark Path"},
 	{"basisoctavus",    "Basis Octavus"},
 	{"bickadoodle",     "Bickadoodle"},
+	{"bookmania",       "BookMania"},
 	{"bookofgron",      "Book of Gron Part One"},
 	{"bthreshold",      "Beyond the Threshold"},
 	{"carolreed4",      "Carol Reed 4 - East Side Story"},
@@ -471,6 +472,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Bickadoodle (https://web.archive.org/web/20150516210632/http://aethericgames.com/games/bickadoodle/download-bickadoodle/)
 	WME_WINENTRY("bickadoodle", "",
 		WME_ENTRY1s("data.dcp", "1584d83577c32add0fce27fae91141a2", 35337728), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+
+	// BookMania
+	WME_WINENTRY("bookmania", "",
+		WME_ENTRY1s("bookmania.exe", "2c7c950a7e7c5b3a30e83a6cd603789b", 5084057), Common::CS_CZE, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Book of Gron Part One
 	WME_WINENTRY("bookofgron", "",
