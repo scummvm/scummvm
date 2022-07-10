@@ -3355,7 +3355,12 @@ bool Actor::isPlayer() {
 bool Actor_v2::isPlayer() {
 	// isPlayer() is not supported by v0
 	assert(_vm->_game.version != 0);
-	return _vm->VAR(42) <= _number && _number <= _vm->VAR(43);
+	// MM V1 PC uses VAR_EGO and not VARS 42 / 43. ZAK V1 does already have VARS 42 / 43 here.
+	// For MM NES I do not have a disasm and the room I used to test it (MM room 24) also has
+	// different box flags in the NES version, so it will not even call into this function.
+	// However, I could at least confirm that VARS 42 and 43 are both set to 0, so apparently
+	// not in use.
+	return (_vm->_game.id == GID_MANIAC && _vm->_game.version == 1) ? (_number == _vm->VAR(_vm->VAR_EGO)) : (_vm->VAR(42) <= _number && _number <= _vm->VAR(43));
 }
 
 void ActorHE::setHEFlag(int bit, int set) {
