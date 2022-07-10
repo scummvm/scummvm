@@ -211,6 +211,12 @@
 #else
 #include <link.h>
 #endif
+#if defined(__ppc__) || defined(__powerpc) || defined(__powerpc__) ||        \
+    defined(__POWERPC__)
+// Linux kernel header required for the struct pt_regs definition
+// to access the NIP (Next Instruction Pointer) register value
+#include <asm/ptrace.h>
+#endif
 #include <signal.h>
 #include <sys/stat.h>
 #include <syscall.h>
@@ -338,7 +344,12 @@
 #include <thread>
 
 #include <basetsd.h>
+
+#ifdef _WIN64
 typedef SSIZE_T ssize_t;
+#else
+typedef int ssize_t;
+#endif
 
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -517,7 +528,7 @@ template <typename T> struct default_delete {
   void operator()(T &ptr) const { delete ptr; }
 };
 
-template <typename T, typename Deleter = deleter<void, void *, &::free>>
+template <typename T, typename Deleter = deleter<void, void *, &::free> >
 class handle {
   struct dummy;
   T _val;
@@ -1224,7 +1235,7 @@ public:
   }
 
   template <class ST> void load_stacktrace(ST &st) {
-    load_addresses(st.begin(), (int)st.size());
+    load_addresses(st.begin(), static_cast<int>(st.size()));
   }
 
   virtual ResolvedTrace resolve(ResolvedTrace t) { return t; }
@@ -1549,7 +1560,7 @@ private:
   bool _bfd_loaded;
 
   typedef details::handle<bfd *,
-                          details::deleter<bfd_boolean, bfd *, &bfd_close>>
+                          details::deleter<bfd_boolean, bfd *, &bfd_close> >
       bfd_handle_t;
 
   typedef details::handle<asymbol **> bfd_symtab_t;
@@ -1774,7 +1785,7 @@ public:
   ResolvedTrace resolve(ResolvedTrace trace) override {
     using namespace details;
 
-    Dwarf_Addr trace_addr = (Dwarf_Addr)trace.addr;
+    Dwarf_Addr trace_addr = reinterpret_cast<Dwarf_Addr>(trace.addr);
 
     if (!_dwfl_handle_initialized) {
       // initialize dwfl...
@@ -1906,8 +1917,8 @@ public:
       int line = 0, col = 0;
       dwarf_lineno(srcloc, &line);
       dwarf_linecol(srcloc, &col);
-      trace.source.line = line;
-      trace.source.col = col;
+      trace.source.line = static_cast<unsigned>(line);
+      trace.source.col = static_cast<unsigned>(col);
     }
 
     deep_first_search_by_pc(cudie, trace_addr - mod_bias,
@@ -1921,9 +1932,9 @@ public:
   }
 
 private:
-  typedef details::handle<Dwfl *, details::deleter<void, Dwfl *, &dwfl_end>>
+  typedef details::handle<Dwfl *, details::deleter<void, Dwfl *, &dwfl_end> >
       dwfl_handle_t;
-  details::handle<Dwfl_Callbacks *, details::default_delete<Dwfl_Callbacks *>>
+  details::handle<Dwfl_Callbacks *, details::default_delete<Dwfl_Callbacks *> >
       _dwfl_cb;
   dwfl_handle_t _dwfl_handle;
   bool _dwfl_handle_initialized;
@@ -1954,8 +1965,8 @@ private:
         Dwarf_Word line = 0, col = 0;
         dwarf_formudata(dwarf_attr(die, DW_AT_call_line, &attr_mem), &line);
         dwarf_formudata(dwarf_attr(die, DW_AT_call_column, &attr_mem), &col);
-        sloc.line = (unsigned)line;
-        sloc.col = (unsigned)col;
+        sloc.line = static_cast<unsigned>(line);
+        sloc.col = static_cast<unsigned>(col);
 
         trace.inliners.push_back(sloc);
         break;
@@ -2245,14 +2256,14 @@ public:
 private:
   bool _dwarf_loaded;
 
-  typedef details::handle<int, details::deleter<int, int, &::close>>
+  typedef details::handle<int, details::deleter<int, int, &::close> >
       dwarf_file_t;
 
-  typedef details::handle<Elf *, details::deleter<int, Elf *, &elf_end>>
+  typedef details::handle<Elf *, details::deleter<int, Elf *, &elf_end> >
       dwarf_elf_t;
 
   typedef details::handle<Dwarf_Debug,
-                          details::deleter<int, Dwarf_Debug, &close_dwarf>>
+                          details::deleter<int, Dwarf_Debug, &close_dwarf> >
       dwarf_handle_t;
 
   typedef std::map<Dwarf_Addr, int> die_linemap_t;
@@ -3686,7 +3697,7 @@ class TraceResolver : public TraceResolverImpl<system_tag::current_tag> {};
 
 class SourceFile {
 public:
-  typedef std::vector<std::pair<unsigned, std::string>> lines_t;
+  typedef std::vector<std::pair<unsigned, std::string> > lines_t;
 
   SourceFile() {}
   SourceFile(const std::string &path) {
@@ -3798,7 +3809,7 @@ public:
 #endif
 
 private:
-  details::handle<std::ifstream *, details::default_delete<std::ifstream *>>
+  details::handle<std::ifstream *, details::default_delete<std::ifstream *> >
       _file;
 
   std::vector<std::string> get_paths_from_env_variable_impl() {
@@ -4245,7 +4256,8 @@ public:
     printer.address = true;
     printer.print(st, stderr);
 
-#if _XOPEN_SOURCE >= 700 || _POSIX_C_SOURCE >= 200809L
+#if (defined(_XOPEN_SOURCE) && _XOPEN_SOURCE >= 700) || \
+    (defined(_POSIX_C_SOURCE) && _POSIX_C_SOURCE >= 200809L)
     psiginfo(info, nullptr);
 #else
     (void)info;
