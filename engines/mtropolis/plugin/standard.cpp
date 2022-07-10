@@ -325,11 +325,7 @@ void MidiNotePlayerImpl::play(uint8 volume, uint8 channel, uint8 program, uint8 
 	if (_durationRemaining)
 		stop();
 
-	bool mustResetControllers = false;
-	if (!_initialized) {
-		mustResetControllers = true;
-		_initialized = true;
-	}
+	_initialized = true;
 
 	_durationRemaining = static_cast<uint64>(duration * 1000000);
 	_channel = channel;
