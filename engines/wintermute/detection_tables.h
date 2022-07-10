@@ -81,6 +81,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"four",            "Four"},
 	{"foxtail",         "FoxTail"},
 	{"framed",          "Framed"},
+	{"fred",            "Fred"},
 	{"ghostsheet",      "Ghost in the Sheet"},
 	{"goldencalf",      "The Golden Calf"},
 	{"hamlet",          "Hamlet or the last game without MMORPG features, shaders and product placement"},
@@ -1300,6 +1301,15 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Framed (Beta)
 	WME_WINENTRY("framed", "Beta",
 		WME_ENTRY1s("data.dcp", "e7259fb36f2c6f9f28242291e0c3de98", 34690568), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_11),
+
+	// Fred (English) (PreAlpha)
+	WME_WINENTRY("fred", "PreAlpha",
+		WME_ENTRY2s("string.tab", "76b48c26e611071810d8182fc27f7d0e", 12590,
+		            "data.dcp", "e18b1f9815b9e9cf1d1357bc48269b0b", 7632855), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_0_31),
+
+	// Fred (French) (PreAlpha)
+	WME_WINENTRY("fred", "PreAlpha",
+		WME_ENTRY1s("data.dcp", "e18b1f9815b9e9cf1d1357bc48269b0b", 7632855), Common::FR_FRA, ADGF_UNSTABLE | ADGF_DEMO, WME_1_0_31),
 
 	// Ghost in the Sheet (English, v1.00)
 	WME_WINENTRY("ghostsheet", "",
@@ -4163,7 +4173,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Shadow of Nebula (Steam: Early Access Game, Mar 2016) (English)
 	WME_WINENTRY("shadowofnebula", "",
-		WME_ENTRY1s("data.dcp", "fd3631791e66885427ccdb6063752a6d", 1402609157), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "fd3631791e66885427ccdb6063752a6d", 1402609157), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
 	// Shadow of Nebula (Demo) (English)
 	WME_WINENTRY("shadowofnebula", "",
