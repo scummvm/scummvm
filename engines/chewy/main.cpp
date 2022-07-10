@@ -197,6 +197,8 @@ bool mainLoop(int16 mode) {
 	if (_G(flags).MainInput) {
 		switch (g_events->_kbInfo._scanCode) {
 		case Common::KEYCODE_F1:
+			if (_G(cur)->usingInventoryCursor())
+				invent_2_slot(_G(cur)->getInventoryCursor());
 			_G(cur)->setInventoryCursor(-1);
 			_G(menu_item) = CUR_WALK;
 			_G(cur)->showCursor();
@@ -206,6 +208,8 @@ bool mainLoop(int16 mode) {
 			break;
 
 		case Common::KEYCODE_F2:
+			if (_G(cur)->usingInventoryCursor())
+				invent_2_slot(_G(cur)->getInventoryCursor());
 			_G(cur)->setInventoryCursor(-1);
 			_G(menu_item) = CUR_USE;
 			_G(cur)->showCursor();
@@ -215,6 +219,8 @@ bool mainLoop(int16 mode) {
 			break;
 
 		case Common::KEYCODE_F3:
+			if (_G(cur)->usingInventoryCursor())
+				invent_2_slot(_G(cur)->getInventoryCursor());
 			_G(cur)->setInventoryCursor(-1);
 			_G(menu_item) = CUR_LOOK;
 			_G(cur)->showCursor();
@@ -224,6 +230,8 @@ bool mainLoop(int16 mode) {
 			break;
 
 		case Common::KEYCODE_F4:
+			if (_G(cur)->usingInventoryCursor())
+				invent_2_slot(_G(cur)->getInventoryCursor());
 			_G(cur)->setInventoryCursor(-1);
 			_G(menu_item) = CUR_TALK;
 			_G(cur)->showCursor();
@@ -261,6 +269,9 @@ bool mainLoop(int16 mode) {
 
 			_G(out)->setPointer((byte *)g_screen->getPixels());
 			_G(fontMgr)->setFont(_G(font6));
+			if (_G(cur)->usingInventoryCursor())
+				invent_2_slot(_G(cur)->getInventoryCursor());
+			_G(cur)->setInventoryCursor(-1);
 			cursorChoice(CUR_SAVE);
 			if (Dialogs::Files::execute(true) == 1) {
 				retValue = true;
@@ -321,6 +332,8 @@ bool mainLoop(int16 mode) {
 				_G(fontMgr)->setFont(_G(font6));
 
 				_G(out)->setPointer((byte *)g_screen->getPixels());
+				if (_G(cur)->usingInventoryCursor())
+					invent_2_slot(_G(cur)->getInventoryCursor());
 				cursorChoice(CUR_SAVE);
 				bool ret = Dialogs::Files::execute(true);
 				if (ret) {
