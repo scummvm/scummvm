@@ -668,6 +668,8 @@ void Animations::doAnim(int32 actorIdx) {
 
 		collision->_causeActorDamage = 0;
 
+		// TODO: hack to fix tank-not-moving bug https://bugs.scummvm.org/ticket/13177
+		// remove processActorSave
 		const IVec3 processActorSave = processActor;
 		collision->setCollisionPos(processActor);
 
@@ -684,6 +686,7 @@ void Animations::doAnim(int32 actorIdx) {
 			collision->doCornerReajust(actor, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 4);
 			collision->doCornerReajust(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 8);
 		}
+		// TODO: hack to fix tank-not-moving bug https://bugs.scummvm.org/ticket/13177
 		processActor = processActorSave;
 
 		// process wall hit while running
