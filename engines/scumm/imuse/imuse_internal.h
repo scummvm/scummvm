@@ -418,7 +418,7 @@ protected:
 	sysexfunc _sysex;
 
 	OSystem *_system;
-	Common::Mutex _mutex;
+	Common::Mutex &_mutex;
 
 protected:
 	bool _paused;
@@ -454,7 +454,7 @@ protected:
 	DeferredCommand _deferredCommands[4];
 
 protected:
-	IMuseInternal();
+	IMuseInternal(Common::Mutex &mutex);
 	~IMuseInternal() override;
 
 	int initialize(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver);
