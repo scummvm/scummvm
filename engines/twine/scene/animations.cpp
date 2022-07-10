@@ -687,7 +687,9 @@ void Animations::doAnim(int32 actorIdx) {
 			collision->doCornerReajust(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 8);
 		}
 		// TODO: hack to fix tank-not-moving bug https://bugs.scummvm.org/ticket/13177
-		processActor = processActorSave;
+		if (actorIdx == 1 && _engine->_scene->_currentSceneIdx == LBA1SceneId::Hamalayi_Mountains_2nd_fighting_scene) {
+			processActor = processActorSave;
+		}
 
 		// process wall hit while running
 		if (collision->_causeActorDamage && !actor->_dynamicFlags.bIsFalling && IS_HERO(_currentlyProcessedActorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_genAnim == AnimationTypes::kForward) {
