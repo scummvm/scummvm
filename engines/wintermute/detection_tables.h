@@ -114,6 +114,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"mukhtar",         "Mukhtar and his Team"},
 	{"mystictriddle",   "Mystic Triddle"},
 	{"mythguff",        "Myth: A Guff's Tale"},
+	{"nightinthefog",   "Night in the Fog"},
 	{"nighttrain",      "Night Train"},
 	{"oknytt",          "Oknytt"},
 	{"one",             "One"},
@@ -1731,6 +1732,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Myth: A Guff's Tale
 	WME_WINENTRY("mythguff", "",
 		WME_ENTRY1s("data.dcp", "ef53dddd2264a7d5b13f3d71da5261e4", 675663078), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Night in the Fog (Demo, 0.4.0212a)
+	WME_WINENTRY("nightinthefog", "Demo 0.4.0212a",
+		WME_ENTRY1s("game.exe", "73c88cb17e380ff72c2f1d156b4545e9", 128294595), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
 	// Night Train Demo
 	WME_WINENTRY("nighttrain", "Demo",
