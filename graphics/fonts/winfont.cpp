@@ -32,11 +32,13 @@ namespace Graphics {
 
 WinFont::WinFont() {
 	_glyphs = 0;
+	_name = Common::String();
 	close();
 }
 
 WinFont::~WinFont() {
 	close();
+	_name.clear();
 }
 
 void WinFont::close() {
@@ -139,8 +141,10 @@ uint32 WinFont::getFontIndex(Common::SeekableReadStream &stream, const WinFontDi
 		uint16 id = stream.readUint16LE();
 
 		// Use the first name when empty
-		if (dirEntry.faceName.empty())
+		if (dirEntry.faceName.empty()) {
+			_name = getFONFontName(stream);
 			return id;
+		}
 
 		WinFontDirEntry entry = readDirEntry(stream);
 
@@ -149,6 +153,15 @@ uint32 WinFont::getFontIndex(Common::SeekableReadStream &stream, const WinFontDi
 	}
 
 	return 0xffffffff;
+}
+
+Common::String WinFont::getFONFontName(Common::SeekableReadStream& stream) {
+	//Currently only works when dirEntry.faceName in getFontIndex is empty
+	//But this can be used for each FONTDIR entry
+	stream.seek(117);
+	/* Device Name = */ stream.readString();
+	Common::String fontName = stream.readString();
+	return fontName;
 }
 
 bool WinFont::loadFromFNT(const Common::String &fileName) {

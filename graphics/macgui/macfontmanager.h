@@ -154,6 +154,7 @@ public:
 	void loadFonts(Common::SeekableReadStream *stream);
 	void loadFonts(const Common::String &fileName);
 	void loadFonts(Common::MacResManager *fontFile);
+	void loadWindowsFont(const Common::String &fileName);
 
 	/**
 	 * Register a font name if it doesn't already exist.
@@ -182,6 +183,7 @@ private:
 	bool _japaneseFontsLoaded;
 	uint32 _mode;
 	Common::Language _language;
+	Common::HashMap<Common::String, Graphics::Font *> _winFontRegistry;
 	Common::HashMap<Common::String, MacFont *> _fontRegistry;
 	Common::HashMap<Common::String, MacFontFamily *> _fontFamilies;
 

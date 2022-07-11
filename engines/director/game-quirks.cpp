@@ -42,6 +42,12 @@ static void quirkLzone() {
 static void quirkMcLuhan() {
 	// TODO. Read fonts from MCLUHAN/SYSTEM directory
 	g_director->_extraSearchPath.push_back("mcluhan\\");
+	g_director->_extraSearchPath.push_back("mcluhan-win\\");
+	g_director->_wm = new Graphics::MacWindowManager();
+	g_director->_wm->setEngine(g_director);
+	g_director->_wm->_fontMan->loadWindowsFont(Common::String("MCLUHAN/SYSTEM/MCBOLD13.FON"));
+	g_director->_wm->_fontMan->loadWindowsFont(Common::String("MCLUHAN/SYSTEM/MCLURG__.FON"));
+	g_director->_wm->_fontMan->loadWindowsFont(Common::String("MCLUHAN/SYSTEM/MCL1N___.FON"));
 }
 
 struct Quirk {
