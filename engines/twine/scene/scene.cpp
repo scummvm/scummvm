@@ -732,7 +732,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 						_engine->_grid->_newCamera.x = zone->infoData.CameraView.x;
 						_engine->_grid->_newCamera.y = zone->infoData.CameraView.y;
 						_engine->_grid->_newCamera.z = zone->infoData.CameraView.z;
-						_engine->_redraw->_reqBgRedraw = true;
+						_engine->_redraw->_firstTime = true;
 					}
 				}
 				break;
@@ -796,7 +796,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 		_engine->_grid->_useCellingGrid = -1;
 		_engine->_grid->_cellingGridIdx = -1;
 		_engine->_grid->createGridMap();
-		_engine->_redraw->_reqBgRedraw = true;
+		_engine->_redraw->_firstTime = true;
 	}
 }
 

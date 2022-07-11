@@ -360,14 +360,14 @@ static int32 mBACKGROUND(TwinEEngine *engine, MoveScriptContext &ctx) {
 		if (!ctx.actor->_staticFlags.bIsBackgrounded) {
 			ctx.actor->_staticFlags.bIsBackgrounded = 1;
 			if (ctx.actor->_dynamicFlags.bIsDrawn) {
-				engine->_redraw->_reqBgRedraw = true;
+				engine->_redraw->_firstTime = true;
 			}
 		}
 	} else {
 		if (ctx.actor->_staticFlags.bIsBackgrounded) {
 			ctx.actor->_staticFlags.bIsBackgrounded = 0;
 			if (ctx.actor->_dynamicFlags.bIsDrawn) {
-				engine->_redraw->_reqBgRedraw = true;
+				engine->_redraw->_firstTime = true;
 			}
 		}
 	}

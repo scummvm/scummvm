@@ -142,7 +142,7 @@ public:
 	bool _inSceneryView = false;
 
 	/** Request background redraw */
-	bool _reqBgRedraw = false;
+	bool _firstTime = false;
 
 	/** Current number of redraw regions in the screen */
 	int32 _currNumOfRedrawBox = 0; // fullRedrawVar8

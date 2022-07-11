@@ -451,7 +451,7 @@ void Debug::debugProcessWindow() {
 
 		count++;
 	}
-	_engine->_redraw->_reqBgRedraw = true;
+	_engine->_redraw->_firstTime = true;
 }
 
 void Debug::processDebug() {

@@ -1009,7 +1009,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 						_scene->_heroPositionType = ScenePositionType::kReborn;
 
 						_scene->_sceneHero->setLife(kActorMaxLife);
-						_redraw->_reqBgRedraw = true;
+						_redraw->_firstTime = true;
 						_screens->_fadePalette = true;
 						_gameState->addLeafs(-1);
 						_actor->_cropBottomScreen = 0;
@@ -1050,23 +1050,23 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 	_grid->centerScreenOnActor();
 
-	_redraw->redrawEngineActions(_redraw->_reqBgRedraw);
+	_redraw->redrawEngineActions(_redraw->_firstTime);
 
 	// workaround to fix hero redraw after drowning
-	if (_actor->_cropBottomScreen && _redraw->_reqBgRedraw) {
+	if (_actor->_cropBottomScreen && _redraw->_firstTime) {
 		_scene->_sceneHero->_staticFlags.bIsHidden = 1;
 		_redraw->redrawEngineActions(true);
 		_scene->_sceneHero->_staticFlags.bIsHidden = 0;
 	}
 
 	_scene->_needChangeScene = SCENE_CEILING_GRID_FADE_1;
-	_redraw->_reqBgRedraw = false;
+	_redraw->_firstTime = false;
 
 	return false;
 }
 
 bool TwinEEngine::gameEngineLoop() {
-	_redraw->_reqBgRedraw = true;
+	_redraw->_firstTime = true;
 	_screens->_fadePalette = true;
 	_movements->setActorAngle(ANGLE_0, -ANGLE_90, ANGLE_1, &_loopMovePtr);
 
