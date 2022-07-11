@@ -59,6 +59,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"carolreed16",     "Carol Reed 16 - Quarantine Diary"},
 	{"chaos",           "Chaos"},
 	{"chivalry",        "Chivalry is Not Dead"},
+	{"colapso1",        "Colapso: Episode 1"},
 	{"colorsoncanvas",  "Colors on Canvas"},
 	{"conspiracao",     "Conspiracao Dumont"},
 	{"corrosion",       "Corrosion: Cold Winter Waiting"},
@@ -775,6 +776,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Chivalry is Not Dead (Version from deirdrakai.com)
 	WME_WINENTRY("chivalry", "",
 		WME_ENTRY1s("data.dcp", "ae6d91b9517f4d2851a8ad94c96951c8", 7278302), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_8_0),
+
+	// Colapso: Episode 1 (multi-language)
+	WME_WINENTRY("colapso1", "",
+		WME_ENTRY1s("data.dcp", "9ad2d643e882ec98a4c37f52555d69f1", 38865249), Common::UNK_LANG, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
 	// Colors on Canvas (Demo)
 	WME_WINENTRY("colorsoncanvas", "Demo",
