@@ -900,7 +900,7 @@ const byte *ScummEngine::postProcessV1Graphics(VirtScreen *vs, int &pitch, int &
 		}
 
 	} else if (vs->number == kTextVirtScreen) {
-		// For EGA, the omly colors that need remapping are for the kTextVirtScreen.
+		// For EGA, the only colors that need remapping are for the kTextVirtScreen.
 		for (int h = height; h; --h)  {
 			for (int w = width; w; --w)
 				*dst++ = _gdi->remapColorToRenderMode(*src++);
