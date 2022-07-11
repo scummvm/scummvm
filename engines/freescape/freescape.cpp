@@ -46,7 +46,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	_velocity = Math::Vector3d(0.f, 0.f, 0.f);
 	_cameraFront = Math::Vector3d(0.f, 0.f, 0.f);
 	_cameraRight = Math::Vector3d(0.f, 0.f, 0.f);
-	_movementSpeed = 1.0f;
+	_movementSpeed = 1.5f;
 	_mouseSensitivity = 0.1f;
 	_borderTexture = nullptr;
 
@@ -369,50 +369,79 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 		break;
 	}
 	int areaScale = _currentArea->getScale();
-	// Is threre some floor under the player?
-	_position.set(_position.x(), positionY - 16 * areaScale, _position.z());
+	// restore y coordinate
+	_position.set(_position.x(), positionY, _position.z());
 	bool collided = checkCollisions(false);
 
-	if (!collided && _targetName == "driller") {  // Player is falling, let's try to step down
-		debug("steping down from position: %f, %f, %f", _position.x(), _position.y(), _position.z());
-
-		_position.set(_position.x(), positionY - 16 * areaScale - 64 * areaScale, _position.z());
-
-		collided = checkCollisions(false);
-		if (!collided)
-			debug("falling from position: %f, %f, %f", _position.x(), _position.y(), _position.z());
-		assert(collided);
-
-		// restore position
-		_position.set(_position.x(), positionY - 64 * areaScale, _position.z());
-
-		checkCollisions(true);
-		/*if (collided && previousAreaID == _currentArea->getAreaID()) {
-			_position = previousPosition;
-		}*/
-	} else {
-		// restore position
-		_position.set(_position.x(), positionY, _position.z());
-
-		collided = checkCollisions(true);
-		if (collided && previousAreaID == _currentArea->getAreaID()) {
-			debug("steping up from position: %f, %f, %f", _position.x(), _position.y(), _position.z());
-			// We found a collisions, let's try to step up
-			_position.set(_position.x(), positionY + 64 * areaScale, _position.z());
-			collided = checkCollisions(false);
-			if (collided)
-				_position = previousPosition;
-		} else {
-			_position.set(_position.x(), positionY - 16 * areaScale, _position.z());
-			collided = checkCollisions(true);
-			assert(collided); // This should not fail
-			// restore position
-			_position.set(_position.x(), positionY, _position.z());
+	if (!collided) {
+		bool hasFloor = checkFloor(_position);
+		if (!hasFloor) {
+			int fallen;
+			for (fallen = 1; fallen < 65 + 1; fallen++) {
+				_position.set(_position.x(), positionY - fallen * areaScale, _position.z());
+				if (tryStepDown(_position))
+					break;
+			}
+			fallen++;
+			fallen++;
+			if (fallen >= 67) {
+				_position = previousPosition; //error("NASTY FALL!");
+				return;
+			}
+			_position.set(_position.x(), positionY - fallen * areaScale, _position.z());
 		}
-
+		checkCollisions(true); // run the effects
+	} else {
+		checkCollisions(true); // run the effects
+		if (_currentArea->getAreaID() == previousAreaID) {
+			bool stepUp = tryStepUp(_position);
+			if (stepUp) {
+				checkCollisions(true); // run the effects (again)
+			} else {
+				_position = previousPosition;
+			}
+		}
 	}
 	debug("new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 }
+
+bool FreescapeEngine::checkFloor(Math::Vector3d currentPosition) {
+	int areaScale = _currentArea->getScale();
+	bool collided = checkCollisions(false);
+	assert(!collided);
+
+	_position.set(_position.x(), _position.y() - 2 * areaScale, _position.z());
+	collided = checkCollisions(false);
+	_position = currentPosition;
+	return collided;
+}
+
+bool FreescapeEngine::tryStepUp(Math::Vector3d currentPosition) {
+	debug("Try to step up!");
+	int areaScale = _currentArea->getScale();
+	_position.set(_position.x(), _position.y() + 64 * areaScale, _position.z());
+	bool collided = checkCollisions(false);
+	if (collided) {
+		_position = currentPosition;
+		return false;
+	} else {
+		// Try to step down
+		return true;
+	}
+}
+
+bool FreescapeEngine::tryStepDown(Math::Vector3d currentPosition) {
+	debug("Try to step down!");
+	int areaScale = _currentArea->getScale();
+	_position.set(_position.x(), _position.y() - areaScale, _position.z());
+	if (checkFloor(_position)) {
+		return true;
+	} else {
+		_position = currentPosition;
+		return false;
+	}
+}
+
 
 bool FreescapeEngine::checkCollisions(bool executeConditions) {
 	int areaScale = _currentArea->getScale();
