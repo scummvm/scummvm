@@ -24,6 +24,7 @@
 #include "common/macresman.h"
 #include "graphics/fonts/bdf.h"
 #include "graphics/fonts/macfont.h"
+#include "graphics/fonts/winfont.h"
 #include "graphics/fonts/ttf.h"
 
 #include "graphics/macgui/macwindowmanager.h"
@@ -181,6 +182,8 @@ MacFontManager::~MacFontManager() {
 	for (Common::HashMap<Common::String, Common::SeekableReadStream *>::iterator it = _ttfData.begin(); it != _ttfData.end(); it++)
 		delete it->_value;
 	for (Common::HashMap<Common::String, MacFont *>::iterator it = _fontRegistry.begin(); it != _fontRegistry.end(); it++)
+		delete it->_value;
+	for (Common::HashMap<Common::String, Graphics::Font *>::iterator it = _winFontRegistry.begin(); it != _winFontRegistry.end(); it++)
 		delete it->_value;
 	for (Common::HashMap<Common::String, MacFontFamily *>::iterator it = _fontFamilies.begin(); it != _fontFamilies.end(); it++)
 		delete it->_value;
@@ -431,6 +434,20 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 	}
 }
 
+void MacFontManager::loadWindowsFont(const Common::String &fileName) {
+	Graphics::WinFont *winFont = new Graphics::WinFont();
+	winFont->loadFromFON(fileName);
+	Common::String fontName = winFont->getName();
+
+
+	_winFontRegistry.setVal(fontName, winFont);
+	MacFont *font = new MacFont();
+	Common::String fullName = Common::String::format("%s-%d-%d", fontName.c_str(), 0, 12);
+	font->setName(fullName);
+	font->setFont(winFont, false);
+	_fontRegistry.setVal(font->getName(), font);
+}
+
 const Font *MacFontManager::getFont(MacFont macFont) {
 	Common::String name;
 	const Font *font = 0;
@@ -489,6 +506,12 @@ const Font *MacFontManager::getFont(MacFont macFont) {
 	}
 #endif
 
+	if (!font) {
+		if (_fontInfo.contains(macFont.getId()) && _winFontRegistry.contains(_fontInfo.getVal(macFont.getId())->name)) {
+			font = _winFontRegistry.getVal(_fontInfo.getVal(macFont.getId())->name);
+		}
+	}
+
 	if (!font)
 		font = FontMan.getFontByUsage(macFont.getFallback());
 
@@ -497,11 +520,12 @@ const Font *MacFontManager::getFont(MacFont macFont) {
 }
 
 int MacFontManager::rectifyId(const MacFont *macFont, const Font *font) {
-	for (auto it = _fontInfo.begin(); it != _fontInfo.end(); it++) {
-		if (((BdfFont *)font)->getFamilyName() == it->_value->name) {
-			return it->_key;
+
+		for (auto it = _fontInfo.begin(); it != _fontInfo.end(); it++) {
+			if (((BdfFont *)font)->getFamilyName() == it->_value->name.c_str()) {
+				return it->_key;
+			}
 		}
-	}
 
 	return macFont->getId();
 }
