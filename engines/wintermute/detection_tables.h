@@ -57,6 +57,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"carolreed14",     "Carol Reed 14 - The Fall Of April"},
 	{"carolreed15",     "Carol Reed 15 - Geospots"},
 	{"carolreed16",     "Carol Reed 16 - Quarantine Diary"},
+	{"chaos",           "Chaos"},
 	{"chivalry",        "Chivalry is Not Dead"},
 	{"colorsoncanvas",  "Colors on Canvas"},
 	{"conspiracao",     "Conspiracao Dumont"},
@@ -762,6 +763,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Carol Reed 16 - Quarantine Diary (SD) (Russian)
 	WME_WINENTRY("carolreed16", "SD",
 		WME_ENTRY1s("data.dcp", "9a9749e4d9cf6a151e9c95dece48b2c1", 774823176), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Chaos (Tech Demo)
+	WME_WINENTRY("chaos", "Tech Demo",
+		WME_ENTRY1s("data_main.dcp", "7fc1d1629876ebf85e098df05d8c795f", 107375), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_10),
 
 	// Chivalry is Not Dead
 	WME_WINENTRY("chivalry", "",
