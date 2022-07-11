@@ -102,7 +102,6 @@ void FreescapeEngine::loadAssets() {
 		load16bitBinary(file);
 	} else if (_targetName.hasPrefix("driller") || _targetName.hasPrefix("spacestationoblivion")) {
 		Common::File exe;
-		bool success = false;
 		if (_renderMode == "ega") {
 			file = gameDir.createReadStreamForMember("DRILLE.EXE");
 
@@ -121,7 +120,6 @@ void FreescapeEngine::loadAssets() {
 
 	} else if (_targetName.hasPrefix("darkside")) {
 		Common::File exe;
-		bool success = false;
 		if (_renderMode == "ega") {
 			file = gameDir.createReadStreamForMember("DSIDEE.EXE");
 
@@ -140,7 +138,6 @@ void FreescapeEngine::loadAssets() {
 
 	} else if (_targetName == "totaleclipse") {
 		Common::File exe;
-		bool success = false;
 		if (_renderMode == "ega") {
 			file = gameDir.createReadStreamForMember("TOTEE.EXE");
 
