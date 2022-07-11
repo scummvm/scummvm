@@ -112,6 +112,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"miskatonic1",     "Miskatonic. Part One"},
 	{"msos",            "Monday Starts on Saturday"},
 	{"mukhtar",         "Mukhtar and his Team"},
+	{"mystictriddle",   "Mystic Triddle"},
 	{"mythguff",        "Myth: A Guff's Tale"},
 	{"nighttrain",      "Night Train"},
 	{"oknytt",          "Oknytt"},
@@ -1722,6 +1723,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Mukhtar and his Team
 	WME_WINENTRY("mukhtar", "",
 		WME_ENTRY1s("data.dcp", "ed1deb8e6b2ce0a50ba26e035bdb7006", 1086177292), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
+
+	// Mystic Triddle (Demo)
+	WME_WINENTRY("mystictriddle", "Demo",
+		WME_ENTRY1s("data.dcp", "77b54c83d49f2cd9d78d319bafa8a4bd", 27716095), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_5_2),
 
 	// Myth: A Guff's Tale
 	WME_WINENTRY("mythguff", "",
