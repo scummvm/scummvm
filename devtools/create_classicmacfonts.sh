@@ -35,30 +35,33 @@ fi
 
 echo done
 
-echo_n "Mounting System 7.0.1 image..."
+echo_n "Decompressing System 7.0.1 image..."
 
 macbinary decode System_7.0.1.smi.bin
-hdiutil convert -quiet System\ 7.0.1.smi -format UDRO -o sys7.dmg
 rm System_7.0.1.smi.bin
-hdiutil attach -quiet sys7.dmg
-
-if test ! -f /Volumes/7.0.1\ \(1440k.images\)/Fonts.image; then
-	echo "Failed to attach sys7.dmg"
-	exit
-fi
+./decompress-diskcopy-image.py System\ 7.0.1.smi sys.img
 
 echo done
 
-echo_n "Mounting Fonts disk image..."
+echo "Dumping floppy images..."
 
-hdiutil convert -quiet /Volumes/7.0.1\ \(1440k.images\)/Fonts.image -format UDRO -o fonts.dmg
-hdiutil detach -quiet `hdiutil info|grep "/Volumes/7.0.1 (1440k.images)"|cut -f 1`
-hdiutil attach -quiet fonts.dmg
+./dumper-companion.py iso sys.img .
 
-if test ! -f /Volumes/Fonts/Chicago; then
-	echo "Failed to attach fonts.dmg"
-	exit
-fi
+echo Done
+
+echo_n "Cutting Fonts.image..."
+mv Fonts.image Fonts.image.bin
+macbinary decode Fonts.image.bin
+
+tail -c +85 Fonts.image | head -c 1474048 >Fonts1.image
+
+echo done
+
+echo "Extracting fonts..."
+
+./dumper-companion.py iso Fonts1.image .
+
+rm Fonts.image.bin
 
 echo done
 
@@ -66,21 +69,18 @@ echo_n "Copying fonts..."
 
 for i in Athens Cairo Chicago Courier Geneva Helvetica London "Los Angeles" Monaco "New York" Palatino "San Francisco" Symbol Times Venice
 do
-	echo $i
-	macbinary encode "/Volumes/Fonts/$i" -o "$i.bin" -n
+	mv "$i" "$i.bin"
 done
 
-echo ...Done
-
-hdiutil detach -quiet `hdiutil info|grep "/Volumes/Fonts"|cut -f 1`
+echo ...done
 
 zip -9 classicmacfonts *.bin
 mv classicmacfonts.zip classicmacfonts.dat
 
 echo_n "Cleaning up..."
 rm *.bin
-rm *.dmg
 rm *.smi
+rm *.image
 echo done
 
 ls -l classicmacfonts.dat
