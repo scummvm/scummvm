@@ -68,13 +68,14 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"deadcity",        "Dead City"},
 	{"devilincapital",  "Devil In The Capital"},
 	{"dfafadventure",   "DFAF Adventure"},
+	{"dirtysplit",      "Dirty Split"},
 	{"drbohus",         "Dr. Bohus"},
 	{"drdoylemotch",    "Dr. Doyle - Mystery Of The Cloche Hat"},
 	{"dreamcat",        "Dreamcat"},
 	{"dreaming",        "Des Reves Elastiques Avec Mille Insectes Nommes Georges"},
-	{"driller",         "The Driller Incident"},
-	{"dirtysplit",      "Dirty Split"},
+	{"dreams",          "Dreams"},
 	{"dreamscape",      "Dreamscape"},
+	{"driller",         "The Driller Incident"},
 	{"erinmyers",       "The Death of Erin Myers"},
 	{"escapemansion",   "Escape from the Mansion"},
 	{"everydaygray",    "Everyday Grey"},
@@ -926,6 +927,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Dreamcat
 	WME_WINENTRY("dreamcat", "",
 		WME_ENTRY1s("data.dcp", "189bd4eef29034f4ff4ed30120eaac4e", 7758040), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, WME_1_9_1),
+
+	// Dreams (Demo)
+	WME_WINENTRY("dreams", "Demo",
+		WME_ENTRY1s("data.dcp", "1c620f51bef1faffbeebb6253542f834", 23622097), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_0_26),
 
 	// Dreamscape (Beta)
 	// NOTE: Package is called "Dreamland.rar", however game title is "Dreamscape"
