@@ -1709,7 +1709,11 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Miskatonic. Part One
 	WME_WINENTRY("miskatonic1", "",
-		WME_ENTRY1s("Miskatonic.exe", "21d1ed0375f64c13688e2d082ed1aaa1", 340306712), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+		WME_ENTRY1s("Miskatonic.exe", "21d1ed0375f64c13688e2d082ed1aaa1", 340306712), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
+
+	// Miskatonic. Part One (alt)
+	WME_WINENTRY("miskatonic1", "",
+		WME_ENTRY1s("Miskatonic.exe", "4c52d1cdc6dc708f47049b5c88a5b866", 339002997), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
 
 	// Monday Starts on Saturday
 	WME_WINENTRY("msos", "",
