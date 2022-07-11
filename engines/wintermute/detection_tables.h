@@ -144,6 +144,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"securanote",      "Securanote"},
 	{"shaban",          "Shaban"},
 	{"shadowofnebula",  "Shadow Of Nebula"},
+	{"shelter",         "Shelter"},
 	{"shinestar",       "The Shine of a Star"},
 	{"spaceinvaders",   "Space Invaders"},
 	{"spacemadness",    "Space Madness"},
@@ -5268,6 +5269,10 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
 					"data_hd.dcp", "61b79bd9f732e48bb097227ee615463b", 272405838,
 					"i18n_pl_strings.dcp", "67c194c45375d2e26f8bf5ae17800944", 119354), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+
+	// Shelter (Demo)
+	WME_WINENTRY("shelter", "Demo",
+		WME_ENTRY1s("data.dcp", "789f15a26fc06a814cfca723e33fc5f7", 5417715), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_6_2),
 
 	// The Shine of a Star
 	WME_WINENTRY("shinestar", "",
