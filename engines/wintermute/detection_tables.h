@@ -128,6 +128,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"pigeons",         "Pigeons in the Park"},
 	{"pizzamorgana",    "Pizza Morgana: Episode 1 - Monsters and Manipulations in the Magical Forest"},
 	{"polechudes",      "Pole Chudes"},
+	{"preciouspills",   "Precious Pills, Blasting Bacon and Mowing Minds"},
 	{"projectdoom",     "Project: Doom"},
 	{"projectjoe",      "Project Joe"},
 	{"qajarycat",       "Qajary Cat"},
@@ -1840,6 +1841,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Pole Chudes
 	WME_WINENTRY("polechudes", "",
 		WME_ENTRY1s("data.dcp", "3329e9af9cb41e052de8d929ea49b594", 76297454), Common::RU_RUS, ADGF_UNSTABLE, WME_HEROCRAFT),
+
+	// Precious Pills, Blasting Bacon and Mowing Minds
+	WME_WINENTRY("preciouspills", "",
+		WME_ENTRY1s("data.dcp", "9237dac68dd09e07c5d17d5b904774d0", 22451857), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Project: Doom (Beta)
 	WME_WINENTRY("projectdoom", "Beta",
