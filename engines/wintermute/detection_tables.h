@@ -164,6 +164,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"tehran1933",      "Murder In Tehran's Alleys 1933"},
 	{"tehran2016",      "Murder In Tehran's Alleys 2016"},
 	{"theancientmark1", "The Ancient Mark - Episode 1"},
+	{"tetriks",         "TeTRIks"},
 	{"thebox",          "The Box"},
 	{"thekite",         "The Kite"},
 	{"thelastcrownmh",  "The Last Crown - Midnight Horror"},
@@ -5374,6 +5375,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// The Ancient Mark - Episode 1
 	WME_WINENTRY("theancientmark1", "",
 		WME_ENTRY1s("data.dcp", "ca04c26f03b2bd307368b306b297ddd7", 364664692), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+
+	// TeTRIks
+	WME_WINENTRY("tetriks", "",
+		WME_ENTRY1s("data.dcp", "94040eb5ae132ac2ef1d40888934f9fa", 2289693), Common::CS_CZE, ADGF_UNSTABLE, WME_1_1_38),
 
 	// The Box
 	WME_WINENTRY("thebox", "",
