@@ -918,6 +918,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("driller", "",
 		WME_ENTRY1s("data.dcp", "9cead7a85244263e0a5ff8f69dd7a1fc", 13671792), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
+	// The Driller Incident (Czech)
+	WME_WINENTRY("driller", "",
+		WME_ENTRY1s("data.dcp", "1adcb6aac675539292a2e8fbe6cf7c76", 13671805), Common::CS_CZE, ADGF_UNSTABLE, WME_1_9_1),
+
 	// The Driller Incident (Russian)
 	WME_WINENTRY("driller", "",
 		WME_ENTRY1s("data.dcp", "5bec2442339dd1ecf221873fff704617", 13671830), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
