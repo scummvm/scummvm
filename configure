@@ -2585,8 +2585,9 @@ case $_host_os in
 			define_in_config_if_yes "$_debug_build" 'DEBUG_BUILD'
 		fi
 		# When building dynamic, add everything possible as plugin
+		# except detection_features (see bug #13603)
 		if test "$_dynamic_modules" = yes ; then
-			_detection_features_static=no
+			_detection_features_static=yes
 			_plugins_default=dynamic
 		fi
 		# Use 'long' for ScummVM's 4 byte typedef, because AmigaOS
