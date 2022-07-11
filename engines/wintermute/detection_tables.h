@@ -95,6 +95,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"idiotstale",      "The Idiot's Tale"},
 	{"imustkill",       "I Must Kill...: Fresh Meat"},
 	{"jamesperis",      "James Peris: No License Nor Control"},
+	{"klaymen1",        "Klaymen Episodes: Pilot"},
 	{"knossos",         "K'NOSSOS"},
 	{"kulivocko",       "Kulivocko"},
 	{"lifein3minutes",  "Life In 3 Minutes"},
@@ -1626,6 +1627,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// J.U.L.I.A.: Untold (GOG)
 	WME_WINENTRY("juliauntold", "GOG",
 		WME_ENTRY1s("data.dcp", "b0aefd82647a26425fe3ee21aabb6283", 26462676), Common::EN_ANY, ADGF_UNSTABLE, WME_LITE),
+
+	// Klaymen Episodes: Pilot
+	WME_WINENTRY("klaymen1", "",
+		WME_ENTRY1s("data.dcp", "8a066d13d32567ca88a6918bfa3c01fa", 17086470), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_6),
 
 	// K'NOSSOS
 	WME_WINENTRY("knossos", "",
