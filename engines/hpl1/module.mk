@@ -362,7 +362,46 @@ MODULE_OBJS := \
 	engine/libraries/newton/physics/dgUpVectorConstraint.o \
 	engine/libraries/newton/physics/dgUserConstraint.o \
 	engine/libraries/newton/physics/dgWorld.o \
-	engine/libraries/newton/physics/dgWorldDynamicUpdate.o
+	engine/libraries/newton/physics/dgWorldDynamicUpdate.o \
+	engine/libraries/angelscript/sources/as_atomic.o \
+	engine/libraries/angelscript/sources/as_builder.o \
+	engine/libraries/angelscript/sources/as_bytecode.o \
+	engine/libraries/angelscript/sources/as_callfunc.o \
+	engine/libraries/angelscript/sources/as_callfunc_arm.o \
+	engine/libraries/angelscript/sources/as_callfunc_arm64.o \
+	engine/libraries/angelscript/sources/as_callfunc_mips.o \
+	engine/libraries/angelscript/sources/as_callfunc_ppc.o \
+	engine/libraries/angelscript/sources/as_callfunc_ppc_64.o \
+	engine/libraries/angelscript/sources/as_callfunc_sh4.o \
+	engine/libraries/angelscript/sources/as_callfunc_x64_gcc.o \
+	engine/libraries/angelscript/sources/as_callfunc_x64_mingw.o \
+	engine/libraries/angelscript/sources/as_callfunc_x64_msvc.o \
+	engine/libraries/angelscript/sources/as_callfunc_x86.o \
+	engine/libraries/angelscript/sources/as_callfunc_xenon.o \
+	engine/libraries/angelscript/sources/as_compiler.o \
+	engine/libraries/angelscript/sources/as_configgroup.o \
+	engine/libraries/angelscript/sources/as_context.o \
+	engine/libraries/angelscript/sources/as_datatype.o \
+	engine/libraries/angelscript/sources/as_gc.o \
+	engine/libraries/angelscript/sources/as_generic.o \
+	engine/libraries/angelscript/sources/as_globalproperty.o \
+	engine/libraries/angelscript/sources/as_memory.o \
+	engine/libraries/angelscript/sources/as_module.o \
+	engine/libraries/angelscript/sources/as_objecttype.o \
+	engine/libraries/angelscript/sources/as_outputbuffer.o \
+	engine/libraries/angelscript/sources/as_parser.o \
+	engine/libraries/angelscript/sources/as_restore.o \
+	engine/libraries/angelscript/sources/as_scriptcode.o \
+	engine/libraries/angelscript/sources/as_scriptengine.o \
+	engine/libraries/angelscript/sources/as_scriptfunction.o \
+	engine/libraries/angelscript/sources/as_scriptnode.o \
+	engine/libraries/angelscript/sources/as_scriptobject.o \
+	engine/libraries/angelscript/sources/as_string.o \
+	engine/libraries/angelscript/sources/as_string_util.o \
+	engine/libraries/angelscript/sources/as_thread.o \
+	engine/libraries/angelscript/sources/as_tokenizer.o \
+	engine/libraries/angelscript/sources/as_typeinfo.o \
+	engine/libraries/angelscript/sources/as_variablescope.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_HPL1), DYNAMIC_PLUGIN)
