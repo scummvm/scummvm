@@ -68,7 +68,7 @@ static WinFontDirEntry readDirEntry(Common::SeekableReadStream &stream) {
 
 	stream.skip(68); // Useless
 	entry.points = stream.readUint16LE();
-	stream.skip(43); // Useless (for now, maybe not in the future)
+	stream.skip(38); // Useless (for now, maybe not in the future)
 	readString(stream);
 	entry.faceName = readString(stream);
 
