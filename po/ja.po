@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-10 14:51+0000\n"
-"PO-Revision-Date: 2022-07-09 06:32+0000\n"
+"PO-Revision-Date: 2022-07-11 08:32+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -217,10 +217,8 @@ msgid "Downloading icons list..."
 msgstr "アイコンリストをDL中..."
 
 #: gui/downloadiconsdialog.cpp:190
-#, fuzzy
-#| msgid "Clear value"
 msgid "Clear Cache"
-msgstr "クリア"
+msgstr "キャッシュクリア"
 
 #: gui/downloadiconsdialog.cpp:241
 #, c-format
@@ -262,7 +260,7 @@ msgstr "新しい利用可能なアイコンパックなし"
 msgid ""
 "You are about to remove %s %s of data, deleting all previously downloaded "
 "icon files. Do you want to proceed?"
-msgstr ""
+msgstr "データ%s %sと、ダウンロードした全てのアイコンファイルが削除されます。続行しますか?"
 
 #: gui/downloadiconsdialog.cpp:452 gui/updates-dialog.cpp:115
 msgid "Proceed"
