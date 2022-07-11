@@ -143,6 +143,7 @@ public:
 	 */
 	const Common::String getFontName(uint16 id, int size, int slant = kMacFontRegular, bool tryGen = false);
 	const Common::String getFontName(MacFont &font);
+	int rectifyId(const MacFont *macFont, const Font *font);
 	int getFontIdByName(Common::String name);
 
 	Common::Language getFontLanguage(uint16 id);

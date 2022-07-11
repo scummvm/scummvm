@@ -492,7 +492,18 @@ const Font *MacFontManager::getFont(MacFont macFont) {
 	if (!font)
 		font = FontMan.getFontByUsage(macFont.getFallback());
 
+
 	return font;
+}
+
+int MacFontManager::rectifyId(const MacFont *macFont, const Font *font) {
+	for (auto it = _fontInfo.begin(); it != _fontInfo.end(); it++) {
+		if (((BdfFont *)font)->getFamilyName() == it->_value->name) {
+			return it->_key;
+		}
+	}
+
+	return macFont->getId();
 }
 
 int MacFontManager::parseFontSlant(Common::String slant) {

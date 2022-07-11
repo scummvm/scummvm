@@ -1344,6 +1344,10 @@ void TextCastMember::importStxt(const Stxt *stxt) {
 	_fgpalinfo3 = stxt->_style.b;
 	_ftext = stxt->_ftext;
 	_ptext = stxt->_ptext;
+
+	//Creating a widget to seee if we actually have that font or not
+	Graphics::MacFont *macFont = new Graphics::MacFont(_fontId, _fontSize, _textSlant);
+	_fontId = g_director->_wm->_fontMan->rectifyId(macFont, g_director->_wm->_fontMan->getFont(*macFont));
 }
 
 Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) {
