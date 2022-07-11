@@ -154,6 +154,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"sotv1",           "Shadows on the Vatican - Act I: Greed"},
 	{"sotv2",           "Shadows on the Vatican - Act II: Wrath"},
 	{"strangechange",   "Strange Change"},
+	{"sunny",           "Sunny"},
 	{"sunrise",         "Sunrise: The game"},
 	{"susanrose1",      "Susan Rose: Mysterious Child"},
 	{"susanrose2",      "Susan Rose: Delicate Murder"},
@@ -5312,6 +5313,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Strange Change
 	WME_WINENTRY("strangechange", "",
 		WME_ENTRY1s("data.dcp", "818e53c1584dac28f336195d7dcfb97d", 3762512), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_8_6),
+
+	// Sunny (Demo)
+	WME_WINENTRY("sunny", "Demo",
+		WME_ENTRY1s("data.dcp", "685f4db26ed8134aa82bf5b6bae3963e", 4745194), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_0_31),
 
 	// Sunrise: The game (German)
 	WME_WINENTRY("sunrise", "",
