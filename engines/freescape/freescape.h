@@ -95,6 +95,10 @@ public:
 	// Input
 	void processInput();
 	void move(CameraMovement direction, uint8 scale, float deltaTime);
+	bool checkFloor(Math::Vector3d currentPosition);
+	bool tryStepUp(Math::Vector3d currentPosition);
+	bool tryStepDown(Math::Vector3d currentPosition);
+
 	void rotate(Common::Point lastMousePos, Common::Point mousePos);
 	// Input state
 	float _lastFrame;
