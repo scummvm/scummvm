@@ -19,23 +19,12 @@
  *
  */
 
-#include "immortal/immortal.h"
-#include "immortal/detection.h"
-#include "immortal/disk.h"
-#include "immortal/compression.h"
-
-#include "common/scummsys.h"
 #include "common/config-manager.h"
-#include "common/debug-channels.h"
-#include "common/events.h"
 #include "common/system.h"
-#include "common/debug.h"
-#include "common/debug-channels.h"
-#include "common/error.h"
-#include "common/file.h"
 
 #include "engines/util.h"
-#include "audio/mixer.h"
+
+#include "immortal/immortal.h"
 
 namespace Immortal {
 
@@ -56,9 +45,6 @@ ImmortalEngine::ImmortalEngine(OSystem *syst, const ADGameDescription *gameDesc)
 }
 
 ImmortalEngine::~ImmortalEngine() {
-	_window.close();
-	_font.close();
-
 	// Confirm that the engine was destroyed
 	debug("ImmortalEngine::~ImmortalEngine");
 }
@@ -71,7 +57,7 @@ uint16 ImmortalEngine::xba(uint16 ab) {
 	 * initial translation a little more straightforward. Eventually,
 	 * logic should be refactored to not require this.
 	 */
-	return ((ab & kMaskLow) << 8) + ((ab & kMaskHigh) >> 8);
+	return ((ab & kMaskLow) << 8) | ((ab & kMaskHigh) >> 8);
 }
 
 uint16 ImmortalEngine::rol(uint16 ab, int n) {
@@ -80,20 +66,24 @@ uint16 ImmortalEngine::rol(uint16 ab, int n) {
 	 * doesn't have this natively??? This assumes a 16 bit
 	 * unsigned int because that's all we need for the 65816.
 	 */
-	return (ab << n) | (ab >> (16 - n));
+	return (ab << n) | (ab >> (-n & 15));
 }
 
 uint16 ImmortalEngine::ror(uint16 ab, int n) {
 	/* The way this works is very straightforward. We start by
-	 * performing the bit shift like normal:
-	 * 0001 -> 0000
+	 * performing the bit shift like normal: 0001 -> 0000
 	 * Then we need an easy way to apply the bit whether it fell
 	 * off the end or not, so we bit shift the opposite direction
-	 * for the length of the word. If the bit wouldn't have
-	 * fallen off, then it applies a 0, but if it would have,
-	 * then we get a 1 on the opposite bit, just like the carry.
+	 * for the length of the word minus the size of the shift.
+	 * This way, the bit that we shifted normally, gets
+	 * separately moved to the other end: 0001 -> 1000
+	 * In other words, the space C uses to evaluate the second
+	 * part of the expression, is simulating the register for the
+	 * carry flag. To avoid branching in case of a 0, we get the
+	 * shift size by using the negative of the number as an
+	 * implicit subtraction and grabbing just the relevant bits.
 	 */
-	return (ab >> n) | (ab << (16 - n));
+	return (ab >> n) | (ab << (-n & 15));
 }
 
 uint16 ImmortalEngine::mult16(uint16 a, uint16 b) {
@@ -148,12 +138,12 @@ Common::ErrorCode ImmortalEngine::initDisks() {
 }
 
 Common::Error ImmortalEngine::run() {
-	initGraphics(_resH, _resV);
+	initGraphics(kResH, kResV);
 
 	_mainSurface = new Graphics::Surface();
-	_mainSurface->create(_resH, _resV, Graphics::PixelFormat::createFormatCLUT8());
+	_mainSurface->create(kResH, kResV, Graphics::PixelFormat::createFormatCLUT8());
 	
-	_screenBuff = new byte[_screenSize];
+	_screenBuff = new byte[kScreenSize];
 
 	if (initDisks() != Common::kNoError) {
 		debug("Some kind of disc error!");
@@ -177,6 +167,8 @@ Common::Error ImmortalEngine::run() {
 	clearSprites();							// Clear the sprites before we start
 	logicInit();							// Init the game logic
 
+	_err = Common::kNoError;
+
 	while (!shouldQuit()) {
 
 	/* The game loop runs at 60fps, which is 16 milliseconds per frame.
@@ -187,10 +179,24 @@ Common::Error ImmortalEngine::run() {
 	 */
 		int64 loopStart = g_system->getMillis();
 
-		// Kernal main function
-		int err = main();
+		// Main
+		Common::Event event;
+    	g_system->getEventManager()->pollEvent(event);
 
-		if (err != Common::kNoError) {
+    	userIO();
+    	noNetwork();
+    	pollKeys();
+    	logic();
+    	pollKeys();
+    	if (logicFreeze() == 0) {
+        	drawUniv();
+        	pollKeys();
+        	fixColors();
+        	copyToScreen();
+        	pollKeys();
+   		}
+
+		if (_err != Common::kNoError) {
 			debug("To err is human, to really screw up you need an Apple IIGS!");
 			return Common::kUnknownError;
 		}

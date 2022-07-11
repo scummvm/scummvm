@@ -25,6 +25,7 @@
 #include "audio/mixer.h"
 
 #include "common/debug.h"
+#include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/scummsys.h"
 #include "common/system.h"
@@ -48,9 +49,9 @@
 #include "immortal/detection.h"
 #include "immortal/disk.h"
 
-namespace Immortal {
+#include "immortal/sprite_list.h"						// This is an enum of all available sprites
 
-#include "immortal/sprite_list.h"
+namespace Immortal {
 
 // There is a lot of bit masking that needs to happen, so this enum makes it a little easier to read
 enum BitMask16 : uint16 {
@@ -78,20 +79,25 @@ enum ColourMask : uint16 {
 };
 
 struct DataSprite {
-	uint8 _cenX;										// These are the base center positions
-	uint8 _cenY;
-    byte *_bitmap;										// Pointer to actual data
-Common::SeekableReadStream *_file;						// This will likely be removed later
+    uint8 _cenX;                                        // These are the base center positions
+    uint8 _cenY;
+    byte *_bitmap;                                      // Pointer to actual data
+Common::SeekableReadStream *_file;                      // This will likely be removed later
 };
 
 struct Sprite {
-	uint16 _frame;										// Something something background?
-	uint16 _activeFrame;								// Why the heck is this inside the individual sprite data?
-	uint16 _X;
-	uint16 _Y;
-	uint16 _on;											// 1 = active
-	uint16 _priority;
-DataSprite _dSprite;
+	   int  _frame;										// Current frame of the cycle
+	uint16  _X;
+	uint16  _Y;
+	uint16  _on;											// 1 = active
+	uint16  _priority;
+DataSprite *_dSprite;
+};
+
+struct Cycle {
+DataSprite *_dSprite;
+      int   _numCycles;
+      int  *_frames;
 };
 
 struct ImmortalGameDescription;
@@ -111,6 +117,8 @@ public:
 	ImmortalEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~ImmortalEngine() override;
 
+	const ADGameDescription *_gameDescription;
+
 	/* Terrible functions because C doesn't like
 	 * bit manipulation enough
 	 */
@@ -118,8 +126,6 @@ public:
 	uint16 rol(uint16 ab, int n);						// Rotate bits left by n
 	uint16 ror(uint16 ab, int n);						// Rotate bits right by n
 	uint16 mult16(uint16 a, uint16 b);					// Just avoids using (uint16) everywhere, and is slightly closer to the original
-
-	const ADGameDescription *_gameDescription;
 
 	/*
 	 * --- Members ---
@@ -129,36 +135,52 @@ public:
 	/*
 	 * Constants
 	 */
+	// Screen
 	const int kResH = 320;
 	const int kResV = 200;
+	const int kScreenW = 128;
+	const int kScreenH = 128;
 	const int kScreenSize = (kResH * kResV) * 2; 		// The size of the screen buffer is 320x200
+	
+	// Disk offsets
+	const int kPaletteOffset = 21205;					// This is the byte position of the palette data in the disk
+
+	// Sprite constants
+	const int kMaxCycles = 32;
 	const int kMaxSprites = 32;							// Number of sprites allowed at once
+	const int kMaxSpriteAbove = 48;						// Maximum sprite extents from center
+	const int kMaxSpriteBelow = 16;
+	const int kMaxSpriteLeft  = 16;
+	const int kMaxSpriteRight = 16;
 	const int kWizardX = 28;							// Common sprite center for some reason
 	const int kWizardY = 37;
 
 	/* 
 	 * 'global' members
 	 */
-			bool _draw = 0;									// Whether the screen should draw this frame
-			bool _dim = 0;									// Whether the palette is dim
-			bool _usingNormal = 0;							// Whether the palette is using normal
-			 int _zero = 0;									// No idea what this is yet
+	Common::ErrorCode _err;								// If this is not kNoError at any point, the engine will stop
+			bool _draw 		   = 0;						// Whether the screen should draw this frame
+			bool _dim 		   = 0;						// Whether the palette is dim
+			bool _usingNormal  = 0;						// Whether the palette is using normal
+			 int _zero 		   = 0;						// No idea what this is yet
 		   uint8 _gameOverFlag = 0;
-		   uint8 _levelOver = 0;
-		   uint8 _themePaused = 0;
-		     int _level = 0;
-		     int _titlesShown = 0;
-		     int _time = 0;
-		     int _promoting = 0;
-		     int _restart = 0;
-		     int _lastCertLen = 0;
+		   uint8 _levelOver    = 0;
+		   uint8 _themePaused  = 0;
+		     int _level 	   = 0;
+		     int _titlesShown  = 0;
+		     int _time 		   = 0;
+		     int _promoting    = 0;
+		     int _restart 	   = 0;
+		     int _lastCertLen  = 0;
 
 	/* 
 	 * Asset related members
 	 */
+		   int	_numSprites = 0;						// This is more accurately actually the index within the sprite array, so _numSprites + 1 is the current number of sprites
 	DataSprite  _font;									// The font sprite data is loaded separate from other sprite stuff
 		  byte *_window;								// Bitmap of the window around the game
 		Sprite  _sprites[32];							// A contiguous series of sprites (this is the same as kMaxSprites, but it can't be used for this)
+		 Cycle  _cycles[32];							// Animation cycle for each sprite slot
 	DataSprite  _dataSprites[kFont+1];					// All the sprite data, indexed by SpriteFile
 
 	/*
@@ -166,18 +188,17 @@ public:
 	 */
 	Graphics::Surface *_mainSurface;
 				 byte *_screenBuff;						// The final buffer that will transfer to the screen
-
+				uint16 _viewPortX;
+				uint16 _viewPortY;
 	/*
 	 * Palette related members
 	 */
-	const int kPaletteOffset = 21205;					// This is the byte position of the palette data in the disk
 	uint16 _palDefault[16];
 	uint16 _palWhite[16];
 	uint16 _palBlack[16];
 	uint16 _palDim[16];
 	  byte _palRGB[48];									// Palette that ScummVM actually uses, which is an RGB conversion of the original
 	   int _dontResetColors = 0;						// Not sure yet
-
 
 
 	/*
@@ -189,19 +210,20 @@ public:
 	 * [Kernal.cpp] Functions from Kernal.gs and Driver.gs
 	 */
 
-	Common::ErrorCode main();							// Main game loop
-
 	// Screen
 	void clearScreen();									// Draws a black rectangle on the screen buffer but only inside the frame
 	void whiteScreen();									// Draws a white rectanlge on the screen buffer (but does not do anything with resetColors)
+	void rect(int x, int y, int w, int h);				// Draws a solid rectangle at x,y with size w,h. Also shadows for blit?
 	void loadWindow();									// Gets the window.bm file
 	void drawUniv();									// Draw the background, add the sprites, determine draw order, draw the sprites
 	void copyToScreen();								// If draw is 0, just check input, otherwise also copy the screen buffer to the scummvm surface and update screen
+	void mungeBM();										// Put together final bitmap?
+	void blit();										// Will probably want this to be it's own function
+	void blit40();										// Uses macro blit 40 times
+	void sBlit();
+	void scroll();
 
 	// Misc engine
-	void delay(int j);									// Delay engine by j jiffies
-	void delay4(int j);									// || /4
-	void delay8(int j);									// || /8
 
 	// Palette
 	void loadPalette();									// Get the static palette data from the disk
@@ -226,12 +248,20 @@ public:
 	void loadSingles(Common::String songName);			// Loads and then parse the maze song
 	void clearSprites();								// Clears all sprites before drawing the current frame
 	void loadSprites();									// Loads all the sprite files and centers their sprites (in spritelist, but called from kernal)
+	void addSprite(uint16 x, uint16 y, SpriteName n, int frame, uint16 p);
 
 	// Input
 	void userIO();										// Get input
 	void pollKeys();									// Buffer input
 	void noNetwork();									// Setup input mirrors
 	void keyTraps();									// Seems to be debug only
+	void blit8();										// This is actually just input, but it is called blit because it does a 'paddle blit' 8 times
+
+	// These will replace the myriad of hardware input handling from the source
+	void getInput();
+	void addKeyBuffer();
+	void clearKeyBuff();
+
 
 	/*
 	 * [Sprites.cpp] Functions from Sprites.GS and spriteList.GS
@@ -239,7 +269,28 @@ public:
 
 	// ??
 	void setSpriteCenter(Common::SeekableReadStream *f, int num, uint8 cenX, uint8 cenY); // Basically initializes the data sprite
-	int getNumFrames(int file, int num);
+	 int getNumFrames(int file, int num);
+
+	/*
+	 * [Cycle.cpp] Functions from Cyc
+	 */
+
+	/* Unneccessary
+	void cycleInit();
+	void cycleFree();
+	void cycleGetNumFrames();
+	void cycleGetList();*/
+
+	// Misc
+	void cycleNew();									// Adds a cycle to the current list
+	 int getCycleChr();
+	void cycleFreeAll();								// Delete all cycles
+	void cycleGetFile();
+	void cycleGetNum();
+	void cycleGetIndex();
+	void cycleSetIndex();
+	void cycleGetFrame();
+	void cycleAdvance();
 
 	/* 
 	 * [Logic.cpp] Functions from Logic.GS
@@ -249,8 +300,8 @@ public:
 	void logicInit();
 	void logic();										// Keeps time, handles win and lose conditions, then general logic
 	void restartLogic();								// This is the actual logic init
-	int  logicFreeze();									// Overcomplicated way to check if game over or level over
-	int  getLevel();									// Literally just return _level...
+	 int logicFreeze();									// Overcomplicated way to check if game over or level over
+	 int getLevel();									// Literally just return _level...
 	void gameOverDisplay();
 	void gameOver();
 	void levelOver();
@@ -259,7 +310,32 @@ public:
 	 * [Misc.cpp] Functions from Misc
 	 */
 
-	//void Misc::textPrint(int num);
+	// Misc
+	void delay(int j);									// Delay engine by j jiffies (from driver originally, but makes more sense grouped with misc)
+	void delay4(int j);									// || /4
+	void delay8(int j);									// || /8
+	void miscInit();
+	void setRandomSeed();
+	void getRandom();
+	void myDelay();
+
+	// Text printing
+	void textPrint(int num);
+	void textSub();
+	void textEnd();
+	void textMiddle();
+	void textBeginning();
+	void yesNo();
+
+	// Input related
+	void buttonPressed();
+	void firePressed();
+
+	// Screen related
+	void inside(int p, int p2, int a);
+	void insideRect(int p, int r);
+	void updateHitGuage();
+
 
 	/*
 	 * [Compression.cpp] Functions from Compression.GS
@@ -270,7 +346,7 @@ public:
 
 	// Subroutines called by unCompress
 	void setupDictionary(uint16 start[], uint16 ptk[], uint16 &findEmpty);
-	int getInputCode(bool &carry, Common::File *src, int &srcLen, uint16 &evenOdd);
+	 int getInputCode(bool &carry, Common::File *src, int &srcLen, uint16 &evenOdd);
 	uint16 getMember(uint16 codeW, uint16 k, uint16 &findEmpty, uint16 start[], uint16 ptk[]);
 	void appendList(uint16 codeW, uint16 k, uint16 &hash, uint16 &findEmpty, uint16 start[], uint16 ptk[], uint16 &tmp);
 

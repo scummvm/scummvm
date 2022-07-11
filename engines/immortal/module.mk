@@ -6,7 +6,10 @@ MODULE_OBJS = \
 	metaengine.o \
 	compression.o \
 	kernal.o \
-	logic.o
+	logic.o \
+	sprites.o \
+	misc.o \
+	cycle.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_IMMORTAL), DYNAMIC_PLUGIN)

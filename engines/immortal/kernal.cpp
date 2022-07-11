@@ -26,55 +26,9 @@
  * considered part of the same process.
  */
 
-#include "common/debug.h"
-#include "common/error.h"
-#include "common/events.h"
-
 #include "immortal/immortal.h"
-#include "immortal/disk.h"
-#include "immortal/compression.h"
 
 namespace Immortal {
-
-/* 
- *
- * -----                -----
- * ----- Main Functions -----
- * -----                -----
- *
- */
-
-Common::ErrorCode ImmortalEngine::main() {
-    Common::Event event;
-    g_system->getEventManager()->pollEvent(event);
-
-    userIO();
-    noNetwork();
-    pollKeys();
-    logic();
-    pollKeys();
-    if (logicFreeze() == 0) {
-        drawUniv();
-        pollKeys();
-        fixColors();
-        copyToScreen();
-        pollKeys();
-    }
-
-    return Common::kNoError;
-}
-
-void ImmortalEngine::delay(int j) {             // Delay is measured in jiffies, which are 56.17ms
-    g_system->delayMillis(j * 56);
-}
-
-void ImmortalEngine::delay4(int j) {            // Named in source quarterClock for some reason, 1/4 jiffies are 14.04ms
-    g_system->delayMillis(j * 14);
-}
-
-void ImmortalEngine::delay8(int j) {            // 1/8 jiffies are 7.02ms
-    g_system->delayMillis(j * 7);
-}
 
 /* 
  *
@@ -85,37 +39,27 @@ void ImmortalEngine::delay8(int j) {            // 1/8 jiffies are 7.02ms
  */
 
 void ImmortalEngine::drawUniv() {
-    /* The byte buffer for the screen (_screenBuff) has one byte for
-     * every pixel, with the resolution of the game being 320x200.
-     * For a bitmap like the window frame, all we need to do is
-     * extract the pixel out of each nyble (half byte) of the data,
-     * by looping over it one row at a time.
-     */
 
-    // Apply the window frame to the buffer
-    _window.seek(0);
-    byte pixel;
-    int pos;
-    for (int y = 0; y < _resV; y++) {
-        for (int x = 0; x < _resH; x += 2) {
-            pos = (y * _resH) + x;
-            pixel = _window.readByte();
-            _screenBuff[pos]     = (pixel & kMask8High) >> 4;
-            _screenBuff[pos + 1] =  pixel & kMask8Low;
-        }
-    }
+    // drawBackground() = draw floor parts of leftmask rightmask and maskers
+    // addRows() = add rows to drawitem array
+    // addSprites() = add all active sprites that are in the viewport, into a list that will be sorted by priority
+    // sortDrawItems() = sort said items
+    // drawItems() = draw the items over the background
+
+    // To start constructing the screem, we start with the frame as the base
+    memcpy(_screenBuff, _window, kScreenSize);
 
     /* copyRectToSurface will apply the screenbuffer to the ScummVM surface.
      * We want to do 320 bytes per scanline, at location (0,0), with a
      * size of 320x200.
      */
-    _mainSurface->copyRectToSurface(_screenBuff, _resH, 0, 0, _resH, _resV);
+    _mainSurface->copyRectToSurface(_screenBuff, kResH, 0, 0, kResH, kResV);
 
 }
 
 void ImmortalEngine::copyToScreen() {
     if (_draw == 1) {
-        g_system->copyRectToScreen((byte *)_mainSurface->getPixels(), _resH, 0, 0, _resH, _resV);
+        g_system->copyRectToScreen((byte *)_mainSurface->getPixels(), kResH, 0, 0, kResH, kResV);
         g_system->updateScreen();
     }
 }
@@ -130,32 +74,174 @@ void ImmortalEngine::clearScreen() {
     }
 }
 
+void ImmortalEngine::whiteScreen() {
+    //fill the visible screen with black pixels by drawing a rectangle
+
+    //rect(32, 20, 256, 128, 13)
+}
+
+void ImmortalEngine::mungeBM() {}
+void ImmortalEngine::blit() {}
+void ImmortalEngine::blit40() {}
+void ImmortalEngine::sBlit() {}
+void ImmortalEngine::scroll() {}
+
+
 /*
  *
- * -----              -----
- * ----- File Loading -----
- * -----              -----
+ * -----            -----
+ * ----- Asset Init -----
+ * -----            -----
  *
  */
 
-void ImmortalEngine::loadSprites() {
-    // Load MoreSprites.spr
+void ImmortalEngine::addSprite(uint16 x, uint16 y, SpriteName n, int frame, uint16 p) {
+    if (_numSprites != kMaxSprites) {
+        if (x >= (kScreenW + kMaxSpriteLeft)) {
+            x |= kMaskHigh;                         // Make it negative
+        }
+        _sprites[_numSprites]._X = (x << 1) + _viewPortX;
+    
+        if (y >= (kMaxSpriteAbove + kScreenH)) {
+            y |= kMaskHigh;
+        }
+        _sprites[_numSprites]._Y = (y << 1) + _viewPortY;
 
+        if (p >= 0x80) {
+            p |= kMaskHigh;
+        }
+        _sprites[_numSprites]._priority = ((p + y) ^ 0xFFFF) + 1;
+        
+        _sprites[_numSprites]._frame = frame;
+        _sprites[_numSprites]._dSprite = &_dataSprites[n];
+        _sprites[_numSprites]._on = 1;
+        _numSprites += 1;
+
+    } else {
+        debug("Max sprites reached beeeeeep!!");
+    }
+
+}
+
+void ImmortalEngine::clearSprites() {
+    // Just sets the 'active' flag on all possible sprites to 0
+    for (int i = 0; i < kMaxSprites; i++) {
+        _sprites[i]._on = 0;
+    }
+}
+
+void ImmortalEngine::loadSprites() {
+    /* This is a bit weird, so I'll explain.
+     * In the source, this routine loads the files onto the heap, and then
+     * goes through a table of sprites in the form file_index, sprite_num, center_x, center_y.
+     * It uses file_index to get a pointer to the start of the file on the heap,
+     * which it then uses to set the center x/y variables in the file itself.
+     * ie. file_pointer[file_index]+((sprite_num<<3)+4) = center_x.
+     * We aren't going to have the sprite properties inside the file data, so instead
+     * we have an array of all game sprites _dataSprites which is indexed
+     * soley by a sprite number now. This also means that a sprite itself has a reference to
+     * a datasprite, instead of the sprite index and separate the file pointer. Datasprite
+     * is what needs the file, so that's where the pointer is. The index isn't used by
+     * the sprite or datasprite themselves, so it isn't a member of either of them.
+     */
+
+    Common::String spriteNames[] = {"MORESPRITES.SPR", "NORLAC.SPR", "POWWOW.SPR", "TURRETS.SPR",
+                                    "WORM.SPR", "IANSPRITES.SPR", "LAST.SPR", "DOORSPRITES.SPR",
+                                    "GENSPRITES.SPR", "DRAGON.SPR", "MORDAMIR.SPR", "FLAMES.SPR",
+                                    "ROPE.SPR", "RESCUE.SPR", "TROLL.SPR", "GOBLIN.SPR", "ULINDOR.SPR",
+                                    "SPIDER.SPR", "DRAG.SPR"};
+
+    Common::SeekableReadStream *files[19];
+
+    // Number of sprites in each file
+    int spriteNum[] = {10, 5, 7, 10, 4, 6, 3, 10, 5, 3, 2, 1, 3, 2, 9, 10, 9, 10, 9};
+
+    // Pairs of (x,y) for each sprite
+    // Should probably have made this a 2d array, oops
+    uint8 centerXY[] = {16,56, 16,32, 27,39, 16,16, 32,16, 34,83, 28,37, 8,12, 8,19, 24,37,
+    /* Norlac      */   46,18, 40,0, 8,13, 32,48, 32,40,
+    /* Powwow      */   53,43, 28,37, 27,37, 26,30, 26,30, 26,29, 28,25,
+    /* Turrets     */   34,42, 28,37, 24,32, 32,56, 26,56, 8,48, 8,32, 8,14, 8,24, 32,44,
+    /* Worm        */   20,65, 25,46, 9,56, 20,53,
+    /* Iansprites  */   24,50, 32,52, 32,53, 32,52, 40,16, 40,16,
+    /* Last        */   32,56, 24,32, 24,36,
+    /* Doorsprites */   0,64, 4,49, 18,49, 18,56, 24,32, 24,16, 24,56, 24,32, 24,32, 36,32,
+    /* Gensprites  */   16,44, 16,28, 32,24, 34,45, 20,28,
+    /* Dragon      */   24,93, 32,48, 0,64,
+    /* Mordamir    */   104,104, 30,30,
+    /* Flames      */   64,0,
+    /* Rope        */   0,80, 32,52, 32,40,
+    /* Rescue      */   0,112, 0,112,
+    /* Troll       */   28,38, 28,37, 28,37, 31,38, 28,37, 25,39, 28,37, 28,37, 28,37,
+    /* Goblin      */   28,38, 30,38, 26,37, 30,38, 26,37, 26,37, 26,37, 26,37, 26,36, 44,32,
+    /* Ulindor     */   42,42, 42,42, 42,42, 42,42, 42,42, 42,42, 42,42, 42,42, 42,42,
+    /* Spider      */   64,44, 64,44, 64,44, 64,44, 64,44, 64,44, 64,44, 64,44, 64,44, 64,44,
+    /* Drag        */   19,36, 19,36, 19,36, 19,36, 19,36, 19,36, 19,36, 19,36, 19,36};
+
+    // Load all sprite files
+    for (int i = 0; i < 19; i++) {
+        files[i] = loadIFF(spriteNames[i]);
+    }
+
+    // s = current sprite index, f = current file index, n = current number of sprites for this file
+    int s = 0;
+    for (int f = 0; f < 19; f++) {
+        for (int n = 0; n < (spriteNum[f] * 2); n += 2, s++) {
+            DataSprite d;
+            _dataSprites[s] = d;
+            setSpriteCenter(files[f], s, centerXY[s * 2], centerXY[(s * 2) + 1]);
+        }
+    }
 
 }
 
 void ImmortalEngine::loadWindow() {
     // Initialize the window bitmap
-    if (!_window.open("WINDOWS.BM")) {
+    Common::File f;
+    _window = new byte[kScreenSize];
+
+    if (f.open("WINDOWS.BM")) {
+
+        /* The byte buffer for the screen (_screenBuff) has one byte for
+         * every pixel, with the resolution of the game being 320x200.
+         * For a bitmap like the window frame, all we need to do is
+         * extract the pixel out of each nyble (half byte) of the data,
+         * by looping over it one row at a time.
+         */
+
+        byte pixel;
+        int pos;
+        for (int y = 0; y < kResV; y++) {
+            for (int x = 0; x < kResH; x += 2) {
+                pos = (y * kResH) + x;
+                pixel = f.readByte();
+                _window[pos]     = (pixel & kMask8High) >> 4;
+                _window[pos + 1] =  pixel & kMask8Low;
+            }
+        }
+
+        // Now that the bitmap is processed and stored in a byte buffer, we can close the file
+        f.close();
+
+    } else {
+        // Should probably give an error or something here
         debug("oh nose :(");
     }
 }
 
 void ImmortalEngine::loadFont() {
-    // Initialize the font sprite
-    if (!_font.open("FONT.SPR")) {
+    // Initialize the font data sprite
+    Common::SeekableReadStream *f = loadIFF("FONT.SPR");
+
+    DataSprite d;
+    _dataSprites[kFont] = d;
+
+    if (f) {
+        setSpriteCenter(f, kFont, 16, 0);
+    } else {
         debug("oh nose :(");
     }
+
 }
 
 Common::SeekableReadStream *ImmortalEngine::loadIFF(Common::String fileName) {
@@ -193,7 +279,7 @@ Common::SeekableReadStream *ImmortalEngine::loadIFF(Common::String fileName) {
 
         // Compressed files have a 12 byte header before the data
         f.seek(12);
-        return Compression::unCompress(&f, len);
+        return unCompress(&f, len);
     }
 
     byte *out = (byte *)malloc(f.size());
@@ -229,8 +315,8 @@ void ImmortalEngine::loadPalette() {
     // The palettes are stored at a particular location in the disk, this just grabs them
     Common::File d;
     d.open("IMMORTAL.dsk");
+    
     d.seek(kPaletteOffset);
-
     d.read(_palDefault, 32);
     d.read(_palWhite, 32);
     d.read(_palBlack, 32);
@@ -249,9 +335,10 @@ void ImmortalEngine::setColors(uint16 pal[]) {
             // Green is already the correct size, being the second nyble (00G0)
             // Red is in the first nyble of the high byte, so it needs to move right by 4 bits (0R00 -> 00R0)
             // Blue is the first nyble of the first byte, so it needs to move left by 4 bits (000B -> 00B0)
-            _palRGB[(i * 3)]     = ((pal[i] & kMaskRed) >> 4);
-            _palRGB[(i * 3) + 1] = ((pal[i] & kMaskGreen));
-            _palRGB[(i * 3) + 2] = (pal[i] & kMaskBlue) << 4;
+            // We also need to repeat the bits so that the colour is the same proportion of 255 as it is 15
+            _palRGB[(i * 3)]     = ((pal[i] & kMaskRed) >> 4) | ((pal[i] & kMaskRed) >> 8);
+            _palRGB[(i * 3) + 1] = (pal[i] & kMaskGreen) | ((pal[i] & kMaskGreen) >> 4) ;
+            _palRGB[(i * 3) + 2] = (pal[i] & kMaskBlue) | ((pal[i] & kMaskBlue) << 4);
         }
     }
     // Palette index to update first is 0, and there are 16 colours to update
@@ -336,7 +423,7 @@ void ImmortalEngine::fade(uint16 pal[], int dir, int delay) {
     uint16 target[16];
     uint16 count;
 
-    // Originally used a branch, but this is functionally identical and much nicer
+    // Originally used a branch, but this is functionally identical and much cleaner
     count = dir * 256;
 
     while ((count >= 0) && (count <= 256)) {
@@ -354,8 +441,20 @@ void ImmortalEngine::fadeOut(int j) {
     fade(_palDefault, 1, j);
 }
 
+void ImmortalEngine::normalFadeOut() {
+    fadeOut(15);
+}
+
+void ImmortalEngine::slowFadeOut() {
+    fadeOut(28);
+}
+
 void ImmortalEngine::fadeIn(int j) {
     fade(_palDefault, 0, j);
+}
+
+void ImmortalEngine::normalFadeIn() {
+    fadeIn(15);
 }
 
 // These two can probably be removed since the extra call in C doesn't have the setup needed in ASM
@@ -388,12 +487,25 @@ void ImmortalEngine::useDim() {
 void ImmortalEngine::userIO() {}
 void ImmortalEngine::pollKeys() {}
 void ImmortalEngine::noNetwork() {}
+void ImmortalEngine::keyTraps() {}
+void ImmortalEngine::blit8() {}
+void ImmortalEngine::getInput() {}
+void ImmortalEngine::addKeyBuffer() {}
+void ImmortalEngine::clearKeyBuff() {}
+
+
+/*
+ *
+ * -----                       -----
+ * ----- Sound/Music Functions -----
+ * -----                       -----
+ *
+ */
 
 void ImmortalEngine::loadSingles(Common::String songName) {
     debug("%s", songName.c_str());
 }
-void ImmortalEngine::clearSprites() {}
-void ImmortalEngine::keyTraps() {}
+
 
 
 } // namespace Immortal
