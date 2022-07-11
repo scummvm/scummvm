@@ -38,6 +38,8 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"apeiron",         "Apeiron"},
 	{"artofmurder1",    "Art of Murder 1: FBI Confidential"},
 	{"awakening",       "Awakening: Burning Ashes"},
+	{"barbapoca1",      "El Engaño de Barbapoca Chapter 1: Esta Pizza Esta de Muerte"},
+	{"barbapoca2",      "El Engaño de Barbapoca Chapter 2: Competencia Fantasmal"},
 	{"barrowhilldp",    "Barrow Hill - The Dark Path"},
 	{"basisoctavus",    "Basis Octavus"},
 	{"bickadoodle",     "Bickadoodle"},
@@ -443,6 +445,14 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Awakening: Burning Ashes (Hayoola) (Persian)
 	WME_WINENTRY("awakening", "",
 		WME_ENTRY1s("data.dcp", "a7b8633fdc5cc8ff659dda5a11d3d971", 1900777616), Common::FA_IRN, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+
+	// El Engaño de Barbapoca Chapter 1: Esta Pizza Esta de Muerte (Spanish)
+	WME_WINENTRY("barbapoca1", "",
+		WME_ENTRY1s("data.dcp", "efc555f57ec0db5d5106bc8aa0e7f627", 467198987), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_1),
+
+	// El Engaño de Barbapoca Chapter 2: Competencia Fantasmal (Spanish)
+	WME_WINENTRY("barbapoca2", "",
+		WME_ENTRY1s("data.dcp", "746b3264178607121169fa32d48f5368", 1256448570), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Barrow Hill - The Dark Path (Steam, September 2018) (English)
 	WME_WINENTRY("barrowhilldp", "",
