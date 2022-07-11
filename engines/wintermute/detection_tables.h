@@ -904,7 +904,7 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("spanish.dcp", "b3982c0a5e85b42e1e38240fef004aa4", 164428596,
 					"data.dcp", "63766d6c68b9f00b632ea1736fc8a95c", 88577621), Common::ES_ESP, ADGF_UNSTABLE, WME_1_8_5),
 
-	// Des Reves Elastiques Avec Mille Insectes Nommes Georges
+	// Des Reves Elastiques Avec Mille Insectes Nommes Georges / Elastic Dreams with a Thousand Insects Named George
 	WME_WINENTRY("dreaming", "",
 		WME_ENTRY1s("data.dcp", "4af26d97ea063fc1277ce30ae431de90", 8804073), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_6),
 
