@@ -89,6 +89,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"fred",            "Fred"},
 	{"ghostsheet",      "Ghost in the Sheet"},
 	{"goldencalf",      "The Golden Calf"},
+	{"guttenburg",      "The Guttenburg Project"},
 	{"hamlet",          "Hamlet or the last game without MMORPG features, shaders and product placement"},
 	{"helga",           "Helga Deep In Trouble"},
 	{"hor",             "Hor"},
@@ -1381,6 +1382,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// The Golden Calf (German)
 	WME_WINENTRY("goldencalf", "",
 		WME_ENTRY1s("data.dcp", "c611503c2c10137d1195878080cee2d1", 1174552), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_11),
+
+	// The Guttenburg Project (Demo)
+	WME_WINENTRY("guttenburg", "Demo",
+		WME_ENTRY1s("data.dcp", "0c90b369ad0928a450d092114376cf7f", 24121170), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
 	// Hamlet or the last game without MMORPG features, shaders and product placement (English)
 	WME_WINENTRY("hamlet", "",
