@@ -46,7 +46,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	_velocity = Math::Vector3d(0.f, 0.f, 0.f);
 	_cameraFront = Math::Vector3d(0.f, 0.f, 0.f);
 	_cameraRight = Math::Vector3d(0.f, 0.f, 0.f);
-	_movementSpeed = 2.5f;
+	_movementSpeed = 1.0f;
 	_mouseSensitivity = 0.1f;
 	_borderTexture = nullptr;
 
@@ -399,7 +399,7 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 
 		collided = checkCollisions(true);
 		if (collided && previousAreaID == _currentArea->getAreaID()) {
-			debug("steping down from position: %f, %f, %f", _position.x(), _position.y(), _position.z());
+			debug("steping up from position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 			// We found a collisions, let's try to step up
 			_position.set(_position.x(), positionY + 64 * areaScale, _position.z());
 			collided = checkCollisions(false);
