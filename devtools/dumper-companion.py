@@ -24,6 +24,7 @@ from pathlib import Path
 from struct import pack, unpack
 from typing import Any, ByteString, List, Tuple
 import unicodedata
+import urllib.request
 
 import machfs
 
@@ -188,6 +189,13 @@ def file_to_macbin(f: machfs.File, name: ByteString) -> bytes:
         macbin += b"\x00" * (-len(f.rsrc) % 128)
 
     return macbin
+
+def macbin_get_datafork(f: bytes) -> bytes:
+    header = unpack(">x64p4s4sBxHHHBxIIIIHB14xIHBB", f[0:124])
+
+    print("Data len is:", header[8])
+
+    return f[128:128 + header[8]]
 
 
 def escape_string(s: str) -> str:
@@ -550,6 +558,21 @@ def collect_forks(args: argparse.Namespace) -> int:
     return 0
 
 
+def create_macfonts(args: argparse.Namespace) -> int:
+    """
+    Downloads System 7 image, extracts fonts from it and packs them
+    int classicmacfonts.dat
+    """
+    print("Downloading System 7.0.1 image...", end="")
+    with urllib.request.urlopen("https://download.info.apple.com/Apple_Support_Area/Apple_Software_Updates/English-North_American/Macintosh/System/Older_System/System_7.0.x/System_7.0.1.smi.bin") as file:
+        output = file.read()
+        print('done')
+
+    datafork = macbin_get_datafork(output)
+
+    return 0
+
+
 def generate_parser() -> argparse.ArgumentParser:
     """
     Generate the parser
@@ -623,6 +646,12 @@ def generate_parser() -> argparse.ArgumentParser:
             "dir", metavar="directory", type=Path, help="input directory"
         )
         parser_macbinary.set_defaults(func=collect_forks)
+
+    parser_macfonts = subparsers.add_parser(
+        "createmacfonts",
+        help="Creates classicmacfonts.dat from Mac OS 7 system images"
+    )
+    parser_macfonts.set_defaults(func=create_macfonts)
 
     return parser
 
