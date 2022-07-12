@@ -202,12 +202,12 @@ byte castleCGA[4][3] = {
 
 byte castleEGA[16][3] = {
 	{0x00, 0x00, 0x00},
-	{0x00, 0xaa, 0x00},
+	{0x00, 0x00, 0x00},
 	{0x00, 0xaa, 0xaa},
 	{0x00, 0xaa, 0xaa},
 	{0xaa, 0xaa, 0xaa},
 	{0x55, 0x55, 0x55},
-	{0x00, 0x00, 0x00},
+	{0x00, 0xaa, 0x00},
 	{0xaa, 0x55, 0x00},
 	{0x12, 0xf3, 0x56},
 	{0xaa, 0x00, 0x00},
@@ -284,8 +284,8 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		ci2 = file->readByte() & 15;
 		debug("Colors: %d %d %d %d", ci1, ci2, skyColor, groundColor);
 	} else {
-		skyColor = file->readByte() & 15;
 		groundColor = file->readByte() & 15;
+		skyColor = file->readByte() & 15;
 		debug("Colors: %d %d", skyColor, groundColor);
 	}
 
