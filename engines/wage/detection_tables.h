@@ -31,6 +31,8 @@ namespace Wage {
 #define BIGGAME(t,v,f,m,s) { t,v,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_DEFAULT,GUIO0()}
 
 static const ADGameDescription gameDescriptions[] = {
+	FANGAMEND("World Builder Demo World", "Demo World", "e221e6f9631f110b484f239e58137a3f", 45467),
+
 	FANGAME("3rd Floor", "931aa0b6ada3aced5117ee6e6daf2fb8", 281153),
 	FANGAME("3rd Floor", "140883954b7cd89b0ffabde6ee0073d4", 281167), // alt version
 	BIGGAME("afm", "v1.3", "Another Fine Mess 1.3", "25934edf84e814f41f3ddf87185b554b", 1409792),
@@ -53,29 +55,30 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Castle of Ert", "069daab46729291a615e9ee3528008ff", 198699),
 	FANGAMEN("Castle of Ert", "Castle of Ert.1", "ecadcdd9bdee68aeb32507932857db30", 198727), // alt version
 	FANGAME("Color by Number", "8fc77e5976ca25d05cf74db3ec3e5ef2", 528306),
-	FANGAME("Dash Hansen", "555e07344506720c8e4a29e1b5ba3578", 257129),
+	FANGAMEN("Dash Hansen and the Search for the Black Orchid", "Dash Hansen", "555e07344506720c8e4a29e1b5ba3578", 257129),
 	FANGAMEND("Death Mall", "Death Mall Demo", "8284351df1c7b678279139ed486ab127", 254618),
 	FANGAME("Deep Angst", "ddc4c8b3d317e2c79a12c53275253ac3", 329294), // Original file name "Deep Angst™"
-	FANGAME("Deep Angst II", "2e468021416bc2b82e283030c7f6bc5d", 408761),
+	FANGAMEN("Deep Angst II: The Nightmare Ends", "Deep Angst II", "2e468021416bc2b82e283030c7f6bc5d", 408761),
 	FANGAME("Deep Ennui", "9879bf659f11c9177d578a347da0c658", 85819),
 	// Polygons with ignored byte 1
 	FANGAME("Double Trouble", "1cd05d66163b44f9f0d8c3e7232bc2db", 542115),
 	BIGGAME("drakmythcastle", "disk I", "Drakmyth Castle disk I of II", "54dd0a817b667fc05c4f2dee6abe126a", 793528),
 	BIGGAME("drakmythcastle", "disk II", "Drakmyth Castle II", "b57af17c805775d7d68b62133164c4e4", 1685403),
 	// Crash at start in GUI rendering
-	FANGAME("Dune Eternity", "4946bc99cc42bf83b628352aa9b81a7b", 289945), // Original file name is "***DUNE ETERNITY*** "
+	FANGAMEN("Dune Eternity", "xn--DUNE ETERNITY -paaanaa75fbbobb", "4946bc99cc42bf83b628352aa9b81a7b", 289945), // Original file name is "***DUNE ETERNITY*** "
 	FANGAMEN("Dungeon World II", "DungeonWorld2", "74a7153f9ae61a59a216078a37f68f2c", 229943),
 	// Made for bigger resolution
 	FANGAME("Dynasty of Dar", "e118a261d33831c224f3b776ec5dd2a8", 275437),
 	FANGAME("Edg's World", "480bcf68be49ee3765902e922ccdc833", 106513),
 	FANGAME("Eidisi I", "ed8fec61ad94ddec06feaf4eb720084b", 172296),
+	FANGAME("Eidisi I", "a20f080d6109d8e253d74b0dfb4b2ae5", 172296), // alt version
 	FANGAME("Eidisi I", "06ae31c4361f9bd5b91593858b6d0d79", 172310), // alt version
 	// Problems(?) with text on the first screen
 	FANGAMEN("Enchanted Pencils", "Enchanted Pencils 0.99 (PG)", "49a0708da81dbeb28c6e607429c92209", 408657),
 	FANGAMEN("Enchanted Pencils", "Enchanted Pencils 0.99 (PG)", "0095d0e069851521c44ca3cdc94bcba3", 414464), // alt?
 	FANGAME("Escape!", "28a9658ee846a34f133df29b54cf255a", 64819), // Original file name "Escape!†"
 	FANGAME("Escape from School!", "2055747bb874052333190eb993246a7f", 49849),
-	FANGAME("Escape from School!", "fcc581e52d1fc8ea4603d7c953fa935a", 49863), // Original file name "Escape from School!†"
+	FANGAMEN("Escape from School!", "xn--Escape from School!-3g6k", "fcc581e52d1fc8ea4603d7c953fa935a", 49863), // Original file name "Escape from School!†"
 	FANGAME("Escape From Saecvrom", "ab401f96ca0755bf5fb849f71cc47d83", 588982),
 	FANGAME("Everyman 1", "97d78e22493245636f84ad8db732305c", 335449),
 	FANGAME("Exploration Zeta!", "9006eff549afadc956e5de4ae6a24fbd", 366343),
@@ -87,7 +90,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Find the Heart", "08de3248b8c691d9a08af984bdcfa872", 105629), // From Joshua's Worlds. Alt version
 	FANGAME("Find the Heart", "73935d313b666763e50d2cdc6b3b7908", 105615), // Standalone
 	FANGAMEN("Fortune Teller", "Fortune Teller 1.1", "3c09329fc3c92a70e5c8874cc763f5cb", 73675),
-	FANGAMEN("Fred Rogers - Terrorist", "Terrorist", "4398f711bc2a456e6d730641308593f0", 524213), // Original file name "Terrorist†"
+	FANGAMEN("Fred Rogers - Terrorist", "xn--Terrorist-od0e", "4398f711bc2a456e6d730641308593f0", 524213), // Original file name "Terrorist†"
 	FANGAME("Fred Rogers - Terrorist", "8597a77619847efbce3f1f8b2ceb3258", 524199), // Original file name "Terrorist†"
 	BIGGAME("grailquest", "", "GrailQuest", "6441d134c0aedd8cb3b6909107a22ee3", 739452),
 	FANGAME("Grey Tower", "02d0bb7a8c278d3789616129d47f15c1", 397248), // v1.5.2
@@ -120,11 +123,11 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Mike's House", "591b5a4d52ecf9a7d87256e83b78b0fd", 87101),
 	FANGAME("Mike's House", "e4c0b836a21799db3995a921a447c28e", 87087), // Alt version
 	FANGAME("Minitorian", "c728dfccdca12571e275a4113b3db343", 586208),
-	FANGAME("M'Lord's Warrior", "e0a0622ce2023984e3118141a9688ec5", 465383), // Original file name is "M'Lord's Warrior †"
+	FANGAMEN("M'Lord's Warrior", "xn--M'Lord's Warrior -f82j", "e0a0622ce2023984e3118141a9688ec5", 465383), // Original file name is "M'Lord's Warrior †"
 	FANGAMEN("Mormonoids from the Deep", "Mormonoids 1.25", "4730d0c47d13401d73353e980f91a304", 645062),
 	FANGAMEN("Mormonoids from the Deep", "Mormonoids 1.25", "1a7ee052b375f0c0a4c18836c978ce5b", 645077), // Alt version
 	// Unhandled comparison case
-	FANGAME("Mountain of Mayhem", "634211b004371635d191ae0687035501", 749747), // Original file name "Mountain of Mayhem †"
+	FANGAMEN("Mountain of Mayhem", "xn--Mountain of Mayhem -3g6k", "634211b004371635d191ae0687035501", 749747), // Original file name "Mountain of Mayhem †"
 	FANGAME("Muddy Water", "711dd9d154d13c31bc216ef8539bb095", 662438), // v1.3.2
 	// No way to pass through the first screen
 	FANGAME("Nightcrawler Ned", "8423fc015c395bd6be54a7ea69170d99", 366286),
@@ -141,8 +144,8 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("The Phoenix v1.2", "The Phoenix", "fee9f1de7ad9096d084461d6066192b1", 431384),
 	FANGAME("The Phoenix", "bd6dabf7a19d2ab7902498a8513f8c71", 431387),
 	FANGAME("Pirate Attack!", "d4d3f59b57d5bf3dd690fd657ecdd9c6", 323722),
-	// FANGAME("Porno Writer 2.0", "b5228c22158ff40ccac36b6a61cc317a", 791379),
-	// FANGAME("Pretty Good Pornography 3.0", "c86c92ec69b464a197659b1bd80880b9", 1122264),
+	FANGAME("Porno Writer 2.0", "b5228c22158ff40ccac36b6a61cc317a", 791379),
+	FANGAME("Pretty Good Pornography 3.0", "c86c92ec69b464a197659b1bd80880b9", 1122264),
 	FANGAME("Psychotic!", "d6229615b71b189f6ef71399a0856cd2", 367053),
 	FANGAME("Psychotic!", "c7608f67592563b44f2f48fe5fec63ce", 367067), // alt version
 	FANGAME("Psychotic!", "51aa5f2744ceb5666c9556bccee797d6", 367173), // another alt version
@@ -165,7 +168,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Ray's World Builder Demo", "eafea10db54530ac6e6128be31741542", 115800),
 	FANGAME("Robot Planet", "1066f6b2892cda16c2f365d1ec97537c", 107089),
 	// Unhandled comparison case
-	FANGAME("Sands of Time", "d065662865d0cb9065812479ed7d2795", 122416), // Original file name "Sands of Time†"
+	FANGAMEN("Sands of Time", "xn--Sands of Time-1s6g", "d065662865d0cb9065812479ed7d2795", 122416), // Original file name "Sands of Time†"
 	BIGGAME("scepters", "", "Scepters", "ecb776fb660205fad5819a26f7e180b5", 347103),
 	BIGGAME("scepters", "", "Scepters", "e6c58e96b02f8eb46e0ccfe4f547045b", 346339),
 	BIGGAME("scepters", "", "Scepters", "2c824f1bd7b22c575c7be86ac88ebd23", 347284), // alt version
@@ -175,75 +178,42 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Space Adventure", "SpaceAdventure", "3908c75d639989a28993c59931fbe1ec", 155100),
 	FANGAMEN("Space Adventure", "SpaceAdventure", "e38d524cb778ed0beb77ee9299f0ed45", 155100), // alt version
 	FANGAMEN("SparGate", "SparGate- vNC.1", "a7a7bfc1825011c2df8b7a03b57fcac9", 611991),
-	FANGAMEN("Spear of Destiny", "SpearOfDestiny", "ac00a26f04f83b47c278cc1d226f48df", 333409), // Original file name "SpearOfDestiny†"
+	FANGAMEN("Spear of Destiny", "xn--SpearOfDestiny-ef3h", "ac00a26f04f83b47c278cc1d226f48df", 333409), // Original file name "SpearOfDestiny†"
 	FANGAME("Spear of Destiny", "ea90bddd0925742351340cf88dd1c7a6", 620350), // alt version, normal file name
 	FANGAME("Star Trek", "3067332e6f0bb0314579f9bf102e1b56", 53064),
 	FANGAME("Starport", "d9e25edc9ea5d2a8b29a3693de19ae2c", 253970),
 	FANGAMEN("Strange Disappearance", "xn--Strange Disappearance -", "9d6e41b61c0fc90400e5da2fcb653a4a", 772026), // Original file name "Strange Disappearance "
 	FANGAME("The Sultan's Palace", "fde31cbcc77b66969b4cfcd43075341e", 456599),
-	FANGAME("Swamp Witch", "bd8c8394be31f7845d55785b7ccfbbde", 739525), // Original file name "Swamp Witch†"
+	FANGAMEN("Swamp Witch", "xn--Swamp Witch-dl3f", "bd8c8394be31f7845d55785b7ccfbbde", 739525), // Original file name "Swamp Witch†"
 	FANGAME("Swamp Witch", "07463c8b3b908b0c493a41b949ac1ff5", 739875), // alt version, normal file name
 	FANGAME("Sweetspace Now!", "574dc7dd25543f7a516d6524f0c5ab33", 123557), // Comes with Jumble
 	// Wrong scrolling in the first console text
 	FANGAMEN("Sword of Siegfried", "Sword of Siegfried 1.0", "2ae8f21cfb228ce58ee47b767bdd8820", 234507),
 	FANGAME("Time Bomb", "e96f3e2efd1e3db6ad0be22180f5473c", 64308),
 	FANGAME("Time Bomb", "976180f9be0d1029aaba7774fec9767c", 64322), // Alt version
-	FANGAMEN("Time Squisher", "Time Squisher v 1.1", "3e296141e7a7c9b05e0dde779d9bb50d", 463526),
+	FANGAMEN("The Time Squisher", "Time Squisher v 1.1", "3e296141e7a7c9b05e0dde779d9bb50d", 463526),
 	// Admission for on 3rd screen is messed up
 	FANGAME("The Tower", "4cd8755ccb5bbeaf2e5f7848a8daa033", 556283),
 	// Polygons with ignored byte 1 and 2 on second scene
 	FANGAME("The Village", "fd35cad8c61064d6c8aaadab7070ccad", 314572),
 	FANGAME("The Wizard's Apprentice", "477c2d2d4672d968dfac1df2acef1dc9", 782568),
 	// Messed up first scene
-	FANGAMEND("Tombworld", "Demo TombWorld", "695734292024290d5d0aa6a66ff628f6", 663996), // Original file name "Demo TombWorld©"
+	FANGAMEND("Tombworld", "xn--Demo TombWorld-8ra", "695734292024290d5d0aa6a66ff628f6", 663996), // Original file name "Demo TombWorld©"
 	// Doesn't go past first scene
 	BIGGAME("twisted", "", "Twisted! 1.6", "6e0be4c7d83231e56a431dc4ef7bf978", 960698),
-	FANGAME("Volcano II", "7941c08b34bc2408b98c0004c7154aeb", 82735), // Original file name "Volcano II†"
+	FANGAMEN("Volcano II", "xn--Volcano II-0y6e", "7941c08b34bc2408b98c0004c7154aeb", 82735), // Original file name "Volcano II†"
 	FANGAMEN("Who Shot Brownie Dog?", "xn--Who Shot Brownie Dogv1.01-lba88n", "4e7a950567c73e98e4478e5683e943ca", 195923),
 	FANGAMEN("Wishing Well", "xn--Wishing Well -", "607a66461d65a73c1222d63dbde0175d", 103432), // original file name "Wishing Well "
 	FANGAME("Wizard's Warehouse", "18b4678c76961c1f3ae3013e13f691a3", 159492),
 	FANGAMEN("Wizard's Warehouse 2", "WizWarehouse 2.0", "e67ac67548236a73897a85cd12b30492", 230614),
 	FANGAME("ZikTuria", "a91559e6f04a67dcb9023a98a0faed77", 52716),
-	FANGAME("Zoony", "3f7418ea8672ea558521c178188cfce5", 154734), // original file name "Zoony™"
+	FANGAMEN("Zoony", "xn--Zoony-j64b", "3f7418ea8672ea558521c178188cfce5", 154734), // original file name "Zoony™"
 	FANGAMEN("Zoony", "xn--Zoony-j64b", "55d3d42b5dca9630eb28ad464f343c67", 154734), // original file name "Zoony™", alt version
 
 #if 0
 	// These are TODO
-	{"grailquest", "GrailQuest: Adventure in the Age of King Arthur"},
-
-	FANGAME("Dash Hansen and the Search for the Black Orchid");
-	FANGAME("Deep Angst II: The Nightmare Ends");
-	FANGAME("Escape From Saecvrom");
-	FANGAME("Maze of the Questing Beast");
-	FANGAME("Pirate Attack!");
-	FANGAME("Robot Planet");
-	FANGAME("Starport");
-	FANGAME("MythWorld");
-	FANGAME("Brownie Saves the Day");
-	FANGAME("Brownie's Dream");
-	FANGAME("Can James Be Found?");
-	FANGAME("SparGate");
-	FANGAME("The Time Squisher");
-	FANGAME("Who Shot Brownie Dog?");
-	FANGAME("Brownie's Time Travels");
 	FANGAME("The Adventures of Steve Reeve");
-	FANGAME("Palace of Sand (Sultan's Palace)");
-	FANGAME("Sword of Siegfried");
 	FANGAME("Introduction to Gothic");
-
-	// modified
-	FANGAME("The Ashland revolution");
-	FANGAME("Jamie the Demon Slayer");
-	FANGAMEN("Lost In Kookyville", "Lost In Kookyville 1.2.4", "89ecb4cef5cc4036e54f8bc45ce7520e", 721569),
-	FANGAME("Nightcrawler Ned", "8423fc015c395bd6be54a7ea69170d99", 366542),
-	FANGAME("The Axe-orcist", "9718b72e86a9727bbd68e12fa992b268", 308764),
-	BIGGAME("scepters", "", "Scepters", "2c824f1bd7b22c575c7be86ac88ebd23", 347540), // alt version
-	FANGAMEN("Enchanted Pencils", "Enchanted Pencils 0.99 (PG)", "49a0708da81dbeb28c6e607429c92209", 408913),
-	BIGGAME("twisted", "", "Twisted! 1.6", "6e0be4c7d83231e56a431dc4ef7bf978", 960954),
-	FANGAME("P-W Adventure", "a8e9f97ee02f01de588a4dbabe55ca3f", 219216),
-	FANGAME("Quest for T-Rex", "51aa29d24ca702c8980e959706ef0b76", 592584),
-	FANGAMEN("Mormonoids from the Deep", "Mormonoids 1.25", "4730d0c47d13401d73353e980f91a304", 645318),
-	FANGAME("Star Trek", "3067332e6f0bb0314579f9bf102e1b56", 53320),
 #endif
 
 	AD_TABLE_END_MARKER

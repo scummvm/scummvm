@@ -29,7 +29,7 @@ static const PlainGameDescriptor wageGames[] = {
 	{"amot", "A Mess O' Trouble"},
 	{"cantitoe", "Camp Cantitoe"},
 	{"drakmythcastle", "Drakmyth Castle"},
-	{"grailquest", "GrailQuest"},
+	{"grailquest", "GrailQuest: Adventure in the Age of King Arthur"},
 	{"raysmaze", "Ray's Maze"},
 	{"scepters", "Enchanted Scepters"},
 	{"twisted", "Twisted!"},
