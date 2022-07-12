@@ -131,6 +131,7 @@ Gui::Gui(WageEngine *engine) {
 	uint maxWidth = _screen.w;
 
 	_consoleWindow = _wm->addTextWindow(font, kColorBlack, kColorWhite, maxWidth, Graphics::kTextAlignLeft, _menu);
+	_consoleWindow->setEditable(true);
 
 	loadBorders();
 }
