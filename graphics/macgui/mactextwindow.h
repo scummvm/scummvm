@@ -49,7 +49,7 @@ public:
 	void appendText(const Common::String &str, const MacFont *macFont = nullptr, bool skipAdd = false);
 	void clearText();
 
-	void setEditable(bool editable) { _editable = editable; }
+	void setEditable(bool editable) { _editable = editable; _mactext->setEditable(editable); }
 	void setSelectable(bool selectable) { _selectable = selectable; }
 
 	void undrawCursor();
