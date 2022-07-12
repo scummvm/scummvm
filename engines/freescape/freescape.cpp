@@ -390,12 +390,15 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 			}
 			_position.set(_position.x(), positionY - fallen * areaScale, _position.z());
 		}
+		debug("Runing effects:");
 		checkCollisions(true); // run the effects
 	} else {
+		debug("Runing effects:");
 		checkCollisions(true); // run the effects
 		if (_currentArea->getAreaID() == previousAreaID) {
 			bool stepUp = tryStepUp(_position);
 			if (stepUp) {
+				debug("Runing effects:");
 				checkCollisions(true); // run the effects (again)
 			} else {
 				_position = previousPosition;
@@ -446,8 +449,16 @@ bool FreescapeEngine::tryStepDown(Math::Vector3d currentPosition) {
 bool FreescapeEngine::checkCollisions(bool executeConditions) {
 	int areaScale = _currentArea->getScale();
 
-	Math::Vector3d v1(_position.x() - _playerWidth / 2, _position.y() - areaScale * _playerHeight , _position.z() - _playerDepth / 2);
-	Math::Vector3d v2(_position.x() + _playerWidth / 2, _position.y()                             , _position.z() + _playerDepth / 2);
+	Math::Vector3d v1;
+	Math::Vector3d v2;
+
+	if (executeConditions) {
+		v1 = Math::Vector3d(_position.x() -  areaScale * 3 * _playerWidth / 4, _position.y() - (areaScale + 1) * _playerHeight , _position.z() - areaScale * 3 * _playerDepth / 4);
+		v2 = Math::Vector3d(_position.x() +  areaScale * 3 * _playerWidth / 4, _position.y()                             , _position.z() + areaScale * 3 * _playerDepth / 4);
+	} else {
+		v1 = Math::Vector3d(_position.x() - areaScale * _playerWidth / 2, _position.y() - areaScale * _playerHeight , _position.z() - areaScale * _playerDepth / 2);
+		v2 = Math::Vector3d(_position.x() + areaScale * _playerWidth / 2, _position.y()                             , _position.z() + areaScale * _playerDepth / 2);
+	}
 
 	const Math::AABB boundingBox(v1, v2);
 	Object *obj = _currentArea->checkCollisions(boundingBox);
