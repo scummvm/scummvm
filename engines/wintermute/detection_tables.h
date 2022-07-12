@@ -119,6 +119,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"mythguff",        "Myth: A Guff's Tale"},
 	{"nightinthefog",   "Night in the Fog"},
 	{"nighttrain",      "Night Train"},
+	{"nosebound1",      "Nose Bound: Episode 1"},
 	{"oknytt",          "Oknytt"},
 	{"one",             "One"},
 	{"onehelluvaday",   "One Helluva Day"},
@@ -1767,6 +1768,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Night Train Demo 2
 	WME_WINENTRY("nighttrain", "Demo",
 		WME_ENTRY1s("data.dcp", "c4c29461bb070735e564ef6612ea371a", 124495883), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
+
+	// Nose Bound: Episode 1 (Demo) (multi-language)
+	WME_WINENTRY("nosebound1", "Demo",
+		WME_ENTRY1s("data.dcp", "280f2e063385e2ed4c17b43991666e93", 379558560), Common::UNK_LANG, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
 	// Oknytt
 	WME_WINENTRY("oknytt", "Version 1.0",
