@@ -5,11 +5,14 @@
 
 #include "freescape/freescape.h"
 #include "freescape/area.h"
+
 #include "freescape/language/8bitDetokeniser.h"
 #include "freescape/language/instruction.h"
+
+#include "freescape/objects/object.h"
 #include "freescape/objects/geometricobject.h"
 #include "freescape/objects/entrance.h"
-#include "freescape/objects/object.h"
+#include "freescape/objects/sensor.h"
 
 namespace Freescape {
 
@@ -138,8 +141,25 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			5 * v); // rotation
 	} break;
 
-	case Object::Sensor:
+	case Object::Sensor: {
+		debug("rotation: %f %f %f", v.x(), v.y(), v.z());
+		if (byteSizeOfObject > 0) {
+			// TODO: there is something here
+			debug("Warning: extra %d bytes in sensor", byteSizeOfObject);
+			file->seek(byteSizeOfObject, SEEK_CUR);
+			byteSizeOfObject = 0;
+		}
+		assert(byteSizeOfObject == 0);
+		debug("End of object at %lx", file->pos());
+		// create an entrance
+		return new Sensor(
+			objectID,
+			32 * position,
+			5 * v); // rotation
+	} break;
+
 	case Object::Group:
+		error("Object of type 'group'");
 		break;
 	}
 

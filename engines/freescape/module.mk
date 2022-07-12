@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	objects/object.o \
 	objects/entrance.o \
 	objects/geometricobject.o \
+	objects/sensor.o \
 	loaders/8bitBinaryLoader.o \
 	language/8bitDetokeniser.o \
 	loaders/16bitBinaryLoader.o \
