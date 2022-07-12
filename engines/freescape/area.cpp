@@ -105,14 +105,16 @@ void Area::draw(Freescape::Renderer *gfx) {
 	gfx->clear();
 	if (skyColor != 255)
 		gfx->drawSky(skyColor);
+
+	if (groundColor != 255)
+		gfx->drawFloor(groundColor);
+
 	assert(drawableObjects.size() > 0);
 	for (Common::Array<Object *>::iterator it = drawableObjects.begin(); it != drawableObjects.end(); it++) {
 		if (!(*it)->isDestroyed() && !(*it)->isInvisible()) {
 			(*it)->draw(gfx);
 		}
 	}
-	if (groundColor != 255)
-		gfx->drawFloor(groundColor);
 }
 
 Object *Area::shootRay(const Math::Ray &ray) {
@@ -153,6 +155,7 @@ void Area::addFloor() {
 	Common::Array<uint8> *gColors = new Common::Array<uint8>;
 	for (int i = 0; i < 6; i++)
 		gColors->push_back(groundColor);
+
 	GeometricObject *floor = new GeometricObject(
 		Object::Type::Cube,
 		200,
@@ -163,7 +166,7 @@ void Area::addFloor() {
 		nullptr,
 		empty
 	);
-	drawableObjects.push_back(floor);
+	drawableObjects.insert_at(0, floor);
 }
 
 } // End of namespace Freescape

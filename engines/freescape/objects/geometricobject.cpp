@@ -114,6 +114,9 @@ GeometricObject::GeometricObject(
 	Common::String *_conditionSource) {
 	_type = type;
 	_flags = flags;
+	if (flags & 0x40)
+		makeInvisible();
+
 	_objectID = objectID;
 	origin = _origin;
 	size = _size;
