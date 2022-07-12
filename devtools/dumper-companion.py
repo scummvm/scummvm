@@ -15,16 +15,17 @@
 # Code is formatted with `black`
 
 import argparse
-import io
+import logging
 import os
 import sys
-import logging
+import unicodedata
+import urllib.request
+import zipfile
 from binascii import crc_hqx
+from io import BytesIO, StringIO
 from pathlib import Path
 from struct import pack, unpack
 from typing import Any, ByteString, List, Tuple
-import unicodedata
-import urllib.request
 
 import machfs
 
@@ -191,11 +192,9 @@ def file_to_macbin(f: machfs.File, name: ByteString) -> bytes:
     return macbin
 
 def macbin_get_datafork(f: bytes) -> bytes:
-    header = unpack(">x64p4s4sBxHHHBxIIIIHB14xIHBB", f[0:124])
-
-    print("Data len is:", header[8])
-
-    return f[128:128 + header[8]]
+    datalen, = unpack(">I", f[0x53:0x57])
+    print("Data len is:", datalen)
+    return f[0x80:0x80 + datalen]
 
 
 def escape_string(s: str) -> str:
@@ -558,6 +557,76 @@ def collect_forks(args: argparse.Namespace) -> int:
     return 0
 
 
+def block_copy(dest, dest_offset, src, src_offset, size):
+    if size == 0:
+        return
+    dest[dest_offset:dest_offset+size] = src[src_offset:src_offset+size]
+
+# Inserts bytes into sliding window ring buffer, returns new window position
+def insert_sl(sl, sl_pos, bytes_to_insert, insert_src_offset, size):
+    available = 0x10000 - sl_pos
+    if available < size:
+        block_copy(sl, sl_pos, bytes_to_insert, insert_src_offset, available)
+        sl_pos = 0
+        sl_pos = insert_sl(sl, sl_pos, bytes_to_insert, insert_src_offset + available, size - available)
+    else:
+        block_copy(sl, sl_pos, bytes_to_insert, insert_src_offset, size)
+        sl_pos = sl_pos + size
+    return sl_pos
+
+# Reads bytes from sliding window ring buffer
+def read_sl(sl, sl_pos, out_buf, out_buf_pos, size):
+    available = 0x10000 - sl_pos
+    if available < size:
+        block_copy(out_buf, out_buf_pos, sl, sl_pos, available)
+        read_sl(sl, 0, out_buf, out_buf_pos + available, size - available)
+    else:
+        block_copy(out_buf, out_buf_pos, sl, sl_pos, size)
+
+def read_lz(sl, sl_pos, out_buf, out_buf_pos, coded_offset, length):
+    actual_offset = coded_offset + 1
+    read_pos = (sl_pos + 0x10000 - actual_offset) % 0x10000;
+    while actual_offset < length:
+        # Repeating sequence
+        read_sl(sl, read_pos, out_buf, out_buf_pos, actual_offset)
+        out_buf_pos += actual_offset
+        length -= actual_offset
+    # Copy
+    read_sl(sl, read_pos, out_buf, out_buf_pos, length)
+
+def decompress(in_f, out_f, compressed_data_size):
+    sl = bytearray(0x10000)
+    lz_bytes = bytearray(128)
+    sl_pos = 0
+    chunk_size = 0
+    output_data = 0
+    while compressed_data_size > 0:
+        code_byte_0 = in_f.read(1)[0]
+        compressed_data_size -= 1
+        if (code_byte_0 & 0x80):
+            # Literal
+            chunk_size = (code_byte_0 & 0x7f) + 1
+            output_data = in_f.read(chunk_size)
+            compressed_data_size -= chunk_size
+        elif (code_byte_0 & 0x40):
+            # Large offset
+            code_bytes_12 = in_f.read(2)
+            compressed_data_size -= 2
+            chunk_size = (code_byte_0 & 0x3f) + 4
+            coded_offset = (code_bytes_12[0] << 8) + code_bytes_12[1]
+            read_lz(sl, sl_pos, lz_bytes, 0, coded_offset, chunk_size)
+            output_data = lz_bytes
+        else:
+            # Small offset
+            code_byte_1 = in_f.read(1)[0]
+            compressed_data_size -= 1
+            chunk_size = ((code_byte_0 & 0x3c) >> 2) + 3
+            coded_offset = ((code_byte_0 & 0x3) << 8) + code_byte_1
+            read_lz(sl, sl_pos, lz_bytes, 0, coded_offset, chunk_size)
+            output_data = lz_bytes
+        out_f.write(output_data[0:chunk_size])
+        sl_pos = insert_sl(sl, sl_pos, output_data, 0, chunk_size)
+
 def create_macfonts(args: argparse.Namespace) -> int:
     """
     Downloads System 7 image, extracts fonts from it and packs them
@@ -568,8 +637,40 @@ def create_macfonts(args: argparse.Namespace) -> int:
         output = file.read()
         print('done')
 
-    datafork = macbin_get_datafork(output)
+    datafork = BytesIO(macbin_get_datafork(output))
+    print('Decompressing...', end="")
+    datafork.seek(-0x200, 2)
+    alt_mdb_loc = datafork.tell()
+    datafork.seek(-(0x200 - 0x12), 2)
+    num_allocation_blocks, allocation_block_size, first_allocation_block = unpack('>HI4xH', datafork.read(12))
+    compressed_data_start = first_allocation_block * allocation_block_size
+    compressed_data_end = alt_mdb_loc   # ???
+    datafork.seek(0)
+    decdatafork = BytesIO()
+    decdatafork.write(datafork.read(compressed_data_start))
+    compressed_amount = compressed_data_end - compressed_data_start
+    decompress(datafork, decdatafork, compressed_amount)
+    datafork.seek(alt_mdb_loc)
+    decdatafork.write(datafork.read(0x200))
+    print('done')
 
+    decdatafork.seek(0)
+    vol = machfs.Volume()
+    vol.read(decdatafork.read())
+    for hpath, obj in vol.iter_paths():
+        if hpath == ('Fonts.image',):
+            fontsvol = obj.data[0x54:]
+            break
+
+    print('Reading Fonts.image...')
+    vol = machfs.Volume()
+    vol.read(fontsvol)
+    with zipfile.ZipFile('classicmacfonts.dat', mode='w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as fontzip:
+        for hpath, obj in vol.iter_paths():
+            print(f'Compressing {hpath[-1]}...')
+            fontzip.writestr(f'{hpath[-1]}.bin', file_to_macbin(obj, hpath[-1].encode("mac_roman")))
+
+    print('Done')
     return 0
 
 
@@ -700,7 +801,7 @@ def test_encode_string(capsys):
 
 
 def test_encode_stdin(capsys, monkeypatch):
-    monkeypatch.setattr("sys.stdin", io.StringIO("Icon\r"))
+    monkeypatch.setattr("sys.stdin", StringIO("Icon\r"))
     call_test_parser(["str", "--stdin"])
     captured = capsys.readouterr()
     assert captured.out == "xn--Icon-ja6e\n"
