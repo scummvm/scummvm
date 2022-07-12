@@ -351,7 +351,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		debug("%s", conditionSource->c_str());
 	}
 
-	if (_targetName.hasPrefix("castlemaster"))
+	if (_targetName.hasPrefix("castlemaster") || _targetName.hasPrefix("totaleclipse"))
 		area->addFloor();
 
 	debug("End of area at %lx", file->pos());
@@ -381,13 +381,17 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	uint8 startEntrance = file->readByte();
 	debug("Entrace area: %d", startEntrance);
 
-	file->seek(0x42, SEEK_CUR);
+	file->seek(0x46, SEEK_CUR);
 
 	uint16 globalSomething;
-	globalSomething = file->readUint16BE();
+	globalSomething = file->readUint16LE();
 	debug("Pointer to something: %x\n", globalSomething);
 
-	file->seek(offset + 0x48);
+	if (_targetName.hasPrefix("driller")) {
+		file->seek(0x3b42);
+		for (int i = 0; i < 8; i++)
+			load8bitObject(file);
+	}
 
 	uint16 globalByteCodeTable;
 	globalByteCodeTable = file->readUint16LE();

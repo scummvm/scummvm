@@ -34,7 +34,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			0, 3, 1, 1, 1, 1, 2, 2,
 			2, 1, 1, 2, 1, 1, 2, 1,
 			1, 2, 2, 1, 2, 0, 0, 0,
-			1, 1, 0, 1, 1, 1, 1, 1, 2, 0, 1};
+			1, 1, 0, 1, 1, 1, 1, 1, 2, 2, 1};
 
 	while (bytePointer < sizeOfTokenisedContent) {
 		// get the conditional type of the next operation
@@ -222,6 +222,14 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 
 		case 32: // end condition if an object is visible in another area
 			detokenisedStream += "IF RVIS? ";
+			detokenisedStream += Common::String::format("(%d), (%d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
+			detokenisedStream += "THEN END ENDIF";
+			bytePointer += 2;
+			numberOfArguments = 0;
+			break;
+
+		case 33: // end condition if an object is invisible in another area
+			detokenisedStream += "IF RINVIS? ";
 			detokenisedStream += Common::String::format("(%d), (%d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
 			detokenisedStream += "THEN END ENDIF";
 			bytePointer += 2;
