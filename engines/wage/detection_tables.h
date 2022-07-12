@@ -35,7 +35,9 @@ static const ADGameDescription gameDescriptions[] = {
 
 	FANGAME("3rd Floor", "931aa0b6ada3aced5117ee6e6daf2fb8", 281153),
 	FANGAME("3rd Floor", "140883954b7cd89b0ffabde6ee0073d4", 281167), // alt version
+	FANGAME("3rd Floor", "afe1a9eb0d4e5857f9f748570862c88e", 281213), // v1.3
 	BIGGAME("afm", "v1.3", "Another Fine Mess 1.3", "25934edf84e814f41f3ddf87185b554b", 1409792),
+	BIGGAME("afm", "v1.4", "Another Fine Mess 1.4", "28d2b78c7abcbfd526f9c252444ef0b3", 1420563),
 	BIGGAME("afm", "v1.8", "Another Fine Mess 1.8", "8bbec64ffe9deee4ff48d27f01176814", 1420467),
 	BIGGAME("amot", "v1.8", "A Mess O' Trouble 1.8", "57de8f1f79a24fa1a296aa10242c3648", 1842848),
 	FANGAMEN("The Adventures of Steve Reeve", "TAoSR", "e8b8ab3a838382125594aae17d53a4e7", 843323),
@@ -54,17 +56,18 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Canal District", "061a09e9258145f6a585e869a0319004", 641214),
 	FANGAME("Carbon Copy", "322410318c60045928a10f6b4c0b0a87", 519189),
 	FANGAME("Castle of Ert", "069daab46729291a615e9ee3528008ff", 198699),
-	FANGAMEN("Castle of Ert", "Castle of Ert.1", "ecadcdd9bdee68aeb32507932857db30", 198727), // alt version
+	FANGAMEN("Castle of Ert", "Castle of Ert.1", "ecadcdd9bdee68aeb32507932857db30", 198727), // alt version, v1.0
 	FANGAME("Color by Number", "8fc77e5976ca25d05cf74db3ec3e5ef2", 528306),
 	FANGAMEN("Dash Hansen and the Search for the Black Orchid", "Dash Hansen", "555e07344506720c8e4a29e1b5ba3578", 257129),
 	FANGAMEND("Death Mall", "Death Mall Demo", "8284351df1c7b678279139ed486ab127", 254618),
-	FANGAME("Deep Angst", "ddc4c8b3d317e2c79a12c53275253ac3", 329294), // Original file name "Deep Angst™"
+	FANGAMEN("Deep Angst", "xn--Deep Angst-398e", "ddc4c8b3d317e2c79a12c53275253ac3", 329294), // Original file name "Deep Angst™", v.90b
 	FANGAMEN("Deep Angst II: The Nightmare Ends", "Deep Angst II", "2e468021416bc2b82e283030c7f6bc5d", 408761),
 	FANGAME("Deep Ennui", "9879bf659f11c9177d578a347da0c658", 85819),
 	// Polygons with ignored byte 1
 	FANGAME("Double Trouble", "1cd05d66163b44f9f0d8c3e7232bc2db", 542115),
-	BIGGAME("drakmythcastle", "disk I", "Drakmyth Castle disk I of II", "54dd0a817b667fc05c4f2dee6abe126a", 793528),
-	BIGGAME("drakmythcastle", "disk II", "Drakmyth Castle II", "b57af17c805775d7d68b62133164c4e4", 1685403),
+	BIGGAME("drakmythcastle", "Disk I", "Drakmyth Castle disk I of II", "54dd0a817b667fc05c4f2dee6abe126a", 793528),
+	BIGGAME("drakmythcastle", "Disk I", "Drakmyth Castle", "b796545fc4b7c2b89683db873e005e92", 792355), // alt version
+	BIGGAME("drakmythcastle", "Disk II", "Drakmyth Castle II", "b57af17c805775d7d68b62133164c4e4", 1685403),
 	// Crash at start in GUI rendering
 	FANGAMEN("Dune Eternity", "xn--DUNE ETERNITY -paaanaa75fbbobb", "4946bc99cc42bf83b628352aa9b81a7b", 289945), // Original file name is "***DUNE ETERNITY*** "
 	FANGAMEN("Dungeon World II", "DungeonWorld2", "74a7153f9ae61a59a216078a37f68f2c", 229943),
@@ -74,6 +77,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Eidisi I", "ed8fec61ad94ddec06feaf4eb720084b", 172296),
 	FANGAME("Eidisi I", "a20f080d6109d8e253d74b0dfb4b2ae5", 172296), // alt version
 	FANGAME("Eidisi I", "06ae31c4361f9bd5b91593858b6d0d79", 172310), // alt version
+	FANGAME("Elite Commando", "3fc74f1403c1529b52f3cd4d60771dac", 293704), // v1.0
 	// Problems(?) with text on the first screen
 	FANGAMEN("Enchanted Pencils", "Enchanted Pencils 0.99 (PG)", "49a0708da81dbeb28c6e607429c92209", 408657),
 	FANGAMEN("Enchanted Pencils", "Enchanted Pencils 0.99 (PG)", "0095d0e069851521c44ca3cdc94bcba3", 414464), // alt?
@@ -88,6 +92,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Crash in console rendering on the first scene
 	FANGAME("Fantasy Quest", "b52d3e2680a76c23b2791e2c87f6b6bd", 762498),
 	FANGAME("Find the Heart", "0c0c282649597ea1ac82d97c8d4029a2", 105979), // From Joshua's Worlds 1.0
+	FANGAME("Find the Heart", "6fb8c6b8bc2287ba225b0ac6580dc073", 105675), // From Joshua's Worlds 1.0, alt version
 	FANGAME("Find the Heart", "08de3248b8c691d9a08af984bdcfa872", 105629), // From Joshua's Worlds. Alt version
 	FANGAME("Find the Heart", "73935d313b666763e50d2cdc6b3b7908", 105615), // Standalone
 	FANGAMEN("Fortune Teller", "Fortune Teller 1.1", "3c09329fc3c92a70e5c8874cc763f5cb", 73675),
@@ -98,13 +103,15 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Haunted House", "Haunted House 1.5", "5e34e9fa13f4c90876f10a40ea1d1c79", 177244),
 	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "c9b3c75814fc6b14feae044157bef252", 231713),
 	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "4658ece81a6f211a828e747125482f48", 231713), // alt version
+	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "baaaae4569fbb1947d74667ac484bea9", 231773), // alt version
+	FANGAMEN(".i.f.", "xn--.i.f.-", "575fc0c25e9823dd742de1acdcaac325", 183221),
 	// Cropped graphics on first scene, cannot pass to in-game
 	FANGAMEN("Introduction to Gothic", "Intro to Gothic", "606eec666f0b2d767e4423747e740434", 207811),
 	FANGAMEN("James Bond 007", "007", "2449924f2cb43454489a4ef91c0ee702", 50407),
 	// Lots of unhandled comparisons
 	FANGAME("Jamie the Demon Slayer", "ed054aa760569059c7ea554e822089a6", 232533),
 	FANGAMEN("Journey", "The Journey 1.6.2 US", "588a516caa187005fdfcbc72823c8eff", 820316),
-	FANGAMEN("Jumble", "LSJUMBLE", "555ead186ec1683157e53b96fc4a99d5", 647083), // Original file name is "LSJUMBLE† "
+	FANGAMEN("Jumble", "xn--LSJUMBLE -", "555ead186ec1683157e53b96fc4a99d5", 647083), // Original file name is "LSJUMBLE† "
 	FANGAME("Karth of the Jungle", "6dae6eef6f46101ba8c9e312bb82e824", 96455),
 	FANGAME("Karth of the Jungle", "c869cacc59f2402d06bc8197be28b5df", 96704), // Alternative version
 	FANGAME("Karth of the Jungle II", "6f26e0bace5c41d91c135e5e102de5bc", 200797),
@@ -143,9 +150,9 @@ static const ADGameDescription gameDescriptions[] = {
 	// Polygons with byte 1
 	FANGAME("Periapt", "7e26a7827c694232624321a5a6844511", 405750),
 	FANGAME("Periapt", "bc36e40de279d5f0844577fe702d9f64", 405750), // alt version
+	FANGAME("The Phoenix", "bd6dabf7a19d2ab7902498a8513f8c71", 431387),
 	// Cannot push buttons
 	FANGAMEN("The Phoenix v1.2", "The Phoenix", "fee9f1de7ad9096d084461d6066192b1", 431384),
-	FANGAME("The Phoenix", "bd6dabf7a19d2ab7902498a8513f8c71", 431387),
 	FANGAME("Pirate Attack!", "d4d3f59b57d5bf3dd690fd657ecdd9c6", 323722),
 	FANGAME("Porno Writer 2.0", "b5228c22158ff40ccac36b6a61cc317a", 791379),
 	FANGAME("Pretty Good Pornography 3.0", "c86c92ec69b464a197659b1bd80880b9", 1122264),
@@ -184,12 +191,14 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Space Adventure", "SpaceAdventure", "e38d524cb778ed0beb77ee9299f0ed45", 155100), // alt version
 	FANGAMEN("SparGate", "SparGate- vNC.1", "a7a7bfc1825011c2df8b7a03b57fcac9", 611991),
 	FANGAMEN("Spear of Destiny", "xn--SpearOfDestiny-ef3h", "ac00a26f04f83b47c278cc1d226f48df", 333409), // Original file name "SpearOfDestiny†"
+	FANGAMEN("Spear of Destiny", "SpearOfDestiny", "ac00a26f04f83b47c278cc1d226f48df", 333409), // same version, normal file name
 	FANGAME("Spear of Destiny", "ea90bddd0925742351340cf88dd1c7a6", 620350), // alt version, normal file name
 	FANGAME("Star Trek", "3067332e6f0bb0314579f9bf102e1b56", 53064),
 	FANGAME("Starport", "d9e25edc9ea5d2a8b29a3693de19ae2c", 253970),
 	FANGAMEN("Strange Disappearance", "xn--Strange Disappearance -", "9d6e41b61c0fc90400e5da2fcb653a4a", 772026), // Original file name "Strange Disappearance "
 	FANGAME("The Sultan's Palace", "fde31cbcc77b66969b4cfcd43075341e", 456599), // Releases titled "Palace of Sand" were made with FutureBasic
 	FANGAMEN("Swamp Witch", "xn--Swamp Witch-dl3f", "bd8c8394be31f7845d55785b7ccfbbde", 739525), // Original file name "Swamp Witch†"
+	FANGAME("Swamp Witch", "bd8c8394be31f7845d55785b7ccfbbde", 739525), // same version, normal file name
 	FANGAME("Swamp Witch", "07463c8b3b908b0c493a41b949ac1ff5", 739875), // alt version, normal file name
 	FANGAME("Sweetspace Now!", "574dc7dd25543f7a516d6524f0c5ab33", 123557), // Comes with Jumble
 	// Wrong scrolling in the first console text
@@ -215,6 +224,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("ZikTuria", "a91559e6f04a67dcb9023a98a0faed77", 52716),
 	FANGAMEN("Zoony", "xn--Zoony-j64b", "3f7418ea8672ea558521c178188cfce5", 154734), // original file name "Zoony™"
 	FANGAMEN("Zoony", "xn--Zoony-j64b", "55d3d42b5dca9630eb28ad464f343c67", 154734), // original file name "Zoony™", alt version
+	FANGAMEN("Zoony", "xn--Zoony-j64b", "ecbe19c53f9d5b7ef62e66db9ea42348", 154970), // original file name "Zoony™", yet another alt version
 
 	AD_TABLE_END_MARKER
 };
