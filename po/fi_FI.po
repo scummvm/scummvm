@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-10 14:51+0000\n"
-"PO-Revision-Date: 2022-07-09 12:15+0000\n"
+"PO-Revision-Date: 2022-07-13 01:32+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -218,10 +218,8 @@ msgid "Downloading icons list..."
 msgstr "Ladataan ikonilistaa..."
 
 #: gui/downloadiconsdialog.cpp:190
-#, fuzzy
-#| msgid "Clear value"
 msgid "Clear Cache"
-msgstr "Tyhjennä arvo"
+msgstr "Tyhjennä välimuisti"
 
 #: gui/downloadiconsdialog.cpp:241
 #, c-format
@@ -264,6 +262,8 @@ msgid ""
 "You are about to remove %s %s of data, deleting all previously downloaded "
 "icon files. Do you want to proceed?"
 msgstr ""
+"Olet poistamassa %s %s dataa, sisältäen kaikki aiemmin ladatut "
+"ikonitiedostot. Haluatko jatkaa?"
 
 #: gui/downloadiconsdialog.cpp:452 gui/updates-dialog.cpp:115
 msgid "Proceed"
