@@ -111,6 +111,17 @@ void MacTextWindow::resize(int w, int h, bool inner) {
 	_mactext->resize(_maxWidth, h);
 }
 
+void MacTextWindow::setDimensions(const Common::Rect &r) {
+	resize(r.width(), r.height());
+	_dims.moveTo(r.left, r.top);
+	updateInnerDims();
+
+	_contentIsDirty = true;
+	_wm->setFullRefresh(true);
+
+	_mactext->setDimensions(Common::Rect(_innerDims.width(), _innerDims.height()));
+}
+
 void MacTextWindow::appendText(const Common::U32String &str, const MacFont *macFont, bool skipAdd) {
 	// the reason we put undrawInput here before appendText, is we don't want the appended text affect our input
 	// thus, we first delete all of out input, and we append new text, and we redraw the input

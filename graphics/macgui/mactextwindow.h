@@ -34,6 +34,7 @@ public:
 	virtual ~MacTextWindow();
 
 	virtual void resize(int w, int h, bool inner = false);
+	void setDimensions(const Common::Rect &r) override;
 
 	virtual bool processEvent(Common::Event &event);
 

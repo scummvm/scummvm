@@ -350,13 +350,14 @@ public:
 
 	void setMode(uint32 mode) { _mode = mode; }
 
+	void updateInnerDims();
+
 private:
 	void drawBorderFromSurface(ManagedSurface *g, uint32 flags);
 	void drawPattern();
 	void drawBox(ManagedSurface *g, int x, int y, int w, int h);
 	void fillRect(ManagedSurface *g, int x, int y, int w, int h, int color);
 	const Font *getTitleFont();
-	void updateInnerDims();
 	void updateOuterDims();
 
 	bool isInCloseButton(int x, int y) const;
