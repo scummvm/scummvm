@@ -278,10 +278,10 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	uint8 skyColor = 255;
 	uint8 groundColor = 255;
 	if (_targetName != "castlemaster") {
+		groundColor = file->readByte() & 15;
+		skyColor = file->readByte() & 15;
 		ci1 = file->readByte() & 15;
 		ci2 = file->readByte() & 15;
-		skyColor = file->readByte() & 15;
-		groundColor = file->readByte() & 15;
 		debug("Colors: %d %d %d %d", ci1, ci2, skyColor, groundColor);
 	} else {
 		skyColor = file->readByte() & 15;

@@ -249,6 +249,7 @@ void FreescapeEngine::shoot() {
 	Object *shot = _currentArea->shootRay(ray);
 	if (shot) {
 		GeometricObject *gobj = (GeometricObject*) shot;
+		debug("Shot object %d with flags %x", gobj->getObjectID(), gobj->getObjectFlags());
 		if (gobj->conditionSource != nullptr) {
 			debug("Must use shot = true when executing: %s", gobj->conditionSource->c_str());
 			executeCode(gobj->condition, true, false);
@@ -286,6 +287,8 @@ Common::Error FreescapeEngine::run() {
 		_farClipPlane = 14189.f;
 	} else {
 		_farClipPlane = 8192.f;
+		if (!_targetName.hasPrefix("driller"))
+			_gfx->_keyColor = 0;
 	}
 
 	if (_border) {
