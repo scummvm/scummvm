@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-10 14:51+0000\n"
-"PO-Revision-Date: 2022-07-08 16:47+0000\n"
+"PO-Revision-Date: 2022-07-12 16:52+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -222,10 +222,8 @@ msgid "Downloading icons list..."
 msgstr "Icon-Liste wird heruntergeladen..."
 
 #: gui/downloadiconsdialog.cpp:190
-#, fuzzy
-#| msgid "Clear value"
 msgid "Clear Cache"
-msgstr "Wert löschen"
+msgstr "Cache leeren"
 
 #: gui/downloadiconsdialog.cpp:241
 #, c-format
@@ -268,6 +266,8 @@ msgid ""
 "You are about to remove %s %s of data, deleting all previously downloaded "
 "icon files. Do you want to proceed?"
 msgstr ""
+"%s %s Daten werden entfernt. Dabei werden alle bisher heruntergeladenen Icon-"
+"Dateien gelöscht. Möchtest du fortfahren?"
 
 #: gui/downloadiconsdialog.cpp:452 gui/updates-dialog.cpp:115
 msgid "Proceed"
