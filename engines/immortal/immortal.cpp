@@ -181,20 +181,20 @@ Common::Error ImmortalEngine::run() {
 
 		// Main
 		Common::Event event;
-    	g_system->getEventManager()->pollEvent(event);
+		g_system->getEventManager()->pollEvent(event);
 
-    	userIO();
-    	noNetwork();
-    	pollKeys();
-    	logic();
-    	pollKeys();
-    	if (logicFreeze() == 0) {
-        	drawUniv();
-        	pollKeys();
-        	fixColors();
-        	copyToScreen();
-        	pollKeys();
-   		}
+		userIO();
+		noNetwork();
+		pollKeys();
+		logic();
+		pollKeys();
+		if (logicFreeze() == 0) {
+			drawUniv();
+			pollKeys();
+			fixColors();
+			copyToScreen();
+			pollKeys();
+		}
 
 		if (_err != Common::kNoError) {
 			debug("To err is human, to really screw up you need an Apple IIGS!");

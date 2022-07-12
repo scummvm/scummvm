@@ -32,10 +32,10 @@ namespace Immortal {
  */
 
 void ImmortalEngine::setSpriteCenter(Common::SeekableReadStream *f, int num, uint8 cenX, uint8 cenY) {
-    // Very simple, just initialize what we can of the data sprite
-    _dataSprites[num]._cenX = cenX;
-    _dataSprites[num]._cenY = cenY;
-    _dataSprites[num]._file = f;
+	// Very simple, just initialize what we can of the data sprite
+	_dataSprites[num]._cenX = cenX;
+	_dataSprites[num]._cenY = cenY;
+	_dataSprites[num]._file = f;
 }
 
 

@@ -25,164 +25,164 @@
 namespace Immortal {
 
 enum SpriteName {
-    // Moresprites 10
-    kCandle,
-    kWow,
-    kAnaVanish,
-    kSink,
-    kTrapdoor,
-    kWizPhant,
-    kVanish,
-    kShadow,
-    kSlime,
-    kSlimeDeath,
+	// Moresprites 10
+	kCandle,
+	kWow,
+	kAnaVanish,
+	kSink,
+	kTrapdoor,
+	kWizPhant,
+	kVanish,
+	kShadow,
+	kSlime,
+	kSlimeDeath,
 
-    // Norlac 5
-    kBridge,
-    kVortex,
-    kBubble,
-    kNorlac,
-    kNolac2,
+	// Norlac 5
+	kBridge,
+	kVortex,
+	kBubble,
+	kNorlac,
+	kNolac2,
 
-    // Powwow 7
-    kPlanners,
-    kUgh,
-    kIsDevoured,
-    kIsBadCrawl,
-    kIsGoodCrawl,
-    kLeg,
-    kIsWebbed,
+	// Powwow 7
+	kPlanners,
+	kUgh,
+	kIsDevoured,
+	kIsBadCrawl,
+	kIsGoodCrawl,
+	kLeg,
+	kIsWebbed,
 
-    // Turrets 10
-    kSleep,
-    kShrink,
-    kLocksmith,
-    kAnaGlimpse,
-    kMadKing,
-    kTorch,
-    kPipe,
-    kProjectile,
-    kKnife,
-    kAnaHug,
+	// Turrets 10
+	kSleep,
+	kShrink,
+	kLocksmith,
+	kAnaGlimpse,
+	kMadKing,
+	kTorch,
+	kPipe,
+	kProjectile,
+	kKnife,
+	kAnaHug,
 
-    // Worm 4
-    kWorm0,
-    kWorm1,
-    kSpike,
-    kIsSpiked,
+	// Worm 4
+	kWorm0,
+	kWorm1,
+	kSpike,
+	kIsSpiked,
 
-    // Iansprites 6
-    kMurder,
-    kWizCrawlUp,
-    kWizLight,
-    kWizBattle,
-    kDown,
-    kNorlacDown,
+	// Iansprites 6
+	kMurder,
+	kWizCrawlUp,
+	kWizLight,
+	kWizBattle,
+	kDown,
+	kNorlacDown,
 
-    // Lastsprites 3
-    kWaterLadder,
-    kPulledDown,
-    kSpill,
+	// Lastsprites 3
+	kWaterLadder,
+	kPulledDown,
+	kSpill,
 
-    // Doorsprites 10
-    kDoor,
-    kTele,
-    kBomb,
-    kTorched,
-    kLadderTop,
-    kSecret,
-    kLadderBottom,
-    kSlipped,
-    kGoblinSlipped,
-    kFlame,
+	// Doorsprites 10
+	kDoor,
+	kTele,
+	kBomb,
+	kTorched,
+	kLadderTop,
+	kSecret,
+	kLadderBottom,
+	kSlipped,
+	kGoblinSlipped,
+	kFlame,
 
-    // General 5
-    kArrow,
-    kSpark,
-    kObject,
-    kBigBurst,
-    kBeam,
+	// General 5
+	kArrow,
+	kSpark,
+	kObject,
+	kBigBurst,
+	kBeam,
 
-    // Mordamir 3
-    kLight,
-    kMord,
-    kDragMask,
+	// Mordamir 3
+	kLight,
+	kMord,
+	kDragMask,
 
-    // Dragon2 2
-    kDFlames,
-    kThroat,
+	// Dragon2 2
+	kDFlames,
+	kThroat,
 
-    // Dragon 1
-    kDragon,
+	// Dragon 1
+	kDragon,
 
-    // Rope 3
-    kChop,
-    kHead,
-    kNurse,
+	// Rope 3
+	kChop,
+	kHead,
+	kNurse,
 
-    // Rescue 2
-    kRescue1,
-    kRescue2,
+	// Rescue 2
+	kRescue1,
+	kRescue2,
 
-    // Troll 9
-    kTroll0,
-    kTroll1,
-    kTroll2,
-    kTroll3,
-    kTroll4,
-    kTroll5,
-    kTroll6,
-    kTroll7,
-    kTroll8,
+	// Troll 9
+	kTroll0,
+	kTroll1,
+	kTroll2,
+	kTroll3,
+	kTroll4,
+	kTroll5,
+	kTroll6,
+	kTroll7,
+	kTroll8,
 
-    // Goblin 10
-    kGoblin0,
-    kGoblin1,
-    kGoblin2,
-    kGoblin3,
-    kGoblin4,
-    kGoblin5,
-    kGoblin6,
-    kGoblin7,
-    kGoblin8,
-    kGoblin9,
+	// Goblin 10
+	kGoblin0,
+	kGoblin1,
+	kGoblin2,
+	kGoblin3,
+	kGoblin4,
+	kGoblin5,
+	kGoblin6,
+	kGoblin7,
+	kGoblin8,
+	kGoblin9,
 
-    //Ulindor 9
-    kUlindor0,
-    kUlindor1,
-    kUlindor2,
-    kUlindor3,
-    kUlindor4,
-    kUlindor5,
-    kUlindor6,
-    kUlindor7,
-    kUlindor8,
+	//Ulindor 9
+	kUlindor0,
+	kUlindor1,
+	kUlindor2,
+	kUlindor3,
+	kUlindor4,
+	kUlindor5,
+	kUlindor6,
+	kUlindor7,
+	kUlindor8,
 
-    //Spider 10
-    kSpider0,
-    kSpider1,
-    kSpider2,
-    kSpider3,
-    kSpider4,
-    kSpider5,
-    kSpider6,
-    kSpider7,
-    kSpider8,
-    kSpider9,
+	//Spider 10
+	kSpider0,
+	kSpider1,
+	kSpider2,
+	kSpider3,
+	kSpider4,
+	kSpider5,
+	kSpider6,
+	kSpider7,
+	kSpider8,
+	kSpider9,
 
-    //Drag 9
-    kDrag0,
-    kDrag1,
-    kDrag2,
-    kDrag3,
-    kDrag4,
-    kDrag5,
-    kDrag6,
-    kDrag7,
-    kDrag8,
+	//Drag 9
+	kDrag0,
+	kDrag1,
+	kDrag2,
+	kDrag3,
+	kDrag4,
+	kDrag5,
+	kDrag6,
+	kDrag7,
+	kDrag8,
 
-    // Font
-    kFont
+	// Font
+	kFont
 };
 
 } // namespace immortal

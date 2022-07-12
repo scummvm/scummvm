@@ -25,7 +25,7 @@ namespace Immortal {
 
 void ImmortalEngine::cycleNew() {}
  int ImmortalEngine::getCycleChr() {
-    return 0;
+	 return 0;
  }
 void ImmortalEngine::cycleFreeAll() {}
 void ImmortalEngine::cycleGetFile() {}
