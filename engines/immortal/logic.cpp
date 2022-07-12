@@ -23,23 +23,36 @@
 
 namespace Immortal {
 
+bool ImmortalEngine::trapKeys() {
+	// This weirdly named routine just checks if you want to restart the game. On the NES it pulls up a dialog with a yes/no,
+	// But on the Apple IIGS it's just the R key
+	getInput();
+	if (_pressedAction == kActionRestart) {
+		gameOver();
+		return true;
+	} else if (_pressedAction == kActionSound) {
+		//toggleSound();
+	}
+	return false;
+}
+
 // There's no way this routine needs to still be here. In fact I'm not sure it needed to be in the game anyway?
 int ImmortalEngine::getLevel() {
-    return _level;
+	return _level;
 }
 
 void ImmortalEngine::logicInit() {
-    _titlesShown = 0;
-    _time = 0;
-    _promoting = 0;
-    _restart = 1;
-    //level_initAtStartOfGameOnly
-    _lastCertLen = 0;
+	_titlesShown = 0;
+	_time = 0;
+	_promoting = 0;
+	_restart = 1;
+	//level_initAtStartOfGameOnly
+	_lastCertLen = 0;
 }
 
 void ImmortalEngine::logic() {
-    _time += 1;
-    // if time overflows the counter, inc the high byte? What the heck...
+	_time += 1;
+	// if time overflows the counter, inc the high byte? What the heck...
 
 }
 
@@ -47,22 +60,41 @@ void ImmortalEngine::restartLogic() {
 }
 
 int ImmortalEngine::logicFreeze() {
-    // Very silly way of checking if the level is over and/or the game is over
-    int g = _gameOverFlag | _levelOver;
-    return (g ^ 1) >> 1;
+	// Very silly way of checking if the level is over and/or the game is over
+	int g = _gameOverFlag | _levelOver;
+	return (g ^ 1) >> 1;
 }
 
 void ImmortalEngine::gameOverDisplay() {
-    _themePaused |= 2;
-    //text_print(kGameOverString)
+	_themePaused |= 2;
+	//text_print(kGameOverString)
 }
 
 void ImmortalEngine::gameOver() {
-    _gameOverFlag = 1;
+	_gameOverFlag = 1;
 }
 
 void ImmortalEngine::levelOver() {
-    _levelOver = 1;
+	_levelOver = 1;
 }
 
 } // namespace Immortal
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

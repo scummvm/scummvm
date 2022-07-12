@@ -55,22 +55,21 @@ namespace Immortal {
 
 // There is a lot of bit masking that needs to happen, so this enum makes it a little easier to read
 enum BitMask16 : uint16 {
-    kMaskLow   = 0x00FF,
-    kMaskHigh  = 0xFF00,
-    kMaskLast  = 0xF000,
-    kMaskFirst = 0x000F,
-    kMaskHLow  = 0x0F00,
-    kMaskLHigh = 0x00F0,
-    kMaskNeg   = 0x8000,
-    kMask12Bit = 0x0F9F									// Compression code (pos, 00, len) is stored in lower 12 bits of word
+	kMaskLow   = 0x00FF,
+	kMaskHigh  = 0xFF00,
+	kMaskLast  = 0xF000,
+	kMaskFirst = 0x000F,
+	kMaskHLow  = 0x0F00,
+	kMaskLHigh = 0x00F0,
+	kMaskNeg   = 0x8000,
+	kMask12Bit = 0x0F9F									// Compression code (pos, 00, len) is stored in lower 12 bits of word
 };
 
 enum BitMask8 : uint8 {
-    kMaskASCII = 0x7F,                                  // The non-extended ASCII table uses 7 bits, this makes a couple of things easier
-    kMask8High = 0xF0,
-    kMask8Low  = 0x0F
+	kMaskASCII = 0x7F,                                  // The non-extended ASCII table uses 7 bits, this makes a couple of things easier
+	kMask8High = 0xF0,
+	kMask8Low  = 0x0F
 };
-
 
 enum ColourMask : uint16 {
 	kMaskRed   = 0x0F00,
@@ -78,10 +77,23 @@ enum ColourMask : uint16 {
 	kMaskBlue  = 0x000F
 };
 
+enum InputAction : int {
+	kActionRestart,
+	kActionSound,
+	kActionFire
+};
+
+enum InputDirection : int {
+	kDirectionUp,
+	kDirectionLeft,
+	kDirectionDown,
+	kDirectionRight
+};
+
 struct DataSprite {
-    uint8 _cenX;                                        // These are the base center positions
-    uint8 _cenY;
-    byte *_bitmap;                                      // Pointer to actual data
+	uint8 _cenX;                                        // These are the base center positions
+	uint8 _cenY;
+	byte *_bitmap;                                      // Pointer to actual data
 Common::SeekableReadStream *_file;                      // This will likely be removed later
 };
 
@@ -89,15 +101,15 @@ struct Sprite {
 	   int  _frame;										// Current frame of the cycle
 	uint16  _X;
 	uint16  _Y;
-	uint16  _on;											// 1 = active
+	uint16  _on;										// 1 = active
 	uint16  _priority;
 DataSprite *_dSprite;
 };
 
 struct Cycle {
 DataSprite *_dSprite;
-      int   _numCycles;
-      int  *_frames;
+	   int  _numCycles;
+	   int *_frames;
 };
 
 struct ImmortalGameDescription;
@@ -159,19 +171,27 @@ public:
 	 * 'global' members
 	 */
 	Common::ErrorCode _err;								// If this is not kNoError at any point, the engine will stop
-			bool _draw 		   = 0;						// Whether the screen should draw this frame
-			bool _dim 		   = 0;						// Whether the palette is dim
-			bool _usingNormal  = 0;						// Whether the palette is using normal
-			 int _zero 		   = 0;						// No idea what this is yet
-		   uint8 _gameOverFlag = 0;
-		   uint8 _levelOver    = 0;
-		   uint8 _themePaused  = 0;
-		     int _level 	   = 0;
-		     int _titlesShown  = 0;
-		     int _time 		   = 0;
-		     int _promoting    = 0;
-		     int _restart 	   = 0;
-		     int _lastCertLen  = 0;
+	 bool _draw 	    = 0;							// Whether the screen should draw this frame
+	 bool _dim 		    = 0;							// Whether the palette is dim
+	 bool _usingNormal  = 0;							// Whether the palette is using normal
+	  int _zero 	    = 0;							// No idea what this is yet
+	uint8 _gameOverFlag = 0;
+	uint8 _levelOver    = 0;
+	uint8 _themePaused  = 0;
+	  int _level 	    = 0;
+	  int _titlesShown  = 0;
+	  int _time 		= 0;
+	  int _promoting    = 0;
+	  int _restart 	    = 0;
+	  int _lastCertLen  = 0;
+
+	/*
+	 * Input members
+	 */
+	int _pressedAction;
+	int _heldAction;
+	int _pressedDirection;
+	int _heldDirection;
 
 	/* 
 	 * Asset related members
@@ -296,6 +316,9 @@ public:
 	 * [Logic.cpp] Functions from Logic.GS
 	 */
 
+	// Surface level
+	bool trapKeys();									// Poorly named, this checks if the player wants to restart the game
+
 	// Misc
 	void logicInit();
 	void logic();										// Keeps time, handles win and lose conditions, then general logic
@@ -369,9 +392,9 @@ public:
 
 	bool hasFeature(EngineFeature f) const override {
 		return
-		    (f == kSupportsLoadingDuringRuntime) ||
-		    (f == kSupportsSavingDuringRuntime) ||
-		    (f == kSupportsReturnToLauncher);
+			(f == kSupportsLoadingDuringRuntime) ||
+			(f == kSupportsSavingDuringRuntime) ||
+			(f == kSupportsReturnToLauncher);
 	};
 
 	bool canLoadGameStateCurrently() override {
