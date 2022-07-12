@@ -1790,8 +1790,12 @@ void TextLabelElement::render(Window *window) {
 				slant |= 64;
 
 			const Graphics::FontManager::FontUsage defaultUsage = getDefaultUsageForMacFont(_macFontID, _size);
+			const Graphics::Font *fallback = FontMan.getFontByUsage(defaultUsage);
 
-			font = _runtime->getMacFontManager()->getFont(Graphics::MacFont(_macFontID, _size, slant, defaultUsage));
+			Graphics::MacFont macFont(_macFontID, _size, slant);
+			macFont.setFallback(fallback);
+
+			font = _runtime->getMacFontManager()->getFont(macFont);
 		}
 
 		// Some weird cases (like the Immediate Action entryway in Obsidian) have no font info at all

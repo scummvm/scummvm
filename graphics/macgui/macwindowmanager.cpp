@@ -225,9 +225,7 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::L
 	CursorMan.showMouse(true);
 
 	loadDataBundle();
-	if (!(_mode & Graphics::kWMNoScummVMWallpaper)) {
-		loadDesktop();
-	}
+	setDesktopMode(_mode);
 }
 
 MacWindowManager::~MacWindowManager() {
@@ -249,6 +247,14 @@ MacWindowManager::~MacWindowManager() {
 	cleanupDataBundle();
 
 	g_system->getTimerManager()->removeTimerProc(&menuTimerHandler);
+}
+
+void MacWindowManager::setDesktopMode(uint32 mode) {
+	if (!(mode & Graphics::kWMNoScummVMWallpaper)) {
+		loadDesktop();
+	} else if (_desktopBmp) {
+		_desktopBmp->free();
+	}
 }
 
 void MacWindowManager::setScreen(ManagedSurface *screen) {

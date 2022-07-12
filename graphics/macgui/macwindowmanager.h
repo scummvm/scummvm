@@ -210,6 +210,7 @@ public:
 	void disableScreenCopy();
 
 	bool isMenuActive();
+	void setDesktopMode(uint32 mode);
 
 	/**
 	 * Set hot zone where menu appears (works only with autohide menu)
