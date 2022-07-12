@@ -779,6 +779,32 @@ void IMuseDigiInternalMixer::mixBits8ConvertToStereo(uint8 *srcBuf, int32 inFram
 					srcBuf_ptr += 2;
 				}
 			}
+		} else if (4 * inFrameCount == feedSize) {
+			srcBuf_ptr = srcBuf;
+			int i = 0;
+			if (inFrameCount - 1 != 0) {
+				for (i = 0; i < inFrameCount - 1; i++) {
+					mixBufCurCell[0] += *((uint16 *)leftAmpTable  + srcBuf_ptr[i]);
+					mixBufCurCell[1] += *((uint16 *)rightAmpTable + srcBuf_ptr[i]);
+					mixBufCurCell[2] += *((uint16 *)leftAmpTable  + srcBuf_ptr[i]);
+					mixBufCurCell[3] += *((uint16 *)rightAmpTable + srcBuf_ptr[i]);
+
+					mixBufCurCell[4] += (*((int16 *)leftAmpTable  + srcBuf_ptr[i]) + *((int16 *)leftAmpTable  + srcBuf_ptr[i + 1])) >> 1;
+					mixBufCurCell[5] += (*((int16 *)rightAmpTable + srcBuf_ptr[i]) + *((int16 *)rightAmpTable + srcBuf_ptr[i + 1])) >> 1;
+					mixBufCurCell[6] += (*((int16 *)leftAmpTable  + srcBuf_ptr[i]) + *((int16 *)leftAmpTable  + srcBuf_ptr[i + 1])) >> 1;
+					mixBufCurCell[7] += (*((int16 *)rightAmpTable + srcBuf_ptr[i]) + *((int16 *)rightAmpTable + srcBuf_ptr[i + 1])) >> 1;
+					mixBufCurCell += 8;
+				}
+			}
+			mixBufCurCell[0] += *((uint16 *)leftAmpTable  + srcBuf_ptr[i]);
+			mixBufCurCell[1] += *((uint16 *)rightAmpTable + srcBuf_ptr[i]);
+			mixBufCurCell[2] += *((uint16 *)leftAmpTable  + srcBuf_ptr[i]);
+			mixBufCurCell[3] += *((uint16 *)rightAmpTable + srcBuf_ptr[i]);
+
+			mixBufCurCell[4] += *((uint16 *)leftAmpTable  + srcBuf_ptr[i]);
+			mixBufCurCell[5] += *((uint16 *)rightAmpTable + srcBuf_ptr[i]);
+			mixBufCurCell[6] += *((uint16 *)leftAmpTable  + srcBuf_ptr[i]);
+			mixBufCurCell[7] += *((uint16 *)rightAmpTable + srcBuf_ptr[i]);
 		} else {
 			residualLength = -inFrameCount;
 			if (feedSize) {
@@ -802,11 +828,6 @@ void IMuseDigiInternalMixer::mixBits12ConvertToStereo(uint8 *srcBuf, int32 inFra
 
 	int xorFlag;
 	int residualLength;
-
-	int term_1;
-	int term_2;
-	int term_3;
-	int term_4;
 
 	mixBufCurCell = (uint16 *)(&_mixBuf[4 * mixBufStartIndex]);
 	if (feedSize == inFrameCount) {
@@ -850,8 +871,8 @@ void IMuseDigiInternalMixer::mixBits12ConvertToStereo(uint8 *srcBuf, int32 inFra
 		mixBufCurCell[0] += *((uint16 *)leftAmpTable  + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF) << 8)));
 		mixBufCurCell[1] += *((uint16 *)rightAmpTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF) << 8)));
 
-		mixBufCurCell[2] += (*((int16 *)leftAmpTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF)  << 8)))
-						   + *((int16 *)leftAmpTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)))) >> 1;
+		mixBufCurCell[2] += (*((int16 *)leftAmpTable  + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF)  << 8)))
+						   + *((int16 *)leftAmpTable  + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)))) >> 1;
 
 		mixBufCurCell[3] += (*((int16 *)rightAmpTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF)  << 8)))
 						   + *((int16 *)rightAmpTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)))) >> 1;
@@ -870,6 +891,57 @@ void IMuseDigiInternalMixer::mixBits12ConvertToStereo(uint8 *srcBuf, int32 inFra
 				mixBufCurCell += 2;
 			}
 		}
+	} else if (4 * inFrameCount == feedSize) {
+		srcBuf_ptr = srcBuf;
+		if ((inFrameCount / 2) - 1 != 0) {
+			for (int i = 0; i < (inFrameCount / 2) - 1; i++) {
+				mixBufCurCell[0] += *((uint16 *)leftAmpTable  + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF) << 8)));
+				mixBufCurCell[1] += *((uint16 *)rightAmpTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF) << 8)));
+				mixBufCurCell[2] += *((uint16 *)leftAmpTable  + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF) << 8)));
+				mixBufCurCell[3] += *((uint16 *)rightAmpTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF) << 8)));
+
+				mixBufCurCell[4] += (*((int16 *)leftAmpTable  + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4))) + *((int16 *)leftAmpTable  + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF) << 8)))) >> 1;
+				mixBufCurCell[5] += (*((int16 *)rightAmpTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4))) + *((int16 *)rightAmpTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF) << 8)))) >> 1;
+				mixBufCurCell[6] += (*((int16 *)leftAmpTable  + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4))) + *((int16 *)leftAmpTable  + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF) << 8)))) >> 1;
+				mixBufCurCell[7] += (*((int16 *)rightAmpTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4))) + *((int16 *)rightAmpTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF) << 8)))) >> 1;
+
+				mixBufCurCell[8]  += *((uint16 *)leftAmpTable  + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)));
+				mixBufCurCell[9]  += *((uint16 *)rightAmpTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)));
+				mixBufCurCell[10] += *((uint16 *)leftAmpTable  + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)));
+				mixBufCurCell[11] += *((uint16 *)rightAmpTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)));
+
+				mixBufCurCell[12] += (*((int16 *)leftAmpTable  + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4))) +
+									  *((int16 *)leftAmpTable  + (srcBuf_ptr[3] | ((srcBuf_ptr[4] & 0xF)  << 8)))) >> 1;
+				mixBufCurCell[13] += (*((int16 *)rightAmpTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4))) +
+									  *((int16 *)rightAmpTable + (srcBuf_ptr[3] | ((srcBuf_ptr[4] & 0xF)  << 8)))) >> 1;
+				mixBufCurCell[14] += (*((int16 *)leftAmpTable  + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4))) +
+									  *((int16 *)leftAmpTable  + (srcBuf_ptr[3] | ((srcBuf_ptr[4] & 0xF)  << 8)))) >> 1;
+				mixBufCurCell[15] += (*((int16 *)rightAmpTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4))) +
+									  *((int16 *)rightAmpTable + (srcBuf_ptr[3] | ((srcBuf_ptr[4] & 0xF)  << 8)))) >> 1;
+
+				srcBuf_ptr += 3;
+				mixBufCurCell += 16;
+			}
+		}
+		mixBufCurCell[0] += *((uint16 *)leftAmpTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF) << 8)));
+		mixBufCurCell[1] += *((uint16 *)rightAmpTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF) << 8)));
+		mixBufCurCell[2] += *((uint16 *)leftAmpTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF) << 8)));
+		mixBufCurCell[3] += *((uint16 *)rightAmpTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF) << 8)));
+
+		mixBufCurCell[4] += (*((int16 *)leftAmpTable  + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF) << 8))) + *((int16 *)leftAmpTable  + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)))) >> 1;
+		mixBufCurCell[5] += (*((int16 *)rightAmpTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF) << 8))) + *((int16 *)rightAmpTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)))) >> 1;
+		mixBufCurCell[6] += (*((int16 *)leftAmpTable  + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF) << 8))) + *((int16 *)leftAmpTable  + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)))) >> 1;
+		mixBufCurCell[7] += (*((int16 *)rightAmpTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF) << 8))) + *((int16 *)rightAmpTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)))) >> 1;
+
+		mixBufCurCell[8] += *((uint16 *)leftAmpTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)));
+		mixBufCurCell[9] += *((uint16 *)rightAmpTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)));
+		mixBufCurCell[10] += *((uint16 *)leftAmpTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)));
+		mixBufCurCell[11] += *((uint16 *)rightAmpTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)));
+
+		mixBufCurCell[12] += *((uint16 *)leftAmpTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)));
+		mixBufCurCell[13] += *((uint16 *)rightAmpTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)));
+		mixBufCurCell[14] += *((uint16 *)leftAmpTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)));
+		mixBufCurCell[15] += *((uint16 *)rightAmpTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)));
 	} else {
 		xorFlag = 0;
 		residualLength = -inFrameCount;
@@ -877,22 +949,12 @@ void IMuseDigiInternalMixer::mixBits12ConvertToStereo(uint8 *srcBuf, int32 inFra
 			srcBuf_ptr = srcBuf;
 			for (int i = 0; i < feedSize; i++) {
 				if (xorFlag) {
-					term_2 = (srcBuf_ptr[1] & 0xF0) << 4;
-					term_1 = srcBuf_ptr[2];
+					mixBufCurCell[0] += *((uint16 *)leftAmpTable  + (srcBuf_ptr[2] | (srcBuf_ptr[1] & 0xF0) << 4));
+					mixBufCurCell[1] += *((uint16 *)rightAmpTable + (srcBuf_ptr[2] | (srcBuf_ptr[1] & 0xF0) << 4));
 				} else {
-					term_2 = (srcBuf_ptr[1] & 0xF) << 8;
-					term_1 = srcBuf_ptr[0];
+					mixBufCurCell[0] += *((uint16 *)leftAmpTable  + (srcBuf_ptr[0] | (srcBuf_ptr[1] & 0xF)  << 8));
+					mixBufCurCell[1] += *((uint16 *)rightAmpTable + (srcBuf_ptr[0] | (srcBuf_ptr[1] & 0xF)  << 8));
 				}
-				mixBufCurCell[0] += *((uint16 *)leftAmpTable + (term_1 | term_2));
-
-				if (xorFlag) {
-					term_4 = (srcBuf_ptr[1] & 0xF0) << 4;
-					term_3 = srcBuf_ptr[2];
-				} else {
-					term_4 = (srcBuf_ptr[1] & 0xF) << 8;
-					term_3 = srcBuf_ptr[0];
-				}
-				mixBufCurCell[1] += *((uint16 *)rightAmpTable + (term_3 | term_4));
 
 				residualLength += inFrameCount;
 				while (residualLength > 0) {
@@ -954,6 +1016,32 @@ void IMuseDigiInternalMixer::mixBits16ConvertToStereo(uint8 *srcBuf, int32 inFra
 				mixBufCurCell += 2;
 			}
 		}
+	} else if (4 * inFrameCount == feedSize) {
+		srcBuf_tmp = (uint16 *)srcBuf;
+		int i = 0;
+		if (inFrameCount - 1 != 0) {
+			for (i = 0; i < inFrameCount - 1; i++) {
+				mixBufCurCell[0] += *(uint16 *)((uint8 *)leftAmpTable  + (((int16)srcBuf_tmp[i] & (int16)0xFFF7) >> 3) + 4096);
+				mixBufCurCell[1] += *(uint16 *)((uint8 *)rightAmpTable + (((int16)srcBuf_tmp[i] & (int16)0xFFF7) >> 3) + 4096);
+				mixBufCurCell[2] += *(uint16 *)((uint8 *)leftAmpTable  + (((int16)srcBuf_tmp[i] & (int16)0xFFF7) >> 3) + 4096);
+				mixBufCurCell[3] += *(uint16 *)((uint8 *)rightAmpTable + (((int16)srcBuf_tmp[i] & (int16)0xFFF7) >> 3) + 4096);
+
+				mixBufCurCell[4] += (*(int16 *)((uint8 *)leftAmpTable  + (((int16)srcBuf_tmp[i] & (int16)0xFFF7) >> 3) + 4096) + *(int16 *)((uint8 *)leftAmpTable  + (((int16)srcBuf_tmp[i + 1] & (int16)0xFFF7) >> 3) + 4096)) >> 1;
+				mixBufCurCell[5] += (*(int16 *)((uint8 *)rightAmpTable + (((int16)srcBuf_tmp[i] & (int16)0xFFF7) >> 3) + 4096) + *(int16 *)((uint8 *)rightAmpTable + (((int16)srcBuf_tmp[i + 1] & (int16)0xFFF7) >> 3) + 4096)) >> 1;
+				mixBufCurCell[6] += (*(int16 *)((uint8 *)leftAmpTable  + (((int16)srcBuf_tmp[i] & (int16)0xFFF7) >> 3) + 4096) + *(int16 *)((uint8 *)leftAmpTable  + (((int16)srcBuf_tmp[i + 1] & (int16)0xFFF7) >> 3) + 4096)) >> 1;
+				mixBufCurCell[7] += (*(int16 *)((uint8 *)rightAmpTable + (((int16)srcBuf_tmp[i] & (int16)0xFFF7) >> 3) + 4096) + *(int16 *)((uint8 *)rightAmpTable + (((int16)srcBuf_tmp[i + 1] & (int16)0xFFF7) >> 3) + 4096)) >> 1;
+				mixBufCurCell += 8;
+			}
+		}
+		mixBufCurCell[0] += *(uint16 *)((uint8 *)leftAmpTable  + (((int16)srcBuf_tmp[i] & (int16)0xFFF7) >> 3) + 4096);
+		mixBufCurCell[1] += *(uint16 *)((uint8 *)rightAmpTable + (((int16)srcBuf_tmp[i] & (int16)0xFFF7) >> 3) + 4096);
+		mixBufCurCell[2] += *(uint16 *)((uint8 *)leftAmpTable  + (((int16)srcBuf_tmp[i] & (int16)0xFFF7) >> 3) + 4096);
+		mixBufCurCell[3] += *(uint16 *)((uint8 *)rightAmpTable + (((int16)srcBuf_tmp[i] & (int16)0xFFF7) >> 3) + 4096);
+
+		mixBufCurCell[4] += *(uint16 *)((uint8 *)leftAmpTable  + (((int16)srcBuf_tmp[i] & (int16)0xFFF7) >> 3) + 4096);
+		mixBufCurCell[5] += *(uint16 *)((uint8 *)rightAmpTable + (((int16)srcBuf_tmp[i] & (int16)0xFFF7) >> 3) + 4096);
+		mixBufCurCell[6] += *(uint16 *)((uint8 *)leftAmpTable  + (((int16)srcBuf_tmp[i] & (int16)0xFFF7) >> 3) + 4096);
+		mixBufCurCell[7] += *(uint16 *)((uint8 *)rightAmpTable + (((int16)srcBuf_tmp[i] & (int16)0xFFF7) >> 3) + 4096);
 	} else {
 		residualLength = -inFrameCount;
 		if (feedSize) {
@@ -1013,6 +1101,33 @@ void IMuseDigiInternalMixer::mixBits8Stereo(uint8 *srcBuf, int32 inFrameCount, i
 				mixBufCurCell += 2;
 			}
 		}
+	} else if (2 * inFrameCount == feedSize) {
+		srcBuf_ptr = srcBuf;
+		if (inFrameCount - 1 != 0) {
+			for (int i = 0; i < inFrameCount - 1; i++) {
+				mixBufCurCell[0] += *((uint16 *)ampTable + srcBuf_ptr[0]);
+				mixBufCurCell[1] += *((uint16 *)ampTable + srcBuf_ptr[1]);
+				mixBufCurCell[2] += *((uint16 *)ampTable + srcBuf_ptr[0]);
+				mixBufCurCell[3] += *((uint16 *)ampTable + srcBuf_ptr[1]);
+
+				mixBufCurCell[4] += (*((int16 *)ampTable + srcBuf_ptr[0]) + *((int16 *)ampTable + srcBuf_ptr[2])) >> 1;
+				mixBufCurCell[5] += (*((int16 *)ampTable + srcBuf_ptr[1]) + *((int16 *)ampTable + srcBuf_ptr[3])) >> 1;
+				mixBufCurCell[6] += (*((int16 *)ampTable + srcBuf_ptr[0]) + *((int16 *)ampTable + srcBuf_ptr[2])) >> 1;
+				mixBufCurCell[7] += (*((int16 *)ampTable + srcBuf_ptr[1]) + *((int16 *)ampTable + srcBuf_ptr[3])) >> 1;
+
+				mixBufCurCell += 8;
+				srcBuf_ptr += 2;
+			}
+		}
+		mixBufCurCell[0] += *((uint16 *)ampTable + srcBuf_ptr[0]);
+		mixBufCurCell[1] += *((uint16 *)ampTable + srcBuf_ptr[1]);
+		mixBufCurCell[2] += *((uint16 *)ampTable + srcBuf_ptr[0]);
+		mixBufCurCell[3] += *((uint16 *)ampTable + srcBuf_ptr[1]);
+
+		mixBufCurCell[4] += *((uint16 *)ampTable + srcBuf_ptr[0]);
+		mixBufCurCell[5] += *((uint16 *)ampTable + srcBuf_ptr[1]);
+		mixBufCurCell[6] += *((uint16 *)ampTable + srcBuf_ptr[0]);
+		mixBufCurCell[7] += *((uint16 *)ampTable + srcBuf_ptr[1]);
 	} else {
 		residualLength = -inFrameCount;
 		if (feedSize) {
@@ -1077,6 +1192,33 @@ void IMuseDigiInternalMixer::mixBits12Stereo(uint8 *srcBuf, int32 inFrameCount, 
 				mixBufCurCell += 2;
 			}
 		}
+	} else if (4 * inFrameCount == feedSize) {
+		srcBuf_ptr = srcBuf;
+		if (inFrameCount - 1 != 0) {
+			for (int i = 0; i < inFrameCount - 1; i++) {
+				mixBufCurCell[0] += *((uint16 *)ampTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF)  << 8)));
+				mixBufCurCell[1] += *((uint16 *)ampTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)));
+				mixBufCurCell[2] += *((uint16 *)ampTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF)  << 8)));
+				mixBufCurCell[3] += *((uint16 *)ampTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)));
+
+				mixBufCurCell[4] += (*((int16 *)ampTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF)  << 8))) + *((int16 *)ampTable + (srcBuf_ptr[3] | ((srcBuf_ptr[4] & 0xF)  << 8)))) >> 1;
+				mixBufCurCell[5] += (*((int16 *)ampTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4))) + *((int16 *)ampTable + (srcBuf_ptr[5] | ((srcBuf_ptr[4] & 0xF0) << 4)))) >> 1;
+				mixBufCurCell[6] += (*((int16 *)ampTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF)  << 8))) + *((int16 *)ampTable + (srcBuf_ptr[3] | ((srcBuf_ptr[4] & 0xF)  << 8)))) >> 1;
+				mixBufCurCell[7] += (*((int16 *)ampTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4))) + *((int16 *)ampTable + (srcBuf_ptr[5] | ((srcBuf_ptr[4] & 0xF0) << 4)))) >> 1;
+
+				srcBuf_ptr += 3;
+				mixBufCurCell += 8;
+			}
+		}
+		mixBufCurCell[0] += *((uint16 *)ampTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF)  << 8)));
+		mixBufCurCell[1] += *((uint16 *)ampTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)));
+		mixBufCurCell[2] += *((uint16 *)ampTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF)  << 8)));
+		mixBufCurCell[3] += *((uint16 *)ampTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)));
+
+		mixBufCurCell[4] += *((uint16 *)ampTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF)  << 8)));
+		mixBufCurCell[5] += *((uint16 *)ampTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)));
+		mixBufCurCell[6] += *((uint16 *)ampTable + (srcBuf_ptr[0] | ((srcBuf_ptr[1] & 0xF)  << 8)));
+		mixBufCurCell[7] += *((uint16 *)ampTable + (srcBuf_ptr[2] | ((srcBuf_ptr[1] & 0xF0) << 4)));
 	} else {
 		residualLength = -inFrameCount;
 		if (feedSize) {
@@ -1118,42 +1260,67 @@ void IMuseDigiInternalMixer::mixBits16Stereo(uint8 *srcBuf, int32 inFrameCount, 
 			for (int i = 0; i < inFrameCount - 1; i++) {
 				mixBufCurCell[0] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[0] & (int16)0xFFF7) >> 3) + 4096);
 				mixBufCurCell[1] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[1] & (int16)0xFFF7) >> 3) + 4096);
+				mixBufCurCell[2] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[0] & (int16)0xFFF7) >> 3) + 4096);
+				mixBufCurCell[3] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[1] & (int16)0xFFF7) >> 3) + 4096);
 
-				mixBufCurCell[2] += (*(int16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[0] & (int16)0xFFF7) >> 3) + 4096)
-								   + *(int16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[2] & (int16)0xFFF7) >> 3) + 4096)) >> 1;
-
-				mixBufCurCell[4] += (*(int16 *)((int8 *)ampTable + (((int16)(((uint8 *)srcBuf_ptr)[2] | (((uint8 *)srcBuf_ptr)[3] << 8)) & (int16)0xFFF7) >> 3) + 4096)
-							       + *(int16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[3] & (int16)0xFFF7) >> 3) + 4096)) >> 1;
 				mixBufCurCell += 4;
 				srcBuf_ptr += 2;
 			}
 		}
-		mixBufCurCell[0] += *(int16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[0] & (int16)0xFFF7) >> 3) + 4096);
-		mixBufCurCell[1] += *(int16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[1] & (int16)0xFFF7) >> 3) + 4096);
-		mixBufCurCell[2] += *(int16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[0] & (int16)0xFFF7) >> 3) + 4096);
-		mixBufCurCell[3] += *(int16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[1] & (int16)0xFFF7) >> 3) + 4096);
-	} else {
-		if (2 * feedSize == inFrameCount) {
-			if (feedSize) {
-				srcBuf_ptr = (uint16 *)srcBuf;
-				for (int i = 0; i < feedSize; i++) {
-					mixBufCurCell[0] += *(uint16 *)((int8 *)ampTable + ((((int16)srcBuf_ptr[0] & (int16)0xFFF7)) >> 3) + 4096);
-					mixBufCurCell[1] += *(uint16 *)((int8 *)ampTable + ((((int16)srcBuf_ptr[1] & (int16)0xFFF7)) >> 3) + 4096);
-					mixBufCurCell += 2;
-					srcBuf_ptr += 4;
-				}
-			}
-		} else {
-			residualLength = -inFrameCount;
-			if (feedSize) {
-				srcBuf_ptr = (uint16 *)srcBuf;
-				for (int i = 0; i < feedSize; i++) {
-					mixBufCurCell[0] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[0] & (int16)0xFFF7) >> 3) + 4096);
-					mixBufCurCell[1] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[1] & (int16)0xFFF7) >> 3) + 4096);
+		mixBufCurCell[0] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[0] & (int16)0xFFF7) >> 3) + 4096);
+		mixBufCurCell[1] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[1] & (int16)0xFFF7) >> 3) + 4096);
+		mixBufCurCell[2] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[0] & (int16)0xFFF7) >> 3) + 4096);
+		mixBufCurCell[3] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[1] & (int16)0xFFF7) >> 3) + 4096);
 
-					for (residualLength += inFrameCount; residualLength >= 0; srcBuf_ptr += 2)
-						residualLength -= feedSize;
-				}
+	} else if (2 * feedSize == inFrameCount) {
+		if (feedSize) {
+			srcBuf_ptr = (uint16 *)srcBuf;
+			for (int i = 0; i < feedSize; i++) {
+				mixBufCurCell[0] += *(uint16 *)((int8 *)ampTable + ((((int16)srcBuf_ptr[0] & (int16)0xFFF7)) >> 3) + 4096);
+				mixBufCurCell[1] += *(uint16 *)((int8 *)ampTable + ((((int16)srcBuf_ptr[1] & (int16)0xFFF7)) >> 3) + 4096);
+				mixBufCurCell += 2;
+				srcBuf_ptr += 4;
+			}
+		}
+	} else if (4 * inFrameCount == feedSize) {
+		srcBuf_ptr = (uint16 *)srcBuf;
+
+		if (inFrameCount - 1 != 0) {
+			for (int i = 0; i < inFrameCount - 1; i++) {
+				mixBufCurCell[0] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[0] & (int16)0xFFF7) >> 3) + 4096);
+				mixBufCurCell[1] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[1] & (int16)0xFFF7) >> 3) + 4096);
+				mixBufCurCell[2] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[0] & (int16)0xFFF7) >> 3) + 4096);
+				mixBufCurCell[3] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[1] & (int16)0xFFF7) >> 3) + 4096);
+
+				mixBufCurCell[4] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[0] & (int16)0xFFF7) >> 3) + 4096);
+				mixBufCurCell[5] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[1] & (int16)0xFFF7) >> 3) + 4096);
+				mixBufCurCell[6] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[0] & (int16)0xFFF7) >> 3) + 4096);
+				mixBufCurCell[7] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[1] & (int16)0xFFF7) >> 3) + 4096);
+
+				mixBufCurCell += 8;
+				srcBuf_ptr += 2;
+			}
+		}
+		mixBufCurCell[0] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[0] & (int16)0xFFF7) >> 3) + 4096);
+		mixBufCurCell[1] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[1] & (int16)0xFFF7) >> 3) + 4096);
+		mixBufCurCell[2] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[0] & (int16)0xFFF7) >> 3) + 4096);
+		mixBufCurCell[3] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[1] & (int16)0xFFF7) >> 3) + 4096);
+
+		mixBufCurCell[4] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[0] & (int16)0xFFF7) >> 3) + 4096);
+		mixBufCurCell[5] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[1] & (int16)0xFFF7) >> 3) + 4096);
+		mixBufCurCell[6] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[0] & (int16)0xFFF7) >> 3) + 4096);
+		mixBufCurCell[7] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[1] & (int16)0xFFF7) >> 3) + 4096);
+
+	} else {
+		residualLength = -inFrameCount;
+		if (feedSize) {
+			srcBuf_ptr = (uint16 *)srcBuf;
+			for (int i = 0; i < feedSize; i++) {
+				mixBufCurCell[0] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[0] & (int16)0xFFF7) >> 3) + 4096);
+				mixBufCurCell[1] += *(uint16 *)((int8 *)ampTable + (((int16)srcBuf_ptr[1] & (int16)0xFFF7) >> 3) + 4096);
+
+				for (residualLength += inFrameCount; residualLength >= 0; srcBuf_ptr += 2)
+					residualLength -= feedSize;
 			}
 		}
 	}
