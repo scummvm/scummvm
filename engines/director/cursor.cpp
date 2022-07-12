@@ -176,11 +176,14 @@ void Cursor::readFromResource(Datum resourceId) {
 		bool readSuccessful = false;
 
 		for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
-			Common::SeekableReadStreamEndian *cursorStream;
+			Common::SeekableReadStreamEndian *cursorStream = nullptr;
+			MacArchive *arch = (MacArchive *)it->_value;
 
-			cursorStream = ((MacArchive *)it->_value)->getResource(MKTAG('C', 'U', 'R', 'S'), resourceId.asInt());
-			if (!cursorStream)
-				cursorStream = ((MacArchive *)it->_value)->getResource(MKTAG('C', 'R', 'S', 'R'), resourceId.asInt());
+			if (arch->hasResource(MKTAG('C', 'U', 'R', 'S'), resourceId.asInt()))
+				cursorStream = arch->getResource(MKTAG('C', 'U', 'R', 'S'), resourceId.asInt());
+
+			if (!cursorStream && arch->hasResource(MKTAG('C', 'R', 'S', 'R'), resourceId.asInt()))
+				cursorStream = arch->getResource(MKTAG('C', 'R', 'S', 'R'), resourceId.asInt());
 
 			if (cursorStream && readFromStream(*((Common::SeekableReadStream *)cursorStream), false, 0)) {
 				_usePalette = true;
