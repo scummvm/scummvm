@@ -1345,9 +1345,10 @@ void TextCastMember::importStxt(const Stxt *stxt) {
 	_ftext = stxt->_ftext;
 	_ptext = stxt->_ptext;
 
-	//Creating a widget to seee if we actually have that font or not
+	// Rectifying _fontId in case of a fallback font
 	Graphics::MacFont *macFont = new Graphics::MacFont(_fontId, _fontSize, _textSlant);
-	_fontId = g_director->_wm->_fontMan->rectifyId(macFont, g_director->_wm->_fontMan->getFont(*macFont));
+	g_director->_wm->_fontMan->getFont(macFont);
+	_fontId = macFont->getId();
 }
 
 Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) {

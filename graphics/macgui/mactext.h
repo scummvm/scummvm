@@ -63,7 +63,7 @@ struct MacFontRun {
 		wordContinuation = false;
 	}
 
-	MacFontRun(MacWindowManager* wm_) {
+	MacFontRun(MacWindowManager *wm_) {
 		wm = wm_;
 		fontId = textSlant = fontSize = 0;
 		palinfo1 = palinfo2 = palinfo3 = 0;

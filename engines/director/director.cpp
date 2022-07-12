@@ -86,10 +86,10 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_fixStageSize = false;
 	_fixStageRect = Common::Rect();
 	_wmMode = debugChannelSet(-1, kDebugDesktop) ? wmModeDesktop : wmModeFullscreen;
+
 	_wmWidth = 1024;
 	_wmHeight = 768;
-
-	_wm = nullptr;
+	_wm = new Graphics::MacWindowManager(_wmMode, &_director3QuickDrawPatterns, getLanguage());
 
 	_gameDataDir = Common::FSNode(ConfMan.get("path"));
 
@@ -180,10 +180,9 @@ Common::Error DirectorEngine::run() {
 
 	if (debugChannelSet(-1, kDebug32bpp))
 		_wmMode |= Graphics::kWMMode32bpp;
-	if (!_wm) {
-		_wm = new Graphics::MacWindowManager(_wmMode, &_director3QuickDrawPatterns, getLanguage());
-		_wm->setEngine(this);
-	}
+
+	_wm->setDesktopMode(_wmMode);
+	_wm->setEngine(this);
 
 	_pixelformat = _wm->_pixelformat;
 
