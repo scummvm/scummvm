@@ -115,7 +115,9 @@ enum WMETargetExecutable {
 	FOXTAIL_1_2_527,
 	FOXTAIL_1_2_896,
 	FOXTAIL_1_2_902,
-	FOXTAIL_LATEST_VERSION
+	FOXTAIL_LATEST_VERSION,
+
+	WME_MAHJONG
 };
 
 enum WintermuteGameFeatures {

@@ -145,6 +145,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"rhiannon",        "Rhiannon: Curse of the four Branches"},
 	{"ritter",          "1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde"},
 	{"rosemary",        "Rosemary"},
+	{"royalmahjong",    "Royal Mahjong: King's Journey"},
 	{"satanandsons",    "Satan and Sons"},
 	{"securanote",      "Securanote"},
 	{"shaban",          "Shaban"},
@@ -4171,6 +4172,25 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Rosemary
 	WME_WINENTRY("rosemary", "",
 		WME_ENTRY1s("data.dcp", "4f2631138bd4d27587d9043f8aeff3df", 29483643), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_6),
+
+	// Royal Mahjong: King's Journey (French)
+	WME_WINENTRY("royalmahjong", "",
+		WME_ENTRY2s("data.dcp", "f8f8b0308693d07261373766e001bb61", 28856313,
+				"fr.dcp", "84fc731590c7ee8c8ae7b8b89d6a8d39", 2560185), Common::FR_FRA, ADGF_UNSTABLE, WME_MAHJONG),
+
+	// Royal Mahjong: King's Journey (German)
+	WME_WINENTRY("royalmahjong", "",
+		WME_ENTRY2s("data.dcp", "f8f8b0308693d07261373766e001bb61", 28856313,
+				"de.dcp", "70f7e6d70787773df11da69e9f5df5e0", 2750615), Common::DE_DEU, ADGF_UNSTABLE, WME_MAHJONG),
+
+	// Royal Mahjong: King's Journey (Russian)
+	WME_WINENTRY("royalmahjong", "",
+		WME_ENTRY2s("data.dcp", "f8f8b0308693d07261373766e001bb61", 28856313,
+				"ru.dcp", "3e6ed74b4571ccada26700e7a0c62696", 978996), Common::RU_RUS, ADGF_UNSTABLE, WME_MAHJONG),
+
+	// Royal Mahjong: King's Journey (English)
+	WME_WINENTRY("royalmahjong", "",
+		WME_ENTRY1s("data.dcp", "f8f8b0308693d07261373766e001bb61", 28856313), Common::EN_ANY, ADGF_UNSTABLE, WME_MAHJONG),
 
 	// Securanote
 	WME_PLATENTRY("securanote", "",
