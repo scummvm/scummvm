@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-10 14:51+0000\n"
-"PO-Revision-Date: 2022-07-04 08:57+0000\n"
+"PO-Revision-Date: 2022-07-13 06:51+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -218,10 +218,8 @@ msgid "Downloading icons list..."
 msgstr "Downloaden van iconen lijst..."
 
 #: gui/downloadiconsdialog.cpp:190
-#, fuzzy
-#| msgid "Clear value"
 msgid "Clear Cache"
-msgstr "Veld leegmaken"
+msgstr "Cache leegmaken"
 
 #: gui/downloadiconsdialog.cpp:241
 #, c-format
@@ -264,6 +262,8 @@ msgid ""
 "You are about to remove %s %s of data, deleting all previously downloaded "
 "icon files. Do you want to proceed?"
 msgstr ""
+"Wilt u echt %s-%s aan pictogram bestanden verwijderen die u eerder gedowload "
+"heeft?"
 
 #: gui/downloadiconsdialog.cpp:452 gui/updates-dialog.cpp:115
 msgid "Proceed"
@@ -6810,16 +6810,16 @@ msgstr ""
 "versies van hetzelfde spel."
 
 #: engines/scumm/detection.cpp:238
-#, fuzzy
-#| msgid "Load modded assets"
 msgid "Load modded audio"
-msgstr "Laad bewerkte bestanden"
+msgstr "Laad aangepaste audio"
 
 #: engines/scumm/detection.cpp:239
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
 msgstr ""
+"Vervang muziek, geluidseffecten en spraak clips door aangepaste audio "
+"bestanden als die er zijn."
 
 #: engines/scumm/detection_internal.h:358
 msgid ""
