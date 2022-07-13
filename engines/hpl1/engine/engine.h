@@ -153,8 +153,6 @@
 #include "hpl1/engine/impl/VertexBufferOGL.h"
 #include "hpl1/engine/impl/VertexBufferVBO.h"
 #include "hpl1/engine/impl/VideoStreamTheora.h"
-#include "hpl1/engine/impl/scriptstring.h"
-#include "hpl1/engine/impl/stdstring.h"
 #include "hpl1/engine/impl/temp-types.h"
 #include "hpl1/engine/impl/tinyXML/tinyxml.h"
 #include "hpl1/engine/input/Action.h"

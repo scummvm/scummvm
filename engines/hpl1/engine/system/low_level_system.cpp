@@ -21,8 +21,7 @@
 
 #include "hpl1/engine/libraries/angelscript/angelscript.h"
 #include "hpl1/engine/impl/SqScript.h"
-#include "hpl1/engine/impl/scriptstring.h"
-#include "hpl1/engine/impl/stdstring.h"
+#include "hpl1/engine/libraries/angelscript/add-ons/scriptstdstring.h"
 #include "hpl1/engine/system/String.h"
 
 #include "hpl1/debug.h"
