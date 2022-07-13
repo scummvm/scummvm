@@ -26,6 +26,7 @@
  */
 
 #include "hpl1/penumbra-overture/Init.h"
+#include "hpl1/engine/graphics/Material.h"
 #include "hpl1/penumbra-overture/ButtonHandler.h"
 #include "hpl1/penumbra-overture/GameArea.h"
 #include "hpl1/penumbra-overture/GameDamageArea.h"
@@ -148,7 +149,7 @@ bool CheckSupport(cInit *apInit) {
 	CG_CHECK(CG_PROFILE_GLSLF);
 	CG_CHECK(CG_PROFILE_GLSLC);
 #undef CG_CHECK
-#endif 
+#endif
 	// Try compiling vertex shader
 	Log("Trying to load vertex program!\n");
 	iGpuProgram *pTestVtxProg = pLowLevelGraphics->CreateGpuProgram("Test", eGpuProgramType_Vertex);
@@ -272,7 +273,6 @@ bool cInit::Init(tString asCommandLine) {
 		CreateFolder(sDir);
 	}
 
-
 	// MAIN INIT /////////////////////
 
 	// Check for what settings file to use.
@@ -351,7 +351,7 @@ bool cInit::Init(tString asCommandLine) {
 
 	mlFSAA = mpConfig->GetInt("Graphics", "FSAA", 0);
 	mbPostEffects = mpConfig->GetBool("Graphics", "PostEffects", true);
-	iMaterial::SetQuality((eMaterialQuality)mpConfig->GetInt("Graphics", "ShaderQuality", eMaterialQuality_High));
+	iMaterial::SetQuality((eMaterialQuality)mpConfig->GetInt("Graphics", "ShaderQuality", eMaterialQuality_VeryLow));
 
 	mPhysicsAccuracy = (ePhysicsAccuracy)mpConfig->GetInt("Physics", "Accuracy", ePhysicsAccuracy_High);
 	mfPhysicsUpdatesPerSec = mpConfig->GetFloat("Physics", "UpdatesPerSec", 60.0f);
