@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-10 14:51+0000\n"
 "PO-Revision-Date: 2022-07-13 23:11+0000\n"
-"Last-Translator: Donovan Watteau <contrib@dwatteau.fr>\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -5888,7 +5888,7 @@ msgstr "Meilleur"
 
 #: engines/mohawk/metaengine.cpp:292
 msgid "Myst ME support not compiled in"
-msgstr "La prise en charge de Myste ME n'a pas été activée dans cette version"
+msgstr "La prise en charge de Myst ME n'a pas été activée dans cette version"
 
 #: engines/mohawk/metaengine.cpp:297
 msgid "Myst support not compiled in"
