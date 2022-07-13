@@ -90,8 +90,6 @@ private:
 
 	GLenum GetGLWrap(eTextureWrap aMode);
 
-	void GetSettings(Bitmap2D *apSrc, int &alChannels, GLenum &aFormat);
-
 	tUIntVec mvTextureHandles;
 	bool mbContainsData;
 	cLowLevelGraphicsSDL *mpGfxSDL;

@@ -35,6 +35,32 @@
 
 namespace hpl {
 
+static void getSettings(Bitmap2D *apSrc, int &alChannels, GLint &internalFormat, GLenum &format) {
+	alChannels = apSrc->getNumChannels();
+	tString sType = cString::ToLowerCase(apSrc->getType());
+
+	if (alChannels == 4) {
+		internalFormat = GL_RGBA;
+		if (sType == "tga") {
+			format = GL_BGRA;
+		} else {
+			format = GL_RGBA;
+		}
+	}
+	if (alChannels == 3) {
+		internalFormat = GL_RGB;
+		if (sType == "tga") {
+			format = GL_BGR;
+		} else {
+			format = GL_RGB;
+		}
+	}
+	if (alChannels == 1) {
+		format = GL_RED;
+		internalFormat = GL_RED;
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS
 //////////////////////////////////////////////////////////////////////////
@@ -144,9 +170,10 @@ bool cSDLTexture::CreateCubeFromBitmapVec(tBitmap2DVec *avBitmaps) {
 
 		int lChannels;
 		GLenum format;
-		GetSettings(pSrc, lChannels, format);
+		GLint internalFormat;
+		getSettings(pSrc, lChannels, internalFormat, format);
 
-		glTexImage2D(target, 0, lChannels, pSrc->getWidth(), pSrc->getHeight(),
+		glTexImage2D(target, 0, internalFormat, pSrc->getWidth(), pSrc->getHeight(),
 					 0, format, GL_UNSIGNED_BYTE, pSrc->getRawData());
 
 		// No mip maps for cubemap
@@ -199,10 +226,10 @@ bool cSDLTexture::CreateFromArray(unsigned char *apPixelData, int alChannels, co
 	GLenum format = 0;
 	switch (lChannels) {
 	case 1:
-		format = GL_LUMINANCE;
+		format = GL_R;
 		break;
 	case 2:
-		format = GL_LUMINANCE_ALPHA;
+		format = GL_RG;
 		break;
 	case 3:
 		format = GL_RGB;
@@ -221,13 +248,13 @@ bool cSDLTexture::CreateFromArray(unsigned char *apPixelData, int alChannels, co
 	}
 
 	if (mTarget == eTextureTarget_1D) {
-		GL_CHECK(glTexImage1D(GLTarget, 0, lChannels, _width, 0, format,
+		GL_CHECK(glTexImage1D(GLTarget, 0, format, _width, 0, format,
 							  GL_UNSIGNED_BYTE, apPixelData));
 	} else if (mTarget == eTextureTarget_2D) {
-		GL_CHECK(glTexImage2D(GLTarget, 0, lChannels, _width, _height,
+		GL_CHECK(glTexImage2D(GLTarget, 0, format, _width, _height,
 							  0, format, GL_UNSIGNED_BYTE, apPixelData));
 	} else if (mTarget == eTextureTarget_3D) {
-		GL_CHECK(glTexImage3D(GLTarget, 0, lChannels, avSize.x, avSize.y, avSize.z,
+		GL_CHECK(glTexImage3D(GLTarget, 0, format, avSize.x, avSize.y, avSize.z,
 							  0, format, GL_UNSIGNED_BYTE, apPixelData));
 	}
 
@@ -485,8 +512,9 @@ bool cSDLTexture::CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx) {
 		Hpl1::logWarning(Hpl1::kDebugGraphics, "Texture '%s' does not have a pow2 size", msName.c_str());
 
 	int lChannels = 0;
+	GLint internalFormat = 0;
 	GLenum format = 0;
-	GetSettings(pBitmapSrc, lChannels, format);
+	getSettings(pBitmapSrc, lChannels, internalFormat, format);
 
 	_bpp = lChannels * 8;
 
@@ -546,10 +574,10 @@ bool cSDLTexture::CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx) {
 	GL_CHECK_FN();
 
 	if (mTarget == eTextureTarget_1D)
-		glTexImage1D(GLTarget, 0, format, _width, 0, format,
+		glTexImage1D(GLTarget, 0, internalFormat, _width, 0, format,
 					 GL_UNSIGNED_BYTE, pPixelSrc);
 	else
-		glTexImage2D(GLTarget, 0, format, _width, _height,
+		glTexImage2D(GLTarget, 0, internalFormat, _width, _height,
 					0, format, GL_UNSIGNED_BYTE, pPixelSrc);
 
 	if (glGetError() != GL_NO_ERROR)
@@ -596,33 +624,6 @@ void cSDLTexture::PostCreation(GLenum aGLTarget) {
 	GL_CHECK(glDisable(aGLTarget));
 
 	mbContainsData = true;
-}
-
-//-----------------------------------------------------------------------
-
-void cSDLTexture::GetSettings(Bitmap2D *apSrc, int &alChannels, GLenum &aFormat) {
-	alChannels = apSrc->getNumChannels();
-	aFormat = GL_RGBA;
-
-	tString sType = cString::ToLowerCase(apSrc->getType());
-
-	if (alChannels == 4) {
-		if (sType == "tga") {
-			aFormat = GL_BGRA;
-		} else {
-			aFormat = GL_RGBA;
-		}
-	}
-	if (alChannels == 3) {
-		if (sType == "tga") {
-			aFormat = GL_BGR;
-		} else {
-			aFormat = GL_RGB;
-		}
-	}
-	if (alChannels == 1) {
-		aFormat = GL_ALPHA;
-	}
 }
 
 //-----------------------------------------------------------------------
