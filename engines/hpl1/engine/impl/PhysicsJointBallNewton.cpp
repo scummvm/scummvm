@@ -29,6 +29,8 @@
 
 #include "hpl1/engine/impl/PhysicsBodyNewton.h"
 #include "hpl1/engine/impl/PhysicsWorldNewton.h"
+#include "hpl1/engine/math/MathTypes.h"
+#include "hpl1/engine/math/Vector3.h"
 
 namespace hpl {
 
@@ -42,8 +44,8 @@ cPhysicsJointBallNewton::cPhysicsJointBallNewton(const tString &asName,
 												 iPhysicsBody *apParentBody, iPhysicsBody *apChildBody,
 												 iPhysicsWorld *apWorld, const cVector3f &avPivotPoint)
 	: iPhysicsJointNewton<iPhysicsJointBall>(asName, apParentBody, apChildBody, apWorld, avPivotPoint) {
-	const float fPivotPoint[3] = {avPivotPoint.x, avPivotPoint.y, avPivotPoint.z};
-	mpNewtonJoint = NewtonConstraintCreateBall(mpNewtonWorld, fPivotPoint,
+	VEC3_CONST_ARRAY(pivotPint, avPivotPoint);
+	mpNewtonJoint = NewtonConstraintCreateBall(mpNewtonWorld, pivotPint,
 											   mpNewtonChildBody, mpNewtonParentBody);
 
 	mvPinDir = cVector3f(0, 0, 0);
@@ -68,8 +70,8 @@ cPhysicsJointBallNewton::~cPhysicsJointBallNewton() {
 //-----------------------------------------------------------------------
 
 void cPhysicsJointBallNewton::SetConeLimits(const cVector3f &avPin, float afMaxConeAngle, float afMaxTwistAngle) {
-	const float vaPin[3] = {avPin.x, avPin.y, avPin.z};
-	NewtonBallSetConeLimits(mpNewtonJoint, vaPin, afMaxConeAngle, afMaxTwistAngle);
+	VEC3_CONST_ARRAY(pin, avPin);
+	NewtonBallSetConeLimits(mpNewtonJoint, pin, afMaxConeAngle, afMaxTwistAngle);
 	mvConePin = avPin;
 	mvPinDir = mvConePin;
 	mfMaxConeAngle = afMaxConeAngle;
@@ -77,9 +79,9 @@ void cPhysicsJointBallNewton::SetConeLimits(const cVector3f &avPin, float afMaxC
 }
 
 cVector3f cPhysicsJointBallNewton::GetAngles() {
-	cVector3f vAngles;
-	NewtonBallGetJointAngle(mpNewtonJoint, &vAngles.x);
-	return vAngles;
+	float angles[3];
+	NewtonBallGetJointAngle(mpNewtonJoint, angles);
+	return cVector3f::fromArray(angles);
 }
 
 //-----------------------------------------------------------------------
@@ -88,14 +90,14 @@ cVector3f cPhysicsJointBallNewton::GetVelocity() {
 	return cVector3f(0, 0, 0);
 }
 cVector3f cPhysicsJointBallNewton::GetAngularVelocity() {
-	cVector3f vVel;
-	NewtonBallGetJointOmega(mpNewtonJoint, &vVel.x);
-	return vVel;
+	float vel[3];
+	NewtonBallGetJointOmega(mpNewtonJoint, vel);
+	return cVector3f::fromArray(vel);
 }
 cVector3f cPhysicsJointBallNewton::GetForce() {
-	cVector3f vForce;
-	NewtonBallGetJointForce(mpNewtonJoint, &vForce.x);
-	return vForce;
+	float force[3];
+	NewtonBallGetJointForce(mpNewtonJoint, force);
+	return cVector3f::fromArray(force);
 }
 
 //-----------------------------------------------------------------------
