@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-10 14:51+0000\n"
-"PO-Revision-Date: 2022-07-13 22:58+0000\n"
+"PO-Revision-Date: 2022-07-13 23:06+0000\n"
 "Last-Translator: Donovan Watteau <contrib@dwatteau.fr>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -5734,14 +5734,14 @@ msgstr "Synthèse vocale"
 
 #: engines/made/detection.cpp:62
 msgid "Play a digital soundtrack during the opening movie"
-msgstr "Jouer une bande son numérique pendant le film d'ouverture"
+msgstr "Jouer une bande-son numérique pendant la séquence d'ouverture"
 
 #: engines/made/detection.cpp:63
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
 msgstr ""
-"Si cette option est sélectionnée, le jeu utilisera une bande son numérique "
+"Si cette option est sélectionnée, le jeu utilisera une bande-son numérique "
 "pendant l'introduction. Sinon, il jouera de la musique MIDI."
 
 #: engines/made/detection_tables.h:441 engines/made/detection_tables.h:458
@@ -5779,10 +5779,10 @@ msgid ""
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
 msgstr ""
-"Activez cette option pour tranformer le pointeur en un éclair lorqu'il se "
+"Activez cette option pour transformer le pointeur en un éclair lorqu'il se "
 "trouve sur certains objets ou certains endroits et, en cliquant dessus, vous "
 "transporter rapidement à ces endroits. Cette option n'est disponible que "
-"pour des endroits où vous êtes déjà allés."
+"pour les endroits où vous êtes déjà allé."
 
 #: engines/mohawk/dialogs.cpp:117
 msgid "~T~ransitions Enabled"
@@ -5888,7 +5888,7 @@ msgstr "Meilleur"
 
 #: engines/mohawk/metaengine.cpp:292
 msgid "Myst ME support not compiled in"
-msgstr "La prise en charge de Myste ME n'est pas incluse"
+msgstr "La prise en charge de Myste ME n'a pas été activée dans cette version"
 
 #: engines/mohawk/metaengine.cpp:297
 msgid "Myst support not compiled in"
