@@ -115,10 +115,16 @@ bool DialogueMenu::addToList(int answer, bool done, int priorityPolite, int prio
 // Original uses incorrect spelling for entry id 1020: DRAGONFLY JEWERLY
 	const Common::String &text = _textResource->getText(answer);
 #else
-// fix spelling or entry id 1020 to DRAGONFLY JEWELRY in English version
 	const char *answerTextCP = _textResource->getText(answer);
 	if (_vm->_language == Common::EN_ANY && answer == 1020 && strcmp(answerTextCP, "DRAGONFLY JEWERLY") == 0) {
+		// fix spelling or entry id 1020 to DRAGONFLY JEWELRY in English version
 		answerTextCP = "DRAGONFLY JEWELRY";
+	} else if (_vm->_language == Common::IT_ITA && answer == 180 && strcmp(answerTextCP, "AUTOMOBILI") == 0) {
+		// fix bad dialogue entry id 180 for Italian version.
+		// The entry is supposed to be Grigorian's organization name (which is CARS in English, but CCSR in Italian)
+		// However, the original localization has it as "AUTOMOBILI" which is literally "cars" and results in confusion.
+		// The other official localizations do not have this issue.
+		answerTextCP = "C.C.S.R.";
 	}
 	const Common::String &text = answerTextCP;
 #endif // BLADERUNNER_ORIGINAL_BUGS
