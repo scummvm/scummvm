@@ -4171,7 +4171,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("pasosuke", "", "xn--PPC-873bpbxa3l", "6822defa470ade9836e0d90f365a035c", 58401, Common::JA_JPN, 404),
 	WINGAME1_l("pasosuke", "", "PASOSUKE.EXE", "81c32e386efd5b68848dacc0a24e8736", 746803, Common::JA_JPN, 404),
 
-	MACGAME1("paws", "", "Start the Dog!", "af8fad5423f5416fe7743198e3909294", 325317, 404),
+	MACGAME1("paws", "", "Start the Dog!", "af8fad5423f5416fe7743198e3909294", 325061, 404),
 	MACDEMO1("paws", "Making of", "The Making of P.A.W.S", "a55b1e9e9d04a2234189a6bcfbe69e4c", 295404, 404),
 	WINGAME1("paws", "", "STARTDOG.EXE", "5c9a56c88b4bb8732377f93f62a885a4", 818961, 404),
 	WINDEMO1("paws", "Making of", "MAKEPAWS.EXE", "559f4c728a348c18b96cddaf102e3413", 874293, 404),
