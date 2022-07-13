@@ -153,11 +153,11 @@ void Sprite::createQDMatte() {
 	switch (_spriteType) {
 	case kOutlinedRectangleSprite:
 	case kRectangleSprite:
-		Graphics::drawFilledRect(fillAreaRect, g_director->_wm->_colorBlack, g_director->_wm->getDrawPixel(), &plotFill);
+		Graphics::drawFilledRect1(fillAreaRect, g_director->_wm->_colorBlack, g_director->_wm->getDrawPixel(), &plotFill);
 		break;
 	case kOutlinedRoundedRectangleSprite:
 	case kRoundedRectangleSprite:
-		Graphics::drawRoundRect(fillAreaRect, 12, g_director->_wm->_colorBlack, true, g_director->_wm->getDrawPixel(), &plotFill);
+		Graphics::drawRoundRect1(fillAreaRect, 12, g_director->_wm->_colorBlack, true, g_director->_wm->getDrawPixel(), &plotFill);
 		break;
 	case kOutlinedOvalSprite:
 	case kOvalSprite:

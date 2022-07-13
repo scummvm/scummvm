@@ -462,7 +462,7 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 	switch (ms->spriteType) {
 	case kRectangleSprite:
 		ms->pd = &plotFill;
-		Graphics::drawFilledRect(fillAreaRect, ms->foreColor, d->getInkDrawPixel(), this);
+		Graphics::drawFilledRect1(fillAreaRect, ms->foreColor, d->getInkDrawPixel(), this);
 		// fall through
 	case kOutlinedRectangleSprite:
 		// if we have lineSize <= 0, means we are not drawing anything. so we may return directly.
@@ -473,11 +473,11 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 		if (!outline)
 			ms->tile = nullptr;
 
-		Graphics::drawRect(strokeRect, ms->foreColor, d->getInkDrawPixel(), this);
+		Graphics::drawRect1(strokeRect, ms->foreColor, d->getInkDrawPixel(), this);
 		break;
 	case kRoundedRectangleSprite:
 		ms->pd = &plotFill;
-		Graphics::drawRoundRect(fillAreaRect, 12, ms->foreColor, true, d->getInkDrawPixel(), this);
+		Graphics::drawRoundRect1(fillAreaRect, 12, ms->foreColor, true, d->getInkDrawPixel(), this);
 		// fall through
 	case kOutlinedRoundedRectangleSprite:
 		if (ms->lineSize <= 0)
@@ -487,7 +487,7 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 		if (!outline)
 			ms->tile = nullptr;
 
-		Graphics::drawRoundRect(strokeRect, 12, ms->foreColor, false, d->getInkDrawPixel(), this);
+		Graphics::drawRoundRect1(strokeRect, 12, ms->foreColor, false, d->getInkDrawPixel(), this);
 		break;
 	case kOvalSprite:
 		ms->pd = &plotFill;
