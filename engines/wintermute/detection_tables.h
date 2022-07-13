@@ -955,7 +955,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Dreams (Demo)
 	WME_WINENTRY("dreams", "Demo",
-		WME_ENTRY1s("data.dcp", "1c620f51bef1faffbeebb6253542f834", 23622097), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_0_26),
+		WME_ENTRY1s("data.dcp", "1c620f51bef1faffbeebb6253542f834", 23622097), Common::EN_ANY, ADGF_UNSUPPORTED | ADGF_DEMO, WME_1_0_26),
 
 	// Dreamscape (Beta)
 	// NOTE: Package is called "Dreamland.rar", however game title is "Dreamscape"
@@ -1355,11 +1355,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Fred (English) (PreAlpha)
 	WME_WINENTRY("fred", "PreAlpha",
 		WME_ENTRY2s("string.tab", "76b48c26e611071810d8182fc27f7d0e", 12590,
-		            "data.dcp", "e18b1f9815b9e9cf1d1357bc48269b0b", 7632855), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_0_31),
+		            "data.dcp", "e18b1f9815b9e9cf1d1357bc48269b0b", 7632855), Common::EN_ANY, ADGF_UNSUPPORTED | ADGF_DEMO, WME_1_0_31),
 
 	// Fred (French) (PreAlpha)
 	WME_WINENTRY("fred", "PreAlpha",
-		WME_ENTRY1s("data.dcp", "e18b1f9815b9e9cf1d1357bc48269b0b", 7632855), Common::FR_FRA, ADGF_UNSTABLE | ADGF_DEMO, WME_1_0_31),
+		WME_ENTRY1s("data.dcp", "e18b1f9815b9e9cf1d1357bc48269b0b", 7632855), Common::FR_FRA, ADGF_UNSUPPORTED | ADGF_DEMO, WME_1_0_31),
 
 	// Ghost in the Sheet (English, v1.00)
 	WME_WINENTRY("ghostsheet", "",
@@ -5366,7 +5366,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Sunny (Demo)
 	WME_WINENTRY("sunny", "Demo",
-		WME_ENTRY1s("data.dcp", "685f4db26ed8134aa82bf5b6bae3963e", 4745194), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_0_31),
+		WME_ENTRY1s("data.dcp", "685f4db26ed8134aa82bf5b6bae3963e", 4745194), Common::EN_ANY, ADGF_UNSUPPORTED | ADGF_DEMO, WME_1_0_31),
 
 	// Sunrise: The game (German)
 	WME_WINENTRY("sunrise", "",
