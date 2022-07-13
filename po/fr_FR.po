@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-10 14:51+0000\n"
-"PO-Revision-Date: 2022-07-11 22:32+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"PO-Revision-Date: 2022-07-13 22:58+0000\n"
+"Last-Translator: Donovan Watteau <contrib@dwatteau.fr>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -550,7 +550,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:653
 msgid "This game ID is already taken. Please choose another one."
-msgstr "Cet ID est déjà utilisé par un autre jeu. Choisissez-en un autre svp."
+msgstr "Cet ID est déjà utilisé par un autre jeu. Veuillez en choisir un autre."
 
 #: gui/editrecorddialog.cpp:57
 msgid "Author:"
@@ -794,7 +794,7 @@ msgstr "Regrouper par : "
 
 #: gui/launcher.cpp:220
 msgid "Select a criteria to group the entries"
-msgstr "Selectionne un critère pour regrouper les entrées"
+msgstr "Sélectionne un critère pour regrouper les entrées"
 
 #: gui/launcher.cpp:243 engines/dialogs.cpp:94
 msgid "~Q~uit"
@@ -1621,7 +1621,7 @@ msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
 msgstr ""
-"Affiche des informations sur les jeux auxquels vous jouer sur Discord si le "
+"Affiche des informations sur les jeux auxquels vous jouez sur Discord si le "
 "client Discord est lancé."
 
 #: gui/options.cpp:2409
@@ -1919,11 +1919,11 @@ msgid ""
 "overwrite a save).\n"
 "List of games:\n"
 msgstr ""
-"ATTENTION : La sauvergarde automatique était activée. Certaines de vos "
-"parties sont sauvegardée à l'emplacement de la sauvegarde automatique. Vous "
-"pouvez soit déplacer la sauvegarde existante vers un nouvel emplacement, "
-"soit désactiver la sauvegarde automatique, ou soit tout ignorer (la question "
-"sera une nouvelle fois posée si la sauvegarde auto. risque d'écraser une "
+"ATTENTION : La sauvegarde automatique était activée. Certaines de vos "
+"parties sont sauvegardées à l'emplacement de la sauvegarde automatique. Vous "
+"pouvez déplacer la sauvegarde existante vers un nouvel emplacement, "
+"désactiver la sauvegarde automatique, ou bien tout ignorer (la question sera "
+"une nouvelle fois posée si la sauvegarde auto. risque d'écraser une "
 "sauvegarde).\n"
 "Liste des parties :\n"
 
@@ -2674,7 +2674,7 @@ msgid ""
 "autosave (will not prompt again until restart)"
 msgstr ""
 "ATTENTION : Il existe une sauvegarde nommée %S à l'emplacement de la "
-"sauvergarde automatique. Vous pouvez soit déplacer la sauvegarde existant "
+"sauvegarde automatique. Vous pouvez soit déplacer la sauvegarde existante "
 "vers un nouvel emplacement, Ecraser la sauvegarde existante, ou annuler la "
 "sauvegarde automatique (ne sera plus redemandé avant un redémarrage)"
 
@@ -4320,7 +4320,7 @@ msgstr "Fichier de séquence '%s' non trouvé !"
 
 #: engines/agos/metaengine.cpp:103
 msgid "AGOS 2 support is not compiled in"
-msgstr "La prise en charge de AGOS 2 n'est pas incluse"
+msgstr "La prise en charge de AGOS 2 n'a pas été activée dans cette version"
 
 #: engines/agos/midi.cpp:184 engines/kyra/sound/sound_pc_midi.cpp:75
 msgid ""
@@ -4403,7 +4403,7 @@ msgid ""
 "The selected game has a data file greater than 2Gb, which isn't supported by "
 "your version of ScummVM yet."
 msgstr ""
-"Le jeu sélectionné a un fichier de donnée de plus de 2Gb, ce qui n'est pas "
+"Le jeu sélectionné a un fichier de donnée de plus de 2 Go, ce qui n'est pas "
 "encore supporté par votre version de ScummVM."
 
 #: engines/asylum/metaengine.cpp:127
@@ -4518,7 +4518,7 @@ msgstr "Limite haute d'images par seconde"
 msgid ""
 "This mode targets a maximum of 120 fps. When disabled, the game targets 60 "
 "fps"
-msgstr "Ce mode vise un maximum de 120 ips. Si désactivé, le jeu vise 60 ips"
+msgstr "Ce mode cible un maximum de 120 FPS. Si désactivé, le jeu cible 60 FPS"
 
 #: engines/bladerunner/detection.cpp:97
 msgid "Disable McCoy's quick stamina drain"
@@ -4721,7 +4721,7 @@ msgid ""
 "time you start the game.\n"
 msgstr ""
 "ScummVM a trouvé des sauvegardes qui ont besoin d'être converties à partir "
-"du format de sauvergarde original.\n"
+"du format de sauvegarde original.\n"
 "Le format de sauvegarde original n'est plus directement supporté, vous ne "
 "pourrez donc pas charger les sauvegardes si vous ne les convertissez pas.\n"
 "\n"
@@ -4788,7 +4788,8 @@ msgstr ""
 
 #: engines/cryomni3d/metaengine.cpp:145
 msgid "Versailles 1685 support is not compiled in"
-msgstr "La prise en charge de Versailles 1685 n'est pas incluse"
+msgstr ""
+"La prise en charge de Versailles 1685 n'a pas été activée dans cette version"
 
 #: engines/director/events.cpp:90
 msgid ""
@@ -4808,7 +4809,7 @@ msgid ""
 "game disc."
 msgstr ""
 "Erreur : Le fichier '%s' n'a pas été correctement extrait.\n"
-"Merci de consulter la page wiki\n"
+"Veuillez consulter la page wiki\n"
 "https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos pour "
 "savoir comment extraire correctement les fichiers DTSPEECH.XA et *.STR de "
 "votre disque de jeu."
@@ -5155,7 +5156,9 @@ msgstr ""
 
 #: engines/grim/metaengine.cpp:61
 msgid "Escape from Monkey Island support is not compiled in"
-msgstr "La prise en charge de Escape from Monkey Island n'est pas incluse"
+msgstr ""
+"La prise en charge de Escape from Monkey Island n'a pas été activée dans "
+"cette version"
 
 #: engines/grim/resource.cpp:100
 msgid ""
@@ -5195,14 +5198,14 @@ msgid ""
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
 "ERREUR : Pas assez de pistes musicales trouvées !\n"
-"Escape from Monkey Island dispose de deux versions de FullMonkeyMap.imt,\n"
-"vous devez copier les deux fichiers des deux CD sur Textures/, et les "
-"renommer\n"
-"comme suit pour faire fonctionner les musiques dans le jeu : \n"
+"Escape from Monkey Island dispose d'un fichier FullMonkeyMap.imt\n"
+"sur chaque CD, que vous devez copier dans Textures/ en les\n"
+"renommant comme suit pour que la musique fonctionne :\n"
 "CD 1 : \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
 "CD 2 : \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
 "\n"
-"Autre possibilité, une copie Steam ou GOG a un FullMonkeyMap.imt combiné"
+"Les versions Steam et GOG permettent aussi d'obtenir un fichier\n"
+"FullMonkeyMap.imt combiné"
 
 #: engines/groovie/detection.cpp:275
 msgid "Fast movie speed"
@@ -5219,7 +5222,7 @@ msgstr "IA plus facile"
 #: engines/groovie/detection.cpp:300
 msgid "Decrease the difficulty of AI puzzles"
 msgstr ""
-"Réduit la performance de l'intelligence articielle, rendant ainsi la "
+"Réduit la performance de l'intelligence artificielle, rendant ainsi la "
 "résolution des énigmes plus facile"
 
 #: engines/groovie/detection.cpp:311
@@ -5235,7 +5238,7 @@ msgstr ""
 
 #: engines/groovie/metaengine.cpp:52
 msgid "GroovieV2 support is not compiled in"
-msgstr "La prise en charge de GroovieV2 n'est pas incluse"
+msgstr "La prise en charge de GroovieV2 n'a pas été activée dans cette version"
 
 #: engines/groovie/script.cpp:652
 msgid "Failed to save game"
@@ -5444,7 +5447,7 @@ msgstr ""
 #: engines/kyra/detection_tables.h:1460
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr ""
-"Le jeu a été ajouté de façon incorrecte. Merci d'ajouter le dossier racine "
+"Le jeu a été ajouté de façon incorrecte. Veuillez ajouter le dossier racine "
 "du jeu."
 
 #. I18N: The file in the game directory needs to be extracted
@@ -5459,19 +5462,22 @@ msgstr ""
 
 #: engines/kyra/metaengine.cpp:118
 msgid "Lands of Lore support is not compiled in"
-msgstr "La prise en charge de Lands of Lore n'est pas incluse"
+msgstr ""
+"La prise en charge de Lands of Lore n'a pas été activée dans cette version"
 
 #: engines/kyra/metaengine.cpp:128
 msgid ""
 "EOB II FM-TOWNS requires support of 16bit color modes which has not been "
 "activated in your ScummVM build"
 msgstr ""
-"La version FM-TOWNS de EOB II nécessite la prise en charge des modes "
-"Couleurs 16bit qui n'a pas été activée dans votre build de ScummVM"
+"La version FM-TOWNS de EOB II nécessite la prise en charge du mode de "
+"couleurs 16 bits, mais celle-ci n'a pas été activée dans cette version de "
+"ScummVM"
 
 #: engines/kyra/metaengine.cpp:134
 msgid "Eye of Beholder support is not compiled in"
-msgstr "La prise en charge de Eye Of Beholder n'est pas incluse"
+msgstr ""
+"La prise en charge de Eye Of Beholder n'a pas été activée dans cette version"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:458
 #: engines/ultima/ultima4/meta_engine.cpp:224
@@ -5627,7 +5633,7 @@ msgid ""
 "\n"
 msgstr ""
 "%d sauvegardes originales ont été importées avec succès. Si vous voulez\n"
-"importer d'autre sauvegardes originales plus tard, vous devrez ouvrir la\n"
+"importer d'autres sauvegardes originales plus tard, vous devrez ouvrir la\n"
 "console de debug de ScummVM et utiliser la commande 'import_savefile'.\n"
 "\n"
 
@@ -5705,7 +5711,7 @@ msgid ""
 "This is a trial Windows version of the game. To play the full version, you "
 "will need to use the original interpreter and purchase a key from Wyrmkeep"
 msgstr ""
-"Ce jeu est une version d'essai Windows. Pour jouer à la version complète il "
+"Ce jeu est une version d'essai Windows. Pour jouer à la version complète, il "
 "est nécessaire d'utiliser l'interpréteur original ainsi que d'acquérir une "
 "clé auprès de Wyrmkeep"
 
