@@ -26,6 +26,8 @@
  */
 
 #include "hpl1/engine/impl/SDLTexture.h"
+#include "common/str.h"
+#include "graphics/pixelformat.h"
 #include "hpl1/engine/graphics/bitmap2D.h"
 
 #include "hpl1/debug.h"
@@ -38,10 +40,11 @@ namespace hpl {
 static void getSettings(Bitmap2D *apSrc, int &alChannels, GLint &internalFormat, GLenum &format) {
 	alChannels = apSrc->getNumChannels();
 	tString sType = cString::ToLowerCase(apSrc->getType());
+	const Common::String bmpFormat = apSrc->format().toString();
 
 	if (alChannels == 4) {
 		internalFormat = GL_RGBA;
-		if (sType == "tga") {
+		if (bmpFormat.contains("BGRA")) {
 			format = GL_BGRA;
 		} else {
 			format = GL_RGBA;
@@ -49,7 +52,7 @@ static void getSettings(Bitmap2D *apSrc, int &alChannels, GLint &internalFormat,
 	}
 	if (alChannels == 3) {
 		internalFormat = GL_RGB;
-		if (sType == "tga") {
+		if (bmpFormat.contains("BGR")) {
 			format = GL_BGR;
 		} else {
 			format = GL_RGB;
