@@ -63,6 +63,7 @@ public:
 
 private:
 	asIScriptEngine *mpScriptEngine;
+	asIScriptModule *_module;
 	cScriptOutput *mpScriptOutput;
 
 	asIScriptContext *mpContext;

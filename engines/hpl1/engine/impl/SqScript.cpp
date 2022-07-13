@@ -25,12 +25,14 @@
  * This file is part of HPL1 Engine.
  */
 
+#include "hpl1/engine/libraries/angelscript/add-ons/scripthelper.h"
 #include "hpl1/engine/impl/SqScript.h"
-#include "hpl1/engine/math/Math.h"
-#include "hpl1/engine/system/low_level_system.h"
-#include "hpl1/engine/system/String.h"
 #include "common/file.h"
 #include "hpl1/debug.h"
+#include "hpl1/engine/libraries/angelscript/angelscript.h"
+#include "hpl1/engine/math/Math.h"
+#include "hpl1/engine/system/String.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 
@@ -47,7 +49,7 @@ cSqScript::cSqScript(const tString &asName, asIScriptEngine *apScriptEngine,
 	mpScriptOutput = apScriptOutput;
 	mlHandle = alHandle;
 
-	//mpContext = mpScriptEngine->CreateContext();
+	mpContext = mpScriptEngine->CreateContext();
 
 	// Create a unique module name
 	msModuleName = "Module_" + cString::ToString(cMath::RandRectl(0, 1000000)) +
@@ -55,10 +57,8 @@ cSqScript::cSqScript(const tString &asName, asIScriptEngine *apScriptEngine,
 }
 
 cSqScript::~cSqScript() {
-#if 0
-  		mpScriptEngine->Discard(msModuleName.c_str());
-		mpContext->Release();
-#endif
+	_module->Discard();
+	mpContext->Release();
 }
 
 //-----------------------------------------------------------------------
@@ -70,49 +70,40 @@ cSqScript::~cSqScript() {
 //-----------------------------------------------------------------------
 
 bool cSqScript::CreateFromFile(const tString &asFileName) {
-#if 0
-  		int lLength;
-		char *pCharBuffer = LoadCharBuffer(asFileName,lLength);
-		if(pCharBuffer==NULL){
-			Error("Couldn't load script '%s'!\n",asFileName.c_str());
-			return false;
-		}
+	int lLength;
+	char *pCharBuffer = LoadCharBuffer(asFileName, lLength);
+	if (pCharBuffer == nullptr) {
+		Error("Couldn't load script '%s'!\n", asFileName.c_str());
+		return false;
+	}
 
-		if(mpScriptEngine->AddScriptSection(msModuleName.c_str(), "main", pCharBuffer, lLength)<0)
-		{
-			Error("Couldn't add script '%s'!\n",asFileName.c_str());
-			hplDeleteArray(pCharBuffer);
-			return false;
-		}
+	_module = mpScriptEngine->GetModule(msModuleName.c_str(), asGM_ALWAYS_CREATE);
+	if (_module->AddScriptSection(msModuleName.c_str(), pCharBuffer, lLength) < 0) {
+		Error("Couldn't add script '%s'!\n", asFileName.c_str());
+		hplDeleteArray(pCharBuffer);
+		return false;
+	}
 
-		if(mpScriptEngine->Build(msModuleName.c_str())<0)
-		{
-			Error("Couldn't build script '%s'!\n",asFileName.c_str());
-			Log("------- SCRIPT OUTPUT BEGIN --------------------------\n");
-			mpScriptOutput->Display();
-			mpScriptOutput->Clear();
-			Log("------- SCRIPT OUTPUT END ----------------------------\n");
-
-
-
-			hplDeleteArray(pCharBuffer);
-			return false;
-		}
+	if (_module->Build() < 0) {
+		Error("Couldn't build script '%s'!\n", asFileName.c_str());
+		Log("------- SCRIPT OUTPUT BEGIN --------------------------\n");
+		mpScriptOutput->Display();
 		mpScriptOutput->Clear();
+		Log("------- SCRIPT OUTPUT END ----------------------------\n");
 
 		hplDeleteArray(pCharBuffer);
-		return true;
-#endif
-	return false;
+		return false;
+	}
+	mpScriptOutput->Clear();
+
+	hplDeleteArray(pCharBuffer);
+	return true;
 }
 
 //-----------------------------------------------------------------------
 
 int cSqScript::GetFuncHandle(const tString &asFunc) {
-#if 0
-  		return mpScriptEngine->GetFunctionIDByName(msModuleName.c_str(),asFunc.c_str());
-#endif
-	return 0;
+	return _module->GetFunctionByName(asFunc.c_str())->GetId();
 }
 
 //-----------------------------------------------------------------------
@@ -123,27 +114,14 @@ void cSqScript::AddArg(const tString &asArg) {
 //-----------------------------------------------------------------------
 
 bool cSqScript::Run(const tString &asFuncLine) {
-#if 0
-  		mpScriptEngine->ExecuteString(msModuleName.c_str(), asFuncLine.c_str());
-
-		return true;
-#endif
-	return false;
+	ExecuteString(mpScriptEngine, asFuncLine.c_str(), _module);
+	return true;
 }
 
 //-----------------------------------------------------------------------
 
 bool cSqScript::Run(int alHandle) {
-#if 0
-  		mpContext->Prepare(alHandle);
-
-		/* Set all the args here */
-
-		mpContext->Execute();
-
-		return true;
-#endif
-	return false;
+	error("call to unimplemented function cSqScript::run(int)");
 }
 
 //-----------------------------------------------------------------------
@@ -155,22 +133,22 @@ bool cSqScript::Run(int alHandle) {
 //-----------------------------------------------------------------------
 
 char *cSqScript::LoadCharBuffer(const tString &asFileName, int &alLength) {
-	Common::File file; 
-	//FIXME: use proper string types
+	Common::File file;
+	// FIXME: use proper string types
 	file.open(asFileName.c_str());
-	if(!file.isOpen()) {
-		debugCN(Hpl1::kDebugLevelError, Hpl1::kDebugFilePath, 
-			"script file at %s could not be opened", asFileName.c_str()); 
+	if (!file.isOpen()) {
+		debugCN(Hpl1::kDebugLevelError, Hpl1::kDebugFilePath,
+				"script file at %s could not be opened", asFileName.c_str());
 		return nullptr;
 	}
-	
-	alLength = file.size(); 
+
+	alLength = file.size();
 	char *pBuffer = hplNewArray(char, alLength);
 	file.read(pBuffer, alLength);
-	if(file.err()) {
-		debugCN(Hpl1::kDebugLevelError, Hpl1::kDebugResourceLoading, 
-			"error in reading script file %s", asFileName.c_str()); 
-		return nullptr; 
+	if (file.err()) {
+		debugCN(Hpl1::kDebugLevelError, Hpl1::kDebugResourceLoading,
+				"error in reading script file %s", asFileName.c_str());
+		return nullptr;
 	}
 	return pBuffer;
 }
