@@ -1343,7 +1343,7 @@ public:
 
 	bool isTerminated() const;
 	VThreadState continuePropagating(Runtime *runtime);
-	
+
 private:
 	Common::Array<Common::WeakPtr<RuntimeObject> > _keyboardMessengers;
 	size_t _dispatchIndex;
@@ -1787,7 +1787,7 @@ struct IModifierContainer : public IInterfaceBase {
 
 class SimpleModifierContainer : public IModifierContainer {
 public:
-	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const;
+	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
 
 private:
@@ -2134,7 +2134,7 @@ public:
 	explicit Project(Runtime *runtime);
 	~Project();
 
-	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg);
+	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 	void loadFromDescription(const ProjectDescription &desc, const Hacks &hacks);
 	void loadSceneFromStream(const Common::SharedPtr<Structural> &structural, uint32 streamID, const Hacks &hacks);
@@ -2272,7 +2272,7 @@ class Section : public Structural {
 public:
 	bool load(const Data::SectionStructuralDef &data);
 
-	bool isSection() const;
+	bool isSection() const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Section"; }
@@ -2426,7 +2426,7 @@ public:
 	bool isVisual() const override;
 	virtual bool isTextLabel() const;
 
-	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg);
+	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 	bool isVisible() const;
 	void setVisible(bool visible);
@@ -2519,7 +2519,7 @@ protected:
 
 	Common::SharedPtr<DragMotionProperties> _dragProps;
 
-	// Quirk: When a graphic modifier is applied, it needs to be 
+	// Quirk: When a graphic modifier is applied, it needs to be
 	VisualElementRenderProperties _renderProps;
 	Common::WeakPtr<GraphicModifier> _primaryGraphicModifier;
 
@@ -2643,7 +2643,7 @@ protected:
 
 class VariableModifier : public Modifier {
 public:
-	virtual bool isVariable() const;
+	virtual bool isVariable() const override;
 	virtual bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) = 0;
 	virtual void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const = 0;
 	virtual Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override = 0;

@@ -131,7 +131,7 @@ class Notification {
 public:
 
 private:
-	Runtime *_runtime;
+	//Runtime *_runtime;
 };
 
 enum DebuggerTool {
