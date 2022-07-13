@@ -260,7 +260,9 @@ msgstr "新しい利用可能なアイコンパックなし"
 msgid ""
 "You are about to remove %s %s of data, deleting all previously downloaded "
 "icon files. Do you want to proceed?"
-msgstr "データ%s %sと、ダウンロードした全てのアイコンファイルが削除されます。続行しますか?"
+msgstr ""
+"データ%s %sと、ダウンロードした全てのアイコンファイルが削除されます。続行しま"
+"すか?"
 
 #: gui/downloadiconsdialog.cpp:452 gui/updates-dialog.cpp:115
 msgid "Proceed"
