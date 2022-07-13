@@ -27,6 +27,8 @@
 
 #include "graphics/opengl/system_headers.h"
 
+#include "common/config-manager.h"
+
 #include "math/glmath.h"
 
 #if defined(USE_OPENGL_SHADERS)
@@ -343,7 +345,10 @@ bool BaseRenderOpenGL3DShader::saveScreenShot(const Common::String &filename, in
 }
 
 void BaseRenderOpenGL3DShader::setWindowed(bool windowed) {
-	warning("BaseRenderOpenGL3DShader::setWindowed not yet implemented");
+	ConfMan.setBool("fullscreen", !windowed);
+	g_system->beginGFXTransaction();
+	g_system->setFeatureState(OSystem::kFeatureFullscreenMode, !windowed);
+	g_system->endGFXTransaction();
 }
 
 void BaseRenderOpenGL3DShader::fadeToColor(byte r, byte g, byte b, byte a) {
@@ -480,7 +485,7 @@ bool BaseRenderOpenGL3DShader::windowedBlt() {
 }
 
 void Wintermute::BaseRenderOpenGL3DShader::onWindowChange() {
-	warning("BaseRenderOpenGL3DShader::onWindowChange not yet implemented");
+	_windowed = !g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
 }
 
 bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed) {
@@ -518,7 +523,7 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 		disableLight(i);
 	}
 
-	_windowed = windowed;
+	_windowed = !ConfMan.getBool("fullscreen");
 	_width = width;
 	_height = height;
 
@@ -577,7 +582,7 @@ bool BaseRenderOpenGL3DShader::indicatorFlip() {
 }
 
 bool BaseRenderOpenGL3DShader::forcedFlip() {
-	warning("BaseRenderOpenGL3DShader::forcedFlip not yet implemented");
+	g_system->updateScreen();
 	return true;
 }
 

@@ -28,6 +28,8 @@
 
 #include "graphics/opengl/system_headers.h"
 
+#include "common/config-manager.h"
+
 #include "math/glmath.h"
 
 #if defined(USE_OPENGL_GAME)
@@ -229,7 +231,10 @@ bool BaseRenderOpenGL3D::saveScreenShot(const Common::String &filename, int size
 }
 
 void BaseRenderOpenGL3D::setWindowed(bool windowed) {
-	warning("BaseRenderOpenGL3D::setWindowed not yet implemented");
+	ConfMan.setBool("fullscreen", !windowed);
+	g_system->beginGFXTransaction();
+	g_system->setFeatureState(OSystem::kFeatureFullscreenMode, !windowed);
+	g_system->endGFXTransaction();
 }
 
 void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
@@ -368,11 +373,11 @@ bool BaseRenderOpenGL3D::windowedBlt() {
 }
 
 void Wintermute::BaseRenderOpenGL3D::onWindowChange() {
-	warning("BaseRenderOpenGL3D::onWindowChange not yet implemented");
+	_windowed = !g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
 }
 
 bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
-	_windowed = windowed;
+	_windowed = !ConfMan.getBool("fullscreen");
 	_width = width;
 	_height = height;
 
@@ -435,7 +440,7 @@ bool BaseRenderOpenGL3D::indicatorFlip() {
 }
 
 bool BaseRenderOpenGL3D::forcedFlip() {
-	warning("BaseRenderOpenGL3D::forcedFlip not yet implemented");
+	g_system->updateScreen();
 	return true;
 }
 
