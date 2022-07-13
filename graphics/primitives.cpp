@@ -239,19 +239,43 @@ void drawThickLine2(int x1, int y1, int x2, int y2, int thick, int color, void (
 }
 
 void drawFilledRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data) {
+	for (int y = rect.top; y < rect.bottom; y++)
+		drawHLine(rect.left, rect.right - 1, y, color, plotProc, data);
+}
+
+/**
+ * @brief Draws filled rectangle _with_ right and bottom edges
+ */
+void drawFilledRect1(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data) {
 	for (int y = rect.top; y <= rect.bottom; y++)
 		drawHLine(rect.left, rect.right, y, color, plotProc, data);
 }
 
 void drawRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data) {
+	drawHLine(rect.left, rect.right - 1, rect.top, color, plotProc, data);
+	drawHLine(rect.left, rect.right - 1, rect.bottom - 1, color, plotProc, data);
+	drawVLine(rect.left, rect.top, rect.bottom - 1, color, plotProc, data);
+	drawVLine(rect.right, rect.top, rect.bottom - 1, color, plotProc, data);
+}
+
+/**
+ * @brief Draws rectangle outline _with_ right and bottom edges
+ */
+void drawRect1(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data) {
 	drawHLine(rect.left, rect.right, rect.top, color, plotProc, data);
 	drawHLine(rect.left, rect.right, rect.bottom, color, plotProc, data);
 	drawVLine(rect.left, rect.top, rect.bottom, color, plotProc, data);
 	drawVLine(rect.right, rect.top, rect.bottom, color, plotProc, data);
 }
 
-// http://members.chello.at/easyfilter/bresenham.html
 void drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, void (*plotProc)(int, int, int, void *), void *data) {
+	Common::Rect r(rect.left, rect.top, rect.right - 1, rect.bottom - 1);
+
+	drawRoundRect1(r, arc, color, filled, plotProc, data);
+}
+
+// http://members.chello.at/easyfilter/bresenham.html
+void drawRoundRect1(Common::Rect &rect, int arc, int color, bool filled, void (*plotProc)(int, int, int, void *), void *data) {
 	if (rect.height() < rect.width()) {
 		int x = -arc, y = 0, err = 2-2*arc; /* II. Quadrant */
 		int dy = rect.height() - arc * 2;

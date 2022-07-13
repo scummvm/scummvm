@@ -33,8 +33,11 @@ void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, int color
 void drawThickLine2(int x1, int y1, int x2, int y2, int thick, int color,
 								void (*plotProc)(int, int, int, void *), void *data);
 void drawFilledRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data);
+void drawFilledRect1(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data);
 void drawRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data);
+void drawRect1(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data);
 void drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, void (*plotProc)(int, int, int, void *), void *data);
+void drawRoundRect1(Common::Rect &rect, int arc, int color, bool filled, void (*plotProc)(int, int, int, void *), void *data);
 void drawPolygonScan(int *polyX, int *polyY, int npoints, Common::Rect &bbox, int color,
 								void (*plotProc)(int, int, int, void *), void *data);
 void drawEllipse(int x0, int y0, int x1, int y1, int color, bool filled, void (*plotProc)(int, int, int, void *), void *data);
