@@ -1075,6 +1075,22 @@ void IMuseDigiInternalMixer::mixBits8Stereo(uint8 *srcBuf, int32 inFrameCount, i
 				mixBufCurCell += 2;
 			}
 		}
+	} else if (2 * inFrameCount == feedSize) {
+		srcBuf_ptr = srcBuf;
+		if (inFrameCount - 1 != 0) {
+			for (int i = 0; i < inFrameCount - 1; i++) {
+				mixBufCurCell[0] += *((uint16 *)ampTable + srcBuf_ptr[0]);
+				mixBufCurCell[1] += *((uint16 *)ampTable + srcBuf_ptr[1]);
+				mixBufCurCell[2] += (*((int16 *)ampTable + srcBuf_ptr[0]) + *((int16 *)ampTable + srcBuf_ptr[2])) >> 1;
+				mixBufCurCell[3] += (*((int16 *)ampTable + srcBuf_ptr[1]) + *((int16 *)ampTable + srcBuf_ptr[3])) >> 1;
+				mixBufCurCell += 4;
+				srcBuf_ptr += 2;
+			}
+		}
+		mixBufCurCell[0] += *((uint16 *)ampTable + srcBuf_ptr[0]);
+		mixBufCurCell[1] += *((uint16 *)ampTable + srcBuf_ptr[1]);
+		mixBufCurCell[2] += *((uint16 *)ampTable + srcBuf_ptr[0]);
+		mixBufCurCell[3] += *((uint16 *)ampTable + srcBuf_ptr[1]);
 	} else if (2 * feedSize == inFrameCount) {
 		if (feedSize) {
 			srcBuf_ptr = srcBuf;
@@ -1085,7 +1101,7 @@ void IMuseDigiInternalMixer::mixBits8Stereo(uint8 *srcBuf, int32 inFrameCount, i
 				mixBufCurCell += 2;
 			}
 		}
-	} else if (2 * inFrameCount == feedSize) {
+	} else if (4 * inFrameCount == feedSize) {
 		srcBuf_ptr = srcBuf;
 		if (inFrameCount - 1 != 0) {
 			for (int i = 0; i < inFrameCount - 1; i++) {
