@@ -184,6 +184,13 @@ void Context::initialize(ContextType contextType) {
 	}
 
 	if (type == kContextGLES2) {
+// OGLES2 on AmigaOS reports GLSL version as 0.9 but we do what is needed to make it work
+// so let's pretend it supports 1.00
+#if defined(AMIGAOS)
+		if (glslVersion < 100) {
+			glslVersion = 100;
+		}
+#endif
 		// GLES2 always has (limited) NPOT support.
 		NPOTSupported = true;
 
