@@ -28,6 +28,7 @@
 #ifndef HPL_LOWLEVELSYSTEM_H
 #define HPL_LOWLEVELSYSTEM_H
 
+#include "hpl1/engine/libraries/angelscript/angelscript.h"
 #include "hpl1/engine/system/MemoryManager.h"
 #include "hpl1/engine/system/SystemTypes.h"
 
@@ -121,7 +122,7 @@ public:
 	 * \param funcDecl the declaration.
 	 * \return
 	 */
-	bool addScriptFunc(const tString &funcDecl, void *func, int callConv);
+	bool addScriptFunc(const tString &funcDecl, asGENFUNC_t func, int callConv);
 
 	/**
 	 * Add a variable to the script vm. Example: "int MyVar"

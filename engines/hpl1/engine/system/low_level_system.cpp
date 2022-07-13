@@ -19,9 +19,9 @@
  *
  */
 
-#include "hpl1/engine/libraries/angelscript/angelscript.h"
 #include "hpl1/engine/impl/SqScript.h"
 #include "hpl1/engine/libraries/angelscript/add-ons/scriptstdstring.h"
+#include "hpl1/engine/libraries/angelscript/angelscript.h"
 #include "hpl1/engine/system/String.h"
 
 #include "hpl1/debug.h"
@@ -32,24 +32,16 @@
 namespace hpl {
 
 LowLevelSystem::LowLevelSystem() {
-#if 0
-	mpScriptEngine = asCreateScriptEngine(ANGELSCRIPT_VERSION);
-#endif
-	//_scriptOutput = hplNew(cScriptOutput, ());
-	//_scriptEngine->SetMessageCallback(asMETHOD(cScriptOutput, AddMessage), _scriptOutput, asCALL_THISCALL);
-#if 0
-#ifdef AS_MAX_PORTABILITY
-	RegisterScriptString(mpScriptEngine);
-#else
-	RegisterStdString(mpScriptEngine);
-#endif
-#endif
+	_scriptEngine = asCreateScriptEngine(ANGELSCRIPT_VERSION);
+	_scriptOutput = hplNew(cScriptOutput, ());
+	_scriptEngine->SetMessageCallback(asMETHOD(cScriptOutput, AddMessage), _scriptOutput, asCALL_THISCALL);
+	RegisterStdString(_scriptEngine);
 	_handleCount = 0;
 }
 
 LowLevelSystem::~LowLevelSystem() {
 	/*Release all runnings contexts */
-
+	_scriptOutput->Display();
 	_scriptEngine->Release();
 	hplDelete(_scriptOutput);
 
@@ -58,7 +50,7 @@ LowLevelSystem::~LowLevelSystem() {
 	// gpLogWriter = NULL;
 }
 
-static void commonLog(int level, const char* fmt, va_list args) {
+static void commonLog(int level, const char *fmt, va_list args) {
 	char buffer[256];
 	vsnprintf(buffer, 256, fmt, args);
 	debugN(level, buffer);
@@ -112,12 +104,12 @@ void LogUpdate(const char *fmt, ...) {
 //-----------------------------------------------------------------------
 
 void CopyTextToClipboard(const tWString &text) {
-	//FIXME: string types
+	// FIXME: string types
 	g_system->setTextInClipboard(Common::String(cString::To8Char(text.c_str()).c_str()));
 }
 
 tWString LoadTextFromClipboard() {
-	//FIXME: string types
+	// FIXME: string types
 	Common::U32String text = g_system->getTextFromClipboard();
 	return cString::To16Char(Common::String(text).c_str());
 }
@@ -381,17 +373,15 @@ iScript *LowLevelSystem::createScript(const tString &name) {
 	return hplNew(cSqScript, (name, _scriptEngine, _scriptOutput, _handleCount++));
 }
 
-bool LowLevelSystem::addScriptFunc(const tString &funcDecl, void *pFunc, int callConv) {
-#if 0
-  	if (_scriptEngine->RegisterGlobalFunction(funcDecl.c_str(),
-											   asFUNCTION(pFunc), callConv) < 0) {
+bool LowLevelSystem::addScriptFunc(const tString &funcDecl, asGENFUNC_t pFunc, int callConv) {
+	if (_scriptEngine->RegisterGlobalFunction(funcDecl.c_str(),
+											  asFUNCTION(pFunc), callConv) < 0) {
 		Error("Couldn't add func '%s'\n", funcDecl.c_str());
+		_scriptOutput->Display();
 		return false;
 	}
 
 	return true;
-#endif
-	return false;
 }
 
 bool LowLevelSystem::addScriptVar(const tString &varDecl, void *pVar) {
