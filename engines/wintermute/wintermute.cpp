@@ -91,7 +91,7 @@ bool WintermuteEngine::hasFeature(EngineFeature f) const {
 		return true;
 #ifdef ENABLE_WME3D
 	case kSupportsArbitraryResolutions:
-		return true;
+		return /*true*/false; // opengl renderers doesn't support it yet
 #endif
 	default:
 		return false;
