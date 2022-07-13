@@ -38,9 +38,9 @@
 #include "hpl1/engine/math/BoundingVolume.h"
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/resources/GpuProgramManager.h"
-#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/resources/Resources.h"
 #include "hpl1/engine/resources/TextureManager.h"
+#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/scene/Camera3D.h"
 #include "hpl1/engine/scene/Entity3D.h"
 #include "hpl1/engine/scene/Light3D.h"
@@ -821,8 +821,9 @@ void cRenderer3D::RenderOcclusionQueries(cCamera3D *apCamera) {
 			}
 			pPrevMatrix = pObject->mpMatrix;
 			// Set the vertex program matrix.
-			mpDiffuseVtxProgram->SetMatrixf("worldViewProj", eGpuProgramMatrix_ViewProjection,
-											eGpuProgramMatrixOp_Identity);
+			if (mpDiffuseVtxProgram)
+				mpDiffuseVtxProgram->SetMatrixf("worldViewProj", eGpuProgramMatrix_ViewProjection,
+												eGpuProgramMatrixOp_Identity);
 
 			if (mbLog)
 				Log(" Setting matrix %d\n", pObject->mpMatrix);
