@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-10 14:51+0000\n"
-"PO-Revision-Date: 2022-07-09 12:15+0000\n"
+"PO-Revision-Date: 2022-07-13 21:42+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -219,10 +219,8 @@ msgid "Downloading icons list..."
 msgstr "Загружаю список инонок..."
 
 #: gui/downloadiconsdialog.cpp:190
-#, fuzzy
-#| msgid "Clear value"
 msgid "Clear Cache"
-msgstr "Очистить значение"
+msgstr "Очистить кеш"
 
 #: gui/downloadiconsdialog.cpp:241
 #, c-format
@@ -265,6 +263,8 @@ msgid ""
 "You are about to remove %s %s of data, deleting all previously downloaded "
 "icon files. Do you want to proceed?"
 msgstr ""
+"Вы собираетесь удалить %s%s данных и удалите все скачанные иконки. Вы "
+"действительно хотите продолжить?"
 
 #: gui/downloadiconsdialog.cpp:452 gui/updates-dialog.cpp:115
 msgid "Proceed"
