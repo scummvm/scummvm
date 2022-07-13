@@ -28,8 +28,8 @@
 #include "hpl1/engine/resources/GpuProgramManager.h"
 #include "hpl1/engine/graphics/GPUProgram.h"
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 
@@ -73,6 +73,8 @@ iResourceBase *cGpuProgramManager::Create(const tString &asName) {
 
 iGpuProgram *cGpuProgramManager::CreateProgram(const tString &asName, const tString &asEntry,
 											   eGpuProgramType aType) {
+	return nullptr;
+#if 0
 	tString sPath;
 	iGpuProgram *pProgram;
 	pProgram = static_cast<iGpuProgram *>(FindLoadedResource(asName, sPath));
@@ -99,6 +101,7 @@ iGpuProgram *cGpuProgramManager::CreateProgram(const tString &asName, const tStr
 
 	EndLoad();
 	return pProgram;
+#endif
 }
 
 //-----------------------------------------------------------------------
