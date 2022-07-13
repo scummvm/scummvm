@@ -26,6 +26,7 @@
  */
 
 #include "hpl1/engine/impl/OcclusionQueryOGL.h"
+#include "hpl1/opengl.h"
 
 //#include <GL/GLee.h>
 
@@ -38,18 +39,14 @@ namespace hpl {
 //-----------------------------------------------------------------------
 
 cOcclusionQueryOGL::cOcclusionQueryOGL() {
-#if 0
-  		glGenQueriesARB(1, (GLuint *)&mlQueryId);
-		mlLastSampleCount =0;
-#endif
+	glGenQueries(1, (GLuint *)&mlQueryId);
+	mlLastSampleCount = 0;
 }
 
 //-----------------------------------------------------------------------
 
 cOcclusionQueryOGL::~cOcclusionQueryOGL() {
-#if 0
-  		glDeleteQueriesARB(1, (GLuint *)&mlQueryId);
-#endif
+	glDeleteQueries(1, (GLuint *)&mlQueryId);
 }
 
 //-----------------------------------------------------------------------
@@ -61,25 +58,20 @@ cOcclusionQueryOGL::~cOcclusionQueryOGL() {
 //-----------------------------------------------------------------------
 
 void cOcclusionQueryOGL::Begin() {
-#if 0
-		glBeginQueryARB(GL_SAMPLES_PASSED_ARB,mlQueryId);
-#endif
+	glBeginQuery(GL_SAMPLES_PASSED, mlQueryId);
 }
 
 void cOcclusionQueryOGL::End() {
-#if 0
-  		glEndQueryARB(GL_SAMPLES_PASSED_ARB);
-#endif
+	glEndQuery(GL_SAMPLES_PASSED);
 }
 
 bool cOcclusionQueryOGL::FetchResults() {
-#if 0
-  		int lAvailable=0;
-		glGetQueryObjectivARB(mlQueryId,GL_QUERY_RESULT_AVAILABLE_ARB,(GLint *)&lAvailable);
-		if(lAvailable==0) return false;
+	int lAvailable = 0;
+	glGetQueryObjectiv(mlQueryId, GL_QUERY_RESULT_AVAILABLE, (GLint *)&lAvailable);
+	if (lAvailable == 0)
+		return false;
 
-		glGetQueryObjectivARB(mlQueryId,GL_QUERY_RESULT_ARB,(GLint *)&mlLastSampleCount);
-#endif
+	glGetQueryObjectiv(mlQueryId, GL_QUERY_RESULT, (GLint *)&mlLastSampleCount);
 	return true;
 }
 
