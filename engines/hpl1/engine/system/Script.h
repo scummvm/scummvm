@@ -199,7 +199,7 @@
 #define SCRIPT_ARG_string(n) std::string _arg##n = *(std::string *)gen->GetArgObject(n)
 #define SCRIPT_ARG_float(n) float _arg##n = gen->GetArgFloat(n)
 #define SCRIPT_ARG_int(n) int _arg##n = gen->GetArgDWord(n)
-#define SCRIPT_ARG_bool(n) bool _arg##n = gen->GetArgDWord(n)
+#define SCRIPT_ARG_bool(n) bool _arg##n = gen->GetArgByte(n)
 // Return Value Macros
 #define SCRIPT_RETURN_string std::string _ret
 #define SCRIPT_RETURN_CALL_string _ret =
@@ -217,9 +217,10 @@
 #define SCRIPT_RETURN_CALL_void
 #define SCRIPT_SET_RETURN_void
 
+#define AS_MAX_PORTABILITY
 #if defined(AS_MAX_PORTABILITY)
 #define SCRIPT_REGISTER_FUNC(funcname) \
-	GenericScript::funcname##_return + " " #funcname " (" + GenericScript::funcname##_arg + ")", (void *)GenericScript::funcname##_Generic, asCALL_GENERIC
+	GenericScript::funcname##_return + " " #funcname " (" + GenericScript::funcname##_arg + ")", GenericScript::funcname##_Generic, asCALL_GENERIC
 #else
 #define SCRIPT_REGISTER_FUNC(funcname) \
 	GenericScript::funcname##_return + " " #funcname " (" + GenericScript::funcname##_arg + ")", (void *)funcname, asCALL_STDCALL
