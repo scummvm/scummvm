@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-10 14:51+0000\n"
-"PO-Revision-Date: 2022-07-13 23:06+0000\n"
-"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"PO-Revision-Date: 2022-07-13 23:11+0000\n"
+"Last-Translator: Donovan Watteau <contrib@dwatteau.fr>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -5892,15 +5892,15 @@ msgstr "La prise en charge de Myste ME n'a pas été activée dans cette version
 
 #: engines/mohawk/metaengine.cpp:297
 msgid "Myst support not compiled in"
-msgstr "La prise en charge de Myst n'est pas incluse"
+msgstr "La prise en charge de Myst n'a pas été activée dans cette version"
 
 #: engines/mohawk/metaengine.cpp:304
 msgid "Riven support not compiled in"
-msgstr "La prise en charge de Riven n'est pas incluse"
+msgstr "La prise en charge de Riven n'a pas été activée dans cette version"
 
 #: engines/mohawk/metaengine.cpp:318
 msgid "CSTime support not compiled in"
-msgstr "La prise en charge de CSTime n'est pas incluse"
+msgstr "La prise en charge de CSTime n'a pas été activée dans cette version"
 
 #: engines/mohawk/mohawk.cpp:51
 msgid "The game is paused. Press any key to continue."
@@ -6363,7 +6363,7 @@ msgstr ""
 "ScummVM a affiché des messages d'avertissements dans votre fenêtre de "
 "console et ne peut pas garantir que tous les fichiers ont été convertis.\n"
 "\n"
-"Merci de faire un rapport à l'équipe."
+"Merci de le signaler à l'équipe ScummVM."
 
 #: engines/pegasus/pegasus.cpp:2719
 msgid "Up/Zoom In/Move Forward/Open Doors"
@@ -6410,7 +6410,7 @@ msgid ""
 "Compressed game detected. Please uncompress it as specified in the game "
 "description on our Wiki"
 msgstr ""
-"Jeu compressé détecté. Merci de le décompresser comme spécifié dans la "
+"Jeu compressé détecté. Veuillez le décompresser comme spécifié dans la "
 "description du jeu sur notre Wiki"
 
 #: engines/queen/detection.cpp:44
@@ -6438,7 +6438,8 @@ msgstr "La version d'essai Pocket PC n'est pas prise en charge"
 
 #: engines/saga/metaengine.cpp:112
 msgid "I Have No Mouth support not compiled in"
-msgstr "La prise en charge de I Have No Mouth n'est pas incluse"
+msgstr ""
+"La prise en charge de I Have No Mouth n'a pas été activée dans cette version"
 
 #: engines/saga/music.cpp:95
 #, c-format
@@ -6647,12 +6648,13 @@ msgstr ""
 msgid ""
 "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
 msgstr ""
-"Impossible de lire une vidéo %dbpp sur un système avec une profondeur de "
-"couleur maximale de 8bpp"
+"Impossible de lire une vidéo %d bpp sur un système avec une profondeur de "
+"couleur maximale de 8 bpp"
 
 #: engines/sci/metaengine.cpp:300
 msgid "SCI32 support not compiled in"
-msgstr "La prise en charge des jeux SCI32 n'est pas incluse"
+msgstr ""
+"La prise en charge des jeux SCI32 n'a pas été activée dans cette version"
 
 #: engines/sci/resource/resource.cpp:863
 msgid ""
@@ -6661,9 +6663,8 @@ msgid ""
 "that your game files are valid."
 msgstr ""
 "Des fichiers de ressources du jeu sont manquants ou corrompus. Certaines "
-"fonctionnalités peuvent ne pas marcher correctement. Veuillez vérifier la "
-"console pour plus d'information, et vérifier que vos fichier de jeu sont "
-"valides."
+"fonctionnalités peuvent ne pas marcher correctement. Consultez la console "
+"pour plus d'information et assurez-vous que vos fichiers de jeu sont valides."
 
 #: engines/sci/sci.cpp:387
 msgid ""
@@ -6693,14 +6694,14 @@ msgid ""
 msgstr ""
 "Vous avez sélectionné le son General MIDI. Sierra a ajouté le support pour "
 "General MIDI après la mise sur le marché de ce jeu par le biais de leur "
-"\"General MIDI Utility\". Veuillez appliquer ce correctifs pour pouvoir "
+"\"General MIDI Utility\". Veuillez appliquer ce correctif pour pouvoir "
 "utiliser la musique MIDI avec ce jeu. Une fois que vous avez obtenu le "
 "correctif, vous pouvez extraire tous les fichiers *.PAT dans le répertoire "
-"Extra de ScummVM. Autrement vous pouvez aussi suivre les instructions du "
-"fichier READ.ME du correctifs, renommer le fichier *.PAT correspondant en 4."
-"PAT et le placer dans le répertoire contenant les fichiers de données du "
-"jeu. En l'absence de ce patch la musique General MIDI pour ce jeu est "
-"fortement déformée."
+"Extra de ScummVM. Vous pouvez également suivre les instructions du fichier "
+"READ.ME du correctif, renommer le fichier *.PAT correspondant en 4.PAT et le "
+"placer dans le répertoire contenant les fichiers de données du jeu. En "
+"l'absence de ce patch, la musique General MIDI pour ce jeu est fortement "
+"déformée."
 
 #: engines/sci/sci.cpp:430
 msgid ""
@@ -6738,8 +6739,8 @@ msgid ""
 "- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 msgstr ""
-"GK2 possède des sous-titres faits par un fan, disponible grâce aux personnes "
-"dévouées de SierraHelp.\n"
+"GK2 possède des sous-titres faits par un fan, disponibles grâce aux "
+"personnes dévouées de SierraHelp.\n"
 "\n"
 "Installation :\n"
 "- télécharger http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
@@ -7605,11 +7606,11 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:431
 msgid "HE v71+ support is not compiled in"
-msgstr "La prise en charge de HE V71+ n'est pas incluse"
+msgstr "La prise en charge de HE V71+ n'a pas été activée dans cette version"
 
 #: engines/scumm/metaengine.cpp:455
 msgid "SCUMM v7-8 support is not compiled in"
-msgstr "La prise en charge de SCUMM V7-8 n'est pas incluse"
+msgstr "La prise en charge de SCUMM V7-8 n'a pas été activée dans cette version"
 
 #: engines/scumm/scumm.cpp:236
 msgid ""
@@ -7654,7 +7655,7 @@ msgid ""
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please copy the game from the original media without compression."
 msgstr ""
-"Des fichiers audio compressés avec ScummVM Tools ont été détectés ; La "
+"Des fichiers audio compressés avec ScummVM Tools ont été détectés ; la "
 "compression\n"
 "des fichiers *.BUN/*.SOU n'est plus supportée pour ce jeu, l'audio sera "
 "désactivé.\n"
@@ -7696,7 +7697,7 @@ msgid ""
 "\n"
 msgstr ""
 "\n"
-"Merci de copier ce(s) fichier(s) dans le répertoire de données du jeu.\n"
+"Veuillez copier ce(s) fichier(s) dans le répertoire de données du jeu.\n"
 "\n"
 
 #: engines/sherlock/detection.cpp:70
@@ -8281,7 +8282,7 @@ msgstr "Collisions contre les murs activées"
 #: engines/twine/parser/text.cpp:36
 msgctxt "Options menu"
 msgid "Wall collision off"
-msgstr "Collisions contre les murs desactivées"
+msgstr "Collisions contre les murs désactivées"
 
 #: engines/ultima/detection.cpp:68
 msgid "Enable frame skipping"
@@ -8440,15 +8441,16 @@ msgstr "Applique un filtrage bilinéaire à chaque image-objet"
 
 #: engines/wintermute/metaengine.cpp:64
 msgid "FoxTail support is not compiled in"
-msgstr "La prise en charge de FoxTail n'est pas incluse"
+msgstr "La prise en charge de FoxTail n'a pas été activée dans cette version"
 
 #: engines/wintermute/metaengine.cpp:70
 msgid "Hero Craft support is not compiled in"
-msgstr "La prise en charge de Hero Craft n'est pas incluse"
+msgstr "La prise en charge de Hero Craft n'a pas été activée dans cette version"
 
 #: engines/wintermute/metaengine.cpp:76
 msgid "Wintermute3D support is not compiled in"
-msgstr "La prise en charge de Wintermute3D n'est pas incluse"
+msgstr ""
+"La prise en charge de Wintermute3D n'a pas été activée dans cette version"
 
 #: engines/wintermute/wintermute.cpp:148
 msgid "This game requires PNG, JPEG and Vorbis support."
@@ -9064,8 +9066,8 @@ msgstr "Armure plus durable"
 #: engines/xeen/detection.cpp:68
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr ""
-"L'armure ne se brisera pas avant que le personnage ne soit à -80HP, au lieu "
-"de seulement -10HP"
+"L'armure ne se brisera pas avant que le personnage ne soit à -80 HP, au lieu "
+"de seulement -10 HP"
 
 #: engines/xeen/saves.cpp:290
 msgid "Failed to autosave"
