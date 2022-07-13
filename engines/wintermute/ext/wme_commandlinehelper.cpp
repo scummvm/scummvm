@@ -73,6 +73,7 @@ ScValue *SXCommandLineHelper::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Parameters (RO)
 	// Used to launch demo: "Pizza Morgana: Episode 1 - Monsters and Manipulations in the Magical Forest"
+	// 'DEMO', 'FULLDEMO'
 	//////////////////////////////////////////////////////////////////////////
 	if (name == "Parameters") {
 		_scValue->setString("Pizza.exe DEMO");
