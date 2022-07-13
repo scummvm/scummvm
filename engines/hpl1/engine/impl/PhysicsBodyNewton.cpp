@@ -111,8 +111,8 @@ void cPhysicsBodyNewtonCallback::OnTransformUpdate(iEntity3D *apEntity) {
 		return;
 
 	cPhysicsBodyNewton *pRigidBody = static_cast<cPhysicsBodyNewton *>(apEntity);
-	auto mTemp = apEntity->GetLocalMatrix().GetTranspose();
-	NewtonBodySetMatrix(pRigidBody->mpNewtonBody, &mTemp.m[0][0]);
+	cMatrixf mTemp = apEntity->GetLocalMatrix().GetTranspose();
+	NewtonBodySetMatrix(pRigidBody->mpNewtonBody, mTemp.v);
 
 	if (pRigidBody->mpNode)
 		pRigidBody->mpNode->SetMatrix(apEntity->GetLocalMatrix());
@@ -129,7 +129,7 @@ void cPhysicsBodyNewtonCallback::OnTransformUpdate(iEntity3D *apEntity) {
 void cPhysicsBodyNewton::SetMaterial(iPhysicsMaterial *apMaterial) {
 	mpMaterial = apMaterial;
 
-	if (apMaterial == NULL)
+	if (apMaterial == nullptr)
 		return;
 
 	cPhysicsMaterialNewton *pNewtonMat = static_cast<cPhysicsMaterialNewton *>(mpMaterial);
@@ -144,21 +144,21 @@ void cPhysicsBodyNewton::SetLinearVelocity(const cVector3f &avVel) {
 	NewtonBodySetVelocity(mpNewtonBody, vel);
 }
 cVector3f cPhysicsBodyNewton::GetLinearVelocity() const {
-	float arrayVec[3];
-	NewtonBodyGetVelocity(mpNewtonBody, arrayVec);
-	return {arrayVec[0], arrayVec[1], arrayVec[2]};
+	float vel[3];
+	NewtonBodyGetVelocity(mpNewtonBody, vel);
+	return cVector3f::fromArray(vel);
 }
 
 //-----------------------------------------------------------------------
 
 void cPhysicsBodyNewton::SetAngularVelocity(const cVector3f &avVel) {
-	const float faVel[] = {avVel.x, avVel.y, avVel.y};
-	NewtonBodySetOmega(mpNewtonBody, faVel);
+	VEC3_CONST_ARRAY(vel, avVel);
+	NewtonBodySetOmega(mpNewtonBody, vel);
 }
 cVector3f cPhysicsBodyNewton::GetAngularVelocity() const {
 	float vel[3];
 	NewtonBodyGetOmega(mpNewtonBody, vel);
-	return {vel[0], vel[1], vel[2]};
+	return cVector3f::fromArray(vel);
 }
 
 //-----------------------------------------------------------------------
@@ -222,15 +222,14 @@ cMatrixf cPhysicsBodyNewton::GetInertiaMatrix() {
 void cPhysicsBodyNewton::SetMass(float afMass) {
 	cCollideShapeNewton *pShapeNewton = static_cast<cCollideShapeNewton *>(mpShape);
 
-	float faInertia[3];
-	float faOffset[3];
+	float inertia[3];
+	float offset[3];
 	NewtonConvexCollisionCalculateInertialMatrix(pShapeNewton->GetNewtonCollision(),
-												 faInertia, faOffset);
+												 inertia, offset);
 
-	cVector3f vInertia = {faInertia[0], faInertia[1], faInertia[2]}; // = pShapeNewton->GetInertia(afMass);
-	vInertia = vInertia * afMass;
+	cVector3f vInertia = cVector3f::fromArray(inertia) * afMass; // = pShapeNewton->GetInertia(afMass);
 
-	NewtonBodySetCentreOfMass(mpNewtonBody, faOffset);
+	NewtonBodySetCentreOfMass(mpNewtonBody, offset);
 
 	NewtonBodySetMassMatrix(mpNewtonBody, afMass, vInertia.x, vInertia.y, vInertia.z);
 	mfMass = afMass;
@@ -245,9 +244,9 @@ void cPhysicsBodyNewton::SetMassCentre(const cVector3f &avCentre) {
 }
 
 cVector3f cPhysicsBodyNewton::GetMassCentre() const {
-	float faCentre[3];
-	NewtonBodyGetCentreOfMass(mpNewtonBody, faCentre);
-	return {faCentre[0], faCentre[1], faCentre[3]};
+	float center[3];
+	NewtonBodyGetCentreOfMass(mpNewtonBody, center);
+	return cVector3f::fromArray(center);
 }
 
 //-----------------------------------------------------------------------
@@ -308,7 +307,7 @@ void cPhysicsBodyNewton::AddImpulseAtPosition(const cVector3f &avImpulse, const 
 //-----------------------------------------------------------------------
 
 void cPhysicsBodyNewton::SetEnabled(bool abEnabled) {
-	NewtonBodySetFreezeState(mpNewtonBody, abEnabled);
+	NewtonBodySetFreezeState(mpNewtonBody, !abEnabled);
 }
 bool cPhysicsBodyNewton::GetEnabled() const {
 	return NewtonBodyGetSleepState(mpNewtonBody) == 0 ? false : true;
