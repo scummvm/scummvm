@@ -245,8 +245,7 @@ class ContactProcessor {
 public:
 	ContactProcessor(const NewtonJoint *joint);
 
-	bool hasNext();
-	void processNext();
+	bool processNext();
 	void endProcessing();
 
 private:
@@ -265,15 +264,11 @@ ContactProcessor::ContactProcessor(const NewtonJoint *joint) : _joint(joint), _c
 	_body1 = NewtonJointGetBody1(joint);
 	_contactBody0 = (cPhysicsBodyNewton *)NewtonBodyGetUserData(_body0);
 	_contactBody1 = (cPhysicsBodyNewton *)NewtonBodyGetUserData(_body1);
+	_contact = NewtonContactJointGetFirstContact(_joint);
 }
 
-bool ContactProcessor::hasNext() {
-	return (_contact = NewtonContactJointGetNextContact(_joint, _contact));
-}
-
-void ContactProcessor::processNext() {
+bool ContactProcessor::processNext() {
 	NewtonMaterial *_material = NewtonContactGetMaterial(_contact);
-
 	float fNormSpeed = NewtonMaterialGetContactNormalSpeed(_material);
 	if (_contactData.mfMaxContactNormalSpeed < fNormSpeed)
 		_contactData.mfMaxContactNormalSpeed = fNormSpeed;
@@ -305,7 +300,8 @@ void ContactProcessor::processNext() {
 		collidePoint.mvNormal = cVector3f::fromArray(matNormal);
 		_contactBody0->GetWorld()->GetContactPoints()->push_back(collidePoint);
 	}
-	_contacts++;
+	++_contacts;
+	return (_contact = NewtonContactJointGetNextContact(_joint, _contact));
 }
 
 void ContactProcessor::endProcessing() {
@@ -354,8 +350,7 @@ void ContactProcessor::endProcessing() {
 void cPhysicsMaterialNewton::ProcessContactCallback(const NewtonJoint *joint, float, int) {
 	ContactProcessor processor(joint);
 
-	while (processor.hasNext())
-		processor.processNext();
+	while (processor.processNext()) {}
 	processor.endProcessing();
 }
 
