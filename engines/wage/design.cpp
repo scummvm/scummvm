@@ -281,7 +281,7 @@ void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 	PlotData pd(surface, &patterns, fillType, 1, this);
 
 	if (fillType <= patterns.size())
-		Graphics::drawFilledRect(r, kColorBlack, drawPixel, &pd);
+		Graphics::drawFilledRect1(r, kColorBlack, drawPixel, &pd);
 
 	pd.fillType = borderFillType;
 	pd.thickness = borderThickness;
@@ -311,13 +311,13 @@ void Design::drawRoundRect(Graphics::ManagedSurface *surface, Common::ReadStream
 	PlotData pd(surface, &patterns, fillType, 1, this);
 
 	if (fillType <= patterns.size())
-		Graphics::drawRoundRect(r, arc / 2, kColorBlack, true, drawPixel, &pd);
+		Graphics::drawRoundRect1(r, arc / 2, kColorBlack, true, drawPixel, &pd);
 
 	pd.fillType = borderFillType;
 	pd.thickness = borderThickness;
 
 	if (borderThickness > 0 && borderFillType <= patterns.size())
-		Graphics::drawRoundRect(r, arc / 2, kColorBlack, false, drawPixel, &pd);
+		Graphics::drawRoundRect1(r, arc / 2, kColorBlack, false, drawPixel, &pd);
 }
 
 void Design::drawPolygon(Graphics::ManagedSurface *surface, Common::ReadStream &in,
@@ -526,7 +526,7 @@ void Design::drawFilledRect(Graphics::ManagedSurface *surface, Common::Rect &rec
 void Design::drawFilledRoundRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int arc, int color, Graphics::MacPatterns &patterns, byte fillType) {
 	PlotData pd(surface, &patterns, fillType, 1, nullptr);
 
-	Graphics::drawRoundRect(rect, arc, color, true, drawPixel, &pd);
+	Graphics::drawRoundRect1(rect, arc, color, true, drawPixel, &pd);
 }
 
 void Design::drawHLine(Graphics::ManagedSurface *surface, int x1, int x2, int y, int thickness, int color, Graphics::MacPatterns &patterns, byte fillType) {
