@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-10 14:51+0000\n"
-"PO-Revision-Date: 2022-07-08 16:50+0000\n"
+"PO-Revision-Date: 2022-07-13 16:21+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -218,10 +218,8 @@ msgid "Downloading icons list..."
 msgstr "Λήψη λίστας εικονιδίων..."
 
 #: gui/downloadiconsdialog.cpp:190
-#, fuzzy
-#| msgid "Clear value"
 msgid "Clear Cache"
-msgstr "Σβήσιμο τιμής"
+msgstr "Σβήσιμο Αποθηκευμένων"
 
 #: gui/downloadiconsdialog.cpp:241
 #, c-format
@@ -264,6 +262,8 @@ msgid ""
 "You are about to remove %s %s of data, deleting all previously downloaded "
 "icon files. Do you want to proceed?"
 msgstr ""
+"Πρόκειται να σβήσετε %s %s από δεδομένα, διαγράφοντας όλα τα εικονίδια που "
+"έχετε ήδη κατεβάσει. Θέλετε να συνεχίσετε;"
 
 #: gui/downloadiconsdialog.cpp:452 gui/updates-dialog.cpp:115
 msgid "Proceed"
