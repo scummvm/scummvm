@@ -23,6 +23,8 @@
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
 #include "hpl1/engine/resources/MeshLoaderHandler.h"
 #include "hpl1/engine/resources/VideoManager.h"
+#include "hpl1/engine/impl/MeshLoaderCollada.h"
+#include "hpl1/engine/impl/MeshLoaderMSH.h"
 #include "common/fs.h"
 #include "hpl1/debug.h"
 #include "common/file.h"
@@ -49,10 +51,8 @@ void LowLevelResources::getSupportedImageFormats(tStringList &formats) {
 }
 
 void LowLevelResources::addMeshLoaders(cMeshLoaderHandler *ml) {
-#if 0
-	ml->AddLoader(hplNew(cMeshLoaderMSH, (mpLowLevelGraphics)));
-	ml->AddLoader(hplNew(cMeshLoaderCollada, (mpLowLevelGraphics)));
-#endif
+	ml->AddLoader(hplNew(cMeshLoaderMSH, (_lowLevelGraphics)));
+	ml->AddLoader(hplNew(cMeshLoaderCollada, (_lowLevelGraphics)));
 }
 
 void LowLevelResources::addVideoLoaders(cVideoManager *vm) {
