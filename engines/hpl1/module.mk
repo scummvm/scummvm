@@ -123,8 +123,8 @@ MODULE_OBJS := \
 	engine/impl/VertexBufferOGL.o \
 	engine/impl/VertexBufferVBO.o \
 	engine/impl/VideoStreamTheora.o \
-	engine/impl/scriptstring.o \
-	engine/impl/stdstring.o \
+	engine/libraries/angelscript/add-ons/scriptstdstring.o \
+	engine/libraries/angelscript/add-ons/scripthelper.o \
 	engine/impl/tinyXML/tinyxml.o \
 	engine/impl/tinyXML/tinyxmlerror.o \
 	engine/impl/tinyXML/tinyxmlparser.o \
