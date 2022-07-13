@@ -32,34 +32,33 @@
 namespace hpl {
 
 LowLevelGameSetup::LowLevelGameSetup() {
-	_lowLevelSystem = hplNew( LowLevelSystem, () );
-	_lowLevelGraphics = hplNew( cLowLevelGraphicsSDL,() );
-	_lowLevelInput = hplNew( cLowLevelInputSDL,(_lowLevelGraphics) );
-	_lowLevelResources = hplNew( LowLevelResources,(_lowLevelGraphics) );
-	_lowLevelSound	= hplNew( cLowLevelSoundOpenAL,() );
-	//_lowLevelPhysics = hplNew( cLowLevelPhysicsNewton,() );
+	_lowLevelSystem = hplNew(LowLevelSystem, ());
+	_lowLevelGraphics = hplNew(cLowLevelGraphicsSDL, ());
+	_lowLevelInput = hplNew(cLowLevelInputSDL, (_lowLevelGraphics));
+	_lowLevelResources = hplNew(LowLevelResources, (_lowLevelGraphics));
+	_lowLevelSound = hplNew(cLowLevelSoundOpenAL, ());
+	_lowLevelPhysics = hplNew(cLowLevelPhysicsNewton, ());
 	_lowLevelHaptic = nullptr;
 }
 
 LowLevelGameSetup::~LowLevelGameSetup() {
-#if 0
-  		Log("- Deleting lowlevel stuff.\n");
+	Log("Deleting lowlevel stuff.\n");
 
-		Log("  Physics\n");
-		hplDelete(mpLowLevelPhysics);
-		Log("  Sound\n");
-		hplDelete(mpLowLevelSound);
-		Log("  Input\n");
-		hplDelete(mpLowLevelInput);
-		Log("  Resources\n");
-		hplDelete(mpLowLevelResources);
-		Log("  System\n");
-		hplDelete(mpLowLevelSystem);
-		Log("  Graphics\n");
-		hplDelete(mpLowLevelGraphics);
-		Log("  Haptic\n");
-		if(mpLowLevelHaptic) hplDelete(mpLowLevelHaptic);
-#endif
+	Log("Physics\n");
+	hplDelete(_lowLevelSystem);
+	Log("Sound\n");
+	hplDelete(_lowLevelSound);
+	Log("Input\n");
+	hplDelete(_lowLevelInput);
+	Log("Resources\n");
+	hplDelete(_lowLevelResources);
+	Log("System\n");
+	hplDelete(_lowLevelSystem);
+	Log("Graphics\n");
+	hplDelete(_lowLevelGraphics);
+	Log("Haptic\n");
+	if (_lowLevelHaptic)
+		hplDelete(_lowLevelHaptic);
 }
 
 cScene *LowLevelGameSetup::createScene(cGraphics *graphics, cResources *resources, cSound *sound,
@@ -70,7 +69,6 @@ cScene *LowLevelGameSetup::createScene(cGraphics *graphics, cResources *resource
 cResources *LowLevelGameSetup::createResources(cGraphics *graphics) {
 	return hplNew(cResources, (_lowLevelResources, _lowLevelGraphics));
 }
-
 
 cInput *LowLevelGameSetup::createInput(cGraphics *graphics) {
 	return hplNew(cInput, (_lowLevelInput));
