@@ -550,7 +550,8 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:653
 msgid "This game ID is already taken. Please choose another one."
-msgstr "Cet ID est déjà utilisé par un autre jeu. Veuillez en choisir un autre."
+msgstr ""
+"Cet ID est déjà utilisé par un autre jeu. Veuillez en choisir un autre."
 
 #: gui/editrecorddialog.cpp:57
 msgid "Author:"
@@ -7610,7 +7611,8 @@ msgstr "La prise en charge de HE V71+ n'a pas été activée dans cette version"
 
 #: engines/scumm/metaengine.cpp:455
 msgid "SCUMM v7-8 support is not compiled in"
-msgstr "La prise en charge de SCUMM V7-8 n'a pas été activée dans cette version"
+msgstr ""
+"La prise en charge de SCUMM V7-8 n'a pas été activée dans cette version"
 
 #: engines/scumm/scumm.cpp:236
 msgid ""
@@ -8445,7 +8447,8 @@ msgstr "La prise en charge de FoxTail n'a pas été activée dans cette version"
 
 #: engines/wintermute/metaengine.cpp:70
 msgid "Hero Craft support is not compiled in"
-msgstr "La prise en charge de Hero Craft n'a pas été activée dans cette version"
+msgstr ""
+"La prise en charge de Hero Craft n'a pas été activée dans cette version"
 
 #: engines/wintermute/metaengine.cpp:76
 msgid "Wintermute3D support is not compiled in"
