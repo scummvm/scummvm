@@ -39,7 +39,9 @@
 
 #include "hpl1/engine/impl/PhysicsControllerNewton.h"
 
+#include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/math/Vector3.h"
+#include "hpl1/engine/physics/CollideShape.h"
 #include "hpl1/engine/scene/PortalContainer.h"
 #include "hpl1/engine/scene/World3D.h"
 
@@ -445,9 +447,17 @@ void cPhysicsWorldNewton::CastRay(iPhysicsRayCallback *apCallback,
 
 //-----------------------------------------------------------------------
 
+static void correctNormal(cVector3f& normal, const cVector3f& collidePoint, const cVector3f& shapeCenter) {
+	cVector3f vCenterToCollidePoint = collidePoint - shapeCenter;
+	//A check if the normal points in the wrong direction.
+	if(cMath::Vector3Dot(vCenterToCollidePoint, normal)>0)
+		normal = normal * -1;
+}
+
 bool cPhysicsWorldNewton::CheckShapeCollision(iCollideShape *apShapeA, const cMatrixf &a_mtxA,
 											  iCollideShape *apShapeB, const cMatrixf &a_mtxB,
-											  cCollideData &aCollideData, int alMaxPoints) {
+											  cCollideData &aCollideData, int alMaxPoints, 
+											  bool correctNormalDirection) {
 	cCollideShapeNewton *pNewtonShapeA = static_cast<cCollideShapeNewton *>(apShapeA);
 	cCollideShapeNewton *pNewtonShapeB = static_cast<cCollideShapeNewton *>(apShapeB);
 
@@ -499,6 +509,9 @@ bool cPhysicsWorldNewton::CheckShapeCollision(iCollideShape *apShapeA, const cMa
 					CollPoint.mvPoint.x = mpTempPoints[lVertex + 0];
 					CollPoint.mvPoint.y = mpTempPoints[lVertex + 1];
 					CollPoint.mvPoint.z = mpTempPoints[lVertex + 2];
+
+					if (correctNormalDirection && apShapeA->GetType() != eCollideShapeType_Mesh)
+						correctNormal(CollPoint.mvNormal, CollPoint.mvPoint,a_mtxA.GetTranslation());
 				}
 
 				lCollideDataStart += lNum;
@@ -539,6 +552,9 @@ bool cPhysicsWorldNewton::CheckShapeCollision(iCollideShape *apShapeA, const cMa
 			CollPoint.mvPoint.x = mpTempPoints[lVertex + 0];
 			CollPoint.mvPoint.y = mpTempPoints[lVertex + 1];
 			CollPoint.mvPoint.z = mpTempPoints[lVertex + 2];
+
+			if (correctNormalDirection && apShapeA->GetType() != eCollideShapeType_Mesh)
+				correctNormal(CollPoint.mvNormal, CollPoint.mvPoint,a_mtxA.GetTranslation());
 		}
 
 		aCollideData.mlNumOfPoints = lNum;

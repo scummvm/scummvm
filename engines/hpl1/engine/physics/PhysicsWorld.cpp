@@ -374,7 +374,7 @@ bool iPhysicsWorld::CheckShapeWorldCollision(cVector3f *apNewPos,
 
 		collideData.SetMaxSize(32);
 		bool bRet = CheckShapeCollision(apShape, a_mtxTransform, pBody->GetShape(), pBody->GetLocalMatrix(),
-										collideData, 32);
+										collideData, 32, true);
 
 		if (bRet) {
 			// if(abDebug) Log(" Collided with '%s'\n",pBody->GetName().c_str());
