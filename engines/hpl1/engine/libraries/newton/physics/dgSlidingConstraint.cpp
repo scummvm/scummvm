@@ -134,7 +134,7 @@ dgUnsigned32 dgSlidingConstraint::JacobianDerivative(
 	dgMatrix matrix0;
 	dgMatrix matrix1;
 
-	//  dgVector angle(CalculateGlobalMatrixAndAngle(matrix0, matrix1));
+	CalculateGlobalMatrixAndAngle(matrix0, matrix1);
 	m_posit = (matrix0.m_posit - matrix1.m_posit) % matrix0.m_front;
 	matrix1.m_posit += matrix1.m_front.Scale(m_posit);
 
