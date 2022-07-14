@@ -255,7 +255,7 @@ void drawRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, voi
 	drawHLine(rect.left, rect.right - 1, rect.top, color, plotProc, data);
 	drawHLine(rect.left, rect.right - 1, rect.bottom - 1, color, plotProc, data);
 	drawVLine(rect.left, rect.top, rect.bottom - 1, color, plotProc, data);
-	drawVLine(rect.right, rect.top, rect.bottom - 1, color, plotProc, data);
+	drawVLine(rect.right - 1, rect.top, rect.bottom - 1, color, plotProc, data);
 }
 
 /**
