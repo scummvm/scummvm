@@ -31,17 +31,17 @@ PlugInModifierLoaderContext::PlugInModifierLoaderContext(ModifierLoaderContext &
 }
 
 template<typename TModifier, typename TModifierData>
-class ModifierFactory : public IModifierFactory {
+class ModifierFactory {
 public:
-	Common::SharedPtr<Modifier> createModifier(ModifierLoaderContext &context, const Data::DataObject &dataObject) const override;
-	static IModifierFactory *getInstance();
+	static Common::SharedPtr<Modifier> createModifier(ModifierLoaderContext &context, const Data::DataObject &dataObject);
+	static SIModifierFactory *getInstance();
 
 private:
-	static ModifierFactory<TModifier, TModifierData> _instance;
+	static SIModifierFactory _instance;
 };
 
 template<typename TModifier, typename TModifierData>
-Common::SharedPtr<Modifier> ModifierFactory<TModifier, TModifierData>::createModifier(ModifierLoaderContext &context, const Data::DataObject &dataObject) const {
+Common::SharedPtr<Modifier> ModifierFactory<TModifier, TModifierData>::createModifier(ModifierLoaderContext &context, const Data::DataObject &dataObject) {
 	Common::SharedPtr<TModifier> modifier(new TModifier());
 
 	if (!modifier->load(context, static_cast<const TModifierData &>(dataObject)))
@@ -57,15 +57,17 @@ Common::SharedPtr<Modifier> ModifierFactory<TModifier, TModifierData>::createMod
 }
 
 template<typename TModifier, typename TModifierData>
-IModifierFactory *ModifierFactory<TModifier, TModifierData>::getInstance() {
+SIModifierFactory *ModifierFactory<TModifier, TModifierData>::getInstance() {
 	return &_instance;
 }
 
 template<typename TModifier, typename TModifierData>
-ModifierFactory<TModifier, TModifierData> ModifierFactory<TModifier, TModifierData>::_instance;
+SIModifierFactory ModifierFactory<TModifier, TModifierData>::_instance = {
+	ModifierFactory<TModifier, TModifierData>::createModifier
+};
 
 
-IModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectTypes::DataObjectType dataObjectType) {
+SIModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectTypes::DataObjectType dataObjectType) {
 	switch (dataObjectType) {
 	case Data::DataObjectTypes::kBehaviorModifier:
 		return ModifierFactory<BehaviorModifier, Data::BehaviorModifier>::getInstance();

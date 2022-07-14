@@ -34,11 +34,11 @@ struct AssetLoaderContext {
 	size_t streamIndex;
 };
 
-struct IAssetFactory : public IInterfaceBase {
-	virtual Common::SharedPtr<Asset> createAsset(AssetLoaderContext &context, const Data::DataObject &dataObject) const = 0;
+struct SIAssetFactory {
+	Common::SharedPtr<Asset> (*createAsset)(AssetLoaderContext &context, const Data::DataObject &dataObject);
 };
 
-IAssetFactory *getAssetFactoryForDataObjectType(Data::DataObjectTypes::DataObjectType dataObjectType);
+SIAssetFactory *getAssetFactoryForDataObjectType(Data::DataObjectTypes::DataObjectType dataObjectType);
 
 } // End of namespace MTropolis
 

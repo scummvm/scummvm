@@ -6338,7 +6338,7 @@ Common::SharedPtr<Modifier> Project::loadModifierObject(ModifierLoaderContext &l
 
 		modifier = factory->createModifier(loaderContext, plugInData);
 	} else {
-		IModifierFactory *factory = getModifierFactoryForDataObjectType(dataObject.getType());
+		SIModifierFactory *factory = getModifierFactoryForDataObjectType(dataObject.getType());
 
 		if (!factory)
 			error("Unknown or unsupported modifier type, or non-modifier encountered where a modifier was expected");
@@ -6630,7 +6630,7 @@ void Project::loadContextualObject(size_t streamIndex, ChildLoaderStack &stack, 
 void Project::loadAssetDef(size_t streamIndex, AssetDefLoaderContext& context, const Data::DataObject& dataObject) {
 	assert(Data::DataObjectTypes::isAsset(dataObject.getType()));
 
-	IAssetFactory *factory = getAssetFactoryForDataObjectType(dataObject.getType());
+	SIAssetFactory *factory = getAssetFactoryForDataObjectType(dataObject.getType());
 	if (!factory) {
 		error("Unimplemented asset type");
 		return;

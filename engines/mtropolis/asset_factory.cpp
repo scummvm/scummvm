@@ -28,17 +28,17 @@ AssetLoaderContext::AssetLoaderContext(size_t pStreamIndex) : streamIndex(pStrea
 }
 
 template<typename TAsset, typename TAssetData>
-class AssetFactory : public IAssetFactory {
+class AssetFactory {
 public:
-	Common::SharedPtr<Asset> createAsset(AssetLoaderContext &context, const Data::DataObject &dataObject) const override;
-	static IAssetFactory *getInstance();
+	static Common::SharedPtr<Asset> createAsset(AssetLoaderContext &context, const Data::DataObject &dataObject);
+	static SIAssetFactory *getInstance();
 
 private:
-	static AssetFactory<TAsset, TAssetData> _instance;
+	static SIAssetFactory _instance;
 };
 
 template<typename TAsset, typename TAssetData>
-Common::SharedPtr<Asset> AssetFactory<TAsset, TAssetData>::createAsset(AssetLoaderContext &context, const Data::DataObject &dataObject) const {
+Common::SharedPtr<Asset> AssetFactory<TAsset, TAssetData>::createAsset(AssetLoaderContext &context, const Data::DataObject &dataObject) {
 	Common::SharedPtr<TAsset> asset(new TAsset());
 
 	if (!asset->load(context, static_cast<const TAssetData &>(dataObject)))
@@ -48,14 +48,16 @@ Common::SharedPtr<Asset> AssetFactory<TAsset, TAssetData>::createAsset(AssetLoad
 }
 
 template<typename TAsset, typename TAssetData>
-IAssetFactory *AssetFactory<TAsset, TAssetData>::getInstance() {
+SIAssetFactory *AssetFactory<TAsset, TAssetData>::getInstance() {
 	return &_instance;
 }
 
 template<typename TAsset, typename TAssetData>
-AssetFactory<TAsset, TAssetData> AssetFactory<TAsset, TAssetData>::_instance;
+SIAssetFactory AssetFactory<TAsset, TAssetData>::_instance = {
+	AssetFactory<TAsset, TAssetData>::createAsset
+};
 
-IAssetFactory *getAssetFactoryForDataObjectType(const Data::DataObjectTypes::DataObjectType dataObjectType) {
+SIAssetFactory *getAssetFactoryForDataObjectType(const Data::DataObjectTypes::DataObjectType dataObjectType) {
 	switch (dataObjectType) {
 	case Data::DataObjectTypes::kColorTableAsset:
 		return AssetFactory<ColorTableAsset, Data::ColorTableAsset>::getInstance();

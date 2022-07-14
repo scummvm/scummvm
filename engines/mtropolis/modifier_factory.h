@@ -33,8 +33,8 @@ struct ModifierLoaderContext {
 	ChildLoaderStack *childLoaderStack;
 };
 
-struct IModifierFactory : public IInterfaceBase {
-	virtual Common::SharedPtr<Modifier> createModifier(ModifierLoaderContext &context, const Data::DataObject &dataObject) const = 0;
+struct SIModifierFactory {
+	Common::SharedPtr<Modifier> (*createModifier)(ModifierLoaderContext &context, const Data::DataObject &dataObject);
 };
 
 struct IPlugInModifierFactory : public IInterfaceBase {
@@ -98,7 +98,7 @@ PlugIn& PlugInModifierFactory<TModifier, TModifierData>::getPlugIn() const {
 	return _plugIn;
 }
 
-IModifierFactory *getModifierFactoryForDataObjectType(Data::DataObjectTypes::DataObjectType dataObjectType);
+SIModifierFactory *getModifierFactoryForDataObjectType(Data::DataObjectTypes::DataObjectType dataObjectType);
 
 } // End of namespace MTropolis
 

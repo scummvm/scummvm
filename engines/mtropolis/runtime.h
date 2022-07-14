@@ -95,7 +95,6 @@ struct ICollider;
 struct ILoadUIProvider;
 struct IMessageConsumer;
 struct IModifierContainer;
-struct IModifierFactory;
 struct IPlugInModifierFactory;
 struct IPlugInModifierFactoryAndDataFactory;
 struct ISaveUIProvider;
@@ -103,6 +102,7 @@ struct IStructuralReferenceVisitor;
 struct MessageProperties;
 struct ModifierLoaderContext;
 struct PlugInModifierLoaderContext;
+struct SIModifierFactory;
 template<typename TElement, typename TElementData> class ElementFactory;
 
 enum MiniscriptInstructionOutcome {
