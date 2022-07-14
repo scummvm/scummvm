@@ -59,7 +59,6 @@ FILETIME fileTime;
 
 int numGlobals = 0;
 
-extern Variable *launchResult;
 extern Variable *globalVars;
 extern VariableStack *noStack;
 
@@ -137,7 +136,6 @@ void initSludge() {
 
 	// global variables
 	numGlobals = 0;
-	launchResult = nullptr;
 
 	allowAnyFilename = true;
 	noStack = nullptr;

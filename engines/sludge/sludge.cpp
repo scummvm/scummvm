@@ -64,7 +64,6 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 	_pixelFormat = new Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 
 	// Init Strings
-	launchMe = "";
 	launchNext = "";
 	loadNow = "";
 	gamePath = "";
