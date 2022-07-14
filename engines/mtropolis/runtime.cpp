@@ -259,6 +259,61 @@ size_t caseInsensitiveFind(const Common::String &strToSearch, const Common::Stri
 	return Common::String::npos;
 }
 
+bool SceneTransitionTypes::loadFromData(SceneTransitionType &transType, uint16 data) {
+	switch (data) {
+	case Data::SceneTransitionTypes::kNone:
+		transType = kNone;
+		break;
+	case Data::SceneTransitionTypes::kPatternDissolve:
+		transType = kPatternDissolve;
+		break;
+	case Data::SceneTransitionTypes::kRandomDissolve:
+		transType = kRandomDissolve;
+		break;
+	case Data::SceneTransitionTypes::kFade:
+		transType = kFade;
+		break;
+	case Data::SceneTransitionTypes::kSlide:
+		transType = kSlide;
+		break;
+	case Data::SceneTransitionTypes::kPush:
+		transType = kPush;
+		break;
+	case Data::SceneTransitionTypes::kZoom:
+		transType = kZoom;
+		break;
+	case Data::SceneTransitionTypes::kWipe:
+		transType = kWipe;
+		break;
+	default:
+		return false;
+	}
+
+	return true;
+}
+
+
+bool SceneTransitionDirections::loadFromData(SceneTransitionDirection &transDir, uint16 data) {
+	switch (data) {
+	case Data::SceneTransitionDirections::kUp:
+		transDir = kUp;
+		break;
+	case Data::SceneTransitionDirections::kDown:
+		transDir = kDown;
+		break;
+	case Data::SceneTransitionDirections::kLeft:
+		transDir = kLeft;
+		break;
+	case Data::SceneTransitionDirections::kRight:
+		transDir = kRight;
+		break;
+	default:
+		return false;
+	}
+
+	return true;
+}
+
 bool EventIDs::isCommand(EventID eventID) {
 	switch (eventID) {
 	case kElementShow:
@@ -4199,7 +4254,7 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 
 	// Scene transitions have to be set up by the destination scene
 	_sceneTransitionState = kSceneTransitionStateWaitingForDraw;
-	_sceneTransitionEffect.transitionType = kTransitionTypeNone;
+	_sceneTransitionEffect.transitionType = SceneTransitionTypes::kNone;
 	_sceneTransitionEffect.duration = 0;
 
 	executeSharedScenePostSceneChangeActions();

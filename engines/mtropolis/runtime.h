@@ -134,23 +134,35 @@ enum ColorDepthMode {
 	kColorDepthModeInvalid,
 };
 
-enum TransitionType {
-	kTransitionTypeNone = 0,
-	kTransitionTypePatternDissolve = 0x0406,
-	kTransitionTypeRandomDissolve = 0x0410, // No steps
-	kTransitionTypeFade = 0x041a,
-	kTransitionTypeSlide = 0x03e8, // Directional
-	kTransitionTypePush = 0x03f2,  // Directional
-	kTransitionTypeZoom = 0x03fc,
-	kTransitionTypeWipe = 0x0424, // Directional
+namespace SceneTransitionTypes {
+
+enum SceneTransitionType {
+	kNone,
+	kPatternDissolve,
+	kRandomDissolve, // No steps
+	kFade,
+	kSlide, // Directional
+	kPush,  // Directional
+	kZoom,
+	kWipe, // Directional
 };
 
-enum TransitionDirection {
-	kTransitionDirectionUp = 0x385,
-	kTransitionDirectionDown = 0x385,
-	kTransitionDirectionLeft = 0x386,
-	kTransitionDirectionRight = 0x387,
+bool loadFromData(SceneTransitionType &transType, uint16 data);
+
+} // End of namespace SceneTransitionTypes
+
+namespace SceneTransitionDirections {
+
+enum SceneTransitionDirection {
+	kUp,
+	kDown,
+	kLeft,
+	kRight,
 };
+
+bool loadFromData(SceneTransitionDirection &transDir, uint16 data);
+
+} // End of namespace SceneTransitionDirections
 
 enum ConstraintDirection {
 	kConstraintDirectionNone,
@@ -1277,8 +1289,8 @@ struct HighLevelSceneTransition {
 struct SceneTransitionEffect {
 	uint32 duration; // 6000000 is maximum
 	uint16 steps;
-	TransitionType transitionType;
-	TransitionDirection transitionDirection;
+	SceneTransitionTypes::SceneTransitionType transitionType;
+	SceneTransitionDirections::SceneTransitionDirection transitionDirection;
 };
 
 class MessageDispatch {

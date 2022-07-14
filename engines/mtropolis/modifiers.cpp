@@ -838,8 +838,10 @@ bool SceneTransitionModifier::load(ModifierLoaderContext &context, const Data::S
 
 	_duration = data.duration;
 	_steps = data.steps;
-	_transitionType = static_cast<TransitionType>(data.transitionType);
-	_transitionDirection = static_cast<TransitionDirection>(data.direction);
+	if (!SceneTransitionTypes::loadFromData(_transitionType, data.transitionType))
+		return false;
+	if (!SceneTransitionDirections::loadFromData(_transitionDirection, data.direction))
+		return false;
 
 	return true;
 }
@@ -861,8 +863,34 @@ bool ElementTransitionModifier::load(ModifierLoaderContext &context, const Data:
 
 	_rate = data.rate;
 	_steps = data.steps;
-	_transitionType = static_cast<TransitionType>(data.transitionType);
-	_revealType = static_cast<RevealType>(data.revealType);
+
+	switch (data.transitionType) {
+	case Data::ElementTransitionModifier::kTransitionTypeFade:
+		_transitionType = kTransitionTypeFade;
+		break;
+	case Data::ElementTransitionModifier::kTransitionTypeOvalIris:
+		_transitionType = kTransitionTypeOvalIris;
+		break;
+	case Data::ElementTransitionModifier::kTransitionTypeRectangularIris:
+		_transitionType = kTransitionTypeRectangularIris;
+		break;
+	case Data::ElementTransitionModifier::kTransitionTypeZoom:
+		_transitionType = kTransitionTypeZoom;
+		break;
+	default:
+		return false;
+	}
+
+	switch (data.revealType) {
+	case Data::ElementTransitionModifier::kRevealTypeConceal:
+		_revealType = kRevealTypeConceal;
+		break;
+	case Data::ElementTransitionModifier::kRevealTypeReveal:
+		_revealType = kRevealTypeReveal;
+		break;
+	default:
+		return false;
+	}
 
 	return true;
 }

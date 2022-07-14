@@ -361,8 +361,8 @@ private:
 
 	uint32 _duration;	// 6000000 is maximum
 	uint16 _steps;
-	TransitionType _transitionType;
-	TransitionDirection _transitionDirection;
+	SceneTransitionTypes::SceneTransitionType _transitionType;
+	SceneTransitionDirections::SceneTransitionDirection _transitionDirection;
 };
 
 class ElementTransitionModifier : public Modifier {
@@ -373,15 +373,15 @@ public:
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 	enum TransitionType {
-		kTransitionTypeRectangularIris = 0x03e8,
-		kTransitionTypeOvalIris = 0x03f2,
-		kTransitionTypeZoom = 0x044c,
-		kTransitionTypeFade = 0x2328,
+		kTransitionTypeRectangularIris,
+		kTransitionTypeOvalIris,
+		kTransitionTypeZoom,
+		kTransitionTypeFade,
 	};
 
 	enum RevealType {
-		kRevealTypeReveal = 0,
-		kRevealTypeConceal = 1,
+		kRevealTypeReveal,
+		kRevealTypeConceal,
 	};
 
 #ifdef MTROPOLIS_DEBUG_ENABLE

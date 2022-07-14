@@ -529,23 +529,53 @@ protected:
 };
 
 namespace ElementFlags {
-	enum ElementFlags {
-		kNotDirectToScreen	= 0x00001000,
-		kHidden				= 0x00008000,
-		kPaused				= 0x00010000,
-		kExpandedInEditor	= 0x00800000,
-		kCacheBitmap		= 0x02000000,
-		kSelectedInEditor	= 0x10000000,
-	};
+
+enum ElementFlags {
+	kNotDirectToScreen	= 0x00001000,
+	kHidden				= 0x00008000,
+	kPaused				= 0x00010000,
+	kExpandedInEditor	= 0x00800000,
+	kCacheBitmap		= 0x02000000,
+	kSelectedInEditor	= 0x10000000,
+};
+
 } // End of namespace ElementFlags
 
 namespace AnimationFlags {
-	enum AnimationFlags {
-		kAlternate			= 0x10000000,
-		kLoop				= 0x08000000,
-		kPlayEveryFrame		= 0x02000000,
-	};
-}
+
+enum AnimationFlags {
+	kAlternate			= 0x10000000,
+	kLoop				= 0x08000000,
+	kPlayEveryFrame		= 0x02000000,
+};
+
+} // End of namespace AnimationFlags
+
+namespace SceneTransitionTypes {
+
+enum SceneTransitionType {
+	kNone = 0,
+	kPatternDissolve = 0x0406,
+	kRandomDissolve = 0x0410, // No steps
+	kFade = 0x041a,
+	kSlide = 0x03e8, // Directional
+	kPush = 0x03f2,  // Directional
+	kZoom = 0x03fc,
+	kWipe = 0x0424, // Directional
+};
+
+} // End of namespace SceneTransitionTypes
+
+namespace SceneTransitionDirections {
+
+enum SceneTransitionDirection {
+	kUp = 0x384,
+	kDown = 0x385,
+	kLeft = 0x386,
+	kRight = 0x387,
+};
+
+} // End of namespace SceneTransitionDirections
 
 struct GraphicElement : public StructuralDef {
 	// Possible element flags: NotDirectToScreen, CacheBitmap, Hidden
@@ -1085,6 +1115,18 @@ protected:
 };
 
 struct ElementTransitionModifier : public DataObject {
+	enum TransitionType {
+		kTransitionTypeRectangularIris = 0x03e8,
+		kTransitionTypeOvalIris = 0x03f2,
+		kTransitionTypeZoom = 0x044c,
+		kTransitionTypeFade = 0x2328,
+	};
+
+	enum RevealType {
+		kRevealTypeReveal = 0,
+		kRevealTypeConceal = 1,
+	};
+
 	TypicalModifierHeader modHeader;
 
 	Event enableWhen;
