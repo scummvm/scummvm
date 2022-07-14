@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    Debug visualizers for director engine types for Visual Studio 2012 and up.
+
+    To use, copy this file into Documents\Visual Studio 20xx\Visualizers.
+-->
+
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="Director::Datum">
+		<DisplayString Condition="type==STRING">{*u.s}</DisplayString>
+		<DisplayString Condition="type==SYMBOL">#{*u.s,sb}</DisplayString>
+		<DisplayString Condition="type==VARREF">var: #{*u.s,sb}</DisplayString>
+		<DisplayString Condition="type==GLOBALREF">global: #{*u.s,sb}</DisplayString>
+		<DisplayString Condition="type==LOCALREF">local: #{*u.s,sb}</DisplayString>
+		<DisplayString Condition="type==PROPREF">property: #{*u.s,sb}</DisplayString>
+		<DisplayString Condition="type==INT">{u.i}</DisplayString>
+		<DisplayString Condition="type==ARGC">argc: {u.i}</DisplayString>
+		<DisplayString Condition="type==ARGCNORET">argcnoret: {u.i}</DisplayString>
+		<DisplayString Condition="type==FLOAT">{u.f}</DisplayString>
+		<DisplayString Condition="type==OBJECT">&lt;Object:{u.obj,x}&gt;</DisplayString>
+		<DisplayString Condition="type==VOID &amp;&amp; g_director-&gt;_version &lt; 400">NoValue</DisplayString>
+		<DisplayString Condition="type==VOID">Void</DisplayString>
+		<DisplayString Condition="type==CASTREF">member {u.cast-&gt;member} of castlib{u.cast-&gt;castLib}</DisplayString>
+		<DisplayString Condition="type==FIELDREF">field {u.cast-&gt;member} of castlib{u.cast-&gt;castLib}</DisplayString>
+		<DisplayString Condition="type==MENUREF">menu({u.menu-&gt;menuIdNum},{u.menu-&gt;menuItemIdNum}</DisplayString>
+		<Expand>
+			<Item Name="Refcount">*refCount</Item>
+			<Item Name="Ignore Global">ignoreGlobal</Item>
+			<ExpandedItem Condition="type==ARRAY || type==POINT || type==RECT">*u.farr</ExpandedItem>
+			<ExpandedItem Condition="type==PARRAY">*u.parr</ExpandedItem>
+			<ExpandedItem Condition="type==CASTREF || type==FIELDREF">*u.cast</ExpandedItem>
+			<ExpandedItem Condition="type==MENUREF">*u.menu</ExpandedItem>
+		</Expand>
+	</Type>
+	
+	<Type Name="Director::FArray">
+		<Expand>
+			<ExpandedItem>arr</ExpandedItem>
+		</Expand>
+	</Type>
+	<Type Name="Director::PArray">
+		<Expand>
+			<ExpandedItem>arr</ExpandedItem>
+		</Expand>
+	</Type>
+  
+	<Type Name="Director::Symbol">
+		<Expand>
+			<Item Name="Name">*name</Item>
+			<Item Name="Type">type</Item>
+			<Item Name="Value" Condition="type==STRING">*s</Item>
+			<Item Name="Definition" Condition="type==HANDLER">*defn</Item>
+		</Expand>
+	</Type>
+
+	<Type Name="Director::SoundID">
+		<Expand>
+			<Item Name="member" Condition="type==kSoundCast">u.cast.member</Item>
+			<Item Name="castLib" Condition="type==kSoundCast">u.cast.castLib</Item>
+			<Item Name="menu" Condition="type==kSoundExternal">u.external.menu</Item>
+			<Item Name="submenu" Condition="type==kSoundExternal">u.external.submenu</Item>
+		</Expand>
+	</Type>
+</AutoVisualizer>
