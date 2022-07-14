@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    Debug visualizers for sludge engine types for Visual Studio 2012 and up.
+
+    To use, copy this file into Documents\Visual Studio 20xx\Visualizers.
+-->
+
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	
+	<!-- Variables -->
+	
+	<Type Name="Sludge::Variable">
+		<DisplayString Condition="varType==SVT_INT">{varData.intValue}</DisplayString>
+		<DisplayString Condition="varType==SVT_FILE">File: {varData.intValue}</DisplayString>
+		<DisplayString Condition="varType==SVT_FUNC">Func: {Sludge::allUserFunc[varData.intValue]} (varData.intValue)</DisplayString>
+		<DisplayString Condition="varType==SVT_FUNC">Func: Unknown user function (varData.intValue)</DisplayString>
+		<DisplayString Condition="varType==SVT_BUILT">Builtin: {Sludge::builtInFunctionArray[varData.intValue].name,sb} ({varData.intValue})</DisplayString>
+		<DisplayString Condition="varType==SVT_STRING">{varData.theString}</DisplayString>
+
+		<Expand>
+			<ExpandedItem Condition="varType==SVT_FASTARRAY">*varData.fastArray</ExpandedItem>
+			<ExpandedItem Condition="varType==SVT_STACK">*varData.theStack</ExpandedItem>
+			<ExpandedItem Condition="varType==SVT_COSTUME">*varData.costumeHandler</ExpandedItem>
+			<ExpandedItem Condition="varType==SVT_ANIM">*varData.animHandler</ExpandedItem>
+			<ExpandedItem Condition="varType==SVT_BUILT">Sludge::builtInFunctionArray[varData.intValue]</ExpandedItem>
+		</Expand>
+	</Type>
+
+	<Type Name="Sludge::VariableStack">
+		<Expand>
+			<LinkedListItems>
+				<HeadPointer>this</HeadPointer>
+				<NextPointer>next</NextPointer>
+				<ValueNode>thisVar</ValueNode>
+			</LinkedListItems>
+		</Expand>
+	</Type>
+
+	<Type Name="Sludge::FastArrayHandler">
+		<Expand>
+			<ArrayItems>
+				<Size>size</Size>
+				<ValuePointer>fastVariables</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+	
+	<Type Name="Sludge::StackHandler">
+		<Expand>
+			<LinkedListItems>
+				<HeadPointer>first</HeadPointer>
+				<NextPointer>next</NextPointer>
+				<ValueNode>thisVar</ValueNode>
+			</LinkedListItems>
+		</Expand>
+	</Type>
+
+	<!-- Objects -->
+
+	<Type Name="Sludge::ObjectType">
+		<DisplayString>{screenName}</DisplayString>
+		<Expand>
+			<Item Name="objectNum">objectNum</Item>
+			<Item Name="speechGap">speechGap</Item>
+			<Item Name="walkSpeed">walkSpeed</Item>
+			<Item Name="wrapSpeech">wrapSpeech</Item>
+			<Item Name="spinSpeed">spinSpeed</Item>
+			<Item Name="Color">{r}, {g}, {b}</Item>
+			<Synthetic Name="Combinations">
+				<Expand>
+					<ArrayItems>
+						<Size>numCom</Size>
+						<ValuePointer>allCombis</ValuePointer>
+					</ArrayItems>
+				</Expand>
+			</Synthetic>
+		</Expand>
+	</Type>
+
+	<!-- Animations -->
+
+	<Type Name="Sludge::PersonaAnimation">
+		<Expand>
+			<Item Name="theSprites">theSprites</Item>
+			<Synthetic Name="frames">
+				<Expand>
+					<ArrayItems>
+						<Size>numFrames</Size>
+						<ValuePointer>frames</ValuePointer>
+					</ArrayItems>
+				</Expand>
+			</Synthetic>
+		</Expand>
+	</Type>
+	
+	<Type Name="Sludge::Persona">
+		<Expand>
+			<ArrayItems>
+				<Size>numDirections * 3</Size>
+				<ValuePointer>animation</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+
+	<Type Name="Sludge::SpriteBank">
+		<Expand>
+			<Item Name="myPalette">myPalette</Item>
+			<Item Name="isFont">isFont</Item>
+			<Synthetic Name="sprites">
+				<Expand>
+					<ArrayItems>
+						<Size>total</Size>
+						<ValuePointer>sprites</ValuePointer>
+					</ArrayItems>
+				</Expand>
+			</Synthetic>
+		</Expand>
+	</Type>
+
+	<!-- Sound -->
+
+	<Type Name="Sludge::SoundManager">
+		<Expand>
+			<Synthetic Name="_soundCache">
+				<Expand>
+					<ArrayItems>
+						<Size>SoundManager::MAX_SAMPLES</Size>
+						<ValuePointer>_soundCache</ValuePointer>
+					</ArrayItems>
+				</Expand>
+			</Synthetic>
+			<Synthetic Name="_modCache">
+				<Expand>
+					<ArrayItems>
+						<Size>SoundManager::MAX_MODS</Size>
+						<ValuePointer>_modCache</ValuePointer>
+					</ArrayItems>
+				</Expand>
+			</Synthetic>
+			<Item Name="_soundListHandles">_soundListHandles</Item>
+			<Item Name="_soundOK">_soundOK</Item>
+			<Item Name="_silenceIKillYou">_silenceIKillYou</Item>
+			<Item Name="_isHandlingSoundList">_isHandlingSoundList</Item>
+			<Item Name="_defVol">_defVol</Item>
+			<Item Name="_defSoundVol">_defSoundVol</Item>
+			<Item Name="_modLoudness">_modLoudness</Item>
+			<Item Name="_emptySoundSlot">_emptySoundSlot</Item>
+		</Expand>
+	</Type>
+
+	<!-- Status bar -->
+
+	<Type Name="Sludge::StatusStuff">
+		<Expand>
+			<Synthetic Name="Statusbars">
+				<Expand>
+					<LinkedListItems>
+						<HeadPointer>firstStatusBar</HeadPointer>
+						<NextPointer>next</NextPointer>
+						<ValueNode>text</ValueNode>
+					</LinkedListItems>
+				</Expand>
+			</Synthetic>
+		</Expand>
+	</Type>
+
+	<!-- Language -->
+
+	<Type Name="Sludge::LanguageManager">
+		<Expand>
+			<Item Name="_languageID">_languageID</Item>
+			<Item Name="_languageIdx">_languageIdx</Item>
+			<Item Name="_languageID">_languageID</Item>
+			<Synthetic Name="_languageTable">
+				<Expand>
+					<ArrayItems>
+						<Size>_numLanguages + 1</Size>
+						<ValuePointer>_languageTable</ValuePointer>
+					</ArrayItems>
+				</Expand>
+			</Synthetic>
+			<Synthetic Name="_languageNames">
+				<Expand>
+					<ArrayItems>
+						<Size>_numLanguages + 1</Size>
+						<ValuePointer>_languageNames</ValuePointer>
+					</ArrayItems>
+				</Expand>
+			</Synthetic>
+		</Expand>
+	</Type>
+</AutoVisualizer>
