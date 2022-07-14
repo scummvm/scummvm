@@ -6259,6 +6259,7 @@ case $_host_os in
 		else
 			# toolchain asks for gc-sections
 			append_var LDFLAGS "-Wl,--no-gc-sections"
+			append_var PLUGIN_LDFLAGS "-Wl,--no-gc-sections"
 			append_var CXXFLAGS "-mlong-calls"
 		fi
 		;;
