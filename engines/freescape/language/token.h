@@ -11,8 +11,6 @@
 
 #include "common/str.h"
 
-#include "freescape/gamestate.h"
-
 namespace Freescape {
 
 struct Token {
@@ -87,7 +85,6 @@ public:
 		VARNOTEQ
 	};
 
-	int32_t getValue(CGameState &, int32 suggestedValue = 0);
 	Type getType();
 
 	Token() {
