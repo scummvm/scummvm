@@ -157,8 +157,8 @@ void Gui::draw() {
 
 		_scene = _engine->_world->_player->_currentScene;
 
-		_sceneWindow->setDimensions(*_scene->_designBounds);
 		_sceneWindow->setTitle(_scene->_name);
+		_sceneWindow->setDimensions(*_scene->_designBounds);
 		_consoleWindow->setDimensions(*_scene->_textBounds);
 
 		_wm->setFullRefresh(true);
