@@ -274,7 +274,6 @@ Common::Error FreescapeEngine::run() {
 	_gfx->init();
 	_gfx->clear();
 	loadAssets();
-	gotoArea(_startArea, _startEntrance);
 	debug("FreescapeEngine::init");
 	// Simple main event loop
 	_lastMousePos = Common::Point(0, 0);
@@ -287,6 +286,7 @@ Common::Error FreescapeEngine::run() {
 		_gfx->_keyColor = 0;
 		// the 16-bit kit permits the range 0-8192 to be used along all three axes and from that comes the far plane distance of 14189.
 		_farClipPlane = 14189.f;
+		_startArea = 1;
 	} else {
 		_farClipPlane = 8192.f;
 		if (!_targetName.hasPrefix("driller"))
@@ -304,6 +304,7 @@ Common::Error FreescapeEngine::run() {
 		_border->fillRect(viewArea, 0xA0A0A0FF);
 	}
 
+	gotoArea(_startArea, _startEntrance);
 	debug("Starting area %d", _currentArea->getAreaID());
 	while (!shouldQuit()) {
 		drawFrame();
