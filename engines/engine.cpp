@@ -567,7 +567,7 @@ void Engine::handleAutoSave() {
 bool Engine::warnBeforeOverwritingAutosave() {
 	SaveStateDescriptor desc = getMetaEngine()->querySaveMetaInfos(
 		_targetName.c_str(), getAutosaveSlot());
-	if (!desc.isValid() || desc.hasAutosaveName())
+	if (!desc.isValid() || desc.isAutosave())
 		return true;
 	Common::U32StringArray altButtons;
 	altButtons.push_back(_("Overwrite"));
