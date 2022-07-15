@@ -943,8 +943,9 @@ void CharsetRendererV3::drawChar(int chr, Graphics::Surface &s, int x, int y) {
 }
 
 void CharsetRenderer::translateColor() {
-	// Don't do anything for v1 here.
-	if (_vm->_game.version == 1)
+	// Don't do anything for v1 and v2 CGA and Hercules modes
+	// here (and v0 doesn't have any of these modes).
+	if (_vm->_game.version < 3)
 		return;
 
 	// Based on disassembly

@@ -1025,7 +1025,7 @@ protected:
 	void setPCEPaletteFromPtr(const byte *ptr);
 	void setAmigaPaletteFromPtr(const byte *ptr);
 	virtual void setPaletteFromPtr(const byte *ptr, int numcolor = -1);
-	void updateColorTableV1(int renderMode);
+	void setV1ColorTable(int renderMode);
 
 	virtual void setPalColor(int index, int r, int g, int b);
 	void setDirtyColors(int min, int max);
@@ -1071,7 +1071,7 @@ protected:
 	void mac_undrawIndy3TextBox();
 	void mac_undrawIndy3CreditsText();
 
-	const byte *postProcessV1Graphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const;
+	const byte *postProcessV2Graphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const;
 	void ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const;
 
 public:

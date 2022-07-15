@@ -191,7 +191,19 @@ void ScummEngine::resetPalette() {
 	int cgaPalIndex = 1;
 	int cgaPalIntensity = 1;
 
-	if (_game.version <= 1) {
+	if (_renderMode == Common::kRenderHercA) {
+		setPaletteFromTable(tableHercAPalette, sizeof(tableHercAPalette) / 3);
+	} else if (_renderMode == Common::kRenderHercG) {
+		setPaletteFromTable(tableHercGPalette, sizeof(tableHercGPalette) / 3);
+	} else if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp) {
+		setPaletteFromTable(_cgaColors[cgaPalIndex * 2 + cgaPalIntensity], sizeof(_cgaColors[0]) / 3);
+		// Cursor palette
+		if (_game.version >= 3) {
+			setPalColor( 7, 170, 170, 170);
+			setPalColor( 8,  85,  85,  85);
+			setPalColor(15, 255, 255, 255);
+		}
+	} else if (_game.version <= 1) {
 		if (_game.platform == Common::kPlatformApple2GS) {
 			setPaletteFromTable(tableApple2gsPalette, sizeof(tableApple2gsPalette) / 3);
 		} else if (_game.platform == Common::kPlatformC64) {
@@ -201,21 +213,13 @@ void ScummEngine::resetPalette() {
 				setPaletteFromTable(tableNESClassicPalette, sizeof(tableNESClassicPalette) / 3);
 			else
 				setPaletteFromTable(tableNESNTSCPalette, sizeof(tableNESNTSCPalette) / 3);
-		} else if (_renderMode == Common::kRenderHercA) {
-			setPaletteFromTable(tableHercAPalette, sizeof(tableHercAPalette) / 3);
-		} else if (_renderMode == Common::kRenderHercG) {
-			setPaletteFromTable(tableHercGPalette, sizeof(tableHercGPalette) / 3);
-		} else if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp) {
-			setPaletteFromTable(_cgaColors[cgaPalIndex * 2 + cgaPalIntensity], sizeof(_cgaColors[0]) / 3);
-		} else if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGA_BW) {
+		} else if (_renderMode == Common::kRenderCGA_BW) {
 			setPalColor(0, 0x00, 0x00, 0x00);
 			setPalColor(1, 0xff, 0xff, 0xff);
 		} else {
 			setPaletteFromTable(tableEGAPalette, sizeof(tableEGAPalette) / 3);
 		}
 	} else if (_game.features & GF_16COLOR) {
-		bool setupCursor = false;
-
 		switch (_renderMode) {
 		case Common::kRenderEGA:
 		case Common::kRenderMacintoshBW:
@@ -229,21 +233,6 @@ void ScummEngine::resetPalette() {
 			setPaletteFromTable(tableAmigaPalette, sizeof(tableAmigaPalette) / 3);
 			break;
 
-		case Common::kRenderCGA:
-			setPaletteFromTable(_cgaColors[cgaPalIndex * 2 + cgaPalIntensity], sizeof(_cgaColors[0]) / 3);
-			setupCursor = true;
-			break;
-
-		case Common::kRenderHercA:
-			setPaletteFromTable(tableHercAPalette, sizeof(tableHercAPalette) / 3);
-			setupCursor = true;
-			break;
-
-		case Common::kRenderHercG:
-			setPaletteFromTable(tableHercGPalette, sizeof(tableHercGPalette) / 3);
-			setupCursor = true;
-			break;
-
 		default:
 			if ((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST))
 				setPaletteFromTable(tableAmigaPalette, sizeof(tableAmigaPalette) / 3);
@@ -251,12 +240,6 @@ void ScummEngine::resetPalette() {
 				setPaletteFromTable(Graphics::macEGAPalette, sizeof(Graphics::macEGAPalette) / 3);
 			else
 				setPaletteFromTable(tableEGAPalette, sizeof(tableEGAPalette) / 3);
-		}
-		if (setupCursor) {
-			// Setup cursor palette
-			setPalColor( 7, 170, 170, 170);
-			setPalColor( 8,  85,  85,  85);
-			setPalColor(15, 255, 255, 255);
 		}
 
 	} else {
@@ -467,7 +450,7 @@ void ScummEngine::setAmigaPaletteFromPtr(const byte *ptr) {
 	setDirtyColors(0, 255);
 }
 
-void ScummEngine::updateColorTableV1(int renderMode) {
+void ScummEngine::setV1ColorTable(int renderMode) {
 	static const byte v1ColorMaps[5][16] = {
 		// C-64: Just leave everything the way it is
 		{	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,	0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F },

@@ -407,7 +407,7 @@ protected:
 		byte maskMap[4096], maskChar[4096];
 	} _V1;
 
-	const byte *_colorMap;
+	const byte *_colorMap = 0;
 
 protected:
 	void decodeV1Gfx(const byte *src, byte *dst, int size) const;

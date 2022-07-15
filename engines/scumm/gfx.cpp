@@ -767,9 +767,11 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 					_system->copyRectToScreen(blackbuf, 16, 0, 0, 16, 240); // Fix left strip
 				}
 			}
-		} else if (_game.version == 1) {
-			src = postProcessV1Graphics(vs, pitch, x, y, width, height);
+		} else if (_game.version == 1 || _game.version == 2) {
+			// MM/ZAK v1/v2
+			src = postProcessV2Graphics(vs, pitch, x, y, width, height);
 		} else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
+			// MI1
 			ditherHerc(_compositeBuf, _hercCGAScaleBuf, width, &x, &y, &width, &height);
 
 			src = _hercCGAScaleBuf + x + y * kHercWidth;
@@ -784,6 +786,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 			width *= m;
 			height *= m;
 		} else if (_renderMode == Common::kRenderCGA) {
+			// LOOM, MI1
 			ditherCGA(_compositeBuf, width, x, y, width, height);
 		}
 	}
@@ -792,28 +795,30 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	_system->copyRectToScreen(src, pitch, x, y, width, height);
 }
 
-const byte *ScummEngine::postProcessV1Graphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const {
-	static const byte zakVrbColMap[] =	{ 0x0, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF, 0xF, 0x5, 0x5, 0x5, 0xA, 0xA, 0xF, 0xF };
-	static const byte zakTxtColMap[] =	{ 0x0, 0xF, 0xA, 0x5, 0xA, 0x5, 0x5, 0xF, 0xA, 0xA, 0xA, 0xA, 0xA, 0x5, 0x5, 0xF };
-	static const byte mmVrbColMap[] =	{ 0x0, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF, 0xA, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF };
+const byte *ScummEngine::postProcessV2Graphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const {
+	static const byte v2VrbColMap[] =	{ 0x0, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF, 0xF, 0x5, 0x5, 0x5, 0xA, 0xA, 0xF, 0xF };
+	static const byte v2TxtColMap[] =	{ 0x0, 0xF, 0xA, 0x5, 0xA, 0x5, 0x5, 0xF, 0xA, 0xA, 0xA, 0xA, 0xA, 0x5, 0x5, 0xF };
+	static const byte mmv1VrbColMap[] =	{ 0x0, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF, 0xA, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF };
+	static const byte v2MainColMap[] =	{ 0x0, 0x4, 0x1, 0x5, 0x8, 0xA, 0x2, 0xF, 0xC, 0x7, 0xD, 0x5, 0xE, 0xB, 0xD, 0xF };
 
-	byte mmTxtColMap[16];
-	for (uint8 i = 0; i < ARRAYSIZE(mmTxtColMap); ++i)
-		mmTxtColMap[i] = mmVrbColMap[_gdi->remapColorToRenderMode(i)];
+	byte tmpTxtColMap[16];
+	for (uint8 i = 0; i < ARRAYSIZE(tmpTxtColMap); ++i)
+		tmpTxtColMap[i] = mmv1VrbColMap[_gdi->remapColorToRenderMode(i)];
 
 	byte *res = _compositeBuf;
 	byte *dst = _compositeBuf;
 	const byte *src = res;
 	bool renderHerc = (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG);
-
-	const byte *colMap = (_game.id == GID_ZAK) ? ((vs->number == kVerbVirtScreen || renderHerc) ? zakVrbColMap : zakTxtColMap) : (vs->number == kVerbVirtScreen ? mmVrbColMap : mmTxtColMap);
+	const byte *colMap = (_game.id == GID_ZAK || _game.version == 2) ? ((vs->number == kVerbVirtScreen || renderHerc) ? v2VrbColMap : v2TxtColMap) : (vs->number == kVerbVirtScreen ? mmv1VrbColMap : tmpTxtColMap);
 
 	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp) {
 		if (vs->number == kMainVirtScreen) {
 			for (int h = height; h; --h) {
 				for (int w = width >> 1; w; --w) {
-					*dst++ = (*src++ >> 2) & 3;
-					*dst++ = *src++ & 3;
+					byte c = (_game.version == 1) ? *src : (v2MainColMap[src[0]] & 0x0C) | (v2MainColMap[src[1]] & 0x03);
+					*dst++ = (c >> 2) & 3;
+					*dst++ = c & 3;
+					src += 2;
 				}
 			}
 		} else {
@@ -851,10 +856,11 @@ const byte *ScummEngine::postProcessV1Graphics(VirtScreen *vs, int &pitch, int &
 			for (int h = height2; h; --h) {
 				for (int w = width >> 1; w; --w) {
 					const uint32 *s = (const uint32*)dst;
-					*dst++ = (*src >> 3) & 1;
-					*dst++ = (*src >> 2) & 1;
-					*dst++ = (*src >> 1) & 1;
-					*dst++ = *src & 1;
+					byte c = (_game.version == 1) ? *src : (v2MainColMap[src[0]] & 0x0C) | (v2MainColMap[src[1]] & 0x03);
+					*dst++ = (c >> 3) & 1;
+					*dst++ = (c >> 2) & 1;
+					*dst++ = (c >> 1) & 1;
+					*dst++ = c & 1;
 					*dst2++ = renderHerc ? 0 : *s;
 					src += 2;
 				}
@@ -899,11 +905,13 @@ const byte *ScummEngine::postProcessV1Graphics(VirtScreen *vs, int &pitch, int &
 			height <<= 1;
 		}
 
-	} else if (vs->number == kTextVirtScreen) {
+	} else if (_game.version == 1 && vs->number == kTextVirtScreen) {
 		// For EGA, the only colors that need remapping are for the kTextVirtScreen.
+		for (uint8 i = 0; i < ARRAYSIZE(tmpTxtColMap); ++i)
+			tmpTxtColMap[i] = _gdi->remapColorToRenderMode(i);
 		for (int h = height; h; --h)  {
 			for (int w = width; w; --w)
-				*dst++ = _gdi->remapColorToRenderMode(*src++);
+				*dst++ = tmpTxtColMap[*src++];
 		}
 	}
 
@@ -933,11 +941,7 @@ void ScummEngine::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, in
 	// But apparently there is a mistake for 10th color.
 	for (int y1 = 0; y1 < height; y1++) {
 		ptr = dst + y1 * dstPitch;
-
-		if (_game.version <= 2)
-			idx1 = 0;
-		else
-			idx1 = (y + y1) % 2;
+		idx1 = (y + y1) % 2;
 
 		for (int x1 = 0; x1 < width; x1++) {
 			idx2 = (x + x1) % 2;

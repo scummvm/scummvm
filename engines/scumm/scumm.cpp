@@ -327,7 +327,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	else if (_renderMode == Common::kRenderCGA_BW)
 		_hercCGAScaleBuf = (byte *)malloc(_screenWidth * 2 * _screenHeight * 2);
 
-	updateColorTableV1(_renderMode);
+	setV1ColorTable(_renderMode);
 
 	_isRTL = (_language == Common::HE_ISR && _game.heversion == 0)
 			&& (_game.id == GID_MANIAC || (_game.version >= 4 && _game.version < 7));
