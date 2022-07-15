@@ -216,6 +216,14 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	act->addDefaultInputMapping("JOY_DOWN");
 	kiaOnlyKeymap->addAction(act);
 
+	// I18N: This keymap allows (in KIA only) for a clue to be set as private or public
+	// (only when the KIA is upgraded).
+	act = new Action("KIATOGGLECLUEPRIVACY", _("Toggle Clue Privacy"));
+	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionToggleCluePrivacy);
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	kiaOnlyKeymap->addAction(act);
+
 	// I18N: This keymap opens KIA's HELP tab.
 	// In Blade Runner's official localizations, there is a description of this keymap
 	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is

@@ -332,7 +332,8 @@ public:
 		kMpActionScrollUp,                     // ScummVM addition (scroll list up)
 		kMpActionScrollDown,                   // ScummVM addition (scroll list down)
 		kMpConfirmDlg,                         // default <Return> or <KP_Enter>
-		kMpDeleteSelectedSvdGame               // default <Delete> or <KP_Period>
+		kMpDeleteSelectedSvdGame,              // default <Delete> or <KP_Period>
+		kMpActionToggleCluePrivacy             // default <right click>
 	};
 
 private:

@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 #include "bladerunner/bladerunner.h"
 
 #include "bladerunner/actor.h"
@@ -1468,6 +1467,8 @@ void BladeRunnerEngine::handleEvents() {
 			}
 			switch ((BladeRunnerEngineMappableAction)event.customType) {
 			case kMpActionToggleCombat:
+				// fall through
+			case kMpActionToggleCluePrivacy:
 				handleMouseAction(event.mouse.x, event.mouse.y, false, false);
 				break;
 
@@ -1513,6 +1514,8 @@ void BladeRunnerEngine::handleEvents() {
 			if (!event.kbdRepeat) {
 				switch ((BladeRunnerEngineMappableAction)event.customType) {
 				case kMpActionToggleCombat:
+					// fall through
+				case kMpActionToggleCluePrivacy:
 					handleMouseAction(event.mouse.x, event.mouse.y, false, true);
 					break;
 
