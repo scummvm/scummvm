@@ -271,7 +271,17 @@ void ScummEngine_v8::stampScreenShot(int slot, int boxX, int boxY, int boxWidth,
 			}
 			heightSlice += 120;
 		}
-
+	} else {
+		// Fallback: this is an old savegame which does not have a SCUMM v8 thumbnail,
+		// so let's just show a brownish box which looks nice enough superimposed on
+		// the Captain's log yellowish background...
+		rgb = 0x001627;
+		color = remapPaletteColor(
+			brightness * ((rgb & 0xFF) >> 0) / 0xFF,
+			brightness * ((rgb & 0xFF00) >> 8) / 0xFF,
+			brightness * ((rgb & 0xFF0000) >> 16) / 0xFF,
+			-1);
+		drawBox(boxX, boxY, boxWidth, boxHeight - 1, color);
 	}
 }
 
