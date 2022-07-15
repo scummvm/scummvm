@@ -1005,7 +1005,7 @@ static void drawPixelPlain(int x, int y, int color, void *data) {
 }
 
 static void drawFilledRoundRect(ManagedSurface *surface, Common::Rect &rect, int arc, int color) {
-	drawRoundRect1(rect, arc, color, true, drawPixelPlain, surface);
+	drawRoundRect(rect, arc, color, true, drawPixelPlain, surface);
 }
 
 static void underlineAccelerator(ManagedSurface *dst, const Font *font, const Common::UnicodeBiDiText &txt, int x, int y, int shortcutPos, uint32 color) {
