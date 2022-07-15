@@ -323,6 +323,8 @@ void FreescapeEngine::initGameState() {
 }
 
 void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos) {
+	if (lastMousePos == Common::Point(0, 0))
+		return;
 	//debug("x: %d, y: %d", mousePos.x, mousePos.y);
 	float xoffset = mousePos.x - lastMousePos.x;
 	float yoffset = mousePos.y - lastMousePos.y;
@@ -492,16 +494,18 @@ void FreescapeEngine::gotoArea(uint16 areaID, uint16 entranceID) {
 		entrance = (Entrance*) _currentArea->firstEntrance();
 
 	_position = entrance->getOrigin();
-	_rotation = entrance->getRotation();
+	if (_rotation == Math::Vector3d(0, 0, 0)) {
+		_rotation = entrance->getRotation();
+		debug("yaw: %f, pitch: %f", _rotation.x(), _rotation.y());
+		_pitch = _rotation.x();
+		_yaw = _rotation.y() - 260;
+	}
 	int scale = _currentArea->getScale();
 	assert(scale > 0);
 
 	debug("entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
 	debug("player height: %d", scale * _playerHeight);
 	_position.setValue(1, _position.y() + scale * _playerHeight);
-
-	_pitch = _rotation.x() - 180.f;
-	_yaw = _rotation.y() - 180.f;
 	debug("starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 }
 
