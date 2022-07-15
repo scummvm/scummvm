@@ -1851,6 +1851,8 @@ void syncWithSerializer(Common::Serializer &s, ScummEngine_v7::SubtitleText &st)
 	s.syncAsSint16LE(st.xpos, VER(61));
 	s.syncAsSint16LE(st.ypos, VER(61));
 	s.syncAsByte(st.actorSpeechMsg, VER(61));
+	s.syncAsByte(st.center, VER(106));
+	s.syncAsByte(st.wrap, VER(106));
 }
 
 void ScummEngine_v8::saveLoadWithSerializer(Common::Serializer &s) {
