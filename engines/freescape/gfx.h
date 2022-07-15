@@ -67,6 +67,7 @@ public:
 
 	virtual void init() = 0;
 	virtual void clear() = 0;
+	virtual void setViewport(const Common::Rect &rect) = 0;
 
 	typedef enum {
 		EastPyramid = 4,

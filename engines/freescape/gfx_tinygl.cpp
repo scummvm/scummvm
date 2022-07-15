@@ -79,6 +79,11 @@ void TinyGLRenderer::init() {
 
 }
 
+void TinyGLRenderer::setViewport(const Common::Rect &rect) {
+	tglViewport(rect.left, g_system->getHeight() - rect.bottom, rect.width(), rect.height());
+}
+
+
 void TinyGLRenderer::clear() {
 	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT);
 	tglColor3f(1.0f, 1.0f, 1.0f);
