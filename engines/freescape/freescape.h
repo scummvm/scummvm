@@ -161,8 +161,8 @@ public:
 
 	// Game state
 	void initGameState();
-	Common::HashMap<uint16, int32> _gameState;
-	Common::Array<bool> _areaBits;
+	Common::HashMap<uint16, int32> _gameStateVars;
+	Common::HashMap<uint16, uint32> _gameStateBits;
 
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return true; }

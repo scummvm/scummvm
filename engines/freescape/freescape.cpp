@@ -318,13 +318,8 @@ Common::Error FreescapeEngine::run() {
 }
 
 void FreescapeEngine::initGameState() {
-	_areaBits.resize(33);
-	for (int16 i = 0; i <= 32; i++) {
-		_areaBits[i] = false;
-	}
-
-	_gameState[k8bitVariableEnergy] = 100;
-	_gameState[k8bitVariableShield] = 100;
+	_gameStateVars[k8bitVariableEnergy] = 100;
+	_gameStateVars[k8bitVariableShield] = 100;
 }
 
 void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos) {
@@ -484,6 +479,8 @@ bool FreescapeEngine::checkCollisions(bool executeConditions) {
 
 void FreescapeEngine::gotoArea(uint16 areaID, uint16 entranceID) {
 	debug("go to area: %d, entrance: %d", areaID, entranceID);
+	if (!_gameStateBits.contains(areaID))
+		_gameStateBits[areaID] = 0;
 
 	assert(_areasByAreaID->contains(areaID));
 	//assert(entranceID > 0);
@@ -505,10 +502,6 @@ void FreescapeEngine::gotoArea(uint16 areaID, uint16 entranceID) {
 
 	_pitch = _rotation.x() - 180.f;
 	_yaw = _rotation.y() - 180.f;
-
-	for (int16 i = 0; i <= 32; i++) {
-		_areaBits[i] = false;
-	}
 	debug("starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 }
 
