@@ -77,10 +77,14 @@ void FreescapeEngine::drawBorder() {
 	if (!_border)
 		return;
 
+	const Common::Rect fullscreenViewArea(0, 0, _screenW, _screenH);
+	_gfx->setViewport(fullscreenViewArea);
+
 	if (!_borderTexture)
 		_borderTexture = _gfx->createTexture(_border);
-	const Common::Rect rect(0, 0, _screenW, _screenH);
-	_gfx->drawTexturedRect2D(rect, rect, _borderTexture);
+	_gfx->drawTexturedRect2D(fullscreenViewArea, fullscreenViewArea, _borderTexture);
+	Common::Rect drillerViewArea(40, 16, 279, 116);
+	_gfx->setViewport(drillerViewArea);
 }
 
 void FreescapeEngine::loadAssets() {
