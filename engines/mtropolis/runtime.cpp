@@ -259,7 +259,7 @@ size_t caseInsensitiveFind(const Common::String &strToSearch, const Common::Stri
 	return Common::String::npos;
 }
 
-bool SceneTransitionTypes::loadFromData(SceneTransitionType &transType, uint16 data) {
+bool SceneTransitionTypes::loadFromData(SceneTransitionType &transType, int32 data) {
 	switch (data) {
 	case Data::SceneTransitionTypes::kNone:
 		transType = kNone;
@@ -293,7 +293,7 @@ bool SceneTransitionTypes::loadFromData(SceneTransitionType &transType, uint16 d
 }
 
 
-bool SceneTransitionDirections::loadFromData(SceneTransitionDirection &transDir, uint16 data) {
+bool SceneTransitionDirections::loadFromData(SceneTransitionDirection &transDir, int32 data) {
 	switch (data) {
 	case Data::SceneTransitionDirections::kUp:
 		transDir = kUp;
@@ -3298,6 +3298,10 @@ HighLevelSceneTransition::HighLevelSceneTransition(const Common::SharedPtr<Struc
 	: scene(hlst_scene), type(hlst_type), addToDestinationScene(hlst_addToDestinationScene), addToReturnList(hlst_addToReturnList) {
 }
 
+SceneTransitionEffect::SceneTransitionEffect()
+	: _duration(100000), _steps(64), _transitionType(SceneTransitionTypes::kNone), _transitionDirection(SceneTransitionDirections::kUp) {
+}
+
 MessageDispatch::MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Structural *root, bool cascade, bool relay, bool couldBeCommand)
 	: _cascade(cascade), _relay(relay), _terminated(false), _msg(msgProps), _isCommand(false) {
 	if (couldBeCommand && EventIDs::isCommand(msgProps->getEvent().eventType)) {
@@ -3730,7 +3734,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	_lastFrameCursor(nullptr), _defaultCursor(new DefaultCursorGraphic()), _platform(kProjectPlatformUnknown),
 	_cachedMousePosition(Common::Point(0, 0)), _realMousePosition(Common::Point(0, 0)), _trackedMouseOutside(false),
 	_forceCursorRefreshOnce(true), _autoResetCursor(false), _haveModifierOverrideCursor(false), _sceneGraphChanged(false), _isQuitting(false),
-	_collisionCheckTime(0), _defaultVolumeState(true) {
+	  _collisionCheckTime(0), _defaultVolumeState(true), _activeSceneTransitionEffect(nullptr), _sceneTransitionStartTime(0), _sceneTransitionEndTime(0) {
 	_random.reset(new Common::RandomSource("mtropolis"));
 
 	_vthread.reset(new VThread());
@@ -3800,7 +3804,7 @@ bool Runtime::runFrame() {
 			break;
 		}
 
-		if (_osEventQueue.size() > 0) {
+		if (_sceneTransitionState != kSceneTransitionStateTransitioning && _osEventQueue.size() > 0) {
 			Common::SharedPtr<OSEvent> evt = _osEventQueue[0];
 			_osEventQueue.remove_at(0);
 
@@ -3953,18 +3957,56 @@ bool Runtime::runFrame() {
 		}
 
 		if (_sceneTransitionState == kSceneTransitionStateWaitingForDraw) {
-			if (_sceneTransitionEffect.duration == 0) {
-				// This needs to skip past the transition phase and hit the next condition
+			if (_sourceSceneTransitionEffect._transitionType != SceneTransitionTypes::kNone)
+				_activeSceneTransitionEffect = &_sourceSceneTransitionEffect;
+			else if (_destinationSceneTransitionEffect._transitionType != SceneTransitionTypes::kNone)
+				_activeSceneTransitionEffect = &_destinationSceneTransitionEffect;
+			else
+				_activeSceneTransitionEffect = nullptr;
+
+			_sceneTransitionState = kSceneTransitionStateTransitioning;
+			_sceneTransitionStartTime = _playTime;
+
+			uint32 transitionDuration = 0;
+
+			if (_activeSceneTransitionEffect) {
+				transitionDuration = _activeSceneTransitionEffect->_duration;
+
+				if (transitionDuration < _hacks.minTransitionDuration)
+					transitionDuration = _hacks.minTransitionDuration;
+			}
+
+			if (transitionDuration == 0) {
+				// No transition at all.  This needs to skip past the transition phase and hit the next condition
 				_sceneTransitionEndTime = _playTime;
-				_sceneTransitionState = kSceneTransitionStateTransitioning;
 			} else {
-				_sceneTransitionState = kSceneTransitionStateDrawingTargetFrame;
-				_sceneTransitionEndTime = _playTime + _sceneTransitionEffect.duration / 10;
+				_sceneTransitionEndTime = _playTime + transitionDuration;
+
+				if (!_mainWindow.expired()) {
+					Common::SharedPtr<Window> mainWindow = _mainWindow.lock();
+					_sceneTransitionOldFrame.reset(new Graphics::ManagedSurface());
+					_sceneTransitionNewFrame.reset(new Graphics::ManagedSurface());
+
+					_sceneTransitionOldFrame->copyFrom(*mainWindow->getSurface());
+
+					Render::renderProject(this, mainWindow.get());
+
+					_sceneTransitionNewFrame->copyFrom(*mainWindow->getSurface());
+				}
 			}
 		}
 
 		if (_sceneTransitionState == kSceneTransitionStateTransitioning && _playTime >= _sceneTransitionEndTime) {
 			_sceneTransitionState = kSceneTransitionStateNotTransitioning;
+
+			if (_sceneTransitionNewFrame && !_mainWindow.expired())
+				_mainWindow.lock()->getSurface()->copyFrom(*_sceneTransitionNewFrame);
+
+			_sceneTransitionOldFrame.reset();
+			_sceneTransitionNewFrame.reset();
+
+			_sourceSceneTransitionEffect = SceneTransitionEffect();
+			_destinationSceneTransitionEffect = SceneTransitionEffect();
 
 			for (const SceneStackEntry &sceneStackEntry : _sceneStack)
 				recursiveAutoPlayMedia(sceneStackEntry.scene.get());
@@ -3974,6 +4016,11 @@ bool Runtime::runFrame() {
 
 			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneTransitionEnded, 0), _activeMainScene.get(), true, true);
 			continue;
+		}
+
+		if (_sceneTransitionState == kSceneTransitionStateTransitioning) {
+			// Keep looping transition and don't do anything else until it's done
+			break;
 		}
 
 		{
@@ -4031,8 +4078,13 @@ void Runtime::drawFrame() {
 
 	{
 		Common::SharedPtr<Window> mainWindow = _mainWindow.lock();
-		if (mainWindow)
-			Render::renderProject(this, mainWindow.get());
+		if (mainWindow) {
+			if (_sceneTransitionState == kSceneTransitionStateTransitioning) {
+				assert(_activeSceneTransitionEffect != nullptr);
+				Render::renderSceneTransition(this, mainWindow.get(), *_activeSceneTransitionEffect, _sceneTransitionStartTime, _sceneTransitionEndTime, _playTime, *_sceneTransitionOldFrame, *_sceneTransitionNewFrame);
+			} else
+				Render::renderProject(this, mainWindow.get());
+		}
 	}
 
 	const size_t numWindows = _windows.size();
@@ -4254,8 +4306,7 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 
 	// Scene transitions have to be set up by the destination scene
 	_sceneTransitionState = kSceneTransitionStateWaitingForDraw;
-	_sceneTransitionEffect.transitionType = SceneTransitionTypes::kNone;
-	_sceneTransitionEffect.duration = 0;
+	_activeSceneTransitionEffect = nullptr;
 
 	executeSharedScenePostSceneChangeActions();
 }
@@ -5578,6 +5629,14 @@ bool Runtime::getVolumeState(const Common::String &name, int &outVolumeID, bool 
 
 void Runtime::addSceneStateTransition(const HighLevelSceneTransition &transition) {
 	_pendingSceneTransitions.push_back(transition);
+}
+
+void Runtime::setSceneTransitionEffect(bool isInDestinationScene, SceneTransitionEffect *effect) {
+	SceneTransitionEffect *target = isInDestinationScene ? &_destinationSceneTransitionEffect : &_sourceSceneTransitionEffect;
+	if (!effect)
+		*target = SceneTransitionEffect();
+	else
+		*target = *effect;
 }
 
 Project *Runtime::getProject() const {

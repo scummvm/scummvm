@@ -73,11 +73,15 @@ public:
 
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::STransCtModifier &data);
 
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "STransCt Scene Transition Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
 
 private:

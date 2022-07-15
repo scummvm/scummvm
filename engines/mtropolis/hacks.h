@@ -49,6 +49,8 @@ struct Hacks {
 	bool ignoreMismatchedProjectNameInObjectLookups;
 	uint midiVolumeScale;	// 256 = 1.0
 
+	uint32 minTransitionDuration;
+
 	Common::Point reportDisplaySize;	// If X or Y is non-zero, report this as the display size
 	Common::Point mainWindowOffset;		// Coordinate offset of the main window
 

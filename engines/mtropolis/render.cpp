@@ -303,6 +303,215 @@ void renderProject(Runtime *runtime, Window *mainWindow) {
 	runtime->clearSceneGraphDirty();
 }
 
+class DissolveOrderedDitherPatternGenerator {
+public:
+	DissolveOrderedDitherPatternGenerator();
+
+	uint8 getNext();
+	void nextLine();
+
+private:
+	uint8 _ditherPattern[16][16];
+
+	uint16 _x;
+	uint16 _y;
+};
+
+DissolveOrderedDitherPatternGenerator::DissolveOrderedDitherPatternGenerator() {
+	OrderedDitherGenerator<uint8, 16>::generateOrderedDither(_ditherPattern);
+}
+
+inline uint8 DissolveOrderedDitherPatternGenerator::getNext() {
+	uint8 result = _ditherPattern[_y][_x];
+
+	uint16 newX = _x + 1;
+	if (newX == 16)
+		newX = 0;
+	_x = newX;
+
+	return result;
+}
+
+inline void DissolveOrderedDitherPatternGenerator::nextLine() {
+	_x = 0;
+	uint16 newY = _y + 1;
+	if (newY == 16)
+		newY = 0;
+	_y = newY;
+}
+
+class DissolveOrderedDitherRandomGenerator {
+public:
+	DissolveOrderedDitherRandomGenerator();
+
+	uint8 getNext();
+	void nextLine();
+
+private:
+	uint32 _lcgState;
+};
+
+
+DissolveOrderedDitherRandomGenerator::DissolveOrderedDitherRandomGenerator() : _lcgState(13) {
+}
+
+inline uint8 DissolveOrderedDitherRandomGenerator::getNext() {
+	_lcgState = ((_lcgState * 1103515245u) + 12345u) & 0x7fffffffu;
+	return (_lcgState >> 16) & 0xff;
+}
+
+inline void DissolveOrderedDitherRandomGenerator::nextLine() {
+}
+
+template<class TPixel, class TGenerator>
+static void runDissolveTransitionWithType(Graphics::ManagedSurface &surface, const Graphics::ManagedSurface &oldFrame, const Graphics::ManagedSurface &newFrame, uint8 breakpoint) {
+	TGenerator generator;
+
+	assert(surface.format.bytesPerPixel == oldFrame.format.bytesPerPixel);
+	assert(surface.format.bytesPerPixel == newFrame.format.bytesPerPixel);
+
+	uint16 w = surface.w;
+	uint16 h = surface.h;
+
+	for (uint y = 0; y < h; y++) {
+		TPixel *destRow = static_cast<TPixel *>(surface.getBasePtr(0, y));
+		const TPixel *oldRow = static_cast<const TPixel *>(oldFrame.getBasePtr(0, y));
+		const TPixel *newRow = static_cast<const TPixel *>(newFrame.getBasePtr(0, y));
+
+		for (uint x = 0; x < w; x++) {
+			if (generator.getNext() <= breakpoint)
+				destRow[x] = newRow[x];
+			else
+				destRow[x] = oldRow[x];
+		}
+
+		generator.nextLine();
+	}
+}
+
+template<class TGenerator>
+static void runDissolveTransition(Graphics::ManagedSurface &surface, const Graphics::ManagedSurface &oldFrame, const Graphics::ManagedSurface &newFrame, uint8 breakpoint) {
+	switch (surface.format.bytesPerPixel) {
+	case 1:
+		runDissolveTransitionWithType<uint8, TGenerator>(surface, oldFrame, newFrame, breakpoint);
+		break;
+	case 2:
+		runDissolveTransitionWithType<uint16, TGenerator>(surface, oldFrame, newFrame, breakpoint);
+		break;
+	case 4:
+		runDissolveTransitionWithType<uint32, TGenerator>(surface, oldFrame, newFrame, breakpoint);
+		break;
+	default:
+		assert(false);
+		break;
+	}
+}
+
+static void safeCopyRectToSurface(Graphics::ManagedSurface &surface, const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect) {
+	if (subRect.width() == 0 || subRect.height() == 0)
+		return;
+
+	surface.copyRectToSurface(srcSurface, destX, destY, subRect);
+}
+
+void renderSceneTransition(Runtime *runtime, Window *mainWindow, const SceneTransitionEffect &effect, uint32 startTime, uint32 endTime, uint32 currentTime, const Graphics::ManagedSurface &oldFrame, const Graphics::ManagedSurface &newFrame) {
+	Graphics::ManagedSurface &surface = *mainWindow->getSurface();
+
+	assert(endTime > startTime);
+
+	uint32 duration = endTime - startTime;
+
+	uint16 w = surface.w;
+	uint16 h = surface.h;
+
+	if (effect._transitionType == SceneTransitionTypes::kSlide || effect._transitionType == SceneTransitionTypes::kWipe)
+		safeCopyRectToSurface(surface, oldFrame, 0, 0, Common::Rect(0, 0, w, h));
+
+	switch (effect._transitionType) {
+	case SceneTransitionTypes::kPatternDissolve:
+		runDissolveTransition<DissolveOrderedDitherPatternGenerator>(surface, oldFrame, newFrame, (currentTime - startTime) * 255 / duration);
+		break;
+	case SceneTransitionTypes::kRandomDissolve:
+		runDissolveTransition<DissolveOrderedDitherRandomGenerator>(surface, oldFrame, newFrame, (currentTime - startTime) * 255 / duration);
+		break;
+	case SceneTransitionTypes::kFade:
+		// Fade transitions fade to black and then fade from black in the new scene
+		warning("Fade transitions are not implemented");
+		break;
+	case SceneTransitionTypes::kSlide:
+	case SceneTransitionTypes::kPush: {
+			uint32 directionalOffset = 0;
+			switch (effect._transitionDirection) {
+			case SceneTransitionDirections::kUp:
+				directionalOffset = static_cast<uint32>(currentTime - startTime) * static_cast<uint32>(h) / duration;
+
+				if (effect._transitionType == SceneTransitionTypes::kPush)
+					safeCopyRectToSurface(surface, oldFrame, 0, 0, Common::Rect(0, directionalOffset, w, h));
+
+				safeCopyRectToSurface(surface, newFrame, 0, h - directionalOffset, Common::Rect(0, 0, w, directionalOffset));
+				break;
+			case SceneTransitionDirections::kDown:
+				directionalOffset = static_cast<uint32>(currentTime - startTime) * static_cast<uint32>(h) / duration;
+
+				if (effect._transitionType == SceneTransitionTypes::kPush)
+					safeCopyRectToSurface(surface, oldFrame, 0, directionalOffset, Common::Rect(0, 0, w, h - directionalOffset));
+
+				safeCopyRectToSurface(surface, newFrame, 0, 0, Common::Rect(0, h - directionalOffset, w, h));
+				break;
+			case SceneTransitionDirections::kLeft:
+				directionalOffset = static_cast<uint32>(currentTime - startTime) * static_cast<uint32>(w) / duration;
+
+				if (effect._transitionType == SceneTransitionTypes::kPush)
+					safeCopyRectToSurface(surface, oldFrame, 0, 0, Common::Rect(directionalOffset, 0, w, h));
+
+				safeCopyRectToSurface(surface, newFrame, w - directionalOffset, 0, Common::Rect(0, 0, directionalOffset, h));
+				break;
+			case SceneTransitionDirections::kRight:
+				directionalOffset = static_cast<uint32>(currentTime - startTime) * static_cast<uint32>(w) / duration;
+
+				if (effect._transitionType == SceneTransitionTypes::kPush)
+					safeCopyRectToSurface(surface, oldFrame, directionalOffset, 0, Common::Rect(0, 0, w - directionalOffset, h));
+
+				safeCopyRectToSurface(surface, newFrame, 0, 0, Common::Rect(w - directionalOffset, 0, w, h));
+				break;
+			default:
+				assert(false);
+				break;
+			}
+		} break;
+	case SceneTransitionTypes::kZoom:
+		warning("Zoom transitions are not implemented");
+		break;
+	case SceneTransitionTypes::kWipe:{
+			uint32 directionalOffset = 0;
+			switch (effect._transitionDirection) {
+			case SceneTransitionDirections::kUp:
+				directionalOffset = static_cast<uint32>(currentTime - startTime) * static_cast<uint32>(h) / duration;
+				safeCopyRectToSurface(surface, newFrame, 0, h - directionalOffset, Common::Rect(0, h - directionalOffset, w, h));
+				break;
+			case SceneTransitionDirections::kDown:
+				directionalOffset = static_cast<uint32>(currentTime - startTime) * static_cast<uint32>(h) / duration;
+				safeCopyRectToSurface(surface, newFrame, 0, 0, Common::Rect(0, 0, w, directionalOffset));
+				break;
+			case SceneTransitionDirections::kLeft:
+				directionalOffset = static_cast<uint32>(currentTime - startTime) * static_cast<uint32>(w) / duration;
+				safeCopyRectToSurface(surface, newFrame, w - directionalOffset, 0, Common::Rect(w - directionalOffset, 0, w, h));
+				break;
+			case SceneTransitionDirections::kRight:
+				directionalOffset = static_cast<uint32>(currentTime - startTime) * static_cast<uint32>(w) / duration;
+				safeCopyRectToSurface(surface, newFrame, 0, 0, Common::Rect(0, 0, directionalOffset, h));
+				break;
+			default:
+				assert(false);
+				break;
+			}
+		} break;
+	default:
+		assert(false);
+		break;
+	}
+}
+
 void convert32To16(Graphics::Surface &destSurface, const Graphics::Surface &srcSurface) {
 	const Graphics::PixelFormat srcFmt = srcSurface.format;
 	const Graphics::PixelFormat destFmt = destSurface.format;

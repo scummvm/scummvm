@@ -320,6 +320,7 @@ public:
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Vector Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
 
 private:
@@ -347,6 +348,9 @@ private:
 class SceneTransitionModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::SceneTransitionModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Scene Transition Modifier"; }

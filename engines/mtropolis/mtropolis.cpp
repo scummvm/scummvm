@@ -132,6 +132,9 @@ Common::Error MTropolisEngine::run() {
 		}
 	}
 
+	if (ConfMan.getBool("mtropolis_mod_minimum_transition_duration"))
+		_runtime->getHacks().minTransitionDuration = 75;
+
 	_runtime->queueProject(projectDesc);
 
 	// Figure out pixel formats

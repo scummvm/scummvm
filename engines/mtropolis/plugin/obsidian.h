@@ -83,6 +83,7 @@ public:
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "TextWork Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
 
 private:
@@ -111,6 +112,7 @@ public:
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Dictionary Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
 
 private:
@@ -139,6 +141,7 @@ public:
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "WordMixer Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
 
 private:
@@ -167,6 +170,7 @@ public:
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Xor Mod Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
 
 private:
@@ -190,6 +194,7 @@ public:
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Xor Check Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
 
 private:

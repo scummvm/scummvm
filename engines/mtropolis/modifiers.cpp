@@ -846,6 +846,39 @@ bool SceneTransitionModifier::load(ModifierLoaderContext &context, const Data::S
 	return true;
 }
 
+bool SceneTransitionModifier::respondsToEvent(const Event &evt) const {
+	return _enableWhen.respondsTo(evt) || _disableWhen.respondsTo(evt);
+}
+
+VThreadState SceneTransitionModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_enableWhen.respondsTo(msg->getEvent())) {
+		SceneTransitionEffect effect;
+
+		// For some reason, these vary
+		uint32 timeDivisor = 100;
+		switch (effect._transitionType) {
+		case SceneTransitionTypes::kRandomDissolve:
+			timeDivisor = 50;
+			break;
+		case SceneTransitionTypes::kFade:
+			timeDivisor = 25;
+			break;
+		default:
+			break;
+		}
+
+		effect._duration = _duration / timeDivisor;
+		effect._steps = _steps;
+		effect._transitionDirection = _transitionDirection;
+		effect._transitionType = _transitionType;
+		runtime->setSceneTransitionEffect(true, &effect);
+	}
+	if (_disableWhen.respondsTo(msg->getEvent()))
+		runtime->setSceneTransitionEffect(true, nullptr);
+
+	return kVThreadReturn;
+}
+
 Common::SharedPtr<Modifier> SceneTransitionModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new SceneTransitionModifier(*this));
 }

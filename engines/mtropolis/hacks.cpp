@@ -34,6 +34,7 @@ namespace MTropolis {
 Hacks::Hacks() {
 	ignoreMismatchedProjectNameInObjectLookups = false;
 	midiVolumeScale = 256;
+	minTransitionDuration = 0;
 }
 
 Hacks::~Hacks() {

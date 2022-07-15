@@ -1605,6 +1605,34 @@ bool STransCtModifier::load(const PlugInModifierLoaderContext &context, const Da
 	return true;
 }
 
+bool STransCtModifier::respondsToEvent(const Event &evt) const {
+	return _enableWhen.respondsTo(evt) || _disableWhen.respondsTo(evt);
+}
+
+VThreadState STransCtModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_enableWhen.respondsTo(msg->getEvent())) {
+		SceneTransitionEffect effect;
+		effect._duration = _duration / 10;
+		effect._steps = _steps;
+
+		if (SceneTransitionTypes::loadFromData(effect._transitionType, _transitionType) && SceneTransitionDirections::loadFromData(effect._transitionDirection, _transitionDirection)) {
+			// Weird quirk: Duration doesn't seem to affect duration properly for wipe transitions.
+			// In Obsidian, this mostly effects 180-degree turns.
+			// Good place to test this is in the corners of the Bureau library.
+			if (effect._transitionType == SceneTransitionTypes::kWipe && effect._duration < 1000)
+				effect._duration = 1000;
+
+			runtime->setSceneTransitionEffect(false, &effect);
+		} else {
+			warning("Source-scene transition had invalid data");
+		}
+	}
+	if (_disableWhen.respondsTo(msg->getEvent()))
+		runtime->setSceneTransitionEffect(false, nullptr);
+
+	return kVThreadReturn;
+}
+
 bool STransCtModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
 	if (attrib == "rate") {
 		if (_duration <= (kMaxDuration / 100))

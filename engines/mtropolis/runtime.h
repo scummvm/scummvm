@@ -147,7 +147,7 @@ enum SceneTransitionType {
 	kWipe, // Directional
 };
 
-bool loadFromData(SceneTransitionType &transType, uint16 data);
+bool loadFromData(SceneTransitionType &transType, int32 data);
 
 } // End of namespace SceneTransitionTypes
 
@@ -160,7 +160,7 @@ enum SceneTransitionDirection {
 	kRight,
 };
 
-bool loadFromData(SceneTransitionDirection &transDir, uint16 data);
+bool loadFromData(SceneTransitionDirection &transDir, int32 data);
 
 } // End of namespace SceneTransitionDirections
 
@@ -1287,10 +1287,12 @@ struct HighLevelSceneTransition {
 };
 
 struct SceneTransitionEffect {
-	uint32 duration; // 6000000 is maximum
-	uint16 steps;
-	SceneTransitionTypes::SceneTransitionType transitionType;
-	SceneTransitionDirections::SceneTransitionDirection transitionDirection;
+	SceneTransitionEffect();
+
+	uint32 _duration; // 6000000 is maximum
+	uint16 _steps;
+	SceneTransitionTypes::SceneTransitionType _transitionType;
+	SceneTransitionDirections::SceneTransitionDirection _transitionDirection;
 };
 
 class MessageDispatch {
@@ -1487,6 +1489,8 @@ public:
 
 	void addSceneStateTransition(const HighLevelSceneTransition &transition);
 
+	void setSceneTransitionEffect(bool isInDestinationScene, SceneTransitionEffect *effect);
+
 	Project *getProject() const;
 
 	void postConsumeMessageTask(IMessageConsumer *msgConsumer, const Common::SharedPtr<MessageProperties> &msg);
@@ -1593,7 +1597,6 @@ private:
 	enum SceneTransitionState {
 		kSceneTransitionStateNotTransitioning,
 		kSceneTransitionStateWaitingForDraw,
-		kSceneTransitionStateDrawingTargetFrame,
 		kSceneTransitionStateTransitioning,
 	};
 
@@ -1705,7 +1708,12 @@ private:
 	Common::Array<SceneReturnListEntry> _sceneReturnList;
 
 	SceneTransitionState _sceneTransitionState;
-	SceneTransitionEffect _sceneTransitionEffect;
+	SceneTransitionEffect _sourceSceneTransitionEffect;
+	SceneTransitionEffect _destinationSceneTransitionEffect;
+	SceneTransitionEffect *_activeSceneTransitionEffect;
+	Common::SharedPtr<Graphics::ManagedSurface> _sceneTransitionOldFrame;
+	Common::SharedPtr<Graphics::ManagedSurface> _sceneTransitionNewFrame;
+	uint32 _sceneTransitionStartTime;
 	uint32 _sceneTransitionEndTime;
 
 	Common::WeakPtr<Window> _mainWindow;

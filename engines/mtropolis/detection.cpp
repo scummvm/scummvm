@@ -71,6 +71,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 	{
+		GAMEOPTION_ENABLE_SHORT_TRANSITIONS,
+		{
+			_s("Enable short transitions"),
+			_s("Enables transitions that are set to maximum rate instead of skipping them"),
+			"mtropolis_mod_minimum_transition_duration",
+			false,
+			0,
+			0
+		}
+	},
+	{
 		GAMEOPTION_LAUNCH_DEBUG,
 		{
 			_s("Start with debugger"),
@@ -107,7 +118,7 @@ static const char *directoryGlobs[] = {
 class MTropolisMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	MTropolisMetaEngineDetection() : AdvancedMetaEngineDetection(MTropolis::gameDescriptions, sizeof(MTropolis::MTropolisGameDescription), mTropolisGames, MTropolis::optionsList) {
-		_guiOptions = GUIO3(GAMEOPTION_DYNAMIC_MIDI, GAMEOPTION_LAUNCH_DEBUG, GAMEOPTION_LAUNCH_BREAK);
+		_guiOptions = GUIO4(GAMEOPTION_DYNAMIC_MIDI, GAMEOPTION_LAUNCH_DEBUG, GAMEOPTION_LAUNCH_BREAK, GAMEOPTION_ENABLE_SHORT_TRANSITIONS);
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}
