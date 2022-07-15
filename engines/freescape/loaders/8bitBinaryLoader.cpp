@@ -129,7 +129,10 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		if (byteSizeOfObject > 0) {
 			// TODO: there is something here
 			debug("Warning: extra %d bytes in entrance", byteSizeOfObject);
-			file->seek(byteSizeOfObject, SEEK_CUR);
+			//file->seek(byteSizeOfObject, SEEK_CUR);
+			while (byteSizeOfObject--) {
+				debug("b: %x", file->readByte());
+			}
 			byteSizeOfObject = 0;
 		}
 		assert(byteSizeOfObject == 0);
@@ -227,7 +230,7 @@ byte eclipseEGA[16][3] = {
 	{0x54, 0xfc, 0xfc},
 	{0x00, 0x00, 0xA8},
 	{0x00, 0x00, 0xaa},
-	{0xaa, 0x55, 0x00},
+	{0xaa, 0x00, 0xaa},
 	{0x12, 0xf3, 0x56},
 	{0xaa, 0x00, 0x00},
 	{0xff, 0x55, 0xff},
@@ -280,8 +283,8 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	if (_targetName != "castlemaster") {
 		groundColor = file->readByte() & 15;
 		skyColor = file->readByte() & 15;
-		ci1 = file->readByte() & 15;
-		ci2 = file->readByte() & 15;
+		ci1 = file->readByte();
+		ci2 = file->readByte();
 		debug("Colors: %d %d %d %d", ci1, ci2, skyColor, groundColor);
 	} else {
 		groundColor = file->readByte() & 15;
@@ -300,9 +303,12 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	debug("Skipped: %d Objects: %d", skippedValue, numberOfObjects);
 	//debug("Condition Ptr: %x", cPtr);
 	debug("Pos before first object: %lx", file->pos());
-
 	if (_targetName == "totaleclipse") {
-		file->seek(5, SEEK_CUR);
+		debug("b: %x", file->readByte());
+		debug("b: %x", file->readByte());
+		debug("b: %x", file->readByte());
+		debug("b: %x", file->readByte());
+		debug("b: %x", file->readByte());
 	} else if (_targetName != "castlemaster")
 		file->seek(15, SEEK_CUR);
 
@@ -313,8 +319,6 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		Object *newObject = load8bitObject(file);
 
 		if (newObject) {
-			//if (newObject->getObjectID() == 255) // TODO: fix me?
-			//	break;
 			if (newObject->getType() == Object::Entrance) {
 				if (entrancesByID->contains(newObject->getObjectID() & 0x7fff))
 					error("WARNING: replacing object id %d (%d)", newObject->getObjectID(), newObject->getObjectID() & 0x7fff);
@@ -325,7 +329,8 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 					error("WARNING: replacing object id %d", newObject->getObjectID());
 				(*objectsByID)[newObject->getObjectID()] = newObject;
 			}
-		}
+		} else
+			error("Failed to read an object!");
 	}
 	long int endLastObject = file->pos();
 	debug("Last position %lx", endLastObject);
@@ -352,7 +357,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	}
 
 	if (_targetName.hasPrefix("castlemaster") || _targetName.hasPrefix("totaleclipse"))
-		area->addFloor();
+		area->addStructure();
 
 	debug("End of area at %lx", file->pos());
 	return area;

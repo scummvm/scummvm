@@ -209,6 +209,8 @@ void FreescapeEngine::processInput() {
 				_position.setValue(1, _position.y() + 12);
 			else if (event.kbd.keycode == Common::KEYCODE_v)
 				_position.setValue(1, _position.y() - 12);
+			else if (event.kbd.keycode == Common::KEYCODE_n)
+				gotoArea(_currentArea->getAreaID() + 1, 0);
 			break;
 
 		case Common::EVENT_QUIT:
@@ -374,6 +376,7 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 	int areaScale = _currentArea->getScale();
 	// restore y coordinate
 	_position.set(_position.x(), positionY, _position.z());
+
 	bool collided = checkCollisions(false);
 
 	if (!collided) {
@@ -482,7 +485,7 @@ void FreescapeEngine::gotoArea(uint16 areaID, uint16 entranceID) {
 	debug("go to area: %d, entrance: %d", areaID, entranceID);
 
 	assert(_areasByAreaID->contains(areaID));
-	assert(entranceID > 0);
+	//assert(entranceID > 0);
 	_currentArea = (*_areasByAreaID)[areaID];
 	_currentArea->show();
 

@@ -446,64 +446,76 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 
 	Common::Array<Math::Vector3d> face;
 	uint8 r, g, b;
-	_palette->getRGBAt((*colours)[0], r, g, b);
-	tglColor3ub(r, g, b);
+	if ((*colours)[0] != _keyColor) {
+		_palette->getRGBAt((*colours)[0], r, g, b);
+		tglColor3ub(r, g, b);
 
-	face.push_back(vertices[5]);
-	face.push_back(vertices[6]);
-	face.push_back(vertices[2]);
-	face.push_back(vertices[1]);
-	renderFace(face);
-	face.clear();
+		face.push_back(vertices[5]);
+		face.push_back(vertices[6]);
+		face.push_back(vertices[2]);
+		face.push_back(vertices[1]);
+		renderFace(face);
+		face.clear();
+	}
 
-	_palette->getRGBAt((*colours)[1], r, g, b);
-	tglColor3ub(r, g, b);
+	if ((*colours)[1] != _keyColor) {
+		_palette->getRGBAt((*colours)[1], r, g, b);
+		tglColor3ub(r, g, b);
 
-	face.push_back(vertices[7]);
-	face.push_back(vertices[4]);
-	face.push_back(vertices[0]);
-	face.push_back(vertices[3]);
-	renderFace(face);
-	face.clear();
+		face.push_back(vertices[7]);
+		face.push_back(vertices[4]);
+		face.push_back(vertices[0]);
+		face.push_back(vertices[3]);
+		renderFace(face);
+		face.clear();
+	}
 
-	_palette->getRGBAt((*colours)[2], r, g, b);
-	tglColor3ub(r, g, b);
+	if ((*colours)[2] != _keyColor) {
+		_palette->getRGBAt((*colours)[2], r, g, b);
+		tglColor3ub(r, g, b);
 
-	face.push_back(vertices[4]);
-	face.push_back(vertices[5]);
-	face.push_back(vertices[1]);
-	face.push_back(vertices[0]);
-	renderFace(face);
-	face.clear();
+		face.push_back(vertices[4]);
+		face.push_back(vertices[5]);
+		face.push_back(vertices[1]);
+		face.push_back(vertices[0]);
+		renderFace(face);
+		face.clear();
+	}
 
-	_palette->getRGBAt((*colours)[3], r, g, b);
-	tglColor3ub(r, g, b);
+	if ((*colours)[3] != _keyColor) {
+		_palette->getRGBAt((*colours)[3], r, g, b);
+		tglColor3ub(r, g, b);
 
-	face.push_back(vertices[6]);
-	face.push_back(vertices[7]);
-	face.push_back(vertices[3]);
-	face.push_back(vertices[2]);
-	renderFace(face);
-	face.clear();
+		face.push_back(vertices[6]);
+		face.push_back(vertices[7]);
+		face.push_back(vertices[3]);
+		face.push_back(vertices[2]);
+		renderFace(face);
+		face.clear();
+	}
 
-	_palette->getRGBAt((*colours)[4], r, g, b);
-	tglColor3ub(r, g, b);
+	if ((*colours)[4] != _keyColor) {
+		_palette->getRGBAt((*colours)[4], r, g, b);
+		tglColor3ub(r, g, b);
 
-	face.push_back(vertices[0]);
-	face.push_back(vertices[1]);
-	face.push_back(vertices[2]);
-	face.push_back(vertices[3]);
-	renderFace(face);
-	face.clear();
+		face.push_back(vertices[0]);
+		face.push_back(vertices[1]);
+		face.push_back(vertices[2]);
+		face.push_back(vertices[3]);
+		renderFace(face);
+		face.clear();
+	}
 
-	_palette->getRGBAt((*colours)[5], r, g, b);
-	tglColor3ub(r, g, b);
+	if ((*colours)[5] != _keyColor) {
+		_palette->getRGBAt((*colours)[5], r, g, b);
+		tglColor3ub(r, g, b);
 
-	face.push_back(vertices[7]);
-	face.push_back(vertices[6]);
-	face.push_back(vertices[5]);
-	face.push_back(vertices[4]);
-	renderFace(face);
+		face.push_back(vertices[7]);
+		face.push_back(vertices[6]);
+		face.push_back(vertices[5]);
+		face.push_back(vertices[4]);
+		renderFace(face);
+	}
 }
 
 void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector3d &size, Common::Array<uint8> *colours) {
