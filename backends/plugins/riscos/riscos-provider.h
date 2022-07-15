@@ -28,7 +28,11 @@
 
 class RiscOSPluginProvider : public ELFPluginProvider {
 public:
+	RiscOSPluginProvider();
 	Plugin *createPlugin(const Common::FSNode &node) const;
+
+private:
+	bool _is32bit;
 };
 
 #endif // BACKENDS_PLUGINS_RISCOS_PROVIDER_H
