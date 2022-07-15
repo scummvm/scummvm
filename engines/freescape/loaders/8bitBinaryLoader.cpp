@@ -386,17 +386,11 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	uint8 startEntrance = file->readByte();
 	debug("Entrace area: %d", startEntrance);
 
-	file->seek(0x46, SEEK_CUR);
+	file->seek(offset + 0x46); // 0x46
 
 	uint16 globalSomething;
 	globalSomething = file->readUint16LE();
 	debug("Pointer to something: %x\n", globalSomething);
-
-	if (_targetName.hasPrefix("driller")) {
-		file->seek(0x3b42);
-		for (int i = 0; i < 8; i++)
-			load8bitObject(file);
-	}
 
 	uint16 globalByteCodeTable;
 	globalByteCodeTable = file->readUint16LE();
@@ -417,6 +411,12 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		//debug("Global condition %d", numConditions + 1);
 		Common::String *conditions = detokenise8bitCondition(conditionArray, instructions);
 		debug("%s", conditions->c_str());
+	}
+
+	if (_targetName.hasPrefix("driller")) {
+		file->seek(0x3b42);
+		for (int i = 0; i < 8; i++)
+			load8bitObject(file);
 	}
 
 	if (_targetName != "castlemaster")
