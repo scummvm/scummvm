@@ -491,7 +491,7 @@ void BaseRenderOpenGL3DShader::setWorldTransform(const Math::Matrix4 &transform)
 }
 
 bool BaseRenderOpenGL3DShader::windowedBlt() {
-	warning("BaseRenderOpenGL3DShader::windowedBlt not yet implemented");
+	flip();
 	return true;
 }
 
@@ -593,7 +593,7 @@ bool BaseRenderOpenGL3DShader::indicatorFlip() {
 }
 
 bool BaseRenderOpenGL3DShader::forcedFlip() {
-	g_system->updateScreen();
+	flip();
 	return true;
 }
 

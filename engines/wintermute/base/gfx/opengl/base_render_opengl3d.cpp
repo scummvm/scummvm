@@ -379,7 +379,7 @@ void BaseRenderOpenGL3D::setWorldTransform(const Math::Matrix4 &transform) {
 }
 
 bool BaseRenderOpenGL3D::windowedBlt() {
-	warning("BaseRenderOpenGL3D::windowedBlt not yet implemented");
+	flip();
 	return true;
 }
 
@@ -451,7 +451,7 @@ bool BaseRenderOpenGL3D::indicatorFlip() {
 }
 
 bool BaseRenderOpenGL3D::forcedFlip() {
-	g_system->updateScreen();
+	flip();
 	return true;
 }
 
