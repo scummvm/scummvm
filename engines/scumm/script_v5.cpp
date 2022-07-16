@@ -725,7 +725,7 @@ void ScummEngine_v5::o5_animateActor() {
 		return;
 	}
 
-	// WORKAROUND bug #1339: While on mars, going outside without your helmet
+	// WORKAROUND bug #1339: While on Mars, going outside without your helmet
 	// (or missing some other part of your "space suite" will cause your
 	// character to complain ("I can't breathe."). Unfortunately, this is
 	// coupled with an animate command, making it very difficult to return to
@@ -1501,7 +1501,40 @@ void ScummEngine_v5::o5_isNotEqual() {
 }
 
 void ScummEngine_v5::o5_notEqualZero() {
-	int a = getVar();
+	int a;
+
+	// WORKAROUND for a possible dead-end in Monkey Island 2. By luck, this
+	// only happens in the Ultimate Talkie Edition (because it fixes another
+	// script error which unveils this one).
+	//
+	// Once Bit[70] has been properly set by one of the configurations above,
+	// Captain Dread will have his intended reaction of forcing you to go back
+	// to Scabb Island, once you've got the four map pieces. But, unless you're
+	// playing in Lite mode, you'll need the lens from the model lighthouse,
+	// otherwise Wally won't be able to read the map, and you'll be completely
+	// stuck on Scabb Island with no way of going back to the Phatt Island
+	// Library, since Dread's ship is gone.
+	//
+	// Not using `_enableEnhancements`, since we always want to solve a dead-end
+	// in a Monkey Island game!
+	if (_game.id == GID_MONKEY2 && ((_roomResource == 22 && vm.slot[_currentScript].number == 202) || (_roomResource == 2 && vm.slot[_currentScript].number == 10002) || vm.slot[_currentScript].number == 97)) {
+		int var = fetchScriptWord();
+		a = readVar(var);
+
+		// If you've got the four map pieces and the script is checking this...
+		if (var == 0x8000 + 69 && a == 1 && readVar(0x8000 + 70) == 1 && readVar(0x8000 + 55) == 1 && readVar(0x8000 + 366) == 1) {
+			// ...but you don't have the lens and you never gave it to Wally...
+			// (and you're not playing the Lite mode, where this doesn't matter)
+			if (getOwner(295) != VAR(VAR_EGO) && readVar(0x8000 + 67) != 0 && readVar(0x8000 + 567) == 0) {
+				// ...then short-cirtcuit this condition, so that you can still go back
+				// to Phatt Island to pick up the lens, as in the original game.
+				a = 0;
+			}
+		}
+	} else {
+		a = getVar();
+	}
+
 	jumpRelative(a != 0);
 }
 
