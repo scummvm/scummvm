@@ -387,7 +387,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("BIT816.EXE", "30bbd89d7df8cb319e654a441efce877", 1259072),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DEMO | GF_TRUECOLOR | ADGF_TESTING,
+		ADGF_DEMO | GF_TRUECOLOR,
 		GUIO_GAME_DEMO
 	},
 
@@ -398,7 +398,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("BIT2416.EXE", "69ba6611561c3eb5f7d8853ef913aa09", 2816256),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DEMO | GF_TRUECOLOR | ADGF_TESTING,
+		ADGF_DEMO | GF_TRUECOLOR,
 		GUIO_GAME_DEMO
 	},
 
