@@ -59,6 +59,17 @@ MiniscriptInstructionOutcome MovementModifier::writeRefAttribute(MiniscriptThrea
 	return Modifier::writeRefAttribute(thread, result, attrib);
 }
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void MovementModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+
+	report->declareDynamic("rate", Common::String::format("%i", static_cast<int>(_rate)));
+	report->declareDynamic("frequency", Common::String::format("%i", static_cast<int>(_frequency)));
+	report->declareDynamic("type", Common::String::format(_type ? "true" : "false"));
+	report->declareDynamic("dest", Common::String::format("(%i,%i)", static_cast<int>(_dest.x), static_cast<int>(_dest.y)));
+}
+#endif
+
 Common::SharedPtr<Modifier> MovementModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new MovementModifier(*this));
 }
@@ -89,6 +100,15 @@ MiniscriptInstructionOutcome RectShiftModifier::writeRefAttribute(MiniscriptThre
 
 	return Modifier::writeRefAttribute(thread, result, attrib);
 }
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void RectShiftModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+
+	report->declareDynamic("direction", Common::String::format("%i", static_cast<int>(_direction)));
+	report->declareDynamic("rate", Common::String::format("%i", static_cast<int>(_rate)));
+}
+#endif
 
 Common::SharedPtr<Modifier> RectShiftModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new RectShiftModifier(*this));

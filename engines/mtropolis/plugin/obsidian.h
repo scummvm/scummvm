@@ -42,6 +42,7 @@ public:
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Movement Modifier"; }
+	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
 
 private:
@@ -62,6 +63,7 @@ public:
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Rect Shift Modifier"; }
+	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
 
 private:
