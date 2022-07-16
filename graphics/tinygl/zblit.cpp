@@ -136,7 +136,7 @@ public:
 		}
 	};
 
-	FORCEINLINE bool clipBlitImage(TinyGL::GLContext *c, int &srcX, int &srcY, int &srcWidth, int &srcHeight, int &width, int &height, int &dstX, int &dstY, int &clampWidth, int &clampHeight) {
+	bool clipBlitImage(TinyGL::GLContext *c, int &srcX, int &srcY, int &srcWidth, int &srcHeight, int &width, int &height, int &dstX, int &dstY, int &clampWidth, int &clampHeight) {
 		if (srcWidth == 0 || srcHeight == 0) {
 			srcWidth = _surface.w;
 			srcHeight = _surface.h;
@@ -213,21 +213,21 @@ public:
 	}
 
 	template <bool kDisableColoring, bool kDisableBlending, bool kEnableAlphaBlending>
-	FORCEINLINE void tglBlitRLE(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint);
+	void tglBlitRLE(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint);
 
 	template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
-	FORCEINLINE void tglBlitSimple(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint);
+	void tglBlitSimple(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint);
 
 	template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
-	FORCEINLINE void tglBlitScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint);
+	void tglBlitScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint);
 
 	template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
-	FORCEINLINE void tglBlitRotoScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, int rotation,
-	                                  int originX, int originY, float aTint, float rTint, float gTint, float bTint);
+	void tglBlitRotoScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, int rotation,
+	                      int originX, int originY, float aTint, float rTint, float gTint, float bTint);
 
 	//Utility function that calls the correct blitting function.
 	template <bool kDisableBlending, bool kDisableColoring, bool kDisableTransform, bool kFlipVertical, bool kFlipHorizontal, bool kEnableAlphaBlending>
-	FORCEINLINE void tglBlitGeneric(const BlitTransform &transform) {
+	void tglBlitGeneric(const BlitTransform &transform) {
 		if (kDisableTransform) {
 			if ((kDisableBlending || kEnableAlphaBlending) && kFlipVertical == false && kFlipHorizontal == false) {
 				tglBlitRLE<kDisableColoring, kDisableBlending, kEnableAlphaBlending>(transform._destinationRectangle.left,
@@ -311,7 +311,7 @@ namespace TinyGL {
 // This blit only supports tinting but it will fall back to simpleBlit
 // if flipping is required (or anything more complex than that, including rotationd and scaling).
 template <bool kDisableColoring, bool kDisableBlending, bool kEnableAlphaBlending>
-FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint) {
+void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint) {
 	GLContext *c = gl_get_context();
 
 	int clampWidth, clampHeight;
@@ -402,7 +402,7 @@ FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, i
 
 // This blit function is called when flipping is needed but transformation isn't.
 template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
-FORCEINLINE void BlitImage::tglBlitSimple(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint) {
+void BlitImage::tglBlitSimple(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint) {
 	GLContext *c = gl_get_context();
 
 	int clampWidth, clampHeight;
@@ -456,8 +456,8 @@ FORCEINLINE void BlitImage::tglBlitSimple(int dstX, int dstY, int srcX, int srcY
 // This function is called when scale is needed: it uses a simple nearest
 // filter to scale the blit image before copying it to the screen.
 template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
-FORCEINLINE void BlitImage::tglBlitScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight,
-	                                 float aTint, float rTint, float gTint, float bTint) {
+void BlitImage::tglBlitScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight,
+	                     float aTint, float rTint, float gTint, float bTint) {
 	GLContext *c = gl_get_context();
 
 	int clampWidth, clampHeight;
@@ -546,8 +546,8 @@ systems.
 */
 
 template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool kFlipHorizontal>
-FORCEINLINE void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, int rotation,
-	                                     int originX, int originY, float aTint, float rTint, float gTint, float bTint) {
+void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, int rotation,
+	                         int originX, int originY, float aTint, float rTint, float gTint, float bTint) {
 	GLContext *c = gl_get_context();
 
 	int clampWidth, clampHeight;

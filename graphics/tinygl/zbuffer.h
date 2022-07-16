@@ -687,10 +687,10 @@ private:
 	FORCEINLINE void putPixel(uint pixelOffset, int color, int x, int y);
 
 	template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite>
-	FORCEINLINE void drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2);
+	void drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2);
 
 	template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite, bool kEnableScissor>
-	FORCEINLINE void drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2);
+	void drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2);
 
 	Buffer _offscreenBuffer;
 	Graphics::PixelBuffer _pbuf;
