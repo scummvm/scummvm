@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|arm64">
+			<Configuration>Analysis</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{2B994921-427F-32C5-BC93-1D4095A49C8C}</ProjectGuid>
+		<RootNamespace>lastexpress</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath16)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath16)</VCTargetsPath>
+		<VcpkgTriplet Condition="'$(Platform)' == 'Win32'">x86-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'x64'">x64-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'arm64'">arm64-windows</VcpkgTriplet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+		<EnableASAN>true</EnableASAN>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>llvm</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+		<EnableASAN>true</EnableASAN>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>llvm</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+		<EnableASAN>true</EnableASAN>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>llvm</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\lastexpress\data\animation.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\data\archive.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\data\background.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\data\cursor.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\data\font.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\data\scene.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\data\sequence.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\data\snd.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\data\subtitle.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\abbot.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\alexei.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\alouan.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\anna.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\august.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\boutarel.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\chapters.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\cooks.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\coudert.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\entity.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\entity39.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\francois.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\gendarmes.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\hadija.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\ivo.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\kahina.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\kronos.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\mahmud.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\max.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\mertens.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\milos.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\mmeboutarel.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\pascale.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\rebecca.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\salko.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\sophie.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\tables.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\tatiana.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\train.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\vassili.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\verges.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\vesna.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\waiter1.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\waiter2.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\entities\yasmin.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\fight\fight.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\fight\fighter.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\fight\fighter_anna.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\fight\fighter_ivo.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\fight\fighter_milos.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\fight\fighter_salko.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\fight\fighter_vesna.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\game\action.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\game\beetle.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\game\entities.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\game\inventory.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\game\logic.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\game\object.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\game\savegame.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\game\savepoint.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\game\scenes.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\game\state.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\menu\clock.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\menu\menu.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\menu\trainline.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\sound\entry.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\sound\queue.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\sound\sound.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\debug.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\graphics.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\lastexpress.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\resource.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\lastexpress\data\animation.h" />
+		<ClInclude Include="..\..\engines\lastexpress\data\archive.h" />
+		<ClInclude Include="..\..\engines\lastexpress\data\background.h" />
+		<ClInclude Include="..\..\engines\lastexpress\data\cursor.h" />
+		<ClInclude Include="..\..\engines\lastexpress\data\font.h" />
+		<ClInclude Include="..\..\engines\lastexpress\data\scene.h" />
+		<ClInclude Include="..\..\engines\lastexpress\data\sequence.h" />
+		<ClInclude Include="..\..\engines\lastexpress\data\snd.h" />
+		<ClInclude Include="..\..\engines\lastexpress\data\subtitle.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\abbot.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\alexei.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\alouan.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\anna.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\august.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\boutarel.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\chapters.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\cooks.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\coudert.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\entity.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\entity39.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\entity_intern.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\francois.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\gendarmes.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\hadija.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\ivo.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\kahina.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\kronos.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\mahmud.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\max.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\mertens.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\milos.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\mmeboutarel.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\pascale.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\rebecca.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\salko.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\sophie.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\tables.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\tatiana.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\train.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\vassili.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\verges.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\vesna.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\waiter1.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\waiter2.h" />
+		<ClInclude Include="..\..\engines\lastexpress\entities\yasmin.h" />
+		<ClInclude Include="..\..\engines\lastexpress\fight\fight.h" />
+		<ClInclude Include="..\..\engines\lastexpress\fight\fighter.h" />
+		<ClInclude Include="..\..\engines\lastexpress\fight\fighter_anna.h" />
+		<ClInclude Include="..\..\engines\lastexpress\fight\fighter_ivo.h" />
+		<ClInclude Include="..\..\engines\lastexpress\fight\fighter_milos.h" />
+		<ClInclude Include="..\..\engines\lastexpress\fight\fighter_salko.h" />
+		<ClInclude Include="..\..\engines\lastexpress\fight\fighter_vesna.h" />
+		<ClInclude Include="..\..\engines\lastexpress\game\action.h" />
+		<ClInclude Include="..\..\engines\lastexpress\game\beetle.h" />
+		<ClInclude Include="..\..\engines\lastexpress\game\entities.h" />
+		<ClInclude Include="..\..\engines\lastexpress\game\inventory.h" />
+		<ClInclude Include="..\..\engines\lastexpress\game\logic.h" />
+		<ClInclude Include="..\..\engines\lastexpress\game\object.h" />
+		<ClInclude Include="..\..\engines\lastexpress\game\savegame.h" />
+		<ClInclude Include="..\..\engines\lastexpress\game\savepoint.h" />
+		<ClInclude Include="..\..\engines\lastexpress\game\scenes.h" />
+		<ClInclude Include="..\..\engines\lastexpress\game\state.h" />
+		<ClInclude Include="..\..\engines\lastexpress\menu\clock.h" />
+		<ClInclude Include="..\..\engines\lastexpress\menu\menu.h" />
+		<ClInclude Include="..\..\engines\lastexpress\menu\trainline.h" />
+		<ClInclude Include="..\..\engines\lastexpress\sound\entry.h" />
+		<ClInclude Include="..\..\engines\lastexpress\sound\queue.h" />
+		<ClInclude Include="..\..\engines\lastexpress\sound\sound.h" />
+		<ClInclude Include="..\..\engines\lastexpress\debug.h" />
+		<ClInclude Include="..\..\engines\lastexpress\drawable.h" />
+		<ClInclude Include="..\..\engines\lastexpress\eventhandler.h" />
+		<ClInclude Include="..\..\engines\lastexpress\graphics.h" />
+		<ClInclude Include="..\..\engines\lastexpress\helpers.h" />
+		<ClInclude Include="..\..\engines\lastexpress\lastexpress.h" />
+		<ClInclude Include="..\..\engines\lastexpress\resource.h" />
+		<ClInclude Include="..\..\engines\lastexpress\shared.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\lastexpress\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

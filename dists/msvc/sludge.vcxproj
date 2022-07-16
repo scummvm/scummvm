@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|arm64">
+			<Configuration>Analysis</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{8091DBFC-C85E-37D8-AC14-EB5CC779F8E4}</ProjectGuid>
+		<RootNamespace>sludge</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath16)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath16)</VCTargetsPath>
+		<VcpkgTriplet Condition="'$(Platform)' == 'Win32'">x86-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'x64'">x64-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'arm64'">arm64-windows</VcpkgTriplet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+		<EnableASAN>true</EnableASAN>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>llvm</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+		<EnableASAN>true</EnableASAN>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>llvm</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+		<EnableASAN>true</EnableASAN>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>llvm</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\sludge\backdrop.cpp" />
+		<ClCompile Include="..\..\engines\sludge\bg_effects.cpp" />
+		<ClCompile Include="..\..\engines\sludge\builtin.cpp" />
+		<ClCompile Include="..\..\engines\sludge\cursors.cpp" />
+		<ClCompile Include="..\..\engines\sludge\event.cpp" />
+		<ClCompile Include="..\..\engines\sludge\fileset.cpp" />
+		<ClCompile Include="..\..\engines\sludge\floor.cpp" />
+		<ClCompile Include="..\..\engines\sludge\fonttext.cpp" />
+		<ClCompile Include="..\..\engines\sludge\freeze.cpp" />
+		<ClCompile Include="..\..\engines\sludge\function.cpp" />
+		<ClCompile Include="..\..\engines\sludge\graphics.cpp" />
+		<ClCompile Include="..\..\engines\sludge\hsi.cpp" />
+		<ClCompile Include="..\..\engines\sludge\imgloader.cpp" />
+		<ClCompile Include="..\..\engines\sludge\language.cpp" />
+		<ClCompile Include="..\..\engines\sludge\main_loop.cpp" />
+		<ClCompile Include="..\..\engines\sludge\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\sludge\moreio.cpp" />
+		<ClCompile Include="..\..\engines\sludge\movie.cpp" />
+		<ClCompile Include="..\..\engines\sludge\newfatal.cpp" />
+		<ClCompile Include="..\..\engines\sludge\objtypes.cpp" />
+		<ClCompile Include="..\..\engines\sludge\people.cpp" />
+		<ClCompile Include="..\..\engines\sludge\region.cpp" />
+		<ClCompile Include="..\..\engines\sludge\savedata.cpp" />
+		<ClCompile Include="..\..\engines\sludge\saveload.cpp" />
+		<ClCompile Include="..\..\engines\sludge\sludge.cpp" />
+		<ClCompile Include="..\..\engines\sludge\sludger.cpp" />
+		<ClCompile Include="..\..\engines\sludge\sound.cpp" />
+		<ClCompile Include="..\..\engines\sludge\speech.cpp" />
+		<ClCompile Include="..\..\engines\sludge\sprbanks.cpp" />
+		<ClCompile Include="..\..\engines\sludge\sprites.cpp" />
+		<ClCompile Include="..\..\engines\sludge\statusba.cpp" />
+		<ClCompile Include="..\..\engines\sludge\thumbnail.cpp" />
+		<ClCompile Include="..\..\engines\sludge\timing.cpp" />
+		<ClCompile Include="..\..\engines\sludge\transition.cpp" />
+		<ClCompile Include="..\..\engines\sludge\variable.cpp" />
+		<ClCompile Include="..\..\engines\sludge\zbuffer.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\sludge\builtin.h" />
+		<ClInclude Include="..\..\engines\sludge\csludge.h" />
+		<ClInclude Include="..\..\engines\sludge\cursors.h" />
+		<ClInclude Include="..\..\engines\sludge\detection.h" />
+		<ClInclude Include="..\..\engines\sludge\detection_tables.h" />
+		<ClInclude Include="..\..\engines\sludge\errors.h" />
+		<ClInclude Include="..\..\engines\sludge\event.h" />
+		<ClInclude Include="..\..\engines\sludge\fileset.h" />
+		<ClInclude Include="..\..\engines\sludge\floor.h" />
+		<ClInclude Include="..\..\engines\sludge\fonttext.h" />
+		<ClInclude Include="..\..\engines\sludge\freeze.h" />
+		<ClInclude Include="..\..\engines\sludge\function.h" />
+		<ClInclude Include="..\..\engines\sludge\functionlist.h" />
+		<ClInclude Include="..\..\engines\sludge\graphics.h" />
+		<ClInclude Include="..\..\engines\sludge\hsi.h" />
+		<ClInclude Include="..\..\engines\sludge\imgloader.h" />
+		<ClInclude Include="..\..\engines\sludge\language.h" />
+		<ClInclude Include="..\..\engines\sludge\main_loop.h" />
+		<ClInclude Include="..\..\engines\sludge\moreio.h" />
+		<ClInclude Include="..\..\engines\sludge\movie.h" />
+		<ClInclude Include="..\..\engines\sludge\newfatal.h" />
+		<ClInclude Include="..\..\engines\sludge\objtypes.h" />
+		<ClInclude Include="..\..\engines\sludge\people.h" />
+		<ClInclude Include="..\..\engines\sludge\region.h" />
+		<ClInclude Include="..\..\engines\sludge\savedata.h" />
+		<ClInclude Include="..\..\engines\sludge\saveload.h" />
+		<ClInclude Include="..\..\engines\sludge\sludge.h" />
+		<ClInclude Include="..\..\engines\sludge\sludger.h" />
+		<ClInclude Include="..\..\engines\sludge\sound.h" />
+		<ClInclude Include="..\..\engines\sludge\speech.h" />
+		<ClInclude Include="..\..\engines\sludge\sprbanks.h" />
+		<ClInclude Include="..\..\engines\sludge\sprites.h" />
+		<ClInclude Include="..\..\engines\sludge\statusba.h" />
+		<ClInclude Include="..\..\engines\sludge\timing.h" />
+		<ClInclude Include="..\..\engines\sludge\variable.h" />
+		<ClInclude Include="..\..\engines\sludge\version.h" />
+		<ClInclude Include="..\..\engines\sludge\zbuffer.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\sludge\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

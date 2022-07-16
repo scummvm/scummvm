@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|arm64">
+			<Configuration>Analysis</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{B73D341A-E2FE-32AA-9A9A-C44CE05C1D8F}</ProjectGuid>
+		<RootNamespace>mutationofjb</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath16)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath16)</VCTargetsPath>
+		<VcpkgTriplet Condition="'$(Platform)' == 'Win32'">x86-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'x64'">x64-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'arm64'">arm64-windows</VcpkgTriplet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+		<EnableASAN>true</EnableASAN>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>llvm</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+		<EnableASAN>true</EnableASAN>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>llvm</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+		<EnableASAN>true</EnableASAN>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>llvm</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\additemcommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\bitmapvisibilitycommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\callmacrocommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\camefromcommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\changecommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\command.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\conditionalcommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\definestructcommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\endblockcommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\gotocommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\ifcommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\ifitemcommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\ifpiggycommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\labelcommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\loadplayercommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\newroomcommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\playanimationcommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\randomcommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\removeallitemscommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\removeitemcommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\renamecommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\saycommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\seqcommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\setcolorcommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\setobjectframecommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\specialshowcommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\switchpartcommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\talkcommand.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\tasks\conversationtask.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\tasks\objectanimationtask.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\tasks\saytask.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\tasks\sequentialtask.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\tasks\taskmanager.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\widgets\buttonwidget.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\widgets\conversationwidget.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\widgets\gamewidget.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\widgets\imagewidget.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\widgets\inventorywidget.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\widgets\labelwidget.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\widgets\widget.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\animationdecoder.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\assets.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\conversationlinelist.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\debug.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\encryptedfile.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\font.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\game.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\gamedata.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\gamescreen.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\guiscreen.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\hardcodedstrings.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\inventory.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\inventoryitemdefinitionlist.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\mutationofjb.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\room.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\script.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\timer.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\util.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\additemcommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\bitmapvisibilitycommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\callmacrocommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\camefromcommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\changecommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\command.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\conditionalcommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\definestructcommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\endblockcommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\gotocommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\ifcommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\ifitemcommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\ifpiggycommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\labelcommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\loadplayercommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\newroomcommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\playanimationcommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\randomcommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\removeallitemscommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\removeitemcommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\renamecommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\saycommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\seqcommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\setcolorcommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\setobjectframecommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\specialshowcommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\switchpartcommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\talkcommand.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\tasks\conversationtask.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\tasks\objectanimationtask.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\tasks\saytask.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\tasks\sequentialtask.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\tasks\task.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\tasks\taskmanager.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\widgets\buttonwidget.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\widgets\conversationwidget.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\widgets\gamewidget.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\widgets\imagewidget.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\widgets\inventorywidget.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\widgets\labelwidget.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\widgets\widget.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\animationdecoder.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\assets.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\conversationlinelist.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\debug.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\encryptedfile.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\font.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\game.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\gamedata.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\gamescreen.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\guiscreen.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\hardcodedstrings.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\inventory.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\inventoryitemdefinitionlist.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\mutationofjb.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\room.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\script.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\timer.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\util.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\mutationofjb\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

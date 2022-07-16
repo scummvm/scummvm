@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|arm64">
+			<Configuration>Analysis</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{7E0C7269-1CBA-3839-A0B9-2329D2F736B0}</ProjectGuid>
+		<RootNamespace>avalanche</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath16)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath16)</VCTargetsPath>
+		<VcpkgTriplet Condition="'$(Platform)' == 'Win32'">x86-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'x64'">x64-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'arm64'">arm64-windows</VcpkgTriplet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+		<EnableASAN>true</EnableASAN>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>llvm</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+		<EnableASAN>true</EnableASAN>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>llvm</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+		<EnableASAN>true</EnableASAN>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>llvm</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\avalanche\animation.cpp" />
+		<ClCompile Include="..\..\engines\avalanche\avalanche.cpp" />
+		<ClCompile Include="..\..\engines\avalanche\avalot.cpp" />
+		<ClCompile Include="..\..\engines\avalanche\background.cpp" />
+		<ClCompile Include="..\..\engines\avalanche\clock.cpp" />
+		<ClCompile Include="..\..\engines\avalanche\closing.cpp" />
+		<ClCompile Include="..\..\engines\avalanche\console.cpp" />
+		<ClCompile Include="..\..\engines\avalanche\dialogs.cpp" />
+		<ClCompile Include="..\..\engines\avalanche\dropdown.cpp" />
+		<ClCompile Include="..\..\engines\avalanche\ghostroom.cpp" />
+		<ClCompile Include="..\..\engines\avalanche\graphics.cpp" />
+		<ClCompile Include="..\..\engines\avalanche\help.cpp" />
+		<ClCompile Include="..\..\engines\avalanche\highscore.cpp" />
+		<ClCompile Include="..\..\engines\avalanche\mainmenu.cpp" />
+		<ClCompile Include="..\..\engines\avalanche\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\avalanche\nim.cpp" />
+		<ClCompile Include="..\..\engines\avalanche\parser.cpp" />
+		<ClCompile Include="..\..\engines\avalanche\sequence.cpp" />
+		<ClCompile Include="..\..\engines\avalanche\shootemup.cpp" />
+		<ClCompile Include="..\..\engines\avalanche\sound.cpp" />
+		<ClCompile Include="..\..\engines\avalanche\timer.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\avalanche\animation.h" />
+		<ClInclude Include="..\..\engines\avalanche\avalanche.h" />
+		<ClInclude Include="..\..\engines\avalanche\avalot.h" />
+		<ClInclude Include="..\..\engines\avalanche\background.h" />
+		<ClInclude Include="..\..\engines\avalanche\clock.h" />
+		<ClInclude Include="..\..\engines\avalanche\closing.h" />
+		<ClInclude Include="..\..\engines\avalanche\console.h" />
+		<ClInclude Include="..\..\engines\avalanche\detection.h" />
+		<ClInclude Include="..\..\engines\avalanche\dialogs.h" />
+		<ClInclude Include="..\..\engines\avalanche\dropdown.h" />
+		<ClInclude Include="..\..\engines\avalanche\enums.h" />
+		<ClInclude Include="..\..\engines\avalanche\ghostroom.h" />
+		<ClInclude Include="..\..\engines\avalanche\graphics.h" />
+		<ClInclude Include="..\..\engines\avalanche\help.h" />
+		<ClInclude Include="..\..\engines\avalanche\highscore.h" />
+		<ClInclude Include="..\..\engines\avalanche\mainmenu.h" />
+		<ClInclude Include="..\..\engines\avalanche\nim.h" />
+		<ClInclude Include="..\..\engines\avalanche\parser.h" />
+		<ClInclude Include="..\..\engines\avalanche\sequence.h" />
+		<ClInclude Include="..\..\engines\avalanche\shootemup.h" />
+		<ClInclude Include="..\..\engines\avalanche\sound.h" />
+		<ClInclude Include="..\..\engines\avalanche\timer.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\avalanche\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

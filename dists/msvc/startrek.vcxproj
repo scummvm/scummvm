@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|arm64">
+			<Configuration>Analysis</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{800007C4-5545-3A05-B911-7D3B052CCE57}</ProjectGuid>
+		<RootNamespace>startrek</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath16)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath16)</VCTargetsPath>
+		<VcpkgTriplet Condition="'$(Platform)' == 'Win32'">x86-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'x64'">x64-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'arm64'">arm64-windows</VcpkgTriplet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+		<EnableASAN>true</EnableASAN>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>llvm</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+		<EnableASAN>true</EnableASAN>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>llvm</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+		<EnableASAN>true</EnableASAN>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>llvm</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\startrek\rooms\demon0.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\demon1.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\demon2.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\demon3.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\demon4.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\demon5.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\demon6.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\feather0.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\feather1.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\feather2.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\feather3.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\feather4.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\feather5.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\feather6.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\feather7.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\love0.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\love1.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\love2.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\love3.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\love4.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\love5.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\lovea.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\mudd0.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\mudd1.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\mudd2.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\mudd3.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\mudd4.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\mudd5.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\mudda.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\sins0.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\sins1.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\sins2.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\sins3.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\sins4.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\sins5.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\trial0.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\trial1.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\trial2.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\trial3.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\trial4.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\trial5.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\tug0.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\tug1.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\tug2.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\tug3.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\veng0.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\veng1.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\veng2.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\veng3.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\veng4.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\veng5.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\veng6.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\veng7.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\veng8.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\venga.cpp" />
+		<ClCompile Include="..\..\engines\startrek\actors.cpp" />
+		<ClCompile Include="..\..\engines\startrek\awaymission.cpp" />
+		<ClCompile Include="..\..\engines\startrek\bitmap.cpp" />
+		<ClCompile Include="..\..\engines\startrek\bridge.cpp" />
+		<ClCompile Include="..\..\engines\startrek\common.cpp" />
+		<ClCompile Include="..\..\engines\startrek\console.cpp" />
+		<ClCompile Include="..\..\engines\startrek\events.cpp" />
+		<ClCompile Include="..\..\engines\startrek\font.cpp" />
+		<ClCompile Include="..\..\engines\startrek\graphics.cpp" />
+		<ClCompile Include="..\..\engines\startrek\intro.cpp" />
+		<ClCompile Include="..\..\engines\startrek\iwfile.cpp" />
+		<ClCompile Include="..\..\engines\startrek\lzss.cpp" />
+		<ClCompile Include="..\..\engines\startrek\menu.cpp" />
+		<ClCompile Include="..\..\engines\startrek\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\startrek\resource.cpp" />
+		<ClCompile Include="..\..\engines\startrek\room.cpp" />
+		<ClCompile Include="..\..\engines\startrek\saveload.cpp" />
+		<ClCompile Include="..\..\engines\startrek\sound.cpp" />
+		<ClCompile Include="..\..\engines\startrek\space.cpp" />
+		<ClCompile Include="..\..\engines\startrek\sprite.cpp" />
+		<ClCompile Include="..\..\engines\startrek\startrek.cpp" />
+		<ClCompile Include="..\..\engines\startrek\text.cpp" />
+		<ClCompile Include="..\..\engines\startrek\textbox.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\startrek\rooms\function_map.h" />
+		<ClInclude Include="..\..\engines\startrek\action.h" />
+		<ClInclude Include="..\..\engines\startrek\awaymission.h" />
+		<ClInclude Include="..\..\engines\startrek\bitmap.h" />
+		<ClInclude Include="..\..\engines\startrek\bridge.h" />
+		<ClInclude Include="..\..\engines\startrek\common.h" />
+		<ClInclude Include="..\..\engines\startrek\console.h" />
+		<ClInclude Include="..\..\engines\startrek\detection.h" />
+		<ClInclude Include="..\..\engines\startrek\fixedint.h" />
+		<ClInclude Include="..\..\engines\startrek\font.h" />
+		<ClInclude Include="..\..\engines\startrek\graphics.h" />
+		<ClInclude Include="..\..\engines\startrek\items.h" />
+		<ClInclude Include="..\..\engines\startrek\iwfile.h" />
+		<ClInclude Include="..\..\engines\startrek\lzss.h" />
+		<ClInclude Include="..\..\engines\startrek\object.h" />
+		<ClInclude Include="..\..\engines\startrek\resource.h" />
+		<ClInclude Include="..\..\engines\startrek\room.h" />
+		<ClInclude Include="..\..\engines\startrek\sound.h" />
+		<ClInclude Include="..\..\engines\startrek\soundeffects.h" />
+		<ClInclude Include="..\..\engines\startrek\space.h" />
+		<ClInclude Include="..\..\engines\startrek\sprite.h" />
+		<ClInclude Include="..\..\engines\startrek\startrek.h" />
+		<ClInclude Include="..\..\engines\startrek\text.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\startrek\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

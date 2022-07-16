@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="common">
+			<UniqueIdentifier>6934B5A7-DDB4-11EB-B033-A87EEAEBEFA7</UniqueIdentifier>
+		</Filter>
+		<Filter Include="gfx">
+			<UniqueIdentifier>6934B5A8-DDB4-11EB-B033-A87EEAEBEFA7</UniqueIdentifier>
+		</Filter>
+		<Filter Include="sound">
+			<UniqueIdentifier>6934B5A9-DDB4-11EB-B033-A87EEAEBEFA7</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\icb\actor.cpp" />
+		<ClCompile Include="..\..\engines\icb\actor_fx_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\actor_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\actor_view_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\animation.cpp" />
+		<ClCompile Include="..\..\engines\icb\animation_mega_set.cpp" />
+		<ClCompile Include="..\..\engines\icb\async_generic.cpp" />
+		<ClCompile Include="..\..\engines\icb\barriers.cpp" />
+		<ClCompile Include="..\..\engines\icb\bone.cpp" />
+		<ClCompile Include="..\..\engines\icb\breath.cpp" />
+		<ClCompile Include="..\..\engines\icb\camera.cpp" />
+		<ClCompile Include="..\..\engines\icb\chi.cpp" />
+		<ClCompile Include="..\..\engines\icb\cluster_manager_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\common\datapacker.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\common\ptr_util.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\common\px_2drealline.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\common\px_bones.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\common\px_capri_maths.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\common\px_capri_maths_pc.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\common\px_clu_api.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\common\px_globalvariables.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\common\px_linkeddatafile.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\common\px_scriptengine.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\common\px_string.cpp">
+			<Filter>common</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\configfile.cpp" />
+		<ClCompile Include="..\..\engines\icb\console_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\custom_logics.cpp" />
+		<ClCompile Include="..\..\engines\icb\debug.cpp" />
+		<ClCompile Include="..\..\engines\icb\debug_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\direct_input.cpp" />
+		<ClCompile Include="..\..\engines\icb\drawpoly_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\event_list.cpp" />
+		<ClCompile Include="..\..\engines\icb\event_manager.cpp" />
+		<ClCompile Include="..\..\engines\icb\floors.cpp" />
+		<ClCompile Include="..\..\engines\icb\fn_animation.cpp" />
+		<ClCompile Include="..\..\engines\icb\fn_event_functions.cpp" />
+		<ClCompile Include="..\..\engines\icb\fn_fx.cpp" />
+		<ClCompile Include="..\..\engines\icb\fn_fx_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\fn_icon_functions.cpp" />
+		<ClCompile Include="..\..\engines\icb\fn_interact.cpp" />
+		<ClCompile Include="..\..\engines\icb\fn_movie_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\fn_remora_functions.cpp" />
+		<ClCompile Include="..\..\engines\icb\fn_routines.cpp" />
+		<ClCompile Include="..\..\engines\icb\fn_sound.cpp" />
+		<ClCompile Include="..\..\engines\icb\fn_sting_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\footstep.cpp" />
+		<ClCompile Include="..\..\engines\icb\function.cpp" />
+		<ClCompile Include="..\..\engines\icb\game_script.cpp" />
+		<ClCompile Include="..\..\engines\icb\game_volume.cpp" />
+		<ClCompile Include="..\..\engines\icb\general_interaction.cpp" />
+		<ClCompile Include="..\..\engines\icb\general_npc_animation.cpp" />
+		<ClCompile Include="..\..\engines\icb\gfx\gfxstub.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\gfx\gfxstub_dutch.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\gfx\gfxstub_rev.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\gfx\psx_camera.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\gfx\psx_pcgpu.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\gfx\psx_tman.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\gfx\rab_api.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\global_objects.cpp" />
+		<ClCompile Include="..\..\engines\icb\global_objects_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\global_objects_psx.cpp" />
+		<ClCompile Include="..\..\engines\icb\global_switches.cpp" />
+		<ClCompile Include="..\..\engines\icb\global_vars.cpp" />
+		<ClCompile Include="..\..\engines\icb\graphic_prims.cpp" />
+		<ClCompile Include="..\..\engines\icb\graphic_prims_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\health_bar_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\icb.cpp" />
+		<ClCompile Include="..\..\engines\icb\icon_list.cpp" />
+		<ClCompile Include="..\..\engines\icb\icon_list_manager.cpp" />
+		<ClCompile Include="..\..\engines\icb\icon_menu.cpp" />
+		<ClCompile Include="..\..\engines\icb\icon_menu_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\jpeg.cpp" />
+		<ClCompile Include="..\..\engines\icb\keyboard.cpp" />
+		<ClCompile Include="..\..\engines\icb\light_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\line_of_sight.cpp" />
+		<ClCompile Include="..\..\engines\icb\loadscrn_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\logic.cpp" />
+		<ClCompile Include="..\..\engines\icb\main_menu_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\map_marker.cpp" />
+		<ClCompile Include="..\..\engines\icb\map_marker_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\mega_interaction.cpp" />
+		<ClCompile Include="..\..\engines\icb\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\icb\mission.cpp" />
+		<ClCompile Include="..\..\engines\icb\mission_functions.cpp" />
+		<ClCompile Include="..\..\engines\icb\mouse.cpp" />
+		<ClCompile Include="..\..\engines\icb\mouse_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\movie_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\non_ad_module.cpp" />
+		<ClCompile Include="..\..\engines\icb\options_manager_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\p4.cpp" />
+		<ClCompile Include="..\..\engines\icb\p4_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\player.cpp" />
+		<ClCompile Include="..\..\engines\icb\player_interaction.cpp" />
+		<ClCompile Include="..\..\engines\icb\player_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\prim_route_builder.cpp" />
+		<ClCompile Include="..\..\engines\icb\protocol.cpp" />
+		<ClCompile Include="..\..\engines\icb\remora.cpp" />
+		<ClCompile Include="..\..\engines\icb\remora_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\remora_sprite.cpp" />
+		<ClCompile Include="..\..\engines\icb\remora_sprite_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\res_man.cpp" />
+		<ClCompile Include="..\..\engines\icb\res_man_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\route_manager.cpp" />
+		<ClCompile Include="..\..\engines\icb\session.cpp" />
+		<ClCompile Include="..\..\engines\icb\set.cpp" />
+		<ClCompile Include="..\..\engines\icb\set_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\shade_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\shadow_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\shake.cpp" />
+		<ClCompile Include="..\..\engines\icb\softskin_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\sound.cpp" />
+		<ClCompile Include="..\..\engines\icb\sound\direct_sound.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\sound\fx_manager.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\sound\music_manager.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\sound\sound_common.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\sound\speech_manager.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\icb\sound_logic.cpp" />
+		<ClCompile Include="..\..\engines\icb\sound_logic_entry.cpp" />
+		<ClCompile Include="..\..\engines\icb\sound_lowlevel_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\speech.cpp" />
+		<ClCompile Include="..\..\engines\icb\speech_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\stage_poly.cpp" />
+		<ClCompile Include="..\..\engines\icb\stagedraw_pc_poly.cpp" />
+		<ClCompile Include="..\..\engines\icb\string_vest.cpp" />
+		<ClCompile Include="..\..\engines\icb\surface_manager.cpp" />
+		<ClCompile Include="..\..\engines\icb\text_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\text_sprites.cpp" />
+		<ClCompile Include="..\..\engines\icb\text_sprites_pc.cpp" />
+		<ClCompile Include="..\..\engines\icb\timer_func.cpp" />
+		<ClCompile Include="..\..\engines\icb\tracer.cpp" />
+		<ClCompile Include="..\..\engines\icb\zsupport.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\icb\actor.h" />
+		<ClInclude Include="..\..\engines\icb\actor_pc.h" />
+		<ClInclude Include="..\..\engines\icb\actor_view_pc.h" />
+		<ClInclude Include="..\..\engines\icb\animation_mega_set.h" />
+		<ClInclude Include="..\..\engines\icb\barriers.h" />
+		<ClInclude Include="..\..\engines\icb\bone.h" />
+		<ClInclude Include="..\..\engines\icb\breath.h" />
+		<ClInclude Include="..\..\engines\icb\cluster_manager_pc.h" />
+		<ClInclude Include="..\..\engines\icb\common\datapacker.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\pc_props.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\ptr_util.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_2drealline.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_2drealpoint.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_3drealpoint.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_anims.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_array.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_bitmap.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_bitmap_pc.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_bones.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_camera.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_camera_cube.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_capri_maths.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_capri_maths_pc.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_clu_api.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_common.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_definitions.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_features.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_floor_map.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_game_object.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_globalvariables.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_lights.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_linkeddatafile.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_list.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_mapfile.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_prop_anims.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_rcutypes.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_route_barriers.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_scriptengine.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_sfx_description.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_sound_constants.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_staticlayers.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_string.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_types.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\px_walkarea_integer.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\common\revtex_api.h">
+			<Filter>common</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\configfile.h" />
+		<ClInclude Include="..\..\engines\icb\custom_logics.h" />
+		<ClInclude Include="..\..\engines\icb\debug.h" />
+		<ClInclude Include="..\..\engines\icb\debug_pc.h" />
+		<ClInclude Include="..\..\engines\icb\direct_input.h" />
+		<ClInclude Include="..\..\engines\icb\drawpoly_pc.h" />
+		<ClInclude Include="..\..\engines\icb\event_list.h" />
+		<ClInclude Include="..\..\engines\icb\event_manager.h" />
+		<ClInclude Include="..\..\engines\icb\event_timer.h" />
+		<ClInclude Include="..\..\engines\icb\floors.h" />
+		<ClInclude Include="..\..\engines\icb\fn_routines.h" />
+		<ClInclude Include="..\..\engines\icb\game_script.h" />
+		<ClInclude Include="..\..\engines\icb\game_volume.h" />
+		<ClInclude Include="..\..\engines\icb\gameover.h" />
+		<ClInclude Include="..\..\engines\icb\gfx\gfxstub.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\gfx\gfxstub_dutch.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\gfx\gfxstub_rev_dutch.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\gfx\psx_anims.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\gfx\psx_camera.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\gfx\psx_clut.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\gfx\psx_light.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\gfx\psx_ot.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\gfx\psx_pcdefines.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\gfx\psx_pcgpu.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\gfx\psx_pchmd.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\gfx\psx_poly.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\gfx\psx_props.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\gfx\psx_pxactor.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\gfx\psx_scrn.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\gfx\psx_tman.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\gfx\rab_api.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\gfx\rap_api.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\gfx\rlp_api.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\global_objects.h" />
+		<ClInclude Include="..\..\engines\icb\global_objects_pc.h" />
+		<ClInclude Include="..\..\engines\icb\global_objects_psx.h" />
+		<ClInclude Include="..\..\engines\icb\global_switches.h" />
+		<ClInclude Include="..\..\engines\icb\global_vars.h" />
+		<ClInclude Include="..\..\engines\icb\graphic_prims.h" />
+		<ClInclude Include="..\..\engines\icb\icb.h" />
+		<ClInclude Include="..\..\engines\icb\icon_list.h" />
+		<ClInclude Include="..\..\engines\icb\icon_list_manager.h" />
+		<ClInclude Include="..\..\engines\icb\icon_menu.h" />
+		<ClInclude Include="..\..\engines\icb\icon_menu_pc.h" />
+		<ClInclude Include="..\..\engines\icb\jpeg.h" />
+		<ClInclude Include="..\..\engines\icb\keyboard.h" />
+		<ClInclude Include="..\..\engines\icb\light.h" />
+		<ClInclude Include="..\..\engines\icb\light_pc.h" />
+		<ClInclude Include="..\..\engines\icb\line_of_sight.h" />
+		<ClInclude Include="..\..\engines\icb\loadscrn.h" />
+		<ClInclude Include="..\..\engines\icb\main_menu.h" />
+		<ClInclude Include="..\..\engines\icb\map_marker.h" />
+		<ClInclude Include="..\..\engines\icb\mission.h" />
+		<ClInclude Include="..\..\engines\icb\mission_functions.h" />
+		<ClInclude Include="..\..\engines\icb\mouse.h" />
+		<ClInclude Include="..\..\engines\icb\movie_pc.h" />
+		<ClInclude Include="..\..\engines\icb\non_ad_module.h" />
+		<ClInclude Include="..\..\engines\icb\object_structs.h" />
+		<ClInclude Include="..\..\engines\icb\options_manager_pc.h" />
+		<ClInclude Include="..\..\engines\icb\p4.h" />
+		<ClInclude Include="..\..\engines\icb\p4_generic.h" />
+		<ClInclude Include="..\..\engines\icb\p4_generic_pc.h" />
+		<ClInclude Include="..\..\engines\icb\player.h" />
+		<ClInclude Include="..\..\engines\icb\prim_route_builder.h" />
+		<ClInclude Include="..\..\engines\icb\protocol.h" />
+		<ClInclude Include="..\..\engines\icb\remora.h" />
+		<ClInclude Include="..\..\engines\icb\remora_pc.h" />
+		<ClInclude Include="..\..\engines\icb\remora_sprite.h" />
+		<ClInclude Include="..\..\engines\icb\res_man.h" />
+		<ClInclude Include="..\..\engines\icb\res_man_pc.h" />
+		<ClInclude Include="..\..\engines\icb\route_manager.h" />
+		<ClInclude Include="..\..\engines\icb\session.h" />
+		<ClInclude Include="..\..\engines\icb\set.h" />
+		<ClInclude Include="..\..\engines\icb\set_pc.h" />
+		<ClInclude Include="..\..\engines\icb\shade.h" />
+		<ClInclude Include="..\..\engines\icb\shade_pc.h" />
+		<ClInclude Include="..\..\engines\icb\shadow.h" />
+		<ClInclude Include="..\..\engines\icb\shadow_pc.h" />
+		<ClInclude Include="..\..\engines\icb\shake.h" />
+		<ClInclude Include="..\..\engines\icb\softskin_pc.h" />
+		<ClInclude Include="..\..\engines\icb\sound.h" />
+		<ClInclude Include="..\..\engines\icb\sound\direct_sound.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\sound\fx_manager.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\sound\music_manager.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\sound\sound_common.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\sound\speech_manager.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\icb\sound_logic.h" />
+		<ClInclude Include="..\..\engines\icb\sound_logic_entry.h" />
+		<ClInclude Include="..\..\engines\icb\sound_lowlevel.h" />
+		<ClInclude Include="..\..\engines\icb\speech.h" />
+		<ClInclude Include="..\..\engines\icb\stage_draw.h" />
+		<ClInclude Include="..\..\engines\icb\stage_view.h" />
+		<ClInclude Include="..\..\engines\icb\string_vest.h" />
+		<ClInclude Include="..\..\engines\icb\surface_manager.h" />
+		<ClInclude Include="..\..\engines\icb\text.h" />
+		<ClInclude Include="..\..\engines\icb\text_sprites.h" />
+		<ClInclude Include="..\..\engines\icb\timer_func.h" />
+		<ClInclude Include="..\..\engines\icb\tracer.h" />
+		<ClInclude Include="..\..\engines\icb\zsupport.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\icb\module.mk" />
+	</ItemGroup>
+</Project>

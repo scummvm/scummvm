@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="rooms">
+			<UniqueIdentifier>6934B603-DDB4-11EB-B033-A87EEAEBEFA7</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\startrek\actors.cpp" />
+		<ClCompile Include="..\..\engines\startrek\awaymission.cpp" />
+		<ClCompile Include="..\..\engines\startrek\bitmap.cpp" />
+		<ClCompile Include="..\..\engines\startrek\bridge.cpp" />
+		<ClCompile Include="..\..\engines\startrek\common.cpp" />
+		<ClCompile Include="..\..\engines\startrek\console.cpp" />
+		<ClCompile Include="..\..\engines\startrek\events.cpp" />
+		<ClCompile Include="..\..\engines\startrek\font.cpp" />
+		<ClCompile Include="..\..\engines\startrek\graphics.cpp" />
+		<ClCompile Include="..\..\engines\startrek\intro.cpp" />
+		<ClCompile Include="..\..\engines\startrek\iwfile.cpp" />
+		<ClCompile Include="..\..\engines\startrek\lzss.cpp" />
+		<ClCompile Include="..\..\engines\startrek\menu.cpp" />
+		<ClCompile Include="..\..\engines\startrek\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\startrek\resource.cpp" />
+		<ClCompile Include="..\..\engines\startrek\room.cpp" />
+		<ClCompile Include="..\..\engines\startrek\rooms\demon0.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\demon1.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\demon2.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\demon3.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\demon4.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\demon5.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\demon6.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\feather0.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\feather1.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\feather2.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\feather3.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\feather4.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\feather5.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\feather6.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\feather7.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\love0.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\love1.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\love2.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\love3.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\love4.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\love5.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\lovea.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\mudd0.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\mudd1.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\mudd2.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\mudd3.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\mudd4.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\mudd5.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\mudda.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\sins0.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\sins1.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\sins2.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\sins3.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\sins4.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\sins5.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\trial0.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\trial1.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\trial2.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\trial3.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\trial4.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\trial5.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\tug0.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\tug1.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\tug2.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\tug3.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\veng0.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\veng1.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\veng2.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\veng3.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\veng4.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\veng5.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\veng6.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\veng7.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\veng8.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\rooms\venga.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\startrek\saveload.cpp" />
+		<ClCompile Include="..\..\engines\startrek\sound.cpp" />
+		<ClCompile Include="..\..\engines\startrek\space.cpp" />
+		<ClCompile Include="..\..\engines\startrek\sprite.cpp" />
+		<ClCompile Include="..\..\engines\startrek\startrek.cpp" />
+		<ClCompile Include="..\..\engines\startrek\text.cpp" />
+		<ClCompile Include="..\..\engines\startrek\textbox.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\startrek\action.h" />
+		<ClInclude Include="..\..\engines\startrek\awaymission.h" />
+		<ClInclude Include="..\..\engines\startrek\bitmap.h" />
+		<ClInclude Include="..\..\engines\startrek\bridge.h" />
+		<ClInclude Include="..\..\engines\startrek\common.h" />
+		<ClInclude Include="..\..\engines\startrek\console.h" />
+		<ClInclude Include="..\..\engines\startrek\detection.h" />
+		<ClInclude Include="..\..\engines\startrek\fixedint.h" />
+		<ClInclude Include="..\..\engines\startrek\font.h" />
+		<ClInclude Include="..\..\engines\startrek\graphics.h" />
+		<ClInclude Include="..\..\engines\startrek\items.h" />
+		<ClInclude Include="..\..\engines\startrek\iwfile.h" />
+		<ClInclude Include="..\..\engines\startrek\lzss.h" />
+		<ClInclude Include="..\..\engines\startrek\object.h" />
+		<ClInclude Include="..\..\engines\startrek\resource.h" />
+		<ClInclude Include="..\..\engines\startrek\room.h" />
+		<ClInclude Include="..\..\engines\startrek\rooms\function_map.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\startrek\sound.h" />
+		<ClInclude Include="..\..\engines\startrek\soundeffects.h" />
+		<ClInclude Include="..\..\engines\startrek\space.h" />
+		<ClInclude Include="..\..\engines\startrek\sprite.h" />
+		<ClInclude Include="..\..\engines\startrek\startrek.h" />
+		<ClInclude Include="..\..\engines\startrek\text.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\startrek\module.mk" />
+	</ItemGroup>
+</Project>

@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|arm64">
+			<Configuration>Analysis</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{A732E7BA-B5E3-3362-BB1D-15AEB54135F2}</ProjectGuid>
+		<RootNamespace>nancy</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath16)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath16)</VCTargetsPath>
+		<VcpkgTriplet Condition="'$(Platform)' == 'Win32'">x86-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'x64'">x64-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'arm64'">arm64-windows</VcpkgTriplet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+		<EnableASAN>true</EnableASAN>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>llvm</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+		<EnableASAN>true</EnableASAN>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>llvm</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+		<EnableASAN>true</EnableASAN>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>llvm</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v142</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\nancy\action\actionmanager.cpp" />
+		<ClCompile Include="..\..\engines\nancy\action\actionrecord.cpp" />
+		<ClCompile Include="..\..\engines\nancy\action\arfactory.cpp" />
+		<ClCompile Include="..\..\engines\nancy\action\leverpuzzle.cpp" />
+		<ClCompile Include="..\..\engines\nancy\action\orderingpuzzle.cpp" />
+		<ClCompile Include="..\..\engines\nancy\action\passwordpuzzle.cpp" />
+		<ClCompile Include="..\..\engines\nancy\action\primaryvideo.cpp" />
+		<ClCompile Include="..\..\engines\nancy\action\recordtypes.cpp" />
+		<ClCompile Include="..\..\engines\nancy\action\rotatinglockpuzzle.cpp" />
+		<ClCompile Include="..\..\engines\nancy\action\secondarymovie.cpp" />
+		<ClCompile Include="..\..\engines\nancy\action\secondaryvideo.cpp" />
+		<ClCompile Include="..\..\engines\nancy\action\sliderpuzzle.cpp" />
+		<ClCompile Include="..\..\engines\nancy\action\staticbitmapanim.cpp" />
+		<ClCompile Include="..\..\engines\nancy\action\telephone.cpp" />
+		<ClCompile Include="..\..\engines\nancy\state\credits.cpp" />
+		<ClCompile Include="..\..\engines\nancy\state\help.cpp" />
+		<ClCompile Include="..\..\engines\nancy\state\logo.cpp" />
+		<ClCompile Include="..\..\engines\nancy\state\mainmenu.cpp" />
+		<ClCompile Include="..\..\engines\nancy\state\map.cpp" />
+		<ClCompile Include="..\..\engines\nancy\state\scene.cpp" />
+		<ClCompile Include="..\..\engines\nancy\ui\button.cpp" />
+		<ClCompile Include="..\..\engines\nancy\ui\fullscreenimage.cpp" />
+		<ClCompile Include="..\..\engines\nancy\ui\inventorybox.cpp" />
+		<ClCompile Include="..\..\engines\nancy\ui\scrollbar.cpp" />
+		<ClCompile Include="..\..\engines\nancy\ui\textbox.cpp" />
+		<ClCompile Include="..\..\engines\nancy\ui\viewport.cpp" />
+		<ClCompile Include="..\..\engines\nancy\commontypes.cpp" />
+		<ClCompile Include="..\..\engines\nancy\console.cpp" />
+		<ClCompile Include="..\..\engines\nancy\constants.cpp" />
+		<ClCompile Include="..\..\engines\nancy\cursor.cpp" />
+		<ClCompile Include="..\..\engines\nancy\decompress.cpp" />
+		<ClCompile Include="..\..\engines\nancy\dialogs.cpp" />
+		<ClCompile Include="..\..\engines\nancy\font.cpp" />
+		<ClCompile Include="..\..\engines\nancy\graphics.cpp" />
+		<ClCompile Include="..\..\engines\nancy\iff.cpp" />
+		<ClCompile Include="..\..\engines\nancy\input.cpp" />
+		<ClCompile Include="..\..\engines\nancy\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\nancy\nancy.cpp" />
+		<ClCompile Include="..\..\engines\nancy\renderobject.cpp" />
+		<ClCompile Include="..\..\engines\nancy\resource.cpp" />
+		<ClCompile Include="..\..\engines\nancy\sound.cpp" />
+		<ClCompile Include="..\..\engines\nancy\util.cpp" />
+		<ClCompile Include="..\..\engines\nancy\video.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\nancy\action\actionmanager.h" />
+		<ClInclude Include="..\..\engines\nancy\action\actionrecord.h" />
+		<ClInclude Include="..\..\engines\nancy\action\leverpuzzle.h" />
+		<ClInclude Include="..\..\engines\nancy\action\orderingpuzzle.h" />
+		<ClInclude Include="..\..\engines\nancy\action\passwordpuzzle.h" />
+		<ClInclude Include="..\..\engines\nancy\action\primaryvideo.h" />
+		<ClInclude Include="..\..\engines\nancy\action\recordtypes.h" />
+		<ClInclude Include="..\..\engines\nancy\action\rotatinglockpuzzle.h" />
+		<ClInclude Include="..\..\engines\nancy\action\secondarymovie.h" />
+		<ClInclude Include="..\..\engines\nancy\action\secondaryvideo.h" />
+		<ClInclude Include="..\..\engines\nancy\action\sliderpuzzle.h" />
+		<ClInclude Include="..\..\engines\nancy\action\staticbitmapanim.h" />
+		<ClInclude Include="..\..\engines\nancy\action\telephone.h" />
+		<ClInclude Include="..\..\engines\nancy\state\credits.h" />
+		<ClInclude Include="..\..\engines\nancy\state\help.h" />
+		<ClInclude Include="..\..\engines\nancy\state\logo.h" />
+		<ClInclude Include="..\..\engines\nancy\state\mainmenu.h" />
+		<ClInclude Include="..\..\engines\nancy\state\map.h" />
+		<ClInclude Include="..\..\engines\nancy\state\scene.h" />
+		<ClInclude Include="..\..\engines\nancy\state\state.h" />
+		<ClInclude Include="..\..\engines\nancy\ui\button.h" />
+		<ClInclude Include="..\..\engines\nancy\ui\fullscreenimage.h" />
+		<ClInclude Include="..\..\engines\nancy\ui\inventorybox.h" />
+		<ClInclude Include="..\..\engines\nancy\ui\scrollbar.h" />
+		<ClInclude Include="..\..\engines\nancy\ui\textbox.h" />
+		<ClInclude Include="..\..\engines\nancy\ui\viewport.h" />
+		<ClInclude Include="..\..\engines\nancy\commontypes.h" />
+		<ClInclude Include="..\..\engines\nancy\console.h" />
+		<ClInclude Include="..\..\engines\nancy\constants.h" />
+		<ClInclude Include="..\..\engines\nancy\cursor.h" />
+		<ClInclude Include="..\..\engines\nancy\decompress.h" />
+		<ClInclude Include="..\..\engines\nancy\detection.h" />
+		<ClInclude Include="..\..\engines\nancy\dialogs.h" />
+		<ClInclude Include="..\..\engines\nancy\dialogueresponses.h" />
+		<ClInclude Include="..\..\engines\nancy\font.h" />
+		<ClInclude Include="..\..\engines\nancy\graphics.h" />
+		<ClInclude Include="..\..\engines\nancy\iff.h" />
+		<ClInclude Include="..\..\engines\nancy\input.h" />
+		<ClInclude Include="..\..\engines\nancy\nancy.h" />
+		<ClInclude Include="..\..\engines\nancy\renderobject.h" />
+		<ClInclude Include="..\..\engines\nancy\resource.h" />
+		<ClInclude Include="..\..\engines\nancy\sound.h" />
+		<ClInclude Include="..\..\engines\nancy\time.h" />
+		<ClInclude Include="..\..\engines\nancy\util.h" />
+		<ClInclude Include="..\..\engines\nancy\video.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\nancy\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

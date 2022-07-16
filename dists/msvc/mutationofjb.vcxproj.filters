@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="commands">
+			<UniqueIdentifier>6934B5C2-DDB4-11EB-B033-A87EEAEBEFA7</UniqueIdentifier>
+		</Filter>
+		<Filter Include="tasks">
+			<UniqueIdentifier>6934B5C3-DDB4-11EB-B033-A87EEAEBEFA7</UniqueIdentifier>
+		</Filter>
+		<Filter Include="widgets">
+			<UniqueIdentifier>6934B5C4-DDB4-11EB-B033-A87EEAEBEFA7</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\mutationofjb\animationdecoder.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\assets.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\commands\additemcommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\bitmapvisibilitycommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\callmacrocommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\camefromcommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\changecommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\command.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\conditionalcommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\definestructcommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\endblockcommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\gotocommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\ifcommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\ifitemcommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\ifpiggycommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\labelcommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\loadplayercommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\newroomcommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\playanimationcommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\randomcommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\removeallitemscommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\removeitemcommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\renamecommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\saycommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\seqcommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\setcolorcommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\setobjectframecommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\specialshowcommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\switchpartcommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\commands\talkcommand.cpp">
+			<Filter>commands</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\conversationlinelist.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\debug.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\encryptedfile.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\font.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\game.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\gamedata.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\gamescreen.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\guiscreen.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\hardcodedstrings.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\inventory.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\inventoryitemdefinitionlist.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\mutationofjb.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\room.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\script.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\tasks\conversationtask.cpp">
+			<Filter>tasks</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\tasks\objectanimationtask.cpp">
+			<Filter>tasks</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\tasks\saytask.cpp">
+			<Filter>tasks</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\tasks\sequentialtask.cpp">
+			<Filter>tasks</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\tasks\taskmanager.cpp">
+			<Filter>tasks</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\timer.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\util.cpp" />
+		<ClCompile Include="..\..\engines\mutationofjb\widgets\buttonwidget.cpp">
+			<Filter>widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\widgets\conversationwidget.cpp">
+			<Filter>widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\widgets\gamewidget.cpp">
+			<Filter>widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\widgets\imagewidget.cpp">
+			<Filter>widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\widgets\inventorywidget.cpp">
+			<Filter>widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\widgets\labelwidget.cpp">
+			<Filter>widgets</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mutationofjb\widgets\widget.cpp">
+			<Filter>widgets</Filter>
+		</ClCompile>
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\mutationofjb\animationdecoder.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\assets.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\commands\additemcommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\bitmapvisibilitycommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\callmacrocommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\camefromcommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\changecommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\command.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\conditionalcommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\definestructcommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\endblockcommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\gotocommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\ifcommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\ifitemcommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\ifpiggycommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\labelcommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\loadplayercommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\newroomcommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\playanimationcommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\randomcommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\removeallitemscommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\removeitemcommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\renamecommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\saycommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\seqcommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\setcolorcommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\setobjectframecommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\specialshowcommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\switchpartcommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\commands\talkcommand.h">
+			<Filter>commands</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\conversationlinelist.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\debug.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\encryptedfile.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\font.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\game.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\gamedata.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\gamescreen.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\guiscreen.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\hardcodedstrings.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\inventory.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\inventoryitemdefinitionlist.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\mutationofjb.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\room.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\script.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\tasks\conversationtask.h">
+			<Filter>tasks</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\tasks\objectanimationtask.h">
+			<Filter>tasks</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\tasks\saytask.h">
+			<Filter>tasks</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\tasks\sequentialtask.h">
+			<Filter>tasks</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\tasks\task.h">
+			<Filter>tasks</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\tasks\taskmanager.h">
+			<Filter>tasks</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\timer.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\util.h" />
+		<ClInclude Include="..\..\engines\mutationofjb\widgets\buttonwidget.h">
+			<Filter>widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\widgets\conversationwidget.h">
+			<Filter>widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\widgets\gamewidget.h">
+			<Filter>widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\widgets\imagewidget.h">
+			<Filter>widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\widgets\inventorywidget.h">
+			<Filter>widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\widgets\labelwidget.h">
+			<Filter>widgets</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mutationofjb\widgets\widget.h">
+			<Filter>widgets</Filter>
+		</ClInclude>
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\mutationofjb\module.mk" />
+	</ItemGroup>
+</Project>

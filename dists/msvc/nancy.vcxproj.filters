@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="action">
+			<UniqueIdentifier>6934B5C5-DDB4-11EB-B033-A87EEAEBEFA7</UniqueIdentifier>
+		</Filter>
+		<Filter Include="state">
+			<UniqueIdentifier>6934B5C6-DDB4-11EB-B033-A87EEAEBEFA7</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ui">
+			<UniqueIdentifier>6934B5C7-DDB4-11EB-B033-A87EEAEBEFA7</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\nancy\action\actionmanager.cpp">
+			<Filter>action</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\action\actionrecord.cpp">
+			<Filter>action</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\action\arfactory.cpp">
+			<Filter>action</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\action\leverpuzzle.cpp">
+			<Filter>action</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\action\orderingpuzzle.cpp">
+			<Filter>action</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\action\passwordpuzzle.cpp">
+			<Filter>action</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\action\primaryvideo.cpp">
+			<Filter>action</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\action\recordtypes.cpp">
+			<Filter>action</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\action\rotatinglockpuzzle.cpp">
+			<Filter>action</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\action\secondarymovie.cpp">
+			<Filter>action</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\action\secondaryvideo.cpp">
+			<Filter>action</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\action\sliderpuzzle.cpp">
+			<Filter>action</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\action\staticbitmapanim.cpp">
+			<Filter>action</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\action\telephone.cpp">
+			<Filter>action</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\commontypes.cpp" />
+		<ClCompile Include="..\..\engines\nancy\console.cpp" />
+		<ClCompile Include="..\..\engines\nancy\constants.cpp" />
+		<ClCompile Include="..\..\engines\nancy\cursor.cpp" />
+		<ClCompile Include="..\..\engines\nancy\decompress.cpp" />
+		<ClCompile Include="..\..\engines\nancy\dialogs.cpp" />
+		<ClCompile Include="..\..\engines\nancy\font.cpp" />
+		<ClCompile Include="..\..\engines\nancy\graphics.cpp" />
+		<ClCompile Include="..\..\engines\nancy\iff.cpp" />
+		<ClCompile Include="..\..\engines\nancy\input.cpp" />
+		<ClCompile Include="..\..\engines\nancy\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\nancy\nancy.cpp" />
+		<ClCompile Include="..\..\engines\nancy\renderobject.cpp" />
+		<ClCompile Include="..\..\engines\nancy\resource.cpp" />
+		<ClCompile Include="..\..\engines\nancy\sound.cpp" />
+		<ClCompile Include="..\..\engines\nancy\state\credits.cpp">
+			<Filter>state</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\state\help.cpp">
+			<Filter>state</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\state\logo.cpp">
+			<Filter>state</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\state\mainmenu.cpp">
+			<Filter>state</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\state\map.cpp">
+			<Filter>state</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\state\scene.cpp">
+			<Filter>state</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\ui\button.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\ui\fullscreenimage.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\ui\inventorybox.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\ui\scrollbar.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\ui\textbox.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\ui\viewport.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\nancy\util.cpp" />
+		<ClCompile Include="..\..\engines\nancy\video.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\nancy\action\actionmanager.h">
+			<Filter>action</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\action\actionrecord.h">
+			<Filter>action</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\action\leverpuzzle.h">
+			<Filter>action</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\action\orderingpuzzle.h">
+			<Filter>action</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\action\passwordpuzzle.h">
+			<Filter>action</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\action\primaryvideo.h">
+			<Filter>action</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\action\recordtypes.h">
+			<Filter>action</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\action\rotatinglockpuzzle.h">
+			<Filter>action</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\action\secondarymovie.h">
+			<Filter>action</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\action\secondaryvideo.h">
+			<Filter>action</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\action\sliderpuzzle.h">
+			<Filter>action</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\action\staticbitmapanim.h">
+			<Filter>action</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\action\telephone.h">
+			<Filter>action</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\commontypes.h" />
+		<ClInclude Include="..\..\engines\nancy\console.h" />
+		<ClInclude Include="..\..\engines\nancy\constants.h" />
+		<ClInclude Include="..\..\engines\nancy\cursor.h" />
+		<ClInclude Include="..\..\engines\nancy\decompress.h" />
+		<ClInclude Include="..\..\engines\nancy\detection.h" />
+		<ClInclude Include="..\..\engines\nancy\dialogs.h" />
+		<ClInclude Include="..\..\engines\nancy\dialogueresponses.h" />
+		<ClInclude Include="..\..\engines\nancy\font.h" />
+		<ClInclude Include="..\..\engines\nancy\graphics.h" />
+		<ClInclude Include="..\..\engines\nancy\iff.h" />
+		<ClInclude Include="..\..\engines\nancy\input.h" />
+		<ClInclude Include="..\..\engines\nancy\nancy.h" />
+		<ClInclude Include="..\..\engines\nancy\renderobject.h" />
+		<ClInclude Include="..\..\engines\nancy\resource.h" />
+		<ClInclude Include="..\..\engines\nancy\sound.h" />
+		<ClInclude Include="..\..\engines\nancy\state\credits.h">
+			<Filter>state</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\state\help.h">
+			<Filter>state</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\state\logo.h">
+			<Filter>state</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\state\mainmenu.h">
+			<Filter>state</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\state\map.h">
+			<Filter>state</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\state\scene.h">
+			<Filter>state</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\state\state.h">
+			<Filter>state</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\time.h" />
+		<ClInclude Include="..\..\engines\nancy\ui\button.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\ui\fullscreenimage.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\ui\inventorybox.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\ui\scrollbar.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\ui\textbox.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\ui\viewport.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\nancy\util.h" />
+		<ClInclude Include="..\..\engines\nancy\video.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\nancy\module.mk" />
+	</ItemGroup>
+</Project>
