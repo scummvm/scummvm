@@ -558,6 +558,7 @@ bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 			warning("3D software renderer is not supported yet");
 		}
 	}
+	_useD3D = _renderer3D != nullptr;
 	_renderer = _renderer3D;
 
 	if (!_renderer && !_playing3DGame) {
