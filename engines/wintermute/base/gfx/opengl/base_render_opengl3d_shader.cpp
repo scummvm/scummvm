@@ -423,7 +423,7 @@ bool BaseRenderOpenGL3DShader::drawLine(int x1, int y1, int x2, int y2, uint32 c
 
 	_lineShader->use();
 	_lineShader->setUniform("color", colorValue);
-	_fadeShader->setUniform("projMatrix", _projectionMatrix2d);
+	_lineShader->setUniform("projMatrix", _projectionMatrix2d);
 
 	glDrawArrays(GL_LINES, 0, 2);
 
@@ -556,7 +556,6 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 
 	static const char *fadeAttributes[] = { "position", nullptr };
 	_fadeShader = OpenGL::Shader::fromFiles("wme_fade", fadeAttributes);
-
 	_fadeShader->enableVertexAttribute("position", _fadeVBO, 2, GL_FLOAT, false, 8, 0);
 
 	glGenBuffers(1, &_lineVBO);
@@ -583,7 +582,7 @@ bool Wintermute::BaseRenderOpenGL3DShader::flip() {
 }
 
 bool BaseRenderOpenGL3DShader::indicatorFlip() {
-	warning("BaseRenderOpenGL3DShader::indicatorFlip not yet implemented");
+	flip();
 	return true;
 }
 

@@ -325,8 +325,8 @@ bool BaseRenderOpenGL3D::drawLine(int x1, int y1, int x2, int y2, uint32 color) 
 
 	glBegin(GL_LINES);
 		glColor4ub(r, g, b, a);
-		glVertex3f(x1, y1, 0.9f);
-		glVertex3f(x2, y2, 0.9f);
+		glVertex3f(x1, _height - y1, 0.9f);
+		glVertex3f(x2, _height - y2, 0.9f);
 	glEnd();
 
 	return true;
@@ -441,7 +441,7 @@ bool Wintermute::BaseRenderOpenGL3D::flip() {
 }
 
 bool BaseRenderOpenGL3D::indicatorFlip() {
-	warning("BaseRenderOpenGL3D::indicatorFlip not yet implemented");
+	flip();
 	return true;
 }
 
