@@ -227,13 +227,13 @@ void FreescapeEngine::processInput() {
 			rotate(_lastMousePos, mousePos);
 			_lastMousePos = mousePos;
 			if (mousePos.x <= 5 || mousePos.x >= _screenW - 5) {
-				g_system->warpMouse(_screenW/2, mousePos.y);
-				_lastMousePos.x = _screenW/2;
+				g_system->warpMouse(_screenW / 2, mousePos.y);
+				_lastMousePos.x = _screenW / 2;
 				_lastMousePos.y = mousePos.y;
 			} else if (mousePos.y <= 5 || mousePos.y >= _screenH - 5) {
-				g_system->warpMouse(mousePos.x, _screenH/2);
+				g_system->warpMouse(mousePos.x, _screenH / 2);
 				_lastMousePos.x = mousePos.x;
-				_lastMousePos.y = _screenH/2;
+				_lastMousePos.y = _screenH / 2;
 			}
 			break;
 
