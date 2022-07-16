@@ -4431,12 +4431,12 @@ void Runtime::executeSharedScenePostSceneChangeActions() {
 
 	const Common::Array<Common::SharedPtr<Structural> > &subsectionScenes = subsection->getChildren();
 
-	queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSharedSceneSceneChanged, 0), _activeSharedScene.get(), false, true);
+	queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSharedSceneSceneChanged, 0), _activeSharedScene.get(), true, true);
 	if (subsectionScenes.size() > 1) {
 		if (_activeMainScene == subsectionScenes[subsectionScenes.size() - 1])
-			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSharedSceneNoNextScene, 0), _activeSharedScene.get(), false, true);
+			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSharedSceneNoNextScene, 0), _activeSharedScene.get(), true, true);
 		if (_activeMainScene == subsectionScenes[1])
-			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSharedSceneNoPrevScene, 0), _activeSharedScene.get(), false, true);
+			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSharedSceneNoPrevScene, 0), _activeSharedScene.get(), true, true);
 	}
 }
 
