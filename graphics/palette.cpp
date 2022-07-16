@@ -44,7 +44,7 @@ bool PaletteLookup::setPalette(const byte *palette, uint len)  {
 	return true;
 }
 
-byte PaletteLookup::findBestColor(byte cr, byte cg, byte cb) {
+byte PaletteLookup::findBestColor(byte cr, byte cg, byte cb, bool useNaiveAlg) {
 	if (_paletteSize == 0) {
 		warning("PaletteLookup::findBestColor(): Palette was not set");
 		return 0;
@@ -58,16 +58,34 @@ byte PaletteLookup::findBestColor(byte cr, byte cg, byte cb) {
 	if (_colorHash.contains(color))
 		return _colorHash[color];
 
-	for (uint i = 0; i < _paletteSize; ++i) {
-		int rmean = (*(_palette + 3 * i + 0) + cr) / 2;
-		int r = *(_palette + 3 * i + 0) - cr;
-		int g = *(_palette + 3 * i + 1) - cg;
-		int b = *(_palette + 3 * i + 2) - cb;
+	if (useNaiveAlg) {
+		byte *palettePtr = _palette;
 
-		double dist = sqrt((((512 + rmean) * r * r) >> 8) + 4 * g * g + (((767 - rmean) * b * b) >> 8));
-		if (min > dist) {
-			bestColor = i;
-			min = dist;
+		for (uint i = 0; i < _paletteSize; i++) {
+			int redSquareDiff = (cr - palettePtr[0]) * (cr - palettePtr[0]);
+			int greenSquareDiff = (cg - palettePtr[1]) * (cg - palettePtr[1]);
+			int blueSquareDiff = (cb - palettePtr[2]) * (cb - palettePtr[2]);
+
+			int weightedColorError = 3 * redSquareDiff + 5 * greenSquareDiff + 2 * blueSquareDiff;
+			if (weightedColorError < min) {
+				bestColor = i;
+				min = weightedColorError;
+			}
+
+			palettePtr += 3;
+		}
+	} else {
+		for (uint i = 0; i < _paletteSize; ++i) {
+			int rmean = (*(_palette + 3 * i + 0) + cr) / 2;
+			int r = *(_palette + 3 * i + 0) - cr;
+			int g = *(_palette + 3 * i + 1) - cg;
+			int b = *(_palette + 3 * i + 2) - cb;
+
+			double dist = sqrt((((512 + rmean) * r * r) >> 8) + 4 * g * g + (((767 - rmean) * b * b) >> 8));
+			if (min > dist) {
+				bestColor = i;
+				min = dist;
+			}
 		}
 	}
 
