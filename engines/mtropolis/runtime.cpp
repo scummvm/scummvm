@@ -4036,6 +4036,7 @@ bool Runtime::runFrame() {
 		if (_collisionCheckTime < _playTime) {
 			_collisionCheckTime = _playTime;
 
+			checkBoundaries();
 			checkCollisions();
 		}
 
@@ -5495,6 +5496,109 @@ void Runtime::checkCollisions() {
 
 			oldCollidingElements.push_back(colElement);
 		}
+	}
+}
+
+void Runtime::addBoundaryDetector(IBoundaryDetector *boundaryDetector) {
+	BoundaryCheckState state;
+	state.currentContacts = 0;
+	state.detector = boundaryDetector;
+	state.position = Common::Point(0, 0);
+	state.positionResolved = false;
+
+	Modifier *modifier;
+	uint edgeFlags;
+	bool mustBeCompletelyOutside;
+	bool continuous;
+	boundaryDetector->getCollisionProperties(modifier, edgeFlags, mustBeCompletelyOutside, continuous);
+
+	_boundaryChecks.push_back(state);
+}
+
+void Runtime::removeBoundaryDetector(IBoundaryDetector *boundaryDetector) {
+	size_t numColliders = _boundaryChecks.size();
+	for (size_t i = 0; i < numColliders; i++) {
+		if (_boundaryChecks[i].detector == boundaryDetector) {
+			_boundaryChecks.remove_at(i);
+			return;
+		}
+	}
+}
+
+void Runtime::checkBoundaries() {
+	// Boundary Detection Messenger behavior is very quirky in mTropolis 1.1.  Basically, if an object moves in the direction of
+	// the boundary, then it may trigger collision checks with the boundary.  If it moves but does not move in the direction of
+	// the boundary, then it is considered no longer in contact with the boundary - period - which means it can trigger again
+	// once it moves in the boundary direction.
+	for (BoundaryCheckState &checkState : _boundaryChecks) {
+		Modifier *modifier;
+		uint edgeFlags;
+		bool mustBeCompletelyOutside;
+		bool continuous;
+		checkState.detector->getCollisionProperties(modifier, edgeFlags, mustBeCompletelyOutside, continuous);
+
+		Structural *structural = modifier->findStructuralOwner();
+		if (structural == nullptr || !structural->isElement() || !static_cast<Element *>(structural)->isVisual())
+			continue;
+
+		VisualElement *visual = static_cast<VisualElement *>(structural);
+
+		Common::Rect thisRect = visual->getRelativeRect();
+		Common::Point point(thisRect.left, thisRect.top);
+
+		if (!checkState.positionResolved) {
+			checkState.positionResolved = true;
+			checkState.position = point;
+			continue;
+		}
+
+		if (point == checkState.position)
+			continue;
+
+		Structural *parentStructural = visual->getParent();
+		if (parentStructural == nullptr || !parentStructural->isElement() || !static_cast<Element *>(parentStructural)->isVisual())
+			continue;
+
+		VisualElement *parentVisual = static_cast<VisualElement *>(parentStructural);
+
+		Common::Point delta = point - checkState.position;
+
+		int16 parentWidth = parentVisual->getRelativeRect().width();
+		int16 parentHeight = parentVisual->getRelativeRect().height();
+
+		uint contacts = 0;
+		if (delta.x < 0) {
+			int16 edge = mustBeCompletelyOutside ? thisRect.right : thisRect.left;
+			if (edge < 0)
+				contacts |= IBoundaryDetector::kEdgeLeft;
+		}
+		if (delta.y < 0) {
+			int16 edge = mustBeCompletelyOutside ? thisRect.bottom : thisRect.top;
+			if (edge < 0)
+				contacts |= IBoundaryDetector::kEdgeTop;
+		}
+		if (delta.x > 0) {
+			int16 edge = mustBeCompletelyOutside ? thisRect.left : thisRect.right;
+			if (edge >= parentWidth)
+				contacts |= IBoundaryDetector::kEdgeRight;
+		}
+		if (delta.y > 0) {
+			int16 edge = mustBeCompletelyOutside ? thisRect.top : thisRect.bottom;
+			if (edge >= parentHeight)
+				contacts |= IBoundaryDetector::kEdgeBottom;
+		}
+
+		uint activatedContacts = contacts;
+
+		// If non-continuous, then only activate new contacts
+		if (!continuous)
+			activatedContacts &= ~checkState.currentContacts;
+
+		checkState.position = point;
+		checkState.currentContacts = contacts;
+
+		if (activatedContacts & edgeFlags)
+			checkState.detector->triggerCollision(this);
 	}
 }
 

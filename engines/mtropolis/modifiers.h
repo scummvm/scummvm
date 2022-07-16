@@ -477,9 +477,21 @@ private:
 	Common::SharedPtr<ScheduledEvent> _scheduledEvent;
 };
 
-class BoundaryDetectionMessengerModifier : public Modifier {
+class BoundaryDetectionMessengerModifier : public Modifier, public IBoundaryDetector {
 public:
+	BoundaryDetectionMessengerModifier();
+	~BoundaryDetectionMessengerModifier();
+
 	bool load(ModifierLoaderContext &context, const Data::BoundaryDetectionMessengerModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	void linkInternalReferences(ObjectLinkingScope *outerScope) override;
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
+
+	void getCollisionProperties(Modifier *&modifier, uint &edgeFlags, bool &mustBeCompletelyOutside, bool &continuous) const override;
+	void triggerCollision(Runtime *runtime) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Boundary Detection Modifier"; }
@@ -508,6 +520,10 @@ private:
 	bool _detectLeftEdge;
 	bool _detectRightEdge;
 	MessengerSendSpec _send;
+
+	Runtime *_runtime;
+	bool _isActive;
+	DynamicValue _incomingData;
 };
 
 class CollisionDetectionMessengerModifier : public Modifier, public ICollider {

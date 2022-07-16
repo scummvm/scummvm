@@ -91,6 +91,7 @@ class Window;
 class WorldManagerInterface;
 struct DynamicValue;
 struct DynamicValueWriteProxy;
+struct IBoundaryDetector;
 struct ICollider;
 struct ILoadUIProvider;
 struct IMessageConsumer;
@@ -1583,6 +1584,10 @@ public:
 	void removeCollider(ICollider *collider);
 	void checkCollisions();
 
+	void addBoundaryDetector(IBoundaryDetector *boundaryDetector);
+	void removeBoundaryDetector(IBoundaryDetector *boundaryDetector);
+	void checkBoundaries();
+
 	const Common::String *resolveAttributeIDName(uint32 attribID) const;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
@@ -1646,6 +1651,13 @@ private:
 	struct CollisionCheckState {
 		Common::Array<Common::WeakPtr<VisualElement> > activeElements;
 		ICollider *collider;
+	};
+
+	struct BoundaryCheckState {
+		IBoundaryDetector *detector;
+		uint currentContacts;
+		Common::Point position;
+		bool positionResolved;
 	};
 
 	struct ColliderInfo {
@@ -1789,6 +1801,7 @@ private:
 	bool _isQuitting;
 
 	Common::Array<Common::SharedPtr<CollisionCheckState> > _colliders;
+	Common::Array<BoundaryCheckState> _boundaryChecks;
 	uint32 _collisionCheckTime;
 
 	Hacks _hacks;
@@ -2129,6 +2142,18 @@ private:
 struct ICollider : public IInterfaceBase {
 	virtual void getCollisionProperties(Modifier *&modifier, bool &collideInFront, bool &collideBehind, bool &excludeParents) const = 0;
 	virtual void triggerCollision(Runtime *runtime, Structural *collidingElement, bool wasInContact, bool isInContact, bool &outShouldStop) = 0;
+};
+
+struct IBoundaryDetector : public IInterfaceBase {
+	enum EdgeFlags {
+		kEdgeTop = 0x1,
+		kEdgeBottom = 0x2,
+		kEdgeLeft = 0x4,
+		kEdgeRight = 0x8,
+	};
+
+	virtual void getCollisionProperties(Modifier *&modifier, uint &edgeFlags, bool &mustBeCompletelyOutside, bool &continuous) const = 0;
+	virtual void triggerCollision(Runtime *runtime) = 0;
 };
 
 struct MediaCueState {

@@ -769,6 +769,19 @@ void VectorMotionModifier::trigger(Runtime *runtime) {
 	uint64 currentTime = runtime->getPlayTime();
 	_scheduledEvent = runtime->getScheduler().scheduleMethod<VectorMotionModifier, &VectorMotionModifier::trigger>(currentTime + 1, this);
 
+	Modifier *vecSrcModifier = _vecVar.lock().get();
+
+	// Variable-sourced motion is continuously updated and doesn't need to be re-triggered.
+	// The Pong minigame in Obsidian's Bureau chapter depends on this.
+	if (vecSrcModifier && vecSrcModifier->isVariable()) {
+		DynamicValue vec;
+		VariableModifier *varModifier = static_cast<VariableModifier *>(vecSrcModifier);
+		varModifier->varGetValue(nullptr, vec);
+
+		if (vec.getType() == DynamicValueTypes::kVector)
+			_resolvedVector = vec.getVector();
+	}
+
 	double radians = _resolvedVector.angleDegrees * (M_PI / 180.0);
 
 	// Distance is per-tick, which is 1/60 of a sec, so the multiplier is 60.0/1000.0 or 0.06
@@ -1171,6 +1184,18 @@ void TimerMessengerModifier::trigger(Runtime *runtime) {
 	_sendSpec.sendFromMessenger(runtime, this, _incomingData, nullptr);
 }
 
+BoundaryDetectionMessengerModifier::BoundaryDetectionMessengerModifier()
+	: _enableWhen(Event::create()), _disableWhen(Event::create()), _exitTriggerMode(kExitTriggerExiting),
+	_detectTopEdge(false), _detectBottomEdge(false), _detectLeftEdge(false), _detectRightEdge(false),
+	_detectionMode(kContinuous), _runtime(nullptr), _isActive(false) {
+}
+
+BoundaryDetectionMessengerModifier::~BoundaryDetectionMessengerModifier() {
+	if (_isActive)
+		_runtime->removeBoundaryDetector(this);
+}
+
+
 bool BoundaryDetectionMessengerModifier::load(ModifierLoaderContext &context, const Data::BoundaryDetectionMessengerModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -1190,6 +1215,59 @@ bool BoundaryDetectionMessengerModifier::load(ModifierLoaderContext &context, co
 		return false;
 
 	return true;
+}
+
+bool BoundaryDetectionMessengerModifier::respondsToEvent(const Event &evt) const {
+	return _enableWhen.respondsTo(evt) || _disableWhen.respondsTo(evt);
+}
+
+VThreadState BoundaryDetectionMessengerModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_enableWhen.respondsTo(msg->getEvent()) && !_isActive) {
+		_runtime = runtime;
+		_runtime->addBoundaryDetector(this);
+		_isActive = true;
+
+		_incomingData = msg->getValue();
+		if (_incomingData.getType() == DynamicValueTypes::kList)
+			_incomingData.setList(_incomingData.getList()->clone());
+	}
+	if (_disableWhen.respondsTo(msg->getEvent()) && _isActive) {
+		_runtime->removeBoundaryDetector(this);
+		_isActive = false;
+		_runtime = nullptr;
+	}
+
+	return kVThreadReturn;
+}
+
+void BoundaryDetectionMessengerModifier::linkInternalReferences(ObjectLinkingScope *outerScope) {
+	_send.linkInternalReferences(outerScope);
+}
+
+void BoundaryDetectionMessengerModifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	_send.visitInternalReferences(visitor);
+}
+
+void BoundaryDetectionMessengerModifier::getCollisionProperties(Modifier *&modifier, uint &edgeFlags, bool &mustBeCompletelyOutside, bool &continuous) const {
+	modifier = const_cast<BoundaryDetectionMessengerModifier *>(this);
+
+	uint flags = 0;
+	if (_detectBottomEdge)
+		flags |= kEdgeBottom;
+	if (_detectTopEdge)
+		flags |= kEdgeTop;
+	if (_detectRightEdge)
+		flags |= kEdgeRight;
+	if (_detectLeftEdge)
+		flags |= kEdgeLeft;
+
+	edgeFlags = flags;
+	mustBeCompletelyOutside = (_exitTriggerMode == kExitTriggerOnceExited);
+	continuous = (_detectionMode == kContinuous);
+}
+
+void BoundaryDetectionMessengerModifier::triggerCollision(Runtime *runtime) {
+	_send.sendFromMessenger(runtime, this, _incomingData, nullptr);
 }
 
 Common::SharedPtr<Modifier> BoundaryDetectionMessengerModifier::shallowClone() const {
