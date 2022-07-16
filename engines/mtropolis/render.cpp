@@ -298,6 +298,9 @@ void renderProject(Runtime *runtime, Window *mainWindow) {
 
 		for (Common::Array<RenderItem>::const_iterator it = directBucket.begin(), itEnd = directBucket.end(); it != itEnd; ++it)
 			renderDirectElement(*it, mainWindow);
+
+		for (const IPostEffect *postEffect : runtime->getPostEffects())
+			postEffect->renderPostEffect(*mainWindow->getSurface());
 	}
 
 	runtime->clearSceneGraphDirty();

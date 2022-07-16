@@ -36,7 +36,13 @@ class WordGameData;
 
 class MovementModifier : public Modifier {
 public:
+	MovementModifier();
+	~MovementModifier();
+
 	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::MovementModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
 
@@ -49,17 +55,38 @@ private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 	const char *getDefaultName() const override;
 
+	void triggerMove(Runtime *runtime);
+
 	Common::Point _dest;
 	bool _type;
-	int32 _rate;
+	double _rate;
 	int32 _frequency;
+
+	Event _enableWhen;
+	Event _disableWhen;
+
+	Event _triggerEvent;
+
+	Common::Point _moveStartPoint;
+	uint64 _moveStartTime;
+
+	Common::SharedPtr<ScheduledEvent> _moveEvent;
+	Runtime *_runtime;
 };
 
-class RectShiftModifier : public Modifier {
+class RectShiftModifier : public Modifier, public IPostEffect {
 public:
+	RectShiftModifier();
+	~RectShiftModifier();
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
 	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::RectShiftModifier &data);
 
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
+
+	void renderPostEffect(Graphics::ManagedSurface &surface) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Rect Shift Modifier"; }
@@ -70,8 +97,13 @@ private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 	const char *getDefaultName() const override;
 
-	int32 _rate;
+	Event _enableWhen;
+	Event _disableWhen;
+
 	int32 _direction;
+
+	Runtime *_runtime;
+	bool _isActive;
 };
 
 class TextWorkModifier : public Modifier {

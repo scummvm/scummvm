@@ -40,27 +40,27 @@ namespace Obsidian {
 // TextWork - Text manipulation operations
 
 struct MovementModifier : public PlugInModifierData {
-	PlugInTypeTaggedValue unknown1Event;	// Probably "enable when"
-	PlugInTypeTaggedValue unknown2Event;	// Probably "disable when"
-	PlugInTypeTaggedValue unknown3Point;
-	PlugInTypeTaggedValue unknown4Bool;
-	PlugInTypeTaggedValue unknown5Point;
-	PlugInTypeTaggedValue unknown6Int;
-	PlugInTypeTaggedValue unknown7Float;
-	PlugInTypeTaggedValue unknown8Int;
-	PlugInTypeTaggedValue unknown9Event;
-	PlugInTypeTaggedValue unknown10Label;
-	PlugInTypeTaggedValue unknown11Null;
-	PlugInTypeTaggedValue unknown12Int;
+	PlugInTypeTaggedValue enableWhen;		// Event
+	PlugInTypeTaggedValue disableWhen;		// Event
+	PlugInTypeTaggedValue dest;				// Point
+	PlugInTypeTaggedValue type;				// Bool, seems to always be "false"
+	PlugInTypeTaggedValue unknown5Point;	// Point, always (0,0)
+	PlugInTypeTaggedValue unknown6Int;		// Int, always 5
+	PlugInTypeTaggedValue rate;				// Float
+	PlugInTypeTaggedValue frequency;		// Int
+	PlugInTypeTaggedValue triggerEvent;
+	PlugInTypeTaggedValue unknown10Label;	// Label, always (5,108) which doesn't seem to correspond to anything
+	PlugInTypeTaggedValue unknown11Null;	// Null, possibly message payload
+	PlugInTypeTaggedValue unknown12Int;		// Int, always 3, possibly message flags
 
 protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
 };
 
 struct RectShiftModifier : public PlugInModifierData {
-	PlugInTypeTaggedValue unknown1Event; // Probably "enable when"
-	PlugInTypeTaggedValue unknown2Event; // Probably "disable when"
-	PlugInTypeTaggedValue rate;
+	PlugInTypeTaggedValue enableWhen; // Event, enable when
+	PlugInTypeTaggedValue disableWhen; // Event, disable when
+	PlugInTypeTaggedValue direction;	// Int, 4 = horizontal, 1 = vertical
 
 protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;

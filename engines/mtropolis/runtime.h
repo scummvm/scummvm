@@ -98,6 +98,7 @@ struct IMessageConsumer;
 struct IModifierContainer;
 struct IPlugInModifierFactory;
 struct IPlugInModifierFactoryAndDataFactory;
+struct IPostEffect;
 struct ISaveUIProvider;
 struct IStructuralReferenceVisitor;
 struct MessageProperties;
@@ -1588,6 +1589,10 @@ public:
 	void removeBoundaryDetector(IBoundaryDetector *boundaryDetector);
 	void checkBoundaries();
 
+	void addPostEffect(IPostEffect *postEffect);
+	void removePostEffect(IPostEffect *postEffect);
+	const Common::Array<IPostEffect *> &getPostEffects() const;
+
 	const Common::String *resolveAttributeIDName(uint32 attribID) const;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
@@ -1803,6 +1808,8 @@ private:
 	Common::Array<Common::SharedPtr<CollisionCheckState> > _colliders;
 	Common::Array<BoundaryCheckState> _boundaryChecks;
 	uint32 _collisionCheckTime;
+
+	Common::Array<IPostEffect *> _postEffects;
 
 	Hacks _hacks;
 
@@ -2154,6 +2161,10 @@ struct IBoundaryDetector : public IInterfaceBase {
 
 	virtual void getCollisionProperties(Modifier *&modifier, uint &edgeFlags, bool &mustBeCompletelyOutside, bool &continuous) const = 0;
 	virtual void triggerCollision(Runtime *runtime) = 0;
+};
+
+struct IPostEffect : public IInterfaceBase {
+	virtual void renderPostEffect(Graphics::ManagedSurface &surface) const = 0;
 };
 
 struct MediaCueState {

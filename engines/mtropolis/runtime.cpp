@@ -5525,6 +5525,24 @@ void Runtime::removeBoundaryDetector(IBoundaryDetector *boundaryDetector) {
 	}
 }
 
+void Runtime::addPostEffect(IPostEffect *postEffect) {
+	_postEffects.push_back(postEffect);
+}
+
+void Runtime::removePostEffect(IPostEffect *postEffect) {
+	size_t numPostEffects = _postEffects.size();
+	for (size_t i = 0; i < numPostEffects; i++) {
+		if (_postEffects[i] == postEffect) {
+			_postEffects.remove_at(i);
+			return;
+		}
+	}
+}
+
+const Common::Array<IPostEffect *> &Runtime::getPostEffects() const {
+	return _postEffects;
+}
+
 void Runtime::checkBoundaries() {
 	// Boundary Detection Messenger behavior is very quirky in mTropolis 1.1.  Basically, if an object moves in the direction of
 	// the boundary, then it may trigger collision checks with the boundary.  If it moves but does not move in the direction of

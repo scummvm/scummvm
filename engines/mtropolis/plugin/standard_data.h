@@ -61,7 +61,7 @@ struct MediaCueMessengerModifier : public PlugInModifierData {
 	enum MessageFlags {
 		kMessageFlagImmediate = 0x1,
 		kMessageFlagCascade = 0x2,
-		kMessageFlagRelay = 0x3,
+		kMessageFlagRelay = 0x4,
 	};
 
 	enum TriggerTiming {

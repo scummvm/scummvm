@@ -31,15 +31,15 @@ DataReadErrorCode MovementModifier::load(PlugIn &plugIn, const PlugInModifier &p
 	if (prefix.plugInRevision != 0)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!unknown1Event.load(reader)
-		|| !unknown2Event.load(reader)
-		|| !unknown3Point.load(reader)
-		|| !unknown4Bool.load(reader)
+	if (!enableWhen.load(reader)
+		|| !disableWhen.load(reader)
+		|| !dest.load(reader)
+		|| !type.load(reader)
 		|| !unknown5Point.load(reader)
 		|| !unknown6Int.load(reader)
-		|| !unknown7Float.load(reader)
-		|| !unknown8Int.load(reader)
-		|| !unknown9Event.load(reader)
+		|| !rate.load(reader)
+		|| !frequency.load(reader)
+		|| !triggerEvent.load(reader)
 		|| !unknown10Label.load(reader)
 		|| !unknown11Null.load(reader)
 		|| !unknown12Int.load(reader))
@@ -52,7 +52,7 @@ DataReadErrorCode RectShiftModifier::load(PlugIn &plugIn, const PlugInModifier &
 	if (prefix.plugInRevision != 1)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!unknown1Event.load(reader) || !unknown2Event.load(reader) || !rate.load(reader))
+	if (!enableWhen.load(reader) || !disableWhen.load(reader) || !direction.load(reader))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
