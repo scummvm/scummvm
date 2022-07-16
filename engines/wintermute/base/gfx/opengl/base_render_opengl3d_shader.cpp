@@ -348,7 +348,7 @@ BaseImage *BaseRenderOpenGL3DShader::takeScreenshot() {
 	glReadPixels(_viewportRect.left, g_system->getHeight() - _viewportRect.bottom, _viewportRect.width(), _viewportRect.height(),
 	             GL_RGBA, GL_UNSIGNED_BYTE, surface->getPixels());
 	flipVertical(surface);
-	Graphics::Surface *converted = surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+	Graphics::Surface *converted = surface->convertTo(getPixelFormat());
 	screenshot->copyFrom(converted);
 	delete surface;
 	delete converted;
