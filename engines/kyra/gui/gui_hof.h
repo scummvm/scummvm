@@ -46,7 +46,7 @@ private:
 
 	uint8 defaultColor1() const override { return 0xCF; }
 	uint8 defaultColor2() const override { return 0xF8; }
-	uint8 menuItemLabelColor() const override { return 0xCF; }
+	uint8 menuItemLabelColor() const override { return 0xFC; }
 
 	uint8 textFieldColor1() const override { return 0xFD; }
 	uint8 textFieldColor2() const override { return 0xFA; }
