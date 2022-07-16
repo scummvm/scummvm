@@ -40,7 +40,7 @@ namespace OpenGL {
 struct VertexAttrib {
 	VertexAttrib(uint32 idx, const char *name) :
 		_enabled(false), _idx(idx), _name(name), _vbo(0), _size(0),
-		_type(GL_FLOAT), _normalized(false), _stride(0), _pointer(nullptr) {}
+		_type(GL_FLOAT), _normalized(false), _stride(0), _pointer(0) {}
 	bool _enabled;
 	uint32 _idx;
 	Common::String _name;
@@ -49,7 +49,7 @@ struct VertexAttrib {
 	GLenum _type;
 	bool _normalized;
 	GLsizei _stride;
-	const void *_pointer;
+	uintptr _pointer;
 	float _const[4];
 };
 
