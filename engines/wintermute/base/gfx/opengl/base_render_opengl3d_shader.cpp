@@ -404,9 +404,9 @@ bool BaseRenderOpenGL3DShader::drawLine(int x1, int y1, int x2, int y2, uint32 c
 	float lineCoords[4];
 
 	lineCoords[0] = x1;
-	lineCoords[1] = y1;
+	lineCoords[1] = _height - y1;
 	lineCoords[2] = x2;
-	lineCoords[3] = y2;
+	lineCoords[3] = _height - y2;
 
 	glBufferSubData(GL_ARRAY_BUFFER, 0, 2 * 8, lineCoords);
 
