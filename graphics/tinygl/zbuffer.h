@@ -520,93 +520,93 @@ public:
 	void clearRegion(int x, int y, int w, int h, bool clearZ, int z,
 	                 bool clearColor, int r, int g, int b, bool clearStencil, int stencilValue);
 
-	FORCEINLINE void setScissorRectangle(const Common::Rect &rect) {
+	void setScissorRectangle(const Common::Rect &rect) {
 		_clipRectangle = rect;
 		_enableScissor = true;
 	}
 
-	FORCEINLINE void resetScissorRectangle() {
+	void resetScissorRectangle() {
 		_enableScissor = false;
 	}
 
-	FORCEINLINE void enableBlending(bool enable) {
+	void enableBlending(bool enable) {
 		_blendingEnabled = enable;
 	}
 
-	FORCEINLINE void setBlendingFactors(int sFactor, int dFactor) {
+	void setBlendingFactors(int sFactor, int dFactor) {
 		_sourceBlendingFactor = sFactor;
 		_destinationBlendingFactor = dFactor;
 	}
 
-	FORCEINLINE void enableAlphaTest(bool enable) {
+	void enableAlphaTest(bool enable) {
 		_alphaTestEnabled = enable;
 	}
 
-	FORCEINLINE void setAlphaTestFunc(int func, int ref) {
+	void setAlphaTestFunc(int func, int ref) {
 		_alphaTestFunc = func;
 		_alphaTestRefVal = ref;
 	}
 
-	FORCEINLINE void enableDepthTest(bool enable) {
+	void enableDepthTest(bool enable) {
 		_depthTestEnabled = enable;
 	}
 
-	FORCEINLINE void setDepthFunc(int func) {
+	void setDepthFunc(int func) {
 		_depthFunc = func;
 	}
 
-	FORCEINLINE void enableDepthWrite(bool enable) {
+	void enableDepthWrite(bool enable) {
 		_depthWrite = enable;
 	}
 
-	FORCEINLINE void enableStencilTest(bool enable) {
+	void enableStencilTest(bool enable) {
 		_stencilTestEnabled = enable;
 	}
 
-	FORCEINLINE void setStencilWriteMask(uint stencilWriteMask) {
+	void setStencilWriteMask(uint stencilWriteMask) {
 		_stencilWriteMask = stencilWriteMask;
 	}
 
-	FORCEINLINE void setStencilTestFunc(int stencilFunc, int stencilValue, uint stencilMask) {
+	void setStencilTestFunc(int stencilFunc, int stencilValue, uint stencilMask) {
 		_stencilTestFunc = stencilFunc;
 		_stencilRefVal = stencilValue;
 		_stencilMask = stencilMask;
 	}
 
-	FORCEINLINE void setStencilOp(int stencilSfail, int stencilDpfail, int stencilDppass) {
+	void setStencilOp(int stencilSfail, int stencilDpfail, int stencilDppass) {
 		_stencilSfail = stencilSfail;
 		_stencilDpfail = stencilDpfail;
 		_stencilDppass = stencilDppass;
 	}
 
-	FORCEINLINE void setOffsetStates(int offsetStates) {
+	void setOffsetStates(int offsetStates) {
 		_offsetStates = offsetStates;
 	}
 
-	FORCEINLINE void setOffsetFactor(float offsetFactor) {
+	void setOffsetFactor(float offsetFactor) {
 		_offsetFactor = offsetFactor;
 	}
 
-	FORCEINLINE void setOffsetUnits(float offsetUnits) {
+	void setOffsetUnits(float offsetUnits) {
 		_offsetUnits = offsetUnits;
 	}
 
-	FORCEINLINE void setTexture(const TexelBuffer *texture, uint wraps, uint wrapt) {
+	void setTexture(const TexelBuffer *texture, uint wraps, uint wrapt) {
 		_currentTexture = texture;
 		_wrapS = wraps;
 		_wrapT = wrapt;
 	}
 
-	FORCEINLINE void setTextureSizeAndMask(int textureSize, int textureSizeMask) {
+	void setTextureSizeAndMask(int textureSize, int textureSizeMask) {
 		_textureSize = textureSize;
 		_textureSizeMask = textureSizeMask;
 	}
 
-	FORCEINLINE void setFogEnabled(bool enable) {
+	void setFogEnabled(bool enable) {
 		_fogEnabled = enable;
 	}
 
-	FORCEINLINE void setFogColor(float colorR, float colorG, float colorB) {
+	void setFogColor(float colorR, float colorG, float colorB) {
 		_fogColorR = colorR;
 		_fogColorG = colorG;
 		_fogColorB = colorB;
@@ -652,7 +652,7 @@ private:
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
 	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
-			  bool kDepthWrite>
+	          bool kDepthWrite>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
 	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode>
