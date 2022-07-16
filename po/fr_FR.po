@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-15 19:45+0000\n"
-"PO-Revision-Date: 2022-07-13 23:11+0000\n"
+"PO-Revision-Date: 2022-07-16 17:51+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -4658,10 +4658,8 @@ msgstr "Défiler vers le bas"
 #. I18N: This keymap allows (in KIA only) for a clue to be set as private or public
 #. (only when the KIA is upgraded).
 #: engines/bladerunner/metaengine.cpp:221
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Clue Privacy"
-msgstr "Act./Désact. Muet"
+msgstr "Act./Désact. Indice Privé"
 
 #. I18N: This keymap opens KIA's SAVE GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
