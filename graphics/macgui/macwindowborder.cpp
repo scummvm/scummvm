@@ -144,7 +144,7 @@ void MacWindowBorder::setTitle(const Common::String& title, int width, MacWindow
 	_title = title;
 	const Graphics::Font *font = wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 12));
 	int sidesWidth = getOffset().left + getOffset().right;
-	int titleWidth = font->getStringWidth(_title) + 10;
+	int titleWidth = font->getStringWidth(_title) + 8;
 	int maxWidth = MAX<int>(width - sidesWidth - 7, 0);
 	if (titleWidth > maxWidth)
 		titleWidth = maxWidth;
@@ -184,13 +184,13 @@ void MacWindowBorder::drawTitle(ManagedSurface *g, MacWindowManager *wm, int tit
 	int titleColor = getOffset().dark ? wm->_colorWhite: wm->_colorBlack;
 	int titleY = getOffset().titleTop;
 	int sidesWidth = getOffset().left + getOffset().right;
-	int titleWidth = font->getStringWidth(_title) + 10;
+	int titleWidth = font->getStringWidth(_title) + 8;
 	int yOff = wm->_fontMan->hasBuiltInFonts() ? 3 : 1;
 	int maxWidth = width - sidesWidth - 7;
 	if (titleWidth > maxWidth)
 		titleWidth = maxWidth;
 
-	font->drawString(g, _title, titleOffset + 5, titleY + yOff, titleWidth, titleColor);
+	font->drawString(g, _title, titleOffset + 4, titleY + yOff, titleWidth, titleColor);
 }
 
 void MacWindowBorder::setBorderType(int type) {
