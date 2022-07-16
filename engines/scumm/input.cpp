@@ -585,41 +585,45 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 				_imuseDigital->diMUSESetSFXGroupVol(volume);
 				return;
 			}
+		}
 
-			// "Text Speed  Slow  ==========  Fast"
-			if (lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-') {
-				if (VAR_CHARINC == 0xFF)
-					return;
-
-				Common::KeyState ks = lastKeyHit;
-
-				int volume = _imuseDigital->diMUSEGetSFXGroupVol();
-				do {
-					if (ks.ascii == '+') {
-						VAR(VAR_CHARINC) -= 1;
-						if (VAR(VAR_CHARINC) < 0)
-							VAR(VAR_CHARINC) = 0;
-					} else {
-						VAR(VAR_CHARINC) += 1;
-						if (VAR(VAR_CHARINC) > 9)
-							VAR(VAR_CHARINC) = 9;
-					}
-
-					strcpy(tempStr, d.getPlainEngineString(31));
-					char *ptrToChar = strchr(tempStr, '=');
-					memset(ptrToChar, '\v', 10);
-					ptrToChar[9 - VAR(VAR_CHARINC)] = '\f';
-
-					showBannerAndPause(0, 0, tempStr);
-					ks = Common::KEYCODE_INVALID;
-					bool leftBtnPressed = false, rightBtnPressed = false;
-					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
-				} while (ks.ascii == '+' || ks.ascii == '-');
-				clearBanner();
-				_imuseDigital->diMUSESetSFXGroupVol(volume);
+		// "Text Speed  Slow  ==========  Fast"
+		if (lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-') {
+			if (!(_game.features & GF_DEMO)) {
+				// Catch the input and bail out
 				return;
 			}
+
+			if (VAR_CHARINC == 0xFF)
+				return;
+
+			Common::KeyState ks = lastKeyHit;
+
+			do {
+				if (ks.ascii == '+') {
+					VAR(VAR_CHARINC) -= 1;
+					if (VAR(VAR_CHARINC) < 0)
+						VAR(VAR_CHARINC) = 0;
+				} else {
+					VAR(VAR_CHARINC) += 1;
+					if (VAR(VAR_CHARINC) > 9)
+						VAR(VAR_CHARINC) = 9;
+				}
+
+				strcpy(tempStr, d.getPlainEngineString(31));
+				char *ptrToChar = strchr(tempStr, '=');
+				memset(ptrToChar, '\v', 10);
+				ptrToChar[9 - VAR(VAR_CHARINC)] = '\f';
+
+				showBannerAndPause(0, 0, tempStr);
+				ks = Common::KEYCODE_INVALID;
+				bool leftBtnPressed = false, rightBtnPressed = false;
+				waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+			} while (ks.ascii == '+' || ks.ascii == '-');
+			clearBanner();
+			return;
 		}
+
 	}
 
 	// F1 (the trigger for the original save/load dialog) is mapped to F5
