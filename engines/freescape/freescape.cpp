@@ -43,11 +43,13 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	_currentArea = nullptr;
 	_rotation = Math::Vector3d(0.f, 0.f, 0.f);
 	_position = Math::Vector3d(0.f, 0.f, 0.f);
+	_lastPosition = Math::Vector3d(0.f, 0.f, 0.f);
 	_velocity = Math::Vector3d(0.f, 0.f, 0.f);
 	_cameraFront = Math::Vector3d(0.f, 0.f, 0.f);
 	_cameraRight = Math::Vector3d(0.f, 0.f, 0.f);
 	_movementSpeed = 1.5f;
 	_mouseSensitivity = 0.1f;
+	_flyMode = false;
 	_borderTexture = nullptr;
 
 	// Here is the right place to set up the engine specific debug channels
@@ -356,7 +358,6 @@ void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos)
 
 void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTime) {
 	debug("old player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
-	Math::Vector3d previousPosition = _position;
 	int previousAreaID = _currentArea->getAreaID();
 
 	float velocity = _movementSpeed * deltaTime;
@@ -377,13 +378,14 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 	}
 	int areaScale = _currentArea->getScale();
 	// restore y coordinate
-	_position.set(_position.x(), positionY, _position.z());
+	if (!_flyMode)
+		_position.set(_position.x(), positionY, _position.z());
 
 	bool collided = checkCollisions(false);
 
 	if (!collided) {
 		bool hasFloor = checkFloor(_position);
-		if (!hasFloor) {
+		if (!hasFloor  && !_flyMode) {
 			int fallen;
 			for (fallen = 1; fallen < 65 + 1; fallen++) {
 				_position.set(_position.x(), positionY - fallen * areaScale, _position.z());
@@ -393,7 +395,7 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 			fallen++;
 			fallen++;
 			if (fallen >= 67) {
-				_position = previousPosition; //error("NASTY FALL!");
+				_position = _lastPosition; //error("NASTY FALL!");
 				return;
 			}
 			_position.set(_position.x(), positionY - fallen * areaScale, _position.z());
@@ -403,16 +405,19 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 	} else {
 		debug("Runing effects:");
 		checkCollisions(true); // run the effects
-		if (_currentArea->getAreaID() == previousAreaID) {
+		if (_flyMode)
+			_position = _lastPosition;
+		else if (_currentArea->getAreaID() == previousAreaID) {
 			bool stepUp = tryStepUp(_position);
 			if (stepUp) {
 				debug("Runing effects:");
 				checkCollisions(true); // run the effects (again)
 			} else {
-				_position = previousPosition;
+				_position = _lastPosition;
 			}
 		}
 	}
+	_lastPosition = _position;
 	debug("new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 }
 
@@ -489,27 +494,40 @@ void FreescapeEngine::gotoArea(uint16 areaID, uint16 entranceID) {
 		_gameStateBits[areaID] = 0;
 
 	assert(_areasByAreaID->contains(areaID));
-	//assert(entranceID > 0);
 	_currentArea = (*_areasByAreaID)[areaID];
 	_currentArea->show();
 
-	Entrance *entrance = (Entrance*) _currentArea->entranceWithID(entranceID);
-	if (!entrance)
-		entrance = (Entrance*) _currentArea->firstEntrance();
-
-	_position = entrance->getOrigin();
-	if (_rotation == Math::Vector3d(0, 0, 0)) {
-		_rotation = entrance->getRotation();
-		debug("yaw: %f, pitch: %f", _rotation.x(), _rotation.y());
-		_pitch = _rotation.x();
-		_yaw = _rotation.y() - 260;
-	}
 	int scale = _currentArea->getScale();
 	assert(scale > 0);
 
-	debug("entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
-	debug("player height: %d", scale * _playerHeight);
-	_position.setValue(1, _position.y() + scale * _playerHeight);
+	Entrance *entrance = nullptr;
+	if (entranceID > 0) {
+		entrance = (Entrance*) _currentArea->entranceWithID(entranceID);
+		assert(entrance);
+
+		_position = entrance->getOrigin();
+		if (_rotation == Math::Vector3d(0, 0, 0)) {
+			_rotation = entrance->getRotation();
+			debug("yaw: %f, pitch: %f", _rotation.x(), _rotation.y());
+			_pitch = _rotation.x();
+			_yaw = _rotation.y() - 260;
+		}
+		debug("entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
+		debug("player height: %d", scale * _playerHeight);
+		_position.setValue(1, _position.y() + scale * _playerHeight);
+	} else {
+		Math::Vector3d diff = _lastPosition - _position;
+		debug("%f %f %f", diff.x(), diff.y(), diff.z());
+		// diff should be used to determinate which entrance to use
+		entrance = (Entrance*) _currentArea->firstEntrance();
+		assert(entrance);
+		if (abs(diff.x()) < abs(diff.z()))
+			_position.setValue(2, entrance->getOrigin().z());
+		else
+			_position.setValue(0, entrance->getOrigin().x());
+
+	}
+
 	debug("starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 }
 
