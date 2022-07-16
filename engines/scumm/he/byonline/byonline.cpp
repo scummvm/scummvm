@@ -537,6 +537,7 @@ void BYOnline::handleProfileInfo(Common::JSONArray profile) {
 void BYOnline::handleTeams(Common::JSONArray userTeam, Common::JSONArray opponentTeam, int error, Common::String message) {
 	if (error == 1) {
 		warning("BYOnline: Unable to retrieve custom teams: %s", message.c_str());
+		_vm->writeVar(747, 0);
 		return;
 	}
 	// We're going to store our team in array 748, which seems to be otherwise unused
