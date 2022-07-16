@@ -417,6 +417,14 @@ bool BaseGame::initConfManSettings() {
 		_smartCache = true;
 	}
 
+#ifdef ENABLE_WME3D
+	if (ConfMan.hasKey("force_2d_renderer")) {
+		_force2dRenderer = ConfMan.getBool("force_2d_renderer");
+	} else {
+		_force2dRenderer = false;
+	}
+#endif
+
 	if (!_smartCache) {
 		LOG(0, "Smart cache is DISABLED");
 	}
@@ -540,19 +548,20 @@ bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 
 	Graphics::RendererType matchingRendererType = Graphics::Renderer::getBestMatchingType(desiredRendererType, availableRendererTypes);
 
+	bool force2dRenderer = _force2dRenderer && !_playing3DGame;
 #if defined(USE_OPENGL_SHADERS)
-	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
+	if (!force2dRenderer && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
 		initGraphics3d(_settings->getResWidth(), _settings->getResHeight());
 		_renderer3D = makeOpenGL3DShaderRenderer(this);
 	}
 #endif // defined(USE_OPENGL_SHADERS)
 #if defined(USE_OPENGL_GAME)
-	if (matchingRendererType == Graphics::kRendererTypeOpenGL) {
+	if (!force2dRenderer && matchingRendererType == Graphics::kRendererTypeOpenGL) {
 		initGraphics3d(_settings->getResWidth(), _settings->getResHeight());
 		_renderer3D = makeOpenGL3DRenderer(this);
 	}
 #endif // defined(USE_OPENGL)
-	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
+	if (!force2dRenderer && matchingRendererType == Graphics::kRendererTypeTinyGL) {
 		if (_playing3DGame) {
 			_renderer3D = nullptr;// TODO: makeTinyGL3DRenderer(this);
 			warning("3D software renderer is not supported yet");

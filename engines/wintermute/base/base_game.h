@@ -315,6 +315,9 @@ protected:
 private:
 	bool _debugShowFPS;
 	bool _bilinearFiltering;
+#ifdef ENABLE_WME3D
+	bool _force2dRenderer;
+#endif
 	void *_debugLogFile;
 	void DEBUG_DebugDisable();
 	void DEBUG_DebugEnable(const char *filename = nullptr);
