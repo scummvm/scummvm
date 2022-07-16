@@ -137,9 +137,11 @@ public:
 	 * @brief This method returns closest color from the palette
 	 *        and it uses cache for faster lookups
 	 *
+	 * @param useNaiveAlg            if true, use a simpler algorithm (non-floating point calculations)
+	 *
 	 * @return the palette index
 	 */
-	byte findBestColor(byte r, byte g, byte b);
+	byte findBestColor(byte r, byte g, byte b, bool useNaiveAlg = false);
 
 private:
 	byte _palette[256 * 3];
