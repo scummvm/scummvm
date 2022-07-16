@@ -68,6 +68,9 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			if (executeEndIfNotEqual(instruction))
 				ip = codeSize;
 			break;
+			case Token::SWAPJET:
+			executeSwapJet(instruction);
+			break;
 			case Token::ADDVAR:
 			executeIncrementVariable(instruction);
 			break;
@@ -260,6 +263,15 @@ bool FreescapeEngine::executeEndIfBitNotEqual(FCLInstruction &instruction) {
 	assert(index < 32);
 	debug("End condition if bit %d is not equal to %d!", index, value);
 	return (((_gameStateBits[_currentArea->getAreaID()] >> index) & 1) != value);
+}
+
+void FreescapeEngine::executeSwapJet(FCLInstruction &instruction) {
+	_flyMode = !_flyMode;
+	if (_flyMode)
+		debug("Swaping to ship mode");
+	else
+		debug("Swaping to tank mode");
+	// TODO: implement the rest of the changes (e.g. border)
 }
 
 } // End of namespace Freescape

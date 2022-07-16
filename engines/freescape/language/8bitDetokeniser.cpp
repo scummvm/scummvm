@@ -265,6 +265,11 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 
 		case 21:
 			detokenisedStream += "SWAPJET";
+			currentInstruction = FCLInstruction(Token::SWAPJET);
+			conditionalInstructions->push_back(currentInstruction);
+			currentInstruction = FCLInstruction(Token::UNKNOWN);
+			bytePointer++;
+			numberOfArguments = 0;
 			break;
 		case 26:
 			detokenisedStream += "REDRAW";
