@@ -1505,7 +1505,8 @@ void ScummEngine_v5::o5_notEqualZero() {
 
 	// WORKAROUND for a possible dead-end in Monkey Island 2. By luck, this
 	// only happens in the Ultimate Talkie Edition (because it fixes another
-	// script error which unveils this one).
+	// script error which unveils this one), or if you enable the Enhancement
+	// option in one of the original releases (see o5_stopScript()).
 	//
 	// Once Bit[70] has been properly set by one of the configurations above,
 	// Captain Dread will have his intended reaction of forcing you to go back
@@ -1526,7 +1527,7 @@ void ScummEngine_v5::o5_notEqualZero() {
 			// ...but you don't have the lens and you never gave it to Wally...
 			// (and you're not playing the Lite mode, where this doesn't matter)
 			if (getOwner(295) != VAR(VAR_EGO) && readVar(0x8000 + 67) != 0 && readVar(0x8000 + 567) == 0) {
-				// ...then short-cirtcuit this condition, so that you can still go back
+				// ...then short-circuit this condition, so that you can still go back
 				// to Phatt Island to pick up the lens, as in the original game.
 				a = 0;
 			}
@@ -2682,6 +2683,21 @@ void ScummEngine_v5::o5_stopScript() {
 		stopObjectCode();
 	else
 		stopScript(script);
+
+	// WORKAROUND: When Guybrush buys a map piece from the antiques dealer,
+	// the script forgets to set Bit[70], which means that an intended
+	// reaction from Captain Dread forcing you to go back to Scabb when you
+	// get the full map was never triggered in the original game.
+	// The Ultimate Edition fixed this, so we're borrowing its script change.
+	//
+	// Note that fixing this unveils a second, much more problematic script
+	// oversight which could cause a dead-end if you didn't pick up the model
+	// lighthouse lens! See o5_notEqualZero().
+	if (_game.id == GID_MONKEY2 && script == 209 &&
+		_roomResource == 48 && vm.slot[_currentScript].number == 207 && _enableEnhancements &&
+		strcmp(_game.variant, "SE Talkie") != 0) {
+		writeVar(0x8000 + 70, 1);
+	}
 }
 
 void ScummEngine_v5::o5_stringOps() {
