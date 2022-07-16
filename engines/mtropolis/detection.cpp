@@ -40,7 +40,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_WIDESCREEN_MOD,
 		{
-			_s("16:9 Widescreen Mod"),
+			_s("16:9 widescreen mod"),
 			_s("Removes letterboxing and moves some display elements, improving coverage on widescreen displays"),
 			"mtropolis_mod_obsidian_widescreen",
 			false,
@@ -51,7 +51,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_DYNAMIC_MIDI,
 		{
-			_s("Improved Music Mixing"),
+			_s("Improved music mixing"),
 			_s("Enables dynamic MIDI mixer, improving quality, but behaving less like mTropolis Player."),
 			"mtropolis_mod_dynamic_midi",
 			true,
@@ -62,7 +62,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_AUTO_SAVE,
 		{
-			_s("Save Progress Automatically"),
+			_s("Save progress automatically"),
 			_s("Automatically saves the game at certain progress points."),
 			"mtropolis_mod_auto_save",
 			true,
