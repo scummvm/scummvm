@@ -3827,12 +3827,6 @@ void Actor::saveLoadWithSerializer(Common::Serializer &s) {
 				_cost.frame[i] = (_cost.frame[i] << 2) | newDirToOldDir(_facing);
 		}
 	}
-
-	// Post-load fix for games that were saved with a different video mode and which do not receive the normal
-	// post-load treatment in ScummEngine_v3::scummLoop_handleSaveLoad() where the script will take care of the
-	// actor palette. This fix is only for Bobbin in his normal costume.
-	if (_vm->_game.id == GID_LOOM && s.isLoading() && _vm->_renderMode == Common::kRenderCGA && _number == 1 && _palette[8] == 8)
-		_palette[8] = 0;
 }
 
 void Actor_v3::saveLoadWithSerializer(Common::Serializer &s) {
@@ -3866,6 +3860,23 @@ void Actor_v3::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsUint16LE(_walkdata.yAdd, VER(rev));
 		s.syncAsUint16LE(_stepX, VER(rev));
 		s.syncAsUint16LE(_stepThreshold, VER(rev));
+	}
+
+	// Post-load actor palette fixes for games that were saved with a different video mode.
+	if (s.isLoading() && _vm->_game.version == 3 && _vm->_game.platform == Common::kPlatformDOS) {
+		// Loom is not really much of a problem here, since it has extensive scripted post-load
+		// treatment in ScummEngine_v3::scummLoop_handleSaveLoad(). But there are situations
+		// where it won't be triggered (basically savegames from places where the original does
+		// not allow saving).  Indy3 is more dependant on this than Loom, since it does have much
+		// less scripted post-load magic of its own.
+		bool cga = (_vm->_renderMode == Common::kRenderCGA);
+		if ((cga && _palette[6] == 6 && _palette[7] == 7) || (!cga && _palette[6] == 5 && _palette[7] == 15)) {
+			_palette[6] ^= 3;
+			_palette[7] ^= 8;
+		}
+		// Extra fix for Bobbin in his normal costume.
+		if (_vm->_game.id == GID_LOOM && _number == 1 && ((cga && _palette[8] == 8) || (!cga && _palette[8] == 0)))
+			_palette[8] ^= 8;
 	}
 }
 
