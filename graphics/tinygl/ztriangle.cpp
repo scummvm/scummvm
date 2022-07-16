@@ -35,10 +35,10 @@ namespace TinyGL {
 static const int NB_INTERP = 8;
 
 template <bool kDepthWrite, bool kSmoothMode, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
-FORCEINLINE void FrameBuffer::putPixelNoTexture(int fbOffset, uint *pz, byte *ps, int _a,
-                                                int x, int y, uint &z, uint &r, uint &g, uint &b, uint &a,
-                                                int &dzdx, int &drdx, int &dgdx, int &dbdx, uint dadx,
-                                                uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx) {
+void FrameBuffer::putPixelNoTexture(int fbOffset, uint *pz, byte *ps, int _a,
+                                    int x, int y, uint &z, uint &r, uint &g, uint &b, uint &a,
+                                    int &dzdx, int &drdx, int &dgdx, int &dbdx, uint dadx,
+                                    uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx) {
 	if (kEnableScissor && scissorPixel(x + _a, y)) {
 		return;
 	}
@@ -76,12 +76,12 @@ FORCEINLINE void FrameBuffer::putPixelNoTexture(int fbOffset, uint *pz, byte *ps
 }
 
 template <bool kDepthWrite, bool kLightsMode, bool kSmoothMode, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
-FORCEINLINE void FrameBuffer::putPixelTexture(int fbOffset, const TexelBuffer *texture,
-                                              uint wrap_s, uint wrap_t, uint *pz, byte *ps, int _a,
-                                              int x, int y, uint &z, int &t, int &s,
-                                              uint &r, uint &g, uint &b, uint &a,
-                                              int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, uint dadx,
-                                              uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx) {
+void FrameBuffer::putPixelTexture(int fbOffset, const TexelBuffer *texture,
+                                  uint wrap_s, uint wrap_t, uint *pz, byte *ps, int _a,
+                                  int x, int y, uint &z, int &t, int &s,
+                                  uint &r, uint &g, uint &b, uint &a,
+                                  int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, uint dadx,
+                                  uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx) {
 	if (kEnableScissor && scissorPixel(x + _a, y)) {
 		return;
 	}
@@ -131,7 +131,7 @@ FORCEINLINE void FrameBuffer::putPixelTexture(int fbOffset, const TexelBuffer *t
 }
 
 template <bool kDepthWrite, bool kEnableScissor, bool kStencilEnabled, bool kDepthTestEnabled>
-FORCEINLINE void FrameBuffer::putPixelDepth(uint *pz, byte *ps, int _a, int x, int y, uint &z, int &dzdx) {
+void FrameBuffer::putPixelDepth(uint *pz, byte *ps, int _a, int x, int y, uint &z, int &dzdx) {
 	if (kEnableScissor && scissorPixel(x + _a, y)) {
 		return;
 	}
