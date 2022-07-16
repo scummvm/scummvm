@@ -76,7 +76,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Enable short transitions"),
 			_s("Enables transitions that are set to maximum rate instead of skipping them"),
 			"mtropolis_mod_minimum_transition_duration",
-			false,
+			true,
 			0,
 			0
 		}
