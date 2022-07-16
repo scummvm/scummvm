@@ -189,6 +189,12 @@ void Window::setStageColor(uint32 stageColor, bool forceReset) {
 	}
 }
 
+void Window::setTitleVisible(bool titleVisible) {
+	_titleVisible = titleVisible;
+	setTitleVisibility(titleVisible);
+	updateBorderType();
+}
+
 Datum Window::getStageRect() {
 	Graphics::ManagedSurface *surface = getSurface();
 	Datum d;

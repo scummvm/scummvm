@@ -121,7 +121,7 @@ public:
 
 	void setWindowType(int type) { _windowType = type; updateBorderType(); }
 	int getWindowType() const { return _windowType; }
-	void setTitleVisible(bool titleVisible) { _titleVisible = titleVisible; updateBorderType(); };
+	void setTitleVisible(bool titleVisible);
 	bool isTitleVisible() { return _titleVisible; };
 	Datum getStageRect();
 
@@ -194,6 +194,7 @@ private:
 	Common::String _currentPath;
 	Common::StringArray _movieQueue;
 	int16 _startFrame;
+	Common::String _titleTemp;
 
 	int _windowType;
 	bool _titleVisible;

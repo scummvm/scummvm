@@ -349,6 +349,7 @@ public:
 	void resizeBorderSurface();
 
 	void setMode(uint32 mode) { _mode = mode; }
+	void setTitleVisibility(bool visible);
 
 private:
 	void drawBorderFromSurface(ManagedSurface *g, uint32 flags);
@@ -388,6 +389,7 @@ private:
 	bool _resizable;
 
 	bool _closeable;
+	bool _isTitleVisible;
 
 	int _borderWidth;
 
@@ -397,6 +399,7 @@ private:
 	WindowClick _highlightedPart;
 
 	Common::String _title;
+	Common::String _shadowedTitle;
 
 	int _borderType;
 };

@@ -63,6 +63,7 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Mac
 	_type = kWindowWindow;
 
 	_closeable = false;
+	_isTitleVisible = true;
 
 	_borderType = -1;
 	_borderWidth = kBorderWidth;
@@ -268,9 +269,25 @@ void MacWindow::drawBorderFromSurface(ManagedSurface *g, uint32 flags) {
 }
 
 void MacWindow::setTitle(const Common::String &title) {
-	_title = title;
-	_borderIsDirty = true;
-	_macBorder.setTitle(title, _borderSurface.w, _wm);
+	if (_isTitleVisible) {
+		_title = title;
+		_borderIsDirty = true;
+		_macBorder.setTitle(title, _borderSurface.w, _wm);
+	} else {
+		_shadowedTitle = title;
+	}
+}
+
+void MacWindow::setTitleVisibility(bool visible) {
+	if (_isTitleVisible && !visible) {
+		_shadowedTitle = _title;
+		setTitle("");
+		_isTitleVisible = visible;
+	} else if (!_isTitleVisible && visible) {
+		_title = _shadowedTitle;
+		_isTitleVisible = visible;
+		setTitle(_title);
+	}
 }
 
 void MacWindow::drawPattern() {
