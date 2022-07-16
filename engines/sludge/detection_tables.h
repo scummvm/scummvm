@@ -390,7 +390,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 		{
 			"nsc",
 			"v1.03",
-			AD_ENTRY1s("gamedata", "57f318cc09e93a1e0685b790a956ebdc", 12733871),
+			AD_ENTRY1s("gamedata.slg", "57f318cc09e93a1e0685b790a956ebdc", 12733871),
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
 			ADGF_UNSTABLE,
