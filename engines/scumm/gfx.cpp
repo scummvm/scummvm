@@ -4262,7 +4262,12 @@ void ScummEngine::dissolveEffect(int width, int height) {
 #endif
 		if (_macScreen)
 			mac_drawStripToScreen(vs, y, x, y + vs->topline, width, height);
+		else if (IS_ALIGNED(width, 4))
+			drawStripToScreen(vs, x, width, y, y + height);
 		else
+			// This is not suitable for any render mode that requires post-processing of the pixels (CGA; Hercules...).
+			// Currently, non of the targets in concern will arrive here, but we will have to look at this again if we
+			// want to support things like the EGA mode of LOOM VGA Talkie...
 			_system->copyRectToScreen(vs->getPixels(x, y), vs->pitch, x, y + vs->topline, width, height);
 
 		// Test for 1x1 pattern...
