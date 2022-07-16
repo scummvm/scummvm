@@ -585,45 +585,39 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 				_imuseDigital->diMUSESetSFXGroupVol(volume);
 				return;
 			}
-		}
 
-		// "Text Speed  Slow  ==========  Fast"
-		if (lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-') {
-			if (!(_game.features & GF_DEMO)) {
-				// Catch the input and bail out
+			// "Text Speed  Slow  ==========  Fast"
+			if (lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-') {
+				if (VAR_CHARINC == 0xFF)
+					return;
+
+				Common::KeyState ks = lastKeyHit;
+
+				do {
+					if (ks.ascii == '+') {
+						VAR(VAR_CHARINC) -= 1;
+						if (VAR(VAR_CHARINC) < 0)
+							VAR(VAR_CHARINC) = 0;
+					} else {
+						VAR(VAR_CHARINC) += 1;
+						if (VAR(VAR_CHARINC) > 9)
+							VAR(VAR_CHARINC) = 9;
+					}
+
+					strcpy(tempStr, d.getPlainEngineString(31));
+					char *ptrToChar = strchr(tempStr, '=');
+					memset(ptrToChar, '\v', 10);
+					ptrToChar[9 - VAR(VAR_CHARINC)] = '\f';
+
+					showBannerAndPause(0, 0, tempStr);
+					ks = Common::KEYCODE_INVALID;
+					bool leftBtnPressed = false, rightBtnPressed = false;
+					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+				} while (ks.ascii == '+' || ks.ascii == '-');
+				clearBanner();
 				return;
 			}
-
-			if (VAR_CHARINC == 0xFF)
-				return;
-
-			Common::KeyState ks = lastKeyHit;
-
-			do {
-				if (ks.ascii == '+') {
-					VAR(VAR_CHARINC) -= 1;
-					if (VAR(VAR_CHARINC) < 0)
-						VAR(VAR_CHARINC) = 0;
-				} else {
-					VAR(VAR_CHARINC) += 1;
-					if (VAR(VAR_CHARINC) > 9)
-						VAR(VAR_CHARINC) = 9;
-				}
-
-				strcpy(tempStr, d.getPlainEngineString(31));
-				char *ptrToChar = strchr(tempStr, '=');
-				memset(ptrToChar, '\v', 10);
-				ptrToChar[9 - VAR(VAR_CHARINC)] = '\f';
-
-				showBannerAndPause(0, 0, tempStr);
-				ks = Common::KEYCODE_INVALID;
-				bool leftBtnPressed = false, rightBtnPressed = false;
-				waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
-			} while (ks.ascii == '+' || ks.ascii == '-');
-			clearBanner();
-			return;
 		}
-
 	}
 
 	// F1 (the trigger for the original save/load dialog) is mapped to F5
@@ -815,13 +809,14 @@ void ScummEngine_v3::processKeyboard(Common::KeyState lastKeyHit) {
 }
 
 void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
-	// Enable the following five special keys conditionally:
+	// Enable the following special keys conditionally:
 	bool restartKeyEnabled = (VAR_RESTART_KEY == 0xFF || VAR(VAR_RESTART_KEY) != 0);
 	bool pauseKeyEnabled = (VAR_PAUSE_KEY == 0xFF || VAR(VAR_PAUSE_KEY) != 0);
 	bool talkstopKeyEnabled = (VAR_TALKSTOP_KEY == 0xFF || VAR(VAR_TALKSTOP_KEY) != 0);
 	bool cutsceneExitKeyEnabled = (VAR_CUTSCENEEXIT_KEY == 0xFF || VAR(VAR_CUTSCENEEXIT_KEY) != 0);
 	bool mainmenuKeyEnabled = (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0);
 	bool snapScrollKeyEnabled = (_game.version >= 2 && _game.version <= 4);
+	bool optionKeysEnabled = !isUsingOriginalGUI();
 
 	// In FM-TOWNS games F8 / restart is always enabled
 	if (_game.platform == Common::kPlatformFMTowns)
@@ -873,7 +868,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 		if (VAR_CAMERA_FAST_X != 0xFF)
 			VAR(VAR_CAMERA_FAST_X) = _snapScroll;
-	} else if (lastKeyHit.ascii == '[' || lastKeyHit.ascii == ']') { // Change music volume
+	} else if (optionKeysEnabled && (lastKeyHit.ascii == '[' || lastKeyHit.ascii == ']')) { // Change music volume
 		int vol = ConfMan.getInt("music_volume") / 16;
 		if (lastKeyHit.ascii == ']' && vol < 16)
 			vol++;
@@ -891,7 +886,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		ConfMan.setInt("music_volume", vol);
 		syncSoundSettings();
 
-	} else if (lastKeyHit.ascii == '-' || lastKeyHit.ascii == '+') { // Change text speed
+	} else if (optionKeysEnabled && (lastKeyHit.ascii == '-' || lastKeyHit.ascii == '+')) { // Change text speed
 		if (lastKeyHit.ascii == '+' && _defaultTalkDelay > 0)
 			_defaultTalkDelay--;
 		else if (lastKeyHit.ascii == '-' && _defaultTalkDelay < 9)
