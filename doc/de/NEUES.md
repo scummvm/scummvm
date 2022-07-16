@@ -28,7 +28,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Die Spiel-Menüs verhalten sich nun wie das Original.
 
 
-#### 2.6.0 (DD.MM.YYYY)
+#### 2.6.0 "Insane Escapism" (2022-08-01)
 
  Neue Spiele:
    - Unterstützung für Sanitarium hinzugefügt.

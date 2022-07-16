@@ -31,7 +31,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Made game menus behave like in the original.
 
 
-#### 2.6.0 (2022-XX-XX)
+#### 2.6.0 "Insane Escapism" (2022-08-01)
 
  New games:
    - Added support for Sanitarium.
