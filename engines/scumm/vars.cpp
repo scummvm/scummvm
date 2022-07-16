@@ -831,6 +831,9 @@ void ScummEngine::resetScummVars() {
 }
 
 void ScummEngine::setVideoModeVarToCurrentConfig() {
+	if (VAR_VIDEOMODE == 0xFF)
+		return;
+
 	if (_game.platform == Common::kPlatformFMTowns)
 		VAR(VAR_VIDEOMODE) = 42;
 	// Value only used by the Macintosh version of Indiana Jones and the Last Crusade
