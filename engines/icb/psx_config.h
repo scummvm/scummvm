@@ -24,21 +24,10 @@
  *
  */
 
-#include "engines/icb/psx_config.h"
-#include "engines/icb/gfx/psx_pcdefines.h"
+#ifndef ICB_PSX_CONFIG_H
+#define ICB_PSX_CONFIG_H
 
-#if _PSX_ON_PC == 1
-#include "engines/icb/common/px_capri_maths.h"
+#define _PSX 0
+#define _PSX_ON_PC 0
+
 #endif
-
-namespace ICB {
-
-MATRIX *gterot;
-MATRIX *gtetrans;
-MATRIX *gtecolour;
-MATRIX *gtelight;
-short gteback[3];
-int32 gtegeomscrn;
-uint8 dcache[1024];
-
-} // End of namespace ICB

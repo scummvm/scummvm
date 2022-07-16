@@ -24,18 +24,14 @@
  *
  */
 
-#if !defined(_PSX_ON_PC)
 #include "engines/icb/debug.h"
 #include "engines/icb/mission.h"
 #include "engines/icb/global_objects.h"
-#endif
 
 #include "engines/icb/icb.h"
 #include "engines/icb/breath.h"
 
 namespace ICB {
-
-#if !defined(_PSX_ON_PC)
 
 mcodeFunctionReturnCodes fn_breath(int32 &result, int32 *params) { return (MS->fn_breath(result, params)); }
 
@@ -52,8 +48,6 @@ mcodeFunctionReturnCodes _game_session::fn_breath(int32 &, int32 *params) {
 
 	return IR_CONT;
 }
-
-#endif
 
 // init the breath, so we get a stream of breath....
 Breath::Breath() {
