@@ -497,12 +497,25 @@ void ScummEngine_v7::drawBlastTexts() {
 }
 
 void ScummEngine_v7::removeBlastTexts() {
-	int i;
+	if (_game.version == 8) {
+		if (_blastTextQueuePos != 0)
+			_blastTextRectsQueue = _blastTextQueuePos;
+		_blastTextQueuePos = 0;
+		return;
+	}
 
-	for (i = 0; i < _blastTextQueuePos; i++) {
+	for (int i = 0; i < _blastTextQueuePos; i++) {
 		restoreBackground(_blastTextQueue[i].rect);
 	}
 	_blastTextQueuePos = 0;
+}
+
+void ScummEngine_v7::restoreBlastTextsRects() {
+	for (int i = 0; i < _blastTextRectsQueue; i++) {
+		restoreBackground(_blastTextQueue[i].rect);
+	}
+
+	_blastTextRectsQueue = 0;
 }
 
 void ScummEngine_v8::printString(int m, const byte *msg) {
