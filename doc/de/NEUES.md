@@ -1,7 +1,7 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.6.0 (DD.MM.YYYY)
+#### 2.6.0 "Insane Escapism" (01.08.2022)
 
  Neue Spiele:
    - Unterstützung für Sanitarium hinzugefügt.
