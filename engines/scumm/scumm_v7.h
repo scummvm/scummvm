@@ -87,6 +87,7 @@ protected:
 	Common::Rect _defaultTextClipRect;
 	Common::Rect _wrappedTextClipRect;
 	bool _newTextRenderStyle;
+	int _blastTextRectsQueue = 0;
 
 	int _verbLineSpacing;
 	bool _existLanguageFile;
@@ -123,6 +124,7 @@ public:
 	void CHARSET_1() override;
 	bool isSmushActive() { return _smushActive; }
 	void removeBlastTexts() override;
+	void restoreBlastTextsRects();
 
 protected:
 

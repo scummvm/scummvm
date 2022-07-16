@@ -2384,7 +2384,15 @@ void ScummEngine::scummLoop(int delta) {
 		scummLoop_handleSaveLoad();
 	}
 
-	// BlastObjects/Texts are removed in this moment of the codepath, in v7-8...
+	// BlastObjects/Texts are removed in this moment of the codepath, in v7-8.
+	// V8 should just reset the queue and the rects should be restored somewhere else.
+	//
+	// We do that for the texts just after calling runAllScripts(), but this method
+	// doesn't quite work as well for the blastObjects as it does for the texts, so
+	// for now we'll have to live with one known glitch: if a system dialog is shown
+	// on the main menu (i.e. "Do you want to replace this saved game? (Y/N)"), it
+	// will wipe out all the blastObjects (the empty thumbnail rectangles) for the duration
+	// of said dialog.
 	if (_game.version >= 7) {
 		((ScummEngine_v6 *)this)->removeBlastObjects();
 #ifdef ENABLE_SCUMM_7_8
@@ -2408,6 +2416,17 @@ void ScummEngine::scummLoop(int delta) {
 			// The music engine generates the timer data for us.
 			VAR(VAR_MUSIC_TIMER) = _musicEngine->getMusicTimer() * _timerFrequency / 240.0;
 		}
+	}
+
+	// Another v8 quirk: runAllScripts() is called here, after that we can
+	// finally restore the blastTexts' rects, otherwise if a system dialog
+	// is shown we will lose all currently displayed blastTexts (see the
+	// comment above on the removal of blastTexts and blastObjects)
+	if (_game.version == 8) {
+		runAllScripts();
+#ifdef ENABLE_SCUMM_7_8
+		((ScummEngine_v7 *)this)->restoreBlastTextsRects();
+#endif
 	}
 
 	if (_game.version < 8)
@@ -2439,7 +2458,9 @@ load_game:
 		((SoundHE *)_sound)->processSoundCode();
 	}
 
-	runAllScripts();
+	if (_game.version < 8) {
+		runAllScripts();
+	}
 
 	// SCUMM v7-8 executes checkExecVerbs inside the function
 	// which processes keyboard inputs, so we handle it above

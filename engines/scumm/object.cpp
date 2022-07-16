@@ -1825,12 +1825,12 @@ void ScummEngine_v6::drawBlastObject(BlastObject *eo) {
 
 void ScummEngine_v6::removeBlastObjects() {
 	BlastObject *eo;
-	int i;
 
 	eo = _blastObjectQueue;
-	for (i = 0; i < _blastObjectQueuePos; i++, eo++) {
+	for (int i = 0; i < _blastObjectQueuePos; i++, eo++) {
 		removeBlastObject(eo);
 	}
+
 	_blastObjectQueuePos = 0;
 }
 
