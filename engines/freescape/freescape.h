@@ -93,6 +93,7 @@ public:
 	uint16 _startEntrance;
 
 	// Input
+	bool _flyMode;
 	void processInput();
 	void move(CameraMovement direction, uint8 scale, float deltaTime);
 	bool checkFloor(Math::Vector3d currentPosition);
@@ -118,6 +119,7 @@ public:
 	Math::Vector3d _cameraFront, _cameraUp, _cameraRight;
 	// Spacial attributes
 	Math::Vector3d _position, _rotation, _velocity;
+	Math::Vector3d _lastPosition;
 	uint16 _playerHeight;
 	uint16 _playerWidth;
 	uint16 _playerDepth;
