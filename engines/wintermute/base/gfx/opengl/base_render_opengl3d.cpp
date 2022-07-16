@@ -23,6 +23,7 @@
 #include "engines/wintermute/ad/ad_generic.h"
 #include "engines/wintermute/ad/ad_walkplane.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/gfx/3ds/camera3d.h"
 #include "engines/wintermute/base/gfx/3ds/light3d.h"
 
@@ -221,13 +222,23 @@ bool BaseRenderOpenGL3D::stencilSupported() {
 }
 
 BaseImage *BaseRenderOpenGL3D::takeScreenshot() {
-	warning("BaseRenderOpenGL3D::takeScreenshot not yet implemented");
-	return nullptr;
-}
+	BaseImage *screenshot = new BaseImage();
+	Graphics::Surface *surface = new Graphics::Surface();
+#ifdef SCUMM_BIG_ENDIAN
+	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#else
+	Graphics::PixelFormat format(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#endif
+	surface->create(_viewportRect.width(), _viewportRect.height(), format);
 
-bool BaseRenderOpenGL3D::saveScreenShot(const Common::String &filename, int sizeX, int sizeY) {
-	warning("BaseRenderOpenGL3D::saveScreenshot not yet implemented");
-	return true;
+	glReadPixels(_viewportRect.left, g_system->getHeight() - _viewportRect.bottom, _viewportRect.width(), _viewportRect.height(),
+	             GL_RGBA, GL_UNSIGNED_BYTE, surface->getPixels());
+	flipVertical(surface);
+	Graphics::Surface *converted = surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+	screenshot->copyFrom(converted);
+	delete surface;
+	delete converted;
+	return screenshot;
 }
 
 void BaseRenderOpenGL3D::setWindowed(bool windowed) {

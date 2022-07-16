@@ -65,7 +65,6 @@ public:
 
 	void dumpData(const char *filename) override {}
 	BaseImage *takeScreenshot() override;
-	bool saveScreenShot(const Common::String &filename, int sizeX = 0, int sizeY = 0) override;
 	void setWindowed(bool windowed) override;
 	void fadeToColor(byte r, byte g, byte b, byte a) override;
 	bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) override;

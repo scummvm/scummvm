@@ -120,4 +120,15 @@ Math::Matrix3 BaseRenderer3D::build2dTransformation(const Vector2 &center, float
 	return translateCenterBack * rotation * translateCenter;
 }
 
+void BaseRenderer3D::flipVertical(Graphics::Surface *s) {
+	for (int y = 0; y < s->h / 2; ++y) {
+		// Flip the lines
+		byte *line1P = (byte *)s->getBasePtr(0, y);
+		byte *line2P = (byte *)s->getBasePtr(0, s->h - y - 1);
+
+		for (int x = 0; x < s->pitch; ++x)
+			SWAP(line1P[x], line2P[x]);
+	}
+}
+
 } // namespace Wintermute
