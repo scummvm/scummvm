@@ -986,8 +986,16 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, C
 		chan._height = height;
 
 		_subchannels.push_back(chan);
-		_subchannels[_subchannels.size() - 1].replaceWidget();
+
 	}
+	// Initialise the widgets on all of the subchannels.
+	// This has to be done once the list has been constructed, otherwise
+	// the list grow operation will erase the widgets as they aren't
+	// part of the Channel assignment constructor.
+	for (auto &iter : _subchannels) {
+		iter.replaceWidget();
+	}
+
 	return &_subchannels;
 }
 
