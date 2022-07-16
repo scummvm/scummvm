@@ -47,7 +47,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"DCINE1.SMK", "1ff3db09d148e8dd8b56d2e87e7296b8", 493752),
 		Common::EN_USA,
 		Common::kPlatformDOS,
-		ADGF_TESTING | ADGF_DEMO,
+		ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -57,7 +57,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"MISSIONS.LIB", "585704e26094cbaf14fbee90798e8d5d", 119945),
 		Common::EN_USA,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -67,7 +67,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"MISSIONS.LIB", "585704e26094cbaf14fbee90798e8d5d", 119945),
 		Common::ES_ESP,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -77,7 +77,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"MISSIONS.LIB", "585704e26094cbaf14fbee90798e8d5d", 119945),
 		Common::DE_DEU,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -87,7 +87,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"MISSIONS.LIB", "585704e26094cbaf14fbee90798e8d5d", 119945),
 		Common::IT_ITA,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -108,7 +108,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"demo.exe", "15a6b1b3819ef002438df340509b5373", 533221),
 		Common::EN_USA,
 		Common::kPlatformDOS,
-		ADGF_TESTING | ADGF_DEMO,
+		ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -119,7 +119,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"demo.exe", "15a6b1b3819ef002438df340509b5373", 533221),
 		Common::EN_USA,
 		Common::kPlatformDOS,
-		ADGF_TESTING | ADGF_DEMO,
+		ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -129,7 +129,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"missions.lib", "6ffa658f22a00b6e17d7f920fcc13578", 12469),
 		Common::EN_USA,
 		Common::kPlatformDOS,
-		ADGF_TESTING | ADGF_DEMO,
+		ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -139,7 +139,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"missions.lib", "34b922fac8f64546c0690aa83f09e98e", 40891),
 		Common::EN_USA,
 		Common::kPlatformDOS,
-		ADGF_TESTING | ADGF_DEMO,
+		ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -149,7 +149,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"missions.lib", "34b922fac8f64546c0690aa83f09e98e", 40891),
 		Common::EN_USA,
 		Common::kPlatformDOS,
-		ADGF_TESTING | ADGF_DEMO,
+		ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -159,7 +159,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"wetmusic.81m", "0d99c63ce19633d09569b1fdcdff1505", 2833439),
 		Common::EN_USA,
 		Common::kPlatformDOS,
-		ADGF_TESTING | ADGF_DEMO,
+		ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -169,7 +169,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"c44_22k.raw", "4b2279af59ce3049cc5177b0047e8447", 5247618),
 		Common::EN_USA,
 		Common::kPlatformDOS,
-		ADGF_TESTING | ADGF_DEMO,
+		ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -179,7 +179,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
 		Common::EN_USA,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -189,7 +189,7 @@ static const ADGameDescription gameDescriptions[] = {
 			    "missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
 		Common::FR_FRA,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -199,7 +199,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
 		Common::ES_ESP,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -209,7 +209,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
 		Common::KO_KOR,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
