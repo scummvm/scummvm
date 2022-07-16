@@ -332,11 +332,6 @@ bool BaseRenderOpenGL3D::drawLine(int x1, int y1, int x2, int y2, uint32 color) 
 	return true;
 }
 
-bool BaseRenderOpenGL3D::drawRect(int x1, int y1, int x2, int y2, uint32 color, int width) {
-	warning("BaseRenderOpenGL3D::drawRect not yet implemented");
-	return true;
-}
-
 bool BaseRenderOpenGL3D::setProjection() {
 	// is the viewport already set here?
 	float viewportWidth = _viewportRect.right - _viewportRect.left;
