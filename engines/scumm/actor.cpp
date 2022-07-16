@@ -3827,6 +3827,12 @@ void Actor::saveLoadWithSerializer(Common::Serializer &s) {
 				_cost.frame[i] = (_cost.frame[i] << 2) | newDirToOldDir(_facing);
 		}
 	}
+
+	// Post-load fix for games that were saved with a different video mode and which do not receive the normal
+	// post-load treatment in ScummEngine_v3::scummLoop_handleSaveLoad() where the script will take care of the
+	// actor palette. This fix is only for Bobbin in his normal costume.
+	if (_vm->_game.id == GID_LOOM && s.isLoading() && _vm->_renderMode == Common::kRenderCGA && _number == 1 && _palette[8] == 8)
+		_palette[8] = 0;
 }
 
 void Actor_v3::saveLoadWithSerializer(Common::Serializer &s) {
