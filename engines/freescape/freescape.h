@@ -146,8 +146,9 @@ public:
 	void executeToggleBit(FCLInstruction &instruction);
 	bool executeEndIfBitNotEqual(FCLInstruction &instruction);
 	bool executeEndIfVisibilityIsNotEqual(FCLInstruction &instruction);
+	void executeSwapJet(FCLInstruction &instruction);
 
-	// Souund
+	// Sound
 	Audio::SoundHandle _speakerHandle;
 	Audio::PCSpeaker _speaker;
 	void playSound(int index);
