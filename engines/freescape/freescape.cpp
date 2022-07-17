@@ -52,10 +52,6 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	_flyMode = false;
 	_borderTexture = nullptr;
 
-	DebugMan.addDebugChannel(kFreescapeDebugMove, "move", "");
-	DebugMan.addDebugChannel(kFreescapeDebugParser, "parser", "");
-	DebugMan.addDebugChannel(kFreescapeDebugCode, "code", "");
-
 	_rnd = new Common::RandomSource("freescape");
 }
 
