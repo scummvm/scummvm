@@ -764,9 +764,11 @@ void GUI_LoK::updateSavegameString() {
 					_backupChars[_inputState++] = prevTwoByteChar;
 				}
 				// A new character will only be added if there is still space left.
-				if (newTwoByteChar && (length < ARRAYSIZE(_savegameName) - 2) && (width <= 250)) {
-					WRITE_BE_UINT16(&_savegameName[length], newTwoByteChar);
-					_savegameName[length + 2] = 0;
+				if (newTwoByteChar) {
+					if ((length < ARRAYSIZE(_savegameName) - 2) && (width <= 250)) {
+						WRITE_BE_UINT16(&_savegameName[length], newTwoByteChar);
+						_savegameName[length + 2] = 0;
+					}
 					_backupChars[0] = newTwoByteChar;
 					_inputState = 1;
 				}
