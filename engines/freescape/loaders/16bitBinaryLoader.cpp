@@ -422,7 +422,6 @@ void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 	}
 
 	// grab the areas
-	AreaMap *areaMap = new AreaMap;
 	for (uint16 area = 0; area < numberOfAreas; area++) {
 		debug("Area offset %d", fileOffsetForArea[area]);
 
@@ -430,7 +429,7 @@ void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 		Area *newArea = load16bitArea(file);
 
 		if (newArea) {
-			(*areaMap)[newArea->getAreaID()] = newArea;
+			_areaMap[newArea->getAreaID()] = newArea;
 		}
 	}
 	// TODO
@@ -513,10 +512,8 @@ void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
 	_startArea = startArea;
 	_startEntrance = startEntrance;
 	_colorNumber = colorNumber;
-	_areasByAreaID = areaMap;
 	_scale = Math::Vector3d(1, 1, 1);
 	_binaryBits = 16;
-	//return Binary{16, startArea, areaMap, raw_border, raw_palette, colorNumber};
 }
 
 } // namespace Freescape

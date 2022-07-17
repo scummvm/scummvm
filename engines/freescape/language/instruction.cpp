@@ -195,7 +195,7 @@ void FreescapeEngine::executeMakeInvisible(FCLInstruction &instruction) {
 	}
 
 	debugC(1, kFreescapeDebugCode, "Making obj %d invisible in area %d!", objectID, areaID);
-	Object *obj = (*_areasByAreaID)[areaID]->objectWithID(objectID);
+	Object *obj = _areaMap[areaID]->objectWithID(objectID);
 	obj->makeInvisible();
 }
 
@@ -211,7 +211,7 @@ void FreescapeEngine::executeMakeVisible(FCLInstruction &instruction) {
 	}
 
 	debugC(1, kFreescapeDebugCode, "Making obj %d visible in area %d!", objectID, areaID);
-	Object *obj = (*_areasByAreaID)[areaID]->objectWithID(objectID);
+	Object *obj = _areaMap[areaID]->objectWithID(objectID);
 	obj->makeVisible();
 }
 
@@ -227,7 +227,7 @@ void FreescapeEngine::executeToggleVisibility(FCLInstruction &instruction) {
 	}
 
 	debugC(1, kFreescapeDebugCode, "Toggling obj %d visibility in area %d!", objectID, areaID);
-	Object *obj = (*_areasByAreaID)[areaID]->objectWithID(objectID);
+	Object *obj = _areaMap[areaID]->objectWithID(objectID);
 	obj->toggleVisibility();
 }
 

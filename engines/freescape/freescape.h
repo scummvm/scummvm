@@ -73,7 +73,7 @@ public:
 
 	// Areas
 	uint16 _startArea;
-	AreaMap *_areasByAreaID;
+	AreaMap _areaMap;
 	Area *_currentArea;
 	Math::Vector3d _scale;
 
