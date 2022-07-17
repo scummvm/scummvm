@@ -65,6 +65,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{Director::kDebugPreprocess, "preprocess", "Lingo preprocessing"},
 	{Director::kDebugScreenshot, "screenshot", "screenshot each frame"},
 	{Director::kDebugSlow, "slow", "Slow playback"},
+	{Director::kDebugSound, "sound", "Sound playback"},
 	{Director::kDebugText, "text", "Text rendering"},
 	DEBUG_CHANNEL_END
 };

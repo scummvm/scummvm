@@ -1195,7 +1195,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		break;
 	case kTheSoundLevel:
 		// setting all of the channel for now
-		_vm->getCurrentWindow()->getSoundManager()->setSouldLevel(-1, d.asInt());
+		_vm->getCurrentWindow()->getSoundManager()->setSoundLevel(-1, d.asInt());
 		break;
 	case kTheSprite:
 		setTheSprite(id, field, d);
