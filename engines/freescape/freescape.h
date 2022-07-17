@@ -43,10 +43,10 @@ typedef struct Binary {
 
 class Console;
 
-// our engine debug channels
 enum {
-	kFreescapeDebug = 1 << 0,
-	kFreescapeDebug2 = 1 << 1
+	kFreescapeDebugMove = 1 << 0,
+	kFreescapeDebugParser = 1 << 1,
+	kFreescapeDebugCode = 1 << 2
 };
 
 class FreescapeEngine : public Engine {

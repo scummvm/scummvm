@@ -52,27 +52,19 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	_flyMode = false;
 	_borderTexture = nullptr;
 
-	// Here is the right place to set up the engine specific debug channels
-	DebugMan.addDebugChannel(kFreescapeDebug, "example", "this is just an example for a engine specific debug channel");
-	DebugMan.addDebugChannel(kFreescapeDebug2, "example2", "also an example");
+	DebugMan.addDebugChannel(kFreescapeDebugMove, "move", "");
+	DebugMan.addDebugChannel(kFreescapeDebugParser, "parser", "");
+	DebugMan.addDebugChannel(kFreescapeDebugCode, "code", "");
 
-	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("freescape");
-
-	debug("FreescapeEngine::FreescapeEngine");
 }
 
 FreescapeEngine::~FreescapeEngine() {
-	debug("FreescapeEngine::~FreescapeEngine");
-
 	// Dispose your resources here
 	delete _rnd;
 	//delete _areasByAreaID;
 	delete _border;
 	delete _gfx;
-
-	// Remove all of our debug levels here
-	//DebugMan.clearAllDebugChannels();
 }
 
 void FreescapeEngine::drawBorder() {
@@ -101,7 +93,7 @@ void FreescapeEngine::loadAssets() {
 		if (files.size() == 0) {
 			error("No .RUN was found in %s", path.c_str());
 		} else if (files.size() > 1) {
-			warning("More than one .RUN file found, only the first one will be used!");
+			debugC(1, kFreescapeDebugParser, "More than one .RUN file found, only the first one will be used!");
 		}
 
 		file = files.begin()->get()->createReadStream();
@@ -140,7 +132,7 @@ void FreescapeEngine::loadAssets() {
 				error("Failed to open DSIDE.EXE");
 			load8bitBinary(file, 0x7bb0, 4);
 		} else
-			error("Invalid render mode %s for Driller", _renderMode.c_str());
+			error("Invalid render mode %s for Dark Side", _renderMode.c_str());
 
 	} else if (_targetName == "totaleclipse") {
 		Common::File exe;
@@ -280,7 +272,6 @@ Common::Error FreescapeEngine::run() {
 	_gfx->init();
 	_gfx->clear();
 	loadAssets();
-	debug("FreescapeEngine::init");
 	// Simple main event loop
 	_lastMousePos = Common::Point(0, 0);
 	_lastFrame = 0.f;
@@ -311,7 +302,7 @@ Common::Error FreescapeEngine::run() {
 	}
 
 	gotoArea(_startArea, _startEntrance);
-	debug("Starting area %d", _currentArea->getAreaID());
+	debugC(1, kFreescapeDebugMove, "Starting area %d", _currentArea->getAreaID());
 	while (!shouldQuit()) {
 		drawFrame();
 		processInput();
@@ -357,7 +348,7 @@ void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos)
 }
 
 void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTime) {
-	debug("old player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
+	debugC(1, kFreescapeDebugMove, "old player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	int previousAreaID = _currentArea->getAreaID();
 
 	float velocity = _movementSpeed * deltaTime;
@@ -400,17 +391,17 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 			}
 			_position.set(_position.x(), positionY - fallen * areaScale, _position.z());
 		}
-		debug("Runing effects:");
+		debugC(1, kFreescapeDebugCode, "Runing effects:");
 		checkCollisions(true); // run the effects
 	} else {
-		debug("Runing effects:");
+		debugC(1, kFreescapeDebugCode, "Runing effects:");
 		checkCollisions(true); // run the effects
 		if (_flyMode)
 			_position = _lastPosition;
 		else if (_currentArea->getAreaID() == previousAreaID) {
 			bool stepUp = tryStepUp(_position);
 			if (stepUp) {
-				debug("Runing effects:");
+				debugC(1, kFreescapeDebugCode, "Runing effects:");
 				checkCollisions(true); // run the effects (again)
 			} else {
 				_position = _lastPosition;
@@ -418,10 +409,11 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 		}
 	}
 	_lastPosition = _position;
-	debug("new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
+	debugC(1, kFreescapeDebugMove, "new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 }
 
 bool FreescapeEngine::checkFloor(Math::Vector3d currentPosition) {
+	debugC(1, kFreescapeDebugMove, "Checking floor under the player");
 	int areaScale = _currentArea->getScale();
 	bool collided = checkCollisions(false);
 	assert(!collided);
@@ -433,7 +425,7 @@ bool FreescapeEngine::checkFloor(Math::Vector3d currentPosition) {
 }
 
 bool FreescapeEngine::tryStepUp(Math::Vector3d currentPosition) {
-	debug("Try to step up!");
+	debugC(1, kFreescapeDebugMove, "Try to step up!");
 	int areaScale = _currentArea->getScale();
 	_position.set(_position.x(), _position.y() + 64 * areaScale, _position.z());
 	bool collided = checkCollisions(false);
@@ -447,7 +439,7 @@ bool FreescapeEngine::tryStepUp(Math::Vector3d currentPosition) {
 }
 
 bool FreescapeEngine::tryStepDown(Math::Vector3d currentPosition) {
-	debug("Try to step down!");
+	debugC(1, kFreescapeDebugMove, "Try to step down!");
 	int areaScale = _currentArea->getScale();
 	_position.set(_position.x(), _position.y() - areaScale, _position.z());
 	if (checkFloor(_position)) {
@@ -477,7 +469,7 @@ bool FreescapeEngine::checkCollisions(bool executeConditions) {
 	Object *obj = _currentArea->checkCollisions(boundingBox);
 
 	if (obj != nullptr) {
-		debug("Collided with object id %d of size %f %f %f", obj->getObjectID(), obj->getSize().x(), obj->getSize().y(), obj->getSize().z());
+		debugC(1, kFreescapeDebugMove, "Collided with object id %d of size %f %f %f", obj->getObjectID(), obj->getSize().x(), obj->getSize().y(), obj->getSize().z());
 		GeometricObject *gobj = (GeometricObject*) obj;
 		if (gobj->conditionSource != nullptr && executeConditions) {
 			debug("Must use collision = true when executing: %s", gobj->conditionSource->c_str());
@@ -489,7 +481,7 @@ bool FreescapeEngine::checkCollisions(bool executeConditions) {
 }
 
 void FreescapeEngine::gotoArea(uint16 areaID, uint16 entranceID) {
-	debug("go to area: %d, entrance: %d", areaID, entranceID);
+	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
 	if (!_gameStateBits.contains(areaID))
 		_gameStateBits[areaID] = 0;
 
@@ -508,12 +500,11 @@ void FreescapeEngine::gotoArea(uint16 areaID, uint16 entranceID) {
 		_position = entrance->getOrigin();
 		if (_rotation == Math::Vector3d(0, 0, 0)) {
 			_rotation = entrance->getRotation();
-			debug("yaw: %f, pitch: %f", _rotation.x(), _rotation.y());
 			_pitch = _rotation.x();
 			_yaw = _rotation.y() - 260;
 		}
-		debug("entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
-		debug("player height: %d", scale * _playerHeight);
+		debugC(1, kFreescapeDebugMove, "entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
+		debugC(1, kFreescapeDebugMove, "player height: %d", scale * _playerHeight);
 		_position.setValue(1, _position.y() + scale * _playerHeight);
 	} else {
 		Math::Vector3d diff = _lastPosition - _position;
@@ -528,7 +519,7 @@ void FreescapeEngine::gotoArea(uint16 areaID, uint16 entranceID) {
 
 	}
 
-	debug("starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
+	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 }
 
 bool FreescapeEngine::hasFeature(EngineFeature f) const {
