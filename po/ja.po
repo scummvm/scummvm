@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-16 21:35+0100\n"
-"PO-Revision-Date: 2022-07-16 17:51+0000\n"
+"PO-Revision-Date: 2022-07-17 10:16+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4295,13 +4295,12 @@ msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "合成音声ではなくデジタルSEを選ぶ"
 
 #: engines/agos/detection.cpp:126
-#, fuzzy
 msgid "Disable fade-out effects"
-msgstr "オートセーブを無効化"
+msgstr "フェードアウトを無効化"
 
 #: engines/agos/detection.cpp:127
 msgid "Don't fade every screen to black when leaving a room."
-msgstr ""
+msgstr "すべての画面で、退室時に暗転しなくなります。"
 
 #: engines/ags/dialogs.cpp:58
 msgid "Game language:"
@@ -5940,78 +5939,71 @@ msgstr ""
 "この操作を行う事ができません。"
 
 #: engines/mtropolis/detection.cpp:43
-#, fuzzy
 msgid "16:9 widescreen mod"
-msgstr "ワイドスクリーン対応MOD"
+msgstr "16:9 ワイドMOD"
 
 #: engines/mtropolis/detection.cpp:44
 msgid ""
 "Removes letterboxing and moves some display elements, improving coverage on "
 "widescreen displays"
-msgstr ""
+msgstr "レターボックスの削除と一部要素の移動により、ワイドディスプレイでの表示率が向上します"
 
 #: engines/mtropolis/detection.cpp:54
 msgid "Improved music mixing"
-msgstr ""
+msgstr "ミキシングの改善"
 
 #: engines/mtropolis/detection.cpp:55
 msgid ""
 "Enables dynamic MIDI mixer, improving quality, but behaving less like "
 "mTropolis Player."
-msgstr ""
+msgstr "ダイナミックMIDIミキサーで品質を上げますが、mTropolis Playerの様には動きません。"
 
 #: engines/mtropolis/detection.cpp:65
 msgid "Save progress automatically"
-msgstr ""
+msgstr "進行状況をオートセーブ"
 
 #: engines/mtropolis/detection.cpp:66
 msgid "Automatically saves the game at certain progress points."
-msgstr ""
+msgstr "ゲームが進行状況に応じて自動的にセーブされます。"
 
 #: engines/mtropolis/detection.cpp:76
-#, fuzzy
 msgid "Enable short transitions"
-msgstr "Discordとの連携を可能にする"
+msgstr "短い遷移を有効化"
 
 #: engines/mtropolis/detection.cpp:77
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them"
-msgstr ""
+msgstr "最大レートに設定された遷移はスキップされず、有効になります"
 
 #: engines/mtropolis/detection.cpp:87
-#, fuzzy
 msgid "Start with debugger"
-msgstr "デバッガーを起動"
+msgstr "デバッグ起動"
 
 #: engines/mtropolis/detection.cpp:88
-#, fuzzy
 msgid "Starts with the debugger dashboard active"
-msgstr "デバッガーを起動"
+msgstr "デバッガーダッシュボードありで起動"
 
 #: engines/mtropolis/detection.cpp:98
 msgid "Start debugging immediately"
-msgstr ""
+msgstr "すぐにデバッグ開始"
 
 #: engines/mtropolis/detection.cpp:99
 msgid "Halts progress and stops at the debugger immediately"
-msgstr ""
+msgstr "ただちにデバッガーで進行を停止する"
 
 #: engines/mtropolis/saveload.cpp:109
-#, fuzzy
 msgid "Failed to read version information from save file"
-msgstr "セーブファイルのロードに失敗しました。"
+msgstr "セーブからバージョン情報が読み取れません"
 
 #: engines/mtropolis/saveload.cpp:117
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
-msgstr ""
+msgstr "ロードに失敗、セーブファイルに有効なバージョン情報がありません。"
 
 #: engines/mtropolis/saveload.cpp:125
-#, fuzzy
 msgid ""
 "Failed to load save, the save file was created by a newer version of ScummVM."
-msgstr ""
-"現在より新しいバージョンのScummVMで作成されたセーブです。ロードできません。"
+msgstr "ロードに失敗、新しいバージョンのScummVMで作成されたセーブです。"
 
 #: engines/mtropolis/saveload.cpp:133
 msgid "Failed to load save, an error occurred when reading the save game data."
