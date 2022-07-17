@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-16 21:35+0100\n"
-"PO-Revision-Date: 2022-07-16 17:51+0000\n"
+"PO-Revision-Date: 2022-07-17 10:16+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -4321,13 +4321,12 @@ msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Digitális hanghatások elõnyben a szintetizáltakkal szemben"
 
 #: engines/agos/detection.cpp:126
-#, fuzzy
 msgid "Disable fade-out effects"
-msgstr "Automentés letiltás"
+msgstr "A fade-out effektusok letiltása"
 
 #: engines/agos/detection.cpp:127
 msgid "Don't fade every screen to black when leaving a room."
-msgstr ""
+msgstr "Ne halványítson el minden képernyőt feketére, mikor elhagyja a szobát."
 
 #: engines/ags/dialogs.cpp:58
 msgid "Game language:"
@@ -6004,87 +6003,91 @@ msgstr ""
 "az oldal többé nem elérhetõ."
 
 #: engines/mtropolis/detection.cpp:43
-#, fuzzy
 msgid "16:9 widescreen mod"
-msgstr "Szélesvásznú mód"
+msgstr "16:9 szélesvásznú mód"
 
 #: engines/mtropolis/detection.cpp:44
 msgid ""
 "Removes letterboxing and moves some display elements, improving coverage on "
 "widescreen displays"
 msgstr ""
+"Eltávolítja a levéldobozokat és áthelyez néhány kijelzőelemet, javítva a "
+"lefedettséget a szélesvásznú kijelzőkön"
 
 #: engines/mtropolis/detection.cpp:54
 msgid "Improved music mixing"
-msgstr ""
+msgstr "Továbbfejlesztett zenekeverés"
 
 #: engines/mtropolis/detection.cpp:55
 msgid ""
 "Enables dynamic MIDI mixer, improving quality, but behaving less like "
 "mTropolis Player."
 msgstr ""
+"Lehetővé teszi a dinamikus MIDI keverőt, javítva a minőséget, de kevésbé "
+"viselkedik, mint az mTropolis Player."
 
 #: engines/mtropolis/detection.cpp:65
-#, fuzzy
 msgid "Save progress automatically"
-msgstr "Frissítések automatikus keresése"
+msgstr "A haladás automatikus mentése"
 
 #: engines/mtropolis/detection.cpp:66
 msgid "Automatically saves the game at certain progress points."
-msgstr ""
+msgstr "Automatikusan elmenti a játékot bizonyos haladási pontokon."
 
 #: engines/mtropolis/detection.cpp:76
-#, fuzzy
 msgid "Enable short transitions"
-msgstr "Engedélyezze a Discord integrációt"
+msgstr "Rövid átmenetek engedélyezése"
 
 #: engines/mtropolis/detection.cpp:77
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them"
 msgstr ""
+"Engedélyezi a maximális sebességre beállított átmeneteket ahelyett, hogy "
+"kihagyná őket"
 
 #: engines/mtropolis/detection.cpp:87
-#, fuzzy
 msgid "Start with debugger"
-msgstr "Hibakeresõ indítása"
+msgstr "Kezdés a hibakeresővel"
 
 #: engines/mtropolis/detection.cpp:88
-#, fuzzy
 msgid "Starts with the debugger dashboard active"
-msgstr "Hibakeresõ indítása"
+msgstr "A hibakereső irányítópult aktív állapotával kezdődik"
 
 #: engines/mtropolis/detection.cpp:98
 msgid "Start debugging immediately"
-msgstr ""
+msgstr "Azonnal kezdje el a hibakeresést"
 
 #: engines/mtropolis/detection.cpp:99
 msgid "Halts progress and stops at the debugger immediately"
-msgstr ""
+msgstr "Leállítja a folyamatot, és azonnal megáll a hibakeresőnél"
 
 #: engines/mtropolis/saveload.cpp:109
-#, fuzzy
 msgid "Failed to read version information from save file"
-msgstr "Nem sikerült a mentett játékállás betöltése fájlból."
+msgstr "Nem sikerült a mentett játékállás betöltése fájlból"
 
 #: engines/mtropolis/saveload.cpp:117
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
+"Nem sikerült betölteni a mentést, a mentési fájl nem tartalmaz érvényes "
+"verzióinformációkat."
 
 #: engines/mtropolis/saveload.cpp:125
-#, fuzzy
 msgid ""
 "Failed to load save, the save file was created by a newer version of ScummVM."
 msgstr ""
-"A mentett játék a ScummVM újabb verziójával készült. Nem lehet betölteni."
+"A mentés betöltése nem sikerült, a mentési fájlt a ScummVM újabb verziója "
+"hozta létre."
 
 #: engines/mtropolis/saveload.cpp:133
 msgid "Failed to load save, an error occurred when reading the save game data."
 msgstr ""
+"Nem sikerült betölteni a mentést, hiba történt a mentési játékadatok "
+"beolvasásakor."
 
 #: engines/mtropolis/saveload.cpp:157
 msgid "Progress Saved"
-msgstr ""
+msgstr "Haladás Mentve"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
@@ -8391,11 +8394,13 @@ msgstr "Bilineáris szûrés alkalmazása egyes sprite-okhoz"
 
 #: engines/wintermute/detection.cpp:77
 msgid "Force to use 2D renderer (2D games only)"
-msgstr ""
+msgstr "2D renderer használatának kényszerítése (csak 2D játékok)"
 
 #: engines/wintermute/detection.cpp:78
 msgid "This setting forces ScummVM to use 2D renderer while running 2D games"
 msgstr ""
+"Ez a beállítás arra kényszeríti a ScummVM-et, hogy 2D renderelőt használjon "
+"2D játékok futtatása közben"
 
 #: engines/wintermute/metaengine.cpp:64
 msgid "FoxTail support is not compiled in"
