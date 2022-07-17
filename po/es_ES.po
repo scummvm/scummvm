@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-16 21:35+0100\n"
-"PO-Revision-Date: 2022-07-10 19:06+0000\n"
+"PO-Revision-Date: 2022-07-17 10:16+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -1936,7 +1936,7 @@ msgstr "Moverse"
 
 #: gui/options.cpp:2676
 msgid "ERROR: Failed to move the following saved games:\n"
-msgstr "ERROR: No se han podido mover las siguientes partidas guardadas:\n"
+msgstr "ERROR: Fallo al mover las siguientes partidas guardadas:\n"
 
 #: gui/options.cpp:2762
 msgid "Failed to change cloud storage!"
@@ -1988,7 +1988,7 @@ msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
-"No se ha podido abrir la URL.\n"
+"Fallo al abrir la URL.\n"
 "Accede a la página manualmente."
 
 #: gui/options.cpp:3133
@@ -2246,8 +2246,7 @@ msgstr ""
 
 #: gui/unknown-game-dialog.cpp:157
 msgid "Copying the game information to the clipboard has failed!"
-msgstr ""
-"¡Ha habido un error al copiar la información del juego en el portapapeles!"
+msgstr "¡Fallo al copiar la información del juego en el portapapeles!"
 
 #: gui/updates-dialog.cpp:48
 msgid ""
@@ -2576,8 +2575,8 @@ msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Ha habido un fallo al guardar la partida (%s). Consulte el archivo README "
-"con información básica y como obtener más ayuda."
+"Fallo al guardar la partida (%s). Consulte el archivo README con información "
+"básica y como obtener más ayuda."
 
 #: engines/dialogs.cpp:355
 msgid "~O~K"
@@ -2691,8 +2690,8 @@ msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
-"Hubo un fallo al cargar la partida (%s). Consulte el archivo README para "
-"información básica y cómo obtener más ayuda."
+"Fallo al cargar la partida (%s). Consulte el archivo README para información "
+"básica y cómo obtener más ayuda."
 
 #: engines/engine.cpp:717
 msgid "WARNING: "
@@ -2937,7 +2936,7 @@ msgstr ""
 #, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
-"FluidSynthi: Error al cargar la SoundFont personalizada '%s'. La música ha "
+"FluidSynth: Fallo al cargar la SoundFont personalizada '%s'. La música ha "
 "sido desactivada."
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:31
@@ -3438,7 +3437,7 @@ msgstr "¡Ya existe un archivo con ese nombre en la ruta principal!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:103
 msgid "Failed to create the directory!"
-msgstr "¡No se ha podido crear el directorio!"
+msgstr "¡No se pudo crear el directorio!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:110
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:119
@@ -3460,7 +3459,7 @@ msgstr "¡No se puede descargar un directorio!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:75
 msgid "Failed to read the file!"
-msgstr "¡No se puede leer el archivo!"
+msgstr "¡No se pudo leer el archivo!"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:58
 msgid ""
@@ -3555,7 +3554,7 @@ msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."
 msgstr ""
-"No se ha podido arrancar el servidor web.\n"
+"Fallo al arrancar el servidor web.\n"
 "Comprueba que el puerto seleccionado no lo esté usando otra aplicación y "
 "vuelve a intentarlo."
 
@@ -4273,7 +4272,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Error al cargar la partida guardada del archivo:\n"
+"Fallo al cargar la partida guardada del archivo:\n"
 "\n"
 "%s"
 
@@ -4284,7 +4283,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Error al guardar la partida al archivo:\n"
+"Fallo al guardar la partida al archivo:\n"
 "\n"
 "%s"
 
@@ -4359,13 +4358,13 @@ msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Utiliza efectos de sonido digitales en vez de los sintetizados"
 
 #: engines/agos/detection.cpp:126
-#, fuzzy
 msgid "Disable fade-out effects"
-msgstr "Desactivar autoguardados"
+msgstr "Desactivar fundidos a negro"
 
 #: engines/agos/detection.cpp:127
 msgid "Don't fade every screen to black when leaving a room."
 msgstr ""
+"Evita que al salir de una estancia la imagen siempre transicione a negro."
 
 #: engines/ags/dialogs.cpp:58
 msgid "Game language:"
@@ -4446,7 +4445,7 @@ msgstr "Cargar de todas maneras"
 
 #: engines/bladerunner/bladerunner.cpp:397
 msgid "Failed to initialize resources"
-msgstr "No se han podido iniciar los recursos"
+msgstr "Fallo al iniciar los recursos"
 
 #: engines/bladerunner/bladerunner.cpp:1161
 msgid "A required game resource was not found"
@@ -4650,9 +4649,8 @@ msgstr "Bajar"
 #. I18N: This keymap allows (in KIA only) for a clue to be set as private or public
 #. (only when the KIA is upgraded).
 #: engines/bladerunner/metaengine.cpp:221
-#, fuzzy
 msgid "Toggle Clue Privacy"
-msgstr "Silenciar audio"
+msgstr "Ocultar pista"
 
 #. I18N: This keymap opens KIA's SAVE GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -6073,88 +6071,91 @@ msgstr ""
 "y esa página ya no existe."
 
 #: engines/mtropolis/detection.cpp:43
-#, fuzzy
 msgid "16:9 widescreen mod"
-msgstr "Mod de pantalla panorámica"
+msgstr "Mod de pantalla panorámica a 16:9"
 
 #: engines/mtropolis/detection.cpp:44
 msgid ""
 "Removes letterboxing and moves some display elements, improving coverage on "
 "widescreen displays"
 msgstr ""
+"Elimina las bandas negras y desplaza algunos elementos visuales para que la "
+"imagen cubra mejor las pantallas panorámicas"
 
 #: engines/mtropolis/detection.cpp:54
 msgid "Improved music mixing"
-msgstr ""
+msgstr "Mezcla de música mejorada"
 
 #: engines/mtropolis/detection.cpp:55
 msgid ""
 "Enables dynamic MIDI mixer, improving quality, but behaving less like "
 "mTropolis Player."
 msgstr ""
+"Activa el mezclador dinámico de MIDI, lo cual mejora la calidad pero tiene "
+"un comportamiento diferente al del reproductor mTropolis."
 
 #: engines/mtropolis/detection.cpp:65
-#, fuzzy
 msgid "Save progress automatically"
-msgstr "Buscar actualizaciones automáticamente"
+msgstr "Guardar avances automáticamente"
 
 #: engines/mtropolis/detection.cpp:66
 msgid "Automatically saves the game at certain progress points."
-msgstr ""
+msgstr "Guarda automáticamente la partida en ciertos puntos de progreso."
 
 #: engines/mtropolis/detection.cpp:76
-#, fuzzy
 msgid "Enable short transitions"
-msgstr "Activar integración con Discord"
+msgstr "Transiciones breves"
 
 #: engines/mtropolis/detection.cpp:77
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them"
 msgstr ""
+"Hace que las transiciones vayan a la máxima velocidad en vez de omitirlas "
+"directamente"
 
 #: engines/mtropolis/detection.cpp:87
-#, fuzzy
 msgid "Start with debugger"
-msgstr "Iniciar debugger"
+msgstr "Iniciar con el depurador"
 
 #: engines/mtropolis/detection.cpp:88
-#, fuzzy
 msgid "Starts with the debugger dashboard active"
-msgstr "Iniciar debugger"
+msgstr "Inicia el juego con el panel de control de depuración activado"
 
 #: engines/mtropolis/detection.cpp:98
 msgid "Start debugging immediately"
-msgstr ""
+msgstr "Empezar a depurar inmediatamente"
 
 #: engines/mtropolis/detection.cpp:99
 msgid "Halts progress and stops at the debugger immediately"
 msgstr ""
+"Paraliza el progreso del juego y lo detiene en el depurador inmediatamente"
 
 #: engines/mtropolis/saveload.cpp:109
-#, fuzzy
 msgid "Failed to read version information from save file"
-msgstr "Fallo al cargar la partida guardada."
+msgstr "Fallo al leer la información de versión de la partida guardada"
 
 #: engines/mtropolis/saveload.cpp:117
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
+"Fallo al cargar la partida: la partida guardada no contiene una información "
+"de versión válida."
 
 #: engines/mtropolis/saveload.cpp:125
-#, fuzzy
 msgid ""
 "Failed to load save, the save file was created by a newer version of ScummVM."
 msgstr ""
-"La partida guardada se creó una versión posterior de ScummVM. No se puede "
+"La partida guardada se creó una versión más reciente de ScummVM. No se puede "
 "cargar."
 
 #: engines/mtropolis/saveload.cpp:133
 msgid "Failed to load save, an error occurred when reading the save game data."
 msgstr ""
+"Fallo al cargar la partida: error al leer los datos de la partida guardada."
 
 #: engines/mtropolis/saveload.cpp:157
 msgid "Progress Saved"
-msgstr ""
+msgstr "Progresos guardados"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
@@ -7224,7 +7225,7 @@ msgstr "Mostrar/Ocultar consola"
 
 #: engines/scumm/help.cpp:94
 msgid "Start the debugger"
-msgstr "Iniciar debugger"
+msgstr "Iniciar el depurador"
 
 #: engines/scumm/help.cpp:95
 msgid "Show memory consumption"
@@ -8500,11 +8501,13 @@ msgstr "Aplica un filtrado bilineal a cada sprite individual"
 
 #: engines/wintermute/detection.cpp:77
 msgid "Force to use 2D renderer (2D games only)"
-msgstr ""
+msgstr "Forzar el renderizador 2D (solo para juegos en 2D)"
 
 #: engines/wintermute/detection.cpp:78
 msgid "This setting forces ScummVM to use 2D renderer while running 2D games"
 msgstr ""
+"Fuerza a ScummVM a utilizar el renderizador 2D cuando se ejecuten juegos en "
+"2D"
 
 #: engines/wintermute/metaengine.cpp:64
 msgid "FoxTail support is not compiled in"
