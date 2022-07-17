@@ -179,7 +179,7 @@ public:
 	void playExternalSound(uint16 menu, uint16 submenu, uint8 soundChannel);
 	void playFPlaySound(const Common::Array<Common::String> &fplayList);
 	void playFPlaySound();
-	void setSouldLevel(int channel, uint8 soundLevel);
+	void setSoundLevel(int channel, uint8 soundLevel);
 	uint8 getSoundLevel(uint8 soundChannel);
 	void setSoundEnabled(bool enabled);
 	void systemBeep();

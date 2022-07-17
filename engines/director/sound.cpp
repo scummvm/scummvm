@@ -174,6 +174,7 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 					warning("DirectorSound::playCastMember: audio data failed to load from cast");
 					return;
 				}
+				debugC(5, kDebugSound, "DirectorSound::playCastMember(): playing cast ID %s, channel %d, looping %d, stopOnZero %d", memberID.asString().c_str(), soundChannel, looping, stopOnZero);
 				playStream(*as, soundChannel);
 				setLastPlayedSound(soundChannel, memberID, stopOnZero);
 			}
@@ -377,6 +378,7 @@ void DirectorSound::playExternalSound(uint16 menu, uint16 submenu, uint8 soundCh
 		loadSampleSounds(menu);
 
 	if (1 <= submenu && submenu <= menuSounds.size()) {
+		debugC(5, kDebugSound, "DirectorSound::playExternalSound(): playing menu ID %d, submenu ID %d, channel %d", menu, submenu, soundChannel);
 		playStream(*(menuSounds[submenu - 1]->getAudioStream()), soundChannel);
 		setLastPlayedSound(soundChannel, soundId);
 	} else {
@@ -425,6 +427,7 @@ void DirectorSound::stopSound(uint8 soundChannel) {
 	if (!isChannelValid(soundChannel))
 		return;
 
+	debugC(5, kDebugSound, "DirectorSound::stopSound(): stopping channel %d", soundChannel);
 	cancelFade(soundChannel);
 	_mixer->stopHandle(_channels[soundChannel - 1].handle);
 	setLastPlayedSound(soundChannel, SoundID());
@@ -432,6 +435,7 @@ void DirectorSound::stopSound(uint8 soundChannel) {
 }
 
 void DirectorSound::stopSound() {
+	debugC(5, kDebugSound, "DirectorSound::stopSound(): stopping all channels");
 	for (uint i = 0; i < _channels.size(); i++) {
 		cancelFade(i + 1);
 
@@ -444,6 +448,7 @@ void DirectorSound::stopSound() {
 }
 
 void DirectorSound::systemBeep() {
+	debugC(5, kDebugSound, "DirectorSound::systemBeep(): beep!");
 	_speaker->play(Audio::PCSpeaker::kWaveFormSquare, 500, 150);
 }
 
@@ -473,6 +478,8 @@ void DirectorSound::playPuppetSound(uint8 soundChannel) {
 	// only play if the puppet was just set
 	if (!_channels[soundChannel - 1].newPuppet)
 		return;
+
+	debugC(5, kDebugSound, "DirectorSound::playPuppetSound(): playing on channel %d", soundChannel);
 
 	_channels[soundChannel - 1].newPuppet = false;
 	playSound(_channels[soundChannel - 1].puppet, soundChannel, true);
@@ -567,7 +574,7 @@ void DirectorSound::setSoundLevelInternal(uint8 soundChannel, uint8 soundLevel) 
 }
 
 // -1 represent all the sound channel
-void DirectorSound::setSouldLevel(int channel, uint8 soundLevel) {
+void DirectorSound::setSoundLevel(int channel, uint8 soundLevel) {
 	if (soundLevel >= 8) {
 		warning("DirectorSound::setSoundLevel: soundLevel %d out of bounds", soundLevel);
 		return;
@@ -576,8 +583,10 @@ void DirectorSound::setSouldLevel(int channel, uint8 soundLevel) {
 	if (channel != -1) {
 		if (!isChannelValid(channel))
 			return;
+		debugC(5, kDebugSound, "DirectorSound::setSoundLevel: setting channel %d to level %d", channel, soundLevel);
 		setSoundLevelInternal(channel, soundLevel);
 	} else {
+		debugC(5, kDebugSound, "DirectorSound::setSoundLevel: setting all channels to level %d", soundLevel);
 		for (uint i = 0; i < _channels.size(); i++)
 			setSoundLevelInternal(i + 1, soundLevel);
 	}
