@@ -1505,8 +1505,8 @@ void ScummEngine_v5::o5_notEqualZero() {
 
 	// WORKAROUND for a possible dead-end in Monkey Island 2. By luck, this
 	// only happens in the Ultimate Talkie Edition (because it fixes another
-	// script error which unveils this one), or if you enable the Enhancement
-	// option in one of the original releases (see o5_stopScript()).
+	// script error which unveils this one), or when one enables the second
+	// workaround just below in one of the original releases.
 	//
 	// Once Bit[70] has been properly set by one of the configurations above,
 	// Captain Dread will have his intended reaction of forcing you to go back
@@ -1522,8 +1522,27 @@ void ScummEngine_v5::o5_notEqualZero() {
 		int var = fetchScriptWord();
 		a = readVar(var);
 
+		// WORKAROUND: When Guybrush buys a map piece from the antiques dealer,
+		// the script forgets to set Bit[70], which means that an intended
+		// reaction from Captain Dread forcing you to go back to Scabb when you
+		// get the full map was never triggered in the original game.
+		//
+		// The Ultimate Edition fixed this in script 48-207 (when you buy the
+		// map piece), but for the other versions we're fixing it on-the-fly
+		// at the last moment instead (by checking for the object in the
+		// inventory instead of Bit[70]), so that it will also work with older
+		// savegames, and so that you can uncheck the Enhancement option at any
+		// moment if you realize that you want the original behavior.
+		//
+		// Note that fixing this unveils the script error causing the possible
+		// dead-end described above.
+		if (var == 0x8000 + 70 && a == 0 && getOwner(519) == VAR(VAR_EGO) && strcmp(_game.variant, "SE Talkie") != 0 && _enableEnhancements) {
+			a = 1;
+		}
+
+		// [Back to the previous "dead-end" workaround.]
 		// If you've got the four map pieces and the script is checking this...
-		if (var == 0x8000 + 69 && a == 1 && readVar(0x8000 + 70) == 1 && readVar(0x8000 + 55) == 1 && readVar(0x8000 + 366) == 1) {
+		else if (var == 0x8000 + 69 && a == 1 && getOwner(519) == VAR(VAR_EGO) && readVar(0x8000 + 55) == 1 && readVar(0x8000 + 366) == 1) {
 			// ...but you don't have the lens and you never gave it to Wally...
 			// (and you're not playing the Lite mode, where this doesn't matter)
 			if (getOwner(295) != VAR(VAR_EGO) && readVar(0x8000 + 67) != 0 && readVar(0x8000 + 567) == 0) {
@@ -2683,21 +2702,6 @@ void ScummEngine_v5::o5_stopScript() {
 		stopObjectCode();
 	else
 		stopScript(script);
-
-	// WORKAROUND: When Guybrush buys a map piece from the antiques dealer,
-	// the script forgets to set Bit[70], which means that an intended
-	// reaction from Captain Dread forcing you to go back to Scabb when you
-	// get the full map was never triggered in the original game.
-	// The Ultimate Edition fixed this, so we're borrowing its script change.
-	//
-	// Note that fixing this unveils a second, much more problematic script
-	// oversight which could cause a dead-end if you didn't pick up the model
-	// lighthouse lens! See o5_notEqualZero().
-	if (_game.id == GID_MONKEY2 && script == 209 &&
-		_roomResource == 48 && vm.slot[_currentScript].number == 207 && _enableEnhancements &&
-		strcmp(_game.variant, "SE Talkie") != 0) {
-		writeVar(0x8000 + 70, 1);
-	}
 }
 
 void ScummEngine_v5::o5_stringOps() {
