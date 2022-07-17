@@ -1,6 +1,8 @@
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
+#include "freescape/freescape.h"
+
 namespace Freescape {
 static const PlainGameDescriptor freescapeGames[] = {
 	{"3dkit", "The 3D Kit Game"},
@@ -162,6 +164,13 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER};
 } // End of namespace Freescape
 
+static const DebugChannelDef debugFlagList[] = {
+	{Freescape::kFreescapeDebugMove, "move", ""},
+	{Freescape::kFreescapeDebugParser, "parser", ""},
+	{Freescape::kFreescapeDebugCode, "code", ""},
+	DEBUG_CHANNEL_END
+};
+
 class FreescapeMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	FreescapeMetaEngineDetection() : AdvancedMetaEngineDetection(Freescape::gameDescriptions, sizeof(ADGameDescription), Freescape::freescapeGames) {
@@ -177,6 +186,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Copyright (C) Incentive Software";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
