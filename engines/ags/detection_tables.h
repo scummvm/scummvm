@@ -3440,7 +3440,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_GOG("geminirue", "gemini rue.exe", "5f747ea1c5f624d3716926fe1ca5135d", 73450387),  // Win v2.0
 	GAME_ENTRY_GOG("geminirue", "gemini rue.exe", "5f747ea1c5f624d3716926fe1ca5135d", 73486515),  // Win v2.1
 	GAME_ENTRY_GOG("geminirue", "gemini rue.exe", "5f747ea1c5f624d3716926fe1ca5135d", 73505075),  // Win v2.2
-	GAME_ENTRY_GOG("geminirue", "gemini rue.exe", "5f747ea1c5f624d3716926fe1ca5135d", 73541907),  // Win v2.3
+	GAME_ENTRY_GOG("geminirue", "gemini rue.exe", "5f747ea1c5f624d3716926fe1ca5135d", 73541907),  // Win, Linux v2.3
 	GAME_ENTRY_GOG("geminirue", "ac2game.dat", "056239de34dfa52cfe1b645eee4eacb7", 70356639), // Mac v2.1
 	GAME_ENTRY_GOG("geminirue", "ac2game.dat", "056239de34dfa52cfe1b645eee4eacb7", 70375199), // Mac v2.2
 	GAME_ENTRY_GOG("geminirue", "ac2game.dat", "056239de34dfa52cfe1b645eee4eacb7", 70412031), // Mac v2.3
@@ -3508,7 +3508,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_GOG("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973495830),
 	GAME_ENTRY_GOG("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973511911),
 	GAME_ENTRY_GOG("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377890),
-	GAME_ENTRY_GOG("primordia", "Primordia.exe", "8f717a5a14ceda815292ce4065348afb", 979602678), // v2.0.0.2
+	GAME_ENTRY_GOG("primordia", "Primordia.exe", "8f717a5a14ceda815292ce4065348afb", 979602678), // v2.0.0.2, with Ita translation
 	GAME_ENTRY_GOG("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 979603175), // v2.6
 	GAME_ENTRY_GOG("primordia", "agsgame.dat", "22313e59c3233001488c26f18c80cc08", 973495830), // Linux
 	GAME_ENTRY_GOG("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976474850), // Mac
