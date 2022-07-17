@@ -492,6 +492,8 @@ void ScummEngine_v7::confirmExitDialog() {
 			_bannerMem = nullptr;
 
 			if (isSmushActive()) {
+				pt.clear();
+				clearClickedStatus();
 				return;
 			}
 

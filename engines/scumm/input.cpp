@@ -402,6 +402,9 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 		InfoDialog d(this, 0);
 		char tempStr[64];
 
+		if (lastKeyHit.keycode == Common::KEYCODE_INVALID)
+			return;
+
 		// Main menu (allow both F1 and F5) mapping; unlike in
 		// the past we choose not to enable it without the
 		// original GUI selected as an option
@@ -418,7 +421,8 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 			return;
 		}
 
-		if (lastKeyHit.keycode == VAR(VAR_PAUSE_KEY)) {
+		if (lastKeyHit.keycode == VAR(VAR_PAUSE_KEY) ||
+			(lastKeyHit.keycode == Common::KEYCODE_SPACE && _game.features & GF_DEMO)) {
 			// Force the cursor OFF...
 			int8 oldCursorState = _cursor.state;
 			_cursor.state = 0;
@@ -497,6 +501,9 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 			if (lastKeyHit.keycode == Common::KEYCODE_o || lastKeyHit.keycode == Common::KEYCODE_p) {
 				Common::KeyState ks = lastKeyHit;
 
+				if (isSmushActive())
+					_mixer->pauseAll(true);
+
 				int volume = _imuseDigital->diMUSEGetMusicGroupVol();
 				do {
 					if (ks.keycode == Common::KEYCODE_o) {
@@ -521,12 +528,19 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 				} while (ks.keycode == Common::KEYCODE_o || ks.keycode == Common::KEYCODE_p);
 				clearBanner();
 				_imuseDigital->diMUSESetMusicGroupVol(volume);
+
+				if (isSmushActive())
+					_mixer->pauseAll(false);
+
 				return;
 			}
 
 			// "Voice Volume  Low  =========  High"
 			if (lastKeyHit.keycode == Common::KEYCODE_k || lastKeyHit.keycode == Common::KEYCODE_l) {
 				Common::KeyState ks = lastKeyHit;
+
+				if (isSmushActive())
+					_mixer->pauseAll(true);
 
 				int volume = _imuseDigital->diMUSEGetVoiceGroupVol();
 				do {
@@ -552,12 +566,19 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 				} while (ks.keycode == Common::KEYCODE_k || ks.keycode == Common::KEYCODE_l);
 				clearBanner();
 				_imuseDigital->diMUSESetVoiceGroupVol(volume);
+
+				if (isSmushActive())
+					_mixer->pauseAll(false);
+
 				return;
 			}
 
 			// "Sfx Volume  Low  =========  High"
 			if (lastKeyHit.keycode == Common::KEYCODE_n || lastKeyHit.keycode == Common::KEYCODE_m) {
 				Common::KeyState ks = lastKeyHit;
+
+				if (isSmushActive())
+					_mixer->pauseAll(true);
 
 				int volume = _imuseDigital->diMUSEGetSFXGroupVol();
 				do {
@@ -583,6 +604,10 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 				} while (ks.keycode == Common::KEYCODE_n || ks.keycode == Common::KEYCODE_m);
 				clearBanner();
 				_imuseDigital->diMUSESetSFXGroupVol(volume);
+
+				if (isSmushActive())
+					_mixer->pauseAll(false);
+
 				return;
 			}
 
@@ -592,6 +617,9 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 					return;
 
 				Common::KeyState ks = lastKeyHit;
+
+				if (isSmushActive())
+					_mixer->pauseAll(true);
 
 				do {
 					if (ks.ascii == '+') {
@@ -615,6 +643,10 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
 				} while (ks.ascii == '+' || ks.ascii == '-');
 				clearBanner();
+
+				if (isSmushActive())
+					_mixer->pauseAll(false);
+
 				return;
 			}
 		}
