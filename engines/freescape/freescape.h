@@ -21,8 +21,6 @@ namespace Freescape {
 
 class Renderer;
 
-// from shooter
-// Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum CameraMovement {
     FORWARD,
     BACKWARD,
@@ -31,17 +29,8 @@ enum CameraMovement {
 };
 
 typedef Common::HashMap<uint16, Area *> AreaMap;
-
-typedef struct Binary {
-	uint8 bits;
-	uint16 startArea;
-	AreaMap *areasByAreaID;
-	Common::Array<uint8> *border;
-	Common::Array<uint8> *palette;
-	uint16 ncolors;
-} Binary;
-
-class Console;
+typedef Common::HashMap<uint16, int32> StateVars;
+typedef Common::HashMap<uint16, uint32> StateBits;
 
 enum {
 	kFreescapeDebugMove = 1 << 0,
@@ -164,8 +153,8 @@ public:
 
 	// Game state
 	void initGameState();
-	Common::HashMap<uint16, int32> _gameStateVars;
-	Common::HashMap<uint16, uint32> _gameStateBits;
+	StateVars _gameStateVars;
+	StateBits _gameStateBits;
 
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return true; }

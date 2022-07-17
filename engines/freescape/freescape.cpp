@@ -263,13 +263,14 @@ void FreescapeEngine::shoot() {
 }
 
 Common::Error FreescapeEngine::run() {
-	initGameState();
-
 	// Initialize graphics
 	_gfx = createRenderer(_system);
 	_gfx->init();
 	_gfx->clear();
+
+	// Load game data and init game state
 	loadAssets();
+	initGameState();
 	// Simple main event loop
 	_lastMousePos = Common::Point(0, 0);
 	_lastFrame = 0.f;
@@ -318,6 +319,12 @@ Common::Error FreescapeEngine::run() {
 }
 
 void FreescapeEngine::initGameState() {
+	for (int i = 0; i < k8bitMaxVariable; i++) // TODO: check maximum variable
+		_gameStateVars[i] = 0;
+
+	for (AreaMap::iterator it = _areasByAreaID->begin(); it != _areasByAreaID->end(); ++it)
+		_gameStateBits[it->_key] = 0;
+
 	_gameStateVars[k8bitVariableEnergy] = 100;
 	_gameStateVars[k8bitVariableShield] = 100;
 }
@@ -550,6 +557,17 @@ Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream
 	_yaw = stream->readFloatLE();
 	_pitch = stream->readFloatLE();
 
+	// Level state
+	for (int i = 0; i < _gameStateVars.size(); i++) {
+		uint16 key = stream->readUint16LE();
+		_gameStateVars[key] = stream->readUint32LE();
+	}
+
+	for (int i = 0; i < _gameStateBits.size(); i++) {
+		uint16 key = stream->readUint16LE();
+		_gameStateBits[key] = stream->readUint32LE();
+	}
+
 	if (!_currentArea || _currentArea->getAreaID() != areaID)
 		gotoArea(areaID, -1); // Do not change position nor rotation
 	return Common::kNoError;
@@ -569,6 +587,17 @@ Common::Error FreescapeEngine::saveGameStream(Common::WriteStream *stream, bool 
 
 	stream->writeFloatLE(_yaw);
 	stream->writeFloatLE(_pitch);
+
+	// Level state
+	for (StateVars::iterator it = _gameStateVars.begin(); it != _gameStateVars.end(); ++it) {
+		stream->writeUint16LE(it->_key);
+		stream->writeUint32LE(it->_value);
+	}
+
+	for (StateBits::iterator it = _gameStateBits.begin(); it != _gameStateBits.end(); ++it) {
+		stream->writeUint16LE(it->_key);
+		stream->writeUint32LE(it->_value);
+	}
 
 	return Common::kNoError;
 }
