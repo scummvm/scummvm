@@ -48,7 +48,7 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 	int codeSize = code.size();
 	while (ip <= codeSize - 1) {
 		FCLInstruction &instruction = code[ip];
-		debug("Executing ip: %d in code with size: %d", ip, codeSize);
+		debugC(1, kFreescapeDebugCode, "Executing ip: %d in code with size: %d", ip, codeSize);
 		switch (instruction.getType()) {
 			default:
 			break;
@@ -123,25 +123,26 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 
 
 void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
-	debug("Redrawing screen");
+	debugC(1, kFreescapeDebugCode, "Redrawing screen");
 	drawFrame();
 }
 
 void FreescapeEngine::executeSound(FCLInstruction &instruction) {
 	uint16 index = instruction.source;
+	debugC(1, kFreescapeDebugCode, "Playing sound %d", index);
 	playSound(index);
 }
 
 void FreescapeEngine::executeDelay(FCLInstruction &instruction) {
 	uint16 delay = instruction.source;
-	debug("Delaying %d * 1/50 seconds", delay);
+	debugC(1, kFreescapeDebugCode, "Delaying %d * 1/50 seconds", delay);
 	g_system->delayMillis(20 * delay);
 }
 
 bool FreescapeEngine::executeEndIfVisibilityIsNotEqual(FCLInstruction &instruction) {
 	uint16 objectID = instruction.source;
 	uint16 value = instruction.destination;
-	debug("End condition if visibility of obj with id %d is %d!", objectID, value);
+	debugC(1, kFreescapeDebugCode, "End condition if visibility of obj with id %d is %d!", objectID, value);
 	Object *obj = _currentArea->objectWithID(objectID);
 	assert(obj);
 	return (obj->isInvisible() == value);
@@ -150,7 +151,7 @@ bool FreescapeEngine::executeEndIfVisibilityIsNotEqual(FCLInstruction &instructi
 bool FreescapeEngine::executeEndIfNotEqual(FCLInstruction &instruction) {
 	uint16 variable = instruction.source;
 	uint16 value = instruction.destination;
-	debug("End condition if variable %d is not equal to %d!", variable, value);
+	debugC(1, kFreescapeDebugCode, "End condition if variable %d is not equal to %d!", variable, value);
 	return (_gameStateVars[variable] != value);
 }
 
@@ -159,9 +160,9 @@ void FreescapeEngine::executeIncrementVariable(FCLInstruction &instruction) {
 	uint16 increment = instruction.destination;
 	_gameStateVars[variable] = _gameStateVars[variable] + increment;
 	if (variable == k8bitVariableScore) {
-		debug("Score incremented by %d up to %d", increment, _gameStateVars[variable]);
+		debugC(1, kFreescapeDebugCode, "Score incremented by %d up to %d", increment, _gameStateVars[variable]);
 	} else
-		debug("Variable %d by %d incremented up to %d!", variable, increment, _gameStateVars[variable]);
+		debugC(1, kFreescapeDebugCode, "Variable %d by %d incremented up to %d!", variable, increment, _gameStateVars[variable]);
 }
 
 void FreescapeEngine::executeDecrementVariable(FCLInstruction &instruction) {
@@ -169,14 +170,14 @@ void FreescapeEngine::executeDecrementVariable(FCLInstruction &instruction) {
 	uint16 decrement = instruction.destination;
 	_gameStateVars[variable] = _gameStateVars[variable] - decrement;
 	if (variable == k8bitVariableEnergy) {
-		debug("Energy decrement by %d up to %d", decrement, _gameStateVars[variable]);
+		debugC(1, kFreescapeDebugCode, "Energy decrement by %d up to %d", decrement, _gameStateVars[variable]);
 	} else
-		debug("Variable %d by %d incremented up to %d!", variable, decrement, _gameStateVars[variable]);
+		debugC(1, kFreescapeDebugCode, "Variable %d by %d incremented up to %d!", variable, decrement, _gameStateVars[variable]);
 }
 
 void FreescapeEngine::executeDestroy(FCLInstruction &instruction) {
 	uint16 objectID = instruction.source;
-	debug("Destroying obj %d!", objectID);
+	debugC(1, kFreescapeDebugCode, "Destroying obj %d!", objectID);
 	Object *obj = _currentArea->objectWithID(objectID);
 	assert(!obj->isDestroyed());
 	obj->destroy();
@@ -193,7 +194,7 @@ void FreescapeEngine::executeMakeInvisible(FCLInstruction &instruction) {
 		objectID = instruction.source;
 	}
 
-	debug("Making obj %d invisible in area %d!", objectID, areaID);
+	debugC(1, kFreescapeDebugCode, "Making obj %d invisible in area %d!", objectID, areaID);
 	Object *obj = (*_areasByAreaID)[areaID]->objectWithID(objectID);
 	obj->makeInvisible();
 }
@@ -209,7 +210,7 @@ void FreescapeEngine::executeMakeVisible(FCLInstruction &instruction) {
 		objectID = instruction.source;
 	}
 
-	debug("Making obj %d visible in area %d!", objectID, areaID);
+	debugC(1, kFreescapeDebugCode, "Making obj %d visible in area %d!", objectID, areaID);
 	Object *obj = (*_areasByAreaID)[areaID]->objectWithID(objectID);
 	obj->makeVisible();
 }
@@ -225,7 +226,7 @@ void FreescapeEngine::executeToggleVisibility(FCLInstruction &instruction) {
 		objectID = instruction.source;
 	}
 
-	debug("Toggling obj %d visibility in area %d!", objectID, areaID);
+	debugC(1, kFreescapeDebugCode, "Toggling obj %d visibility in area %d!", objectID, areaID);
 	Object *obj = (*_areasByAreaID)[areaID]->objectWithID(objectID);
 	obj->toggleVisibility();
 }
@@ -240,7 +241,7 @@ void FreescapeEngine::executeSetBit(FCLInstruction &instruction) {
 	uint16 index = instruction.source - 1; // Starts in 1
 	assert(index < 32);
 	_gameStateBits[_currentArea->getAreaID()] |= (1 << index);
-	debug("Setting bit %d", index);
+	debugC(1, kFreescapeDebugCode, "Setting bit %d", index);
 	//debug("v: %d", (_gameStateBits[_currentArea->getAreaID()] & (1 << index)));
 }
 
@@ -248,29 +249,29 @@ void FreescapeEngine::executeClearBit(FCLInstruction &instruction) {
 	uint16 index = instruction.source - 1; // Starts in 1
 	assert(index < 32);
 	_gameStateBits[_currentArea->getAreaID()] &= ~(1 << index);
-	debug("Clearing bit %d", index);
+	debugC(1, kFreescapeDebugCode, "Clearing bit %d", index);
 }
 
 void FreescapeEngine::executeToggleBit(FCLInstruction &instruction) {
 	uint16 index = instruction.source - 1; // Starts in 1
 	_gameStateBits[_currentArea->getAreaID()] ^= (1 << index);
-	debug("Toggling bit %d", index);
+	debugC(1, kFreescapeDebugCode, "Toggling bit %d", index);
 }
 
 bool FreescapeEngine::executeEndIfBitNotEqual(FCLInstruction &instruction) {
 	uint16 index = instruction.source - 1; // Starts in 1
 	uint16 value = instruction.destination;
 	assert(index < 32);
-	debug("End condition if bit %d is not equal to %d!", index, value);
+	debugC(1, kFreescapeDebugCode, "End condition if bit %d is not equal to %d!", index, value);
 	return (((_gameStateBits[_currentArea->getAreaID()] >> index) & 1) != value);
 }
 
 void FreescapeEngine::executeSwapJet(FCLInstruction &instruction) {
 	_flyMode = !_flyMode;
 	if (_flyMode)
-		debug("Swaping to ship mode");
+		debugC(1, kFreescapeDebugCode, "Swaping to ship mode");
 	else
-		debug("Swaping to tank mode");
+		debugC(1, kFreescapeDebugCode, "Swaping to tank mode");
 	// TODO: implement the rest of the changes (e.g. border)
 }
 

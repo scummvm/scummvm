@@ -19,7 +19,7 @@ namespace Freescape {
 Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 
 	byte rawFlagsAndType = file->readByte();
-	debug("Raw object data flags and type: %d", rawFlagsAndType);
+	debugC(1, kFreescapeDebugParser, "Raw object data flags and type: %d", rawFlagsAndType);
 	Object::Type objectType = (Object::Type)(rawFlagsAndType & 0x1F);
 
 	Math::Vector3d position, v;
@@ -38,7 +38,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 	// already so we can subtract that to get the remaining
 	// length beyond here
 	uint8 byteSizeOfObject = file->readByte();
-	debug("Raw object %d ; type %d ; size %d", objectID, (int)objectType, byteSizeOfObject);
+	debugC(1, kFreescapeDebugParser, "Raw object %d ; type %d ; size %d", objectID, (int)objectType, byteSizeOfObject);
 	if (byteSizeOfObject < 9) {
 		error("Not enough bytes %d to read object %d with type %d", byteSizeOfObject, objectID, objectType);
 		//file->seek(byteSizeOfObject, SEEK_CUR);
@@ -47,15 +47,15 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 
 	assert(byteSizeOfObject >= 9);
 	byteSizeOfObject = byteSizeOfObject - 9;
-	debug("Object %d ; type %d ; size %d", objectID, (int)objectType, byteSizeOfObject);
-    debug("pos: %f %f %f", position.x(), position.y(), position.z());
+	debugC(1, kFreescapeDebugParser, "Object %d ; type %d ; size %d", objectID, (int)objectType, byteSizeOfObject);
+    debugC(1, kFreescapeDebugParser, "pos: %f %f %f", position.x(), position.y(), position.z());
 	switch (objectType) {
 	default: {
-		debug("size: %f %f %f", v.x(), v.y(), v.z());
+		debugC(1, kFreescapeDebugParser, "size: %f %f %f", v.x(), v.y(), v.z());
 		// read the appropriate number of colours
 		int numberOfColours = GeometricObject::numberOfColoursForObjectOfType(objectType);
 		Common::Array<uint8> *colours = new Common::Array<uint8>;
-		debug("Number of colors: %d", numberOfColours/2);
+		debugC(1, kFreescapeDebugParser, "Number of colors: %d", numberOfColours/2);
 		uint8 entry;
 		for (uint8 colour = 0; colour < numberOfColours/2; colour++) {
 			uint8 data = file->readByte();
@@ -64,20 +64,20 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 				entry = entry % 4; // TODO: use dithering
 
 			colours->push_back(entry);
-			debug("color[%d] = %x", 2*colour, entry);
+			debugC(1, kFreescapeDebugParser, "color[%d] = %x", 2*colour, entry);
 
 			entry = data >> 4;
 			if (_renderMode == "cga")
 				entry = entry % 4; // TODO: use dithering
 
 			colours->push_back(entry);
-			debug("color[%d] = %x", 2*colour+1, entry);
+			debugC(1, kFreescapeDebugParser, "color[%d] = %x", 2*colour+1, entry);
 			byteSizeOfObject--;
 		}
 
 		// read extra vertices if required...
 		int numberOfOrdinates = GeometricObject::numberOfOrdinatesForType(objectType);
-		debug("number of ordinates %d", numberOfOrdinates);
+		debugC(1, kFreescapeDebugParser, "number of ordinates %d", numberOfOrdinates);
 		Common::Array<uint16> *ordinates = nullptr;
 
 		if (numberOfOrdinates) {
@@ -90,7 +90,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			}
 			for (int ordinate = 0; ordinate < numberOfOrdinates; ordinate++) {
 				ord = file->readByte();
-				debug("ord: %x", ord);
+				debugC(1, kFreescapeDebugParser, "ord: %x", ord);
 				ordinates->push_back(32 * ord);
 				byteSizeOfObject--;
 			}
@@ -105,9 +105,9 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			Common::Array<uint8> conditionArray(conditionData, byteSizeOfObject);
 			conditionSource = detokenise8bitCondition(conditionArray, instructions);
 			//instructions = getInstructions(conditionSource);
-			debug("%s", conditionSource->c_str());
+			debugC(1, kFreescapeDebugParser, "%s", conditionSource->c_str());
 		}
-		debug("End of object at %lx", file->pos());
+		debugC(1, kFreescapeDebugParser, "End of object at %lx", file->pos());
 
 		if (!GeometricObject::isPolygon(objectType))
 			position = 32 * position;
@@ -125,18 +125,18 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			conditionSource);
 	} break;
 	case Object::Entrance: {
-		debug("rotation: %f %f %f", v.x(), v.y(), v.z());
+		debugC(1, kFreescapeDebugParser, "rotation: %f %f %f", v.x(), v.y(), v.z());
 		if (byteSizeOfObject > 0) {
 			// TODO: there is something here
-			debug("Warning: extra %d bytes in entrance", byteSizeOfObject);
+			debugC(1, kFreescapeDebugParser, "Warning: extra %d bytes in entrance", byteSizeOfObject);
 			//file->seek(byteSizeOfObject, SEEK_CUR);
 			while (byteSizeOfObject--) {
-				debug("b: %x", file->readByte());
+				debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
 			}
 			byteSizeOfObject = 0;
 		}
 		assert(byteSizeOfObject == 0);
-		debug("End of object at %lx", file->pos());
+		debugC(1, kFreescapeDebugParser, "End of object at %lx", file->pos());
 		// create an entrance
 		return new Entrance(
 			objectID,
@@ -145,15 +145,15 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 	} break;
 
 	case Object::Sensor: {
-		debug("rotation: %f %f %f", v.x(), v.y(), v.z());
+		debugC(1, kFreescapeDebugParser, "rotation: %f %f %f", v.x(), v.y(), v.z());
 		if (byteSizeOfObject > 0) {
 			// TODO: there is something here
-			debug("Warning: extra %d bytes in sensor", byteSizeOfObject);
+			debugC(1, kFreescapeDebugParser, "Warning: extra %d bytes in sensor", byteSizeOfObject);
 			file->seek(byteSizeOfObject, SEEK_CUR);
 			byteSizeOfObject = 0;
 		}
 		assert(byteSizeOfObject == 0);
-		debug("End of object at %lx", file->pos());
+		debugC(1, kFreescapeDebugParser, "End of object at %lx", file->pos());
 		// create an entrance
 		return new Sensor(
 			objectID,
@@ -266,15 +266,15 @@ Graphics::PixelBuffer *FreescapeEngine::getPalette(uint8 areaNumber, uint8 c1, u
 Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 ncolors) {
 
 	uint32 base = file->pos();
-	debug("Area base: %x", base);
+	debugC(1, kFreescapeDebugParser, "Area base: %x", base);
 	uint8 skippedValue = file->readByte();
 	uint8 numberOfObjects = file->readByte();
 	uint8 areaNumber = file->readByte();
 
 	uint16 cPtr = file->readUint16LE();
-	debug("Condition pointer: %x", cPtr);
+	debugC(1, kFreescapeDebugParser, "Condition pointer: %x", cPtr);
 	uint8 scale = file->readByte();
-	debug("Scale: %d", scale);
+	debugC(1, kFreescapeDebugParser, "Scale: %d", scale);
 
 	uint8 ci1 = 0;
 	uint8 ci2 = 0;
@@ -285,11 +285,11 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		skyColor = file->readByte() & 15;
 		ci1 = file->readByte();
 		ci2 = file->readByte();
-		debug("Colors: %d %d %d %d", ci1, ci2, skyColor, groundColor);
+		debugC(1, kFreescapeDebugParser, "Colors: %d %d %d %d", ci1, ci2, skyColor, groundColor);
 	} else {
 		groundColor = file->readByte() & 15;
 		skyColor = file->readByte() & 15;
-		debug("Colors: %d %d", skyColor, groundColor);
+		debugC(1, kFreescapeDebugParser, "Colors: %d %d", skyColor, groundColor);
 	}
 
 	if (_renderMode == "cga") {
@@ -299,23 +299,23 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 
 	Graphics::PixelBuffer *palette = getPalette(areaNumber, ci1, ci2, skyColor, groundColor, ncolors);
 
-	debug("Area %d", areaNumber);
-	debug("Skipped: %d Objects: %d", skippedValue, numberOfObjects);
+	debugC(1, kFreescapeDebugParser, "Area %d", areaNumber);
+	debugC(1, kFreescapeDebugParser, "Skipped: %d Objects: %d", skippedValue, numberOfObjects);
 	//debug("Condition Ptr: %x", cPtr);
-	debug("Pos before first object: %lx", file->pos());
+	debugC(1, kFreescapeDebugParser, "Pos before first object: %lx", file->pos());
 	if (_targetName == "totaleclipse") {
-		debug("b: %x", file->readByte());
-		debug("b: %x", file->readByte());
-		debug("b: %x", file->readByte());
-		debug("b: %x", file->readByte());
-		debug("b: %x", file->readByte());
+		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
+		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
+		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
+		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
+		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
 	} else if (_targetName != "castlemaster")
 		file->seek(15, SEEK_CUR);
 
 	ObjectMap *objectsByID = new ObjectMap;
 	ObjectMap *entrancesByID = new ObjectMap;
 	for (uint8 object = 0; object < numberOfObjects; object++) {
-		debug("Reading object: %d", object);
+		debugC(1, kFreescapeDebugParser, "Reading object: %d", object);
 		Object *newObject = load8bitObject(file);
 
 		if (newObject) {
@@ -333,11 +333,11 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 			error("Failed to read an object!");
 	}
 	long int endLastObject = file->pos();
-	debug("Last position %lx", endLastObject);
+	debugC(1, kFreescapeDebugParser, "Last position %lx", endLastObject);
 	assert(endLastObject == base + cPtr);
 	file->seek(base + cPtr);
 	uint8 numConditions = file->readByte();
-	debug("%d area conditions at %x of area %d", numConditions, base + cPtr, areaNumber);
+	debugC(1, kFreescapeDebugParser, "%d area conditions at %x of area %d", numConditions, base + cPtr, areaNumber);
 
 	Area *area = new Area(areaNumber, objectsByID, entrancesByID, scale, skyColor, groundColor, palette);
 
@@ -345,7 +345,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		FCLInstructionVector instructions;
 		// get the length
 		uint32 lengthOfCondition = file->readByte();
-		debug("length of condition: %d", lengthOfCondition);
+		debugC(1, kFreescapeDebugParser, "length of condition: %d", lengthOfCondition);
 		// get the condition
 		byte *conditionData = (byte*)malloc(lengthOfCondition);
 		file->read(conditionData, lengthOfCondition);
@@ -353,13 +353,13 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		Common::String *conditionSource = detokenise8bitCondition(conditionArray, instructions);
 		area->conditions.push_back(instructions);
 		area->conditionSources.push_back(conditionSource);
-		debug("%s", conditionSource->c_str());
+		debugC(1, kFreescapeDebugParser, "%s", conditionSource->c_str());
 	}
 
 	if (_targetName.hasPrefix("castlemaster") || _targetName.hasPrefix("totaleclipse"))
 		area->addStructure();
 
-	debug("End of area at %lx", file->pos());
+	debugC(1, kFreescapeDebugParser, "End of area at %lx", file->pos());
 	return area;
 }
 
@@ -377,40 +377,39 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	file->seek(offset);
 	uint8 numberOfAreas = file->readByte();
 	uint16 dbSize = file->readUint16LE();
-	debug("Database ends at %x", dbSize);
-
-	debug("Number of areas: %d", numberOfAreas);
+	debugC(1, kFreescapeDebugParser, "Number of areas: %d", numberOfAreas);
+	debugC(1, kFreescapeDebugParser, "Database ends at %x", dbSize);
 
 	uint8 startArea = file->readByte();
-	debug("Start area: %d", startArea);
+	debugC(1, kFreescapeDebugParser, "Start area: %d", startArea);
 	uint8 startEntrance = file->readByte();
-	debug("Entrace area: %d", startEntrance);
+	debugC(1, kFreescapeDebugParser, "Entrace area: %d", startEntrance);
 
 	file->seek(offset + 0x46); // 0x46
 
 	uint16 globalSomething;
 	globalSomething = file->readUint16LE();
-	debug("Pointer to something: %x\n", globalSomething);
+	debugC(1, kFreescapeDebugParser, "Pointer to something: %x\n", globalSomething);
 
 	uint16 globalByteCodeTable;
 	globalByteCodeTable = file->readUint16LE();
-	debug("GBCT: %d\n", globalByteCodeTable);
+	debugC(1, kFreescapeDebugParser, "GBCT: %d\n", globalByteCodeTable);
 
 	file->seek(offset + globalByteCodeTable);
 	uint8 numConditions = file->readByte();
-	debug("%d global conditions", numConditions);
+	debugC(1, kFreescapeDebugParser, "%d global conditions", numConditions);
 	while (numConditions--) {
 		FCLInstructionVector instructions;
 		// get the length
 		uint32 lengthOfCondition = file->readByte();
-		debug("length of condition: %d at %lx", lengthOfCondition, file->pos());
+		debugC(1, kFreescapeDebugParser, "length of condition: %d at %lx", lengthOfCondition, file->pos());
 		// get the condition
 		byte *conditionData = (byte*)malloc(lengthOfCondition);
 		file->read(conditionData, lengthOfCondition);
 		Common::Array<uint8> conditionArray(conditionData, lengthOfCondition);
 		//debug("Global condition %d", numConditions + 1);
 		Common::String *conditions = detokenise8bitCondition(conditionArray, instructions);
-		debug("%s", conditions->c_str());
+		debugC(1, kFreescapeDebugParser, "%s", conditions->c_str());
 	}
 
 	if (_targetName.hasPrefix("driller")) {
@@ -424,18 +423,18 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	else
 		file->seek(offset + 0x4f);
 
-	debug("areas index at: %lx", file->pos());
+	debugC(1, kFreescapeDebugParser, "areas index at: %lx", file->pos());
 	uint16 *fileOffsetForArea = new uint16[numberOfAreas];
 	for (uint16 area = 0; area < numberOfAreas; area++) {
 		fileOffsetForArea[area] = file->readUint16LE();
-		debug("offset: %x", fileOffsetForArea[area]);
+		debugC(1, kFreescapeDebugParser, "offset: %x", fileOffsetForArea[area]);
 	}
 
 	// grab the areas
 	AreaMap *areaMap = new AreaMap;
 	Area *newArea = nullptr;
 	for (uint16 area = 0; area < numberOfAreas; area++) {
-		debug("Area offset %d", fileOffsetForArea[area]);
+		debugC(1, kFreescapeDebugParser, "Area offset %d", fileOffsetForArea[area]);
 
 		file->seek(offset + fileOffsetForArea[area]);
 		newArea = load8bitArea(file, ncolors);
@@ -444,7 +443,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 			if (!areaMap->contains(newArea->getAreaID()))
 				(*areaMap)[newArea->getAreaID()] = newArea;
 			else
-				debug("WARNING: area ID repeated: %d", newArea->getAreaID());
+				debugC(1, kFreescapeDebugParser, "WARNING: area ID repeated: %d", newArea->getAreaID());
 		} else
 			error("Invalid area?");
 	}
