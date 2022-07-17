@@ -23,9 +23,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  SCUMM:
    - Added support for CGA, CGA Composite, CGA black & white and Hercules modes
      for SCUMM 1 versions of Zak McKracken and Maniac Mansion. Also improved
-	 accuracy of CGA and Hercules modes for SCUMM 2 (enhanced) versions of
-	 Zak McKracken and Maniac Mansion and fixed some minor glitches for the
-	 CGA mode of Loom.
+	   accuracy of CGA and Hercules modes for SCUMM 2 (enhanced) versions of
+	   Zak McKracken and Maniac Mansion and fixed some minor glitches for the
+	   CGA mode of Loom.
 
  Toon:
    - Made game menus behave like in the original.
