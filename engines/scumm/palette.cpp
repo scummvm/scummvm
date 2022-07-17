@@ -1546,26 +1546,9 @@ void ScummEngine::fetchBlackAndWhite(uint32 &black, uint32 &white, byte *palette
 	}
 }
 
-uint32 ScummEngine::findClosestPaletteColor(byte *palette, int numOfSlots, byte r, byte g, byte b) {
-	uint32 color = 0;
-	uint32 redSquareDiff, blueSquareDiff, greenSquareDiff, weightedColorError;
-	uint32 minErr = 10000000;
-
-	// Iterate through the palette slots to find a color with the minimum
-	// weighted error with respect to our queried RGB values.
-	for (int i = 0; numOfSlots > i; ++i) {
-		redSquareDiff   = (r - palette[0]) * (r - palette[0]);
-		greenSquareDiff = (g - palette[1]) * (g - palette[1]);
-		blueSquareDiff  = (b - palette[2]) * (b - palette[2]);
-
-		weightedColorError = 3 * redSquareDiff + 5 * greenSquareDiff + 2 * blueSquareDiff;
-		if (weightedColorError < minErr) {
-			color = i;
-			minErr = weightedColorError;
-		}
-		palette += 3;
-	}
-	return color;
+uint32 ScummEngine::findClosestPaletteColor(byte *palette, int paletteLength, byte r, byte g, byte b) {
+	_pl.setPalette(palette, paletteLength);
+	return (uint32)_pl.findBestColor(r, g, b, true);
 }
 
 void ScummEngine::updatePalette() {

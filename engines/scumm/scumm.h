@@ -38,6 +38,7 @@
 #include "common/textconsole.h"
 #include "graphics/surface.h"
 #include "graphics/sjis.h"
+#include "graphics/palette.h"
 
 #include "scumm/gfx.h"
 #include "scumm/detection.h"
@@ -969,6 +970,7 @@ public:
 protected:
 	ColorCycle _colorCycle[16];	// Palette cycles
 	uint8 _colorUsedByCycle[256];
+	Graphics::PaletteLookup _pl; // Used by the internal GUI
 
 	uint32 _ENCD_offs = 0, _EXCD_offs = 0;
 	uint32 _CLUT_offs = 0, _EPAL_offs = 0;
@@ -1050,7 +1052,7 @@ protected:
 	void stopCycle(int i);
 	virtual void palManipulateInit(int resID, int start, int end, int time);
 	void palManipulate();
-	uint32 findClosestPaletteColor(byte *palette, int numOfSlots, byte r, byte g, byte b);
+	uint32 findClosestPaletteColor(byte *palette, int paletteLength, byte r, byte g, byte b);
 
 public:
 	uint8 *getHEPaletteSlot(uint16 palSlot);
