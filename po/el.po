@@ -8622,8 +8622,8 @@ msgstr "Επιβολή χρήσης απόδοσης εικόνας 2D (μόνο
 #: engines/wintermute/detection.cpp:78
 msgid "This setting forces ScummVM to use 2D renderer while running 2D games"
 msgstr ""
-"Η ρύθμιση αυτή εξαναγκάζει το ScummVM να χρησιμοποιήσει απόδοση εικόνας 2D ("
-"2D renderer) κατά την εκτέλεση παιχνιδιών 2D"
+"Η ρύθμιση αυτή εξαναγκάζει το ScummVM να χρησιμοποιήσει απόδοση εικόνας 2D "
+"(2D renderer) κατά την εκτέλεση παιχνιδιών 2D"
 
 #: engines/wintermute/metaengine.cpp:64
 msgid "FoxTail support is not compiled in"
