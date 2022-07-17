@@ -2373,14 +2373,16 @@ void ScummEngine::scummLoop(int delta) {
 
 	processInput();
 
-	// In v7-8 this function is executed at the end of processInput().
-	// we emulate the same behavior by calling it here...
-	if (_game.version >= 7)
+	if (_game.version == 8) {
+		// In v7-8 this function is executed at the end of processInput().
+		// Currently there are no known cases for v7 in which not calling this here,
+		// causes issues. Because of the way things are positioned in our implementation
+		// of the SCUMM loop, as of now enabling this for v7 breaks the screen shake
+		// effect. For v8 we really need to call this here, so let's do that...
 		checkExecVerbs();
 
-	// Saving is performed here in v8; this is important when saving the thumbnail,
-	// which would otherwise miss blastObjects/Texts on the bitmap.
-	if (_game.version == 8) {
+		// Saving is performed here in v8; this is important when saving the thumbnail,
+		// which would otherwise miss blastObjects/Texts on the bitmap.
 		scummLoop_handleSaveLoad();
 	}
 
@@ -2464,8 +2466,8 @@ load_game:
 
 	// SCUMM v7-8 executes checkExecVerbs inside the function
 	// which processes keyboard inputs, so we handle it above
-	// in that case.
-	if (_game.version < 7)
+	// in that case. Again, we make an exception for v7, for now.
+	if (_game.version < 8)
 		checkExecVerbs();
 
 	checkAndRunSentenceScript();
