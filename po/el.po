@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-16 21:35+0100\n"
-"PO-Revision-Date: 2022-07-16 11:01+0000\n"
+"PO-Revision-Date: 2022-07-17 10:16+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -4405,13 +4405,14 @@ msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Προτίμηση ψηφιακών ηχητικών εφέ αντί για εφέ δυναμικής σύνθεσης"
 
 #: engines/agos/detection.cpp:126
-#, fuzzy
 msgid "Disable fade-out effects"
-msgstr "Χωρίς αυτόματη αποθήκευση"
+msgstr "Χωρίς εφέ ομαλής εναλλαγής εικόνας"
 
 #: engines/agos/detection.cpp:127
 msgid "Don't fade every screen to black when leaving a room."
 msgstr ""
+"Να μην γίνεται ομαλή μετάβαση της εικόνας οθόνης σε μαύρο, όταν γίνεται "
+"έξοδος από ένα δωμάτιο."
 
 #: engines/ags/dialogs.cpp:58
 msgid "Game language:"
