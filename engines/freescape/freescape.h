@@ -88,7 +88,7 @@ public:
 	Area *_currentArea;
 	Math::Vector3d _scale;
 
-	void gotoArea(uint16 areaID, uint16 entranceID);
+	void gotoArea(uint16 areaID, int entranceID);
 	// Entrance
 	uint16 _startEntrance;
 
@@ -169,10 +169,10 @@ public:
 
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return true; }
+	bool canSaveAutosaveCurrently() override { return false; }
 	bool canSaveGameStateCurrently() override { return true; }
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
-	void syncGameStream(Common::Serializer &s);
 };
 
 // Example console class

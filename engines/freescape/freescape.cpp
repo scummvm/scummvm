@@ -205,6 +205,8 @@ void FreescapeEngine::processInput() {
 				_position.setValue(1, _position.y() - 12);
 			else if (event.kbd.keycode == Common::KEYCODE_n)
 				gotoArea(_currentArea->getAreaID() + 1, 0);
+			else if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+				openMainMenuDialog();
 			break;
 
 		case Common::EVENT_QUIT:
@@ -297,7 +299,12 @@ Common::Error FreescapeEngine::run() {
 		_border->fillRect(viewArea, 0xA0A0A0FF);
 	}
 
-	gotoArea(_startArea, _startEntrance);
+	int saveSlot = ConfMan.getInt("save_slot");
+	if (saveSlot >= 0) { // load the savegame
+		loadGameState(saveSlot);
+	} else
+		gotoArea(_startArea, _startEntrance);
+
 	debugC(1, kFreescapeDebugMove, "Starting area %d", _currentArea->getAreaID());
 	while (!shouldQuit()) {
 		drawFrame();
@@ -476,7 +483,7 @@ bool FreescapeEngine::checkCollisions(bool executeConditions) {
 	return false;
 }
 
-void FreescapeEngine::gotoArea(uint16 areaID, uint16 entranceID) {
+void FreescapeEngine::gotoArea(uint16 areaID, int entranceID) {
 	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
 	if (!_gameStateBits.contains(areaID))
 		_gameStateBits[areaID] = 0;
@@ -502,7 +509,7 @@ void FreescapeEngine::gotoArea(uint16 areaID, uint16 entranceID) {
 		debugC(1, kFreescapeDebugMove, "entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
 		debugC(1, kFreescapeDebugMove, "player height: %d", scale * _playerHeight);
 		_position.setValue(1, _position.y() + scale * _playerHeight);
-	} else {
+	} else if (entranceID == 0) {
 		Math::Vector3d diff = _lastPosition - _position;
 		debug("%f %f %f", diff.x(), diff.y(), diff.z());
 		// diff should be used to determinate which entrance to use
@@ -532,21 +539,38 @@ void FreescapeEngine::playSound(int index) {
 }
 
 Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream) {
-	Common::Serializer s(stream, nullptr);
-	syncGameStream(s);
+
+	uint16 areaID = stream->readUint16LE();
+	for (int i = 0; i < 3; i++)
+		_position.setValue(i, stream->readFloatLE());
+
+	for (int i = 0; i < 3; i++)
+		_rotation.setValue(i, stream->readFloatLE());
+
+	_yaw = stream->readFloatLE();
+	_pitch = stream->readFloatLE();
+
+	if (!_currentArea || _currentArea->getAreaID() != areaID)
+		gotoArea(areaID, -1); // Do not change position nor rotation
 	return Common::kNoError;
 }
 
 Common::Error FreescapeEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
-	Common::Serializer s(nullptr, stream);
-	syncGameStream(s);
-	return Common::kNoError;
-}
+	if (isAutosave)
+		return Common::kNoError;
 
-void FreescapeEngine::syncGameStream(Common::Serializer &s) {
-	// Use methods of Serializer to save/load fields
-	int dummy = 0;
-	s.syncAsUint16LE(dummy);
+	stream->writeUint16LE(_currentArea->getAreaID());
+
+	for (int i = 0; i < 3; i++)
+		stream->writeFloatLE(_position.getValue(i));
+
+	for (int i = 0; i < 3; i++)
+		stream->writeFloatLE(_rotation.getValue(i));
+
+	stream->writeFloatLE(_yaw);
+	stream->writeFloatLE(_pitch);
+
+	return Common::kNoError;
 }
 
 } // namespace Freescape
