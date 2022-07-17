@@ -5946,7 +5946,9 @@ msgstr "16:9 ワイドMOD"
 msgid ""
 "Removes letterboxing and moves some display elements, improving coverage on "
 "widescreen displays"
-msgstr "レターボックスの削除と一部要素の移動により、ワイドディスプレイでの表示率が向上します"
+msgstr ""
+"レターボックスの削除と一部要素の移動により、ワイドディスプレイでの表示率が向"
+"上します"
 
 #: engines/mtropolis/detection.cpp:54
 msgid "Improved music mixing"
@@ -5956,7 +5958,9 @@ msgstr "ミキシングの改善"
 msgid ""
 "Enables dynamic MIDI mixer, improving quality, but behaving less like "
 "mTropolis Player."
-msgstr "ダイナミックMIDIミキサーで品質を上げますが、mTropolis Playerの様には動きません。"
+msgstr ""
+"ダイナミックMIDIミキサーで品質を上げますが、mTropolis Playerの様には動きませ"
+"ん。"
 
 #: engines/mtropolis/detection.cpp:65
 msgid "Save progress automatically"
