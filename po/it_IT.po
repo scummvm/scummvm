@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-16 21:35+0100\n"
-"PO-Revision-Date: 2022-07-16 18:59+0000\n"
+"PO-Revision-Date: 2022-07-18 01:32+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -4376,13 +4376,12 @@ msgstr ""
 "sintetizzati"
 
 #: engines/agos/detection.cpp:126
-#, fuzzy
 msgid "Disable fade-out effects"
-msgstr "Disabilita salv. auto"
+msgstr "Disabilita effetto dissolvenza"
 
 #: engines/agos/detection.cpp:127
 msgid "Don't fade every screen to black when leaving a room."
-msgstr ""
+msgstr "Disattiva l'effetto di dissolvenza a nero durante i cambi di scena."
 
 #: engines/ags/dialogs.cpp:58
 msgid "Game language:"
@@ -6082,75 +6081,78 @@ msgstr ""
 "sito non è più disponibile."
 
 #: engines/mtropolis/detection.cpp:43
-#, fuzzy
 msgid "16:9 widescreen mod"
-msgstr "Modalità widescreen"
+msgstr "Modalità 16:9 widescreen"
 
 #: engines/mtropolis/detection.cpp:44
 msgid ""
 "Removes letterboxing and moves some display elements, improving coverage on "
 "widescreen displays"
 msgstr ""
+"Elimina i bordi neri e sposta alcuni elementi grafici, permettendo una "
+"visuale più ampia su schermi wide"
 
 #: engines/mtropolis/detection.cpp:54
 msgid "Improved music mixing"
-msgstr ""
+msgstr "Mixer musicale ottimizzato"
 
 #: engines/mtropolis/detection.cpp:55
 msgid ""
 "Enables dynamic MIDI mixer, improving quality, but behaving less like "
 "mTropolis Player."
 msgstr ""
+"Abilita il mixer MIDI dinamico, dotato di una migliore qualità audio ma meno "
+"fedele al player originale di mTropolis."
 
 #: engines/mtropolis/detection.cpp:65
-#, fuzzy
 msgid "Save progress automatically"
-msgstr "Controlla aggiornamenti automaticamente"
+msgstr "Salva automaticamente i progressi"
 
 #: engines/mtropolis/detection.cpp:66
 msgid "Automatically saves the game at certain progress points."
-msgstr ""
+msgstr "Salva automaticamente al raggiungimento di alcuni punti prestabiliti."
 
 #: engines/mtropolis/detection.cpp:76
-#, fuzzy
 msgid "Enable short transitions"
-msgstr "Abilita integrazione Discord"
+msgstr "Abilita transizioni brevi"
 
 #: engines/mtropolis/detection.cpp:77
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them"
 msgstr ""
+"Esegue le transizioni anche se impostate alla massima velocità, anzichè "
+"saltarle completamente"
 
 #: engines/mtropolis/detection.cpp:87
-#, fuzzy
 msgid "Start with debugger"
-msgstr "Avvia il debugger"
+msgstr "Avvia con debugger"
 
 #: engines/mtropolis/detection.cpp:88
-#, fuzzy
 msgid "Starts with the debugger dashboard active"
-msgstr "Avvia il debugger"
+msgstr "Avvia il gioco con le funzionalità di debug abilitate"
 
 #: engines/mtropolis/detection.cpp:98
 msgid "Start debugging immediately"
-msgstr ""
+msgstr "Avvia il debugging immediatamente"
 
 #: engines/mtropolis/detection.cpp:99
 msgid "Halts progress and stops at the debugger immediately"
-msgstr ""
+msgstr "Arresta immediatamente il progresso del gioco aprendo il debugger"
 
 #: engines/mtropolis/saveload.cpp:109
-#, fuzzy
 msgid "Failed to read version information from save file"
-msgstr "Impossibile caricare la partita dal file."
+msgstr ""
+"Non è stato possibile leggere i dati relativi alla versione nel file di "
+"salvataggio"
 
 #: engines/mtropolis/saveload.cpp:117
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
+"Impossibile caricare il salvataggio, i dati relativi alla versione non sono "
+"validi."
 
 #: engines/mtropolis/saveload.cpp:125
-#, fuzzy
 msgid ""
 "Failed to load save, the save file was created by a newer version of ScummVM."
 msgstr ""
@@ -6160,10 +6162,12 @@ msgstr ""
 #: engines/mtropolis/saveload.cpp:133
 msgid "Failed to load save, an error occurred when reading the save game data."
 msgstr ""
+"Impossibile caricare il salvataggio, rilevato un errore durante la lettura "
+"dei dati."
 
 #: engines/mtropolis/saveload.cpp:157
 msgid "Progress Saved"
-msgstr ""
+msgstr "Progresso Salvato"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
@@ -8523,11 +8527,13 @@ msgstr "Applica un filtro grafico bilineare ad ogni sprite"
 
 #: engines/wintermute/detection.cpp:77
 msgid "Force to use 2D renderer (2D games only)"
-msgstr ""
+msgstr "Forza l'uso del renderer 2D (solo per i giochi 2D)"
 
 #: engines/wintermute/detection.cpp:78
 msgid "This setting forces ScummVM to use 2D renderer while running 2D games"
 msgstr ""
+"Questa opzione obbliga ScummVM ad utilizzare il renderer 2D per l'esecuzione "
+"dei giochi 2D"
 
 #: engines/wintermute/metaengine.cpp:64
 msgid "FoxTail support is not compiled in"
