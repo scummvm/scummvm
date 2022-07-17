@@ -17,10 +17,12 @@
 namespace Freescape {
 
 enum {
-	k8bitVariableShield = 256,
-	k8bitVariableEnergy = 257,
-	k8bitVariableScore = 258
+	k8bitVariableShield = 63,
+	k8bitVariableEnergy = 62,
+	k8bitVariableScore = 61
 };
+
+static uint8 k8bitMaxVariable = 64;
 
 Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition, FCLInstructionVector &instructions);
 
