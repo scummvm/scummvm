@@ -29,6 +29,7 @@
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm_v3.h"
+#include "scumm/scumm_v7.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
 
@@ -42,6 +43,12 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	int i, where;
 
 	debugC(DEBUG_GENERAL, "Loading room %d", room);
+
+#ifdef ENABLE_SCUMM_7_8
+	if (_game.version >= 7) {
+		((ScummEngine_v7 *)this)->removeBlastTexts();
+	}
+#endif
 
 	stopTalk();
 
