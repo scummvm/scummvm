@@ -198,48 +198,11 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "{userdesktop}\ScummVM"; Filename: "{app}\scummvm.exe"; Tasks: desktopicon
 
 ; Start menu icons
-; General
-Name: {group}\{cm:UninstallProgram, ScummVM}; Filename: {uninstallexe}
-Name: {group}\ScummVM; Filename: {app}\scummvm.exe; WorkingDir: {app}; Comment: scummvm; Flags: createonlyiffileexists; IconIndex: 0
-Name: {group}\ScummVM (noconsole); Filename: {app}\scummvm.exe; Parameters: "--no-console"; WorkingDir: {app}; Comment: scummvm; Flags: createonlyiffileexists; IconIndex: 0; Languages: not german
-Name: {group}\ScummVM (ohne Konsolenfenster); Filename: {app}\scummvm.exe; Parameters: "--no-console"; WorkingDir: {app}; Comment: scummvm; Flags: createonlyiffileexists; IconIndex:0; Languages: german
+Name: {group}\ScummVM; Filename: {app}\scummvm.exe; Parameters: "--no-console"; WorkingDir: {app}; Comment: ScummVM; Flags: createonlyiffileexists; IconIndex: 0
+Name: {group}\ScummVM (with console); Filename: {app}\scummvm.exe; WorkingDir: {app}; Comment: ScummVM; Flags: createonlyiffileexists; IconIndex: 0; Languages: not german
+Name: {group}\ScummVM (mit Konsolenfenster); Filename: {app}\scummvm.exe; WorkingDir: {app}; Comment: ScummVM; Flags: createonlyiffileexists; IconIndex:0; Languages: german
 Name: {group}\Saved Games\Saved Games; Filename: {userappdata}\ScummVM\Saved Games; WorkingDir: {userappdata}\ScummVM\Saved Games; Comment: Saved Games; IconIndex: 0; MinVersion: 0, 1; Languages: not german
-Name: {group}\Spielstï¿½nde\Spielstï¿½nde; Filename: {userappdata}\ScummVM\Saved Games; WorkingDir: {userappdata}\ScummVM\Saved Games; Comment: Spielstï¿½nde; IconIndex: 0; MinVersion: 0, 1; Languages: german
-Name: {group}\Saved Games\Saved Games (old default); Filename: {app}; WorkingDir: {app}; Comment: Saved Games (old default); IconIndex: 0; MinVersion: 0, 1; Languages: not german
-Name: {group}\Spielstï¿½nde\Spielstï¿½nde (alter Standard); Filename: {app}; WorkingDir: {app}; Comment: Spielstï¿½nde (alter Standard); IconIndex: 0; MinVersion: 0, 1; Languages: german
-
-; DOCUMENTATION
-Name: {group}\Authors; Filename: {app}\AUTHORS.txt; WorkingDir: {app}; Comment: AUTHORS; Flags: createonlyiffileexists; Languages: not german
-Name: {group}\Mitwirkende; Filename: {app}\AUTHORS.txt; WorkingDir: {app}; Comment: AUTHORS; Flags: createonlyiffileexists; Languages: german
-Name: {group}\Copying; Filename: {app}\COPYING.txt; WorkingDir: {app}; Comment: COPYING; Flags: createonlyiffileexists
-Name: {group}\Copying.BSD; Filename: {app}\LICENSES\COPYING.BSD.txt; WorkingDir: {app}; Comment: COPYING.BSD; Flags: createonlyiffileexists
-Name: {group}\Copying.LGPL; Filename: {app}\LICENSES\COPYING.LGPL.txt; WorkingDir: {app}; Comment: COPYING.LGPL; Flags: createonlyiffileexists
-Name: {group}\Copying.FREEFONT; Filename: {app}\LICENSES\COPYING.FREEFONT.txt; WorkingDir: {app}; Comment: COPYING.FREEFONT; Flags: createonlyiffileexists
-Name: {group}\Copying.OFL; Filename: {app}\LICENSES\COPYING.OFL.txt; WorkingDir: {app}; Comment: COPYING.OFL; Flags: createonlyiffileexists
-Name: {group}\Copying.ISC; Filename: {app}\LICENSES\COPYING.ISC.txt; WorkingDir: {app}; Comment: COPYING.ISC; Flags: createonlyiffileexists
-Name: {group}\Copying.LUA; Filename: {app}\LICENSES\COPYING.LUA.txt; WorkingDir: {app}; Comment: COPYING.LUA; Flags: createonlyiffileexists
-Name: {group}\Copying.MIT; Filename: {app}\LICENSES\COPYING.MIT.txt; WorkingDir: {app}; Comment: COPYING.MIT; Flags: createonlyiffileexists
-Name: {group}\Copying.TINYGL; Filename: {app}\LICENSES\COPYING.TINYGL.txt; WorkingDir: {app}; Comment: COPYING.TINYGL; Flags: createonlyiffileexists
-Name: {group}\Copying.GLAD; Filename: {app}\LICENSES\COPYING.GLAD.txt; WorkingDir: {app}; Comment: COPYING.GLAD; Flags: createonlyiffileexists
-Name: {group}\Copyright; Filename: {app}\COPYRIGHT.txt; WorkingDir: {app}; Comment: COPYRIGHT; Flags: createonlyiffileexists
-
-; NEWS
-Name: {group}\News; Filename: {app}\NEWS.txt; WorkingDir: {app}; Comment: NEWS; Flags: createonlyiffileexists; Languages: not german
-Name: {group}\Neues; Filename: {app}\NEUES.txt; WorkingDir: {app}; Comment: NEUES; Flags: createonlyiffileexists; Languages: german
-
-; QUICKSTART
-Name: {group}\Schnellstart; Filename: {app}\Schnellstart.txt; WorkingDir: {app}; Comment: Schnellstart; Flags: createonlyiffileexists; Languages: german
-Name: {group}\InicioRapido; Filename: {app}\InicioRapido.txt; WorkingDir: {app}; Comment: InicioRapido; Flags: createonlyiffileexists; Languages: spanish
-Name: {group}\DemarrageRapide; Filename: {app}\DemarrageRapide.txt; WorkingDir: {app}; Comment: DemarrageRapide; Flags: createonlyiffileexists; Languages: french
-Name: {group}\GuidaRapida; Filename: {app}\GuidaRapida.txt; WorkingDir: {app}; Comment: GuidaRapida; Flags: createonlyiffileexists; Languages: italian
-Name: {group}\HurtigStart; Filename: {app}\HurtigStart.txt; WorkingDir: {app}; Comment: HurtigStart; Flags: createonlyiffileexists; Languages: norwegian
-Name: {group}\Snabbstart; Filename: {app}\Snabbstart.txt; WorkingDir: {app}; Comment: Snabbstart; Flags: createonlyiffileexists; Languages: swedish
-
-; README
-Name: {group}\Readme; Filename: {app}\README.txt; WorkingDir: {app}; Comment: README; Flags: createonlyiffileexists; Languages: not (czech or german or swedish)
-Name: {group}\PrectiMe; Filename: {app}\PrectiMe.txt; WorkingDir: {app}; Comment: PrectiMe; Flags: createonlyiffileexists; Languages: czech
-Name: {group}\Liesmich; Filename: {app}\LIESMICH.txt; WorkingDir: {app}; Comment: LIESMICH; Flags: createonlyiffileexists; Languages: german
-Name: {group}\LasMig; Filename: {app}\LasMig.txt; WorkingDir: {app}; Comment: LasMig; Flags: createonlyiffileexists; Languages: swedish
+Name: {group}\Spielstände\Spielstände; Filename: {userappdata}\ScummVM\Saved Games; WorkingDir: {userappdata}\ScummVM\Saved Games; Comment: Spielstände; IconIndex: 0; MinVersion: 0, 1; Languages: german
 
 [Run]
 Filename: {app}\ScummVM.exe; Flags: nowait skipifdoesntexist postinstall skipifsilent
@@ -258,39 +221,41 @@ Name: "{userappdata}\ScummVM\Saved Games"; MinVersion: 0, 1; Flags: uninsneverun
 
 [Files]
 ; AUTHORS and LICENSING
-Source: AUTHORS.txt; DestDir: {app}; Flags: ignoreversion
-Source: COPYING.txt; DestDir: {app}; Flags: ignoreversion
-Source: COPYING.BSD.txt; DestDir: {app}; Flags: ignoreversion
-Source: COPYING.FREEFONT.txt; DestDir: {app}; Flags: ignoreversion
-Source: COPYING.OFL.txt; DestDir: {app}; Flags: ignoreversion
-Source: COPYING.LGPL.txt; DestDir: {app}; Flags: ignoreversion
-Source: COPYRIGHT.txt; DestDir: {app}; Flags: ignoreversion
+Source: AUTHORS.txt; DestDir: {app}
+Source: COPYING.txt; DestDir: {app}
+Source: COPYRIGHT.txt; DestDir: {app}
+Source: LICENSES\*; DestDir: {app}\LICENSES;
 
 ; NEWS
-Source: NEWS.txt; DestDir: {app}; Flags: ignoreversion; Languages: not german
-Source: doc/de/NEUES.txt; DestDir: {app}; Flags: ignoreversion; Languages: german
+Source: NEWS.html; DestDir: {app}; Flags: ignoreversion; Languages: not german
+Source: NEUES.html; DestDir: {app}; Flags: ignoreversion; Languages: german
 
 ; QUICKSTART
-Source: doc/de/Schnellstart.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: german
-Source: doc/es/InicioRapido.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: spanish
-Source: doc/fr/DemarrageRapide.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: french
-Source: doc/it/GuidaRapida.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: italian
-Source: doc/no-nb/HurtigStart.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: norwegian
-Source: doc/se/Snabbstart.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: swedish
+Source: doc/de/Schnellstart.txt; DestDir: {app}; Flags: ignoreversion; Languages: german
+Source: doc/es/InicioRapido.txt; DestDir: {app}; Flags: ignoreversion; Languages: spanish
+Source: doc/fr/DemarrageRapide.txt; DestDir: {app}; Flags: ignoreversion; Languages: french
+Source: doc/it/GuidaRapida.txt; DestDir: {app}; Flags: ignoreversion; Languages: italian
+Source: doc/no-nb/HurtigStart.txt; DestDir: {app}; Flags: ignoreversion; Languages: norwegian
+Source: doc/se/Snabbstart.txt; DestDir: {app}; Flags: ignoreversion; Languages: swedish
 
-; README
-Source: README.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: not (czech or german or swedish)
-Source: doc/cz/PrectiMe.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: czech
-Source: doc/de/LIESMICH.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: german
-Source: doc/se/LasMig.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: swedish
-Source: README-SDL.txt; DestDir: {app}; Flags: ignoreversion
-Source: scummvm.exe; DestDir: {app}; Flags: ignoreversion
+; README and DOCUMENTATION
+Source: README.html; DestDir: {app}; Flags: ignoreversion; Languages: not (czech or german or swedish)
+Source: doc/cz/PrectiMe.txt; DestDir: {app}; Flags: ignoreversion; Languages: czech
+Source: doc/de/LIESMICH.txt; DestDir: {app}; Flags: ignoreversion; Languages: german
+Source: doc/se/LasMig.txt; DestDir: {app}; Flags: ignoreversion; Languages: swedish
+Source: *Manual*.pdf; DestDir: {app}; Flags: ignoreversion isreadme
 
-; ScummVM executable and libraries
-Source: SDL2.dll; DestDir: {app}; Flags: replacesameversion
-; Source: SDL2_net.dll; DestDir: {app}; Flags: replacesameversion
-; Source: WinSparkle.dll; DestDir: {app}; Flags: replacesameversion
+; ScummVM executables and libraries
+; for 32 bit aka. i686:
+Source: scummvm-i686.exe; DestDir: {app}; DestName: scummvm.exe; Flags: sign ignoreversion; Check: not Is64BitInstallMode
+Source: SDL2-i686.dll; DestDir: {app}; DestName: SDL2.dll; Flags: replacesameversion; Check: not Is64BitInstallMode
+Source: SDL2_net-i686.dll; DestDir: {app}; DestName: SDL2_net.dll; Flags: replacesameversion; Check: not Is64BitInstallMode
+Source: WinSparkle-i686.dll; DestDir: {app}; DestName: WinSparkle.dll; Flags: replacesameversion; Check: not Is64BitInstallMode
+Source: discord-rpc-i686.dll; DestDir: {app}; DestName: discord-rpc.dll; Flags: replacesameversion; Check: not Is64BitInstallMode
 
-; Migration script for saved games in Windows NT4 onwards
-Source: migration.bat; DestDir: {app}; Flags: ignoreversion; MinVersion: 0, 1
-Source: migration.txt; DestDir: {app}; Flags: ignoreversion; MinVersion: 0, 1
+; for 64 bit aka. x86_64
+Source: scummvm-x86_64.exe; DestDir: {app}; DestName: scummvm.exe; Flags: sign ignoreversion; Check: Is64BitInstallMode
+Source: SDL2-x86_64.dll; DestDir: {app}; DestName: SDL2.dll; Flags: replacesameversion; Check: Is64BitInstallMode
+Source: SDL2_net-x86_64.dll; DestDir: {app}; DestName: SDL2_net.dll; Flags: replacesameversion; Check: Is64BitInstallMode
+Source: WinSparkle-x86_64.dll; DestDir: {app}; DestName: WinSparkle.dll; Flags: replacesameversion; Check: Is64BitInstallMode
+Source: discord-rpc-x86_64.dll; DestDir: {app}; DestName: discord-rpc.dll; Flags: replacesameversion; Check: Is64BitInstallMode
