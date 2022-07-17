@@ -431,7 +431,6 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	}
 
 	// grab the areas
-	AreaMap *areaMap = new AreaMap;
 	Area *newArea = nullptr;
 	for (uint16 area = 0; area < numberOfAreas; area++) {
 		debugC(1, kFreescapeDebugParser, "Area offset %d", fileOffsetForArea[area]);
@@ -440,8 +439,8 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		newArea = load8bitArea(file, ncolors);
 
 		if (newArea) {
-			if (!areaMap->contains(newArea->getAreaID()))
-				(*areaMap)[newArea->getAreaID()] = newArea;
+			if (!_areaMap.contains(newArea->getAreaID()))
+				_areaMap[newArea->getAreaID()] = newArea;
 			else
 				debugC(1, kFreescapeDebugParser, "WARNING: area ID repeated: %d", newArea->getAreaID());
 		} else
@@ -451,8 +450,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	_playerWidth = 12;
 	_playerDepth = 32;
 
-	_areasByAreaID = areaMap;
-	if (!areaMap->contains(startArea))
+	if (_areaMap.contains(startArea))
 		_startArea = newArea->getAreaID();
 	else
 		_startArea = startArea;

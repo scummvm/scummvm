@@ -322,7 +322,7 @@ void FreescapeEngine::initGameState() {
 	for (int i = 0; i < k8bitMaxVariable; i++) // TODO: check maximum variable
 		_gameStateVars[i] = 0;
 
-	for (AreaMap::iterator it = _areasByAreaID->begin(); it != _areasByAreaID->end(); ++it)
+	for (AreaMap::iterator it = _areaMap.begin(); it != _areaMap.end(); ++it)
 		_gameStateBits[it->_key] = 0;
 
 	_gameStateVars[k8bitVariableEnergy] = 100;
@@ -495,8 +495,8 @@ void FreescapeEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (!_gameStateBits.contains(areaID))
 		_gameStateBits[areaID] = 0;
 
-	assert(_areasByAreaID->contains(areaID));
-	_currentArea = (*_areasByAreaID)[areaID];
+	assert(_areaMap.contains(areaID));
+	_currentArea = _areaMap[areaID];
 	_currentArea->show();
 
 	int scale = _currentArea->getScale();
