@@ -1736,14 +1736,14 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	const int ppc = (flags >> 8) & 0x3F;
 	_dsPlot = dsPlotFunc[ppc];
 	DsPlotFunc dsPlot2 = dsPlotFunc[ppc], dsPlot3 = dsPlotFunc[ppc];
-	if (flags & kDRAWSHP_PRIORITY)
-		dsPlot3 = dsPlotFunc[((flags >> 8) & 0xF7) & 0x3F];
+	if (_vm->gameFlags().gameID == GI_KYRA3 && (flags & kDRAWSHP_PRIORITY))
+		dsPlot3 = dsPlotFunc[ppc & ~8];
 
 	if (!_dsPlot || !dsPlot2 || !dsPlot3) {
 		if (!dsPlot2)
 			warning("Missing drawShape plotting method type %d", ppc);
 		if (dsPlot3 != dsPlot2 && !dsPlot3)
-			warning("Missing drawShape plotting method type %d", (((flags >> 8) & 0xF7) & 0x3F));
+			warning("Missing drawShape plotting method type %d", ppc & ~8);
 		return;
 	}
 
