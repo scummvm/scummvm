@@ -202,7 +202,7 @@ Name: {group}\ScummVM; Filename: {app}\scummvm.exe; Parameters: "--no-console"; 
 Name: {group}\ScummVM (with console); Filename: {app}\scummvm.exe; WorkingDir: {app}; Comment: ScummVM; Flags: createonlyiffileexists; IconIndex: 0; Languages: not german
 Name: {group}\ScummVM (mit Konsolenfenster); Filename: {app}\scummvm.exe; WorkingDir: {app}; Comment: ScummVM; Flags: createonlyiffileexists; IconIndex:0; Languages: german
 Name: {group}\Saved Games\Saved Games; Filename: {userappdata}\ScummVM\Saved Games; WorkingDir: {userappdata}\ScummVM\Saved Games; Comment: Saved Games; IconIndex: 0; MinVersion: 0, 1; Languages: not german
-Name: {group}\Spielst‰nde\Spielst‰nde; Filename: {userappdata}\ScummVM\Saved Games; WorkingDir: {userappdata}\ScummVM\Saved Games; Comment: Spielst‰nde; IconIndex: 0; MinVersion: 0, 1; Languages: german
+Name: {group}\Spielst√§nde\Spielst√§nde; Filename: {userappdata}\ScummVM\Saved Games; WorkingDir: {userappdata}\ScummVM\Saved Games; Comment: Spielst√§nde; IconIndex: 0; MinVersion: 0, 1; Languages: german
 
 [Run]
 Filename: {app}\ScummVM.exe; Flags: nowait skipifdoesntexist postinstall skipifsilent
