@@ -84,7 +84,7 @@ public:
 		_size = size ? size : 12;
 		_slant = slant;
 		_fallback = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-		_fallbackName = Common::String(((BdfFont *)_fallback)->getFamilyName());
+		_fallbackName = Common::String(((const BdfFont *)_fallback)->getFamilyName());
 		_generated = false;
 		_truetype = false;
 		_font = NULL;
