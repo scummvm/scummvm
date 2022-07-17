@@ -145,8 +145,14 @@ fi
 
 ### finish up
 
-echo "Done:"
+echo ""
+echo "The following release tarball archives have been created:"
 ls -l $fullname.tar.gz $fullname.tar.bz2 $fullname.tar.xz $fullname.tar.lz $fullname.zip
+echo ""
+echo "SHA256 checksums (recommended):"
+sha256sum $fullname.tar.gz $fullname.tar.bz2 $fullname.tar.xz $fullname.tar.lz $fullname.zip
+echo ""
+echo "MD5 checksums (deprecated):"
 md5sum $fullname.tar.gz $fullname.tar.bz2 $fullname.tar.xz $fullname.tar.lz $fullname.zip
 
 exit 0
