@@ -367,17 +367,6 @@ MODULE_OBJS := \
 	engine/libraries/angelscript/sources/as_builder.o \
 	engine/libraries/angelscript/sources/as_bytecode.o \
 	engine/libraries/angelscript/sources/as_callfunc.o \
-	engine/libraries/angelscript/sources/as_callfunc_arm.o \
-	engine/libraries/angelscript/sources/as_callfunc_arm64.o \
-	engine/libraries/angelscript/sources/as_callfunc_mips.o \
-	engine/libraries/angelscript/sources/as_callfunc_ppc.o \
-	engine/libraries/angelscript/sources/as_callfunc_ppc_64.o \
-	engine/libraries/angelscript/sources/as_callfunc_sh4.o \
-	engine/libraries/angelscript/sources/as_callfunc_x64_gcc.o \
-	engine/libraries/angelscript/sources/as_callfunc_x64_mingw.o \
-	engine/libraries/angelscript/sources/as_callfunc_x64_msvc.o \
-	engine/libraries/angelscript/sources/as_callfunc_x86.o \
-	engine/libraries/angelscript/sources/as_callfunc_xenon.o \
 	engine/libraries/angelscript/sources/as_compiler.o \
 	engine/libraries/angelscript/sources/as_configgroup.o \
 	engine/libraries/angelscript/sources/as_context.o \
