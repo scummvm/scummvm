@@ -123,6 +123,8 @@ public:
 	int getWindowType() const { return _windowType; }
 	void setTitleVisible(bool titleVisible);
 	bool isTitleVisible() { return _titleVisible; };
+	void setModal(bool modal) { _isModal = modal; };
+	bool getModal() { return _isModal; };
 	Datum getStageRect();
 
 	void updateBorderType();
@@ -198,6 +200,7 @@ private:
 
 	int _windowType;
 	bool _titleVisible;
+	bool _isModal;
 
 private:
 

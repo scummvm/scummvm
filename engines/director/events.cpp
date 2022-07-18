@@ -123,10 +123,11 @@ bool Movie::processEvent(Common::Event &event) {
 
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
+	{
 		pos = _window->getMousePos();
 
 		_lastEventTime = g_director->getMacTicks();
-		_lastRollTime =	 _lastEventTime;
+		_lastRollTime = _lastEventTime;
 
 		if (_vm->getCursorWindow() != _window) {
 			// Cursor just entered this window. Force a cursor update.
@@ -169,14 +170,22 @@ bool Movie::processEvent(Common::Event &event) {
 			}
 		}
 		return true;
-
+	}
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
+	{
 		if (sc->_waitForClick) {
 			sc->_waitForClick = false;
 			sc->renderCursor(_window->getMousePos(), true);
 		} else {
 			pos = _window->getMousePos();
+
+			Director::Window *window = g_director->getCurrentWindow();
+
+			if (window) {
+				if (window->getModal() && !window->isMouseIn(pos))
+					return true;
+			}
 
 			// D3 doesn't have both mouse up and down.
 			// But we still want to know if the mouse is down for press effects.
@@ -222,10 +231,16 @@ bool Movie::processEvent(Common::Event &event) {
 		}
 
 		return true;
-
+	}
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONUP:
+	{
 		pos = _window->getMousePos();
+		Director::Window *window = g_director->getCurrentWindow();
+		if (window) {
+			if (window->getModal() && !window->isMouseIn(pos))
+				return true;
+		}
 
 		if (g_director->getVersion() < 400)
 			spriteId = sc->getActiveSpriteIDFromPos(pos);
@@ -260,7 +275,7 @@ bool Movie::processEvent(Common::Event &event) {
 		_currentHiliteChannelId = 0;
 		_mouseDownWasInButton = false;
 		return true;
-
+	}
 	case Common::EVENT_KEYDOWN:
 		_keyCode = _vm->_KeyCodes.contains(event.kbd.keycode) ? _vm->_KeyCodes[event.kbd.keycode] : 0;
 		_key = (unsigned char)(event.kbd.ascii & 0xff);

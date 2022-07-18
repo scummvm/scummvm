@@ -522,6 +522,10 @@ Datum Window::getField(int field) {
 		return getWindowType();
 	case kTheRect:
 		return getStageRect();
+	case kTheModal:
+		return getModal();
+	case kTheFileName:
+		break;
 
 	default:
 		warning("Window::getField: unhandled field '%s'", g_lingo->field2str(field));
@@ -543,6 +547,10 @@ bool Window::setField(int field, const Datum &value) {
 	case kTheWindowType:
 		setWindowType(value.asInt());
 		return true;
+	case kTheModal:
+		setModal((bool)value.asInt());
+		return true;
+
 	default:
 		warning("Window::setField: unhandled field '%s'", g_lingo->field2str(field));
 		return false;

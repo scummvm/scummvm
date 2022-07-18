@@ -350,6 +350,7 @@ public:
 
 	void setMode(uint32 mode) { _mode = mode; }
 	void setTitleVisibility(bool visible);
+	bool isMouseIn(const Common::Point &pos);
 
 private:
 	void drawBorderFromSurface(ManagedSurface *g, uint32 flags);

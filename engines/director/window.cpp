@@ -60,6 +60,7 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 
 	_windowType = -1;
 	_titleVisible = true;
+	_isModal = false;
 	updateBorderType();
 
 	_retPC = 0;

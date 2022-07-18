@@ -290,6 +290,16 @@ void MacWindow::setTitleVisibility(bool visible) {
 	}
 }
 
+bool MacWindow::isMouseIn(const Common::Point &pos) {
+	Common::Rect bbox = _dims;
+
+	bbox.right -= bbox.left;
+	bbox.bottom -= bbox.top;
+	bbox.top = 0;
+	bbox.left = 0;
+	return bbox.contains(pos);
+}
+
 void MacWindow::drawPattern() {
 	byte *pat = _wm->getPatterns()[_pattern - 1];
 	for (int y = 0; y < _composeSurface->h; y++) {
