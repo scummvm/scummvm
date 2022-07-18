@@ -98,6 +98,25 @@ void Area::show() {
 		debug("objID: %d, type: %d (entrance)", (*it)._value->getObjectID(), (*it)._value->getType());
 }
 
+void Area::loadObjectFlags(Common::SeekableReadStream *stream) {
+	for (int i = 0; i < int(objectsByID->size()); i++) {
+		uint16 key = stream->readUint32LE();
+		assert(objectsByID->contains(key));
+		Object *obj = (*objectsByID)[key];
+		obj->setObjectFlags(stream->readUint32LE());
+	}
+}
+
+void Area::saveObjectFlags(Common::WriteStream *stream) {
+	int dirtyFlags = 0;
+	//stream->writeUint32LE(objectsByID->size());
+
+	for (ObjectMap::iterator iterator = objectsByID->begin(); iterator != objectsByID->end(); iterator++) {
+		stream->writeUint32LE(iterator->_key);
+		stream->writeUint32LE(iterator->_value->getObjectFlags());
+	}
+}
+
 void Area::draw(Freescape::Renderer *gfx) {
 	if (palette)
 		gfx->_palette = palette;

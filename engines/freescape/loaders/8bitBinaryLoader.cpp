@@ -450,7 +450,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	_playerWidth = 12;
 	_playerDepth = 32;
 
-	if (_areaMap.contains(startArea))
+	if (!_areaMap.contains(startArea))
 		_startArea = newArea->getAreaID();
 	else
 		_startArea = startArea;
