@@ -206,7 +206,7 @@
 #define SCRIPT_SET_RETURN_string gen->SetReturnObject(&_ret)
 #define SCRIPT_RETURN_bool bool _ret
 #define SCRIPT_RETURN_CALL_bool _ret =
-#define SCRIPT_SET_RETURN_bool gen->SetReturnDWord(_ret ? -1 : 0)
+#define SCRIPT_SET_RETURN_bool gen->SetReturnByte(_ret ? -1 : 0)
 #define SCRIPT_RETURN_int int _ret
 #define SCRIPT_RETURN_CALL_int _ret =
 #define SCRIPT_SET_RETURN_int gen->SetReturnDWord(_ret)
