@@ -139,7 +139,6 @@ public:
 
 	// Sound
 	Audio::SoundHandle _speakerHandle;
-	Audio::PCSpeaker _speaker;
 	void playSound(int index);
 
 	// Rendering
