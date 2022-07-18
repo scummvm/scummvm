@@ -299,7 +299,7 @@ Common::Error FreescapeEngine::run() {
 		Common::Rect viewArea(40, 16, 279, 116);
 		_border->fillRect(viewArea, 0xA0A0A0FF);
 	}
-
+	assert(_startArea == 1);
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot >= 0) { // load the savegame
 		loadGameState(saveSlot);
@@ -558,14 +558,21 @@ Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream
 	_pitch = stream->readFloatLE();
 
 	// Level state
-	for (int i = 0; i < _gameStateVars.size(); i++) {
+	for (int i = 0; i < int(_gameStateVars.size()); i++) {
 		uint16 key = stream->readUint16LE();
 		_gameStateVars[key] = stream->readUint32LE();
 	}
 
-	for (int i = 0; i < _gameStateBits.size(); i++) {
+	for (int i = 0; i < int(_gameStateBits.size()); i++) {
 		uint16 key = stream->readUint16LE();
 		_gameStateBits[key] = stream->readUint32LE();
+	}
+
+	for (int i = 0; i < int(_areaMap.size()); i++) {
+		uint16 key = stream->readUint16LE();
+		assert(_areaMap.contains(key));
+		Area *area = _areaMap[key];
+		area->loadObjectFlags(stream);
 	}
 
 	if (!_currentArea || _currentArea->getAreaID() != areaID)
@@ -597,6 +604,11 @@ Common::Error FreescapeEngine::saveGameStream(Common::WriteStream *stream, bool 
 	for (StateBits::iterator it = _gameStateBits.begin(); it != _gameStateBits.end(); ++it) {
 		stream->writeUint16LE(it->_key);
 		stream->writeUint32LE(it->_value);
+	}
+
+	for (AreaMap::iterator it = _areaMap.begin(); it != _areaMap.end(); ++it) {
+		stream->writeUint16LE(it->_key);
+		it->_value->saveObjectFlags(stream);
 	}
 
 	return Common::kNoError;

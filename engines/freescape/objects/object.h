@@ -44,6 +44,7 @@ public:
 	virtual Type getType();
 	uint16 getObjectID();
 	uint16 getObjectFlags();
+	void setObjectFlags(uint32 flags);
 	Math::Vector3d getOrigin();
 	Math::Vector3d getSize();
 

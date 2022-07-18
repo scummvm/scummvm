@@ -50,6 +50,10 @@ public:
 	Common::Array<Common::String*> conditionSources;
 	Common::Array<FCLInstructionVector> conditions;
 
+	// Serialization
+	void saveObjectFlags(Common::WriteStream *stream);
+	void loadObjectFlags(Common::SeekableReadStream *stream);
+
 private:
 	uint16 areaID;
 	uint8 scale;
