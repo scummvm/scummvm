@@ -32,6 +32,8 @@
 #include "engines/icb/mission.h"
 #include "engines/icb/remora.h"
 
+#include "common/str.h"
+
 namespace ICB {
 
 // Armed menu positioning  -- I've put these here as they are not need outside this file,
@@ -43,16 +45,6 @@ LRECT ICON_BITMAP_RECT = {0, 0, ICON_X_SIZE - 1, ICON_Y_SIZE - 1};
 LRECT ICON_ADDING_RECT = {ICON_ADDING_X, ICON_ADDING_Y, ICON_ADDING_X + ICON_X_SIZE - 1, ICON_ADDING_Y + ICON_Y_SIZE - 1};
 
 void _icon_menu::Activate(const _icon_list *pIconList, const _icon_menu_duplicates &sDuplicates, bool8 bAllowEscape, uint32 nSelected) {
-	uint32 i;
-	uint8 *pyIconBitmap;
-	uint8 *pyHiLiteBitmap;
-	uint32 nIconCount;
-	char pcIconName[MAXLEN_ICON_NAME];
-	char pcFullIconName[MAXLEN_URL];
-	char pcIconPath[MAXLEN_URL];
-	uint32 nFullIconNameHash;
-	_pxBitmap *psIconBitmap;
-
 	Zdebug("Entered _icon_menu::Activate()");
 
 	PXTRY
@@ -73,7 +65,7 @@ void _icon_menu::Activate(const _icon_list *pIconList, const _icon_menu_duplicat
 	m_nSelectedIcon = nSelected;
 	m_bValidSelection = FALSE8;
 	m_pIconList = pIconList;
-	nIconCount = pIconList->GetIconCount();
+	uint32 nIconCount = pIconList->GetIconCount();
 	m_sDuplicates = sDuplicates;
 	m_bAllowEscape = bAllowEscape;
 	m_nLastIconIndex = (uint8)nSelected;
@@ -97,24 +89,23 @@ void _icon_menu::Activate(const _icon_list *pIconList, const _icon_menu_duplicat
 	}
 
 	// Loop for each icon to be drawn.
-	for (i = 0; i < nIconCount; ++i) {
+	for (uint32 i = 0; i < nIconCount; ++i) {
 		// Get the full pathname for the icon.
-		strcpy(pcIconName, m_pIconList->GetIcon(i));
-		sprintf(pcIconPath, ICON_PATH);
-		sprintf(pcFullIconName, "%s%s.%s", pcIconPath, pcIconName, PX_BITMAP_PC_EXT);
+		Common::String strIconName = m_pIconList->GetIcon(i);
+		Common::String strFullIconName = Common::String::format("%s%s.%s", ICON_PATH, strIconName.c_str(), PX_BITMAP_PC_EXT);
 
 		// Open the icon resource.
-		nFullIconNameHash = NULL_HASH;
-		psIconBitmap = (_pxBitmap *)rs_icons->Res_open(pcFullIconName, nFullIconNameHash, m_pcIconCluster, m_nIconClusterHash);
+		uint32 nFullIconNameHash = NULL_HASH;
+		_pxBitmap *psIconBitmap = (_pxBitmap *)rs_icons->Res_open(strFullIconName.c_str(), nFullIconNameHash, m_pcIconCluster, m_nIconClusterHash);
 
 		// Check the schema is correct.
 		if (psIconBitmap->schema != PC_BITMAP_SCHEMA)
-			Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", pcFullIconName, PC_BITMAP_SCHEMA, psIconBitmap->schema);
+			Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strFullIconName.c_str(), PC_BITMAP_SCHEMA, psIconBitmap->schema);
 
 		// Create a surface for the icon
-		m_pnIconSurfaceIDs[i] = surface_manager->Create_new_surface(pcIconName, ICON_X_SIZE, ICON_Y_SIZE, EITHER);
+		m_pnIconSurfaceIDs[i] = surface_manager->Create_new_surface(strIconName.c_str(), ICON_X_SIZE, ICON_Y_SIZE, EITHER);
 		surface_manager->Set_transparent_colour_key(m_pnIconSurfaceIDs[i], m_nTransparentKey);
-		pyIconBitmap = surface_manager->Lock_surface(m_pnIconSurfaceIDs[i]);
+		uint8 *pyIconBitmap = surface_manager->Lock_surface(m_pnIconSurfaceIDs[i]);
 		uint32 nPitch = surface_manager->Get_pitch(m_pnIconSurfaceIDs[i]);
 		// Load the icon into the surface
 		SpriteXYFrameDraw(pyIconBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
@@ -138,10 +129,10 @@ void _icon_menu::Activate(const _icon_list *pIconList, const _icon_menu_duplicat
 		surface_manager->Unlock_surface(m_pnIconSurfaceIDs[i]);
 
 		// Create a surface for the icons hilite
-		sprintf(pcIconName + strlen(pcIconName), "H");
-		m_pnHiLiteSurfaceIDs[i] = surface_manager->Create_new_surface(pcIconName, ICON_X_SIZE, ICON_Y_SIZE, EITHER);
+		strIconName += 'H';
+		m_pnHiLiteSurfaceIDs[i] = surface_manager->Create_new_surface(strIconName.c_str(), ICON_X_SIZE, ICON_Y_SIZE, EITHER);
 		surface_manager->Set_transparent_colour_key(m_pnHiLiteSurfaceIDs[i], m_nTransparentKey);
-		pyHiLiteBitmap = surface_manager->Lock_surface(m_pnHiLiteSurfaceIDs[i]);
+		uint8 *pyHiLiteBitmap = surface_manager->Lock_surface(m_pnHiLiteSurfaceIDs[i]);
 		nPitch = surface_manager->Get_pitch(m_pnHiLiteSurfaceIDs[i]);
 		// Load the icon hilight
 		SpriteXYFrameDraw(pyHiLiteBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
@@ -163,10 +154,8 @@ void _icon_menu::Activate(const _icon_list *pIconList, const _icon_menu_duplicat
 }
 
 void _icon_menu::ReActivate() {
-	int32 i;
-
 	// Free up all the previous icon surfaces
-	for (i = m_pIconList->GetIconCount() - 1; i >= 0; --i) {
+	for (int32 i = m_pIconList->GetIconCount() - 1; i >= 0; --i) {
 		surface_manager->Kill_surface(m_pnIconSurfaceIDs[i]);
 		surface_manager->Kill_surface(m_pnHiLiteSurfaceIDs[i]);
 	}
@@ -181,23 +170,18 @@ void _icon_menu::ReActivate() {
 	}
 
 	// Now recreate and reload all those surfi
-	for (i = m_pIconList->GetIconCount() - 1; i >= 0; --i) {
+	for (int32 i = m_pIconList->GetIconCount() - 1; i >= 0; --i) {
 		// Get the full pathname for the icon.
-		char pcIconName[MAXLEN_ICON_NAME];
-		char pcFullIconName[MAXLEN_URL];
-		char pcIconPath[MAXLEN_URL];
-
-		strcpy(pcIconName, m_pIconList->GetIcon(i));
-		sprintf(pcIconPath, ICON_PATH);
-		sprintf(pcFullIconName, "%s%s.%s", pcIconPath, pcIconName, PX_BITMAP_PC_EXT);
+		Common::String strIconName = m_pIconList->GetIcon(i);
+		Common::String strFullIconName = Common::String::format("%s%s.%s", ICON_PATH, strIconName.c_str(), PX_BITMAP_PC_EXT);
 
 		// Open the icon resource.
 		uint32 nFullIconNameHash = NULL_HASH;
-		_pxBitmap *psIconBitmap = (_pxBitmap *)rs_icons->Res_open(pcFullIconName, nFullIconNameHash, m_pcIconCluster, m_nIconClusterHash);
+		_pxBitmap *psIconBitmap = (_pxBitmap *)rs_icons->Res_open(strFullIconName.c_str(), nFullIconNameHash, m_pcIconCluster, m_nIconClusterHash);
 
 		// Check the schema is correct.
 		if (psIconBitmap->schema != PC_BITMAP_SCHEMA)
-			Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", pcFullIconName, PC_BITMAP_SCHEMA, psIconBitmap->schema);
+			Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strFullIconName.c_str(), PC_BITMAP_SCHEMA, psIconBitmap->schema);
 
 		// Create a surface for the icon
 		m_pnIconSurfaceIDs[i] = surface_manager->Create_new_surface("Icon", ICON_X_SIZE, ICON_Y_SIZE, EITHER);
@@ -226,8 +210,8 @@ void _icon_menu::ReActivate() {
 		surface_manager->Unlock_surface(m_pnIconSurfaceIDs[i]);
 
 		// Create a surface for the icons hilite
-		sprintf(pcIconName + strlen(pcIconName), "H");
-		m_pnHiLiteSurfaceIDs[i] = surface_manager->Create_new_surface(pcIconName, ICON_X_SIZE, ICON_Y_SIZE, EITHER);
+		strIconName += 'H';
+		m_pnHiLiteSurfaceIDs[i] = surface_manager->Create_new_surface(strIconName.c_str(), ICON_X_SIZE, ICON_Y_SIZE, EITHER);
 		uint8 *pyHiLiteBitmap = surface_manager->Lock_surface(m_pnHiLiteSurfaceIDs[i]);
 		nPitch = surface_manager->Get_pitch(m_pnHiLiteSurfaceIDs[i]);
 		// Load the icon hilight
@@ -241,19 +225,14 @@ void _icon_menu::ReActivate() {
 }
 
 void _icon_menu::DrawIconMenu() {
-	uint32 i;
-	uint32 nIconIndex;
 	uint32 nItemCount;
-	int32 nStartX;
 	LRECT sToRectangle;
 	LRECT sFromRectangle;
-	uint32 nIconCount;
-	uint32 nMaxDrawableIcons, nIconsToDraw;
+	uint32 nMaxDrawableIcons;
 	int32 scrolling = 0;
 	char pcDigits[16];
 	const char *pcIconLabel;
 	char pcIconName[MAXLEN_ICON_NAME];
-	uint32 nHashRef;
 
 	Zdebug("Entered _icon_menu::DrawIconMenu()");
 
@@ -264,11 +243,11 @@ void _icon_menu::DrawIconMenu() {
 		m_nMenuY = ICON_MENU_PIXEL_Y;
 
 	// Get number of icons.
-	nIconCount = m_pIconList->GetIconCount();
+	uint32 nIconCount = m_pIconList->GetIconCount();
 
 	// Work out where we start drawing the icons from (based on which one is currently selected).
-	nIconIndex = m_nSelectedIcon;
-	nStartX = ICON_MENU_PIXEL_X;
+	uint32 nIconIndex = m_nSelectedIcon;
+	int32 nStartX = ICON_MENU_PIXEL_X;
 
 	int32 scrollyX = GetScrollingPosition(nStartX, nIconIndex);
 
@@ -330,13 +309,13 @@ void _icon_menu::DrawIconMenu() {
 	}
 
 	// The number of icons we draw is the lesser of the maximum we can draw and how many there actually are.
-	nIconsToDraw = (nIconCount < nMaxDrawableIcons) ? nIconCount : nMaxDrawableIcons;
+	uint32 nIconsToDraw = (nIconCount < nMaxDrawableIcons) ? nIconCount : nMaxDrawableIcons;
 
 	// Where to draw them
 	int32 x = nStartX;
 
 	// Loop for each icon to be drawn.
-	for (i = 0; i < nIconsToDraw; ++i) {
+	for (uint32 i = 0; i < nIconsToDraw; ++i) {
 		// Work out blit-to rectangle.
 		sToRectangle.left = x;
 		sToRectangle.right = sToRectangle.left + ICON_X_SIZE - 1;
@@ -357,7 +336,7 @@ void _icon_menu::DrawIconMenu() {
 
 		// Get the icon name and hash for it.
 		strcpy(pcIconName, m_pIconList->GetIcon(nIconIndex));
-		nHashRef = HashString(pcIconName);
+		uint32 nHashRef = HashString(pcIconName);
 
 		// Now blit the icon itself.
 		surface_manager->Blit_surface_to_surface(m_pnIconSurfaceIDs[nIconIndex], working_buffer_id, &sFromRectangle, &sToRectangle, DDBLT_KEYSRC);
@@ -405,15 +384,12 @@ void _icon_menu::DrawIconMenu() {
 }
 
 void _icon_menu::CloseDownIconMenuDisplay() {
-	uint32 i;
-	uint32 nIconCount;
-
 	Zdebug("Entered _icon_menu::CloseDownIconMenuDisplay()");
 
-	nIconCount = m_pIconList->GetIconCount();
+	uint32 nIconCount = m_pIconList->GetIconCount();
 
 	// Dump the icon store graphic surfaces.
-	for (i = 0; i < nIconCount; ++i) {
+	for (uint32 i = 0; i < nIconCount; ++i) {
 		surface_manager->Kill_surface(m_pnIconSurfaceIDs[i]);
 		surface_manager->Kill_surface(m_pnHiLiteSurfaceIDs[i]);
 	}
@@ -431,55 +407,37 @@ void _icon_menu::CloseDownIconMenuDisplay() {
 
 void _icon_menu::SetTransparencyColourKey() {
 	uint32 nFullIconNameHash = NULL_HASH;
-	_pxBitmap *psTransparentBitmap;
-	uint8 *pnPalette;
-	uint32 nIconClusterHash;
-	char pcFullIconName[MAXLEN_URL];
-	char pcIconCluster[MAXLEN_CLUSTER_URL];
-
-	strcpy(pcIconCluster, ICON_CLUSTER_PATH);
-	nIconClusterHash = NULL_HASH;
+	uint32 nIconClusterHash = NULL_HASH;
 
 	// Here we open the bitmap containing the reference colour for transparency and set it.
-	sprintf(pcFullIconName, ICON_PATH);
-	strcat(pcFullIconName, BITMAP_TRANSPARENCY_REFERENCE);
-	strcat(pcFullIconName, ".");
-	strcat(pcFullIconName, PX_BITMAP_PC_EXT);
+	Common::String strFullIconName = Common::String::format("%s%s.%s", ICON_PATH, BITMAP_TRANSPARENCY_REFERENCE, PX_BITMAP_PC_EXT);
 
-	psTransparentBitmap = (_pxBitmap *)rs_icons->Res_open(pcFullIconName, nFullIconNameHash, pcIconCluster, nIconClusterHash);
+	_pxBitmap *psTransparentBitmap = (_pxBitmap *)rs_icons->Res_open(strFullIconName.c_str(), nFullIconNameHash, ICON_CLUSTER_PATH, nIconClusterHash);
 
 	if (psTransparentBitmap->schema != PC_BITMAP_SCHEMA)
-		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", pcFullIconName, PC_BITMAP_SCHEMA, psTransparentBitmap->schema);
+		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strFullIconName.c_str(), PC_BITMAP_SCHEMA, psTransparentBitmap->schema);
 
-	pnPalette = psTransparentBitmap->Fetch_palette_pointer();
+	uint8 *pnPalette = psTransparentBitmap->Fetch_palette_pointer();
 	m_nTransparentKey = ((uint32 *)pnPalette)[0];
 }
 
 void _icon_menu::SetupAdding(const char *pcIconName, uint32 &nSurfaceID) {
-	uint32 nPitch;
-	char pcFullIconName[MAXLEN_URL];
-	char pcIconPath[MAXLEN_URL];
-	uint32 nFullIconNameHash;
-	_pxBitmap *psIconBitmap;
-	uint8 *p8Bitmap;
-
 	// Get the full pathname for the ammo clips icon.
-	sprintf(pcIconPath, ICON_PATH);
-	sprintf(pcFullIconName, "%s%s.%s", pcIconPath, pcIconName, PX_BITMAP_PC_EXT);
+	Common::String strFullIconName = Common::String::format("%s%s.%s", ICON_PATH, pcIconName, PX_BITMAP_PC_EXT);
 
 	// Open the icon resource.
-	nFullIconNameHash = NULL_HASH;
-	psIconBitmap = (_pxBitmap *)rs_icons->Res_open(pcFullIconName, nFullIconNameHash, m_pcIconCluster, m_nIconClusterHash);
+	uint32 nFullIconNameHash = NULL_HASH;
+	_pxBitmap *psIconBitmap = (_pxBitmap *)rs_icons->Res_open(strFullIconName.c_str(), nFullIconNameHash, m_pcIconCluster, m_nIconClusterHash);
 
 	// Check the schema is correct.
 	if (psIconBitmap->schema != PC_BITMAP_SCHEMA)
-		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", pcFullIconName, PC_BITMAP_SCHEMA, psIconBitmap->schema);
+		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strFullIconName.c_str(), PC_BITMAP_SCHEMA, psIconBitmap->schema);
 
 	// Create a surface for the clips icon.
 	nSurfaceID = surface_manager->Create_new_surface(pcIconName, ICON_X_SIZE, ICON_Y_SIZE, EITHER);
 	surface_manager->Set_transparent_colour_key(nSurfaceID, m_nTransparentKey);
-	p8Bitmap = surface_manager->Lock_surface(nSurfaceID);
-	nPitch = surface_manager->Get_pitch(nSurfaceID);
+	uint8 *p8Bitmap = surface_manager->Lock_surface(nSurfaceID);
+	uint32 nPitch = surface_manager->Get_pitch(nSurfaceID);
 
 	// Draw the icon into the surface.
 	SpriteXYFrameDraw(p8Bitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
@@ -507,8 +465,8 @@ void _icon_menu::DrawAdding() {
 		break;
 
 	default:
-	    // Draw nothing.
-	    ;
+		// Draw nothing.
+		break;
 	}
 }
 
@@ -600,76 +558,69 @@ void _icon_menu::DrawArmedMenu(const int32 nBullets, const int32 maxBullets, con
 }
 
 void _icon_menu::SetUpOffScreenArrows() {
-	uint8 *pyLeftBitmap;
-	uint8 *pyLeftHiLiteBitmap;
-	uint8 *pyRightBitmap;
-	uint8 *pyRightHiLiteBitmap;
-	uint32 nPitch;
-	uint32 nFullIconNameHash;
-	_pxBitmap *psIconBitmap;
-	char pcArrowIconName[MAXLEN_URL];
-	char pcIconPath[MAXLEN_URL];
+	{
+		// Create surfaces for the left arrow - both highlighted and normal.
+		m_nLeftArrowID = surface_manager->Create_new_surface(ICON_MENU_OFF_SCREEN_LEFT, ICON_X_SIZE, ICON_Y_SIZE, EITHER);
+		surface_manager->Set_transparent_colour_key(m_nLeftArrowID, m_nTransparentKey);
+		uint8 *pyLeftBitmap = surface_manager->Lock_surface(m_nLeftArrowID);
 
-	// Create surfaces for the left arrow - both highlighted and normal.
-	m_nLeftArrowID = surface_manager->Create_new_surface(ICON_MENU_OFF_SCREEN_LEFT, ICON_X_SIZE, ICON_Y_SIZE, EITHER);
-	surface_manager->Set_transparent_colour_key(m_nLeftArrowID, m_nTransparentKey);
-	pyLeftBitmap = surface_manager->Lock_surface(m_nLeftArrowID);
+		m_nLeftArrowHiLiteID = surface_manager->Create_new_surface(ICON_MENU_OFF_SCREEN_LEFT, ICON_X_SIZE, ICON_Y_SIZE, EITHER);
+		surface_manager->Set_transparent_colour_key(m_nLeftArrowHiLiteID, m_nTransparentKey);
+		uint8 *pyLeftHiLiteBitmap = surface_manager->Lock_surface(m_nLeftArrowHiLiteID);
 
-	m_nLeftArrowHiLiteID = surface_manager->Create_new_surface(ICON_MENU_OFF_SCREEN_LEFT, ICON_X_SIZE, ICON_Y_SIZE, EITHER);
-	surface_manager->Set_transparent_colour_key(m_nLeftArrowHiLiteID, m_nTransparentKey);
-	pyLeftHiLiteBitmap = surface_manager->Lock_surface(m_nLeftArrowHiLiteID);
+		// Get the pitch (assume it's the same for both.
+		uint32 nPitch = surface_manager->Get_pitch(m_nLeftArrowID);
 
-	// Get the pitch (assume it's the same for both.
-	nPitch = surface_manager->Get_pitch(m_nLeftArrowID);
+		// Open the icon (contains both the highlighted and normal frames).
+		Common::String strLeftArrowIconName = Common::String::format("%s%s.%s", ICON_PATH, ICON_MENU_OFF_SCREEN_LEFT, PX_BITMAP_PC_EXT);
 
-	// Open the icon (contains both the highlighted and normal frames).
-	sprintf(pcIconPath, ICON_PATH);
-	/*uint32 nBufferCount =*/ sprintf(pcArrowIconName, "%s%s.%s", pcIconPath, ICON_MENU_OFF_SCREEN_LEFT, PX_BITMAP_PC_EXT);
+		uint32 nFullIconNameHash = NULL_HASH;
 
-	nFullIconNameHash = NULL_HASH;
+		_pxBitmap *psIconBitmap = (_pxBitmap *)rs_icons->Res_open(strLeftArrowIconName.c_str(), nFullIconNameHash, m_pcIconCluster, m_nIconClusterHash);
 
-	psIconBitmap = (_pxBitmap *)rs_icons->Res_open(pcArrowIconName, nFullIconNameHash, m_pcIconCluster, m_nIconClusterHash);
+		if (psIconBitmap->schema != PC_BITMAP_SCHEMA)
+			Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strLeftArrowIconName.c_str(), PC_BITMAP_SCHEMA, psIconBitmap->schema);
 
-	if (psIconBitmap->schema != PC_BITMAP_SCHEMA)
-		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", pcArrowIconName, PC_BITMAP_SCHEMA, psIconBitmap->schema);
+		// Draw the two frames onto their respective surfaces.
+		SpriteXYFrameDraw(pyLeftBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
+		SpriteXYFrameDraw(pyLeftHiLiteBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 1, FALSE8, nullptr, 255);
 
-	// Draw the two frames onto their respective surfaces.
-	SpriteXYFrameDraw(pyLeftBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
-	SpriteXYFrameDraw(pyLeftHiLiteBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 1, FALSE8, nullptr, 255);
+		// Finished drawing the icon into the surfaces so we can unlock them.
+		surface_manager->Unlock_surface(m_nLeftArrowID);
+		surface_manager->Unlock_surface(m_nLeftArrowHiLiteID);
+	}
 
-	// Finished drawing the icon into the surfaces so we can unlock them.
-	surface_manager->Unlock_surface(m_nLeftArrowID);
-	surface_manager->Unlock_surface(m_nLeftArrowHiLiteID);
+	{
+		// Now we repeat the whole thing for the right arrow.
+		m_nRightArrowID = surface_manager->Create_new_surface(ICON_MENU_OFF_SCREEN_RIGHT, ICON_X_SIZE, ICON_Y_SIZE, EITHER);
+		surface_manager->Set_transparent_colour_key(m_nRightArrowID, m_nTransparentKey);
+		uint8 *pyRightBitmap = surface_manager->Lock_surface(m_nRightArrowID);
 
-	// Now we repeat the whole thing for the right arrow.
-	m_nRightArrowID = surface_manager->Create_new_surface(ICON_MENU_OFF_SCREEN_RIGHT, ICON_X_SIZE, ICON_Y_SIZE, EITHER);
-	surface_manager->Set_transparent_colour_key(m_nRightArrowID, m_nTransparentKey);
-	pyRightBitmap = surface_manager->Lock_surface(m_nRightArrowID);
+		m_nRightArrowHiLiteID = surface_manager->Create_new_surface(ICON_MENU_OFF_SCREEN_RIGHT, ICON_X_SIZE, ICON_Y_SIZE, EITHER);
+		surface_manager->Set_transparent_colour_key(m_nRightArrowHiLiteID, m_nTransparentKey);
+		uint8 *pyRightHiLiteBitmap = surface_manager->Lock_surface(m_nRightArrowHiLiteID);
 
-	m_nRightArrowHiLiteID = surface_manager->Create_new_surface(ICON_MENU_OFF_SCREEN_RIGHT, ICON_X_SIZE, ICON_Y_SIZE, EITHER);
-	surface_manager->Set_transparent_colour_key(m_nRightArrowHiLiteID, m_nTransparentKey);
-	pyRightHiLiteBitmap = surface_manager->Lock_surface(m_nRightArrowHiLiteID);
+		// Get the pitch (assume it's the same for both.
+		uint32 nPitch = surface_manager->Get_pitch(m_nRightArrowID);
 
-	// Get the pitch (assume it's the same for both.
-	nPitch = surface_manager->Get_pitch(m_nRightArrowID);
+		// Open the icon (contains both the highlighted and normal frames).
+		Common::String strRightArrowIconName = Common::String::format("%s%s.%s", ICON_PATH, ICON_MENU_OFF_SCREEN_RIGHT, PX_BITMAP_PC_EXT);
 
-	// Open the icon (contains both the highlighted and normal frames).
-	/*uint32 nBufferCount =*/ sprintf(pcArrowIconName, "%s%s.%s", pcIconPath, ICON_MENU_OFF_SCREEN_RIGHT, PX_BITMAP_PC_EXT);
+		uint32 nFullIconNameHash = NULL_HASH;
 
-	nFullIconNameHash = NULL_HASH;
+		_pxBitmap *psIconBitmap = (_pxBitmap *)rs_icons->Res_open(strRightArrowIconName.c_str(), nFullIconNameHash, m_pcIconCluster, m_nIconClusterHash);
 
-	psIconBitmap = (_pxBitmap *)rs_icons->Res_open(pcArrowIconName, nFullIconNameHash, m_pcIconCluster, m_nIconClusterHash);
+		if (psIconBitmap->schema != PC_BITMAP_SCHEMA)
+			Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strRightArrowIconName.c_str(), PC_BITMAP_SCHEMA, psIconBitmap->schema);
 
-	if (psIconBitmap->schema != PC_BITMAP_SCHEMA)
-		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", pcArrowIconName, PC_BITMAP_SCHEMA, psIconBitmap->schema);
+		// Draw the two frames onto their respective surfaces.
+		SpriteXYFrameDraw(pyRightBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
+		SpriteXYFrameDraw(pyRightHiLiteBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 1, FALSE8, nullptr, 255);
 
-	// Draw the two frames onto their respective surfaces.
-	SpriteXYFrameDraw(pyRightBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
-	SpriteXYFrameDraw(pyRightHiLiteBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 1, FALSE8, nullptr, 255);
-
-	// Finished drawing the icon into the surfaces so we can unlock them.
-	surface_manager->Unlock_surface(m_nRightArrowID);
-	surface_manager->Unlock_surface(m_nRightArrowHiLiteID);
+		// Finished drawing the icon into the surfaces so we can unlock them.
+		surface_manager->Unlock_surface(m_nRightArrowID);
+		surface_manager->Unlock_surface(m_nRightArrowHiLiteID);
+	}
 }
 
 } // End of namespace ICB
