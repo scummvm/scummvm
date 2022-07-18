@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    Debug visualizers for mTropolis engine types for Visual Studio 2012 and up.
+
+    To use, copy this file into Documents\Visual Studio 20xx\Visualizers.
+-->
+
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	
+	<!-- Variables -->
+	
+	<Type Name="MTropolis::DynamicValue">
+		<DisplayString Condition="_type==kNull">Null</DisplayString>
+		<DisplayString Condition="_type==kInteger">{_value.asInt}</DisplayString>
+		<DisplayString Condition="_type==kFloat">{_value.asFloat}</DisplayString>
+		<DisplayString Condition="_type==kPoint">{_value.asPoint}</DisplayString>
+		<DisplayString Condition="_type==kIntegerRange">{_value.asIntRange}</DisplayString>
+		<DisplayString Condition="_type==kBoolean">{_value.asBool}</DisplayString>
+		<DisplayString Condition="_type==kString">{_str}</DisplayString>
+
+		<Expand>
+			<ExpandedItem Condition="_type==kList">*_list</ExpandedItem>
+			<ExpandedItem Condition="_type==kObject">_obj</ExpandedItem>
+			<ExpandedItem Condition="_type==kVector">_value.asVector</ExpandedItem>
+			<ExpandedItem Condition="_type==kLabel">_value.asLabel</ExpandedItem>
+			<ExpandedItem Condition="_type==kIntegerRange">_value.asIntRange</ExpandedItem>
+			<ExpandedItem Condition="_type==kEvent">_value.asEvent</ExpandedItem>
+			<ExpandedItem Condition="_type==kPoint">_value.asPoint</ExpandedItem>
+			<ExpandedItem Condition="_type==kWriteProxy">_value.asWriteProxy</ExpandedItem>
+			<ExpandedItem Condition="_type==kVariableReference">_value.asVarReference</ExpandedItem>
+		</Expand>
+	</Type>
+
+	<Type Name="MTropolis::IntRange">
+		<DisplayString>{min}..{max}</DisplayString>
+	</Type>
+
+	<Type Name="MTropolis::Point16POD">
+		<DisplayString>({x}, {y})</DisplayString>
+	</Type>
+
+</AutoVisualizer>
