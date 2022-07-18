@@ -378,6 +378,7 @@ MODULE_OBJS += \
 	fs/posix/posix-iostream.o \
 	fs/posix-drives/posix-drives-fs.o \
 	fs/posix-drives/posix-drives-fs-factory.o \
+	plugins/psp2/psp2-provider.o \
 	events/psp2sdl/psp2sdl-events.o
 endif
 
