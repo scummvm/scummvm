@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-16 21:35+0100\n"
-"PO-Revision-Date: 2022-07-17 10:16+0000\n"
+"PO-Revision-Date: 2022-07-18 18:32+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -6011,11 +6011,11 @@ msgstr "ロードに失敗、新しいバージョンのScummVMで作成され�
 
 #: engines/mtropolis/saveload.cpp:133
 msgid "Failed to load save, an error occurred when reading the save game data."
-msgstr ""
+msgstr "ロード失敗、セーブデータの読み込み時にエラーが発生しました。"
 
 #: engines/mtropolis/saveload.cpp:157
 msgid "Progress Saved"
-msgstr ""
+msgstr "セーブ完了"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
@@ -8290,11 +8290,11 @@ msgstr "スプライト単位でバイリニアフィルタリングを適用"
 
 #: engines/wintermute/detection.cpp:77
 msgid "Force to use 2D renderer (2D games only)"
-msgstr ""
+msgstr "2Dレンダラーを強制(2Dゲームのみ)"
 
 #: engines/wintermute/detection.cpp:78
 msgid "This setting forces ScummVM to use 2D renderer while running 2D games"
-msgstr ""
+msgstr "ScummVMがゲームを実行する際、2Dレンダラーを使用します"
 
 #: engines/wintermute/metaengine.cpp:64
 msgid "FoxTail support is not compiled in"
