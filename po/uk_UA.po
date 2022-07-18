@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-16 21:35+0100\n"
-"PO-Revision-Date: 2022-07-13 21:42+0000\n"
+"PO-Revision-Date: 2022-07-18 18:32+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -4341,13 +4341,12 @@ msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Віддавати перевагу цифровим звуковим ефектам, а не синтезованим"
 
 #: engines/agos/detection.cpp:126
-#, fuzzy
 msgid "Disable fade-out effects"
-msgstr "Заборонити автозбереження"
+msgstr "Заборонити ефекти затемнення"
 
 #: engines/agos/detection.cpp:127
 msgid "Don't fade every screen to black when leaving a room."
-msgstr ""
+msgstr "Не затемнювати екран під час кожного переходу між кімнатами."
 
 #: engines/ags/dialogs.cpp:58
 msgid "Game language:"
@@ -4628,9 +4627,8 @@ msgstr "Прокручення донизу"
 #. I18N: This keymap allows (in KIA only) for a clue to be set as private or public
 #. (only when the KIA is upgraded).
 #: engines/bladerunner/metaengine.cpp:221
-#, fuzzy
 msgid "Toggle Clue Privacy"
-msgstr "Перемкнути звук"
+msgstr "Перемкнути приватність підказок"
 
 #. I18N: This keymap opens KIA's SAVE GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -6019,19 +6017,20 @@ msgstr ""
 "окрім того, цей магазин більше не працює."
 
 #: engines/mtropolis/detection.cpp:43
-#, fuzzy
 msgid "16:9 widescreen mod"
-msgstr "Мод для широкого екрану"
+msgstr "Мод для широкого екрану 16:9"
 
 #: engines/mtropolis/detection.cpp:44
 msgid ""
 "Removes letterboxing and moves some display elements, improving coverage on "
 "widescreen displays"
 msgstr ""
+"Забирає чорні полоски зверху та знизу екрану та переміщує деякі графічнчі "
+"елементи, задля покращення вигляду на широких екранах"
 
 #: engines/mtropolis/detection.cpp:54
 msgid "Improved music mixing"
-msgstr ""
+msgstr "Покращене міксування музики"
 
 #: engines/mtropolis/detection.cpp:55
 msgid ""
