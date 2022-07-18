@@ -3059,16 +3059,21 @@ EOF
 		append_var CXXFLAGS "-mlong-calls"
 		append_var CXXFLAGS "-mword-relocations"
 		append_var CXXFLAGS "-fomit-frame-pointer"
-		#use link time optimization to further reduce exe size
-		append_var CXXFLAGS "-flto"
-		append_var LDFLAGS "-flto=jobserver"
 		#ensure verbose output during linking to prevent buildbot kills after 1200 seconds
 		if test "$_verbose_build" = yes ; then
 			append_var LDFLAGS "-Wl,-v --verbose"
 		fi
-		#use linker dead code elimination to further reduce exe size
-		append_var CXXFLAGS "-ffunction-sections -fdata-sections"
-		append_var LDFLAGS "-Wl,--gc-sections"
+		if test "$_dynamic_modules" = yes ; then
+			_detection_features_static=no
+			_plugins_default=dynamic
+		else
+			#use link time optimization to further reduce exe size
+			append_var CXXFLAGS "-flto"
+			append_var LDFLAGS "-flto=jobserver"
+			#use linker dead code elimination to further reduce exe size
+			append_var CXXFLAGS "-ffunction-sections -fdata-sections"
+			append_var LDFLAGS "-Wl,--gc-sections"
+		fi
 		if test "$_debug_build" = no; then
 		#optimize for smallest file size. This is necessary to prevent a crash on startup
 		#due to the large executable file size when many engines are enabled
@@ -4254,6 +4259,19 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 _mak_plugins='
 LDFLAGS				+= -Wl,-T$(srcdir)/backends/plugins/psp/main_prog.ld  -Wl,-zmax-page-size=128
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -Wl,-zmax-page-size=128 -lstdc++
+'
+		;;
+	psp2)
+		_plugin_prefix=""
+		# This will create an ELF with a suprx extension which we will have to mangle when packaging
+		_plugin_suffix=".suprx"
+		append_var CXXFLAGS "-fuse-cxa-atexit"
+		append_var DEFINES "-DUNCACHED_PLUGINS"
+_mak_plugins='
+PLUGIN_EXTRA_DEPS	= $(EXECUTABLE) backends/plugins/psp2/plugin.o
+PLUGIN_LDFLAGS		+= -nostartfiles -nodefaultlibs backends/plugins/psp2/plugin.o -Wl,-q -Xlinker --just-symbols -Xlinker $(EXECUTABLE) -lgcc
+PRE_OBJS_FLAGS		:= -Wl,--whole-archive
+POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '
 		;;
 	riscos)

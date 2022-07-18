@@ -188,7 +188,9 @@ PluginList FilePluginProvider::getPlugins() {
 	#ifndef WIN32
 	pluginDirs.push_back(Common::FSNode("."));
 	#endif
+	#ifndef PSP2
 	pluginDirs.push_back(Common::FSNode("plugins"));
+	#endif
 
 	// Add the provider's custom directories
 	addCustomDirectories(pluginDirs);
