@@ -576,6 +576,7 @@ Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream
 		area->loadObjectFlags(stream);
 	}
 
+	_flyMode = stream->readByte();
 	if (!_currentArea || _currentArea->getAreaID() != areaID)
 		gotoArea(areaID, -1); // Do not change position nor rotation
 	return Common::kNoError;
@@ -612,6 +613,7 @@ Common::Error FreescapeEngine::saveGameStream(Common::WriteStream *stream, bool 
 		it->_value->saveObjectFlags(stream);
 	}
 
+	stream->writeByte(_flyMode);
 	return Common::kNoError;
 }
 
