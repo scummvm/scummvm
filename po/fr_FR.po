@@ -6154,7 +6154,8 @@ msgstr "Interrompt la progression et s'arrête immédiatement au débogueur"
 
 #: engines/mtropolis/saveload.cpp:109
 msgid "Failed to read version information from save file"
-msgstr "Impossible de lire les informations de version du fichier de sauvegarde"
+msgstr ""
+"Impossible de lire les informations de version du fichier de sauvegarde"
 
 #: engines/mtropolis/saveload.cpp:117
 msgid ""
