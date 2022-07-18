@@ -468,8 +468,8 @@ bool FreescapeEngine::checkCollisions(bool executeConditions) {
 	Math::Vector3d v2;
 
 	if (executeConditions) {
-		v1 = Math::Vector3d(_position.x() -  areaScale * 3 * _playerWidth / 4, _position.y() - (areaScale + 1) * _playerHeight , _position.z() - areaScale * 3 * _playerDepth / 4);
-		v2 = Math::Vector3d(_position.x() +  areaScale * 3 * _playerWidth / 4, _position.y()                             , _position.z() + areaScale * 3 * _playerDepth / 4);
+		v1 = Math::Vector3d(_position.x() -  areaScale * 3 * _playerWidth / 5, _position.y() - (areaScale + 1) * _playerHeight , _position.z() - areaScale * 3 * _playerDepth / 5);
+		v2 = Math::Vector3d(_position.x() +  areaScale * 3 * _playerWidth / 5, _position.y()                                   , _position.z() + areaScale * 3 * _playerDepth / 5);
 	} else {
 		v1 = Math::Vector3d(_position.x() - areaScale * _playerWidth / 2, _position.y() - areaScale * _playerHeight , _position.z() - areaScale * _playerDepth / 2);
 		v2 = Math::Vector3d(_position.x() + areaScale * _playerWidth / 2, _position.y()                             , _position.z() + areaScale * _playerDepth / 2);
