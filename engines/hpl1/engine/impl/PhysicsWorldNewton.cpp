@@ -447,6 +447,7 @@ void cPhysicsWorldNewton::CastRay(iPhysicsRayCallback *apCallback,
 
 //-----------------------------------------------------------------------
 
+// Fix found in HPL2 (https://github.com/FrictionalGames/AmnesiaTheDarkDescent)
 static void correctNormal(cVector3f& normal, const cVector3f& collidePoint, const cVector3f& shapeCenter) {
 	cVector3f vCenterToCollidePoint = collidePoint - shapeCenter;
 	//A check if the normal points in the wrong direction.
@@ -456,7 +457,7 @@ static void correctNormal(cVector3f& normal, const cVector3f& collidePoint, cons
 
 bool cPhysicsWorldNewton::CheckShapeCollision(iCollideShape *apShapeA, const cMatrixf &a_mtxA,
 											  iCollideShape *apShapeB, const cMatrixf &a_mtxB,
-											  cCollideData &aCollideData, int alMaxPoints, 
+											  cCollideData &aCollideData, int alMaxPoints,
 											  bool correctNormalDirection) {
 	cCollideShapeNewton *pNewtonShapeA = static_cast<cCollideShapeNewton *>(apShapeA);
 	cCollideShapeNewton *pNewtonShapeB = static_cast<cCollideShapeNewton *>(apShapeB);
