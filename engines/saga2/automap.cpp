@@ -49,10 +49,6 @@ extern GameWorld            *currentWorld;
 
 requestInfo     rInfo;
 
-#if DEBUG
-bool autoMapCheat = false;
-#endif
-
 static AutoMap     *pAutoMap = nullptr;
 
 /* ===================================================================== *
@@ -178,6 +174,7 @@ AutoMap::AutoMap(const Rect16 box,
 
 	_trackPos = getCenterActor()->getLocation();
 
+	_autoMapCheat = false; // FIXME: Allow setting from debug console
 }
 
 // ------------------------------------------------------------------------
@@ -495,11 +492,7 @@ void AutoMap::createSmallMap() {
 			uint16  mtile = mapRow[v];
 
 			if (mtile & metaTileVisited)
-				if (
-#if DEBUG
-				    autoMapCheat ||
-#endif
-				    (mtile & metaTileVisited)) {
+				if (_autoMapCheat || (mtile & metaTileVisited)) {
 					// get the tile data
 					map.data = &_summaryData[(mtile & ~metaTileVisited) << 6];
 

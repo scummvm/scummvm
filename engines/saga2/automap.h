@@ -57,6 +57,8 @@ private:
 	uint8   *_summaryData;
 	Rect16  _sumMapArea;
 
+	bool _autoMapCheat;
+
 public:
 	AutoMap(const Rect16 box,
 	         uint8 *summary,
