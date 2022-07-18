@@ -1416,7 +1416,9 @@ void cMeshLoaderCollada::LoadGeometry(TiXmlElement *apRootElem, tColladaGeometry
 					for (int i = 0; i < 3; i++) {
 						DataVec[i].mlVtx = vIndexArray[lTriangleAdd + i * lTriElements + Geometry.mlPosIdxNum];
 						DataVec[i].mlNorm = vIndexArray[lTriangleAdd + i * lTriElements + Geometry.mlNormIdxNum];
-						DataVec[i].mlTex = vIndexArray[lTriangleAdd + i * lTriElements + Geometry.mlTexIdxNum];
+						// FIXME: temporary fix for a memory fault caused by a negative index value
+						if ((lTriangleAdd + i * lTriElements + Geometry.mlTexIdxNum) >= 0)
+							DataVec[i].mlTex = vIndexArray[lTriangleAdd + i * lTriElements + Geometry.mlTexIdxNum];
 					}
 				}
 
