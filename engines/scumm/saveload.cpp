@@ -1283,8 +1283,16 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint16LE(_cursor.hotspotY, VER(20));
 	s.syncAsByte(_cursor.animate, VER(20));
 	s.syncAsByte(_cursor.animateIndex, VER(20));
-	s.syncAsSint16LE(_mouse.x, VER(20));
-	s.syncAsSint16LE(_mouse.y, VER(20));
+
+	// Don't restore the mouse position when using
+	// the original GUI, since the originals didn't
+	if (isUsingOriginalGUI()) {
+		s.skip(2, VER(106));
+		s.skip(2, VER(106));
+	} else {
+		s.syncAsSint16LE(_mouse.x, VER(20));
+		s.syncAsSint16LE(_mouse.y, VER(20));
+	}
 
 	s.syncBytes(_colorUsedByCycle, 256, VER(60));
 	s.syncAsByte(_doEffect, VER(8));
