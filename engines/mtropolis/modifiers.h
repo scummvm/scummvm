@@ -30,6 +30,9 @@
 
 namespace MTropolis {
 
+struct AudioMetadata;
+class AudioPlayer;
+class CachedAudio;
 struct ModifierLoaderContext;
 class MiniscriptProgram;
 class MiniscriptReferences;
@@ -228,6 +231,9 @@ class SoundEffectModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::SoundEffectModifier &data);
 
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Sound Effect Modifier"; }
 #endif
@@ -241,11 +247,17 @@ private:
 		kSoundTypeAudioAsset,
 	};
 
+	void loadAndCacheAudio(Runtime *runtime);
+
 	Event _executeWhen;
 	Event _terminateWhen;
 
 	SoundType _soundType;
 	uint32 _assetID;
+
+	Common::SharedPtr<CachedAudio> _cachedAudio;
+	Common::SharedPtr<AudioMetadata> _metadata;
+	Common::SharedPtr<AudioPlayer> _player;
 };
 
 class PathMotionModifierV2 : public Modifier {

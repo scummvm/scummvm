@@ -21,6 +21,8 @@
 
 #include "common/memstream.h"
 
+#include "mtropolis/assets.h"
+#include "mtropolis/audio_player.h"
 #include "mtropolis/miniscript.h"
 #include "mtropolis/modifiers.h"
 #include "mtropolis/modifier_factory.h"
@@ -532,7 +534,7 @@ bool SoundEffectModifier::load(ModifierLoaderContext &context, const Data::Sound
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	if (!_executeWhen.load(data.executeWhen) || !_terminateWhen.load(data.executeWhen))
+	if (!_executeWhen.load(data.executeWhen) || !_terminateWhen.load(data.terminateWhen))
 		return false;
 
 	if (data.assetID == Data::SoundEffectModifier::kSpecialAssetIDSystemBeep) {
@@ -544,6 +546,57 @@ bool SoundEffectModifier::load(ModifierLoaderContext &context, const Data::Sound
 	}
 
 	return true;
+}
+
+bool SoundEffectModifier::respondsToEvent(const Event &evt) const {
+	return _executeWhen.respondsTo(evt) || _terminateWhen.respondsTo(evt);
+}
+
+VThreadState SoundEffectModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_terminateWhen.respondsTo(msg->getEvent())) {
+		if (_player) {
+			_player->stop();
+			_player.reset();
+		}
+	} else if (_executeWhen.respondsTo(msg->getEvent())) {
+		if (_soundType == kSoundTypeAudioAsset) {
+			if (!_cachedAudio)
+				loadAndCacheAudio(runtime);
+
+			if (_cachedAudio) {
+				if (_player) {
+					_player->stop();
+					_player.reset();
+				}
+
+				size_t numSamples = _cachedAudio->getNumSamples(*_metadata);
+				_player.reset(new AudioPlayer(runtime->getAudioMixer(), 255, 0, _metadata, _cachedAudio, false, 0, 0, numSamples));
+			}
+		}
+	}
+
+	return kVThreadReturn;
+}
+
+void SoundEffectModifier::loadAndCacheAudio(Runtime *runtime) {
+	if (_cachedAudio)
+		return;
+
+	Project *project = runtime->getProject();
+	Common::SharedPtr<Asset> asset = project->getAssetByID(_assetID).lock();
+
+	if (!asset) {
+		warning("Sound effect modifier references asset %i but the asset isn't loaded!", _assetID);
+		return;
+	}
+
+	if (asset->getAssetType() != kAssetTypeAudio) {
+		warning("Sound element assigned an asset that isn't audio");
+		return;
+	}
+
+	_cachedAudio = static_cast<AudioAsset *>(asset.get())->loadAndCacheAudio(runtime);
+	_metadata = static_cast<AudioAsset *>(asset.get())->getMetadata();
 }
 
 Common::SharedPtr<Modifier> SoundEffectModifier::shallowClone() const {

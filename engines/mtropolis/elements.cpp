@@ -29,137 +29,14 @@
 #include "graphics/font.h"
 #include "graphics/managed_surface.h"
 
-#include "mtropolis/elements.h"
 #include "mtropolis/assets.h"
+#include "mtropolis/audio_player.h"
+#include "mtropolis/elements.h"
 #include "mtropolis/element_factory.h"
 #include "mtropolis/miniscript.h"
 #include "mtropolis/render.h"
 
 namespace MTropolis {
-
-
-// Audio player, this does not support requeueing.  If the sound exhausts, then you must create a
-// new audio player.  In particular, since time is being tracked separately, if the loop status
-// changes when the timer thinks the sound should still be playing, but the sound has actually
-// exhausted, then the sound needs to be requeued.
-class AudioPlayer : public Audio::AudioStream {
-public:
-	AudioPlayer(Audio::Mixer *mixer, byte volume, int8 balance, const Common::SharedPtr<AudioMetadata> &metadata, const Common::SharedPtr<CachedAudio> &audio, bool isLooping, size_t currentPos, size_t startPos, size_t endPos);
-	~AudioPlayer();
-	
-	int readBuffer(int16 *buffer, const int numSamples) override;
-	bool isStereo() const override;
-	int getRate() const override;
-	bool endOfData() const override;
-
-	void sendToMixer(Audio::Mixer *mixer, byte volume, int8 balance);
-	void stop();
-
-private:
-	Common::Mutex _mutex;
-
-	Common::SharedPtr<AudioMetadata> _metadata;
-	Common::SharedPtr<CachedAudio> _audio;
-	Audio::SoundHandle _handle;
-	bool _isLooping;
-	bool _exhausted;
-	size_t _currentPos;
-	size_t _startPos;
-	size_t _endPos;
-	Audio::Mixer *_mixer;
-};
-
-AudioPlayer::AudioPlayer(Audio::Mixer *mixer, byte volume, int8 balance, const Common::SharedPtr<AudioMetadata> &metadata, const Common::SharedPtr<CachedAudio> &audio, bool isLooping, size_t currentPos, size_t startPos, size_t endPos)
-	: _metadata(metadata), _audio(audio), _isLooping(isLooping), _currentPos(currentPos), _startPos(startPos), _endPos(endPos), _exhausted(false), _mixer(nullptr) {
-	if (_startPos >= _endPos) {
-		// ???
-		_exhausted = true;
-		_isLooping = false;
-	}
-	if (_currentPos < _startPos)
-		_currentPos = _startPos;
-
-	if (!_exhausted) {
-		_mixer = mixer;
-		mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, this, -1, volume, balance, DisposeAfterUse::NO);
-	}
-}
-
-AudioPlayer::~AudioPlayer() {
-	stop();
-}
-
-int AudioPlayer::readBuffer(int16 *buffer, const int numSamplesTimesChannelCount) {
-	Common::StackLock lock(_mutex);
-
-	int samplesRead = 0;
-	if (_exhausted)
-		return 0;
-
-	uint8 numChannels = _metadata->channels;
-
-	size_t numSamples = numSamplesTimesChannelCount / numChannels;
-
-	while (numSamples > 0) {
-		size_t samplesAvailable = _endPos - _currentPos;
-		if (samplesAvailable == 0) {
-			if (_isLooping) {
-				_currentPos = _startPos;
-				continue;
-			} else {
-				_exhausted = true;
-				break;
-			}
-		}
-
-		size_t numSamplesThisIteration = numSamples;
-		if (numSamplesThisIteration > samplesAvailable)
-			numSamplesThisIteration = samplesAvailable;
-
-		size_t numSampleValues = numSamplesThisIteration * numChannels;
-		// TODO: Support more formats
-		if (_metadata->bitsPerSample == 8 && _metadata->encoding == AudioMetadata::kEncodingUncompressed) {
-			const uint8 *inSamples = static_cast<const uint8 *>(_audio->getData()) + _currentPos * numChannels;
-			for (size_t i = 0; i < numSampleValues; i++)
-				buffer[i] = (inSamples[i] - 0x80) * 256;
-		} else if (_metadata->bitsPerSample == 16 && _metadata->encoding == AudioMetadata::kEncodingUncompressed) {
-			const int16 *inSamples = static_cast<const int16 *>(_audio->getData()) + _currentPos * numChannels;
-			memcpy(buffer, inSamples, sizeof(int16) * numSampleValues);
-		}
-
-		buffer += numSampleValues;
-		numSamples -= numSamplesThisIteration;
-
-		samplesRead += numSamplesThisIteration * numChannels;
-		_currentPos += numSamplesThisIteration;
-	}
-
-	return samplesRead;
-}
-
-bool AudioPlayer::isStereo() const {
-	return _metadata->channels == 2;
-}
-
-int AudioPlayer::getRate() const {
-	return _metadata->sampleRate;
-}
-
-bool AudioPlayer::endOfData() const {
-	return _exhausted;
-}
-
-void AudioPlayer::sendToMixer(Audio::Mixer *mixer, byte volume, int8 balance) {
-	mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, this, -1, volume, balance, DisposeAfterUse::NO);
-}
-
-void AudioPlayer::stop() {
-	if (_mixer)
-		_mixer->stopHandle(_handle);
-
-	_exhausted = true;
-	_mixer = nullptr;
-}
 
 GraphicElement::GraphicElement() : _cacheBitmap(false) {
 }
