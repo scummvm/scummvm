@@ -539,10 +539,11 @@ bool FreescapeEngine::hasFeature(EngineFeature f) const {
 }
 
 void FreescapeEngine::playSound(int index) {
+	_mixer->stopAll();
 	debug("Playing sound %d", index);
-	_speaker.setVolume(Audio::Mixer::kMaxChannelVolume);
-	_speaker.play(Audio::PCSpeaker::kWaveFormSine, 2000, 100);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle, &_speaker);
+	Audio::PCSpeaker *speaker = new Audio::PCSpeaker();
+	speaker->play(Audio::PCSpeaker::kWaveFormSine, 2000, 100);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle, speaker);
 }
 
 Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream) {
