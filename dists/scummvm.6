@@ -99,36 +99,36 @@ Force windowed mode.
 .It Fl g | -gfx-mode= Ns Ar MODE
 Select graphics scaler:
 .Bl -tag -width 10m
-.It Em 1x
+.It Ar 1x
 No filtering, no scaling.
 Fastest.
-.It Em 2x
+.It Ar 2x
 No filtering, factor 2x (default for non 640x480 games).
-.It Em 3x
+.It Ar 3x
 No filtering, factor 3x.
-.It Em 2xsai
+.It Ar 2xsai
 2xSAI filter, factor 2x.
-.It Em super2xsai
+.It Ar super2xsai
 Enhanced 2xSAI filtering, factor 2x.
-.It Em supereagle
+.It Ar supereagle
 Less blurry than 2xSAI, but slower.
 Factor 2x.
-.It Em advmame2x
+.It Ar advmame2x
 Doesn't rely on blurring like 2xSAI, fast.
 Factor 2x.
-.It Em advmame3x
+.It Ar advmame3x
 Doesn't rely on blurring like 2xSAI, fast.
 Factor 3x.
-.It Em hq2x
+.It Ar hq2x
 Very nice high quality filter but slow.
 Factor 2x.
-.It Em hq3x
+.It Ar hq3x
 Very nice high quality filter but slow.
 Factor 3x.
-.It Em tv2x
+.It Ar tv2x
 Interlace filter, tries to emulate a TV.
 Factor 2x.
-.It Em dotmatrix
+.It Ar dotmatrix
 Dot matrix effect.
 Factor 2x.
 .El
@@ -158,33 +158,33 @@ Display list of all usable GUI themes
 .It Fl e | -music-driver= Ns Ar MODE
 Select music driver:
 .Bl -tag -width 10m
-.It Em null
+.It Ar null
 Null output.
 Don't play any music.
-.It Em adlib
+.It Ar adlib
 Internal AdLib emulation
-.It Em fluidsynth
+.It Ar fluidsynth
 FluidSynth MIDI emulation
-.It Em mt32
+.It Ar mt32
 Internal MT-32 emulation
-.It Em pcjr
+.It Ar pcjr
 Internal PCjr emulation (only usable in SCUMM games)
-.It Em pcspk
+.It Ar pcspk
 Internal PC Speaker emulation
-.It Em towns
+.It Ar towns
 Internal FM-TOWNS YM2612 emulation (only usable in SCUMM FM-TOWNS games)
-.It Em alsa
+.It Ar alsa
 Output using ALSA sequencer device
-.It Em core
+.It Ar core
 CoreAudio sound, for macOS users
-.It Em coremidi
+.It Ar coremidi
 CoreMIDI sound, for macOS users.
 Use only if you have a hardware MIDI synthesizer.
-.It Em seq
+.It Ar seq
 Use /dev/sequencer for MIDI, *nix users.
-.It Em timidity
+.It Ar timidity
 Connect to TiMidity++ MIDI server.
-.It Em windows
+.It Ar windows
 Windows built in MIDI sequencer for Windows users
 .El
 .It Fl -list-audio-devices
@@ -192,33 +192,33 @@ List all available audio devices
 .It Fl q | -language= Ns Ar LANG
 Select game's language:
 .Bl -tag -width Ds
-.It Em cz
+.It Ar cz
 Czech
-.It Em de
+.It Ar de
 German
-.It Em en
+.It Ar en
 English (USA) (default)
-.It Em es
+.It Ar es
 Spanish
-.It Em fr
+.It Ar fr
 French
-.It Em gb
+.It Ar gb
 English (Great Britain)
-.It Em hb
+.It Ar hb
 Hebrew
-.It Em it
+.It Ar it
 Italian
-.It Em jp
+.It Ar jp
 Japanese
-.It Em kr
+.It Ar kr
 Korean
-.It Em pt
+.It Ar pt
 Portuguese
-.It Em ru
+.It Ar ru
 Russian
-.It Em se
+.It Ar se
 Swedish
-.It Em zh
+.It Ar zh
 Chinese
 .El
 .It Fl m | -music-volume= Ns Ar NUM
