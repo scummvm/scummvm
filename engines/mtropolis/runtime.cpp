@@ -3507,6 +3507,10 @@ RuntimeObject *MessageDispatch::getRootPropagator() const {
 		case PropagationStack::kStageSendToStructuralModifiers:
 		case PropagationStack::kStageSendToStructuralSelf:
 			return lowest.ptr.structural;
+		case PropagationStack::kStageCheckAndSendToModifier:
+		case PropagationStack::kStageCheckAndSendToStructural:
+		case PropagationStack::kStageCheckAndSendCommand:
+			return _root.lock().get();
 		default:
 			break;
 		}
@@ -4291,7 +4295,6 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 	}
 
 	{
-		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetSharedScene, LowLevelSceneStateTransitionAction::kAutoResetCursor));
 		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetScene, LowLevelSceneStateTransitionAction::kLoad));
 		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentEnabled, 0), targetScene.get(), true, true);
 		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneStarted, 0), targetScene.get(), true, true);
@@ -4301,6 +4304,12 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 
 		_sceneStack.push_back(sceneEntry);
 	}
+
+	// This might not be exactly where this belongs but it must go after Parent Enabled for sure, otherwise
+	// the wave puzzle in the Mac version of Obsidian completes instantly because Parent Enabled hasn't had
+	// a chance to clear the flags.  It looks like what's supposed to happen is the cursor override gets
+	// cleared by the scene transition starting and the cursor reset happens after.  Fix this later...
+	_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetScene, LowLevelSceneStateTransitionAction::kAutoResetCursor));
 
 	_activeMainScene = targetScene;
 	_activeSharedScene = targetSharedScene;
