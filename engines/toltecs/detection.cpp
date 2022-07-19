@@ -183,7 +183,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 		// 3 Skulls of the Toltecs English Demo version
 		{
 			"toltecs",
-			0,
+			"Demo",
 			AD_ENTRY1s("WESTERN", "53a0abd1c0bc5cad8ba18f0e56877705", 46241833),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
@@ -196,7 +196,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 		// 3 Skulls of the Toltecs German Demo version
 		{
 			"toltecs",
-			0,
+			"Demo",
 			AD_ENTRY1s("WESTERN", "1c85e82712d24f1d5c1ea2a66ddd75c2", 47730038),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
