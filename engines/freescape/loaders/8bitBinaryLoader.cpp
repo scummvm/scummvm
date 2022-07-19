@@ -408,8 +408,10 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		file->read(conditionData, lengthOfCondition);
 		Common::Array<uint8> conditionArray(conditionData, lengthOfCondition);
 		//debug("Global condition %d", numConditions + 1);
-		Common::String *conditions = detokenise8bitCondition(conditionArray, instructions);
-		debugC(1, kFreescapeDebugParser, "%s", conditions->c_str());
+		Common::String *conditionSource = detokenise8bitCondition(conditionArray, instructions);
+		_conditions.push_back(instructions);
+		_conditionSources.push_back(conditionSource);
+		debugC(1, kFreescapeDebugParser, "%s", conditionSource->c_str());
 	}
 
 	if (_targetName.hasPrefix("driller")) {

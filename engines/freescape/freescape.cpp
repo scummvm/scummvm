@@ -481,9 +481,24 @@ bool FreescapeEngine::checkCollisions(bool executeConditions) {
 	if (obj != nullptr) {
 		debugC(1, kFreescapeDebugMove, "Collided with object id %d of size %f %f %f", obj->getObjectID(), obj->getSize().x(), obj->getSize().y(), obj->getSize().z());
 		GeometricObject *gobj = (GeometricObject*) obj;
-		if (gobj->conditionSource != nullptr && executeConditions) {
-			debug("Must use collision = true when executing: %s", gobj->conditionSource->c_str());
+		if (!executeConditions) // Avoid executing code
+			return true;
+
+		if (gobj->conditionSource != nullptr) {
+			debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", gobj->conditionSource->c_str());
 			executeCode(gobj->condition, false, true);
+		}
+
+		debugC(1, kFreescapeDebugCode, "Executing room conditions");
+		for (int i = 0; i < int(_currentArea->conditions.size()); i++) {
+			debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", _currentArea->conditionSources[i]->c_str());
+			executeCode(_currentArea->conditions[i], true, false);
+		}
+
+		debugC(1, kFreescapeDebugCode, "Executing global conditions (%d)", _conditions.size());
+		for (int i = 0; i < int(_conditions.size()); i++) {
+			//debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", _conditionSources[i]->c_str());
+			executeCode(_conditions[i], false, true);
 		}
 		return true;
 	}
