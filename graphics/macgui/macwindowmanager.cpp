@@ -255,6 +255,7 @@ void MacWindowManager::setDesktopMode(uint32 mode) {
 			loadDesktop();
 	} else if (_desktopBmp) {
 		_desktopBmp->free();
+		_desktopBmp = nullptr;
 	}
 
 	_mode = mode;
