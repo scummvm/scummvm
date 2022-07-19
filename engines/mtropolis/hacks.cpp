@@ -156,6 +156,9 @@ private:
 	template<class TPixel>
 	void anamorphicScaleFrameTyped(const Graphics::Surface &src, Graphics::Surface &dest) const;
 
+	static double anamorphicCurve(double d);
+	static double inverseAnamorphicCurve(double d);
+
 	template<class TPixel>
 	void halveWidthTyped(const Graphics::Surface &src, Graphics::Surface &dest) const;
 
@@ -168,6 +171,8 @@ private:
 
 ObsidianRSGLogoAnamorphicFilter::ObsidianRSGLogoAnamorphicFilter() {
 	// Anamorphic rescale, keeps the RSG logo proportional but preserves the vertical spacing!
+	// We use an anamorphic curve of y=x+x^2 which ensures the derivative at 0 is 1, meaning
+	// the rate of change stays constant at with the unfiltered pixels at the edge of the filter.
 	const uint unscaledWidth = 640;
 	const uint unscaledHeight = 480;
 
@@ -184,17 +189,35 @@ ObsidianRSGLogoAnamorphicFilter::ObsidianRSGLogoAnamorphicFilter() {
 
 	const double sideMarginInScaledImage = (static_cast<double>(scaledWidth) - ((static_cast<double>(unscaledWidth) - sideMarginInOriginalImage * 2.0) * scalingFactor)) * 0.5;
 
+	const double originalMarginHeightFraction = sideMarginInOriginalImage / static_cast<double>(unscaledHeight);
+	const double scaledMarginHeightFraction = sideMarginInScaledImage / static_cast<double>(scaledHeight);
+
+	const double targetCurveRatio = scaledMarginHeightFraction / originalMarginHeightFraction;
+
+	// (x + x^2) / x = targetCurveRatio
+	// (x + x^2) = targetCurveRatio * x
+	// 1 + x = targetCurveRatio
+
+	const double xCurveRatio = targetCurveRatio - 1.0;
+	const double yCurveRatio = anamorphicCurve(xCurveRatio);
+
 	const double rightMarginStart = static_cast<double>(scaledWidth) - sideMarginInScaledImage;
 
 	for (uint i = 0; i < scaledWidth; i++) {
 		double pixelCenterX = static_cast<double>(i) + 0.5;
 		double originalImagePixelCenter = 0.0;
 		if (pixelCenterX < sideMarginInScaledImage) {
-			double marginFraction = pixelCenterX / sideMarginInScaledImage;
-			originalImagePixelCenter = sqrt(marginFraction) * sideMarginInOriginalImage;
+			double marginFraction = 1.0 - pixelCenterX / sideMarginInScaledImage;
+			double marginCurveY = marginFraction * yCurveRatio;
+			double marginCurveX = inverseAnamorphicCurve(marginCurveY);
+			double multiplier = 1.0 - marginCurveX / xCurveRatio;
+			originalImagePixelCenter = multiplier * sideMarginInOriginalImage;
 		} else if (pixelCenterX > rightMarginStart) {
-			double marginFraction = (static_cast<double>(scaledWidth) - pixelCenterX) / sideMarginInScaledImage;
-			originalImagePixelCenter = static_cast<double>(unscaledWidth) - sqrt(marginFraction) * sideMarginInOriginalImage;
+			double marginFraction = 1.0 - (static_cast<double>(scaledWidth) - pixelCenterX) / sideMarginInScaledImage;
+			double marginCurveY = marginFraction * yCurveRatio;
+			double marginCurveX = inverseAnamorphicCurve(marginCurveY);
+			double multiplier = 1.0 - marginCurveX / xCurveRatio;
+			originalImagePixelCenter = static_cast<double>(unscaledWidth) - multiplier * sideMarginInOriginalImage;
 		} else {
 			double offsetFromCenter = pixelCenterX - (static_cast<double>(scaledWidth) * 0.5);
 			double offsetFromCenterInOriginalImage = offsetFromCenter * invScalingFactor;
@@ -232,6 +255,14 @@ void ObsidianRSGLogoAnamorphicFilter::anamorphicScaleFrameTyped(const Graphics::
 		for (uint col = 0; col < width; col++)
 			destRow[col] = srcRow[xCoordinates[col]];
 	}
+}
+
+double ObsidianRSGLogoAnamorphicFilter::anamorphicCurve(double d) {
+	return d + d * d;
+}
+
+double ObsidianRSGLogoAnamorphicFilter::inverseAnamorphicCurve(double d) {
+	return -0.5 + sqrt(0.25 + d);
 }
 
 template<class TPixel>
