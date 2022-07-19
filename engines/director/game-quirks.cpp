@@ -29,7 +29,7 @@ static void quirkKidsBox() {
     // a full screen 640x480 game window. If desktop mode is off, ScummVM
     // will pick a game window that fits the splash screen and then try
     // to squish the full size game window into it.
-    g_director->_wmMode = Director::kWMModeDesktop;
+    g_director->_wmMode &= !Graphics::kWMModeNoDesktop;
     // Game runs in 640x480; clipping it to this size ensures the main
     // game window takes up the full screen, and only the splash is windowed.
     g_director->_wmWidth = 640;
