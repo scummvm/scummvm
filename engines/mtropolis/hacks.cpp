@@ -150,7 +150,7 @@ class ObsidianRSGLogoAnamorphicFilter : public MovieResizeFilter {
 public:
 	ObsidianRSGLogoAnamorphicFilter();
 
-	Common::SharedPtr<Graphics::Surface> scaleFrame(const Graphics::Surface &surface, uint timestamp) const override;
+	Common::SharedPtr<Graphics::Surface> scaleFrame(const Graphics::Surface &surface, uint32 timestamp) const override;
 
 private:
 	template<class TPixel>
@@ -295,7 +295,7 @@ void ObsidianRSGLogoAnamorphicFilter::halveHeightTyped(const Graphics::Surface &
 	}
 }
 
-Common::SharedPtr<Graphics::Surface> ObsidianRSGLogoAnamorphicFilter::scaleFrame(const Graphics::Surface &surface, uint timestamp) const {
+Common::SharedPtr<Graphics::Surface> ObsidianRSGLogoAnamorphicFilter::scaleFrame(const Graphics::Surface &surface, uint32 timestamp) const {
 	Common::SharedPtr<Graphics::Surface> result(new Graphics::Surface());
 	result->create(_xCoordinates.size() / 2, _yCoordinates.size() / 2, surface.format);
 
