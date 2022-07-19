@@ -26,9 +26,6 @@
 #include "mtropolis/runtime.h"
 #include "mtropolis/render.h"
 
-namespace Audio {
-} // End of namespace Audio
-
 namespace MTropolis {
 
 struct AssetLoaderContext;
