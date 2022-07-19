@@ -54,32 +54,32 @@ Set debug verbosity level.
 .It Fl e | -music-driver= Ns Ar MODE
 Select music driver:
 .Bl -tag -width 10m
-.It Ar null
-Null output.
-Don't play any music.
 .It Ar adlib
 Internal AdLib emulation
-.It Ar fluidsynth
-FluidSynth MIDI emulation
-.It Ar mt32
-Internal MT-32 emulation
-.It Ar pcjr
-Internal PCjr emulation (only usable in SCUMM games)
-.It Ar pcspk
-Internal PC Speaker emulation
-.It Ar towns
-Internal FM-TOWNS YM2612 emulation (only usable in SCUMM FM-TOWNS games)
 .It Ar alsa
 Output using ALSA sequencer device
 .It Ar core
 CoreAudio sound, for macOS users
 .It Ar coremidi
 CoreMIDI sound, for macOS users.
-Use only if you have a hardware MIDI synthesizer.
+.It Ar fluidsynth
+FluidSynth MIDI emulation
+.It Ar mt32
+Internal MT-32 emulation
+.It Ar null
+Null output.
+Don't play any music.
+.It Ar pcjr
+Internal PCjr emulation (only usable in SCUMM games)
+.It Ar pcspk
+Internal PC Speaker emulation
 .It Ar seq
 Use /dev/sequencer for MIDI, *nix users.
 .It Ar timidity
 Connect to TiMidity++ MIDI server.
+.It Ar towns
+Internal FM-TOWNS YM2612 emulation (only usable in SCUMM FM-TOWNS games)
+Use only if you have a hardware MIDI synthesizer.
 .It Ar windows
 Windows built in MIDI sequencer for Windows users
 .El
