@@ -54,10 +54,11 @@
 #include "engines/engine.h"
 #include "engines/util.h"
 
+#include "graphics/macgui/macdialog.h"
+
 #include "wage/wage.h"
 #include "wage/entities.h"
 #include "wage/gui.h"
-#include "wage/dialog.h"
 #include "wage/script.h"
 #include "wage/world.h"
 
@@ -203,11 +204,11 @@ void WageEngine::appendText(const char *str) {
 }
 
 void WageEngine::gameOver() {
-	DialogButtonArray buttons;
+	Graphics::MacDialogButtonArray buttons;
 
-	buttons.push_back(new DialogButton("OK", 66, 67, 68, 28));
+	buttons.push_back(new Graphics::MacDialogButton("OK", 66, 67, 68, 28));
 
-	Dialog gameOverDialog(_gui, 199, _world->_gameOverMessage->c_str(), &buttons, 0);
+	Graphics::MacDialog gameOverDialog(_gui, 199, _world->_gameOverMessage->c_str(), &buttons, 0);
 
 	gameOverDialog.run();
 
@@ -218,13 +219,13 @@ void WageEngine::gameOver() {
 }
 
 bool WageEngine::saveDialog() {
-	DialogButtonArray buttons;
+	Graphics::MacDialogButtonArray buttons;
 
-	buttons.push_back(new DialogButton("No", 19, 67, 68, 28));
-	buttons.push_back(new DialogButton("Yes", 112, 67, 68, 28));
-	buttons.push_back(new DialogButton("Cancel", 205, 67, 68, 28));
+	buttons.push_back(new Graphics::MacDialogButton("No", 19, 67, 68, 28));
+	buttons.push_back(new Graphics::MacDialogButton("Yes", 112, 67, 68, 28));
+	buttons.push_back(new Graphics::MacDialogButton("Cancel", 205, 67, 68, 28));
 
-	Dialog save(_gui, 291, _world->_saveBeforeCloseMessage->c_str(), &buttons, 1);
+	Graphics::MacDialog save(_gui, 291, _world->_saveBeforeCloseMessage->c_str(), &buttons, 1);
 
 	int button = save.run();
 

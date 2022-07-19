@@ -54,6 +54,7 @@
 #include "common/rect.h"
 #include "common/macresman.h"
 #include "common/random.h"
+#include "common/events.h"
 
 #include "wage/debugger.h"
 
@@ -127,6 +128,7 @@ public:
 	void regen();
 
 	const char *getTargetName() { return _targetName.c_str(); }
+	bool pollEvent(Common::Event &event) { return _eventMan->pollEvent(event); } 
 
 private:
 	bool loadWorld(Common::MacResManager *resMan);
