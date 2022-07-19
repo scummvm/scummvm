@@ -224,6 +224,10 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			detokenisedStream += "IF RVIS? ";
 			detokenisedStream += Common::String::format("(%d), (%d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
 			detokenisedStream += "THEN END ENDIF";
+			currentInstruction = FCLInstruction(Token::INVISQ);
+			currentInstruction.setSource(tokenisedCondition[bytePointer]);
+			currentInstruction.setAdditional(tokenisedCondition[bytePointer + 1]);
+			currentInstruction.setDestination(false); // visible
 			bytePointer += 2;
 			numberOfArguments = 0;
 			break;
@@ -232,6 +236,10 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			detokenisedStream += "IF RINVIS? ";
 			detokenisedStream += Common::String::format("(%d), (%d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
 			detokenisedStream += "THEN END ENDIF";
+			currentInstruction = FCLInstruction(Token::INVISQ);
+			currentInstruction.setSource(tokenisedCondition[bytePointer]);
+			currentInstruction.setAdditional(tokenisedCondition[bytePointer + 1]);
+			currentInstruction.setDestination(true); // invisible
 			bytePointer += 2;
 			numberOfArguments = 0;
 			break;

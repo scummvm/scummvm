@@ -22,12 +22,14 @@ public:
 	FCLInstruction();
 	FCLInstruction(Token::Type type);
 	void setSource(int32 _source);
+	void setAdditional(int32 _additional);
 	void setDestination(int32 _destination);
 
 	Token::Type getType();
 	void setBranches(FCLInstructionVector *thenBranch, FCLInstructionVector *elseBranch);
 
 	int32 source;
+	int32 additional;
 	int32 destination;
 
 	FCLInstructionVector *thenInstructions;
