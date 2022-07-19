@@ -167,7 +167,7 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::L
 	_mouseDown = false;
 	_hoveredWidget = nullptr;
 
-	_mode = mode;
+	_mode = 0;
 	_language = language;
 
 	_menu = 0;
@@ -251,7 +251,7 @@ MacWindowManager::~MacWindowManager() {
 
 void MacWindowManager::setDesktopMode(uint32 mode) {
 	if (!(mode & Graphics::kWMNoScummVMWallpaper)) {
-		if (_mode & Graphics::kWMNoScummVMWallpaper)
+		if (!_mode || (_mode & Graphics::kWMNoScummVMWallpaper))
 			loadDesktop();
 	} else if (_desktopBmp) {
 		_desktopBmp->free();
