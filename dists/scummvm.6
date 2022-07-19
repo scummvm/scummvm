@@ -50,7 +50,7 @@ Pass number to the boot script (boot param).
 .It Fl c | -config= Ns Ar CONFIG
 Use alternate configuration file.
 .It Fl d | -debuglevel= Ns Ar NUM
-Set debug verbosity level
+Set debug verbosity level.
 .It Fl e | -music-driver= Ns Ar MODE
 Select music driver:
 .Bl -tag -width 10m
@@ -199,11 +199,11 @@ Enable copy protection in games, when ScummVM disables it by default.
 .It Fl -dirtyrects
 Enable dirty rectangles optimisation in software renderer (default: enabled).
 .It Fl -debug-channels-only
-Show only the specified debug channels
+Show only the specified debug channels.
 .It Fl -debugflags= Ns Ar FLAGS
-Enable engine specific debug flags (separated by commas)
+Enable engine specific debug flags (separated by commas).
 .It Fl -demo-mode
-Start demo mode of Maniac Mansion (Classic version)
+Start demo mode of Maniac Mansion (Classic version).
 .It Fl -detect
 Display a list of games with their ID from current or specified directory
 without adding it to the config.
@@ -225,9 +225,9 @@ only lists games for this engine.
 .It Fl -engine-speed= Ns Ar NUM
 Set frame per second limit (0 - 100), 0 = no limit (default: 60).
 .It Fl -extrapath= Ns Ar PATH
-Extra path to additional game data
+Extra path to additional game data.
 .It Fl -filtering
-Force filtered graphics mode
+Force filtered graphics mode.
 .It Fl -game= Ns Ar ID
 In combination with
 .Fl -add
@@ -241,7 +241,7 @@ Select GUI theme
 .Ar default ,
 .Ar modern ,
 .Ar classic
-.Pc
+.Pc .
 .It Fl -joystick= Ns Ar NUM
 Enable joystick input (default: 0 = first joystick).
 .It Fl -iconspath= Ns Ar PATH
@@ -253,7 +253,7 @@ Display list of all detection engines and exit.
 .It Fl -list-all-games
 Display list of all detected games and exit.
 .It Fl -list-audio-devices
-List all available audio devices
+List all available audio devices.
 .It Fl -list-debugflags= Ns Ar engine
 Display list of engine specified debugflags.
 if
@@ -275,7 +275,7 @@ or
 only adds or attempts to detect the game with id
 .Ar ID .
 .It Fl -list-themes
-Display list of all usable GUI themes
+Display list of all usable GUI themes.
 .It Fl -md5
 Shows MD5 hash of the file given by
 .Fl -md5-path= Ns Ar PATH .
@@ -299,7 +299,7 @@ is passed then it shows the MD5 hash of the first or last
 .Ar NUM
 bytes of each fork.
 .It Fl -midi-gain= Ns Ar NUM
-Set the gain for MIDI playback, 0-1000 (default: 100)
+Set the gain for MIDI playback, 0-1000 (default: 100).
 .br
 (only supported by some MIDI drivers)
 .It Fl -multi-midi
@@ -307,14 +307,14 @@ Enable combination of AdLib and native MIDI.
 .It Fl -native-mt32
 True Roland MT-32 MIDI (disable GM emulation).
 .It Fl -no-filtering
-Force unfiltered graphics mode
+Force unfiltered graphics mode.
 .It Fl -opl-driver= Ns Ar DRIVER
 Select AdLib (OPL) emulator
 .Po
 .Ar db ,
 .Ar mame ,
 .Ar nuked
-.Pc
+.Pc .
 .It Fl -output-rate= Ns Ar RATE
 Set output sample rate in Hz (e.g. 22050).
 .It Fl -platform= Ns Ar WORD
@@ -333,13 +333,13 @@ Specify platform of game
 .Ar pce ,
 .Ar segacd ,
 .Ar windows
-.Pc
+.Pc .
 .It Fl -recursive
 In combination with
 .Fl -add
 or
 .Fl -detect
-recurse down all subdirectories
+recurse down all subdirectories.
 .It Fl -render-mode= Ns Ar MODE
 Enable additional render modes
 .Po
@@ -355,16 +355,16 @@ Enable additional render modes
 .Ar 2gs ,
 .Ar atari ,
 .Ar macintosh
-.Pc
+.Pc .
 .It Fl -renderer= Ns Ar RENDERER
 Select 3D renderer
 .Po
 .Ar software ,
 .Ar opengl ,
 .Ar opengl_shaders
-.Pc
+.Pc .
 .It Fl -savepath= Ns Ar PATH
-Path to where saved games are stored
+Path to where saved games are stored.
 .It Fl -scale-factor= Ns Ar FACTOR
 Factor to scale the graphics by.
 .It Fl -scaler= Ns Ar MODE
@@ -397,13 +397,13 @@ Select stretch mode
 .Ar integral ,
 .Ar fit ,
 .Ar stretch
-.Pc
+.Pc .
 .It Fl -talkspeed= Ns Ar NUM
-Set talk delay for SCUMM games, or talk speed for other games (default: 60)
+Set talk delay for SCUMM games, or talk speed for other games (default: 60).
 .It Fl -tempo= Ns Ar NUM
 Set music tempo (in percent, 50-200) for SCUMM games (default: 100).
 .It Fl -themepath= Ns Ar PATH
-Path to where GUI themes are stored
+Path to where GUI themes are stored.
 .It Fl -window-size= Ns Ar W,H
 Set the ScummVM window size to the specified dimensions (OpenGL only).
 .El
