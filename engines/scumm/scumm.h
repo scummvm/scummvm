@@ -1072,8 +1072,7 @@ protected:
 	void mac_undrawIndy3TextBox();
 	void mac_undrawIndy3CreditsText();
 
-	const byte *postProcessV2Graphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const;
-	void ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const;
+	const byte *postProcessDOSGraphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const;
 
 public:
 	VirtScreen *findVirtScreen(int y);
@@ -1082,7 +1081,6 @@ public:
 protected:
 	void fadeIn(int effect);
 	void fadeOut(int effect);
-	void setScrollBuffer();
 
 	void dissolveEffectSelector();
 	void transitionEffect(int a);

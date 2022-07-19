@@ -54,8 +54,6 @@ static void copy8Col(byte *dst, int dstPitch, const byte *src, int height, uint8
 #endif
 static void clear8Col(byte *dst, int dstPitch, int height, uint8 bitDepth);
 
-static void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height);
-
 struct StripTable {
 	int offsets[160];
 	int run[160];
@@ -767,27 +765,15 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 					_system->copyRectToScreen(blackbuf, 16, 0, 0, 16, 240); // Fix left strip
 				}
 			}
-		} else if (_game.version == 1 || _game.version == 2) {
-			// MM/ZAK v1/v2
-			src = postProcessV2Graphics(vs, pitch, x, y, width, height);
-		} else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-			// MI1
-			ditherHerc(_compositeBuf, _hercCGAScaleBuf, width, &x, &y, &width, &height);
-
-			src = _hercCGAScaleBuf + x + y * kHercWidth;
-			pitch = kHercWidth;
-
-			// center image on the screen
-			x += (kHercWidth - _screenWidth * 2) / 2;	// (720 - 320*2)/2 = 40
 		} else if (_useCJKMode && m == 2) {
 			pitch *= m;
 			x *= m;
 			y *= m;
 			width *= m;
 			height *= m;
-		} else if (_renderMode == Common::kRenderCGA) {
-			// LOOM, MI1
-			ditherCGA(_compositeBuf, width, x, y, width, height);
+		} else if (_game.platform == Common::kPlatformDOS && _game.version < 5) {
+			// CGA and Hercules modes for MM/ZAK v1/v2, INDY3, LOOM, MI1EGA
+			src = postProcessDOSGraphics(vs, pitch, x, y, width, height);
 		}
 	}
 
@@ -795,11 +781,24 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	_system->copyRectToScreen(src, pitch, x, y, width, height);
 }
 
-const byte *ScummEngine::postProcessV2Graphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const {
-	static const byte v2VrbColMap[] =	{ 0x0, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF, 0xF, 0x5, 0x5, 0x5, 0xA, 0xA, 0xF, 0xF };
-	static const byte v2TxtColMap[] =	{ 0x0, 0xF, 0xA, 0x5, 0xA, 0x5, 0x5, 0xF, 0xA, 0xA, 0xA, 0xA, 0xA, 0x5, 0x5, 0xF };
-	static const byte mmv1VrbColMap[] =	{ 0x0, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF, 0xA, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF };
-	static const byte v2MainColMap[] =	{ 0x0, 0x4, 0x1, 0x5, 0x8, 0xA, 0x2, 0xF, 0xC, 0x7, 0xD, 0x5, 0xE, 0xB, 0xD, 0xF };
+const byte *ScummEngine::postProcessDOSGraphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const {
+	static const byte v2VrbColMap[] =	{	0x0, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF, 0xF, 0x5, 0x5, 0x5, 0xA, 0xA, 0xF, 0xF };
+	static const byte v2TxtColMap[] =	{	0x0, 0xF, 0xA, 0x5, 0xA, 0x5, 0x5, 0xF, 0xA, 0xA, 0xA, 0xA, 0xA, 0x5, 0x5, 0xF };
+	static const byte mmv1VrbColMap[] =	{	0x0, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF, 0xA, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF };
+	static const byte v2MainColMap[] =	{	0x0, 0x4, 0x1, 0x5, 0x8, 0xA, 0x2, 0xF, 0xC, 0x7, 0xD, 0x5, 0xE, 0xB, 0xD, 0xF };
+	static const byte v3MainColMap[] =	{	0x0, 0x4, 0x1, 0x5, 0x8, 0xA, 0x2, 0x3, 0xC, 0x7, 0xD, 0x5, 0xF, 0xB, 0x5, 0xF,
+											0x0, 0x1, 0x4, 0x5, 0x2, 0xA, 0x8, 0xC, 0x3, 0xD, 0x5, 0x5, 0xF, 0xE, 0x5, 0xF };
+	static const byte v4MainColMap[] =	{	0x0, 0x4, 0x1, 0x5, 0x2, 0xA, 0x2, 0x3, 0x0, 0x5, 0x5, 0x7, 0xF, 0xE, 0x5, 0xF,
+											0x0, 0x1, 0x4, 0x5, 0x8, 0xA, 0x8, 0xC, 0x0, 0x7, 0x5, 0xD, 0xF, 0xB, 0x5, 0xF,
+											0x0, 0x4, 0x1, 0x5, 0x2, 0xA, 0x2, 0x3, 0x0, 0x5, 0x5, 0x7, 0xF, 0xE, 0x5, 0xF,
+											0x0, 0x1, 0x4, 0x5, 0x8, 0xA, 0x8, 0xC, 0x0, 0xD, 0x5, 0xD, 0xF, 0xB, 0x5, 0xF };
+
+	static const byte hrcTableV4[32] = {	0x00, 0x00, 0x08, 0x80,	0xaa, 0xaa, 0xbb, 0xdd,	0x55, 0x00, 0x66, 0x99,	0x99, 0x66, 0x7f, 0xf7,
+											0x11, 0x44, 0x55, 0xaa,	0x77, 0xdd, 0xee, 0x77,	0xaa, 0xff, 0xee, 0xbb,	0xff, 0xbb, 0xff, 0xff };
+
+	static const byte *mainColMap[] = { nullptr, nullptr, v2MainColMap, v3MainColMap, v4MainColMap };
+
+	assert(_game.version < 5);
 
 	byte tmpTxtColMap[16];
 	for (uint8 i = 0; i < ARRAYSIZE(tmpTxtColMap); ++i)
@@ -809,17 +808,26 @@ const byte *ScummEngine::postProcessV2Graphics(VirtScreen *vs, int &pitch, int &
 	byte *dst = _compositeBuf;
 	const byte *src = res;
 	bool renderHerc = (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG);
+	bool renderV1 = (_game.version == 1);
+	bool renderV3 = _game.version > 2;
 	const byte *colMap = (_game.id == GID_ZAK || _game.version == 2) ? ((vs->number == kVerbVirtScreen || renderHerc) ? v2VrbColMap : v2TxtColMap) : (vs->number == kVerbVirtScreen ? mmv1VrbColMap : tmpTxtColMap);
+	const byte *colMap2 = mainColMap[_game.version];
+
+	// For v3 CGA is dithered as 4x4 squares, for v4 as 4x8 squares. Odd lines have the colors swapped, so there will be checkered patterns.
+	uint8 lnMod = (_game.version > 3) ? 0x40 : 0x20;
+	uint8 lnIdx = (y & ((lnMod >> 4) - 1)) << 4;
 
 	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp) {
-		if (vs->number == kMainVirtScreen) {
+		if (renderV3 || vs->number == kMainVirtScreen) {
 			for (int h = height; h; --h) {
 				for (int w = width >> 1; w; --w) {
-					byte c = (_game.version == 1) ? *src : (v2MainColMap[src[0]] & 0x0C) | (v2MainColMap[src[1]] & 0x03);
+					byte c = renderV1 ? *src : (colMap2[src[0] + lnIdx] & 0x0C) | (colMap2[src[1] + lnIdx] & 0x03);
 					*dst++ = (c >> 2) & 3;
 					*dst++ = c & 3;
 					src += 2;
 				}
+				if (renderV3)
+					lnIdx = (lnIdx + 0x10) % lnMod;
 			}
 		} else {
 			for (int h = height; h; --h) {
@@ -856,7 +864,7 @@ const byte *ScummEngine::postProcessV2Graphics(VirtScreen *vs, int &pitch, int &
 			for (int h = height2; h; --h) {
 				for (int w = width >> 1; w; --w) {
 					const uint32 *s = (const uint32*)dst;
-					byte c = (_game.version == 1) ? *src : (v2MainColMap[src[0]] & 0x0C) | (v2MainColMap[src[1]] & 0x03);
+					byte c = renderV1 ? *src : (v2MainColMap[src[0]] & 0x0C) | (v2MainColMap[src[1]] & 0x03);
 					*dst++ = (c >> 3) & 1;
 					*dst++ = (c >> 2) & 1;
 					*dst++ = (c >> 1) & 1;
@@ -905,7 +913,7 @@ const byte *ScummEngine::postProcessV2Graphics(VirtScreen *vs, int &pitch, int &
 			height <<= 1;
 		}
 
-	} else if (_game.version == 1 && vs->number == kTextVirtScreen) {
+	} else if (renderV1 && vs->number == kTextVirtScreen) {
 		// For EGA, the only colors that need remapping are for the kTextVirtScreen.
 		for (uint8 i = 0; i < ARRAYSIZE(tmpTxtColMap); ++i)
 			tmpTxtColMap[i] = _gdi->remapColorToRenderMode(i);
@@ -918,39 +926,6 @@ const byte *ScummEngine::postProcessV2Graphics(VirtScreen *vs, int &pitch, int &
 	return res;
 }
 
-// CGA
-// indy3 loom maniac monkey1 zak
-//
-// Herc (720x350)
-// maniac monkey1 zak
-//
-// EGA
-// monkey2 loom maniac monkey1 atlantis indy3 zak loomcd
-
-static const byte cgaDither[2][2][16] = {
-	{{0, 1, 0, 1, 2, 2, 0, 0, 3, 1, 3, 1, 3, 2, 1, 3},
-	 {0, 0, 1, 1, 0, 2, 2, 3, 0, 3, 1, 1, 3, 3, 1, 3}},
-	{{0, 0, 1, 1, 0, 2, 2, 3, 0, 3, 1, 1, 3, 3, 1, 3},
-	 {0, 1, 0, 1, 2, 2, 0, 0, 3, 1, 1, 1, 3, 2, 1, 3}}};
-
-void ScummEngine::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const {
-	byte *ptr;
-	int idx1, idx2;
-	// CGA dithers 4x4 square with direct substitutes
-	// Odd lines have colors swapped, so there will be checkered patterns.
-	// But apparently there is a mistake for 10th color.
-	for (int y1 = 0; y1 < height; y1++) {
-		ptr = dst + y1 * dstPitch;
-		idx1 = (y + y1) % 2;
-
-		for (int x1 = 0; x1 < width; x1++) {
-			idx2 = (x + x1) % 2;
-			*ptr = cgaDither[idx1][idx2][*ptr & 0xF];
-			ptr++;
-		}
-	}
-}
-
 // Hercules dithering. It uses same dithering tables but output is 1bpp and
 // it stretches in this way:
 //         aaaa0
@@ -960,8 +935,8 @@ void ScummEngine::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, in
 // dd      cccc0
 //         cccc1
 //         dddd0
-void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height) {
-	byte *srcptr, *dstptr;
+//void ScummEngine::ditherV4herc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height) const {
+	/*byte *srcptr, *dstptr;
 	const int xo = *x, yo = *y, widtho = *width, heighto = *height;
 	int dsty = yo*2 - yo/4;
 
@@ -974,21 +949,21 @@ void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *wid
 		const int idx1 = (dsty % 7) % 2;
 		for (int x1 = 0; x1 < widtho; x1++) {
 			const int idx2 = (xo + x1) % 2;
-			const byte tmp = cgaDither[idx1][idx2][*srcptr & 0xF];
-			*dstptr++ = tmp >> 1;
-			*dstptr++ = tmp & 0x1;
+			//const byte tmp = _ditheringTable[idx1][idx2][*srcptr & 0xF];
+			//*dstptr++ = tmp >> 1;
+			//*dstptr++ = tmp & 0x1;
 			srcptr++;
 		}
 		if (idx1 || dsty % 7 == 6)
 			y1++;
 		dsty++;
-	}
+	}*/
 
-	*x *= 2;
-	*y = yo*2 - yo/4;
-	*width *= 2;
-	*height = dsty - *y;
-}
+	//*x *= 2;
+	//*y = yo*2 - yo/4;
+	//*width *= 2;
+	//*height = dsty - *y;
+//}
 
 #pragma mark -
 #pragma mark --- Background buffers & charset mask ---
