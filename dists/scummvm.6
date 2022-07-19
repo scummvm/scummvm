@@ -33,20 +33,6 @@ For example,
 will turn aspect ratio correction off.
 This is useful if you want to override a setting in the configuration file.
 .Bl -tag -width Ds
-.It Fl v | -version
-Display ScummVM version information and exit.
-.It Fl h | -help
-Display a brief help text and exit.
-.It Fl z | -list-games
-Display list of supported games and exit.
-.It Fl t | -list-targets
-Display list of configured targets and exit.
-.It Fl t | -list-engines
-Display list of suppported engines and exit.
-.It Fl -list-saves
-Display a list of saved games for the target specified with
-.Fl -game= Ns Ar TARGET
-or all targets if none is specified.
 .It Fl a | -add
 Add all games from current or specified directory.
 If
@@ -59,41 +45,48 @@ See also
 Use
 .Fl -path= Ns Ar PATH
 to specify a directory.
-.It Fl -detect
-Display a list of games with their ID from current or specified directory
-without adding it to the config.
-Use
-.Fl -path= Ns Ar PATH
-to specify a directory.
-.Fl -game= Ns Ar ID
-In combination with
-.Fl -add
-or
-.Fl -detect
-only adds or attempts to detect the game with id
-.Ar ID .
-.It Fl -auto-detect
-Display a list of games from current or specified directory and start the first
-one.
-Use
-.Fl -path= Ns Ar PATH
-to specify a directory.
-.It Fl -recursive
-In combination with
-.Fl -add
-or
-.Fl -detect
-recurse down all subdirectories
+.It Fl b | -boot-param= Ns Ar NUM
+Pass number to the boot script (boot param).
 .It Fl c | -config= Ns Ar CONFIG
 Use alternate configuration file.
-.It Fl p | -path= Ns Ar PATH
-Path to where the game is installed.
-.It Fl x | -save-slot= Ns Ar [SLOT]
-Saved game slot to load (default: autosave).
-.It Fl f | -fullscreen
-Force full-screen mode.
+.It Fl d | -debuglevel= Ns Ar NUM
+Set debug verbosity level
+.It Fl e | -music-driver= Ns Ar MODE
+Select music driver:
+.Bl -tag -width 10m
+.It Ar null
+Null output.
+Don't play any music.
+.It Ar adlib
+Internal AdLib emulation
+.It Ar fluidsynth
+FluidSynth MIDI emulation
+.It Ar mt32
+Internal MT-32 emulation
+.It Ar pcjr
+Internal PCjr emulation (only usable in SCUMM games)
+.It Ar pcspk
+Internal PC Speaker emulation
+.It Ar towns
+Internal FM-TOWNS YM2612 emulation (only usable in SCUMM FM-TOWNS games)
+.It Ar alsa
+Output using ALSA sequencer device
+.It Ar core
+CoreAudio sound, for macOS users
+.It Ar coremidi
+CoreMIDI sound, for macOS users.
+Use only if you have a hardware MIDI synthesizer.
+.It Ar seq
+Use /dev/sequencer for MIDI, *nix users.
+.It Ar timidity
+Connect to TiMidity++ MIDI server.
+.It Ar windows
+Windows built in MIDI sequencer for Windows users
+.El
 .It Fl F | -no-fullscreen
 Force windowed mode.
+.It Fl f | -fullscreen
+Force full-screen mode.
 .It Fl g | -gfx-mode= Ns Ar MODE
 Select graphics scaler:
 .Bl -tag -width 10m
@@ -130,63 +123,14 @@ Factor 2x.
 Dot matrix effect.
 Factor 2x.
 .El
-.It Fl -stretch-mode= Ns Ar MODE
-Select stretch mode
-.Po
-.Ar center ,
-.Ar integral ,
-.Ar fit ,
-.Ar stretch
-.Pc
-.It Fl -filtering
-Force filtered graphics mode
-.It Fl -no-filtering
-Force unfiltered graphics mode
-.It Fl -gui-theme= Ns Ar THEME
-Select GUI theme
-.Po
-.Ar default ,
-.Ar modern ,
-.Ar classic
-.Pc
-.It Fl -themepath= Ns Ar PATH
-Path to where GUI themes are stored
-.It Fl -list-themes
-Display list of all usable GUI themes
-.It Fl e | -music-driver= Ns Ar MODE
-Select music driver:
-.Bl -tag -width 10m
-.It Ar null
-Null output.
-Don't play any music.
-.It Ar adlib
-Internal AdLib emulation
-.It Ar fluidsynth
-FluidSynth MIDI emulation
-.It Ar mt32
-Internal MT-32 emulation
-.It Ar pcjr
-Internal PCjr emulation (only usable in SCUMM games)
-.It Ar pcspk
-Internal PC Speaker emulation
-.It Ar towns
-Internal FM-TOWNS YM2612 emulation (only usable in SCUMM FM-TOWNS games)
-.It Ar alsa
-Output using ALSA sequencer device
-.It Ar core
-CoreAudio sound, for macOS users
-.It Ar coremidi
-CoreMIDI sound, for macOS users.
-Use only if you have a hardware MIDI synthesizer.
-.It Ar seq
-Use /dev/sequencer for MIDI, *nix users.
-.It Ar timidity
-Connect to TiMidity++ MIDI server.
-.It Ar windows
-Windows built in MIDI sequencer for Windows users
-.El
-.It Fl -list-audio-devices
-List all available audio devices
+.It Fl h | -help
+Display a brief help text and exit.
+.It Fl m | -music-volume= Ns Ar NUM
+Set the music volume, 0-255 (default: 192).
+.It Fl n | -subtitles
+Enable subtitles (use with games that have voice).
+.It Fl p | -path= Ns Ar PATH
+Path to where the game is installed.
 .It Fl q | -language= Ns Ar LANG
 Select game's language:
 .Bl -tag -width Ds
@@ -219,32 +163,98 @@ Swedish
 .It Ar zh
 Chinese
 .El
-.It Fl m | -music-volume= Ns Ar NUM
-Set the music volume, 0-255 (default: 192).
-.It Fl s | -sfx-volume= Ns Ar NUM
-Set the sfx volume to, 0-255 (default: 192).
 .It Fl r | -speech-volume Ns Ar NUM
 Set the voice volume to, 0-255 (default: 192).
-.It Fl -midi-gain= Ns Ar NUM
-Set the gain for MIDI playback, 0-1000 (default: 100)
-.br
-(only supported by some MIDI drivers)
-.It Fl n | -subtitles
-Enable subtitles (use with games that have voice).
-.It Fl b | -boot-param= Ns Ar NUM
-Pass number to the boot script (boot param).
-.It Fl d | -debuglevel= Ns Ar NUM
-Set debug verbosity level
-.It Fl -debugflags= Ns Arm FLAGS
-Enable engine specific debug flags (separated by commas)
+.It Fl s | -sfx-volume= Ns Ar NUM
+Set the sfx volume to, 0-255 (default: 192).
+.It Fl t | -list-targets
+Display list of configured targets and exit.
 .It Fl u | -dump-scripts
 Enable script dumping if a directory called
 .Em dumps
 exists in the current directory.
+.It Fl v | -version
+Display ScummVM version information and exit.
+.It Fl x | -save-slot= Ns Ar [SLOT]
+Saved game slot to load (default: autosave).
+.It Fl z | -list-games
+Display list of supported games and exit.
+.It Fl -alt-intro
+Use alternative intro for CD versions of Beneath a Steel Sky and Flight of the
+Amazon Queen.
+.It Fl -aspect-ratio
+Enable aspect ratio correction.
+.It Fl -auto-detect
+Display a list of games from current or specified directory and start the first
+one.
+Use
+.Fl -path= Ns Ar PATH
+to specify a directory.
 .It Fl -cdrom= Ns Ar NUM
 CD drive to play CD audio from (default: 0 = first drive).
-.It Fl -joystick= Ns Ar [NUM]
+.It Fl -copy-protection
+Enable copy protection in games, when ScummVM disables it by default.
+.It Fl -debugflags= Ns Ar FLAGS
+Enable engine specific debug flags (separated by commas)
+.It Fl -demo-mode
+Start demo mode of Maniac Mansion (Classic version)
+.It Fl -detect
+Display a list of games with their ID from current or specified directory
+without adding it to the config.
+Use
+.Fl -path= Ns Ar PATH
+to specify a directory.
+.It Fl -enable-gs
+Enable Roland GS mode for MIDI playback.
+.It Fl -extrapath= Ns Ar PATH
+Extra path to additional game data
+.It Fl -filtering
+Force filtered graphics mode
+.It Fl -gui-theme= Ns Ar THEME
+Select GUI theme
+.Po
+.Ar default ,
+.Ar modern ,
+.Ar classic
+.Pc
+.It Fl -joystick= Ns Ar NUM
 Enable joystick input (default: 0 = first joystick).
+.It Fl -list-audio-devices
+List all available audio devices
+.It Fl -list-engines
+Display list of suppported engines and exit.
+.It Fl -list-saves
+Display a list of saved games for the target specified with
+.Fl -game= Ns Ar TARGET
+or all targets if none is specified.
+.Fl -game= Ns Ar ID
+In combination with
+.Fl -add
+or
+.Fl -detect
+only adds or attempts to detect the game with id
+.Ar ID .
+.It Fl -list-themes
+Display list of all usable GUI themes
+.It Fl -midi-gain= Ns Ar NUM
+Set the gain for MIDI playback, 0-1000 (default: 100)
+.br
+(only supported by some MIDI drivers)
+.It Fl -multi-midi
+Enable combination of AdLib and native MIDI.
+.It Fl -native-mt32
+True Roland MT-32 MIDI (disable GM emulation).
+.It Fl -no-filtering
+Force unfiltered graphics mode
+.It Fl -opl-driver= Ns Ar DRIVER
+Select AdLib (OPL) emulator
+.Po
+.Ar db ,
+.Ar mame ,
+.Ar nuked
+.Pc
+.It Fl -output-rate= Ns Ar RATE
+Set output sample rate in Hz (e.g. 22050).
 .It Fl -platform= Ns Ar WORD
 Specify platform of game
 .Po
@@ -262,29 +272,12 @@ Specify platform of game
 .Ar segacd ,
 .Ar windows
 .Pc
-.It Fl -savepath= Ns Ar PATH
-Path to where saved games are stored
-.It Fl -extrapath= Ns Ar PATH
-Extra path to additional game data
-.It Fl -soundfont= Ns Ar FILE
-Select the SoundFont for MIDI playback (only supported by some MIDI drivers).
-.It Fl -multi-midi
-Enable combination of AdLib and native MIDI.
-.It Fl -native-mt32
-True Roland MT-32 MIDI (disable GM emulation).
-.It Fl -enable-gs
-Enable Roland GS mode for MIDI playback.
-.It Fl -output-rate= Ns Ar RATE
-Set output sample rate in Hz (e.g. 22050).
-.It Fl -opl-driver= Ns Ar DRIVER
-Select AdLib (OPL) emulator
-.Po
-.Ar db ,
-.Ar mame ,
-.Ar nuked
-.Pc
-.It Fl -aspect-ratio
-Enable aspect ratio correction.
+.It Fl -recursive
+In combination with
+.Fl -add
+or
+.Fl -detect
+recurse down all subdirectories
 .It Fl -render-mode= Ns Ar MODE
 Enable additional render modes
 .Po
@@ -301,17 +294,24 @@ Enable additional render modes
 .Ar atari ,
 .Ar macintosh
 .Pc
-.It Fl -alt-intro
-Use alternative intro for CD versions of Beneath a Steel Sky and Flight of the
-Amazon Queen.
-.It Fl -copy-protection
-Enable copy protection in games, when ScummVM disables it by default.
+.It Fl -savepath= Ns Ar PATH
+Path to where saved games are stored
+.It Fl -soundfont= Ns Ar FILE
+Select the SoundFont for MIDI playback (only supported by some MIDI drivers).
+.It Fl -stretch-mode= Ns Ar MODE
+Select stretch mode
+.Po
+.Ar center ,
+.Ar integral ,
+.Ar fit ,
+.Ar stretch
+.Pc
 .It Fl -talkspeed= Ns Ar NUM
 Set talk delay for SCUMM games, or talk speed for other games (default: 60)
-.It Fl -demo-mode
-Start demo mode of Maniac Mansion (Classic version)
 .It Fl -tempo= Ns Ar NUM
 Set music tempo (in percent, 50-200) for SCUMM games (default: 100).
+.It Fl -themepath= Ns Ar PATH
+Path to where GUI themes are stored
 .El
 .Sh INGAME HOTKEYS
 .Bl -tag -width 13m
