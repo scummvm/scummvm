@@ -400,15 +400,17 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 	} else {
 		debugC(1, kFreescapeDebugCode, "Runing effects:");
 		checkCollisions(true); // run the effects
-		if (_flyMode)
-			_position = _lastPosition;
-		else if (_currentArea->getAreaID() == previousAreaID) {
-			bool stepUp = tryStepUp(_position);
-			if (stepUp) {
-				debugC(1, kFreescapeDebugCode, "Runing effects:");
-				checkCollisions(true); // run the effects (again)
-			} else {
+		if (_currentArea->getAreaID() == previousAreaID) {
+			if (_flyMode)
 				_position = _lastPosition;
+			else {
+				bool stepUp = tryStepUp(_position);
+				if (stepUp) {
+					debugC(1, kFreescapeDebugCode, "Runing effects:");
+					checkCollisions(true); // run the effects (again)
+				} else {
+					_position = _lastPosition;
+				}
 			}
 		}
 	}
@@ -512,15 +514,23 @@ void FreescapeEngine::gotoArea(uint16 areaID, int entranceID) {
 		_position.setValue(1, _position.y() + scale * _playerHeight);
 	} else if (entranceID == 0) {
 		Math::Vector3d diff = _lastPosition - _position;
-		debug("%f %f %f", diff.x(), diff.y(), diff.z());
+		debug("dif: %f %f %f", diff.x(), diff.y(), diff.z());
 		// diff should be used to determinate which entrance to use
-		entrance = (Entrance*) _currentArea->firstEntrance();
-		assert(entrance);
-		if (abs(diff.x()) < abs(diff.z()))
-			_position.setValue(2, entrance->getOrigin().z());
-		else
-			_position.setValue(0, entrance->getOrigin().x());
-
+		int newPos = -1;
+		if (abs(diff.x()) < abs(diff.z())) {
+			if (diff.z() > 0)
+				newPos = 4000;
+			else
+				newPos = 100;
+			_position.setValue(2, newPos);
+		} else {
+			if (diff.x() > 0)
+				newPos = 4000;
+			else
+				newPos = 100;
+			_position.setValue(0, newPos);
+		}
+		assert(newPos != -1);
 	}
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
