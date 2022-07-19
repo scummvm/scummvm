@@ -85,7 +85,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_version = getDescriptionVersion();
 	_fixStageSize = false;
 	_fixStageRect = Common::Rect();
-	_wmMode = debugChannelSet(-1, kDebugDesktop) ? wmModeDesktop : wmModeFullscreen;
+	_wmMode = debugChannelSet(-1, kDebugDesktop) ? kWMModeDesktop : kWMModeFullscreen;
 
 	_wmWidth = 1024;
 	_wmHeight = 768;

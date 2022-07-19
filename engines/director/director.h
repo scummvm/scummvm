@@ -55,8 +55,8 @@ class ManagedSurface;
 
 namespace Director {
 
-const uint32 wmModeDesktop = Graphics::kWMModalMenuMode | Graphics::kWMModeManualDrawWidgets;
-const uint32 wmModeFullscreen = Graphics::kWMModalMenuMode | Graphics::kWMModeNoDesktop
+const uint32 kWMModeDesktop = Graphics::kWMModalMenuMode | Graphics::kWMModeManualDrawWidgets;
+const uint32 kWMModeFullscreen = Graphics::kWMModalMenuMode | Graphics::kWMModeNoDesktop
 	| Graphics::kWMModeManualDrawWidgets | Graphics::kWMModeFullscreen;
 
 class Archive;
