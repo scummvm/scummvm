@@ -31,6 +31,12 @@ class WriteStream;
 
 } // End of namespace Common
 
+namespace Graphics {
+
+struct Surface;
+
+} // End of namespace Graphics
+
 namespace MTropolis {
 
 class Modifier;
@@ -46,7 +52,7 @@ struct ISaveReader : public IInterfaceBase {
 };
 
 struct ISaveUIProvider : public IInterfaceBase {
-	virtual bool promptSave(ISaveWriter *writer) = 0;
+	virtual bool promptSave(ISaveWriter *writer, const Graphics::Surface *screenshotOverride) = 0;
 };
 
 struct ILoadUIProvider : public IInterfaceBase {

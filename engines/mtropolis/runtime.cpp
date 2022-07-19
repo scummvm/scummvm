@@ -3728,6 +3728,10 @@ Runtime::SceneStackEntry::SceneStackEntry() {
 SceneTransitionHooks::~SceneTransitionHooks() {
 }
 
+
+void SceneTransitionHooks::onSceneTransitionSetup(Runtime *runtime, const Common::WeakPtr<Structural> &oldScene, const Common::WeakPtr<Structural> &newScene) {
+}
+
 void SceneTransitionHooks::onSceneTransitionEnded(Runtime *runtime, const Common::WeakPtr<Structural> &newScene) {
 }
 
@@ -4257,6 +4261,9 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 		_sceneStack.resize(1);	// Reserve shared scene slot
 
 	Common::SharedPtr<Structural> targetSharedScene = findDefaultSharedSceneForScene(targetScene.get());
+
+	for (const Common::SharedPtr<SceneTransitionHooks> &hooks : _hacks.sceneTransitionHooks)
+		hooks->onSceneTransitionSetup(this, _activeMainScene, targetScene);
 
 	if (targetScene == targetSharedScene)
 		error("Transitioned into a default shared scene, this is not supported");
@@ -5671,6 +5678,18 @@ const Common::String *Runtime::resolveAttributeIDName(uint32 attribID) const {
 		return nullptr;
 	else
 		return &it->_value;
+}
+
+const Common::WeakPtr<Window> &Runtime::getMainWindow() const {
+	return _mainWindow;
+}
+
+const Common::SharedPtr<Graphics::Surface> &Runtime::getSaveScreenshotOverride() const {
+	return _saveScreenshotOverride;
+}
+
+void Runtime::setSaveScreenshotOverride(const Common::SharedPtr<Graphics::Surface> &screenshot) {
+	_saveScreenshotOverride = screenshot;
 }
 
 void Runtime::ensureMainWindowExists() {

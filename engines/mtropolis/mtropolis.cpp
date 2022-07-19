@@ -119,6 +119,7 @@ Common::Error MTropolisEngine::run() {
 		preferredColorDepthMode = kColorDepthMode16Bit;
 		enhancedColorDepthMode = kColorDepthMode32Bit;
 
+		HackSuites::addObsidianQuirks(*_gameDescription, _runtime->getHacks());
 		HackSuites::addObsidianBugFixes(*_gameDescription, _runtime->getHacks());
 
 		if (ConfMan.getBool("mtropolis_mod_auto_save"))

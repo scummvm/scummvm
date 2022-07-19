@@ -1472,6 +1472,7 @@ class SceneTransitionHooks {
 public:
 	virtual ~SceneTransitionHooks();
 
+	virtual void onSceneTransitionSetup(Runtime *runtime, const Common::WeakPtr<Structural> &oldScene, const Common::WeakPtr<Structural> &newScene);
 	virtual void onSceneTransitionEnded(Runtime *runtime, const Common::WeakPtr<Structural> &newScene);
 };
 
@@ -1594,6 +1595,11 @@ public:
 	const Common::Array<IPostEffect *> &getPostEffects() const;
 
 	const Common::String *resolveAttributeIDName(uint32 attribID) const;
+
+	const Common::WeakPtr<Window> &getMainWindow() const;
+
+	const Common::SharedPtr<Graphics::Surface> &getSaveScreenshotOverride() const;
+	void setSaveScreenshotOverride(const Common::SharedPtr<Graphics::Surface> &screenshot);
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
@@ -1758,8 +1764,10 @@ private:
 	Scheduler _scheduler;
 	OSystem *_system;
 	Audio::Mixer *_mixer;
+
 	ISaveUIProvider *_saveProvider;
 	ILoadUIProvider *_loadProvider;
+	Common::SharedPtr<Graphics::Surface> _saveScreenshotOverride;
 
 	Common::SharedPtr<CursorGraphic> _lastFrameCursor;
 	Common::SharedPtr<CursorGraphic> _defaultCursor;

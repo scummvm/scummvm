@@ -27,6 +27,7 @@
 #include "gui/saveload.h"
 
 #include "mtropolis/mtropolis.h"
+#include "mtropolis/render.h"
 #include "mtropolis/runtime.h"
 
 namespace MTropolis {
@@ -57,7 +58,7 @@ void SaveLoadHooks::onLoad(Runtime *runtime, Modifier *saveLoadModifier, Modifie
 void SaveLoadHooks::onSave(Runtime *runtime, Modifier *saveLoadModifier, Modifier *varModifier) {
 }
 
-bool MTropolisEngine::promptSave(ISaveWriter *writer) {
+bool MTropolisEngine::promptSave(ISaveWriter *writer, const Graphics::Surface *screenshotOverride) {
 	Common::String desc;
 	int slot;
 
@@ -157,6 +158,18 @@ bool MTropolisEngine::autoSave(ISaveWriter *writer) {
 	g_system->displayMessageOnOSD(_("Progress Saved"));
 
 	return true;
+}
+
+const Graphics::Surface *MTropolisEngine::getSavegameScreenshot() const {
+	const Graphics::Surface *screenshotOverride = _runtime->getSaveScreenshotOverride().get();
+	if (screenshotOverride)
+		return screenshotOverride;
+	else {
+		Window *mainWindow = _runtime->getMainWindow().lock().get();
+		if (!mainWindow)
+			return nullptr;
+		return mainWindow->getSurface().get()->surfacePtr();
+	}
 }
 
 } // End of namespace MTropolis

@@ -22,6 +22,7 @@
 #include "common/system.h"
 #include "common/hashmap.h"
 
+#include "graphics/managed_surface.h"
 #include "graphics/surface.h"
 
 #include "mtropolis/assets.h"
@@ -362,6 +363,35 @@ void ObsidianRSGLogoWidescreenHooks::onCreate(Structural *structural) {
 	MovieElement *movie = static_cast<MovieElement *>(structural);
 	movie->setRelativeRect(Common::Rect(0, 60, 640, 420));
 	movie->setResizeFilter(Common::SharedPtr<MovieResizeFilter>(new ObsidianRSGLogoAnamorphicFilter()));
+}
+
+class ObsidianSaveScreenshotHooks : public SceneTransitionHooks {
+public:
+	void onSceneTransitionSetup(Runtime *runtime, const Common::WeakPtr<Structural> &oldScene, const Common::WeakPtr<Structural> &newScene) override;
+};
+
+void ObsidianSaveScreenshotHooks::onSceneTransitionSetup(Runtime *runtime, const Common::WeakPtr<Structural> &oldScene, const Common::WeakPtr<Structural> &newScene) {
+	Structural *newScenePtr = newScene.lock().get();
+
+	if (!newScenePtr)
+		return;
+
+	if (newScenePtr->getName() == "Game_Screen") {
+		Window *mainWindow = runtime->getMainWindow().lock().get();
+		if (mainWindow) {
+			Common::SharedPtr<Graphics::ManagedSurface> mainWindowSurface = mainWindow->getSurface();
+			Common::SharedPtr<Graphics::Surface> screenshot(new Graphics::Surface());
+			screenshot->copyFrom(*mainWindowSurface);
+
+			runtime->setSaveScreenshotOverride(screenshot);
+		}
+	} else {
+		runtime->setSaveScreenshotOverride(Common::SharedPtr<Graphics::Surface>());
+	}
+}
+
+void addObsidianQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
+	hacks.addSceneTransitionHooks(Common::SharedPtr<SceneTransitionHooks>(new ObsidianSaveScreenshotHooks()));
 }
 
 void addObsidianBugFixes(const MTropolisGameDescription &desc, Hacks &hacks) {

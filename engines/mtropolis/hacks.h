@@ -63,6 +63,7 @@ struct Hacks {
 
 namespace HackSuites {
 
+void addObsidianQuirks(const MTropolisGameDescription &desc, Hacks &hacks);
 void addObsidianBugFixes(const MTropolisGameDescription &desc, Hacks &hacks);
 void addObsidianAutoSaves(const MTropolisGameDescription &desc, Hacks &hacks, IAutoSaveProvider *autoSaveProvider);
 void addObsidianImprovedWidescreen(const MTropolisGameDescription &desc, Hacks &hacks);

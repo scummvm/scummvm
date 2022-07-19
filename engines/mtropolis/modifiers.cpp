@@ -277,7 +277,7 @@ VThreadState SaveAndRestoreModifier::consumeMessage(Runtime *runtime, const Comm
 
 	if (_saveWhen.respondsTo(msg->getEvent())) {
 		CompoundVarSaver saver(obj);
-		if (runtime->getSaveProvider()->promptSave(&saver)) {
+		if (runtime->getSaveProvider()->promptSave(&saver, runtime->getSaveScreenshotOverride().get())) {
 			for (const Common::SharedPtr<SaveLoadHooks> &hooks : runtime->getHacks().saveLoadHooks)
 				hooks->onSave(runtime, this, static_cast<Modifier *>(obj));
 		}

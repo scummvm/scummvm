@@ -59,9 +59,11 @@ public:
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
 
-	bool promptSave(ISaveWriter *writer) override;
+	bool promptSave(ISaveWriter *writer, const Graphics::Surface *screenshotOverride) override;
 	bool autoSave(ISaveWriter *writer) override;
 	bool promptLoad(ISaveReader *reader) override;
+
+	const Graphics::Surface *getSavegameScreenshot() const;
 
 public:
 	void handleEvents();
