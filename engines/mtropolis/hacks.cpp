@@ -22,8 +22,11 @@
 #include "common/system.h"
 #include "common/hashmap.h"
 
+#include "graphics/surface.h"
+
 #include "mtropolis/assets.h"
 #include "mtropolis/detection.h"
+#include "mtropolis/elements.h"
 #include "mtropolis/hacks.h"
 #include "mtropolis/runtime.h"
 #include "mtropolis/modifiers.h"
@@ -88,7 +91,7 @@ void ObsidianInventoryWindscreenHooks::onSetPosition(Structural *structural, Com
 	}
 }
 
-class ObsidianSecurityFormWindscreenHooks : public StructuralHooks {
+class ObsidianSecurityFormWidescreenHooks : public StructuralHooks {
 public:
 	void onSetPosition(Structural *structural, Common::Point &pt) override;
 
@@ -96,7 +99,7 @@ private:
 	Common::Array<uint32> _hiddenCards;
 };
 
-void ObsidianSecurityFormWindscreenHooks::onSetPosition(Structural *structural, Common::Point &pt) {
+void ObsidianSecurityFormWidescreenHooks::onSetPosition(Structural *structural, Common::Point &pt) {
 	bool cardVisibility = (pt.y > 480);
 
 	// Originally tried manipulating layer order but that's actually not a good solution because
@@ -141,6 +144,193 @@ void ObsidianSecurityFormWindscreenHooks::onSetPosition(Structural *structural, 
 
 	if (cardVisibility)
 		_hiddenCards.clear();
+}
+
+class ObsidianRSGLogoAnamorphicFilter : public MovieResizeFilter {
+public:
+	ObsidianRSGLogoAnamorphicFilter();
+
+	Common::SharedPtr<Graphics::Surface> scaleFrame(const Graphics::Surface &surface, uint timestamp) const override;
+
+private:
+	template<class TPixel>
+	void anamorphicScaleFrameTyped(const Graphics::Surface &src, Graphics::Surface &dest) const;
+
+	template<class TPixel>
+	void halveWidthTyped(const Graphics::Surface &src, Graphics::Surface &dest) const;
+
+	template<class TPixel>
+	void halveHeightTyped(const Graphics::Surface &src, Graphics::Surface &dest) const;
+
+	Common::Array<uint> _xCoordinates;
+	Common::Array<uint> _yCoordinates;
+};
+
+ObsidianRSGLogoAnamorphicFilter::ObsidianRSGLogoAnamorphicFilter() {
+	// Anamorphic rescale, keeps the RSG logo proportional but preserves the vertical spacing!
+	const uint unscaledWidth = 640;
+	const uint unscaledHeight = 480;
+
+	const uint scaledWidth = 1280;
+	const uint scaledHeight = 720;
+
+	_xCoordinates.resize(scaledWidth);
+	_yCoordinates.resize(scaledHeight);
+
+	// Margin in pixels on the side of the original image to apply filter
+	const double scalingFactor = static_cast<double>(scaledHeight) / static_cast<double>(unscaledHeight);
+	const double invScalingFactor = 1.0 / scalingFactor;
+	const double sideMarginInOriginalImage = 90.0;
+
+	const double sideMarginInScaledImage = (static_cast<double>(scaledWidth) - ((static_cast<double>(unscaledWidth) - sideMarginInOriginalImage * 2.0) * scalingFactor)) * 0.5;
+
+	const double rightMarginStart = static_cast<double>(scaledWidth) - sideMarginInScaledImage;
+
+	for (uint i = 0; i < scaledWidth; i++) {
+		double pixelCenterX = static_cast<double>(i) + 0.5;
+		double originalImagePixelCenter = 0.0;
+		if (pixelCenterX < sideMarginInScaledImage) {
+			double marginFraction = pixelCenterX / sideMarginInScaledImage;
+			originalImagePixelCenter = sqrt(marginFraction) * sideMarginInOriginalImage;
+		} else if (pixelCenterX > rightMarginStart) {
+			double marginFraction = (static_cast<double>(scaledWidth) - pixelCenterX) / sideMarginInScaledImage;
+			originalImagePixelCenter = static_cast<double>(unscaledWidth) - sqrt(marginFraction) * sideMarginInOriginalImage;
+		} else {
+			double offsetFromCenter = pixelCenterX - (static_cast<double>(scaledWidth) * 0.5);
+			double offsetFromCenterInOriginalImage = offsetFromCenter * invScalingFactor;
+			originalImagePixelCenter = static_cast<double>(unscaledWidth) * 0.5 + offsetFromCenterInOriginalImage;
+		}
+
+		double srcPixelX = floor(originalImagePixelCenter);
+		if (srcPixelX < 0.0)
+			srcPixelX = 0.0;
+		else if (srcPixelX >= static_cast<double>(unscaledWidth))
+			srcPixelX = static_cast<double>(unscaledWidth - 1);
+
+		_xCoordinates[i] = static_cast<uint>(srcPixelX);
+	}
+
+	for (uint i = 0; i < scaledHeight; i++)
+		_yCoordinates[i] = (2 * i + 1) * unscaledHeight / (scaledHeight * 2);
+}
+
+template<class TPixel>
+void ObsidianRSGLogoAnamorphicFilter::anamorphicScaleFrameTyped(const Graphics::Surface &src, Graphics::Surface &dest) const {
+	const uint width = _xCoordinates.size();
+	const uint height = _yCoordinates.size();
+
+	const uint *xCoordinates = &_xCoordinates[0];
+	const uint *yCoordinates = &_yCoordinates[0];
+
+	assert(width == static_cast<uint>(dest.w));
+	assert(height == static_cast<uint>(dest.h));
+
+	for (uint row = 0; row < height; row++) {
+		const TPixel *srcRow = static_cast<const TPixel *>(src.getBasePtr(0, yCoordinates[row]));
+		TPixel *destRow = static_cast<TPixel *>(dest.getBasePtr(0, row));
+
+		for (uint col = 0; col < width; col++)
+			destRow[col] = srcRow[xCoordinates[col]];
+	}
+}
+
+template<class TPixel>
+void ObsidianRSGLogoAnamorphicFilter::halveWidthTyped(const Graphics::Surface &src, Graphics::Surface &dest) const {
+	const uint widthHigh = src.w;
+	const uint widthLow = dest.w;
+	const uint height = src.h;
+
+	assert(widthLow * 2 == widthHigh);
+	assert(dest.h == src.h);
+
+	const Graphics::PixelFormat fmt = src.format;
+
+	for (uint row = 0; row < height; row++) {
+		const TPixel *srcRow = static_cast<const TPixel *>(src.getBasePtr(0, row));
+		TPixel *destRow = static_cast<TPixel *>(dest.getBasePtr(0, row));
+
+		for (uint col = 0; col < widthLow; col++) {
+			uint32 col1 = srcRow[col * 2];
+			uint32 col2 = srcRow[col * 2 + 1];
+
+			uint8 r1, g1, b1;
+			fmt.colorToRGB(col1, r1, g1, b1);
+
+			uint8 r2, g2, b2;
+			fmt.colorToRGB(col2, r2, g2, b2);
+
+			destRow[col] = fmt.RGBToColor((r1 + r2) >> 1, (g1 + g2) >> 1, (b1 + b2) >> 1);
+		}
+	}
+}
+
+template<class TPixel>
+void ObsidianRSGLogoAnamorphicFilter::halveHeightTyped(const Graphics::Surface &src, Graphics::Surface &dest) const {
+	const uint heightHigh = src.h;
+	const uint heightLow = dest.h;
+	const uint width = src.w;
+
+	assert(heightLow * 2 == heightHigh);
+	assert(dest.w == src.w);
+
+	const Graphics::PixelFormat fmt = src.format;
+
+	for (uint row = 0; row < heightLow; row++) {
+		const TPixel *srcRow1 = static_cast<const TPixel *>(src.getBasePtr(0, row * 2));
+		const TPixel *srcRow2 = static_cast<const TPixel *>(src.getBasePtr(0, row * 2 + 1));
+		TPixel *destRow = static_cast<TPixel *>(dest.getBasePtr(0, row));
+
+		for (uint col = 0; col < width; col++) {
+			uint32 col1 = srcRow1[col];
+			uint32 col2 = srcRow2[col];
+
+			uint8 r1, g1, b1;
+			fmt.colorToRGB(col1, r1, g1, b1);
+
+			uint8 r2, g2, b2;
+			fmt.colorToRGB(col2, r2, g2, b2);
+
+			destRow[col] = fmt.RGBToColor((r1 + r2) >> 1, (g1 + g2) >> 1, (b1 + b2) >> 1);
+		}
+	}
+}
+
+Common::SharedPtr<Graphics::Surface> ObsidianRSGLogoAnamorphicFilter::scaleFrame(const Graphics::Surface &surface, uint timestamp) const {
+	Common::SharedPtr<Graphics::Surface> result(new Graphics::Surface());
+	result->create(_xCoordinates.size() / 2, _yCoordinates.size() / 2, surface.format);
+
+	Common::SharedPtr<Graphics::Surface> temp1(new Graphics::Surface());
+	Common::SharedPtr<Graphics::Surface> temp2(new Graphics::Surface());
+
+	temp1->create(_xCoordinates.size(), _yCoordinates.size(), surface.format);
+	temp2->create(_xCoordinates.size() / 2, _yCoordinates.size(), surface.format);
+
+	if (surface.format.bytesPerPixel == 1) {
+		anamorphicScaleFrameTyped<uint8>(surface, *temp1);
+		halveWidthTyped<uint8>(*temp1, *temp2);
+		halveHeightTyped<uint8>(*temp2, *result);
+	} else if (surface.format.bytesPerPixel == 2) {
+		anamorphicScaleFrameTyped<uint16>(surface, *temp1);
+		halveWidthTyped<uint16>(*temp1, *temp2);
+		halveHeightTyped<uint16>(*temp2, *result);
+	} else if (surface.format.bytesPerPixel == 4) {
+		anamorphicScaleFrameTyped<uint32>(surface, *temp1);
+		halveWidthTyped<uint32>(*temp1, *temp2);
+		halveHeightTyped<uint32>(*temp2, *result);
+	}
+
+	return result;
+}
+
+class ObsidianRSGLogoWidescreenHooks : public StructuralHooks {
+public:
+	void onCreate(Structural *structural) override;
+};
+
+void ObsidianRSGLogoWidescreenHooks::onCreate(Structural *structural) {
+	MovieElement *movie = static_cast<MovieElement *>(structural);
+	movie->setRelativeRect(Common::Rect(0, 60, 640, 420));
+	movie->setResizeFilter(Common::SharedPtr<MovieResizeFilter>(new ObsidianRSGLogoAnamorphicFilter()));
 }
 
 void addObsidianBugFixes(const MTropolisGameDescription &desc, Hacks &hacks) {
@@ -228,13 +418,15 @@ void addObsidianImprovedWidescreen(const MTropolisGameDescription &desc, Hacks &
 		};
 
 		const uint32 cubeMazeSecurityFormGUID = 0x9602ec;
+		const uint32 rsgIntroMovieGUID = 0x2fc101;
 
 		Common::SharedPtr<StructuralHooks> invItemHooks(new ObsidianInventoryWindscreenHooks());
 
 		for (uint32 guid : inventoryItemGUIDs)
 			hacks.addStructuralHooks(guid, invItemHooks);
 
-		hacks.addStructuralHooks(cubeMazeSecurityFormGUID, Common::SharedPtr<StructuralHooks>(new ObsidianSecurityFormWindscreenHooks()));
+		hacks.addStructuralHooks(cubeMazeSecurityFormGUID, Common::SharedPtr<StructuralHooks>(new ObsidianSecurityFormWidescreenHooks()));
+		hacks.addStructuralHooks(rsgIntroMovieGUID, Common::SharedPtr<StructuralHooks>(new ObsidianRSGLogoWidescreenHooks()));
 	}
 	if ((desc.desc.flags & ADGF_DEMO) == 0 && desc.desc.language == Common::EN_ANY && desc.desc.platform == Common::kPlatformMacintosh) {
 		const uint32 inventoryItemGUIDs[] = {
@@ -300,13 +492,15 @@ void addObsidianImprovedWidescreen(const MTropolisGameDescription &desc, Hacks &
 		};
 
 		const uint32 cubeMazeSecurityFormGUID = 0x9602ec;
+		const uint32 rsgIntroMovieGUID = 0x2fc101;
 
 		Common::SharedPtr<StructuralHooks> invItemHooks(new ObsidianInventoryWindscreenHooks());
 
 		for (uint32 guid : inventoryItemGUIDs)
 			hacks.addStructuralHooks(guid, invItemHooks);
 
-		hacks.addStructuralHooks(cubeMazeSecurityFormGUID, Common::SharedPtr<StructuralHooks>(new ObsidianSecurityFormWindscreenHooks()));
+		hacks.addStructuralHooks(cubeMazeSecurityFormGUID, Common::SharedPtr<StructuralHooks>(new ObsidianSecurityFormWidescreenHooks()));
+		hacks.addStructuralHooks(rsgIntroMovieGUID, Common::SharedPtr<StructuralHooks>(new ObsidianRSGLogoWidescreenHooks()));
 	}
 }
 

@@ -419,6 +419,9 @@ void GraphicElement::render(Window *window) {
 	}
 }
 
+MovieResizeFilter::~MovieResizeFilter() {
+}
+
 MovieElement::MovieElement()
 	: _cacheBitmap(false), _reversed(false), _haveFiredAtFirstCel(false), _haveFiredAtLastCel(false)
 	, _alternate(false), _playEveryFrame(false), _assetID(0), _runtime(nullptr), _displayFrame(nullptr)
@@ -617,17 +620,26 @@ void MovieElement::render(Window *window) {
 		_videoDecoder->seek(Audio::Timestamp(0, _timeScale).addFrames(_currentTimestamp));
 		_videoDecoder->setEndTime(Audio::Timestamp(0, _timeScale).addFrames(_reversed ? realRange.min : realRange.max));
 		const Graphics::Surface *decodedFrame = _videoDecoder->decodeNextFrame();
-		if (decodedFrame)
+		if (decodedFrame) {
 			_displayFrame = decodedFrame;
+			_scaledFrame.reset();
+		}
 
 		_needsReset = false;
 	}
 
 	if (_displayFrame) {
+		const Graphics::Surface *displaySurface = _displayFrame;
+		if (_resizeFilter) {
+			if (!_scaledFrame)
+				_scaledFrame = _resizeFilter->scaleFrame(*_displayFrame, _currentTimestamp);
+			displaySurface = _scaledFrame.get();
+		}
+
 		Graphics::ManagedSurface *target = window->getSurface().get();
-		Common::Rect srcRect(0, 0, _displayFrame->w, _displayFrame->h);
+		Common::Rect srcRect(0, 0, displaySurface->w, displaySurface->h);
 		Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.width(), _cachedAbsoluteOrigin.y + _rect.height());
-		target->blitFrom(*_displayFrame, srcRect, destRect);
+		target->blitFrom(*displaySurface, srcRect, destRect);
 	}
 }
 
@@ -700,6 +712,7 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 					_contentsDirty = true;
 					framesDecodedThisFrame++;
 					_displayFrame = decodedFrame;
+					_scaledFrame.reset();
 					if (_playEveryFrame)
 						break;
 				}
@@ -770,6 +783,10 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 			}
 		}
 	}
+}
+
+void MovieElement::setResizeFilter(const Common::SharedPtr<MovieResizeFilter> &filter) {
+	_resizeFilter = filter;
 }
 
 void MovieElement::onSegmentUnloaded(int segmentIndex) {

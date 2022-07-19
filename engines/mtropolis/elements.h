@@ -74,6 +74,13 @@ private:
 	Common::SharedPtr<Graphics::ManagedSurface> _mask;
 };
 
+class MovieResizeFilter {
+public:
+	virtual ~MovieResizeFilter();
+
+	virtual Common::SharedPtr<Graphics::Surface> scaleFrame(const Graphics::Surface &surface, uint32 timestamp) const = 0;
+};
+
 class MovieElement : public VisualElement, public ISegmentUnloadSignalReceiver, public IPlayMediaSignalReceiver {
 public:
 	MovieElement();
@@ -94,6 +101,8 @@ public:
 
 	void render(Window *window) override;
 	void playMedia(Runtime *runtime, Project *project) override;
+
+	void setResizeFilter(const Common::SharedPtr<MovieResizeFilter> &filter);
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Movie Element"; }
@@ -145,6 +154,8 @@ private:
 	IntRange _playRange;
 
 	const Graphics::Surface *_displayFrame;
+	Common::SharedPtr<Graphics::Surface> _scaledFrame;
+	Common::SharedPtr<MovieResizeFilter> _resizeFilter;
 
 	Common::SharedPtr<SegmentUnloadSignaller> _unloadSignaller;
 	Common::SharedPtr<PlayMediaSignaller> _playMediaSignaller;
