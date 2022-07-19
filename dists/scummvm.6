@@ -125,6 +125,8 @@ Factor 2x.
 .El
 .It Fl h | -help
 Display a brief help text and exit.
+.It Fl l | -logfile= Ns Ar PATH
+Use alternate path for log file.
 .It Fl m | -music-volume= Ns Ar NUM
 Set the music volume, 0-255 (default: 192).
 .It Fl n | -subtitles
@@ -194,6 +196,10 @@ to specify a directory.
 CD drive to play CD audio from (default: 0 = first drive).
 .It Fl -copy-protection
 Enable copy protection in games, when ScummVM disables it by default.
+.It Fl -dirtyrects
+Enable dirty rectangles optimisation in software renderer (default: enabled).
+.It Fl -debug-channels-only
+Show only the specified debug channels
 .It Fl -debugflags= Ns Ar FLAGS
 Enable engine specific debug flags (separated by commas)
 .It Fl -demo-mode
@@ -204,12 +210,31 @@ without adding it to the config.
 Use
 .Fl -path= Ns Ar PATH
 to specify a directory.
+.It Fl -dump-midi
+Dumps MIDI events to
+.Pa dump.mid ,
+until quitting from game.
 .It Fl -enable-gs
 Enable Roland GS mode for MIDI playback.
+.It Fl -engine= Ns Ar ID
+In combination with
+.Fl -list-games
+or
+.Fl -list-all-games
+only lists games for this engine.
+.It Fl -engine-speed= Ns Ar NUM
+Set frame per second limit (0 - 100), 0 = no limit (default: 60).
 .It Fl -extrapath= Ns Ar PATH
 Extra path to additional game data
 .It Fl -filtering
 Force filtered graphics mode
+.It Fl -game= Ns Ar ID
+In combination with
+.Fl -add
+or
+.Fl -detect
+only adds or attempts to detect the game with id
+.Ar ID .
 .It Fl -gui-theme= Ns Ar THEME
 Select GUI theme
 .Po
@@ -219,8 +244,23 @@ Select GUI theme
 .Pc
 .It Fl -joystick= Ns Ar NUM
 Enable joystick input (default: 0 = first joystick).
+.It Fl -iconspath= Ns Ar PATH
+Path to additional icons for the launcher grid view.
+.It Fl -list-all-debugflags
+Display list of all engine specified debugflags.
+.It Fl -list-all-engines
+Display list of all detection engines and exit.
+.It Fl -list-all-games
+Display list of all detected games and exit.
 .It Fl -list-audio-devices
 List all available audio devices
+.It Fl -list-debugflags= Ns Ar engine
+Display list of engine specified debugflags.
+if
+.Ar engine= Ns global
+or
+.Ar engine
+is not specified, then it will list global debugflags.
 .It Fl -list-engines
 Display list of suppported engines and exit.
 .It Fl -list-saves
@@ -236,6 +276,28 @@ only adds or attempts to detect the game with id
 .Ar ID .
 .It Fl -list-themes
 Display list of all usable GUI themes
+.It Fl -md5
+Shows MD5 hash of the file given by
+.Fl -md5-path= Ns Ar PATH .
+If
+.Fl -md5-length= Ns Ar NUM
+is passed then it shows the MD5 hash of the first or last
+.Ar NUM
+bytes of the file given by
+.Ar PATH .
+If
+.Fl -md5-engine= Ns Ar ENGINE_ID
+is passed, it fetches the MD5 length automatically, overriding
+.Fl -md5-length .
+.It Fl -md5mac
+Shows MD5 hash for both the resource fork and data fork of the
+mac file given by
+.Fl -md5-path= Ns Ar PATH .
+If
+.Fl -md5-length= Ns Ar NUM
+is passed then it shows the MD5 hash of the first or last
+.Ar NUM
+bytes of each fork.
 .It Fl -midi-gain= Ns Ar NUM
 Set the gain for MIDI playback, 0-1000 (default: 100)
 .br
@@ -294,10 +356,40 @@ Enable additional render modes
 .Ar atari ,
 .Ar macintosh
 .Pc
+.It Fl -renderer= Ns Ar RENDERER
+Select 3D renderer
+.Po
+.Ar software ,
+.Ar opengl ,
+.Ar opengl_shaders
+.Pc
 .It Fl -savepath= Ns Ar PATH
 Path to where saved games are stored
+.It Fl -scale-factor= Ns Ar FACTOR
+Factor to scale the graphics by.
+.It Fl -scaler= Ns Ar MODE
+Select graphics scaler
+.Po
+.Ar normal ,
+.Ar hq ,
+.Ar edge ,
+.Ar advmame ,
+.Ar sai ,
+.Ar supersai ,
+.Ar supereagle ,
+.Ar pm ,
+.Ar dotmatrix ,
+.Ar tv2x
+.Pc .
+.It Fl -screenshotpath= Ns Ar PATH
+Specify path where screenshot files are created.
+.It Fl -show-fps
+Display FPS in 3D games.
 .It Fl -soundfont= Ns Ar FILE
 Select the SoundFont for MIDI playback (only supported by some MIDI drivers).
+.It Fl -start-movie= Ns Ar NAME Ns Ar @NUM
+Start movie at frame for Director.
+Either can be specified without the other.
 .It Fl -stretch-mode= Ns Ar MODE
 Select stretch mode
 .Po
@@ -312,6 +404,8 @@ Set talk delay for SCUMM games, or talk speed for other games (default: 60)
 Set music tempo (in percent, 50-200) for SCUMM games (default: 100).
 .It Fl -themepath= Ns Ar PATH
 Path to where GUI themes are stored
+.It Fl -window-size= Ns Ar W,H
+Set the ScummVM window size to the specified dimensions (OpenGL only).
 .El
 .Sh INGAME HOTKEYS
 .Bl -tag -width 13m
