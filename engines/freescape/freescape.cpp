@@ -248,18 +248,12 @@ void FreescapeEngine::shoot() {
 	if (shot) {
 		GeometricObject *gobj = (GeometricObject*) shot;
 		debug("Shot object %d with flags %x", gobj->getObjectID(), gobj->getObjectFlags());
-		if (gobj->conditionSource != nullptr) {
+
+		if (gobj->conditionSource != nullptr)
 			debug("Must use shot = true when executing: %s", gobj->conditionSource->c_str());
-			executeCode(gobj->condition, true, false);
-		}
-	}
 
-	for (int i = 0; i < int(_currentArea->conditionSources.size()); i++) {
-		debug("Must use shot = true executing: %s", _currentArea->conditionSources[i]->c_str());
-		executeCode(_currentArea->conditions[i], true, false);
+		executeConditions(gobj, true, false);
 	}
-
-	//debug("camera front: %f %f %f", _cameraFront.x(), _rotation.y(), _rotation.z());
 }
 
 Common::Error FreescapeEngine::run() {
@@ -461,13 +455,13 @@ bool FreescapeEngine::tryStepDown(Math::Vector3d currentPosition) {
 }
 
 
-bool FreescapeEngine::checkCollisions(bool executeConditions) {
+bool FreescapeEngine::checkCollisions(bool executeCode) {
 	int areaScale = _currentArea->getScale();
 
 	Math::Vector3d v1;
 	Math::Vector3d v2;
 
-	if (executeConditions) {
+	if (executeCode) {
 		v1 = Math::Vector3d(_position.x() -  areaScale * 3 * _playerWidth / 5, _position.y() - (areaScale + 1) * _playerHeight , _position.z() - areaScale * 3 * _playerDepth / 5);
 		v2 = Math::Vector3d(_position.x() +  areaScale * 3 * _playerWidth / 5, _position.y()                                   , _position.z() + areaScale * 3 * _playerDepth / 5);
 	} else {
@@ -481,25 +475,10 @@ bool FreescapeEngine::checkCollisions(bool executeConditions) {
 	if (obj != nullptr) {
 		debugC(1, kFreescapeDebugMove, "Collided with object id %d of size %f %f %f", obj->getObjectID(), obj->getSize().x(), obj->getSize().y(), obj->getSize().z());
 		GeometricObject *gobj = (GeometricObject*) obj;
-		if (!executeConditions) // Avoid executing code
+		if (!executeCode) // Avoid executing code
 			return true;
 
-		if (gobj->conditionSource != nullptr) {
-			debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", gobj->conditionSource->c_str());
-			executeCode(gobj->condition, false, true);
-		}
-
-		debugC(1, kFreescapeDebugCode, "Executing room conditions");
-		for (int i = 0; i < int(_currentArea->conditions.size()); i++) {
-			debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", _currentArea->conditionSources[i]->c_str());
-			executeCode(_currentArea->conditions[i], true, false);
-		}
-
-		debugC(1, kFreescapeDebugCode, "Executing global conditions (%d)", _conditions.size());
-		for (int i = 0; i < int(_conditions.size()); i++) {
-			//debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", _conditionSources[i]->c_str());
-			executeCode(_conditions[i], false, true);
-		}
+		executeConditions(gobj, false, true);
 		return true;
 	}
 	return false;

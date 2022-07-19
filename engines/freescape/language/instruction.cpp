@@ -42,6 +42,25 @@ Token::Type FCLInstruction::getType() {
 	return type;
 }
 
+void FreescapeEngine::executeConditions(GeometricObject *obj, bool shot, bool collided) {
+	if (obj->conditionSource != nullptr) {
+		debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", obj->conditionSource->c_str());
+		executeCode(obj->condition, shot, collided);
+	}
+
+	debugC(1, kFreescapeDebugCode, "Executing room conditions");
+	for (int i = 0; i < int(_currentArea->conditions.size()); i++) {
+		debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", _currentArea->conditionSources[i]->c_str());
+		executeCode(_currentArea->conditions[i], shot, collided);
+	}
+
+	debugC(1, kFreescapeDebugCode, "Executing global conditions (%d)", _conditions.size());
+	for (int i = 0; i < int(_conditions.size()); i++) {
+		//debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", _conditionSources[i]->c_str());
+		executeCode(_conditions[i], shot, collided);
+	}
+}
+
 void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool collided) {
 	assert(!(shot && collided));
 	int ip = 0;
