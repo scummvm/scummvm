@@ -29,20 +29,20 @@ For example,
 This is useful if you want to override a setting in the configuration file.
 .\" FIXME better way to do long options?
 .Bl -tag -width Ds
-.It Fl v, -version
+.It Fl v | -version
 Display ScummVM version information and exit.
-.It Fl h, -help
+.It Fl h | -help
 Display a brief help text and exit.
-.It Fl z, -list-games
+.It Fl z | -list-games
 Display list of supported games and exit.
-.It Fl t, -list-targets
+.It Fl t | -list-targets
 Display list of configured targets and exit.
-.It Fl t, -list-engines
+.It Fl t | -list-engines
 Display list of suppported engines and exit.
 .It Fl -list-saves
 Display a list of saved games for the target specified with
 \fB--game=\fITARGET\fR or all targets if none is specified.
-.It Fl a, -add
+.It Fl a | -add
 Add all games from current or specified directory.
 If \fB--game=\fIID\fR is
 passed only the game with id \fBID\fR is added.
@@ -62,17 +62,17 @@ Use \fB--path=\fIPATH\fR to specify a directory.
 .It Fl -recursive
 In combination with \fB--add\fR or \fB--detect\fR recurse down all
 subdirectories
-.It Fl c, -config= Ns Ar CONFIG
+.It Fl c | -config= Ns Ar CONFIG
 Use alternate configuration file.
-.It Fl p, -path= Ns Ar PATH
+.It Fl p | -path= Ns Ar PATH
 Path to where the game is installed.
-.It Fl x, -save-slot= Ns Ar [SLOT]
+.It Fl x | -save-slot= Ns Ar [SLOT]
 Saved game slot to load (default: autosave).
-.It Fl f, -fullscreen
+.It Fl f | -fullscreen
 Force full-screen mode.
-.It Fl F, -no-fullscreen
+.It Fl F | -no-fullscreen
 Force windowed mode.
-.It Fl g, -gfx-mode= Ns Ar MODE
+.It Fl g | -gfx-mode= Ns Ar MODE
 Select graphics scaler:
 .Bl -tag -width 10m
 .It Em 1x
@@ -120,7 +120,7 @@ Select GUI theme (\fIdefault\fR, \fImodern\fR, \fIclassic\fR)
 Path to where GUI themes are stored
 .It Fl -list-themes
 Display list of all usable GUI themes
-.It Fl e, -music-driver= Ns Ar MODE
+.It Fl e | -music-driver= Ns Ar MODE
 Select music driver:
 .Bl -tag -width 10m
 .It Em null
@@ -154,7 +154,7 @@ Windows built in MIDI sequencer for Windows users
 .El
 .It Fl -list-audio-devices
 List all available audio devices
-.It Fl q, -language= Ns Ar LANG
+.It Fl q | -language= Ns Ar LANG
 Select game's language:
 .Bl -tag -width Ds
 .It Em cz
@@ -186,25 +186,25 @@ Swedish
 .It Em zh
 Chinese
 .El
-.It Fl m, -music-volume= Ns Ar NUM
+.It Fl m | -music-volume= Ns Ar NUM
 Set the music volume, 0-255 (default: 192).
-.It Fl s, -sfx-volume= Ns Ar NUM
+.It Fl s | -sfx-volume= Ns Ar NUM
 Set the sfx volume to, 0-255 (default: 192).
-.It Fl r, -speech-volume Ns Ar NUM
+.It Fl r | -speech-volume Ns Ar NUM
 Set the voice volume to, 0-255 (default: 192).
 .It Fl -midi-gain= Ns Ar NUM
 Set the gain for MIDI playback, 0-1000 (default: 100)
 .br
 (only supported by some MIDI drivers)
-.It Fl n, -subtitles
+.It Fl n | -subtitles
 Enable subtitles (use with games that have voice).
-.It Fl b, -boot-param= Ns Ar NUM
+.It Fl b | -boot-param= Ns Ar NUM
 Pass number to the boot script (boot param).
-.It Fl d, -debuglevel= Ns Ar NUM
+.It Fl d | -debuglevel= Ns Ar NUM
 Set debug verbosity level
 .It Fl -debugflags= Ns Arm FLAGS
 Enable engine specific debug flags (separated by commas)
-.It Fl u, -dump-scripts
+.It Fl u | -dump-scripts
 Enable script dumping if a directory called \fIdumps\fR exists in the current
 directory.
 .It Fl -cdrom= Ns Ar NUM
