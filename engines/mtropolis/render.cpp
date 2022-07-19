@@ -320,7 +320,7 @@ private:
 	uint16 _y;
 };
 
-DissolveOrderedDitherPatternGenerator::DissolveOrderedDitherPatternGenerator() {
+DissolveOrderedDitherPatternGenerator::DissolveOrderedDitherPatternGenerator() : _x(0), _y(0) {
 	OrderedDitherGenerator<uint8, 16>::generateOrderedDither(_ditherPattern);
 }
 
