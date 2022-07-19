@@ -14,17 +14,24 @@
 is an interpreter that will play graphic adventure games
 based on a variety of game engines.
 .Pp
-\fIGAME\fR is a short name of game to load.
-For example, \fIscumm:monkey\fR for Monkey Island.
+.Ar GAME
+is a short name of game to load.
+For example,
+.Em scumm:monkey
+for Monkey Island.
 This can be either a built-in gameid, or a user configured target.
 .Sh OPTIONS
 Please note that more detailed information for the following options can be
-found in the \fIREADME\fR file.
+found in the
+.Em README
+file.
 .Pp
 The meaning of most long options (that is, those options starting with a
-double-dash) can be inverted by prefixing them with \fBno-\fR.
+double-dash) can be inverted by prefixing them with
+.Sy no- .
 For example,
-\fB--no-aspect-ratio\fR will turn aspect ratio correction off.
+.Fl -no-aspect-ratio
+will turn aspect ratio correction off.
 This is useful if you want to override a setting in the configuration file.
 .\" FIXME better way to do long options?
 .Bl -tag -width Ds
@@ -40,27 +47,45 @@ Display list of configured targets and exit.
 Display list of suppported engines and exit.
 .It Fl -list-saves
 Display a list of saved games for the target specified with
-\fB--game=\fITARGET\fR or all targets if none is specified.
+.Fl -game= Ns Ar TARGET
+or all targets if none is specified.
 .It Fl a | -add
 Add all games from current or specified directory.
-If \fB--game=\fIID\fR is
-passed only the game with id \fBID\fR is added.
-See also \fB--detect\fR.
-Use \fB--path=\fIPATH\fR to specify a directory.
+If
+.Fl -game= Ns Ar ID
+is passed only the game with id
+.Ar ID
+is added.
+See also
+.Fl -detect .
+Use
+.Fl -path= Ns Ar PATH
+to specify a directory.
 .It Fl -detect
 Display a list of games with their ID from current or specified directory
 without adding it to the config.
-Use \fB--path=\fIPATH\fR to specify a directory.
-.It Fl -game= Ns Ar ID
-In combination with \fB--add\fR or \fB--detect\fR only adds or attempts to
-detect the game with id \fBID\fR.
+Use
+.Fl -path= Ns Ar PATH
+to specify a directory.
+.Fl -game= Ns Ar ID
+In combination with
+.Fl -add
+or
+.Fl -detect
+only adds or attempts to detect the game with id
+.Ar ID .
 .It Fl -auto-detect
 Display a list of games from current or specified directory and start the first
 one.
-Use \fB--path=\fIPATH\fR to specify a directory.
+Use
+.Fl -path= Ns Ar PATH
+to specify a directory.
 .It Fl -recursive
-In combination with \fB--add\fR or \fB--detect\fR recurse down all
-subdirectories
+In combination with
+.Fl -add
+or
+.Fl -detect
+recurse down all subdirectories
 .It Fl c | -config= Ns Ar CONFIG
 Use alternate configuration file.
 .It Fl p | -path= Ns Ar PATH
@@ -108,13 +133,24 @@ Dot matrix effect.
 Factor 2x.
 .El
 .It Fl -stretch-mode= Ns Ar MODE
-Select stretch mode (\fIcenter\fR, \fIintegral\fR, \fIfit\fR, \fIstretch\fR)
+Select stretch mode
+.Po
+.Ar center ,
+.Ar integral ,
+.Ar fit ,
+.Ar stretch
+.Pc
 .It Fl -filtering
 Force filtered graphics mode
 .It Fl -no-filtering
 Force unfiltered graphics mode
 .It Fl -gui-theme= Ns Ar THEME
-Select GUI theme (\fIdefault\fR, \fImodern\fR, \fIclassic\fR)
+Select GUI theme
+.Po
+.Ar default ,
+.Ar modern ,
+.Ar classic
+.Pc
 .It Fl -themepath= Ns Ar PATH
 Path to where GUI themes are stored
 .It Fl -list-themes
@@ -204,16 +240,30 @@ Set debug verbosity level
 .It Fl -debugflags= Ns Arm FLAGS
 Enable engine specific debug flags (separated by commas)
 .It Fl u | -dump-scripts
-Enable script dumping if a directory called \fIdumps\fR exists in the current
-directory.
+Enable script dumping if a directory called
+.Em dumps
+exists in the current directory.
 .It Fl -cdrom= Ns Ar NUM
 CD drive to play CD audio from (default: 0 = first drive).
 .It Fl -joystick= Ns Ar [NUM]
 Enable joystick input (default: 0 = first joystick).
 .It Fl -platform= Ns Ar WORD
-Specify platform of game (allowed values: \fI2gs\fR, \fI3do\fR, \fIacorn\fR,
-\fIamiga\fR, \fIatari\fR, \fIc64\fR, \fIfmtowns\fR, \fImac\fR, \fInes\fR,
-\fIpc\fR, \fIpce\fR, \fIsegacd\fR, \fIwindows\fR)
+Specify platform of game
+.Po
+.Ar 2gs ,
+.Ar 3do ,
+.Ar acorn ,
+.Ar amiga ,
+.Ar atari ,
+.Ar c64 ,
+.Ar fmtowns ,
+.Ar mac ,
+.Ar nes ,
+.Ar pc ,
+.Ar pce ,
+.Ar segacd ,
+.Ar windows
+.Pc
 .It Fl -savepath= Ns Ar PATH
 Path to where saved games are stored
 .It Fl -extrapath= Ns Ar PATH
@@ -229,13 +279,30 @@ Enable Roland GS mode for MIDI playback.
 .It Fl -output-rate= Ns Ar RATE
 Set output sample rate in Hz (e.g. 22050).
 .It Fl -opl-driver= Ns Ar DRIVER
-Select AdLib (OPL) emulator (\fIdb\fR, \fImame\fR, \fInuked\fR)
+Select AdLib (OPL) emulator
+.Po
+.Ar db ,
+.Ar mame ,
+.Ar nuked
+.Pc
 .It Fl -aspect-ratio
 Enable aspect ratio correction.
 .It Fl -render-mode= Ns Ar MODE
-Enable additional render modes (\fIhercGreen\fR, \fIhercAmber\fR, \fIcga\fR,
-\fIega\fR, \fIvga\fR, \fIamiga\fR, \fIfmtowns\fR, \fIpc9821\fR, \fIpc9801\fR,
-\fI2gs\fR, \fIatari\fR, \fImacintosh\fR)
+Enable additional render modes
+.Po
+.Ar hercGreen ,
+.Ar hercAmber ,
+.Ar cga ,
+.Ar ega ,
+.Ar vga ,
+.Ar amiga ,
+.Ar fmtowns ,
+.Ar pc9821 ,
+.Ar pc9801 ,
+.Ar 2gs ,
+.Ar atari ,
+.Ar macintosh
+.Pc
 .It Fl -alt-intro
 Use alternative intro for CD versions of Beneath a Steel Sky and Flight of the
 Amazon Queen.
@@ -282,7 +349,9 @@ of the middle mouse button or wheel.
 .El
 .Pp
 There are many more SCUMM and game-specific hotkeys.
-See the \fIREADME\fR file.
+See the
+.Em README
+file.
 .Sh ENVIRONMENT
 .Bl -tag -width SCUMMVM
 .It Ev SCUMMVM_MIDI
@@ -322,7 +391,9 @@ Running the Italian version of Maniac Mansion fullscreen:
 .Pp
 .Dl $ scummvm -q it -f scumm:maniac
 .Sh SEE ALSO
-More information can be found in the \fIREADME\fR and on the website
+More information can be found in the
+.Em README
+and on the website
 .Pa https://www.scummvm.org .
 .Sh AUTHORS
 This manual page written by Jonathan Gray <khalek at scummvm.org>.
