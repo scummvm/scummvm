@@ -229,12 +229,17 @@ private:
 		Runtime *runtime;
 	};
 
+	struct StopPlayingTaskData {
+		Runtime *runtime;
+	};
+
 	struct ChangeFrameTaskData {
 		Runtime *runtime;
 		uint32 frame;
 	};
 
 	VThreadState startPlayingTask(const StartPlayingTaskData &taskData);
+	VThreadState stopPlayingTask(const StopPlayingTaskData &taskData);
 
 	void playMedia(Runtime *runtime, Project *project) override;
 	MiniscriptInstructionOutcome scriptSetRate(MiniscriptThread *thread, const DynamicValue &value);

@@ -1125,7 +1125,7 @@ MiniscriptInstructionOutcome MToonElement::writeRefAttribute(MiniscriptThread *t
 	return VisualElement::writeRefAttribute(thread, result, attrib);
 }
 
-VThreadState MToonElement::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties>& msg) {
+VThreadState MToonElement::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (Event::create(EventIDs::kPlay, 0).respondsTo(msg->getEvent())) {
 		StartPlayingTaskData *startPlayingTaskData = runtime->getVThread().pushTask("MToonElement::startPlayingTask", this, &MToonElement::startPlayingTask);
 		startPlayingTaskData->runtime = runtime;
@@ -1137,12 +1137,12 @@ VThreadState MToonElement::consumeCommand(Runtime *runtime, const Common::Shared
 		return kVThreadReturn;
 	}
 	if (Event::create(EventIDs::kStop, 0).respondsTo(msg->getEvent())) {
-		// Works differently from movies: Needs to hide the element and pause
-#ifdef MTROPOLIS_DEBUG_ENABLE
-		if (Debugger *debugger = runtime->debugGetDebugger())
-			debugger->notify(kDebugSeverityError, "mToon element was commanded to stop, but that's not implemented yet");
-#endif
-		warning("mToon element stops are not implemented");
+		ChangeFlagTaskData *becomeVisibleTaskData = runtime->getVThread().pushTask("MToonElement::changeVisibilityTask", static_cast<VisualElement *>(this), &MToonElement::changeVisibilityTask);
+		becomeVisibleTaskData->desiredFlag = false;
+		becomeVisibleTaskData->runtime = runtime;
+
+		StopPlayingTaskData *stopPlayingTaskData = runtime->getVThread().pushTask("MToonElement::startPlayingTask", this, &MToonElement::stopPlayingTask);
+		stopPlayingTaskData->runtime = runtime;
 		return kVThreadReturn;
 	}
 
@@ -1295,6 +1295,17 @@ VThreadState MToonElement::startPlayingTask(const StartPlayingTaskData &taskData
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
 		taskData.runtime->sendMessageOnVThread(dispatch);
 	}
+
+	return kVThreadReturn;
+}
+
+VThreadState MToonElement::stopPlayingTask(const StopPlayingTaskData &taskData) {
+	_contentsDirty = true;
+	_isPlaying = false;
+
+	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kStop, 0), DynamicValue(), getSelfReference()));
+	Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+	taskData.runtime->sendMessageOnVThread(dispatch);
 
 	return kVThreadReturn;
 }
