@@ -85,7 +85,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_version = getDescriptionVersion();
 	_fixStageSize = false;
 	_fixStageRect = Common::Rect();
-	_wmMode = debugChannelSet(-1, kDebugDesktop) ? kWMModeDesktop : kWMModeFullscreen;
+	_wmMode = 0;
 
 	_wmWidth = 1024;
 	_wmHeight = 768;
@@ -176,6 +176,12 @@ Common::Error DirectorEngine::run() {
 	}
 
 	_currentPalette = nullptr;
+
+	//        we run mac-style menus     |   and we will redraw all widgets
+	_wmMode = Graphics::kWMModalMenuMode | Graphics::kWMModeManualDrawWidgets;
+
+	if (!debugChannelSet(-1, kDebugDesktop))
+		_wmMode |= Graphics::kWMModeFullscreen | Graphics::kWMModeNoDesktop;
 
 	if (debugChannelSet(-1, kDebug32bpp))
 		_wmMode |= Graphics::kWMMode32bpp;
