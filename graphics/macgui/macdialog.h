@@ -44,16 +44,26 @@
  *
  */
 
-#ifndef WAGE_DIALOG_H
-#define WAGE_DIALOG_H
+#ifndef GRAPHICS_MACGUI_MACDIALOG_H
+#define GRAPHICS_MACGUI_MACDIALOG_H
+
+#include "common/str.h"
+#include "common/rect.h"
+
+#include "graphics/managed_surface.h"
+#include "graphics/font.h"
 
 namespace Wage {
+class Gui;
+}
 
-struct DialogButton {
+namespace Graphics {
+
+struct MacDialogButton {
 	Common::String text;
 	Common::Rect bounds;
 
-	DialogButton(const char *t, int x1, int y1, int w, int h) {
+	MacDialogButton(const char *t, int x1, int y1, int w, int h) {
 		text = t;
 		bounds.left = x1;
 		bounds.top = y1;
@@ -62,23 +72,23 @@ struct DialogButton {
 	}
 };
 
-typedef Common::Array<DialogButton *> DialogButtonArray;
+typedef Common::Array<MacDialogButton *> MacDialogButtonArray;
 
-class Dialog {
+class MacDialog {
 public:
-	Dialog(Gui *gui, int width, const char *text, DialogButtonArray *buttons, uint defaultButton);
-	~Dialog();
+	MacDialog(Wage::Gui *gui, int width, const char *text, MacDialogButtonArray *buttons, uint defaultButton);
+	~MacDialog();
 
 	int run();
 
 private:
-	Gui *_gui;
-	Graphics::ManagedSurface _tempSurface;
+	Wage::Gui *_gui;
+	ManagedSurface _tempSurface;
 	Common::Rect _bbox;
 	Common::String _text;
 
-	const Graphics::Font *_font;
-	DialogButtonArray *_buttons;
+	const Font *_font;
+	MacDialogButtonArray *_buttons;
 	int _pressedButton;
 	uint _defaultButton;
 	bool _mouseOverPressedButton;
@@ -86,7 +96,7 @@ private:
 	bool _needsRedraw;
 
 private:
-	const Graphics::Font *getDialogFont();
+	const Font *getDialogFont();
 	void drawOutline(Common::Rect &bounds, int *spec, int speclen);
 	void paint();
 	void mouseMove(int x, int y);

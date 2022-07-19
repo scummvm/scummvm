@@ -44,25 +44,26 @@
  *
  */
 
-#include "common/system.h"
 #include "common/events.h"
+#include "common/system.h"
+
+//#include "engines/engine.h"
+#include "engines/wage/design.h"
+#include "engines/wage/gui.h"
+#include "engines/wage/wage.h"
 
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
+#include "graphics/macgui/macdialog.h"
 
-#include "wage/wage.h"
-#include "wage/design.h"
-#include "wage/gui.h"
-#include "wage/dialog.h"
-
-namespace Wage {
+namespace Graphics {
 
 enum {
 	kDialogHeight = 113
 };
 
-Dialog::Dialog(Gui *gui, int width, const char *text, DialogButtonArray *buttons, uint defaultButton) :
-		_gui(gui), _text(text), _buttons(buttons), _defaultButton(defaultButton) {
+MacDialog::MacDialog(Wage::Gui *gui, int width, const char *text, MacDialogButtonArray *buttons, uint defaultButton) :
+	_gui(gui), _text(text), _buttons(buttons), _defaultButton(defaultButton) {
 	assert(_gui->_engine);
 	assert(_gui->_engine->_world);
 
@@ -86,25 +87,25 @@ Dialog::Dialog(Gui *gui, int width, const char *text, DialogButtonArray *buttons
 	_needsRedraw = true;
 }
 
-Dialog::~Dialog() {
+MacDialog::~MacDialog() {
 	for (uint i = 0; i < _buttons->size(); i++)
 		delete _buttons->operator[](i);
 }
 
-const Graphics::Font *Dialog::getDialogFont() {
+const Graphics::Font *MacDialog::getDialogFont() {
 	return _gui->_wm->_fontMan->getFont(Graphics::MacFont(Graphics::kMacFontChicago, 12));
 }
 
-void Dialog::paint() {
-	Design::drawFilledRect(&_gui->_screen, _bbox, kColorWhite, _gui->_wm->getPatterns(), kPatternSolid);
+void MacDialog::paint() {
+	Wage::Design::drawFilledRect(&_gui->_screen, _bbox, kColorWhite, _gui->_wm->getPatterns(), kPatternSolid);
 	_font->drawString(&_gui->_screen, _text, _bbox.left + 24, _bbox.top + 16, _bbox.width(), kColorBlack);
 
-	static int boxOutline[] = { 1, 0, 0, 1, 1 };
+	static int boxOutline[] = {1, 0, 0, 1, 1};
 	drawOutline(_bbox, boxOutline, ARRAYSIZE(boxOutline));
 
 	for (uint i = 0; i < _buttons->size(); i++) {
-		DialogButton *button = _buttons->operator[](i);
-		static int buttonOutline[] = { 0, 0, 0, 0, 1 };
+		MacDialogButton *button = _buttons->operator[](i);
+		static int buttonOutline[] = {0, 0, 0, 0, 1};
 
 		if (i == _defaultButton) {
 			buttonOutline[0] = buttonOutline[1] = 1;
@@ -116,9 +117,9 @@ void Dialog::paint() {
 
 		if ((int)i == _pressedButton && _mouseOverPressedButton) {
 			Common::Rect bb(button->bounds.left + 5, button->bounds.top + 5,
-				button->bounds.right - 5, button->bounds.bottom - 5);
+							button->bounds.right - 5, button->bounds.bottom - 5);
 
-			Design::drawFilledRect(&_gui->_screen, bb, kColorBlack, _gui->_wm->getPatterns(), kPatternSolid);
+			Wage::Design::drawFilledRect(&_gui->_screen, bb, kColorBlack, _gui->_wm->getPatterns(), kPatternSolid);
 
 			color = kColorWhite;
 		}
@@ -132,19 +133,19 @@ void Dialog::paint() {
 	}
 
 	g_system->copyRectToScreen(_gui->_screen.getBasePtr(_bbox.left, _bbox.top), _gui->_screen.pitch,
-			_bbox.left, _bbox.top, _bbox.width() + 1, _bbox.height() + 1);
+							   _bbox.left, _bbox.top, _bbox.width() + 1, _bbox.height() + 1);
 
 	_needsRedraw = false;
 }
 
-void Dialog::drawOutline(Common::Rect &bounds, int *spec, int speclen) {
+void MacDialog::drawOutline(Common::Rect &bounds, int *spec, int speclen) {
 	for (int i = 0; i < speclen; i++)
 		if (spec[i] != 0)
-			Design::drawRect(&_gui->_screen, bounds.left + i, bounds.top + i, bounds.right - i, bounds.bottom - i,
-						1, kColorBlack, _gui->_wm->getPatterns(), kPatternSolid);
+			Wage::Design::drawRect(&_gui->_screen, bounds.left + i, bounds.top + i, bounds.right - i, bounds.bottom - i,
+							 1, kColorBlack, _gui->_wm->getPatterns(), kPatternSolid);
 }
 
-int Dialog::run() {
+int MacDialog::run() {
 	bool shouldQuit = false;
 	Common::Rect r(_bbox);
 
@@ -154,7 +155,7 @@ int Dialog::run() {
 	while (!shouldQuit) {
 		Common::Event event;
 
-		while (_gui->_engine->_eventMan->pollEvent(event)) {
+		while (_gui->_engine->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 				_gui->_engine->_shouldQuit = true;
@@ -198,7 +199,7 @@ int Dialog::run() {
 	return _pressedButton;
 }
 
-int Dialog::matchButton(int x, int y) {
+int MacDialog::matchButton(int x, int y) {
 	for (uint i = 0; i < _buttons->size(); i++)
 		if (_buttons->operator[](i)->bounds.contains(x, y))
 			return i;
@@ -206,7 +207,7 @@ int Dialog::matchButton(int x, int y) {
 	return -1;
 }
 
-void Dialog::mouseMove(int x, int y) {
+void MacDialog::mouseMove(int x, int y) {
 	if (_pressedButton != -1) {
 		int match = matchButton(x, y);
 
@@ -220,7 +221,7 @@ void Dialog::mouseMove(int x, int y) {
 	}
 }
 
-void Dialog::mouseClick(int x, int y) {
+void MacDialog::mouseClick(int x, int y) {
 	int match = matchButton(x, y);
 
 	if (match != -1) {
@@ -231,7 +232,7 @@ void Dialog::mouseClick(int x, int y) {
 	}
 }
 
-int Dialog::mouseRaise(int x, int y) {
+int MacDialog::mouseRaise(int x, int y) {
 	bool res = false;
 
 	if (_pressedButton != -1) {
