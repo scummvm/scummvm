@@ -227,6 +227,9 @@ bool MacTextWindow::draw(bool forceRedraw) {
 	// Compose
 	_mactext->draw(_composeSurface, true);
 
+	if (_cursorState)
+		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX, _cursorY));
+
 	return true;
 }
 
@@ -634,7 +637,7 @@ static void cursorTimerHandler(void *refCon) {
 
 void MacTextWindow::updateCursorPos() {
 	_cursorY = _mactext->getTextHeight() - _scrollPos - kCursorHeight;
-
+	_cursorY += _inputText.empty() ? 3 : 0;
 	_cursorDirty = true;
 }
 
