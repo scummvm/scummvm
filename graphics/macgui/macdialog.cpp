@@ -52,6 +52,7 @@
 #include "engines/wage/gui.h"
 #include "engines/wage/wage.h"
 
+#include "graphics/macgui/mactext.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macdialog.h"
@@ -62,8 +63,8 @@ enum {
 	kDialogHeight = 113
 };
 
-MacDialog::MacDialog(Wage::Gui *gui, int width, const char *text, MacDialogButtonArray *buttons, uint defaultButton) :
-	_gui(gui), _text(text), _buttons(buttons), _defaultButton(defaultButton) {
+MacDialog::MacDialog(Wage::Gui *gui, int width, MacText *mactext, MacDialogButtonArray *buttons, uint defaultButton) :
+	_gui(gui), _mactext(mactext), _buttons(buttons), _defaultButton(defaultButton) {
 	assert(_gui->_engine);
 	assert(_gui->_engine->_world);
 
@@ -98,7 +99,7 @@ const Graphics::Font *MacDialog::getDialogFont() {
 
 void MacDialog::paint() {
 	Wage::Design::drawFilledRect(&_gui->_screen, _bbox, kColorWhite, _gui->_wm->getPatterns(), kPatternSolid);
-	_font->drawString(&_gui->_screen, _text, _bbox.left + 24, _bbox.top + 16, _bbox.width(), kColorBlack);
+	_mactext->draw(&_gui->_screen, 0, 0, _bbox.width(), _bbox.height(), _bbox.left + 24, _bbox.top + 16);
 
 	static int boxOutline[] = {1, 0, 0, 1, 1};
 	drawOutline(_bbox, boxOutline, ARRAYSIZE(boxOutline));

@@ -208,7 +208,12 @@ void WageEngine::gameOver() {
 
 	buttons.push_back(new Graphics::MacDialogButton("OK", 66, 67, 68, 28));
 
-	Graphics::MacDialog gameOverDialog(_gui, 199, _world->_gameOverMessage->c_str(), &buttons, 0);
+	Graphics::MacFont font;
+
+	Graphics::MacText gameOverMessage(*_world->_gameOverMessage, _gui->_wm, &font, Graphics::kColorBlack,
+									  Graphics::kColorWhite, 199, Graphics::kTextAlignCenter);
+
+	Graphics::MacDialog gameOverDialog(_gui, 199, &gameOverMessage, &buttons, 0);
 
 	gameOverDialog.run();
 
@@ -225,7 +230,12 @@ bool WageEngine::saveDialog() {
 	buttons.push_back(new Graphics::MacDialogButton("Yes", 112, 67, 68, 28));
 	buttons.push_back(new Graphics::MacDialogButton("Cancel", 205, 67, 68, 28));
 
-	Graphics::MacDialog save(_gui, 291, _world->_saveBeforeCloseMessage->c_str(), &buttons, 1);
+	Graphics::MacFont font; 
+
+	Graphics::MacText saveBeforeCloseMessage(*_world->_saveBeforeCloseMessage, _gui->_wm, &font, Graphics::kColorBlack,
+									  Graphics::kColorWhite, 291, Graphics::kTextAlignLeft);
+
+	Graphics::MacDialog save(_gui, 291, &saveBeforeCloseMessage, &buttons, 1);
 
 	int button = save.run();
 

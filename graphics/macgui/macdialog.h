@@ -59,6 +59,8 @@ class Gui;
 
 namespace Graphics {
 
+class MacText;
+
 struct MacDialogButton {
 	Common::String text;
 	Common::Rect bounds;
@@ -76,7 +78,7 @@ typedef Common::Array<MacDialogButton *> MacDialogButtonArray;
 
 class MacDialog {
 public:
-	MacDialog(Wage::Gui *gui, int width, const char *text, MacDialogButtonArray *buttons, uint defaultButton);
+	MacDialog(Wage::Gui *gui, int width, MacText *mactext, MacDialogButtonArray *buttons, uint defaultButton);
 	~MacDialog();
 
 	int run();
@@ -85,7 +87,7 @@ private:
 	Wage::Gui *_gui;
 	ManagedSurface _tempSurface;
 	Common::Rect _bbox;
-	Common::String _text;
+	MacText *_mactext;
 
 	const Font *_font;
 	MacDialogButtonArray *_buttons;
