@@ -89,7 +89,8 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 	_wmWidth = 1024;
 	_wmHeight = 768;
-	_wm = new Graphics::MacWindowManager(_wmMode, &_director3QuickDrawPatterns, getLanguage());
+
+	_wm = nullptr;
 
 	_gameDataDir = Common::FSNode(ConfMan.get("path"));
 
@@ -126,8 +127,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 	_surface = nullptr;
 	_tickBaseline = 0;
-
-	gameQuirks(_gameDescription->desc.gameId, _gameDescription->desc.platform);
 }
 
 DirectorEngine::~DirectorEngine() {
@@ -181,8 +180,14 @@ Common::Error DirectorEngine::run() {
 	if (debugChannelSet(-1, kDebug32bpp))
 		_wmMode |= Graphics::kWMMode32bpp;
 
-	_wm->setDesktopMode(_wmMode);
+	_wm = new Graphics::MacWindowManager(_wmMode, &_director3QuickDrawPatterns, getLanguage());
 	_wm->setEngine(this);
+
+	gameQuirks(_gameDescription->desc.gameId, _gameDescription->desc.platform);
+
+	_wm->setDesktopMode(_wmMode);
+
+	_wm->printWMMode();
 
 	_pixelformat = _wm->_pixelformat;
 
