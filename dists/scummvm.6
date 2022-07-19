@@ -14,18 +14,19 @@
 is an interpreter that will play graphic adventure games
 based on a variety of game engines.
 .Pp
-\fIGAME\fR is a short name of game to load. For example, \fIscumm:monkey\fR for
-Monkey Island. This can be either a built-in gameid, or a user configured
-target.
+\fIGAME\fR is a short name of game to load.
+For example, \fIscumm:monkey\fR for Monkey Island.
+This can be either a built-in gameid, or a user configured target.
 .Sh OPTIONS
 .Pp
 Please note that more detailed information for the following options can be
 found in the \fIREADME\fR file.
 .Pp
 The meaning of most long options (that is, those options starting with a
-double-dash) can be inverted by prefixing them with \fBno-\fR. For example,
-\fB--no-aspect-ratio\fR will turn aspect ratio correction off. This is useful
-if you want to override a setting in the configuration file.
+double-dash) can be inverted by prefixing them with \fBno-\fR.
+For example,
+\fB--no-aspect-ratio\fR will turn aspect ratio correction off.
+This is useful if you want to override a setting in the configuration file.
 .\" FIXME better way to do long options?
 .Bl -tag -width Ds
 .It Fl v, -version
@@ -42,18 +43,22 @@ Display list of suppported engines and exit.
 Display a list of saved games for the target specified with
 \fB--game=\fITARGET\fR or all targets if none is specified.
 .It Fl a, -add
-Add all games from current or specified directory. If \fB--game=\fIID\fR is
-passed only the game with id \fBID\fR is added. See also \fB--detect\fR.
+Add all games from current or specified directory.
+If \fB--game=\fIID\fR is
+passed only the game with id \fBID\fR is added.
+See also \fB--detect\fR.
 Use \fB--path=\fIPATH\fR to specify a directory.
 .It Fl -detect
 Display a list of games with their ID from current or specified directory
-without adding it to the config. Use \fB--path=\fIPATH\fR to specify a directory.
+without adding it to the config.
+Use \fB--path=\fIPATH\fR to specify a directory.
 .It Fl -game= Ns Ar ID
 In combination with \fB--add\fR or \fB--detect\fR only adds or attempts to
 detect the game with id \fBID\fR.
 .It Fl -auto-detect
 Display a list of games from current or specified directory and start the first
-one. Use \fB--path=\fIPATH\fR to specify a directory.
+one.
+Use \fB--path=\fIPATH\fR to specify a directory.
 .It Fl -recursive
 In combination with \fB--add\fR or \fB--detect\fR recurse down all
 subdirectories
@@ -71,7 +76,8 @@ Force windowed mode.
 Select graphics scaler:
 .Bl -tag -width 10m
 .It Em 1x
-No filtering, no scaling. Fastest.
+No filtering, no scaling.
+Fastest.
 .It Em 2x
 No filtering, factor 2x (default for non 640x480 games).
 .It Em 3x
@@ -81,19 +87,26 @@ No filtering, factor 3x.
 .It Em super2xsai
 Enhanced 2xSAI filtering, factor 2x.
 .It Em supereagle
-Less blurry than 2xSAI, but slower. Factor 2x.
+Less blurry than 2xSAI, but slower.
+Factor 2x.
 .It Em advmame2x
-Doesn't rely on blurring like 2xSAI, fast. Factor 2x.
+Doesn't rely on blurring like 2xSAI, fast.
+Factor 2x.
 .It Em advmame3x
-Doesn't rely on blurring like 2xSAI, fast. Factor 3x.
+Doesn't rely on blurring like 2xSAI, fast.
+Factor 3x.
 .It Em hq2x
-Very nice high quality filter but slow. Factor 2x.
+Very nice high quality filter but slow.
+Factor 2x.
 .It Em hq3x
-Very nice high quality filter but slow. Factor 3x.
+Very nice high quality filter but slow.
+Factor 3x.
 .It Em tv2x
-Interlace filter, tries to emulate a TV. Factor 2x.
+Interlace filter, tries to emulate a TV.
+Factor 2x.
 .It Em dotmatrix
-Dot matrix effect. Factor 2x.
+Dot matrix effect.
+Factor 2x.
 .El
 .It Fl -stretch-mode= Ns Ar MODE
 Select stretch mode (\fIcenter\fR, \fIintegral\fR, \fIfit\fR, \fIstretch\fR)
@@ -111,7 +124,8 @@ Display list of all usable GUI themes
 Select music driver:
 .Bl -tag -width 10m
 .It Em null
-Null output. Don't play any music.
+Null output.
+Don't play any music.
 .It Em adlib
 Internal AdLib emulation
 .It Em fluidsynth
@@ -129,8 +143,8 @@ Output using ALSA sequencer device
 .It Em core
 CoreAudio sound, for macOS users
 .It Em coremidi
-CoreMIDI sound, for macOS users. Use only if you have a hardware MIDI
-synthesizer.
+CoreMIDI sound, for macOS users.
+Use only if you have a hardware MIDI synthesizer.
 .It Em seq
 Use /dev/sequencer for MIDI, *nix users.
 .It Em timidity
@@ -268,7 +282,8 @@ Open virtual keyboard (if enabled). This can also be triggered by a long press
 of the middle mouse button or wheel.
 .El
 .Pp
-There are many more SCUMM and game-specific hotkeys. See the \fIREADME\fR file.
+There are many more SCUMM and game-specific hotkeys.
+See the \fIREADME\fR file.
 .Sh ENVIRONMENT
 .Bl -tag -width SCUMMVM
 .It Ev SCUMMVM_MIDI
