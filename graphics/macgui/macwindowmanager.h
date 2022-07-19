@@ -298,6 +298,8 @@ public:
 
 	void clearWidgetRefs(MacWidget *widget);
 
+	void printWMMode(int debuglevel = 0);
+
 private:
 	void replaceCursorType(MacCursorType type);
 

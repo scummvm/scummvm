@@ -1360,4 +1360,49 @@ void MacWindowManager::setEngineRedrawCallback(void *engine, void (*redrawCallba
 	_redrawEngineCallback = redrawCallback;
 }
 
+void MacWindowManager::printWMMode(int debuglevel) {
+	Common::String out;
+
+	if (_mode & kWMModeNoDesktop)
+		out += "kWMModeNoDesktop";
+	else
+		out += "!kWMModeNoDesktop";
+
+	if (_mode & kWMModeAutohideMenu)
+		out += " kWMModeAutohideMenu";
+
+	if (_mode & kWMModalMenuMode)
+		out += " kWMModalMenuMode";
+
+	if (_mode & kWMModeForceBuiltinFonts)
+		out += " kWMModeForceBuiltinFonts";
+
+	if (_mode & kWMModeUnicode)
+		out += " kWMModeUnicode";
+
+	if (_mode & kWMModeManualDrawWidgets)
+		out += " kWMModeManualDrawWidgets";
+
+	if (_mode & kWMModeFullscreen)
+		out += " kWMModeFullscreen";
+	else
+		out += " !kWMModeFullscreen";
+
+	if (_mode & kWMModeButtonDialogStyle)
+		out += " kWMModeButtonDialogStyle";
+
+	if (_mode & kWMMode32bpp)
+		out += " kWMMode32bpp";
+	else
+		out += " !kWMMode32bpp";
+
+	if (_mode & kWMNoScummVMWallpaper)
+		out += " kWMNoScummVMWallpaper";
+
+	if (_mode & kWMModeWin95)
+		out += " kWMModeWin95";
+
+	debug(debuglevel, "WM mode: %s", out.c_str());
+}
+
 } // End of namespace Graphics
