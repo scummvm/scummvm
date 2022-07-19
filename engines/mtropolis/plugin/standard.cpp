@@ -1616,13 +1616,12 @@ VThreadState STransCtModifier::consumeMessage(Runtime *runtime, const Common::Sh
 		effect._steps = _steps;
 
 		if (SceneTransitionTypes::loadFromData(effect._transitionType, _transitionType) && SceneTransitionDirections::loadFromData(effect._transitionDirection, _transitionDirection)) {
-			// Weird quirk: Duration doesn't seem to affect duration properly for wipe transitions.
+			// Duration doesn't seem to affect wipe transitions for some reason.
 			// In Obsidian, this mostly effects 180-degree turns.
-			// Good place to test this is in the corners of the Bureau library.
-			const uint32 kMinWipeDuration = 500;
-
-			if (effect._transitionType == SceneTransitionTypes::kWipe && effect._duration < kMinWipeDuration)
-				effect._duration = kMinWipeDuration;
+			// Good place to test this is in the corners of the Bureau library, where it's 0,
+			// but some cases where it is set (e.g. the Spider control room) have the same duration anyway.
+			if (effect._transitionType == SceneTransitionTypes::kWipe)
+				effect._duration = 500;
 
 			runtime->setSceneTransitionEffect(false, &effect);
 		} else {
