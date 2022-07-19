@@ -251,10 +251,13 @@ MacWindowManager::~MacWindowManager() {
 
 void MacWindowManager::setDesktopMode(uint32 mode) {
 	if (!(mode & Graphics::kWMNoScummVMWallpaper)) {
-		loadDesktop();
+		if (_mode & Graphics::kWMNoScummVMWallpaper)
+			loadDesktop();
 	} else if (_desktopBmp) {
 		_desktopBmp->free();
 	}
+
+	_mode = mode;
 }
 
 void MacWindowManager::setScreen(ManagedSurface *screen) {
