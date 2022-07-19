@@ -13,6 +13,9 @@
 namespace Freescape {
 
 FCLInstruction::FCLInstruction(Token::Type _type) {
+	source = 0;
+	destination = 0;
+	additional = 0;
 	// TODO: learn modern constructor syntax
 	type = _type;
 	thenInstructions = nullptr;
@@ -20,6 +23,9 @@ FCLInstruction::FCLInstruction(Token::Type _type) {
 }
 
 FCLInstruction::FCLInstruction() {
+	source = 0;
+	destination = 0;
+	additional = 0;
 	type = Token::UNKNOWN;
 	thenInstructions = nullptr;
 	elseInstructions = nullptr;
@@ -27,6 +33,10 @@ FCLInstruction::FCLInstruction() {
 
 void FCLInstruction::setSource(int32 _source) {
 	source = _source;
+}
+
+void FCLInstruction::setAdditional(int32 _additional) {
+	additional = _additional;
 }
 
 void FCLInstruction::setDestination(int32 _destination) {
@@ -159,11 +169,22 @@ void FreescapeEngine::executeDelay(FCLInstruction &instruction) {
 }
 
 bool FreescapeEngine::executeEndIfVisibilityIsNotEqual(FCLInstruction &instruction) {
-	uint16 objectID = instruction.source;
+	uint16 source = instruction.source;
+	uint16 additional = instruction.additional;
 	uint16 value = instruction.destination;
-	debugC(1, kFreescapeDebugCode, "End condition if visibility of obj with id %d is %d!", objectID, value);
-	Object *obj = _currentArea->objectWithID(objectID);
-	assert(obj);
+
+	Object *obj = nullptr;
+	if (additional == 0) {
+		obj = _currentArea->objectWithID(source);
+		assert(obj);
+		debugC(1, kFreescapeDebugCode, "End condition if visibility of obj with id %d is %d!", source, value);
+	} else {
+		assert(_areaMap.contains(source));
+		obj = _areaMap[source]->objectWithID(additional);
+		assert(obj);
+		debugC(1, kFreescapeDebugCode, "End condition if visibility of obj with id %d in area %d is %d!", additional, source, value);
+	}
+
 	return (obj->isInvisible() == value);
 }
 
@@ -247,7 +268,11 @@ void FreescapeEngine::executeToggleVisibility(FCLInstruction &instruction) {
 
 	debugC(1, kFreescapeDebugCode, "Toggling obj %d visibility in area %d!", objectID, areaID);
 	Object *obj = _areaMap[areaID]->objectWithID(objectID);
-	obj->toggleVisibility();
+	if (obj)
+		obj->toggleVisibility();
+	else
+		debugC(1, kFreescapeDebugCode, "WARNING!: obj %d does not exists in area %d!", objectID, areaID);
+
 }
 
 void FreescapeEngine::executeGoto(FCLInstruction &instruction) {
