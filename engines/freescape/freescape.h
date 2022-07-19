@@ -13,6 +13,7 @@
 #include "audio/softsynth/pcspk.h"
 
 #include "freescape/area.h"
+#include "freescape/objects/geometricobject.h"
 #include "freescape/objects/entrance.h"
 #include "freescape/language/instruction.h"
 #include "freescape/gfx.h"
@@ -117,7 +118,8 @@ public:
 	Common::Array<Common::String*> _conditionSources;
 	Common::Array<FCLInstructionVector> _conditions;
 
-	bool checkCollisions(bool executeConditions);
+	bool checkCollisions(bool executeCode);
+	void executeConditions(GeometricObject *obj, bool shot, bool collided);
 	void executeCode(FCLInstructionVector &code, bool shot, bool collided);
 
 	// Instructions
