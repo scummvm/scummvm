@@ -211,6 +211,7 @@ static const char *credits[] = {
 "C0""Scott Percival",
 "C0""Steven Hoefel",
 "C0""Tobia Tesan",
+"C0""Misty De M\303\251o",
 "",
 "C1""DM",
 "C0""Arnaud Boutonn\303\251",
