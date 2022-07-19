@@ -486,6 +486,7 @@ void SceneScriptHF05::dialogueWithCrazylegs1() {
 		}
 		Actor_Says(kActorCrazylegs, 510, kAnimationModeTalk);
 		if (_vm->_cutContent) {
+			// TODO ASDF Test animation
 			Actor_Says(kActorCrazylegs, 520, kAnimationModeTalk);
 		}
 		Actor_Says(kActorMcCoy, 1920, 23);
@@ -622,7 +623,19 @@ void SceneScriptHF05::dialogueWithCrazylegs2() { // Restored feature - Original:
 	if (answer == 1250) { // ARREST
 		Actor_Says(kActorMcCoy, 1955, 17);
 		Actor_Says(kActorMcCoy, 1960, 23);
-		Item_Pickup_Spin_Effect(kModelAnimationSpinnerKeys, 315, 327);
+		if (_vm->_cutContent) {
+			// This extra check is required to fix a problematic saved game where
+			// the clue kClueGrigoriansResources was acquired in Vanilla Mode,
+			// due to a bug that affected ScummVM 2.5.0, 2.5.1 and 2.6.0.
+			// This bug only occurs if the game's data files contain
+			// separate CDFRAMESx.DAT files instead of a single HDFRAMES.DAT file.
+			// In Vanilla Mode the currently loaded CDFRAMES files
+			// is missing an animation (Bug #13727).
+			// In Restored Content mode we load all animation files
+			// so the bug, expectedly, does not manifest there.
+			// The animation for the keys item is the culprit.
+			Item_Pickup_Spin_Effect(kModelAnimationSpinnerKeys, 315, 327);
+		}
 		Delay(2000);
 		Actor_Says(kActorMcCoy, 1980, 23);
 		Actor_Says(kActorMcCoy, 1985, kAnimationModeTalk);
