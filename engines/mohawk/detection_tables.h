@@ -3169,6 +3169,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	{
+		{
+			"wsg",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1s("WSKL.CFG", "0d0d1156387ad51bf2b0c6bdc380f751", 1269),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, 0 }
 };
 
