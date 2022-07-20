@@ -123,7 +123,7 @@ bool MTropolisEngine::promptLoad(ISaveReader *reader) {
 	}
 
 	if (saveFileVersion > kCurrentSaveFileVersion) {
-		GUI::MessageDialog dialog(_("Failed to load save, the save file was created by a newer version of ScummVM."));
+		GUI::MessageDialog dialog(_("Saved game was created with a newer version of ScummVM. Unable to load."));
 		dialog.runModal();
 
 		warning("Save file '%s' version is above the current save file version", saveFileName.c_str());
