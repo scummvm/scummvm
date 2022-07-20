@@ -78,7 +78,7 @@ typedef Common::Array<MacDialogButton *> MacDialogButtonArray;
 
 class MacDialog {
 public:
-	MacDialog(Wage::Gui *gui, int width, MacText *mactext, MacDialogButtonArray *buttons, uint defaultButton);
+	MacDialog(Wage::Gui *gui, int width, MacText *mactext, int maxTextWidth, MacDialogButtonArray *buttons, uint defaultButton);
 	~MacDialog();
 
 	int run();
@@ -88,6 +88,7 @@ private:
 	ManagedSurface _tempSurface;
 	Common::Rect _bbox;
 	MacText *_mactext;
+	int _maxTextWidth;
 
 	const Font *_font;
 	MacDialogButtonArray *_buttons;
