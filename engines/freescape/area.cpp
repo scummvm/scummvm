@@ -8,6 +8,7 @@
 
 #include "freescape/area.h"
 #include "freescape/objects/geometricobject.h"
+#include "freescape/objects/entrance.h"
 #include "common/algorithm.h"
 #include "freescape/objects/object.h"
 
@@ -169,89 +170,46 @@ Object *Area::checkCollisions(const Math::AABB &boundingBox) {
 	return collided;
 }
 
-void Area::addStructure() {
+void Area::addStructure(Area *structure) {
+	Object *obj = nullptr;
+	if (!structure || !entrancesByID->contains(255)) {
+		int id = 254;
+		Common::Array<uint8> *gColors = new Common::Array<uint8>;
+		for (int i = 0; i < 6; i++)
+			gColors->push_back(0);
 
-	Object *data = (*entrancesByID)[255];
-
-	if (data == nullptr)
+		obj = (Object*) new GeometricObject(
+			Object::Type::Cube,
+			id,
+			0, // flags
+			Math::Vector3d(0, -1, 0), // Position
+			Math::Vector3d(4128, 1, 4128), // size
+			gColors,
+			nullptr,
+			FCLInstructionVector()
+		);
+		(*objectsByID)[id] = obj;
+		drawableObjects.insert_at(0, obj);
 		return;
+	}
+	RoomStructure *rs = (RoomStructure*) (*entrancesByID)[255];
 
-	FCLInstructionVector empty;
-	Common::Array<uint8> *gColors = new Common::Array<uint8>;
-	for (int i = 0; i < 6; i++)
-		gColors->push_back(0xd);
+	for (int i = 0; i < int(rs->structure.size()); i++) {
+		int16 id = rs->structure[i];
+		if (id == 0)
+			continue;
 
-	int id = 200;
-	GeometricObject *gobj = nullptr;
-
-	// Floor
-	gobj = new GeometricObject(
-		Object::Type::Cube,
-		id,
-		0, // flags
-		Math::Vector3d(0, 1, 0), // Position
-		Math::Vector3d(128 * 32, 1, 135 * 32), // size
-		gColors,
-		nullptr,
-		empty
-	);
-	(*objectsByID)[id] = (Object*) gobj;
-	drawableObjects.insert_at(0, gobj);
-
-	gColors = new Common::Array<uint8>;
-	for (int i = 0; i < 6; i++)
-		gColors->push_back(0x0);
-
-	// East Wall
-	id++;
-	gobj = new GeometricObject(
-		Object::Type::Cube,
-		id,
-		0, // flags
-		//Math::Vector3d(-64 + 22*32, 0, 0), // Position
-		Math::Vector3d(22*32, 0, 0), // Position
-
-		Math::Vector3d(1, 8128, 8128), // size
-		gColors,
-		nullptr,
-		empty
-	);
-	(*objectsByID)[id] = (Object*) gobj;
-	drawableObjects.insert_at(0, gobj);
-
-	// West Wall
-	id++;
-	gobj = new GeometricObject(
-		Object::Type::Cube,
-		id,
-		0, // flags
-		Math::Vector3d(2*22*32, 0, 0), // Position
-		Math::Vector3d(1, 8128, 8128), // size
-		gColors,
-		nullptr,
-		empty
-	);
-	(*objectsByID)[id] = (Object*) gobj;
-	drawableObjects.insert_at(0, gobj);
-
-	gColors = new Common::Array<uint8>;
-	for (int i = 0; i < 6; i++)
-		gColors->push_back(0xe);
-
-	// North Wall
-	id++;
-	gobj = new GeometricObject(
-		Object::Type::Cube,
-		id,
-		0, // flags
-		Math::Vector3d(0, 0, 2080), // Position
-		Math::Vector3d(8128, 8128, 1), // size
-		gColors,
-		nullptr,
-		empty
-	);
-	(*objectsByID)[id] = (Object*) gobj;
-	drawableObjects.insert_at(0, gobj);
+		debug("Adding object %d to room structure", id);
+		obj = structure->objectWithID(id);
+		if (!obj) {
+			assert(structure->entranceWithID(id));
+			(*entrancesByID)[id] = structure->entranceWithID(id);
+		} else {
+			(*objectsByID)[id] = structure->objectWithID(id);
+			if (obj->isDrawable())
+				drawableObjects.insert_at(0, obj);
+		}
+	}
 }
 
 } // End of namespace Freescape

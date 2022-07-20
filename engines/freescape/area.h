@@ -45,7 +45,7 @@ public:
 
 	Object *shootRay(const Math::Ray &ray);
 	Object *checkCollisions(const Math::AABB &boundingBox);
-	void addStructure();
+	void addStructure(Area *structure);
 
 	Common::Array<Common::String*> conditionSources;
 	Common::Array<FCLInstructionVector> conditions;
