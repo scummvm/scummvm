@@ -245,16 +245,28 @@ bool Cast::loadConfig() {
 	if (debugChannelSet(5, kDebugLoading))
 		stream->hexdump(stream->size());
 
+	// Post D3 Check. The version field was added in D3 and later versions.
+	// This is used to check some fields which differed pre-d7 and post-d7
+	if (stream->size() > 36) {
+		stream->seek(36);					// Seek to version
+		_version = stream->readSint16();	// Read version for post-D3
+		stream->seek(0);					// Seek to start of stream
+	}
+
 	uint16 len = stream->readUint16();
 	uint16 fileVersion = stream->readUint16(); // TODO: very high fileVersion means protected
-	if (!g_director->_fixStageSize) {
-		_movieRect = Movie::readRect(*stream);
-	} else {
-		// Skipping rectangle and substituting it with the global one
-		for (int i = 0; i < 4; i++)
-			(void)stream->readSint16();
+
+	if (stream->size() <= 36)
+		_version = fileVersion;				// Checking if we have already read the version
+
+	uint humanVer = humanVersion(_version);
+
+	Common::Rect checkRect = Movie::readRect(*stream);
+	if (!g_director->_fixStageSize)
+		_movieRect = checkRect;
+	else
 		_movieRect = g_director->_fixStageRect;
-	}
+
 	if (!_isShared)
 		_movie->_movieRect = _movieRect;
 
@@ -265,7 +277,7 @@ bool Cast::loadConfig() {
 	// actual framerates are, on average: { 3.75, 4, 4.35, 4.65, 5, 5.5, 6, 6.6, 7.5, 8.5, 10, 12, 20, 30, 60 }
 	Common::Array<int> frameRates = { 3, 4, 4, 4, 5, 5, 6, 6, 7, 8, 10, 12, 15, 20, 30, 60 };
 	byte readRate = stream->readByte();
-	byte currentFrameRate;
+	int16 currentFrameRate;
 	if (readRate <= 0xF) {
 		currentFrameRate = frameRates[readRate];
 	} else {
@@ -292,11 +304,22 @@ bool Cast::loadConfig() {
 	}
 
 	byte lightswitch = stream->readByte();
-	uint16 unk1 = stream->readUint16();
+
+	int16 unk1 = stream->readSint16();
+
+	// Warning for post-D7 movies (unk1 is stageColorG and stageColorB post-D7)
+	if (humanVer >= 700)
+		warning("STUB: Cast::loadConfig: 16 bit unk1 read instead of two 8 bit stageColorG and stageColorB. Read value: %04x", unk1);
+
 	uint16 commentFont = stream->readUint16();
 	uint16 commentSize = stream->readUint16();
 	uint16 commentStyle = stream->readUint16();
 	_stageColor = stream->readUint16();
+
+	// Warning for post-D7 movies (stageColor is isStageColorRGB and stageColorR post-D7)
+	if (humanVer >= 700)
+		warning("STUB: Cast::loadConfig: 16 bit stageColor read instead of two 8 bit isStageColorRGB and stageColorR. Read value: %04x", _stageColor);
+
 	if (!_isShared)
 		_movie->_stageColor = _vm->transformColor(_stageColor);
 
@@ -314,30 +337,91 @@ bool Cast::loadConfig() {
 	if (debugChannelSet(1, kDebugLoading))
 		_movieRect.debugPrint(1, "Cast::loadConfig(): Movie rect: ");
 
-	_version = fileVersion;
+	// Fields required for checksum calculation
+	uint8 field17 = 0, field18 = 0;
+	int16 field21 = 0;
+	int32 field19 = 0, field22 = 0, field23 = 0;
 
 	// D3 fields - Macromedia did not increment the fileVersion from D2 to D3
 	// so we just have to check if there are more bytes to read.
 	if (stream->pos() < stream->size()) {
-		for (int i = 0; i < 0x06; i++) {
-			stream->readByte();
-		}
-		_version = stream->readUint16();
-		for (int i = 0; i < 0x0a; i++) {
-			stream->readByte();
-		}
+
+		//reading these fields for the sake of checksum calculation
+		field17 = stream->readByte();
+		field18 = stream->readByte();
+		field19 = stream->readSint32();
+
+		/* _version = */ stream->readUint16();
+
+		field21 = stream->readSint16();
+		field22 = stream->readSint32();
+		field23 = stream->readSint32();
+
 		debugC(1, kDebugLoading, "Cast::loadConfig(): directorVersion: %d", _version);
 	}
 
 	if (_version >= kFileVer400) {
-		for (int i = 0; i < 0x07; i++) {
-			stream->readByte();
-		}
-		currentFrameRate = stream->readByte();
-		_platform = platformFromID(stream->readUint16());
-		for (int i = 0; i < 0x0c; i++) {
-			stream->readByte();
-		}
+		int32 field24 = stream->readSint32();
+		int8 field25 = stream->readSByte();
+		/* int8 field26 = */ stream->readSByte();
+
+		currentFrameRate = stream->readSint16();
+		uint16 platform = stream->readUint16();
+		_platform = platformFromID(platform);
+
+		int16 protection = stream->readSint16();
+		/* int32 field29 = */ stream->readSint32();
+		uint32 checksum = stream->readUint32();
+
+		//Calculation and verification of checksum
+		uint32 check = len + 1;
+		check *= fileVersion + 2;
+		check /= checkRect.top + 3;
+		check *= checkRect.left + 4;
+		check /= checkRect.bottom + 5;
+		check *= checkRect.right + 6;
+		check -= _castArrayStart + 7;
+		check *= _castArrayEnd + 8;
+		check -= (int8)readRate + 9;
+		check -= lightswitch + 10;
+
+		if (humanVer < 700)
+			check += unk1 + 11;
+		else
+			warning("STUB: skipped using stageColorG, stageColorB for post-D7 movie in checksum calulation");
+
+		check *= commentFont + 12;
+		check += commentSize + 13;
+
+		if (humanVer < 800)
+			check *= (uint8)((commentStyle >> 8) & 0xFF) + 14;
+		else
+			check *= commentStyle + 14;
+
+		if (humanVer < 700)
+			check += _stageColor + 15;
+		else
+			check += (uint8)(_stageColor & 0xFF) + 15;	// Taking lower 8 bits to take into account stageColorR
+
+
+		check += bitdepth + 16;
+		check += field17 + 17;
+		check *= field18 + 18;
+		check += field19 + 19;
+		check *= _version + 20;
+		check += field21 + 21;
+		check += field22 + 22;
+		check += field23 + 23;
+		check += field24 + 24;
+		check *= field25 + 25;
+		check += currentFrameRate + 26;
+		check *= platform + 27;
+		check *= (protection * 0xE06) + 0xFFF450000;
+		check ^= MKTAG('r', 'a', 'l', 'f');
+
+		if (check != checksum)
+			warning("BUILDBOT: The checksum for this VWCF resource is incorrect. Got %04x, but expected %04x", check, checksum);
+
 		_defaultPalette = stream->readSint16();
 		// In this header value, the first builtin palette starts at 0 and
 		// continues down into negative numbers.
@@ -356,7 +440,6 @@ bool Cast::loadConfig() {
 		_movie->getScore()->_currentFrameRate = currentFrameRate;
 	}
 
-	uint16 humanVer = humanVersion(_version);
 	if (humanVer > _vm->getVersion()) {
 		if (_vm->getVersion() > 0)
 			warning("Movie is from later version v%d", humanVer);
