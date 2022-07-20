@@ -1,0 +1,33 @@
+// Copyright 2006-2010 (C) - Frictional Games
+//
+// This file is part of HPL1 Engine
+//
+// For conditions of distribution and use, see copyright notice in
+// LICENSE-shaders
+//
+
+///////////////////////////////////////////////////////
+/// BUMP SPOTLIGHTING FRAGMENT PROGRAM /////////////
+///////////////////////////////////////////////////////
+
+in vec4 vPos; // in projection space
+in vec4 vLightColor;
+in vec2 vUv;
+in vec3 vLightDir;
+in vec3 vSpotlightUv;
+
+OUTPUT
+
+uniform sampler2D diffuseMap = 0;      //: TEXUNIT0,
+uniform sampler2D normalMap = 1;       //: TEXUNIT1,
+uniform samplerCube normalCubeMap = 2; //: TEXUNIT2,
+uniform sampler2D spotlightMap = 3;    //: TEXUNIT3
+
+void main() {
+  vec3 diffuse = texture(diffuseMap, vUv).xyz;
+  vec3 bumpVec = (2.0 * texture(normalMap, vUv) - vec3(1.0)).xyz;
+  vec3 lightVec = (2.0 * textureCube(normalCubeMap, vLightDir) - vec3(1.0)).xyz;
+  vec3 spotColor =
+      texture(spotlightMap, vSpotlightUv.xy / vSpotlightUv.z).xyz; // CHECK
+  outColor.xyz = diffuse * dot(lightVec, bumpVec) * vLightColor.xyz * spotColor;
+}

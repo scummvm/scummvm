@@ -1,0 +1,47 @@
+// Copyright 2006-2010 (C) - Frictional Games
+//
+// This file is part of HPL1 Engine
+//
+// For conditions of distribution and use, see copyright notice in LICENSE-shaders
+//
+
+///////////////////////////////////////////////////////
+/// DIFFUSE COLOR SPOTLIGHTING FRAGMENT PROGRAM /////////////
+///////////////////////////////////////////////////////
+
+in vec4 vPos; //in projection space
+in vec4 vLightColor;
+in vec2 vUv;
+in vec3 vLightDir;
+in vec3 vHalfVec;
+in vec3 vSpotlightUv;
+
+OUTPUT
+
+uniform sampler2D diffuseMap = 0;
+uniform sampler2D normalMap = 1;
+uniform samplerCube normalCubeMap = 2;
+uniform sampler1D  falloffMap = 3;
+uniform sampler2D  spotlightMap = 4;
+uniform sampler1D  spotNegRejectMap = 5;
+uniform sampler2D  specularMap = 6;
+
+void main()
+{
+	vec3 diffuse = texture(diffuseMap, vUv).xyz;
+
+	vec3 bumpVec = (2.0*texture(normalMap, vUv)-vec3(1.0)).xyz;
+	vec3 lightVec =	normalize(vLightDir);
+	vHalfVec = normalize(vHalfVec);
+
+	float  attenuation = texture1D(falloffMap,dot(vLightDir,vLightDir)).x;
+	vec4 spotColor = texture(spotlightMap, vSpotlightUv.xy / vSpotlightUv.z); // CHECK
+	float  rejectNeg = texture1D(spotNegRejectMap,vSpotlightUv.z + 0.5).x;
+
+	float specular = clamp(dot(vHalfVec, bumpVec.xyz), 0.0, 1.0);
+	specular = pow(specular, 16.0)* vLightColor.w * spotColor.w;
+
+	outColor.xyz = diffuse * dot(lightVec, bumpVec.xyz) * vLightColor.xyz * spotColor.xyz
+					+ (specular * texture(specularMap, vUv).xyz);
+	outColor.xyz *= attenuation * rejectNeg;
+}

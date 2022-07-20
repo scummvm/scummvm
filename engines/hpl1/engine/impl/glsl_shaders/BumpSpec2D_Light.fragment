@@ -1,0 +1,38 @@
+// Copyright 2006-2010 (C) - Frictional Games
+//
+// This file is part of HPL1 Engine
+//
+// For conditions of distribution and use, see copyright notice in
+// LICENSE-shaders
+//
+
+///////////////////////////////////////////////////////
+/// SPECULAR BUMPMAPPING 2D FRAGMENT PROGRAM //////////
+///////////////////////////////////////////////////////
+
+in vec4 vPos; // in projection space
+in vec4 vColor;
+in vec3 vUv; // in object space
+in vec3 vLightDir;
+in vec3 vHalfVec;
+in vec2 vScreenPos;
+
+OUTPUT
+
+uniform sampler2D NormalMap = 0;
+uniform sampler2D LightMap = 1;
+
+void main() {
+  vec4 BumpVec = (vec3(1.0) - 2.0 * texture(NormalMap, uv));
+
+  vec4 LightCol = texture(LightMap, vScreenPos);
+
+  BumpVec.xyz = normalize(BumpVec.xyz);
+  float Diffuse = dot(normalize(vLightDir), BumpVec.xyz) * LightCol.x;
+
+  float Specular = dot(normalize(vHalfVec), BumpVec.xyz);
+  Specular = pow(Specular, 24.0) * BumpVec.w * vColor.w;
+
+  outColor.xyz = Diffuse * vColor.xyz;
+  outColor.w = Specular * LightCol.x;
+}

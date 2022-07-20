@@ -1,0 +1,36 @@
+// Copyright 2006-2010 (C) - Frictional Games
+//
+// This file is part of HPL1 Engine
+//
+// For conditions of distribution and use, see copyright notice in LICENSE-shaders
+//
+
+///////////////////////////////////////////////////////
+/// WATER FOG VERTEX PROGRAM ////////////
+///////////////////////////////////////////////////////
+
+in vec4 position;
+in vec3 color;
+in vec3 uv;
+
+out vec4 vPos;
+out vec3 vColor;
+out vec3 vUv;
+
+uniform mat4 worldViewProj;
+uniform float timeCount;
+
+void main()
+{
+	float amp = 0.04;
+	float freq = 15.0;
+	float speed = 3.0;
+
+	vPos = (worldViewProj * position);
+	vPos.y += sin(timeCount*speed + (position.x)*freq)*amp;
+	vPos.y += sin(timeCount*speed + (position.z)*freq)*amp;
+
+	vColor = color;
+
+	vUv = uv;
+}
