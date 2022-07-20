@@ -1,0 +1,30 @@
+// Copyright 2006-2010 (C) - Frictional Games
+//
+// This file is part of HPL1 Engine
+//
+// For conditions of distribution and use, see copyright notice in LICENSE-shaders
+//
+
+///////////////////////////////////////////////////////
+/// DIFFUSE COLOR MUL VERTEX PROGRAM ////////////
+///////////////////////////////////////////////////////
+
+in vec4 position;
+in vec3 color;
+in vec3 uv;
+
+out vec4 vPos;
+out vec3 vColor;
+out vec3 vUv;
+
+uniform mat4 worldViewProj
+uniform vec4 colorMul;
+
+void main()
+{
+	vPos = worldViewProj * position;
+
+	vColor = color * colorMul;
+
+	vUv = uv;
+}

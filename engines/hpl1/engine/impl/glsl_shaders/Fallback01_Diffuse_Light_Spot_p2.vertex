@@ -1,0 +1,38 @@
+// Copyright 2006-2010 (C) - Frictional Games
+//
+// This file is part of HPL1 Engine
+//
+// For conditions of distribution and use, see copyright notice in LICENSE-shaders
+//
+
+///////////////////////////////////////////////////////
+/// DIFFUSE LIGHTING VERTEX PROGRAM //////////////////
+///////////////////////////////////////////////////////
+
+in vec4 position;
+in vec3 normal;
+in vec3 uv;
+in vec4 tangent;
+
+out vec4 vPos;
+out vec4 vLightColor;
+out vec3 vUv;
+out vec4 vSpotlightUv;
+out float vRejectUv;
+
+uniform mat4 worldViewProj;
+uniform mat4 spotViewProj;
+uniform vec3 LightPos;
+uniform vec4 LightColor;
+uniform vec3 LightDirMul;
+
+void main()
+{
+	vPos = (worldViewProj * position);
+
+	vUv = uv;
+	vSpotlightUv = (spotViewProj * position);
+	vRejectUv.x = vSpotlightUv.z + 0.5;
+
+	vLightColor = LightColor;
+}

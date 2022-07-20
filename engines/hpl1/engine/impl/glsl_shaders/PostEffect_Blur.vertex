@@ -1,0 +1,37 @@
+// Copyright 2006-2010 (C) - Frictional Games
+//
+// This file is part of HPL1 Engine
+//
+// For conditions of distribution and use, see copyright notice in LICENSE-shaders
+//
+
+///////////////////////////////////////////////////////
+/// SIMPLE DIFFUSE COLOR VERTEX PROGRAM ////////////
+///////////////////////////////////////////////////////
+
+in vec4 position;
+in vec3 color;
+in vec2 uv;
+
+out vec4 vPos;
+out vec3 vColor;
+out vec2 vUv0;
+out vec2 vUv1;
+out vec2 vUv2;
+out vec2 vUv3;
+
+uniform mat4 worldViewProj;
+uniform float yOffset;
+uniform float xOffset;
+uniform float amount;
+
+void main()
+{
+	vPos = (worldViewProj * position);
+	vColor = color;
+
+	vUv0 = uv + vec2(xOffset, yOffset) * amount;
+	vUv1 = uv + vec2(xOffset, yOffset) * 2.0 * amount;
+	vUv2 = uv - vec2(xOffset, yOffset) * amount;
+	vUv3 = uv - vec2(xOffset, yOffset) * 2.0 * amount;
+}

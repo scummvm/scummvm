@@ -1,0 +1,23 @@
+// Copyright 2006-2010 (C) - Frictional Games
+//
+// This file is part of HPL1 Engine
+//
+// For conditions of distribution and use, see copyright notice in LICENSE-shaders
+//
+
+///////////////////////////////////////////////////////
+/// SIMPLE DIFFUSE COLOR FRAGMENT PROGRAM ////////////
+///////////////////////////////////////////////////////
+
+in vec4 vPos; //in projection space
+in vec4 vColor;
+in vec2 vUv;
+
+OUTPUT
+
+uniform sampler2D diffuseMap = 0;
+
+void main()
+{
+	outColor = texture(diffuseMap, vUv) * vColor;
+}
