@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-16 21:35+0100\n"
+"POT-Creation-Date: 2022-07-19 23:18+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -2511,7 +2511,7 @@ msgstr "~R~etur til oversigt"
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
 #: engines/kingdom/kingdom.cpp:736 engines/lab/savegame.cpp:242
 #: engines/mads/nebular/dialogs_nebular.cpp:349
-#: engines/mtropolis/saveload.cpp:64 engines/neverhood/menumodule.cpp:889
+#: engines/mtropolis/saveload.cpp:65 engines/neverhood/menumodule.cpp:889
 #: engines/pegasus/pegasus.cpp:402 engines/prince/saveload.cpp:54
 #: engines/sci/engine/guest_additions.cpp:742 engines/sci/engine/kfile.cpp:1079
 #: engines/sherlock/scalpel/scalpel.cpp:1249
@@ -2533,7 +2533,7 @@ msgstr "Gemt spil:"
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:736
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:242
 #: engines/mads/nebular/dialogs_nebular.cpp:349
-#: engines/mtropolis/saveload.cpp:64 engines/neverhood/menumodule.cpp:889
+#: engines/mtropolis/saveload.cpp:65 engines/neverhood/menumodule.cpp:889
 #: engines/parallaction/metaengine.cpp:133
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:402
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:743
@@ -4261,7 +4261,7 @@ msgstr ""
 #: engines/groovie/script.cpp:2251 engines/hugo/file.cpp:399
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:746
 #: engines/lab/savegame.cpp:257 engines/mads/nebular/dialogs_nebular.cpp:376
-#: engines/mtropolis/saveload.cpp:96 engines/neverhood/menumodule.cpp:902
+#: engines/mtropolis/saveload.cpp:97 engines/neverhood/menumodule.cpp:902
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:745
 #: engines/sci/engine/kfile.cpp:1206 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
@@ -4280,7 +4280,7 @@ msgstr "Gendan spil:"
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:746 engines/lab/savegame.cpp:237
 #: engines/lab/savegame.cpp:257 engines/mads/nebular/dialogs_nebular.cpp:376
-#: engines/mtropolis/saveload.cpp:96 engines/neverhood/menumodule.cpp:902
+#: engines/mtropolis/saveload.cpp:97 engines/neverhood/menumodule.cpp:902
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:746
 #: engines/sci/engine/kfile.cpp:1206 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
@@ -6124,17 +6124,17 @@ msgstr ""
 msgid "Halts progress and stops at the debugger immediately"
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:109
+#: engines/mtropolis/saveload.cpp:110
 #, fuzzy
 msgid "Failed to read version information from save file"
 msgstr "Kunne ikke indlæse gemt spil fra fil."
 
-#: engines/mtropolis/saveload.cpp:117
+#: engines/mtropolis/saveload.cpp:118
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:125
+#: engines/mtropolis/saveload.cpp:126
 #, fuzzy
 msgid ""
 "Failed to load save, the save file was created by a newer version of ScummVM."
@@ -6142,11 +6142,11 @@ msgstr ""
 "Det gemte spil blev oprettet med en anden version af spillet, kunne ikke "
 "indlæse det"
 
-#: engines/mtropolis/saveload.cpp:133
+#: engines/mtropolis/saveload.cpp:134
 msgid "Failed to load save, an error occurred when reading the save game data."
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:157
+#: engines/mtropolis/saveload.cpp:158
 msgid "Progress Saved"
 msgstr ""
 
