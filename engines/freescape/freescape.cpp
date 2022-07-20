@@ -293,7 +293,6 @@ Common::Error FreescapeEngine::run() {
 		Common::Rect viewArea(40, 16, 279, 116);
 		_border->fillRect(viewArea, 0xA0A0A0FF);
 	}
-	assert(_startArea == 1);
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot >= 0) { // load the savegame
 		loadGameState(saveSlot);
