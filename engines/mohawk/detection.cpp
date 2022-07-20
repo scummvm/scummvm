@@ -63,6 +63,7 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"stellaluna", "Stellaluna"},
 	{"sheila", "Sheila Rae, the Brave"},
 	{"rugratsps", "Rugrats Print Shop" },
+	{"wsg", "Williams-Sonoma Guide to Good Cooking" },
 	{nullptr, nullptr}
 };
 
