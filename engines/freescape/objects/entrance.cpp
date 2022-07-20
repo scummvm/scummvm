@@ -13,6 +13,11 @@
 
 namespace Freescape {
 
+RoomStructure::RoomStructure(const Common::Array<byte> _structure) {
+	_objectID = 255;
+	structure = _structure;
+}
+
 Entrance::Entrance(
 	uint16 objectID,
 	const Math::Vector3d &_origin,

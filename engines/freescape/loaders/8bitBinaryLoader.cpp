@@ -41,12 +41,27 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 	debugC(1, kFreescapeDebugParser, "Raw object %d ; type %d ; size %d", objectID, (int)objectType, byteSizeOfObject);
 	if (byteSizeOfObject < 9) {
 		error("Not enough bytes %d to read object %d with type %d", byteSizeOfObject, objectID, objectType);
-		//file->seek(byteSizeOfObject, SEEK_CUR);
-		//return nullptr;
 	}
 
 	assert(byteSizeOfObject >= 9);
 	byteSizeOfObject = byteSizeOfObject - 9;
+	if (objectID == 255) {
+		debug("Found the room structure (objectID: 255 with size %d)", byteSizeOfObject + 6);
+		byte *structureData = (byte*)malloc(byteSizeOfObject + 6);
+		structureData[0] = int(position.x());
+		structureData[1] = int(position.y());
+		structureData[2] = int(position.z());
+
+		structureData[3] = int(v.x());
+		structureData[4] = int(v.y());
+		structureData[5] = int(v.z());
+
+		if (byteSizeOfObject > 0)
+			file->read(structureData+6, byteSizeOfObject);
+		Common::Array<uint8> structureArray(structureData, byteSizeOfObject + 6);
+		return new RoomStructure(structureArray);
+	}
+
 	debugC(1, kFreescapeDebugParser, "Object %d ; type %d ; size %d", objectID, (int)objectType, byteSizeOfObject);
     debugC(1, kFreescapeDebugParser, "pos: %f %f %f", position.x(), position.y(), position.z());
 	switch (objectType) {
@@ -356,8 +371,10 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		debugC(1, kFreescapeDebugParser, "%s", conditionSource->c_str());
 	}
 
-	if (_targetName.hasPrefix("castlemaster") || _targetName.hasPrefix("totaleclipse"))
-		area->addStructure();
+	if (_areaMap.contains(255))
+		area->addStructure(_areaMap[255]);
+	else if (_targetName.hasPrefix("castle") || _targetName.hasPrefix("totaleclipse"))
+		area->addStructure(nullptr);
 
 	debugC(1, kFreescapeDebugParser, "End of area at %lx", file->pos());
 	return area;

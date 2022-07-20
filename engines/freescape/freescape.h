@@ -29,7 +29,7 @@ enum CameraMovement {
     RIGHT
 };
 
-typedef Common::HashMap<uint16, Area *> AreaMap;
+typedef Common::HashMap<uint16, Area*> AreaMap;
 typedef Common::HashMap<uint16, int32> StateVars;
 typedef Common::HashMap<uint16, uint32> StateBits;
 

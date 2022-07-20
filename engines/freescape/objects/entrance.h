@@ -13,6 +13,14 @@
 
 namespace Freescape {
 
+class RoomStructure : public Object {
+public:
+	Common::Array<byte> structure;
+	RoomStructure(const Common::Array<byte> _structure);
+	Type getType() override { return Type::Entrance; };
+	void draw(Freescape::Renderer *gfx) override { error("cannot render RoomStructure"); };
+};
+
 class Entrance : public Object {
 public:
 
