@@ -250,6 +250,23 @@ bool WageEngine::saveDialog() {
 	return true;
 }
 
+void WageEngine::aboutDialog() {
+	Graphics::MacDialogButtonArray buttons;
+
+	buttons.push_back(new Graphics::MacDialogButton("OK", 191, 167, 68, 28));
+
+	Graphics::MacText aboutMessage(_world->_aboutMessage, _gui->_wm, _gui->_consoleWindow->getTextWindowFont(), Graphics::kColorBlack,
+											 Graphics::kColorWhite, 400, Graphics::kTextAlignCenter);
+
+	Common::U32String disclaimer("\n\n\n\nThis adventure was produced with World Builder\xAA\nthe adventure game creation system.\n© Copyright 1986 by William C. Appleton, All Right Reserved\nPublished by Silicon Beach Software, Inc.");
+
+	aboutMessage.appendText(disclaimer, 3, 9, 0, false);
+
+	Graphics::MacDialog save(_gui, 450, &aboutMessage, &buttons, 0);
+
+	save.run();
+}
+
 void WageEngine::saveGame() {
 	warning("STUB: saveGame()");
 }

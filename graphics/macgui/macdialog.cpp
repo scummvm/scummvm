@@ -68,14 +68,16 @@ MacDialog::MacDialog(Wage::Gui *gui, int width, MacText *mactext, MacDialogButto
 	assert(_gui->_engine);
 	assert(_gui->_engine->_world);
 
+	int height = kDialogHeight + _mactext->getTextHeight();
+
 	_font = getDialogFont();
 
-	_tempSurface.create(width + 1, kDialogHeight + 1, Graphics::PixelFormat::createFormatCLUT8());
+	_tempSurface.create(width + 1, height + 1, Graphics::PixelFormat::createFormatCLUT8());
 
 	_bbox.left = (_gui->_screen.w - width) / 2;
-	_bbox.top = (_gui->_screen.h - kDialogHeight) / 2;
+	_bbox.top = (_gui->_screen.h - height) / 2;
 	_bbox.right = (_gui->_screen.w + width) / 2;
-	_bbox.bottom = (_gui->_screen.h + kDialogHeight) / 2;
+	_bbox.bottom = (_gui->_screen.h + height) / 2;
 
 	_pressedButton = -1;
 
@@ -99,7 +101,7 @@ const Graphics::Font *MacDialog::getDialogFont() {
 
 void MacDialog::paint() {
 	Wage::Design::drawFilledRect(&_gui->_screen, _bbox, kColorWhite, _gui->_wm->getPatterns(), kPatternSolid);
-	_mactext->draw(&_gui->_screen, 0, 0, _bbox.width(), _bbox.height(), _bbox.left + 24, _bbox.top + 16);
+	_mactext->draw(&_gui->_screen, 0, 0, _bbox.width(), _bbox.height(), _bbox.left + (_bbox.width() - _mactext->getTextMaxWidth())/2, _bbox.top + 16);
 
 	static int boxOutline[] = {1, 0, 0, 1, 1};
 	drawOutline(_bbox, boxOutline, ARRAYSIZE(boxOutline));

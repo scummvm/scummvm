@@ -202,6 +202,7 @@ public:
 	void appendText(const char *str);
 	void gameOver();
 	bool saveDialog();
+	void aboutDialog();
 	Obj *getOffer();
 	Chr *getMonster();
 	void processEvents();
