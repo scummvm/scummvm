@@ -264,6 +264,8 @@ void menuCommandsCallback(int action, Common::String &text, void *data) {
 void Gui::executeMenuCommand(int action, Common::String &text) {
 	switch(action) {
 	case kMenuActionAbout:
+		_engine->aboutDialog();
+		break;
 	case kMenuActionNew:
 	case kMenuActionClose:
 	case kMenuActionRevert:
