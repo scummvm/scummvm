@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-19 23:18+0000\n"
-"PO-Revision-Date: 2022-07-13 21:42+0000\n"
+"PO-Revision-Date: 2022-07-20 10:45+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -4340,13 +4340,12 @@ msgstr ""
 "Отдавать предпочтение цифровым звуковым эффектам вместо синтезированных"
 
 #: engines/agos/detection.cpp:126
-#, fuzzy
 msgid "Disable fade-out effects"
-msgstr "Запретить автосохранение"
+msgstr "Выключить эффекты затемнения"
 
 #: engines/agos/detection.cpp:127
 msgid "Don't fade every screen to black when leaving a room."
-msgstr ""
+msgstr "Не затемнять каждый экран при выходе из комнаты."
 
 #: engines/ags/dialogs.cpp:58
 msgid "Game language:"
@@ -4629,9 +4628,8 @@ msgstr "Прокрутить вниз"
 #. I18N: This keymap allows (in KIA only) for a clue to be set as private or public
 #. (only when the KIA is upgraded).
 #: engines/bladerunner/metaengine.cpp:221
-#, fuzzy
 msgid "Toggle Clue Privacy"
-msgstr "Вкл/выкл звук"
+msgstr "Вкл/выкл приватность для улик"
 
 #. I18N: This keymap opens KIA's SAVE GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -6021,72 +6019,72 @@ msgstr ""
 "не существует."
 
 #: engines/mtropolis/detection.cpp:43
-#, fuzzy
 msgid "16:9 widescreen mod"
-msgstr "Широкоэкранный мод"
+msgstr "Широкоэкранный 16:9 мод"
 
 #: engines/mtropolis/detection.cpp:44
 msgid ""
 "Removes letterboxing and moves some display elements, improving coverage on "
 "widescreen displays"
 msgstr ""
+"Убирает чёрные полосы по краям экрана, перемещает некоторые элементы, чтобы "
+"лучше выглядело на широкоэкранных мониторах"
 
 #: engines/mtropolis/detection.cpp:54
 msgid "Improved music mixing"
-msgstr ""
+msgstr "Улучшенное микширование музыки"
 
 #: engines/mtropolis/detection.cpp:55
 msgid ""
 "Enables dynamic MIDI mixer, improving quality, but behaving less like "
 "mTropolis Player."
 msgstr ""
+"Включает динамическое MIDI микширование. Это улучшает качество, но "
+"отличается от оригинального mTropolis."
 
 #: engines/mtropolis/detection.cpp:65
-#, fuzzy
 msgid "Save progress automatically"
-msgstr "Автоматически проверять обновления"
+msgstr "Автоматически сохранять прогресс"
 
 #: engines/mtropolis/detection.cpp:66
 msgid "Automatically saves the game at certain progress points."
-msgstr ""
+msgstr "Автоматически сохраняет игру в некоторых точках прогресса."
 
 #: engines/mtropolis/detection.cpp:76
-#, fuzzy
 msgid "Enable short transitions"
-msgstr "Включить интеграцию с Discord"
+msgstr "Включить короткие переходы"
 
 #: engines/mtropolis/detection.cpp:77
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them"
-msgstr ""
+msgstr "Включает переходы с максимальной скоростью, а не просто их пропускает"
 
 #: engines/mtropolis/detection.cpp:87
-#, fuzzy
 msgid "Start with debugger"
-msgstr "Запуск отладчика"
+msgstr "Стартовать с отладчика"
 
 #: engines/mtropolis/detection.cpp:88
-#, fuzzy
 msgid "Starts with the debugger dashboard active"
-msgstr "Запуск отладчика"
+msgstr "Стартует с активной панелью отладчика"
 
 #: engines/mtropolis/detection.cpp:98
 msgid "Start debugging immediately"
-msgstr ""
+msgstr "Немедленно запустить отладчик"
 
 #: engines/mtropolis/detection.cpp:99
 msgid "Halts progress and stops at the debugger immediately"
-msgstr ""
+msgstr "Останавливает прогресс и сразу же запускает отладчик"
 
 #: engines/mtropolis/saveload.cpp:110
-#, fuzzy
 msgid "Failed to read version information from save file"
-msgstr "Не удалось загрузить сохранённую игру из файла."
+msgstr "Не удалось загрузить информацию о версии из сохранения"
 
 #: engines/mtropolis/saveload.cpp:118
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
+"Не удалось загрузить игру, в файле сохранения отсутствует информация о "
+"версии."
 
 #: engines/mtropolis/saveload.cpp:126
 #, fuzzy
@@ -6098,11 +6096,11 @@ msgstr ""
 
 #: engines/mtropolis/saveload.cpp:134
 msgid "Failed to load save, an error occurred when reading the save game data."
-msgstr ""
+msgstr "Не удалось загрузить игру, возникла ошибка при чтении файла."
 
 #: engines/mtropolis/saveload.cpp:158
 msgid "Progress Saved"
-msgstr ""
+msgstr "Прогресс сохранён"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
@@ -8420,11 +8418,12 @@ msgstr "Применить билинейную фильтрацию для ин
 
 #: engines/wintermute/detection.cpp:77
 msgid "Force to use 2D renderer (2D games only)"
-msgstr ""
+msgstr "Принудительно включить 2D рендерер (только в 2D играх)"
 
 #: engines/wintermute/detection.cpp:78
 msgid "This setting forces ScummVM to use 2D renderer while running 2D games"
 msgstr ""
+"Эта настройка принудительно включает 2D рендерер во время запуска 2D игр"
 
 #: engines/wintermute/metaengine.cpp:64
 msgid "FoxTail support is not compiled in"
