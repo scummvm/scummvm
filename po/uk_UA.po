@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-19 23:18+0000\n"
-"PO-Revision-Date: 2022-07-18 18:32+0000\n"
+"PO-Revision-Date: 2022-07-20 10:31+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -6037,53 +6037,52 @@ msgid ""
 "Enables dynamic MIDI mixer, improving quality, but behaving less like "
 "mTropolis Player."
 msgstr ""
+"Вмикає динамічний MIDI міксер, підвищуючи якість, але це відрізняється від "
+"оригінального mTropolis."
 
 #: engines/mtropolis/detection.cpp:65
-#, fuzzy
 msgid "Save progress automatically"
-msgstr "Автоматично перевіряти оновлення"
+msgstr "Автоматично зберігати прогрес"
 
 #: engines/mtropolis/detection.cpp:66
 msgid "Automatically saves the game at certain progress points."
-msgstr ""
+msgstr "Автоматично зберігає гру в певних точках прогресу."
 
 #: engines/mtropolis/detection.cpp:76
-#, fuzzy
 msgid "Enable short transitions"
-msgstr "Ввімкнути інтеграцію з Discord"
+msgstr "Ввімкнути короткі переходи"
 
 #: engines/mtropolis/detection.cpp:77
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them"
-msgstr ""
+msgstr "Вмикає переходи з найбільшою швидкістю замість просто пропускання"
 
 #: engines/mtropolis/detection.cpp:87
-#, fuzzy
 msgid "Start with debugger"
-msgstr "Запуск відладчика"
+msgstr "Розпочинати з відладчика"
 
 #: engines/mtropolis/detection.cpp:88
-#, fuzzy
 msgid "Starts with the debugger dashboard active"
-msgstr "Запуск відладчика"
+msgstr "Відразу запускає активну панель відладчика"
 
 #: engines/mtropolis/detection.cpp:98
 msgid "Start debugging immediately"
-msgstr ""
+msgstr "Відразу запустити відладку"
 
 #: engines/mtropolis/detection.cpp:99
 msgid "Halts progress and stops at the debugger immediately"
-msgstr ""
+msgstr "Припиняє прогрес і відразу запускає відладчик"
 
 #: engines/mtropolis/saveload.cpp:110
-#, fuzzy
 msgid "Failed to read version information from save file"
-msgstr "Не вдалося завантажити збережену гру з файлу."
+msgstr "Не вдалося завантажити інформацію про версію зі збереження гри"
 
 #: engines/mtropolis/saveload.cpp:118
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
+"Не вдалося завантажити гру, у файлі збереження відсутня інформація про "
+"версію."
 
 #: engines/mtropolis/saveload.cpp:126
 #, fuzzy
@@ -6095,11 +6094,11 @@ msgstr ""
 
 #: engines/mtropolis/saveload.cpp:134
 msgid "Failed to load save, an error occurred when reading the save game data."
-msgstr ""
+msgstr "Не вдалося завантажити гру, виникла помилка під час читання даних."
 
 #: engines/mtropolis/saveload.cpp:158
 msgid "Progress Saved"
-msgstr ""
+msgstr "Прогрес збережено"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
@@ -8407,11 +8406,13 @@ msgstr "Застосувати білінійну фільтрацію до ок
 
 #: engines/wintermute/detection.cpp:77
 msgid "Force to use 2D renderer (2D games only)"
-msgstr ""
+msgstr "Примусово використовувати 2D рендерер (тільки для 2D ігор)"
 
 #: engines/wintermute/detection.cpp:78
 msgid "This setting forces ScummVM to use 2D renderer while running 2D games"
 msgstr ""
+"Це налаштування примушує ScummVM використовувати 2D рендерер під час запуску "
+"2D ігор"
 
 #: engines/wintermute/metaengine.cpp:64
 msgid "FoxTail support is not compiled in"
