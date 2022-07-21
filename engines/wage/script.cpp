@@ -351,11 +351,11 @@ Script::Operand *Script::readOperand() {
 	case 0xC3: // MONSTER@
 		return new Operand(_engine->getMonster(), CHR);
 	case 0xC4: // RANDOMSCN@
-		return new Operand(_world->_orderedScenes[_engine->_rnd->getRandomNumber(_world->_orderedScenes.size())], SCENE);
+		return new Operand(_world->_orderedScenes[_engine->_rnd->getRandomNumber(_world->_orderedScenes.size() - 1)], SCENE);
 	case 0xC5: // RANDOMCHR@
-		return new Operand(_world->_orderedChrs[_engine->_rnd->getRandomNumber(_world->_orderedChrs.size())], CHR);
+		return new Operand(_world->_orderedChrs[_engine->_rnd->getRandomNumber(_world->_orderedChrs.size() - 1)], CHR);
 	case 0xC6: // RANDOMOBJ@
-		return new Operand(_world->_orderedObjs[_engine->_rnd->getRandomNumber(_world->_orderedObjs.size())], OBJ);
+		return new Operand(_world->_orderedObjs[_engine->_rnd->getRandomNumber(_world->_orderedObjs.size() - 1)], OBJ);
 	case 0xB0: // VISITS#
 		return new Operand(cont->_visits, NUMBER);
 	case 0xB1: // RANDOM# for Star Trek, but VISITS# for some other games?
