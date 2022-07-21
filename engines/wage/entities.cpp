@@ -163,6 +163,9 @@ Designed *Scene::lookUpEntity(int x, int y) {
 			((*it)->_name == "Goth" && (*it)->_resourceId == 18623))
 			if (_design->isPointOpaque(x, y))
 				return *it;
+
+		if ((*it)->_name == "TWIST.CLICK")
+			return *it;
 		if ((*it)->_design->isPointOpaque(x, y))
 			return *it;
 	}
