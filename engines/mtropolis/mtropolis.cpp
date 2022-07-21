@@ -50,7 +50,7 @@
 
 namespace MTropolis {
 
-MTropolisEngine::MTropolisEngine(OSystem *syst, const MTropolisGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+MTropolisEngine::MTropolisEngine(OSystem *syst, const MTropolisGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc), _saveWriter(nullptr), _isTriggeredAutosave(false) {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Resource");
 
@@ -121,8 +121,9 @@ Common::Error MTropolisEngine::run() {
 
 		HackSuites::addObsidianQuirks(*_gameDescription, _runtime->getHacks());
 		HackSuites::addObsidianBugFixes(*_gameDescription, _runtime->getHacks());
+		HackSuites::addObsidianSaveMechanism(*_gameDescription, _runtime->getHacks());
 
-		if (ConfMan.getBool("mtropolis_mod_auto_save"))
+		if (ConfMan.getBool("mtropolis_mod_auto_save_at_checkpoints"))
 			HackSuites::addObsidianAutoSaves(*_gameDescription, _runtime->getHacks(), this);
 
 		if (ConfMan.getBool("mtropolis_mod_obsidian_widescreen")) {
@@ -260,6 +261,18 @@ Common::Error MTropolisEngine::run() {
 
 void MTropolisEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
+}
+
+
+
+bool MTropolisEngine::hasFeature(EngineFeature f) const {
+	switch (f) {
+	case kSupportsReturnToLauncher:
+	case kSupportsSavingDuringRuntime:
+		return true;
+	default:
+		return false;
+	};
 }
 
 } // End of namespace MTropolis

@@ -81,6 +81,14 @@ public:
 	virtual void onSave(Runtime *runtime, Modifier *saveLoadModifier, Modifier *varModifier);
 };
 
+class SaveLoadMechanismHooks {
+public:
+	virtual ~SaveLoadMechanismHooks();
+
+	virtual bool canSaveNow(Runtime *runtime);
+	virtual Common::SharedPtr<ISaveWriter> createSaveWriter(Runtime *runtime);
+};
+
 } // End of namespace MTropolis
 
 #endif /* MTROPOLIS_SAVELOAD_H */

@@ -88,15 +88,6 @@ bool MTropolisMetaEngine::hasFeature(MetaEngineFeature f) const {
 	}
 }
 
-bool MTropolis::MTropolisEngine::hasFeature(EngineFeature f) const {
-	switch (f) {
-	case kSupportsReturnToLauncher:
-		return true;
-	default:
-		return false;
-	};
-}
-
 Common::Error MTropolisMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new MTropolis::MTropolisEngine(syst, reinterpret_cast<const MTropolis::MTropolisGameDescription *>(desc));
 	return Common::kNoError;

@@ -64,6 +64,10 @@ void Hacks::addSaveLoadHooks(const Common::SharedPtr<SaveLoadHooks> &hooks) {
 	saveLoadHooks.push_back(hooks);
 }
 
+void Hacks::addSaveLoadMechanismHooks(const Common::SharedPtr<SaveLoadMechanismHooks> &hooks) {
+	saveLoadMechanismHooks.push_back(hooks);
+}
+
 namespace HackSuites {
 
 class ObsidianCorruptedAirTowerTransitionFix : public AssetHooks {
@@ -912,6 +916,100 @@ void addObsidianAutoSaves(const MTropolisGameDescription &desc, Hacks &hacks, IA
 	Common::SharedPtr<ObsidianAutoSaveVarsState> varsState(new ObsidianAutoSaveVarsState());
 	hacks.addSceneTransitionHooks(Common::SharedPtr<SceneTransitionHooks>(new ObsidianAutoSaveSceneTransitionHooks(varsState, autoSaveProvider)));
 	hacks.addSaveLoadHooks(Common::SharedPtr<SaveLoadHooks>(new ObsidianAutoSaveSaveLoadHooks(varsState)));
+}
+
+class ObsidianSaveLoadMechanism : public SaveLoadMechanismHooks {
+public:
+	bool canSaveNow(Runtime *runtime) override;
+	Common::SharedPtr<ISaveWriter> createSaveWriter(Runtime *runtime) override;
+};
+
+bool ObsidianSaveLoadMechanism::canSaveNow(Runtime *runtime) {
+	Project *project = runtime->getProject();
+
+	// Check that we're in a game section
+	Structural *mainScene = runtime->getActiveMainScene().get();
+
+	if (!mainScene)
+		return false;
+
+	const Common::String disallowedSections[] = {
+		Common::String("Start Obsidian"),	// Intro videos/screens
+		Common::String("End Obsidian"),		// Credits
+		Common::String("GUI"),				// Menus
+	};
+
+	Common::String sectionName = mainScene->getParent()->getParent()->getName();
+
+	for (const Common::String &disallowedSection : disallowedSections) {
+		if (caseInsensitiveEqual(disallowedSection, sectionName))
+			return false;
+	}
+
+	// Check that the g.bESC flag is set, meaning we can go to the menu
+	Common::String gName("g");
+	Common::String bEscName("bESC");
+
+	Modifier *gCompoundVar = nullptr;
+	for (const Common::SharedPtr<Modifier> &child : project->getModifiers()) {
+		if (caseInsensitiveEqual(child->getName(), gName)) {
+			gCompoundVar = child.get();
+			break;
+		}
+	}
+
+	if (!gCompoundVar)
+		return false;
+
+	IModifierContainer *container = gCompoundVar->getChildContainer();
+	if (!container)
+		return false;
+
+	Modifier *bEscVar = nullptr;
+	for (const Common::SharedPtr<Modifier> &child : container->getModifiers()) {
+		if (caseInsensitiveEqual(child->getName(), bEscName)) {
+			bEscVar = child.get();
+			break;
+		}
+	}
+
+	if (!bEscVar || !bEscVar->isVariable())
+		return false;
+
+	DynamicValue bEscValue;
+	static_cast<VariableModifier *>(bEscVar)->varGetValue(nullptr, bEscValue);
+
+	if (bEscValue.getType() != DynamicValueTypes::kBoolean || !bEscValue.getBool())
+		return false;
+
+	return true;
+}
+
+Common::SharedPtr<ISaveWriter> ObsidianSaveLoadMechanism::createSaveWriter(Runtime *runtime) {
+	Project *project = runtime->getProject();
+
+	Common::String cgstName("cGSt");
+
+	Modifier *cgstCompoundVar = nullptr;
+	for (const Common::SharedPtr<Modifier> &child : project->getModifiers()) {
+		if (caseInsensitiveEqual(child->getName(), cgstName)) {
+			cgstCompoundVar = child.get();
+			break;
+		}
+	}
+
+	if (!cgstCompoundVar)
+		return nullptr;
+
+	if (cgstCompoundVar->getSaveLoad())
+		return Common::SharedPtr<CompoundVarSaver>(new CompoundVarSaver(cgstCompoundVar));
+
+	return nullptr;
+}
+
+void addObsidianSaveMechanism(const MTropolisGameDescription &desc, Hacks &hacks) {
+	Common::SharedPtr<ObsidianSaveLoadMechanism> mechanism(new ObsidianSaveLoadMechanism());
+	hacks.addSaveLoadMechanismHooks(mechanism);
 }
 
 } // End of namespace HackSuites

@@ -58,6 +58,17 @@ void SaveLoadHooks::onLoad(Runtime *runtime, Modifier *saveLoadModifier, Modifie
 void SaveLoadHooks::onSave(Runtime *runtime, Modifier *saveLoadModifier, Modifier *varModifier) {
 }
 
+SaveLoadMechanismHooks::~SaveLoadMechanismHooks() {
+}
+
+bool SaveLoadMechanismHooks::canSaveNow(Runtime *runtime) {
+	return false;
+}
+
+Common::SharedPtr<ISaveWriter> SaveLoadMechanismHooks::createSaveWriter(Runtime *runtime) {
+	return nullptr;
+}
+
 bool MTropolisEngine::promptSave(ISaveWriter *writer, const Graphics::Surface *screenshotOverride) {
 	Common::String desc;
 	int slot;
@@ -78,11 +89,13 @@ bool MTropolisEngine::promptSave(ISaveWriter *writer, const Graphics::Surface *s
 	Common::String saveFileName = getSaveStateName(slot);
 	Common::SharedPtr<Common::OutSaveFile> out(_saveFileMan->openForSaving(saveFileName, false));
 
-	out->writeUint32BE(kSavegameSignature);
-	out->writeUint32BE(kCurrentSaveFileVersion);
+	ISaveWriter *oldWriter = _saveWriter;
 
-	if (!writer->writeSave(out.get()) || out->err())
-		warning("An error occurred while writing file '%s'", saveFileName.c_str());
+	_saveWriter = writer;
+
+	saveGameStream(out.get(), false);
+
+	_saveWriter = oldWriter;
 
 	getMetaEngine()->appendExtendedSave(out.get(), getTotalPlayTime(), desc, false);
 
@@ -142,20 +155,16 @@ bool MTropolisEngine::promptLoad(ISaveReader *reader) {
 }
 
 bool MTropolisEngine::autoSave(ISaveWriter *writer) {
-	const int slot = 0;
+	ISaveWriter *oldWriter = _saveWriter;
+	bool oldIsTriggeredAutosave = _isTriggeredAutosave;
 
-	Common::String saveFileName = getSaveStateName(slot);
-	Common::SharedPtr<Common::OutSaveFile> out(_saveFileMan->openForSaving(saveFileName, false));
+	_saveWriter = writer;
+	_isTriggeredAutosave = true;
 
-	out->writeUint32BE(kSavegameSignature);
-	out->writeUint32BE(kCurrentSaveFileVersion);
+	saveAutosaveIfEnabled();
 
-	if (!writer->writeSave(out.get()) || out->err())
-		warning("An error occurred while writing file '%s'", saveFileName.c_str());
-
-	getMetaEngine()->appendExtendedSave(out.get(), getTotalPlayTime(), "Auto Save", true);
-
-	g_system->displayMessageOnOSD(_("Progress Saved"));
+	_saveWriter = oldWriter;
+	_isTriggeredAutosave = oldIsTriggeredAutosave;
 
 	return true;
 }
@@ -170,6 +179,54 @@ const Graphics::Surface *MTropolisEngine::getSavegameScreenshot() const {
 			return nullptr;
 		return mainWindow->getSurface().get()->surfacePtr();
 	}
+}
+
+Common::Error MTropolisEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	ISaveWriter *saveWriter = _saveWriter;
+
+	Common::SharedPtr<ISaveWriter> mechanismHookWriter;
+	if (!saveWriter) {
+		for (Common::SharedPtr<SaveLoadMechanismHooks> &hooks : _runtime->getHacks().saveLoadMechanismHooks) {
+			if (hooks->canSaveNow(_runtime.get())) {
+				mechanismHookWriter = hooks->createSaveWriter(_runtime.get());
+				saveWriter = mechanismHookWriter.get();
+				break;
+			}
+		}
+	}
+
+	if (!saveWriter)
+		return Common::Error(Common::kWritingFailed, Common::convertFromU32String(_("An internal error occurred while attempting to write save game data")));
+
+	assert(saveWriter);
+
+	stream->writeUint32BE(kSavegameSignature);
+	stream->writeUint32BE(kCurrentSaveFileVersion);
+
+	if (!saveWriter->writeSave(stream) || stream->err())
+		return Common::Error(Common::kWritingFailed, Common::convertFromU32String(_("An error occurred while writing the save game")));
+
+	return Common::kNoError;
+}
+
+bool MTropolisEngine::canSaveAutosaveCurrently() {
+	// Triggered autosaves are always safe
+	if (_isTriggeredAutosave)
+		return true;
+
+	return canSaveGameStateCurrently();
+}
+
+bool MTropolisEngine::canSaveGameStateCurrently() {
+	if (!_runtime->isIdle())
+		return false;
+
+	for (Common::SharedPtr<SaveLoadMechanismHooks> &hooks : _runtime->getHacks().saveLoadMechanismHooks) {
+		if (hooks->canSaveNow(_runtime.get()))
+			return true;
+	}
+
+	return false;
 }
 
 } // End of namespace MTropolis

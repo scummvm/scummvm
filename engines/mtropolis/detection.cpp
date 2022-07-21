@@ -60,11 +60,11 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 	{
-		GAMEOPTION_AUTO_SAVE,
+		GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS,
 		{
-			_s("Save progress automatically"),
-			_s("Automatically saves the game at certain progress points."),
-			"mtropolis_mod_auto_save",
+			_s("Autosave at progress checkpoints"),
+			_s("Automatically saves the game at progress."),
+			"mtropolis_mod_auto_save_at_checkpoints",
 			true,
 			0,
 			0
