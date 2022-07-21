@@ -383,6 +383,9 @@ private:
 
 class ElementTransitionModifier : public Modifier {
 public:
+	ElementTransitionModifier();
+	~ElementTransitionModifier();
+
 	bool load(ModifierLoaderContext &context, const Data::ElementTransitionModifier &data);
 
 	bool respondsToEvent(const Event &evt) const override;
@@ -412,13 +415,18 @@ private:
 	void continueTransition(Runtime *runtime);
 	void completeTransition(Runtime *runtime);
 
+	void setTransitionProgress(uint32 steps, uint32 maxSteps);
+
 	Event _enableWhen;
 	Event _disableWhen;
 
-	uint32 _rate;	// 1-100, higher is faster
+	uint32 _rate;	// Steps per second
 	uint16 _steps;
 	TransitionType _transitionType;
 	RevealType _revealType;
+
+	uint64 _transitionStartTime;
+	uint32 _currentStep;
 
 	Common::SharedPtr<ScheduledEvent> _scheduledEvent;
 };

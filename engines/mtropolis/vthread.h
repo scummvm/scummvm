@@ -138,6 +138,8 @@ public:
 
 	VThreadState step();
 
+	bool hasTasks() const;
+
 private:
 	template<typename TClass, typename TData>
 	TData *pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, const char *name, TClass *obj, VThreadState (TClass::*method)(const TData &data));

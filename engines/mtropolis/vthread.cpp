@@ -74,6 +74,10 @@ VThreadState VThread::step() {
 	return kVThreadReturn;
 }
 
+bool VThread::hasTasks() const {
+	return _used > 0;
+}
+
 void VThread::reserveFrame(size_t size, size_t alignment, void *&outFramePtr, void *&outUnadjustedDataPtr, size_t &outPrevFrameOffset) {
 	const size_t frameAlignment = alignof(VThreadStackFrame);
 	const size_t frameAlignmentMask = frameAlignment - 1;

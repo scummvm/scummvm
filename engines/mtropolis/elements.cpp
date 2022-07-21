@@ -1040,11 +1040,18 @@ void ImageElement::render(Window *window) {
 		Common::Rect srcRect(optimized->w, optimized->h);
 		Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.width(), _cachedAbsoluteOrigin.y + _rect.height());
 
+		uint8 alpha = _transitionProps.getAlpha();
+
 		if (inkMode == VisualElementRenderProperties::kInkModeBackgroundMatte || inkMode == VisualElementRenderProperties::kInkModeBackgroundTransparent) {
 			const ColorRGB8 transColorRGB8 = _renderProps.getBackColor();
 			uint32 transColor = optimized->format.ARGBToColor(255, transColorRGB8.r, transColorRGB8.g, transColorRGB8.b);
-			window->getSurface()->transBlitFrom(*optimized, srcRect, destRect, transColor);
+			window->getSurface()->transBlitFrom(*optimized, srcRect, destRect, transColor, false, 0, alpha);
 		} else if (inkMode == VisualElementRenderProperties::kInkModeDefault || inkMode == VisualElementRenderProperties::kInkModeCopy) {
+			if (alpha != 255) {
+				warning("Alpha fade was applied to a default or copy image, this isn't supported yet");
+				_transitionProps.setAlpha(255);
+			}
+
 			window->getSurface()->blitFrom(*optimized, srcRect, destRect);
 		} else {
 			warning("Unimplemented image ink mode");

@@ -100,6 +100,7 @@ struct IPlugInModifierFactory;
 struct IPlugInModifierFactoryAndDataFactory;
 struct IPostEffect;
 struct ISaveUIProvider;
+struct ISaveWriter;
 struct IStructuralReferenceVisitor;
 struct MessageProperties;
 struct ModifierLoaderContext;
@@ -1601,6 +1602,8 @@ public:
 	const Common::SharedPtr<Graphics::Surface> &getSaveScreenshotOverride() const;
 	void setSaveScreenshotOverride(const Common::SharedPtr<Graphics::Surface> &screenshot);
 
+	bool isIdle() const;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
 	void debugBreak();
@@ -2400,6 +2403,21 @@ protected:
 	bool _haveCheckedAutoPlay;
 };
 
+class VisualElementTransitionProperties {
+public:
+	VisualElementTransitionProperties();
+
+	uint8 getAlpha() const;
+	void setAlpha(uint8 alpha);
+
+	bool isDirty() const;
+	void clearDirty();
+
+private:
+	uint8 _alpha;
+	bool _isDirty;
+};
+
 class VisualElementRenderProperties {
 public:
 	VisualElementRenderProperties();
@@ -2536,6 +2554,9 @@ public:
 	const VisualElementRenderProperties &getRenderProperties() const;
 	const Common::WeakPtr<GraphicModifier> &getPrimaryGraphicModifier() const;
 
+	void setTransitionProperties(const VisualElementTransitionProperties &props);
+	const VisualElementTransitionProperties &getTransitionProperties() const;
+
 	bool needsRender() const;
 	virtual void render(Window *window) = 0;
 	void finalizeRender();
@@ -2583,9 +2604,12 @@ protected:
 
 	Common::SharedPtr<DragMotionProperties> _dragProps;
 
-	// Quirk: When a graphic modifier is applied, it needs to be
+	// Quirk: When a graphic modifier is applied, it becomes the primary graphic modifier, and disabling it
+	// will only take effect if it's the primary graphic modifier.
 	VisualElementRenderProperties _renderProps;
 	Common::WeakPtr<GraphicModifier> _primaryGraphicModifier;
+
+	VisualElementTransitionProperties _transitionProps;
 
 	Common::Rect _prevRect;
 	bool _contentsDirty;

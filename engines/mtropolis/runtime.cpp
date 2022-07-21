@@ -5692,6 +5692,38 @@ void Runtime::setSaveScreenshotOverride(const Common::SharedPtr<Graphics::Surfac
 	_saveScreenshotOverride = screenshot;
 }
 
+bool Runtime::isIdle() const {
+	// The runtime is idle if nothing is happening except for scheduled events and the OS queue
+	if (_vthread->hasTasks())
+		return false;
+
+	if (_sceneTransitionState != kSceneTransitionStateNotTransitioning)
+		return false;
+
+	if (_forceCursorRefreshOnce)
+		return false;
+
+	if (_queuedProjectDesc)
+		return false;
+
+	if (_pendingTeardowns.size() > 0)
+		return false;
+
+	if (_pendingLowLevelTransitions.size() > 0)
+		return false;
+
+	if (_messageQueue.size() > 0)
+		return false;
+
+	if (_pendingSceneTransitions.size() > 0)
+		return false;
+
+	if (_isQuitting)
+		return false;
+
+	return true;
+}
+
 void Runtime::ensureMainWindowExists() {
 	// Maybe there's a better spot for this
 	if (_mainWindow.expired() && _project) {
@@ -7004,6 +7036,26 @@ bool Element::resolveMediaMarkerLabel(const Label& label, int32 &outResolution) 
 	return false;
 }
 
+VisualElementTransitionProperties::VisualElementTransitionProperties() : _isDirty(true), _alpha(255) {
+}
+
+uint8 VisualElementTransitionProperties::getAlpha() const {
+	return _alpha;
+}
+
+void VisualElementTransitionProperties::setAlpha(uint8 alpha) {
+	_isDirty = true;
+	_alpha = alpha;
+}
+
+bool VisualElementTransitionProperties::isDirty() const {
+	return _isDirty;
+}
+
+void VisualElementTransitionProperties::clearDirty() {
+	_isDirty = false;
+}
+
 VisualElementRenderProperties::VisualElementRenderProperties()
 	: _inkMode(kInkModeDefault), _shape(kShapeRect), _foreColor(ColorRGB8::create(0, 0, 0)), _backColor(ColorRGB8::create(255, 255, 255)),
 	  _borderColor(ColorRGB8::create(0, 0, 0)), _shadowColor(ColorRGB8::create(0, 0, 0)), _borderSize(0), _shadowSize(0), _isDirty(true) {
@@ -7457,6 +7509,14 @@ void VisualElement::handleDragMotion(Runtime *runtime, const Common::Point &init
 VThreadState VisualElement::offsetTranslateTask(const OffsetTranslateTaskData &data) {
 	offsetTranslate(data.dx, data.dy, false);
 	return kVThreadReturn;
+}
+
+void VisualElement::setTransitionProperties(const VisualElementTransitionProperties &props) {
+	_transitionProps = props;
+}
+
+const VisualElementTransitionProperties &VisualElement::getTransitionProperties() const {
+	return _transitionProps;
 }
 
 void VisualElement::setRenderProperties(const VisualElementRenderProperties &props, const Common::WeakPtr<GraphicModifier> &primaryGraphicModifier) {

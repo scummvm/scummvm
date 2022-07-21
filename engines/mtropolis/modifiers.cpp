@@ -953,6 +953,17 @@ const char *SceneTransitionModifier::getDefaultName() const {
 	return "Scene Transition Modifier";
 }
 
+ElementTransitionModifier::ElementTransitionModifier() : _enableWhen(Event::create()), _disableWhen(Event::create()), _rate(0), _steps(0),
+	_transitionType(kTransitionTypeFade), _revealType(kRevealTypeReveal), _transitionStartTime(0), _currentStep(0) {
+}
+
+ElementTransitionModifier::~ElementTransitionModifier() {
+	if (_scheduledEvent) {
+		_scheduledEvent->cancel();
+		_scheduledEvent.reset();
+	}
+}
+
 bool ElementTransitionModifier::load(ModifierLoaderContext &context, const Data::ElementTransitionModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -1017,6 +1028,9 @@ VThreadState ElementTransitionModifier::consumeMessage(Runtime *runtime, const C
 		}
 
 		_scheduledEvent = runtime->getScheduler().scheduleMethod<ElementTransitionModifier, &ElementTransitionModifier::continueTransition>(runtime->getPlayTime() + 1, this);
+		_transitionStartTime = runtime->getPlayTime();
+		_currentStep = 0;
+		setTransitionProgress(0, _steps);
 
 		// Pushed tasks, so these are executed in reverse order (Show -> Transition Started)
 		{
@@ -1060,13 +1074,28 @@ const char *ElementTransitionModifier::getDefaultName() const {
 }
 
 void ElementTransitionModifier::continueTransition(Runtime *runtime) {
-	// TODO: Make this functional
-	completeTransition(runtime);
+	_scheduledEvent.reset();
+
+	const uint64 playTime = runtime->getPlayTime();
+	const uint64 timeSinceStart = playTime - _transitionStartTime;
+
+	uint32 step = static_cast<uint32>(timeSinceStart * _rate / 1000);
+
+	if (step >= _steps || _rate == 0) {
+		completeTransition(runtime);
+		return;
+	}
+
+	if (step != _currentStep) {
+		setTransitionProgress(step, _steps);
+		_currentStep = step;
+	}
+
+	runtime->setSceneGraphDirty();
+	_scheduledEvent = runtime->getScheduler().scheduleMethod<ElementTransitionModifier, &ElementTransitionModifier::continueTransition>(playTime + 1, this);
 }
 
 void ElementTransitionModifier::completeTransition(Runtime *runtime) {
-	_scheduledEvent.reset();
-
 	// Pushed tasks, so these are executed in reverse order (Hide -> Transition Ended)
 	{
 		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kTransitionEnded, 0), DynamicValue(), getSelfReference()));
@@ -1078,6 +1107,31 @@ void ElementTransitionModifier::completeTransition(Runtime *runtime) {
 		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kElementHide, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, findStructuralOwner(), false, false, true));
 		runtime->sendMessageOnVThread(dispatch);
+	}
+
+	setTransitionProgress(( _revealType == kRevealTypeReveal) ? 1 : 0, 1);
+	runtime->setSceneGraphDirty();
+}
+
+void ElementTransitionModifier::setTransitionProgress(uint32 step, uint32 maxSteps) {
+	Structural *structural = findStructuralOwner();
+	if (structural && structural->isElement() && static_cast<Element *>(structural)->isVisual()) {
+		VisualElement *visual = static_cast<VisualElement *>(structural);
+		VisualElementTransitionProperties props = visual->getTransitionProperties();
+
+		if (_transitionType == kTransitionTypeFade) {
+			if (step > maxSteps)
+				step = maxSteps;
+
+			uint32 alpha = step * 255 / maxSteps;
+			if (_revealType == kRevealTypeConceal)
+				alpha = 255 - alpha;
+
+			props.setAlpha(alpha);
+			visual->setTransitionProperties(props);
+		} else {
+			warning("Unsupported transition type");
+		}
 	}
 }
 
