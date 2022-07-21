@@ -2042,6 +2042,8 @@ protected:
 	// being available for sound indexes to be properly set up.
 	bool _loop;
 
+	int32 _flushPriority;
+
 	Common::SharedPtr<StructuralHooks> _hooks;
 };
 

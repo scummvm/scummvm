@@ -2618,7 +2618,7 @@ void StructuralHooks::onSetPosition(Structural *structural, Common::Point &pt) {
 ProjectPresentationSettings::ProjectPresentationSettings() : width(640), height(480), bitsPerPixel(8) {
 }
 
-Structural::Structural() : _parent(nullptr), _paused(false), _loop(false) {
+Structural::Structural() : _parent(nullptr), _paused(false), _loop(false), _flushPriority(0) {
 }
 
 Structural::~Structural() {
@@ -2736,6 +2736,9 @@ bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, c
 		else
 			result.clear();
 		return true;
+	} else if (attrib == "flushpriority") {
+		result.setInt(_flushPriority);
+		return true;
 	}
 
 	// Traverse children (modifiers must be first)
@@ -2806,6 +2809,9 @@ MiniscriptInstructionOutcome Structural::writeRefAttribute(MiniscriptThread *thr
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "debug") {
 		DynamicValueWriteFuncHelper<Structural, &Structural::scriptSetDebug>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "flushpriority") {
+		DynamicValueWriteIntegerHelper<int32>::create(&_flushPriority, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
