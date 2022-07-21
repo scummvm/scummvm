@@ -264,7 +264,7 @@ void ScummEngine_v8::stampScreenShot(int slot, int boxX, int boxY, int boxWidth,
 			for (int j = 0; j < boxWidth; j++) {
 				color = _savegameThumbnail[160 * (heightSlice / boxHeight) + (widthSlice / boxWidth)];
 				pixelX = j + boxX;
-				pixelColor = tmpPalette[color + 0];
+				pixelColor = tmpPalette[color];
 				drawPixel(vs, pixelX, pixelY, pixelColor, false); // In the frontbuffer
 				drawPixel(vs, pixelX, pixelY, pixelColor, true);  // In the backbuffer
 				widthSlice += 160;
