@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-20 10:32+0000\n"
+"POT-Creation-Date: 2022-07-21 22:23+0000\n"
 "PO-Revision-Date: 2022-07-17 10:46+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -2557,7 +2557,7 @@ msgstr "Επισ~τ~ρ. σε Launcher"
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
 #: engines/kingdom/kingdom.cpp:736 engines/lab/savegame.cpp:242
 #: engines/mads/nebular/dialogs_nebular.cpp:349
-#: engines/mtropolis/saveload.cpp:65 engines/neverhood/menumodule.cpp:889
+#: engines/mtropolis/saveload.cpp:76 engines/neverhood/menumodule.cpp:889
 #: engines/pegasus/pegasus.cpp:402 engines/prince/saveload.cpp:54
 #: engines/sci/engine/guest_additions.cpp:742 engines/sci/engine/kfile.cpp:1079
 #: engines/sherlock/scalpel/scalpel.cpp:1249
@@ -2579,7 +2579,7 @@ msgstr "Αποθήκευση παιχνιδιού:"
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:736
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:242
 #: engines/mads/nebular/dialogs_nebular.cpp:349
-#: engines/mtropolis/saveload.cpp:65 engines/neverhood/menumodule.cpp:889
+#: engines/mtropolis/saveload.cpp:76 engines/neverhood/menumodule.cpp:889
 #: engines/parallaction/metaengine.cpp:133
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:402
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:743
@@ -4277,7 +4277,7 @@ msgstr ""
 #: engines/groovie/script.cpp:2251 engines/hugo/file.cpp:399
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:746
 #: engines/lab/savegame.cpp:257 engines/mads/nebular/dialogs_nebular.cpp:376
-#: engines/mtropolis/saveload.cpp:97 engines/neverhood/menumodule.cpp:902
+#: engines/mtropolis/saveload.cpp:110 engines/neverhood/menumodule.cpp:902
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:745
 #: engines/sci/engine/kfile.cpp:1206 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
@@ -4296,7 +4296,7 @@ msgstr "Επαναφορά παιχνιδιού:"
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:746 engines/lab/savegame.cpp:237
 #: engines/lab/savegame.cpp:257 engines/mads/nebular/dialogs_nebular.cpp:376
-#: engines/mtropolis/saveload.cpp:97 engines/neverhood/menumodule.cpp:902
+#: engines/mtropolis/saveload.cpp:110 engines/neverhood/menumodule.cpp:902
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:746
 #: engines/sci/engine/kfile.cpp:1206 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
@@ -4783,7 +4783,7 @@ msgstr ""
 "Πατήστε OK (Εντάξει)για να τα μετατρέψετε τώρα, αλλιώς θα ερωτηθείτε ξανά "
 "την επόμενη φορά που θα ξεκινήσετε το παιχνίδι.\n"
 
-#: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:126
+#: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:139
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Το αποθηκευμένο παιχνίδι δημιουργήθηκε με νεότερη έκδοση του ScummVM. "
@@ -6167,11 +6167,15 @@ msgstr ""
 "κάποιες διαφορές από τη λειτουργία του πρωτότυπου mTropolis Player."
 
 #: engines/mtropolis/detection.cpp:65
-msgid "Save progress automatically"
-msgstr "Αυτόματη αποθήκευση προόδου"
+#, fuzzy
+#| msgid "Automatically saves the game at certain progress points."
+msgid "Autosave at progress checkpoints"
+msgstr "Αποθηκεύει αυτόματα το παιχνίδι σε συγκεκριμένα σημεία προόδου."
 
 #: engines/mtropolis/detection.cpp:66
-msgid "Automatically saves the game at certain progress points."
+#, fuzzy
+#| msgid "Automatically saves the game at certain progress points."
+msgid "Automatically saves the game at progress."
 msgstr "Αποθηκεύει αυτόματα το παιχνίδι σε συγκεκριμένα σημεία προόδου."
 
 #: engines/mtropolis/detection.cpp:76
@@ -6201,26 +6205,40 @@ msgstr "Άμεση εκκίνηση αποσφαλμάτωσης"
 msgid "Halts progress and stops at the debugger immediately"
 msgstr "Διακόπτει την πρόοδο και σταματάει αμέσως στον αποσφαλματωτή"
 
-#: engines/mtropolis/saveload.cpp:110
+#: engines/mtropolis/saveload.cpp:123
 msgid "Failed to read version information from save file"
 msgstr "Η ανάγνωση της έκδοσης από το αρχείο αποθηκευμένου παιχνιδιού απέτυχε"
 
-#: engines/mtropolis/saveload.cpp:118
+#: engines/mtropolis/saveload.cpp:131
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Αποτυχία φόρτωσης αποθηκευμένου παιχνιδιού. Το αρχείο αποθηκευσης δεν "
 "περιέχει έγκυρση πληροφορία έκδοσης."
 
-#: engines/mtropolis/saveload.cpp:134
+#: engines/mtropolis/saveload.cpp:147
 msgid "Failed to load save, an error occurred when reading the save game data."
 msgstr ""
 "Αποτυχία φόρτωσης αποθηκευμένου παιχνιδιού. Σφάλμα κατά την ανάγνωση των "
 "δεδομένων του αποθηκευμένου παιχνιδιού."
 
-#: engines/mtropolis/saveload.cpp:158
-msgid "Progress Saved"
-msgstr "Η πρόοδος σας αποθηκεύτηκε"
+#: engines/mtropolis/saveload.cpp:199
+#, fuzzy
+#| msgid ""
+#| "Failed to load save, an error occurred when reading the save game data."
+msgid "An internal error occurred while attempting to write save game data"
+msgstr ""
+"Αποτυχία φόρτωσης αποθηκευμένου παιχνιδιού. Σφάλμα κατά την ανάγνωση των "
+"δεδομένων του αποθηκευμένου παιχνιδιού."
+
+#: engines/mtropolis/saveload.cpp:207
+#, fuzzy
+#| msgid ""
+#| "Failed to load save, an error occurred when reading the save game data."
+msgid "An error occurred while writing the save game"
+msgstr ""
+"Αποτυχία φόρτωσης αποθηκευμένου παιχνιδιού. Σφάλμα κατά την ανάγνωση των "
+"δεδομένων του αποθηκευμένου παιχνιδιού."
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
@@ -9341,6 +9359,12 @@ msgstr ""
 "Liberation Fonts ή το πακέτο GNU FreeFont. Θα χρειαστείτε όλα τα fonts από "
 "το πακέτο με fonts που θα επιλέξετε, δηλαδή, LiberationMono, LiberationSans "
 "και LiberationSerif, ή FreeMono, FreeSans και FreeSerif αντίστοιχα."
+
+#~ msgid "Save progress automatically"
+#~ msgstr "Αυτόματη αποθήκευση προόδου"
+
+#~ msgid "Progress Saved"
+#~ msgstr "Η πρόοδος σας αποθηκεύτηκε"
 
 #~ msgid ""
 #~ "Failed to load save, the save file was created by a newer version of "

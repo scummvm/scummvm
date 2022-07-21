@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-20 10:32+0000\n"
+"POT-Creation-Date: 2022-07-21 22:23+0000\n"
 "PO-Revision-Date: 2022-07-17 10:16+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -2524,7 +2524,7 @@ msgstr "~V~olver al iniciador"
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
 #: engines/kingdom/kingdom.cpp:736 engines/lab/savegame.cpp:242
 #: engines/mads/nebular/dialogs_nebular.cpp:349
-#: engines/mtropolis/saveload.cpp:65 engines/neverhood/menumodule.cpp:889
+#: engines/mtropolis/saveload.cpp:76 engines/neverhood/menumodule.cpp:889
 #: engines/pegasus/pegasus.cpp:402 engines/prince/saveload.cpp:54
 #: engines/sci/engine/guest_additions.cpp:742 engines/sci/engine/kfile.cpp:1079
 #: engines/sherlock/scalpel/scalpel.cpp:1249
@@ -2546,7 +2546,7 @@ msgstr "Guardar partida:"
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:736
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:242
 #: engines/mads/nebular/dialogs_nebular.cpp:349
-#: engines/mtropolis/saveload.cpp:65 engines/neverhood/menumodule.cpp:889
+#: engines/mtropolis/saveload.cpp:76 engines/neverhood/menumodule.cpp:889
 #: engines/parallaction/metaengine.cpp:133
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:402
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:743
@@ -4233,7 +4233,7 @@ msgstr ""
 #: engines/groovie/script.cpp:2251 engines/hugo/file.cpp:399
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:746
 #: engines/lab/savegame.cpp:257 engines/mads/nebular/dialogs_nebular.cpp:376
-#: engines/mtropolis/saveload.cpp:97 engines/neverhood/menumodule.cpp:902
+#: engines/mtropolis/saveload.cpp:110 engines/neverhood/menumodule.cpp:902
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:745
 #: engines/sci/engine/kfile.cpp:1206 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
@@ -4252,7 +4252,7 @@ msgstr "Cargar partida:"
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:746 engines/lab/savegame.cpp:237
 #: engines/lab/savegame.cpp:257 engines/mads/nebular/dialogs_nebular.cpp:376
-#: engines/mtropolis/saveload.cpp:97 engines/neverhood/menumodule.cpp:902
+#: engines/mtropolis/saveload.cpp:110 engines/neverhood/menumodule.cpp:902
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:746
 #: engines/sci/engine/kfile.cpp:1206 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
@@ -4726,7 +4726,7 @@ msgstr ""
 "Pulsa Aceptar para actualizarlas.\n"
 "De lo contrario, este mensaje aparecerá cada vez que se inicie el juego.\n"
 
-#: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:126
+#: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:139
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "La partida guardada se creó una versión posterior de ScummVM. No se puede "
@@ -6095,11 +6095,15 @@ msgstr ""
 "un comportamiento diferente al del reproductor mTropolis."
 
 #: engines/mtropolis/detection.cpp:65
-msgid "Save progress automatically"
-msgstr "Guardar avances automáticamente"
+#, fuzzy
+#| msgid "Automatically saves the game at certain progress points."
+msgid "Autosave at progress checkpoints"
+msgstr "Guarda automáticamente la partida en ciertos puntos de progreso."
 
 #: engines/mtropolis/detection.cpp:66
-msgid "Automatically saves the game at certain progress points."
+#, fuzzy
+#| msgid "Automatically saves the game at certain progress points."
+msgid "Automatically saves the game at progress."
 msgstr "Guarda automáticamente la partida en ciertos puntos de progreso."
 
 #: engines/mtropolis/detection.cpp:76
@@ -6130,25 +6134,37 @@ msgid "Halts progress and stops at the debugger immediately"
 msgstr ""
 "Paraliza el progreso del juego y lo detiene en el depurador inmediatamente"
 
-#: engines/mtropolis/saveload.cpp:110
+#: engines/mtropolis/saveload.cpp:123
 msgid "Failed to read version information from save file"
 msgstr "Fallo al leer la información de versión de la partida guardada"
 
-#: engines/mtropolis/saveload.cpp:118
+#: engines/mtropolis/saveload.cpp:131
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Fallo al cargar la partida: la partida guardada no contiene una información "
 "de versión válida."
 
-#: engines/mtropolis/saveload.cpp:134
+#: engines/mtropolis/saveload.cpp:147
 msgid "Failed to load save, an error occurred when reading the save game data."
 msgstr ""
 "Fallo al cargar la partida: error al leer los datos de la partida guardada."
 
-#: engines/mtropolis/saveload.cpp:158
-msgid "Progress Saved"
-msgstr "Progresos guardados"
+#: engines/mtropolis/saveload.cpp:199
+#, fuzzy
+#| msgid ""
+#| "Failed to load save, an error occurred when reading the save game data."
+msgid "An internal error occurred while attempting to write save game data"
+msgstr ""
+"Fallo al cargar la partida: error al leer los datos de la partida guardada."
+
+#: engines/mtropolis/saveload.cpp:207
+#, fuzzy
+#| msgid ""
+#| "Failed to load save, an error occurred when reading the save game data."
+msgid "An error occurred while writing the save game"
+msgstr ""
+"Fallo al cargar la partida: error al leer los datos de la partida guardada."
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
@@ -9225,6 +9241,12 @@ msgstr ""
 "Necesitarás todas las fuentes del paquete que prefieras, por ejemplo, "
 "LiberationMono, LiberationSans y LiberationSerif, o FreeMono, FreeSans y "
 "FreeSerif respectivamente."
+
+#~ msgid "Save progress automatically"
+#~ msgstr "Guardar avances automáticamente"
+
+#~ msgid "Progress Saved"
+#~ msgstr "Progresos guardados"
 
 #~ msgid ""
 #~ "Failed to load save, the save file was created by a newer version of "

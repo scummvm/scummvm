@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-20 10:32+0000\n"
+"POT-Creation-Date: 2022-07-21 22:23+0000\n"
 "PO-Revision-Date: 2022-07-18 18:32+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -2500,7 +2500,7 @@ msgstr "Palaa p~e~livalitsimeen"
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
 #: engines/kingdom/kingdom.cpp:736 engines/lab/savegame.cpp:242
 #: engines/mads/nebular/dialogs_nebular.cpp:349
-#: engines/mtropolis/saveload.cpp:65 engines/neverhood/menumodule.cpp:889
+#: engines/mtropolis/saveload.cpp:76 engines/neverhood/menumodule.cpp:889
 #: engines/pegasus/pegasus.cpp:402 engines/prince/saveload.cpp:54
 #: engines/sci/engine/guest_additions.cpp:742 engines/sci/engine/kfile.cpp:1079
 #: engines/sherlock/scalpel/scalpel.cpp:1249
@@ -2522,7 +2522,7 @@ msgstr "Tallenna peli:"
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:736
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:242
 #: engines/mads/nebular/dialogs_nebular.cpp:349
-#: engines/mtropolis/saveload.cpp:65 engines/neverhood/menumodule.cpp:889
+#: engines/mtropolis/saveload.cpp:76 engines/neverhood/menumodule.cpp:889
 #: engines/parallaction/metaengine.cpp:133
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:402
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:743
@@ -4201,7 +4201,7 @@ msgstr ""
 #: engines/groovie/script.cpp:2251 engines/hugo/file.cpp:399
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:746
 #: engines/lab/savegame.cpp:257 engines/mads/nebular/dialogs_nebular.cpp:376
-#: engines/mtropolis/saveload.cpp:97 engines/neverhood/menumodule.cpp:902
+#: engines/mtropolis/saveload.cpp:110 engines/neverhood/menumodule.cpp:902
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:745
 #: engines/sci/engine/kfile.cpp:1206 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
@@ -4220,7 +4220,7 @@ msgstr "Lataa pelitallenne:"
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:746 engines/lab/savegame.cpp:237
 #: engines/lab/savegame.cpp:257 engines/mads/nebular/dialogs_nebular.cpp:376
-#: engines/mtropolis/saveload.cpp:97 engines/neverhood/menumodule.cpp:902
+#: engines/mtropolis/saveload.cpp:110 engines/neverhood/menumodule.cpp:902
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:746
 #: engines/sci/engine/kfile.cpp:1206 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
@@ -4690,7 +4690,7 @@ msgstr ""
 "Paina OK muuntaaksesi ne nyt heti, muutoin asiaa kysytään sinulta taas "
 "uudestaan seuraavalla kerralla peliä käynnistäessäsi.\n"
 
-#: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:126
+#: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:139
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Tämä pelitallenne on luotu ScummVM:n uudemmalla versiolla. Lataus ei onnistu."
@@ -6026,11 +6026,15 @@ msgstr ""
 "eri tavalla kuin mTropolis Player."
 
 #: engines/mtropolis/detection.cpp:65
-msgid "Save progress automatically"
-msgstr "Tallenna edistyminen automaattisesti"
+#, fuzzy
+#| msgid "Automatically saves the game at certain progress points."
+msgid "Autosave at progress checkpoints"
+msgstr "Tekee automaattisen pelitallennuksen tietyissä pelin kohdissa."
 
 #: engines/mtropolis/detection.cpp:66
-msgid "Automatically saves the game at certain progress points."
+#, fuzzy
+#| msgid "Automatically saves the game at certain progress points."
+msgid "Automatically saves the game at progress."
 msgstr "Tekee automaattisen pelitallennuksen tietyissä pelin kohdissa."
 
 #: engines/mtropolis/detection.cpp:76
@@ -6058,24 +6062,34 @@ msgstr "Aloita debuggaus välittömästi"
 msgid "Halts progress and stops at the debugger immediately"
 msgstr "Pysäyttää etenemisen ja siirtyy debuggeriin välittömästi"
 
-#: engines/mtropolis/saveload.cpp:110
+#: engines/mtropolis/saveload.cpp:123
 msgid "Failed to read version information from save file"
 msgstr "Pelitallenteen version lukeminen epäonnistui"
 
-#: engines/mtropolis/saveload.cpp:118
+#: engines/mtropolis/saveload.cpp:131
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Pelitallenteen lukeminen epäonnistui, tallenne ei sisällä validia "
 "versioinformaatiota."
 
-#: engines/mtropolis/saveload.cpp:134
+#: engines/mtropolis/saveload.cpp:147
 msgid "Failed to load save, an error occurred when reading the save game data."
 msgstr "Pelitallenteen lataaminen epäonnistui, sen lukemisessa tapahtui virhe."
 
-#: engines/mtropolis/saveload.cpp:158
-msgid "Progress Saved"
-msgstr "Edistyminen tallennettu"
+#: engines/mtropolis/saveload.cpp:199
+#, fuzzy
+#| msgid ""
+#| "Failed to load save, an error occurred when reading the save game data."
+msgid "An internal error occurred while attempting to write save game data"
+msgstr "Pelitallenteen lataaminen epäonnistui, sen lukemisessa tapahtui virhe."
+
+#: engines/mtropolis/saveload.cpp:207
+#, fuzzy
+#| msgid ""
+#| "Failed to load save, an error occurred when reading the save game data."
+msgid "An error occurred while writing the save game"
+msgstr "Pelitallenteen lataaminen epäonnistui, sen lukemisessa tapahtui virhe."
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
@@ -9116,6 +9130,12 @@ msgstr ""
 "ladata Liberation Fonts -paketin tai GNU FreeFont -paketin. Tarvitset kaikki "
 "fontit paketista jonka valitset, i.e. LiberationMono, LiberationSans ja "
 "LiberationSerif, tai FreeMono, FreeSans ja FreeSerif riippuen valinnastasi."
+
+#~ msgid "Save progress automatically"
+#~ msgstr "Tallenna edistyminen automaattisesti"
+
+#~ msgid "Progress Saved"
+#~ msgstr "Edistyminen tallennettu"
 
 #~ msgid ""
 #~ "Failed to load save, the save file was created by a newer version of "

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-20 10:32+0000\n"
+"POT-Creation-Date: 2022-07-21 22:23+0000\n"
 "PO-Revision-Date: 2022-07-18 01:32+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -2520,7 +2520,7 @@ msgstr "~V~ai a elenco giochi"
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
 #: engines/kingdom/kingdom.cpp:736 engines/lab/savegame.cpp:242
 #: engines/mads/nebular/dialogs_nebular.cpp:349
-#: engines/mtropolis/saveload.cpp:65 engines/neverhood/menumodule.cpp:889
+#: engines/mtropolis/saveload.cpp:76 engines/neverhood/menumodule.cpp:889
 #: engines/pegasus/pegasus.cpp:402 engines/prince/saveload.cpp:54
 #: engines/sci/engine/guest_additions.cpp:742 engines/sci/engine/kfile.cpp:1079
 #: engines/sherlock/scalpel/scalpel.cpp:1249
@@ -2542,7 +2542,7 @@ msgstr "Salva gioco:"
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:736
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:242
 #: engines/mads/nebular/dialogs_nebular.cpp:349
-#: engines/mtropolis/saveload.cpp:65 engines/neverhood/menumodule.cpp:889
+#: engines/mtropolis/saveload.cpp:76 engines/neverhood/menumodule.cpp:889
 #: engines/parallaction/metaengine.cpp:133
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:402
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:743
@@ -4248,7 +4248,7 @@ msgstr ""
 #: engines/groovie/script.cpp:2251 engines/hugo/file.cpp:399
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:746
 #: engines/lab/savegame.cpp:257 engines/mads/nebular/dialogs_nebular.cpp:376
-#: engines/mtropolis/saveload.cpp:97 engines/neverhood/menumodule.cpp:902
+#: engines/mtropolis/saveload.cpp:110 engines/neverhood/menumodule.cpp:902
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:745
 #: engines/sci/engine/kfile.cpp:1206 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
@@ -4267,7 +4267,7 @@ msgstr "Carica partita:"
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:746 engines/lab/savegame.cpp:237
 #: engines/lab/savegame.cpp:257 engines/mads/nebular/dialogs_nebular.cpp:376
-#: engines/mtropolis/saveload.cpp:97 engines/neverhood/menumodule.cpp:902
+#: engines/mtropolis/saveload.cpp:110 engines/neverhood/menumodule.cpp:902
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:746
 #: engines/sci/engine/kfile.cpp:1206 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
@@ -4744,7 +4744,7 @@ msgstr ""
 "Premi OK per convertirli adesso, altrimenti ti verrà richiesto al prossimo "
 "avvio del gioco.\n"
 
-#: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:126
+#: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:139
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Questo salvataggio è stato creato con una versione più recente di ScummVM. "
@@ -6105,11 +6105,15 @@ msgstr ""
 "fedele al player originale di mTropolis."
 
 #: engines/mtropolis/detection.cpp:65
-msgid "Save progress automatically"
-msgstr "Salva automaticamente i progressi"
+#, fuzzy
+#| msgid "Automatically saves the game at certain progress points."
+msgid "Autosave at progress checkpoints"
+msgstr "Salva automaticamente al raggiungimento di alcuni punti prestabiliti."
 
 #: engines/mtropolis/detection.cpp:66
-msgid "Automatically saves the game at certain progress points."
+#, fuzzy
+#| msgid "Automatically saves the game at certain progress points."
+msgid "Automatically saves the game at progress."
 msgstr "Salva automaticamente al raggiungimento di alcuni punti prestabiliti."
 
 #: engines/mtropolis/detection.cpp:76
@@ -6139,28 +6143,42 @@ msgstr "Avvia il debugging immediatamente"
 msgid "Halts progress and stops at the debugger immediately"
 msgstr "Arresta immediatamente il progresso del gioco aprendo il debugger"
 
-#: engines/mtropolis/saveload.cpp:110
+#: engines/mtropolis/saveload.cpp:123
 msgid "Failed to read version information from save file"
 msgstr ""
 "Non è stato possibile leggere i dati relativi alla versione nel file di "
 "salvataggio"
 
-#: engines/mtropolis/saveload.cpp:118
+#: engines/mtropolis/saveload.cpp:131
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Impossibile caricare il salvataggio, i dati relativi alla versione non sono "
 "validi."
 
-#: engines/mtropolis/saveload.cpp:134
+#: engines/mtropolis/saveload.cpp:147
 msgid "Failed to load save, an error occurred when reading the save game data."
 msgstr ""
 "Impossibile caricare il salvataggio, rilevato un errore durante la lettura "
 "dei dati."
 
-#: engines/mtropolis/saveload.cpp:158
-msgid "Progress Saved"
-msgstr "Progresso Salvato"
+#: engines/mtropolis/saveload.cpp:199
+#, fuzzy
+#| msgid ""
+#| "Failed to load save, an error occurred when reading the save game data."
+msgid "An internal error occurred while attempting to write save game data"
+msgstr ""
+"Impossibile caricare il salvataggio, rilevato un errore durante la lettura "
+"dei dati."
+
+#: engines/mtropolis/saveload.cpp:207
+#, fuzzy
+#| msgid ""
+#| "Failed to load save, an error occurred when reading the save game data."
+msgid "An error occurred while writing the save game"
+msgstr ""
+"Impossibile caricare il salvataggio, rilevato un errore durante la lettura "
+"dei dati."
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
@@ -9252,6 +9270,12 @@ msgstr ""
 "GNU. Ti serviranno tutti i font presenti nel pacchetto di tua preferenza, "
 "precisamente: LiberationMono, LiberationSans e LiberationSerif; oppure "
 "FreeMono, FreeSans e FreeSerif."
+
+#~ msgid "Save progress automatically"
+#~ msgstr "Salva automaticamente i progressi"
+
+#~ msgid "Progress Saved"
+#~ msgstr "Progresso Salvato"
 
 #~ msgid ""
 #~ "Failed to load save, the save file was created by a newer version of "
