@@ -215,6 +215,9 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		if (res != NULL) {
 			scene->_textBounds = readRect(res);
 			int fontType = res->readUint16BE();
+			if (_name == "***DUNE ETERNITY*** ")
+				fontType = 3;
+
 			int fontSize = res->readUint16BE();
 			scene->_font = new Graphics::MacFont(fontType, fontSize, Graphics::kMacFontRegular);
 			const Graphics::Font *fallback = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
