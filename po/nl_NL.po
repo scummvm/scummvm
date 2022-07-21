@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-21 22:23+0000\n"
+"POT-Creation-Date: 2022-07-21 22:26+0000\n"
 "PO-Revision-Date: 2022-07-13 06:51+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -6065,11 +6065,11 @@ msgid ""
 msgstr ""
 
 #: engines/mtropolis/detection.cpp:65
-msgid "Autosave at progress checkpoints"
+msgid "Autosave at progress points"
 msgstr ""
 
 #: engines/mtropolis/detection.cpp:66
-msgid "Automatically saves the game at progress."
+msgid "Automatically saves the game after completing puzzles and chapters."
 msgstr ""
 
 #: engines/mtropolis/detection.cpp:76

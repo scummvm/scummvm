@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-21 22:23+0000\n"
+"POT-Creation-Date: 2022-07-21 22:26+0000\n"
 "PO-Revision-Date: 2022-07-18 18:32+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -5965,13 +5965,13 @@ msgstr ""
 #: engines/mtropolis/detection.cpp:65
 #, fuzzy
 #| msgid "Automatically saves the game at certain progress points."
-msgid "Autosave at progress checkpoints"
+msgid "Autosave at progress points"
 msgstr "ゲームが進行状況に応じて自動的にセーブされます。"
 
 #: engines/mtropolis/detection.cpp:66
 #, fuzzy
 #| msgid "Automatically saves the game at certain progress points."
-msgid "Automatically saves the game at progress."
+msgid "Automatically saves the game after completing puzzles and chapters."
 msgstr "ゲームが進行状況に応じて自動的にセーブされます。"
 
 #: engines/mtropolis/detection.cpp:76
