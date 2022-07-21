@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-19 23:18+0000\n"
+"POT-Creation-Date: 2022-07-20 10:32+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -4681,7 +4681,7 @@ msgid ""
 "time you start the game.\n"
 msgstr ""
 
-#: engines/buried/saveload.cpp:165
+#: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:126
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 
@@ -5946,11 +5946,6 @@ msgstr ""
 #: engines/mtropolis/saveload.cpp:118
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
-msgstr ""
-
-#: engines/mtropolis/saveload.cpp:126
-msgid ""
-"Failed to load save, the save file was created by a newer version of ScummVM."
 msgstr ""
 
 #: engines/mtropolis/saveload.cpp:134

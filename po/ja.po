@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-19 23:18+0000\n"
+"POT-Creation-Date: 2022-07-20 10:32+0000\n"
 "PO-Revision-Date: 2022-07-18 18:32+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -4649,7 +4649,7 @@ msgstr ""
 "OKを押すと、ただちに変換します。それ以外の場合は、次回起動時にもう一度尋ねら"
 "れます。\n"
 
-#: engines/buried/saveload.cpp:165
+#: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:126
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "現在より新しいバージョンのScummVMで作成されたセーブです。ロードできません。"
@@ -6003,11 +6003,6 @@ msgstr "セーブからバージョン情報が読み取れません"
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr "ロードに失敗、セーブファイルに有効なバージョン情報がありません。"
-
-#: engines/mtropolis/saveload.cpp:126
-msgid ""
-"Failed to load save, the save file was created by a newer version of ScummVM."
-msgstr "ロードに失敗、新しいバージョンのScummVMで作成されたセーブです。"
 
 #: engines/mtropolis/saveload.cpp:134
 msgid "Failed to load save, an error occurred when reading the save game data."
@@ -9009,6 +9004,11 @@ msgstr ""
 "Arialが必要です。LiberationFontsを使用する場合、LiberationMono、"
 "LiberationSans、LiberationSerifが必要です。GNUFreeFontを使用する場合、"
 "FreeMono、FreeSans、FreeSerifが必要です。"
+
+#~ msgid ""
+#~ "Failed to load save, the save file was created by a newer version of "
+#~ "ScummVM."
+#~ msgstr "ロードに失敗、新しいバージョンのScummVMで作成されたセーブです。"
 
 #~ msgid ""
 #~ "WARNING: Existing save has longer gameplay duration than the current "

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-19 23:18+0000\n"
+"POT-Creation-Date: 2022-07-20 10:32+0000\n"
 "PO-Revision-Date: 2022-07-17 10:16+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -4687,7 +4687,7 @@ msgstr ""
 "Nyomj Ok-t a konvertáláshoz most, különben a rendszer a játék következő "
 "indításakor újra megkérdezi.\n"
 
-#: engines/buried/saveload.cpp:165
+#: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:126
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "A mentett játék a ScummVM újabb verziójával készült. Nem lehet betölteni."
@@ -6071,13 +6071,6 @@ msgid ""
 msgstr ""
 "Nem sikerült betölteni a mentést, a mentési fájl nem tartalmaz érvényes "
 "verzióinformációkat."
-
-#: engines/mtropolis/saveload.cpp:126
-msgid ""
-"Failed to load save, the save file was created by a newer version of ScummVM."
-msgstr ""
-"A mentés betöltése nem sikerült, a mentési fájlt a ScummVM újabb verziója "
-"hozta létre."
 
 #: engines/mtropolis/saveload.cpp:134
 msgid "Failed to load save, an error occurred when reading the save game data."
@@ -9118,6 +9111,13 @@ msgstr ""
 "FreeFont csomagot. Szükséged lesz az összes betűtípusra a választott "
 "betűkészletből, azaz, LiberationMono, LiberationSans és LiberationSerif, "
 "vagy FreeMono, FreeSans és FreeSerif választhatóan."
+
+#~ msgid ""
+#~ "Failed to load save, the save file was created by a newer version of "
+#~ "ScummVM."
+#~ msgstr ""
+#~ "A mentés betöltése nem sikerült, a mentési fájlt a ScummVM újabb verziója "
+#~ "hozta létre."
 
 #~ msgid ""
 #~ "WARNING: Existing save has longer gameplay duration than the current "

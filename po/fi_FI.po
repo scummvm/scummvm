@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-19 23:18+0000\n"
+"POT-Creation-Date: 2022-07-20 10:32+0000\n"
 "PO-Revision-Date: 2022-07-18 18:32+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4690,7 +4690,7 @@ msgstr ""
 "Paina OK muuntaaksesi ne nyt heti, muutoin asiaa kysytään sinulta taas "
 "uudestaan seuraavalla kerralla peliä käynnistäessäsi.\n"
 
-#: engines/buried/saveload.cpp:165
+#: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:126
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Tämä pelitallenne on luotu ScummVM:n uudemmalla versiolla. Lataus ei onnistu."
@@ -6068,13 +6068,6 @@ msgid ""
 msgstr ""
 "Pelitallenteen lukeminen epäonnistui, tallenne ei sisällä validia "
 "versioinformaatiota."
-
-#: engines/mtropolis/saveload.cpp:126
-msgid ""
-"Failed to load save, the save file was created by a newer version of ScummVM."
-msgstr ""
-"Pelitallenteen lataaminen epäonnistui, se on luotu ScummVM:n uudemmalla "
-"versiolla."
 
 #: engines/mtropolis/saveload.cpp:134
 msgid "Failed to load save, an error occurred when reading the save game data."
@@ -9123,6 +9116,13 @@ msgstr ""
 "ladata Liberation Fonts -paketin tai GNU FreeFont -paketin. Tarvitset kaikki "
 "fontit paketista jonka valitset, i.e. LiberationMono, LiberationSans ja "
 "LiberationSerif, tai FreeMono, FreeSans ja FreeSerif riippuen valinnastasi."
+
+#~ msgid ""
+#~ "Failed to load save, the save file was created by a newer version of "
+#~ "ScummVM."
+#~ msgstr ""
+#~ "Pelitallenteen lataaminen epäonnistui, se on luotu ScummVM:n uudemmalla "
+#~ "versiolla."
 
 #~ msgid ""
 #~ "WARNING: Existing save has longer gameplay duration than the current "

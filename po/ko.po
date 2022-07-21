@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-19 23:18+0000\n"
+"POT-Creation-Date: 2022-07-20 10:32+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4660,7 +4660,7 @@ msgstr ""
 "확인 버튼을 누르면 변환을 진행합니다. 그렇지 않으면 다음 번 게임을 시작 시 다"
 "시 이 창이 표시됩니다.\n"
 
-#: engines/buried/saveload.cpp:165
+#: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:126
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "저장된 게임은 최신 버전의 ScummVM으로 생성되었습니다. 로드할 수 없습니다."
@@ -6022,13 +6022,6 @@ msgstr "파일에서 저장된 게임을 불러오는데 실패했습니다."
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
-
-#: engines/mtropolis/saveload.cpp:126
-#, fuzzy
-msgid ""
-"Failed to load save, the save file was created by a newer version of ScummVM."
-msgstr ""
-"저장된 게임은 최신 버전의 ScummVM으로 생성되었습니다. 로드할 수 없습니다."
 
 #: engines/mtropolis/saveload.cpp:134
 msgid "Failed to load save, an error occurred when reading the save game data."
@@ -9023,6 +9016,13 @@ msgstr ""
 "다. 선택한 글꼴 패키지의 모든 글꼴이 필요할 수 있습니다. 예: LiberationMono, "
 "LiberationSans 및 LiberationSerif 또는 FreeMono, FreeSans 및 FreeSerif가 각"
 "각 필요함."
+
+#, fuzzy
+#~ msgid ""
+#~ "Failed to load save, the save file was created by a newer version of "
+#~ "ScummVM."
+#~ msgstr ""
+#~ "저장된 게임은 최신 버전의 ScummVM으로 생성되었습니다. 로드할 수 없습니다."
 
 #~ msgid ""
 #~ "WARNING: Existing save has longer gameplay duration than the current "
