@@ -3828,8 +3828,10 @@ void Actor::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 	}
 
-	// Post-load actor palette fixes for games that were saved with a different video mode (concerns INDY3, LOOM and MI1EGA).
-	if (s.isLoading() && (_vm->_game.version == 3 || _vm->_game.version == 4) && _vm->_game.platform == Common::kPlatformDOS) {
+	// WORKAROUND: Post-load actor palette fixes for games that were saved with a different render mode
+	// (concerns INDY3, LOOM and MI1EGA). The original interpreter does not fix this, savegames from
+	// different videomodes will cause glitches there.
+	if (s.isLoading() && (_vm->_game.version == 3 || _vm->_game.id == GID_MONKEY_EGA) && _vm->_game.platform == Common::kPlatformDOS) {
 		// Loom is not really much of a problem here, since it has extensive scripted post-load
 		// treatment in ScummEngine_v3::scummLoop_handleSaveLoad(). But there are situations
 		// where it won't be triggered (basically savegames from places where the original does
@@ -3837,7 +3839,10 @@ void Actor::saveLoadWithSerializer(Common::Serializer &s) {
 		// less scripted post-load magic of its own. Monkey Island always needs this, since V4+
 		// games don't do scripted loading of savegames (scripted post-load things) at all.
 		bool cga = (_vm->_renderMode == Common::kRenderCGA);
-		if ((cga && _palette[6] == 6 && _palette[7] == 7) || (!cga && _palette[6] == 5 && _palette[7] == 15)) {
+		if (cga && _vm->_game.id == GID_MONKEY_EGA && _palette[6] == 0xFF && _palette[7] == 0xFF) {
+			_palette[6] = 5;
+			_palette[7] = 15;
+		} else if ((cga && _palette[6] == 6 && _palette[7] == 7) || (!cga && _palette[6] == 5 && _palette[7] == 15)) {
 			_palette[6] ^= 3;
 			_palette[7] ^= 8;
 		}

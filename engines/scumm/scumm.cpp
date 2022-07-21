@@ -2681,6 +2681,27 @@ void ScummEngine_v5::scummLoop_handleSaveLoad() {
 
 	ScummEngine::scummLoop_handleSaveLoad();
 
+	// WORKAROUND: MI1 post-load room palette fixes for games that were saved with a different
+	// render mode. The entry scripts apply custom fixes here, based on the VAR_VIDEOMODE
+	// var. Saving this state and then loading the savegame with a different render mode setting,
+	// will mess up the room palette. The original interpreter does not fix this, savegames
+	// from different videomodes are basically incompatible, at least until a scene comes up
+	// where the script might again apply the necessary fixes. Unfortunately, this workaround
+	// will also only work if the current room has a script with the correct fixes...
+	if (_game.id == GID_MONKEY_EGA && _videoModeChanged) {
+		_videoModeChanged = false;
+		// Reset everything that the former entry script might have
+		// done (based on the former VAR_VIDEOMODE).
+		for (int i = 0; i < ARRAYSIZE(_roomPalette); ++i)
+			_roomPalette[i] = i;
+		// We want just the ENCD script...
+		int entryScript = VAR_ENTRY_SCRIPT;
+		VAR_ENTRY_SCRIPT = 0xFF;
+		runEntryScript();
+		VAR_ENTRY_SCRIPT = entryScript;
+		warning("Loading savegame with a different render mode setting. Glitches might occur");
+	}
+
 	// update IQ points after loading
 	if (processIQPoints)
 		runScript(145, 0, 0, nullptr);

@@ -606,6 +606,7 @@ protected:
 	uint32 _lastSaveTime = 0;
 	bool _saveTemporaryState = false;
 	bool _loadFromLauncher = false;
+	bool _videoModeChanged = false;
 	Common::String _saveLoadFileName;
 	Common::String _saveLoadDescription;
 

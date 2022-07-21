@@ -1446,7 +1446,13 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	// Set video mode var to the current actual mode, not the one that was enabled when the game was saved.
 	// At least for Loom this fixes glitches, since the game actually reads the var and makes actor palette
 	// adjustments based on that. This is a bug that happens in the original interpreter, too.
-	setVideoModeVarToCurrentConfig();
+	if (s.isLoading() && VAR_VIDEOMODE != 0xFF) {
+		int videoModeSaved = VAR(VAR_VIDEOMODE);
+		setVideoModeVarToCurrentConfig();
+		// For MI1EGA we need to know if the savegame is from a different render mode, so we can apply some
+		// post-load fixes if necessary.
+		_videoModeChanged = (videoModeSaved != VAR(VAR_VIDEOMODE));
+	}
 
 	// WORKAROUND: FM-TOWNS Zak used the extra 40 pixels at the bottom to increase the inventory to 10 items
 	// if we trim to 200 pixels, we can show only 6 items
@@ -1465,7 +1471,6 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 		// make sure the appropriate verbs and arrows are displayed
 		runInventoryScript(0);
 	}
-
 
 	//
 	// Save/load a list of the locked objects

@@ -540,7 +540,7 @@ void ScummEngine_v5::o5_actorOps() {
 
 			// WORKAROUND for original bug. The original interpreter has a color fix for CGA mode which can be seen
 			// in Actor::setActorCostume(). Sometimes (e. g. when Bobbin walks out of the darkened tent) the actor
-			// colors are changed via script without taking into the account the need to repeat the color fix.
+			// colors are changed via script without taking into account the need to repeat the color fix.
 			if (_game.id == GID_LOOM && _renderMode == Common::kRenderCGA && act == 1) {
 				if (i == 6 && j == 6)
 					j = 5;
