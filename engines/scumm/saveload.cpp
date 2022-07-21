@@ -163,42 +163,85 @@ void ScummEngine::requestLoad(int slot) {
 	_saveLoadFlag = 2;		// 2 for load
 }
 
+static bool saveSaveGameHeader(Common::WriteStream *out, SaveGameHeader &hdr) {
+	hdr.type = MKTAG('S','C','V','M');
+	hdr.size = 0;
+	hdr.ver = CURRENT_VER;
+
+	out->writeUint32BE(hdr.type);
+	out->writeUint32LE(hdr.size);
+	out->writeUint32LE(hdr.ver);
+	out->write(hdr.name, sizeof(hdr.name));
+	return true;
+}
+
+static bool loadSaveGameHeader(Common::SeekableReadStream *in, SaveGameHeader &hdr) {
+	hdr.type = in->readUint32BE();
+	hdr.size = in->readUint32LE();
+	hdr.ver = in->readUint32LE();
+	in->read(hdr.name, sizeof(hdr.name));
+	return !in->err() && hdr.type == MKTAG('S','C','V','M');
+}
+
+namespace {
+bool loadAndCheckSaveGameHeader(Common::InSaveFile *in, int heversion, SaveGameHeader &hdr, Common::String *error = nullptr) {
+	if (!loadSaveGameHeader(in, hdr)) {
+		if (error) {
+			*error = "Invalid savegame";
+		}
+		return false;
+	}
+
+	if (hdr.ver > CURRENT_VER) {
+		hdr.ver = TO_LE_32(hdr.ver);
+	}
+
+	if (hdr.ver < VER(7) || hdr.ver > CURRENT_VER) {
+		if (error) {
+			*error = "Invalid version";
+		}
+		return false;
+	}
+
+	// We (deliberately) broke HE savegame compatibility at some point.
+	if (hdr.ver < VER(57) && heversion >= 60) {
+		if (error) {
+			*error = "Unsupported version";
+		}
+		return false;
+	}
+
+	hdr.name[sizeof(hdr.name) - 1] = 0;
+	return true;
+}
+} // End of anonymous namespace
+
 void ScummEngine::copyHeapSaveGameToFile(int slot, const char *saveName) {
 	Common::String fileName;
 	SaveGameHeader hdr;
 	bool saveFailed = false;
 
 	Common::SeekableReadStream *heapSaveFile = openSaveFileForReading(1, true, fileName);
-	hdr.type = heapSaveFile->readUint32BE();
-	hdr.size = heapSaveFile->readUint32LE();
-	hdr.ver = heapSaveFile->readUint32LE();
-	heapSaveFile->read(hdr.name, sizeof(hdr.name));
-	Common::strlcpy(hdr.name, saveName, sizeof(hdr.name));
+	saveFailed = !loadAndCheckSaveGameHeader(heapSaveFile, _game.heversion, hdr);
 
-	if (heapSaveFile->err() || hdr.type != MKTAG('S','C','V','M')) {
+	Common::WriteStream *saveFile = openSaveFileForWriting(slot, false, fileName);
+	if (!saveFile) {
 		saveFailed = true;
 	} else {
-		Common::WriteStream *saveFile = openSaveFileForWriting(slot, false, fileName);
-		if (!saveFile) {
-			saveFailed = true;
-		} else {
-			saveFile->writeUint32BE(hdr.type);
-			saveFile->writeUint32LE(hdr.size);
-			saveFile->writeUint32LE(hdr.ver);
-			saveFile->write(hdr.name, sizeof(hdr.name));
+		Common::strlcpy(hdr.name, saveName, sizeof(hdr.name));
+		saveSaveGameHeader(saveFile, hdr);
 
-			heapSaveFile->seek(sizeof(hdr), SEEK_SET);
-			while (!heapSaveFile->eos()) {
-				byte b = heapSaveFile->readByte();
-				saveFile->writeByte(b);
-			}
-
-			saveFile->finalize();
-			if (saveFile->err())
-				saveFailed = true;
-
-			delete saveFile;
+		heapSaveFile->seek(sizeof(hdr), SEEK_SET);
+		while (!heapSaveFile->eos()) {
+			byte b = heapSaveFile->readByte();
+			saveFile->writeByte(b);
 		}
+
+		saveFile->finalize();
+		if (saveFile->err())
+			saveFailed = true;
+
+		delete saveFile;
 	}
 
 	if (saveFailed)
@@ -240,14 +283,15 @@ void ScummEngine_v8::stampScreenShot(int slot, int boxX, int boxY, int boxWidth,
 	int color, pixelColor, rgb;
 	int heightSlice, widthSlice;
 
-	bool success = false;
+	bool foundInternalThumbnail = false;
 	byte tmpPalette[256];
+	uint32 *thumbSurface = nullptr;
 
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 
-	success = fetchInternalSaveStateThumbnail(slot == 0 ? 1 : slot, slot == 0);
+	foundInternalThumbnail = fetchInternalSaveStateThumbnail(slot == 0 ? 1 : slot, slot == 0);
 
-	if (success) {
+	if (foundInternalThumbnail) {
 		for (int i = 0; i < 256; i++) {
 			rgb = _savegameThumbnailPalette[i];
 			tmpPalette[i] = remapPaletteColor(
@@ -256,33 +300,62 @@ void ScummEngine_v8::stampScreenShot(int slot, int boxX, int boxY, int boxWidth,
 				brightness * ((rgb & 0xFF0000) >> 16) / 0xFF,
 				-1);
 		}
-
-		heightSlice = 0;
-		for (int i = 0; i < boxHeight; i++) {
-			pixelY = boxY + i;
-			widthSlice = 0;
-			for (int j = 0; j < boxWidth; j++) {
-				color = _savegameThumbnail[160 * (heightSlice / boxHeight) + (widthSlice / boxWidth)];
-				pixelX = j + boxX;
-				pixelColor = tmpPalette[color];
-				drawPixel(vs, pixelX, pixelY, pixelColor, false); // In the frontbuffer
-				drawPixel(vs, pixelX, pixelY, pixelColor, true);  // In the backbuffer
-				widthSlice += 160;
-			}
-			heightSlice += 120;
-		}
 	} else {
-		// Fallback: this is an old savegame which does not have a SCUMM v8 thumbnail,
-		// so let's just show a brownish box which looks nice enough superimposed on
-		// the Captain's log yellowish background...
-		rgb = 0x001627;
-		color = remapPaletteColor(
-			brightness * ((rgb & 0xFF) >> 0) / 0xFF,
-			brightness * ((rgb & 0xFF00) >> 8) / 0xFF,
-			brightness * ((rgb & 0xFF0000) >> 16) / 0xFF,
-			-1);
-		drawBox(boxX, boxY, boxWidth, boxHeight - 1, color);
+		// The savegame does not contain an internal SCUMM v8 thumbnail: fetch the default ScummVM one,
+		// and process it with the brightness parameter beforehand...
+		thumbSurface = fetchScummVMSaveStateThumbnail(slot == 0 ? 1 : slot, slot == 0, brightness);
+
+		// Fallback: this is a savegame which does not have any of the two possible,
+		// thumbnails so let's just show a brownish box which looks nice enough
+		// superimposed on the Captain's log yellowish background...
+		// This is some kind of last resort fallback. We shouldn't arrive here,
+		// but still, better safe than sorry... :-)
+		if (!thumbSurface) {
+			rgb = 0x001627;
+			color = remapPaletteColor(
+				brightness * ((rgb & 0xFF) >> 0) / 0xFF,
+				brightness * ((rgb & 0xFF00) >> 8) / 0xFF,
+				brightness * ((rgb & 0xFF0000) >> 16) / 0xFF,
+				-1);
+
+			// The -1 after boxHeight is done to compensate for the fact that
+			// we can't directly control the back and front buffers (see below)
+			drawBox(boxX, boxY, boxWidth, boxHeight - 1, color);
+			return;
+		}
 	}
+
+	// If we got here, it means we managed to fetch one of the
+	// thumbnails, so let's actually draw it to screen!
+	heightSlice = 0;
+	for (int i = 0; i < boxHeight; i++) {
+		pixelY = boxY + i;
+		widthSlice = 0;
+		for (int j = 0; j < boxWidth; j++) {
+			pixelX = j + boxX;
+
+			// Remember, the internal one is paletted, while the ScummVM one
+			// is blitted without going through a palette index...
+			if (foundInternalThumbnail) {
+				color = _savegameThumbnail[160 * (heightSlice / boxHeight) + (widthSlice / boxWidth)];
+				pixelColor = tmpPalette[color];
+			} else {
+				pixelColor = thumbSurface[160 * (heightSlice / boxHeight) + (widthSlice / boxWidth)];
+			}
+
+			// Draw twice; once in the frontbuffer, once in the backbuffer:
+			// this ensures that the lowest row of the image doesn't get overwritten
+			// by the blastText rect just below, containing the savegame name...
+			drawPixel(vs, pixelX, pixelY, pixelColor, false);
+			drawPixel(vs, pixelX, pixelY, pixelColor, true);
+
+			widthSlice += 160;
+		}
+		heightSlice += 120;
+	}
+
+	if (thumbSurface)
+		delete[] thumbSurface;
 }
 
 void ScummEngine_v8::createInternalSaveStateThumbnail() {
@@ -321,13 +394,7 @@ bool ScummEngine_v8::fetchInternalSaveStateThumbnail(int slotId, bool isHeapSave
 
 	// In order to fetch the internal COMI thumbnail, we perform the same routine
 	// used during normal loading, stripped down to support only version 106 onwards...
-	hdr.type = in->readUint32BE();
-	hdr.size = in->readUint32LE();
-	hdr.ver = in->readUint32LE();
-	in->read(hdr.name, sizeof(hdr.name));
-
-	if (in->err() || hdr.type != MKTAG('S', 'C', 'V', 'M')) {
-		warning("Invalid savegame header for savegame '%s'", filename.c_str());
+	if (!loadAndCheckSaveGameHeader(in, _game.heversion, hdr)) {
 		delete in;
 		return false;
 	}
@@ -337,6 +404,7 @@ bool ScummEngine_v8::fetchInternalSaveStateThumbnail(int slotId, bool isHeapSave
 
 	// Reject save games which do not contain the internal thumbnail...
 	if (hdr.ver < VER(106)) {
+		delete in;
 		return false;
 	}
 
@@ -362,6 +430,52 @@ bool ScummEngine_v8::fetchInternalSaveStateThumbnail(int slotId, bool isHeapSave
 	delete in;
 	return true;
 }
+
+uint32 *ScummEngine_v8::fetchScummVMSaveStateThumbnail(int slotId, bool isHeapSave, int brightness) {
+	Common::String filename;
+	Graphics::Surface *thumbnailSurface;
+
+	// Perform the necessary steps to arrive at the thumbnail section of the save file...
+	Common::SeekableReadStream *in = openSaveFileForReading(slotId, isHeapSave, filename);
+	if (in) {
+		// We don't perform checks on the header: if we're here it means that the
+		// savestate follows the correct format and it is loadable.
+		in->skip(sizeof(uint32) * 3 + sizeof(SaveGameHeader::name));
+
+		// Load the thumbnail.
+		// We're under the assumption that its resolution will always be 160x120,
+		// which is a fourth of the original 640x480 internal resolution, so there's
+		// no need to scale the surface.
+		bool thumbSuccess = Graphics::loadThumbnail(*in, thumbnailSurface);
+		delete in;
+
+		if (thumbSuccess) {
+			// Now take the pixels from the surface, extract the RGB components, process them
+			// with the brightness parameter, and store them in an appropriate structure
+			// which the SCUMM graphics pipeline can use...
+			byte r, g, b;
+			uint32 *processedThumbnail = new uint32[thumbnailSurface->w * thumbnailSurface->h];
+			for (int i = 0; i < thumbnailSurface->h; i++) {
+				for (int j = 0; j < thumbnailSurface->w; j++) {
+					uint32 *ptr = (uint32 *)thumbnailSurface->getBasePtr(j, i);
+					thumbnailSurface->format.colorToRGB(*ptr, r, g, b);
+
+					processedThumbnail[i * thumbnailSurface->w + j] = getPaletteColorFromRGB(
+						_currentPalette,
+						brightness * r / 0xFF,
+						brightness * g / 0xFF,
+						brightness * b / 0xFF);
+				}
+			}
+
+			thumbnailSurface->free();
+			delete thumbnailSurface;
+			return processedThumbnail;
+		}
+	}
+
+	return nullptr;
+}
 #endif
 
 Common::SeekableReadStream *ScummEngine::openSaveFileForReading(int slot, bool compat, Common::String &fileName) {
@@ -372,18 +486,6 @@ Common::SeekableReadStream *ScummEngine::openSaveFileForReading(int slot, bool c
 Common::WriteStream *ScummEngine::openSaveFileForWriting(int slot, bool compat, Common::String &fileName) {
 	fileName = makeSavegameName(slot, compat);
 	return _saveFileMan->openForSaving(fileName);
-}
-
-static bool saveSaveGameHeader(Common::WriteStream *out, SaveGameHeader &hdr) {
-	hdr.type = MKTAG('S','C','V','M');
-	hdr.size = 0;
-	hdr.ver = CURRENT_VER;
-
-	out->writeUint32BE(hdr.type);
-	out->writeUint32LE(hdr.size);
-	out->writeUint32LE(hdr.ver);
-	out->write(hdr.name, sizeof(hdr.name));
-	return true;
 }
 
 bool ScummEngine::saveState(Common::WriteStream *out, bool writeHeader) {
@@ -513,14 +615,6 @@ bool ScummEngine_v4::savePreparedSavegame(int slot, char *desc) {
 		debug(1, "State saved as '%s'", filename.c_str());
 		return true;
 	}
-}
-
-static bool loadSaveGameHeader(Common::SeekableReadStream *in, SaveGameHeader &hdr) {
-	hdr.type = in->readUint32BE();
-	hdr.size = in->readUint32LE();
-	hdr.ver = in->readUint32LE();
-	in->read(hdr.name, sizeof(hdr.name));
-	return !in->err() && hdr.type == MKTAG('S','C','V','M');
 }
 
 bool ScummEngine::loadState(int slot, bool compat) {
@@ -851,39 +945,6 @@ bool ScummEngine::getSavegameName(int slot, Common::String &desc) {
 	}
 	return result;
 }
-
-namespace {
-bool loadAndCheckSaveGameHeader(Common::InSaveFile *in, int heversion, SaveGameHeader &hdr, Common::String *error = nullptr) {
-	if (!loadSaveGameHeader(in, hdr)) {
-		if (error) {
-			*error = "Invalid savegame";
-		}
-		return false;
-	}
-
-	if (hdr.ver > CURRENT_VER) {
-		hdr.ver = TO_LE_32(hdr.ver);
-	}
-
-	if (hdr.ver < VER(7) || hdr.ver > CURRENT_VER) {
-		if (error) {
-			*error = "Invalid version";
-		}
-		return false;
-	}
-
-	// We (deliberately) broke HE savegame compatibility at some point.
-	if (hdr.ver < VER(57) && heversion >= 60) {
-		if (error) {
-			*error = "Unsupported version";
-		}
-		return false;
-	}
-
-	hdr.name[sizeof(hdr.name) - 1] = 0;
-	return true;
-}
-} // End of anonymous namespace
 
 bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion) {
 	SaveGameHeader hdr;
