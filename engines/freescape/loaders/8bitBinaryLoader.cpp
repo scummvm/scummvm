@@ -184,28 +184,6 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 	return nullptr;
 }
 
-Graphics::PixelBuffer *FreescapeEngine::getPalette(uint8 areaNumber, uint8 c1, uint8 c2, uint8 c3, uint8 c4, uint16 ncolors) {
-	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
-	Graphics::PixelBuffer *palette = nullptr;
-	if (_targetName.hasPrefix("driller")) {
-		if (_renderMode == "ega")
-			palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&drillerEGA);
-		else if (_renderMode == "cga")
-			palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&drillerCGA);
-	} else if (_targetName.hasPrefix("castlemaster")) {
-		if (_renderMode == "ega")
-			palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&castleEGA); // TODO
-		else if (_renderMode == "cga")
-			palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&castleCGA);
-	} else if (_targetName.hasPrefix("totaleclipse")) {
-		palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&eclipseEGA);
-	} else
-		palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&drillerEGA);
-
-	assert(palette);
-	return palette;
-}
-
 Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 ncolors) {
 
 	uint32 base = file->pos();

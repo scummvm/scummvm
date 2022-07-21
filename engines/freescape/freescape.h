@@ -39,13 +39,6 @@ enum {
 	kFreescapeDebugCode = 1 << 2
 };
 
-extern byte drillerEGA[16][3];
-extern byte drillerCGA[4][3];
-extern byte castleCGA[4][3];
-extern byte castleEGA[16][3];
-extern byte eclipseEGA[16][3];
-
-
 class FreescapeEngine : public Engine {
 private:
 	// We need random numbers
