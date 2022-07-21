@@ -265,6 +265,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "guardduty", "Guard Duty" },
 	{ "herdiscoming", "Herd is Coming" },
 	{ "incantamentum","Incantamentum" },
+	{ "insectophobiaep1","Insectophobia: Episode 1" },
 	{ "jorry", "JORRY" },
 	{ "justignorethem", "Just Ignore Them" },
 	{ "justignorethembrea1", "Just Ignore Them: Brea's Story Tape 1" },
@@ -273,6 +274,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "lamplightcity", "Lamplight City" },
 	{ "lancelothangover", "Lancelot's Hangover" },
 	{ "larrylotter", "Larry Lotter and the Test of Time" }, // aka Warthogs
+	{ "lastdayadolf","The Last Day of Adolf" },
 	{ "lastpirateadventure","The Last Pirate Adventure: Drake's Treasure" },
 	{ "legendofhand", "Legend of Hand" },
 	{ "mage", "Mage's Initiation: Reign of the Elements" },
@@ -286,6 +288,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "perfidiouspetrolstation", "The Perfidious Petrol Station" },
 	{ "phantomfellows", "The Phantom Fellows" },
 	{ "primordia", "Primordia" },
+	{ "projectorface", "Projector Face" },
 	{ "qfi", "Quest for Infamy" },
 	{ "quantumnauts", "Quantumnauts" },
 	{ "quantumnauts2", "Quantumnauts 2" },
@@ -300,6 +303,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "shoaly", "Shoaly You Can't Be Serious!" },
 	{ "sisterssecret", "Sisters' Secret" },
 	{ "smallsister","Small Sister" },
+	{ "spaceraven", "Space raven quest - Tiny planet" },
 	{ "sphonx", "Sphonx" },
 	{ "starshipquasar", "Starship Quasar" },
 	{ "strangeland", "Strangeland" },
@@ -326,7 +330,9 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "waitingfortheloop", "Waiting For the Loop" },
 	{ "welcometosunnymunarvagir", "Welcome to Sunny Munarvagir" },
 	{ "whispersofamachine", "Whispers of a Machine" },
-	{ "wingman","WingMan" },
+	{ "wingman", "WingMan" },
+	{ "wolfterritory", "Wolf Territory" },
+	{ "yetilastescape", "The Last Escape of Yeti" },
 	{ "zniwadventure", "Zniw Adventure" },
 
 	// Commercial Italian games
@@ -2036,7 +2042,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "palettequest2", "Palette Quest 2.0" },
 	{ "pandainspace", "Panda In Space" },
 	{ "pandor", "Pandor" },
-	{ "paperkubik", "Paper - Kubik" },
+	{ "paperkubik", "Lost in the Tomb / Paper-Kubik" },
 	{ "paperplanes", "Paper Planes" },
 	{ "paradiselost", "Larrywilco in: Paradise Lost" },
 	{ "parameciumcomplex", "The Paramecium Complex" },
@@ -3470,6 +3476,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("guardduty", "guardduty.exe", "98d09f79129a5f96b6622661e2a7bc64", 706020335),
 	GAME_ENTRY_GOG("guardduty", "guardduty.exe", "98d09f79129a5f96b6622661e2a7bc64", 706020743),
 	GAME_ENTRY_EN_STEAM("herdiscoming", "herd.exe", "78dd4ca028ee0156b6a093d6d780aa65", 7321217),
+	GAME_ENTRY_STEAM("insectophobiaep1", "insect.exe", "b142b43c146c25443a1d155d441a6a81", 16950265),
 	GAME_ENTRY_STEAM("justignorethem", "justignorethem.exe", "182e930ace9d62a22d09779cac72e597", 94918926),
 	GAME_ENTRY_PLATFORM("justignorethem", "justignorethemremake.exe", "7a0b9391c01ad13e5107b7763084a993", 187186542, "Remake/Steam"),
 	GAME_ENTRY_PLATFORM("justignorethem", "justignorethemremake.exe", "182e930ace9d62a22d09779cac72e597", 94656598, "Rollback/Steam"),
@@ -3486,6 +3493,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("larrylotter", "Warthogs.exe", "9c49b6fa0460f36d6e7558281f142683", 12448793),
 	GAME_ENTRY("larrylotter", "warthogs.exe", "cbe62572ed082a3063a49d594612ac0b", 12397280), // v1.7
 	GAME_ENTRY_STEAM("larrylotter", "larry lotter.ags", "2802b69370de199a1f8d47889a197c14", 47202232),
+	GAME_ENTRY_EN_STEAM("lastdayadolf", "thelastdayofadolf.ags", "6ed2d17ac0fcdb9da877daa89d4c9d30", 24559188),
 	GAME_ENTRY_EN_STEAM("legendofhand", "legend of hand.exe", "fc478dd7564c908615c9366398d995c8", 75797285),
 	GAME_ENTRY_EN("legendofhand", "legend of hand.exe", "fc478dd7564c908615c9366398d995c8", 75797155),
 	GAME_ENTRY_EN_GOG("mage", "ac2game.dat", "2e822f554994f36e0c62da2acda874da", 30492258), // Mac
@@ -3522,6 +3530,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 979602678),  // with Ita translation
 	GAME_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973154021), // DVD version
 	GAME_ENTRY("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 978722743),
+	GAME_ENTRY_STEAM("projectorface", "Projector Face.exe", "d26528c4933649f147c6c4338bcb9e0a", 42610502),  // En-De-It
 	GAME_ENTRY_EN_STEAM("puzzlebots", "ac2game.dat", "34b49df9cf6eadb5c3587b3921d5b72f", 787776664),
 	GAME_ENTRY_EN_GOG("qfi", "qfi.exe", "0702df6e67ef87fd3c51d09303803126", 534847265),
 	GAME_ENTRY_EN_GOG("qfi", "qfi.exe", "32b36aebe0729c9360bc10dcddc0653c", 538562096),
@@ -3567,6 +3576,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("shivah", "shivah.exe", "adf5d1e8de8b1292e98ef59ce89ab42c", 33845596), // GOG, v2.1
 	GAME_ENTRY_EN_GOG("shivah", "ac2game.dat", "021b85e94ba52ed77b6b4841ffb50c43", 30658376), // macOS v2.1a
 	GAME_ENTRY_EN("sisterssecret", "SistersSecret.exe", "f8d06c339ca2af5160b662c7a19572d6", 18659398),  // v1.0.0a
+	GAME_ENTRY_STEAM("smallsister", "sister.exe", "78dd4ca028ee0156b6a093d6d780aa65", 18534526),  // Eng-Tur
+	GAME_ENTRY_EN_STEAM("spaceraven", "Tiny Planet.exe", "c6154d27a773ebf98a9be181a840d146", 29803571),
 	GAME_ENTRY_STEAM("starshipquasar", "starship quasar.ags", "0ea8150e15a4f4d0f3e82c231a4659f2", 10415956),
 	GAME_ENTRY("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", 3186614879),
 	GAME_ENTRY("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", -1), // for 32-bit limited filesystems
@@ -3615,6 +3626,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("welcometosunnymunarvagir", "alpha4.ags", "392dbdd0697ae32af4cfe5212f9213c5", 23000263),
 	GAME_ENTRY_PLUGIN_STEAM_NOLAUNCHLOAD("whispersofamachine", "whispers.exe", "b4962a0a9c9c33954e185a137125f527", 159084291, AGSSPRITEFONT_CLIFFTOP),
 	GAME_ENTRY_PLUGIN_GOG_NOLAUNCHLOAD("whispersofamachine", "whispers.exe", "b8416ff5242d6540980f922f03a01a5f", 159085573, AGSSPRITEFONT_CLIFFTOP),
+	GAME_ENTRY_EN_STEAM("wolfterritory", "wolf.exe", "78dd4ca028ee0156b6a093d6d780aa65", 3957156),
+	GAME_ENTRY_EN_STEAM("yetilastescape", "Big-run.exe", "1e003cdad70709b5bd3d0d957f637e58", 31372723),
 	GAME_ENTRY_STEAM("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100036465),
 	GAME_ENTRY_STEAM("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100040004),
 	GAME_ENTRY_GOG("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100046802),
@@ -3678,9 +3691,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("anotherhero", "Another Hero - First Look Demo.exe", "7ddb9e776648faed5a51170d087074e9", 27404506),
 	DEMO_ENTRY("apotheosis", "the apotheosis project.exe", "c52c9fe85328d90f0cd12e526ba585d4", 612169084),  // Screen7 demo En-It
 	DEMO_ENTRY_EN("ashinaredwitch", "ATRW.exe", "8355ade0422da6e8655f71470ff51483", 44543604),  // Itch.io
-	DEMO_ENTRY_EN("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51054188),  // Itch.io demo/prologue
+	DEMO_ENTRY("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51054188),  	// Itch.io demo/prologue
 	DEMO_ENTRY_EN("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 48844189),  // Steam prologue
-	DEMO_ENTRY_EN("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51055599),  // Steam prologue
+	DEMO_ENTRY("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51055599),  	// Steam prologue
 	DEMO_ENTRY_EN("ashinaredwitch", "Ashina.exe", "8355ade0422da6e8655f71470ff51483", 140043612),  // Steam
 	DEMO_ENTRY_EN("ashinaredwitch", "Ashina.exe", "f34240ec041be3a6707a575fd28c8a03", 129558944),  // Steam
 	DEMO_ENTRY_EN("ashpines", "Ash Pines Demo.exe", "981e60a9be515bb56c634856462abbc7", 90323249),
