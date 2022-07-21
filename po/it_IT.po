@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-21 22:26+0000\n"
+"POT-Creation-Date: 2022-07-21 23:35+0000\n"
 "PO-Revision-Date: 2022-07-18 01:32+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -6135,14 +6135,6 @@ msgstr "Avvia con debugger"
 msgid "Starts with the debugger dashboard active"
 msgstr "Avvia il gioco con le funzionalità di debug abilitate"
 
-#: engines/mtropolis/detection.cpp:98
-msgid "Start debugging immediately"
-msgstr "Avvia il debugging immediatamente"
-
-#: engines/mtropolis/detection.cpp:99
-msgid "Halts progress and stops at the debugger immediately"
-msgstr "Arresta immediatamente il progresso del gioco aprendo il debugger"
-
 #: engines/mtropolis/saveload.cpp:123
 msgid "Failed to read version information from save file"
 msgstr ""
@@ -9270,6 +9262,12 @@ msgstr ""
 "GNU. Ti serviranno tutti i font presenti nel pacchetto di tua preferenza, "
 "precisamente: LiberationMono, LiberationSans e LiberationSerif; oppure "
 "FreeMono, FreeSans e FreeSerif."
+
+#~ msgid "Start debugging immediately"
+#~ msgstr "Avvia il debugging immediatamente"
+
+#~ msgid "Halts progress and stops at the debugger immediately"
+#~ msgstr "Arresta immediatamente il progresso del gioco aprendo il debugger"
 
 #~ msgid "Save progress automatically"
 #~ msgstr "Salva automaticamente i progressi"

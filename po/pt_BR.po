@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-21 22:26+0000\n"
+"POT-Creation-Date: 2022-07-21 23:35+0000\n"
 "PO-Revision-Date: 2022-07-17 10:16+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -6097,14 +6097,6 @@ msgstr "Iniciar com depurador"
 msgid "Starts with the debugger dashboard active"
 msgstr "Inicia com o painel do depurador ativo"
 
-#: engines/mtropolis/detection.cpp:98
-msgid "Start debugging immediately"
-msgstr "Iniciar depurador imediatamente"
-
-#: engines/mtropolis/detection.cpp:99
-msgid "Halts progress and stops at the debugger immediately"
-msgstr "Interrompe o progresso e para no depurador imediatamente"
-
 #: engines/mtropolis/saveload.cpp:123
 msgid "Failed to read version information from save file"
 msgstr "Falha ao ler as informações da versão do arquivo salvo"
@@ -9207,6 +9199,12 @@ msgstr ""
 "do GNU. Você precisará de todas as fontes do pacote de fontes que você "
 "escolher, ex., LiberationMono, LiberationSans e LiberationSerif, ou "
 "FreeMono, FreeSans e FreeSerif respectivamente."
+
+#~ msgid "Start debugging immediately"
+#~ msgstr "Iniciar depurador imediatamente"
+
+#~ msgid "Halts progress and stops at the debugger immediately"
+#~ msgstr "Interrompe o progresso e para no depurador imediatamente"
 
 #~ msgid "Save progress automatically"
 #~ msgstr "Salvar progresso automaticamente"

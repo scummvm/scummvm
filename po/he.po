@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-21 22:26+0000\n"
+"POT-Creation-Date: 2022-07-21 23:35+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -6026,14 +6026,6 @@ msgstr "הפעל את הבאגים"
 #, fuzzy
 msgid "Starts with the debugger dashboard active"
 msgstr "הפעל את הבאגים"
-
-#: engines/mtropolis/detection.cpp:98
-msgid "Start debugging immediately"
-msgstr ""
-
-#: engines/mtropolis/detection.cpp:99
-msgid "Halts progress and stops at the debugger immediately"
-msgstr ""
 
 #: engines/mtropolis/saveload.cpp:123
 #, fuzzy

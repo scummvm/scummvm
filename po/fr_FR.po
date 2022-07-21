@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-21 22:26+0000\n"
+"POT-Creation-Date: 2022-07-21 23:35+0000\n"
 "PO-Revision-Date: 2022-07-18 18:32+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -6148,14 +6148,6 @@ msgstr "Démarrer avec le débogueur"
 msgid "Starts with the debugger dashboard active"
 msgstr "Démarre avec le panneau de débogage activé"
 
-#: engines/mtropolis/detection.cpp:98
-msgid "Start debugging immediately"
-msgstr "Commencez à déboguer immédiatement"
-
-#: engines/mtropolis/detection.cpp:99
-msgid "Halts progress and stops at the debugger immediately"
-msgstr "Interrompt la progression et s'arrête immédiatement au débogueur"
-
 #: engines/mtropolis/saveload.cpp:123
 msgid "Failed to read version information from save file"
 msgstr ""
@@ -9303,6 +9295,12 @@ msgstr ""
 "les polices du paquet de polices que vous avez choisi, c'est-à-dire "
 "LiberationMono, LiberationSans et LiberationSerif, ou respectivement "
 "FreeMono, FreeSans et FreeSerif."
+
+#~ msgid "Start debugging immediately"
+#~ msgstr "Commencez à déboguer immédiatement"
+
+#~ msgid "Halts progress and stops at the debugger immediately"
+#~ msgstr "Interrompt la progression et s'arrête immédiatement au débogueur"
 
 #~ msgid "Save progress automatically"
 #~ msgstr "Sauvegarder la progression automatiquement"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-21 22:26+0000\n"
+"POT-Creation-Date: 2022-07-21 23:35+0000\n"
 "PO-Revision-Date: 2022-07-20 10:45+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -6071,14 +6071,6 @@ msgstr "Стартовать с отладчика"
 msgid "Starts with the debugger dashboard active"
 msgstr "Стартует с активной панелью отладчика"
 
-#: engines/mtropolis/detection.cpp:98
-msgid "Start debugging immediately"
-msgstr "Немедленно запустить отладчик"
-
-#: engines/mtropolis/detection.cpp:99
-msgid "Halts progress and stops at the debugger immediately"
-msgstr "Останавливает прогресс и сразу же запускает отладчик"
-
 #: engines/mtropolis/saveload.cpp:123
 msgid "Failed to read version information from save file"
 msgstr "Не удалось загрузить информацию о версии из сохранения"
@@ -9149,6 +9141,12 @@ msgstr ""
 "понадобятся все шрифты из выбранного вами пакета, то есть, LiberationMono, "
 "LiberationSans и LiberationSerif, либо FreeMono, FreeSans и FreeSerif "
 "соответственно."
+
+#~ msgid "Start debugging immediately"
+#~ msgstr "Немедленно запустить отладчик"
+
+#~ msgid "Halts progress and stops at the debugger immediately"
+#~ msgstr "Останавливает прогресс и сразу же запускает отладчик"
 
 #~ msgid "Save progress automatically"
 #~ msgstr "Автоматически сохранять прогресс"

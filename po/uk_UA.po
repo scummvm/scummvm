@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-21 22:26+0000\n"
+"POT-Creation-Date: 2022-07-21 23:35+0000\n"
 "PO-Revision-Date: 2022-07-20 10:31+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -6069,14 +6069,6 @@ msgstr "Розпочинати з відладчика"
 msgid "Starts with the debugger dashboard active"
 msgstr "Відразу запускає активну панель відладчика"
 
-#: engines/mtropolis/detection.cpp:98
-msgid "Start debugging immediately"
-msgstr "Відразу запустити відладку"
-
-#: engines/mtropolis/detection.cpp:99
-msgid "Halts progress and stops at the debugger immediately"
-msgstr "Припиняє прогрес і відразу запускає відладчик"
-
 #: engines/mtropolis/saveload.cpp:123
 msgid "Failed to read version information from save file"
 msgstr "Не вдалося завантажити інформацію про версію зі збереження гри"
@@ -9136,6 +9128,12 @@ msgstr ""
 "завантажити Liberation Fonts, або пакет GNU FreeFont. Вам будуть потрібні "
 "всі шрифти з пакету, який ви оберете, тобто, LiberationMono, LiberationSans "
 "та LiberationSerif, або FreeMono, FreeSans та FreeSerif відповідно."
+
+#~ msgid "Start debugging immediately"
+#~ msgstr "Відразу запустити відладку"
+
+#~ msgid "Halts progress and stops at the debugger immediately"
+#~ msgstr "Припиняє прогрес і відразу запускає відладчик"
 
 #~ msgid "Save progress automatically"
 #~ msgstr "Автоматично зберігати прогрес"

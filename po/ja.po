@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-21 22:26+0000\n"
+"POT-Creation-Date: 2022-07-21 23:35+0000\n"
 "PO-Revision-Date: 2022-07-18 18:32+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -5991,14 +5991,6 @@ msgstr "デバッグ起動"
 msgid "Starts with the debugger dashboard active"
 msgstr "デバッガーダッシュボードありで起動"
 
-#: engines/mtropolis/detection.cpp:98
-msgid "Start debugging immediately"
-msgstr "すぐにデバッグ開始"
-
-#: engines/mtropolis/detection.cpp:99
-msgid "Halts progress and stops at the debugger immediately"
-msgstr "ただちにデバッガーで進行を停止する"
-
 #: engines/mtropolis/saveload.cpp:123
 msgid "Failed to read version information from save file"
 msgstr "セーブからバージョン情報が読み取れません"
@@ -9018,6 +9010,12 @@ msgstr ""
 "Arialが必要です。LiberationFontsを使用する場合、LiberationMono、"
 "LiberationSans、LiberationSerifが必要です。GNUFreeFontを使用する場合、"
 "FreeMono、FreeSans、FreeSerifが必要です。"
+
+#~ msgid "Start debugging immediately"
+#~ msgstr "すぐにデバッグ開始"
+
+#~ msgid "Halts progress and stops at the debugger immediately"
+#~ msgstr "ただちにデバッガーで進行を停止する"
 
 #~ msgid "Save progress automatically"
 #~ msgstr "進行状況をオートセーブ"

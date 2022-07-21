@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-21 22:26+0000\n"
+"POT-Creation-Date: 2022-07-21 23:35+0000\n"
 "PO-Revision-Date: 2022-07-18 18:32+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -6054,14 +6054,6 @@ msgstr "Käynnistä debuggeri päällä"
 msgid "Starts with the debugger dashboard active"
 msgstr "Käynnistää debuggerikojelauta aktiivisena"
 
-#: engines/mtropolis/detection.cpp:98
-msgid "Start debugging immediately"
-msgstr "Aloita debuggaus välittömästi"
-
-#: engines/mtropolis/detection.cpp:99
-msgid "Halts progress and stops at the debugger immediately"
-msgstr "Pysäyttää etenemisen ja siirtyy debuggeriin välittömästi"
-
 #: engines/mtropolis/saveload.cpp:123
 msgid "Failed to read version information from save file"
 msgstr "Pelitallenteen version lukeminen epäonnistui"
@@ -9130,6 +9122,12 @@ msgstr ""
 "ladata Liberation Fonts -paketin tai GNU FreeFont -paketin. Tarvitset kaikki "
 "fontit paketista jonka valitset, i.e. LiberationMono, LiberationSans ja "
 "LiberationSerif, tai FreeMono, FreeSans ja FreeSerif riippuen valinnastasi."
+
+#~ msgid "Start debugging immediately"
+#~ msgstr "Aloita debuggaus välittömästi"
+
+#~ msgid "Halts progress and stops at the debugger immediately"
+#~ msgstr "Pysäyttää etenemisen ja siirtyy debuggeriin välittömästi"
 
 #~ msgid "Save progress automatically"
 #~ msgstr "Tallenna edistyminen automaattisesti"

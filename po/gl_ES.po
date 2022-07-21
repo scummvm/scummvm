@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-21 22:26+0000\n"
+"POT-Creation-Date: 2022-07-21 23:35+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -6141,14 +6141,6 @@ msgstr "Iniciar o depurador"
 #, fuzzy
 msgid "Starts with the debugger dashboard active"
 msgstr "Iniciar o depurador"
-
-#: engines/mtropolis/detection.cpp:98
-msgid "Start debugging immediately"
-msgstr ""
-
-#: engines/mtropolis/detection.cpp:99
-msgid "Halts progress and stops at the debugger immediately"
-msgstr ""
 
 #: engines/mtropolis/saveload.cpp:123
 #, fuzzy
