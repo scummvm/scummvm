@@ -15,7 +15,8 @@ MODULE_OBJS := \
 	language/8bitDetokeniser.o \
 	loaders/16bitBinaryLoader.o \
 	language/16bitDetokeniser.o \
-	language/instruction.o
+	language/instruction.o \
+	palettes.o
 
 MODULE_DIRS += \
 	engines/freescape
