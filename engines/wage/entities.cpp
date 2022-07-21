@@ -159,6 +159,9 @@ void Scene::paint(Graphics::ManagedSurface *surface, int x, int y) {
 Designed *Scene::lookUpEntity(int x, int y) {
 	for (ObjList::const_iterator it = _objs.end(); it != _objs.begin(); ) {
 		it--;
+		if ((*it)->_name == "continue" && (*it)->_resourceId == 22259)
+			if (_design->isPointOpaque(x, y))
+				return *it;
 		if ((*it)->_design->isPointOpaque(x, y))
 			return *it;
 	}
