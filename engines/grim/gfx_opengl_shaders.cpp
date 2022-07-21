@@ -1694,7 +1694,7 @@ void GfxOpenGLS::drawTextObject(const TextObject *text) {
 	Math::Vector3d colors(float(td->color.getRed()) / 255.0f,
 	                      float(td->color.getGreen()) / 255.0f,
 	                      float(td->color.getBlue()) / 255.0f);
-	_textProgram->setUniform("color", colors);
+	td->shader->setUniform("color", colors);
 	glBindTexture(GL_TEXTURE_2D, td->texture);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
 	glDrawElements(GL_TRIANGLES, td->characters * 6, GL_UNSIGNED_SHORT, nullptr);
