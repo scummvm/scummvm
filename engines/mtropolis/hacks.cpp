@@ -410,9 +410,6 @@ void addObsidianBugFixes(const MTropolisGameDescription &desc, Hacks &hacks) {
 	// the player leaves the journal without clicking Continue.
 	hacks.ignoreMismatchedProjectNameInObjectLookups = true;
 
-	// Bump 70% volume musics to 100%
-	hacks.midiVolumeScale = (100 * 256 / 70);
-
 	// Fix for corrupted frame in transition from the outer edge in Spider to the air puzzle tower.
 	// The data is corrupted in both Mac and Win retail versions.
 	hacks.addAssetHooks(Common::SharedPtr<AssetHooks>(new ObsidianCorruptedAirTowerTransitionFix()));
