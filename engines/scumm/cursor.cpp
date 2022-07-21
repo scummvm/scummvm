@@ -692,32 +692,36 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 				252, 252, 253, 254
 			};
 			color = indy4AmigaColors[idx];
+		} else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
+			color = idx & 1;
 		} else {
 			color = default_cursor_colors[idx];
 		}
 		memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
 	}
 
-	_cursor.hotspotX = _cursorHotspots[2 * _currentCursor] * _textSurfaceMultiplier;
-	_cursor.hotspotY = _cursorHotspots[2 * _currentCursor + 1] * _textSurfaceMultiplier;
-	_cursor.width = 16 * _textSurfaceMultiplier;
-	_cursor.height = 16 * _textSurfaceMultiplier;
+	int sclW = (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) ? 2 : _textSurfaceMultiplier;
+	int sclH = (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) ? 1 : _textSurfaceMultiplier;
+	int sclW2 = _outputPixelFormat.bytesPerPixel * sclW;
 
-	int scl = _outputPixelFormat.bytesPerPixel * _textSurfaceMultiplier;
-
+	_cursor.hotspotX = _cursorHotspots[2 * _currentCursor] * sclW;
+	_cursor.hotspotY = _cursorHotspots[2 * _currentCursor + 1] * sclH;
+	_cursor.width = 16 * sclW;
+	_cursor.height = 16 * sclH;
+	
 	for (i = 0; i < 16; i++) {
 		for (j = 0; j < 16; j++) {
 			if (src[i] & (1 << j)) {
-				byte *dst1 = _grabbedCursor + 16 * scl * i * _textSurfaceMultiplier + (15 - j) * scl;
-				byte *dst2 = (_textSurfaceMultiplier == 2) ? dst1 + 16 * scl : dst1;
+				byte *dst1 = _grabbedCursor + 16 * sclW2 * i * sclH + (15 - j) * sclW2;
+				byte *dst2 = (sclH == 2) ? dst1 + 16 * sclW2 : dst1;
 				if (_outputPixelFormat.bytesPerPixel == 2) {
-					for (int b = 0; b < scl; b += 2) {
+					for (int b = 0; b < sclW; b++) {
 						*((uint16 *)dst1) = *((uint16 *)dst2) = color;
 						dst1 += 2;
 						dst2 += 2;
 					}
 				} else {
-					for (int b = 0; b < scl; b++)
+					for (int b = 0; b < sclW; b++)
 						*dst1++ = *dst2++ = color;
 				}
 			}

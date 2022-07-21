@@ -628,6 +628,15 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	assert(x >= 0 && width <= vs->pitch);
 	assert(_textSurface.getPixels());
 
+	// Some extra clipping/alignment for certain render modes. This is from the MI1EGA interpreter where it actually matters.
+	// The dithering patterns require the alignment, otherwise there will be visible glitches. For V3, the original interpreter
+	// actually does this for all graphics modes... 
+	if (_game.version > 2 && (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderHercG || _renderMode == Common::kRenderHercA)) {
+		top &= ~3;
+		if (bottom & 3)
+			bottom = (bottom + 4) & ~3;
+	}
+
 	// Perform some clipping
 	if (width > vs->w - x)
 		width = vs->w - x;
@@ -782,23 +791,26 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 }
 
 const byte *ScummEngine::postProcessDOSGraphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const {
-	static const byte v2VrbColMap[] =	{	0x0, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF, 0xF, 0x5, 0x5, 0x5, 0xA, 0xA, 0xF, 0xF };
-	static const byte v2TxtColMap[] =	{	0x0, 0xF, 0xA, 0x5, 0xA, 0x5, 0x5, 0xF, 0xA, 0xA, 0xA, 0xA, 0xA, 0x5, 0x5, 0xF };
-	static const byte mmv1VrbColMap[] =	{	0x0, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF, 0xA, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF };
-	static const byte v2MainColMap[] =	{	0x0, 0x4, 0x1, 0x5, 0x8, 0xA, 0x2, 0xF, 0xC, 0x7, 0xD, 0x5, 0xE, 0xB, 0xD, 0xF };
-	static const byte v3MainColMap[] =	{	0x0, 0x4, 0x1, 0x5, 0x8, 0xA, 0x2, 0x3, 0xC, 0x7, 0xD, 0x5, 0xF, 0xB, 0x5, 0xF,
-											0x0, 0x1, 0x4, 0x5, 0x2, 0xA, 0x8, 0xC, 0x3, 0xD, 0x5, 0x5, 0xF, 0xE, 0x5, 0xF };
-	static const byte v4MainColMap[] =	{	0x0, 0x4, 0x1, 0x5, 0x2, 0xA, 0x2, 0x3, 0x0, 0x5, 0x5, 0x7, 0xF, 0xE, 0x5, 0xF,
-											0x0, 0x1, 0x4, 0x5, 0x8, 0xA, 0x8, 0xC, 0x0, 0x7, 0x5, 0xD, 0xF, 0xB, 0x5, 0xF,
-											0x0, 0x4, 0x1, 0x5, 0x2, 0xA, 0x2, 0x3, 0x0, 0x5, 0x5, 0x7, 0xF, 0xE, 0x5, 0xF,
-											0x0, 0x1, 0x4, 0x5, 0x8, 0xA, 0x8, 0xC, 0x0, 0xD, 0x5, 0xD, 0xF, 0xB, 0x5, 0xF };
+	static const byte v2VrbColMap[] =	{ 0x0, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF, 0xF, 0x5, 0x5, 0x5, 0xA, 0xA, 0xF, 0xF };
+	static const byte v2TxtColMap[] =	{ 0x0, 0xF, 0xA, 0x5, 0xA, 0x5, 0x5, 0xF, 0xA, 0xA, 0xA, 0xA, 0xA, 0x5, 0x5, 0xF };
+	static const byte mmv1VrbColMap[] =	{ 0x0, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF, 0xA, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF };
+	static const byte v2MainColMap[] =	{ 0x0, 0x4, 0x1, 0x5, 0x8, 0xA, 0x2, 0xF, 0xC, 0x7, 0xD, 0x5, 0xE, 0xB, 0xD, 0xF };
 
-	static const byte hrcTableV4[32] = {	0x00, 0x00, 0x08, 0x80,	0xaa, 0xaa, 0xbb, 0xdd,	0x55, 0x00, 0x66, 0x99,	0x99, 0x66, 0x7f, 0xf7,
-											0x11, 0x44, 0x55, 0xaa,	0x77, 0xdd, 0xee, 0x77,	0xaa, 0xff, 0xee, 0xbb,	0xff, 0xbb, 0xff, 0xff };
+	static const byte v3MainColMap[] =	{
+		0x0, 0x4, 0x1, 0x5, 0x8, 0xA, 0x2, 0x3, 0xC, 0x7, 0xD, 0x5, 0xF, 0xB, 0x5, 0xF, 0x0, 0x1, 0x4, 0x5, 0x2, 0xA, 0x8, 0xC, 0x3, 0xD, 0x5, 0x5, 0xF, 0xE, 0x5, 0xF
+	};
+
+	static const byte v4MainColMap[] =	{
+		0x0, 0x4, 0x1, 0x5, 0x2, 0xA, 0x2, 0x3, 0x0, 0x5, 0x5, 0x7, 0xF, 0xE, 0x5, 0xF, 0x0, 0x1, 0x4, 0x5, 0x8, 0xA, 0x8, 0xC, 0x0, 0x7, 0x5, 0xD, 0xF, 0xB, 0x5, 0xF,
+		0x0, 0x4, 0x1, 0x5, 0x2, 0xA, 0x2, 0x3, 0x0, 0x5, 0x5, 0x7, 0xF, 0xE, 0x5, 0xF, 0x0, 0x1, 0x4, 0x5, 0x8, 0xA, 0x8, 0xC, 0x0, 0xD, 0x5, 0xD, 0xF, 0xB, 0x5, 0xF
+	};
+
+	static const byte hrcTableV4[32] = {
+		0x00, 0x08, 0xAA, 0xBB, 0x55, 0x66, 0x99, 0x77, 0x11, 0x55, 0x77, 0xEE, 0xAA, 0xEE, 0xFF, 0xFF,
+		0x00, 0x80, 0xAA, 0xDD, 0x00, 0x99, 0x66, 0xF7, 0x44, 0xAA, 0xDD, 0x77, 0xFF, 0xBB, 0xBB, 0xFF
+	};
 
 	static const byte *mainColMap[] = { nullptr, nullptr, v2MainColMap, v3MainColMap, v4MainColMap };
-
-	assert(_game.version < 5);
 
 	byte tmpTxtColMap[16];
 	for (uint8 i = 0; i < ARRAYSIZE(tmpTxtColMap); ++i)
@@ -810,11 +822,15 @@ const byte *ScummEngine::postProcessDOSGraphics(VirtScreen *vs, int &pitch, int 
 	bool renderHerc = (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG);
 	bool renderV1 = (_game.version == 1);
 	bool renderV3 = _game.version > 2;
+
+	if (!renderV1 && !renderHerc && _renderMode != Common::kRenderCGA)
+		return res;
+
 	const byte *colMap = (_game.id == GID_ZAK || _game.version == 2) ? ((vs->number == kVerbVirtScreen || renderHerc) ? v2VrbColMap : v2TxtColMap) : (vs->number == kVerbVirtScreen ? mmv1VrbColMap : tmpTxtColMap);
 	const byte *colMap2 = mainColMap[_game.version];
 
-	// For v3 CGA is dithered as 4x4 squares, for v4 as 4x8 squares. Odd lines have the colors swapped, so there will be checkered patterns.
-	uint8 lnMod = (_game.version > 3) ? 0x40 : 0x20;
+	// For LOOM and INDY3, CGA gets dithered as 4x4 squares, for MI1EGA as 4x8 squares. Odd lines have the colors swapped, so there will be checkered patterns.
+	uint8 lnMod = (_game.version > 3 && !renderHerc) ? 0x40 : 0x20;
 	uint8 lnIdx = (y & ((lnMod >> 4) - 1)) << 4;
 
 	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp) {
@@ -839,18 +855,37 @@ const byte *ScummEngine::postProcessDOSGraphics(VirtScreen *vs, int &pitch, int 
 		}
 
 	} else if (renderHerc || _renderMode == Common::kRenderCGA_BW) {
-		// The monochrome rendering is very similiar for Hercules and CGA b/w.
-		// For Hercules we have to do some corrections to fit into the 350 pixels
-		// height. The text and verb vs are rendered in normal height, only the
-		// main vs gets scaled by leaving out every other line. And we center the
-		// image horizontally within the 720 pixels width.
-		// For CGA b/w the origial resolution is 640x200, so we just scale that
-		// to our 640x400 by repeating each line.
+		// The monochrome rendering is very similiar for Hercules and CGA b/w. For Hercules we have to do some corrections to fit into the 350 pixels height.
+		// For Hercules V1/2, the text and verb vs are rendered in normal height, only the main vs gets scaled by leaving out every other line. Hercules V4
+		// instead scales everything in a 4-to-7 lines ratio. And for all versions, we center the image horizontally within the 720 pixels width.
+		// For CGA b/w the origial resolution is 640x200, so we just scale that to our 640x400 by repeating each line.
 		pitch = renderHerc ? kHercWidth : (_screenWidth << 1);
 		dst = res = _hercCGAScaleBuf;
 		int pitch1 = (pitch - width) << 1;
 
-		if (vs->number == kMainVirtScreen) {
+		if (renderV3) {
+			pitch1 = pitch - (width << 1);
+			int height2 = height >> 2;
+			height = height2 * 7;
+			y = (y << 1) - (y >> 2);
+
+			for (int h1 = height2; h1; --h1) {
+				lnIdx = 0; // The 7-lines pattern always starts from the beginning. Which works fine, since the strips get vertically aligned for Hercules and CGA.
+				for (int h2 = 7; h2; --h2) {
+					for (int w = width >> 2; w; --w) {
+						byte c = (hrcTableV4[src[0] + lnIdx] & 0xC0) | (hrcTableV4[src[1] + lnIdx] & 0x30) | (hrcTableV4[src[2] + lnIdx] & 0x0C) | (hrcTableV4[src[3] + lnIdx] & 0x03);
+						for (int i = 7; i >= 0; --i)
+							*dst++ = (c >> i) & 1;
+						src += 4;
+					}
+					dst += pitch1;
+					if (lnIdx ^= 0x10)
+						src -= width;
+				}
+				src += width;
+			}
+
+		} else if (vs->number == kMainVirtScreen) {
 			uint32 *dst2 = (uint32*)(dst + pitch);
 			int pitch2 = pitch1 >> 2;
 			int height2 = height;
@@ -864,7 +899,7 @@ const byte *ScummEngine::postProcessDOSGraphics(VirtScreen *vs, int &pitch, int 
 			for (int h = height2; h; --h) {
 				for (int w = width >> 1; w; --w) {
 					const uint32 *s = (const uint32*)dst;
-					byte c = renderV1 ? *src : (v2MainColMap[src[0]] & 0x0C) | (v2MainColMap[src[1]] & 0x03);
+					byte c = renderV1 ? *src : (colMap2[src[0]] & 0x0C) | (colMap2[src[1]] & 0x03);
 					*dst++ = (c >> 3) & 1;
 					*dst++ = (c >> 2) & 1;
 					*dst++ = (c >> 1) & 1;
@@ -925,45 +960,6 @@ const byte *ScummEngine::postProcessDOSGraphics(VirtScreen *vs, int &pitch, int 
 
 	return res;
 }
-
-// Hercules dithering. It uses same dithering tables but output is 1bpp and
-// it stretches in this way:
-//         aaaa0
-// aa      aaaa1
-// bb      bbbb0      Here 0 and 1 mean dithering table row number
-// cc -->  bbbb1
-// dd      cccc0
-//         cccc1
-//         dddd0
-//void ScummEngine::ditherV4herc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height) const {
-	/*byte *srcptr, *dstptr;
-	const int xo = *x, yo = *y, widtho = *width, heighto = *height;
-	int dsty = yo*2 - yo/4;
-
-	for (int y1 = 0; y1 < heighto;) {
-		assert(dsty < kHercHeight);
-
-		srcptr = src + y1 * srcPitch;
-		dstptr = hercbuf + dsty * kHercWidth + xo * 2;
-
-		const int idx1 = (dsty % 7) % 2;
-		for (int x1 = 0; x1 < widtho; x1++) {
-			const int idx2 = (xo + x1) % 2;
-			//const byte tmp = _ditheringTable[idx1][idx2][*srcptr & 0xF];
-			//*dstptr++ = tmp >> 1;
-			//*dstptr++ = tmp & 0x1;
-			srcptr++;
-		}
-		if (idx1 || dsty % 7 == 6)
-			y1++;
-		dsty++;
-	}*/
-
-	//*x *= 2;
-	//*y = yo*2 - yo/4;
-	//*width *= 2;
-	//*height = dsty - *y;
-//}
 
 #pragma mark -
 #pragma mark --- Background buffers & charset mask ---
