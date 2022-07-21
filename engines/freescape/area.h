@@ -27,6 +27,7 @@ class Area {
 public:
 	Area(
 		uint16 areaID,
+		uint16 areaFlags,
 		ObjectMap *objectsByID,
 		ObjectMap *entrancesByID,
 		uint8 scale,
@@ -39,6 +40,7 @@ public:
 	Object *entranceWithID(uint16 objectID);
 	Object *firstEntrance();
 	uint16 getAreaID();
+	uint16 getAreaFlags();
 	uint8 getScale();
 	void draw(Renderer *gfx);
 	void show();
@@ -56,6 +58,7 @@ public:
 
 private:
 	uint16 areaID;
+	uint16 areaFlags;
 	uint8 scale;
 	Graphics::PixelBuffer *palette;
 	uint8 skyColor;

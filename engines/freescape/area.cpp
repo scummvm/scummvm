@@ -38,12 +38,17 @@ uint16 Area::getAreaID() {
 	return areaID;
 }
 
+uint16 Area::getAreaFlags() {
+	return areaFlags;
+}
+
 uint8 Area::getScale() {
 	return scale;
 }
 
 Area::Area(
 	uint16 _areaID,
+	uint16 _areaFlags,
 	ObjectMap *_objectsByID,
 	ObjectMap *_entrancesByID,
 	uint8 _scale,
@@ -55,6 +60,7 @@ Area::Area(
 	skyColor = _skyColor;
 	groundColor = _groundColor;
 	areaID = _areaID;
+	areaFlags = _areaFlags;
 	objectsByID = _objectsByID;
 	entrancesByID = _entrancesByID;
 
@@ -122,12 +128,17 @@ void Area::draw(Freescape::Renderer *gfx) {
 	if (palette)
 		gfx->_palette = palette;
 
-	gfx->clear();
-	if (skyColor != 255)
-		gfx->drawSky(skyColor);
+	if (areaFlags & 0x80)
+		gfx->_keyColor = 0;
+	else
+		gfx->_keyColor = 255;
 
-	if (groundColor != 255)
+	gfx->clear();
+	if (areaFlags & 0x01)
 		gfx->drawFloor(groundColor);
+
+	if (areaFlags & 0x02)
+		gfx->drawSky(skyColor);
 
 	assert(drawableObjects.size() > 0);
 	for (Common::Array<Object *>::iterator it = drawableObjects.begin(); it != drawableObjects.end(); it++) {

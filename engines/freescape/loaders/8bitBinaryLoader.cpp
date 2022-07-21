@@ -282,7 +282,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 
 	uint32 base = file->pos();
 	debugC(1, kFreescapeDebugParser, "Area base: %x", base);
-	uint8 skippedValue = file->readByte();
+	uint8 areaFlags = file->readByte();
 	uint8 numberOfObjects = file->readByte();
 	uint8 areaNumber = file->readByte();
 
@@ -315,7 +315,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	Graphics::PixelBuffer *palette = getPalette(areaNumber, ci1, ci2, skyColor, groundColor, ncolors);
 
 	debugC(1, kFreescapeDebugParser, "Area %d", areaNumber);
-	debugC(1, kFreescapeDebugParser, "Skipped: %d Objects: %d", skippedValue, numberOfObjects);
+	debugC(1, kFreescapeDebugParser, "Flags: %d Objects: %d", areaFlags, numberOfObjects);
 	//debug("Condition Ptr: %x", cPtr);
 	debugC(1, kFreescapeDebugParser, "Pos before first object: %lx", file->pos());
 	if (_targetName == "totaleclipse") {
@@ -354,7 +354,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	uint8 numConditions = file->readByte();
 	debugC(1, kFreescapeDebugParser, "%d area conditions at %x of area %d", numConditions, base + cPtr, areaNumber);
 
-	Area *area = new Area(areaNumber, objectsByID, entrancesByID, scale, skyColor, groundColor, palette);
+	Area *area = new Area(areaNumber, areaFlags, objectsByID, entrancesByID, scale, skyColor, groundColor, palette);
 
 	while (numConditions--) {
 		FCLInstructionVector instructions;
