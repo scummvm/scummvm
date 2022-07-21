@@ -1264,14 +1264,16 @@ void MidiCombinerDynamic::syncSourceHRController(uint outputChannel, OutputChann
 
 	if (hrController == MidiDriver_BASE::MIDI_CONTROLLER_VOLUME) {
 		// GM volume to gain control is 40*log10(V/127)
-		// This means linearScale is (volume/0x38f0)^4
-		double linearScale = static_cast<double>(effectiveValue);
+		// This means linearScale is (volume/0x3f80)^4
+		const double maxVolScale = 0x3f80;
+
+		double linearScale = static_cast<double>(effectiveValue) / maxVolScale;
 		linearScale *= linearScale;
 		linearScale *= linearScale;
 
 		linearScale *= static_cast<double>(srcState._masterVolume) * (1.0 / 255.0);
 
-		double gmScale = sqrt(sqrt(linearScale)) * 0x38f0;
+		double gmScale = sqrt(sqrt(linearScale)) * maxVolScale;
 		if (gmScale > static_cast<double>(0x3fff))
 			gmScale = 0x3fff;
 
