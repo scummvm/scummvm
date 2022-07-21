@@ -175,12 +175,12 @@ static Object *load16bitObject(Common::SeekableReadStream *file) {
 Area *load16bitArea(Common::SeekableReadStream *file) {
 	// the lowest bit of this value seems to indicate
 	// horizon on or off; this is as much as I currently know
-	uint16 skippedValue = file->readUint16BE();
+	uint16 areaFlags = file->readUint16BE();
 	uint16 numberOfObjects = file->readUint16BE();
 	uint16 areaNumber = file->readUint16BE();
 
 	debug("Area %d", areaNumber);
-	debug("Skipped value %d", skippedValue);
+	debug("Area flags %d", areaFlags);
 	debug("Objects: %d", numberOfObjects);
 
 	// I've yet to decipher this fully
@@ -256,7 +256,7 @@ Area *load16bitArea(Common::SeekableReadStream *file) {
 		debug("%s", detokenise16bitCondition(conditionArray)->c_str());
 	}
 
-	return (new Area(areaNumber, objectsByID, entrancesByID, 1, skyColor, groundColor));
+	return (new Area(areaNumber, areaFlags, objectsByID, entrancesByID, 1, skyColor, groundColor));
 }
 
 void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {
