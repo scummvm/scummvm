@@ -93,6 +93,7 @@ protected:
 	void saveLoadWithSerializer(Common::Serializer &s) override;
 	void createInternalSaveStateThumbnail();
 	bool fetchInternalSaveStateThumbnail(int slotId, bool isHeapSave);
+	uint32 *fetchScummVMSaveStateThumbnail(int slotId, bool isHeapSave, int brightness);
 
 	/* Version 8 script opcodes */
 	void o8_mod();
