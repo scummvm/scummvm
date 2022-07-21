@@ -258,6 +258,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "footballgame", "Football Game" },
 	{ "geminirue", "Gemini Rue" },
 	{ "ghostdream", "Ghostdream" },
+	{ "ghostman", "Ghostman: The Council Calamity" },
 	{ "goldenwake", "A Golden Wake" },
 	{ "graceward", "Graceward" },
 	{ "grandmabadass", "GrandMa Badass" },
@@ -3338,6 +3339,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("apotheosis", "the apotheosis project.exe", "0115a64ddec9396108f32da31d761ecb", 1144677502),
 	GAME_ENTRY_STEAM("apotheosis", "The Apotheosis Project.exe", "4c0c28d58ebd53823fc0248e5b777c52", 1144826071),
 	GAME_ENTRY_STEAM("apotheosis", "The Apotheosis Project.ags", "0d9ae5a4ffd3e3e968c6addb5d524954", 1142362222), // Linux
+	GAME_ENTRY_STEAM("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51054188),  // Original (rollback 0.0)
+	GAME_ENTRY_STEAM("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51056669),  // v1.1 (rollback 0.1)
+	GAME_ENTRY_STEAM("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51089445),  // v1.2
 	GAME_ENTRY_EN_STEAM("astroloco", "astroloco1.exe", "c71919e3b0cc415ef725cf1a9818a515", 42894919),
 	GAME_ENTRY_EN("astroloco", "astroloco1.exe", "06e70a826fde73b3f86f974885d31abe", 42492070),
 	GAME_ENTRY_EN_STEAM("beer", "beer!.exe", "6f201fd7a19869c85f49c7c471d0479a", 5055091), // Windows
@@ -3454,6 +3458,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("geminirue", "ac2game.dat", "f3c0c7d3892bdd8963e8ce017f73de08", 62852566), // Android
 	GAME_ENTRY("geminirue", "ac2game.dat", "e8f1d07a6b363e9cc80dac5367f1b4ba", 72836785), // MacOS, Humble Bundle
 	GAME_ENTRY_EN_STEAM("ghostdream", "ghostdream.exe", "05594881531d62e4575545f3c8fd2576", 480856325),
+	GAME_ENTRY_EN_STEAM("ghostman", "Rebut And Ghostman.exe", "0241777c2537fc5d077c05cde10bfa9f", 10312749),
 	GAME_ENTRY_EN_STEAM("goldenwake", "a-golden-wake.exe", "dbe281d93c914899886e77c09c3c65ec", 130844360), // Linux & Mac
 	GAME_ENTRY_EN_STEAM("goldenwake", "a-golden-wake.exe", "e7080df9729aae2a0097b752198f3cca", 130846774),
 	GAME_ENTRY_EN_GOG("goldenwake", "a-golden-wake.exe", "7056895c888d6cf3f0120d2edfeb7f7b", 130912596),
@@ -3673,7 +3678,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("anotherhero", "Another Hero - First Look Demo.exe", "7ddb9e776648faed5a51170d087074e9", 27404506),
 	DEMO_ENTRY("apotheosis", "the apotheosis project.exe", "c52c9fe85328d90f0cd12e526ba585d4", 612169084),  // Screen7 demo En-It
 	DEMO_ENTRY_EN("ashinaredwitch", "ATRW.exe", "8355ade0422da6e8655f71470ff51483", 44543604),  // Itch.io
+	DEMO_ENTRY_EN("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51054188),  // Itch.io demo/prologue
 	DEMO_ENTRY_EN("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 48844189),  // Steam prologue
+	DEMO_ENTRY_EN("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51055599),  // Steam prologue
 	DEMO_ENTRY_EN("ashinaredwitch", "Ashina.exe", "8355ade0422da6e8655f71470ff51483", 140043612),  // Steam
 	DEMO_ENTRY_EN("ashinaredwitch", "Ashina.exe", "f34240ec041be3a6707a575fd28c8a03", 129558944),  // Steam
 	DEMO_ENTRY_EN("ashpines", "Ash Pines Demo.exe", "981e60a9be515bb56c634856462abbc7", 90323249),
