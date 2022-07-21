@@ -21,10 +21,12 @@
 
 #include "ags/shared/ac/character_info.h"
 #include "ags/shared/ac/game_setup_struct_base.h"
+#include "ags/shared/ac/game_setup_struct.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/ac/words_dictionary.h"
 #include "ags/shared/script/cc_script.h"
 #include "ags/shared/util/stream.h"
+#include <string.h>
 
 namespace AGS3 {
 
@@ -239,6 +241,9 @@ Size ResolutionTypeToSize(GameResolutionType resolution, bool letterbox) {
 	case kGameResolution_320x240:
 		return Size(320, 240);
 	case kGameResolution_640x400:
+		// The engine was modified for Whispers of a Machine to return 640x360
+		if (strcmp(_GP(game).guid, "{5833654f-6f0d-40d9-99e2-65c101c8544a}") == 0)
+			return Size(640, 360);
 		return letterbox ? Size(640, 480) : Size(640, 400);
 	case kGameResolution_640x480:
 		return Size(640, 480);
