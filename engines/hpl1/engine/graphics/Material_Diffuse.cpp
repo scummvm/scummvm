@@ -43,8 +43,8 @@ cMaterial_Diffuse::cMaterial_Diffuse(const tString &asName, iLowLevelGraphics *a
 									 cImageManager *apImageManager, cTextureManager *apTextureManager,
 									 cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
 									 eMaterialPicture aPicture, cRenderer3D *apRenderer3D)
-	: iMaterial_BaseLight("Diffuse_Light_vp.cg",
-						  "Diffuse_Light_fp.cg",
+	: iMaterial_BaseLight("Diffuse_Light",
+						  "Diffuse_Light",
 						  asName, apLowLevelGraphics, apImageManager, apTextureManager, apRenderer, apProgramManager,
 						  aPicture, apRenderer3D) {
 	mbUseSpecular = false;

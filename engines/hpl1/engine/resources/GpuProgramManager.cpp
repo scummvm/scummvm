@@ -26,10 +26,12 @@
  */
 
 #include "hpl1/engine/resources/GpuProgramManager.h"
+#include "hpl1/debug.h"
 #include "hpl1/engine/graphics/GPUProgram.h"
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
 #include "hpl1/engine/system/String.h"
 #include "hpl1/engine/system/low_level_system.h"
+#include <cstddef>
 
 namespace hpl {
 
@@ -71,37 +73,22 @@ iResourceBase *cGpuProgramManager::Create(const tString &asName) {
 
 //-----------------------------------------------------------------------
 
-iGpuProgram *cGpuProgramManager::CreateProgram(const tString &asName, const tString &asEntry,
+iGpuProgram *cGpuProgramManager::CreateProgram(const tString &vertex, const tString &fragment,
 											   eGpuProgramType aType) {
-	return nullptr;
-#if 0
+	if (!mpLowLevelGraphics->GetCaps(eGraphicCaps_GL_FragmentProgram))
+		return nullptr;
+
 	tString sPath;
 	iGpuProgram *pProgram;
-	pProgram = static_cast<iGpuProgram *>(FindLoadedResource(asName, sPath));
-
-	BeginLoad(asName);
-
-	if (pProgram == NULL && sPath != "") {
-		pProgram = mpLowLevelGraphics->CreateGpuProgram(asName, aType);
-
-		if (pProgram->CreateFromFile(sPath, asEntry) == false) {
-			Error("Couldn't create program '%s'\n", asName.c_str());
-			hplDelete(pProgram);
-			EndLoad();
-			return NULL;
-		}
-
+	pProgram = static_cast<iGpuProgram *>(FindLoadedResource(vertex + " " + fragment, sPath));
+	if (pProgram == nullptr) {
+		pProgram = mpLowLevelGraphics->CreateGpuProgram(vertex, fragment);
 		AddResource(pProgram);
 	}
 
-	if (pProgram)
-		pProgram->IncUserCount();
-	else
-		Error("Couldn't load program '%s'\n", asName.c_str());
+	pProgram->IncUserCount();
 
-	EndLoad();
 	return pProgram;
-#endif
 }
 
 //-----------------------------------------------------------------------

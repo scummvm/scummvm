@@ -26,6 +26,7 @@
  */
 
 #include "hpl1/engine/graphics/Material_Fallback01_BaseLight.h"
+#include "common/textconsole.h"
 #include "hpl1/engine/graphics/GPUProgram.h"
 #include "hpl1/engine/graphics/Renderer2D.h"
 #include "hpl1/engine/math/Math.h"
@@ -288,6 +289,8 @@ iMaterial_Fallback01_BaseLight::iMaterial_Fallback01_BaseLight(
 	eMaterialPicture aPicture, cRenderer3D *apRenderer3D)
 	: iMaterial(asName, apLowLevelGraphics, apImageManager, apTextureManager, apRenderer, apProgramManager,
 				aPicture, apRenderer3D) {
+	error("iMaterial_Fallback01_BaseLight not yet implemented");
+
 	gDiffuseGLState.SetUp(mpLowLevelGraphics);
 	gBumpGLState.SetUp(mpLowLevelGraphics);
 	gSpotGLState.SetUp(mpLowLevelGraphics);

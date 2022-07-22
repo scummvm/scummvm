@@ -50,7 +50,7 @@ public:
 	 * \param aType type of the program
 	 * \return
 	 */
-	iGpuProgram *CreateProgram(const tString &asName, const tString &asEntry, eGpuProgramType aType);
+	iGpuProgram *CreateProgram(const tString &vertex, const tString &fragment, eGpuProgramType aType = eGpuProgramType_LastEnum);
 
 	void Destroy(iResourceBase *apResource);
 	void Unload(iResourceBase *apResource);
@@ -58,6 +58,8 @@ public:
 private:
 	iLowLevelGraphics *mpLowLevelGraphics;
 };
+
+
 
 };     // namespace hpl
 #endif // HPL_GPU_PROGRAM_MANAGER_H

@@ -28,33 +28,25 @@
 #ifndef HPL_CGPROGRAM_H
 #define HPL_CGPROGRAM_H
 
-//#include <windows.h>
-#if 0
-#include <Cg/cg.h>
-#include <Cg/cgGL.h>
-#include <GL/GLee.h>
-#endif
-
 #include "temp-types.h"
 
 #include "hpl1/engine/graphics/GPUProgram.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
+#include "graphics/opengl/shader.h"
 
 namespace hpl {
 
 class cCGProgram : public iGpuProgram {
 public:
-	cCGProgram(tString asName, CGcontext aContext, eGpuProgramType aType);
-	~cCGProgram();
+	cCGProgram(const tString &vertex, const tString &fragment);
+	~cCGProgram() = default;
 
 	bool reload();
 	void unload();
 	void destroy();
 
 	tString GetProgramName() { return msName; }
-
-	bool CreateFromFile(const tString &asFile, const tString &asEntry = "main");
 
 	void Bind();
 	void UnBind();
@@ -67,39 +59,12 @@ public:
 	bool SetMatrixf(const tString &asName, const cMatrixf &mMtx);
 	bool SetMatrixf(const tString &asName, eGpuProgramMatrix mType,
 					eGpuProgramMatrixOp mOp);
-
-	bool SetTexture(const tString &asName, iTexture *apTexture, bool abAutoDisable = true);
-	bool SetTextureToUnit(int alUnit, iTexture *apTexture);
-
-	/// CG SPECIFIC //////////////////////
-
-	CGprogram GetProgram() { return mProgram; }
-	CGprofile GetProfile() { return mProfile; }
-
-	static void SetVProfile(tString asProfile) {
-		msForceVP = asProfile;
-	}
-	static void SetFProfile(tString asProfile) {
-		msForceFP = asProfile;
-	}
-	static tString &GetVProfile() { return msForceVP; }
-	static tString &GetFProfile() { return msForceFP; }
-
-protected:
-	CGcontext mContext;
+private:
+	OpenGL::Shader *_shader;
 
 	tString msName;
 	tString msFile;
 	tString msEntry;
-	CGprogram mProgram;
-	CGprofile mProfile;
-
-	CGparameter mvTexUnitParam[MAX_TEXTUREUNITS];
-
-	CGparameter GetParam(const tString &asName, CGtype aType);
-
-	static tString msForceFP;
-	static tString msForceVP;
 };
 };     // namespace hpl
 #endif // HPL_CGPROGRAM_H

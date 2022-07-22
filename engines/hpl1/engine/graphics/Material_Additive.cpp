@@ -72,21 +72,13 @@ cMaterial_Additive::cMaterial_Additive(const tString &asName, iLowLevelGraphics 
 	mbIsGlowing = false;
 	mbUsesLights = false;
 
-	mpFogVtxProg = mpProgramManager->CreateProgram("Fog_Trans_vp.cg", "main", eGpuProgramType_Vertex);
-
-	if (mpLowLevelGraphics->GetCaps(eGraphicCaps_GL_FragmentProgram))
-		mpFogFragProg = mpProgramManager->CreateProgram("Fog_Trans_Alpha_fp.cg", "main", eGpuProgramType_Fragment);
-	else
-		mpFogFragProg = NULL;
+	_fogShader = mpProgramManager->CreateProgram("Fog_Trans", "Fog_Trans_Alpha");
 }
 
 //-----------------------------------------------------------------------
 
 cMaterial_Additive::~cMaterial_Additive() {
-	if (mpFogVtxProg)
-		mpProgramManager->Destroy(mpFogVtxProg);
-	if (mpFogFragProg)
-		mpProgramManager->Destroy(mpFogFragProg);
+	mpProgramManager->Destroy(_fogShader);
 }
 
 //-----------------------------------------------------------------------
@@ -97,18 +89,15 @@ cMaterial_Additive::~cMaterial_Additive() {
 
 //-----------------------------------------------------------------------
 
-iGpuProgram *cMaterial_Additive::GetVertexProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
-	if (mpRenderSettings->mbFogActive)
-		return mpFogVtxProg;
-	else
-		return NULL;
+iGpuProgram *cMaterial_Additive::getGpuProgram(const eMaterialRenderType aType, const int alPass, iLight3D *apLight) {
+	return _fogShader;
 }
 
-iMaterialProgramSetup *cMaterial_Additive::GetVertexProgramSetup(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
+iMaterialProgramSetup *cMaterial_Additive::getGpuProgramSetup(const eMaterialRenderType aType, const int alPass, iLight3D *apLight) {
 	if (mpRenderSettings->mbFogActive)
 		return &gFogProgramSetup;
 	else
-		return NULL;
+		return nullptr;
 }
 
 bool cMaterial_Additive::VertexProgramUsesLight(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
@@ -117,13 +106,6 @@ bool cMaterial_Additive::VertexProgramUsesLight(eMaterialRenderType aType, int a
 
 bool cMaterial_Additive::VertexProgramUsesEye(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
 	return false;
-}
-
-iGpuProgram *cMaterial_Additive::GetFragmentProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
-	if (mpRenderSettings->mbFogActive)
-		return mpFogFragProg;
-	else
-		return NULL;
 }
 
 eMaterialAlphaMode cMaterial_Additive::GetAlphaMode(eMaterialRenderType aType, int alPass, iLight3D *apLight) {

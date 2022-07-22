@@ -28,6 +28,7 @@
 #ifndef HPL_MATERIAL_BUMP_SPEC2D_H
 #define HPL_MATERIAL_BUMP_SPEC2D_H
 
+#include "hpl1/engine/graphics/GPUProgram.h"
 #include "hpl1/engine/graphics/Material.h"
 
 namespace hpl {
@@ -54,6 +55,7 @@ public:
 					  tVertexVec *apVtxVec, cVector3f *apTransform, unsigned int alIndexAdd);
 
 private:
+	iGpuProgram *_shader;
 	bool mbHasSpecular;
 };
 

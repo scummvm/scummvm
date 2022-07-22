@@ -151,6 +151,7 @@ bool CheckSupport(cInit *apInit) {
 #undef CG_CHECK
 #endif
 	// Try compiling vertex shader
+#if 0
 	Log("Trying to load vertex program!\n");
 	iGpuProgram *pTestVtxProg = pLowLevelGraphics->CreateGpuProgram("Test", eGpuProgramType_Vertex);
 	if (pTestVtxProg->CreateFromFile("core/programs/Fallback01_Diffuse_Light_p1_vp.cg", "main") == false) {
@@ -171,7 +172,7 @@ bool CheckSupport(cInit *apInit) {
 	}
 	Log("Success!\n");
 	hplDelete(pTestVtxProg);
-
+#endif
 	return true;
 }
 
@@ -394,8 +395,8 @@ bool cInit::Init(tString asCommandLine) {
 	Vars.AddBool("LowLevelSoundLogging", mpConfig->GetBool("Sound", "LowLevelLogging", false));
 
 	// Set CG Options
-	cCGProgram::SetFProfile(mpConfig->GetString("Graphics", "ForceFP", "AUTO"));
-	cCGProgram::SetVProfile(mpConfig->GetString("Graphics", "ForceVP", "AUTO"));
+	//cCGProgram::SetFProfile(mpConfig->GetString("Graphics", "ForceFP", "AUTO"));
+	//cCGProgram::SetVProfile(mpConfig->GetString("Graphics", "ForceVP", "AUTO"));
 
 	LowLevelGameSetup *pSetUp = NULL;
 

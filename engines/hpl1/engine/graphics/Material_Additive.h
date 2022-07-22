@@ -28,6 +28,7 @@
 #ifndef HPL_MATERIAL_ADDITIVE_H
 #define HPL_MATERIAL_ADDITIVE_H
 
+#include "hpl1/engine/graphics/GPUProgram.h"
 #include "hpl1/engine/graphics/Material.h"
 
 namespace hpl {
@@ -45,13 +46,11 @@ public:
 
 	bool UsesType(eMaterialRenderType aType);
 
-	iGpuProgram *GetVertexProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
-	iMaterialProgramSetup *GetVertexProgramSetup(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	iGpuProgram *getGpuProgram(const eMaterialRenderType aType, const int alPass, iLight3D *apLight);
+	iMaterialProgramSetup *getGpuProgramSetup(const eMaterialRenderType aType, const int alPass, iLight3D *apLight);
 
 	bool VertexProgramUsesLight(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 	bool VertexProgramUsesEye(eMaterialRenderType aType, int alPass, iLight3D *apLight);
-
-	iGpuProgram *GetFragmentProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 
 	eMaterialAlphaMode GetAlphaMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 	eMaterialBlendMode GetBlendMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
@@ -75,8 +74,7 @@ public:
 					  tVertexVec *apVtxVec, cVector3f *apTransform, unsigned int alIndexAdd) {}
 
 private:
-	iGpuProgram *mpFogVtxProg;
-	iGpuProgram *mpFogFragProg;
+	iGpuProgram *_fogShader;
 };
 
 class cMaterialType_Additive : public iMaterialType {

@@ -355,8 +355,8 @@ FontData *cLowLevelGraphicsSDL::CreateFontData(const tString &asName) {
 
 //-----------------------------------------------------------------------
 
-iGpuProgram *cLowLevelGraphicsSDL::CreateGpuProgram(const tString &asName, eGpuProgramType aType) {
-	return hplNew(cCGProgram, (asName, 0, aType));
+iGpuProgram *cLowLevelGraphicsSDL::CreateGpuProgram(const tString &vertex, const tString &fragment) {
+	return hplNew(cCGProgram, (vertex, fragment));
 }
 
 //-----------------------------------------------------------------------

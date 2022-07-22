@@ -134,7 +134,7 @@ class iLight3D;
 class iGLStateProgram : public iGpuProgram {
 public:
 	iGLStateProgram(tString asName)
-		: iGpuProgram(asName, eGpuProgramType_Fragment) {
+		: iGpuProgram(asName) {
 		mbSetUpDone = false;
 	}
 	virtual ~iGLStateProgram() {}
@@ -161,7 +161,7 @@ public:
 	bool SetTexture(const tString &asName, iTexture *apTexture, bool abAutoDisable = true) { return false; }
 	bool SetTextureToUnit(int alUnit, iTexture *apTexture) { return false; }
 
-	eGpuProgramType GetType() { return mProgramType; }
+	eGpuProgramType GetType() { return eGpuProgramType_LastEnum; }
 
 	bool reload() { return false; }
 	void unload() {}
@@ -217,6 +217,9 @@ public:
 	virtual void Update(float afTimeStep) {}
 
 	// The new render system stuff
+	virtual iGpuProgram *getGpuProgram(const eMaterialRenderType aType, const int alPass, iLight3D *apLight) { return nullptr; }
+	virtual iMaterialProgramSetup *getGpuProgramSetup(const eMaterialRenderType aType, const int alPass, iLight3D *apLight) { return nullptr; };
+
 	virtual iGpuProgram *GetVertexProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight) { return NULL; }
 	virtual bool VertexProgramUsesLight(eMaterialRenderType aType, int alPass, iLight3D *apLight) { return false; }
 	virtual bool VertexProgramUsesEye(eMaterialRenderType aType, int alPass, iLight3D *apLight) { return false; }
@@ -330,8 +333,7 @@ public:
 	void SetId(int alId) { mlId = alId; }
 	int GetId() { return mlId; }
 
-	virtual iGpuProgram *GetRefractionVertexProgam() { return NULL; }
-	virtual iGpuProgram *GetRefractionFragmentProgam() { return NULL; }
+	virtual iGpuProgram *getRefractionProgram() { return nullptr; }
 
 	virtual bool GetRefractionUsesDiffuse() { return false; }
 	virtual eMaterialTexture GetRefractionDiffuseTexture() { return eMaterialTexture_Diffuse; }

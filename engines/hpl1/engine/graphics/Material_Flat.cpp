@@ -52,11 +52,6 @@ cMaterial_Flat::cMaterial_Flat(const tString &asName, iLowLevelGraphics *apLowLe
 	mbIsTransperant = false;
 	mbIsGlowing = false;
 	mbUsesLights = false;
-
-	///////////////////////////////////////////
-	// Load the Z pass vertex program
-	iGpuProgram *pVtxProg = mpProgramManager->CreateProgram("Diffuse_Color_vp.cg", "main", eGpuProgramType_Vertex);
-	SetProgram(pVtxProg, eGpuProgramType_Vertex, 0);
 }
 
 //-----------------------------------------------------------------------
@@ -72,20 +67,12 @@ cMaterial_Flat::~cMaterial_Flat() {
 
 //-----------------------------------------------------------------------
 
-iGpuProgram *cMaterial_Flat::GetVertexProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
-	return NULL; // return mpProgram[eGpuProgramType_Vertex][0];
-}
-
 bool cMaterial_Flat::VertexProgramUsesLight(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
 	return false;
 }
 
 bool cMaterial_Flat::VertexProgramUsesEye(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
 	return false;
-}
-
-iGpuProgram *cMaterial_Flat::GetFragmentProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
-	return NULL;
 }
 
 eMaterialAlphaMode cMaterial_Flat::GetAlphaMode(eMaterialRenderType aType, int alPass, iLight3D *apLight) {

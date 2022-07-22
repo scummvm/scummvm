@@ -61,20 +61,11 @@ enum eGpuProgramMatrixOp {
 
 class iGpuProgram : public iResourceBase {
 public:
-	iGpuProgram(tString asName, eGpuProgramType aType) : iResourceBase(asName, 0) {
-		mProgramType = aType;
+	iGpuProgram(const tString &asName) : iResourceBase(asName, 0) {
 	}
 	virtual ~iGpuProgram() {}
 
 	static void SetLogDebugInformation(bool abX) { mbDebugInfo = abX; }
-
-	/**
-	 * Create a from a file. Used internally
-	 * \param asFile
-	 * \param asEntry
-	 * \return
-	 */
-	virtual bool CreateFromFile(const tString &asFile, const tString &asEntry) = 0;
 
 	/**
 	 * Bind the program to the GPU
@@ -108,15 +99,7 @@ public:
 	virtual bool SetMatrixf(const tString &asName, const cMatrixf &mMtx) = 0;
 	virtual bool SetMatrixf(const tString &asName, eGpuProgramMatrix mType,
 							eGpuProgramMatrixOp mOp) = 0;
-
-	virtual bool SetTexture(const tString &asName, iTexture *apTexture, bool abAutoDisable = true) = 0;
-	virtual bool SetTextureToUnit(int alUnit, iTexture *apTexture) = 0;
-
-	eGpuProgramType GetType() { return mProgramType; }
-
 protected:
-	eGpuProgramType mProgramType;
-
 	static bool mbDebugInfo;
 };
 };     // namespace hpl

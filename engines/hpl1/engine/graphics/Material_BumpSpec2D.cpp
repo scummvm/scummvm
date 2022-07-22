@@ -49,38 +49,17 @@ cMaterial_BumpSpec2D::cMaterial_BumpSpec2D(const tString &asName, iLowLevelGraph
 	mbIsTransperant = false;
 	mbIsGlowing = false;
 	mbUsesLights = true;
-
 	mbHasSpecular = true;
-
 	mType = eMaterialType_BumpSpec;
 
-	if (mbHasSpecular) {
-		// load the fragment program
-		iGpuProgram *pFragProg = mpProgramManager->CreateProgram("BumpSpec2D_Light_fp.cg", "main",
-																 eGpuProgramType_Fragment);
-		SetProgram(pFragProg, eGpuProgramType_Fragment, 0);
-
-		// Load the vertex program
-		iGpuProgram *pVtxProg = mpProgramManager->CreateProgram("BumpSpec2D_Light_vp.cg", "main",
-																eGpuProgramType_Vertex);
-		SetProgram(pVtxProg, eGpuProgramType_Vertex, 0);
-	} else // Just use normal bump without specular
-	{
-		// load the fragment program
-		iGpuProgram *pFragProg = mpProgramManager->CreateProgram("Bump2D_Light_fp.cg", "main",
-																 eGpuProgramType_Fragment);
-		SetProgram(pFragProg, eGpuProgramType_Fragment, 0);
-
-		// Load the vertex program
-		iGpuProgram *pVtxProg = mpProgramManager->CreateProgram("Bump2D_Light_vp.cg", "main",
-																eGpuProgramType_Vertex);
-		SetProgram(pVtxProg, eGpuProgramType_Vertex, 0);
-	}
+	_shader = mpProgramManager->CreateProgram("BumpSpec2D_Light", "BumpSpec2D_Light");
 }
 
 //-----------------------------------------------------------------------
 
 cMaterial_BumpSpec2D::~cMaterial_BumpSpec2D() {
+	if (_shader)
+		mpProgramManager->Destroy(_shader);
 }
 
 //-----------------------------------------------------------------------
@@ -107,7 +86,7 @@ bool cMaterial_BumpSpec2D::StartRendering(eMaterialRenderType aType, iCamera *ap
 		cVector3f vLightPos = apLight->GetLightPosition();
 
 		cVector3f vEyePos;
-		if (apCam != NULL) {
+		if (apCam != nullptr) {
 			vEyePos = apCam->GetEyePosition();
 		}
 
@@ -117,27 +96,22 @@ bool cMaterial_BumpSpec2D::StartRendering(eMaterialRenderType aType, iCamera *ap
 		mpLowLevelGraphics->SetTexture(0, GetTexture(eMaterialTexture_NMap));
 		mpLowLevelGraphics->SetTexture(1, mpRenderer->GetLightMap(0));
 
-		mpProgram[eGpuProgramType_Vertex][0]->SetMatrixf("worldViewProj",
-														 eGpuProgramMatrix_ViewProjection,
-														 eGpuProgramMatrixOp_Identity);
+		_shader->SetMatrixf("worldViewProj",
+							eGpuProgramMatrix_ViewProjection,
+							eGpuProgramMatrixOp_Identity);
 
-		mpProgram[eGpuProgramType_Vertex][0]->SetVec3f("LightPos", vLightPos.x, vLightPos.y, vLightPos.z);
+		_shader->SetVec3f("LightPos", vLightPos.x, vLightPos.y, vLightPos.z);
 
-		if (mbHasSpecular)
-			mpProgram[eGpuProgramType_Vertex][0]->SetVec3f("EyePos", vEyePos.x, vEyePos.y, vEyePos.z);
+		_shader->SetVec3f("EyePos", vEyePos.x, vEyePos.y, vEyePos.z);
 
-		mpProgram[eGpuProgramType_Vertex][0]->SetFloat("LightRadius", apLight->GetFarAttenuation());
-		mpProgram[eGpuProgramType_Vertex][0]->SetVec4f("LightColor", apLight->GetDiffuseColor().r,
-													   apLight->GetDiffuseColor().g, apLight->GetDiffuseColor().b,
-													   apLight->GetDiffuseColor().a);
-
-		mpProgram[eGpuProgramType_Vertex][0]->Bind();
-
-		mpProgram[eGpuProgramType_Fragment][0]->Bind();
+		_shader->SetFloat("LightRadius", apLight->GetFarAttenuation());
+		_shader->SetVec4f("LightColor", apLight->GetDiffuseColor().r,
+						  apLight->GetDiffuseColor().g, apLight->GetDiffuseColor().b,
+						  apLight->GetDiffuseColor().a);
+		_shader->Bind();
 	} else if (aType == eMaterialRenderType_Diffuse) {
 		mpLowLevelGraphics->SetBlendActive(true);
 		mpLowLevelGraphics->SetBlendFunc(eBlendFunc_DestColor, eBlendFunc_DestAlpha);
-
 		mpLowLevelGraphics->SetTexture(0, GetTexture(eMaterialTexture_Diffuse));
 		mpLowLevelGraphics->SetTextureEnv(eTextureParam_ColorFunc, eTextureFunc_Add);
 		mpLowLevelGraphics->SetTextureEnv(eTextureParam_ColorOp1, eTextureOp_OneMinusAlpha);
@@ -157,8 +131,7 @@ void cMaterial_BumpSpec2D::EndRendering(eMaterialRenderType aType) {
 		mpLowLevelGraphics->SetTexture(0, NULL);
 		mpLowLevelGraphics->SetTexture(1, NULL);
 
-		mpProgram[eGpuProgramType_Vertex][0]->UnBind();
-		mpProgram[eGpuProgramType_Fragment][0]->UnBind();
+		_shader->UnBind();
 	} else if (aType == eMaterialRenderType_Diffuse) {
 		mpLowLevelGraphics->SetTexture(0, NULL);
 		mpLowLevelGraphics->SetBlendActive(false);
