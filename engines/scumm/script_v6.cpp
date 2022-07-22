@@ -506,7 +506,27 @@ void ScummEngine_v6::o6_byteArrayRead() {
 
 void ScummEngine_v6::o6_wordArrayRead() {
 	int base = pop();
-	push(readArray(fetchScriptWord(), 0, base));
+	int num = fetchScriptWord();
+#ifdef USE_BYONLINE
+	// If we're pulling from the randomly selected teams for online play
+	// at Prince Rupert, read from variables 748 and 749 instead
+	if (
+		_game.id == GID_BASEBALL2001 && _currentRoom == 6 && vm.slot[_currentScript].number == 2071 &&
+		readVar(399) == 1 &&  // We're online and in the team name select screen
+		readVar(747) == 1  // We successfully got team arrays the host and opponent
+	) {
+		switch (num) {
+			case 264: case 321:
+				num = 748;
+				break;
+			case 265: case 322:
+				num = 749;
+				break;
+		}
+	}
+#endif
+	int val = readArray(num, 0, base);
+	push(val);
 }
 
 void ScummEngine_v6::o6_byteArrayIndexedRead() {
@@ -540,6 +560,7 @@ void ScummEngine_v6::o6_eq() {
 	// checks that we are playing on the Windows version.  These scripts check VAR_PLATFORM (b) against the value (2)
 	// of the Macintosh platform (a).
 #ifdef USE_BYONLINE
+	int offset = _scriptPointer - _scriptOrgPointer;
 	if (_game.id == GID_FOOTBALL && _currentRoom == 2 && (vm.slot[_currentScript].number == 2049 || vm.slot[_currentScript].number == 2050 ||
 		vm.slot[_currentScript].number == 498) && a == 2 && b == 2) {
 		push(0);
@@ -567,6 +588,14 @@ void ScummEngine_v6::o6_eq() {
 		fetchScriptWord();
 		pop();
 		stopObjectCode();
+	// BYOnline: This script doesn't allow Super Colossal Dome to be chosen for online play, by checking if the selected
+	// field's value is 5 (SCD's number) and incrementing/decrementing if it is. To allow SCD to be used, we return 0
+	// for those checks.
+	} else if (_game.id == GID_BASEBALL2001 && _currentRoom == 40 && vm.slot[_currentScript].number == 2106 && a == 5 && (
+		offset == 16754 || offset == 16791
+		)
+	) {
+		push(0);
 	}
 
 	// WORKAROUND: Forces the game version string set via script 1 to be used in both Macintosh and Windows versions,
@@ -1383,7 +1412,8 @@ void ScummEngine_v6::o6_loadRoomWithEgo() {
 
 void ScummEngine_v6::o6_getRandomNumber() {
 	int rnd;
-	rnd = _rnd.getRandomNumber(ABS(pop()));
+	rnd = _rnd.getRandomNumber(0x7fff);
+	rnd = rnd % (pop() + 1);
 	if (VAR_RANDOM_NR != 0xFF)
 		VAR(VAR_RANDOM_NR) = rnd;
 	push(rnd);
@@ -1392,7 +1422,23 @@ void ScummEngine_v6::o6_getRandomNumber() {
 void ScummEngine_v6::o6_getRandomNumberRange() {
 	int max = pop();
 	int min = pop();
-	int rnd = _rnd.getRandomNumberRng(min, max);
+
+	int rnd = _rnd.getRandomNumber(0x7fff);
+	rnd = min + (rnd % (max - min + 1));
+#ifdef USE_BYONLINE
+	// For using predefined teams in Prince Rupert, instead of choosing player IDs randomly
+	// let's pull from the variables that contain the teams
+	if (_game.id == GID_BASEBALL2001 && vm.slot[_currentScript].number == 298 && readVar(399) == 1 && readVar(747) == 1) {
+		int offset = _scriptPointer - _scriptOrgPointer;
+		if (offset == 117) {
+			// Host's team
+			rnd = readArray(748, 0, vm.localvar[_currentScript][1]);
+		} else if (offset == 210) {
+			// Opponent's team
+			rnd = readArray(749, 0, vm.localvar[_currentScript][1]);
+		}
+	}
+#endif
 	if (VAR_RANDOM_NR != 0xFF)
 		VAR(VAR_RANDOM_NR) = rnd;
 	push(rnd);
