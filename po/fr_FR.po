@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-21 23:35+0000\n"
-"PO-Revision-Date: 2022-07-18 18:32+0000\n"
+"PO-Revision-Date: 2022-07-22 09:09+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -6118,16 +6118,14 @@ msgstr ""
 "comportant moins comme le lecteur mTropolis."
 
 #: engines/mtropolis/detection.cpp:65
-#, fuzzy
-#| msgid "Automatically saves the game at certain progress points."
 msgid "Autosave at progress points"
-msgstr "Sauvegarde automatiquement la partie à certains stades de progression."
+msgstr "Sauvegarde auto aux stades de progression"
 
 #: engines/mtropolis/detection.cpp:66
-#, fuzzy
-#| msgid "Automatically saves the game at certain progress points."
 msgid "Automatically saves the game after completing puzzles and chapters."
-msgstr "Sauvegarde automatiquement la partie à certains stades de progression."
+msgstr ""
+"Sauvegarde automatiquement la partie après avoir terminé les énigmes et les "
+"chapitres."
 
 #: engines/mtropolis/detection.cpp:76
 msgid "Enable short transitions"
@@ -6167,22 +6165,15 @@ msgstr ""
 "lecture des données de sauvegarde de la partie."
 
 #: engines/mtropolis/saveload.cpp:199
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, an error occurred when reading the save game data."
 msgid "An internal error occurred while attempting to write save game data"
 msgstr ""
-"Impossible de charger la sauvegarde, une erreur s'est produite lors de la "
-"lecture des données de sauvegarde de la partie."
+"Une erreur interne s'est produite lors de l'écriture des données de "
+"sauvegarde de la partie"
 
 #: engines/mtropolis/saveload.cpp:207
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, an error occurred when reading the save game data."
 msgid "An error occurred while writing the save game"
 msgstr ""
-"Impossible de charger la sauvegarde, une erreur s'est produite lors de la "
-"lecture des données de sauvegarde de la partie."
+"Une erreur s'est produite lors de l'écriture de la sauvegarde de la partie"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
