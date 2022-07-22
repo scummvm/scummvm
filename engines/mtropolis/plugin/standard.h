@@ -71,6 +71,8 @@ class STransCtModifier : public Modifier {
 public:
 	static const int32 kMaxDuration = 600000;
 
+	STransCtModifier();
+
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::STransCtModifier &data);
 
 	bool respondsToEvent(const Event &evt) const override;

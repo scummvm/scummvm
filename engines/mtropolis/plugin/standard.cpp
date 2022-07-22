@@ -301,7 +301,7 @@ void MidiFilePlayerImpl::onTimer() {
 }
 
 MidiNotePlayerImpl::MidiNotePlayerImpl(const Common::SharedPtr<MidiCombinerSource> &outputDriver, uint32 timerRate)
-	: _timerRate(timerRate), _durationRemaining(0), _outputDriver(outputDriver), _channel(0), _note(0), _program(0), _initialized(false) {
+	: _timerRate(timerRate), _durationRemaining(0), _outputDriver(outputDriver), _channel(0), _note(0), _program(0), _initialized(false), _volume(100) {
 }
 
 MidiNotePlayerImpl::~MidiNotePlayerImpl() {
@@ -332,7 +332,13 @@ void MidiNotePlayerImpl::play(uint8 volume, uint8 channel, uint8 program, uint8 
 	_note = note;
 	_volume = volume;
 
-	const uint16 hpVolume = volume * 0x3fff / 100;
+	// GM volume scale to linear is x^4 so we need the 4th root of the volume, and need to rescale it from 0-100 to 0-0x3f80
+	// = 0x3f80 / sqrt(sqrt(100))
+	const double volumeMultiplier = 5140.5985643697174420974013458299;
+
+	if (volume > 100)
+		volume = 100;
+	uint16 hpVolume = static_cast<uint16>(floor(sqrt(sqrt(volume)) * volumeMultiplier));
 
 	_outputDriver->send(MidiDriver_BASE::MIDI_COMMAND_PROGRAM_CHANGE | _channel, program, 0);
 	_outputDriver->send(MidiDriver_BASE::MIDI_COMMAND_CONTROL_CHANGE | _channel, MidiDriver_BASE::MIDI_CONTROLLER_EXPRESSION, 127);
@@ -1555,7 +1561,7 @@ void MultiMidiPlayer::send(uint32 b) {
 	_driver->send(b);
 }
 
-CursorModifier::CursorModifier() {
+CursorModifier::CursorModifier() : _applyWhen(Event::create()), _removeWhen(Event::create()), _cursorID(0) {
 }
 
 bool CursorModifier::respondsToEvent(const Event &evt) const {
@@ -1588,6 +1594,10 @@ Common::SharedPtr<Modifier> CursorModifier::shallowClone() const {
 
 const char *CursorModifier::getDefaultName() const {
 	return "Cursor Modifier";
+}
+
+STransCtModifier::STransCtModifier() : _enableWhen(Event::create()), _disableWhen(Event::create()),
+	_transitionType(0), _transitionDirection(0), _steps(0), _duration(0), _fullScreen(false) {
 }
 
 bool STransCtModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::STransCtModifier &data) {
@@ -1712,7 +1722,7 @@ MiniscriptInstructionOutcome STransCtModifier::scriptSetSteps(MiniscriptThread *
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
-MediaCueMessengerModifier::MediaCueMessengerModifier() : _isActive(false) {
+MediaCueMessengerModifier::MediaCueMessengerModifier() : _isActive(false), _cueSourceType(kCueSourceInteger) {
 	_mediaCue.sourceModifier = this;
 }
 
@@ -2253,8 +2263,10 @@ bool ObjectReferenceVariableModifier::SaveLoad::loadInternal(Common::ReadStream 
 	return true;
 }
 
-MidiModifier::MidiModifier() : _plugIn(nullptr), _filePlayer(nullptr), _notePlayer(nullptr), _mutedTracks(0),
-	_singleNoteChannel(0), _singleNoteNote(0), _runtime(nullptr), _volume(100) {
+
+MidiModifier::MidiModifier() : _executeWhen(Event::create()), _terminateWhen(Event::create()),
+	_mode(kModeFile), _volume(100), _mutedTracks(0), _singleNoteChannel(0), _singleNoteNote(0),
+	_plugIn(nullptr), _filePlayer(nullptr), _notePlayer(nullptr), _runtime(nullptr) {
 }
 
 MidiModifier::~MidiModifier() {
@@ -2405,7 +2417,7 @@ MiniscriptInstructionOutcome MidiModifier::writeRefAttributeIndexed(MiniscriptTh
 		}
 
 		result.pod.objectRef = this;
-		result.pod.ptrOrOffset = asInteger - 1;
+		result.pod.ptrOrOffset = static_cast<uintptr>(asInteger) - 1;
 		result.pod.ifc = DynamicValueWriteInterfaceGlue<MuteTrackProxyInterface>::getInstance();
 
 		return kMiniscriptInstructionOutcomeContinue;
@@ -2786,7 +2798,7 @@ void ListVariableModifier::debugInspect(IDebugInspectionReport *report) const {
 }
 #endif
 
-ListVariableModifier::ListVariableModifier(const ListVariableModifier &other) {
+ListVariableModifier::ListVariableModifier(const ListVariableModifier &other) : _preferredContentType(DynamicValueTypes::kNull) {
 	if (other._list)
 		_list = other._list->clone();
 }
