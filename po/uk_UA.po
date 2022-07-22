@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-21 23:35+0000\n"
-"PO-Revision-Date: 2022-07-20 10:31+0000\n"
+"PO-Revision-Date: 2022-07-22 11:07+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -6041,16 +6041,12 @@ msgstr ""
 "оригінального mTropolis."
 
 #: engines/mtropolis/detection.cpp:65
-#, fuzzy
-#| msgid "Automatically saves the game at certain progress points."
 msgid "Autosave at progress points"
-msgstr "Автоматично зберігає гру в певних точках прогресу."
+msgstr "Автоматично зберігає гру в певних точках прогресу"
 
 #: engines/mtropolis/detection.cpp:66
-#, fuzzy
-#| msgid "Automatically saves the game at certain progress points."
 msgid "Automatically saves the game after completing puzzles and chapters."
-msgstr "Автоматично зберігає гру в певних точках прогресу."
+msgstr "Автоматично зберігає гру після розв'язання головоломок та розділів."
 
 #: engines/mtropolis/detection.cpp:76
 msgid "Enable short transitions"
@@ -6085,18 +6081,12 @@ msgid "Failed to load save, an error occurred when reading the save game data."
 msgstr "Не вдалося завантажити гру, виникла помилка під час читання даних."
 
 #: engines/mtropolis/saveload.cpp:199
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, an error occurred when reading the save game data."
 msgid "An internal error occurred while attempting to write save game data"
-msgstr "Не вдалося завантажити гру, виникла помилка під час читання даних."
+msgstr "Виникла внутрішня помилка під час спроби запису даних гри"
 
 #: engines/mtropolis/saveload.cpp:207
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, an error occurred when reading the save game data."
 msgid "An error occurred while writing the save game"
-msgstr "Не вдалося завантажити гру, виникла помилка під час читання даних."
+msgstr "Виникла помилка під час запису збереженої гри"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
