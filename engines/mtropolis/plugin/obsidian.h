@@ -272,14 +272,18 @@ struct WordGameLoadBucket {
 class WordGameData {
 public:
 	struct WordBucket {
-		Common::Array<char> chars;
-		Common::Array<uint16> wordIndexes;
-		uint32 spacing;
+		WordBucket();
+
+		Common::Array<char> _chars;
+		Common::Array<uint16> _wordIndexes;
+		uint32 _spacing;
 	};
 
 	struct SortedWord {
-		const char *chars;
-		uint length;
+		SortedWord();
+
+		const char *_chars;
+		uint _length;
 	};
 
 	bool load(Common::SeekableReadStream *stream, const WordGameLoadBucket *buckets, uint numBuckets, uint alignment, bool backwards);

@@ -34,11 +34,11 @@ struct ElementLoaderContext {
 	size_t streamIndex;
 };
 
-struct IElementFactory : public IInterfaceBase {
-	virtual Common::SharedPtr<Element> createElement(ElementLoaderContext &context, const Data::DataObject &dataObject) const = 0;
+struct SIElementFactory {
+	Common::SharedPtr<Element> (*createElement)(ElementLoaderContext &context, const Data::DataObject &dataObject);
 };
 
-IElementFactory *getElementFactoryForDataObjectType(Data::DataObjectTypes::DataObjectType dataObjectType);
+SIElementFactory *getElementFactoryForDataObjectType(Data::DataObjectTypes::DataObjectType dataObjectType);
 
 } // End of namespace MTropolis
 

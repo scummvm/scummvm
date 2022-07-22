@@ -99,6 +99,9 @@ MacFontFormatting::MacFontFormatting() : fontID(0), fontFlags(0), size(12) {
 MacFontFormatting::MacFontFormatting(uint16 mff_fontID, uint8 mff_fontFlags, uint16 mff_size) : fontID(mff_fontID), fontFlags(mff_fontFlags), size(mff_size) {
 }
 
+MacFormattingSpan::MacFormattingSpan() : spanStart(0) {
+}
+
 WindowParameters::WindowParameters(Runtime *wp_runtime, int32 wp_x, int32 wp_y, int16 wp_width, int16 wp_height, const Graphics::PixelFormat &wp_format)
 	: runtime(wp_runtime), x(wp_x), y(wp_y), width(wp_width), height(wp_height), format(wp_format) {
 }

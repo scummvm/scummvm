@@ -452,6 +452,12 @@ bool InternalTypeTaggedValue::load(DataReader &reader) {
 	return true;
 }
 
+
+
+PlugInTypeTaggedValue::PlugInTypeTaggedValue() : type(kNull) {
+	memset(&this->value, 0, sizeof(this->value));
+}
+
 bool PlugInTypeTaggedValue::load(DataReader &reader) {
 	if (!reader.readU16(type))
 		return false;
@@ -566,7 +572,7 @@ DataReadErrorCode ProjectLabelMap::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
-ProjectLabelMap::LabelTree::LabelTree() : children(nullptr) {
+ProjectLabelMap::LabelTree::LabelTree() : nameLength(0), isGroup(0), id(0), unknown1(0), flags(0), numChildren(0), children(nullptr) {
 }
 
 ProjectLabelMap::LabelTree::~LabelTree() {
@@ -621,6 +627,9 @@ DataReadErrorCode ProjectLabelMap::loadLabelTree(LabelTree &lt, DataReader &read
 		lt.numChildren = 0;
 
 	return kDataReadErrorNone;
+}
+
+ProjectHeader::ProjectHeader() : persistFlags(0), sizeIncludingTag(0), unknown1(0), catalogFilePosition(0) {
 }
 
 DataReadErrorCode ProjectHeader::load(DataReader &reader) {
@@ -847,6 +856,11 @@ DataReadErrorCode GlobalObjectInfo::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+
+
+ProjectCatalog::ProjectCatalog() : persistFlags(0), sizeOfStreamAndSegmentDescs(0), unknown1(0), unknown2(0), unknown3(0) {
+}
+
 DataReadErrorCode ProjectCatalog::load(DataReader &reader) {
 	if (_revision != 2 && _revision != 3) {
 		return kDataReadErrorUnsupportedRevision;
@@ -903,6 +917,15 @@ DataReadErrorCode ProjectCatalog::load(DataReader &reader) {
 	}
 
 	return kDataReadErrorNone;
+}
+
+StreamHeader::StreamHeader() : marker(0), sizeIncludingTag(0), unknown2(0) {
+	for (char &v : this->name)
+		v = 0;
+	for (uint8 &v : this->projectID)
+		v = 0;
+	for (uint8 &v : this->unknown1)
+		v = 0;
 }
 
 DataReadErrorCode StreamHeader::load(DataReader& reader) {

@@ -116,6 +116,30 @@ size_t CachedAudio::getNumSamples(const AudioMetadata &metadata) const {
 	}
 }
 
+MToonMetadata::FrameDef::FrameDef() : dataOffset(0), compressedSize(0), decompressedSize(0), decompressedBytesPerRow(0), isKeyFrame(false) {
+}
+
+bool MToonMetadata::FrameDef::load(AssetLoaderContext &context, const Data::MToonAsset::FrameDef &data) {
+	compressedSize = data.compressedSize;
+	dataOffset = data.dataOffset;
+	decompressedBytesPerRow = data.decompressedBytesPerRow;
+	decompressedSize = data.decompressedSize;
+	isKeyFrame = (data.keyframeFlag != 0);
+	if (!data.rect1.toScummVMRect(rect))
+		return false;
+
+	return true;
+}
+
+MToonMetadata::FrameRangeDef::FrameRangeDef() : startFrame(0), endFrame(0) {
+}
+
+MToonMetadata::MToonMetadata() : imageFormat(kImageFormatWindows), bitsPerPixel(0), codecID(0), encodingFlags(0) {
+}
+
+CachedMToon::RleFrame::RleFrame() : version(0), width(0), height(0), isKeyframe(0) {
+}
+
 CachedMToon::CachedMToon() : _isRLETemporalCompressed(false) {
 }
 
@@ -334,7 +358,7 @@ void CachedMToon::loadRLEFrames(const Common::Array<uint8> &data) {
 				// so we need to ignore it and derive size from the frameDef instead.
 				uint32 numDWords = (frameDef.compressedSize - 20) / 2;
 				rleFrame.data16.resize(numDWords);
-				memcpy(&rleFrame.data16[0], &data[baseOffset + 20], numDWords * 2);
+				memcpy(&rleFrame.data16[0], &data[baseOffset + 20], static_cast<size_t>(numDWords) * 2u);
 
 				uint16 *i16 = &rleFrame.data16[0];
 				if (_metadata->imageFormat == MToonMetadata::kImageFormatWindows) {
@@ -630,6 +654,12 @@ const Common::SharedPtr<MToonMetadata>& CachedMToon::getMetadata() const {
 	return _metadata;
 }
 
+
+
+AudioMetadata::AudioMetadata() : encoding(kEncodingUncompressed), durationMSec(0),
+	sampleRate(0), channels(0), bitsPerSample(0), isBigEndian(false) {
+}
+
 bool AudioAsset::load(AssetLoaderContext &context, const Data::AudioAsset &data) {
 	_assetID = data.assetID;
 
@@ -799,7 +829,7 @@ const Common::SharedPtr<Graphics::Surface> &CachedImage::optimize(Runtime *runti
 	return _optimizedSurface;
 }
 
-ImageAsset::ImageAsset() {
+ImageAsset::ImageAsset() : _colorDepth(kColorDepthMode8Bit), _filePosition(0), _size(0), _streamIndex(0), _imageFormat(kImageFormatWindows) {
 }
 
 ImageAsset::~ImageAsset() {
@@ -1094,18 +1124,6 @@ const Common::SharedPtr<CachedMToon> &MToonAsset::loadAndCacheMToon(Runtime *run
 	_cachedMToon = cachedMToon;
 
 	return _cachedMToon;
-}
-
-bool MToonMetadata::FrameDef::load(AssetLoaderContext &context, const Data::MToonAsset::FrameDef &data) {
-	compressedSize = data.compressedSize;
-	dataOffset = data.dataOffset;
-	decompressedBytesPerRow = data.decompressedBytesPerRow;
-	decompressedSize = data.decompressedSize;
-	isKeyFrame = (data.keyframeFlag != 0);
-	if (!data.rect1.toScummVMRect(rect))
-		return false;
-
-	return true;
 }
 
 bool MToonMetadata::FrameRangeDef::load(AssetLoaderContext &context, const Data::MToonAsset::FrameRangeDef &data) {

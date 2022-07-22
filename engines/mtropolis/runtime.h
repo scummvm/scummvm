@@ -1029,13 +1029,7 @@ struct DynamicValueWriteFuncHelper {
 		proxy.pod.objectRef = obj;
 		proxy.pod.ifc = DynamicValueWriteInterfaceGlue<DynamicValueWriteFuncHelper<TClass, TWriteMethod> >::getInstance();
 	}
-
-private:
-	static DynamicValueWriteFuncHelper _instance;
 };
-
-template<class TClass, MiniscriptInstructionOutcome (TClass::*TWriteMethod)(MiniscriptThread *thread, const DynamicValue &dest)>
-DynamicValueWriteFuncHelper<TClass, TWriteMethod> DynamicValueWriteFuncHelper<TClass, TWriteMethod>::_instance;
 
 struct DynamicValueWriteObjectHelper {
 	static MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset);
@@ -1083,13 +1077,6 @@ private:
 	static bool isSectionFilter(Structural *section);
 	static bool isSubsectionFilter(Structural *section);
 	static bool isElementFilter(Structural *section);
-};
-
-struct Message {
-	Message();
-
-	Event evt;
-	DynamicValue data;
 };
 
 enum MessageDestination {
@@ -1626,6 +1613,8 @@ private:
 	};
 
 	struct Teardown {
+		Teardown();
+
 		Common::WeakPtr<Structural> structural;
 		bool onlyRemoveChildren;
 	};
@@ -1644,20 +1633,29 @@ private:
 	};
 
 	struct ConsumeMessageTaskData {
+		ConsumeMessageTaskData();
+
 		IMessageConsumer *consumer;
 		Common::SharedPtr<MessageProperties> message;
 	};
 
 	struct ConsumeCommandTaskData {
+		ConsumeCommandTaskData();
+
 		Structural *structural;
 		Common::SharedPtr<MessageProperties> message;
 	};
 
 	struct UpdateMouseStateTaskData {
+		UpdateMouseStateTaskData();
+
 		bool mouseDown;
 	};
 
 	struct UpdateMousePositionTaskData {
+		UpdateMousePositionTaskData() : x(0), y(0) {
+		}
+
 		int32 x;
 		int32 y;
 	};
@@ -2195,6 +2193,7 @@ struct MediaCueState {
 	MessengerSendSpec send;
 	DynamicValue incomingData;
 
+	MediaCueState();
 	void checkTimestampChange(Runtime *runtime, uint32 oldTS, uint32 newTS, bool continuousTimestamps, bool canTriggerDuring);
 };
 
@@ -2239,6 +2238,8 @@ public:
 
 private:
 	struct LabelSuperGroup {
+		LabelSuperGroup();
+
 		size_t firstRootNodeIndex;
 		size_t numRootNodes;
 		size_t numTotalNodes;
@@ -2248,6 +2249,8 @@ private:
 	};
 
 	struct LabelTree {
+		LabelTree();
+
 		size_t firstChildIndex;
 		size_t numChildren;
 

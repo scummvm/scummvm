@@ -80,6 +80,9 @@ DataReadErrorCode ObjectReferenceVariableModifier::load(PlugIn &plugIn, const Pl
 	return kDataReadErrorNone;
 }
 
+MidiModifier::MidiModifier() : embeddedFlag(0) {
+}
+
 DataReadErrorCode MidiModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
 	if (prefix.plugInRevision != 1 && prefix.plugInRevision != 2)
 		return kDataReadErrorUnsupportedRevision;
@@ -117,7 +120,10 @@ DataReadErrorCode MidiModifier::load(PlugIn &plugIn, const PlugInModifier &prefi
 	return kDataReadErrorNone;
 }
 
-ListVariableModifier::ListVariableModifier() : values(nullptr) {
+ListVariableModifier::ListVariableModifier() : unknown1(0), contentsType(0),
+	havePersistentData(false), numValues(0), values(nullptr), persistentValuesGarbled(false) {
+	for (uint8 &v : unknown2)
+		v = 0;
 }
 
 ListVariableModifier::~ListVariableModifier() {

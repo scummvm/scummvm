@@ -347,6 +347,8 @@ struct PlugInTypeTaggedValue : public Common::NonCopyable {
 		uint32 asVarRefGUID;
 	};
 
+	PlugInTypeTaggedValue();
+
 	uint16 type;
 	ValueUnion value;
 
@@ -374,6 +376,8 @@ protected:
 };
 
 struct ProjectHeader : public DataObject {
+	ProjectHeader();
+
 	uint32 persistFlags;
 	uint32 sizeIncludingTag;
 	uint16 unknown1;
@@ -753,6 +757,8 @@ public:
 		Common::String exportedPath;
 	};
 
+	ProjectCatalog();
+
 	uint32 persistFlags;
 	uint32 sizeOfStreamAndSegmentDescs;
 	uint16 unknown1;
@@ -767,6 +773,7 @@ protected:
 };
 
 struct StreamHeader : public DataObject {
+	StreamHeader();
 
 	uint32 marker;
 	uint32 sizeIncludingTag;

@@ -3731,6 +3731,19 @@ const Common::KeyState &KeyboardInputEvent::getKeyState() const {
 Runtime::SceneStackEntry::SceneStackEntry() {
 }
 
+Runtime::Teardown::Teardown() : onlyRemoveChildren(false) {
+}
+
+
+Runtime::ConsumeMessageTaskData::ConsumeMessageTaskData() : consumer(nullptr) {
+}
+
+Runtime::ConsumeCommandTaskData::ConsumeCommandTaskData() : structural(nullptr) {
+}
+
+Runtime::UpdateMouseStateTaskData::UpdateMouseStateTaskData() : mouseDown(false) {
+}
+
 SceneTransitionHooks::~SceneTransitionHooks() {
 }
 
@@ -6108,6 +6121,9 @@ void KeyboardEventSignaller::removeReceiver(IKeyboardEventReceiver *receiver) {
 	}
 }
 
+MediaCueState::MediaCueState() : minTime(0), maxTime(0), sourceModifier(nullptr), triggerTiming(kTriggerTimingStart) {
+}
+
 void MediaCueState::checkTimestampChange(Runtime *runtime, uint32 oldTS, uint32 newTS, bool continuousTimestamps, bool canTriggerDuring) {
 	bool entersRange = (static_cast<int32>(oldTS) < minTime && static_cast<int32>(newTS) >= minTime);
 	bool exitsRange = (static_cast<int32>(oldTS) <= maxTime && static_cast<int32>(newTS) > maxTime);
@@ -6131,6 +6147,13 @@ void MediaCueState::checkTimestampChange(Runtime *runtime, uint32 oldTS, uint32 
 	// Given the positioning of this, there's not really a way for the immediate flag to have any effect?
 	if (shouldTrigger)
 		send.sendFromMessenger(runtime, sourceModifier, incomingData, nullptr);
+}
+
+
+Project::LabelSuperGroup::LabelSuperGroup() : firstRootNodeIndex(0), numRootNodes(0), numTotalNodes(0), superGroupID(0) {
+}
+
+Project::LabelTree::LabelTree() : firstChildIndex(0), numChildren(0), id(0) {
 }
 
 Project::Segment::Segment() : weakStream(nullptr) {
@@ -6876,7 +6899,7 @@ void Project::loadContextualObject(size_t streamIndex, ChildLoaderStack &stack, 
 			if (topContext.containerUnion.filteredElements.filterFunc(dataObjectType)) {
 				const Data::StructuralDef &structuralDef = static_cast<const Data::StructuralDef &>(dataObject);
 
-				IElementFactory *elementFactory = getElementFactoryForDataObjectType(dataObjectType);
+				SIElementFactory *elementFactory = getElementFactoryForDataObjectType(dataObjectType);
 				if (!elementFactory) {
 					error("No element factory defined for structural object");
 				}

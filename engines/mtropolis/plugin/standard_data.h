@@ -118,6 +118,8 @@ struct MidiModifier : public PlugInModifierData {
 		SingleNotePart singleNote;
 	};
 
+	MidiModifier();
+
 	PlugInTypeTaggedValue executeWhen;
 	PlugInTypeTaggedValue terminateWhen;
 

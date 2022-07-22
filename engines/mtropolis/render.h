@@ -71,6 +71,8 @@ struct MacFontFormatting {
 };
 
 struct MacFormattingSpan {
+	MacFormattingSpan();
+
 	uint16 spanStart;
 	MacFontFormatting formatting;
 };
