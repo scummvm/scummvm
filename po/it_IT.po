@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-21 23:35+0000\n"
-"PO-Revision-Date: 2022-07-18 01:32+0000\n"
+"PO-Revision-Date: 2022-07-22 09:25+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -6105,16 +6105,14 @@ msgstr ""
 "fedele al player originale di mTropolis."
 
 #: engines/mtropolis/detection.cpp:65
-#, fuzzy
-#| msgid "Automatically saves the game at certain progress points."
 msgid "Autosave at progress points"
-msgstr "Salva automaticamente al raggiungimento di alcuni punti prestabiliti."
+msgstr "Salvataggio automatico ai checkpoint"
 
 #: engines/mtropolis/detection.cpp:66
-#, fuzzy
-#| msgid "Automatically saves the game at certain progress points."
 msgid "Automatically saves the game after completing puzzles and chapters."
-msgstr "Salva automaticamente al raggiungimento di alcuni punti prestabiliti."
+msgstr ""
+"Salva automaticamente al termine di ogni capitolo e al completamento dei "
+"puzzle."
 
 #: engines/mtropolis/detection.cpp:76
 msgid "Enable short transitions"
@@ -6155,22 +6153,12 @@ msgstr ""
 "dei dati."
 
 #: engines/mtropolis/saveload.cpp:199
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, an error occurred when reading the save game data."
 msgid "An internal error occurred while attempting to write save game data"
-msgstr ""
-"Impossibile caricare il salvataggio, rilevato un errore durante la lettura "
-"dei dati."
+msgstr "Errore interno durante il salvataggio della partita"
 
 #: engines/mtropolis/saveload.cpp:207
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, an error occurred when reading the save game data."
 msgid "An error occurred while writing the save game"
-msgstr ""
-"Impossibile caricare il salvataggio, rilevato un errore durante la lettura "
-"dei dati."
+msgstr "Errore durante il salvataggio della partita"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
