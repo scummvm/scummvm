@@ -91,6 +91,7 @@ static const GLchar *readFile(const Common::String &filename) {
 	SearchMan.addDirectory("STARK_SHADERS", "engines/stark", 0, 2);
 	SearchMan.addDirectory("WINTERMUTE_SHADERS", "engines/wintermute/base/gfx/opengl", 0, 2);
 	SearchMan.addDirectory("PLAYGROUND3D_SHADERS", "engines/playground3d", 0, 2);
+	SearchMan.addDirectory("HPL1_SHADERS", "engines/hpl1/engine/impl", 0, 2);
 	if (ConfMan.hasKey("extrapath")) {
 		SearchMan.addDirectory("EXTRA_PATH", Common::FSNode(ConfMan.get("extrapath")), 0, 2);
 	}
@@ -106,6 +107,7 @@ static const GLchar *readFile(const Common::String &filename) {
 	SearchMan.remove("WINTERMUTE_SHADERS");
 	SearchMan.remove("PLAYGROUND3D_SHADERS");
 	SearchMan.remove("EXTRA_PATH");
+	SearchMan.remove("HPL1_SHADERS");
 
 	const int32 size = file.size();
 	GLchar *shaderSource = new GLchar[size + 1];
