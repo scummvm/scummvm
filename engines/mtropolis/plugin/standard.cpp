@@ -500,7 +500,7 @@ private:
 		void deallocate();
 
 		SourceChannelState _sourceChannelState[MidiDriver_BASE::MIDI_CHANNEL_COUNT];
-		uint8 _masterVolume;
+		uint16 _root4MasterVolume;
 		bool _isAllocated;
 	};
 
@@ -633,7 +633,7 @@ void MidiCombinerDynamic::deallocateSource(uint sourceID) {
 
 void MidiCombinerDynamic::setSourceVolume(uint sourceID, uint8 volume) {
 	SourceState &src = _sources[sourceID];
-	src._masterVolume = volume;
+	src._root4MasterVolume = static_cast<uint16>(floor(sqrt(sqrt(volume)) * 16400.0));
 
 	for (uint i = 0; i < ARRAYSIZE(_outputChannels); i++) {
 		OutputChannelState &ch = _outputChannels[i];
@@ -1264,20 +1264,12 @@ void MidiCombinerDynamic::syncSourceHRController(uint outputChannel, OutputChann
 
 	if (hrController == MidiDriver_BASE::MIDI_CONTROLLER_VOLUME) {
 		// GM volume to gain control is 40*log10(V/127)
-		// This means linearScale is (volume/0x3f80)^4
-		const double maxVolScale = 0x3f80;
-
-		double linearScale = static_cast<double>(effectiveValue) / maxVolScale;
-		linearScale *= linearScale;
-		linearScale *= linearScale;
-
-		linearScale *= static_cast<double>(srcState._masterVolume) * (1.0 / 255.0);
-
-		double gmScale = sqrt(sqrt(linearScale)) * maxVolScale;
-		if (gmScale > static_cast<double>(0x3fff))
-			gmScale = 0x3fff;
-
-		effectiveValue = static_cast<uint16>(gmScale);
+		// This means linear scale is (volume/0x3f80)^4
+		// To modulate the volume linearly, we must multiply the volume by the 4th root
+		// of the volume.
+		uint32 effectiveValueScaled = static_cast<uint32>(srcState._root4MasterVolume) * static_cast<uint32>(effectiveValue);
+		effectiveValueScaled += (effectiveValueScaled >> 16) + 1u;
+		effectiveValue = static_cast<uint16>(effectiveValueScaled >> 16);
 	}
 
 	if (outState._hrControllers[hrController] == effectiveValue)
@@ -1385,7 +1377,7 @@ MidiCombinerDynamic::SourceChannelState::SourceChannelState() {
 void MidiCombinerDynamic::SourceChannelState::reset() {
 }
 
-MidiCombinerDynamic::SourceState::SourceState() : _isAllocated(false), _masterVolume(255) {
+MidiCombinerDynamic::SourceState::SourceState() : _isAllocated(false), _root4MasterVolume(0xffffu) {
 }
 
 void MidiCombinerDynamic::SourceState::allocate() {
