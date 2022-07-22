@@ -1724,6 +1724,7 @@ MiniscriptInstructionOutcome STransCtModifier::scriptSetSteps(MiniscriptThread *
 
 MediaCueMessengerModifier::MediaCueMessengerModifier() : _isActive(false), _cueSourceType(kCueSourceInteger) {
 	_mediaCue.sourceModifier = this;
+	memset(&this->_cueSource, 0, sizeof(this->_cueSource));
 }
 
 bool MediaCueMessengerModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::MediaCueMessengerModifier &data) {
@@ -2265,8 +2266,10 @@ bool ObjectReferenceVariableModifier::SaveLoad::loadInternal(Common::ReadStream 
 
 
 MidiModifier::MidiModifier() : _executeWhen(Event::create()), _terminateWhen(Event::create()),
-	_mode(kModeFile), _volume(100), _mutedTracks(0), _singleNoteChannel(0), _singleNoteNote(0),
-	_plugIn(nullptr), _filePlayer(nullptr), _notePlayer(nullptr), _runtime(nullptr) {
+							   _mode(kModeFile), _volume(100), _mutedTracks(0), _singleNoteChannel(0), _singleNoteNote(0),
+							   _plugIn(nullptr), _filePlayer(nullptr), _notePlayer(nullptr), _runtime(nullptr) {
+
+	memset(&this->_modeSpecific, 0, sizeof(this->_modeSpecific));
 }
 
 MidiModifier::~MidiModifier() {

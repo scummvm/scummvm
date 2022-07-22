@@ -30,8 +30,8 @@ namespace MTropolis {
 
 namespace Obsidian {
 
-MovementModifier::MovementModifier() : _enableWhen(Event::create()), _disableWhen(Event::create()), _triggerEvent(Event::create()),
-	_moveStartTime(0), _runtime(nullptr) {
+MovementModifier::MovementModifier() : _type(false), _rate(0), _frequency(0),
+	_enableWhen(Event::create()), _disableWhen(Event::create()), _triggerEvent(Event::create()), _moveStartTime(0), _runtime(nullptr) {
 }
 
 MovementModifier::~MovementModifier() {

@@ -215,6 +215,7 @@ private:
 
 struct Rect {
 	bool load(DataReader &reader);
+	static Rect createDefault();
 
 	bool toScummVMRect(Common::Rect &outRect) const;
 	bool toScummVMRectUnchecked(Common::Rect &outRect) const;
@@ -229,12 +230,15 @@ struct Point {
 	bool load(DataReader &reader);
 	bool toScummVMPoint(Common::Point &outPoint) const;
 
+	static Point createDefault();
+
 	int16 x;
 	int16 y;
 };
 
 struct Event {
 	bool load(DataReader &reader);
+	static Event createDefault();
 
 	uint32 eventID;
 	uint32 eventInfo;
@@ -439,6 +443,8 @@ private:
 };
 
 struct PresentationSettings : public DataObject {
+	PresentationSettings();
+
 	uint32 persistFlags;
 	uint32 sizeIncludingTag;
 	uint8 unknown1[2];
@@ -457,6 +463,8 @@ struct AssetCatalog : public DataObject {
 	};
 
 	struct AssetInfo {
+		AssetInfo();
+
 		uint32 flags1;
 		uint16 nameLength;
 		uint16 alwaysZero;
@@ -466,6 +474,8 @@ struct AssetCatalog : public DataObject {
 		uint32 flags2;
 		Common::String name;
 	};
+
+	AssetCatalog();
 
 	uint32 persistFlags;
 	uint32 totalNameSizePlus22;
@@ -478,6 +488,8 @@ protected:
 };
 
 struct Unknown19 : public DataObject {
+	Unknown19();
+
 	uint32 persistFlags;
 	uint32 sizeIncludingTag;
 	uint8 unknown1[2];
@@ -487,10 +499,14 @@ protected:
 };
 
 struct StructuralDef : public DataObject {
+	StructuralDef();
+
 	uint32 structuralFlags;
 };
 
 struct ProjectStructuralDef : public DataObject {
+	ProjectStructuralDef();
+
 	uint32 unknown1; // Seems to always be 0x16 or 0x9
 	uint32 sizeIncludingTag;
 	uint32 guid;
@@ -504,6 +520,8 @@ protected:
 };
 
 struct SectionStructuralDef : public StructuralDef {
+	SectionStructuralDef();
+
 	uint32 sizeIncludingTag;
 	uint32 guid;
 	uint16 lengthOfName;
@@ -519,6 +537,8 @@ protected:
 };
 
 struct SubsectionStructuralDef : public StructuralDef {
+	SubsectionStructuralDef();
+
 	uint32 structuralFlags;
 	uint32 sizeIncludingTag;
 	uint32 guid;
@@ -582,6 +602,8 @@ enum SceneTransitionDirection {
 } // End of namespace SceneTransitionDirections
 
 struct GraphicElement : public StructuralDef {
+	GraphicElement();
+
 	// Possible element flags: NotDirectToScreen, CacheBitmap, Hidden
 	uint32 sizeIncludingTag;
 	uint32 guid;

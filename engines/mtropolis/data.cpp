@@ -317,6 +317,15 @@ bool Rect::load(DataReader &reader) {
 		return false;
 }
 
+Rect Rect::createDefault() {
+	Rect rect;
+	rect.top = 0;
+	rect.bottom = 0;
+	rect.left = 0;
+	rect.right = 0;
+	return rect;
+}
+
 bool Rect::toScummVMRect(Common::Rect &outRect) const {
 	if (left > right || top > bottom)
 		return false;
@@ -332,6 +341,13 @@ bool Rect::toScummVMRectUnchecked(Common::Rect &outRect) const {
 	return true;
 }
 
+Point Point::createDefault() {
+	Point pt;
+	pt.x = 0;
+	pt.y = 0;
+	return pt;
+}
+
 bool Point::load(DataReader &reader) {
 	if (reader.getProjectFormat() == kProjectFormatMacintosh)
 		return reader.readS16(y) && reader.readS16(x);
@@ -344,6 +360,13 @@ bool Point::load(DataReader &reader) {
 bool Point::toScummVMPoint(Common::Point &outPoint) const {
 	outPoint = Common::Point(x, y);
 	return true;
+}
+
+Event Event::createDefault() {
+	Event evt;
+	evt.eventID = 0;
+	evt.eventInfo = 0;
+	return evt;
 }
 
 bool Event::load(DataReader& reader) {
@@ -581,7 +604,7 @@ ProjectLabelMap::LabelTree::~LabelTree() {
 }
 
 ProjectLabelMap::SuperGroup::SuperGroup()
-	: tree(nullptr) {
+	: nameLength(0), id(0), unknown2(0), numChildren(0), tree(nullptr) {
 }
 
 ProjectLabelMap::SuperGroup::~SuperGroup() {
@@ -644,6 +667,10 @@ DataReadErrorCode ProjectHeader::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+PresentationSettings::PresentationSettings()
+	: persistFlags(0), dimensions(Point::createDefault()), sizeIncludingTag(0), unknown1{0, 0}, bitsPerPixel(0), unknown4(0) {
+}
+
 DataReadErrorCode PresentationSettings::load(DataReader &reader) {
 	if (_revision != 2)
 		return kDataReadErrorUnsupportedRevision;
@@ -660,6 +687,12 @@ DataReadErrorCode PresentationSettings::load(DataReader &reader) {
 		return kDataReadErrorUnrecognized;
 
 	return kDataReadErrorNone;
+}
+
+AssetCatalog::AssetInfo::AssetInfo() : flags1(0), nameLength(0), alwaysZero(0), unknown1(0), filePosition(0), assetType(0), flags2(0) {
+}
+
+AssetCatalog::AssetCatalog() : persistFlags(0), totalNameSizePlus22(0), unknown1{0, 0, 0, 0}, numAssets(0) {
 }
 
 DataReadErrorCode AssetCatalog::load(DataReader& reader) {
@@ -686,6 +719,9 @@ DataReadErrorCode AssetCatalog::load(DataReader& reader) {
 	return kDataReadErrorNone;
 }
 
+Unknown19::Unknown19() : persistFlags(0), sizeIncludingTag(0), unknown1{0, 0} {
+}
+
 DataReadErrorCode Unknown19::load(DataReader &reader) {
 	if (_revision != 0)
 		return kDataReadErrorUnsupportedRevision;
@@ -694,6 +730,12 @@ DataReadErrorCode Unknown19::load(DataReader &reader) {
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
+}
+
+StructuralDef::StructuralDef() : structuralFlags(0) {
+}
+
+ProjectStructuralDef::ProjectStructuralDef() : unknown1(0), sizeIncludingTag(0), guid(0), otherFlags(0), lengthOfName(0) {
 }
 
 DataReadErrorCode ProjectStructuralDef::load(DataReader &reader) {
@@ -705,6 +747,10 @@ DataReadErrorCode ProjectStructuralDef::load(DataReader &reader) {
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
+}
+
+SectionStructuralDef::SectionStructuralDef()
+	: sizeIncludingTag(0), guid(0), lengthOfName(0), otherFlags(0), unknown4(0), sectionID(0), segmentID(0) {
 }
 
 DataReadErrorCode SectionStructuralDef::load(DataReader &reader) {
@@ -719,6 +765,10 @@ DataReadErrorCode SectionStructuralDef::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+SubsectionStructuralDef::SubsectionStructuralDef()
+	: structuralFlags(0), sizeIncludingTag(0), guid(0), lengthOfName(0), otherFlags(0), sectionID(0) {
+}
+
 DataReadErrorCode SubsectionStructuralDef::load(DataReader &reader) {
 	if (_revision != 0)
 		return kDataReadErrorUnsupportedRevision;
@@ -729,6 +779,11 @@ DataReadErrorCode SubsectionStructuralDef::load(DataReader &reader) {
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
+}
+
+GraphicElement::GraphicElement()
+	: sizeIncludingTag(0), guid(0), lengthOfName(0), elementFlags(0), layer(0), sectionID(0),
+	  rect1(Rect::createDefault()), rect2(Rect::createDefault()), streamLocator(0), unknown11{0, 0, 0, 0} {
 }
 
 DataReadErrorCode GraphicElement::load(DataReader& reader) {
@@ -919,13 +974,9 @@ DataReadErrorCode ProjectCatalog::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
-StreamHeader::StreamHeader() : marker(0), sizeIncludingTag(0), unknown2(0) {
-	for (char &v : this->name)
-		v = 0;
-	for (uint8 &v : this->projectID)
-		v = 0;
-	for (uint8 &v : this->unknown1)
-		v = 0;
+StreamHeader::StreamHeader()
+	: marker(0), sizeIncludingTag(0), unknown2(0), name{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	  projectID{0, 0}, unknown1{0, 0, 0, 0} {
 }
 
 DataReadErrorCode StreamHeader::load(DataReader& reader) {

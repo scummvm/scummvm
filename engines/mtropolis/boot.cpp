@@ -57,6 +57,8 @@ struct FileIdentification {
 		char debug[4];
 	};
 
+	FileIdentification();
+
 	Common::String fileName;
 	FileCategory category;
 
@@ -65,6 +67,11 @@ struct FileIdentification {
 	Common::SharedPtr<Common::MacResManager> resMan;
 	Common::SharedPtr<Common::SeekableReadStream> stream;
 };
+
+FileIdentification::FileIdentification() : category(kFileCategoryUnknown) {
+	macType.value = 0;
+	macCreator.value = 0;
+}
 
 static void initResManForFile(FileIdentification &f) {
 	if (!f.resMan) {
