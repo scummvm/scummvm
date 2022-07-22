@@ -799,6 +799,11 @@ DataReadErrorCode GraphicElement::load(DataReader& reader) {
 	return kDataReadErrorNone;
 }
 
+ImageElement::ImageElement()
+	: sizeIncludingTag(0), guid(0), lengthOfName(0), elementFlags(0), layer(0), sectionID(0),
+	  rect1(Rect::createDefault()), rect2(Rect::createDefault()), imageAssetID(0), streamLocator(0), unknown7{0, 0, 0, 0} {
+}
+
 DataReadErrorCode ImageElement::load(DataReader &reader) {
 	if (_revision != 2)
 		return kDataReadErrorUnsupportedRevision;
@@ -855,6 +860,11 @@ DataReadErrorCode TextLabelElement::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+SoundElement::SoundElement()
+	: sizeIncludingTag(0), guid(0), lengthOfName(0), elementFlags(0), soundFlags(0), unknown2(0),
+	  unknown3{0, 0}, rightVolume(0), leftVolume(0), balance(0), assetID(0), unknown5{0, 0, 0, 0, 0, 0, 0, 0} {
+}
+
 DataReadErrorCode SoundElement::load(DataReader& reader) {
 	if (_revision != 3)
 		return kDataReadErrorUnsupportedRevision;
@@ -867,6 +877,13 @@ DataReadErrorCode SoundElement::load(DataReader& reader) {
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
+}
+
+MovieElement::MovieElement()
+	: sizeIncludingTag(0), guid(0), lengthOfName(0), elementFlags(0), layer(0),
+	  unknown3{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	  sectionID(0), unknown5{0, 0}, rect1(Rect::createDefault()), rect2(Rect::createDefault()), assetID(0), unknown7(0), volume(0), animationFlags(0),
+	  unknown10{0, 0, 0, 0}, unknown11{0, 0, 0, 0}, streamLocator(0), unknown13{0, 0, 0, 0} {
 }
 
 DataReadErrorCode MovieElement::load(DataReader &reader) {
@@ -885,6 +902,11 @@ DataReadErrorCode MovieElement::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+MToonElement::MToonElement()
+	: sizeIncludingTag(0), guid(0), lengthOfName(0), elementFlags(0), layer(0), animationFlags(0), unknown4{ 0, 0, 0, 0 },
+	  sectionID(0), rect1(Rect::createDefault()), rect2(Rect::createDefault()), assetID(0), rateTimes100000(0), streamLocator(0), unknown6(0) {
+}
+
 DataReadErrorCode MToonElement::load(DataReader &reader) {
 	if (_revision != 2 && _revision != 3)
 		return kDataReadErrorUnsupportedRevision;
@@ -900,6 +922,10 @@ DataReadErrorCode MToonElement::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+GlobalObjectInfo::GlobalObjectInfo()
+	: persistFlags(0), sizeIncludingTag(0), numGlobalModifiers(0), unknown1{0, 0, 0, 0} {
+}
+
 DataReadErrorCode GlobalObjectInfo::load(DataReader &reader) {
 	if (_revision != 0)
 		return kDataReadErrorUnsupportedRevision;
@@ -910,8 +936,6 @@ DataReadErrorCode GlobalObjectInfo::load(DataReader &reader) {
 
 	return kDataReadErrorNone;
 }
-
-
 
 ProjectCatalog::ProjectCatalog() : persistFlags(0), sizeOfStreamAndSegmentDescs(0), unknown1(0), unknown2(0), unknown3(0) {
 }
@@ -999,6 +1023,12 @@ DataReadErrorCode StreamHeader::load(DataReader& reader) {
 	return kDataReadErrorNone;
 }
 
+BehaviorModifier::BehaviorModifier()
+	: modifierFlags(0), sizeIncludingTag(0), unknown2{0, 0}, guid(0), unknown4(0), unknown5(0), unknown6(0),
+	  editorLayoutPosition(Point::createDefault()), lengthOfName(0), numChildren(0), behaviorFlags(0),
+	  enableWhen(Event::createDefault()), disableWhen(Event::createDefault()), unknown7{0, 0} {
+}
+
 DataReadErrorCode BehaviorModifier::load(DataReader& reader) {
 	if (_revision != 1)
 		return kDataReadErrorUnsupportedRevision;
@@ -1017,6 +1047,20 @@ DataReadErrorCode BehaviorModifier::load(DataReader& reader) {
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
+}
+
+MiniscriptProgram::LocalRef::LocalRef()
+	: guid(0), lengthOfName(0), unknown2(0) {
+}
+
+
+MiniscriptProgram::Attribute::Attribute()
+	: lengthOfName(0), unknown3(0) {
+}
+
+MiniscriptProgram::MiniscriptProgram()
+	: unknown1(0), sizeOfInstructions(0), numOfInstructions(0), numLocalRefs(0), numAttributes(0),
+	  projectFormat(kProjectFormatUnknown), isBigEndian(false) {
 }
 
 bool MiniscriptProgram::load(DataReader &reader) {
@@ -1057,6 +1101,10 @@ bool MiniscriptProgram::load(DataReader &reader) {
 	}
 
 	return true;
+}
+
+TypicalModifierHeader::TypicalModifierHeader()
+	: modifierFlags(0), sizeIncludingTag(0), guid(0), unknown3{0, 0, 0, 0, 0, 0}, unknown4(0), editorLayoutPosition(Point::createDefault()), lengthOfName(0) {
 }
 
 bool TypicalModifierHeader::load(DataReader& reader) {

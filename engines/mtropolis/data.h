@@ -623,6 +623,8 @@ protected:
 };
 
 struct ImageElement : public StructuralDef {
+	ImageElement();
+
 	// Possible element flags: NotDirectToScreen, CacheBitmap, Hidden
 	uint32 sizeIncludingTag;
 	uint32 guid;
@@ -684,6 +686,8 @@ struct SoundElement : public StructuralDef {
 		kLoop = 0x80000000,
 	};
 
+	SoundElement();
+
 	// Possible element flags: Loop, Paused
 	uint32 sizeIncludingTag;
 	uint32 guid;
@@ -705,6 +709,8 @@ protected:
 };
 
 struct MovieElement : public StructuralDef {
+	MovieElement();
+
 	// Possible flags: NotDirectToScreen, CacheBitmap, Hidden, Loop, Loop + Alternate, Paused
 	uint32 sizeIncludingTag;
 	uint32 guid;
@@ -732,6 +738,8 @@ protected:
 };
 
 struct MToonElement : public StructuralDef {
+	MToonElement();
+
 	// Possible flags: NotDirectToScreen, CacheBitmap, Hidden, Loop, Paused, PlayEveryFrame (inverted as "Maintain Rate")
 	uint32 sizeIncludingTag;
 	uint32 guid;
@@ -755,16 +763,18 @@ protected:
 };
 
 struct GlobalObjectInfo : public DataObject {
-	DataReadErrorCode load(DataReader &reader) override;
+	GlobalObjectInfo();
 
 	uint32 persistFlags;
 	uint32 sizeIncludingTag;
 	uint16 numGlobalModifiers;
 	uint8 unknown1[4];
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
 };
 
 class ProjectCatalog : public DataObject {
-
 public:
 	struct StreamDesc {
 		char streamType[25];
@@ -813,6 +823,8 @@ struct BehaviorModifier : public DataObject {
 		kBehaviorFlagSwitchable = 1,
 	};
 
+	BehaviorModifier();
+
 	uint32 modifierFlags;
 	uint32 sizeIncludingTag;
 	uint8 unknown2[2];
@@ -836,6 +848,8 @@ protected:
 
 struct MiniscriptProgram {
 	struct LocalRef {
+		LocalRef();
+
 		uint32 guid;
 		uint8 lengthOfName;
 		uint8 unknown2;
@@ -844,11 +858,15 @@ struct MiniscriptProgram {
 	};
 
 	struct Attribute {
+		Attribute();
+
 		uint8 lengthOfName;
 		uint8 unknown3;
 
 		Common::String name;
 	};
+
+	MiniscriptProgram();
 
 	uint32 unknown1;
 	uint32 sizeOfInstructions;
@@ -868,6 +886,8 @@ struct MiniscriptProgram {
 
 // Header used for most modifiers, but not all
 struct TypicalModifierHeader {
+	TypicalModifierHeader();
+
 	uint32 modifierFlags;
 	uint32 sizeIncludingTag;
 	uint32 guid;
