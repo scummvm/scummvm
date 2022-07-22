@@ -66,9 +66,12 @@ static const char USAGE_STRING[] =
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
 #if defined(ANDROID) || defined(__DS__) || defined(__3DS__)
-static const char HELP_STRING[] = "NoUsageString"; // save more data segment space
+static const char HELP_STRING1[] = "%s None"; // save more data segment space
+static const char HELP_STRING2[] = "None";
+static const char HELP_STRING3[] = "None";
+static const char HELP_STRING4[] = "None";
 #else
-static const char HELP_STRING[] =
+static const char HELP_STRING1[] =
 	"ScummVM - Graphical Adventure Game Interpreter\n"
 	"Usage: %s [OPTIONS]... [GAME]\n"
 	"  -v, --version            Display ScummVM version information and exit\n"
@@ -125,9 +128,19 @@ static const char HELP_STRING[] =
 	"  --themepath=PATH         Path to where GUI themes are stored\n"
 	"  --list-themes            Display list of all usable GUI themes\n"
 	"  -e, --music-driver=MODE  Select music driver (see README for details)\n"
-	"  --list-audio-devices     List all available audio devices\n"
-	"  -q, --language=LANG      Select language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,\n"
-	"                           hb,ru,cz)\n"
+	"  --list-audio-devices     List all available audio devices\n";
+
+// Make it match the indentation of the main list
+#define kCommandLineIndent \
+	"                           "
+#define kCommandMaxWidth 79
+static const char HELP_STRING2[] =
+	"  -q, --language=LANG      Select language (";
+
+static const char HELP_STRING3[] =
+	"  --platform=WORD          Specify platform of game (allowed values: ";
+
+static const char HELP_STRING4[] =
 	"  -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)\n"
 	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)\n"
 	"  -r, --speech-volume=NUM  Set the speech volume, 0-255 (default: 192)\n"
@@ -146,12 +159,6 @@ static const char HELP_STRING[] =
 	"                           drive, path, or numeric index (default: 0 = best\n"
 	"                           choice drive)\n"
 	"  --joystick[=NUM]         Enable joystick input (default: 0 = first joystick)\n"
-	"  --platform=WORD          Specify platform of game (allowed values: 2gs, 3do,\n"
-	"                           acorn, amiga, android, apple2, atari, atari8, beos,\n"
-	"                           c64, cdi, coco, coco3, fmtowns, genesis, ios, lunux,\n"
-	"                           nes, mac, macintosh2, os2, pc, pc98, pce, pippin, ppc,\n"
-	"                           psx, ps2, saturm, segacd, shockwave, ti994, wii,\n"
-	"                           windows, xbox, zx)\n"
 	"  --savepath=PATH          Path to where saved games are stored\n"
 	"  --extrapath=PATH         Extra path to additional game data\n"
 	"  --iconspath=PATH         Path to additional icons for the launcher grid view\n"
@@ -1740,7 +1747,43 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		printf("Features compiled in: %s\n", gScummVMFeatures);
 		return true;
 	} else if (command == "help") {
-		printf(HELP_STRING, s_appName);
+		printf(HELP_STRING1, s_appName);
+
+		Common::String s = HELP_STRING2;
+		Common::List<Common::String> langs = Common::getLanguageList();
+
+		s += langs.front();
+		langs.pop_front();
+
+		for (auto &l : langs) {
+			if (s.size() + l.size() + 2 >= kCommandMaxWidth) {
+				printf("%s,\n", s.c_str());
+				s = kCommandLineIndent + l;
+			} else {
+				s += ", " + l;
+			}
+		}
+
+		printf("%s)\n", s.c_str());
+
+		s = HELP_STRING3;
+		Common::List<Common::String> platforms = Common::getPlatformList();
+		s += platforms.front();
+		langs.pop_front();
+
+		for (auto &p : platforms) {
+			if (s.size() + p.size() + 2 >= kCommandMaxWidth) {
+				printf("%s,\n", s.c_str());
+				s = kCommandLineIndent + p;
+			} else {
+				s += ", " + p;
+			}
+		}
+
+		printf("%s)\n", s.c_str());
+
+		printf(HELP_STRING4);
+
 		return true;
 	} else if (command == "auto-detect") {
 		bool resursive = settings["recursive"] == "true";
