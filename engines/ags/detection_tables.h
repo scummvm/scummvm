@@ -3375,11 +3375,14 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_GOG("blackwell2", "unbound.exe", "8e3a3a985acc65b2a5c32fab0a998286", 60754659), // v2.2.1
 	GAME_ENTRY_EN_GOG("blackwell2", "unbound.exe", "8e3a3a985acc65b2a5c32fab0a998286", 60767448), // v2.2.2
 	GAME_ENTRY_EN_GOG("blackwell2", "unbound.exe", "8e3a3a985acc65b2a5c32fab0a998286", 60767900), // v2.3
+	GAME_ENTRY_EN_GOG("blackwell2", "unbound.exe", "8e3a3a985acc65b2a5c32fab0a998286", 60768044),
 	GAME_ENTRY_EN_GOG("blackwell2", "ac2game.dat", "82f8bf2635ea1b5bfb2e8693fa883f89", 57638596), // Mac
 	GAME_ENTRY_EN_GOG("blackwell2", "ac2game.dat", "c787c663b92cb3596a8e7219f0f9bb25", 57639048), // Mac v2.3
+	GAME_ENTRY_EN_GOG("blackwell2", "ac2game.dat", "53b931909fc86ede449eb371e5396c36", 57639192), // Mac v2.4
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14496128, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14469500, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell2", "unbound.exe", "00edc7b69ae377f6093ac567fd901849", 15683333, AGSTEAM_WADJETEYE),
+	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell2", "unbound.exe", "8e3a3a985acc65b2a5c32fab0a998286", 60767841, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell2", "ac2game.dat", "87c0681f4eebafddc60533f799456d53", 57672335, AGSTEAM_WADJETEYE), // Linux & Mac
 	GAME_ENTRY_EN("blackwell2", "unbound.exe", "5c3a940514d91431e8e1c372018851ca", 14495742), // Humble Bunde (Windows)
 	GAME_ENTRY_EN("blackwell2", "ac2game.dat", "5c3a940514d91431e8e1c372018851ca", 69452991), // Android
@@ -3585,6 +3588,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_GOG("strangeland", "ac2game.dat", "7e5abc5202098bd00ddef999854eb9ab", 3183368017), // Mac
 	GAME_ENTRY_GOG("strangeland", "ac2game.dat", "e4b9f0aa26c1115143ad483c99bc9383", 3183880236), // Mac v2.5a
 	GAME_ENTRY_GOG("strangeland", "ac2game.dat", "86e8b93b8231d6c571669f1621561a21", 3183886917), // Mac v2.7
+	GAME_ENTRY_GOG("strangeland", "ac2game.dat", "c0d0009485795a4ff0cf9dbe5ad82a2f", 3183902196), // Mac
 	GAME_ENTRY_STEAM("sumatra", "sumatra fate of yandi.exe", "57c868b1a81c0335ab60970292cd79d8", 170088886),
 	GAME_ENTRY_EN("superjazzman", "sjm.exe", "0710e2ec71042617f565c01824f0cf3c", 10841689), // Official website
 	GAME_ENTRY_LANG("symploke1", "Symploke.exe", "ff20c8c9dda8379607db87e7726909c6", 29996616, Common::ES_ESP), // Videojuegos Fermin website (Spanish)
@@ -3619,8 +3623,10 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("unavowed", "ac2game.dat", "140570a663877cb81e3656b4f29c63f6", 1752922600), // Mac
 	GAME_ENTRY_STEAM("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756036604), // Linux (and Windows?) v0.9.0
 	GAME_ENTRY_STEAM("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756040045), // Linux (and Windows?) v1.0.0
+	GAME_ENTRY_STEAM("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756041684), // Windows v1.0.2
 	GAME_ENTRY_PLATFORM("unavowed", "Unavowed.exe", "b1ff7d96667707daf4266975cea2bf90", 1755451248, "Steam/GOG"), // TODO: split
 	GAME_ENTRY_GOG("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756040362), // Linux/Windows v.1.0.0
+	GAME_ENTRY_GOG("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756042001), // Windows v1.0.2
 	GAME_ENTRY_EN_STEAM("waitingfortheloop", "waitingfortheloop.exe", "0241777c2537fc5d077c05cde10bfa9f", 51472537),
 	GAME_ENTRY_EN("waitingfortheloop", "waitingfortheloop.exe", "0241777c2537fc5d077c05cde10bfa9f", 51273604),
 	GAME_ENTRY("welcometosunnymunarvagir", "alpha4.ags", "392dbdd0697ae32af4cfe5212f9213c5", 23000263),
