@@ -51,6 +51,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	_mouseSensitivity = 0.1f;
 	_flyMode = false;
 	_borderTexture = nullptr;
+	_viewArea = Common::Rect(0, 0, _screenW, _screenH);
 
 	_rnd = new Common::RandomSource("freescape");
 }
@@ -73,8 +74,7 @@ void FreescapeEngine::drawBorder() {
 	if (!_borderTexture)
 		_borderTexture = _gfx->createTexture(_border);
 	_gfx->drawTexturedRect2D(fullscreenViewArea, fullscreenViewArea, _borderTexture);
-	Common::Rect drillerViewArea(40, 16, 279, 116);
-	_gfx->setViewport(drillerViewArea);
+	_gfx->setViewport(_viewArea);
 }
 
 void FreescapeEngine::loadAssets() {
@@ -290,8 +290,14 @@ Common::Error FreescapeEngine::run() {
 		g_system->delayMillis(1000);
 
 		_borderTexture = nullptr;
-		Common::Rect viewArea(40, 16, 279, 116);
-		_border->fillRect(viewArea, 0xA0A0A0FF);
+		if (_targetName.hasPrefix("driller"))
+			_viewArea = Common::Rect(40, 16, 279, 116);
+		else if (_targetName.hasPrefix("totaleclipse"))
+			_viewArea = Common::Rect(40, 32, 280, 132);
+		else
+			error("Invalid target!");
+
+		_border->fillRect(_viewArea, 0xA0A0A0FF);
 	}
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot >= 0) { // load the savegame

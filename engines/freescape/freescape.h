@@ -58,6 +58,7 @@ public:
 	Common::Error run() override;
 
 	// Border
+	Common::Rect _viewArea;
 	void convertBorder();
 	void drawBorder();
 	Texture *_borderTexture;
