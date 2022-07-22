@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-21 23:35+0000\n"
-"PO-Revision-Date: 2022-07-17 10:16+0000\n"
+"PO-Revision-Date: 2022-07-22 09:09+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -6095,16 +6095,12 @@ msgstr ""
 "un comportamiento diferente al del reproductor mTropolis."
 
 #: engines/mtropolis/detection.cpp:65
-#, fuzzy
-#| msgid "Automatically saves the game at certain progress points."
 msgid "Autosave at progress points"
-msgstr "Guarda automáticamente la partida en ciertos puntos de progreso."
+msgstr "Guardado automático en puntos de progreso"
 
 #: engines/mtropolis/detection.cpp:66
-#, fuzzy
-#| msgid "Automatically saves the game at certain progress points."
 msgid "Automatically saves the game after completing puzzles and chapters."
-msgstr "Guarda automáticamente la partida en ciertos puntos de progreso."
+msgstr "Guarda automáticamente la partida al completar acertijos y capítulos."
 
 #: engines/mtropolis/detection.cpp:76
 msgid "Enable short transitions"
@@ -6142,20 +6138,12 @@ msgstr ""
 "Fallo al cargar la partida: error al leer los datos de la partida guardada."
 
 #: engines/mtropolis/saveload.cpp:199
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, an error occurred when reading the save game data."
 msgid "An internal error occurred while attempting to write save game data"
-msgstr ""
-"Fallo al cargar la partida: error al leer los datos de la partida guardada."
+msgstr "Error interno al intentar escribir los datos de la partida guardada"
 
 #: engines/mtropolis/saveload.cpp:207
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, an error occurred when reading the save game data."
 msgid "An error occurred while writing the save game"
-msgstr ""
-"Fallo al cargar la partida: error al leer los datos de la partida guardada."
+msgstr "Error interno al escribir la partida guardada"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
