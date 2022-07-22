@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-21 23:35+0000\n"
-"PO-Revision-Date: 2022-07-17 10:16+0000\n"
+"PO-Revision-Date: 2022-07-22 09:09+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -6027,16 +6027,13 @@ msgstr ""
 "viselkedik, mint az mTropolis Player."
 
 #: engines/mtropolis/detection.cpp:65
-#, fuzzy
-#| msgid "Automatically saves the game at certain progress points."
 msgid "Autosave at progress points"
-msgstr "Automatikusan elmenti a játékot bizonyos haladási pontokon."
+msgstr "Automatikus mentés a folyamatpontokon"
 
 #: engines/mtropolis/detection.cpp:66
-#, fuzzy
-#| msgid "Automatically saves the game at certain progress points."
 msgid "Automatically saves the game after completing puzzles and chapters."
-msgstr "Automatikusan elmenti a játékot bizonyos haladási pontokon."
+msgstr ""
+"A rejtvények és fejezetek befejezése után automatikusan elmenti a játékot."
 
 #: engines/mtropolis/detection.cpp:76
 msgid "Enable short transitions"
@@ -6075,22 +6072,12 @@ msgstr ""
 "beolvasásakor."
 
 #: engines/mtropolis/saveload.cpp:199
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, an error occurred when reading the save game data."
 msgid "An internal error occurred while attempting to write save game data"
-msgstr ""
-"Nem sikerült betölteni a mentést, hiba történt a mentési játékadatok "
-"beolvasásakor."
+msgstr "Belső hiba történt a mentett játékadatok írása közben"
 
 #: engines/mtropolis/saveload.cpp:207
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, an error occurred when reading the save game data."
 msgid "An error occurred while writing the save game"
-msgstr ""
-"Nem sikerült betölteni a mentést, hiba történt a mentési játékadatok "
-"beolvasásakor."
+msgstr "Hiba történt a játék mentés írása közben"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
