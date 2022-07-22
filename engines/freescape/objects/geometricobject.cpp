@@ -114,8 +114,9 @@ GeometricObject::GeometricObject(
 	Common::String *_conditionSource) {
 	_type = type;
 	_flags = flags;
-	if (flags & 0x40)
-		makeInvisible();
+
+	if (isDestroyed()) // If the object is destroyed, restore it
+		_flags = _flags & ~0x20;
 
 	_objectID = objectID;
 	origin = _origin;
