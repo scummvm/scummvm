@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-21 23:35+0000\n"
-"PO-Revision-Date: 2022-07-20 10:45+0000\n"
+"PO-Revision-Date: 2022-07-22 11:06+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -6043,16 +6043,12 @@ msgstr ""
 "отличается от оригинального mTropolis."
 
 #: engines/mtropolis/detection.cpp:65
-#, fuzzy
-#| msgid "Automatically saves the game at certain progress points."
 msgid "Autosave at progress points"
-msgstr "Автоматически сохраняет игру в некоторых точках прогресса."
+msgstr "Автоматически сохраняет игру в некоторых точках прогресса"
 
 #: engines/mtropolis/detection.cpp:66
-#, fuzzy
-#| msgid "Automatically saves the game at certain progress points."
 msgid "Automatically saves the game after completing puzzles and chapters."
-msgstr "Автоматически сохраняет игру в некоторых точках прогресса."
+msgstr "Автоматически сохраняет игру по завершению головоломок и разделов."
 
 #: engines/mtropolis/detection.cpp:76
 msgid "Enable short transitions"
@@ -6087,18 +6083,12 @@ msgid "Failed to load save, an error occurred when reading the save game data."
 msgstr "Не удалось загрузить игру, возникла ошибка при чтении файла."
 
 #: engines/mtropolis/saveload.cpp:199
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, an error occurred when reading the save game data."
 msgid "An internal error occurred while attempting to write save game data"
-msgstr "Не удалось загрузить игру, возникла ошибка при чтении файла."
+msgstr "Возникла внутренняя ошибка при попытке записи данных игры"
 
 #: engines/mtropolis/saveload.cpp:207
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, an error occurred when reading the save game data."
 msgid "An error occurred while writing the save game"
-msgstr "Не удалось загрузить игру, возникла ошибка при чтении файла."
+msgstr "Возникла ошибка при записи сохранения игры"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
