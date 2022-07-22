@@ -935,6 +935,13 @@ void BYOnline::acceptChallenge(int playerId) {
 	acceptChallengeRequest.setVal("cmd", new Common::JSONValue("accept_challenge"));
 	acceptChallengeRequest.setVal("user", new Common::JSONValue((long long int)playerId));
 	sendWithVersion(acceptChallengeRequest);
+	if (_vm->_game.id == GID_BASEBALL2001 && _vm->readVar(559) == 19) {  // Only if in Prince Rupert
+		// Request teams for this client and opponent
+		Common::JSONObject getTeamsRequest;
+		getTeamsRequest.setVal("cmd", new Common::JSONValue("get_teams"));
+		getTeamsRequest.setVal("opponent_id", new Common::JSONValue((long long int)playerId));
+		sendWithVersion(getTeamsRequest);
+	}
 }
 
 void BYOnline::handleAcceptChallenge() {
