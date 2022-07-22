@@ -88,6 +88,9 @@ WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(sy
 
 	_resManager = NULL;
 
+	_gameFeatures = 0;
+	initFeatures();
+
 	debug("WageEngine::WageEngine()");
 }
 
@@ -103,7 +106,18 @@ WageEngine::~WageEngine() {
 Common::Error WageEngine::run() {
 	debug("WageEngine::init");
 
-	initGraphics(512, 342);
+	int width = 512;
+	int height = 342;
+
+	if (getFeatures() & GF_RES800) {
+		width = 800;
+		height = 600;
+	} else if (getFeatures() & GF_RES1024) {
+		width = 1024;
+		height = 768;
+	}
+
+	initGraphics(width, height);
 
 	setDebugger(new Debugger(this));
 
@@ -269,6 +283,10 @@ void WageEngine::aboutDialog() {
 
 void WageEngine::saveGame() {
 	warning("STUB: saveGame()");
+}
+
+uint32 WageEngine::getFeatures() {
+	return _gameFeatures;
 }
 
 void WageEngine::performInitialSetup() {
