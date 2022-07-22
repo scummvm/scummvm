@@ -76,9 +76,9 @@ Area::Area(
 	{
 		bool operator()(Object *object1, Object *object2) {
 			if (!object1->isPlanar() && object2->isPlanar())
-				return false;
-			if (object1->isPlanar() && !object2->isPlanar())
 				return true;
+			if (object1->isPlanar() && !object2->isPlanar())
+				return false;
 			return object1->getObjectID() > object2->getObjectID();
 		};
 	} compareObjects;
@@ -128,17 +128,18 @@ void Area::draw(Freescape::Renderer *gfx) {
 	if (palette)
 		gfx->_palette = palette;
 
+	gfx->clear();
+
+	if (areaFlags & 0x02 || areaFlags & 0x20)
+		gfx->drawSky(skyColor);
+
+	if (areaFlags & 0x01 || areaFlags & 0x40)
+		gfx->drawFloor(groundColor);
+
 	if (areaFlags & 0x80)
 		gfx->_keyColor = 0;
 	else
 		gfx->_keyColor = 255;
-
-	gfx->clear();
-	if (areaFlags & 0x01)
-		gfx->drawFloor(groundColor);
-
-	if (areaFlags & 0x02)
-		gfx->drawSky(skyColor);
 
 	assert(drawableObjects.size() > 0);
 	for (Common::Array<Object *>::iterator it = drawableObjects.begin(); it != drawableObjects.end(); it++) {
@@ -187,7 +188,7 @@ void Area::addStructure(Area *structure) {
 		int id = 254;
 		Common::Array<uint8> *gColors = new Common::Array<uint8>;
 		for (int i = 0; i < 6; i++)
-			gColors->push_back(0);
+			gColors->push_back(groundColor);
 
 		obj = (Object*) new GeometricObject(
 			Object::Type::Cube,
