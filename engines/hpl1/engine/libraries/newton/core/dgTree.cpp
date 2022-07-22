@@ -396,7 +396,7 @@ void dgRedBackNode::Unlink(dgRedBackNode ** const head)
       *head = child;
     }
 
-    if (endNode->GetColor() == BLACK)
+    if (endNode->GetColor() == BLACK && endNode->m_parent)
     {
       endNode->m_parent->RemoveFixup(child, head);
     }
