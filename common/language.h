@@ -23,6 +23,7 @@
 #define COMMON_LANGUAGE_H
 
 #include "common/scummsys.h"
+#include "common/list.h"
 
 namespace Common {
 
@@ -104,6 +105,8 @@ const String getGameGUIOptionsDescriptionLanguage(Common::Language lang);
 
 // TODO: Document this GUIO related function
 bool checkGameGUIOptionLanguage(Common::Language lang, const String &str);
+
+List<String> getLanguageList();
 
 /** @} */
 

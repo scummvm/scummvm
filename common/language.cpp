@@ -22,6 +22,7 @@
 #include "common/language.h"
 #include "common/gui_options.h"
 #include "common/str.h"
+#include "common/algorithm.h"
 
 namespace Common {
 
@@ -176,6 +177,17 @@ const String getGameGUIOptionsDescriptionLanguage(Language lang) {
 		return "";
 
 	return String("lang_") + getLanguageDescription(lang);
+}
+
+List<String> getLanguageList() {
+	List<String> list;
+
+	for (const LanguageDescription *l = g_languages; l->code; ++l)
+		list.push_back(l->code);
+
+	 Common::sort(list.begin(), list.end());
+
+	 return list;
 }
 
 } // End of namespace Common

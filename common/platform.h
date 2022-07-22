@@ -23,6 +23,7 @@
 #define COMMON_PLATFORM_H
 
 #include "common/scummsys.h"
+#include "common/list.h"
 
 namespace Common {
 
@@ -98,6 +99,8 @@ extern Platform parsePlatform(const String &str);
 extern const char *getPlatformCode(Platform id);
 extern const char *getPlatformAbbrev(Platform id);
 extern const char *getPlatformDescription(Platform id);
+
+List<String> getPlatformList();
 
 /** @} */
 
