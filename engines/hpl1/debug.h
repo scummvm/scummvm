@@ -30,7 +30,8 @@ enum DebugChannels {
 	kDebugGraphics = 1 << 0,
 	kDebugResourceLoading = 1 << 1,
 	kDebugFilePath = 1 << 2,
-	kDebugOpenGL = 1 << 3
+	kDebugOpenGL = 1 << 3,
+	kDebugRenderer = 1 << 4
 };
 
 enum DebugLevels {
