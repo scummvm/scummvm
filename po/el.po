@@ -6216,11 +6216,11 @@ msgstr ""
 msgid "An internal error occurred while attempting to write save game data"
 msgstr ""
 "Παρουσιάστηκε εσωτερικό σφάλμα κατά την απόπειρα εγγραφής δεδομένων του "
-"αποθηκευμένου παιχνιδιού."
+"αποθηκευμένου παιχνιδιού"
 
 #: engines/mtropolis/saveload.cpp:207
 msgid "An error occurred while writing the save game"
-msgstr "Παρουσιάστηκε σφάλμα κατά την εγγραφή του αποθηκευμένου παιχνιδιού."
+msgstr "Παρουσιάστηκε σφάλμα κατά την εγγραφή του αποθηκευμένου παιχνιδιού"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
