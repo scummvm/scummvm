@@ -30,6 +30,10 @@
 
 namespace Wage {
 
+void WageEngine::initFeatures() {
+	_gameFeatures = _gameDescription->flags;
+}
+
 const char *WageEngine::getGameFile() const {
 	return _gameDescription->filesDescriptions[0].fileName;
 }

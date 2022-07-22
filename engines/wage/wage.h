@@ -104,6 +104,11 @@ enum {
 	// the current limitation is 32 debug levels (1 << 31 is the last one)
 };
 
+enum Resolution {
+	GF_RES800 = 1 << 0,
+	GF_RES1024 = 1 << 1
+};
+
 Common::Rect *readRect(Common::SeekableReadStream *in);
 const char *getIndefiniteArticle(const Common::String &word);
 const char *prependGenderSpecificPronoun(int gender);
@@ -197,6 +202,8 @@ public:
 
 	Common::String _inputText;
 
+	uint32 _gameFeatures;
+
 	void playSound(Common::String soundName);
 	void setMenu(Common::String soundName);
 	void appendText(const char *str);
@@ -211,6 +218,9 @@ public:
 	void encounter(Chr *player, Chr *chr);
 	void redrawScene();
 	void saveGame();
+
+	void initFeatures();
+	uint32 getFeatures();
 
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
