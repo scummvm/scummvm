@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-21 23:35+0000\n"
-"PO-Revision-Date: 2022-07-17 10:46+0000\n"
+"PO-Revision-Date: 2022-07-22 14:05+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -6167,16 +6167,14 @@ msgstr ""
 "κάποιες διαφορές από τη λειτουργία του πρωτότυπου mTropolis Player."
 
 #: engines/mtropolis/detection.cpp:65
-#, fuzzy
-#| msgid "Automatically saves the game at certain progress points."
 msgid "Autosave at progress points"
-msgstr "Αποθηκεύει αυτόματα το παιχνίδι σε συγκεκριμένα σημεία προόδου."
+msgstr "Αυτόματη αποθήκευση σε συγκεκριμένα σημεία"
 
 #: engines/mtropolis/detection.cpp:66
-#, fuzzy
-#| msgid "Automatically saves the game at certain progress points."
 msgid "Automatically saves the game after completing puzzles and chapters."
-msgstr "Αποθηκεύει αυτόματα το παιχνίδι σε συγκεκριμένα σημεία προόδου."
+msgstr ""
+"Αποθηκεύει αυτόματα το παιχνίδι μετά την επίλυση γρίφων ή την ολοκλήρωση "
+"ενός κεφαλαίου."
 
 #: engines/mtropolis/detection.cpp:76
 msgid "Enable short transitions"
@@ -6215,22 +6213,14 @@ msgstr ""
 "δεδομένων του αποθηκευμένου παιχνιδιού."
 
 #: engines/mtropolis/saveload.cpp:199
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, an error occurred when reading the save game data."
 msgid "An internal error occurred while attempting to write save game data"
 msgstr ""
-"Αποτυχία φόρτωσης αποθηκευμένου παιχνιδιού. Σφάλμα κατά την ανάγνωση των "
-"δεδομένων του αποθηκευμένου παιχνιδιού."
+"Παρουσιάστηκε εσωτερικό σφάλμα κατά την απόπειρα εγγραφής δεδομένων του "
+"αποθηκευμένου παιχνιδιού."
 
 #: engines/mtropolis/saveload.cpp:207
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, an error occurred when reading the save game data."
 msgid "An error occurred while writing the save game"
-msgstr ""
-"Αποτυχία φόρτωσης αποθηκευμένου παιχνιδιού. Σφάλμα κατά την ανάγνωση των "
-"δεδομένων του αποθηκευμένου παιχνιδιού."
+msgstr "Παρουσιάστηκε σφάλμα κατά την εγγραφή του αποθηκευμένου παιχνιδιού."
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
