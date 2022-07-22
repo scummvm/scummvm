@@ -797,7 +797,8 @@ void cMeshLoaderCollada::LoadColladaScene(TiXmlElement *apRootElem, cColladaNode
 			if (apColladaLightVec && GetLight(pNode->msSource, *apColladaLightVec)) {
 			}
 			// Colliders do not use scale.
-			else if (cString::ToLowerCase(cString::Sub(pNode->msName, 1, 8)) == "collider" || cString::ToLowerCase(cString::Sub(pNode->msName, 1, 12)) == "charcollider" || cString::ToLowerCase(cString::Sub(pNode->msName, 1, 4)) == "area") {
+			// Don't scale refs - ported from HPL1R project authored by zenmumbler
+			else if (cString::ToLowerCase(cString::Sub(pNode->msName, 1, 8)) == "collider" || cString::ToLowerCase(cString::Sub(pNode->msName, 1, 12)) == "charcollider" || cString::ToLowerCase(cString::Sub(pNode->msName, 1, 4)) == "area" || cString::ToLowerCase(cString::Sub(pNode->msName, 1, 3)) == "ref") {
 
 			}
 			// This a geometry node (or something else..). Apply scale as normal
