@@ -29,7 +29,7 @@ namespace MTropolis {
 
 class MiniscriptThread;
 struct MiniscriptStackValue;
-struct IMiniscriptInstructionFactory;
+struct SIMiniscriptInstructionFactory;
 
 bool miniscriptEvaluateTruth(const DynamicValue &value);
 
@@ -83,7 +83,7 @@ class MiniscriptParser {
 public:
 	static bool parse(const Data::MiniscriptProgram &programData, Common::SharedPtr<MiniscriptProgram> &outProgram, Common::SharedPtr<MiniscriptReferences> &outReferences);
 
-	static IMiniscriptInstructionFactory *resolveOpcode(uint16 opcode);
+	static SIMiniscriptInstructionFactory *resolveOpcode(uint16 opcode);
 };
 
 namespace MiniscriptInstructions {
