@@ -4116,15 +4116,15 @@ void Runtime::drawFrame() {
 	}
 
 	const size_t numWindows = _windows.size();
-	WindowSortingBucket singleBucket;
+	WindowSortingBucket singleBucket[1];
 	Common::Array<WindowSortingBucket> multipleBuckets;
-	WindowSortingBucket *sortedBuckets = &singleBucket;
+	WindowSortingBucket *sortedBuckets = singleBucket;
 
 	if (numWindows < 2) {
-		sortedBuckets = &singleBucket;
+		sortedBuckets = singleBucket;
 
-		singleBucket.originalIndex = 0;
-		singleBucket.window = _windows[0].get();
+		singleBucket[0].originalIndex = 0;
+		singleBucket[0].window = _windows[0].get();
 	} else {
 		multipleBuckets.resize(numWindows);
 		sortedBuckets = &multipleBuckets[0];
