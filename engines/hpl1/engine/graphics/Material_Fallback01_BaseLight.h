@@ -28,6 +28,7 @@
 #ifndef HPL_MATERIAL_FALLBACK01_BASE_LIGHT_H
 #define HPL_MATERIAL_FALLBACK01_BASE_LIGHT_H
 
+#include "hpl1/engine/graphics/GPUProgram.h"
 #include "hpl1/engine/graphics/Material.h"
 #include "hpl1/engine/scene/Light3D.h"
 #include <vector>
@@ -91,6 +92,7 @@ protected:
 
 	iTexture *mpAttenuationMap;
 
+	iGpuProgram *_shaders[eBaseLightProgram_LastEnum];
 	iGpuProgram *mvVtxPrograms[eBaseLightProgram_LastEnum];
 	iGpuProgram *mvFragPrograms[eBaseLightProgram_LastEnum];
 };

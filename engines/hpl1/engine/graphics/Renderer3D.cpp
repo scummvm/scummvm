@@ -1146,8 +1146,8 @@ void cRenderer3D::RenderTrans(cCamera3D *apCamera) {
 					Log("   Special = true\n");
 			}
 
-			iGpuProgram *pRefractVtxProgram = pMaterial->GetRefractionVertexProgam();
-			iGpuProgram *pRefractFragProgram = pMaterial->GetRefractionFragmentProgam();
+			iGpuProgram *pRefractVtxProgram = nullptr; //pMaterial->GetRefractionVertexProgam();
+			iGpuProgram *pRefractFragProgram = nullptr; //pMaterial->GetRefractionFragmentProgam();
 
 			if (pRefractFragProgram == NULL) {
 				if (bSpecial)

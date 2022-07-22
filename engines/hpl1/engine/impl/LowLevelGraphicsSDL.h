@@ -95,7 +95,7 @@ public:
 
 	Graphics::PixelFormat *GetPixelFormat();
 
-	iGpuProgram *CreateGpuProgram(const tString &asName, eGpuProgramType aType);
+	iGpuProgram *CreateGpuProgram(const tString &vertex, const tString &fragment);
 
 	void SaveScreenToBMP(const tString &asFile);
 

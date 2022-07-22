@@ -266,7 +266,7 @@ public:
 
 	virtual Graphics::PixelFormat *GetPixelFormat() = 0;
 
-	virtual iGpuProgram *CreateGpuProgram(const tString &asName, eGpuProgramType aType) = 0;
+	virtual iGpuProgram *CreateGpuProgram(const tString &vertex, const tString &fragment) = 0;
 
 	// TODO: Kinda quick and diry, better to have a screen to Bitmap.
 	//  and then a save as in the Bitmap.

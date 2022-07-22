@@ -102,6 +102,7 @@ cMaterial_EnvMap_Reflect::cMaterial_EnvMap_Reflect(const tString &asName, iLowLe
 												   eMaterialPicture aPicture, cRenderer3D *apRenderer3D)
 	: iMaterial(asName, apLowLevelGraphics, apImageManager, apTextureManager, apRenderer, apProgramManager,
 				aPicture, apRenderer3D) {
+	error("cMaterial_EnvMap_Reflect not implemented");
 	mbIsTransperant = false;
 	mbIsGlowing = false;
 	mbUsesLights = false;

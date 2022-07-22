@@ -147,6 +147,8 @@ iMaterial_Fallback02_BaseLight::iMaterial_Fallback02_BaseLight(
 	eMaterialPicture aPicture, cRenderer3D *apRenderer3D)
 	: iMaterial(asName, apLowLevelGraphics, apImageManager, apTextureManager, apRenderer, apProgramManager,
 				aPicture, apRenderer3D) {
+	error("iMaterial_Fallback02_BaseLight not yet implemented");
+
 	gDiffuseGLState.SetUp(mpLowLevelGraphics);
 	gSpotGLState.SetUp(mpLowLevelGraphics);
 

@@ -28,6 +28,7 @@
 #ifndef HPL_MATERIAL_WATER_H
 #define HPL_MATERIAL_WATER_H
 
+#include "hpl1/engine/graphics/GPUProgram.h"
 #include "hpl1/engine/graphics/Material.h"
 
 namespace hpl {
@@ -47,12 +48,12 @@ public:
 
 	void Update(float afTimeStep);
 
+	iGpuProgram *getGpuProgram(const eMaterialRenderType aType, const int alPass, iLight3D *apLight);
+	iMaterialProgramSetup *getGpuProgramSetup(const eMaterialRenderType aType, const int alPass, iLight3D *apLight);
+
 	iGpuProgram *GetVertexProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
-	iMaterialProgramSetup *GetVertexProgramSetup(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 	bool VertexProgramUsesLight(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 	bool VertexProgramUsesEye(eMaterialRenderType aType, int alPass, iLight3D *apLight);
-
-	iGpuProgram *GetFragmentProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 
 	eMaterialAlphaMode GetAlphaMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 	eMaterialBlendMode GetBlendMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
@@ -63,8 +64,7 @@ public:
 
 	int GetNumOfPasses(eMaterialRenderType aType, iLight3D *apLight) { return 1; }
 
-	iGpuProgram *GetRefractionVertexProgam() { return mpRefractVtxProg; }
-	iGpuProgram *GetRefractionFragmentProgam() { return mpRefractFragProg; }
+	iGpuProgram * getRefractionProgram() { return _refractShader; }
 	bool GetRefractionUsesDiffuse() { return true; }
 	eMaterialTexture GetRefractionDiffuseTexture() { return eMaterialTexture_Specular; }
 	bool GetRefractionUsesEye() { return true; }
@@ -86,6 +86,7 @@ public:
 private:
 	iGpuProgram *mpFogVtxProg;
 
+	iGpuProgram *_refractShader;
 	iGpuProgram *mpRefractVtxProg;
 	iGpuProgram *mpRefractFragProg;
 
