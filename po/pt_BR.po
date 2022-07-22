@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-21 23:35+0000\n"
-"PO-Revision-Date: 2022-07-17 10:16+0000\n"
+"PO-Revision-Date: 2022-07-22 09:09+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -6067,16 +6067,12 @@ msgstr ""
 "menos como o Reprodutor mTropolis."
 
 #: engines/mtropolis/detection.cpp:65
-#, fuzzy
-#| msgid "Automatically saves the game at certain progress points."
 msgid "Autosave at progress points"
-msgstr "Salva o jogo automaticamentem em certos pontos de progresso."
+msgstr "Salvar automaticamente em pontos de progresso"
 
 #: engines/mtropolis/detection.cpp:66
-#, fuzzy
-#| msgid "Automatically saves the game at certain progress points."
 msgid "Automatically saves the game after completing puzzles and chapters."
-msgstr "Salva o jogo automaticamentem em certos pontos de progresso."
+msgstr "Salva o jogo automaticamentem depois de completar puzzles e capítulos."
 
 #: engines/mtropolis/detection.cpp:76
 msgid "Enable short transitions"
@@ -6115,22 +6111,12 @@ msgstr ""
 "salvo."
 
 #: engines/mtropolis/saveload.cpp:199
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, an error occurred when reading the save game data."
 msgid "An internal error occurred while attempting to write save game data"
-msgstr ""
-"Falha ao carregar o salvamento, ocorreu um erro ao ler os dados do jogo "
-"salvo."
+msgstr "Ocorreu um erro interno ao tentar gravar dados do progresso do jogo"
 
 #: engines/mtropolis/saveload.cpp:207
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, an error occurred when reading the save game data."
 msgid "An error occurred while writing the save game"
-msgstr ""
-"Falha ao carregar o salvamento, ocorreu um erro ao ler os dados do jogo "
-"salvo."
+msgstr "Ocorreu um erro ao tentar gravar o progresso do jogo"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
