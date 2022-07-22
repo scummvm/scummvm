@@ -1412,7 +1412,8 @@ void ScummEngine_v6::o6_loadRoomWithEgo() {
 
 void ScummEngine_v6::o6_getRandomNumber() {
 	int rnd;
-	rnd = _rnd.getRandomNumber(ABS(pop()));
+	rnd = _rnd.getRandomNumber(0x7fff);
+	rnd = rnd % (pop() + 1);
 	if (VAR_RANDOM_NR != 0xFF)
 		VAR(VAR_RANDOM_NR) = rnd;
 	push(rnd);
@@ -1421,9 +1422,9 @@ void ScummEngine_v6::o6_getRandomNumber() {
 void ScummEngine_v6::o6_getRandomNumberRange() {
 	int max = pop();
 	int min = pop();
-	uint rnd;
 
-	rnd = _rnd.getRandomNumberRng(min, max);
+	int rnd = _rnd.getRandomNumber(0x7fff);
+	rnd = min + (rnd % (max - min + 1));
 #ifdef USE_BYONLINE
 	// For using predefined teams in Prince Rupert, instead of choosing player IDs randomly
 	// let's pull from the variables that contain the teams
