@@ -319,6 +319,8 @@ struct InternalTypeTaggedValue {
 		Point asPoint;
 	};
 
+	InternalTypeTaggedValue();
+
 	uint16 type;
 	ValueUnion value;
 
@@ -645,6 +647,8 @@ protected:
 };
 
 struct TextLabelElement : public StructuralDef {
+	TextLabelElement();
+
 	// Possible element flags: NotDirectToScreen, CacheBitmap, Hidden
 	uint32 sizeIncludingTag;
 	uint32 guid;
@@ -902,6 +906,8 @@ struct TypicalModifierHeader {
 };
 
 struct MiniscriptModifier : public DataObject {
+	MiniscriptModifier();
+
 	TypicalModifierHeader modHeader;
 	Event enableWhen;
 	uint8 unknown6[11];
@@ -915,6 +921,8 @@ protected:
 
 
 struct SaveAndRestoreModifier : public DataObject {
+	SaveAndRestoreModifier();
+
 	TypicalModifierHeader modHeader;
 	uint8 unknown1[4];
 	Event saveWhen;
@@ -945,6 +953,8 @@ enum MessageFlags {
 
 
 struct MessengerModifier : public DataObject {
+	MessengerModifier();
+
 	TypicalModifierHeader modHeader;
 
 	uint32 messageFlags;
@@ -965,6 +975,8 @@ protected:
 };
 
 struct SetModifier : public DataObject {
+	SetModifier();
+
 	TypicalModifierHeader modHeader;
 
 	uint8 unknown1[4];
@@ -988,6 +1000,8 @@ protected:
 };
 
 struct AliasModifier : public DataObject {
+	AliasModifier();
+
 	uint32 modifierFlags;
 	uint32 sizeIncludingTag;
 	uint16 aliasIndexPlusOne;
@@ -1013,6 +1027,8 @@ struct ChangeSceneModifier : public DataObject {
 		kChangeSceneFlagWrapAround			= 0x04000000,
 	};
 
+	ChangeSceneModifier();
+
 	TypicalModifierHeader modHeader;
 	uint32 changeSceneFlags;
 	Event executeWhen;
@@ -1025,6 +1041,8 @@ protected:
 };
 
 struct SoundEffectModifier : public DataObject {
+	SoundEffectModifier();
+
 	static const uint32 kSpecialAssetIDSystemBeep = 0xffffffffu;
 
 	TypicalModifierHeader modHeader;

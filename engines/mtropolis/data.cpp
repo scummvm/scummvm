@@ -420,6 +420,10 @@ bool Label::load(DataReader &reader) {
 	return reader.readU32(superGroupID) && reader.readU32(labelID);
 }
 
+InternalTypeTaggedValue::InternalTypeTaggedValue() : type(0) {
+	memset(&this->value, 0, sizeof(this->value));
+}
+
 bool InternalTypeTaggedValue::load(DataReader &reader) {
 	if (!reader.readU16(type))
 		return false;
@@ -818,6 +822,12 @@ DataReadErrorCode ImageElement::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+TextLabelElement::TextLabelElement()
+	: sizeIncludingTag(0), guid(0), lengthOfName(0), elementFlags(0), layer(0), sectionID(0),
+	  rect1(Rect::createDefault()), rect2(Rect::createDefault()), assetID(0), haveMacPart(false), haveWinPart(false) {
+	memset(&this->platform, 0, sizeof(this->platform));
+}
+
 DataReadErrorCode TextLabelElement::load(DataReader &reader) {
 	if (reader.getProjectFormat() == kProjectFormatMacintosh) {
 		if (_revision != 2)
@@ -1119,6 +1129,10 @@ bool TypicalModifierHeader::load(DataReader& reader) {
 	return true;
 }
 
+MiniscriptModifier::MiniscriptModifier()
+	: enableWhen(Event::createDefault()), unknown6{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, unknown7(0) {
+}
+
 DataReadErrorCode MiniscriptModifier::load(DataReader &reader) {
 	if (_revision != 1003)
 		return kDataReadErrorUnsupportedRevision;
@@ -1127,6 +1141,11 @@ DataReadErrorCode MiniscriptModifier::load(DataReader &reader) {
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
+}
+
+SaveAndRestoreModifier::SaveAndRestoreModifier()
+	: unknown1{0, 0, 0, 0}, saveWhen(Event::createDefault()), restoreWhen(Event::createDefault()),
+	  unknown5{0, 0, 0, 0, 0, 0, 0, 0}, lengthOfFilePath(0), lengthOfFileName(0), lengthOfVariableName(0), lengthOfVariableString(0) {
 }
 
 DataReadErrorCode SaveAndRestoreModifier::load(DataReader &reader) {
@@ -1141,6 +1160,11 @@ DataReadErrorCode SaveAndRestoreModifier::load(DataReader &reader) {
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
+}
+
+MessengerModifier::MessengerModifier()
+	: messageFlags(0), send(Event::createDefault()), when(Event::createDefault()), unknown14(0), destination(0),
+	  unknown11{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, withSourceLength(0), withStringLength(0) {
 }
 
 DataReadErrorCode MessengerModifier::load(DataReader &reader) {
@@ -1161,6 +1185,11 @@ DataReadErrorCode MessengerModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+SetModifier::SetModifier()
+	: unknown1{0, 0, 0, 0}, executeWhen(Event::createDefault()), unknown3(0),
+	  sourceNameLength(0), targetNameLength(0), sourceStringLength(0), targetStringLength(0), unknown4(0) {
+}
+
 DataReadErrorCode SetModifier::load(DataReader &reader) {
 	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
@@ -1175,6 +1204,10 @@ DataReadErrorCode SetModifier::load(DataReader &reader) {
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
+}
+
+AliasModifier::AliasModifier()
+	: modifierFlags(0), sizeIncludingTag(0), aliasIndexPlusOne(0), unknown1(0), unknown2(0), lengthOfName(0), guid(0), editorLayoutPosition(Point::createDefault()) {
 }
 
 DataReadErrorCode AliasModifier::load(DataReader& reader) {
@@ -1195,6 +1228,10 @@ DataReadErrorCode AliasModifier::load(DataReader& reader) {
 	return kDataReadErrorNone;
 }
 
+ChangeSceneModifier::ChangeSceneModifier()
+	: executeWhen(Event::createDefault()), targetSectionGUID(0), targetSubsectionGUID(0), targetSceneGUID(0) {
+}
+
 DataReadErrorCode ChangeSceneModifier::load(DataReader &reader) {
 	if (_revision != 1001)
 		return kDataReadErrorUnsupportedRevision;
@@ -1204,6 +1241,11 @@ DataReadErrorCode ChangeSceneModifier::load(DataReader &reader) {
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
+}
+
+SoundEffectModifier::SoundEffectModifier()
+	: unknown1{0, 0, 0, 0}, executeWhen(Event::createDefault()), terminateWhen(Event::createDefault()),
+	  unknown2(0), unknown3{0, 0, 0, 0}, assetID(0), unknown5{0, 0, 0, 0} {
 }
 
 DataReadErrorCode SoundEffectModifier::load(DataReader &reader) {
