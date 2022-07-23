@@ -208,7 +208,7 @@ Common::Error MTropolisEngine::run() {
 
 	// If that fails, then try to find the best one available
 	if (selectedMode == kColorDepthModeInvalid) {
-		for (int i = preferredColorDepthMode - 1; i >= 0; i++) {
+		for (int i = preferredColorDepthMode - 1; i >= 0; i--) {
 			if (haveExactMode[i] || haveCloseMode[i]) {
 				selectedMode = static_cast<ColorDepthMode>(i);
 				break;
