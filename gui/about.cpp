@@ -123,9 +123,6 @@ AboutDialog::AboutDialog()
 	PluginList::const_iterator iter = plugins.begin();
 	for (; iter != plugins.end(); ++iter) {
 		Common::String str;
-		str = "C0";
-		str += (*iter)->getName();
-		addLine(str);
 
 		const Plugin *p = EngineMan.findPlugin((*iter)->getName());
 
@@ -134,6 +131,9 @@ AboutDialog::AboutDialog()
 			continue;
 		}
 
+		str = "C0";
+		str += p->get<MetaEngineDetection>().getName();
+		addLine(str);
 		str = "C2";
 		str += p->get<MetaEngineDetection>().getOriginalCopyright();
 		addLine(str);
