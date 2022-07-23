@@ -116,7 +116,7 @@ bool cCGProgram::SetVec3f(const tString &asName, float afX, float afY, float afZ
 //-----------------------------------------------------------------------
 
 bool cCGProgram::SetVec4f(const tString &asName, float afX, float afY, float afZ, float afW) {
-	_shader->setUniform(asName.c_str(), {afX, afY, afZ});
+	_shader->setUniform(asName.c_str(), {afX, afY, afZ, afW});
 	return true;
 }
 
