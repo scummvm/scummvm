@@ -11,11 +11,11 @@
 
 vec4 position = gl_Vertex;
 vec3 normal = gl_Normal;
-vec3 uv = gl_TexCoord[0].xyz;
+vec2 uv = gl_TexCoord[0].xy;
 
 
 out vec4 vColor
-out vec3 vUv;
+out vec2 vUv;
 out vec3 vLighDir;
 out vec3 vHalfVec;
 out vec2 vScreenPos;

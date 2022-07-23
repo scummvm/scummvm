@@ -13,7 +13,7 @@
 in vec4 vLightColor;
 in vec2 vUv;
 in vec3 vLightDir;
-in vec3 vSpotlightUv;
+in vec4 vSpotlightUv;
 
 OUTPUT
 

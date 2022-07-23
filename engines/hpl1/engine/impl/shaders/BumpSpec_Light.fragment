@@ -28,13 +28,13 @@ void main()
 	vec4 bumpVec = texture(tex1, vUv);
 	bumpVec.xyz = (2.0*bumpVec.xyz)-vec3(1.0);
 
-	vLightDir = normalize(vLightDir);
-	vHalfVec = normalize(vHalfVec);
+	vec3 normLightDir = normalize(vLightDir);
+	vec3 normHalfVec = normalize(vHalfVec);
 
-	float specular = clamp(dot(vHalfVec, bumpVec.xyz), 0.0, 1.0);
+	float specular = clamp(dot(normHalfVec, bumpVec.xyz), 0.0, 1.0);
 	specular = pow(specular, 16.0) * vLightColor.w * clamp(bumpVec.w, 0.0, 1.0);
 
-	outColor.xyz = texture(tex0, vUv).xyz * vLightColor.xyz * dot(vLightDir, bumpVec.xyz) +
+	outColor.xyz = texture(tex0, vUv).xyz * vLightColor.xyz * dot(normLightDir, bumpVec.xyz) +
 					specular;
 	outColor.xyz *= attenuation;
 }
