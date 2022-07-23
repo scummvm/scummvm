@@ -2461,7 +2461,7 @@ void EoBEngine::seq_xdeath() {
 
 void EoBEngine::seq_segaOpeningCredits(bool jumpToTitle) {
 	uint16 *scrollTable = new uint16[0x200]();
-	SegaRenderer *r = _screen->sega_getRenderer();
+	SCDRenderer *r = _screen->sega_getRenderer();
 
 	r->setPitch(128);
 	r->setPlaneTableLocation(SCDRenderer::kPlaneA, 0xE000);

@@ -2335,7 +2335,7 @@ int GUI_EoB::simpleMenu_process(int sd, const char *const *strings, void *b, int
 		simpleMenu_printButton(sd, currentItem, strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], false, false);
 		simpleMenu_printButton(sd, newItem, strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], true, false);
 		if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
-			_screen->sega_getRenderer()->render(0, 6, 20, 26, 5);
+			_screen->sega_getRenderer()->renderToPage(0, 6, 20, 26, 5);
 		}
 		_screen->updateScreen();
 	}
