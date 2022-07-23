@@ -219,10 +219,20 @@ void FreescapeEngine::executeDecrementVariable(FCLInstruction &instruction) {
 }
 
 void FreescapeEngine::executeDestroy(FCLInstruction &instruction) {
-	uint16 objectID = instruction.source;
-	debugC(1, kFreescapeDebugCode, "Destroying obj %d!", objectID);
-	Object *obj = _currentArea->objectWithID(objectID);
-	assert(!obj->isDestroyed());
+	uint16 objectID = 0;
+	uint16 areaID = _currentArea->getAreaID();
+
+	if (instruction.destination > 0) {
+		objectID = instruction.destination;
+		areaID = instruction.source;
+	} else {
+		objectID = instruction.source;
+	}
+
+	debugC(1, kFreescapeDebugCode, "Destroying obj %d in area %d!", objectID, areaID);
+	assert(_areaMap.contains(areaID));
+	Object *obj = _areaMap[areaID]->objectWithID(objectID);
+	assert(!(obj->isDestroyed()));
 	obj->destroy();
 }
 
