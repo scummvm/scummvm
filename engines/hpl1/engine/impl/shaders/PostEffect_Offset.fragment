@@ -1,0 +1,23 @@
+// Copyright 2006-2010 (C) - Frictional Games
+//
+// This file is part of HPL1 Engine
+//
+// For conditions of distribution and use, see copyright notice in LICENSE-shaders
+//
+
+///////////////////////////////////////////////////////
+/// SPECULAR BUMPMAPPING 2D FRAGMENT PROGRAM //////////
+///////////////////////////////////////////////////////
+
+in vec3 vUv; //in object space
+
+OUTPUT
+
+uniform sampler2D tex0; //ScreenBuffer
+
+void main()
+{
+	vec4 Col = texture(tex0, vUv);
+
+	outColor = Col;
+}

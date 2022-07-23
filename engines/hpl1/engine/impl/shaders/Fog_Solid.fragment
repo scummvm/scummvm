@@ -1,0 +1,22 @@
+// Copyright 2006-2010 (C) - Frictional Games
+//
+// This file is part of HPL1 Engine
+//
+// For conditions of distribution and use, see copyright notice in LICENSE-shaders
+//
+
+///////////////////////////////////////////////////////
+/// SOLID FOG FRAGMENT PROGRAM ////////////
+///////////////////////////////////////////////////////
+
+in vec4 vColor;
+in float vUv;
+
+OUTPUT
+
+uniform sampler1D tex0; //diffuseMap;
+
+void main()
+{
+	outColor = texture1D(tex0, vUv) * vColor;
+}

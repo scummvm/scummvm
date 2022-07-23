@@ -1,0 +1,28 @@
+// Copyright 2006-2010 (C) - Frictional Games
+//
+// This file is part of HPL1 Engine
+//
+// For conditions of distribution and use, see copyright notice in LICENSE-shaders
+//
+
+///////////////////////////////////////////////////////
+/// SPECULAR BUMPMAPPING 2D FRAGMENT PROGRAM //////////
+///////////////////////////////////////////////////////
+
+in vec4 vColor;
+in vec3 vUv; //in object space
+in vec3 vLightDir;
+in vec2 vScreenPos;
+
+OUTPUT
+
+uniform sampler2D tex0; //NormalMap
+uniform sampler2D tex1; //LightMap
+
+void main()
+{
+	vec4 BumpVec = (1 - 2*texture(tex0, vUv));
+	vec4 LightCol = texture(tex1,vScreenPos);
+	float Diffuse = dot(vLightDir,BumpVec.xyz)*LightCol.x;
+	outColor.xyz = Diffuse*vColor.xyz;
+}

@@ -1,0 +1,24 @@
+// Copyright 2006-2010 (C) - Frictional Games
+//
+// This file is part of HPL1 Engine
+//
+// For conditions of distribution and use, see copyright notice in LICENSE-shaders
+//
+
+///////////////////////////////////////////////////////
+/// AMBIENT DIFFUSE COLOR FRAG PROGRAM ////////////
+///////////////////////////////////////////////////////
+
+in vec4 vLightColor;
+in vec2 vUv;
+
+OUTPUT
+
+uniform sampler2D tex0; //diffuseMap
+uniform vec3 ambientColor;
+
+void main()
+{
+	outColor = texture(tex0, vUv);
+	outColor.xyz *= ambientColor;
+}

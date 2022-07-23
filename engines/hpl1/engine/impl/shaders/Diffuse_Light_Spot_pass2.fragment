@@ -1,0 +1,30 @@
+// Copyright 2006-2010 (C) - Frictional Games
+//
+// This file is part of HPL1 Engine
+//
+// For conditions of distribution and use, see copyright notice in LICENSE-shaders
+//
+
+///////////////////////////////////////////////////////
+/// DIFFUSE SPOT LIGHTING FRAGMENT PROGRAM /////////////
+///////////////////////////////////////////////////////
+
+in vec4 vLightColor;
+in vec2 vUv;
+in vec3 vLightDir;
+in vec3 vSpotlightUv;
+
+OUTPUT
+
+uniform sampler2D tex0; //diffuseMap
+uniform samplerCube tex1; //normalCubeMap
+uniform sampler2D tex2; //spotlightMap
+
+void main()
+{
+	vec3 diffuse = texture(tex0, vUv).xyz;
+	vec3 lightNormal = (2.0*textureCube(tex1,vLightDir)-vec4(1.0)).xyz;
+    vec3 spotColor = texture(tex2, vSpotlightUv.xy / vSpotlightUv.z).xyz;
+
+	outColor.xyz = diffuse * dot(lightNormal, vec3(0,0,1)) * vLightColor.xyz * spotColor;
+}
