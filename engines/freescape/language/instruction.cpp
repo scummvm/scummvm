@@ -58,7 +58,7 @@ void FreescapeEngine::executeConditions(GeometricObject *obj, bool shot, bool co
 		executeCode(obj->condition, shot, collided);
 	}
 
-	if (!_targetName.hasPrefix("driller"))
+	if (!isDriller())
 		return;
 
 	debugC(1, kFreescapeDebugCode, "Executing room conditions");

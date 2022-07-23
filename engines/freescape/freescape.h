@@ -54,6 +54,12 @@ public:
 	FreescapeEngine(OSystem *syst);
 	~FreescapeEngine();
 
+	// Game selection
+	bool isDriller() { return _targetName.hasPrefix("driller") || _targetName.hasPrefix("spacestationoblivion"); }
+	bool isDark() { return _targetName.hasPrefix("darkside"); }
+	bool isEclipse() { return _targetName.hasPrefix("totaleclipse"); }
+	bool isCastle() { return _targetName.hasPrefix("castle"); }
+
 	Renderer *_gfx;
 	Common::Error run() override;
 
