@@ -1958,9 +1958,7 @@ void LB::b_installMenu(int nargs) {
 	}
 	TextCastMember *field = static_cast<TextCastMember *>(member);
 
-	// TODO: We should process the U32String instead of encoding it to Mac Roman first
-	Common::String menuStxt = g_lingo->_compiler->codePreprocessor(field->getText(), field->getCast()->_lingoArchive, kNoneScript, memberID, true).encode(Common::kMacRoman);
-	Common::String line;
+	Common::U32String menuStxt = g_lingo->_compiler->codePreprocessor(field->getText(), field->getCast()->_lingoArchive, kNoneScript, memberID, true);
 	int linenum = -1; // We increment it before processing
 
 	Graphics::MacMenu *menu = g_director->_wm->addMenu();
@@ -1971,27 +1969,50 @@ void LB::b_installMenu(int nargs) {
 
 	menu->setCommandsCallback(menuCommandsCallback, g_director);
 
-	debugC(3, kDebugLingoExec, "installMenu: '%s'", Common::toPrintable(menuStxt).c_str());
+	debugC(3, kDebugLingoExec, "installMenu: '%s'", Common::toPrintable(menuStxt).encode().c_str());
 
 	LingoArchive *mainArchive = g_director->getCurrentMovie()->getMainLingoArch();
 
-	for (const byte *s = (const byte *)menuStxt.c_str(); *s; s++) {
-		// Get next line
-		line.clear();
-		while (*s && *s != '\n') { // If we see a whitespace
-			if (*s == (byte)'\xc2') {
-				s++;
-				if (*s == '\n') {
-					line += ' ';
+	// Since loading the STXT converts the text to Unicode based on the platform
+	// encoding, we need to fetch the correct Unicode character for the platform.
 
+	// STXT sections use Mac-style carriage returns for line breaks.
+	// The code preprocessor converts carriage returns to line feeds.
+	const uint32 LINE_BREAK = 0x0a;
+	// Menu definitions use the character 0xc3 to denote a checkmark.
+	// For Mac, this is √. For Windows, this is Ã.
+	const uint8 CHECKMARK_CHAR = 0xc3;
+	const uint32 CHECKMARK_U32 = numToChar(CHECKMARK_CHAR);
+	const char *CHECKMARK_STR = "\xc3\x83";
+	// Menu definitions use the character 0xc5 to denote a code separator.
+	// For Mac, this is ≈. For Windows, this is Å.
+	const uint8 CODE_SEPARATOR_CHAR = 0xc5;
+	const uint32 CODE_SEPARATOR_U32 = numToChar(CODE_SEPARATOR_CHAR);
+	const char *CODE_SEPARATOR_STR = "\xc3\x85";
+
+	Common::U32String lineBuffer;
+
+	for (const Common::u32char_type_t *s = menuStxt.c_str(); *s; s++) {
+		lineBuffer.clear();
+		while (*s && *s != LINE_BREAK) {
+			if (*s == CHECKMARK_U32) {
+				lineBuffer += CHECKMARK_CHAR;
+				s++;
+			} else if (*s == CODE_SEPARATOR_U32) {
+				lineBuffer += CODE_SEPARATOR_CHAR;
+				s++;
+			} else if (*s == CONTINUATION) { // fast forward to the next line
+				s++;
+				if (*s == LINE_BREAK) {
+					lineBuffer += ' ';
 					s++;
 				}
 			} else {
-				line += *s++;
+				lineBuffer += *s++;
 			}
 		}
-
 		linenum++;
+		Common::String line = lineBuffer.encode();
 
 		if (line.empty())
 			continue;
@@ -2016,14 +2037,22 @@ void LB::b_installMenu(int nargs) {
 			continue;
 		}
 
-		// We have \xc5 as a separator
-		const char *p = strchr(line.c_str(), '\xc5');
+		// If the line has a UTF8 checkmark, replace it with a byte character
+		// as expected by MacMenu.
+		size_t checkOffset = line.find(CHECKMARK_STR);
+		if (checkOffset != Common::String::npos) {
+			line.erase(checkOffset, strlen(CHECKMARK_STR));
+			line.insertChar((const char)CHECKMARK_CHAR, checkOffset);
+		}
+
+		// Split the line at the code separator
+		size_t sepOffset = line.find(CODE_SEPARATOR_STR);
 
 		Common::String text;
 
-		if (p) {
-			text = Common::String(line.c_str(), p);
-			command = Common::String(p + 1);
+		if (sepOffset != Common::String::npos) {
+			text = Common::String(line.c_str(), line.c_str() + sepOffset);
+			command = Common::String(line.c_str() + sepOffset + strlen(CODE_SEPARATOR_STR));
 		} else {
 			text = line;
 			command = "";
