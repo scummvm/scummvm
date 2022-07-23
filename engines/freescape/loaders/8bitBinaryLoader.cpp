@@ -371,9 +371,15 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		} else
 			error("Invalid area?");
 	}
-	_playerHeight = 64;
-	_playerWidth = 12;
-	_playerDepth = 32;
+	if (_targetName.hasPrefix("totaleclipse")) {
+		_playerHeight = 48;
+		_playerWidth = 8;
+		_playerDepth = 8;
+	} else {
+		_playerHeight = 64;
+		_playerWidth = 12;
+		_playerDepth = 32;
+	}
 
 	if (!_areaMap.contains(startArea))
 		_startArea = newArea->getAreaID();
