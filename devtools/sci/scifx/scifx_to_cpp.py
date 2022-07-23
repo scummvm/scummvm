@@ -76,7 +76,7 @@ if __name__ == "__main__":
     sys.exit(-1)
 
   print("""
-  /* ScummVM - Graphic Adventure Engine
+ /* ScummVM - Graphic Adventure Engine
   *
   * ScummVM is the legal property of its developers, whose names
   * are too numerous to list here. Please refer to the COPYRIGHT
@@ -228,4 +228,4 @@ if __name__ == "__main__":
     }
   }
 
-  }""")
+}""")
