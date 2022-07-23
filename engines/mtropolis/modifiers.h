@@ -262,6 +262,8 @@ private:
 
 class PathMotionModifierV2 : public Modifier {
 public:
+	PathMotionModifierV2();
+
 	bool load(ModifierLoaderContext &context, const Data::PathMotionModifierV2 &data);
 
 	bool respondsToEvent(const Event &evt) const override;
@@ -274,6 +276,8 @@ public:
 
 private:
 	struct PointDef {
+		PointDef();
+
 		Common::Point point;
 		uint32 frame;
 		bool useFrame;
@@ -735,6 +739,8 @@ private:
 
 	private:
 		struct ChildSaveLoad {
+			ChildSaveLoad();
+
 			Modifier *modifier;
 			Common::SharedPtr<ModifierSaveLoad> saveLoad;
 		};

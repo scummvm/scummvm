@@ -607,6 +607,14 @@ const char *SoundEffectModifier::getDefaultName() const {
 	return "Sound Effect Modifier";
 }
 
+PathMotionModifierV2::PointDef::PointDef() : frame(0), useFrame(false) {
+}
+
+PathMotionModifierV2::PathMotionModifierV2()
+	: _executeWhen(Event::create()), _terminateWhen(Event::create()), _reverse(false), _loop(false), _alternate(false),
+	  _startAtBeginning(false), _frameDurationTimes10Million(0) {
+}
+
 bool PathMotionModifierV2::load(ModifierLoaderContext &context, const Data::PathMotionModifierV2 &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -1386,9 +1394,9 @@ const char *BoundaryDetectionMessengerModifier::getDefaultName() const {
 }
 
 CollisionDetectionMessengerModifier::CollisionDetectionMessengerModifier()
-	: _runtime(nullptr), _isActive(false),
-	  _enableWhen(Event::create()), _disableWhen(Event::create()), _detectionMode(kDetectionModeFirstContact),
-	  _detectInFront(true), _detectBehind(true), _ignoreParent(true), _sendToCollidingElement(false) {
+	: _enableWhen(Event::create()), _disableWhen(Event::create()), _detectionMode(kDetectionModeFirstContact),
+	  _detectInFront(true), _detectBehind(true), _ignoreParent(true), _sendToCollidingElement(false),
+	  _sendToOnlyFirstCollidingElement(false), _runtime(nullptr), _isActive(false) {
 }
 
 CollisionDetectionMessengerModifier::~CollisionDetectionMessengerModifier() {
@@ -1956,6 +1964,9 @@ Modifier *CompoundVariableModifier::findChildByName(const Common::String &name) 
 	}
 
 	return nullptr;
+}
+
+CompoundVariableModifier::SaveLoad::ChildSaveLoad::ChildSaveLoad() : modifier(nullptr) {
 }
 
 CompoundVariableModifier::SaveLoad::SaveLoad(CompoundVariableModifier *modifier) : _modifier(modifier) {

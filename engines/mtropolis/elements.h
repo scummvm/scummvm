@@ -124,10 +124,14 @@ private:
 	MiniscriptInstructionOutcome scriptSetRangeTyped(MiniscriptThread *thread, const IntRange &range);
 
 	struct StartPlayingTaskData {
+		StartPlayingTaskData() : runtime(nullptr) {}
+
 		Runtime *runtime;
 	};
 
 	struct SeekToTimeTaskData {
+		SeekToTimeTaskData() : runtime(nullptr), timestamp(0) {}
+
 		Runtime *runtime;
 		uint32 timestamp;
 	};

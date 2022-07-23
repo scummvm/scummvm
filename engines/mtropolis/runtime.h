@@ -522,9 +522,13 @@ struct DynamicValueWriteProxyPOD {
 	uintptr ptrOrOffset;
 	void *objectRef;
 	const DynamicValueWriteInterface *ifc;
+
+	static DynamicValueWriteProxyPOD createDefault();
 };
 
 struct DynamicValueWriteProxy {
+	DynamicValueWriteProxy();
+
 	DynamicValueWriteProxyPOD pod;
 	Common::SharedPtr<DynamicList> containerList;
 };
@@ -1451,6 +1455,8 @@ private:
 };
 
 struct DragMotionProperties {
+	DragMotionProperties();
+
 	ConstraintDirection constraintDirection;
 	Common::Rect constraintMargin;
 	bool constrainToParent;
@@ -2593,6 +2599,8 @@ protected:
 	Common::Point getCenterPosition() const;
 
 	struct ChangeFlagTaskData {
+		ChangeFlagTaskData() : desiredFlag(false), runtime(nullptr) {}
+
 		bool desiredFlag;
 		Runtime *runtime;
 	};

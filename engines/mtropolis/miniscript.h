@@ -43,6 +43,8 @@ public:
 class MiniscriptReferences {
 public:
 	struct LocalRef {
+		LocalRef();
+
 		uint32 guid;
 		Common::String name;
 		Common::WeakPtr<RuntimeObject> resolution;
@@ -84,6 +86,17 @@ public:
 	static bool parse(const Data::MiniscriptProgram &programData, Common::SharedPtr<MiniscriptProgram> &outProgram, Common::SharedPtr<MiniscriptReferences> &outReferences);
 
 	static SIMiniscriptInstructionFactory *resolveOpcode(uint16 opcode);
+
+private:
+	struct InstructionData {
+		InstructionData();
+
+		uint16 opcode;
+		uint16 flags;
+		size_t pdPosition;
+		SIMiniscriptInstructionFactory *instrFactory;
+		Common::Array<uint8> contents;
+	};
 };
 
 namespace MiniscriptInstructions {

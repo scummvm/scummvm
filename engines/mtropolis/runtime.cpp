@@ -419,6 +419,17 @@ ColorRGB8 ColorRGB8::create(uint8 r, uint8 g, uint8 b) {
 MessageFlags::MessageFlags() : relay(true), cascade(true), immediate(true) {
 }
 
+DynamicValueWriteProxyPOD DynamicValueWriteProxyPOD::createDefault() {
+	DynamicValueWriteProxyPOD proxy;
+	proxy.ifc = nullptr;
+	proxy.objectRef = nullptr;
+	proxy.ptrOrOffset = 0;
+	return proxy;
+}
+
+DynamicValueWriteProxy::DynamicValueWriteProxy() : pod(DynamicValueWriteProxyPOD::createDefault()) {
+}
+
 Common::Point Point16POD::toScummVMPoint() const {
 	return Common::Point(x, y);
 }
@@ -3742,6 +3753,9 @@ Runtime::ConsumeCommandTaskData::ConsumeCommandTaskData() : structural(nullptr) 
 }
 
 Runtime::UpdateMouseStateTaskData::UpdateMouseStateTaskData() : mouseDown(false) {
+}
+
+DragMotionProperties::DragMotionProperties() : constraintDirection(kConstraintDirectionNone), constrainToParent(false) {
 }
 
 SceneTransitionHooks::~SceneTransitionHooks() {

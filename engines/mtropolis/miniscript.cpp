@@ -46,6 +46,9 @@ bool miniscriptEvaluateTruth(const DynamicValue &value) {
 MiniscriptInstruction::~MiniscriptInstruction() {
 }
 
+MiniscriptReferences::LocalRef::LocalRef() : guid(0) {
+}
+
 MiniscriptReferences::MiniscriptReferences(const Common::Array<LocalRef> &localRefs) : _localRefs(localRefs) {
 }
 
@@ -284,6 +287,10 @@ SIMiniscriptInstructionFactory MiniscriptInstructionFactory<T>::_instance = {
 	MiniscriptInstructionFactory<T>::getSizeAndAlignment
 };
 
+MiniscriptParser::InstructionData::InstructionData()
+	: opcode(0), flags(0), pdPosition(0), instrFactory(nullptr) {
+}
+
 bool MiniscriptParser::parse(const Data::MiniscriptProgram &program, Common::SharedPtr<MiniscriptProgram> &outProgram, Common::SharedPtr<MiniscriptReferences> &outReferences) {
 	Common::Array<MiniscriptReferences::LocalRef> localRefs;
 	Common::Array<MiniscriptProgram::Attribute> attributes;
@@ -310,14 +317,6 @@ bool MiniscriptParser::parse(const Data::MiniscriptProgram &program, Common::Sha
 
 	Common::MemoryReadStreamEndian stream(&program.bytecode[0], program.bytecode.size(), program.isBigEndian);
 	Data::DataReader reader(0, stream, program.projectFormat);
-
-	struct InstructionData {
-		uint16 opcode;
-		uint16 flags;
-		size_t pdPosition;
-		SIMiniscriptInstructionFactory *instrFactory;
-		Common::Array<uint8> contents;
-	};
 
 	Common::Array<InstructionData> rawInstructions;
 	rawInstructions.resize(program.numOfInstructions);
@@ -1566,6 +1565,8 @@ MiniscriptInstructionOutcome GetChild::readRValueAttribIndexed(MiniscriptThread 
 
 PushValue::PushValue(DataType dataType, const void *value, bool isLValue)
 	: _dataType(dataType), _isLValue(isLValue) {
+	memset(&this->_value, 0, sizeof(this->_value));
+
 	switch (dataType) {
 	case DataType::kDataTypeBool:
 		_value.b = *static_cast<const bool *>(value);
@@ -1580,7 +1581,10 @@ PushValue::PushValue(DataType dataType, const void *value, bool isLValue)
 	case DataType::kDataTypeLabel:
 		_value.lbl = *static_cast<const Label *>(value);
 		break;
+	case DataType::kDataTypeNull:
+		break;
 	default:
+		warning("PushValue instruction has an unknown type of value, this will probably malfunction!");
 		break;
 	}
 }

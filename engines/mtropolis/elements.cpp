@@ -423,9 +423,10 @@ MovieResizeFilter::~MovieResizeFilter() {
 }
 
 MovieElement::MovieElement()
-	: _cacheBitmap(false), _reversed(false), _haveFiredAtFirstCel(false), _haveFiredAtLastCel(false)
-	, _alternate(false), _playEveryFrame(false), _assetID(0), _runtime(nullptr), _displayFrame(nullptr)
-	, _shouldPlayIfNotPaused(true), _needsReset(true), _currentPlayState(kMediaStateStopped), _playRange(IntRange::create(0, 0)) {
+	: _cacheBitmap(false), _alternate(false), _playEveryFrame(false), _reversed(false), _haveFiredAtLastCel(false),
+	  _haveFiredAtFirstCel(false), _shouldPlayIfNotPaused(true), _needsReset(true), _currentPlayState(kMediaStateStopped),
+	  _assetID(0), _maxTimestamp(0), _timeScale(0), _currentTimestamp(0), _volume(100), _playRange(IntRange::create(0, 0)),
+	  _displayFrame(nullptr), _runtime(nullptr) {
 }
 
 MovieElement::~MovieElement() {
@@ -965,7 +966,7 @@ VThreadState MovieElement::seekToTimeTask(const SeekToTimeTaskData &taskData) {
 	return kVThreadReturn;
 }
 
-ImageElement::ImageElement() : _cacheBitmap(false), _runtime(nullptr) {
+ImageElement::ImageElement() : _cacheBitmap(false), _assetID(0), _runtime(nullptr) {
 }
 
 ImageElement::~ImageElement() {
@@ -1064,7 +1065,9 @@ MiniscriptInstructionOutcome ImageElement::scriptSetFlushPriority(MiniscriptThre
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
-MToonElement::MToonElement() : _cel(1), _renderedFrame(0), _flushPriority(0), _celStartTimeMSec(0), _isPlaying(false), _playRange(IntRange::create(1, 1)) {
+MToonElement::MToonElement()
+	: _cacheBitmap(false), _maintainRate(false), _assetID(0), _rateTimes100000(0), _flushPriority(0), _celStartTimeMSec(0),
+	  _isPlaying(false), _runtime(nullptr), _renderedFrame(0), _playRange(IntRange::create(1, 1)), _cel(1) {
 }
 
 MToonElement::~MToonElement() {
@@ -1550,7 +1553,9 @@ MiniscriptInstructionOutcome MToonElement::scriptSetRate(MiniscriptThread *threa
 }
 
 
-TextLabelElement::TextLabelElement() : _needsRender(false), _isBitmap(false), _macFontID(0), _size(12), _alignment(kTextAlignmentLeft) {
+TextLabelElement::TextLabelElement()
+	: _cacheBitmap(false), _needsRender(false), _isBitmap(false), _assetID(0),
+	  _macFontID(0), _size(12), _alignment(kTextAlignmentLeft), _runtime(nullptr) {
 }
 
 TextLabelElement::~TextLabelElement() {
@@ -1588,7 +1593,7 @@ bool TextLabelElement::readAttributeIndexed(MiniscriptThread *thread, DynamicVal
 			return false;
 		}
 
-		size_t lineIndex = asInteger - 1;
+		size_t lineIndex = static_cast<size_t>(asInteger) - 1;
 		uint32 startPos;
 		uint32 endPos;
 		if (findLineRange(lineIndex, startPos, endPos))
@@ -1621,7 +1626,7 @@ MiniscriptInstructionOutcome TextLabelElement::writeRefAttributeIndexed(Miniscri
 
 		writeProxy.pod.ifc = DynamicValueWriteInterfaceGlue<TextLabelLineWriteInterface>::getInstance();
 		writeProxy.pod.objectRef = this;
-		writeProxy.pod.ptrOrOffset = asInteger - 1;
+		writeProxy.pod.ptrOrOffset = static_cast<uintptr>(asInteger) - 1;
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -1940,7 +1945,9 @@ MiniscriptInstructionOutcome TextLabelElement::TextLabelLineWriteInterface::refA
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
-SoundElement::SoundElement() : _finishTime(0), _shouldPlayIfNotPaused(true), _needsReset(true) {
+SoundElement::SoundElement()
+	: _leftVolume(0), _rightVolume(0), _balance(0), _assetID(0), _finishTime(0),
+	  _shouldPlayIfNotPaused(true), _needsReset(true), _runtime(nullptr) {
 }
 
 SoundElement::~SoundElement() {
