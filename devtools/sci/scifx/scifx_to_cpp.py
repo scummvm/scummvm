@@ -4,21 +4,21 @@ import sys
 def Chunker(seq, size):
     return (seq[pos:pos + size] for pos in range(0, len(seq), size))
 
-def ModToIndex(m):
+def ModToIndex(mods, m):
   try:
-    return Mods.index(m)
+    return mods.index(m)
   except ValueError:
-    Mods.append(m)
-    return len(Mods)-1
+    mods.append(m)
+    return len(mods)-1
 
-def PrintMods():
-  L = [ "\t{ " + ", ".join( [ "%4d" % (round(128 * (val - 1)),) for val in m ] )  + " }" for m in Mods ]
-  print("static const PaletteMod paletteMods" + GID + "[] = {")
+def PrintMods(gid, mods):
+  L = [ "\t{ " + ", ".join( [ "%4d" % (round(128 * (val - 1)),) for val in m ] )  + " }" for m in mods ]
+  print("static const PaletteMod paletteMods" + gid + "[] = {")
   print( ",\n".join(L) )
   print("};")
 
-def PrintPic(pics, comments):
-  print("static const PicMod picMods" + GID + "[] = {")
+def PrintPic(gid, pics, comments):
+  print("static const PicMod picMods" + gid + "[] = {")
 
   for comment in comments:
     print("\t// " + comment)
@@ -31,8 +31,8 @@ def PrintPic(pics, comments):
 
   print("};")
 
-def PrintView(views, comments):
-  print("static const ViewMod viewMods" + GID + "[] = {")
+def PrintView(gid, views, comments):
+  print("static const ViewMod viewMods" + gid + "[] = {")
 
   for comment in comments:
     print("\t// " + comment)
@@ -71,7 +71,6 @@ def ParseTriple(l):
   return L
 
 if __name__ == "__main__":
-
   if len(sys.argv) < 2:
     print("Usage: python scifx_to_header.py [scifx files] > scifx.cpp")
     sys.exit(-1)
@@ -106,14 +105,15 @@ if __name__ == "__main__":
 
   namespace Sci {
   """)
-  GIDs = []
+  input_files = sys.argv[1:]
+  gids = []
 
-  for F in sys.argv[1:]:
+  for F in input_files:
     comments = []
     pics = []
     views = []
-    Mods = [(1.,1.,1.)]
-    GID = ""
+    mods = [(1.,1.,1.)]
+    gid = ""
 
     for l in open(F, "r").readlines():
       l = l.strip()
@@ -122,17 +122,17 @@ if __name__ == "__main__":
       if l[0] == '#':
         comment = l[1:].strip()
         # Only add the top comments (before the game ID is set)
-        if (GID == ""):
+        if (gid == ""):
           comments.append(comment)
         continue
       if l[0:6] == "gameid":
-        assert(GID == "")
+        assert(gid == "")
         l = l[6:].strip()
         l = l.strip()
         assert(l[0] == "=")
         assert(l[-1] == ";")
         l = l[1:-1].strip()
-        GID = l
+        gid = l
         continue
       if l[0:4] == "view":
         ruletype = "view"
@@ -162,28 +162,28 @@ if __name__ == "__main__":
         val = (float(l), float(l), float(l))
       if ruletype == "pic":
         for pic in ids:
-          pics.append([pic, ModToIndex(val)])
+          pics.append([pic, ModToIndex(mods, val)])
       elif ruletype == "view":
         for view in ids:
           for loop in loops:
             for cel in cels:
-              views.append([view, loop, cel, ModToIndex(val)])
+              views.append([view, loop, cel, ModToIndex(mods, val)])
 
-    if GID == "":
+    if gid == "":
       raise ValueError("No gameid specified")
 
-    GIDs.append(GID)
+    gids.append(gid)
 
-    PrintMods()
+    PrintMods(gid, mods)
     print()
-    PrintPic(pics, comments)
+    PrintPic(gid, pics, comments)
     print()
-    PrintView(views, comments)
+    PrintView(gid, views, comments)
     print()
 
   print("static const SciFxMod mods[] = {")
-  for GID in GIDs:
-    print("\t{{ GID_{0}, paletteMods{0}, ARRAYSIZE(paletteMods{0}), picMods{0}, ARRAYSIZE(picMods{0}), viewMods{0}, ARRAYSIZE(viewMods{0}) }},".format(GID));
+  for gid in gids:
+    print("\t{{ gid_{0}, paletteMods{0}, ARRAYSIZE(paletteMods{0}), picMods{0}, ARRAYSIZE(picMods{0}), viewMods{0}, ARRAYSIZE(viewMods{0}) }},".format(gid));
   print("};")
 
   print("""
