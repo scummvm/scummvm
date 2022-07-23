@@ -962,7 +962,7 @@ ProjectCatalog::StreamDesc::StreamDesc()
 }
 
 ProjectCatalog::SegmentDesc::SegmentDesc() : segmentID(0) {
-};
+}
 
 ProjectCatalog::ProjectCatalog() : persistFlags(0), sizeOfStreamAndSegmentDescs(0), unknown1(0), unknown2(0), unknown3(0) {
 }
