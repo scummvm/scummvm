@@ -806,7 +806,7 @@ const byte *ScummEngine::postProcessDOSGraphics(VirtScreen *vs, int &pitch, int 
 	};
 
 	static const byte hrcTableV4[32] = {
-		0x00, 0x08, 0xAA, 0xBB, 0x55, 0x66, 0x99, 0x77, 0x11, 0x55, 0x77, 0xEE, 0xAA, 0xEE, 0xFF, 0xFF,
+		0x00, 0x08, 0xAA, 0xBB, 0x55, 0x66, 0x99, 0x7F, 0x11, 0x55, 0x77, 0xEE, 0xAA, 0xEE, 0xFF, 0xFF,
 		0x00, 0x80, 0xAA, 0xDD, 0x00, 0x99, 0x66, 0xF7, 0x44, 0xAA, 0xDD, 0x77, 0xFF, 0xBB, 0xBB, 0xFF
 	};
 
@@ -829,7 +829,7 @@ const byte *ScummEngine::postProcessDOSGraphics(VirtScreen *vs, int &pitch, int 
 	const byte *colMap = (_game.id == GID_ZAK || _game.version == 2) ? ((vs->number == kVerbVirtScreen || renderHerc) ? v2VrbColMap : v2TxtColMap) : (vs->number == kVerbVirtScreen ? mmv1VrbColMap : tmpTxtColMap);
 	const byte *colMap2 = mainColMap[_game.version];
 
-	// For LOOM and INDY3, CGA gets dithered as 4x4 squares, for MI1EGA as 4x8 squares. Odd lines have the colors swapped, so there will be checkered patterns.
+	// For LOOM and INDY3, CGA gets dithered as 2x2 squares, for MI1EGA as 2x4 squares. Odd lines have the colors swapped, so there will be checkered patterns.
 	uint8 lnMod = (_game.version > 3 && !renderHerc) ? 0x40 : 0x20;
 	uint8 lnIdx = (y & ((lnMod >> 4) - 1)) << 4;
 
@@ -864,6 +864,7 @@ const byte *ScummEngine::postProcessDOSGraphics(VirtScreen *vs, int &pitch, int 
 		int pitch1 = (pitch - width) << 1;
 
 		if (renderV3) {
+			// This is for MI1EGA Hercules only
 			pitch1 = pitch - (width << 1);
 			int height2 = height >> 2;
 			height = height2 * 7;
@@ -886,6 +887,7 @@ const byte *ScummEngine::postProcessDOSGraphics(VirtScreen *vs, int &pitch, int 
 			}
 
 		} else if (vs->number == kMainVirtScreen) {
+			// V1/2 Hercules and CGA b/w mode
 			uint32 *dst2 = (uint32*)(dst + pitch);
 			int pitch2 = pitch1 >> 2;
 			int height2 = height;
@@ -912,6 +914,7 @@ const byte *ScummEngine::postProcessDOSGraphics(VirtScreen *vs, int &pitch, int 
 			}
 
 		} else {
+			// V1/2 Hercules and CGA b/w mode
 			if (renderHerc) {
 				pitch1 = kHercWidth - (width << 1);
 				y -= vs->topline;
