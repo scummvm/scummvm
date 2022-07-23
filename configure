@@ -3165,6 +3165,7 @@ if test -n "$_host"; then
 	case "$_host" in
 		3ds)
 			append_var DEFINES "-DDISABLE_FANCY_THEMES"
+			append_var DEFINES "-DDISABLE_HELP_STRINGS"
 			append_var DEFINES "-DDISABLE_SID"
 			append_var DEFINES "-DDISABLE_NES_APU"
 			_backend="3ds"
@@ -3330,7 +3331,7 @@ if test -n "$_host"; then
 			if test "$_debug_build" != yes; then
 				append_var DEFINES "-DDISABLE_TEXT_CONSOLE"
 			fi
-			append_var DEFINES "-DDISABLE_COMMAND_LINE"
+			append_var DEFINES "-DDISABLE_HELP_STRINGS"
 			append_var DEFINES "-DDISABLE_DOSBOX_OPL"
 			append_var DEFINES "-DDISABLE_FANCY_THEMES"
 			append_var DEFINES "-DDISABLE_SID"
