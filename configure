@@ -3066,13 +3066,6 @@ EOF
 		if test "$_dynamic_modules" = yes ; then
 			_detection_features_static=no
 			_plugins_default=dynamic
-		else
-			#use link time optimization to further reduce exe size
-			append_var CXXFLAGS "-flto"
-			append_var LDFLAGS "-flto=jobserver"
-			#use linker dead code elimination to further reduce exe size
-			append_var CXXFLAGS "-ffunction-sections -fdata-sections"
-			append_var LDFLAGS "-Wl,--gc-sections"
 		fi
 		if test "$_debug_build" = no; then
 		#optimize for smallest file size. This is necessary to prevent a crash on startup
@@ -6286,6 +6279,16 @@ case $_host_os in
 		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found
 		# during linking stage
 		append_var LIBS "-lc -lgcc -lnosys"
+		;;
+	psp2)
+		if test "$_dynamic_modules" = no ; then
+			#use link time optimization to further reduce exe size
+			append_var CXXFLAGS "-flto"
+			append_var LDFLAGS "-flto=jobserver"
+			#use linker dead code elimination to further reduce exe size
+			append_var CXXFLAGS "-ffunction-sections -fdata-sections"
+			append_var LDFLAGS "-Wl,--gc-sections"
+		fi
 		;;
 esac
 
