@@ -90,22 +90,19 @@ iMaterial_BaseLight::iMaterial_BaseLight(const tString &asLightVertexProgram,
 
 	////////////////////////////////////////
 	// Get names for other light programs
-	tString sSpotVtxProgram = cString::Sub(asLightVertexProgram, 0, (int)asLightVertexProgram.size() - 5) +
-							  "Spot";
+	tString sSpotVtxProgram = asLightVertexProgram + "_Spot";
 
 	//////////////////////////////////////////////////////
 	// Check if there is enough texture units for 1 pass spot
 	if (mpLowLevelGraphics->GetCaps(eGraphicCaps_MaxTextureImageUnits) > 4) {
 		mbUsesTwoPassSpot = false;
-		tString sSpotFragProgram = cString::Sub(asLightFragmentProgram, 0, (int)asLightFragmentProgram.size() - 5) +
-								   "Spot";
+		tString sSpotFragProgram = asLightFragmentProgram + "_Spot";
 		_shaders[eBaseLightProgram_Spot1] = mpProgramManager->CreateProgram(sSpotVtxProgram, sSpotFragProgram);
 	} else {
 		mbUsesTwoPassSpot = true;
 		tString sSpotFragProgram1 = "Diffuse_Light_Spot_pass1"; // cString::Sub(asLightFragmentProgram,0, (int)asLightFragmentProgram.size() - 5) +
 																	  //			"Spot_fp_pass1.cg";
-		tString sSpotFragProgram2 = cString::Sub(asLightFragmentProgram, 0, (int)asLightFragmentProgram.size() - 5) +
-									"Spot_pass2";
+		tString sSpotFragProgram2 = asLightFragmentProgram + "_Spot_pass2";
 		_shaders[eBaseLightProgram_Spot1] = mpProgramManager->CreateProgram(sSpotVtxProgram, sSpotFragProgram1);
 		_shaders[eBaseLightProgram_Spot2] = mpProgramManager->CreateProgram(sSpotVtxProgram, sSpotFragProgram2);
 	}
