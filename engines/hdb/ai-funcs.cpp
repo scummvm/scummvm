@@ -427,9 +427,9 @@ bool AI::cacheEntGfx(AIEntity *e, bool initFlag) {
 			e->aiInit = aiEntList[i].initFunc;
 			e->aiInit2 = aiEntList[i].initFunc2;
 			if (initFlag) {
-				e->aiInit(e);
+				e->aiInit(e, 0, 0);
 				if (e->aiInit2)
-					e->aiInit2(e);
+					e->aiInit2(e, 0, 0);
 
 				if (e->luaFuncInit[0]) {
 					g_hdb->_lua->callFunction(e->luaFuncInit, 2);
@@ -443,7 +443,7 @@ bool AI::cacheEntGfx(AIEntity *e, bool initFlag) {
 						Common::strlcpy(e->printedName, str2, 32);
 				}
 			} else if (e->aiInit2)
-				e->aiInit2(e);
+				e->aiInit2(e, 0, 0);
 
 			break; // Entity Initiated
 		}
@@ -610,7 +610,7 @@ bool AI::useLuaEntity(const char *initName) {
 	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
 		AIEntity *e = *it;
 		if (!scumm_stricmp(initName, e->entityName)) {
-			e->aiUse(e);
+			e->aiUse(e, 0, 0);
 			checkActionList(e, e->tileX, e->tileY, true);
 			if (e->luaFuncUse[0])
 				g_hdb->_lua->callFunction(e->luaFuncUse, 0);
@@ -719,7 +719,7 @@ void AI::setEntityGoal(AIEntity *e, int x, int y) {
 // Initializes each entity after map is loaded
 void AI::initAllEnts() {
 	for (Common::Array<AIEntity *>::iterator it = _ents->begin(); it != _ents->end(); ++it) {
-		(*it)->aiInit((*it));
+		(*it)->aiInit((*it), 0, 0);
 		if ((*it)->luaFuncInit[0]) {
 			if (g_hdb->_lua->callFunction((*it)->luaFuncInit, 2)) {
 				Common::strlcpy((*it)->entityName, g_hdb->_lua->getStringOffStack(), 32);
@@ -1244,7 +1244,7 @@ void AI::animateEntity(AIEntity *e) {
 						g_hdb->_sound->playSound(SND_SPLASH);
 					} else if (!checkFloating(e->tileX, e->tileY)) {
 						if (e->type == AI_BOOMBARREL) {
-							aiBarrelExplode(e);
+							aiBarrelExplode(e, 0, 0);
 							aiBarrelBlowup(e, e->tileX, e->tileY);
 							return;
 						} else {
@@ -1570,7 +1570,7 @@ void AI::animEntFrames(AIEntity *e) {
 		max = e->special1Frames;
 		if (e->type == AI_BOOMBARREL) {
 			// while exploding, call this function
-			aiBarrelExplodeSpread(e);
+			aiBarrelExplodeSpread(e, 0, 0);
 			if (e->animFrame == max - 1) {
 				removeEntity(e);
 				return;
@@ -1919,7 +1919,7 @@ void AI::moveEnts() {
 	// Call aiAction for Floating Entities
 	for (Common::Array<AIEntity *>::iterator it = _floats->begin(); it != _floats->end(); ++it) {
 		if ((*it)->aiAction)
-			(*it)->aiAction((*it));
+			(*it)->aiAction((*it), 0, 0);
 	}
 
 	// Call aiAction for all other Entities
@@ -1941,7 +1941,7 @@ void AI::moveEnts() {
 			}
 			// Stunned Entity Timer
 			if (!e->stunnedWait)
-				e->aiAction(e);
+				e->aiAction(e, 0, 0);
 			else if (e->stunnedWait < (int32)g_hdb->getTimeSlice())
 				e->stunnedWait = 0;
 		}
@@ -2136,7 +2136,7 @@ void AI::laserScan() {
 	for (uint i = 0; i < _ents->size(); i++) {
 		AIEntity *e = _ents->operator[](i);
 		if (e->type == AI_LASER)
-			aiLaserAction(e);
+			aiLaserAction(e, 0, 0);
 	}
 }
 

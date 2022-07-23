@@ -525,7 +525,7 @@ bool AI::autoActive(int x, int y) {
 
 CallbackDef allCallbacks[] = {
 	{NO_FUNCTION, nullptr},
-	{AI_BARREL_EXPLOSION_END, aiBarrelExplosionEnd},
+	{AI_BARREL_EXPLOSION_END, callbackAiBarrelExplosionEnd},
 	{CALLBACK_DOOR_OPEN_CLOSE, callbackDoorOpenClose},
 	{CALLBACK_AUTODOOR_OPEN_CLOSE, callbackAutoDoorOpenClose},
 	{CALLBACK_END, nullptr}

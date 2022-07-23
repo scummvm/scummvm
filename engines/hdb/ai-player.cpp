@@ -35,7 +35,7 @@
 
 namespace HDB {
 
-void aiPlayerInit(AIEntity *e) {
+void aiPlayerInit(AIEntity *e, int mx, int my) {
 	g_hdb->_ai->clearInventory();
 	e->aiAction = aiPlayerAction;
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
@@ -63,7 +63,7 @@ void aiPlayerInit(AIEntity *e) {
 	g_hdb->_ai->assignPlayer(e);
 }
 
-void aiPlayerInit2(AIEntity *e) {
+void aiPlayerInit2(AIEntity *e, int mx, int my) {
 	if (!g_hdb->_ai->_clubUpGfx[0]) {
 		g_hdb->_ai->_weaponSelGfx = g_hdb->_gfx->loadTile(TILE_WEAPON_EQUIPPED);
 		g_hdb->_ai->_clubUpGfx[0] = g_hdb->_gfx->getPicGfx(CLUBUP1, -1);
@@ -116,7 +116,7 @@ void aiPlayerInit2(AIEntity *e) {
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
-void aiPlayerAction(AIEntity *e) {
+void aiPlayerAction(AIEntity *e, int mx, int my) {
 	static const AIState stand[5] = {STATE_NONE, STATE_STANDUP, STATE_STANDDOWN, STATE_STANDLEFT, STATE_STANDRIGHT};
 	static const int xvAhead[5] = {9, 0, 0, -1, 1};
 	static const int yvAhead[5] = {9, -1, 1, 0, 0};
@@ -501,7 +501,7 @@ void aiPlayerDraw(AIEntity *e, int mx, int my) {
 	}
 }
 
-void aiGemAttackInit(AIEntity *e) {
+void aiGemAttackInit(AIEntity *e, int mx, int my) {
 	static const int xv[5] = {9, 0, 0, -1, 1};
 	static const int yv[5] = {9, -1, 1, 0, 0};
 
@@ -514,7 +514,7 @@ void aiGemAttackInit(AIEntity *e) {
 	g_hdb->_sound->playSound(SND_GEM_THROW);
 }
 
-void aiGemAttackAction(AIEntity *e) {
+void aiGemAttackAction(AIEntity *e, int mx, int my) {
 	static const int xv[5] = {9, 0, 0, -1, 1};
 	static const int yv[5] = {9, -1, 1, 0, 0};
 
@@ -554,14 +554,14 @@ void aiGemAttackAction(AIEntity *e) {
 						g_hdb->_sound->playSound(SND_CLUB_HIT_FLESH);
 						AIEntity *found = g_hdb->_ai->findEntity(atoi(num1), atoi(num2));
 						if (found)
-							aiDragonWake(found);
+							aiDragonWake(found, 0, 0);
 					}
 					g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
 					g_hdb->_sound->playSound(SND_INV_SELECT);
 					break;
 				case AI_DRAGON:
 					g_hdb->_sound->playSound(SND_CLUB_HIT_FLESH);
-					aiDragonWake(hit);
+					aiDragonWake(hit, 0, 0);
 					// fallthrough
 				default:
 					g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
@@ -618,13 +618,13 @@ void aiGemAttackAction(AIEntity *e) {
 	}
 }
 
-void aiChickenAction(AIEntity *e) {
+void aiChickenAction(AIEntity *e, int mx, int my) {
 	static int delay = 64;
 
 	if (g_hdb->_map->checkEntOnScreen(e) && !delay) {
 		g_hdb->_sound->playSound(SND_CHICKEN_AMBIENT);
 		delay = g_hdb->_rnd->getRandomNumber(127) + 160;
-		aiChickenUse(e);
+		aiChickenUse(e, 0, 0);
 	}
 
 	if (delay)
@@ -636,39 +636,39 @@ void aiChickenAction(AIEntity *e) {
 		g_hdb->_ai->animEntFrames(e);
 }
 
-void aiChickenUse(AIEntity *e) {
+void aiChickenUse(AIEntity *e, int mx, int my) {
 	g_hdb->_sound->playSound(SND_CHICKEN_BAGAWK);
 }
 
-void aiChickenInit(AIEntity *e) {
+void aiChickenInit(AIEntity *e, int mx, int my) {
 	e->aiUse = aiChickenUse;
 	e->aiAction = aiChickenAction;
 }
 
-void aiChickenInit2(AIEntity *e) {
+void aiChickenInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiDollyInit(AIEntity *e) {
+void aiDollyInit(AIEntity *e, int mx, int my) {
 	e->moveSpeed = kPlayerMoveSpeed >> 1;
 	e->aiAction = aiGenericAction;
 }
 
-void aiDollyInit2(AIEntity *e) {
+void aiDollyInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->movedownGfx[0];
 }
 
-void aiSergeantInit(AIEntity *e) {
+void aiSergeantInit(AIEntity *e, int mx, int my) {
 	e->moveSpeed = kPlayerMoveSpeed >> 1;
 	if (e->value1)
 		e->aiAction = aiSergeantAction;
 }
 
-void aiSergeantInit2(AIEntity *e) {
+void aiSergeantInit2(AIEntity *e, int mx, int my) {
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
-void aiSergeantAction(AIEntity *e) {
+void aiSergeantAction(AIEntity *e, int mx, int my) {
 	if (e->goalX) {
 		g_hdb->_sound->playSound(SND_FOOTSTEPS);
 		g_hdb->_ai->animateEntity(e);
@@ -676,13 +676,13 @@ void aiSergeantAction(AIEntity *e) {
 		g_hdb->_ai->animEntFrames(e);
 }
 
-void aiSpacedudeInit(AIEntity *e) {
+void aiSpacedudeInit(AIEntity *e, int mx, int my) {
 	e->moveSpeed = kPlayerMoveSpeed >> 1;
 	if (e->value1)
 		e->aiAction = aiGenericAction;
 }
 
-void aiSpacedudeInit2(AIEntity *e) {
+void aiSpacedudeInit2(AIEntity *e, int mx, int my) {
 	e->standdownFrames = 1;
 	e->standdownGfx[0] = e->movedownGfx[0];
 	e->standupFrames = 1;
@@ -694,7 +694,7 @@ void aiSpacedudeInit2(AIEntity *e) {
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
-void aiCrateAction(AIEntity *e) {
+void aiCrateAction(AIEntity *e, int mx, int my) {
 	// if crate isn't moving somewhere, don't move it
 	if (!e->goalX) {
 		// crate is stopped in the water... should it continue downstream?
@@ -716,7 +716,7 @@ void aiCrateAction(AIEntity *e) {
 	g_hdb->_ai->animateEntity(e);
 }
 
-void aiCrateInit2(AIEntity *e) {
+void aiCrateInit2(AIEntity *e, int mx, int my) {
 	// point all crate move frames to the standing one
 	e->movedownFrames =
 		e->moveleftFrames =
@@ -731,13 +731,13 @@ void aiCrateInit2(AIEntity *e) {
 	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
 }
 
-void aiCrateInit(AIEntity *e) {
+void aiCrateInit(AIEntity *e, int mx, int my) {
 	e->moveSpeed = kPushMoveSpeed;
 	e->aiAction = aiCrateAction;
 	e->value1 = 0;
 }
 
-void aiBarrelLightAction(AIEntity *e) {
+void aiBarrelLightAction(AIEntity *e, int mx, int my) {
 	if (!e->goalX) {
 		if (e->state == STATE_FLOATING)
 			g_hdb->_ai->animEntFrames(e);
@@ -747,7 +747,7 @@ void aiBarrelLightAction(AIEntity *e) {
 	g_hdb->_ai->animateEntity(e);
 }
 
-void aiBarrelLightInit2(AIEntity *e) {
+void aiBarrelLightInit2(AIEntity *e, int mx, int my) {
 	// point all light barrel move frames to the standing one
 	e->movedownFrames =
 		e->moveleftFrames =
@@ -762,12 +762,12 @@ void aiBarrelLightInit2(AIEntity *e) {
 	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
 }
 
-void aiBarrelLightInit(AIEntity *e) {
+void aiBarrelLightInit(AIEntity *e, int mx, int my) {
 	e->moveSpeed = kPushMoveSpeed;
 	e->aiAction = aiBarrelLightAction;
 }
 
-void aiBarrelHeavyAction(AIEntity *e) {
+void aiBarrelHeavyAction(AIEntity *e, int mx, int my) {
 	if (!e->goalX) {
 		if (e->state == STATE_FLOATING)
 			g_hdb->_ai->animEntFrames(e);
@@ -777,7 +777,7 @@ void aiBarrelHeavyAction(AIEntity *e) {
 	g_hdb->_ai->animateEntity(e);
 }
 
-void aiBarrelHeavyInit2(AIEntity *e) {
+void aiBarrelHeavyInit2(AIEntity *e, int mx, int my) {
 	// point all heavy barrel move frames to the standing one
 	e->movedownFrames =
 		e->moveleftFrames =
@@ -792,12 +792,12 @@ void aiBarrelHeavyInit2(AIEntity *e) {
 	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
 }
 
-void aiBarrelHeavyInit(AIEntity *e) {
+void aiBarrelHeavyInit(AIEntity *e, int mx, int my) {
 	e->moveSpeed = kPushMoveSpeed;
 	e->aiAction = aiBarrelHeavyAction;
 }
 
-void aiBarrelExplode(AIEntity *e) {
+void aiBarrelExplode(AIEntity *e, int mx, int my) {
 	e->state = STATE_EXPLODING;
 	e->animDelay = e->animCycle;
 	e->animFrame = 0;
@@ -808,13 +808,13 @@ void aiBarrelExplode(AIEntity *e) {
 	g_hdb->_map->setBoomBarrel(e->tileX, e->tileY, 0);
 }
 
-void aiBarrelExplodeInit(AIEntity *e) {
+void aiBarrelExplodeInit(AIEntity *e, int mx, int my) {
 	e->moveSpeed = kPushMoveSpeed;
 	e->aiAction = aiBarrelExplodeAction;
 	g_hdb->_map->setBoomBarrel(e->tileX, e->tileY, 1);
 }
 
-void aiBarrelExplodeInit2(AIEntity *e) {
+void aiBarrelExplodeInit2(AIEntity *e, int mx, int my) {
 	// point all exploding barrel MOVE frames to the standing one
 	e->blinkFrames =
 		e->movedownFrames =
@@ -831,14 +831,14 @@ void aiBarrelExplodeInit2(AIEntity *e) {
 	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
 }
 
-void aiBarrelExplodeAction(AIEntity *e) {
+void aiBarrelExplodeAction(AIEntity *e, int mx, int my) {
 	if (e->goalX)
 		g_hdb->_ai->animateEntity(e);
 	else if (e->state == STATE_EXPLODING)
 		g_hdb->_ai->animEntFrames(e);
 }
 
-void aiBarrelExplodeSpread(AIEntity *e) {
+void aiBarrelExplodeSpread(AIEntity *e, int mx, int my) {
 	static const int xv1[4] = {-1,  1, -1,  0};
 	static const int yv1[4] = {-1, -1,  0, -1};
 	static const int xv2[4] = {1,  0,  1, -1};
@@ -868,7 +868,7 @@ void aiBarrelExplodeSpread(AIEntity *e) {
 				g_hdb->_ai->killPlayer(DEATH_FRIED);
 				break;
 			case AI_BOOMBARREL:
-				aiBarrelExplode(e2);
+				aiBarrelExplode(e2, 0, 0);
 				break;
 			case AI_OMNIBOT:
 			case AI_TURNBOT:
@@ -912,7 +912,7 @@ void aiBarrelExplodeSpread(AIEntity *e) {
 				g_hdb->_ai->killPlayer(DEATH_FRIED);
 				break;
 			case AI_BOOMBARREL:
-				aiBarrelExplode(e2);
+				aiBarrelExplode(e2, 0, 0);
 				break;
 			case AI_OMNIBOT:
 			case AI_TURNBOT:
@@ -941,7 +941,7 @@ void aiBarrelExplodeSpread(AIEntity *e) {
 	}
 }
 
-void aiBarrelExplosionEnd(int x, int y) {
+void callbackAiBarrelExplosionEnd(int x, int y) {
 	g_hdb->_map->setExplosion(x, y, 0);
 }
 
@@ -952,7 +952,7 @@ void aiBarrelBlowup(AIEntity *e, int x, int y) {
 	g_hdb->_ai->addCallback(AI_BARREL_EXPLOSION_END, x, y, e->animCycle * 4);
 }
 
-void aiScientistInit(AIEntity *e) {
+void aiScientistInit(AIEntity *e, int x, int y) {
 	e->moveSpeed = kPlayerMoveSpeed >> 1;
 	if (g_hdb->_ai->findPath(e))
 		e->aiAction = aiGenericAction;
@@ -960,11 +960,11 @@ void aiScientistInit(AIEntity *e) {
 		e->aiAction = aiGenericAction;
 }
 
-void aiScientistInit2(AIEntity *e) {
+void aiScientistInit2(AIEntity *e, int x, int y) {
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
-void aiSlugAttackAction(AIEntity *e) {
+void aiSlugAttackAction(AIEntity *e, int x, int y) {
 	static const int xv[5] = {9, 0, 0, -1, 1};
 	static const int yv[5] = {9, -1, 1, 0, 0};
 
@@ -1038,7 +1038,7 @@ void aiSlugAttackAction(AIEntity *e) {
 			break;
 		case AI_BOOMBARREL:
 			g_hdb->_sound->playSound(SND_CLUB_HIT_METAL);
-			aiBarrelExplode(hit);
+			aiBarrelExplode(hit, 0, 0);
 			aiBarrelBlowup(hit, hit->tileX, hit->tileY);
 			break;
 			// ACTION MODE entities go away - except the FOURFIRER
@@ -1066,12 +1066,12 @@ void aiSlugAttackAction(AIEntity *e) {
 				g_hdb->_sound->playSound(SND_CLUB_HIT_FLESH);
 				AIEntity *found = g_hdb->_ai->findEntity(atoi(num1), atoi(num2));
 				if (found)
-					aiDragonWake(found);
+					aiDragonWake(found, 0, 0);
 				g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
 			}
 			break;
 		case AI_DRAGON:
-			aiDragonWake(hit);
+			aiDragonWake(hit, 0, 0);
 			break;
 		default:
 			break;
@@ -1093,7 +1093,7 @@ void aiSlugAttackDraw(AIEntity *e, int mx, int my) {
 	g_hdb->_ai->_slugAttackGfx[e->animFrame]->drawMasked(e->x - mx + 8, e->y - my + 8);
 }
 
-void aiSlugAttackInit(AIEntity *e) {
+void aiSlugAttackInit(AIEntity *e, int mx, int my) {
 	static const int xv[5] = {9,  0, 0, -1, 1};
 	static const int yv[5] = {9, -1, 1,  0, 0};
 
@@ -1109,40 +1109,40 @@ void aiSlugAttackInit(AIEntity *e) {
 	g_hdb->_sound->playSound(SND_SLUG_FIRE);
 }
 
-void aiSlugAttackInit2(AIEntity *e) {
+void aiSlugAttackInit2(AIEntity *e, int mx, int my) {
 	e->movedownFrames = 4;
 }
 
-void aiDeadWorkerInit(AIEntity *e) {
+void aiDeadWorkerInit(AIEntity *e, int mx, int my) {
 }
 
-void aiDeadWorkerInit2(AIEntity *e) {
+void aiDeadWorkerInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiWorkerInit(AIEntity *e) {
+void aiWorkerInit(AIEntity *e, int mx, int my) {
 	if (e->value1)
 		e->aiAction = aiGenericAction;
 	e->moveSpeed = kPlayerMoveSpeed >> 1;
 }
 
-void aiWorkerInit2(AIEntity *e) {
+void aiWorkerInit2(AIEntity *e, int mx, int my) {
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
-void aiAccountantInit(AIEntity *e) {
+void aiAccountantInit(AIEntity *e, int mx, int my) {
 }
 
-void aiAccountantInit2(AIEntity *e) {
+void aiAccountantInit2(AIEntity *e, int mx, int my) {
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
-void aiFrogStatueInit(AIEntity *e) {
+void aiFrogStatueInit(AIEntity *e, int mx, int my) {
 	e->moveSpeed = kPushMoveSpeed;
 	e->aiAction = aiFrogStatueAction;
 }
 
-void aiFrogStatueInit2(AIEntity *e) {
+void aiFrogStatueInit2(AIEntity *e, int mx, int my) {
 	// point all frog statue MOVE frames to the standing one
 	e->blinkFrames =
 		e->movedownFrames =
@@ -1159,7 +1159,7 @@ void aiFrogStatueInit2(AIEntity *e) {
 	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
 }
 
-void aiFrogStatueAction(AIEntity *e) {
+void aiFrogStatueAction(AIEntity *e, int mx, int my) {
 	// if frog statue isn't moving somewhere, don't move it
 	if (!e->goalX)
 		return;
@@ -1167,261 +1167,261 @@ void aiFrogStatueAction(AIEntity *e) {
 	g_hdb->_ai->animateEntity(e);
 }
 
-void aiRoboStunnerAction(AIEntity *e) {
+void aiRoboStunnerAction(AIEntity *e, int mx, int my) {
 	aiAnimateStanddown(e, 1);
-	aiGetItemAction(e);
+	aiGetItemAction(e, 0, 0);
 }
 
-void aiRoboStunnerInit(AIEntity *e) {
+void aiRoboStunnerInit(AIEntity *e, int mx, int my) {
 	e->aiAction = aiRoboStunnerAction;
 	Common::strlcpy(e->printedName, "Robostunner", 32);
 }
 
-void aiRoboStunnerInit2(AIEntity *e) {
+void aiRoboStunnerInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiClubInit(AIEntity *e) {
+void aiClubInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "Creature Clubber", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiClubInit2(AIEntity *e) {
+void aiClubInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiSlugSlingerInit(AIEntity *e) {
+void aiSlugSlingerInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "Slugslinger", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiSlugSlingerInit2(AIEntity *e) {
+void aiSlugSlingerInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiEnvelopeGreenInit(AIEntity *e) {
+void aiEnvelopeGreenInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "Green envelope", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiEnvelopeGreenInit2(AIEntity *e) {
+void aiEnvelopeGreenInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiGemBlueInit(AIEntity *e) {
+void aiGemBlueInit(AIEntity *e, int mx, int my) {
 	e->aiAction = aiGemAction;
 }
 
-void aiGemBlueInit2(AIEntity *e) {
+void aiGemBlueInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiGemRedInit(AIEntity *e) {
+void aiGemRedInit(AIEntity *e, int mx, int my) {
 	e->aiAction = aiGemAction;
 }
 
-void aiGemRedInit2(AIEntity *e) {
+void aiGemRedInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiGemGreenInit(AIEntity *e) {
+void aiGemGreenInit(AIEntity *e, int mx, int my) {
 	e->aiAction = aiGemAction;
 }
 
-void aiGemGreenInit2(AIEntity *e) {
+void aiGemGreenInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiTeaCupInit(AIEntity *e) {
+void aiTeaCupInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "a Teacup", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiTeaCupInit2(AIEntity *e) {
+void aiTeaCupInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiCookieInit(AIEntity *e) {
+void aiCookieInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "a Cookie", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiCookieInit2(AIEntity *e) {
+void aiCookieInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiBurgerInit(AIEntity *e) {
+void aiBurgerInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "a Burger", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiBurgerInit2(AIEntity *e) {
+void aiBurgerInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiBookInit(AIEntity *e) {
+void aiBookInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "a Book", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiBookInit2(AIEntity *e) {
+void aiBookInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiClipboardInit(AIEntity *e) {
+void aiClipboardInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "a Clipboard", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiClipboardInit2(AIEntity *e) {
+void aiClipboardInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiNoteInit(AIEntity *e) {
+void aiNoteInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "a Note", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiNoteInit2(AIEntity *e) {
+void aiNoteInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiKeycardWhiteInit(AIEntity *e) {
+void aiKeycardWhiteInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "a White keycard", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiKeycardWhiteInit2(AIEntity *e) {
+void aiKeycardWhiteInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiKeycardBlueInit(AIEntity *e) {
+void aiKeycardBlueInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "a Blue keycard", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiKeycardBlueInit2(AIEntity *e) {
+void aiKeycardBlueInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiKeycardRedInit(AIEntity *e) {
+void aiKeycardRedInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "a Red keycard", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiKeycardRedInit2(AIEntity *e) {
+void aiKeycardRedInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiKeycardGreenInit(AIEntity *e) {
+void aiKeycardGreenInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "a Green keycard", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiKeycardGreenInit2(AIEntity *e) {
+void aiKeycardGreenInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiKeycardPurpleInit(AIEntity *e) {
+void aiKeycardPurpleInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "a Purple keycard", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiKeycardPurpleInit2(AIEntity *e) {
+void aiKeycardPurpleInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiKeycardBlackInit(AIEntity *e) {
+void aiKeycardBlackInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "a Black keycard", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiKeycardBlackInit2(AIEntity *e) {
+void aiKeycardBlackInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiSeedInit(AIEntity *e) {
+void aiSeedInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "some Henscratch", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiSeedInit2(AIEntity *e) {
+void aiSeedInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiSodaInit(AIEntity *e) {
+void aiSodaInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "a Dr. Frostee", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiSodaInit2(AIEntity *e) {
+void aiSodaInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiDollyTool1Init(AIEntity *e) {
+void aiDollyTool1Init(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "Dolly's Wrench", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiDollyTool1Init2(AIEntity *e) {
+void aiDollyTool1Init2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiDollyTool2Init(AIEntity *e) {
+void aiDollyTool2Init(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "Dolly's Torch", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiDollyTool2Init2(AIEntity *e) {
+void aiDollyTool2Init2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiDollyTool3Init(AIEntity *e) {
+void aiDollyTool3Init(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "Dolly's EMF Resonator", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiDollyTool3Init2(AIEntity *e) {
+void aiDollyTool3Init2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiDollyTool4Init(AIEntity *e) {
+void aiDollyTool4Init(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "Dolly's Toolbox", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiDollyTool4Init2(AIEntity *e) {
+void aiDollyTool4Init2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiRouterInit(AIEntity *e) {
+void aiRouterInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "a Computer Router", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiRouterInit2(AIEntity *e) {
+void aiRouterInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiSlicerInit(AIEntity *e) {
+void aiSlicerInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "a Pizza Slicer", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiSlicerInit2(AIEntity *e) {
+void aiSlicerInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiPackageInit(AIEntity *e) {
+void aiPackageInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "a Package", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiPackageInit2(AIEntity *e) {
+void aiPackageInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiMagicEggAction(AIEntity *e) {
+void aiMagicEggAction(AIEntity *e, int mx, int my) {
 	// if magic egg isn't moving somewhere, don't move it
 	if (!e->goalX)
 		return;
@@ -1429,12 +1429,12 @@ void aiMagicEggAction(AIEntity *e) {
 	g_hdb->_ai->animateEntity(e);
 }
 
-void aiMagicEggInit(AIEntity *e) {
+void aiMagicEggInit(AIEntity *e, int mx, int my) {
 	e->moveSpeed = kPushMoveSpeed;
 	e->aiAction = aiMagicEggAction;
 }
 
-void aiMagicEggInit2(AIEntity *e) {
+void aiMagicEggInit2(AIEntity *e, int mx, int my) {
 	// point all magic egg move frames to the standing one
 	e->movedownFrames =
 		e->moveleftFrames =
@@ -1449,7 +1449,7 @@ void aiMagicEggInit2(AIEntity *e) {
 	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
 }
 
-void aiMagicEggUse(AIEntity *e) {
+void aiMagicEggUse(AIEntity *e, int mx, int my) {
 	if (!scumm_strnicmp(e->luaFuncAction, "ai_", 3) || !scumm_strnicmp(e->luaFuncAction, "item_", 5)) {
 		AIEntity *spawned = nullptr;
 		for (int i = 0; aiEntList[i].type != END_AI_TYPES; ++i) {
@@ -1471,7 +1471,7 @@ void aiMagicEggUse(AIEntity *e) {
 	}
 }
 
-void aiIceBlockAction(AIEntity *e) {
+void aiIceBlockAction(AIEntity *e, int mx, int my) {
 	// if ice block isn't moving somewhere, don't move it
 	if (!e->goalX)
 		return;
@@ -1479,12 +1479,12 @@ void aiIceBlockAction(AIEntity *e) {
 	g_hdb->_ai->animateEntity(e);
 }
 
-void aiIceBlockInit(AIEntity *e) {
+void aiIceBlockInit(AIEntity *e, int mx, int my) {
 	e->moveSpeed = kPushMoveSpeed;
 	e->aiAction = aiIceBlockAction;
 }
 
-void aiIceBlockInit2(AIEntity *e) {
+void aiIceBlockInit2(AIEntity *e, int mx, int my) {
 	// point all ice block move frames to the standing one
 	e->movedownFrames =
 		e->moveleftFrames =
@@ -1499,100 +1499,100 @@ void aiIceBlockInit2(AIEntity *e) {
 	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
 }
 
-void aiCabKeyInit(AIEntity *e) {
+void aiCabKeyInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "a Cabinet key", 32);
 }
 
-void aiCabKeyInit2(AIEntity *e) {
+void aiCabKeyInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiItemChickenInit(AIEntity *e) {
+void aiItemChickenInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "Cooper's chicken", 32);
 }
 
-void aiItemChickenInit2(AIEntity *e) {
+void aiItemChickenInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiPdaInit(AIEntity *e) {
+void aiPdaInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "a P.D.A.", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiPdaInit2(AIEntity *e) {
+void aiPdaInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
 #if 0
-void aiCellUse(AIEntity *e) {
+void aiCellUse(AIEntity *e, int mx, int my) {
 	g_hdb->_window->openMessageBar("You got the Energy Cell!", kMsgDelay);
 }
 #endif
 
-void aiCellInit2(AIEntity *e) {
+void aiCellInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiCellInit(AIEntity *e) {
+void aiCellInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "Energy Cell", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiEnvelopeWhiteInit(AIEntity *e) {
+void aiEnvelopeWhiteInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "White envelope", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiEnvelopeWhiteInit2(AIEntity *e) {
+void aiEnvelopeWhiteInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiEnvelopeBlueInit(AIEntity *e) {
+void aiEnvelopeBlueInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "Blue envelope", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiEnvelopeBlueInit2(AIEntity *e) {
+void aiEnvelopeBlueInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiEnvelopeRedInit(AIEntity *e) {
+void aiEnvelopeRedInit(AIEntity *e, int mx, int my) {
 	Common::strlcpy(e->printedName, "Red envelope", 32);
 	e->aiAction = aiGetItemAction;
 }
 
-void aiEnvelopeRedInit2(AIEntity *e) {
+void aiEnvelopeRedInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiTransceiverInit(AIEntity *e) {
+void aiTransceiverInit(AIEntity *e, int mx, int my) {
 	e->aiAction = aiTransceiverAction;
 	Common::strlcpy(e->printedName, "Transceiver", 32);
 }
 
-void aiTransceiverInit2(AIEntity *e) {
+void aiTransceiverInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiTransceiverAction(AIEntity *e) {
+void aiTransceiverAction(AIEntity *e, int mx, int my) {
 	aiAnimateStanddown(e, 5);
 	if (e->onScreen)
-		aiGetItemAction(e);
+		aiGetItemAction(e, 0, 0);
 }
 
 #if 0
-void aiTransceiverUse(AIEntity *e) {
+void aiTransceiverUse(AIEntity *e, int mx, int my) {
 	g_hdb->_window->openMessageBar("You got the Transceiver!", kMsgDelay);
 }
 #endif
 
-void aiMonkeystoneInit(AIEntity *e) {
+void aiMonkeystoneInit(AIEntity *e, int mx, int my) {
 	e->aiUse = aiMonkeystoneUse;
 	e->aiAction = aiMonkeystoneAction;
 }
 
-void aiMonkeystoneAction(AIEntity *e) {
+void aiMonkeystoneAction(AIEntity *e, int mx, int my) {
 	if (!e->onScreen)
 		return;
 
@@ -1602,15 +1602,15 @@ void aiMonkeystoneAction(AIEntity *e) {
 			g_hdb->_lua->callFunction(e->luaFuncUse, 0);
 
 		g_hdb->_ai->addToInventory(e);
-		aiMonkeystoneUse(nullptr);
+		aiMonkeystoneUse(nullptr, 0, 0);
 	}
 }
 
-void aiMonkeystoneInit2(AIEntity *e) {
+void aiMonkeystoneInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiMonkeystoneUse(AIEntity *e) {
+void aiMonkeystoneUse(AIEntity *e, int mx, int my) {
 	int	val = g_hdb->_ai->getMonkeystoneAmount();
 	Common::String monkString = Common::String::format("You have %d Monkeystone%s!", val, (val > 1) ? "s" : "");
 	g_hdb->_sound->playSound(SND_GET_MONKEYSTONE);
@@ -1637,7 +1637,7 @@ void aiMonkeystoneUse(AIEntity *e) {
 	}
 }
 
-void aiGemAction(AIEntity *e) {
+void aiGemAction(AIEntity *e, int mx, int my) {
 	e->animFrame++;
 	if (e->animFrame >= e->standdownFrames) {
 		e->animFrame = 0;
@@ -1659,28 +1659,28 @@ void aiGemAction(AIEntity *e) {
 	e->draw = e->standdownGfx[e->animFrame];
 }
 
-void aiGemWhiteInit(AIEntity *e) {
+void aiGemWhiteInit(AIEntity *e, int mx, int my) {
 	e->aiAction = aiGemAction;
 }
 
-void aiGemWhiteInit2(AIEntity *e) {
+void aiGemWhiteInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiGooCupUse(AIEntity *e) {
+void aiGooCupUse(AIEntity *e, int mx, int my) {
 	g_hdb->_window->openMessageBar("Got a... cup of goo.", kMsgDelay);
 }
 
-void aiGooCupInit(AIEntity *e) {
+void aiGooCupInit(AIEntity *e, int mx, int my) {
 	e->aiUse = aiGooCupUse;
 	e->aiAction = aiGetItemAction;
 }
 
-void aiGooCupInit2(AIEntity *e) {
+void aiGooCupInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiVortexianAction(AIEntity *e) {
+void aiVortexianAction(AIEntity *e, int mx, int my) {
 	// anim the alpha blending : down to 32, up to 180, back down...
 	e->value2 += e->value1;
 	if ((e->value2 & 0xff) > 128) {
@@ -1713,21 +1713,21 @@ void aiVortexianAction(AIEntity *e) {
 	e->draw = e->standdownGfx[e->animFrame];
 }
 
-void aiVortexianUse(AIEntity *e) {
+void aiVortexianUse(AIEntity *e, int mx, int my) {
 }
 
-void aiVortexianInit(AIEntity *e) {
+void aiVortexianInit(AIEntity *e, int mx, int my) {
 	e->aiUse = aiVortexianUse;
 	e->aiAction = aiVortexianAction;
 	e->value1 = 5;
 	e->value2 = 128;
 }
 
-void aiVortexianInit2(AIEntity *e) {
+void aiVortexianInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
-void aiNoneInit(AIEntity *e) {
+void aiNoneInit(AIEntity *e, int mx, int my) {
 }
 
 // Utility Functions
@@ -1744,7 +1744,7 @@ void aiAnimateStanddown(AIEntity *e, int speed) {
 		e->animFrame = 0;
 }
 
-void aiGenericAction(AIEntity *e) {
+void aiGenericAction(AIEntity *e, int mx, int my) {
 	if (!e->goalX)
 		g_hdb->_ai->findPath(e);
 	else if (onEvenTile(e->x, e->y))
@@ -1752,14 +1752,14 @@ void aiGenericAction(AIEntity *e) {
 	g_hdb->_ai->animateEntity(e);
 }
 
-void aiGetItemAction(AIEntity *e) {
+void aiGetItemAction(AIEntity *e, int mx, int my) {
 	if (!e->onScreen)
 		return;
 
 	AIEntity *p = g_hdb->_ai->getPlayer();
 	if (abs(p->x - e->x) < 16 && abs(p->y - e->y) < 16 && e->level == p->level) {
 		if (e->aiUse)
-			e->aiUse(e);
+			e->aiUse(e, 0, 0);
 		if (e->luaFuncUse[0])
 			g_hdb->_lua->callFunction(e->luaFuncUse, 0);
 

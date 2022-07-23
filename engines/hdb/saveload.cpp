@@ -265,7 +265,7 @@ void AIEntity::save(Common::OutSaveFile *out) {
 		strncpy(funcString, lookUp, 31);
 	out->write(funcString, 32);
 
-	lookUp = g_hdb->_ai->funcLookUp((FuncPtr)aiDraw);
+	lookUp = g_hdb->_ai->funcLookUp(aiDraw);
 	memset(&funcString, 0, 32);
 	if (!lookUp && aiDraw)
 		error("AIEntity::save: No matching DRAW function for func-string for %s entity", AIType2Str(type));
@@ -311,11 +311,9 @@ void AIEntity::save(Common::OutSaveFile *out) {
 
 void AIEntity::load(Common::InSaveFile *in) {
 	char funcString[32];
-	FuncPtr init, init2, use, action;
-	EntFuncPtr drawf;
+	FuncPtr init, init2, use, action, drawf;
 
-	action = init = init2 = use = nullptr;
-	drawf = nullptr;
+	action = init = init2 = use = drawf = nullptr;
 
 	// Read 32-char names for the function ptrs we have in entity struct
 	in->read(funcString, 32);
@@ -336,7 +334,7 @@ void AIEntity::load(Common::InSaveFile *in) {
 
 	in->read(funcString, 32);
 	if (funcString[0])
-		drawf = (EntFuncPtr)g_hdb->_ai->funcLookUp(funcString);
+		drawf = g_hdb->_ai->funcLookUp(funcString);
 
 	// Load AIEntity
 	type = (AIType)in->readSint32LE();

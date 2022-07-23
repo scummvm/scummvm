@@ -598,7 +598,7 @@ void HDBGame::useEntity(AIEntity *e) {
 			e = &temp;
 
 			if (temp.aiUse)
-				temp.aiUse(&temp);
+				temp.aiUse(&temp, 0, 0);
 
 			if (temp.luaFuncUse[0])
 				_lua->callFunction(temp.luaFuncUse, 0);
@@ -609,7 +609,7 @@ void HDBGame::useEntity(AIEntity *e) {
 			return;
 
 		if (e->aiUse)
-			e->aiUse(e);
+			e->aiUse(e, 0, 0);
 
 		if (e->luaFuncUse[0])
 			_lua->callFunction(e->luaFuncUse, 0);
