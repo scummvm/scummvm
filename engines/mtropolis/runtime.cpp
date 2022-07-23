@@ -1148,6 +1148,7 @@ MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::refAttribIndexed(
 }
 
 DynamicValue::DynamicValue() : _type(DynamicValueTypes::kNull) {
+	memset(&this->_value, 0, sizeof(this->_value));
 }
 
 DynamicValue::DynamicValue(const DynamicValue &other) : _type(DynamicValueTypes::kNull) {
@@ -1781,7 +1782,7 @@ void DynamicValueWriteObjectHelper::create(RuntimeObject *obj, DynamicValueWrite
 	proxy.pod.ptrOrOffset = 0;
 }
 
-MessengerSendSpec::MessengerSendSpec() : destination(0), _linkType(kLinkTypeNotYetLinked) {
+MessengerSendSpec::MessengerSendSpec() : send(Event::create()), destination(0), _linkType(kLinkTypeNotYetLinked) {
 }
 
 bool MessengerSendSpec::load(const Data::Event &dataEvent, uint32 dataMessageFlags, const Data::InternalTypeTaggedValue &dataLocator, const Common::String &dataWithSource, const Common::String &dataWithString, uint32 dataDestination) {
@@ -2152,6 +2153,11 @@ MiniscriptInstructionOutcome AngleMagVector::refAttrib(MiniscriptThread *thread,
 
 Common::String AngleMagVector::toString() const {
 	return Common::String::format("(%g deg %g mag)", angleDegrees, magnitude);
+}
+
+
+
+SegmentDescription::SegmentDescription() : volumeID(0), stream(nullptr) {
 }
 
 void IPlugInModifierRegistrar::registerPlugInModifier(const char *name, const IPlugInModifierFactoryAndDataFactory *loaderFactory) {
@@ -3196,6 +3202,9 @@ MiniscriptInstructionOutcome Structural::scriptSetDebug(MiniscriptThread *thread
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
+VolumeState::VolumeState() : volumeID(0), isMounted(false) {
+}
+
 ObjectLinkingScope::ObjectLinkingScope() : _parent(nullptr) {
 }
 
@@ -3745,6 +3754,8 @@ Runtime::SceneStackEntry::SceneStackEntry() {
 Runtime::Teardown::Teardown() : onlyRemoveChildren(false) {
 }
 
+Runtime::SceneReturnListEntry::SceneReturnListEntry() : isAddToDestinationSceneTransition(false) {
+}
 
 Runtime::ConsumeMessageTaskData::ConsumeMessageTaskData() : consumer(nullptr) {
 }
@@ -3755,12 +3766,23 @@ Runtime::ConsumeCommandTaskData::ConsumeCommandTaskData() : structural(nullptr) 
 Runtime::UpdateMouseStateTaskData::UpdateMouseStateTaskData() : mouseDown(false) {
 }
 
+Runtime::UpdateMousePositionTaskData::UpdateMousePositionTaskData() : x(0), y(0) {
+}
+
+Runtime::CollisionCheckState::CollisionCheckState() : collider(nullptr) {
+}
+
+Runtime::BoundaryCheckState::BoundaryCheckState() : detector(nullptr), currentContacts(0), positionResolved(false) {
+}
+
+Runtime::ColliderInfo::ColliderInfo() : sceneStackDepth(0), layer(0), element(nullptr) {
+}
+
 DragMotionProperties::DragMotionProperties() : constraintDirection(kConstraintDirectionNone), constrainToParent(false) {
 }
 
 SceneTransitionHooks::~SceneTransitionHooks() {
 }
-
 
 void SceneTransitionHooks::onSceneTransitionSetup(Runtime *runtime, const Common::WeakPtr<Structural> &oldScene, const Common::WeakPtr<Structural> &newScene) {
 }
@@ -3770,12 +3792,13 @@ void SceneTransitionHooks::onSceneTransitionEnded(Runtime *runtime, const Common
 
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProvider, ILoadUIProvider *loadProvider)
 	: _system(system), _mixer(mixer), _saveProvider(saveProvider), _loadProvider(loadProvider),
-	_nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
-	_displayWidth(1024), _displayHeight(768), _realTimeBase(0), _playTimeBase(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning),
-	_lastFrameCursor(nullptr), _defaultCursor(new DefaultCursorGraphic()), _platform(kProjectPlatformUnknown),
-	_cachedMousePosition(Common::Point(0, 0)), _realMousePosition(Common::Point(0, 0)), _trackedMouseOutside(false),
-	_forceCursorRefreshOnce(true), _autoResetCursor(false), _haveModifierOverrideCursor(false), _sceneGraphChanged(false), _isQuitting(false),
-	  _collisionCheckTime(0), _defaultVolumeState(true), _activeSceneTransitionEffect(nullptr), _sceneTransitionStartTime(0), _sceneTransitionEndTime(0) {
+	  _nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
+	  _displayWidth(1024), _displayHeight(768), _realTime(0), _realTimeBase(0), _playTime(0), _playTimeBase(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning),
+	  _lastFrameCursor(nullptr), _defaultCursor(new DefaultCursorGraphic()), _platform(kProjectPlatformUnknown),
+	  _cachedMousePosition(Common::Point(0, 0)), _realMousePosition(Common::Point(0, 0)), _trackedMouseOutside(false),
+	  _forceCursorRefreshOnce(true), _autoResetCursor(false), _haveModifierOverrideCursor(false), _sceneGraphChanged(false), _isQuitting(false),
+	  _collisionCheckTime(0), _defaultVolumeState(true), _activeSceneTransitionEffect(nullptr), _sceneTransitionStartTime(0), _sceneTransitionEndTime(0),
+	  _modifierOverrideCursorID(0) {
 	_random.reset(new Common::RandomSource("mtropolis"));
 
 	_vthread.reset(new VThread());
@@ -6032,6 +6055,7 @@ const Common::Array<Common::SharedPtr<Modifier> > &IModifierContainer::getModifi
 }
 
 ChildLoaderContext::ChildLoaderContext() : remainingCount(0), type(kTypeUnknown) {
+	memset(&this->containerUnion, 0, sizeof(this->containerUnion));
 }
 
 ProjectPlugInRegistry::ProjectPlugInRegistry() {
@@ -6171,6 +6195,12 @@ Project::LabelTree::LabelTree() : firstChildIndex(0), numChildren(0), id(0) {
 }
 
 Project::Segment::Segment() : weakStream(nullptr) {
+}
+
+Project::StreamDesc::StreamDesc() : streamType(kStreamTypeUnknown), segmentIndex(0), size(0), pos(0) {
+}
+
+Project::AssetDesc::AssetDesc() : typeCode(0), id(0) {
 }
 
 Project::Project(Runtime *runtime)
@@ -7213,8 +7243,7 @@ VisualElementRenderProperties &VisualElementRenderProperties::operator=(const Vi
 */
 
 VisualElement::VisualElement()
-	: _rect(0, 0, 0, 0), _cachedAbsoluteOrigin(Common::Point(0, 0))
-	, _contentsDirty(true) {
+	: _rect(0, 0, 0, 0), _cachedAbsoluteOrigin(Common::Point(0, 0)), _contentsDirty(true), _directToScreen(false), _visible(true), _layer(0) {
 }
 
 bool VisualElement::isVisual() const {

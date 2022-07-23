@@ -230,14 +230,20 @@ public:
 
 private:
 	struct StartPlayingTaskData {
+		StartPlayingTaskData() : runtime(nullptr) {}
+
 		Runtime *runtime;
 	};
 
 	struct StopPlayingTaskData {
+		StopPlayingTaskData() : runtime(nullptr) {}
+
 		Runtime *runtime;
 	};
 
 	struct ChangeFrameTaskData {
+		ChangeFrameTaskData() : runtime(nullptr), frame(0) {}
+
 		Runtime *runtime;
 		uint32 frame;
 	};
@@ -377,6 +383,8 @@ private:
 	MiniscriptInstructionOutcome scriptSetBalance(MiniscriptThread *thread, const DynamicValue &value);
 
 	struct StartPlayingTaskData {
+		StartPlayingTaskData() : runtime(nullptr) {}
+
 		Runtime *runtime;
 	};
 

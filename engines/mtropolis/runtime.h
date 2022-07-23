@@ -1045,6 +1045,7 @@ struct DynamicValueWriteObjectHelper {
 
 struct MessengerSendSpec {
 	MessengerSendSpec();
+
 	bool load(const Data::Event &dataEvent, uint32 dataMessageFlags, const Data::InternalTypeTaggedValue &dataLocator, const Common::String &dataWithSource, const Common::String &dataWithString, uint32 dataDestination);
 	bool load(const Data::PlugInTypeTaggedValue &dataEvent, const MessageFlags &dataMessageFlags, const Data::PlugInTypeTaggedValue &dataWith, uint32 dataDestination);
 
@@ -1057,11 +1058,6 @@ struct MessengerSendSpec {
 	void sendFromMessenger(Runtime *runtime, Modifier *sender, const DynamicValue &incomingData, RuntimeObject *customDestination) const;
 	void sendFromMessengerWithCustomData(Runtime *runtime, Modifier *sender, const DynamicValue &data, RuntimeObject *customDestination) const;
 
-	Event send;
-	MessageFlags messageFlags;
-	DynamicValue with;
-	uint32 destination; // May be a MessageDestination or GUID
-
 	enum LinkType {
 		kLinkTypeNotYetLinked,
 		kLinkTypeStructural,
@@ -1069,6 +1065,11 @@ struct MessengerSendSpec {
 		kLinkTypeCoded,
 		kLinkTypeUnresolved,
 	};
+
+	Event send;
+	MessageFlags messageFlags;
+	DynamicValue with;
+	uint32 destination; // May be a MessageDestination or GUID
 
 	LinkType _linkType;
 	Common::WeakPtr<Structural> _resolvedStructuralDest;
@@ -1106,6 +1107,8 @@ enum MessageDestination {
 };
 
 struct SegmentDescription {
+	SegmentDescription();
+
 	int volumeID;
 	Common::String filePath;
 	Common::SeekableReadStream *stream;
@@ -1217,6 +1220,8 @@ private:
 };
 
 struct VolumeState {
+	VolumeState();
+
 	Common::String name;
 	int volumeID;
 	bool isMounted;
@@ -1626,6 +1631,8 @@ private:
 	};
 
 	struct SceneReturnListEntry {
+		SceneReturnListEntry();
+
 		Common::SharedPtr<Structural> scene;
 		bool isAddToDestinationSceneTransition;
 	};
@@ -1659,19 +1666,22 @@ private:
 	};
 
 	struct UpdateMousePositionTaskData {
-		UpdateMousePositionTaskData() : x(0), y(0) {
-		}
+		UpdateMousePositionTaskData();
 
 		int32 x;
 		int32 y;
 	};
 
 	struct CollisionCheckState {
+		CollisionCheckState();
+
 		Common::Array<Common::WeakPtr<VisualElement> > activeElements;
 		ICollider *collider;
 	};
 
 	struct BoundaryCheckState {
+		BoundaryCheckState();
+
 		IBoundaryDetector *detector;
 		uint currentContacts;
 		Common::Point position;
@@ -1679,6 +1689,8 @@ private:
 	};
 
 	struct ColliderInfo {
+		ColliderInfo();
+
 		size_t sceneStackDepth;
 		uint16 layer;
 		VisualElement *element;
@@ -2282,6 +2294,8 @@ private:
 	};
 
 	struct StreamDesc {
+		StreamDesc();
+
 		StreamType streamType;
 		uint16 segmentIndex;
 		uint32 size;
@@ -2289,6 +2303,8 @@ private:
 	};
 
 	struct AssetDesc {
+		AssetDesc();
+
 		uint32 typeCode;
 		size_t id;
 		Common::String name;
@@ -2555,6 +2571,8 @@ public:
 	void handleDragMotion(Runtime *runtime, const Common::Point &initialOrigin, const Common::Point &targetOrigin);
 
 	struct OffsetTranslateTaskData {
+		OffsetTranslateTaskData() : dx(0), dy(0) {}
+
 		int32 dx;
 		int32 dy;
 	};

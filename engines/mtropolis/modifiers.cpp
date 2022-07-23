@@ -1523,7 +1523,9 @@ void CollisionDetectionMessengerModifier::triggerCollision(Runtime *runtime, Str
 KeyboardMessengerModifier::~KeyboardMessengerModifier() {
 }
 
-KeyboardMessengerModifier::KeyboardMessengerModifier() : _isEnabled(false) {
+KeyboardMessengerModifier::KeyboardMessengerModifier()
+	: _send(Event::create()), _onDown(false), _onUp(false), _onRepeat(false), _keyModControl(false), _keyModCommand(false), _keyModOption(false),
+	  _isEnabled(false), _keyCodeType(kAny), _macRomanChar(0) {
 }
 
 bool KeyboardMessengerModifier::isKeyboardMessenger() const {

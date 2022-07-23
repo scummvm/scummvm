@@ -60,12 +60,16 @@ public:
 
 private:
 	struct SwitchTaskData {
+		SwitchTaskData() : targetState(false), eventID(EventIDs::kNothing), runtime(nullptr) {}
+
 		bool targetState;
 		EventIDs::EventID eventID;
 		Runtime *runtime;
 	};
 
 	struct PropagateTaskData {
+		PropagateTaskData() : index(0), eventID(EventIDs::kNothing), runtime(nullptr) {}
+
 		size_t index;
 		EventIDs::EventID eventID;
 		Runtime *runtime;
@@ -449,6 +453,8 @@ public:
 
 private:
 	struct EvaluateAndSendTaskData {
+		EvaluateAndSendTaskData() : runtime(nullptr) {}
+
 		Common::SharedPtr<MiniscriptThread> thread;
 		Runtime *runtime;
 		DynamicValue incomingData;
@@ -625,8 +631,6 @@ private:
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 	void linkInternalReferences(ObjectLinkingScope *scope) override;
 
-	Event _send;
-
 	enum KeyCodeType {
 		kAny = 0x00,
 		kHome = 0x01,
@@ -646,6 +650,8 @@ private:
 		kDelete = 0x7f,
 		kMacRomanChar = 0xff,
 	};
+
+	Event _send;
 
 	bool _onDown : 1;
 	bool _onUp : 1;
