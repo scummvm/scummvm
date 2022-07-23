@@ -27,6 +27,7 @@
 
 #include "hpl1/engine/graphics/Renderer3D.h"
 
+#include "hpl1/debug.h"
 #include "hpl1/engine/graphics/GPUProgram.h"
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
 #include "hpl1/engine/graphics/MeshCreator.h"
@@ -47,6 +48,8 @@
 #include "hpl1/engine/scene/RenderableContainer.h"
 #include "hpl1/engine/scene/World3D.h"
 #include "hpl1/engine/system/low_level_system.h"
+#include <cstddef>
+#include <sys/types.h>
 
 namespace hpl {
 
@@ -72,9 +75,11 @@ cRenderSettings::cRenderSettings() {
 
 //-----------------------------------------------------------------------
 
+
+
 cRenderer3D::cRenderer3D(iLowLevelGraphics *apLowLevelGraphics, cResources *apResources,
 						 cMeshCreator *apMeshCreator, cRenderList *apRenderList) {
-	Log("  Creating Renderer3D\n");
+	Hpl1::logInfo(Hpl1::kDebugGraphics, "Creating Renderer3D\n");
 
 	mpLowLevelGraphics = apLowLevelGraphics;
 	mpLowLevelResources = apResources->GetLowLevel();
@@ -110,52 +115,26 @@ cRenderer3D::cRenderer3D(iLowLevelGraphics *apLowLevelGraphics, cResources *apRe
 	mRenderSettings.mShowShadows = eRendererShowShadows_All;
 	mRenderSettings.mpTempIndexArray = hplNewArray(unsigned int, 60000);
 
-	Log("   Load Renderer3D gpu programs:\n");
-
-	Log("    Extrude\n");
-
+	Hpl1::logInfo(Hpl1::kDebugGraphics, "Load Renderer3D gpu programs:\n");
 	cGpuProgramManager *pProgramManager = apResources->GetGpuProgramManager();
-	mRenderSettings.mpVtxExtrudeProgram = pProgramManager->CreateProgram("ShadowExtrude_vp.cg", "main", eGpuProgramType_Vertex);
-	if (mRenderSettings.mpVtxExtrudeProgram == NULL) {
-		Error("Couldn't load 'ShadowExtrude_vp.cg' program! Shadows will be disabled.\n");
-	}
 
-	if (mpLowLevelGraphics->GetCaps(eGraphicCaps_GL_FragmentProgram))
-		mRenderSettings.mpFragExtrudeProgram = pProgramManager->CreateProgram("ShadowExtrude_fp.cg", "main", eGpuProgramType_Fragment);
-	else
-		mRenderSettings.mpFragExtrudeProgram = NULL;
+	mRenderSettings.extrudeProgram = pProgramManager->CreateProgram("ShadowExtrude", "ShadowExtrude");
 
 	///////////////////////////////////
 	// Load diffuse program, for stuff like query rendering
-	Log("    Diffuse Vertex\n");
-	mpDiffuseVtxProgram = pProgramManager->CreateProgram("Diffuse_Color_vp.cg", "main",
-														 eGpuProgramType_Vertex);
-	if (mpDiffuseVtxProgram == NULL) {
-		Error("Couldn't load 'Diffuse_Color_vp.cg'\n");
-	}
-
-	///////////////////////////////////
-	// Load diffuse frag program, used where possible. Else fixed funcion.
-	Log("    Diffuse Fragment\n");
-	mpDiffuseFragProgram = pProgramManager->CreateProgram("Diffuse_Color_fp.cg", "main", eGpuProgramType_Fragment);
+	_diffuseProgram = pProgramManager->CreateProgram("Diffuse_Color", "Diffuse_Color");
 
 	///////////////////////////////////
 	// Fog Vertex Program Init
-	Log("    Fog\n");
-	mpSolidFogVtxProgram = pProgramManager->CreateProgram("Fog_Solid_vp.cg", "main", eGpuProgramType_Vertex);
-	if (mpSolidFogVtxProgram == NULL)
-		Error("Couldn't load 'Fog_Solid_vp.cg'\n");
-
-	mpSolidFogFragProgram = pProgramManager->CreateProgram("Fog_Solid_fp.cg", "main", eGpuProgramType_Fragment);
+	_solidFogProgram = pProgramManager->CreateProgram("Fog_Solid", "Fog_Solid");
 
 	///////////////////////////////////
 	// Fog Texture Init
-
-	Log("   Creating fog textures: ");
+	Log("Creating fog textures:");
 	unsigned char *pFogArray = hplNewArray(unsigned char, 256 * 2);
 
 	// Solid
-	Log("Solid ");
+	Log("Solid");
 	iTexture *pTex = mpLowLevelGraphics->CreateTexture("FogLinearSolid",
 													   false, eTextureType_Normal, eTextureTarget_1D);
 
@@ -209,23 +188,20 @@ cRenderer3D::cRenderer3D(iLowLevelGraphics *apLowLevelGraphics, cResources *apRe
 	/////////////////////////////////////////////
 	// Create Refraction programs
 	mbRefractionAvailable = true;
-
-	mpRefractVtxProgram = pProgramManager->CreateProgram("refract_vp.cg", "main", eGpuProgramType_Vertex);
-	mpRefractFragProgram = pProgramManager->CreateProgram("refract_fp.cg", "main", eGpuProgramType_Fragment);
-	mpRefractSpecFragProgram = pProgramManager->CreateProgram("refract_special_fp.cg", "main", eGpuProgramType_Fragment);
-
-	if (mpRefractFragProgram == NULL || mpRefractVtxProgram == NULL || mpRefractSpecFragProgram == NULL) {
+	_refractProgram = pProgramManager->CreateProgram("refract", "refract");
+	_refractSpecProgram = pProgramManager->CreateProgram("refract", "refract_special");
+	if (!_refractProgram || !_refractSpecProgram) {
 		mbRefractionAvailable = false;
-		Log("   Refraction will not be supported!\n");
+		Hpl1::logInfo(Hpl1::kDebugGraphics, "refraction will not be supported");
 	}
 
 	/////////////////////////////////////////////
 	// Create sky box graphics.
 
-	Log("   init sky box\n");
+	Log("init sky box\n");
 	InitSkyBox();
 
-	Log("  Renderer3D created\n");
+	Log("Renderer3D created\n");
 }
 
 //-----------------------------------------------------------------------
@@ -233,27 +209,19 @@ cRenderer3D::cRenderer3D(iLowLevelGraphics *apLowLevelGraphics, cResources *apRe
 cRenderer3D::~cRenderer3D() {
 	hplDeleteArray(mRenderSettings.mpTempIndexArray);
 
-	if (mRenderSettings.mpVtxExtrudeProgram)
-		mpResources->GetGpuProgramManager()->Destroy(mRenderSettings.mpVtxExtrudeProgram);
-	if (mRenderSettings.mpFragExtrudeProgram)
-		mpResources->GetGpuProgramManager()->Destroy(mRenderSettings.mpFragExtrudeProgram);
+	if (mRenderSettings.extrudeProgram)
+		mpResources->GetGpuProgramManager()->Destroy(mRenderSettings.extrudeProgram);
 
-	if (mpDiffuseVtxProgram)
-		mpResources->GetGpuProgramManager()->Destroy(mpDiffuseVtxProgram);
-	if (mpDiffuseFragProgram)
-		mpResources->GetGpuProgramManager()->Destroy(mpDiffuseFragProgram);
+	if (_diffuseProgram)
+		mpResources->GetGpuProgramManager()->Destroy(_diffuseProgram);
 
-	if (mpSolidFogVtxProgram)
-		mpResources->GetGpuProgramManager()->Destroy(mpSolidFogVtxProgram);
-	if (mpSolidFogFragProgram)
-		mpResources->GetGpuProgramManager()->Destroy(mpSolidFogFragProgram);
+	if (_solidFogProgram)
+		mpResources->GetGpuProgramManager()->Destroy(_solidFogProgram);
 
-	if (mpRefractVtxProgram)
-		mpResources->GetGpuProgramManager()->Destroy(mpRefractVtxProgram);
-	if (mpRefractFragProgram)
-		mpResources->GetGpuProgramManager()->Destroy(mpRefractFragProgram);
-	if (mpRefractSpecFragProgram)
-		mpResources->GetGpuProgramManager()->Destroy(mpRefractSpecFragProgram);
+	if (_refractProgram)
+		mpResources->GetGpuProgramManager()->Destroy(_refractProgram);
+	if (_refractSpecProgram)
+		mpResources->GetGpuProgramManager()->Destroy(_refractSpecProgram);
 
 	if (mpSkyBox)
 		hplDelete(mpSkyBox);
@@ -286,9 +254,8 @@ void cRenderSettings::Clear() {
 	mBlendMode = eMaterialBlendMode_None;
 	mChannelMode = eMaterialChannelMode_RGBA;
 
-	mpVertexProgram = NULL;
+	gpuProgram = nullptr;
 	mbVertexUseLight = false;
-	mpFragmentProgram = NULL;
 
 	mpSector = NULL;
 
@@ -306,10 +273,8 @@ void cRenderSettings::Clear() {
 }
 
 void cRenderSettings::Reset(iLowLevelGraphics *apLowLevel) {
-	if (mpVertexProgram)
-		mpVertexProgram->UnBind();
-	if (mpFragmentProgram)
-		mpFragmentProgram->UnBind();
+	if (gpuProgram)
+		gpuProgram->UnBind();
 	if (mpVtxBuffer)
 		mpVtxBuffer->UnBind();
 
@@ -510,7 +475,7 @@ void cRenderer3D::SetSkyBoxColor(const cColor &aColor) {
 //-----------------------------------------------------------------------
 
 void cRenderer3D::SetFogActive(bool abX) {
-	if (mpSolidFogVtxProgram)
+	if (_solidFogProgram)
 		mRenderSettings.mbFogActive = abX;
 }
 void cRenderer3D::SetFogStart(float afX) {
@@ -595,7 +560,7 @@ void cRenderer3D::InitSkyBox() {
 //-----------------------------------------------------------------------
 
 void cRenderer3D::RenderFog(cCamera3D *apCamera) {
-	if (mRenderSettings.mbFogActive == false || mpSolidFogVtxProgram == NULL)
+	if (mRenderSettings.mbFogActive == false || !_solidFogProgram)
 		return;
 	int i;
 	//////////////////////////////////
@@ -608,23 +573,15 @@ void cRenderer3D::RenderFog(cCamera3D *apCamera) {
 	}
 
 	//////////////////////////////////
-	// Set vertex program
-	if (mRenderSettings.mpVertexProgram)
-		mRenderSettings.mpVertexProgram->UnBind();
-	mRenderSettings.mpVertexProgram = NULL;
-	mpSolidFogVtxProgram->Bind();
+	// Set fog program
+	if (mRenderSettings.gpuProgram)
+		mRenderSettings.gpuProgram->UnBind();
+	mRenderSettings.gpuProgram = nullptr;
+	_solidFogProgram->Bind();
+	_solidFogProgram->SetColor3f("fogColor", mRenderSettings.mFogColor);
+	_solidFogProgram->SetFloat("fogStart", mRenderSettings.mfFogStart);
+	_solidFogProgram->SetFloat("fogEnd", mRenderSettings.mfFogEnd);
 
-	mpSolidFogVtxProgram->SetColor3f("fogColor", mRenderSettings.mFogColor);
-	mpSolidFogVtxProgram->SetFloat("fogStart", mRenderSettings.mfFogStart);
-	mpSolidFogVtxProgram->SetFloat("fogEnd", mRenderSettings.mfFogEnd);
-
-	//////////////////////////////////
-	// Set fragment program
-	if (mRenderSettings.mpFragmentProgram)
-		mRenderSettings.mpFragmentProgram->UnBind();
-	if (mpSolidFogFragProgram)
-		mpSolidFogFragProgram->Bind();
-	mRenderSettings.mpFragmentProgram = NULL;
 
 	//////////////////////////////////
 	// Blend mode
@@ -652,7 +609,7 @@ void cRenderer3D::RenderFog(cCamera3D *apCamera) {
 			mpLowLevelGraphics->SetMatrix(eMatrix_ModelView, cMath::MatrixMul(apCamera->GetViewMatrix(),
 																			  *pMtx));
 
-			mpSolidFogVtxProgram->SetMatrixf("worldViewProj", eGpuProgramMatrix_ViewProjection,
+			_solidFogProgram->SetMatrixf("worldViewProj", eGpuProgramMatrix_ViewProjection,
 											 eGpuProgramMatrixOp_Identity);
 		}
 		//////////////////
@@ -660,7 +617,7 @@ void cRenderer3D::RenderFog(cCamera3D *apCamera) {
 		else {
 			mpLowLevelGraphics->SetMatrix(eMatrix_ModelView, apCamera->GetViewMatrix());
 
-			mpSolidFogVtxProgram->SetMatrixf("worldViewProj", eGpuProgramMatrix_ViewProjection,
+			_solidFogProgram->SetMatrixf("worldViewProj", eGpuProgramMatrix_ViewProjection,
 											 eGpuProgramMatrixOp_Identity);
 		}
 
@@ -669,9 +626,7 @@ void cRenderer3D::RenderFog(cCamera3D *apCamera) {
 		pObject->GetVertexBuffer()->UnBind();
 	}
 
-	mpSolidFogVtxProgram->UnBind();
-	if (mpSolidFogFragProgram)
-		mpSolidFogFragProgram->UnBind();
+	_solidFogProgram->UnBind();
 }
 
 //-----------------------------------------------------------------------
@@ -680,21 +635,15 @@ void cRenderer3D::RenderSkyBox(cCamera3D *apCamera) {
 	if (mbSkyBoxActive == false)
 		return;
 
-	if (mbLog)
-		Log(" Drawing skybox\n");
+	Hpl1::logInfo(Hpl1::kDebugRenderer, "Drawing skybox");
 
-	if (mRenderSettings.mpVertexProgram) {
-		mRenderSettings.mpVertexProgram->UnBind();
-		mRenderSettings.mpVertexProgram = NULL;
+	if (mRenderSettings.gpuProgram) {
+		mRenderSettings.gpuProgram->UnBind();
+		mRenderSettings.gpuProgram = nullptr;
 		if (mbLog)
 			Log(" Setting Vertex program: NULL\n");
 	}
-	if (mRenderSettings.mpFragmentProgram) {
-		mRenderSettings.mpFragmentProgram->UnBind();
-		mRenderSettings.mpFragmentProgram = NULL;
-		if (mbLog)
-			Log(" Setting Fragment program: NULL\n");
-	}
+
 	if (mRenderSettings.mpVtxBuffer) {
 		mRenderSettings.mpVtxBuffer->UnBind();
 		mRenderSettings.mpVtxBuffer = NULL;
@@ -751,23 +700,23 @@ void cRenderer3D::RenderZ(cCamera3D *apCamera) {
 //-----------------------------------------------------------------------
 
 void cRenderer3D::RenderOcclusionQueries(cCamera3D *apCamera) {
+#if 0
 	//////////////////////////////////////////////////
 	// Reset any vertex buffers,fragment or vertex programs.
 	if (mRenderSettings.mpFragmentProgram)
 		mRenderSettings.mpFragmentProgram->UnBind();
 
 	mRenderSettings.mpFragmentProgram = NULL;
+#endif
 
 	////////////////////////////
 	// Vertex program
-	if (mRenderSettings.mpVertexProgram != mpDiffuseVtxProgram) {
-		if (mRenderSettings.mpVertexProgram)
-			mRenderSettings.mpVertexProgram->UnBind();
-		mRenderSettings.mpVertexProgram = mpDiffuseVtxProgram;
-
-		mpDiffuseVtxProgram->Bind();
-		if (mbLog)
-			Log(" Binding vertex program %d\n", mpDiffuseVtxProgram);
+	if (mRenderSettings.gpuProgram != _diffuseProgram) {
+		if (mRenderSettings.gpuProgram)
+			mRenderSettings.gpuProgram->UnBind();
+		mRenderSettings.gpuProgram = _diffuseProgram;
+		_diffuseProgram->Bind();
+		Hpl1::logInfo(Hpl1::kDebugGraphics, "binding Rendered3D::_diffuseProgram");
 	}
 
 	////////////////////////
@@ -821,8 +770,8 @@ void cRenderer3D::RenderOcclusionQueries(cCamera3D *apCamera) {
 			}
 			pPrevMatrix = pObject->mpMatrix;
 			// Set the vertex program matrix.
-			if (mpDiffuseVtxProgram)
-				mpDiffuseVtxProgram->SetMatrixf("worldViewProj", eGpuProgramMatrix_ViewProjection,
+			if (_diffuseProgram)
+				_diffuseProgram->SetMatrixf("worldViewProj", eGpuProgramMatrix_ViewProjection,
 												eGpuProgramMatrixOp_Identity);
 
 			if (mbLog)
@@ -967,11 +916,6 @@ void cRenderer3D::RenderTrans(cCamera3D *apCamera) {
 
 		eMaterialBlendMode blendMode = pMaterial->GetBlendMode(eMaterialRenderType_Diffuse, 0, NULL);
 
-		iGpuProgram *pVtxProgram = pMaterial->GetVertexProgram(eMaterialRenderType_Diffuse, 0, NULL);
-		iMaterialProgramSetup *pVtxProgramSetup = pMaterial->GetVertexProgramSetup(eMaterialRenderType_Diffuse, 0, NULL);
-
-		iGpuProgram *pFragProgram = pMaterial->GetFragmentProgram(eMaterialRenderType_Diffuse, 0, NULL);
-
 		for (int i = 0; i < MAX_TEXTUREUNITS; ++i)
 			vTextures[i] = pMaterial->GetTexture(i, eMaterialRenderType_Diffuse, 0, NULL);
 
@@ -1000,10 +944,8 @@ void cRenderer3D::RenderTrans(cCamera3D *apCamera) {
 				Log("   Unbind vtx buffer, vtx program and frag program\n");
 			if (mRenderSettings.mpVtxBuffer)
 				mRenderSettings.mpVtxBuffer->UnBind();
-			if (mRenderSettings.mpVertexProgram)
-				mRenderSettings.mpVertexProgram->UnBind();
-			if (mRenderSettings.mpFragmentProgram)
-				mRenderSettings.mpFragmentProgram->UnBind();
+			if (mRenderSettings.gpuProgram)
+				mRenderSettings.gpuProgram->UnBind();
 
 			/////////////////////////////////////
 			// Alpha and blend mode
@@ -1146,24 +1088,20 @@ void cRenderer3D::RenderTrans(cCamera3D *apCamera) {
 					Log("   Special = true\n");
 			}
 
-			iGpuProgram *pRefractVtxProgram = nullptr; //pMaterial->GetRefractionVertexProgam();
-			iGpuProgram *pRefractFragProgram = nullptr; //pMaterial->GetRefractionFragmentProgam();
-
-			if (pRefractFragProgram == NULL) {
+			iGpuProgram *refractProgram = pMaterial->getRefractionProgram();
+			if (!refractProgram) {
 				if (bSpecial)
-					pRefractFragProgram = mpRefractSpecFragProgram;
+					refractProgram = _refractSpecProgram;
 				else
-					pRefractFragProgram = mpRefractFragProgram;
+					refractProgram = _refractProgram;
 			}
-			if (pRefractVtxProgram == NULL)
-				pRefractVtxProgram = mpRefractVtxProgram;
+
+			mRenderSettings.gpuProgram = refractProgram;
+			refractProgram->Bind();
+			Hpl1::logInfo(Hpl1::kDebugRenderer, "Binding gpu program '%s'", refractProgram->GetName().c_str());
 
 			/////////////////////////////////////
-			// Vertex program
-			mRenderSettings.mpVertexProgram = pRefractVtxProgram;
-			pRefractVtxProgram->Bind();
-			if (bLog)
-				Log("   Binding vtx program '%s' (%d)\n", pRefractVtxProgram->GetName().c_str(), pRefractVtxProgram);
+			// Vertex shader
 			mRenderSettings.mbMatrixWasNULL = false;
 
 			// Model matrix
@@ -1175,8 +1113,7 @@ void cRenderer3D::RenderTrans(cCamera3D *apCamera) {
 				mpLowLevelGraphics->SetMatrix(eMatrix_ModelView, apCamera->GetViewMatrix());
 				mRenderSettings.mbMatrixWasNULL = true;
 			}
-
-			pRefractVtxProgram->SetMatrixf("worldViewProj",
+			refractProgram->SetMatrixf("worldViewProj",
 										   eGpuProgramMatrix_ViewProjection,
 										   eGpuProgramMatrixOp_Identity);
 
@@ -1184,29 +1121,23 @@ void cRenderer3D::RenderTrans(cCamera3D *apCamera) {
 			if (pMaterial->GetRefractionUsesEye()) {
 				if (pModelMatrix) {
 					cVector3f vLocalEye = cMath::MatrixMul(*pInvModelMatrix, apCamera->GetEyePosition());
-					pRefractVtxProgram->SetVec3f("EyePos", vLocalEye);
+					refractProgram->SetVec3f("EyePos", vLocalEye);
 				} else {
-					pRefractVtxProgram->SetVec3f("EyePos", apCamera->GetEyePosition());
+					refractProgram->SetVec3f("EyePos", apCamera->GetEyePosition());
 				}
 			}
 
 			/////////////////////////////////////
-			// Fragment program
-			if (bLog)
-				Log("   Binding frag program '%s' (%d)\n", pRefractFragProgram->GetName().c_str(), pRefractFragProgram);
-			pRefractFragProgram->Bind();
-
-			mRenderSettings.mpFragmentProgram = pRefractFragProgram;
-
-			pRefractFragProgram->SetVec2f("screenSize", mpLowLevelGraphics->GetScreenSize());
+			// Fragment shader
+			refractProgram->SetVec2f("screenSize", mpLowLevelGraphics->GetScreenSize());
 
 			if (bSpecial) {
-				pRefractFragProgram->SetFloat("t", mfRenderTime * pRefraction->GetFrameTime());
+				refractProgram->SetFloat("t", mfRenderTime * pRefraction->GetFrameTime());
 			} else if (pMaterial->GetRefractionUsesTime()) {
-				pRefractFragProgram->SetFloat("t", mfRenderTime);
+				refractProgram->SetFloat("t", mfRenderTime);
 			}
 
-			pRefractFragProgram->SetFloat("scale", pMaterial->GetValue());
+			refractProgram->SetFloat("scale", pMaterial->GetValue());
 
 			////////////////////////////////////
 			// Textures
@@ -1326,50 +1257,19 @@ void cRenderer3D::RenderTrans(cCamera3D *apCamera) {
 			}
 		}
 
-		/////////////////////////////////////////////////
-		// Vertex program
-		if (pVtxProgram != mRenderSettings.mpVertexProgram) {
-			if (bLog) {
-				if (pVtxProgram)
-					Log("  Set vtx program '%s' (%d)\n", pVtxProgram->GetName().c_str(), pVtxProgram);
-				else
-					Log("  Set vtx program NULL\n");
-			}
-			if (mRenderSettings.mpVertexProgram) // && pVtxProgram==NULL) //Why null??
-			{
-				mRenderSettings.mpVertexProgram->UnBind();
-			}
-			mRenderSettings.mpVertexProgram = pVtxProgram;
+		iGpuProgram *gpuProgram = pMaterial->getGpuProgram(eMaterialRenderType_Diffuse, 0, nullptr);
+		iMaterialProgramSetup *gpuProgramSetup = pMaterial->getGpuProgramSetup(eMaterialRenderType_Diffuse, 0, NULL);
 
-			if (pVtxProgram) {
-				pVtxProgram->Bind();
-
-				if (pVtxProgramSetup) {
-					pVtxProgramSetup->Setup(pVtxProgram, &mRenderSettings);
-				}
-				mRenderSettings.mpVtxProgramSetup = pVtxProgramSetup;
-
-				// reset this so all matrix setting are set to vertex program.
+		if (gpuProgram != mRenderSettings.gpuProgram) {
+			if (mRenderSettings.gpuProgram)
+				mRenderSettings.gpuProgram->UnBind();
+			mRenderSettings.gpuProgram = gpuProgram;
+			if (gpuProgram) {
+				gpuProgram->Bind();
+				if (gpuProgramSetup)
+					gpuProgramSetup->Setup(gpuProgram, &mRenderSettings);
+				mRenderSettings.gpuProgramSetup = gpuProgramSetup;
 				mRenderSettings.mbMatrixWasNULL = false;
-			}
-		}
-
-		/////////////////////////////////////////////////
-		// Fragment program
-		if (pFragProgram != mRenderSettings.mpFragmentProgram) {
-			if (bLog) {
-				if (pFragProgram)
-					Log("  Set frag program '%s' (%d)\n", pFragProgram->GetName().c_str(), pFragProgram);
-				else
-					Log("  Set frag program NULL\n");
-			}
-			if (mRenderSettings.mpFragmentProgram)
-				mRenderSettings.mpFragmentProgram->UnBind();
-
-			mRenderSettings.mpFragmentProgram = pFragProgram;
-
-			if (pFragProgram) {
-				pFragProgram->Bind();
 			}
 		}
 
@@ -1423,29 +1323,27 @@ void cRenderer3D::RenderTrans(cCamera3D *apCamera) {
 			bSetVtxProgMatrix = true;
 		}
 
-		if (mRenderSettings.mpVertexProgram && bSetVtxProgMatrix) {
+		if (mRenderSettings.gpuProgram && bSetVtxProgMatrix) {
 			// Might be quicker if this is set directly
-			mRenderSettings.mpVertexProgram->SetMatrixf("worldViewProj",
+			mRenderSettings.gpuProgram->SetMatrixf("worldViewProj",
 														eGpuProgramMatrix_ViewProjection,
 														eGpuProgramMatrixOp_Identity);
-			if (mRenderSettings.mpVtxProgramSetup) {
-				mRenderSettings.mpVtxProgramSetup->SetupMatrix(pModelMatrix, &mRenderSettings);
+			if (mRenderSettings.gpuProgramSetup) {
+				mRenderSettings.gpuProgramSetup->SetupMatrix(pModelMatrix, &mRenderSettings);
 			}
 		}
 
 		///////////////////////////////////////////
 		/// Draw
 		if (bLog)
-			Log("  Draw\n");
+			Log("Draw\n");
 		pVtxBuffer->Draw();
 	}
 
 	if (mRenderSettings.mpVtxBuffer)
 		mRenderSettings.mpVtxBuffer->UnBind();
-	if (mRenderSettings.mpVertexProgram)
-		mRenderSettings.mpVertexProgram->UnBind();
-	if (mRenderSettings.mpFragmentProgram)
-		mRenderSettings.mpFragmentProgram->UnBind();
+	if (mRenderSettings.gpuProgram)
+		mRenderSettings.gpuProgram->UnBind();
 }
 
 //-----------------------------------------------------------------------

@@ -28,6 +28,7 @@
 #ifndef HPL_RENDERER3D_H
 #define HPL_RENDERER3D_H
 
+#include "hpl1/engine/graphics/GPUProgram.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/Material.h"
 #include "hpl1/engine/math/Frustum.h"
@@ -81,8 +82,7 @@ public:
 	void Reset(iLowLevelGraphics *apLowLevel);
 
 	// Setings that doesn't change:
-	iGpuProgram *mpVtxExtrudeProgram;
-	iGpuProgram *mpFragExtrudeProgram;
+	iGpuProgram *extrudeProgram;
 	iLowLevelGraphics *mpLowLevel;
 
 	unsigned int *mpTempIndexArray;
@@ -113,6 +113,8 @@ public:
 	eMaterialBlendMode mBlendMode;
 	eMaterialChannelMode mChannelMode;
 
+	iGpuProgram *gpuProgram;
+	iMaterialProgramSetup *gpuProgramSetup;
 	iGpuProgram *mpVertexProgram;
 	bool mbVertexUseLight;
 	iMaterialProgramSetup *mpVtxProgramSetup;
@@ -226,19 +228,16 @@ private:
 
 	float mfRenderTime;
 
-	iGpuProgram *mpDiffuseVtxProgram;
-	iGpuProgram *mpDiffuseFragProgram;
-	iGpuProgram *mpSolidFogVtxProgram;
-	iGpuProgram *mpSolidFogFragProgram;
+	iGpuProgram *_diffuseProgram;
+	iGpuProgram *_solidFogProgram;
 
 	iTexture *mpFogLinearSolidTexture;
 
 	iTexture *mpFogLinearAddTexture;
 	iTexture *mpFogLinearAlphaTexture;
 
-	iGpuProgram *mpRefractVtxProgram;
-	iGpuProgram *mpRefractFragProgram;
-	iGpuProgram *mpRefractSpecFragProgram;
+	iGpuProgram *_refractProgram;
+	iGpuProgram *_refractSpecProgram;
 	bool mbRefractionAvailable;
 	bool mbRefractionUsed;
 

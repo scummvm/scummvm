@@ -436,7 +436,7 @@ void cGame::Run() {
 		// Log("----\nCreations made: %d\n------\n",cMemoryManager::GetCreationCount());
 		//}
 
-		g_system->delayMillis(10);
+		//g_system->delayMillis(10);
 	}
 	Log("--------------------------------------------------------\n\n");
 

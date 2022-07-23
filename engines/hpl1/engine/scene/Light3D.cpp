@@ -302,7 +302,7 @@ bool iLight3D::BeginDraw(cRenderSettings *apRenderSettings, iLowLevelGraphics *a
 
 	//////////////////////////////////////////////////////////
 	// Cast shadows
-	if (mbCastShadows && apRenderSettings->mShowShadows != eRendererShowShadows_None && apRenderSettings->mpVtxExtrudeProgram != NULL) {
+	if (mbCastShadows && apRenderSettings->mShowShadows != eRendererShowShadows_None && apRenderSettings->extrudeProgram) {
 		// Get temp index array. (Remove this when the index pool
 		//  is implemented.).
 		mpIndexArray = apRenderSettings->mpTempIndexArray;
@@ -343,20 +343,13 @@ bool iLight3D::BeginDraw(cRenderSettings *apRenderSettings, iLowLevelGraphics *a
 		apRenderSettings->mbMatrixWasNULL = false;
 
 		// Set the fragment program.
-		if (apRenderSettings->mpFragExtrudeProgram) {
+		if (apRenderSettings->extrudeProgram) {
 			if (apRenderSettings->mbLog)
 				Log("Setting fragment program: '%s'\n",
-					apRenderSettings->mpFragExtrudeProgram->GetName().c_str());
-			apRenderSettings->mpFragExtrudeProgram->Bind();
-			apRenderSettings->mpFragmentProgram = apRenderSettings->mpFragExtrudeProgram;
+					apRenderSettings->extrudeProgram->GetName().c_str());
+			apRenderSettings->extrudeProgram->Bind();
+			apRenderSettings->gpuProgram = apRenderSettings->extrudeProgram;
 		}
-
-		// Set the vertex program.
-		if (apRenderSettings->mbLog)
-			Log("Setting vertex program: '%s'\n",
-				apRenderSettings->mpVtxExtrudeProgram->GetName().c_str());
-		apRenderSettings->mpVtxExtrudeProgram->Bind();
-		apRenderSettings->mpVertexProgram = apRenderSettings->mpVtxExtrudeProgram;
 
 		// Render shadows
 		tCasterCacheSetIt it = m_setDynamicCasters.begin();
@@ -756,8 +749,8 @@ void iLight3D::RenderShadow(iRenderable *apObject, cRenderSettings *apRenderSett
 	// Set light position and model view matrix, this does not have to be set if last
 	// object was static.
 	if (pModelMtx || apRenderSettings->mbMatrixWasNULL == false) {
-		apRenderSettings->mpVtxExtrudeProgram->SetVec3f("lightPosition", vLocalLight);
-		apRenderSettings->mpVtxExtrudeProgram->SetMatrixf("worldViewProj",
+		apRenderSettings->extrudeProgram->SetVec3f("lightPosition", vLocalLight);
+		apRenderSettings->extrudeProgram->SetMatrixf("worldViewProj",
 														  eGpuProgramMatrix_ViewProjection,
 														  eGpuProgramMatrixOp_Identity);
 

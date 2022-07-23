@@ -28,6 +28,7 @@
 #ifndef HPL_RENDER_SET_H
 #define HPL_RENDER_SET_H
 
+#include "hpl1/engine/graphics/GPUProgram.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/Material.h"
 #include "hpl1/engine/math/MathTypes.h"
@@ -53,7 +54,8 @@ enum eRenderStateType {
 	eRenderStateType_VertexBuffer = 9,
 	eRenderStateType_Matrix = 10,
 	eRenderStateType_Render = 11,
-	eRenderStateType_LastEnum = 12
+	eRenderStateType_GpuProgram = 12,
+	eRenderStateType_LastEnum = 13
 };
 ///////////// INTERFACE ////////////////////
 
@@ -87,6 +89,9 @@ public:
 	// Blend
 	eMaterialBlendMode mBlendMode;
 	eMaterialChannelMode mChannelMode;
+
+	iGpuProgram *gpuProgram;
+	iMaterialProgramSetup *gpuProgramSetup;
 
 	// Vertex program
 	iGpuProgram *mpVtxProgram;
@@ -130,6 +135,7 @@ private:
 	int CompareVtxBuff(const iRenderState *apState) const;
 	int CompareMatrix(const iRenderState *apState) const;
 	int CompareRender(const iRenderState *apState) const;
+	int compareGpuProgram(const iRenderState *state) const;
 	// Set mode
 	void SetSectorMode(cRenderSettings *apSettings);
 	void SetPassMode(cRenderSettings *apSettings);
@@ -139,6 +145,7 @@ private:
 	void SetAlphaMode(cRenderSettings *apSettings);
 	void SetVtxProgMode(cRenderSettings *apSettings);
 	void SetFragProgMode(cRenderSettings *apSettings);
+	void setGpuProgMode(cRenderSettings *settings);
 	void SetTextureMode(cRenderSettings *apSettings);
 	void SetVtxBuffMode(cRenderSettings *apSettings);
 	void SetMatrixMode(cRenderSettings *apSettings);

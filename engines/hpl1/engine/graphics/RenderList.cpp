@@ -562,6 +562,19 @@ void cRenderList::AddToTree(iRenderable *apObject, eRenderListDrawType aObjectTy
 		pNode = InsertNode(pNode, pTempNode);
 	}
 
+	/////// GPU PROGRAM //////////////
+	{
+		pTempState->mType = eRenderStateType_GpuProgram;
+
+		pTempState->gpuProgram = pMaterial->getGpuProgram(aPassType, alPass, apLight);
+		pTempState->gpuProgramSetup = pMaterial->getGpuProgramSetup(aPassType, alPass, apLight);
+		pTempState->mbUsesLight = pMaterial->VertexProgramUsesLight(aPassType, alPass, apLight);
+		pTempState->mbUsesEye = pMaterial->VertexProgramUsesEye(aPassType, alPass, apLight);
+		pTempState->mpLight = apLight;
+
+		pNode = InsertNode(pNode, pTempNode);
+	}
+#if 0
 	/////// VERTEX PROGRAM //////////////
 	{
 		// Log("\nVertex program level\n");
@@ -594,7 +607,7 @@ void cRenderList::AddToTree(iRenderable *apObject, eRenderListDrawType aObjectTy
 
 		pNode = InsertNode(pNode, pTempNode);
 	}
-
+#endif
 	/////// TEXTURE //////////////
 	{
 		// Log("\nTexture level\n");
