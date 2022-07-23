@@ -201,7 +201,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	uint8 ci2 = 0;
 	uint8 skyColor = 255;
 	uint8 groundColor = 255;
-	if (_targetName != "castlemaster") {
+	if (!isCastle()) {
 		groundColor = file->readByte() & 15;
 		skyColor = file->readByte() & 15;
 		ci1 = file->readByte();
@@ -224,13 +224,13 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	debugC(1, kFreescapeDebugParser, "Flags: %d Objects: %d", areaFlags, numberOfObjects);
 	//debug("Condition Ptr: %x", cPtr);
 	debugC(1, kFreescapeDebugParser, "Pos before first object: %lx", file->pos());
-	if (_targetName == "totaleclipse") {
+	if (isEclipse()) {
 		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
 		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
 		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
 		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
 		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
-	} else if (_targetName != "castlemaster")
+	} else if (!isCastle())
 		file->seek(15, SEEK_CUR);
 
 	ObjectMap *objectsByID = new ObjectMap;
@@ -279,7 +279,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 
 	if (_areaMap.contains(255))
 		area->addStructure(_areaMap[255]);
-	else if (_targetName.hasPrefix("castle") || _targetName.hasPrefix("totaleclipse"))
+	else if (isCastle() || isEclipse())
 		area->addStructure(nullptr);
 
 	debugC(1, kFreescapeDebugParser, "End of area at %lx", file->pos());
@@ -337,13 +337,13 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		debugC(1, kFreescapeDebugParser, "%s", conditionSource->c_str());
 	}
 
-	if (_targetName.hasPrefix("driller")) {
+	if (isDriller()) {
 		file->seek(0x3b42);
 		for (int i = 0; i < 8; i++)
 			load8bitObject(file);
 	}
 
-	if (_targetName != "castlemaster")
+	if (!isCastle())
 		file->seek(offset + 0xc8);
 	else
 		file->seek(offset + 0x4f);
@@ -371,7 +371,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		} else
 			error("Invalid area?");
 	}
-	if (_targetName.hasPrefix("totaleclipse")) {
+	if (isEclipse()) {
 		_playerHeight = 48;
 		_playerWidth = 8;
 		_playerDepth = 8;

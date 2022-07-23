@@ -94,7 +94,7 @@ void FreescapeEngine::loadAssets() {
 
 		file = files.begin()->get()->createReadStream();
 		load16bitBinary(file);
-	} else if (_targetName.hasPrefix("driller") || _targetName.hasPrefix("spacestationoblivion")) {
+	} else if (isDriller()) {
 		Common::File exe;
 		if (_renderMode == "ega") {
 			file = gameDir.createReadStreamForMember("DRILLE.EXE");
@@ -112,7 +112,7 @@ void FreescapeEngine::loadAssets() {
 		} else
 			error("Invalid render mode %s for Driller", _renderMode.c_str());
 
-	} else if (_targetName.hasPrefix("darkside")) {
+	} else if (isDark()) {
 		Common::File exe;
 		if (_renderMode == "ega") {
 			file = gameDir.createReadStreamForMember("DSIDEE.EXE");
@@ -130,7 +130,7 @@ void FreescapeEngine::loadAssets() {
 		} else
 			error("Invalid render mode %s for Dark Side", _renderMode.c_str());
 
-	} else if (_targetName == "totaleclipse") {
+	} else if (isEclipse()) {
 		Common::File exe;
 		if (_renderMode == "ega") {
 			file = gameDir.createReadStreamForMember("TOTEE.EXE");
@@ -147,7 +147,7 @@ void FreescapeEngine::loadAssets() {
 			load8bitBinary(file, 0x7bb0, 4); // TODO
 		} else
 			error("Invalid render mode %s for Total Eclipse", _renderMode.c_str());
-	   } else if (_targetName.hasPrefix("castlemaster")) {
+	   } else if (isCastle()) {
 			_renderMode = "ega";
 			file = gameDir.createReadStreamForMember("castle.sna");
 
@@ -279,8 +279,6 @@ Common::Error FreescapeEngine::run() {
 		_startArea = 1;
 	} else {
 		_farClipPlane = 8192.f;
-		if (!_targetName.hasPrefix("driller"))
-			_gfx->_keyColor = 0;
 	}
 
 	if (_border) {
@@ -290,9 +288,9 @@ Common::Error FreescapeEngine::run() {
 		g_system->delayMillis(1000);
 
 		_borderTexture = nullptr;
-		if (_targetName.hasPrefix("driller"))
+		if (isDriller())
 			_viewArea = Common::Rect(40, 16, 279, 116);
-		else if (_targetName.hasPrefix("totaleclipse"))
+		else if (isEclipse())
 			_viewArea = Common::Rect(40, 32, 280, 132);
 		else
 			error("Invalid target!");

@@ -76,17 +76,17 @@ byte eclipseEGA[16][3] = {
 Graphics::PixelBuffer *FreescapeEngine::getPalette(uint8 areaNumber, uint8 c1, uint8 c2, uint8 c3, uint8 c4, uint16 ncolors) {
 	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
 	Graphics::PixelBuffer *palette = nullptr;
-	if (_targetName.hasPrefix("driller")) {
+	if (isDriller()) {
 		if (_renderMode == "ega")
 			palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&drillerEGA);
 		else if (_renderMode == "cga")
 			palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&drillerCGA);
-	} else if (_targetName.hasPrefix("castlemaster")) {
+	} else if (isCastle()) {
 		if (_renderMode == "ega")
 			palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&castleEGA); // TODO
 		else if (_renderMode == "cga")
 			palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&castleCGA);
-	} else if (_targetName.hasPrefix("totaleclipse")) {
+	} else if (isEclipse()) {
 		palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&eclipseEGA);
 	} else
 		palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&drillerEGA);
