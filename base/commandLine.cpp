@@ -55,17 +55,15 @@ namespace Base {
 
 #ifndef DISABLE_COMMAND_LINE
 
-#if !defined(__DS__)
 static const char USAGE_STRING[] =
 	"%s: %s\n"
 	"Usage: %s [OPTIONS]... [GAME]\n"
 	"\n"
 	"Try '%s --help' for more options.\n"
 ;
-#endif
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
-#if defined(__DS__) || defined(__3DS__)
+#if defined(__3DS__)
 static const char HELP_STRING1[] = "%s None"; // save more data segment space
 static const char HELP_STRING2[] = "None";
 static const char HELP_STRING3[] = "None";
@@ -258,9 +256,7 @@ static void usage(const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-#if !defined(__DS__)
 	printf(USAGE_STRING, s_appName, buf, s_appName, s_appName);
-#endif
 	exit(1);
 }
 
