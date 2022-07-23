@@ -831,7 +831,7 @@ const byte *ScummEngine::postProcessDOSGraphics(VirtScreen *vs, int &pitch, int 
 
 	// For LOOM and INDY3, CGA gets dithered as 2x2 squares, for MI1EGA as 2x4 squares. Odd lines have the colors swapped, so there will be checkered patterns.
 	uint8 lnMod = (_game.version > 3 && !renderHerc) ? 0x40 : 0x20;
-	uint8 lnIdx = (y & ((lnMod >> 4) - 1)) << 4;
+	uint8 lnIdx = renderV3 ? ((y & ((lnMod >> 4) - 1)) << 4) : 0;
 
 	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp) {
 		if (renderV3 || vs->number == kMainVirtScreen) {
