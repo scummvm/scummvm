@@ -65,7 +65,7 @@ static const char USAGE_STRING[] =
 #endif
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
-#if defined(ANDROID) || defined(__DS__) || defined(__3DS__)
+#if defined(__DS__) || defined(__3DS__)
 static const char HELP_STRING1[] = "%s None"; // save more data segment space
 static const char HELP_STRING2[] = "None";
 static const char HELP_STRING3[] = "None";
