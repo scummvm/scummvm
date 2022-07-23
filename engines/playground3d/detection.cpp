@@ -25,7 +25,7 @@
 #include "playground3d/playground3d.h"
 
 static const PlainGameDescriptor playground3d_setting[] = {
-	{ "playground3d", "Playground 3d: the testing and plaground environment for 3d renderers" },
+	{ "playground3d", "Playground 3d: the testing and playground environment for 3d renderers" },
 	{ nullptr, nullptr }
 };
 
@@ -53,7 +53,7 @@ public:
 	}
 
 	const char *getName() const override {
-		return "Playground 3d: the testing and plaground environment for 3d renderers";
+		return "Playground 3d: the testing and playground environment for 3d renderers";
 	}
 
 	const char *getOriginalCopyright() const override {
