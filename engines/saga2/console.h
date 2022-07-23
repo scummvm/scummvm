@@ -114,6 +114,9 @@ private:
 
 	// Input: <1/0>. Sets the invisibility effect on the party.
 	bool cmdInvisibility(int argc, const char **argv);
+
+	// Input: <1/0>. Sets state of Automap cheat for testing.
+	bool cmdMapCheat(int argc, const char **argv);
 };
 
 }

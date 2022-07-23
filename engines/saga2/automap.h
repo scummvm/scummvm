@@ -80,6 +80,9 @@ public:
 	APPFUNCV(cmdAutoMapPgDn);
 
 	gPanel *keyTest(int16 key);
+
+	void setCheatFlag(bool flag) { _autoMapCheat = flag; }
+	bool getCheatFlag() { return _autoMapCheat; }
 private:
 	bool activate(gEventType why);       // activate the control
 	void deactivate();

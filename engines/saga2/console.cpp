@@ -25,6 +25,7 @@
 #include "image/png.h"
 
 #include "saga2/saga2.h"
+#include "saga2/automap.h"
 #include "saga2/objects.h"
 #include "saga2/player.h"
 #include "saga2/mapfeatr.h"
@@ -36,6 +37,7 @@ namespace Saga2 {
 
 extern GameObject *objectList;
 extern WorldMapData *mapList;
+extern AutoMap *pAutoMap;
 
 Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	_vm = vm;
@@ -89,6 +91,8 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	registerCmd("play_voice", WRAP_METHOD(Console, cmdPlayVoice));
 
 	registerCmd("invis", WRAP_METHOD(Console, cmdInvisibility));
+
+	registerCmd("map_cheat", WRAP_METHOD(Console, cmdMapCheat));
 }
 
 Console::~Console() {
@@ -462,6 +466,19 @@ bool Console::cmdInvisibility(int argc, const char **argv) {
 				p->setEffect(actorInvisible, true);
 			else
 				p->setEffect(actorInvisible, false);
+		}
+	}
+
+	return true;
+}
+
+bool Console::cmdMapCheat(int argc, const char **argv) {
+	if (argc != 2)
+		debugPrintf("Usage: %s <1/0>\n", argv[0]);
+	else {
+		bool cheat = atoi(argv[1]);
+		if (pAutoMap) {
+			pAutoMap->setCheatFlag(cheat);
 		}
 	}
 

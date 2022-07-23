@@ -49,7 +49,7 @@ extern GameWorld            *currentWorld;
 
 requestInfo     rInfo;
 
-static AutoMap     *pAutoMap = nullptr;
+AutoMap *pAutoMap = nullptr;
 
 /* ===================================================================== *
    Constants
