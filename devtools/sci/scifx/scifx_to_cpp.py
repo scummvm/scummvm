@@ -1,23 +1,24 @@
 from __future__ import print_function
 import sys
+from typing import List, Tuple, Any
 
-def Chunker(seq, size):
+def Chunker(seq: List[Any], size: int) -> List[List[Any]]:
     return (seq[pos:pos + size] for pos in range(0, len(seq), size))
 
-def ModToIndex(mods, m):
+def ModToIndex(mods: List[Tuple[int]], m: int):
   try:
     return mods.index(m)
   except ValueError:
     mods.append(m)
     return len(mods)-1
 
-def PrintMods(gid, mods):
+def PrintMods(gid: str, mods: List[Tuple[int]]):
   L = [ "\t{ " + ", ".join( [ "%4d" % (round(128 * (val - 1)),) for val in m ] )  + " }" for m in mods ]
   print("static const PaletteMod paletteMods" + gid + "[] = {")
   print( ",\n".join(L) )
   print("};")
 
-def PrintPic(gid, pics, comments):
+def PrintPic(gid: str, pics: List[List[int]], comments: List[str]):
   print("static const PicMod picMods" + gid + "[] = {")
 
   for comment in comments:
@@ -31,7 +32,7 @@ def PrintPic(gid, pics, comments):
 
   print("};")
 
-def PrintView(gid, views, comments):
+def PrintView(gid: str, views: List[List[int]], comments: List[str]):
   print("static const ViewMod viewMods" + gid + "[] = {")
 
   for comment in comments:
@@ -45,7 +46,7 @@ def PrintView(gid, views, comments):
 
   print("};")
 
-def ParseList(l):
+def ParseList(l: str) -> Tuple[str, List[str]]:
   assert(l[0] == '(')
   e = l.find(")")
   L = l[1:e].split(",")
@@ -58,12 +59,12 @@ def ParseList(l):
       end = int(t[ell+2:])
       # interval
       for x in range(start, end + 1):
-        tests.append(x)
+        tests.append(str(x))
     else:
       tests.append(t)
   return l[e+1:], tests
 
-def ParseTriple(l):
+def ParseTriple(l: str) -> List[str]:
   assert(l[0] == '(')
   e = l.find(")")
   L = l[1:e].split(",")
