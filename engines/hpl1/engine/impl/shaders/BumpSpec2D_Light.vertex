@@ -1,0 +1,67 @@
+// Copyright 2006-2010 (C) - Frictional Games
+//
+// This file is part of HPL1 Engine
+//
+// For conditions of distribution and use, see copyright notice in LICENSE-shaders
+//
+
+///////////////////////////////////////////////////////
+/// SPECULAR BUMPMAPPING 2D VERTEX PROGRAM ////////////
+///////////////////////////////////////////////////////
+
+vec4 position = gl_Vertex;
+vec3 normal = gl_Normal;
+vec3 uv = gl_TexCoord[0].xyz;
+
+
+out vec4 vColor
+out vec3 vUv;
+out vec3 vLighDir;
+out vec3 vHalfVec;
+out vec2 vScreenPos;
+
+uniform mat4 worldViewProj;
+uniform vec3 LightPos;
+uniform vec3 EyePos;
+uniform float LightRadius;
+uniform vec4 LightColor;
+
+void main()
+{
+	vec3 L;
+
+	//Get the direction of the light and normalize it
+	vLighDir.xy = position.xy - LightPos.xy;
+
+	vScreenPos = (vLighDir.xy + (LightRadius)) / (LightRadius * 2.0);
+
+	//rotate the light to texture (tangent) space. Normal x=cos(angle) y = sin(angle)
+	vec2 TempLight = vLighDir.xy;
+	vLighDir.x = normal.x*TempLight.x + normal.y*TempLight.y;
+	vLighDir.y = normal.x*TempLight.y - normal.y*TempLight.x;
+	vLighDir.x *= normal.z / abs(normal.z);
+	vLighDir.y *= abs(normal.z)-2.0;
+
+	vLighDir.z = -LightPos.z;
+	vLighDir = normalize(vLighDir);
+
+	//Get the halfangle and normalize it
+	vHalfVec.xy = position.xy - EyePos.xy;
+	vHalfVec.z = -EyePos.y;
+
+    ///rotate halfvec aswell NOTE: Not sure you need this...
+	vec2 TempHalfVec = vHalfVec.xy;
+	vHalfVec.x = normal.x*TempHalfVec.x + normal.y*TempHalfVec.y;
+	vHalfVec.y = normal.x*TempHalfVec.y - normal.y*TempHalfVec.x;
+	vHalfVec.x *= normal.z/abs(normal.z);
+	vHalfVec.y *= abs(normal.z) - 2.0;
+
+	vHalfVec = normalize(vHalfVec);
+	vHalfVec = normalize(vHalfVec + vLighDir);
+
+	gl_Position = worldViewProj * position;
+
+	vColor = LightColor;
+
+	vUv = uv;
+}

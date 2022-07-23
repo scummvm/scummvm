@@ -1,0 +1,41 @@
+// Copyright 2006-2010 (C) - Frictional Games
+//
+// This file is part of HPL1 Engine
+//
+// For conditions of distribution and use, see copyright notice in LICENSE-shaders
+//
+
+///////////////////////////////////////////////////////
+/// BUMP COLOR SPECULAR LIGHTING FRAGMENT PROGRAM ///////////
+///////////////////////////////////////////////////////
+
+in vec4 vLightColor;
+in vec2 vUv;
+in vec3 vLightDir;
+in vec3 vHalfVec;
+
+OUTPUT
+
+uniform sampler2D tex0; //diffuseMap
+uniform sampler2D tex1; //normalMap
+uniform samplerCube tex2; //normalCubeMap
+uniform sampler1D tex3; //falloffMap
+uniform sampler2D tex4; //specularMap
+
+void main()
+{
+	float attenuation = texture1D(tex3,dot(vLightDir,vLightDir)).x;
+
+	vec3 bumpVec = texture(tex1, vUv).xyz;
+	bumpVec.xyz = (2.0*bumpVec.xyz)-vec3(1.0);
+
+	vLightDir = normalize(vLightDir);
+	vHalfVec = normalize(vHalfVec);
+
+	float specular = clamp(dot(vHalfVec, bumpVec.xyz), 0.0, 1.0);
+	specular = pow(specular, 16.0) * vLightColor.w;
+
+	outColor.xyz = texture(tex0, vUv).xyz * vLightColor.xyz * dot(vLightDir, bumpVec.xyz)
+					+ (specular * texture(tex4, vUv).xyz);
+	outColor.xyz *= attenuation;
+}

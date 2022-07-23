@@ -1,0 +1,28 @@
+// Copyright 2006-2010 (C) - Frictional Games
+//
+// This file is part of HPL1 Engine
+//
+// For conditions of distribution and use, see copyright notice in LICENSE-shaders
+//
+
+///////////////////////////////////////////////////////
+/// BLOOOM FRAGMENT PROGRAM /////////////////
+///////////////////////////////////////////////////////
+
+in vec4 vColor;
+in vec2 vUv0;
+in vec2 vUv1;
+
+OUTPUT
+
+uniform sampler2D tex0; //blurTex
+uniform sampler2DRect tex1; //screenTex
+
+void main()
+{
+	vec4 blurCol = texture(tex0, vUv0);
+	vec4 screenCol = texture2DRect(tex1, vUv1);
+
+	blurCol *= blurCol;
+	outColor.xyz = blurCol.xyz * dot(blurCol.xyz,vec3(0.3, 0.58, 0.12)) + screenCol.xyz;
+}

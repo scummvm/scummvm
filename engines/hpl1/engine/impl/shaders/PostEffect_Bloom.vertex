@@ -1,0 +1,30 @@
+// Copyright 2006-2010 (C) - Frictional Games
+//
+// This file is part of HPL1 Engine
+//
+// For conditions of distribution and use, see copyright notice in LICENSE-shaders
+//
+
+///////////////////////////////////////////////////////
+/// BLOOM VERTEX PROGRAM ////////////
+///////////////////////////////////////////////////////
+
+vec4 position = gl_Vertex;
+vec3 color = gl_Color.xyz;
+vec2 uv0 = gl_TexCoord[0].xy;
+vec2 uv1 = gl_TexCoord[1].xy;
+
+out vec3 vColor;
+out vec2 vUv0;
+out vec2 vUv1;
+
+uniform mat4 worldViewProj;
+
+void main()
+{
+	gl_Position = (worldViewProj * position);
+	vColor = color;
+
+	vUv0 = uv0;
+	vUv1 = uv1;
+}

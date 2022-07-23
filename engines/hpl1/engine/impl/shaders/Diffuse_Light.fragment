@@ -1,0 +1,30 @@
+// Copyright 2006-2010 (C) - Frictional Games
+//
+// This file is part of HPL1 Engine
+//
+// For conditions of distribution and use, see copyright notice in LICENSE-shaders
+//
+
+///////////////////////////////////////////////////////
+/// DIFFUSE LIGHTING FRAGMENT PROGRAM /////////////////
+///////////////////////////////////////////////////////
+
+vec4 vLightColor;
+vec2 vUv;
+vec3 vLightDir;
+
+OUTPUT
+
+uniform sampler2D tex0; //diffuseMap
+uniform samplerCube tex1; //normalCubeMap
+uniform sampler1D tex2; //falloffMap
+
+void main()
+{
+	float attenuation = texture1D(tex2,dot(vLightDir,vLightDir)).x;
+
+	vLightDir = (2.0*textureCube(tex1,vLightDir)-vec4(1.0)).xyz;
+
+	outColor.xyz = attenuation * texture(tex0, vUv).xyz * vLightColor.xyz * dot(vLightDir, vec3(0,0,1));
+	outColor.w = 0.0;
+}

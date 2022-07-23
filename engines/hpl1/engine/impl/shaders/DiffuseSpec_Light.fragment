@@ -1,0 +1,35 @@
+// Copyright 2006-2010 (C) - Frictional Games
+//
+// This file is part of HPL1 Engine
+//
+// For conditions of distribution and use, see copyright notice in LICENSE-shaders
+//
+
+///////////////////////////////////////////////////////
+/// DIFFUSE SPECULAR LIGHTING FRAGMENT PROGRAM ////////
+///////////////////////////////////////////////////////
+
+in vec4 vLightColor;
+in vec2 vUv;
+in vec3 vLightDir;
+in vec3 vHalfVec;
+
+OUTPUT
+
+uniform sampler2D tex0; //diffuseMap
+uniform samplerCube tex1; //normalCubeMap
+uniform sampler1D tex2; //falloffMap
+
+void main()
+{
+	float attenuation = texture1D(tex2, dot(vLightDir,vLightDir)).x;
+
+	vLightDir = normalize(vLightDir);//(2*textureCube(tex1,vLightDir)-1).xyz;
+	vHalfVec = normalize(vHalfVec);//(2*textureCube(tex1,vHalfVec)-1).xyz;
+
+	float specular = clamp(dot(vHalfVec, vec3(0,0,1)), 0.0, 1.0);
+	specular = pow(specular, 16.0) * vLightColor.w;
+
+	outColor.xyz = specular + texture(tex0, vUv).xyz * vLightColor.xyz * dot(normalize(vLightDir), vec3(0,0,1));
+	outColor.xyz = outColor.xyz * attenuation;
+}

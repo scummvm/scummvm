@@ -1,0 +1,37 @@
+// Copyright 2006-2010 (C) - Frictional Games
+//
+// This file is part of HPL1 Engine
+//
+// For conditions of distribution and use, see copyright notice in LICENSE-shaders
+//
+
+///////////////////////////////////////////////////////
+/// DEPTH OF FIELD FRAGMENT PROGRAM /////////////////
+///////////////////////////////////////////////////////
+
+in float vDepth;
+
+OUTPUT
+
+uniform sampler2DRect tex0; //screenMap
+uniform sampler2D tex1; //blurMap
+uniform vec3 planes;
+uniform float maxBlur;
+uniform vec2 screenSize;
+
+void main()
+{
+	float blur = 0.0;
+
+	if(vDepth < planes.y) {
+		blur = (planes.y - vDepth) / (planes.y - planes.x);
+	}
+	else {
+		blur = (vDepth - planes.y) / (planes.z - planes.y);
+	}
+
+	blur = clamp(blur, 0.0, maxBlur);
+
+	outColor = texture2DRect(tex0,gl_FragCoord.xy) * (1.0-blur) + texture(tex1,gl_FragCoord.xy/screenSize) *blur;
+	//outColor = 1 - blur;
+}
