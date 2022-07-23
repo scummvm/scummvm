@@ -149,21 +149,17 @@ private:
 
 	cImageTrailEffect mImageTrailData;
 
-	iGpuProgram *mpBlurVP;
-	iGpuProgram *mpBlur2dFP;
-	iGpuProgram *mpBlurRectFP;
+	iGpuProgram *_blur2DProgram;
+	iGpuProgram *_blurRectProgram;
 	bool mbBlurFallback;
 
-	iGpuProgram *mpBloomVP;
-	iGpuProgram *mpBloomFP;
+	iGpuProgram *_bloomProgram;
 
 	iTexture *mpBloomBlurTexture;
 
-	iGpuProgram *mpMotionBlurVP;
-	iGpuProgram *mpMotionBlurFP;
+	iGpuProgram *_motionBlurProgram;
 
-	iGpuProgram *mpDepthOfFieldVP;
-	iGpuProgram *mpDepthOfFieldFP;
+	iGpuProgram *_depthOfFieldProgram;
 	iTexture *mpDofBlurTexture;
 
 	tVertexVec mvTexRectVtx;

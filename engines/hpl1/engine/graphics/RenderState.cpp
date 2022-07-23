@@ -80,6 +80,8 @@ int iRenderState::Compare(const iRenderState *apState) const {
 		return CompareMatrix(apState);
 	case eRenderStateType_Render:
 		return CompareRender(apState);
+	case eRenderStateType_GpuProgram:
+		return compareGpuProgram(apState);
 	default:
 		break;
 	}
@@ -127,6 +129,8 @@ void iRenderState::SetMode(cRenderSettings *apSettings) {
 	case eRenderStateType_Render:
 		SetRenderMode(apSettings);
 		break;
+	case eRenderStateType_GpuProgram:
+		setGpuProgMode(apSettings);
 	default:
 		break;
 	}
@@ -190,6 +194,14 @@ void iRenderState::Set(const iRenderState *apState) {
 	case eRenderStateType_Render:
 		mpObject = apState->mpObject;
 		break;
+
+	case eRenderStateType_GpuProgram:
+		gpuProgram = apState->gpuProgram;
+		gpuProgramSetup = apState->gpuProgramSetup;
+		mbUsesEye = apState->mbUsesEye;
+		mbUsesLight = apState->mbUsesLight;
+		mpLight = apState->mpLight;
+
 	default:
 		break;
 	}
@@ -362,43 +374,43 @@ void iRenderState::SetBlendMode(cRenderSettings *apSettings) {
 //-----------------------------------------------------------------------
 
 void iRenderState::SetVtxProgMode(cRenderSettings *apSettings) {
-	if (mpVtxProgram != apSettings->mpVertexProgram) {
+	if (gpuProgram != apSettings->gpuProgram) {
 		if (apSettings->mbLog) {
-			if (mpVtxProgram)
-				Log("Setting vertex program: '%s'/%d ", mpVtxProgram->GetName().c_str(),
-					(size_t)mpVtxProgram);
+			if (gpuProgram)
+				Log("Setting vertex program: '%s'/%d ", gpuProgram->GetName().c_str(),
+					(size_t)gpuProgram);
 			else
-				Log("Setting vertex program: NULL ");
+				Log("Setting vertex program: NULL");
 		}
 
-		if (mpVtxProgram == NULL && apSettings->mpVertexProgram) {
-			apSettings->mpVertexProgram->UnBind();
+		if (gpuProgram == NULL && apSettings->gpuProgram) {
+			apSettings->gpuProgram->UnBind();
 			if (apSettings->mbLog)
-				Log("Unbinding old ");
+				Log("Unbinding old");
 		}
-		apSettings->mpVertexProgram = mpVtxProgram;
+		apSettings->gpuProgram = gpuProgram;
 
-		if (mpVtxProgram) {
+		if (gpuProgram) {
 			if (apSettings->mbLog)
-				Log("Binding new ");
-			mpVtxProgram->Bind();
+				Log("Binding new");
+			gpuProgram->Bind();
 
-			if (mpVtxProgramSetup) {
+			if (gpuProgramSetup) {
 				if (apSettings->mbLog)
-					Log("Custom setup %d ", mpVtxProgram);
-				mpVtxProgramSetup->Setup(mpVtxProgram, apSettings);
+					Log("Custom setup %d ", gpuProgram);
+				gpuProgramSetup->Setup(gpuProgram, apSettings);
 			}
-			apSettings->mpVtxProgramSetup = mpVtxProgramSetup;
+			apSettings->gpuProgramSetup = gpuProgramSetup;
 
 			// reset this so all matrix setting are set to vertex program.
 			apSettings->mbMatrixWasNULL = false;
 
 			if (mbUsesLight) {
 				if (apSettings->mbLog)
-					Log("Setting light properites ");
+					Log("Setting light properites");
 
-				// mpVtxProgram->SetFloat("LightRadius",mpLight->GetFarAttenuation());
-				mpVtxProgram->SetColor4f("LightColor", mpLight->GetDiffuseColor());
+				// gpuProgram->SetFloat("LightRadius",mpLight->GetFarAttenuation());
+				gpuProgram->SetColor4f("LightColor", mpLight->GetDiffuseColor());
 
 				apSettings->mpLight = mpLight;
 			} else {
@@ -411,42 +423,47 @@ void iRenderState::SetVtxProgMode(cRenderSettings *apSettings) {
 		if (apSettings->mbLog)
 			Log("\n");
 	} else {
-		if (apSettings->mpVertexProgram && mbUsesLight && mpLight != apSettings->mpLight) {
+		if (apSettings->gpuProgram && mbUsesLight && mpLight != apSettings->mpLight) {
 			if (apSettings->mbLog)
 				Log("Setting new light properites\n");
-			// mpVtxProgram->SetFloat("LightRadius",mpLight->GetFarAttenuation());
-			mpVtxProgram->SetColor4f("LightColor", mpLight->GetDiffuseColor());
+			// gpuProgram->SetFloat("LightRadius",mpLight->GetFarAttenuation());
+			gpuProgram->SetColor4f("LightColor", mpLight->GetDiffuseColor());
 
 			apSettings->mpLight = mpLight;
 		}
 	}
 }
 
+void iRenderState::setGpuProgMode(cRenderSettings *settings) {
+	SetVtxProgMode(settings);
+	SetFragProgMode(settings);
+}
+
 //-----------------------------------------------------------------------
 
 void iRenderState::SetFragProgMode(cRenderSettings *apSettings) {
-	if (mpFragProgram != apSettings->mpFragmentProgram) {
+	if (gpuProgram != apSettings->gpuProgram) {
 		if (apSettings->mbLog) {
-			if (mpFragProgram)
-				Log("Setting fragment program: '%s' /%d ", mpFragProgram->GetName().c_str(),
-					(size_t)mpFragProgram);
+			if (gpuProgram)
+				Log("Setting fragment program: '%s' /%d ", gpuProgram->GetName().c_str(),
+					(size_t)gpuProgram);
 			else
 				Log("Setting fragment program: NULL");
 		}
 
-		// if(mpFragProgram==NULL && apSettings->mpFragmentProgram) apSettings->mpFragmentProgram->UnBind();
-		if (apSettings->mpFragmentProgram)
-			apSettings->mpFragmentProgram->UnBind();
+		// if(gpuProgram==NULL && apSettings->mpFragmentProgram) apSettings->mpFragmentProgram->UnBind();
+		if (apSettings->gpuProgram)
+			apSettings->gpuProgram->UnBind();
 
-		apSettings->mpFragmentProgram = mpFragProgram;
+		apSettings->gpuProgram = gpuProgram;
 
-		if (mpFragProgram) {
+		if (gpuProgram) {
 			if (apSettings->mbLog)
 				Log("Binding new ");
-			mpFragProgram->Bind();
+			gpuProgram->Bind();
 
-			if (mpFragProgramSetup)
-				mpFragProgramSetup->Setup(mpFragProgram, apSettings);
+			if (gpuProgramSetup)
+				gpuProgramSetup->Setup(gpuProgram, apSettings);
 		}
 
 		if (apSettings->mbLog)
@@ -518,13 +535,13 @@ void iRenderState::SetMatrixMode(cRenderSettings *apSettings) {
 		apSettings->mbMatrixWasNULL = true;
 	}
 
-	if (apSettings->mpVertexProgram) {
+	if (apSettings->gpuProgram) {
 		// Might be quicker if this is set directly
-		apSettings->mpVertexProgram->SetMatrixf("worldViewProj",
+		apSettings->gpuProgram->SetMatrixf("worldViewProj",
 												eGpuProgramMatrix_ViewProjection,
 												eGpuProgramMatrixOp_Identity);
-		if (apSettings->mpVtxProgramSetup) {
-			apSettings->mpVtxProgramSetup->SetupMatrix(mpModelMatrix, apSettings);
+		if (apSettings->gpuProgramSetup) {
+			apSettings->gpuProgramSetup->SetupMatrix(mpModelMatrix, apSettings);
 		}
 
 		if (apSettings->mbUsesLight) {
@@ -534,11 +551,11 @@ void iRenderState::SetMatrixMode(cRenderSettings *apSettings) {
 				// Light position
 				cVector3f vLocalLight = cMath::MatrixMul(*mpInvModelMatrix,
 														 apSettings->mpLight->GetLightPosition());
-				apSettings->mpVertexProgram->SetVec3f("LightPos", vLocalLight);
+				apSettings->gpuProgram->SetVec3f("LightPos", vLocalLight);
 
 				// LightDir Div, use scale to make attenuation correct!
 				cVector3f vLightDirDiv = mvScale / apSettings->mpLight->GetFarAttenuation();
-				apSettings->mpVertexProgram->SetVec3f("LightDirMul", vLightDirDiv);
+				apSettings->gpuProgram->SetVec3f("LightDirMul", vLightDirDiv);
 
 				if (apSettings->mbLog)
 					Log("(%s) LightDirMul (%s) ", vLocalLight.ToString().c_str(), vLightDirDiv.ToString().c_str());
@@ -548,22 +565,22 @@ void iRenderState::SetMatrixMode(cRenderSettings *apSettings) {
 					if (apSettings->mbLog)
 						Log("SpotLightViewProj ");
 					cLight3DSpot *pSpotLight = static_cast<cLight3DSpot *>(apSettings->mpLight);
-					apSettings->mpVertexProgram->SetMatrixf("spotViewProj",
+					apSettings->gpuProgram->SetMatrixf("spotViewProj",
 															cMath::MatrixMul(pSpotLight->GetViewProjMatrix(), *mpModelMatrix));
 				}
 			} else {
 				// Light position
-				apSettings->mpVertexProgram->SetVec3f("LightPos", apSettings->mpLight->GetLightPosition());
+				apSettings->gpuProgram->SetVec3f("LightPos", apSettings->mpLight->GetLightPosition());
 
 				// LightDir Div
-				apSettings->mpVertexProgram->SetVec3f("LightDirMul", 1.0f / apSettings->mpLight->GetFarAttenuation());
+				apSettings->gpuProgram->SetVec3f("LightDirMul", 1.0f / apSettings->mpLight->GetFarAttenuation());
 
 				// Light view projection
 				if (apSettings->mpLight->GetLightType() == eLight3DType_Spot) {
 					if (apSettings->mbLog)
 						Log("SpotLightViewProj ");
 					cLight3DSpot *pSpotLight = static_cast<cLight3DSpot *>(apSettings->mpLight);
-					apSettings->mpVertexProgram->SetMatrixf("spotViewProj", pSpotLight->GetViewProjMatrix());
+					apSettings->gpuProgram->SetMatrixf("spotViewProj", pSpotLight->GetViewProjMatrix());
 				}
 			}
 		}
@@ -574,9 +591,9 @@ void iRenderState::SetMatrixMode(cRenderSettings *apSettings) {
 			if (mpModelMatrix) {
 				cVector3f vLocalEye = cMath::MatrixMul(*mpInvModelMatrix,
 													   apSettings->mpCamera->GetEyePosition());
-				apSettings->mpVertexProgram->SetVec3f("EyePos", vLocalEye);
+				apSettings->gpuProgram->SetVec3f("EyePos", vLocalEye);
 			} else {
-				apSettings->mpVertexProgram->SetVec3f("EyePos", apSettings->mpCamera->GetEyePosition());
+				apSettings->gpuProgram->SetVec3f("EyePos", apSettings->mpCamera->GetEyePosition());
 			}
 		}
 	}
@@ -681,6 +698,10 @@ int iRenderState::CompareMatrix(const iRenderState *apState) const {
 
 int iRenderState::CompareRender(const iRenderState *apState) const {
 	return GetCompareVal(mpObject, apState->mpObject);
+}
+
+int iRenderState::compareGpuProgram(const iRenderState *state) const {
+	return GetCompareVal(gpuProgram, state->gpuProgram);
 }
 
 //-----------------------------------------------------------------------
