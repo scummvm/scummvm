@@ -26,7 +26,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved accuracy of CGA and Hercules modes for SCUMM 2 (enhanced) versions of
      Zak McKracken and Maniac Mansion.
    - Improved accuracy of CGA and Hercules modes for Monkey Island 1 (EGA version
-	   only - the VGA version does not have CGA and Hercules modes).
+     only - the VGA version does not have CGA and Hercules modes).
    - Fixed some minor glitches for the CGA mode of Loom. 
 
  Toon:
