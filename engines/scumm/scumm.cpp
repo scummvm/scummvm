@@ -2386,15 +2386,8 @@ void ScummEngine::scummLoop(int delta) {
 		scummLoop_handleSaveLoad();
 	}
 
-	// BlastObjects/Texts are removed in this moment of the codepath, in v7-8.
-	// V8 should just reset the queue and the rects should be restored somewhere else.
-	//
-	// We do that for the texts just after calling runAllScripts(), but this method
-	// doesn't quite work as well for the blastObjects as it does for the texts, so
-	// for now we'll have to live with one known glitch: if a system dialog is shown
-	// on the main menu (i.e. "Do you want to replace this saved game? (Y/N)"), it
-	// will wipe out all the blastObjects (the empty thumbnail rectangles) for the duration
-	// of said dialog.
+	// BlastObjects/Texts are completely removed in this moment of the codepath, in v7.
+	// In v8 we just reset the queue: the rects will be restored after runAllScripts().
 	if (_game.version >= 7) {
 		((ScummEngine_v6 *)this)->removeBlastObjects();
 #ifdef ENABLE_SCUMM_7_8
@@ -2420,12 +2413,11 @@ void ScummEngine::scummLoop(int delta) {
 		}
 	}
 
-	// Another v8 quirk: runAllScripts() is called here, after that we can
-	// finally restore the blastTexts' rects, otherwise if a system dialog
-	// is shown we will lose all currently displayed blastTexts (see the
-	// comment above on the removal of blastTexts and blastObjects)
+	// Another v8 quirk: runAllScripts() is called here; after that we can
+	// finally restore the blastTexts/blastObject rects...
 	if (_game.version == 8) {
 		runAllScripts();
+		((ScummEngine_v6 *)this)->restoreBlastObjectsRects();
 #ifdef ENABLE_SCUMM_7_8
 		((ScummEngine_v7 *)this)->restoreBlastTextsRects();
 #endif
@@ -2648,6 +2640,7 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 			GUI::TimedMessageDialog dialog(buf, 1500);
 			runDialog(dialog);
 		}
+
 		if (success && _saveLoadFlag != 1)
 			clearClickedStatus();
 
@@ -2854,8 +2847,6 @@ void ScummEngine_v8::scummLoop_handleSaveLoad() {
 	}
 
 	ScummEngine::scummLoop_handleSaveLoad();
-
-	removeBlastObjects();
 }
 #endif
 

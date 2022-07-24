@@ -82,7 +82,9 @@ protected:
 	};
 
 	int _blastObjectQueuePos;
+	int _blastObjectRectsQueue = 0;
 	BlastObject _blastObjectQueue[200];
+	Common::Rect _blastObjectsRectsToBeRestored[200];
 
 	// Akos Class
 	struct {
@@ -131,6 +133,7 @@ protected:
 public: // FIXME. TODO
 	void nukeArray(int array);
 	void removeBlastObjects();
+	void restoreBlastObjectsRects();
 
 protected:
 	virtual int readArray(int array, int index, int base);
@@ -156,7 +159,7 @@ protected:
 	void drawBlastObjects();
 	void drawBlastObject(BlastObject *eo);
 
-	void removeBlastObject(BlastObject *eo);
+	void restoreBlastObjectRect(Common::Rect r);
 
 	void clearDrawQueues() override;
 

@@ -1824,24 +1824,50 @@ void ScummEngine_v6::drawBlastObject(BlastObject *eo) {
 }
 
 void ScummEngine_v6::removeBlastObjects() {
-	BlastObject *eo;
+	// While v6-7 games restore the rect immediately, we only reset
+	// the blastObject queue in here for v8, since their graphics
+	// has to remain on screen until after runAllScripts().
+	if (_game.version == 8) {
+		if (_blastObjectQueuePos != 0) {
+			for (int i = 0; i < _blastObjectQueuePos; i++) {
+				_blastObjectsRectsToBeRestored[i] = _blastObjectQueue[i].rect;
+				_blastObjectRectsQueue = _blastObjectQueuePos;
+			}
+		}
 
-	eo = _blastObjectQueue;
-	for (int i = 0; i < _blastObjectQueuePos; i++, eo++) {
-		removeBlastObject(eo);
+		_blastObjectQueuePos = 0;
+		return;
+	}
+
+	for (int i = 0; i < _blastObjectQueuePos; i++) {
+		restoreBlastObjectRect(_blastObjectQueue[i].rect);
 	}
 
 	_blastObjectQueuePos = 0;
 }
 
-void ScummEngine_v6::removeBlastObject(BlastObject *eo) {
+void ScummEngine_v6::restoreBlastObjectsRects() {
+	// While v6-7 games restore the rect immediately in
+	// ScummEngine_v6::removeBlastObjects(), we do that here
+	// for v8, which has to restore the rects after runAllScripts().
+	if (_game.version < 8)
+		return;
+
+	for (int i = 0; i < _blastObjectRectsQueue; i++) {
+		restoreBlastObjectRect(_blastObjectsRectsToBeRestored[i]);
+
+		// Invalidate the rect after restoring it...
+		_blastObjectsRectsToBeRestored[i].setHeight(0);
+	}
+
+	_blastObjectRectsQueue = 0;
+}
+
+void ScummEngine_v6::restoreBlastObjectRect(Common::Rect r) {
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 
-	Common::Rect r;
 	int left_strip, right_strip;
 	int i;
-
-	r = eo->rect;
 
 	r.clip(Common::Rect(vs->w, vs->h));
 
