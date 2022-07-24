@@ -2197,6 +2197,11 @@ Common::Error ScummEngine::go() {
 			delta = ceil(delta / 3.0) * 3;
 		}
 
+		// In COMI we put no speed limit while on the main menu.
+		if (_game.version == 8 && _currentRoom == 92) {
+			delta = 0;
+		}
+
 		// Wait, start and stop the stop watch at the time the wait is assumed
 		// to end. There is no guarantee that the wait is that exact,
 		// but this way if it overshoots that time will count as part
