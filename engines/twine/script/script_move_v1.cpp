@@ -125,7 +125,7 @@ static int32 mGOTO_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	if (ctx.actor->_staticFlags.bIsSpriteActor) {
 		ctx.actor->_angle = newAngle;
 	} else {
-		engine->_movements->moveActor(ctx.actor->_angle, newAngle, ctx.actor->_speed, &ctx.actor->_move);
+		engine->_movements->initRealAngleConst(ctx.actor->_angle, newAngle, ctx.actor->_speed, &ctx.actor->_move);
 	}
 
 	if (engine->_movements->_targetActorDistance > 500) {
@@ -173,7 +173,7 @@ static int32 mANGLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	}
 	engine->_scene->_currentScriptValue = angle;
 	if (ctx.actor->_move.numOfStep == 0) {
-		engine->_movements->moveActor(ctx.actor->_angle, angle, ctx.actor->_speed, &ctx.actor->_move);
+		engine->_movements->initRealAngleConst(ctx.actor->_angle, angle, ctx.actor->_speed, &ctx.actor->_move);
 	}
 	if (ctx.actor->_angle == angle) {
 		engine->_movements->clearRealAngle(ctx.actor);
@@ -255,7 +255,7 @@ static int32 mGOTO_SYM_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	if (ctx.actor->_staticFlags.bIsSpriteActor) {
 		ctx.actor->_angle = newAngle;
 	} else {
-		engine->_movements->moveActor(ctx.actor->_angle, newAngle, ctx.actor->_speed, &ctx.actor->_move);
+		engine->_movements->initRealAngleConst(ctx.actor->_angle, newAngle, ctx.actor->_speed, &ctx.actor->_move);
 	}
 
 	if (engine->_movements->_targetActorDistance > 500) {
@@ -603,7 +603,7 @@ static int32 mFACE_HERO(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->_currentScriptValue = angle;
 	if (engine->_scene->_currentScriptValue == -1 && ctx.actor->_move.numOfStep == 0) {
 		engine->_scene->_currentScriptValue = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos(), engine->_scene->_sceneHero->pos());
-		engine->_movements->moveActor(ctx.actor->_angle, engine->_scene->_currentScriptValue, ctx.actor->_speed, &ctx.actor->_move);
+		engine->_movements->initRealAngleConst(ctx.actor->_angle, engine->_scene->_currentScriptValue, ctx.actor->_speed, &ctx.actor->_move);
 		ctx.stream.rewind(2);
 		ctx.stream.writeSint16LE(engine->_scene->_currentScriptValue);
 	}
@@ -641,7 +641,7 @@ static int32 mANGLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 			engine->_scene->_currentScriptValue = ClampAngle(newAngle - engine->getRandomNumber(val1));
 		}
 
-		engine->_movements->moveActor(ctx.actor->_angle, engine->_scene->_currentScriptValue, ctx.actor->_speed, &ctx.actor->_move);
+		engine->_movements->initRealAngleConst(ctx.actor->_angle, engine->_scene->_currentScriptValue, ctx.actor->_speed, &ctx.actor->_move);
 		ctx.stream.rewind(2);
 		ctx.stream.writeSint16LE(engine->_scene->_currentScriptValue);
 	}

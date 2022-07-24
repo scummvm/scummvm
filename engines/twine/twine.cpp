@@ -718,7 +718,7 @@ void TwinEEngine::processInventoryAction() {
 			_actor->initModelActor(BodyType::btNormal, _scene->_mecaPenguinIdx);
 			penguin->_dynamicFlags.bIsDead = 0;
 			penguin->setBrickShape(ShapeType::kNone);
-			_movements->moveActor(penguin->_angle, penguin->_angle, penguin->_speed, &penguin->_move);
+			_movements->initRealAngleConst(penguin->_angle, penguin->_angle, penguin->_speed, &penguin->_move);
 			_gameState->removeItem(InventoryItems::kiPenguin);
 			penguin->_delayInMillis = _lbaTime + TO_SECONDS(30);
 		}

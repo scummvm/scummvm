@@ -150,18 +150,18 @@ IVec3 Movements::rotateActor(int32 x, int32 z, int32 angle) {
 	return IVec3(x, 0, z);
 }
 
-void Movements::moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMoveStruct *movePtr) const { // ManualRealAngle
-	const int16 from = ClampAngle(angleFrom);
-	const int16 to = ClampAngle(angleTo);
+void Movements::initRealAngleConst(int32 start, int32 end, int32 duration, ActorMoveStruct *movePtr) const { // ManualRealAngle
+	const int16 cstart = ClampAngle(start);
+	const int16 cend = ClampAngle(end);
 
-	movePtr->from = from;
-	movePtr->to = to;
+	movePtr->from = cstart;
+	movePtr->to = cend;
 
-	const int16 numOfStep = (from - to) * 64;
+	const int16 numOfStep = (cstart - cend) * 64;
 	int32 numOfStepInt = ABS(numOfStep);
 	numOfStepInt /= 64;
 
-	numOfStepInt *= speed;
+	numOfStepInt *= duration;
 	numOfStepInt /= 256;
 
 	movePtr->numOfStep = (int16)numOfStepInt;
@@ -361,7 +361,7 @@ void Movements::processManualRotationExecution(int actorIdx) {
 		tempAngle = ANGLE_0;
 	}
 
-	moveActor(actor->_angle, actor->_angle + tempAngle, actor->_speed, &actor->_move);
+	initRealAngleConst(actor->_angle, actor->_angle + tempAngle, actor->_speed, &actor->_move);
 }
 
 void Movements::processManualAction(int actorIdx) {
@@ -389,7 +389,7 @@ void Movements::processFollowAction(int actorIdx) {
 	if (actor->_staticFlags.bIsSpriteActor) {
 		actor->_angle = newAngle;
 	} else {
-		moveActor(actor->_angle, newAngle, actor->_speed, &actor->_move);
+		initRealAngleConst(actor->_angle, newAngle, actor->_speed, &actor->_move);
 	}
 }
 
@@ -401,7 +401,7 @@ void Movements::processRandomAction(int actorIdx) {
 
 	if (actor->brickCausesDamage()) {
 		const int32 angle = ClampAngle(actor->_angle + (_engine->getRandomNumber() & (ANGLE_180 - 1)) - ANGLE_90 + ANGLE_180);
-		moveActor(actor->_angle, angle, actor->_speed, &actor->_move);
+		initRealAngleConst(actor->_angle, angle, actor->_speed, &actor->_move);
 		actor->_delayInMillis = _engine->getRandomNumber(300) + _engine->_lbaTime + 300;
 		_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 	}
@@ -410,7 +410,7 @@ void Movements::processRandomAction(int actorIdx) {
 		_engine->_animations->initAnim(AnimationTypes::kForward, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 		if (_engine->_lbaTime > actor->_delayInMillis) {
 			const int32 angle = ClampAngle(actor->_angle + (_engine->getRandomNumber() & (ANGLE_180 - 1)) - ANGLE_90);
-			moveActor(actor->_angle, angle, actor->_speed, &actor->_move);
+			initRealAngleConst(actor->_angle, angle, actor->_speed, &actor->_move);
 			actor->_delayInMillis = _engine->getRandomNumber(300) + _engine->_lbaTime + 300;
 		}
 	}
@@ -448,7 +448,7 @@ void Movements::processActorMovements(int32 actorIdx) {
 			tempAngle = -ANGLE_90;
 		}
 
-		moveActor(actor->_angle, actor->_angle + tempAngle, actor->_speed, &actor->_move);
+		initRealAngleConst(actor->_angle, actor->_angle + tempAngle, actor->_speed, &actor->_move);
 		return;
 	}
 	if (!actor->_staticFlags.bIsSpriteActor) {
