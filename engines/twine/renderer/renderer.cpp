@@ -383,7 +383,7 @@ static FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
 	return x < a ? a : (x > b ? b : x);
 }
 
-bool Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int32 numVertices) {
+bool Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int32 numVertices) { // ComputePolyMinMax
 	uint8 vertexParam1 = vertices[numVertices - 1].colorIndex;
 	int16 currentVertexX = vertices[numVertices - 1].x;
 	int16 currentVertexY = vertices[numVertices - 1].y;
