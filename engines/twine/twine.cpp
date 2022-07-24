@@ -704,7 +704,7 @@ void TwinEEngine::processInventoryAction() {
 	case kiPenguin: {
 		ActorStruct *penguin = _scene->getActor(_scene->_mecaPenguinIdx);
 
-		const IVec3 &destPos = _movements->rotateActor(0, 800, penguin->_angle);
+		const IVec3 &destPos = _movements->rotateActor(0, 800, _scene->_sceneHero->_angle);
 
 		penguin->_pos = _scene->_sceneHero->_pos;
 		penguin->_pos.x += destPos.x;
