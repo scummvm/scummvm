@@ -51,7 +51,7 @@ struct OverlayListStruct {
 	int16 y = 0;
 	int16 info1 = 0; // text = actor | total coins
 	OverlayPosType posType = OverlayPosType::koNormal;
-	int16 lifeTime = 0;
+	int16 lifeTime = 0; // life time in ticks - see TO_SECONDS()
 };
 
 struct DrawListStruct {
