@@ -365,6 +365,7 @@ void ScummEngine_v7::confirmExitDialog() {
 		curCursorHotspotX = _cursor.hotspotX;
 		curCursorHotspotY = _cursor.hotspotY;
 		setDefaultCursor();
+		CursorMan.showMouse(true);
 
 		// Backup the current charsetId, since we're going to switch
 		// to charsetId == 1 and start taking measurements for the box...
