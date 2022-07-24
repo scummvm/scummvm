@@ -511,6 +511,9 @@ void ScummEngine_v7::removeBlastTexts() {
 }
 
 void ScummEngine_v7::restoreBlastTextsRects() {
+	if (_game.version < 8)
+		return;
+
 	for (int i = 0; i < _blastTextRectsQueue; i++) {
 		restoreBackground(_blastTextQueue[i].rect);
 	}

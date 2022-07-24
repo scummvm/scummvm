@@ -1134,7 +1134,7 @@ protected:
 	 * If the leftmost bit is set, the strip (background) is dirty
 	 * needs to be redrawn.
 	 *
-	 * The second leftmost bit is set by removeBlastObject() and
+	 * The second leftmost bit is set by restoreBlastObjectsRect() and
 	 * restoreBackground(), but I'm not yet sure why.
 	 */
 	uint32 gfxUsageBits[410 * 3];

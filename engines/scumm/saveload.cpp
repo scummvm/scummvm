@@ -845,8 +845,9 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	sh = _screenH;
 
 #ifdef ENABLE_SCUMM_7_8
-	// Remove any blast text leftovers
+	// Remove any blastText/blastObject leftovers
 	if (_game.version >= 7) {
+		((ScummEngine_v6 *)this)->removeBlastObjects();
 		((ScummEngine_v7 *)this)->removeBlastTexts();
 	}
 
