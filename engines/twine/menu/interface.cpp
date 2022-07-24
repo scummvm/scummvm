@@ -171,11 +171,15 @@ void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
 	_engine->_frontVideoBuffer.addDirtyRect(r);
 }
 
-void Interface::drawFilledRect(const Common::Rect &rect, uint8 colorIndex) {
+void Interface::drawFilledRect(const Common::Rect &rect, uint8 colorIndex) { // Box
 	if (!rect.isValidRect()) {
 		return;
 	}
-	_engine->_frontVideoBuffer.fillRect(Common::Rect(rect.left, rect.top, rect.right + 1, rect.bottom + 1), colorIndex);
+	Common::Rect clipped(rect.left, rect.top, rect.right + 1, rect.bottom + 1);
+	if (_clip.isValidRect()) {
+		clipped.clip(_clip);
+	}
+	_engine->_frontVideoBuffer.fillRect(clipped, colorIndex);
 }
 
 bool Interface::setClip(const Common::Rect &rect) {
