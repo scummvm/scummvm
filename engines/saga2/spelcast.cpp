@@ -30,9 +30,7 @@
 #include "saga2/spelshow.h"
 #include "saga2/spelvals.h"
 #include "saga2/tilevect.h"
-#if DEBUG
 #include "saga2/tileline.h"
-#endif
 
 namespace Saga2 {
 
@@ -76,6 +74,8 @@ SpellStuff::SpellStuff() {
 	size = 0;
 	range = 0;
 	sound = 0;
+
+	_debug = false;
 }
 
 //-----------------------------------------------------------------------
@@ -408,7 +408,6 @@ void SpellStuff::removeTargetList() {
 //-----------------------------------------------------------------------
 //	spell debugging
 
-#if DEBUG
 #define DSPELL_AREA_COLOR 3
 #define DSPELL_TARGET_COLOR 7
 
@@ -417,6 +416,8 @@ void showTarg(const TilePoint &tp) {
 }
 
 void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
+	if (!_debug) return;
+
 	int16 radius = size;
 	TilePoint tVect, orth, tBase;
 	switch (shape) {
@@ -570,11 +571,6 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 	}
 	}
 }
-#else
-
-void SpellStuff::show(GameObject *, SpellTarget &) {}
-
-#endif
 
 /* ===================================================================== *
    SpellInstance implementation
