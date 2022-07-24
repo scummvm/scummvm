@@ -89,41 +89,11 @@ Force windowed mode.
 .It Fl f | -fullscreen
 Force full-screen mode.
 .It Fl g | -gfx-mode= Ns Ar MODE
-Select graphics scaler:
-.Bl -tag -width 10m
-.It Ar 1x
-No filtering, no scaling.
-Fastest.
-.It Ar 2x
-No filtering, factor 2x (default for non 640x480 games).
-.It Ar 3x
-No filtering, factor 3x.
-.It Ar 2xsai
-2xSAI filter, factor 2x.
-.It Ar super2xsai
-Enhanced 2xSAI filtering, factor 2x.
-.It Ar supereagle
-Less blurry than 2xSAI, but slower.
-Factor 2x.
-.It Ar advmame2x
-Doesn't rely on blurring like 2xSAI, fast.
-Factor 2x.
-.It Ar advmame3x
-Doesn't rely on blurring like 2xSAI, fast.
-Factor 3x.
-.It Ar hq2x
-Very nice high quality filter but slow.
-Factor 2x.
-.It Ar hq3x
-Very nice high quality filter but slow.
-Factor 3x.
-.It Ar tv2x
-Interlace filter, tries to emulate a TV.
-Factor 2x.
-.It Ar dotmatrix
-Dot matrix effect.
-Factor 2x.
-.El
+Select graphics mode:
+.Po
+.Ar opengl ,
+.Ar surfacesdl
+.Pc
 .It Fl h | -help
 Display a brief help text and exit.
 .It Fl l | -logfile= Ns Ar PATH
