@@ -543,7 +543,7 @@ void Holomap::processHolomap() {
 	int32 time = _engine->_lbaTime;
 	int32 xRot = _locations[currentLocation].angleX;
 	int32 yRot = _locations[currentLocation].angleY;
-	bool rotate = false;
+	bool automove = false;
 	bool redraw = true;
 	int waterPaletteChangeTimer = 0;
 	bool fadeInPalette = true;
@@ -561,7 +561,7 @@ void Holomap::processHolomap() {
 				currentLocation = nextLocation;
 				_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
 				time = _engine->_lbaTime;
-				rotate = true;
+				automove = true;
 			}
 		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapNext)) {
 			const int32 nextLocation = getNextHolomapLocation(currentLocation, 1);
@@ -569,31 +569,31 @@ void Holomap::processHolomap() {
 				currentLocation = nextLocation;
 				_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
 				time = _engine->_lbaTime;
-				rotate = true;
+				automove = true;
 			}
 		}
 
 		if (_engine->_input->isActionActive(TwinEActionType::HolomapDown)) {
 			xRot += ANGLE_2;
-			rotate = true;
+			automove = true;
 			time = _engine->_lbaTime;
 		} else if (_engine->_input->isActionActive(TwinEActionType::HolomapUp)) {
 			xRot -= ANGLE_2;
-			rotate = true;
+			automove = true;
 			time = _engine->_lbaTime;
 		}
 
 		if (_engine->_input->isActionActive(TwinEActionType::HolomapRight)) {
 			yRot += ANGLE_2;
-			rotate = true;
+			automove = true;
 			time = _engine->_lbaTime;
 		} else if (_engine->_input->isActionActive(TwinEActionType::HolomapLeft)) {
 			yRot -= ANGLE_2;
-			rotate = true;
+			automove = true;
 			time = _engine->_lbaTime;
 		}
 
-		if (rotate) {
+		if (automove) {
 			const int32 dt = _engine->_lbaTime - time;
 			xRot = _engine->_collision->clampedLerp(ClampAngle(xRot), _locations[currentLocation].angleX, 75, dt);
 			yRot = _engine->_collision->clampedLerp(ClampAngle(yRot), _locations[currentLocation].angleY, 75, dt);
@@ -622,14 +622,15 @@ void Holomap::processHolomap() {
 			renderHolomapSurfacePolygons(holomapImagePtr, holomapImageSize);
 			renderLocations(xRot, yRot, 0, true);
 			drawHolomapText(_engine->width() / 2, 25, "HoloMap");
-			if (rotate) {
+			if (automove) {
+				// draw cursor
 				const Common::Rect &targetRect = _engine->centerOnScreen(40, 40);
-				_engine->_menu->drawRectBorders(targetRect.left, cameraPosY - 20, targetRect.right, cameraPosY + 20);
+				_engine->_menu->drawRectBorders(targetRect.left, cameraPosY - 20, targetRect.right, cameraPosY + 20, 15, 15);
 			}
 		}
 
-		if (rotate && xRot == _locations[currentLocation].angleX && yRot == _locations[currentLocation].angleY) {
-			rotate = false;
+		if (automove && xRot == _locations[currentLocation].angleX && yRot == _locations[currentLocation].angleY) {
+			automove = false;
 		}
 
 		++_engine->_lbaTime;
