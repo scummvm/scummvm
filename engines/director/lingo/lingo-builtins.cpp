@@ -1983,12 +1983,12 @@ void LB::b_installMenu(int nargs) {
 	// For Mac, this is √. For Windows, this is Ã.
 	const uint8 CHECKMARK_CHAR = 0xc3;
 	const uint32 CHECKMARK_U32 = numToChar(CHECKMARK_CHAR);
-	const char *CHECKMARK_STR = "\xc3\x83";
+	const char *CHECKMARK_STR = "\xc3\x83"; // "Ã"
 	// Menu definitions use the character 0xc5 to denote a code separator.
 	// For Mac, this is ≈. For Windows, this is Å.
 	const uint8 CODE_SEPARATOR_CHAR = 0xc5;
 	const uint32 CODE_SEPARATOR_U32 = numToChar(CODE_SEPARATOR_CHAR);
-	const char *CODE_SEPARATOR_STR = "\xc3\x85";
+	const char *CODE_SEPARATOR_STR = "\xc3\x85"; // "Å"
 
 	Common::U32String lineBuffer;
 
@@ -2150,7 +2150,7 @@ void LB::b_move(int nargs) {
 	uint16 frame = movie->getScore()->getCurrentFrame();
 	Frame *currentFrame = movie->getScore()->_frames[frame];
 	auto channels = g_director->getCurrentMovie()->getScore()->_channels;
-	
+
 
 	movie->getScore()->renderFrame(frame, kRenderForceUpdate);
 
@@ -2753,7 +2753,7 @@ void LB::b_offsetRect(int nargs) {
 	rect.u.farr->arr[2].u.i += hori.u.i;
 	rect.u.farr->arr[1].u.i -= vert.u.i;
 	rect.u.farr->arr[3].u.i -= vert.u.i;
-	
+
 
 	g_lingo->push(rect);
 }
