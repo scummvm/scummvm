@@ -706,6 +706,8 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 }
 
 void ScummEngine_v7::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked) {
+	bool validKey = false;
+
 	if (waitTime && waitTime != -1) {
 		uint32 millis = _system->getMillis();
 		while (((_system->getMillis() - millis) * (_timerFrequency / 4) / 1000) < waitTime) {
@@ -720,7 +722,7 @@ void ScummEngine_v7::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bo
 				return;
 		}
 	} else {
-		while (ks == Common::KEYCODE_INVALID && !leftBtnClicked && !rightBtnClicked) {
+		while (!validKey && !leftBtnClicked && !rightBtnClicked) {
 			waitForTimer(1); // Allow the engine to update the screen and fetch new inputs...
 			ks = _keyPressed;
 			leftBtnClicked = (_leftBtnPressed & msClicked) != 0;
@@ -728,6 +730,16 @@ void ScummEngine_v7::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bo
 
 			if (shouldQuit())
 				return;
+
+			validKey = ks.keycode != Common::KEYCODE_INVALID &&
+					   ks.keycode != Common::KEYCODE_LCTRL   &&
+					   ks.keycode != Common::KEYCODE_RCTRL   &&
+					   ks.keycode != Common::KEYCODE_LSHIFT  &&
+					   ks.keycode != Common::KEYCODE_RSHIFT  &&
+					   ks.keycode != Common::KEYCODE_UP      &&
+					   ks.keycode != Common::KEYCODE_DOWN    &&
+					   ks.keycode != Common::KEYCODE_LEFT    &&
+					   ks.keycode != Common::KEYCODE_RIGHT;
 		}
 	}
 }
