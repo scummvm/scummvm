@@ -23,9 +23,11 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  SCUMM:
    - Unterstützung von CGA-, CGA Composite-, CGA schwarz/weiß- und Herkules-Grafikmodi
      für die SCUMM 1-Versionen von Zak McKracken und Maniac Mansion hinzugefügt.
-     Die Genauigkeit der CGA- und Hercules-Modi der SCUMM 2-Versionen von
+   - Die Genauigkeit der CGA- und Hercules-Modi der SCUMM 2-Versionen von
      Zak McKracken und Maniac Mansion wurde verbessert.
-     Einige Grafik-Fehler im CGA-Modus von Loom wurden ebenfalls korrigiert.
+   - Verbesserte Genauigkeit der Darstekkzbg von CGA- und Hercules-Grafikmodi
+     in der EGA-Version von Monkey Island 1 (die VGA-Version unterstützt weder CGA noch Hercules).
+   - Einige Grafik-Fehler im CGA-Modus von Loom wurden korrigiert.
 
  Toon:
    - Die Spiel-Menüs verhalten sich nun wie das Original.
