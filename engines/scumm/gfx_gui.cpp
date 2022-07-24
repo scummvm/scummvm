@@ -156,7 +156,13 @@ Common::KeyState ScummEngine_v7::showBannerAndPause(int bannerId, int32 waitTime
 	bool leftBtnPressed = false, rightBtnPressed = false;
 	if (waitTime) {
 		waitForBannerInput(waitTime, ks, leftBtnPressed, rightBtnPressed);
-		clearBanner();
+
+		// Don't manually clear the banner if a SMUSH movie is playing,
+		// as that will cause some rare small glitches. The SMUSH player
+		// will take care of that for us automatically when updating the
+		// screen for next frame.
+		if (!isSmushActive())
+			clearBanner();
 	}
 
 	// Finally, resume the engine, clear the input state, and restore the charset.
@@ -390,7 +396,7 @@ void ScummEngine_v7::confirmExitDialog() {
 		// Save the pixels which will be overwritten by the dialog,
 		// so that we can restore them later. Note that the interpreter
 		// doesn't do this, but we have to...
-		if (!_bannerMem) {
+		if (!_bannerMem && !isSmushActive()) {
 			_bannerMemSize = _screenWidth * _screenHeight;
 			_bannerMem = (byte *)malloc(_bannerMemSize * sizeof(byte));
 			if (_bannerMem)
@@ -483,19 +489,13 @@ void ScummEngine_v7::confirmExitDialog() {
 
 		// Again, he interpreter does not explicitly restore the screen
 		// after finishing displaying this query dialog, but we have to...
-		if (_bannerMem) {
+		if (_bannerMem && !isSmushActive()) {
 			memcpy(
 				_virtscr[kMainVirtScreen].getPixels(0, _screenTop),
 				_bannerMem,
 				_bannerMemSize);
 			free(_bannerMem);
 			_bannerMem = nullptr;
-
-			if (isSmushActive()) {
-				pt.clear();
-				clearClickedStatus();
-				return;
-			}
 
 			markRectAsDirty(_virtscr[kMainVirtScreen].number, 0, _screenWidth + 8, _screenTop, _screenHeight + _screenTop);
 			ScummEngine::drawDirtyScreenParts();
