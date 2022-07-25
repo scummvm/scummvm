@@ -205,6 +205,8 @@ void FreescapeEngine::processInput() {
 				_position.setValue(1, _position.y() - 12);
 			else if (event.kbd.keycode == Common::KEYCODE_n)
 				gotoArea(_currentArea->getAreaID() + 1, 0);
+			else if (event.kbd.keycode == Common::KEYCODE_m)
+				_currentArea->addDrill(globalObjectsArea, _position);
 			else if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				openMainMenuDialog();
 			break;

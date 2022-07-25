@@ -46,6 +46,7 @@ public:
 	uint16 getObjectFlags();
 	void setObjectFlags(uint32 flags);
 	Math::Vector3d getOrigin();
+	void setOrigin(Math::Vector3d origin);
 	Math::Vector3d getSize();
 
 	virtual void draw(Freescape::Renderer *gfx) = 0;

@@ -45,7 +45,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 
 	assert(byteSizeOfObject >= 9);
 	byteSizeOfObject = byteSizeOfObject - 9;
-	if (objectID == 255) {
+	if (objectID == 255 && objectType == Object::Type::Entrance) {
 		debug("Found the room structure (objectID: 255 with size %d)", byteSizeOfObject + 6);
 		byte *structureData = (byte*)malloc(byteSizeOfObject + 6);
 		structureData[0] = int(position.x());
@@ -224,12 +224,23 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	debugC(1, kFreescapeDebugParser, "Flags: %d Objects: %d", areaFlags, numberOfObjects);
 	//debug("Condition Ptr: %x", cPtr);
 	debugC(1, kFreescapeDebugParser, "Pos before first object: %lx", file->pos());
+
+	uint8 gasPocketX = 0;
+	uint8 gasPocketY = 0;
+	uint8 gasPocketRadius = 0;
+
 	if (isEclipse()) {
 		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
 		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
 		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
 		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
 		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
+	} else if (isDriller()) {
+		gasPocketX = file->readByte();
+		gasPocketY = file->readByte();
+		gasPocketRadius = file->readByte();
+		debugC(1, kFreescapeDebugParser, "Gas pocket at (%d, %d) with radius %d", gasPocketX, gasPocketY, gasPocketRadius);
+		file->seek(12, SEEK_CUR);
 	} else if (!isCastle())
 		file->seek(15, SEEK_CUR);
 
@@ -261,6 +272,9 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	debugC(1, kFreescapeDebugParser, "%d area conditions at %x of area %d", numConditions, base + cPtr, areaNumber);
 
 	Area *area = new Area(areaNumber, areaFlags, objectsByID, entrancesByID, scale, skyColor, groundColor, palette);
+	area->gasPocketX = gasPocketX;
+	area->gasPocketY = gasPocketY;
+	area->gasPocketRadius = gasPocketRadius;
 
 	while (numConditions--) {
 		FCLInstructionVector instructions;
@@ -338,9 +352,17 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	}
 
 	if (isDriller()) {
+		ObjectMap *globalObjectsByID = new ObjectMap;
 		file->seek(0x3b42);
-		for (int i = 0; i < 8; i++)
-			load8bitObject(file);
+		for (int i = 0; i < 8; i++) {
+			Object *gobj = load8bitObject(file);
+			assert(gobj);
+			assert(!globalObjectsByID->contains(gobj->getObjectID()));
+			debugC(1, kFreescapeDebugParser, "Adding global object: %d", gobj->getObjectID());
+			(*globalObjectsByID)[gobj->getObjectID()] = gobj;
+		}
+
+		globalObjectsArea = new Area(255, 0, globalObjectsByID, nullptr, 1, 255, 255, nullptr);
 	}
 
 	if (!isCastle())

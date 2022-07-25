@@ -75,6 +75,8 @@ public:
 	void load16bitBinary(Common::SeekableReadStream *file);
 
 	// 8-bits
+	//ObjectMap globalObjectsByID;
+	Area *globalObjectsArea;
 	void load8bitBinary(Common::SeekableReadStream *file, int offset, int ncolors);
 	Area *load8bitArea(Common::SeekableReadStream *file, uint16 ncolors);
 	Object *load8bitObject(Common::SeekableReadStream *file);
