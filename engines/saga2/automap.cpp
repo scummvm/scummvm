@@ -163,6 +163,8 @@ AutoMap::AutoMap(const Rect16 box,
                    uint16 ident,
                    AppFunc *cmd)
 	: ModalWindow(box, ident, cmd) {
+	_autoMapCheat = false; // FIXME: Allow setting from debug console
+
 	// setup boundry definitions
 	_sumMapArea  = Rect16(0, 0, kSumMapAreaWidth, kSumMapAreaHeight);
 	_summaryData = summary;
@@ -173,8 +175,6 @@ AutoMap::AutoMap(const Rect16 box,
 	}
 
 	_trackPos = getCenterActor()->getLocation();
-
-	_autoMapCheat = false; // FIXME: Allow setting from debug console
 }
 
 // ------------------------------------------------------------------------
