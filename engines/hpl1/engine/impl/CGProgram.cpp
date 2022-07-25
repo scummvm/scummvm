@@ -30,6 +30,7 @@
 #include "hpl1/engine/system/low_level_system.h"
 
 #include "hpl1/engine/system/String.h"
+#include "hpl1/engine/math/Math.h"
 
 #include "hpl1/opengl.h"
 #include "graphics/opengl/shader.h"
@@ -135,9 +136,12 @@ bool cCGProgram::SetMatrixf(const tString &asName, const cMatrixf &mMtx) {
 //TODO: replace with normal setmatrix
 bool cCGProgram::SetMatrixf(const tString &asName, eGpuProgramMatrix mType,
 							eGpuProgramMatrixOp mOp) {
-  	if (mOp != eGpuProgramMatrixOp_Identity)
-		Hpl1::logError(Hpl1::kDebugOpenGL, "unsupported shader matrix %d", mOp);
-	SetMatrixf(asName, cMatrixf::Identity);
+  	if (mType != eGpuProgramMatrix_ViewProjection)
+		error("unsupported shader matrix %d", mOp);
+	cMatrixf modelView, projection;
+	glGetFloatv(GL_PROJECTION_MATRIX, projection.v);
+	glGetFloatv(GL_MODELVIEW_MATRIX, modelView.v);
+	SetMatrixf(asName, cMath::MatrixMul(modelView, projection));
 	return true;
 }
 
