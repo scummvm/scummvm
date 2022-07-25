@@ -539,7 +539,7 @@ bool ScummEngine::newLine() {
 			// the original code it seems that setting _nextLeft to 0 is the right thing to do here.
 			_nextLeft = /*_game.version >= 6 ? _string[0].xpos :*/ 0;
 	} else if (_isRTL) {
-		if (_game.id == GID_MANIAC || (_game.id == GID_MONKEY && _charset->getCurID() == 4)) {
+		if (_game.id == GID_MANIAC || ((_game.id == GID_MONKEY || _game.id == GID_MONKEY2) && _charset->getCurID() == 4)) {
 			_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
 		}
 	}
@@ -786,7 +786,7 @@ void ScummEngine::CHARSET_1() {
 		if (_nextLeft < 0)
 			_nextLeft = _game.version >= 6 ? _string[0].xpos : 0;
 	} else if (_isRTL) {
-		if (_game.id == GID_MANIAC || (_game.id == GID_MONKEY && _charset->getCurID() == 4)) {
+		if (_game.id == GID_MANIAC || ((_game.id == GID_MONKEY || _game.id == GID_MONKEY2) && _charset->getCurID() == 4)) {
 			_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
 		}
 	}
