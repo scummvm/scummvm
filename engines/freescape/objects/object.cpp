@@ -17,6 +17,7 @@ uint16 Object::getObjectID() { return _objectID; }
 uint16 Object::getObjectFlags() { return _flags; }
 void Object::setObjectFlags(uint32 flags) { _flags = flags; }
 Math::Vector3d Object::getOrigin() { return origin; }
+void Object::setOrigin(Math::Vector3d _origin) { origin = _origin; };
 Math::Vector3d Object::getSize() { return size; }
 
 bool Object::isDrawable() { return false; }

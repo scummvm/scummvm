@@ -84,6 +84,10 @@ Area::Area(
 	} compareObjects;
 
 	Common::sort(drawableObjects.begin(), drawableObjects.end(), compareObjects);
+
+	gasPocketX = 0;
+	gasPocketY = 0;
+	gasPocketRadius = 0;
 }
 
 Area::~Area() {
@@ -180,6 +184,55 @@ Object *Area::checkCollisions(const Math::AABB &boundingBox) {
 		}
 	}
 	return collided;
+}
+
+void Area::addDrill(Area *structure, const Math::Vector3d position) {
+	//int drillObjectIDs[8] = {255, 254, 253, 252, 251, 250, 248, 247};
+	Object *obj = nullptr;
+	Math::Vector3d offset = position;
+	offset.setValue(1, 1);
+
+	int16 id;
+
+	id = 255;
+	debug("Adding object %d to room structure", id);
+	obj = structure->objectWithID(id);
+	obj->setOrigin(offset);
+	offset.setValue(1, offset.y() + obj->getSize().y());
+	assert(obj);
+	(*objectsByID)[id] = obj;
+	obj->makeVisible();
+	drawableObjects.insert_at(0, obj);
+
+	id = 254;
+	debug("Adding object %d to room structure", id);
+	obj = structure->objectWithID(id);
+	obj->setOrigin(offset);
+	offset.setValue(1, offset.y() + obj->getSize().y());
+	assert(obj);
+	(*objectsByID)[id] = obj;
+	obj->makeVisible();
+	drawableObjects.insert_at(0, obj);
+
+	id = 253;
+	debug("Adding object %d to room structure", id);
+	obj = structure->objectWithID(id);
+	obj->setOrigin(offset);
+	offset.setValue(1, offset.y() + obj->getSize().y());
+	assert(obj);
+	(*objectsByID)[id] = obj;
+	obj->makeVisible();
+	drawableObjects.insert_at(0, obj);
+
+	id = 252;
+	debug("Adding object %d to room structure", id);
+	obj = structure->objectWithID(id);
+	obj->setOrigin(offset);
+	offset.setValue(1, offset.y() + obj->getSize().y());
+	assert(obj);
+	(*objectsByID)[id] = obj;
+	obj->makeVisible();
+	drawableObjects.insert_at(0, obj);
 }
 
 void Area::addStructure(Area *structure) {
