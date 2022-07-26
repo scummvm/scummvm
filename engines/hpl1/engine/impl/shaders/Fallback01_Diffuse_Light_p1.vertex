@@ -16,7 +16,7 @@ vec4 tangent = gl_MultiTexCoord1;
 
 
 out vec4 vColor
-out vec3 vLighDir;
+out vec3 vLightDir;
 out vec3 vUv;
 out vec3 vLightPos;
 
@@ -32,15 +32,15 @@ void main()
 	vUv = uv;
 
 	vec3 lightDir = LightPos - position.xyz;
-	vLighDir = lightDir * LightDirMul;
-	vLightPos = vLighDir *0.5 + 0.5;
+	vLightDir = lightDir * LightDirMul;
+	vLightPos = vLightDir *0.5 + 0.5;
 
 	//Calculate rotation for light to get it to tangent space.
 	vec3 binormal = cross(normal,tangent.xyz)*tangent.w;
 	mat3 rotation = mat3(tangent.xyz, binormal, normal);
 
 	//Transform the lightdir
-	vLighDir = (rotation * vLighDir);
+	vLightDir = (rotation * vLightDir);
 
-    outColor = vec4(1.0);
+	outColor = vec4(1.0);
 }

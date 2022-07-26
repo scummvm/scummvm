@@ -16,7 +16,7 @@ vec2 uv = gl_MultiTexCoord0.xy;
 
 out vec4 vColor
 out vec2 vUv;
-out vec3 vLighDir;
+out vec3 vLightDir;
 out vec3 vHalfVec;
 out vec2 vScreenPos;
 
@@ -31,25 +31,25 @@ void main()
 	vec3 L;
 
 	//Get the direction of the light and normalize it
-	vLighDir.xy = position.xy - LightPos.xy;
+	vLightDir.xy = position.xy - LightPos.xy;
 
-	vScreenPos = (vLighDir.xy + (LightRadius)) / (LightRadius * 2.0);
+	vScreenPos = (vLightDir.xy + (LightRadius)) / (LightRadius * 2.0);
 
 	//rotate the light to texture (tangent) space. Normal x=cos(angle) y = sin(angle)
-	vec2 TempLight = vLighDir.xy;
-	vLighDir.x = normal.x*TempLight.x + normal.y*TempLight.y;
-	vLighDir.y = normal.x*TempLight.y - normal.y*TempLight.x;
-	vLighDir.x *= normal.z / abs(normal.z);
-	vLighDir.y *= abs(normal.z)-2.0;
+	vec2 TempLight = vLightDir.xy;
+	vLighttDir.x = normal.x*TempLight.x + normal.y*TempLight.y;
+	vLighttDir.y = normal.x*TempLight.y - normal.y*TempLight.x;
+	vLighttDir.x *= normal.z / abs(normal.z);
+	vLighttDir.y *= abs(normal.z)-2.0;
 
-	vLighDir.z = -LightPos.z;
-	vLighDir = normalize(vLighDir);
+	vLighttDir.z = -LightPos.z;
+	vLighttDir = normalize(vLightDir);
 
 	//Get the halfangle and normalize it
 	vHalfVec.xy = position.xy - EyePos.xy;
 	vHalfVec.z = -EyePos.y;
 
-    ///rotate halfvec aswell NOTE: Not sure you need this...
+	///rotate halfvec aswell NOTE: Not sure you need this...
 	vec2 TempHalfVec = vHalfVec.xy;
 	vHalfVec.x = normal.x*TempHalfVec.x + normal.y*TempHalfVec.y;
 	vHalfVec.y = normal.x*TempHalfVec.y - normal.y*TempHalfVec.x;
@@ -57,7 +57,7 @@ void main()
 	vHalfVec.y *= abs(normal.z) - 2.0;
 
 	vHalfVec = normalize(vHalfVec);
-	vHalfVec = normalize(vHalfVec + vLighDir);
+	vHalfVec = normalize(vHalfVec + vLightDir);
 
 	gl_Position = worldViewProj * position;
 
