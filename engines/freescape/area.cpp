@@ -102,6 +102,7 @@ Area::~Area() {
 }
 
 void Area::show() {
+	debug("Area name: %s", name.c_str());
 	for (ObjectMap::iterator it = objectsByID->begin(); it != objectsByID->end(); it++)
 		debug("objID: %d, type: %d", (*it)._value->getObjectID(), (*it)._value->getType());
 

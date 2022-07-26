@@ -186,6 +186,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 
 Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 ncolors) {
 
+	Common::String name;
 	uint32 base = file->pos();
 	debugC(1, kFreescapeDebugParser, "Area base: %x", base);
 	uint8 areaFlags = file->readByte();
@@ -235,12 +236,17 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
 		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
 		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
-	} else if (isDriller()) {
+	} else if (isDriller() || isDark()) {
 		gasPocketX = file->readByte();
 		gasPocketY = file->readByte();
 		gasPocketRadius = file->readByte();
 		debugC(1, kFreescapeDebugParser, "Gas pocket at (%d, %d) with radius %d", gasPocketX, gasPocketY, gasPocketRadius);
-		file->seek(12, SEEK_CUR);
+		int i = 0;
+		while (i < 12) {
+			name = name + char(file->readByte());
+			i++;
+		}
+		debugC(1, kFreescapeDebugParser, "Area name: %s", name.c_str());
 	} else if (!isCastle())
 		file->seek(15, SEEK_CUR);
 
@@ -272,6 +278,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	debugC(1, kFreescapeDebugParser, "%d area conditions at %x of area %d", numConditions, base + cPtr, areaNumber);
 
 	Area *area = new Area(areaNumber, areaFlags, objectsByID, entrancesByID, scale, skyColor, groundColor, palette);
+	area->name = name;
 	area->gasPocketX = gasPocketX;
 	area->gasPocketY = gasPocketY;
 	area->gasPocketRadius = gasPocketRadius;
