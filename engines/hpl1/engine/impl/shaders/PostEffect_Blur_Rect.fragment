@@ -9,11 +9,11 @@
 /// DIFFUSE LIGHTING FRAGMENT PROGRAM /////////////////
 ///////////////////////////////////////////////////////
 
-vec4 vColor;
-vec2 vUv0;
-vec2 vUv1;
-vec2 vUv2;
-vec2 vUv3;
+in vec4 vColor;
+in vec2 vUv0;
+in vec2 vUv1;
+in vec2 vUv2;
+in vec2 vUv3;
 
 OUTPUT
 

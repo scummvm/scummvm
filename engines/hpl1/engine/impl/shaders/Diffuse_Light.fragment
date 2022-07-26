@@ -9,9 +9,9 @@
 /// DIFFUSE LIGHTING FRAGMENT PROGRAM /////////////////
 ///////////////////////////////////////////////////////
 
-vec4 vLightColor;
-vec2 vUv;
-vec3 vLightDir;
+in vec4 vLightColor;
+in vec2 vUv;
+in vec3 vLightDir;
 
 OUTPUT
 
@@ -23,8 +23,8 @@ void main()
 {
 	float attenuation = texture1D(tex2,dot(vLightDir,vLightDir)).x;
 
-	vLightDir = (2.0*textureCube(tex1,vLightDir)-vec4(1.0)).xyz;
+	vec3 lightDir = (2.0*textureCube(tex1,vLightDir)-vec4(1.0)).xyz;
 
-	outColor.xyz = attenuation * texture(tex0, vUv).xyz * vLightColor.xyz * dot(vLightDir, vec3(0,0,1));
+	outColor.xyz = attenuation * texture(tex0, vUv).xyz * vLightColor.xyz * dot(lightDir, vec3(0,0,1));
 	outColor.w = 0.0;
 }
