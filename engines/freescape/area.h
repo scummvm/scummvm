@@ -36,6 +36,7 @@ public:
 		Graphics::PixelBuffer *palette = nullptr);
 	virtual ~Area();
 
+	Common::String name;
 	Object *objectWithID(uint16 objectID);
 	Object *entranceWithID(uint16 objectID);
 	Object *firstEntrance();
