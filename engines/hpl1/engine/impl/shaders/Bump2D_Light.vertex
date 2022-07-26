@@ -16,7 +16,7 @@ vec3 uv = gl_MultiTexCoord0.xyz;
 
 out vec4 vColor;
 out vec3 vUv;
-out vec3 vLighDir;
+out vec3 vLightDir;
 out vec2 vScreenPos;
 
 uniform mat4 worldViewProj;
@@ -29,17 +29,17 @@ void main()
 	vec3 L;
 
 	//Get the direction of the light and normalize it
-	vLighDir.xy = position.xy - LightPos.xy;
-	vScreenPos = (vLighDir.xy + (LightRadius) )/ (LightRadius*2.0);
+	vLightDir.xy = position.xy - LightPos.xy;
+	vScreenPos = (vLightDir.xy + (LightRadius) )/ (LightRadius*2.0);
 	//rotate the light to texture (tangent) space. Normal x=cos(angle) y = sin(angle)
-	vec2 TempLight = vLighDir.xy;
-	vLighDir.x = normal.x*TempLight.x + normal.y*TempLight.y;
-	vLighDir.y = normal.x*TempLight.y - normal.y*TempLight.x;
-	vLighDir.x *= normal.z/abs(normal.z);
-	vLighDir.y *= abs(normal.z)-2.0;
+	vec2 TempLight = vLightDir.xy;
+	vLightDir.x = normal.x*TempLight.x + normal.y*TempLight.y;
+	vLightDir.y = normal.x*TempLight.y - normal.y*TempLight.x;
+	vLightDir.x *= normal.z/abs(normal.z);
+	vLightDir.y *= abs(normal.z)-2.0;
 
-	vLighDir.z = -LightPos.z;
-	vLighDir = normalize(vLighDir);
+	vLightDir.z = -LightPos.z;
+	vLightDir = normalize(vLightDir);
 
 	gl_Position = worldViewProj * position;
 
