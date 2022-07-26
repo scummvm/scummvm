@@ -594,7 +594,11 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 	// Parse the CAS*, if present
 	if (hasResource(MKTAG('C', 'A', 'S', '*'), -1)) {
-		Common::SeekableReadStreamEndian *casStream = getFirstResource(MKTAG('C', 'A', 'S', '*'));
+		Common::SeekableReadStreamEndian *casStream = nullptr;
+		if (_movieChunks.contains(MKTAG('C', 'A', 'S', '*')))
+			casStream = getResource(MKTAG('C', 'A', 'S', '*'), _movieChunks[MKTAG('C', 'A', 'S', '*')]);
+		else
+			casStream = getFirstResource(MKTAG('C', 'A', 'S', '*'));
 		readCast(*casStream);
 		delete casStream;
 	}
@@ -855,6 +859,8 @@ void RIFXArchive::readKeyTable(Common::SeekableReadStreamEndian &keyStream) {
 			castResMap[parentIndex].children.push_back(_types[childTag][childIndex]);
 		} else if (castResMap.contains(childIndex)) { // sometimes parent and child index are reversed...
 			castResMap[childIndex].children.push_back(_types[childTag][parentIndex]);
+		} else if (parentIndex == 1024) {
+			_movieChunks.setVal(childTag, childIndex);
 		}
 	}
 }

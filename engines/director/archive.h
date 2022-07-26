@@ -80,7 +80,9 @@ protected:
 	Common::SeekableReadStream *_stream;
 	typedef Common::HashMap<uint16, Resource> ResourceMap;
 	typedef Common::HashMap<uint32, ResourceMap> TypeMap;
+	typedef Common::HashMap<uint32, uint32> MovieMap;
 	TypeMap _types;
+	MovieMap _movieChunks;
 
 	Common::String _pathName;
 };
