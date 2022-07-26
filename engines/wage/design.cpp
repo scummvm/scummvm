@@ -269,8 +269,8 @@ void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 				Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 	int16 y1 = in.readSint16BE();
 	int16 x1 = in.readSint16BE();
-	int16 y2 = in.readSint16BE();
-	int16 x2 = in.readSint16BE();
+	int16 y2 = in.readSint16BE() - 1;
+	int16 x2 = in.readSint16BE() - 1;
 
 	if (x1 > x2)
 		SWAP(x1, x2);
@@ -285,6 +285,13 @@ void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 
 	pd.fillType = borderFillType;
 	pd.thickness = borderThickness;
+
+	if (borderThickness > 1) {
+		x1 += borderThickness / 2;
+		y1 += borderThickness / 2;
+		x2 -= (borderThickness - 1) / 2;
+		y2 -= (borderThickness - 1) / 2;
+	}
 
 	if (borderThickness > 0 && borderFillType <= patterns.size()) {
 		Graphics::drawLine(x1, y1, x2, y1, kColorBlack, drawPixel, &pd);
