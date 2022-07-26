@@ -43,12 +43,6 @@ class FreescapeEngine : public Engine {
 private:
 	// We need random numbers
 	Common::RandomSource *_rnd;
-	int _screenW, _screenH;
-
-	Graphics::Surface *_border;
-
-	uint32 _timeOfLastTick;
-	bool _hasReceivedTime;
 
 public:
 	FreescapeEngine(OSystem *syst);
@@ -60,7 +54,6 @@ public:
 	bool isEclipse() { return _targetName.hasPrefix("totaleclipse"); }
 	bool isCastle() { return _targetName.hasPrefix("castle"); }
 
-	Renderer *_gfx;
 	Common::Error run() override;
 
 	// Border
@@ -107,7 +100,7 @@ public:
 	// Interaction
 	void shoot();
 
-	// Eular Angles
+	// Euler Angles
 	float _yaw;
 	float _pitch;
 	Math::Vector3d directionToVector(float pitch, float heading);
@@ -156,6 +149,8 @@ public:
 	void playSound(int index);
 
 	// Rendering
+	int _screenW, _screenH;
+	Renderer *_gfx;
 	Common::String _renderMode;
 	Graphics::PixelBuffer *getPalette(uint8 areaNumber, uint8 c1, uint8 c2, uint8 c3, uint8 c4, uint16 ncolors);
 	void drawFrame();
@@ -163,6 +158,7 @@ public:
 	Math::Vector3d _scaleVector;
 	float _nearClipPlane;
 	float _farClipPlane;
+	Graphics::Surface *_border;
 
 	// Game state
 	void initGameState();

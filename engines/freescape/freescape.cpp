@@ -27,14 +27,7 @@ FreescapeEngine *g_freescape = NULL;
 
 FreescapeEngine::FreescapeEngine(OSystem *syst)
 	: Engine(syst), _screenW(320), _screenH(200), _border(nullptr), _gfx(nullptr) {
-	// Put your engine in a sane state, but do nothing big yet;
-	// in particular, do not load data from files; rather, if you
-	// need to do such things, do them from run().
-
 	g_freescape = this;
-	// Do not initialize graphics here
-	// Do not initialize audio devices here
-	_hasReceivedTime = false;
 	if (!ConfMan.hasKey("render_mode"))
 		_renderMode = "ega";
 	else
@@ -57,9 +50,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 }
 
 FreescapeEngine::~FreescapeEngine() {
-	// Dispose your resources here
 	delete _rnd;
-	//delete _areasByAreaID;
 	delete _border;
 	delete _gfx;
 }
@@ -291,7 +282,8 @@ Common::Error FreescapeEngine::run() {
 		drawBorder();
 		_gfx->flipBuffer();
 		g_system->updateScreen();
-		g_system->delayMillis(1000);
+		if (isDriller())
+			g_system->delayMillis(1000);
 
 		_borderTexture = nullptr;
 		if (isDriller())
