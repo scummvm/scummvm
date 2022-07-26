@@ -184,6 +184,18 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 	return nullptr;
 }
 
+static const char *eclipseRoomName[] = {
+	"* SAHARA",
+	"HORAKHTY",
+	"NEPHTHYS",
+	"KHEPRESH",
+	" RAMESES",
+	"PHARAOHS",
+	" SHABAKA",
+	"ILLUSION",
+	"????????"
+};
+
 Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 ncolors) {
 
 	Common::String name;
@@ -231,11 +243,15 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	uint8 gasPocketRadius = 0;
 
 	if (isEclipse()) {
-		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
-		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
-		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
-		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
-		debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
+		byte idx = file->readByte();
+		name = idx < 8 ? eclipseRoomName[idx] : eclipseRoomName[8];
+		name = name + "-" + char(file->readByte()) + " ";
+
+		int i = 0;
+		while (i < 3) {
+			name = name + char(file->readByte());
+			i++;
+		}
 	} else if (isDriller() || isDark()) {
 		gasPocketX = file->readByte();
 		gasPocketY = file->readByte();
