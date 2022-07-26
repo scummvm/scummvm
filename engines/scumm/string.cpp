@@ -567,7 +567,7 @@ void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb) const {
 	// Reverses texts on each line marked by control characters (considering different control characters used in verbs panel)
 	// While preserving original order of numbers (also negative numbers and comma separated)
 	int32 ll = 0;
-	if (_game.id == GID_INDY4 && ltext[ll] == 0x7F) {
+	if ((_game.id == GID_INDY4 && ltext[ll] == 0x7F) || (_game.id == GID_MONKEY2 && ltext[ll] == 0x07)) {
 		ll++;
 	}
 	while (ltext[ll] == 0xFF) {
@@ -648,9 +648,15 @@ void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb) const {
 		}
 		break;
 	}
-	if (!ignoreVerb && _game.id == GID_INDY4 && ltext[0] == 0x7F) {
-		ltext[start + ipos + ll] = 0x80;
-		ltext[start + ipos + ll + 1] = 0;
+	if (!ignoreVerb) {
+		if (_game.id == GID_INDY4 && ltext[0] == 0x7F) {
+			ltext[start + ipos + ll] = 0x80;
+			ltext[start + ipos + ll + 1] = 0;
+		} else if (_game.id == GID_MONKEY2 && ltext[0] == 0x07) {
+			ltext[0] = ' ';
+			ltext[start + ipos + ll] = 0x07;
+			ltext[start + ipos + ll + 1] = 0;
+		}
 	}
 
 	free(buff);
