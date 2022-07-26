@@ -1589,19 +1589,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
 
-	// King's Quest 4 - English Amiga (from www.back2roots.org)
-	// Executable scanning reports "1.002.032"
-	// SCI interpreter version 0.000.685
-	{"kq4sci", "SCI", {
-		{"resource.map", 0, "f88dd267fb9504d40a04d599c048d42b", 6354},
-		{"resource.000", 0, "77615c595388acf3d1df8e107bfb6b52", 138523},
-		{"resource.001", 0, "52c2231765eced34faa7f7bcff69df83", 44751},
-		{"resource.002", 0, "fb351106ec865fad9af5d78bd6b8e3cb", 663629},
-		{"resource.003", 0, "fd16c9c223f7dc5b65f06447615224ff", 683016},
-		{"resource.004", 0, "3fac034c7d130e055d05bc43a1f8d5f8", 549993},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO_STD16_UNDITHER	},
-
 	// King's Quest 4 - English DOS Non-Interactive Demo
 	// Executable scanning reports "0.000.494"
 	{"kq4sci", "SCI/Demo", {
@@ -1620,7 +1607,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "851a62d00972dc4002f472cc0d84e71d", 649441},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
-
+	
 	// King's Quest 4 - English DOS (original boxed release, 3 1/2" disks)
 	// Executable scanning reports "0.000.253"
 	// K4091988.QA file reports "SCI Version 0.000.247 (2nd rev)"
@@ -1631,46 +1618,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "0c8566848a76eea19a6d6220914030a7", 681749},
 		{"resource.003", 0, "0c8566848a76eea19a6d6220914030a7", 686821},
 		{"resource.004", 0, "0c8566848a76eea19a6d6220914030a7", 652398},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
-
-	// King's Quest 4 - English DOS (from the King's Quest Collection)
-	// Executable scanning reports "0.000.502"
-	// SCI interpreter version 0.000.502
-	{"kq4sci", "SCI", {
-		{"resource.map", 0, "3164a39790b599c954ecf716d0b32be8", 7476},
-		{"resource.001", 0, "77615c595388acf3d1df8e107bfb6b52", 452523},
-		{"resource.002", 0, "77615c595388acf3d1df8e107bfb6b52", 536573},
-		{"resource.003", 0, "77615c595388acf3d1df8e107bfb6b52", 707591},
-		{"resource.004", 0, "77615c595388acf3d1df8e107bfb6b52", 479562},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
-
-	// King's Quest 4 - English DOS (supplied by ssburnout in bug report #5270)
-	// 1.006.003 8x5.25" (label: Int.#0.000.502)
-	{"kq4sci", "SCI", {
-		{"resource.map", 0, "a22b66e6fa0d82460b985e9f7e562950", 9384},
-		{"resource.001", 0, "6db7de6f93c6ea62dca78abee677f8c0", 174852},
-		{"resource.002", 0, "6db7de6f93c6ea62dca78abee677f8c0", 356024},
-		{"resource.003", 0, "6db7de6f93c6ea62dca78abee677f8c0", 335716},
-		{"resource.004", 0, "6db7de6f93c6ea62dca78abee677f8c0", 312231},
-		{"resource.005", 0, "6db7de6f93c6ea62dca78abee677f8c0", 283466},
-		{"resource.006", 0, "6db7de6f93c6ea62dca78abee677f8c0", 324789},
-		{"resource.007", 0, "6db7de6f93c6ea62dca78abee677f8c0", 334441},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
-
-	// King's Quest 4 - English DOS
-	// SCI interpreter version 0.000.274
-	{"kq4sci", "SCI", {
-		{"resource.map", 0, "adbe267662a5915d3c89c9075ec8cf3e", 9474},
-		{"resource.001", 0, "851a62d00972dc4002f472cc0d84e71d", 188239},
-		{"resource.002", 0, "851a62d00972dc4002f472cc0d84e71d", 329895},
-		{"resource.003", 0, "851a62d00972dc4002f472cc0d84e71d", 355385},
-		{"resource.004", 0, "851a62d00972dc4002f472cc0d84e71d", 322951},
-		{"resource.005", 0, "851a62d00972dc4002f472cc0d84e71d", 321593},
-		{"resource.006", 0, "851a62d00972dc4002f472cc0d84e71d", 333777},
-		{"resource.007", 0, "851a62d00972dc4002f472cc0d84e71d", 341038},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
@@ -1687,6 +1634,73 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "0c8566848a76eea19a6d6220914030a7", 343882},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
+	// King's Quest 4 - English DOS
+	// SCI interpreter version 0.000.274
+	// Game version 1.000.111
+	// Released: September 24th, 1988 (Information from K4092488.QA file)
+	{"kq4sci", "SCI", {
+		{"resource.map", 0, "adbe267662a5915d3c89c9075ec8cf3e", 9474},
+		{"resource.001", 0, "851a62d00972dc4002f472cc0d84e71d", 188239},
+		{"resource.002", 0, "851a62d00972dc4002f472cc0d84e71d", 329895},
+		{"resource.003", 0, "851a62d00972dc4002f472cc0d84e71d", 355385},
+		{"resource.004", 0, "851a62d00972dc4002f472cc0d84e71d", 322951},
+		{"resource.005", 0, "851a62d00972dc4002f472cc0d84e71d", 321593},
+		{"resource.006", 0, "851a62d00972dc4002f472cc0d84e71d", 333777},
+		{"resource.007", 0, "851a62d00972dc4002f472cc0d84e71d", 341038},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
+	// King's Quest 4 - English DOS
+	// SCI interpreter version 0.000.409
+	// Game version 1.003.006
+	// Released: January 24, 1989 (Information from QAFILE file)
+	{"kq4sci", "SCI", {
+		{"resource.map", 0, "7c86c3c2bb93d581c2f587bfcbcc1617", 5766},
+		{"resource.001", 0, "a3cdb4848fb859fdd302976fff56490f", 1920200},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
+	// King's Quest 4 - English DOS (supplied by ssburnout in bug report #5270)
+	// SCI interpreter version 0.000.502
+	// Game version 1.006.003 8x5.25" (label: Int.#0.000.502)
+	{"kq4sci", "SCI", {
+		{"resource.map", 0, "a22b66e6fa0d82460b985e9f7e562950", 9384},
+		{"resource.001", 0, "6db7de6f93c6ea62dca78abee677f8c0", 174852},
+		{"resource.002", 0, "6db7de6f93c6ea62dca78abee677f8c0", 356024},
+		{"resource.003", 0, "6db7de6f93c6ea62dca78abee677f8c0", 335716},
+		{"resource.004", 0, "6db7de6f93c6ea62dca78abee677f8c0", 312231},
+		{"resource.005", 0, "6db7de6f93c6ea62dca78abee677f8c0", 283466},
+		{"resource.006", 0, "6db7de6f93c6ea62dca78abee677f8c0", 324789},
+		{"resource.007", 0, "6db7de6f93c6ea62dca78abee677f8c0", 334441},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
+	// King's Quest 4 - English DOS (from the King's Quest Collection)
+	// Executable scanning reports "0.000.502"
+	// SCI interpreter version 0.000.502
+	// Game version 1.006.004
+	{"kq4sci", "SCI", {
+		{"resource.map", 0, "3164a39790b599c954ecf716d0b32be8", 7476},
+		{"resource.001", 0, "77615c595388acf3d1df8e107bfb6b52", 452523},
+		{"resource.002", 0, "77615c595388acf3d1df8e107bfb6b52", 536573},
+		{"resource.003", 0, "77615c595388acf3d1df8e107bfb6b52", 707591},
+		{"resource.004", 0, "77615c595388acf3d1df8e107bfb6b52", 479562},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
+	// King's Quest 4 - English Amiga (from www.back2roots.org)
+	// Executable scanning reports "1.002.032"
+	// SCI interpreter version 0.000.685
+	{"kq4sci", "SCI", {
+		{"resource.map", 0, "f88dd267fb9504d40a04d599c048d42b", 6354},
+		{"resource.000", 0, "77615c595388acf3d1df8e107bfb6b52", 138523},
+		{"resource.001", 0, "52c2231765eced34faa7f7bcff69df83", 44751},
+		{"resource.002", 0, "fb351106ec865fad9af5d78bd6b8e3cb", 663629},
+		{"resource.003", 0, "fd16c9c223f7dc5b65f06447615224ff", 683016},
+		{"resource.004", 0, "3fac034c7d130e055d05bc43a1f8d5f8", 549993},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO_STD16_UNDITHER	},
 
 	// King's Quest 4 - English Atari ST (double-sided diskettes)
 	// Game version 1.003.006 (January 12, 1989)
