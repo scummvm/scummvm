@@ -123,43 +123,6 @@ void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	tglBlit(((TinyGLTexture *)texture)->getBlitTexture(), transform);
 }
 
-void TinyGLRenderer::draw2DText(const Common::String &text, const Common::Point &position) {
-	TinyGLTexture *glFont = static_cast<TinyGLTexture *>(_font);
-
-	// The font only has uppercase letters
-	Common::String textToDraw = text;
-	textToDraw.toUppercase();
-
-	tglEnable(TGL_BLEND);
-	tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
-
-	tglEnable(TGL_TEXTURE_2D);
-	tglDepthMask(TGL_FALSE);
-
-	tglColor3f(1.0f, 1.0f, 1.0f);
-	tglBindTexture(TGL_TEXTURE_2D, glFont->id);
-
-	int x = position.x;
-	int y = position.y;
-
-	for (uint i = 0; i < textToDraw.size(); i++) {
-		Common::Rect textureRect = getFontCharacterRect(textToDraw[i]);
-		int w = textureRect.width();
-		int h = textureRect.height();
-
-		TinyGL::BlitTransform transform(x, y);
-		transform.sourceRectangle(textureRect.left, textureRect.top, w, h);
-		transform.flip(true, false);
-		//TinyGL::tglBlit(glFont->getBlitTexture(), transform);
-
-		x += textureRect.width() - 3;
-	}
-
-	tglDisable(TGL_TEXTURE_2D);
-	tglDisable(TGL_BLEND);
-	tglDepthMask(TGL_TRUE);
-}
-
 void TinyGLRenderer::updateProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) {
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();

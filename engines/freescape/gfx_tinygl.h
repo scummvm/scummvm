@@ -48,7 +48,6 @@ public:
 
 	virtual void drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) override;
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture) override;
-	virtual void draw2DText(const Common::String &text, const Common::Point &position) override;
 
 	virtual void renderCrossair(byte color) override;
 	virtual void renderShoot(byte color) override;

@@ -83,16 +83,11 @@ public:
 	 */
 	virtual void flipBuffer() { }
 
-	virtual void initFont(const Graphics::Surface *surface);
-	virtual void freeFont();
-
 	virtual Texture *createTexture(const Graphics::Surface *surface) = 0;
 	virtual void freeTexture(Texture *texture) = 0;
 
 	virtual void drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) = 0;
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture) = 0;
-
-	virtual void draw2DText(const Common::String &text, const Common::Point &position) = 0;
 
 	virtual void renderCrossair(byte color) = 0;
 	virtual void renderShoot(byte color) = 0;
@@ -131,7 +126,6 @@ public:
 
 protected:
 	OSystem *_system;
-	Texture *_font;
 	Common::Rect _screenViewport;
 
 	Math::Matrix4 _projectionMatrix;
