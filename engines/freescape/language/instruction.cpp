@@ -63,13 +63,13 @@ void FreescapeEngine::executeConditions(GeometricObject *obj, bool shot, bool co
 
 	debugC(1, kFreescapeDebugCode, "Executing room conditions");
 	for (int i = 0; i < int(_currentArea->conditions.size()); i++) {
-		debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", _currentArea->conditionSources[i]->c_str());
+		debugC(1, kFreescapeDebugCode, "%s", _currentArea->conditionSources[i]->c_str());
 		executeCode(_currentArea->conditions[i], shot, collided);
 	}
 
 	debugC(1, kFreescapeDebugCode, "Executing global conditions (%d)", _conditions.size());
 	for (int i = 0; i < int(_conditions.size()); i++) {
-		//debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", _conditionSources[i]->c_str());
+		debugC(1, kFreescapeDebugCode, "%s", _conditionSources[i]->c_str());
 		executeCode(_conditions[i], shot, collided);
 	}
 }
@@ -188,7 +188,7 @@ bool FreescapeEngine::executeEndIfVisibilityIsNotEqual(FCLInstruction &instructi
 		debugC(1, kFreescapeDebugCode, "End condition if visibility of obj with id %d in area %d is %d!", additional, source, value);
 	}
 
-	return (obj->isInvisible() == value);
+	return (obj->isInvisible() != value);
 }
 
 bool FreescapeEngine::executeEndIfNotEqual(FCLInstruction &instruction) {

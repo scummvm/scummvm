@@ -228,6 +228,8 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			currentInstruction.setSource(tokenisedCondition[bytePointer]);
 			currentInstruction.setAdditional(tokenisedCondition[bytePointer + 1]);
 			currentInstruction.setDestination(false); // visible
+			conditionalInstructions->push_back(currentInstruction);
+			currentInstruction = FCLInstruction(Token::UNKNOWN);
 			bytePointer += 2;
 			numberOfArguments = 0;
 			break;
@@ -240,6 +242,8 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			currentInstruction.setSource(tokenisedCondition[bytePointer]);
 			currentInstruction.setAdditional(tokenisedCondition[bytePointer + 1]);
 			currentInstruction.setDestination(true); // invisible
+			conditionalInstructions->push_back(currentInstruction);
+			currentInstruction = FCLInstruction(Token::UNKNOWN);
 			bytePointer += 2;
 			numberOfArguments = 0;
 			break;
