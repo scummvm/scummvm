@@ -127,7 +127,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 				{ "mNet.rPP",			   0, "ed5d998e7db6daae1f24bb124cc269aa", 134784 },
 				{ "Obsidian.cPP",		   0, "6da7babae9725a716f27f9f4ea382e92", 7552 },
 				{ "RSGKit.rPP",			   0, "c359e3c932b09280d1ccf21f8fb52bd7", 668160 },
-				{ "Obs Demo Large w Sega", 0, "34efe95fc32dcf0a2a90bf6854c08e95", 98953679 },
+				{ "Obs Demo Large w Sega", 0, "4672fe8ba459811dea0744cf90063a35", 98954240 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
