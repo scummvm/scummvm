@@ -1579,9 +1579,9 @@ void Actor::faceToObject(int obj) {
 		dir = (x2 > _pos.x) ? 90 : 270;
 	} else {
 		_vm->getObjectOrActorWidth(obj, width);
-		dir = _pos.x < x2;
+		dir = (_pos.x < x2) ? 1 : 0;
 		if (abs(_pos.x - x2) < width / 2)
-			dir = (_pos.y > y2) + 2;
+			dir = (_pos.y > y2) ? 3 : 2;
 
 		dir = oldDirToNewDir(dir);
 	}
