@@ -20,27 +20,23 @@
  *
  */
 
-#include "engines/freescape/gfx.h"
-
-#include "engines/util.h"
 
 #include "common/config-manager.h"
-
 #include "graphics/renderer.h"
 #include "graphics/surface.h"
-
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 #include "graphics/opengl/context.h"
 #endif
 
 #include "math/glmath.h"
 
+#include "engines/freescape/gfx.h"
+#include "engines/util.h"
+
 namespace Freescape {
 
-
 Renderer::Renderer(OSystem *system)
-		: _system(system),
-		  _font(nullptr) {
+		: _system(system) {
 
 	_currentPixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	_originalPixelFormat = Graphics::PixelFormat::createFormatCLUT8();
@@ -49,17 +45,6 @@ Renderer::Renderer(OSystem *system)
 }
 
 Renderer::~Renderer() {}
-
-void Renderer::initFont(const Graphics::Surface *surface) {
-	_font = createTexture(surface);
-}
-
-void Renderer::freeFont() {
-	if (_font) {
-		freeTexture(_font);
-		_font = nullptr;
-	}
-}
 
 Graphics::Surface *Renderer::convertFromPalette(Graphics::PixelBuffer *rawsurf) {
 	Graphics::Surface * surf = new Graphics::Surface();
@@ -148,4 +133,4 @@ Renderer *createRenderer(OSystem *system) {
 	error("Unable to create a '%s' renderer", rendererConfig.c_str());
 }
 
-} // End of namespace Myst3
+} // End of namespace Freescape
