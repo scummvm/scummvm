@@ -76,7 +76,7 @@ static byte *DecompressMsZipData(byte *buffer, uint32 inputSize, uint32 &decompr
 			break;
 		}
 
-		if (uncompressedLen == 0 && compressedLen == 0 && remainingData == 0) {
+		if (remainingData == 0) {
 			break;
 		}
 
