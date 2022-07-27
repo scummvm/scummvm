@@ -238,7 +238,9 @@ bool Cast::loadConfig() {
 		return false;
 	}
 
-	Common::SeekableReadStreamEndian *stream = _castArchive->getFirstResource(MKTAG('V', 'W', 'C', 'F'));
+	Common::SeekableReadStreamEndian *stream = nullptr;
+
+	stream = _castArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'C', 'F'));
 
 	debugC(1, kDebugLoading, "****** Loading Config VWCF");
 
@@ -489,26 +491,26 @@ void Cast::loadCast() {
 	}
 
 	// Font Mapping
-	if (_castArchive->hasResource(MKTAG('V', 'W', 'F', 'M'), -1)) {
-		loadFontMap(*(r = _castArchive->getFirstResource(MKTAG('V', 'W', 'F', 'M'))));
+	if (r = _castArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'F', 'M'))) {
+		loadFontMap(*r);
 		delete r;
 	}
 
 	// Cross-Platform Font Mapping
-	if (_castArchive->hasResource(MKTAG('F', 'X', 'm', 'p'), -1)) {
-		loadFXmp(*(r = _castArchive->getFirstResource(MKTAG('F', 'X', 'm', 'p'))));
+	if (r = _castArchive->getMovieResourceIfPresent(MKTAG('F', 'X', 'm', 'p'))) {
+		loadFXmp(*r);
 		delete r;
 	}
 
 	// Font Mapping V4
-	if (_castArchive->hasResource(MKTAG('F', 'm', 'a', 'p'), -1)) {
-		loadFontMapV4(*(r = _castArchive->getFirstResource(MKTAG('F', 'm', 'a', 'p'))));
+	if (r = _castArchive->getMovieResourceIfPresent(MKTAG('F', 'm', 'a', 'p'))) {
+		loadFontMapV4(*r);
 		delete r;
 	}
 
 	// Pattern Tiles
-	if (_castArchive->hasResource(MKTAG('V', 'W', 'T', 'L'), -1)) {
-		loadVWTL(*(r = _castArchive->getFirstResource(MKTAG('V', 'W', 'T', 'L'))));
+	if (r = _castArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'T', 'L'))) {
+		loadVWTL(*r);
 		delete r;
 	}
 
@@ -525,8 +527,8 @@ void Cast::loadCast() {
 	}
 
 	// External sound files
-	if (_castArchive->hasResource(MKTAG('S', 'T', 'R', ' '), -1)) {
-		loadExternalSound(*(r = _castArchive->getFirstResource(MKTAG('S', 'T', 'R', ' '))));
+	if (r = _castArchive->getMovieResourceIfPresent(MKTAG('S', 'T', 'R', ' '))) {
+		loadExternalSound(*r);
 		delete r;
 	}
 
@@ -558,14 +560,9 @@ void Cast::loadCast() {
 	// For D4+ we may request to force Lingo scripts and skip precompiled bytecode
 	if (_version >= kFileVer400 && !debugChannelSet(-1, kDebugNoBytecode)) {
 		// Try to load script context
-		Common::Array<uint16> lctx =  _castArchive->getResourceIDList(MKTAG('L','c','t','x'));
-		if (lctx.size() > 0) {
-			debugC(2, kDebugLoading, "****** Loading %d Lctx resources", lctx.size());
-
-			for (Common::Array<uint16>::iterator iterator = lctx.begin(); iterator != lctx.end(); ++iterator) {
-				loadLingoContext(*(r = _castArchive->getResource(MKTAG('L','c','t','x'), *iterator)));
-				delete r;
-			}
+		if (r = _castArchive->getMovieResourceIfPresent(MKTAG('L', 'c', 't', 'x'))) {
+			loadLingoContext(*r);
+			delete r;
 		}
 	}
 
@@ -580,8 +577,8 @@ void Cast::loadCast() {
 	}
 
 	// Score Order List resources
-	if (_castArchive->hasResource(MKTAG('S', 'o', 'r', 'd'), -1)) {
-		loadSord(*(r = _castArchive->getFirstResource(MKTAG('S', 'o', 'r', 'd'))));
+	if (r = _castArchive->getMovieResourceIfPresent(MKTAG('S', 'o', 'r', 'd'))) {
+		loadSord(*r);
 		delete r;
 	}
 

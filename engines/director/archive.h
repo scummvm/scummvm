@@ -69,6 +69,7 @@ public:
 	uint32 getOffset(uint32 tag, uint16 id) const;
 	uint16 findResourceID(uint32 tag, const Common::String &resName, bool ignoreCase = false) const;
 	Common::String getName(uint32 tag, uint16 id) const;
+	Common::SeekableReadStreamEndian *getMovieResourceIfPresent(uint32 tag);
 
 	Common::Array<uint32> getResourceTypeList() const;
 	Common::Array<uint16> getResourceIDList(uint32 type) const;
@@ -80,9 +81,9 @@ protected:
 	Common::SeekableReadStream *_stream;
 	typedef Common::HashMap<uint16, Resource> ResourceMap;
 	typedef Common::HashMap<uint32, ResourceMap> TypeMap;
-	typedef Common::HashMap<uint32, uint32> MovieMap;
+	typedef Common::HashMap<uint32, uint32> MovieChunkMap;
 	TypeMap _types;
-	MovieMap _movieChunks;
+	MovieChunkMap _movieChunks;
 
 	Common::String _pathName;
 };

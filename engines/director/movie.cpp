@@ -111,9 +111,8 @@ void Movie::setArchive(Archive *archive) {
 	_cast->setArchive(archive);
 
 	// Frame Labels
-	if (archive->hasResource(MKTAG('V', 'W', 'L', 'B'), -1)) {
-		Common::SeekableReadStreamEndian *r;
-		_score->loadLabels(*(r = archive->getFirstResource(MKTAG('V', 'W', 'L', 'B'))));
+	if (Common::SeekableReadStreamEndian *r = archive->getMovieResourceIfPresent(MKTAG('V', 'W', 'L', 'B'))) {
+		_score->loadLabels(*r);
 		delete r;
 	}
 }
@@ -131,8 +130,8 @@ bool Movie::loadArchive() {
 	// Wait to handle _stageColor until palette is loaded in loadCast...
 
 	// File Info
-	if (_movieArchive->hasResource(MKTAG('V', 'W', 'F', 'I'), -1)) {
-		loadFileInfo(*(r = _movieArchive->getFirstResource(MKTAG('V', 'W', 'F', 'I'))));
+	if (r = _movieArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'F', 'I'))) {
+		loadFileInfo(*r);
 		delete r;
 	}
 
@@ -166,16 +165,17 @@ bool Movie::loadArchive() {
 	_window->setStageColor(_stageColor, true);
 
 	// Score
-	if (!_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), -1)) {
+	if (!(r = _movieArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'S', 'C')))) {
 		warning("Movie::loadArchive(): Wrong movie format. VWSC resource missing");
 		return false;
 	}
-	_score->loadFrames(*(r = _movieArchive->getFirstResource(MKTAG('V', 'W', 'S', 'C'))), _version);
+
+	_score->loadFrames(*r, _version);
 	delete r;
 
 	// Action list
-	if (_movieArchive->hasResource(MKTAG('V', 'W', 'A', 'C'), -1)) {
-		_score->loadActions(*(r = _movieArchive->getFirstResource(MKTAG('V', 'W', 'A', 'C'))));
+	if (r = _movieArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'A', 'C'))) {
+		_score->loadActions(*r);
 		delete r;
 	}
 
