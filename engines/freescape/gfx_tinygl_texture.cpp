@@ -53,4 +53,4 @@ TinyGL::BlitImage *TinyGLTexture::getBlitTexture() const {
 	return _blitImage;
 }
 
-} // End of namespace Myst3
+} // End of namespace Freescape

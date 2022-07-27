@@ -49,6 +49,6 @@ private:
 	TinyGL::BlitImage *_blitImage;
 };
 
-} // End of namespace Myst3
+} // End of namespace Freescape
 
 #endif
