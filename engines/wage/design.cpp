@@ -303,16 +303,24 @@ void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 
 void Design::drawRoundRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 				Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
+	debug("thickness: %d", borderThickness);
 	int16 y1 = in.readSint16BE();
 	int16 x1 = in.readSint16BE();
-	int16 y2 = in.readSint16BE();
-	int16 x2 = in.readSint16BE();
+	int16 y2 = in.readSint16BE() - 1;
+	int16 x2 = in.readSint16BE() - 1;
 	int16 arc = in.readSint16BE();
 
 	if (x1 > x2)
 		SWAP(x1, x2);
 	if (y1 > y2)
 		SWAP(y1, y2);
+
+	if (borderThickness > 1) {
+		x1 += borderThickness / 2;
+		y1 += borderThickness / 2;
+		x2 -= (borderThickness - 1) / 2;
+		y2 -= (borderThickness - 1) / 2;
+	}
 
 	Common::Rect r(x1, y1, x2, y2);
 	PlotData pd(surface, &patterns, fillType, 1, this);
@@ -324,7 +332,7 @@ void Design::drawRoundRect(Graphics::ManagedSurface *surface, Common::ReadStream
 	pd.thickness = borderThickness;
 
 	if (borderThickness > 0 && borderFillType <= patterns.size())
-		Graphics::drawRoundRect1(r, arc / 2, kColorBlack, false, drawPixel, &pd);
+		Graphics::drawRoundRect1(r, arc / 2 - 1, kColorBlack, false, drawPixel, &pd);
 }
 
 void Design::drawPolygon(Graphics::ManagedSurface *surface, Common::ReadStream &in,
@@ -378,6 +386,13 @@ void Design::drawPolygon(Graphics::ManagedSurface *surface, Common::ReadStream &
 	}
 	xcoords.push_back(x1);
 	ycoords.push_back(y1);
+
+	if (borderThickness > 1) {
+		for (int i = 0; i < xcoords.size(); ++i) {
+			xcoords[i] += borderThickness / 2;
+			ycoords[i] += borderThickness / 2;
+		}
+	}
 
 	int npoints = xcoords.size();
 	int *xpoints = (int *)calloc(npoints, sizeof(int));

@@ -41,6 +41,12 @@ namespace Wage {
 static const ADGameDescription gameDescriptions[] = {
 	FANGAMEND("World Builder Demo World", "Demo World", "e221e6f9631f110b484f239e58137a3f", 45467),
 
+	FANGAME("Rects", "03d2f93b1cafe963a0e29232f4867cc4", 38177),
+	FANGAME("Filled Rects", "835ae43bf16a8d83b84a99724eaec79d", 38194),
+	FANGAME("Round Rects", "9602f7baafb13fd1c7fd00f92743227c", 38194),
+	FANGAME("Filled Round Rects", "4d880677a97fd07e6a4f04a46f147084", 38194),
+	FANGAME("Polygon", "c84d8065c6a4eb7dd232003954ba7cab", 38352),
+
 	FANGAME("3rd Floor", "931aa0b6ada3aced5117ee6e6daf2fb8", 281153),
 	FANGAME("3rd Floor", "140883954b7cd89b0ffabde6ee0073d4", 281167), // alt version
 	FANGAME("3rd Floor", "afe1a9eb0d4e5857f9f748570862c88e", 281213), // v1.3
