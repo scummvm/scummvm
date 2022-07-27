@@ -3287,6 +3287,24 @@ void ScummEngine_v5::decodeParseString() {
 					} else {
 						printString(textSlot, _scriptPointer);
 					}
+				} else if (_game.id == GID_INDY4 && vm.slot[_currentScript].number == 161 && _actorToPrintStrFor == 2 &&
+						_game.platform != Common::kPlatformAmiga && strcmp(_game.variant, "Floppy") != 0 &&
+						_enableEnhancements) {
+					// WORKAROUND: In Indy 4, if one plays as Sophia and looks at Indy, then
+					// her "There's nothing to look at." reaction line will be said with
+					// Indy's voice, because script 68-161 doesn't check for Sophia in this
+					// case. Script 68-4 has a "There's nothing to look at." line for Sophia,
+					// though, so we reuse this if the current line contains the expected
+					// audio offset.
+					if (memcmp(_scriptPointer, "\xFF\x0A\x5D\x8E\xFF\x0A\x63\x08\xFF\x0A\x0E\x00\xFF\x0A\x00\x00", 16) == 0) {
+						byte *tmpBuf = new byte[len];
+						memcpy(tmpBuf, "\xFF\x0A\xCE\x3B\xFF\x0A\x01\x05\xFF\x0A\x0E\x00\xFF\x0A\x00\x00", 16);
+						memcpy(tmpBuf + 16, _scriptPointer + 16, len - 16);
+						printString(textSlot, tmpBuf);
+						delete[] tmpBuf;
+					} else {
+						printString(textSlot, _scriptPointer);
+					}
 				} else if (_game.id == GID_MONKEY_EGA && _roomResource == 30 && vm.slot[_currentScript].number == 411 &&
 							strstr((const char *)_scriptPointer, "NCREDIT-NOTE-AMOUNT")) {
 					// WORKAROUND for bug #4886 (MI1EGA German: Credit text incorrect)
