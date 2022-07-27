@@ -2042,7 +2042,7 @@ void LB::b_installMenu(int nargs) {
 		size_t checkOffset = line.find(CHECKMARK_STR);
 		if (checkOffset != Common::String::npos) {
 			line.erase(checkOffset, strlen(CHECKMARK_STR));
-			line.insertChar((const char)CHECKMARK_CHAR, checkOffset);
+			line.insertChar(CHECKMARK_CHAR, checkOffset);
 		}
 
 		// Split the line at the code separator
