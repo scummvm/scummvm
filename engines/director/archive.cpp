@@ -171,6 +171,18 @@ Common::String Archive::getName(uint32 tag, uint16 id) const {
 	return resMap[id].name;
 }
 
+Common::SeekableReadStreamEndian *Archive::getMovieResourceIfPresent(uint32 tag) {
+	if (g_director->getVersion() >= 400 && (_movieChunks.contains(tag) && hasResource(tag, _movieChunks[tag])))
+		return getResource(tag, _movieChunks[tag]);
+
+	if (hasResource(tag, -1)) {
+		warning("Archive::getMovieResourceIfPresent(): KEY* to reference tag %d not found, returning first occurence of this resource", tag);
+		return getFirstResource(tag);
+	}
+
+	return nullptr;
+}
+
 Common::Array<uint32> Archive::getResourceTypeList() const {
 	Common::Array<uint32> typeList;
 
@@ -593,12 +605,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	}
 
 	// Parse the CAS*, if present
-	if (hasResource(MKTAG('C', 'A', 'S', '*'), -1)) {
-		Common::SeekableReadStreamEndian *casStream = nullptr;
-		if (_movieChunks.contains(MKTAG('C', 'A', 'S', '*')))
-			casStream = getResource(MKTAG('C', 'A', 'S', '*'), _movieChunks[MKTAG('C', 'A', 'S', '*')]);
-		else
-			casStream = getFirstResource(MKTAG('C', 'A', 'S', '*'));
+	if (Common::SeekableReadStreamEndian *casStream = getMovieResourceIfPresent(MKTAG('C', 'A', 'S', '*'))) {
 		readCast(*casStream);
 		delete casStream;
 	}
