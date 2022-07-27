@@ -156,13 +156,7 @@ Common::KeyState ScummEngine_v7::showBannerAndPause(int bannerId, int32 waitTime
 	bool leftBtnPressed = false, rightBtnPressed = false;
 	if (waitTime) {
 		waitForBannerInput(waitTime, ks, leftBtnPressed, rightBtnPressed);
-
-		// Don't manually clear the banner if a SMUSH movie is playing,
-		// as that will cause some rare small glitches. The SMUSH player
-		// will take care of that for us automatically when updating the
-		// screen for next frame.
-		if (!isSmushActive())
-			clearBanner();
+		clearBanner();
 	}
 
 	// Finally, resume the engine, clear the input state, and restore the charset.
@@ -184,20 +178,23 @@ void ScummEngine_v7::clearBanner() {
 	// Restore the GFX content which was under the banner,
 	// and then mark that part of the screen as dirty.
 	if (_bannerMem) {
-		memcpy(
-			&_virtscr[kMainVirtScreen].getPixels(0, _screenTop)[(_screenWidth + 8) * (_screenHeight / 2 - 10)],
-			_bannerMem,
-			_bannerMemSize);
-		free(_bannerMem);
-		_bannerMem = nullptr;
+		// Don't manually clear the banner if a SMUSH movie is playing,
+		// as that will cause some rare small glitches. The SMUSH player
+		// will take care of that for us automatically when updating the
+		// screen for next frame.
+		if (!isSmushActive()) {
+			memcpy(
+				&_virtscr[kMainVirtScreen].getPixels(0, _screenTop)[(_screenWidth + 8) * (_screenHeight / 2 - 10)],
+				_bannerMem,
+				_bannerMemSize);
 
-		if (isSmushActive()) {
-			return;
+			markRectAsDirty(_virtscr[kMainVirtScreen].number, 0, _screenWidth + 8, _screenTop, _screenHeight + _screenTop);
+			ScummEngine::drawDirtyScreenParts();
+			_system->updateScreen();
 		}
 
-		markRectAsDirty(_virtscr[kMainVirtScreen].number, 0, _screenWidth + 8, _screenTop, _screenHeight + _screenTop);
-		ScummEngine::drawDirtyScreenParts();
-		_system->updateScreen();
+		free(_bannerMem);
+		_bannerMem = nullptr;
 	}
 }
 
