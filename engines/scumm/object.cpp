@@ -368,6 +368,37 @@ int ScummEngine::whereIsObject(int object) const {
 	return WIO_NOT_FOUND;
 }
 
+int ScummEngine::getObjectOrActorWidth(int object, int &width) {
+	Actor *act;
+
+	if (objIsActor(object)) {
+		act = derefActorSafe(objToActor(object), "getObjectOrActorWidth");
+		if (act && act->isInCurrentRoom()) {
+			width = act->_width;
+			return 0;
+		} else
+			return -1;
+	}
+
+	switch (whereIsObject(object)) {
+	case WIO_NOT_FOUND:
+		return -1;
+	case WIO_INVENTORY:
+		if (objIsActor(_objectOwnerTable[object])) {
+			act = derefActor(_objectOwnerTable[object], "getObjectOrActorWidth(2)");
+			if (act && act->isInCurrentRoom()) {
+				width = act->_width;
+				return 0;
+			}
+		}
+		return -1;
+	default:
+		break;
+	}
+	getObjectWidth(object, width);
+	return 0;
+}
+
 int ScummEngine::getObjectOrActorXY(int object, int &x, int &y) {
 	Actor *act;
 
@@ -405,7 +436,7 @@ int ScummEngine::getObjectOrActorXY(int object, int &x, int &y) {
  * Return the position of an object.
  * Returns X, Y and direction in angles
  */
-void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
+void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir, int &width) {
 	int idx = getObjectIndex(object);
 	assert(idx >= 0);
 	ObjectData &od = _objs[idx];
