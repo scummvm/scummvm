@@ -28,6 +28,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Verbesserte Genauigkeit der Darstekkzbg von CGA- und Hercules-Grafikmodi
      in der EGA-Version von Monkey Island 1 (die VGA-Version unterstützt weder CGA noch Hercules).
    - Einige Grafik-Fehler im CGA-Modus von Loom wurden korrigiert.
+   - Mögliche Sackgasse in der Ultimate Talkie Edition von Monkey Island 2 korrigiert.
+     Diese ist immer dann aufgetreten, wenn der Spieler am Ende von Part II
+     das Modell des Leuchtturms nicht aufhebt, bevor Captain Dread Guybrush
+     zurück zu Scabb Island bringt.
 
  Toon:
    - Die Spiel-Menüs verhalten sich nun wie das Original.
