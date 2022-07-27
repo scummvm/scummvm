@@ -157,6 +157,27 @@ void GeometricObject::createBoundingBox() {
 		_boundingBox.expand(origin + size);
 		break;
 	case Line:
+		for (int i = 0; i < int(ordinates->size()); i = i + 3) {
+			_boundingBox.expand(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1], (*ordinates)[i + 2]));
+		}
+		int dx, dy, dz;
+		dx = dy = dz = 0;
+		if (size.x() == 0 && size.y() == 0) {
+			dx = 2;
+			dy = 2;
+		} else if (size.x() == 0 && size.z() == 0) {
+			dx = 2;
+			dz = 2;
+		} else if (size.y() == 0 && size.z() == 0) {
+			dy = 2;
+			dz = 2;
+		}
+
+		for (int i = 0; i < int(ordinates->size()); i = i + 3) {
+			_boundingBox.expand(Math::Vector3d((*ordinates)[i] + dx, (*ordinates)[i + 1] + dy, (*ordinates)[i + 2] + dz));
+		}
+
+		break;
 	case Triangle:
 	case Quadrilateral:
 	case Pentagon:
