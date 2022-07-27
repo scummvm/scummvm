@@ -73,39 +73,15 @@ void TinyGLRenderer::init() {
 	tglDisable(TGL_LIGHTING);
 	tglDisable(TGL_TEXTURE_2D);
 	tglEnable(TGL_DEPTH_TEST);
-
-	//tglColorMask(TGL_FALSE, TGL_FALSE, TGL_FALSE, TGL_FALSE);
-	//tglDisable(TGL_POLYGON_OFFSET_FILL);
-
 }
 
 void TinyGLRenderer::setViewport(const Common::Rect &rect) {
 	tglViewport(rect.left, g_system->getHeight() - rect.bottom, rect.width(), rect.height());
 }
 
-
 void TinyGLRenderer::clear() {
 	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT);
 	tglColor3f(1.0f, 1.0f, 1.0f);
-}
-
-void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) {
-	tglDisable(TGL_TEXTURE_2D);
-	tglColor3ub(r, g, b);
-
-	if (a != 255) {
-		tglEnable(TGL_BLEND);
-		tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
-	}
-
-	tglBegin(TGL_TRIANGLE_STRIP);
-		tglVertex3f(rect.left, rect.bottom, 0.0f);
-		tglVertex3f(rect.right, rect.bottom, 0.0f);
-		tglVertex3f(rect.left, rect.top, 0.0f);
-		tglVertex3f(rect.right, rect.top, 0.0f);
-	tglEnd();
-
-	tglDisable(TGL_BLEND);
 }
 
 void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture) {
