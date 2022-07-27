@@ -25,14 +25,13 @@ namespace Wage {
 
 #define ADGF_DEFAULT (ADGF_DROPLANGUAGE|ADGF_DROPPLATFORM|ADGF_MACRESFORK|ADGF_UNSTABLE)
 #define ADGF_GENERIC (ADGF_DEFAULT|ADGF_USEEXTRAASTITLE|ADGF_AUTOGENTARGET)
-#define ADGF_DEMO (ADGF_GENERIC|ADGF_DEMO)
 
 #define FANGAME(n,m,s) { "wage",n,AD_ENTRY1s(n,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_GENERIC,GUIO0() }
 #define FANGAMEr(n,m,s,r) { "wage",n,AD_ENTRY1s(n,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_GENERIC | r,GUIO0() }
 #define FANGAMEN(n,f,m,s) { "wage",n,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_GENERIC,GUIO0() }
 #define FANGAMENr(n,f,m,s,r) { "wage",n,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_GENERIC | r,GUIO0() }
-#define FANGAMEND(n,f,m,s) { "wage",n,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_DEMO,GUIO0() }
-#define FANGAMENDr(n,f,m,s,r) { "wage",n,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_DEMO | r,GUIO0() }
+#define FANGAMEND(n,f,m,s) { "wage",n,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_GENERIC | ADGF_DEMO,GUIO0() }
+#define FANGAMENDr(n,f,m,s,r) { "wage",n,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_GENERIC | ADGF_DEMO | r,GUIO0() }
 #define BIGGAME(t,v,f,m,s) { t,v,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_DEFAULT,GUIO0() }
 #define BIGGAMEr(t,v,f,m,s,r) { t,v,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_DEFAULT | r,GUIO0() }
 #define BIGGAMED(t,v,f,m,s) { t,v,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_DEMO,GUIO0() }
@@ -42,6 +41,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEND("World Builder Demo World", "Demo World", "e221e6f9631f110b484f239e58137a3f", 45467),
 
 	// Render Tests
+	//FANGAME("Shape Test", "7466edab34a853707343c26eb362b8c1", 38194),
 	//FANGAME("Rects", "03d2f93b1cafe963a0e29232f4867cc4", 38177),
 	//FANGAME("Filled Rects", "835ae43bf16a8d83b84a99724eaec79d", 38194),
 	//FANGAME("Round Rects", "9602f7baafb13fd1c7fd00f92743227c", 38194),
@@ -193,6 +193,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Psychotic!", "51aa5f2744ceb5666c9556bccee797d6", 367173), // another alt version
 	FANGAME("Puzzle Piece Search", "6c21c1e0c6afef9300941abd7782dd16", 247437), // From Joshua's Worlds 1.0
 	FANGAME("The Puzzle Piece Search", "8fa1d80dd3f1ed69f45d15d774968995", 247082), // From Joshua's Worlds
+	FANGAME("The Puzzle Piece Search", "bb4d42fd5936ac7fec92a8efc1987653", 247128), // From Joshua's Worlds¸ alt version
 	FANGAME("The Puzzle Piece Search", "fb839ac4f22427f44e99bcc5afd57a0b", 247068), // Standalone
 	FANGAME("Pyramid of No Return", "4bf4c39b140f5aadb5f8c9a50153d18e", 384889),
 	FANGAME("P-W Adventure", "a8e9f97ee02f01de588a4dbabe55ca3f", 218960),
@@ -214,6 +215,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Robot Planet", "1066f6b2892cda16c2f365d1ec97537c", 107089),
 	FANGAMEN("Sands of Time", "xn--Sands of Time-1s6g", "d065662865d0cb9065812479ed7d2795", 122416), // Original file name "Sands of Time†"
 	FANGAMEN("Sands of Time", "Sands of Time", "d065662865d0cb9065812479ed7d2795", 122416), // same version, normal file name
+	FANGAMEN("Sands of Time", "Sands of Time", "466add24c5092937afca005041c7150b", 122380), // alt version, normal file name
 	BIGGAME("scepters", "", "Scepters", "ecb776fb660205fad5819a26f7e180b5", 347103), // original 1986 version
 	BIGGAME("scepters", "", "Scepters", "e6c58e96b02f8eb46e0ccfe4f547045b", 346339), // alt version
 	BIGGAME("scepters", "", "Scepters", "2c824f1bd7b22c575c7be86ac88ebd23", 347284), // alt version
