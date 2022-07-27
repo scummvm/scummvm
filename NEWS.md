@@ -27,7 +27,10 @@ For a more comprehensive changelog of the latest experimental code, see:
      Zak McKracken and Maniac Mansion.
    - Improved accuracy of CGA and Hercules modes for Monkey Island 1 (EGA version
      only - the VGA version does not have CGA and Hercules modes).
-   - Fixed some minor glitches for the CGA mode of Loom. 
+   - Fixed some minor glitches for the CGA mode of Loom.
+   - Fixed a possible dead-end in the Ultimate Talkie Edition of Monkey Island 2,
+     if one doesn't pick up the model lighthouse lens before Captain Dread brings
+     Guybrush back to Scabb Island, at the end of Part II.
 
  Toon:
    - Made game menus behave like in the original.
