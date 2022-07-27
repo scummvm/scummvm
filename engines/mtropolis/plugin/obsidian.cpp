@@ -94,13 +94,17 @@ VThreadState MovementModifier::consumeMessage(Runtime *runtime, const Common::Sh
 		}
 	}
 	if (_disableWhen.respondsTo(msg->getEvent())) {
-		if (_moveEvent) {
-			_moveEvent->cancel();
-			_moveEvent.reset();
-		}
+		disable(runtime);
 	}
 
 	return kVThreadReturn;
+}
+
+void MovementModifier::disable(Runtime *runtime) {
+	if (_moveEvent) {
+		_moveEvent->cancel();
+		_moveEvent.reset();
+	}
 }
 
 MiniscriptInstructionOutcome MovementModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
@@ -213,12 +217,18 @@ VThreadState RectShiftModifier::consumeMessage(Runtime *runtime, const Common::S
 		_isActive = true;
 	}
 	if (_disableWhen.respondsTo(msg->getEvent()) && _isActive) {
+		disable(runtime);
+	}
+
+	return kVThreadReturn;
+}
+
+void RectShiftModifier::disable(Runtime *runtime) {
+	if (_isActive) {
 		_isActive = false;
 		_runtime->removePostEffect(this);
 		_runtime = nullptr;
 	}
-
-	return kVThreadReturn;
 }
 
 bool RectShiftModifier::load(const PlugInModifierLoaderContext &context, const Data::Obsidian::RectShiftModifier &data) {
@@ -798,30 +808,42 @@ bool XorModModifier::respondsToEvent(const Event &evt) const {
 }
 
 VThreadState XorModModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	Structural *owner = findStructuralOwner();
-	if (!owner)
-		return kVThreadError;
+	if (_enableWhen.respondsTo(msg->getEvent())) {
+		Structural *owner = findStructuralOwner();
+		if (!owner)
+			return kVThreadError;
 
-	if (!owner->isElement())
+		if (!owner->isElement())
+			return kVThreadReturn;
+
+		Element *element = static_cast<Element *>(owner);
+		if (!element->isVisual())
+			return kVThreadReturn;
+
+		VisualElement *visual = static_cast<VisualElement *>(element);
+
+		VisualElementRenderProperties renderProps = visual->getRenderProperties();
+		renderProps.setInkMode(VisualElementRenderProperties::kInkModeXor);
+
+		if (_shapeID == 0)
+			renderProps.setShape(VisualElementRenderProperties::kShapeRect);
+		else
+			renderProps.setShape(static_cast<VisualElementRenderProperties::Shape>(VisualElementRenderProperties::kShapeObsidianCanvasPuzzleTri1 + _shapeID - 1));
+
+		visual->setRenderProperties(renderProps, Common::WeakPtr<GraphicModifier>());
+
 		return kVThreadReturn;
-
-	Element *element = static_cast<Element *>(owner);
-	if (!element->isVisual())
+	}
+	if (_disableWhen.respondsTo(msg->getEvent())) {
+		disable(runtime);
 		return kVThreadReturn;
-
-	VisualElement *visual = static_cast<VisualElement *>(element);
-
-	VisualElementRenderProperties renderProps = visual->getRenderProperties();
-	renderProps.setInkMode(VisualElementRenderProperties::kInkModeXor);
-
-	if (_shapeID == 0)
-		renderProps.setShape(VisualElementRenderProperties::kShapeRect);
-	else
-		renderProps.setShape(static_cast<VisualElementRenderProperties::Shape>(VisualElementRenderProperties::kShapeObsidianCanvasPuzzleTri1 + _shapeID - 1));
-
-	visual->setRenderProperties(renderProps, Common::WeakPtr<GraphicModifier>());
+	}
 
 	return kVThreadReturn;
+}
+
+void XorModModifier::disable(Runtime *runtime) {
+	// This is a special-purpose modifier and is never disabled
 }
 
 Common::SharedPtr<Modifier> XorModModifier::shallowClone() const {

@@ -120,6 +120,18 @@ bool BehaviorModifier::respondsToEvent(const Event &evt) const {
 VThreadState BehaviorModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (_switchable) {
 		if (_disableWhen.respondsTo(msg->getEvent())) {
+			// These are executed in reverse order.  The disable event is propagated to children, then the disable task
+			// runs to forcibly disable any children.
+			//
+			// This works a bit weirdly in practice with child behaviors since ultimately we want them to be disabled and
+			// fire their Parent Disabled task but we don't actually do it on disable.  We instead rely on it being kind of
+			// the logical outcome of how this works:
+			//
+			// If the behavior is enabled, then Parent Disabled will propagate through the behavior, followed by the children
+			// actually being disabled.
+			DisableTaskData *disableTask = runtime->getVThread().pushTask("BehaviorModifier::disableTask", this, &BehaviorModifier::disableTask);
+			disableTask->runtime = runtime;
+
 			SwitchTaskData *taskData = runtime->getVThread().pushTask("BehaviorModifier::switchTask", this, &BehaviorModifier::switchTask);
 			taskData->targetState = false;
 			taskData->eventID = EventIDs::kParentDisabled;
@@ -134,6 +146,14 @@ VThreadState BehaviorModifier::consumeMessage(Runtime *runtime, const Common::Sh
 	}
 
 	return kVThreadReturn;
+}
+
+void BehaviorModifier::disable(Runtime *runtime) {
+	if (_switchable && _isEnabled)
+		_isEnabled = false;
+
+	for (const Common::SharedPtr<Modifier> &child : _children)
+		child->disable(runtime);
 }
 
 VThreadState BehaviorModifier::switchTask(const SwitchTaskData &taskData) {
@@ -163,6 +183,11 @@ VThreadState BehaviorModifier::propagateTask(const PropagateTaskData &taskData) 
 	Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, _children[taskData.index].get(), true, true, false));
 	taskData.runtime->sendMessageOnVThread(dispatch);
 
+	return kVThreadReturn;
+}
+
+VThreadState BehaviorModifier::disableTask(const DisableTaskData &taskData) {
+	disable(taskData.runtime);
 	return kVThreadReturn;
 }
 
@@ -559,23 +584,27 @@ VThreadState SoundEffectModifier::consumeMessage(Runtime *runtime, const Common:
 			_player.reset();
 		}
 	} else if (_executeWhen.respondsTo(msg->getEvent())) {
-		if (_soundType == kSoundTypeAudioAsset) {
-			if (!_cachedAudio)
-				loadAndCacheAudio(runtime);
-
-			if (_cachedAudio) {
-				if (_player) {
-					_player->stop();
-					_player.reset();
-				}
-
-				size_t numSamples = _cachedAudio->getNumSamples(*_metadata);
-				_player.reset(new AudioPlayer(runtime->getAudioMixer(), 255, 0, _metadata, _cachedAudio, false, 0, 0, numSamples));
-			}
-		}
+		disable(runtime);
 	}
 
 	return kVThreadReturn;
+}
+
+void SoundEffectModifier::disable(Runtime *runtime) {
+	if (_soundType == kSoundTypeAudioAsset) {
+		if (!_cachedAudio)
+			loadAndCacheAudio(runtime);
+
+		if (_cachedAudio) {
+			if (_player) {
+				_player->stop();
+				_player.reset();
+			}
+
+			size_t numSamples = _cachedAudio->getNumSamples(*_metadata);
+			_player.reset(new AudioPlayer(runtime->getAudioMixer(), 255, 0, _metadata, _cachedAudio, false, 0, 0, numSamples));
+		}
+	}
 }
 
 void SoundEffectModifier::loadAndCacheAudio(Runtime *runtime) {
@@ -659,16 +688,19 @@ VThreadState PathMotionModifierV2::consumeMessage(Runtime *runtime, const Common
 		return kVThreadReturn;
 	}
 	if (_terminateWhen.respondsTo(msg->getEvent())) {
-#ifdef MTROPOLIS_DEBUG_ENABLE
-		if (Debugger *debugger = runtime->debugGetDebugger())
-			debugger->notify(kDebugSeverityWarning, "Path motion modifier was supposed to terminate, but this isn't implemented yet");
-#endif
+		disable(runtime);
 		return kVThreadReturn;
 	}
 
 	return kVThreadReturn;
 }
 
+void PathMotionModifierV2::disable(Runtime *runtime) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	if (Debugger *debugger = runtime->debugGetDebugger())
+		debugger->notify(kDebugSeverityWarning, "Path motion modifier was supposed to terminate, but this isn't implemented yet");
+#endif
+}
 
 Common::SharedPtr<Modifier> PathMotionModifierV2::shallowClone() const {
 	Common::SharedPtr<PathMotionModifierV2> clone(new PathMotionModifierV2(*this));
@@ -741,13 +773,17 @@ VThreadState DragMotionModifier::consumeMessage(Runtime *runtime, const Common::
 		return kVThreadReturn;
 	}
 	if (_disableWhen.respondsTo(msg->getEvent())) {
-		Structural *owner = this->findStructuralOwner();
-		if (owner->isElement() && static_cast<Element *>(owner)->isVisual())
-			static_cast<VisualElement *>(owner)->setDragMotionProperties(nullptr);
+		disable(runtime);
 		return kVThreadReturn;
 	}
 
 	return kVThreadReturn;
+}
+
+void DragMotionModifier::disable(Runtime *runtime) {
+	Structural *owner = this->findStructuralOwner();
+	if (owner->isElement() && static_cast<Element *>(owner)->isVisual())
+		static_cast<VisualElement *>(owner)->setDragMotionProperties(nullptr);
 }
 
 VectorMotionModifier::~VectorMotionModifier() {
@@ -816,14 +852,18 @@ VThreadState VectorMotionModifier::consumeMessage(Runtime *runtime, const Common
 		}
 	}
 	if (_disableWhen.respondsTo(msg->getEvent())) {
-		if (_scheduledEvent) {
-			_scheduledEvent->cancel();
-			_scheduledEvent.reset();
-		}
+		disable(runtime);
 		return kVThreadReturn;
 	}
 
 	return kVThreadReturn;
+}
+
+void VectorMotionModifier::disable(Runtime *runtime) {
+	if (_scheduledEvent) {
+		_scheduledEvent->cancel();
+		_scheduledEvent.reset();
+	}
 }
 
 void VectorMotionModifier::trigger(Runtime *runtime) {
@@ -948,9 +988,13 @@ VThreadState SceneTransitionModifier::consumeMessage(Runtime *runtime, const Com
 		runtime->setSceneTransitionEffect(true, &effect);
 	}
 	if (_disableWhen.respondsTo(msg->getEvent()))
-		runtime->setSceneTransitionEffect(true, nullptr);
+		disable(runtime);
 
 	return kVThreadReturn;
+}
+
+void SceneTransitionModifier::disable(Runtime *runtime) {
+	runtime->setSceneTransitionEffect(true, nullptr);
 }
 
 Common::SharedPtr<Modifier> SceneTransitionModifier::shallowClone() const {
@@ -1058,16 +1102,19 @@ VThreadState ElementTransitionModifier::consumeMessage(Runtime *runtime, const C
 	}
 
 	if (_disableWhen.respondsTo(msg->getEvent())) {
-		if (_scheduledEvent) {
-			_scheduledEvent->cancel();
-
-			completeTransition(runtime);
-		}
-
+		disable(runtime);
 		return kVThreadReturn;
 	}
 
 	return Modifier::consumeMessage(runtime, msg);
+}
+
+void ElementTransitionModifier::disable(Runtime *runtime) {
+	if (_scheduledEvent) {
+		_scheduledEvent->cancel();
+
+		completeTransition(runtime);
+	}
 }
 
 Common::SharedPtr<Modifier> ElementTransitionModifier::shallowClone() const {
@@ -1241,11 +1288,10 @@ bool TimerMessengerModifier::respondsToEvent(const Event &evt) const {
 VThreadState TimerMessengerModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	// If this terminates AND starts then just cancel out and terminate
 	if (_terminateWhen.respondsTo(msg->getEvent())) {
-		if (_scheduledEvent) {
-			_scheduledEvent->cancel();
-			_scheduledEvent.reset();
-		}
-	} else if (_executeWhen.respondsTo(msg->getEvent())) {
+		disable(runtime);
+		return kVThreadReturn;
+	}
+	if (_executeWhen.respondsTo(msg->getEvent())) {
 		// 0-time events are not allowed
 		uint32 realMilliseconds = _milliseconds;
 		if (realMilliseconds == 0)
@@ -1262,9 +1308,18 @@ VThreadState TimerMessengerModifier::consumeMessage(Runtime *runtime, const Comm
 		_incomingData = msg->getValue();
 		if (_incomingData.getType() == DynamicValueTypes::kList)
 			_incomingData.setList(_incomingData.getList()->clone());
+
+		return kVThreadReturn;
 	}
 
 	return kVThreadReturn;
+}
+
+void TimerMessengerModifier::disable(Runtime *runtime) {
+	if (_scheduledEvent) {
+		_scheduledEvent->cancel();
+		_scheduledEvent.reset();
+	}
 }
 
 void TimerMessengerModifier::linkInternalReferences(ObjectLinkingScope *outerScope) {
@@ -1346,13 +1401,19 @@ VThreadState BoundaryDetectionMessengerModifier::consumeMessage(Runtime *runtime
 		if (_incomingData.getType() == DynamicValueTypes::kList)
 			_incomingData.setList(_incomingData.getList()->clone());
 	}
-	if (_disableWhen.respondsTo(msg->getEvent()) && _isActive) {
+	if (_disableWhen.respondsTo(msg->getEvent())) {
+		disable(runtime);
+	}
+
+	return kVThreadReturn;
+}
+
+void BoundaryDetectionMessengerModifier::disable(Runtime *runtime) {
+	if (_isActive) {
 		_runtime->removeBoundaryDetector(this);
 		_isActive = false;
 		_runtime = nullptr;
 	}
-
-	return kVThreadReturn;
 }
 
 void BoundaryDetectionMessengerModifier::linkInternalReferences(ObjectLinkingScope *outerScope) {
@@ -1454,14 +1515,18 @@ VThreadState CollisionDetectionMessengerModifier::consumeMessage(Runtime *runtim
 		}
 	}
 	if (_disableWhen.respondsTo(msg->getEvent())) {
-		if (_isActive) {
-			_isActive = false;
-			_runtime->removeCollider(this);
-			_incomingData = DynamicValue();
-		}
+		disable(runtime);
 	}
 
 	return kVThreadReturn;
+}
+
+void CollisionDetectionMessengerModifier::disable(Runtime *runtime) {
+	if (_isActive) {
+		_isActive = false;
+		_runtime->removeCollider(this);
+		_incomingData = DynamicValue();
+	}
 }
 
 void CollisionDetectionMessengerModifier::linkInternalReferences(ObjectLinkingScope *scope) {
@@ -1586,10 +1651,14 @@ VThreadState KeyboardMessengerModifier::consumeMessage(Runtime *runtime, const C
  	if (Event::create(EventIDs::kParentEnabled, 0).respondsTo(msg->getEvent())) {
 		_isEnabled = true;
 	} else if (Event::create(EventIDs::kParentDisabled, 0).respondsTo(msg->getEvent())) {
-		_isEnabled = false;
+		disable(runtime);
 	}
 
 	return kVThreadReturn;
+}
+
+void KeyboardMessengerModifier::disable(Runtime *runtime) {
+	_isEnabled = false;
 }
 
 Common::SharedPtr<Modifier> KeyboardMessengerModifier::shallowClone() const {
@@ -1789,13 +1858,16 @@ VThreadState TextStyleModifier::consumeMessage(Runtime *runtime, const Common::S
 
 		return kVThreadReturn;
 	} else if (_removeWhen.respondsTo(msg->getEvent())) {
-		// Doesn't actually do anything
+		disable(runtime);
 		return kVThreadReturn;
 	}
 
 	return Modifier::consumeMessage(runtime, msg);
 }
 
+void TextStyleModifier::disable(Runtime *runtime) {
+	// Doesn't actually do anything
+}
 
 Common::SharedPtr<Modifier> TextStyleModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new TextStyleModifier(*this));
@@ -1861,11 +1933,28 @@ VThreadState GraphicModifier::consumeMessage(Runtime *runtime, const Common::Sha
 		visual->setRenderProperties(_renderProps, this->getSelfReference().staticCast<GraphicModifier>());
 	}
 	if (_removeWhen.respondsTo(msg->getEvent())) {
-		if (visual->getPrimaryGraphicModifier().lock().get() == this)
-			static_cast<VisualElement *>(element)->setRenderProperties(VisualElementRenderProperties(), Common::WeakPtr<GraphicModifier>());
+		disable(runtime);
 	}
 
 	return kVThreadReturn;
+}
+
+void GraphicModifier::disable(Runtime *runtime) {
+	Structural *owner = findStructuralOwner();
+	if (!owner)
+		return;
+
+	if (!owner->isElement())
+		return;
+
+	Element *element = static_cast<Element *>(owner);
+	if (!element->isVisual())
+		return;
+
+	VisualElement *visual = static_cast<VisualElement *>(element);
+
+	if (visual->getPrimaryGraphicModifier().lock().get() == this)
+		static_cast<VisualElement *>(element)->setRenderProperties(VisualElementRenderProperties(), Common::WeakPtr<GraphicModifier>());
 }
 
 Common::SharedPtr<Modifier> GraphicModifier::shallowClone() const {
@@ -1892,6 +1981,10 @@ bool CompoundVariableModifier::load(ModifierLoaderContext &context, const Data::
 	_name = data.name;
 
 	return true;
+}
+
+void CompoundVariableModifier::disable(Runtime *runtime) {
+	// Do nothing I guess, no variables can be disdabled
 }
 
 Common::SharedPtr<ModifierSaveLoad> CompoundVariableModifier::getSaveLoad() {

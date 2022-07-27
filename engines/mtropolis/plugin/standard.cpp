@@ -1574,9 +1574,14 @@ VThreadState CursorModifier::consumeMessage(Runtime *runtime, const Common::Shar
 		runtime->setModifierCursorOverride(_cursorID);
 	}
 	if (_removeWhen.respondsTo(msg->getEvent())) {
+		// This doesn't call "disable" because the behavior is actually different.
+		// Disabling a cursor modifier doesn't seem to remove it.
 		runtime->clearModifierCursorOverride();
 	}
 	return kVThreadReturn;
+}
+
+void CursorModifier::disable(Runtime *runtime) {
 }
 
 bool CursorModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::CursorModifier &data) {
@@ -1646,9 +1651,13 @@ VThreadState STransCtModifier::consumeMessage(Runtime *runtime, const Common::Sh
 		}
 	}
 	if (_disableWhen.respondsTo(msg->getEvent()))
-		runtime->setSceneTransitionEffect(false, nullptr);
+		disable(runtime);
 
 	return kVThreadReturn;
+}
+
+void STransCtModifier::disable(Runtime *runtime) {
+	runtime->setSceneTransitionEffect(false, nullptr);
 }
 
 bool STransCtModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
@@ -1848,16 +1857,20 @@ VThreadState MediaCueMessengerModifier::consumeMessage(Runtime *runtime, const C
 		}
 	}
 	if (_disableWhen.respondsTo(msg->getEvent())) {
-		if (_isActive) {
-			Structural *owner = findStructuralOwner();
-			if (owner && owner->isElement())
-				static_cast<Element *>(owner)->removeMediaCue(&_mediaCue);
-
-			_isActive = false;
-		}
+		disable(runtime);
 	}
 
 	return kVThreadReturn;
+}
+
+void MediaCueMessengerModifier::disable(Runtime *runtime) {
+	if (_isActive) {
+		Structural *owner = findStructuralOwner();
+		if (owner && owner->isElement())
+			static_cast<Element *>(owner)->removeMediaCue(&_mediaCue);
+
+		_isActive = false;
+	}
 }
 
 Common::SharedPtr<Modifier> MediaCueMessengerModifier::shallowClone() const {
@@ -2351,17 +2364,21 @@ VThreadState MidiModifier::consumeMessage(Runtime *runtime, const Common::Shared
 		}
 	}
 	if (_terminateWhen.respondsTo(msg->getEvent())) {
-		if (_filePlayer) {
-			_plugIn->getMidi()->deleteFilePlayer(_filePlayer);
-			_filePlayer = nullptr;
-		}
-		if (_notePlayer) {
-			_plugIn->getMidi()->deleteNotePlayer(_notePlayer);
-			_notePlayer = nullptr;
-		}
+		disable(runtime);
 	}
 
 	return kVThreadReturn;
+}
+
+void MidiModifier::disable(Runtime *runtime) {
+	if (_filePlayer) {
+		_plugIn->getMidi()->deleteFilePlayer(_filePlayer);
+		_filePlayer = nullptr;
+	}
+	if (_notePlayer) {
+		_plugIn->getMidi()->deleteNotePlayer(_notePlayer);
+		_notePlayer = nullptr;
+	}
 }
 
 void MidiModifier::playSingleNote() {
