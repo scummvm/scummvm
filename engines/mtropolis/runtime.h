@@ -1938,6 +1938,7 @@ private:
 	MiniscriptInstructionOutcome setCurrentScene(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome setRefreshCursor(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome setAutoResetCursor(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome setWinSndBufferSize(MiniscriptThread *thread, const DynamicValue &value);
 };
 
 class AssetManagerInterface : public RuntimeObject {

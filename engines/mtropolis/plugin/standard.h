@@ -252,8 +252,9 @@ private:
 	MiniscriptInstructionOutcome scriptSetLoop(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetPlayNote(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetTempo(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetMuteTrack(MiniscriptThread *thread, const DynamicValue &value);
 
-	MiniscriptInstructionOutcome scriptSetMuteTrack(MiniscriptThread *thread, size_t trackIndex, bool muted);
+	MiniscriptInstructionOutcome scriptSetMuteTrackIndexed(MiniscriptThread *thread, size_t trackIndex, bool muted);
 
 	uint getBoostedVolume(Runtime *runtime) const;
 

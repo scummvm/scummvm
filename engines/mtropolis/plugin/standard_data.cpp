@@ -140,7 +140,7 @@ ListVariableModifier::~ListVariableModifier() {
 }
 
 DataReadErrorCode ListVariableModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
-	if (prefix.plugInRevision != 2 && prefix.plugInRevision != 3)
+	if (prefix.plugInRevision < 1 || prefix.plugInRevision > 3)
 		return kDataReadErrorUnsupportedRevision;
 
 	int64 privateDataPos = reader.tell();
@@ -150,12 +150,17 @@ DataReadErrorCode ListVariableModifier::load(PlugIn &plugIn, const PlugInModifie
 
 	persistentValuesGarbled = false;
 
-	if (prefix.plugInRevision == 3) {
-		PlugInTypeTaggedValue persistentFlag;
-		if (!persistentFlag.load(reader) || persistentFlag.type != PlugInTypeTaggedValue::kBoolean)
-			return kDataReadErrorReadFailed;
+	if (prefix.plugInRevision == 1 || prefix.plugInRevision == 3) {
+		if (prefix.plugInRevision == 1) {
+			havePersistentData = true;
+		} else if (prefix.plugInRevision == 3) {
+			PlugInTypeTaggedValue persistentFlag;
+			if (!persistentFlag.load(reader) || persistentFlag.type != PlugInTypeTaggedValue::kBoolean)
+				return kDataReadErrorReadFailed;
 
-		havePersistentData = (persistentFlag.value.asBoolean != 0);
+			havePersistentData = (persistentFlag.value.asBoolean != 0);
+		}
+
 		if (havePersistentData) {
 			PlugInTypeTaggedValue numValuesVar;
 			if (!numValuesVar.load(reader) || numValuesVar.type != PlugInTypeTaggedValue::kInteger || numValuesVar.value.asInt < 0)

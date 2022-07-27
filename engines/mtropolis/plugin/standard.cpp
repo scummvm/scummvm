@@ -2423,6 +2423,9 @@ MiniscriptInstructionOutcome MidiModifier::writeRefAttribute(MiniscriptThread *t
 	} else if (attrib == "tempo") {
 		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetTempo>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "mutetrack") {
+		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetMuteTrack>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	return Modifier::writeRefAttribute(thread, result, attrib);
@@ -2591,7 +2594,25 @@ MiniscriptInstructionOutcome MidiModifier::scriptSetPlayNote(MiniscriptThread *t
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
-MiniscriptInstructionOutcome MidiModifier::scriptSetMuteTrack(MiniscriptThread *thread, size_t trackIndex, bool muted) {
+MiniscriptInstructionOutcome MidiModifier::scriptSetMuteTrack(MiniscriptThread *thread, const DynamicValue &value) {
+	if (value.getType() != DynamicValueTypes::kBoolean) {
+		thread->error("Invalid type for mutetrack");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	uint16 mutedTracks = value.getBool() ? 0xffffu : 0u;
+
+	if (mutedTracks != _mutedTracks) {
+		_mutedTracks = mutedTracks;
+
+		if (_filePlayer)
+			_plugIn->getMidi()->setPlayerMutedTracks(_filePlayer, mutedTracks);
+	}
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome MidiModifier::scriptSetMuteTrackIndexed(MiniscriptThread *thread, size_t trackIndex, bool muted) {
 	if (trackIndex >= 16) {
 		thread->error("Invalid track index for mutetrack");
 		return kMiniscriptInstructionOutcomeFailed;
@@ -2621,7 +2642,7 @@ MiniscriptInstructionOutcome MidiModifier::MuteTrackProxyInterface::write(Minisc
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	return static_cast<MidiModifier *>(objectRef)->scriptSetMuteTrack(thread, ptrOrOffset, value.getBool());
+	return static_cast<MidiModifier *>(objectRef)->scriptSetMuteTrackIndexed(thread, ptrOrOffset, value.getBool());
 }
 
 MiniscriptInstructionOutcome MidiModifier::MuteTrackProxyInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) {

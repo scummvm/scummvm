@@ -2414,6 +2414,10 @@ MiniscriptInstructionOutcome WorldManagerInterface::writeRefAttribute(Miniscript
 		DynamicValueWriteFuncHelper<WorldManagerInterface, &WorldManagerInterface::setAutoResetCursor>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
+	if (attrib == "winsndbuffersize") {
+		DynamicValueWriteFuncHelper<WorldManagerInterface, &WorldManagerInterface::setWinSndBufferSize>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
 	return RuntimeObject::writeRefAttribute(thread, result, attrib);
 }
 
@@ -2460,6 +2464,11 @@ MiniscriptInstructionOutcome WorldManagerInterface::setAutoResetCursor(Miniscrip
 
 	thread->getRuntime()->setAutoResetCursor(value.getBool());
 
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome WorldManagerInterface::setWinSndBufferSize(MiniscriptThread *thread, const DynamicValue &value) {
+	// Ignore
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
