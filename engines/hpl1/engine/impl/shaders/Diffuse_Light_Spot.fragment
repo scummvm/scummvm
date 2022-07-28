@@ -27,7 +27,7 @@ void main()
 	vec3 diffuse = texture(tex0, vUv).xyz;
 	vec3 lightNormal = (2.0*textureCube(tex1,vLightDir)-vec4(1.0)).xyz;
     float  attenuation = texture1D(tex2,dot(vLightDir,vLightDir)).x;
-	vec3 spotColor = texture(tex3, vSpotlightUv.xy / vSpotlightUv.z).xyz;
+	vec3 spotColor = texture(tex3, vSpotlightUv.xy / vSpotlightUv.w).xyz;
 	float rejectNeg = texture1D(tex4,vSpotlightUv.z + 0.5).x;
 
 	outColor.xyz = diffuse * dot(lightNormal, vec3(0,0,1)) * attenuation *

@@ -34,7 +34,7 @@ void main()
 	vec3 normHalfVec = normalize(vHalfVec);
 
 	float  attenuation = texture1D(tex3,dot(vLightDir,vLightDir)).x;
-	vec4 spotColor = texture(tex4, vSpotlightUv.xy / vSpotlightUv.z); // CHECK
+	vec4 spotColor = texture(tex4, vSpotlightUv.xy / vSpotlightUv.w);
 	float  rejectNeg = texture1D(tex5,vSpotlightUv.z + 0.5).x;
 
 	float specular = clamp(dot(normHalfVec, bumpVec.xyz), 0.0, 1.0);
