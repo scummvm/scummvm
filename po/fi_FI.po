@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-07-23 21:18+0000\n"
-"PO-Revision-Date: 2022-07-18 18:32+0000\n"
+"PO-Revision-Date: 2022-07-28 21:37+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -6026,16 +6026,12 @@ msgstr ""
 "eri tavalla kuin mTropolis Player."
 
 #: engines/mtropolis/detection.cpp:65
-#, fuzzy
-#| msgid "Automatically saves the game at certain progress points."
 msgid "Autosave at progress points"
-msgstr "Tekee automaattisen pelitallennuksen tietyissä pelin kohdissa."
+msgstr "Automaattinen pelitallennus pelin edistyessä"
 
 #: engines/mtropolis/detection.cpp:66
-#, fuzzy
-#| msgid "Automatically saves the game at certain progress points."
 msgid "Automatically saves the game after completing puzzles and chapters."
-msgstr "Tekee automaattisen pelitallennuksen tietyissä pelin kohdissa."
+msgstr "Tekee automaattisen pelitallennuksen pulmien ja jaksojen päätteeksi."
 
 #: engines/mtropolis/detection.cpp:76
 msgid "Enable short transitions"
@@ -6070,18 +6066,12 @@ msgid "Failed to load save, an error occurred when reading the save game data."
 msgstr "Pelitallenteen lataaminen epäonnistui, sen lukemisessa tapahtui virhe."
 
 #: engines/mtropolis/saveload.cpp:199
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, an error occurred when reading the save game data."
 msgid "An internal error occurred while attempting to write save game data"
-msgstr "Pelitallenteen lataaminen epäonnistui, sen lukemisessa tapahtui virhe."
+msgstr "Sisäinen virhe pelitallennusta kirjoittaessa"
 
 #: engines/mtropolis/saveload.cpp:207
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, an error occurred when reading the save game data."
 msgid "An error occurred while writing the save game"
-msgstr "Pelitallenteen lataaminen epäonnistui, sen lukemisessa tapahtui virhe."
+msgstr "Pelitallennetta kirjoittaessa tapahtui virhe"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
