@@ -17,14 +17,14 @@ in vec3 vSpotlightUv;
 OUTPUT
 
 uniform sampler2D tex0; //diffuseMap
-uniform samplerCube tex1; //normalCubeMap
-uniform sampler2D tex2; //spotlightMap
+uniform samplerCube tex2; //normalCubeMap
+uniform sampler2D tex3; //spotlightMap
 
 void main()
 {
 	vec3 diffuse = texture(tex0, vUv).xyz;
-	vec3 lightNormal = (2.0*textureCube(tex1,vLightDir)-vec4(1.0)).xyz;
-    vec3 spotColor = texture(tex2, vSpotlightUv.xy / vSpotlightUv.z).xyz;
+	vec3 lightNormal = (2.0*textureCube(tex2,vLightDir)-vec4(1.0)).xyz;
+    vec3 spotColor = texture(tex3, vSpotlightUv.xy / vSpotlightUv.z).xyz;
 
 	outColor.xyz = diffuse * dot(lightNormal, vec3(0,0,1)) * vLightColor.xyz * spotColor;
 }
