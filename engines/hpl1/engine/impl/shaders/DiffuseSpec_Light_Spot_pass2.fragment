@@ -18,17 +18,17 @@ in vec3 vSpotlightUv;
 OUTPUT
 
 uniform sampler2D tex0; //diffuseMap
-uniform samplerCube tex1; //normalCubeMap
-uniform sampler2D tex2; //spotlightMap
+uniform samplerCube tex2; //normalCubeMap
+uniform sampler2D tex3; //spotlightMap
 
 void main()
 {
 	vec3 diffuse = texture(tex0, vUv).xyz;
 
-	vec3 lightNormal = (2.0*textureCube(tex1,vLightDir)-vec4(1.0)).xyz;
-	vHalfVec = (2.0*textureCube(tex1,vHalfVec)-vec4(1.0)).xyz;
+	vec3 lightNormal = (2.0*textureCube(tex2,vLightDir)-vec4(1.0)).xyz;
+	vHalfVec = (2.0*textureCube(tex2,vHalfVec)-vec4(1.0)).xyz;
 
-	vec4 spotColor = texture(tex2, vSpotlightUv.xy / vSpotlightUv.z);
+	vec4 spotColor = texture(tex3, vSpotlightUv.xy / vSpotlightUv.z);
 
 	float specular = clamp(dot(vHalfVec, vec3(0,0,1)), 0.0, 1.0);
 	specular = pow(specular, 16.0) * vLightColor.w * spotColor.w;

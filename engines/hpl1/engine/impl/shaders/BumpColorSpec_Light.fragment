@@ -20,7 +20,7 @@ uniform sampler2D tex0; //diffuseMap
 uniform sampler2D tex1; //normalMap
 uniform samplerCube tex2; //normalCubeMap
 uniform sampler1D tex3; //falloffMap
-uniform sampler2D tex4; //specularMap
+uniform sampler2D tex6; //specularMap
 
 void main()
 {
@@ -36,6 +36,6 @@ void main()
 	specular = pow(specular, 16.0) * vLightColor.w;
 
 	outColor.xyz = texture(tex0, vUv).xyz * vLightColor.xyz * dot(normLightDir, bumpVec.xyz)
-					+ (specular * texture(tex4, vUv).xyz);
+					+ (specular * texture(tex6, vUv).xyz);
 	outColor.xyz *= attenuation;
 }

@@ -17,18 +17,18 @@ in vec4 vSpotlightUv;
 OUTPUT
 
 uniform sampler2D tex0; //diffuseMap
-uniform samplerCube tex1; //normalCubeMap
-uniform sampler1D tex2; //falloffMap
-uniform sampler2D tex3; //spotlightMap
-uniform sampler1D tex4; //spotNegRejectMap
+uniform samplerCube tex2; //normalCubeMap
+uniform sampler1D tex3; //falloffMap
+uniform sampler2D tex4; //spotlightMap
+uniform sampler1D tex5; //spotNegRejectMap
 
 void main()
 {
 	vec3 diffuse = texture(tex0, vUv).xyz;
-	vec3 lightNormal = (2.0*textureCube(tex1,vLightDir)-vec4(1.0)).xyz;
-    float  attenuation = texture1D(tex2,dot(vLightDir,vLightDir)).x;
-	vec3 spotColor = texture(tex3, vSpotlightUv.xy / vSpotlightUv.w).xyz;
-	float rejectNeg = texture1D(tex4,vSpotlightUv.z + 0.5).x;
+	vec3 lightNormal = (2.0*textureCube(tex2,vLightDir)-vec4(1.0)).xyz;
+    float  attenuation = texture1D(tex3,dot(vLightDir,vLightDir)).x;
+	vec3 spotColor = texture(tex4, vSpotlightUv.xy / vSpotlightUv.w).xyz;
+	float rejectNeg = texture1D(tex5,vSpotlightUv.z + 0.5).x;
 
 	outColor.xyz = diffuse * dot(lightNormal, vec3(0,0,1)) * attenuation *
 						vLightColor.xyz * spotColor * rejectNeg;
