@@ -36,7 +36,7 @@
 
 #include "hpl1/engine/impl/tinyXML/tinyxml.h"
 
-//#include <algorithm>
+#include "common/algorithm.h"
 
 namespace hpl {
 
@@ -359,9 +359,9 @@ void cAINodeContainer::Compile() {
 
 		///////////////////////////////////////
 		// Sort nodes and remove unwanted ones.
-		#if 0
-		std::sort(pNode->mvEdges.begin(), pNode->mvEdges.end(), cSortEndNodes());
-		#endif
+
+		Common::sort(pNode->mvEdges.data(), pNode->mvEdges.data() + pNode->mvEdges.size(), cSortEndNodes());
+
 		// Resize if to too large
 		if (mlMaxNodeEnds > 0 && (int)pNode->mvEdges.size() > mlMaxNodeEnds) {
 			pNode->mvEdges.resize(mlMaxNodeEnds);
