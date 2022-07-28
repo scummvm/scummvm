@@ -588,7 +588,7 @@ void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb) const {
 		if (*current == 0x0D || *current == 0 || *current == 0xFF || *current == 0xFE) {
 
 			// ignore the line break for verbs texts
-			if (ignoreVerb && (*(current + 1) ==  8)) {
+			if (ignoreVerb && *current && (*(current + 1) ==  8)) {
 				*(current + 1) = *current;
 				*current = 0x08;
 				ipos += 2;
