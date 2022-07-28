@@ -32,7 +32,7 @@ void main() {
 
   float attenuation = texture1D(tex3, dot(vLightDir, vLightDir)).x;
   vec3 spotColor =
-      texture(tex4, vSpotlightUv.xy / vSpotlightUv.z).xyz; // CHECK
+      texture(tex4, vSpotlightUv.xy / vSpotlightUv.w).xyz;
   float rejectNeg = texture1D(tex5, vSpotlightUv.z + 0.5).x;
   outColor.xyz = diffuse * dot(lightVec, bumpVec) * attenuation *
                  vLightColor.xyz * spotColor * rejectNeg;
