@@ -21,6 +21,7 @@
 
 #include "common/rect.h"
 #include "common/system.h"
+#include "common/unicode-bidi.h"
 #include "gui/widgets/editable.h"
 #include "gui/gui-manager.h"
 #include "graphics/font.h"
@@ -75,12 +76,20 @@ void EditableWidget::setEditString(const Common::U32String &str) {
 	_caretPos = 0;
 }
 
-bool EditableWidget::tryInsertChar(byte c, int pos) {
+bool EditableWidget::tryInsertChar(Common::u32char_type_t c, int pos) {
 	if ((c >= 32 && c <= 127) || c >= 160) {
 		_editString.insertChar(c, pos);
 		return true;
 	}
 	return false;
+}
+
+int EditableWidget::caretVisualPos(int logicalPos) {
+	return Common::convertBiDiU32String(_editString + " ").getVisualPosition(logicalPos);
+}
+
+int EditableWidget::caretLogicalPos() const {
+	return Common::convertBiDiU32String(_editString + " ").getLogicalPosition(_caretPos);
 }
 
 void EditableWidget::handleTickle() {
@@ -95,6 +104,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	bool handled = true;
 	bool dirty = false;
 	bool forcecaret = false;
+	int deleteIndex;
 
 	if (!isEnabled())
 		return false;
@@ -139,9 +149,11 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		break;
 
 	case Common::KEYCODE_BACKSPACE:
-		if (_caretPos > 0) {
-			_caretPos--;
-			_editString.deleteChar(_caretPos);
+		deleteIndex = caretLogicalPos();
+		if (deleteIndex > 0) {
+			deleteIndex--;
+			_editString.deleteChar(deleteIndex);
+			setCaretPos(caretVisualPos(deleteIndex));
 			dirty = true;
 
 			sendCommand(_cmd, 0);
@@ -150,8 +162,10 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		break;
 
 	case Common::KEYCODE_DELETE:
-		if (_caretPos < (int)_editString.size()) {
-			_editString.deleteChar(_caretPos);
+		deleteIndex = caretLogicalPos();
+		if (deleteIndex < (int)_editString.size()) {
+			_editString.deleteChar(deleteIndex);
+			setCaretPos(caretVisualPos(deleteIndex));
 			dirty = true;
 
 			sendCommand(_cmd, 0);
@@ -162,7 +176,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	case Common::KEYCODE_DOWN:
 	case Common::KEYCODE_END:
 		// Move caret to end
-		setCaretPos(_editString.size());
+		setCaretPos(caretVisualPos(_editString.size()));
 		forcecaret = true;
 		dirty = true;
 		break;
@@ -188,7 +202,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	case Common::KEYCODE_UP:
 	case Common::KEYCODE_HOME:
 		// Move caret to start
-		setCaretPos(0);
+		setCaretPos(caretVisualPos(0));
 		forcecaret = true;
 		dirty = true;
 		break;
@@ -198,8 +212,9 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 			if (g_system->hasTextInClipboard()) {
 				Common::U32String text = g_system->getTextFromClipboard();
 				for (uint32 i = 0; i < text.size(); ++i) {
-					if (tryInsertChar(text[i], _caretPos))
-						++_caretPos;
+					const int logicalPosition = caretLogicalPos();
+					if (tryInsertChar(text[i], logicalPosition))
+						setCaretPos(caretVisualPos(logicalPosition + 1));
 				}
 				dirty = true;
 			}
@@ -261,8 +276,9 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 }
 
 void EditableWidget::defaultKeyDownHandler(Common::KeyState &state, bool &dirty, bool &forcecaret, bool &handled) {
-	if (state.ascii < 256 && tryInsertChar((byte)state.ascii, _caretPos)) {
-		_caretPos++;
+	const int logicalPosition = caretLogicalPos();
+	if (tryInsertChar(state.ascii, logicalPosition)) {
+		setCaretPos(caretVisualPos(logicalPosition + 1));
 		dirty = true;
 		forcecaret = true;
 
@@ -273,7 +289,8 @@ void EditableWidget::defaultKeyDownHandler(Common::KeyState &state, bool &dirty,
 }
 
 int EditableWidget::getCaretOffset() const {
-	Common::U32String substr(_editString.begin(), _editString.begin() + _caretPos);
+	Common::UnicodeBiDiText utxt(_editString);
+	Common::U32String substr(utxt.visual.begin(), utxt.visual.begin() + _caretPos);
 	return g_gui.getStringWidth(substr, _font) - _editScrollOffset;
 }
 
@@ -313,15 +330,16 @@ void EditableWidget::drawCaret(bool erase) {
 	g_gui.theme()->drawCaret(Common::Rect(x, y, x + 1, y + editRect.height()), erase);
 
 	if (erase) {
-		Common::String character;
+		Common::U32String character;
 		int width;
 
 		if ((uint)_caretPos < _editString.size()) {
-			const byte chr = _editString[_caretPos];
+			Common::UnicodeBiDiText utxt(_editString);
+			const Common::u32char_type_t chr = utxt.visual[_caretPos];
 			width = g_gui.getCharWidth(chr, _font);
-			character = chr;
+			character = Common::U32String(chr);
 
-			const uint last = (_caretPos > 0) ? _editString[_caretPos - 1] : 0;
+			const uint32 last = (_caretPos > 0) ?  utxt.visual[_caretPos - 1] : 0;
 			x += g_gui.getKerningOffset(last, chr, _font);
 		} else {
 			// We draw a fake space here to assure that removing the caret
