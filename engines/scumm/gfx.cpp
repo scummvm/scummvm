@@ -973,7 +973,7 @@ const byte *ScummEngine::ditherVGAtoEGA(int &pitch, int &x, int &y, int &width, 
 	uint8 *dst1 = _hercCGAScaleBuf + pitch;
 	uint8 *src = _compositeBuf;
 
-	for (int i = height, st = 1; i; --i, st ^= 1) {
+	for (int i = height, st = 1 ^ (y & 1); i; --i, st ^= 1) {
 		for (int ii = width; ii; --ii) {
 			byte in = *src++;
 			*dst0++ = *dst1++ = _egaColorMap[st][in];
@@ -4272,10 +4272,20 @@ void ScummEngine::dissolveEffect(int width, int height) {
 			int wd = width;
 			int ht = height;
 
-			if (_enableEGADithering)
+			if (_enableEGADithering) {
+				if (width == 1 && height == 1) {
+					*_compositeBuf = *src;
+				} else {
+					for (int i = 0; i < height; ++i) {
+						memcpy(_compositeBuf + width * i, src, width);
+						src += pitch;
+					}
+				}
+				pitch = width;
 				src = ditherVGAtoEGA(pitch, x, y, wd, ht);
+			}
 
-			_system->copyRectToScreen(src, vs->pitch, x, y, wd, ht);
+			_system->copyRectToScreen(src, pitch, x, y, wd, ht);
 		}
 
 		// Test for 1x1 pattern...
