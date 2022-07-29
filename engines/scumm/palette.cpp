@@ -1065,8 +1065,8 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 			if (!_EPAL_offs) {
 				// We can support the EGA mode for games that aren't supposed to have it, like this.
 				// Might be glitchy, though...
-				const byte *p = getPalettePtr(_curPalIndex, _roomResource);
-				for (int i = 0; i < 256; ++i) {
+				const byte *p = getPalettePtr(_curPalIndex, _roomResource) + startColor * 3;
+				for (int i = startColor; i <= endColor; ++i) {
 					byte col = egaFindBestMatch(p[0], p[1], p[2]);
 					_egaColorMap[0][i] = col & 0x0F;
 					_egaColorMap[1][i] = col >> 4;
