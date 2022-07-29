@@ -20,5 +20,5 @@ uniform sampler1D tex1; //fogMap
 
 void main()
 {
-	outColor = texture(tex0, vUv) * texture1D(tex1, vFogUv) * vColor;
+	outColor = texture(tex0, vUv) * texture1D(tex1, vFogUv).r * vColor;
 }
