@@ -243,8 +243,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 	// VGA games which support an EGA dithering mode
 	static const byte egaModeIDs[] = {
-		/*GID_SAMNMAX,*/	// Not supported in the original interpreter. It works, but is too glitchy to have it enabled without further fine tuning...
-		GID_TENTACLE,		// Not supported in the original interpreter. Less glitchy than SAM, so I leave it enabled. I guess, people who actually select this will know what they're doing.
+		GID_SAMNMAX,		// Not supported in the original interpreter. Glitches might occur.
+		GID_TENTACLE,		// Not supported in the original interpreter. Glitches might occur.
 		GID_LOOM,			// Supported in the original interpreter.
 		GID_MONKEY,
 		GID_MONKEY_VGA,
@@ -2691,13 +2691,13 @@ void ScummEngine_v3::scummLoop_handleSaveLoad() {
 			_townsPlayer->restoreAfterLoad();
 	}
 }
+
 void ScummEngine_v5::scummLoop_handleSaveLoad() {
 	bool processIQPoints = (_game.id == GID_INDY4) && (_saveLoadFlag == 2 || _loadFromLauncher);
 	_loadFromLauncher = false;
 
 	ScummEngine::scummLoop_handleSaveLoad();
 
-	
 	if (_videoModeChanged) {
 		_videoModeChanged = false;
 		warning("Loading savegame with a different render mode setting. Glitches might occur");
@@ -2732,6 +2732,33 @@ void ScummEngine_v5::scummLoop_handleSaveLoad() {
 	// update IQ points after loading
 	if (processIQPoints)
 		runScript(145, 0, 0, nullptr);
+}
+
+void ScummEngine_v6::scummLoop_handleSaveLoad() {
+	ScummEngine::scummLoop_handleSaveLoad();
+
+	if (_videoModeChanged) {
+		_videoModeChanged = false;
+		warning("Loading savegame with a different render mode setting. Glitches might occur");
+		if (_supportsEGADithering) {
+			// Reconstruct the screen palette.
+			setCurrentPalette(_curPalIndex);
+			// Reconstruct mouse cursor (crosshair for DOTT, verb cursor for SAM).
+			if (_game.id == GID_SAMNMAX) {
+				setCursorFromImg(VAR(177), VAR(177) > 890 ? 94 : 93, 1);
+				if (VAR(177) > 890) {
+					// The inventory item cursors require some extra treatment...
+					setCursorTransparency(180);
+					setCursorTransparency(178);
+					setCursorTransparency(176);
+					setCursorTransparency(6);
+					setCursorTransparency(0);
+				}
+			} else {
+				setDefaultCursor();
+			}
+		}
+	}
 }
 
 #ifdef ENABLE_SCUMM_7_8

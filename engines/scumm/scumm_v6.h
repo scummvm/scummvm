@@ -108,6 +108,7 @@ public:
 protected:
 	void setupOpcodes() override;
 
+	void scummLoop_handleSaveLoad() override;
 	void scummLoop_handleActors() override;
 	void processKeyboard(Common::KeyState lastKeyHit) override;
 
@@ -143,6 +144,8 @@ protected:
 	void useIm01Cursor(const byte *im, int w, int h);
 	void useBompCursor(const byte *im, int w, int h);
 	void grabCursor(int x, int y, int w, int h);
+	void setCursorFromBuffer(const byte *ptr, int width, int height, int pitch);
+	void ditherCursor();
 
 	virtual void drawBlastTexts() {}
 	virtual void removeBlastTexts() {}

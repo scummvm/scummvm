@@ -113,9 +113,17 @@ void ScummEngine_v6::setCursorTransparency(int a) {
 
 	size = _cursor.width * _cursor.height;
 
-	for (i = 0; i < size; i++)
-		if (_grabbedCursor[i] == (byte)a)
-			_grabbedCursor[i] = 0xFF;
+	if (_enableEGADithering) {
+		for (i = 0; i < size; i += 2) {
+			int st = 1 ^ ((i / (_cursor.width << 1)) & 1);
+			if (_grabbedCursor[i] == _egaColorMap[st][a] && _grabbedCursor[i + 1] == _egaColorMap[st ^ 1][a])
+				_grabbedCursor[i] = _grabbedCursor[i + 1] = 0xFF;
+		}
+	} else {
+		for (i = 0; i < size; i++)
+			if (_grabbedCursor[i] == (byte)a)
+				_grabbedCursor[i] = 0xFF;
+	}
 
 	updateCursor();
 }
@@ -153,41 +161,49 @@ void ScummEngine_v6::setDefaultCursor() {
 	setCursorFromBuffer(default_v6_cursor, 16, 13, 16);
 }
 
-void ScummEngine::setCursorFromBuffer(const byte *ptr, int width, int height, int pitch) {
+void ScummEngine_v6::setCursorFromBuffer(const byte *ptr, int width, int height, int pitch) {
 	uint size;
 	byte *dst;
 
-	int sclW = _enableEGADithering ? 2 : 1;
-	int sclH = _enableEGADithering ? 2 : 1;
-
-	size = width * sclW * height * sclH * _bytesPerPixel;
+	size = width * height * _bytesPerPixel;
+	if (_enableEGADithering)
+		size <<= 2;
 	if (size > sizeof(_grabbedCursor))
 		error("grabCursor: grabbed cursor too big");
 
-	_cursor.width = width * sclW;
-	_cursor.height = height * sclH;
+	_cursor.width = width;
+	_cursor.height = height;
 	_cursor.animate = 0;
 
-	dst = _grabbedCursor;
+	dst = _enableEGADithering ? _compositeBuf : _grabbedCursor;
 	for (; height; height--) {
-		for (int h2 = sclH; h2; --h2) {
-			const byte *s1 = ptr;
-			const byte *s2 = 0;
-			byte *d = dst;
-			for (int w = width; w; --w) {
-				for (int w2 = sclW; w2; --w2) {
-					s2 = s1;
-					for (int w3 = _bytesPerPixel; w3; --w3)
-						*d++ = *s2++;
-				}
-				s1 = s2;
-			}
-			dst += width * sclW * _bytesPerPixel;
-		}
+		memcpy(dst, ptr, width * _bytesPerPixel);
+		dst += width * _bytesPerPixel;
 		ptr += pitch;
 	}
 
+	if (_enableEGADithering)
+		ditherCursor();
+
 	updateCursor();
+}
+
+void ScummEngine_v6::ditherCursor() {
+	int x = 0;
+	int y = 0;
+	int pitch = _cursor.width;
+
+	// We temporarily put the transparency color in the EGA color tables.
+	uint8 backupEGA0 = _egaColorMap[0][255];
+	uint8 backupEGA1 = _egaColorMap[1][255];
+	_egaColorMap[0][255] = _egaColorMap[1][255] = 0xFF;
+
+	ditherVGAtoEGA(pitch, x, y, _cursor.width, _cursor.height);
+
+	_egaColorMap[0][255] = backupEGA0;
+	_egaColorMap[1][255] = backupEGA1;
+
+	memcpy(_grabbedCursor, _hercCGAScaleBuf, _cursor.width * _cursor.height);
 }
 
 void ScummEngine_v70he::setCursorFromImg(uint img, uint room, uint imgindex) {
@@ -391,6 +407,8 @@ void ScummEngine_v6::useBompCursor(const byte *im, int width, int height) {
 	height *= 8;
 
 	size = width * height;
+	if (_enableEGADithering)
+		size <<= 2;
 	if (size > sizeof(_grabbedCursor))
 		error("useBompCursor: cursor too big (%d)", size);
 
@@ -404,7 +422,10 @@ void ScummEngine_v6::useBompCursor(const byte *im, int width, int height) {
 	} else {
 		im += 18;
 	}
-	decompressBomp(_grabbedCursor, im, width, height);
+	decompressBomp(_enableEGADithering ? _compositeBuf : _grabbedCursor, im, width, height);
+
+	if (_enableEGADithering)
+		ditherCursor();
 
 	updateCursor();
 }

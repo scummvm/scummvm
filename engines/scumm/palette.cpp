@@ -252,6 +252,12 @@ void ScummEngine::resetPalette() {
 		} else if (_renderMode == Common::kRenderEGA && _supportsEGADithering) {
 			setPaletteFromTable(tableEGAPalette, sizeof(tableEGAPalette) / 3);
 			_enableEGADithering = true;
+			// Set the color tables to sane values (for games that dither the mouse cursor
+			// right at the beginning, before these tables get filled normally.
+			if (_currentRoom == 0) {
+				for (uint16 i = 0; i < 256; ++i)
+					_egaColorMap[0][i] = _egaColorMap[1][i] = i & 0x0F;
+			}
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		} else if (_game.platform == Common::kPlatformFMTowns) {
 			if (_game.id == GID_INDY4 || _game.id == GID_MONKEY2)
