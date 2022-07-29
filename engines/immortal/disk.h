@@ -83,7 +83,7 @@ enum FileExt {
 class ProDOSFile : public Common::ArchiveMember {
 public:
 	ProDOSFile(char name[16], uint8 type, uint16 tBlk, uint32 eof, uint16 bPtr, Common::File *disk);
-	~ProDOSFile() {};
+	~ProDOSFile() {};											 // File does not need a destructor, because the file it reads from is a pointer to Disk, and Disk has a destructor
 
 	// -- These are the Common::ArchiveMember related functions --
 	Common::String getName() const override;                              // Returns _name
@@ -95,12 +95,12 @@ public:
 	void printInfo();
 
 private:
-			char  _name[16];
+				char  _name[16];
 		   uint8  _type;                     // As defined by enum FileType
 		  uint16  _blockPtr;                 // Block index in volume of index block or data
 		  uint16  _totalBlocks;
 		  uint32  _eof;                      // End Of File, used generally as size (exception being sparse files)
-	Common::File *_disk;                     // This is a pointer because it is the same _disk as in ProDosDisk, passed to the file object
+Common::File *_disk;                   	 // This is a pointer because it is the same _disk as in ProDosDisk, passed to the file object
 };
 
 /* This class defines the entire disk volume. Upon using the open() method,
