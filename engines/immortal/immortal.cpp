@@ -162,8 +162,8 @@ Common::Error ImmortalEngine::run() {
 	loadWindow();							// Load the window background
 	loadSingles("Song A");					// Music
 	loadSprites();							// Get all the sprite data into memory
-	// playing = kPlayingNothing;
-	// themepaused = 0;
+	_playing = kSongNothing;
+	_themePaused = 0;
 	clearSprites();							// Clear the sprites before we start
 	logicInit();							// Init the game logic
 
