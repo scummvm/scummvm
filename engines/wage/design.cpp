@@ -253,6 +253,53 @@ void drawPixel(int x, int y, int color, void *data) {
 	}
 }
 
+void drawPixelCircle(int x, int y, int color, void *data) {
+	PlotData *p = (PlotData *)data;
+
+	if (p->fillType > p->patterns->size())
+		return;
+
+	if (p->design && p->design->isBoundsCalculation()) {
+		if (x < 0 || y < 0)
+			return;
+		if (p->thickness == 1) {
+			p->design->adjustBounds(x, y);
+		} else {
+			int x1 = x;
+			int x2 = x1 + p->thickness;
+			int y1 = y;
+			int y2 = y1 + p->thickness;
+
+			for (y = y1; y < y2; y++)
+				for (x = x1; x < x2; x++)
+					p->design->adjustBounds(x, y);
+		}
+
+		return;
+	}
+
+	byte *pat = p->patterns->operator[](p->fillType - 1);
+
+	if (p->thickness == 1) {
+		if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
+			uint xu = (uint)x; // for letting compiler optimize it
+			uint yu = (uint)y;
+
+			*((byte *)p->surface->getBasePtr(xu, yu)) =
+				(pat[yu % 8] & (1 << (7 - xu % 8))) ? color : kColorWhite;
+		}
+	} else {
+		int x1 = x - p->thickness / 2;
+		int x2 = x1 + p->thickness;
+		int y1 = y - p->thickness / 2;
+		int y2 = y1 + p->thickness;
+
+		PlotData pd(p->surface, p->patterns, p->fillType, 1, p->design);
+
+		Graphics::drawEllipse(x1, y1, x2 - 1, y2 - 1, kColorBlack, true, drawPixel, &pd);
+	}
+}
+
 void drawPixelPlain(int x, int y, int color, void *data) {
 	PlotData *p = (PlotData *)data;
 
@@ -303,7 +350,6 @@ void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 
 void Design::drawRoundRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 				Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
-	debug("thickness: %d", borderThickness);
 	int16 y1 = in.readSint16BE();
 	int16 x1 = in.readSint16BE();
 	int16 y2 = in.readSint16BE() - 1;
@@ -433,8 +479,15 @@ void Design::drawOval(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 	pd.fillType = borderFillType;
 	pd.thickness = borderThickness;
 
+	if (borderThickness > 1) {
+		x1 += borderThickness / 2;
+		y1 += borderThickness / 2;
+		x2 -= (borderThickness - 1) / 2;
+		y2 -= (borderThickness - 1) / 2;
+	}
+
 	if (borderThickness > 0 && borderFillType <= patterns.size())
-		Graphics::drawEllipse(x1, y1, x2-1, y2-1, kColorBlack, false, drawPixel, &pd);
+		Graphics::drawEllipse(x1, y1, x2-1, y2-1, kColorBlack, false, drawPixelCircle, &pd);
 }
 
 void Design::drawBitmap(Graphics::ManagedSurface *surface, Common::SeekableReadStream &in) {
