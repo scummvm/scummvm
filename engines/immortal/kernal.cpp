@@ -39,12 +39,21 @@ namespace Immortal {
  */
 
 void ImmortalEngine::drawUniv() {
+	// This is where the entire screen actually comes together
+	_myViewPortX = _viewPortX & 0xFFFE;
+	_myViewPortY = _viewPortY;
 
-	// drawBackground() = draw floor parts of leftmask rightmask and maskers
-	// addRows() = add rows to drawitem array
-	// addSprites() = add all active sprites that are in the viewport, into a list that will be sorted by priority
-	// sortDrawItems() = sort said items
-	// drawItems() = draw the items over the background
+	_num2DrawItems = 0;
+
+	_myUnivPointX = !(_myViewPortX & (kChrW - 1)) + kViewPortSpX;
+	_myUnivPointY = !(_myViewPortY & (kChrH - 1)) + kViewPortSpY;
+
+	makeMyCNM();
+	drawBGRND();							// Draw floor parts of leftmask rightmask and maskers
+	addRows();								// Add rows to drawitem array
+	addSprites();							// Add all active sprites that are in the viewport, into a list that will be sorted by priority
+	sortDrawItems();						// Sort said items
+	drawItems();							// Draw the items over the background
 
 	// To start constructing the screem, we start with the frame as the base
 	memcpy(_screenBuff, _window, kScreenSize);
@@ -85,7 +94,258 @@ void ImmortalEngine::blit() {}
 void ImmortalEngine::blit40() {}
 void ImmortalEngine::sBlit() {}
 void ImmortalEngine::scroll() {}
+void ImmortalEngine::makeMyCNM() {}									// ?
 
+void ImmortalEngine::addRows() {
+	// I'm not really sure how this works yet
+	int i = _num2DrawItems;
+	_tPriority[i] = !(!(_myViewPortY & (kChrH - 1)) + _myViewPortY);
+	
+	for (int j = 0; j != kViewPortCH+4; j++, i++) {
+		_tIndex[i] = (j << 5) | 0x8000;
+		_tPriority[i] = _tPriority[i] - kChrH;
+	}
+	_num2DrawItems = i;
+}
+
+void ImmortalEngine::addSprites() {
+	// My goodness this routine is gross
+	int tmpNum = _num2DrawItems;
+	for (int i = 0; i < kMaxSprites; i++) {
+		if (_sprites[i]._on == 1) {
+			if ((_sprites[i]._X & 1) != 0) {
+				debug("not good! BRK");
+				return;
+			}
+			int tmpx = (_sprites[i]._X - kMaxSpriteW) - _myViewPortX;
+			if (tmpx < 0) {
+				if (tmpx + (kMaxSpriteW * 2) < 0) {
+					continue;
+				}
+			} else if (tmpx >= kViewPortW) {
+				continue;
+			}
+
+			int tmpy = (_sprites[i]._Y - kMaxSpriteH) - _myViewPortY;
+			if (tmpy < 0) {
+				if (tmpy + (kMaxSpriteH * 2) < 0) {
+					continue;
+				}
+			} else if (tmpy >= kViewPortH) {
+				continue;
+			}
+
+			DataSprite *tempD = _sprites[i]._dSprite;
+			Frame *tempF = &(_sprites[i]._dSprite->_frames[_sprites[i]._frame]);
+			int sx = ((_sprites[i]._X + tempF->_deltaX) - tempD->_cenX) - _myViewPortX;
+			int sy = ((_sprites[i]._Y + tempF->_deltaY) - tempD->_cenY) - _myViewPortY;
+
+			if (sx >= 0 ) {
+				if (sx >= kViewPortW) {
+					continue;
+				}
+			} else if ((sx + tempF->_rectX) <= 0) {
+				continue;
+			}
+
+			if (sy >= 0 ) {
+				if (sy >= kViewPortH) {
+					continue;
+				}
+			} else if ((sy + tempF->_rectY) <= 0) {
+				continue;
+			}
+
+			// Sprite is actually in viewport, we can now enter it in the sorting array
+			_tIndex[_num2DrawItems] = i;
+			_tPriority[_num2DrawItems] = _sprites[i]._priority;
+			tmpNum++;
+			if (tmpNum == kMaxDrawItems) {
+				break;
+			}
+		}
+	}
+	_num2DrawItems = tmpNum;
+}
+
+void ImmortalEngine::sortDrawItems() {
+	/* Just an implementation of bubble sort.
+	 * Sorting largest to smallest entry, simply
+	 * swapping every two entries if they are not in order.
+	 */
+
+	int top = _num2DrawItems;
+	bool bailout;
+
+	do {
+		// Assume that the list is sorted
+		bailout = true;
+		for (int i = 1; i < top; i++) {
+			if (_tPriority[i] > _tPriority[i-1]) {
+				uint16 tmp = _tPriority[i];
+				_tPriority[i] = _tPriority[i-1];
+				_tPriority[i-1] = tmp;
+
+				// List was not sorted yet, therefor we need to check it again
+				bailout = false;
+			}
+		}
+		/* After every pass, the smallest entry is at the end of the array, so we move
+		 * the end marker back by one
+		 */
+		top--;
+	} while (bailout == false);
+}
+
+void ImmortalEngine::drawBGRND() {
+	// 'tmp' is y, 'cmp' is x
+
+	uint16 pointX = _myUnivPointX;
+	uint16 pointY = _myUnivPointY;
+
+	for (int y = kViewPortCH + 1, y2 = 0; y != 0; y--, y2++) {
+		for (int x = 0; x < (kViewPortCW + 1); x += (kViewPortCW + 1)) {
+			uint16 BTS = _myModLCNM[y2][x];
+
+			if (_tIsBackground[BTS] != 0) {
+				// Low Floor value, draw tile as background
+				drawSolid(_myCNM[y2][x], pointX, pointY);
+
+			} else if (_tChrMask[BTS] >= 0x8000) {
+				// Right Mask, draw upper left hand corner (ULHC) of floor
+				drawULHC(_myCNM[y2][x], pointX, pointY);
+
+			} else if (_tChrMask[BTS] != 0) {
+				// Left Mask, draw upper right hand corner (UPHC) of floor
+				drawURHC(_myCNM[y2][x], pointX, pointY);
+			}
+			pointX += kChrW;									// This (and the H version) could be added to the for loop iterator arugment
+		}
+		pointX -= (kChrW * (kViewPortCW + 1));					// They could have also just done pointX = _myUnivPointX
+		pointY += kChrH;
+	}
+}
+
+void ImmortalEngine::drawItems() {
+	for (int i = 0; i < (kViewPortCW + 1); i++) {
+		_columnIndex[i] = 0;
+	}
+
+	for (int i = 0; i < (kViewPortCW + 1); i++) {
+		_columnTop[i] = _myUnivPointY;
+	}
+
+	_columnX[0] = _myUnivPointX;
+	for (int i = 1; i < (kViewPortCW + 1); i++) {
+		_columnX[i] = _myUnivPointX + kChrW;
+	}
+
+	// This is truly horrible, I should double check that this is the intended logic
+	int n = 0;
+	uint16 rowY = 0;
+	do {
+		uint16 index = _tIndex[n];
+		if (index >= 0x8000) {								// If negative, it's a row to draw
+			// rowY is (I think) the position of the start of the scroll window within the tile data
+			rowY = (index & 0x7FFF) + _myUnivPointY;
+
+			// The background is a matrix of rows and columns, so for each column, we draw each row tile
+			for (int i = 0; (i < (kViewPortCW + 1)); i++) {
+				//draw the column of rows
+				while (_columnIndex[i] < ((kViewPortCW + 1) * (kViewPortCH + 1))) {
+
+					k = _myModLCNM[i][_columnIndex[i]];
+					if ((rowY - _tChrDy[k]) < _columnTop[i]) {
+						break;
+					}
+					if (_tIsBackground[k] == 0) {
+						// If it's a background tile, we already drew it (why is it in here then??)
+						if (_tChrMask[k] >= 0x8000) {
+							// Right Mask, draw lower right hand corner (LRHC)
+							drawLRHC(_myCNM[i][_columnIndex[i]], _columnTop[i], _columnX[i]);
+
+						} else if (_tChrMask[k] == 0) {
+							// Floor or cover, draw the whole CHR
+							drawSolid(_myCNM[i][_columnIndex[i]], _columnTop[i], _columnX[i]);
+
+						} else {
+							// Left Mask, draw lower left hand corner (LLHC)
+							drawLLHC(_myCNM[i][_columnIndex[i]], _columnTop[i], _columnX[i]);
+						}
+					}
+					_columnTop[i] += kChrH;
+					_columnIndex += (kViewPortCW + 1);
+				}
+			}
+
+		} else {
+			// If positive, it's a sprite
+			uint16 x = (_sprites[index]._X - _myViewPortX) + kVSX;
+			uint16 y = (_sprites[index]._Y - _myViewPortY) + kVSY;
+			superSprite(index, x, y, _sprites[index]._dSprite->_frames[_sprites[index]._frame], kVSBMW, _screenBuff, kMySuperTop, kMySuperBottom);
+		}
+		n++;
+	} while (n != _num2DrawItems);
+}
+
+void ImmortalEngine::printChr(char c) {
+	// This draws a character from the font sprite table, indexed as an ascii char, using superSprite
+	c &= kMaskASCII;				// Grab just the non-extended ascii part
+
+	if (c == ' ') {
+		_penX += 8;					// A space just moves the position on the screen to draw ahead by the size of a space
+		return;
+	}
+
+	if (c == 0x27) {
+		_penX -= 2;
+	}
+
+	if ((c >= 'A') && (c <= 'Z')) {
+		_penX += 8;
+
+	} else {
+		switch (c) {
+			// Capitals, the health bar icons, and lower case m/w are all 2 chars wide
+			case 'm':
+			case 'w':
+			case 'M':
+			case 'W':
+			case 1:						// Can't use the constant for this for some reason
+			case 0:
+				_penX += 8;
+				break;
+			case 'i':
+				_penX -= 3;
+				break;
+			case 'j':
+			case 't':
+				_penX -= 2;
+				break;
+			case 'l':
+				_penX -= 4;
+			default:
+				break;
+		}
+	}
+
+	uint16 x = _penX + kScreenLeft;
+	if (x < _dataSprites[kFont]._cenX) {
+		return;
+	}
+
+	uint16 y = _penY + kScreenTop;
+	if (y < _dataSprites[kFont]._cenY) {
+		return;
+	}
+
+	superSprite(0, x, y, _dataSprites[kFont]._frames[(int) c], kScreenBMW, _screenBuff, kSuperTop, kSuperBottom);
+	if ((c == 0x27) || (c == 'T')) {
+		_penX -= 2;					// Why is this done twice??
+	}
+
+	_penX += 8;
+}
 
 /*
  *
@@ -97,12 +357,12 @@ void ImmortalEngine::scroll() {}
 
 void ImmortalEngine::addSprite(uint16 x, uint16 y, SpriteName n, int frame, uint16 p) {
 	if (_numSprites != kMaxSprites) {
-		if (x >= (kScreenW + kMaxSpriteLeft)) {
+		if (x >= (kResH + kMaxSpriteLeft)) {
 			x |= kMaskHigh;                         // Make it negative
 		}
 		_sprites[_numSprites]._X = (x << 1) + _viewPortX;
 	
-		if (y >= (kMaxSpriteAbove + kScreenH)) {
+		if (y >= (kMaxSpriteAbove + kResV)) {
 			y |= kMaskHigh;
 		}
 		_sprites[_numSprites]._Y = (y << 1) + _viewPortY;
@@ -148,17 +408,15 @@ void ImmortalEngine::loadSprites() {
 	Common::String spriteNames[] = {"MORESPRITES.SPR", "NORLAC.SPR", "POWWOW.SPR", "TURRETS.SPR",
 									"WORM.SPR", "IANSPRITES.SPR", "LAST.SPR", "DOORSPRITES.SPR",
 									"GENSPRITES.SPR", "DRAGON.SPR", "MORDAMIR.SPR", "FLAMES.SPR",
-									"ROPE.SPR", "RESCUE.SPR", "TROLL.SPR", "GOBLIN.SPR", "ULINDOR.SPR",
-									"SPIDER.SPR", "DRAG.SPR"};
-
-	Common::SeekableReadStream *files[19];
+									"ROPE.SPR", "RESCUE.SPR", "TROLL.SPR", "GOBLIN.SPR", "WIZARDA.SPR",
+									"WIZARDB.SPR", "ULINDOR.SPR", "SPIDER.SPR", "DRAG.SPR"};
 
 	// Number of sprites in each file
-	int spriteNum[] = {10, 5, 7, 10, 4, 6, 3, 10, 5, 3, 2, 1, 3, 2, 9, 10, 9, 10, 9};
+	int spriteNum[] = {10, 5, 7, 10, 4, 6, 3, 10, 5, 3, 2, 1, 3, 2, 9, 10, 8, 3, 9, 10, 9};
 
 	// Pairs of (x,y) for each sprite
 	// Should probably have made this a 2d array, oops
-	uint8 centerXY[] = {16,56, 16,32, 27,39, 16,16, 32,16, 34,83, 28,37, 8,12, 8,19, 24,37,
+	uint16 centerXY[] = {16,56, 16,32, 27,39, 16,16, 32,16, 34,83, 28,37, 8,12, 8,19, 24,37,
 	/* Norlac      */   46,18, 40,0, 8,13, 32,48, 32,40,
 	/* Powwow      */   53,43, 28,37, 27,37, 26,30, 26,30, 26,29, 28,25,
 	/* Turrets     */   34,42, 28,37, 24,32, 32,56, 26,56, 8,48, 8,32, 8,14, 8,24, 32,44,
@@ -174,25 +432,25 @@ void ImmortalEngine::loadSprites() {
 	/* Rescue      */   0,112, 0,112,
 	/* Troll       */   28,38, 28,37, 28,37, 31,38, 28,37, 25,39, 28,37, 28,37, 28,37,
 	/* Goblin      */   28,38, 30,38, 26,37, 30,38, 26,37, 26,37, 26,37, 26,37, 26,36, 44,32,
+	/* Wizarda	   */	28,37, 28,37, 28,37, 28,37, 28,37, 28,37, 28,37, 28,37,
+	/* Wizardb	   */   28,37, 28,37, 28,37,
 	/* Ulindor     */   42,42, 42,42, 42,42, 42,42, 42,42, 42,42, 42,42, 42,42, 42,42,
 	/* Spider      */   64,44, 64,44, 64,44, 64,44, 64,44, 64,44, 64,44, 64,44, 64,44, 64,44,
 	/* Drag        */   19,36, 19,36, 19,36, 19,36, 19,36, 19,36, 19,36, 19,36, 19,36};
 
-	// Load all sprite files
-	for (int i = 0; i < 19; i++) {
-		files[i] = loadIFF(spriteNames[i]);
-	}
-
 	// s = current sprite index, f = current file index, n = current number of sprites for this file
 	int s = 0;
-	for (int f = 0; f < 19; f++) {
+	for (int f = 0; f < 21; f++) {
+		// For every sprite file, open it and get the pointer
+		Common::SeekableReadStream *file = loadIFF(spriteNames[f]);
+
 		for (int n = 0; n < (spriteNum[f] * 2); n += 2, s++) {
+			// For every data sprite in the file, make a datasprite and initialize it
 			DataSprite d;
+			initDataSprite(file, &d, n/2, centerXY[s * 2], centerXY[(s * 2) + 1]);
 			_dataSprites[s] = d;
-			setSpriteCenter(files[f], s, centerXY[s * 2], centerXY[(s * 2) + 1]);
 		}
 	}
-
 }
 
 void ImmortalEngine::loadWindow() {
@@ -232,14 +490,14 @@ void ImmortalEngine::loadWindow() {
 void ImmortalEngine::loadFont() {
 	// Initialize the font data sprite
 	Common::SeekableReadStream *f = loadIFF("FONT.SPR");
-
 	DataSprite d;
-	_dataSprites[kFont] = d;
 
 	if (f) {
-		setSpriteCenter(f, kFont, 16, 0);
+		initDataSprite(f, &d, 0, 16, 0);
+		_dataSprites[kFont] = d;
+
 	} else {
-		debug("oh nose :(");
+		debug("file doesn't exit?!");
 	}
 
 }
@@ -281,11 +539,12 @@ Common::SeekableReadStream *ImmortalEngine::loadIFF(Common::String fileName) {
 		f.seek(12);
 		return unCompress(&f, len);
 	}
+	// Gotta remember we just moved the cursor around a bunch, need to reset it to read the file
+	f.seek(SEEK_SET);
 
 	byte *out = (byte *)malloc(f.size());
 	f.read(out, f.size());
 	return new Common::MemoryReadStream(out, f.size(), DisposeAfterUse::YES);
-
 }
 
 
@@ -335,10 +594,10 @@ void ImmortalEngine::setColors(uint16 pal[]) {
 			// Green is already the correct size, being the second nyble (00G0)
 			// Red is in the first nyble of the high byte, so it needs to move right by 4 bits (0R00 -> 00R0)
 			// Blue is the first nyble of the first byte, so it needs to move left by 4 bits (000B -> 00B0)
-			// We also need to repeat the bits so that the colour is the same proportion of 255 as it is 15
+			// We also need to repeat the bits so that the colour is the same proportion of 255 as it is of 15
 			_palRGB[(i * 3)]     = ((pal[i] & kMaskRed) >> 4) | ((pal[i] & kMaskRed) >> 8);
-			_palRGB[(i * 3) + 1] = (pal[i] & kMaskGreen) | ((pal[i] & kMaskGreen) >> 4) ;
-			_palRGB[(i * 3) + 2] = (pal[i] & kMaskBlue) | ((pal[i] & kMaskBlue) << 4);
+			_palRGB[(i * 3) + 1] =  (pal[i] & kMaskGreen)     | ((pal[i] & kMaskGreen) >> 4);
+			_palRGB[(i * 3) + 2] =  (pal[i] & kMaskBlue)      | ((pal[i] & kMaskBlue) << 4);
 		}
 	}
 	// Palette index to update first is 0, and there are 16 colours to update
@@ -382,14 +641,14 @@ void ImmortalEngine::fadePal(uint16 pal[], int count, uint16 target[]) {
 	 * but will not touch the window frame palette. It essentially takes the
 	 * color value nyble, multiplies it by a multiplier, then takes the whole
 	 * number result and inserts it into the word at the palette index of the
-	 * temporary palette. This could I'm sure be done with regular multiplication
+	 * temporary palette. This could I'm sure, be done with regular multiplication
 	 * and division operators, but in case the bits that get dropped are otherwise
 	 * kept, this is a direct translation of the bit manipulation sequence.
 	 */
-	int maskPal[16] = {0xFFFF, 0x0000, 0x0000, 0x0000,
-					   0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
-					   0xFFFF, 0xFFFF, 0xFFFF, 0x0000,
-					   0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
+	uint16 maskPal[16] = {0xFFFF, 0x0000, 0x0000, 0x0000,
+					      0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+					      0xFFFF, 0xFFFF, 0xFFFF, 0x0000,
+					      0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
 
 	uint16 result;
 	uint16 temp;
@@ -397,17 +656,20 @@ void ImmortalEngine::fadePal(uint16 pal[], int count, uint16 target[]) {
 	for (int i = 15; i >= 0; i--) {
 		result = maskPal[i];
 		if (result == 0) {
+			// If the equivalent maskPal entry is 0, then it is a colour we want to fade
 			result = pal[i];
 			if (result != 0xFFFF) {
-				// Blue = 0RGB -> 000B -> 0BBB -> BB0B -> 000B
+				// If we have not reached FFFF in one direction or the other, we keep going
+
+				// Blue = 0RGB -> 000B -> 0Bbb -> bb0B -> 000B
 				result = (xba(mult16((result & kMaskFirst), count))) & kMaskFirst;
 
-				// Green = 0RGB -> 00RG -> 000G -> 0GGG -> GG0G -> 000G -> 00G0 -> 00GB
+				// Green = 0RGB -> 00RG -> 000G -> 0Ggg -> gg0G -> 000G -> 00G0 -> 00GB
 				temp = mult16(((pal[i] >> 4) & kMaskFirst), count);
 				temp = (xba(temp) & kMaskFirst) << 4;
 				result = temp | result;
 
-				// Red = 0RGB -> GB0R -> 000R -> 0RRR -> RR0R -> 000R -> 0R00 -> 0RGB
+				// Red = 0RGB -> GB0R -> 000R -> 0Rrr -> rr0R -> 000R -> 0R00 -> 0RGB
 				temp = xba(pal[i]) & kMaskFirst;
 				temp = xba(mult16(temp, count));
 				temp = xba(temp & kMaskFirst);
@@ -487,9 +749,21 @@ void ImmortalEngine::useDim() {
 void ImmortalEngine::userIO() {}
 void ImmortalEngine::pollKeys() {}
 void ImmortalEngine::noNetwork() {}
-void ImmortalEngine::keyTraps() {}
+
+void ImmortalEngine::waitKey() {
+	bool wait = true;
+	while (wait == true) {
+		if (getInput() == true) {
+			wait = false;
+		}
+	}
+}
+
 void ImmortalEngine::blit8() {}
-void ImmortalEngine::getInput() {}
+bool ImmortalEngine::getInput() {
+	return true;
+}
+
 void ImmortalEngine::addKeyBuffer() {}
 void ImmortalEngine::clearKeyBuff() {}
 
@@ -501,6 +775,63 @@ void ImmortalEngine::clearKeyBuff() {}
  * -----                       -----
  *
  */
+
+void ImmortalEngine::toggleSound() {
+	// Interestingly, this does not mute or turn off the sound, it actually pauses it
+	_themePaused = !_themePaused;
+	fixPause();
+}
+
+void ImmortalEngine::fixPause() {
+	/* The code for this is a little strange, but the idea is that you have
+	 * a level theme, and a combat theme, that can both be active. So first you
+	 * pause the level theme, and then you pause the combat theme.
+	 * The way it does it is weird though. Here's the logic:
+	 * if playing either text or maze song, check if the theme is paused. else, just go ahead and pause.
+	 * Same thing for combat song. A little odd.
+	 */
+
+	// This is a nasty bit of code isn't it? It's accurate to the source though :D
+	switch (_playing) {
+		case kSongText:
+		case kSongMaze:
+			if (_themePaused) {
+				musicUnPause(_themeID);
+				break;
+			}
+		default:
+			musicPause(_themeID);
+			break;
+	}
+
+	// Strictly speaking this should probably be a single function called twice, but the source writes out both so I will too
+	switch (_playing) {
+		case kSongCombat:
+			if (_themePaused) {
+				musicUnPause(_combatID);
+				break;
+			}
+		default:
+			musicPause(_combatID);
+			break;
+	}
+
+}
+
+// *** These two functions will be in music.cpp, they just aren't implemented yet ***
+void ImmortalEngine::musicPause(int sID) {}
+void ImmortalEngine::musicUnPause(int sID) {}
+// ***
+
+Song ImmortalEngine::getPlaying() {
+	return kSongMaze;
+}
+
+void ImmortalEngine::playMazeSong() {
+}
+
+void ImmortalEngine::playCombatSong() {
+}
 
 void ImmortalEngine::loadSingles(Common::String songName) {
 	debug("%s", songName.c_str());

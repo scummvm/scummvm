@@ -77,28 +77,90 @@ enum ColourMask : uint16 {
 	kMaskBlue  = 0x000F
 };
 
-enum InputAction : int {
-	kActionRestart,
-	kActionSound,
-	kActionFire
+enum Screen {											// These are constants that are used for defining screen related arrays
+	kMaxRooms 	  = 16,									// Should probably put this in a different enum
+	kMaxSprites   = 32,									// Number of sprites allowed at once
+	kViewPortCW   = 256 / 64,
+	kViewPortCH   = 128 / kMaxSprites,
+	kMaxDrawItems = kViewPortCH + 1 + kMaxSprites
 };
 
-enum InputDirection : int {
+enum InputAction {
+	kActionNothing,
+	kActionRestart,										// Key "R" <-- Debug?
+	kActionSound,
+	kActionFire,
+	kActionButton,
+	kActionDBGStep										// Debug key for moving engine forward one frame at a time
+};
+
+enum InputDirection {
 	kDirectionUp,
 	kDirectionLeft,
 	kDirectionDown,
 	kDirectionRight
 };
 
+enum ObjFlag : uint8 {
+	kObjUsesFireButton = 0x40,
+	kObjIsInvisible    = 0x20,
+	kObjIsRunning 	   = 0x10,
+	kObjIsChest 	   = 0x08,
+	kObjIsOnGround 	   = 0x04,
+	kObjIsF1 		   = 0x02,
+	kObjIsF2 		   = 0x01
+};
+
+enum Monster {
+	kPlayerID
+};
+
+enum Str {
+	kStrGold
+};
+
+enum CertIndex : uint8 {
+	kCertHits,
+	kCertLevel,
+	kCertLoGameFlags,
+	kCertHiGameFlags,
+	kCertQuickness,
+	kCertInvLo,
+	kCertInvHi,
+	kCertGoldLo,
+	kCertGoldHi
+};
+
+enum Song {
+	kSongNothing,
+	kSongMaze,
+	kSongCombat,
+	kSongText
+};
+
+enum GameFlags : uint8 {
+	kSavedNone = 0,
+	kSavedKing = 1,
+	kSavedAna  = 2
+};
+
+struct Frame {
+	uint16  _deltaX;
+	uint16  _deltaY;
+	uint16  _rectX;
+	uint16  _rectY;
+	  byte *_bitmap;
+};
+
 struct DataSprite {
-	uint8 _cenX;                                        // These are the base center positions
-	uint8 _cenY;
-	byte *_bitmap;                                      // Pointer to actual data
-Common::SeekableReadStream *_file;                      // This will likely be removed later
+	uint16  _cenX;                                      // These are the base center positions
+	uint16  _cenY;
+	uint16  _numFrames;
+Common::Array<Frame> _frames;
 };
 
 struct Sprite {
-	   int  _frame;										// Current frame of the cycle
+	   int  _frame;										// Index of _dSprite._frames[]
 	uint16  _X;
 	uint16  _Y;
 	uint16  _on;										// 1 = active
@@ -106,16 +168,20 @@ struct Sprite {
 DataSprite *_dSprite;
 };
 
-struct Cycle {
-DataSprite *_dSprite;
-	   int  _numCycles;
-	   int *_frames;
+struct ObjType {
+	Str _str;
+	Str _desc;
+	int _size;
+	//_pickup;
+	//_use;
+	//_run;
 };
 
 struct ImmortalGameDescription;
 
 // Forward declaration because we will need the Disk class
 class ProDosDisk;
+class Room;
 
 class ImmortalEngine : public Engine {
 private:
@@ -147,78 +213,154 @@ public:
 	/*
 	 * Constants
 	 */
-	// Screen
-	const int kResH = 320;
-	const int kResV = 200;
-	const int kScreenW = 128;
-	const int kScreenH = 128;
+
+	// Misc constants
+
+	// Screen constants
+	const int kResH 	  = 320;
+	const int kResV 	  = 200;
+	const int kScreenW__  = 128;						// ??? labeled in source as SCREENWIDTH
+	const int kScreenH__  = 128;						// ???
+	const int kViewPortW  = 256;
+	const int kViewPortH  = 128;
 	const int kScreenSize = (kResH * kResV) * 2; 		// The size of the screen buffer is 320x200
-	
+	const int kScreenLeft = 32;
+	const int kScreenTop  = 20;
+	const int kTextLeft   = 8;
+	const int kTextTop    = 4;
+	const int kGaugeX     = 0;
+	const int kGaugeY     = -13;						// ???
+	const int kScreenBMW  = 160;						// Literally no idea yet
+	const int kChrW 	  = 64;
+	const int kChrH  	  = 32;
+	const int kChrLen	  = (kChrW / 2) * kChrH;
+	const int kChrBMW	  = kChrW / 2;
+
+	uint16 _tChrMask[] = {0,0,0,0,-1,1,0,1,-1,0,0,2,0,-1,2,-2,0,-2,1};
+
+	uint16 _isBackground[] = {1,0,0,0,0,0,0,0,
+							  0,1,1,0,0,0,0,0,
+							  0,0,0,
+							  0,0,0,0,0,0,0,0,
+							  0,0,0,0,0,0,0,0,
+							  0};
+
+
 	// Disk offsets
 	const int kPaletteOffset = 21205;					// This is the byte position of the palette data in the disk
 
 	// Sprite constants
-	const int kMaxCycles = 32;
-	const int kMaxSprites = 32;							// Number of sprites allowed at once
 	const int kMaxSpriteAbove = 48;						// Maximum sprite extents from center
 	const int kMaxSpriteBelow = 16;
 	const int kMaxSpriteLeft  = 16;
 	const int kMaxSpriteRight = 16;
-	const int kWizardX = 28;							// Common sprite center for some reason
-	const int kWizardY = 37;
+	const int kMaxSpriteW 	  = 64;
+	const int kMaxSpriteH 	  = 64;
+	const int kSpriteDY		  = 32;
+	const int kVSX			  = kMaxSpriteW;
+	const int kVSY 			  = kSpriteDY;
+	const int kVSBMW		  = (kViewPortW + kMaxSpriteW) / 2;
+	const int kVSLen		  = kVSBMW * (kViewPortH + kMaxSpriteH);
+	const int kVSDY			  = 32; 					// difference from top of screen to top of viewport in the virtual screen buffer
+	const int kMySuperBottom  = kVSDY + kViewPortH;
+	const int kSuperBottom 	  = 200;
+	const int kMySuperTop	  = kVSDY;
+	const int kSuperTop	  	  = 0;
+	const int kViewPortSpX	  = 32;
+	const int kViewPortSpY	  = 0;
+	const int kWizardX 		  = 28;						// Common sprite center for some reason
+	const int kWizardY 		  = 37;
 
+	// Asset constants
+	const char kGaugeOn	   = 1;							// On uses the sprite at index 1 of the font spriteset
+	const char kGaugeOff   = 0;							// Off uses the sprite at index 0 of the font spriteset
+	const char kGaugeStop  = 1;							// Literally just means the final kGaugeOn char to draw
+	const char kGaugeStart = 1;							// First kGaugeOn char to draw
+
+	// General Strings
+	const Common::String kOldGameString = "New game?%";
+	const Common::String kEnterCertificate = "Enter certificate:&-=";
+	const Common::String kBadCertificate = "Invalid certificate.@";
+	const Common::String kCertString = "End of level!&Here is your certificate:&&=";
+	const Common::String kCert2String = "&@";
+	const Common::String kTitle0 = "   Electronic Arts presents&&       The Immortal&&&&      1990 Will Harvey|]]]]]]]]]="; // Might need \ for something
+	const Common::String kTitle4 = "          written by&&         Will Harvey&         Ian Gooding&      Michael Marcantel&       Brett G. Durrett&        Douglas Fulton|]]]]]]]/=";
 	/* 
 	 * 'global' members
 	 */
+
+	// Misc
 	Common::ErrorCode _err;								// If this is not kNoError at any point, the engine will stop
 	 bool _draw 	    = 0;							// Whether the screen should draw this frame
-	 bool _dim 		    = 0;							// Whether the palette is dim
-	 bool _usingNormal  = 0;							// Whether the palette is using normal
 	  int _zero 	    = 0;							// No idea what this is yet
-	uint8 _gameOverFlag = 0;
-	uint8 _levelOver    = 0;
-	uint8 _themePaused  = 0;
-	  int _level 	    = 0;
+	 bool _gameOverFlag = false;
+	uint8 _gameFlags;									// Bitflag array of event flags, but only two were used (saving ana and saving the king) <-- why is gameOverFlag not in this? Lol
+	 bool _themePaused;									// In the source, this is actually considered a bit flag array of 2 bits (b0 and b1). However, it only ever checks for non-zero, so it's effectively only 1 bit.
 	  int _titlesShown  = 0;
 	  int _time 		= 0;
-	  int _promoting    = 0;
-	  int _restart 	    = 0;
+	  int _promoting    = 0;							// I think promoting means the title stuff
+	 bool _restart 	    = false;
 	  int _lastCertLen  = 0;
+	  int _cert = 0;									// This will probably not be an int
 
-	/*
-	 * Input members
-	 */
+	// Level members
+	   int _maxLevels	= 0;							// This is determined when loading in story files
+	   int _level 	    = 0;
+	  bool _levelOver   = false;
+	 Room *_rooms[kMaxRooms];							// Rooms within the level
+
+	// Debug members
+	bool _singleStep;									// Flag for _singleStep mode
+
+	// Input members
 	int _pressedAction;
 	int _heldAction;
 	int _pressedDirection;
 	int _heldDirection;
 
-	/* 
-	 * Asset related members
-	 */
+	// Music members
+	Song _playing;										// Currently playing song
+	int _themeID  = 0;									// Not sure yet tbh
+	int _combatID = 0;
+
+	// Asset members
 		   int	_numSprites = 0;						// This is more accurately actually the index within the sprite array, so _numSprites + 1 is the current number of sprites
 	DataSprite  _font;									// The font sprite data is loaded separate from other sprite stuff
-		  byte *_window;								// Bitmap of the window around the game
-		Sprite  _sprites[32];							// A contiguous series of sprites (this is the same as kMaxSprites, but it can't be used for this)
-		 Cycle  _cycles[32];							// Animation cycle for each sprite slot
+		Sprite  _sprites[kMaxSprites];					// All the sprites shown on screen
 	DataSprite  _dataSprites[kFont+1];					// All the sprite data, indexed by SpriteFile
 
-	/*
-	 * Screen related members
-	 */
+	// Screen members
+	 byte  *_window;									// Bitmap of the window around the game
+	 byte  *_screenBuff;								// The final buffer that will transfer to the screen
+    uint16  _myCNM[(kViewPortCW+1)][(kViewPortCH+1)];
+    uint16  _myModCNM[(kViewPortCW+1)][(kViewPortCH+1)];
+    uint16  _myModLCNM[(kViewPortCW+1)][(kViewPortCH+1)];
+    uint16  _columnX[kViewPortCW+1];
+    uint16  _columnTop[kViewPortCW+1];
+    uint16  _columnIndex[kViewPortCW+1];				// Why the heck is this an entire array, when it's just an index that gets zeroed before it gets used anyway...
+	uint16  _tIndex[kMaxDrawItems];
+	uint16  _tPriority[kMaxDrawItems];
+    uint16  _viewPortX;
+    uint16  _viewPortY;
+    uint16  _myViewPortX;								// Probably mirror of viewportX
+    uint16  _myViewPortY;
+	   int  _lastGauge = 0;								// Mirror for player health, used to update health gauge display
+    uint16  _penX = 0;									// Basically where in the screen we are currently drawing
+    uint16  _penY = 0;
+    uint16  _myUnivPointX;
+    uint16  _myUnivPointY;
+	   int  _num2DrawItems = 0;
 	Graphics::Surface *_mainSurface;
-				 byte *_screenBuff;						// The final buffer that will transfer to the screen
-				uint16 _viewPortX;
-				uint16 _viewPortY;
-	/*
-	 * Palette related members
-	 */
+
+	// Palette members
+	  bool _dim = 0;									// Whether the palette is dim
 	uint16 _palDefault[16];
 	uint16 _palWhite[16];
 	uint16 _palBlack[16];
 	uint16 _palDim[16];
 	  byte _palRGB[48];									// Palette that ScummVM actually uses, which is an RGB conversion of the original
 	   int _dontResetColors = 0;						// Not sure yet
+	  bool _usingNormal  = 0;							// Whether the palette is using normal
 
 
 	/*
@@ -234,6 +376,7 @@ public:
 	void clearScreen();									// Draws a black rectangle on the screen buffer but only inside the frame
 	void whiteScreen();									// Draws a white rectanlge on the screen buffer (but does not do anything with resetColors)
 	void rect(int x, int y, int w, int h);				// Draws a solid rectangle at x,y with size w,h. Also shadows for blit?
+	void printChr(char c);
 	void loadWindow();									// Gets the window.bm file
 	void drawUniv();									// Draw the background, add the sprites, determine draw order, draw the sprites
 	void copyToScreen();								// If draw is 0, just check input, otherwise also copy the screen buffer to the scummvm surface and update screen
@@ -242,8 +385,24 @@ public:
 	void blit40();										// Uses macro blit 40 times
 	void sBlit();
 	void scroll();
+	void makeMyCNM();									// ?
+	void drawBGRND();									// Draw floor parts of leftmask rightmask and maskers
+	void addRows();										// Add rows to drawitem array
+	void addSprites();									// Add all active sprites that are in the viewport, into a list that will be sorted by priority
+	void sortDrawItems();								// Sort said items
+	void drawItems();									// Draw the items over the background
 
-	// Misc engine
+
+	// Music
+	void toggleSound();									// Actually pauses the sound, doesn't just turn it off/mute
+	void fixPause();
+	Song getPlaying();
+	void playMazeSong();
+	void playCombatSong();
+	void doGroan();
+	void musicPause(int sID);
+	void musicUnPause(int sID);
+	void loadSingles(Common::String songName);			// Loads and then parse the maze song
 
 	// Palette
 	void loadPalette();									// Get the static palette data from the disk
@@ -265,7 +424,6 @@ public:
 	// Assets
 	Common::SeekableReadStream *loadIFF(Common::String fileName); // Loads a file and uncompresses if it is compressed
 	void loadFont();									// Gets the font.spr file, and centers the sprite
-	void loadSingles(Common::String songName);			// Loads and then parse the maze song
 	void clearSprites();								// Clears all sprites before drawing the current frame
 	void loadSprites();									// Loads all the sprite files and centers their sprites (in spritelist, but called from kernal)
 	void addSprite(uint16 x, uint16 y, SpriteName n, int frame, uint16 p);
@@ -274,11 +432,11 @@ public:
 	void userIO();										// Get input
 	void pollKeys();									// Buffer input
 	void noNetwork();									// Setup input mirrors
-	void keyTraps();									// Seems to be debug only
+	void waitKey();										// Waits until a key is pressed (until getInput() returns true)
 	void blit8();										// This is actually just input, but it is called blit because it does a 'paddle blit' 8 times
 
 	// These will replace the myriad of hardware input handling from the source
-	void getInput();
+	bool getInput();									// True if there was input, false if not
 	void addKeyBuffer();
 	void clearKeyBuff();
 
@@ -287,47 +445,43 @@ public:
 	 * [Sprites.cpp] Functions from Sprites.GS and spriteList.GS
 	 */
 
-	// ??
-	void setSpriteCenter(Common::SeekableReadStream *f, int num, uint8 cenX, uint8 cenY); // Basically initializes the data sprite
-	 int getNumFrames(int file, int num);
+	// Init
+	void initDataSprite(Common::SeekableReadStream *f, DataSprite *d, int index, uint16 cenX, uint16 cenY); // Initializes the data sprite
+	
+	// Main
+	void superSprite(int s, uint16 x, uint16 y, Frame f, int bmw, byte *dst, int sT, int sB);
 
-	/*
-	 * [Cycle.cpp] Functions from Cyc
-	 */
-
-	/* Unneccessary
-	void cycleInit();
-	void cycleFree();
-	void cycleGetNumFrames();
-	void cycleGetList();*/
-
-	// Misc
-	void cycleNew();									// Adds a cycle to the current list
-	 int getCycleChr();
-	void cycleFreeAll();								// Delete all cycles
-	void cycleGetFile();
-	void cycleGetNum();
-	void cycleGetIndex();
-	void cycleSetIndex();
-	void cycleGetFrame();
-	void cycleAdvance();
 
 	/* 
 	 * [Logic.cpp] Functions from Logic.GS
 	 */
 
-	// Surface level
-	bool trapKeys();									// Poorly named, this checks if the player wants to restart the game
+	// Debug
+	void doSingleStep();								// Let the user advance the engine one frame at a time
 
-	// Misc
+	// Main
+	void trapKeys();									// Poorly named, this checks if the player wants to restart/pause music/use debug step
 	void logicInit();
 	void logic();										// Keeps time, handles win and lose conditions, then general logic
 	void restartLogic();								// This is the actual logic init
 	 int logicFreeze();									// Overcomplicated way to check if game over or level over
+	void updateHitGauge();
+	void drawGauge(int h);
+	bool getCertificate();
+
+	// Misc
+	bool printAnd(const Common::String s);
+	bool fromOldGame();
+	void setGameFlags(uint16 f);
+	void setSavedKing();
+	bool isSavedKing();
+	void setSavedAna();
+	bool isSavedAna();
 	 int getLevel();									// Literally just return _level...
 	void gameOverDisplay();
 	void gameOver();
 	void levelOver();
+
 
 	/*
 	 * [Misc.cpp] Functions from Misc
@@ -343,7 +497,7 @@ public:
 	void myDelay();
 
 	// Text printing
-	void textPrint(int num);
+	bool textPrint(const Common::String s);
 	void textSub();
 	void textEnd();
 	void textMiddle();
@@ -357,7 +511,6 @@ public:
 	// Screen related
 	void inside(int p, int p2, int a);
 	void insideRect(int p, int r);
-	void updateHitGuage();
 
 
 	/*
@@ -373,6 +526,31 @@ public:
 	uint16 getMember(uint16 codeW, uint16 k, uint16 &findEmpty, uint16 start[], uint16 ptk[]);
 	void appendList(uint16 codeW, uint16 k, uint16 &hash, uint16 &findEmpty, uint16 start[], uint16 ptk[], uint16 &tmp);
 
+
+	/*
+	 * [Music.cpp] Functions from Music.cpp
+	 */
+
+	// Misc
+
+
+	/*
+	 * [DrawChr.cpp] Functions from DrawChr.cpp
+	 */
+
+	// Main
+	int mungeCBM(int numChrs);
+	void storeAddr();
+	void mungeSolid();
+	void mungeLRHC();
+	void mungeLLHC();
+	void mungeULHC();
+	void mungeURHC();
+	void drawSolid(int chr, int x, int y);
+	void drawULHC(int chr, int x, int y);
+	void drawURHC(int chr, int x, int y);
+	void drawLLHC(int chr, int x, int y);
+	void drawLRHC(int chr, int x, int y);
 
 
 	/*
