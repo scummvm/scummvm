@@ -24,6 +24,68 @@
 
 namespace Immortal {
 
+enum SpriteFrame {
+	// Chest frames
+	kChest0Frame,
+	kOpenChestFrame,
+	kRingFrame,
+	kKnifeFrame,
+	kDeadGoblinFrame,
+
+	// Normal frames
+	kSwordFrame,
+	kKeyFrame,
+	kYesIconOff,
+	kYesIconOn,
+	kNoIconOff,
+	kNoIconOn,
+	kChoiceFrame,
+	kEraseChoseFrame,
+	kSwordBigFrame,
+	kVaseBigFrame,
+	kVaseFrame,
+	kBrokenFrame,
+	kKeyBigFrame,
+	kBagFrame,
+	kBagBigFrame,
+	kBookBigFrame,
+	kBookFrame,
+	kScrollFrame,
+	kScrollBigFrame,
+	kOkayFrame,
+	kAltarFrame,
+	kGoldBigFrame,
+	kMapBigFrame,
+	kSemblanceFrame,
+	kTrapDoorFrame,
+	kBonesFrame,
+	kSackBigFrame,
+	kSporesFrame,
+	kGemGlintFrame,
+	kStoneFrame,
+	kGreenStoneFrame,
+	kGemBigFrame,
+	kStoneBigFrame,
+	kPileFrame,
+	kNoteBigFrame,
+
+	// 45 - 48 are Merchant frames
+	kMerchantFrame,
+
+	// Remaining frames
+	kCoinBigFrame = 49,
+	kPileBigFrame,
+	kKingFrame,
+	kDeadKingFrame,
+	kBombBigFrame,
+	kRingBigFrame,
+	kKnifeBigFrame,
+	kCarpetBigFrame,
+	kAnaInHoleFrame,
+	kAnaNotInHoleFrame,
+	kInvisRingFrame
+};
+
 enum SpriteName {
 	// Moresprites 10
 	kCandle,
