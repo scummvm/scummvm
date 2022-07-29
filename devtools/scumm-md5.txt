@@ -50,7 +50,7 @@
 # IFS=$OIFS
 #
 maniac	Maniac Mansion
-	2d624d1b214f7faf0094daea65c6d1a6	-1	en	2gs	Apple II	-	-
+	2d624d1b214f7faf0094daea65c6d1a6	1188	en	2gs	Apple II	-	-
 
 	2cb46375dd5cdfd023e2f07e0a21b530	-1	en	C64	C64	Demo	-	Robert Crossfield
 	eea4d9ac2fb6f145945a308e8866915b	-1	en	C64	C64	-	-
@@ -59,16 +59,16 @@ maniac	Maniac Mansion
 	7f45ddd6dbfbf8f80c0c0efea4c295bc	1972	en	DOS	V1	V1	-	Fingolfin
 
 	17f7296f63c78642724f057fd8e736a7	2082	gb	NES	NES	-
-	91d5db93187fab54d823f73bd6441cb6	-1	us	NES	NES	-
-	1c7e7db2cfab1ad62746ab680a634204	-1	fr	NES	NES	-
-	3a5ec90d556d4920976c5578bfbfaf79	-1	de	NES	NES	-
-	b7d37d6b786b5a22deea3b038eca96ca	-1	es	NES	NES	-
-	fa3cb1541f9d7cf99ccbae6249bc150c	-1	it	NES	NES	-
-	6b5a3fef241e90d4b2e77f1e222773ee	-1	se	NES	NES	-
+	91d5db93187fab54d823f73bd6441cb6	2082	us	NES	NES	-
+	1c7e7db2cfab1ad62746ab680a634204	2082	fr	NES	NES	-
+	3a5ec90d556d4920976c5578bfbfaf79	2082	de	NES	NES	-
+	b7d37d6b786b5a22deea3b038eca96ca	2082	es	NES	NES	-
+	fa3cb1541f9d7cf99ccbae6249bc150c	2082	it	NES	NES	-
+	6b5a3fef241e90d4b2e77f1e222773ee	2082	se	NES	NES	-
 
-	e781230da44a44e2f0770edb2b3b3633	-1	en	Amiga	V2	V2	-	dhewg, Andrea Petrucci
+	e781230da44a44e2f0770edb2b3b3633	1988	en	Amiga	V2	V2	-	dhewg, Andrea Petrucci
 	ce7733f185b838e248927c7ba1a04204	-1	fr	Amiga	V2	V2	-	Tobias Fleischer
-	9bc548e179cdb0767009401c094d0895	-1	de	Amiga	V2	V2	-	Norbert Lange
+	9bc548e179cdb0767009401c094d0895	1988	de	Amiga	V2	V2	-	Norbert Lange
 	3cf4b6ff78f735b671d8ccc2bc110b15	-1	es	Amiga	V2	V2	-	vanfanel
 	a570381b028972d891052ee1e51dc011	1988	en	Atari	V2	V2	SS	Andreas Bylund
 	0c331637580950aea2346e012ef2a868	1988	en	Atari	V2	V2	DS	Petr Maruska
@@ -94,9 +94,9 @@ zak	Zak McKracken and the Alien Mindbenders
 	7020931d5a2be0a49d68e7a1882363e4	1896	en	DOS	V1	V1	-	Fingolfin
 	b23f7cd7c304d7dff08e92a96120d5b4	-1	en	DOS	V1	V1	alt?	Andrea Petrucci
 
-	e94c7cc3686fce406d3c91b5eae5a72d	-1	en	Amiga	V2	V2	-	dhweg
-	91469353f7be1b122fa88d23480a1320	-1	fr	Amiga	V2	V2	-	Tobias Fleischer
-	6027e9ca9c35746d95dee2068cec17e5	-1	de	Amiga	V2	V2	-	Norbert Lange
+	e94c7cc3686fce406d3c91b5eae5a72d	1916	en	Amiga	V2	V2	-	dhweg
+	91469353f7be1b122fa88d23480a1320	1916	fr	Amiga	V2	V2	-	Tobias Fleischer
+	6027e9ca9c35746d95dee2068cec17e5	1916	de	Amiga	V2	V2	-	Norbert Lange
 	27b3a4224ad63d5b04627595c1c1a025	-1	it	Amiga	V2	V2	-	Andrea Petrucci
 	d55eff37c2100f5065cde9de428621fa	-1	en	Atari	V2	V2	-
 	613f64f78ea26c7353b2a5940eb61d6a	-1	fr	Atari	V2	V2	-	Andreas Bylund
@@ -156,9 +156,9 @@ indy3	Indiana Jones and the Last Crusade
 	cb8feea195746e042368e2b738766d8b	-1	ko	DOS	VGA	VGA	Fan translation	ScummVM-Kor
 
 loom	Loom
-	4dc780f1bc587a193ce8a97652791438	-1	en	Amiga	EGA	EGA	-	Antti Leimi, Andrea Petrucci
+	4dc780f1bc587a193ce8a97652791438	5748	en	Amiga	EGA	EGA	-	Antti Leimi, Andrea Petrucci
 	39cb9dec16fa16f38d79acd80effb059	-1	All	Amiga	EGA	EGA	IT and FR	Gerald Vincent (IT), Andrea Petrucci (FR)
-	2fe369ad70f52a8cf7ad6077ee64f81a	-1	de	Amiga	EGA	EGA	-	Norbert Lange
+	2fe369ad70f52a8cf7ad6077ee64f81a	5748	de	Amiga	EGA	EGA	-	Norbert Lange
 	48b9f04b348bc5013327753f0d12a144	-1	es	Amiga	EGA	EGA	-	VooD
 	a0a7dea72003933b8b3f8b99b9f7ddeb	-1	en	Atari	No AdLib	EGA	-
 	0e9b01430e31d9fcd94071d433bbc6bf	-1	fr	Atari	No AdLib	EGA	-
@@ -208,10 +208,10 @@ monkey	The Secret of Monkey Island
 	477dbafbd66a53c98416dc01aef019ad	-1	it	DOS	EGA	EGA	4 disk	Andrea Petrucci
 
 	6c2bff0e327f2962e809c2e1a82d7309	8347	en	Amiga	VGA	-	V1.2	dhweg
-	3433be9866ca4261b2d5d25374e3f243	-1	fr	Amiga	VGA	-	-	Gerald Vincent
+	3433be9866ca4261b2d5d25374e3f243	8347	fr	Amiga	VGA	-	-	Gerald Vincent
 	0a212fa35fa8421f31c1f3961272caf0	-1	de	Amiga	VGA	-	V1.1	Andreas Bylund
-	319a4dde52c7960b5aae8a1ec348d918	-1	de	Amiga	VGA	-	V1.2r	ghoostkilla
-	fb66aa42de21675116346213f176a366	-1	it	Amiga	VGA	-	-	Andrea Petrucci
+	319a4dde52c7960b5aae8a1ec348d918	8347	de	Amiga	VGA	-	V1.2r	ghoostkilla
+	fb66aa42de21675116346213f176a366	8347	it	Amiga	VGA	-	-	Andrea Petrucci
 	870d1e3c86bc50846d808d14a36b4e08	-1	es	Amiga	VGA	-	-	Andreas Bylund
 
 	c7890e038806df2bb5c0c8c6f1986ea2	-1	en	DOS	VGA	VGA	8 disk	Andrea Petrucci
@@ -260,8 +260,8 @@ zakloom	Zak McKracken & Loom non-interactive demo
 
 monkey2	Monkey Island 2: LeChuck's Revenge
 	132bff65e6367c09cc69318ce1b59333	11155	en	Amiga	Amiga	-	v1.0 4/8/92	Fingolfin
-	c30ef068add4277104243c31ce46c12b	-1	fr	Amiga	Amiga	-	-	Andreas Bylund
-	da669b20271b85182e9c17a2a37ea02e	-1	de	Amiga	Amiga	-	-	Andreas Bylund, Norbert Lange
+	c30ef068add4277104243c31ce46c12b	11155	fr	Amiga	Amiga	-	-	Andreas Bylund
+	da669b20271b85182e9c17a2a37ea02e	11155	de	Amiga	Amiga	-	-	Andreas Bylund, Norbert Lange
 	11ddf1fde76e3156eb3a38da213f484e	-1	it	Amiga	Amiga	-	-	Andrea Petrucci
 	6ea966b4d660c870b9ee790d1fbfc535	-1	es	Amiga	Amiga	-	-	Andreas Bylund
 	3686cf8f89e102ececf4366e1d2c8126	11135	en	DOS	-	-	v1.0 11/21/91
@@ -281,9 +281,9 @@ monkey2	Monkey Island 2: LeChuck's Revenge
 	a95baf7746f1be4985ad42126993a744	-1	ko	DOS	-	-	Fan translation	ScummVM-Kor
 
 atlantis	Indiana Jones and the Fate of Atlantis
-	3a03dab514e4038df192d8a8de469788	-1	en	Amiga	Amiga	Floppy	-	dhewg
-	20da6fce37805423966aaa8f3c2426aa	-1	fr	Amiga	Amiga	Floppy	-	Joachim Eberhard
-	4f267a901719623de7dde83e47d5b474	-1	de	Amiga	Amiga	Floppy	-	ghoostkilla
+	3a03dab514e4038df192d8a8de469788	12035	en	Amiga	Amiga	Floppy	-	dhewg
+	20da6fce37805423966aaa8f3c2426aa	12035	fr	Amiga	Amiga	Floppy	-	Joachim Eberhard
+	4f267a901719623de7dde83e47d5b474	12035	de	Amiga	Amiga	Floppy	-	ghoostkilla
 	e534d29afb3c6e0ee9dc3d53c5956714	-1	de	Amiga	Amiga	Floppy	alt?	Tobias Fleischer
 	5798972220cd458be2626d54c80f71d7	-1	it	Amiga	Amiga	Floppy	-	Andrea Petrucci
 	15f588e887e857e8c56fe6ade4956168	-1	es	Amiga	Amiga	Floppy	-	VooD
@@ -517,7 +517,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	c0039ad982999c92d0de81910d640fa0	26159	nl	Windows	HE 71	-	-	adutchguy
 	68530d2e15f339fbbf3150b78b4d2ffb	-1	en	Mac	HE 73	-	-	satz
 	6d1baa1065ac5f7b210be8ebe4235e49	26384	nl	Mac	HE 73	-	-	daniel9
-	c782fbbe74a987c3df8ac73cd3e289ed	-1	se	Mac	HE 73	-	-	Torbj?n Andersson
+	c782fbbe74a987c3df8ac73cd3e289ed	-1	se	Mac	HE 73	-	-	Torbj&ouml;n Andersson
 	5ebb57234b2fe5c5dff641e00184ad81	26654	fr	Windows	HE 73	-	-	gist974
 	cf8ef3a1fb483c5c4b1c584d1167b2c4	26618	de	Windows	HE 73	-	-	Oncer
 	1f2e62b5a9c50589fc342285a6bb3a27	-1	he	Windows	HE 73	-	-	e_orz
