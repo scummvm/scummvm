@@ -44,31 +44,15 @@ namespace ICB {
 
 uint32 MAX_MEM_BLOCKS = 0;
 
-Common::File *openDiskFileForBinaryRead(const char *filename) {
-	pxString path = filename;
-	path.ConvertPath();
-	Common::File *result = new Common::File();
-	if (result->open(path.c_str())) {
-		return result;
-	} else {
-		delete result;
-		warning("openDiskFileForBinaryRead(%s) - FAILED", path.c_str());
-		return nullptr;
-	}
-}
-
 Common::SeekableReadStream *openDiskFileForBinaryStreamRead(const Common::String &filename) {
-	// Quick-fix to start replacing FILE with Stream.
-	Common::File *f = openDiskFileForBinaryRead(filename.c_str());
-	if (!f) {
-		return nullptr;
-	}
-	int32 size = f->size();
-	byte *data = (byte *)malloc(size);
-	f->read(data, size);
-	f->close();
-	delete f;
-	Common::MemoryReadStream *stream = new Common::MemoryReadStream(data, size, DisposeAfterUse::YES);
+	pxString path = filename.c_str();
+	path.ConvertPath();
+	Common::SeekableReadStream *stream = nullptr;
+	if (SearchMan.hasFile(path.c_str()))
+		stream = SearchMan.createReadStreamForMember(path.c_str());
+	else
+		error("File not found: %s", path.c_str());
+
 	return stream;
 }
 
