@@ -50,7 +50,7 @@ private:
 	bool showCloudsTitle();
 
 	/**
-	 * Inner implementation of the the Clouds of Xeen intro sequence
+	 * Inner implementation of the Clouds of Xeen intro sequence
 	 */
 	bool showCloudsIntroInner();
 

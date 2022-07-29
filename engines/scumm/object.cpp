@@ -172,7 +172,7 @@ void ScummEngine::clearOwnerOf(int obj) {
 	// Stop the associated object script code (else crashes might occurs)
 	stopObjectScript(obj);
 
-	// If the object is "owned" by a the current room, we scan the
+	// If the object is "owned" by the current room, we scan the
 	// object list and (only if it's a floating object) nuke it.
 	if (getOwner(obj) == OF_OWNER_ROOM) {
 		for (i = 0; i < _numLocalObjects; i++)  {

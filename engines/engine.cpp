@@ -176,7 +176,7 @@ Engine::Engine(OSystem *syst)
 	//
 	// If an engine only used CursorMan.replaceCursor and no cursor has
 	// been setup before, then replaceCursor just uses pushCursor. This
-	// means that that the engine's cursor is never again removed from
+	// means that the engine's cursor is never again removed from
 	// CursorMan. Hence we setup a fake cursor here and remove it again
 	// in the destructor.
 	CursorMan.pushCursor(NULL, 0, 0, 0, 0, 0);

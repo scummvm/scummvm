@@ -1837,7 +1837,7 @@ bool Actor::shouldDrawShadow(int shadowId) {
 		return false;
 
 	// Don't draw a shadow if the shadow caster and the actor are on different sides
-	// of the the shadow plane.
+	// of the shadow plane.
 
 	if (shadow->planeList.size() == 0)
 		return false;

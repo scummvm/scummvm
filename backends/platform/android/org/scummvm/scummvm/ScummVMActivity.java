@@ -2496,7 +2496,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		// Important note: We cannot assume that anything sent here is a relative path on top of the *ONLY* SAF "root" path
-		//                 since the the user could select another SD Card (from multiple inserted or replaces the current one and inserts another)
+		//                 since the user could select another SD Card (from multiple inserted or replaces the current one and inserts another)
 		// TODO Can we translate our path string "/storage/XXXX-XXXXX/folder/doc.ext' a content URI? or a document URI?
 		String[] parts = relPath.split("\\/");
 		for (int i = 0; i < parts.length; i++) {

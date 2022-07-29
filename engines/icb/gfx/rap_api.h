@@ -37,7 +37,7 @@ namespace ICB {
 
 // A bone-bone link
 // tx, ty, tz : is translation
-// parent : is the the parent bone ID
+// parent : is the parent bone ID
 // = nBones means no linkage
 typedef struct BoneLink {
 	int16 tx, ty, tz;
@@ -83,9 +83,9 @@ typedef struct WeightedVertexLink {
 // tsb = weird PSX flag, giving the VRAM texture page to use
 // pad = padding !
 //
-// n0, v0 = index into the the normal and vertex pool for normal/vertex 0
-// n1, v1 = index into the the normal and vertex pool for normal/vertex 1
-// n2, v2 = index into the the normal and vertex pool for normal/vertex 2
+// n0, v0 = index into the normal and vertex pool for normal/vertex 0
+// n1, v1 = index into the normal and vertex pool for normal/vertex 1
+// n2, v2 = index into the normal and vertex pool for normal/vertex 2
 //
 // The .rap file format
 //

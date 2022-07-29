@@ -290,7 +290,7 @@ int32 Router::getRoute() {
 // THE SLIDY PATH ROUTINES
 
 int32 Router::smoothestPath() {
-	// This is the second big part of the route finder and the the only
+	// This is the second big part of the route finder and the only
 	// bit that tries to be clever (the other bits are clever).
 	//
 	// This part of the autorouter creates a list of modules from a set of

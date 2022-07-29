@@ -30,7 +30,7 @@
 using namespace std;
 
 //  **********************************************************************************
-//  SynthFile - An intermediate class to lay out all of the the data necessary for Coll conversion
+//  SynthFile - An intermediate class to lay out all of the data necessary for Coll conversion
 //				to DLS or SF2 formats.  Currently, the structure is identical to
 //DLS.
 //  **********************************************************************************

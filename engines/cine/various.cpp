@@ -1442,7 +1442,7 @@ void removeMessages() {
 			// NOTE: These are really removeOverlay calls that have been deferred.
 			// In Operation Stealth's disassembly elements are removed from the
 			// overlay list right in the drawOverlays function (And actually in
-			// some other places too) and that's where incrementing a the overlay's
+			// some other places too) and that's where incrementing the overlay's
 			// last parameter by one if it's negative and testing it for positivity
 			// comes from too.
 			remove = it->type == 3 || (it->type == 2 && (it->color >= 0 || ++(it->color) >= 0));

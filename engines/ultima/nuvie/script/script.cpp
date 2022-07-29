@@ -2587,7 +2587,7 @@ static int nscript_player_set_karma(lua_State *L) {
 /***
 Decrement the player's alcohol counter (U6)
 
-If value is greater than the counter the the counter is left at zero.
+If value is greater than the counter the counter is left at zero.
 @function player_dec_alcohol
 @param value number to decrement counter by
 @within player
