@@ -4273,11 +4273,11 @@ void ScummEngine::dissolveEffect(int width, int height) {
 			int ht = height;
 
 			if (_enableEGADithering) {
-				if (width == 1 && height == 1) {
+				if (is1x1Pattern) {
 					*_compositeBuf = *src;
 				} else {
-					for (int i = 0; i < height; ++i) {
-						memcpy(_compositeBuf + width * i, src, width);
+					for (int ii = 0; ii < height; ++i) {
+						memcpy(_compositeBuf + width * ii, src, width);
 						src += pitch;
 					}
 				}
