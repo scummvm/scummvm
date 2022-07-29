@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-23 21:18+0000\n"
+"POT-Creation-Date: 2022-07-29 14:23+0000\n"
 "PO-Revision-Date: 2022-06-29 20:10+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -179,9 +179,9 @@ msgstr ""
 #: engines/groovie/script.cpp:652 engines/nancy/dialogs.cpp:101
 #: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:99
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:926
-#: engines/scumm/dialogs.cpp:180 engines/scumm/scumm.cpp:1062
-#: engines/scumm/scumm.cpp:1088 engines/scumm/scumm.cpp:1110
-#: engines/scumm/scumm.cpp:1391 engines/scumm/scumm.cpp:1862
+#: engines/scumm/dialogs.cpp:180 engines/scumm/scumm.cpp:1078
+#: engines/scumm/scumm.cpp:1104 engines/scumm/scumm.cpp:1126
+#: engines/scumm/scumm.cpp:1407 engines/scumm/scumm.cpp:1878
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:531
 #: engines/sword1/animation.cpp:552 engines/sword1/animation.cpp:568
 #: engines/sword1/animation.cpp:576 engines/sword1/control.cpp:888
@@ -4241,7 +4241,7 @@ msgstr "Gjenopprett"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "Hurtiglasting eller -lagring av spill støttes ikke her"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2538
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2554
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4252,7 +4252,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2528
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2544
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4263,7 +4263,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2551
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2567
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7627,7 +7627,7 @@ msgstr "HE v71+-støtte ikke innkompilert"
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "SCUMM v7-8-støtte er ikke innkompilert"
 
-#: engines/scumm/scumm.cpp:245
+#: engines/scumm/scumm.cpp:260
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
 "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
@@ -7639,7 +7639,7 @@ msgstr ""
 "Du kan korrigere bildeformatet ved å kutte skjermbildet til en oppløsning på "
 "320x200 via 'Spillmotor'-fanen."
 
-#: engines/scumm/scumm.cpp:1061
+#: engines/scumm/scumm.cpp:1077
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
@@ -7648,7 +7648,7 @@ msgstr ""
 "Fonter i høy oppløsning vil bli deaktivert.\n"
 "fra den. Musikk vil bli deaktivert."
 
-#: engines/scumm/scumm.cpp:1087
+#: engines/scumm/scumm.cpp:1103
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
@@ -7657,7 +7657,7 @@ msgstr ""
 "Fonter og musepeker i høy oppløsning, samt musikk, vil bli deaktivert.\n"
 "fra den. Musikk vil bli deaktivert."
 
-#: engines/scumm/scumm.cpp:1109
+#: engines/scumm/scumm.cpp:1125
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -7665,7 +7665,7 @@ msgstr ""
 "Kunne ikke finne Macintosh-binærfila «Monkey Island» for å lese\n"
 "instrumenter fra den. Musikk vil bli deaktivert."
 
-#: engines/scumm/scumm.cpp:1388
+#: engines/scumm/scumm.cpp:1404
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -7677,7 +7677,7 @@ msgstr ""
 "Kopier spillet fra sitt opprinnelige lagringsmedium uten bruk av "
 "komprimering."
 
-#: engines/scumm/scumm.cpp:1860
+#: engines/scumm/scumm.cpp:1876
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -7686,7 +7686,7 @@ msgstr ""
 "Ekte MIDI-støtte krever «Roland Upgrade» fra LucasArts,\n"
 "men %s mangler. Bruker AdLib istedet."
 
-#: engines/scumm/scumm.cpp:2971
+#: engines/scumm/scumm.cpp:3004
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
