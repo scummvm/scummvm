@@ -125,9 +125,7 @@ bool cCGProgram::SetVec4f(const tString &asName, float afX, float afY, float afZ
 
 bool cCGProgram::SetMatrixf(const tString &asName, const cMatrixf &mMtx) {
 	Math::Matrix4 mat4;
-	float *vals = mat4.getData();
-	for(int i = 0; i < 16; ++i)
-		vals[i] = mMtx.v[i];
+	mat4.setData(mMtx.v);
 	_shader->setUniform(asName.c_str(), mat4);
 	return true;
 }
