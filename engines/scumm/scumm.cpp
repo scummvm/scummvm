@@ -2885,6 +2885,12 @@ void ScummEngine::restart() {
 	_currentRoom = 0;
 	_currentScript = 0xFF;
 	killAllScriptsExceptCurrent();
+
+	if (_townsScreen && _game.id == GID_MONKEY) {
+		_textSurface.fillRect(Common::Rect(0, 0, _textSurface.w * _textSurfaceMultiplier, _textSurface.h * _textSurfaceMultiplier), 0);
+		_townsScreen->clearLayer(1);
+	}
+
 	setShake(0);
 	_sound->stopAllSounds();
 
