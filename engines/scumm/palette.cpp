@@ -190,6 +190,7 @@ void ScummEngine::resetPalette() {
 
 	int cgaPalIndex = 1;
 	int cgaPalIntensity = 1;
+	_enableEGADithering = false;
 
 	if (_renderMode == Common::kRenderHercA) {
 		setPaletteFromTable(tableHercAPalette, sizeof(tableHercAPalette) / 3);
