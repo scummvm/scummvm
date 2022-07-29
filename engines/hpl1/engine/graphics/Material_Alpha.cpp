@@ -76,7 +76,8 @@ cMaterial_Alpha::cMaterial_Alpha(const tString &asName, iLowLevelGraphics *apLow
 //-----------------------------------------------------------------------
 
 cMaterial_Alpha::~cMaterial_Alpha() {
-	mpProgramManager->Destroy(_fogShader);
+	if (_fogShader)
+		mpProgramManager->Destroy(_fogShader);
 }
 
 //-----------------------------------------------------------------------
