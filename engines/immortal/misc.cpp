@@ -57,7 +57,9 @@ void ImmortalEngine::myDelay() {}
  *
  */
 
-void ImmortalEngine::textPrint(int num) {}
+bool ImmortalEngine::textPrint(const Common::String s) {
+    return true;
+}
 void ImmortalEngine::textSub() {}
 void ImmortalEngine::textEnd() {}
 void ImmortalEngine::textMiddle() {}
@@ -87,10 +89,6 @@ void ImmortalEngine::firePressed() {}
 
 void ImmortalEngine::inside(int p, int p2, int a) {}
 void ImmortalEngine::insideRect(int p, int r) {}
-void ImmortalEngine::updateHitGuage() {}
-
-
-
 
 
 } // namespace Immortal

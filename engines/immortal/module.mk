@@ -1,13 +1,13 @@
 MODULE := engines/immortal
 
 MODULE_OBJS = \
-	immortal.o \
-	disk.o \
 	metaengine.o \
-	compression.o \
+	disk.o \
+	immortal.o \
 	kernal.o \
 	logic.o \
 	sprites.o \
+	compression.o \
 	misc.o \
 	cycle.o
 
