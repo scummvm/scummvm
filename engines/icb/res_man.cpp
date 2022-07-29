@@ -737,7 +737,7 @@ uint8 *res_man::LoadFile(int32 &cluster_search, RMParams *params) {
 	}
 
 	// align to 8 byte boundary in length so that next resource will adjoin legally
-	// so, the the file was 5 bytes int32 it would end up being 8 bytes int32
+	// so, the file was 5 bytes int32 it would end up being 8 bytes int32
 	adj_len = (params->len + 7) & ~7;
 
 	if (adj_len >= total_pool)

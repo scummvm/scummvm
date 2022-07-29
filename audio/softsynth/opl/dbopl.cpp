@@ -907,7 +907,7 @@ Channel* Channel::BlockTemplate( Chip* chip, Bit32u samples, Bit32s* output ) {
 	default:
 		break;
 	}
-	//Init the operators with the the current vibrato and tremolo values
+	//Init the operators with the current vibrato and tremolo values
 	Op( 0 )->Prepare( chip );
 	Op( 1 )->Prepare( chip );
 	if ( mode > sm4Start ) {
@@ -1066,7 +1066,7 @@ INLINE Bit32u Chip::ForwardLFO( Bit32u samples ) {
 		lfoCounter &= (LFO_MAX - 1);
 		//Maximum of 7 vibrato value * 4
 		vibratoIndex = ( vibratoIndex + 1 ) & 31;
-		//Clip tremolo to the the table size
+		//Clip tremolo to the table size
 		if ( tremoloIndex + 1 < TREMOLO_TABLE  )
 			++tremoloIndex;
 		else

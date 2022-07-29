@@ -213,7 +213,7 @@ bool FrameWindow::showClosingScreen() {
 	_mainChildWindow->showWindow(kWindowShow);
 	_mainChildWindow->setFocus();
 
-	// Start the the title sequence
+	// Start the title sequence
 	((TitleSequenceWindow *)_mainChildWindow)->playTitleSequence();
 
 	// Empty the input queue

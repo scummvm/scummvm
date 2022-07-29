@@ -1291,7 +1291,7 @@ static const SciMessageWorkaroundEntry messageWorkarounds[] = {
 	{ GID_GK1,           SCI_MEDIA_FLOPPY, K_LANG_NONE,     -1,  420,   4,   8,   3,  1, { MSG_WORKAROUND_REMAP,    420,   4,   8,   7,  1,  0,   0,   0, nullptr } },
 	// Clicking money on Loreli when sitting or dancing in room 420 - bug #10819
 	//  The script transposes sitting vs dancing responses, passes an invalid cond for one of them, and the
-	//  audio36 for the the other has the wrong tuple, which we fix in the audio36 workarounds.
+	//  audio36 for the other has the wrong tuple, which we fix in the audio36 workarounds.
 	{ GID_GK1,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  420,   2,  32,   3,  1, { MSG_WORKAROUND_REMAP,    420,   2,  32,   0,  1,  0,   0,   0, nullptr } },
 	{ GID_GK1,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  420,   2,  32,   0,  1, { MSG_WORKAROUND_REMAP,    420,   2,  32,   2,  1,  0,   0,   0, nullptr } },
 	// Clicking one of Gabriel's letters on Gerde in room 120 after getting his address in some versions

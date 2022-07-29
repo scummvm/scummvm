@@ -289,7 +289,7 @@ void _remora::SetUpRemora() {
 	// Prepare the Remora casing.
 	SetUpSurfaceForBitmap(REMORA_BITMAP_REMORA, m_sCasingSourceRectangle, m_sCasingTargetRectangle, m_nCasingSurfaceID);
 
-	// Draw the the casing.
+	// Draw the casing.
 	surface_manager->Blit_surface_to_surface(m_nCasingSurfaceID, m_nRemoraSurfaceID, &m_sCasingSourceRectangle, &m_sCasingTargetRectangle);
 
 	// Set up the sprites that flash when text goes off the top or botttom of the screen.

@@ -39,7 +39,7 @@ namespace AGT {
 
    Ideally, a port to a new platform should only need to modify this
 	file, the makefile, os_<whatever>.c, and possibly filename.c.  (In
-	practice, you may also need to tweak the the high-level I/O code
+	practice, you may also need to tweak the high-level I/O code
 	in interface.c or the memory-allocation code in util.c.  If you
 	find yourself needing to do more than that, get in touch with me.)  */
 

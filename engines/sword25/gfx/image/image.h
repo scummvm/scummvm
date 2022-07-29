@@ -77,7 +77,7 @@ public:
 	                The default value is 0.
 	    @param PosY the position on the Y-axis in the target image in pixels where the image is supposed to be rendered.<br>
 	                The default value is 0.
-	    @param Flipping how the the image should be flipped.<br>
+	    @param Flipping how the image should be flipped.<br>
 	                    The default value is Graphics::FLIP_NONE (no flipping)
 	    @param pSrcPartRect Pointer on Common::Rect which specifies the section to be rendered. If the whole image has to be rendered the Pointer is NULL.<br>
 	                        This referes to the unflipped and unscaled image.<br>

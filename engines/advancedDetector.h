@@ -493,7 +493,7 @@ public:
 	/**
 	 * Return the name of the engine plugin based on the engineID.
 	 *
-	 * The the engineID must match the one from MetaEngine.
+	 * The engineID must match the one from MetaEngine.
 	 *
 	 * @see MetaEngine::getName().
 	 */

@@ -4840,7 +4840,7 @@ void OptionsManager::AnimateSlotsPaging() {
 				DrawMovieSlots(m_movieOffset - M_NUMBER_OF_VISIBLE_MOVIE_SLOTS, m_mySlotSurface1ID);
 			}
 
-			// Blit this surface the the screen with animating offsets and transparency
+			// Blit this surface the screen with animating offsets and transparency
 			surface_manager->Blit_surface_to_surface(m_mySlotSurface1ID, working_buffer_id, &m_pageOn_from, &m_pageOn_dest, DDBLT_KEYSRC);
 		}
 
@@ -4863,7 +4863,7 @@ void OptionsManager::AnimateSlotsPaging() {
 				DrawMovieSlots(m_movieOffset, m_mySlotSurface1ID);
 			}
 
-			// Blit this surface the the screen with animating offsets and transparency
+			// Blit this surface the screen with animating offsets and transparency
 			surface_manager->Blit_surface_to_surface(m_mySlotSurface1ID, working_buffer_id, &m_pageOff_from, &m_pageOff_dest, DDBLT_KEYSRC);
 		}
 
@@ -4924,7 +4924,7 @@ void OptionsManager::AnimateSlotsPaging() {
 				DrawMovieSlots(m_movieOffset + M_NUMBER_OF_VISIBLE_MOVIE_SLOTS, m_mySlotSurface1ID);
 			}
 
-			// Blit this surface the the screen with animating offsets and transparency
+			// Blit this surface the screen with animating offsets and transparency
 			surface_manager->Blit_surface_to_surface(m_mySlotSurface1ID, working_buffer_id, &m_pageOn_from, &m_pageOn_dest, DDBLT_KEYSRC);
 		}
 
@@ -4946,7 +4946,7 @@ void OptionsManager::AnimateSlotsPaging() {
 				DrawMovieSlots(m_movieOffset, m_mySlotSurface1ID);
 			}
 
-			// Blit this surface the the screen with animating offsets and transparency
+			// Blit this surface the screen with animating offsets and transparency
 			surface_manager->Blit_surface_to_surface(m_mySlotSurface1ID, working_buffer_id, &m_pageOff_from, &m_pageOff_dest, DDBLT_KEYSRC);
 		}
 

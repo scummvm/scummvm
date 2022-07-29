@@ -210,7 +210,7 @@ void WidgetFiles::handleEvents() {
 		}
 	}
 
-	// Only redraw the window if the the scrollbar position has changed
+	// Only redraw the window if the scrollbar position has changed
 	if (ui._scrollHighlight != oldHighlight || oldScrollIndex != _savegameIndex || _selector != _oldSelector)
 		render(RENDER_NAMES_AND_SCROLLBAR);
 	_oldSelector = _selector;

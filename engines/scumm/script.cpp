@@ -688,8 +688,8 @@ void ScummEngine::writeVar(uint var, int value) {
 
 		// Unlike the PC version, the Macintosh version of Loom appears
 		// to hard-code the drawing of the practice mode box. This is
-		// handled by script 27 in both versions, but wherease the PC
-		// version draws the notes, the the Mac version this just sets
+		// handled by script 27 in both versions, but whereas the PC
+		// version draws the notes, the Mac version just sets
 		// variables 50 and 54.
 		//
 		// In this script, the variables are set to the same value but

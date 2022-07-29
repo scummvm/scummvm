@@ -30,7 +30,7 @@ namespace AGT {
  * Glk interface for AGiliTy 1.1.1.1
  * -------------------------------
  *
- * This module contains the the Glk porting layer for AGiliTy.  It
+ * This module contains the Glk porting layer for AGiliTy.  It
  * defines the Glk arguments list structure, the entry points for the
  * Glk library framework to use, and all platform-abstracted I/O to
  * link to Glk's I/O.

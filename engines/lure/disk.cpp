@@ -83,7 +83,7 @@ void Disk::openFile(uint8 fileNum) {
 	if (_fileNum != 0xff) delete _fileHandle;
 	_fileNum = fileNum;
 
-	// Open up the the new file
+	// Open up the new file
 	_fileHandle = new Common::File();
 
 	char sFilename[10];

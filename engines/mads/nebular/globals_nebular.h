@@ -271,7 +271,7 @@ enum {
 };
 
 /* Section #7 */
-// Status of the the bottle
+// Status of the bottle
 enum {
 	BOTTLE_EMPTY = 0, BOTTLE_ONE_QUARTER_FULL = 1, BOTTLE_HALF_FULL = 2,
 	BOTTLE_THREE_QUARTERS_FULL = 3, BOTTLE_FULL = 4

@@ -1475,7 +1475,7 @@ void GfxFont::writeString(const char *s, int numChars) {
 }
 
 /**
- * Writes the the specified string at the current text position
+ * Writes the specified string at the current text position
  *
  * @s String to display
  */

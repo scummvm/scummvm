@@ -80,7 +80,7 @@ struct picture {
  * between calls is about 100 milliseconds.
  * Each call to ms_animate() will fill in the arguments with the address
  * and size of an array of ms_position structures (see below), each of
- * which holds an an animation frame number and x and y co-ordinates. To
+ * which holds an animation frame number and x and y co-ordinates. To
  * display the animation, decode all the animation frames (discussed below)
  * from a single call to ms_animate() and display each one over the main picture.
  * If your port does not support animations, define NO_ANIMATION.

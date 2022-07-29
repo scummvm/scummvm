@@ -180,7 +180,7 @@ static int32 compDecode(byte *src, byte *dst) {
 int32 decompressADPCM(byte *compInput, byte *compOutput, int channels) {
 	byte *src;
 
-	// Decoder for the the IMA ADPCM variants used in COMI.
+	// Decoder for the IMA ADPCM variants used in COMI.
 	// Contrary to regular IMA ADPCM, this codec uses a variable
 	// bitsize for the encoded data.
 
