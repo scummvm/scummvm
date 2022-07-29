@@ -124,7 +124,7 @@ enum SpriteName {
 	kRescue1,
 	kRescue2,
 
-	// Troll 9
+	// Troll 9 (8 directions + ?)
 	kTroll0,
 	kTroll1,
 	kTroll2,
@@ -135,7 +135,7 @@ enum SpriteName {
 	kTroll7,
 	kTroll8,
 
-	// Goblin 10
+	// Goblin 10 (8 directions + ?)
 	kGoblin0,
 	kGoblin1,
 	kGoblin2,
@@ -147,7 +147,22 @@ enum SpriteName {
 	kGoblin8,
 	kGoblin9,
 
-	//Ulindor 9
+	// Wizard A 8 (8 directions)
+	kWizard0,
+	kWizard1,
+	kWizard2,
+	kWizard3,
+	kWizard4,
+	kWizard5,
+	kWizard6,
+	kWizard7,
+
+	// Wizard B 3 (3 ?)
+	kWizard8,
+	kWizard9,
+	kWizard10,
+
+	// Ulindor 9 (8 directions + ?)
 	kUlindor0,
 	kUlindor1,
 	kUlindor2,
@@ -158,7 +173,7 @@ enum SpriteName {
 	kUlindor7,
 	kUlindor8,
 
-	//Spider 10
+	// Spider 10 (probably not directions)
 	kSpider0,
 	kSpider1,
 	kSpider2,
@@ -170,7 +185,7 @@ enum SpriteName {
 	kSpider8,
 	kSpider9,
 
-	//Drag 9
+	// Drag 9 (probably not directions)
 	kDrag0,
 	kDrag1,
 	kDrag2,
