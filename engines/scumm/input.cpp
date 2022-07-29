@@ -210,7 +210,7 @@ void ScummEngine::parseEvent(Common::Event event) {
 				_mouse.y = _mouse.y * 4 / 7;
 			}
 
-		} else if (_macScreen || (_useCJKMode && _textSurfaceMultiplier == 2) || _renderMode == Common::kRenderCGA_BW) {
+		} else if (_macScreen || (_useCJKMode && _textSurfaceMultiplier == 2) || _renderMode == Common::kRenderCGA_BW || _enableEGADithering) {
 			_mouse.x >>= 1;
 			_mouse.y >>= 1;
 		}

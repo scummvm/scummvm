@@ -1065,6 +1065,8 @@ protected:
 	// Screen rendering
 	byte *_compositeBuf;
 	byte *_hercCGAScaleBuf = nullptr;
+	bool _enableEGADithering = false;
+	bool _supportsEGADithering = false;
 
 	virtual void drawDirtyScreenParts();
 	void updateDirtyScreen(VirtScreenNumber slot);
@@ -1077,6 +1079,7 @@ protected:
 	void mac_undrawIndy3CreditsText();
 
 	const byte *postProcessDOSGraphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const;
+	const byte *ditherVGAtoEGA(int &pitch, int &x, int &y, int &width, int &height) const;
 
 public:
 	VirtScreen *findVirtScreen(int y);
@@ -1174,6 +1177,9 @@ protected:
 	int remapRoomPaletteColor(int r, int g, int b);
 	void mapVerbPalette(int idx);
 	int remapVerbPaletteColor(int r, int g, int b);
+
+	// EGA dithering mode color tables for certain VGA games like MI2, LOOM Talkie...
+	byte *_egaColorMap[2];
 
 public:
 	uint16 _extraBoxFlags[65];

@@ -99,6 +99,11 @@ void ScummEngine_v5::animateCursor() {
 }
 
 void ScummEngine_v6::setCursorHotspot(int x, int y) {
+	if (_enableEGADithering) {
+		x <<= 1;
+		y <<= 1;
+	}
+
 	_cursor.hotspotX = x;
 	_cursor.hotspotY = y;
 }
@@ -152,18 +157,33 @@ void ScummEngine::setCursorFromBuffer(const byte *ptr, int width, int height, in
 	uint size;
 	byte *dst;
 
-	size = width * height * _bytesPerPixel;
+	int sclW = _enableEGADithering ? 2 : 1;
+	int sclH = _enableEGADithering ? 2 : 1;
+
+	size = width * sclW * height * sclH * _bytesPerPixel;
 	if (size > sizeof(_grabbedCursor))
 		error("grabCursor: grabbed cursor too big");
 
-	_cursor.width = width;
-	_cursor.height = height;
+	_cursor.width = width * sclW;
+	_cursor.height = height * sclH;
 	_cursor.animate = 0;
 
 	dst = _grabbedCursor;
 	for (; height; height--) {
-		memcpy(dst, ptr, width * _bytesPerPixel);
-		dst += width * _bytesPerPixel;
+		for (int h2 = sclH; h2; --h2) {
+			const byte *s1 = ptr;
+			const byte *s2 = 0;
+			byte *d = dst;
+			for (int w = width; w; --w) {
+				for (int w2 = sclW; w2; --w2) {
+					s2 = s1;
+					for (int w3 = _bytesPerPixel; w3; --w3)
+						*d++ = *s2++;
+				}
+				s1 = s2;
+			}
+			dst += width * sclW * _bytesPerPixel;
+		}
 		ptr += pitch;
 	}
 
@@ -700,8 +720,8 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 		memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
 	}
 
-	int sclW = (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) ? 2 : _textSurfaceMultiplier;
-	int sclH = (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) ? 1 : _textSurfaceMultiplier;
+	int sclW = (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG || _enableEGADithering) ? 2 : _textSurfaceMultiplier;
+	int sclH = (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) ? 1 : (_enableEGADithering ? 2 : _textSurfaceMultiplier);
 	int sclW2 = _outputPixelFormat.bytesPerPixel * sclW;
 
 	_cursor.hotspotX = _cursorHotspots[2 * _currentCursor] * sclW;

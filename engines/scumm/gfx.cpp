@@ -628,14 +628,12 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	assert(x >= 0 && width <= vs->pitch);
 	assert(_textSurface.getPixels());
 
-	// Some extra clipping/alignment for certain render modes. This is from the MI1EGA interpreter where it actually matters.
-	// The dithering patterns require the alignment, otherwise there will be visible glitches. For V3, the original interpreter
-	// actually does this for all graphics modes... 
-	if (_game.version > 2 && (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderHercG || _renderMode == Common::kRenderHercA)) {
-		top &= ~3;
-		if (bottom & 3)
-			bottom = (bottom + 4) & ~3;
-	}
+	// Some extra vertical alignment for certain render modes. It matters for MI1EGA. The dithering patterns require the alignment,
+	// otherwise there will be visible glitches. It can be found in the original interpreters.
+	int align = (_game.version > 2 && (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderHercG || _renderMode == Common::kRenderHercA)) ? 4 : (_enableEGADithering ? 2 : 1);
+	top &= ~(align - 1);
+	if (bottom & (align - 1))
+		bottom = (bottom + align) & ~(align - 1);
 
 	// Perform some clipping
 	if (width > vs->w - x)
@@ -780,6 +778,9 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 			y *= m;
 			width *= m;
 			height *= m;
+		} else if (_enableEGADithering) {
+			// EGA mode for certain VGA versions (MI2, LOOM Talkie)
+			src = ditherVGAtoEGA(pitch, x, y, width, height);
 		} else if (_game.platform == Common::kPlatformDOS && _game.version < 5) {
 			// CGA and Hercules modes for MM/ZAK v1/v2, INDY3, LOOM, MI1EGA
 			src = postProcessDOSGraphics(vs, pitch, x, y, width, height);
@@ -962,6 +963,32 @@ const byte *ScummEngine::postProcessDOSGraphics(VirtScreen *vs, int &pitch, int 
 	}
 
 	return res;
+}
+
+const byte *ScummEngine::ditherVGAtoEGA(int &pitch, int &x, int &y, int &width, int &height) const {
+	pitch <<= 1;
+	int pitch2 = (pitch - width) << 1;
+
+	uint8 *dst0 = _hercCGAScaleBuf;
+	uint8 *dst1 = _hercCGAScaleBuf + pitch;
+	uint8 *src = _compositeBuf;
+
+	for (int i = height, st = 1; i; --i, st ^= 1) {
+		for (int ii = width; ii; --ii) {
+			byte in = *src++;
+			*dst0++ = *dst1++ = _egaColorMap[st][in];
+			*dst0++ = *dst1++ = _egaColorMap[st ^ 1][in];
+		}
+		dst0 += pitch2;
+		dst1 += pitch2;
+	}
+
+	x <<= 1;
+	y <<= 1;
+	width <<= 1;
+	height <<= 1;
+
+	return _hercCGAScaleBuf;
 }
 
 #pragma mark -
@@ -4238,11 +4265,18 @@ void ScummEngine::dissolveEffect(int width, int height) {
 			mac_drawStripToScreen(vs, y, x, y + vs->topline, width, height);
 		else if (IS_ALIGNED(width, 4))
 			drawStripToScreen(vs, x, width, y, y + height);
-		else
-			// This is not suitable for any render mode that requires post-processing of the pixels (CGA; Hercules...).
-			// Currently, non of the targets in concern will arrive here, but we will have to look at this again if we
-			// want to support things like the EGA mode of LOOM VGA Talkie...
-			_system->copyRectToScreen(vs->getPixels(x, y), vs->pitch, x, y + vs->topline, width, height);
+		else {
+			const byte *src = vs->getPixels(x, y);
+			int pitch = vs->pitch;
+			y += vs->topline;
+			int wd = width;
+			int ht = height;
+
+			if (_enableEGADithering)
+				src = ditherVGAtoEGA(pitch, x, y, wd, ht);
+
+			_system->copyRectToScreen(src, vs->pitch, x, y, wd, ht);
+		}
 
 		// Test for 1x1 pattern...
 		canHalt |= is1x1Pattern && ++blits >= blitsBeforeRefresh;
