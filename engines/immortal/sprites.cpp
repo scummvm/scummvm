@@ -31,17 +31,49 @@ namespace Immortal {
  *
  */
 
-void ImmortalEngine::setSpriteCenter(Common::SeekableReadStream *f, int num, uint8 cenX, uint8 cenY) {
-	// Very simple, just initialize what we can of the data sprite
-	_dataSprites[num]._cenX = cenX;
-	_dataSprites[num]._cenY = cenY;
-	_dataSprites[num]._file = f;
+// This function is basically setSpriteCenter + getSpriteInfo from the source
+void ImmortalEngine::initDataSprite(Common::SeekableReadStream *f, DataSprite *d, int index, uint16 cenX, uint16 cenY) {
+	// We set the center X and Y, for some reason
+	d->_cenX = cenX;
+	d->_cenY = cenY;
+
+	// But now we need to get the rest of the meta data for each frame
+	// index is the index of the sprite within the file (not the same as the sprite name enum)
+	index *= 8;
+	f->seek(index);
+
+	index = f->readUint16LE();
+	uint16 numFrames = f->readUint16LE();
+
+	d->_numFrames = numFrames;
+	debug("Number of Frames: %d", numFrames);
+
+	// Only here for dragon, but just in case, it's a high number so it should catch others
+	if (numFrames >= 0x0200) {
+		debug("** Crazy large value, this isn't a frame number **");
+		return;
+	}
+
+	Common::Array<Frame> frames;
+
+	for (int i = 0; i < numFrames; i++) {
+		Frame newFrame;
+		f->seek(index + (i*2));
+		int ptrFrame = f->readUint16LE();
+		f->seek(ptrFrame);
+		newFrame._deltaX = f->readUint16LE() << 1;      // the ASL might not be required, depending on how I translate the sprite drawing
+		newFrame._deltaY = f->readUint16LE();
+		newFrame._rectX = f->readUint16LE();
+		newFrame._rectY = f->readUint16LE();
+		frames.push_back(newFrame);
+		// This is probably where we will get the bitmap when I know how to get it
+	}
+
+	d->_frames = frames;
 }
 
 
-
-
-
+void ImmortalEngine::superSprite(int s, uint16 x, uint16 y, Frame f, int bmw, byte *dst, int sT, int sB) {}
 
 } // namespace Immortal
 
