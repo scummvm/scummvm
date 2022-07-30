@@ -30,6 +30,11 @@
 #include "hpl1/engine/resources/SoundManager.h"
 
 #include "hpl1/engine/math/Math.h"
+#include "audio/mixer.h"
+#include "common/system.h"
+#include "common/debug.h"
+
+#define mixer g_system->getMixer()
 
 namespace hpl {
 
@@ -39,8 +44,8 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cOpenALSoundChannel::cOpenALSoundChannel(iSoundData *apData, int alChannel, cSoundManager *apSoundManger)
-	: iSoundChannel(apData, apSoundManger) {
+cOpenALSoundChannel::cOpenALSoundChannel(iSoundData *apData, Audio::SoundHandle handle, cSoundManager *apSoundManger)
+	: iSoundChannel(apData, apSoundManger), _handle(handle), _playing(true) {
 #if 0
   		mlChannel = alChannel;
 
@@ -65,6 +70,9 @@ cOpenALSoundChannel::cOpenALSoundChannel(iSoundData *apData, int alChannel, cSou
 //-----------------------------------------------------------------------
 
 cOpenALSoundChannel::~cOpenALSoundChannel() {
+	mixer->stopHandle(_handle);
+	if (mpSoundManger)
+		mpSoundManger->Destroy(mpData);
 #if 0
   		if(mlChannel>=0)
 			OAL_Source_Stop ( mlChannel );
@@ -92,6 +100,8 @@ void cOpenALSoundChannel::Play() {
 //-----------------------------------------------------------------------
 
 void cOpenALSoundChannel::Stop() {
+	mixer->stopHandle(_handle);
+	mbStopUsed = true;
 #if 0
   		//Log("Stopping %s - Source %d Ref %d\n",mpData->GetName().c_str(), mlChannel & 0xFFF, (mlChannel & 0x7ffff000) >> 12);
 		OAL_Source_Stop ( mlChannel );
@@ -103,7 +113,9 @@ void cOpenALSoundChannel::Stop() {
 
 //-----------------------------------------------------------------------
 
-void cOpenALSoundChannel::SetPaused(bool abX) {
+void cOpenALSoundChannel::SetPaused(bool toggle) {
+	mixer->pauseHandle(_handle, toggle);
+	_playing = toggle;
 #if 0
   //		Log("Setting %s %spaused! - Source %d\n",mpData->GetName().c_str(),abX?"":"un", mlChannel);
 
@@ -129,7 +141,9 @@ void cOpenALSoundChannel::SetSpeed(float afSpeed) {
 
 //-----------------------------------------------------------------------
 
-void cOpenALSoundChannel::SetVolume(float afVolume) {
+void cOpenALSoundChannel::SetVolume(float volume) {
+	assert(0.f <= volume && volume <= 1.f);
+	mixer->setChannelVolume(_handle, static_cast<byte>(volume * 255.f));
 #if 0
   		mfVolume = afVolume;
 
@@ -140,6 +154,8 @@ void cOpenALSoundChannel::SetVolume(float afVolume) {
 //-----------------------------------------------------------------------
 
 void cOpenALSoundChannel::SetLooping(bool abLoop) {
+	mbLooping = abLoop;
+	mixer->loopChannel(_handle);
 #if 0
   		mbLooping = abLoop;
 
@@ -204,10 +220,7 @@ void cOpenALSoundChannel::SetMaxDistance(float afMax) {
 //-----------------------------------------------------------------------
 
 bool cOpenALSoundChannel::IsPlaying() {
-#if 0
-  		return OAL_Source_IsPlaying( mlChannel );
-#endif
-	return false;
+	return _playing;
 }
 //-----------------------------------------------------------------------
 
