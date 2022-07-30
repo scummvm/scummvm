@@ -48,8 +48,6 @@
 #include "hpl1/engine/scene/RenderableContainer.h"
 #include "hpl1/engine/scene/World3D.h"
 #include "hpl1/engine/system/low_level_system.h"
-#include <cstddef>
-#include <sys/types.h>
 
 namespace hpl {
 
