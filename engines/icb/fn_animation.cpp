@@ -1476,9 +1476,9 @@ mcodeFunctionReturnCodes _game_session::fn_apply_anim_y(int32 &, int32 *params) 
 			PXreal yend;
 			PXreal ystart;
 
-			PXFrameEnOfAnim(pAnim->frame_qty - 1, pAnim)->markers[ORG_POS].GetXYZ(&x, &yend, &z);
+			PXmarker_PSX_Object::GetXYZ(&PXFrameEnOfAnim(pAnim->frame_qty - 1, pAnim)->markers[ORG_POS], &x, &yend, &z);
 
-			PXFrameEnOfAnim(0, pAnim)->markers[ORG_POS].GetXYZ(&x, &ystart, &z);
+			PXmarker_PSX_Object::GetXYZ(&PXFrameEnOfAnim(0, pAnim)->markers[ORG_POS], &x, &ystart, &z);
 
 			y_next = yend - ystart;
 

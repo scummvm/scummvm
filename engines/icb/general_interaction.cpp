@@ -68,7 +68,7 @@ bool8 _game_session::Find_interact_marker_in_anim(__mega_set_names animation, PX
 	// INT_TYPE : which means it was a real export of the INT marker on the frame when the anim made the INT marker visible
 
 	PXreal x_org, z_org, unused;
-	PXFrameEnOfAnim(0, pAnim)->markers[ORG_POS].GetXYZ(&x_org, &unused, &z_org);
+	PXmarker_PSX_Object::GetXYZ(&PXFrameEnOfAnim(0, pAnim)->markers[ORG_POS], &x_org, &unused, &z_org);
 
 	for (uint16 frame = 0; frame < pAnim->frame_qty; frame++) {
 		PXframe *frm = PXFrameEnOfAnim(frame, pAnim);
@@ -76,13 +76,13 @@ bool8 _game_session::Find_interact_marker_in_anim(__mega_set_names animation, PX
 
 		if (frm->marker_qty > INT_POS) {
 			PXmarker *marker = &(frm->markers[INT_POS]);
-			uint8 mtype = (uint8)marker->GetType();
+			uint8 mtype = (uint8)PXmarker_PSX_Object::GetType(marker);
 
 			if ((INT0_TYPE == mtype) || (INT_TYPE == mtype)) {
 				// The interact marker exists
 				PXreal x_int, z_int;
 
-				marker->GetXYZ(&x_int, &unused, &z_int);
+				PXmarker_PSX_Object::GetXYZ(marker, &x_int, &unused, &z_int);
 
 				xoff[0] = x_int - x_org;
 				zoff[0] = z_int - z_org;

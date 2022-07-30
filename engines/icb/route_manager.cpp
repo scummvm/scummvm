@@ -1057,8 +1057,8 @@ uint32 _game_session::Animate_points(_route_description *route) {
 	// get motion displacement from currently displayed frame to next one
 	// note that we always read frame+1 for motion of next frame even though the voxel frame itself will be looped back to 0
 	PXreal x1, z1, x2, z2, unused;
-	PXFrameEnOfAnim(L->anim_pc + 1, pAnim)->markers[ORG_POS].GetXYZ(&x1, &unused, &z1);
-	PXFrameEnOfAnim(L->anim_pc, pAnim)->markers[ORG_POS].GetXYZ(&x2, &unused, &z2);
+	PXmarker_PSX_Object::GetXYZ(&PXFrameEnOfAnim(L->anim_pc + 1, pAnim)->markers[ORG_POS], &x1, &unused, &z1);
+	PXmarker_PSX_Object::GetXYZ(&PXFrameEnOfAnim(L->anim_pc, pAnim)->markers[ORG_POS], &x2, &unused, &z2);
 
 	xnext = x1 - x2;
 	znext = z1 - z2;

@@ -483,7 +483,7 @@ mcodeFunctionReturnCodes _game_session::Core_prop_interact(int32 & /*result*/, i
 		for (j = 0; j < M->anim_speed; j++) {
 			PXframe *frame = PXFrameEnOfAnim(L->anim_pc + j, pAnim);
 
-			if ((frame->marker_qty > INT_POS) && (INT_TYPE == (frame->markers[INT_POS].GetType()))) {
+			if ((frame->marker_qty > INT_POS) && (INT_TYPE == (PXmarker_PSX_Object::GetType(&frame->markers[INT_POS])))) {
 				//          run the trigger anim
 				if (!MS->Call_socket(M->target_id, "trigger", &retval)) {
 					Message_box("[%s] interact marker but no trigger script", (const char *)L->GetName());

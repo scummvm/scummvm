@@ -389,7 +389,7 @@ void DrawFrame(const int32 frame) {
 	PXframe *frm = PXFrameEnOfAnim(framenum, pxanim);
 	PXmarker &marker = frm->markers[ORG_POS];
 	float mposx, mposy, mposz;
-	marker.GetXYZ(&mposx, &mposy, &mposz);
+	PXmarker_PSX_Object::GetXYZ(&marker, &mposx, &mposy, &mposz);
 	int32 dy = (int32)mposy;
 
 	g_av_actor->lw.t[0] = 0;

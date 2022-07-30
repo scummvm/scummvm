@@ -109,7 +109,7 @@ void _game_session::Stage_draw_poly() {
 				}
 				PXmarker_PSX &marker = PXFrameEnOfAnim(f, pAnim)->markers[ORG_POS];
 				float dx, dy, dz;
-				marker.GetXYZ(&dx, &dy, &dz);
+				PXmarker_PSX_Object::GetXYZ(&marker, &dx, &dy, &dz);
 
 				// Make the actors orientation matrix
 				int32 pan;

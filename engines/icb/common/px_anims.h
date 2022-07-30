@@ -29,12 +29,11 @@
 
 #include "engines/icb/common/px_common.h"
 
+#include "common/endian.h"
+
 namespace ICB {
 
-#define PSX_PXANIM_SCHEMA 5
-#define PC_PXANIM_SCHEMA 5
-
-#define PXANIM_SCHEMA PC_PXANIM_SCHEMA
+#define PXANIM_SCHEMA 5
 
 #define PXANIM_TAG "Peas"
 #define ORG_POS 0
@@ -50,50 +49,35 @@ namespace ICB {
 #define TRI_TYPE 3
 #define OBJ_TYPE 4
 
-#if PXANIM_SCHEMA == 1
-
-#define TRI_POS 2
-#define TRI_STRING "TRI"
-
-#undef INT_TYPE
-#define INT_TYPE *(uint32 *)INT_STRING
-
-#undef TRI_TYPE
-#define TRI_TYPE *(uint32 *)TRI_STRING
-
-#endif // #if PXANIM_SCHEMA == 1
-
 // PXmarker_PC : the PC version
-class PXmarker_PC {
-private:
+typedef struct {
 	uint32 m_type;
 	float m_x, m_y, m_z;
 	float m_pan;
+} PXmarker_PC;
 
-#if PXANIM_SCHEMA == 1
-	float dummy1, dummy2;
-#endif
-
+// PXmarker_PC : the PC version
+class PXmarker_PC_Object {
 public:
-	void SetType(uint32 type) { m_type = type; }
-	void SetPan(float pan) { m_pan = pan; }
-	void SetXYZ(float x, float y, float z);
+	static void SetType(PXmarker_PC *marker, uint32 type) { marker->m_type = type; }
+	static void SetPan(PXmarker_PC *marker, float pan) { marker->m_pan = pan; }
+	static void SetXYZ(PXmarker_PC *marker, float x, float y, float z);
 
-	uint32 GetType(void) { return m_type; }
-	void GetPan(float *pan) { *pan = m_pan; }
-	void GetXYZ(float *x, float *y, float *z);
+	static uint32 GetType(PXmarker_PC *marker) { return marker->m_type; }
+	static void GetPan(PXmarker_PC *marker, float *pan) { *pan = marker->m_pan; }
+	static void GetXYZ(PXmarker_PC *marker, float *x, float *y, float *z);
 };
 
-inline void PXmarker_PC::SetXYZ(float x, float y, float z) {
-	m_x = x;
-	m_y = y;
-	m_z = z;
+inline void PXmarker_PC_Object::SetXYZ(PXmarker_PC *marker, float x, float y, float z) {
+	marker->m_x = x;
+	marker->m_y = y;
+	marker->m_z = z;
 }
 
-inline void PXmarker_PC::GetXYZ(float *x, float *y, float *z) {
-	*x = m_x;
-	*y = m_y;
-	*z = m_z;
+inline void PXmarker_PC_Object::GetXYZ(PXmarker_PC *marker, float *x, float *y, float *z) {
+	*x = marker->m_x;
+	*y = marker->m_y;
+	*z = marker->m_z;
 }
 
 // PXframe_PC : the PC version //
@@ -108,43 +92,47 @@ typedef struct {
 } PXframe_PC;
 
 // PXmarker_PSX : the PSX version
-class PXmarker_PSX {
-private:
+typedef struct {
 	uint8 m_type;
 	uint8 x8;
 	uint16 x7y9;
 	uint32 y6z15pan11;
+} PXmarker_PSX;
 
+// PXmarker_PSX : the PSX version
+class PXmarker_PSX_Object {
 public:
-	void SetType(uint8 type) { m_type = type; }
-	void SetPackedXYZPan(uint8 _x8, uint16 _x7y9, uint32 _y6z15pan11);
+	static void SetType(PXmarker_PSX *marker, uint8 type) { marker->m_type = type; }
+	static void SetPackedXYZPan(PXmarker_PSX *marker, uint8 _x8, uint16 _x7y9, uint32 _y6z15pan11);
 
-	uint8 GetType(void) const { return m_type; }
+	static uint8 GetType(PXmarker_PSX *marker) { return marker->m_type; }
 
-	void GetPan(float *pan) const;
-	void GetXYZ(float *x, float *y, float *z) const;
+	static void GetPan(PXmarker_PSX *marker, float *pan);
+	static void GetXYZ(PXmarker_PSX *marker, float *x, float *y, float *z);
 };
 
-inline void PXmarker_PSX::SetPackedXYZPan(uint8 _x8, uint16 _x7y9, uint32 _y6z15pan11) {
-	x8 = _x8;
-	x7y9 = _x7y9;
-	y6z15pan11 = _y6z15pan11;
+inline void PXmarker_PSX_Object::SetPackedXYZPan(PXmarker_PSX *marker, uint8 _x8, uint16 _x7y9, uint32 _y6z15pan11) {
+	marker->x8 = _x8;
+	marker->x7y9 = _x7y9;
+	marker->y6z15pan11 = _y6z15pan11;
 }
 
-inline void PXmarker_PSX::GetPan(float *pan) const { *pan = (float)(((y6z15pan11 & 0x7FF) << 1)) / 4096.0f; }
+inline void PXmarker_PSX_Object::GetPan(PXmarker_PSX *marker, float *pan) {
+	*pan = (float)(((marker->y6z15pan11 & 0x7FF) << 1)) / 4096.0f;
+}
 
-inline void PXmarker_PSX::GetXYZ(float *x, float *y, float *z) const {
+inline void PXmarker_PSX_Object::GetXYZ(PXmarker_PSX *marker, float *x, float *y, float *z) {
 	int32 ix, iy, iz;
 
-	ix = ((x8 << 7) | (x7y9 >> 9));
+	ix = ((marker->x8 << 7) | (marker->x7y9 >> 9));
 	if (ix >= 16384)
 		ix = ix - 32768;
 
-	iy = (((x7y9 & 0x1FF) << 6) | (y6z15pan11 >> 26));
+	iy = (((marker->x7y9 & 0x1FF) << 6) | (marker->y6z15pan11 >> 26));
 	if (iy >= 16384)
 		iy = iy - 32768;
 
-	iz = ((y6z15pan11 >> 11) & 0x7FFF);
+	iz = ((marker->y6z15pan11 >> 11) & 0x7FFF);
 	if (iz >= 16384)
 		iz = iz - 32768;
 
@@ -183,21 +171,21 @@ typedef struct {
 
 inline void ConvertPXanim(PXanim_PSX *anim) {
 	// Support old schema type files
-	if (anim->schema == PSX_PXANIM_SCHEMA - 1) {
+	if (FROM_LE_32(anim->schema) == PXANIM_SCHEMA - 1) {
 		int32 nFrames = anim->frame_qty;
 		anim->frame_qty = (uint8)nFrames;
 		anim->speed = 1;
-		anim->schema = PSX_PXANIM_SCHEMA;
+		anim->schema = TO_LE_32(PXANIM_SCHEMA);
 	}
 }
 
 inline void ConvertPXanim(PXanim_PC *anim) {
 	// Support old schema type files
-	if (anim->schema == PC_PXANIM_SCHEMA - 1) {
+	if (FROM_LE_32(anim->schema) == PXANIM_SCHEMA - 1) {
 		int32 nFrames = anim->frame_qty;
 		anim->frame_qty = (uint8)nFrames;
 		anim->speed = 1;
-		anim->schema = PC_PXANIM_SCHEMA;
+		anim->schema = TO_LE_32(PXANIM_SCHEMA);
 	}
 }
 

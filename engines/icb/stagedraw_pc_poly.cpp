@@ -499,15 +499,15 @@ int32 drawSpecialObjects(SDactor &actor, MATRIXPC *local2screen, int32 brightnes
 		PXframe *frm = PXFrameEnOfAnim(actor.frame, pAnim);
 		if (frm->marker_qty > INT_POS) {
 			PXmarker *marker = &(frm->markers[INT_POS]);
-			uint8 mtype = (uint8)marker->GetType();
+			uint8 mtype = (uint8)PXmarker_PSX_Object::GetType(marker);
 			if ((INT0_TYPE == mtype) || (INT_TYPE == mtype)) {
 				// The interact marker exists
 				PXfloat mx, my, mz;
-				marker->GetXYZ(&mx, &my, &mz);
+				PXmarker_PSX_Object::GetXYZ(marker, &mx, &my, &mz);
 
 				PXfloat ox, oy, oz;
 				marker = &(frm->markers[ORG_POS]);
-				marker->GetXYZ(&ox, &oy, &oz);
+				PXmarker_PSX_Object::GetXYZ(marker, &ox, &oy, &oz);
 
 				// Yeah - found a muzzle flash
 				mflash = 1;
