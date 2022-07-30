@@ -480,27 +480,31 @@ reg_t SoundCommandParser::kDoSoundFade(EngineState *s, int argc, reg_t *argv) {
 		musicSlot->fadeTicker = 0;
 		break;
 
-	case 4: // SCI01+
-	case 5: // SCI1+ (SCI1 late sound scheme), with fade and continue
-		musicSlot->fadeTo = CLIP<uint16>(argv[1].toUint16(), 0, MUSIC_VOLUME_MAX);
-		// Check if the song is already at the requested volume. If it is, don't
-		// perform any fading. Happens for example during the intro of Longbow.
-		if (musicSlot->fadeTo == musicSlot->volume)
-			return s->r_acc;
-
-		musicSlot->fadeStep = volume > musicSlot->fadeTo ? -argv[3].toUint16() : argv[3].toUint16();
-		musicSlot->fadeTickerStep = argv[2].toUint16() * 16667 / _music->soundGetTempo();
-		musicSlot->fadeTicker = 0;
+	case 4:   // SCI01+
+	case 5: { // SCI1+ (SCI1 late sound scheme), with fade and continue
+		byte fadeTo = CLIP<uint16>(argv[1].toUint16(), 0, MUSIC_VOLUME_MAX);
 
 		// argv[4] is a boolean. Scripts sometimes pass strange values,
 		// but SSCI only checks for zero/non-zero. (Verified in KQ6).
 		// KQ6 room 460 even passes an object, but treating this as 'true'
-		// seems fine in that case.
-		if (argc == 5)
-			musicSlot->stopAfterFading = !argv[4].isNull();
-		else
-			musicSlot->stopAfterFading = false;
+		// seems fine in that case. Bug #6120
+		bool stopAfterFading = (argc == 5) && !argv[4].isNull();
+
+		// Ignore the fade request if the song is already at the requested volume and
+		// the stopAfterFading flag isn't being set. SSCI stored this flag in the upper
+		// bit of the target volume before comparing it to the current volume.
+		// Longbow relies on this in its introduction. Bug #5239
+		if (musicSlot->volume == fadeTo && !stopAfterFading) {
+			return s->r_acc;
+		}
+
+		musicSlot->fadeTo = fadeTo;
+		musicSlot->fadeStep = volume > musicSlot->fadeTo ? -argv[3].toUint16() : argv[3].toUint16();
+		musicSlot->fadeTickerStep = argv[2].toUint16() * 16667 / _music->soundGetTempo();
+		musicSlot->fadeTicker = 0;
+		musicSlot->stopAfterFading = stopAfterFading;
 		break;
+	}
 
 	default:
 		error("kDoSound(fade): unsupported argc %d", argc);
