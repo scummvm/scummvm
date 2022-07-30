@@ -79,32 +79,13 @@ bool cOpenALSoundData::CreateFromFile(const tString &filename) {
 //-----------------------------------------------------------------------
 
 iSoundChannel *cOpenALSoundData::CreateChannel(int alPriority) {
-#if 0
-  		//if(mpSoundData==NULL)return NULL;
-		if ( (mpSample == NULL) && (mpStream == NULL) ) return NULL;
+	if (!_stream)
+		return nullptr;
 
-		int lHandle;
-		iSoundChannel *pSoundChannel=NULL;
-		if(mbStream)
-		{
-			lHandle = OAL_Stream_Play ( OAL_FREE, GetStream(), 1.0f, true );
-			if(lHandle==-1)return NULL;
-
-			pSoundChannel = hplNew( cOpenALSoundChannel, (this,lHandle, mpSoundManger) );
-			IncUserCount();
-		}
-		else
-		{
-			lHandle = OAL_Sample_Play ( OAL_FREE, GetSample(), 1.0f, true, alPriority);
-			if(lHandle==-1)return NULL;
-
-			pSoundChannel = hplNew( cOpenALSoundChannel, (this,lHandle, mpSoundManger) );
-			IncUserCount();
-		}
-
-		return pSoundChannel;
-#endif
-	return NULL;
+	Audio::SoundHandle handle;
+	g_system->getMixer()->playStream(Audio::Mixer::SoundType::kPlainSoundType, &handle, _stream);
+	IncUserCount();
+	return hplNew(cOpenALSoundChannel, (this, handle, mpSoundManger));
 }
 
 } // namespace hpl
