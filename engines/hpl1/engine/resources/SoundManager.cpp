@@ -33,6 +33,8 @@
 #include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
 
+#include "hpl1/debug.h"
+
 namespace hpl {
 
 //////////////////////////////////////////////////////////////////////////
@@ -47,7 +49,7 @@ cSoundManager::cSoundManager(cSound *apSound, cResources *apResources)
 	mpSound = apSound;
 	mpResources = apResources;
 
-	//mpSound->GetLowLevel()->GetSupportedFormats(mlstFileFormats);
+	mpSound->GetLowLevel()->GetSupportedFormats(mlstFileFormats);
 }
 
 cSoundManager::~cSoundManager() {
@@ -77,6 +79,8 @@ iSoundData *cSoundManager::CreateSoundData(const tString &asName, bool abStream,
 		if (pSound) {
 			AddResource(pSound);
 			pSound->SetSoundManager(mpResources->GetSoundManager());
+		} else {
+			Hpl1::logError(Hpl1::kDebugAudio, "sound data %s could not be loaded\n", asName.c_str());
 		}
 
 	} else {
