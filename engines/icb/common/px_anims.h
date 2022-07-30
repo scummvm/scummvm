@@ -59,26 +59,10 @@ typedef struct {
 // PXmarker_PC : the PC version
 class PXmarker_PC_Object {
 public:
-	static void SetType(PXmarker_PC *marker, uint32 type) { marker->m_type = type; }
-	static void SetPan(PXmarker_PC *marker, float pan) { marker->m_pan = pan; }
-	static void SetXYZ(PXmarker_PC *marker, float x, float y, float z);
-
-	static uint32 GetType(PXmarker_PC *marker) { return marker->m_type; }
-	static void GetPan(PXmarker_PC *marker, float *pan) { *pan = marker->m_pan; }
+	static uint32 GetType(PXmarker_PC *marker) { return FROM_LE_32(marker->m_type); }
+	static void GetPan(PXmarker_PC *marker, float *pan) { *pan = FROM_LE_32(marker->m_pan); }
 	static void GetXYZ(PXmarker_PC *marker, float *x, float *y, float *z);
 };
-
-inline void PXmarker_PC_Object::SetXYZ(PXmarker_PC *marker, float x, float y, float z) {
-	marker->m_x = x;
-	marker->m_y = y;
-	marker->m_z = z;
-}
-
-inline void PXmarker_PC_Object::GetXYZ(PXmarker_PC *marker, float *x, float *y, float *z) {
-	*x = marker->m_x;
-	*y = marker->m_y;
-	*z = marker->m_z;
-}
 
 // PXframe_PC : the PC version //
 typedef struct {
@@ -102,37 +86,27 @@ typedef struct {
 // PXmarker_PSX : the PSX version
 class PXmarker_PSX_Object {
 public:
-	static void SetType(PXmarker_PSX *marker, uint8 type) { marker->m_type = type; }
-	static void SetPackedXYZPan(PXmarker_PSX *marker, uint8 _x8, uint16 _x7y9, uint32 _y6z15pan11);
-
 	static uint8 GetType(PXmarker_PSX *marker) { return marker->m_type; }
-
 	static void GetPan(PXmarker_PSX *marker, float *pan);
 	static void GetXYZ(PXmarker_PSX *marker, float *x, float *y, float *z);
 };
 
-inline void PXmarker_PSX_Object::SetPackedXYZPan(PXmarker_PSX *marker, uint8 _x8, uint16 _x7y9, uint32 _y6z15pan11) {
-	marker->x8 = _x8;
-	marker->x7y9 = _x7y9;
-	marker->y6z15pan11 = _y6z15pan11;
-}
-
 inline void PXmarker_PSX_Object::GetPan(PXmarker_PSX *marker, float *pan) {
-	*pan = (float)(((marker->y6z15pan11 & 0x7FF) << 1)) / 4096.0f;
+	*pan = (float)(((FROM_LE_32(marker->y6z15pan11) & 0x7FF) << 1)) / 4096.0f;
 }
 
 inline void PXmarker_PSX_Object::GetXYZ(PXmarker_PSX *marker, float *x, float *y, float *z) {
 	int32 ix, iy, iz;
 
-	ix = ((marker->x8 << 7) | (marker->x7y9 >> 9));
+	ix = ((marker->x8 << 7) | (FROM_LE_16(marker->x7y9) >> 9));
 	if (ix >= 16384)
 		ix = ix - 32768;
 
-	iy = (((marker->x7y9 & 0x1FF) << 6) | (marker->y6z15pan11 >> 26));
+	iy = (((FROM_LE_16(marker->x7y9) & 0x1FF) << 6) | (FROM_LE_32(marker->y6z15pan11) >> 26));
 	if (iy >= 16384)
 		iy = iy - 32768;
 
-	iz = ((marker->y6z15pan11 >> 11) & 0x7FFF);
+	iz = ((FROM_LE_32(marker->y6z15pan11) >> 11) & 0x7FFF);
 	if (iz >= 16384)
 		iz = iz - 32768;
 
