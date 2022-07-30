@@ -1815,7 +1815,16 @@ void ScummEngine_v6::o6_actorOps() {
 
 	switch (subOp) {
 	case 76:		// SO_COSTUME
-		a->setActorCostume(pop());
+		i = pop();
+		// WORKAROUND: There's a small continuity error in DOTT; the fire that
+		// makes Washington leave the room can only exist if he's wearing the
+		// chattering teeth, but yet when he comes back he's not wearing them
+		// during this cutscene.
+		if (_game.id == GID_TENTACLE && _currentRoom == 13 && vm.slot[_currentScript].number == 211 &&
+			a->_number == 8 && i == 53 && _enableEnhancements) {
+			i = 69;
+		}
+		a->setActorCostume(i);
 		break;
 	case 77:		// SO_STEP_DIST
 		j = pop();
