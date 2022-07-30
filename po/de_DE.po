@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-30 11:49+0000\n"
+"POT-Creation-Date: 2022-07-30 20:39+0000\n"
 "PO-Revision-Date: 2022-07-22 16:59+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -6719,16 +6719,16 @@ msgstr ""
 "implementiert. Es existiert eine Platzhalter-Logik, welche die Aktionen der "
 "Gegner zufällig auswählt"
 
-#: engines/sci/engine/savegame.cpp:1458
+#: engines/sci/engine/savegame.cpp:1467
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr "Das Format dieses Spielstands ist veraltet; laden nicht möglich"
 
-#: engines/sci/engine/savegame.cpp:1460
+#: engines/sci/engine/savegame.cpp:1469
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr "Spielstand-Version ist %d, höchste unterstützte Version ist %0d"
 
-#: engines/sci/engine/savegame.cpp:1471
+#: engines/sci/engine/savegame.cpp:1480
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"

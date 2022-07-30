@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-30 11:49+0000\n"
+"POT-Creation-Date: 2022-07-30 20:39+0000\n"
 "PO-Revision-Date: 2022-07-22 14:05+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -6780,20 +6780,20 @@ msgstr ""
 "υλοποιηθεί ακόμα. Για την ώρα υπάρχει μόνο μια απλή λογική, όπου οι "
 "ενέργειες του αντιπάλου επιλέγονται τυχαία"
 
-#: engines/sci/engine/savegame.cpp:1458
+#: engines/sci/engine/savegame.cpp:1467
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr ""
 "Η μορφή αυτού του αρχείου αποθηκευμένου παιχνιδιού είναι παρωχημένη, δεν "
 "γίνεται να φορτωθεί"
 
-#: engines/sci/engine/savegame.cpp:1460
+#: engines/sci/engine/savegame.cpp:1469
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr ""
 "Η έκδοση του αποθηκευμένου παχινιδιού είναι %d, η μέγιστη υποστηριζόμενη "
 "έκδοση είναι %0d"
 
-#: engines/sci/engine/savegame.cpp:1471
+#: engines/sci/engine/savegame.cpp:1480
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"

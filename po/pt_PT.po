@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-30 11:49+0000\n"
+"POT-Creation-Date: 2022-07-30 20:39+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -6482,16 +6482,16 @@ msgid ""
 "randomly"
 msgstr ""
 
-#: engines/sci/engine/savegame.cpp:1458
+#: engines/sci/engine/savegame.cpp:1467
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr ""
 
-#: engines/sci/engine/savegame.cpp:1460
+#: engines/sci/engine/savegame.cpp:1469
 #, fuzzy, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr "ID de jogo não suportado"
 
-#: engines/sci/engine/savegame.cpp:1471
+#: engines/sci/engine/savegame.cpp:1480
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
