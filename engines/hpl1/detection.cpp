@@ -31,9 +31,12 @@
 #include "hpl1/debug.h"
 
 const DebugChannelDef Hpl1MetaEngineDetection::debugFlagList[] = {
-	{ Hpl1::kDebugGraphics, "Graphics", "Graphics debug level" },
-	{ Hpl1::kDebugResourceLoading, "ResourceLoading", "Resource loading debug level" },
-	{ Hpl1::kDebugFilePath, "FilePath", "File path debug level" }, 
+	{ Hpl1::kDebugGraphics, "Graphics", "Graphics debug channel" },
+	{ Hpl1::kDebugResourceLoading, "ResourceLoading", "Resource loading debug channel" },
+	{ Hpl1::kDebugFilePath, "FilePath", "File path debug channel" },
+	{ Hpl1::kDebugOpenGL, "OpenGL", "OpenGL debug channel"},
+	{ Hpl1::kDebugRenderer, "Renderer", "Rederer debug channel"},
+	{ Hpl1::kDebugAudio, "Audio", "Audio debug channel"},
 	DEBUG_CHANNEL_END
 };
 
