@@ -688,6 +688,8 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint16LE(fadeStep);
 	s.syncAsSint32LE(fadeTicker);
 	s.syncAsSint32LE(fadeTickerStep);
+	s.syncAsByte(fadeSetVolume, VER(46));
+	s.syncAsByte(fadeCompleted, VER(46));
 	s.syncAsByte(stopAfterFading, VER(45));
 	s.syncAsByte(status);
 	if (s.getVersion() >= 32)
