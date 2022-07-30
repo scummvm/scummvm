@@ -41,11 +41,15 @@ namespace Wage {
 static const ADGameDescription gameDescriptions[] = {
 	FANGAMEND("World Builder Demo World", "Demo World", "e221e6f9631f110b484f239e58137a3f", 45467),
 
-	FANGAME("Rects", "03d2f93b1cafe963a0e29232f4867cc4", 38177),
-	FANGAME("Filled Rects", "835ae43bf16a8d83b84a99724eaec79d", 38194),
-	FANGAME("Round Rects", "9602f7baafb13fd1c7fd00f92743227c", 38194),
-	FANGAME("Filled Round Rects", "4d880677a97fd07e6a4f04a46f147084", 38194),
-	FANGAME("Polygon", "c84d8065c6a4eb7dd232003954ba7cab", 38352),
+	// Render Tests
+	//FANGAME("Rects", "03d2f93b1cafe963a0e29232f4867cc4", 38177),
+	//FANGAME("Filled Rects", "835ae43bf16a8d83b84a99724eaec79d", 38194),
+	//FANGAME("Round Rects", "9602f7baafb13fd1c7fd00f92743227c", 38194),
+	//FANGAME("Filled Round Rects", "4d880677a97fd07e6a4f04a46f147084", 38194),
+	//FANGAME("Polygon", "c84d8065c6a4eb7dd232003954ba7cab", 38352),
+	//FANGAME("Filled Polygon", "2d5a3c952c6c43c0456eae9bbc52867d", 38310),
+	//FANGAME("Ovals", "9b5e3d5afe3b4c46e506216a5ae16e14", 38194),
+	//FANGAME("Filled Ovals", "6990174e0b39d85f3069f98511bb0074", 38194),
 
 	FANGAME("3rd Floor", "931aa0b6ada3aced5117ee6e6daf2fb8", 281153),
 	FANGAME("3rd Floor", "140883954b7cd89b0ffabde6ee0073d4", 281167), // alt version
@@ -86,15 +90,12 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Deep Angst", "xn--DEEP ANGST 1987Ronald Wartow-k8a2050w", "38cc0c9a301e63b0a942677a0d19b0ac", 337122), // original file name "DEEP ANGST™ ©1987Ronald Wartow", v..90B
 	FANGAMEN("Deep Angst II: The Nightmare Ends", "Deep Angst II", "2e468021416bc2b82e283030c7f6bc5d", 408761),
 	FANGAME("Deep Ennui", "9879bf659f11c9177d578a347da0c658", 85819),
-	// Polygons with ignored byte 1
 	FANGAME("Double Trouble", "1cd05d66163b44f9f0d8c3e7232bc2db", 542115),
 	BIGGAME("drakmythcastle", "Disk I", "Drakmyth Castle disk I of II", "54dd0a817b667fc05c4f2dee6abe126a", 793528),
 	BIGGAME("drakmythcastle", "Disk I", "Drakmyth Castle", "b796545fc4b7c2b89683db873e005e92", 792355), // alt version
 	BIGGAME("drakmythcastle", "Disk II", "Drakmyth Castle II", "b57af17c805775d7d68b62133164c4e4", 1685403),
-	// Crash at start in GUI rendering
 	FANGAMENr("Dune Eternity", "xn--DUNE ETERNITY -paaanaa75fbbobb", "4946bc99cc42bf83b628352aa9b81a7b", 289945, GF_RES800), // Original file name is "***DUNE ETERNITY*** "
 	FANGAMEN("Dungeon World II", "DungeonWorld2", "74a7153f9ae61a59a216078a37f68f2c", 229943),
-	// Made for bigger resolution
 	FANGAMEr("Dynasty of Dar", "e118a261d33831c224f3b776ec5dd2a8", 275437, GF_RES800),
 	FANGAMEr("Dynasty of Dar", "e15eae8d9a4c40512be3bb81ecedf32c", 275423, GF_RES800), // alt version
 	FANGAME("Edg's World", "480bcf68be49ee3765902e922ccdc833", 106513),
@@ -103,7 +104,6 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Eidisi I", "a20f080d6109d8e253d74b0dfb4b2ae5", 172296), // alt version
 	FANGAME("Eidisi I", "06ae31c4361f9bd5b91593858b6d0d79", 172310), // alt version
 	FANGAME("Elite Commando", "3fc74f1403c1529b52f3cd4d60771dac", 293704), // v1.0
-	// Problems(?) with text on the first screen
 	FANGAMEN("Enchanted Pencils", "Enchanted Pencils 0.99 (PG)", "49a0708da81dbeb28c6e607429c92209", 408657),
 	FANGAMEN("Enchanted Pencils", "Enchanted Pencils 0.99 (PG)", "0095d0e069851521c44ca3cdc94bcba3", 414464), // alt?
 	FANGAMEN("Escape!", "xn--Escape!-z46c", "28a9658ee846a34f133df29b54cf255a", 64819), // Original file name "Escape!†"
@@ -118,7 +118,6 @@ static const ADGameDescription gameDescriptions[] = {
 	// Cannot proceed past the first scene
 	FANGAMEND("Explorer", "Explorer DEMO", "0ae79f48754466c4cd65137c7f186384", 460972),
 	FANGAMEND("Explorer", "Explorer DEMO", "6b22972808630201ece7cc96a0ef17f7", 460959), // alt version
-	// Crash in console rendering on the first scene
 	FANGAME("Fantasy Quest", "b52d3e2680a76c23b2791e2c87f6b6bd", 762498),
 	FANGAME("Find the Heart", "0c0c282649597ea1ac82d97c8d4029a2", 105979), // From Joshua's Worlds 1.0
 	FANGAME("Find the Heart", "6fb8c6b8bc2287ba225b0ac6580dc073", 105675), // From Joshua's Worlds 1.0, alt version
@@ -143,7 +142,6 @@ static const ADGameDescription gameDescriptions[] = {
 	// Cropped graphics on first scene, cannot pass to in-game
 	FANGAMEN("Introduction to Gothic", "Intro to Gothic", "606eec666f0b2d767e4423747e740434", 207811),
 	FANGAMEN("James Bond 007", "007", "2449924f2cb43454489a4ef91c0ee702", 50407),
-	// Lots of unhandled comparisons
 	FANGAME("Jamie the Demon Slayer", "ed054aa760569059c7ea554e822089a6", 232533),
 	FANGAMEN("Journey", "The Journey 1.6.2 US", "588a516caa187005fdfcbc72823c8eff", 820316),
 	FANGAMEN("Jumble", "xn--LSJUMBLE -", "555ead186ec1683157e53b96fc4a99d5", 647083), // Original file name is "LSJUMBLE† "
@@ -162,7 +160,6 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Magic Rings", "263e2c90af61f0798bf41f6a1e3f6345", 108788),
 	FANGAMEN("Maze of the Questing Beast", "MQB", "03775e1894809f24234aeaab18f39451", 134444),
 	FANGAMEN("Maze of the Questing Beast Solutions", "MQB Solutions", "8a27e515f12162cc8b85e4f2bd16a1e5", 37606),
-	// No way to click on the house
 	FANGAME("Messy House", "32ca71f2ff37997407cead590c2dd306", 176864),
 	FANGAME("Midnight Snack", "70ba8a5a1f0304669c9987360bba236f", 67696),
 	FANGAME("Midnight Snack", "24973af10822979e23866d88a7d2e15c", 67710), // alt version
@@ -175,20 +172,16 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Mormonoids from the Deep", "Mormonoids 1.0",  "15c99d26ac2abb9eb4802a7dd5326086", 642975),
 	FANGAMEN("Mormonoids from the Deep", "Mormonoids 1.25", "4730d0c47d13401d73353e980f91a304", 645062),
 	FANGAMEN("Mormonoids from the Deep", "Mormonoids 1.25", "1a7ee052b375f0c0a4c18836c978ce5b", 645077), // alt version
-	// Unhandled comparison case
 	FANGAMEN("Mountain of Mayhem", "xn--Mountain of Mayhem -3g6k", "634211b004371635d191ae0687035501", 749747), // Original file name "Mountain of Mayhem †"
 	FANGAME("Mountain of Mayhem", "c83a5703b3ea95f465839f4f54ef0805", 749733), // alt version
 	FANGAME("Muddy Water", "711dd9d154d13c31bc216ef8539bb095", 662438), // v1.3.2
 	// No way to pass through the first screen
 	FANGAME("Nightcrawler Ned", "8423fc015c395bd6be54a7ea69170d99", 366286),
-	// No player in the world
 	FANGAMEN("Parrot Talk", "PARROT TALK V1", "c38c090be8c078d931905c93bc0689f5", 118680),
-	// No player in the world
 	FANGAMEN("Parrot Talk", "PARROT TALKV2", "5ec1df9e2d6d0dcf1a040a95500d9551", 118628),
 	FANGAME("Pavilion", "a980e60a291c0a7b949474177affa134", 231431),
 	FANGAMEN("Pencils", "Pencils.99", "09dbcdbefe20536c2db1b1a4fb4e5ed3", 408295),
 	FANGAMEN("Pencils", "Pencils.99", "9757cc28d82cea636ee260b9aa33c167", 407695), // alt version
-	// Polygons with byte 1
 	FANGAME("Periapt", "7e26a7827c694232624321a5a6844511", 405750),
 	FANGAME("Periapt", "bc36e40de279d5f0844577fe702d9f64", 405750), // alt version
 	FANGAME("Periapt", "661642865321fa81ce84ae2eedbc1aff", 405736), // alt version
@@ -205,9 +198,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Puzzle Piece Search", "6c21c1e0c6afef9300941abd7782dd16", 247437), // From Joshua's Worlds 1.0
 	FANGAME("The Puzzle Piece Search", "8fa1d80dd3f1ed69f45d15d774968995", 247082), // From Joshua's Worlds
 	FANGAME("The Puzzle Piece Search", "fb839ac4f22427f44e99bcc5afd57a0b", 247068), // Standalone
-	// Empty(?)  first scene
 	FANGAME("Pyramid of No Return", "4bf4c39b140f5aadb5f8c9a50153d18e", 384889),
-	// Cropped graphics at the first scene
 	FANGAME("P-W Adventure", "a8e9f97ee02f01de588a4dbabe55ca3f", 218960),
 	FANGAMEN("Pyramid of Ert", "Pyramid of Ert V1.2", "358b03ea9c978fbfd2ce2833daea00f8", 315527),
 	FANGAME("Queen Quest", "7ca009dad76827ce008c3c7fa01cab0a", 56770),
@@ -225,7 +216,6 @@ static const ADGameDescription gameDescriptions[] = {
 	BIGGAME("raysmaze", "v1.5/alt", "Ray's Maze1.5", "401cd46df5e49fa4171ed398b3e0227b", 1408260),
 	FANGAME("Ray's World Builder Demo", "eafea10db54530ac6e6128be31741542", 115800),
 	FANGAME("Robot Planet", "1066f6b2892cda16c2f365d1ec97537c", 107089),
-	// Unhandled comparison case
 	FANGAMEN("Sands of Time", "xn--Sands of Time-1s6g", "d065662865d0cb9065812479ed7d2795", 122416), // Original file name "Sands of Time†"
 	FANGAMEN("Sands of Time", "Sands of Time", "d065662865d0cb9065812479ed7d2795", 122416), // same version, normal file name
 	BIGGAME("scepters", "", "Scepters", "ecb776fb660205fad5819a26f7e180b5", 347103), // original 1986 version
@@ -252,20 +242,15 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Swamp Witch", "07463c8b3b908b0c493a41b949ac1ff5", 739875), // alt version
 	FANGAME("Swamp Witch", "865a07a0356926d6cab8f14208e11f9c", 739511), // another alt version
 	FANGAME("Sweetspace Now!", "574dc7dd25543f7a516d6524f0c5ab33", 123557), // Comes with Jumble
-	// Wrong scrolling in the first console text
 	FANGAMEN("Sword of Siegfried", "Sword of Siegfried 1.0", "2ae8f21cfb228ce58ee47b767bdd8820", 234507),
 	FANGAMEN("Sword of Siegfried", "Sword of Siegfried 1.0", "7a68b00019592f3aa671cae024f7e843", 234493), // alt version
 	FANGAME("Time Bomb", "e96f3e2efd1e3db6ad0be22180f5473c", 64308),
 	FANGAME("Time Bomb", "976180f9be0d1029aaba7774fec9767c", 64322), // alt version
 	FANGAMEN("The Time Squisher", "Time Squisher v 1.1", "3e296141e7a7c9b05e0dde779d9bb50d", 463526),
-	// Admission for on 3rd screen is messed up
 	FANGAME("The Tower", "4cd8755ccb5bbeaf2e5f7848a8daa033", 556283),
-	// Messed up first scene
 	FANGAMEND("Tombworld", "xn--Demo TombWorld-8ra", "695734292024290d5d0aa6a66ff628f6", 663996), // Original file name "Demo TombWorld©"
 	FANGAMEND("Tombworld", "DemoTombWorld", "4b3f56cfa595eab3919a918767e11870", 387403), // alt version
-	// Doesn't go past first scene
 	BIGGAME("twisted", "", "Twisted! 1.6", "6e0be4c7d83231e56a431dc4ef7bf978", 960698),
-	// Polygons with ignored byte 1 and 2 on second scene
 	FANGAME("The Village", "fd35cad8c61064d6c8aaadab7070ccad", 314572),
 	FANGAME("The Village", "b84ac84be610498c4de5d9bd4fd36175", 314620), // alt version
 	FANGAMEN("Volcano II", "xn--Volcano II-0y6e", "7941c08b34bc2408b98c0004c7154aeb", 82735), // Original file name "Volcano II†"
