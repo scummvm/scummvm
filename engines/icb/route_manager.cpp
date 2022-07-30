@@ -212,12 +212,14 @@ bool8 _game_session::Process_route() {
 		else
 			res = Play_anim_with_no_movement();
 
+		// if more to do then return
+		//if (!res)
 		return (res);
 
 		// remove the phase so headup diagnostics disappear now the route is effectively done
-		M->m_phase = RM_NONE;
+		//M->m_phase = RM_NONE;
 
-		return (1); // no slow-out so we're done
+		//return (1); // no slow-out so we're done
 	}
 
 	// ok, process that point-to-point route!

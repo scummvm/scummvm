@@ -376,7 +376,7 @@ void DrawFrame(const int32 frame) {
 	ambient.b = 128;
 
 	pxanim = (PXanim *)rs_anims->Res_open(raj_name, raj_name_hash, cluster_name, cluster_name_hash);
-	PXFrameEnOfAnim(framenum, pxanim)->markers[ORG_POS];
+	PXFrameEnOfAnim(framenum, pxanim);
 
 	// Make the actors orientation matrix
 	g_av_actor->rot = rot;
