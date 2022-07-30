@@ -698,7 +698,7 @@ int32 _game_session::Soften_up_anim_file(__mega_set_names link, int32 diff) {
 	PXanim *pCur_Anim = (PXanim *)rs_anims->Res_open(I->get_info_name(L->cur_anim_type), I->info_name_hash[L->cur_anim_type], I->base_path, I->base_path_hash);
 
 	// find out leg position for current frame
-	old_leg_pos = PXFrameEnOfAnim(L->anim_pc, pCur_Anim)->left_foot_distance;
+	old_leg_pos = FROM_LE_16(PXFrameEnOfAnim(L->anim_pc, pCur_Anim)->left_foot_distance);
 
 	// Jake check the link anim exists / make its name
 	ANIM_CHECK(link);
@@ -712,7 +712,7 @@ int32 _game_session::Soften_up_anim_file(__mega_set_names link, int32 diff) {
 
 	// see which has the closest leg position
 	for (j = 0; j < (pLnk_Anim->frame_qty - 1); j++) {
-		int32 foot = PXFrameEnOfAnim(j, pLnk_Anim)->left_foot_distance;
+		int32 foot = FROM_LE_16(PXFrameEnOfAnim(j, pLnk_Anim)->left_foot_distance);
 		int32 d = twabs(foot - old_leg_pos);
 
 		if (d < diff) {
