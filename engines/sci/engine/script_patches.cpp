@@ -22189,6 +22189,53 @@ static const uint16 sq5PatchTabInventoryCursorFix[] = {
 	PATCH_END
 };
 
+// In room 310, if WD40 appears while ego is exiting through the left tunnel
+//  then the room exits break. When ego is near the tunnel, sWD40Appear waits
+//  for seven seconds before calling handsOff. If sExitViaTunnelB is running
+//  then handsOff stops ego's exit motion and the room script never completes.
+//
+// We fix this by clearing sWD40Appear:seconds when starting sExitViaTunnelB so
+//  that the timer in sWD40Appear state 0 is stopped once ego begins exiting the
+//  the room. sWD40Appear already checks that sExitViaTunnelB isn't running in
+//  its later states, but it's missing the check in state 1.
+//
+// Applies to: All versions
+// Responsible method: rm310:doit
+// Fixes bug: #9988
+static const uint16 sq5SignatureWd40TunnelLockupFix[] = {
+	0x72, SIG_ADDTOOFFSET(+2),            // lofsa sWD40Appear
+	SIG_ADDTOOFFSET(+15),
+	0x38, SIG_SELECTOR16(script),         // pushi script
+	0x76,                                 // push0
+	0x81, 0x02,                           // lag 02
+	0x4a, SIG_MAGICDWORD, 0x04,           // send 04 [ rm310 script? ]
+	0x18,                                 // not
+	0x31, 0x0e,                           // bnt 0e [ skip sExitViaTunnelB if room has script ]
+	0x38, SIG_SELECTOR16(setScript),      // pushi setScript
+	0x78,                                 // push1
+	0x72, SIG_ADDTOOFFSET(+2),            // lofsa sExitViaTunnelB
+	0x36,                                 // push
+	0x81, 0x02,                           // lag 02
+	0x4a, 0x06,                           // send 06 [ rm310 setScript: sExitViaTunnelB ]
+	SIG_END
+};
+
+static const uint16 sq5PatchWd40TunnelLockupFix[] = {
+	PATCH_ADDTOOFFSET(+18),
+	0x63, 0x12,                           // pToa script
+	0x2f, 0x15,                           // bt 15 [ skip sExitViaTunnelB if room has script ]
+	0x38, PATCH_SELECTOR16(setScript),    // pushi setScript
+	0x78,                                 // push1
+	0x74, PATCH_GETORIGINALUINT16(+34),   // lofss sExitViaTunnelB
+	0x54, 0x06,                           // self 06 [ self setScript: sExitViaTunnelB ]
+	0x38, PATCH_SELECTOR16(seconds),      // pushi seconds
+	0x78,                                 // push1
+	0x76,                                 // push0
+	0x72, PATCH_GETORIGINALUINT16(+1),    // lofsa sWD40Appear
+	0x4a, 0x06,                           // send 06 [ sWD40Appear seconds: 0 (stop timer) ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry sq5Signatures[] = {
 	{  true,     0, "tab inventory cursor fix",                    1, sq5SignatureTabInventoryCursorFix,    sq5PatchTabInventoryCursorFix },
@@ -22197,6 +22244,7 @@ static const SciScriptPatcherEntry sq5Signatures[] = {
 	{  true,   243, "transporter room speed fix",                  3, sq5SignatureTransporterRoomSpeedFix,  sq5PatchTransporterRoomSpeedFix },
 	{  true,   250, "elevator handsOn fix",                        1, sq5SignatureElevatorHandsOn,          sq5PatchElevatorHandsOn },
 	{  true,   305, "wd40 fruit fix",                              1, sq5SignatureWd40FruitFix,             sq5PatchWd40FruitFix },
+	{  true,   310, "wd40 tunnel lockup fix",                      1, sq5SignatureWd40TunnelLockupFix,      sq5PatchWd40TunnelLockupFix },
 	{  true,   335, "wd40 alarm countdown fix",                    1, sq5SignatureWd40AlarmCountdownFix,    sq5PatchWd40AlarmCountdownFix },
 	{  true,   730, "genetix bridge handsOn fix",                  1, sq5SignatureGenetixBridgeHandsOn,     sq5PatchGenetixBridgeHandsOn },
 	{  true,    30, "ChoiceTalker lockup fix",                     1, sciNarratorLockupSignature,           sciNarratorLockupPatch },
