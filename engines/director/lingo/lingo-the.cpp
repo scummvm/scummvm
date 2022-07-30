@@ -885,7 +885,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheStageColor:
 		d.type = INT;
-		d.u.i = g_director->getCurrentWindow()->getStageColor();
+		// TODO: Provide proper reverse transform for non-indexed color
+		d.u.i = (int)g_director->transformColor(g_director->getCurrentWindow()->getStageColor());
 		break;
 	case kTheStageLeft:
 		d.type = INT;
@@ -1204,7 +1205,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheStage);
 		break;
 	case kTheStageColor:
-		g_director->getCurrentWindow()->setStageColor(d.asInt());
+		g_director->getCurrentWindow()->setStageColor(g_director->transformColor(d.asInt()));
 
 		// Queue an immediate update of the stage
 		if (!score->getNextFrame())
@@ -1337,7 +1338,8 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 
 	switch (field) {
 	case kTheBackColor:
-		d.u.i = sprite->_backColor;
+		// TODO: Provide proper reverse transform for non-indexed color
+		d.u.i = (int)g_director->transformColor(sprite->_backColor);
 		break;
 	case kTheBlend:
 		d.u.i = sprite->_blend;
@@ -1359,7 +1361,8 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_editable;
 		break;
 	case kTheForeColor:
-		d.u.i = sprite->_foreColor;
+		// TODO: Provide proper reverse transform for non-indexed color
+		d.u.i = (int)g_director->transformColor(sprite->_foreColor);
 		break;
 	case kTheHeight:
 		d.u.i = channel->_height;
@@ -1491,9 +1494,12 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 
 	switch (field) {
 	case kTheBackColor:
-		if ((uint32)d.asInt() != sprite->_backColor) {
-			sprite->_backColor = d.asInt();
-			channel->_dirty = true;
+		{
+			uint32 newColor = g_director->transformColor(d.asInt());
+			if (newColor != sprite->_backColor) {
+				sprite->_backColor = newColor;
+				channel->_dirty = true;
+			}
 		}
 		break;
 	case kTheBlend:
@@ -1563,9 +1569,12 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		channel->_sprite->_editable = d.asInt();
 		break;
 	case kTheForeColor:
-		if ((uint32)d.asInt() != sprite->_foreColor) {
-			sprite->_foreColor = d.asInt();
-			channel->_dirty = true;
+		{
+			uint32 newColor = g_director->transformColor(d.asInt());
+			if (newColor != sprite->_foreColor) {
+				sprite->_foreColor = newColor;
+				channel->_dirty = true;
+			}
 		}
 		break;
 	case kTheHeight:
