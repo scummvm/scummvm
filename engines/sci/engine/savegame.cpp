@@ -847,6 +847,13 @@ void GfxPalette::palVarySaveLoadPalette(Common::Serializer &s, Palette *palette)
 }
 
 void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
+	if (s.isLoading()) {
+		// Palette cycling schedules must be reset on load because we persist the engine tick count.
+		// Otherwise, loading during cycling leaves the animation stuck until the new lower tick count
+		// reaches the stale scheduled values. (Example: SQ5 Kiz Urazgubi waterfalls)
+		// SSCI didn't persist or reset engine tick count so it didn't need to reset the schedules.
+		_schedules.clear();
+	}
 	if (s.getVersion() >= 25) {
 		// We need to save intensity of the _sysPalette at least for kq6 when entering the dark cave (room 390)
 		//  from room 340. scripts will set intensity to 60 for this room and restore them when leaving.

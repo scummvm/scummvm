@@ -572,11 +572,10 @@ int16 GfxPalette::kernelFindColor(uint16 r, uint16 g, uint16 b, bool force16BitC
 // Returns true, if palette got changed
 bool GfxPalette::kernelAnimate(byte fromColor, byte toColor, int speed) {
 	Color col;
-	//byte colorNr;
 	int16 colorCount;
 	uint32 now = g_sci->getTickCount();
 
-	// search for sheduled animations with the same 'from' value
+	// search for scheduled animations with the same 'from' value
 	// schedule animation...
 	int scheduleCount = _schedules.size();
 	int scheduleNr;
