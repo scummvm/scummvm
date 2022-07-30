@@ -252,10 +252,10 @@ int32 EvalEnv(const CEnvelope &env, int32 x) {
 }
 
 // get the sfxlist file!
-_linked_data_file *GetMissionSfxFile() {
+LinkedDataFile *GetMissionSfxFile() {
 	uint32 fileHash;
 	uint32 clusterHash;
-	_linked_data_file *f = nullptr;
+	LinkedDataFile *f = nullptr;
 
 	// if no mission return NULL
 	if (!g_mission) {
@@ -268,17 +268,17 @@ _linked_data_file *GetMissionSfxFile() {
 
 		fileHash = NULL_HASH;
 		clusterHash = MS->Fetch_session_cluster_hash();
-		f = (_linked_data_file *)private_session_resman->Res_open("m_sfxlist", fileHash, MS->Fetch_session_cluster(), clusterHash);
+		f = (LinkedDataFile *)private_session_resman->Res_open("m_sfxlist", fileHash, MS->Fetch_session_cluster(), clusterHash);
 
 	}
 
-	if ((f->GetHeaderVersion() != SFX_VERSION) || (f->header.type != FT_COMPILED_SFX))
-		Fatal_error("Sound: mission::the.cmpsfxlist, Header wrong, engine:%d,%08x file:%d,%08x\n", SFX_VERSION, FT_COMPILED_SFX, f->GetHeaderVersion(), f->header.type);
+	if ((LinkedDataObject::GetHeaderVersion(f) != SFX_VERSION) || (FROM_LE_32(f->header.type) != FT_COMPILED_SFX))
+		Fatal_error("Sound: mission::the.cmpsfxlist, Header wrong, engine:%d,%08x file:%d,%08x\n", SFX_VERSION, FT_COMPILED_SFX, LinkedDataObject::GetHeaderVersion(f), FROM_LE_32(f->header.type));
 
 	return f;
 }
 
-_linked_data_file *GetSessionSfxFile() {
+LinkedDataFile *GetSessionSfxFile() {
 
 	// if no session return NULL
 	if ((!g_mission) || (!(g_mission->session))) {
@@ -288,48 +288,48 @@ _linked_data_file *GetSessionSfxFile() {
 
 	uint32 fileHash = NULL_HASH;
 	uint32 clusterHash = MS->Fetch_session_cluster_hash();
-	_linked_data_file *f;
+	LinkedDataFile *f;
 
 	// For the PC clustering the sfx file does not have the path, just the name
 
-	f = (_linked_data_file *)private_session_resman->Res_open(
+	f = (LinkedDataFile *)private_session_resman->Res_open(
 
 	    "s_sfxlist",
 
 	    fileHash, MS->Fetch_session_cluster(), clusterHash);
 
-	if ((f->GetHeaderVersion() != SFX_VERSION) || (f->header.type != FT_COMPILED_SFX))
-		Fatal_error("Sound: session::the.cmpsfxlist, Header wrong, engine:%d,%08x file:%d,%08x\n", SFX_VERSION, FT_COMPILED_SFX, f->GetHeaderVersion(), f->header.type);
+	if ((LinkedDataObject::GetHeaderVersion(f) != SFX_VERSION) || (FROM_LE_32(f->header.type) != FT_COMPILED_SFX))
+		Fatal_error("Sound: session::the.cmpsfxlist, Header wrong, engine:%d,%08x file:%d,%08x\n", SFX_VERSION, FT_COMPILED_SFX, LinkedDataObject::GetHeaderVersion(f), FROM_LE_32(f->header.type));
 	return f;
 }
 
 // get a pointer to sfx (number) in the mission or session sfx file
 CSfx *GetMissionSfx(int32 number) {
-	_linked_data_file *linkedSfx;
+	LinkedDataFile *linkedSfx;
 
 	linkedSfx = GetMissionSfxFile();
 
-	return (CSfx *)linkedSfx->Fetch_item_by_number(number);
+	return (CSfx *)LinkedDataObject::Fetch_item_by_number(linkedSfx, number);
 }
 
 CSfx *GetSessionSfx(int32 number) {
-	_linked_data_file *linkedSfx;
+	LinkedDataFile *linkedSfx;
 
 	linkedSfx = GetSessionSfxFile();
 
-	return (CSfx *)linkedSfx->Fetch_item_by_number(number);
+	return (CSfx *)LinkedDataObject::Fetch_item_by_number(linkedSfx, number);
 }
 
 // return a number for the sfx (in either mision or session) -1 means the sfx is not in the sound file (probabily in the other one)
 int32 WhichMissionSfx(uint32 sfx) {
-	_linked_data_file *linkedSfx;
+	LinkedDataFile *linkedSfx;
 	uint32 n;
 
 	linkedSfx = GetMissionSfxFile();
 	if (linkedSfx == nullptr)
 		return -1;
 
-	n = linkedSfx->Fetch_item_number_by_hash(sfx);
+	n = LinkedDataObject::Fetch_item_number_by_hash(linkedSfx, sfx);
 
 	if (n == PX_LINKED_DATA_FILE_ERROR)
 		return -1;
@@ -338,14 +338,14 @@ int32 WhichMissionSfx(uint32 sfx) {
 }
 
 int32 WhichSessionSfx(uint32 sfx) {
-	_linked_data_file *linkedSfx;
+	LinkedDataFile *linkedSfx;
 	uint32 n;
 
 	linkedSfx = GetSessionSfxFile();
 	if (linkedSfx == nullptr)
 		return -1;
 
-	n = linkedSfx->Fetch_item_number_by_hash(sfx);
+	n = LinkedDataObject::Fetch_item_number_by_hash(linkedSfx, sfx);
 
 	if (n == PX_LINKED_DATA_FILE_ERROR)
 		return -1;
@@ -1034,7 +1034,7 @@ void RegisterSoundOffset(uint32 obj, const char *offsetName, const char *sfxName
 	else if (isNico) {
 		// is nico so get position of it...
 		// x=, y=, z=
-		_feature_info *fi = (_feature_info *)(MS->features->Fetch_item_by_name(offsetName));
+		_feature_info *fi = (_feature_info *)(LinkedDataObject::Fetch_item_by_name(MS->features, offsetName));
 		x = fi->x;
 		y = fi->y;
 		z = fi->z;
@@ -1044,7 +1044,7 @@ void RegisterSoundOffset(uint32 obj, const char *offsetName, const char *sfxName
 	else {
 		// is mega object so attach sound to it
 		// obj=
-		obj = MS->objects->Fetch_item_number_by_name(offsetName);
+		obj = LinkedDataObject::Fetch_item_number_by_name(MS->objects, offsetName);
 		g_registeredSounds[i]->RegisterFromObject(obj, sndID, sfxName, sfxHash, xo, yo, zo, volume_offset);
 	}
 
@@ -1059,7 +1059,7 @@ void RegisterSound(uint32 obj, const char *sfxName, uint32 sfxHash, const char *
 	if (obj == SPECIAL_SOUND)
 		name = nullptr;
 	else
-		name = (const char *)(MS->objects->Fetch_items_name_by_number(obj));
+		name = (const char *)(LinkedDataObject::Fetch_items_name_by_number(MS->objects, obj));
 
 	RegisterSoundOffset(obj, name, sfxName, sfxHash, sndID, (PXreal)0, (PXreal)0, (PXreal)0, 0, 0, volume_offset);
 }
@@ -1075,7 +1075,7 @@ void RegisterSoundTime(uint32 obj, const char *sfxName, uint32 sfxHash, const ch
 	if (obj == SPECIAL_SOUND)
 		name = nullptr;
 	else
-		name = (const char *)(MS->objects->Fetch_items_name_by_number(obj));
+		name = (const char *)(LinkedDataObject::Fetch_items_name_by_number(MS->objects, obj));
 
 	RegisterSoundOffset(obj, name, sfxName, sfxHash, sndID, (PXreal)0, (PXreal)0, (PXreal)0, 0, time, volume_offset);
 }

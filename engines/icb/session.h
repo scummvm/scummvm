@@ -938,14 +938,14 @@ public:
 	_barrier_handler *session_barriers; // pointer to _barrier_handler object - loads file so must be pointer
 
 	// game object stuff - objects.linked
-	_linked_data_file *objects;
+	LinkedDataFile *objects;
 	uint32 total_objects; // number of objects in the objects.object file - pulled out at session start for convenience
 	_logic *logic_structs[MAX_session_objects]; // pointers to current sessions logic structs
 	uint32 num_megas; // keeps a running total of megas initialised - used when assigning megas structures
 	uint32 num_vox_images; // as above but for vox_images - in theory these 2 counters are the same thing but that would be an assumption too far tbh
 
 	// and the scripts.linked file
-	_linked_data_file *scripts;
+	LinkedDataFile *scripts;
 
 	// handles player object and user interface
 	_player player;
@@ -955,10 +955,10 @@ public:
 	_marker markers;
 
 	// initial map tag positions of props, people, etc.
-	_linked_data_file *features;
+	LinkedDataFile *features;
 
 	// ascii speech text
-	_linked_data_file *text;
+	LinkedDataFile *text;
 
 	// list of auto interact objects
 	uint8 auto_interact_list[MAX_auto_interact];
@@ -970,13 +970,13 @@ public:
 	uint32 remora_font_hash;     // the hash value of the speech_font_one string
 
 	// prop animations
-	_linked_data_file *prop_anims; // prop anims are loaded into the special private_session_resman
+	LinkedDataFile *prop_anims; // prop anims are loaded into the special private_session_resman
 
 	// make los_timing be global so we can print it at a global level
 	uint32 los_time;
 
 	uint32 total_was; // how many individual walk-areas
-	_linked_data_file *walk_areas;
+	LinkedDataFile *walk_areas;
 	const __aWalkArea *wa_list[MAX_was]; // walk areas
 
 	bool8 manual_camera; // overiden by a script command
@@ -1184,7 +1184,7 @@ inline uint32 _game_session::Fetch_object_integer_variable(const char *pcName, c
 	c_game_object *pGameObject;
 
 	// Get the object itself.
-	pGameObject = (c_game_object *)objects->Fetch_item_by_name(pcName);
+	pGameObject = (c_game_object *)LinkedDataObject::Fetch_item_by_name(objects, pcName);
 
 	if (!pGameObject)
 		Fatal_error("_game_session::Fetch_object_integer_variable( %s, %s ) couldn't find object", pcName, pcVar);

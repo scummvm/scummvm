@@ -171,7 +171,7 @@ mcodeFunctionReturnCodes _game_session::fn_stop_sfx(int32 &, int32 *params) {
 
 		strcpy(tempSnd, sub + strlen("::"));
 
-		int32 obj = MS->objects->Fetch_item_number_by_name(tempObj);
+		int32 obj = LinkedDataObject::Fetch_item_number_by_name(MS->objects, tempObj);
 
 		if (obj != -1)
 			RemoveRegisteredSound(obj, tempSnd);

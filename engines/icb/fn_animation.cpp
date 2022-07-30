@@ -226,7 +226,7 @@ mcodeFunctionReturnCodes _game_session::fn_face_nicos_pan(int32 &, int32 *params
 
 	if (!L->looping) {
 		// setup
-		start_pos = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+		start_pos = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 		if (!start_pos)
 			Fatal_error("no NICO marker (fn_face_nico) ob %s, nico %s", object->GetName(), nico_name);
 
@@ -292,7 +292,7 @@ mcodeFunctionReturnCodes _game_session::fn_face_object(int32 &, int32 *params) {
 		// setup
 		_logic *log;
 
-		uint32 id = objects->Fetch_item_number_by_name(object_name);
+		uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 		log = Fetch_object_struct(id);
 
@@ -341,7 +341,7 @@ mcodeFunctionReturnCodes _game_session::fn_fast_face_object(int32 &, int32 *para
 		// setup
 		_logic *log;
 
-		uint32 id = objects->Fetch_item_number_by_name(object_name);
+		uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 		log = Fetch_object_struct(id);
 
@@ -528,7 +528,7 @@ mcodeFunctionReturnCodes _game_session::fn_snap_face_object(int32 &, int32 *para
 
 	Zdebug("fn_snap_face_object [%s]", object_name);
 
-	uint32 id = objects->Fetch_item_number_by_name(object_name);
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	if (id == 0xffffffff)
 		Fatal_error("fn_snap_face_object cant find target object %s", object_name);
@@ -1272,7 +1272,7 @@ mcodeFunctionReturnCodes _game_session::fn_sync_with_mega(int32 &, int32 *params
 	const char *mega_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	if (!L->looping) {
-		L->list[0] = objects->Fetch_item_number_by_name(mega_name);
+		L->list[0] = LinkedDataObject::Fetch_item_number_by_name(objects, mega_name);
 		L->list[1] = 42;    // we are here
 		L->looping = TRUE8; // dont do this again
 	}
@@ -1331,7 +1331,7 @@ mcodeFunctionReturnCodes _game_session::fn_new_apply_bullet(int32 &, int32 *para
 	}
 
 	// get id
-	tid = objects->Fetch_item_number_by_name(target_name);
+	tid = LinkedDataObject::Fetch_item_number_by_name(objects, target_name);
 
 	// how near
 	if (L->image_type == PROP) { // we are prop
@@ -1368,7 +1368,7 @@ mcodeFunctionReturnCodes _game_session::fn_new_apply_bullet(int32 &, int32 *para
 					MS->player.being_shot = 3;            // cant shoot for 3 cycles (engine anim over three frames)
 					MS->player.shot_by_id = (int8)cur_id; // shot by us...!
 
-					c_game_object *ob = (c_game_object *)objects->Fetch_item_by_number(player.Fetch_player_id());
+					c_game_object *ob = (c_game_object *)LinkedDataObject::Fetch_item_by_number(objects, player.Fetch_player_id());
 					int32 ret = ob->GetVariable("hits");
 					uint32 hits = ob->GetIntegerVariable(ret);
 

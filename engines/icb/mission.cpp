@@ -423,7 +423,7 @@ void _mission::Save_micro_session() {
 	micro_sessions[j].number_of_micro_objects = session->Fetch_number_of_objects();
 
 	for (i = 0; i < session->Fetch_number_of_objects(); i++) {
-		object = (c_game_object *)session->objects->Fetch_item_by_number(i);
+		object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(session->objects, i);
 
 		Tdebug("micro_session.txt", "\n  object %d  %s, %d vars - status %d", i, object->GetName(), object->GetNoLvars(), session->Fetch_object_status(i));
 		micro_sessions[j].micro_objects[i].status_flag = session->Fetch_object_status(i);
@@ -497,7 +497,7 @@ void _mission::Restore_micro_session_vars() {
 
 			// restore lvars
 			for (i = 0; i < session->Fetch_number_of_objects(); i++) {
-				object = (c_game_object *)session->objects->Fetch_item_by_number(i);
+				object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(session->objects, i);
 
 				Tdebug("micro_session.txt", "\n  object %d  %s, %d vars - status %d", i, object->GetName(), object->GetNoLvars(),
 				       micro_sessions[j].micro_objects[i].status_flag);
@@ -536,7 +536,7 @@ void _mission::Restore_micro_session_coords(bool8 from_disk) {
 
 			// restore lvars
 			for (i = 0; i < session->Fetch_number_of_objects(); i++) {
-				object = (c_game_object *)session->objects->Fetch_item_by_number(i);
+				object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(session->objects, i);
 
 				Tdebug("micro_session.txt", "\n  object %d  %s, %d vars - status %d", i, object->GetName(), object->GetNoLvars(),
 				       micro_sessions[j].micro_objects[i].status_flag);

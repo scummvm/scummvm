@@ -236,7 +236,7 @@ __mode_return _player::Player_press_fire_button() {
 		if ((interact_selected) && (MS->Call_socket(cur_interact_id, "give_state", &retval))) {
 			if (!retval) {
 				//      try to fetch the object
-				MS->socket_object = (c_game_object *)MS->objects->Fetch_item_by_number(cur_interact_id);
+				MS->socket_object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, cur_interact_id);
 
 				res = MS->Call_socket(cur_interact_id, "gun_shot", &retval);
 
@@ -738,7 +738,7 @@ mcodeFunctionReturnCodes _player::Gateway() {
 
 						interact_lock = TRUE8;
 
-						ob = (c_game_object *)MS->objects->Fetch_item_by_number(player_id);
+						ob = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, player_id);
 
 						// Make sure number of medi-packs is > 0
 						if (GetNoMediPacks() > 0) {
@@ -1912,7 +1912,7 @@ void _player::Add_to_interact_history() {
 	// record it
 	MS->history[MS->cur_history].interaction = TRUE8;
 	MS->history[MS->cur_history].id = MS->stairs[stair_num].stair_id;
-	Tdebug("history.txt", "Stair [%s]", MS->objects->Fetch_items_name_by_number(MS->stairs[stair_num].stair_id));
+	Tdebug("history.txt", "Stair [%s]", LinkedDataObject::Fetch_items_name_by_number(MS->objects, MS->stairs[stair_num].stair_id));
 
 	MS->floor_def->Set_floor_rect_flag(log);
 	Tdebug("history.txt", "...%d", log->owner_floor_rect);
@@ -3141,7 +3141,7 @@ void _game_session::Restart_player() {
 	int32 var_num;
 	c_game_object *ob;
 
-	ob = (c_game_object *)objects->Fetch_item_by_number(player.Fetch_player_id());
+	ob = (c_game_object *)LinkedDataObject::Fetch_item_by_number(objects, player.Fetch_player_id());
 
 	var_num = ob->GetVariable("state");
 	if (var_num == -1)

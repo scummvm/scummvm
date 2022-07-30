@@ -93,7 +93,7 @@ public:
 	_child_group *Fetch_child_box(_parent_box *parent, uint32 child);
 	_route_barrier *Fetch_barrier(uint32 num);
 	uint32 Fetch_total_barriers();
-	_linked_data_file *Get_barrier_pointer() const { return raw_barriers; }
+	LinkedDataFile *Get_barrier_pointer() const { return raw_barriers; }
 	void Prepare_animating_barriers();
 	uint32 Get_anim_barriers(uint32 n, uint32 *oThisCubesBarriers, uint32 slice);
 
@@ -110,12 +110,12 @@ public:
 	_animating_parent anim_parent_table[MAX_floors]; // storage
 
 	// raw barriers
-	_linked_data_file *raw_barriers; // raw route barriers used for routing/line of sight and maybe shadow geometry
+	LinkedDataFile *raw_barriers; // raw route barriers used for routing/line of sight and maybe shadow geometry
 
 	uint32 total_barriers;
 
 	// route barrier wrapper file
-	_linked_data_file *route_wrapper;
+	LinkedDataFile *route_wrapper;
 
 	uint32 total_slices; // useful out of file
 

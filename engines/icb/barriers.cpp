@@ -503,9 +503,9 @@ void _barrier_handler::___init() {
 	Tdebug("barriers.txt", "%s", (const char *)temp_buf);
 	uint32 buf_hash = NULL_HASH;
 	uint32 cluster_hash = MS->Fetch_session_cluster_hash();
-	raw_barriers = (_linked_data_file *)private_session_resman->Res_open(temp_buf, buf_hash, MS->Fetch_session_cluster(), cluster_hash);
+	raw_barriers = (LinkedDataFile *)private_session_resman->Res_open(temp_buf, buf_hash, MS->Fetch_session_cluster(), cluster_hash);
 
-	num_bars = (uint32 *)raw_barriers->Fetch_item_by_name("Count");
+	num_bars = (uint32 *)LinkedDataObject::Fetch_item_by_name(raw_barriers, "Count");
 
 	total_barriers = *(num_bars);
 
@@ -519,9 +519,9 @@ void _barrier_handler::___init() {
 
 	Tdebug("barriers.txt", "%s", temp_buf);
 	buf_hash = NULL_HASH;
-	route_wrapper = (_linked_data_file *)private_session_resman->Res_open(temp_buf, buf_hash, MS->Fetch_session_cluster(), cluster_hash);
+	route_wrapper = (LinkedDataFile *)private_session_resman->Res_open(temp_buf, buf_hash, MS->Fetch_session_cluster(), cluster_hash);
 
-	total_slices = route_wrapper->Fetch_number_of_items();
+	total_slices = LinkedDataObject::Fetch_number_of_items(route_wrapper);
 
 	if (total_slices > MAX_slices)
 		Fatal_error("_barrier_handler::___init finds too many slices - %d but only %d allowed", total_slices, MAX_slices);
@@ -535,7 +535,7 @@ void _barrier_handler::___init() {
 
 	uint32 j;
 	for (j = 0; j < total_slices; j++) {
-		slice = (_routing_slice *)route_wrapper->Fetch_item_by_number(j);
+		slice = (_routing_slice *)LinkedDataObject::Fetch_item_by_number(route_wrapper, j);
 		Tdebug("slice.txt", "bottom %3.1f top %3.1f", slice->bottom, slice->top);
 		Tdebug("slice.txt", "%d parents", slice->num_parent_boxes);
 	}
@@ -821,7 +821,7 @@ _parent_box *_barrier_handler::Fetch_parent_num_on_slice_y(uint32 requested_pare
 	// first time in so compute the slice
 	if (!requested_parent) {
 		while (1) {
-			slice = (_routing_slice *)route_wrapper->Fetch_item_by_number(cur_slice);
+			slice = (_routing_slice *)LinkedDataObject::Fetch_item_by_number(route_wrapper, cur_slice);
 
 			if ((y >= slice->bottom) && (y < slice->top))
 				break;
@@ -857,7 +857,7 @@ _route_barrier *_barrier_handler::Fetch_barrier(uint32 num) {
 	if (num >= total_barriers)
 		Fatal_error("illegal barrier request %d", num);
 
-	bar = (_route_barrier *)raw_barriers->Fetch_item_by_name("Data");
+	bar = (_route_barrier *)LinkedDataObject::Fetch_item_by_name(raw_barriers, "Data");
 
 	return &bar[num];
 }
@@ -875,7 +875,7 @@ _parent_box *_barrier_handler::Fetch_parent_box_for_xyz(PXreal x, PXreal y, PXre
 	slice_num = 0;
 
 	while (1) {
-		slice = (_routing_slice *)route_wrapper->Fetch_item_by_number(slice_num);
+		slice = (_routing_slice *)LinkedDataObject::Fetch_item_by_number(route_wrapper, slice_num);
 
 		if ((y >= slice->bottom) && (y < slice->top))
 			break;
@@ -929,7 +929,7 @@ void _game_session::Prepare_megas_route_barriers(bool8 pl) {
 	z = M->actor_xyz.z;
 
 	// on previous slice?
-	slice = (_routing_slice *)session_barriers->route_wrapper->Fetch_item_by_number(M->cur_slice);
+	slice = (_routing_slice *)LinkedDataObject::Fetch_item_by_number(session_barriers->route_wrapper, M->cur_slice);
 	if ((y >= slice->bottom) && (y < slice->top) && (M->cur_parent))
 		if ((x > M->cur_parent->left) && (x < M->cur_parent->right) && (z > M->cur_parent->back) && (z < M->cur_parent->front)) {
 			// nothing has changed
@@ -944,7 +944,7 @@ void _game_session::Prepare_megas_route_barriers(bool8 pl) {
 
 	M->cur_slice = 0;
 	while (1) {
-		slice = (_routing_slice *)session_barriers->route_wrapper->Fetch_item_by_number(M->cur_slice);
+		slice = (_routing_slice *)LinkedDataObject::Fetch_item_by_number(session_barriers->route_wrapper, M->cur_slice);
 		if ((y >= slice->bottom) && (y < slice->top))
 			break;
 
@@ -952,7 +952,7 @@ void _game_session::Prepare_megas_route_barriers(bool8 pl) {
 		M->cur_slice++;
 		if (M->cur_slice == session_barriers->total_slices) { // if so then must be last slice :O
 			M->cur_slice--;
-			slice = (_routing_slice *)session_barriers->route_wrapper->Fetch_item_by_number(M->cur_slice);
+			slice = (_routing_slice *)LinkedDataObject::Fetch_item_by_number(session_barriers->route_wrapper, M->cur_slice);
 			break;
 		}
 	}
@@ -1077,13 +1077,13 @@ void _barrier_handler::Prepare_animating_barriers() {
 
 	Tdebug("anim_barriers.txt", "Preparing animating barriers");
 
-	for (j = 0; j < MS->prop_anims->Fetch_number_of_items(); j++) {
-		Tdebug("anim_barriers.txt", "\n%d %s", j, MS->prop_anims->Fetch_items_name_by_number(j));
+	for (j = 0; j < LinkedDataObject::Fetch_number_of_items(MS->prop_anims); j++) {
+		Tdebug("anim_barriers.txt", "\n%d %s", j, LinkedDataObject::Fetch_items_name_by_number(MS->prop_anims, j));
 
 		_animating_prop *index;
 		_animation_entry *anim;
 
-		index = (_animating_prop *)MS->prop_anims->Fetch_item_by_number(j);
+		index = (_animating_prop *)LinkedDataObject::Fetch_item_by_number(MS->prop_anims, j);
 
 		Tdebug("anim_barriers.txt", " has %d anims", index->num_anims);
 
@@ -1126,7 +1126,7 @@ void _barrier_handler::Prepare_animating_barriers() {
 							cur_slice = 0;
 
 							do {
-								slice = (_routing_slice *)route_wrapper->Fetch_item_by_number(cur_slice);
+								slice = (_routing_slice *)LinkedDataObject::Fetch_item_by_number(route_wrapper, cur_slice);
 
 								if ((bar->bottom() >= slice->bottom) && (bar->bottom() < slice->top))
 									break;
@@ -1145,12 +1145,11 @@ void _barrier_handler::Prepare_animating_barriers() {
 									            "- %d parents",
 									            slice->num_parent_boxes);
 
-								int32 prop_number =
-								    MS->objects->Fetch_item_number_by_name((const char *)MS->prop_anims->Fetch_items_name_by_number(j));
+								int32 prop_number = LinkedDataObject::Fetch_item_number_by_name(MS->prop_anims, (const char *)LinkedDataObject::Fetch_items_name_by_number(MS->prop_anims, j));
 
 								if (prop_number == -1) {
 									Tdebug("anim_barriers.txt", "       !!associated prop [%s] not a game object - so ignoring",
-									       (const char *)MS->prop_anims->Fetch_items_name_by_number(j));
+									       (const char *)LinkedDataObject::Fetch_items_name_by_number(MS->prop_anims, j));
 								} else {
 									// now find parent the barrier would belong to
 									for (f = 0; f < slice->num_parent_boxes; f++) {
@@ -1161,8 +1160,8 @@ void _barrier_handler::Prepare_animating_barriers() {
 										// do we lie within the box?
 										if ((bar->x1() > parent->left) && (bar->x1() < parent->right) && (bar->z1() > parent->back) &&
 										    (bar->z1() < parent->front)) {
-											char *props_name = (char *)MS->prop_anims->Fetch_items_name_by_number(j);
-											uint32 props_number = MS->objects->Fetch_item_number_by_name(props_name);
+											char *props_name = (char *)LinkedDataObject::Fetch_items_name_by_number(MS->prop_anims, j);
+											uint32 props_number = LinkedDataObject::Fetch_item_number_by_name(MS->objects, props_name);
 
 											if (!anim_slices[cur_slice].anim_parents[f]) {
 												anim_slices[cur_slice].anim_parents[f] = &anim_parent_table[parents_used++];
@@ -1232,12 +1231,12 @@ void _barrier_handler::Prepare_animating_barriers() {
 	for (j = 0; j < MAX_props; j++)
 		anim_prop_info[j].barriers_per_state = 0; // do it here so it can double up as 0 being an unused entry
 
-	for (j = 0; j < MS->prop_anims->Fetch_number_of_items(); j++) {
-		Tdebug("anim_barriers.txt", "\n**%d %s", j, MS->prop_anims->Fetch_items_name_by_number(j));
+	for (j = 0; j < LinkedDataObject::Fetch_number_of_items(MS->prop_anims); j++) {
+		Tdebug("anim_barriers.txt", "\n**%d %s", j, LinkedDataObject::Fetch_items_name_by_number(MS->prop_anims, j));
 		_animating_prop *index;
 		_animation_entry *anim;
 
-		index = (_animating_prop *)MS->prop_anims->Fetch_item_by_number(j);
+		index = (_animating_prop *)LinkedDataObject::Fetch_item_by_number(MS->prop_anims, j);
 
 		// loop through all looking for our named anim
 		if (index->num_anims) {
@@ -1272,7 +1271,7 @@ void _barrier_handler::Prepare_animating_barriers() {
 					// now compute slice for sample barrier
 					cur_slice = 0;
 					do {
-						slice = (_routing_slice *)route_wrapper->Fetch_item_by_number(cur_slice);
+						slice = (_routing_slice *)LinkedDataObject::Fetch_item_by_number(route_wrapper, cur_slice);
 						if ((bar->bottom() >= slice->bottom) && (bar->bottom() < slice->top))
 							break;
 						cur_slice++;
@@ -1285,7 +1284,7 @@ void _barrier_handler::Prepare_animating_barriers() {
 						Tdebug("anim_barriers.txt", "  sample bar puts prop in slice %d", cur_slice);
 
 						// get the prop number
-						uint32 prop_number = MS->objects->Fetch_item_number_by_name((const char *)MS->prop_anims->Fetch_items_name_by_number(j));
+						uint32 prop_number = LinkedDataObject::Fetch_item_number_by_name(MS->prop_anims, (const char *)LinkedDataObject::Fetch_items_name_by_number(MS->prop_anims, j));
 
 						// gotta check for anims with no equivelent game objects
 						if (prop_number != 0xffffffff) {
@@ -1336,7 +1335,7 @@ void _barrier_handler::Prepare_animating_barriers() {
 							// ok, we've set up the anim barriers for this prop
 
 							Tdebug("anim_barriers.txt", "    prop [%s] highest state %d, %d bars per state",
-							       (const char *)MS->prop_anims->Fetch_items_name_by_number(j), total_states,
+							       (const char *)LinkedDataObject::Fetch_items_name_by_number(MS->prop_anims, j), total_states,
 							       anim_prop_info[prop_number].barriers_per_state);
 
 							// note down total states
@@ -1371,7 +1370,7 @@ void _barrier_handler::Prepare_animating_barriers() {
 	for (j = 0; j < MS->Fetch_number_of_objects(); j++)
 		if (anim_prop_info[j].barriers_per_state) {
 			Tdebug("anim_barriers.txt", "prop %d", j);
-			Tdebug("anim_barriers.txt", "prop %d [%s] has %d anim barriers, %d per frame", j, (const char *)MS->objects->Fetch_items_name_by_number(j),
+			Tdebug("anim_barriers.txt", "prop %d [%s] has %d anim barriers, %d per frame", j, (const char *)LinkedDataObject::Fetch_items_name_by_number(MS->objects, j),
 			       anim_prop_info[j].total_states, anim_prop_info[j].barriers_per_state);
 			Tdebug("anim_barriers.txt", "total %d", anim_prop_info[j].barriers_per_state * (anim_prop_info[j].total_states));
 			for (uint16 k = 0; k < anim_prop_info[j].barriers_per_state * (anim_prop_info[j].total_states); k++)

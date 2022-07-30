@@ -97,20 +97,14 @@ enum _file_type {
 
 #define STANDARD_HEADER_NAME_LENGTH 32 // Max length of the header name
 
-class px_standard_header {
-public:
+typedef struct {
 	int32 version;                          // This is incremented every time the object is updated
 	_file_type type;                        // enumerated value for every type of object in the game
 	int32 owner;                            // Who is responsible for producing this object
 	int32 unused;                           // For future expansion
 	int32 unused2;                          // For future expansion
 	char name[STANDARD_HEADER_NAME_LENGTH]; // 32 bytes worth of ascii name information
-
-	void SetData(int32 version, _file_type type, int32 owner, const char *name);
-	_file_type GetType() { return (type); }
-	const char *GetName() { return (name); }
-	uint32 GetVersion() { return (version); }
-};
+} px_standard_header;
 
 typedef struct {
 	uint8 red;

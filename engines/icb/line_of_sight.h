@@ -125,12 +125,12 @@ public:
 	_barrier_logic_value GetLastImpactType() const { return (m_eImpactType); }
 
 	// This allows other classes to get at the barrier slices (the Remora needs this).
-	_linked_data_file *GetSlicesPointer() const { return (m_pyLOSData); }
+	LinkedDataFile *GetSlicesPointer() const { return (m_pyLOSData); }
 
 	bool8 FailingOnHeight() const { return (m_bFailingOnHeight); }
 
 private:
-	_linked_data_file *m_pyLOSData;            // Pointer to the loaded line-of-sight data file.
+	LinkedDataFile *m_pyLOSData;               // Pointer to the loaded line-of-sight data file.
 	uint32 m_nSubsPerCycle;                    // How many subscribers to process per cycle.
 	uint32 m_nFirstSubscriber;                 // Number of first subscriber to process
 	uint32 m_nNumObjects;                      // Number of subscribers to this service.

@@ -280,7 +280,7 @@ void UpdatePlayerLook() {
 
 		// target is an actor so need adjustment for eye height...
 		if (target->image_type == VOXEL) {
-			c_game_object *pGameObject = (c_game_object *)MS->objects->Fetch_item_by_number(sel_id);
+			c_game_object *pGameObject = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, sel_id);
 			int32 dead = pGameObject->GetIntegerVariable(pGameObject->GetVariable("state"));
 
 			if (target->object_type == __NON_ORGANIC_MEGA) { // robot (look down)
@@ -479,7 +479,7 @@ mcodeFunctionReturnCodes _game_session::speak_simple_look(int32 &, int32 *params
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	// object
-	int32 object_id = objects->Fetch_item_number_by_name(object_name);
+	int32 object_id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	// direction
 	int32 l = params[1];
@@ -564,7 +564,7 @@ mcodeFunctionReturnCodes _game_session::speak_set_neck_vector(int32 &, int32 *pa
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	object_id = objects->Fetch_item_number_by_name(object_name);
+	object_id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	x = params[1];
 	y = params[2];
 	z = params[3];

@@ -68,7 +68,7 @@ mcodeFunctionReturnCodes _game_session::fn_prop_animate(int32 &, int32 *params) 
 	uint32 j;
 
 	// find entry for this object via its name
-	index = (_animating_prop *)prop_anims->Try_fetch_item_by_name(object->GetName());
+	index = (_animating_prop *)LinkedDataObject::Try_fetch_item_by_name(prop_anims, object->GetName());
 
 	const char *anim_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
@@ -132,7 +132,7 @@ mcodeFunctionReturnCodes _game_session::fn_prop_set_to_last_frame(int32 &, int32
 	uint32 j;
 
 	// find entry for this object via its name
-	index = (_animating_prop *)prop_anims->Try_fetch_item_by_name(object->GetName());
+	index = (_animating_prop *)LinkedDataObject::Try_fetch_item_by_name(prop_anims, object->GetName());
 
 	const char *anim_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
@@ -163,7 +163,7 @@ mcodeFunctionReturnCodes _game_session::fn_prop_set_to_first_frame(int32 &, int3
 	uint32 j;
 
 	// find entry for this object via its name
-	index = (_animating_prop *)prop_anims->Try_fetch_item_by_name(object->GetName());
+	index = (_animating_prop *)LinkedDataObject::Try_fetch_item_by_name(prop_anims, object->GetName());
 
 	const char *anim_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
@@ -196,7 +196,7 @@ mcodeFunctionReturnCodes _game_session::fn_test_prop_anim(int32 &result, int32 *
 	uint32 j;
 
 	// find entry for this object via its name
-	index = (_animating_prop *)prop_anims->Try_fetch_item_by_name(object->GetName());
+	index = (_animating_prop *)LinkedDataObject::Try_fetch_item_by_name(prop_anims, object->GetName());
 
 	const char *anim_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
@@ -235,7 +235,7 @@ uint32 _game_session::Validate_prop_anim(const char *anim_name) {
 	uint32 j;
 
 	// find entry for this object via its name
-	index = (_animating_prop *)prop_anims->Try_fetch_item_by_name(object->GetName());
+	index = (_animating_prop *)LinkedDataObject::Try_fetch_item_by_name(prop_anims, object->GetName());
 
 	// loop through all looking for our named anim
 	for (j = 0; j < index->num_anims; j++) {
@@ -276,7 +276,7 @@ mcodeFunctionReturnCodes _game_session::fn_inherit_prop_anim_height_id(int32 &, 
 	Zdebug("fn_inherit_prop_anim_height_id");
 
 	// find entry for this object via its name, which we find via its number :(
-	index = (_animating_prop *)prop_anims->Fetch_item_by_name((const char *)objects->Fetch_items_name_by_number(params[0]));
+	index = (_animating_prop *)LinkedDataObject::Fetch_item_by_name(prop_anims, (const char *)LinkedDataObject::Fetch_items_name_by_number(objects, params[0]));
 
 	// loop through all looking for our named anim
 	for (j = 0; j < index->num_anims; j++) {
@@ -345,7 +345,7 @@ mcodeFunctionReturnCodes _game_session::fn_inherit_prop_anim_height_id(int32 &, 
 	}
 
 	// didnt find the named anim so thats it
-	Fatal_error("fn_inherit_prop_anim_height_id object [%s] prop [%s] cant find anim [%s]", object->GetName(), objects->Fetch_items_name_by_number(params[0]), anim_name);
+	Fatal_error("fn_inherit_prop_anim_height_id object [%s] prop [%s] cant find anim [%s]", object->GetName(), LinkedDataObject::Fetch_items_name_by_number(objects, params[0]), anim_name);
 	return (IR_STOP);
 }
 
@@ -373,7 +373,7 @@ mcodeFunctionReturnCodes _game_session::fn_inherit_prop_anim_height(int32 &, int
 	Zdebug("prop %s  anim %s", prop_name, anim_name);
 
 	// find entry for this object via its name, which we find via its number :(
-	index = (_animating_prop *)prop_anims->Fetch_item_by_name(prop_name);
+	index = (_animating_prop *)LinkedDataObject::Fetch_item_by_name(prop_anims, prop_name);
 
 	// loop through all looking for our named anim
 	for (j = 0; j < index->num_anims; j++) {

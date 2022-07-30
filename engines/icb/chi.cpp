@@ -117,7 +117,7 @@ mcodeFunctionReturnCodes _game_session::fn_record_player_interaction(int32 &, in
 	history[cur_history].interaction = TRUE8;
 	history[cur_history].id = M->target_id;
 
-	Tdebug("history.txt", "-> [%s] %d", objects->Fetch_items_name_by_number(M->target_id), M->target_id);
+	Tdebug("history.txt", "-> [%s] %d", LinkedDataObject::Fetch_items_name_by_number(objects, M->target_id), M->target_id);
 
 	return IR_CONT;
 }
@@ -126,7 +126,7 @@ mcodeFunctionReturnCodes _game_session::fn_send_chi_to_named_object(int32 &, int
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 	uint32 id;
 
-	id = objects->Fetch_item_number_by_name(object_name);
+	id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_send_chi_to_named_object - illegal object [%s]", object_name);
 

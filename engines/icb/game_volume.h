@@ -95,7 +95,7 @@ public:
 	inline const _game_volume &operator=(const _game_volume &oOpB);
 
 	// This single function sets up all the parameters.
-	void SetUpParameters(_linked_data_file *pyLOSData);
+	void SetUpParameters(LinkedDataFile *pyLOSData);
 
 	// Gets and sets.
 	PXreal GetAbsoluteTop() const { return (m_fAbsoluteTop); }
@@ -118,7 +118,7 @@ public:
 	bool8 GetCubeAndIndices(const px3DRealPoint &oPoint, _XYZ_index &oIndex, _bullet_cube &oCube) const;
 
 protected:
-	_linked_data_file *m_pyLOSMemFile; // Pointer to the line-of-sight data file.
+	LinkedDataFile *m_pyLOSMemFile; // Pointer to the line-of-sight data file.
 
 private:
 	PXreal m_fAbsoluteTop;                   // The 'roof' of the cube.

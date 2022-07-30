@@ -82,7 +82,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_interacting(int32 &, int32 *param
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	uint32 id = objects->Fetch_item_number_by_name(object_name);
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_set_interacting - illegal object [%s]", object_name);
 
@@ -161,7 +161,7 @@ mcodeFunctionReturnCodes _game_session::fn_sony_door_interact(int32 &result, int
 	if (!L->looping) {
 		// work out which button to interact with
 
-		id = objects->Fetch_item_number_by_name(button1_name);
+		id = LinkedDataObject::Fetch_item_number_by_name(objects, button1_name);
 		if (id == 0xffffffff)
 			Fatal_error("fn_sony_door_interact - illegal object [%s]", button1_name);
 
@@ -194,7 +194,7 @@ mcodeFunctionReturnCodes _game_session::fn_sony_door_interact(int32 &result, int
 			}
 
 			// there is another button so lets take a look to see it is named correctly
-			id = objects->Fetch_item_number_by_name(button2_name);
+			id = LinkedDataObject::Fetch_item_number_by_name(objects, button2_name);
 			if (id == 0xffffffff)
 				Fatal_error("fn_sony_door_interact - illegal object [%s]", button2_name);
 
@@ -520,7 +520,7 @@ mcodeFunctionReturnCodes _game_session::fn_is_object_interact_object(int32 &resu
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	uint32 id = objects->Fetch_item_number_by_name(object_name);
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_is_object_interact_object - object [%s] does not exist", object_name);
 

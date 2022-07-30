@@ -29,7 +29,7 @@
 
 namespace ICB {
 
-void _game_volume::SetUpParameters(_linked_data_file *pyLOSData) {
+void _game_volume::SetUpParameters(LinkedDataFile *pyLOSData) {
 	uint32 i;
 	_barrier_slice *pSlice;
 	_slice_limit sSliceLimit;
@@ -39,7 +39,7 @@ void _game_volume::SetUpParameters(_linked_data_file *pyLOSData) {
 
 	// Get the first slice and use this to set the horizontal sizes, since they all share the
 	// same horizontal sizes.
-	pSlice = (_barrier_slice *)pyLOSData->Fetch_item_by_number(0);
+	pSlice = (_barrier_slice *)LinkedDataObject::Fetch_item_by_number(pyLOSData, 0);
 	m_fLeftEdge = pSlice->left_edge;
 	m_fRightEdge = pSlice->right_edge;
 	m_fBackEdge = pSlice->back_edge;
@@ -54,10 +54,10 @@ void _game_volume::SetUpParameters(_linked_data_file *pyLOSData) {
 	m_nMinimumZIndex = (int32)(m_fBackEdge / (PXreal)FLOOR_CUBE_SIZE);
 
 	// Now set the slice heights.
-	m_nNumSlices = pyLOSData->Fetch_number_of_items();
+	m_nNumSlices = LinkedDataObject::Fetch_number_of_items(pyLOSData);
 
 	for (i = 0; i < m_nNumSlices; ++i) {
-		pSlice = (_barrier_slice *)pyLOSData->Fetch_item_by_number(i);
+		pSlice = (_barrier_slice *)LinkedDataObject::Fetch_item_by_number(pyLOSData, i);
 		sSliceLimit.fTop = pSlice->top;
 		sSliceLimit.fBottom = pSlice->bottom;
 		m_oSliceLimits[i] = sSliceLimit;

@@ -58,7 +58,7 @@ extern res_man *rs_font;   // pointer to which res_man to use for font data
 
 // global test file only in this resman
 extern res_man *global_text_resman;
-extern _linked_data_file *global_text;
+extern LinkedDataFile *global_text;
 
 extern text_sprite *g_text_bloc1;
 extern text_sprite *g_text_bloc2;

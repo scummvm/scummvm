@@ -68,7 +68,7 @@ mcodeFunctionReturnCodes _game_session::fn_interact_with_id(int32 &, int32 *para
 	script_hash = HashString(script_name);
 
 	// get target object
-	target_object = (c_game_object *)MS->objects->Fetch_item_by_number(params[0]);
+	target_object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, params[0]);
 
 	// set socket_id ready for any special socket functions
 	M->target_id = params[0];
@@ -83,7 +83,7 @@ mcodeFunctionReturnCodes _game_session::fn_interact_with_id(int32 &, int32 *para
 			// script k is the one to run
 			// get the address of the script we want to run
 
-			char *ad = (char *)scripts->Try_fetch_item_by_hash(target_object->GetScriptNameFullHash(k));
+			char *ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, target_object->GetScriptNameFullHash(k));
 
 			// write actual offset
 			L->logic[2] = ad;
@@ -125,12 +125,12 @@ mcodeFunctionReturnCodes _game_session::fn_mega_interacts(int32 &, int32 *params
 	Zdebug("fn_mega_interacts with object [%s], script [%s]", object_name, script_name);
 
 	// get target object
-	target_object = (c_game_object *)MS->objects->Try_fetch_item_by_name(object_name);
+	target_object = (c_game_object *)LinkedDataObject::Try_fetch_item_by_name(MS->objects, object_name);
 	if (!target_object)
 		Fatal_error("fn_mega_interacts - named object [%s] dont exist", object_name);
 
 	// set socket_id ready for any special socket functions
-	M->target_id = objects->Fetch_item_number_by_name(object_name);
+	M->target_id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	// set this flag to avoid interact with id=0 based problems
 	M->interacting = TRUE8;
@@ -141,7 +141,7 @@ mcodeFunctionReturnCodes _game_session::fn_mega_interacts(int32 &, int32 *params
 			Zdebug("found target interact script", k);
 			// script k is the one to run
 			// get the address of the script we want to run
-			char *ad = (char *)scripts->Try_fetch_item_by_hash(target_object->GetScriptNameFullHash(k));
+			char *ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, target_object->GetScriptNameFullHash(k));
 
 			// write actual offset
 			L->logic[2] = ad;
@@ -176,12 +176,12 @@ mcodeFunctionReturnCodes _game_session::fn_mega_generic_interact(int32 &, int32 
 	Zdebug("fn_mega_generic_interact with [%s]", object_name);
 
 	// get target object
-	target_object = (c_game_object *)MS->objects->Try_fetch_item_by_name(object_name);
+	target_object = (c_game_object *)LinkedDataObject::Try_fetch_item_by_name(MS->objects, object_name);
 	if (!target_object)
 		Fatal_error("fn_mega_generic_interact - named object [%s] dont exist", object_name);
 
 	// set socket_id ready for any special socket functions
-	M->target_id = objects->Fetch_item_number_by_name(object_name);
+	M->target_id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	// set this flag to avoid interact with id=0 based problems
 	M->interacting = TRUE8;
@@ -193,7 +193,7 @@ mcodeFunctionReturnCodes _game_session::fn_mega_generic_interact(int32 &, int32 
 			// script k is the one to run
 			// get the address of the script we want to run
 
-			char *ad = (char *)scripts->Try_fetch_item_by_hash(target_object->GetScriptNameFullHash(k));
+			char *ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, target_object->GetScriptNameFullHash(k));
 
 			// write actual offset
 			L->logic[2] = ad;
@@ -225,7 +225,7 @@ bool8 _game_session::chi_interacts(int32 id, const char *script_name) {
 	script_hash = HashString(script_name);
 
 	// get target object
-	target_object = (c_game_object *)MS->objects->Fetch_item_by_number(id);
+	target_object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, id);
 	if (!target_object)
 		Fatal_error("chi_interacts - object [%d] dont exist", id);
 
@@ -240,7 +240,7 @@ bool8 _game_session::chi_interacts(int32 id, const char *script_name) {
 		if (script_hash == target_object->GetScriptNamePartHash(k)) {
 			// script k is the one to run
 			// get the address of the script we want to run
-			char *ad = (char *)scripts->Try_fetch_item_by_hash(target_object->GetScriptNameFullHash(k));
+			char *ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, target_object->GetScriptNameFullHash(k));
 
 			// write actual offset
 			L->logic[2] = ad;

@@ -56,7 +56,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_custom_simple_animator(int32 &, i
 	_animation_entry *anim;
 
 	// find entry for this object via its name
-	index = (_animating_prop *)prop_anims->Try_fetch_item_by_name(object->GetName());
+	index = (_animating_prop *)LinkedDataObject::Try_fetch_item_by_name(prop_anims, object->GetName());
 
 	// get anim
 	anim = (_animation_entry *)(((char *)index) + index->anims[0]);
@@ -73,7 +73,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_custom_simple_animator(int32 &, i
 
 	L->big_mode = __CUSTOM_SIMPLE_ANIMATE;
 
-	SA_INDEX = prop_anims->Fetch_item_number_by_name(object->GetName());
+	SA_INDEX = LinkedDataObject::Fetch_item_number_by_name(prop_anims, object->GetName());
 
 	// object will pause when off screen
 	L->hold_mode = prop_camera_hold;
@@ -90,7 +90,7 @@ void _game_session::Custom_simple_animator() {
 	_animation_entry *anim;
 
 	// get index for object
-	index = (_animating_prop *)prop_anims->Fetch_item_by_number(SA_INDEX);
+	index = (_animating_prop *)LinkedDataObject::Fetch_item_by_number(prop_anims, SA_INDEX);
 
 	// now then, lets make the assumption that anim 0 will be the 'looping' one
 	anim = (_animation_entry *)(((char *)index) + index->anims[0]);
@@ -117,7 +117,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_custom_button_operated_door(int32
 	// switch out of script mode
 	L->big_mode = __CUSTOM_BUTTON_OPERATED_DOOR;
 
-	BOD_INDEX = prop_anims->Fetch_item_number_by_name(object->GetName());
+	BOD_INDEX = LinkedDataObject::Fetch_item_number_by_name(prop_anims, object->GetName());
 
 	BOD_OPEN_NO = Validate_prop_anim("opening");
 	BOD_CLOSE_NO = Validate_prop_anim("closing");
@@ -170,7 +170,7 @@ void _game_session::Custom_button_operated_door() {
 
 		if (BOD_CONTROL == BOD_OPENING) {
 			// get index for object
-			index = (_animating_prop *)prop_anims->Fetch_item_by_number(BOD_INDEX);
+			index = (_animating_prop *)LinkedDataObject::Fetch_item_by_number(prop_anims, BOD_INDEX);
 			anim = (_animation_entry *)(((char *)index) + index->anims[BOD_OPEN_NO]);
 			prop_state_table[cur_id] = anim->frames[L->anim_pc];
 
@@ -187,7 +187,7 @@ void _game_session::Custom_button_operated_door() {
 			return;
 		} else if (BOD_CONTROL == BOD_CLOSING) {
 			// get index for object
-			index = (_animating_prop *)prop_anims->Try_fetch_item_by_name(object->GetName());
+			index = (_animating_prop *)LinkedDataObject::Try_fetch_item_by_name(prop_anims, object->GetName());
 			anim = (_animation_entry *)(((char *)index) + index->anims[BOD_CLOSE_NO]);
 
 			// set frame
@@ -292,7 +292,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_custom_auto_door(int32 &, int32 *
 	L->big_mode = __CUSTOM_AUTO_DOOR;
 
 	// anim presets
-	CAD_INDEX = prop_anims->Fetch_item_number_by_name(object->GetName());
+	CAD_INDEX = LinkedDataObject::Fetch_item_number_by_name(prop_anims, object->GetName());
 	CAD_OPEN_NO = Validate_prop_anim("opening");
 	CAD_CLOSE_NO = Validate_prop_anim("closing");
 
@@ -334,7 +334,7 @@ void _game_session::Custom_auto_door() {
 
 	if (CAD_STATE == CAD_OPENING) { // doors opening
 		// get index for object
-		index = (_animating_prop *)prop_anims->Fetch_item_by_number(CAD_INDEX);
+		index = (_animating_prop *)LinkedDataObject::Fetch_item_by_number(prop_anims, CAD_INDEX);
 
 		anim = (_animation_entry *)(((char *)index) + index->anims[CAD_OPEN_NO]);
 		prop_state_table[cur_id] = anim->frames[L->anim_pc];
@@ -370,7 +370,7 @@ void _game_session::Custom_auto_door() {
 			return;
 		}
 		// get index for object
-		index = (_animating_prop *)prop_anims->Fetch_item_by_number(CAD_INDEX);
+		index = (_animating_prop *)LinkedDataObject::Fetch_item_by_number(prop_anims, CAD_INDEX);
 
 		// when closing we reverse the opening anim - until the done when we set to last frame of closing
 		anim = (_animation_entry *)(((char *)index) + index->anims[CAD_OPEN_NO]);
@@ -416,7 +416,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_cad_lock_status(int32 &, int32 *p
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 	uint32 id;
 
-	id = (uint32)objects->Fetch_item_number_by_name(object_name);
+	id = (uint32)LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	logic_structs[id]->list[5] = params[1];
 
 	return IR_CONT;
@@ -429,7 +429,7 @@ mcodeFunctionReturnCodes _game_session::fn_get_cad_state_flag(int32 &result, int
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 	uint32 id;
 
-	id = (uint32)objects->Fetch_item_number_by_name(object_name);
+	id = (uint32)LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (logic_structs[id]->EXT_CAD_STATE == CAD_OPEN)
 		result = 1;
 	else

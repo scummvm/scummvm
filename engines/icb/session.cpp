@@ -52,7 +52,7 @@ namespace ICB {
 
 // Translation tweaks
 
-_linked_data_file *LoadTranslatedFile(const char *session, const char *mission);
+LinkedDataFile *LoadTranslatedFile(const char *session, const char *mission);
 
 
 // prototypes
@@ -161,10 +161,10 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 
 	// Make Res_open compute the hash value
 	buf_hash = NULL_HASH;
-	objects = (_linked_data_file *)private_session_resman->Res_open(temp_buf, buf_hash, session_cluster, session_cluster_hash);
+	objects = (LinkedDataFile *)private_session_resman->Res_open(temp_buf, buf_hash, session_cluster, session_cluster_hash);
 
 	//	set this for convenience
-	total_objects = objects->Fetch_number_of_items();
+	total_objects = LinkedDataObject::Fetch_number_of_items(objects);
 	Zdebug("total objects %d", total_objects);
 
 	if (total_objects >= MAX_session_objects)
@@ -186,7 +186,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	// so PSX can have nice session loading screen and details (for timing and to stop player getting bored)
 	LoadMsg("Session Scripts");
 	buf_hash = NULL_HASH;
-	scripts = (_linked_data_file *)private_session_resman->Res_open(temp_buf, buf_hash, session_cluster, session_cluster_hash);
+	scripts = (LinkedDataFile *)private_session_resman->Res_open(temp_buf, buf_hash, session_cluster, session_cluster_hash);
 
 	// display script version info
 	// also available on console
@@ -200,11 +200,11 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	// so PSX can have nice session loading screen and details (for timing and to stop player getting bored)
 	LoadMsg("Session PropAnims");
 	buf_hash = NULL_HASH;
-	prop_anims = (_linked_data_file *)private_session_resman->Res_open(temp_buf, buf_hash, session_cluster, session_cluster_hash);
+	prop_anims = (LinkedDataFile *)private_session_resman->Res_open(temp_buf, buf_hash, session_cluster, session_cluster_hash);
 
 	// Check file version is correct.
-	if (prop_anims->GetHeaderVersion() != VERSION_PXWGPROPANIMS)
-		Fatal_error("%s version check failed (file has %d, engine has %d)", temp_buf, prop_anims->GetHeaderVersion(), VERSION_PXWGPROPANIMS);
+	if (LinkedDataObject::GetHeaderVersion(prop_anims) != VERSION_PXWGPROPANIMS)
+		Fatal_error("%s version check failed (file has %d, engine has %d)", temp_buf, LinkedDataObject::GetHeaderVersion(prop_anims), VERSION_PXWGPROPANIMS);
 
 	// init features file
 	// we stick this in the private cache so it hangs around and later in-game references wont cause a main pool reload
@@ -215,7 +215,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	// so PSX can have nice session loading screen and details (for timing and to stop player getting bored)
 	LoadMsg("Session Features");
 	buf_hash = NULL_HASH;
-	features = (_linked_data_file *)private_session_resman->Res_open(temp_buf, buf_hash, session_cluster, session_cluster_hash);
+	features = (LinkedDataFile *)private_session_resman->Res_open(temp_buf, buf_hash, session_cluster, session_cluster_hash);
 
 	// engine knows no set/camera chosen
 	Reset_camera_director();
@@ -250,7 +250,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 			// Ok, translators mode has been activated
 			text = LoadTranslatedFile(mission, session_name);
 		} else
-			text = (_linked_data_file *)private_session_resman->Res_open(temp_buf, buf_hash, session_cluster, session_cluster_hash);
+			text = (LinkedDataFile *)private_session_resman->Res_open(temp_buf, buf_hash, session_cluster, session_cluster_hash);
 	} else
 		Fatal_error("Missing Text File \"%s\"", temp_buf);
 
@@ -277,7 +277,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 			// Ok, translators mode has been activated
 			global_text = LoadTranslatedFile("global", "global\\global\\");
 		} else
-			global_text = (_linked_data_file *)private_session_resman->Res_open(textFileName, buf_hash, global_cluster, global_cluster_hash);
+			global_text = (LinkedDataFile *)private_session_resman->Res_open(textFileName, buf_hash, global_cluster, global_cluster_hash);
 
 	} else {
 		Fatal_error("Failed to find global text file [%s][%s]", textFileName, global_cluster);
@@ -318,13 +318,13 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	uint32 len = private_session_resman->Check_file_size(temp_buf, buf_hash, session_cluster, session_cluster_hash);
 
 	if (len) {
-		walk_areas = (_linked_data_file *)private_session_resman->Res_open(temp_buf, buf_hash, session_cluster, session_cluster_hash);
-		Tdebug("walkareas.txt", "%d top level walkareas\n", walk_areas->Fetch_number_of_items());
+		walk_areas = (LinkedDataFile *)private_session_resman->Res_open(temp_buf, buf_hash, session_cluster, session_cluster_hash);
+		Tdebug("walkareas.txt", "%d top level walkareas\n", LinkedDataObject::Fetch_number_of_items(walk_areas));
 
 		int32 nMissing = 0;
-		for (uint32 k = 0; k < walk_areas->Fetch_number_of_items(); k++) {
+		for (uint32 k = 0; k < LinkedDataObject::Fetch_number_of_items(walk_areas); k++) {
 			INTEGER_WalkAreaFile *inner_wa;
-			inner_wa = (INTEGER_WalkAreaFile *)walk_areas->Fetch_item_by_number(k);
+			inner_wa = (INTEGER_WalkAreaFile *)LinkedDataObject::Fetch_item_by_number(walk_areas, k);
 
 			Tdebug("walkareas.txt", "\nclump %d has %d inner items", k, inner_wa->GetNoAreas());
 
@@ -383,7 +383,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 }
 
 void _game_session::Script_version_check() {
-	if (FN_ROUTINES_DATA_VERSION != scripts->GetHeaderVersion())
+	if (FN_ROUTINES_DATA_VERSION != LinkedDataObject::GetHeaderVersion(scripts))
 		Fatal_error("WARNING! SCRIPTS AND ENGINE ARE NOT SAME VERSION");
 }
 
@@ -482,13 +482,13 @@ void _game_session::Init_objects() {
 		// only do this at start of mission - never again afterward - i.e. not when returning to first session from another
 		uint32 script_hash;
 
-		id = objects->Fetch_item_number_by_name("player"); // returns -1 if object not in existence
+		id = LinkedDataObject::Fetch_item_number_by_name(objects, "player"); // returns -1 if object not in existence
 		if (id == 0xffffffff)
 			Fatal_error("Init_objects cant find 'player'");
 		script_hash = HashString("player::globals");
-		const char *pc = (const char *)scripts->Try_fetch_item_by_hash(script_hash);
+		const char *pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, script_hash);
 		if (pc) {
-			object = (c_game_object *)objects->Fetch_item_by_number(id);
+			object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(objects, id);
 			Tdebug("objects_init.txt", " initialising globals", (const char *)buf);
 			RunScript(pc, object);
 		}
@@ -508,7 +508,7 @@ void _game_session::Init_objects() {
 	// event manager have been initialised in case calls get made to these services in any of the
 	// objects' InitScripts.
 	for (j = 0; ((j < total_objects)); j++) {
-		object = (c_game_object *)objects->Fetch_item_by_number(j);
+		object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(objects, j);
 		Tdebug("objects_init.txt", "\n\n---------------------------------------------------\n%d  initialising object '%s'", j, object->GetName());
 		Zdebug("\n\n---------------------------------------------------\n%d  initialising object '%s'", j, object->GetName());
 
@@ -527,7 +527,7 @@ void _game_session::Init_objects() {
 		// the init script is always script 0 for the object
 		// the init script may or may not be overiden
 		// get the address of the script we want to run
-		const char *pc = (const char *)scripts->Try_fetch_item_by_hash(object->GetScriptNameFullHash(OB_INIT_SCRIPT)); // run init script
+		const char *pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, object->GetScriptNameFullHash(OB_INIT_SCRIPT)); // run init script
 
 		if (pc) {
 			RunScript(pc, object);
@@ -544,7 +544,7 @@ void _game_session::Init_objects() {
 
 			Tdebug("objects_init.txt", "search for [%s]", (const char *)buf);
 
-			pc = (const char *)scripts->Try_fetch_item_by_hash(script_hash);
+			pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, script_hash);
 
 			if (pc) {
 				//              set M and I for FN_ functions that may be called
@@ -562,7 +562,7 @@ void _game_session::Init_objects() {
 			logic_structs[j]->logic_level = 0;
 
 			//          set base logic to logic context script
-			logic_structs[j]->logic[0] = (char *)scripts->Try_fetch_item_by_hash(object->GetScriptNameFullHash(OB_LOGIC_CONTEXT));
+			logic_structs[j]->logic[0] = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, object->GetScriptNameFullHash(OB_LOGIC_CONTEXT));
 			//          **note, we dont need to set up the script reference (logic_ref) for level 0
 		} else
 			Shut_down_object("by initialise - no init script");
@@ -599,14 +599,14 @@ void _game_session::Init_objects() {
 
 	// init the player object number
 	// get id
-	id = objects->Fetch_item_number_by_name("player"); // returns -1 if object not in existence
+	id = LinkedDataObject::Fetch_item_number_by_name(objects, "player"); // returns -1 if object not in existence
 
 	if (id != 0xffffffff) {
 		L = logic_structs[id]; // fetch logic struct for player object
 		I = L->voxel_info;
 		M = L->mega;
 
-		object = (c_game_object *)objects->Fetch_item_by_number(id);
+		object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(objects, id);
 
 		//		not if this object has been shut-down - for not having a map marker for example
 		if (L->ob_status != OB_STATUS_HELD)
@@ -669,7 +669,7 @@ void _game_session::Pre_initialise_objects() {
 
 		Zdebug("%d -[%d]", j, num_megas);
 
-		object = (c_game_object *)objects->Fetch_item_by_number(j);
+		object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(objects, j);
 
 		logic_structs[j] = g_logics[j];
 		logic_structs[j]->___init((const char *)object->GetName());
@@ -778,7 +778,7 @@ void _game_session::One_logic_cycle() {
 			cur_id = j; // fast reference for engine functions
 			// fetch the object that is our current object
 			// 'object' needed as logic code may ask it for the objects name, etc.
-			object = (c_game_object *)objects->Fetch_item_by_number(j);
+			object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(objects, j);
 
 			// run appropriate logic
 			switch (L->big_mode) {
@@ -930,7 +930,7 @@ void _game_session::Pre_logic_event_check() {
 			// interacting, so ignoring LOS event
 			Zdebug("interacting, so ignoring LOS event");
 		} else {
-			L->logic[0] = (char *)scripts->Try_fetch_item_by_hash((object->GetScriptNameFullHash(OB_LOGIC_CONTEXT)));
+			L->logic[0] = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, (object->GetScriptNameFullHash(OB_LOGIC_CONTEXT)));
 
 			// run script - context chooser MAY pick a new L 1 logic
 			// we call this now so the new script will be setup and ready to run
@@ -956,7 +956,7 @@ void _game_session::Script_cycle() {
 		if ((L->image_type == VOXEL) && (M->interacting)) { // check for megas who are interacting
 			// object is running someone elses interaction script
 			// so get their object and pass to interpretter so that local vars can be accessed correctly
-			script_owner = (c_game_object *)objects->Fetch_item_by_number(M->target_id);
+			script_owner = (c_game_object *)LinkedDataObject::Fetch_item_by_number(objects, M->target_id);
 		} else {
 			script_owner = object; // object running its own script
 		}
@@ -985,7 +985,7 @@ void _game_session::Script_cycle() {
 				// it is acceptable to choose the logic that had previously been running
 
 				// temp reset PC the hard way
-				L->logic[0] = (char *)scripts->Try_fetch_item_by_hash(object->GetScriptNameFullHash(OB_LOGIC_CONTEXT));
+				L->logic[0] = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, object->GetScriptNameFullHash(OB_LOGIC_CONTEXT));
 
 				// run script - context chooser will pick a new L 1 logic
 				RunScript(const_cast<const char *&>(L->logic[0]), object);
@@ -1019,7 +1019,7 @@ uint32 _game_session::Fetch_prop_state(char *prop_name) {
 	uint32 j;
 
 	if (camera_hack == FALSE8) {
-		prop_number = objects->Fetch_item_number_by_name(prop_name);
+		prop_number = LinkedDataObject::Fetch_item_number_by_name(objects, prop_name);
 
 		if (prop_number != 0xffffffff)
 			return (prop_state_table[prop_number]); // get prop state (pc)
@@ -1061,7 +1061,7 @@ void _game_session::Set_prop_state(char *prop_name, uint32 value) {
 	uint32 j;
 
 	if (camera_hack == FALSE8) {
-		prop_number = objects->Fetch_item_number_by_name(prop_name);
+		prop_number = LinkedDataObject::Fetch_item_number_by_name(objects, prop_name);
 
 		if (prop_number != 0xffffffff)
 			prop_state_table[prop_number] = value; // set prop state (pc)
@@ -1153,7 +1153,7 @@ void _game_session::Idle_manager() {
 				if (script_hash == object->GetScriptNamePartHash(k)) {
 					//          script k is the one to run
 					//          get the address of the script we want to run
-					ad = (char *)scripts->Try_fetch_item_by_hash(object->GetScriptNameFullHash(k));
+					ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, object->GetScriptNameFullHash(k));
 
 					//          write actual offset
 					L->logic[2] = ad;
@@ -1187,7 +1187,7 @@ void _game_session::Set_init_voxel_floors() {
 	Prepare_megas_route_barriers(TRUE8); // update barriers
 }
 
-_linked_data_file *LoadTranslatedFile(const char *mission, const char *session) {
+LinkedDataFile *LoadTranslatedFile(const char *mission, const char *session) {
 	// Get the actual session name
 	const char *sessionstart = session + strlen(mission) + 1;
 	pxString actsession;
@@ -1217,7 +1217,7 @@ _linked_data_file *LoadTranslatedFile(const char *mission, const char *session) 
 	//      0 terminate the string
 	memPtr[len] = 0;
 
-	return ((_linked_data_file *)memPtr);
+	return ((LinkedDataFile *)memPtr);
 }
 
 } // End of namespace ICB

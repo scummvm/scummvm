@@ -51,13 +51,13 @@ public:
 	bool8 Trace(const px3DRealPoint &oFrom, const px3DRealPoint &oTo, _barrier_ray_type eRayType, px3DRealPoint &oImpact, _barrier_logic_value eImpactType);
 
 	// Call this before using the tracer, to point it at its barriers.
-	void SetBarrierPointer(_linked_data_file *pyBarriers) { m_pyBarrierMemFile = pyBarriers; }
+	void SetBarrierPointer(LinkedDataFile *pyBarriers) { m_pyBarrierMemFile = pyBarriers; }
 
 	// Call this to give the tracer access to the floor data.
 	void SetFloorsPointer(_floor_world *pFloorWorld) { m_pFloorWorld = pFloorWorld; }
 
 private:
-	_linked_data_file *m_pyBarrierMemFile; // The memory image of the barrier file.
+	LinkedDataFile *m_pyBarrierMemFile;    // The memory image of the barrier file.
 	_floor_world *m_pFloorWorld;           // The floors data (loaded by the routing code).
 	PXreal m_fXDiff, m_fYDiff, m_fZDiff;   // Delta x, y and z for the line we're tracing.
 	PXreal m_fSqrLength;                   // Square length of the vector we're tracing.
@@ -90,7 +90,7 @@ inline const _route_barrier *_tracer::GetBarrier(uint32 i) const {
 	if (!m_pyBarrierMemFile)
 		Fatal_error("No barrier file in _tracer::GetBarrier()");
 
-	pBarriers = (_route_barrier *)m_pyBarrierMemFile->Fetch_item_by_name("Data");
+	pBarriers = (_route_barrier *)LinkedDataObject::Fetch_item_by_name(m_pyBarrierMemFile, "Data");
 	return &(pBarriers[i]);
 }
 

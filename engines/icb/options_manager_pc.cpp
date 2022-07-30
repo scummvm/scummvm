@@ -104,7 +104,7 @@ void Init_play_movie(const char *param0, bool8 param1);
 uint32 GetFileSz(const char *path);
 
 // Translation tweaks
-_linked_data_file *LoadTranslatedFile(const char *session, const char *mission);
+LinkedDataFile *LoadTranslatedFile(const char *session, const char *mission);
 
 // Death text functions and defines
 #define MAX_DEATH_TEXT 4
@@ -641,7 +641,7 @@ void OptionsManager::StartGameOverOptions() {
 	bool8 regularPlayerDeath = TRUE8;
 
 	// Have we died under irregular circumstances?
-	c_game_object *playerObj = (c_game_object *)MS->objects->Fetch_item_by_number(MS->player.Fetch_player_id());
+	c_game_object *playerObj = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, MS->player.Fetch_player_id());
 	int32 state = playerObj->GetVariable("state");
 	if (playerObj->GetIntegerVariable(state) == 2)
 		regularPlayerDeath = FALSE8;
@@ -5515,12 +5515,12 @@ const char *OptionsManager::GetTextFromReference(uint32 hashRef) {
 
 	// Get the text via a label
 	if (m_global_text)
-		textLine = (char *)m_global_text->Try_fetch_item_by_hash(hashRef);
+		textLine = (char *)LinkedDataObject::Try_fetch_item_by_hash(m_global_text, hashRef);
 
 	if (!textLine) {
 		// Try again with reloaded text file
 		LoadGlobalTextFile();
-		textLine = (char *)m_global_text->Try_fetch_item_by_hash(hashRef);
+		textLine = (char *)LinkedDataObject::Try_fetch_item_by_hash(m_global_text, hashRef);
 		if (!textLine)
 			return "Missing text!";
 	}
@@ -5569,8 +5569,8 @@ void OptionsManager::LoadBitmapFont() {
 	pxString font_cluster = FONT_CLUSTER_PATH;
 	m_font_file = (_pxBitmap *)rs_font->Res_open(m_fontName, hashedname, font_cluster, font_cluster_hash);
 
-	if (m_font_file->schema != PC_BITMAP_SCHEMA)
-		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", m_fontName, PC_BITMAP_SCHEMA, m_font_file->schema);
+	if (FROM_LE_32(m_font_file->schema) != PC_BITMAP_SCHEMA)
+		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", m_fontName, PC_BITMAP_SCHEMA, FROM_LE_32(m_font_file->schema));
 
 	m_fontPalette = (uint32 *)&m_font_file->palette[0];
 }
@@ -5595,9 +5595,9 @@ void OptionsManager::LoadGlobalTextFile() {
 		if (m_global_text == nullptr)
 			m_global_text = LoadTranslatedFile("global", "global\\global\\");
 	} else
-		m_global_text = (_linked_data_file *)rs1->Res_open(textFileName, buf_hash, globalClusterFile, globalClusterHash);
+		m_global_text = (LinkedDataFile *)rs1->Res_open(textFileName, buf_hash, globalClusterFile, globalClusterHash);
 
-	m_global_text = (_linked_data_file *)rs1->Res_open(textFileName, buf_hash, globalClusterFile, globalClusterHash);
+	m_global_text = (LinkedDataFile *)rs1->Res_open(textFileName, buf_hash, globalClusterFile, globalClusterHash);
 }
 
 bool8 OptionsManager::SetCharacterSprite(char c) {

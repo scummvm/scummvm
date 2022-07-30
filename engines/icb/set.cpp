@@ -31,6 +31,7 @@
 #include "engines/icb/mission.h"
 #include "engines/icb/session.h"
 #include "engines/icb/common/px_string.h"
+#include "engines/icb/common/px_linkeddatafile.h"
 #include "engines/icb/res_man.h"
 #include "engines/icb/global_objects.h"
 #include "engines/icb/global_switches.h"
@@ -108,7 +109,7 @@ void _game_session::GetSelectedPropRGB(uint8 &r, uint8 &g, uint8 &b) {
 }
 
 bool8 _game_session::IsPropSelected(const char *propName) {
-	uint32 prop_number = objects->Fetch_item_number_by_name(propName);
+	uint32 prop_number = LinkedDataObject::Fetch_item_number_by_name(objects, propName);
 
 	if (prop_number == 0xFFFFFFFF)
 		return FALSE8;
@@ -136,9 +137,9 @@ void _game_session::Render_3d_nicos() {
 	ad = surface_manager->Lock_surface(working_buffer_id);
 	pitch = surface_manager->Get_pitch(working_buffer_id);
 
-	for (j = 0; j < features->Fetch_number_of_items(); j++) {
+	for (j = 0; j < LinkedDataObject::Fetch_number_of_items(features); j++) {
 		// get nico
-		feature = (_feature_info *)MS->features->Fetch_item_by_number(j);
+		feature = (_feature_info *)LinkedDataObject::Fetch_item_by_number(MS->features, j);
 
 		// setup camera : have to do this once per frame because
 		// clip_text_print does a Res_open and in principal this
@@ -163,7 +164,7 @@ void _game_session::Render_3d_nicos() {
 		// print name if on screen
 		if (result) {
 			Clip_text_print(&pen, (uint32)(filmpos.x + (SCREEN_WIDTH / 2)), (uint32)((SCREEN_DEPTH / 2) - filmpos.y), ad, pitch, "%s %3.1f",
-			                (char *)features->Fetch_items_name_by_number(j), feature->direction);
+			                (char *)LinkedDataObject::Fetch_items_name_by_number(features, j), feature->direction);
 		}
 	}
 

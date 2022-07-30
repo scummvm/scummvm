@@ -281,7 +281,7 @@ mcodeFunctionReturnCodes _game_session::fn_get_persons_weapon(int32 &result, int
 
 	const char *mega_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	id = objects->Fetch_item_number_by_name(mega_name);
+	id = LinkedDataObject::Fetch_item_number_by_name(objects, mega_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_get_persons_weapon: object [%s] does not exist", mega_name);
 
@@ -395,7 +395,7 @@ void _game_session::Set_script(const char *script_name) {
 	// set the script on the current level
 	char *ad;
 
-	ad = (char *)scripts->Fetch_item_by_name(script_name);
+	ad = (char *)LinkedDataObject::Fetch_item_by_name(scripts, script_name);
 
 	L->logic[L->logic_level] = ad;
 
@@ -412,7 +412,7 @@ void _game_session::Context_check(uint32 script_name) {
 
 	Zdebug("context check");
 
-	ad = (char *)scripts->Try_fetch_item_by_hash(script_name);
+	ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, script_name);
 
 	Zdebug("context_check ad=%d ref=%d", ad, L->logic_ref[1]);
 
@@ -475,7 +475,7 @@ mcodeFunctionReturnCodes _game_session::fn_kill_object(int32 &, int32 *params) {
 	// kill this object
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	uint32 id = objects->Fetch_item_number_by_name(object_name);
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	if (id == 0xffffffff)
 		Fatal_error("fn_kill_object finds [%s] does not exist", object_name);
@@ -511,7 +511,7 @@ void _game_session::Shut_down_object(const char *ascii) {
 bool8 _game_session::Console_shut_down_object(const char *name) {
 	// we have name of object
 
-	uint32 id = objects->Fetch_item_number_by_name(name);
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, name);
 	if (id == 0xffffffff)
 		return (FALSE8);
 
@@ -529,7 +529,7 @@ bool8 _game_session::Console_shut_down_object(const char *name) {
 
 bool8 _game_session::Free_object(const char *name) {
 	// we have name of object
-	uint32 id = objects->Fetch_item_number_by_name(name);
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, name);
 
 	if (id == 0xffffffff)
 		return (FALSE8);
@@ -649,7 +649,7 @@ mcodeFunctionReturnCodes _game_session::fn_object_rerun_logic_context(int32 &, i
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	uint32 id = objects->Fetch_item_number_by_name(object_name);
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_object_rerun_logic_context cant find object [%s]", object_name);
 
@@ -696,7 +696,7 @@ mcodeFunctionReturnCodes _game_session::fn_new_script(int32 &, int32 *params) {
 		if (script_hash == object->GetScriptNamePartHash(k)) {
 			// script k is the one to run
 			// get the address of the script we want to run
-			ad = (char *)scripts->Try_fetch_item_by_hash(object->GetScriptNameFullHash(k));
+			ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, object->GetScriptNameFullHash(k));
 
 			// write actual offset
 			L->logic[1] = ad;
@@ -741,7 +741,7 @@ mcodeFunctionReturnCodes _game_session::fn_gosub(int32 &, int32 *params) {
 			// script k is the one to run
 			// get the address of the script we want to run
 
-			ad = (char *)scripts->Try_fetch_item_by_hash(object->GetScriptNameFullHash(k));
+			ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, object->GetScriptNameFullHash(k));
 
 			// write actual offset
 			L->logic[2] = ad;
@@ -770,7 +770,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_strike_overide(int32 &, int32 *pa
 	// params    0   name of mega
 	//			1  0 off 1 on
 	const char *mega_name = (const char *)MemoryUtil::resolvePtr(params[0]);
-	uint32 tar = MS->objects->Fetch_item_number_by_name(mega_name);
+	uint32 tar = LinkedDataObject::Fetch_item_number_by_name(MS->objects, mega_name);
 	if (tar == 0xffffffff)
 		Fatal_error("fn_set_strike_overide finds object [%s] does not exist", mega_name);
 
@@ -790,7 +790,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_shoot_overide(int32 &, int32 *par
 
 	const char *mega_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	uint32 tar = MS->objects->Fetch_item_number_by_name(mega_name);
+	uint32 tar = LinkedDataObject::Fetch_item_number_by_name(MS->objects, mega_name);
 	if (tar == 0xffffffff)
 		Fatal_error("fn_set_shoot_overide finds object [%s] does not exist", mega_name);
 
@@ -836,7 +836,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_dynamic_light(int32 &, int32 *par
 mcodeFunctionReturnCodes _game_session::speak_set_dynamic_light(int32 &, int32 *params) {
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	int32 obj_id = objects->Fetch_item_number_by_name(object_name);
+	int32 obj_id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	logic_structs[obj_id]->mega->SetDynamicLight(params[1],                       // cycles
 	                                             params[2], params[3], params[4], // rgb

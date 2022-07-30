@@ -295,12 +295,12 @@ __mode_return _player::Player_interact() {
 		for (j = 0; j < MAX_auto_interact; j++)
 			if (MS->auto_interact_list[j] == (cur_interact_id + 1)) {
 				//      try to fetch the object
-				iobject = (c_game_object *)MS->objects->Fetch_item_by_number(cur_interact_id);
+				iobject = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, cur_interact_id);
 
 				Zdebug("  INTERACT with %s", iobject->GetName());
 
 				//      get the address of the script we want to run
-				const char *pc = (const char *)MS->scripts->Try_fetch_item_by_hash(iobject->GetScriptNameFullHash(OB_ACTION_CONTEXT)); //
+				const char *pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(MS->scripts, iobject->GetScriptNameFullHash(OB_ACTION_CONTEXT)); //
 
 				if (pc == nullptr)
 					Fatal_error("Object [%s] has no interact script", iobject->GetName());
@@ -315,10 +315,10 @@ __mode_return _player::Player_interact() {
 	// check for interact button AND there being an object to interact with
 	if ((cur_state.IsButtonSet(__INTERACT)) && (interact_selected) && (!interact_lock) && (!stood_on_lift)) {
 		// try to fetch the object
-		iobject = (c_game_object *)MS->objects->Fetch_item_by_number(cur_interact_id);
+		iobject = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, cur_interact_id);
 
 		// get the address of the script we want to run
-		const char *pc = (const char *)MS->scripts->Try_fetch_item_by_hash(iobject->GetScriptNameFullHash(OB_ACTION_CONTEXT)); //
+		const char *pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(MS->scripts, iobject->GetScriptNameFullHash(OB_ACTION_CONTEXT)); //
 
 		if (pc == nullptr)
 			Fatal_error("Object [%s] has no interact script", iobject->GetName());
@@ -371,7 +371,7 @@ mcodeFunctionReturnCodes _game_session::fn_start_player_interaction(int32 &, int
 	M->interacting = TRUE8;
 
 	// fetch action script
-	ad = (char *)scripts->Try_fetch_item_by_hash(params[0] /*(uint32)params*/);
+	ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, params[0] /*(uint32)params*/);
 
 	//	write actual offset
 	L->logic[1] = ad;
@@ -397,7 +397,7 @@ bool8 _game_session::Engine_start_interaction(const char *script, uint32 id) {
 	script_hash = HashString(script);
 
 	// get target object
-	iobject = (c_game_object *)MS->objects->Fetch_item_by_number(id);
+	iobject = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, id);
 	if (!iobject)
 		Fatal_error("Engine_start_interaction - named object dont exist"); // should never happen
 
@@ -407,7 +407,7 @@ bool8 _game_session::Engine_start_interaction(const char *script, uint32 id) {
 		if (script_hash == iobject->GetScriptNamePartHash(k)) {
 			//			script k is the one to run
 			//			get the address of the script we want to run
-			char *pc = (char *)scripts->Try_fetch_item_by_hash(iobject->GetScriptNameFullHash(k));
+			char *pc = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, iobject->GetScriptNameFullHash(k));
 
 			// set target id
 			M->target_id = id;

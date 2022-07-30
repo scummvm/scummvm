@@ -157,7 +157,7 @@ mcodeFunctionReturnCodes _game_session::fn_register_object_for_event(int32 &, in
 	const char *event_name = (const char *)MemoryUtil::resolvePtr(params[1]);
 
 	// Find the target object's ID.
-	nObjectID = objects->Fetch_item_number_by_name(object_name);
+	nObjectID = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	// Call the function that does the work in the event manager.
 	g_oEventManager->RegisterForEvent(nObjectID, event_name);
@@ -173,7 +173,7 @@ mcodeFunctionReturnCodes _game_session::fn_unregister_object_for_event(int32 &, 
 	const char *event_name = (const char *)MemoryUtil::resolvePtr(params[1]);
 
 	// Find the target object's ID.
-	nObjectID = objects->Fetch_item_number_by_name(object_name);
+	nObjectID = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	// Call the function that does the work in the event manager.
 	g_oEventManager->UnregisterForEvent(nObjectID, event_name);
@@ -242,7 +242,7 @@ mcodeFunctionReturnCodes _game_session::fn_event_check_last_sender(int32 &result
 	const char *event_name = (const char *)MemoryUtil::resolvePtr(params[1]);
 
 	// Find the target object's ID.
-	nObjectID = objects->Fetch_item_number_by_name(object_name);
+	nObjectID = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	// Find the sender of the named event.
 	result = g_oEventManager->DidObjectSendLastNamedEvent(cur_id, nObjectID, event_name);
@@ -268,7 +268,7 @@ mcodeFunctionReturnCodes _game_session::fn_post_named_event_to_object(int32 &, i
 	const char *event_name = (const char *)MemoryUtil::resolvePtr(params[1]);
 
 	// Get ID of target and make sure it is valid.
-	nTargetID = objects->Fetch_item_number_by_name(object_name);
+	nTargetID = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	// Post the event.
 	g_oEventManager->PostNamedEventToObject(event_name, nTargetID, cur_id);
@@ -312,7 +312,7 @@ mcodeFunctionReturnCodes _game_session::fn_is_object_registered_for_event(int32 
 	const char *event_name = (const char *)MemoryUtil::resolvePtr(params[1]);
 
 	// Get ID of object and make sure it is valid.
-	nObjectID = objects->Fetch_item_number_by_name(object_name);
+	nObjectID = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	// Make the engine call.
 	result = g_oEventManager->IsObjectRegisteredForEvent(nObjectID, event_name);
@@ -349,7 +349,7 @@ mcodeFunctionReturnCodes _game_session::fn_register_for_line_of_sight(int32 &, i
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	// Find the target object's ID.
-	nObjectID = objects->Fetch_item_number_by_name(object_name);
+	nObjectID = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	// Now we can make the actual call to the line-of-sight object.
 	PXTRY
@@ -372,7 +372,7 @@ mcodeFunctionReturnCodes _game_session::fn_unregister_for_line_of_sight(int32 &,
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	// Find the target object's ID.
-	nObjectID = objects->Fetch_item_number_by_name(object_name);
+	nObjectID = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	// Now we can make the actual call to the line-of-sight object.
 	PXTRY
@@ -397,9 +397,9 @@ mcodeFunctionReturnCodes _game_session::fn_register_object_for_line_of_sight(int
 	const char *target_name = (const char *)MemoryUtil::resolvePtr(params[1]);
 
 	// Find the objects' IDs.
-	nObserverID = objects->Fetch_item_number_by_name(observer_name);
+	nObserverID = LinkedDataObject::Fetch_item_number_by_name(objects, observer_name);
 
-	nTargetID = objects->Fetch_item_number_by_name(target_name);
+	nTargetID = LinkedDataObject::Fetch_item_number_by_name(objects, target_name);
 
 	// Now we can make the actual call to the line-of-sight object.
 	if ((nTargetID != PX_LINKED_DATA_FILE_ERROR) && (nObserverID != PX_LINKED_DATA_FILE_ERROR)) {
@@ -426,9 +426,9 @@ mcodeFunctionReturnCodes _game_session::fn_unregister_object_for_line_of_sight(i
 	const char *target_name = (const char *)MemoryUtil::resolvePtr(params[1]);
 
 	// Find the objects' IDs.
-	nObserverID = objects->Fetch_item_number_by_name(observer_name);
+	nObserverID = LinkedDataObject::Fetch_item_number_by_name(objects, observer_name);
 
-	nTargetID = objects->Fetch_item_number_by_name(target_name);
+	nTargetID = LinkedDataObject::Fetch_item_number_by_name(objects, target_name);
 
 	// Now we can make the actual call to the line-of-sight object.
 	if ((nTargetID != PX_LINKED_DATA_FILE_ERROR) && (nObserverID != PX_LINKED_DATA_FILE_ERROR)) {
@@ -453,7 +453,7 @@ mcodeFunctionReturnCodes _game_session::fn_can_see(int32 &result, int32 *params)
 	const char *target_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	// Find ID of target object.
-	nTargetID = objects->Fetch_item_number_by_name(target_name);
+	nTargetID = LinkedDataObject::Fetch_item_number_by_name(objects, target_name);
 
 	// Don't call line-of-sight for an invalid ID.
 	if (nTargetID != PX_LINKED_DATA_FILE_ERROR) {
@@ -482,12 +482,12 @@ mcodeFunctionReturnCodes _game_session::fn_can_object_see(int32 &result, int32 *
 	const char *target_name = (const char *)MemoryUtil::resolvePtr(params[1]);
 
 	// Find the objects' IDs.
-	nObserverID = objects->Fetch_item_number_by_name(observer_name);
+	nObserverID = LinkedDataObject::Fetch_item_number_by_name(objects, observer_name);
 
 	if (nObserverID == PX_LINKED_DATA_FILE_ERROR)
 		Fatal_error("Object %s not found in fn_can_object_see()", observer_name);
 
-	nTargetID = objects->Fetch_item_number_by_name(target_name);
+	nTargetID = LinkedDataObject::Fetch_item_number_by_name(objects, target_name);
 
 	if (nTargetID == PX_LINKED_DATA_FILE_ERROR)
 		Fatal_error("Object %s not found in fn_can_object_see()", target_name);
@@ -580,7 +580,7 @@ mcodeFunctionReturnCodes _game_session::fn_line_of_sight_now(int32 &result, int3
 
 	const char *target_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	nTargetID = objects->Fetch_item_number_by_name(target_name);
+	nTargetID = LinkedDataObject::Fetch_item_number_by_name(objects, target_name);
 
 	if (nTargetID == PX_LINKED_DATA_FILE_ERROR)
 		Fatal_error("Object %s not found in fn_line_of_sight_now()", target_name);

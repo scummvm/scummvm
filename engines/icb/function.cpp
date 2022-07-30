@@ -373,7 +373,7 @@ mcodeFunctionReturnCodes _game_session::socket_force_new_logic(int32 &, int32 *p
 			Zdebug("script %d matches", k);
 			// script k is the one to run
 			// get the address of the script we want to run
-			ad = (char *)scripts->Try_fetch_item_by_hash(socket_object->GetScriptNameFullHash(k));
+			ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, socket_object->GetScriptNameFullHash(k));
 
 			if (g_px->socket_watch)
 				Message_box("replacing logic");
@@ -487,7 +487,7 @@ mcodeFunctionReturnCodes _game_session::fn_init_from_nico_file(int32 &, int32 * 
 		Fatal_error("fn_init_from_nico_file called by a mega! [%s] - use fn_init_mega_from_nico", object->GetName());
 
 	// fetch tag file for this item
-	start_pos = (_feature_info *)features->Try_fetch_item_by_name(object->GetName());
+	start_pos = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, object->GetName());
 
 	if (!start_pos) {
 		Message_box("fn_init_from_nico_file - missing nico for item %s", object->GetName());
@@ -531,7 +531,7 @@ mcodeFunctionReturnCodes _game_session::fn_check_for_nico(int32 &result, int32 *
 
 	_feature_info *start_pos;
 
-	start_pos = (_feature_info *)features->Try_fetch_item_by_name(object->GetName());
+	start_pos = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, object->GetName());
 
 	if (!start_pos)
 		result = FALSE8;
@@ -593,7 +593,7 @@ mcodeFunctionReturnCodes _game_session::fn_init_mega_from_nico(int32 &, int32 *)
 		Fatal_error("fn_init_mega_from_nico fails because object is not registered as a mega");
 
 	// fetch tag file for this item
-	start_pos = (_feature_info *)features->Try_fetch_item_by_name(object->GetName());
+	start_pos = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, object->GetName());
 
 	if (!start_pos) {
 		Message_box("fn_init_mega_from_nico missing nico for item %s", object->GetName());
@@ -631,7 +631,7 @@ mcodeFunctionReturnCodes _game_session::fn_teleport_to_nico(int32 &, int32 *para
 		Fatal_error("fn_teleport_to_nico fails because object is not registered as a mega");
 
 	// fetch tag file for this item
-	start_pos = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+	start_pos = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 	if (!start_pos)
 		Fatal_error("no NICO marker (fn_teleport_to_nico) ob %s, nico %s", object->GetName(), nico_name);
 
@@ -666,7 +666,7 @@ mcodeFunctionReturnCodes _game_session::fn_panless_teleport_to_nico(int32 &, int
 		Fatal_error("fn_panless_teleport_to_nico_ fails because object is not registered as a mega");
 
 	// fetch tag file for this item
-	start_pos = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+	start_pos = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 	if (!start_pos)
 		Fatal_error("no NICO marker (fn_panless_teleport_to_nico_) ob %s, nico %s", object->GetName(), nico_name);
 
@@ -698,7 +698,7 @@ mcodeFunctionReturnCodes _game_session::fn_teleport_to_nico_y(int32 &, int32 *pa
 		Fatal_error("fn_teleport_to_nico_y fails because object is not registered as a mega");
 
 	// fetch tag file for this item
-	start_pos = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+	start_pos = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 	if (!start_pos)
 		Fatal_error("no NICO marker (fn_teleport_to_nico_y) ob %s, nico %s", object->GetName(), nico_name);
 
@@ -731,7 +731,7 @@ mcodeFunctionReturnCodes _game_session::fn_snap_to_nico_y(int32 &, int32 *params
 		Fatal_error("fn_snap_to_nico_y fails because object is not registered as a mega");
 
 	// fetch tag file for this item
-	start_pos = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+	start_pos = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 	if (!start_pos)
 		Fatal_error("no NICO marker (fn_snap_to_nico_y) ob %s, nico %s", object->GetName(), nico_name);
 
@@ -754,7 +754,7 @@ mcodeFunctionReturnCodes _game_session::fn_get_pan_from_nico(int32 &, int32 *par
 	Zdebug("fn_get_pan_from_nico - %s (nico %s)", object->GetName(), nico_name);
 
 	// fetch tag file for this item
-	start_pos = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+	start_pos = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 
 	if (!start_pos) {
 		// item does not have an entry but clearly expects one
@@ -806,12 +806,12 @@ mcodeFunctionReturnCodes _game_session::fn_call_socket(int32 &result, int32 *par
 	script_hash = HashString(socket_script_name);
 
 	// get target object
-	socket_object = (c_game_object *)MS->objects->Try_fetch_item_by_name(target_object_name);
+	socket_object = (c_game_object *)LinkedDataObject::Try_fetch_item_by_name(MS->objects, target_object_name);
 	if (!socket_object)
 		Fatal_error("%s call to fn_call_socket - object %s doesnt exist", object->GetName(), target_object_name);
 
 	// set socket_id ready for any special socket functions
-	socket_id = MS->objects->Fetch_item_number_by_name(target_object_name);
+	socket_id = LinkedDataObject::Fetch_item_number_by_name(MS->objects, target_object_name);
 	if (socket_id == 0xffffffff)
 		Fatal_error("fn_call_socket couldnt find object [%s]", target_object_name);
 
@@ -823,7 +823,7 @@ mcodeFunctionReturnCodes _game_session::fn_call_socket(int32 &result, int32 *par
 			// script k is the one to run
 			// get the address of the script we want to run
 
-			const char *pc = (const char *)scripts->Try_fetch_item_by_hash(socket_object->GetScriptNameFullHash(k));
+			const char *pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, socket_object->GetScriptNameFullHash(k));
 
 			// run the script - pass its object so vars can be accessed
 			RunScript(pc, socket_object, &retval);
@@ -874,7 +874,7 @@ bool8 _game_session::Call_socket(uint32 id, const char *script, int32 *retval) {
 	script_hash = HashString(script);
 
 	// get target object
-	socket_object = (c_game_object *)MS->objects->Fetch_item_by_number(id);
+	socket_object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, id);
 	if (!socket_object)
 		Fatal_error("internal Call_socket - named object dont exist");
 
@@ -892,7 +892,7 @@ bool8 _game_session::Call_socket(uint32 id, const char *script, int32 *retval) {
 			Zdebug("calling socket %d", k);
 			// script k is the one to run
 			// get the address of the script we want to run
-			const char *pc = (const char *)scripts->Try_fetch_item_by_hash(socket_object->GetScriptNameFullHash(k));
+			const char *pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, socket_object->GetScriptNameFullHash(k));
 
 			int32 result = static_cast<int>(*retval);
 
@@ -961,7 +961,7 @@ mcodeFunctionReturnCodes _game_session::fn_teleport(int32 &, int32 *params) {
 	// Made this so it takes a special name "from_origin" to indicate that the offset is to be applied
 	// from 0,0.
 	if (strcmp(target_object_name, "from_origin") != 0) {
-		uint32 tar = MS->objects->Fetch_item_number_by_name(target_object_name);
+		uint32 tar = LinkedDataObject::Fetch_item_number_by_name(MS->objects, target_object_name);
 
 		if (tar == 0xffffffff)
 			Fatal_error("'destination' teleport object [%s] does not exist", target_object_name);
@@ -1007,7 +1007,7 @@ mcodeFunctionReturnCodes _game_session::fn_teleport_z(int32 &, int32 *params) {
 
 	Zdebug("fn_teleport_z to %s", target_object_name);
 
-	uint32 tar = MS->objects->Fetch_item_number_by_name(target_object_name);
+	uint32 tar = LinkedDataObject::Fetch_item_number_by_name(MS->objects, target_object_name);
 
 	if (tar == 0xffffffff)
 		Fatal_error("'destination' teleport object [%s] does not exist", target_object_name);
@@ -1064,7 +1064,7 @@ mcodeFunctionReturnCodes _game_session::fn_are_we_on_this_floor(int32 &result, i
 		return IR_CONT;
 
 	uint32 hash = HashString(floor_name);
-	floor_id = floor_def->floors->Fetch_item_number_by_hash(hash);
+	floor_id = LinkedDataObject::Fetch_item_number_by_hash(floor_def->floors, hash);
 
 	if (floor_id == 0xffffffff)
 		Fatal_error("fn_are_we_on_this_floor cant locate floor [%s]", floor_name);
@@ -1089,7 +1089,7 @@ mcodeFunctionReturnCodes _game_session::fn_is_object_on_our_floor(int32 &result,
 	if (first_session_cycle)
 		return IR_CONT;
 
-	id = objects->Fetch_item_number_by_name(object_name);
+	id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_is_object_on_our_floor - illegal object [%s]", object_name);
 
@@ -1167,7 +1167,7 @@ mcodeFunctionReturnCodes _game_session::fn_is_object_on_screen(int32 &result, in
 	}
 
 	// get object to check
-	id = objects->Fetch_item_number_by_name(object_name);
+	id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_is_object_on_screen - illegal object [%s]", object_name);
 
@@ -1260,7 +1260,7 @@ mcodeFunctionReturnCodes _game_session::fn_get_objects_lvar_value(int32 &result,
 	Zdebug("fn_get_objects_lvar_value - [%s] [%s]", object_name, lvar_name);
 
 	uint32 hash = HashString(object_name);
-	ob = (c_game_object *)objects->Try_fetch_item_by_hash(hash);
+	ob = (c_game_object *)LinkedDataObject::Try_fetch_item_by_hash(objects, hash);
 	if (!ob)
 		Fatal_error("fn_get_objects_lvar_value - illegal object [%s]", object_name);
 
@@ -1287,7 +1287,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_objects_lvar_value(int32 &, int32
 
 	Zdebug("[%s] calls fn_set_objects_lvar_value - [%s] [%s, %d]", object->GetName(), object_name, lvar_name, params[2]);
 
-	ob = (c_game_object *)objects->Fetch_item_by_name(object_name);
+	ob = (c_game_object *)LinkedDataObject::Fetch_item_by_name(objects, object_name);
 	if (!ob)
 		Fatal_error("fn_set_objects_lvar_value - illegal object [%s]", object_name);
 
@@ -1311,9 +1311,9 @@ mcodeFunctionReturnCodes _game_session::fn_set_ids_lvar_value(int32 &, int32 *pa
 	c_game_object *ob;
 	const char *lvar_name = (const char *)MemoryUtil::resolvePtr(params[1]);
 
-	Zdebug("fn_set_ids_lvar_value - [%s] [%s]", objects->Fetch_items_name_by_number(params[0]), lvar_name);
+	Zdebug("fn_set_ids_lvar_value - [%s] [%s]", LinkedDataObject::Fetch_items_name_by_number(objects, params[0]), lvar_name);
 
-	ob = (c_game_object *)objects->Fetch_item_by_number(params[0]);
+	ob = (c_game_object *)LinkedDataObject::Fetch_item_by_number(objects, params[0]);
 	if (!ob)
 		Fatal_error("fn_set_ids_lvar_value - illegal object [%d]", params[0]);
 
@@ -1335,7 +1335,7 @@ mcodeFunctionReturnCodes _game_session::fn_get_state_flag(int32 &result, int32 *
 	c_game_object *ob;
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	ob = (c_game_object *)objects->Fetch_item_by_name(object_name);
+	ob = (c_game_object *)LinkedDataObject::Fetch_item_by_name(objects, object_name);
 	if (!ob)
 		Fatal_error("fn_get_state_flag - illegal object [%s]", object_name);
 	ret = ob->GetVariable("state");
@@ -1350,7 +1350,7 @@ mcodeFunctionReturnCodes _game_session::fn_is_object_dead(int32 &result, int32 *
 	// params        0 name of object
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
-	uint32 id = objects->Fetch_item_number_by_name(object_name);
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	if (!logic_structs[id]->mega)
 		Fatal_error("fn_get_state_flag - object [%s] not mega", object_name);
@@ -1405,7 +1405,7 @@ mcodeFunctionReturnCodes _game_session::fn_is_an_object_crouching(int32 &result,
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	id = objects->Fetch_item_number_by_name(object_name);
+	id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_is_an_object_crouching - illegal object [%s]", object_name);
 
@@ -1595,7 +1595,7 @@ mcodeFunctionReturnCodes _game_session::fn_get_objects_x(int32 &result, int32 *p
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	id = (uint32)objects->Fetch_item_number_by_name(object_name);
+	id = (uint32)LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_get_objects_x - illegal object [%s]", object_name);
 
@@ -1617,7 +1617,7 @@ mcodeFunctionReturnCodes _game_session::fn_get_objects_y(int32 &result, int32 *p
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	id = (uint32)objects->Fetch_item_number_by_name(object_name);
+	id = (uint32)LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_get_objects_y - illegal object [%s]", object_name);
 
@@ -1639,7 +1639,7 @@ mcodeFunctionReturnCodes _game_session::fn_get_objects_z(int32 &result, int32 *p
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	id = (uint32)objects->Fetch_item_number_by_name(object_name);
+	id = (uint32)LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_get_objects_z - illegal object [%s]", object_name);
 
@@ -1660,7 +1660,7 @@ mcodeFunctionReturnCodes _game_session::fn_has_mega_our_height(int32 &result, in
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	// get target
-	id = (uint32)objects->Fetch_item_number_by_name(object_name);
+	id = (uint32)LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_has_mega_our_height - illegal object [%s]", object_name);
 
@@ -1688,7 +1688,7 @@ mcodeFunctionReturnCodes _game_session::fn_near(int32 &result, int32 *params) {
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	id = (uint32)objects->Fetch_item_number_by_name(object_name);
+	id = (uint32)LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_is_object_dead - illegal object [%s]", object_name);
 
@@ -1743,10 +1743,10 @@ mcodeFunctionReturnCodes _game_session::fn_is_mega_near_mega(int32 &result, int3
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 	const char *other_object_name = (const char *)MemoryUtil::resolvePtr(params[1]);
 
-	id = (uint32)objects->Fetch_item_number_by_name(object_name);
+	id = (uint32)LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_is_mega_near_mega - illegal object [%s]", object_name);
-	id2 = (uint32)objects->Fetch_item_number_by_name(other_object_name);
+	id2 = (uint32)LinkedDataObject::Fetch_item_number_by_name(objects, other_object_name);
 	if (id2 == 0xffffffff)
 		Fatal_error("fn_is_mega_near_mega - illegal object [%s]", other_object_name);
 
@@ -1814,7 +1814,7 @@ mcodeFunctionReturnCodes _game_session::fn_object_near_nico(int32 &result, int32
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 	const char *nico_name = (const char *)MemoryUtil::resolvePtr(params[1]);
 
-	id = (uint32)objects->Fetch_item_number_by_name(object_name);
+	id = (uint32)LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	if (id == 0xffffffff)
 		Fatal_error("fn_object_near_nico - illegal object [%s]", object_name);
@@ -1823,7 +1823,7 @@ mcodeFunctionReturnCodes _game_session::fn_object_near_nico(int32 &result, int32
 		Fatal_error("fn_object_near_nico object [%s] is not a mega!", object_name);
 
 	// fetch tag file for this item
-	nico = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+	nico = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 
 	if (!nico)
 		Fatal_error("fn_object_near_nico cant find nico [%s]", nico_name);
@@ -1857,7 +1857,7 @@ mcodeFunctionReturnCodes _game_session::fn_add_object_name_to_list(int32 &, int3
 	if (L->total_list == MAX_list)
 		Fatal_error("fn_object_name_to_list [%s] has exceeded list size of %d", object->GetName(), MAX_list);
 
-	id = objects->Fetch_item_number_by_name(object_name);
+	id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	if (id == -1)
 		Fatal_error("[%s] callling fn_add_object_name_to_list finds [%s] is not a legal object", object->GetName(), object_name);
@@ -1903,7 +1903,7 @@ mcodeFunctionReturnCodes _game_session::fn_lift_process_list(int32 &result, int3
 		return (IR_CONT);
 	}
 
-	monica = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+	monica = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 	if (!monica)
 		Fatal_error("fn_lift_process_list cant find nico [%s]", nico_name);
 
@@ -1967,7 +1967,7 @@ mcodeFunctionReturnCodes _game_session::fn_lib_lift_chord_and_chi(int32 &result,
 		return IR_CONT;
 	}
 
-	monica = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+	monica = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 	if (!monica)
 		Fatal_error("fn_lift_process_list cant find nico [%s]", nico_name);
 	lifty = monica->y;
@@ -2094,7 +2094,7 @@ mcodeFunctionReturnCodes _game_session::fn_lift2_process(int32 &result, int32 *p
 	}
 
 	// get nico
-	monica = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+	monica = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 	if (!monica)
 		Fatal_error("fn_lift_process_list cant find nico [%s]", nico_name);
 	lifty = monica->y;
@@ -2313,7 +2313,7 @@ mcodeFunctionReturnCodes _game_session::fn_hold_while_list_near_nico(int32 &resu
 		return (IR_CONT);
 	}
 
-	monica = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+	monica = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 	if (!monica)
 		Fatal_error("fn_lift_process_list cant find nico [%s]", nico_name);
 
@@ -2353,7 +2353,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_watch(int32 &, int32 *params) {
 	// params        0       name of object
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
-	uint32 id = objects->Fetch_item_number_by_name(object_name);
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	if (id == 0xffffffff)
 		Fatal_error("fn_set_watch - object [%s] does not exist", object_name);
@@ -2451,7 +2451,7 @@ mcodeFunctionReturnCodes _game_session::fn_change_session(int32 &, int32 *params
 
 	// save the players 'hits' variable
 	c_game_object *ob;
-	ob = (c_game_object *)objects->Fetch_item_by_number(player.Fetch_player_id());
+	ob = (c_game_object *)LinkedDataObject::Fetch_item_by_number(objects, player.Fetch_player_id());
 	ret = ob->GetVariable("hits");
 	g_mission->old_hits_value = ob->GetIntegerVariable(ret);
 
@@ -2469,7 +2469,7 @@ mcodeFunctionReturnCodes _game_session::fn_changed_sessions(int32 &result, int32
 	result = g_mission->Is_there_init_nico();
 
 	if (result) { // nico is waiting Removed explicit test against TRUE8 to get rid of VC5 warning
-		nico = (_feature_info *)features->Try_fetch_item_by_name(g_mission->Return_init_nico_name());
+		nico = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, g_mission->Return_init_nico_name());
 		if (!nico)
 			Fatal_error("fn_changed_sessions cant find nico [%s]", g_mission->Return_init_nico_name());
 
@@ -2491,7 +2491,7 @@ mcodeFunctionReturnCodes _game_session::fn_changed_sessions(int32 &result, int32
 		logic_structs[cur_id]->prop_coords_set = TRUE8;
 
 		// move player forwards a little
-		if (cur_id == objects->Fetch_item_number_by_name("chi")) {
+		if (cur_id == LinkedDataObject::Fetch_item_number_by_name(objects, "chi")) {
 			// we are the player then jump player in-front of chi
 
 			PXfloat ang = nico->direction * TWO_PI;
@@ -2547,7 +2547,7 @@ mcodeFunctionReturnCodes _game_session::fn_is_object_adjacent(int32 &result, int
 		return (IR_CONT);
 	}
 
-	id = objects->Fetch_item_number_by_name(object_name);
+	id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_is_object_on_our_floor - illegal object [%s]", object_name);
 
@@ -2585,11 +2585,11 @@ mcodeFunctionReturnCodes _game_session::fn_is_object_on_this_floor(int32 &result
 
 	Zdebug("fn_is_object_on_this_floor [%s], [%s]", object_name, floor_name);
 
-	id = objects->Fetch_item_number_by_name(object_name);
+	id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_is_object_on_our_floor - illegal object [%s]", object_name);
 
-	floor_id = floor_def->floors->Fetch_item_number_by_name(floor_name);
+	floor_id = LinkedDataObject::Fetch_item_number_by_name(floor_def->floors, floor_name);
 	if (floor_id == 0xffffffff)
 		Fatal_error("fn_are_we_on_this_floor cant locate floor [%s]", floor_name);
 
@@ -2655,7 +2655,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_sleep(int32 &, int32 *params) {
 	uint32 id;
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	id = objects->Fetch_item_number_by_name(object_name);
+	id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_set_sleep - illegal object [%s]", object_name);
 
@@ -2681,7 +2681,7 @@ mcodeFunctionReturnCodes _game_session::fn_mega_use_lift(int32 &, int32 *params)
 	uint32 var_num;
 	const char *lift_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	ob = (c_game_object *)objects->Fetch_item_by_name(lift_name);
+	ob = (c_game_object *)LinkedDataObject::Fetch_item_by_name(objects, lift_name);
 	if (!ob)
 		Fatal_error("fn_use_lift - illegal object [%s]", lift_name);
 
@@ -2761,7 +2761,7 @@ mcodeFunctionReturnCodes _game_session::fn_is_mega_within_area(int32 &result, in
 	uint32 id;
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	id = (uint32)objects->Fetch_item_number_by_name(object_name);
+	id = (uint32)LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	if (id == 0xffffffff)
 		Fatal_error("fn_is_mega_within_area - illegal object [%s]", object_name);
@@ -2945,10 +2945,10 @@ uint32 _game_session::Register_stair_or_ladder(const char *target, bool8 top, ui
 		Fatal_error("%s has illegal length %d", object->GetName(), length);
 
 	// get our nico
-	stair = (_feature_info *)features->Try_fetch_item_by_name(const_cast<char *>(object->GetName()));
+	stair = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, const_cast<char *>(object->GetName()));
 	// get other end
-	dest_stair = (_feature_info *)features->Try_fetch_item_by_name(target);
-	dest_stair_id = objects->Fetch_item_number_by_name(target);
+	dest_stair = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, target);
+	dest_stair_id = LinkedDataObject::Fetch_item_number_by_name(objects, target);
 
 	if (!stair)
 		Fatal_error("fn_register_stairway - cant find nico %s", object->GetName());
@@ -3178,7 +3178,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_object_visible(int32 &, int32 *pa
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	// Find the target object's ID.
-	nObjectID = objects->Fetch_item_number_by_name(object_name);
+	nObjectID = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	// Make sure object is a mega character.
 	if (!(logic_structs[nObjectID]->mega))
@@ -3220,7 +3220,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_camera_hold(int32 &, int32 *param
 		Fatal_error("fn_set_camera_hold called for [%s] but this is for props only", object->GetName());
 
 	// find entry for this object via its name, which we find via its number :(
-	if (!prop_anims->Try_fetch_item_by_name(object->GetName()))
+	if (!LinkedDataObject::Try_fetch_item_by_name(prop_anims, object->GetName()))
 		return IR_CONT; // item has no prop entry - so keep it live
 
 	if (params[0])
@@ -3275,7 +3275,7 @@ mcodeFunctionReturnCodes _game_session::fn_lock_y(int32 &, int32 *params) {
 	_feature_info *nico;
 	const char *marker_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	nico = (_feature_info *)features->Try_fetch_item_by_name(marker_name);
+	nico = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, marker_name);
 	if (!nico)
 		Fatal_error("fn_lock_y by [%s] for nico [%s] finds no such nico", object->GetName(), marker_name);
 

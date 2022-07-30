@@ -504,7 +504,7 @@ mcodeFunctionReturnCodes _game_session::fn_route_to_nico(int32 &result, int32 *p
 			return IR_REPEAT;
 		}
 
-		monica = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+		monica = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 
 		if (!monica)
 			Fatal_error("fn_route_to_nico - object [%s] cant find nico [%s]", object->GetName(), nico_name);
@@ -613,7 +613,7 @@ mcodeFunctionReturnCodes _game_session::fn_spectre_route_to_mega(int32 &result, 
 	const char *mega_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	// get object to check
-	id = objects->Fetch_item_number_by_name(mega_name);
+	id = LinkedDataObject::Fetch_item_number_by_name(objects, mega_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_spectre_route_to_mega - illegal object [%s]", mega_name);
 
@@ -786,13 +786,13 @@ mcodeFunctionReturnCodes _game_session::Route_to_near_mega_core(const char *name
 
 	// get object to check
 
-	monica = (_feature_info *)features->Try_fetch_item_by_name(name);
+	monica = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, name);
 	if (monica) {
 		x = monica->x;
 		z = monica->z;
 
 	} else {
-		id = objects->Fetch_item_number_by_name(name);
+		id = LinkedDataObject::Fetch_item_number_by_name(objects, name);
 		if (id == 0xffffffff)
 			Fatal_error("[%s] calling Route_to_near_mega_core - finds neither object or nico named [%s]", object->GetName(), name);
 		//			found mega with name!

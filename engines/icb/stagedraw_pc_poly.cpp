@@ -447,7 +447,7 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 	if (g_mission->session->objects == nullptr || strcmp(act.log->GetName(), "StageView") == 0) {
 		uvframe = gameCycle;
 	} else {
-		c_game_object *ob = (c_game_object *)MS->objects->Fetch_item_by_name(act.log->GetName());
+		c_game_object *ob = (c_game_object *)LinkedDataObject::Fetch_item_by_name(MS->objects, act.log->GetName());
 
 		int32 ret = ob->GetVariable("state");
 

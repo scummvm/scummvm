@@ -346,7 +346,7 @@ void _icon_menu::DrawIconMenu() {
 			surface_manager->Blit_surface_to_surface(m_pnHiLiteSurfaceIDs[nIconIndex], working_buffer_id, &sFromRectangle, &sToRectangle, DDBLT_KEYSRC);
 
 			// Look for the icon label in the global text file.
-			pcIconLabel = (const char *)global_text->Try_fetch_item_by_hash(nHashRef);
+			pcIconLabel = (const char *)LinkedDataObject::Try_fetch_item_by_hash(global_text, nHashRef);
 
 			// If we found it, display it.
 			if (pcIconLabel && (g_px->display_mode == THREED)) {

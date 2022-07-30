@@ -219,7 +219,7 @@ void _tracer::GetBarriersForCube(const _XYZ_index &oCubeIndices, uint32 *oThisCu
 	uint32 *pBarrierArray;
 
 	// Get to the right slice.
-	pSlice = (_barrier_slice *)m_pyLOSMemFile->Fetch_item_by_number(oCubeIndices.nY);
+	pSlice = (_barrier_slice *)LinkedDataObject::Fetch_item_by_number(m_pyLOSMemFile, oCubeIndices.nY);
 
 	// Get to the right cube entry.
 	nActualIndex = oCubeIndices.nZ * pSlice->row_length + oCubeIndices.nX;
