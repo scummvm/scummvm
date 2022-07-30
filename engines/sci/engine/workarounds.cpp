@@ -769,11 +769,11 @@ const SciWorkaroundEntry kDoSoundPlay_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index-range,   workaround
 const SciWorkaroundEntry kDoSoundFade_workarounds[] = {
-	{ GID_KQ5,           213,   989,  0,       "globalSound3", "fade",                   nullptr,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // english floppy: when bandits leave the secret temple, parameter 4 is an object - bug #5078
+	{ GID_KQ5,           213,   989,  0,       "globalSound3", "fade",                   nullptr,     0,     0, { WORKAROUND_IGNORE,    0 } }, // english floppy: when bandits leave the secret temple, parameter 1 is an object followed by 3 non-existent parameters. Ignore; rideOut2 calls the same fade correctly at the same time - bug #5078
 	{ GID_KQ6,           105,   989,  0,        "globalSound", "fade",                   nullptr,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // floppy: during intro, parameter 4 is an object
 	{ GID_KQ6,           460,   989,  0,       "globalSound2", "fade",                   nullptr,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // after pulling the black widow's web on the isle of wonder, parameter 4 is an object - bug #4954
 	{ GID_QFG4,           -1, 64989,  1,          "GlorySong", "fade",                   nullptr,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // CD version: many places, parameter 4 is an object (the sound object itself)
-	{ GID_SQ5,           800,   989,  0,          "sq5Music1", "fade",                   nullptr,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // when cutting the wrong part of Goliath with the laser - bug #6341
+	{ GID_SQ5,           800,   989,  0,          "sq5Music1", "fade",                   nullptr,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // when cutting the wrong part of Goliath with the laser, parameter 4 is an object - bug #6341
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
