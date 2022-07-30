@@ -58,9 +58,6 @@ typedef PXanim_PSX PXanim;
 // Very hacky #defines for function overloading
 #define PXWorldToFilm WorldToFilm
 
-// Very hacky #defines for function overloading
-// #define PXFrameEnOfAnim ADFrameEnOfAnim
-#define PXFrameEnOfAnim(n, pAnim) psxFrameEnOfAnim(n, pAnim, __FILE__, __LINE__)
 #define PXAngleOfVector AngleOfVector
 #define PXfabs fabs
 #define PXfmod fmod

@@ -33,11 +33,11 @@
 
 namespace ICB {
 
-static inline PXframe_PSX *psxFrameEnOfAnim(uint32 n, PXanim_PSX *pAnim, const char *file, const int32 line) {
+inline PXframe_PSX *PXFrameEnOfAnim(uint32 n, PXanim_PSX *pAnim) {
 	// Convert to the new schema
 	ConvertPXanim(pAnim);
 	if (n >= pAnim->frame_qty) {
-		Real_Fatal_error("Illegal frame %d %d %s %d", n, pAnim->frame_qty, file, line);
+		Real_Fatal_error("Illegal frame %d %d %s %d", n, pAnim->frame_qty);
 		error("Should exit with error-code -1");
 		return NULL;
 	}
