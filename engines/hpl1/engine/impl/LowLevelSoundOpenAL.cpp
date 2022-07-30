@@ -33,6 +33,9 @@
 #include "hpl1/engine/math/Math.h"
 
 #include "hpl1/engine/system/low_level_system.h"
+#include "common/system.h"
+#include "audio/mixer.h"
+
 
 //#include "OALWrapper/OAL_Funcs.h"
 //#include "OALWrapper/OAL_Effect_Reverb.h"
@@ -46,9 +49,8 @@ namespace hpl {
 //-----------------------------------------------------------------------
 
 cLowLevelSoundOpenAL::cLowLevelSoundOpenAL() {
-	mvFormats[0] = "WAV";
-	mvFormats[1] = "OGG";
-	mvFormats[2] = "";
+	mvFormats[0] = "OGG";
+	mvFormats[1] = "";
 	mbInitialized = false;
 	mbEnvAudioEnabled = false;
 	mbNullEffectAttached = false;
@@ -73,7 +75,6 @@ cLowLevelSoundOpenAL::~cLowLevelSoundOpenAL() {
 
 iSoundData *cLowLevelSoundOpenAL::LoadSoundData(const tString &asName, const tString &asFilePath,
 												const tString &asType, bool abStream, bool abLoopStream) {
-#if 0
 	cOpenALSoundData *pSoundData = hplNew(cOpenALSoundData, (asName, abStream));
 
 	pSoundData->SetLoopStream(abLoopStream);
@@ -84,8 +85,6 @@ iSoundData *cLowLevelSoundOpenAL::LoadSoundData(const tString &asName, const tSt
 	}
 
 	return pSoundData;
-#endif
-	return nullptr;
 }
 
 //-----------------------------------------------------------------------
@@ -162,7 +161,9 @@ void cLowLevelSoundOpenAL::SetSetRolloffFactor(float afFactor) {
 
 //-----------------------------------------------------------------------
 
-void cLowLevelSoundOpenAL::SetVolume(float afVolume) {
+void cLowLevelSoundOpenAL::SetVolume(float volume) {
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, static_cast<byte>(volume * 255.f));
+	mfVolume = volume;
 #if 0
   		mfVolume = afVolume;
 
@@ -323,8 +324,8 @@ void cLowLevelSoundOpenAL::Init(bool abUseHardware, bool abForceGeneric, bool ab
 		OAL_Listener_SetAttributes ( Pos, Vel, mvListenerForward.v, mvListenerUp.v );
 
 		//Default volume:
-		SetVolume(1.0f);
 #endif
+	SetVolume(1.0f);
 }
 
 //-----------------------------------------------------------------------
