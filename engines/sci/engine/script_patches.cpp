@@ -22236,6 +22236,39 @@ static const uint16 sq5PatchWd40TunnelLockupFix[] = {
 	PATCH_END
 };
 
+// In room 310, clicking Talk or most inventory items on WD40 results in a
+//  missing message error. When WD40 is visible, wd40:doVerb passes the incoming
+//  verb directly to testMessager:say without first checking if a message exists
+//  for the verb. We fix this by setting the noun and modNum as in the other
+//  rooms on K.U. and then calling super:doVerb as normal.
+//
+// Applies to: All versions
+// Responsible method: wd40:doVerb
+static const uint16 sq5SignatureWd40MissingMessages[] = {
+	0x38, SIG_SELECTOR16(say),            // pushi say
+	SIG_MAGICDWORD,
+	0x39, 0x06,                           // pushi 06
+	0x39, 0x04,                           // pushi 04
+	0x8f, 0x01,                           // lsp 01
+	0x76,                                 // push0
+	0x76,                                 // push0
+	0x76,                                 // push0
+	0x38, SIG_UINT16(0x012d),             // pushi 012d
+	0x81, 0x5b,                           // lag 5b
+	0x4a, 0x10,                           // send 10 [ testMessager say: 4 verb 0 0 0 301 ]
+	0x33, 0x0b,                           // jmp 0b  [ skip super: doVerb verb &rest ]
+	SIG_END
+};
+
+static const uint16 sq5PatchWd40MissingMessages[] = {
+	0x35, 0x04,                           // ldi 04
+	0x65, 0x1a,                           // aTop noun [ noun = 4 ]
+	0x34, PATCH_UINT16(0x012d),           // ldi 012d
+	0x65, 0x1c,                           // aTop modNum [ modNum = 301 ]
+	0x33, 0x0a,                           // jmp 0a [ super: doVerb verb &rest ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry sq5Signatures[] = {
 	{  true,     0, "tab inventory cursor fix",                    1, sq5SignatureTabInventoryCursorFix,    sq5PatchTabInventoryCursorFix },
@@ -22245,6 +22278,7 @@ static const SciScriptPatcherEntry sq5Signatures[] = {
 	{  true,   250, "elevator handsOn fix",                        1, sq5SignatureElevatorHandsOn,          sq5PatchElevatorHandsOn },
 	{  true,   305, "wd40 fruit fix",                              1, sq5SignatureWd40FruitFix,             sq5PatchWd40FruitFix },
 	{  true,   310, "wd40 tunnel lockup fix",                      1, sq5SignatureWd40TunnelLockupFix,      sq5PatchWd40TunnelLockupFix },
+	{  true,   310, "wd40 missing messages",                       1, sq5SignatureWd40MissingMessages,      sq5PatchWd40MissingMessages },
 	{  true,   335, "wd40 alarm countdown fix",                    1, sq5SignatureWd40AlarmCountdownFix,    sq5PatchWd40AlarmCountdownFix },
 	{  true,   730, "genetix bridge handsOn fix",                  1, sq5SignatureGenetixBridgeHandsOn,     sq5PatchGenetixBridgeHandsOn },
 	{  true,    30, "ChoiceTalker lockup fix",                     1, sciNarratorLockupSignature,           sciNarratorLockupPatch },
