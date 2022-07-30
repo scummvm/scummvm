@@ -4276,7 +4276,7 @@ void ScummEngine::dissolveEffect(int width, int height) {
 				if (is1x1Pattern) {
 					*_compositeBuf = *src;
 				} else {
-					for (int ii = 0; ii < height; ++i) {
+					for (int ii = 0; ii < height; ++ii) {
 						memcpy(_compositeBuf + width * ii, src, width);
 						src += pitch;
 					}
