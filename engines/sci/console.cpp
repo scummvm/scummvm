@@ -4640,7 +4640,12 @@ bool Console::processGameFlagsOperation(GameFlagsOperation op, int argc, const c
 			continue;
 		}
 		uint16 globalValue = globalReg->toUint16();
-		uint16 flagMask = 0x8000 >> (flagNumber % 16);
+		uint16 flagMask;
+		if (g_sci->_features->isGameFlagBitOrderNormal()) {
+			flagMask = 0x0001 << (flagNumber % 16);
+		} else {
+			flagMask = 0x8000 >> (flagNumber % 16);
+		}
 		
 		// set or clear the flag
 		bool already = false;

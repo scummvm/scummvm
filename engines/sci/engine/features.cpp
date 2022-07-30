@@ -907,13 +907,13 @@ uint16 GameFeatures::getGameFlagsGlobal() const {
 	case GID_GK2: return 150;
 	// ICEMAN uses object properties
 	case GID_ISLANDBRAIN: return 250;
-	case GID_LAURABOW: return 440;
-	case GID_LAURABOW2: return 186;
 	case GID_KQ1: return 150;
 	// KQ4 has no flags
 	case GID_KQ5: return 129;
 	case GID_KQ6: return 137;
 	case GID_KQ7: return 127;
+	case GID_LAURABOW: return 440;
+	case GID_LAURABOW2: return 186;
 	case GID_LIGHTHOUSE: return 116;
 	case GID_LONGBOW: return 200;
 	case GID_LSL1: return 111;
@@ -943,6 +943,20 @@ uint16 GameFeatures::getGameFlagsGlobal() const {
 	case GID_SQ6: return 250;
 	// TORIN uses a flags object
 	default: return 0;
+	}
+}
+
+bool GameFeatures::isGameFlagBitOrderNormal() const {
+	// Most games store flags in reverse bit order
+	switch (g_sci->getGameId()) {
+	case GID_KQ5:
+	case GID_LAURABOW:
+	case GID_PEPPER:
+	case GID_PQ1:
+	case GID_PQ3:
+		return true;
+	default:
+		return false;
 	}
 }
 
