@@ -2886,10 +2886,12 @@ void ScummEngine::restart() {
 	_currentScript = 0xFF;
 	killAllScriptsExceptCurrent();
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_townsScreen && _game.id == GID_MONKEY) {
 		_textSurface.fillRect(Common::Rect(0, 0, _textSurface.w * _textSurfaceMultiplier, _textSurface.h * _textSurfaceMultiplier), 0);
 		_townsScreen->clearLayer(1);
 	}
+#endif
 
 	setShake(0);
 	_sound->stopAllSounds();
