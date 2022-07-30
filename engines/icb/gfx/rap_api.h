@@ -94,7 +94,7 @@ typedef struct WeightedVertexLink {
 // Notice, how poor ANSI C/C++ is at its representation
 //
 
-typedef struct rap_API {
+typedef struct {
 	char id[4];
 	uint32 schema;
 	uint32 platform;
@@ -134,41 +134,41 @@ typedef struct rap_API {
 	uint32 normalOffset;     // in bytes
 	uint32 boneOffset;       // in bytes
 	Vertex noneLinkData[1];  // Vertex noLinkData[nNone];
-} rap_API;
+} RapAPI;
 
-class rap_API_Object {
+class RapAPIObject {
 public:
-	static Vertex *GetNoneLinkPtr(rap_API *rap) { return rap->noneLinkData; }
+	static Vertex *GetNoneLinkPtr(RapAPI *rap) { return rap->noneLinkData; }
 
-	static VertexLink *GetSingleLinkPtr(rap_API *rap) { return (VertexLink *)(rap->id + rap->singleLinkOffset); }
+	static VertexLink *GetSingleLinkPtr(RapAPI *rap) { return (VertexLink *)(rap->id + rap->singleLinkOffset); }
 
-	static WeightedVertexLink *GetMultiLinkPtr(rap_API *rap) { return (WeightedVertexLink *)(rap->id + rap->multiLinkOffset); }
+	static WeightedVertexLink *GetMultiLinkPtr(RapAPI *rap) { return (WeightedVertexLink *)(rap->id + rap->multiLinkOffset); }
 
-	static uint32 *GetFUS3Ptr(rap_API *rap) { return (uint32 *)(rap->id + rap->FUS3offset); }
-	static uint32 *GetGUS3Ptr(rap_API *rap) { return (uint32 *)(rap->id + rap->GUS3offset); }
-	static uint32 *GetFTS3Ptr(rap_API *rap) { return (uint32 *)(rap->id + rap->FTS3offset); }
-	static uint32 *GetGTS3Ptr(rap_API *rap) { return (uint32 *)(rap->id + rap->GTS3offset); }
-	static uint32 *GetFUL3Ptr(rap_API *rap) { return (uint32 *)(rap->id + rap->FUL3offset); }
-	static uint32 *GetGUL3Ptr(rap_API *rap) { return (uint32 *)(rap->id + rap->GUL3offset); }
-	static uint32 *GetFTL3Ptr(rap_API *rap) { return (uint32 *)(rap->id + rap->FTL3offset); }
-	static uint32 *GetGTL3Ptr(rap_API *rap) { return (uint32 *)(rap->id + rap->GTL3offset); }
-	static uint32 *GetTRI3Ptr(rap_API *rap) { return (uint32 *)(rap->id + rap->TRI3offset); }
-	static uint32 *GetNormalPtr(rap_API *rap) { return (uint32 *)(rap->id + rap->normalOffset); }
-	static BoneLink *GetBonePtr(rap_API *rap) { return (BoneLink *)(rap->id + rap->boneOffset); }
-	static uint32 *GetBoneHashPtr(rap_API *rap) {
+	static uint32 *GetFUS3Ptr(RapAPI *rap) { return (uint32 *)(rap->id + rap->FUS3offset); }
+	static uint32 *GetGUS3Ptr(RapAPI *rap) { return (uint32 *)(rap->id + rap->GUS3offset); }
+	static uint32 *GetFTS3Ptr(RapAPI *rap) { return (uint32 *)(rap->id + rap->FTS3offset); }
+	static uint32 *GetGTS3Ptr(RapAPI *rap) { return (uint32 *)(rap->id + rap->GTS3offset); }
+	static uint32 *GetFUL3Ptr(RapAPI *rap) { return (uint32 *)(rap->id + rap->FUL3offset); }
+	static uint32 *GetGUL3Ptr(RapAPI *rap) { return (uint32 *)(rap->id + rap->GUL3offset); }
+	static uint32 *GetFTL3Ptr(RapAPI *rap) { return (uint32 *)(rap->id + rap->FTL3offset); }
+	static uint32 *GetGTL3Ptr(RapAPI *rap) { return (uint32 *)(rap->id + rap->GTL3offset); }
+	static uint32 *GetTRI3Ptr(RapAPI *rap) { return (uint32 *)(rap->id + rap->TRI3offset); }
+	static uint32 *GetNormalPtr(RapAPI *rap) { return (uint32 *)(rap->id + rap->normalOffset); }
+	static BoneLink *GetBonePtr(RapAPI *rap) { return (BoneLink *)(rap->id + rap->boneOffset); }
+	static uint32 *GetBoneHashPtr(RapAPI *rap) {
 		BoneLink *bPtr = GetBonePtr(rap);
 		return (uint32 *)(bPtr + rap->nBones);
 	}
-	static uint32 *GetAnimPolyPtr(rap_API *rap) {
+	static uint32 *GetAnimPolyPtr(RapAPI *rap) {
 		return (uint32 *)(rap->id + rap->animPolyOffset);
 		
 	}
-	static uint32 *GetAnimPolyFrame(rap_API *rap, int32 frame) {
+	static uint32 *GetAnimPolyFrame(RapAPI *rap, int32 frame) {
 		return (uint32 *)(rap->id + rap->animPolyOffset + rap->nAnimTypes * 2 * sizeof(uint32) + frame * rap->animPolySize);
 	}
 };
 
-inline void ConvertRAP(rap_API *rap) {
+inline void ConvertRAP(RapAPI *rap) {
 	// Do we need to do any conversion ?
 	if (FROM_LE_32(rap->schema) == RAP_API_SCHEMA)
 		return;

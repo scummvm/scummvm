@@ -1580,21 +1580,21 @@ void _remora::SetUpSurfaceForBitmap(const char *pcBitmapName, DXrect &sSourceRec
 	pcFullBitmapName = MakeRemoraGraphicsPath(pcBitmapName);
 	pBitmap = (_pxBitmap *)rs_remora->Res_open(pcFullBitmapName, nFullBitmapNameHash, m_pcRemoraCluster, m_nRemoraClusterHash);
 
-	if (pBitmap->schema != PC_BITMAP_SCHEMA)
+	if (FROM_LE_32(pBitmap->schema) != PC_BITMAP_SCHEMA)
 		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", pcFullBitmapName, PC_BITMAP_SCHEMA, pBitmap->schema);
 
 	pSprite = (_pxSprite *)((byte *)pBitmap + FROM_LE_32(pBitmap->sprite_offsets[0]));
 
 	// Prepare the source/target rectangles for blitting later.
-	sSourceRect = MakeRECTFromSpriteSizes(0, 0, pSprite->width, pSprite->height);
-	sTargetRect = MakeRECTFromSpriteSizes(pSprite->x, pSprite->y, pSprite->width, pSprite->height);
+	sSourceRect = MakeRECTFromSpriteSizes(0, 0, FROM_LE_32(pSprite->width), FROM_LE_32(pSprite->height));
+	sTargetRect = MakeRECTFromSpriteSizes(FROM_LE_32(pSprite->x), FROM_LE_32(pSprite->y), FROM_LE_32(pSprite->width), FROM_LE_32(pSprite->height));
 
-	nSurfaceID = surface_manager->Create_new_surface(pcBitmapName, pSprite->width, pSprite->height, SYSTEM);
+	nSurfaceID = surface_manager->Create_new_surface(pcBitmapName, FROM_LE_32(pSprite->width), FROM_LE_32(pSprite->height), SYSTEM);
 	surface_manager->Set_transparent_colour_key(nSurfaceID, g_oIconMenu->GetTransparencyKey());
 
 	pSurfaceBitmap = surface_manager->Lock_surface(nSurfaceID);
 	nPitch = surface_manager->Get_pitch(nSurfaceID);
-	SpriteXYFrameDraw(pSurfaceBitmap, nPitch, pSprite->width, pSprite->height, pBitmap, 0, 0, 0, FALSE8, nullptr, 255);
+	SpriteXYFrameDraw(pSurfaceBitmap, nPitch, FROM_LE_32(pSprite->width), FROM_LE_32(pSprite->height), pBitmap, 0, 0, 0, FALSE8, nullptr, 255);
 	surface_manager->Unlock_surface(nSurfaceID);
 }
 

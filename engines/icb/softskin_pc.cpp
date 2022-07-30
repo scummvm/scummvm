@@ -32,7 +32,7 @@
 
 namespace ICB {
 
-int32 softskinPC(rap_API *rap, int32 poseBone, MATRIXPC *lw, SVECTORPC *local, int16 *xminLocal, int16 *xmaxLocal, int16 *yminLocal, int16 *ymaxLocal, int16 *zminLocal,
+int32 softskinPC(RapAPI *rap, int32 poseBone, MATRIXPC *lw, SVECTORPC *local, int16 *xminLocal, int16 *xmaxLocal, int16 *yminLocal, int16 *ymaxLocal, int16 *zminLocal,
 			   int16 *zmaxLocal, int32 screenShift) {
 	// step 1 : make all the local-world and local-screen matrices
 	//    This is done prior to this function
@@ -43,14 +43,14 @@ int32 softskinPC(rap_API *rap, int32 poseBone, MATRIXPC *lw, SVECTORPC *local, i
 	//
 
 	// step 2
-	rap_API *pLink = rap;
+	RapAPI *pLink = rap;
 	uint32 nNone = pLink->nNone;
 	uint32 nSingle = pLink->nSingle;
 	uint32 nMulti = pLink->nMultiple;
 	uint32 i, vIndex;
-	Vertex *noneLink = rap_API_Object::GetNoneLinkPtr(rap);
-	VertexLink *singleLink = rap_API_Object::GetSingleLinkPtr(rap);
-	WeightedVertexLink *multiLink = rap_API_Object::GetMultiLinkPtr(rap);
+	Vertex *noneLink = RapAPIObject::GetNoneLinkPtr(rap);
+	VertexLink *singleLink = RapAPIObject::GetSingleLinkPtr(rap);
+	WeightedVertexLink *multiLink = RapAPIObject::GetMultiLinkPtr(rap);
 
 	uint32 prim;
 	uint32 nVertices = 0;

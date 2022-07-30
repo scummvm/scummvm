@@ -28,6 +28,8 @@
 #include "engines/icb/gfx/gfxstub_dutch.h"
 #include "engines/icb/gfx/gfxstub_rev_dutch.h"
 
+#include "common/endian.h"
+
 namespace ICB {
 
 typedef struct {
@@ -120,7 +122,7 @@ TextureHandle *RegisterTexture(const RevTexture *revInput) {
 	for (i = 0; i < 9; i++)
 		th->pRGBA[i] = nullptr;
 
-	if (revInput->palette[0] == 0xDEADBEAF) {
+	if (FROM_LE_32(revInput->palette[0]) == 0xDEADBEAF) {
 		th->bpp = 4;
 		th->palette = nullptr;
 		th->pRGBA[0] = revInput->level[0];
@@ -156,7 +158,7 @@ TextureHandle *RegisterTexture(const RevTexture *revInput) {
 		th->bpp = 1;
 		th->palette = new uint32[256];
 		for (i = 0; i < 256; i++)
-			th->palette[i] = revInput->palette[i];
+			th->palette[i] = FROM_LE_32(revInput->palette[i]);
 
 		int32 size = th->w * th->h * th->bpp;
 		for (i = 0; i < 9; i++) {

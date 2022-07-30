@@ -408,13 +408,13 @@ void DrawFrame(const int32 frame) {
 	sprintf(smesh_name, "mesh_shadow.rap");
 
 	uint32 mesh_hash = HashString(mesh_name);
-	rap_API *mesh = (rap_API *)rs_anims->Res_open(mesh_name, mesh_hash, cluster_name, cluster_name_hash);
+	RapAPI *mesh = (RapAPI *)rs_anims->Res_open(mesh_name, mesh_hash, cluster_name, cluster_name_hash);
 	uint32 smesh_hash = HashString(smesh_name);
-	rap_API *smesh = (rap_API *)rs_anims->Res_open(smesh_name, smesh_hash, cluster_name, cluster_name_hash);
+	RapAPI *smesh = (RapAPI *)rs_anims->Res_open(smesh_name, smesh_hash, cluster_name, cluster_name_hash);
 	uint32 pose_hash = HashString(pose_name);
-	rap_API *pose = (rap_API *)rs_anims->Res_open(pose_name, pose_hash, cluster_name, cluster_name_hash);
+	RapAPI *pose = (RapAPI *)rs_anims->Res_open(pose_name, pose_hash, cluster_name, cluster_name_hash);
 	uint32 bone_hash = HashString(bone_name);
-	rab_API *rab = (rab_API *)rs_anims->Res_open(bone_name, bone_hash, cluster_name, cluster_name_hash);
+	RabAPI *rab = (RabAPI *)rs_anims->Res_open(bone_name, bone_hash, cluster_name, cluster_name_hash);
 
 	ConvertRAP(pose);
 	ConvertRAP(smesh);
@@ -444,7 +444,7 @@ void DrawFrame(const int32 frame) {
 	}
 
 	// Pass in the linkage file and the bones file
-	Bone_Frame *bone_frame = rab->GetFrame(frame);
+	Bone_Frame *bone_frame = RabAPIObject::GetFrame(rab, frame);
 	int32 brightness;
 
 	int32 debug = 1;

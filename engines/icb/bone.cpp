@@ -103,7 +103,7 @@ void _game_session::UpdateCartridgeCase() {
 // for jaw and neck. This sets random
 // movement on neck (x,y,z) and random
 // movement for jaw (just in x)
-void UpdateTalking(_logic *log, rap_API *rap) {
+void UpdateTalking(_logic *log, RapAPI *rap) {
 	// check for -1 in rap
 	if (rap->jawBone == (int8)-1)
 		Tdebug("bones.txt", "mega %s speaking but has no jaw bone!", log->mega->chr_name);

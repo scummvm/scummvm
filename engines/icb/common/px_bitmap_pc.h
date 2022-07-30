@@ -58,41 +58,6 @@ typedef struct _pxPCBitmap {
 
 } _pxPCBitmap;
 
-/*
-// This holds information about a bitmap (which may contain a number of frames).
-class _pxPCBitmap {
-public:
-	// Constructor and destructor (don't need to do anything because these items are always created
-	// by doing a Res_open and casting a block of memory to this type).
-	_pxPCBitmap() { ; }
-	~_pxPCBitmap() { ; }
-
-	char id[4];    // "PCB" Pc bitmap
-	uint32 schema; // The current schema number
-
-	// Gets and sets.
-	uint32 Fetch_number_of_items() const { return num_sprites; }
-	inline _pxPCSprite *Fetch_item_by_number(uint32 nNumber);
-
-	uint8 *Fetch_palette_pointer() { return &palette[0]; }
-
-private:
-	uint8 palette[4 * 256]; // RGB but padded with 0 to 32-bits.
-	uint32 num_sprites;             // Number of sprites in this file.
-	uint32 sprite_offsets[1];       // Offsets to sprite data for each sprite.
-
-	_pxPCBitmap(const _pxPCBitmap &) { ; }
-	void operator=(const _pxPCBitmap &) { ; }
-};
-
-inline _pxPCSprite *_pxPCBitmap::Fetch_item_by_number(uint32 nNumber) {
-	// Make sure requested sprite is in the resource.
-	assert(nNumber < num_sprites);
-
-	// Return the pointer.
-	return ((_pxPCSprite *)(((uint8 *)this) + sprite_offsets[nNumber]));
-}*/
-
 } // End of namespace ICB
 
 #endif // #ifndef _PX_BITMAP_PC_H_INCLUDED

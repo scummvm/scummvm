@@ -33,14 +33,14 @@ namespace ICB {
 // Decompress the FrameData into the CurrentFrame data storage
 // e.g. undo the delta compression or replace the zero ignored
 // values with zero
-Bone_Frame *rab_API::GetFrame(const int32 f) {
-	Bone_Frame *curFrm = GetCurrentFrame();
+Bone_Frame *RabAPIObject::GetFrame(RabAPI *rab, const int32 f) {
+	Bone_Frame *curFrm = GetCurrentFrame(rab);
 	Bone_Frame *prevFrm = nullptr;
 
-	if (f != currentFrame) {
+	if (f != rab->currentFrame) {
 		// Decode and decompress the data from the animation frame into
 		// the current frame
-		FrameData *frm = GetFrameData(f);
+		FrameData *frm = GetFrameData(rab, f);
 
 		uint32 b, i;
 		uint32 nt = frm->nThings;
@@ -48,7 +48,7 @@ Bone_Frame *rab_API::GetFrame(const int32 f) {
 
 		// For deltas we need the previous frame
 		if ((frm->typeSize & DataTypeDeltas) != 0) {
-			prevFrm = GetFrame(f - 1);
+			prevFrm = GetFrame(rab, f - 1);
 			int32 dcvx;
 			int32 dcvy;
 			int32 dcvz;
@@ -96,10 +96,18 @@ Bone_Frame *rab_API::GetFrame(const int32 f) {
 					} else {
 						b = i;
 					}
-					memcpy(&temp, (data), dataSize);
+					byte *tempSrc = (byte *)data;
+					byte *tempDst = (byte *)&temp;
+					for (int t = 0; t < dataSize; t++) {
+#ifdef SCUMM_LITTLE_ENDIAN
+						tempDst[t] = tempSrc[t];
+#else
+						tempDst[t] = tempSrc[dataSize - t - 1];
+#endif
+					}
 
 					// The previous compressed angles
-					prevCrot = prevFrm->bones[b].crot;
+					prevCrot = FROM_LE_32(prevFrm->bones[b].crot);
 					prevVx = (prevCrot >> COMP_VX_SHIFT) & COMP_VX_MASK;
 					prevVy = (prevCrot >> COMP_VY_SHIFT) & COMP_VY_MASK;
 					prevVz = (prevCrot >> COMP_VZ_SHIFT) & COMP_VZ_MASK;
@@ -144,7 +152,7 @@ Bone_Frame *rab_API::GetFrame(const int32 f) {
 					temp |= (curVz << COMP_VZ_SHIFT);
 
 					// Store the deltas in the currentFrame structure
-					curFrm->bones[b].crot = temp;
+					curFrm->bones[b].crot = TO_LE_32(temp);
 					data += dataSize;
 				}
 			}
@@ -154,20 +162,36 @@ Bone_Frame *rab_API::GetFrame(const int32 f) {
 			case ALL_ANGLES_32_TYPESIZE: {
 				for (b = 0; b < nt; b++) {
 					// The data is not aligned so need to do memcpy
-					memcpy(&(curFrm->bones[b].crot), (data), sizeof(CompTriplet));
+					byte *tempSrc = (byte *)data;
+					byte *tempDst = (byte *)&(curFrm->bones[b].crot);
+					for (uint t = 0; t < sizeof(CompTriplet); t++) {
+#ifdef SCUMM_LITTLE_ENDIAN
+						tempDst[t] = tempSrc[t];
+#else
+						tempDst[t] = tempSrc[dataSize - t - 1];
+#endif
+					}
 					data += ALL_ANGLES_32_BYTE_SIZE;
 				}
 				break;
 			}
 			case NONZERO_ANGLES_32_TYPESIZE: {
 				// Zero out the angles first
-				for (b = 0; b < nBones; b++) {
-					curFrm->bones[b].crot = ZERO_ANGLE;
+				for (b = 0; b < rab->nBones; b++) {
+					curFrm->bones[b].crot = TO_LE_32(ZERO_ANGLE);
 				}
 				// Then update the angles which are non-zero
 				for (i = 0; i < nt; i++) {
 					b = (int32)(*data);
-					memcpy(&(curFrm->bones[b].crot), (data + 1), sizeof(CompTriplet));
+					byte *tempSrc = (byte *)data + 1;
+					byte *tempDst = (byte *)&(curFrm->bones[b].crot);
+					for (uint t = 0; t < sizeof(CompTriplet); t++) {
+#ifdef SCUMM_LITTLE_ENDIAN
+						tempDst[t] = tempSrc[t];
+#else
+						tempDst[t] = tempSrc[dataSize - t - 1];
+#endif
+					}
 					data += NONZERO_ANGLES_32_BYTE_SIZE;
 				}
 				break;
@@ -175,8 +199,11 @@ Bone_Frame *rab_API::GetFrame(const int32 f) {
 			default: { return nullptr; }
 			}
 		}
-		curFrm->poseBone = frm->poseBone;
-		currentFrame = (uint8)f;
+		curFrm->poseBone.tx = FROM_LE_16(frm->poseBone.tx);
+		curFrm->poseBone.ty = FROM_LE_16(frm->poseBone.ty);
+		curFrm->poseBone.tz = FROM_LE_16(frm->poseBone.tz);
+		curFrm->poseBone.parent = FROM_LE_16(frm->poseBone.parent);
+		rab->currentFrame = (uint8)f;
 	}
 
 	return curFrm;

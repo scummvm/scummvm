@@ -952,7 +952,7 @@ void _game_session::UpdateMegaFX() {
 	    (speech_info[CONV_ID].state == __SAYING)                 // are definately saying, not just getting ready to...
 	    ) {
 		// get rap
-		rap_API *pose = (rap_API *)rs_anims->Res_open(I->get_pose_name(), I->pose_hash, I->base_path, I->base_path_hash);
+		RapAPI *pose = (RapAPI *)rs_anims->Res_open(I->get_pose_name(), I->pose_hash, I->base_path, I->base_path_hash);
 
 		// use it
 		UpdateTalking(L, pose); // update jaw and neck bone
