@@ -48,9 +48,9 @@ int32 softskinPC(rap_API *rap, int32 poseBone, MATRIXPC *lw, SVECTORPC *local, i
 	uint32 nSingle = pLink->nSingle;
 	uint32 nMulti = pLink->nMultiple;
 	uint32 i, vIndex;
-	Vertex *noneLink = rap->GetNoneLinkPtr();
-	VertexLink *singleLink = rap->GetSingleLinkPtr();
-	WeightedVertexLink *multiLink = rap->GetMultiLinkPtr();
+	Vertex *noneLink = rap_API_Object::GetNoneLinkPtr(rap);
+	VertexLink *singleLink = rap_API_Object::GetSingleLinkPtr(rap);
+	WeightedVertexLink *multiLink = rap_API_Object::GetMultiLinkPtr(rap);
 
 	uint32 prim;
 	uint32 nVertices = 0;

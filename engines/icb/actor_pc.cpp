@@ -83,7 +83,7 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 	MATRIXPC bone2actor[MAX_LW_MATRICES];
 	MatrixHierarchyPC skeleton[MAX_LW_MATRICES];
 	MATRIXPC *lwPtr;
-	BoneLink *bones = mesh->GetBonePtr();
+	BoneLink *bones = rap_API_Object::GetBonePtr(mesh);
 
 	SVECTOR poseBox[8];
 	SVECTOR poseMinBox, poseMaxBox;
@@ -619,11 +619,11 @@ void DrawModel4PC(rap_API *mrap, int32 poseBone, MATRIXPC *lw, MATRIXPC *local2s
 	// Now go and find the actual polygon data for this primitive
 	uint32 *polyStart;
 	uint32 nPolys;
-	uint32 *pNormal = mrap->GetNormalPtr();
+	uint32 *pNormal = rap_API_Object::GetNormalPtr(mrap);
 
 	nPolys = mrap->nFUS3;
 	if (nPolys != 0) {
-		polyStart = mrap->GetFUS3Ptr();
+		polyStart = rap_API_Object::GetFUS3Ptr(mrap);
 		// Do the drawing using internal C based debugging drawing code
 		if (debug) {
 			drawFUS3PC(polyStart, nPolys, local);
@@ -633,7 +633,7 @@ void DrawModel4PC(rap_API *mrap, int32 poseBone, MATRIXPC *lw, MATRIXPC *local2s
 	}
 	nPolys = mrap->nGUS3;
 	if (nPolys != 0) {
-		polyStart = mrap->GetGUS3Ptr();
+		polyStart = rap_API_Object::GetGUS3Ptr(mrap);
 		// Do the drawing using internal C based debugging drawing code
 		if (debug) {
 			drawGUS3PC(polyStart, nPolys, local);
@@ -643,7 +643,7 @@ void DrawModel4PC(rap_API *mrap, int32 poseBone, MATRIXPC *lw, MATRIXPC *local2s
 	}
 	nPolys = mrap->nFTS3;
 	if (nPolys != 0) {
-		polyStart = mrap->GetFTS3Ptr();
+		polyStart = rap_API_Object::GetFTS3Ptr(mrap);
 		// Do the drawing using internal C based debugging drawing code
 		if (debug) {
 			drawFTS3PC(polyStart, nPolys, local);
@@ -653,7 +653,7 @@ void DrawModel4PC(rap_API *mrap, int32 poseBone, MATRIXPC *lw, MATRIXPC *local2s
 	}
 	nPolys = mrap->nGTS3;
 	if (nPolys != 0) {
-		polyStart = mrap->GetGTS3Ptr();
+		polyStart = rap_API_Object::GetGTS3Ptr(mrap);
 		// Do the drawing using internal C based debugging drawing code
 		if (debug) {
 			drawGTS3PC(polyStart, nPolys, local);
@@ -663,7 +663,7 @@ void DrawModel4PC(rap_API *mrap, int32 poseBone, MATRIXPC *lw, MATRIXPC *local2s
 	}
 	nPolys = mrap->nFUL3;
 	if (nPolys != 0) {
-		polyStart = mrap->GetFUL3Ptr();
+		polyStart = rap_API_Object::GetFUL3Ptr(mrap);
 		// Do the drawing using internal C based debugging drawing code
 		if (debug) {
 			drawFUL3PC(polyStart, nPolys, local, (SVECTOR *)pNormal);
@@ -673,7 +673,7 @@ void DrawModel4PC(rap_API *mrap, int32 poseBone, MATRIXPC *lw, MATRIXPC *local2s
 	}
 	nPolys = mrap->nGUL3;
 	if (nPolys != 0) {
-		polyStart = mrap->GetGUL3Ptr();
+		polyStart = rap_API_Object::GetGUL3Ptr(mrap);
 		// Do the drawing using internal C based debugging drawing code
 		if (debug) {
 			drawGUL3PC(polyStart, nPolys, local, (SVECTOR *)pNormal);
@@ -683,7 +683,7 @@ void DrawModel4PC(rap_API *mrap, int32 poseBone, MATRIXPC *lw, MATRIXPC *local2s
 	}
 	nPolys = mrap->nFTL3;
 	if (nPolys != 0) {
-		polyStart = mrap->GetFTL3Ptr();
+		polyStart = rap_API_Object::GetFTL3Ptr(mrap);
 		// Do the drawing using internal C based debugging drawing code
 		if (debug) {
 			drawFTL3PC(polyStart, nPolys, local, (SVECTOR *)pNormal);
@@ -693,7 +693,7 @@ void DrawModel4PC(rap_API *mrap, int32 poseBone, MATRIXPC *lw, MATRIXPC *local2s
 	}
 	nPolys = mrap->nGTL3;
 	if (nPolys != 0) {
-		polyStart = mrap->GetGTL3Ptr();
+		polyStart = rap_API_Object::GetGTL3Ptr(mrap);
 		// Do the drawing using internal C based debugging drawing code
 		if (debug) {
 			drawGTL3PC(polyStart, nPolys, local, (SVECTOR *)pNormal);
@@ -718,8 +718,8 @@ void DrawModel4PC(rap_API *mrap, int32 poseBone, MATRIXPC *lw, MATRIXPC *local2s
 			deadObject = 0;
 		}
 
-		uint32 *typePtr = mrap->GetAnimPolyPtr();
-		polyStart = mrap->GetAnimPolyFrame(frm);
+		uint32 *typePtr = rap_API_Object::GetAnimPolyPtr(mrap);
+		polyStart = rap_API_Object::GetAnimPolyFrame(mrap, frm);
 		for (uint32 t = 0; t < nTypes; t++) {
 			switch (*typePtr++) { // ++ skips the type field
 			case HMD_FUS3: {

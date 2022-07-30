@@ -351,7 +351,7 @@ void MakeShadowPC(rap_API *srap, SVECTORPC *local, int32 nVertices, SVECTORPC *p
 
 	nPolys = srap->nTRI3;
 	if (nPolys != 0) {
-		polyStart = srap->GetTRI3Ptr();
+		polyStart = rap_API_Object::GetTRI3Ptr(srap);
 		// Do the drawing using internal C based debugging drawing code
 		if (debug) {
 			drawTRI3PC(polyStart, nPolys, pvert);
