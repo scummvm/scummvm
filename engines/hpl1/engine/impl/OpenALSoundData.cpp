@@ -26,8 +26,15 @@
  */
 
 #include "hpl1/engine/impl/OpenALSoundData.h"
+#include "audio/mixer.h"
+#include "common/file.h"
+#include "common/stream.h"
+#include "common/system.h"
+#include "common/types.h"
+#include "hpl1/debug.h"
 #include "hpl1/engine/impl/OpenALSoundChannel.h"
 #include "hpl1/engine/system/low_level_system.h"
+#include "audio/decoders/vorbis.h"
 namespace hpl {
 
 //////////////////////////////////////////////////////////////////////////
@@ -36,27 +43,13 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cOpenALSoundData::cOpenALSoundData(tString asName, bool abStream) : iSoundData(asName, abStream) {
-	mpSample = NULL;
-	mpStream = NULL;
-	//		mpSoundData = NULL;
+cOpenALSoundData::cOpenALSoundData(tString asName, bool abStream) : iSoundData(asName, abStream), _stream(nullptr) {
 }
 
 //-----------------------------------------------------------------------
 
 cOpenALSoundData::~cOpenALSoundData() {
-#if 0
-  		if (mbStream)
-		{
-			if(mpStream)
-				OAL_Stream_Unload ( mpStream );//static_cast<cOAL_Stream*>(mpSoundData) );
-		}
-		else
-		{
-			if(mpSample)
-				OAL_Sample_Unload ( mpSample );//static_cast<cOAL_Sample*>(mpSoundData) );
-		}
-#endif
+
 }
 
 //-----------------------------------------------------------------------
@@ -67,52 +60,20 @@ cOpenALSoundData::~cOpenALSoundData() {
 
 //-----------------------------------------------------------------------
 
-bool cOpenALSoundData::CreateFromFile(const tString &asFile) {
-#if 0
-  		int lFlags=0;
-
-		unsigned int lCaps = 0;
-//		FSOUND_GetDriverCaps(0, &lCaps);//Current driver here instead of 0
-
-		//Get the load flags
-//		if(lCaps & FSOUND_CAPS_HARDWARE)	lFlags |= FSOUND_HW3D;
-		//if(mbStream)						lFlags |= FSOUND_STREAMABLE;
-
-		if(mbStream)
-		{
-			//mpSoundData
-			mpStream = OAL_Stream_Load ( asFile.c_str() );
-
-
-
-			if(mpStream == NULL )//mpSoundData==NULL){
-			{
-				Error("Couldn't load sound stream '%s'\n", asFile.c_str());
-				return false;
-			}
-			else
-				OAL_Stream_SetLoop(mpStream,mbLoopStream);
-				//mpStream->SetLoop(mbLoopStream);
-				//mpSoundData->SetLoop(mbLoopStream);
-
-		}
-		else
-		{
-			mpSample = OAL_Sample_Load ( asFile.c_str() );
-//			mpSoundData = OAL_Sample_Load ( asFile.c_str() );
-			if(mpSample == NULL)//mpSoundData==NULL){
-			{
-				Error("Couldn't load sound data '%s'\n", asFile.c_str());
-				return false;
-			}
-			else
-				OAL_Sample_SetLoop(mpSample,true);
-				//mpSample->SetLoop ( true );
-
-		}
-
-#endif
-	return true;
+bool cOpenALSoundData::CreateFromFile(const tString &filename) {
+	Hpl1::logInfo(Hpl1::kDebugResourceLoading | Hpl1::kDebugAudio,
+		"loading audio file %s\n", filename.c_str());
+	// FIXME: string types
+	Common::File soundFile;
+	if (_stream)
+		error("trying to load a sample"); // FIXME: remove this if its not needed
+	if (!soundFile.open(filename.c_str())) {
+		Hpl1::logError(Hpl1::kDebugAudio,
+			"audio file %s could not be loaded", filename.c_str());
+		return false;
+	}
+	_stream = Audio::makeVorbisStream(&soundFile, DisposeAfterUse::NO);
+	return static_cast<bool>(_stream);
 }
 
 //-----------------------------------------------------------------------
@@ -145,20 +106,5 @@ iSoundChannel *cOpenALSoundData::CreateChannel(int alPriority) {
 #endif
 	return NULL;
 }
-
-//-----------------------------------------------------------------------
-
-bool cOpenALSoundData::IsStereo() {
-#if 0
-  		if (mbStream)
-			return (OAL_Stream_GetChannels(mpStream)==2);
-		if (mpSample)
-			return (OAL_Sample_GetChannels(mpSample)==2);
-
-#endif
-	return false;
-}
-
-//-----------------------------------------------------------------------
 
 } // namespace hpl

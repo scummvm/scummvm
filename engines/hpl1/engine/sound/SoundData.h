@@ -47,8 +47,6 @@ public:
 
 	virtual iSoundChannel *CreateChannel(int alPriority) = 0;
 
-	virtual bool IsStereo() = 0;
-
 	bool IsStream() { return mbStream; }
 	void SetLoopStream(bool abX) { mbLoopStream = abX; }
 	bool GetLoopStream() { return mbLoopStream; }

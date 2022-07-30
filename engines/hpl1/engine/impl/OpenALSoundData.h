@@ -30,8 +30,7 @@
 
 #include "hpl1/engine/sound/SoundData.h"
 
-//#include "OALWrapper/OAL_Funcs.h"
-#include "temp-types.h"
+#include "audio/audiostream.h"
 
 namespace hpl {
 
@@ -46,14 +45,13 @@ public:
 
 	bool IsStream() { return mbStream; }
 
-	bool IsStereo();
-
-	cOAL_Sample *GetSample() { return (mpSample); } // static_cast<cOAL_Sample*> (mpSoundData));}
-	cOAL_Stream *GetStream() { return (mpStream); } // static_cast<cOAL_Stream*> (mpSoundData));}
+	//cOAL_Sample *GetSample() { return (mpSample); } // static_cast<cOAL_Sample*> (mpSoundData));}
+	//cOAL_Stream *GetStream() { return (mpStream); } // static_cast<cOAL_Stream*> (mpSoundData));}
 
 private:
-	cOAL_Sample *mpSample;
-	cOAL_Stream *mpStream;
+	//cOAL_Sample *mpSample;
+	//cOAL_Stream *mpStream;
+	Audio::SeekableAudioStream* _stream;
 
 	// iOAL_Loadable*	mpSoundData;
 };
