@@ -488,7 +488,7 @@ void _game_session::Init_objects() {
 		script_hash = HashString("player::globals");
 		const char *pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, script_hash);
 		if (pc) {
-			object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(objects, id);
+			object = (CGame *)LinkedDataObject::Fetch_item_by_number(objects, id);
 			Tdebug("objects_init.txt", " initialising globals", (const char *)buf);
 			RunScript(pc, object);
 		}
@@ -508,9 +508,9 @@ void _game_session::Init_objects() {
 	// event manager have been initialised in case calls get made to these services in any of the
 	// objects' InitScripts.
 	for (j = 0; ((j < total_objects)); j++) {
-		object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(objects, j);
-		Tdebug("objects_init.txt", "\n\n---------------------------------------------------\n%d  initialising object '%s'", j, object->GetName());
-		Zdebug("\n\n---------------------------------------------------\n%d  initialising object '%s'", j, object->GetName());
+		object = (CGame *)LinkedDataObject::Fetch_item_by_number(objects, j);
+		Tdebug("objects_init.txt", "\n\n---------------------------------------------------\n%d  initialising object '%s'", j, CGameObject::GetName(object));
+		Zdebug("\n\n---------------------------------------------------\n%d  initialising object '%s'", j, CGameObject::GetName(object));
 
 		Zdebug("[%d]", num_megas);
 
@@ -527,12 +527,12 @@ void _game_session::Init_objects() {
 		// the init script is always script 0 for the object
 		// the init script may or may not be overiden
 		// get the address of the script we want to run
-		const char *pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, object->GetScriptNameFullHash(OB_INIT_SCRIPT)); // run init script
+		const char *pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, CGameObject::GetScriptNameFullHash(object, OB_INIT_SCRIPT)); // run init script
 
 		if (pc) {
 			RunScript(pc, object);
 
-			strcpy(buf, object->GetName());
+			strcpy(buf, CGameObject::GetName(object));
 			strcat(buf, "::local_init");
 
 			uint32 script_hash;
@@ -540,7 +540,7 @@ void _game_session::Init_objects() {
 			script_hash = HashString(buf);
 
 			// Jso PSX can have nice session loading screen and details (for timing and to stop player getting bored)
-			InitMsg(object->GetName());
+			InitMsg(CGameObject::GetName(object));
 
 			Tdebug("objects_init.txt", "search for [%s]", (const char *)buf);
 
@@ -562,7 +562,7 @@ void _game_session::Init_objects() {
 			logic_structs[j]->logic_level = 0;
 
 			//          set base logic to logic context script
-			logic_structs[j]->logic[0] = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, object->GetScriptNameFullHash(OB_LOGIC_CONTEXT));
+			logic_structs[j]->logic[0] = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, CGameObject::GetScriptNameFullHash(object, OB_LOGIC_CONTEXT));
 			//          **note, we dont need to set up the script reference (logic_ref) for level 0
 		} else
 			Shut_down_object("by initialise - no init script");
@@ -606,7 +606,7 @@ void _game_session::Init_objects() {
 		I = L->voxel_info;
 		M = L->mega;
 
-		object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(objects, id);
+		object = (CGame *)LinkedDataObject::Fetch_item_by_number(objects, id);
 
 		//		not if this object has been shut-down - for not having a map marker for example
 		if (L->ob_status != OB_STATUS_HELD)
@@ -669,10 +669,10 @@ void _game_session::Pre_initialise_objects() {
 
 		Zdebug("%d -[%d]", j, num_megas);
 
-		object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(objects, j);
+		object = (CGame *)LinkedDataObject::Fetch_item_by_number(objects, j);
 
 		logic_structs[j] = g_logics[j];
-		logic_structs[j]->___init((const char *)object->GetName());
+		logic_structs[j]->___init((const char *)CGameObject::GetName(object));
 	}
 
 	// Set up the event manager for this session.  This has to be done after the barrier handler
@@ -778,7 +778,7 @@ void _game_session::One_logic_cycle() {
 			cur_id = j; // fast reference for engine functions
 			// fetch the object that is our current object
 			// 'object' needed as logic code may ask it for the objects name, etc.
-			object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(objects, j);
+			object = (CGame *)LinkedDataObject::Fetch_item_by_number(objects, j);
 
 			// run appropriate logic
 			switch (L->big_mode) {
@@ -921,16 +921,16 @@ void _game_session::Pre_logic_event_check() {
 	if (L->context_request || g_oEventManager->HasEventPending(cur_id) || g_oSoundLogicEngine->SoundEventPendingForID(cur_id)) {
 		//      Yes, the object has an event pending, so rerun its logic context.
 		if (L->context_request)
-			Zdebug("[%s] internal request to rerun logic context", object->GetName());
+			Zdebug("[%s] internal request to rerun logic context", CGameObject::GetName(object));
 
 		else
-			Zdebug("[%s] event means rerun logic context", object->GetName());
+			Zdebug("[%s] event means rerun logic context", CGameObject::GetName(object));
 
 		if ((L->image_type == VOXEL) && (M->interacting)) { // check for megas who are interacting
 			// interacting, so ignoring LOS event
 			Zdebug("interacting, so ignoring LOS event");
 		} else {
-			L->logic[0] = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, (object->GetScriptNameFullHash(OB_LOGIC_CONTEXT)));
+			L->logic[0] = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, (CGameObject::GetScriptNameFullHash(object, OB_LOGIC_CONTEXT)));
 
 			// run script - context chooser MAY pick a new L 1 logic
 			// we call this now so the new script will be setup and ready to run
@@ -944,7 +944,7 @@ void _game_session::Pre_logic_event_check() {
 
 void _game_session::Script_cycle() {
 	int32 ret;
-	c_game_object *script_owner;
+	CGame *script_owner;
 	uint32 inner_cycles;
 
 	inner_cycles = 0; // to catch infnite_loops
@@ -956,7 +956,7 @@ void _game_session::Script_cycle() {
 		if ((L->image_type == VOXEL) && (M->interacting)) { // check for megas who are interacting
 			// object is running someone elses interaction script
 			// so get their object and pass to interpretter so that local vars can be accessed correctly
-			script_owner = (c_game_object *)LinkedDataObject::Fetch_item_by_number(objects, M->target_id);
+			script_owner = (CGame *)LinkedDataObject::Fetch_item_by_number(objects, M->target_id);
 		} else {
 			script_owner = object; // object running its own script
 		}
@@ -985,7 +985,7 @@ void _game_session::Script_cycle() {
 				// it is acceptable to choose the logic that had previously been running
 
 				// temp reset PC the hard way
-				L->logic[0] = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, object->GetScriptNameFullHash(OB_LOGIC_CONTEXT));
+				L->logic[0] = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, CGameObject::GetScriptNameFullHash(object, OB_LOGIC_CONTEXT));
 
 				// run script - context chooser will pick a new L 1 logic
 				RunScript(const_cast<const char *&>(L->logic[0]), object);
@@ -1006,7 +1006,7 @@ void _game_session::Script_cycle() {
 		// in the Remora's menu's now for it to trip this limit, and genuine infinite loops will
 		// still be caught.
 		if (inner_cycles == 1000)
-			Fatal_error("object [%s] is in an infinite script loop!", object->GetName());
+			Fatal_error("object [%s] is in an infinite script loop!", CGameObject::GetName(object));
 
 	} while (ret); // ret==0 means quit for this object
 }
@@ -1149,11 +1149,11 @@ void _game_session::Idle_manager() {
 			script_hash = HashString("idle");
 
 			// try and find a script with the passed extention i.e. ???::looping
-			for (k = 0; k < object->GetNoScripts(); k++) {
-				if (script_hash == object->GetScriptNamePartHash(k)) {
+			for (k = 0; k < CGameObject::GetNoScripts(object); k++) {
+				if (script_hash == CGameObject::GetScriptNamePartHash(object, k)) {
 					//          script k is the one to run
 					//          get the address of the script we want to run
-					ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, object->GetScriptNameFullHash(k));
+					ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, CGameObject::GetScriptNameFullHash(object, k));
 
 					//          write actual offset
 					L->logic[2] = ad;

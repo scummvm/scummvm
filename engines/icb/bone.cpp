@@ -93,7 +93,7 @@ void _game_session::UpdateCartridgeCase() {
 			M->bulletBounced++;
 
 			// this is where we make the bouncing sound...
-			RegisterSound(cur_id, object->GetStringValueOrDefault(tinkleSfxVar, defaultTinkleSfx), tinkleDesc);
+			RegisterSound(cur_id, CGameObject::GetStringValueOrDefault(object, tinkleSfxVar, defaultTinkleSfx), tinkleDesc);
 		}
 	}
 }
@@ -280,8 +280,8 @@ void UpdatePlayerLook() {
 
 		// target is an actor so need adjustment for eye height...
 		if (target->image_type == VOXEL) {
-			c_game_object *pGameObject = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, sel_id);
-			int32 dead = pGameObject->GetIntegerVariable(pGameObject->GetVariable("state"));
+			CGame *pGameObject = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, sel_id);
+			int32 dead = CGameObject::GetIntegerVariable(pGameObject, CGameObject::GetVariable(pGameObject, "state"));
 
 			if (target->object_type == __NON_ORGANIC_MEGA) { // robot (look down)
 				oy += ROBOT_EYE;

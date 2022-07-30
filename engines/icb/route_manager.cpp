@@ -305,7 +305,7 @@ mcodeFunctionReturnCodes _game_session::fn_tiny_route(int32 &result, int32 *para
 
 	if (L->looping < 2) {
 
-		Tdebug("route_async.txt", "%s tiny", object->GetName());
+		Tdebug("route_async.txt", "%s tiny", CGameObject::GetName(object));
 
 		// check for free router
 		if (Is_router_busy())
@@ -509,7 +509,7 @@ mcodeFunctionReturnCodes _game_session::fn_route_to_nico(int32 &result, int32 *p
 		monica = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 
 		if (!monica)
-			Fatal_error("fn_route_to_nico - object [%s] cant find nico [%s]", object->GetName(), nico_name);
+			Fatal_error("fn_route_to_nico - object [%s] cant find nico [%s]", CGameObject::GetName(object), nico_name);
 
 		// build route
 		if (!Setup_route(result, (int32)monica->x, (int32)monica->z, params[1], __FULL, TRUE8)) {
@@ -796,7 +796,7 @@ mcodeFunctionReturnCodes _game_session::Route_to_near_mega_core(const char *name
 	} else {
 		id = LinkedDataObject::Fetch_item_number_by_name(objects, name);
 		if (id == 0xffffffff)
-			Fatal_error("[%s] calling Route_to_near_mega_core - finds neither object or nico named [%s]", object->GetName(), name);
+			Fatal_error("[%s] calling Route_to_near_mega_core - finds neither object or nico named [%s]", CGameObject::GetName(object), name);
 		//			found mega with name!
 		//			check we are within the distance and stop us if so
 
@@ -897,7 +897,7 @@ mcodeFunctionReturnCodes _game_session::fn_route_to_marker(int32 &result, int32 
 		marker = (_map_marker *)markers.Fetch_marker_by_object_name(marker_name);
 
 		if (!marker)
-			Fatal_error("fn_route_to_marker - object [%s] cant find marker [%s]", object->GetName(), marker_name);
+			Fatal_error("fn_route_to_marker - object [%s] cant find marker [%s]", CGameObject::GetName(object), marker_name);
 
 		// build route
 		if (!Setup_route(result, (int32)FROM_LE_FLOAT32(marker->x), (int32)FROM_LE_FLOAT32(marker->z), params[1], __FULL, TRUE8)) {
@@ -954,7 +954,7 @@ bool8 _game_session::Setup_route(int32 &result, int32 corex, int32 corez, int32 
 
 	// quick CAPS check on the anim
 	if ((!L->voxel_info->IsAnimTable(L->cur_anim_type)))
-		Fatal_error("mega [%s] has anim [%s] missing", object->GetName(), master_anim_name_table[L->cur_anim_type].name);
+		Fatal_error("mega [%s] has anim [%s] missing", CGameObject::GetName(object), master_anim_name_table[L->cur_anim_type].name);
 
 	// new route do prepare a route request form!
 	// initial x,z

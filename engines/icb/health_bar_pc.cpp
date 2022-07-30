@@ -77,9 +77,9 @@ void _game_session::Draw_health_bar() {
 	General_draw_line_24_32(BAR_X + BAR_W + 2, BAR_Y - 1, BAR_X + BAR_W + 2, BAR_Y + BAR_H + 2, &pen, ad, pitch);
 
 	// Find out how much health the player has (0 dead -- 10 full)
-	c_game_object *ob = (c_game_object *)LinkedDataObject::Fetch_item_by_number(objects, player.Fetch_player_id());
-	int32 ret = ob->GetVariable("hits");
-	int32 health = ob->GetIntegerVariable(ret);
+	CGame *ob = (CGame *)LinkedDataObject::Fetch_item_by_number(objects, player.Fetch_player_id());
+	int32 ret = CGameObject::GetVariable(ob, "hits");
+	int32 health = CGameObject::GetIntegerVariable(ob, ret);
 
 	// Sort out the speed the health bar is moving at
 	if (targetHealth == -1) {

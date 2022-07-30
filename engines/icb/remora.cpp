@@ -981,12 +981,12 @@ void _remora::SetCommonActivateInfo(RemoraMode eMode) {
 
 void _remora::AccessMenuLevelVariables(int32 *pnParams, MenuVariableAccessMode eRetrieve) {
 	uint32 i, j;
-	c_game_object *pGameObject;
+	CGame *pGameObject;
 	char pcVarName[] = REMORA_MENU_LEVEL_NAME;
 	uint32 nDigitPos;
 
 	// Get the Remora's game object.
-	pGameObject = (c_game_object *)LinkedDataObject::Fetch_item_by_name(MS->objects, REMORA_NAME);
+	pGameObject = (CGame *)LinkedDataObject::Fetch_item_by_name(MS->objects, REMORA_NAME);
 
 	// Get the position where we need to add the digit to the menu variable name.
 	nDigitPos = strlen(pcVarName) - 1;
@@ -998,24 +998,24 @@ void _remora::AccessMenuLevelVariables(int32 *pnParams, MenuVariableAccessMode e
 
 		// Find the variable in the Remora's game object.
 		j = 0;
-		while ((j < pGameObject->GetNoLvars()) && strcmp(pcVarName, pGameObject->GetScriptVariableName(j)))
+		while ((j < CGameObject::GetNoLvars(pGameObject)) && strcmp(pcVarName, CGameObject::GetScriptVariableName(pGameObject, j)))
 			++j;
 
 		// If we ran out of variables, this is an error because we haven't found the one we're looking for.
-		if (j == pGameObject->GetNoLvars())
+		if (j == CGameObject::GetNoLvars(pGameObject))
 			Fatal_error("Failed to find menu variable %s in _remora::AccessMenuLevelVariables()", pcVarName);
 
 		// Found it, so get or set it.
 		if (eRetrieve == GET)
-			pnParams[i] = pGameObject->GetIntegerVariable(j);
+			pnParams[i] = CGameObject::GetIntegerVariable(pGameObject, j);
 		else
-			pGameObject->SetIntegerVariable(j, pnParams[i]);
+			CGameObject::SetIntegerVariable(pGameObject, j, pnParams[i]);
 	}
 }
 
 _remora::ScreenSymbol _remora::GetSymbolToDrawObject(_logic *pObject, uint32 nID) const {
 	__object_type eObjectType;
-	c_game_object *pGameObject;
+	CGame *pGameObject;
 	uint32 nScriptVar, nVarVal;
 
 	// If it's player, always return same symbol.
@@ -1037,9 +1037,9 @@ _remora::ScreenSymbol _remora::GetSymbolToDrawObject(_logic *pObject, uint32 nID
 
 	case (__ORGANIC_MEGA):
 		// Need to find out if the human is alive or dead.
-		pGameObject = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, nID);
-		nScriptVar = pGameObject->GetVariable("state");
-		nVarVal = pGameObject->GetIntegerVariable(nScriptVar);
+		pGameObject = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, nID);
+		nScriptVar = CGameObject::GetVariable(pGameObject, "state");
+		nVarVal = CGameObject::GetIntegerVariable(pGameObject, nScriptVar);
 		if (nVarVal == 1)
 			return (DEAD_HUMAN);
 		else
@@ -1049,9 +1049,9 @@ _remora::ScreenSymbol _remora::GetSymbolToDrawObject(_logic *pObject, uint32 nID
 
 	case (__NON_ORGANIC_MEGA):
 		// Need to find out if the robot is alive or dead.
-		pGameObject = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, nID);
-		nScriptVar = pGameObject->GetVariable("state");
-		nVarVal = pGameObject->GetIntegerVariable(nScriptVar);
+		pGameObject = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, nID);
+		nScriptVar = CGameObject::GetVariable(pGameObject, "state");
+		nVarVal = CGameObject::GetIntegerVariable(pGameObject, nScriptVar);
 		if (nVarVal == 1)
 			return (DEAD_ROBOT);
 		else
@@ -1061,9 +1061,9 @@ _remora::ScreenSymbol _remora::GetSymbolToDrawObject(_logic *pObject, uint32 nID
 
 	case (__REMORA_CARRIER):
 		// This is an object carrying a Remora, but only the player gets a special symbol now.
-		pGameObject = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, nID);
-		nScriptVar = pGameObject->GetVariable("state");
-		nVarVal = pGameObject->GetIntegerVariable(nScriptVar);
+		pGameObject = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, nID);
+		nScriptVar = CGameObject::GetVariable(pGameObject, "state");
+		nVarVal = CGameObject::GetIntegerVariable(pGameObject, nScriptVar);
 		if (nVarVal == 1)
 			return (DEAD_HUMAN);
 		else
@@ -1071,9 +1071,9 @@ _remora::ScreenSymbol _remora::GetSymbolToDrawObject(_logic *pObject, uint32 nID
 		break;
 
 	case (__RECHARGE_POINT):
-		pGameObject = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, nID);
-		nScriptVar = pGameObject->GetVariable("set_mine");
-		nVarVal = pGameObject->GetIntegerVariable(nScriptVar);
+		pGameObject = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, nID);
+		nScriptVar = CGameObject::GetVariable(pGameObject, "set_mine");
+		nVarVal = CGameObject::GetIntegerVariable(pGameObject, nScriptVar);
 		if (nVarVal == 1)
 			return (RECHARGE_ARMED);
 		else

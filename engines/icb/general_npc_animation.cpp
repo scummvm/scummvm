@@ -407,7 +407,7 @@ void _game_session::Animate_turn_to_pan(__mega_set_names anim_type, uint32 speed
 	}
 
 	if ((info_pc >= pAnim->frame_qty) || (next_pc >= pAnim->frame_qty))
-		Fatal_error("Animate_turn_to_pan [%s] using illegal frame", object->GetName());
+		Fatal_error("Animate_turn_to_pan [%s] using illegal frame", CGameObject::GetName(object));
 
 	// update engine pan with the difference between pan of previous frame and next frame
 	PXreal pan1, pan2;

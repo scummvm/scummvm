@@ -1054,7 +1054,7 @@ void _game_session::Prepare_megas_route_barriers(bool8 pl) {
 	Prepare_megas_abarriers(M->cur_slice, M->par_number);
 
 	if (M->number_of_barriers + M->number_of_animating > MAX_bars)
-		Fatal_error("[%s] finds too many barriers - found %d + %d animating, total max %d", object->GetName(), M->number_of_barriers, M->number_of_animating, MAX_bars);
+		Fatal_error("[%s] finds too many barriers - found %d + %d animating, total max %d", CGameObject::GetName(object), M->number_of_barriers, M->number_of_animating, MAX_bars);
 
 	if (M->number_of_nudge > MAX_bars)
 		Fatal_error("too many player nudge barriers");

@@ -447,9 +447,9 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 	if (g_mission->session->objects == nullptr || strcmp(act.log->GetName(), "StageView") == 0) {
 		uvframe = gameCycle;
 	} else {
-		c_game_object *ob = (c_game_object *)LinkedDataObject::Fetch_item_by_name(MS->objects, act.log->GetName());
+		CGame *ob = (CGame *)LinkedDataObject::Fetch_item_by_name(MS->objects, act.log->GetName());
 
-		int32 ret = ob->GetVariable("state");
+		int32 ret = CGameObject::GetVariable(ob, "state");
 
 		// The snow_suit in Car_5 does not have a state flag
 		// so can't test ret == -1
@@ -458,7 +458,7 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 
 		uvframe = -1;
 		if (ret != -1) {
-			ret = ob->GetIntegerVariable(ret);
+			ret = CGameObject::GetIntegerVariable(ob, ret);
 			// which means ALIVE
 			if (ret == 0)
 				uvframe = gameCycle;

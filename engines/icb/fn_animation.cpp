@@ -228,7 +228,7 @@ mcodeFunctionReturnCodes _game_session::fn_face_nicos_pan(int32 &, int32 *params
 		// setup
 		start_pos = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 		if (!start_pos)
-			Fatal_error("no NICO marker (fn_face_nico) ob %s, nico %s", object->GetName(), nico_name);
+			Fatal_error("no NICO marker (fn_face_nico) ob %s, nico %s", CGameObject::GetName(object), nico_name);
 
 		new_pan = start_pos->direction;
 
@@ -870,7 +870,7 @@ mcodeFunctionReturnCodes _game_session::fn_easy_play_custom_anim_with_pan(int32 
 
 	const char *anim_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	Zdebug("fn_easy_play_custom_anim_with_pan %s %s", object->GetName(), anim_name);
+	Zdebug("fn_easy_play_custom_anim_with_pan %s %s", CGameObject::GetName(object), anim_name);
 
 	if (!L->looping) {
 		// set anim up
@@ -1320,7 +1320,7 @@ mcodeFunctionReturnCodes _game_session::fn_new_apply_bullet(int32 &, int32 *para
 	// 0 - nothing on screen
 	// 1 - normal light/muzzleflash/cartridge case
 	// default is 1
-	int32 shotType = object->GetIntegerValueOrDefault("gun_effects", 1);
+	int32 shotType = CGameObject::GetIntegerValueOrDefault(object, "gun_effects", 1);
 
 	// if mega then do dynamic light (only if shotType isnt 0
 	if ((logic_structs[cur_id]->image_type == VOXEL) && (shotType == 1)) {
@@ -1368,9 +1368,9 @@ mcodeFunctionReturnCodes _game_session::fn_new_apply_bullet(int32 &, int32 *para
 					MS->player.being_shot = 3;            // cant shoot for 3 cycles (engine anim over three frames)
 					MS->player.shot_by_id = (int8)cur_id; // shot by us...!
 
-					c_game_object *ob = (c_game_object *)LinkedDataObject::Fetch_item_by_number(objects, player.Fetch_player_id());
-					int32 ret = ob->GetVariable("hits");
-					uint32 hits = ob->GetIntegerVariable(ret);
+					CGame *ob = (CGame *)LinkedDataObject::Fetch_item_by_number(objects, player.Fetch_player_id());
+					int32 ret = CGameObject::GetVariable(ob, "hits");
+					uint32 hits = CGameObject::GetIntegerVariable(ob, ret);
 
 					PXreal subp1, subp2;
 					if (L->image_type == PROP) { // we are prop
@@ -1395,7 +1395,7 @@ mcodeFunctionReturnCodes _game_session::fn_new_apply_bullet(int32 &, int32 *para
 					} else if (hits)
 						hits--;
 
-					ob->SetIntegerVariable(ret, hits);
+					CGameObject::SetIntegerVariable(ob, ret, hits);
 				}
 
 				MS->Call_socket(tid, "gun_shot", &retval); // the hit takes
@@ -1425,27 +1425,27 @@ mcodeFunctionReturnCodes _game_session::fn_new_apply_bullet(int32 &, int32 *para
 		if (M->is_evil) {
 			// take chi and player out of the equation
 
-			int32 ret = object->GetVariable("cur_bullets");
+			int32 ret = CGameObject::GetVariable(object, "cur_bullets");
 			if (ret != -1) {
-				int32 result = object->GetIntegerVariable(ret);
+				int32 result = CGameObject::GetIntegerVariable(object, ret);
 
 				if (!result) { // no bullets
-					int32 clipret = object->GetVariable("number_of_clips");
-					int32 no_clips = object->GetIntegerVariable(clipret);
+					int32 clipret = CGameObject::GetVariable(object, "number_of_clips");
+					int32 no_clips = CGameObject::GetIntegerVariable(object, clipret);
 					if (no_clips == -1)
 						Fatal_error("object has no 'number_of_clips' variable");
 
 					if (no_clips) {     // has clips left
 						no_clips--; // 1 less
-						object->SetIntegerVariable(clipret, no_clips);
+						CGameObject::SetIntegerVariable(object, clipret, no_clips);
 
 						int32 bull_per_clip = MS->player.GetBulletsPerClip();
 
-						object->SetIntegerVariable(ret, bull_per_clip); // reload the gun
+						CGameObject::SetIntegerVariable(object, ret, bull_per_clip); // reload the gun
 					}
 				} else { // has bullets, fire one
 					result--;
-					object->SetIntegerVariable(ret, result); // reload
+					CGameObject::SetIntegerVariable(object, ret, result); // reload
 				}
 			}
 		}
@@ -1489,7 +1489,7 @@ mcodeFunctionReturnCodes _game_session::fn_apply_anim_y(int32 &, int32 *params) 
 		}
 	}
 
-	Fatal_error("fn_apply_anim_y [%s] cant find generic anim [%s]", object->GetName(), anim_name);
+	Fatal_error("fn_apply_anim_y [%s] cant find generic anim [%s]", CGameObject::GetName(object), anim_name);
 
 	return IR_CONT;
 }
@@ -1500,11 +1500,11 @@ mcodeFunctionReturnCodes _game_session::fn_add_y(int32 &, int32 *params) {
 	// params        0   value
 
 	if (L->image_type == PROP)
-		Fatal_error("fn_add_y cant be used on a prop - %s", object->GetName());
+		Fatal_error("fn_add_y cant be used on a prop - %s", CGameObject::GetName(object));
 
 	M->actor_xyz.y += params[0];
 
-	Tdebug("fn_add_y.txt", "%s +%d to %3.1f", object->GetName(), params[0], M->actor_xyz.y);
+	Tdebug("fn_add_y.txt", "%s +%d to %3.1f", CGameObject::GetName(object), params[0], M->actor_xyz.y);
 
 	return IR_CONT;
 }

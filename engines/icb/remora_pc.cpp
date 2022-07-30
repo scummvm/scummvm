@@ -1087,7 +1087,7 @@ void _remora::DrawPulse() {
 	int32 nXCoord;
 	int32 nWhiteValue;
 	float fHighlightStep, fCurrentHighlight;
-	c_game_object *pPlayer;
+	CGame *pPlayer;
 	uint32 nHits, nHealth;
 
 	// Calculate a base drawing point for the whole thing.
@@ -1095,8 +1095,8 @@ void _remora::DrawPulse() {
 	//nBaseY = REMORA_PULSE_Y;
 
 	// Work out player's health.
-	pPlayer = (c_game_object *)LinkedDataObject::Fetch_item_by_name(MS->objects, "player");
-	nHits = pPlayer->GetIntegerVariable(pPlayer->GetVariable("hits"));
+	pPlayer = (CGame *)LinkedDataObject::Fetch_item_by_name(MS->objects, "player");
+	nHits = CGameObject::GetIntegerVariable(pPlayer, CGameObject::GetVariable(pPlayer,  "hits"));
 
 	// This counts from 10 down to zero (check player's script for this figure if it changes).
 	if (nHits > 6)

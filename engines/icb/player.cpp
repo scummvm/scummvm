@@ -236,14 +236,14 @@ __mode_return _player::Player_press_fire_button() {
 		if ((interact_selected) && (MS->Call_socket(cur_interact_id, "give_state", &retval))) {
 			if (!retval) {
 				//      try to fetch the object
-				MS->socket_object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, cur_interact_id);
+				MS->socket_object = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, cur_interact_id);
 
 				res = MS->Call_socket(cur_interact_id, "gun_shot", &retval);
 
 				MS->Set_chi_permission(); // if chi's around she gets permission to start shooting
 
 				if (!res)
-					Tdebug("gun_shot_errors.txt", "no [%s] for object [%s]", "gun_shot", MS->socket_object->GetName());
+					Tdebug("gun_shot_errors.txt", "no [%s] for object [%s]", "gun_shot", CGameObject::GetName(MS->socket_object));
 			}
 		} else {
 			// no hit play ricochet sound
@@ -556,7 +556,7 @@ mcodeFunctionReturnCodes _player::Gateway() {
 	// Jake 15/2/98 : set the default
 	__mode_return ret = __FINISHED_THIS_CYCLE;
 	int32 bull_per_clip;
-	c_game_object *ob;
+	CGame *ob;
 
 	// Set the player control mode correctly
 	switch (g_px->display_mode) {
@@ -738,18 +738,18 @@ mcodeFunctionReturnCodes _player::Gateway() {
 
 						interact_lock = TRUE8;
 
-						ob = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, player_id);
+						ob = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, player_id);
 
 						// Make sure number of medi-packs is > 0
 						if (GetNoMediPacks() > 0) {
-							hit_var = ob->GetVariable((const char *)"hits");
-							hits = ob->GetIntegerVariable(hit_var);
+							hit_var = CGameObject::GetVariable(ob, (const char *)"hits");
+							hits = CGameObject::GetIntegerVariable(ob, hit_var);
 							if (hits != MAX_HITS) {
 								new_energy = hits + MAX_HITS / 2;
 								if (new_energy > MAX_HITS)
 									new_energy = MAX_HITS;
 
-								ob->SetIntegerVariable(hit_var, new_energy); // full health again
+								CGameObject::SetIntegerVariable(ob, hit_var, new_energy); // full health again
 								UseMediPacks(1); // use the pack
 								// Play the medi-pack sound !
 								RegisterSoundSpecial(defaultUsingMediSfx, addingMediDesc, 127, 0);
@@ -1398,11 +1398,11 @@ __mode_return _player::Process_strike() {
 						//								behind
 						ret = MS->Call_socket(cur_interact_id, "ko", &retval);
 						if (!ret)
-							Fatal_error("no ko script for object [%s]", MS->socket_object->GetName());
+							Fatal_error("no ko script for object [%s]", CGameObject::GetName(MS->socket_object));
 					} else { // infront
 						ret = MS->Call_socket(cur_interact_id, "see_ko", &retval);
 						if (!ret)
-							Fatal_error("no see_ko script for object [%s]", MS->socket_object->GetName());
+							Fatal_error("no see_ko script for object [%s]", CGameObject::GetName(MS->socket_object));
 					}
 					MS->Signal_to_other_guards(); // make other guards see this!
 					return __FINISHED_THIS_CYCLE;
@@ -3139,19 +3139,19 @@ void _game_session::Restart_player() {
 	player.Reset_player();
 
 	int32 var_num;
-	c_game_object *ob;
+	CGame *ob;
 
-	ob = (c_game_object *)LinkedDataObject::Fetch_item_by_number(objects, player.Fetch_player_id());
+	ob = (CGame *)LinkedDataObject::Fetch_item_by_number(objects, player.Fetch_player_id());
 
-	var_num = ob->GetVariable("state");
+	var_num = CGameObject::GetVariable(ob, "state");
 	if (var_num == -1)
 		Fatal_error("Restart_player cant fetch state");
-	ob->SetIntegerVariable(var_num, 0); // alive
+	CGameObject::SetIntegerVariable(ob, var_num, 0); // alive
 
-	var_num = ob->GetVariable("hits");
+	var_num = CGameObject::GetVariable(ob, "hits");
 	if (var_num == -1)
 		Fatal_error("Restart_player cant fetch hits");
-	ob->SetIntegerVariable(var_num, MAX_HITS); // another 10 hits
+	CGameObject::SetIntegerVariable(ob, var_num, MAX_HITS); // another 10 hits
 
 	L->logic_level = 0; // restart
 	L->logic_ref[1] = nullptr;

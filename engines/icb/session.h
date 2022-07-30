@@ -684,7 +684,7 @@ public:
 
 	bool8 Call_socket(uint32 id, const char *script, int32 *retval);
 	uint32 socket_id;
-	c_game_object *socket_object;
+	CGame *socket_object;
 
 	void Create_initial_route(__rtype type);
 
@@ -1005,7 +1005,7 @@ private:
 	_logic *L; // current objects logic structure
 	_vox_image *I; // pointer to current objects _voxel_image structure - megas only
 	_mega *M; // pointer to current objects _mega struct - megas only
-	c_game_object *object; // represents the current game object at logic run time
+	CGame *object; // represents the current game object at logic run time
 	uint32 script_var_value; // holds script variables passed back via fn_pass_flag_to_engine
 
 	// list of ids that are voxel characters - built per game cycle
@@ -1181,22 +1181,22 @@ inline uint32 _game_session::Fetch_session_cluster_hash() {
 
 inline uint32 _game_session::Fetch_object_integer_variable(const char *pcName, const char *pcVar) const {
 	int32 nVariableNumber;
-	c_game_object *pGameObject;
+	CGame *pGameObject;
 
 	// Get the object itself.
-	pGameObject = (c_game_object *)LinkedDataObject::Fetch_item_by_name(objects, pcName);
+	pGameObject = (CGame *)LinkedDataObject::Fetch_item_by_name(objects, pcName);
 
 	if (!pGameObject)
 		Fatal_error("_game_session::Fetch_object_integer_variable( %s, %s ) couldn't find object", pcName, pcVar);
 
 	// Find the position of the requested variable.
-	nVariableNumber = pGameObject->GetVariable(pcVar);
+	nVariableNumber = CGameObject::GetVariable(pGameObject, pcVar);
 
 	if (nVariableNumber == -1)
 		Fatal_error("_game_session::Fetch_object_integer_variable( %s, %s ) couldn't find variable", pcName, pcVar);
 
 	// Get the lvar.
-	return (pGameObject->GetIntegerVariable(nVariableNumber));
+	return (CGameObject::GetIntegerVariable(pGameObject, nVariableNumber));
 }
 
 inline PXcamera &_game_session::GetCamera() { return set.GetCamera(); }

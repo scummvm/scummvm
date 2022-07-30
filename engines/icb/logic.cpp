@@ -460,7 +460,7 @@ void _game_session::Shut_down_object() {
 
 	prop_state_table[cur_id] = 0; // set to state 0 - in case killed because of illegal frame
 
-	Tdebug("objects_that_died.txt", "**OBJECT '%s' [id=%d] has been shut down**", object->GetName(), cur_id);
+	Tdebug("objects_that_died.txt", "**OBJECT '%s' [id=%d] has been shut down**", CGameObject::GetName(object), cur_id);
 }
 
 mcodeFunctionReturnCodes _game_session::fn_kill_me(int32 &, int32 *) {
@@ -505,7 +505,7 @@ void _game_session::Shut_down_object(const char *ascii) {
 
 	prop_state_table[cur_id] = 0; // set to state 0 - in case killed because of illegal frame
 
-	Tdebug("objects_that_died.txt", "**OBJECT '%s' [id=%d] has been shut down** %s", object->GetName(), cur_id, ascii);
+	Tdebug("objects_that_died.txt", "**OBJECT '%s' [id=%d] has been shut down** %s", CGameObject::GetName(object), cur_id, ascii);
 }
 
 bool8 _game_session::Console_shut_down_object(const char *name) {
@@ -692,11 +692,11 @@ mcodeFunctionReturnCodes _game_session::fn_new_script(int32 &, int32 *params) {
 	script_hash = HashString(script_name);
 
 	// try and find a script with the passed extention i.e. ???::looping
-	for (k = 0; k < object->GetNoScripts(); k++) {
-		if (script_hash == object->GetScriptNamePartHash(k)) {
+	for (k = 0; k < CGameObject::GetNoScripts(object); k++) {
+		if (script_hash == CGameObject::GetScriptNamePartHash(object, k)) {
 			// script k is the one to run
 			// get the address of the script we want to run
-			ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, object->GetScriptNameFullHash(k));
+			ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, CGameObject::GetScriptNameFullHash(object, k));
 
 			// write actual offset
 			L->logic[1] = ad;
@@ -716,7 +716,7 @@ mcodeFunctionReturnCodes _game_session::fn_new_script(int32 &, int32 *params) {
 		}
 	}
 
-	Fatal_error("fn_new_script - cant find script [%s] in object [%s]", script_name, object->GetName());
+	Fatal_error("fn_new_script - cant find script [%s] in object [%s]", script_name, CGameObject::GetName(object));
 	return IR_CONT; // keep daft compiler happy
 }
 
@@ -732,16 +732,16 @@ mcodeFunctionReturnCodes _game_session::fn_gosub(int32 &, int32 *params) {
 	script_hash = HashString(script_name);
 
 	if (L->logic_level != 1)
-		Fatal_error("object [%s] has performed an illegal gosub", object->GetName());
+		Fatal_error("object [%s] has performed an illegal gosub", CGameObject::GetName(object));
 
 	// try and find a script with the passed extention i.e. ???::looping
-	for (k = 0; k < object->GetNoScripts(); k++) {
+	for (k = 0; k < CGameObject::GetNoScripts(object); k++) {
 		// now check for actual script name
-		if (script_hash == object->GetScriptNamePartHash(k)) {
+		if (script_hash == CGameObject::GetScriptNamePartHash(object, k)) {
 			// script k is the one to run
 			// get the address of the script we want to run
 
-			ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, object->GetScriptNameFullHash(k));
+			ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, CGameObject::GetScriptNameFullHash(object, k));
 
 			// write actual offset
 			L->logic[2] = ad;
@@ -760,7 +760,7 @@ mcodeFunctionReturnCodes _game_session::fn_gosub(int32 &, int32 *params) {
 		}
 	}
 
-	Fatal_error("fn_gosub - cant find script [%s] in object [%s]", script_name, object->GetName());
+	Fatal_error("fn_gosub - cant find script [%s] in object [%s]", script_name, CGameObject::GetName(object));
 	return IR_CONT; // keep daft compiler happy
 }
 

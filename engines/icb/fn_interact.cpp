@@ -281,7 +281,7 @@ mcodeFunctionReturnCodes _game_session::Core_prop_interact(int32 & /*result*/, i
 				Fatal_error("Core_prop_interact cant indentify animation %s", anim_name);
 
 			if (!I->IsAnimTable(anim))
-				Fatal_error("Core_prop_interact finds [%s] doesnt have a [%s] animation", object->GetName(), params[0]);
+				Fatal_error("Core_prop_interact finds [%s] doesnt have a [%s] animation", CGameObject::GetName(object), params[0]);
 		} else {
 			Zdebug("calc *custom* target anim [%s]", anim_name);
 			I->Init_custom_animation(anim_name);
@@ -538,13 +538,13 @@ mcodeFunctionReturnCodes _game_session::fn_unregister_for_auto_interaction(int32
 
 	for (j = 0; j < MAX_auto_interact; j++) {
 		if (auto_interact_list[j] == (uint8)(cur_id + 1)) {
-			Tdebug("auto_interact.txt", "- [%s] %d", object->GetName(), j);
+			Tdebug("auto_interact.txt", "- [%s] %d", CGameObject::GetName(object), j);
 			auto_interact_list[j] = 0; // slot not empty
 			return IR_CONT;
 		}
 	}
 
-	Fatal_error("fn_unregister_for_auto_interaction cant unregister non registered object [%s]", object->GetName());
+	Fatal_error("fn_unregister_for_auto_interaction cant unregister non registered object [%s]", CGameObject::GetName(object));
 
 	return IR_CONT;
 }
@@ -556,16 +556,16 @@ mcodeFunctionReturnCodes _game_session::fn_register_for_auto_interaction(int32 &
 
 	for (j = 0; j < MAX_auto_interact; j++) {
 		if (auto_interact_list[j] == (uint8)(cur_id + 1))
-			Fatal_error("fn_register_for_auto_interaction finds double registration of %s", object->GetName());
+			Fatal_error("fn_register_for_auto_interaction finds double registration of %s", CGameObject::GetName(object));
 
 		if (!auto_interact_list[j]) { // empty slot
 			auto_interact_list[j] = (uint8)(cur_id + 1);
-			Tdebug("auto_interact.txt", "+ [%s] %d", object->GetName(), j);
+			Tdebug("auto_interact.txt", "+ [%s] %d", CGameObject::GetName(object), j);
 			return IR_CONT;
 		}
 	}
 
-	Fatal_error("fn_register_for_auto_interaction - list full - [%s]", object->GetName());
+	Fatal_error("fn_register_for_auto_interaction - list full - [%s]", CGameObject::GetName(object));
 
 	return IR_CONT;
 }

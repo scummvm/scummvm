@@ -641,9 +641,9 @@ void OptionsManager::StartGameOverOptions() {
 	bool8 regularPlayerDeath = TRUE8;
 
 	// Have we died under irregular circumstances?
-	c_game_object *playerObj = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, MS->player.Fetch_player_id());
-	int32 state = playerObj->GetVariable("state");
-	if (playerObj->GetIntegerVariable(state) == 2)
+	CGame *playerObj = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, MS->player.Fetch_player_id());
+	int32 state = CGameObject::GetVariable(playerObj, "state");
+	if (CGameObject::GetIntegerVariable(playerObj, state) == 2)
 		regularPlayerDeath = FALSE8;
 
 	InitialiseSounds();

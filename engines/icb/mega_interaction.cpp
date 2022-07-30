@@ -59,7 +59,7 @@ mcodeFunctionReturnCodes _game_session::fn_interact_with_id(int32 &, int32 *para
 	// params        0   id of target object
 	//				1  name of script
 	const char *script_name = (const char *)MemoryUtil::resolvePtr(params[1]);
-	c_game_object *target_object;
+	CGame *target_object;
 	uint32 script_hash;
 
 	Zdebug("fn_interact_with_id with object");
@@ -68,7 +68,7 @@ mcodeFunctionReturnCodes _game_session::fn_interact_with_id(int32 &, int32 *para
 	script_hash = HashString(script_name);
 
 	// get target object
-	target_object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, params[0]);
+	target_object = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, params[0]);
 
 	// set socket_id ready for any special socket functions
 	M->target_id = params[0];
@@ -77,13 +77,13 @@ mcodeFunctionReturnCodes _game_session::fn_interact_with_id(int32 &, int32 *para
 	M->interacting = TRUE8;
 
 	// now try and find a script with the passed extention i.e. ???::looping
-	for (uint32 k = 0; k < target_object->GetNoScripts(); k++) {
-		if (script_hash == target_object->GetScriptNamePartHash(k)) {
+	for (uint32 k = 0; k < CGameObject::GetNoScripts(target_object); k++) {
+		if (script_hash == CGameObject::GetScriptNamePartHash(target_object, k)) {
 			Zdebug("found target interact script", k);
 			// script k is the one to run
 			// get the address of the script we want to run
 
-			char *ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, target_object->GetScriptNameFullHash(k));
+			char *ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, CGameObject::GetScriptNameFullHash(target_object, k));
 
 			// write actual offset
 			L->logic[2] = ad;
@@ -99,7 +99,7 @@ mcodeFunctionReturnCodes _game_session::fn_interact_with_id(int32 &, int32 *para
 		}
 	}
 
-	Fatal_error("fn_interact_with_id - target object [%d] has not got a [%s] script", params[0], object->GetName());
+	Fatal_error("fn_interact_with_id - target object [%d] has not got a [%s] script", params[0], CGameObject::GetName(object));
 
 	return (IR_STOP);
 }
@@ -114,7 +114,7 @@ mcodeFunctionReturnCodes _game_session::fn_mega_interacts(int32 &, int32 *params
 	// params        0   name of target object
 	//				1  name of script
 
-	c_game_object *target_object;
+	CGame *target_object;
 	uint32 script_hash;
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
@@ -125,7 +125,7 @@ mcodeFunctionReturnCodes _game_session::fn_mega_interacts(int32 &, int32 *params
 	Zdebug("fn_mega_interacts with object [%s], script [%s]", object_name, script_name);
 
 	// get target object
-	target_object = (c_game_object *)LinkedDataObject::Try_fetch_item_by_name(MS->objects, object_name);
+	target_object = (CGame *)LinkedDataObject::Try_fetch_item_by_name(MS->objects, object_name);
 	if (!target_object)
 		Fatal_error("fn_mega_interacts - named object [%s] dont exist", object_name);
 
@@ -136,12 +136,12 @@ mcodeFunctionReturnCodes _game_session::fn_mega_interacts(int32 &, int32 *params
 	M->interacting = TRUE8;
 
 	// now try and find a script with the passed extention i.e. ???::looping
-	for (uint32 k = 0; k < target_object->GetNoScripts(); k++) {
-		if (script_hash == target_object->GetScriptNamePartHash(k)) {
+	for (uint32 k = 0; k < CGameObject::GetNoScripts(target_object); k++) {
+		if (script_hash == CGameObject::GetScriptNamePartHash(target_object, k)) {
 			Zdebug("found target interact script", k);
 			// script k is the one to run
 			// get the address of the script we want to run
-			char *ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, target_object->GetScriptNameFullHash(k));
+			char *ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, CGameObject::GetScriptNameFullHash(target_object, k));
 
 			// write actual offset
 			L->logic[2] = ad;
@@ -157,7 +157,7 @@ mcodeFunctionReturnCodes _game_session::fn_mega_interacts(int32 &, int32 *params
 		}
 	}
 
-	Fatal_error("fn_mega_interacts - target object [%s] has not got a [%s] script", object_name, object->GetName());
+	Fatal_error("fn_mega_interacts - target object [%s] has not got a [%s] script", object_name, CGameObject::GetName(object));
 
 	return (IR_STOP);
 }
@@ -167,7 +167,7 @@ mcodeFunctionReturnCodes _game_session::fn_mega_generic_interact(int32 &, int32 
 
 	// params    0   ascii name of object
 
-	c_game_object *target_object;
+	CGame *target_object;
 	uint32 script_hash;
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
@@ -176,7 +176,7 @@ mcodeFunctionReturnCodes _game_session::fn_mega_generic_interact(int32 &, int32 
 	Zdebug("fn_mega_generic_interact with [%s]", object_name);
 
 	// get target object
-	target_object = (c_game_object *)LinkedDataObject::Try_fetch_item_by_name(MS->objects, object_name);
+	target_object = (CGame *)LinkedDataObject::Try_fetch_item_by_name(MS->objects, object_name);
 	if (!target_object)
 		Fatal_error("fn_mega_generic_interact - named object [%s] dont exist", object_name);
 
@@ -187,13 +187,13 @@ mcodeFunctionReturnCodes _game_session::fn_mega_generic_interact(int32 &, int32 
 	M->interacting = TRUE8;
 
 	// now try and find a script with the 'interact' extention i.e. ???::interact
-	for (uint32 k = 0; k < target_object->GetNoScripts(); k++) {
-		if (script_hash == target_object->GetScriptNamePartHash(k)) {
+	for (uint32 k = 0; k < CGameObject::GetNoScripts(target_object); k++) {
+		if (script_hash == CGameObject::GetScriptNamePartHash(target_object, k)) {
 			Zdebug("found target interact script", k);
 			// script k is the one to run
 			// get the address of the script we want to run
 
-			char *ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, target_object->GetScriptNameFullHash(k));
+			char *ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, CGameObject::GetScriptNameFullHash(target_object, k));
 
 			// write actual offset
 			L->logic[2] = ad;
@@ -209,7 +209,7 @@ mcodeFunctionReturnCodes _game_session::fn_mega_generic_interact(int32 &, int32 
 		}
 	}
 
-	Fatal_error("fn_mega_generic_interact - [%s] finds target object [%s] has not got an 'interact' script", object->GetName(), object_name);
+	Fatal_error("fn_mega_generic_interact - [%s] finds target object [%s] has not got an 'interact' script", CGameObject::GetName(object), object_name);
 
 	return (IR_STOP);
 }
@@ -219,13 +219,13 @@ bool8 _game_session::chi_interacts(int32 id, const char *script_name) {
 
 	// set it up on level 2 and change script level
 
-	c_game_object *target_object;
+	CGame *target_object;
 	uint32 script_hash;
 
 	script_hash = HashString(script_name);
 
 	// get target object
-	target_object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, id);
+	target_object = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, id);
 	if (!target_object)
 		Fatal_error("chi_interacts - object [%d] dont exist", id);
 
@@ -236,11 +236,11 @@ bool8 _game_session::chi_interacts(int32 id, const char *script_name) {
 	M->interacting = TRUE8;
 
 	// now try and find a script with the passed extention i.e. ???::looping
-	for (uint32 k = 0; k < target_object->GetNoScripts(); k++) {
-		if (script_hash == target_object->GetScriptNamePartHash(k)) {
+	for (uint32 k = 0; k < CGameObject::GetNoScripts(target_object); k++) {
+		if (script_hash == CGameObject::GetScriptNamePartHash(target_object, k)) {
 			// script k is the one to run
 			// get the address of the script we want to run
-			char *ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, target_object->GetScriptNameFullHash(k));
+			char *ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, CGameObject::GetScriptNameFullHash(target_object, k));
 
 			// write actual offset
 			L->logic[2] = ad;

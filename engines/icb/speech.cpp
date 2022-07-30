@@ -110,7 +110,7 @@ mcodeFunctionReturnCodes _game_session::fn_request_speech(int32 &result, int32 *
 
 	const char *scene_script_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	Zdebug("[%s] fn_request_speech [%s]", object->GetName(), scene_script_name);
+	Zdebug("[%s] fn_request_speech [%s]", CGameObject::GetName(object), scene_script_name);
 
 	// there cannot be any other conversations happening - change to initial spec as it is not used and memory is required
 	if (total_convs) {
@@ -338,7 +338,7 @@ mcodeFunctionReturnCodes _game_session::fn_converse(int32 &, int32 *) {
 	int32 params;
 	mcodeFunctionReturnCodes ret;
 
-	Zdebug("fn_converse [%s] - uid %d", object->GetName(), L->conversation_uid);
+	Zdebug("fn_converse [%s] - uid %d", CGameObject::GetName(object), L->conversation_uid);
 
 	if (L->conversation_uid == NO_SPEECH_REQUEST) {
 		//		conversation has ended!
@@ -424,7 +424,7 @@ mcodeFunctionReturnCodes _game_session::fn_converse(int32 &, int32 *) {
 void _game_session::Service_speech() {
 	// the system runs all speech scripts
 
-	c_game_object *speech_object;
+	CGame *speech_object;
 	uint32 ret;
 
 	// anything going on?
@@ -452,7 +452,7 @@ void _game_session::Service_speech() {
 	switch (speech_info[CONV_ID].state) {
 	case __PROCESS: // run the script
 		// get the dummy speech object
-		speech_object = (c_game_object *)LinkedDataObject::Fetch_item_by_name(objects, "scenes");
+		speech_object = (CGame *)LinkedDataObject::Fetch_item_by_name(objects, "scenes");
 		cur_id = LinkedDataObject::Fetch_item_number_by_name(objects, "scenes");
 		L = logic_structs[cur_id];
 		I = nullptr;

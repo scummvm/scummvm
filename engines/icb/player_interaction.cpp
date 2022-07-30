@@ -286,7 +286,7 @@ __mode_return _player::Player_interact() {
 	//				__FINISHED_THIS_CYCLE, or
 	//				__MORE_THIS_CYCLE
 
-	c_game_object *iobject;
+	CGame *iobject;
 	uint32 j;
 
 	// first check for auto-interact objects
@@ -295,15 +295,15 @@ __mode_return _player::Player_interact() {
 		for (j = 0; j < MAX_auto_interact; j++)
 			if (MS->auto_interact_list[j] == (cur_interact_id + 1)) {
 				//      try to fetch the object
-				iobject = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, cur_interact_id);
+				iobject = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, cur_interact_id);
 
-				Zdebug("  INTERACT with %s", iobject->GetName());
+				Zdebug("  INTERACT with %s", CGameObject::GetName(iobject));
 
 				//      get the address of the script we want to run
-				const char *pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(MS->scripts, iobject->GetScriptNameFullHash(OB_ACTION_CONTEXT)); //
+				const char *pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(MS->scripts, CGameObject::GetScriptNameFullHash(iobject, OB_ACTION_CONTEXT)); //
 
 				if (pc == nullptr)
-					Fatal_error("Object [%s] has no interact script", iobject->GetName());
+					Fatal_error("Object [%s] has no interact script", CGameObject::GetName(iobject));
 
 				//      now run the action context script which may or may not set a new script on level 1
 				RunScript(pc, iobject);
@@ -315,13 +315,13 @@ __mode_return _player::Player_interact() {
 	// check for interact button AND there being an object to interact with
 	if ((cur_state.IsButtonSet(__INTERACT)) && (interact_selected) && (!interact_lock) && (!stood_on_lift)) {
 		// try to fetch the object
-		iobject = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, cur_interact_id);
+		iobject = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, cur_interact_id);
 
 		// get the address of the script we want to run
-		const char *pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(MS->scripts, iobject->GetScriptNameFullHash(OB_ACTION_CONTEXT)); //
+		const char *pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(MS->scripts, CGameObject::GetScriptNameFullHash(iobject, OB_ACTION_CONTEXT)); //
 
 		if (pc == nullptr)
-			Fatal_error("Object [%s] has no interact script", iobject->GetName());
+			Fatal_error("Object [%s] has no interact script", CGameObject::GetName(iobject));
 
 		interact_lock = TRUE8; // switch the lock on
 
@@ -391,23 +391,23 @@ mcodeFunctionReturnCodes _game_session::fn_start_player_interaction(int32 &, int
 bool8 _game_session::Engine_start_interaction(const char *script, uint32 id) {
 	// set the current mega object interacting named 'script' in target object 'id'
 
-	c_game_object *iobject;
+	CGame *iobject;
 	uint32 script_hash;
 
 	script_hash = HashString(script);
 
 	// get target object
-	iobject = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, id);
+	iobject = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, id);
 	if (!iobject)
 		Fatal_error("Engine_start_interaction - named object dont exist"); // should never happen
 
 	// now try and find a script with the passed extention i.e. ???::looping
-	for (uint32 k = 0; k < iobject->GetNoScripts(); k++) {
+	for (uint32 k = 0; k < CGameObject::GetNoScripts(iobject); k++) {
 
-		if (script_hash == iobject->GetScriptNamePartHash(k)) {
+		if (script_hash == CGameObject::GetScriptNamePartHash(iobject, k)) {
 			//			script k is the one to run
 			//			get the address of the script we want to run
-			char *pc = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, iobject->GetScriptNameFullHash(k));
+			char *pc = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, CGameObject::GetScriptNameFullHash(iobject, k));
 
 			// set target id
 			M->target_id = id;

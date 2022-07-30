@@ -394,7 +394,7 @@ uint32 _mission::Game_cycle() {
 
 void _mission::Save_micro_session() {
 	// save all object lvars to a micro session
-	c_game_object *object;
+	CGame *object;
 	uint32 j = 0;
 	uint32 i, k;
 	uint32 total_fvars = 0;
@@ -423,9 +423,9 @@ void _mission::Save_micro_session() {
 	micro_sessions[j].number_of_micro_objects = session->Fetch_number_of_objects();
 
 	for (i = 0; i < session->Fetch_number_of_objects(); i++) {
-		object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(session->objects, i);
+		object = (CGame *)LinkedDataObject::Fetch_item_by_number(session->objects, i);
 
-		Tdebug("micro_session.txt", "\n  object %d  %s, %d vars - status %d", i, object->GetName(), object->GetNoLvars(), session->Fetch_object_status(i));
+		Tdebug("micro_session.txt", "\n  object %d  %s, %d vars - status %d", i, CGameObject::GetName(object), CGameObject::GetNoLvars(object), session->Fetch_object_status(i));
 		micro_sessions[j].micro_objects[i].status_flag = session->Fetch_object_status(i);
 
 		// if mega then save coord
@@ -446,14 +446,14 @@ void _mission::Save_micro_session() {
 
 		micro_sessions[j].micro_objects[i].total_lvars = 0;
 
-		if (object->GetNoLvars() > MAX_lvars)
-			Fatal_error("object [%s] has too many lvars - has %d, only %d allowed", object->GetName(), object->GetNoLvars(), MAX_lvars);
+		if (CGameObject::GetNoLvars(object) > MAX_lvars)
+			Fatal_error("object [%s] has too many lvars - has %d, only %d allowed", CGameObject::GetName(object), CGameObject::GetNoLvars(object), MAX_lvars);
 
-		for (k = 0; k < object->GetNoLvars(); k++) {
-			if (!object->IsVariableString(k)) {
-				Tdebug("micro_session.txt", "   saving lvar %d %s value %d", k, object->GetScriptVariableName(k), object->GetIntegerVariable(k));
+		for (k = 0; k < CGameObject::GetNoLvars(object); k++) {
+			if (!CGameObject::IsVariableString(object, k)) {
+				Tdebug("micro_session.txt", "   saving lvar %d %s value %d", k, CGameObject::GetScriptVariableName(object, k), CGameObject::GetIntegerVariable(object, k));
 
-				int32 value = object->GetIntegerVariable(k);
+				int32 value = CGameObject::GetIntegerVariable(object, k);
 
 				// Using 14-bits to pack lvar's
 				int32 packMin = -(1 << 13);
@@ -461,8 +461,8 @@ void _mission::Save_micro_session() {
 
 				if ((value < packMin) || (value > packMax)) {
 					// Don't do a message box for a CD build of the game!
-					Message_box("Object '%s' lvar %d '%s' is too big to pack please try and reduce %d range is %d->%d", object->GetName(), k,
-					            object->GetScriptVariableName(k), value, packMin, packMax);
+					Message_box("Object '%s' lvar %d '%s' is too big to pack please try and reduce %d range is %d->%d", CGameObject::GetName(object), k,
+								CGameObject::GetScriptVariableName(object, k), value, packMin, packMax);
 					packData = 0;
 				}
 
@@ -471,7 +471,7 @@ void _mission::Save_micro_session() {
 				int32 lvarMax = +((1 << 15) - 1);
 
 				if ((value < lvarMin) || (value > lvarMax)) {
-					Fatal_error("Object '%s' lvar %d '%s' is too big to save %d range is %d->%d", object->GetName(), k, object->GetScriptVariableName(k), value,
+					Fatal_error("Object '%s' lvar %d '%s' is too big to save %d range is %d->%d", CGameObject::GetName(object), k, CGameObject::GetScriptVariableName(object, k), value,
 					            packMin, packMax);
 				}
 
@@ -483,7 +483,7 @@ void _mission::Save_micro_session() {
 
 void _mission::Restore_micro_session_vars() {
 	// reload all object lvars from a micro session
-	c_game_object *object;
+	CGame *object;
 	uint32 j = 0;
 	uint32 i, k;
 	uint32 lvar;
@@ -497,19 +497,19 @@ void _mission::Restore_micro_session_vars() {
 
 			// restore lvars
 			for (i = 0; i < session->Fetch_number_of_objects(); i++) {
-				object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(session->objects, i);
+				object = (CGame *)LinkedDataObject::Fetch_item_by_number(session->objects, i);
 
-				Tdebug("micro_session.txt", "\n  object %d  %s, %d vars - status %d", i, object->GetName(), object->GetNoLvars(),
+				Tdebug("micro_session.txt", "\n  object %d  %s, %d vars - status %d", i, CGameObject::GetName(object), CGameObject::GetNoLvars(object),
 				       micro_sessions[j].micro_objects[i].status_flag);
 				session->Set_object_status(i, micro_sessions[j].micro_objects[i].status_flag);
 
 				lvar = 0;
-				for (k = 0; k < object->GetNoLvars(); k++) {
-					if (!object->IsVariableString(k)) {
-						Tdebug("micro_session.txt", "   restoring lvar %d %s to %d", k, object->GetScriptVariableName(k),
+				for (k = 0; k < CGameObject::GetNoLvars(object); k++) {
+					if (!CGameObject::IsVariableString(object, k)) {
+						Tdebug("micro_session.txt", "   restoring lvar %d %s to %d", k, CGameObject::GetScriptVariableName(object, k),
 						       micro_sessions[j].micro_objects[i].lvar_value[lvar]);
 						// reset lvar value
-						object->SetIntegerVariable(k, micro_sessions[j].micro_objects[i].lvar_value[lvar++]);
+						CGameObject::SetIntegerVariable(object, k, micro_sessions[j].micro_objects[i].lvar_value[lvar++]);
 					}
 				}
 			}
@@ -522,7 +522,7 @@ void _mission::Restore_micro_session_vars() {
 
 void _mission::Restore_micro_session_coords(bool8 from_disk) {
 	// reload all object lvars from a micro session
-	c_game_object *object;
+	CGame *object;
 	uint32 j = 0;
 	uint32 i;
 	uint32 index = 0;
@@ -536,9 +536,9 @@ void _mission::Restore_micro_session_coords(bool8 from_disk) {
 
 			// restore lvars
 			for (i = 0; i < session->Fetch_number_of_objects(); i++) {
-				object = (c_game_object *)LinkedDataObject::Fetch_item_by_number(session->objects, i);
+				object = (CGame *)LinkedDataObject::Fetch_item_by_number(session->objects, i);
 
-				Tdebug("micro_session.txt", "\n  object %d  %s, %d vars - status %d", i, object->GetName(), object->GetNoLvars(),
+				Tdebug("micro_session.txt", "\n  object %d  %s, %d vars - status %d", i, CGameObject::GetName(object), CGameObject::GetNoLvars(object),
 				       micro_sessions[j].micro_objects[i].status_flag);
 				session->Set_object_status(i, micro_sessions[j].micro_objects[i].status_flag);
 

@@ -355,9 +355,9 @@ void Mission_and_console() {
 		// the mission has terminated of its own accord - as apposed to a user quit
 
 		// if the player died then we bring up a restart/continue menu here
-		c_game_object *ob = (c_game_object *)LinkedDataObject::Fetch_item_by_number(MS->objects, MS->player.Fetch_player_id());
-		int32 ret = ob->GetVariable("state");
-		if (ob->GetIntegerVariable(ret)) {
+		CGame *ob = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, MS->player.Fetch_player_id());
+		int32 ret = CGameObject::GetVariable(ob, "state");
+		if (CGameObject::GetIntegerVariable(ob, ret)) {
 			// Return to avoid deleting the mission
 			g_stub->Push_stub_mode(__gameover_menu);
 			return;

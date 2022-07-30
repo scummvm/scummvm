@@ -139,7 +139,7 @@ mcodeFunctionReturnCodes _game_session::fn_send_chi_to_named_object(int32 &, int
 	history[cur_history].interaction = TRUE8;
 	history[cur_history].id = id;
 
-	Tdebug("history.txt", ">> [%s] %d", object->GetName(), cur_id);
+	Tdebug("history.txt", ">> [%s] %d", CGameObject::GetName(object), cur_id);
 
 	return IR_CONT;
 }
@@ -830,7 +830,7 @@ mcodeFunctionReturnCodes _game_session::fn_register_chi(int32 &, int32 *) {
 	if (is_there_a_chi)
 		Fatal_error("double call to fn_register_chi");
 
-	Tdebug("chi.txt", "%s registers as chi", object->GetName());
+	Tdebug("chi.txt", "%s registers as chi", CGameObject::GetName(object));
 
 	is_there_a_chi = TRUE8;
 	chi_id = cur_id;
