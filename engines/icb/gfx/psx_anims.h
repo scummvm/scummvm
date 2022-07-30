@@ -41,13 +41,7 @@ inline PXframe_PSX *PXFrameEnOfAnim(uint32 n, PXanim_PSX *pAnim) {
 		error("Should exit with error-code -1");
 		return NULL;
 	}
-	return (PXframe_PSX *)((uint8 *)pAnim + pAnim->offsets[n]);
-}
-
-static inline void psxMatrixToAngles(PXorient_PSX &orient, PXfloat &pan, PXfloat &tilt, PXfloat &cant) {
-	pan = orient.pan;
-	tilt = orient.tilt;
-	cant = orient.cant;
+	return (PXframe_PSX *)((uint8 *)pAnim + FROM_LE_16(pAnim->offsets[n]));
 }
 
 } // End of namespace ICB

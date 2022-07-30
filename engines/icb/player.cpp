@@ -978,14 +978,14 @@ void _player::Soft_start_new_mode_no_link(_player_stat new_mode, __mega_set_name
 	                                                log->voxel_info->base_path, log->voxel_info->base_path_hash); //
 
 	// find out leg position for current frame
-	old_leg_pos = PXFrameEnOfAnim(log->anim_pc, pCurAnim)->left_foot_distance;
+	old_leg_pos = FROM_LE_16(PXFrameEnOfAnim(log->anim_pc, pCurAnim)->left_foot_distance);
 
 	// JAKE : just in case defrag has moved something about
 	PXanim *pLnkAnim = (PXanim *)rs_anims->Res_open(log->voxel_info->get_info_name(type), log->voxel_info->info_name_hash[type], log->voxel_info->base_path,
 	                                                log->voxel_info->base_path_hash); //
 	// see which has the closest leg position
 	for (j = 0; j < (pLnkAnim->frame_qty - 1); j++) {
-		int32 foot = PXFrameEnOfAnim(j, pLnkAnim)->left_foot_distance;
+		int32 foot = FROM_LE_16(PXFrameEnOfAnim(j, pLnkAnim)->left_foot_distance);
 		int32 d = twabs(foot - old_leg_pos);
 		if (d < diff) {
 			diff = d;
@@ -1027,7 +1027,7 @@ void _player::Soft_start_new_mode(_player_stat new_mode, __mega_set_names opt_li
 	                                                log->voxel_info->base_path, log->voxel_info->base_path_hash); //
 
 	// find out leg position for current frame
-	old_leg_pos = PXFrameEnOfAnim(log->anim_pc, pCurAnim)->left_foot_distance;
+	old_leg_pos = FROM_LE_16(PXFrameEnOfAnim(log->anim_pc, pCurAnim)->left_foot_distance);
 
 	// JAKE : just in case defrag has moved something about
 	PXanim *pLnkAnim = (PXanim *)rs_anims->Res_open(log->voxel_info->get_info_name(opt_link), log->voxel_info->info_name_hash[opt_link], log->voxel_info->base_path,
@@ -1035,7 +1035,7 @@ void _player::Soft_start_new_mode(_player_stat new_mode, __mega_set_names opt_li
 
 	// see which has the closest leg position
 	for (j = 0; j < (pLnkAnim->frame_qty - 1); j++) {
-		int32 foot = PXFrameEnOfAnim(j, pLnkAnim)->left_foot_distance;
+		int32 foot = FROM_LE_16(PXFrameEnOfAnim(j, pLnkAnim)->left_foot_distance);
 		int32 d = twabs(foot - old_leg_pos);
 		if (d < diff) {
 			diff = d;
@@ -1255,7 +1255,7 @@ void _player::Soft_start_new_mode(_player_stat new_mode, __mega_set_names opt_li
 	                                                log->voxel_info->base_path, log->voxel_info->base_path_hash); //
 
 	// find out leg position for current frame
-	old_leg_pos = PXFrameEnOfAnim(log->anim_pc, pCurAnim)->left_foot_distance;
+	old_leg_pos = FROM_LE_16(PXFrameEnOfAnim(log->anim_pc, pCurAnim)->left_foot_distance);
 
 	// Load the first link candidate anim
 	PXanim *pLnkAnim = (PXanim *)rs_anims->Res_open(log->voxel_info->get_info_name(opt_link), log->voxel_info->info_name_hash[opt_link], log->voxel_info->base_path,
@@ -1263,7 +1263,7 @@ void _player::Soft_start_new_mode(_player_stat new_mode, __mega_set_names opt_li
 
 	// see which has the closest leg position
 	for (j = 0; j < (pLnkAnim->frame_qty - 1); j++) {
-		int32 foot = PXFrameEnOfAnim(j, pLnkAnim)->left_foot_distance;
+		int32 foot = FROM_LE_16(PXFrameEnOfAnim(j, pLnkAnim)->left_foot_distance);
 		int32 d = twabs(foot - old_leg_pos);
 		if (d < diff) {
 			diff = d;
@@ -1278,7 +1278,7 @@ void _player::Soft_start_new_mode(_player_stat new_mode, __mega_set_names opt_li
 
 	// see which has the closest leg position
 	for (j = 0; j < (pLnkAnim->frame_qty - 1); j++) {
-		int32 foot = PXFrameEnOfAnim(j, pLnkAnim)->left_foot_distance;
+		int32 foot = FROM_LE_16(PXFrameEnOfAnim(j, pLnkAnim)->left_foot_distance);
 		int32 d = twabs(foot - old_leg_pos);
 		if (d < diff) {
 			diff = d;
