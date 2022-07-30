@@ -48,6 +48,17 @@ typedef struct {
 
 } _pxPCSprite;
 
+typedef struct _pxPCBitmap {
+	char id[4];    // "PCB" Pc bitmap
+	uint32 schema; // The current schema number
+
+	uint8 palette[4 * 256];         // RGB but padded with 0 to 32-bits.
+	uint32 num_sprites;             // Number of sprites in this file.
+	uint32 sprite_offsets[1];       // Offsets to sprite data for each sprite.
+
+} _pxPCBitmap;
+
+/*
 // This holds information about a bitmap (which may contain a number of frames).
 class _pxPCBitmap {
 public:
@@ -80,7 +91,7 @@ inline _pxPCSprite *_pxPCBitmap::Fetch_item_by_number(uint32 nNumber) {
 
 	// Return the pointer.
 	return ((_pxPCSprite *)(((uint8 *)this) + sprite_offsets[nNumber]));
-}
+}*/
 
 } // End of namespace ICB
 

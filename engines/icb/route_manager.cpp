@@ -898,7 +898,7 @@ mcodeFunctionReturnCodes _game_session::fn_route_to_marker(int32 &result, int32 
 			Fatal_error("fn_route_to_marker - object [%s] cant find marker [%s]", object->GetName(), marker_name);
 
 		// build route
-		if (!Setup_route(result, (int32)marker->x, (int32)marker->z, params[1], __FULL, TRUE8)) {
+		if (!Setup_route(result, (int32)FROM_LE_FLOAT32(marker->x), (int32)FROM_LE_FLOAT32(marker->z), params[1], __FULL, TRUE8)) {
 			L->looping = 0;
 			return (IR_CONT);
 		}

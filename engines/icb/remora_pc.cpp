@@ -1583,7 +1583,7 @@ void _remora::SetUpSurfaceForBitmap(const char *pcBitmapName, DXrect &sSourceRec
 	if (pBitmap->schema != PC_BITMAP_SCHEMA)
 		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", pcFullBitmapName, PC_BITMAP_SCHEMA, pBitmap->schema);
 
-	pSprite = pBitmap->Fetch_item_by_number(0);
+	pSprite = (_pxSprite *)((byte *)pBitmap + FROM_LE_32(pBitmap->sprite_offsets[0]));
 
 	// Prepare the source/target rectangles for blitting later.
 	sSourceRect = MakeRECTFromSpriteSizes(0, 0, pSprite->width, pSprite->height);

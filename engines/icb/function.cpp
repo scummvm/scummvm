@@ -496,23 +496,23 @@ mcodeFunctionReturnCodes _game_session::fn_init_from_nico_file(int32 &, int32 * 
 	}
 
 	// set coordinates
-	logic_structs[cur_id]->prop_xyz.x = start_pos->x;
+	logic_structs[cur_id]->prop_xyz.x = FROM_LE_FLOAT32(start_pos->x);
 
-	if (start_pos->y < start_pos->floor_y) // nico is under the floor!
-		logic_structs[cur_id]->prop_xyz.y = start_pos->floor_y;
+	if (FROM_LE_FLOAT32(start_pos->y) < FROM_LE_FLOAT32(start_pos->floor_y)) // nico is under the floor!
+		logic_structs[cur_id]->prop_xyz.y = FROM_LE_FLOAT32(start_pos->floor_y);
 
 	else
-		logic_structs[cur_id]->prop_xyz.y = start_pos->y;
+		logic_structs[cur_id]->prop_xyz.y = FROM_LE_FLOAT32(start_pos->y);
 
-	logic_structs[cur_id]->prop_xyz.z = start_pos->z;
+	logic_structs[cur_id]->prop_xyz.z = FROM_LE_FLOAT32(start_pos->z);
 
 	// set pan
-	logic_structs[cur_id]->pan = start_pos->direction; // is this right?
+	logic_structs[cur_id]->pan = FROM_LE_FLOAT32(start_pos->direction); // is this right?
 
-	logic_structs[cur_id]->prop_interact_pan = start_pos->direction; // this might be more sensible
+	logic_structs[cur_id]->prop_interact_pan = FROM_LE_FLOAT32(start_pos->direction); // this might be more sensible
 
 	// set owner floor for things lile fn_on_screen
-	logic_structs[cur_id]->owner_floor_rect = floor_def->Return_floor_rect(start_pos->x, start_pos->z, start_pos->floor_y, 0);
+	logic_structs[cur_id]->owner_floor_rect = floor_def->Return_floor_rect(FROM_LE_FLOAT32(start_pos->x), FROM_LE_FLOAT32(start_pos->z), FROM_LE_FLOAT32(start_pos->floor_y), 0);
 
 	if (logic_structs[cur_id]->owner_floor_rect == PXNULL) {
 		Message_box("fn_init_from_nico_file - %s nico not on a legal floor position - object has been shutdown", object->GetName());
@@ -566,12 +566,12 @@ mcodeFunctionReturnCodes _game_session::fn_init_from_marker_file(int32 &, int32 
 		return IR_STOP;
 	}
 
-	logic_structs[cur_id]->mega->actor_xyz.x = start_pos->x;
-	logic_structs[cur_id]->mega->actor_xyz.y = start_pos->y;
-	logic_structs[cur_id]->mega->actor_xyz.z = start_pos->z;
+	logic_structs[cur_id]->mega->actor_xyz.x = FROM_LE_FLOAT32(start_pos->x);
+	logic_structs[cur_id]->mega->actor_xyz.y = FROM_LE_FLOAT32(start_pos->y);
+	logic_structs[cur_id]->mega->actor_xyz.z = FROM_LE_FLOAT32(start_pos->z);
 
 	// set pan
-	logic_structs[cur_id]->pan = start_pos->pan;
+	logic_structs[cur_id]->pan = FROM_LE_FLOAT32(start_pos->pan);
 
 	// has coords
 	logic_structs[cur_id]->prop_coords_set = TRUE8;
@@ -602,12 +602,12 @@ mcodeFunctionReturnCodes _game_session::fn_init_mega_from_nico(int32 &, int32 *)
 	}
 
 	// set coordinates
-	logic_structs[cur_id]->mega->actor_xyz.x = start_pos->x;
-	logic_structs[cur_id]->mega->actor_xyz.y = start_pos->floor_y;
-	logic_structs[cur_id]->mega->actor_xyz.z = start_pos->z;
+	logic_structs[cur_id]->mega->actor_xyz.x = FROM_LE_FLOAT32(start_pos->x);
+	logic_structs[cur_id]->mega->actor_xyz.y = FROM_LE_FLOAT32(start_pos->floor_y);
+	logic_structs[cur_id]->mega->actor_xyz.z = FROM_LE_FLOAT32(start_pos->z);
 
 	// set pan
-	logic_structs[cur_id]->pan = start_pos->direction;
+	logic_structs[cur_id]->pan = FROM_LE_FLOAT32(start_pos->direction);
 
 	// has coords
 	logic_structs[cur_id]->prop_coords_set = TRUE8;
@@ -636,12 +636,12 @@ mcodeFunctionReturnCodes _game_session::fn_teleport_to_nico(int32 &, int32 *para
 		Fatal_error("no NICO marker (fn_teleport_to_nico) ob %s, nico %s", object->GetName(), nico_name);
 
 	// set coordinates
-	logic_structs[cur_id]->mega->actor_xyz.x = start_pos->x;
-	logic_structs[cur_id]->mega->actor_xyz.y = start_pos->floor_y; // Gravitise_y(start_pos->y);
-	logic_structs[cur_id]->mega->actor_xyz.z = start_pos->z;
+	logic_structs[cur_id]->mega->actor_xyz.x = FROM_LE_FLOAT32(start_pos->x);
+	logic_structs[cur_id]->mega->actor_xyz.y = FROM_LE_FLOAT32(start_pos->floor_y); // Gravitise_y(start_pos->y);
+	logic_structs[cur_id]->mega->actor_xyz.z = FROM_LE_FLOAT32(start_pos->z);
 
 	// set pan
-	logic_structs[cur_id]->pan = start_pos->direction;
+	logic_structs[cur_id]->pan = FROM_LE_FLOAT32(start_pos->direction);
 
 	// for safety
 	logic_structs[cur_id]->cur_anim_type = __STAND;
@@ -671,9 +671,9 @@ mcodeFunctionReturnCodes _game_session::fn_panless_teleport_to_nico(int32 &, int
 		Fatal_error("no NICO marker (fn_panless_teleport_to_nico_) ob %s, nico %s", object->GetName(), nico_name);
 
 	// set coordinates
-	logic_structs[cur_id]->mega->actor_xyz.x = start_pos->x;
-	logic_structs[cur_id]->mega->actor_xyz.y = start_pos->floor_y; // Gravitise_y(start_pos->y);
-	logic_structs[cur_id]->mega->actor_xyz.z = start_pos->z;
+	logic_structs[cur_id]->mega->actor_xyz.x = FROM_LE_FLOAT32(start_pos->x);
+	logic_structs[cur_id]->mega->actor_xyz.y = FROM_LE_FLOAT32(start_pos->floor_y); // Gravitise_y(start_pos->y);
+	logic_structs[cur_id]->mega->actor_xyz.z = FROM_LE_FLOAT32(start_pos->z);
 
 	// for safety
 	logic_structs[cur_id]->cur_anim_type = __STAND;
@@ -703,7 +703,7 @@ mcodeFunctionReturnCodes _game_session::fn_teleport_to_nico_y(int32 &, int32 *pa
 		Fatal_error("no NICO marker (fn_teleport_to_nico_y) ob %s, nico %s", object->GetName(), nico_name);
 
 	// set coordinates
-	logic_structs[cur_id]->mega->actor_xyz.y = start_pos->floor_y; // Gravitise_y(start_pos->y);
+	logic_structs[cur_id]->mega->actor_xyz.y = FROM_LE_FLOAT32(start_pos->floor_y); // Gravitise_y(start_pos->y);
 
 	// for safety
 	logic_structs[cur_id]->cur_anim_type = __STAND;
@@ -736,7 +736,7 @@ mcodeFunctionReturnCodes _game_session::fn_snap_to_nico_y(int32 &, int32 *params
 		Fatal_error("no NICO marker (fn_snap_to_nico_y) ob %s, nico %s", object->GetName(), nico_name);
 
 	// set coordinates
-	logic_structs[cur_id]->mega->actor_xyz.y = start_pos->floor_y;
+	logic_structs[cur_id]->mega->actor_xyz.y = FROM_LE_FLOAT32(start_pos->floor_y);
 
 	return IR_CONT;
 }
@@ -764,7 +764,7 @@ mcodeFunctionReturnCodes _game_session::fn_get_pan_from_nico(int32 &, int32 *par
 	}
 
 	// set pan
-	logic_structs[cur_id]->pan = start_pos->direction;
+	logic_structs[cur_id]->pan = FROM_LE_FLOAT32(start_pos->direction);
 
 	return IR_CONT;
 }

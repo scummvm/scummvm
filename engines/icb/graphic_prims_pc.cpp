@@ -854,10 +854,10 @@ void SpriteFrameDraw(uint8 *pSurfaceBitmap,     // IN:  Pointer to the surface's
 	_pxSprite *pSprite;
 
 	// Get to the sprite frame.
-	pSprite = pBitmap->Fetch_item_by_number(nFrameNumber);
+	pSprite = (_pxSprite *)((byte *)pBitmap + FROM_LE_32(pBitmap->sprite_offsets[nFrameNumber]));
 
 	// Get the palette pointer.
-	pPalette = pBitmap->Fetch_palette_pointer();
+	pPalette = &pBitmap->palette[0];
 
 	// Now do the actual drawing.
 	RawSpriteDraw(pSurfaceBitmap, nPitch, nSurfaceWidth, nSurfaceHeight, pSprite, pPalette, pSprite->x, pSprite->y, pnTransparencyRef, nOpacity);
@@ -879,7 +879,7 @@ void SpriteXYFrameDraw(uint8 *pSurfaceBitmap,     // IN:  Pointer to the surface
 	_pxSprite *pSprite;
 
 	// Get to the sprite frame.
-	pSprite = pBitmap->Fetch_item_by_number(nFrameNumber);
+	pSprite = (_pxSprite *)((byte *)pBitmap + FROM_LE_32(pBitmap->sprite_offsets[nFrameNumber]));
 
 	// Work out a new plotting position if it is to be centred.
 	if (bCenter) {
@@ -888,7 +888,7 @@ void SpriteXYFrameDraw(uint8 *pSurfaceBitmap,     // IN:  Pointer to the surface
 	}
 
 	// Get the palette pointer.
-	pPalette = pBitmap->Fetch_palette_pointer();
+	pPalette = &pBitmap->palette[0];
 
 	// Now do the actual drawing.
 	RawSpriteDraw(pSurfaceBitmap, nPitch, nSurfaceWidth, nSurfaceHeight, pSprite, pPalette, nX, nY, pnTransparencyRef, nOpacity);

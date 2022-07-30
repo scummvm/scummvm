@@ -33,6 +33,8 @@
 #include "engines/icb/common/pc_props.h"
 #include "engines/icb/common/px_staticlayers.h"
 
+#include "common/endian.h"
+
 namespace ICB {
 
 #define WEATHER_SCREEN_WIDTH SCREEN_WIDTH
@@ -150,13 +152,13 @@ public: /* Prop Surfaces */
 	int32 m_TotalPropSurfaces;
 };
 
-inline rlp_API *_set::GetPRig() { return (rlp_API *)(((uint8 *)m_currentCamera) + m_currentCamera->lightOffset); }
+inline rlp_API *_set::GetPRig() { return (rlp_API *)(((uint8 *)m_currentCamera) + FROM_LE_32(m_currentCamera->lightOffset)); }
 
-inline pcStaticLayers *_set::GetStaticLayers() { return (pcStaticLayers *)(((uint8 *)m_currentCamera) + m_currentCamera->layerOffset); }
+inline pcStaticLayers *_set::GetStaticLayers() { return (pcStaticLayers *)(((uint8 *)m_currentCamera) + FROM_LE_32(m_currentCamera->layerOffset)); }
 
 inline pcPropFile *_set::GetProps() { return m_props; }
 
-inline uint8 *_set::GetBackground() { return (uint8 *)(((uint8 *)m_currentCamera) + m_currentCamera->backgroundOffset); }
+inline uint8 *_set::GetBackground() { return (uint8 *)(((uint8 *)m_currentCamera) + FROM_LE_32(m_currentCamera->backgroundOffset)); }
 
 inline PXcamera &_set::GetCamera() { return m_camera; }
 

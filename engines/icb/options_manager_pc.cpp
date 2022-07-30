@@ -300,10 +300,14 @@ void LoadThumbnail(uint32 slot_id, uint32 to_surface_id) {
 	uint8 *surface_address = surface_manager->Lock_surface(to_surface_id);
 	uint32 pitch = surface_manager->Get_pitch(to_surface_id);
 
+	uint32 *u32surfPtr = (uint32 *)surface_address;
 	// Now we need to read the 64 by 48 image data into the surface
 	for (uint32 i = 0; i < 48; i++) {
-		if (stream->read(surface_address, sizeof(uint32) * 64) != 64 * sizeof(uint32))
-			Fatal_error("LoadThumbnail() failed reading");
+		for (uint32 j = 0; j < 64; j++) {
+			u32surfPtr[j] = stream->readUint32LE();
+			if (stream->err())
+				Fatal_error("LoadThumbnail() failed reading");
+		}
 
 		surface_address += pitch;
 	}
@@ -5568,7 +5572,7 @@ void OptionsManager::LoadBitmapFont() {
 	if (m_font_file->schema != PC_BITMAP_SCHEMA)
 		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", m_fontName, PC_BITMAP_SCHEMA, m_font_file->schema);
 
-	m_fontPalette = (uint32 *)m_font_file->Fetch_palette_pointer();
+	m_fontPalette = (uint32 *)&m_font_file->palette[0];
 }
 
 void OptionsManager::LoadGlobalTextFile() {
@@ -5602,10 +5606,10 @@ bool8 OptionsManager::SetCharacterSprite(char c) {
 		index += 256;
 
 	// Catch ernoeous characters and make them apostrophes
-	if ((uint)index >= m_font_file->Fetch_number_of_items())
+	if ((uint)index >= m_font_file->num_sprites)
 		index = 7;
 
-	m_currentSprite = m_font_file->Fetch_item_by_number(index);
+	m_currentSprite = (_pxSprite *)((byte *)m_font_file + FROM_LE_32(m_font_file->sprite_offsets[index]));
 
 	if (!m_currentSprite)
 		return FALSE8;

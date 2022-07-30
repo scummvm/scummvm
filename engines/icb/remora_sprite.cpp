@@ -44,7 +44,7 @@ void _remora_sprite::InitialiseFromBitmapName(const char *pcBitmapName, const ch
 	// Get the number of frames (don't forget to check schema number is correct).
 	psBitmap = (_pxBitmap *)rs_remora->Res_open(m_pcName, m_nNameHash, m_pcClusterName, m_nClusterHash);
 
-	m_nNumFrames = psBitmap->Fetch_number_of_items();
+	m_nNumFrames = FROM_LE_32(psBitmap->num_sprites);
 
 	if (m_nNumFrames == 0)
 		Fatal_error("Bitmap %s has no frames.", pcBitmapName);
@@ -52,7 +52,7 @@ void _remora_sprite::InitialiseFromBitmapName(const char *pcBitmapName, const ch
 	// Here we work out half the sprite's width and height so we can avoid plotting it in positions where it
 	// would run off the edge of a surface.  Note that this is based on the first frame; it would need to be
 	// made more sophisticated to deal with sprites that change in size as they are played.
-	psSprite = psBitmap->Fetch_item_by_number(0);
+	psSprite = (_pxSprite *)((byte *)psBitmap + FROM_LE_32(psBitmap->sprite_offsets[0]));
 
 	m_nHalfSpriteWidth = psSprite->width / 2;
 	m_nHalfSpriteHeight = psSprite->height / 2;

@@ -417,7 +417,7 @@ void _icon_menu::SetTransparencyColourKey() {
 	if (psTransparentBitmap->schema != PC_BITMAP_SCHEMA)
 		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strFullIconName.c_str(), PC_BITMAP_SCHEMA, psTransparentBitmap->schema);
 
-	uint8 *pnPalette = psTransparentBitmap->Fetch_palette_pointer();
+	uint8 *pnPalette = &psTransparentBitmap->palette[0];
 	m_nTransparentKey = ((uint32 *)pnPalette)[0];
 }
 

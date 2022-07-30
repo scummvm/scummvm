@@ -294,17 +294,25 @@ _TSrtn text_sprite::AnalyseSentence() {
 
 uint32 text_sprite::CharWidth(const uint8 ch, const char *fontRes, uint32 fontRes_hash) {
 	_pxBitmap *charSet = LoadFont(fontRes, fontRes_hash);
-	_pxSprite *spr = (_pxSprite *)charSet->Fetch_item_by_number(ch - ' ');
+
+	uint32 nNumber = ch - ' ';
+	assert(nNumber < FROM_LE_32(charSet->num_sprites));
+
+	_pxSprite *spr = (_pxSprite *)((byte *)charSet + FROM_LE_32(charSet->sprite_offsets[nNumber]));
 	return (spr->width);
 }
 
 uint32 text_sprite::CharHeight(const char *fontRes, uint32 fontRes_hash) { // assume all chars the same height!
 	_pxBitmap *charSet = LoadFont(fontRes, fontRes_hash);
-	_pxSprite *spr = (_pxSprite *)charSet->Fetch_item_by_number(0);
+	_pxSprite *spr = (_pxSprite *)((byte *)charSet + FROM_LE_32(charSet->sprite_offsets[0]));
 	return spr->height;
 }
 
-_pxSprite *text_sprite::FindChar(uint8 ch, _pxBitmap *charSet) { return ((_pxSprite *)charSet->Fetch_item_by_number(ch - ' ')); }
+_pxSprite *text_sprite::FindChar(uint8 ch, _pxBitmap *charSet) {
+	uint32 nNumber = ch - ' ';
+	assert(nNumber < FROM_LE_32(charSet->num_sprites));
+	return ((_pxSprite *)((byte *)charSet + FROM_LE_32(charSet->sprite_offsets[nNumber])));
+}
 
 void text_sprite::CopyChar(_pxSprite *charPtr, uint8 *spritePtr, uint8 *pal) { // copy character into sprite, based on params
 	uint8 *rowPtr;

@@ -245,16 +245,13 @@ const char *res_man::OpenFile(int32 &cluster_search, RMParams *params) {
 		if (params->_stream == nullptr)
 			Fatal_error("Res_open cannot *OPEN* cluster file %s", clusterPath.c_str());
 
-		// Read in 16 bytes, part of which is the cluster header length
-
-		uint32 data[4];
-
-		if (params->_stream->read(&data, 16) != 16) {
+		if (params->_stream->size() < 16) {
 			Fatal_error("res_man::OpenFile cannot read 16 bytes from cluster %s %d", clusterPath.c_str(), params->cluster_hash);
 		}
 
 		params->seekpos = 0;
-		params->len = data[2];
+		params->_stream->skip(8);
+		params->len = params->_stream->readSint32LE();
 		return params->cluster;
 	}
 
@@ -274,14 +271,14 @@ const char *res_man::OpenFile(int32 &cluster_search, RMParams *params) {
 	if (params->_stream == nullptr)
 		Fatal_error("Res_open cannot *OPEN* cluster file %s", clusterPath.c_str());
 
-	params->seekpos = hn->offset;
+	params->seekpos = FROM_LE_32(hn->offset);
 
 	// Set the length of the data
 	if (params->zipped) {
 		params->_stream->seek(params->seekpos, SEEK_SET);
 		params->len = fileGetZipLength2(params->_stream); // TODO: Use wrapCompressedStream to solve?
 	} else
-		params->len = hn->size;
+		params->len = FROM_LE_32(hn->size);
 
 	return nullptr;
 }
@@ -313,12 +310,12 @@ HEADER_NORMAL *res_man::GetFileHeader(int32 &cluster_search, RMParams *params) {
 	// and get the position and length to get the data from
 
 	// Check the schema value and the ID
-	if ((clu->schema != CLUSTER_API_SCHEMA) || (*(int32 *)clu->ID != *(int32 *)const_cast<char *>(CLUSTER_API_ID))) {
+	if ((FROM_LE_32(clu->schema) != CLUSTER_API_SCHEMA) || (READ_LE_U32((uint32 *)clu->ID) != *(uint32 *)const_cast<char *>(CLUSTER_API_ID))) {
 		// Big error unknown cluster filetype
 		Fatal_error("res_man::GetFileHeader unknown cluster schema or ID %d %s for %s::0x%X", clu->schema, clu->ID, params->cluster, params->url_hash);
 	}
 
-	if (clu->ho.cluster_hash != params->cluster_hash) {
+	if (FROM_LE_32(clu->ho.cluster_hash) != params->cluster_hash) {
 		// Big error this cluster has a different internal hash value to the one
 		// we are looking for
 //		Fatal_error("res_man::GetFileHeader different internal cluster_hash value %x file %x for %s::0x%X", params->cluster_hash, clu->ho.cluster_hash, params->cluster,
@@ -327,14 +324,14 @@ HEADER_NORMAL *res_man::GetFileHeader(int32 &cluster_search, RMParams *params) {
 
 	HEADER_NORMAL *hn = clu->hn;
 	uint32 i;
-	for (i = 0; i < clu->ho.noFiles; hn++, i++) {
+	for (i = 0; i < FROM_LE_32(clu->ho.noFiles); hn++, i++) {
 		// Hey it has been found
-		if (hn->hash == params->url_hash)
+		if (FROM_LE_32(hn->hash) == params->url_hash)
 			break;
 	}
 
 	// Check that the file was actually found
-	if (i == clu->ho.noFiles) {
+	if (i == FROM_LE_32(clu->ho.noFiles)) {
 		return nullptr;
 	}
 
@@ -349,7 +346,7 @@ void res_man::Res_open_mini_cluster(const char *cluster_url, uint32 &cluster_has
 	uint32 zeroHash = 0;
 	Cluster_API *clu = (Cluster_API *)Res_open(nullptr, zeroHash, cluster_url, cluster_hash);
 
-	int32 numFiles = clu->ho.noFiles;
+	int32 numFiles = FROM_LE_32(clu->ho.noFiles);
 
 	// check none of the fake files exist
 	// also find total size required
@@ -359,14 +356,14 @@ void res_man::Res_open_mini_cluster(const char *cluster_url, uint32 &cluster_has
 
 	for (i = 0; i < numFiles; i++) {
 		HEADER_NORMAL *hn = clu->hn + i;
-		uint32 check_hash = hn->hash;
+		uint32 check_hash = FROM_LE_32(hn->hash);
 
 		if (FindFile(check_hash, fake_cluster_hash, MAKE_TOTAL_HASH(fake_cluster_hash, check_hash)) != -1) {
 			warning("File %s::%08x exists in res_man so can't load my mini-cluster!", fake_cluster_url, check_hash);
 			return;
 		}
 
-		int32 fileSize = (hn->size + 7) & (~7);
+		int32 fileSize = (FROM_LE_32(hn->size) + 7) & (~7);
 		mem_needed += fileSize;
 	}
 
@@ -407,7 +404,7 @@ void res_man::Res_open_mini_cluster(const char *cluster_url, uint32 &cluster_has
 	stream = openDiskFileForBinaryStreamRead(clusterPath.c_str());
 
 	// seek
-	stream->seek((clu->hn)->offset, SEEK_SET);
+	stream->seek(FROM_LE_32((clu->hn)->offset), SEEK_SET);
 
 	// read
 	stream->read(mem_list[mem_block].ad, mem_needed);
@@ -443,9 +440,9 @@ void res_man::Res_open_mini_cluster(const char *cluster_url, uint32 &cluster_has
 			mem_list[current_child].parent = mem_block;
 		}
 
-		mem_list[mem_block].url_hash = hn->hash;
+		mem_list[mem_block].url_hash = FROM_LE_32(hn->hash);
 		mem_list[mem_block].cluster_hash = fake_cluster_hash;
-		mem_list[mem_block].total_hash = MAKE_TOTAL_HASH(fake_cluster_hash, hn->hash);
+		mem_list[mem_block].total_hash = MAKE_TOTAL_HASH(fake_cluster_hash, FROM_LE_32(hn->hash));
 
 		mem_list[mem_block].ad = ad;
 
@@ -454,7 +451,7 @@ void res_man::Res_open_mini_cluster(const char *cluster_url, uint32 &cluster_has
 		mem_list[mem_block].age = current_time_frame;
 
 		// adjusted size
-		int32 fileSize = (hn->size + 7) & (~7);
+		int32 fileSize = (FROM_LE_32(hn->size) + 7) & (~7);
 
 		mem_list[mem_block].size = fileSize;
 

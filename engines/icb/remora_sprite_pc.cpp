@@ -95,7 +95,7 @@ uint32 _remora_sprite::GetHeight() {
 	psBitmap = (_pxBitmap *)rs_remora->Res_open(m_pcName, m_nNameHash, m_pcClusterName, m_nClusterHash);
 
 	// Get the first frame and return its height.
-	psSprite = psBitmap->Fetch_item_by_number(0);
+	psSprite = (_pxSprite *)((byte *)psBitmap + FROM_LE_32(psBitmap->sprite_offsets[0]));
 	return (psSprite->height);
 }
 
@@ -111,7 +111,7 @@ uint32 _remora_sprite::GetWidth() {
 	psBitmap = (_pxBitmap *)rs_remora->Res_open(m_pcName, m_nNameHash, m_pcClusterName, m_nClusterHash);
 
 	// Get the first frame and return its height.
-	psSprite = psBitmap->Fetch_item_by_number(0);
+	psSprite = (_pxSprite *)((byte *)psBitmap + FROM_LE_32(psBitmap->sprite_offsets[0]));
 	return (psSprite->width);
 }
 

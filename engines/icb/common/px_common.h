@@ -226,6 +226,16 @@ inline uint32 READ_LE_U32(const void *p) {
 	return (uint32)(((uint32)data[3] << 24) | ((uint32)data[2] << 16) | ((uint32)data[1] << 8) | (uint32)data[0]);
 }
 
+#if defined(SCUMM_LITTLE_ENDIAN)
+
+#define FROM_LE_FLOAT32(a) ((float)(a))
+
+#else
+
+#define FROM_LE_FLOAT32(a) ((float)(SWAP_BYTES_32(a)))
+
+#endif
+
 #define MKTAG(a0, a1, a2, a3) ((uint32)((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24)))
 
 } // End of namespace ICB

@@ -891,15 +891,15 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 									uint16 *ptr = rowAd;
 									for (int32 x = 0; x < TILE_WIDTH;) {
 										// read the rle counters (trans/solid)
-										int32 trans = ((int32)*zPtr) & 0xff;
-										int32 solid = ((int32)*zPtr) >> 8;
+										int32 trans = ((int32)READ_LE_U16(zPtr)) & 0xff;
+										int32 solid = ((int32)READ_LE_U16(zPtr)) >> 8;
 										zPtr++;
 
 										x += trans + solid;
 										ptr += trans;
 
 										while (solid--) {
-											if (*ptr > *zPtr)
+											if (*ptr > READ_LE_U16(zPtr))
 												*ptr = 0xffff;
 											++ptr;
 											++zPtr;
@@ -921,14 +921,14 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 									uint16 *aZ = bufZ;
 									for (int32 x = 0; x < TILE_WIDTH;) {
 										// read the rle counters (trans/solid)
-										int32 trans = ((int32)*tPtr) & 0xff;
-										int32 solid = ((int32)*tPtr) >> 8;
+										int32 trans = ((int32)READ_LE_U16(tPtr)) & 0xff;
+										int32 solid = ((int32)READ_LE_U16(tPtr)) >> 8;
 										tPtr++;
 										aRGB += trans;
 										aZ += trans;
 										x += trans + solid;
 										while (solid--) {
-											if (*tPtr++ <= *aZ) {
+											if (READ_LE_U16(tPtr++) <= *aZ) {
 												uint8 *pix = (uint8 *)aRGB;
 												uint8 *t = (uint8 *)tPtr;
 												for (int32 i = 0; i < 3; i++) {
@@ -1061,14 +1061,14 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 								uint16 *aZ = bufZ;
 								for (int32 x = 0; x < TILE_WIDTH;) {
 									// read the rle counters (trans/solid)
-									int32 trans = ((int32)*tPtr) & 0xff;
-									int32 solid = ((int32)*tPtr) >> 8;
+									int32 trans = ((int32)READ_LE_U16(tPtr)) & 0xff;
+									int32 solid = ((int32)READ_LE_U16(tPtr)) >> 8;
 									tPtr++;
 									aRGB += trans;
 									aZ += trans;
 									x += trans + solid;
 									while (solid--) {
-										if (*tPtr++ <= *aZ) {
+										if (READ_LE_U16(tPtr++) <= *aZ) {
 											uint8 *pix = (uint8 *)aRGB;
 											uint8 *t = (uint8 *)tPtr;
 											for (int32 i = 0; i < 3; i++) {
@@ -1202,8 +1202,8 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 								uint32 *rgbDst = rgbS32;
 								for (int32 x = 0; x < TILE_WIDTH;) {
 									// read the rle counters (trans/solid)
-									int32 trans = ((int32)*zPtr) & 0xff;
-									int32 solid = ((int32)*zPtr) >> 8;
+									int32 trans = ((int32)READ_LE_U16(zPtr)) & 0xff;
+									int32 solid = ((int32)READ_LE_U16(zPtr)) >> 8;
 									zPtr++;
 
 									x += trans + solid;
@@ -1297,7 +1297,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 									}
 
 									while (solid--) {
-										if (*zDst < *zPtr) {
+										if (*zDst < READ_LE_U16(zPtr)) {
 											switch ((*rgbSrc) >> 30) {
 											case 0:
 												*rgbDst = *rgbSrc;
@@ -1620,8 +1620,8 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 										uint32 *rgbDst = rgbS32;
 										for (int32 x = 0; x < TILE_WIDTH;) {
 											// read the rle counters (trans/solid)
-											int32 trans = ((int32)*zPtr) & 0xff;
-											int32 solid = ((int32)*zPtr) >> 8;
+											int32 trans = ((int32)READ_LE_U16(zPtr)) & 0xff;
+											int32 solid = ((int32)READ_LE_U16(zPtr)) >> 8;
 											zPtr++;
 
 											x += trans + solid;
@@ -1715,7 +1715,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 											}
 
 											while (solid--) {
-												if ((*zDst < *zPtr) && (*zDst < *(zDst + (ZBUFFERSIZE >> 1)))) {
+												if ((*zDst < READ_LE_U16(zPtr)) && (*zDst < *(zDst + (ZBUFFERSIZE >> 1)))) {
 													switch ((*rgbSrc) >> 30) {
 													case 0:
 														*rgbDst = *rgbSrc;

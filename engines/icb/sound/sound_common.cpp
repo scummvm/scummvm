@@ -45,7 +45,7 @@ bool8 openWav(Common::SeekableReadStream *stream, _wavHeader &header, uint32 &le
 	if (stream->read(&header, sizeof(_wavHeader)) != sizeof(_wavHeader))
 		return FALSE8;
 
-	if (header.formatTag != 1) {
+	if (FROM_LE_16(header.formatTag) != 1) {
 		warning("Only supports PCM uncompressed wav files");
 		return FALSE8;
 	}
@@ -76,7 +76,7 @@ bool8 openWav(Common::SeekableReadStream *stream, _wavHeader &header, uint32 &le
 	byteOffsetInCluster = (uint32)stream->pos();
 
 	// Expected number of cycles this sample reguires to completely playback
-	lengthInCycles = (int32)ceil(((double)length / (double)header.avgBytesPerSec) * 12.0f * 1.215f);
+	lengthInCycles = (int32)ceil(((double)length / (double)FROM_LE_32(header.avgBytesPerSec)) * 12.0f * 1.215f);
 
 	stream->seek(pos);
 

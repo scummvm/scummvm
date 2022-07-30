@@ -613,8 +613,8 @@ bool8 _set::Init(const char *camera_name, const char *clustered_camera_name) {
 
 	// Load this camera
 	m_currentCamera = (_pcSetHeader *)rs_bg->Res_open(p_rcvf, p_rcvf_hash, set_cluster, set_cluster_hash);
-	if (m_currentCamera->id != PCSETFILE_ID)
-		Fatal_error("Unsupported set files. Set id is %d.  should be %d", m_currentCamera->id, PCSETFILE_ID);
+	if (FROM_LE_32(m_currentCamera->id) != PCSETFILE_ID)
+		Fatal_error("Unsupported set files. Set id is %d.  should be %d", FROM_LE_32(m_currentCamera->id), PCSETFILE_ID);
 
 	// Hack the camera into the format we want.
 	HackMakeCamera();
@@ -687,7 +687,7 @@ void _set::Init_base_bitmap_buffers() {
 	bgPtr = GetBackground();
 
 	// Check this is a valid support set type
-	if ((*(uint32 *)bgPtr) != 7)
+	if (READ_LE_UINT32(bgPtr) != 7)
 		Fatal_error("Camera %s is out of date.", set_url);
 
 	// Find the shadow table
@@ -700,7 +700,7 @@ void _set::Init_base_bitmap_buffers() {
 	surface_manager->Fill_surface(bg_buffer_id, 0x008080ff);
 
 	// Find the start of this shadow data
-	uint8 *ptr = bgPtr + shadowTable[0];
+	uint8 *ptr = bgPtr + FROM_LE_32(shadowTable[0]);
 
 	// Decode the jpeg background
 	Graphics::Surface *jpegSurf = JpegDecode(ptr, 1024 * 1024);
@@ -719,9 +719,9 @@ void _set::Init_base_bitmap_buffers() {
 	delete jpegSurf;
 
 	// find the start of the weather data
-	int32 *weatherPtr = (int32 *)(bgPtr + shadowTable[1]);
+	int32 *weatherPtr = (int32 *)(bgPtr + FROM_LE_32(shadowTable[1]));
 
-	InitWeather(*(weatherPtr), *(weatherPtr + 1), *(weatherPtr + 2), *(weatherPtr + 3), *(weatherPtr + 4), *(weatherPtr + 5));
+	InitWeather(READ_LE_INT32(weatherPtr), READ_LE_INT32(weatherPtr + 1), READ_LE_INT32(weatherPtr + 2), READ_LE_INT32(weatherPtr + 3), READ_LE_INT32(weatherPtr + 4), READ_LE_INT32(weatherPtr + 5));
 
 	// Flush the actor z buffer
 	if (pZ)
@@ -748,7 +748,7 @@ void _set::Load_props() {
 	delete m_props;
 
 	// Load the prop file
-	m_props = new pcPropFile(((uint8 *)m_currentCamera) + m_currentCamera->propOffset);
+	m_props = new pcPropFile(((uint8 *)m_currentCamera) + FROM_LE_32(m_currentCamera->propOffset));
 
 	pcPropFile *propFile = GetProps();
 	// Which version are we using ?
@@ -1695,8 +1695,8 @@ void _set::DrawWeather() {
 
 void _set::HackMakeCamera() {
 	float *oldCameraData;
-	if (m_currentCamera->id == PCSETFILE_ID)
-		oldCameraData = (float *)(((uint8 *)m_currentCamera) + m_currentCamera->cameraOffset);
+	if (FROM_LE_32(m_currentCamera->id) == PCSETFILE_ID)
+		oldCameraData = (float *)(((uint8 *)m_currentCamera) + FROM_LE_32(m_currentCamera->cameraOffset));
 	else
 		oldCameraData = (float *)rs_bg->Res_open(rvcam_file_name, rvcam_file_hash, set_cluster, set_cluster_hash, 0);
 	/*   Old Camera Format
@@ -1732,15 +1732,15 @@ void _set::HackMakeCamera() {
 
 	// Find scalings in the input matrix
 	float matrix[3][3];
-	matrix[0][0] = *(oldCameraData + 4);
-	matrix[0][1] = *(oldCameraData + 5);
-	matrix[0][2] = *(oldCameraData + 6);
-	matrix[1][0] = *(oldCameraData + 7);
-	matrix[1][1] = *(oldCameraData + 8);
-	matrix[1][2] = *(oldCameraData + 9);
-	matrix[2][0] = *(oldCameraData + 10);
-	matrix[2][1] = *(oldCameraData + 11);
-	matrix[2][2] = *(oldCameraData + 12);
+	matrix[0][0] = READ_LE_FLOAT32(oldCameraData + 4);
+	matrix[0][1] = READ_LE_FLOAT32(oldCameraData + 5);
+	matrix[0][2] = READ_LE_FLOAT32(oldCameraData + 6);
+	matrix[1][0] = READ_LE_FLOAT32(oldCameraData + 7);
+	matrix[1][1] = READ_LE_FLOAT32(oldCameraData + 8);
+	matrix[1][2] = READ_LE_FLOAT32(oldCameraData + 9);
+	matrix[2][0] = READ_LE_FLOAT32(oldCameraData + 10);
+	matrix[2][1] = READ_LE_FLOAT32(oldCameraData + 11);
+	matrix[2][2] = READ_LE_FLOAT32(oldCameraData + 12);
 	float scalex = (float)sqrt(matrix[0][0] * matrix[0][0] + matrix[1][0] * matrix[1][0] + matrix[2][0] * matrix[2][0]);
 	float scaley = (float)sqrt(matrix[0][1] * matrix[0][1] + matrix[1][1] * matrix[1][1] + matrix[2][1] * matrix[2][1]);
 	float scalez = (float)sqrt(matrix[0][2] * matrix[0][2] + matrix[1][2] * matrix[1][2] + matrix[2][2] * matrix[2][2]);
@@ -1799,9 +1799,9 @@ void _set::HackMakeCamera() {
 	m_camera.view.m[2][1] = (int16)(-matrix[2][1] * 4 * ONE);
 	m_camera.view.m[2][2] = (int16)(-matrix[2][2] * 4 * ONE);
 
-	int32 TR2vx = (int32)(-(*(oldCameraData + 1)) * m_camera.view.m[0][0] - (*(oldCameraData + 2)) * m_camera.view.m[0][1] - (*(oldCameraData + 3)) * m_camera.view.m[0][2]);
-	int32 TR2vy = (int32)(-(*(oldCameraData + 1)) * m_camera.view.m[1][0] - (*(oldCameraData + 2)) * m_camera.view.m[1][1] - (*(oldCameraData + 3)) * m_camera.view.m[1][2]);
-	int32 TR2vz = (int32)(-(*(oldCameraData + 1)) * m_camera.view.m[2][0] - (*(oldCameraData + 2)) * m_camera.view.m[2][1] - (*(oldCameraData + 3)) * m_camera.view.m[2][2]);
+	int32 TR2vx = (int32)(-(READ_LE_FLOAT32(oldCameraData + 1)) * m_camera.view.m[0][0] - (READ_LE_FLOAT32(oldCameraData + 2)) * m_camera.view.m[0][1] - (READ_LE_FLOAT32(oldCameraData + 3)) * m_camera.view.m[0][2]);
+	int32 TR2vy = (int32)(-(READ_LE_FLOAT32(oldCameraData + 1)) * m_camera.view.m[1][0] - (READ_LE_FLOAT32(oldCameraData + 2)) * m_camera.view.m[1][1] - (READ_LE_FLOAT32(oldCameraData + 3)) * m_camera.view.m[1][2]);
+	int32 TR2vz = (int32)(-(READ_LE_FLOAT32(oldCameraData + 1)) * m_camera.view.m[2][0] - (READ_LE_FLOAT32(oldCameraData + 2)) * m_camera.view.m[2][1] - (READ_LE_FLOAT32(oldCameraData + 3)) * m_camera.view.m[2][2]);
 
 	// Multiply the translation by rotation matrix
 	// to get into how PSX does the projection
@@ -1810,7 +1810,7 @@ void _set::HackMakeCamera() {
 	m_camera.view.t[1] = TR2vy >> 12;
 	m_camera.view.t[2] = TR2vz >> 12;
 
-	m_camera.focLen = (uint16)((*(oldCameraData + 13)) * -4.0);
+	m_camera.focLen = (uint16)((READ_LE_FLOAT32(oldCameraData + 13)) * -4.0);
 
 	gte_SetRotMatrix(&m_camera.view);
 	gte_SetTransMatrix(&m_camera.view);
