@@ -168,7 +168,7 @@ Bone_Frame *RabAPIObject::GetFrame(RabAPI *rab, const int32 f) {
 #ifdef SCUMM_LITTLE_ENDIAN
 						tempDst[t] = tempSrc[t];
 #else
-						tempDst[t] = tempSrc[dataSize - t - 1];
+						tempDst[t] = tempSrc[sizeof(CompTriplet) - t - 1];
 #endif
 					}
 					data += ALL_ANGLES_32_BYTE_SIZE;
@@ -189,7 +189,7 @@ Bone_Frame *RabAPIObject::GetFrame(RabAPI *rab, const int32 f) {
 #ifdef SCUMM_LITTLE_ENDIAN
 						tempDst[t] = tempSrc[t];
 #else
-						tempDst[t] = tempSrc[dataSize - t - 1];
+						tempDst[t] = tempSrc[sizeof(CompTriplet) - t - 1];
 #endif
 					}
 					data += NONZERO_ANGLES_32_BYTE_SIZE;
