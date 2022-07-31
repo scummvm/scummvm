@@ -44,7 +44,7 @@ void ImmortalEngine::restartLogic() {
 	_gameFlags = kSavedNone;
 
 	// Here's where the majority of the game actually gets initialized
-	//miscInit();
+	miscInit();
 	//qarrayInit();
 	//cycInit();		<-- room.initCycles()
 	//fsetInit();		<-- room.initTorches()
@@ -105,11 +105,8 @@ void ImmortalEngine::logic() {
 				textPrint(kStrYouWin);
 
 			} else {
-				//makeCertificate();
-				//printCertificate();
-				if (_level == 0) {
-					//manual2();		// <- debug?
-				}
+				makeCertificate();
+				printCertificate();
 				_promoting = 1;
 			}
 			_restart = true;
@@ -400,6 +397,93 @@ bool ImmortalEngine::fromOldGame() {
 	return true;
 }
 
+void ImmortalEngine::makeCertificate() {
+	/* The code for this bit doesn't really make sense,
+	 * so I will write it as it is, but I am noting here
+	 * that it should be:
+	 * jsr monst_getGold : ... sta certificate+certgoldhi
+	 * jsr monst_getQuickness : sta certificate+certquickness
+	 * instead of getquickness : get gold : sta gold : sta quickness
+	 * also no need to ldx 0 since this is player only ram right?
+	 */
+
+	//uint8 q = room._playerQuickness
+	//uint16 g = room._playerGold
+	uint16 g = 0;
+
+	_certificate[kCertGoldLo] = g & 0xf;
+	_certificate[kCertGoldHi] = g >> 4;
+	_certificate[kCertQuickness] = g >> 4; // Should actually be = q, but this is what the game does
+
+	_certificate[kCertHits] = 0; //room._playerHits
+	_certificate[kCertLoGameFlags] = getGameFlags() & 0xf;
+	_certificate[kCertLoGameFlags] = getGameFlags() >> 4;
+
+	_certificate[kCertLevel] = _level + 1;
+	_certificate[kCertInvLo] = 0;
+	_certificate[kCertInvHi] = 0;
+
+	if (true/*room.monster[kPlayerID].hasObject(waterType)*/) {
+		_certificate[kCertInvHi] |= 1;
+	}
+
+	if (true/*room.monster[kPlayerID].hasObject(dunRingType)*/) {
+		_certificate[kCertInvHi] |= 2;
+	}
+
+	if (true/*room.monster[kPlayerID].hasObject(wormFoodType)*/) {
+		_certificate[kCertInvHi] |= 4;
+	}
+
+	if (true/*room.monster[kPlayerID].hasObject(coinType)*/) {
+		_certificate[kCertInvHi] |= 8;
+	}
+
+	// The lo byte of the inventory is used for items that only exist on a specific level, and are removed after
+	switch (_certificate[kCertLevel]) {
+		case 1:
+			if (true/*room.monster[kPlayerID].hasObject(sporesType)*/) {
+				_certificate[kCertInvLo] |= 2;
+			}
+
+			if (true/*room.monster[kPlayerID].hasObject(wowCharmType)*/) {
+				_certificate[kCertInvLo] |= 4;
+			}
+
+		case 3:
+			if (true/*room.monster[kPlayerID].hasObject(faceRingType)*/) {
+				_certificate[kCertInvLo] |= 1;
+			}
+
+		case 4:
+			if (true/*room.monster[kPlayerID].hasObject(coffeeType)*/) {
+				_certificate[kCertInvLo] |= 2;
+			}
+
+		case 7:
+			if (true/*room.monster[kPlayerID].hasObject(bronzeType)*/) {
+				_certificate[kCertInvLo] |= 1;
+			}
+
+			if (true/*room.monster[kPlayerID].hasObject(tractorType)*/) {
+				_certificate[kCertInvLo] |= 2;
+			}
+
+			if (true/*room.monster[kPlayerID].hasObject(antiType)*/) {
+				_certificate[kCertInvLo] |= 4;
+			}
+
+		default:
+			_lastCertLen = 13;
+			uint8 checksum[4];
+			calcCheckSum(_lastCertLen, checksum);
+			_certificate[0] = checksum[0];
+			_certificate[1] = checksum[1];
+			_certificate[2] = checksum[2];
+			_certificate[3] = checksum[3];
+	}
+}
+
 void ImmortalEngine::calcCheckSum(int l, uint8 checksum[]) {
 	checksum[0] = 4;
 	checksum[1] = 0xa5;
@@ -434,10 +518,8 @@ bool ImmortalEngine::getCertificate() {
 		} else if (k == 0x7f) {
 			// The input was a backspace
 			if (certLen != 0) {
-				// Length is one smaller now
-				// move the drawing position back and reprint the '-' char
-				certLen--;
-				backspace();
+				certLen--;				// Length is one smaller now
+				backspace();			// move the drawing position back and reprint the '-' char
 				backspace();
 				printChr('-');
 			}			
