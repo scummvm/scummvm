@@ -54,8 +54,8 @@ void _remora_sprite::InitialiseFromBitmapName(const char *pcBitmapName, const ch
 	// made more sophisticated to deal with sprites that change in size as they are played.
 	psSprite = (_pxSprite *)((byte *)psBitmap + FROM_LE_32(psBitmap->sprite_offsets[0]));
 
-	m_nHalfSpriteWidth = psSprite->width / 2;
-	m_nHalfSpriteHeight = psSprite->height / 2;
+	m_nHalfSpriteWidth = FROM_LE_32(psSprite->width) / 2;
+	m_nHalfSpriteHeight = FROM_LE_32(psSprite->height) / 2;
 
 	// Frame PC starts at 0.
 	m_nFramePC = 0;

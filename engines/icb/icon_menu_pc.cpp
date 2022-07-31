@@ -99,8 +99,8 @@ void _icon_menu::Activate(const _icon_list *pIconList, const _icon_menu_duplicat
 		_pxBitmap *psIconBitmap = (_pxBitmap *)rs_icons->Res_open(strFullIconName.c_str(), nFullIconNameHash, m_pcIconCluster, m_nIconClusterHash);
 
 		// Check the schema is correct.
-		if (psIconBitmap->schema != PC_BITMAP_SCHEMA)
-			Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strFullIconName.c_str(), PC_BITMAP_SCHEMA, psIconBitmap->schema);
+		if (FROM_LE_32(psIconBitmap->schema) != PC_BITMAP_SCHEMA)
+			Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strFullIconName.c_str(), PC_BITMAP_SCHEMA, FROM_LE_32(psIconBitmap->schema));
 
 		// Create a surface for the icon
 		m_pnIconSurfaceIDs[i] = surface_manager->Create_new_surface(strIconName.c_str(), ICON_X_SIZE, ICON_Y_SIZE, EITHER);
@@ -180,8 +180,8 @@ void _icon_menu::ReActivate() {
 		_pxBitmap *psIconBitmap = (_pxBitmap *)rs_icons->Res_open(strFullIconName.c_str(), nFullIconNameHash, m_pcIconCluster, m_nIconClusterHash);
 
 		// Check the schema is correct.
-		if (psIconBitmap->schema != PC_BITMAP_SCHEMA)
-			Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strFullIconName.c_str(), PC_BITMAP_SCHEMA, psIconBitmap->schema);
+		if (FROM_LE_32(psIconBitmap->schema) != PC_BITMAP_SCHEMA)
+			Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strFullIconName.c_str(), PC_BITMAP_SCHEMA, FROM_LE_32(psIconBitmap->schema));
 
 		// Create a surface for the icon
 		m_pnIconSurfaceIDs[i] = surface_manager->Create_new_surface("Icon", ICON_X_SIZE, ICON_Y_SIZE, EITHER);
@@ -430,8 +430,8 @@ void _icon_menu::SetupAdding(const char *pcIconName, uint32 &nSurfaceID) {
 	_pxBitmap *psIconBitmap = (_pxBitmap *)rs_icons->Res_open(strFullIconName.c_str(), nFullIconNameHash, m_pcIconCluster, m_nIconClusterHash);
 
 	// Check the schema is correct.
-	if (psIconBitmap->schema != PC_BITMAP_SCHEMA)
-		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strFullIconName.c_str(), PC_BITMAP_SCHEMA, psIconBitmap->schema);
+	if (FROM_LE_32(psIconBitmap->schema) != PC_BITMAP_SCHEMA)
+		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strFullIconName.c_str(), PC_BITMAP_SCHEMA, FROM_LE_32(psIconBitmap->schema));
 
 	// Create a surface for the clips icon.
 	nSurfaceID = surface_manager->Create_new_surface(pcIconName, ICON_X_SIZE, ICON_Y_SIZE, EITHER);
@@ -578,8 +578,8 @@ void _icon_menu::SetUpOffScreenArrows() {
 
 		_pxBitmap *psIconBitmap = (_pxBitmap *)rs_icons->Res_open(strLeftArrowIconName.c_str(), nFullIconNameHash, m_pcIconCluster, m_nIconClusterHash);
 
-		if (psIconBitmap->schema != PC_BITMAP_SCHEMA)
-			Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strLeftArrowIconName.c_str(), PC_BITMAP_SCHEMA, psIconBitmap->schema);
+		if (FROM_LE_32(psIconBitmap->schema) != PC_BITMAP_SCHEMA)
+			Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strLeftArrowIconName.c_str(), PC_BITMAP_SCHEMA, FROM_LE_32(psIconBitmap->schema));
 
 		// Draw the two frames onto their respective surfaces.
 		SpriteXYFrameDraw(pyLeftBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
@@ -610,8 +610,8 @@ void _icon_menu::SetUpOffScreenArrows() {
 
 		_pxBitmap *psIconBitmap = (_pxBitmap *)rs_icons->Res_open(strRightArrowIconName.c_str(), nFullIconNameHash, m_pcIconCluster, m_nIconClusterHash);
 
-		if (psIconBitmap->schema != PC_BITMAP_SCHEMA)
-			Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strRightArrowIconName.c_str(), PC_BITMAP_SCHEMA, psIconBitmap->schema);
+		if (FROM_LE_32(psIconBitmap->schema) != PC_BITMAP_SCHEMA)
+			Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strRightArrowIconName.c_str(), PC_BITMAP_SCHEMA, FROM_LE_32(psIconBitmap->schema));
 
 		// Draw the two frames onto their respective surfaces.
 		SpriteXYFrameDraw(pyRightBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
