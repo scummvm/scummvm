@@ -194,9 +194,6 @@ public:
 	/** Cancels running sync. */
 	virtual void cancelSync();
 
-	/** Sets SavesSyncRequest's target to given CommandReceiver. */
-	virtual void setSyncTarget(GUI::CommandReceiver *target);
-
 protected:
 	/** Finishes the sync. Shows an OSD message. */
 	virtual void savesSyncDefaultCallback(BoolResponse response);

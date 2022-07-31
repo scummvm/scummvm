@@ -260,9 +260,6 @@ public:
 	/** Cancels running sync. */
 	void cancelSync() const;
 
-	/** Sets SavesSyncRequest's target to given CommandReceiver. */
-	void setSyncTarget(GUI::CommandReceiver *target) const;
-
 	/** Shows a "cloud disabled" icon for three seconds. */
 	void showCloudDisabledIcon();
 

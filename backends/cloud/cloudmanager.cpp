@@ -441,12 +441,6 @@ void CloudManager::cancelSync() const {
 		storage->cancelSync();
 }
 
-void CloudManager::setSyncTarget(GUI::CommandReceiver *target) const {
-	Storage *storage = getCurrentStorage();
-	if (storage)
-		storage->setSyncTarget(target);
-}
-
 void CloudManager::showCloudDisabledIcon() {
 	_icon.show(CloudIcon::kDisabled, 3000);
 }

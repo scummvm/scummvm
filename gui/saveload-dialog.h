@@ -30,21 +30,21 @@
 namespace GUI {
 
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
-enum SaveLoadCloudSyncProgress {
-	kSavesSyncProgressCmd = 'SSPR',
-	kSavesSyncEndedCmd = 'SSEN'
-};
-
 class SaveLoadCloudSyncProgressDialog : public Dialog { //protected?
 	StaticTextWidget *_label, *_percentLabel;
 	SliderWidget *_progressBar;
 	bool _close;
+	int _pollFrame;
+
 public:
 	SaveLoadCloudSyncProgressDialog(bool canRunInBackground);
 	~SaveLoadCloudSyncProgressDialog() override;
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleTickle() override;
+
+private:
+	void pollCloudMan();
 };
 #endif
 
@@ -130,6 +130,14 @@ protected:
 	void addChooserButtons();
 	ButtonWidget *createSwitchButton(const Common::String &name, const Common::U32String &desc, const Common::U32String &tooltip, const char *image, uint32 cmd = 0);
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
+
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+	int _pollFrame;
+	bool _didUpdateAfterSync;
+
+	/** If CloudMan is syncing, this will refresh the list of saves. */
+	void pollCloudMan();
+#endif
 };
 
 class SaveLoadChooserSimple : public SaveLoadChooserDialog {
