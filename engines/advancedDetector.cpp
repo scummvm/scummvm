@@ -860,7 +860,7 @@ void AdvancedMetaEngineDetection::preprocessDescriptions() {
 					depth++;
 				}
 
-				if (depth > _maxScanDepth) {
+				if (depth > int(_maxScanDepth)) {
 					_maxScanDepth = depth;
 
 					debugC(4, kDebugGlobalDetection, "  Increased scan depth to %d", _maxScanDepth);
