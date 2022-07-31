@@ -487,7 +487,12 @@ void Design::drawBitmap(Graphics::ManagedSurface *surface, Common::SeekableReadS
 		}
 		ff.fill();
 
-		for (y = 0; y < h && y1 + y < surface->h; y++) {
+		y = 0;
+
+		if (y1 < 0)
+			y = -y1;
+
+		for (; y < h && y1 + y < surface->h; y++) {
 			byte *src = (byte *)tmp.getBasePtr(0, y);
 			byte *dst = (byte *)surface->getBasePtr(x1, y1 + y);
 			for (x = 0; x < w; x++) {
