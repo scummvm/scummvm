@@ -421,25 +421,25 @@ void DrawFrame(const int32 frame) {
 	ConvertRAP(mesh);
 
 	// Some error checking
-	if (*(int32 *)mesh->id != *(int32 *)const_cast<char *>(RAP_API_ID)) {
+	if (READ_LE_INT32((int32 *)mesh->id) != *(int32 *)const_cast<char *>(RAP_API_ID)) {
 		Fatal_error("Wrong rap id value file %d api %d file:%s", mesh->id, RAP_API_ID, mesh_name);
 	}
-	if (mesh->schema != RAP_API_SCHEMA) {
+	if (FROM_LE_32(mesh->schema) != RAP_API_SCHEMA) {
 		Fatal_error("Wrong rap schema value file %d rap_api %d file:%s", mesh->schema, RAP_API_SCHEMA, mesh_name);
 	}
-	if (*(int32 *)pose->id != *(int32 *)const_cast<char *>(RAP_API_ID)) {
+	if (READ_LE_INT32((int32 *)pose->id) != *(int32 *)const_cast<char *>(RAP_API_ID)) {
 		Fatal_error("Wrong rap id value file %d api %d file:%s", pose->id, RAP_API_ID, pose_name);
 	}
-	if (pose->schema != RAP_API_SCHEMA) {
+	if (FROM_LE_32(pose->schema) != RAP_API_SCHEMA) {
 		Fatal_error("Wrong rap schema value file %d rap_api %d file:%s", pose->schema, RAP_API_SCHEMA, pose_name);
 	}
-	if (*(int32 *)rab->id != *(int32 *)const_cast<char *>(RAB_API_ID)) {
+	if (READ_LE_INT32((int32 *)rab->id) != *(int32 *)const_cast<char *>(RAB_API_ID)) {
 		Fatal_error("Wrong rab id value file %d rab_api %d file:%s", rab->id, RAB_API_ID, bone_name);
 	}
-	if (rab->schema != RAB_API_SCHEMA) {
+	if (FROM_LE_32(rab->schema) != RAB_API_SCHEMA) {
 		Fatal_error("Wrong rab schema value file %d rab_api %d file:%s", rab->schema, RAB_API_SCHEMA, bone_name);
 	}
-	if (mesh->nBones != rab->nBones) {
+	if (FROM_LE_16(mesh->nBones) != rab->nBones) {
 		Fatal_error("mesh nBones != animation nBones %d != %d", mesh->nBones, rab->nBones);
 	}
 

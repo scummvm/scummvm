@@ -47,7 +47,7 @@ _cdtEntry *FetchCdtEntry(uint8 *animFile, uint16 frameNo) {
 
 _frameHeader *FetchFrameHeader(uint8 *animFile, uint16 frameNo) {
 	// required address = (address of the start of the anim header) + frameOffset
-	return (_frameHeader *)(animFile + sizeof(_standardHeader) + (FetchCdtEntry(animFile, frameNo)->frameOffset));
+	return (_frameHeader *)(animFile + sizeof(_standardHeader) + FROM_LE_32(FetchCdtEntry(animFile, frameNo)->frameOffset));
 }
 
 } // End of namespace ICB
