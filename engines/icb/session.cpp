@@ -24,6 +24,7 @@
  *
  */
 
+#include "engines/icb/icb.h"
 #include "engines/icb/p4.h"
 #include "engines/icb/debug.h"
 #include "engines/icb/p4_generic.h"
@@ -483,10 +484,16 @@ void _game_session::Init_objects() {
 		// only do this at start of mission - never again afterward - i.e. not when returning to first session from another
 		uint32 script_hash;
 
-		id = LinkedDataObject::Fetch_item_number_by_name(objects, "player"); // returns -1 if object not in existence
+		Common::String itemName;
+		if (g_icb->getGameType() == GType_ICB)
+			itemName = "player";
+		else
+			itemName = "scenes";
+		id = LinkedDataObject::Fetch_item_number_by_name(objects, itemName.c_str()); // returns -1 if object not in existence
 		if (id == 0xffffffff)
-			Fatal_error("Init_objects cant find 'player'");
-		script_hash = HashString("player::globals");
+			Fatal_error("Init_objects cant find '%s'", itemName.c_str());
+		Common::String hashString = itemName + "::globals";
+		script_hash = HashString(hashString.c_str());
 		const char *pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, script_hash);
 		if (pc) {
 			object = (CGame *)LinkedDataObject::Fetch_item_by_number(objects, id);
