@@ -214,13 +214,6 @@ void Storage::cancelSync() {
 	_runningRequestsMutex.unlock();
 }
 
-void Storage::setSyncTarget(GUI::CommandReceiver *target) {
-	_runningRequestsMutex.lock();
-	if (_savesSyncRequest)
-		_savesSyncRequest->setTarget(target);
-	_runningRequestsMutex.unlock();
-}
-
 void Storage::savesSyncDefaultCallback(BoolResponse response) {
 	_runningRequestsMutex.lock();
 	_savesSyncRequest = nullptr;

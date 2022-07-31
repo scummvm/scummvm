@@ -34,7 +34,7 @@
 namespace Cloud {
 
 SavesSyncRequest::SavesSyncRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb):
-	Request(nullptr, ecb), CommandSender(nullptr), _storage(storage), _boolCallback(callback),
+	Request(nullptr, ecb), _storage(storage), _boolCallback(callback),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
@@ -269,15 +269,12 @@ void SavesSyncRequest::directoryCreatedErrorCallback(Networking::ErrorResponse e
 void SavesSyncRequest::downloadNextFile() {
 	if (_filesToDownload.empty()) {
 		_currentDownloadingFile = StorageFile("", 0, 0, false); //so getFilesToDownload() would return an empty array
-		sendCommand(GUI::kSavesSyncEndedCmd, 0);
 		uploadNextFile();
 		return;
 	}
 
 	_currentDownloadingFile = _filesToDownload.back();
 	_filesToDownload.pop_back();
-
-	sendCommand(GUI::kSavesSyncProgressCmd, (int)(getDownloadingProgress() * 100));
 
 	debug(9, "\nSavesSyncRequest: downloading %s (%d %%)", _currentDownloadingFile.name().c_str(), (int)(getProgress() * 100));
 	_workingRequest = _storage->downloadById(

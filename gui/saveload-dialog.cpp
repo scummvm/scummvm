@@ -50,7 +50,7 @@ enum {
 	kBackgroundSyncCmd = 'PDBS'
 };
 
-SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(bool canRunInBackground): Dialog("SaveLoadCloudSyncProgress"), _close(false) {
+SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(bool canRunInBackground): Dialog("SaveLoadCloudSyncProgress"), _close(false), _pollFrame(0) {
 	_label = new StaticTextWidget(this, "SaveLoadCloudSyncProgress.TitleText", _("Downloading saves..."));
 	uint32 progress = (uint32)(100 * CloudMan.getSyncDownloadingProgress());
 	_progressBar = new SliderWidget(this, "SaveLoadCloudSyncProgress.ProgressBar");
@@ -66,23 +66,15 @@ SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(bool canRunInBa
 }
 
 SaveLoadCloudSyncProgressDialog::~SaveLoadCloudSyncProgressDialog() {
-	CloudMan.setSyncTarget(nullptr); //not that dialog, at least
 }
 
 void SaveLoadCloudSyncProgressDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch(cmd) {
-	case kSavesSyncProgressCmd:
-		_percentLabel->setLabel(Common::String::format("%u%%", data));
-		_progressBar->setValue(data);
-		_progressBar->markAsDirty();
-		break;
-
 	case kCancelSyncCmd:
 		setResult(kCancelSyncCmd);
 		close();
 		break;
 
-	case kSavesSyncEndedCmd:
 	case kBackgroundSyncCmd:
 		_close = true;
 		break;
@@ -95,12 +87,30 @@ void SaveLoadCloudSyncProgressDialog::handleCommand(CommandSender *sender, uint3
 }
 
 void SaveLoadCloudSyncProgressDialog::handleTickle() {
+	pollCloudMan();
+
 	if (_close) {
 		setResult(kBackgroundSyncCmd);
 		close();
 	}
 
 	Dialog::handleTickle();
+}
+
+void SaveLoadCloudSyncProgressDialog::pollCloudMan() {
+	_pollFrame = (_pollFrame + 1) % 60;
+	if (_pollFrame != 0) return;
+
+	const bool syncing = CloudMan.isSyncing();
+	const uint32 progress = (uint32)(100 * CloudMan.getSyncDownloadingProgress());
+
+	if (!syncing || progress == 100) {
+		_close = true;
+	}
+
+	_percentLabel->setLabel(Common::String::format("%u %%", progress));
+	_progressBar->setValue(progress);
+	_progressBar->markAsDirty();
 }
 #endif
 
@@ -142,6 +152,9 @@ SaveLoadChooserDialog::SaveLoadChooserDialog(const Common::String &dialogName, c
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	, _listButton(nullptr), _gridButton(nullptr)
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+	, _pollFrame(0), _didUpdateAfterSync(true)
+#endif
 	{
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	addChooserButtons();
@@ -155,6 +168,9 @@ SaveLoadChooserDialog::SaveLoadChooserDialog(int x, int y, int w, int h, const b
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	, _listButton(nullptr), _gridButton(nullptr)
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+	, _pollFrame(0), _didUpdateAfterSync(true)
+#endif
 	{
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	addChooserButtons();
@@ -162,9 +178,6 @@ SaveLoadChooserDialog::SaveLoadChooserDialog(int x, int y, int w, int h, const b
 }
 
 SaveLoadChooserDialog::~SaveLoadChooserDialog() {
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
-	CloudMan.setSyncTarget(nullptr); //not that dialog, at least
-#endif
 }
 
 void SaveLoadChooserDialog::open() {
@@ -178,9 +191,6 @@ void SaveLoadChooserDialog::open() {
 }
 
 void SaveLoadChooserDialog::close() {
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
-	CloudMan.setSyncTarget(nullptr); //not that dialog, at least
-#endif
 	Dialog::close();
 }
 
@@ -220,13 +230,6 @@ void SaveLoadChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uin
 	}
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
-	if (cmd == kSavesSyncProgressCmd || cmd == kSavesSyncEndedCmd) {
-		//this dialog only gets these commands if the progress dialog was shown and user clicked "run in background"
-		return updateSaveList();
-	}
-#endif
-
 	return Dialog::handleCommand(sender, cmd, data);
 }
 
@@ -237,8 +240,6 @@ void SaveLoadChooserDialog::runSaveSync(bool hasSavepathOverride) {
 			CloudMan.showCloudDisabledIcon();
 		} else {
 			Cloud::SavesSyncRequest *request = CloudMan.syncSaves();
-			if (request)
-				request->setTarget(this);
 		}
 	}
 }
@@ -251,18 +252,17 @@ void SaveLoadChooserDialog::handleTickle() {
 		if (!files.empty()) {
 			{
 				SaveLoadCloudSyncProgressDialog dialog(_metaEngine ? _metaEngine->hasFeature(MetaEngine::kSimpleSavesNames) : false);
-				CloudMan.setSyncTarget(&dialog);
 				int result = dialog.runModal();
 				if (result == kCancelSyncCmd) {
 					CloudMan.cancelSync();
 				}
 			}
-			//dialog changes syncTarget to nullptr after that }
-			CloudMan.setSyncTarget(this);
 			_dialogWasShown = true;
 			updateSaveList();
 		}
 	}
+
+	pollCloudMan();
 #endif
 	Dialog::handleTickle();
 }
@@ -375,6 +375,29 @@ ButtonWidget *SaveLoadChooserDialog::createSwitchButton(const Common::String &na
 	return button;
 }
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
+
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+void SaveLoadChooserDialog::pollCloudMan() {
+	_pollFrame = (_pollFrame + 1) % 60;
+	if (_pollFrame != 0) return;
+
+	const bool syncing = CloudMan.isSyncing();
+	const uint32 progress = (uint32)(100 * CloudMan.getSyncDownloadingProgress());
+
+	bool update = false;
+	if (syncing && progress < 100) {
+		update = true;
+		_didUpdateAfterSync = false;
+	} else {
+		if (!_didUpdateAfterSync) { // do one more update when sync is over
+			update = true;
+			_didUpdateAfterSync = true;
+		}
+	}
+
+	if (update) updateSaveList();
+}
+#endif
 
 // SaveLoadChooserSimple implementation
 
