@@ -847,7 +847,7 @@ void AdvancedMetaEngineDetection::preprocessDescriptions() {
 
 				Common::StringTokenizer tok(fileDesc->fileName, "/");
 
-				int depth = 0;
+				uint32 depth = 0;
 
 				while (!tok.empty()) {
 					Common::String component = tok.nextToken();
@@ -860,7 +860,7 @@ void AdvancedMetaEngineDetection::preprocessDescriptions() {
 					depth++;
 				}
 
-				if (depth > int(_maxScanDepth)) {
+				if (depth > _maxScanDepth) {
 					_maxScanDepth = depth;
 
 					debugC(4, kDebugGlobalDetection, "  Increased scan depth to %d", _maxScanDepth);
