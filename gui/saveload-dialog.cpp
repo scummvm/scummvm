@@ -109,7 +109,11 @@ void SaveLoadCloudSyncProgressDialog::pollCloudMan() {
 		_close = true;
 	}
 
-	_percentLabel->setLabel(Common::String::format("%u %%", progress));
+	Common::String downloaded, downloadedUnits, total, totalUnits;
+	downloaded = getHumanReadableBytes(CloudMan.getSyncDownloadBytesNumber(), downloadedUnits);
+	total = getHumanReadableBytes(CloudMan.getSyncDownloadTotalBytesNumber(), totalUnits);
+
+	_percentLabel->setLabel(Common::String::format("%u %% (%s %S / %s %S)", progress, downloaded.c_str(), _(downloadedUnits).c_str(), total.c_str(), _(totalUnits).c_str()));
 	_progressBar->setValue(progress);
 	_progressBar->markAsDirty();
 

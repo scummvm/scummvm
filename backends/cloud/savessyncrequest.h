@@ -41,6 +41,7 @@ class SavesSyncRequest: public Networking::Request {
 	bool _ignoreCallback;
 	uint32 _totalFilesToHandle;
 	Common::String _date;
+	uint32 _bytesToDownload, _bytesDownloaded;
 
 	void start();
 	void directoryListedCallback(Storage::ListDirectoryResponse response);
@@ -71,6 +72,9 @@ public:
 
 	/** Returns an array of saves names which are not downloaded yet. */
 	Common::Array<Common::String> getFilesToDownload();
+
+	uint32 getDownloadedBytes() const;
+	uint32 getBytesToDownload() const;
 };
 
 } // End of namespace Cloud
