@@ -1925,20 +1925,46 @@ void OptionsManager::MoveSelected(bool8 _down_) {
 			currentlySelected--;
 
 		if (g_px->game_completed) {
-			if (currentlySelected < 0)
-				m_M_EXTRA_selected = (M_EXTRA_CHOICES)(NUMBER_OF_EXTRA_CHOICES - 1);
-			else
-				m_M_EXTRA_selected = (M_EXTRA_CHOICES)(currentlySelected % NUMBER_OF_EXTRA_CHOICES);
-		} else {
-			if (currentlySelected < 0)
-				m_M_EXTRA_selected = (M_EXTRA_CHOICES)(NUMBER_OF_EXTRA_CHOICES - 1);
-			else {
-				if (_down_ && currentlySelected == SLIDESHOW)
-					m_M_EXTRA_selected = CREDITS;
-				else if (!_down_ && currentlySelected == PROFILES)
-					m_M_EXTRA_selected = MOVIES;
+			if (g_icb->getGameType() == GType_ICB) {
+				if (currentlySelected < 0)
+					m_M_EXTRA_selected = (M_EXTRA_CHOICES)(NUMBER_OF_EXTRA_CHOICES - 1);
 				else
 					m_M_EXTRA_selected = (M_EXTRA_CHOICES)(currentlySelected % NUMBER_OF_EXTRA_CHOICES);
+			} else {
+				if (currentlySelected < 0)
+					m_M_EXTRA_selected = (M_EXTRA_CHOICES)(NUMBER_OF_EXTRA_CHOICES - 1);
+				else {
+					if (_down_ && currentlySelected == PLAYSELECT)
+						m_M_EXTRA_selected = CREDITS;
+					else if (!_down_ && currentlySelected == PROFILES)
+						m_M_EXTRA_selected = SLIDESHOW;
+					else
+						m_M_EXTRA_selected = (M_EXTRA_CHOICES)(currentlySelected % NUMBER_OF_EXTRA_CHOICES);
+				}
+			}
+		} else {
+			if (g_icb->getGameType() == GType_ICB) {
+				if (currentlySelected < 0)
+					m_M_EXTRA_selected = CREDITS;
+				else {
+					if (_down_ && currentlySelected == SLIDESHOW)
+						m_M_EXTRA_selected = CREDITS;
+					else if (!_down_ && currentlySelected == PROFILES)
+						m_M_EXTRA_selected = MOVIES;
+					else
+					m_M_EXTRA_selected = (M_EXTRA_CHOICES)(currentlySelected % NUMBER_OF_EXTRA_CHOICES);
+				}
+			} else {
+				if (currentlySelected < 0)
+					m_M_EXTRA_selected = CREDITS;
+				else {
+					if (_down_ && currentlySelected == SLIDESHOW)
+						m_M_EXTRA_selected = CREDITS;
+					else if (!_down_ && currentlySelected == PROFILES)
+						m_M_EXTRA_selected = SLIDESHOW;
+					else
+						m_M_EXTRA_selected = (M_EXTRA_CHOICES)(currentlySelected % NUMBER_OF_EXTRA_CHOICES);
+				}
 			}
 		}
 
