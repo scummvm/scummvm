@@ -123,6 +123,8 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "mTropolis (C) mFactory/Quark";
 	}
+
+	bool canPlayUnknownVariants() const override { return true; }
 };
 
 REGISTER_PLUGIN_STATIC(MTROPOLIS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, MTropolisMetaEngineDetection);
