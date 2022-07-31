@@ -9,7 +9,18 @@ MODULE_OBJS = \
 	sprites.o \
 	compression.o \
 	misc.o \
-	cycle.o
+	cycle.o \
+	drawChr.o
+
+# 	level.o \
+#	universe.o \
+#	room.o \
+#	object.o \
+#	door.o \
+#	flameset.o \
+#	bullet.o \
+#	monster.o \
+#	motives.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_IMMORTAL), DYNAMIC_PLUGIN)
