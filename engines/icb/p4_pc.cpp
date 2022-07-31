@@ -37,6 +37,7 @@
 #include "engines/icb/mission.h"
 #include "engines/icb/cluster_manager_pc.h"
 #include "engines/icb/configfile.h"
+#include "engines/icb/icb.h"
 
 #include "common/str.h"
 #include "common/config-manager.h"
@@ -99,7 +100,12 @@ void ReadConfigFromIniFile() {
 	char configFile[1024];
 	uint32 temp;
 
-	sprintf(configFile, CONFIG_INI_FILENAME);
+	if (g_icb->getGameType() == GType_ICB)
+		sprintf(configFile, "engine\\icb.ini");
+	else if (g_icb->getGameType() == GType_ELDORADO)
+		sprintf(configFile, "engine\\eldorado.ini");
+	else
+		assert(false);
 
 	ConfigFile config;
 	pxString filename = configFile;

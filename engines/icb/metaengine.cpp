@@ -40,7 +40,8 @@ public:
 };
 
 Common::Error IcbMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new IcbEngine(syst, desc);
+	const IcbGameDescription *gd = (const IcbGameDescription *)desc;
+	*engine = new IcbEngine(syst, gd);
 	return Common::kNoError;
 }
 
@@ -49,6 +50,8 @@ Common::KeymapArray IcbMetaEngine::initKeymaps(const char *target) const {
 
 	if (gameId == "icb") {
 		return ICB::IcbEngine::initKeymapsIcb(target);
+	} else if (gameId == "eldorado") {
+		return ICB::IcbEngine::initKeymapsEldorado(target);
 	}
 
 	return AdvancedMetaEngine::initKeymaps(target);

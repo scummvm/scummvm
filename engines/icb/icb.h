@@ -30,24 +30,30 @@
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
 
+#include "engines/icb/detection.h"
+
 #include "common/random.h"
 
 namespace ICB {
 
 class IcbEngine : public Engine {
 public:
-	IcbEngine(OSystem *syst, const ADGameDescription *gameDesc);
+	IcbEngine(OSystem *syst, const IcbGameDescription *gameDescIcb);
 	virtual ~IcbEngine();
 
 	Common::RandomSource *getRandomSource() { return _randomSource; }
 	static Common::Array<Common::Keymap *> initKeymapsIcb(const char *target);
+	static Common::Array<Common::Keymap *> initKeymapsEldorado(const char *target);
 	bool hasFeature(EngineFeature f) const override;
+	IcbGameType getGameType() { return _gameType; }
 
 protected:
 	// Engine APIs
 	Common::Error run() override;
 
 private:
+	IcbGameType _gameType;
+
 	void initGfx(bool hwAccel, bool fullscreen);
 	void mainLoop();
 	Common::RandomSource *_randomSource;

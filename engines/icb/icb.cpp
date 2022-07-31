@@ -38,18 +38,19 @@
 
 #include "audio/mixer.h"
 
-
 namespace ICB {
 
 IcbEngine *g_icb;
 
-IcbEngine::IcbEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+IcbEngine::IcbEngine(OSystem *syst, const IcbGameDescription *gameDesc) : Engine(syst) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	_randomSource = new Common::RandomSource("icb");
 	g_icb = this;
+	_gameDescription = &gameDesc->desc;
+	_gameType = gameDesc->gameType;
 	(void)_gameDescription; // silence warning
 }
 
@@ -107,6 +108,66 @@ Common::KeymapArray IcbEngine::initKeymapsIcb(const char *target) {
 	act = new Action("BREM", _("Remora"));
 	act->setKeyEvent(KeyState(KEYCODE_r));
 	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	act = new Action("BCRU", _("Crouch"));
+	act->setKeyEvent(KeyState(KEYCODE_x));
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeyMap->addAction(act);
+
+	act = new Action("BSID", _("Side Step"));
+	act->setKeyEvent(KeyState(KEYCODE_LSHIFT));
+	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("BRUN", _("Run"));
+	act->setKeyEvent(KeyState(KEYCODE_z));
+	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("BPAS", _("Pause"));
+	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_BACK");
+	engineKeyMap->addAction(act);
+
+	return Keymap::arrayOf(engineKeyMap);
+}
+
+Common::KeymapArray IcbEngine::initKeymapsEldorado(const char *target) {
+	using namespace Common;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "eldorado", "The Road to El Dorado");
+	Action *act;
+
+	act = new Action(kStandardActionMoveUp, _("Up"));
+	act->setKeyEvent(KEYCODE_UP);
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveDown, _("Down"));
+	act->setKeyEvent(KEYCODE_DOWN);
+	act->addDefaultInputMapping("JOY_DOWN");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveLeft, _("Left"));
+	act->setKeyEvent(KEYCODE_LEFT);
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveRight, _("Right"));
+	act->setKeyEvent(KEYCODE_RIGHT);
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeyMap->addAction(act);
+
+	act = new Action("BUSE", _("Interact"));
+	act->setKeyEvent(KeyState(KEYCODE_LCTRL));
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action("BINV", _("Inventory"));
+	act->setKeyEvent(KeyState(KEYCODE_RETURN));
+	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 
 	act = new Action("BCRU", _("Crouch"));
