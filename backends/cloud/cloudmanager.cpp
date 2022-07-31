@@ -421,6 +421,20 @@ double CloudManager::getSyncDownloadingProgress() const {
 	return 1;
 }
 
+uint64 CloudManager::getSyncDownloadBytesNumber() const {
+	Storage *storage = getCurrentStorage();
+	if (storage)
+		return storage->getSyncDownloadBytesNumber();
+	return 0;
+}
+
+uint64 CloudManager::getSyncDownloadTotalBytesNumber() const {
+	Storage *storage = getCurrentStorage();
+	if (storage)
+		return storage->getSyncDownloadTotalBytesNumber();
+	return 0;
+}
+
 double CloudManager::getSyncProgress() const {
 	Storage *storage = getCurrentStorage();
 	if (storage)

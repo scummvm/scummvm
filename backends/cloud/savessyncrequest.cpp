@@ -21,6 +21,8 @@
 
 #include "backends/cloud/savessyncrequest.h"
 #include "backends/cloud/cloudmanager.h"
+#include "backends/cloud/downloadrequest.h"
+#include "backends/cloud/id/iddownloadrequest.h"
 #include "backends/networking/curl/curljsonrequest.h"
 #include "backends/saves/default/default-saves.h"
 #include "common/config-manager.h"
@@ -35,7 +37,7 @@ namespace Cloud {
 
 SavesSyncRequest::SavesSyncRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb):
 	Request(nullptr, ecb), _storage(storage), _boolCallback(callback),
-	_workingRequest(nullptr), _ignoreCallback(false) {
+	_workingRequest(nullptr), _ignoreCallback(false), _bytesToDownload(0), _bytesDownloaded(0) {
 	start();
 }
 
@@ -136,11 +138,14 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 		}
 	}
 
+	_bytesToDownload = 0;
+	_bytesDownloaded = 0;
 	debug(9, "\nSavesSyncRequest: ");
 	if (_filesToDownload.size() > 0) {
 		debug(9, "download files:");
 		for (uint32 i = 0; i < _filesToDownload.size(); ++i) {
 			debug(9, " %s", _filesToDownload[i].name().c_str());
+			_bytesToDownload += _filesToDownload[i].size();
 		}
 		debug(9, "%s", "");
 	} else {
@@ -303,6 +308,7 @@ void SavesSyncRequest::fileDownloadedCallback(Storage::BoolResponse response) {
 	//update local timestamp for downloaded file
 	_localFilesTimestamps[_currentDownloadingFile.name()] = _currentDownloadingFile.timestamp();
 	DefaultSaveFileManager::saveTimestamps(_localFilesTimestamps);
+	_bytesDownloaded += _currentDownloadingFile.size();
 
 	//continue downloading files
 	downloadNextFile();
@@ -381,6 +387,11 @@ double SavesSyncRequest::getDownloadingProgress() const {
 	if (_totalFilesToHandle == _filesToUpload.size())
 		return 1; //nothing to download => download complete
 
+	if (_bytesToDownload > 0) {
+		// can calculate more precise progress
+		return (double)(getDownloadedBytes()) / (double)(_bytesToDownload);
+	}
+
 	uint32 totalFilesToDownload = _totalFilesToHandle - _filesToUpload.size();
 	uint32 filesLeftToDownload = _filesToDownload.size() + (_currentDownloadingFile.name() != "" ? 1 : 0);
 	return (double)(totalFilesToDownload - filesLeftToDownload) / (double)(totalFilesToDownload);
@@ -403,6 +414,20 @@ Common::Array<Common::String> SavesSyncRequest::getFilesToDownload() {
 	if (_currentDownloadingFile.name() != "")
 		result.push_back(_currentDownloadingFile.name());
 	return result;
+}
+
+uint32 SavesSyncRequest::getDownloadedBytes() const {
+	double currentFileProgress = 0;
+	if (const DownloadRequest *downloadRequest = dynamic_cast<DownloadRequest *>(_workingRequest))
+		currentFileProgress = downloadRequest->getProgress();
+	else if (const Id::IdDownloadRequest *idDownloadRequest = dynamic_cast<Id::IdDownloadRequest *>(_workingRequest))
+		currentFileProgress = idDownloadRequest->getProgress();
+
+	return _bytesDownloaded + currentFileProgress * _currentDownloadingFile.size();
+}
+
+uint32 SavesSyncRequest::getBytesToDownload() const {
+	return _bytesToDownload;
 }
 
 void SavesSyncRequest::finishError(Networking::ErrorResponse error, Networking::RequestState state) {

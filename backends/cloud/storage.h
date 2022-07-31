@@ -182,8 +182,14 @@ public:
 	/** Returns whether there is a SavesSyncRequest running. */
 	virtual bool isSyncing();
 
-	/** Returns a number in [0, 1] range which represents current sync progress (1 = complete). */
+	/** Returns a number in [0, 1] range which represents current sync downloading progress (1 = complete). */
 	virtual double getSyncDownloadingProgress();
+
+	/** Returns a number of bytes that is downloaded in current sync downloading progress. */
+	virtual uint64 getSyncDownloadBytesNumber();
+
+	/** Returns a total number of bytes to be downloaded in current sync download progress. */
+	virtual uint64 getSyncDownloadTotalBytesNumber();
 
 	/** Returns a number in [0, 1] range which represents current sync progress (1 = complete). */
 	virtual double getSyncProgress();

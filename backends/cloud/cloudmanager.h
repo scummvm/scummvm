@@ -251,6 +251,12 @@ public:
 	/** Returns a number in [0, 1] range which represents current sync downloading progress (1 = complete). */
 	double getSyncDownloadingProgress() const;
 
+	/** Returns a number of bytes that is downloaded in current sync downloading progress. */
+	uint64 getSyncDownloadBytesNumber() const;
+
+	/** Returns a total number of bytes to be downloaded in current sync downloading progress. */
+	uint64 getSyncDownloadTotalBytesNumber() const;
+
 	/** Returns a number in [0, 1] range which represents current sync progress (1 = complete). */
 	double getSyncProgress() const;
 
