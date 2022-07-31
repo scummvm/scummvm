@@ -490,6 +490,8 @@ void AdvancedMetaEngineDetection::composeFileHashMap(FileMap &allFiles, const Co
 		if (efname.lastChar() == '.')
 			efname.deleteLastChar();
 
+		debugC(9, kDebugGlobalDetection, "$$ ['%s'] ['%s'] in '%s", tstr.c_str(), efname.c_str(), firstPathComponents(fslist.front().getPath(), '/').c_str());
+
 		allFiles[tstr] = *file;		// Record the presence of this file
 		allFiles[efname] = *file;	// ...and its file name
 	}
