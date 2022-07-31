@@ -757,16 +757,19 @@ void ScummEngine_v5::o5_chainScript() {
 
 	cur = _currentScript;
 
-	// WORKAROUND bug #812: Work around a bug in script 33 in Indy3 VGA.
+	// WORKAROUND bug #812: Work around a bug in script 33 in Indy3.
 	// That script is used for the fist fights in the Zeppelin. It uses
 	// Local[5], even though that is never set to any value. But script 33 is
 	// called via chainScript by script 32, and in there Local[5] is set to
 	// the actor ID of the opposing soldier. So, we copy that value over to
 	// the Local[5] variable of script 33.
-	// FIXME: This workaround is meant for Indy3 VGA, but we make no checks
-	// to exclude the EGA/Mac/FM-TOWNS versions. We need to check whether
+	// FIXME: This workaround is meant for Indy3 EGA/VGA, but we make no
+	// checks to exclude the Mac/FM-TOWNS versions. We need to check whether
 	// those need the same workaround; if they don't, or if they need it in
 	// modified form, adjust this workaround accordingly.
+	// FIXME: Do we still need this workaround, 19 years later? I can't
+	// reproduce the original crash anymore, maybe we handle uninitialized
+	// local values the same way the original interpreter did, now?
 	if (_game.id == GID_INDY3 && vm.slot[cur].number == 32 && script == 33) {
 		vars[5] = vm.localvar[cur][5];
 	}
