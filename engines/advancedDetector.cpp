@@ -847,6 +847,8 @@ void AdvancedMetaEngineDetection::preprocessDescriptions() {
 
 				Common::StringTokenizer tok(fileDesc->fileName, "/");
 
+				int depth = 0;
+
 				while (!tok.empty()) {
 					Common::String component = tok.nextToken();
 
@@ -854,6 +856,14 @@ void AdvancedMetaEngineDetection::preprocessDescriptions() {
 						_globsMap.setVal(component, true);
 						debugC(4, kDebugGlobalDetection, "  Added '%s' to globs", component.c_str());
 					}
+
+					depth++;
+				}
+
+				if (depth > _maxScanDepth) {
+					_maxScanDepth = depth;
+
+					debugC(4, kDebugGlobalDetection, "  Increased scan depth to %d", _maxScanDepth);
 				}
 			}
 		}
