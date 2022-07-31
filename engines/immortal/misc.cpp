@@ -58,7 +58,7 @@ void ImmortalEngine::myDelay() {}
  */
 
 bool ImmortalEngine::textPrint(Str s) {
-    return true;
+	return true;
 }
 void ImmortalEngine::textSub() {}
 void ImmortalEngine::textEnd(Str s) {}
