@@ -899,7 +899,7 @@ void _remora::SetCommonActivateInfo(RemoraMode eMode) {
 	uint32 i, j;
 	_logic *pPlayerObject;
 	LinkedDataFile *pSlices;
-	_barrier_slice *pSlice;
+	BarrierSlice *pSlice;
 	int32 nSlice;
 	uint32 nNumSlices;
 	bool8 bInFloorRange;
@@ -936,7 +936,7 @@ void _remora::SetCommonActivateInfo(RemoraMode eMode) {
 
 	for (i = 0; i < nNumSlices; ++i) {
 		// Get the slice.
-		pSlice = (_barrier_slice *)LinkedDataObject::Fetch_item_by_number(pSlices, i);
+		pSlice = (BarrierSlice *)LinkedDataObject::Fetch_item_by_number(pSlices, i);
 
 		// See if the player's feet are in this slice.
 		if ((m_nPlayerY >= pSlice->bottom) && (m_nPlayerY < pSlice->top))
@@ -954,7 +954,7 @@ void _remora::SetCommonActivateInfo(RemoraMode eMode) {
 			bInFloorRange = TRUE8;
 
 			for (j = m_pFloorRanges[i].s_nLower; j <= m_pFloorRanges[i].s_nUpper; ++j) {
-				m_pSlices[m_nNumCurrentFloorRanges] = (_barrier_slice *)LinkedDataObject::Fetch_item_by_number(pSlices, j);
+				m_pSlices[m_nNumCurrentFloorRanges] = (BarrierSlice *)LinkedDataObject::Fetch_item_by_number(pSlices, j);
 				m_pnSlices[m_nNumCurrentFloorRanges] = j;
 				++m_nNumCurrentFloorRanges;
 			}
@@ -966,7 +966,7 @@ void _remora::SetCommonActivateInfo(RemoraMode eMode) {
 	// If we didn't set a floor range then we must set a single floor slice.
 	if (!bInFloorRange) {
 		// Only one slice required to be displayed.
-		m_pSlices[0] = (_barrier_slice *)LinkedDataObject::Fetch_item_by_number(pSlices, nSlice);
+		m_pSlices[0] = (BarrierSlice *)LinkedDataObject::Fetch_item_by_number(pSlices, nSlice);
 		m_pnSlices[0] = nSlice;
 		m_nNumCurrentFloorRanges = 1;
 	}

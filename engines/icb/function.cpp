@@ -2989,18 +2989,24 @@ uint32 _game_session::Register_stair_or_ladder(const char *target, bool8 top, ui
 	z3 = z1 - dz;
 
 	// new constructor for barrier...
-	stairs[num_stairs].bar = _route_barrier(x2, z2, x3, z3, stair->floor_y, (PXreal)0 /* dont care */, BRICK /* dont care */);
+	stairs[num_stairs].bar.m_x1 = x2;
+	stairs[num_stairs].bar.m_z1 = z2;
+	stairs[num_stairs].bar.m_x2 = x3;
+	stairs[num_stairs].bar.m_z2 = z3;
+	stairs[num_stairs].bar.m_bottom = stair->floor_y;
+	stairs[num_stairs].bar.m_top = (PXreal)0;
+	stairs[num_stairs].bar.m_material = BRICK;
 
 	// create the BCM maths----------------------------------------------
 	// The barrier has coordinates x2, z2 to x3, z3.
 	// Fill in the structure that holds the extra collision maths.
 
-	stairs[num_stairs].bar.bcm().Generate(x2, z2, x3, z3);
-	stairs[num_stairs].bar.Create_pan();
+	BarrierCollisionMathsObject::Generate(&stairs[num_stairs].bar.m_bcm, x2, z2, x3, z3);
+	routeBarrierCreatePan(&stairs[num_stairs].bar);
 
-	Tdebug("stairs.txt", "try this: %.4f, %g,%g,%g %g,%g %g,%g %g,%g\n", stairs[num_stairs].bar.pan(), stairs[num_stairs].bar.bcm().linedist(),
-	       stairs[num_stairs].bar.bcm().alinedist(), stairs[num_stairs].bar.bcm().blinedist(), stairs[num_stairs].bar.bcm().lpx(), stairs[num_stairs].bar.bcm().lpz(),
-	       stairs[num_stairs].bar.bcm().alpx(), stairs[num_stairs].bar.bcm().alpz(), stairs[num_stairs].bar.bcm().blpx(), stairs[num_stairs].bar.bcm().blpz());
+	Tdebug("stairs.txt", "try this: %.4f, %g,%g,%g %g,%g %g,%g %g,%g\n", stairs[num_stairs].bar.m_pan, stairs[num_stairs].bar.m_bcm.m_linedist,
+	       stairs[num_stairs].bar.m_bcm.m_alinedist, stairs[num_stairs].bar.m_bcm.m_blinedist, stairs[num_stairs].bar.m_bcm.m_lpx, stairs[num_stairs].bar.m_bcm.m_lpz,
+		   BarrierCollisionMathsObject::alpx(&stairs[num_stairs].bar.m_bcm), BarrierCollisionMathsObject::alpz(&stairs[num_stairs].bar.m_bcm), BarrierCollisionMathsObject::blpx( &stairs[num_stairs].bar.m_bcm), BarrierCollisionMathsObject::blpz(&stairs[num_stairs].bar.m_bcm));
 
 	// create the BCM maths----------------------------------------------
 

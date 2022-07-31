@@ -87,11 +87,11 @@ public:
 	void Form_route_barrier_list(PXreal x, PXreal y, PXreal z, PXreal x2, PXreal z2);
 	void Form_parent_barrier_list(PXreal x, PXreal y, PXreal z);
 
-	_parent_box *Fetch_parent_box_for_xyz(PXreal x, PXreal y, PXreal z, uint32 &par_num, uint32 &slice_num);
-	_parent_box *Fetch_parent_num_on_slice_y(uint32 requested_parent, PXreal y);
-	uint32 Fetch_number_of_child_boxes(_parent_box *parent);
-	_child_group *Fetch_child_box(_parent_box *parent, uint32 child);
-	_route_barrier *Fetch_barrier(uint32 num);
+	ParentBox *Fetch_parent_box_for_xyz(PXreal x, PXreal y, PXreal z, uint32 &par_num, uint32 &slice_num);
+	ParentBox *Fetch_parent_num_on_slice_y(uint32 requested_parent, PXreal y);
+	uint32 Fetch_number_of_child_boxes(ParentBox *parent);
+	ChildGroup *Fetch_child_box(ParentBox *parent, uint32 child);
+	RouteBarrier *Fetch_barrier(uint32 num);
 	uint32 Fetch_total_barriers();
 	LinkedDataFile *Get_barrier_pointer() const { return raw_barriers; }
 	void Prepare_animating_barriers();
@@ -139,9 +139,9 @@ inline void _barrier_handler::Clear_route_barrier_mask() {
 	barrier_mask = FALSE8;
 }
 
-inline uint32 _barrier_handler::Fetch_number_of_child_boxes(_parent_box *parent) { return (parent->num_childgroups); }
+inline uint32 _barrier_handler::Fetch_number_of_child_boxes(ParentBox *parent) { return (parent->num_childgroups); }
 
-inline _child_group *_barrier_handler::Fetch_child_box(_parent_box *parent, uint32 child) { return ((_child_group *)(((uint8 *)parent) + parent->childgroups[child])); }
+inline ChildGroup *_barrier_handler::Fetch_child_box(ParentBox *parent, uint32 child) { return ((ChildGroup *)(((uint8 *)parent) + parent->childgroups[child])); }
 
 inline uint32 _barrier_handler::Fetch_total_barriers() { return (total_barriers); }
 

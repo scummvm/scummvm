@@ -31,7 +31,7 @@ namespace ICB {
 
 void _game_volume::SetUpParameters(LinkedDataFile *pyLOSData) {
 	uint32 i;
-	_barrier_slice *pSlice;
+	BarrierSlice *pSlice;
 	_slice_limit sSliceLimit;
 
 	// Store the pointer to the data file.
@@ -39,7 +39,7 @@ void _game_volume::SetUpParameters(LinkedDataFile *pyLOSData) {
 
 	// Get the first slice and use this to set the horizontal sizes, since they all share the
 	// same horizontal sizes.
-	pSlice = (_barrier_slice *)LinkedDataObject::Fetch_item_by_number(pyLOSData, 0);
+	pSlice = (BarrierSlice *)LinkedDataObject::Fetch_item_by_number(pyLOSData, 0);
 	m_fLeftEdge = pSlice->left_edge;
 	m_fRightEdge = pSlice->right_edge;
 	m_fBackEdge = pSlice->back_edge;
@@ -57,7 +57,7 @@ void _game_volume::SetUpParameters(LinkedDataFile *pyLOSData) {
 	m_nNumSlices = LinkedDataObject::Fetch_number_of_items(pyLOSData);
 
 	for (i = 0; i < m_nNumSlices; ++i) {
-		pSlice = (_barrier_slice *)LinkedDataObject::Fetch_item_by_number(pyLOSData, i);
+		pSlice = (BarrierSlice *)LinkedDataObject::Fetch_item_by_number(pyLOSData, i);
 		sSliceLimit.fTop = pSlice->top;
 		sSliceLimit.fBottom = pSlice->bottom;
 		m_oSliceLimits[i] = sSliceLimit;

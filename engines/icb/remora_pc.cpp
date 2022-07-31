@@ -570,12 +570,12 @@ void _remora::DrawStaticBarriers(_rgb oLineColour) const {
 	uint32 i, j, k;
 	float fX1, fZ1, fX2, fZ2;
 	int32 nX1, nZ1, nX2, nZ2;
-	_barrier_cube *pBarrierCube;
-	_barrier_slice *pSlice;
+	BarrierCube *pBarrierCube;
+	BarrierSlice *pSlice;
 	uint32 *pBarrierArray;
 	uint32 nBarrierCubeOffset;
 	uint32 nBarrierIndex;
-	_route_barrier *pBarrier;
+	RouteBarrier *pBarrier;
 
 	PXTRY
 
@@ -588,7 +588,7 @@ void _remora::DrawStaticBarriers(_rgb oLineColour) const {
 		for (j = 0; j < pSlice->num_cubes; ++j) {
 			// Get to the barriers for this cube.
 			nBarrierCubeOffset = pSlice->offset_cubes[j];
-			pBarrierCube = (_barrier_cube *)((uint8 *)pSlice + nBarrierCubeOffset);
+			pBarrierCube = (BarrierCube *)((uint8 *)pSlice + nBarrierCubeOffset);
 			pBarrierArray = (uint32 *)((uint8 *)pSlice + pBarrierCube->barriers);
 
 			// Draw the barriers for this cube.
@@ -600,10 +600,10 @@ void _remora::DrawStaticBarriers(_rgb oLineColour) const {
 				pBarrier = MS->session_barriers->Fetch_barrier(nBarrierIndex);
 
 				// Set up the vector, the player relative bit has been done in the translation_matrix setting up
-				fX1 = pBarrier->x1();
-				fZ1 = pBarrier->z1();
-				fX2 = pBarrier->x2();
-				fZ2 = pBarrier->z2();
+				fX1 = pBarrier->m_x1;
+				fZ1 = pBarrier->m_z1;
+				fX2 = pBarrier->m_x2;
+				fZ2 = pBarrier->m_z2;
 
 				GameToRemora(fX1, fZ1);
 				GameToRemora(fX2, fZ2);
@@ -631,7 +631,7 @@ void _remora::DrawAnimatingBarriers(_rgb oLineColour) const {
 	float fX1, fZ1, fX2, fZ2;
 	int32 nX1, nZ1, nX2, nZ2;
 	uint32 nBarrierIndex;
-	_route_barrier *pBarrier;
+	RouteBarrier *pBarrier;
 	uint32 nPropID;
 	uint32 nPropState;
 	uint32 nBarriersPerState;
@@ -672,10 +672,10 @@ void _remora::DrawAnimatingBarriers(_rgb oLineColour) const {
 						pBarrier = MS->session_barriers->Fetch_barrier(*(pnBarriers++));
 
 						// Set up the vector, the player relative bit has been done in the translation_matrix setting up
-						fX1 = pBarrier->x1();
-						fZ1 = pBarrier->z1();
-						fX2 = pBarrier->x2();
-						fZ2 = pBarrier->z2();
+						fX1 = pBarrier->m_x1;
+						fZ1 = pBarrier->m_z1;
+						fX2 = pBarrier->m_x2;
+						fZ2 = pBarrier->m_z2;
 
 						GameToRemora(fX1, fZ1);
 						GameToRemora(fX2, fZ2);

@@ -202,7 +202,7 @@ enum CameraStateEnum { OFF_CAMERA = 0x0, ON_CAMERA = 0x1 };
 
 class _mega { // mega logic specific
 public:
-	_parent_box *cur_parent; // our owner parent box
+	ParentBox *cur_parent;   // our owner parent box
 	uint32 par_number;       // for players abar list update
 	uint32 cur_slice;        // for speedups
 

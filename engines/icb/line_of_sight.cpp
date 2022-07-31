@@ -157,7 +157,7 @@ void _line_of_sight::UnSubscribe(uint32 nObserverID, uint32 nTargetID) {
 	}
 }
 
-bool8 _line_of_sight::ObjectToObject(uint32 nObserverID, uint32 nTargetID, _barrier_ray_type eRayType, bool8 bCanSeeUs, ActorEyeMode eEyeMode, bool8 bOverrideHeightLimit) {
+bool8 _line_of_sight::ObjectToObject(uint32 nObserverID, uint32 nTargetID, eBarrierRayType eRayType, bool8 bCanSeeUs, ActorEyeMode eEyeMode, bool8 bOverrideHeightLimit) {
 	_logic *pObserver;
 	_logic *pTarget;
 	bool8 bObserverIsActor, bTargetIsActor;

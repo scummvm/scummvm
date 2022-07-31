@@ -78,7 +78,7 @@ __barrier_result _game_session::Check_barrier_bump_and_bounce(PXreal newx, PXrea
 	// returns   0 no barrier found thats too near
 	//				1 a barrier was too close
 
-	_route_barrier *bar;
+	RouteBarrier *bar;
 	PXreal pdist, dist;
 	uint32 j;
 	PXfloat barrier_tolerance = BARRIER_TOLERANCE; // 1/8 of a turn = 45 degress
@@ -105,20 +105,20 @@ __barrier_result _game_session::Check_barrier_bump_and_bounce(PXreal newx, PXrea
 			if (!stairs[j].live)
 				continue;
 
-			if (newy != bar->bottom())
+			if (newy != bar->m_bottom)
 				continue; // not on our floor so continue with next
 
-			pdist = ((newx * bar->bcm().lpx()) + (newz * bar->bcm().lpz())) - bar->bcm().linedist();
+			pdist = ((newx * bar->m_bcm.m_lpx) + (newz * bar->m_bcm.m_lpz)) - bar->m_bcm.m_linedist;
 
 			if (((PXfloat)PXfabs(pdist) < STAIR_CLOSE) ||                                                    // stair
 			    ((!stairs[j].is_stair) && (!stairs[j].up) && ((PXfloat)PXfabs(pdist) < LADDER_TOP_CLOSE))) { // top of stairs
 				// we are near the plane so now we must check the end points
 				// check the left end of the line
-				dist = ((newx * bar->bcm().alpx()) + (newz * bar->bcm().alpz())) - bar->bcm().alinedist();
+				dist = ((newx * BarrierCollisionMathsObject::alpx(&bar->m_bcm)) + (newz * BarrierCollisionMathsObject::alpz(&bar->m_bcm))) - bar->m_bcm.m_alinedist;
 
 				// check the right end
 				if (dist >= 0) {
-					dist = ((newx * bar->bcm().blpx()) + (newz * bar->bcm().blpz())) - bar->bcm().blinedist();
+					dist = ((newx * BarrierCollisionMathsObject::blpx(&bar->m_bcm)) + (newz * BarrierCollisionMathsObject::blpz(&bar->m_bcm))) - bar->m_bcm.m_blinedist;
 
 					if (dist >= 0) {
 						// ok, its a hit
@@ -194,20 +194,20 @@ __barrier_result _game_session::Check_barrier_bump_and_bounce(PXreal newx, PXrea
 			int32 b = Fetch_megas_nudge_barrier_number(j);
 			bar = session_barriers->Fetch_barrier(b);
 
-			pdist = ((newx * bar->bcm().lpx()) + (newz * bar->bcm().lpz())) - bar->bcm().linedist();
+			pdist = ((newx * bar->m_bcm.m_lpx) + (newz * bar->m_bcm.m_lpz)) - bar->m_bcm.m_linedist;
 			if ((PXfloat)PXfabs(pdist) < BARRIER_CLOSE) {
 				// we are near the plane so now we must check the end points
 				// check the left end of the line
-				dist = ((newx * bar->bcm().alpx()) + (newz * bar->bcm().alpz())) - bar->bcm().alinedist();
+				dist = ((newx * BarrierCollisionMathsObject::alpx(&bar->m_bcm)) + (newz * BarrierCollisionMathsObject::alpz(&bar->m_bcm))) - bar->m_bcm.m_alinedist;
 				// check the right end
 				// Make barrier a bit longer to nudge player through the doorway nicely
 				if (dist > -bar_close) {
-					dist = ((newx * bar->bcm().blpx()) + (newz * bar->bcm().blpz())) - bar->bcm().blinedist();
+					dist = ((newx * BarrierCollisionMathsObject::blpx(&bar->m_bcm)) + (newz * BarrierCollisionMathsObject::blpz(&bar->m_bcm))) - bar->m_bcm.m_blinedist;
 					// Make barrier a bit longer to nudge player through the doorway nicely
 					if (dist > -bar_close) {
 						// check angle - narrow ones are ignored
 
-						PXfloat delta = remainder(L->pan - bar->pan(), FULL_TURN, HALF_TURN);
+						PXfloat delta = remainder(L->pan - bar->m_pan, FULL_TURN, HALF_TURN);
 						PXfloat delta2 = delta;
 
 						if (delta < -QUARTER_TURN)
@@ -220,7 +220,7 @@ __barrier_result _game_session::Check_barrier_bump_and_bounce(PXreal newx, PXrea
 							// work out pan of barrier
 
 							// we have our coordinate and a direction to shift in
-							PXfloat ang = bar->pan() * TWO_PI;
+							PXfloat ang = bar->m_pan * TWO_PI;
 
 							PXfloat cang = (PXfloat)PXcos(ang);
 							PXfloat sang = (PXfloat)PXsin(ang);
@@ -248,7 +248,7 @@ __barrier_result _game_session::Check_barrier_bump_and_bounce(PXreal newx, PXrea
 		bar = session_barriers->Fetch_barrier(b);
 		ignoreBarrier[j] = 1;
 
-		if ((PXfloat)PXfabs(newy - bar->bottom()) > BARRIER_TOO_HIGH)
+		if ((PXfloat)PXfabs(newy - bar->m_bottom) > BARRIER_TOO_HIGH)
 			continue; // ignore abars that are now too high
 
 		__barrier_result result = Check_this_barrier(bar, newx, newz, oldx, oldz, bar_close, &ignoreThis);
@@ -270,7 +270,7 @@ __barrier_result _game_session::Check_barrier_bump_and_bounce(PXreal newx, PXrea
 		for (j = 0; j < num_stairs; j++) {
 			bar = &stairs[j].bar;
 
-			if (newy != bar->bottom())
+			if (newy != bar->m_bottom)
 				continue; // not on our floor so continue with next
 
 			__barrier_result result = Check_this_barrier(bar, newx, newz, oldx, oldz, bar_close, &ignoreThis);
@@ -321,11 +321,11 @@ __barrier_result _game_session::Check_barrier_bump_and_bounce(PXreal newx, PXrea
 			if (ignoreBarrier[j] == 1)
 				continue;
 
-			hit = troute.Get_intersect(oldx, oldz, destx, destz, bar->x1(), bar->z1(), bar->x2(), bar->z2());
+			hit = troute.Get_intersect(oldx, oldz, destx, destz, bar->m_x1, bar->m_z1, bar->m_x2, bar->m_z2);
 
 			if (hit == 1) {
 				warning("Player crossed the line nBars %d nFortKnox %d : player %f %f -> %f %f bar: %f %f -> %f %f", nBarriers, nFortKnox, oldx, oldz, destx, destz,
-				        bar->x1(), bar->z1(), bar->x2(), bar->z2());
+						bar->m_x1, bar->m_z1, bar->m_x2, bar->m_z2);
 				break;
 			}
 		}
@@ -419,7 +419,7 @@ __barrier_result _game_session::Check_barrier_bump_and_bounce(PXreal newx, PXrea
 	return (__OK);
 }
 
-__barrier_result _game_session::Check_this_barrier(_route_barrier *bar, PXreal newx, PXreal newz, PXreal /* oldx */, PXreal /* oldz */, PXreal bar_close, int32 *ignoreThis) {
+__barrier_result _game_session::Check_this_barrier(RouteBarrier *bar, PXreal newx, PXreal newz, PXreal /* oldx */, PXreal /* oldz */, PXreal bar_close, int32 *ignoreThis) {
 	PXfloat delta;
 	PXfloat delta2;
 	PXfloat barrier_tolerance = BARRIER_TOLERANCE; // 1/8 of a turn = 45 degress
@@ -428,24 +428,24 @@ __barrier_result _game_session::Check_this_barrier(_route_barrier *bar, PXreal n
 
 	*ignoreThis = 1;
 
-	pdist = ((newx * bar->bcm().lpx()) + (newz * bar->bcm().lpz())) - bar->bcm().linedist();
+	pdist = ((newx * bar->m_bcm.m_lpx) + (newz * bar->m_bcm.m_lpz)) - bar->m_bcm.m_linedist;
 
 	if ((PXfloat)PXfabs(pdist) < bar_close) {
 		// we are near the plane so now we must check the end points
 		// check the left end of the line
 
-		dist = ((newx * bar->bcm().alpx()) + (newz * bar->bcm().alpz())) - bar->bcm().alinedist();
+		dist = ((newx * BarrierCollisionMathsObject::alpx(&bar->m_bcm)) + (newz * BarrierCollisionMathsObject::alpz(&bar->m_bcm))) - bar->m_bcm.m_alinedist;
 
 		// check the right end
 		if (dist >= 0) {
-			dist = ((newx * bar->bcm().blpx()) + (newz * bar->bcm().blpz())) - bar->bcm().blinedist();
+			dist = ((newx * BarrierCollisionMathsObject::blpx(&bar->m_bcm)) + (newz * BarrierCollisionMathsObject::blpz(&bar->m_bcm))) - bar->m_bcm.m_blinedist;
 
 			if (dist >= 0) {
 				*ignoreThis = 0;
 
 				// we are going to hit this barrier
 				// but, if the angle is narrow we can aquire the barriers pan and continue unmolested
-				delta = remainder(L->pan - bar->pan(), FULL_TURN, HALF_TURN);
+				delta = remainder(L->pan - bar->m_pan, FULL_TURN, HALF_TURN);
 				delta2 = delta;
 
 				if (delta < -QUARTER_TURN)
@@ -457,9 +457,9 @@ __barrier_result _game_session::Check_this_barrier(_route_barrier *bar, PXreal n
 						return (__BLOCKED); // conflict, so finish
 
 					if ((delta > QUARTER_TURN) || (delta < -QUARTER_TURN)) {
-						adjusted_pan = remainder(bar->pan() + HALF_TURN, FULL_TURN, HALF_TURN);
+						adjusted_pan = remainder(bar->m_pan + HALF_TURN, FULL_TURN, HALF_TURN);
 					} else {
-						adjusted_pan = bar->pan();
+						adjusted_pan = bar->m_pan;
 					}
 					made_adjust = TRUE8;
 					if (adjusted_pan > L->pan) {
@@ -468,9 +468,9 @@ __barrier_result _game_session::Check_this_barrier(_route_barrier *bar, PXreal n
 						adjusted_pan -= REPEL_TURN;
 					}
 					if (pdist > 0)
-						normalAngle = bar->pan() + QUARTER_TURN;
+						normalAngle = bar->m_pan + QUARTER_TURN;
 					else if (pdist < 0)
-						normalAngle = bar->pan() - QUARTER_TURN;
+						normalAngle = bar->m_pan - QUARTER_TURN;
 				} else {
 					// cant adjust
 					return (__BLOCKED);
@@ -487,7 +487,7 @@ __barrier_result _game_session::Check_this_barrier(_route_barrier *bar, PXreal n
 }
 
 void _barrier_handler::___init() {
-	_routing_slice *slice;
+	RoutingSlice *slice;
 	uint32 *num_bars;
 	uint32 len;
 
@@ -507,7 +507,7 @@ void _barrier_handler::___init() {
 
 	num_bars = (uint32 *)LinkedDataObject::Fetch_item_by_name(raw_barriers, "Count");
 
-	total_barriers = *(num_bars);
+	total_barriers = READ_LE_U32(num_bars);
 
 	Tdebug("barriers.txt", "%d raw barriers", total_barriers);
 
@@ -535,9 +535,9 @@ void _barrier_handler::___init() {
 
 	uint32 j;
 	for (j = 0; j < total_slices; j++) {
-		slice = (_routing_slice *)LinkedDataObject::Fetch_item_by_number(route_wrapper, j);
-		Tdebug("slice.txt", "bottom %3.1f top %3.1f", slice->bottom, slice->top);
-		Tdebug("slice.txt", "%d parents", slice->num_parent_boxes);
+		slice = (RoutingSlice *)LinkedDataObject::Fetch_item_by_number(route_wrapper, j);
+		Tdebug("slice.txt", "bottom %3.1f top %3.1f", FROM_LE_FLOAT32(slice->bottom), FROM_LE_FLOAT32(slice->top));
+		Tdebug("slice.txt", "%d parents", FROM_LE_32(slice->num_parent_boxes));
 	}
 
 	// reset prop list for each
@@ -566,9 +566,9 @@ void _barrier_handler::___init() {
 	if (clist[j]->num_barriers)                                                                                                                                                \
 		for (k = 0; k < clist[j]->num_barriers; k++) {                                                                                                                     \
 			bar = Fetch_barrier(clist[j]->barriers[k]);                                                                                                                \
-			if (bar->bottom() == y) {                                                                                                                                  \
+			if (bar->m_bottom == y) {                                                                                                                                  \
 				if (barrier_mask) {                                                                                                                                \
-					if (MS->troute.LineIntersectsRect(mask, (int32)bar->x1(), (int32)bar->z1(), (int32)bar->x2(), (int32)bar->z2()))                           \
+					if (MS->troute.LineIntersectsRect(mask, (int32)bar->m_x1, (int32)bar->m_z1, (int32)bar->m_x2, (int32)bar->m_z2))                           \
 						MS->troute.Add_barrier(bar);                                                                                                       \
 				} else                                                                                                                                             \
 					MS->troute.Add_barrier(bar);                                                                                                               \
@@ -597,9 +597,9 @@ void _barrier_handler::___init() {
 
 void _barrier_handler::Form_parent_barrier_list(PXreal x, PXreal y, PXreal z) {
 	// we are routing into a room - just get the parent barriers
-	_parent_box *endb;
+	ParentBox *endb;
 	uint32 parent_a, slice_a, k;
-	_route_barrier *bar;
+	RouteBarrier *bar;
 	uint32 *array;
 
 	endb = Fetch_parent_box_for_xyz(x, y, z, parent_a, slice_a);
@@ -624,14 +624,14 @@ void _barrier_handler::Form_route_barrier_list(PXreal x, PXreal y, PXreal z, PXr
 	// it is a higher level job to divide long routes up into rect to rect chunks before calling here
 	// but this is quite sensible anyway as we only want to be auto-routing across tiny areas at a time
 
-	_parent_box *startb;
-	_parent_box *endb;
+	ParentBox *startb;
+	ParentBox *endb;
 	_rect rb; // rb meaning 'Route-Box'
 	uint32 j;
-	_child_group *clist[MAX_child_groups_per_parent * 2];
+	ChildGroup *clist[MAX_child_groups_per_parent * 2];
 	uint32 total_childs = 0; // separate total for safety
 	int32 expanded_this_go;
-	_route_barrier *bar;
+	RouteBarrier *bar;
 	uint32 k;
 	uint32 parent_a, parent_b;
 	uint32 slice_a, slice_b;
@@ -778,50 +778,50 @@ void _barrier_handler::Form_route_barrier_list(PXreal x, PXreal y, PXreal z, PXr
 			}
 		}
 	} else { // route lies within a single floor - so draw a box around it
-		_route_barrier newbar;
+		RouteBarrier newbar;
 
 		// left hand barrier
-		newbar.x1(startb->left);
-		newbar.z1(startb->back);
-		newbar.x2(startb->left);
-		newbar.z2(startb->front);
+		newbar.m_x1 = startb->left;
+		newbar.m_z1 = startb->back;
+		newbar.m_x2 = startb->left;
+		newbar.m_z2 = startb->front;
 		MS->troute.Add_barrier(&newbar);
 
 		// right hand barrier
-		newbar.x1(startb->right);
-		newbar.z1(startb->back);
-		newbar.x2(startb->right);
-		newbar.z2(startb->front);
+		newbar.m_x1 = startb->right;
+		newbar.m_z1 = startb->back;
+		newbar.m_x2 = startb->right;
+		newbar.m_z2 = startb->front;
 		MS->troute.Add_barrier(&newbar);
 
 		// top barrier
-		newbar.x1(startb->left);
-		newbar.z1(startb->back);
-		newbar.x2(startb->right);
-		newbar.z2(startb->back);
+		newbar.m_x1 = startb->left;
+		newbar.m_z1 = startb->back;
+		newbar.m_x2 = startb->right;
+		newbar.m_z2 = startb->back;
 		MS->troute.Add_barrier(&newbar);
 
 		// bottom barrier
-		newbar.x1(startb->left);
-		newbar.z1(startb->front);
-		newbar.x2(startb->right);
-		newbar.z2(startb->front);
+		newbar.m_x1 = startb->left;
+		newbar.m_z1 = startb->front;
+		newbar.m_x2 = startb->right;
+		newbar.m_z2 = startb->front;
 		MS->troute.Add_barrier(&newbar);
 	}
 }
 
-_parent_box *_barrier_handler::Fetch_parent_num_on_slice_y(uint32 requested_parent, PXreal y) {
+ParentBox *_barrier_handler::Fetch_parent_num_on_slice_y(uint32 requested_parent, PXreal y) {
 	// fetch the parent of the number passed for a given y level
 	// ie 0 means first, 1 means second, etc
 	// this is called by the plan-viewer which just keeps asking for the next one until we say there are no more
 	// by passing back a 0 instead of a pointer to a parent
-	static _routing_slice *slice;
+	static RoutingSlice *slice;
 	uint32 cur_slice = 0;
 
 	// first time in so compute the slice
 	if (!requested_parent) {
 		while (1) {
-			slice = (_routing_slice *)LinkedDataObject::Fetch_item_by_number(route_wrapper, cur_slice);
+			slice = (RoutingSlice *)LinkedDataObject::Fetch_item_by_number(route_wrapper, cur_slice);
 
 			if ((y >= slice->bottom) && (y < slice->top))
 				break;
@@ -845,29 +845,29 @@ _parent_box *_barrier_handler::Fetch_parent_num_on_slice_y(uint32 requested_pare
 
 	// simply return the pointer
 
-	return ((_parent_box *)(((uint8 *)slice) + slice->parent_boxes[requested_parent]));
+	return ((ParentBox *)(((uint8 *)slice) + slice->parent_boxes[requested_parent]));
 }
 
-_route_barrier *_barrier_handler::Fetch_barrier(uint32 num) {
+RouteBarrier *_barrier_handler::Fetch_barrier(uint32 num) {
 	// return a pointer to numbered barrier
-	_route_barrier *bar;
+	RouteBarrier *bar;
 
 	assert(num < total_barriers);
 
 	if (num >= total_barriers)
 		Fatal_error("illegal barrier request %d", num);
 
-	bar = (_route_barrier *)LinkedDataObject::Fetch_item_by_name(raw_barriers, "Data");
+	bar = (RouteBarrier *)LinkedDataObject::Fetch_item_by_name(raw_barriers, "Data");
 
 	return &bar[num];
 }
 
-_parent_box *_barrier_handler::Fetch_parent_box_for_xyz(PXreal x, PXreal y, PXreal z, uint32 &par_num, uint32 &slice_num) {
+ParentBox *_barrier_handler::Fetch_parent_box_for_xyz(PXreal x, PXreal y, PXreal z, uint32 &par_num, uint32 &slice_num) {
 	// return a pointer to the parent box of a point in world space
 	// returns 0 if the point does not lie within a parent box
 
-	_routing_slice *slice = nullptr;
-	_parent_box *parent = nullptr;
+	RoutingSlice *slice = nullptr;
+	ParentBox *parent = nullptr;
 
 	// find correct slice according to height
 	// fetch first
@@ -875,7 +875,7 @@ _parent_box *_barrier_handler::Fetch_parent_box_for_xyz(PXreal x, PXreal y, PXre
 	slice_num = 0;
 
 	while (1) {
-		slice = (_routing_slice *)LinkedDataObject::Fetch_item_by_number(route_wrapper, slice_num);
+		slice = (RoutingSlice *)LinkedDataObject::Fetch_item_by_number(route_wrapper, slice_num);
 
 		if ((y >= slice->bottom) && (y < slice->top))
 			break;
@@ -897,7 +897,7 @@ _parent_box *_barrier_handler::Fetch_parent_box_for_xyz(PXreal x, PXreal y, PXre
 		Fatal_error("_barrier_handler::Fetch_parent_box_for_xyz slice has no parent boxes");
 
 	for (par_num = 0; par_num < slice->num_parent_boxes; par_num++) {
-		parent = (_parent_box *)(((uint8 *)slice) + slice->parent_boxes[par_num]);
+		parent = (ParentBox *)(((uint8 *)slice) + slice->parent_boxes[par_num]);
 
 		// do we lie within the box?
 		if ((x > parent->left) && (x < parent->right) && (z > parent->back) && (z < parent->front)) {
@@ -914,14 +914,14 @@ void _game_session::Prepare_megas_route_barriers(bool8 pl) {
 	// this system is custom for the player object - routing megas use their own system
 	// this routine fecthes the 'special' player only line-of-sight barriers too
 
-	_parent_box *par = nullptr;
-	_child_group *pchild;
+	ParentBox *par = nullptr;
+	ChildGroup *pchild;
 	uint32 total_childs;
 	uint32 j, k;
 	uint32 *list;
-	_route_barrier *bar;
+	RouteBarrier *bar;
 	uint32 parent_number;
-	_routing_slice *slice;
+	RoutingSlice *slice;
 	PXreal x, y, z;
 
 	x = M->actor_xyz.x;
@@ -929,7 +929,7 @@ void _game_session::Prepare_megas_route_barriers(bool8 pl) {
 	z = M->actor_xyz.z;
 
 	// on previous slice?
-	slice = (_routing_slice *)LinkedDataObject::Fetch_item_by_number(session_barriers->route_wrapper, M->cur_slice);
+	slice = (RoutingSlice *)LinkedDataObject::Fetch_item_by_number(session_barriers->route_wrapper, M->cur_slice);
 	if ((y >= slice->bottom) && (y < slice->top) && (M->cur_parent))
 		if ((x > M->cur_parent->left) && (x < M->cur_parent->right) && (z > M->cur_parent->back) && (z < M->cur_parent->front)) {
 			// nothing has changed
@@ -944,7 +944,7 @@ void _game_session::Prepare_megas_route_barriers(bool8 pl) {
 
 	M->cur_slice = 0;
 	while (1) {
-		slice = (_routing_slice *)LinkedDataObject::Fetch_item_by_number(session_barriers->route_wrapper, M->cur_slice);
+		slice = (RoutingSlice *)LinkedDataObject::Fetch_item_by_number(session_barriers->route_wrapper, M->cur_slice);
 		if ((y >= slice->bottom) && (y < slice->top))
 			break;
 
@@ -952,7 +952,7 @@ void _game_session::Prepare_megas_route_barriers(bool8 pl) {
 		M->cur_slice++;
 		if (M->cur_slice == session_barriers->total_slices) { // if so then must be last slice :O
 			M->cur_slice--;
-			slice = (_routing_slice *)LinkedDataObject::Fetch_item_by_number(session_barriers->route_wrapper, M->cur_slice);
+			slice = (RoutingSlice *)LinkedDataObject::Fetch_item_by_number(session_barriers->route_wrapper, M->cur_slice);
 			break;
 		}
 	}
@@ -962,7 +962,7 @@ void _game_session::Prepare_megas_route_barriers(bool8 pl) {
 		Fatal_error("Prepare_megas_route_barriers slice has no parent boxes");
 
 	for (parent_number = 0; parent_number < slice->num_parent_boxes; parent_number++) {
-		par = (_parent_box *)(((uint8 *)slice) + slice->parent_boxes[parent_number]);
+		par = (ParentBox *)(((uint8 *)slice) + slice->parent_boxes[parent_number]);
 
 		// do we lie within the box?
 		if ((x > par->left) && (x < par->right) && (z > par->back) && (z < par->front)) {
@@ -996,7 +996,7 @@ void _game_session::Prepare_megas_route_barriers(bool8 pl) {
 			for (j = 0; j < par->num_barriers; j++) {
 				// fetch each barrier and check that its bottom edge is on the floor - otherwise we ignore it
 				bar = session_barriers->Fetch_barrier(*(list));
-				if (bar->bottom() == slice->bottom) { // M->actor_xyz.y)
+				if (bar->m_bottom == slice->bottom) { // M->actor_xyz.y)
 					// ok, this barrier is on the floor so we add it to our list
 					M->barrier_list[M->number_of_barriers++] = *(list++);
 				}
@@ -1018,19 +1018,19 @@ void _game_session::Prepare_megas_route_barriers(bool8 pl) {
 				// fetch each barrier and check that its bottom edge is on the floor - otherwise we ignore it
 				bar = session_barriers->Fetch_barrier(*(list));
 
-				if (bar->material() == VIEW_FIELD) {
-					if (bar->bottom() == slice->bottom) { // M->actor_xyz.y)
+				if (bar->m_material == VIEW_FIELD) {
+					if (bar->m_bottom == slice->bottom) { // M->actor_xyz.y)
 						//                  ok, this barrier is on the floor so we add it to our list
 						M->barrier_list[M->number_of_barriers++] = *(list++);
 					}
-				} else if (bar->material() >= LEFT_NUDGE) {
-					if (bar->bottom() == slice->bottom) { // M->actor_xyz.y)
+				} else if (bar->m_material >= LEFT_NUDGE) {
+					if (bar->m_bottom == slice->bottom) { // M->actor_xyz.y)
 						//                  ok, this barrier is on the floor so we add it to our list
 						M->nudge_list[M->number_of_nudge++] = *(list++);
 					}
 				} else {
-					Fatal_error("illegal barrier [%d], special list - type %d, x1 %3.2f, x2 %3.2f, z1 %3.2f, z2 %3.2f", *(list), bar->material(), bar->x1(),
-					            bar->x2(), bar->z1(), bar->z2());
+					Fatal_error("illegal barrier [%d], special list - type %d, x1 %3.2f, x2 %3.2f, z1 %3.2f, z2 %3.2f", *(list), bar->m_material, bar->m_x1,
+					            bar->m_x2, bar->m_z1, bar->m_z2);
 				}
 			}
 		}
@@ -1043,7 +1043,7 @@ void _game_session::Prepare_megas_route_barriers(bool8 pl) {
 
 			for (k = 0; k < pchild->num_barriers; k++) {
 				bar = session_barriers->Fetch_barrier(pchild->barriers[k]);
-				if (bar->bottom() == slice->bottom) { // M->actor_xyz.y)
+				if (bar->m_bottom == slice->bottom) { // M->actor_xyz.y)
 					M->barrier_list[M->number_of_barriers++] = pchild->barriers[k];
 				}
 			}
@@ -1068,9 +1068,9 @@ void _barrier_handler::Prepare_animating_barriers() {
 	uint32 j;
 	uint16 barrier_table[MAX_anim_barriers];
 	uint32 total_anim_bars = 0;
-	_route_barrier *bar;
-	_routing_slice *slice;
-	_parent_box *parent;
+	RouteBarrier *bar;
+	RoutingSlice *slice;
+	ParentBox *parent;
 	uint32 cur_slice = 0;
 	uint32 l, f, pbar_num;
 	uint32 abar_index = 0;
@@ -1114,8 +1114,8 @@ void _barrier_handler::Prepare_animating_barriers() {
 							bar = Fetch_barrier(bars[i]);
 
 							if (l == total_anim_bars) { // didnt find in list
-								Tdebug("anim_barriers.txt", "     new barrier %d  x%3.2f y%3.2f z%3.2f", bars[i], bar->x1(), bar->bottom(),
-								       bar->z1());
+								Tdebug("anim_barriers.txt", "     new barrier %d  x%3.2f y%3.2f z%3.2f", bars[i], bar->m_x1, bar->m_bottom,
+								       bar->m_z1);
 
 								barrier_table[total_anim_bars++] = (uint16)bars[i]; // write the bar down
 
@@ -1126,9 +1126,9 @@ void _barrier_handler::Prepare_animating_barriers() {
 							cur_slice = 0;
 
 							do {
-								slice = (_routing_slice *)LinkedDataObject::Fetch_item_by_number(route_wrapper, cur_slice);
+								slice = (RoutingSlice *)LinkedDataObject::Fetch_item_by_number(route_wrapper, cur_slice);
 
-								if ((bar->bottom() >= slice->bottom) && (bar->bottom() < slice->top))
+								if ((bar->m_bottom >= slice->bottom) && (bar->m_bottom < slice->top))
 									break;
 
 								cur_slice++;
@@ -1155,11 +1155,11 @@ void _barrier_handler::Prepare_animating_barriers() {
 									for (f = 0; f < slice->num_parent_boxes; f++) {
 										Tdebug("anim_barriers.txt", "       check parent %d", f);
 
-										parent = (_parent_box *)(((uint8 *)slice) + slice->parent_boxes[f]);
+										parent = (ParentBox *)(((uint8 *)slice) + slice->parent_boxes[f]);
 
 										// do we lie within the box?
-										if ((bar->x1() > parent->left) && (bar->x1() < parent->right) && (bar->z1() > parent->back) &&
-										    (bar->z1() < parent->front)) {
+										if ((bar->m_x1 > parent->left) && (bar->m_x1 < parent->right) && (bar->m_z1 > parent->back) &&
+										    (bar->m_z1 < parent->front)) {
 											char *props_name = (char *)LinkedDataObject::Fetch_items_name_by_number(MS->prop_anims, j);
 											uint32 props_number = LinkedDataObject::Fetch_item_number_by_name(MS->objects, props_name);
 
@@ -1271,8 +1271,8 @@ void _barrier_handler::Prepare_animating_barriers() {
 					// now compute slice for sample barrier
 					cur_slice = 0;
 					do {
-						slice = (_routing_slice *)LinkedDataObject::Fetch_item_by_number(route_wrapper, cur_slice);
-						if ((bar->bottom() >= slice->bottom) && (bar->bottom() < slice->top))
+						slice = (RoutingSlice *)LinkedDataObject::Fetch_item_by_number(route_wrapper, cur_slice);
+						if ((bar->m_bottom >= slice->bottom) && (bar->m_bottom < slice->top))
 							break;
 						cur_slice++;
 					} while (cur_slice != total_slices);

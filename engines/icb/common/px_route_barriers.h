@@ -72,88 +72,58 @@ namespace ICB {
 //  VIEW_FIELD          -   stops characters walking out of camera field-of-view.
 //  LEFT_NUDGE          -   use to assist player control going through doors.
 //  RIGHT_NUDGE         -   ditto last one.
-enum _barrier_type { BRICK = 0, GLASS, BULLET_PROOF_GLASS, THIN_STEEL, WIRE_FENCE, UNIT_HEIGHT, VIEW_FIELD, LEFT_NUDGE, RIGHT_NUDGE };
+enum eBarrierType { BRICK = 0, GLASS, BULLET_PROOF_GLASS, THIN_STEEL, WIRE_FENCE, UNIT_HEIGHT, VIEW_FIELD, LEFT_NUDGE, RIGHT_NUDGE };
 
 #define BARRIER_TYPE_CARDINALITY 9 // Must match number of enums in previous type (because C++
 // doesn't provide a way to get this).
 
 // This is an enumerated type for the things that might try to pass through a barrier.  Note: the TEST_RAY
 // is blocked by all types of barrier.
-enum _barrier_ray_type { TEST_RAY, LIGHT, BULLET };
+enum eBarrierRayType { TEST_RAY, LIGHT, BULLET };
 
 #define RAY_TYPE_CARDINALITY 3
 
 // Defines a multi-state logic value for use with the barriers.
-enum _barrier_logic_value { NO_IMPACT = 0, BLOCKS, ALLOWS, MAYBE, SPECIAL };
+enum eBarrierLogicValue { NO_IMPACT = 0, BLOCKS, ALLOWS, MAYBE, SPECIAL };
 
 // This is the truth table that states what kind of ray passes through what
 // type of barrier.
-static enum _barrier_logic_value _barrier_logic_table[BARRIER_TYPE_CARDINALITY][RAY_TYPE_CARDINALITY] = {
+static enum eBarrierLogicValue barrierLogicTable[BARRIER_TYPE_CARDINALITY][RAY_TYPE_CARDINALITY] = {
 	{BLOCKS, BLOCKS, BLOCKS}, {BLOCKS, ALLOWS, SPECIAL}, {BLOCKS, ALLOWS, BLOCKS}, {BLOCKS, BLOCKS, ALLOWS}, {BLOCKS, ALLOWS, MAYBE},
 	{BLOCKS, ALLOWS, ALLOWS}, {BLOCKS, ALLOWS, ALLOWS},  {BLOCKS, ALLOWS, ALLOWS}, {BLOCKS, ALLOWS, ALLOWS}};
 
-// simple, this is just for the converters
-// Some extra figures to speed up barrier collision detection.
 typedef struct {
-	PXfloat linedist, alinedist, blinedist;
-	PXfloat lpx, lpz;   // Main barrier
-	PXfloat alpx, alpz; // End A.
-	PXfloat blpx, blpz; // End B.
-} _simple_barrier_collision_maths;
-
-// simple, this is just for the converters
-// This holds one single barrier.
-typedef struct {
-	PXreal x1, z1;                       // Looking down on the model, the position of the first vertical edge of the barrier.
-	PXreal x2, z2;                       // Looking down on the model, the position of the second vertical edge.
-	PXreal bottom;                       // The bottom of the barrier.
-	PXreal top;                          // The top of the barrier.
-	_barrier_type material;              // The material the barrier is made of.
-	PXfloat pan;                         // The barrier's pan value.
-	_simple_barrier_collision_maths bcm; // Some extra figures to speed up barrier collision detection.
-} _simple_route_barrier;
-
-class _barrier_collision_maths {
-private:
 	// these are in both versions
 	PXfloat m_linedist, m_alinedist, m_blinedist;
 
 	PXfloat m_lpx, m_lpz;   // Main barrier
 	PXfloat m_alpx, m_alpz; // End A.
 	PXfloat m_blpx, m_blpz; // End B.
+} BarrierCollisionMaths;
 
+class BarrierCollisionMathsObject {
 public:
-	inline PXfloat linedist() { return m_linedist; }
-
-	inline PXfloat alinedist() { return m_alinedist; }
-	inline PXfloat blinedist() { return m_blinedist; }
-
-	// on pc these are pxfloats
-
-	inline PXfloat lpx() { return m_lpx; }
-	inline PXfloat lpz() { return m_lpz; }
-
-	inline PXfloat alpx() {
+	static inline PXfloat alpx(BarrierCollisionMaths *bmath) {
 		// return m_alpx;
-		return -lpz();
+		return -bmath->m_lpz;
 	}
 
-	inline PXfloat alpz() {
+	static inline PXfloat alpz(BarrierCollisionMaths *bmath) {
 		// return m_alpz;
-		return lpx();
+		return bmath->m_lpx;
 	}
 
-	inline PXfloat blpx() {
+	static inline PXfloat blpx(BarrierCollisionMaths *bmath) {
 		// return m_blpx;
-		return lpz();
+		return bmath->m_lpz;
 	}
 
-	inline PXfloat blpz() {
+	static inline PXfloat blpz(BarrierCollisionMaths *bmath) {
 		// return m_blpz;
-		return -lpx();
+		return -bmath->m_lpx;
 	}
 
-	void Generate(PXreal x1, PXreal z1, PXreal x2, PXreal z2) {
+	static void Generate(BarrierCollisionMaths *bmath, PXreal x1, PXreal z1, PXreal x2, PXreal z2) {
 		PXreal dx = x1 - x2;
 		PXreal dz = z1 - z2;
 
@@ -162,75 +132,35 @@ public:
 		PXfloat xunit = PXreal2PXfloat(dx) / nLength;
 		PXfloat zunit = PXreal2PXfloat(dz) / nLength;
 
-		m_lpx = -zunit;
-		m_lpz = xunit;
+		bmath->m_lpx = -zunit;
+		bmath->m_lpz = xunit;
 
-		m_linedist = (x1 * lpx()) + (z1 * lpz());
+		bmath->m_linedist = (x1 * bmath->m_lpx) + (z1 * bmath->m_lpz);
 
-		m_alinedist = (x1 * alpx()) + (z1 * alpz());
+		bmath->m_alinedist = (x1 * alpx(bmath)) + (z1 * alpz(bmath));
 
-		m_blinedist = (x2 * blpx()) + (z2 * blpz());
-	}
-
-	_barrier_collision_maths() {
-		(void)m_alpx; // shutup warning
-		(void)m_alpz; // shutup warning
-		(void)m_blpx; // shutup warning
-		(void)m_blpz; // shutup warning
+		bmath->m_blinedist = (x2 * blpx(bmath)) + (z2 * blpz(bmath));
 	}
 };
 
-class _route_barrier {
-
+typedef struct {
 	PXreal m_x1, m_z1;        // Looking down on the model, the position of the first vertical edge of the barrier.
 	PXreal m_x2, m_z2;        // Looking down on the model, the position of the second vertical edge.
 	PXreal m_bottom;          // The bottom of the barrier.
 	PXreal m_top;             // The top of the barrier.
-	_barrier_type m_material; // The material the barrier is made of.
+	eBarrierType m_material;  // The material the barrier is made of.
 	PXfloat m_pan;            // The barrier's pan value.
-	_barrier_collision_maths m_bcm; // Some extra figures to speed up barrier collision detection.
+	BarrierCollisionMaths m_bcm; // Some extra figures to speed up barrier collision detection.
+} RouteBarrier;
 
-public:
-
-	void Create_pan() { m_pan = PXAngleOfVector(m_z1 - m_z2, m_x1 - m_x2); }
-
-	void x1(PXreal x) { m_x1 = x; }
-	void z1(PXreal z) { m_z1 = z; }
-
-	inline PXreal x1() const { return m_x1; }
-	inline PXreal z1() const { return m_z1; }
-
-	void x2(PXreal x) { m_x2 = x; }
-	void z2(PXreal z) { m_z2 = z; }
-	inline PXreal x2() const { return m_x2; }
-	inline PXreal z2() const { return m_z2; }
-	inline PXreal bottom() const { return m_bottom; }
-	inline PXreal top() const { return m_top; }
-	inline _barrier_type material() const { return m_material; }
-
-	inline PXfloat pan() const { return m_pan; }
-
-	inline _barrier_collision_maths &bcm() { return m_bcm; }
-
-	_route_barrier() {}
-
-	_route_barrier(PXreal inX1, PXreal inZ1, PXreal inX2, PXreal inZ2, PXreal inBottom, PXreal inTop, _barrier_type inMaterial) {
-		m_x1 = inX1;
-		m_z1 = inZ1;
-		m_x2 = inX2;
-		m_z2 = inZ2;
-		m_bottom = inBottom;
-		m_top = inTop;
-		m_material = inMaterial;
-	}
-};
+inline void routeBarrierCreatePan(RouteBarrier *barrier) { barrier->m_pan = PXAngleOfVector(barrier->m_z1 - barrier->m_z2, barrier->m_x1 - barrier->m_x2); }
 
 // This holds several barriers.  These barriers all at least partly occupy a given cube in space.  If one barrier passes
 // through more than one cube, it will have a duplicate entry in each cube.
 typedef struct {
 	int32 num_barriers; // The number of barriers referenced in this cube.
 	uint32 barriers;    // Offset to an array of barrier indices.
-} _barrier_cube;
+} BarrierCube;
 
 // This is a horizontal slice through the Max model, containing all the route barriers that pass through this level.  The
 // extremeties of the whole cuboid are given first so that a quick initial check can be done to see if there might be
@@ -245,7 +175,7 @@ typedef struct {
 	uint32 num_cubes;       // Number of _route_cubes in this floor (could be calculated by dividing overall cube size by FLOOR_CUBE_SIZE).
 	uint32 row_length;      // Size of the rows in the array (eg. 6 cubes could be 1X6, 2X3, 3X2 or 6X1).
 	uint32 offset_cubes[1]; // An array of offsets to cubes (2D array of size row_length * (num_cubes / row_length) ).
-} _barrier_slice;
+} BarrierSlice;
 
 // This is used in the following definition of _parent_box, and holds one group of barriers.
 typedef struct {
@@ -254,7 +184,7 @@ typedef struct {
 	uint32 num_barriers; // Number of barriers in this group.
 	uint32 barriers[1];  // Array of barrier indices.
 
-} _child_group;
+} ChildGroup;
 
 // This holds one parent box entry.
 typedef struct {
@@ -267,7 +197,7 @@ typedef struct {
 	uint32 num_childgroups; // Number of child groups owned by this parent box.
 	uint32 childgroups[1];  // Array of offsets to the child groups.
 
-} _parent_box;
+} ParentBox;
 
 // This is also a slice through the model, but the data is grouped in a different way which is more suited to routing.
 typedef struct {
@@ -276,9 +206,9 @@ typedef struct {
 	uint32 num_parent_boxes; // The number of parent boxes in this slice (same as the number of floor rectangles at this height).
 	uint32 parent_boxes[1];  // An array of offsets to parent boxes.
 
-} _routing_slice;
+} RoutingSlice;
 
-__inline _barrier_logic_value IsBarrierTo(_barrier_type eMaterial, _barrier_ray_type eRay) { return _barrier_logic_table[eMaterial][eRay]; }
+inline eBarrierLogicValue IsBarrierTo(eBarrierType eMaterial, eBarrierRayType eRay) { return barrierLogicTable[eMaterial][eRay]; }
 
 } // End of namespace ICB
 

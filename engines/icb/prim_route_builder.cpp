@@ -47,14 +47,14 @@ void _prim_route_builder::Reset_barrier_list() {
 	total_points = 0;
 }
 
-void _prim_route_builder::Add_barrier(_route_barrier *new_barrier) {
-	barrier_list[total_points].x = new_barrier->x1();
-	barrier_list[total_points++].z = new_barrier->z1();
-	barrier_list[total_points].x = new_barrier->x2();
-	barrier_list[total_points++].z = new_barrier->z2();
+void _prim_route_builder::Add_barrier(RouteBarrier *new_barrier) {
+	barrier_list[total_points].x = new_barrier->m_x1;
+	barrier_list[total_points++].z = new_barrier->m_z1;
+	barrier_list[total_points].x = new_barrier->m_x2;
+	barrier_list[total_points++].z = new_barrier->m_z2;
 
 	if (!ExtrapolateLine(&barrier_list[total_points - 2], &barrier_list[total_points - 1], &barrier_list[total_points - 2], &barrier_list[total_points - 1], extrap_size))
-		Fatal_error("extrapolate line failed on line %3.2f %3.2f  %3.2f %3.2f", new_barrier->x1(), new_barrier->z1(), new_barrier->x2(), new_barrier->z2());
+		Fatal_error("extrapolate line failed on line %3.2f %3.2f  %3.2f %3.2f", new_barrier->m_x1, new_barrier->m_z1, new_barrier->m_x2, new_barrier->m_z2);
 
 	assert(total_points < MAX_barriers);
 }

@@ -48,7 +48,7 @@ public:
 	virtual inline ~_tracer() { ; }
 
 	// This checks a line through game-world space and returns the point of its first impact.
-	bool8 Trace(const px3DRealPoint &oFrom, const px3DRealPoint &oTo, _barrier_ray_type eRayType, px3DRealPoint &oImpact, _barrier_logic_value eImpactType);
+	bool8 Trace(const px3DRealPoint &oFrom, const px3DRealPoint &oTo, eBarrierRayType eRayType, px3DRealPoint &oImpact, eBarrierLogicValue eImpactType);
 
 	// Call this before using the tracer, to point it at its barriers.
 	void SetBarrierPointer(LinkedDataFile *pyBarriers) { m_pyBarrierMemFile = pyBarriers; }
@@ -75,22 +75,22 @@ private:
 
 	px3DRealPoint CalculateEntryToNextCube(const px3DRealPoint &oCurrentPoint, const px3DRealPoint &oTo, const _bullet_cube &oThisCube, FaceID &eCubeLeavingFace) const;
 
-	bool8 CheckRayHeightAgainstBarrier(const px3DRealPoint &oFrom, const px3DRealPoint &oTo, const _route_barrier *pBarrier, px3DRealPoint &o3DImpactPoint) const;
+	bool8 CheckRayHeightAgainstBarrier(const px3DRealPoint &oFrom, const px3DRealPoint &oTo, const RouteBarrier *pBarrier, px3DRealPoint &o3DImpactPoint) const;
 
 	uint32 FindClosest(const px3DRealPoint &oFrom, px3DRealPoint *oImpactList, uint32 nNumImpacts) const;
 
 	px3DRealPoint CalculateRayIntersectionWithCubeWall(const px3DRealPoint &oCurrentPoint, const px3DRealPoint &oTo, const _bullet_cube &oThisCube, FaceID eLeavingFace) const;
 
-	inline const _route_barrier *GetBarrier(uint32 i) const;
+	inline const RouteBarrier *GetBarrier(uint32 i) const;
 };
 
-inline const _route_barrier *_tracer::GetBarrier(uint32 i) const {
-	_route_barrier *pBarriers;
+inline const RouteBarrier *_tracer::GetBarrier(uint32 i) const {
+	RouteBarrier *pBarriers;
 
 	if (!m_pyBarrierMemFile)
 		Fatal_error("No barrier file in _tracer::GetBarrier()");
 
-	pBarriers = (_route_barrier *)LinkedDataObject::Fetch_item_by_name(m_pyBarrierMemFile, "Data");
+	pBarriers = (RouteBarrier *)LinkedDataObject::Fetch_item_by_name(m_pyBarrierMemFile, "Data");
 	return &(pBarriers[i]);
 }
 

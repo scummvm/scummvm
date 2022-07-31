@@ -152,7 +152,7 @@ typedef struct {
 #define MAX_stairs 32
 
 typedef struct {
-	_route_barrier bar;
+	RouteBarrier bar;
 	PXfloat pan, pan_ref, x, z;
 
 	uint8 units;
@@ -772,7 +772,7 @@ public:
 	PXfloat normalAngle;
 	__barrier_result Check_barrier_bump_and_bounce(PXreal newx, PXreal newy, PXreal newz, PXreal oldx, PXreal oldy, PXreal oldz, bool8 player);
 
-	__barrier_result Check_this_barrier(_route_barrier *bar, PXreal newx, PXreal newz, PXreal oldx, PXreal oldz, PXreal bar_close, int32 *ignore);
+	__barrier_result Check_this_barrier(RouteBarrier *bar, PXreal newx, PXreal newz, PXreal oldx, PXreal oldz, PXreal bar_close, int32 *ignore);
 
 	void Prepare_megas_route_barriers(bool8 player);
 	void Prepare_megas_abarriers(uint32 slice_number, uint32 parent_number);

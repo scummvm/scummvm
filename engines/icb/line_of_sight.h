@@ -115,14 +115,14 @@ public:
 	inline void ShadowsOnOff(bool8 bState) { m_bHandleShadows = bState; }
 
 	// This checks line-of-sight between two objects, accounting for field-of-view if observer is an actor,
-	bool8 ObjectToObject(uint32 nObserverID, uint32 nTargetID, _barrier_ray_type eRayType, bool8 bCanSeeUs, ActorEyeMode eEyeMode, bool8 bOverrideHeightLimit = FALSE8);
+	bool8 ObjectToObject(uint32 nObserverID, uint32 nTargetID, eBarrierRayType eRayType, bool8 bCanSeeUs, ActorEyeMode eEyeMode, bool8 bOverrideHeightLimit = FALSE8);
 
 	// This checks line-of-sight using the current truth table values and so is fast.
 	inline bool8 LineOfSight(uint32 nObserverID, uint32 nTargetID);
 
 	// And these two return extra information after a call to ObjectToObject().
 	const px3DRealPoint GetLastImpactPoint() const { return (m_oImpactPoint); }
-	_barrier_logic_value GetLastImpactType() const { return (m_eImpactType); }
+	eBarrierLogicValue GetLastImpactType() const { return (m_eImpactType); }
 
 	// This allows other classes to get at the barrier slices (the Remora needs this).
 	LinkedDataFile *GetSlicesPointer() const { return (m_pyLOSData); }
@@ -145,7 +145,7 @@ private:
 	bool8 m_pbCanSeeInDark[LOS_1D_SIZE];       // Housekeeping table of objects that should ignore shadows.
 	bool8 m_pbIgnoreShadows[LOS_1D_SIZE];      // Table of megas that are always seen regardless of shadows.
 	px3DRealPoint m_oImpactPoint;              // Holds impact point from last call to ObjectToObject().
-	_barrier_logic_value m_eImpactType;        // Holds type of impact from last call to ObjectToObject().
+	eBarrierLogicValue m_eImpactType;          // Holds type of impact from last call to ObjectToObject().
 	bool8 m_bSwitchedOn;                       // Flag that allows LOS processing to be suspended.
 	bool8 m_bFailingOnHeight;                  // Debug flag that gets set when a barrier height check fails.
 	bool8 m_bHandleShadows;                    // Turns shadow handling on/off.

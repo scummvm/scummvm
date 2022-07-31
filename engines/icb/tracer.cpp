@@ -40,9 +40,9 @@ _tracer *g_oTracer;
 
 bool8 _tracer::Trace(const px3DRealPoint &oFrom,      // IN:  Point to plot from.
 					 const px3DRealPoint &oTo,        // IN:  Point to plot to.
-					 _barrier_ray_type eRayType,      // IN:  The type of the ray being plotted.
+					 eBarrierRayType eRayType,      // IN:  The type of the ray being plotted.
 					 px3DRealPoint &oPointOfImpact,   // OUT: The first point of impact.
-					 _barrier_logic_value /*eImpactType*/ // OUT: For interpretation by high-level logic.
+					 eBarrierLogicValue /*eImpactType*/ // OUT: For interpretation by high-level logic.
 					 ) {
 	uint32 i;
 	uint32 nLoopCount;
@@ -55,8 +55,8 @@ bool8 _tracer::Trace(const px3DRealPoint &oFrom,      // IN:  Point to plot from
 	px2DRealLine oPlanRay, oPlanBarrier;
 	_bullet_cube oThisCube;
 	_XYZ_index oThisIndex;
-	_barrier_logic_value eTempImpactType;
-	const _route_barrier *pBarrier;
+	eBarrierLogicValue eTempImpactType;
+	const RouteBarrier *pBarrier;
 	bool8 bFinishInThisCube;
 	FaceID eCubeLeavingFace;
 	_floor *psFloor;
@@ -130,14 +130,14 @@ bool8 _tracer::Trace(const px3DRealPoint &oFrom,      // IN:  Point to plot from
 
 			// The intersection test is relatively expensive, so do the barrier type check
 			// first (eg. if we're firing light at a glass barrier, we know it can go through).
-			eTempImpactType = IsBarrierTo(pBarrier->material(), eRayType);
+			eTempImpactType = IsBarrierTo(pBarrier->m_material, eRayType);
 			if (eTempImpactType != ALLOWS) {
 				// Right, this barrier doesn't allow this ray to pass, so we must check if it
 				// is actually in the path of the ray.
-				oPlanBarrier.SetX1(pBarrier->x1());
-				oPlanBarrier.SetY1(pBarrier->z1());
-				oPlanBarrier.SetX2(pBarrier->x2());
-				oPlanBarrier.SetY2(pBarrier->z2());
+				oPlanBarrier.SetX1(pBarrier->m_x1);
+				oPlanBarrier.SetY1(pBarrier->m_z1);
+				oPlanBarrier.SetX2(pBarrier->m_x2);
+				oPlanBarrier.SetY2(pBarrier->m_z2);
 
 				if (oPlanRay.Intersects(oPlanBarrier, o2DImpactPoint) == px2DRealLine::DO_INTERSECT) {
 					// We've found a barrier that the ray intersects with in the horizontal plane;
@@ -212,19 +212,19 @@ bool8 _tracer::Trace(const px3DRealPoint &oFrom,      // IN:  Point to plot from
 
 void _tracer::GetBarriersForCube(const _XYZ_index &oCubeIndices, uint32 *oThisCubesBarriers, int32 &nNumBarriers, int32 nExtraSliceIndex) const {
 	int32 i;
-	_barrier_slice *pSlice;
-	_barrier_cube *pBarrierCube;
+	BarrierSlice *pSlice;
+	BarrierCube *pBarrierCube;
 	uint32 nBarrierCubeOffset;
 	uint32 nActualIndex;
 	uint32 *pBarrierArray;
 
 	// Get to the right slice.
-	pSlice = (_barrier_slice *)LinkedDataObject::Fetch_item_by_number(m_pyLOSMemFile, oCubeIndices.nY);
+	pSlice = (BarrierSlice *)LinkedDataObject::Fetch_item_by_number(m_pyLOSMemFile, oCubeIndices.nY);
 
 	// Get to the right cube entry.
 	nActualIndex = oCubeIndices.nZ * pSlice->row_length + oCubeIndices.nX;
 	nBarrierCubeOffset = pSlice->offset_cubes[nActualIndex];
-	pBarrierCube = (_barrier_cube *)((uint8 *)pSlice + nBarrierCubeOffset);
+	pBarrierCube = (BarrierCube *)((uint8 *)pSlice + nBarrierCubeOffset);
 	pBarrierArray = (uint32 *)((uint8 *)pSlice + pBarrierCube->barriers);
 
 	// Add the barriers to the array we're returning.
@@ -418,7 +418,7 @@ px3DRealPoint _tracer::CalculateRayIntersectionWithCubeWall(const px3DRealPoint 
 	return (oNewPoint);
 }
 
-bool8 _tracer::CheckRayHeightAgainstBarrier(const px3DRealPoint &oFrom, const px3DRealPoint &oTo, const _route_barrier *pBarrier, px3DRealPoint &o3DImpactPoint) const {
+bool8 _tracer::CheckRayHeightAgainstBarrier(const px3DRealPoint &oFrom, const px3DRealPoint &oTo, const RouteBarrier *pBarrier, px3DRealPoint &o3DImpactPoint) const {
 	PXreal l_fXDiff, l_fZDiff, l_fYDiff;
 	PXfloat fImpactDistance;
 	PXreal fTotalDistance;
@@ -440,7 +440,7 @@ bool8 _tracer::CheckRayHeightAgainstBarrier(const px3DRealPoint &oFrom, const px
 	fImpactY = oFrom.GetY() + (fImpactDistance * l_fYDiff) / fTotalDistance;
 
 	// Check this z against the barrier to see if we have impact.
-	if ((fImpactY >= pBarrier->bottom()) && (fImpactY <= pBarrier->top())) {
+	if ((fImpactY >= pBarrier->m_bottom) && (fImpactY <= pBarrier->m_top)) {
 		o3DImpactPoint.SetY(fImpactY);
 		return (TRUE8);
 	} else {
