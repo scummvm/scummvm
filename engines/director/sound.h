@@ -29,6 +29,7 @@ namespace Audio {
 	class SoundHandle;
 	class PCSpeaker;
 	class RewindableAudioStream;
+	class LoopableAudioStream;
 }
 
 namespace Common {
@@ -145,7 +146,11 @@ struct SoundChannel {
 	// And we will override the sound when ever the sound is changing. thus we use a flag to indicate whether the movie is changed.
 	bool movieChanged;
 
-	SoundChannel(): handle(), lastPlayedSound(SoundID()), stopOnZero(true), volume(255), fade(nullptr), puppet(SoundID()), newPuppet(false), movieChanged(false) {}
+	// Pointer for keeping track of a looping sound, used to signal
+	// a stop at the end of a loop.
+	Audio::LoopableAudioStream *loopPtr;
+
+	SoundChannel(): handle(), lastPlayedSound(SoundID()), stopOnZero(true), volume(255), fade(nullptr), puppet(SoundID()), newPuppet(false), movieChanged(false), loopPtr(nullptr) {}
 };
 
 class DirectorSound {
