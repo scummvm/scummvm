@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-31 16:33+0000\n"
+"POT-Creation-Date: 2022-07-31 20:28+0000\n"
 "PO-Revision-Date: 2022-07-22 14:05+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -6556,7 +6556,7 @@ msgstr "Προβολή/Απόκρυψη Μενού Παύσης"
 msgid "Toggle Chatty AI"
 msgstr "Εναλλαγή Φλύαρου AI"
 
-#: engines/pink/gui.cpp:278
+#: engines/pink/gui.cpp:279
 msgid "This menu item is not yet implemented"
 msgstr "Αυτή η επιλογή μενού δεν έχει υλοποιηθεί ακόμα"
 

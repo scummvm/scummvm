@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-31 16:33+0000\n"
+"POT-Creation-Date: 2022-07-31 20:28+0000\n"
 "PO-Revision-Date: 2022-07-22 09:09+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -6335,7 +6335,7 @@ msgstr "ポーズメニューの表示/非表示"
 msgid "Toggle Chatty AI"
 msgstr "おしゃべりAIの切り替え"
 
-#: engines/pink/gui.cpp:278
+#: engines/pink/gui.cpp:279
 msgid "This menu item is not yet implemented"
 msgstr "このメニューは未実装です"
 

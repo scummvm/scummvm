@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-31 16:33+0000\n"
+"POT-Creation-Date: 2022-07-31 20:28+0000\n"
 "PO-Revision-Date: 2022-07-28 21:37+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -6401,7 +6401,7 @@ msgstr "Näytä/Piilota Pausevalikko"
 msgid "Toggle Chatty AI"
 msgstr "Puhelias AI päälle / pois"
 
-#: engines/pink/gui.cpp:278
+#: engines/pink/gui.cpp:279
 msgid "This menu item is not yet implemented"
 msgstr "Tätä valikkoa ei ole vielä toteutettu"
 
