@@ -50,7 +50,9 @@ enum {
 	kBackgroundSyncCmd = 'PDBS'
 };
 
-SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(bool canRunInBackground): Dialog("SaveLoadCloudSyncProgress"), _close(false), _pollFrame(0) {
+SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(bool canRunInBackground, SaveLoadChooserDialog *parent)
+	: Dialog("SaveLoadCloudSyncProgress"), _close(false), _pollFrame(0), _parent(parent)
+{
 	_label = new StaticTextWidget(this, "SaveLoadCloudSyncProgress.TitleText", _("Downloading saves..."));
 	uint32 progress = (uint32)(100 * CloudMan.getSyncDownloadingProgress());
 	_progressBar = new SliderWidget(this, "SaveLoadCloudSyncProgress.ProgressBar");
@@ -62,7 +64,6 @@ SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(bool canRunInBa
 	new ButtonWidget(this, "SaveLoadCloudSyncProgress.Cancel", _("Cancel"), Common::U32String(), kCancelSyncCmd, Common::ASCII_ESCAPE);	// Cancel dialog
 	ButtonWidget *backgroundButton = new ButtonWidget(this, "SaveLoadCloudSyncProgress.Background", _("Run in background"), Common::U32String(), kBackgroundSyncCmd, Common::ASCII_RETURN);	// Confirm dialog
 	backgroundButton->setEnabled(canRunInBackground);
-	g_gui.scheduleTopDialogRedraw();
 }
 
 SaveLoadCloudSyncProgressDialog::~SaveLoadCloudSyncProgressDialog() {
@@ -99,7 +100,7 @@ void SaveLoadCloudSyncProgressDialog::handleTickle() {
 
 void SaveLoadCloudSyncProgressDialog::pollCloudMan() {
 	_pollFrame = (_pollFrame + 1) % 60;
-	if (_pollFrame != 0) return;
+	if (_pollFrame != 1) return;
 
 	const bool syncing = CloudMan.isSyncing();
 	const uint32 progress = (uint32)(100 * CloudMan.getSyncDownloadingProgress());
@@ -111,6 +112,11 @@ void SaveLoadCloudSyncProgressDialog::pollCloudMan() {
 	_percentLabel->setLabel(Common::String::format("%u %%", progress));
 	_progressBar->setValue(progress);
 	_progressBar->markAsDirty();
+
+	if (_parent) {
+		_parent->updateSaveList();
+		_parent->reflowLayout();
+	}
 }
 #endif
 
@@ -251,7 +257,7 @@ void SaveLoadChooserDialog::handleTickle() {
 		Common::Array<Common::String> files = CloudMan.getSyncingFiles();
 		if (!files.empty()) {
 			{
-				SaveLoadCloudSyncProgressDialog dialog(_metaEngine ? _metaEngine->hasFeature(MetaEngine::kSimpleSavesNames) : false);
+				SaveLoadCloudSyncProgressDialog dialog(_metaEngine ? _metaEngine->hasFeature(MetaEngine::kSimpleSavesNames) : false, this);
 				int result = dialog.runModal();
 				if (result == kCancelSyncCmd) {
 					CloudMan.cancelSync();
@@ -379,7 +385,7 @@ ButtonWidget *SaveLoadChooserDialog::createSwitchButton(const Common::String &na
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 void SaveLoadChooserDialog::pollCloudMan() {
 	_pollFrame = (_pollFrame + 1) % 60;
-	if (_pollFrame != 0) return;
+	if (_pollFrame != 1) return;
 
 	const bool syncing = CloudMan.isSyncing();
 	const uint32 progress = (uint32)(100 * CloudMan.getSyncDownloadingProgress());
