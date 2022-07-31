@@ -23,6 +23,12 @@
 
 namespace Immortal {
 
+int ImmortalEngine::logicFreeze() {
+	// Very silly way of checking if the level is over and/or the game is over
+	int g = _gameOverFlag | _levelOver;
+	return (g ^ 1) >> 1;
+}
+
 void ImmortalEngine::logicInit() {
 	_titlesShown = 0;
 	_time = 0;
@@ -58,7 +64,7 @@ void ImmortalEngine::restartLogic() {
 
 	if (fromOldGame() == false) {
 		_level = 0;
-		//levelNew();
+		//levelNew(_level);
 	}
 
 	if (_level != 7) {
@@ -96,8 +102,7 @@ void ImmortalEngine::logic() {
 			_levelOver = false;
 
 			if (_level == (_maxLevels-1)) {
-				//textPrint(kPrintYouWin);
-				debug("YOU WIN");
+				textPrint(kStrYouWin);
 
 			} else {
 				//makeCertificate();
@@ -123,7 +128,7 @@ void ImmortalEngine::logic() {
 			// If so, dim the screen
 			_dim = 0;
 			if ((_level == 0) && (/*_currentLevel.getShowRoom()*/0 == 0) && (/*roomLighted()*/false == false) && (/*getNumBullets()*/ 0 == 0)) {
-				_dim += 1;
+				//_dim += 1;
 			}
 
 			if (_level == 7) {
@@ -166,6 +171,25 @@ void ImmortalEngine::trapKeys() {
 	}
 }
 
+int ImmortalEngine::keyOrButton() {
+	// Returns a key if a key was pressed, or 13 if a button was pressed
+
+	int button = 0;
+	while (button == 0) {
+		getInput();
+		switch (_pressedAction) {
+			case kActionKey:
+				button = _pressedAction;
+			case kActionFire:
+			case kActionButton:
+				button = 13;
+			default:
+				break;
+		}
+	}
+	return button;
+}
+
 void ImmortalEngine::doSingleStep() {
 	/* This is a very cool debug routine. If you press the _singleStep key,
 	 * the engine enters this debug mode where it waits for another key press.
@@ -194,7 +218,7 @@ void ImmortalEngine::updateHitGauge() {
 	 * what their health is. If the game considered the player unique, this would
 	 * probably just check a global 'health' variable instead.
 	 */
-	//int h = _rooms[_currentRoom]._monsters[kPlayerID]._getHits();
+	//int hits = _rooms[_currentRoom]._monsters[kPlayerID]._getHits();
 	int hits = 0;
 	if (hits != _lastGauge) {
 		// Update the mirror value if the health has changed since last frame
@@ -246,11 +270,8 @@ void ImmortalEngine::drawGauge(int h) {
 	}
 }
 
-void ImmortalEngine::doGroan() {
-	//getRandom();
-}
-
-bool ImmortalEngine::printAnd(const Common::String s) {
+bool ImmortalEngine::printAnd(Str s) {
+	// Only ever used by fromOldGame()
 	// Just prints what it's given and then checks for input
 	textPrint(s);
 	getInput();
@@ -261,12 +282,16 @@ bool ImmortalEngine::printAnd(const Common::String s) {
 }
 
 bool ImmortalEngine::fromOldGame() {
-	/*
+	/* This is the basic load game routine (and also title display).
+	 * It lets the user enter a password, or start a new game.
+	 * Either way it sets up the inventory for the level, and also
+	 * various object related things for the specific level.
+	 */
 	if (_titlesShown == 0) {
 		_titlesShown++;
 		_dontResetColors = 1;
-		printAnd(kTitle0);
-		printAnd(kTitle4);
+		printAnd(kStrTitle0);
+		printAnd(kStrTitle4);
 		getInput();
 		return false;
 	}
@@ -278,52 +303,260 @@ bool ImmortalEngine::fromOldGame() {
 	} else {
 
 		do {
-			if (!textPrint(kOldGameString)) {
+			if (!textPrint(kStrOldGame)) {
 				// They choose not to load an old game
 				return false;			
 			}
-		} while (getCertificate());
+		} while (getCertificate() == true);
 
 		if (_lastCertLen == 0) {
 			return false;
 		}
 	}
 
-	_level = _cert + kCertLevel;
-	setGameFlags(((_cert + kCertHiGameFlags) << 4) | (_cert + kCertLoGameFlags));
-	uint16 hits = _cert + kCertHits;
-	uint16 quick = _cert + kCertQuickness;
-	uint16 gold = ((_cert + kCertGoldHi) << 4) | (_cert + kCertGoldLo);
+	// Set game flags
+	_level = _certificate[kCertLevel];
+
+	setGameFlags((_certificate[kCertHiGameFlags] << 4) | _certificate[kCertLoGameFlags]);
+
+	// Create the player
+
+	//uint8 hits  = _certificate[kCertHits];
+	//uint8 quick = _certificate[kCertQuickness];
+	//uint8 gold  = (_certificate[kCertGoldHi] << 4) | _certificate[kCertGoldLo];
 	// monstMakePlayer(hits, quick, gold);	<- will become room.makePlayer();
 
-	uint8 tmp = 3;
-	uint8 flags = kObjIsRunning;
-	uint8 frame;
-	uint8 type;
+	// Create the inventory
+	// room.makeObject(3, kObjIsRunning, 0, goldType);
 
-	// room.makeObject(tmp, flags, gold, )*/
+	// Hi bits of inventory
+	int certInv = _certificate[kCertInvHi];
+
+	if ((certInv & 1) != 0 ) {
+		if (_level < 2) {
+			//room.makeObject(3, 0, 0, waterType);
+		}
+	}
+
+	if ((certInv & 2) != 0) {
+		//room.makeObject(3, 0, kRingFrame, dunRingType);
+	}
+
+	if ((certInv & 4) != 0) {
+		if (_level < 6) {
+			//room.makeObject(3, 0, kSporesFrame, wormFoodType);
+		}
+	}
+
+	if ((certInv & 8) != 0) {
+		//room.makeObject(3, 0, 0 (?), coinType);
+	}
+
+
+	// Low bits of inventory
+	certInv = _certificate[kCertInvLo];
+
+	// This would have been much more clean as a set of tables instead of a long branching tree
+	switch (_certificate[kCertLevel]) {
+		case 1:
+			if ((certInv & 2) != 0) {
+				//room.makeObject(3, 0, kSporesFrame, sporesType);
+			}
+
+			if ((certInv & 4) != 0) {
+				//room.makeObject(3, 0, kSporesFrame, wowCharmType);
+			}
+
+			break;
+		case 4:
+			if ((certInv & 2) != 0) {
+				//room.makeObject(3, kIsInvisible, kSporesFrame, coffeeType);
+			}
+
+			break;
+		case 3:
+			if ((certInv & 1) != 0) {
+				//room.makeObject(3, kIsRunning, kRingFrame, faceRingType);
+			}
+
+			break;
+		case 7:
+			if ((certInv & 1) != 0) {
+				//room.makeObject(6, kUsesFireButton, kSporesFrame, bronzeType);
+			}
+
+			if ((certInv & 2) != 0) {
+				//room.makeObject(3, 0, kSporesFrame, tractorType);
+			}
+
+			if ((certInv & 4) != 0) {
+				//room.makeObject(3, 0, kSporesFrame, antiType);
+			}
+
+		default:
+			break;
+	}
+	//levelNew(_level)
 	return true;
 }
 
-void ImmortalEngine::setGameFlags(uint16 f) {
+void ImmortalEngine::calcCheckSum(int l, uint8 checksum[]) {
+	checksum[0] = 4;
+	checksum[1] = 0xa5;
 
+	/* The game logic seems to allow a len of 4 (cmp 4 : bcc),
+	 * but the checksum iny before it checks if the sizes are the same,
+	 * so shouldn't a cert of len 4 cause it to loop 0xfffc times?
+	 */
+	for (int i = 4; i <= l; i++) {
+		checksum[0] = (_certificate[i] + checksum[0]) ^ checksum[1];
+		checksum[1] = (_certificate[i] << 1) + checksum[1];
+	}
+
+	checksum[3] = checksum[1] >> 4;
+	checksum[2] = checksum[1] & 0xf;
+	checksum[1] = checksum[0] >> 4;
+	checksum[0] = checksum[0] & 0xf;
 }
 
-// There's no way this routine needs to still be here. In fact I'm not sure it needed to be in the game anyway?
+bool ImmortalEngine::getCertificate() {
+	textPrint(kStrCertificate);
+	int certLen = 0;
+	bool entered = false;
+	int k = 0;
+
+	// My goodness the logic for this is a mess.
+	while (entered == false) {
+		k = keyOrButton();
+		if (k == 13) {
+			entered = true;
+
+		} else if (k == 0x7f) {
+			// The input was a backspace
+			if (certLen != 0) {
+				// Length is one smaller now
+				// move the drawing position back and reprint the '-' char
+				certLen--;
+				backspace();
+				backspace();
+				printChr('-');
+			}			
+
+		} else {
+			// The input was a key
+
+			if (certLen != kMaxCertificate) {
+				if ((k >= 'a') && (k < '{')) {
+					k -= 0x20;
+				}
+
+				if (k >= '0') {
+					if (k < ('9' + 1)) {
+						k -= '0';
+					}
+
+					else {
+						if (k < 'A') {
+							// Terrible, I know. But this seems to be the logic.
+							continue;
+						}
+
+						if (k < ('F' + 1)) {
+							k -= ('A' - 10);
+						}
+					}
+
+					int certK = k;
+					if ((k < ('Z' + 1)) && (k >= 'A')) {
+						k += ('a' - 'A');
+					}
+					backspace();
+					printChr(k);
+					printChr('-');
+					_certificate[certLen] = certK;
+					certLen++;
+				}
+			}
+		}
+	}
+
+	// Input of certificate is finished
+	if (certLen == 0) {
+		certLen = _lastCertLen;
+	}
+	if (certLen != 0) {
+		if (certLen < 4) {
+			textPrint(kStrBadCertificate);
+			return false;
+		}
+		uint8 checksum[4];
+		calcCheckSum(certLen, checksum);
+		for (int i = 0; i < 4; i++) {
+			if (checksum[i] != _certificate[i]) {
+				textPrint(kStrBadCertificate);
+				return false;
+			}
+		}
+	}
+
+	// Cert is good
+	_lastCertLen = certLen;
+	return true;
+}
+
+void ImmortalEngine::printCertificate() {
+	/* In contrast to the other certificate routines,
+	 * this one is nice and simple. You could also
+	 * just add the appropriate offset for the letters,
+	 * but grabbing it from a table is faster and doesn't
+	 * use a lot of space (especially if it's used anywhere else).
+	 * Why doesn't the game use rom table indexing like this more often?
+	 */
+	char toHex[] = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
+
+	textBeginning(kStrCertificate);
+	for (int i = 0; i < _lastCertLen; i++) {
+		printChr(toHex[_certificate[i]]);
+	}
+	textEnd(kStrCertificate2);
+}
+
+bool ImmortalEngine::isSavedKing() {
+	if ((_gameFlags & kSavedKing) == 1) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool ImmortalEngine::isSavedAna() {
+	if ((_gameFlags & kSavedAna) == 1) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
+/*
+ * Functions that don't really need to be functions
+ */
+
+void ImmortalEngine::setGameFlags(uint16 f) {
+	_gameFlags = f;
+}
+
+uint16 ImmortalEngine::getGameFlags() {
+	return _gameFlags;
+}
+
 int ImmortalEngine::getLevel() {
 	return _level;
 }
 
-int ImmortalEngine::logicFreeze() {
-	// Very silly way of checking if the level is over and/or the game is over
-	int g = _gameOverFlag | _levelOver;
-	return (g ^ 1) >> 1;
-}
-
 void ImmortalEngine::gameOverDisplay() {
 	_themePaused = true;
-	//text_print(kGameOverString)
-	debug("GAME OVER");
+	textPrint(kStrGameOver);
 }
 
 void ImmortalEngine::gameOver() {
@@ -338,29 +571,19 @@ void ImmortalEngine::setSavedKing() {
 	_gameFlags |= kSavedKing;
 }
 
-bool ImmortalEngine::isSavedKing() {
-	if ((_gameFlags & kSavedKing) == 1) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
 void ImmortalEngine::setSavedAna() {
 	_gameFlags |= kSavedAna;
 }
 
-bool ImmortalEngine::isSavedAna() {
-	if ((_gameFlags & kSavedAna) == 1) {
-		return true;
-	} else {
-		return false;
-	}
+
+/*
+ * Not relevant yet (music)
+ */
+
+void ImmortalEngine::doGroan() {
+	//getRandom();
 }
 
-bool ImmortalEngine::getCertificate() {
-	return true;
-}
 
 } // namespace Immortal
 
