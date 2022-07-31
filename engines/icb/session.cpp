@@ -49,7 +49,6 @@
 
 namespace ICB {
 
-
 // Translation tweaks
 
 LinkedDataFile *LoadTranslatedFile(const char *session, const char *mission);
@@ -383,8 +382,10 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 }
 
 void _game_session::Script_version_check() {
-	if (FN_ROUTINES_DATA_VERSION != LinkedDataObject::GetHeaderVersion(scripts))
-		Fatal_error("WARNING! SCRIPTS AND ENGINE ARE NOT SAME VERSION");
+	uint32 version = LinkedDataObject::GetHeaderVersion(scripts);
+	if (FN_ROUTINES_DATA_VERSION != version) {
+		warning("SCRIPTS AND ENGINE ARE NOT SAME VERSION: %d", version);
+	}
 }
 
 void _game_session::___destruct() {
