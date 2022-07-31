@@ -129,9 +129,10 @@ enum {
 
 enum {
 	kRecentSaveId		= 9,
-	kRecentSavesOffset	= 400000,
-	kMaxSaves			= 10
+	kRecentSavesOffset	= 400000
 };
+
+static const int kMaxSaves = 10;
 
 static void menuCommandsCallback(int action, Common::U32String &, void *data) {
 	PinkEngine *engine = (PinkEngine *)data;
