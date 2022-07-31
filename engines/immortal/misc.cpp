@@ -43,7 +43,11 @@ void ImmortalEngine::delay8(int j) {            // 1/8 jiffies are 7.02ms
 	g_system->delayMillis(j * 7);
 }
 
-void ImmortalEngine::miscInit() {}
+void ImmortalEngine::miscInit() {
+    // In the source, this is where the seed for the rng is set, but we don't need to do that as we used _randomSource
+    _lastGauge = 0;
+}
+
 void ImmortalEngine::setRandomSeed() {}
 void ImmortalEngine::getRandom() {}
 void ImmortalEngine::myDelay() {}

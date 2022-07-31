@@ -202,7 +202,7 @@ public:
 	const int kNiceTime = 36;
 	const int kMaxCertificate = 16;
 
-	// this should really be a char array, but inserting frame values will be stupid so it's just a string instead
+	// This should really be a char array, but inserting frame values will be stupid so it's just a string instead
 	const Common::String genStr[11] = {"New game?%", "Enter certificate:&-=", "Invalid certificate.@",
 					   	   			  "End of level!&Here is your certificate:&&=", "&@",
 						   			  "   Electronic Arts presents&&       The Immortal&&&&      1990 Will Harvey|]]]]]]]]]=", // Might need \ for something
@@ -469,6 +469,7 @@ public:
 	 int logicFreeze();									// Overcomplicated way to check if game over or level over
 	void updateHitGauge();
 	void drawGauge(int h);
+	void makeCertificate();
 	void calcCheckSum(int l, uint8 checksum[]);			// Checksum is one word, but the source called it CheckSum
 	bool getCertificate();
 	void printCertificate();
@@ -526,10 +527,10 @@ public:
 	Common::SeekableReadStream *unCompress(Common::File *src, int srcLen);
 
 	// Subroutines called by unCompress
-	void setupDictionary(uint16 start[], uint16 ptk[], uint16 &findEmpty);
-	 int getInputCode(bool &carry, Common::File *src, int &srcLen, uint16 &evenOdd);
+	void   setupDictionary(uint16 start[], uint16 ptk[], uint16 &findEmpty);
+	int    getInputCode(bool &carry, Common::File *src, int &srcLen, uint16 &evenOdd);
 	uint16 getMember(uint16 codeW, uint16 k, uint16 &findEmpty, uint16 start[], uint16 ptk[]);
-	void appendList(uint16 codeW, uint16 k, uint16 &hash, uint16 &findEmpty, uint16 start[], uint16 ptk[], uint16 &tmp);
+	void   appendList(uint16 codeW, uint16 k, uint16 &hash, uint16 &findEmpty, uint16 start[], uint16 ptk[], uint16 &tmp);
 
 
 	/*
