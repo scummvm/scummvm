@@ -481,6 +481,7 @@ void AdvancedMetaEngineDetection::composeFileHashMap(FileMap &allFiles, const Co
 				continue;
 
 			composeFileHashMap(allFiles, files, depth - 1, tstr);
+			continue;
 		}
 
 		// Strip any trailing dot
