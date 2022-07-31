@@ -2558,6 +2558,7 @@ public:
 	Common::Point getParentOrigin() const;
 	Common::Point getGlobalPosition() const;
 	const Common::Rect &getRelativeRect() const;
+	virtual Common::Rect getRelativeCollisionRect() const;
 
 	void setRelativeRect(const Common::Rect &rect);
 

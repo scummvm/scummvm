@@ -1282,6 +1282,12 @@ bool MToonElement::isMouseCollisionAtPoint(int32 relativeX, int32 relativeY) con
 	return false;
 }
 
+Common::Rect MToonElement::getRelativeCollisionRect() const {
+	Common::Rect colRect = _metadata->frames[_renderedFrame].rect;
+	colRect.translate(_rect.left, _rect.top);
+	return colRect;
+}
+
 VThreadState MToonElement::startPlayingTask(const StartPlayingTaskData &taskData) {
 	if (_rateTimes100000 < 0)
 		_cel = _playRange.max;

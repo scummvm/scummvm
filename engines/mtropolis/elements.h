@@ -223,6 +223,8 @@ public:
 
 	bool isMouseCollisionAtPoint(int32 relativeX, int32 relativeY) const override;
 
+	Common::Rect getRelativeCollisionRect() const override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "mToon Element"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }

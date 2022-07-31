@@ -5716,7 +5716,7 @@ void Runtime::recursiveFindColliders(Structural *structural, size_t sceneStackDe
 			// isRoot = Is a scene, and colliding with scenes is not allowed
 			if (!isRoot && visual->isVisible()) {
 				ColliderInfo colliderInfo;
-				colliderInfo.absRect = rect;
+				colliderInfo.absRect = visual->getRelativeCollisionRect();
 				colliderInfo.absRect.translate(parentOriginX, parentOriginY);
 				colliderInfo.element = visual;
 				colliderInfo.layer = visual->getLayer();
@@ -7504,6 +7504,10 @@ MiniscriptInstructionOutcome VisualElement::writeRefAttribute(MiniscriptThread *
 
 const Common::Rect &VisualElement::getRelativeRect() const {
 	return _rect;
+}
+
+Common::Rect VisualElement::getRelativeCollisionRect() const {
+	return getRelativeRect();
 }
 
 void VisualElement::setRelativeRect(const Common::Rect &rect) {
