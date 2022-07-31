@@ -111,6 +111,10 @@ enum InputDirection {
 	kDirectionRight
 };
 
+enum MonsterID {
+	kPlayerID
+};
+
 enum CertIndex : uint8 {
 	kCertHits,
 	kCertLevel,
