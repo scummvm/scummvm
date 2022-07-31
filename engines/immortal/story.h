@@ -34,10 +34,6 @@ enum ObjFlag : uint8 {
 	kObjIsF2           = 0x01
 };
 
-enum MonsterID {
-	kPlayerID
-};
-
 enum Str {
 	kStrOldGame,
 	kStrEnterCertificate,
