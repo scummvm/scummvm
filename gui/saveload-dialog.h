@@ -30,14 +30,17 @@
 namespace GUI {
 
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
+class SaveLoadChooserDialog;
+
 class SaveLoadCloudSyncProgressDialog : public Dialog { //protected?
 	StaticTextWidget *_label, *_percentLabel;
 	SliderWidget *_progressBar;
+	SaveLoadChooserDialog *_parent;
 	bool _close;
 	int _pollFrame;
 
 public:
-	SaveLoadCloudSyncProgressDialog(bool canRunInBackground);
+	SaveLoadCloudSyncProgressDialog(bool canRunInBackground, SaveLoadChooserDialog *parent);
 	~SaveLoadCloudSyncProgressDialog() override;
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
@@ -137,6 +140,8 @@ protected:
 
 	/** If CloudMan is syncing, this will refresh the list of saves. */
 	void pollCloudMan();
+
+	friend class SaveLoadCloudSyncProgressDialog;
 #endif
 };
 
