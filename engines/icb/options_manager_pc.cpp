@@ -1608,7 +1608,9 @@ void OptionsManager::DrawMainOptionsScreen(uint32 surface_id) {
 		Draw_vertical_line(m_box.right + 1, m_box.bottom - m_lipLength, m_lipLength + 2, &m_drawColour, surface_address, pitch);
 		Draw_horizontal_line(m_box.left, m_box.bottom + 1, m_box.right - m_box.left + 1, &m_drawColour, surface_address, pitch);
 
-		DisplayText(surface_address, pitch, "Copyright 2000 Revolution Software", 0, SCREEN_DEPTH - 100, PALEFONT, TRUE8);
+		if (g_icb->getGameType() == GType_ELDORADO)
+			DisplayText(surface_address, pitch, "Copyright (c) 2000 DreamWorks SKG", 0, SCREEN_DEPTH - 120, PALEFONT, TRUE8);
+		DisplayText(surface_address, pitch, "Copyright (c) 2000 Revolution Software Ltd", 0, SCREEN_DEPTH - 100, PALEFONT, TRUE8);
 
 		// Unlock the working buffer
 		surface_manager->Unlock_surface(surface_id);
