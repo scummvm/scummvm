@@ -207,15 +207,15 @@ void ImmortalEngine::drawBGRND() {
 		for (int x = 0; x < (kViewPortCW + 1); x += (kViewPortCW + 1)) {
 			uint16 BTS = _myModLCNM[y2][x];
 
-			if (_tIsBackground[BTS] != 0) {
+			if (kIsBackground[BTS] != 0) {
 				// Low Floor value, draw tile as background
 				drawSolid(_myCNM[y2][x], pointX, pointY);
 
-			} else if (_tChrMask[BTS] >= 0x8000) {
+			} else if (kChrMask[BTS] >= 0x8000) {
 				// Right Mask, draw upper left hand corner (ULHC) of floor
 				drawULHC(_myCNM[y2][x], pointX, pointY);
 
-			} else if (_tChrMask[BTS] != 0) {
+			} else if (kChrMask[BTS] != 0) {
 				// Left Mask, draw upper right hand corner (UPHC) of floor
 				drawURHC(_myCNM[y2][x], pointX, pointY);
 			}
@@ -254,17 +254,20 @@ void ImmortalEngine::drawItems() {
 				//draw the column of rows
 				while (_columnIndex[i] < ((kViewPortCW + 1) * (kViewPortCH + 1))) {
 
-					k = _myModLCNM[i][_columnIndex[i]];
-					if ((rowY - _tChrDy[k]) < _columnTop[i]) {
+					uint16 k = _myModLCNM[i][_columnIndex[i]];
+					// ******* This is just so that the array can be indexed right now, will remove when myModLCNM is actually useable
+					k = 0;
+					// *****************************
+					if ((rowY - kChrDy[k]) < _columnTop[i]) {
 						break;
 					}
-					if (_tIsBackground[k] == 0) {
+					if (kIsBackground[k] == 0) {
 						// If it's a background tile, we already drew it (why is it in here then??)
-						if (_tChrMask[k] >= 0x8000) {
+						if (kChrMask[k] >= 0x8000) {
 							// Right Mask, draw lower right hand corner (LRHC)
 							drawLRHC(_myCNM[i][_columnIndex[i]], _columnTop[i], _columnX[i]);
 
-						} else if (_tChrMask[k] == 0) {
+						} else if (kChrMask[k] == 0) {
 							// Floor or cover, draw the whole CHR
 							drawSolid(_myCNM[i][_columnIndex[i]], _columnTop[i], _columnX[i]);
 
@@ -274,7 +277,7 @@ void ImmortalEngine::drawItems() {
 						}
 					}
 					_columnTop[i] += kChrH;
-					_columnIndex += (kViewPortCW + 1);
+					_columnIndex[i] += (kViewPortCW + 1);
 				}
 			}
 
@@ -286,6 +289,12 @@ void ImmortalEngine::drawItems() {
 		}
 		n++;
 	} while (n != _num2DrawItems);
+}
+
+void ImmortalEngine::backspace() {
+	// Just moves the drawing position back by a char, and then draws an empty rect there (I think)
+	_penX -= 8;
+	//rect(_penX + 32, 40, 8, 16, 0);
 }
 
 void ImmortalEngine::printChr(char c) {

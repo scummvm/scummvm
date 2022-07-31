@@ -57,13 +57,13 @@ void ImmortalEngine::myDelay() {}
  *
  */
 
-bool ImmortalEngine::textPrint(const Common::String s) {
+bool ImmortalEngine::textPrint(Str s) {
     return true;
 }
 void ImmortalEngine::textSub() {}
-void ImmortalEngine::textEnd() {}
-void ImmortalEngine::textMiddle() {}
-void ImmortalEngine::textBeginning() {}
+void ImmortalEngine::textEnd(Str s) {}
+void ImmortalEngine::textMiddle(Str s) {}
+void ImmortalEngine::textBeginning(Str s) {}
 void ImmortalEngine::yesNo() {}
 
 
