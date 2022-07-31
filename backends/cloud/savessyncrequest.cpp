@@ -301,7 +301,6 @@ void SavesSyncRequest::fileDownloadedCallback(Storage::BoolResponse response) {
 	}
 
 	//update local timestamp for downloaded file
-	_localFilesTimestamps = DefaultSaveFileManager::loadTimestamps();
 	_localFilesTimestamps[_currentDownloadingFile.name()] = _currentDownloadingFile.timestamp();
 	DefaultSaveFileManager::saveTimestamps(_localFilesTimestamps);
 
@@ -352,7 +351,6 @@ void SavesSyncRequest::fileUploadedCallback(Storage::UploadResponse response) {
 		return;
 
 	//update local timestamp for the uploaded file
-	_localFilesTimestamps = DefaultSaveFileManager::loadTimestamps();
 	_localFilesTimestamps[_currentUploadingFile] = response.value.timestamp();
 	DefaultSaveFileManager::saveTimestamps(_localFilesTimestamps);
 
