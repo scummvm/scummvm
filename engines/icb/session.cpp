@@ -605,24 +605,26 @@ void _game_session::Init_objects() {
 
 	Tdebug("objects_init.txt", "\n\nfound %d voxel characters", number_of_voxel_ids);
 
-	// init the player object number
-	// get id
-	id = LinkedDataObject::Fetch_item_number_by_name(objects, "player"); // returns -1 if object not in existence
+	if (g_icb->getGameType() == GType_ICB) {
+		// init the player object number
+		// get id
+		id = LinkedDataObject::Fetch_item_number_by_name(objects, "player"); // returns -1 if object not in existence
 
-	if (id != 0xffffffff) {
-		L = logic_structs[id]; // fetch logic struct for player object
-		I = L->voxel_info;
-		M = L->mega;
+		if (id != 0xffffffff) {
+			L = logic_structs[id]; // fetch logic struct for player object
+			I = L->voxel_info;
+			M = L->mega;
 
-		object = (CGame *)LinkedDataObject::Fetch_item_by_number(objects, id);
+			object = (CGame *)LinkedDataObject::Fetch_item_by_number(objects, id);
 
-		//		not if this object has been shut-down - for not having a map marker for example
-		if (L->ob_status != OB_STATUS_HELD)
-			player.Set_player_id(id);
+			// not if this object has been shut-down - for not having a map marker for example
+			if (L->ob_status != OB_STATUS_HELD)
+				player.Set_player_id(id);
 
-		// Preload the player animation to make PSX jerking better
-		for (uint32 i = 0; i < NUMBER_player_startup_anims; i++)
-			rs_anims->Res_open(I->get_anim_name(player_startup_anims[i]), I->anim_name_hash[player_startup_anims[i]], I->base_path, I->base_path_hash);
+			// Preload the player animation to make PSX jerking better
+			for (uint32 i = 0; i < NUMBER_player_startup_anims; i++)
+				rs_anims->Res_open(I->get_anim_name(player_startup_anims[i]), I->anim_name_hash[player_startup_anims[i]], I->base_path, I->base_path_hash);
+		}
 	}
 
 	// done
