@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-30 20:39+0000\n"
+"POT-Creation-Date: 2022-07-31 16:33+0000\n"
 "PO-Revision-Date: 2022-07-13 06:51+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -6449,7 +6449,7 @@ msgstr "Toon/Verberg Pauze-Menu"
 msgid "Toggle Chatty AI"
 msgstr "Schakel Chatty AI aan/uit"
 
-#: engines/pink/gui.cpp:219
+#: engines/pink/gui.cpp:278
 msgid "This menu item is not yet implemented"
 msgstr "Dit menu onderdeel is nog niet geïmplementeerd"
 

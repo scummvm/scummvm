@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-30 20:39+0000\n"
+"POT-Creation-Date: 2022-07-31 16:33+0000\n"
 "PO-Revision-Date: 2022-07-22 09:09+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -6407,7 +6407,7 @@ msgstr "Szünet menü Képre/Elrejt"
 msgid "Toggle Chatty AI"
 msgstr "Kapcsold be a Csevegő AI-t"
 
-#: engines/pink/gui.cpp:219
+#: engines/pink/gui.cpp:278
 msgid "This menu item is not yet implemented"
 msgstr "Ez a menüpont még nincs megvalósítva"
 
