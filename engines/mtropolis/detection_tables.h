@@ -37,7 +37,7 @@ namespace MTropolis {
 
 static const MTropolisGameDescription gameDescriptions[] = {
 
-	{ // Obsidian Macintosh
+	{ // Obsidian Macintosh, dumped
 		{
 			"obsidian",
 			"V1.0, 1/13/97, CD",
@@ -48,6 +48,28 @@ static const MTropolisGameDescription gameDescriptions[] = {
 				{ "Obsidian Data 4",	0, "8dfa726c675aae3778951ddd18e4484c", 599297536 },
 				{ "Obsidian Data 5",	0, "6f085578b13b3db99543b969c9009b17", 583581056 },
 				{ "Obsidian Data 6",	0, "120ddcb1780be0f6380d708041733406", 558315648 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_UNSTABLE,
+			GUIO2(GAMEOPTION_WIDESCREEN_MOD, GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS)
+		},
+		GID_OBSIDIAN,
+		0,
+		0,
+	},
+	{ // Obsidian Macintosh, data forks only
+		{
+			"obsidian",
+			"V1.0, 1/13/97, CD",
+			{
+				{ "Obsidian Installer", MTFT_SPECIAL,		"c8859ba831a202a112eaffc5aee3ddf5", 9138050 },
+				{ "Obsidian Data 2",	MTFT_ADDITIONAL,	"a07c8ba79b9cb1de5496345dbe168527", 563284971 },
+				{ "Obsidian Data 3",	MTFT_ADDITIONAL,	"7cd809daa365b478ed96acbd6434966b", 617410816 },
+				{ "Obsidian Data 4",	MTFT_ADDITIONAL,	"ee67b2032f27133800f50c8b5cf08129", 599294667 },
+				{ "Obsidian Data 5",	MTFT_ADDITIONAL,	"13a221b93471b7d551316735cec21e7f", 583578222 },
+				{ "Obsidian Data 6",	MTFT_ADDITIONAL,	"5388ee329d1f5621333249f2f09cfb0c", 558312729 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,

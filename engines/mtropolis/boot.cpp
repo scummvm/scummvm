@@ -40,17 +40,6 @@ namespace MTropolis {
 
 namespace Boot {
 
-enum FileCategory {
-	kFileCategoryPlayer,
-	kFileCategoryExtension,
-	kFileCategoryProjectAdditionalSegment,
-	kFileCategoryProjectMainSegment,
-
-	kFileCategorySpecial,
-
-	kFileCategoryUnknown,
-};
-
 struct FileIdentification {
 	union Tag {
 		uint32 value;
@@ -60,7 +49,7 @@ struct FileIdentification {
 	FileIdentification();
 
 	Common::String fileName;
-	FileCategory category;
+	MTropolisFileType category;
 
 	Tag macType;
 	Tag macCreator;
@@ -68,7 +57,7 @@ struct FileIdentification {
 	Common::SharedPtr<Common::SeekableReadStream> stream;
 };
 
-FileIdentification::FileIdentification() : category(kFileCategoryUnknown) {
+FileIdentification::FileIdentification() : category(MTFT_AUTO) {
 	macType.value = 0;
 	macCreator.value = 0;
 }
@@ -211,7 +200,7 @@ void ObsidianGameDataHandler::unpackMacRetailInstaller(Common::Array<Common::Sha
 		ident.macCreator.value = request.creator;
 		ident.macType.value = request.type;
 		ident.resMan = resMan;
-		ident.category = kFileCategoryUnknown;
+		ident.category = MTFT_AUTO;
 		files.push_back(ident);
 	}
 
@@ -224,7 +213,7 @@ void ObsidianGameDataHandler::unpackMacRetailInstaller(Common::Array<Common::Sha
 		ident.fileName = "Obsidian Data 1";
 		ident.macCreator.value = MKTAG('M', 'f', 'P', 'l');
 		ident.macType.value = MKTAG('M', 'F', 'm', 'm');
-		ident.category = kFileCategoryUnknown;
+		ident.category = MTFT_AUTO;
 		ident.stream = startupStream;
 		files.push_back(ident);
 	}
@@ -235,7 +224,7 @@ void ObsidianGameDataHandler::categorizeSpecialFiles(Common::Array<FileIdentific
 	// Flag RSGKit as Special so it doesn't get fed to the cursor loader
 	for (FileIdentification &file : files) {
 		if (file.fileName == "Obsidian Installer" || file.fileName == "RSGKit.rPP" || file.fileName == "RSGKit.r95")
-			file.category = kFileCategorySpecial;
+			file.category = MTFT_SPECIAL;
 	}
 }
 
@@ -566,8 +555,10 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 
 			Boot::FileIdentification ident;
 			ident.fileName = fileName;
-			ident.category = Boot::kFileCategoryUnknown;
-			if (!Boot::getMacTypesForFile(fileName, ident.macType.value, ident.macCreator.value))
+			ident.category = static_cast<MTropolisFileType>(fileDesc->fileType);
+			ident.macType.value = 0;
+			ident.macCreator.value = 0;
+			if (ident.category == MTFT_AUTO && !Boot::getMacTypesForFile(fileName, ident.macType.value, ident.macCreator.value))
 				error("Couldn't determine Mac file type code for file '%s'", fileName);
 
 			macFiles.push_back(ident);
@@ -591,7 +582,7 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 		bool haveAnyMFxm = false;
 
 		for (Boot::FileIdentification &macFile : macFiles) {
-			if (macFile.category == Boot::kFileCategoryUnknown) {
+			if (macFile.category == MTFT_AUTO) {
 				switch (macFile.macType.value) {
 				case MKTAG('M', 'F', 'm', 'm'):
 					haveAnyMFmm = true;
@@ -617,25 +608,25 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 
 		// Identify unknown files
 		for (Boot::FileIdentification &macFile : macFiles) {
-			if (macFile.category == Boot::kFileCategoryUnknown) {
+			if (macFile.category == MTFT_AUTO) {
 				switch (macFile.macType.value) {
 				case MKTAG('M', 'F', 'm', 'm'):
-					macFile.category = Boot::kFileCategoryProjectMainSegment;
+					macFile.category = MTFT_MAIN;
 					break;
 				case MKTAG('M', 'F', 'm', 'x'):
-					macFile.category = isMT2CrossPlatform ? Boot::kFileCategoryProjectMainSegment : Boot::kFileCategoryProjectAdditionalSegment;
+					macFile.category = isMT2CrossPlatform ? MTFT_MAIN : MTFT_ADDITIONAL;
 					break;
 				case MKTAG('M', 'F', 'x', 'm'):
 				case MKTAG('M', 'F', 'x', 'x'):
-					macFile.category = Boot::kFileCategoryProjectAdditionalSegment;
+					macFile.category = MTFT_ADDITIONAL;
 					break;
 				case MKTAG('A', 'P', 'P', 'L'):
-					macFile.category = Boot::kFileCategoryPlayer;
+					macFile.category = MTFT_PLAYER;
 					break;
 				case MKTAG('M', 'F', 'c', 'o'):
 				case MKTAG('M', 'F', 'c', 'r'):
 				case MKTAG('M', 'F', 'X', 'O'):
-					macFile.category = Boot::kFileCategoryExtension;
+					macFile.category = MTFT_EXTENSION;
 					break;
 				default:
 					error("Failed to categorize input file '%s'", macFile.fileName.c_str());
@@ -650,16 +641,16 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 		// Bin segments
 		for (Boot::FileIdentification &macFile : macFiles) {
 			switch (macFile.category) {
-			case Boot::kFileCategoryPlayer:
+			case MTFT_PLAYER:
 				// Case handled below after cursor loading
 				break;
-			case Boot::kFileCategoryExtension:
+			case MTFT_EXTENSION:
 				// Case handled below after cursor loading
 				break;
-			case Boot::kFileCategoryProjectMainSegment:
+			case MTFT_MAIN:
 				mainSegmentFile = &macFile;
 				break;
-			case Boot::kFileCategoryProjectAdditionalSegment: {
+			case MTFT_ADDITIONAL: {
 					int segmentID = Boot::resolveFileSegmentID(macFile.fileName);
 					if (segmentID < 2)
 						error("Unusual segment numbering scheme");
@@ -669,9 +660,9 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 						segmentFiles.push_back(nullptr);
 					segmentFiles[segmentIndex] = &macFile;
 				} break;
-			case Boot::kFileCategorySpecial:
+			case MTFT_SPECIAL:
 				break;
-			case Boot::kFileCategoryUnknown:
+			case MTFT_AUTO:
 				break;
 			}
 		}
@@ -685,12 +676,12 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 		Common::SharedPtr<CursorGraphicCollection> cursorGraphics(new CursorGraphicCollection());
 
 		for (Boot::FileIdentification &macFile : macFiles) {
-			if (macFile.category == Boot::kFileCategoryPlayer)
+			if (macFile.category == MTFT_PLAYER)
 				Boot::loadCursorsMac(macFile, *cursorGraphics);
 		}
 
 		for (Boot::FileIdentification &macFile : macFiles) {
-			if (macFile.category == Boot::kFileCategoryExtension)
+			if (macFile.category == MTFT_EXTENSION)
 				Boot::loadCursorsMac(macFile, *cursorGraphics);
 		}
 
@@ -733,7 +724,7 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 
 			Boot::FileIdentification ident;
 			ident.fileName = fileName;
-			ident.category = Boot::kFileCategoryUnknown;
+			ident.category = MTFT_AUTO;
 			ident.macType.value = 0;
 			ident.macCreator.value = 0;
 			winFiles.push_back(ident);
@@ -753,17 +744,17 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 
 		// Identify unknown files
 		for (Boot::FileIdentification &winFile : winFiles) {
-			if (winFile.category == Boot::kFileCategoryUnknown) {
+			if (winFile.category == MTFT_AUTO) {
 				switch (Boot::getWinFileEndingPseudoTag(winFile.fileName)) {
 				case MKTAG('.', 'm', 'p', 'l'):
-					winFile.category = Boot::kFileCategoryProjectMainSegment;
+					winFile.category = MTFT_MAIN;
 					isWindows = true;
 					isMT1 = true;
 					if (isMT2)
 						error("Unexpected mix of file platforms");
 					break;
 				case MKTAG('.', 'm', 'p', 'x'):
-					winFile.category = Boot::kFileCategoryProjectAdditionalSegment;
+					winFile.category = MTFT_ADDITIONAL;
 					isWindows = true;
 					isMT1 = true;
 					if (isMT2)
@@ -771,7 +762,7 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 					break;
 
 				case MKTAG('.', 'm', 'f', 'w'):
-					winFile.category = Boot::kFileCategoryProjectMainSegment;
+					winFile.category = MTFT_MAIN;
 					if (isMT1 || isCrossPlatform)
 						error("Unexpected mix of file platforms");
 					isWindows = true;
@@ -779,7 +770,7 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 					break;
 
 				case MKTAG('.', 'm', 'x', 'w'):
-					winFile.category = Boot::kFileCategoryProjectAdditionalSegment;
+					winFile.category = MTFT_ADDITIONAL;
 					if (isMT1 || isCrossPlatform)
 						error("Unexpected mix of file platforms");
 					isWindows = true;
@@ -787,7 +778,7 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 					break;
 
 				case MKTAG('.', 'm', 'f', 'x'):
-					winFile.category = Boot::kFileCategoryProjectMainSegment;
+					winFile.category = MTFT_MAIN;
 					if (isWindows)
 						error("Unexpected mix of file platforms");
 					isCrossPlatform = true;
@@ -795,7 +786,7 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 					break;
 
 				case MKTAG('.', 'm', 'x', 'x'):
-					winFile.category = Boot::kFileCategoryProjectAdditionalSegment;
+					winFile.category = MTFT_ADDITIONAL;
 					if (isWindows)
 						error("Unexpected mix of file platforms");
 					isCrossPlatform = true;
@@ -805,11 +796,11 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 				case MKTAG('.', 'c', '9', '5'):
 				case MKTAG('.', 'e', '9', '5'):
 				case MKTAG('.', 'r', '9', '5'):
-					winFile.category = Boot::kFileCategoryExtension;
+					winFile.category = MTFT_EXTENSION;
 					break;
 
 				case MKTAG('.', 'e', 'x', 'e'):
-					winFile.category = Boot::kFileCategoryPlayer;
+					winFile.category = MTFT_PLAYER;
 					break;
 
 				default:
@@ -825,16 +816,16 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 		// Bin segments
 		for (Boot::FileIdentification &macFile : winFiles) {
 			switch (macFile.category) {
-			case Boot::kFileCategoryPlayer:
+			case MTFT_PLAYER:
 				// Case handled below after cursor loading
 				break;
-			case Boot::kFileCategoryExtension:
+			case MTFT_EXTENSION:
 				// Case handled below after cursor loading
 				break;
-			case Boot::kFileCategoryProjectMainSegment:
+			case MTFT_MAIN:
 				mainSegmentFile = &macFile;
 				break;
-			case Boot::kFileCategoryProjectAdditionalSegment: {
+			case MTFT_ADDITIONAL: {
 				int segmentID = Boot::resolveFileSegmentID(macFile.fileName);
 				if (segmentID < 2)
 					error("Unusual segment numbering scheme");
@@ -844,9 +835,9 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 					segmentFiles.push_back(nullptr);
 				segmentFiles[segmentIndex] = &macFile;
 			} break;
-			case Boot::kFileCategorySpecial:
+			case MTFT_SPECIAL:
 				break;
-			case Boot::kFileCategoryUnknown:
+			case MTFT_AUTO:
 				break;
 			}
 		}
@@ -860,12 +851,12 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 		Common::SharedPtr<CursorGraphicCollection> cursorGraphics(new CursorGraphicCollection());
 
 		for (Boot::FileIdentification &winFile : winFiles) {
-			if (winFile.category == Boot::kFileCategoryPlayer)
+			if (winFile.category == MTFT_PLAYER)
 				Boot::loadCursorsWin(winFile, *cursorGraphics);
 		}
 
 		for (Boot::FileIdentification &winFile : winFiles) {
-			if (winFile.category == Boot::kFileCategoryExtension)
+			if (winFile.category == MTFT_EXTENSION)
 				Boot::loadCursorsWin(winFile, *cursorGraphics);
 		}
 

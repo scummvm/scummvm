@@ -31,6 +31,15 @@ enum MTropolisGameID {
 	GID_LEARNING_MTROPOLIS	= 1,
 };
 
+enum MTropolisFileType {
+	MTFT_AUTO		= 0,	// Automatic, determine based on extension or file type
+	MTFT_PLAYER		= 1,	// mTropolis Player program
+	MTFT_EXTENSION	= 2,	// Extension (only use this if the extension contains cursors, otherwise use MTFT_SPECIAL if it has something else useful, or exclude it if not)
+	MTFT_MAIN		= 3,	// Main segment
+	MTFT_ADDITIONAL	= 4,	// Additional segment
+	MTFT_SPECIAL	= 5,	// Some other kind of file, or something that might be incorrectly detected as a different type of file (e.g. installers)
+};
+
 struct MTropolisGameDescription {
 	ADGameDescription desc;
 
