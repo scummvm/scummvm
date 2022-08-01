@@ -189,22 +189,12 @@ double Storage::getSyncDownloadingProgress() {
 	return result;
 }
 
-uint64 Storage::getSyncDownloadBytesNumber() {
-	uint64 result = 0;
+void Storage::getSyncDownloadingInfo(SyncDownloadingInfo& info) {
 	_runningRequestsMutex.lock();
-	if (_savesSyncRequest)
-		result = _savesSyncRequest->getDownloadedBytes();
+	if (_savesSyncRequest) {
+		_savesSyncRequest->getDownloadingInfo(info);
+	}
 	_runningRequestsMutex.unlock();
-	return result;
-}
-
-uint64 Storage::getSyncDownloadTotalBytesNumber() {
-	uint64 result = 0;
-	_runningRequestsMutex.lock();
-	if (_savesSyncRequest)
-		result = _savesSyncRequest->getBytesToDownload();
-	_runningRequestsMutex.unlock();
-	return result;
 }
 
 double Storage::getSyncProgress() {

@@ -57,6 +57,9 @@ class SavesSyncRequest: public Networking::Request {
 	virtual void finishError(Networking::ErrorResponse error, Networking::RequestState state = Networking::FINISHED);
 	void finishSync(bool success);
 
+	uint32 getDownloadedBytes() const;
+	uint32 getBytesToDownload() const;
+
 public:
 	SavesSyncRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb);
 	virtual ~SavesSyncRequest();
@@ -67,14 +70,14 @@ public:
 	/** Returns a number in range [0, 1], where 1 is "complete". */
 	double getDownloadingProgress() const;
 
+	/** Fills a struct with numbers about current sync downloading progress. */
+	void getDownloadingInfo(Storage::SyncDownloadingInfo &info) const;
+
 	/** Returns a number in range [0, 1], where 1 is "complete". */
 	double getProgress() const;
 
 	/** Returns an array of saves names which are not downloaded yet. */
 	Common::Array<Common::String> getFilesToDownload();
-
-	uint32 getDownloadedBytes() const;
-	uint32 getBytesToDownload() const;
 };
 
 } // End of namespace Cloud

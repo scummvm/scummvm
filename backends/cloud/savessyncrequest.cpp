@@ -394,7 +394,23 @@ double SavesSyncRequest::getDownloadingProgress() const {
 
 	uint32 totalFilesToDownload = _totalFilesToHandle - _filesToUpload.size();
 	uint32 filesLeftToDownload = _filesToDownload.size() + (_currentDownloadingFile.name() != "" ? 1 : 0);
+	if (filesLeftToDownload > totalFilesToDownload)
+		filesLeftToDownload = totalFilesToDownload;
 	return (double)(totalFilesToDownload - filesLeftToDownload) / (double)(totalFilesToDownload);
+}
+
+void SavesSyncRequest::getDownloadingInfo(Storage::SyncDownloadingInfo &info) const {
+	info.bytesDownloaded = getDownloadedBytes();
+	info.bytesToDownload = getBytesToDownload();
+
+	uint32 totalFilesToDownload = _totalFilesToHandle - _filesToUpload.size();
+	uint32 filesLeftToDownload = _filesToDownload.size() + (_currentDownloadingFile.name() != "" ? 1 : 0);
+	if (filesLeftToDownload > totalFilesToDownload)
+		filesLeftToDownload = totalFilesToDownload;
+	info.filesDownloaded = totalFilesToDownload - filesLeftToDownload;
+	info.filesToDownload = totalFilesToDownload;
+
+	info.inProgress = (totalFilesToDownload > 0 && filesLeftToDownload > 0);
 }
 
 double SavesSyncRequest::getProgress() const {

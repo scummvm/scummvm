@@ -185,11 +185,14 @@ public:
 	/** Returns a number in [0, 1] range which represents current sync downloading progress (1 = complete). */
 	virtual double getSyncDownloadingProgress();
 
-	/** Returns a number of bytes that is downloaded in current sync downloading progress. */
-	virtual uint64 getSyncDownloadBytesNumber();
+	struct SyncDownloadingInfo {
+		uint64 bytesDownloaded = 0, bytesToDownload = 0;
+		uint64 filesDownloaded = 0, filesToDownload = 0;
+		bool inProgress = false;
+	};
 
-	/** Returns a total number of bytes to be downloaded in current sync download progress. */
-	virtual uint64 getSyncDownloadTotalBytesNumber();
+	/** Fills a struct with numbers about current sync downloading progress. */
+	virtual void getSyncDownloadingInfo(SyncDownloadingInfo &info);
 
 	/** Returns a number in [0, 1] range which represents current sync progress (1 = complete). */
 	virtual double getSyncProgress();
