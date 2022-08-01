@@ -100,7 +100,8 @@ void SaveLoadCloudSyncProgressDialog::handleTickle() {
 
 void SaveLoadCloudSyncProgressDialog::pollCloudMan() {
 	_pollFrame = (_pollFrame + 1) % 60;
-	if (_pollFrame != 1) return;
+	if (_pollFrame != 1)
+		return;
 
 	const bool syncing = CloudMan.isSyncing();
 	const uint32 progress = (uint32)(100 * CloudMan.getSyncDownloadingProgress());
@@ -109,11 +110,26 @@ void SaveLoadCloudSyncProgressDialog::pollCloudMan() {
 		_close = true;
 	}
 
-	Common::String downloaded, downloadedUnits, total, totalUnits;
-	downloaded = getHumanReadableBytes(CloudMan.getSyncDownloadBytesNumber(), downloadedUnits);
-	total = getHumanReadableBytes(CloudMan.getSyncDownloadTotalBytesNumber(), totalUnits);
+	Cloud::Storage::SyncDownloadingInfo info;
+	CloudMan.getSyncDownloadingInfo(info);
 
-	_percentLabel->setLabel(Common::String::format("%u %% (%s %S / %s %S)", progress, downloaded.c_str(), _(downloadedUnits).c_str(), total.c_str(), _(totalUnits).c_str()));
+	Common::String downloaded, downloadedUnits, total, totalUnits;
+	downloaded = getHumanReadableBytes(info.bytesDownloaded, downloadedUnits);
+	total = getHumanReadableBytes(info.bytesToDownload, totalUnits);
+
+	Common::String progressPercent = Common::String::format("%u %%", progress);
+	Common::String filesDownloaded = Common::String::format("%llu", info.filesDownloaded);
+	Common::String filesToDownload = Common::String::format("%llu", info.filesToDownload);
+
+	_percentLabel->setLabel(
+		Common::U32String::format(
+			_("%s (%s %S / %s %S, %s / %s files)"),
+			progressPercent.c_str(),
+			downloaded.c_str(), _(downloadedUnits).c_str(),
+			total.c_str(), _(totalUnits).c_str(),
+			filesDownloaded.c_str(), filesToDownload.c_str()
+		)
+	);
 	_progressBar->setValue(progress);
 	_progressBar->markAsDirty();
 
@@ -389,7 +405,8 @@ ButtonWidget *SaveLoadChooserDialog::createSwitchButton(const Common::String &na
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 void SaveLoadChooserDialog::pollCloudMan() {
 	_pollFrame = (_pollFrame + 1) % 60;
-	if (_pollFrame != 1) return;
+	if (_pollFrame != 1)
+		return;
 
 	const bool syncing = CloudMan.isSyncing();
 	const uint32 progress = (uint32)(100 * CloudMan.getSyncDownloadingProgress());
@@ -405,7 +422,8 @@ void SaveLoadChooserDialog::pollCloudMan() {
 		}
 	}
 
-	if (update) updateSaveList();
+	if (update)
+		updateSaveList();
 }
 #endif
 
