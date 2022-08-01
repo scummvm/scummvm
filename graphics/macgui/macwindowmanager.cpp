@@ -225,7 +225,7 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::L
 	CursorMan.showMouse(true);
 
 	loadDataBundle();
-	setDesktopMode(_mode);
+	setDesktopMode(mode);
 }
 
 MacWindowManager::~MacWindowManager() {
