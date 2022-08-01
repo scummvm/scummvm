@@ -169,7 +169,8 @@ void KyraEngine_HoF::pauseEngineIntern(bool pause) {
 		_pauseStart = 0;
 
 		_nextIdleAnim += pausedTime;
-		_tim->refreshTimersAfterPause(pausedTime);
+		if (_tim)
+			_tim->refreshTimersAfterPause(pausedTime);
 	}
 }
 
