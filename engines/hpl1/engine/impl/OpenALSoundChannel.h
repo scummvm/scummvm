@@ -28,6 +28,7 @@
 #ifndef HPL_OPENAL_SOUND_CHANNEL_H
 #define HPL_OPENAL_SOUND_CHANNEL_H
 
+#include "hpl1/engine/impl/OpenALSoundData.h"
 #include "hpl1/engine/sound/SoundChannel.h"
 #include "hpl1/engine/sound/SoundData.h"
 #include "audio/mixer.h"
@@ -38,7 +39,7 @@ namespace hpl {
 
 class cOpenALSoundChannel : public iSoundChannel {
 public:
-	cOpenALSoundChannel(iSoundData *apData, Audio::SoundHandle handle, cSoundManager *apSoundManger);
+	cOpenALSoundChannel(cOpenALSoundData *soundData, cSoundManager *apSoundManger);
 	~cOpenALSoundChannel();
 
 	void Play();
@@ -73,8 +74,11 @@ public:
 	void SetFilterGainHF(float afGainHF);
 
 private:
+	void restart();
+
 	Audio::SoundHandle _handle;
 	bool _playing;
+	cOpenALSoundData* _soundData;
 	int mlDefaultFreq;
 
 	float mfPosition[3];

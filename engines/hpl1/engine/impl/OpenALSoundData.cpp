@@ -43,13 +43,14 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cOpenALSoundData::cOpenALSoundData(tString asName, bool abStream) : iSoundData(asName, abStream), _stream(nullptr) {
+cOpenALSoundData::cOpenALSoundData(tString asName, bool abStream) : iSoundData(asName, abStream), _audioStream(nullptr) {
 }
 
 //-----------------------------------------------------------------------
 
 cOpenALSoundData::~cOpenALSoundData() {
-
+	delete _audioStream;
+	_soundFile.close();
 }
 
 //-----------------------------------------------------------------------
@@ -64,28 +65,31 @@ bool cOpenALSoundData::CreateFromFile(const tString &filename) {
 	Hpl1::logInfo(Hpl1::kDebugResourceLoading | Hpl1::kDebugAudio,
 		"loading audio file %s\n", filename.c_str());
 	// FIXME: string types
-	Common::File soundFile;
-	if (_stream)
+	if (_audioStream)
 		error("trying to load a sample"); // FIXME: remove this if its not needed
-	if (!soundFile.open(filename.c_str())) {
+	if (!_soundFile.open(filename.c_str())) {
 		Hpl1::logError(Hpl1::kDebugAudio,
 			"audio file %s could not be loaded", filename.c_str());
 		return false;
 	}
-	_stream = Audio::makeVorbisStream(&soundFile, DisposeAfterUse::NO);
-	return static_cast<bool>(_stream);
+	_audioStream = Audio::makeVorbisStream(&_soundFile, DisposeAfterUse::NO);
+	return static_cast<bool>(_audioStream);
 }
 
 //-----------------------------------------------------------------------
 
 iSoundChannel *cOpenALSoundData::CreateChannel(int alPriority) {
-	if (!_stream)
+	if (!_audioStream)
 		return nullptr;
 
-	Audio::SoundHandle handle;
-	g_system->getMixer()->playStream(Audio::Mixer::SoundType::kPlainSoundType, &handle, _stream);
 	IncUserCount();
-	return hplNew(cOpenALSoundChannel, (this, handle, mpSoundManger));
+	return hplNew(cOpenALSoundChannel, (this, mpSoundManger));
+}
+
+void cOpenALSoundData::start(Audio::SoundHandle *handle) {
+	_audioStream->rewind();
+	g_system->getMixer()->playStream(Audio::Mixer::SoundType::kPlainSoundType, handle, _audioStream,
+		-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 }
 
 } // namespace hpl
