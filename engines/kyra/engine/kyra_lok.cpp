@@ -96,7 +96,7 @@ KyraEngine_LoK::KyraEngine_LoK(OSystem *system, const GameFlags &flags)
 	_malcolmFrame = 0;
 	_malcolmTimer1 = _malcolmTimer2 = 0;
 	_defaultFont = Screen::FID_8_FNT;
-	_noteFont = Screen::FID_6_FNT;
+	_noteFont = (_flags.isTalkie || flags.platform == Common::kPlatformAmiga) ? _defaultFont : Screen::FID_6_FNT;
 	_defaultLineSpacing = 0;
 
 	switch (_flags.lang) {
