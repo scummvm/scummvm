@@ -264,7 +264,7 @@ Common::String OSystem_Win32::getDefaultIconsPath() {
 		if (!Win32::getApplicationDataDirectory(iconsPath)) {
 			return Common::String();
 		}
-		_tcscat(iconsPath, TEXT("\\Icons"));
+		_tcscat(iconsPath, TEXT("\\Icons\\"));
 		CreateDirectory(iconsPath, nullptr);
 	}
 
