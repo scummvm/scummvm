@@ -215,6 +215,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		if (res != NULL) {
 			scene->_textBounds = readRect(res);
 			int fontType = res->readUint16BE();
+			// WORKAROUND: Dune Eternity has a weird fontType ID so we override it to the correct one
 			if (_name == "***DUNE ETERNITY*** ")
 				fontType = 3;
 
