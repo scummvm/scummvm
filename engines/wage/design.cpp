@@ -280,6 +280,7 @@ void drawPixelCircle(int x, int y, int color, void *data) {
 
 	byte *pat = p->patterns->operator[](p->fillType - 1);
 
+	// Draw circle when thickness is > 1, put a pixel otherwise
 	if (p->thickness == 1) {
 		if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
 			uint xu = (uint)x; // for letting compiler optimize it
