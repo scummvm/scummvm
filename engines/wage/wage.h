@@ -202,8 +202,6 @@ public:
 
 	Common::String _inputText;
 
-	uint32 _gameFeatures;
-
 	void playSound(Common::String soundName);
 	void setMenu(Common::String soundName);
 	void appendText(const char *str);
@@ -219,7 +217,6 @@ public:
 	void redrawScene();
 	void saveGame();
 
-	void initFeatures();
 	uint32 getFeatures();
 
 	Common::Error loadGameState(int slot) override;
