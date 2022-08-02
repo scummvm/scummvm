@@ -53,6 +53,7 @@
 
 #include "engines/engine.h"
 #include "engines/util.h"
+#include "engines/advancedDetector.h"
 
 #include "graphics/macgui/macdialog.h"
 
@@ -87,9 +88,6 @@ WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(sy
 	_offer = NULL;
 
 	_resManager = NULL;
-
-	_gameFeatures = 0;
-	initFeatures();
 
 	debug("WageEngine::WageEngine()");
 }
@@ -286,7 +284,7 @@ void WageEngine::saveGame() {
 }
 
 uint32 WageEngine::getFeatures() {
-	return _gameFeatures;
+	return _gameDescription->flags;
 }
 
 void WageEngine::performInitialSetup() {
