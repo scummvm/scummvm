@@ -377,7 +377,7 @@ Common::Error SciEngine::run() {
 
 		// Jones only initializes its menus when restarting/restoring, thus set
 		// the gameIsRestarting flag here before initializing. Fixes bug #6536.
-		if (g_sci->getGameId() == GID_JONES)
+		if (getGameId() == GID_JONES)
 			_gamestate->gameIsRestarting = GAMEISRESTARTING_RESTORE;
 	}
 
@@ -603,7 +603,7 @@ void SciEngine::initGraphics() {
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
 		// SCI32 graphic objects creation
-		if (g_sci->getPlatform() == Common::kPlatformMacintosh && _resMan->hasResourceType(kResourceTypeCursor)) {
+		if (getPlatform() == Common::kPlatformMacintosh && _resMan->hasResourceType(kResourceTypeCursor)) {
 			_gfxCursor32 = new GfxMacCursor32();
 		} else {
 			_gfxCursor32 = new GfxCursor32();
@@ -866,7 +866,7 @@ void SciEngine::sleep(uint32 msecs) {
 		_eventMan->getSciEvent(kSciEventPeek);
 
 		// There is no point in waiting any more if we are just waiting to quit
-		if (g_engine->shouldQuit()) {
+		if (shouldQuit()) {
 			return;
 		}
 
@@ -875,7 +875,7 @@ void SciEngine::sleep(uint32 msecs) {
 		// movement is still occurring and the screen needs to be updated to
 		// reflect it
 		if (getSciVersion() >= SCI_VERSION_2) {
-			g_sci->_gfxFrameout->updateScreen();
+			_gfxFrameout->updateScreen();
 		}
 #endif
 		time = g_system->getMillis();
@@ -903,7 +903,7 @@ void SciEngine::setLauncherLanguage() {
 		case Common::JA_JPN: {
 			// Set Japanese for FM-Towns games
 			// KQ5 on FM-Towns has no initial language set
-			if (g_sci->getPlatform() == Common::kPlatformFMTowns) {
+			if (getPlatform() == Common::kPlatformFMTowns) {
 				languageToSet = K_LANG_JAPANESE;
 			}
 		}
@@ -975,9 +975,9 @@ void SciEngine::loadMacExecutable() {
 }
 
 uint32 SciEngine::getTickCount() {
-	return g_engine->getTotalPlayTime() * 60 / 1000;
+	return getTotalPlayTime() * 60 / 1000;
 }
 void SciEngine::setTickCount(const uint32 ticks) {
-	return g_engine->setTotalPlayTime(ticks * 1000 / 60);
+	return setTotalPlayTime(ticks * 1000 / 60);
 }
 } // End of namespace Sci
