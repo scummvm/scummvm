@@ -50,7 +50,8 @@ namespace hpl {
 
 cLowLevelSoundOpenAL::cLowLevelSoundOpenAL() {
 	mvFormats[0] = "OGG";
-	mvFormats[1] = "";
+	mvFormats[1] = "WAV";
+	mvFormats[2] = "";
 	mbInitialized = false;
 	mbEnvAudioEnabled = false;
 	mbNullEffectAttached = false;
