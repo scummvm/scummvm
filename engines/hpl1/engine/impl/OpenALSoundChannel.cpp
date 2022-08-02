@@ -29,11 +29,10 @@
 #include "hpl1/engine/impl/OpenALSoundData.h"
 #include "hpl1/engine/resources/SoundManager.h"
 
-#include "hpl1/engine/math/Math.h"
-#include "hpl1/debug.h"
 #include "audio/mixer.h"
 #include "common/system.h"
-#include "common/debug.h"
+#include "hpl1/debug.h"
+#include "hpl1/engine/math/Math.h"
 
 #define mixer g_system->getMixer()
 
@@ -45,9 +44,11 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cOpenALSoundChannel::cOpenALSoundChannel(cOpenALSoundData *soundData, cSoundManager *apSoundManger)
-	: iSoundChannel(soundData, apSoundManger), _playing(false), _soundData(soundData) {
-	Play();
+cOpenALSoundChannel::cOpenALSoundChannel(cOpenALSoundData *soundData, Audio::SeekableAudioStream *audioStream, cSoundManager *apSoundManger)
+	: iSoundChannel(soundData, apSoundManger), _playing(false), _audioStream(audioStream) {
+	Hpl1::logInfo(Hpl1::kDebugAudio, "creating sound channel form file %s\n", mpData->GetName().c_str());
+	if (!_audioStream)
+		Hpl1::logError(Hpl1::kDebugAudio, "sound channel created with null audio stream\n");
 #if 0
   		mlChannel = alChannel;
 
@@ -73,14 +74,10 @@ cOpenALSoundChannel::cOpenALSoundChannel(cOpenALSoundData *soundData, cSoundMana
 
 cOpenALSoundChannel::~cOpenALSoundChannel() {
 	mixer->stopHandle(_handle);
+	if (_audioStream)
+		delete _audioStream;
 	if (mpSoundManger)
 		mpSoundManger->Destroy(mpData);
-#if 0
-  		if(mlChannel>=0)
-			OAL_Source_Stop ( mlChannel );
-
-		if(mpSoundManger)mpSoundManger->Destroy(mpData);
-#endif
 }
 
 //-----------------------------------------------------------------------
@@ -93,9 +90,7 @@ cOpenALSoundChannel::~cOpenALSoundChannel() {
 
 void cOpenALSoundChannel::Play() {
 	Hpl1::logInfo(Hpl1::kDebugAudio, "playing sound channel from data %s\n", mpData->GetName().c_str());
-	mixer->stopHandle(_handle);
-	_soundData->start(&_handle);
-	SetVolume(mfVolume);
+	restart();
 	if (mbLooping)
 		mixer->loopChannel(_handle);
 	_playing = true;
@@ -114,8 +109,10 @@ void cOpenALSoundChannel::Stop() {
 
 void cOpenALSoundChannel::SetPaused(bool pause) {
 	Hpl1::logInfo(Hpl1::kDebugAudio, "%spausing sound channel from data %s\n", pause ? "" : "un",
-		mpData->GetName().c_str());
+				  mpData->GetName().c_str());
 	mixer->pauseHandle(_handle, pause);
+	if (!_playing && !pause)
+		Play();
 	mbPaused = pause;
 }
 
@@ -270,7 +267,8 @@ void cOpenALSoundChannel::SetFilterGainHF(float afGainHF) {
 
 void cOpenALSoundChannel::restart() {
 	mixer->stopHandle(_handle);
-	_soundData->start(&_handle);
+	_audioStream->rewind();
+	mixer->playStream(Audio::Mixer::SoundType::kPlainSoundType, &_handle, _audioStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 	SetVolume(mfVolume);
 }
 

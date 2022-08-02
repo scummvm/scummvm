@@ -29,15 +29,12 @@
 #define HPL_OPENAL_SOUND_DATA_H
 
 #include "hpl1/engine/sound/SoundData.h"
+#include "hpl1/engine/system/SystemTypes.h"
 
-#include "audio/mixer.h"
-#include "audio/audiostream.h"
-#include "common/file.h"
-
+#include "common/str.h"
 namespace hpl {
 
 class cOpenALSoundData : public iSoundData {
-	friend class cOpenALSoundChannel;
 public:
 	cOpenALSoundData(tString asName, bool abStream);
 	~cOpenALSoundData();
@@ -48,14 +45,8 @@ public:
 
 	bool IsStream() { return mbStream; }
 
-	//cOAL_Sample *GetSample() { return (mpSample); } // static_cast<cOAL_Sample*> (mpSoundData));}
-	//cOAL_Stream *GetStream() { return (mpStream); } // static_cast<cOAL_Stream*> (mpSoundData));}
-
 private:
-	void start(Audio::SoundHandle *handle);
-
-	Audio::SeekableAudioStream* _audioStream;
-	Common::File _soundFile;
+	Common::String _filename;
 };
 };     // namespace hpl
 #endif // HPL_OPENAL_SOUND_DATA_H
