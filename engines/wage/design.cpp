@@ -488,7 +488,7 @@ void Design::drawOval(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 	}
 
 	if (borderThickness > 0 && borderFillType <= patterns.size())
-		Graphics::drawEllipse(x1, y1, x2-1, y2-1, kColorBlack, false, drawPixelCircle, &pd);
+		Graphics::drawEllipse(x1, y1, x2 - 1, y2 - 1, kColorBlack, false, drawPixelCircle, &pd);
 }
 
 void Design::drawBitmap(Graphics::ManagedSurface *surface, Common::SeekableReadStream &in) {
