@@ -22,6 +22,8 @@
 #ifndef ASYLUM_VIEWS_MENU_H
 #define ASYLUM_VIEWS_MENU_H
 
+#include "graphics/surface.h"
+
 #include "asylum/eventhandler.h"
 #include "asylum/shared.h"
 
@@ -131,6 +133,10 @@ private:
 	int32 _prefixWidth;
 	bool _loadingDuringStartup;
 
+	// Thumbnails
+	int _thumbnailIndex;
+	Graphics::Surface _thumbnailSurface;
+
 	/**
 	 * Setups menu screen
 	 */
@@ -206,6 +212,11 @@ private:
 	bool music();
 	bool key(const AsylumEvent &evt);
 	bool click(const AsylumEvent &evt);
+
+	// Thumbnails
+	bool hasThumbnail(int index);
+	void readThumbnail();
+	void showThumbnail();
 
 	// Update handlers
 	void updateNewGame();

@@ -183,6 +183,10 @@ void Screen::draw(GraphicResource *resource, uint32 frameIndex, const Common::Po
 	}
 }
 
+void Screen::draw(const Graphics::Surface &surface, int x, int y) {
+	_backBuffer.copyRectToSurface(surface, x, y, Common::Rect(0, 0, surface.w, surface.h));
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Misc
 //////////////////////////////////////////////////////////////////////////
