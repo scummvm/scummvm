@@ -3436,6 +3436,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_GOG("blackwell1", "Blackwell Legacy.exe", "92af7315126c6da1e9e0c641cd9df200", 67331239),  // v2.2.2
 	GAME_ENTRY_EN_GOG("blackwell1", "Blackwell Legacy.exe", "92af7315126c6da1e9e0c641cd9df200", 67332268),  // v2.2.3
 	GAME_ENTRY_EN_GOG("blackwell1", "Blackwell Legacy.exe", "92af7315126c6da1e9e0c641cd9df200", 67332730),  // v2.3
+	GAME_ENTRY_EN_GOG("blackwell1", "Blackwell Legacy.exe", "92af7315126c6da1e9e0c641cd9df200", 67337164),  // v2.4a
 	GAME_ENTRY_EN_GOG("blackwell1", "ac2game.dat", "7865a17a36ff5a1844cd5359071eb04b", 64183795),
 	GAME_ENTRY_EN_GOG("blackwell1", "ac2game.dat", "5b63e0d2bc117cc9d32b88bfb5de167c", 64199320),
 	GAME_ENTRY_EN_GOG("blackwell1", "ac2game.dat", "6d17d5534a5c77a419117975053a1e90", 64199782), // Mac v2.3
@@ -3643,6 +3644,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642157876),  // v1.1
 	GAME_ENTRY_EN_STEAM("shardlight", "shardlight.exe", "cc447656f408ac32e8443274c3f70c67", 643459667),  // v2.0
 	GAME_ENTRY_EN_STEAM("shardlight", "shardlight.exe", "cc447656f408ac32e8443274c3f70c67", 643461648),  // v2.1
+	GAME_ENTRY_EN_GOG("shardlight", "shardlight.exe", "cc447656f408ac32e8443274c3f70c67", 643461930), // Win v2.4
 	GAME_ENTRY_EN_GOG("shardlight", "ac2game.dat", "df94d3c1cec961c89894c676b000e7bc", 640346706), // Mac v2.3a
 	GAME_ENTRY_EN_GOG("shardlight", "ac2game.dat", "df94d3c1cec961c89894c676b000e7bc", 640348438), // Mac v2.4
 	GAME_ENTRY_EN("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642151325),
@@ -3669,6 +3671,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_GOG("strangeland", "ac2game.dat", "86e8b93b8231d6c571669f1621561a21", 3183886917), // Mac v2.7
 	GAME_ENTRY_GOG("strangeland", "ac2game.dat", "c0d0009485795a4ff0cf9dbe5ad82a2f", 3183902196), // Mac
 	GAME_ENTRY_STEAM("sumatra", "sumatra fate of yandi.exe", "57c868b1a81c0335ab60970292cd79d8", 170088886),
+	GAME_ENTRY_STEAM("sumatra", "sumatra fate of yandi.exe", "b4407ac542f316456f549fc8a60dccae", 170634789),
 	GAME_ENTRY_EN("superjazzman", "sjm.exe", "0710e2ec71042617f565c01824f0cf3c", 10841689), // Official website
 	GAME_ENTRY_LANG("symploke1", "Symploke.exe", "ff20c8c9dda8379607db87e7726909c6", 29996616, Common::ES_ESP), // Videojuegos Fermin website (Spanish)
 	GAME_ENTRY_EN("symploke1", "symploke1.exe", "ff20c8c9dda8379607db87e7726909c6", 57363019), // Steam (English), same as Videojuegos Fermin website (English)
@@ -3683,6 +3686,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448795857),  // Win v2.2
 	GAME_ENTRY_EN_STEAM("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448823986),  // Win v2.2 updated
 	GAME_ENTRY_EN_STEAM("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448823978),
+	GAME_ENTRY_EN_GOG("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448796372), // Win v2.2
 	GAME_ENTRY_EN_GOG("technobabylon", "ac2game.dat", "570e69be27d3fa94b50f2779100e3fed", 445671616), // Mac v2.2a
 	GAME_ENTRY_EN("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447894701),  // Humble Bundle
 	GAME_ENTRY_EN_STEAM("theadventuresoffatman", "fatman.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 44449205),
@@ -4494,9 +4498,10 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("billybstar", "Billy B Star.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 1756026),
 	GAME_ENTRY_EN("billyboysimportantwinelottery", "billyboy.exe", "5881d6b88386317dc9d67524a14b11d4", 4872317),
 	GAME_ENTRY_EN("billygoatsgruff", "billygoatsgruff.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 5949489),
-	GAME_ENTRY("billymasterswasright", "Billy Masters Was Right.exe", "6fe5526eb7dc5b8fe82fb447a4701af7", 44901409),  //En-Es-De
+	GAME_ENTRY("billymasterswasright", "Billy Masters Was Right.exe", "6fe5526eb7dc5b8fe82fb447a4701af7", 44901409),  // En-Es-De
 	GAME_ENTRY("billymasterswasright", "Billy Masters Was Right.exe", "30327f199fa3765a9d854813d65cc680", 47726867),  // Win En-Es-De-It
 	GAME_ENTRY("billymasterswasright", "Billy Masters Was Right.ags", "811fd3c025c00359150d35e5f830540b", 45057908),  // Linux En-Es-De-It
+	GAME_ENTRY("billymasterswasright", "Billy Masters Was Right.exe", "30327f199fa3765a9d854813d65cc680", 47727073),  // Win En-Es-De-It
 	GAME_ENTRY_EN("billythekid", "The New Adventures Of Billy The Kid.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 9233573),
 	GAME_ENTRY_EN("bioluminescence", "MAGS May.exe", "615e73fc1874e92d60a1996c2330ea36", 12887295),
 	GAME_ENTRY_EN("bird", "bird.exe", "2c1fd0f6fb167d5e69080d8c0946a2dc", 110011869),  // Windows
@@ -5374,6 +5379,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("ioawn4t", "ioawn4t.exe", "b93a59eb67e202f5e807d7a7e678ad85", 887315687),
 	GAME_ENTRY_EN("ioawn4t", "ioawn4t.exe", "11bd8123982f9442f372ed5defc88b50", 888895169),
 	GAME_ENTRY_EN("ioawn4t", "game.ags", "11bd8123982f9442f372ed5defc88b50", 888895169),
+	GAME_ENTRY_EN_STEAM("ioawn4t", "ioawn4t.exe", "11bd8123982f9442f372ed5defc88b50", 888897420),
 	GAME_ENTRY_EN("irentedaboat", "I_rented_a_boat.exe", "792c0a0eaeba1a8846cb7b1af1e3266e", 144007992),  // Windows
 	GAME_ENTRY_EN("irentedaboat", "I_rented_a_boat.ags", "9c8cbf1ee6f0a797fdaee29177a43224", 140971300),  // Linux
 	GAME_ENTRY_EN("irishcoffee", "Irish Coffee.exe", "6d012687b4944c2b9167dad450579527", 18381150),
