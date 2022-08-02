@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-02 09:57+0000\n"
-"PO-Revision-Date: 2022-04-30 18:19+0000\n"
+"PO-Revision-Date: 2022-08-02 15:16+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -1522,7 +1522,6 @@ msgid "Icon Path:"
 msgstr "Шлях да значкоў:"
 
 #: gui/options.cpp:2307
-#, fuzzy
 msgctxt "path"
 msgid "Default"
 msgstr "Стандартна"
@@ -3711,9 +3710,8 @@ msgid "Choose the preferred touch mode:"
 msgstr ""
 
 #: backends/platform/android/options.cpp:96
-#, fuzzy
 msgid "In menus"
-msgstr "Далучыць Venus"
+msgstr "У мэню"
 
 #: backends/platform/android/options.cpp:98
 #: backends/platform/android/options.cpp:116
@@ -3738,11 +3736,11 @@ msgstr "Эмуляцыя ТВ"
 
 #: backends/platform/android/options.cpp:106
 msgid "In 2D games"
-msgstr ""
+msgstr "У 2D гульнях"
 
 #: backends/platform/android/options.cpp:108
 msgid "In 3D games"
-msgstr ""
+msgstr "У 3D гульнях"
 
 #. I18N: Show a button to revoke Storage Access Framework permissions for Android
 #: backends/platform/android/options.cpp:128
@@ -4283,7 +4281,7 @@ msgstr ""
 
 #: engines/agos/detection.cpp:82
 msgid "AdLib OPL3 mode"
-msgstr ""
+msgstr "Рэжым AdLib OPL3"
 
 #: engines/agos/detection.cpp:83
 msgid ""
@@ -4294,7 +4292,7 @@ msgstr ""
 
 #: engines/agos/detection.cpp:93 engines/agos/detection.cpp:104
 msgid "Use DOS version music tempos"
-msgstr ""
+msgstr "Выкарыстоўваць тэмп музыкі DOS-вэрсіі"
 
 #: engines/agos/detection.cpp:94 engines/agos/detection.cpp:105
 msgid ""
@@ -4381,9 +4379,8 @@ msgid "Bring up the In-Game Menu"
 msgstr ""
 
 #: engines/asylum/metaengine.cpp:151
-#, fuzzy
 msgid "Open character inventory"
-msgstr "Адкрыць/закрыць рыштунак"
+msgstr "Адкрыць пэрсанажаў рыштунак"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:200
