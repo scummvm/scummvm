@@ -21,6 +21,7 @@
 
 #include "common/debug.h"
 #include "common/substream.h"
+#include "common/unicode-bidi.h"
 
 #include "graphics/transparent_surface.h"
 
@@ -95,7 +96,9 @@ void ActionText::start() {
 	stream->read(str, stream->size());
 	delete stream;
 
-	switch(_actor->getPage()->getGame()->getLanguage()) {
+	Common::Language language = _actor->getPage()->getGame()->getLanguage();
+	screen->getWndManager()._language = language;
+	switch(language) {
 	case Common::DA_DNK:
 	case Common::ES_ESP:
 	case Common::FR_FRA:
