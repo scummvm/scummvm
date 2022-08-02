@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-31 22:09+0000\n"
+"POT-Creation-Date: 2022-08-02 09:57+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -2709,7 +2709,7 @@ msgid "Default game keymap"
 msgstr "기본 게임 키설정"
 
 #: engines/metaengine.cpp:60 backends/platform/maemo/maemo.cpp:161
-#: engines/asylum/metaengine.cpp:115 engines/hdb/metaengine.cpp:187
+#: engines/asylum/metaengine.cpp:157 engines/hdb/metaengine.cpp:187
 #: engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:114
 msgid "Left Click"
@@ -2723,7 +2723,7 @@ msgid "Middle Click"
 msgstr "중간 클릭"
 
 #: engines/metaengine.cpp:71 backends/platform/maemo/maemo.cpp:169
-#: engines/asylum/metaengine.cpp:121 engines/parallaction/metaengine.cpp:120
+#: engines/asylum/metaengine.cpp:163 engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:120
 msgid "Right Click"
 msgstr "오른쪽 클릭"
@@ -4339,31 +4339,35 @@ msgstr ""
 "선택된 게임은 2GB를 초과하는 게임 데이터 파일이 포함되어 있으며, 현재 ScummVM"
 "에서는 지원되지 않습니다."
 
-#: engines/asylum/metaengine.cpp:127
+#: engines/asylum/metaengine.cpp:115
 msgid "Show version"
 msgstr "버전 표시"
 
-#: engines/asylum/metaengine.cpp:132 engines/wintermute/keymapper_tables.h:950
+#: engines/asylum/metaengine.cpp:120 engines/wintermute/keymapper_tables.h:950
 msgid "Quick load"
 msgstr "빠른 불러오기"
 
-#: engines/asylum/metaengine.cpp:137 engines/wintermute/keymapper_tables.h:930
+#: engines/asylum/metaengine.cpp:125 engines/wintermute/keymapper_tables.h:930
 msgid "Quick save"
 msgstr "빠른 저장"
 
-#: engines/asylum/metaengine.cpp:142
+#: engines/asylum/metaengine.cpp:130
 msgid "Switch to Sarah"
 msgstr "Sarah에게 전환"
 
-#: engines/asylum/metaengine.cpp:147
+#: engines/asylum/metaengine.cpp:135
 msgid "Switch to Grimwall"
 msgstr "Grimwall에게 전환"
 
-#: engines/asylum/metaengine.cpp:152
+#: engines/asylum/metaengine.cpp:140
 msgid "Switch to Olmec"
 msgstr "Olmec에게 전환"
 
-#: engines/asylum/metaengine.cpp:157
+#: engines/asylum/metaengine.cpp:145
+msgid "Bring up the In-Game Menu"
+msgstr ""
+
+#: engines/asylum/metaengine.cpp:151
 #, fuzzy
 msgid "Open character inventory"
 msgstr "인벤토리 열기/닫기"

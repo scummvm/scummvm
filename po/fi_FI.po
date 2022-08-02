@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-07-31 22:09+0000\n"
+"POT-Creation-Date: 2022-08-02 09:57+0000\n"
 "PO-Revision-Date: 2022-07-28 21:37+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -2733,7 +2733,7 @@ msgid "Default game keymap"
 msgstr "Oletusnäppäinasetukset"
 
 #: engines/metaengine.cpp:60 backends/platform/maemo/maemo.cpp:161
-#: engines/asylum/metaengine.cpp:115 engines/hdb/metaengine.cpp:187
+#: engines/asylum/metaengine.cpp:157 engines/hdb/metaengine.cpp:187
 #: engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:114
 msgid "Left Click"
@@ -2747,7 +2747,7 @@ msgid "Middle Click"
 msgstr "Keskiklikkaus"
 
 #: engines/metaengine.cpp:71 backends/platform/maemo/maemo.cpp:169
-#: engines/asylum/metaengine.cpp:121 engines/parallaction/metaengine.cpp:120
+#: engines/asylum/metaengine.cpp:163 engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:120
 msgid "Right Click"
 msgstr "Oikea klikkaus"
@@ -4366,31 +4366,35 @@ msgstr ""
 "Valitun pelin datatiedosto on kooltaan yli 2Gb, joka ei ole vielä tuettu "
 "tässä ScummVM:n versiossa."
 
-#: engines/asylum/metaengine.cpp:127
+#: engines/asylum/metaengine.cpp:115
 msgid "Show version"
 msgstr "Näytä versio"
 
-#: engines/asylum/metaengine.cpp:132 engines/wintermute/keymapper_tables.h:950
+#: engines/asylum/metaengine.cpp:120 engines/wintermute/keymapper_tables.h:950
 msgid "Quick load"
 msgstr "Pelitallenteen pikalataus"
 
-#: engines/asylum/metaengine.cpp:137 engines/wintermute/keymapper_tables.h:930
+#: engines/asylum/metaengine.cpp:125 engines/wintermute/keymapper_tables.h:930
 msgid "Quick save"
 msgstr "Pelin pikatallennus"
 
-#: engines/asylum/metaengine.cpp:142
+#: engines/asylum/metaengine.cpp:130
 msgid "Switch to Sarah"
 msgstr "Vaihda Sarahiin"
 
-#: engines/asylum/metaengine.cpp:147
+#: engines/asylum/metaengine.cpp:135
 msgid "Switch to Grimwall"
 msgstr "Vaihda Grimwalliin"
 
-#: engines/asylum/metaengine.cpp:152
+#: engines/asylum/metaengine.cpp:140
 msgid "Switch to Olmec"
 msgstr "Vaihda Olmeciin"
 
-#: engines/asylum/metaengine.cpp:157
+#: engines/asylum/metaengine.cpp:145
+msgid "Bring up the In-Game Menu"
+msgstr ""
+
+#: engines/asylum/metaengine.cpp:151
 msgid "Open character inventory"
 msgstr "Avaa hahmon inventorio"
 
