@@ -92,7 +92,7 @@ cOpenALSoundChannel::~cOpenALSoundChannel() {
 //-----------------------------------------------------------------------
 
 void cOpenALSoundChannel::Play() {
-	Hpl1::logInfo(Hpl1::kDebugAudio, "playing sound channel from data %s", mpData->GetName().c_str());
+	Hpl1::logInfo(Hpl1::kDebugAudio, "playing sound channel from data %s\n", mpData->GetName().c_str());
 	mixer->stopHandle(_handle);
 	_soundData->start(&_handle);
 	SetVolume(mfVolume);
@@ -113,7 +113,7 @@ void cOpenALSoundChannel::Stop() {
 //-----------------------------------------------------------------------
 
 void cOpenALSoundChannel::SetPaused(bool pause) {
-	Hpl1::logInfo(Hpl1::kDebugAudio, "%spausing sound channel from data %s", pause ? "" : "un",
+	Hpl1::logInfo(Hpl1::kDebugAudio, "%spausing sound channel from data %s\n", pause ? "" : "un",
 		mpData->GetName().c_str());
 	mixer->pauseHandle(_handle, pause);
 	mbPaused = pause;
