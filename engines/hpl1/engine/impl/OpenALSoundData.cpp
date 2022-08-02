@@ -61,6 +61,7 @@ bool cOpenALSoundData::CreateFromFile(const tString &filename) {
 		error("trying to load a sample"); // FIXME: remove this if its not needed
 	// FIXME: string types
 	_filename = filename.c_str();
+	return true;
 }
 
 //-----------------------------------------------------------------------
