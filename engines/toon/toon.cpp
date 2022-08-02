@@ -5528,12 +5528,12 @@ void ToonEngine::syncSoundSettings() {
 		allSoundIsMuted = ConfMan.getBool("mute");
 		if (!_noMusicDriver) {
 			_mixer->muteSoundType(_mixer->kMusicSoundType, allSoundIsMuted);
-			_audioManager->muteMusic(true);
+			_audioManager->muteMusic(allSoundIsMuted);
 		}
 		_mixer->muteSoundType(_mixer->kSpeechSoundType, allSoundIsMuted);
-		_audioManager->muteVoice(true);
+		_audioManager->muteVoice(allSoundIsMuted);
 		_mixer->muteSoundType(_mixer->kSFXSoundType, allSoundIsMuted);
-		_audioManager->muteSfx(true);
+		_audioManager->muteSfx(allSoundIsMuted);
 		// movie sound type
 		_mixer->muteSoundType(_mixer->kPlainSoundType, allSoundIsMuted);
 	}
