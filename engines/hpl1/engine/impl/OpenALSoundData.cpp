@@ -26,15 +26,11 @@
  */
 
 #include "hpl1/engine/impl/OpenALSoundData.h"
-#include "audio/mixer.h"
-#include "common/file.h"
-#include "common/stream.h"
-#include "common/system.h"
-#include "common/types.h"
+#include "audio/audiostream.h"
 #include "hpl1/debug.h"
 #include "hpl1/engine/impl/OpenALSoundChannel.h"
+#include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/engine/system/low_level_system.h"
-#include "audio/decoders/vorbis.h"
 namespace hpl {
 
 //////////////////////////////////////////////////////////////////////////
@@ -43,14 +39,13 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cOpenALSoundData::cOpenALSoundData(tString asName, bool abStream) : iSoundData(asName, abStream), _audioStream(nullptr) {
+cOpenALSoundData::cOpenALSoundData(tString asName, bool abStream)
+	: iSoundData(asName, abStream) {
 }
 
 //-----------------------------------------------------------------------
 
 cOpenALSoundData::~cOpenALSoundData() {
-	delete _audioStream;
-	_soundFile.close();
 }
 
 //-----------------------------------------------------------------------
@@ -62,34 +57,17 @@ cOpenALSoundData::~cOpenALSoundData() {
 //-----------------------------------------------------------------------
 
 bool cOpenALSoundData::CreateFromFile(const tString &filename) {
-	Hpl1::logInfo(Hpl1::kDebugResourceLoading | Hpl1::kDebugAudio,
-		"loading audio file %s\n", filename.c_str());
-	// FIXME: string types
-	if (_audioStream)
+	if (_filename != "")
 		error("trying to load a sample"); // FIXME: remove this if its not needed
-	if (!_soundFile.open(filename.c_str())) {
-		Hpl1::logError(Hpl1::kDebugAudio,
-			"audio file %s could not be loaded", filename.c_str());
-		return false;
-	}
-	_audioStream = Audio::makeVorbisStream(&_soundFile, DisposeAfterUse::NO);
-	return static_cast<bool>(_audioStream);
+	// FIXME: string types
+	_filename = filename.c_str();
 }
 
 //-----------------------------------------------------------------------
 
 iSoundChannel *cOpenALSoundData::CreateChannel(int alPriority) {
-	if (!_audioStream)
-		return nullptr;
-
 	IncUserCount();
-	return hplNew(cOpenALSoundChannel, (this, mpSoundManger));
-}
-
-void cOpenALSoundData::start(Audio::SoundHandle *handle) {
-	_audioStream->rewind();
-	g_system->getMixer()->playStream(Audio::Mixer::SoundType::kPlainSoundType, handle, _audioStream,
-		-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+	return hplNew(cOpenALSoundChannel, (this, Audio::SeekableAudioStream::openStreamFile(_filename.substr(0, _filename.size() - 4)), mpSoundManger));
 }
 
 } // namespace hpl
