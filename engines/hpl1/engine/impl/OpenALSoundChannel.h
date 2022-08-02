@@ -67,9 +67,9 @@ public:
 
 	bool IsPlaying();
 
-	bool IsBufferUnderrun() { return true; /*#if 0 return OAL_Source_IsBufferUnderrun(mlChannel);*/ }
-	double GetElapsedTime() { return 0.0; /*#if 0 return OAL_Source_GetElapsedTime(mlChannel);*/ }
-	double GetTotalTime() { return 0.0; /*#if 0 return OAL_Source_GetTotalTime(mlChannel);*/ }
+	bool IsBufferUnderrun() { return false; }
+	double GetElapsedTime() { return g_system->getMixer()->getElapsedTime(_handle).secs(); }
+	double GetTotalTime() { return _audioStream->getLength().secs(); }
 
 	void SetAffectedByEnv(bool abAffected);
 	void SetFiltering(bool abEnabled, int alFlags);
