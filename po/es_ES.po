@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-02 09:57+0000\n"
-"PO-Revision-Date: 2022-07-22 09:09+0000\n"
+"PO-Revision-Date: 2022-08-02 13:39+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -4427,7 +4427,7 @@ msgstr "Cambiar a Olmec"
 
 #: engines/asylum/metaengine.cpp:145
 msgid "Bring up the In-Game Menu"
-msgstr ""
+msgstr "Mostrar menú interno del juego"
 
 #: engines/asylum/metaengine.cpp:151
 msgid "Open character inventory"
