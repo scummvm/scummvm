@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-02 19:05+0000\n"
+"POT-Creation-Date: 2022-08-02 20:08+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -62,9 +62,9 @@ msgstr "Subir"
 #: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2193
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
 #: gui/recorderdialog.cpp:213 gui/remotebrowser.cpp:59
-#: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:406
-#: gui/saveload-dialog.cpp:477 gui/saveload-dialog.cpp:779
-#: gui/saveload-dialog.cpp:1172 gui/themebrowser.cpp:54
+#: gui/saveload-dialog.cpp:64 gui/saveload-dialog.cpp:457
+#: gui/saveload-dialog.cpp:528 gui/saveload-dialog.cpp:830
+#: gui/saveload-dialog.cpp:1223 gui/themebrowser.cpp:54
 #: gui/unknown-game-dialog.cpp:53 engines/engine.cpp:721
 #: backends/dialogs/gtk/gtk-dialogs.cpp:63
 #: backends/events/default/default-events.cpp:193
@@ -170,7 +170,7 @@ msgstr ""
 #: gui/editrecorddialog.cpp:67 gui/fluidsynth-dialog.cpp:153
 #: gui/launcher.cpp:529 gui/launcher.cpp:533 gui/massadd.cpp:90
 #: gui/options.cpp:2195 gui/predictivedialog.cpp:69
-#: gui/saveload-dialog.cpp:1173 engines/engine.cpp:526 engines/engine.cpp:550
+#: gui/saveload-dialog.cpp:1224 engines/engine.cpp:526 engines/engine.cpp:550
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
 #: engines/buried/saveload.cpp:69
 #: engines/director/lingo/lingo-builtins.cpp:1677
@@ -927,11 +927,11 @@ msgstr "Escolha o jogo:"
 msgid "Group by:"
 msgstr "Agrupar por:"
 
-#: gui/launcher.cpp:831 gui/saveload-dialog.cpp:355
+#: gui/launcher.cpp:831 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr "Lista"
 
-#: gui/launcher.cpp:832 gui/saveload-dialog.cpp:356
+#: gui/launcher.cpp:832 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr "Mosaico"
 
@@ -2053,7 +2053,7 @@ msgid "Recorder or Playback Gameplay"
 msgstr "Gravar ou reproduzir jogo"
 
 #: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:213
-#: gui/saveload-dialog.cpp:410 gui/saveload-dialog.cpp:477
+#: gui/saveload-dialog.cpp:461 gui/saveload-dialog.cpp:528
 msgid "Delete"
 msgstr "Eliminar"
 
@@ -2091,67 +2091,72 @@ msgstr "Autor desconhecido"
 msgid "ScummVM could not access the directory!"
 msgstr "O ScummVM não pôde aceder a esta pasta!"
 
-#: gui/saveload-dialog.cpp:54
+#: gui/saveload-dialog.cpp:56
 msgid "Downloading saves..."
 msgstr "A transferir jogos guardados..."
 
-#: gui/saveload-dialog.cpp:63
+#: gui/saveload-dialog.cpp:65
 msgid "Run in background"
 msgstr "Correr em segundo plano"
 
-#: gui/saveload-dialog.cpp:401 gui/saveload-dialog.cpp:581
+#: gui/saveload-dialog.cpp:126
+#, c-format
+msgid "%s (%s %S / %s %S, %s / %s files)"
+msgstr ""
+
+#: gui/saveload-dialog.cpp:452 gui/saveload-dialog.cpp:632
 msgid "No date saved"
 msgstr "Nenhuma data guardada"
 
-#: gui/saveload-dialog.cpp:402 gui/saveload-dialog.cpp:582
+#: gui/saveload-dialog.cpp:453 gui/saveload-dialog.cpp:633
 msgid "No time saved"
 msgstr "Nenhuma hora guardada"
 
-#: gui/saveload-dialog.cpp:403 gui/saveload-dialog.cpp:583
+#: gui/saveload-dialog.cpp:454 gui/saveload-dialog.cpp:634
 msgid "No playtime saved"
 msgstr "Nenhuma duração guardada"
 
-#: gui/saveload-dialog.cpp:476
+#: gui/saveload-dialog.cpp:527
 msgid "Do you really want to delete this saved game?"
 msgstr "Deseja mesmo eliminar este jogo guardado?"
 
-#: gui/saveload-dialog.cpp:608 gui/saveload-dialog.cpp:1123
+#: gui/saveload-dialog.cpp:659 gui/saveload-dialog.cpp:1174
 msgid "Date: "
 msgstr "Data: "
 
-#: gui/saveload-dialog.cpp:612 gui/saveload-dialog.cpp:1129
+#: gui/saveload-dialog.cpp:663 gui/saveload-dialog.cpp:1180
 msgid "Time: "
 msgstr "Hora: "
 
-#: gui/saveload-dialog.cpp:618 gui/saveload-dialog.cpp:1137
+#: gui/saveload-dialog.cpp:669 gui/saveload-dialog.cpp:1188
 msgid "Playtime: "
 msgstr "Duração: "
 
-#: gui/saveload-dialog.cpp:631 gui/saveload-dialog.cpp:717
+#: gui/saveload-dialog.cpp:682 gui/saveload-dialog.cpp:768
 msgid "Untitled saved game"
 msgstr "Jogo sem título"
 
-#: gui/saveload-dialog.cpp:780
+#: gui/saveload-dialog.cpp:831
 msgid "Next"
 msgstr "Seguinte"
 
-#: gui/saveload-dialog.cpp:783
+#: gui/saveload-dialog.cpp:834
 msgid "Prev"
 msgstr "Anterior"
 
-#: gui/saveload-dialog.cpp:984
+#: gui/saveload-dialog.cpp:1035
 msgid "New Save"
 msgstr "Guardar"
 
-#: gui/saveload-dialog.cpp:984
+#: gui/saveload-dialog.cpp:1035
 msgid "Create a new saved game"
 msgstr "Criar um novo jogo guardado"
 
-#: gui/saveload-dialog.cpp:1116
+#: gui/saveload-dialog.cpp:1167
 msgid "Name: "
 msgstr "Nome: "
 
-#: gui/saveload-dialog.cpp:1192
+#: gui/saveload-dialog.cpp:1243
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "Introduza uma descrição para a posição %d:"
@@ -2923,11 +2928,11 @@ msgstr "Emulador C64 Audio"
 msgid "<syncing...>"
 msgstr "<a sincronizar...>"
 
-#: backends/cloud/storage.cpp:241
+#: backends/cloud/storage.cpp:242
 msgid "Saved games sync was cancelled."
 msgstr "Sincronização de jogos guardados cancelada."
 
-#: backends/cloud/storage.cpp:243
+#: backends/cloud/storage.cpp:244
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
@@ -2935,7 +2940,7 @@ msgstr ""
 "Falha na sincronização.\n"
 "Verifique a sua ligação à Internet."
 
-#: backends/cloud/storage.cpp:347
+#: backends/cloud/storage.cpp:348
 #, c-format
 msgid ""
 "Download complete.\n"
@@ -2944,11 +2949,11 @@ msgstr ""
 "Transferência completa.\n"
 "%u ficheiros não puderam ser transferidos."
 
-#: backends/cloud/storage.cpp:349
+#: backends/cloud/storage.cpp:350
 msgid "Download complete."
 msgstr "Transferência completa."
 
-#: backends/cloud/storage.cpp:359
+#: backends/cloud/storage.cpp:360
 msgid "Download failed."
 msgstr "Transferência falhou."
 
