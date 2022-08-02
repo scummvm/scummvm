@@ -124,6 +124,7 @@ bool VideoPlayer::handleEvent(const AsylumEvent &evt) {
 
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_KEYDOWN:
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		_done = true;
 		if (!_vm->checkGameVersion("Steam") && !_vm->isAltDemo())
 			getScreen()->clear();

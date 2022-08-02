@@ -72,6 +72,9 @@ bool Puzzle::handleEvent(const AsylumEvent &evt) {
 
 	case Common::EVENT_RBUTTONUP:
 		return mouseRightUp(evt);
+
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		return keyExit(evt);
 	}
 
 	return false;
