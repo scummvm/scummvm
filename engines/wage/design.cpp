@@ -434,7 +434,7 @@ void Design::drawPolygon(Graphics::ManagedSurface *surface, Common::ReadStream &
 	ycoords.push_back(y1);
 
 	if (borderThickness > 1) {
-		for (int i = 0; i < xcoords.size(); ++i) {
+		for (uint i = 0; i < xcoords.size(); ++i) {
 			xcoords[i] += borderThickness / 2;
 			ycoords[i] += borderThickness / 2;
 		}
