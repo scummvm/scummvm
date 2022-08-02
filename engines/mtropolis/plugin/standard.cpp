@@ -1554,11 +1554,14 @@ void MultiMidiPlayer::stopNote(MidiNotePlayer *player) {
 }
 
 uint32 MultiMidiPlayer::getBaseTempo() const {
-	return _driver->getBaseTempo();
+	if (_driver)
+		return _driver->getBaseTempo();
+	return 1;
 }
 
 void MultiMidiPlayer::send(uint32 b) {
-	_driver->send(b);
+	if (_driver)
+		_driver->send(b);
 }
 
 CursorModifier::CursorModifier() : _applyWhen(Event::create()), _removeWhen(Event::create()), _cursorID(0) {
