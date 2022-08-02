@@ -110,7 +110,6 @@ void cLowLevelSoundOpenAL::UpdateSound(float afTimeStep) {
 
 void cLowLevelSoundOpenAL::SetListenerAttributes(const cVector3f &avPos, const cVector3f &avVel,
 												 const cVector3f &avForward, const cVector3f &avUp) {
-#if 0
 	mvListenerPosition = avPos;
 	mvListenerVelocity = avVel;
 	mvListenerForward = avForward;
@@ -130,20 +129,12 @@ void cLowLevelSoundOpenAL::SetListenerAttributes(const cVector3f &avPos, const c
 	m_mtxListener.SetForward(mvListenerForward * -1);
 	m_mtxListener = cMath::MatrixInverse(m_mtxListener);
 	m_mtxListener.SetTranslation(mvListenerPosition);
-
-	float fVel[3] = {0, 0, 0};
-  		OAL_Listener_SetAttributes ( avPos.v, avVel.v, (avForward*(-1)).v, avUp.v );
-#endif
 }
 
 //-----------------------------------------------------------------------
 
 void cLowLevelSoundOpenAL::SetListenerPosition(const cVector3f &avPos) {
-#if 0
-  		mvListenerPosition = avPos;
-
-		OAL_Listener_SetAttributes ( avPos.v, mvListenerVelocity.v, (mvListenerForward*(-1)).v, mvListenerUp.v );
-#endif
+  	mvListenerPosition = avPos;
 }
 
 //-----------------------------------------------------------------------
@@ -165,11 +156,6 @@ void cLowLevelSoundOpenAL::SetSetRolloffFactor(float afFactor) {
 void cLowLevelSoundOpenAL::SetVolume(float volume) {
 	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, static_cast<byte>(volume * 255.f));
 	mfVolume = volume;
-#if 0
-  		mfVolume = afVolume;
-
-		OAL_Listener_SetMasterVolume ( afVolume );
-#endif
 }
 
 //-----------------------------------------------------------------------
@@ -314,18 +300,14 @@ void cLowLevelSoundOpenAL::Init(bool abUseHardware, bool abForceGeneric, bool ab
 				Log("  Setting up Environmental Audio...Failed.\n");
 		}
 #endif
-
-		//Default listener settings.
-		float Pos[3] = {0,0,0};
-		float Vel[3] = {0,0,0};
-
-		mvListenerForward = cVector3f(0,0,1);
-		mvListenerUp = cVector3f(0,1,0);
-
 		OAL_Listener_SetAttributes ( Pos, Vel, mvListenerForward.v, mvListenerUp.v );
 
 		//Default volume:
 #endif
+	//Default listener settings.
+	mvListenerForward = cVector3f(0,0,1);
+	mvListenerUp = cVector3f(0,1,0);
+
 	SetVolume(1.0f);
 }
 
