@@ -105,8 +105,8 @@ enum {
 };
 
 enum Resolution {
-	GF_RES800 = 1 << 0,
-	GF_RES1024 = 1 << 1
+	GF_RES800  =	1 << 0,
+	GF_RES1024 =	1 << 1
 };
 
 Common::Rect *readRect(Common::SeekableReadStream *in);
