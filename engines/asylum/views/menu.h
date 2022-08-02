@@ -64,6 +64,7 @@ public:
 	void setLoadingDuringStartup()  { _loadingDuringStartup = true; }
 
 	bool isEditingSavegameName() { return _activeScreen == kMenuSaveGame && _isEditingSavegameName; };
+	bool isConfiguringKeyboard() { return _activeScreen == kMenuKeyboardConfig && _selectedShortcutIndex != -1; }
 
 private:
 	AsylumEngine *_vm;
