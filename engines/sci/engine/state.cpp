@@ -110,7 +110,6 @@ void EngineState::reset(bool isRestoring) {
 	_paletteSetIntensityCounter = 0;
 	_throttleLastTime = 0;
 	_throttleTrigger = false;
-	_gameIsBenchmarking = false;
 
 	_lastSaveVirtualId = SAVEGAMEID_OFFICIALRANGE_START;
 	_lastSaveNewId = 0;

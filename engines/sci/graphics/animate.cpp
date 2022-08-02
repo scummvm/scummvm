@@ -739,18 +739,15 @@ void GfxAnimate::throttleSpeed() {
 				// check further that there is only one cel in that view
 				GfxView *onlyView = _cache->getView(onlyCast->viewId);
 				if ((onlyView->getLoopCount() == 1) && (onlyView->getCelCount(0))) {
-					_s->_gameIsBenchmarking = true;
 					return;
 				}
 			}
 		}
-		_s->_gameIsBenchmarking = false;
 		_s->_throttleTrigger = true;
 		break;
 	}
 	default:
 		// More than 1 entry drawn -> time for speed throttling
-		_s->_gameIsBenchmarking = false;
 		_s->_throttleTrigger = true;
 		break;
 	}

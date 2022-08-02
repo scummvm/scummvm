@@ -122,7 +122,6 @@ public:
 	uint32 _paletteSetIntensityCounter; /**< total times kPaletteSetIntensity was invoked since the last call to kGameIsRestarting or kWait */
 	uint32 _throttleLastTime; /**< last time kAnimate was invoked */
 	bool _throttleTrigger;
-	bool _gameIsBenchmarking;
 
 	/* Kernel File IO stuff */
 

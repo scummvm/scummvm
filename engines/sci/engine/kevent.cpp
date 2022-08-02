@@ -31,6 +31,7 @@
 #include "sci/console.h"
 #include "sci/debug.h"	// for g_debug_simulated_key
 #include "sci/event.h"
+#include "sci/graphics/animate.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/maciconbar.h"
@@ -264,14 +265,13 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		g_sci->_soundCmd->updateSci0Cues();
 	}
 
-	// Wait a bit here, so that the CPU isn't maxed out when the game
-	// is waiting for user input (e.g. when showing text boxes) - bug
-	// #5091. Make sure that we're not delaying while the game is
-	// benchmarking, as that will affect the final benchmarked result -
-	// check bugs #5326 and #5543
-	if (s->_gameIsBenchmarking) {
-		// Game is benchmarking, don't add a delay
-	} else if (getSciVersion() < SCI_VERSION_2) {
+	// Wait a bit if a "fast cast" game is polling kGetEvent while a message is
+	// being said or displayed. This prevents fast cast mode from maxing out
+	// CPU by polling from an inner loop when the fast cast global is set.
+	// Fixes bugs #5091, #5326
+	if (getSciVersion() <= SCI_VERSION_1_1 &&
+		g_sci->_gfxAnimate->isFastCastEnabled() &&
+		!s->variables[VAR_GLOBAL][kGlobalVarFastCast].isNull()) {
 		g_system->delayMillis(10);
 	}
 
