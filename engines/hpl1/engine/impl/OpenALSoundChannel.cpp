@@ -248,21 +248,11 @@ void cOpenALSoundChannel::SetFiltering(bool abEnabled, int alFlags) {
 }
 
 void cOpenALSoundChannel::SetFilterGain(float afGain) {
-#if 0
-  //		if (!(gpGame->GetSound()->GetLowLevel()->IsEnvAudioAvailable()))
-//			return;
-
-		OAL_Source_SetFilterGain(mlChannel, afGain);
-#endif
+	HPL1_UNIMPLEMENTED(cOpenALSoundChannel::SetFilterGain);
 }
 
 void cOpenALSoundChannel::SetFilterGainHF(float afGainHF) {
-#if 0
-  //		if (!(gpGame->GetSound()->GetLowLevel()->IsEnvAudioAvailable()))
-//			return;
-
-		OAL_Source_SetFilterGainHF(mlChannel, afGainHF);
-#endif
+	HPL1_UNIMPLEMENTED(cOpenALSoundChannel::SetFilterGainHF);
 }
 
 void cOpenALSoundChannel::restart() {
