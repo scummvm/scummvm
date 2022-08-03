@@ -24,6 +24,8 @@
 
 #include "common/debug.h"
 
+#define HPL1_UNIMPLEMENTED(fnName) error("call to unimplemented function " #fnName)
+
 namespace Hpl1 {
 
 enum DebugChannels {
