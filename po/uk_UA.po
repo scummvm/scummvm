@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-03 06:38+0000\n"
-"PO-Revision-Date: 2022-07-22 11:07+0000\n"
+"PO-Revision-Date: 2022-08-03 12:08+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -2120,7 +2120,7 @@ msgstr "Працювати у фоні"
 #: gui/saveload-dialog.cpp:126
 #, c-format
 msgid "%s (%s %S / %s %S, %s / %s files)"
-msgstr ""
+msgstr "%s (%s%S / %s%S, %s / %s файлів)"
 
 #: gui/saveload-dialog.cpp:452 gui/saveload-dialog.cpp:632
 msgid "No date saved"
@@ -4410,7 +4410,7 @@ msgstr "Переключитися на Ольмека"
 
 #: engines/asylum/metaengine.cpp:145
 msgid "Bring up the In-Game Menu"
-msgstr ""
+msgstr "Показати меню гри"
 
 #: engines/asylum/metaengine.cpp:151
 msgid "Open character inventory"
