@@ -784,6 +784,7 @@ void ScummEngine_v5::o5_chainScript() {
 void ScummEngine_v5::o5_cursorCommand() {
 	int i, j, k;
 	int table[32];
+	memset(table, 0, sizeof(table));
 	switch ((_opcode = fetchScriptByte()) & 0x1F) {
 	case 1:			// SO_CURSOR_ON
 		_cursor.state = 1;
