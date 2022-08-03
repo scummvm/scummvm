@@ -47,6 +47,7 @@
 namespace ICB {
 
 mcodeFunctionReturnCodes fn_start_player_interaction(int32 &result, int32 *params) { return (MS->fn_start_player_interaction(result, params)); }
+mcodeFunctionReturnCodes fn_set_interact_distance(int32 &result, int32 *params) { return (MS->fn_set_interact_distance(result, params)); }
 
 #define INTERACT_DISTANCE (250 * REAL_ONE)
 #define MIN_INTERACT_DISTANCE (5 * REAL_ONE)
@@ -344,6 +345,23 @@ __mode_return _player::Player_interact() {
 		interact_lock = FALSE8; // let go
 
 	return (__MORE_THIS_CYCLE);
+}
+
+mcodeFunctionReturnCodes _game_session::fn_set_interact_distance(int32 &, int32 *params) {
+	// set the distance that the player needs to be from named object to interact with it
+	// params: 0 - name of object, 1 - distance in cm's
+
+	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
+	if (id == 0xffffffff)
+		Fatal_error("[%s] calling fn_set_interact_distance finds [%s] is not a legal object", CGameObject::GetName(object), object_name);
+
+	if (params[1]) //positive value
+		logic_structs[id]->interact_dist = (PXreal)(params[1] * params[1]);
+	else
+		logic_structs[id]->interact_dist = DEFAULT_interact_distance;  //default interact distance - this is the ICB figure, but ED imps can change as required
+
+	return IR_CONT;
 }
 
 mcodeFunctionReturnCodes _game_session::fn_start_player_interaction(int32 &, int32 *params) {

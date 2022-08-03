@@ -426,6 +426,18 @@ mcodeFunctionReturnCodes fn_simple_look(int32 &result, int32 *params) { return (
 
 mcodeFunctionReturnCodes speak_simple_look(int32 &result, int32 *params) { return (MS->speak_simple_look(result, params)); }
 
+mcodeFunctionReturnCodes fn_set_mega_height(int32 &result, int32 *params) { return (MS->fn_set_mega_height(result, params)); }
+
+mcodeFunctionReturnCodes _game_session::fn_set_mega_height(int32 &, int32 *params) {
+	if (!L->mega)
+		Fatal_error("fn_set_mega_height called for %s which is not a mega!", L->GetName());
+
+	L->mega->height = params[0];
+
+	return IR_CONT;
+}
+
+
 // the array of standard look coords
 
 #define LOOK_RIGHT (int16)(-384)

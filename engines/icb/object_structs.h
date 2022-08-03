@@ -200,6 +200,8 @@ enum CameraStateEnum { OFF_CAMERA = 0x0, ON_CAMERA = 0x1 };
 // on camera last cycle and on this cycle
 #define ON_ON_CAMERA MAKE_VIEW_STATE(ON_CAMERA, ON_CAMERA)
 
+#define DEFAULT_HEIGHT 170
+
 class _mega { // mega logic specific
 public:
 	ParentBox *cur_parent;   // our owner parent box
@@ -242,6 +244,8 @@ public:
 	_route_description m_main_route;
 
 	Breath breath;
+
+	int32 height;	// looking height (El Dorado only)
 
 	// the dynamic lamp (with one state only) and a switch as to whether it is on or off (if >0 then it is on for dynLightOn cycles, if
 	// 0 then off, if -1 on until explicitly turned off)
@@ -349,6 +353,8 @@ inline void _mega::SetThisViewState(enum CameraStateEnum status) { viewState = (
 
 enum _object_image_type { PROP, VOXEL };
 
+enum _prop_interact_type { __THREE_SIXTY = 1, __ICB, __RADIAL };
+
 enum _hold_mode {
 	prop_camera_hold = 1,
 	mega_player_floor_hold,  // hold when not on player floor
@@ -402,6 +408,10 @@ public:
 	// prop xyz coord derived from nico
 	PXvector prop_xyz;
 	PXfloat prop_interact_pan;
+	PXreal interact_dist;	//actual distance - can be changed by implementor
+	_prop_interact_type prop_interact_method;	//user interaction method
+	int32 radial_interact_distance;
+
 	PXfloat pan;        // engine pan
 	PXfloat pan_adjust; // pan neutraliser for frames that include a pan from the grab - i.e. turn on spot
 	// this is a distance to look up when looking at the object, only useful:

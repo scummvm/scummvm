@@ -79,6 +79,8 @@ enum __rtype {
 	__LASER // straight there - no barriers
 };
 
+#define DEFAULT_interact_distance (500*500*REAL_ONE)
+
 #define MAX_extra_floors 12
 
 class _floor_cam_list {
@@ -665,9 +667,13 @@ public:
 	mcodeFunctionReturnCodes fn_hard_load_custom_anim(int32 &, int32 *);
 
 	mcodeFunctionReturnCodes fn_face_camera(int32 &, int32 *);
+	mcodeFunctionReturnCodes fn_set_interact_distance(int32 &, int32 *);
 
 	mcodeFunctionReturnCodes fn_activate_sparkle(int32 &, int32 *);
 	mcodeFunctionReturnCodes fn_deactivate_sparkle(int32 &, int32 *);
+
+	mcodeFunctionReturnCodes fn_is_player_standing_still(int32 &, int32 *);
+	mcodeFunctionReturnCodes fn_set_mega_height(int32 &, int32 *);
 
 	void Set_script(const char *script_name);
 	void Context_check(uint32 script_name);

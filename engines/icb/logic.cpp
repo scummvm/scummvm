@@ -73,6 +73,8 @@ mcodeFunctionReturnCodes fn_set_dynamic_light(int32 &result, int32 *params) { re
 
 mcodeFunctionReturnCodes speak_set_dynamic_light(int32 &result, int32 *params) { return (MS->speak_set_dynamic_light(result, params)); }
 
+mcodeFunctionReturnCodes fn_is_player_standing_still(int32 &result, int32 *params) { return (MS->fn_is_player_standing_still(result, params)); }
+
 mcodeFunctionReturnCodes fn_activate_sparkle(int32 &result, int32 *params) { return (MS->fn_activate_sparkle(result, params)); }
 
 mcodeFunctionReturnCodes fn_deactivate_sparkle(int32 &result, int32 *params) { return (MS->fn_deactivate_sparkle(result, params)); }
@@ -125,6 +127,7 @@ void _logic::___init(const char *name) {
 
 	// defaults to a prop
 	image_type = PROP;
+	prop_interact_method = __ICB;
 
 	// defaults to no-type-set
 	object_type = __NO_TYPE_SET;
@@ -184,6 +187,8 @@ void _logic::___init(const char *name) {
 
 	// sparkle off by default
 	sparkleOn = FALSE8;
+
+	interact_dist = DEFAULT_interact_distance;  //default interact distance - this is the ICB figure, but ED imps can change as required
 }
 
 void _mega::___init() {
@@ -256,6 +261,9 @@ void _mega::___init() {
 
 	dead = FALSE8; // still alive!
 
+	// height for looking at
+	height = DEFAULT_HEIGHT;	//170cm default
+
 	// camera control
 	y_locked = FALSE8;
 
@@ -270,6 +278,17 @@ mcodeFunctionReturnCodes _game_session::fn_set_to_exlusive_coords(int32 &, int32
 	logic_structs[cur_id]->mega->has_exclusive_coords = TRUE8;
 
 	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_is_player_standing_still(int32 &result, int32 *) {
+	// stood or crouching?
+	if ((player.player_status == STOOD) || (player.player_status == CROUCHING) || (player.player_status == INVENTORY))
+		result = 1;
+	else
+		result = 0;
+
+	return IR_CONT;
+
 }
 
 mcodeFunctionReturnCodes _game_session::fn_get_persons_weapon(int32 &result, int32 *params) {
