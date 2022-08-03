@@ -105,6 +105,7 @@ public:
 	Common::String getSaveStateName(int slot) const override {
 		return Common::String::format("%s.s%02d", _targetName.c_str(), slot);
 	}
+	SaveStateList listSaves() const;
 
 	friend class Console;
 

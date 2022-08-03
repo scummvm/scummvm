@@ -146,9 +146,9 @@ struct SaveStateDescriptorTimeComparator {
 	}
 };
 
-static SaveStateList listSaves(bool isPeril) {
+SaveStateList PinkEngine::listSaves() const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::String pattern = isPeril ? "peril.s##" : "pokus.s##";
+	Common::String pattern = getMetaEngine()->getSavegameFile(kSavegameFilePattern, _targetName.c_str());
 	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
 
 	SaveStateList saveList;
@@ -179,7 +179,7 @@ void PinkEngine::initMenu() {
 
 	Graphics::MacMenuSubMenu *subMenu = _menu->getSubmenu(nullptr, 0);
 	if (subMenu) {
-		SaveStateList saves = listSaves(isPeril());
+		SaveStateList saves = listSaves();
 		if (!saves.empty()) {
 			_menu->removeMenuItem(subMenu, kRecentSaveId);
 			int maxSaves = saves.size() > kMaxSaves ? kMaxSaves : saves.size();
