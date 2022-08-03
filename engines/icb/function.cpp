@@ -297,6 +297,10 @@ mcodeFunctionReturnCodes fn_snap_to_ladder_bottom(int32 &result, int32 *params) 
 
 mcodeFunctionReturnCodes fn_snap_to_ladder_top(int32 &result, int32 *params) { return (MS->fn_snap_to_ladder_top(result, params)); }
 
+mcodeFunctionReturnCodes fn_set_manual_interact_object(int32 &result, int32 *params) { return (MS->fn_set_manual_interact_object(result, params)); }
+
+mcodeFunctionReturnCodes fn_cancel_manual_interact_object(int32 &result, int32 *params) { return (MS->fn_cancel_manual_interact_object(result, params)); }
+
 mcodeFunctionReturnCodes fn_PLEASE_REUSE_THIS_SLOT_2(int32 &, int32 *) { return IR_CONT; }
 
 mcodeFunctionReturnCodes fn_PLEASE_REUSE_THIS_SLOT_3(int32 &, int32 *) { return IR_CONT; }
@@ -3370,6 +3374,32 @@ mcodeFunctionReturnCodes _game_session::fn_snap_to_ladder_top(int32 &, int32 *) 
 	}
 
 	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_set_manual_interact_object(int32 &, int32 *params) {
+	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
+
+	// Find the id for the named object.
+	uint32 nObjectID = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
+
+	// Check the object is valid.
+	if (nObjectID == PX_LINKED_DATA_FILE_ERROR)
+		Fatal_error("fn_set_manual_interact_object( %s ) - object does not exist", object_name);
+
+	// Clear the script-forced object interact id.
+	player.cur_interact_id = nObjectID;
+
+	// Calling script can continue.
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_cancel_manual_interact_object(int32 &, int32 *) {
+	// Clear the script-forced object interact id.
+	player.cur_interact_id = -1;
+
+	// Calling script can continue.
+	return IR_CONT;
+
 }
 
 mcodeFunctionReturnCodes _game_session::fn_set_to_floor(int32 &, int32 *params) {

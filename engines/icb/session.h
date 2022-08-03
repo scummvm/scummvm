@@ -661,6 +661,9 @@ public:
 	mcodeFunctionReturnCodes fn_snap_to_ladder_bottom(int32 &, int32 *);
 	mcodeFunctionReturnCodes fn_snap_to_ladder_top(int32 &, int32 *);
 
+	mcodeFunctionReturnCodes fn_set_manual_interact_object(int32 &, int32 *);
+	mcodeFunctionReturnCodes fn_cancel_manual_interact_object(int32 &, int32 *);
+
 	mcodeFunctionReturnCodes fn_set_feet_to_pan(int32 &, int32 *);
 	mcodeFunctionReturnCodes fn_room_route(int32 &, int32 *);
 	mcodeFunctionReturnCodes fn_hard_load_generic_anim(int32 &, int32 *);
