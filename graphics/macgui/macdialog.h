@@ -53,13 +53,10 @@
 #include "graphics/managed_surface.h"
 #include "graphics/font.h"
 
-namespace Wage {
-class Gui;
-}
-
 namespace Graphics {
 
 class MacText;
+class MacWindowManager;
 
 struct MacDialogButton {
 	Common::String text;
@@ -78,29 +75,35 @@ typedef Common::Array<MacDialogButton *> MacDialogButtonArray;
 
 class MacDialog {
 public:
-	MacDialog(Wage::Gui *gui, int width, MacText *mactext, int maxTextWidth, MacDialogButtonArray *buttons, uint defaultButton);
+	MacDialog(ManagedSurface *screen, MacWindowManager *wm,  int width, MacText *mactext, int maxTextWidth, MacDialogButtonArray *buttons, uint defaultButton);
 	~MacDialog();
 
-	int run();
+	void start();
+	int stop();
 
 private:
-	Wage::Gui *_gui;
+	ManagedSurface *_screen;
+	MacWindowManager *_wm;
 	ManagedSurface _tempSurface;
 	Common::Rect _bbox;
+	Common::Rect _r;
 	MacText *_mactext;
 	int _maxTextWidth;
 
 	const Font *_font;
 	MacDialogButtonArray *_buttons;
-	int _pressedButton;
 	uint _defaultButton;
 	bool _mouseOverPressedButton;
 
+public:
+	int _pressedButton;
 	bool _needsRedraw;
 
 private:
 	const Font *getDialogFont();
 	void drawOutline(Common::Rect &bounds, int *spec, int speclen);
+
+public:
 	void paint();
 	void mouseMove(int x, int y);
 	void mouseClick(int x, int y);

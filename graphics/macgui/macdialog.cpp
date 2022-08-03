@@ -47,10 +47,7 @@
 #include "common/events.h"
 #include "common/system.h"
 
-//#include "engines/engine.h"
-#include "engines/wage/design.h"
-#include "engines/wage/gui.h"
-#include "engines/wage/wage.h"
+#include "graphics/primitives.h"
 
 #include "graphics/macgui/mactext.h"
 #include "graphics/macgui/macfontmanager.h"
@@ -63,10 +60,8 @@ enum {
 	kDialogHeight = 113
 };
 
-MacDialog::MacDialog(Wage::Gui *gui, int width, MacText *mactext, int maxTextWidth, MacDialogButtonArray *buttons, uint defaultButton) :
-	_gui(gui), _mactext(mactext), _maxTextWidth(maxTextWidth), _buttons(buttons), _defaultButton(defaultButton) {
-	assert(_gui->_engine);
-	assert(_gui->_engine->_world);
+MacDialog::MacDialog(ManagedSurface *screen, MacWindowManager *wm, int width, MacText *mactext, int maxTextWidth, MacDialogButtonArray *buttons, uint defaultButton) :
+	_screen(screen), _wm(wm), _mactext(mactext), _maxTextWidth(maxTextWidth), _buttons(buttons), _defaultButton(defaultButton) {
 
 	int height = kDialogHeight + _mactext->getTextHeight();
 
@@ -74,10 +69,10 @@ MacDialog::MacDialog(Wage::Gui *gui, int width, MacText *mactext, int maxTextWid
 
 	_tempSurface.create(width + 1, height + 1, Graphics::PixelFormat::createFormatCLUT8());
 
-	_bbox.left = (_gui->_screen.w - width) / 2;
-	_bbox.top = (_gui->_screen.h - height) / 2;
-	_bbox.right = (_gui->_screen.w + width) / 2;
-	_bbox.bottom = (_gui->_screen.h + height) / 2;
+	_bbox.left = (_screen->w - width) / 2;
+	_bbox.top = (_screen->h - height) / 2;
+	_bbox.right = (_screen->w + width) / 2;
+	_bbox.bottom = (_screen->h + height) / 2;
 
 	_pressedButton = -1;
 
@@ -96,12 +91,13 @@ MacDialog::~MacDialog() {
 }
 
 const Graphics::Font *MacDialog::getDialogFont() {
-	return _gui->_wm->_fontMan->getFont(Graphics::MacFont(Graphics::kMacFontChicago, 12));
+	return _wm->_fontMan->getFont(Graphics::MacFont(Graphics::kMacFontChicago, 12));
 }
 
 void MacDialog::paint() {
-	Wage::Design::drawFilledRect(&_gui->_screen, _bbox, kColorWhite, _gui->_wm->getPatterns(), kPatternSolid);
-	_mactext->drawToPoint(&_gui->_screen, Common::Point(_bbox.left + (_bbox.width() - _maxTextWidth)/2, _bbox.top + 16));
+	MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorBlack, false);	
+	drawFilledRect1(_bbox, kColorWhite, _wm->getDrawPixel(), &pd);
+	_mactext->drawToPoint(_screen, Common::Point(_bbox.left + (_bbox.width() - _maxTextWidth)/2, _bbox.top + 16));
 	static int boxOutline[] = {1, 0, 0, 1, 1};
 	drawOutline(_bbox, boxOutline, ARRAYSIZE(boxOutline));
 
@@ -121,7 +117,7 @@ void MacDialog::paint() {
 			Common::Rect bb(button->bounds.left + 5, button->bounds.top + 5,
 							button->bounds.right - 5, button->bounds.bottom - 5);
 
-			Wage::Design::drawFilledRect(&_gui->_screen, bb, kColorBlack, _gui->_wm->getPatterns(), kPatternSolid);
+			drawFilledRect1(bb, kColorBlack, _wm->getDrawPixel(), &pd);
 
 			color = kColorWhite;
 		}
@@ -129,74 +125,38 @@ void MacDialog::paint() {
 		int x = button->bounds.left + (button->bounds.width() - w) / 2;
 		int y = button->bounds.top + 6;
 
-		_font->drawString(&_gui->_screen, button->text, x, y, _bbox.width(), color);
+		_font->drawString(_screen, button->text, x, y, _bbox.width(), color);
 
 		drawOutline(button->bounds, buttonOutline, ARRAYSIZE(buttonOutline));
 	}
 
-	g_system->copyRectToScreen(_gui->_screen.getBasePtr(_bbox.left, _bbox.top), _gui->_screen.pitch,
+	g_system->copyRectToScreen(_screen->getBasePtr(_bbox.left, _bbox.top), _screen->pitch,
 							   _bbox.left, _bbox.top, _bbox.width() + 1, _bbox.height() + 1);
 
 	_needsRedraw = false;
 }
 
 void MacDialog::drawOutline(Common::Rect &bounds, int *spec, int speclen) {
+	MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorBlack, false);	
 	for (int i = 0; i < speclen; i++)
-		if (spec[i] != 0)
-			Wage::Design::drawRect(&_gui->_screen, bounds.left + i, bounds.top + i, bounds.right - i, bounds.bottom - i,
-							 1, kColorBlack, _gui->_wm->getPatterns(), kPatternSolid);
+		if (spec[i] != 0) {
+			Common::Rect r(bounds.left + i, bounds.top + i, bounds.right - i, bounds.bottom - i);
+			drawRect1(r, kColorBlack, _wm->getDrawPixel(), &pd);
+		}
 }
 
-int MacDialog::run() {
-	bool shouldQuit = false;
-	Common::Rect r(_bbox);
+void MacDialog::start() {
+	_r = Common::Rect(_bbox);
 
-	_tempSurface.copyRectToSurface(_gui->_screen.getBasePtr(_bbox.left, _bbox.top), _gui->_screen.pitch, 0, 0, _bbox.width() + 1, _bbox.height() + 1);
-	_gui->_wm->pushCursor(kMacCursorArrow, nullptr);
+	_tempSurface.copyRectToSurface(_screen->getBasePtr(_bbox.left, _bbox.top), _screen->pitch, 0, 0, _bbox.width() + 1, _bbox.height() + 1);
+	_wm->pushCursor(kMacCursorArrow, nullptr);
+}
 
-	while (!shouldQuit) {
-		Common::Event event;
+int MacDialog::stop() {
+	_screen->copyRectToSurface(_tempSurface.getBasePtr(0, 0), _tempSurface.pitch, _bbox.left, _bbox.top, _bbox.width() + 1, _bbox.height() + 1);
+	g_system->copyRectToScreen(_screen->getBasePtr(_r.left, _r.top), _screen->pitch, _r.left, _r.top, _r.width() + 1, _r.height() + 1);
 
-		while (_gui->_engine->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_QUIT:
-				_gui->_engine->_shouldQuit = true;
-				shouldQuit = true;
-				break;
-			case Common::EVENT_MOUSEMOVE:
-				mouseMove(event.mouse.x, event.mouse.y);
-				break;
-			case Common::EVENT_LBUTTONDOWN:
-				mouseClick(event.mouse.x, event.mouse.y);
-				break;
-			case Common::EVENT_LBUTTONUP:
-				shouldQuit = mouseRaise(event.mouse.x, event.mouse.y);
-				break;
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_ESCAPE:
-					_pressedButton = -1;
-					shouldQuit = true;
-				default:
-					break;
-				}
-				break;
-			default:
-				break;
-			}
-		}
-
-		if (_needsRedraw)
-			paint();
-
-		g_system->updateScreen();
-		g_system->delayMillis(50);
-	}
-
-	_gui->_screen.copyRectToSurface(_tempSurface.getBasePtr(0, 0), _tempSurface.pitch, _bbox.left, _bbox.top, _bbox.width() + 1, _bbox.height() + 1);
-	g_system->copyRectToScreen(_gui->_screen.getBasePtr(r.left, r.top), _gui->_screen.pitch, r.left, r.top, r.width() + 1, r.height() + 1);
-
-	_gui->_wm->popCursor();
+	_wm->popCursor();
 
 	return _pressedButton;
 }

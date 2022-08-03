@@ -60,6 +60,10 @@
 
 struct ADGameDescription;
 
+namespace Graphics {
+class MacDialog;
+}
+
 namespace Wage {
 
 class Console;
@@ -205,6 +209,7 @@ public:
 	void playSound(Common::String soundName);
 	void setMenu(Common::String soundName);
 	void appendText(const char *str);
+	void pollDialogEvents(Graphics::MacDialog &dialog);
 	void gameOver();
 	bool saveDialog();
 	void aboutDialog();
