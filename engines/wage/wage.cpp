@@ -215,6 +215,48 @@ void WageEngine::appendText(const char *str) {
 	_inputText.clear();
 }
 
+void WageEngine::pollDialogEvents(Graphics::MacDialog &dialog) {
+	bool shouldQuit = false;
+	while (!shouldQuit) {
+		Common::Event event;
+
+		while (_gui->_engine->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+				_gui->_engine->_shouldQuit = true;
+				shouldQuit = true;
+				break;
+			case Common::EVENT_MOUSEMOVE:
+				dialog.mouseMove(event.mouse.x, event.mouse.y);
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				dialog.mouseClick(event.mouse.x, event.mouse.y);
+				break;
+			case Common::EVENT_LBUTTONUP:
+				shouldQuit = dialog.mouseRaise(event.mouse.x, event.mouse.y);
+				break;
+			case Common::EVENT_KEYDOWN:
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_ESCAPE:
+					dialog._pressedButton = -1;
+					shouldQuit = true;
+				default:
+					break;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+
+		if (dialog._needsRedraw)
+			dialog.paint();
+
+		g_system->updateScreen();
+		g_system->delayMillis(50);
+	}
+}
+
 void WageEngine::gameOver() {
 	Graphics::MacDialogButtonArray buttons;
 
@@ -225,9 +267,11 @@ void WageEngine::gameOver() {
 	Graphics::MacText gameOverMessage(*_world->_gameOverMessage, _gui->_wm, &font, Graphics::kColorBlack,
 									  Graphics::kColorWhite, 199, Graphics::kTextAlignCenter);
 
-	Graphics::MacDialog gameOverDialog(_gui, 199, &gameOverMessage, 199, &buttons, 0);
+	Graphics::MacDialog gameOverDialog(&_gui->_screen, _gui->_wm,  199, &gameOverMessage, 199, &buttons, 0);
 
-	gameOverDialog.run();
+	gameOverDialog.start();
+	pollDialogEvents(gameOverDialog);
+	gameOverDialog.stop();
 
 	doClose();
 
@@ -247,9 +291,11 @@ bool WageEngine::saveDialog() {
 	Graphics::MacText saveBeforeCloseMessage(*_world->_saveBeforeCloseMessage, _gui->_wm, &font, Graphics::kColorBlack,
 									  Graphics::kColorWhite, 291, Graphics::kTextAlignCenter);
 
-	Graphics::MacDialog save(_gui, 291, &saveBeforeCloseMessage, 291, &buttons, 1);
+	Graphics::MacDialog save(&_gui->_screen, _gui->_wm, 291, &saveBeforeCloseMessage, 291, &buttons, 1);
 
-	int button = save.run();
+	save.start();
+	pollDialogEvents(save);
+	int button = save.stop();
 
 	if (button == 2) // Cancel
 		return false;
@@ -274,9 +320,11 @@ void WageEngine::aboutDialog() {
 
 	aboutMessage.appendText(disclaimer, 3, 9, 0, false);
 
-	Graphics::MacDialog save(_gui, 450, &aboutMessage, 400, &buttons, 0);
+	Graphics::MacDialog about(&_gui->_screen, _gui->_wm, 450, &aboutMessage, 400, &buttons, 0);
 
-	save.run();
+	about.start();
+	pollDialogEvents(about);
+	about.stop();
 }
 
 void WageEngine::saveGame() {
