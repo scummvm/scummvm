@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-03 06:38+0000\n"
-"PO-Revision-Date: 2022-07-22 16:59+0000\n"
+"PO-Revision-Date: 2022-08-03 16:30+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -2126,7 +2126,7 @@ msgstr "Im Hintergrund laufen"
 #: gui/saveload-dialog.cpp:126
 #, c-format
 msgid "%s (%s %S / %s %S, %s / %s files)"
-msgstr ""
+msgstr "%s (%s %S / %s %S, %s / %s Dateien)"
 
 #: gui/saveload-dialog.cpp:452 gui/saveload-dialog.cpp:632
 msgid "No date saved"
@@ -4429,7 +4429,7 @@ msgstr "Zu Olmec wechseln"
 
 #: engines/asylum/metaengine.cpp:145
 msgid "Bring up the In-Game Menu"
-msgstr ""
+msgstr "Öffne das Spielmenü"
 
 #: engines/asylum/metaengine.cpp:151
 msgid "Open character inventory"
