@@ -145,7 +145,7 @@ Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
 	act = new Action("MENU", _("Bring up the In-Game Menu"));
 	act->setCustomEngineActionEvent(kAsylumActionShowMenu);
 	act->addDefaultInputMapping("ESCAPE");
-	act->addDefaultInputMapping("JOY_START");
+	act->addDefaultInputMapping("JOY_Y");
 	engineKeyMap->addAction(act);
 
 	act = new Action("INVENTORY", _("Open character inventory"));
