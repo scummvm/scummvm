@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-03 06:38+0000\n"
-"PO-Revision-Date: 2022-07-22 14:05+0000\n"
+"PO-Revision-Date: 2022-08-03 13:30+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -2155,7 +2155,7 @@ msgstr "Εκτέλεση στο παρασκήνιο"
 #: gui/saveload-dialog.cpp:126
 #, c-format
 msgid "%s (%s %S / %s %S, %s / %s files)"
-msgstr ""
+msgstr "%s (%s %S / %s %S, %s / %s αρχεία)"
 
 #: gui/saveload-dialog.cpp:452 gui/saveload-dialog.cpp:632
 msgid "No date saved"
@@ -4479,7 +4479,7 @@ msgstr "Εναλλαγή σε Olmec"
 
 #: engines/asylum/metaengine.cpp:145
 msgid "Bring up the In-Game Menu"
-msgstr ""
+msgstr "Εμφάνιση Μενού Παιχνιδιού"
 
 #: engines/asylum/metaengine.cpp:151
 msgid "Open character inventory"
