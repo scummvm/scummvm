@@ -316,6 +316,8 @@ public:
 	uint32 slice_hold_tolerance; // y distance to stray before slice hold kicks back in
 	uint8 idle_count;            // how int32 just been stood
 
+	bool8 inventoryActive;       // used to toggle the inventory on and off from scripts (El Dorado only)
+
 	// camera control
 	bool8 y_locked;
 	PXreal y_lock;

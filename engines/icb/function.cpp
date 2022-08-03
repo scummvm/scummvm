@@ -125,6 +125,8 @@ mcodeFunctionReturnCodes fn_set_watch(int32 &result, int32 *params) { return (MS
 
 mcodeFunctionReturnCodes fn_three_sixty_interact(int32 &result, int32 *params) { return (MS->fn_three_sixty_interact(result, params)); }
 
+mcodeFunctionReturnCodes fn_radial_interact(int32 &result, int32 *params) { return (MS->fn_radial_interact(result, params)); }
+
 mcodeFunctionReturnCodes fn_near_list(int32 &result, int32 *params) { return (MS->fn_near_list(result, params)); }
 
 mcodeFunctionReturnCodes fn_get_list_result(int32 &result, int32 *params) { return (MS->fn_get_list_result(result, params)); }
@@ -304,6 +306,12 @@ mcodeFunctionReturnCodes fn_swordfight(int32 &result, int32 *params) { return (M
 mcodeFunctionReturnCodes _game_session::fn_swordfight(int32 &, int32 *) { return (IR_CONT); }
 
 mcodeFunctionReturnCodes fn_set_as_player(int32 &result, int32 *params) { return (MS->fn_set_as_player(result, params)); }
+
+mcodeFunctionReturnCodes fn_inventory_active(int32 &result, int32 *params) { return (MS->fn_inventory_active(result, params)); }
+
+mcodeFunctionReturnCodes fn_can_save(int32 &result, int32 *params) { return (MS->fn_can_save(result, params)); }
+
+mcodeFunctionReturnCodes fn_is_actor_relative(int32 &result, int32 *params) { return (MS->fn_is_actor_relative(result, params)); }
 
 mcodeFunctionReturnCodes _game_session::fn_set_as_player(int32 &, int32 *) { return (IR_CONT); }
 
@@ -2412,9 +2420,25 @@ mcodeFunctionReturnCodes _game_session::fn_three_sixty_interact(int32 &, int32 *
 	if (L->image_type != PROP)
 		Fatal_error("fn_three_sixty_interact - object [%s] is not a prop!", CGameObject::GetName(object));
 
-	L->three_sixty_interact |= THREE_SIXTY_INTERACT;
+	if (g_icb->getGameType() == GType_ELDORADO)
+		L->prop_interact_method = __THREE_SIXTY;
+	else
+		L->three_sixty_interact |= THREE_SIXTY_INTERACT;
 
 	return (IR_CONT);
+}
+
+mcodeFunctionReturnCodes _game_session::fn_radial_interact(int32 &, int32 *params) {
+	//set object to use the simple distance based prop interaction type
+
+	if (L->image_type != PROP)
+		Fatal_error("fn_radial_interact - object [%s] is not a prop!", CGameObject::GetName(object));
+
+	L->prop_interact_method = __RADIAL;
+
+	L->radial_interact_distance = params[0];
+
+	return IR_CONT;
 }
 
 mcodeFunctionReturnCodes _game_session::fn_prop_crouch_interact(int32 &, int32 *) {
@@ -3179,6 +3203,15 @@ mcodeFunctionReturnCodes _game_session::fn_set_visible(int32 &, int32 *params) {
 	return IR_CONT;
 }
 
+mcodeFunctionReturnCodes _game_session::fn_inventory_active(int32 &, int32 *params) {
+	if ((params[0] != 0) && (params[0] != 1))
+		Message_box("Must pass either 0 or 1 into fn_inventory_active");
+
+	M->inventoryActive = (bool8)params[0];
+
+	return IR_CONT;
+}
+
 mcodeFunctionReturnCodes _game_session::fn_set_object_visible(int32 &, int32 *params) {
 	uint32 nObjectID;
 
@@ -3352,5 +3385,21 @@ mcodeFunctionReturnCodes _game_session::fn_set_to_floor(int32 &, int32 *params) 
 
 	return IR_CONT;
 }
+
+mcodeFunctionReturnCodes _game_session::fn_is_actor_relative(int32 &result, int32 *) {
+	if (player.Get_control_mode() == ACTOR_RELATIVE)
+		result = TRUE8;
+	else
+		result = FALSE8;
+
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_can_save(int32 &result, int32 *) {
+	result = (int32)(MS->prev_save_state);
+
+	return IR_CONT;
+}
+
 
 } // End of namespace ICB

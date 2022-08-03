@@ -69,6 +69,8 @@ mcodeFunctionReturnCodes fn_add_ammo_clips(int32 &result, int32 *params) { retur
 
 mcodeFunctionReturnCodes fn_use_ammo_clips(int32 &result, int32 *params) { return (MS->fn_use_ammo_clips(result, params)); }
 
+mcodeFunctionReturnCodes fn_shutdown_inventory(int32 &result, int32 *params) { return (MS->fn_shutdown_inventory(result, params)); }
+
 mcodeFunctionReturnCodes _game_session::fn_is_carrying(int32 &result, int32 *params) {
 	const char *item_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
@@ -300,6 +302,13 @@ mcodeFunctionReturnCodes _game_session::fn_interact_choose(int32 &, int32 *param
 
 	// To fix a GCC compiler warning.
 	return (IR_REPEAT);
+}
+
+mcodeFunctionReturnCodes _game_session::fn_shutdown_inventory(int32 &, int32 *) {
+	g_oIconMenu->CloseDownIconMenu();
+
+	// Calling script can continue.
+	return IR_CONT;
 }
 
 } // End of namespace ICB

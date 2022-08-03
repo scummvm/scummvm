@@ -673,7 +673,13 @@ public:
 	mcodeFunctionReturnCodes fn_deactivate_sparkle(int32 &, int32 *);
 
 	mcodeFunctionReturnCodes fn_is_player_standing_still(int32 &, int32 *);
+	mcodeFunctionReturnCodes fn_inventory_active(int32 &, int32 *);
+	mcodeFunctionReturnCodes fn_radial_interact(int32 &, int32 *);
+	mcodeFunctionReturnCodes fn_shutdown_inventory(int32 &, int32 *);
 	mcodeFunctionReturnCodes fn_set_mega_height(int32 &, int32 *);
+
+	mcodeFunctionReturnCodes fn_is_actor_relative(int32 &, int32 *);
+	mcodeFunctionReturnCodes fn_can_save(int32 &, int32 *);
 
 	void Set_script(const char *script_name);
 	void Context_check(uint32 script_name);

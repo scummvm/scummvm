@@ -259,6 +259,9 @@ void _mega::___init() {
 	// set to draw
 	display_me = TRUE8;
 
+	// inventory is active as a default
+	inventoryActive = TRUE8;
+
 	dead = FALSE8; // still alive!
 
 	// height for looking at
