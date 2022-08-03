@@ -2367,40 +2367,41 @@ mcodeFunctionReturnCodes _game_session::fn_set_watch(int32 &, int32 *params) {
 	else
 		g_mission->camera_follow_id_overide = id;
 
-	// If we are switching back to the player then we need to put the Remora back up if
-	// it was up when we switched to a manual watch (but only in 3D).
-	if (g_px->display_mode == THREED) {
-		// Check if switching to player.
-		if (id == player.Fetch_player_id()) {
-			// If the Remora was active, need to bring it back up.
-			if (g_mission->remora_save_mode != -1) {
-				MS->player.Push_control_mode(ACTOR_RELATIVE);
-				g_oRemora->SetModeOverride((_remora::RemoraMode)g_mission->remora_save_mode);
-				g_oRemora->ActivateRemora((_remora::RemoraMode)g_mission->remora_save_mode);
-				MS->player.Set_player_status(REMORA);
-				MS->player.Update_input_state();
-				psInputState = MS->player.Fetch_input_state();
-				g_oRemora->CycleRemoraLogic(*psInputState);
-				g_mission->remora_save_mode = -1;
-			}
-		} else {
-			// Not switching to player so flag whether or not the Remora is active.
-			if (g_oRemora->IsActive()) {
-				// Deactivate it and remember its mode.
-				g_mission->remora_save_mode = (int32)g_oRemora->GetMode();
-				g_oRemora->SetMode(_remora::MOTION_SCAN);
-				g_oRemora->DeactivateRemora(TRUE8);
-				sInputState.UnSetButton(__UNUSEDBUTTON);
-				g_oRemora->CycleRemoraLogic(sInputState);
-				MS->player.Pop_control_mode();
-				MS->player.Set_player_status(STOOD);
+	if (g_icb->getGameType() == GType_ICB) {
+		// If we are switching back to the player then we need to put the Remora back up if
+		// it was up when we switched to a manual watch (but only in 3D).
+		if (g_px->display_mode == THREED) {
+			// Check if switching to player.
+			if (id == player.Fetch_player_id()) {
+				// If the Remora was active, need to bring it back up.
+				if (g_mission->remora_save_mode != -1) {
+					MS->player.Push_control_mode(ACTOR_RELATIVE);
+					g_oRemora->SetModeOverride((_remora::RemoraMode)g_mission->remora_save_mode);
+					g_oRemora->ActivateRemora((_remora::RemoraMode)g_mission->remora_save_mode);
+					MS->player.Set_player_status(REMORA);
+					MS->player.Update_input_state();
+					psInputState = MS->player.Fetch_input_state();
+					g_oRemora->CycleRemoraLogic(*psInputState);
+					g_mission->remora_save_mode = -1;
+				}
 			} else {
-				g_mission->remora_save_mode = -1;
+				// Not switching to player so flag whether or not the Remora is active.
+				if (g_oRemora->IsActive()) {
+					// Deactivate it and remember its mode.
+					g_mission->remora_save_mode = (int32)g_oRemora->GetMode();
+					g_oRemora->SetMode(_remora::MOTION_SCAN);
+					g_oRemora->DeactivateRemora(TRUE8);
+					sInputState.UnSetButton(__UNUSEDBUTTON);
+					g_oRemora->CycleRemoraLogic(sInputState);
+					MS->player.Pop_control_mode();
+					MS->player.Set_player_status(STOOD);
+				} else {
+					g_mission->remora_save_mode = -1;
+				}
 			}
 		}
+		// Deactivate the Remora.
 	}
-
-	// Deactivate the Remora.
 
 	return (IR_CONT);
 }
