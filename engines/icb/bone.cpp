@@ -474,7 +474,7 @@ mcodeFunctionReturnCodes _game_session::fn_simple_look(int32 &, int32 *params) {
 	int32 l = params[0]; // which direction
 
 	if (!logic_structs[cur_id]->mega)
-		Fatal_error("fn_set_neck_vector called by non mega %s", L->GetName());
+		Fatal_error("fn_simple_look called by non mega %s", L->GetName());
 
 	int32 callingParams[2];
 
@@ -497,10 +497,10 @@ mcodeFunctionReturnCodes _game_session::speak_simple_look(int32 &, int32 *params
 	int32 l = params[1];
 
 	if (!logic_structs[object_id]->mega)
-		Fatal_error("fn_set_neck_vector called by non mega %s", logic_structs[object_id]->GetName());
+		Fatal_error("speak_simple_look called by non mega %s", logic_structs[object_id]->GetName());
 
 	if (logic_structs[object_id]->voxel_info->lookBone.boneNumber == (int8)-1)
-		Fatal_error("fn_set_neck_vector called but no fn_set_neck_bone() has been called for object %s", logic_structs[object_id]->GetName());
+		Fatal_error("speak_simple_look called but no fn_set_neck_bone() has been called for object %s", logic_structs[object_id]->GetName());
 
 	Tdebug("bones.txt", "%s: Simple look %d <%d,%d,%d> at speed %d", object_name, l, looks[l][2], looks[l][1], looks[l][0], STANDARD_LOOK_SPEED);
 

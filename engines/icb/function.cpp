@@ -400,7 +400,7 @@ mcodeFunctionReturnCodes _game_session::socket_force_new_logic(int32 &, int32 *p
 	// didnt find the script in the target
 	// shut that object down as its full of holes!
 
-	Fatal_error("socket_force_new_logic cant find script - obj %s, script %s", CGameObject::GetName(socket_object), script_name);
+	Fatal_error("socket_force_new_logic can't find script - obj %s, script %s", CGameObject::GetName(socket_object), script_name);
 
 	return (IR_TERMINATE);
 }
@@ -555,7 +555,7 @@ mcodeFunctionReturnCodes _game_session::fn_init_from_marker_file(int32 &, int32 
 
 	// if this object does not have a voxel_info struct then we're done here!
 	if (!logic_structs[cur_id]->voxel_info)
-		Fatal_error("FN_INIT_FROM_MARKER_FILE fails because object is not registered as a mega.");
+		Fatal_error("fn_init_from_marker_file fails because object is not registered as a mega.");
 
 	// fetch tag file for this item
 	start_pos = (_map_marker *)markers.Fetch_marker_by_object_name(const_cast<char *>(CGameObject::GetName(object)));
@@ -808,7 +808,7 @@ mcodeFunctionReturnCodes _game_session::fn_call_socket(int32 &result, int32 *par
 	// get target object
 	socket_object = (CGame *)LinkedDataObject::Try_fetch_item_by_name(MS->objects, target_object_name);
 	if (!socket_object)
-		Fatal_error("%s call to fn_call_socket - object %s doesnt exist", CGameObject::GetName(object), target_object_name);
+		Fatal_error("%s call to fn_call_socket - object %s doesn't exist", CGameObject::GetName(object), target_object_name);
 
 	// set socket_id ready for any special socket functions
 	socket_id = LinkedDataObject::Fetch_item_number_by_name(MS->objects, target_object_name);
@@ -1067,7 +1067,7 @@ mcodeFunctionReturnCodes _game_session::fn_are_we_on_this_floor(int32 &result, i
 	floor_id = LinkedDataObject::Fetch_item_number_by_hash(floor_def->floors, hash);
 
 	if (floor_id == 0xffffffff)
-		Fatal_error("fn_are_we_on_this_floor cant locate floor [%s]", floor_name);
+		Fatal_error("fn_are_we_on_this_floor can't locate floor [%s]", floor_name);
 
 	if (floor_id == L->owner_floor_rect)
 		result = TRUE8;
@@ -1266,7 +1266,7 @@ mcodeFunctionReturnCodes _game_session::fn_get_objects_lvar_value(int32 &result,
 
 	ret = CGameObject::GetVariable(ob, lvar_name);
 	if (ret == -1)
-		Fatal_error("%s finds fn_get_objects_lvar_value - target object [%s] doesnt have [%s] lvar", CGameObject::GetName(object), object_name, lvar_name);
+		Fatal_error("%s finds fn_get_objects_lvar_value - target object [%s] doesn't have [%s] lvar", CGameObject::GetName(object), object_name, lvar_name);
 
 	result = CGameObject::GetIntegerVariable(ob, ret);
 
@@ -1293,7 +1293,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_objects_lvar_value(int32 &, int32
 
 	var_num = CGameObject::GetVariable(ob, lvar_name);
 	if (var_num == -1)
-		Fatal_error("[%s] fn_set_objects_lvar_value - object [%s] doesnt have [%s] lvar", CGameObject::GetName(object), object_name, lvar_name);
+		Fatal_error("[%s] fn_set_objects_lvar_value - object [%s] doesn't have [%s] lvar", CGameObject::GetName(object), object_name, lvar_name);
 
 	CGameObject::SetIntegerVariable(ob, var_num, params[2]);
 
@@ -1319,7 +1319,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_ids_lvar_value(int32 &, int32 *pa
 
 	var_num = CGameObject::GetVariable(ob, lvar_name);
 	if (var_num == -1)
-		Fatal_error("fn_set_ids_lvar_value - object [%d] doesnt have [%s] lvar", params[0], lvar_name);
+		Fatal_error("fn_set_ids_lvar_value - object [%d] doesn't have [%s] lvar", params[0], lvar_name);
 
 	CGameObject::SetIntegerVariable(ob, var_num, params[2]);
 
@@ -1340,7 +1340,7 @@ mcodeFunctionReturnCodes _game_session::fn_get_state_flag(int32 &result, int32 *
 		Fatal_error("fn_get_state_flag - illegal object [%s]", object_name);
 	ret = CGameObject::GetVariable(ob, "state");
 	if (ret == -1)
-		Fatal_error("fn_get_state_flag - object [%s] doesnt have 'state' lvar", object_name);
+		Fatal_error("fn_get_state_flag - object [%s] doesn't have 'state' lvar", object_name);
 	result = CGameObject::GetIntegerVariable(ob, ret);
 
 	return (IR_CONT);
@@ -1826,7 +1826,7 @@ mcodeFunctionReturnCodes _game_session::fn_object_near_nico(int32 &result, int32
 	nico = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 
 	if (!nico)
-		Fatal_error("fn_object_near_nico cant find nico [%s]", nico_name);
+		Fatal_error("fn_object_near_nico can't find nico [%s]", nico_name);
 
 	if (PXfabs(logic_structs[id]->mega->actor_xyz.y - nico->y) < (200 * REAL_ONE)) { // slack for height calc
 		sub1 = logic_structs[id]->mega->actor_xyz.x - nico->x;
@@ -1855,12 +1855,12 @@ mcodeFunctionReturnCodes _game_session::fn_add_object_name_to_list(int32 &, int3
 
 	// check for list overflow
 	if (L->total_list == MAX_list)
-		Fatal_error("fn_object_name_to_list [%s] has exceeded list size of %d", CGameObject::GetName(object), MAX_list);
+		Fatal_error("fn_add_object_name_to_list [%s] has exceeded list size of %d", CGameObject::GetName(object), MAX_list);
 
 	id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	if (id == -1)
-		Fatal_error("[%s] callling fn_add_object_name_to_list finds [%s] is not a legal object", CGameObject::GetName(object), object_name);
+		Fatal_error("[%s] calling fn_add_object_name_to_list finds [%s] is not a legal object", CGameObject::GetName(object), object_name);
 
 	L->list[L->total_list++] = (uint32)id;
 
@@ -1872,7 +1872,7 @@ mcodeFunctionReturnCodes _game_session::fn_add_object_id_to_list(int32 &, int32 
 
 	// check for list overflow
 	if (L->total_list == MAX_list)
-		Fatal_error("fn_object_id_to_list [%s] has exceeded list size of %d", CGameObject::GetName(object), MAX_list);
+		Fatal_error("fn_add_object_id_to_list [%s] has exceeded list size of %d", CGameObject::GetName(object), MAX_list);
 
 	assert((uint32)params[0] < total_objects);
 
@@ -1905,7 +1905,7 @@ mcodeFunctionReturnCodes _game_session::fn_lift_process_list(int32 &result, int3
 
 	monica = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 	if (!monica)
-		Fatal_error("fn_lift_process_list cant find nico [%s]", nico_name);
+		Fatal_error("fn_lift_process_list can't find nico [%s]", nico_name);
 
 	for (j = 0; j < L->total_list; j++) {
 		if (logic_structs[L->list[j]]->image_type != VOXEL)
@@ -1962,14 +1962,14 @@ mcodeFunctionReturnCodes _game_session::fn_lib_lift_chord_and_chi(int32 &result,
 	static int32 issued_warning = FALSE8;
 	const char *nico_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	if (!prev_save_state) { // could not save last go - then cant operate lift either. Player is in a private script
+	if (!prev_save_state) { // could not save last go - then can't operate lift either. Player is in a private script
 		result = FALSE8;
 		return IR_CONT;
 	}
 
 	monica = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 	if (!monica)
-		Fatal_error("fn_lift_process_list cant find nico [%s]", nico_name);
+		Fatal_error("fn_lib_lift_chord_and_chi can't find nico [%s]", nico_name);
 	lifty = monica->y;
 
 	// see if the lift has registered a coordinate platform - if so, we use that
@@ -2096,7 +2096,7 @@ mcodeFunctionReturnCodes _game_session::fn_lift2_process(int32 &result, int32 *p
 	// get nico
 	monica = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 	if (!monica)
-		Fatal_error("fn_lift_process_list cant find nico [%s]", nico_name);
+		Fatal_error("fn_lift2_process can't find nico [%s]", nico_name);
 	lifty = monica->y;
 
 	// see if the lift has registered a coordinate platform - if so, we use that
@@ -2115,7 +2115,7 @@ mcodeFunctionReturnCodes _game_session::fn_lift2_process(int32 &result, int32 *p
 
 	for (j = 0; j < L->total_list; j++) {
 		if (logic_structs[L->list[j]]->image_type != VOXEL)
-			Fatal_error("fn_lift_process_list finds [%s] is not a mega", (const char *)logic_structs[L->list[j]]->GetName());
+			Fatal_error("fn_lift2_process finds [%s] is not a mega", (const char *)logic_structs[L->list[j]]->GetName());
 
 		if (logic_structs[L->list[j]]->mega->dead)
 			continue;
@@ -2315,7 +2315,7 @@ mcodeFunctionReturnCodes _game_session::fn_hold_while_list_near_nico(int32 &resu
 
 	monica = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 	if (!monica)
-		Fatal_error("fn_lift_process_list cant find nico [%s]", nico_name);
+		Fatal_error("fn_hold_while_list_near_nico can't find nico [%s]", nico_name);
 
 	for (j = 0; j < L->total_list; j++) {
 		if (logic_structs[L->list[j]]->image_type != VOXEL)
@@ -2324,7 +2324,7 @@ mcodeFunctionReturnCodes _game_session::fn_hold_while_list_near_nico(int32 &resu
 		// ignore people who are dead
 		res = Call_socket(L->list[j], "give_state", &ret);
 		if (!res)
-			Fatal_error("fn_hold_while_list_near_nico - object doesnt have 'give_state' script. Perhaps its not a mega");
+			Fatal_error("fn_hold_while_list_near_nico - object doesn't have 'give_state' script. Perhaps it's not a mega");
 
 		if ((!ret) && (PXfabs(logic_structs[L->list[j]]->mega->actor_xyz.y - monica->y) < (200 * REAL_ONE))) { // slack for height calc
 			sub1 = logic_structs[L->list[j]]->mega->actor_xyz.x - monica->x;
@@ -2471,7 +2471,7 @@ mcodeFunctionReturnCodes _game_session::fn_changed_sessions(int32 &result, int32
 	if (result) { // nico is waiting Removed explicit test against TRUE8 to get rid of VC5 warning
 		nico = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, g_mission->Return_init_nico_name());
 		if (!nico)
-			Fatal_error("fn_changed_sessions cant find nico [%s]", g_mission->Return_init_nico_name());
+			Fatal_error("fn_changed_sessions can't find nico [%s]", g_mission->Return_init_nico_name());
 
 #define XX logic_structs[cur_id]->mega->actor_xyz.x
 #define ZZ logic_structs[cur_id]->mega->actor_xyz.z
@@ -2543,7 +2543,7 @@ mcodeFunctionReturnCodes _game_session::fn_is_object_adjacent(int32 &result, int
 	our_floor = floor_def->Fetch_floor_number(L->owner_floor_rect);
 
 	if (!our_floor->num_neighbours) {
-		result = FALSE8; // cant be adjacent as there are non - which is impossible of course but hey
+		result = FALSE8; // can't be adjacent as there are non - which is impossible of course but hey
 		return (IR_CONT);
 	}
 
@@ -2591,7 +2591,7 @@ mcodeFunctionReturnCodes _game_session::fn_is_object_on_this_floor(int32 &result
 
 	floor_id = LinkedDataObject::Fetch_item_number_by_name(floor_def->floors, floor_name);
 	if (floor_id == 0xffffffff)
-		Fatal_error("fn_are_we_on_this_floor cant locate floor [%s]", floor_name);
+		Fatal_error("fn_are_we_on_this_floor can't locate floor [%s]", floor_name);
 
 	if (floor_id == logic_structs[id]->owner_floor_rect)
 		result = TRUE8;
@@ -2687,7 +2687,7 @@ mcodeFunctionReturnCodes _game_session::fn_mega_use_lift(int32 &, int32 *params)
 
 	var_num = CGameObject::GetVariable(ob, "request");
 	if (var_num == (uint32)-1)
-		Fatal_error("fn_use_lift - object [%s] doesnt have REQUEST variable", lift_name);
+		Fatal_error("fn_use_lift - object [%s] doesn't have REQUEST variable", lift_name);
 
 	CGameObject::SetIntegerVariable(ob, var_num, 2); // two is trigger value
 
@@ -2951,9 +2951,9 @@ uint32 _game_session::Register_stair_or_ladder(const char *target, bool8 top, ui
 	dest_stair_id = LinkedDataObject::Fetch_item_number_by_name(objects, target);
 
 	if (!stair)
-		Fatal_error("fn_register_stairway - cant find nico %s", CGameObject::GetName(object));
+		Fatal_error("fn_register_stairway - can't find nico %s", CGameObject::GetName(object));
 	if (!dest_stair)
-		Fatal_error("fn_register_stairway - cant find nico %s", target);
+		Fatal_error("fn_register_stairway - can't find nico %s", target);
 	if (num_stairs == MAX_stairs)
 		Fatal_error("too many stairs - max = %d", MAX_stairs);
 
@@ -3159,7 +3159,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_half_character_width(int32 &, int
 	// adjust the default barrier extrapolation for route barriers - for people like spectre who is very big
 
 	if (!M)
-		Fatal_error("fn_set_door_width only for megas [%s]", CGameObject::GetName(object));
+		Fatal_error("fn_set_half_character_width only for megas [%s]", CGameObject::GetName(object));
 
 	M->extrap_size = (uint8)params[0];
 
