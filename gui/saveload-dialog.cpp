@@ -118,8 +118,8 @@ void SaveLoadCloudSyncProgressDialog::pollCloudMan() {
 	total = getHumanReadableBytes(info.bytesToDownload, totalUnits);
 
 	Common::String progressPercent = Common::String::format("%u %%", progress);
-	Common::String filesDownloaded = Common::String::format("%llu", info.filesDownloaded);
-	Common::String filesToDownload = Common::String::format("%llu", info.filesToDownload);
+	Common::String filesDownloaded = Common::String::format("%llu", (unsigned long long)info.filesDownloaded);
+	Common::String filesToDownload = Common::String::format("%llu", (unsigned long long)info.filesToDownload);
 
 	_percentLabel->setLabel(
 		Common::U32String::format(
@@ -265,7 +265,7 @@ void SaveLoadChooserDialog::runSaveSync(bool hasSavepathOverride) {
 		if (hasSavepathOverride) {
 			CloudMan.showCloudDisabledIcon();
 		} else {
-			Cloud::SavesSyncRequest *request = CloudMan.syncSaves();
+			CloudMan.syncSaves();
 		}
 	}
 }
