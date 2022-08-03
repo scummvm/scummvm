@@ -783,7 +783,7 @@ void ScummEngine_v5::o5_chainScript() {
 
 void ScummEngine_v5::o5_cursorCommand() {
 	int i, j, k;
-	int table[NUM_SCRIPT_LOCAL];
+	int table[32];
 	switch ((_opcode = fetchScriptByte()) & 0x1F) {
 	case 1:			// SO_CURSOR_ON
 		_cursor.state = 1;
@@ -843,8 +843,15 @@ void ScummEngine_v5::o5_cursorCommand() {
 			// games if needed.
 		} else {
 			getWordVararg(table);
+			// MI1 FM-Towns has a bug in the original interpreter which removes the shadow color from the verbs.
+			// getWordVararg() will generate a WORD table, but then - right here - it is accessed like a DWORD
+			// table. This is actually fixed in the original interpreters for MI2 and INDY4. It could be argued
+			// if we even want that "fixed", but it does lead to bug tickets (#13735 - "Inaccurate verb rendering
+			// in Monkey 1 FM-TOWNS") and the "fix" restores the original appearance (which - as per usual - is
+			// a matter of personal taste...)
+			int m = (_game.platform == Common::kPlatformFMTowns && _game.id == GID_MONKEY) ? 2 : 1;
 			for (i = 0; i < 16; i++)
-				_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)table[i];
+				_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)table[i * m];
 		}
 		break;
 	default:

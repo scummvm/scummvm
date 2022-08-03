@@ -2365,7 +2365,7 @@ void CharsetRendererTownsClassic::processCharsetColors() {
 		if (c > 16) {
 			uint8 t = (_vm->_currentPalette[c * 3] < 32) ? 4 : 12;
 			t |= ((_vm->_currentPalette[c * 3 + 1] < 32) ? 2 : 10);
-			t |= ((_vm->_currentPalette[c * 3 + 1] < 32) ? 1 : 9);
+			t |= ((_vm->_currentPalette[c * 3 + 2] < 32) ? 1 : 9);
 			c = t;
 		}
 
