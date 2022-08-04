@@ -45,7 +45,7 @@ LowLevelGameSetup::~LowLevelGameSetup() {
 	Log("Deleting lowlevel stuff.\n");
 
 	Log("Physics\n");
-	hplDelete(_lowLevelSystem);
+	hplDelete(_lowLevelPhysics);
 	Log("Sound\n");
 	hplDelete(_lowLevelSound);
 	Log("Input\n");
