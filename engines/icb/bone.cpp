@@ -216,6 +216,13 @@ void SetPlayerShotBone(int32 obj_id) {
 
 #define STANDARD_MARKER_HEIGHT 170
 
+void ResetPlayerLook() {
+	_logic *log = MS->player.log;
+	BoneDeformation *b = &(log->voxel_info->lookBone);
+
+	b->boneTarget.vx = b->boneTarget.vy = b->boneTarget.vz = 0;
+}
+
 // update the neck bone
 // should only be called with player as logic
 void UpdatePlayerLook() {

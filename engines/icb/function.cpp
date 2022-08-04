@@ -338,8 +338,6 @@ mcodeFunctionReturnCodes fn_shadow(int32 &result, int32 *params) { return (MS->f
 
 mcodeFunctionReturnCodes fn_is_actor_relative(int32 &result, int32 *params) { return (MS->fn_is_actor_relative(result, params)); }
 
-mcodeFunctionReturnCodes _game_session::fn_set_as_player(int32 &, int32 *) { return (IR_CONT); }
-
 mcodeFunctionReturnCodes _game_session::fn_rig_test(int32 &, int32 *) {
 	//	no params
 
@@ -3580,5 +3578,36 @@ mcodeFunctionReturnCodes _game_session::fn_can_save(int32 &result, int32 *) {
 	return IR_CONT;
 }
 
+mcodeFunctionReturnCodes _game_session::fn_set_as_player(int32 &, int32 *params) {
+	if (g_icb->getGameType() != GType_ELDORADO)
+		return IR_CONT;
+
+	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
+
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
+
+	if (id == PX_LINKED_DATA_FILE_ERROR)
+		Fatal_error("fn_set_as_player object [%s] does not exist", object_name);
+
+	// first, if there is a current player then he needs to be told to re-run context as he ain't anymore
+	if (player.Player_exists()) {
+		logic_structs[player.Fetch_player_id()]->context_request = TRUE8;
+		logic_structs[player.Fetch_player_id()]->mega->async_list_pos = 0; // reset list position
+		logic_structs[player.Fetch_player_id()]->mega->asyncing = 0;
+		ResetPlayerLook(); // old player straightens out - i.e. reset look at interact object
+	}
+
+	player.Set_player_id(id);
+
+	player.Reset_player();
+
+	player.interact_lock = TRUE8;
+
+	logic_structs[id]->context_request = TRUE8;
+	logic_structs[id]->mega->async_list_pos = 0; // reset list position
+	logic_structs[id]->mega->asyncing = 0;
+
+	return IR_CONT;
+}
 
 } // End of namespace ICB

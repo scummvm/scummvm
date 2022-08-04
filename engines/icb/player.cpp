@@ -2900,8 +2900,10 @@ void _player::Set_player_id(uint32 id) {
 	// get player structures - we can be sure they wont get moved
 	log = g_mission->session->Fetch_object_struct(player_id);
 
-	// get initial barriers for player
-	MS->Prepare_megas_route_barriers(TRUE8);
+	if (g_icb->getGameType() == GType_ICB) {
+		// get initial barriers for player
+		MS->Prepare_megas_route_barriers(TRUE8);
+	}
 
 	// reset pointer to player parent barrier box
 	MS->logic_structs[id]->mega->cur_parent = nullptr;
