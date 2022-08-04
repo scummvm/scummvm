@@ -78,7 +78,8 @@ cMaterial_Additive::cMaterial_Additive(const tString &asName, iLowLevelGraphics 
 //-----------------------------------------------------------------------
 
 cMaterial_Additive::~cMaterial_Additive() {
-	mpProgramManager->Destroy(_fogShader);
+	if (_fogShader)
+		mpProgramManager->Destroy(_fogShader);
 }
 
 //-----------------------------------------------------------------------
