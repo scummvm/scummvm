@@ -24,6 +24,7 @@
  *
  */
 
+#include "engines/icb/icb.h"
 #include "engines/icb/icon_menu.h"
 #include "engines/icb/icon_menu_pc.h"
 #include "engines/icb/global_objects.h"
@@ -361,7 +362,7 @@ void _icon_menu::DrawIconMenu() {
 		nItemCount = m_sDuplicates.s_pnItemCounts[nIconIndex];
 
 		// Only write the number on in 3D mode.
-		if (g_px->display_mode == THREED) {
+		if (g_px->display_mode == THREED && g_icb->getGameType() == GType_ICB) {
 			// Write the number if greater than 1 or it is the clips or medipacks count.
 			if (((nItemCount > 1) || (nHashRef == HashString(ARMS_HEALTH_NAME)) || (nHashRef == HashString(ARMS_AMMO_NAME))) && x > 0) {
 				snprintf(pcDigits, 16, "%d", m_sDuplicates.s_pnItemCounts[nIconIndex]);
@@ -487,8 +488,10 @@ void _icon_menu::SetAddingClipsCount(uint32 nNumClips) {
 	// Set the counter that controls the flashing.  Starts at 1 just to tidy up the initial flash.
 	m_nAddedFlashCount = 0;
 
-	// Prepare to draw the flashing icon (on PC only).
-	SetupAdding(ARMS_AMMO_NAME, m_nAddedClipsSurface);
+	if (g_icb->getGameType() == GType_ICB) {
+		// Prepare to draw the flashing icon (on PC only).
+		SetupAdding(ARMS_AMMO_NAME, m_nAddedClipsSurface);
+	}
 }
 
 void _icon_menu::SetAddingMedipacksCount(uint32 nNumMedipacks) {
@@ -498,8 +501,10 @@ void _icon_menu::SetAddingMedipacksCount(uint32 nNumMedipacks) {
 	// Set the counter that controls the flashing.
 	m_nAddedFlashCount = 0;
 
-	// Prepare to draw the flashing icon (on PC only).
-	SetupAdding(ARMS_HEALTH_NAME, m_nAddedMedipacksSurface);
+	if (g_icb->getGameType() == GType_ICB) {
+		// Prepare to draw the flashing icon (on PC only).
+		SetupAdding(ARMS_HEALTH_NAME, m_nAddedMedipacksSurface);
+	}
 }
 
 void _icon_menu::SetEmailArrived() {
@@ -525,7 +530,9 @@ void _icon_menu::DrawArmedMenu(const int32 nBullets, const int32 maxBullets, con
 
 	// Load the 2 icons... We probably only deleted them last frame but whey !
 	SetupAdding(ARMS_GUN_NAME, gunSurface);
-	SetupAdding(ARMS_AMMO_NAME, clipSurface);
+	if (g_icb->getGameType() == GType_ICB) {
+		SetupAdding(ARMS_AMMO_NAME, clipSurface);
+	}
 	// Icon positioning
 	LRECT destRect;
 	destRect.left = ICON_ARMED_MENU_PIXEL_X + 10;

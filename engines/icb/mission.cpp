@@ -24,6 +24,7 @@
  *
  */
 
+#include "engines/icb/icb.h"
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/mission.h"
 #include "engines/icb/global_objects.h"
@@ -805,8 +806,10 @@ void _mission::Save_game_position(const char *filename, const char *slot_label, 
 	// save timed events
 	g_oEventManager->Save(stream);
 
-	// Save the Remora's locations-visited information.
-	g_oRemora->Save(stream);
+	if (g_icb->getGameType() == GType_ICB) {
+		// Save the Remora's locations-visited information.
+		g_oRemora->Save(stream);
+	}
 
 	// save gfx init info for initing a set...
 	surface_manager->SaveGFXInfo(stream);
@@ -1085,8 +1088,10 @@ __load_result Load_game(const char *filename) {
 	// timed events
 	g_oEventManager->Restore(stream);
 
-	// Restore the Remora's knowledge about where the player has been.
-	g_oRemora->Restore(stream);
+	if (g_icb->getGameType() == GType_ICB) {
+		// Restore the Remora's knowledge about where the player has been.
+		g_oRemora->Restore(stream);
+	}
 
 	// load gfx init info for initing a set...
 	surface_manager->LoadGFXInfo(stream);
@@ -1128,8 +1133,10 @@ void _mission::Create_display() {
 			// The Remora has a function which gets called every cycle when it is active.  This is because game
 			// logic continues to run when the Remora is up.
 			// But, note the background is NOT drawn whilst in REMORA mode
-			if (g_oRemora->IsActive()) {
+			if (g_icb->getGameType() == GType_ICB && g_oRemora->IsActive()) {
 				g_oRemora->DrawRemora();
+			} else if (g_icb->getGameType() != GType_ICB && /*g_oMap*/g_oRemora->IsActive()) {
+				//g_oMap.DrawMap();
 			} else {
 //  full 3d stage draw NOT in REMORA mode
 				session->Stage_draw_poly();
@@ -1151,17 +1158,18 @@ void _mission::Create_display() {
 			// If the icon menu is active, draw it.
 			if (g_oIconMenu->IsActive()) {
 				g_oIconMenu->DrawIconMenu();
+				if (g_icb->getGameType() == GType_ICB) {
+					// If not in the REMORA then draw the armed menu & health bar as well
+					if ((g_oRemora->IsActive() == FALSE8) && (session->logic_structs[session->player.Fetch_player_id()]->mega->Fetch_armed_status())) {
+						int32 nBullets = session->player.GetNoBullets();
+						int32 nClips = session->player.GetNoAmmoClips();
+						int32 maxBullets = session->player.GetBulletsPerClip();
+						int32 maxClips = session->player.GetMaxClips();
+						g_oIconMenu->DrawArmedMenu(nBullets, maxBullets, nClips, maxClips);
 
-				// If not in the REMORA then draw the armed menu & health bar as well
-				if ((g_oRemora->IsActive() == FALSE8) && (session->logic_structs[session->player.Fetch_player_id()]->mega->Fetch_armed_status())) {
-					int32 nBullets = session->player.GetNoBullets();
-					int32 nClips = session->player.GetNoAmmoClips();
-					int32 maxBullets = session->player.GetBulletsPerClip();
-					int32 maxClips = session->player.GetMaxClips();
-					g_oIconMenu->DrawArmedMenu(nBullets, maxBullets, nClips, maxClips);
-
-					session->Draw_health_bar();
-					session->health_time = 0; // cancel the health bar timer
+						session->Draw_health_bar();
+						session->health_time = 0; // cancel the health bar timer
+					}
 				}
 			} else if (session->logic_structs[session->player.Fetch_player_id()]->mega->Fetch_armed_status()) { // if player armed
 				session->Draw_health_bar();
@@ -1178,9 +1186,11 @@ void _mission::Create_display() {
 				session->Draw_health_bar();
 			}
 
-			// If the icon menu is currently flashing added medipacks or clips draw it (but not in Remora).
-			if (!g_oRemora->IsActive() && g_oIconMenu->IsAdding())
-				g_oIconMenu->DrawAdding();
+			if (g_icb->getGameType() == GType_ICB) {
+				// If the icon menu is currently flashing added medipacks or clips draw it (but not in Remora).
+				if (!g_oRemora->IsActive() && g_oIconMenu->IsAdding())
+					g_oIconMenu->DrawAdding();
+			}
 
 			if (g_px->mega_timer)
 				session->Display_mega_times();

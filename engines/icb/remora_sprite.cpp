@@ -24,6 +24,7 @@
  *
  */
 
+#include "engines/icb/icb.h"
 #include "engines/icb/remora_sprite.h"
 #include "engines/icb/global_objects.h"
 #include "engines/icb/res_man.h"
@@ -31,6 +32,10 @@
 namespace ICB {
 
 void _remora_sprite::InitialiseFromBitmapName(const char *pcBitmapName, const char *pcClusterName, uint32 nClusterHash) {
+	if (g_icb->getGameType() == GType_ELDORADO) {
+		return;
+	}
+
 	_pxBitmap *psBitmap;
 
 	_pxSprite *psSprite;

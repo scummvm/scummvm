@@ -24,6 +24,7 @@
  *
  */
 
+#include "engines/icb/icb.h"
 #include "engines/icb/p4.h"
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/common/px_floor_map.h"
@@ -492,7 +493,11 @@ int32 _prim_route_builder::Get_intersect(PXreal x0, PXreal y0, PXreal x1, PXreal
 }
 
 bool8 _prim_route_builder::LineIntersectsRect(DXrect oRect, int32 nX1, int32 nY1, int32 nX2, int32 nY2) const {
-	return (g_oRemora->CohenSutherland(oRect, nX1, nY1, nX2, nY2, FALSE8));
+	if (g_icb->getGameType() == GType_ICB) {
+		return (g_oRemora->CohenSutherland(oRect, nX1, nY1, nX2, nY2, FALSE8));
+	} else {
+		return (/*g_oMap*/g_oRemora->CohenSutherland(oRect, nX1, nY1, nX2, nY2, FALSE8));
+	}
 }
 
 } // End of namespace ICB

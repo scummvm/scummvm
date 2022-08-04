@@ -24,6 +24,7 @@
  *
  */
 
+#include "engines/icb/icb.h"
 #include "engines/icb/floors.h"
 #include "engines/icb/speech.h"
 #include "engines/icb/fn_routines.h"
@@ -87,17 +88,19 @@ mcodeFunctionReturnCodes _game_session::fn_get_speech_status(int32 &result, int3
 
 	result = total_convs;
 
-	if ((cur_id == player.Fetch_player_id()) && (player.player_status == REMORA))
-		Fatal_error("fn_get_speech_status - player cant start conversation inside remora!");
+	if (g_icb->getGameType() == GType_ICB) {
+		if ((cur_id == player.Fetch_player_id()) && (player.player_status == REMORA))
+			Fatal_error("fn_get_speech_status - player cant start conversation inside remora!");
 
-	if ((cur_id == player.Fetch_player_id()) && (g_oIconMenu->IsActive()))
-		g_oIconMenu->CloseDownIconMenu();
+		if ((cur_id == player.Fetch_player_id()) && (g_oIconMenu->IsActive()))
+			g_oIconMenu->CloseDownIconMenu();
 
-	if ((g_oIconMenu->IsActive()) || (player.player_status == REMORA))
-		result = 1;
+		if ((g_oIconMenu->IsActive()) || (player.player_status == REMORA))
+			result = 1;
 
-	if ((result) && (cur_id == player.Fetch_player_id()))
-		Tdebug("speech_check.txt", "get status");
+		if ((result) && (cur_id == player.Fetch_player_id()))
+			Tdebug("speech_check.txt", "get status");
+	}
 
 	return IR_CONT;
 }
@@ -120,17 +123,22 @@ mcodeFunctionReturnCodes _game_session::fn_request_speech(int32 &result, int32 *
 		return IR_REPEAT; // just wait until other is done
 	}
 
-	if (player.player_status == REMORA)
+	if (g_icb->getGameType() == GType_ICB) {
+		if (player.player_status == REMORA)
+			return IR_REPEAT;
+
+		if ((cur_id == player.Fetch_player_id()) && (g_oIconMenu->IsActive()))
+			g_oIconMenu->CloseDownIconMenu();
+
+		if ((g_oIconMenu->IsActive()) || (player.player_status == REMORA))
 		return IR_REPEAT;
 
-	if ((cur_id == player.Fetch_player_id()) && (g_oIconMenu->IsActive()))
-		g_oIconMenu->CloseDownIconMenu();
-
-	if ((g_oIconMenu->IsActive()) || (player.player_status == REMORA))
-		return IR_REPEAT;
-
-	// not started yet
-	S.state = __PENDING;
+		// not started yet
+		S.state = __PENDING;
+	} else {
+		if ((g_oIconMenu->IsActive()) || (player.player_status == REMORA/*MAP*/))
+			return IR_REPEAT;
+	}
 
 	// get the system now - in case another object tries to start a conversation
 	total_convs++; // to 1 ;)

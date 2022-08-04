@@ -24,6 +24,7 @@
  *
  */
 
+#include "engines/icb/icb.h"
 #include "engines/icb/common/px_common.h"
 #include "engines/icb/text_sprites.h"
 #include "engines/icb/global_objects.h"
@@ -94,6 +95,20 @@ _TSrtn text_sprite::BuildTextSprite(int32 stopAtLine, bool8 bRemoraLeftFormattin
 		// Save the first 6 entries of the palette.
 		memcpy(pnSavePalette, pal, 24);
 
+		if (g_icb->getGameType() == GType_ELDORADO) {
+			pal[0] = 0;
+			pal[1] = 0;
+			pal[2] = 0;
+
+			pal[4] = 0;
+			pal[5] = 0;
+			pal[6] = 0;
+
+			pal[8] = 1;
+			pal[9] = 1;
+			pal[10] = 1;
+		}
+
 		// Put in the main text colour.
 		pal[12] = psTempSpeechColour->blue;
 		pal[13] = psTempSpeechColour->green;
@@ -104,10 +119,12 @@ _TSrtn text_sprite::BuildTextSprite(int32 stopAtLine, bool8 bRemoraLeftFormattin
 		pal[17] = (uint8)((float)psTempSpeechColour->green * 0.65);
 		pal[18] = (uint8)((float)psTempSpeechColour->red * 0.65);
 
-		// Put in second anti-alias colour.
-		pal[20] = (uint8)((float)psTempSpeechColour->blue * 0.3);
-		pal[21] = (uint8)((float)psTempSpeechColour->green * 0.3);
-		pal[22] = (uint8)((float)psTempSpeechColour->red * 0.3);
+		if (g_icb->getGameType() == GType_ICB) {
+			// Put in second anti-alias colour.
+			pal[20] = (uint8)((float)psTempSpeechColour->blue * 0.3);
+			pal[21] = (uint8)((float)psTempSpeechColour->green * 0.3);
+			pal[22] = (uint8)((float)psTempSpeechColour->red * 0.3);
+		}
 	}
 
 	// fill sprite with characters, one line at a time

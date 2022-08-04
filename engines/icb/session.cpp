@@ -287,8 +287,10 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	// reference file which is opened here so the global reference can be set.
 	g_oIconMenu->SetTransparencyColourKey();
 
-	// Initialise the remora
-	g_oRemora->InitialiseRemora();
+	if (g_icb->getGameType() == GType_ICB) {
+		// Initialise the remora
+		g_oRemora->InitialiseRemora();
+	}
 
 	// Set the default colour for voice over text.
 	voice_over_red = VOICE_OVER_DEFAULT_RED;

@@ -158,9 +158,11 @@ __mode_return _player::Player_press_remora_button() {
 		Push_control_mode(ACTOR_RELATIVE);
 		MS->Awaken_doors(); // sleeping doors come alive while in remora display!
 
-		// This sets a flag which the Remora will pick up next cycle.
-		g_oRemora->ActivateRemora(_remora::MOTION_SCAN);
-		g_oRemora->CycleRemoraLogic(cur_state);
+		if (g_icb->getGameType() == GType_ICB) {
+			// This sets a flag which the Remora will pick up next cycle.
+			g_oRemora->ActivateRemora(_remora::MOTION_SCAN);
+			g_oRemora->CycleRemoraLogic(cur_state);
+		}
 		return (__FINISHED_THIS_CYCLE);
 	} else if (!(cur_state.IsButtonSet(__REMORA)))
 		remora_lock = FALSE8;
@@ -815,6 +817,10 @@ mcodeFunctionReturnCodes _player::Gateway() {
 			break;
 
 		case REMORA:
+			if (g_icb->getGameType() == GType_ELDORADO) {
+				return IR_REPEAT;
+			}
+
 			// The Remora is currently up over the game screen.  Most important check is to see if player
 			// wants to quit it.
 			if (cur_state.IsButtonSet(__REMORA)) {
@@ -934,7 +940,7 @@ mcodeFunctionReturnCodes _player::Gateway() {
 		}
 	} while (ret == __MORE_THIS_CYCLE);
 
-	return (IR_REPEAT);
+	return IR_REPEAT;
 }
 
 void _player::Set_player_status(_player_stat new_mode) {

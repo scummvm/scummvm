@@ -24,6 +24,7 @@
  *
  */
 
+#include "engines/icb/icb.h"
 #include "engines/icb/icon_list_manager.h"
 #include "engines/icb/global_objects.h"
 #include "engines/icb/mission.h"
@@ -49,35 +50,37 @@ void _icon_list_manager::ActivateIconMenu(const char *pcListName, bool8 bAllowEs
 	int32 nListIndex;
 	_icon_menu_duplicates sDuplicates;
 	uint32 nHash;
-	int32 nInitialSelected;
+	int32 nInitialSelected = 0;
 	uint32 nNumClips, nNumMedi;
 
 	nListIndex = FindListByName(pcListName);
 
-	// The player object now 'owns' the count of medipacks and clips.  To find out how many to draw,
-	// we need to get these counts here and add them to the inventory.  Not in the Remora though.
-	if (bDrawStatusIcons) {
-		// Get number of clips and medipacks from the player object.
-		nNumClips = MS->player.GetNoAmmoClips();
-		nNumMedi = MS->player.GetNoMediPacks();
+	if (g_icb->getGameType() == GType_ICB) {
+		// The player object now 'owns' the count of medipacks and clips.  To find out how many to draw,
+		// we need to get these counts here and add them to the inventory.  Not in the Remora though.
+		if (bDrawStatusIcons) {
+			// Get number of clips and medipacks from the player object.
+			nNumClips = MS->player.GetNoAmmoClips();
+			nNumMedi = MS->player.GetNoMediPacks();
 
-		// Set this number in the icon menu.
-		m_pListOfLists[nListIndex].SetAbsoluteIconCount(ARMS_AMMO_NAME, nNumClips);
-		m_pListOfLists[nListIndex].SetAbsoluteIconCount(ARMS_HEALTH_NAME, nNumMedi);
+			// Set this number in the icon menu.
+			m_pListOfLists[nListIndex].SetAbsoluteIconCount(ARMS_AMMO_NAME, nNumClips);
+			m_pListOfLists[nListIndex].SetAbsoluteIconCount(ARMS_HEALTH_NAME, nNumMedi);
 
-		// Find the medipacks position.
-		nInitialSelected = m_pListOfLists[nListIndex].GetIconPosition(ARMS_HEALTH_NAME);
+			// Find the medipacks position.
+			nInitialSelected = m_pListOfLists[nListIndex].GetIconPosition(ARMS_HEALTH_NAME);
 
-		// If we didn't find it, just set the 0 icon to be displayed.
-		if (nInitialSelected == -1)
+			// If we didn't find it, just set the 0 icon to be displayed.
+			if (nInitialSelected == -1)
+				nInitialSelected = 0;
+		} else {
+			// Just select first icon in the Remora.
 			nInitialSelected = 0;
-	} else {
-		// Just select first icon in the Remora.
-		nInitialSelected = 0;
 
-		// No clips or medipacks in the Remora.
-		m_pListOfLists[nListIndex].RemoveIcon(ARMS_AMMO_NAME, TRUE8);
-		m_pListOfLists[nListIndex].RemoveIcon(ARMS_HEALTH_NAME, TRUE8);
+			// No clips or medipacks in the Remora.
+			m_pListOfLists[nListIndex].RemoveIcon(ARMS_AMMO_NAME, TRUE8);
+			m_pListOfLists[nListIndex].RemoveIcon(ARMS_HEALTH_NAME, TRUE8);
+		}
 	}
 
 	// We've found the list.  If there are no icons in it, add the 'empty' one.

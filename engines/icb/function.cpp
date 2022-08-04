@@ -2401,6 +2401,10 @@ mcodeFunctionReturnCodes _game_session::fn_hold_while_list_near_nico(int32 &resu
 }
 
 mcodeFunctionReturnCodes _game_session::fn_set_watch(int32 &, int32 *params) {
+	if (g_icb->getGameType() == GType_ELDORADO) {
+		return IR_CONT;
+	}
+
 	_input *psInputState;
 	_input sInputState;
 

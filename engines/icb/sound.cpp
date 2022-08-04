@@ -889,7 +889,7 @@ void UpdateHearableSounds() {
 	if ((g_mission) && (g_mission->session) && (MS->speech_info[CONV_ID].total_subscribers > 0) && (GetSpeechVolume() > 0))
 		speechOnSliderTarget = SPEECH_ON_VOLUME;
 	// if remora active even lower volume
-	else if (g_oRemora->IsActive())
+	else if (g_icb->getGameType() == GType_ICB && g_oRemora->IsActive())
 		speechOnSliderTarget = REMORA_ACTIVE_VOLUME;
 	// otherwise our target is full volume
 	else

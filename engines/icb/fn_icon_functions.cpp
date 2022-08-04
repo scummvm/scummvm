@@ -24,6 +24,7 @@
  *
  */
 
+#include "engines/icb/icb.h"
 #include "engines/icb/common/px_rcutypes.h"
 #include "engines/icb/common/ptr_util.h"
 #include "engines/icb/global_objects.h"
@@ -144,6 +145,11 @@ mcodeFunctionReturnCodes _game_session::fn_remove_inventory_item(int32 &, int32 
 }
 
 mcodeFunctionReturnCodes _game_session::fn_add_medipacks(int32 &result, int32 *params) {
+	if (g_icb->getGameType() == GType_ELDORADO) {
+		result = 0;
+		return IR_CONT;
+	}
+
 	char pcIconPath[ENGINE_STRING_LEN];
 	bool8 bFlashIcons;
 
@@ -177,6 +183,10 @@ mcodeFunctionReturnCodes _game_session::fn_use_medipacks(int32 &, int32 *params)
 }
 
 mcodeFunctionReturnCodes _game_session::fn_add_ammo_clips(int32 &result, int32 *params) {
+	if (g_icb->getGameType() == GType_ELDORADO) {
+		return IR_CONT;
+	}
+
 	char pcIconPath[ENGINE_STRING_LEN];
 	bool8 bFlashIcons;
 

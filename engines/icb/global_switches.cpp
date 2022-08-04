@@ -24,6 +24,7 @@
  *
  */
 
+#include "engines/icb/icb.h"
 #include "engines/icb/global_switches.h"
 
 namespace ICB {
@@ -41,8 +42,13 @@ c_global_switches::c_global_switches() {
 	// have BASIC top-down shadows ON by default for the both platforms
 	actorShadows = -1; // = -1 for automatic top-down shadow
 	cross_hair = FALSE8;
-	prop_hilite = FALSE8;
-	mega_hilite = FALSE8;
+	if (g_icb->getGameType() == GType_ICB) {
+		prop_hilite = FALSE8;
+		mega_hilite = FALSE8;
+	} else {
+		prop_hilite = TRUE8;
+		mega_hilite = TRUE8;
+	}
 	game_completed = FALSE8;
 	los_enabled = TRUE8;
 	debugging_and_console = TRUE8; // head up switcher, headup info and console allowed - i.e. no in final game
