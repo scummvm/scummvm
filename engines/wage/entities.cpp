@@ -206,7 +206,16 @@ Obj::Obj(Common::String name, Common::SeekableReadStream *data, int resourceId) 
 
 	_design = new Design(data);
 
-	setDesignBounds(readRect(data));
+	// WORKAROUND: Intro to Gothic has wrong design bounds for a button
+	if (name == "go" && resourceId == 27613) {
+		int y1 = data->readSint16BE() - 2;
+		int x1 = data->readSint16BE() - 2;
+		int y2 = data->readSint16BE() + 2;
+		int x2 = data->readSint16BE() + 2;
+		setDesignBounds(new Common::Rect(x1, y1, x2 + 50, y2));
+	}
+	else
+		setDesignBounds(readRect(data));
 
 	int16 namePlural = data->readSint16BE();
 
