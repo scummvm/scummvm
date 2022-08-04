@@ -426,6 +426,11 @@ const Graphics::Surface *CinepakDecoder::decodeFrame(Common::SeekableReadStream 
 	if (!_curFrame.surface) {
 		_curFrame.surface = new Graphics::Surface();
 		_curFrame.surface->create(_curFrame.width, _curFrame.height, _pixelFormat);
+	} else if (_ditherPalette && _pixelFormat.bytesPerPixel != _curFrame.surface->format.bytesPerPixel) {
+		_curFrame.surface->free();
+		delete _curFrame.surface;
+		_curFrame.surface = new Graphics::Surface();
+		_curFrame.surface->create(_curFrame.width, _curFrame.height, _pixelFormat);
 	}
 
 	_y = 0;
