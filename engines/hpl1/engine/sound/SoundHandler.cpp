@@ -61,6 +61,7 @@ cSoundHandler::cSoundHandler(iLowLevelSound *apLowLevelSound, cResources *apReso
 	mpWorld3D = NULL;
 
 	mlCount = 0;
+	mlIdCount = 0;
 
 	mbSilent = false;
 
