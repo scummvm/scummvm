@@ -107,6 +107,126 @@ static const IcbGameDescription gameDescriptions[] = {
 		GType_ELDORADO
 	},
 
+	{
+		{
+			// The Road to El Dorado
+			// Brazilian Portuguese
+			"eldorado",
+			"",
+			AD_ENTRY2s("g/speech.clu", "f69efab57478cd9b1792880298eada8d", 1927072, "g/g", "ed4e6fed9c3c5b2cbccec30484eef434", 19280),
+			Common::PT_BRA,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		GType_ELDORADO
+	},
+
+	{
+		{
+			// The Road to El Dorado
+			// English demo from CyberMycha 02/2001
+			"eldorado",
+			"Demo",
+			AD_ENTRY2s("g/speech.clu", "93905d81f6e11f8c1b9c6a1dcd303e68", 1970016, "g/g", "7e8aabc6fe481317de92fd18bdf328df", 17040),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		GType_ELDORADO
+	},
+
+	{
+		{
+			// The Road to El Dorado
+			// English US PS1
+			"eldorado",
+			0,
+			AD_ENTRY2s("g/speech.clu", "641adcc7b812dcd99a09e78bce22f2ce", 349480, "g/havenota.clu", "0a51dd4f3f49e8d0b209ea410ed42853", 17064),
+			Common::EN_USA,
+			Common::kPlatformPSX,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		GType_ELDORADO
+	},
+
+	{
+		{
+			// The Road to El Dorado
+			// English EU PS1
+			"eldorado",
+			0,
+			AD_ENTRY2s("g/speech.clu", "641adcc7b812dcd99a09e78bce22f2ce", 349480, "g/havenota.clu", "7276ce48dcb2ff87181292f9c6889f19", 17064),
+			Common::EN_GRB,
+			Common::kPlatformPSX,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		GType_ELDORADO
+	},
+
+	{
+		{
+			// The Road to El Dorado
+			// German PS1
+			"eldorado",
+			0,
+			AD_ENTRY2s("g/speech.clu", "4314272e910bfc72aa9224c179ea90ba", 328600, "g/havenota.clu", "0fb92797c62e1f5fd35a08292c681cd1", 18176),
+			Common::DE_DEU,
+			Common::kPlatformPSX,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		GType_ELDORADO
+	},
+
+	{
+		{
+			// The Road to El Dorado
+			// French PS1
+			"eldorado",
+			0,
+			AD_ENTRY2s("g/speech.clu", "2c0095ac493d847a60a9c395282bfe9b", 287032, "g/havenota.clu", "195c71302b79b3be2b60e11a2b49bae0", 18032),
+			Common::FR_FRA,
+			Common::kPlatformPSX,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		GType_ELDORADO
+	},
+
+	{
+		{
+			// The Road to El Dorado
+			// Spanish PS1
+			"eldorado",
+			0,
+			AD_ENTRY2s("g/speech.clu", "3862579927ef45bd603a6e19ee1bbaff", 353656, "g/havenota.clu", "c053da010d3aeb3d242f7f7d6f222669", 18112),
+			Common::ES_ESP,
+			Common::kPlatformPSX,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		GType_ELDORADO
+	},
+
+	{
+		{
+			// The Road to El Dorado
+			// Italian PS1
+			"eldorado",
+			0,
+			AD_ENTRY2s("g/speech.clu", "c28ccf1def3fbf6de597f900b9c8d4e4", 288984, "g/havenota.clu", "fec13ff938c9f7ed054124b0bba10528", 17944),
+			Common::IT_ITA,
+			Common::kPlatformPSX,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		GType_ELDORADO
+	},
+
 	{ AD_TABLE_END_MARKER, GType_ICB }
 };
 
