@@ -154,9 +154,9 @@ static uint32 alphaToRed(const uint32 pixel, const Graphics::PixelFormat &format
 void Bitmap2D::copyRedToAlpha() {
 	if (!_isSurfaceActive)
 		copyDecoder();
-	for (uint y = 0; y < _surface.h; y++) {
+	for (int16 y = 0; y < _surface.h; y++) {
 		uint32 *rowPtr = (uint32 *)_surface.getBasePtr(0, y);
-		for (uint x = 0; x < _surface.w; ++x, ++rowPtr) {
+		for (int16 x = 0; x < _surface.w; ++x, ++rowPtr) {
 			*rowPtr = alphaToRed(*rowPtr, _surface.format);
 		}
 	}
@@ -167,7 +167,7 @@ void Bitmap2D::copyDecoder(const Graphics::PixelFormat &format) {
 	if (format.bytesPerPixel != 0)
 		_surface.convertToInPlace(format);
 	_isSurfaceActive = true;
-	_decoder.release();
+	_decoder.reset(nullptr);
 }
 
 const Graphics::Surface &Bitmap2D::activeSurface() const {
