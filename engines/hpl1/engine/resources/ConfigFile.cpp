@@ -72,10 +72,8 @@ bool cConfigFile::Load() {
 //-----------------------------------------------------------------------
 
 bool cConfigFile::Save() {
-	Common::DumpFile cf; 
 	//FIXME: use proper string types
-	cf.open(cString::To8Char(msFile).c_str()); 
-	return mpXmlDoc->SaveFile(cf);
+	return mpXmlDoc->SaveFile(cString::To8Char(msFile).c_str());
 }
 
 //-----------------------------------------------------------------------
