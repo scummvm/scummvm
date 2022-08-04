@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-03 06:38+0000\n"
-"PO-Revision-Date: 2022-07-28 21:37+0000\n"
+"PO-Revision-Date: 2022-08-05 00:37+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -2111,7 +2111,7 @@ msgstr "Aja taustalla"
 #: gui/saveload-dialog.cpp:126
 #, c-format
 msgid "%s (%s %S / %s %S, %s / %s files)"
-msgstr ""
+msgstr "%s (%s %S / %s %S, %s / %s tiedostoa)"
 
 #: gui/saveload-dialog.cpp:452 gui/saveload-dialog.cpp:632
 msgid "No date saved"
@@ -4397,7 +4397,7 @@ msgstr "Vaihda Olmeciin"
 
 #: engines/asylum/metaengine.cpp:145
 msgid "Bring up the In-Game Menu"
-msgstr ""
+msgstr "Avaa pelin sisäinen valikko"
 
 #: engines/asylum/metaengine.cpp:151
 msgid "Open character inventory"
