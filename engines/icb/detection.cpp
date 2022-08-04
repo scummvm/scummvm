@@ -95,6 +95,36 @@ static const IcbGameDescription gameDescriptions[] = {
 	{
 		{
 			// The Road to El Dorado
+			// Spanish
+			"eldorado",
+			"",
+			AD_ENTRY2s("g/speech.clu", "81a0aedb57e78b22d1f434c2f3e09b08", 1948952, "g/g", "a3a396cce6e30040bd16f6dbdd724d49", 19560),
+			Common::ES_ESP,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		GType_ELDORADO
+	},
+
+	{
+		{
+			// The Road to El Dorado
+			// Italian
+			"eldorado",
+			"",
+			AD_ENTRY2s("g/speech.clu", "1220c9bef92e30a5faa033a15cb6788d", 1609464, "g/g", "52fbb4ab3247360d005e5c04a60d7196", 18920),
+			Common::IT_ITA,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		GType_ELDORADO
+	},
+
+	{
+		{
+			// The Road to El Dorado
 			// Polish
 			"eldorado",
 			"",
