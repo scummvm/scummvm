@@ -28,7 +28,7 @@
 #ifndef HPL_QUATERNION_H
 #define HPL_QUATERNION_H
 
-#include "hpl1/engine/math/Matrix.h"
+#include "hpl1/engine/math/hplMatrix.h"
 #include "hpl1/engine/math/Vector3.h"
 
 namespace hpl {
