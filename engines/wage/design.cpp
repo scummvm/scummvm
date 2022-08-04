@@ -194,6 +194,24 @@ bool Design::isPointOpaque(int x, int y) {
 	return pixel != kColorGreen;
 }
 
+bool Design::isInBounds(int x, int y) {
+	if (_surface == NULL)
+		error("Surface is null");
+
+	Common::MemoryReadStream in(_data, _len);
+	in.skip(4);
+	
+	int16 y1 = in.readSint16BE();
+	int16 x1 = in.readSint16BE();
+	int16 y2 = in.readSint16BE() - 1;
+	int16 x2 = in.readSint16BE() - 1;
+
+	if (x >= x1 && x < x2 && y >= y1 && y < y2)
+		return true;
+	else
+		return false;
+}
+
 void Design::adjustBounds(int16 x, int16 y) {
 	_bounds->right  = MAX(x, _bounds->right);
 	_bounds->bottom = MAX(y, _bounds->bottom);
