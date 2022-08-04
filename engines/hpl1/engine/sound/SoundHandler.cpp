@@ -439,8 +439,7 @@ bool cSoundHandler::IsValidId(iSoundChannel *apChannel, int alId) {
 	if (apChannel == NULL)
 		return false;
 
-	tSoundEntryListIt it;
-	it = mlstWorldSounds.begin();
+	tSoundEntryListIt it = mlstWorldSounds.begin();
 	while (it != mlstWorldSounds.end()) {
 		if (it->mpSound == apChannel && it->mpSound->GetId() == alId)
 			return true;

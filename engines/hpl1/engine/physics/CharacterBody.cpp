@@ -60,6 +60,8 @@ iCharacterBody::iCharacterBody(const tString &asName, iPhysicsWorld *apWorld, co
 
 	mbTestCollision = true;
 
+	mbOnGround = false;
+
 	float fRadius = cMath::Max(avSize.x, avSize.z) * 0.5f;
 	cMatrixf mtxOffset = cMath::MatrixRotateZ(kPi2f);
 	iCollideShape *pCollider = NULL;
