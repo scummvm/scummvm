@@ -115,7 +115,6 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("EveryMan 1", "9104b23c8978c7db118bb60fb5f8bf0f", 335435), // alt version
 	FANGAME("EveryMan 1", "829aabea15e143f20fe692f0bc38e56a", 335444), // alt version
 	FANGAME("Exploration Zeta!", "9006eff549afadc956e5de4ae6a24fbd", 366343),
-	// Cannot proceed past the first scene
 	FANGAMEND("Explorer", "Explorer DEMO", "0ae79f48754466c4cd65137c7f186384", 460972),
 	FANGAMEND("Explorer", "Explorer DEMO", "6b22972808630201ece7cc96a0ef17f7", 460959), // alt version
 	FANGAME("Fantasy Quest", "b52d3e2680a76c23b2791e2c87f6b6bd", 762498),
@@ -139,7 +138,6 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "baaaae4569fbb1947d74667ac484bea9", 231773), // alt version
 	FANGAMEN("The Hotel Caper", "Hotel Caper V1.0", "138e89e5d5bcac6aba222cf33677bcec", 231127),
 	FANGAMEN(".i.f.", "xn--.i.f.-", "575fc0c25e9823dd742de1acdcaac325", 183221),
-	// Cropped graphics on first scene, cannot pass to in-game
 	FANGAMEN("Introduction to Gothic", "Intro to Gothic", "606eec666f0b2d767e4423747e740434", 207811),
 	FANGAMEN("James Bond 007", "007", "2449924f2cb43454489a4ef91c0ee702", 50407),
 	FANGAME("Jamie the Demon Slayer", "ed054aa760569059c7ea554e822089a6", 232533),
@@ -175,7 +173,6 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Mountain of Mayhem", "xn--Mountain of Mayhem -3g6k", "634211b004371635d191ae0687035501", 749747), // Original file name "Mountain of Mayhem †"
 	FANGAME("Mountain of Mayhem", "c83a5703b3ea95f465839f4f54ef0805", 749733), // alt version
 	FANGAME("Muddy Water", "711dd9d154d13c31bc216ef8539bb095", 662438), // v1.3.2
-	// No way to pass through the first screen
 	FANGAME("Nightcrawler Ned", "8423fc015c395bd6be54a7ea69170d99", 366286),
 	FANGAMEN("Parrot Talk", "PARROT TALK V1", "c38c090be8c078d931905c93bc0689f5", 118680),
 	FANGAMEN("Parrot Talk", "PARROT TALKV2", "5ec1df9e2d6d0dcf1a040a95500d9551", 118628),
