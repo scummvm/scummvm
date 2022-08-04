@@ -28,7 +28,7 @@
 #ifndef HPL_MATHTYPES_H
 #define HPL_MATHTYPES_H
 
-#include "hpl1/engine/math/Matrix.h"
+#include "hpl1/engine/math/hplMatrix.h"
 #include "hpl1/engine/math/Vector2.h"
 #include "hpl1/engine/math/Vector3.h"
 #include "hpl1/engine/system/SystemTypes.h"

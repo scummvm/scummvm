@@ -170,7 +170,7 @@
 #include "hpl1/engine/math/Frustum.h"
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/math/MathTypes.h"
-#include "hpl1/engine/math/Matrix.h"
+#include "hpl1/engine/math/hplMatrix.h"
 #include "hpl1/engine/math/MeshTypes.h"
 #include "hpl1/engine/math/PidController.h"
 #include "hpl1/engine/math/Quaternion.h"
