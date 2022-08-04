@@ -2827,18 +2827,33 @@ void ScummEngine_v5::scummLoop_handleSaveLoad() {
 				_roomPalette[i] = i;
 			// We want just the ENCD script...
 			int entryScript = VAR_ENTRY_SCRIPT;
-			VAR_ENTRY_SCRIPT = 0xFF;
+			int entryScript2 = VAR_ENTRY_SCRIPT2;
+			VAR_ENTRY_SCRIPT = VAR_ENTRY_SCRIPT2 = 0xFF;
 			runEntryScript();
 			VAR_ENTRY_SCRIPT = entryScript;
+			VAR_ENTRY_SCRIPT2 = entryScript2;
 		} else if (_supportsEGADithering) {
 			// Reconstruct the screen palette. It might glitch a bit if the palette was modified with
 			// darkenPalette or similar. But we do give warning... and the alternative would be to
 			// completely process, save and load both the VGA and EGA palettes all the time (regardless
 			// of the current render mode).
 			setCurrentPalette(_curPalIndex);
+			// This is also needed to fix the verb interface colors for the games with the purple verbs
+			// interface. It looks like this came up first with MI2 and was then brought over to MI1 CD
+			// and even to DOTT. GID_MONKEY_VGA (with the green verbs) is not affected.
+			if ((_game.id == GID_MONKEY || _game.id == GID_MONKEY2) && VAR_ENTRY_SCRIPT2 != 0xFF && VAR(VAR_ENTRY_SCRIPT2))
+				runScript(VAR(VAR_ENTRY_SCRIPT2), 0, 0, nullptr);
 		}
 	}
-
+	bool redrawDistaff = (_game.id == GID_LOOM && _saveLoadFlag == 2 && VAR(150) == 2);
+	if (redrawDistaff) {
+		// Restore distaff and notes for LOOM VGA Talkie.
+		int args[NUM_SCRIPT_LOCAL];
+		memset(args, 0, sizeof(args));
+		args[0] = 2;
+		runScript(18, 0, 0, args);
+		//VAR(152) = VAR(153) = 0;
+	}
 	// update IQ points after loading
 	if (processIQPoints)
 		runScript(145, 0, 0, nullptr);
@@ -2866,6 +2881,12 @@ void ScummEngine_v6::scummLoop_handleSaveLoad() {
 				}
 			} else {
 				setDefaultCursor();
+				// For DOTT, this is also needed to fix the verb interface colors. Weirdly, it
+				// does check the videomode var for an EGA setting and makes color changes
+				// based on that. My guess is that this was brought over from MI2 (since the
+				// color adjustments are also the same).
+				if (VAR_ENTRY_SCRIPT2 != 0xFF && VAR(VAR_ENTRY_SCRIPT2))
+					runScript(VAR(VAR_ENTRY_SCRIPT2), 0, 0, nullptr);
 			}
 		}
 	}
