@@ -671,15 +671,26 @@ public:
 
 	mcodeFunctionReturnCodes fn_face_camera(int32 &, int32 *);
 	mcodeFunctionReturnCodes fn_set_interact_distance(int32 &, int32 *);
+	mcodeFunctionReturnCodes fn_display_objects_lvar(int32 &, int32 *);
 
 	mcodeFunctionReturnCodes fn_activate_sparkle(int32 &, int32 *);
 	mcodeFunctionReturnCodes fn_deactivate_sparkle(int32 &, int32 *);
 
 	mcodeFunctionReturnCodes fn_is_player_standing_still(int32 &, int32 *);
+	mcodeFunctionReturnCodes fn_set_override_pose(int32 &, int32 *);
+	mcodeFunctionReturnCodes fn_cancel_override_pose(int32 &, int32 *);
+
+	mcodeFunctionReturnCodes fn_preload_actor_file(int32 &, int32 *);
+	mcodeFunctionReturnCodes fn_preload_mesh(int32 &, int32 *);
+	mcodeFunctionReturnCodes fn_preload_texture(int32 &, int32 *);
+	mcodeFunctionReturnCodes fn_preload_palette(int32 &, int32 *);
+	mcodeFunctionReturnCodes fn_preload_animation(int32 &, int32 *);
 	mcodeFunctionReturnCodes fn_inventory_active(int32 &, int32 *);
 	mcodeFunctionReturnCodes fn_radial_interact(int32 &, int32 *);
 	mcodeFunctionReturnCodes fn_shutdown_inventory(int32 &, int32 *);
+	mcodeFunctionReturnCodes fn_hard_load_mesh(int32 &, int32 *);
 	mcodeFunctionReturnCodes fn_set_mega_height(int32 &, int32 *);
+	mcodeFunctionReturnCodes fn_shadow(int32 &, int32 *);
 
 	mcodeFunctionReturnCodes fn_is_actor_relative(int32 &, int32 *);
 	mcodeFunctionReturnCodes fn_can_save(int32 &, int32 *);

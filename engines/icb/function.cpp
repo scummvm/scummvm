@@ -42,6 +42,7 @@
 #include "engines/icb/direct_input.h"
 #include "engines/icb/actor.h"
 #include "engines/icb/remora.h"
+#include "engines/icb/res_man.h"
 
 #include "common/keyboard.h"
 
@@ -301,6 +302,24 @@ mcodeFunctionReturnCodes fn_set_manual_interact_object(int32 &result, int32 *par
 
 mcodeFunctionReturnCodes fn_cancel_manual_interact_object(int32 &result, int32 *params) { return (MS->fn_cancel_manual_interact_object(result, params)); }
 
+mcodeFunctionReturnCodes fn_display_objects_lvar(int32 &result, int32 *params) { return (MS->fn_display_objects_lvar(result, params)); }
+
+mcodeFunctionReturnCodes fn_set_override_pose(int32 &result, int32 *params) { return (MS->fn_set_override_pose(result, params)); }
+
+mcodeFunctionReturnCodes fn_cancel_override_pose(int32 &result, int32 *params) { return (MS->fn_cancel_override_pose(result, params)); }
+
+mcodeFunctionReturnCodes fn_preload_actor_file(int32 &result, int32 *params) { return (MS->fn_preload_actor_file(result, params)); }
+
+mcodeFunctionReturnCodes fn_preload_mesh(int32 &result, int32 *params) { return (MS->fn_preload_mesh(result, params)); }
+
+mcodeFunctionReturnCodes fn_hard_load_mesh(int32 &result, int32 *params) { return (MS->fn_hard_load_mesh(result, params)); }
+
+mcodeFunctionReturnCodes fn_preload_texture(int32 &result, int32 *params) { return (MS->fn_preload_texture(result, params)); }
+
+mcodeFunctionReturnCodes fn_preload_palette(int32 &result, int32 *params) { return (MS->fn_preload_palette(result, params)); }
+
+mcodeFunctionReturnCodes fn_preload_animation(int32 &result, int32 *params) { return (MS->fn_preload_animation(result, params)); }
+
 mcodeFunctionReturnCodes fn_PLEASE_REUSE_THIS_SLOT_2(int32 &, int32 *) { return IR_CONT; }
 
 mcodeFunctionReturnCodes fn_PLEASE_REUSE_THIS_SLOT_3(int32 &, int32 *) { return IR_CONT; }
@@ -314,6 +333,8 @@ mcodeFunctionReturnCodes fn_set_as_player(int32 &result, int32 *params) { return
 mcodeFunctionReturnCodes fn_inventory_active(int32 &result, int32 *params) { return (MS->fn_inventory_active(result, params)); }
 
 mcodeFunctionReturnCodes fn_can_save(int32 &result, int32 *params) { return (MS->fn_can_save(result, params)); }
+
+mcodeFunctionReturnCodes fn_shadow(int32 &result, int32 *params) { return (MS->fn_shadow(result, params)); }
 
 mcodeFunctionReturnCodes fn_is_actor_relative(int32 &result, int32 *params) { return (MS->fn_is_actor_relative(result, params)); }
 
@@ -1502,6 +1523,24 @@ mcodeFunctionReturnCodes _game_session::fn_set_mesh(int32 &, int32 *params) {
 	return (IR_CONT);
 }
 
+mcodeFunctionReturnCodes _game_session::fn_set_override_pose(int32 &, int32 *params) {
+	// fn_set_override_pose(text)
+
+	const char *pose = (const char *)MemoryUtil::resolvePtr(params[0]);
+
+	L->voxel_info->Set_override_pose(pose);
+
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_cancel_override_pose(int32 &, int32 *) {
+	// fn_cancel_override_pose(text)
+
+	L->voxel_info->Cancel_override_pose();
+
+	return IR_CONT;
+}
+
 extern _player_stat player_stat_table[__TOTAL_WEAPONS];
 
 mcodeFunctionReturnCodes _game_session::fn_set_player_pose(int32 &, int32 *params) {
@@ -2305,6 +2344,13 @@ mcodeFunctionReturnCodes _game_session::fn_get_list_result(int32 &result, int32 
 	result = L->list_result;
 
 	return (IR_CONT);
+}
+
+mcodeFunctionReturnCodes _game_session::fn_display_objects_lvar(int32 &, int32 *params) {
+	//draw specified objects specified lvar on the screen - for script debugging
+
+	warning("fn_display_objects_lvar() not implemented");
+	return IR_CONT;
 }
 
 mcodeFunctionReturnCodes _game_session::fn_hold_while_list_near_nico(int32 &result, int32 *params) {
@@ -3161,12 +3207,21 @@ mcodeFunctionReturnCodes _game_session::fn_shadows_on(int32 &, int32 *) {
 }
 
 mcodeFunctionReturnCodes _game_session::fn_shadows_off(int32 &, int32 *) {
-	// shadows back on
+	// shadows off
 
 	if (logic_structs[cur_id]->image_type != VOXEL)
 		Fatal_error("fn_shadows_off says people only!");
 
-	M->drawShadow = FALSE8; // shadows back on
+	M->drawShadow = FALSE8; // shadows off
+
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_shadow(int32 &, int32 *params) {
+	if (logic_structs[cur_id]->image_type != VOXEL)
+		Fatal_error("fn_shadow says people only!");
+
+	M->drawShadow = (uint8)params[0];
 
 	return IR_CONT;
 }
@@ -3400,6 +3455,100 @@ mcodeFunctionReturnCodes _game_session::fn_cancel_manual_interact_object(int32 &
 	// Calling script can continue.
 	return IR_CONT;
 
+}
+
+mcodeFunctionReturnCodes _game_session::fn_preload_actor_file(int32 &, int32 *params ) {
+	const char *filename = (const char *)MemoryUtil::resolvePtr(params[0]);
+
+	if (L->voxel_info->Preload_file(filename) == 0)
+		return IR_REPEAT;
+
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_hard_load_mesh(int32 &, int32 *params) {
+	const char *base_name = (const char *)MemoryUtil::resolvePtr(params[0]);
+
+	char mesh[32];
+	strcpy(mesh, base_name);
+	strcat(mesh, ".rap");
+
+	uint32 fileHash = NULL_HASH;
+	rs_anims->Res_open(mesh, fileHash, L->voxel_info->base_path, L->voxel_info->base_path_hash);
+
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_preload_mesh(int32 &, int32 *params) {
+	const char *base_name = (const char *)MemoryUtil::resolvePtr(params[0]);
+
+	char filename[32];
+	strcpy(filename, base_name);
+	strcat(filename, ".rap");
+
+	if (L->voxel_info->Preload_file(filename) == 0)
+		return IR_REPEAT;
+
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_preload_texture(int32 &, int32 *params) {
+	const char *base_name = (const char *)MemoryUtil::resolvePtr(params[0]);
+
+	char filename[32];
+	strcpy(filename, base_name);
+	strcat(filename, ".revtex");
+
+	if (L->voxel_info->Preload_file(filename) == 0)
+		return IR_REPEAT;
+
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_preload_palette(int32 &, int32 *params) {
+	const char *base_name = (const char *)MemoryUtil::resolvePtr(params[0]);
+
+	char filename[32];
+	strcpy(filename, base_name);
+	strcat(filename, ".revtex");
+
+	if (L->voxel_info->Preload_file(filename) == 0)
+		return IR_REPEAT;
+
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_preload_animation(int32 &param1, int32 *params) {
+	const char *set_name = (const char *)MemoryUtil::resolvePtr(params[0]);
+	const char *anim_name = (const char *)MemoryUtil::resolvePtr(params[1]);
+
+	char stub[128];
+	char file[128];
+
+	// The set name
+	strcpy(stub, set_name);
+
+	// The actual animation name
+	strcat(stub, "\\");
+	strcat(stub, anim_name);
+
+	// Preload the marker file into memory
+	strcpy(file, stub);
+	strcat(file, ".raj");
+
+	if (L->voxel_info->Preload_file(file) == 0) {
+		return IR_REPEAT;
+	}
+
+	// Preload the animation file into memory
+	strcpy(file, stub);
+	strcat(file, ".rab");
+
+	 if (L->voxel_info->Preload_file(file) == 0) {
+		return IR_REPEAT;
+	 }
+
+	 return IR_CONT;
 }
 
 mcodeFunctionReturnCodes _game_session::fn_set_to_floor(int32 &, int32 *params) {
