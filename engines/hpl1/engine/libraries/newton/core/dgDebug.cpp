@@ -33,11 +33,7 @@ void dgApi dgExpandTraceMessage(const char *fmt, ...)
   va_start(v_args, fmt);
   vsprintf(text, fmt, v_args);
   va_end(v_args);
+  printf ("%s\n", text);
 
-	#ifdef _WIN32 
-		OutputDebugStringA(text);
-	#else 
-		printf ("%s\n", text);
-	#endif
 }
 #endif
