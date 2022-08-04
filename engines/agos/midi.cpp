@@ -533,7 +533,7 @@ bool MidiPlayer::isPlaying(bool checkQueued) {
 void MidiPlayer::stop(bool sfx) {
 	Common::StackLock lock(_mutex);
 
-if (!sfx) {
+	if (!sfx) {
 		// Clear the queued track to prevent it from starting when the current
 		// track is stopped.
 		_queuedTrack = 255;

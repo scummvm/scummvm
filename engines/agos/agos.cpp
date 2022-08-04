@@ -612,9 +612,10 @@ Common::Error AGOSEngine::init() {
 	_midi = new MidiPlayer(this);
 
 	if ((getGameType() == GType_SIMON2 && getPlatform() == Common::kPlatformWindows) ||
-		(getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) ||
-		((getFeatures() & GF_TALKIE) && getPlatform() == Common::kPlatformAcorn) ||
-		(getPlatform() == Common::kPlatformDOS || getPlatform() == Common::kPlatformPC98)) {
+			(getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) ||
+			((getFeatures() & GF_TALKIE) && getPlatform() == Common::kPlatformAcorn) ||
+			(getPlatform() == Common::kPlatformDOS && getGameType() != GType_PN && getGameType() != GType_FF) ||
+			getPlatform() == Common::kPlatformPC98) {
 
 		int ret = _midi->open();
 		if (ret)
