@@ -103,9 +103,12 @@ public:
 	bool8 Set_texture(const char *texture_name);
 	bool8 Set_palette(const char *palette_name);
 	bool8 Set_mesh(const char *mesh_name);
+	bool8 Set_override_pose(const char *override_pose_name);
+	bool8 Cancel_override_pose();
 	void Promote_non_generic();
 	int8 IsAnimTable(int32 i);
 	void MakeAnimEntry(int32 i);
+	int Preload_file(const char *file);
 
 	// those hashs in full
 
@@ -117,6 +120,7 @@ public:
 	uint32 palette_hash;     // the name of the palette
 	uint32 texture_hash;     // the name of the texture (which includes a default palette)
 	uint32 pose_hash;        // the name of the ordinary pose/accessory mesh
+	uint32 override_pose_hash; // the name of the pose/accessory mesh overrides the default setting
 	uint32 custom_pose_hash; // the name of the "custom" pose/accessory mesh
 
 	// base path
@@ -152,6 +156,7 @@ public:
 	char palette_name[PALETTE_STR_LEN];
 	char pose_name[ANIM_NAME_STR_LEN];
 	char custom_pose_name[ANIM_NAME_STR_LEN];
+	char override_pose_name[ANIM_NAME_STR_LEN];
 
 	// and so the access functions return the
 	// actual thing
@@ -164,6 +169,7 @@ public:
 	char *get_palette_name() { return palette_name; }
 	char *get_pose_name() { return pose_name; }
 	char *get_custom_pose_name() { return custom_pose_name; }
+	char *get_override_pose_name() { return override_pose_name; }
 
 };
 

@@ -274,6 +274,12 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 		poseName = vox->pose_name;
 		poseHash = vox->pose_hash;
 	}
+	if (vox->override_pose_hash != NULL_HASH) {
+		// If the default pose object has been overriden then it is
+		// vox->override_pose_hash
+		poseName = vox->override_pose_name;
+		poseHash = vox->override_pose_hash;
+	}
 
 	// Load the POSE
 	pose = (RapAPI *)rs_anims->Res_open(poseName, poseHash, vox->base_path, vox->base_path_hash);
