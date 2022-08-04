@@ -71,11 +71,8 @@ private:
 	void DoWork(dgInt32 threadIndex);
 	dgInt32 GetWork(dgWorkerThread** cWork);
 
-#ifdef _WIN32
-	static dgUnsigned32 _stdcall ThreadExecute(void *Param);
-#else
+
 	static void* ThreadExecute(void *Param);
-#endif
 
 	dgInt32 m_numOfThreads;
 	dgInt32 m_numberOfCPUCores;
@@ -84,22 +81,13 @@ private:
 	dgInt32 m_workInProgress;
 	mutable dgInt32 m_globalSpinLock;
 
-#ifdef _WIN32
-	HANDLE m_exit;
-	HANDLE m_workToDo;
-	HANDLE m_emptySlot;
-	CRITICAL_SECTION m_criticalSection;
-	dgWorkerThread* m_queue[DG_MAXQUEUE];
-	HANDLE m_threadhandles[DG_MAXIMUN_THREADS];
-#else
 	bool m_exit;
 	dgInt32 m_emptySlot;
 	dgInt32 m_workToDo;
 	dgInt32 m_criticalSection;
 	dgInt32 m_workToDoSpinLock;
 	dgWorkerThread* m_queue[DG_MAXQUEUE];
-	pthread_t m_threadhandles[DG_MAXIMUN_THREADS];
-#endif
+	//pthread_t m_threadhandles[DG_MAXIMUN_THREADS];
 
 	OnGetPerformanceCountCallback m_getPerformanceCount;
 	dgLocadData m_localData[DG_MAXIMUN_THREADS];

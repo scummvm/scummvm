@@ -26,25 +26,7 @@
 #define NEWTON_MAJOR_VERSION 2
 #define NEWTON_MINOR_VERSION 36
 
-
-#ifdef _NEWTON_STATIC_LIB
-	#define NEWTON_API
-#else 
-	#ifdef _NEWTON_BUILD_DLL
-		#ifdef _WIN32
-			#define NEWTON_API __declspec (dllexport)
-		#else
-			#define NEWTON_API __attribute__ ((visibility("default")))
-		#endif
-	#else
-		#ifdef _WIN32
-			#define NEWTON_API __declspec (dllimport)
-		#else
-			#define NEWTON_API
-		#endif
-	#endif
-#endif
-
+#define NEWTON_API
 
 #ifdef __USE_DOUBLE_PRECISION__
   #define dFloat double

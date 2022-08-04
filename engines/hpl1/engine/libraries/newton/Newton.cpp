@@ -44,20 +44,6 @@ void TraceFuntionName(const char *name) {
 #define TRACE_FUNTION(name)
 #endif // _DEBUG
 
-#ifndef _NEWTON_STATIC_LIB
-#ifdef __MINGW32__
-int main(int argc, char *argv[]) {
-	return 0;
-}
-#endif // _MINGW32__
-
-#ifdef _MSC_VER
-BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
-	return TRUE;
-}
-#endif
-#endif // _NEWTON_STATIC_LIB
-
 //#define SAVE_COLLISION
 #ifdef SAVE_COLLISION
 
