@@ -284,6 +284,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "metaldead", "Metal Dead" },
 	{ "mountainsofmadness", "Chronicle of Innsmouth: Mountains of Madness" },
 	{ "mybigsister", "My Big Sister" },
+	{ "nellycootalot-hd", "Nelly Cootalot: Spoonbeaks Ahoy! HD" },
 	{ "neofeud", "Neofeud" },
 	{ "odissea", "Odissea - An Almost True Story" },
 	{ "oott", "Order of the Thorne: The King's Challenge" },
@@ -1948,7 +1949,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "nefasto", "Nefasto's Misadventure: Meeting Noeroze" },
 	{ "nekusnewtrip", "Neku's new trip" },
 	{ "nellycootalot", "Nelly Cootalot: Spoonbeaks Ahoy!" },
-	{ "nellycootalot-hd", "Nelly Cootalot: Spoonbeaks Ahoy! HD" },
 	{ "neosaires2070", "Neos Aires 2070: Sunday Comes First" },
 	{ "nerdyquest", "Nerdy Quest" },
 	{ "nesquest", "NES Quest" },
@@ -3589,6 +3589,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("mybigsister", "My Big Sister.exe", "4dc50ca8b5d2c762fe86a528b09973cf", 147257266),
 	GAME_ENTRY_STEAM("mybigsister", "My Big Sister.exe", "4dc50ca8b5d2c762fe86a528b09973cf", 147082912),  // rollback
 	GAME_ENTRY_STEAM("mybigsister", "My Big Sister.exe", "4dc50ca8b5d2c762fe86a528b09973cf", 147248623),  // rollback - latest
+	GAME_ENTRY_STEAM("nellycootalot-hd", "Nelly.exe", "521aecdb5343c8d8f1c1000c4c2fa468", 11069524),
+	GAME_ENTRY_STEAM("nellycootalot-hd", "Nelly.exe", "28f22ae60e2f3524665c1d5be60a0bf3", 11069220),
 	GAME_ENTRY_EN_STEAM("neofeud", "neofeud.exe", "6e861b1f476ff7cdf036082abb271329", 2078740517),
 	GAME_ENTRY_EN("neofeud", "neofeud.exe", "6e861b1f476ff7cdf036082abb271329", 2078743375),
 	GAME_ENTRY("odissea", "ODISSEA.exe", "5bb86de9245242046c309711ff02dad3", 717438956),  // itch.io  Eng-Ita
@@ -3636,9 +3638,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849410915, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_EN_STEAM("richardandalice", "richardandalice.exe", "1023d348f67ba958f78ed62d029565c7", 109164768),
 	GAME_ENTRY_EN_STEAM("richardandalice", "richardandalice.exe", "f47d11397e2059a25b11057ea6cf3409", 108264256),
-	GAME_ENTRY_EN("richardandalice", "richardandalice.exe", "9a7e38a1810e6a1839601fb5c6bd42e6", 108602238), // Desura
+	GAME_ENTRY_EN_GOG("richardandalice", "richardandalice.exe", "9a7e38a1810e6a1839601fb5c6bd42e6", 108602238), // Desura - GOG v1.0
 	GAME_ENTRY_EN_STEAM("roguestate", "roguestate.exe", "981a1c4d5a64b8ebe300f9769acf0fe5", 895486573),
-	GAME_ENTRY("samaritan", "samaritan.exe", "79dd677433bbb10d4970367eb68b243c", 78070237), // Groupees, v1.1
+	GAME_ENTRY_GOG("samaritan", "samaritan.exe", "79dd677433bbb10d4970367eb68b243c", 78070237), // Groupees, v1.1 - GOG
 	GAME_ENTRY_STEAM("samaritan", "samaritan.exe", "5fb404a4a7c9cd1449dfdd3d23fa0250", 78753952),
 	GAME_ENTRY_STEAM("samaritan", "samaritan.exe", "6a3b669b7d34ec9356a665afe0c2c003", 78438375),
 	GAME_ENTRY_EN_STEAM("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642157876),  // v1.1
@@ -3657,7 +3659,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("shivah", "ac2game.dat", "ec0019b528dd1e9bcb4264967c4a3a31", 30446404), // Linux Humble Bundle
 	GAME_ENTRY_EN("shivah", "ac2game.dat", "bdc618b23fc279938f05f8ac058a938b", 32723739), // MacOS
 	GAME_ENTRY_EN_GOG("shivah", "shivah.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 32319665), // Windows GOG, Humble Bundle
-	GAME_ENTRY_EN("shivah", "shivah.exe", "adf5d1e8de8b1292e98ef59ce89ab42c", 33845596), // GOG, v2.1
+	GAME_ENTRY_EN_GOG("shivah", "shivah.exe", "adf5d1e8de8b1292e98ef59ce89ab42c", 33845596), // GOG, v2.1
 	GAME_ENTRY_EN_GOG("shivah", "ac2game.dat", "021b85e94ba52ed77b6b4841ffb50c43", 30658376), // macOS v2.1a
 	GAME_ENTRY_EN("sisterssecret", "SistersSecret.exe", "f8d06c339ca2af5160b662c7a19572d6", 18659398),  // v1.0.0a
 	GAME_ENTRY_STEAM("smallsister", "sister.exe", "78dd4ca028ee0156b6a093d6d780aa65", 18534526),  // Eng-Tur
@@ -3666,12 +3668,14 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", 3186614879),
 	GAME_ENTRY("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", -1), // for 32-bit limited filesystems
 	GAME_ENTRY("strangeland", "ac2game.dat", "151b0391a650d3c81c2758deaa5852cd", 3183277137),
+	GAME_ENTRY_GOG("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", 3186989657), // Win v2.7
 	GAME_ENTRY_GOG("strangeland", "ac2game.dat", "7e5abc5202098bd00ddef999854eb9ab", 3183368017), // Mac
 	GAME_ENTRY_GOG("strangeland", "ac2game.dat", "e4b9f0aa26c1115143ad483c99bc9383", 3183880236), // Mac v2.5a
 	GAME_ENTRY_GOG("strangeland", "ac2game.dat", "86e8b93b8231d6c571669f1621561a21", 3183886917), // Mac v2.7
 	GAME_ENTRY_GOG("strangeland", "ac2game.dat", "c0d0009485795a4ff0cf9dbe5ad82a2f", 3183902196), // Mac
 	GAME_ENTRY_STEAM("sumatra", "sumatra fate of yandi.exe", "57c868b1a81c0335ab60970292cd79d8", 170088886),
 	GAME_ENTRY_STEAM("sumatra", "sumatra fate of yandi.exe", "b4407ac542f316456f549fc8a60dccae", 170634789),
+	GAME_ENTRY_GOG("sumatra", "sumatra fate of yandi.exe", "b4407ac542f316456f549fc8a60dccae", 170715680),  // v1.2
 	GAME_ENTRY_EN("superjazzman", "sjm.exe", "0710e2ec71042617f565c01824f0cf3c", 10841689), // Official website
 	GAME_ENTRY_LANG("symploke1", "Symploke.exe", "ff20c8c9dda8379607db87e7726909c6", 29996616, Common::ES_ESP), // Videojuegos Fermin website (Spanish)
 	GAME_ENTRY_EN("symploke1", "symploke1.exe", "ff20c8c9dda8379607db87e7726909c6", 57363019), // Steam (English), same as Videojuegos Fermin website (English)
@@ -3686,7 +3690,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448795857),  // Win v2.2
 	GAME_ENTRY_EN_STEAM("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448823986),  // Win v2.2 updated
 	GAME_ENTRY_EN_STEAM("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448823978),
+	GAME_ENTRY_EN_STEAM("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448825176),  // Win v2.5
 	GAME_ENTRY_EN_GOG("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448796372), // Win v2.2
+	GAME_ENTRY_EN_GOG("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448825442), // Win v2.5
 	GAME_ENTRY_EN_GOG("technobabylon", "ac2game.dat", "570e69be27d3fa94b50f2779100e3fed", 445671616), // Mac v2.2a
 	GAME_ENTRY_EN("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447894701),  // Humble Bundle
 	GAME_ENTRY_EN_STEAM("theadventuresoffatman", "fatman.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 44449205),
@@ -3699,8 +3705,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("thesecretofhuttongrammarschoolvga", "The Secret of Hutton Grammar School VGA.ags", "8d699b21ab64b28c6b2c245c01c822fc", 64971355),
 	GAME_ENTRY_EN_STEAM("thesecretofhuttongrammarschoolvga", "The Secret of Hutton Grammar School VGA.exe", "2321081ba51d1869ebe11b9ba126911b", 67463317),  // Steam Win
 	GAME_ENTRY_STEAM("thesecretsofjesus", "the secrets of jesus.exe", "2e17ab52586ad34b5e597c20a59f60a0", 1577637692),
-	GAME_ENTRY_EN_STEAM("theterribleoldman", "the terrible old man.exe", "e07a475bcf14bc75c016724186f222ac", 369769127),
-	GAME_ENTRY_EN_STEAM("theterribleoldman", "the terrible old man.exe", "b3a10d7d3b5a728330b028ec28ff2d05", 103852030),
+	GAME_ENTRY_EN_STEAM("theterribleoldman", "The Terrible Old Man.exe", "b3a10d7d3b5a728330b028ec28ff2d05", 103852030),  //v1.2 MAGS port
+	GAME_ENTRY_EN_STEAM("theterribleoldman", "The Terrible OId Man.exe", "e07a475bcf14bc75c016724186f222ac", 369769127),
 	GAME_ENTRY_EN_STEAM("timegentlemenplease", "tgp.exe", "86a5359bac7c88f0dfa060478800dd61", 74077811),
 	GAME_ENTRY_STEAM("unavowed", "ac2game.dat", "b1ff7d96667707daf4266975cea2bf90", 1755457364), // Mac
 	GAME_ENTRY_STEAM("unavowed", "ac2game.dat", "140570a663877cb81e3656b4f29c63f6", 1752922600), // Mac
@@ -5992,8 +5998,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_PLATFORM("nekusnewtrip", "square enix.exe", "a524cbb1c51589903c4043b98917f1d9", 10630694, "Chapter 1"),
 	GAME_ENTRY_EN("nellycootalot", "Nelly Cootalot.exe", "18b284c22010850f79bc5c20054a70c4", 108256323),  // v1.5
 	GAME_ENTRY("nellycootalot", "Nelly.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 198349190),  // v1.8 Multi
-	GAME_ENTRY_STEAM("nellycootalot-hd", "Nelly.exe", "521aecdb5343c8d8f1c1000c4c2fa468", 11069524),
-	GAME_ENTRY_STEAM("nellycootalot-hd", "Nelly.exe", "28f22ae60e2f3524665c1d5be60a0bf3", 11069220),
 	GAME_ENTRY_EN("neosaires2070", "Neos Aires 2070 - Sunday Comes First.exe", "76703ac67835bdbfde5b378a147c8ba2", 84186100), // 1.0
 	GAME_ENTRY_LANG("neosaires2070", "Neos Aires 2070.exe", "78dd4ca028ee0156b6a093d6d780aa65", 84126492, Common::ES_ESP), // 1.1
 	GAME_ENTRY_EN("nerdyquest", "Nerdy Quest.exe", "430eaebb21d406061d67a9972ad33947", 19707725),
@@ -6593,6 +6597,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("somnamulizer", "Hypnos.exe", "618d7dce9631229b4579340b964c6810", 50943313),
 	GAME_ENTRY_EN("songanimals", "SongAnimals.exe", "f982756f0e2c2fbeca15d199b9851559", 120864978),   //v1.0.1
 	GAME_ENTRY_EN_PLATFORM("songanimals", "SongAnimals.exe", "f982756f0e2c2fbeca15d199b9851559", 117864767, "MAGS"),
+	GAME_ENTRY_EN_STEAM("songanimals", "SongAnimals.exe", "5a31d98635be0e3ade3d71cbcdc881f7", 121582550),
 	GAME_ENTRY_EN("sonicandfriendsinclubhouse", "Sonic and friends.exe", "71989c04f1b9812a0df87bc4f5915d4b", 50429335),
 	GAME_ENTRY_EN("sonicandfriendsinclubhouse", "Sonic and friends.ags", "8e3a88dbe57f3963d3a4fb2e4d4031c2", 47952263),
 	GAME_ENTRY_EN("sophiamcgrath", "SophiaMcGrath.exe", "06a03fe35791b0578068ab1873455463", 7477218),  //v1.4
