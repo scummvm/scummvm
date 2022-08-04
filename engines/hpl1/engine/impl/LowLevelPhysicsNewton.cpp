@@ -25,8 +25,6 @@
  * This file is part of HPL1 Engine.
  */
 
-#pragma comment(lib, "newton.lib")
-
 #include "hpl1/engine/impl/LowLevelPhysicsNewton.h"
 
 #include "hpl1/engine/impl/PhysicsWorldNewton.h"
