@@ -71,6 +71,8 @@ public:
 		mbStopUsed = false;
 
 		mpCallback = NULL;
+
+		mlId = 0;
 	}
 
 	virtual ~iSoundChannel() {}

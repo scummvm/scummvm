@@ -72,7 +72,7 @@ class cSoundEntry {
 public:
 	cSoundEntry() : mfNormalVolume(1), mfNormalVolumeFadeDest(1),
 					mfNormalVolumeMul(1), mfNormalVolumeFadeSpeed(0), mbStream(false),
-					mlCount(0) {}
+					mlCount(0), mpSound(nullptr) {}
 
 	void Update(float afTimeStep);
 
