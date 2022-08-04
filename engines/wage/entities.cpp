@@ -159,29 +159,13 @@ void Scene::paint(Graphics::ManagedSurface *surface, int x, int y) {
 Designed *Scene::lookUpEntity(int x, int y) {
 	for (ObjList::const_iterator it = _objs.end(); it != _objs.begin(); ) {
 		it--;
-		// WORKAROUND: Some games don't draw all pixels
-		if (_name == " Introduction" && _resourceId == 18634 ||
-			_name == " Descriptions" && _resourceId == 17079 ||
-			_name == " Descriptions 2" && _resourceId == 17198)
-			if ((*it)->_design->isInBounds(x, y))
-				return *it;
-
-		// WORKAROUND: Some games draw objects on a different surface
-		if (((*it)->_name == "continue" && (*it)->_resourceId == 22259) ||
-			((*it)->_name == "Goth" && (*it)->_resourceId == 18623))
-			if (_design->isPointOpaque(x, y))
-				return *it;
-
-		// WORKAROUND: Twister needs special check to handle intro sequence
-		if ((*it)->_name == "TWIST.CLICK")
-			return *it;
-		if ((*it)->_design->isPointOpaque(x, y))
+		if ((*it)->_design->isInBounds(x, y))
 			return *it;
 	}
 
 	for (ChrList::const_iterator it = _chrs.end(); it != _chrs.begin(); ) {
 		it--;
-		if ((*it)->_design->isPointOpaque(x, y))
+		if ((*it)->_design->isInBounds(x, y))
 			return *it;
 	}
 

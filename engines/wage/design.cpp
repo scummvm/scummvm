@@ -185,21 +185,18 @@ void Design::render(Graphics::MacPatterns &patterns) {
 	}
 }
 
-bool Design::isPointOpaque(int x, int y) {
-	if (_surface == NULL)
-		error("Surface is null");
-
-	byte pixel = ((byte *)_surface->getBasePtr(x, y))[0];
-
-	return pixel != kColorGreen;
-}
-
 bool Design::isInBounds(int x, int y) {
 	if (_surface == NULL)
 		error("Surface is null");
+	if (_len == 0)
+		return true;
 
 	Common::MemoryReadStream in(_data, _len);
-	in.skip(4);
+	in.skip(3);
+	int type = in.readByte();
+
+	if (type == 24)
+		in.skip(2);
 	
 	int16 y1 = in.readSint16BE();
 	int16 x1 = in.readSint16BE();
