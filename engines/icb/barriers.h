@@ -33,7 +33,7 @@
 
 namespace ICB {
 
-#define MAX_slices 9
+#define MAX_slices 10
 
 //+1 for dummy top floor ceiling
 #define MAX_heights (MAX_slices + 1)
