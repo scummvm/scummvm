@@ -150,6 +150,7 @@ void MacDialog::drawOutline(Common::Rect &bounds, int *spec, int speclen) {
 }
 
 int MacDialog::run() {
+	bool shouldQuitEngine = false;
 	bool shouldQuit = false;
 	Common::Rect r(_bbox);
 
@@ -162,7 +163,7 @@ int MacDialog::run() {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
-				//_shouldQuit = true;
+				shouldQuitEngine = true;
 				shouldQuit = true;
 				break;
 			case Common::EVENT_MOUSEMOVE:
@@ -199,6 +200,9 @@ int MacDialog::run() {
 	g_system->copyRectToScreen(_screen->getBasePtr(r.left, r.top), _screen->pitch, r.left, r.top, r.width() + 1, r.height() + 1);
 
 	_wm->popCursor();
+
+	if (shouldQuitEngine)
+		return kMacDialogQuitRequested;
 
 	return _pressedButton;
 }

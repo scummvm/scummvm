@@ -58,6 +58,10 @@ class ManagedSurface;
 class MacText;
 class MacWindowManager;
 
+enum {
+	kMacDialogQuitRequested = -2
+};
+
 struct MacDialogButton {
 	Common::String text;
 	Common::Rect bounds;
