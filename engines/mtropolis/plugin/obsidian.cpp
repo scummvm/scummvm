@@ -31,7 +31,7 @@ namespace MTropolis {
 namespace Obsidian {
 
 MovementModifier::MovementModifier() : _type(false), _rate(0), _frequency(0),
-	_enableWhen(Event::create()), _disableWhen(Event::create()), _triggerEvent(Event::create()), _moveStartTime(0), _runtime(nullptr) {
+	_moveStartTime(0), _runtime(nullptr) {
 }
 
 MovementModifier::~MovementModifier() {
@@ -198,7 +198,7 @@ void MovementModifier::triggerMove(Runtime *runtime) {
 	}
 }
 
-RectShiftModifier::RectShiftModifier() : _enableWhen(Event::create()), _disableWhen(Event::create()), _direction(0), _runtime(nullptr), _isActive(false) {
+RectShiftModifier::RectShiftModifier() : _direction(0), _runtime(nullptr), _isActive(false) {
 }
 
 RectShiftModifier::~RectShiftModifier() {
@@ -779,7 +779,7 @@ const char *WordMixerModifier::getDefaultName() const {
 	return "WordMixer";
 }
 
-XorModModifier::XorModModifier() : _enableWhen(Event::create()), _disableWhen(Event::create()), _shapeID(0) {
+XorModModifier::XorModModifier() : _shapeID(0) {
 }
 
 bool XorModModifier::load(const PlugInModifierLoaderContext &context, const Data::Obsidian::XorModModifier &data) {

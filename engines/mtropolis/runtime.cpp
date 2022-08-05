@@ -366,6 +366,12 @@ Common::String pointToString(const Common::Point &point) {
 	return Common::String::format("(%i,%i)", point.x, point.y);
 }
 
+IntRange::IntRange() : min(0), max(0) {
+}
+
+IntRange::IntRange(int32 pmin, int32 pmax) : min(pmin), max(pmax) {
+}
+
 bool IntRange::load(const Data::IntRange &range) {
 	max = range.max;
 	min = range.min;
@@ -391,6 +397,11 @@ Common::String IntRange::toString() const {
 	return Common::String::format("(%i thru %i)", min, max);
 }
 
+Label::Label() : superGroupID(0), id(0) {
+}
+
+Label::Label(int32 psuperGroupID, int32 pid) : superGroupID(psuperGroupID), id(pid) {
+}
 
 bool Label::load(const Data::Label &label) {
 	id = label.labelID;
@@ -407,12 +418,10 @@ bool ColorRGB8::load(const Data::ColorRGB16 &color) {
 	return true;
 }
 
-ColorRGB8 ColorRGB8::create(uint8 r, uint8 g, uint8 b) {
-	ColorRGB8 result;
-	result.r = r;
-	result.g = g;
-	result.b = b;
-	return result;
+ColorRGB8::ColorRGB8() : r(0), g(0), b(0) {
+}
+
+ColorRGB8::ColorRGB8(uint8 pr, uint8 pg, uint8 pb) : r(pr), g(pg), b(pb) {
 }
 
 
@@ -483,10 +492,6 @@ void DynamicListDefaultSetter::defaultSet(Common::SharedPtr<DynamicList> &value)
 void DynamicListDefaultSetter::defaultSet(ObjectReference &value) {
 }
 
-Common::Point DynamicListValueConverter<Common::Point>::dereference(const Point16POD *source) {
-	return source->toScummVMPoint();
-}
-
 bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const int32 *&outPtr) {
 	if (dynValue.getType() != DynamicValueTypes::kInteger)
 		return false;
@@ -501,7 +506,7 @@ bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const d
 	return true;
 }
 
-bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const Point16POD *&outPtr) {
+bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const Common::Point *&outPtr) {
 	if (dynValue.getType() != DynamicValueTypes::kPoint)
 		return false;
 	outPtr = &dynValue.getPoint();
@@ -661,7 +666,6 @@ bool DynamicListContainer<VarReference>::setAtIndex(size_t index, const DynamicV
 	if (_array.size() < requiredSize) {
 		size_t prevSize = _array.size();
 		_array.resize(requiredSize);
-		_strings.resize(requiredSize);
 
 		for (size_t i = prevSize; i < index; i++) {
 			_array[i].guid = 0;
@@ -669,13 +673,11 @@ bool DynamicListContainer<VarReference>::setAtIndex(size_t index, const DynamicV
 
 		const VarReference &varRef = dynValue.getVarReference();
 		_array[index].guid = varRef.guid;
-		_strings[index] = *varRef.source;
-
-		rebuildStringPointers();
+		_array[index].source = varRef.source;
 	} else {
 		const VarReference &varRef = dynValue.getVarReference();
 		_array[index].guid = varRef.guid;
-		_strings[index] = *varRef.source;
+		_array[index].source = varRef.source;
 	}
 
 	return true;
@@ -690,11 +692,10 @@ bool DynamicListContainer<VarReference>::expandToMinimumSize(size_t sz) {
 	if (_array.size() < sz) {
 		size_t prevSize = _array.size();
 		_array.resize(sz);
-		_strings.resize(sz);
 
 		for (size_t i = prevSize; i < sz; i++) {
 			_array[i].guid = 0;
-			_array[i].source = nullptr;
+			_array[i].source = "";
 		}
 	}
 
@@ -714,8 +715,6 @@ void DynamicListContainer<VarReference>::setFrom(const DynamicListContainerBase 
 	const DynamicListContainer<VarReference> &otherTyped = static_cast<const DynamicListContainer<VarReference> &>(other);
 
 	_array = otherTyped._array;
-	_strings = otherTyped._strings;
-	rebuildStringPointers();
 }
 
 const void *DynamicListContainer<VarReference>::getConstArrayPtr() const {
@@ -737,15 +736,6 @@ bool DynamicListContainer<VarReference>::compareEqual(const DynamicListContainer
 
 DynamicListContainerBase *DynamicListContainer<VarReference>::clone() const {
 	return new DynamicListContainer<VarReference>(*this);
-}
-
-void DynamicListContainer<VarReference>::rebuildStringPointers() {
-	assert(_strings.size() == _array.size());
-
-	size_t numStrings = _array.size();
-	for (size_t i = 0; i < numStrings; i++) {
-		_array[i].source = &_strings[i];
-	}
 }
 
 DynamicList::DynamicList() : _type(DynamicValueTypes::kEmpty), _container(nullptr) {
@@ -1147,12 +1137,36 @@ MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::refAttribIndexed(
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
+DynamicValue::ValueUnion::ValueUnion() : asUnset(0) {
+}
+
+DynamicValue::ValueUnion::~ValueUnion() {
+}
+
+template<class T, T(DynamicValue::ValueUnion::*TMember)>
+void DynamicValue::ValueUnion::construct(const T &value) {
+	T *field = &(this->*TMember);
+	new (field) T(value);
+}
+
+template<class T, T(DynamicValue::ValueUnion::*TMember)>
+void DynamicValue::ValueUnion::construct(T &&value) {
+	T *field = &(this->*TMember);
+	new (field) T(static_cast<T&&>(value));
+}
+
+template<class T, T(DynamicValue::ValueUnion::*TMember)>
+void DynamicValue::ValueUnion::destruct() {
+	T *field = &(this->*TMember);
+	field->~T();
+}
+
 DynamicValue::DynamicValue() : _type(DynamicValueTypes::kNull) {
 	memset(&this->_value, 0, sizeof(this->_value));
 }
 
 DynamicValue::DynamicValue(const DynamicValue &other) : _type(DynamicValueTypes::kNull) {
-	initFromOther(other);
+	setFromOther(other);
 }
 
 DynamicValue::~DynamicValue() {
@@ -1160,6 +1174,8 @@ DynamicValue::~DynamicValue() {
 }
 
 bool DynamicValue::load(const Data::InternalTypeTaggedValue &data, const Common::String &varSource, const Common::String &varString) {
+	clear();
+
 	switch (data.type) {
 	case Data::InternalTypeTaggedValue::kNull:
 		_type = DynamicValueTypes::kNull;
@@ -1169,38 +1185,37 @@ bool DynamicValue::load(const Data::InternalTypeTaggedValue &data, const Common:
 		break;
 	case Data::InternalTypeTaggedValue::kInteger:
 		_type = DynamicValueTypes::kInteger;
-		_value.asInt = data.value.asInteger;
+		_value.construct<int32, &ValueUnion::asInt>(data.value.asInteger);
 		break;
 	case Data::InternalTypeTaggedValue::kString:
 		_type = DynamicValueTypes::kString;
-		_str = varString;
+		_value.construct<Common::String, &ValueUnion::asString>(varString);
 		break;
 	case Data::InternalTypeTaggedValue::kPoint:
 		_type = DynamicValueTypes::kPoint;
-		_value.asPoint.x = data.value.asPoint.x;
-		_value.asPoint.y = data.value.asPoint.y;
+		_value.construct<Common::Point, &ValueUnion::asPoint>(Common::Point(data.value.asPoint.x, data.value.asPoint.y));
 		break;
 	case Data::InternalTypeTaggedValue::kIntegerRange:
 		_type = DynamicValueTypes::kIntegerRange;
+		_value.construct<IntRange, &ValueUnion::asIntRange>(IntRange(0, 0));
 		if (!_value.asIntRange.load(data.value.asIntegerRange))
 			return false;
 		break;
 	case Data::InternalTypeTaggedValue::kFloat:
 		_type = DynamicValueTypes::kFloat;
-		_value.asFloat = data.value.asFloat.toXPFloat().toDouble();
+		_value.construct<double, &ValueUnion::asFloat>(data.value.asFloat.toXPFloat().toDouble());
 		break;
 	case Data::InternalTypeTaggedValue::kBool:
 		_type = DynamicValueTypes::kBoolean;
-		_value.asBool = (data.value.asBool != 0);
+		_value.construct<bool, &ValueUnion::asBool>(data.value.asBool != 0);
 		break;
 	case Data::InternalTypeTaggedValue::kVariableReference:
 		_type = DynamicValueTypes::kVariableReference;
-		_value.asVarReference.guid = data.value.asVariableReference.guid;
-		_value.asVarReference.source = &_str;
-		_str = varSource;
+		_value.construct<VarReference, &ValueUnion::asVarReference>(VarReference(data.value.asVariableReference.guid, varSource));
 		break;
 	case Data::InternalTypeTaggedValue::kLabel:
 		_type = DynamicValueTypes::kLabel;
+		_value.construct<Label, &ValueUnion::asLabel>(Label());
 		if (!_value.asLabel.load(data.value.asLabel))
 			return false;
 		break;
@@ -1213,6 +1228,8 @@ bool DynamicValue::load(const Data::InternalTypeTaggedValue &data, const Common:
 }
 
 bool DynamicValue::load(const Data::PlugInTypeTaggedValue &data) {
+	clear();
+
 	switch (data.type) {
 	case Data::PlugInTypeTaggedValue::kNull:
 		_type = DynamicValueTypes::kNull;
@@ -1222,45 +1239,48 @@ bool DynamicValue::load(const Data::PlugInTypeTaggedValue &data) {
 		break;
 	case Data::PlugInTypeTaggedValue::kInteger:
 		_type = DynamicValueTypes::kInteger;
-		_value.asInt = data.value.asInt;
+		_value.construct<int32, &ValueUnion::asInt>(data.value.asInt);
 		break;
 	case Data::PlugInTypeTaggedValue::kIntegerRange:
 		_type = DynamicValueTypes::kIntegerRange;
+		_value.construct<IntRange, &ValueUnion::asIntRange>(IntRange());
 		if (!_value.asIntRange.load(data.value.asIntRange))
 			return false;
 		break;
 	case Data::PlugInTypeTaggedValue::kFloat:
 		_type = DynamicValueTypes::kFloat;
-		_value.asFloat = data.value.asFloat.toXPFloat().toDouble();
+		_value.construct<double, &ValueUnion::asFloat>(data.value.asFloat.toXPFloat().toDouble());
 		break;
 	case Data::PlugInTypeTaggedValue::kBoolean:
 		_type = DynamicValueTypes::kBoolean;
-		_value.asBool = (data.value.asBoolean != 0);
+		_value.construct<bool, &ValueUnion::asBool>(data.value.asBoolean != 0);
 		break;
 	case Data::PlugInTypeTaggedValue::kEvent:
 		_type = DynamicValueTypes::kEvent;
+		_value.construct<Event, &ValueUnion::asEvent>(Event());
 		if (!_value.asEvent.load(data.value.asEvent))
 			return false;
 		break;
 	case Data::PlugInTypeTaggedValue::kLabel:
 		_type = DynamicValueTypes::kLabel;
+		_value.construct<Label, &ValueUnion::asLabel>(Label());
 		if (!_value.asLabel.load(data.value.asLabel))
 			return false;
 		break;
 	case Data::PlugInTypeTaggedValue::kString:
 		_type = DynamicValueTypes::kString;
-		_str = data.str;
+		_value.construct<Common::String, &ValueUnion::asString>(data.str);
 		break;
 	case Data::PlugInTypeTaggedValue::kVariableReference:
 		_type = DynamicValueTypes::kVariableReference;
-		_value.asVarReference.guid = data.value.asVarRefGUID;
-		_value.asVarReference.source = &_str;
-		_str.clear(); // Extra data doesn't seem to correlate to this
+		// Extra data doesn't seem to correlate with var source string in this case
+		_value.construct<VarReference, &ValueUnion::asVarReference>(VarReference(data.value.asVarRefGUID, ""));
 		break;
 	case Data::PlugInTypeTaggedValue::kPoint:
 		_type = DynamicValueTypes::kPoint;
-		_value.asPoint.x = data.value.asPoint.x;
-		_value.asPoint.y = data.value.asPoint.y;
+		_value.construct<Common::Point, &ValueUnion::asPoint>(Common::Point());
+		if (!data.value.asPoint.toScummVMPoint(_value.asPoint))
+			return false;
 		break;
 	default:
 		assert(false);
@@ -1284,7 +1304,7 @@ const double &DynamicValue::getFloat() const {
 	return _value.asFloat;
 }
 
-const Point16POD &DynamicValue::getPoint() const {
+const Common::Point &DynamicValue::getPoint() const {
 	assert(_type == DynamicValueTypes::kPoint);
 	return _value.asPoint;
 }
@@ -1316,7 +1336,7 @@ const VarReference &DynamicValue::getVarReference() const {
 
 const Common::String &DynamicValue::getString() const {
 	assert(_type == DynamicValueTypes::kString);
-	return _str;
+	return _value.asString;
 }
 
 const bool &DynamicValue::getBool() const {
@@ -1326,111 +1346,94 @@ const bool &DynamicValue::getBool() const {
 
 const Common::SharedPtr<DynamicList> &DynamicValue::getList() const {
 	assert(_type == DynamicValueTypes::kList);
-	return _list;
+	return _value.asList;
 }
 
 const ObjectReference &DynamicValue::getObject() const {
 	assert(_type == DynamicValueTypes::kObject);
-	return _obj;
+	return _value.asObj;
 }
 
-const DynamicValueWriteProxyPOD &DynamicValue::getWriteProxyPOD() const {
+const DynamicValueWriteProxy &DynamicValue::getWriteProxy() const {
 	assert(_type == DynamicValueTypes::kWriteProxy);
 	return _value.asWriteProxy;
-}
-
-DynamicValueWriteProxy DynamicValue::getWriteProxyTEMP() const {
-	assert(_type == DynamicValueTypes::kWriteProxy);
-
-	DynamicValueWriteProxy proxy;
-	proxy.pod = _value.asWriteProxy;
-	proxy.containerList = _list;
-	return proxy;
-}
-
-const Common::SharedPtr<DynamicList> &DynamicValue::getWriteProxyContainer() const {
-	assert(_type == DynamicValueTypes::kWriteProxy);
-	return _list;
 }
 
 void DynamicValue::setInt(int32 value) {
 	if (_type != DynamicValueTypes::kInteger)
 		clear();
 	_type = DynamicValueTypes::kInteger;
-	_value.asInt = value;
+	_value.construct<int32, &ValueUnion::asInt>(value);
 }
 
 void DynamicValue::setFloat(double value) {
 	if (_type != DynamicValueTypes::kFloat)
 		clear();
 	_type = DynamicValueTypes::kFloat;
-	_value.asFloat = value;
+	_value.construct<double, &ValueUnion::asFloat>(value);
 }
 
 void DynamicValue::setPoint(const Common::Point &value) {
 	if (_type != DynamicValueTypes::kPoint)
 		clear();
 	_type = DynamicValueTypes::kPoint;
-	_value.asPoint.x = value.x;
-	_value.asPoint.y = value.y;
+	_value.construct<Common::Point, &ValueUnion::asPoint>(value);
 }
 
 void DynamicValue::setIntRange(const IntRange &value) {
 	if (_type != DynamicValueTypes::kIntegerRange)
 		clear();
 	_type = DynamicValueTypes::kIntegerRange;
-	_value.asIntRange = value;
+	_value.construct<IntRange, &ValueUnion::asIntRange>(value);
 }
 
 void DynamicValue::setVector(const AngleMagVector &value) {
 	if (_type != DynamicValueTypes::kVector)
 		clear();
 	_type = DynamicValueTypes::kVector;
-	_value.asVector = value;
+	_value.construct<AngleMagVector, &ValueUnion::asVector>(value);
 }
 
 void DynamicValue::setLabel(const Label &value) {
 	if (_type != DynamicValueTypes::kLabel)
 		clear();
 	_type = DynamicValueTypes::kLabel;
-	_value.asLabel = value;
+	_value.construct<Label, &ValueUnion::asLabel>(value);
 }
 
 void DynamicValue::setEvent(const Event &value) {
 	if (_type != DynamicValueTypes::kEvent)
 		clear();
 	_type = DynamicValueTypes::kEvent;
-	_value.asEvent = value;
+	_value.construct<Event, &ValueUnion::asEvent>(value);
 }
 
 void DynamicValue::setVarReference(const VarReference &value) {
 	if (_type != DynamicValueTypes::kVariableReference)
 		clear();
 	_type = DynamicValueTypes::kVariableReference;
-	_value.asVarReference.guid = value.guid;
-	_value.asVarReference.source = &_str;
-	_str = *value.source;
+	_value.construct<VarReference, &ValueUnion::asVarReference>(value);
 }
 
 void DynamicValue::setString(const Common::String &value) {
 	if (_type != DynamicValueTypes::kString)
 		clear();
 	_type = DynamicValueTypes::kString;
-	_str = value;
+	_value.construct<Common::String, &ValueUnion::asString>(value);
 }
 
 void DynamicValue::setBool(bool value) {
 	if (_type != DynamicValueTypes::kBoolean)
 		clear();
 	_type = DynamicValueTypes::kBoolean;
-	_value.asBool = value;
+	_value.construct<bool, &ValueUnion::asBool>(value);
 }
 
 void DynamicValue::setList(const Common::SharedPtr<DynamicList> &value) {
 	if (_type != DynamicValueTypes::kList)
 		clear();
 	_type = DynamicValueTypes::kList;
-	_list = value;
+	_value.construct<Common::SharedPtr<DynamicList>, &ValueUnion::asList>(value);
 }
 
 void DynamicValue::setWriteProxy(const DynamicValueWriteProxy &writeProxy) {
@@ -1438,8 +1441,7 @@ void DynamicValue::setWriteProxy(const DynamicValueWriteProxy &writeProxy) {
 	if (_type != DynamicValueTypes::kWriteProxy)
 		clear();
 	_type = DynamicValueTypes::kWriteProxy;
-	_value.asWriteProxy = writeProxy.pod;
-	_list = listRef;
+	_value.construct<DynamicValueWriteProxy, &ValueUnion::asWriteProxy>(writeProxy);
 }
 
 bool DynamicValue::roundToInt(int32 &outInt) const {
@@ -1477,31 +1479,15 @@ void DynamicValue::setObject(const ObjectReference &value) {
 	if (_type != DynamicValueTypes::kObject)
 		clear();
 	_type = DynamicValueTypes::kObject;
-	_obj = value;
+	_value.construct<ObjectReference, &ValueUnion::asObj>(value);
 }
 
 void DynamicValue::setObject(const Common::WeakPtr<RuntimeObject> &value) {
 	setObject(ObjectReference(value));
 }
 
-void DynamicValue::swap(DynamicValue &other) {
-	internalSwap(_type, other._type);
-	internalSwap(_str, other._str);
-	internalSwap(_list, other._list);
-	internalSwap(_obj, other._obj);
-
-	ValueUnion tempValue;
-	memcpy(&tempValue, &_value, sizeof(ValueUnion));
-	memcpy(&_value, &other._value, sizeof(ValueUnion));
-	memcpy(&other._value, &tempValue, sizeof(ValueUnion));
-}
-
 DynamicValue &DynamicValue::operator=(const DynamicValue &other) {
-	if (this != &other) {
-		DynamicValue temp(other);
-		swap(temp);
-	}
-
+	setFromOther(other);
 	return *this;
 }
 
@@ -1534,13 +1520,13 @@ bool DynamicValue::operator==(const DynamicValue &other) const {
 	case DynamicValueTypes::kIncomingData:
 		return true;
 	case DynamicValueTypes::kString:
-		return _str == other._str;
+		return _value.asString == other._value.asString;
 	case DynamicValueTypes::kBoolean:
 		return _value.asBool == other._value.asBool;
 	case DynamicValueTypes::kList:
-		return (*_list.get()) == (*other._list.get());
+		return (*_value.asList.get()) == (*_value.asList.get());
 	case DynamicValueTypes::kObject:
-		return _obj == other._obj;
+		return _value.asObj == other._value.asObj;
 	default:
 		break;
 	}
@@ -1550,9 +1536,56 @@ bool DynamicValue::operator==(const DynamicValue &other) const {
 }
 
 void DynamicValue::clear() {
-	_list.reset();
-	_obj.reset();
-	_str.clear();
+	switch (_type) {
+	case DynamicValueTypes::kNull:
+	case DynamicValueTypes::kEmpty:
+	case DynamicValueTypes::kIncomingData:
+		_value.destruct<uint64, &ValueUnion::asUnset>();
+		break;
+	case DynamicValueTypes::kInteger:
+		_value.destruct<int32, &ValueUnion::asInt>();
+		break;
+	case DynamicValueTypes::kFloat:
+		_value.destruct<double, &ValueUnion::asFloat>();
+		break;
+	case DynamicValueTypes::kPoint:
+		_value.destruct<Common::Point, &ValueUnion::asPoint>();
+		break;
+	case DynamicValueTypes::kIntegerRange:
+		_value.destruct<IntRange, &ValueUnion::asIntRange>();
+		break;
+	case DynamicValueTypes::kBoolean:
+		_value.destruct<bool, &ValueUnion::asBool>();
+		break;
+	case DynamicValueTypes::kVector:
+		_value.destruct<AngleMagVector, &ValueUnion::asVector>();
+		break;
+	case DynamicValueTypes::kLabel:
+		_value.destruct<Label, &ValueUnion::asLabel>();
+		break;
+	case DynamicValueTypes::kEvent:
+		_value.destruct<Event, &ValueUnion::asEvent>();
+		break;
+	case DynamicValueTypes::kVariableReference:
+		_value.destruct<VarReference, &ValueUnion::asVarReference>();
+		break;
+	case DynamicValueTypes::kString:
+		_value.destruct<Common::String, &ValueUnion::asString>();
+		break;
+	case DynamicValueTypes::kList:
+		_value.destruct<Common::SharedPtr<DynamicList>, &ValueUnion::asList>();
+		break;
+	case DynamicValueTypes::kObject:
+		_value.destruct<ObjectReference, &ValueUnion::asObj>();
+		break;
+	case DynamicValueTypes::kWriteProxy:
+		_value.destruct<DynamicValueWriteProxy, &ValueUnion::asWriteProxy>();
+		break;
+	default:
+		assert(false);
+		break;
+	};
+
 	_type = DynamicValueTypes::kNull;
 }
 
@@ -1613,57 +1646,67 @@ bool DynamicValue::convertBoolToType(DynamicValueTypes::DynamicValueType targetT
 	}
 }
 
-void DynamicValue::initFromOther(const DynamicValue &other) {
-	assert(_type == DynamicValueTypes::kNull);
+void DynamicValue::setFromOther(const DynamicValue &other) {
+	if (this == &other)
+		return;
+
+	// Keep the list alive until the end of this in case the other value is contained inside of this one
+	Common::SharedPtr<DynamicList> listHolder;
+	if (_type == DynamicValueTypes::kList)
+		listHolder = _value.asList;
 
 	switch (other._type) {
 	case DynamicValueTypes::kNull:
-	case DynamicValueTypes::kIncomingData:	// FIXME: Get rid of this
+	case DynamicValueTypes::kIncomingData:
+	case DynamicValueTypes::kEmpty:
+		_type = other._type;
+		clear();
 		break;
 	case DynamicValueTypes::kInteger:
-		_value.asInt = other._value.asInt;
+		setInt(other._value.asInt);
 		break;
 	case DynamicValueTypes::kFloat:
-		_value.asFloat = other._value.asFloat;
+		setFloat(other._value.asFloat);
 		break;
 	case DynamicValueTypes::kPoint:
-		_value.asPoint = other._value.asPoint;
+		setPoint(other._value.asPoint);
 		break;
 	case DynamicValueTypes::kIntegerRange:
-		_value.asIntRange = other._value.asIntRange;
+		setIntRange(other._value.asIntRange);
 		break;
 	case DynamicValueTypes::kVector:
-		_value.asVector = other._value.asVector;
+		setVector(other._value.asVector);
 		break;
 	case DynamicValueTypes::kLabel:
-		_value.asLabel = other._value.asLabel;
+		setLabel(other._value.asLabel);
 		break;
 	case DynamicValueTypes::kEvent:
-		_value.asEvent = other._value.asEvent;
+		setEvent(other._value.asEvent);
 		break;
 	case DynamicValueTypes::kVariableReference:
-		_value.asVarReference = other._value.asVarReference;
-		_str = other._str;
-		_value.asVarReference.source = &_str;
+		setVarReference(other._value.asVarReference);
 		break;
 	case DynamicValueTypes::kString:
-		_str = other._str;
+		setString(other._value.asString);
 		break;
 	case DynamicValueTypes::kBoolean:
-		_value.asBool = other._value.asBool;
+		setBool(other._value.asBool);
 		break;
 	case DynamicValueTypes::kList:
-		_list = other._list;
+		setList(other._value.asList);
 		break;
 	case DynamicValueTypes::kObject:
-		_obj = other._obj;
+		setObject(other._value.asObj);
+		break;
+	case DynamicValueTypes::kWriteProxy:
+		setWriteProxy(other._value.asWriteProxy);
 		break;
 	default:
 		assert(false);
 		break;
 	}
 
-	_type = other._type;
+	assert(_type == other._type);
 }
 
 MiniscriptInstructionOutcome DynamicValueWriteStringHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) {
@@ -1697,7 +1740,7 @@ MiniscriptInstructionOutcome DynamicValueWritePointHelper::write(MiniscriptThrea
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	*static_cast<Common::Point *>(objectRef) = value.getPoint().toScummVMPoint();
+	*static_cast<Common::Point *>(objectRef) = value.getPoint();
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
@@ -1782,7 +1825,7 @@ void DynamicValueWriteObjectHelper::create(RuntimeObject *obj, DynamicValueWrite
 	proxy.pod.ptrOrOffset = 0;
 }
 
-MessengerSendSpec::MessengerSendSpec() : send(Event::create()), destination(0), _linkType(kLinkTypeNotYetLinked) {
+MessengerSendSpec::MessengerSendSpec() : destination(0), _linkType(kLinkTypeNotYetLinked) {
 }
 
 bool MessengerSendSpec::load(const Data::Event &dataEvent, uint32 dataMessageFlags, const Data::InternalTypeTaggedValue &dataLocator, const Common::String &dataWithSource, const Common::String &dataWithString, uint32 dataDestination) {
@@ -1857,7 +1900,7 @@ void MessengerSendSpec::linkInternalReferences(ObjectLinkingScope *outerScope) {
 	if (this->with.getType() == DynamicValueTypes::kVariableReference) {
 		const VarReference &varRef = this->with.getVarReference();
 
-		Common::WeakPtr<RuntimeObject> resolution = outerScope->resolve(varRef.guid, *varRef.source, false);
+		Common::WeakPtr<RuntimeObject> resolution = outerScope->resolve(varRef.guid, varRef.source, false);
 		if (!resolution.expired()) {
 			Common::SharedPtr<RuntimeObject> obj = resolution.lock();
 			if (obj->isModifier())
@@ -2062,20 +2105,10 @@ bool MessengerSendSpec::isElementFilter(Structural *structural) {
 	return structural->isElement();
 }
 
-Event Event::create() {
-	Event evt;
-	evt.eventInfo = 0;
-	evt.eventType = EventIDs::kNothing;
-
-	return evt;
+Event::Event() : eventType(EventIDs::kNothing), eventInfo(0) {
 }
 
-Event Event::create(EventIDs::EventID eventType, uint32 eventInfo) {
-	Event evt;
-	evt.eventType = eventType;
-	evt.eventInfo = eventInfo;
-
-	return evt;
+Event::Event(EventIDs::EventID peventType, uint32 peventInfo) : eventType(peventType), eventInfo(peventInfo) {
 }
 
 bool Event::respondsTo(const Event &otherEvent) const {
@@ -2087,6 +2120,12 @@ bool Event::load(const Data::Event &data) {
 	eventInfo = data.eventInfo;
 
 	return true;
+}
+
+VarReference::VarReference() : guid(0) {
+}
+
+VarReference::VarReference(uint32 pguid, const Common::String &psource) : guid(pguid), source(psource) {
 }
 
 bool VarReference::resolve(Structural *structuralScope, Common::WeakPtr<RuntimeObject> &outObject) const {
@@ -2129,7 +2168,7 @@ bool VarReference::resolveContainer(IModifierContainer *modifierContainer, Commo
 }
 
 bool VarReference::resolveSingleModifier(Modifier *modifier, Common::WeakPtr<RuntimeObject> &outObject) const {
-	if (modifier->getStaticGUID() == guid || (source && caseInsensitiveEqual(modifier->getName(), *source))) {
+	if (modifier->getStaticGUID() == guid || (source.size() > 0 && caseInsensitiveEqual(modifier->getName(), source))) {
 		outObject = modifier->getSelfReference();
 		return true;
 	}
@@ -2137,6 +2176,12 @@ bool VarReference::resolveSingleModifier(Modifier *modifier, Common::WeakPtr<Run
 	return false;
 }
 
+
+AngleMagVector::AngleMagVector() : angleDegrees(0), magnitude(0) {
+}
+
+AngleMagVector::AngleMagVector(double pangleDegrees, double pmagnitude) : angleDegrees(pangleDegrees), magnitude(pmagnitude) {
+}
 
 MiniscriptInstructionOutcome AngleMagVector::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib) {
 	if (attrib == "angle") {
@@ -3033,25 +3078,25 @@ void Structural::materializeDescendents(Runtime *runtime, ObjectLinkingScope *ou
 }
 
 VThreadState Structural::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	if (Event::create(EventIDs::kUnpause, 0).respondsTo(msg->getEvent())) {
+	if (Event(EventIDs::kUnpause, 0).respondsTo(msg->getEvent())) {
 		if (_paused) {
 			_paused = false;
 			onPauseStateChanged();
 		}
 
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kUnpause, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kUnpause, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
 		runtime->sendMessageOnVThread(dispatch);
 
 		return kVThreadReturn;
 	}
-	if (Event::create(EventIDs::kPause, 0).respondsTo(msg->getEvent())) {
+	if (Event(EventIDs::kPause, 0).respondsTo(msg->getEvent())) {
 		if (!_paused) {
 			_paused = true;
 			onPauseStateChanged();
 		}
 
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPause, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kPause, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
 		runtime->sendMessageOnVThread(dispatch);
 
@@ -3114,7 +3159,7 @@ VThreadState Structural::consumeCommand(Runtime *runtime, const Common::SharedPt
 	};
 
 	for (EventIDs::EventID evtID : ignoredIDs) {
-		if (Event::create(evtID, 0).respondsTo(msg->getEvent()))
+		if (Event(evtID, 0).respondsTo(msg->getEvent()))
 			return kVThreadReturn;
 	}
 
@@ -3190,7 +3235,7 @@ MiniscriptInstructionOutcome Structural::scriptSetPaused(MiniscriptThread *threa
 	//
 	// The event does, however, need to be sent immediately.
 	if (!thread->getRuntime()->isAwaitingSceneTransition()) {
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(targetValue ? EventIDs::kPause : EventIDs::kUnpause, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(targetValue ? EventIDs::kPause : EventIDs::kUnpause, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
 		thread->getRuntime()->sendMessageOnVThread(dispatch);
 	}
@@ -3973,7 +4018,7 @@ bool Runtime::runFrame() {
 				error("Project has no subsections");
 			}
 
-			Common::SharedPtr<MessageProperties> psProps(new MessageProperties(Event::create(EventIDs::kProjectStarted, 0), DynamicValue(), _project->getSelfReference()));
+			Common::SharedPtr<MessageProperties> psProps(new MessageProperties(Event(EventIDs::kProjectStarted, 0), DynamicValue(), _project->getSelfReference()));
 			Common::SharedPtr<MessageDispatch> psDispatch(new MessageDispatch(psProps, _project.get(), false, true, false));
 			queueMessage(psDispatch);
 
@@ -4087,7 +4132,7 @@ bool Runtime::runFrame() {
 			for (const Common::SharedPtr<SceneTransitionHooks> &hooks : _hacks.sceneTransitionHooks)
 				hooks->onSceneTransitionEnded(this, _activeMainScene);
 
-			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneTransitionEnded, 0), _activeMainScene.get(), true, true);
+			queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneTransitionEnded, 0), _activeMainScene.get(), true, true);
 			continue;
 		}
 
@@ -4339,8 +4384,8 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 	for (size_t i = _sceneStack.size() - 1; i > 0; i--) {
 		Common::SharedPtr<Structural> stackedScene = _sceneStack[i].scene;
 
-		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneEnded, 0), _activeMainScene.get(), true, true);
-		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentDisabled, 0), _activeMainScene.get(), true, true);
+		queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneEnded, 0), _activeMainScene.get(), true, true);
+		queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kParentDisabled, 0), _activeMainScene.get(), true, true);
 		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeMainScene, LowLevelSceneStateTransitionAction::kUnload));
 
 		if (stackedScene == targetSharedScene)
@@ -4351,14 +4396,14 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 
 	if (targetSharedScene != _activeSharedScene) {
 		if (_activeSharedScene) {
-			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneEnded, 0), _activeSharedScene.get(), true, true);
-			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentDisabled, 0), _activeSharedScene.get(), true, true);
+			queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneEnded, 0), _activeSharedScene.get(), true, true);
+			queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kParentDisabled, 0), _activeSharedScene.get(), true, true);
 			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeSharedScene, LowLevelSceneStateTransitionAction::kUnload));
 		}
 
 		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetSharedScene, LowLevelSceneStateTransitionAction::kLoad));
-		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentEnabled, 0), targetSharedScene.get(), true, true);
-		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneStarted, 0), targetSharedScene.get(), true, true);
+		queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kParentEnabled, 0), targetSharedScene.get(), true, true);
+		queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneStarted, 0), targetSharedScene.get(), true, true);
 
 		SceneStackEntry sharedSceneEntry;
 		sharedSceneEntry.scene = targetSharedScene;
@@ -4368,8 +4413,8 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 
 	{
 		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetScene, LowLevelSceneStateTransitionAction::kLoad));
-		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentEnabled, 0), targetScene.get(), true, true);
-		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneStarted, 0), targetScene.get(), true, true);
+		queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kParentEnabled, 0), targetScene.get(), true, true);
+		queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneStarted, 0), targetScene.get(), true, true);
 
 		SceneStackEntry sceneEntry;
 		sceneEntry.scene = targetScene;
@@ -4418,11 +4463,11 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 
 				if (sceneReturn.isAddToDestinationSceneTransition) {
 					// In this case we unload the active main scene and reactivate the old main
-					queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneEnded, 0), _activeMainScene.get(), true, true);
-					queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentDisabled, 0), _activeMainScene.get(), true, true);
+					queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneEnded, 0), _activeMainScene.get(), true, true);
+					queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kParentDisabled, 0), _activeMainScene.get(), true, true);
 					_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeMainScene, LowLevelSceneStateTransitionAction::kUnload));
 
-					queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneReactivated, 0), sceneReturn.scene.get(), true, true);
+					queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneReactivated, 0), sceneReturn.scene.get(), true, true);
 
 					_activeMainScene = sceneReturn.scene;
 
@@ -4452,18 +4497,18 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 					if (_activeMainScene == targetSharedScene)
 						error("Transitioned into scene currently being used as a target scene, this is not supported");
 
-					queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneDeactivated, 0), _activeMainScene.get(), true, true);
+					queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneDeactivated, 0), _activeMainScene.get(), true, true);
 
 					if (targetSharedScene != _activeSharedScene) {
 						if (_activeSharedScene) {
-							queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneEnded, 0), _activeSharedScene.get(), true, true);
-							queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentDisabled, 0), _activeSharedScene.get(), true, true);
+							queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneEnded, 0), _activeSharedScene.get(), true, true);
+							queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kParentDisabled, 0), _activeSharedScene.get(), true, true);
 							_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeSharedScene, LowLevelSceneStateTransitionAction::kUnload));
 						}
 
 						_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetSharedScene, LowLevelSceneStateTransitionAction::kLoad));
-						queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentEnabled, 0), targetSharedScene.get(), true, true);
-						queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneStarted, 0), targetSharedScene.get(), true, true);
+						queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kParentEnabled, 0), targetSharedScene.get(), true, true);
+						queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneStarted, 0), targetSharedScene.get(), true, true);
 
 						SceneStackEntry sharedSceneEntry;
 						sharedSceneEntry.scene = targetScene;
@@ -4484,8 +4529,8 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 					// This is probably wrong if it's already in the stack, but transitioning to already-in-stack scenes is extremely buggy in mTropolis Player anyway
 					if (!sceneAlreadyInStack) {
 						_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetScene, LowLevelSceneStateTransitionAction::kLoad));
-						queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentEnabled, 0), targetScene.get(), true, true);
-						queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneStarted, 0), targetScene.get(), true, true);
+						queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kParentEnabled, 0), targetScene.get(), true, true);
+						queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneStarted, 0), targetScene.get(), true, true);
 
 						SceneStackEntry sceneEntry;
 						sceneEntry.scene = targetScene;
@@ -4512,12 +4557,12 @@ void Runtime::executeSharedScenePostSceneChangeActions() {
 
 	const Common::Array<Common::SharedPtr<Structural> > &subsectionScenes = subsection->getChildren();
 
-	queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSharedSceneSceneChanged, 0), _activeSharedScene.get(), true, true);
+	queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSharedSceneSceneChanged, 0), _activeSharedScene.get(), true, true);
 	if (subsectionScenes.size() > 1) {
 		if (_activeMainScene == subsectionScenes[subsectionScenes.size() - 1])
-			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSharedSceneNoNextScene, 0), _activeSharedScene.get(), true, true);
+			queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSharedSceneNoNextScene, 0), _activeSharedScene.get(), true, true);
 		if (_activeMainScene == subsectionScenes[1])
-			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSharedSceneNoPrevScene, 0), _activeSharedScene.get(), true, true);
+			queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSharedSceneNoPrevScene, 0), _activeSharedScene.get(), true, true);
 	}
 }
 
@@ -4601,7 +4646,7 @@ bool Runtime::isModifierMouseInteractive(Modifier *modifier, MouseInteractivityT
 
 	for (size_t i = 0; i < numEventIDs; i++) {
 		EventIDs::EventID evtID = evtIDs[i];
-		if (modifier->respondsToEvent(Event::create(evtID, 0)))
+		if (modifier->respondsToEvent(Event(evtID, 0)))
 			return true;
 	}
 
@@ -5075,7 +5120,7 @@ VThreadState Runtime::updateMouseStateTask(const UpdateMouseStateTaskData &data)
 
 	for (size_t ri = 0; ri < messagesToSend.size(); ri++) {
 		const MessageToSend &msg = messagesToSend[messagesToSend.size() - 1 - ri];
-		Common::SharedPtr<MessageProperties> props(new MessageProperties(Event::create(msg.eventID, 0), mousePtValue, nullptr));
+		Common::SharedPtr<MessageProperties> props(new MessageProperties(Event(msg.eventID, 0), mousePtValue, nullptr));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(props, msg.target, false, true, false));
 		sendMessageOnVThread(dispatch);
 	}
@@ -5184,7 +5229,7 @@ VThreadState Runtime::updateMousePositionTask(const UpdateMousePositionTaskData 
 
 	for (size_t ri = 0; ri < messagesToSend.size(); ri++) {
 		const MessageToSend &msg = messagesToSend[messagesToSend.size() - 1 - ri];
-		Common::SharedPtr<MessageProperties> props(new MessageProperties(Event::create(msg.eventID, 0), mousePtValue, nullptr));
+		Common::SharedPtr<MessageProperties> props(new MessageProperties(Event(msg.eventID, 0), mousePtValue, nullptr));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(props, msg.target, false, true, false));
 		sendMessageOnVThread(dispatch);
 	}
@@ -6224,7 +6269,7 @@ Project::~Project() {
 }
 
 VThreadState Project::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	if (Event::create(EventIDs::kCloseProject, 0).respondsTo(msg->getEvent())) {
+	if (Event(EventIDs::kCloseProject, 0).respondsTo(msg->getEvent())) {
 		runtime->closeProject();
 		return kVThreadReturn;
 	}
@@ -7078,7 +7123,7 @@ bool Element::canAutoPlay() const {
 
 void Element::queueAutoPlayEvents(Runtime *runtime, bool isAutoPlaying) {
 	if (isAutoPlaying) {
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, false, true));
 		runtime->queueMessage(dispatch);
 	}
@@ -7139,8 +7184,8 @@ void VisualElementTransitionProperties::clearDirty() {
 }
 
 VisualElementRenderProperties::VisualElementRenderProperties()
-	: _inkMode(kInkModeDefault), _shape(kShapeRect), _foreColor(ColorRGB8::create(0, 0, 0)), _backColor(ColorRGB8::create(255, 255, 255)),
-	  _borderColor(ColorRGB8::create(0, 0, 0)), _shadowColor(ColorRGB8::create(0, 0, 0)), _borderSize(0), _shadowSize(0), _isDirty(true) {
+	: _inkMode(kInkModeDefault), _shape(kShapeRect), _foreColor(0, 0, 0), _backColor(255, 255, 255),
+	  _borderColor(0, 0, 0), _shadowColor(0, 0, 0), _borderSize(0), _shadowSize(0), _isDirty(true) {
 }
 
 VisualElementRenderProperties::InkMode VisualElementRenderProperties::getInkMode() const {
@@ -7288,26 +7333,26 @@ void VisualElement::setLayer(uint16 layer) {
 }
 
 VThreadState VisualElement::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	if (Event::create(EventIDs::kElementShow, 0).respondsTo(msg->getEvent())) {
+	if (Event(EventIDs::kElementShow, 0).respondsTo(msg->getEvent())) {
 		if (!_visible) {
 			_visible = true;
 			runtime->setSceneGraphDirty();
 		}
 
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kElementShow, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kElementShow, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
 		runtime->sendMessageOnVThread(dispatch);
 
 		return kVThreadReturn;
 	}
 
-	if (Event::create(EventIDs::kElementHide, 0).respondsTo(msg->getEvent())) {
+	if (Event(EventIDs::kElementHide, 0).respondsTo(msg->getEvent())) {
 		if (_visible) {
 			_visible = false;
 			runtime->setSceneGraphDirty();
 		}
 
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kElementHide, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kElementHide, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
 		runtime->sendMessageOnVThread(dispatch);
 
@@ -7678,7 +7723,7 @@ MiniscriptInstructionOutcome VisualElement::scriptSetDirect(MiniscriptThread *th
 
 MiniscriptInstructionOutcome VisualElement::scriptSetPosition(MiniscriptThread *thread, const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kPoint) {
-		Common::Point destPoint = value.getPoint().toScummVMPoint();
+		Common::Point destPoint = value.getPoint();
 
 		if (_hooks)
 			_hooks->onSetPosition(this, destPoint);
@@ -7734,7 +7779,7 @@ MiniscriptInstructionOutcome VisualElement::scriptSetPositionY(MiniscriptThread 
 
 MiniscriptInstructionOutcome VisualElement::scriptSetCenterPosition(MiniscriptThread *thread, const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kPoint) {
-		const Common::Point destPoint = value.getPoint().toScummVMPoint();
+		const Common::Point destPoint = value.getPoint();
 		const Common::Point &srcPoint = getCenterPosition();
 		int32 xDelta = destPoint.x - srcPoint.x;
 		int32 yDelta = destPoint.y - srcPoint.y;
@@ -7867,7 +7912,7 @@ VThreadState VisualElement::changeVisibilityTask(const ChangeFlagTaskData &taskD
 	if (_visible != taskData.desiredFlag) {
 		_visible = taskData.desiredFlag;
 
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(_visible ? EventIDs::kElementHide : EventIDs::kElementShow, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(_visible ? EventIDs::kElementHide : EventIDs::kElementShow, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
 		taskData.runtime->sendMessageOnVThread(dispatch);
 	}

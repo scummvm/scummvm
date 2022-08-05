@@ -179,7 +179,7 @@ VThreadState BehaviorModifier::propagateTask(const PropagateTaskData &taskData) 
 		propagateData->runtime = taskData.runtime;
 	}
 
-	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(taskData.eventID, 0), DynamicValue(), this->getSelfReference()));
+	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(taskData.eventID, 0), DynamicValue(), this->getSelfReference()));
 	Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, _children[taskData.index].get(), true, true, false));
 	taskData.runtime->sendMessageOnVThread(dispatch);
 
@@ -640,7 +640,7 @@ PathMotionModifierV2::PointDef::PointDef() : frame(0), useFrame(false) {
 }
 
 PathMotionModifierV2::PathMotionModifierV2()
-	: _executeWhen(Event::create()), _terminateWhen(Event::create()), _reverse(false), _loop(false), _alternate(false),
+	: _reverse(false), _loop(false), _alternate(false),
 	  _startAtBeginning(false), _frameDurationTimes10Million(0) {
 }
 
@@ -928,7 +928,7 @@ const char *VectorMotionModifier::getDefaultName() const {
 void VectorMotionModifier::linkInternalReferences(ObjectLinkingScope *scope) {
 	if (_vec.getType() == DynamicValueTypes::kVariableReference) {
 		const VarReference &varRef = _vec.getVarReference();
-		Common::WeakPtr<RuntimeObject> objRef = scope->resolve(varRef.guid, *varRef.source, false);
+		Common::WeakPtr<RuntimeObject> objRef = scope->resolve(varRef.guid, varRef.source, false);
 
 		RuntimeObject *obj = objRef.lock().get();
 		if (obj == nullptr || !obj->isModifier()) {
@@ -1005,7 +1005,7 @@ const char *SceneTransitionModifier::getDefaultName() const {
 	return "Scene Transition Modifier";
 }
 
-ElementTransitionModifier::ElementTransitionModifier() : _enableWhen(Event::create()), _disableWhen(Event::create()), _rate(0), _steps(0),
+ElementTransitionModifier::ElementTransitionModifier() : _rate(0), _steps(0),
 	_transitionType(kTransitionTypeFade), _revealType(kRevealTypeReveal), _transitionStartTime(0), _currentStep(0) {
 }
 
@@ -1086,14 +1086,14 @@ VThreadState ElementTransitionModifier::consumeMessage(Runtime *runtime, const C
 
 		// Pushed tasks, so these are executed in reverse order (Show -> Transition Started)
 		{
-			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kTransitionStarted, 0), DynamicValue(), getSelfReference()));
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kTransitionStarted, 0), DynamicValue(), getSelfReference()));
 			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, findStructuralOwner(), false, true, false));
 			runtime->sendMessageOnVThread(dispatch);
 		}
 
 		if (_revealType == kRevealTypeReveal)
 		{
-			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kElementShow, 0), DynamicValue(), getSelfReference()));
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kElementShow, 0), DynamicValue(), getSelfReference()));
 			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, findStructuralOwner(), false, false, true));
 			runtime->sendMessageOnVThread(dispatch);
 		}
@@ -1153,13 +1153,13 @@ void ElementTransitionModifier::continueTransition(Runtime *runtime) {
 void ElementTransitionModifier::completeTransition(Runtime *runtime) {
 	// Pushed tasks, so these are executed in reverse order (Hide -> Transition Ended)
 	{
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kTransitionEnded, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kTransitionEnded, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, findStructuralOwner(), false, true, false));
 		runtime->sendMessageOnVThread(dispatch);
 	}
 
 	if (_revealType == kRevealTypeConceal) {
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kElementHide, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kElementHide, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, findStructuralOwner(), false, false, true));
 		runtime->sendMessageOnVThread(dispatch);
 	}
@@ -1355,9 +1355,9 @@ void TimerMessengerModifier::trigger(Runtime *runtime) {
 }
 
 BoundaryDetectionMessengerModifier::BoundaryDetectionMessengerModifier()
-	: _enableWhen(Event::create()), _disableWhen(Event::create()), _exitTriggerMode(kExitTriggerExiting),
-	_detectTopEdge(false), _detectBottomEdge(false), _detectLeftEdge(false), _detectRightEdge(false),
-	_detectionMode(kContinuous), _runtime(nullptr), _isActive(false) {
+	: _exitTriggerMode(kExitTriggerExiting), _detectTopEdge(false), _detectBottomEdge(false),
+	  _detectLeftEdge(false), _detectRightEdge(false), _detectionMode(kContinuous),
+	  _runtime(nullptr), _isActive(false) {
 }
 
 BoundaryDetectionMessengerModifier::~BoundaryDetectionMessengerModifier() {
@@ -1455,9 +1455,9 @@ const char *BoundaryDetectionMessengerModifier::getDefaultName() const {
 }
 
 CollisionDetectionMessengerModifier::CollisionDetectionMessengerModifier()
-	: _enableWhen(Event::create()), _disableWhen(Event::create()), _detectionMode(kDetectionModeFirstContact),
-	  _detectInFront(true), _detectBehind(true), _ignoreParent(true), _sendToCollidingElement(false),
-	  _sendToOnlyFirstCollidingElement(false), _runtime(nullptr), _isActive(false) {
+	: _detectionMode(kDetectionModeFirstContact), _detectInFront(true), _detectBehind(true),
+	  _ignoreParent(true), _sendToCollidingElement(false), _sendToOnlyFirstCollidingElement(false),
+	  _runtime(nullptr), _isActive(false) {
 }
 
 CollisionDetectionMessengerModifier::~CollisionDetectionMessengerModifier() {
@@ -1589,7 +1589,7 @@ KeyboardMessengerModifier::~KeyboardMessengerModifier() {
 }
 
 KeyboardMessengerModifier::KeyboardMessengerModifier()
-	: _send(Event::create()), _onDown(false), _onUp(false), _onRepeat(false), _keyModControl(false), _keyModCommand(false), _keyModOption(false),
+	: _onDown(false), _onUp(false), _onRepeat(false), _keyModControl(false), _keyModCommand(false), _keyModOption(false),
 	  _isEnabled(false), _keyCodeType(kAny), _macRomanChar(0) {
 }
 
@@ -1641,16 +1641,16 @@ bool KeyboardMessengerModifier::load(ModifierLoaderContext &context, const Data:
 }
 
 bool KeyboardMessengerModifier::respondsToEvent(const Event &evt) const {
-	if (Event::create(EventIDs::kParentEnabled, 0).respondsTo(evt) || Event::create(EventIDs::kParentDisabled, 0).respondsTo(evt))
+	if (Event(EventIDs::kParentEnabled, 0).respondsTo(evt) || Event(EventIDs::kParentDisabled, 0).respondsTo(evt))
 		return true;
 
 	return false;
 }
 
 VThreadState KeyboardMessengerModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
- 	if (Event::create(EventIDs::kParentEnabled, 0).respondsTo(msg->getEvent())) {
+ 	if (Event(EventIDs::kParentEnabled, 0).respondsTo(msg->getEvent())) {
 		_isEnabled = true;
-	} else if (Event::create(EventIDs::kParentDisabled, 0).respondsTo(msg->getEvent())) {
+	} else if (Event(EventIDs::kParentDisabled, 0).respondsTo(msg->getEvent())) {
 		disable(runtime);
 	}
 
@@ -2450,7 +2450,7 @@ Common::SharedPtr<ModifierSaveLoad> PointVariableModifier::getSaveLoad() {
 
 bool PointVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kPoint)
-		_value = value.getPoint().toScummVMPoint();
+		_value = value.getPoint();
 	else
 		return false;
 

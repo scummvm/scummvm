@@ -108,6 +108,7 @@ private:
 class MediaCueMessengerModifier : public Modifier {
 public:
 	MediaCueMessengerModifier();
+	~MediaCueMessengerModifier();
 
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::MediaCueMessengerModifier &data);
 
@@ -126,13 +127,25 @@ private:
 		kCueSourceIntegerRange,
 		kCueSourceVariableReference,
 		kCueSourceLabel,
+
+		kCueSourceInvalid = -1,
 	};
 
 	union CueSourceUnion {
+		CueSourceUnion();
+		~CueSourceUnion();
+
 		int32 asInt;
 		IntRange asIntRange;
 		uint32 asVarRefGUID;
 		Label asLabel;
+		uint64 asUnset;
+
+		template<class T, T (CueSourceUnion::*TMember)>
+		void construct(const T &value);
+
+		template<class T, T (CueSourceUnion::*TMember)>
+		void destruct();
 	};
 
 	Common::SharedPtr<Modifier> shallowClone() const override;

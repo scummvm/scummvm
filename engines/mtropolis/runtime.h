@@ -320,6 +320,9 @@ MiniscriptInstructionOutcome pointWriteRefAttrib(Common::Point &point, Miniscrip
 Common::String pointToString(const Common::Point &point);
 
 struct IntRange {
+	IntRange();
+	IntRange(int32 pmin, int32 pmax);
+
 	int32 min;
 	int32 max;
 
@@ -333,18 +336,14 @@ struct IntRange {
 		return !((*this) == other);
 	}
 
-	inline static IntRange create(int32 min, int32 max) {
-		IntRange result;
-		result.min = min;
-		result.max = max;
-		return result;
-	}
-
 	MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib);
 	Common::String toString() const;
 };
 
 struct Label {
+	Label();
+	Label(int32 psuperGroupID, int32 pid);
+
 	uint32 superGroupID;
 	uint32 id;
 
@@ -360,11 +359,11 @@ struct Label {
 };
 
 struct Event {
+	Event();
+	Event(EventIDs::EventID peventType, uint32 peventInfo);
+
 	EventIDs::EventID eventType;
 	uint32 eventInfo;
-
-	static Event create();
-	static Event create(EventIDs::EventID eventType, uint32 eventInfo);
 
 	// Returns true if this event, interpreted as a filter, recognizes another event.
 	// Handles cases where eventInfo is ignored (hopefully).
@@ -382,11 +381,14 @@ struct Event {
 };
 
 struct VarReference {
+	VarReference();
+	VarReference(uint32 pguid, const Common::String &psource);
+
 	uint32 guid;
-	Common::String *source;
+	Common::String source;
 
 	inline bool operator==(const VarReference &other) const {
-		return guid == other.guid && (*source) == (*other.source);
+		return guid == other.guid && source == other.source;
 	}
 
 	inline bool operator!=(const VarReference &other) const {
@@ -424,6 +426,8 @@ struct ObjectReference {
 };
 
 struct AngleMagVector {
+	AngleMagVector();
+
 	double angleDegrees; // These are stored as radians in the data but scripts treat them as degrees so it's just pointless constantly doing conversion...
 	double magnitude;
 
@@ -436,30 +440,29 @@ struct AngleMagVector {
 	}
 
 	inline static AngleMagVector createRadians(double angleRadians, double magnitude) {
-		AngleMagVector result;
-		result.angleDegrees = angleRadians * (180.0 / M_PI);
-		result.magnitude = magnitude;
-		return result;
+		return AngleMagVector(angleRadians * (180.0 / M_PI), magnitude);
 	}
 
 	inline static AngleMagVector createDegrees(double angleDegrees, double magnitude) {
-		AngleMagVector result;
-		result.angleDegrees = angleDegrees;
-		result.magnitude = magnitude;
-		return result;
+		return AngleMagVector(angleDegrees, magnitude);
 	}
 
 	MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib);
 	Common::String toString() const;
+
+private:
+	AngleMagVector(double angleDegrees, double magnitude);
 };
 
 struct ColorRGB8 {
+	ColorRGB8();
+	ColorRGB8(uint8 pr, uint8 pg, uint8 pb);
+
 	uint8 r;
 	uint8 g;
 	uint8 b;
 
 	bool load(const Data::ColorRGB16 &color);
-	static ColorRGB8 create(uint8 r, uint8 g, uint8 b);
 
 	inline bool operator==(const ColorRGB8 &other) const {
 		return r == other.r && g == other.g && b == other.b;
@@ -577,17 +580,10 @@ struct DynamicListValueConverter {
 	static const T &dereference(const T *source) { return *source; }
 };
 
-template<>
-struct DynamicListValueConverter<Common::Point> {
-	typedef Point16POD DynamicValuePODType_t;
-
-	static Common::Point dereference(const Point16POD *source);
-};
-
 struct DynamicListValueImporter {
 	static bool importValue(const DynamicValue &dynValue, const int32 *&outPtr);
 	static bool importValue(const DynamicValue &dynValue, const double *&outPtr);
-	static bool importValue(const DynamicValue &dynValue, const Point16POD *&outPtr);
+	static bool importValue(const DynamicValue &dynValue, const Common::Point *&outPtr);
 	static bool importValue(const DynamicValue &dynValue, const IntRange *&outPtr);
 	static bool importValue(const DynamicValue &dynValue, const bool *&outPtr);
 	static bool importValue(const DynamicValue &dynValue, const AngleMagVector *&outPtr);
@@ -668,7 +664,6 @@ private:
 	void rebuildStringPointers();
 
 	Common::Array<VarReference> _array;
-	Common::Array<Common::String> _strings;
 };
 
 template<class T>
@@ -837,7 +832,7 @@ struct DynamicValue {
 
 	const int32 &getInt() const;
 	const double &getFloat() const;
-	const Point16POD &getPoint() const;
+	const Common::Point &getPoint() const;
 	const IntRange &getIntRange() const;
 	const AngleMagVector &getVector() const;
 	const Label &getLabel() const;
@@ -847,9 +842,7 @@ struct DynamicValue {
 	const bool &getBool() const;
 	const Common::SharedPtr<DynamicList> &getList() const;
 	const ObjectReference &getObject() const;
-	const DynamicValueWriteProxyPOD &getWriteProxyPOD() const;
-	DynamicValueWriteProxy getWriteProxyTEMP() const;
-	const Common::SharedPtr<DynamicList> &getWriteProxyContainer() const;
+	const DynamicValueWriteProxy &getWriteProxy() const;
 
 	void clear();
 
@@ -879,10 +872,11 @@ struct DynamicValue {
 		return !((*this) == other);
 	}
 
-	void swap(DynamicValue &other);
-
 private:
 	union ValueUnion {
+		ValueUnion();
+		~ValueUnion();
+
 		double asFloat;
 		int32 asInt;
 		IntRange asIntRange;
@@ -890,9 +884,23 @@ private:
 		Label asLabel;
 		VarReference asVarReference;
 		Event asEvent;
-		Point16POD asPoint;
+		Common::Point asPoint;
 		bool asBool;
-		DynamicValueWriteProxyPOD asWriteProxy;
+		DynamicValueWriteProxy asWriteProxy;
+		Common::String asString;
+		Common::SharedPtr<DynamicList> asList;
+		ObjectReference asObj;
+
+		uint64 asUnset;
+
+		template<class T, T(ValueUnion::*TMember)>
+		void construct(const T &value);
+
+		template<class T, T(ValueUnion::*TMember)>
+		void construct(T &&value);
+
+		template<class T, T(ValueUnion::*TMember)>
+		void destruct();
 	};
 
 	template<class T>
@@ -906,13 +914,10 @@ private:
 	bool convertFloatToType(DynamicValueTypes::DynamicValueType targetType, DynamicValue &result) const;
 	bool convertBoolToType(DynamicValueTypes::DynamicValueType targetType, DynamicValue &result) const;
 
-	void initFromOther(const DynamicValue &other);
+	void setFromOther(const DynamicValue &other);
 
 	DynamicValueTypes::DynamicValueType _type;
 	ValueUnion _value;
-	Common::String _str;
-	Common::SharedPtr<DynamicList> _list;
-	ObjectReference _obj;
 };
 
 template<class TFloat>

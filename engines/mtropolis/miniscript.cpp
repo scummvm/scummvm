@@ -495,8 +495,8 @@ MiniscriptInstructionOutcome Set::execute(MiniscriptThread *thread) const {
 	MiniscriptStackValue &target = thread->getStackValueFromTop(1);
 
 	if (target.value.getType() == DynamicValueTypes::kWriteProxy) {
-		const DynamicValueWriteProxyPOD &proxy = target.value.getWriteProxyPOD();
-		outcome = proxy.ifc->write(thread, srcValue.value, proxy.objectRef, proxy.ptrOrOffset);
+		const DynamicValueWriteProxy &proxy = target.value.getWriteProxy();
+		outcome = proxy.pod.ifc->write(thread, srcValue.value, proxy.pod.objectRef, proxy.pod.ptrOrOffset);
 		if (outcome == kMiniscriptInstructionOutcomeFailed) {
 			thread->error("Failed to assign value to proxy");
 			return outcome;
@@ -602,8 +602,8 @@ MiniscriptInstructionOutcome BinaryArithInstruction::execute(MiniscriptThread *t
 	DynamicValue &lsDest = thread->getStackValueFromTop(1).value;
 
 	if (lsDest.getType() == DynamicValueTypes::kPoint && rs.getType() == DynamicValueTypes::kPoint) {
-		Common::Point lsPoint = lsDest.getPoint().toScummVMPoint();
-		Common::Point rsPoint = rs.getPoint().toScummVMPoint();
+		Common::Point lsPoint = lsDest.getPoint();
+		Common::Point rsPoint = rs.getPoint();
 
 		double resultX = 0.0;
 		double resultY = 0.0;
@@ -1134,7 +1134,7 @@ MiniscriptInstructionOutcome BuiltinFunc::executeRectToPolar(MiniscriptThread *t
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	const Point16POD &pt = inputDynamicValue.getPoint();
+	Common::Point pt = inputDynamicValue.getPoint();
 
 	double angle = atan2(pt.y, pt.x);
 	double magnitude = sqrt(pt.x * pt.x + pt.y * pt.y);
@@ -1347,7 +1347,7 @@ MiniscriptInstructionOutcome RangeCreate::execute(MiniscriptThread *thread) cons
 		}
 	}
 
-	xValDest.setIntRange(IntRange::create(coords[0], coords[1]));
+	xValDest.setIntRange(IntRange(coords[0], coords[1]));
 
 	thread->popValues(1);
 
@@ -1400,7 +1400,7 @@ MiniscriptInstructionOutcome GetChild::execute(MiniscriptThread *thread) const {
 
 				indexableValueSlot.value.setWriteProxy(proxy);
 			} else if (indexableValueSlot.value.getType() == DynamicValueTypes::kWriteProxy) {
-				DynamicValueWriteProxy proxy = indexableValueSlot.value.getWriteProxyTEMP();
+				DynamicValueWriteProxy proxy = indexableValueSlot.value.getWriteProxy();
 
 				outcome = proxy.pod.ifc->refAttribIndexed(thread, proxy, proxy.pod.objectRef, proxy.pod.ptrOrOffset, attrib, indexSlot.value);
 				if (outcome == kMiniscriptInstructionOutcomeFailed) {
@@ -1445,7 +1445,7 @@ MiniscriptInstructionOutcome GetChild::execute(MiniscriptThread *thread) const {
 
 				indexableValueSlot.value.setWriteProxy(writeProxy);
 			} else if (indexableValueSlot.value.getType() == DynamicValueTypes::kWriteProxy) {
-				DynamicValueWriteProxy proxy = indexableValueSlot.value.getWriteProxyTEMP();
+				DynamicValueWriteProxy proxy = indexableValueSlot.value.getWriteProxy();
 				outcome = proxy.pod.ifc->refAttrib(thread, proxy, proxy.pod.objectRef, proxy.pod.ptrOrOffset, attrib);
 				if (outcome == kMiniscriptInstructionOutcomeFailed) {
 					thread->error("Can't write to attribute '" + attrib + "'");
