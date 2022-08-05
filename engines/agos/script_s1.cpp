@@ -378,7 +378,7 @@ void AGOSEngine_Simon1::os1_playEffect() {
 	uint16 soundId = getVarOrWord();
 
 	if (getGameId() == GID_SIMON1DOS)
-		playSfx(soundId, 0, 0, true);
+		playSfx(soundId, 0, 0);
 	else
 		_sound->playEffects(soundId);
 }

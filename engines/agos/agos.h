@@ -653,7 +653,7 @@ protected:
 	void decompressPN(Common::Stack<uint32> &dataList, uint8 *&dataOut, int &dataOutSize);
 	void loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &compressedSize, uint32 &size);
 	void loadSound(uint16 sound, int16 pan, int16 vol, uint16 type);
-	void playSfx(uint16 sound, uint16 freq, uint16 flags, bool canUseMidiSfx);
+	void playSfx(uint16 sound, uint16 freq, uint16 flags, bool digitalOnly = false, bool midiOnly = false);
 	void loadSound(uint16 sound, uint16 freq, uint16 flags);
 	void loadMidiSfx();
 	virtual void playMidiSfx(uint16 sound);
