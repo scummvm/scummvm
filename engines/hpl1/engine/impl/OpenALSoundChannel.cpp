@@ -135,12 +135,13 @@ void cOpenALSoundChannel::SetVolume(float volume) {
 
 //-----------------------------------------------------------------------
 
-void cOpenALSoundChannel::SetLooping(bool abLoop) {
-	mbLooping = abLoop;
-	if (abLoop)
-		mixer->loopChannel(_handle);
-	else if (_playing)
+void cOpenALSoundChannel::SetLooping(bool loop) {
+	Hpl1::logInfo(Hpl1::kDebugAudio, "%slooping audio from source %s\n", loop ? "" : "un", mpData->GetName().c_str());
+	mbLooping = loop;
+	if (!_playing)
 		restart();
+	if (loop)
+		mixer->loopChannel(_handle);
 }
 
 //-----------------------------------------------------------------------
