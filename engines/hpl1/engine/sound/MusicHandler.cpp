@@ -34,6 +34,7 @@
 #include "hpl1/engine/sound/SoundData.h"
 #include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
+#include "hpl1/debug.h"
 
 namespace hpl {
 
@@ -287,13 +288,13 @@ void cMusicHandler::Update(float afTimeStep) {
 bool cMusicHandler::LoadAndStart(const tString &asFileName, cMusicEntry *apSong, float afVolume, bool abLoop) {
 	iSoundData *pData = mpResources->GetSoundManager()->CreateSoundData(asFileName, true, abLoop);
 	if (pData == NULL) {
-		Error("Couldn't load music '%s'\n", asFileName.c_str());
+		Hpl1::logError(Hpl1::kDebugAudio | Hpl1::kDebugResourceLoading, "Couldn't load music '%s'\n", asFileName.c_str());
 		return false;
 	}
 
 	iSoundChannel *pStream = pData->CreateChannel(256);
 	if (pStream == NULL) {
-		Error("Couldn't stream music '%s'!\n", asFileName.c_str());
+		Hpl1::logError(Hpl1::kDebugAudio, "Couldn't stream music '%s'!\n", asFileName.c_str());
 		return false;
 	}
 
@@ -302,6 +303,7 @@ bool cMusicHandler::LoadAndStart(const tString &asFileName, cMusicEntry *apSong,
 	apSong->mpStream->SetVolume(afVolume);
 
 	apSong->mpStream->Play();
+	apSong->mpStream->SetLooping(abLoop);
 
 	return true;
 }
