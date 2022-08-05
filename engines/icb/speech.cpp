@@ -131,14 +131,29 @@ mcodeFunctionReturnCodes _game_session::fn_request_speech(int32 &result, int32 *
 			g_oIconMenu->CloseDownIconMenu();
 
 		if ((g_oIconMenu->IsActive()) || (player.player_status == REMORA))
-		return IR_REPEAT;
-
-		// not started yet
-		S.state = __PENDING;
-	} else {
-		if ((g_oIconMenu->IsActive()) || (player.player_status == REMORA/*MAP*/))
 			return IR_REPEAT;
+	} else {
+		//TODO:
+#if 0
+		if ((cur_id == player.Fetch_player_id()) && (player.player_status==MAP))
+			g_oMap.CloseDownMap();
+
+		if ((cur_id == player.Fetch_player_id()) && (g_oIconMenu.IsActive()))
+			g_oIconMenu.CloseDownIconMenu();
+
+		// if object is a mega, check what anim it has and turn its ambient anims off or on depending...
+		if (L->mega) {
+			if (L->cur_anim_type == __STAND) {
+				M->idleAnimsOn = TRUE8;
+				M->idlePhase = NEEDS_INIT;
+			} else
+				M->idleAnimsOn = FALSE8;
+		}
+#endif
 	}
+
+	// not started yet
+	S.state = __PENDING;
 
 	// get the system now - in case another object tries to start a conversation
 	total_convs++; // to 1 ;)
