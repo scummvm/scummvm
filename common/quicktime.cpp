@@ -49,6 +49,7 @@ QuickTimeParser::QuickTimeParser() {
 	_scaleFactorY = 1;
 	_resFork = new MacResManager();
 	_disposeFileHandle = DisposeAfterUse::YES;
+	_timeScale = 1;
 
 	initParseTable();
 }
