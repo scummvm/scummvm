@@ -338,83 +338,41 @@ dgFloat32 dgFastRayTest::PolygonIntersectSimd(const dgVector& normal,
 
 dgFloat32 dgFastRayTest::PolygonIntersect (const dgVector& normal, const dgFloat32* const polygon, dgInt32 strideInBytes, const dgInt32* const indexArray, dgInt32 indexCount) const
 {
-  _ASSERTE(m_p0.m_w == m_p1.m_w);
+	_ASSERTE (m_p0.m_w == m_p1.m_w);
 
-
-	#ifndef __USE_DOUBLE_PRECISION__
-	dgFloat32 unrealible = dgFloat32 (1.0e10f);
-	#endif
-
-  dgFloat32 dist = normal % m_diff;
+	dgFloat32 dist = normal % m_diff;
 	if (dist < m_dirError) {
 
-    dgInt32 stride = dgInt32(strideInBytes / sizeof(dgFloat32));
+		dgInt32 stride = dgInt32 (strideInBytes / sizeof (dgFloat32));
 
-    dgVector v0(&polygon[indexArray[indexCount - 1] * stride]);
-    dgVector p0v0(v0 - m_p0);
-    dgFloat32 tOut = normal % p0v0;
-		dgFloat32 tolerance = m_magRayTest * DG_RAY_TOL_ERROR;
-    // this only work for convex polygons and for single side faces
-    // walk the polygon around the edges and calculate the volume
+		dgVector v0 (&polygon[indexArray[indexCount - 1] * stride]);
+		dgVector p0v0 (v0 - m_p0);
+		dgFloat32 tOut = normal % p0v0;
+		// this only work for convex polygons and for single side faces 
+		// walk the polygon around the edges and calculate the volume 
 		if ((tOut < dgFloat32 (0.0f)) && (tOut > dist)) {
 			for (dgInt32 i = 0; i < indexCount; i ++) {
-        dgInt32 i2 = indexArray[i] * stride;
-        dgVector v1(&polygon[i2]);
-        dgVector p0v1(v1 - m_p0);
-        // calculate the volume formed by the line and the edge of the polygon
-        dgFloat32 alpha = (m_diff * p0v1) % p0v0;
-        // if a least one volume is negative it mean the line cross the polygon outside this edge and do not hit the face
-				if (alpha < tolerance) {
-					#ifdef __USE_DOUBLE_PRECISION__
-          return 1.2f;
-					#else
-						unrealible = alpha;
-						break;
-					#endif
-        }
-        p0v0 = p0v1;
-      }
-
-			#ifndef __USE_DOUBLE_PRECISION__ 
-				if ((unrealible  < dgFloat32 (0.0f)) && (unrealible > (DG_RAY_TOL_ERROR * dgFloat32 (10.0f)))) {
-					// the edge is too close to an edge float is not reliable, do the calculation with double
-					dgBigVector v0_ (v0);
-					dgBigVector m_p0_ (m_p0);
-					//dgBigVector m_p1_ (m_p1);
-					dgBigVector p0v0_ (v0_ - m_p0_);
-					dgBigVector normal_ (normal);
-					dgBigVector diff_ (m_diff);
-					dgFloat64 tOut_ = normal_ % p0v0_;
-					//dgFloat64 dist_ = normal_ % diff_;
-					if ((tOut < dgFloat64 (0.0f)) && (tOut > dist)) {
-						for (dgInt32 i = 0; i < indexCount; i ++) {
-							dgInt32 i2 = indexArray[i] * stride;
-							dgBigVector v1 (&polygon[i2]);
-							dgBigVector p0v1_ (v1 - m_p0_);
-							// calculate the volume formed by the line and the edge of the polygon
-							dgFloat64 alpha = (diff_ * p0v1_) % p0v0_;
-							// if a least one volume is negative it mean the line cross the polygon outside this edge and do not hit the face
-							if (alpha < DG_RAY_TOL_ERROR) {
-								return 1.2f;
-							}
-							p0v0_ = p0v1_;
-						}
-
-						tOut = dgFloat32 (tOut_);
-					}
+				dgInt32 i2 = indexArray[i] * stride;
+				dgVector v1 (&polygon[i2]);
+				dgVector p0v1 (v1 - m_p0);
+				// calculate the volume formed by the line and the edge of the polygon
+				dgFloat32 alpha = (m_diff * p0v1) % p0v0;
+				// if a least one volume is negative it mean the line cross the polygon outside this edge and do not hit the face
+				if (alpha < DG_RAY_TOL_ERROR) {
+					return 1.2f;
 				}
-			#endif
+				p0v0 = p0v1;
+			}
 
-      //the line is to the left of all the polygon edges,
-      //then the intersection is the point we the line intersect the plane of the polygon
-      tOut = tOut / dist;
-      _ASSERTE(tOut >= dgFloat32 (0.0f));
-      _ASSERTE(tOut <= dgFloat32 (1.0f));
-      return tOut;
-    }
-  }
-  return dgFloat32(1.2f);
-
+			//the line is to the left of all the polygon edges, 
+			//then the intersection is the point we the line intersect the plane of the polygon
+			tOut = tOut / dist;
+			_ASSERTE (tOut >= dgFloat32 (0.0f));
+			_ASSERTE (tOut <= dgFloat32 (1.0f));
+			return tOut;
+		}
+	}
+	return dgFloat32 (1.2f);
 }
 
 bool dgApi dgRayBoxClip(dgVector& p0, dgVector& p1, const dgVector& boxP0,
