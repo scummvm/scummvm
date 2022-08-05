@@ -31,6 +31,7 @@
 #include "engines/icb/common/px_common.h"          // common defs for tools & engine
 #include "engines/icb/common/px_globalvariables.h" // The global variable class
 #include "engines/icb/fn_routines.h"
+#include "engines/icb/icb.h"
 
 namespace ICB {
 
@@ -237,7 +238,9 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 
 			Fetch16(fnNumber);
 
-			if (!((fnNumber >= 0) && (fnNumber < NO_API_ROUTINES)))
+			const int16 numApiRoutines = (g_icb->getGameType() == GType_ELDORADO) ? NO_API_ROUTINES_ELDORADO : NO_API_ROUTINES_ICB;
+
+			if (!((fnNumber >= 0) && (fnNumber < numApiRoutines)))
 				_SCRIPT_ENGINE_ERROR("fnNumber out of range?");
 
 			// Get the number of parameters
@@ -246,7 +249,15 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 			ScriptTrace("Call mcode %d (%sin expression)", fnNumber, isInExpression ? "" : "not ");
 
 			int32 routineReturnParameter = 0; // The value returned by the mcode routine
-			mcodeFunctionReturnCodes mcodeRetVal = McodeTable[fnNumber](routineReturnParameter, stack + (stackPointer - value));
+			mcodeFunctionReturnCodes mcodeRetVal;
+
+			if (g_icb->getGameType() == GType_ICB) {
+				mcodeRetVal = McodeTableICB[fnNumber](routineReturnParameter, stack + (stackPointer - value));
+			} else if (g_icb->getGameType() == GType_ELDORADO) {
+				mcodeRetVal = McodeTableED[fnNumber](routineReturnParameter, stack + (stackPointer - value));
+			} else {
+				error("unknown game type");
+			}
 
 			ScriptTrace("api returned %d(%d)", mcodeRetVal, routineReturnParameter);
 
@@ -342,7 +353,7 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 					ScriptTrace("interact");
 					fn_start_player_interaction(dummyReturnValue, &scriptHash);
 				} else {
-					ScriptTrace("chusen logic");
+					ScriptTrace("chosen logic");
 					fn_context_chosen_logic(dummyReturnValue, &scriptHash);
 				}
 

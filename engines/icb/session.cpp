@@ -386,8 +386,8 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 
 void _game_session::Script_version_check() {
 	uint32 version = LinkedDataObject::GetHeaderVersion(scripts);
-	if (FN_ROUTINES_DATA_VERSION != version) {
-		warning("SCRIPTS AND ENGINE ARE NOT SAME VERSION: %d", version);
+	if (FN_ROUTINES_DATA_VERSION_ICB != version && FN_ROUTINES_DATA_VERSION_ELDORADO != version) {
+		error("SCRIPTS AND ENGINE ARE NOT SAME VERSION: %d", version);
 	}
 }
 

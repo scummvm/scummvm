@@ -32,6 +32,7 @@ MODULE_OBJS := \
 	fn_interact.o \
 	fn_movie_pc.o \
 	fn_remora_functions.o \
+	fn_routines_ed.o \
 	fn_routines_icb.o \
 	fn_sound.o \
 	fn_sting_pc.o \

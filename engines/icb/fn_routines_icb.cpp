@@ -444,7 +444,7 @@ mcodeFunctionReturnCodes fn_activate_sparkle(int32 &, int32 *);
 mcodeFunctionReturnCodes fn_deactivate_sparkle(int32 &, int32 *);
 mcodeFunctionReturnCodes fn_missing_routine(int32 &, int32 *);
 
-mcodeFunctionReturnCodes (*McodeTable[NO_API_ROUTINES])(int32 &, int32 *) = {
+mcodeFunctionReturnCodes (*McodeTableICB[NO_API_ROUTINES_ICB])(int32 &, int32 *) = {
 	fn_test,
 	fn_create_mega,
 	fn_shut_down_object,
