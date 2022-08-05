@@ -190,7 +190,7 @@ void Design::render(Graphics::MacPatterns &patterns) {
 
 bool Design::isInBounds(int x, int y) {
 	if (_surface == NULL)
-		error("Surface is null");
+		error("Design::isInBounds(): Surface is null");
 	if (_maskImage == nullptr)
 		return false;
 	if (x > _maskImage->w || y > _maskImage->h)
