@@ -34,7 +34,12 @@ namespace ICB {
 
 #define PCPROP_SCHEMA 3
 #define PCPROP_ID MKTAG('p', 'o', 'r', 'P')
-#define PCSETFILE_ID MKTAG('t', 'n', 'i', 'm')
+
+#define PCINTERACTIBLE_SCHEMA 2
+#define PCINTERACTIBLE_ID MKTAG('k', 'c', 'a', 'T')
+
+#define PCSETFILE_ID_ICB MKTAG('t', 'n', 'i', 'm')
+#define PCSETFILE_ID_ELDORADO MKTAG('t', 'n', 'i', 'p')
 
 typedef struct _pcSetHeader {
 	uint32 id;
@@ -43,7 +48,95 @@ typedef struct _pcSetHeader {
 	uint32 propOffset;
 	uint32 layerOffset;
 	uint32 backgroundOffset;
+	uint32 interactiblesOffset;
 } _pcSetHeader;
+
+class pcInteractible {
+private:
+	char name[32];
+	int32 width;
+	int32 height;
+	int32 x;
+	int32 y;
+	uint8 *mask;
+
+public:
+	pcInteractible(uint8 *interactiblePtr) {
+		uint8 *ptr = interactiblePtr;
+
+		memcpy(name, ptr, 32);
+		ptr += 32;
+
+		width = (int32)READ_LE_U32(ptr);
+		ptr += 4;
+
+		height = (int32)READ_LE_U32(ptr);
+		ptr += 4;
+
+		x = (int32)READ_LE_U32(ptr);
+		ptr += 4;
+
+		y = (int32)READ_LE_U32(ptr);
+		ptr += 4;
+
+		mask = ptr;
+	}
+};
+
+class pcInteractibleFile {
+private:
+	uint32 id;
+	uint32 schema;
+	uint32 mapping;
+	uint32 quantity;
+	pcInteractible **interactibles;
+
+public:
+	pcInteractibleFile() : id(PCINTERACTIBLE_ID), schema(PCINTERACTIBLE_SCHEMA), mapping(0), quantity(0), interactibles(nullptr) {}
+
+	pcInteractibleFile(uint8 *interactibleData) {
+		uint8 *ptr = interactibleData;
+
+		id = READ_LE_U32(ptr);
+		ptr += 4;
+
+		schema = READ_LE_U32(ptr);
+		ptr += 4;
+
+		mapping = READ_LE_U32(ptr);
+		ptr += 4;
+
+		quantity = READ_LE_U32(ptr);
+		ptr += 4;
+
+		interactibles = new pcInteractible *[quantity];
+		for (uint32 i = 0; i < quantity; i++) {
+			interactibles[i] = new pcInteractible(interactibleData + READ_LE_U32(ptr));
+			ptr += 4;
+		}
+	}
+
+	~pcInteractibleFile() {
+		for (uint32 i = 0; i < quantity; i++) {
+			delete interactibles[i];
+		}
+		delete[] interactibles;
+		interactibles = 0;
+	}
+
+	uint32 GetID() { return id; }
+	void SetId(uint32 i) { id = i; }
+	uint32 GetQty() { return quantity; }
+	void SetQty(uint32 q) { quantity = q; }
+	pcInteractible *GetInt(uint32 i) { return interactibles[i]; }
+	void SetSchema(uint32 s) { schema = s; }
+	uint32 GetSchema() const {
+		if (id != PCINTERACTIBLE_ID)
+			return 0;
+		else
+			return schema;
+	}
+};
 
 class pcPropRGBState {
 private:

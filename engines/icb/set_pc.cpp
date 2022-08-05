@@ -613,8 +613,8 @@ bool8 _set::Init(const char *camera_name, const char *clustered_camera_name) {
 
 	// Load this camera
 	m_currentCamera = (_pcSetHeader *)rs_bg->Res_open(p_rcvf, p_rcvf_hash, set_cluster, set_cluster_hash);
-	if (FROM_LE_32(m_currentCamera->id) != PCSETFILE_ID)
-		Fatal_error("Unsupported set files. Set id is %d.  should be %d", FROM_LE_32(m_currentCamera->id), PCSETFILE_ID);
+	if (FROM_LE_32(m_currentCamera->id) != PCSETFILE_ID_ICB && FROM_LE_32(m_currentCamera->id) != PCSETFILE_ID_ELDORADO)
+		Fatal_error("Unsupported set files. Set id is %d.", FROM_LE_32(m_currentCamera->id));
 
 	// Hack the camera into the format we want.
 	HackMakeCamera();
@@ -1695,10 +1695,10 @@ void _set::DrawWeather() {
 
 void _set::HackMakeCamera() {
 	float *oldCameraData;
-	if (FROM_LE_32(m_currentCamera->id) == PCSETFILE_ID)
-		oldCameraData = (float *)(((uint8 *)m_currentCamera) + FROM_LE_32(m_currentCamera->cameraOffset));
-	else
-		oldCameraData = (float *)rs_bg->Res_open(rvcam_file_name, rvcam_file_hash, set_cluster, set_cluster_hash, 0);
+	if (FROM_LE_32(m_currentCamera->id) != PCSETFILE_ID_ICB && FROM_LE_32(m_currentCamera->id) != PCSETFILE_ID_ELDORADO)
+		Fatal_error("Illegal camera file.  SetID == %d", FROM_LE_32(m_currentCamera->id));
+
+	oldCameraData = (float *)(((uint8 *)m_currentCamera) + FROM_LE_32(m_currentCamera->cameraOffset));
 	/*   Old Camera Format
 	    -------------------
 

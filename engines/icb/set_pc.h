@@ -78,6 +78,7 @@ public:
 	inline rlp_API *GetPRig();
 	inline pcStaticLayers *GetStaticLayers();
 	inline pcPropFile *GetProps();
+	inline pcInteractibleFile *GetInteractibles();
 	inline uint8 *GetBackground();
 	inline uint32 GetPropQty();
 	inline const char *GetPropName(uint32 n);
@@ -155,6 +156,18 @@ public: /* Prop Surfaces */
 inline rlp_API *_set::GetPRig() { return (rlp_API *)(((uint8 *)m_currentCamera) + FROM_LE_32(m_currentCamera->lightOffset)); }
 
 inline pcStaticLayers *_set::GetStaticLayers() { return (pcStaticLayers *)(((uint8 *)m_currentCamera) + FROM_LE_32(m_currentCamera->layerOffset)); }
+
+inline pcInteractibleFile *_set::GetInteractibles() {
+	if (m_currentCamera->id == PCSETFILE_ID_ICB) {
+		static pcInteractibleFile temp;
+		temp.SetQty(0);
+		temp.SetSchema(PCINTERACTIBLE_SCHEMA);
+		temp.SetId(PCINTERACTIBLE_ID);
+		return &temp;
+	}
+	else
+		return (pcInteractibleFile *)(((uint8 *)m_currentCamera) + FROM_LE_32(m_currentCamera->interactiblesOffset));
+}
 
 inline pcPropFile *_set::GetProps() { return m_props; }
 
