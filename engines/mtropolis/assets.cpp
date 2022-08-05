@@ -1134,6 +1134,9 @@ bool MToonMetadata::FrameRangeDef::load(AssetLoaderContext &context, const Data:
 	return true;
 }
 
+TextAsset::TextAsset() : _alignment(kTextAlignmentLeft), _isBitmap(false) {
+}
+
 bool TextAsset::load(AssetLoaderContext &context, const Data::TextAsset &data) {
 	_assetID = data.assetID;
 

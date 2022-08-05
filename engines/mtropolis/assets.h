@@ -293,6 +293,8 @@ private:
 
 class TextAsset : public Asset {
 public:
+	TextAsset();
+
 	bool load(AssetLoaderContext &context, const Data::TextAsset &data);
 	AssetType getAssetType() const override;
 
