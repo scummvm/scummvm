@@ -45,14 +45,24 @@ namespace ICB {
 LRECT ICON_BITMAP_RECT = {0, 0, ICON_X_SIZE - 1, ICON_Y_SIZE - 1};
 LRECT ICON_ADDING_RECT = {ICON_ADDING_X, ICON_ADDING_Y, ICON_ADDING_X + ICON_X_SIZE - 1, ICON_ADDING_Y + ICON_Y_SIZE - 1};
 
+LRECT ICON_BITMAP_RECT_ED = {0, 0, ICON_X_SIZE - 1, ICON_Y_SIZE_ED - 1};
+LRECT ICON_ADDING_RECT_ED = {ICON_ADDING_X, ICON_ADDING_Y, ICON_ADDING_X + ICON_X_SIZE - 1, ICON_ADDING_Y + ICON_Y_SIZE_ED - 1};
+
 void _icon_menu::Activate(const _icon_list *pIconList, const _icon_menu_duplicates &sDuplicates, bool8 bAllowEscape, uint32 nSelected) {
 	Zdebug("Entered _icon_menu::Activate()");
 
 	PXTRY
 
+	uint32 iconSizeY = ICON_Y_SIZE;
+	uint32 iconMenuPixelY = ICON_MENU_PIXEL_Y;
+	if (g_icb->getGameType() == GType_ELDORADO) {
+		iconSizeY = ICON_Y_SIZE_ED;
+		iconMenuPixelY = ICON_MENU_PIXEL_Y_ED;
+	}
+
 	// If we are not in the remora, then we want to scroll the icons onto the screen
 	if (g_oRemora->IsActive())
-		m_nMenuY = ICON_MENU_PIXEL_Y;
+		m_nMenuY = iconMenuPixelY;
 	else
 		m_nMenuY = 490;
 
@@ -104,15 +114,15 @@ void _icon_menu::Activate(const _icon_list *pIconList, const _icon_menu_duplicat
 			Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strFullIconName.c_str(), PC_BITMAP_SCHEMA, FROM_LE_32(psIconBitmap->schema));
 
 		// Create a surface for the icon
-		m_pnIconSurfaceIDs[i] = surface_manager->Create_new_surface(strIconName.c_str(), ICON_X_SIZE, ICON_Y_SIZE, EITHER);
+		m_pnIconSurfaceIDs[i] = surface_manager->Create_new_surface(strIconName.c_str(), ICON_X_SIZE, iconSizeY, EITHER);
 		surface_manager->Set_transparent_colour_key(m_pnIconSurfaceIDs[i], m_nTransparentKey);
 		uint8 *pyIconBitmap = surface_manager->Lock_surface(m_pnIconSurfaceIDs[i]);
 		uint32 nPitch = surface_manager->Get_pitch(m_pnIconSurfaceIDs[i]);
 		// Load the icon into the surface
-		SpriteXYFrameDraw(pyIconBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
+		SpriteXYFrameDraw(pyIconBitmap, nPitch, ICON_X_SIZE, iconSizeY, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
 		// convert it to b/w
 		uint32 *icon_ad = (uint32 *)pyIconBitmap;
-		for (uint32 y = 0; y < ICON_Y_SIZE; y++) {
+		for (uint32 y = 0; y < iconSizeY; y++) {
 			uint32 *rowAd = icon_ad;
 			for (int32 x = 0; x < ICON_X_SIZE; x++) {
 				uint32 col = *rowAd;
@@ -131,12 +141,12 @@ void _icon_menu::Activate(const _icon_list *pIconList, const _icon_menu_duplicat
 
 		// Create a surface for the icons hilite
 		strIconName += 'H';
-		m_pnHiLiteSurfaceIDs[i] = surface_manager->Create_new_surface(strIconName.c_str(), ICON_X_SIZE, ICON_Y_SIZE, EITHER);
+		m_pnHiLiteSurfaceIDs[i] = surface_manager->Create_new_surface(strIconName.c_str(), ICON_X_SIZE, iconSizeY, EITHER);
 		surface_manager->Set_transparent_colour_key(m_pnHiLiteSurfaceIDs[i], m_nTransparentKey);
 		uint8 *pyHiLiteBitmap = surface_manager->Lock_surface(m_pnHiLiteSurfaceIDs[i]);
 		nPitch = surface_manager->Get_pitch(m_pnHiLiteSurfaceIDs[i]);
 		// Load the icon hilight
-		SpriteXYFrameDraw(pyHiLiteBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
+		SpriteXYFrameDraw(pyHiLiteBitmap, nPitch, ICON_X_SIZE, iconSizeY, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
 		// Unlock the surface
 		surface_manager->Unlock_surface(m_pnHiLiteSurfaceIDs[i]);
 	}
@@ -155,6 +165,10 @@ void _icon_menu::Activate(const _icon_list *pIconList, const _icon_menu_duplicat
 }
 
 void _icon_menu::ReActivate() {
+	uint32 iconSizeY = ICON_Y_SIZE;
+	if (g_icb->getGameType() == GType_ELDORADO)
+		iconSizeY = ICON_Y_SIZE_ED;
+
 	// Free up all the previous icon surfaces
 	for (int32 i = m_pIconList->GetIconCount() - 1; i >= 0; --i) {
 		surface_manager->Kill_surface(m_pnIconSurfaceIDs[i]);
@@ -185,15 +199,15 @@ void _icon_menu::ReActivate() {
 			Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strFullIconName.c_str(), PC_BITMAP_SCHEMA, FROM_LE_32(psIconBitmap->schema));
 
 		// Create a surface for the icon
-		m_pnIconSurfaceIDs[i] = surface_manager->Create_new_surface("Icon", ICON_X_SIZE, ICON_Y_SIZE, EITHER);
+		m_pnIconSurfaceIDs[i] = surface_manager->Create_new_surface("Icon", ICON_X_SIZE, iconSizeY, EITHER);
 		uint8 *pyIconBitmap = surface_manager->Lock_surface(m_pnIconSurfaceIDs[i]);
 		uint32 nPitch = surface_manager->Get_pitch(m_pnIconSurfaceIDs[i]);
 
 		// Load the icon into the surface
-		SpriteXYFrameDraw(pyIconBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
+		SpriteXYFrameDraw(pyIconBitmap, nPitch, ICON_X_SIZE, iconSizeY, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
 		// convert it to b/w
 		uint32 *icon_ad = (uint32 *)pyIconBitmap;
-		for (uint32 y = 0; y < ICON_Y_SIZE; y++) {
+		for (uint32 y = 0; y < iconSizeY; y++) {
 			uint32 *rowAd = icon_ad;
 			for (int32 x = 0; x < ICON_X_SIZE; x++) {
 				uint32 col = *rowAd;
@@ -234,14 +248,20 @@ void _icon_menu::DrawIconMenu() {
 	char pcDigits[16];
 	const char *pcIconLabel;
 	char pcIconName[MAXLEN_ICON_NAME];
+	uint32 iconSizeY = ICON_Y_SIZE;
+	uint32 iconMenuPixelY = ICON_MENU_PIXEL_Y;
+	if (g_icb->getGameType() == GType_ELDORADO) {
+		iconSizeY = ICON_Y_SIZE_ED;
+		iconMenuPixelY = ICON_MENU_PIXEL_Y_ED;
+	}
 
 	Zdebug("Entered _icon_menu::DrawIconMenu()");
 
 	// Check if we are scrolling the icon menu up
-	if (m_nMenuY != ICON_MENU_PIXEL_Y)
+	if (m_nMenuY != iconMenuPixelY)
 		m_nMenuY -= 15;
-	if (m_nMenuY < ICON_MENU_PIXEL_Y)
-		m_nMenuY = ICON_MENU_PIXEL_Y;
+	if (m_nMenuY < iconMenuPixelY)
+		m_nMenuY = iconMenuPixelY;
 
 	// Get number of icons.
 	uint32 nIconCount = m_pIconList->GetIconCount();
@@ -265,12 +285,15 @@ void _icon_menu::DrawIconMenu() {
 		nStartX = nStartX + ICON_X_SIZE + ICON_SPACING;
 
 		// Draw the left off-screen arrows.
-		sToRectangle.left = ICON_MENU_PIXEL_X;
+		sToRectangle.left = iconMenuPixelY;
 		sToRectangle.right = sToRectangle.left + ICON_X_SIZE - 1;
 		sToRectangle.top = m_nMenuY;
-		sToRectangle.bottom = sToRectangle.top + ICON_Y_SIZE - 1;
+		sToRectangle.bottom = sToRectangle.top + iconSizeY - 1;
 
-		sFromRectangle = ICON_BITMAP_RECT;
+		if (g_icb->getGameType() == GType_ELDORADO)
+			sFromRectangle = ICON_BITMAP_RECT_ED;
+		else
+			sFromRectangle = ICON_BITMAP_RECT;
 
 		if (sToRectangle.left < 0) {
 			sFromRectangle.left -= sToRectangle.left;
@@ -288,10 +311,13 @@ void _icon_menu::DrawIconMenu() {
 		// Draw the right off-screen arrows.
 		sToRectangle.left = ICON_MENU_PIXEL_X + ((m_nMaxIconsDisplayed - 1) * (ICON_X_SIZE + ICON_SPACING));
 		sToRectangle.right = sToRectangle.left + ICON_X_SIZE - 1;
-		sToRectangle.top = ICON_MENU_PIXEL_Y;
-		sToRectangle.bottom = ICON_MENU_PIXEL_Y + ICON_Y_SIZE - 1;
+		sToRectangle.top = iconMenuPixelY;
+		sToRectangle.bottom = iconMenuPixelY + iconSizeY - 1;
 
-		sFromRectangle = ICON_BITMAP_RECT;
+		if (g_icb->getGameType() == GType_ELDORADO)
+			sFromRectangle = ICON_BITMAP_RECT_ED;
+		else
+			sFromRectangle = ICON_BITMAP_RECT;
 
 		if (sToRectangle.left < 0) {
 			sFromRectangle.left -= sToRectangle.left;
@@ -321,9 +347,12 @@ void _icon_menu::DrawIconMenu() {
 		sToRectangle.left = x;
 		sToRectangle.right = sToRectangle.left + ICON_X_SIZE - 1;
 		sToRectangle.top = m_nMenuY;
-		sToRectangle.bottom = sToRectangle.top + ICON_Y_SIZE - 1;
+		sToRectangle.bottom = sToRectangle.top + iconSizeY - 1;
 
-		sFromRectangle = ICON_BITMAP_RECT;
+		if (g_icb->getGameType() == GType_ELDORADO)
+			sFromRectangle = ICON_BITMAP_RECT_ED;
+		else
+			sFromRectangle = ICON_BITMAP_RECT;
 
 		if (sToRectangle.left < 0) {
 			sFromRectangle.left -= sToRectangle.left;
@@ -423,6 +452,10 @@ void _icon_menu::SetTransparencyColourKey() {
 }
 
 void _icon_menu::SetupAdding(const char *pcIconName, uint32 &nSurfaceID) {
+	uint32 iconSizeY = ICON_Y_SIZE;
+	if (g_icb->getGameType() == GType_ELDORADO);
+		iconSizeY = ICON_Y_SIZE_ED;
+
 	// Get the full pathname for the ammo clips icon.
 	Common::String strFullIconName = Common::String::format("%s%s.%s", ICON_PATH, pcIconName, PX_BITMAP_PC_EXT);
 
@@ -435,13 +468,13 @@ void _icon_menu::SetupAdding(const char *pcIconName, uint32 &nSurfaceID) {
 		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strFullIconName.c_str(), PC_BITMAP_SCHEMA, FROM_LE_32(psIconBitmap->schema));
 
 	// Create a surface for the clips icon.
-	nSurfaceID = surface_manager->Create_new_surface(pcIconName, ICON_X_SIZE, ICON_Y_SIZE, EITHER);
+	nSurfaceID = surface_manager->Create_new_surface(pcIconName, ICON_X_SIZE, iconSizeY, EITHER);
 	surface_manager->Set_transparent_colour_key(nSurfaceID, m_nTransparentKey);
 	uint8 *p8Bitmap = surface_manager->Lock_surface(nSurfaceID);
 	uint32 nPitch = surface_manager->Get_pitch(nSurfaceID);
 
 	// Draw the icon into the surface.
-	SpriteXYFrameDraw(p8Bitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
+	SpriteXYFrameDraw(p8Bitmap, nPitch, ICON_X_SIZE, iconSizeY, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
 
 	// Finished drawing the icon into the surfaces so we can unlock them.
 	surface_manager->Unlock_surface(nSurfaceID);
@@ -452,17 +485,26 @@ void _icon_menu::DrawAdding() {
 	switch (m_nAddedSymbol) {
 	case 1:
 		// Draw the medipack flash.
-		surface_manager->Blit_surface_to_surface(m_nAddedMedipacksSurface, working_buffer_id, &ICON_BITMAP_RECT, &ICON_ADDING_RECT, DDBLT_KEYSRC);
+		if (g_icb->getGameType() == GType_ELDORADO)
+			surface_manager->Blit_surface_to_surface(m_nAddedMedipacksSurface, working_buffer_id, &ICON_BITMAP_RECT_ED, &ICON_ADDING_RECT_ED, DDBLT_KEYSRC);
+		else
+			surface_manager->Blit_surface_to_surface(m_nAddedMedipacksSurface, working_buffer_id, &ICON_BITMAP_RECT, &ICON_ADDING_RECT, DDBLT_KEYSRC);
 		break;
 
 	case 2:
 		// Draw the ammo clips flash.
-		surface_manager->Blit_surface_to_surface(m_nAddedClipsSurface, working_buffer_id, &ICON_BITMAP_RECT, &ICON_ADDING_RECT, DDBLT_KEYSRC);
+		if (g_icb->getGameType() == GType_ELDORADO)
+			surface_manager->Blit_surface_to_surface(m_nAddedClipsSurface, working_buffer_id, &ICON_BITMAP_RECT_ED, &ICON_ADDING_RECT_ED, DDBLT_KEYSRC);
+		else
+			surface_manager->Blit_surface_to_surface(m_nAddedClipsSurface, working_buffer_id, &ICON_BITMAP_RECT, &ICON_ADDING_RECT, DDBLT_KEYSRC);
 		break;
 
 	case 3:
 		// Draw the ammo clips flash.
-		surface_manager->Blit_surface_to_surface(m_nEmailArrivedSurface, working_buffer_id, &ICON_BITMAP_RECT, &ICON_ADDING_RECT, DDBLT_KEYSRC);
+		if (g_icb->getGameType() == GType_ELDORADO)
+			surface_manager->Blit_surface_to_surface(m_nEmailArrivedSurface, working_buffer_id, &ICON_BITMAP_RECT_ED, &ICON_ADDING_RECT_ED, DDBLT_KEYSRC);
+		else
+			surface_manager->Blit_surface_to_surface(m_nEmailArrivedSurface, working_buffer_id, &ICON_BITMAP_RECT, &ICON_ADDING_RECT, DDBLT_KEYSRC);
 		break;
 
 	default:
@@ -537,11 +579,18 @@ void _icon_menu::DrawArmedMenu(const int32 nBullets, const int32 maxBullets, con
 	LRECT destRect;
 	destRect.left = ICON_ARMED_MENU_PIXEL_X + 10;
 	destRect.top = ICON_ARMED_MENU_PIXEL_Y;
-	destRect.right = destRect.left + ICON_BITMAP_RECT.right - ICON_BITMAP_RECT.left;
-	destRect.bottom = destRect.top + ICON_BITMAP_RECT.bottom - ICON_BITMAP_RECT.top;
-
+	if (g_icb->getGameType() == GType_ELDORADO) {
+		destRect.right = destRect.left + ICON_BITMAP_RECT_ED.right - ICON_BITMAP_RECT_ED.left;
+		destRect.bottom = destRect.top + ICON_BITMAP_RECT_ED.bottom - ICON_BITMAP_RECT_ED.top;
+	} else {
+		destRect.right = destRect.left + ICON_BITMAP_RECT.right - ICON_BITMAP_RECT.left;
+		destRect.bottom = destRect.top + ICON_BITMAP_RECT.bottom - ICON_BITMAP_RECT.top;
+	}
 	// Blit the icon ...
-	surface_manager->Blit_surface_to_surface(gunSurface, working_buffer_id, &ICON_BITMAP_RECT, &destRect, DDBLT_KEYSRC);
+	if (g_icb->getGameType() == GType_ELDORADO)
+		surface_manager->Blit_surface_to_surface(gunSurface, working_buffer_id, &ICON_BITMAP_RECT_ED, &destRect, DDBLT_KEYSRC);
+	else
+		surface_manager->Blit_surface_to_surface(gunSurface, working_buffer_id, &ICON_BITMAP_RECT, &destRect, DDBLT_KEYSRC);
 
 	// ... and add the counter
 	MS->Create_remora_text(destRect.left, destRect.top - 15, pxVString("%d/%d", nBullets, maxBullets), 2, PIN_AT_TOP_LEFT, 3, 2, 300);
@@ -553,7 +602,10 @@ void _icon_menu::DrawArmedMenu(const int32 nBullets, const int32 maxBullets, con
 	destRect.right += (ICON_X_SIZE + ICON_SPACING);
 
 	// Blit the icon
-	surface_manager->Blit_surface_to_surface(clipSurface, working_buffer_id, &ICON_BITMAP_RECT, &destRect, DDBLT_KEYSRC);
+	if (g_icb->getGameType() == GType_ELDORADO)
+		surface_manager->Blit_surface_to_surface(clipSurface, working_buffer_id, &ICON_BITMAP_RECT_ED, &destRect, DDBLT_KEYSRC);
+	else
+		surface_manager->Blit_surface_to_surface(clipSurface, working_buffer_id, &ICON_BITMAP_RECT, &destRect, DDBLT_KEYSRC);
 	// and add the counter
 	MS->Create_remora_text(destRect.left, destRect.top - 15, pxVString("%d/%d", nClips, maxClips), 2, PIN_AT_TOP_LEFT, 3, 2, 300);
 	MS->Render_speech(MS->text_bloc);
@@ -565,13 +617,17 @@ void _icon_menu::DrawArmedMenu(const int32 nBullets, const int32 maxBullets, con
 }
 
 void _icon_menu::SetUpOffScreenArrows() {
+	uint32 iconSizeY = ICON_Y_SIZE;
+	if (g_icb->getGameType() == GType_ELDORADO);
+		iconSizeY = ICON_Y_SIZE_ED;
+
 	{
 		// Create surfaces for the left arrow - both highlighted and normal.
-		m_nLeftArrowID = surface_manager->Create_new_surface(ICON_MENU_OFF_SCREEN_LEFT, ICON_X_SIZE, ICON_Y_SIZE, EITHER);
+		m_nLeftArrowID = surface_manager->Create_new_surface(ICON_MENU_OFF_SCREEN_LEFT, ICON_X_SIZE, iconSizeY, EITHER);
 		surface_manager->Set_transparent_colour_key(m_nLeftArrowID, m_nTransparentKey);
 		uint8 *pyLeftBitmap = surface_manager->Lock_surface(m_nLeftArrowID);
 
-		m_nLeftArrowHiLiteID = surface_manager->Create_new_surface(ICON_MENU_OFF_SCREEN_LEFT, ICON_X_SIZE, ICON_Y_SIZE, EITHER);
+		m_nLeftArrowHiLiteID = surface_manager->Create_new_surface(ICON_MENU_OFF_SCREEN_LEFT, ICON_X_SIZE, iconSizeY, EITHER);
 		surface_manager->Set_transparent_colour_key(m_nLeftArrowHiLiteID, m_nTransparentKey);
 		uint8 *pyLeftHiLiteBitmap = surface_manager->Lock_surface(m_nLeftArrowHiLiteID);
 
@@ -589,8 +645,8 @@ void _icon_menu::SetUpOffScreenArrows() {
 			Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strLeftArrowIconName.c_str(), PC_BITMAP_SCHEMA, FROM_LE_32(psIconBitmap->schema));
 
 		// Draw the two frames onto their respective surfaces.
-		SpriteXYFrameDraw(pyLeftBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
-		SpriteXYFrameDraw(pyLeftHiLiteBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 1, FALSE8, nullptr, 255);
+		SpriteXYFrameDraw(pyLeftBitmap, nPitch, ICON_X_SIZE, iconSizeY, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
+		SpriteXYFrameDraw(pyLeftHiLiteBitmap, nPitch, ICON_X_SIZE, iconSizeY, psIconBitmap, 0, 0, 1, FALSE8, nullptr, 255);
 
 		// Finished drawing the icon into the surfaces so we can unlock them.
 		surface_manager->Unlock_surface(m_nLeftArrowID);
@@ -599,11 +655,11 @@ void _icon_menu::SetUpOffScreenArrows() {
 
 	{
 		// Now we repeat the whole thing for the right arrow.
-		m_nRightArrowID = surface_manager->Create_new_surface(ICON_MENU_OFF_SCREEN_RIGHT, ICON_X_SIZE, ICON_Y_SIZE, EITHER);
+		m_nRightArrowID = surface_manager->Create_new_surface(ICON_MENU_OFF_SCREEN_RIGHT, ICON_X_SIZE, iconSizeY, EITHER);
 		surface_manager->Set_transparent_colour_key(m_nRightArrowID, m_nTransparentKey);
 		uint8 *pyRightBitmap = surface_manager->Lock_surface(m_nRightArrowID);
 
-		m_nRightArrowHiLiteID = surface_manager->Create_new_surface(ICON_MENU_OFF_SCREEN_RIGHT, ICON_X_SIZE, ICON_Y_SIZE, EITHER);
+		m_nRightArrowHiLiteID = surface_manager->Create_new_surface(ICON_MENU_OFF_SCREEN_RIGHT, ICON_X_SIZE, iconSizeY, EITHER);
 		surface_manager->Set_transparent_colour_key(m_nRightArrowHiLiteID, m_nTransparentKey);
 		uint8 *pyRightHiLiteBitmap = surface_manager->Lock_surface(m_nRightArrowHiLiteID);
 
@@ -621,8 +677,8 @@ void _icon_menu::SetUpOffScreenArrows() {
 			Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", strRightArrowIconName.c_str(), PC_BITMAP_SCHEMA, FROM_LE_32(psIconBitmap->schema));
 
 		// Draw the two frames onto their respective surfaces.
-		SpriteXYFrameDraw(pyRightBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
-		SpriteXYFrameDraw(pyRightHiLiteBitmap, nPitch, ICON_X_SIZE, ICON_Y_SIZE, psIconBitmap, 0, 0, 1, FALSE8, nullptr, 255);
+		SpriteXYFrameDraw(pyRightBitmap, nPitch, ICON_X_SIZE, iconSizeY, psIconBitmap, 0, 0, 0, FALSE8, nullptr, 255);
+		SpriteXYFrameDraw(pyRightHiLiteBitmap, nPitch, ICON_X_SIZE, iconSizeY, psIconBitmap, 0, 0, 1, FALSE8, nullptr, 255);
 
 		// Finished drawing the icon into the surfaces so we can unlock them.
 		surface_manager->Unlock_surface(m_nRightArrowID);
