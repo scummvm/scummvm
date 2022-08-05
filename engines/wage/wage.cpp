@@ -230,7 +230,10 @@ void WageEngine::gameOver() {
 
 	Graphics::MacDialog gameOverDialog(&_gui->_screen, _gui->_wm,  199, &gameOverMessage, 199, &buttons, 0);
 
-	gameOverDialog.run();
+	int button = gameOverDialog.run();
+
+	if (button == Graphics::kMacDialogQuitRequested)
+		_shouldQuit = true;
 
 	doClose();
 
@@ -254,10 +257,11 @@ bool WageEngine::saveDialog() {
 
 	int button = save.run();
 
-	if (button == 2) // Cancel
+	if (button == Graphics::kMacDialogQuitRequested)
+		_shouldQuit = true;
+	else if (button == 2) // Cancel
 		return false;
-
-	if (button == 1)
+	else if (button == 1)
 		saveGame();
 
 	doClose();
@@ -279,7 +283,10 @@ void WageEngine::aboutDialog() {
 
 	Graphics::MacDialog about(&_gui->_screen, _gui->_wm, 450, &aboutMessage, 400, &buttons, 0);
 
-	about.run();
+	int button = about.run();
+
+	if (button == Graphics::kMacDialogQuitRequested)
+		_shouldQuit = true;
 }
 
 void WageEngine::saveGame() {
