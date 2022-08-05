@@ -119,9 +119,8 @@ void cOpenALSoundChannel::SetPaused(bool pause) {
 //-----------------------------------------------------------------------
 
 void cOpenALSoundChannel::SetSpeed(float afSpeed) {
-#if 0
   		mfSpeed = afSpeed;
-
+#if 0
 		OAL_Source_SetPitch ( mlChannel, afSpeed );
 #endif
 }
@@ -170,20 +169,18 @@ void cOpenALSoundChannel::SetPositionRelative(bool abRelative) {
 //-----------------------------------------------------------------------
 
 void cOpenALSoundChannel::SetPosition(const cVector3f &avPos) {
+  	mvPosition = avPos;
 #if 0
-  		mvPosition = avPos;
-
-		OAL_Source_SetAttributes ( mlChannel, mvPosition.v, mvVelocity.v );
+	OAL_Source_SetAttributes ( mlChannel, mvPosition.v, mvVelocity.v );
 #endif
 }
 
 //-----------------------------------------------------------------------
 
 void cOpenALSoundChannel::SetVelocity(const cVector3f &avVel) {
+  	mvVelocity = avVel;
 #if 0
-  		mvVelocity = avVel;
-
-		OAL_Source_SetAttributes ( mlChannel, mvPosition.v, mvVelocity.v );
+	OAL_Source_SetAttributes ( mlChannel, mvPosition.v, mvVelocity.v );
 #endif
 }
 
