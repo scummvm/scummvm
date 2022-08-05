@@ -60,7 +60,7 @@
 struct ADGameDescription;
 
 namespace Common {
-class Event;
+struct Event;
 }
 
 namespace Graphics {
