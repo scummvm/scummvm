@@ -72,7 +72,8 @@ Design::Design(Common::SeekableReadStream *data) {
 	data->read(_data, _len);
 
 	_surface = NULL;
-	_bounds = NULL;
+	_bounds = new Common::Rect();
+	_maskImage = nullptr;
 
 	_boundsCalculationMode = false;
 }
@@ -82,6 +83,8 @@ Design::~Design() {
 	if (_surface)
 		_surface->free();
 	delete _surface;
+	delete _bounds;
+	delete _maskImage;
 }
 
 void Design::paint(Graphics::ManagedSurface *surface, Graphics::MacPatterns &patterns, int x, int y) {
@@ -98,7 +101,7 @@ void Design::paint(Graphics::ManagedSurface *surface, Graphics::MacPatterns &pat
 		_bounds->debugPrint(4, "Calculated bounds:");
 
 		_surface = new Graphics::ManagedSurface;
-		_surface->create(_bounds->width(), _bounds->height(), Graphics::PixelFormat::createFormatCLUT8());
+		_surface->create(_bounds->width() + 1, _bounds->height(), Graphics::PixelFormat::createFormatCLUT8());
 
 		_surface->clear(kColorGreen);
 
@@ -188,25 +191,13 @@ void Design::render(Graphics::MacPatterns &patterns) {
 bool Design::isInBounds(int x, int y) {
 	if (_surface == NULL)
 		error("Surface is null");
-	if (_len == 0)
-		return true;
-
-	Common::MemoryReadStream in(_data, _len);
-	in.skip(3);
-	int type = in.readByte();
-
-	if (type == 24)
-		in.skip(2);
-	
-	int16 y1 = in.readSint16BE();
-	int16 x1 = in.readSint16BE();
-	int16 y2 = in.readSint16BE() - 1;
-	int16 x2 = in.readSint16BE() - 1;
-
-	if (x >= x1 && x < x2 && y >= y1 && y < y2)
-		return true;
-	else
+	if (_maskImage == nullptr)
 		return false;
+	if (x > _maskImage->w || y > _maskImage->h)
+		return false;
+
+	byte pixel = ((byte *)_maskImage->getBasePtr(x, y))[0];
+	return pixel != kColorGreen;
 }
 
 void Design::adjustBounds(int16 x, int16 y) {
@@ -340,6 +331,21 @@ void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 	if (y1 > y2)
 		SWAP(y1, y2);
 
+	if (_boundsCalculationMode) {
+		_bounds->top = MIN(y1, _bounds->top);
+		_bounds->left = MIN(x1, _bounds->left);
+		_bounds->right = MAX(x2, _bounds->right);
+		_bounds->bottom = MAX(y2, _bounds->bottom);
+	}
+
+	if (_surface) {
+		if (!_maskImage) {
+			_maskImage = new Graphics::ManagedSurface(_surface->w, _surface->h);
+			_maskImage->clear(kColorGreen);
+		}
+		_maskImage->fillRect(Common::Rect(x1, y1, x2, y2), kColorBlack);
+	}
+
 	Common::Rect r(x1, y1, x2, y2);
 	PlotData pd(surface, &patterns, fillType, 1, this);
 
@@ -377,6 +383,14 @@ void Design::drawRoundRect(Graphics::ManagedSurface *surface, Common::ReadStream
 	if (y1 > y2)
 		SWAP(y1, y2);
 
+	if (_surface) {
+		if (!_maskImage) {
+			_maskImage = new Graphics::ManagedSurface(_surface->w, _surface->h);
+			_maskImage->clear(kColorGreen);
+		}
+		_maskImage->fillRect(Common::Rect(x1, y1, x2, y2), kColorBlack);
+	}
+
 	if (borderThickness > 1) {
 		x1 += borderThickness / 2;
 		y1 += borderThickness / 2;
@@ -411,6 +425,14 @@ void Design::drawPolygon(Graphics::ManagedSurface *surface, Common::ReadStream &
 	int16 by2 = in.readSint16BE();
 	int16 bx2 = in.readSint16BE();
 	Common::Rect bbox(bx1, by1, bx2, by2);
+
+	if (_surface) {
+		if (!_maskImage) {
+			_maskImage = new Graphics::ManagedSurface(_surface->w, _surface->h);
+			_maskImage->clear(kColorGreen);
+		}
+		_maskImage->fillRect(Common::Rect(bx1, by1, bx2, by2), kColorBlack);
+	}
 
 	numBytes -= 8;
 
@@ -489,6 +511,14 @@ void Design::drawOval(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 	int16 x2 = in.readSint16BE();
 	PlotData pd(surface, &patterns, fillType, 1, this);
 
+	if (_surface) {
+		if (!_maskImage) {
+			_maskImage = new Graphics::ManagedSurface(_surface->w, _surface->h);
+			_maskImage->clear(kColorGreen);
+		}
+		_maskImage->fillRect(Common::Rect(x1, y1, x2, y2), kColorBlack);
+	}
+
 	if (fillType <= patterns.size())
 		Graphics::drawEllipse(x1, y1, x2-1, y2-1, kColorBlack, true, drawPixel, &pd);
 
@@ -514,6 +544,14 @@ void Design::drawBitmap(Graphics::ManagedSurface *surface, Common::SeekableReadS
 	int x2 = in.readSint16BE();
 	int w = x2 - x1;
 	int h = y2 - y1;
+
+	if (_surface) {
+		if (!_maskImage) {
+			_maskImage = new Graphics::ManagedSurface(_surface->w, _surface->h);
+			_maskImage->clear(kColorGreen);
+		}
+	}
+
 	Graphics::Surface tmp;
 
 	tmp.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
@@ -586,11 +624,15 @@ void Design::drawBitmap(Graphics::ManagedSurface *surface, Common::SeekableReadS
 		for (; y < h && y1 + y < surface->h; y++) {
 			byte *src = (byte *)tmp.getBasePtr(0, y);
 			byte *dst = (byte *)surface->getBasePtr(x1, y1 + y);
+			byte *mask = (byte *)_maskImage->getBasePtr(x1, y1 + y);
 			for (x = 0; x < w; x++) {
-				if (*src != kColorGreen)
+				if (*src != kColorGreen) {
 					*dst = *src;
+					*mask = kColorBlack;
+				}
 				src++;
 				dst++;
+				mask++;
 			}
 		}
 	}
