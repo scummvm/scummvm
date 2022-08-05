@@ -90,6 +90,7 @@ private:
 	Common::Rect *_bounds;
 	Graphics::ManagedSurface *_surface;
 	bool _boundsCalculationMode;
+	Graphics::ManagedSurface *_maskImage;
 
 private:
 	void render(Graphics::MacPatterns &patterns);
