@@ -215,48 +215,6 @@ void WageEngine::appendText(const char *str) {
 	_inputText.clear();
 }
 
-void WageEngine::pollDialogEvents(Graphics::MacDialog &dialog) {
-	bool shouldQuit = false;
-	while (!shouldQuit) {
-		Common::Event event;
-
-		while (_gui->_engine->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_QUIT:
-				_gui->_engine->_shouldQuit = true;
-				shouldQuit = true;
-				break;
-			case Common::EVENT_MOUSEMOVE:
-				dialog.mouseMove(event.mouse.x, event.mouse.y);
-				break;
-			case Common::EVENT_LBUTTONDOWN:
-				dialog.mouseClick(event.mouse.x, event.mouse.y);
-				break;
-			case Common::EVENT_LBUTTONUP:
-				shouldQuit = dialog.mouseRaise(event.mouse.x, event.mouse.y);
-				break;
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_ESCAPE:
-					dialog._pressedButton = -1;
-					shouldQuit = true;
-				default:
-					break;
-				}
-				break;
-			default:
-				break;
-			}
-		}
-
-		if (dialog._needsRedraw)
-			dialog.paint();
-
-		g_system->updateScreen();
-		g_system->delayMillis(50);
-	}
-}
-
 void WageEngine::gameOver() {
 	Graphics::MacDialogButtonArray buttons;
 
@@ -269,9 +227,7 @@ void WageEngine::gameOver() {
 
 	Graphics::MacDialog gameOverDialog(&_gui->_screen, _gui->_wm,  199, &gameOverMessage, 199, &buttons, 0);
 
-	gameOverDialog.start();
-	pollDialogEvents(gameOverDialog);
-	gameOverDialog.stop();
+	gameOverDialog.run();
 
 	doClose();
 
@@ -293,9 +249,7 @@ bool WageEngine::saveDialog() {
 
 	Graphics::MacDialog save(&_gui->_screen, _gui->_wm, 291, &saveBeforeCloseMessage, 291, &buttons, 1);
 
-	save.start();
-	pollDialogEvents(save);
-	int button = save.stop();
+	int button = save.run();
 
 	if (button == 2) // Cancel
 		return false;
@@ -322,9 +276,7 @@ void WageEngine::aboutDialog() {
 
 	Graphics::MacDialog about(&_gui->_screen, _gui->_wm, 450, &aboutMessage, 400, &buttons, 0);
 
-	about.start();
-	pollDialogEvents(about);
-	about.stop();
+	about.run();
 }
 
 void WageEngine::saveGame() {

@@ -78,8 +78,7 @@ public:
 	MacDialog(ManagedSurface *screen, MacWindowManager *wm,  int width, MacText *mactext, int maxTextWidth, MacDialogButtonArray *buttons, uint defaultButton);
 	~MacDialog();
 
-	void start();
-	int stop();
+	int run();
 
 private:
 	ManagedSurface *_screen;

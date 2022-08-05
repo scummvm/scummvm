@@ -145,16 +145,54 @@ void MacDialog::drawOutline(Common::Rect &bounds, int *spec, int speclen) {
 		}
 }
 
-void MacDialog::start() {
-	_r = Common::Rect(_bbox);
+int MacDialog::run() {
+	bool shouldQuit = false;
+	Common::Rect r(_bbox);
 
 	_tempSurface.copyRectToSurface(_screen->getBasePtr(_bbox.left, _bbox.top), _screen->pitch, 0, 0, _bbox.width() + 1, _bbox.height() + 1);
 	_wm->pushCursor(kMacCursorArrow, nullptr);
-}
 
-int MacDialog::stop() {
+	while (!shouldQuit) {
+		Common::Event event;
+
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+				//_shouldQuit = true;
+				shouldQuit = true;
+				break;
+			case Common::EVENT_MOUSEMOVE:
+				mouseMove(event.mouse.x, event.mouse.y);
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				mouseClick(event.mouse.x, event.mouse.y);
+				break;
+			case Common::EVENT_LBUTTONUP:
+				shouldQuit = mouseRaise(event.mouse.x, event.mouse.y);
+				break;
+			case Common::EVENT_KEYDOWN:
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_ESCAPE:
+					_pressedButton = -1;
+					shouldQuit = true;
+				default:
+					break;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+
+		if (_needsRedraw)
+			paint();
+
+		g_system->updateScreen();
+		g_system->delayMillis(50);
+	}
+
 	_screen->copyRectToSurface(_tempSurface.getBasePtr(0, 0), _tempSurface.pitch, _bbox.left, _bbox.top, _bbox.width() + 1, _bbox.height() + 1);
-	g_system->copyRectToScreen(_screen->getBasePtr(_r.left, _r.top), _screen->pitch, _r.left, _r.top, _r.width() + 1, _r.height() + 1);
+	g_system->copyRectToScreen(_screen->getBasePtr(r.left, r.top), _screen->pitch, r.left, r.top, r.width() + 1, r.height() + 1);
 
 	_wm->popCursor();
 
