@@ -144,6 +144,7 @@ void DestoryRevRenderDevice() {
 #define TEX 0
 #define PAL 1
 TextureHandle *texHans[MAX_NUM_TEX_HANS];
+uint32 texTransparent[MAX_NUM_TEX_HANS];
 uint32 texHanHashs[MAX_NUM_TEX_HANS][2];
 uint32 texHanBaseHashs[MAX_NUM_TEX_HANS];
 int32 numTexHans = 0;
@@ -156,6 +157,7 @@ void ClearTextures() {
 		texHanHashs[i][TEX] = 0; // no hash so don't think we have this texture
 		texHanHashs[i][PAL] = 0; // no hash so don't think we have this texture
 		texHanBaseHashs[i] = 0;  // ditto
+		texTransparent[i] = 0;
 
 		UnregisterTexture(texHans[i]);
 	}
@@ -168,42 +170,71 @@ void ClearTextures() {
 // open a new texture, add it to position numTexHans of texHans list...
 void OpenTexture(const char *tex_name, uint32 tex_hash, const char *pal_name, uint32 pal_hash, const char *base, uint32 base_hash) {
 	// Load the texture
-	revtex_API *rTexAPI = (revtex_API *)rs_anims->Res_open(tex_name, tex_hash, base, base_hash);
+	revtex_API_header *rTexAPIHeader = (revtex_API_header *)rs_anims->Res_open(tex_name, tex_hash, base, base_hash);
 
 	// Check the texture file is correct ID & schema
-	if (READ_LE_UINT32((uint32 *)rTexAPI->id) != (*(uint32 *)const_cast<char *>(REVTEX_API_ID)))
-		Fatal_error("Invalid revtex_API id file %s API %s in file %s", rTexAPI->id, REVTEX_API_ID, tex_name);
+	if (READ_LE_UINT32((uint32 *)rTexAPIHeader->id) != (*(uint32 *)const_cast<char *>(REVTEX_API_ID)))
+		Fatal_error("Invalid revtex_API id file %s API %s in file %s", rTexAPIHeader->id, REVTEX_API_ID, tex_name);
 
-	if (FROM_LE_32(rTexAPI->schema) != REVTEX_API_SCHEMA)
-		Fatal_error("Invalid revtex_API file schema file %d API %d in file %s", FROM_LE_32(rTexAPI->schema), REVTEX_API_SCHEMA, tex_name);
+	if (FROM_LE_32(rTexAPIHeader->schema) != REVTEX_API_SCHEMA_ICB && FROM_LE_32(rTexAPIHeader->schema) != REVTEX_API_SCHEMA_ELDORADO)
+		Fatal_error("Invalid revtex_API file schema file %d in file %s", FROM_LE_32(rTexAPIHeader->schema), tex_name);
 
 	// Load the palette (it might be the same file !)
-	revtex_API *rPalAPI = (revtex_API *)rs_anims->Res_open(pal_name, pal_hash, base, base_hash);
+	revtex_API_header *rPalAPIHeader = (revtex_API_header *)rs_anims->Res_open(pal_name, pal_hash, base, base_hash);
 
 	// Is the palette different ?
-	if (rPalAPI != rTexAPI) {
+	if (rPalAPIHeader != rTexAPIHeader) {
 		// It's different !
-		if ((READ_LE_UINT32((uint32 *)rPalAPI->id)) != (*(uint32 *)const_cast<char *>(REVTEX_API_ID)))
-			Fatal_error("Invalid revtex_API id file %s API %s in file %s", rTexAPI->id, REVTEX_API_ID, pal_name);
+		if ((READ_LE_UINT32((uint32 *)rPalAPIHeader->id)) != (*(uint32 *)const_cast<char *>(REVTEX_API_ID)))
+			Fatal_error("Invalid revtex_API id file %s API %s in file %s", rPalAPIHeader->id, REVTEX_API_ID, pal_name);
 
-		if (FROM_LE_32(rPalAPI->schema) != REVTEX_API_SCHEMA)
-			Fatal_error("Invalid revtex_API file schema file %d API %d in file %s", FROM_LE_32(rTexAPI->schema), REVTEX_API_SCHEMA, pal_name);
+		if (FROM_LE_32(rPalAPIHeader->schema) != REVTEX_API_SCHEMA_ICB && FROM_LE_32(rPalAPIHeader->schema) != REVTEX_API_SCHEMA_ELDORADO)
+			Fatal_error("Invalid revtex_API file schema file %d in file %s", FROM_LE_32(rPalAPIHeader->schema), pal_name);
 
-		// Copy the palette into the texture
-		memcpy(rTexAPI->palette, rPalAPI->palette, 256 * sizeof(uint32));
+		if (FROM_LE_32(rTexAPIHeader->schema) != FROM_LE_32(rPalAPIHeader->schema))
+			Fatal_error("revtex_API file schema mismatch %d != %d", FROM_LE_32(rTexAPIHeader->schema), FROM_LE_32(rPalAPIHeader->schema));
+
+		if (FROM_LE_32(rTexAPIHeader->schema) == REVTEX_API_SCHEMA_ICB) {
+			revtex_API_v1 *rTexAPI = (revtex_API_v1 *)rTexAPIHeader;
+			revtex_API_v1 *rPalAPI = (revtex_API_v1 *)rPalAPIHeader;
+
+			// Copy the palette into the texture
+			memcpy(rTexAPI->palette, rPalAPI->palette, 256 * sizeof(uint32));
+		} else if (FROM_LE_32(rTexAPIHeader->schema) == REVTEX_API_SCHEMA_ELDORADO) {
+			revtex_API_v2 *rTexAPI = (revtex_API_v2 *)rTexAPIHeader;
+			revtex_API_v2 *rPalAPI = (revtex_API_v2 *)rPalAPIHeader;
+
+			// Copy the palette into the texture
+			memcpy(rTexAPI->palette, rPalAPI->palette, 256 * sizeof(uint32));
+		}
 	}
 
 	// Set up RevTexture structure
 	RevTexture revTex;
-	revTex.palette = rTexAPI->palette;
-	revTex.width = FROM_LE_32(rTexAPI->width);
-	revTex.height = FROM_LE_32(rTexAPI->height);
-	for (int32 i = 0; i < 9; i++) {
-		revTex.level[i] = (uint8 *)rTexAPI + FROM_LE_32(rTexAPI->levelOffset[i]);
+	uint32 transparent = 0;
+
+	if (FROM_LE_32(rTexAPIHeader->schema) == REVTEX_API_SCHEMA_ICB) {
+		revtex_API_v1 *rTexAPI = (revtex_API_v1 *)rTexAPIHeader;
+		revTex.palette = rTexAPI->palette;
+		revTex.width = FROM_LE_32(rTexAPI->width);
+		revTex.height = FROM_LE_32(rTexAPI->height);
+		for (int32 i = 0; i < 9; i++) {
+			revTex.level[i] = (uint8 *)rTexAPI + FROM_LE_32(rTexAPI->levelOffset[i]);
+		}
+	} else if (FROM_LE_32(rTexAPIHeader->schema) == REVTEX_API_SCHEMA_ELDORADO) {
+		revtex_API_v2 *rTexAPI = (revtex_API_v2 *)rTexAPIHeader;
+		revTex.palette = rTexAPI->palette;
+		revTex.width = FROM_LE_32(rTexAPI->width);
+		revTex.height = FROM_LE_32(rTexAPI->height);
+		for (int32 i = 0; i < 9; i++) {
+			revTex.level[i] = (uint8 *)rTexAPI + FROM_LE_32(rTexAPI->levelOffset[i]);
+		}
+		transparent = rTexAPI->transparent;
 	}
 
 	// Register the texture
 	texHans[numTexHans] = RegisterTexture(&revTex);
+	texTransparent[numTexHans] = transparent;
 	texHanHashs[numTexHans][TEX] = tex_hash;
 	texHanHashs[numTexHans][PAL] = pal_hash;
 	texHanBaseHashs[numTexHans] = base_hash;
