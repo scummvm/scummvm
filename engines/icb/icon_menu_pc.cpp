@@ -453,7 +453,7 @@ void _icon_menu::SetTransparencyColourKey() {
 
 void _icon_menu::SetupAdding(const char *pcIconName, uint32 &nSurfaceID) {
 	uint32 iconSizeY = ICON_Y_SIZE;
-	if (g_icb->getGameType() == GType_ELDORADO);
+	if (g_icb->getGameType() == GType_ELDORADO)
 		iconSizeY = ICON_Y_SIZE_ED;
 
 	// Get the full pathname for the ammo clips icon.
@@ -618,7 +618,7 @@ void _icon_menu::DrawArmedMenu(const int32 nBullets, const int32 maxBullets, con
 
 void _icon_menu::SetUpOffScreenArrows() {
 	uint32 iconSizeY = ICON_Y_SIZE;
-	if (g_icb->getGameType() == GType_ELDORADO);
+	if (g_icb->getGameType() == GType_ELDORADO)
 		iconSizeY = ICON_Y_SIZE_ED;
 
 	{
