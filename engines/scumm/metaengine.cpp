@@ -237,6 +237,7 @@ bool ScummEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime) ||
 		(f == kSupportsSubtitleOptions) ||
+		(f == kSupportsHelp) ||
 		(
 			f == kSupportsChangingOptionsDuringRuntime &&
 			Common::String(_game.guioptions).contains(GUIO_AUDIO_OVERRIDE)
