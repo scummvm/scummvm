@@ -50,10 +50,10 @@
 #include "common/str.h"
 #include "common/rect.h"
 
-#include "graphics/managed_surface.h"
-#include "graphics/font.h"
-
 namespace Graphics {
+
+class Font;
+class ManagedSurface;
 
 class MacText;
 class MacWindowManager;
@@ -83,7 +83,7 @@ public:
 private:
 	ManagedSurface *_screen;
 	MacWindowManager *_wm;
-	ManagedSurface _tempSurface;
+	ManagedSurface *_tempSurface;
 	Common::Rect _bbox;
 	Common::Rect _r;
 	MacText *_mactext;
