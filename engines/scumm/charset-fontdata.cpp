@@ -405,6 +405,14 @@ static const byte russianCharsetDataV2[] = {
 // These replacement character tables have been created using the
 // make-charset-fontdata tool.
 
+// English v1 Zak font with inverted apostrophe.
+// The original interpreter apparently manipulates the character on
+// the fly and kind of mirrors it; we instead opt for a substitution.
+static const byte englishCharsetDataV1[] = {
+	39,
+	2,
+};
+
 // German Zak font.
 static const byte germanCharsetDataV2[] = {
 	36, 0,
@@ -696,7 +704,13 @@ CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 		replacementData = hebrewCharsetDataV2;
 		break;
 	default:
-		_fontPtr = englishCharsetDataV2;
+		if (_vm->_game.version == 1 && !(_vm->_game.features & GF_DEMO)) {
+			replacementMap = englishCharsetDataV1;
+			replacementChars = sizeof(englishCharsetDataV1) / 2;
+			replacementData = specialCharsetData;
+		} else {
+			_fontPtr = englishCharsetDataV2;
+		}
 		break;
 	}
 
