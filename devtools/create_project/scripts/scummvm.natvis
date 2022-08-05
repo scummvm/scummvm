@@ -147,4 +147,9 @@
       <Item Condition="_tracker != 0" Name="[refCount]">_tracker->_strongRefCount</Item>
     </Expand>
   </Type>
+
+	<Type Name="Graphics::MacMenuItem">
+		<DisplayString Condition="unicode">{unicodeText}</DisplayString>
+		<DisplayString Condition="!unicode">{text}</DisplayString>
+	</Type>
 </AutoVisualizer>
