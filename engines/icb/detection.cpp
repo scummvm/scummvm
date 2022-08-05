@@ -50,6 +50,21 @@ static const IcbGameDescription gameDescriptions[] = {
 	{
 		{
 			// In Cold Blood
+			// English 3 CD version
+			"icb",
+			"",
+			AD_ENTRY2s("g/speech.clu", "ced60009bdffa9a1055863bf10d2e79e", 7683040, "g/g", "af8281173d34b64088e173d791d1c27f", 63000),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		GType_ICB
+	},
+
+	{
+		{
+			// In Cold Blood
 			// English Demo
 			"icb",
 			"Demo",
