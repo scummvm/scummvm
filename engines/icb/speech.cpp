@@ -97,10 +97,10 @@ mcodeFunctionReturnCodes _game_session::fn_get_speech_status(int32 &result, int3
 
 		if ((g_oIconMenu->IsActive()) || (player.player_status == REMORA))
 			result = 1;
-
-		if ((result) && (cur_id == player.Fetch_player_id()))
-			Tdebug("speech_check.txt", "get status");
 	}
+
+	if ((result) && (cur_id == player.Fetch_player_id()))
+		Tdebug("speech_check.txt", "get status");
 
 	return IR_CONT;
 }
@@ -126,31 +126,33 @@ mcodeFunctionReturnCodes _game_session::fn_request_speech(int32 &result, int32 *
 	if (g_icb->getGameType() == GType_ICB) {
 		if (player.player_status == REMORA)
 			return IR_REPEAT;
+	} else {
+		// TODO: enable later
+		#if 0
+		if (cur_id == player.Fetch_player_id() && (player.player_status == MAP)) {
+			g_oMap.CloseDownMap();
+		}
+		#endif
+	}
 
-		if ((cur_id == player.Fetch_player_id()) && (g_oIconMenu->IsActive()))
-			g_oIconMenu->CloseDownIconMenu();
+	if ((cur_id == player.Fetch_player_id()) && (g_oIconMenu->IsActive()))
+		g_oIconMenu->CloseDownIconMenu();
 
+	if (g_icb->getGameType() == GType_ICB) {
 		if ((g_oIconMenu->IsActive()) || (player.player_status == REMORA))
 			return IR_REPEAT;
-	} else {
-		//TODO:
-#if 0
-		if ((cur_id == player.Fetch_player_id()) && (player.player_status==MAP))
-			g_oMap.CloseDownMap();
-
-		if ((cur_id == player.Fetch_player_id()) && (g_oIconMenu.IsActive()))
-			g_oIconMenu.CloseDownIconMenu();
-
-		// if object is a mega, check what anim it has and turn its ambient anims off or on depending...
-		if (L->mega) {
-			if (L->cur_anim_type == __STAND) {
-				M->idleAnimsOn = TRUE8;
-				M->idlePhase = NEEDS_INIT;
-			} else
-				M->idleAnimsOn = FALSE8;
-		}
-#endif
 	}
+
+	// TODO: enable later
+	#if 0
+	if (g_icb->getGameType() == GType_ELDORADO && L->mega) {
+		if (L->cur_anim_type == __STAND) {
+			M->idleAnimsOn = TRUE8;
+			M->idlePhase = NEEDS_INIT;
+		} else
+			M->idleAnimsOn = FALSE8;
+	}
+	#endif
 
 	// not started yet
 	S.state = __PENDING;
