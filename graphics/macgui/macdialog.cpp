@@ -47,6 +47,8 @@
 #include "common/events.h"
 #include "common/system.h"
 
+#include "graphics/font.h"
+#include "graphics/managed_surface.h"
 #include "graphics/primitives.h"
 
 #include "graphics/macgui/mactext.h"
@@ -67,7 +69,8 @@ MacDialog::MacDialog(ManagedSurface *screen, MacWindowManager *wm, int width, Ma
 
 	_font = getDialogFont();
 
-	_tempSurface.create(width + 1, height + 1, Graphics::PixelFormat::createFormatCLUT8());
+	_tempSurface = new ManagedSurface();
+	_tempSurface->create(width + 1, height + 1, Graphics::PixelFormat::createFormatCLUT8());
 
 	_bbox.left = (_screen->w - width) / 2;
 	_bbox.top = (_screen->h - height) / 2;
@@ -88,6 +91,7 @@ MacDialog::MacDialog(ManagedSurface *screen, MacWindowManager *wm, int width, Ma
 MacDialog::~MacDialog() {
 	for (uint i = 0; i < _buttons->size(); i++)
 		delete _buttons->operator[](i);
+	delete _tempSurface;
 }
 
 const Graphics::Font *MacDialog::getDialogFont() {
@@ -95,7 +99,7 @@ const Graphics::Font *MacDialog::getDialogFont() {
 }
 
 void MacDialog::paint() {
-	MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorBlack, false);	
+	MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorBlack, false);
 	drawFilledRect1(_bbox, kColorWhite, _wm->getDrawPixel(), &pd);
 	_mactext->drawToPoint(_screen, Common::Point(_bbox.left + (_bbox.width() - _maxTextWidth)/2, _bbox.top + 16));
 	static int boxOutline[] = {1, 0, 0, 1, 1};
@@ -149,7 +153,7 @@ int MacDialog::run() {
 	bool shouldQuit = false;
 	Common::Rect r(_bbox);
 
-	_tempSurface.copyRectToSurface(_screen->getBasePtr(_bbox.left, _bbox.top), _screen->pitch, 0, 0, _bbox.width() + 1, _bbox.height() + 1);
+	_tempSurface->copyRectToSurface(_screen->getBasePtr(_bbox.left, _bbox.top), _screen->pitch, 0, 0, _bbox.width() + 1, _bbox.height() + 1);
 	_wm->pushCursor(kMacCursorArrow, nullptr);
 
 	while (!shouldQuit) {
@@ -191,7 +195,7 @@ int MacDialog::run() {
 		g_system->delayMillis(50);
 	}
 
-	_screen->copyRectToSurface(_tempSurface.getBasePtr(0, 0), _tempSurface.pitch, _bbox.left, _bbox.top, _bbox.width() + 1, _bbox.height() + 1);
+	_screen->copyRectToSurface(_tempSurface->getBasePtr(0, 0), _tempSurface->pitch, _bbox.left, _bbox.top, _bbox.width() + 1, _bbox.height() + 1);
 	g_system->copyRectToScreen(_screen->getBasePtr(r.left, r.top), _screen->pitch, r.left, r.top, r.width() + 1, r.height() + 1);
 
 	_wm->popCursor();
