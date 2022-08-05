@@ -917,76 +917,55 @@ void MacText::render(int from, int to, int shadow) {
 	int w = MIN(_maxWidth, _textMaxWidth);
 	ManagedSurface *surface = shadow ? _shadowSurface : _surface;
 
+	int myFrom = from, myTo = to + 1, delta = 1;
+
 	if (_wm->_language == Common::HE_ISR) {
-		for (int i = to; i >= from; i--) {
-			int xOffset = getAlignOffset(i);
-			xOffset++;
+		myFrom = to;
+		myTo = from - 1;
+		delta = -1;
+	}
 
-			int maxAscentForRow = 0;
-			for (int j = _textLines[i].chunks.size() - 1; j >= 0; j--) {
-				if (_textLines[i].chunks[j].font->getFontAscent() > maxAscentForRow)
-					maxAscentForRow = _textLines[i].chunks[j].font->getFontAscent();
-			}
+	for (int i = myFrom; i != myTo; i += delta) {
+		int xOffset = getAlignOffset(i);
+		xOffset++;
 
-			// TODO: _textMaxWidth, when -1, was not rendering ANY text.
-			for (int j = _textLines[i].chunks.size() - 1; j >= 0; j--) {
-				debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d, fgcolor: %d bgcolor: %d, font: %p",
-					  i, j, _textLines[i].height, xOffset, _textLines[i].y, _textLines[i].chunks[j].text.encode().c_str(),
-					  _textLines[i].chunks[j].fontId, _surface->w, _surface->h, _textLines[i].chunks[j].fgcolor, _bgcolor,
-					  (const void *)_textLines[i].chunks[j].getFont());
-
-				if (_textLines[i].chunks[j].text.empty())
-					continue;
-
-				int yOffset = 0;
-				if (_textLines[i].chunks[j].font->getFontAscent() < maxAscentForRow) {
-					yOffset = maxAscentForRow - _textLines[i].chunks[j].font->getFontAscent();
-				}
-
-				if (_textLines[i].chunks[j].plainByteMode()) {
-					Common::String str = _textLines[i].chunks[j].getEncodedText();
-					_textLines[i].chunks[j].getFont()->drawString(surface, str, xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor, Graphics::kTextAlignLeft, 0, true);
-					xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(str);
-				} else {
-					_textLines[i].chunks[j].getFont()->drawString(surface, convertBiDiU32String(_textLines[i].chunks[j].text, Common::BIDI_PAR_RTL), xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor, Graphics::kTextAlignLeft, 0, true);
-					xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(_textLines[i].chunks[j].text);
-				}
-			}
+		int start = 0, end = _textLines[i].chunks.size();
+		if (_wm->_language == Common::HE_ISR) {
+			start = _textLines[i].chunks.size() - 1;
+			end = -1;
 		}
-	} else {
-		for (int i = from; i <= to; i++) {
-			int xOffset = getAlignOffset(i);
-			xOffset++;
 
-			int maxAscentForRow = 0;
-			for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
-				if (_textLines[i].chunks[j].font->getFontAscent() > maxAscentForRow)
-					maxAscentForRow = _textLines[i].chunks[j].font->getFontAscent();
+		int maxAscentForRow = 0;
+		for (int j = start; j != end; j += delta) {
+			if (_textLines[i].chunks[j].font->getFontAscent() > maxAscentForRow)
+				maxAscentForRow = _textLines[i].chunks[j].font->getFontAscent();
+		}
+
+		// TODO: _textMaxWidth, when -1, was not rendering ANY text.
+		for (int j = start; j != end; j += delta) {
+			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d, fgcolor: %d bgcolor: %d, font: %p",
+				  i, j, _textLines[i].height, xOffset, _textLines[i].y, _textLines[i].chunks[j].text.encode().c_str(),
+				  _textLines[i].chunks[j].fontId, _surface->w, _surface->h, _textLines[i].chunks[j].fgcolor, _bgcolor,
+				  (const void *)_textLines[i].chunks[j].getFont());
+
+			if (_textLines[i].chunks[j].text.empty())
+				continue;
+
+			int yOffset = 0;
+			if (_textLines[i].chunks[j].font->getFontAscent() < maxAscentForRow) {
+				yOffset = maxAscentForRow - _textLines[i].chunks[j].font->getFontAscent();
 			}
 
-			// TODO: _textMaxWidth, when -1, was not rendering ANY text.
-			for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
-				debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d, fgcolor: %d bgcolor: %d, font: %p",
-					  i, j, _textLines[i].height, xOffset, _textLines[i].y, _textLines[i].chunks[j].text.encode().c_str(),
-					  _textLines[i].chunks[j].fontId, _surface->w, _surface->h, _textLines[i].chunks[j].fgcolor, _bgcolor,
-					  (const void *)_textLines[i].chunks[j].getFont());
-
-				if (_textLines[i].chunks[j].text.empty())
-					continue;
-
-				int yOffset = 0;
-				if (_textLines[i].chunks[j].font->getFontAscent() < maxAscentForRow) {
-					yOffset = maxAscentForRow - _textLines[i].chunks[j].font->getFontAscent();
-				}
-
-				if (_textLines[i].chunks[j].plainByteMode()) {
-					Common::String str = _textLines[i].chunks[j].getEncodedText();
-					_textLines[i].chunks[j].getFont()->drawString(surface, str, xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor, Graphics::kTextAlignLeft, 0, true);
-					xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(str);
-				} else {
+			if (_textLines[i].chunks[j].plainByteMode()) {
+				Common::String str = _textLines[i].chunks[j].getEncodedText();
+				_textLines[i].chunks[j].getFont()->drawString(surface, str, xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor, Graphics::kTextAlignLeft, 0, true);
+				xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(str);
+			} else {
+				if (_wm->_language == Common::HE_ISR)
+					_textLines[i].chunks[j].getFont()->drawString(surface, convertBiDiU32String(_textLines[i].chunks[j].text, Common::BIDI_PAR_RTL), xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor, Graphics::kTextAlignLeft, 0, true);
+				else
 					_textLines[i].chunks[j].getFont()->drawString(surface, convertBiDiU32String(_textLines[i].chunks[j].text), xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor, Graphics::kTextAlignLeft, 0, true);
-					xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(_textLines[i].chunks[j].text);
-				}
+				xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(_textLines[i].chunks[j].text);
 			}
 		}
 	}
