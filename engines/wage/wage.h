@@ -209,7 +209,6 @@ public:
 	void playSound(Common::String soundName);
 	void setMenu(Common::String soundName);
 	void appendText(const char *str);
-	void pollDialogEvents(Graphics::MacDialog &dialog);
 	void gameOver();
 	bool saveDialog();
 	void aboutDialog();
