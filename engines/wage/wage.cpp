@@ -53,7 +53,6 @@
 
 #include "engines/engine.h"
 #include "engines/util.h"
-#include "engines/advancedDetector.h"
 
 #include "graphics/macgui/macdialog.h"
 
@@ -281,10 +280,6 @@ void WageEngine::aboutDialog() {
 
 void WageEngine::saveGame() {
 	warning("STUB: saveGame()");
-}
-
-uint32 WageEngine::getFeatures() {
-	return _gameDescription->flags;
 }
 
 void WageEngine::performInitialSetup() {

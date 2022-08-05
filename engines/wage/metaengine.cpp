@@ -29,6 +29,10 @@
 #include "wage/wage.h"
 
 namespace Wage {
+	
+uint32 WageEngine::getFeatures() {
+	return _gameDescription->flags;
+}
 
 const char *WageEngine::getGameFile() const {
 	return _gameDescription->filesDescriptions[0].fileName;
