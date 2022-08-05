@@ -100,6 +100,10 @@ WageEngine::~WageEngine() {
 	delete _rnd;
 }
 
+bool WageEngine::pollEvent(Common::Event &event) {
+	return _eventMan->pollEvent(event);
+} 
+
 Common::Error WageEngine::run() {
 	debug("WageEngine::init");
 

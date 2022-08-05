@@ -54,11 +54,14 @@
 #include "common/rect.h"
 #include "common/macresman.h"
 #include "common/random.h"
-#include "common/events.h"
 
 #include "wage/debugger.h"
 
 struct ADGameDescription;
+
+namespace Common {
+class Event;
+}
 
 namespace Graphics {
 class MacDialog;
@@ -137,7 +140,7 @@ public:
 	void regen();
 
 	const char *getTargetName() { return _targetName.c_str(); }
-	bool pollEvent(Common::Event &event) { return _eventMan->pollEvent(event); } 
+	bool pollEvent(Common::Event &event);
 
 private:
 	bool loadWorld(Common::MacResManager *resMan);
