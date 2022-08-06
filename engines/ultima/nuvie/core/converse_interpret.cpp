@@ -201,7 +201,7 @@ void ConverseInterpret::enter(converse_value c) {
 	ef->break_c = 0x00;
 	ef->start_c = c;
 	if (!b_frame)
-		b_frame = new stack<struct convi_frame_s *>;
+		b_frame = new Common::Stack<struct convi_frame_s *>;
 	b_frame->push(ef);
 #ifdef CONVERSE_DEBUG
 	DEBUG(1, LEVEL_DEBUGGING, "Converse: ...enter %02x...\n", ef->start_c);
@@ -363,7 +363,7 @@ string ConverseInterpret::get_formatted_text(const char *c_str) {
  * which must have been evaluated already.)
  */
 void ConverseInterpret::do_ctrl() {
-	stack<converse_typed_value> st;
+	Common::Stack<converse_typed_value> st;
 #ifdef CONVERSE_DEBUG
 	DEBUG(1, LEVEL_DEBUGGING, "Converse: %04x INSTR:", in_start);
 	for (uint32 v = 0; v < val_count(); v++)
@@ -448,7 +448,7 @@ converse_value ConverseInterpret::add_rstr(const char *s) {
 
 /* Returns and removes top item from a value stack.
  */
-converse_value ConverseInterpret::pop_arg(stack<converse_typed_value> &vs) {
+converse_value ConverseInterpret::pop_arg(Common::Stack<converse_typed_value> &vs) {
 	converse_value ret = 0;
 	if (!vs.empty()) {
 		converse_typed_value val = vs.top();
@@ -458,7 +458,7 @@ converse_value ConverseInterpret::pop_arg(stack<converse_typed_value> &vs) {
 	return (ret);
 }
 
-converse_typed_value ConverseInterpret::pop_typed_arg(stack<converse_typed_value> &vs) {
+converse_typed_value ConverseInterpret::pop_typed_arg(Common::Stack<converse_typed_value> &vs) {
 	converse_typed_value ret = {0, 0};
 	if (!vs.empty()) {
 		ret = vs.top();
@@ -468,7 +468,7 @@ converse_typed_value ConverseInterpret::pop_typed_arg(stack<converse_typed_value
 }
 
 #if 0
-bool MDTalkInterpret::op(stack<converse_value> &i) {
+bool MDTalkInterpret::op(Common::Stack<converse_value> &i) {
 	bool success = true;
 	converse_value v[4], in; // args
 
@@ -481,7 +481,7 @@ bool MDTalkInterpret::op(stack<converse_value> &i) {
 }
 #endif
 
-bool ConverseInterpret::op_create_new(stack<converse_typed_value> &i) {
+bool ConverseInterpret::op_create_new(Common::Stack<converse_typed_value> &i) {
 	converse_value v[4];
 	Actor *cnpc = NULL;
 
@@ -502,7 +502,7 @@ bool ConverseInterpret::op_create_new(stack<converse_typed_value> &i) {
 	return true;
 }
 
-bool WOUConverseInterpret::op_create_new(stack<converse_typed_value> &i) {
+bool WOUConverseInterpret::op_create_new(Common::Stack<converse_typed_value> &i) {
 	converse_value v[4];
 	Actor *cnpc = NULL;
 
@@ -526,7 +526,7 @@ bool WOUConverseInterpret::op_create_new(stack<converse_typed_value> &i) {
 /* Run control code with arguments/operands (arranged on a stack from
  * top to bottom.)
  */
-bool ConverseInterpret::op(stack<converse_typed_value> &i) {
+bool ConverseInterpret::op(Common::Stack<converse_typed_value> &i) {
 	bool success = true;
 	converse_value v[4] = { 0, 0, 0, 0 }; // args
 	converse_value inVal;
@@ -813,7 +813,7 @@ bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 /* The other set of codes, these operate on the input values, so call them
  * valops. Output goes back to the stack.
  */
-bool ConverseInterpret::evop(stack<converse_typed_value> &i) {
+bool ConverseInterpret::evop(Common::Stack<converse_typed_value> &i) {
 	bool success = true;
 	converse_value v[4]; // input
 	converse_typed_value inVal;
@@ -1118,7 +1118,7 @@ bool ConverseInterpret::evop(stack<converse_typed_value> &i) {
 	return (success);
 }
 
-converse_value ConverseInterpret::evop_eq(stack<converse_typed_value> &vs) {
+converse_value ConverseInterpret::evop_eq(Common::Stack<converse_typed_value> &vs) {
 	converse_typed_value operand1 = pop_typed_arg(vs);
 	converse_typed_value operand2 = pop_typed_arg(vs);
 	converse_value out = 0;
@@ -1139,7 +1139,7 @@ converse_value ConverseInterpret::evop_eq(stack<converse_typed_value> &vs) {
  * back to the input list, and replaces everything after and including `vi'.
  */
 void ConverseInterpret::eval(uint32 vi) {
-	stack<converse_typed_value> op_stk, r_stk;
+	Common::Stack<converse_typed_value> op_stk, r_stk;
 	uint32 v = vi;
 #ifdef CONVERSE_DEBUG
 	DEBUG(1, LEVEL_DEBUGGING, "Converse: EVAL");

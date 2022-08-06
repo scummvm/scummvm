@@ -2269,8 +2269,8 @@ static int nscript_u6link_gc(lua_State *L) {
 
 /* free up resources for a recursive U6Link iterator. */
 static int nscript_u6link_recursive_gc(lua_State *L) {
-	Std::stack<U6Link *> **s_stack = (Std::stack<U6Link *> **)luaL_checkudata(L, 1, "nuvie.U6LinkRecursive");
-	Std::stack<U6Link *> *s = *s_stack;
+	Common::Stack<U6Link *> **s_stack = (Common::Stack<U6Link *> **)luaL_checkudata(L, 1, "nuvie.U6LinkRecursive");
+	Common::Stack<U6Link *> *s = *s_stack;
 
 	if (s->empty() == false) {
 		for (; !s->empty(); s->pop()) {
@@ -3796,8 +3796,8 @@ int nscript_u6llist_iter(lua_State *L) {
 }
 
 int nscript_u6llist_iter_recursive(lua_State *L) {
-	Std::stack<U6Link *> **s_stack = (Std::stack<U6Link *> **)luaL_checkudata(L, 1, "nuvie.U6LinkRecursive");
-	Std::stack<U6Link *> *s = *s_stack;
+	Common::Stack<U6Link *> **s_stack = (Common::Stack<U6Link *> **)luaL_checkudata(L, 1, "nuvie.U6LinkRecursive");
+	Common::Stack<U6Link *> *s = *s_stack;
 
 	if (s->empty() || s->top() == NULL)
 		return 0;
@@ -4386,8 +4386,8 @@ int nscript_init_u6link_iter(lua_State *L, U6LList *list, bool is_recursive) {
 	if (is_recursive) {
 		lua_pushcfunction(L, nscript_u6llist_iter_recursive);
 
-		Std::stack<U6Link *> **p_stack = (Std::stack<U6Link *> **)lua_newuserdata(L, sizeof(Std::stack<U6Link *> *));
-		*p_stack = new Std::stack<U6Link *>();
+		Common::Stack<U6Link *> **p_stack = (Common::Stack<U6Link *> **)lua_newuserdata(L, sizeof(Common::Stack<U6Link *> *));
+		*p_stack = new Common::Stack<U6Link *>();
 		(*p_stack)->push(link);
 
 		luaL_getmetatable(L, "nuvie.U6LinkRecursive");

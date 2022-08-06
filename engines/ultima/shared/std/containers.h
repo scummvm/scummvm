@@ -306,10 +306,6 @@ public:
 	}
 };
 
-template<class VAL>
-class stack : public Common::Stack<VAL> {
-};
-
 /**
  * Queue ordered by a provided priority function
  * NOTE: Unlike in the C std library, we have to provde a comparitor that sorts
