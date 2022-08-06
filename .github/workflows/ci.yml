@@ -149,10 +149,12 @@ jobs:
         include:
           - platform: ubuntu-latest
             sdlConfig: sdl2-config
+            cxx: ccache g++
             aptPackages: 'libsdl2-dev libsdl2-net-dev liba52-dev libjpeg-turbo8-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libfribidi-dev libcurl4-openssl-dev libgtk-3-dev libspeechd-dev libsndio-dev libunity-dev'
           - platform: ubuntu-18.04
             sdlConfig: sdl-config
-            aptPackages: 'libsdl1.2-dev libsdl-net1.2-dev liba52-dev libjpeg-turbo8-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libfribidi-dev libcurl4-openssl-dev libgtk-3-dev libspeechd-dev libsndio-dev libunity-dev'
+            cxx: ccache g++-4.8
+            aptPackages: 'g++-4.8 libsdl1.2-dev libsdl-net1.2-dev liba52-dev libjpeg-turbo8-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libfribidi-dev libcurl4-openssl-dev libgtk-3-dev libspeechd-dev libsndio-dev libunity-dev'
     env:
       SDL_CONFIG: ${{ matrix.sdlConfig }}
     steps:
@@ -169,7 +171,7 @@ jobs:
           max-size: 1G
       - name: Call configure
         run: |
-          CXX='ccache g++' ./configure --enable-all-engines ${{ matrix.configflags }}
+          CXX='${{ matrix.cxx }}' ./configure --enable-all-engines ${{ matrix.configflags }}
       - name: Build scummvm
         run: |
           make -j2
