@@ -40,7 +40,7 @@ namespace hpl {
 class cCGProgram : public iGpuProgram {
 public:
 	cCGProgram(const tString &vertex, const tString &fragment);
-	~cCGProgram() = default;
+	~cCGProgram();
 
 	bool reload();
 	void unload();

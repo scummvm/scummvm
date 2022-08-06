@@ -64,6 +64,10 @@ cCGProgram::cCGProgram(const tString &vertex, const tString &fragment)
 	setSamplers(_shader);
 }
 
+cCGProgram::~cCGProgram() {
+	delete _shader;
+}
+
 //-----------------------------------------------------------------------
 
 bool cCGProgram::reload() {
