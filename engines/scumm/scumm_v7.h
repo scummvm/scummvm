@@ -65,23 +65,6 @@ public:
 		int32 offset;
 	};
 
-	struct InternalGUIControl {
-		int relativeCenterX;
-		int relativeCenterY;
-		int xPos;
-		int yPos;
-		int primaryFillColor;
-		int topLineColor;
-		int bottomLineColor;
-		int leftLineColor;
-		int rightLineColor;
-		int primaryLineColor;
-		int secondaryLineColor;
-		int secondaryFillColor;
-		bool centerText;
-		char *label;
-	};
-
 protected:
 	TextRenderer_v7 *_textV7;
 	Common::Rect _defaultTextClipRect;
@@ -111,18 +94,12 @@ protected:
 	int _subtitleQueuePos;
 	SubtitleText _subtitleQueue[20];
 
-	int32 _bannerColors[50]; // Colors for the original GUI
-	byte *_bannerMem = nullptr;
-	uint32 _bannerMemSize = 0;
-	InternalGUIControl _internalGUIControls[30];
-	char _emptyMsg[1] = { '\0' };
-
 public:
 	void processSubtitleQueue();
 	void addSubtitleToQueue(const byte *text, const Common::Point &pos, byte color, byte charset, bool center, bool wrap);
 	void clearSubtitleQueue();
 	void CHARSET_1() override;
-	bool isSmushActive() { return _smushActive; }
+	bool isSmushActive() override { return _smushActive; }
 	void removeBlastTexts() override;
 	void restoreBlastTextsRects();
 
@@ -165,19 +142,12 @@ protected:
 	void loadLanguageBundle() override;
 	void playSpeech(const byte *ptr);
 
-	void initBanners();
-	Common::KeyState showBannerAndPause(int bannerId, int32 waitTime, const char *msg, ...);
-	void waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked);
-	void clearBanner();
-	void setBannerColors(int bannerId, byte r, byte g, byte b);
-	int getBannerColor(int bannerId);
-	void setUpInternalGUIControl(int id, int primaryFillColor, int primaryLineColor,
-								 int topLineColor, int bottomLineColor, int leftLineColor, int rightLineColor,
-								 int secondaryLineColor, int secondaryFillColor,
-								 int anchorPointX, int anchorPointY, int x, int y, char *label, bool centerFlag);
-	void drawInternalGUIControl(int id, bool useSecondaryColor);
-	int getInternalGUIControlFromCoordinates(int x, int y);
-	void confirmExitDialog() override;
+	void queryQuit() override;
+	int getBannerColor(int bannerId) override;
+	const char *getGUIString(int stringId) override;
+	int getGUIStringHeight(const char *str) override;
+	int getGUIStringWidth(const char *str) override;
+	void drawGUIText(const char *buttonString, int textXPos, int textYPos, int textColor, bool centerFlag) override;
 
 	void setDefaultCursor() override;
 

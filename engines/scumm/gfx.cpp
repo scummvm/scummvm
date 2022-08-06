@@ -1425,7 +1425,7 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	if ((vs = findVirtScreen(y)) == nullptr)
 		return;
 
-	if (_game.version == 8) {
+	if (_game.version == 8 || _game.id == GID_DIG) {
 		width = _screenWidth + 8;
 		height = _screenHeight;
 		int effX2 = x2;

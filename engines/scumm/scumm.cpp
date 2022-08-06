@@ -848,6 +848,10 @@ Common::Error ScummEngine::init() {
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
+	ConfMan.registerDefault("original_gui", true);
+	if (ConfMan.hasKey("original_gui", _targetName)) {
+		_useOriginalGUI = ConfMan.getBool("original_gui");
+	}
 	_enableEnhancements = ConfMan.getBool("enable_enhancements");
 	_enableAudioOverride = ConfMan.getBool("audio_override");
 
@@ -1388,11 +1392,6 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::setupScumm(const Common::String &macResourceFile) {
-
-	ConfMan.registerDefault("original_gui", true);
-	if (ConfMan.hasKey("original_gui", _targetName)) {
-		_useOriginalGUI = ConfMan.getBool("original_gui");
-	}
 
 	// The object line toggle is always synchronized from the main game to
 	// our internal Game Options; at startup we do the opposite, since an user
@@ -2090,7 +2089,7 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 }
 
 void ScummEngine::syncSoundSettings() {
-	if (isUsingOriginalGUI() && _game.version == 8) {
+	if (isUsingOriginalGUI() && _game.version > 6) {
 		if (ConfMan.hasKey("original_gui_text_status", _targetName)) {
 			_voiceMode = ConfMan.getInt("original_gui_text_status");
 		} else if (ConfMan.hasKey("subtitles", _targetName) && ConfMan.hasKey("speech_mute", _targetName)){
@@ -3109,7 +3108,7 @@ void ScummEngine::restart() {
 }
 
 bool ScummEngine::isUsingOriginalGUI() {
-	if (_game.version == 8)
+	if (_game.version > 6)
 		return _useOriginalGUI;
 
 	return false;

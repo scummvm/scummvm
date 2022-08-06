@@ -398,8 +398,6 @@ void ScummEngine::processInput() {
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 	if (isUsingOriginalGUI()) {
-		// Set up an InfoDialog object for fetching the internal strings.
-		InfoDialog d(this, 0);
 		char tempStr[64];
 
 		if (lastKeyHit.keycode == Common::KEYCODE_INVALID)
@@ -428,7 +426,7 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 			_cursor.state = 0;
 			CursorMan.showMouse(_cursor.state > 0);
 			// "Game Paused.  Press SPACE to Continue."
-			showBannerAndPause(0, -1, d.getPlainEngineString(4));
+			showBannerAndPause(0, -1, getGUIString(gsPause));
 			_cursor.state = oldCursorState;
 			return;
 		}
@@ -443,24 +441,7 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 		}
 
 		if (lastKeyHit.keycode == Common::KEYCODE_c && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
-			if (_game.features & GF_DEMO) {
-				// "Are you sure you want to quit?  (Y-N)"
-				Common::KeyState ks = showBannerAndPause(0, -1, d.getPlainEngineString(30));
-				if (ks.keycode == Common::KEYCODE_y) {
-					quitGame();
-				}
-			} else {
-				// Force the cursor to be ON...
-				int8 oldCursorState = _cursor.state;
-				_cursor.state = 1;
-				CursorMan.showMouse(_cursor.state > 0);
-
-				confirmExitDialog();
-
-				// Restore the old cursor state...
-				_cursor.state = oldCursorState;
-				CursorMan.showMouse(_cursor.state > 0);
-			}
+			queryQuit();
 			return;
 		}
 
@@ -474,13 +455,13 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 
 			switch (voiceMode) {
 			case 0: // "Voice Only"
-				showBannerAndPause(0, 120, d.getPlainEngineString(28));
+				showBannerAndPause(0, 120, getGUIString(gsVoiceOnly));
 				break;
 			case 1: // "Voice and Text"
-				showBannerAndPause(0, 120, d.getPlainEngineString(26));
+				showBannerAndPause(0, 120, getGUIString(gsVoiceAndText));
 				break;
 			default: // "Text Display Only"
-				showBannerAndPause(0, 120, d.getPlainEngineString(27));
+				showBannerAndPause(0, 120, getGUIString(gsTextDisplayOnly));
 			}
 
 			ConfMan.setInt("original_gui_text_status", voiceMode);
@@ -509,7 +490,7 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 		if (lastKeyHit.keycode == Common::KEYCODE_b && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
 			int curBufferCount = _imuseDigital->roundRobinSetBufferCount();
 			// "iMuse buffer count changed to %d"
-			showBannerAndPause(0, 90, d.getPlainEngineString(25), curBufferCount);
+			showBannerAndPause(0, 90, getGUIString(gsIMuseBuffer), curBufferCount);
 			return;
 		}
 
@@ -533,7 +514,7 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 							volume = 127;
 					}
 
-					strcpy(tempStr, d.getPlainEngineString(32));
+					strcpy(tempStr, getGUIString(gsMusicVolume));
 					char *ptrToChar = strchr(tempStr, '=');
 					memset(ptrToChar, '\v', 9);
 					ptrToChar[volume / 15] = '\f';
@@ -571,7 +552,7 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 							volume = 127;
 					}
 
-					strcpy(tempStr, d.getPlainEngineString(33));
+					strcpy(tempStr, getGUIString(gsVoiceVolume));
 					char *ptrToChar = strchr(tempStr, '=');
 					memset(ptrToChar, '\v', 9);
 					ptrToChar[volume / 15] = '\f';
@@ -609,7 +590,7 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 							volume = 127;
 					}
 
-					strcpy(tempStr, d.getPlainEngineString(34));
+					strcpy(tempStr, getGUIString(gsSfxVolume));
 					char *ptrToChar = strchr(tempStr, '=');
 					memset(ptrToChar, '\v', 9);
 					ptrToChar[volume / 15] = '\f';
@@ -649,7 +630,7 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 							VAR(VAR_CHARINC) = 9;
 					}
 
-					strcpy(tempStr, d.getPlainEngineString(31));
+					strcpy(tempStr, getGUIString(gsTextSpeed));
 					char *ptrToChar = strchr(tempStr, '=');
 					memset(ptrToChar, '\v', 10);
 					ptrToChar[9 - VAR(VAR_CHARINC)] = '\f';
@@ -721,8 +702,10 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 		ScummEngine_v6::processKeyboard(lastKeyHit);
 	}
 }
+#endif
 
-void ScummEngine_v7::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked) {
+
+void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked) {
 	bool validKey = false;
 
 	if (waitTime && waitTime != -1) {
@@ -760,8 +743,6 @@ void ScummEngine_v7::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bo
 		}
 	}
 }
-
-#endif
 
 void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
 	if (lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
