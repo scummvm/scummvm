@@ -112,13 +112,13 @@ bool cShadowVolumeBV::CollideBVAABB(cBoundingVolume *aBV) {
 	// Go through all the planes
 	for (int i = 0; i < mlPlaneCount; i++) {
 		int lInCount = 9;
-		bool bIsIn = true;
+		//bool bIsIn = true;
 
 		for (int j = 0; j < 9; j++) {
 			float fDist = cMath::PlaneToPointDist(mvPlanes[i], vCorners[j]);
 			if (fDist < 0) {
 				lInCount--;
-				bIsIn = false;
+				//bIsIn = false;
 			}
 		}
 
@@ -286,7 +286,7 @@ cShadowVolumeBV *cBoundingVolume::GetShadowVolume(const cVector3f &avLightPos,
 
 	/////////////////////////////////////////////////////////////////////
 	// Iterate the faces and check which ones are facing the light.
-	int lNearPoint = -1;
+	//int lNearPoint = -1;
 	mShadowVolume.mlPlaneCount = 0;
 	for (int face = 0; face < 6; face++) {
 		gvFaces[face].facingLight = cMath::Vector3Dot(gvFaces[face].normal,

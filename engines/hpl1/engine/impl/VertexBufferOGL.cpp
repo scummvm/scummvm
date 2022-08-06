@@ -275,9 +275,11 @@ iVertexBuffer *cVertexBufferOGL::CreateCopy(eVertexBufferUsageType aUsageType) {
 	// Copy the vertices to the new buffer.
 	for (int i = 0; i < klNumOfVertexFlags; i++) {
 		if (kvVertexFlags[i] & mVertexFlags) {
+#if 0
 			int lElements = kvVertexElements[i];
 			if (mbTangents && kvVertexFlags[i] == eVertexFlag_Texture1)
 				lElements = 4;
+#endif
 
 			pVtxBuff->ResizeArray(kvVertexFlags[i], (int)mvVertexArray[i].size());
 

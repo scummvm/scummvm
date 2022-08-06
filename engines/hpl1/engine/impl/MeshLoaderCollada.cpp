@@ -430,6 +430,8 @@ cMesh *cMeshLoaderCollada::LoadMesh(const tString &asFile, tMeshLoadFlag aFlags)
 					JointType = ePhysicsJointType_Slider;
 				else if (sJointType == "screw")
 					JointType = ePhysicsJointType_Screw;
+				else
+					error("Unknown JointType: %s", sJointType.c_str());
 
 				cMeshJoint *pJoint = pMesh->CreatePhysicsJoint(JointType);
 
@@ -937,7 +939,7 @@ cMesh *cMeshLoaderCollada::LoadMesh(const tString &asFile, tMeshLoadFlag aFlags)
 			if (pTrack == NULL)
 				continue;
 			if (pSkeleton) {
-				cBone *pBone = pSkeleton->GetBoneByName(pTrack->GetName());
+				//cBone *pBone = pSkeleton->GetBoneByName(pTrack->GetName());
 				int lBoneIdx = pSkeleton->GetBoneIndexByName(pTrack->GetName());
 				pTrack->SetNodeIndex(lBoneIdx);
 			} else {
@@ -1097,7 +1099,7 @@ cAnimation *cMeshLoaderCollada::LoadAnimation(const tString &asFile) {
 			if (pTrack == NULL)
 				continue;
 			if (pSkeleton) {
-				cBone *pBone = pSkeleton->GetBoneByName(pTrack->GetName());
+				//cBone *pBone = pSkeleton->GetBoneByName(pTrack->GetName());
 				int lBoneIdx = pSkeleton->GetBoneIndexByName(pTrack->GetName());
 				pTrack->SetNodeIndex(lBoneIdx);
 			} else {
@@ -1593,7 +1595,7 @@ cColliderEntity *cMeshLoaderCollada::CreateStaticCollider(cColladaNode *apNode, 
 	// Haptic creation
 	if (cHaptic::GetIsUsed()) {
 		cHaptic *pHaptic = apWorld->GetHaptic();
-		iHapticShape *pHShape = pHaptic->GetLowLevel()->CreateShapeFromPhysicsBody(apNode->msName, pBody);
+		/* iHapticShape *pHShape = */(void)pHaptic->GetLowLevel()->CreateShapeFromPhysicsBody(apNode->msName, pBody);
 	}
 
 	return apWorld->CreateColliderEntity(apNode->msName, pBody);
@@ -1667,8 +1669,8 @@ void cMeshLoaderCollada::AddSceneObjects(cColladaNode *apNode, cWorld3D *apWorld
 				cSoundEntity *pEntity = apWorld->CreateSoundEntity(sName, sFile, false);
 
 				if (pEntity == NULL) {
-					tString sName = vParams[1];
-					tString sFile = cString::Sub(apNode->msName, 7 + (int)+sName.size() + 1);
+					sName = vParams[1];
+					sFile = cString::Sub(apNode->msName, 7 + (int)+sName.size() + 1);
 
 					pEntity = apWorld->CreateSoundEntity(sName, sFile, false);
 				}
@@ -1728,7 +1730,7 @@ void cMeshLoaderCollada::AddSceneObjects(cColladaNode *apNode, cWorld3D *apWorld
 			if (vParams.size() < 3) {
 				Error("Too few params in ref entity '%s'\n", apNode->msName.c_str());
 			} else {
-				tString sType = vParams[1];
+				sType = vParams[1];
 				tString sName = cString::Sub(apNode->msName, 6 + (int)sType.size() + 1);
 
 				apWorld->AddAINode(sName, sType, apNode->m_mtxWorldTransform.GetTranslation());
@@ -1790,7 +1792,7 @@ void cMeshLoaderCollada::AddSceneObjects(cColladaNode *apNode, cWorld3D *apWorld
 				Error("Too few params in billboard entity entity '%s'\n", apNode->msName.c_str());
 			} else {
 				cVector2f vSize(apNode->mvScale.x, apNode->mvScale.y);
-				float fOffset = apNode->mvScale.z;
+				//float fOffset = apNode->mvScale.z;
 
 				tString sName = vParams[vParams.size() - 1];
 				tString sFile = "";
