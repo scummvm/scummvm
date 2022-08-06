@@ -28,7 +28,6 @@ namespace Ultima {
 namespace Nuvie {
 
 using Std::string;
-using Std::stack;
 using Std::vector;
 
 /* Control and value opcodes for op() & evop() (U6) */
@@ -152,7 +151,7 @@ protected:
 	string ystring; // modified by SETNAME, accessed with "$Y"
 	uint8 decl_v; // declared/initialized variable number
 	uint8 decl_t; // declared variable type: 0x00=none,0xb2=int,0xb3=string
-	stack<struct convi_frame_s *> *b_frame;
+	Common::Stack<struct convi_frame_s *> *b_frame;
 
 	bool db_lvar;
 	converse_value db_loc;
@@ -257,14 +256,14 @@ protected:
 	void do_ctrl();
 	void do_text();
 	string get_formatted_text(const char *c_str);
-	converse_value pop_arg(stack<converse_typed_value> &vs);
-	converse_typed_value pop_typed_arg(stack<converse_typed_value> &vs);
-	virtual bool evop(stack<converse_typed_value> &i);
-	virtual bool op(stack<converse_typed_value> &i);
+	converse_value pop_arg(Common::Stack<converse_typed_value> &vs);
+	converse_typed_value pop_typed_arg(Common::Stack<converse_typed_value> &vs);
+	virtual bool evop(Common::Stack<converse_typed_value> &i);
+	virtual bool op(Common::Stack<converse_typed_value> &i);
 
-	virtual bool op_create_new(stack<converse_typed_value> &i);
+	virtual bool op_create_new(Common::Stack<converse_typed_value> &i);
 
-	converse_value evop_eq(stack<converse_typed_value> &vs);
+	converse_value evop_eq(Common::Stack<converse_typed_value> &vs);
 
 public:
 	virtual uint8 npc_num(uint32 n);//uint8 npc_num(uint32 n){return((n!=0xeb)?n:converse->npc_num);}
@@ -319,7 +318,7 @@ public:
 	WOUConverseInterpret(Converse *owner) : ConverseInterpret(owner) { }
 
 protected:
-	bool op_create_new(stack<converse_typed_value> &i) override;
+	bool op_create_new(Common::Stack<converse_typed_value> &i) override;
 };
 
 class SETalkInterpret : public ConverseInterpret {
