@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-03 06:38+0000\n"
+"POT-Creation-Date: 2022-08-06 11:34+0000\n"
 "PO-Revision-Date: 2022-08-03 12:08+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -78,7 +78,7 @@ msgstr "上へ"
 #: engines/mohawk/riven_stacks/aspit.cpp:349
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/nancy/dialogs.cpp:100
-#: engines/parallaction/saveload.cpp:270 engines/scumm/dialogs.cpp:178
+#: engines/parallaction/saveload.cpp:270 engines/scumm/dialogs.cpp:192
 #: engines/sword1/control.cpp:888 engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "キャンセル"
@@ -176,9 +176,9 @@ msgstr ""
 #: engines/groovie/script.cpp:652 engines/nancy/dialogs.cpp:101
 #: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:99
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:926
-#: engines/scumm/dialogs.cpp:180 engines/scumm/scumm.cpp:1078
+#: engines/scumm/dialogs.cpp:194 engines/scumm/scumm.cpp:1078
 #: engines/scumm/scumm.cpp:1104 engines/scumm/scumm.cpp:1126
-#: engines/scumm/scumm.cpp:1407 engines/scumm/scumm.cpp:1878
+#: engines/scumm/scumm.cpp:1420 engines/scumm/scumm.cpp:1893
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:531
 #: engines/sword1/animation.cpp:552 engines/sword1/animation.cpp:568
 #: engines/sword1/animation.cpp:576 engines/sword1/control.cpp:888
@@ -868,7 +868,7 @@ msgstr "ゲームをロード："
 #: gui/launcher.cpp:280 engines/dialogs.cpp:97 engines/engine.cpp:885
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:383
-#: engines/scumm/dialogs.cpp:176 engines/trecision/saveload.cpp:253
+#: engines/scumm/dialogs.cpp:190 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:630 engines/wage/saveload.cpp:741
 #: engines/xeen/saves.cpp:255
 msgid "Load"
@@ -2164,7 +2164,7 @@ msgstr "レンダラー無効"
 msgid "Standard renderer"
 msgstr "標準レンダラー"
 
-#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:675
+#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:705
 msgid "Standard"
 msgstr "標準"
 
@@ -2229,7 +2229,7 @@ msgstr ""
 msgid "Clear value"
 msgstr "クリア"
 
-#: gui/widgets/grid.cpp:218 engines/scumm/dialogs.cpp:177
+#: gui/widgets/grid.cpp:218 engines/scumm/dialogs.cpp:191
 msgid "Play"
 msgstr "再生"
 
@@ -2508,7 +2508,7 @@ msgstr "ゲームをセーブ："
 #: engines/parallaction/metaengine.cpp:133
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:402
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:743
-#: engines/sci/engine/kfile.cpp:1079 engines/scumm/dialogs.cpp:175
+#: engines/sci/engine/kfile.cpp:1079 engines/scumm/dialogs.cpp:189
 #: engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3765
@@ -2973,7 +2973,7 @@ msgstr ""
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:260 engines/hdb/metaengine.cpp:255
 #: engines/mohawk/myst_stacks/menu.cpp:317
-#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/scumm/dialogs.cpp:179
+#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/scumm/dialogs.cpp:193
 #: engines/scumm/help.cpp:81 engines/scumm/help.cpp:83
 #: engines/zvision/metaengine.cpp:203 engines/zvision/metaengine.cpp:221
 msgid "Quit"
@@ -3524,7 +3524,7 @@ msgstr "ファイルは転送されませんでした!"
 msgid "Uploaded successfully!"
 msgstr "アップロードに成功しました!"
 
-#: backends/platform/3ds/options-dialog.cpp:44 engines/scumm/dialogs.cpp:278
+#: backends/platform/3ds/options-dialog.cpp:44 engines/scumm/dialogs.cpp:292
 msgid "~C~lose"
 msgstr "閉じる(~C~)"
 
@@ -4209,7 +4209,7 @@ msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 "このロケーションでは、セーブまたはクイックロードはサポートされていません"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2554
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2663
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4220,7 +4220,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2544
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2653
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4231,7 +4231,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2567
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2676
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6765,11 +6765,11 @@ msgid ""
 "intro."
 msgstr "イントロの高速なカメラワークの際、スムーズさが過剰になるのを抑えます。"
 
-#: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:709
+#: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:739
 msgid "Enable game-specific enhancements"
 msgstr "ゲーム固有の拡張機能を有効化"
 
-#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:709
+#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:739
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
@@ -6787,6 +6787,18 @@ msgid ""
 "available."
 msgstr "可能なら、BGM・SE・スピーチクリップを改造ファイルに置き換えて下さい。"
 
+#: engines/scumm/detection.cpp:247
+#, fuzzy
+#| msgid "Enable the original audio cd track"
+msgid "Enable the original GUI and Menu"
+msgstr "オリジナルオーディオCDトラックを有効にする"
+
+#: engines/scumm/detection.cpp:248
+msgid ""
+"Allow the game to use the in-engine graphical interface and the original "
+"save/load menu."
+msgstr ""
+
 #: engines/scumm/detection_internal.h:358
 msgid ""
 "This version of Monkey Island can't be played, because Limited Run Games "
@@ -6802,124 +6814,124 @@ msgstr ""
 "テクニカルサポートに連絡して修正版をもらうか、Limited Run Games提供のKryoFlux"
 "ダンプから有効なファイルを抽出するガイドをオンラインで検索してください。"
 
-#: engines/scumm/dialogs.cpp:163
+#: engines/scumm/dialogs.cpp:177
 #, c-format
 msgid "Insert Disk %c and Press Button to Continue."
 msgstr "続けるにはディスク%cを入れてボタンを押してください。"
 
-#: engines/scumm/dialogs.cpp:164
+#: engines/scumm/dialogs.cpp:178
 #, c-format
 msgid "Unable to Find %s, (%c%d) Press Button."
 msgstr "%sが見つかりません(%c%d)。ボタンを押してください。"
 
-#: engines/scumm/dialogs.cpp:165
+#: engines/scumm/dialogs.cpp:179
 #, c-format
 msgid "Error reading disk %c, (%c%d) Press Button."
 msgstr ""
 "ディスク%cのロード中にエラーが発生しました(%c%d)。ボタンを押してください。"
 
-#: engines/scumm/dialogs.cpp:166
+#: engines/scumm/dialogs.cpp:180
 msgid "Game Paused.  Press SPACE to Continue."
 msgstr "ポーズ中です。 スペースキーで再開します。"
 
 #. I18N: You may specify 'Yes' symbol at the end of the line, like this:
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
-#: engines/scumm/dialogs.cpp:170
+#: engines/scumm/dialogs.cpp:184
 msgid "Are you sure you want to restart?  (Y/N)Y"
 msgstr "リスタートしてもよろしいですか?  (Y/N)Y"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
-#: engines/scumm/dialogs.cpp:172
+#: engines/scumm/dialogs.cpp:186
 msgid "Are you sure you want to quit?  (Y/N)Y"
 msgstr "終了してもよろしいですか?  (Y/N)Y"
 
-#: engines/scumm/dialogs.cpp:181
+#: engines/scumm/dialogs.cpp:195
 msgid "Insert save/load game disk"
 msgstr "セーブ/ロードディスクを挿入"
 
-#: engines/scumm/dialogs.cpp:182
+#: engines/scumm/dialogs.cpp:196
 msgid "You must enter a name"
 msgstr "名前を入れてください"
 
-#: engines/scumm/dialogs.cpp:183
+#: engines/scumm/dialogs.cpp:197
 msgid "The game was NOT saved (disk full?)"
 msgstr "セーブされませんでした(ディスクの容量不足?)"
 
-#: engines/scumm/dialogs.cpp:184
+#: engines/scumm/dialogs.cpp:198
 msgid "The game was NOT loaded"
 msgstr "ゲームがロードできませんでした"
 
-#: engines/scumm/dialogs.cpp:185
+#: engines/scumm/dialogs.cpp:199
 #, c-format
 msgid "Saving '%s'"
 msgstr "%sをセーブしています"
 
-#: engines/scumm/dialogs.cpp:186
+#: engines/scumm/dialogs.cpp:200
 #, c-format
 msgid "Loading '%s'"
 msgstr "%sをロードしています"
 
-#: engines/scumm/dialogs.cpp:187
+#: engines/scumm/dialogs.cpp:201
 msgid "Name your SAVE game"
 msgstr "セーブ名を入力してください"
 
-#: engines/scumm/dialogs.cpp:188
+#: engines/scumm/dialogs.cpp:202
 msgid "Select a game to LOAD"
 msgstr "ロードするゲームを選択"
 
-#: engines/scumm/dialogs.cpp:189
+#: engines/scumm/dialogs.cpp:203
 msgid "Game title)"
 msgstr "ゲームタイトル"
 
 #. I18N: Previous page button
-#: engines/scumm/dialogs.cpp:275
+#: engines/scumm/dialogs.cpp:289
 msgid "~P~revious"
 msgstr "前(~P~)"
 
 #. I18N: Next page button
-#: engines/scumm/dialogs.cpp:277
+#: engines/scumm/dialogs.cpp:291
 msgid "~N~ext"
 msgstr "次(~N~)"
 
-#: engines/scumm/dialogs.cpp:614
+#: engines/scumm/dialogs.cpp:644
 msgid "Speech Only"
 msgstr "音声のみ"
 
-#: engines/scumm/dialogs.cpp:615
+#: engines/scumm/dialogs.cpp:645
 msgid "Speech and Subtitles"
 msgstr "音声と字幕"
 
-#: engines/scumm/dialogs.cpp:616
+#: engines/scumm/dialogs.cpp:646
 msgid "Subtitles Only"
 msgstr "字幕のみ"
 
-#: engines/scumm/dialogs.cpp:624
+#: engines/scumm/dialogs.cpp:654
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "喋り&字幕"
 
-#: engines/scumm/dialogs.cpp:670
+#: engines/scumm/dialogs.cpp:700
 msgid "Select a Proficiency Level."
 msgstr "習熟度を選択してください。"
 
-#: engines/scumm/dialogs.cpp:672
+#: engines/scumm/dialogs.cpp:702
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "ヘルプについては、Loom(TM)のマニュアルを参照してください。"
 
-#: engines/scumm/dialogs.cpp:676
+#: engines/scumm/dialogs.cpp:706
 msgid "Practice"
 msgstr "練習"
 
-#: engines/scumm/dialogs.cpp:677
+#: engines/scumm/dialogs.cpp:707
 msgid "Expert"
 msgstr "エキスパート"
 
-#: engines/scumm/dialogs.cpp:730
+#: engines/scumm/dialogs.cpp:760
 msgid "Overture Timing:"
 msgstr "Overtureのタイミング："
 
-#: engines/scumm/dialogs.cpp:734
+#: engines/scumm/dialogs.cpp:764
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
@@ -6927,11 +6939,11 @@ msgstr ""
 "BGMを置き換える際、OvertureがLucasfilmとLoomのロゴに切り替わるタイミングを調"
 "整します。"
 
-#: engines/scumm/dialogs.cpp:810
+#: engines/scumm/dialogs.cpp:840
 msgid "Playback Adjust:"
 msgstr "再生アジャスト："
 
-#: engines/scumm/dialogs.cpp:814
+#: engines/scumm/dialogs.cpp:844
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
@@ -6939,11 +6951,11 @@ msgstr ""
 "CDオーディオトラックを再生する際、開始位置を調整します。サウンドに問題がある"
 "場合に使用して下さい。"
 
-#: engines/scumm/dialogs.cpp:886
+#: engines/scumm/dialogs.cpp:916
 msgid "Intro Adjust:"
 msgstr "イントロ調整："
 
-#: engines/scumm/dialogs.cpp:890
+#: engines/scumm/dialogs.cpp:920
 msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
@@ -6952,11 +6964,11 @@ msgstr ""
 "イントロトラックを、この位置から再生します。曲が途中で切れたり、同期が正しく"
 "ない場合に使用して下さい。"
 
-#: engines/scumm/dialogs.cpp:899
+#: engines/scumm/dialogs.cpp:929
 msgid "Outlook Adjust:"
 msgstr "アウトルック調整："
 
-#: engines/scumm/dialogs.cpp:903
+#: engines/scumm/dialogs.cpp:933
 msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "
@@ -7474,19 +7486,19 @@ msgstr "右へ飛ぶ"
 msgid "Fly to lower right"
 msgstr "右へ降下"
 
-#: engines/scumm/input.cpp:603
+#: engines/scumm/input.cpp:925
 msgid "Snap scroll on"
 msgstr "スナップスクロールをオン"
 
-#: engines/scumm/input.cpp:605
+#: engines/scumm/input.cpp:927
 msgid "Snap scroll off"
 msgstr "スナップスクロールをオフ"
 
-#: engines/scumm/input.cpp:618
+#: engines/scumm/input.cpp:940
 msgid "Music volume: "
 msgstr "音楽の音量： "
 
-#: engines/scumm/input.cpp:635
+#: engines/scumm/input.cpp:957
 msgid "Subtitle speed: "
 msgstr "字幕の速度： "
 
@@ -7545,7 +7557,7 @@ msgstr ""
 "ん。\n"
 "音楽は無効になります。"
 
-#: engines/scumm/scumm.cpp:1404
+#: engines/scumm/scumm.cpp:1417
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -7555,7 +7567,7 @@ msgstr ""
 "このゲームではサポートされていないため、オーディオは無効になります。\n"
 "オリジナルのメディアから、圧縮せずにコピーしてください。"
 
-#: engines/scumm/scumm.cpp:1876
+#: engines/scumm/scumm.cpp:1891
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -7564,7 +7576,7 @@ msgstr ""
 "ネイティブMIDIのサポートには、LucasArts提供のthe Roland Upgradeが必要です。\n"
 "しかし%sがありません。代わりにAdLibを使用します。"
 
-#: engines/scumm/scumm.cpp:3033
+#: engines/scumm/scumm.cpp:3159
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "

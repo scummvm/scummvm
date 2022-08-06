@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-03 06:38+0000\n"
+"POT-Creation-Date: 2022-08-06 11:34+0000\n"
 "PO-Revision-Date: 2022-06-03 20:16+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -79,7 +79,7 @@ msgstr "Oppover"
 #: engines/mohawk/riven_stacks/aspit.cpp:349
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/nancy/dialogs.cpp:100
-#: engines/parallaction/saveload.cpp:270 engines/scumm/dialogs.cpp:178
+#: engines/parallaction/saveload.cpp:270 engines/scumm/dialogs.cpp:192
 #: engines/sword1/control.cpp:888 engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "Avbryt"
@@ -178,9 +178,9 @@ msgstr ""
 #: engines/groovie/script.cpp:652 engines/nancy/dialogs.cpp:101
 #: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:99
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:926
-#: engines/scumm/dialogs.cpp:180 engines/scumm/scumm.cpp:1078
+#: engines/scumm/dialogs.cpp:194 engines/scumm/scumm.cpp:1078
 #: engines/scumm/scumm.cpp:1104 engines/scumm/scumm.cpp:1126
-#: engines/scumm/scumm.cpp:1407 engines/scumm/scumm.cpp:1878
+#: engines/scumm/scumm.cpp:1420 engines/scumm/scumm.cpp:1893
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:531
 #: engines/sword1/animation.cpp:552 engines/sword1/animation.cpp:568
 #: engines/sword1/animation.cpp:576 engines/sword1/control.cpp:888
@@ -885,7 +885,7 @@ msgstr "Åpne spel:"
 #: gui/launcher.cpp:280 engines/dialogs.cpp:97 engines/engine.cpp:885
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:383
-#: engines/scumm/dialogs.cpp:176 engines/trecision/saveload.cpp:253
+#: engines/scumm/dialogs.cpp:190 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:630 engines/wage/saveload.cpp:741
 #: engines/xeen/saves.cpp:255
 msgid "Load"
@@ -2231,7 +2231,7 @@ msgstr "Deaktivert GFX"
 msgid "Standard renderer"
 msgstr "Standardteiknar"
 
-#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:675
+#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:705
 msgid "Standard"
 msgstr "Standard"
 
@@ -2294,7 +2294,7 @@ msgstr ""
 msgid "Clear value"
 msgstr "Tøm verdi"
 
-#: gui/widgets/grid.cpp:218 engines/scumm/dialogs.cpp:177
+#: gui/widgets/grid.cpp:218 engines/scumm/dialogs.cpp:191
 msgid "Play"
 msgstr "Spel"
 
@@ -2565,7 +2565,7 @@ msgstr "Lagra spel:"
 #: engines/parallaction/metaengine.cpp:133
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:402
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:743
-#: engines/sci/engine/kfile.cpp:1079 engines/scumm/dialogs.cpp:175
+#: engines/sci/engine/kfile.cpp:1079 engines/scumm/dialogs.cpp:189
 #: engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3765
@@ -3037,7 +3037,7 @@ msgstr "   Er du sikker på at du vil avslutte?   "
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:260 engines/hdb/metaengine.cpp:255
 #: engines/mohawk/myst_stacks/menu.cpp:317
-#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/scumm/dialogs.cpp:179
+#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/scumm/dialogs.cpp:193
 #: engines/scumm/help.cpp:81 engines/scumm/help.cpp:83
 #: engines/zvision/metaengine.cpp:203 engines/zvision/metaengine.cpp:221
 msgid "Quit"
@@ -3648,7 +3648,7 @@ msgstr ""
 msgid "Uploaded successfully!"
 msgstr "DVD-montering fullført"
 
-#: backends/platform/3ds/options-dialog.cpp:44 engines/scumm/dialogs.cpp:278
+#: backends/platform/3ds/options-dialog.cpp:44 engines/scumm/dialogs.cpp:292
 msgid "~C~lose"
 msgstr "~L~ukk"
 
@@ -4343,7 +4343,7 @@ msgstr "Gjenopprett"
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2554
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2663
 #, fuzzy, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4351,7 +4351,7 @@ msgid ""
 "%s"
 msgstr "Kunne ikkje laste lagra spel frå fil."
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2544
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2653
 #, fuzzy, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4359,7 +4359,7 @@ msgid ""
 "%s"
 msgstr "Klarte ikkje lagre speltilstand til fil."
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2567
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2676
 #, fuzzy, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6860,12 +6860,12 @@ msgid ""
 "intro."
 msgstr ""
 
-#: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:709
+#: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:739
 #, fuzzy
 msgid "Enable game-specific enhancements"
 msgstr "Slå på flytande peikarar"
 
-#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:709
+#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:739
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
@@ -6882,6 +6882,17 @@ msgid ""
 "available."
 msgstr ""
 
+#: engines/scumm/detection.cpp:247
+#, fuzzy
+msgid "Enable the original GUI and Menu"
+msgstr "Slå på heliummodus"
+
+#: engines/scumm/detection.cpp:248
+msgid ""
+"Allow the game to use the in-engine graphical interface and the original "
+"save/load menu."
+msgstr ""
+
 #: engines/scumm/detection_internal.h:358
 msgid ""
 "This version of Monkey Island can't be played, because Limited Run Games "
@@ -6892,155 +6903,155 @@ msgid ""
 "dumps that Limited Run Games also provided."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:163
+#: engines/scumm/dialogs.cpp:177
 #, c-format
 msgid "Insert Disk %c and Press Button to Continue."
 msgstr "Sett inn disk %c og trykk på knappen for å fortsette."
 
-#: engines/scumm/dialogs.cpp:164
+#: engines/scumm/dialogs.cpp:178
 #, c-format
 msgid "Unable to Find %s, (%c%d) Press Button."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:165
+#: engines/scumm/dialogs.cpp:179
 #, c-format
 msgid "Error reading disk %c, (%c%d) Press Button."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:166
+#: engines/scumm/dialogs.cpp:180
 msgid "Game Paused.  Press SPACE to Continue."
 msgstr "Spelet er pausa. Trykk MELLOMROM for å fortsette."
 
 #. I18N: You may specify 'Yes' symbol at the end of the line, like this:
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
-#: engines/scumm/dialogs.cpp:170
+#: engines/scumm/dialogs.cpp:184
 msgid "Are you sure you want to restart?  (Y/N)Y"
 msgstr "Er du sikker på at du vil starte på nytt (J/N)J"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
-#: engines/scumm/dialogs.cpp:172
+#: engines/scumm/dialogs.cpp:186
 msgid "Are you sure you want to quit?  (Y/N)Y"
 msgstr "Er du sikker på at du vil avslutte (J/N)J"
 
-#: engines/scumm/dialogs.cpp:181
+#: engines/scumm/dialogs.cpp:195
 msgid "Insert save/load game disk"
 msgstr "Sett in lagre/laste speldisk"
 
-#: engines/scumm/dialogs.cpp:182
+#: engines/scumm/dialogs.cpp:196
 msgid "You must enter a name"
 msgstr "Du må skrive eit namn"
 
-#: engines/scumm/dialogs.cpp:183
+#: engines/scumm/dialogs.cpp:197
 msgid "The game was NOT saved (disk full?)"
 msgstr "Spelet vart IKKJE lagra (full disk?)"
 
-#: engines/scumm/dialogs.cpp:184
+#: engines/scumm/dialogs.cpp:198
 msgid "The game was NOT loaded"
 msgstr "Spelet vart IKKJE lasta"
 
-#: engines/scumm/dialogs.cpp:185
+#: engines/scumm/dialogs.cpp:199
 #, c-format
 msgid "Saving '%s'"
 msgstr "Lagrar '%s'"
 
-#: engines/scumm/dialogs.cpp:186
+#: engines/scumm/dialogs.cpp:200
 #, c-format
 msgid "Loading '%s'"
 msgstr "Lastar '%s'"
 
-#: engines/scumm/dialogs.cpp:187
+#: engines/scumm/dialogs.cpp:201
 msgid "Name your SAVE game"
 msgstr "Namngi det LAGRA spelet"
 
-#: engines/scumm/dialogs.cpp:188
+#: engines/scumm/dialogs.cpp:202
 msgid "Select a game to LOAD"
 msgstr "Vel eit spel for LASTING"
 
-#: engines/scumm/dialogs.cpp:189
+#: engines/scumm/dialogs.cpp:203
 msgid "Game title)"
 msgstr "Speltittel)"
 
 #. I18N: Previous page button
-#: engines/scumm/dialogs.cpp:275
+#: engines/scumm/dialogs.cpp:289
 msgid "~P~revious"
 msgstr "~F~orrige"
 
 #. I18N: Next page button
-#: engines/scumm/dialogs.cpp:277
+#: engines/scumm/dialogs.cpp:291
 msgid "~N~ext"
 msgstr "~N~este"
 
-#: engines/scumm/dialogs.cpp:614
+#: engines/scumm/dialogs.cpp:644
 msgid "Speech Only"
 msgstr "Berre Tale"
 
-#: engines/scumm/dialogs.cpp:615
+#: engines/scumm/dialogs.cpp:645
 msgid "Speech and Subtitles"
 msgstr "Tale og undertekstar"
 
-#: engines/scumm/dialogs.cpp:616
+#: engines/scumm/dialogs.cpp:646
 msgid "Subtitles Only"
 msgstr "Berre undertekstar"
 
-#: engines/scumm/dialogs.cpp:624
+#: engines/scumm/dialogs.cpp:654
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Tekst & Tale"
 
-#: engines/scumm/dialogs.cpp:670
+#: engines/scumm/dialogs.cpp:700
 msgid "Select a Proficiency Level."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:672
+#: engines/scumm/dialogs.cpp:702
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "Sjå i Loom(TM)-manualen for hjelp."
 
-#: engines/scumm/dialogs.cpp:676
+#: engines/scumm/dialogs.cpp:706
 msgid "Practice"
 msgstr "Øving"
 
-#: engines/scumm/dialogs.cpp:677
+#: engines/scumm/dialogs.cpp:707
 msgid "Expert"
 msgstr "Ekspert"
 
-#: engines/scumm/dialogs.cpp:730
+#: engines/scumm/dialogs.cpp:760
 msgid "Overture Timing:"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:734
+#: engines/scumm/dialogs.cpp:764
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:810
+#: engines/scumm/dialogs.cpp:840
 #, fuzzy
 msgid "Playback Adjust:"
 msgstr "Spel"
 
-#: engines/scumm/dialogs.cpp:814
+#: engines/scumm/dialogs.cpp:844
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:886
+#: engines/scumm/dialogs.cpp:916
 msgid "Intro Adjust:"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:890
+#: engines/scumm/dialogs.cpp:920
 msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
 "syncs up with the intro."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:899
+#: engines/scumm/dialogs.cpp:929
 msgid "Outlook Adjust:"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:903
+#: engines/scumm/dialogs.cpp:933
 msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "
@@ -7558,21 +7569,21 @@ msgstr "Fly til høgre"
 msgid "Fly to lower right"
 msgstr "Fly til nedre høgre"
 
-#: engines/scumm/input.cpp:603
+#: engines/scumm/input.cpp:925
 #, fuzzy
 msgid "Snap scroll on"
 msgstr "Bla liste ned"
 
-#: engines/scumm/input.cpp:605
+#: engines/scumm/input.cpp:927
 #, fuzzy
 msgid "Snap scroll off"
 msgstr "Bla liste ned"
 
-#: engines/scumm/input.cpp:618
+#: engines/scumm/input.cpp:940
 msgid "Music volume: "
 msgstr "Musikkvolum: "
 
-#: engines/scumm/input.cpp:635
+#: engines/scumm/input.cpp:957
 msgid "Subtitle speed: "
 msgstr "Subtitle speed: "
 
@@ -7627,21 +7638,21 @@ msgstr ""
 "Kunne ikkje finne Macintosh-binærfila «Monkey Island» for å lese\n"
 "instrumentar frå den. Musikk vert deaktivert."
 
-#: engines/scumm/scumm.cpp:1404
+#: engines/scumm/scumm.cpp:1417
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please copy the game from the original media without compression."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1876
+#: engines/scumm/scumm.cpp:1891
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:3033
+#: engines/scumm/scumm.cpp:3159
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
