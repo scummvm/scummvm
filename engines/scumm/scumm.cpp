@@ -1377,8 +1377,11 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::setupScumm(const Common::String &macResourceFile) {
 
-	if (ConfMan.hasKey("original_gui", _targetName))
-		_useOriginalGUI =  ConfMan.getBool("original_gui");
+	if (!ConfMan.hasKey("original_gui", _targetName)) {
+		ConfMan.setBool("original_gui", true);
+	}
+
+	_useOriginalGUI = ConfMan.getBool("original_gui");
 
 	// The object line toggle is always synchronized from the main game to
 	// our internal Game Options; at startup we do the opposite, since an user
