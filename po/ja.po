@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-06 16:47+0000\n"
+"POT-Creation-Date: 2022-08-06 18:24+0000\n"
 "PO-Revision-Date: 2022-08-06 16:44+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -178,7 +178,7 @@ msgstr ""
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:926
 #: engines/scumm/dialogs.cpp:194 engines/scumm/scumm.cpp:1078
 #: engines/scumm/scumm.cpp:1104 engines/scumm/scumm.cpp:1126
-#: engines/scumm/scumm.cpp:1420 engines/scumm/scumm.cpp:1893
+#: engines/scumm/scumm.cpp:1423 engines/scumm/scumm.cpp:1896
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:531
 #: engines/sword1/animation.cpp:552 engines/sword1/animation.cpp:568
 #: engines/sword1/animation.cpp:576 engines/sword1/control.cpp:888
@@ -4209,7 +4209,7 @@ msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 "このロケーションでは、セーブまたはクイックロードはサポートされていません"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2663
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2666
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4220,7 +4220,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2653
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2656
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4231,7 +4231,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2676
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2679
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7555,7 +7555,7 @@ msgstr ""
 "ん。\n"
 "音楽は無効になります。"
 
-#: engines/scumm/scumm.cpp:1417
+#: engines/scumm/scumm.cpp:1420
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -7565,7 +7565,7 @@ msgstr ""
 "このゲームではサポートされていないため、オーディオは無効になります。\n"
 "オリジナルのメディアから、圧縮せずにコピーしてください。"
 
-#: engines/scumm/scumm.cpp:1891
+#: engines/scumm/scumm.cpp:1894
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -7574,7 +7574,7 @@ msgstr ""
 "ネイティブMIDIのサポートには、LucasArts提供のthe Roland Upgradeが必要です。\n"
 "しかし%sがありません。代わりにAdLibを使用します。"
 
-#: engines/scumm/scumm.cpp:3180
+#: engines/scumm/scumm.cpp:3183
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
