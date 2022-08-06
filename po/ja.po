@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-06 11:34+0000\n"
-"PO-Revision-Date: 2022-08-03 12:08+0000\n"
+"PO-Revision-Date: 2022-08-06 16:44+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -6788,16 +6788,14 @@ msgid ""
 msgstr "可能なら、BGM・SE・スピーチクリップを改造ファイルに置き換えて下さい。"
 
 #: engines/scumm/detection.cpp:247
-#, fuzzy
-#| msgid "Enable the original audio cd track"
 msgid "Enable the original GUI and Menu"
-msgstr "オリジナルオーディオCDトラックを有効にする"
+msgstr "オリジナルGUIとメニューを有効化"
 
 #: engines/scumm/detection.cpp:248
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu."
-msgstr ""
+msgstr "エンジン内のGUIとオリジナルのセーブ/ロードメニューを使用可能にします。"
 
 #: engines/scumm/detection_internal.h:358
 msgid ""
