@@ -151,7 +151,7 @@ jobs:
             sdlConfig: sdl2-config
             cxx: ccache g++
             aptPackages: 'libsdl2-dev libsdl2-net-dev liba52-dev libjpeg-turbo8-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libfribidi-dev libcurl4-openssl-dev libgtk-3-dev libspeechd-dev libsndio-dev libunity-dev'
-          - platform: ubuntu-18.04
+          - platform: ubuntu-20.04
             sdlConfig: sdl-config
             cxx: ccache g++-4.8
             aptPackages: 'g++-4.8 libsdl1.2-dev libsdl-net1.2-dev liba52-dev libjpeg-turbo8-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libfribidi-dev libcurl4-openssl-dev libgtk-3-dev libspeechd-dev libsndio-dev libunity-dev'
@@ -160,6 +160,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Add Ubuntu Xenial package sources
+        if: matrix.platform == 'ubuntu-20.04'
+        run: |
+          sudo apt-add-repository 'deb http://dk.archive.ubuntu.com/ubuntu/ xenial main'
+          sudo apt-add-repository 'deb http://dk.archive.ubuntu.com/ubuntu/ xenial universe'
       - name: Install packages
         run: |
           sudo apt-get update
