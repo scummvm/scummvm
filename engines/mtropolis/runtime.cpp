@@ -1659,8 +1659,8 @@ void DynamicValue::setFromOther(const DynamicValue &other) {
 	case DynamicValueTypes::kNull:
 	case DynamicValueTypes::kIncomingData:
 	case DynamicValueTypes::kEmpty:
-		_type = other._type;
 		clear();
+		_type = other._type;
 		break;
 	case DynamicValueTypes::kInteger:
 		setInt(other._value.asInt);
