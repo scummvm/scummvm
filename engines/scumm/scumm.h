@@ -352,6 +352,60 @@ class ResourceManager;
 #define AMIGA_NTSC_VBLANK_RATE 240.0
 
 /**
+ * GUI strings categories.
+ */
+
+enum GUIString {
+	gsPause = 0,
+	gsVersion = 1,
+	gsTextSpeed = 2,
+	gsRestart = 3,
+	gsQuitPrompt = 4,
+	gsSave = 5,
+	gsLoad = 6,
+	gsPlay = 7,
+	gsCancel = 8,
+	gsQuit = 9,
+	gsOK = 10,
+	gsMustName = 11,
+	gsGameNotSaved = 12,
+	gsGameNotLoaded = 13,
+	gsSaving = 14,
+	gsLoading = 15,
+	gsNamePrompt = 16,
+	gsSelectLoadPrompt = 17,
+	gsReplacePrompt = 18,
+	gsYes = 20,
+	gsNo = 21,
+	gsIMuseBuffer = 22,
+	gsVoiceAndText = 23,
+	gsTextDisplayOnly = 24,
+	gsVoiceOnly = 25,
+	gsYesKey = 26,
+	gsMusicVolume = 27,
+	gsVoiceVolume = 28,
+	gsSfxVolume = 29,
+	gsHeap = 30
+};
+
+struct InternalGUIControl {
+	int relativeCenterX;
+	int relativeCenterY;
+	int xPos;
+	int yPos;
+	int normalFillColor;
+	int topLineColor;
+	int bottomLineColor;
+	int leftLineColor;
+	int rightLineColor;
+	int normalTextColor;
+	int highlightedTextColor;
+	int highlightedFillColor;
+	bool centerText;
+	char *label;
+};
+
+/**
  * Base class for all SCUMM engines.
  */
 class ScummEngine : public Engine, public Common::Serializable {
@@ -492,11 +546,39 @@ protected:
 	Dialog *_messageDialog = nullptr;
 	Dialog *_versionDialog = nullptr;
 
-	virtual void confirmExitDialog();
+	void confirmExitDialog();
 	void confirmRestartDialog();
 	void pauseDialog();
 	void messageDialog(const Common::U32String &message);
 	void versionDialog();
+
+	// Original GUI
+	int32 _bannerColors[50]; // Colors for the original GUI
+	byte *_bannerMem = nullptr;
+	uint32 _bannerMemSize = 0;
+	InternalGUIControl _internalGUIControls[30];
+	char _emptyMsg[1] = {'\0'};
+
+	void initBanners();
+	Common::KeyState showBannerAndPause(int bannerId, int32 waitTime, const char *msg, ...);
+	void clearBanner();
+	void setBannerColors(int bannerId, byte r, byte g, byte b);
+	virtual int getBannerColor(int bannerId) { return getBannerColor(bannerId, _currentPalette); }
+	int getBannerColor(int bannerId, byte *palette);
+	void setUpInternalGUIControl(int id, int normalFillColor, int normalTextColor,
+								 int topLineColor, int bottomLineColor, int leftLineColor, int rightLineColor,
+								 int highlightedTextColor, int highlightedFillColor,
+								 int anchorPointX, int anchorPointY, int x, int y, char *label, bool centerFlag);
+	void drawInternalGUIControl(int id, bool highlightColor);
+	int getInternalGUIControlFromCoordinates(int x, int y);
+	virtual bool isSmushActive() { return false; }
+
+	virtual void queryQuit();
+	virtual const char *getGUIString(int stringId);
+	void waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked);
+	virtual int getGUIStringHeight(const char *str);
+	virtual int getGUIStringWidth(const char *str);
+	virtual void drawGUIText(const char *buttonString, int textXPos, int textYPos, int textColor, bool centerFlag);
 
 public:
 	char displayMessage(const char *altButton, const char *message, ...) GCC_PRINTF(3, 4);

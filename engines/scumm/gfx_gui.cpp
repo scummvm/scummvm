@@ -20,7 +20,7 @@
  */
 
 #include "scumm/scumm.h"
-#include "scumm/scumm_v7.h"
+#include "scumm/scumm_v8.h"
 #include "scumm/gfx.h"
 #include "scumm/dialogs.h"
 #include "scumm/charset.h"
@@ -31,8 +31,7 @@
 
 namespace Scumm {
 
-#ifdef ENABLE_SCUMM_7_8
-void ScummEngine_v7::initBanners() {
+void ScummEngine::initBanners() {
 	setPalColor(7, 0x5A, 0x5A, 0x5A);
 	setPalColor(8, 0x46, 0x46, 0x46);
 	setPalColor(15, 0x8C, 0x8C, 0x8C);
@@ -71,7 +70,7 @@ void ScummEngine_v7::initBanners() {
 	setBannerColors(31, 0x54, 0x54, 0x54);
 }
 
-Common::KeyState ScummEngine_v7::showBannerAndPause(int bannerId, int32 waitTime, const char *msg, ...) {
+Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, const char *msg, ...) {
 	char bannerMsg[512];
 	char localizedMsg[512];
 	char localizedY[512];
@@ -80,8 +79,7 @@ Common::KeyState ScummEngine_v7::showBannerAndPause(int bannerId, int32 waitTime
 	int startingPointX, startingPointY;
 	int xPos, yPos;
 	int rightLineColor, leftLineColor, bottomLineColor, topLineColor;
-	int primaryLineColor, primaryFillColor;
-	InfoDialog d(this, 0);
+	int normalTextColor, normalFillColor;
 
 	// Fetch the translated string for the message...
 	convertMessageToString((const byte *)msg, (byte *)localizedMsg, sizeof(localizedMsg));
@@ -101,8 +99,8 @@ Common::KeyState ScummEngine_v7::showBannerAndPause(int bannerId, int32 waitTime
 	PauseToken pt = pauseEngine();
 
 	// Gather the colors needed for the banner
-	primaryFillColor = getBannerColor(6 * bannerId + 15);
-	primaryLineColor = getBannerColor(6 * bannerId + 14);
+	normalFillColor = getBannerColor(6 * bannerId + 15);
+	normalTextColor = getBannerColor(6 * bannerId + 14);
 	topLineColor = getBannerColor(6 * bannerId + 16);
 	bottomLineColor = getBannerColor(6 * bannerId + 17);
 	leftLineColor = getBannerColor(6 * bannerId + 18);
@@ -116,7 +114,7 @@ Common::KeyState ScummEngine_v7::showBannerAndPause(int bannerId, int32 waitTime
 	// Take all the necessary measurements for the box which
 	// will contain the string...
 	bool isCOMIDemo = (_game.id == GID_CMI && (_game.features & GF_DEMO) != 0);
-	bannerMsgHeight = (isCOMIDemo ? _textV7->getStringHeight("ABC \x80\x78 \xb0\x78") : _textV7->getStringHeight(bannerMsg)) + 5;
+	bannerMsgHeight = (isCOMIDemo ? _textV7->getStringHeight("ABC \x80\x78 \xb0\x78) : _textV7->getStringHeight(bannerMsg)) + 5;
 	bannerMsgWidth = _textV7->getStringWidth(bannerMsg);
 	if (bannerMsgWidth < 100)
 		bannerMsgWidth = 100;
@@ -140,7 +138,7 @@ Common::KeyState ScummEngine_v7::showBannerAndPause(int bannerId, int32 waitTime
 	}
 
 	// Set up the GUI control, specifying all the related colors, the message and the position...
-	setUpInternalGUIControl(0, primaryFillColor, primaryLineColor,
+	setUpInternalGUIControl(0, normalFillColor, normalTextColor,
 							topLineColor, bottomLineColor, leftLineColor, rightLineColor, 0, 0,
 							startingPointX, startingPointY, xPos, yPos,
 							bannerMsg, true);
@@ -166,7 +164,7 @@ Common::KeyState ScummEngine_v7::showBannerAndPause(int bannerId, int32 waitTime
 		_charset->setCurID(oldId);
 
 	// Fetch the localized confirmation letter and substitute it with the 'y' of 'yes'
-	convertMessageToString((const byte *)d.getPlainEngineString(29), (byte *)localizedY, sizeof(localizedY));
+	convertMessageToString((const byte *)getGUIString(gsYesKey), (byte *)localizedY, sizeof(localizedY));
 
 	if (tolower(localizedY[0]) == ks.ascii || toupper((localizedY[0]) == ks.ascii))
 		ks = Common::KEYCODE_y;
@@ -174,7 +172,7 @@ Common::KeyState ScummEngine_v7::showBannerAndPause(int bannerId, int32 waitTime
 	return ks;
 }
 
-void ScummEngine_v7::clearBanner() {
+void ScummEngine::clearBanner() {
 	// Restore the GFX content which was under the banner,
 	// and then mark that part of the screen as dirty.
 	if (_bannerMem) {
@@ -198,7 +196,7 @@ void ScummEngine_v7::clearBanner() {
 	}
 }
 
-void ScummEngine_v7::setBannerColors(int bannerId, byte r, byte g, byte b) {
+void ScummEngine::setBannerColors(int bannerId, byte r, byte g, byte b) {
 	if (bannerId < 0 || bannerId > 50) {
 		debug(1, "ScummEngine::setBannerColors(): invalid slot %d out of range (min %d, max %d)", bannerId, 0, 50);
 		return;
@@ -208,18 +206,14 @@ void ScummEngine_v7::setBannerColors(int bannerId, byte r, byte g, byte b) {
 }
 
 int ScummEngine_v7::getBannerColor(int bannerId) {
-	byte r, g, b;
 	byte *palette = isSmushActive() ? _splayer->getVideoPalette() : _currentPalette;
-	r = (_bannerColors[bannerId] >> 0) & 0xFF;
-	g = (_bannerColors[bannerId] >> 8) & 0xFF;
-	b = (_bannerColors[bannerId] >> 16) & 0xFF;
-	return getPaletteColorFromRGB(palette, r, g, b);
+	return ScummEngine::getBannerColor(bannerId, palette);
 }
 
-void ScummEngine_v7::setUpInternalGUIControl(int id, int primaryFillColor, int primaryLineColor,
-											 int topLineColor, int bottomLineColor, int leftLineColor, int rightLineColor,
-											 int secondaryLineColor, int secondaryFillColor,
-											 int anchorPointX, int anchorPointY, int x, int y, char *label, bool centerFlag) {
+void ScummEngine::setUpInternalGUIControl(int id, int normalFillColor, int normalTextColor,
+										  int topLineColor, int bottomLineColor, int leftLineColor, int rightLineColor,
+										  int highlightedTextColor, int highlightedFillColor,
+										  int anchorPointX, int anchorPointY, int x, int y, char *label, bool centerFlag) {
 
 	int effX, effY;
 	InternalGUIControl *ctrl;
@@ -237,21 +231,21 @@ void ScummEngine_v7::setUpInternalGUIControl(int id, int primaryFillColor, int p
 	ctrl->yPos = effY;
 	ctrl->label = label;
 	ctrl->centerText = centerFlag;
-	ctrl->primaryFillColor = primaryFillColor;
+	ctrl->normalFillColor = normalFillColor;
 	ctrl->topLineColor = topLineColor;
 	ctrl->bottomLineColor = bottomLineColor;
 	ctrl->leftLineColor = leftLineColor;
 	ctrl->rightLineColor = rightLineColor;
-	ctrl->primaryLineColor = primaryLineColor;
-	ctrl->secondaryLineColor = secondaryLineColor;
-	ctrl->secondaryFillColor = secondaryFillColor;
+	ctrl->normalTextColor = normalTextColor;
+	ctrl->highlightedTextColor = highlightedTextColor;
+	ctrl->highlightedFillColor = highlightedFillColor;
 }
 
-void ScummEngine_v7::drawInternalGUIControl(int id, bool useSecondaryColor) {
+void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 	InternalGUIControl *ctrl;
 	int relCentX, relCentY, textHeight;
 	int x, y, textXPos, textYPos;
-	int lineColor, fillColor;
+	int textColor, fillColor;
 	int boxSizeX, boxSizeY;
 
 	bool centerFlag;
@@ -267,7 +261,7 @@ void ScummEngine_v7::drawInternalGUIControl(int id, bool useSecondaryColor) {
 		boxSizeX = x - ctrl->relativeCenterX;
 		boxSizeY = y - relCentY;
 
-		fillColor = useSecondaryColor ? ctrl->secondaryFillColor : ctrl->primaryFillColor;
+		fillColor = highlightColor ? ctrl->highlightedFillColor : ctrl->normalFillColor;
 
 		// Draw the main box...
 		drawBox(relCentX + 1, relCentY + 1, boxSizeX - 2, boxSizeY - 2, fillColor);
@@ -286,7 +280,7 @@ void ScummEngine_v7::drawInternalGUIControl(int id, bool useSecondaryColor) {
 		// Calculate the positioning for the text
 		int oldId = _charset->getCurID();
 		_charset->setCurID(1);
-		textHeight = _textV7->getStringHeight(buttonString);
+		textHeight = getGUIStringHeight(buttonString);
 		centerFlag = ctrl->centerText;
 
 		if (centerFlag)
@@ -297,17 +291,17 @@ void ScummEngine_v7::drawInternalGUIControl(int id, bool useSecondaryColor) {
 		textYPos = relCentY + (boxSizeY - textHeight) / 2 + 1;
 
 		// Finally, choose the color and draw the text message
-		if (useSecondaryColor)
-			lineColor = ctrl->secondaryLineColor;
+		if (highlightColor)
+			textColor = ctrl->highlightedTextColor;
 		else
-			lineColor = ctrl->primaryLineColor;
+			textColor = ctrl->normalTextColor;
 
 		if (ctrl->label)
 			strcpy(buttonString, ctrl->label);
 		else
 			strcpy(buttonString, "null button");
 
-		drawTextImmediately((const byte *)buttonString, textXPos, textYPos, lineColor, 1, (TextStyleFlags)centerFlag);
+		drawGUIText(buttonString, textXPos, textYPos, textColor, centerFlag);
 
 		// Restore the previous charset
 		if (oldId)
@@ -315,7 +309,7 @@ void ScummEngine_v7::drawInternalGUIControl(int id, bool useSecondaryColor) {
 	}
 }
 
-int ScummEngine_v7::getInternalGUIControlFromCoordinates(int x, int y) {
+int ScummEngine::getInternalGUIControlFromCoordinates(int x, int y) {
 	int id = 0;
 	while (_internalGUIControls[id].relativeCenterX == -1 ||
 		   _internalGUIControls[id].relativeCenterX > x ||
@@ -330,184 +324,443 @@ int ScummEngine_v7::getInternalGUIControlFromCoordinates(int x, int y) {
 	return id;
 }
 
-void ScummEngine_v7::confirmExitDialog() {
+
+#ifdef ENABLE_SCUMM_7_8
+void ScummEngine_v7::queryQuit() {
 	if (isUsingOriginalGUI()) {
-		int boxWidth, strWidth;
-		int ctrlId;
-		char yesLabelPtr[512];
-		char noLabelPtr[512];
-		char msgLabelPtr[512];
-		byte *curGrabbedCursor;
-		int curCursorWidth, curCursorHeight, curCursorHotspotX, curCursorHotspotY, curCursorState;
+		if (_game.version == 8 && !(_game.features & GF_DEMO)) {
+			int boxWidth, strWidth;
+			int ctrlId;
+			char yesLabelPtr[512];
+			char noLabelPtr[512];
+			char msgLabelPtr[512];
+			byte *curGrabbedCursor;
+			int curCursorWidth, curCursorHeight, curCursorHotspotX, curCursorHotspotY, curCursorState;
 
-		InfoDialog d(this, 0);
+			// Force the cursor to be ON...
+			int8 oldCursorState = _cursor.state;
+			_cursor.state = 1;
+			CursorMan.showMouse(_cursor.state > 0);
 
-		// "Are you sure you want to quit?"
-		convertMessageToString((const byte *)d.getPlainEngineString(22), (byte *)msgLabelPtr, sizeof(msgLabelPtr));
-		// "Yes"
-		convertMessageToString((const byte *)d.getPlainEngineString(23), (byte *)yesLabelPtr, sizeof(yesLabelPtr));
-		// "No"
-		convertMessageToString((const byte *)d.getPlainEngineString(24), (byte *)noLabelPtr, sizeof(noLabelPtr));
+			// "Are you sure you want to quit?"
+			convertMessageToString((const byte *)getGUIString(gsQuitPrompt), (byte *)msgLabelPtr, sizeof(msgLabelPtr));
+			// "Yes"
+			convertMessageToString((const byte *)getGUIString(gsYes), (byte *)yesLabelPtr, sizeof(yesLabelPtr));
+			// "No"
+			convertMessageToString((const byte *)getGUIString(gsNo), (byte *)noLabelPtr, sizeof(noLabelPtr));
 
-		// Pause the engine...
-		PauseToken pt = pauseEngine();
+			// Pause the engine...
+			PauseToken pt = pauseEngine();
 
-		// Backup the current cursor graphics and parameters
-		// and set up the internal v8 cursor...
-		curGrabbedCursor = (byte *)malloc(sizeof(_grabbedCursor));
-		memcpy(curGrabbedCursor, _grabbedCursor, sizeof(_grabbedCursor));
-		curCursorState = isSmushActive() ? 0 : _cursor.state;
-		curCursorWidth = _cursor.width;
-		curCursorHeight = _cursor.height;
-		curCursorHotspotX = _cursor.hotspotX;
-		curCursorHotspotY = _cursor.hotspotY;
-		setDefaultCursor();
-		CursorMan.showMouse(true);
+			// Backup the current cursor graphics and parameters
+			// and set up the internal v8 cursor...
+			curGrabbedCursor = (byte *)malloc(sizeof(_grabbedCursor));
+			memcpy(curGrabbedCursor, _grabbedCursor, sizeof(_grabbedCursor));
+			curCursorState = isSmushActive() ? 0 : _cursor.state;
+			curCursorWidth = _cursor.width;
+			curCursorHeight = _cursor.height;
+			curCursorHotspotX = _cursor.hotspotX;
+			curCursorHotspotY = _cursor.hotspotY;
+			setDefaultCursor();
+			CursorMan.showMouse(true);
 
-		// Backup the current charsetId, since we're going to switch
-		// to charsetId == 1 and start taking measurements for the box...
-		int oldId = _charset->getCurID();
-		_charset->setCurID(1);
+			// Backup the current charsetId, since we're going to switch
+			// to charsetId == 1 and start taking measurements for the box...
+			int oldId = _charset->getCurID();
+			_charset->setCurID(1);
 
-		boxWidth = ((_textV7->getStringWidth(msgLabelPtr) + 32) & 0xFFF0) + 8;
-		if (boxWidth <= 400)
-			boxWidth = 400;
+			boxWidth = ((getGUIStringWidth(msgLabelPtr) + 32) & 0xFFF0) + 8;
+			if (boxWidth <= 400)
+				boxWidth = 400;
 
-		// Set up and draw the main box
-		setUpInternalGUIControl(
-			0,
-			getBannerColor(33),
-			getBannerColor(32),
-			getBannerColor(34),
-			getBannerColor(35),
-			getBannerColor(36),
-			getBannerColor(37),
-			0,
-			0,
-			320 - boxWidth / 2,
-			190,
-			boxWidth / 2 + 319,
-			-90,
-			_emptyMsg,
-			true);
+			// Set up and draw the main box
+			setUpInternalGUIControl(
+				0,
+				getBannerColor(33),
+				getBannerColor(32),
+				getBannerColor(34),
+				getBannerColor(35),
+				getBannerColor(36),
+				getBannerColor(37),
+				0,
+				0,
+				320 - boxWidth / 2,
+				190,
+				boxWidth / 2 + 319,
+				-90,
+				_emptyMsg,
+				true);
 
-		// Save the pixels which will be overwritten by the dialog,
-		// so that we can restore them later. Note that the interpreter
-		// doesn't do this, but we have to...
-		if (!_bannerMem && !isSmushActive()) {
-			_bannerMemSize = _screenWidth * _screenHeight;
-			_bannerMem = (byte *)malloc(_bannerMemSize * sizeof(byte));
-			if (_bannerMem)
-				memcpy(
-					_bannerMem,
-					_virtscr[kMainVirtScreen].getPixels(0, _screenTop),
-					_bannerMemSize);
-		}
+			// Save the pixels which will be overwritten by the dialog,
+			// so that we can restore them later. Note that the interpreter
+			// doesn't do this, but we have to...
+			if (!_bannerMem && !isSmushActive()) {
+				_bannerMemSize = _screenWidth * _screenHeight;
+				_bannerMem = (byte *)malloc(_bannerMemSize * sizeof(byte));
+				if (_bannerMem)
+					memcpy(
+						_bannerMem,
+						_virtscr[kMainVirtScreen].getPixels(0, _screenTop),
+						_bannerMemSize);
+			}
 
-		drawInternalGUIControl(0, 0);
+			drawInternalGUIControl(0, 0);
 
-		// The text is drawn as a separate entity
-		drawTextImmediately((const byte *)msgLabelPtr, 320, 200, getBannerColor(32), 1, (TextStyleFlags) true);
+			// The text is drawn as a separate entity
+			drawTextImmediately((const byte *)msgLabelPtr, 320, 200, getBannerColor(32), 1, (TextStyleFlags) true);
 
-		// Now set up and draw the Yes and No buttons...
-		if (_textV7->getStringWidth(noLabelPtr) <= _textV7->getStringWidth(yesLabelPtr)) {
-			strWidth = _textV7->getStringWidth(yesLabelPtr);
-		} else {
-			strWidth = _textV7->getStringWidth(noLabelPtr);
-		}
+			// Now set up and draw the Yes and No buttons...
+			if (getGUIStringWidth(noLabelPtr) <= getGUIStringWidth(yesLabelPtr)) {
+				strWidth = getGUIStringWidth(yesLabelPtr);
+			} else {
+				strWidth = getGUIStringWidth(noLabelPtr);
+			}
 
-		if (strWidth <= 120)
-			strWidth = 120;
+			if (strWidth <= 120)
+				strWidth = 120;
 
-		setUpInternalGUIControl(
-			0,
-			getBannerColor(45),
-			getBannerColor(44),
-			getBannerColor(46),
-			getBannerColor(47),
-			getBannerColor(48),
-			getBannerColor(49),
-			0,
-			0,
-			420 - (strWidth / 2),
-			240, -strWidth,
-			-30,
-			noLabelPtr,
-			true);
+			setUpInternalGUIControl(
+				0,
+				getBannerColor(45),
+				getBannerColor(44),
+				getBannerColor(46),
+				getBannerColor(47),
+				getBannerColor(48),
+				getBannerColor(49),
+				0,
+				0,
+				420 - (strWidth / 2),
+				240, -strWidth,
+				-30,
+				noLabelPtr,
+				true);
 
-		drawInternalGUIControl(0, 0);
+			drawInternalGUIControl(0, 0);
 
-		setUpInternalGUIControl(
-			0,
-			getBannerColor(39),
-			getBannerColor(38),
-			getBannerColor(40),
-			getBannerColor(41),
-			getBannerColor(42),
-			getBannerColor(43),
-			0,
-			0,
-			220 - (strWidth / 2),
-			240,
-			-strWidth,
-			-30,
-			yesLabelPtr,
-			true);
+			setUpInternalGUIControl(
+				0,
+				getBannerColor(39),
+				getBannerColor(38),
+				getBannerColor(40),
+				getBannerColor(41),
+				getBannerColor(42),
+				getBannerColor(43),
+				0,
+				0,
+				220 - (strWidth / 2),
+				240,
+				-strWidth,
+				-30,
+				yesLabelPtr,
+				true);
 
-		drawInternalGUIControl(0, 0);
+			drawInternalGUIControl(0, 0);
 
-		// Done, draw everything to screen!
-		ScummEngine::drawDirtyScreenParts();
-
-		// Stay in the dialog while we keep pressing CTRL-C...
-		Common::KeyState ks;
-		bool leftBtnPressed = false, rightBtnPressed = false;
-		do {
-			clearClickedStatus();
-			ks = Common::KEYCODE_INVALID;
-			waitForBannerInput(-1, ks, leftBtnPressed, rightBtnPressed);
-		} while (ks.keycode == Common::KEYCODE_LCTRL ||
-				 ks.keycode == Common::KEYCODE_RCTRL ||
-				 (ks.keycode == Common::KEYCODE_c && ks.hasFlags(Common::KBD_CTRL)));
-
-		ctrlId = getInternalGUIControlFromCoordinates(_mouse.x, _mouse.y);
-		if ((leftBtnPressed && ctrlId == 0) || (toupper(ks.ascii) == yesLabelPtr[0]))
-			quitGame();
-
-		// Restore the previous cursor...
-		_cursor.state = curCursorState;
-		CursorMan.showMouse(_cursor.state > 0);
-		setCursorHotspot(curCursorHotspotX, curCursorHotspotY);
-		setCursorFromBuffer(curGrabbedCursor, curCursorWidth, curCursorHeight, curCursorWidth);
-		free(curGrabbedCursor);
-
-		// The interpreter makes us wait 45 full frames;
-		// let's wait half that time...
-		waitForTimer(45 * 2);
-
-		// Again, he interpreter does not explicitly restore the screen
-		// after finishing displaying this query dialog, but we have to...
-		if (_bannerMem && !isSmushActive()) {
-			memcpy(
-				_virtscr[kMainVirtScreen].getPixels(0, _screenTop),
-				_bannerMem,
-				_bannerMemSize);
-			free(_bannerMem);
-			_bannerMem = nullptr;
-
-			markRectAsDirty(_virtscr[kMainVirtScreen].number, 0, _screenWidth + 8, _screenTop, _screenHeight + _screenTop);
+			// Done, draw everything to screen!
 			ScummEngine::drawDirtyScreenParts();
-			_system->updateScreen();
-		}
 
-		// Finally, resume the engine, clear the input state, and restore the charset.
-		pt.clear();
-		clearClickedStatus();
-		if (oldId)
-			_charset->setCurID(oldId);
+			// Stay in the dialog while we keep pressing CTRL-C...
+			Common::KeyState ks;
+			bool leftBtnPressed = false, rightBtnPressed = false;
+			do {
+				clearClickedStatus();
+				ks = Common::KEYCODE_INVALID;
+				waitForBannerInput(-1, ks, leftBtnPressed, rightBtnPressed);
+			} while (ks.keycode == Common::KEYCODE_LCTRL ||
+					 ks.keycode == Common::KEYCODE_RCTRL ||
+					 (ks.keycode == Common::KEYCODE_c && ks.hasFlags(Common::KBD_CTRL)));
+
+			ctrlId = getInternalGUIControlFromCoordinates(_mouse.x, _mouse.y);
+			if ((leftBtnPressed && ctrlId == 0) || (toupper(ks.ascii) == yesLabelPtr[0]))
+				quitGame();
+
+			// Restore the previous cursor...
+			_cursor.state = curCursorState;
+			CursorMan.showMouse(_cursor.state > 0);
+			setCursorHotspot(curCursorHotspotX, curCursorHotspotY);
+			setCursorFromBuffer(curGrabbedCursor, curCursorWidth, curCursorHeight, curCursorWidth);
+			free(curGrabbedCursor);
+
+			// The interpreter makes us wait 45 full frames;
+			// let's wait half that time...
+			waitForTimer(45 * 2);
+
+			// Again, he interpreter does not explicitly restore the screen
+			// after finishing displaying this query dialog, but we have to...
+			if (_bannerMem && !isSmushActive()) {
+				memcpy(
+					_virtscr[kMainVirtScreen].getPixels(0, _screenTop),
+					_bannerMem,
+					_bannerMemSize);
+				free(_bannerMem);
+				_bannerMem = nullptr;
+
+				markRectAsDirty(_virtscr[kMainVirtScreen].number, 0, _screenWidth + 8, _screenTop, _screenHeight + _screenTop);
+				ScummEngine::drawDirtyScreenParts();
+				_system->updateScreen();
+			}
+
+			// Finally, resume the engine, clear the input state, and restore the charset.
+			pt.clear();
+			clearClickedStatus();
+			if (oldId)
+				_charset->setCurID(oldId);
+
+			// Restore the old cursor state...
+			_cursor.state = oldCursorState;
+			CursorMan.showMouse(_cursor.state > 0);
+		} else {
+			ScummEngine::queryQuit();
+		}
 	} else {
 		ScummEngine::confirmExitDialog();
 	}
 }
-#endif
+
+const char *ScummEngine_v8::getGUIString(int stringId) {
+	InfoDialog d(this, 0);
+	int resStringId = -1;
+
+	switch (stringId) {
+	case gsPause:
+		resStringId = 4;
+		break;
+	case gsQuitPrompt:
+		resStringId = (_game.features & GF_DEMO) ? 30 : 22;
+		break;
+	case gsYes:
+		resStringId = 23;
+		break;
+	case gsNo:
+		resStringId = 24;
+		break;
+	case gsIMuseBuffer:
+		resStringId = 25;
+		break;
+	case gsVoiceAndText:
+		resStringId = 26;
+		break;
+	case gsTextDisplayOnly:
+		resStringId = 27;
+		break;
+	case gsVoiceOnly:
+		resStringId = 28;
+		break;
+	case gsYesKey:
+		resStringId = 29;
+		break;
+	case gsTextSpeed:
+		resStringId = 31;
+		break;
+	case gsMusicVolume:
+		resStringId = 32;
+		break;
+	case gsVoiceVolume:
+		resStringId = 33;
+		break;
+	case gsSfxVolume:
+		resStringId = 34;
+		break;
+	default:
+		return "";
+	}
+
+	if (resStringId > 0)
+		return d.getPlainEngineString(resStringId);
+	else
+		return "";
 }
+
+const char *ScummEngine_v7::getGUIString(int stringId) {
+	InfoDialog d(this, 0);
+	int resStringId = -1;
+
+	switch (stringId) {
+	case gsPause:
+		break;
+	case gsVersion:
+		break;
+	case gsTextSpeed:
+		break;
+	case gsRestart:
+		break;
+	case gsQuitPrompt:
+		break;
+	case gsSave:
+		break;
+	case gsLoad:
+		break;
+	case gsPlay:
+		break;
+	case gsCancel:
+		break;
+	case gsQuit:
+		break;
+	case gsOK:
+		break;
+	case gsMustName:
+		break;
+	case gsGameNotSaved:
+		break;
+	case gsGameNotLoaded:
+		break;
+	case gsSaving:
+		break;
+	case gsLoading:
+		break;
+	case gsNamePrompt:
+		break;
+	case gsSelectLoadPrompt:
+		break;
+	case gsReplacePrompt:
+		break;
+	case gsYes:
+		break;
+	case gsNo:
+		break;
+	case gsIMuseBuffer:
+		break;
+	case gsVoiceAndText:
+		break;
+	case gsTextDisplayOnly:
+		break;
+	case gsYesKey:
+		break;
+	case gsMusicVolume:
+		break;
+	case gsVoiceVolume:
+		break;
+	case gsSfxVolume:
+		break;
+	default:
+		return "";
+	}
+
+	if (resStringId > 0)
+		return d.getPlainEngineString(resStringId);
+	else
+		return "";
+}
+
+int ScummEngine_v7::getGUIStringHeight(const char *str) {
+	return _textV7->getStringHeight(str);
+}
+
+int ScummEngine_v7::getGUIStringWidth(const char *str) {
+	return _textV7->getStringWidth(str);
+}
+
+void ScummEngine_v7::drawGUIText(const char *buttonString, int textXPos, int textYPos, int textColor, bool centerFlag) {
+	drawTextImmediately((const byte *)buttonString, textXPos, textYPos, textColor, 1, (TextStyleFlags)centerFlag);
+}
+
+#endif
+
+int ScummEngine::getBannerColor(int bannerId, byte *palette) {
+	byte r, g, b;
+	r = (_bannerColors[bannerId] >> 0) & 0xFF;
+	g = (_bannerColors[bannerId] >> 8) & 0xFF;
+	b = (_bannerColors[bannerId] >> 16) & 0xFF;
+	return getPaletteColorFromRGB(palette, r, g, b);
+}
+
+void ScummEngine::queryQuit() {
+	// "Are you sure you want to quit?  (Y-N)"
+	Common::KeyState ks = showBannerAndPause(0, -1, getGUIString(gsQuitPrompt));
+	if (ks.keycode == Common::KEYCODE_y) {
+		quitGame();
+	}
+}
+
+int ScummEngine::getGUIStringHeight(const char *str) {
+	return _charset->getFontHeight();
+}
+
+int ScummEngine::getGUIStringWidth(const char *str) {
+	return _charset->getStringWidth(0, (const byte *)str);
+}
+
+void ScummEngine::drawGUIText(const char *buttonString, int textXPos, int textYPos, int textColor, bool centerFlag) {
+	_string[4].ypos = textYPos;
+	_string[4].xpos = textXPos;
+	_string[4].right = _screenWidth - 1;
+	_string[4].center = centerFlag;
+	_string[4].color = textColor;
+	_string[4].charset = 1;
+	drawString(4, (const byte *)buttonString);
+}
+
+const char *ScummEngine::getGUIString(int stringId) {
+	InfoDialog d(this, 0);
+	int resStringId = -1;
+
+	switch (stringId) {
+	case gsPause:
+		break;
+	case gsVersion:
+		break;
+	case gsTextSpeed:
+		break;
+	case gsRestart:
+		break;
+	case gsQuitPrompt:
+		break;
+	case gsSave:
+		break;
+	case gsLoad:
+		break;
+	case gsPlay:
+		break;
+	case gsCancel:
+		break;
+	case gsQuit:
+		break;
+	case gsOK:
+		break;
+	case gsMustName:
+		break;
+	case gsGameNotSaved:
+		break;
+	case gsGameNotLoaded:
+		break;
+	case gsSaving:
+		break;
+	case gsLoading:
+		break;
+	case gsNamePrompt:
+		break;
+	case gsSelectLoadPrompt:
+		break;
+	case gsReplacePrompt:
+		break;
+	case gsYes:
+		break;
+	case gsNo:
+		break;
+	case gsIMuseBuffer:
+		break;
+	case gsVoiceAndText:
+		break;
+	case gsTextDisplayOnly:
+		break;
+	case gsYesKey:
+		break;
+	case gsMusicVolume:
+		break;
+	case gsVoiceVolume:
+		break;
+	case gsSfxVolume:
+		break;
+	case gsHeap:
+		return "Heap %d";
+	default:
+		return "";
+	}
+
+	if (resStringId > 0)
+		return d.getPlainEngineString(resStringId);
+	else
+		return "";
+}
+
+} // End of namespace Scumm

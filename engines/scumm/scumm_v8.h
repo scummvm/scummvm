@@ -95,6 +95,8 @@ protected:
 	bool fetchInternalSaveStateThumbnail(int slotId, bool isHeapSave);
 	uint32 *fetchScummVMSaveStateThumbnail(int slotId, bool isHeapSave, int brightness);
 
+	const char *getGUIString(int stringId) override;
+
 	/* Version 8 script opcodes */
 	void o8_mod();
 	void o8_wait();
