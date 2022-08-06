@@ -28,6 +28,7 @@
 #include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/impl/LowLevelSoundOpenAL.h"
 #include "hpl1/engine/impl/MouseSDL.h"
+#include "hpl1/engine/haptic/LowLevelHaptic.h"
 
 namespace hpl {
 

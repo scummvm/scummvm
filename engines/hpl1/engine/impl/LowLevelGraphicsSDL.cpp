@@ -63,6 +63,7 @@ GLenum ColorFormatToGL(eColorDataFormat format) {
 		break;
 	}
 	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid color format (%d)", format);
+	return GL_RGB;
 }
 
 GLenum TextureTargetToGL(eTextureTarget target) {
@@ -81,6 +82,7 @@ GLenum TextureTargetToGL(eTextureTarget target) {
 		break;
 	}
 	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid texture target (%d)", target);
+	return GL_TEXTURE_1D;
 }
 
 cLowLevelGraphicsSDL::cLowLevelGraphicsSDL() {
@@ -863,7 +865,7 @@ void cLowLevelGraphicsSDL::SetStencilTwoSide(eStencilFunc aFrontFunc, eStencilFu
 
 void cLowLevelGraphicsSDL::SetStencilTwoSide(bool abX) {
 	if (GetCaps(eGraphicCaps_TwoSideStencil))
-		Hpl1::logError(Hpl1::kDebugOpenGL, "call to setStencilTwoSide with two side stencil enabled");
+		Hpl1::logError(Hpl1::kDebugOpenGL, "call to setStencilTwoSide with two side stencil enabled%c", ".");
 }
 
 //-----------------------------------------------------------------------

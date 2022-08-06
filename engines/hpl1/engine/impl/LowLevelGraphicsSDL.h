@@ -245,7 +245,7 @@ private:
 	int mlBpp;
 
 	// Gamma
-	uint16 mvStartGammaArray[3][256];
+	//uint16 mvStartGammaArray[3][256];
 	float mfGammaCorrection;
 
 	// Clipping

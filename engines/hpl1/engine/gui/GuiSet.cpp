@@ -377,7 +377,7 @@ void cGuiSet::DrawFont(const tWString &asText,
 					   const cVector2f &avSize, const cColor &aColor,
 					   eFontAlign aAlign, eGuiMaterial aMaterial) {
 	int lCount = 0;
-	float lXAdd = 0;
+	//float lXAdd = 0;
 	cVector3f vPos = avPos;
 
 	if (aAlign == eFontAlign_Center) {
@@ -586,7 +586,7 @@ void cGuiSet::DestroyWidget(iWidget *apWidget) {
 void cGuiSet::CreatePopUpMessageBox(const tWString &asLabel, const tWString &asText,
 									const tWString &asButton1, const tWString &asButton2,
 									void *apCallbackObject, tGuiCallbackFunc apCallback) {
-	cGuiPopUpMessageBox *pMessageBox = hplNew(cGuiPopUpMessageBox, (this, asLabel, asText,
+	/* cGuiPopUpMessageBox *pMessageBox = */(void)hplNew(cGuiPopUpMessageBox, (this, asLabel, asText,
 																	asButton1, asButton2,
 																	apCallbackObject, apCallback));
 }
@@ -835,7 +835,7 @@ void cGuiSet::RenderClipRegion() {
 		// Iterate for all with same texture and material
 		do {
 			cGuiRenderObject object = *it;
-			cGuiGfxElement *pGfx = object.mpGfx;
+			pGfx = object.mpGfx;
 
 			if (kLogRender) {
 				if (pGfx->mvImages[0])
