@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-06 11:34+0000\n"
-"PO-Revision-Date: 2022-08-03 13:30+0000\n"
+"PO-Revision-Date: 2022-08-06 16:42+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -7063,16 +7063,16 @@ msgstr ""
 "ήχου, εφόσον είναι διαθέσιμα."
 
 #: engines/scumm/detection.cpp:247
-#, fuzzy
-#| msgid "Enable the original audio cd track"
 msgid "Enable the original GUI and Menu"
-msgstr "Ενεργοποίηση χρήσης ήχου από CD που είχε το αρχικό παιχνίδι"
+msgstr "Χρήση αρχικού Μενού και Περιβάλλοντος Διεπαφής (GUI)"
 
 #: engines/scumm/detection.cpp:248
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu."
 msgstr ""
+"Επιτρέπει στο παιχνίδι να χρησιμοποιήσει το εγγενές γραφικό περιβάλλον "
+"διεπαφής και το αρχικό μενού αποθήκευσης/φόρτωσης."
 
 #: engines/scumm/detection_internal.h:358
 msgid ""
