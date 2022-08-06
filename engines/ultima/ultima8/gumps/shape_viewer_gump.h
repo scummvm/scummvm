@@ -41,7 +41,7 @@ public:
 
 	ShapeViewerGump();
 	ShapeViewerGump(int x, int y, int width, int height,
-	                Std::vector<Std::pair<Std::string, ShapeArchive *> > &flexes,
+	                Std::vector<Common::Pair<Std::string, ShapeArchive *> > &flexes,
 	                uint32 flags = FLAG_PREVENT_SAVE, int32 layer = LAYER_MODAL);
 	~ShapeViewerGump() override;
 
@@ -59,7 +59,7 @@ public:
 	void saveData(Common::WriteStream *ws) override;
 
 protected:
-	Std::vector<Std::pair<Std::string, ShapeArchive *> > _flexes;
+	Std::vector<Common::Pair<Std::string, ShapeArchive *> > _flexes;
 	unsigned int _curFlex;
 	ShapeArchive *_flex;
 	uint32 _curShape;

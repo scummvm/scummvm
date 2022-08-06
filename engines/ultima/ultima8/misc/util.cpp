@@ -145,7 +145,7 @@ template void SplitString<istring>(const istring &args, char sep, Std::vector<is
 
 
 template<class T> void SplitStringKV(const T &args, char sep,
-									 Std::vector<Std::pair<T, T> > &argv) {
+									 Std::vector<Common::Pair<T, T> > &argv) {
 	// Clear the vector
 	argv.clear();
 
@@ -155,7 +155,7 @@ template<class T> void SplitStringKV(const T &args, char sep,
 	SplitString(args, sep, keyvals);
 
 	for (unsigned int i = 0; i < keyvals.size(); ++i) {
-		Std::pair<T, T> keyval;
+		Common::Pair<T, T> keyval;
 		typename T::size_type pos;
 		pos = keyvals[i].find('=');
 		keyval.first = keyvals[i].substr(0, pos);
@@ -171,8 +171,8 @@ template<class T> void SplitStringKV(const T &args, char sep,
 	}
 }
 
-template void SplitStringKV<Std::string>(const Std::string &args, char sep, Std::vector<Std::pair<Std::string, Std::string> > &argv);
-template void SplitStringKV<istring>(const istring &args, char sep, Std::vector<Std::pair<istring, istring> > &argv);
+template void SplitStringKV<Std::string>(const Std::string &args, char sep, Std::vector<Common::Pair<Std::string, Std::string> > &argv);
+template void SplitStringKV<istring>(const istring &args, char sep, Std::vector<Common::Pair<istring, istring> > &argv);
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

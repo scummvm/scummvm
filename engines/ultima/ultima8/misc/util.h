@@ -36,7 +36,7 @@ template<class T> void TabsToSpaces(T &str, unsigned int nspaces);
 template<class T> void SplitString(const T &args, char sep, Std::vector<T> &argv);
 
 template<class T> void SplitStringKV(const T &args, char sep,
-									 Std::vector<Std::pair<T, T> > &argv);
+									 Std::vector<Common::Pair<T, T> > &argv);
 
 } // End of namespace Ultima8
 } // End of namespace Ultima
