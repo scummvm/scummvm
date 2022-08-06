@@ -111,7 +111,7 @@ void cOpenALSoundChannel::SetPaused(bool pause) {
 	Hpl1::logInfo(Hpl1::kDebugAudio, "%spausing sound channel from data %s\n", pause ? "" : "un",
 				  mpData->GetName().c_str());
 	mixer->pauseHandle(_handle, pause);
-	if (!_playing && !pause)
+	if (!_playing && !pause && mbPaused) // corner case of the original implementation
 		Play();
 	mbPaused = pause;
 }
