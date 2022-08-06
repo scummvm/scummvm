@@ -1377,8 +1377,18 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::setupScumm(const Common::String &macResourceFile) {
 
-	if (ConfMan.hasKey("original_gui"))
+	if (ConfMan.hasKey("original_gui", _targetName))
 		_useOriginalGUI =  ConfMan.getBool("original_gui");
+
+	// The object line toggle is always synchronized from the main game to
+	// our internal Game Options; at startup we do the opposite, since an user
+	// might change the toggle just before starting up the game...
+	if (_game.version == 8) {
+		if (ConfMan.hasKey("original_gui_object_labels", _targetName) &&
+			ConfMan.hasKey("object_labels", _targetName)) {
+			ConfMan.setInt("original_gui_object_labels", ConfMan.getBool("object_labels") ? 1 : 0);
+		}
+	}
 
 	if (_game.id == GID_DIG && (_game.features & GF_DEMO))
 		_smushFrameRate = 15;
@@ -2065,15 +2075,33 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 
 void ScummEngine::syncSoundSettings() {
 	if (isUsingOriginalGUI() && _game.version == 8) {
-		_voiceMode = ConfMan.getInt("original_gui_text_status");
+		if (ConfMan.hasKey("original_gui_text_status", _targetName)) {
+			_voiceMode = ConfMan.getInt("original_gui_text_status");
+		} else if (ConfMan.hasKey("subtitles", _targetName) && ConfMan.hasKey("speech_mute", _targetName)){
+			int guiTextStatus = 0;
+			if (ConfMan.getBool("speech_mute")) {
+				guiTextStatus = 2;
+			} else if (ConfMan.getBool("subtitles")) {
+				guiTextStatus = 1;
+			}
+
+			// Let's set it now so we don't have to do the conversion the next time...
+			ConfMan.setInt("original_gui_text_status", guiTextStatus);
+			_voiceMode = guiTextStatus;
+		}
 
 		if (VAR_VOICE_MODE != 0xFF)
 			VAR(VAR_VOICE_MODE) = _voiceMode;
 
 		if (ConfMan.hasKey("original_gui_text_speed", _targetName)) {
+			// If the value has been changed from the GMM, sync it...
+			if (getTalkSpeed() != ConfMan.getInt("original_gui_text_speed")) {
+				ConfMan.setInt("original_gui_text_speed", getTalkSpeed());
+			}
+
 			_defaultTalkDelay = ConfMan.getInt("original_gui_text_speed");
 
-			// In the original GUI the talk delay is represented as text speed,
+			// In the original games the talk delay is represented as text speed,
 			// so we have to invert the value:
 			// - 9 is the highest text speed possible;
 			// - 0 is the lowest text speed possible.
@@ -2116,8 +2144,13 @@ void ScummEngine::syncSoundSettings() {
 
 	if (ConfMan.hasKey("talkspeed", _targetName)) {
 		_defaultTalkDelay = getTalkSpeed();
+
+		// In the original games the talk delay is represented as text speed,
+		// so we have to invert the value:
+		// - 9 is the highest text speed possible;
+		// - 0 is the lowest text speed possible.
 		if (VAR_CHARINC != 0xFF)
-			VAR(VAR_CHARINC) = _defaultTalkDelay;
+			VAR(VAR_CHARINC) = 9 - _defaultTalkDelay;
 	}
 
 	// Backyard Baseball 2003 uses a unique subtitle variable,
@@ -2803,7 +2836,7 @@ void ScummEngine_v5::scummLoop_handleSaveLoad() {
 			// completely process, save and load both the VGA and EGA palettes all the time (regardless
 			// of the current render mode).
 			setCurrentPalette(_curPalIndex);
-		}	
+		}
 	}
 
 	// update IQ points after loading

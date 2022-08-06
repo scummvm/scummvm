@@ -1157,20 +1157,25 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		int value = args[2];
 		const char *str = (const char *)getStringAddress(idx);
 		if (isUsingOriginalGUI()) {
-			if (!strcmp(str, "SFX Volume"))
+			if (!strcmp(str, "SFX Volume")) {
 				ConfMan.setInt("sfx_volume", value * 2);
-			else if (!strcmp(str, "Voice Volume"))
+			} else if (!strcmp(str, "Voice Volume")) {
 				ConfMan.setInt("speech_volume", value * 2);
-			else if (!strcmp(str, "Music Volume"))
+			} else if (!strcmp(str, "Music Volume")) {
 				ConfMan.setInt("music_volume", value * 2);
-			else if (!strcmp(str, "Text Status"))
+			} else if (!strcmp(str, "Text Status")) {
 				ConfMan.setInt("original_gui_text_status", value);
-			else if (!strcmp(str, "Text Speed"))
+				ConfMan.setBool("speech_mute", value == 2);
+				ConfMan.setBool("subtitles", value > 0);
+			} else if (!strcmp(str, "Text Speed")) {
 				ConfMan.setInt("original_gui_text_speed", value);
-			else if (!strcmp(str, "Object Names"))
+				setTalkSpeed(value);
+			} else if (!strcmp(str, "Object Names")) {
 				ConfMan.setInt("original_gui_object_labels", value);
-			else if (!strcmp(str, "Saveload Page"))
+				ConfMan.setBool("object_labels", value > 0);
+			} else if (!strcmp(str, "Saveload Page")) {
 				ConfMan.setInt("original_gui_saveload_page", value);
+			}
 
 			ConfMan.flushToDisk();
 		}
@@ -1278,22 +1283,43 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 		{
 		int idx = args[1];
 		const char *str = (const char *)getStringAddress(idx);
-		if (!strcmp(str, "SFX Volume"))
+		if (!strcmp(str, "SFX Volume")) {
 			push(ConfMan.getInt("sfx_volume") / 2);
-		else if (!strcmp(str, "Voice Volume"))
+		} else if (!strcmp(str, "Voice Volume")) {
 			push(ConfMan.getInt("speech_volume") / 2);
-		else if (!strcmp(str, "Music Volume"))
+		} else if (!strcmp(str, "Music Volume")) {
 			push(ConfMan.getInt("music_volume") / 2);
-		else if (!strcmp(str, "Text Status"))
-			push(isUsingOriginalGUI() ? ConfMan.getInt("original_gui_text_status") : ConfMan.getBool("subtitles"));
-		else if (!strcmp(str, "Text Speed"))
-			push(ConfMan.getInt("original_gui_text_speed"));
-		else if (!strcmp(str, "Object Names"))
-			push(isUsingOriginalGUI() ? ConfMan.getInt("original_gui_object_labels") : ConfMan.getBool("object_labels"));
-		else if (!strcmp(str, "Saveload Page"))
-			push(ConfMan.getInt("original_gui_saveload_page"));
-		else		// Use defaults
+		} else if (!strcmp(str, "Text Status")) {
+			if (ConfMan.hasKey("original_gui_text_status", _targetName) && isUsingOriginalGUI()) {
+				push(ConfMan.getInt("original_gui_text_status"));
+			} else if (ConfMan.hasKey("subtitles", _targetName)) {
+				push(ConfMan.getBool("subtitles"));
+			} else {
+				push(-1); // Default value
+			}
+		} else if (!strcmp(str, "Text Speed")) {
+			if (ConfMan.hasKey("original_gui_text_speed", _targetName) && isUsingOriginalGUI()) {
+				push(ConfMan.getInt("original_gui_text_speed"));
+			} else {
+				push(-1); // Default value
+			}
+		} else if (!strcmp(str, "Object Names")) {
+			if (ConfMan.hasKey("original_gui_object_labels", _targetName) && isUsingOriginalGUI()) {
+				push(ConfMan.getInt("original_gui_object_labels"));
+			} else if (ConfMan.hasKey("object_labels", _targetName)) {
+				push(ConfMan.getBool("object_labels"));
+			} else {
+				push(-1); // Default value
+			}
+		} else if (!strcmp(str, "Saveload Page")) {
+			if (ConfMan.hasKey("original_gui_saveload_page", _targetName) && isUsingOriginalGUI()) {
+				push(ConfMan.getInt("original_gui_saveload_page"));
+			} else {
+				push(-1); // Default value
+			}
+		} else { // Use defaults
 			push(-1);
+		}
 
 		debugC(DEBUG_GENERAL,"o8_kernelGetFunctions: readRegistryValue(%s)", str);
 		}
