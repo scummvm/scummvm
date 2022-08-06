@@ -34,7 +34,7 @@ void main()
 
 	//Calculate rotation for light to get it to tangent space.
 	vec3 binormal = cross(normal,tangent.xyz)*tangent.w;
-	mat3 rotation = mat3(tangent.xyz, binormal, normal);
+	mat3 rotation = transpose(mat3(tangent.xyz, binormal, normal));
 
 	//Transform the lightdir
 	vLightDir = (rotation * vLightDir);
