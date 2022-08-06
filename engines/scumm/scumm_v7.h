@@ -115,7 +115,7 @@ protected:
 	byte *_bannerMem = nullptr;
 	uint32 _bannerMemSize = 0;
 	InternalGUIControl _internalGUIControls[30];
-	char _emptyMsg[1] = "";
+	char _emptyMsg[1] = { '\0' };
 
 public:
 	void processSubtitleQueue();
