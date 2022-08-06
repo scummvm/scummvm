@@ -1225,7 +1225,7 @@ void Screen::screenGemUpdate() {
 	if (g_context->_location->_map->_type == Map::DUNGEON) {
 		//DO THE SPECIAL DUNGEON MAP TRAVERSAL
 		Std::vector<Std::vector<int> > drawnTiles(layout->_viewport.width(), Std::vector<int>(layout->_viewport.height(), 0));
-		Common::List<Std::pair<int, int> > coordStack;
+		Common::List<Common::Pair<int, int> > coordStack;
 
 		//Put the avatar's position on the stack
 		int center_x = layout->_viewport.width() / 2 - 1;
@@ -1233,12 +1233,12 @@ void Screen::screenGemUpdate() {
 		int avt_x = g_context->_location->_coords.x - 1;
 		int avt_y = g_context->_location->_coords.y - 1;
 
-		coordStack.push_back(Std::pair<int, int>(center_x, center_y));
+		coordStack.push_back(Common::Pair<int, int>(center_x, center_y));
 		bool weAreDrawingTheAvatarTile = true;
 
 		//And draw each tile on the growing stack until it is empty
 		while (coordStack.size() > 0) {
-			Std::pair<int, int> currentXY = coordStack.back();
+			Common::Pair<int, int> currentXY = coordStack.back();
 			coordStack.pop_back();
 
 			x = currentXY.first;
@@ -1275,16 +1275,16 @@ void Screen::screenGemUpdate() {
 				//or the avatar position in those rare circumstances where he is stuck in a wall
 
 				//by adding all relative adjacency combinations to the stack for drawing
-				coordStack.push_back(Std::pair<int, int>(x + 1, y - 1));
-				coordStack.push_back(Std::pair<int, int>(x + 1, y));
-				coordStack.push_back(Std::pair<int, int>(x + 1, y + 1));
+				coordStack.push_back(Common::Pair<int, int>(x + 1, y - 1));
+				coordStack.push_back(Common::Pair<int, int>(x + 1, y));
+				coordStack.push_back(Common::Pair<int, int>(x + 1, y + 1));
 
-				coordStack.push_back(Std::pair<int, int>(x, y - 1));
-				coordStack.push_back(Std::pair<int, int>(x, y + 1));
+				coordStack.push_back(Common::Pair<int, int>(x, y - 1));
+				coordStack.push_back(Common::Pair<int, int>(x, y + 1));
 
-				coordStack.push_back(Std::pair<int, int>(x - 1, y - 1));
-				coordStack.push_back(Std::pair<int, int>(x - 1, y));
-				coordStack.push_back(Std::pair<int, int>(x - 1, y + 1));
+				coordStack.push_back(Common::Pair<int, int>(x - 1, y - 1));
+				coordStack.push_back(Common::Pair<int, int>(x - 1, y));
+				coordStack.push_back(Common::Pair<int, int>(x - 1, y + 1));
 
 				// We only draw the avatar tile once, it is the first tile drawn
 				weAreDrawingTheAvatarTile = false;

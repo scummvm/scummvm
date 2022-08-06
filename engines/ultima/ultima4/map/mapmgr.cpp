@@ -350,8 +350,8 @@ int MapMgr::initCompressedChunkFromConf(const ConfigElement &compressedChunkConf
 	return compressedChunkConf.getInt("index");
 }
 
-Std::pair<Common::String, MapCoords> MapMgr::initLabelFromConf(const ConfigElement &labelConf) {
-	return Std::pair<Common::String, MapCoords>
+Common::Pair<Common::String, MapCoords> MapMgr::initLabelFromConf(const ConfigElement &labelConf) {
+	return Common::Pair<Common::String, MapCoords>
 	       (labelConf.getString("name"),
 	        MapCoords(labelConf.getInt("x"), labelConf.getInt("y"), labelConf.getInt("z", 0)));
 }

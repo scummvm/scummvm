@@ -56,7 +56,7 @@ ShapeViewerGump::ShapeViewerGump()
 }
 
 ShapeViewerGump::ShapeViewerGump(int x, int y, int width, int height,
-								 Std::vector<Std::pair<Std::string, ShapeArchive *> > &flexes,
+								 Std::vector<Common::Pair<Std::string, ShapeArchive *> > &flexes,
 								 uint32 flags, int32 layer)
 		: ModalGump(x, y, width, height, 0, flags, layer), _flexes(flexes),
 		_curFlex(0), _curShape(0), _curFrame(0), _background(0), _fontNo(0),
@@ -293,8 +293,8 @@ bool ShapeViewerGump::OnTextInput(int unicode) {
 void ShapeViewerGump::U8ShapeViewer() {
 	GameData *gamedata = GameData::get_instance();
 
-	Std::vector<Std::pair<Std::string, ShapeArchive *> > _flexes;
-	Std::pair<Std::string, ShapeArchive *> _flex;
+	Std::vector<Common::Pair<Std::string, ShapeArchive *> > _flexes;
+	Common::Pair<Std::string, ShapeArchive *> _flex;
 	_flex.first = "shapes";
 	_flex.second = gamedata->getMainShapes();
 	_flexes.push_back(_flex);

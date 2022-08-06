@@ -29,20 +29,10 @@
 #include "common/list.h"
 #include "common/queue.h"
 #include "common/stack.h"
+#include "common/util.h"
 
 namespace Ultima {
 namespace Std {
-
-template<class T1, class T2>
-struct pair {
-	T1 first;
-	T2 second;
-
-	pair() {
-	}
-	pair(T1 first_, T2 second_) : first(first_), second(second_) {
-	}
-};
 
 template<class T>
 class vector : public Common::Array<T> {
@@ -252,7 +242,7 @@ template<class Key, class Val, class HashFunc = Common::Hash<Key>,
 		 class EqualFunc = Common::EqualTo<Key> >
 class map : public Common::HashMap<Key, Val, HashFunc, EqualFunc> {
 public:
-	void insert(Std::pair<Key, Val> elem) {
+	void insert(Common::Pair<Key, Val> elem) {
 		this->operator[](elem.first) = elem.second;
 	}
 };

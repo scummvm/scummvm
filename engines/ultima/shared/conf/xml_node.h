@@ -22,7 +22,7 @@
 #ifndef SHARED_CONF_XML_NODE_H
 #define SHARED_CONF_XML_NODE_H
 
-#include "ultima/shared/std/containers.h"
+#include "common/util.h"
 #include "common/str.h"
 #include "common/array.h"
 #include "common/hash-str.h"
@@ -122,7 +122,7 @@ public:
 		return _nodeList;
 	}
 
-	typedef Std::pair<Common::String, Common::String> KeyType;
+	typedef Common::Pair<Common::String, Common::String> KeyType;
 	typedef Common::Array<KeyType> KeyTypeList;
 
 	/**

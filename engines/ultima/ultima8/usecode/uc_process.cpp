@@ -108,7 +108,7 @@ bool UCProcess::ret() {
 void UCProcess::freeOnTerminate(uint16 index, int type) {
 	assert(type >= 1 && type <= 3);
 
-	Std::pair<uint16, int> p;
+	Common::Pair<uint16, int> p;
 	p.first = index;
 	p.second = type;
 
@@ -116,7 +116,7 @@ void UCProcess::freeOnTerminate(uint16 index, int type) {
 }
 
 void UCProcess::terminate() {
-	Std::list<Std::pair<uint16, int> >::iterator i;
+	Std::list<Common::Pair<uint16, int> >::iterator i;
 
 	for (i = _freeOnTerminate.begin(); i != _freeOnTerminate.end(); ++i) {
 		uint16 index = (*i).first;
@@ -160,7 +160,7 @@ void UCProcess::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(_ip);
 	ws->writeUint32LE(_temp32);
 	ws->writeUint32LE(static_cast<uint32>(_freeOnTerminate.size()));
-	Std::list<Std::pair<uint16, int> >::iterator iter;
+	Std::list<Common::Pair<uint16, int> >::iterator iter;
 	for (iter = _freeOnTerminate.begin(); iter != _freeOnTerminate.end(); ++iter) {
 		ws->writeUint16LE(iter->first);
 		ws->writeUint32LE(static_cast<uint32>(iter->second));
@@ -177,7 +177,7 @@ bool UCProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	_temp32 = rs->readUint32LE();
 	uint32 freecount = rs->readUint32LE();
 	for (unsigned int i = 0; i < freecount; ++i) {
-		Std::pair<uint16, int> p;
+		Common::Pair<uint16, int> p;
 		p.first = rs->readUint16LE();
 		p.second = static_cast<int>(rs->readUint32LE());
 		_freeOnTerminate.push_back(p);

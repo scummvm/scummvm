@@ -80,7 +80,7 @@ bool TreasureLoader::internalParse(const Std::string &desc, TreasureInfo &ti,
 	ti.clear();
 	bool loadedDefault = false;
 
-	Std::vector<Std::pair<Std::string, Std::string> > kv;
+	Std::vector<Common::Pair<Std::string, Std::string> > kv;
 	SplitStringKV(desc, ' ', kv);
 
 	for (unsigned int i = 0; i < kv.size(); ++i) {

@@ -282,7 +282,7 @@ void Image::makeBackgroundColorTransparent(int haloSize, int shadowOpacity) {
 void Image::performTransparencyHack(uint colorValue, uint numFrames,
 									uint currentFrameIndex, uint haloWidth,
 									uint haloOpacityIncrementByPixelDistance) {
-	Common::List<Std::pair<uint, uint> > opaqueXYs;
+	Common::List<Common::Pair<uint, uint> > opaqueXYs;
 	int x, y;
 	byte t_r, t_g, t_b;
 
@@ -305,12 +305,12 @@ void Image::performTransparencyHack(uint colorValue, uint numFrames,
 			} else {
 				putPixel(x, y, r, g, b, a);
 				if (haloWidth)
-					opaqueXYs.push_back(Std::pair<uint, uint>(x, y));
+					opaqueXYs.push_back(Common::Pair<uint, uint>(x, y));
 			}
 		}
 	}
 	int ox, oy;
-	for (Common::List<Std::pair<uint, uint> >::iterator xy = opaqueXYs.begin();
+	for (Common::List<Common::Pair<uint, uint> >::iterator xy = opaqueXYs.begin();
 	        xy != opaqueXYs.end();
 	        ++xy) {
 		ox = xy->first;

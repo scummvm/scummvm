@@ -127,7 +127,7 @@ private:
 	void initDungeonRoom(Dungeon *dng, int room);
 	void createMoongateFromConf(const ConfigElement &moongateConf);
 	int initCompressedChunkFromConf(const ConfigElement &compressedChunkConf);
-	Std::pair<Common::String, MapCoords> initLabelFromConf(const ConfigElement &labelConf);
+	Common::Pair<Common::String, MapCoords> initLabelFromConf(const ConfigElement &labelConf);
 
 	static MapMgr *_instance;
 	Std::vector<Map *> _mapList;
