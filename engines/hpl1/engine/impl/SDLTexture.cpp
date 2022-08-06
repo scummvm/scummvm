@@ -79,7 +79,7 @@ cSDLTexture::cSDLTexture(const tString &asName, Graphics::PixelFormat *apPxlFmt,
 	mpPBuffer = NULL;
 
 	if (aType == eTextureType_RenderTarget) {
-		Hpl1::logError(Hpl1::kDebugGraphics, "use of render target");
+		Hpl1::logError(Hpl1::kDebugGraphics, "use of render target%s", ".");
 		// mpPBuffer = hplNew( cPBuffer, (mpLowLevelGraphics,true) );
 	}
 
@@ -528,7 +528,7 @@ bool cSDLTexture::CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx) {
 		// Log("OldSize: %d x %d ",mlWidth,mlHeight);
 
 		int lOldW = _width;
-		int lOldH = _height;
+		//int lOldH = _height;
 
 		int lSizeDiv = (int)pow((float)2, (int)mlSizeLevel);
 

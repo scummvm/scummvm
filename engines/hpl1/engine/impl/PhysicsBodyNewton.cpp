@@ -376,11 +376,11 @@ bool cPhysicsBodyNewton::GetGravity() const {
 
 //-----------------------------------------------------------------------
 
-static iLowLevelGraphics *gpLowLevelGraphics;
+//static iLowLevelGraphics *gpLowLevelGraphics;
 static cColor gDebugColor;
 
 ////////////////////////////////////////////
-
+/*
 static void RenderDebugPolygon(const NewtonBody *apNewtonBody,
 							   int alVertexCount, const dFloat *apFaceVertex, int alId) {
 	int i;
@@ -395,7 +395,7 @@ static void RenderDebugPolygon(const NewtonBody *apNewtonBody,
 		vP0 = vP1;
 	}
 }
-
+*/
 ////////////////////////////////////////////
 
 void cPhysicsBodyNewton::RenderDebugGeometry(iLowLevelGraphics *apLowLevel, const cColor &aColor) {

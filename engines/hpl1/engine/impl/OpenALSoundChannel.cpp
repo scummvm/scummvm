@@ -48,7 +48,7 @@ cOpenALSoundChannel::cOpenALSoundChannel(cOpenALSoundData *soundData, Audio::See
 	: iSoundChannel(soundData, apSoundManger), _playing(false), _audioStream(audioStream) {
 	Hpl1::logInfo(Hpl1::kDebugAudio, "creating sound channel form file %s\n", mpData->GetName().c_str());
 	if (!_audioStream)
-		Hpl1::logError(Hpl1::kDebugAudio, "sound channel created with null audio stream\n");
+		Hpl1::logError(Hpl1::kDebugAudio, "sound channel created with null audio stream%s", ".");
 #if 0
   		mlChannel = alChannel;
 

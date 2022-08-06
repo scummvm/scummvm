@@ -82,10 +82,10 @@ private:
 	Audio::SoundHandle _handle;
 	bool _playing;
 	Audio::SeekableAudioStream* _audioStream;
-	int mlDefaultFreq;
+	//int mlDefaultFreq;
 
-	float mfPosition[3];
-	float mfVelocity[3];
+	//float mfPosition[3];
+	//float mfVelocity[3];
 };
 
 }     // namespace hpl

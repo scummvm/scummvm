@@ -913,10 +913,10 @@ static void LoadControllerVec(TiXmlElement *apRootElem, tColladaControllerVec *a
 		return;
 	}
 
-	int lSize = cString::ToInt(pControllerRootElem->Attribute("Size"), 0);
+	int lSize1 = cString::ToInt(pControllerRootElem->Attribute("Size"), 0);
 
 	apColladaControllerVec->clear();
-	apColladaControllerVec->resize(lSize);
+	apColladaControllerVec->resize(lSize1);
 
 	int lCount = 0;
 	TiXmlElement *pControllerElem = pControllerRootElem->FirstChildElement();
@@ -1057,10 +1057,10 @@ static void LoadAnimationVec(TiXmlElement *apRootElem, tColladaAnimationVec *apC
 		return;
 	}
 
-	int lSize = cString::ToInt(pAnimationRootElem->Attribute("Size"), 0);
+	int lSize1 = cString::ToInt(pAnimationRootElem->Attribute("Size"), 0);
 
 	apColladaAnimationVec->clear();
-	apColladaAnimationVec->resize(lSize);
+	apColladaAnimationVec->resize(lSize1);
 
 	int lCount = 0;
 	TiXmlElement *pAnimationElem = pAnimationRootElem->FirstChildElement();
@@ -1135,10 +1135,10 @@ static void LoadAnimationVec(TiXmlElement *apRootElem, tColladaAnimationVec *apC
 static void LoadGeometryVec(TiXmlElement *apRootElem, tColladaGeometryVec *apColladaGeometryVec) {
 	TiXmlElement *pGeometryRootElem = apRootElem->FirstChildElement("GeometryRoot");
 
-	int lSize = cString::ToInt(pGeometryRootElem->Attribute("Size"), 0);
+	int lSize1 = cString::ToInt(pGeometryRootElem->Attribute("Size"), 0);
 
 	apColladaGeometryVec->clear();
-	apColladaGeometryVec->resize(lSize);
+	apColladaGeometryVec->resize(lSize1);
 
 	int lCount = 0;
 	TiXmlElement *pGeometryElem = pGeometryRootElem->FirstChildElement();
