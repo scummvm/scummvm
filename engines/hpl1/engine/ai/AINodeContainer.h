@@ -296,5 +296,6 @@ private:
 	float mfMaxHeight;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_AI_NODE_CONTAINER_H

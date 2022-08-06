@@ -54,5 +54,6 @@ private:
 	cHaptic *mpHaptic;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_ACTIONMOUSEBUTTON_H

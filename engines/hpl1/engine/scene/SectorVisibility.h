@@ -178,5 +178,6 @@ private:
 
 //----------------------------------------------------
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_SECTOR_VISIBILTY_H

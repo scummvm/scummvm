@@ -65,5 +65,7 @@ private:
 
 	tCollideShapeVec mvSubShapes;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_COLLIDE_SHAPE_NEWTON_H

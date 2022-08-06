@@ -142,5 +142,7 @@ private:
 	cScriptOutput *_scriptOutput;
 	int _handleCount;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_LOWLEVELSYSTEM_H

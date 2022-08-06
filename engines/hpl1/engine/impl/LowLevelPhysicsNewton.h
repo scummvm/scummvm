@@ -40,5 +40,7 @@ public:
 
 	iPhysicsWorld *CreateWorld();
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_LOWLEVELPHYSICS_NEWTON_H

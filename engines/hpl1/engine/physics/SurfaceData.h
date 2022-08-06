@@ -202,5 +202,7 @@ protected:
 
 	iHapticSurface *mpHapticSurface;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_SURFACE_DATA_H

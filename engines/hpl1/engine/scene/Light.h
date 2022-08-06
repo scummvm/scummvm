@@ -153,5 +153,7 @@ protected:
 	float mfFlickerTime;
 	float mfFlickerStateLength;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_LIGHT_H

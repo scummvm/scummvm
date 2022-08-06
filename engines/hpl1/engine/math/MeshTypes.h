@@ -71,5 +71,6 @@ typedef tTriEdgeVec::iterator tTriEdgeVecIt;
 
 //----------------------------------------------
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_MESH_TYPES_H

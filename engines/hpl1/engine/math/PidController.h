@@ -128,5 +128,7 @@ private:
 
 typedef cPidController<float> cPidControllerf;
 typedef cPidController<cVector3f> cPidControllerVec3;
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_PID_CONTROLLER_H

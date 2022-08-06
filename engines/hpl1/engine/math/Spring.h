@@ -61,5 +61,7 @@ public:
 
 typedef cSpring<float> cSpringf;
 typedef cSpring<cVector3f> cSpringVec3;
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_SPRING_H

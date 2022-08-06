@@ -126,5 +126,7 @@ private:
 	cVector3f mvTotalForce;
 	cVector3f mvTotalTorque;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_PHYSICS_BODY_NEWTON_H

@@ -87,5 +87,7 @@ private:
 	float mfPosition[3];
 	float mfVelocity[3];
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_OPENAL_CHANNEL_H

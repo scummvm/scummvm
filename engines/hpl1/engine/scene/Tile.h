@@ -74,5 +74,7 @@ private:
 
 typedef std::list<cTile *> tTileList;
 typedef tTileList::iterator tTileListIt;
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_TILE_H

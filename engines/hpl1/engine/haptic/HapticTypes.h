@@ -95,5 +95,6 @@ typedef cSTLIterator<iHapticShape *, tHapticShapeList, tHapticShapeListIt> cHapt
 
 //----------------------------------------------
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_HAPTIC_TYPES_H

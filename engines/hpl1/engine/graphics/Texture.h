@@ -198,5 +198,7 @@ protected:
 
 typedef std::vector<iTexture *> tTextureVec;
 typedef tTextureVec::iterator tTextureVecIt;
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_TEXTURE_H

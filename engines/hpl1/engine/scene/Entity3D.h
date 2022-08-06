@@ -168,5 +168,6 @@ private:
 	void UpdateWorldTransform();
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_ENTITY3D_H

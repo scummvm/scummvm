@@ -71,5 +71,6 @@ protected:
 	cGuiGfxElement *mvGfxCornersDown[4];
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_WIDGET_BUTTON_H

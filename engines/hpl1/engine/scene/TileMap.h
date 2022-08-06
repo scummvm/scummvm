@@ -96,5 +96,6 @@ private:
 	inline void RenderTileData(cTile *apTile, int alLayer);
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_TILEMAP_H

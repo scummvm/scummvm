@@ -166,5 +166,6 @@ private:
 	static tSoundEntityGlobalCallbackList mlstGobalCallbacks;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_SOUND_ENTITY_H

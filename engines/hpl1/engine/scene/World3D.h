@@ -370,5 +370,6 @@ private:
 	cColor mAmbientColor;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_WOLRD3D_H

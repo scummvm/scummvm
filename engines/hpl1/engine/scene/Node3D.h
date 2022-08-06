@@ -123,5 +123,6 @@ private:
 	cNode3D *mpParent;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_NODE3D_H

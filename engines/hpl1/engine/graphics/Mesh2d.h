@@ -108,5 +108,6 @@ private:
 	void CalculateEdges(eTileRotation aRotation, tVertexVec &aVtx, tUIntVec &aIdx);
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_MESH2D_H

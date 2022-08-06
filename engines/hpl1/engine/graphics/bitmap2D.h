@@ -76,5 +76,6 @@ private:
 typedef std::vector<Bitmap2D *> tBitmap2DVec;
 typedef std::vector<Bitmap2D *>::iterator tBitmap2DVecIt;
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_BITMAP2D_H

@@ -399,5 +399,6 @@ public:
 typedef std::list<iMaterialType *> tMaterialTypeList;
 typedef tMaterialTypeList::iterator tMaterialTypeListIt;
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_MATERIAL_H

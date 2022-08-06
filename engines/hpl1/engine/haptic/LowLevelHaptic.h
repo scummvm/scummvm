@@ -205,5 +205,6 @@ protected:
 	bool mbUpdateShapes;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_LOW_LEVEL_HAPTIC_H

@@ -102,5 +102,7 @@ public:
 protected:
 	static bool mbDebugInfo;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_GPU_PROGRAM_H

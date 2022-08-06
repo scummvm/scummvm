@@ -74,5 +74,7 @@ protected:
 	float mfMaxTwistAngle;
 	cVector3f mvConePin;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_PHYSICS_JOINT_BALL_H

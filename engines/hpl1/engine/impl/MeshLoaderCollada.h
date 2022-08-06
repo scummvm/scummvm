@@ -552,5 +552,6 @@ private:
 	cVector3f GetVectorScaleFromPtr(float *apVec);
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_MESH_LOADER_COLLADA_H

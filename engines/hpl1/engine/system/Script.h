@@ -252,5 +252,7 @@ public:
 
 	virtual bool Run(int alHandle) = 0;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_SCRIPT_H

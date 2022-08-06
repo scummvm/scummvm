@@ -163,5 +163,6 @@ private:
 	tStringSet m_setLoadedMaps;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_SCENE_H

@@ -149,5 +149,6 @@ private:
 	tBackgroundImageMap m_mapBackgroundImages;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_GRAPHICSDRAWER_H

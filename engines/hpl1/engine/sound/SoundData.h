@@ -64,5 +64,7 @@ protected:
 	bool mbLoopStream;
 	cSoundManager *mpSoundManger;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_SOUND_DATA_H

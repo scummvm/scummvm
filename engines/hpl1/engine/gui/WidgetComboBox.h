@@ -116,5 +116,6 @@ protected:
 	cGuiGfxElement *mvGfxCorners[4];
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_WIDGET_COMBO_BOX_H

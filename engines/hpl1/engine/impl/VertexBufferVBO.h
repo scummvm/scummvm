@@ -94,5 +94,6 @@ private:
 	bool mbCompiled;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_RENDERER3D_VBO_H

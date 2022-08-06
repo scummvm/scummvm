@@ -39,5 +39,7 @@ public:
 	cPhysicsControllerNewton(const tString &asName, iPhysicsWorld *apWorld);
 	~cPhysicsControllerNewton();
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_PHYSICS_CONTROLLER_NEWTON_H

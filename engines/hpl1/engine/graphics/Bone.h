@@ -92,5 +92,6 @@ private:
 	int mlValue;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_BONE_H

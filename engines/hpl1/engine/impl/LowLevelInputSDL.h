@@ -57,5 +57,7 @@ private:
 	Common::Array<Common::Event> _events;
 	iLowLevelGraphics *_lowLevelGraphics;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_LOWLEVELINPUT_SDL_H

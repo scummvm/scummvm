@@ -84,5 +84,6 @@ private:
 	int mlIdCounter;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_MATERIAL_MANAGER_H

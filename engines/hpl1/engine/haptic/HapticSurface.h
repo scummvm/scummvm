@@ -47,5 +47,6 @@ private:
 	tString msName;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_HAPTIC_SURFACE_H

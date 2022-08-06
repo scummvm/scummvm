@@ -267,5 +267,7 @@ protected:
 	tCollidePointVec mvContactPoints;
 	bool mbSaveContactPoints;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_PHYSICS_WORLD_H

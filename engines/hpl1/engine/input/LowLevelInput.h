@@ -55,5 +55,7 @@ public:
 	virtual iMouse *CreateMouse() = 0;
 	virtual iKeyboard *CreateKeyboard() = 0;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_LOWLEVELINPUT_H

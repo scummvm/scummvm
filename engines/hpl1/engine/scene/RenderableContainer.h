@@ -67,5 +67,7 @@ public:
 	 */
 	virtual void Compile() = 0;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // RENDERABLE_CONTAINER

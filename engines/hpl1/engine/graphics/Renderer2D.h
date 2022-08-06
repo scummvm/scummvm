@@ -141,5 +141,6 @@ private:
 	inline bool ClipPoints(cVector3f *avPoint, cRect2f aRect, cVector2f avPos, float afSize);
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_RENDERER2D_H

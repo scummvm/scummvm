@@ -87,5 +87,6 @@ private:
 	bool mbHasShadowDouble;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_RENDERER3D_OGL_H

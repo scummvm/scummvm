@@ -409,5 +409,7 @@ protected:
 
 	std::vector<iPhysicsBody *> mvExtraBodies;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_CHARACTER_BODY_H

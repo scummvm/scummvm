@@ -70,5 +70,6 @@ private:
 	const char *GetCharArray(tString asLevel, tString asName);
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_CONFIGFILE_H

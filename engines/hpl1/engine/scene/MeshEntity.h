@@ -283,5 +283,6 @@ private:
 
 //-----------------------------------------------------------------------
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_MESH_ENTITY_H

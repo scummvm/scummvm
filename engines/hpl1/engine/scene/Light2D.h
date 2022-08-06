@@ -58,5 +58,7 @@ protected:
 
 typedef std::list<iLight2D *> tLightList;
 typedef tLightList::iterator tLightListIt;
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_LIGHT2D_H

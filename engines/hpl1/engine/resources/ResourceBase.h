@@ -91,5 +91,6 @@ protected:
 	bool mbLogDestruction;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_RESOURCEBASE_H

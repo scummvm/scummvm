@@ -518,5 +518,6 @@ private:
 	CONT *mpCont;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_SYSTEM_TYPES_H

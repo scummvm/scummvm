@@ -70,5 +70,6 @@ private:
 	eTileLayerType mType;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_TILELAYER_H

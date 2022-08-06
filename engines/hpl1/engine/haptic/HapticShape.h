@@ -84,5 +84,6 @@ protected:
 	int mlTransformCount;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_HAPTIC_SHAPE_H

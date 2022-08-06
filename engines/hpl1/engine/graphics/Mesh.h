@@ -349,5 +349,6 @@ private:
 	tMeshReferenceVec mvReferences;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_MESH_H

@@ -57,5 +57,6 @@ protected:
 	eHapticForceType mType;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_HAPTIC_FORCE_H

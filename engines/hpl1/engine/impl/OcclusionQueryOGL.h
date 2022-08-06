@@ -47,5 +47,6 @@ public:
 	unsigned int mlQueryId;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_OCCLUSION_QUERY_H

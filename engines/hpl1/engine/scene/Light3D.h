@@ -222,5 +222,7 @@ protected:
 
 typedef std::list<iLight3D *> tLight3DList;
 typedef tLight3DList::iterator tLight3DListIt;
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_LIGHT3D_H

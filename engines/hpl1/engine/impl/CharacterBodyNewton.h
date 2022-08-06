@@ -42,5 +42,7 @@ public:
 
 private:
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_CHARACTER_BODY_NEWTON_H

@@ -52,5 +52,6 @@ private:
 	cResources *mpResources;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_ANIMATION_MANAGER_H

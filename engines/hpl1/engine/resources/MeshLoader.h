@@ -94,5 +94,6 @@ protected:
 	static tString msCacheDir;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_MESH_LOADER_H

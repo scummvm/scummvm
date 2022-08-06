@@ -54,5 +54,7 @@ public:
 private:
 	static unsigned LimitCallback(const NewtonJoint *pSlider, NewtonHingeSliderUpdateDesc *pDesc);
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_PHYSICS_JOINT_SCREW_NEWTON_H

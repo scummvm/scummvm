@@ -126,5 +126,5 @@ private:
 	bool LoadAndStart(const tString &asFileName, cMusicEntry *apSong, float afVolume, bool abLoop);
 };
 
-};     // namespace hpl
+}     // namespace hpl
 #endif // HPL_MUSICHANDLER_H
