@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-06 11:34+0000\n"
-"PO-Revision-Date: 2022-08-02 20:55+0000\n"
+"PO-Revision-Date: 2022-08-06 15:59+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -6964,16 +6964,16 @@ msgstr ""
 "modificados de audio en caso de que estén disponibles."
 
 #: engines/scumm/detection.cpp:247
-#, fuzzy
-#| msgid "Enable the original audio cd track"
 msgid "Enable the original GUI and Menu"
-msgstr "Activa el uso de las pistas de audio originales en CD"
+msgstr "Activar menú e interfaz originales"
 
 #: engines/scumm/detection.cpp:248
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu."
 msgstr ""
+"Permite al juego utilizar la interfaz gráfica interna y los menús originales "
+"para guardar y cargar."
 
 #: engines/scumm/detection_internal.h:358
 msgid ""
