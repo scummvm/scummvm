@@ -189,6 +189,29 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	{ // Obsidian PC demo, same as above, with 8.3 file names
+		{
+			"obsidian",
+			"Demo",
+			{
+				{ "OBSIDIAN.EXE",	0, "b6fb0e0df88c1524bcd0c5de9f5e882c", 750080 },
+				{ "OBSIDIAN.R95",	0, "5361ef93e36d722665594b724e0018fd", 183296 },
+				{ "TEXTWORK.R95",	0, "96346d39c4bb04f525edbf06ffe047e0", 148992 },
+				{ "EXPRMNTL.R95",	0, "aa0431c2be37e33883747c61d3e980ff", 108544 },
+				{ "MCURSORS.C95",	0, "47cf6abb95f3c43cdcbdf7ea1de3478d", 145920 },
+				{ "OBSIDI~1.MPL",	0, "643a989213b42cbac319d04676447624", 29096880 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO | ADGF_TESTING,
+			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
+		},
+		GID_OBSIDIAN,
+		0,
+		0,
+	},
+
 	{ // Obsidian PC demo found on Level 25 (1997-02) [1996-10-11/22]
 		{
 			"obsidian",
