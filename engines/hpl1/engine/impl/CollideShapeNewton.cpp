@@ -62,8 +62,7 @@ cCollideShapeNewton::cCollideShapeNewton(eCollideShapeType aType, const cVector3
 		////////////////////////////////////////////
 		// Create Newton collision
 
-  		switch(aType)
-		{
+  		switch(aType) {
 		case eCollideShapeType_Null:		mpNewtonCollision = NewtonCreateNull(apNewtonWorld); break;
 
 		case eCollideShapeType_Box:			mpNewtonCollision = NewtonCreateBox(apNewtonWorld,
@@ -81,6 +80,8 @@ cCollideShapeNewton::cCollideShapeNewton(eCollideShapeType aType, const cVector3
 		case eCollideShapeType_Capsule:		mpNewtonCollision = NewtonCreateCapsule(apNewtonWorld,
 												mvSize.x, mvSize.y,
 												0, pMtx); break;
+		default:
+			break;
 		}
 
 	////////////////////////////////////////////

@@ -1711,8 +1711,8 @@ void cMeshLoaderCollada::AddSceneObjects(cColladaNode *apNode, cWorld3D *apWorld
 
 				// If no entity was loaded, try old style.
 				if (pEntity == NULL) {
-					tString sName = vParams[1];
-					tString sFile = cString::Sub(apNode->msName, 5 + (int)+sName.size() + 1);
+					sName = vParams[1];
+					sFile = cString::Sub(apNode->msName, 5 + (int)+sName.size() + 1);
 					sFile = cString::SetFileExt(sFile, "ent");
 
 					apWorld->CreateEntity(sName, apNode->m_mtxWorldTransform, sFile, true);
@@ -1827,7 +1827,7 @@ void cMeshLoaderCollada::AddSceneObjects(cColladaNode *apNode, cWorld3D *apWorld
 				Error("Too few params in billboard entity entity '%s'\n", apNode->msName.c_str());
 			} else {
 				tString sName = vParams[vParams.size() - 1];
-				tString sType = "";
+				sType = "";
 				for (size_t i = 1; i < vParams.size() - 1; ++i) {
 					sType += vParams[i];
 					if (i != vParams.size() - 2)
@@ -1840,7 +1840,7 @@ void cMeshLoaderCollada::AddSceneObjects(cColladaNode *apNode, cWorld3D *apWorld
 				if (pPS == NULL) {
 					sName = vParams[1];
 					sType = cString::Sub(apNode->msName, 4 + (int)sName.size() + 1);
-					cParticleSystem3D *pPS = apWorld->CreateParticleSystem(sName, sType, apNode->mvScale,
+					pPS = apWorld->CreateParticleSystem(sName, sType, apNode->mvScale,
 																		   apNode->m_mtxWorldTransform);
 
 					if (pPS == NULL) {
@@ -1872,7 +1872,6 @@ void cMeshLoaderCollada::AddSceneObjects(cColladaNode *apNode, cWorld3D *apWorld
 				TempBV.AddArrayPoints(&vVertexVec[0], (int)vArray.size());
 				TempBV.CreateFromPoints(3);
 
-				tString sType;
 				tString sName;
 				if (vParams.size() < 3 || (mFlags & eWorldLoadFlag_NoGameEntities)) {
 					sType = "";
