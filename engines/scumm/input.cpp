@@ -484,6 +484,23 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 			}
 
 			ConfMan.setInt("original_gui_text_status", voiceMode);
+			switch (voiceMode) {
+			case 0:
+				ConfMan.setBool("speech_mute", false);
+				ConfMan.setBool("subtitles", false);
+				break;
+			case 1:
+				ConfMan.setBool("speech_mute", false);
+				ConfMan.setBool("subtitles", true);
+				break;
+			case 2:
+				ConfMan.setBool("speech_mute", true);
+				ConfMan.setBool("subtitles", true);
+				break;
+			default:
+				break;
+			}
+
 			ConfMan.flushToDisk();
 			syncSoundSettings();
 			return;
