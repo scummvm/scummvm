@@ -81,5 +81,7 @@ protected:
 	float mfMinDistance;
 	cVector3f mvPin;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_PHYSICS_JOINT_SLIDER_H

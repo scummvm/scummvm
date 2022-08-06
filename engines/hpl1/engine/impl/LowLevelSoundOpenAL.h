@@ -79,5 +79,7 @@ private:
 
 	cOAL_Effect_Reverb *mpEffect;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_LOWLEVELSOUND_OPENAL_H

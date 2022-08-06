@@ -56,5 +56,6 @@ private:
 	cVector3f mvScale;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_NODE2D_H

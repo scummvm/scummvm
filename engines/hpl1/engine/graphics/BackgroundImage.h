@@ -59,5 +59,7 @@ private:
 
 typedef std::map<float, cBackgroundImage *> tBackgroundImageMap;
 typedef tBackgroundImageMap::iterator tBackgroundImageMapIt;
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_BACKGROUND_IMAGE_H

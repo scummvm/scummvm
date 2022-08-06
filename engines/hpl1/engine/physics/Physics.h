@@ -122,5 +122,6 @@ private:
 	bool mbLog;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_Physics_H

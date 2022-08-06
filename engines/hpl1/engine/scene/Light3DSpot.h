@@ -123,5 +123,6 @@ private:
 	int mlFrustumMatrixCount;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_LIGHT3D_SPOT_H

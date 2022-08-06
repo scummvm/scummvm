@@ -305,5 +305,7 @@ private:
 
 	int mlEntityIterateCount;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_PORTAL_CONTAINER_H

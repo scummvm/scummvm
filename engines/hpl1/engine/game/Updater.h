@@ -105,5 +105,7 @@ private:
 	tUpdateableList *mpCurrentUpdates;
 	tUpdateableList mlstGlobalUpdateableList;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_UPDATER_H

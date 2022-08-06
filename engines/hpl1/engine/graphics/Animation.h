@@ -73,5 +73,6 @@ private:
 	tAnimationTrackVec mvTracks;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_ANIMATION_H

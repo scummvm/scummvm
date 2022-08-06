@@ -75,5 +75,6 @@ public:
 	}
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_MATERIAL_BUMP_SPEC2D_H

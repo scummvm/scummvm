@@ -48,5 +48,7 @@ public:
 private:
 	Common::String _filename;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_OPENAL_SOUND_DATA_H

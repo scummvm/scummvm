@@ -58,5 +58,6 @@ protected:
 	tGuiCallbackFunc mpCallback;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_GUI_POP_UP_MESSAGE_BOX_H

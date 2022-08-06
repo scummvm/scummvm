@@ -179,5 +179,7 @@ private:
 
 	void AddPosXY(cVector2f avPosAdd);
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_BODY_H

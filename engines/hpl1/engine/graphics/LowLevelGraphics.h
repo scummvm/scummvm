@@ -428,5 +428,7 @@ public:
 	virtual void FlushRendering() = 0;
 	virtual void SwapBuffers() = 0;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_LOWLEVELGRAPHICS_H

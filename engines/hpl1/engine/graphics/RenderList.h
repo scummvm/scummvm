@@ -218,5 +218,7 @@ private:
 
 	cGraphics *mpGraphics;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_RENDER_LIST_H

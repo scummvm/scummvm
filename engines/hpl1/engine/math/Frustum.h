@@ -119,5 +119,7 @@ private:
 	cVector3f mvEndPoints[4];
 	tVector3fVec mvPoints;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_FRUSTUM_H

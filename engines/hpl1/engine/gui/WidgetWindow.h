@@ -76,5 +76,6 @@ protected:
 	bool mbMoving;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_WIDGET_H

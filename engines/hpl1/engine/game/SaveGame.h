@@ -232,5 +232,6 @@ private:
 
 //---------------------------------------------------------
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_SAVE_GAME_H

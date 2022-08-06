@@ -66,5 +66,7 @@ private:
 	tString msFile;
 	tString msEntry;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_CGPROGRAM_H

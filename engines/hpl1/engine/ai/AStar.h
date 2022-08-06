@@ -122,5 +122,6 @@ private:
 	tAStarNodeSet m_setClosedList;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_A_STAR_H

@@ -115,5 +115,7 @@ protected:
 
 	tSoundEnvList mlstSoundEnv;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_LOWLEVELSOUND_H

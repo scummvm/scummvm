@@ -148,5 +148,7 @@ protected:
 	bool mbRendered;
 	float mfZ;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_RENDERABLE_H

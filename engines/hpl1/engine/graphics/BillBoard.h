@@ -182,5 +182,6 @@ private:
 	float mfHaloAlpha;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_BILLBOARD_H

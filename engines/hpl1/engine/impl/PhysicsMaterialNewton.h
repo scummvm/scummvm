@@ -78,5 +78,7 @@ private:
 	float mfStaticFriction;
 	float mfKineticFriction;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_PHYSICS_MATERIAL_NEWTON_H

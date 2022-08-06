@@ -75,5 +75,6 @@ private:
 	tTempAiNodeList *mpNodeList;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_AI_NODE_GENERATOR_H

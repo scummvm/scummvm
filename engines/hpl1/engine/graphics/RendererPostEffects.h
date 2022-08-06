@@ -180,5 +180,6 @@ private:
 	bool mbActive;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_RENDERER_POST_EFFECTS_H

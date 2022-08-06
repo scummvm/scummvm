@@ -85,5 +85,6 @@ protected:
 	bool mbActive;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_NODE_H

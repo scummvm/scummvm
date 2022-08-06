@@ -183,5 +183,7 @@ protected:
 
 typedef std::list<iSoundChannel *> tSoundChannelList;
 typedef tSoundChannelList::iterator tSoundChannelListIt;
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_SOUND_CHANNEL_H

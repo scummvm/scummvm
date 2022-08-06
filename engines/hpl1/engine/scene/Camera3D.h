@@ -238,5 +238,6 @@ private:
 	bool mbMoveUpdated;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_CAMERA3D_H

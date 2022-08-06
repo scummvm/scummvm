@@ -89,5 +89,6 @@ protected:
 	cMesh *mpMesh;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_ENTITY_LOADER_OBJECT_H

@@ -58,5 +58,6 @@ private:
 	iSoundData *FindData(const tString &asName, tString &asFilePath);
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_SOUND_MANAGER_H

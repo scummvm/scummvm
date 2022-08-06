@@ -281,5 +281,7 @@ public:
 	//Properties:
 	iRenderable *mpObject;
 };*/
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_RENDER_SET_H

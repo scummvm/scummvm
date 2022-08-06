@@ -101,5 +101,6 @@ private:
 	cPBuffer *mpPBuffer;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_SDL_TEXTURE_H

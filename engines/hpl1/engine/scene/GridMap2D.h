@@ -198,5 +198,6 @@ private:
 	cVector2l mvMaxGridSpan;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_GRIDMAP2D_H

@@ -53,5 +53,7 @@ public:
 private:
 	iLowLevelGraphics *_lowLevelGraphics;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_LOWLEVELRESOURCES_H

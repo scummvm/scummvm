@@ -60,5 +60,6 @@ public:
 	}
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_COLLIDE_DATA_2D_H

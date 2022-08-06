@@ -135,5 +135,6 @@ private:
 typedef std::vector<cImageEntity *> tImageEntityVec;
 typedef tImageEntityVec::iterator tImageEntityVecIt;
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_IMAGE_ENTITY_H

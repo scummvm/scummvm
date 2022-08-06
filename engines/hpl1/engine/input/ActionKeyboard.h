@@ -55,5 +55,6 @@ private:
 	cInput *mpInput;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_ACTIONKEYBOARD_H

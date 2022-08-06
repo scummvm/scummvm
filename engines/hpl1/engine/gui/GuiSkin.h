@@ -79,5 +79,6 @@ private:
 	std::vector<cVector3f> mvAttributes;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_GUI_SKIN_H

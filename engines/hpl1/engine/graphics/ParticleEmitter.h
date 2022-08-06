@@ -236,5 +236,6 @@ protected:
 typedef std::map<tString, iParticleEmitterData *> tParticleEmitterDataMap;
 typedef tParticleEmitterDataMap::iterator tParticleEmitterDataMapIt;
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_PARTICLE_EMITTER_H

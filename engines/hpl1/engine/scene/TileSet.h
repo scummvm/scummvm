@@ -74,5 +74,6 @@ private:
 	void GetTileNum(TiXmlElement *apElement);
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_TILESET_H

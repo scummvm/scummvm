@@ -172,5 +172,6 @@ private:
 	void loadNextGlyph(const TiXmlElement *charIt, Common::Array<Common::SharedPtr<Bitmap2D>> &bitmaps, const cVector2l &fontSize);
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_FONTDATA_H

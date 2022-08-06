@@ -42,5 +42,7 @@ public:
 	virtual int GetNum() = 0;
 	virtual int GetCurrentLayer() = 0;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_TILEMAP_IT_H

@@ -64,5 +64,7 @@ private:
 	iLowLevelPhysics *_lowLevelPhysics;
 	iLowLevelHaptic *_lowLevelHaptic;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_LOWLEVELGAMESETUP_H

@@ -59,5 +59,7 @@ private:
 
 typedef std::vector<cGfxObject> tGfxObjectVec;
 typedef tGfxObjectVec::iterator tGfxObjectVecIt;
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_GFX_OBJECT_H

@@ -180,5 +180,6 @@ typedef std::vector<cSubMeshEntity *>::iterator tSubMeshEntityVecIt;
 typedef std::multimap<tString, cSubMeshEntity *> tSubMeshEntityMap;
 typedef tSubMeshEntityMap::iterator tSubMeshEntityMapIt;
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_SUB_MESH_ENTITY_H

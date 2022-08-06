@@ -56,5 +56,6 @@ private:
 	static bool mbIsUsed;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_HAPTIC_H

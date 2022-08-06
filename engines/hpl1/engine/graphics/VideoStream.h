@@ -88,5 +88,7 @@ protected:
 	tString msFilePath;
 	cVector2l mvSize;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_VIDEO_STREAM_H

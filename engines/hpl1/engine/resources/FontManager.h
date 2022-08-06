@@ -63,5 +63,6 @@ private:
 	cGui *mpGui;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_FONT_MANAGER_H

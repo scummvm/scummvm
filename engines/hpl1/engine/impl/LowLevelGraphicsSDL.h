@@ -315,5 +315,7 @@ private:
 	// Vtx helper
 	void SetVtxBatchStates(tVtxBatchFlag flags);
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_LOWLEVELGRAPHICS_SDL_H

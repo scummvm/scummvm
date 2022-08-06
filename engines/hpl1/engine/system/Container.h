@@ -260,5 +260,6 @@ public:
 
 //---------------------------------
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_CONTAINER_H

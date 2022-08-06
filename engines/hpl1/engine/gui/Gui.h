@@ -161,5 +161,6 @@ private:
 	unsigned long mlLastRenderTime;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_GUI_H

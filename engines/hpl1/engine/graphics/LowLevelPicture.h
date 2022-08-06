@@ -61,5 +61,6 @@ private:
 	tString _path;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_LOWLEVEL_PICTURE_H

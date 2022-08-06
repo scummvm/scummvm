@@ -62,5 +62,6 @@ private:
 	bool CreateClipRect(cRect2l &aCliprect, cRenderSettings *apRenderSettings, iLowLevelGraphics *apLowLevelGraphics);
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_LIGHT3D_POINT_H

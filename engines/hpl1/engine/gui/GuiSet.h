@@ -331,5 +331,6 @@ private:
 	bool mbDestroyingSet;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_GUI_SET_H

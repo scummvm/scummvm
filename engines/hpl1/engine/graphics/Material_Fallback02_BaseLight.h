@@ -151,5 +151,6 @@ public:
 
 //---------------------------------------------------------------
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_MATERIAL_FALLBACK02_BASE_LIGHT_H

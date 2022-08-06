@@ -70,5 +70,6 @@ private:
 	LowLevelResources *mpLowLevelResources;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_FILESEARCHER_H

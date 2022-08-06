@@ -91,5 +91,7 @@ protected:
 	NewtonBody *mpNewtonParentBody;
 	NewtonBody *mpNewtonChildBody;
 };
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_PHYSICS_JOINT_NEWTON_H

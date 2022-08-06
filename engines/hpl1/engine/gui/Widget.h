@@ -238,5 +238,6 @@ private:
 	bool mbPositionIsUpdated;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_WIDGET_H

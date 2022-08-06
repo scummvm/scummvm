@@ -90,5 +90,7 @@ private:
 
 typedef std::list<cSoundSource *> tSoundSourceList;
 typedef tSoundSourceList::iterator tSoundSourceListIt;
-};     // namespace hpl
+
+}     // namespace hpl
+
 #endif // HPL_SOUNDSOURCE_H

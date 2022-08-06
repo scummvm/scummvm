@@ -73,5 +73,6 @@ private:
 	cScene *mpScene;
 };
 
-};     // namespace hpl
+}     // namespace hpl
+
 #endif // HPL_MESH_LOADER_HANDLER_H
