@@ -85,6 +85,10 @@ public:
 	uint getScaleFactor() const override;
 #endif
 
+#if !USE_FORCED_GLES
+	bool setShader(const Common::String &fileNode) override;
+#endif
+
 	void beginGFXTransaction() override;
 	OSystem::TransactionError endGFXTransaction() override;
 
@@ -175,7 +179,7 @@ protected:
 		    gameFormat(),
 #endif
 		    aspectRatioCorrection(false), graphicsMode(GFX_OPENGL), filtering(true),
-		    scalerIndex(0), scaleFactor(1) {
+		    scalerIndex(0), scaleFactor(1), shader() {
 		}
 
 		bool valid;
@@ -191,6 +195,8 @@ protected:
 		uint scalerIndex;
 		int scaleFactor;
 
+		Common::String shader;
+
 		bool operator==(const VideoState &right) {
 			return gameWidth == right.gameWidth && gameHeight == right.gameHeight
 #ifdef USE_RGB_COLOR
@@ -198,7 +204,8 @@ protected:
 #endif
 			    && aspectRatioCorrection == right.aspectRatioCorrection
 			    && graphicsMode == right.graphicsMode
-				&& filtering == right.filtering;
+				&& filtering == right.filtering
+			    && shader == right.shader;
 		}
 
 		bool operator!=(const VideoState &right) {
