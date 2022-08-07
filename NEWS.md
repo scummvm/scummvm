@@ -6,7 +6,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  New games:
    - Added support for Soldier Boyz.
    - Added support for C64 and ZX Spectrum versions of GLK Scott Adams
-     Interactive Fiction games
+     Interactive Fiction games.
    - Added support for GLK Scott Adams adventures 1-12 in the TI99/4A format.
    - Added support for Obsidian.
 
