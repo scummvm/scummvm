@@ -68,14 +68,14 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		}
 
 		// get the actual operation
-		uint16 opcode = tokenisedCondition[bytePointer] & 0x7f;
+		uint16 opcode = tokenisedCondition[bytePointer] & 0x3f;
 		bytePointer++;
 
 		// figure out how many argument bytes we're going to need,
 		// check we have enough bytes left to read
 		if (opcode > 48) {
 			debug("%s", detokenisedStream.c_str());
-			if (opcode != 0x29 && opcode < 0x4f && opcode > 0x5f)
+			if (opcode != 0x3f)
 				error("ERROR: failed to read opcode: %x", opcode);
 			break;
 		}
@@ -318,19 +318,14 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 
 		case 35:
 			detokenisedStream += "SCREEN ";
-			//detokenisedStream += Common::String::format("(%d)", (int)tokenisedCondition[bytePointer]);
-			//bytePointer += 1;
-			//numberOfArguments = 0;
 			break;
 
 		case 44:
 			detokenisedStream += "ELSE ";
-			//numberOfArguments = 0;
 			break;
 
 		case 45:
 			detokenisedStream += "ENDIF ";
-			//numberOfArguments = 0;
 			break;
 
 		case 46:
@@ -349,9 +344,6 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 
 		case 48:
 			detokenisedStream += "EXECUTE ";
-			//detokenisedStream += Common::String::format("(%d)", (int)tokenisedCondition[bytePointer]);
-			//bytePointer += 1;
-			//numberOfArguments = 0;
 			break;
 		}
 
