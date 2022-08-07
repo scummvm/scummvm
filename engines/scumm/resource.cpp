@@ -1732,21 +1732,21 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 		delete[] patchedScript;
 	} else
 
-	// For some reason, the CD version of Monkey Island 1 removes some of
-	// the text when giving the wimpy idol to the cannibals. It looks like
-	// a mistake, because one of the text that is printed is immediately
-	// overwritten. This probably affects all CD versions, so we just have
-	// to add further patches as they are reported.
+	// WORKAROUND: For some reason, the CD version of Monkey Island 1
+	// removes some of the text when giving the wimpy idol to the cannibals.
+	// It looks like a mistake, because one of the text that is printed is
+	// immediately overwritten. This probably affects all CD versions, so we
+	// just have to add further patches as they are reported.
 
 	if (_game.id == GID_MONKEY && type == rtRoom && idx == 25 && _enableEnhancements) {
 		tryPatchMI1CannibalScript(getResourceAddress(type, idx), size);
 	} else
 
-	// There is a cracked version of Maniac Mansion v2 that attempts to
-	// remove the security door copy protection. With it, any code is
-	// accepted as long as you get the last digit wrong. Unfortunately,
-	// it changes a script that is used by all keypads in the game, which
-	// means some puzzles are completely nerfed.
+	// WORKAROUND: There is a cracked version of Maniac Mansion v2 that
+	// attempts to remove the security door copy protection. With it, any
+	// code is accepted as long as you get the last digit wrong.
+	// Unfortunately, it changes a script that is used by all keypads in the
+	// game, which means some puzzles are completely nerfed.
 	//
 	// Even worse, this is the version that GOG and Steam are selling. No,
 	// seriously! I've reported this as a bug, but it remains unclear

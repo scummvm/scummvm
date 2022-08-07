@@ -187,7 +187,7 @@ int IMuseDigital::startVoice(int soundId, const char *soundName, byte speakingAc
 		if (fileDoesNotExist)
 			return 1;
 
-		// Workaround for this particular sound file not playing (this is a bug in the original):
+		// WORKAROUND for this particular sound file not playing (this is a bug in the original):
 		// this is happening because the sound buffer responsible for speech
 		// is still busy with the previous speech file playing during the SAN
 		// movie. We just stop the SMUSH speech sound before playing NEXUS.029.

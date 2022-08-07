@@ -1154,7 +1154,10 @@ void ScummEngine_v2::o2_walkActorTo() {
 
 	int act = getVarOrDirectByte(PARAM_1);
 
-	// WORKAROUND bug #2110
+	// WORKAROUND bug #2110: crash when trying to fly back to San Francisco.
+	// walkActorTo() is called with an invalid actor number by script 115,
+	// after the room is loaded. The original DOS interpreter probably let
+	// this slip by.
 	if (_game.id == GID_ZAK && _game.version == 1 && vm.slot[_currentScript].number == 115 && act == 249) {
 		act = VAR(VAR_EGO);
 	}
@@ -1252,7 +1255,7 @@ void ScummEngine_v2::o2_startScript() {
 }
 
 void ScummEngine_v2::stopScriptCommon(int script) {
-	// WORKAROUND bug #4112: If you enter the lab while Dr. Fred has the powered turned off
+	// WORKAROUND bug #4112: If you enter the lab while Dr. Fred has the power turned off
 	// to repair the Zom-B-Matic, the script will be stopped and the power will never turn
 	// back on. This fix forces the power on, when the player enters the lab,
 	// if the script which turned it off is running

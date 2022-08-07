@@ -674,7 +674,7 @@ bool IMuseInternal::startSound_internal(int sound, int offset) {
 	if (_game_id == GID_SAMNMAX && sound == 82 && getSoundStatus_internal(81, false))
 		ImClearTrigger(81, 1);
 
-	// Workaround for monkey2 bug #1410 / Scabb Island
+	// WORKAROUND for monkey2 bug #1410 / Scabb Island
 	//
 	// Tunes involved:
 	// 100 - Captain Dread's map
@@ -691,11 +691,11 @@ bool IMuseInternal::startSound_internal(int sound, int offset) {
 	if (_game_id == GID_MONKEY2 && (sound == 107) && (getSoundStatus_internal(100, true) == 1))
 		return false;
 
-	// In some cases 107 is running and doesn't get killed at Dread's map
+	// WORKAROUND: In some cases 107 is running and doesn't get killed at Dread's map
 	if (_game_id == GID_MONKEY2 && (sound == 100) && (getSoundStatus_internal(107, true) == 1))
 		IMuseInternal::stopSound_internal(107);
 
-	// Workaround for monkey2 bug #1410 / Booty Island
+	// WORKAROUND for monkey2 bug #1410 / Booty Island
 	//
 	// Tunes involved
 	// 100 - Captain Dread's map

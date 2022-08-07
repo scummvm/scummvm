@@ -420,7 +420,7 @@ void ScummEngine_v5::o5_actorFromPos() {
 void ScummEngine_v5::o5_actorOps() {
 	static const byte convertTable[20] =
 		{ 1, 0, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20 };
-	// Fix for bug #2233 "MI2 FM-TOWNS: Elaine's mappiece directly flies to treehouse"
+	// WORKAROUND bug #2233 "MI2 FM-TOWNS: Elaine's mappiece directly flies to treehouse"
 	// There's extra code inserted in script 45 from room 45 that caused that behaviour,
 	// the code below just skips the extra script code.
 	if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformFMTowns &&
@@ -719,8 +719,10 @@ void ScummEngine_v5::o5_animateActor() {
 	int act = getVarOrDirectByte(PARAM_1);
 	int anim = getVarOrDirectByte(PARAM_2);
 
-	// WORKAROUND bug #1265: This seems to be yet another script bug which
-	// the original engine let slip by. For details, refer to the tracker item.
+	// WORKAROUND bug #1265: This script calls animateCostume(86,255) and
+	// animateCostume(31,255), with 86 and 31 being script numbers used as
+	// (way out of range) actor numbers. This seems to be yet another script
+	// bug which the original engine let slip by.
 	if (_game.id == GID_INDY4 && vm.slot[_currentScript].number == 206 && _currentRoom == 17 && (act == 31 || act == 86)) {
 		return;
 	}
@@ -2620,6 +2622,7 @@ void ScummEngine_v5::o5_startScript() {
 	// WORKAROUND bug #1025: in Loom, using the stealth draft on the
 	// shepherds would crash the game because of a missing actor number for
 	// their first reaction line ("We are the masters of stealth"...).
+	// The original interpreter would just skip the line.
 	if (_game.id == GID_LOOM && _game.version == 3 && _roomResource == 23 && script == 232 && data[0] == 0) {
 		byte shepherdActor;
 		bool buggyShepherdsEGArelease = false;
