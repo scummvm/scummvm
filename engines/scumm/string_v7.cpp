@@ -183,11 +183,15 @@ void TextRenderer_v7::drawString(const char *str, byte *buffer, Common::Rect &cl
 
 	int totalLen = (int)strlen(str);
 	int lineStart = 0;
+	int xAdj = 0;
 
 	// COMI always does this for CJK strings (before any other possible yPos fixes).
 	if (_gameId == GID_CMI) {
-		if (_useCJKMode)
+		if (_useCJKMode) {
 			y += 2;
+			if (col != 0)
+				xAdj = 1; // x-adjust for left side glyph shadow
+		}
 		// No idea whether it is actually used. We currently don't handle this flag.
 		/*if (flags & 0x40)
 			y -= (getStringHeight(str, totalLen) / 2);*/
@@ -223,8 +227,8 @@ void TextRenderer_v7::drawString(const char *str, byte *buffer, Common::Rect &cl
 		lineStart = pos + 1;
 	}
 
-	clipRect.left = (flags & kStyleAlignCenter) ? x - maxWidth / 2 : ((flags & kStyleAlignRight) ? x - maxWidth : x);
-	clipRect.right = MIN<int>(clipRect.right, clipRect.left + maxWidth);
+	clipRect.left = MAX<int>(0, ((flags & kStyleAlignCenter) ? x - maxWidth / 2 : ((flags & kStyleAlignRight) ? x - maxWidth : x)) - xAdj);
+	clipRect.right = MIN<int>(clipRect.right, clipRect.left + xAdj + maxWidth);
 	clipRect.top = y2;
 	clipRect.bottom = y + (_newStyle ? 0 : 1);
 }
@@ -263,10 +267,14 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 	int maxWidth = 0;
 	int curWidth = 0;
 	int curPos = -1;
+	int xAdj = 0;
 
 	// COMI does this for CJK strings (before any other possible yPos fixes, see lines 343 - 355).
-	if (_gameId == GID_CMI && _useCJKMode)
+	if (_gameId == GID_CMI && _useCJKMode) {
 		y += 2;
+		if (col != 0)
+			xAdj = 1; // x-adjust for left side glyph shadow
+	}
 
 	while (curPos < len) {
 		int textStart = curPos + 1;
@@ -374,8 +382,8 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 		y += getStringHeight(str + substrStart[i], len);
 	}
 
-	clipRect.left = (flags & kStyleAlignCenter) ? x - maxWidth / 2 : ((flags & kStyleAlignRight) ? x - maxWidth : x);
-	clipRect.right = MIN<int>(clipRect.right, clipRect.left + maxWidth);
+	clipRect.left = MAX<int>(0, ((flags & kStyleAlignCenter) ? x - maxWidth / 2 : ((flags & kStyleAlignRight) ? x - maxWidth : x)) - xAdj);
+	clipRect.right = MIN<int>(clipRect.right, clipRect.left + xAdj + maxWidth);
 	clipRect.top = y2;
 	clipRect.bottom = y + (_newStyle ? 0 : 1);
 }
