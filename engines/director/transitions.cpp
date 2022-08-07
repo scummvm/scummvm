@@ -69,6 +69,9 @@ enum {
 
 #define TRANS(t,a,d) {t,#t,a,d}
 
+// cap transition framerate to 60fps
+#define MAX_STEPS(duration) ((duration)*60/1000)
+
 struct {
 	TransitionType type;
 	const char *name;
@@ -199,6 +202,9 @@ void Window::playTransition(uint16 transDuration, uint8 transArea, uint8 transCh
 
 	Common::Rect rfrom, rto;
 
+	uint32 transStartTime = g_system->getMillis();
+	debugC(2, kDebugLoading, "Window::playTransition(): Playing transition %d", t.type);
+
 	initTransParams(t, clipRect);
 
 	Graphics::ManagedSurface *blitFrom;
@@ -210,16 +216,19 @@ void Window::playTransition(uint16 transDuration, uint8 transArea, uint8 transCh
 			dissolvePatternsTrans(t, clipRect, &nextFrame);
 		else
 			dissolveTrans(t, clipRect, &nextFrame);
+		debugC(2, kDebugLoading, "Window::playTransition(): Transition %d finished in %d ms", t.type, g_system->getMillis() - transStartTime);
 		return;
 
 	case kTransAlgoChecker:
 	case kTransAlgoStrips:
 	case kTransAlgoBlinds:
 		transMultiPass(t, clipRect, &nextFrame);
+		debugC(2, kDebugLoading, "Window::playTransition(): Transition %d finished in %d ms", t.type, g_system->getMillis() - transStartTime);
 		return;
 
 	case kTransAlgoZoom:
 		transZoom(t, clipRect, &nextFrame);
+		debugC(2, kDebugLoading, "Window::playTransition(): Transition %d finished in %d ms", t.type, g_system->getMillis() - transStartTime);
 		return;
 
 	case kTransAlgoCenterOut:
@@ -504,7 +513,7 @@ void Window::playTransition(uint16 transDuration, uint8 transArea, uint8 transCh
 			break;
 
 		default:
-			warning("Score::playTransition(): Unhandled transition type %s %d %d", transProps[t.type].name, t.duration, t.chunkSize);
+			warning("Window::playTransition(): Unhandled transition type %s %d %d", transProps[t.type].name, t.duration, t.chunkSize);
 			stop = true;
 			break;
 		}
@@ -539,6 +548,8 @@ void Window::playTransition(uint16 transDuration, uint8 transArea, uint8 transCh
 	render(true, _composeSurface);
 	_contentIsDirty = true;
 	g_director->draw();
+
+	debugC(2, kDebugLoading, "Window::playTransition(): Transition %d finished in %d ms", t.type, g_system->getMillis() - transStartTime);
 }
 
 static int getLog2(int n) {
@@ -663,6 +674,7 @@ void Window::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::Man
 	if (t.type == kTransDissolvePixelsFast ||
 			t.type == kTransDissolveBitsFast)
 		t.stepDuration = 0;						// No delay
+	debug(2, "steps: %d, stepDuration: %d", t.steps, t.stepDuration );
 
 	Common::Rect r(MAX(1, t.xStepSize), t.yStepSize);
 
@@ -799,6 +811,7 @@ static byte dissolvePatterns[][8] = {
 void Window::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *nextFrame) {
 	t.steps = 64;
 	t.stepDuration = t.duration / t.steps;
+	debug(2, "steps: %d, stepDuration: %d", t.steps, t.stepDuration );
 
 	for (int i = 0; i < t.steps; i++) {
 		uint32 startTime = g_system->getMillis();
@@ -842,8 +855,9 @@ void Window::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::Ma
 	bool flag = false;
 
 	Common::Array<Common::Rect> rects;
+	rects.reserve(128);
 
-	for (uint16 i = 1; i < t.steps; i++) {
+	for (uint16 i = 0; i < t.steps; i++) {
 		uint32 startTime = g_system->getMillis();
 		bool stop = false;
 		rto = clipRect;
@@ -978,7 +992,7 @@ void Window::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::Ma
 			break;
 
 		default:
-			warning("Score::transMultiPass(): Unhandled transition type %s %d %d", transProps[t.type].name, t.duration, t.chunkSize);
+			warning("Window::transMultiPass(): Unhandled transition type %s %d %d", transProps[t.type].name, t.duration, t.chunkSize);
 			stop = true;
 			break;
 		}
@@ -993,9 +1007,9 @@ void Window::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::Ma
 
 			if (rto.height() > 0 && rto.width() > 0) {
 				_composeSurface->blitFrom(*nextFrame, rto, Common::Point(rto.left, rto.top));
-				stepTransition();
 			}
 		}
+		stepTransition();
 		rects.clear();
 
 		g_lingo->executePerFrameHook(t.frame, i);
@@ -1076,21 +1090,23 @@ void Window::initTransParams(TransParams &t, Common::Rect &clipRect) {
 	if (debugChannelSet(-1, kDebugFast))
 		t.chunkSize = MIN((uint) m, t.chunkSize*16);
 
+	uint maxSteps = MAX_STEPS(t.duration);
+
 	switch (transProps[t.type].dir) {
 	case kTransDirHorizontal:
-		t.steps = MAX(w / t.chunkSize, (uint)1);
+		t.steps = MIN(MAX(w / t.chunkSize, (uint)1), maxSteps);
 		t.xStepSize = w / t.steps;
 		t.xpos = w % t.steps;
 		break;
 
 	case kTransDirVertical:
-		t.steps = MAX(h / t.chunkSize, (uint)1);
+		t.steps = MIN(MAX(h / t.chunkSize, (uint)1), maxSteps);
 		t.yStepSize = h / t.steps;
 		t.ypos = h % t.steps;
 		break;
 
 	case kTransDirBoth:
-		t.steps = MAX(m / t.chunkSize, (uint)1);
+		t.steps = MIN(MAX(m / t.chunkSize, (uint)1), maxSteps);
 
 		t.xStepSize = w / t.steps;
 		t.xpos = w % t.steps;
@@ -1099,17 +1115,23 @@ void Window::initTransParams(TransParams &t, Common::Rect &clipRect) {
 		break;
 
 	case kTransDirStepsH:
-		t.xStepSize = t.chunkSize;
-		t.yStepSize = (h + kNumStrips - 1) / kNumStrips;
-		t.stripSize = (w + kNumStrips - 1) / kNumStrips;
-		t.steps = ((w + t.xStepSize - 1) / t.xStepSize) * 2;
+		{
+			uint minChunkSize = (w - 1)/((maxSteps/2) - 1);
+			t.xStepSize = MAX(t.chunkSize, minChunkSize);
+			t.yStepSize = (h + kNumStrips - 1) / kNumStrips;
+			t.stripSize = (w + kNumStrips - 1) / kNumStrips;
+			t.steps = ((w + t.xStepSize - 1) / t.xStepSize) * 2;
+		}
 		break;
 
 	case kTransDirStepsV:
-		t.xStepSize = (w + kNumStrips - 1) / kNumStrips;
-		t.yStepSize = t.chunkSize;
-		t.stripSize = (h + kNumStrips - 1) / kNumStrips;
-		t.steps = ((h + t.yStepSize - 1) / t.yStepSize) * 2;
+		{
+			uint minChunkSize = (h - 1)/((maxSteps/2) - 1);
+			t.xStepSize = (w + kNumStrips - 1) / kNumStrips;
+			t.yStepSize = MAX(t.chunkSize, minChunkSize);
+			t.stripSize = (h + kNumStrips - 1) / kNumStrips;
+			t.steps = ((h + t.yStepSize - 1) / t.yStepSize) * 2;
+		}
 		break;
 
 	case kTransDirCheckers:
@@ -1142,6 +1164,8 @@ void Window::initTransParams(TransParams &t, Common::Rect &clipRect) {
 	}
 
 	t.stepDuration = t.duration / t.steps;
+
+	debugC(2, kDebugLoading, "Window::initTransParams(): type: %d, duration: %d, chunkSize: %d, steps: %d, stepDuration: %d, xpos: %d, ypos: %d, xStepSize: %d, yStepSize: %d, stripSize: %d", t.type, t.duration, t.chunkSize, t.steps, t.stepDuration, t.xpos, t.ypos, t.xStepSize, t.yStepSize, t.stripSize);
 }
 
 } // End of namespace Director
