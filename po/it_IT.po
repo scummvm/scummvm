@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-06 21:33+0000\n"
+"POT-Creation-Date: 2022-08-07 19:45+0000\n"
 "PO-Revision-Date: 2022-08-07 09:19+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -270,7 +270,7 @@ msgstr ""
 msgid "Proceed"
 msgstr "Procedi"
 
-#: gui/editgamedialog.cpp:141 engines/dialogs.cpp:275
+#: gui/editgamedialog.cpp:141 engines/dialogs.cpp:277
 msgid "Game"
 msgstr "Gioco"
 
@@ -373,11 +373,11 @@ msgctxt "lowres"
 msgid "Override global shader settings"
 msgstr "Ignora impostazioni shader globali"
 
-#: gui/editgamedialog.cpp:244 gui/options.cpp:2084 engines/dialogs.cpp:318
+#: gui/editgamedialog.cpp:244 gui/options.cpp:2084 engines/dialogs.cpp:320
 msgid "Keymaps"
 msgstr "Mappa tasti"
 
-#: gui/editgamedialog.cpp:251 gui/options.cpp:2091 engines/dialogs.cpp:325
+#: gui/editgamedialog.cpp:251 gui/options.cpp:2091 engines/dialogs.cpp:327
 msgid "Backend"
 msgstr "Backend"
 
@@ -390,7 +390,7 @@ msgctxt "lowres"
 msgid "Override global backend settings"
 msgstr "Ignora impostazioni backend globali"
 
-#: gui/editgamedialog.cpp:270 gui/options.cpp:2105 engines/dialogs.cpp:293
+#: gui/editgamedialog.cpp:270 gui/options.cpp:2105 engines/dialogs.cpp:295
 msgid "Audio"
 msgstr "Audio"
 
@@ -493,11 +493,11 @@ msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Salvataggi:"
 
-#: gui/editgamedialog.cpp:370 engines/dialogs.cpp:340
+#: gui/editgamedialog.cpp:370 engines/dialogs.cpp:342
 msgid "Achievements"
 msgstr "Obiettivi"
 
-#: gui/editgamedialog.cpp:374 engines/dialogs.cpp:344
+#: gui/editgamedialog.cpp:374 engines/dialogs.cpp:346
 msgid "Statistics"
 msgstr "Statistiche"
 
@@ -793,7 +793,7 @@ msgstr "Raggruppa: "
 msgid "Select a criteria to group the entries"
 msgstr "Seleziona un criterio per raggruppare i titoli"
 
-#: gui/launcher.cpp:243 engines/dialogs.cpp:94
+#: gui/launcher.cpp:243 engines/dialogs.cpp:96
 msgid "~Q~uit"
 msgstr "~E~sci"
 
@@ -865,14 +865,14 @@ msgstr "Cerca nella lista dei giochi"
 msgid "Search:"
 msgstr "Cerca:"
 
-#: gui/launcher.cpp:280 engines/dialogs.cpp:97 engines/engine.cpp:885
+#: gui/launcher.cpp:280 engines/dialogs.cpp:99 engines/engine.cpp:885
 #: engines/pegasus/pegasus.cpp:383 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:630 engines/wage/saveload.cpp:741
 #: engines/xeen/saves.cpp:255
 msgid "Load game:"
 msgstr "Carica gioco:"
 
-#: gui/launcher.cpp:280 engines/dialogs.cpp:97 engines/engine.cpp:885
+#: gui/launcher.cpp:280 engines/dialogs.cpp:99 engines/engine.cpp:885
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:383
 #: engines/scumm/dialogs.cpp:190 engines/trecision/saveload.cpp:253
@@ -2503,20 +2503,20 @@ msgstr "~O~pzioni"
 msgid "~H~elp"
 msgstr "~A~iuto"
 
-#: engines/dialogs.cpp:85
+#: engines/dialogs.cpp:87
 msgid "~A~bout"
 msgstr "~I~nfo"
 
-#: engines/dialogs.cpp:88 engines/dialogs.cpp:164
+#: engines/dialogs.cpp:90 engines/dialogs.cpp:166
 msgid "~R~eturn to Launcher"
 msgstr "~T~orna a elenco giochi"
 
-#: engines/dialogs.cpp:90 engines/dialogs.cpp:166
+#: engines/dialogs.cpp:92 engines/dialogs.cpp:168
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~V~ai a elenco giochi"
 
-#: engines/dialogs.cpp:98 engines/engine.cpp:914 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:100 engines/engine.cpp:914 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -2537,7 +2537,7 @@ msgstr "~V~ai a elenco giochi"
 msgid "Save game:"
 msgstr "Salva gioco:"
 
-#: engines/dialogs.cpp:98 engines/engine.cpp:914 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:100 engines/engine.cpp:914 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -2561,7 +2561,7 @@ msgstr "Salva gioco:"
 msgid "Save"
 msgstr "Salva"
 
-#: engines/dialogs.cpp:128
+#: engines/dialogs.cpp:130
 msgid ""
 "Sorry, this engine does not currently provide in-game help. Please consult "
 "the README for basic information, and for instructions on how to obtain "
@@ -2571,7 +2571,7 @@ msgstr ""
 "gioco. Si prega di consultare il file README per le informazioni di base e "
 "per le istruzioni su come ottenere ulteriore assistenza."
 
-#: engines/dialogs.cpp:212 engines/pegasus/pegasus.cpp:413
+#: engines/dialogs.cpp:214 engines/pegasus/pegasus.cpp:413
 #, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
@@ -2580,11 +2580,11 @@ msgstr ""
 "Salvataggio non riuscito (%s). Consultare il file README per le informazioni "
 "di base e per le istruzioni su come ottenere ulteriore assistenza."
 
-#: engines/dialogs.cpp:355
+#: engines/dialogs.cpp:357
 msgid "~O~K"
 msgstr "~O~K"
 
-#: engines/dialogs.cpp:356
+#: engines/dialogs.cpp:358
 msgid "~C~ancel"
 msgstr "~A~nnulla"
 
@@ -7698,7 +7698,7 @@ msgstr "Volume musica: "
 msgid "Subtitle speed: "
 msgstr "Velocità testo: "
 
-#: engines/scumm/metaengine.cpp:334
+#: engines/scumm/metaengine.cpp:335
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -7708,11 +7708,11 @@ msgstr ""
 "evitarne la pirateria.\n"
 "La versione completa è disponibile per l'acquisto sull'iTunes Store."
 
-#: engines/scumm/metaengine.cpp:431
+#: engines/scumm/metaengine.cpp:432
 msgid "HE v71+ support is not compiled in"
 msgstr "Il supporto per HE v71+ non è stato incluso nella compilazione"
 
-#: engines/scumm/metaengine.cpp:455
+#: engines/scumm/metaengine.cpp:456
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "Il supporto per SCUMM v7-8 non è stato incluso nella compilazione"
 
