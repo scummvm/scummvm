@@ -35,6 +35,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      Diese ist immer dann aufgetreten, wenn der Spieler am Ende von Part II
      das Modell des Leuchtturms nicht aufhebt, bevor Captain Dread Guybrush
      zurück zu Scabb Island bringt.
+   - Unterstützung für die originale Benutzeroberfläche von COMI hinzugefügt.
 
  Toon:
    - Die Spiel-Menüs verhalten sich nun wie das Original.
