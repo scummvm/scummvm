@@ -114,6 +114,9 @@ bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) const {
 #ifdef USE_SCALERS
 	case OSystem::kFeatureScalers:
 #endif
+#if !USE_FORCED_GLES
+	case OSystem::kFeatureShaders:
+#endif
 		return true;
 
 	case OSystem::kFeatureOverlaySupportsAlpha:
@@ -345,6 +348,20 @@ uint OpenGLGraphicsManager::getScaleFactor() const {
 }
 #endif
 
+#if !USE_FORCED_GLES
+bool OpenGLGraphicsManager::setShader(const Common::String &fileName) {
+	assert(_transactionMode != kTransactionNone);
+
+	// Special case for the 'default' shader
+	if (fileName == "default")
+		_currentState.shader = "";
+	else
+		_currentState.shader = fileName;
+
+	return true;
+}
+#endif
+
 void OpenGLGraphicsManager::beginGFXTransaction() {
 	assert(_transactionMode == kTransactionNone);
 
@@ -508,6 +525,14 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		}
 #endif
 	}
+
+#if !USE_FORCED_GLES
+	// Load selected shader preset
+	if (!_currentState.shader.empty()) {
+		if (!_libretroPipeline->open(Common::FSNode(_currentState.shader)))
+			warning("Failed to load %s", _currentState.shader.c_str());
+	}
+#endif
 
 	// Update our display area and cursor scaling. This makes sure we pick up
 	// aspect ratio correction and game screen changes correctly.
@@ -1165,17 +1190,6 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 #if !USE_FORCED_GLES
 	if (LibRetroPipeline::isSupportedByContext()) {
 		_libretroPipeline = new LibRetroPipeline();
-
-		// Load selected shader preset from config file
-		// TODO: Handle this in endGFXTransaction()
-		if (ConfMan.hasKey("shader_scaler", Common::ConfigManager::kApplicationDomain)) {
-			Common::FSNode shaderPreset(ConfMan.get("shader_scaler", Common::ConfigManager::kApplicationDomain));
-			if (shaderPreset.isReadable()) {
-				if (!_libretroPipeline->open(shaderPreset))
-					warning("Failed to load %s", shaderPreset.getName().c_str());
-			}
-		}
-
 		_libretroPipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
 		_libretroPipeline->setFramebuffer(&_backBuffer);
 	}
