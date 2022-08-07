@@ -10,9 +10,9 @@ MODULE_OBJS = \
 	compression.o \
 	misc.o \
 	cycle.o \
-	drawChr.o
+	drawChr.o \
+ 	level.o
 
-# 	level.o \
 #	universe.o \
 #	room.o \
 #	object.o \

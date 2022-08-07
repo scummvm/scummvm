@@ -846,7 +846,11 @@ void ImmortalEngine::loadSingles(Common::String songName) {
 	debug("%s", songName.c_str());
 }
 
-
+void ImmortalEngine::stopMusic() {
+	//musicStop(-1)
+	_playing = kSongNothing;
+	//stopSound();
+}
 
 } // namespace Immortal
 
