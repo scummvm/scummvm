@@ -29,12 +29,14 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 	FCLInstruction currentInstruction;
 
 	// this lookup table tells us how many argument bytes to read per opcode
-	uint8 argumentsRequiredByOpcode[35] =
-		{
-			0, 3, 1, 1, 1, 1, 2, 2,
-			2, 1, 1, 2, 1, 1, 2, 1,
-			1, 2, 2, 1, 2, 0, 0, 0,
-			1, 1, 0, 1, 1, 1, 1, 1, 2, 2, 1};
+	uint8 argumentsRequiredByOpcode[49] =
+		{ 0, 3, 1, 1, 1, 1, 2, 2,
+		  2, 1, 1, 2, 1, 1, 2, 1,
+		  1, 2, 2, 1, 2, 0, 0, 0,
+		  1, 1, 0, 1, 1, 1, 1, 1,
+		  2, 2, 1, 1, 0, 0, 0, 0,
+		  0, 0, 0, 0, 0, 0, 2, 2,
+		  1};
 
 	while (bytePointer < sizeOfTokenisedContent) {
 		// get the conditional type of the next operation
@@ -71,8 +73,10 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 
 		// figure out how many argument bytes we're going to need,
 		// check we have enough bytes left to read
-		if (opcode > 34) {
-			debug("ERROR: failed to read opcode: %x", opcode);
+		if (opcode > 48) {
+			debug("%s", detokenisedStream.c_str());
+			if (opcode != 0x29 && opcode < 0x4f && opcode > 0x5f)
+				error("ERROR: failed to read opcode: %x", opcode);
 			break;
 		}
 
@@ -86,8 +90,6 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			detokenisedStream += "<UNKNOWN 8 bit: ";
 			detokenisedStream += Common::String::format("%x", (int)opcode);
 			detokenisedStream += " > ";
-			if (opcode != 0x18)
-				error("Unknown FCL instruction: 0x%x", (int)opcode);
 			break;
 
 		case 0:
@@ -314,16 +316,42 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			numberOfArguments = 0;
 			break;
 
-		case 23:
-			detokenisedStream += "UNKNOWN(23)(..) ";
+		case 35:
+			detokenisedStream += "SCREEN ";
+			//detokenisedStream += Common::String::format("(%d)", (int)tokenisedCondition[bytePointer]);
+			//bytePointer += 1;
+			//numberOfArguments = 0;
+			break;
+
+		case 44:
+			detokenisedStream += "ELSE ";
+			//numberOfArguments = 0;
+			break;
+
+		case 45:
+			detokenisedStream += "ENDIF ";
+			//numberOfArguments = 0;
+			break;
+
+		case 46:
+			detokenisedStream += "IFGTE ";
+			detokenisedStream += Common::String::format("(v%d, %d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
 			bytePointer += 2;
 			numberOfArguments = 0;
 			break;
 
-		case 22:
-			detokenisedStream += "UNKNOWN(22)(..) ";
+		case 47:
+			detokenisedStream += "IFLTE ";
+			detokenisedStream += Common::String::format("(v%d, %d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
 			bytePointer += 2;
 			numberOfArguments = 0;
+			break;
+
+		case 48:
+			detokenisedStream += "EXECUTE ";
+			//detokenisedStream += Common::String::format("(%d)", (int)tokenisedCondition[bytePointer]);
+			//bytePointer += 1;
+			//numberOfArguments = 0;
 			break;
 		}
 
