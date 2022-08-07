@@ -87,11 +87,20 @@ enum ChrMask : uint16 {
 };
 
 enum Screen {											// These are constants that are used for defining screen related arrays
-	kMaxRooms 	  = 16,									// Should probably put this in a different enum
 	kMaxSprites   = 32,									// Number of sprites allowed at once
 	kViewPortCW   = 256 / 64,
 	kViewPortCH   = 128 / kMaxSprites,
 	kMaxDrawItems = kViewPortCH + 1 + kMaxSprites
+};
+
+enum StoryMaxes {
+	kMaxRooms		 = 16,
+	kMaxDoors		 = 10,
+	kMaxFlames 	     = 32,
+	kMaxFlamesInRoom = 5,
+	kMaxObjects 	 = 42,
+	kMaxMonsters 	 = 20,
+	kMaxGenSprites	 = 6
 };
 
 enum InputAction {
@@ -141,9 +150,9 @@ enum Song {
 };
 
 enum GameFlags : uint8 {
-	kSavedNone = 0,
-	kSavedKing = 1,
-	kSavedAna  = 2
+	kSavedNone,
+	kSavedKing,
+	kSavedAna
 };
 
 struct Frame {
@@ -222,7 +231,6 @@ public:
 						   			  		"Congratulations!&&Play again?@",
 						   			  		"Enter certificate:&-=",
 						   			  		"Game Over&&Play again?@"};
-
 	// Screen constants
 	const int kResH 	  = 320;
 	const int kResV 	  = 200;
@@ -296,9 +304,10 @@ public:
 	const char kGaugeStart    = 1;						// First kGaugeOn char to draw
 
 	// Level constants
+	const int kStoryNull		= 5;
 	const int kMaxFilesPerLevel = 16;
 	const int kMaxPartInstances = 4;
-	const int kLevelToMaze[8] = {0,0,1,1,2,2,2,3};
+	const int kLevelToMaze[8]   = {0,0,1,1,2,2,2,3};
 
 	/* 
 	 * 'global' members
@@ -317,6 +326,9 @@ public:
 	  int _time 		= 0;
 	  int _promoting    = 0;							// I think promoting means the title stuff
 	 bool _restart 	    = false;
+
+	// Story members
+	Story _stories[8];
 
 	// Level members
 	  int _maxLevels	= 0;							// This is determined when loading in story files
@@ -339,7 +351,6 @@ public:
 	  int _lastType;
 	  int _roomCellX;
 	  int _roomCellY;
-	Story _stories[8];
 	Room *_rooms[kMaxRooms];							// Rooms within the level
 
 	// Debug members
@@ -577,6 +588,13 @@ public:
 	bool levelIsShowRoom(int r);
 	bool levelIsLoaded(int l);
 	void univAtNew(int l);
+
+
+	/*
+	 * [Story.cpp] Functions from Story.cpp
+	 */
+	// Init
+	void loadStoryFiles();
 
 	/*
 	 * [Sprites.cpp] Functions from Sprites.GS and spriteList.GS
