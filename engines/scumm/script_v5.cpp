@@ -3260,6 +3260,16 @@ void ScummEngine_v5::decodeParseString() {
 			if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && vm.slot[_currentScript].number == 134 && color == 0x8F)
 				color = 0x87;
 
+			// WORKAROUND: In the CD version of MI1, the text in
+			// the sign about the dogs only sleeping has the wrong
+			// color. We can't find an exact match to what the
+			// floppy version used, but we pick on that's as close
+			// as we can get.
+
+			else if (_game.id == GID_MONKEY && _currentRoom == 36 && vm.slot[_currentScript].number == 201 && color == 2 && _enableEnhancements) {
+				color = findClosestPaletteColor(_currentPalette, 256, 0, 171, 0);
+			}
+
 			_string[textSlot].color = color;
 			break;
 		case 2:		// SO_CLIPPED
