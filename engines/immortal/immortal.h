@@ -115,6 +115,12 @@ enum MonsterID {
 	kPlayerID
 };
 
+enum LevelType {
+	kRoomType,
+	kMonsterType,
+	kObjectType
+};
+
 enum CertIndex : uint8 {
 	kCertHits,
 	kCertLevel,
@@ -206,15 +212,16 @@ public:
 	const int kNiceTime = 36;
 	const int kMaxCertificate = 16;
 
+	// Max strings = 250
 	// This should really be a char array, but inserting frame values will be stupid so it's just a string instead
-	const Common::String genStr[11] = {"New game?%", "Enter certificate:&-=", "Invalid certificate.@",
-					   	   			  "End of level!&Here is your certificate:&&=", "&@",
-						   			  "   Electronic Arts presents&&       The Immortal&&&&      1990 Will Harvey|]]]]]]]]]=", // Might need \ for something
-						  		 	  "          written by&&         Will Harvey&         Ian Gooding&      Michael Marcantel&       Brett G. Durrett&        Douglas Fulton|]]]]]]]/=",
-						   			  "#" + Common::String(kGoldBigFrame) + "$0 gold@",
-						   			  "Congratulations!&&Play again?@",
-						   			  "Enter certificate:&-=",
-						   			  "Game Over&&Play again?@"};
+	const Common::String stringPtrs[250] = {"New game?%", "Enter certificate:&-=", "Invalid certificate.@",
+					   	   			  		"End of level!&Here is your certificate:&&=", "&@",
+						   			  		"   Electronic Arts presents&&       The Immortal&&&&      1990 Will Harvey|]]]]]]]]]=", // Might need \ for something
+						  		 	  		"          written by&&         Will Harvey&         Ian Gooding&      Michael Marcantel&       Brett G. Durrett&        Douglas Fulton|]]]]]]]/=",
+						   			  		"#" + Common::String(kGoldBigFrame) + "$0 gold@",
+						   			  		"Congratulations!&&Play again?@",
+						   			  		"Enter certificate:&-=",
+						   			  		"Game Over&&Play again?@"};
 
 	// Screen constants
 	const int kResH 	  = 320;
@@ -288,6 +295,10 @@ public:
 	const char kGaugeStop     = 1;						// Literally just means the final kGaugeOn char to draw
 	const char kGaugeStart    = 1;						// First kGaugeOn char to draw
 
+	// Level constants
+	const int kMaxFilesPerLevel = 16;
+	const int kMaxPartInstances = 4;
+	const int kLevelToMaze[8] = {0,0,1,1,2,2,2,3};
 
 	/* 
 	 * 'global' members
@@ -311,6 +322,24 @@ public:
 	  int _maxLevels	= 0;							// This is determined when loading in story files
 	  int _level 	    = 0;
 	 bool _levelOver    = false;
+	  int _count;
+	  int _lastLevelLoaded;
+	  int _lastSongLoaded;
+	  int _storyLevel;
+	  int _storyX;
+	  int _loadA;
+	  int _loadY;
+	  uint16 _initialX;
+	  uint16 _initialY;
+	  int _initialBX;
+	  int _initialBY;
+	  int _dRoomNum;
+	  int _initialRoom;
+	  int _currentRoom;
+	  int _lastType;
+	  int _roomCellX;
+	  int _roomCellY;
+	Story _stories[8];
 	Room *_rooms[kMaxRooms];							// Rooms within the level
 
 	// Debug members
@@ -404,6 +433,7 @@ public:
 	void playMazeSong();
 	void playCombatSong();
 	void doGroan();
+	void stopMusic();
 	void musicPause(int sID);
 	void musicUnPause(int sID);
 	void loadSingles(Common::String songName);			// Loads and then parse the maze song
@@ -447,14 +477,22 @@ public:
 
 
 	/*
-	 * [Sprites.cpp] Functions from Sprites.GS and spriteList.GS
+	 * [DrawChr.cpp] Functions from DrawChr.cpp
 	 */
 
-	// Init
-	void initDataSprite(Common::SeekableReadStream *f, DataSprite *d, int index, uint16 cenX, uint16 cenY); // Initializes the data sprite
-	
 	// Main
-	void superSprite(int s, uint16 x, uint16 y, Frame f, int bmw, byte *dst, int sT, int sB);
+	int mungeCBM(int numChrs);
+	void storeAddr();
+	void mungeSolid();
+	void mungeLRHC();
+	void mungeLLHC();
+	void mungeULHC();
+	void mungeURHC();
+	void drawSolid(int chr, int x, int y);
+	void drawULHC(int chr, int x, int y);
+	void drawURHC(int chr, int x, int y);
+	void drawLLHC(int chr, int x, int y);
+	void drawLRHC(int chr, int x, int y);
 
 
 	/* 
@@ -524,6 +562,34 @@ public:
 
 
 	/*
+	 * [Level.cpp] Functions from level.GS
+	 */
+	// Init
+	void levelInitAtStartOfGameOnly();
+	void levelInit();
+
+	// Main
+	void levelStory(int l);
+	void levelLoadFile(int l);
+	void levelNew(int l);
+	void levelDrawAll();
+	void levelShowRoom(int r, int bX, int bY);
+	bool levelIsShowRoom(int r);
+	bool levelIsLoaded(int l);
+	void univAtNew(int l);
+
+	/*
+	 * [Sprites.cpp] Functions from Sprites.GS and spriteList.GS
+	 */
+
+	// Init
+	void initDataSprite(Common::SeekableReadStream *f, DataSprite *d, int index, uint16 cenX, uint16 cenY); // Initializes the data sprite
+	
+	// Main
+	void superSprite(int s, uint16 x, uint16 y, Frame f, int bmw, byte *dst, int sT, int sB);
+
+
+	/*
 	 * [Compression.cpp] Functions from Compression.GS
 	 */
 
@@ -542,26 +608,6 @@ public:
 	 */
 
 	// Misc
-
-
-	/*
-	 * [DrawChr.cpp] Functions from DrawChr.cpp
-	 */
-
-	// Main
-	int mungeCBM(int numChrs);
-	void storeAddr();
-	void mungeSolid();
-	void mungeLRHC();
-	void mungeLLHC();
-	void mungeULHC();
-	void mungeURHC();
-	void drawSolid(int chr, int x, int y);
-	void drawULHC(int chr, int x, int y);
-	void drawURHC(int chr, int x, int y);
-	void drawLLHC(int chr, int x, int y);
-	void drawLRHC(int chr, int x, int y);
-
 
 	/*
 	 * --- ScummVM general engine Functions ---

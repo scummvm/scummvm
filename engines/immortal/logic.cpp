@@ -34,7 +34,7 @@ void ImmortalEngine::logicInit() {
 	_time = 0;
 	_promoting = 0;
 	_restart = true;
-	//level_initAtStartOfGameOnly
+	levelInitAtStartOfGameOnly();
 	_lastCertLen = 0;
 }
 
@@ -48,7 +48,7 @@ void ImmortalEngine::restartLogic() {
 	//qarrayInit();
 	//cycInit();		<-- room.initCycles()
 	//fsetInit();		<-- room.initTorches()
-	//levelInit();		<-- presumably creates room
+	levelInit();
 	//roomInit();		<-- will be run in constructor of room
 	//monstInit();		<-- room.initMonsters()		\
 	//objectInit();		<-- room.initObjects()
@@ -64,7 +64,7 @@ void ImmortalEngine::restartLogic() {
 
 	if (fromOldGame() == false) {
 		_level = 0;
-		//levelNew(_level);
+		levelNew(_level);
 	}
 
 	if (_level != 7) {
@@ -118,7 +118,7 @@ void ImmortalEngine::logic() {
 			//monstRunAll();
 			//objectRunAll();
 			//doInfiniteHallways();
-			//levelDrawAll();
+			levelDrawAll();
 			updateHitGauge();
 
 			// What the heck? Check if we are in level 0: room 0, with no lit torches, and no projectiles
@@ -393,7 +393,7 @@ bool ImmortalEngine::fromOldGame() {
 		default:
 			break;
 	}
-	//levelNew(_level)
+	levelNew(_level);
 	return true;
 }
 

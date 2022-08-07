@@ -24,6 +24,17 @@
 
 namespace Immortal {
 
+enum OPMask : uint8 {
+	kOPMaskRoom,
+	kOPMaskInRoom,
+	kOPMaskFlame,
+	kOPMaskUnivAt,
+	kOPMaskMonster,
+	kOPMaskDoor,
+	kOPMaskObject,
+	kOPMaskRecord
+};
+
 enum ObjFlag : uint8 {
 	kObjUsesFireButton = 0x40,
 	kObjIsInvisible    = 0x20,
@@ -45,6 +56,10 @@ enum Str {
 	kStrGold,
 	kStrYouWin,
 	kStrGameOver
+};
+
+struct Story {
+	int x;
 };
 
 struct Pickup {
