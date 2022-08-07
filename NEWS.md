@@ -34,6 +34,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed a possible dead-end in the Ultimate Talkie Edition of Monkey Island 2,
      if one doesn't pick up the model lighthouse lens before Captain Dread brings
      Guybrush back to Scabb Island, at the end of Part II.
+   - Added support for original GUI dialogs to COMI.
 
  Toon:
    - Made game menus behave like in the original.
