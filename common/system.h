@@ -46,7 +46,6 @@ class OptionsContainerWidget;
 
 namespace Common {
 class EventManager;
-class FSNode;
 class MutexInternal;
 struct Rect;
 class SaveFileManager;
@@ -774,7 +773,7 @@ public:
 	 *
 	 * @return True if the switch was successful, false otherwise.
 	 */
-	virtual bool setShader(const Common::FSNode &fileNode) { return false; }
+	virtual bool setShader(const Common::String &fileName) { return false; }
 
 	/**
 	 * Retrieve a list of all stretch modes supported by this backend.

@@ -73,8 +73,8 @@ int ModularGraphicsBackend::getGraphicsMode() const {
 	return _graphicsManager->getGraphicsMode();
 }
 
-bool ModularGraphicsBackend::setShader(const Common::FSNode &fileNode) {
-	return _graphicsManager->setShader(fileNode);
+bool ModularGraphicsBackend::setShader(const Common::String &fileName) {
+	return _graphicsManager->setShader(fileName);
 }
 
 const OSystem::GraphicsMode *ModularGraphicsBackend::getSupportedStretchModes() const {
