@@ -691,7 +691,7 @@ void ScummEngine::CHARSET_1() {
 
 		if (_game.version <= 5) {
 			if (VAR(VAR_V5_TALK_STRING_Y) < 0) {
-				if (_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA) {
+				if (_game.version == 4) {
 					_string[0].ypos = (int)VAR(VAR_V5_TALK_STRING_Y) + a->getPos().y + a->getElevation();
 				} else {
 					s = (a->_scaley * (int)VAR(VAR_V5_TALK_STRING_Y)) / 0xFF;
