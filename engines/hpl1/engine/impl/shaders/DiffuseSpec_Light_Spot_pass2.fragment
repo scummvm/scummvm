@@ -13,7 +13,7 @@ in vec4 vLightColor;
 in vec2 vUv;
 in vec3 vLightDir;
 in vec3 vHalfVec;
-in vec3 vSpotlightUv;
+in vec4 vSpotlightUv;
 
 OUTPUT
 
@@ -28,7 +28,7 @@ void main()
 	vec3 lightNormal = (2.0*textureCube(tex2,vLightDir)-vec4(1.0)).xyz;
 	vHalfVec = (2.0*textureCube(tex2,vHalfVec)-vec4(1.0)).xyz;
 
-	vec4 spotColor = texture(tex3, vSpotlightUv.xy / vSpotlightUv.z);
+	vec4 spotColor = texture(tex3, vSpotlightUv.xy / vSpotlightUv.w);
 
 	float specular = clamp(dot(vHalfVec, vec3(0,0,1)), 0.0, 1.0);
 	specular = pow(specular, 16.0) * vLightColor.w * spotColor.w;
