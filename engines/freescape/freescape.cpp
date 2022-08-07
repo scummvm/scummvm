@@ -9,6 +9,7 @@
 #include "common/math.h"
 #include "common/fs.h"
 #include "common/system.h"
+#include "common/memstream.h"
 
 #include "engines/util.h"
 
@@ -140,11 +141,26 @@ void FreescapeEngine::loadAssets() {
 			error("Invalid render mode %s for Total Eclipse", _renderMode.c_str());
 	   } else if (isCastle()) {
 			_renderMode = "ega";
-			file = gameDir.createReadStreamForMember("cm.bin");
 
-			if (file == nullptr)
-				error("Failed to open cm.bin");
-			load8bitBinary(file, 0x791a, 16);
+			file = gameDir.createReadStreamForMember("CMEDF");
+			int size = file->size();
+			byte *encryptedBuffer = (byte*) malloc(size);
+			file->read(encryptedBuffer, size);
+
+			int seed = 24;
+			for (int i = 0; i < size; i++) {
+				encryptedBuffer[i] ^= seed;
+				seed = (seed + 1) & 0xff;
+			}
+
+			file = new Common::MemoryReadStream(encryptedBuffer, size);
+			load8bitBinary(file, 0, 16);
+
+			// CPC
+			//file = gameDir.createReadStreamForMember("cm.bin");
+			//if (file == nullptr)
+			//	error("Failed to open cm.bin");
+			//load8bitBinary(file, 0x791a, 16);
 	   } else
 		error("'%s' is an invalid game", _targetName.c_str());
 
