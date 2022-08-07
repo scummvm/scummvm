@@ -3550,6 +3550,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("ghostman", "Rebut And Ghostman.exe", "0241777c2537fc5d077c05cde10bfa9f", 10312749),
 	GAME_ENTRY_EN_STEAM("goldenwake", "a-golden-wake.exe", "dbe281d93c914899886e77c09c3c65ec", 130844360), // Linux & Mac
 	GAME_ENTRY_EN_STEAM("goldenwake", "a-golden-wake.exe", "e7080df9729aae2a0097b752198f3cca", 130846774),
+	GAME_ENTRY_EN_STEAM("goldenwake", "a-golden-wake.exe", "409b71f7b73f30bef5098c6449505c1a", 130929070),  // Windows
 	GAME_ENTRY_EN_GOG("goldenwake", "a-golden-wake.exe", "7056895c888d6cf3f0120d2edfeb7f7b", 130912596),
 	GAME_ENTRY_EN("goldenwake", "a-golden-wake.exe", "e80586fdc2db32f65658b235d8cbc159", 129814364), // Humble Bundle
 	GAME_ENTRY_EN("goldenwake", "a-golden-wake.exe", "e80586fdc2db32f65658b235d8cbc159", 129814642),
@@ -3691,8 +3692,10 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448823986),  // Win v2.2 updated
 	GAME_ENTRY_EN_STEAM("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448823978),
 	GAME_ENTRY_EN_STEAM("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448825176),  // Win v2.5
+	GAME_ENTRY_EN_STEAM("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448836470),  // Win v2.5a
 	GAME_ENTRY_EN_GOG("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448796372), // Win v2.2
 	GAME_ENTRY_EN_GOG("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448825442), // Win v2.5
+	GAME_ENTRY_EN_GOG("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448836736), // Win v2.5a
 	GAME_ENTRY_EN_GOG("technobabylon", "ac2game.dat", "570e69be27d3fa94b50f2779100e3fed", 445671616), // Mac v2.2a
 	GAME_ENTRY_EN("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447894701),  // Humble Bundle
 	GAME_ENTRY_EN_STEAM("theadventuresoffatman", "fatman.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 44449205),
