@@ -387,7 +387,7 @@ public:
 	ResourceManager *_res = nullptr;
 
 	bool _enableEnhancements = false;
-	bool _useOriginalGUI = false;
+	bool _useOriginalGUI = true;
 	bool _enableAudioOverride = false;
 
 protected:
