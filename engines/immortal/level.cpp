@@ -24,6 +24,7 @@
 namespace Immortal {
 
 void ImmortalEngine::levelInitAtStartOfGameOnly() {
+	loadStoryFiles();
 	_lastLevelLoaded = -1;
 	_lastSongLoaded = -1;
 }
@@ -61,8 +62,6 @@ void ImmortalEngine::levelNew(int l) {
 void ImmortalEngine::levelStory(int l) {
 	levelLoadFile(l);
 }
-
-//loadStoryFiles() {}
 
 void ImmortalEngine::levelLoadFile(int l) {
 	/* Originally, this searched through story.gs and ignored the data entries.
