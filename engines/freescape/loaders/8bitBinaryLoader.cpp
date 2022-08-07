@@ -176,7 +176,12 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 	} break;
 
 	case Object::Group:
-		error("Object of type 'group'");
+		debug("Object of type 'group'");
+		file->seek(byteSizeOfObject, SEEK_CUR);
+		return new Sensor(
+			objectID,
+			position,
+			v);
 		break;
 	}
 
@@ -214,17 +219,16 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	uint8 ci2 = 0;
 	uint8 skyColor = 255;
 	uint8 groundColor = 255;
-	if (!isCastle()) {
-		groundColor = file->readByte() & 15;
-		skyColor = file->readByte() & 15;
-		ci1 = file->readByte();
-		ci2 = file->readByte();
-		debugC(1, kFreescapeDebugParser, "Colors: %d %d %d %d", ci1, ci2, skyColor, groundColor);
-	} else {
-		groundColor = file->readByte() & 15;
-		skyColor = file->readByte() & 15;
-		debugC(1, kFreescapeDebugParser, "Colors: %d %d", skyColor, groundColor);
-	}
+
+	groundColor = file->readByte() & 15;
+	skyColor = file->readByte() & 15;
+	ci1 = file->readByte();
+	ci2 = file->readByte();
+	debugC(1, kFreescapeDebugParser, "Colors: %d %d %d %d", ci1, ci2, skyColor, groundColor);
+	// CPC
+	//groundColor = file->readByte() & 15;
+	//skyColor = file->readByte() & 15;
+	//debugC(1, kFreescapeDebugParser, "Colors: %d %d", skyColor, groundColor);
 
 	if (_renderMode == "cga") {
 		skyColor = skyColor % 4;
@@ -237,6 +241,9 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	debugC(1, kFreescapeDebugParser, "Flags: %d Objects: %d", areaFlags, numberOfObjects);
 	//debug("Condition Ptr: %x", cPtr);
 	debugC(1, kFreescapeDebugParser, "Pos before first object: %lx", file->pos());
+
+	if (areaNumber == 192)
+		return nullptr;
 
 	uint8 gasPocketX = 0;
 	uint8 gasPocketY = 0;
@@ -263,12 +270,12 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 			i++;
 		}
 		debugC(1, kFreescapeDebugParser, "Area name: %s", name.c_str());
-	} else if (!isCastle())
-		file->seek(15, SEEK_CUR);
+	} else if (isCastle())
+		file->seek(5, SEEK_CUR);
 
 	ObjectMap *objectsByID = new ObjectMap;
 	ObjectMap *entrancesByID = new ObjectMap;
-	for (uint8 object = 0; object < numberOfObjects; object++) {
+	for (uint8 object = 0; object < numberOfObjects && areaNumber != 192; object++) {
 		debugC(1, kFreescapeDebugParser, "Reading object: %d", object);
 		Object *newObject = load8bitObject(file);
 
@@ -288,7 +295,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	}
 	long int endLastObject = file->pos();
 	debugC(1, kFreescapeDebugParser, "Last position %lx", endLastObject);
-	assert(endLastObject == base + cPtr);
+	assert(endLastObject == base + cPtr || areaNumber == 192);
 	file->seek(base + cPtr);
 	uint8 numConditions = file->readByte();
 	debugC(1, kFreescapeDebugParser, "%d area conditions at %x of area %d", numConditions, base + cPtr, areaNumber);
@@ -388,10 +395,8 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		globalObjectsArea = new Area(255, 0, globalObjectsByID, nullptr, 1, 255, 255, nullptr);
 	}
 
-	if (!isCastle())
-		file->seek(offset + 0xc8);
-	else
-		file->seek(offset + 0x4f);
+	file->seek(offset + 0xc8);
+	//file->seek(offset + 0x4f); //CPC
 
 	debugC(1, kFreescapeDebugParser, "areas index at: %lx", file->pos());
 	uint16 *fileOffsetForArea = new uint16[numberOfAreas];
@@ -413,10 +418,12 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 				_areaMap[newArea->getAreaID()] = newArea;
 			else
 				debugC(1, kFreescapeDebugParser, "WARNING: area ID repeated: %d", newArea->getAreaID());
-		} else
-			error("Invalid area?");
+		} else {
+			debug("Invalid area %d?", area);
+			break;
+		}
 	}
-	if (isEclipse()) {
+	if (isEclipse() || isCastle()) {
 		_playerHeight = 48;
 		_playerWidth = 8;
 		_playerDepth = 8;
