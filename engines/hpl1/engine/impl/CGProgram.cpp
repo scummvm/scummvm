@@ -130,20 +130,21 @@ bool cCGProgram::SetVec4f(const tString &asName, float afX, float afY, float afZ
 bool cCGProgram::SetMatrixf(const tString &asName, const cMatrixf &mMtx) {
 	Math::Matrix4 mat4;
 	mat4.setData(mMtx.v);
+	mat4.transpose();
 	_shader->setUniform(asName.c_str(), mat4);
 	return true;
 }
 
 //-----------------------------------------------------------------------
-//TODO: replace with normal setmatrix
+
 bool cCGProgram::SetMatrixf(const tString &asName, eGpuProgramMatrix mType,
 							eGpuProgramMatrixOp mOp) {
   	if (mType != eGpuProgramMatrix_ViewProjection)
 		error("unsupported shader matrix %d", mOp);
-	cMatrixf modelView, projection;
-	glGetFloatv(GL_PROJECTION_MATRIX, projection.v);
-	glGetFloatv(GL_MODELVIEW_MATRIX, modelView.v);
-	SetMatrixf(asName, cMath::MatrixMul(modelView, projection));
+	Math::Matrix4 modelView, projection;
+	glGetFloatv(GL_PROJECTION_MATRIX, projection.getData());
+	glGetFloatv(GL_MODELVIEW_MATRIX, modelView.getData());
+	_shader->setUniform(asName.c_str(), modelView * projection);
 	return true;
 }
 
