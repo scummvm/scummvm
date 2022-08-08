@@ -795,7 +795,10 @@ void ScummEngine::palManipulateInit(int resID, int start, int end, int time) {
 	// This function is actually a nullsub in Indy4 Amiga.
 	// It might very well be a nullsub in other Amiga games, but for now I
 	// limit this to Indy4 Amiga, since that is the only game I can check.
-	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4)
+	// UPDATE: Disable it for EGA mode, too. The original does not handle this. For
+	// Indy4 they just disabled the EGA mode completely. I have tried to make an EGA
+	// implementation, but it looks glitchy and unpleasant.
+	if ((_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) || _enableEGADithering)
 		return;
 
 	byte *string1 = getStringAddress(resID);
@@ -838,6 +841,9 @@ void ScummEngine::palManipulateInit(int resID, int start, int end, int time) {
 
 void ScummEngine_v6::palManipulateInit(int resID, int start, int end, int time) {
 	const byte *new_pal;
+
+	if (_enableEGADithering)
+		return;
 
 	new_pal = getPalettePtr(resID, _roomResource);
 
@@ -981,7 +987,7 @@ void ScummEngine::setShadowPalette(int redScale, int greenScale, int blueScale, 
 }
 
 byte egaFindBestMatch(int r, int g, int b) {
-	// This mostly like the normal EGA palette, but a bit different
+	// This is almost like the normal EGA palette, but a bit different
 	static const byte matchPalette[] = {
 		0x00, 0x00, 0x00, 	0x00, 0x00, 0xAB, 	0x00, 0xAB, 0x00, 	0x00, 0xAB, 0xAB,
 		0xAB, 0x00, 0x00, 	0xAB, 0x00, 0xAB, 	0xAB, 0x57, 0x00, 	0xAB, 0xAB, 0xAB,
