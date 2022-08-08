@@ -154,9 +154,21 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 
 	// Prefer standalone files first, starting with raw forks
 	SeekableReadStream *stream = archive.createReadStreamForMember(fileName.append(".rsrc"));
-	if (stream && loadFromRawFork(*stream)) {
-		_baseFileName = fileName;
-		return true;
+
+	if (stream) {
+		// Some programs actually store AppleDouble there. Check it
+		bool appleDouble = (stream->readUint32BE() == 0x00051607);
+		stream->seek(0);
+
+		if (appleDouble && loadFromAppleDouble(*stream)) {
+			_baseFileName = fileName;
+			return true;
+		}
+
+		if (loadFromRawFork(*stream)) {
+			_baseFileName = fileName;
+			return true;
+		}
 	}
 	delete stream;
 
