@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-07 19:45+0000\n"
-"PO-Revision-Date: 2022-08-03 12:08+0000\n"
+"PO-Revision-Date: 2022-08-08 09:53+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -6900,16 +6900,16 @@ msgstr ""
 "наличии."
 
 #: engines/scumm/detection.cpp:247
-#, fuzzy
-#| msgid "Enable the original audio cd track"
 msgid "Enable the original GUI and Menu"
-msgstr "Включить оригинальный аудио CD трек"
+msgstr "Включить оригинальные GUI и меню"
 
 #: engines/scumm/detection.cpp:248
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu."
 msgstr ""
+"Игра будет использовать оригинальный графический интерфейс и меню "
+"сохранения/загрузки."
 
 #: engines/scumm/detection_internal.h:358
 msgid ""
