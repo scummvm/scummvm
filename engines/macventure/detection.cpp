@@ -28,14 +28,32 @@ namespace MacVenture {
 
 #define ADGF_DEFAULT (ADGF_DROPLANGUAGE|ADGF_DROPPLATFORM|ADGF_MACRESFORK|ADGF_UNSTABLE)
 
-#define BASEGAME(n, v, f, md5, s) {n, v, AD_ENTRY1s(f, md5, s), Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEFAULT, GUIO1(GUIO_NOMIDI)}
-#define BASEDEMO(n, v, f, md5, s) {n, v, AD_ENTRY1s(f, md5, s), Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEFAULT|ADGF_DEMO, GUIO1(GUIO_NOMIDI)}
+#define MACGAME(n, v, f, md5, s) {n, v, AD_ENTRY1s(f, md5, s), Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEFAULT, GUIO1(GUIO_NOMIDI)}
+#define MACDEMO(n, v, f, md5, s) {n, v, AD_ENTRY1s(f, md5, s), Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEFAULT|ADGF_DEMO, GUIO1(GUIO_NOMIDI)}
+#define IIGSGAME(n, v, f, md5, s) {n, v, AD_ENTRY1s(f, md5, s), Common::EN_ANY, Common::kPlatformApple2GS, ADGF_DEFAULT, GUIO1(GUIO_NOMIDI)}
 
 static const ADGameDescription gameDescriptions[] = {
-	BASEGAME("shadowgate", "Zojoi Rerelease", "Shadowgate", "ebbfbcbf93938bd2900cb0c0213b19ad", 68718), // Zojoi Rerelease
-	BASEGAME("deja_vu", "Zojoi Rerelease", "Deja Vu", "5e9f5a8e3c8eb29ed02b34ae5937354f", 68778), // Zojoi Rerelease
-	BASEGAME("deja_vu2", "Zojoi Rerelease", "Lost in Las Vegas", "8f8e1d8d41f577ee0fbc03847969af0d", 66264), // Zojoi Rerelease
-	BASEDEMO("uninvited", "Demo", "Uninvited Demo", "e53adca77d773dca926f61faac68df86", 53119),
+	// Original Mac releases (uses protection)
+	MACGAME("shadowgate", "", "Shadowgate", "b9e8e5d68a81cdbd2cbb5cfe8ea7a47d", 58886), // protection cracked
+	MACGAME("deja_vu", "", "xn--Dj Vu-sqa5d", "9e0436d1f24a1c8a3c9fd846f055201e", 58468), // original filename is "Déjà Vu", protection cracked
+	MACGAME("uninvited", "", "Uninvited", "2cf518cddeda96bfc0cc9ba0bd91b42e", 58631), // v2.1D1, with protection
+	MACGAME("uninvited", "", "Uninvited", "20291feb9bce70a32979031631c42da1", 58639), // protection cracked
+
+	// 1993 Mac rereleases (identical to the Zojoi rereleases), no protection
+	MACGAME("shadowgate", "1993 rerelease", "Shadowgate", "0f4eb65cf369c6c75e4b991b986c34a2", 68718),
+	MACGAME("deja_vu", "1993 rerelease", "xn--Dj Vu-sqa5d", "0f4eb65cf369c6c75e4b991b986c34a2", 6877), // original filename is "Déjà Vu"
+	MACGAME("deja_vu2", "1993 rerelease", "Lost in Las Vegas", "0f4eb65cf369c6c75e4b991b986c34a2", 66264),
+	MACGAME("uninvited", "1993 rerelease", "Uninvited", "0f4eb65cf369c6c75e4b991b986c34a2", 68974),
+
+	// IIGS releases
+	IIGSGAME("shadowgate", "", "SHADOWGATE", "45924ea00ea4ef088e00db0ee774b8df", 101376),
+	IIGSGAME("deja_vu", "", "DEJAVU", "45924ea00ea4ef088e00db0ee774b8df", 101376),
+	IIGSGAME("deja_vu", "Zojoi rerelease", "DEJAVU", "81f1ee050d2afae2fa90a3306010dc56", 101376), // 6 bytes different, BB BE F0 -> BB BE 80
+	IIGSGAME("deja_vu2", "", "DEJAVUII", "f6ef6ead871d4d1cc0f6cf840f48b63f", 69047),
+	IIGSGAME("uninvited", "", "UNINVITED", "45924ea00ea4ef088e00db0ee774b8df", 101376),
+
+	// Misc
+	MACDEMO("uninvited", "Demo", "Uninvited Demo", "e53adca77d773dca926f61faac68df86", 53119),
 	AD_TABLE_END_MARKER
 };
 
