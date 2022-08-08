@@ -27,6 +27,6 @@ void main() {
   vec3 bumpVec = (2.0 * texture(tex1, vUv) - vec4(1.0)).xyz;
   vec3 lightVec = (2.0 * textureCube(tex2, vLightDir) - vec4(1.0)).xyz;
   vec3 spotColor =
-      texture(tex3, vSpotlightUv.xy / vSpotlightUv.w).xyz; // CHECK
+      texture(tex3, vSpotlightUv.xy / vSpotlightUv.w).xyz;
   outColor.xyz = diffuse * dot(lightVec, bumpVec) * vLightColor.xyz * spotColor;
 }

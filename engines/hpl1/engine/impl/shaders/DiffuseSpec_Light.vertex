@@ -43,10 +43,9 @@ void main()
 
 	//Get the halfvector for the specular term
 	vHalfVec = normalize(EyePos - position.xyz);
-	//vHalfVec = normalize( normalize(EyePos) +  normalize(lightDir));
 	//transform to tangent space
 	vHalfVec = (rotation * vHalfVec);
-	vHalfVec = normalize(vLightDir)+vHalfVec;//normalize(vHalfVec + normalize(vLightDir));
+	vHalfVec = normalize(vLightDir)+vHalfVec;
 
 	vLightColor = LightColor;
 }

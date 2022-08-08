@@ -33,5 +33,4 @@ void main()
 	blur = clamp(blur, 0.0, maxBlur);
 
 	outColor = texture2DRect(tex0,gl_FragCoord.xy) * (1.0-blur) + texture(tex1,gl_FragCoord.xy/screenSize) *blur;
-	//outColor = 1 - blur;
 }
