@@ -617,6 +617,7 @@ static const PlainGameDescriptor directorGames[] = {
 
 	// Productivity software
 	{ "expbooktoolkit2",	"Expanded Book Toolkit II" },
+	{ "secretwriters",		"Secret Writer's Society" },
 
 	// Shareware and freeware
 	{ "101pet",				"Dalmation Adoption" },
@@ -6440,6 +6441,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME2_l("samson", "", "start.exe", "a593079aecf5bd938ce75264cac24b2d", 1919963,
 							 "GOSCHOT.DXR", "045e8b0091317831da84596f807779cd", 161404, Common::NL_NLD, 600),
+
+	MACGAME1("secretwriters", "", "Secret Writer's Society", "1b0e3f44bd18e81164b424a268e4fdf7", 1028926, 600),
+	WINGAME1t("secretwriters", "", "WRITING.EXE", "48c8c31df289713b629af6a4c4e519fb", 1508719, 600),
+
 
 	MACGAME1("shrlucky", "", "Arcade", "dab7a517b0877454d1e16c40c9b5a9be", 1029193, 600),
 	WINGAME1("shrlucky", "", "COPYARC/ARCWIN95.EXE", "a593079aecf5bd938ce75264cac24b2d", 7304861, 600),
