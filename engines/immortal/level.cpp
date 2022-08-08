@@ -64,60 +64,58 @@ void ImmortalEngine::levelStory(int l) {
 }
 
 void ImmortalEngine::levelLoadFile(int l) {
-	/* Originally, this searched through story.gs and ignored the data entries.
-	 * However, we have the STR entries separate from the story entries, so
-	 * we can just index the story files array directly.
-	 * It also used a 16 byte buffer to read in a story entry, but again this
-	 * is equivalent to the overhead of reading the array entry I think.
+	_dRoomNum = 0;
+
+	/* This was originally a large branching tree that checked the identifier of each entry and
+	 * Processed them all for the story. Once again, this would have been better as an indexed
+	 * JSR instead of a set of comparisons and branches. Regardless, we instead use the information
+	 * in the story struct to create the rooms and then populate them.
 	 */
 
-	_dRoomNum = 0;
-	bool done = false;
-	int type = 0;//story[l];
-
-	// instead of switch statement, just make a room for each, because the rooms will have the relevant info
-
-	// Once again, would be better as an indexed JSR instead of a set of comparisons and branches
-	while (done == false) {
-		switch (type & kOPMaskRecord) {
-			case kOPMaskRoom:
-//				roomNew();
-				break;
-			case kOPMaskInRoom:
-//				inRoomNew();
-				break;
-			case kOPMaskFlame:
-//				fsetNew();
-				break;
-			case kOPMaskUnivAt:
-				univAtNew(l);
-				break;
-			case kOPMaskMonster:
-//				monstNew();
-				break;
-			case kOPMaskDoor:
-//				doorNew();
-				break;
-			case kOPMaskObject:
-//				objectNew();
-				break;
-			default:
-				done = true;
+	// Create the rooms and doors, then populate the rooms with their objects and actors
+	for (int r = 0; r < _stories[l]._rooms.size(); r++) {
+		//roomNew(_stories[l]._rooms[i]);
+		//doorNew(_stories[l]._doors[i]);
+		debug("Room %d", r);
+		for (int f = 0; f < _stories[l]._flames.size(); f++) {
+			if (_stories[l]._flames[r].size() > 0) {
+				//fsetNew(_stories[l]._flames[r][f]);
+				debugN("F%d", f);
+			}
 		}
+		debug("");
+
+		for (int o = 0; o < _stories[l]._objects.size(); o++) {
+			if (_stories[l]._objects[r].size() > 0) {
+				//objNew(_stories[l]._objects[r][o]);
+				debugN("O%d", o);
+			}
+		}
+		debug("");
+
+		for (int m = 0; m < _stories[l]._monsters.size(); m++) {
+			if (_stories[l]._monsters[r].size() > 0) {
+				//monstNew(_stories[l]._monsters[r][m]);
+				debugN("M%d", m);
+			}
+		}
+		debug("");
 	}
+
+	// Set up the _initial variables for the engine scope
+	univAtNew(l);
 }
 
 void ImmortalEngine::univAtNew(int l) {
 	_initialRoom = _dRoomNum;
-	_initialX = 0;//_stories[l]._initialX;
-	_initialY = 0;//_stories[l]._initialY;
-	_initialBX = 0;//_stories[l]._initialBX;
-	_initialBY = 0;//_stories[l]._initialBY;
+	_initialX    = _stories[l]._initialUnivX;
+	_initialY    = _stories[l]._initialUnivY;
+	_initialBX   = _stories[l]._playerPointX;
+	_initialBY   = _stories[l]._playerPointY;
 	//doorToNextLevel(_stories[l]._doorToNextLevel, _initialBX, _initialBY);
 	//doorSetLadders(_stories[l]._doorSetLadders);
 	//roomSetHole(_stories[l]._setHole, _stories[l]._setHoleX, _stories[l]._setHoleY);
 	//monstRepos(kPlayerID);
-
 }
 
 void ImmortalEngine::levelDrawAll() {

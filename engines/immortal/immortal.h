@@ -578,6 +578,7 @@ public:
 	// Init
 	void levelInitAtStartOfGameOnly();
 	void levelInit();
+	//void levelGetCount <-- lda count
 
 	// Main
 	void levelStory(int l);
@@ -588,6 +589,9 @@ public:
 	bool levelIsShowRoom(int r);
 	bool levelIsLoaded(int l);
 	void univAtNew(int l);
+	//void getLastType <-- lda lastType
+	//void setLastType <-- sta lastType
+	//void getShowRoom <-- lda currentRoom
 
 
 	/*

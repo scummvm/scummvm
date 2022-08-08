@@ -24,26 +24,29 @@
 
 namespace Immortal {
 
+// We need a few two-dimentional vectors, and writing them out in full each time is tedious
+template<class T> using CArray2D = Common::Array<Common::Array<T>>;
+
 enum DoorDir : bool {
 	kLeft = false,
 	kRight = true
 };
 
-enum RoomFlag : uint8 {
+enum RoomFlag : uint8 {							// Generic properties available to each room
 	kRoomFlag0 = 0x1,
 	kRoomFlag1 = 0x2,
 	kRoomFlag2 = 0x4,
 	kRoomFlag3 = 0x8
 };
 
-enum FPattern {
+enum FPattern : uint8 {							// This defines which Cyc animation it uses
 	kFlameNormal,
 	kFlameCandle,
 	kFlameOff,
 	kFlameGusty
 };
 
-enum OPMask : uint8 {
+enum OPMask : uint8 {							// These are not actually needed anymore, they were for the original compiler method for making story.gs. Keeping it just in case for now
 	kOPMaskRoom,
 	kOPMaskInRoom,
 	kOPMaskFlame,
@@ -61,27 +64,62 @@ enum ObjFlag : uint8 {
 	kObjIsChest        = 0x08,
 	kObjIsOnGround     = 0x04,
 	kObjIsF1           = 0x02,
-	kObjIsF2           = 0x01
+	kObjIsF2           = 0x01,
+	kObjNone		   = 0x0
 };
 
 enum MonsterFlag : uint8 {
+	kMonstIsNone   = 0x00,
 	kMonstIsTough  = 0x10,
 	kMonstIsDead   = 0x20,
 	kMonstIsPoss   = 0x40,
 	kMonstIsBaby   = 0x40,
-	kMonstIsEngage = 0x80
+	kMonstIsEngage = 0x80,
+	kMonstPlayer   = 0x00,
+	kMonstMonster  = 0x01,
+	kMonstAnybody  = 0x02,
+	kMonstNobody   = 0x03,
+	kMonstA 	   = 0x04,
+	kMonstB 	   = 0x05,
+	kMonstC 	   = 0x06,
+	kMonstD 	   = 0x07
 };
 
 enum IsA : uint8 {
 	kIsAF1 = 0x20,
-	kIsAF2 = 0x40
+	kIsAF2 = 0x40,
+	kIsANone = 0x0,
 };
 
-enum Program {						// This will likely be moved to a monster ai specific file later
+enum Motive {						// This will likely be moved to a monster ai specific file later
+	kMotiveRoomCombat,
+	kMotiveShadeFind,
+	kMotiveShadeLoose,
+	kMotiveEngage,
+	kMotiveUpdateGoal,
+	kMotiveFollow,
+	kMotiveShadeHesitate,
+	kMotiveEasyRoomCombat,
+	kMotiveFind8,
+	kMotiveLoose4,
+	kMotiveDefensiveCombat,
+	kMotiveUlinTalk,
+	kMotiveGive,
+	kMotiveUseUpMonster,
+	kMotiveAliveRoomCombat,
+	kMotiveFindAlways,
+	kMotivePlayerCombat,
+	kMotiveJoystick,
+	kMotivePlayerDoor,
+	kMotivewaittalk2,
+	kMotiveGetDisturbed,
+	kMotiveLoose32,
+	kMotiveIfNot1Skip1,
 };
 
 enum Str {
-	kStrOldGame,
+	kStrNoDesc,
+	kStrOldGame = 0,
 	kStrEnterCertificate,
 	kStrBadCertificate,
 	kStrCertificate,
@@ -91,6 +129,33 @@ enum Str {
 	kStrGold,
 	kStrYouWin,
 	kStrGameOver,
+};
+
+enum SObjType {
+	kTypeTrap,
+	kTypeCoin,
+	kTypeWowCharm,
+	kTypeDead,
+	kTypeFireBall,
+	kTypeDunRing,
+	kTypeChest,
+	kTypeDeathMap,
+	kTypeWater,
+	kTypeSpores,
+	kTypeWormFood,
+	kTypeChestKey,
+	kTypePhant,
+	kTypeGold,
+	kTypeHay,
+	kTypeBeam
+};
+
+enum SObjPickup {
+
+};
+
+enum SObjUse {
+
 };
 
 struct Pickup {
@@ -104,14 +169,13 @@ struct Use {
 };
 
 struct ObjType {
-	Str _str;
-	Str _desc;
-	int _size;
+	Str _str = kStrNoDesc;
+	Str _desc = kStrNoDesc;
+	int _size = 0;
  Pickup _pickup;
 	Use _use;
 	Use _run;
 };
-
 
 /* Strictly speaking, many of these structs (which were rom data written dynamically
  * with compiler macros) combine multiple properties into single bytes (ex. room uses
@@ -119,10 +183,10 @@ struct ObjType {
  * for the moment there's no need to replicate this particular bit of space saving.
  */
 struct SRoom {
-	uint8 _x;
-	uint8 _y;
- RoomFlag _flags;
- 	SRoom() {}
+	uint8 _x = 0;
+	uint8 _y = 0;
+ RoomFlag _flags = kRoomFlag0;
+
  	SRoom(uint8 x, uint8 y, RoomFlag f) {
  			_x = x;
  			_y = y;
@@ -131,100 +195,88 @@ struct SRoom {
 };
 
 struct SDoor {
-  DoorDir _dir;
-	uint8 _x;
-	uint8 _y;
-	uint8 _fromRoom;
-	uint8 _toRoom;
-	 bool _isLocked;
-	 SDoor() {}
+DoorDir _dir = kLeft;
+	uint8 _x = 0;
+	uint8 _y = 0;
+	uint8 _fromRoom = 0;
+	uint8 _toRoom = 0;
+	 bool _isLocked = false;
+
 	 SDoor(DoorDir d, uint8 x, uint8 y, uint8 f, uint8 t, bool l) {
-	 		  _dir = d;
-	 			_x = x;
-	 			_y = y;
-	 	 _fromRoom = f;
-	 	   _toRoom = t;
-	 	 _isLocked = l;
+	 	_dir = d;
+	 	_x = x;
+	 	_y = y;
+	 	_fromRoom = f;
+	 	_toRoom = t;
+		_isLocked = l;
 	 }
 };
 
 struct SFlame {
-	uint8 _x;
-	uint8 _y;
- FPattern _pattern;
- 	SFlame() {}
+	 uint8 _x = 0;
+	 uint8 _y = 0;
+FPattern _pattern = kFlameOff;
+
  	SFlame(uint8 x, uint8 y, FPattern p) {
  			  _x = x;
  			  _y = y;
- 		_pattern = p;
+ 	_pattern = p;
  	}
 };
 
-struct UnivAt {
-	uint8 _initialUnivX;
-	uint8 _initialUnivY;
-	uint8 _playerPointX;
-	uint8 _playerPointY;
-	int *_ladders;
-	UnivAt() {}
-	UnivAt(uint8 iX, uint8 iY, uint8 pX, uint8 pY, int l[]) {
-		_initialUnivX = iX;
-		_initialUnivY = iY;
-		_playerPointX = pX;
-		_playerPointY = pY;
-		_ladders = l;
-	}
-};
-
 struct SObj {
-	  uint8 _x;
-	  uint8 _y;
-	ObjType _type;
-	ObjFlag _flags;
-	  uint8 _tmp;
-SpriteFrame _frame;
-	SObj() {}
-	SObj(uint8 x, uint8 y, ObjType t, ObjFlag f, uint8 tmp, SpriteFrame s) {
+	  uint8 _x = 0;
+	  uint8 _y = 0;
+   SObjType _type = kTypeTrap;
+	  uint8 _flags = 0;
+SpriteFrame _frame = kNoFrame;
+Common::Array<uint8> _traps;
+
+	SObj(uint8 x, uint8 y, SObjType t, SpriteFrame s, uint8 f, Common::Array<uint8> traps) {
  		    _x = x;
  		    _y = y;
  		 _type = t;
  		_flags = f;
- 		  _tmp = tmp;
+ 		_traps = traps;
  		_frame = s;
 	}
 };
 
 struct SMonster {
-	  uint8 _x;
-	  uint8 _y;
-	  uint8 _hits;
-	  uint8 _madAt;
-		IsA _isA;
-    Program _program;
- SpriteName _sprite;
-MonsterFlag _flags;
-	SMonster() {}
-	SMonster(uint8 x, uint8 y, uint8 h, uint8 m, IsA i, Program p, SpriteName s, MonsterFlag mf) {
- 		  _x = x;
- 		  _y = y;
+	    uint8 _x = 0;
+	    uint8 _y = 0;
+	    uint8 _hits = 0;
+MonsterFlag _madAt = kMonstIsNone;
+	    uint8 _flags = 0;
+ SpriteName _sprite = kCandle;
+Common::Array<Motive> _program;
+
+	SMonster(uint8 x, uint8 y, uint8 h, MonsterFlag m, uint8 f, Common::Array<Motive> p, SpriteName s) {
+ 		    _x = x;
+ 		    _y = y;
  	   _hits = h;
  	  _madAt = m;
- 		_isA = i;
+ 	  _flags = f;
  	_program = p;
  	 _sprite = s;
- 	  _flags = mf;
 	}
 };
 
 struct Story {
-	 int _levelNum;
-	 int _partNum;
-  UnivAt _UnivAt;
-   SRoom *_rooms;
-   SDoor *_doors;
-  SFlame **_flames;
-    SObj **_objects;
-SMonster **_monsters;
+	 int _level = 0;
+	 int _part  = 1;
+
+   uint8 _initialUnivX = 0;
+   uint8 _initialUnivY = 0;
+   uint8 _playerPointX = 0;
+   uint8 _playerPointY = 0;
+
+  Common::Array<int> _ladders;
+Common::Array<SRoom> _rooms;
+Common::Array<SDoor> _doors;
+    CArray2D<SFlame> _flames;
+      CArray2D<SObj> _objects;
+  CArray2D<SMonster> _monsters;
 };
 
 } // namespace immortal
