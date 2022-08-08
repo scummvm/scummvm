@@ -1565,26 +1565,38 @@ MiniscriptInstructionOutcome GetChild::readRValueAttribIndexed(MiniscriptThread 
 
 PushValue::PushValue(DataType dataType, const void *value, bool isLValue)
 	: _dataType(dataType), _isLValue(isLValue) {
-	memset(&this->_value, 0, sizeof(this->_value));
 
 	switch (dataType) {
 	case DataType::kDataTypeBool:
-		_value.b = *static_cast<const bool *>(value);
+		new (static_cast<bool *>(&_value.b)) bool(*static_cast<const bool *>(value));
 		break;
 	case DataType::kDataTypeDouble:
-		_value.f = *static_cast<const double *>(value);
+		new (static_cast<double *>(&_value.f)) double(*static_cast<const double *>(value));
 		break;
 	case DataType::kDataTypeLocalRef:
 	case DataType::kDataTypeGlobalRef:
-		_value.ref = *static_cast<const uint32 *>(value);
+		new (static_cast<uint32 *>(&_value.ref)) uint32(*static_cast<const uint32 *>(value));
 		break;
 	case DataType::kDataTypeLabel:
-		_value.lbl = *static_cast<const Label *>(value);
+		new (static_cast<Label *>(&_value.lbl)) Label(*static_cast<const Label *>(value));
 		break;
 	case DataType::kDataTypeNull:
 		break;
 	default:
 		warning("PushValue instruction has an unknown type of value, this will probably malfunction!");
+		break;
+	}
+}
+
+PushValue::ValueUnion::ValueUnion() {
+}
+
+PushValue::~PushValue() {
+	switch (_dataType) {
+	case DataType::kDataTypeLabel:
+		_value.lbl.~Label();
+		break;
+	default:
 		break;
 	}
 }

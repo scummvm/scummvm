@@ -1162,7 +1162,6 @@ void DynamicValue::ValueUnion::destruct() {
 }
 
 DynamicValue::DynamicValue() : _type(DynamicValueTypes::kNull) {
-	memset(&this->_value, 0, sizeof(this->_value));
 }
 
 DynamicValue::DynamicValue(const DynamicValue &other) : _type(DynamicValueTypes::kNull) {

@@ -329,11 +329,14 @@ namespace MiniscriptInstructions {
 		};
 
 		PushValue(DataType dataType, const void *value, bool isLValue);
+		~PushValue();
 
 	private:
 		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
 
 		union ValueUnion {
+			ValueUnion();
+
 			bool b;
 			double f;
 			uint32 ref;
