@@ -422,7 +422,10 @@ void ScummEngine_v5::o5_actorOps() {
 		{ 1, 0, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20 };
 	// WORKAROUND bug #2233 "MI2 FM-TOWNS: Elaine's mappiece directly flies to treehouse"
 	// There's extra code inserted in script 45 from room 45 that caused that behaviour,
-	// the code below just skips the extra script code.
+	// the code below just skips the extra script code.  As confirmed by Aric Wilmunder,
+	// "the fishing pole puzzle had been removed for the Towns because vertical scrolling
+	// hadn't been implemented", but it appears to work nonetheless, which is what they
+	// also observed when doing the QA for the PC version.
 	if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformFMTowns &&
 		vm.slot[_currentScript].number == 45 && _currentRoom == 45 &&
 		(_scriptPointer - _scriptOrgPointer == 0xA9) && _enableEnhancements) {
