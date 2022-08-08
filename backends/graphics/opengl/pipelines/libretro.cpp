@@ -243,10 +243,22 @@ bool LibRetroPipeline::loadPasses() {
 			return false;
 		}
 
+		char *shaderFileStart = shaderFileContents.begin();
+		unsigned long shaderFileVersion = 0;
+
+		// If the shader contains a version directive, it needs to be parsed and stripped out so that the VERTEX
+		// and FRAGMENT defines can be prepended to it.
+		const char *existing_version = strstr(shaderFileStart, "#version");
+		if (existing_version) {
+			shaderFileVersion = strtoul(existing_version + 8, &shaderFileStart, 10);
+		}
+
+		// TODO: Handle alias defines
+
 		Shader *shader = Shader::fromStrings(fileNode.getName(),
-		                                     ("#define VERTEX\n" + Common::String(shaderFileContents.begin())).c_str(),
-		                                     ("#define FRAGMENT\n" + Common::String(shaderFileContents.begin())).c_str(),
-		                                     g_libretroShaderAttributes);
+		                                     ("#define VERTEX\n" + Common::String(shaderFileStart)).c_str(),
+		                                     ("#define FRAGMENT\n" + Common::String(shaderFileStart)).c_str(),
+		                                     g_libretroShaderAttributes, shaderFileVersion);
 
 		// Set uniforms with fixed value throughout lifetime.
 		// We do not support rewinding, thus fix 'forward'.
