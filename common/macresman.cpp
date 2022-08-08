@@ -598,14 +598,26 @@ void MacResManager::readMap() {
 	_stream->seek(_mapOffset + _resMap.typeOffset + 2);
 	_resTypes = new ResType[_resMap.numTypes];
 
+	debug(8, "numResTypes: %d total size: %lu", _resMap.numTypes, _stream->size());
+
+	if (_stream->pos() + _resMap.numTypes * 8 > _stream->size())
+		error("MacResManager::readMap(): incorrect resource map, too big, %d types", _resMap.numTypes);
+
+	int totalItems = 0;
+
 	for (int i = 0; i < _resMap.numTypes; i++) {
 		_resTypes[i].id = _stream->readUint32BE();
 		_resTypes[i].items = _stream->readUint16BE();
 		_resTypes[i].offset = _stream->readUint16BE();
 		_resTypes[i].items++;
 
+		totalItems += _resTypes[i].items;
+
 		debug(8, "resType: <%s> items: %d offset: %d (0x%x)", tag2str(_resTypes[i].id), _resTypes[i].items,  _resTypes[i].offset, _resTypes[i].offset);
 	}
+
+	if (totalItems * 4 > _stream->size())
+		error("MacResManager::readMap(): incorrect resource map, too big, %d total items", totalItems);
 
 	_resLists = new ResPtr[_resMap.numTypes];
 
