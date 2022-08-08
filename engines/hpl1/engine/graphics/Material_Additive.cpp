@@ -91,7 +91,9 @@ cMaterial_Additive::~cMaterial_Additive() {
 //-----------------------------------------------------------------------
 
 iGpuProgram *cMaterial_Additive::getGpuProgram(const eMaterialRenderType aType, const int alPass, iLight3D *apLight) {
-	return _fogShader;
+	if (mpRenderSettings->mbFogActive)
+		return _fogShader;
+	return nullptr;
 }
 
 iMaterialProgramSetup *cMaterial_Additive::getGpuProgramSetup(const eMaterialRenderType aType, const int alPass, iLight3D *apLight) {
