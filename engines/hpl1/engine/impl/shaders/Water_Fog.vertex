@@ -13,7 +13,6 @@ vec4 position = gl_Vertex;
 vec4 color = gl_Color;
 vec3 uv = gl_MultiTexCoord0.xyz;
 
-
 out vec4 vColor
 out vec3 vUv;
 out float vFogUv;

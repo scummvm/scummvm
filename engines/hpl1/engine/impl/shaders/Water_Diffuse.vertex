@@ -13,7 +13,6 @@ vec4 position = gl_Vertex;
 vec3 color = gl_Color.xyz;
 vec3 uv = gl_MultiTexCoord0.xyz;
 
-
 out vec3 vColor;
 out vec3 vUv;
 

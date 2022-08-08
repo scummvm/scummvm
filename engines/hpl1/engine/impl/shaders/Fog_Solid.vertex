@@ -25,12 +25,7 @@ void main()
 {
 	gl_Position = (worldViewProj * position);
 
-	/*vUv.x =0;
-	vColor.xyz = (fogEnd - gl_Position.z)/(fogEnd - fogStart);*/
 	vUv = (fogEnd - gl_Position.z)/(fogEnd - fogStart);
 	vColor.xyz = fogColor;
 	vColor.w = 1;
-	/*outColor = 1;
-	vUv = uv;
-	//vUv = (fogEnd - gl_Position.z)/(fogEnd - fogStart);*/
 }

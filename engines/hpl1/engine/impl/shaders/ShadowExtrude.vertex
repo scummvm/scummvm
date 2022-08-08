@@ -11,13 +11,10 @@
 
 vec4 position = gl_Vertex;
 
-//out vec3 outColor;
-
 uniform mat4 worldViewProj;
 uniform vec3 lightPosition;
 
 void main()
 {
 	gl_Position = (worldViewProj * vec4((position.xyz - lightPosition*(1.0-position.w)), position.w));
-    //outColor = vec3(0.1,0,0.1);
 }

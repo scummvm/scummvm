@@ -39,10 +39,4 @@ void main()
 	}
 
 	outColor = a;
-	//outColor.xy = 0.5 + velocity *0.005;
-	//outColor.z = 1;
-
-	//outColor.xyz = (1 + velocity) *0.5;
-
-	//outColor = texture2DRect(tex0, wpos + velocity);
 }
