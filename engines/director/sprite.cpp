@@ -460,7 +460,7 @@ void Sprite::setCast(CastMemberID memberID) {
 	_castId = memberID;
 	_cast = _movie->getCastMember(_castId);
 	//As QDShapes don't have an associated cast, we must not change their _SpriteType.
-	if (g_director->getVersion() >= 400 && !isQDShape())
+	if (g_director->getVersion() >= 400 && !isQDShape() && _castId != CastMemberID(0, 0))
 		_spriteType = kCastMemberSprite;
 
 	if (_cast) {
