@@ -2233,7 +2233,10 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 	// drawing it. The text is also slightly different, but that is taken
 	// care of elsewhere.
 
-	else if (_vm->_game.id == GID_MONKEY && _vm->_currentRoom == 36 && vs->number == kMainVirtScreen && y == 8 && x >= 7 && x <= 30 && height == 88 && _vm->_enableEnhancements) {
+	else if (_vm->_game.id == GID_MONKEY && _vm->_currentRoom == 36
+			&& vs->number == kMainVirtScreen && y == 8 && x >= 7 && x <= 30
+			&& height == 88	&& strcmp(_vm->_game.variant, "SE Talkie") != 0
+			&& _vm->_enableEnhancements) {
 		_roomPalette[47] = 15;
 
 		byte result = decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);

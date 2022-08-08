@@ -3266,7 +3266,10 @@ void ScummEngine_v5::decodeParseString() {
 			// floppy version used, but we pick on that's as close
 			// as we can get.
 
-			else if (_game.id == GID_MONKEY && _currentRoom == 36 && vm.slot[_currentScript].number == 201 && color == 2 && _enableEnhancements) {
+			else if (_game.id == GID_MONKEY && _currentRoom == 36
+					&& vm.slot[_currentScript].number == 201 && color == 2
+					&& strcmp(_game.variant, "SE Talkie") != 0
+					&& _enableEnhancements) {
 				color = findClosestPaletteColor(_currentPalette, 256, 0, 171, 0);
 			}
 
