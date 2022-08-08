@@ -134,16 +134,10 @@ void Area::draw(Freescape::Renderer *gfx) {
 		gfx->_palette = palette;
 
 	gfx->clear();
-
-	if (areaFlags & 0x02 || areaFlags & 0x20)
-		gfx->drawSky(skyColor);
-
-	if (areaFlags & 0x01 || areaFlags & 0x40)
-		gfx->drawFloor(groundColor);
-
-	if (areaFlags & 0x80)
+	if (skyColor != 255) {
 		gfx->_keyColor = 0;
-	else
+		gfx->drawSky(skyColor);
+	} else
 		gfx->_keyColor = 255;
 
 	assert(drawableObjects.size() > 0);

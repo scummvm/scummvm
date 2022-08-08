@@ -217,11 +217,16 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 
 	uint8 ci1 = 0;
 	uint8 ci2 = 0;
-	uint8 skyColor = 255;
-	uint8 groundColor = 255;
+	uint8 skyColor = areaFlags & 15;
+	uint8 groundColor = areaFlags >> 4;
 
-	groundColor = file->readByte() & 15;
-	skyColor = file->readByte() & 15;
+	if (groundColor == 0)
+		groundColor = 255;
+	if (skyColor == 0)
+		skyColor = 255;
+
+	file->readByte() & 15;
+	file->readByte() & 15;
 	ci1 = file->readByte();
 	ci2 = file->readByte();
 	debugC(1, kFreescapeDebugParser, "Colors: %d %d %d %d", ci1, ci2, skyColor, groundColor);
