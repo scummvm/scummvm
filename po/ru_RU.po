@@ -6908,8 +6908,8 @@ msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu."
 msgstr ""
-"Игра будет использовать оригинальный графический интерфейс и меню "
-"сохранения/загрузки."
+"Игра будет использовать оригинальный графический интерфейс и меню сохранения/"
+"загрузки."
 
 #: engines/scumm/detection_internal.h:358
 msgid ""
