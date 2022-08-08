@@ -25,8 +25,11 @@
 namespace Immortal {
 
 enum SpriteFrame {
+	// Null
+	kNoFrame,
+
 	// Chest frames
-	kChest0Frame,
+	kChest0Frame = 0,
 	kOpenChestFrame,
 	kRingFrame,
 	kKnifeFrame,

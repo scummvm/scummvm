@@ -19,21 +19,27 @@
  *
  */
 
-#include "immortal/immortal.h"
+/* [Alternate Name: Sprite Animation Processing]
+ * --- What is a Cycle ---
+ */
+
+//#include "immortal/room.h"
 
 namespace Immortal {
 
-void ImmortalEngine::cycleNew() {}
- int ImmortalEngine::getCycleChr() {
+// Most of these functions can probably be removed eventually
+/*
+void Room::cycleNew() {}
+ int Room::getCycleChr() {
 	 return 0;
  }
-void ImmortalEngine::cycleFreeAll() {}
-void ImmortalEngine::cycleGetFile() {}
-void ImmortalEngine::cycleGetNum() {}
-void ImmortalEngine::cycleGetIndex() {}
-void ImmortalEngine::cycleSetIndex() {}
-void ImmortalEngine::cycleGetFrame() {}
-void ImmortalEngine::cycleAdvance() {}
-
+void Room::cycleFreeAll() {}
+void Room::cycleGetFile() {}
+void Room::cycleGetNum() {}
+void Room::cycleGetIndex() {}
+void Room::cycleSetIndex() {}
+void Room::cycleGetFrame() {}
+void Room::cycleAdvance() {}
+*/
 
 } // namespace Immortal
