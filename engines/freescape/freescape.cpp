@@ -215,12 +215,15 @@ void FreescapeEngine::processInput() {
 			else if (event.kbd.keycode == Common::KEYCODE_n)
 				gotoArea(_currentArea->getAreaID() + 1, 0);
 			else if (event.kbd.keycode == Common::KEYCODE_d) {
-				if (isDriller() && !_currentArea->drillDeployed()) {
+				uint32 gasPocketX = _currentArea->gasPocketX;
+				uint32 gasPocketY = _currentArea->gasPocketX;
+				uint32 gasPocketRadius = _currentArea->gasPocketRadius;
+				if (isDriller() && gasPocketRadius > 0 && !_currentArea->drillDeployed()) {
 					// TODO: check if there is space for the drill
 					// TODO: check if there is enough energy
 					Math::Vector3d drillPosition = _position + _cameraFront * 128;
 					drillPosition.setValue(1, 1);
-					const Math::Vector3d gasPocket(_currentArea->gasPocketX, 1, _currentArea->gasPocketY);
+					const Math::Vector3d gasPocket(gasPocketX, 1, gasPocketY);
 					_currentArea->addDrill(globalObjectsArea, drillPosition);
 					float distance = (gasPocket - drillPosition).length();
 					debug("length to gas pocket: %f with radius %d", distance, _currentArea->gasPocketRadius);
