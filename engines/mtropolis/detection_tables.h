@@ -162,11 +162,10 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		0,
 	},
 
-	{ // Obsidian PC demo [1996-10-03], appears on:
+	{ // Obsidian PC demo [1996-10-03], found on:
 	  // - PC Magazine Ultimate Utilities for Windows 95 (1996)
 	  // - PC Magazine Super Shareware Annual Award Winners (1996)
 	  // - PC Magazine Gaming Megapac (1997)
-	  // - PC Gamer Disc 2.12 (1997-01) [with 8.3 names]
 		{
 			"obsidian",
 			"Demo",
@@ -189,7 +188,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		0,
 	},
 
-	{ // Obsidian PC demo, same as above, with 8.3 file names
+	{ // Obsidian PC demo (same as above, with 8.3 file names), found on PC Gamer Disc 2.12 (1997-01)
 		{
 			"obsidian",
 			"Demo",
@@ -212,7 +211,9 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		0,
 	},
 
-	{ // Obsidian PC demo found on Level 25 (1997-02) [1996-10-11/22]
+	{ // Obsidian PC demo [1996-10-11/22] found on:
+	  // - Level 25 (1997-02)
+	  // - Score 38 (1997-02)
 		{
 			"obsidian",
 			"Demo",
@@ -260,7 +261,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		0,
 	},
 
-	{ // Obsidian PC demo found on Multimedia Live (PC World) (v2.11, May 1997) [1996-10-03] [using 8.3 names]
+	{ // Obsidian PC demo found on Multimedia Live (PC World) (v2.11, May 1997) [1996-10-03]
 		{
 			"obsidian",
 			"Demo",
@@ -325,6 +326,99 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
 		},
 		GID_OBSIDIAN,
+		0,
+		0,
+	},
+
+	{ // Muppet Treasure Island
+		{
+			"mti",
+			"",
+			{
+				{ "MTPLAY32.EXE",	0, "aad51b462d0961fb02d9c1422a41937f", 840192 },
+				{ "GROUP3.R95",		0, "3b01850e511727aa270aff1d6cb1fcf8", 89088 },
+				{ "MTIKIT.R95",		0, "f7183d9ff845a3a607f764920fc23b18", 101376 },
+				{ "MTI1.MPL",		0, "cd0e1cd198fa2971371f42bb92b44972", 28500187 },
+				{ "MTI2.MPX",		0, "299929afb890398c385b13ee1446ece1", 431981661 },
+				{ "MTI3.MPX",		0, "90bd8dd40fcc65579f723eb75ad92799", 306575085 },
+				{ "MTI4.MPX",		0, "108628b01feb4d61ce40c9424de41b42", 201095285 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_MTI,
+		0,
+		0,
+	},
+
+	{ // Los Muppets en la Isla del Tesoro (Mexican) [identical to Los Teleñecos en la Isla del Tesoro?]
+		{
+			"mti",
+			"",
+			{
+				{ "MTPLAY32.EXE",	0, "aad51b462d0961fb02d9c1422a41937f", 840192 },
+				{ "GROUP3.R95",		0, "3b01850e511727aa270aff1d6cb1fcf8", 89088 },
+				{ "MTIKIT.R95",		0, "f7183d9ff845a3a607f764920fc23b18", 101376 },
+				{ "MTI1.MPL",		0, "1a951860380f7a0a0e1b9abe6be45ccd", 28605614 },
+				{ "MTI2.MPX",		0, "29b21afc024dc56dc99b7eb1f056fe65", 433252845 },
+				{ "MTI3.MPX",		0, "a880d87116b787b6e8a39f7d522c723c", 306257034 },
+				{ "MTI4.MPX",		0, "9b41ca763935f288b1b97c4025568e1d", 201507336 },
+				AD_LISTEND
+			},
+			Common::ES_ESP,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_MTI,
+		0,
+		0,
+	},
+
+	{ // I Muppet nell'Isola del Tesoro
+		{
+			"mti",
+			"",
+			{
+				{ "MTPLAY32.EXE",	0, "aad51b462d0961fb02d9c1422a41937f", 840192 },
+				{ "GROUP3.R95",		0, "3b01850e511727aa270aff1d6cb1fcf8", 89088 },
+				{ "MTIKIT.R95",		0, "f7183d9ff845a3a607f764920fc23b18", 101376 },
+				{ "MTI1.MPL",		0, "49883a0d8c76db739449ac8b0c6bc0a9", 28280783 },
+				{ "MTI2.MPX",		0, "5b69bbcceaf221e6b4200a5a76f8373e", 431268421 },
+				{ "MTI3.MPX",		0, "43a145a5a498640804a2116f8418cbf6", 307241744 },
+				{ "MTI4.MPX",		0, "30cd478975003466c7dadf5f6c6f5408", 201100471 },
+				AD_LISTEND
+			},
+			Common::IT_ITA,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_MTI,
+		0,
+		0,
+	},
+
+	{ // Muppet Treasure Island PC demo found on Score 38 (1997-02) [1996-07-17/19]
+		{
+			"mti",
+			"Demo",
+			{
+				{ "MTIWIN95.EXE", 0, "aad51b462d0961fb02d9c1422a41937f", 840192 },
+				{ "GROUP3.R95",	  0, "3b01850e511727aa270aff1d6cb1fcf8", 89088 },
+				{ "MTIKIT.R95",	  0, "f7183d9ff845a3a607f764920fc23b18", 101376 },
+				{ "MUP_DATA.MPL", 0, "aea8ca15455991278213d09674a183ed", 51678610 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_MTI,
 		0,
 		0,
 	},
