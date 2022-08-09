@@ -620,10 +620,11 @@ void cSDLTexture::PostCreation(GLenum aGLTarget) {
 	}
 	GL_CHECK_FN();
 	GL_CHECK(glTexParameteri(aGLTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-	GL_CHECK(glTexParameteri(aGLTarget, GL_TEXTURE_WRAP_S, GL_REPEAT));
-	GL_CHECK(glTexParameteri(aGLTarget, GL_TEXTURE_WRAP_T, GL_REPEAT));
-	GL_CHECK(glTexParameteri(aGLTarget, GL_TEXTURE_WRAP_R, GL_REPEAT));
-
+	if (aGLTarget != GL_TEXTURE_RECTANGLE) {
+		GL_CHECK(glTexParameteri(aGLTarget, GL_TEXTURE_WRAP_S, GL_REPEAT));
+		GL_CHECK(glTexParameteri(aGLTarget, GL_TEXTURE_WRAP_T, GL_REPEAT));
+		GL_CHECK(glTexParameteri(aGLTarget, GL_TEXTURE_WRAP_R, GL_REPEAT));
+	}
 	GL_CHECK(glDisable(aGLTarget));
 
 	mbContainsData = true;
