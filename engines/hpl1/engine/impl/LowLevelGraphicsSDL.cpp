@@ -30,19 +30,19 @@
 #include "hpl1/engine/graphics/font_data.h"
 #include "hpl1/engine/impl/LowLevelGraphicsSDL.h"
 
-#include "hpl1/engine/impl/CGProgram.h"
 #include "hpl1/engine/graphics/bitmap2D.h"
 #include "hpl1/engine/graphics/font_data.h"
+#include "hpl1/engine/impl/CGProgram.h"
 #include "hpl1/engine/impl/SDLTexture.h"
 #include "hpl1/engine/impl/VertexBufferOGL.h"
 #include "hpl1/engine/impl/VertexBufferVBO.h"
 #include "hpl1/engine/system/low_level_system.h"
 
-#include "hpl1/engine/impl/OcclusionQueryOGL.h"
 #include "common/algorithm.h"
-#include "engines/util.h"
 #include "common/system.h"
+#include "engines/util.h"
 #include "hpl1/debug.h"
+#include "hpl1/engine/impl/OcclusionQueryOGL.h"
 #include "hpl1/opengl.h"
 
 namespace hpl {
@@ -62,7 +62,7 @@ GLenum ColorFormatToGL(eColorDataFormat format) {
 	default:
 		break;
 	}
-	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid color format (%d)", format);
+	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid color format (%d)\n", format);
 	return GL_RGB;
 }
 
@@ -81,15 +81,15 @@ GLenum TextureTargetToGL(eTextureTarget target) {
 	default:
 		break;
 	}
-	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid texture target (%d)", target);
+	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid texture target (%d)\n", target);
 	return GL_TEXTURE_1D;
 }
 
 cLowLevelGraphicsSDL::cLowLevelGraphicsSDL() {
 	mlBatchArraySize = 20000;
 	mlVertexCount = 0;
-	mlIndexCount =0;
-	mlMultisampling =0;
+	mlIndexCount = 0;
+	mlMultisampling = 0;
 	mvVirtualSize.x = 800;
 	mvVirtualSize.y = 600;
 	mfGammaCorrection = 1.0;
@@ -106,21 +106,21 @@ cLowLevelGraphicsSDL::cLowLevelGraphicsSDL() {
 	mbClearDepth = true;
 	mbClearStencil = false;
 
-	//Create the batch arrays:
+	// Create the batch arrays:
 	mlBatchStride = 13;
-	//3 Pos floats, 4 color floats, 3 Tex coord floats .
-	mpVertexArray = (float*)hplMalloc(sizeof(float) * mlBatchStride * mlBatchArraySize);
-	mpIndexArray = (unsigned int*)hplMalloc(sizeof(unsigned int) * mlBatchArraySize); //Index is one int.
+	// 3 Pos floats, 4 color floats, 3 Tex coord floats .
+	mpVertexArray = (float *)hplMalloc(sizeof(float) * mlBatchStride * mlBatchArraySize);
+	mpIndexArray = (unsigned int *)hplMalloc(sizeof(unsigned int) * mlBatchArraySize); // Index is one int.
 
 	for (int i = 0; i < MAX_TEXTUREUNITS; i++) {
-		mpTexCoordArray[i] = (float*)hplMalloc(sizeof(float) * 3 * mlBatchArraySize);
+		mpTexCoordArray[i] = (float *)hplMalloc(sizeof(float) * 3 * mlBatchArraySize);
 		mbTexCoordArrayActive[i] = false;
-		mlTexCoordArrayCount[i]=0;
+		mlTexCoordArrayCount[i] = 0;
 	}
 }
 
 cLowLevelGraphicsSDL::~cLowLevelGraphicsSDL() {
-	//SDL_SetGammaRamp(mvStartGammaArray[0],mvStartGammaArray[1],mvStartGammaArray[2]);
+	// SDL_SetGammaRamp(mvStartGammaArray[0],mvStartGammaArray[1],mvStartGammaArray[2]);
 
 	hplFree(mpVertexArray);
 	hplFree(mpIndexArray);
@@ -138,7 +138,7 @@ bool cLowLevelGraphicsSDL::Init(int alWidth, int alHeight, int alBpp, int abFull
 	initGraphics3d(alWidth, alHeight);
 	SetupGL();
 	ShowCursor(false);
-	//CheckMultisampleCaps();
+	// CheckMultisampleCaps();
 	g_system->updateScreen();
 	return true;
 }
@@ -151,41 +151,41 @@ void cLowLevelGraphicsSDL::CheckMultisampleCaps() {
 //-----------------------------------------------------------------------
 
 static void logOGLInfo(const cLowLevelGraphicsSDL &graphics) {
-	Hpl1::logInfo(Hpl1::kDebugOpenGL, "Max texture image units: %d",
-		graphics.GetCaps(eGraphicCaps_MaxTextureImageUnits));
-	Hpl1::logInfo(Hpl1::kDebugOpenGL, "Max texture coord units: %d",
-		graphics.GetCaps(eGraphicCaps_MaxTextureCoordUnits));
-	Hpl1::logInfo(Hpl1::kDebugOpenGL,"Two sided stencil: %d",
-		graphics.GetCaps(eGraphicCaps_TwoSideStencil));
-	Hpl1::logInfo(Hpl1::kDebugOpenGL, "Vertex Buffer Object: %d",
-		graphics.GetCaps(eGraphicCaps_VertexBufferObject));
-	Hpl1::logInfo(Hpl1::kDebugOpenGL, "Anisotropic filtering: %d",
-		graphics.GetCaps(eGraphicCaps_AnisotropicFiltering));
-	Hpl1::logInfo(Hpl1::kDebugOpenGL, "Max Anisotropic degree: %d",
-		graphics.GetCaps(eGraphicCaps_MaxAnisotropicFiltering));
+	Hpl1::logInfo(Hpl1::kDebugOpenGL, "Max texture image units: %d\n",
+				  graphics.GetCaps(eGraphicCaps_MaxTextureImageUnits));
+	Hpl1::logInfo(Hpl1::kDebugOpenGL, "Max texture coord units: %d\n",
+				  graphics.GetCaps(eGraphicCaps_MaxTextureCoordUnits));
+	Hpl1::logInfo(Hpl1::kDebugOpenGL, "Two sided stencil: %d\n",
+				  graphics.GetCaps(eGraphicCaps_TwoSideStencil));
+	Hpl1::logInfo(Hpl1::kDebugOpenGL, "Vertex Buffer Object: %d\n",
+				  graphics.GetCaps(eGraphicCaps_VertexBufferObject));
+	Hpl1::logInfo(Hpl1::kDebugOpenGL, "Anisotropic filtering: %d\n",
+				  graphics.GetCaps(eGraphicCaps_AnisotropicFiltering));
+	Hpl1::logInfo(Hpl1::kDebugOpenGL, "Max Anisotropic degree: %d\n",
+				  graphics.GetCaps(eGraphicCaps_MaxAnisotropicFiltering));
 	Hpl1::logInfo(Hpl1::kDebugOpenGL, "Multisampling: %d\n",
-		graphics.GetCaps(eGraphicCaps_Multisampling));
+				  graphics.GetCaps(eGraphicCaps_Multisampling));
 }
 
 void cLowLevelGraphicsSDL::SetupGL() {
-	//Inits GL stuff
-	//Set Shade model and clear color.
+	// Inits GL stuff
+	// Set Shade model and clear color.
 	GL_CHECK(glShadeModel(GL_SMOOTH));
 	GL_CHECK(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
 
-	//Depth Test setup
-	GL_CHECK(glClearDepth(1.0f));//VAlues buffer is cleared with
-	GL_CHECK(glEnable(GL_DEPTH_TEST)); //enable depth testing
-	GL_CHECK(glDepthFunc(GL_LEQUAL)); //function to do depth test with
+	// Depth Test setup
+	GL_CHECK(glClearDepth(1.0f));      // VAlues buffer is cleared with
+	GL_CHECK(glEnable(GL_DEPTH_TEST)); // enable depth testing
+	GL_CHECK(glDepthFunc(GL_LEQUAL));  // function to do depth test with
 	GL_CHECK(glDisable(GL_ALPHA_TEST));
 
-	//Set best perspective correction
+	// Set best perspective correction
 	GL_CHECK(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST));
 
-	//Stencil setup
+	// Stencil setup
 	GL_CHECK(glClearStencil(0));
 
-	//Clear the screen
+	// Clear the screen
 	GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
 	GL_CHECK(glMatrixMode(GL_MODELVIEW));
@@ -195,13 +195,13 @@ void cLowLevelGraphicsSDL::SetupGL() {
 
 	/////  BEGIN BATCH ARRAY STUFF ///////////////
 
-	//Enable all the vertex arrays that are used:
-	GL_CHECK(glEnableClientState(GL_VERTEX_ARRAY)); //The positions
-	GL_CHECK(glEnableClientState(GL_COLOR_ARRAY)); //The color
-	GL_CHECK(glEnableClientState(GL_TEXTURE_COORD_ARRAY)); //Tex coords
+	// Enable all the vertex arrays that are used:
+	GL_CHECK(glEnableClientState(GL_VERTEX_ARRAY));        // The positions
+	GL_CHECK(glEnableClientState(GL_COLOR_ARRAY));         // The color
+	GL_CHECK(glEnableClientState(GL_TEXTURE_COORD_ARRAY)); // Tex coords
 	GL_CHECK(glDisableClientState(GL_NORMAL_ARRAY));
-	//Disable the once not used.
-	GL_CHECK(glDisableClientState(GL_INDEX_ARRAY)); //color index
+	// Disable the once not used.
+	GL_CHECK(glDisableClientState(GL_INDEX_ARRAY)); // color index
 	GL_CHECK(glDisableClientState(GL_EDGE_FLAG_ARRAY));
 
 	///// END BATCH ARRAY STUFF ///////////////
@@ -211,66 +211,66 @@ void cLowLevelGraphicsSDL::SetupGL() {
 //-----------------------------------------------------------------------
 
 int cLowLevelGraphicsSDL::GetCaps(eGraphicCaps type) const {
-	switch(type) {
+	switch (type) {
 
-	//Texture Rectangle
+	// Texture Rectangle
 	case eGraphicCaps_TextureTargetRectangle:
 		return 1;
 
-	//Vertex Buffer Object
+	// Vertex Buffer Object
 	case eGraphicCaps_VertexBufferObject:
-		return 1; //gl 2.0
+		return 1; // gl 2.0
 
-	//Two Sided Stencil
+	// Two Sided Stencil
 	case eGraphicCaps_TwoSideStencil:
-		return 1; //gl 2.0
+		return 1; // gl 2.0
 
-	//Max Texture Image Units
+	// Max Texture Image Units
 	case eGraphicCaps_MaxTextureImageUnits: {
 		int lUnits;
 		GL_CHECK(glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, (GLint *)&lUnits));
 		return lUnits;
 	}
-	//Max Texture Coord Units
+	// Max Texture Coord Units
 	case eGraphicCaps_MaxTextureCoordUnits: {
 		int lUnits = 0;
 		GL_CHECK(glGetIntegerv(GL_MAX_TEXTURE_COORDS, (GLint *)&lUnits));
 		return lUnits;
 	}
-	//Texture Anisotropy
+	// Texture Anisotropy
 	case eGraphicCaps_AnisotropicFiltering:
-		return 0; //gl 4.6
+		return 0; // gl 4.6
 
-	//Texture Anisotropy
+	// Texture Anisotropy
 	case eGraphicCaps_MaxAnisotropicFiltering:
-		return 0; //gl 4.6
+		return 0; // gl 4.6
 
-	//Multisampling
+	// Multisampling
 	case eGraphicCaps_Multisampling:
-		return 1; //gl 1.3
+		return 1; // gl 1.3
 
-	//GL Vertex program
+	// GL Vertex program
 	case eGraphicCaps_GL_VertexProgram:
-		return 0; //gl 2.0
+		return 0; // gl 2.0
 
-	//GL Fragment program
+	// GL Fragment program
 	case eGraphicCaps_GL_FragmentProgram:
-		return 0; //gl 2.0
+		return 0; // gl 2.0
 
 	case eGraphicCaps_GL_ATIFragmentShader:
 		return 0;
 
-	//GL ATI Fragment Shader
+	// GL ATI Fragment Shader
 	case eGraphicCaps_GL_BlendFunctionSeparate:
-		return 1; //gl 1.4
+		return 1; // gl 1.4
 
 	case eGraphicCaps_GL_MultiTexture:
-		return GLAD_GL_ARB_multitexture; //gl 1.4
+		return GLAD_GL_ARB_multitexture; // gl 1.4
 
 	default:
 		break;
 	}
-	Hpl1::logWarning(Hpl1::kDebugGraphics, "graphic options %d is not supported", type);
+	Hpl1::logWarning(Hpl1::kDebugGraphics, "graphic options %d is not supported\n", type);
 	return 0;
 }
 
@@ -290,7 +290,7 @@ void cLowLevelGraphicsSDL::SetVsyncActive(bool toggle) {
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::SetMultisamplingActive(bool toggle) {
-	if (!GetCaps(eGraphicCaps_Multisampling) || mlMultisampling<=0)
+	if (!GetCaps(eGraphicCaps_Multisampling) || mlMultisampling <= 0)
 		return;
 
 	if (toggle)
@@ -313,16 +313,15 @@ float cLowLevelGraphicsSDL::GetGammaCorrection() {
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::SetClipPlane(int alIdx, const cPlanef &aPlane) {
-  	mvClipPlanes[alIdx] = aPlane;
+	mvClipPlanes[alIdx] = aPlane;
 
 	double vPlane[4];
 	vPlane[0] = aPlane.a;
 	vPlane[1] = aPlane.b;
 	vPlane[2] = aPlane.c;
 	vPlane[3] = aPlane.d;
-	GL_CHECK(glClipPlane(GL_CLIP_PLANE0 + alIdx,vPlane));
+	GL_CHECK(glClipPlane(GL_CLIP_PLANE0 + alIdx, vPlane));
 }
-
 
 cPlanef cLowLevelGraphicsSDL::GetClipPlane(int alIdx, const cPlanef &aPlane) {
 	return mvClipPlanes[alIdx];
@@ -447,7 +446,7 @@ void cLowLevelGraphicsSDL::SetIdentityMatrix(eMatrix aMtxType) {
 
 void cLowLevelGraphicsSDL::TranslateMatrix(eMatrix aMtxType, const cVector3f &avPos) {
 	GL_CHECK(SetMatrixMode(aMtxType));
-	GL_CHECK(glTranslatef(avPos.x,avPos.y,avPos.z));
+	GL_CHECK(glTranslatef(avPos.x, avPos.y, avPos.z));
 }
 
 //-----------------------------------------------------------------------
@@ -459,14 +458,14 @@ void cLowLevelGraphicsSDL::TranslateMatrix(eMatrix aMtxType, const cVector3f &av
  */
 void cLowLevelGraphicsSDL::RotateMatrix(eMatrix aMtxType, const cVector3f &avRot) {
 	SetMatrixMode(aMtxType);
-	GL_CHECK(glRotatef(1,avRot.x,avRot.y,avRot.z));
+	GL_CHECK(glRotatef(1, avRot.x, avRot.y, avRot.z));
 }
 
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::ScaleMatrix(eMatrix aMtxType, const cVector3f &avScale) {
 	SetMatrixMode(aMtxType);
-	GL_CHECK(glScalef(avScale.x,avScale.y,avScale.z));
+	GL_CHECK(glScalef(avScale.x, avScale.y, avScale.z));
 }
 
 //-----------------------------------------------------------------------
@@ -474,60 +473,48 @@ void cLowLevelGraphicsSDL::ScaleMatrix(eMatrix aMtxType, const cVector3f &avScal
 void cLowLevelGraphicsSDL::SetOrthoProjection(const cVector2f &avSize, float afMin, float afMax) {
 	GL_CHECK(glMatrixMode(GL_PROJECTION));
 	GL_CHECK(glLoadIdentity());
-	GL_CHECK(glOrtho(0,avSize.x,avSize.y,0,afMin,afMax));
+	GL_CHECK(glOrtho(0, avSize.x, avSize.y, 0, afMin, afMax));
 }
 
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::SetTexture(unsigned int alUnit, iTexture *apTex) {
-	if(apTex == mpCurrentTexture[alUnit]) return;
+	if (apTex == mpCurrentTexture[alUnit])
+		return;
 
-	GLenum NewTarget=0;
+	GLenum NewTarget = 0;
 	if (apTex)
 		NewTarget = GetGLTextureTargetEnum(apTex->GetTarget());
-	GLenum LastTarget=0;
+	GLenum LastTarget = 0;
 	if (mpCurrentTexture[alUnit])
 		LastTarget = GetGLTextureTargetEnum(mpCurrentTexture[alUnit]->GetTarget());
 
-	//Check if multi texturing is supported.
+	// Check if multi texturing is supported.
 	if (GetCaps(eGraphicCaps_GL_MultiTexture)) {
 		GL_CHECK(glActiveTexture(GL_TEXTURE0 + alUnit));
 	}
 
-	//If the current texture in this unit is a render target, unbind it.
-	if (mpCurrentTexture[alUnit]){
-		if(mpCurrentTexture[alUnit]->GetTextureType() == eTextureType_RenderTarget) {
-			error("render target not supported");
-#if 0
-			cSDLTexture *pSDLTex = static_cast<cSDLTexture *> (mpCurrentTexture[alUnit]);
+	// If the current texture in this unit is a render target, unbind it.
+	if (mpCurrentTexture[alUnit] && mpCurrentTexture[alUnit]->GetTextureType() == eTextureType_RenderTarget)
+		error("render target not supported");
 
-			glBindTexture(LastTarget, pSDLTex->GetTextureHandle());
-			cPBuffer* pBuffer = pSDLTex->GetPBuffer();
-			pBuffer->UnBind();
-#endif
-		}
-	}
-
-	//Disable this unit if NULL
+	// Disable this unit if NULL
 	if (apTex == NULL) {
-		glDisable(LastTarget);
-		//glBindTexture(LastTarget,0);
-	//Enable the unit, set the texture handle and bind the pbuffer
+		GL_CHECK(glDisable(LastTarget));
+		// glBindTexture(LastTarget,0);
+		// Enable the unit, set the texture handle and bind the pbuffer
 	} else {
-		if (NewTarget != LastTarget) glDisable(LastTarget);
+		if (NewTarget != LastTarget && LastTarget != 0)
+			GL_CHECK(glDisable(LastTarget));
 
-		cSDLTexture *pSDLTex = static_cast<cSDLTexture*> (apTex);
+		cSDLTexture *pSDLTex = static_cast<cSDLTexture *>(apTex);
 
-		glBindTexture(NewTarget, pSDLTex->GetTextureHandle());
-		glEnable(NewTarget);
+		GL_CHECK(glBindTexture(NewTarget, pSDLTex->GetTextureHandle()));
+		GL_CHECK(glEnable(NewTarget));
 
-		//if it is a render target we need to do some more binding.
+		// if it is a render target we need to do some more binding.
 		if (pSDLTex->GetTextureType() == eTextureType_RenderTarget) {
 			error("render target not supported");
-#if 0
-			cPBuffer* pBuffer = pSDLTex->GetPBuffer();
-			pBuffer->Bind();
-#endif
 		}
 	}
 
@@ -537,7 +524,7 @@ void cLowLevelGraphicsSDL::SetTexture(unsigned int alUnit, iTexture *apTex) {
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::SetActiveTextureUnit(unsigned int alUnit) {
-  	GL_CHECK(glActiveTexture(GL_TEXTURE0 + alUnit));
+	GL_CHECK(glActiveTexture(GL_TEXTURE0 + alUnit));
 }
 
 //-----------------------------------------------------------------------
@@ -547,16 +534,13 @@ void cLowLevelGraphicsSDL::SetTextureEnv(eTextureParam aParam, int alVal) {
 
 	GL_CHECK(glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE));
 
-	if(aParam == eTextureParam_ColorFunc || aParam == eTextureParam_AlphaFunc) {
+	if (aParam == eTextureParam_ColorFunc || aParam == eTextureParam_AlphaFunc) {
 		glTexEnvi(GL_TEXTURE_ENV, lParam, GetGLTextureFuncEnum((eTextureFunc)alVal));
-	}
-	else if(aParam >= eTextureParam_ColorSource0 && aParam <= eTextureParam_AlphaSource2) {
+	} else if (aParam >= eTextureParam_ColorSource0 && aParam <= eTextureParam_AlphaSource2) {
 		glTexEnvi(GL_TEXTURE_ENV, lParam, GetGLTextureSourceEnum((eTextureSource)alVal));
-	}
-	else if(aParam >= eTextureParam_ColorOp0 && aParam <= eTextureParam_AlphaOp2) {
+	} else if (aParam >= eTextureParam_ColorOp0 && aParam <= eTextureParam_AlphaOp2) {
 		glTexEnvi(GL_TEXTURE_ENV, lParam, GetGLTextureOpEnum((eTextureOp)alVal));
-	}
-	else {
+	} else {
 		glTexEnvi(GL_TEXTURE_ENV, lParam, alVal);
 	}
 	GL_CHECK_FN();
@@ -565,7 +549,7 @@ void cLowLevelGraphicsSDL::SetTextureEnv(eTextureParam aParam, int alVal) {
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::SetTextureConstantColor(const cColor &color) {
-	float vColor[] = {	color.r, color.g, color.b, color.a	};
+	float vColor[] = {color.r, color.g, color.b, color.a};
 
 	GL_CHECK(glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, &vColor[0]));
 }
@@ -579,7 +563,7 @@ void cLowLevelGraphicsSDL::SetColor(const cColor &aColor) {
 //-----------------------------------------------------------------------
 
 iVertexBuffer *cLowLevelGraphicsSDL::CreateVertexBuffer(tVertexFlag aFlags,
-	eVertexBufferDrawType aDrawType, eVertexBufferUsageType aUsageType, int alReserveVtxSize, int alReserveIdxSize) {
+														eVertexBufferDrawType aDrawType, eVertexBufferUsageType aUsageType, int alReserveVtxSize, int alReserveIdxSize) {
 
 	if (GetCaps(eGraphicCaps_VertexBufferObject))
 		return hplNew(cVertexBufferVBO, (this, aFlags, aDrawType, aUsageType, alReserveVtxSize, alReserveIdxSize));
@@ -589,17 +573,17 @@ iVertexBuffer *cLowLevelGraphicsSDL::CreateVertexBuffer(tVertexFlag aFlags,
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::DrawRect(const cVector2f &avPos, const cVector2f &avSize, float afZ) {
-	glColor4f(1,1,1,1);
+	glColor4f(1, 1, 1, 1);
 	glBegin(GL_QUADS);
 	{
 		glTexCoord2f(0.0, 0.0);
-		glVertex3f(avPos.x, avPos.y,afZ);
+		glVertex3f(avPos.x, avPos.y, afZ);
 		glTexCoord2f(1.0, 0.0);
-		glVertex3f(avPos.x+avSize.x, avPos.y,afZ);
+		glVertex3f(avPos.x + avSize.x, avPos.y, afZ);
 		glTexCoord2f(1.0, 1.0);
-		glVertex3f(avPos.x+avSize.x, avPos.y+avSize.y,afZ);
+		glVertex3f(avPos.x + avSize.x, avPos.y + avSize.y, afZ);
 		glTexCoord2f(0.0, 1.0);
-		glVertex3f(avPos.x, avPos.y+avSize.y,afZ);
+		glVertex3f(avPos.x, avPos.y + avSize.y, afZ);
 	}
 	glEnd();
 	GL_CHECK_FN();
@@ -608,7 +592,7 @@ void cLowLevelGraphicsSDL::DrawRect(const cVector2f &avPos, const cVector2f &avS
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::FlushRendering() {
-  	GL_CHECK(glFlush());
+	GL_CHECK(glFlush());
 }
 void cLowLevelGraphicsSDL::SwapBuffers() {
 	GL_CHECK(glFlush());
@@ -618,14 +602,14 @@ void cLowLevelGraphicsSDL::SwapBuffers() {
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::DrawTri(const tVertexVec &avVtx) {
-	assert(avVtx.size()==3);
+	assert(avVtx.size() == 3);
 
 	glBegin(GL_TRIANGLES);
 	{
-		for(int i=0;i<3;i++){
+		for (int i = 0; i < 3; i++) {
 			glTexCoord3f(avVtx[i].tex.x, avVtx[i].tex.y, avVtx[i].tex.z);
-			glColor4f(avVtx[i].col.r,avVtx[i].col.g,avVtx[i].col.b,avVtx[i].col.a);
-			glVertex3f(avVtx[i].pos.x,avVtx[i].pos.y,avVtx[i].pos.z);
+			glColor4f(avVtx[i].col.r, avVtx[i].col.g, avVtx[i].col.b, avVtx[i].col.a);
+			glVertex3f(avVtx[i].pos.x, avVtx[i].pos.y, avVtx[i].pos.z);
 		}
 	}
 	glEnd();
@@ -637,10 +621,10 @@ void cLowLevelGraphicsSDL::DrawTri(const tVertexVec &avVtx) {
 void cLowLevelGraphicsSDL::DrawTri(const cVertex *avVtx) {
 	glBegin(GL_TRIANGLES);
 	{
-		for(int i=0;i<3;i++) {
-			glTexCoord3f(avVtx[i].tex.x,avVtx[i].tex.y,avVtx[i].tex.z);
-			glColor4f(avVtx[i].col.r,avVtx[i].col.g,avVtx[i].col.b,avVtx[i].col.a);
-			glVertex3f(avVtx[i].pos.x,avVtx[i].pos.y,avVtx[i].pos.z);
+		for (int i = 0; i < 3; i++) {
+			glTexCoord3f(avVtx[i].tex.x, avVtx[i].tex.y, avVtx[i].tex.z);
+			glColor4f(avVtx[i].col.r, avVtx[i].col.g, avVtx[i].col.b, avVtx[i].col.a);
+			glVertex3f(avVtx[i].pos.x, avVtx[i].pos.y, avVtx[i].pos.z);
 		}
 	}
 	glEnd();
@@ -650,14 +634,14 @@ void cLowLevelGraphicsSDL::DrawTri(const cVertex *avVtx) {
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::DrawQuad(const tVertexVec &avVtx) {
-	assert(avVtx.size()==4);
+	assert(avVtx.size() == 4);
 
 	glBegin(GL_QUADS);
 	{
-		for(int i=0;i<4;i++){
-			glTexCoord3f(avVtx[i].tex.x,avVtx[i].tex.y,avVtx[i].tex.z);
-			glColor4f(avVtx[i].col.r,avVtx[i].col.g,avVtx[i].col.b,avVtx[i].col.a);
-			glVertex3f(avVtx[i].pos.x,avVtx[i].pos.y,avVtx[i].pos.z);
+		for (int i = 0; i < 4; i++) {
+			glTexCoord3f(avVtx[i].tex.x, avVtx[i].tex.y, avVtx[i].tex.z);
+			glColor4f(avVtx[i].col.r, avVtx[i].col.g, avVtx[i].col.b, avVtx[i].col.a);
+			glVertex3f(avVtx[i].pos.x, avVtx[i].pos.y, avVtx[i].pos.z);
 		}
 	}
 	glEnd();
@@ -667,21 +651,19 @@ void cLowLevelGraphicsSDL::DrawQuad(const tVertexVec &avVtx) {
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::DrawQuadMultiTex(const tVertexVec &avVtx, const tVector3fVec &avExtraUvs) {
-	int lExtraUnits = (int)avExtraUvs.size()/4;
+	int lExtraUnits = (int)avExtraUvs.size() / 4;
 	glBegin(GL_QUADS);
 	{
-		for(int i=0;i<4;i++)
-		{
-			glMultiTexCoord3fARB(GL_TEXTURE0_ARB,avVtx[i].tex.x,avVtx[i].tex.y,avVtx[i].tex.z);
+		for (int i = 0; i < 4; i++) {
+			glMultiTexCoord3fARB(GL_TEXTURE0_ARB, avVtx[i].tex.x, avVtx[i].tex.y, avVtx[i].tex.z);
 
-			for(int unit=0; unit<lExtraUnits; ++unit)
-			{
+			for (int unit = 0; unit < lExtraUnits; ++unit) {
 				glMultiTexCoord3fARB(GL_TEXTURE0_ARB + unit + 1,
-									avExtraUvs[unit*4 + i].x, avExtraUvs[unit*4 + i].y, avExtraUvs[unit*4 + i].z);
+									 avExtraUvs[unit * 4 + i].x, avExtraUvs[unit * 4 + i].y, avExtraUvs[unit * 4 + i].z);
 			}
 
-			glColor4f(avVtx[i].col.r,avVtx[i].col.g,avVtx[i].col.b,avVtx[i].col.a);
-			glVertex3f(avVtx[i].pos.x,avVtx[i].pos.y,avVtx[i].pos.z);
+			glColor4f(avVtx[i].col.r, avVtx[i].col.g, avVtx[i].col.b, avVtx[i].col.a);
+			glVertex3f(avVtx[i].pos.x, avVtx[i].pos.y, avVtx[i].pos.z);
 		}
 	}
 	glEnd();
@@ -704,13 +686,13 @@ void cLowLevelGraphicsSDL::DestroyOcclusionQuery(iOcclusionQuery *apQuery) {
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::ClearScreen() {
-	GLbitfield bitmask=0;
+	GLbitfield bitmask = 0;
 
-	if(mbClearColor)
+	if (mbClearColor)
 		bitmask |= GL_COLOR_BUFFER_BIT;
-	if(mbClearDepth)
+	if (mbClearDepth)
 		bitmask |= GL_DEPTH_BUFFER_BIT;
-	if(mbClearStencil)
+	if (mbClearStencil)
 		bitmask |= GL_STENCIL_BUFFER_BIT;
 
 	GL_CHECK(glClear(bitmask));
@@ -743,7 +725,7 @@ void cLowLevelGraphicsSDL::SetClearStencilActive(bool abX) {
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::SetColorWriteActive(bool abR, bool abG, bool abB, bool abA) {
-	glColorMask(abR,abG,abB,abA);
+	glColorMask(abR, abG, abB, abA);
 }
 
 //-----------------------------------------------------------------------
@@ -755,7 +737,7 @@ void cLowLevelGraphicsSDL::SetDepthWriteActive(bool abX) {
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::SetDepthTestActive(bool abX) {
-	if(abX)
+	if (abX)
 		glEnable(GL_DEPTH_TEST);
 	else
 		glDisable(GL_DEPTH_TEST);
@@ -771,7 +753,7 @@ void cLowLevelGraphicsSDL::SetDepthTestFunc(eDepthTestFunc aFunc) {
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::SetAlphaTestActive(bool abX) {
-	if(abX)
+	if (abX)
 		glEnable(GL_ALPHA_TEST);
 	else
 		glDisable(GL_ALPHA_TEST);
@@ -781,13 +763,13 @@ void cLowLevelGraphicsSDL::SetAlphaTestActive(bool abX) {
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::SetAlphaTestFunc(eAlphaTestFunc aFunc, float afRef) {
-	GL_CHECK(glAlphaFunc(GetGLAlphaTestFuncEnum(aFunc),afRef));
+	GL_CHECK(glAlphaFunc(GetGLAlphaTestFuncEnum(aFunc), afRef));
 }
 
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::SetStencilActive(bool abX) {
-	if(abX)
+	if (abX)
 		glEnable(GL_STENCIL_TEST);
 	else
 		glDisable(GL_STENCIL_TEST);
@@ -843,35 +825,34 @@ void cLowLevelGraphicsSDL::SetStencil(eStencilFunc aFunc, int alRef, unsigned in
 	GL_CHECK(glStencilFunc(GetGLStencilFuncEnum(aFunc), alRef, aMask));
 
 	GL_CHECK(glStencilOp(GetGLStencilOpEnum(aFailOp), GetGLStencilOpEnum(aZFailOp),
-				GetGLStencilOpEnum(aZPassOp)));
+						 GetGLStencilOpEnum(aZPassOp)));
 }
 
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::SetStencilTwoSide(eStencilFunc aFrontFunc, eStencilFunc aBackFunc,
-	int alRef, unsigned int aMask,eStencilOp aFrontFailOp, eStencilOp aFrontZFailOp, eStencilOp aFrontZPassOp,
-	eStencilOp aBackFailOp, eStencilOp aBackZFailOp, eStencilOp aBackZPassOp) {
-		if (GetCaps(eGraphicCaps_TwoSideStencil)) {
-			GL_CHECK(glStencilFuncSeparate(GL_FRONT, GetGLStencilFuncEnum(aFrontFunc), alRef, aMask));
-			GL_CHECK(glStencilOpSeparate(GL_FRONT, GetGLStencilOpEnum(aFrontFailOp), GetGLStencilOpEnum(aFrontZFailOp),
-										 GetGLStencilOpEnum(aFrontZPassOp)))
-			GL_CHECK(glStencilFuncSeparate(GL_BACK, GetGLStencilFuncEnum(aBackFunc), alRef, aMask));
-			GL_CHECK(glStencilOpSeparate(GL_BACK, GetGLStencilOpEnum(aBackFailOp), GetGLStencilOpEnum(aBackZFailOp),
-										 GetGLStencilOpEnum(aBackZPassOp)));
-		}
-		else
-			error("Only single sided stencil supported");
+											 int alRef, unsigned int aMask, eStencilOp aFrontFailOp, eStencilOp aFrontZFailOp, eStencilOp aFrontZPassOp,
+											 eStencilOp aBackFailOp, eStencilOp aBackZFailOp, eStencilOp aBackZPassOp) {
+	if (GetCaps(eGraphicCaps_TwoSideStencil)) {
+		GL_CHECK(glStencilFuncSeparate(GL_FRONT, GetGLStencilFuncEnum(aFrontFunc), alRef, aMask));
+		GL_CHECK(glStencilOpSeparate(GL_FRONT, GetGLStencilOpEnum(aFrontFailOp), GetGLStencilOpEnum(aFrontZFailOp),
+									 GetGLStencilOpEnum(aFrontZPassOp)))
+		GL_CHECK(glStencilFuncSeparate(GL_BACK, GetGLStencilFuncEnum(aBackFunc), alRef, aMask));
+		GL_CHECK(glStencilOpSeparate(GL_BACK, GetGLStencilOpEnum(aBackFailOp), GetGLStencilOpEnum(aBackZFailOp),
+									 GetGLStencilOpEnum(aBackZPassOp)));
+	} else
+		error("Only single sided stencil supported");
 }
 
 void cLowLevelGraphicsSDL::SetStencilTwoSide(bool abX) {
-	if (GetCaps(eGraphicCaps_TwoSideStencil))
-		Hpl1::logError(Hpl1::kDebugOpenGL, "call to setStencilTwoSide with two side stencil enabled%c", ".");
+	if (!GetCaps(eGraphicCaps_TwoSideStencil))
+		Hpl1::logError(Hpl1::kDebugOpenGL, "call to setStencilTwoSide with two side stencil disabled%c\n", '.');
 }
 
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::SetCullActive(bool abX) {
-	if(abX)
+	if (abX)
 		glEnable(GL_CULL_FACE);
 	else
 		glDisable(GL_CULL_FACE);
@@ -880,7 +861,7 @@ void cLowLevelGraphicsSDL::SetCullActive(bool abX) {
 }
 void cLowLevelGraphicsSDL::SetCullMode(eCullMode aMode) {
 	GL_CHECK(glCullFace(GL_BACK));
-	if(aMode == eCullMode_Clockwise)
+	if (aMode == eCullMode_Clockwise)
 		glFrontFace(GL_CCW);
 	else
 		glFrontFace(GL_CW);
@@ -890,7 +871,7 @@ void cLowLevelGraphicsSDL::SetCullMode(eCullMode aMode) {
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::SetScissorActive(bool toggle) {
-	if(toggle)
+	if (toggle)
 		glEnable(GL_SCISSOR_TEST);
 	else
 		glDisable(GL_SCISSOR_TEST);
@@ -900,13 +881,13 @@ void cLowLevelGraphicsSDL::SetScissorActive(bool toggle) {
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::SetScissorRect(const cRect2l &aRect) {
-	glScissor(aRect.x, (mvScreenSize.y - aRect.y - 1)-aRect.h, aRect.w, aRect.h);
+	glScissor(aRect.x, (mvScreenSize.y - aRect.y - 1) - aRect.h, aRect.w, aRect.h);
 }
 
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::SetBlendActive(bool abX) {
-	if(abX)
+	if (abX)
 		glEnable(GL_BLEND);
 	else
 		glDisable(GL_BLEND);
@@ -922,13 +903,13 @@ void cLowLevelGraphicsSDL::SetBlendFunc(eBlendFunc aSrcFactor, eBlendFunc aDestF
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::SetBlendFuncSeparate(eBlendFunc aSrcFactorColor, eBlendFunc aDestFactorColor,
-                                                eBlendFunc aSrcFactorAlpha, eBlendFunc aDestFactorAlpha) {
+												eBlendFunc aSrcFactorAlpha, eBlendFunc aDestFactorAlpha) {
 	if (GetCaps(eGraphicCaps_GL_BlendFunctionSeparate)) {
 
 		glBlendFuncSeparate(GetGLBlendEnum(aSrcFactorColor),
-		                    GetGLBlendEnum(aDestFactorColor),
-		                    GetGLBlendEnum(aSrcFactorAlpha),
-		                    GetGLBlendEnum(aDestFactorAlpha));
+							GetGLBlendEnum(aDestFactorColor),
+							GetGLBlendEnum(aSrcFactorAlpha),
+							GetGLBlendEnum(aDestFactorAlpha));
 	} else {
 		glBlendFunc(GetGLBlendEnum(aSrcFactorColor), GetGLBlendEnum(aDestFactorColor));
 	}
@@ -937,15 +918,15 @@ void cLowLevelGraphicsSDL::SetBlendFuncSeparate(eBlendFunc aSrcFactorColor, eBle
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::DrawQuad(const tVertexVec &avVtx, const cColor aCol) {
-	assert(avVtx.size()==4);
+	assert(avVtx.size() == 4);
 
 	glBegin(GL_QUADS);
 	{
-		//Make all this inline??
-		for(int i=0;i<4;i++){
-			glTexCoord3f(avVtx[i].tex.x,avVtx[i].tex.y,avVtx[i].tex.z);
-			glColor4f(aCol.r,aCol.g,aCol.b,aCol.a);
-			glVertex3f(avVtx[i].pos.x,avVtx[i].pos.y,avVtx[i].pos.z);
+		// Make all this inline??
+		for (int i = 0; i < 4; i++) {
+			glTexCoord3f(avVtx[i].tex.x, avVtx[i].tex.y, avVtx[i].tex.z);
+			glColor4f(aCol.r, aCol.g, aCol.b, aCol.a);
+			glVertex3f(avVtx[i].pos.x, avVtx[i].pos.y, avVtx[i].pos.z);
 		}
 	}
 	glEnd();
@@ -955,15 +936,15 @@ void cLowLevelGraphicsSDL::DrawQuad(const tVertexVec &avVtx, const cColor aCol) 
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::DrawQuad(const tVertexVec &avVtx, const float afZ) {
-	assert(avVtx.size()==4);
+	assert(avVtx.size() == 4);
 
 	glBegin(GL_QUADS);
 	{
-		//Make all this inline??
-		for(int i=0;i<4;i++){
-			glTexCoord3f(avVtx[i].tex.x,avVtx[i].tex.y,afZ);
-			glColor4f(avVtx[i].col.r,avVtx[i].col.g,avVtx[i].col.b,avVtx[i].col.a);
-			glVertex3f(avVtx[i].pos.x,avVtx[i].pos.y,avVtx[i].pos.z);
+		// Make all this inline??
+		for (int i = 0; i < 4; i++) {
+			glTexCoord3f(avVtx[i].tex.x, avVtx[i].tex.y, afZ);
+			glColor4f(avVtx[i].col.r, avVtx[i].col.g, avVtx[i].col.b, avVtx[i].col.a);
+			glVertex3f(avVtx[i].pos.x, avVtx[i].pos.y, avVtx[i].pos.z);
 		}
 	}
 	GL_CHECK_FN();
@@ -972,15 +953,15 @@ void cLowLevelGraphicsSDL::DrawQuad(const tVertexVec &avVtx, const float afZ) {
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::DrawQuad(const tVertexVec &avVtx, const float afZ, const cColor &aCol) {
-	assert(avVtx.size()==4);
+	assert(avVtx.size() == 4);
 
 	glBegin(GL_QUADS);
 	{
-		//Make all this inline??
-		for(int i=0;i<4;i++){
-			glTexCoord3f(avVtx[i].tex.x,avVtx[i].tex.y,afZ);
-			glColor4f(aCol.r,aCol.g,aCol.b,aCol.a);
-			glVertex3f(avVtx[i].pos.x,avVtx[i].pos.y,avVtx[i].pos.z);
+		// Make all this inline??
+		for (int i = 0; i < 4; i++) {
+			glTexCoord3f(avVtx[i].tex.x, avVtx[i].tex.y, afZ);
+			glColor4f(aCol.r, aCol.g, aCol.b, aCol.a);
+			glVertex3f(avVtx[i].pos.x, avVtx[i].pos.y, avVtx[i].pos.z);
 		}
 	}
 	glEnd();
@@ -1134,12 +1115,12 @@ void cLowLevelGraphicsSDL::AddTexCoordToBatch(unsigned int alUnit, const cVector
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::SetBatchTextureUnitActive(unsigned int alUnit, bool active) {
-	GL_CHECK(glClientActiveTextureARB(GL_TEXTURE0_ARB+alUnit));
+	GL_CHECK(glClientActiveTextureARB(GL_TEXTURE0_ARB + alUnit));
 
 	if (active)
-		glTexCoordPointer(3,GL_FLOAT,0, &mpTexCoordArray[alUnit][0]);
+		glTexCoordPointer(3, GL_FLOAT, 0, &mpTexCoordArray[alUnit][0]);
 	else
-		glTexCoordPointer(3,GL_FLOAT,sizeof(float)*mlBatchStride, &mpVertexArray[7]);
+		glTexCoordPointer(3, GL_FLOAT, sizeof(float) * mlBatchStride, &mpVertexArray[7]);
 	GL_CHECK_FN();
 }
 
@@ -1164,7 +1145,7 @@ void cLowLevelGraphicsSDL::FlushTriBatch(tVtxBatchFlag aTypeFlags, bool abAutoCl
 void cLowLevelGraphicsSDL::FlushQuadBatch(tVtxBatchFlag aTypeFlags, bool abAutoClear) {
 	SetVtxBatchStates(aTypeFlags);
 	SetUpBatchArrays();
-	GL_CHECK(glDrawElements(GL_QUADS,mlIndexCount,GL_UNSIGNED_INT, mpIndexArray));
+	GL_CHECK(glDrawElements(GL_QUADS, mlIndexCount, GL_UNSIGNED_INT, mpIndexArray));
 	if (abAutoClear)
 		flushAutoClear(mlIndexCount, mlVertexCount, mlTexCoordArrayCount);
 }
@@ -1179,63 +1160,63 @@ void cLowLevelGraphicsSDL::ClearBatch() {
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::DrawLine(const cVector3f &avBegin, const cVector3f &avEnd, cColor aCol) {
-  	SetTexture(0, nullptr);
-	//SetBlendActive(false);
-	glColor4f(aCol.r,aCol.g,aCol.b,aCol.a);
+	SetTexture(0, nullptr);
+	// SetBlendActive(false);
+	glColor4f(aCol.r, aCol.g, aCol.b, aCol.a);
 	glBegin(GL_LINES);
 	{
-		glVertex3f(avBegin.x,avBegin.y,avBegin.z);
-		glVertex3f(avEnd.x,avEnd.y,avEnd.z);
+		glVertex3f(avBegin.x, avBegin.y, avBegin.z);
+		glVertex3f(avEnd.x, avEnd.y, avEnd.z);
 	}
 	glEnd();
 	GL_CHECK_FN();
 }
 
 void cLowLevelGraphicsSDL::DrawBoxMaxMin(const cVector3f &avMax, const cVector3f &avMin, cColor aCol) {
-  	SetTexture(0,NULL);
+	SetTexture(0, NULL);
 	SetBlendActive(false);
-	glColor4f(aCol.r,aCol.g,aCol.b,aCol.a);
+	glColor4f(aCol.r, aCol.g, aCol.b, aCol.a);
 
 	glBegin(GL_LINES);
 	{
-		//Pos Z Quad
-		glVertex3f(avMax.x,avMax.y,avMax.z);
-		glVertex3f(avMin.x,avMax.y,avMax.z);
+		// Pos Z Quad
+		glVertex3f(avMax.x, avMax.y, avMax.z);
+		glVertex3f(avMin.x, avMax.y, avMax.z);
 
-		glVertex3f(avMax.x,avMax.y,avMax.z);
-		glVertex3f(avMax.x,avMin.y,avMax.z);
+		glVertex3f(avMax.x, avMax.y, avMax.z);
+		glVertex3f(avMax.x, avMin.y, avMax.z);
 
-		glVertex3f(avMin.x,avMax.y,avMax.z);
-		glVertex3f(avMin.x,avMin.y,avMax.z);
+		glVertex3f(avMin.x, avMax.y, avMax.z);
+		glVertex3f(avMin.x, avMin.y, avMax.z);
 
-		glVertex3f(avMin.x,avMin.y,avMax.z);
-		glVertex3f(avMax.x,avMin.y,avMax.z);
+		glVertex3f(avMin.x, avMin.y, avMax.z);
+		glVertex3f(avMax.x, avMin.y, avMax.z);
 
-		//Neg Z Quad
-		glVertex3f(avMax.x,avMax.y,avMin.z);
-		glVertex3f(avMin.x,avMax.y,avMin.z);
+		// Neg Z Quad
+		glVertex3f(avMax.x, avMax.y, avMin.z);
+		glVertex3f(avMin.x, avMax.y, avMin.z);
 
-		glVertex3f(avMax.x,avMax.y,avMin.z);
-		glVertex3f(avMax.x,avMin.y,avMin.z);
+		glVertex3f(avMax.x, avMax.y, avMin.z);
+		glVertex3f(avMax.x, avMin.y, avMin.z);
 
-		glVertex3f(avMin.x,avMax.y,avMin.z);
-		glVertex3f(avMin.x,avMin.y,avMin.z);
+		glVertex3f(avMin.x, avMax.y, avMin.z);
+		glVertex3f(avMin.x, avMin.y, avMin.z);
 
-		glVertex3f(avMin.x,avMin.y,avMin.z);
-		glVertex3f(avMax.x,avMin.y,avMin.z);
+		glVertex3f(avMin.x, avMin.y, avMin.z);
+		glVertex3f(avMax.x, avMin.y, avMin.z);
 
-		//Lines between
-		glVertex3f(avMax.x,avMax.y,avMax.z);
-		glVertex3f(avMax.x,avMax.y,avMin.z);
+		// Lines between
+		glVertex3f(avMax.x, avMax.y, avMax.z);
+		glVertex3f(avMax.x, avMax.y, avMin.z);
 
-		glVertex3f(avMin.x,avMax.y,avMax.z);
-		glVertex3f(avMin.x,avMax.y,avMin.z);
+		glVertex3f(avMin.x, avMax.y, avMax.z);
+		glVertex3f(avMin.x, avMax.y, avMin.z);
 
-		glVertex3f(avMin.x,avMin.y,avMax.z);
-		glVertex3f(avMin.x,avMin.y,avMin.z);
+		glVertex3f(avMin.x, avMin.y, avMax.z);
+		glVertex3f(avMin.x, avMin.y, avMin.z);
 
-		glVertex3f(avMax.x,avMin.y,avMax.z);
-		glVertex3f(avMax.x,avMin.y,avMin.z);
+		glVertex3f(avMax.x, avMin.y, avMax.z);
+		glVertex3f(avMax.x, avMin.y, avMin.z);
 	}
 	glEnd();
 	GL_CHECK_FN();
@@ -1245,43 +1226,39 @@ void cLowLevelGraphicsSDL::DrawBoxMaxMin(const cVector3f &avMax, const cVector3f
 
 void cLowLevelGraphicsSDL::DrawSphere(const cVector3f &avPos, float afRadius, cColor aCol) {
 	int alSegments = 32;
-	float afAngleStep = k2Pif /(float)alSegments;
+	float afAngleStep = k2Pif / (float)alSegments;
 
-	SetTexture(0,nullptr);
+	SetTexture(0, nullptr);
 	SetBlendActive(false);
-	glColor4f(aCol.r,aCol.g,aCol.b,aCol.a);
+	glColor4f(aCol.r, aCol.g, aCol.b, aCol.a);
 	glBegin(GL_LINES);
 	{
-		//X Circle:
-		for(float a=0; a< k2Pif; a+= afAngleStep)
-		{
-			glVertex3f(avPos.x, avPos.y + sin(a)*afRadius,
-								avPos.z + cos(a)*afRadius);
+		// X Circle:
+		for (float a = 0; a < k2Pif; a += afAngleStep) {
+			glVertex3f(avPos.x, avPos.y + sin(a) * afRadius,
+					   avPos.z + cos(a) * afRadius);
 
-			glVertex3f(avPos.x, avPos.y + sin(a+afAngleStep)*afRadius,
-								avPos.z + cos(a+afAngleStep)*afRadius);
+			glVertex3f(avPos.x, avPos.y + sin(a + afAngleStep) * afRadius,
+					   avPos.z + cos(a + afAngleStep) * afRadius);
 		}
 
-		//Y Circle:
-		for(float a=0; a< k2Pif; a+= afAngleStep)
-		{
-			glVertex3f(avPos.x + cos(a)*afRadius, avPos.y,
-								avPos.z + sin(a)*afRadius);
+		// Y Circle:
+		for (float a = 0; a < k2Pif; a += afAngleStep) {
+			glVertex3f(avPos.x + cos(a) * afRadius, avPos.y,
+					   avPos.z + sin(a) * afRadius);
 
-			glVertex3f(avPos.x + cos(a+afAngleStep)*afRadius, avPos.y ,
-						avPos.z+ sin(a+afAngleStep)*afRadius);
+			glVertex3f(avPos.x + cos(a + afAngleStep) * afRadius, avPos.y,
+					   avPos.z + sin(a + afAngleStep) * afRadius);
 		}
 
-		//Z Circle:
-		for(float a=0; a< k2Pif; a+= afAngleStep)
-		{
-			glVertex3f(avPos.x + cos(a)*afRadius, avPos.y + sin(a)*afRadius, avPos.z);
+		// Z Circle:
+		for (float a = 0; a < k2Pif; a += afAngleStep) {
+			glVertex3f(avPos.x + cos(a) * afRadius, avPos.y + sin(a) * afRadius, avPos.z);
 
-			glVertex3f(avPos.x + cos(a+afAngleStep)*afRadius,
-						avPos.y + sin(a+afAngleStep)*afRadius,
-						avPos.z);
+			glVertex3f(avPos.x + cos(a + afAngleStep) * afRadius,
+					   avPos.y + sin(a + afAngleStep) * afRadius,
+					   avPos.z);
 		}
-
 	}
 	glEnd();
 	GL_CHECK_FN();
@@ -1290,13 +1267,13 @@ void cLowLevelGraphicsSDL::DrawSphere(const cVector3f &avPos, float afRadius, cC
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::DrawLine2D(const cVector2f &avBegin, const cVector2f &avEnd, float afZ, cColor aCol) {
-	SetTexture(0,NULL);
+	SetTexture(0, NULL);
 	SetBlendActive(false);
-	glColor4f(aCol.r,aCol.g,aCol.b,aCol.a);
+	glColor4f(aCol.r, aCol.g, aCol.b, aCol.a);
 	glBegin(GL_LINES);
 	{
-		glVertex3f(avBegin.x,avBegin.y,afZ);
-		glVertex3f(avEnd.x,avEnd.y,afZ);
+		glVertex3f(avBegin.x, avBegin.y, afZ);
+		glVertex3f(avEnd.x, avEnd.y, afZ);
 	}
 	glEnd();
 	GL_CHECK_FN();
@@ -1305,16 +1282,16 @@ void cLowLevelGraphicsSDL::DrawLine2D(const cVector2f &avBegin, const cVector2f 
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::DrawLineRect2D(const cRect2f &aRect, float afZ, cColor aCol) {
-  	SetTexture(0, nullptr);
+	SetTexture(0, nullptr);
 	SetBlendActive(false);
-	glColor4f(aCol.r,aCol.g,aCol.b,aCol.a);
+	glColor4f(aCol.r, aCol.g, aCol.b, aCol.a);
 	glBegin(GL_LINE_STRIP);
 	{
-		glVertex3f(aRect.x,aRect.y,afZ);
-		glVertex3f(aRect.x+aRect.w,aRect.y,afZ);
-		glVertex3f(aRect.x+aRect.w,aRect.y+aRect.h,afZ);
-		glVertex3f(aRect.x,aRect.y+aRect.h,afZ);
-		glVertex3f(aRect.x,aRect.y,afZ);
+		glVertex3f(aRect.x, aRect.y, afZ);
+		glVertex3f(aRect.x + aRect.w, aRect.y, afZ);
+		glVertex3f(aRect.x + aRect.w, aRect.y + aRect.h, afZ);
+		glVertex3f(aRect.x, aRect.y + aRect.h, afZ);
+		glVertex3f(aRect.x, aRect.y, afZ);
 	}
 	glEnd();
 	GL_CHECK_FN();
@@ -1324,13 +1301,13 @@ void cLowLevelGraphicsSDL::DrawLineRect2D(const cRect2f &aRect, float afZ, cColo
 
 void cLowLevelGraphicsSDL::DrawFilledRect2D(const cRect2f &aRect, float afZ, cColor aCol) {
 	SetTexture(0, NULL);
-	glColor4f(aCol.r,aCol.g,aCol.b,aCol.a);
+	glColor4f(aCol.r, aCol.g, aCol.b, aCol.a);
 	glBegin(GL_QUADS);
 	{
-		glVertex3f(aRect.x,aRect.y,afZ);
-		glVertex3f(aRect.x+aRect.w,aRect.y,afZ);
-		glVertex3f(aRect.x+aRect.w,aRect.y+aRect.h,afZ);
-		glVertex3f(aRect.x,aRect.y+aRect.h,afZ);
+		glVertex3f(aRect.x, aRect.y, afZ);
+		glVertex3f(aRect.x + aRect.w, aRect.y, afZ);
+		glVertex3f(aRect.x + aRect.w, aRect.y + aRect.h, afZ);
+		glVertex3f(aRect.x, aRect.y + aRect.h, afZ);
 	}
 	glEnd();
 	GL_CHECK_FN();
@@ -1345,20 +1322,20 @@ void cLowLevelGraphicsSDL::DrawLineCircle2D(const cVector2f &avCenter, float afR
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::CopyContextToTexure(iTexture *apTex, const cVector2l &avPos,
-	const cVector2l &avSize, const cVector2l &avTexOffset) {
-  		if(apTex == nullptr)
-			return;
+											   const cVector2l &avSize, const cVector2l &avTexOffset) {
+	if (apTex == nullptr)
+		return;
 
-		int lScreenY = (mvScreenSize.y - avSize.y) - avPos.y;
-		int lTexY = (apTex->getHeight() - avSize.y) - avTexOffset.y;
+	int lScreenY = (mvScreenSize.y - avSize.y) - avPos.y;
+	int lTexY = (apTex->getHeight() - avSize.y) - avTexOffset.y;
 
-		//Log("TExoffset: %d %d\n",avTexOffset.x,lTexY);
-		//Log("ScreenOffset: %d %d (h: %d s: %d p: %d)\n",avPos.x,lScreenY,mvScreenSize.y,
-		//												avSize.y,avPos.y);
+	// Log("TExoffset: %d %d\n",avTexOffset.x,lTexY);
+	// Log("ScreenOffset: %d %d (h: %d s: %d p: %d)\n",avPos.x,lScreenY,mvScreenSize.y,
+	//												avSize.y,avPos.y);
 
-		SetTexture(0, apTex);
-		GL_CHECK(glCopyTexSubImage2D(GetGLTextureTargetEnum(apTex->GetTarget()),0,
-							avTexOffset.x, lTexY, avPos.x, lScreenY, avSize.x, avSize.y));
+	SetTexture(0, apTex);
+	GL_CHECK(glCopyTexSubImage2D(GetGLTextureTargetEnum(apTex->GetTarget()), 0,
+								 avTexOffset.x, lTexY, avPos.x, lScreenY, avSize.x, avSize.y));
 }
 
 //-----------------------------------------------------------------------
@@ -1456,17 +1433,17 @@ void cLowLevelGraphicsSDL::SetVirtualSize(cVector2f avSize) {
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::SetUpBatchArrays() {
-  	//Set the arrays
-	glVertexPointer(3,GL_FLOAT, sizeof(float)*mlBatchStride, mpVertexArray);
-	glColorPointer(4,GL_FLOAT, sizeof(float)*mlBatchStride, &mpVertexArray[3]);
-	glNormalPointer(GL_FLOAT, sizeof(float)*mlBatchStride, &mpVertexArray[10]);
+	// Set the arrays
+	glVertexPointer(3, GL_FLOAT, sizeof(float) * mlBatchStride, mpVertexArray);
+	glColorPointer(4, GL_FLOAT, sizeof(float) * mlBatchStride, &mpVertexArray[3]);
+	glNormalPointer(GL_FLOAT, sizeof(float) * mlBatchStride, &mpVertexArray[10]);
 
 	glClientActiveTextureARB(GL_TEXTURE0_ARB);
-	glTexCoordPointer(3,GL_FLOAT, sizeof(float)*mlBatchStride, &mpVertexArray[7]);
+	glTexCoordPointer(3, GL_FLOAT, sizeof(float) * mlBatchStride, &mpVertexArray[7]);
 	glClientActiveTextureARB(GL_TEXTURE1_ARB);
-	glTexCoordPointer(3,GL_FLOAT, sizeof(float)*mlBatchStride, &mpVertexArray[7]);
+	glTexCoordPointer(3, GL_FLOAT, sizeof(float) * mlBatchStride, &mpVertexArray[7]);
 	glClientActiveTextureARB(GL_TEXTURE2_ARB);
-	glTexCoordPointer(3,GL_FLOAT, sizeof(float)*mlBatchStride, &mpVertexArray[7]);
+	glTexCoordPointer(3, GL_FLOAT, sizeof(float) * mlBatchStride, &mpVertexArray[7]);
 	GL_CHECK_FN();
 }
 
@@ -1726,7 +1703,7 @@ GLenum cLowLevelGraphicsSDL::GetGLAlphaTestFuncEnum(eAlphaTestFunc type) {
 	default:
 		break;
 	}
-	Hpl1::logError(Hpl1::kDebugOpenGL ,"invalid alpha test function (%d)", type);
+	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid alpha test function (%d)", type);
 	return 0;
 }
 
