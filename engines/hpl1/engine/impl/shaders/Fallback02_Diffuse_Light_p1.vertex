@@ -38,5 +38,5 @@ void main()
 	//Transform the lightdir
 	vLightDir = (rotation * vLightDir);
 
-	vColor = 1;
+	vColor = vec4(1.0);
 }

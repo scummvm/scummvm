@@ -26,6 +26,6 @@ void main()
 	gl_Position = (worldViewProj * position);
 
 	vUv = (fogEnd - gl_Position.z)/(fogEnd - fogStart);
-	vColor.xyz = fogColor;
+	vColor.xyz = clamp(fogColor, vec3(0.0), vec3(1.0));
 	vColor.w = 1;
 }

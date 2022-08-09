@@ -29,5 +29,5 @@ void main()
 
 	vUv = uv;
 
-	vLightColor = LightColor;
+	vLightColor = clamp(LightColor, vec4(0.0), vec4(1.0));
 }

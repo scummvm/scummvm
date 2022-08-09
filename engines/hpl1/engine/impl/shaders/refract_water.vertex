@@ -27,7 +27,7 @@ void main()
 {
 	gl_Position = (worldViewProj * position);
 
-	outColor = color;
+	vColor = clamp(color, vec4(0.0), vec4(1.0));
 
 	vUv = uv;
 

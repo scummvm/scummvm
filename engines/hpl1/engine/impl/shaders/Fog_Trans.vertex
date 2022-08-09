@@ -27,5 +27,5 @@ void main()
 
 	vUv = uv.xy;
 	vFogUv = (fogEnd - gl_Position.z)/(fogEnd - fogStart);
-	vColor = color;
+	vColor = clamp(color, vec4(0.0), vec4(1.0));
 }

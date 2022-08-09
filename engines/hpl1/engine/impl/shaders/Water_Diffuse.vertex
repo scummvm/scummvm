@@ -29,7 +29,7 @@ void main()
 	gl_Position.y += sin(timeCount*speed + (position.x)*freq)*amp;
 	gl_Position.y += sin(timeCount*speed + (position.z)*freq)*amp;
 
-	vColor = color;
+	vColor = clamp(color, vec3(0.0), vec3(1.0));
 
 	vUv = uv;
 }
