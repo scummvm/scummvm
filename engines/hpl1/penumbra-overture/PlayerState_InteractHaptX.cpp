@@ -77,7 +77,7 @@ void cPlayerState_GrabHaptX::OnUpdate(float afTimeStep) {
 	// Get needed varaibles
 	cCamera3D *pCamera = mpPlayer->GetCamera();
 	iPhysicsWorld *pPhysicsWorld = mpInit->mpGame->GetScene()->GetWorld3D()->GetPhysicsWorld();
-	cInput *pInput = mpInit->mpGame->GetInput();
+	/*cInput *pInput = */mpInit->mpGame->GetInput();
 
 	cVector3f vProxyPos = mpLowLevelHaptic->GetProxyPosition();
 
@@ -139,7 +139,7 @@ void cPlayerState_GrabHaptX::OnUpdate(float afTimeStep) {
 
 	///////////////////////////////////////
 	// Get the desired position
-	cVector3f vForward = cMath::Vector3Normalize(vProxyPos - pCamera->GetPosition());
+	/*cVector3f vForward = */cMath::Vector3Normalize(vProxyPos - pCamera->GetPosition());
 	/*pCamera->UnProject(mpPlayer->GetCrossHairPos(),
 	mpInit->mpGame->GetGraphics()->GetLowLevel());*/
 
@@ -239,9 +239,9 @@ void cPlayerState_GrabHaptX::OnDraw() {
 //-----------------------------------------------------------------------
 
 void cPlayerState_GrabHaptX::OnPostSceneDraw() {
-	iLowLevelGraphics *pLowGfx = mpInit->mpGame->GetGraphics()->GetLowLevel();
+	/*iLowLevelGraphics *pLowGfx = */mpInit->mpGame->GetGraphics()->GetLowLevel();
 
-	cVector3f vPickPoint = cMath::MatrixMul(mpPushBody->GetWorldMatrix(), mvRelPickPoint);
+	/*cVector3f vPickPoint = */cMath::MatrixMul(mpPushBody->GetWorldMatrix(), mvRelPickPoint);
 
 	// pLowGfx->DrawSphere(vPickPoint, 0.2f, cColor(1,1,1,1));
 	// pLowGfx->DrawSphere(mvCurrentDisered, 0.2f, cColor(1,1,1,1));

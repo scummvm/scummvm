@@ -905,9 +905,9 @@ void cPortalContainer::AddLightShadowCasters(iLight3D *apLight, cFrustum *apFrus
 
 			// If the light is static and the static list is not filled yet.
 			if (!(apLight->IsStatic() && apLight->AllStaticCastersAdded())) {
-				tRenderableSetIt it = pSector->m_setStaticObjects.begin();
-				for (; it != pSector->m_setStaticObjects.end(); ++it) {
-					iRenderable *pR = *it;
+				tRenderableSetIt it2 = pSector->m_setStaticObjects.begin();
+				for (; it2 != pSector->m_setStaticObjects.end(); ++it2) {
+					iRenderable *pR = *it2;
 					if (bLog)
 						Log("Adding static '%s' type: %s\n", pR->GetName().c_str(), pR->GetEntityType().c_str());
 					apLight->AddShadowCaster(pR, apFrustum, true, apRenderList);
@@ -915,9 +915,9 @@ void cPortalContainer::AddLightShadowCasters(iLight3D *apLight, cFrustum *apFrus
 			}
 
 			// Add dynamic objects
-			tRenderableSetIt it = pSector->m_setDynamicObjects.begin();
-			for (; it != pSector->m_setDynamicObjects.end(); ++it) {
-				iRenderable *pR = *it;
+			tRenderableSetIt it2 = pSector->m_setDynamicObjects.begin();
+			for (; it2 != pSector->m_setDynamicObjects.end(); ++it2) {
+				iRenderable *pR = *it2;
 				if (bLog)
 					Log("Adding dynamic '%s' type: %s\n", pR->GetName().c_str(), pR->GetEntityType().c_str());
 				apLight->AddShadowCaster(pR, apFrustum, false, apRenderList);

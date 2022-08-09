@@ -127,7 +127,7 @@ void CreateMessageBoxW(const wchar_t *caption, const wchar_t *fmt, ...) {
 
 //-----------------------------------------------------------------------
 
-static cDate DateFromGMTIme(struct tm *apClock) {
+/*static cDate DateFromGMTIme(struct tm *apClock) {
 	cDate date;
 
 	date.seconds = apClock->tm_sec;
@@ -140,7 +140,7 @@ static cDate DateFromGMTIme(struct tm *apClock) {
 	date.year_day = apClock->tm_yday;
 
 	return date;
-}
+}*/
 
 //-----------------------------------------------------------------------
 

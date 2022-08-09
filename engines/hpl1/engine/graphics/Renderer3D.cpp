@@ -873,7 +873,7 @@ void cRenderer3D::RenderTrans(cCamera3D *apCamera) {
 		mRenderSettings.mpTexture[i] = NULL;
 	}*/
 
-	cVector3f vForward = apCamera->GetForward();
+	/*cVector3f vForward = */apCamera->GetForward();
 
 	//////////////////////////////////
 	// Iterate the query objects

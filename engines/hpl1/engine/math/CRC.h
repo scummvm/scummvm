@@ -52,7 +52,7 @@ private:
 
 class cCRC {
 public:
-	cCRC(tCRCKey key) : mKey(key), mRegister(0) {
+	cCRC(tCRCKey key) : mRegister(0) {
 		mTable.Init(key);
 	}
 
@@ -66,7 +66,6 @@ public:
 
 private:
 	static cCRCTable mTable;
-	tCRCKey mKey;
 	tCRCKey mRegister;
 };
 

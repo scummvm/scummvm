@@ -78,8 +78,8 @@ cMesh *cMeshManager::CreateMesh(const tString &asName) {
 		tStringVec *pTypes = mpResources->GetMeshLoaderHandler()->GetSupportedTypes();
 		for (size_t i = 0; i < pTypes->size(); i++) {
 			asNewName = cString::SetFileExt(asNewName, (*pTypes)[i]);
-			tString sPath = mpResources->GetFileSearcher()->GetFilePath(asNewName);
-			if (sPath != "") {
+			tString sPath2 = mpResources->GetFileSearcher()->GetFilePath(asNewName);
+			if (sPath2 != "") {
 				bFound = true;
 				break;
 			}

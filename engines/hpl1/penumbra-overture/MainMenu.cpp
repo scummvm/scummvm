@@ -1775,7 +1775,7 @@ public:
 	}
 
 private:
-	cMainMenuWidget_Text *mpKeyWidget;
+	//cMainMenuWidget_Text *mpKeyWidget;
 	tString msActionName;
 };
 
@@ -2612,7 +2612,7 @@ void cMainMenu::CreateWidgets() {
 		AddWidgetToState(state, gpSaveGameList[i]);
 
 		LowLevelResources *pLowLevelResources = mpInit->mpGame->GetResources()->GetLowLevel();
-		LowLevelSystem *pLowLevelSystem = mpInit->mpGame->GetSystem()->GetLowLevel();
+		/*LowLevelSystem *pLowLevelSystem = */mpInit->mpGame->GetSystem()->GetLowLevel();
 
 		tStringList lstFiles;
 		tTempFileAndDataSet setTempFiles;
@@ -2711,34 +2711,34 @@ void cMainMenu::CreateWidgets() {
 	if (mpInit->mbHapticsAvailable) {
 		vPos.y += 5;
 		// Use haptics
-		tWString sText = kTranslate("MainMenu", "Use Haptics:");
-		if (sText == _W(""))
-			sText = _W("Use Haptics:");
-		pWidgetUseHaptics = hplNew(cMainMenuWidget_UseHaptics, (mpInit, vPos, sText, 20, eFontAlign_Right));
+		tWString sText2 = kTranslate("MainMenu", "Use Haptics:");
+		if (sText2 == _W(""))
+			sText2 = _W("Use Haptics:");
+		pWidgetUseHaptics = hplNew(cMainMenuWidget_UseHaptics, (mpInit, vPos, sText2, 20, eFontAlign_Right));
 		AddWidgetToState(eMainMenuState_OptionsControls, pWidgetUseHaptics);
 		vPos.y += 29;
 
 		// Weight Force Scale
-		sText = kTranslate("MainMenu", "Weight Force Scale:");
-		if (sText == _W(""))
-			sText = _W("Weight Force Scale:");
-		pWidgetWeightForceScale = hplNew(cMainMenuWidget_WeightForceScale, (mpInit, vPos, sText, 20, eFontAlign_Right));
+		sText2 = kTranslate("MainMenu", "Weight Force Scale:");
+		if (sText2 == _W(""))
+			sText2 = _W("Weight Force Scale:");
+		pWidgetWeightForceScale = hplNew(cMainMenuWidget_WeightForceScale, (mpInit, vPos, sText2, 20, eFontAlign_Right));
 		AddWidgetToState(eMainMenuState_OptionsControls, pWidgetWeightForceScale);
 		vPos.y += 29;
 
 		// InteractMode camera speed
-		sText = kTranslate("MainMenu", "InteractMode Camera Speed:");
-		if (sText == _W(""))
-			sText = _W("InteractMode Camera Speed:");
-		pWidgetInteractModeCameraSpeed = hplNew(cMainMenuWidget_InteractModeCameraSpeed, (mpInit, vPos, sText, 20, eFontAlign_Right));
+		sText2 = kTranslate("MainMenu", "InteractMode Camera Speed:");
+		if (sText2 == _W(""))
+			sText2 = _W("InteractMode Camera Speed:");
+		pWidgetInteractModeCameraSpeed = hplNew(cMainMenuWidget_InteractModeCameraSpeed, (mpInit, vPos, sText2, 20, eFontAlign_Right));
 		AddWidgetToState(eMainMenuState_OptionsControls, pWidgetInteractModeCameraSpeed);
 		vPos.y += 29;
 
 		// ActionMode camera speed
-		sText = kTranslate("MainMenu", "ActionMode Camera Speed:");
-		if (sText == _W(""))
-			sText = _W("ActionMode Camera Speed:");
-		pWidgetActionModeCameraSpeed = hplNew(cMainMenuWidget_ActionModeCameraSpeed, (mpInit, vPos, sText, 20, eFontAlign_Right));
+		sText2 = kTranslate("MainMenu", "ActionMode Camera Speed:");
+		if (sText2 == _W(""))
+			sText2 = _W("ActionMode Camera Speed:");
+		pWidgetActionModeCameraSpeed = hplNew(cMainMenuWidget_ActionModeCameraSpeed, (mpInit, vPos, sText2, 20, eFontAlign_Right));
 		AddWidgetToState(eMainMenuState_OptionsControls, pWidgetActionModeCameraSpeed);
 		vPos.y += 29;
 
@@ -2799,23 +2799,23 @@ void cMainMenu::CreateWidgets() {
 	///////////////////////////////////
 	for (int i = 0; i < 3; ++i) {
 		eMainMenuState state = (eMainMenuState)(i + eMainMenuState_OptionsKeySetupMove);
-		cVector3f vPos = vTextStart; // cVector3f(400, 260, 40);
+		cVector3f vPos2 = vTextStart; // cVector3f(400, 260, 40);
 		// Head
-		AddWidgetToState(state, hplNew(cMainMenuWidget_Text, (mpInit, vPos, kTranslate("MainMenu", "Configure Keys"), 25, eFontAlign_Center)));
-		vPos.y += 42;
-		vPos.x -= 110;
+		AddWidgetToState(state, hplNew(cMainMenuWidget_Text, (mpInit, vPos2, kTranslate("MainMenu", "Configure Keys"), 25, eFontAlign_Center)));
+		vPos2.y += 42;
+		vPos2.x -= 110;
 		// Buttons
-		AddWidgetToState(state, hplNew(cMainMenuWidget_Button, (mpInit, vPos, kTranslate("MainMenu", "Movement"), eMainMenuState_OptionsKeySetupMove, 25, eFontAlign_Center)));
-		vPos.y += 32;
-		AddWidgetToState(state, hplNew(cMainMenuWidget_Button, (mpInit, vPos, kTranslate("MainMenu", "Actions"), eMainMenuState_OptionsKeySetupAction, 25, eFontAlign_Center)));
-		vPos.y += 32;
-		AddWidgetToState(state, hplNew(cMainMenuWidget_Button, (mpInit, vPos, kTranslate("MainMenu", "Misc"), eMainMenuState_OptionsKeySetupMisc, 25, eFontAlign_Center)));
+		AddWidgetToState(state, hplNew(cMainMenuWidget_Button, (mpInit, vPos2, kTranslate("MainMenu", "Movement"), eMainMenuState_OptionsKeySetupMove, 25, eFontAlign_Center)));
+		vPos2.y += 32;
+		AddWidgetToState(state, hplNew(cMainMenuWidget_Button, (mpInit, vPos2, kTranslate("MainMenu", "Actions"), eMainMenuState_OptionsKeySetupAction, 25, eFontAlign_Center)));
+		vPos2.y += 32;
+		AddWidgetToState(state, hplNew(cMainMenuWidget_Button, (mpInit, vPos2, kTranslate("MainMenu", "Misc"), eMainMenuState_OptionsKeySetupMisc, 25, eFontAlign_Center)));
 		// Back
-		vPos.y += 150;
-		vPos.x += 130;
-		AddWidgetToState(state, hplNew(cMainMenuWidget_KeyReset, (mpInit, vPos, kTranslate("MainMenu", "Reset to defaults"), 23, eFontAlign_Center)));
-		vPos.y += 32;
-		AddWidgetToState(state, hplNew(cMainMenuWidget_Button, (mpInit, vPos, kTranslate("MainMenu", "Back"), eMainMenuState_OptionsControls, 23, eFontAlign_Center)));
+		vPos2.y += 150;
+		vPos2.x += 130;
+		AddWidgetToState(state, hplNew(cMainMenuWidget_KeyReset, (mpInit, vPos2, kTranslate("MainMenu", "Reset to defaults"), 23, eFontAlign_Center)));
+		vPos2.y += 32;
+		AddWidgetToState(state, hplNew(cMainMenuWidget_Button, (mpInit, vPos2, kTranslate("MainMenu", "Back"), eMainMenuState_OptionsControls, 23, eFontAlign_Center)));
 	}
 
 	///////////////////////////////////
@@ -2826,7 +2826,7 @@ void cMainMenu::CreateWidgets() {
 	float fKeyTextXAdd = 195;
 
 	// Key buttons
-	cInput *pInput = mpInit->mpGame->GetInput();
+	/*cInput *pInput = */mpInit->mpGame->GetInput();
 	vPos = vTextStart; // cVector3f(400, 260, 40);
 	vPos.y += 46;
 	vPos.x += 15;

@@ -540,12 +540,12 @@ void cHudModel_WeaponMelee::Attack() {
 
 			// Add force to bodies
 			for (int i = 0; i < pEnemy->GetBodyNum(); ++i) {
-				iPhysicsBody *pBody = pEnemy->GetBody(i);
+				iPhysicsBody *pBody2 = pEnemy->GetBody(i);
 
-				pBody->AddImpulse(vForceDir * fForceSize * 0.5f);
+				pBody2->AddImpulse(vForceDir * fForceSize * 0.5f);
 
 				cVector3f vTorque = vSpinMul * fMass * fForceSize * 0.5f;
-				pBody->AddTorque(vTorque);
+				pBody2->AddTorque(vTorque);
 			}
 
 			// Calculate damage
@@ -590,7 +590,7 @@ void cHudModel_WeaponMelee::Attack() {
 	while (it.HasNext()) {
 		iPhysicsBody *pBody = it.Next();
 
-		float fMass = pBody->GetMass();
+		/*float fMass = */pBody->GetMass();
 
 		if (pBody->IsActive() == false)
 			continue;

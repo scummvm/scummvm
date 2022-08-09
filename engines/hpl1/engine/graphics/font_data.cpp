@@ -179,7 +179,7 @@ void FontData::draw(const cVector3f &avPos, const cVector2f &avSize, const cColo
 	va_end(ap);
 
 	int lCount = 0;
-	float lXAdd = 0;
+	//float lXAdd = 0;
 	cVector3f vPos = avPos;
 
 	if (aAlign == eFontAlign_Center) {
@@ -336,7 +336,7 @@ void FontData::getWordWrapRows(float afLength, float afFontHeight, cVector2f avS
 
 float FontData::getLength(const cVector2f &avSize, const wchar_t *sText) {
 	int lCount = 0;
-	float lXAdd = 0;
+	//float lXAdd = 0;
 	float fLength = 0;
 	while (sText[lCount] != 0) {
 		unsigned short lGlyphNum = ((wchar_t)sText[lCount]);
@@ -348,8 +348,8 @@ float FontData::getLength(const cVector2f &avSize, const wchar_t *sText) {
 
 		Glyph *pGlyph = _glyphs[lGlyphNum];
 		if (pGlyph) {
-			cVector2f vOffset(pGlyph->_offset * avSize);
-			cVector2f vSize(pGlyph->_size * avSize);
+			//cVector2f vOffset(pGlyph->_offset * avSize);
+			//cVector2f vSize(pGlyph->_size * avSize);
 
 			fLength += pGlyph->_advance * avSize.x;
 		}

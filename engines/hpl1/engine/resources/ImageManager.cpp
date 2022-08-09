@@ -180,10 +180,10 @@ void cImageManager::Destroy(iResourceBase *apResource) {
 
 		// Delete the bitmap frame that has this this frame.
 		for (tFrameBitmapListIt it = mlstBitmapFrames.begin(); it != mlstBitmapFrames.end(); ++it) {
-			cFrameBitmap *pBmpFrame = *it;
-			if (pBmpFrame->GetFrameTexture() == pFrame) {
+			cFrameBitmap *pBmpFrame2 = *it;
+			if (pBmpFrame2->GetFrameTexture() == pFrame) {
 				// Log("and bitmap...");
-				hplDelete(pBmpFrame);
+				hplDelete(pBmpFrame2);
 				mlstBitmapFrames.erase(it);
 				break;
 			}

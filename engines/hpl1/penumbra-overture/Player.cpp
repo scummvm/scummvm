@@ -1093,7 +1093,7 @@ void cPlayer::Update(float afTimeStep) {
 	/////////////////////////////////////////////////
 	// Collide script
 	pPhysicsWorld = mpInit->mpGame->GetScene()->GetWorld3D()->GetPhysicsWorld();
-	cWorld3D *pWorld = mpInit->mpGame->GetScene()->GetWorld3D();
+	/*cWorld3D *pWorld = */mpInit->mpGame->GetScene()->GetWorld3D();
 	cCollideData collideData;
 	collideData.SetMaxSize(1);
 

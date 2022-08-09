@@ -817,7 +817,7 @@ void iLight3D::RenderShadow(iRenderable *apObject, cRenderSettings *apRenderSett
 void iLight3D::OnFlickerOff() {
 	// Particle system
 	if (msFlickerOffPS != "") {
-		cParticleSystem3D *pPS = mpWorld3D->CreateParticleSystem(GetName() + "_PS",
+		/*cParticleSystem3D *pPS = */mpWorld3D->CreateParticleSystem(GetName() + "_PS",
 																 msFlickerOffPS, cVector3f(1, 1, 1), GetWorldMatrix());
 	}
 }
@@ -827,7 +827,7 @@ void iLight3D::OnFlickerOff() {
 void iLight3D::OnFlickerOn() {
 	// Particle system
 	if (msFlickerOnPS != "") {
-		cParticleSystem3D *pPS = mpWorld3D->CreateParticleSystem(GetName() + "_PS",
+		/*cParticleSystem3D *pPS = */mpWorld3D->CreateParticleSystem(GetName() + "_PS",
 																 msFlickerOnPS, cVector3f(1, 1, 1), GetWorldMatrix());
 	}
 }

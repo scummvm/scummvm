@@ -210,7 +210,7 @@ bool cAttackHandler::CreateShapeAttack(iCollideShape *apShape, const cMatrixf &a
 	std::list<iPhysicsBody *>::iterator it = lstTempBodies.begin();
 	for (; it != lstTempBodies.end(); ++it) {
 		iPhysicsBody *pBody = *it;
-		float fMass = pBody->GetMass();
+		/*float fMass = */pBody->GetMass();
 
 		if (pBody->IsActive() == false)
 			continue;
@@ -247,14 +247,14 @@ bool cAttackHandler::CreateShapeAttack(iCollideShape *apShape, const cMatrixf &a
 					}
 
 					// Impulse
-					float fMass = mpInit->mpPlayer->GetCharacterBody()->GetMass();
+					float fMass2 = mpInit->mpPlayer->GetCharacterBody()->GetMass();
 					float fForceSize = 0;
-					if (fMass > afMaxMass * 10)
+					if (fMass2 > afMaxMass * 10)
 						fForceSize = 0;
-					else if (fMass <= afMinMass * 10)
+					else if (fMass2 <= afMinMass * 10)
 						fForceSize = afMaxImpulse * 10;
 					else {
-						float fT = (fMass - afMinMass * 10) / (afMaxMass * 10 - afMinMass * 10);
+						float fT = (fMass2 - afMinMass * 10) / (afMaxMass * 10 - afMinMass * 10);
 						fForceSize = afMinImpulse * 10 * fT + afMaxImpulse * 10 * (1 - fT);
 					}
 
@@ -298,8 +298,8 @@ bool cAttackHandler::CreateShapeAttack(iCollideShape *apShape, const cMatrixf &a
 	// Iterate bodies hit, this to
 	// spread out the impulse.
 	float fAmount = (float)lstBodies.size();
-	for (tPhysicsBodyListIt it = lstBodies.begin(); it != lstBodies.end(); ++it) {
-		iPhysicsBody *pBody = *it;
+	for (tPhysicsBodyListIt it2 = lstBodies.begin(); it2 != lstBodies.end(); ++it2) {
+		iPhysicsBody *pBody = *it2;
 
 		// Calculate force
 		float fMass = pBody->GetMass();

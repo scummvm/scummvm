@@ -160,7 +160,7 @@ private:
 	float mfAttackCount;
 
 	bool mbInteractDown;
-	int mlInteractCount;
+	//int mlInteractCount;
 
 	cVector3f mvRotation;
 	cVector3f mvGoalRotation;

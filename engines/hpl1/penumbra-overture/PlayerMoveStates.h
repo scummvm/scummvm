@@ -368,7 +368,7 @@ public:
 		float fSpeed = vForceVel.Length();
 
 		if (fSpeed > mfMaxForward) {
-			float fNeg = fSpeed - mfMaxForward;
+			//float fNeg = fSpeed - mfMaxForward;
 
 			float fForwardSpeed = pBody->GetMoveSpeed(eCharDir_Forward);
 			/*if(fForwardSpeed>0){
@@ -468,7 +468,7 @@ public:
 			iCollideShape *pShape = pBody->GetExtraBody(i)->GetShape();
 
 			cVector3f vNewPos = pBody->GetPosition();
-			bool bCollide = pWorld->CheckShapeWorldCollision(&vNewPos, pShape,
+			/*bool bCollide = */pWorld->CheckShapeWorldCollision(&vNewPos, pShape,
 															 cMath::MatrixTranslate(pBody->GetPosition()),
 															 pBody->GetBody(), false, true);
 

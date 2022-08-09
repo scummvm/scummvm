@@ -486,6 +486,10 @@ void cGameObject::OnPlayerInteract() {
 	case eObjectInteractMode_Grab:
 		GrabObject();
 		break;
+	case eObjectInteractMode_Static:
+		break;
+	case eObjectInteractMode_LastEnum:
+		break;
 	}
 }
 
@@ -658,7 +662,7 @@ void cGameObject::BreakAction() {
 	//////////////////
 	// Particle System
 	if (mBreakProps.msPS != "") {
-		cParticleSystem3D *pPS = pWorld->CreateParticleSystem("Break", mBreakProps.msPS, cVector3f(1, 1, 1),
+		/*cParticleSystem3D *pPS = */pWorld->CreateParticleSystem("Break", mBreakProps.msPS, cVector3f(1, 1, 1),
 															  pParentBody->GetWorldMatrix());
 	}
 

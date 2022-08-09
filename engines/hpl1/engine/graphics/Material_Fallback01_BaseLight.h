@@ -123,7 +123,7 @@ public:
 private:
 	void InitData();
 
-	int mlBind;
+	//int mlBind;
 };
 
 //---------------------------------------------------------------
@@ -152,7 +152,7 @@ public:
 private:
 	void InitData();
 
-	int mlBind;
+	//int mlBind;
 };
 
 //---------------------------------------------------------------
@@ -181,7 +181,7 @@ public:
 private:
 	void InitData();
 
-	int mlBind;
+	//int mlBind;
 };
 
 //---------------------------------------------------------------

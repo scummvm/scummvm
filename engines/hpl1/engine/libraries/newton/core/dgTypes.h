@@ -375,10 +375,10 @@ void dgRadixSort(T *const array,
 				scanCount[i] = scanCount[i - 1] + histogram[i - 1][radix + 1];
 			}
 
-			dgInt32 radixShift = (radix + 1) << 3;
+			dgInt32 radixShift2 = (radix + 1) << 3;
 
 			for (dgInt32 i = 0; i < elements; i++) {
-				dgInt32 key = (getRadixKey(&array[i], context) >> radixShift) & 0xff;
+				dgInt32 key = (getRadixKey(&array[i], context) >> radixShift2) & 0xff;
 				dgInt32 index = scanCount[key];
 				array[index] = tmpArray[i];
 				scanCount[key] = index + 1;

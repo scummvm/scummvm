@@ -51,7 +51,7 @@ public:
 private:
 	tVertexVec mvVtx;
 	iMaterial *mpMat;
-	float mfZ;
+	//float mfZ;
 	bool mbIsImage;
 
 	tString msSourceFile;

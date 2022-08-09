@@ -411,10 +411,10 @@ bool cGameItemType_WeaponMeleeHaptX::OnAction(cInventoryItem *apItem, int alActi
 
 			//////////////////////////
 			// Set up the melee state
-			iPlayerState *pState = mpInit->mpPlayer->GetStateData(ePlayerState_WeaponMelee);
+			iPlayerState *pState2 = mpInit->mpPlayer->GetStateData(ePlayerState_WeaponMelee);
 
-			cPlayerState_WeaponMeleeHaptX *pMeleeState = static_cast<cPlayerState_WeaponMeleeHaptX *>(pState);
-			pMeleeState->SetHudWeapon(pMeleeHud);
+			cPlayerState_WeaponMeleeHaptX *pMeleeState2 = static_cast<cPlayerState_WeaponMeleeHaptX *>(pState2);
+			pMeleeState2->SetHudWeapon(pMeleeHud);
 
 			// change state to melee
 			mpInit->mpPlayer->ChangeState(ePlayerState_WeaponMelee);

@@ -825,7 +825,7 @@ void iCharacterBody::Update(float afTimeStep) {
 		mvPosition += cVector3f(mvVelolcity.x, 0, mvVelolcity.z) * afTimeStep;
 
 		vNewPos = mvPosition;
-		bool bCollide = mpWorld->CheckShapeWorldCollision(&vNewPos, mpBody->GetShape(), cMath::MatrixTranslate(mvPosition),
+		/*bool bCollide = */mpWorld->CheckShapeWorldCollision(&vNewPos, mpBody->GetShape(), cMath::MatrixTranslate(mvPosition),
 														  mpBody, false, true, NULL, mbCollideCharacter);
 
 		// Set new velocity depending on collisions.

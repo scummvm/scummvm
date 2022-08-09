@@ -447,9 +447,9 @@ void cHapticGameCamera::UpdateCameraOrientation(float afTimeStep)
 			cVector3f vDir = cMath::Vector3Normalize(vDeltaPos);
 
 			//Force
-			cVector3f vForce = vDir * fLength * 0.012f;
+			cVector3f vForce2 = vDir * fLength * 0.012f;
 			mpForce->SetActive(true);
-			mpForce->SetForce(vForce);
+			mpForce->SetForce(vForce2);
 
 			//Movement
 			if(mbCamMove) 

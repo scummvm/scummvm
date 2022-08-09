@@ -67,7 +67,7 @@ void cGLStateTwoUnits_Diffuse::UnBind() {
 //-----------------------------------------------------------------------
 
 cGLStateTwoUnits_ATIDiffuse::cGLStateTwoUnits_ATIDiffuse()
-	: iGLStateProgram("Internal_TwoUnit_ATIDiffuse"), mlBind(0) {
+	: iGLStateProgram("Internal_TwoUnit_ATIDiffuse")/*, mlBind(0)*/ {
 }
 
 void cGLStateTwoUnits_ATIDiffuse::InitData() {

@@ -302,8 +302,8 @@ iTexture *cTextureManager::CreateAttenuation(const tString &asFallOffName) {
 	if (cString::GetFileExt(asFallOffName) != "") {
 		sPath = mpFileSearcher->GetFilePath(asFallOffName);
 	} else {
-		for (tStringListIt it = mlstFileFormats.begin(); it != mlstFileFormats.end(); ++it) {
-			tString sFileName = cString::SetFileExt(asFallOffName, *it);
+		for (tStringListIt it2 = mlstFileFormats.begin(); it2 != mlstFileFormats.end(); ++it2) {
+			tString sFileName = cString::SetFileExt(asFallOffName, *it2);
 			sPath = mpFileSearcher->GetFilePath(sFileName);
 			if (sPath != "")
 				break;
@@ -322,7 +322,7 @@ iTexture *cTextureManager::CreateAttenuation(const tString &asFallOffName) {
 
 	int lBmpChannels = pBmp->getNumChannels();
 	int lWidth = pBmp->getWidth();
-	unsigned char *pPixels = (unsigned char *)pBmp->getRawData();
+	unsigned char *pPixels = (unsigned char *)const_cast<void *>(pBmp->getRawData());
 
 	iTexture *pTexture = mpGraphics->GetLowLevel()->CreateTexture("Attenuation", false, eTextureType_Normal, eTextureTarget_3D);
 	int lSize = 16;

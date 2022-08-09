@@ -81,8 +81,8 @@ namespace hpl {
 		int lSH = apSrc->getHeight()+2;
 
 		//destination size
-		int lDW = mpBitmap->getWidth();
-		int lDH = mpBitmap->getHeight();
+		//int lDW = mpBitmap->getWidth();
+		//int lDH = mpBitmap->getHeight();
 
 		cVector2l vPos;
 
@@ -200,28 +200,28 @@ namespace hpl {
 		if(DEBUG_BTREE)
 		{
 			Log("Current Tree begin:\n");
-			tRectTreeNodeList lstNodes =  mRects.GetNodeList();
-			tRectTreeNodeListIt it;
-			int node=0;
-			for(it = lstNodes.begin();it!=lstNodes.end();++it)
+			tRectTreeNodeList lstNodes2 =  mRects.GetNodeList();
+			tRectTreeNodeListIt it2;
+			int node2=0;
+			for(it2 = lstNodes2.begin();it2!=lstNodes2.end();++it)
 			{
-				cRect2l Rect = (*it)->GetData()->mRect;
+				cRect2l Rect = (*it2)->GetData()->mRect;
 				int h = (*it)->GetData()->mlHandle;
-				Log(" %d: [%d:%d:%d:%d]:%d\n",node,Rect.x,Rect.y,Rect.w,Rect.h,h);
-				node++;
+				Log(" %d: [%d:%d:%d:%d]:%d\n",node2,Rect.x,Rect.y,Rect.w,Rect.h,h);
+				node2++;
 			}
 			Log("Current Tree end:\n");
 			Log("-----------------\n");
 
 			Log("Current Leaves begin:\n");
-			lstNodes =  mRects.GetLeafList();
-			node=0;
-			for(it = lstNodes.begin();it!=lstNodes.end();++it)
+			lstNodes2 =  mRects.GetLeafList();
+			node2=0;
+			for(it2 = lstNodes2.begin();it2!=lstNodes2.end();++it)
 			{
-				cRect2l Rect = (*it)->GetData()->mRect;
-				int h = (*it)->GetData()->mlHandle;
-				Log(" %d: [%d:%d:%d:%d]: %d\n",node,Rect.x,Rect.y,Rect.w,Rect.h,h);
-				node++;
+				cRect2l Rect = (*it2)->GetData()->mRect;
+				int h = (*it2)->GetData()->mlHandle;
+				Log(" %d: [%d:%d:%d:%d]: %d\n",node2,Rect.x,Rect.y,Rect.w,Rect.h,h);
+				node2++;
 			}
 			Log("Current Tree end:\n");
 			Log("-----------------\n");

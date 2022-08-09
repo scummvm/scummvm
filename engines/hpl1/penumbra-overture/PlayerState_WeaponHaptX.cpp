@@ -804,12 +804,12 @@ bool cPlayerState_WeaponMeleeHaptX::CheckAttack(const cMatrixf &a_mtxTransform, 
 
 			// Add force to bodies
 			for (int i = 0; i < pEnemy->GetBodyNum(); ++i) {
-				iPhysicsBody *pBody = pEnemy->GetBody(i);
+				iPhysicsBody *pBody2 = pEnemy->GetBody(i);
 
-				pBody->AddImpulse(vForceDir * fForceSize * 0.5f);
+				pBody2->AddImpulse(vForceDir * fForceSize * 0.5f);
 
 				cVector3f vTorque = cVector3f(0, 1, 0) * fMass * fForceSize * 0.5f;
-				pBody->AddTorque(vTorque);
+				pBody2->AddTorque(vTorque);
 			}
 
 			// Calculate damage
@@ -852,7 +852,7 @@ bool cPlayerState_WeaponMeleeHaptX::CheckAttack(const cMatrixf &a_mtxTransform, 
 	while (it.HasNext()) {
 		iPhysicsBody *pBody = it.Next();
 
-		float fMass = pBody->GetMass();
+		/*float fMass = */pBody->GetMass();
 
 		if (pBody->IsActive() == false)
 			continue;

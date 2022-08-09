@@ -129,7 +129,7 @@ public:
 class cPlayerState_MessageHaptX : public iPlayerState {
 private:
 	ePlayerMoveState mPrevMoveState;
-	ePlayerState mPrevState;
+	//ePlayerState mPrevState;
 
 public:
 	cPlayerState_MessageHaptX(cInit *apInit, cPlayer *apPlayer);

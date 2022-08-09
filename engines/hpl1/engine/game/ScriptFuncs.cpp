@@ -977,6 +977,10 @@ static float GetJointProperty(std::string asJointName, std::string asProp) {
 			iPhysicsJointSlider *pSliderJoint = static_cast<iPhysicsJointSlider *>(pJoint);
 			return pSliderJoint->GetMinDistance();
 		}
+		case ePhysicsJointType_Ball:
+			break;
+		case ePhysicsJointType_LastEnum:
+			break;
 		}
 	}
 	/////////////////////////////
@@ -995,6 +999,10 @@ static float GetJointProperty(std::string asJointName, std::string asProp) {
 			iPhysicsJointSlider *pSliderJoint = static_cast<iPhysicsJointSlider *>(pJoint);
 			return pSliderJoint->GetMaxDistance();
 		}
+		case ePhysicsJointType_Ball:
+			break;
+		case ePhysicsJointType_LastEnum:
+			break;
 		}
 	}
 

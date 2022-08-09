@@ -67,7 +67,7 @@ void cGLState_Diffuse::UnBind() {
 //-----------------------------------------------------------------------
 
 cGLState_ATIDiffuse::cGLState_ATIDiffuse()
-	: iGLStateProgram("Internal_ATIDiffuse"), mlBind(0) {
+	: iGLStateProgram("Internal_ATIDiffuse")/*, mlBind(0)*/ {
 }
 
 void cGLState_ATIDiffuse::InitData() {
@@ -148,7 +148,7 @@ void cGLState_Bump::UnBind() {
 //-----------------------------------------------------------------------
 
 cGLState_ATIBump::cGLState_ATIBump()
-	: iGLStateProgram("Internal_ATIBump"), mlBind(0) {
+	: iGLStateProgram("Internal_ATIBump")/*, mlBind(0)*/ {
 }
 
 void cGLState_ATIBump::InitData() {
@@ -216,7 +216,7 @@ void cGLState_Spot::UnBind() {
 //-----------------------------------------------------------------------
 
 cGLState_ATISpot::cGLState_ATISpot()
-	: iGLStateProgram("Internal_ATISpot"), mlBind(0) {
+	: iGLStateProgram("Internal_ATISpot")/*, mlBind(0)*/ {
 }
 
 void cGLState_ATISpot::InitData() {

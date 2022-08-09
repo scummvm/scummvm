@@ -234,7 +234,7 @@ cMeshEntity::cMeshEntity(const tString asName, cMesh *apMesh, cMaterialManager *
 			// Set the sub entity with the mesh node world matrix
 			cSubMeshEntity *pSubEntity = GetSubMeshEntityName(pMeshNode->GetSource());
 			if (pSubEntity) {
-				cSubMesh *pSubMesh = pSubEntity->GetSubMesh();
+				/*cSubMesh *pSubMesh = */pSubEntity->GetSubMesh();
 				cMatrixf mtxSub = pMeshNode->GetWorldMatrix();
 
 				pSubEntity->SetMatrix(mtxSub);
@@ -352,8 +352,8 @@ cMeshEntity::cMeshEntity(const tString asName, cMesh *apMesh, cMaterialManager *
 
 cMeshEntity::~cMeshEntity() {
 	for (tEntity3DListIt it = mlstAttachedEntities.begin(); it != mlstAttachedEntities.end(); ++it) {
-		iEntity3D *pEntity = *it;
-		// TODOD: if(mpWorld) mpWorld->DestroyUnkownEntity(pEntity);
+		//iEntity3D *pEntity = *it;
+		// TODO: if(mpWorld) mpWorld->DestroyUnkownEntity(pEntity);
 	}
 
 	for (int i = 0; i < (int)mvSubMeshes.size(); i++) {
@@ -566,8 +566,8 @@ void cMeshEntity::UpdateLogic(float afTimeStep) {
 
 				cAnimation *pAnim = pAnimState->GetAnimation();
 
-				for (int i = 0; i < pAnim->GetTrackNum(); i++) {
-					cAnimationTrack *pTrack = pAnim->GetTrack(i);
+				for (int i2 = 0; i < pAnim->GetTrackNum(); i++) {
+					cAnimationTrack *pTrack = pAnim->GetTrack(i2);
 
 					if (pTrack->GetNodeIndex() < 0) {
 						pTrack->SetNodeIndex(GetNodeStateIndex(pTrack->GetName()));
@@ -677,8 +677,8 @@ void cMeshEntity::UpdateLogic(float afTimeStep) {
 			if (pAnimState->IsActive()) {
 				cAnimation *pAnim = pAnimState->GetAnimation();
 
-				for (int i = 0; i < pAnim->GetTrackNum(); i++) {
-					cAnimationTrack *pTrack = pAnim->GetTrack(i);
+				for (int i2 = 0; i2 < pAnim->GetTrackNum(); i2++) {
+					cAnimationTrack *pTrack = pAnim->GetTrack(i2);
 
 					cNode3D *pState = GetBoneState(pTrack->GetNodeIndex());
 
@@ -920,7 +920,7 @@ void cMeshEntity::FadeSkeletonPhysicsWeight(float afTime) {
 		for (int bone = 0; bone < GetBoneStateNum(); ++bone) {
 			cBoneState *pState = GetBoneState(bone);
 			iPhysicsBody *pBody = pState->GetBody();
-			iPhysicsBody *pColliderBody = pState->GetColliderBody();
+			/*iPhysicsBody *pColliderBody = */pState->GetColliderBody();
 
 			if (pBody)
 				pBody->SetActive(false);
@@ -1285,7 +1285,7 @@ void cMeshEntity::HandleAnimationEvent(cAnimationEvent *apEvent) {
 		}
 		break;
 	}
-	defzult:
+	default:
 		break;
 	}
 }
@@ -1351,9 +1351,9 @@ void cMeshEntity::UpdateBVFromSubs() {
 		// exported. This to give a working Bounding Volume.
 		// This fells kind a slow... but might be only way..
 
-		cMatrixf mtxTemp;
+		cMatrixf mtxTemp2;
 		if (mpRootNode) {
-			mtxTemp = mpRootNode->GetWorldMatrix();
+			mtxTemp2 = mpRootNode->GetWorldMatrix();
 			mpRootNode->SetMatrix(cMatrixf::Identity);
 		}
 
@@ -1383,7 +1383,7 @@ void cMeshEntity::UpdateBVFromSubs() {
 		mBoundingVolume.SetLocalMinMax(vFinalMin, vFinalMax);
 
 		if (mpRootNode) {
-			mpRootNode->SetMatrix(mtxTemp);
+			mpRootNode->SetMatrix(mtxTemp2);
 		} else {
 		}
 	}
@@ -1413,8 +1413,8 @@ kBeginSerialize(cSaveData_cMeshEntity, cSaveData_iRenderable)
 	cResources *pResources = apGame->GetResources();
 	cWorld3D *pWorld = apGame->GetScene()->GetWorld3D();
 
-	cMeshLoaderHandler *pMeshLoadHandler = pResources->GetMeshLoaderHandler();
-	cFileSearcher *pFileSearcher = pResources->GetFileSearcher();
+	/*cMeshLoaderHandler *pMeshLoadHandler = */pResources->GetMeshLoaderHandler();
+	/*cFileSearcher *pFileSearcher = */pResources->GetFileSearcher();
 
 	///////////////////////////////////
 	// Load mesh

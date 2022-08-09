@@ -160,7 +160,7 @@ private:
 
 	tString GetTabs();
 
-	cPortalContainer *mpContainer;
+	//cPortalContainer *mpContainer;
 
 	tSectorSet m_setStartSectors;
 
