@@ -198,25 +198,39 @@ void FreescapeEngine::processInput() {
 
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_w || event.kbd.keycode == Common::KEYCODE_UP)
+			if (event.kbd.keycode == Common::KEYCODE_o || event.kbd.keycode == Common::KEYCODE_UP)
 				move(FORWARD, _scaleVector.x(), deltaTime);
-			else if (event.kbd.keycode == Common::KEYCODE_s || event.kbd.keycode == Common::KEYCODE_DOWN)
+			else if (event.kbd.keycode == Common::KEYCODE_k || event.kbd.keycode == Common::KEYCODE_DOWN)
 				move(BACKWARD, _scaleVector.x(), deltaTime);
-			else if (event.kbd.keycode == Common::KEYCODE_a || event.kbd.keycode == Common::KEYCODE_LEFT)
+			else if (event.kbd.keycode == Common::KEYCODE_q || event.kbd.keycode == Common::KEYCODE_LEFT)
 				move(LEFT, _scaleVector.y(), deltaTime);
-			else if (event.kbd.keycode == Common::KEYCODE_d || event.kbd.keycode == Common::KEYCODE_RIGHT)
+			else if (event.kbd.keycode == Common::KEYCODE_w || event.kbd.keycode == Common::KEYCODE_RIGHT)
 				move(RIGHT, _scaleVector.y(), deltaTime);
+			else if (event.kbd.keycode == Common::KEYCODE_KP5 || event.kbd.keycode == Common::KEYCODE_KP0)
+				shoot();
 			else if (event.kbd.keycode == Common::KEYCODE_f)
 				_position.setValue(1, _position.y() + 12);
 			else if (event.kbd.keycode == Common::KEYCODE_v)
 				_position.setValue(1, _position.y() - 12);
 			else if (event.kbd.keycode == Common::KEYCODE_n)
 				gotoArea(_currentArea->getAreaID() + 1, 0);
-			else if (event.kbd.keycode == Common::KEYCODE_m) {
-				if (isDriller()) {
+			else if (event.kbd.keycode == Common::KEYCODE_d) {
+				if (isDriller() && !_currentArea->drillDeployed()) {
 					// TODO: check if there is space for the drill
-					_currentArea->addDrill(globalObjectsArea, _position + _cameraFront * 128);
+					// TODO: check if there is enough energy
+					Math::Vector3d drillPosition = _position + _cameraFront * 128;
+					drillPosition.setValue(1, 1);
+					const Math::Vector3d gasPocket(_currentArea->gasPocketX, 1, _currentArea->gasPocketY);
+					_currentArea->addDrill(globalObjectsArea, drillPosition);
+					float distance = (gasPocket - drillPosition).length();
+					debug("length to gas pocket: %f with radius %d", distance, _currentArea->gasPocketRadius);
 					// TODO check the result of the drilling
+					// TODO: reduce energy
+				}
+			} else if (event.kbd.keycode == Common::KEYCODE_c) {
+				// TODO: check if there is enough energy
+				if (isDriller() && _currentArea->drillDeployed()) {
+					_currentArea->removeDrill();
 				}
 			} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				openMainMenuDialog();
