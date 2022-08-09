@@ -29,6 +29,7 @@ namespace MTropolis {
 enum MTropolisGameID {
 	GID_OBSIDIAN			= 0,
 	GID_LEARNING_MTROPOLIS	= 1,
+	GID_MTI    				= 2,
 };
 
 enum MTropolisFileType {
