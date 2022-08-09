@@ -18,5 +18,5 @@ uniform sampler1D tex0; //diffuseMap;
 
 void main()
 {
-	outColor = texture1D(tex0, vUv) * vColor;
+	outColor = texture1D(tex0, vUv).rrrg * vColor;
 }

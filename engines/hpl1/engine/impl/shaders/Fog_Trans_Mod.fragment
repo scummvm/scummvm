@@ -21,7 +21,7 @@ uniform sampler1D tex1; //fogMap
 void main()
 {
 	vec4 diffuse = texture(tex0, vUv);
-	float alpha = texture1D(tex1, vFogUv).w;
+	float alpha = texture1D(tex1, vFogUv).g;
 	outColor.xyz = diffuse.xyz * alpha + vec3(1.0 - alpha);
 	outColor.w = diffuse.w;
 }
