@@ -49,7 +49,6 @@ public:
 	Object *shootRay(const Math::Ray &ray);
 	Object *checkCollisions(const Math::AABB &boundingBox);
 	void addStructure(Area *structure);
-	void addDrill(Area *structure, const Math::Vector3d position);
 
 	Common::Array<Common::String*> conditionSources;
 	Common::Array<FCLInstructionVector> conditions;
@@ -58,10 +57,15 @@ public:
 	void saveObjectFlags(Common::WriteStream *stream);
 	void loadObjectFlags(Common::SeekableReadStream *stream);
 
-	// Driller specific fields
-	uint8 gasPocketX;
-	uint8 gasPocketY;
-	uint8 gasPocketRadius;
+	// Driller specific
+	void addDrill(Area *structure, const Math::Vector3d position);
+	void removeDrill();
+
+	bool drillDeployed();
+
+	uint32 gasPocketX;
+	uint32 gasPocketY;
+	uint32 gasPocketRadius;
 
 private:
 	uint16 areaID;

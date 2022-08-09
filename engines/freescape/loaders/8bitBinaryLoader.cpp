@@ -307,8 +307,8 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 
 	Area *area = new Area(areaNumber, areaFlags, objectsByID, entrancesByID, scale, skyColor, groundColor, palette);
 	area->name = name;
-	area->gasPocketX = gasPocketX;
-	area->gasPocketY = gasPocketY;
+	area->gasPocketX = 32 * gasPocketX;
+	area->gasPocketY = 32 * gasPocketY;
 	area->gasPocketRadius = gasPocketRadius;
 
 	while (numConditions--) {

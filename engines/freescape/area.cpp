@@ -202,8 +202,8 @@ void Area::addDrill(Area *structure, const Math::Vector3d position) {
 	id = 254;
 	debug("Adding object %d to room structure", id);
 	obj = structure->objectWithID(id);
-	obj->setOrigin(offset);
 	offset.setValue(1, offset.y() + obj->getSize().y());
+	obj->setOrigin(offset);
 	assert(obj);
 	(*objectsByID)[id] = obj;
 	obj->makeVisible();
@@ -228,6 +228,18 @@ void Area::addDrill(Area *structure, const Math::Vector3d position) {
 	(*objectsByID)[id] = obj;
 	obj->makeVisible();
 	drawableObjects.insert_at(0, obj);
+}
+
+void Area::removeDrill() {
+	for (int16 id = 252; id < 256; id++) {
+		objectsByID->erase(id);
+		assert(drawableObjects[0]->getObjectID() == id);
+		drawableObjects.remove_at(0);
+	}
+}
+
+bool Area::drillDeployed() {
+	return (objectWithID(252) != nullptr);
 }
 
 void Area::addStructure(Area *structure) {
