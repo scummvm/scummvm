@@ -26,7 +26,7 @@ void main()
 {
 	gl_Position = (worldViewProj * position);
 
-	vColor = color;
+	vColor = clamp(color, vec3(0.0), vec3(1.0));
 
     mat3 rotation = mat3(objectWorldMatrix);
 

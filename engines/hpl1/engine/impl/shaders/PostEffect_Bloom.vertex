@@ -23,7 +23,7 @@ uniform mat4 worldViewProj;
 void main()
 {
 	gl_Position = (worldViewProj * position);
-	vColor = color;
+	vColor = clamp(color, vec3(0.0), vec3(1.0));
 
 	vUv0 = uv0;
 	vUv1 = uv1;

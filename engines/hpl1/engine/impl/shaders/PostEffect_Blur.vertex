@@ -27,7 +27,7 @@ uniform float amount;
 void main()
 {
 	gl_Position = (worldViewProj * position);
-	vColor = color;
+	vColor = clamp(color, vec3(0.0), vec3(1.0));
 	vUv0 = uv + vec2(xOffset, yOffset) * amount;
 	vUv1 = uv + vec2(xOffset, yOffset) * 2.0 * amount;
 	vUv2 = uv - vec2(xOffset, yOffset) * amount;

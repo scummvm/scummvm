@@ -53,5 +53,5 @@ void main()
 	vHalfVec = (rotation * vHalfVec);
 	vHalfVec = normalize(vLightDir)+vHalfVec;
 
-	vLightColor = LightColor;
+	vLightColor = clamp(LightColor, vec4(0.0), vec4(1.0));
 }

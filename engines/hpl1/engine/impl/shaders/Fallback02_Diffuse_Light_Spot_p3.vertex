@@ -32,5 +32,5 @@ void main()
 	vUv = uv;
 	vSpotlightUv = (spotViewProj * position);
 
-	vLightColor = LightColor;
+	vLightColor = clamp(LightColor, vec4(0.0), vec4(1.0));
 }
