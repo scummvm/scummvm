@@ -38,6 +38,6 @@ namespace Hpl1 {
 	void checkOGLErrors(const char *function, const int line) {
 		GLenum code;
 		while((code = glGetError()) != GL_NO_ERROR)
-			logError(kDebugOpenGL, "Opengl error: \'%s\' in function %s - %d", getErrorString(code), function, line);
+			logError(kDebugOpenGL, "Opengl error: \'%s\' in function %s - %d\n", getErrorString(code), function, line);
 	}
 }
