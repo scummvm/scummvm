@@ -1054,23 +1054,16 @@ void cMapHandler::RenderItemEffect() {
 															   pMeshEntity->GetWorldMatrix()));
 		for (int i = 0; i < pMeshEntity->GetMesh()->GetSubMeshNum(); i++) {
 			cSubMeshEntity *pSubEntity = pMeshEntity->GetSubMeshEntity(i);
-			/*cSubMesh *pSubMesh = */pMeshEntity->GetMesh()->GetSubMesh(i);
 			iVertexBuffer *pVtxBuffer = pSubEntity->GetVertexBuffer();
 			iMaterial *pMaterial = pSubEntity->GetMaterial();
 
-			iGpuProgram *pVtxProg = pMaterial->GetVertexProgram(eMaterialRenderType_Z, 0, NULL);
-
-			if (pVtxProg) {
-				pVtxProg->Bind();
-				pVtxProg->SetMatrixf("worldViewProj",
-									 eGpuProgramMatrix_ViewProjection,
-									 eGpuProgramMatrixOp_Identity);
-			}
-
-			iGpuProgram *pFragProg = pMaterial->GetFragmentProgram(eMaterialRenderType_Z, 0, NULL);
-			if (pFragProg) {
-				pFragProg->SetColor3f("ambientColor", pItem->GetFlashAlpha());
-				pFragProg->Bind();
+			iGpuProgram *gpuProgram = pMaterial->getGpuProgram(eMaterialRenderType_Z, 0, NULL);
+			if (gpuProgram) {
+				gpuProgram->Bind();
+				gpuProgram->SetMatrixf("worldViewProj",
+						eGpuProgramMatrix_ViewProjection,
+						eGpuProgramMatrixOp_Identity);
+				gpuProgram->SetColor3f("ambientColor", pItem->GetFlashAlpha());
 			}
 
 			pLowGfx->SetTexture(0, pMaterial->GetTexture(eMaterialTexture_Diffuse));
@@ -1079,10 +1072,8 @@ void cMapHandler::RenderItemEffect() {
 			pVtxBuffer->Draw();
 			pVtxBuffer->UnBind();
 
-			if (pFragProg)
-				pFragProg->UnBind();
-			if (pVtxProg)
-				pVtxProg->UnBind();
+			if (gpuProgram)
+				gpuProgram->UnBind();
 		}
 	}
 
