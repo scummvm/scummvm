@@ -812,7 +812,7 @@ void cSerializeClass::LoadArray(TiXmlElement *apElement, iSerializable *apData, 
 	tString sName = cString::ToString(apElement->Attribute("name"), "");
 	tString sClassType = cString::ToString(apElement->Attribute("class_type"), "");
 	eSerializeType type = cString::ToInt(apElement->Attribute("type"), eSerializeMainType_NULL);
-	size_t lSize = cString::ToInt(apElement->Attribute("size"), 0);
+	//size_t lSize = cString::ToInt(apElement->Attribute("size"), 0);
 
 	if (gbLog) {
 		Log("%s Begin Saving array: '%s' classtype: %s type %d\n", GetTabs(), sName.c_str(), sClassType.c_str(), type);
@@ -846,13 +846,13 @@ void cSerializeClass::LoadArray(TiXmlElement *apElement, iSerializable *apData, 
 			size_t lOffset = sizeof(void *) * lCount;
 			iSerializable **pValuePtr = (iSerializable **)ValuePointer(pArrayData, lOffset);
 
-			tString sClassType = cString::ToString(pVarElem->Attribute("type"), "");
-			cSerializeSavedClass *pSavedClass = GetClass(sClassType);
+			tString sClassType2 = cString::ToString(pVarElem->Attribute("type"), "");
+			cSerializeSavedClass *pSavedClass = GetClass(sClassType2);
 			if (pSavedClass == NULL)
 				continue;
 
 			if (gbLog)
-				Log("%s Element Class pointer: %s\n", GetTabs(), sClassType.c_str());
+				Log("%s Element Class pointer: %s\n", GetTabs(), sClassType2.c_str());
 
 			// If NULL, then just create else delete and then create-
 			// virtual pointers here...yes yes...

@@ -337,11 +337,11 @@ void iParticleEmitter3D::UpdateGraphics(cCamera3D *apCamera, float afFrameTime, 
 			//////////////////////////////////////////////////
 			// LINE
 			else if (mDrawType == eParticleEmitter3DType_Line) {
-				cVector3f vAdd[4] = {
+				/*cVector3f vAdd[4] = {
 					cVector3f(mvDrawSize.x, -mvDrawSize.y, 0),
 					cVector3f(-mvDrawSize.x, -mvDrawSize.y, 0),
 					cVector3f(-mvDrawSize.x, mvDrawSize.y, 0),
-					cVector3f(mvDrawSize.x, mvDrawSize.y, 0)};
+					cVector3f(mvDrawSize.x, mvDrawSize.y, 0)};*/
 
 				int lVtxStride = kvVertexElements[cMath::Log2ToInt(eVertexFlag_Position)];
 				int lVtxQuadSize = lVtxStride * 4;

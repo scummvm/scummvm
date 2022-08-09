@@ -416,7 +416,7 @@ private:
 	float mfMaxMoveDist;
 
 	float mfMaxGrabDist;
-	float mfMaxGrabForce;
+	//float mfMaxGrabForce;
 
 	float mfMaxUseItemDist;
 

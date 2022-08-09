@@ -410,7 +410,7 @@ cAnimationTrack *cMeshLoaderCollada::CreateAnimTrack(cAnimation *apAnimation, cS
 	return pTrack;
 }
 
-static tString gsTemp;
+/*static tString gsTemp;
 static const char *GetTabs(int alDepth) {
 	gsTemp = "";
 
@@ -418,7 +418,7 @@ static const char *GetTabs(int alDepth) {
 		gsTemp += "\t";
 
 	return gsTemp.c_str();
-}
+}*/
 
 //-----------------------------------------------------------------------
 
@@ -748,7 +748,7 @@ void cMeshLoaderCollada::LoadColladaScene(TiXmlElement *apRootElem, cColladaNode
 
 	// Log("Node. %s, type: %s\n",pNode->msId.c_str(),pNode->msType.c_str());
 
-	cVector3f vTranslation = cVector3f(0, 0, 0);
+	//cVector3f vTranslation = cVector3f(0, 0, 0);
 
 	///////////////////////////////////////////////////////////
 	// Iterate through all of the transforms.
@@ -1290,7 +1290,7 @@ void cMeshLoaderCollada::LoadGeometry(TiXmlElement *apRootElem, tColladaGeometry
 		}
 		int lTriElements = 0;
 
-		int lTriCount = cString::ToInt(pTriElem->Attribute("count"), 0);
+		/*int lTriCount = */cString::ToInt(pTriElem->Attribute("count"), 0);
 		Geometry.msMaterial = cString::ToString(pTriElem->Attribute("material"), "");
 		GetAdress(Geometry.msMaterial);
 

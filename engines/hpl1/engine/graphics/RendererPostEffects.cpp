@@ -466,7 +466,7 @@ void cRendererPostEffects::RenderMotionBlur() {
 	iTexture *pScreenTexture = mpScreenBuffer[mImageTrailData.mlCurrentBuffer == 0 ? 1 : 0];
 
 	// Size of the virtual screen
-	cVector2f vVirtSize = mpLowLevelGraphics->GetVirtualSize();
+	/*cVector2f vVirtSize = */mpLowLevelGraphics->GetVirtualSize();
 
 	// Copy screen to texture
 	mpLowLevelGraphics->CopyContextToTexure(pScreenTexture, 0, cVector2l((int)mvScreenSize.x, (int)mvScreenSize.y));
@@ -580,7 +580,7 @@ void cRendererPostEffects::RenderBloom() {
 	RenderBlurTexture(mpBloomBlurTexture, pScreenTexture, mfBloomSpread);
 
 	// Size of blur texture
-	cVector2f vBlurSize = cVector2f((float)mpBloomBlurTexture->getWidth(), (float)mpBloomBlurTexture->getHeight());
+	/*cVector2f vBlurSize = */cVector2f((float)mpBloomBlurTexture->getWidth(), (float)mpBloomBlurTexture->getHeight());
 
 	// Size of the virtual screen
 	cVector2f vVirtSize = mpLowLevelGraphics->GetVirtualSize();

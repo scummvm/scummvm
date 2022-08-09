@@ -248,7 +248,7 @@ bool cPhysics::LoadSurfaceData(const tString &asFile, cHaptic *apHaptic) {
 
 			float fDeadHeight = cString::ToFloat(pChildElem->Attribute("HapticDeadHeight"), 0.004f);
 			float fStickyStiffness = cString::ToFloat(pChildElem->Attribute("HapticStickyStiffness"), 0.6f);
-			float fDeviation = cString::ToFloat(pChildElem->Attribute("HapticDeviation"), 0.1f);
+			//float fDeviation = cString::ToFloat(pChildElem->Attribute("HapticDeviation"), 0.1f);
 			float fMean = cString::ToFloat(pChildElem->Attribute("HapticMean"), 0.5f);
 			float fDamping = cString::ToFloat(pChildElem->Attribute("HapticDamping"), 0.0f);
 			float fStiffness = cString::ToFloat(pChildElem->Attribute("HapticStiffness"), 0.9f);

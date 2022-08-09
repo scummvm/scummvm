@@ -218,7 +218,7 @@ cSaveHandler::cSaveHandler(cInit *apInit) : iUpdateable("SaveHandler") {
 	//////////////////////////////////////////////
 	// Create directories
 	msSaveDir = _W("");
-	LowLevelSystem *pLowLevelSystem = mpInit->mpGame->GetSystem()->GetLowLevel();
+	/*LowLevelSystem *pLowLevelSystem = */mpInit->mpGame->GetSystem()->GetLowLevel();
 
 	tWString sPeronalDir = GetSystemSpecialPath(eSystemPath_Personal);
 
@@ -350,7 +350,7 @@ void cSaveHandler::SaveData(const tString &asName) {
 //-----------------------------------------------------------------------
 
 void cSaveHandler::LoadData(const tString &asName) {
-	cWorld3D *pWorld = mpInit->mpGame->GetScene()->GetWorld3D();
+	/*cWorld3D *pWorld = */mpInit->mpGame->GetScene()->GetWorld3D();
 	cSavedWorld *pSavedWorld = mpSavedGame->GetSavedWorld(asName);
 
 	///////////////////////
@@ -378,7 +378,7 @@ void cSaveHandler::LoadData(const tString &asName) {
 
 	///////////////////////
 	// Inventory callbacks
-	cInventory *pInventory = mpInit->mpInventory;
+	//cInventory *pInventory = mpInit->mpInventory;
 
 	///////////////////////
 	// Use callbacks
@@ -669,7 +669,7 @@ void cSaveHandler::OnExit() {
 
 void cSaveHandler::DeleteOldestIfMax(const tWString &asDir, const tWString &asMask, int alMaxFiles) {
 	LowLevelResources *pLowLevelResources = mpInit->mpGame->GetResources()->GetLowLevel();
-	LowLevelSystem *pLowLevelSystem = mpInit->mpGame->GetSystem()->GetLowLevel();
+	/*LowLevelSystem *pLowLevelSystem = */mpInit->mpGame->GetSystem()->GetLowLevel();
 
 	tWString sPath = msSaveDir + asDir;
 
@@ -698,7 +698,7 @@ void cSaveHandler::DeleteOldestIfMax(const tWString &asDir, const tWString &asMa
 
 tWString cSaveHandler::GetLatest(const tWString &asDir, const tWString &asMask) {
 	LowLevelResources *pLowLevelResources = mpInit->mpGame->GetResources()->GetLowLevel();
-	LowLevelSystem *pLowLevelSystem = mpInit->mpGame->GetSystem()->GetLowLevel();
+	/*LowLevelSystem *pLowLevelSystem = */mpInit->mpGame->GetSystem()->GetLowLevel();
 
 	tWString sPath = msSaveDir + asDir;
 

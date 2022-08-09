@@ -72,12 +72,12 @@ public:
 
 private:
 	tString mvFormats[30];
-	bool mbLogSounds;
+	//bool mbLogSounds;
 	bool mbInitialized;
-	int mlEffectSlotId;
+	//int mlEffectSlotId;
 	bool mbNullEffectAttached;
 
-	cOAL_Effect_Reverb *mpEffect;
+	//cOAL_Effect_Reverb *mpEffect;
 };
 
 }     // namespace hpl

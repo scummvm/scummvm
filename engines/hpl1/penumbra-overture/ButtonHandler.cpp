@@ -115,7 +115,8 @@ static cButtonHandlerAction gvDefaultActions[] = {
 	//{"Taunt","Keyboard",eKey_t,false},
 	{"PrintLog", "Keyboard", eKey_l, false},
 
-	{"", "", 0}};
+	{"", "", 0, false}
+};
 
 //////////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS

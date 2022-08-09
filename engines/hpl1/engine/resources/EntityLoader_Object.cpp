@@ -581,7 +581,7 @@ iEntity3D *cEntityLoader_Object::Load(const tString &asName, TiXmlElement *apRoo
 		cMeshEntity *pEntityCopy = mpEntity;
 		cMesh *pMeshCopy = mpMesh;
 		for (int i = 0; i < pMeshCopy->GetReferenceNum(); i++) {
-			iEntity3D *pRef = mpMesh->CreateReferenceInWorld(asName, pMeshCopy->GetReference(i), pEntityCopy,
+			/*iEntity3D *pRef = */mpMesh->CreateReferenceInWorld(asName, pMeshCopy->GetReference(i), pEntityCopy,
 															 apWorld, a_mtxTransform);
 			// if(pPS) mvParticleSystems.push_back(pPS);
 		}
@@ -612,14 +612,11 @@ void cEntityLoader_Object::SetBodyProperties(iPhysicsBody *apBody, TiXmlElement 
 	bool bContinuousCollision = cString::ToBool(apPhysicsElem->Attribute("ContinuousCollision"), true);
 
 	bool bPushedByCharacterGravity = cString::ToBool(apPhysicsElem->Attribute("PushedByCharacterGravity"), false);
-
-	float fAutoDisableLinearThreshold = cString::ToFloat(apPhysicsElem->Attribute("AutoDisableLinearThreshold"),
-														 0.1f);
-	float fAutoDisableAngularThreshold = cString::ToFloat(apPhysicsElem->Attribute("AutoDisableAngularThreshold"),
-														  0.1f);
-	int lAutoDisableNumSteps = cString::ToInt(apPhysicsElem->Attribute("AutoDisableNumSteps"),
-											  10);
-
+#if 0
+	float fAutoDisableLinearThreshold = cString::ToFloat(apPhysicsElem->Attribute("AutoDisableLinearThreshold"), 0.1f);
+	float fAutoDisableAngularThreshold = cString::ToFloat(apPhysicsElem->Attribute("AutoDisableAngularThreshold"), 0.1f);
+	int lAutoDisableNumSteps = cString::ToInt(apPhysicsElem->Attribute("AutoDisableNumSteps"), 10);
+#endif
 	bool bVolatile = cString::ToBool(apPhysicsElem->Attribute("Volatile"), false);
 
 	bool bCanAttachCharacter = cString::ToBool(apPhysicsElem->Attribute("CanAttachCharacter"), false);

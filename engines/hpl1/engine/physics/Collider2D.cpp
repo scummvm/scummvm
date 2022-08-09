@@ -309,7 +309,7 @@ tFlag cCollider2D::CollideLine(const cVector2f &avStart, const cVector2f &avEnd,
 
 	//// Check for all tiles if the flag is set
 	if (alCollideFlags & eFlagBit_0) {
-		float fTileSize = mpWorld->GetTileMap()->GetTileSize();
+		/*float fTileSize = */mpWorld->GetTileMap()->GetTileSize();
 
 		for (int i = 0; i < mpWorld->GetTileMap()->GetTileLayerNum(); i++) {
 			if (mpWorld->GetTileMap()->GetTileLayer(i)->HasCollision() == false)

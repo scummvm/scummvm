@@ -116,9 +116,9 @@ void cAINodeGenerator::Generate(cWorld3D *apWorld, cAINodeGeneratorParams *apPar
 
 	iPhysicsWorld *pPhysicsWorld = apWorld->GetPhysicsWorld();
 
-	bool mbLoadFromFile = false;
+	//bool mbLoadFromFile = false;
 
-	cSystem *pSystem = apWorld->GetSystem();
+	/*cSystem *pSystem = */apWorld->GetSystem();
 	cResources *pResources = apWorld->GetResources();
 	cFileSearcher *pFileSearcher = pResources->GetFileSearcher();
 
@@ -264,7 +264,7 @@ bool cAINodeGenerator::OnIntersect(iPhysicsBody *pBody, cPhysicsRayParams *apPar
 	if (pBody->GetMass() != 0)
 		return true;
 
-	iPhysicsWorld *pPhysicsWorld = mpWorld->GetPhysicsWorld();
+	/*iPhysicsWorld *pPhysicsWorld = */mpWorld->GetPhysicsWorld();
 
 	cVector3f vPosition = apParams->mvPoint + cVector3f(0, mpParams->mfHeightFromGround, 0);
 
@@ -279,7 +279,7 @@ void cAINodeGenerator::SaveToFile() {
 	if (mpWorld->GetFileName() == "")
 		return;
 
-	cSystem *pSystem = mpWorld->GetSystem();
+	/*cSystem *pSystem = */mpWorld->GetSystem();
 	cResources *pResources = mpWorld->GetResources();
 	cFileSearcher *pFileSearcher = pResources->GetFileSearcher();
 
@@ -314,7 +314,7 @@ void cAINodeGenerator::LoadFromFile() {
 	if (mpWorld->GetFileName() == "")
 		return;
 
-	cSystem *pSystem = mpWorld->GetSystem();
+	/*cSystem *pSystem = */mpWorld->GetSystem();
 	cResources *pResources = mpWorld->GetResources();
 	cFileSearcher *pFileSearcher = pResources->GetFileSearcher();
 

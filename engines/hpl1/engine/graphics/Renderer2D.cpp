@@ -642,8 +642,8 @@ bool cRenderer2D::RenderShadows(cCamera2D *apCamera, iLight2D *pLight, cWorld2D 
 
 		// Iterate all tiles
 		while (pTileIt->HasNext()) {
-			cTile *pTile = pTileIt->Next();
-			cTileDataNormal *pData = static_cast<cTileDataNormal *>(pTile->GetTileData());
+			cTile *pTile2 = pTileIt->Next();
+			cTileDataNormal *pData = static_cast<cTileDataNormal *>(pTile2->GetTileData());
 
 			if (pData->GetCollideMesh() == NULL)
 				continue;
@@ -659,10 +659,10 @@ bool cRenderer2D::RenderShadows(cCamera2D *apCamera, iLight2D *pLight, cWorld2D 
 				}
 			}
 
-			tMesh2DEdgeVec *pEdgeVec = pData->GetCollideMesh()->GetEdgeVec(pTile->GetAngle());
-			tVertexVec *pVtxVec = pData->GetCollideVertexVec(pTile->GetAngle());
+			tMesh2DEdgeVec *pEdgeVec = pData->GetCollideMesh()->GetEdgeVec(pTile2->GetAngle());
+			tVertexVec *pVtxVec = pData->GetCollideVertexVec(pTile2->GetAngle());
 
-			cVector2f vTilePos = cVector2f(pTile->GetPosition().x, pTile->GetPosition().y);
+			cVector2f vTilePos = cVector2f(pTile2->GetPosition().x, pTile2->GetPosition().y);
 			cVector2f vLightPos = cVector2f(pLight->GetWorldPosition().x, pLight->GetWorldPosition().y);
 			float fRadius = pLight->GetFarAttenuation();
 			bool bNonFit = false;
@@ -752,10 +752,10 @@ void cRenderer2D::FindShadowPoints(tMesh2DEdgeVec *apEdgeVec, cVector2f avLightP
 	cVector2f vEdgeNormal;
 	cVector2f vLightNormal;
 
-	int lPrevWasShadow = -1;
-	int lFirstWasShadow = -1;
+	//int lPrevWasShadow = -1;
+	//int lFirstWasShadow = -1;
 	mlShadowPointSize = 0;
-	int lMaxEdge = (int)apEdgeVec->size() - 1;
+	//int lMaxEdge = (int)apEdgeVec->size() - 1;
 
 	for (int i = 0; i < (int)apEdgeVec->size(); i++) {
 		int point = (*apEdgeVec)[i].mlStartIndex;
@@ -778,7 +778,7 @@ void cRenderer2D::FindShadowPoints(tMesh2DEdgeVec *apEdgeVec, cVector2f avLightP
 
 int cRenderer2D::CreateVertexes(cVector2f vLightPos, cRect2f LightRect, float fRadius, bool bNonFit,
 								cVector2f vTilePos, tVertexVec *apVtxVec, cColor ShadowColor, int lFirstIndex, float fSourceSize) {
-	int lNum = 0;
+	//int lNum = 0;
 
 	// Walk through the edges
 	for (int idx = 0; idx < mlShadowPointSize; idx++) {

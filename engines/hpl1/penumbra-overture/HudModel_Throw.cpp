@@ -160,17 +160,17 @@ void cHudModel_Throw::OnAttackUp()
 																				msThrowEntity, true);
 	if(pEntity)
 	{
-		iGameEntity *pEntity = mpInit->mpMapHandler->GetLatestEntity();
+		iGameEntity *pEntity2 = mpInit->mpMapHandler->GetLatestEntity();
 		
 		float fImpulse = mfMinImpulse * (1 - mfChargeCount) + mfMaxImpulse * mfChargeCount;
 		
-		cVector3f vRot =cMath::MatrixMul(mtxStart.GetRotation(),mvTorque);
+		cVector3f vRot2 =cMath::MatrixMul(mtxStart.GetRotation(),mvTorque);
 
-        for(int i=0; i< pEntity->GetBodyNum(); ++i)
+        for(int i=0; i< pEntity2->GetBodyNum(); ++i)
 		{
-			iPhysicsBody *pBody = pEntity->GetBody(i);
+			iPhysicsBody *pBody = pEntity2->GetBody(i);
 			pBody->AddImpulse(pCam->GetForward() * fImpulse);
-			pBody->AddTorque(vRot);
+			pBody->AddTorque(vRot2);
 		}
 	}
 

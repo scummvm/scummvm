@@ -59,7 +59,7 @@ public:
 
 private:
 	bool mbHasCollided;
-	int mlCount;
+	//int mlCount;
 };
 
 //----------------------------------------

@@ -877,15 +877,15 @@ iSoundChannel *cSoundHandler::CreateChannel(const tString &asName, int alPriorit
 		}
 
 		if (lCount > 0) {
-			int lNum = cMath::RandRectl(1, lCount);
+			int lNum2 = cMath::RandRectl(1, lCount);
 
 			if (lCount > 2) {
-				while (lLastNum == lNum)
-					lNum = cMath::RandRectl(1, lCount);
+				while (lLastNum == lNum2)
+					lNum2 = cMath::RandRectl(1, lCount);
 			}
-			SoundIt->second = lNum;
+			SoundIt->second = lNum2;
 
-			sName = sBaseName + cString::ToString(lNum);
+			sName = sBaseName + cString::ToString(lNum2);
 
 			pData = mpResources->GetSoundManager()->CreateSoundData(sName, false);
 

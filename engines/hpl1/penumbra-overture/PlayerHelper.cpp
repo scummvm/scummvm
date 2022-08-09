@@ -335,7 +335,7 @@ void cPlayerPickRayCallback::CalculateResults() {
 
 		if (mpPickedBody) {
 			iGameEntity *pEntity = (iGameEntity *)mpPickedBody->GetUserData();
-			cGameArea *pArea = (cGameArea *)mpPickedAreaBody->GetUserData();
+			//cGameArea *pArea = (cGameArea *)mpPickedAreaBody->GetUserData();
 
 			if (pEntity) {
 				// Too for from object
@@ -583,6 +583,8 @@ void cPlayerHealth::Update(float afTimeStep) {
 		break;
 	case eGameDifficulty_Hard:
 		pPlayer->AddHealth(afTimeStep * 0.14f);
+		break;
+	case eGameDifficulty_LastEnum:
 		break;
 	}
 
@@ -1495,7 +1497,7 @@ void cPlayerGlowStick::SetActive(bool abX) {
 		return;
 	mbActive = abX;
 
-	cSoundHandler *pSoundHanlder = mpInit->mpGame->GetSound()->GetSoundHandler();
+	/*cSoundHandler *pSoundHanlder = */mpInit->mpGame->GetSound()->GetSoundHandler();
 
 	if (mbActive) {
 		// Log("Setting the glowstick to TRUE\n");
@@ -1617,7 +1619,7 @@ void cPlayerFlare::SetActive(bool abX) {
 		return;
 	mbActive = abX;
 
-	cSoundHandler *pSoundHanlder = mpInit->mpGame->GetSound()->GetSoundHandler();
+	/*cSoundHandler *pSoundHanlder = */mpInit->mpGame->GetSound()->GetSoundHandler();
 
 	if (mbActive) {
 		mpInit->mpPlayerHands->SetCurrentModel(0, "Flare");
@@ -1651,14 +1653,14 @@ void cPlayerFlare::SetActive(bool abX) {
 		iEntity3D *pEntity = mpInit->mpGame->GetScene()->GetWorld3D()->CreateEntity("Throw", mtxStart,
 																					"items_flare_thrown.ent", true);
 		if (pEntity) {
-			iGameEntity *pEntity = mpInit->mpMapHandler->GetLatestEntity();
+			iGameEntity *pEntity2 = mpInit->mpMapHandler->GetLatestEntity();
 
-			cVector3f vRot = cMath::MatrixMul(mtxStart.GetRotation(), cVector3f(1, 0.3f, 0));
+			cVector3f vRot2 = cMath::MatrixMul(mtxStart.GetRotation(), cVector3f(1, 0.3f, 0));
 
-			for (int i = 0; i < pEntity->GetBodyNum(); ++i) {
-				iPhysicsBody *pBody = pEntity->GetBody(i);
+			for (int i = 0; i < pEntity2->GetBodyNum(); ++i) {
+				iPhysicsBody *pBody = pEntity2->GetBody(i);
 				pBody->AddImpulse(pCam->GetForward() * 3.0f);
-				pBody->AddTorque(vRot);
+				pBody->AddTorque(vRot2);
 			}
 
 			// setup light
@@ -1667,8 +1669,8 @@ void cPlayerFlare::SetActive(bool abX) {
 				if (fRadius < 0)
 					fRadius = 0;
 
-				for (int i = 0; i < pEntity->GetLightNum(); ++i) {
-					iLight3D *pLight = pEntity->GetLight(i);
+				for (int i = 0; i < pEntity2->GetLightNum(); ++i) {
+					iLight3D *pLight = pEntity2->GetLight(i);
 					pLight->SetFarAttenuation(pLight->GetFarAttenuation() * fRadius);
 				}
 			}

@@ -286,7 +286,7 @@ void cGameEnemyState_Worm_Hunt::OnUpdate(float afTimeStep) {
 	if (mfUpdatePathCount <= 0) {
 		mfUpdatePathCount = mfUpdateFreq;
 
-		cAINodeContainer *pNodeCont = mpEnemy->GetMover()->GetNodeContainer();
+		/*cAINodeContainer *pNodeCont = */mpEnemy->GetMover()->GetNodeContainer();
 
 		// Check if there is a free path to the player
 		if (mbLostPlayer == false && mpMover->FreeDirectPathToChar(mpPlayer->GetCharacterBody())) {
@@ -502,7 +502,7 @@ cGameEnemy_Worm_MeshCallback::cGameEnemy_Worm_MeshCallback(cGameEnemy_Worm *apWo
 
 /*OLD CALC MATRIX VERSION:
 cMatrixf mtxRot = cMatrixf::Identity;
-mtxRot.SetRight(mpWorm->mvRootRight*-1); //*-1 = straange
+mtxRot.SetRight(mpWorm->mvRootRight*-1); // *-1 = straange
 mtxRot.SetUp(mpWorm->mvRootUp);
 mtxRot.SetForward(mpWorm->mvRootForward);
 
@@ -550,7 +550,7 @@ void cGameEnemy_Worm_MeshCallback::AfterAnimationUpdate(cMeshEntity *apMeshEntit
 		// Change orientation according to forward
 		cMatrixf mtxTrans = cMatrixf::Identity;
 		{
-			/*mtxTrans.SetRight(pSegment->mvRight*-1); //*-1 = straaange
+			/*mtxTrans.SetRight(pSegment->mvRight*-1); // *-1 = straaange
 			mtxTrans.SetUp(pSegment->mvUp);
 			mtxTrans.SetForward(pSegment->mvForward);
 
@@ -746,9 +746,9 @@ void cGameEnemy_Worm::OnUpdate(float afTimeStep) {
 			pSegment->mlstPositions.pop_front();
 		}
 		pSegment->mvPostion = 0;
-		std::list<cVector3f>::iterator posIt = pSegment->mlstPositions.begin();
-		for (; posIt != pSegment->mlstPositions.end(); ++posIt) {
-			pSegment->mvPostion += *posIt;
+		std::list<cVector3f>::iterator posIt2 = pSegment->mlstPositions.begin();
+		for (; posIt2 != pSegment->mlstPositions.end(); ++posIt2) {
+			pSegment->mvPostion += *posIt2;
 		}
 		pSegment->mvPostion = pSegment->mvPostion / (float)pSegment->mlstPositions.size();
 

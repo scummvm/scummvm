@@ -91,8 +91,8 @@ static void setMouseState(const int state, Common::BitArray &states) {
 void cMouseSDL::processEvent(const Common::Event &ev) {
 	if (!Common::isMouseEvent(ev))
 		return;
-	const cVector2f screenSize = _lowLevelGraphics->GetScreenSize();
-	const cVector2f virtualSize = _lowLevelGraphics->GetVirtualSize();
+	//const cVector2f screenSize = _lowLevelGraphics->GetScreenSize();
+	//const cVector2f virtualSize = _lowLevelGraphics->GetVirtualSize();
 	if (ev.type == Common::EVENT_MOUSEMOVE) {
 		_absMousePos = cVector2f(ev.mouse.x, ev.mouse.y);
 		//mvMouseAbsPos = (mvMouseAbsPos / screenSize) * virtualSize;

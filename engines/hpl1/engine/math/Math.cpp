@@ -1001,6 +1001,8 @@ cMatrixf cMath::MatrixRotate(cVector3f avRot, eEulerRotationOrder aOrder) {
 		mtxRot = MatrixMul(MatrixRotateY(avRot.y), mtxRot);
 		mtxRot = MatrixMul(MatrixRotateX(avRot.x), mtxRot);
 		break;
+	case eEulerRotationOrder_LastEnum:
+		break;
 	}
 
 	return mtxRot;
@@ -1164,12 +1166,12 @@ static inline cVector3f GetVector3(const float *apVertexArray, int alIdx, int al
 	return cVector3f(apVec[0], apVec[1], apVec[2]);
 }
 
-static inline void AddVector3(float *apArray, int alIdx, const cVector3f &avVec, int alStride) {
+/*static inline void AddVector3(float *apArray, int alIdx, const cVector3f &avVec, int alStride) {
 	float *apVec = &apArray[alIdx * alStride];
 	apVec[0] += avVec.x;
 	apVec[1] += avVec.y;
 	apVec[2] += avVec.z;
-}
+}*/
 
 static inline void SetVector4(const cVector3f &avVec, float afW, float *apArray, int alIdx) {
 	float *apVec = &apArray[alIdx * 4];
@@ -1342,8 +1344,7 @@ bool cMath::CreateTriangleData(tTriangleDataVec &avTriangles,
 }
 
 //-----------------------------------------------------------------------
-
-static bool EdgePointEqual(const float *apVertexArray,
+/*static bool EdgePointEqual(const float *apVertexArray,
 						   const cTriEdge &edge1, const cTriEdge &edge2, int alStride) {
 	if (Vector3Equal(apVertexArray, edge1.point1, apVertexArray, edge2.point1, alStride) &&
 		Vector3Equal(apVertexArray, edge1.point2, apVertexArray, edge2.point2, alStride)) {
@@ -1375,7 +1376,7 @@ static bool EdgeEqual(const float *apVertexArray, const cTriEdge &edge1, const c
 		return true;
 
 	return false;
-}
+}*/
 
 /////////////////////////
 

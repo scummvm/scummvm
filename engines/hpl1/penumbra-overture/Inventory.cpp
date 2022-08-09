@@ -731,7 +731,7 @@ void cInventoryContext::Draw() {
 							cVector2f(mvSize.x, vCornerSize.y), cColor(1, fTotalAlpha));
 
 	for (int i = 0; i < (int)mpActionVec->size(); i++) {
-		cColor Col = mlSelectedRow == i ? cColor(0.2f, 1.0f, 0.2f, mfAlpha) : cColor(0.65f, 0.65f, 0.65f, fTotalAlpha);
+		/*cColor Col = */mlSelectedRow == i ? cColor(0.2f, 1.0f, 0.2f, mfAlpha) : cColor(0.65f, 0.65f, 0.65f, fTotalAlpha);
 
 		// mpFont->Draw(mvPos + cVector3f(2.0f,(float)i*mfRowSize,1),14,Col,
 		//			eFontAlign_Left,(*mpActionVec)[i].c_str());
@@ -1183,7 +1183,7 @@ void cInventory::AddItemFromFile(const tString &asName, const tString &asFile, i
 	m_mapItems.insert(tInventoryItemMap::value_type(pItem->GetName(), pItem));
 
 	int lCount = 0;
-	int lCurrentSlot = -1;
+	//int lCurrentSlot = -1;
 
 	tInventorySlotListIt it = mlstSlots.begin();
 	for (; it != mlstSlots.end(); ++it) {

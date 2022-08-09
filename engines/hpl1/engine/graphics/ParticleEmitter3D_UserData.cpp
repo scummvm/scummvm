@@ -953,6 +953,8 @@ void cParticleEmitter3D_UserData::UpdateMotion(float afTimeStep) {
 
 			break;
 		}
+		case ePEGravityType_LastEnum:
+			break;
 		}
 
 		if (pParticle->mfMaxSpeed > 0) {

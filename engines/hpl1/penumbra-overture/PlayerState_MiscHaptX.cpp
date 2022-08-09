@@ -79,7 +79,7 @@ void cPlayerState_NormalHaptX::OnUpdate(float afTimeStep) {
 	collideData.SetMaxSize(1);
 
 	cPortalContainerEntityIterator it = pCont->GetEntityIterator(&bv);
-	iGameEntity *pPickedEntity = NULL;
+	//iGameEntity *pPickedEntity = NULL;
 	eGameEntityType pickedType = eGameEntityType_LastEnum;
 
 	while (it.HasNext()) {
@@ -545,7 +545,7 @@ void cPlayerState_UseItemHaptX::OnStartInteract() {
 
 	if (pEntity && mpPlayer->GetPickedDist() <= pEntity->GetMaxExamineDist()) {
 		if (mpPlayer->GetPickedDist() <= pEntity->GetMaxInteractDist()) {
-			iGameEntity *pEntity = (iGameEntity *)mpPlayer->GetPickedBody()->GetUserData();
+			iGameEntity *pEntity2 = (iGameEntity *)mpPlayer->GetPickedBody()->GetUserData();
 			cGameItemType *pType = mpInit->mpInventory->GetItemType(mpPlayer->GetCurrentItem()->GetItemType());
 
 			if (mPrevState == ePlayerState_WeaponMelee ||
@@ -555,7 +555,7 @@ void cPlayerState_UseItemHaptX::OnStartInteract() {
 				mpPlayer->ChangeState(mPrevState);
 			}
 
-			pType->OnUse(mpPlayer->GetCurrentItem(), pEntity);
+			pType->OnUse(mpPlayer->GetCurrentItem(), pEntity2);
 		} else {
 			mpInit->mpEffectHandler->GetSubTitle()->Add(kTranslate("Player", "UseItemTooFar"), 2.0f, true);
 			return;
@@ -1004,7 +1004,7 @@ bool cPlayerState_ClimbHaptX::OnMoveForwards(float afMul, float afTimeStep) {
 	return false;
 }
 bool cPlayerState_ClimbHaptX::OnMoveSideways(float afMul, float afTimeStep) {
-	iCharacterBody *pCharBody = mpPlayer->GetCharacterBody();
+	/*iCharacterBody *pCharBody = */mpPlayer->GetCharacterBody();
 
 	return false;
 }
