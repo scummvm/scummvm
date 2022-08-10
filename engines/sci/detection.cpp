@@ -130,8 +130,6 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"gk1demo",         "Gabriel Knight: Sins of the Fathers"},
 	{"qfg4demo",        "Quest for Glory IV: Shadows of Darkness"},
 	{"pq4demo",         "Police Quest IV: Open Season"},
-	// === SCI1.1+ games ======================================================
-	{"catdate",         "The Dating Pool"},
 	// === SCI2 games =========================================================
 	{"gk1",             "Gabriel Knight: Sins of the Fathers"},
 	{"pq4",             "Police Quest IV: Open Season"}, // floppy is SCI2, CD SCI2.1

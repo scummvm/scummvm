@@ -6092,11 +6092,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE("Curt's Quest 1.1", "54084c29346683296e45ef32d7ae74f3", 1128, "c851182cdf6fc6a81b840f4d4875f1a0", 302000),
 	FANMADE("Demo Quest", "c89a0c9e0a4e4af0ecedb300a3b31dbf", 384, "a32f3495ba24764cba091119cc3f1e13", 160098),
 	FANMADE("Dr. Jummybummy's Space Adventure 2", "6ae6cb7de423f51736d9487b4ca0c6da", 810, "26e5b563f578e104d79689f36568b7cf", 394670),
+	FANMADE("Dr. Jummybummy's Space Adventure 2 v1.0", "d689721ebf598b5ed84993057c7bd8d9", 4782, "9f748aac2f78a70a89d417f31989daea", 2247273),
 	FANMADE("Edy Oliver into the Cave of Whistling Skulls Demo", "eba0a0e86768ee3f14e78fecbc5af011", 2388, "4f6eab79a0f7980960eed101ab8122ad", 2601551),
 	FANMADE("Footsteps Sound Demo", "d9dabee6e1550b1fdb793f442f227738", 372, "06561df40dea49c6e84184e0ba6f19cb", 114212),
 	FANMADE_L("Grostesteing: Plus Mechant que Jamais", "ec9a97ccb134f69249f6ea8b16c13d8e", 1500, "b869f5f11bfe2ab5f67f4f0c618f2ce1", 464657, "resource.001", Common::FR_FRA), // FIXME: Accent
 	FANMADE("Humanoid Demo", "97d8331293a6d57e8bad58c1efc89a63", 624, "fb354b9abe64011b12159e45d724633f", 452320),
 	FANMADE("Island of Secrets Demo 0.3", "61279176c3e4530fec9b578877aecda7", 504, "7f4ed7a81b86bea22c62bc98e6d9ec39", 197790),
+	FANMADE("Island of Secrets Demo 0.4", "a8ec7759c8014cf1383a3fe0f0897d0e", 786, "89c61a9d00c63fd94621879a927aad17", 303359),
 	FANMADE("Jim's Quest 1: The Phantom Thesis", "0af50be1d3f0cb77a09137709a76ef4f", 960, "9c042c136548b20d9183495668e03526", 496446),
 	FANMADE("King's Quest II SCI Pre-Alpha Version", "cdea1c081022e7697a1afffb1d2f9f6a", 2646, "fb2ce39002c3e05f3d83533638dea105", 2310356),
 	FANMADE("Knight's Quest Demo 1.0", "5e816edf993956752ed06fccfeeae6d9", 1260, "959321f88a22905fa1f8c6d897874744", 703836),
@@ -6107,7 +6109,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE("New Year's Mystery", "e4dcab1b1d3cb4a2c070a07a9c9589e0", 708, "e00ca5e44fd4e98d8174b467b31b0f21", 295425),
 	FANMADE("New Year's Mystery (Updated)", "efd1beb5120293725065c95959144f81", 714, "b3bd3c2372ed6efa28adb12403c4c31a", 305027),
 	FANMADE("Ocean Battle", "c2304a0568e0eb84f8e9a0915f01170a", 408, "46c520c1ac9b63528854d0f58c7e1b74", 142234),
-	FANMADE("Osama", "db8f1710453cfbecf4214b2946970043", 390, "7afd75d4620dedf97a84ae8f0a7523cf", 123827),
+	FANMADE("Osama Been Skatin'", "db8f1710453cfbecf4214b2946970043", 390, "7afd75d4620dedf97a84ae8f0a7523cf", 123827),
 	FANMADE("Quest for the Cheat", "a359d4cf27f98264b42b55c017671214", 882, "8a943029f73c4bc85d454b7f473455ba", 455209),
 	FANMADE("Robust Parse Demo 1.2", "c956d40b6eb42292ec328c510acb11d8", 540, "26f092bab5ec4490737d8463fd3ebbd5", 229044),
 	FANMADE("SCI Capture the Flag", "4cd679a51d93b8b27c6b38d81be24b8b", 432, "98ae1f6ed7b4c21f88addbf643dd1d2f", 147878),
@@ -6120,7 +6122,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE("SCI Programming April 2010 Competition Template", "36e5c4011dd7c92e1ae4c6fede7d698d", 456, "20c87fbb7f73e2a3eb2c5dfab4d76b5a", 142221),
 	FANMADE("SCI Studio Template 3.0", "ca0dc8d586e0a8670b7621cde090b532", 354, "58a48ee692a86c0575e6bd0b00a92b9a", 113097),
 	FANMADE("SCI Quest", "9067e1f1e54436d2dbfce855524bc84a", 552, "ffa7d355cd9223f245289108a696bcd2", 149634),
+#if 0
+	// Disabled, this crashes into: [VM] kFGets[2b]: signature mismatch in method TitleScreen::init (room 3052, script 800, localCall ffffffff)!
+	FANMADE("SCI Tetris", "a268f84a293e6f8bbb55f6a41541c6cb", 384, "4da38a05d9752e787770e560a8f54fe6", 138974),
+#endif
+	FANMADE11("SCI VGA Demo Update-Remake", "8913c0855eac223de6a86b3fc1af67c1", 439, "31d4283d8a9d52833df0d1e91dd702ec", 299311),
 	FANMADE("SCI-Man", "3ab85bd39a86c11f85781764f9db09bb", 468, "bb8f9992f504a242bf0860e3588e150b", 131810),
+	FANMADE("Scene Builder", "981de9fc7ecfc26631a5aec5c4e09bfe", 1842, "8faf71a4f7d89618d1346c1d60cd3074", 820847),
 	FANMADE("Soulshade Asylum", "965a07e7fb6fd9563b94c969b72cfe2a", 546, "57401d18559985e569085a69edda691e", 244786),
 	FANMADE("Text Views Demo", "ad0485a96470566517f184ff5dd049f8", 372, "727b946b37588ed334737732c55007c4", 115788),
 	FANMADE("The Black Cauldron Demo", "5e1ff2833c7f33ebcfa456ba836e2067", 2592, "2f8e6264d2db91bb54982ab8aa18b3b4", 1881839),
@@ -6138,12 +6146,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Itch.IO 2019 release: more bug fixes and polish
 	FANMADE11("The Dating Pool Demo (Itch.IO 2019)", "1f7b68ed422eadbf373cc8611bc56f94", 1393, "094b9d3c841fe60076f06cdef3fb1383", 1555073),
 	// Reported in #11071
-	FANMADE11("The Dating Pool Demo (2019 One Day)", "736656f6debeaf8c8f53ef4f4825511a", 1303, "4d6f521253ec67d0f1bd38c29c91c806", 915171),
+	FANMADE11("The Dating Pool Demo (2016 One Day)", "736656f6debeaf8c8f53ef4f4825511a", 1303, "4d6f521253ec67d0f1bd38c29c91c806", 915171),
 	FANMADE("The Farm Nightmare", "fb6cbfddaa7c055e2c3d8cf4c683a7db", 906, "50655e8b8925f717e698e08f006f40be", 338303),
 	FANMADE("The Gem Scenario", "ef5f61f4d2c6d31122d3e2baf89ad976", 642, "2f16be390dd90c3d7ca1c8a594ac0bfa", 244794),
 	FANMADE("The Legend of the Lost Jewel", "ba1bca315e3818c5626eda51bcfbcccf", 636, "9b0736d69924af0cff32a0f78db96855", 300398),
 	FANMADE("The Sect of Achturan", "130ee6a9137005cdd4a26c38fa21576a", 1626, "1faf42afbfdb782f61ceaa1ee6243b76", 961705),
 	FANMADE("Winter Wonderland", "c1ffaf8327462effd4ad21eeed9eea59", 504, "5d48666dc62f90d852a1d0de6e69195f", 305076),
+#if 0
+	// Disabled, this crashes into: ERROR: Uninitialized read for temp 2 from method ::export 1 (room 516, script 505, localCall ffffffff)!
+	FANMADE("Zork Demo", "1e449214ed0738cb868e09249a24dbb6", 3480, "0f24d70ab8a51155a3a62f4495847afd", 335957),
+#endif
 	FANMADE11("Zork: The Great Underground Empire", "65f0731485faca4ee568b74e2f59d850", 3518, "e5d4790b6e8fa1b9a9691b22d541012b", 2460903),
 
 	// FIXME: The vga demo does not have a resource.000/001 file.
