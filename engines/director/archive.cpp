@@ -862,11 +862,19 @@ void RIFXArchive::readKeyTable(Common::SeekableReadStreamEndian &keyStream) {
 		uint32 childTag = keyStream.readUint32();
 
 		debugC(2, kDebugLoading, "KEY*: childIndex: %d parentIndex: %d childTag: %s", childIndex, parentIndex, tag2str(childTag));
+
+		// Link cast members to their resources.
 		if (castResMap.contains(parentIndex)) {
 			castResMap[parentIndex].children.push_back(_types[childTag][childIndex]);
 		} else if (castResMap.contains(childIndex)) { // sometimes parent and child index are reversed...
 			castResMap[childIndex].children.push_back(_types[childTag][parentIndex]);
-		} else if (parentIndex == 1024) {
+		}
+
+		// Link the movie to its resources.
+		// The movie has the hardcoded ID 1024, which may collide with a cast member's ID
+		// when there are many chunks. This is not a problem since cast members and
+		// movies use different resource types, so we can tell them apart.
+		if (parentIndex == 1024) {
 			_movieChunks.setVal(childTag, childIndex);
 		}
 	}
