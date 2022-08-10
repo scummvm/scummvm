@@ -130,7 +130,7 @@ bool Movie::loadArchive() {
 	// Wait to handle _stageColor until palette is loaded in loadCast...
 
 	// File Info
-	if (r = _movieArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'F', 'I'))) {
+	if ((r = _movieArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'F', 'I'))) != nullptr) {
 		loadFileInfo(*r);
 		delete r;
 	}
@@ -174,7 +174,7 @@ bool Movie::loadArchive() {
 	delete r;
 
 	// Action list
-	if (r = _movieArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'A', 'C'))) {
+	if ((r = _movieArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'A', 'C'))) != nullptr) {
 		_score->loadActions(*r);
 		delete r;
 	}

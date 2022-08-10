@@ -491,25 +491,25 @@ void Cast::loadCast() {
 	}
 
 	// Font Mapping
-	if (r = _castArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'F', 'M'))) {
+	if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'F', 'M'))) != nullptr) {
 		loadFontMap(*r);
 		delete r;
 	}
 
 	// Cross-Platform Font Mapping
-	if (r = _castArchive->getMovieResourceIfPresent(MKTAG('F', 'X', 'm', 'p'))) {
+	if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('F', 'X', 'm', 'p'))) != nullptr) {
 		loadFXmp(*r);
 		delete r;
 	}
 
 	// Font Mapping V4
-	if (r = _castArchive->getMovieResourceIfPresent(MKTAG('F', 'm', 'a', 'p'))) {
+	if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('F', 'm', 'a', 'p'))) != nullptr) {
 		loadFontMapV4(*r);
 		delete r;
 	}
 
 	// Pattern Tiles
-	if (r = _castArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'T', 'L'))) {
+	if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'T', 'L'))) != nullptr) {
 		loadVWTL(*r);
 		delete r;
 	}
@@ -527,7 +527,7 @@ void Cast::loadCast() {
 	}
 
 	// External sound files
-	if (r = _castArchive->getMovieResourceIfPresent(MKTAG('S', 'T', 'R', ' '))) {
+	if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('S', 'T', 'R', ' '))) != nullptr) {
 		loadExternalSound(*r);
 		delete r;
 	}
@@ -560,7 +560,7 @@ void Cast::loadCast() {
 	// For D4+ we may request to force Lingo scripts and skip precompiled bytecode
 	if (_version >= kFileVer400 && !debugChannelSet(-1, kDebugNoBytecode)) {
 		// Try to load script context
-		if (r = _castArchive->getMovieResourceIfPresent(MKTAG('L', 'c', 't', 'x'))) {
+		if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('L', 'c', 't', 'x'))) != nullptr) {
 			loadLingoContext(*r);
 			delete r;
 		}
@@ -577,7 +577,7 @@ void Cast::loadCast() {
 	}
 
 	// Score Order List resources
-	if (r = _castArchive->getMovieResourceIfPresent(MKTAG('S', 'o', 'r', 'd'))) {
+	if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('S', 'o', 'r', 'd'))) != nullptr) {
 		loadSord(*r);
 		delete r;
 	}
