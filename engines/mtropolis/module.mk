@@ -23,6 +23,7 @@ MODULE_OBJS = \
 	render.o \
 	runtime.o \
 	saveload.o \
+	subtitles.o \
 	vthread.o
 
 # This module can be built as a plugin

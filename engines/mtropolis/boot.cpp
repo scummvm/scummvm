@@ -31,6 +31,7 @@
 #include "mtropolis/boot.h"
 #include "mtropolis/detection.h"
 #include "mtropolis/runtime.h"
+#include "mtropolis/subtitles.h"
 
 #include "mtropolis/plugin/obsidian.h"
 #include "mtropolis/plugin/standard.h"
@@ -535,9 +536,32 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 
 	Common::SharedPtr<Boot::GameDataHandler> gameDataHandler;
 
+	Common::SharedPtr<SubtitleAssetMappingTable> subsAssetMappingTable;
+	Common::SharedPtr<SubtitleModifierMappingTable> subsModifierMappingTable;
+	Common::SharedPtr<SubtitleSpeakerTable> subsSpeakerTable;
+	Common::SharedPtr<SubtitleLineTable> subsLineTable;
+
+	Common::String speakerTablePath;
+	Common::String linesTablePath;
+	Common::String assetMappingTablePath;
+	Common::String modifierMappingTablePath;
+
 	switch (gameDesc.gameID) {
 	case GID_OBSIDIAN:
 		gameDataHandler.reset(new Boot::ObsidianGameDataHandler(gameDesc));
+
+		if ((gameDesc.desc.flags & ADGF_DEMO) == 0 && gameDesc.desc.language == Common::EN_ANY) {
+			linesTablePath = "subtitles_lines_obsidian_en.csv";
+			speakerTablePath = "subtitles_speakers_obsidian_en.csv";
+
+			if (gameDesc.desc.platform == Common::kPlatformWindows) {
+				assetMappingTablePath = "subtitles_asset_mapping_obsidian_win_en.csv";
+				modifierMappingTablePath = "subtitles_modifier_mapping_obsidian_win_en.csv";
+			} else if (gameDesc.desc.platform == Common::kPlatformMacintosh) {
+				assetMappingTablePath = "subtitles_asset_mapping_obsidian_mac_en.csv";
+				modifierMappingTablePath = "subtitles_modifier_mapping_obsidian_mac_en.csv";
+			}
+		}
 		break;
 	default:
 		gameDataHandler.reset(new Boot::GameDataHandler());
@@ -884,6 +908,41 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 	resources->persistentResources = persistentResources;
 
 	desc->setResources(resources);
+
+	if (assetMappingTablePath.size() > 0 && linesTablePath.size() > 0) {
+		subsAssetMappingTable.reset(new SubtitleAssetMappingTable());
+		subsModifierMappingTable.reset(new SubtitleModifierMappingTable());
+		subsSpeakerTable.reset(new SubtitleSpeakerTable());
+		subsLineTable.reset(new SubtitleLineTable());
+
+		Common::ErrorCode assetMappingError = subsAssetMappingTable->load(assetMappingTablePath);
+		Common::ErrorCode modifierMappingError = subsModifierMappingTable->load(modifierMappingTablePath);
+		Common::ErrorCode speakerError = subsSpeakerTable->load(speakerTablePath);
+		Common::ErrorCode linesError = speakerError;
+
+		if (speakerError == Common::kNoError)
+			linesError = subsLineTable->load(linesTablePath, *subsSpeakerTable);
+
+		if (assetMappingError != Common::kNoError || modifierMappingError != Common::kNoError || linesError != Common::kNoError) {
+			// If all sub files are missing, then the user hasn't installed them
+			if (assetMappingError != Common::kPathDoesNotExist || modifierMappingError != Common::kPathDoesNotExist || linesError != Common::kPathDoesNotExist) {
+				warning("Failed to load subtitles data");
+			}
+
+			subsAssetMappingTable.reset();
+			subsModifierMappingTable.reset();
+			subsLineTable.reset();
+			subsSpeakerTable.reset();
+		}
+	}
+
+	SubtitleTables subTables;
+	subTables.assetMapping = subsAssetMappingTable;
+	subTables.lines = subsLineTable;
+	subTables.modifierMapping = subsModifierMappingTable;
+	subTables.speakers = subsSpeakerTable;
+
+	desc->getSubtitles(subTables);
 
 	return desc;
 }

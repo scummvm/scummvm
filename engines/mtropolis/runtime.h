@@ -38,6 +38,7 @@
 #include "mtropolis/data.h"
 #include "mtropolis/debug.h"
 #include "mtropolis/hacks.h"
+#include "mtropolis/subtitles.h"
 #include "mtropolis/vthread.h"
 
 class OSystem;
@@ -1215,12 +1216,16 @@ public:
 
 	ProjectPlatform getPlatform() const;
 
+	const SubtitleTables &getSubtitles() const;
+	void getSubtitles(const SubtitleTables &subs);
+
 private:
 	Common::Array<SegmentDescription> _segments;
 	Common::Array<Common::SharedPtr<PlugIn> > _plugIns;
 	Common::SharedPtr<ProjectResources> _resources;
 	Common::SharedPtr<CursorGraphicCollection> _cursorGraphics;
 	Common::Language _language;
+	SubtitleTables _subtitles;
 	ProjectPlatform _platform;
 };
 
@@ -1483,6 +1488,7 @@ public:
 class Runtime {
 public:
 	explicit Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProvider, ILoadUIProvider *loadProvider);
+	~Runtime();
 
 	bool runFrame();
 	void drawFrame();
@@ -1606,6 +1612,8 @@ public:
 	void setSaveScreenshotOverride(const Common::SharedPtr<Graphics::Surface> &screenshot);
 
 	bool isIdle() const;
+
+	const Common::SharedPtr<SubtitleRenderer> &getSubtitleRenderer() const;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
@@ -1842,6 +1850,8 @@ private:
 	uint32 _collisionCheckTime;
 
 	Common::Array<IPostEffect *> _postEffects;
+
+	Common::SharedPtr<SubtitleRenderer> _subtitleRenderer;
 
 	Hacks _hacks;
 
@@ -2256,6 +2266,8 @@ public:
 
 	const Common::SharedPtr<CursorGraphicCollection> &getCursorGraphics() const;
 
+	const SubtitleTables &getSubtitles() const;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Project"; }
 #endif
@@ -2364,6 +2376,8 @@ private:
 
 	Common::SharedPtr<PlayMediaSignaller> _playMediaSignaller;
 	Common::SharedPtr<KeyboardEventSignaller> _keyboardEventSignaller;
+
+	SubtitleTables _subtitles;
 
 	Runtime *_runtime;
 };

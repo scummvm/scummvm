@@ -259,7 +259,7 @@ static void renderDirectElement(const RenderItem &item, Window *mainWindow) {
 	renderNormalElement(item, mainWindow);	// Meh
 }
 
-void renderProject(Runtime *runtime, Window *mainWindow) {
+void renderProject(Runtime *runtime, Window *mainWindow, bool *outSkipped) {
 	bool sceneChanged = runtime->isSceneGraphDirty();
 
 	Common::Array<Structural *> scenes;
@@ -296,6 +296,9 @@ void renderProject(Runtime *runtime, Window *mainWindow) {
 	}
 
 	if (sceneChanged) {
+		if (outSkipped)
+			*outSkipped = false;
+
 		for (Common::Array<RenderItem>::const_iterator it = normalBucket.begin(), itEnd = normalBucket.end(); it != itEnd; ++it)
 			renderNormalElement(*it, mainWindow);
 
@@ -304,6 +307,9 @@ void renderProject(Runtime *runtime, Window *mainWindow) {
 
 		for (const IPostEffect *postEffect : runtime->getPostEffects())
 			postEffect->renderPostEffect(*mainWindow->getSurface());
+	} else {
+		if (outSkipped)
+			*outSkipped = true;
 	}
 
 	runtime->clearSceneGraphDirty();

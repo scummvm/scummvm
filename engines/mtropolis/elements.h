@@ -109,10 +109,14 @@ public:
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
 
-private:
+protected:
+	void onPauseStateChanged() override;
 	void onSegmentUnloaded(int segmentIndex) override;
 
+private:
 	IntRange computeRealRange() const;
+
+	void stopSubtitles();
 
 	MiniscriptInstructionOutcome scriptSetRange(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetRangeStart(MiniscriptThread *thread, const DynamicValue &value);
@@ -163,6 +167,8 @@ private:
 
 	Common::SharedPtr<SegmentUnloadSignaller> _unloadSignaller;
 	Common::SharedPtr<PlayMediaSignaller> _playMediaSignaller;
+
+	Common::SharedPtr<SubtitlePlayer> _subtitles;
 
 	Common::Array<int> _damagedFrames;
 
@@ -380,6 +386,8 @@ public:
 #endif
 
 private:
+	void stopPlayer();
+
 	MiniscriptInstructionOutcome scriptSetLoop(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetVolume(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetBalance(MiniscriptThread *thread, const DynamicValue &value);
@@ -405,11 +413,16 @@ private:
 	Common::SharedPtr<CachedAudio> _cachedAudio;
 	Common::SharedPtr<AudioMetadata> _metadata;
 	Common::SharedPtr<AudioPlayer> _player;
+	uint64 _startTime;
 	uint64 _finishTime;
+	uint64 _startTimestamp;	// Time in the sound corresponding to the start time
+	uint64 _cueCheckTime;
 	bool _shouldPlayIfNotPaused;
 	bool _needsReset;
 
 	Common::SharedPtr<PlayMediaSignaller> _playMediaSignaller;
+
+	Common::SharedPtr<SubtitlePlayer> _subtitlePlayer;
 
 	Runtime *_runtime;
 };

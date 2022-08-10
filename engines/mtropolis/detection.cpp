@@ -60,7 +60,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 	{
-		GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS,
+		GAMEOPTION_SOUND_GAMEPLAY_SUBTITLES,
 		{
 			_s("Autosave at progress points"),
 			_s("Automatically saves the game after completing puzzles and chapters."),
@@ -77,6 +77,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Enables transitions that are set to maximum rate instead of skipping them"),
 			"mtropolis_mod_minimum_transition_duration",
 			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS,
+		{
+			_s("Use subtitles for sound-based gameplay elements"),
+			_s("Enables subtitles for gameplay elements that depend on hearing an audible sound."),
+			"mtropolis_mod_sound_gameplay_subtitles",
+			false,
 			0,
 			0
 		}

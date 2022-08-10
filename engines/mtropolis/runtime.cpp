@@ -2330,6 +2330,14 @@ ProjectPlatform ProjectDescription::getPlatform() const {
 	return _platform;
 }
 
+const SubtitleTables &ProjectDescription::getSubtitles() const {
+	return _subtitles;
+}
+
+void ProjectDescription::getSubtitles(const SubtitleTables &subs) {
+	_subtitles = subs;
+}
+
 const Common::Array<Common::SharedPtr<Modifier> >& SimpleModifierContainer::getModifiers() const {
 	return _modifiers;
 }
@@ -3855,6 +3863,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	_random.reset(new Common::RandomSource("mtropolis"));
 
 	_vthread.reset(new VThread());
+	_subtitleRenderer.reset(new SubtitleRenderer());
 
 	for (int i = 0; i < kColorDepthModeCount; i++) {
 		_displayModeSupported[i] = false;
@@ -3899,6 +3908,13 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	_getSetAttribIDsToAttribName[AttributeIDs::kAttribText] = "text";
 	_getSetAttribIDsToAttribName[AttributeIDs::kAttribMasterVolume] = "mastervolume";
 	_getSetAttribIDsToAttribName[AttributeIDs::kAttribUserTimeout] = "usertimeout";
+}
+
+Runtime::~Runtime() {
+	// Clear the project first, which should detach any references to other things
+	_project.reset();
+
+	_subtitleRenderer.reset();
 }
 
 bool Runtime::runFrame() {
@@ -4106,7 +4122,7 @@ bool Runtime::runFrame() {
 
 					_sceneTransitionOldFrame->copyFrom(*mainWindow->getSurface());
 
-					Render::renderProject(this, mainWindow.get());
+					Render::renderProject(this, mainWindow.get(), nullptr);
 
 					_sceneTransitionNewFrame->copyFrom(*mainWindow->getSurface());
 				}
@@ -4194,14 +4210,26 @@ void Runtime::drawFrame() {
 
 	_system->fillScreen(Render::resolveRGB(0, 0, 0, getRenderPixelFormat()));
 
+	bool needToRenderSubtitles = false;
+	if (_subtitleRenderer->update(_playTime))
+		setSceneGraphDirty();
+
 	{
 		Common::SharedPtr<Window> mainWindow = _mainWindow.lock();
 		if (mainWindow) {
 			if (_sceneTransitionState == kSceneTransitionStateTransitioning) {
 				assert(_activeSceneTransitionEffect != nullptr);
 				Render::renderSceneTransition(this, mainWindow.get(), *_activeSceneTransitionEffect, _sceneTransitionStartTime, _sceneTransitionEndTime, _playTime, *_sceneTransitionOldFrame, *_sceneTransitionNewFrame);
-			} else
-				Render::renderProject(this, mainWindow.get());
+				needToRenderSubtitles = true;
+			} else {
+				bool skipped = false;
+				Render::renderProject(this, mainWindow.get(), &skipped);
+
+				needToRenderSubtitles = !skipped;
+			}
+
+			if (needToRenderSubtitles)
+				_subtitleRenderer->composite(*mainWindow);
 		}
 	}
 
@@ -5833,6 +5861,10 @@ bool Runtime::isIdle() const {
 	return true;
 }
 
+const Common::SharedPtr<SubtitleRenderer> &Runtime::getSubtitleRenderer() const {
+	return _subtitleRenderer;
+}
+
 void Runtime::ensureMainWindowExists() {
 	// Maybe there's a better spot for this
 	if (_mainWindow.expired() && _project) {
@@ -6279,6 +6311,7 @@ VThreadState Project::consumeCommand(Runtime *runtime, const Common::SharedPtr<M
 void Project::loadFromDescription(const ProjectDescription &desc, const Hacks &hacks) {
 	_resources = desc.getResources();
 	_cursorGraphics = desc.getCursorGraphics();
+	_subtitles = desc.getSubtitles();
 
 	debug(1, "Loading new project...");
 
@@ -6680,6 +6713,10 @@ void Project::loadBootStream(size_t streamIndex, const Hacks &hacks) {
 
 	holdAssets(assetDefLoader.assets);
 	assignAssets(assetDefLoader.assets, hacks);
+}
+
+const SubtitleTables &Project::getSubtitles() const {
+	return _subtitles;
 }
 
 void Project::loadPresentationSettings(const Data::PresentationSettings &presentationSettings) {
