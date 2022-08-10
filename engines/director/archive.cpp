@@ -172,11 +172,10 @@ Common::String Archive::getName(uint32 tag, uint16 id) const {
 }
 
 Common::SeekableReadStreamEndian *Archive::getMovieResourceIfPresent(uint32 tag) {
-	if (g_director->getVersion() >= 400 && (_movieChunks.contains(tag) && hasResource(tag, _movieChunks[tag])))
-		return getResource(tag, _movieChunks[tag]);
-
-	if (hasResource(tag, -1)) {
-		warning("Archive::getMovieResourceIfPresent(): KEY* to reference tag %d not found, returning first occurence of this resource", tag);
+	if (g_director->getVersion() >= 400) {
+		if (_movieChunks.contains(tag) && hasResource(tag, _movieChunks[tag]))
+			return getResource(tag, _movieChunks[tag]);
+	} else if (hasResource(tag, -1)) {
 		return getFirstResource(tag);
 	}
 
