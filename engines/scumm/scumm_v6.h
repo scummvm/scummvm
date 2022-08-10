@@ -163,6 +163,9 @@ protected:
 
 	void clearDrawQueues() override;
 
+	int getBannerColor(int bannerId) override;
+	const char *getGUIString(int stringId) override;
+
 public:
 	bool akos_increaseAnims(const byte *akos, Actor *a);
 	bool akos_increaseAnim(Actor *a, int i, const byte *aksq, const uint16 *akfo, int numakfo);
