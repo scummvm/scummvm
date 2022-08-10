@@ -49,7 +49,6 @@
 #include "immortal/detection.h"
 #include "immortal/disk.h"
 
-#include "immortal/sprite_list.h"						// This is an enum of all available sprites
 #include "immortal/story.h"
 
 namespace Immortal {
@@ -217,8 +216,8 @@ public:
 	 */
 
 	// Misc constants
-	const int kNumLengths = 21;
-	const int kNiceTime = 36;
+	const int kNumLengths     = 21;
+	const int kNiceTime       = 36;
 	const int kMaxCertificate = 16;
 
 	// Max strings = 250
@@ -232,27 +231,27 @@ public:
 						   			  		"Enter certificate:&-=",
 						   			  		"Game Over&&Play again?@"};
 	// Screen constants
-	const int kResH 	  = 320;
-	const int kResV 	  = 200;
-	const int kScreenW__  = 128;						// ??? labeled in source as SCREENWIDTH
-	const int kScreenH__  = 128;						// ???
-	const int kViewPortW  = 256;
-	const int kViewPortH  = 128;
-	const int kScreenSize = (kResH * kResV) * 2; 		// The size of the screen buffer is 320x200
-	const int kScreenLeft = 32;
-	const int kScreenTop  = 20;
-	const int kTextLeft   = 8;
-	const int kTextTop    = 4;
-	const int kGaugeX     = 0;
-	const int kGaugeY     = -13;						// ???
-	const int kScreenBMW  = 160;						// Literally no idea yet
-	const uint16 kChrW 	  = 64;
-	const uint16 kChrH    = 32;
-	const uint16 kChrH2   = kChrH * 2;
-	const uint16 kChrH3   = kChrH * 3;
-	const int kChrLen	  = (kChrW / 2) * kChrH;
-	const int kChrBMW	  = kChrW / 2;
-	const int kLCutaway   = 4;
+	const int    kResH 	     = 320;
+	const int    kResV 	     = 200;
+	const int    kScreenW__  = 128;						// ??? labeled in source as SCREENWIDTH
+	const int    kScreenH__  = 128;						// ???
+	const int    kViewPortW  = 256;
+	const int    kViewPortH  = 128;
+	const int    kScreenSize = (kResH * kResV) * 2; 	// The size of the screen buffer is 320x200
+	const int    kScreenLeft = 32;
+	const int    kScreenTop  = 20;
+	const int    kTextLeft   = 8;
+	const int    kTextTop    = 4;
+	const int    kGaugeX     = 0;
+	const int    kGaugeY     = -13;						// ???
+	const int    kScreenBMW  = 160;						// Literally no idea yet
+	const uint16 kChrW 	     = 64;
+	const uint16 kChrH       = 32;
+	const uint16 kChrH2      = kChrH * 2;
+	const uint16 kChrH3      = kChrH * 3;
+	const int    kChrLen	 = (kChrW / 2) * kChrH;
+	const int    kChrBMW	 = kChrW / 2;
+	const int    kLCutaway   = 4;
 
 	const uint16 kChrDy[19] = {kChr0, kChrH, kChrH2, kChrH, kChrH2,
 						   	   kChrH2, kChrH, kChrH2, kChrH2, kChr0,
@@ -273,7 +272,7 @@ public:
 							  		  0, 0, 0, 0, 0, 0};
 
 	// Disk offsets
-	const int kPaletteOffset = 21205;					// This is the byte position of the palette data in the disk
+	const int kPaletteOffset  = 21205;					// This is the byte position of the palette data in the disk
 
 	// Sprite constants
 	const int kMaxSpriteAbove = 48;						// Maximum sprite extents from center
@@ -574,6 +573,7 @@ public:
 
 	/*
 	 * [Level.cpp] Functions from level.GS
+	 * < All functions implemented (in some capacity)! >
 	 */
 	// Init
 	void levelInitAtStartOfGameOnly();
