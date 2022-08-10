@@ -19,9 +19,12 @@
  *
  */
 
+#include "immortal/room.h"
 #include "immortal/immortal.h"
 
 namespace Immortal {
+
+struct Flame;
 
 void ImmortalEngine::levelInitAtStartOfGameOnly() {
 	loadStoryFiles();
@@ -38,7 +41,7 @@ void ImmortalEngine::levelNew(int l) {
 	clearScreen();
 	/* commented out in the source for some reason? */
 	for (int i = 0; i < kMaxRooms; i++) {
-		//_rooms[i].delete();
+		delete _rooms[i];
 	}
 
 	levelStory(l);
@@ -64,7 +67,7 @@ void ImmortalEngine::levelStory(int l) {
 }
 
 void ImmortalEngine::levelLoadFile(int l) {
-	_dRoomNum = 0;
+//	_dRoomNum = 0;
 
 	/* This was originally a large branching tree that checked the identifier of each entry and
 	 * Processed them all for the story. Once again, this would have been better as an indexed
@@ -74,12 +77,13 @@ void ImmortalEngine::levelLoadFile(int l) {
 
 	// Create the rooms and doors, then populate the rooms with their objects and actors
 	for (int r = 0; r < _stories[l]._rooms.size(); r++) {
-		//roomNew(_stories[l]._rooms[i]);
+		_rooms[r] = new Room(_stories[l]._rooms[r]._x, _stories[l]._rooms[r]._y, _stories[l]._rooms[r]._flags);
 		//doorNew(_stories[l]._doors[i]);
 		debug("Room %d", r);
 		for (int f = 0; f < _stories[l]._flames.size(); f++) {
 			if (_stories[l]._flames[r].size() > 0) {
-				//fsetNew(_stories[l]._flames[r][f]);
+				//Flame flame;
+				//_rooms[r]->_flames.push_back(flame);
 				debugN("F%d", f);
 			}
 		}

@@ -12,10 +12,10 @@ MODULE_OBJS = \
 	cycle.o \
 	drawChr.o \
  	level.o \
- 	story.o
+ 	story.o \
+	room.o
 
 #	universe.o \
-#	room.o \
 #	object.o \
 #	door.o \
 #	flameset.o \

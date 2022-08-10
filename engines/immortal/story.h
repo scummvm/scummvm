@@ -19,6 +19,8 @@
  *
  */
 
+#include "immortal/sprite_list.h"						// This is an enum of all available sprites
+
 #ifndef IMMORTAL_STORY_H
 #define IMMORTAL_STORY_H
 
