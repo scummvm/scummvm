@@ -1516,7 +1516,6 @@ void LauncherGrid::updateListing() {
 		Common::String engineid;
 		engineid = iter->_value.getValOrDefault("engineid");
 
-		// Strip platform language from the title.
 		Common::String key = buildQualifiedGameName(engineid, gameid);
 
 		if (_launcherChooser->getGameList()->contains(key)) {
@@ -1529,6 +1528,18 @@ void LauncherGrid::updateListing() {
 
 		if (description.empty())
 			description = Common::String::format("Unknown (target %s, gameid %s)", iter->_key.c_str(), gameid.c_str());
+
+		// Fallback for fanmade AGI/SCI games that have an identical title
+		if (title.contains("Fanmade AGI") || title.contains("Fanmade SCI")) {
+			title = description;
+
+			// Strip platform language from the title.
+			if (title.contains("(")) {
+				size_t extraPos = description.find("(");
+				if (extraPos != Common::String::npos)
+					title = Common::String(description.c_str(), extraPos);
+			}
+		}
 
 		if (title.empty())
 			title = description;
