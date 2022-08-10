@@ -102,7 +102,7 @@ jobs:
           - platform: macosx
             buildFlags: -scheme ScummVM-macOS
             configFlags: --disable-nasm --enable-faad --enable-mpeg2
-            brewPackages: a52dec faad2 flac fluid-synth freetype fribidi mad libmpeg2 libogg libpng libvorbis sdl2 sdl2_net theora giflib
+            brewPackages: a52dec faad2 flac fluid-synth freetype fribidi jpeg mad libmpeg2 libogg libpng libvorbis sdl2 sdl2_net theora giflib
           - platform: ios7
             buildFlags: -scheme ScummVM-iOS CODE_SIGN_IDENTITY="" CODE_SIGNING_ALLOWED=NO
             configFlags: --disable-nasm --disable-opengl --disable-theoradec --disable-mpeg2 --disable-taskbar --disable-tts --disable-fribidi
