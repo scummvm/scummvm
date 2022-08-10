@@ -709,7 +709,6 @@ void SubtitlePlayer::update(uint64 prevTime, uint64 newTime) {
 
 	const Common::Array<SubtitleLineTable::LineData> &allLines = _lines->getAllLines();
 
-	uint numLines = _lineRange.numLines;
 	for (uint i = 0; i < _lineRange.numLines; i++) {
 		const SubtitleLineTable::LineData &line = allLines[_lineRange.linesStart + i];
 		if (line.timeOffsetMSec >= prevTime && line.timeOffsetMSec < newTime)
