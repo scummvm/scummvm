@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-10 13:28+0000\n"
+"POT-Creation-Date: 2022-08-10 23:16+0000\n"
 "PO-Revision-Date: 2022-08-10 11:37+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -5985,26 +5985,31 @@ msgid "Enable short transitions"
 msgstr "短い遷移を有効化"
 
 #: engines/mtropolis/detection.cpp:77
+#, fuzzy
+#| msgid ""
+#| "Enables transitions that are set to maximum rate instead of skipping them"
 msgid ""
-"Enables transitions that are set to maximum rate instead of skipping them"
+"Enables transitions that are set to maximum rate instead of skipping them."
 msgstr "最大レートに設定された遷移はスキップされず、有効になります"
 
 #: engines/mtropolis/detection.cpp:87
-msgid "Use subtitles for sound-based gameplay elements"
-msgstr "音を使うゲーム要素に字幕を使用する"
+msgid "Enable subtitles for important sound effects"
+msgstr ""
 
 #: engines/mtropolis/detection.cpp:88
 msgid ""
-"Enables subtitles for gameplay elements that depend on hearing an audible "
-"sound."
-msgstr "サウンドに依存するゲーム要素において、字幕を有効化します。"
+"Enables subtitles for important sound effects.  This may reduce the "
+"difficulty of sound recognition puzzles and minigames."
+msgstr ""
 
 #: engines/mtropolis/detection.cpp:98
 msgid "Start with debugger"
 msgstr "デバッグ起動"
 
 #: engines/mtropolis/detection.cpp:99
-msgid "Starts with the debugger dashboard active"
+#, fuzzy
+#| msgid "Starts with the debugger dashboard active"
+msgid "Starts with the debugger dashboard active."
 msgstr "デバッガーダッシュボードありで起動"
 
 #: engines/mtropolis/saveload.cpp:123
@@ -9030,6 +9035,14 @@ msgstr ""
 "Arialが必要です。LiberationFontsを使用する場合、LiberationMono、"
 "LiberationSans、LiberationSerifが必要です。GNUFreeFontを使用する場合、"
 "FreeMono、FreeSans、FreeSerifが必要です。"
+
+#~ msgid "Use subtitles for sound-based gameplay elements"
+#~ msgstr "音を使うゲーム要素に字幕を使用する"
+
+#~ msgid ""
+#~ "Enables subtitles for gameplay elements that depend on hearing an audible "
+#~ "sound."
+#~ msgstr "サウンドに依存するゲーム要素において、字幕を有効化します。"
 
 #~ msgid "Start debugging immediately"
 #~ msgstr "すぐにデバッグ開始"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-10 13:28+0000\n"
+"POT-Creation-Date: 2022-08-10 23:16+0000\n"
 "PO-Revision-Date: 2022-02-18 18:47+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -6083,17 +6083,17 @@ msgstr "Włącz pływające kursory"
 
 #: engines/mtropolis/detection.cpp:77
 msgid ""
-"Enables transitions that are set to maximum rate instead of skipping them"
+"Enables transitions that are set to maximum rate instead of skipping them."
 msgstr ""
 
 #: engines/mtropolis/detection.cpp:87
-msgid "Use subtitles for sound-based gameplay elements"
+msgid "Enable subtitles for important sound effects"
 msgstr ""
 
 #: engines/mtropolis/detection.cpp:88
 msgid ""
-"Enables subtitles for gameplay elements that depend on hearing an audible "
-"sound."
+"Enables subtitles for important sound effects.  This may reduce the "
+"difficulty of sound recognition puzzles and minigames."
 msgstr ""
 
 #: engines/mtropolis/detection.cpp:98
@@ -6103,7 +6103,7 @@ msgstr "Włącz debugger"
 
 #: engines/mtropolis/detection.cpp:99
 #, fuzzy
-msgid "Starts with the debugger dashboard active"
+msgid "Starts with the debugger dashboard active."
 msgstr "Włącz debugger"
 
 #: engines/mtropolis/saveload.cpp:123
