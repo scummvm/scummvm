@@ -219,6 +219,7 @@ void FreescapeEngine::processInput() {
 				uint32 gasPocketY = _currentArea->gasPocketX;
 				uint32 gasPocketRadius = _currentArea->gasPocketRadius;
 				if (isDriller() && gasPocketRadius > 0 && !_currentArea->drillDeployed()) {
+					_gameStateVars[32]++;
 					// TODO: check if there is space for the drill
 					// TODO: check if there is enough energy
 					Math::Vector3d drillPosition = _position + _cameraFront * 128;
@@ -233,6 +234,7 @@ void FreescapeEngine::processInput() {
 			} else if (event.kbd.keycode == Common::KEYCODE_c) {
 				// TODO: check if there is enough energy
 				if (isDriller() && _currentArea->drillDeployed()) {
+					_gameStateVars[32]--;
 					_currentArea->removeDrill();
 				}
 			} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
