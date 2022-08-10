@@ -396,6 +396,7 @@ uint SubtitleDisplayItem::getSlot() const {
 }
 
 SubtitleRenderer::SubtitleRenderer() : _nonImmediateDisappearTime(3500), _isDirty(true), _lastTime(0) {
+#ifdef USE_FREETYPE2
 	Common::File fontFile;
 	const char *fontPath = "LiberationSans-Bold.ttf";
 
@@ -403,6 +404,9 @@ SubtitleRenderer::SubtitleRenderer() : _nonImmediateDisappearTime(3500), _isDirt
 
 	if (!_font)
 		warning("Couldn't open '%s', subtitles will not work", fontPath);
+
+	// TODO: Maybe support subtitles some other way if FreeType isn't enabled
+#endif
 }
 
 void SubtitleRenderer::addDisplayItem(const Common::SharedPtr<SubtitleDisplayItem> &item, uint duration) {
