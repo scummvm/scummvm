@@ -2468,17 +2468,6 @@ load_game:
 		scummLoop_handleSaveLoad();
 
 	if (_completeScreenRedraw) {
-		clearCharsetMask();
-		_charset->_hasMask = false;
-
-		if (_game.version > 3) {
-			if (_townsPlayer)
-				_townsPlayer->restoreAfterLoad();
-
-			for (int i = 0; i < _numVerbs; i++)
-				drawVerb(i, 0);
-		}
-
 		// Update volume settings
 		syncSoundSettings();
 
@@ -2689,7 +2678,7 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 }
 
 void ScummEngine_v3::scummLoop_handleSaveLoad() {
-	bool processIQPoints = (_game.id == GID_INDY3) && (_saveLoadFlag == 2 || _loadFromLauncher);
+	bool processIQPoints = (_game.id == GID_INDY3 && (_saveLoadFlag == 2 || _loadFromLauncher));
 	_loadFromLauncher = false;
 
 	ScummEngine::scummLoop_handleSaveLoad();
@@ -2805,7 +2794,7 @@ void ScummEngine_v3::scummLoop_handleSaveLoad() {
 }
 
 void ScummEngine_v5::scummLoop_handleSaveLoad() {
-	bool processIQPoints = (_game.id == GID_INDY4) && (_saveLoadFlag == 2 || _loadFromLauncher);
+	bool processIQPoints = (_game.id == GID_INDY4 && (_saveLoadFlag == 2 || _loadFromLauncher));
 	_loadFromLauncher = false;
 
 	ScummEngine::scummLoop_handleSaveLoad();
@@ -2847,15 +2836,27 @@ void ScummEngine_v5::scummLoop_handleSaveLoad() {
 				runScript(VAR(VAR_ENTRY_SCRIPT2), 0, 0, nullptr);
 		}
 	}
-	bool redrawDistaff = (_game.id == GID_LOOM && _saveLoadFlag == 2 && VAR(150) == 2);
-	if (redrawDistaff) {
-		// Restore distaff and notes for LOOM VGA Talkie.
-		int args[NUM_SCRIPT_LOCAL];
-		memset(args, 0, sizeof(args));
-		args[0] = 2;
-		runScript(18, 0, 0, args);
-		//VAR(152) = VAR(153) = 0;
+
+	if (_completeScreenRedraw) {
+		clearCharsetMask();
+		_charset->_hasMask = false;
+
+		if (_townsPlayer)
+			_townsPlayer->restoreAfterLoad();
+
+		redrawVerbs();
+
+		// For LOOM VGA Talkie, we restore the text glyphs on top of the note verbs
+		// and also restore the text description on top of the image of the selected
+		// object in the bottom right corner. 
+		// These text parts are not actually connected to the verbs (which are image
+		// verbs only). redrawVerbs() will not restore them. They require some script
+		// work. The original interpreter just sets this variable after loading.
+		// Apparently, this is the trigger for all necessary steps to happen...
+		if (_game.id == GID_LOOM)
+			VAR(66) = 1;
 	}
+
 	// update IQ points after loading
 	if (processIQPoints)
 		runScript(145, 0, 0, nullptr);
@@ -2891,6 +2892,12 @@ void ScummEngine_v6::scummLoop_handleSaveLoad() {
 					runScript(VAR(VAR_ENTRY_SCRIPT2), 0, 0, nullptr);
 			}
 		}
+	}
+
+	if (_completeScreenRedraw) {
+		clearCharsetMask();
+		_charset->_hasMask = false;
+		redrawVerbs();
 	}
 }
 

@@ -1181,6 +1181,9 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 	xstrip = x / 8;
 	ydiff = y - vs->topline;
 
+	if (_game.version == 4)
+		ydiff &= ~7;
+
 	obim = getResourceAddress(rtVerb, verb);
 	assert(obim);
 	if (_game.features & GF_OLD_BUNDLE) {

@@ -2874,33 +2874,6 @@ void ScummEngine_v5::o5_verbOps() {
 				default:
 					break;
 				}
-			} else	if (_game.id == GID_LOOM && _game.version == 4) {
-			// FIXME: hack loom notes into right spot
-				if ((verb >= 90) && (verb <= 97)) {	// Notes
-					switch (verb) {
-					case 90:
-					case 91:
-						vs->curRect.top -= 7;
-						break;
-					case 92:
-						vs->curRect.top -= 6;
-						break;
-					case 93:
-						vs->curRect.top -= 4;
-						break;
-					case 94:
-						vs->curRect.top -= 3;
-						break;
-					case 95:
-						vs->curRect.top -= 1;
-						break;
-					case 97:
-						vs->curRect.top -= 5;
-						break;
-					default:
-						break;
-					}
-				}
 			} else if (_game.platform == Common::kPlatformFMTowns && ConfMan.getBool("trim_fmtowns_to_200_pixels")) {
 				if (_game.id == GID_ZAK && verb == 116)
 					// WORKAROUND: FM-TOWNS Zak used the extra 40 pixels at the bottom to increase the inventory to 10 items
