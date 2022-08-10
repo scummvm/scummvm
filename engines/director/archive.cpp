@@ -310,10 +310,16 @@ void MacArchive::readTags() {
 	Common::DumpFile out;
 
 	for (uint32 i = 0; i < tagArray.size(); i++) {
-		ResourceMap &resMap = _types[tagArray[i]];
+		ResourceMap resMap;
 		Common::MacResIDArray idArray = _resFork->getResIDArray(tagArray[i]);
 
 		for (uint32 j = 0; j < idArray.size(); j++) {
+			// Avoid assigning invalid entries to _types, because other
+			// functions will assume they exist and are valid if listed.
+			if (_resFork->getResource(tagArray[i], idArray[j]) == nullptr) {
+				continue;
+			}
+
 			Resource &res = resMap[idArray[j]];
 
 			res.offset = res.size = 0; // unused
@@ -323,6 +329,11 @@ void MacArchive::readTags() {
 			debug(3, "Found MacArchive resource '%s' %d: %s", tag2str(tagArray[i]), idArray[j], res.name.c_str());
 			if (ConfMan.getBool("dump_scripts"))
 				dumpChunk(res, out);
+		}
+
+		// Don't assign a 0-entry resMap to _types.
+		if (resMap.size() > 0) {
+			 _types[tagArray[i]] = resMap;
 		}
 	}
 }
