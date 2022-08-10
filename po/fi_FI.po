@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-08 20:09+0000\n"
+"POT-Creation-Date: 2022-08-10 01:55+0000\n"
 "PO-Revision-Date: 2022-08-05 00:37+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -6053,10 +6053,20 @@ msgid ""
 msgstr "Näyttää siirtymät maksiminopeudella niiden ohittamisen sijaan"
 
 #: engines/mtropolis/detection.cpp:87
+msgid "Use subtitles for sound-based gameplay elements"
+msgstr ""
+
+#: engines/mtropolis/detection.cpp:88
+msgid ""
+"Enables subtitles for gameplay elements that depend on hearing an audible "
+"sound."
+msgstr ""
+
+#: engines/mtropolis/detection.cpp:98
 msgid "Start with debugger"
 msgstr "Käynnistä debuggeri päällä"
 
-#: engines/mtropolis/detection.cpp:88
+#: engines/mtropolis/detection.cpp:99
 msgid "Starts with the debugger dashboard active"
 msgstr "Käynnistää debuggerikojelauta aktiivisena"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-08 20:09+0000\n"
+"POT-Creation-Date: 2022-08-10 01:55+0000\n"
 "PO-Revision-Date: 2022-06-29 20:10+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -6083,11 +6083,21 @@ msgid ""
 msgstr ""
 
 #: engines/mtropolis/detection.cpp:87
+msgid "Use subtitles for sound-based gameplay elements"
+msgstr ""
+
+#: engines/mtropolis/detection.cpp:88
+msgid ""
+"Enables subtitles for gameplay elements that depend on hearing an audible "
+"sound."
+msgstr ""
+
+#: engines/mtropolis/detection.cpp:98
 #, fuzzy
 msgid "Start with debugger"
 msgstr "Start debuggeren"
 
-#: engines/mtropolis/detection.cpp:88
+#: engines/mtropolis/detection.cpp:99
 #, fuzzy
 msgid "Starts with the debugger dashboard active"
 msgstr "Start debuggeren"
