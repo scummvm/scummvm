@@ -70,6 +70,8 @@ void BoyzEngine::runMainMenu(Code *code) {
 	for (Common::StringArray::iterator it = profiles.begin(); it != profiles.end(); ++it) {
 		drawString("block05.fgx", *it, 130, posY, 170, c);
 		posY = posY + 10;
+		if (posY >= 185)
+			break;
 	}
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
