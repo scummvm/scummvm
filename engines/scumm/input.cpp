@@ -398,8 +398,6 @@ void ScummEngine::processInput() {
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 	if (isUsingOriginalGUI()) {
-		char tempStr[64];
-
 		if (lastKeyHit.keycode == Common::KEYCODE_INVALID)
 			return;
 
@@ -418,74 +416,21 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 				runScript(_keyScriptNo, 0, 0, 0);
 			return;
 		}
+	}
 
-		if (lastKeyHit.keycode == VAR(VAR_PAUSE_KEY) ||
-			(lastKeyHit.keycode == Common::KEYCODE_SPACE && _game.features & GF_DEMO)) {
-			// Force the cursor OFF...
-			int8 oldCursorState = _cursor.state;
-			_cursor.state = 0;
-			CursorMan.showMouse(_cursor.state > 0);
-			// "Game Paused.  Press SPACE to Continue."
-			showBannerAndPause(0, -1, getGUIString(gsPause));
-			_cursor.state = oldCursorState;
-			return;
-		}
+	// F1 (the trigger for the original save/load dialog) is mapped to F5
+	if (!(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F1 && lastKeyHit.hasFlags(0)) {
+		lastKeyHit = Common::KeyState(Common::KEYCODE_F5, 319);
+	}
 
-		if (VAR(VAR_VERSION_KEY) != 0 &&
-			lastKeyHit.keycode == Common::KEYCODE_v && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
-			showBannerAndPause(0, -1, _dataFileVersionString);
-			// This is not the string being used by the interpreter, which is instead hardcoded
-			// in the executable. The one used here is found in the data files.
-			showBannerAndPause(0, -1, _engineVersionString);
-			return;
-		}
+	// Fall back to V7 behavior...
+	ScummEngine_v7::processKeyboard(lastKeyHit);
 
-		if (lastKeyHit.keycode == Common::KEYCODE_c && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
-			queryQuit();
-			return;
-		}
+}
 
-		if (lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
-			int voiceMode = VAR(VAR_VOICE_MODE);
-
-			voiceMode++;
-			if (voiceMode >= 3) {
-				voiceMode = 0;
-			}
-
-			switch (voiceMode) {
-			case 0: // "Voice Only"
-				showBannerAndPause(0, 120, getGUIString(gsVoiceOnly));
-				break;
-			case 1: // "Voice and Text"
-				showBannerAndPause(0, 120, getGUIString(gsVoiceAndText));
-				break;
-			default: // "Text Display Only"
-				showBannerAndPause(0, 120, getGUIString(gsTextDisplayOnly));
-			}
-
-			ConfMan.setInt("original_gui_text_status", voiceMode);
-			switch (voiceMode) {
-			case 0:
-				ConfMan.setBool("speech_mute", false);
-				ConfMan.setBool("subtitles", false);
-				break;
-			case 1:
-				ConfMan.setBool("speech_mute", false);
-				ConfMan.setBool("subtitles", true);
-				break;
-			case 2:
-				ConfMan.setBool("speech_mute", true);
-				ConfMan.setBool("subtitles", true);
-				break;
-			default:
-				break;
-			}
-
-			ConfMan.flushToDisk();
-			syncSoundSettings();
-			return;
-		}
+void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
+	if (isUsingOriginalGUI()) {
+		char sliderString[256];
 
 		if (lastKeyHit.keycode == Common::KEYCODE_b && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
 			int curBufferCount = _imuseDigital->roundRobinSetBufferCount();
@@ -494,7 +439,7 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 			return;
 		}
 
-		if (_game.features & GF_DEMO) {
+		if (_game.version != 8 || (_game.version == 8 && (_game.features & GF_DEMO))) {
 			// "Music Volume  Low  =========  High"
 			if (lastKeyHit.keycode == Common::KEYCODE_o || lastKeyHit.keycode == Common::KEYCODE_p) {
 				Common::KeyState ks = lastKeyHit;
@@ -514,12 +459,8 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 							volume = 127;
 					}
 
-					strcpy(tempStr, getGUIString(gsMusicVolume));
-					char *ptrToChar = strchr(tempStr, '=');
-					memset(ptrToChar, '\v', 9);
-					ptrToChar[volume / 15] = '\f';
-
-					showBannerAndPause(0, 0, tempStr);
+					getSliderString(gsMusicVolume, volume, sliderString, sizeof(sliderString));
+					showBannerAndPause(0, 0, sliderString);
 					ks = Common::KEYCODE_INVALID;
 					bool leftBtnPressed = false, rightBtnPressed = false;
 					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
@@ -552,12 +493,8 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 							volume = 127;
 					}
 
-					strcpy(tempStr, getGUIString(gsVoiceVolume));
-					char *ptrToChar = strchr(tempStr, '=');
-					memset(ptrToChar, '\v', 9);
-					ptrToChar[volume / 15] = '\f';
-
-					showBannerAndPause(0, 0, tempStr);
+					getSliderString(gsVoiceVolume, volume, sliderString, sizeof(sliderString));
+					showBannerAndPause(0, 0, sliderString);
 					ks = Common::KEYCODE_INVALID;
 					bool leftBtnPressed = false, rightBtnPressed = false;
 					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
@@ -590,12 +527,8 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 							volume = 127;
 					}
 
-					strcpy(tempStr, getGUIString(gsSfxVolume));
-					char *ptrToChar = strchr(tempStr, '=');
-					memset(ptrToChar, '\v', 9);
-					ptrToChar[volume / 15] = '\f';
-
-					showBannerAndPause(0, 0, tempStr);
+					getSliderString(gsSfxVolume, volume, sliderString, sizeof(sliderString));
+					showBannerAndPause(0, 0, sliderString);
 					ks = Common::KEYCODE_INVALID;
 					bool leftBtnPressed = false, rightBtnPressed = false;
 					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
@@ -630,12 +563,8 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 							VAR(VAR_CHARINC) = 9;
 					}
 
-					strcpy(tempStr, getGUIString(gsTextSpeed));
-					char *ptrToChar = strchr(tempStr, '=');
-					memset(ptrToChar, '\v', 10);
-					ptrToChar[9 - VAR(VAR_CHARINC)] = '\f';
-
-					showBannerAndPause(0, 0, tempStr);
+					getSliderString(gsTextSpeed, VAR(VAR_CHARINC), sliderString, sizeof(sliderString));
+					showBannerAndPause(0, 0, sliderString);
 					ks = Common::KEYCODE_INVALID;
 					bool leftBtnPressed = false, rightBtnPressed = false;
 					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
@@ -650,17 +579,6 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 		}
 	}
 
-	// F1 (the trigger for the original save/load dialog) is mapped to F5
-	if (!(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F1 && lastKeyHit.hasFlags(0)) {
-		lastKeyHit = Common::KeyState(Common::KEYCODE_F5, 319);
-	}
-
-	// Fall back to V7 behavior...
-	ScummEngine_v7::processKeyboard(lastKeyHit);
-
-}
-
-void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 	const bool cutsceneExitKeyEnabled = (VAR_CUTSCENEEXIT_KEY == 0xFF || VAR(VAR_CUTSCENEEXIT_KEY) != 0);
 
 	// VAR_VERSION_KEY (usually ctrl-v) is used in COMI, Dig and FT to trigger
@@ -669,7 +587,8 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 	// versionDialog for it. Dig/FT version strings are partly hard coded, too.
 	if (_game.id != GID_CMI && 0 != VAR(VAR_VERSION_KEY) &&
 	    lastKeyHit.keycode == Common::KEYCODE_v && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
-		versionDialog();
+		if (!isUsingOriginalGUI())
+			versionDialog();
 
 	} else if (cutsceneExitKeyEnabled && lastKeyHit.keycode == Common::KEYCODE_ESCAPE) {
 		// Skip cutscene (or active SMUSH video).
@@ -745,32 +664,98 @@ void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool 
 }
 
 void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
-	if (lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
-		SubtitleSettingsDialog dialog(this, _voiceMode);
-		_voiceMode = runDialog(dialog);
+	if (isUsingOriginalGUI()) {
+		if (VAR_VERSION_KEY != 0xFF && VAR(VAR_VERSION_KEY) != 0 &&
+			lastKeyHit.keycode == Common::KEYCODE_v && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+			if (_game.version == 8) {
+				showBannerAndPause(0, -1, _dataFileVersionString);
+				// This is not the string being used by the interpreter, which is instead hardcoded
+				// in the executable. The one used here is found in the data files.
+				showBannerAndPause(0, -1, _engineVersionString);
 
-		switch (_voiceMode) {
-		case 0:
-			ConfMan.setBool("speech_mute", false);
-			ConfMan.setBool("subtitles", false);
-			break;
-		case 1:
-			ConfMan.setBool("speech_mute", false);
-			ConfMan.setBool("subtitles", true);
-			break;
-		case 2:
-			ConfMan.setBool("speech_mute", true);
-			ConfMan.setBool("subtitles", true);
-			break;
-		default:
-			break;
+				if (_game.features & GF_DEMO)
+					showBannerAndPause(0, -1, "iMuse(tm) initialized");
+			} else if (_game.version == 7) {
+				showBannerAndPause(0, -1, getGUIString(gsVersion));
+				showBannerAndPause(0, -1, "Scripts compiled %s", _dataFileVersionString);
+				showBannerAndPause(0, -1, "SPU(tm) version %s", _engineVersionString);
+				showBannerAndPause(0, -1, "iMuse(tm) initialized");
+			}
+
+			return;
 		}
 
-		// We need to sync the current sound settings here to make sure that
-		// we actually update the mute state of speech properly.
-		syncSoundSettings();
 
-		return;
+		if (lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+			int voiceMode = VAR(VAR_VOICE_MODE);
+
+			voiceMode++;
+			if (voiceMode >= 3) {
+				voiceMode = 0;
+			}
+
+			switch (voiceMode) {
+			case 0: // "Voice Only"
+				showBannerAndPause(0, 120, getGUIString(gsVoiceOnly));
+				break;
+			case 1: // "Voice and Text"
+				showBannerAndPause(0, 120, getGUIString(gsVoiceAndText));
+				break;
+			default: // "Text Display Only"
+				showBannerAndPause(0, 120, getGUIString(gsTextDisplayOnly));
+			}
+
+			ConfMan.setInt("original_gui_text_status", voiceMode);
+			switch (voiceMode) {
+			case 0:
+				ConfMan.setBool("speech_mute", false);
+				ConfMan.setBool("subtitles", false);
+				break;
+			case 1:
+				ConfMan.setBool("speech_mute", false);
+				ConfMan.setBool("subtitles", true);
+				break;
+			case 2:
+				ConfMan.setBool("speech_mute", true);
+				ConfMan.setBool("subtitles", true);
+				break;
+			default:
+				break;
+			}
+
+			ConfMan.flushToDisk();
+			syncSoundSettings();
+			return;
+		}
+
+	} else {
+		if (lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+			SubtitleSettingsDialog dialog(this, _voiceMode);
+			_voiceMode = runDialog(dialog);
+
+			switch (_voiceMode) {
+			case 0:
+				ConfMan.setBool("speech_mute", false);
+				ConfMan.setBool("subtitles", false);
+				break;
+			case 1:
+				ConfMan.setBool("speech_mute", false);
+				ConfMan.setBool("subtitles", true);
+				break;
+			case 2:
+				ConfMan.setBool("speech_mute", true);
+				ConfMan.setBool("subtitles", true);
+				break;
+			default:
+				break;
+			}
+
+			// We need to sync the current sound settings here to make sure that
+			// we actually update the mute state of speech properly.
+			syncSoundSettings();
+
+			return;
+		}
 	}
 
 	// Fall back to default behavior
@@ -863,6 +848,35 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 	// In FM-TOWNS games F8 / restart is always enabled
 	if (_game.platform == Common::kPlatformFMTowns)
 		restartKeyEnabled = true;
+
+	if (isUsingOriginalGUI()) {
+		if (pauseKeyEnabled && (lastKeyHit.ascii == VAR(VAR_PAUSE_KEY) ||
+			(lastKeyHit.keycode == Common::KEYCODE_SPACE && _game.features & GF_DEMO))) {
+			// Force the cursor OFF...
+			int8 oldCursorState = _cursor.state;
+			_cursor.state = 0;
+			CursorMan.showMouse(_cursor.state > 0);
+			// "Game Paused.  Press SPACE to Continue."
+			showBannerAndPause(0, -1, getGUIString(gsPause));
+			_cursor.state = oldCursorState;
+			return;
+		}
+
+		if (restartKeyEnabled && (lastKeyHit.ascii == VAR(VAR_RESTART_KEY))) {
+			queryRestart();
+			return;
+		}
+
+		if (lastKeyHit.keycode == Common::KEYCODE_k && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+			showBannerAndPause(0, 120, getGUIString(gsHeap), _res->getHeapSize() / 1024);
+			return;
+		}
+
+		if (lastKeyHit.keycode == Common::KEYCODE_c && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+			queryQuit();
+			return;
+		}
+	}
 
 	// For games which use VAR_MAINMENU_KEY, disable the mainmenu key if
 	// requested by the scripts. We make an exception for COMI (i.e.

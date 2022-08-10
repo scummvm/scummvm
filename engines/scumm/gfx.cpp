@@ -1581,6 +1581,11 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 }
 
 void ScummEngine::drawLine(int x1, int y1, int x2, int y2, int color) {
+	if (_game.platform == Common::kPlatformFMTowns) {
+		drawBox(x1, y1, x2, y2, color);
+		return;
+	}
+
 	int effColor, black, white;
 	int effX1, effY1;
 	int width, height, widthAccumulator, heightAccumulator, horizontalStrips, originalHeight;

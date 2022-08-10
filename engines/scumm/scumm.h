@@ -385,7 +385,9 @@ enum GUIString {
 	gsMusicVolume = 27,
 	gsVoiceVolume = 28,
 	gsSfxVolume = 29,
-	gsHeap = 30
+	gsHeap = 30,
+	gsSavePath = 31,
+	gsTitle = 32
 };
 
 struct InternalGUIControl {
@@ -556,6 +558,11 @@ protected:
 	int32 _bannerColors[50]; // Colors for the original GUI
 	byte *_bannerMem = nullptr;
 	uint32 _bannerMemSize = 0;
+
+	// The followings are needed for MI1 FM-Towns
+	byte *_textSurfBannerMem = nullptr;
+	uint32 _textSurfBannerMemSize = 0;
+
 	InternalGUIControl _internalGUIControls[30];
 	char _emptyMsg[1] = {'\0'};
 
@@ -563,8 +570,9 @@ protected:
 	Common::KeyState showBannerAndPause(int bannerId, int32 waitTime, const char *msg, ...);
 	void clearBanner();
 	void setBannerColors(int bannerId, byte r, byte g, byte b);
-	virtual int getBannerColor(int bannerId) { return getBannerColor(bannerId, _currentPalette); }
-	int getBannerColor(int bannerId, byte *palette);
+	//virtual int getBannerColor(int bannerId) { return getBannerColor(bannerId, _currentPalette); }
+	//int getBannerColor(int bannerId, byte *palette);
+	virtual int getBannerColor(int bannerId);
 	void setUpInternalGUIControl(int id, int normalFillColor, int normalTextColor,
 								 int topLineColor, int bottomLineColor, int leftLineColor, int rightLineColor,
 								 int highlightedTextColor, int highlightedFillColor,
@@ -574,11 +582,13 @@ protected:
 	virtual bool isSmushActive() { return false; }
 
 	virtual void queryQuit();
+	virtual void queryRestart();
 	virtual const char *getGUIString(int stringId);
 	void waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked);
 	virtual int getGUIStringHeight(const char *str);
 	virtual int getGUIStringWidth(const char *str);
 	virtual void drawGUIText(const char *buttonString, int textXPos, int textYPos, int textColor, bool centerFlag);
+	void getSliderString(int stringId, int value, char *sliderString, int size);
 
 public:
 	char displayMessage(const char *altButton, const char *message, ...) GCC_PRINTF(3, 4);
