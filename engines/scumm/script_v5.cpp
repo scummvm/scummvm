@@ -437,6 +437,24 @@ void ScummEngine_v5::o5_actorOps() {
 	Actor *a = derefActor(act, "o5_actorOps");
 	int i, j;
 
+	// WORKAROUND: There's a continuity error in Monkey 1, in that the Jolly Roger should
+	// only appear in the first scene showing the Sea Monkey in the middle of the sea,
+	// since Guybrush must have picked it for the two other cutscenes to happen.
+	//
+	// The VGA releases fixed this, but this has been lost in the v5 versions. We just
+	// check that the script describing that "the crew begins to plan their voyage" is
+	// running, as that release did.  The Ultimate Talkie fixed this, but differently.
+	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY) && _roomResource == 87 &&
+		vm.slot[_currentScript].number == 10002 && act == 9 && _enableEnhancements &&
+		strcmp(_game.variant, "SE Talkie") != 0) {
+		const int scriptNr = (_game.version == 5) ? 122 : 119;
+		if (!isScriptRunning(scriptNr)) {
+			a->putActor(0);
+			stopObjectCode();
+			return;
+		}
+	}
+
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		if (_game.features & GF_SMALL_HEADER)
 			_opcode = (_opcode & 0xE0) | convertTable[(_opcode & 0x1F) - 1];
