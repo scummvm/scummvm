@@ -82,7 +82,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 	{
-		GAMEOPTION_SOUND_GAMEPLAY_SUBTITLES,
+		GAMEOPTION_SOUND_EFFECT_SUBTITLES,
 		{
 			_s("Enable subtitles for important sound effects"),
 			_s("Enables subtitles for important sound effects.  This may reduce the difficulty of sound recognition puzzles and minigames."),
