@@ -484,10 +484,9 @@ void Cast::loadCast() {
 	}
 
 	// CastMember Information Array
-	Common::Array<uint16> idList = _castArchive->getResourceIDList(MKTAG('V', 'W', 'C', 'R'));
-	_castIDoffset = idList.size() == 0 ? -1 : idList[0];
-	if ((r = _castArchive->getResource(MKTAG('V', 'W', 'C', 'R'), _castIDoffset)) != nullptr) {
-		loadCastDataVWCR(*r);
+	if (_castArchive->hasResource(MKTAG('V', 'W', 'C', 'R'), -1)) {
+		_castIDoffset = _castArchive->getResourceIDList(MKTAG('V', 'W', 'C', 'R'))[0];
+		loadCastDataVWCR(*(r = _castArchive->getResource(MKTAG('V', 'W', 'C', 'R'), _castIDoffset)));
 		delete r;
 	}
 
