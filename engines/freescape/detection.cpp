@@ -148,6 +148,20 @@ static const ADGameDescription gameDescriptions[] = {
 	 ADGF_NO_FLAGS,
 	 GUIO1(GUIO_NOMIDI)},
 	{"castlemaster",
+	 "Castle Master/DomarkPCCollection",
+	 {
+		{"X.EXE", 0, "d51d7db1e06814cbf763c43f411df616", 2157},
+		{"CMC.EXE", 0, "7b9275df446f82fdd0c377f6ec2db546", 57168},
+		{"CMT.EXE", 0, "78002e4b6c14e0a7924317d27e868985", 40685},
+		{"CME.EXE", 0, "494268dea6d8580a7f27afb2a8157cc0", 46557},
+		{"CMH.EXE", 0, "03b6f4c5b8931259e42e229de06ac5fc", 35645},
+		AD_LISTEND
+	 },
+	 Common::EN_ANY,
+	 Common::kPlatformDOS,
+	 ADGF_NO_FLAGS,
+	 GUIO1(GUIO_NOMIDI)},
+	{"castlemaster",
 	 "Castle Master",
 	 {
 		{"CASTLE.EXE", 0, "42a7d46b418d68e75e31c1cb9d89af14", 2678},
