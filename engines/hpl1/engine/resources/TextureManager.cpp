@@ -322,7 +322,7 @@ iTexture *cTextureManager::CreateAttenuation(const tString &asFallOffName) {
 
 	int lBmpChannels = pBmp->getNumChannels();
 	int lWidth = pBmp->getWidth();
-	unsigned char *pPixels = (unsigned char *)const_cast<void *>(pBmp->getRawData());
+	const unsigned char *pPixels = static_cast<const unsigned char *>(pBmp->getRawData());
 
 	iTexture *pTexture = mpGraphics->GetLowLevel()->CreateTexture("Attenuation", false, eTextureType_Normal, eTextureTarget_3D);
 	int lSize = 16;
