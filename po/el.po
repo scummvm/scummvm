@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-10 23:16+0000\n"
-"PO-Revision-Date: 2022-08-06 16:42+0000\n"
+"PO-Revision-Date: 2022-08-11 17:17+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -6191,34 +6191,32 @@ msgid "Enable short transitions"
 msgstr "Σύντομες μεταβάσεις"
 
 #: engines/mtropolis/detection.cpp:77
-#, fuzzy
-#| msgid ""
-#| "Enables transitions that are set to maximum rate instead of skipping them"
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
 msgstr ""
-"Οι μεταβάσεις θα πραγματοποιούνται με μέγιστο ρυθμό, αντί να παρακάμπτονται"
+"Οι μεταβάσεις θα πραγματοποιούνται με μέγιστο ρυθμό, αντί να παρακάμπτονται."
 
 #: engines/mtropolis/detection.cpp:87
 msgid "Enable subtitles for important sound effects"
-msgstr ""
+msgstr "Υπότιτλοι για σημαντικά ηχητικά εφε"
 
 #: engines/mtropolis/detection.cpp:88
 msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
 msgstr ""
+"Ενεργοποιεί υπότιτλους για συμαντικά ηχητικά εφέ. Αυτό ενδέχεται να "
+"ελαττώσει τη δυσκολία γρίφων και επιμέρους παιχνιδιών (minigames) που "
+"απαιτούν αναγνώριση ήχων."
 
 #: engines/mtropolis/detection.cpp:98
 msgid "Start with debugger"
 msgstr "Εκκίνηση με αποσφαλματωτή"
 
 #: engines/mtropolis/detection.cpp:99
-#, fuzzy
-#| msgid "Starts with the debugger dashboard active"
 msgid "Starts with the debugger dashboard active."
 msgstr ""
-"Εκκίνηση με ενεργοποιημένο το περιβάλλον αποσφαλμάτωσης (debugger dashboard)"
+"Εκκίνηση με ενεργοποιημένο το περιβάλλον αποσφαλμάτωσης (debugger dashboard)."
 
 #: engines/mtropolis/saveload.cpp:123
 msgid "Failed to read version information from save file"
