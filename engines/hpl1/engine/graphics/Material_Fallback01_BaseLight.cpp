@@ -62,7 +62,7 @@ iMaterial_Fallback01_BaseLight::iMaterial_Fallback01_BaseLight(
 	mbUsesLights = true;
 
 	const char *firstPassFragment = "";
-	if (abSpecular)
+	if (abNormalMap)
 		firstPassFragment = "Fallback01_Bump_Light";
 	else
 		firstPassFragment = "Fallback01_Diffuse_Light_p1";
