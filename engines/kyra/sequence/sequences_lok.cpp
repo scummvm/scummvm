@@ -252,9 +252,8 @@ bool KyraEngine_LoK::seq_introStory() {
 		return false;
 
 	bool success = false;
-	static const char *pattern[] = { "", "_ENG", "_FRE", "_GER", "_SPA", "_ITA", "_HEB", "_HAN" };
-	for (int i = 0; i < ARRAYSIZE(pattern) && !success; ++i) {
-		Common::String tryFile = Common::String::format("TEXT%s.CPS", pattern[i]);
+	for (int i = 0; i < _langFileExt.size() && !success; ++i) {
+		Common::String tryFile = Common::String::format("TEXT%s.CPS", _langFileExt[i].c_str());
 		if ((success = _res->exists(tryFile.c_str())))
 			_screen->loadBitmap(tryFile.c_str(), 3, 3, &_screen->getPalette(0));
 	}
