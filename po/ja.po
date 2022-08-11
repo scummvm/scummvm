@@ -5997,7 +5997,9 @@ msgstr "重要なSEの字幕を有効化"
 msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
-msgstr "重要なSEの字幕を表示可能にしました。  音声認識パズルやミニゲームの難易度が下がる場合があります。"
+msgstr ""
+"重要なSEの字幕を表示可能にしました。  音声認識パズルやミニゲームの難易度が下"
+"がる場合があります。"
 
 #: engines/mtropolis/detection.cpp:98
 msgid "Start with debugger"
