@@ -1231,9 +1231,20 @@ void ScummEngine_v5::o5_getActorMoving() {
 void ScummEngine_v5::o5_getActorRoom() {
 	getResultPos();
 	int act = getVarOrDirectByte(PARAM_1);
-	// WORKAROUND bug #832. This is a really odd bug in either the script
-	// or in our script engine. Might be a good idea to investigate this
-	// further by e.g. looking at the FOA engine a bit closer.
+
+	// WORKAROUND bug #832: Invalid actor XXX in o5_getActorRoom().
+	//
+	// Script 94-206 is started by script 94-200 this way:
+	//
+	// Var[442] = getObjectOwner(586)  (the metal rod)
+	// startScript(201,[Var[442]],F)
+	// startScript(206,[Var[442]],F,R)
+	//
+	// Script 201 gets to run first, and it changes the value of Var[442],
+	// so by the time script 206 is invoked, it gets a bad value as param.
+	// This is a really odd bug in either the script or in our script
+	// engine. Might be a good idea to investigate this further by e.g.
+	// looking at the FOA engine a bit closer. The original doesn't crash.
 	if (_game.id == GID_INDY4 && _roomResource == 94 && vm.slot[_currentScript].number == 206 && !isValidActor(act)) {
 		setResult(0);
 		return;
