@@ -54,9 +54,6 @@ void HypnoEngine::runMenu(Hotspots *hs, bool only_menu) {
 		case IntroAction:
 			runIntro((Intro *)action);
 			break;
-		case CutsceneAction:
-			runCutscene((Cutscene *)action);
-			break;
 		case PaletteAction:
 			runPalette((Palette *)action);
 			break;
@@ -131,14 +128,21 @@ void HypnoEngine::runIntro(Intro *a) {
 
 	_intros[a->path] = true;
 	MVideo v(a->path, Common::Point(0, 0), false, true, false);
+	disableCursor();
 	runIntro(v);
+	defaultCursor();
 }
 
 void HypnoEngine::runCutscene(Cutscene *a) {
 	stopSound();
 	defaultCursor();
 	_music.clear();
-	_nextSequentialVideoToPlay.push_back(MVideo(a->path, Common::Point(0, 0), false, true, false));
+	MVideo v(a->path, Common::Point(0, 0), false, true, false);
+	disableCursor();
+	runIntro(v);
+	defaultCursor();
+	runMenu(stack.back());
+	drawScreen();
 }
 
 bool HypnoEngine::runGlobal(Global *a) {
