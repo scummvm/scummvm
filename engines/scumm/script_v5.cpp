@@ -756,7 +756,7 @@ void ScummEngine_v5::o5_breakHere() {
 	// least intrusive way of adding the delay. The script calls it a number
 	// of times, but only once from room 69.
 
-  if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::EN_ANY && vm.slot[_currentScript].number == 44 && _currentRoom == 69) {
+	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::EN_ANY && vm.slot[_currentScript].number == 44 && _currentRoom == 69) {
 		vm.slot[_currentScript].delay = 120;
 		vm.slot[_currentScript].status = ssPaused;
 	}
