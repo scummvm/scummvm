@@ -1,0 +1,14 @@
+//Fallback01_Diffuse_Light.fragment
+
+in vec4 vLightColor;
+in vec3 vUv;
+in vec3 vLightPos;
+in vec3 vLightDir;
+
+OUTPUT
+
+uniform sampler2D tex0; //diffuseMap
+
+void main() {
+	outColor = texture(tex0, vUv.xy) * vLightColor;
+}

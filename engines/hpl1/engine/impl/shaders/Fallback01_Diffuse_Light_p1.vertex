@@ -14,8 +14,7 @@ vec3 normal = gl_Normal;
 vec3 uv = gl_MultiTexCoord0.xyz;
 vec4 tangent = gl_MultiTexCoord1;
 
-
-out vec4 vColor
+out vec4 vLightColor;
 out vec3 vLightDir;
 out vec3 vUv;
 out vec3 vLightPos;
@@ -42,5 +41,5 @@ void main()
 	//Transform the lightdir
 	vLightDir = (rotation * vLightDir);
 
-	outColor = vec4(1.0);
+	vLightColor = vec4(1.0);
 }

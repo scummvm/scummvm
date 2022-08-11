@@ -1,0 +1,17 @@
+//FallBack01_Diffuse_Light_Spot.fragment
+
+in vec4 vLightColor;
+in vec3 vUv;
+in vec4 vSpotlightUv;
+in float vRejectUv;
+
+uniform sampler2D tex0; //diffuseMap
+uniform sampler2D tex1; //normalMap
+uniform sampler1D tex2; //spotNegRejectMap
+
+void main() {
+	vec4 diffuse = texture(tex0, vUv.xy);
+	vec4 spot = texture(tex1, vSpotlightUv.xy / vSpotlightUv.w);
+	float spotNegReject = texture1D(tex2, vSpotlightUv.z).r;
+	outColor = diffuse * spot * spotNegReject * vLightColor;
+}
