@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-10 23:16+0000\n"
-"PO-Revision-Date: 2022-08-10 11:37+0000\n"
+"PO-Revision-Date: 2022-08-11 17:17+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5985,32 +5985,27 @@ msgid "Enable short transitions"
 msgstr "短い遷移を有効化"
 
 #: engines/mtropolis/detection.cpp:77
-#, fuzzy
-#| msgid ""
-#| "Enables transitions that are set to maximum rate instead of skipping them"
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
-msgstr "最大レートに設定された遷移はスキップされず、有効になります"
+msgstr "最大レートに設定された遷移はスキップされず、有効になります。"
 
 #: engines/mtropolis/detection.cpp:87
 msgid "Enable subtitles for important sound effects"
-msgstr ""
+msgstr "重要なSEの字幕を有効化"
 
 #: engines/mtropolis/detection.cpp:88
 msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
-msgstr ""
+msgstr "重要なSEの字幕を表示可能にしました。  音声認識パズルやミニゲームの難易度が下がる場合があります。"
 
 #: engines/mtropolis/detection.cpp:98
 msgid "Start with debugger"
 msgstr "デバッグ起動"
 
 #: engines/mtropolis/detection.cpp:99
-#, fuzzy
-#| msgid "Starts with the debugger dashboard active"
 msgid "Starts with the debugger dashboard active."
-msgstr "デバッガーダッシュボードありで起動"
+msgstr "デバッガーをダッシュボードありで起動します。"
 
 #: engines/mtropolis/saveload.cpp:123
 msgid "Failed to read version information from save file"
