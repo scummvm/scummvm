@@ -12,11 +12,11 @@ uniform sampler2D tex1; //normalMap
 uniform sampler3D tex2; //attenuation
 
 void main() {
-	vec4 nv = texture(tex0, vLightDir)
+	vec4 nv = textureCube(tex0, vLightDir);
 	vec4 norm = texture(tex1, vUv.st);
 	vec4 attenuation = texture3D(tex2, vLightPos);
 
-	outColor = vec4((nv.r - 0.5)*(norm.r - 0.5) + (nv.g - 0.5)*(norm.g - 0.5) + (nv.b - 0.5)*(norm.b - 0.5));
+	outColor = vec4(4*((nv.r - 0.5)*(norm.r - 0.5) + (nv.g - 0.5)*(norm.g - 0.5) + (nv.b - 0.5)*(norm.b - 0.5)));
 	outColor.a *= attenuation.g;
 }
 
