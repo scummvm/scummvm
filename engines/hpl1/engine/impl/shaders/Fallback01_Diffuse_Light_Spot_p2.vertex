@@ -14,7 +14,6 @@ vec3 normal = gl_Normal;
 vec3 uv = gl_MultiTexCoord0.xyz;
 vec4 tangent = gl_MultiTexCoord1;
 
-
 out vec4 vLightColor;
 out vec3 vUv;
 out vec4 vSpotlightUv;
@@ -32,7 +31,7 @@ void main()
 
 	vUv = uv;
 	vSpotlightUv = (spotViewProj * position);
-	vRejectUv.x = vSpotlightUv.z + 0.5;
+	vRejectUv = vSpotlightUv.z + 0.5;
 
 	vLightColor = clamp(LightColor, vec4(0.0), vec4(1.0));
 }
