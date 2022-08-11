@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-10 23:16+0000\n"
-"PO-Revision-Date: 2022-08-08 12:28+0000\n"
+"PO-Revision-Date: 2022-08-11 11:09+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -6129,34 +6129,32 @@ msgid "Enable short transitions"
 msgstr "Aktiviere kurze Übergänge"
 
 #: engines/mtropolis/detection.cpp:77
-#, fuzzy
-#| msgid ""
-#| "Enables transitions that are set to maximum rate instead of skipping them"
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
 msgstr ""
 "Die Szenen-Übergänge werden so schnell wie möglich abgespielt, jedoch nicht "
-"vollständig übersprungen"
+"vollständig übersprungen."
 
 #: engines/mtropolis/detection.cpp:87
 msgid "Enable subtitles for important sound effects"
-msgstr ""
+msgstr "Untertitel für wichtige Sound-Effekte aktivieren"
 
 #: engines/mtropolis/detection.cpp:88
 msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
 msgstr ""
+"Aktiviert Untertitel für wichtige Sound-Effekte.  Dies wird vermutlich den "
+"Schwierigkeitsgrad für Puzzle, die auf der Erkennung von Sounds basieren, "
+"erleichtern."
 
 #: engines/mtropolis/detection.cpp:98
 msgid "Start with debugger"
 msgstr "Mit Debugger starten"
 
 #: engines/mtropolis/detection.cpp:99
-#, fuzzy
-#| msgid "Starts with the debugger dashboard active"
 msgid "Starts with the debugger dashboard active."
-msgstr "Startet das Spiel mit einem aktivierten Debugging-Dashboard"
+msgstr "Startet das Spiel mit einem aktivierten Debugging-Dashboard."
 
 #: engines/mtropolis/saveload.cpp:123
 msgid "Failed to read version information from save file"
