@@ -26,7 +26,7 @@
  */
 
 #include "hpl1/engine/graphics/Material_Fallback01_BaseLight.h"
-#include "common/textconsole.h"
+#include "hpl1/engine/graphics/Renderer3D.h"
 #include "hpl1/engine/graphics/GPUProgram.h"
 #include "hpl1/engine/graphics/Renderer2D.h"
 #include "hpl1/engine/math/Math.h"
@@ -36,250 +36,12 @@
 #include "hpl1/engine/scene/Light.h"
 #include "hpl1/engine/scene/Light3DSpot.h"
 #include "hpl1/engine/system/String.h"
+#include "hpl1/engine/scene/PortalContainer.h"
+#include "common/algorithm.h"
 
 //#include <GL/GLee.h>
 
 namespace hpl {
-
-//////////////////////////////////////////////////////////////////////////
-// FRAGMENT PROGRAMS
-//////////////////////////////////////////////////////////////////////////
-
-//-----------------------------------------------------------------------
-
-cGLState_Diffuse::cGLState_Diffuse()
-	: iGLStateProgram("Internal_Diffuse") {
-}
-
-void cGLState_Diffuse::Bind() {
-	mpLowGfx->SetActiveTextureUnit(0);
-	mpLowGfx->SetTextureEnv(eTextureParam_ColorFunc, eTextureFunc_Dot3RGBA);
-	mpLowGfx->SetTextureEnv(eTextureParam_ColorSource1, eTextureSource_Constant);
-	mpLowGfx->SetTextureConstantColor(cColor(0.5f, 0.5f, 1, 0));
-}
-
-void cGLState_Diffuse::UnBind() {
-	mpLowGfx->SetActiveTextureUnit(0);
-	mpLowGfx->SetTextureEnv(eTextureParam_ColorFunc, eTextureFunc_Modulate);
-	mpLowGfx->SetTextureEnv(eTextureParam_ColorSource1, eTextureSource_Previous);
-}
-
-//-----------------------------------------------------------------------
-
-cGLState_ATIDiffuse::cGLState_ATIDiffuse()
-	: iGLStateProgram("Internal_ATIDiffuse")/*, mlBind(0)*/ {
-}
-
-void cGLState_ATIDiffuse::InitData() {
-#if 0
-  		mlBind = glGenFragmentShadersATI(1);
-
-		Log("Creating and binding ATI diffuse shader to %d\n",mlBind);
-		glBindFragmentShaderATI(mlBind);
-
-		glBeginFragmentShaderATI();
-
-		glSampleMapATI(GL_REG_0_ATI, GL_TEXTURE0_ARB, GL_SWIZZLE_STR_ATI);
-		glSampleMapATI(GL_REG_2_ATI, GL_TEXTURE2_ARB, GL_SWIZZLE_STR_ATI);
-
-		//Reg0 = NormlizedVec dot3 Vector(0,0,1)
-		float vConst[4] = {0,0,1,0};
-		glSetFragmentShaderConstantATI( GL_CON_0_ATI,vConst);
-		glColorFragmentOp2ATI(	GL_DOT3_ATI, GL_REG_0_ATI, GL_NONE, GL_NONE,
-								GL_REG_0_ATI, GL_NONE, GL_2X_BIT_ATI|GL_BIAS_BIT_ATI,
-								GL_CON_0_ATI, GL_NONE, GL_NONE);
-		glAlphaFragmentOp2ATI(	GL_DOT3_ATI, GL_REG_0_ATI, GL_NONE,
-								GL_REG_0_ATI, GL_NONE, GL_2X_BIT_ATI|GL_BIAS_BIT_ATI,
-								GL_CON_0_ATI, GL_NONE, GL_NONE);
-
-		//Reg0 = Light * Attenuation
-		glAlphaFragmentOp2ATI(	GL_MUL_ATI, GL_REG_0_ATI, GL_NONE,
-								GL_REG_0_ATI, GL_NONE, GL_NONE,
-								GL_REG_2_ATI, GL_NONE, GL_NONE);
-
-		glEndFragmentShaderATI();
-#endif
-}
-
-cGLState_ATIDiffuse::~cGLState_ATIDiffuse() {
-#if 0
-  		Log("Deleting ATI shader to %d\n",mlBind);
-		if (mlBind) glDeleteFragmentShaderATI(mlBind);
-#endif
-}
-
-void cGLState_ATIDiffuse::Bind() {
-#if 0
-  		glEnable(GL_FRAGMENT_SHADER_ATI);
-		glBindFragmentShaderATI(mlBind);
-#endif
-}
-
-void cGLState_ATIDiffuse::UnBind() {
-#if 0
-  		glDisable(GL_FRAGMENT_SHADER_ATI);
-#endif
-}
-
-//-----------------------------------------------------------------------
-
-cGLState_Bump::cGLState_Bump()
-	: iGLStateProgram("Internal_Bump") {
-}
-
-void cGLState_Bump::Bind() {
-	mpLowGfx->SetActiveTextureUnit(0);
-	mpLowGfx->SetTextureEnv(eTextureParam_ColorFunc, eTextureFunc_Replace);
-	mpLowGfx->SetActiveTextureUnit(1);
-	mpLowGfx->SetTextureEnv(eTextureParam_ColorFunc, eTextureFunc_Dot3RGBA);
-	mpLowGfx->SetActiveTextureUnit(2);
-	mpLowGfx->SetTextureEnv(eTextureParam_AlphaFunc, eTextureFunc_Modulate);
-}
-
-void cGLState_Bump::UnBind() {
-	mpLowGfx->SetActiveTextureUnit(0);
-	mpLowGfx->SetTextureEnv(eTextureParam_ColorFunc, eTextureFunc_Modulate);
-	mpLowGfx->SetActiveTextureUnit(1);
-	mpLowGfx->SetTextureEnv(eTextureParam_ColorFunc, eTextureFunc_Modulate);
-	mpLowGfx->SetActiveTextureUnit(2);
-	mpLowGfx->SetTextureEnv(eTextureParam_AlphaFunc, eTextureFunc_Modulate);
-}
-
-//-----------------------------------------------------------------------
-
-cGLState_ATIBump::cGLState_ATIBump()
-	: iGLStateProgram("Internal_ATIBump")/*, mlBind(0)*/ {
-}
-
-void cGLState_ATIBump::InitData() {
-#if 0
-  		mlBind = glGenFragmentShadersATI(1);
-
-		Log("Creating and binding ATI bump shader to %d\n",mlBind);
-		glBindFragmentShaderATI(mlBind);
-
-		glBeginFragmentShaderATI();
-
-		glSampleMapATI(GL_REG_0_ATI, GL_TEXTURE0_ARB, GL_SWIZZLE_STR_ATI);
-		glSampleMapATI(GL_REG_1_ATI, GL_TEXTURE1_ARB, GL_SWIZZLE_STR_ATI);
-		glSampleMapATI(GL_REG_2_ATI, GL_TEXTURE2_ARB, GL_SWIZZLE_STR_ATI);
-
-		//Reg0 = NormlizedVec dot3 NormalMap
-		glColorFragmentOp2ATI(	GL_DOT3_ATI, GL_REG_0_ATI, GL_NONE, GL_NONE,
-								GL_REG_1_ATI, GL_NONE, GL_2X_BIT_ATI|GL_BIAS_BIT_ATI,
-								GL_REG_0_ATI, GL_NONE, GL_2X_BIT_ATI|GL_BIAS_BIT_ATI);
-		glAlphaFragmentOp2ATI(	GL_DOT3_ATI, GL_REG_0_ATI, GL_NONE,
-								GL_REG_1_ATI, GL_NONE, GL_2X_BIT_ATI|GL_BIAS_BIT_ATI,
-								GL_REG_0_ATI, GL_NONE, GL_2X_BIT_ATI|GL_BIAS_BIT_ATI);
-
-		//Reg0 = Light * Attenuation
-		glAlphaFragmentOp2ATI(	GL_MUL_ATI, GL_REG_0_ATI, GL_NONE,
-								GL_REG_0_ATI, GL_NONE, GL_NONE,
-								GL_REG_2_ATI, GL_NONE, GL_NONE);
-
-		glEndFragmentShaderATI();
-#endif
-}
-
-cGLState_ATIBump::~cGLState_ATIBump() {
-#if 0
-  		Log("Deleting ATI shader to %d\n",mlBind);
-		if (mlBind) glDeleteFragmentShaderATI(mlBind);
-#endif
-}
-
-void cGLState_ATIBump::Bind() {
-#if 0
-  		glEnable(GL_FRAGMENT_SHADER_ATI);
-		glBindFragmentShaderATI(mlBind);
-#endif
-}
-
-void cGLState_ATIBump::UnBind() {
-#if 0
-  		glDisable(GL_FRAGMENT_SHADER_ATI);
-#endif
-}
-
-//-----------------------------------------------------------------------
-
-cGLState_Spot::cGLState_Spot()
-	: iGLStateProgram("Internal_Spot") {
-}
-
-void cGLState_Spot::Bind() {
-}
-
-void cGLState_Spot::UnBind() {
-}
-
-//-----------------------------------------------------------------------
-
-cGLState_ATISpot::cGLState_ATISpot()
-	: iGLStateProgram("Internal_ATISpot")/*, mlBind(0)*/ {
-}
-
-void cGLState_ATISpot::InitData() {
-#if 0
-  		mlBind = glGenFragmentShadersATI(1);
-
-		Log("Creating and binding ATI spot shader to %d\n",mlBind);
-		glBindFragmentShaderATI(mlBind);
-
-		glBeginFragmentShaderATI();
-
-		glSampleMapATI(GL_REG_0_ATI, GL_TEXTURE0_ARB, GL_SWIZZLE_STR_ATI);
-		glSampleMapATI(GL_REG_1_ATI, GL_TEXTURE1_ARB, GL_SWIZZLE_STR_DR_ATI);
-		glSampleMapATI(GL_REG_2_ATI, GL_TEXTURE2_ARB, GL_SWIZZLE_STR_ATI);
-
-		//Reg0 = Diffuse * Spot
-		glColorFragmentOp2ATI(GL_MUL_ATI, GL_REG_0_ATI, GL_NONE, GL_NONE,
-			GL_REG_0_ATI, GL_NONE, GL_NONE,
-			GL_REG_1_ATI, GL_NONE, GL_NONE);
-
-		//Reg0 = NegRejection * Reg0
-		glColorFragmentOp2ATI(GL_MUL_ATI, GL_REG_0_ATI, GL_NONE, GL_NONE,
-			GL_REG_0_ATI, GL_NONE, GL_NONE,
-			GL_REG_2_ATI, GL_NONE, GL_NONE);
-
-		//Reg0 = LightColor * Reg0
-		glColorFragmentOp2ATI(GL_MUL_ATI, GL_REG_0_ATI, GL_NONE, GL_NONE,
-			GL_REG_0_ATI, GL_NONE, GL_NONE,
-			GL_PRIMARY_COLOR_ARB, GL_NONE, GL_NONE);
-
-		glEndFragmentShaderATI();
-#endif
-}
-
-cGLState_ATISpot::~cGLState_ATISpot() {
-#if 0
-  		Log("Deleting ATI shader to %d\n",mlBind);
-		if (mlBind) glDeleteFragmentShaderATI(mlBind);
-#endif
-}
-
-void cGLState_ATISpot::Bind() {
-#if 0
-  		glEnable(GL_FRAGMENT_SHADER_ATI);
-		glBindFragmentShaderATI(mlBind);
-#endif
-}
-
-void cGLState_ATISpot::UnBind() {
-#if 0
-  		glDisable(GL_FRAGMENT_SHADER_ATI);
-#endif
-}
-
-//-----------------------------------------------------------------------
-static cGLState_Diffuse gDiffuseGLState;
-static cGLState_ATIDiffuse gATIDiffuseGLState;
-static cGLState_Bump gBumpGLState;
-static cGLState_ATIBump gATIBumpGLState;
-static cGLState_ATISpot gATISpotGLState;
-static cGLState_Spot gSpotGLState;
-
-//-----------------------------------------------------------------------
 
 iMaterial_Fallback01_BaseLight::iMaterial_Fallback01_BaseLight(
 	bool abNormalMap, bool abSpecular,
@@ -289,16 +51,8 @@ iMaterial_Fallback01_BaseLight::iMaterial_Fallback01_BaseLight(
 	eMaterialPicture aPicture, cRenderer3D *apRenderer3D)
 	: iMaterial(asName, apLowLevelGraphics, apImageManager, apTextureManager, apRenderer, apProgramManager,
 				aPicture, apRenderer3D) {
-	error("iMaterial_Fallback01_BaseLight not yet implemented");
 
-	gDiffuseGLState.SetUp(mpLowLevelGraphics);
-	gBumpGLState.SetUp(mpLowLevelGraphics);
-	gSpotGLState.SetUp(mpLowLevelGraphics);
-	if (mpLowLevelGraphics->GetCaps(eGraphicCaps_GL_ATIFragmentShader)) {
-		gATISpotGLState.SetUp(mpLowLevelGraphics);
-		gATIBumpGLState.SetUp(mpLowLevelGraphics);
-		gATIDiffuseGLState.SetUp(mpLowLevelGraphics);
-	}
+	Common::fill(_programs, _programs + eBaseLightProgram_LastEnum, nullptr);
 
 	mbUseNormalMap = abNormalMap;
 	mbUseSpecular = abSpecular;
@@ -307,74 +61,19 @@ iMaterial_Fallback01_BaseLight::iMaterial_Fallback01_BaseLight(
 	mbIsGlowing = false;
 	mbUsesLights = true;
 
-	tString asLightVertexProgram1 = "Fallback01_Diffuse_Light_p1_vp.cg";
-	tString asLightVertexProgram2 = "Fallback01_Diffuse_Light_p2_vp.cg";
+	const char *firstPassFragment = "";
+	if (abSpecular)
+		firstPassFragment = "Fallback01_Bump_Light";
+	else
+		firstPassFragment = "Fallback01_Diffuse_Light_p1";
 
-	tString asLightSpotVertexProgram1 = "Fallback01_Diffuse_Light_p1_vp.cg";
-	tString asLightSpotVertexProgram2 = "Fallback01_Diffuse_Light_Spot_p2_vp.cg";
+	_programs[eBaseLightProgram_Point1] = mpProgramManager->CreateProgram("Fallback01_Diffuse_Light_p1", firstPassFragment);
+	_programs[eBaseLightProgram_Point2] = mpProgramManager->CreateProgram("Fallback01_Diffuse_Light_p2", "Fallback01_Diffuse_Light_p2");
+	_programs[eBaseLightProgram_Spot1] = mpProgramManager->CreateProgram("Fallback01_Diffuse_Light_p1", firstPassFragment);
+	_programs[eBaseLightProgram_Spot2] = mpProgramManager->CreateProgram("Fallback01_Diffuse_Light_Spot_p2", "Fallback01_Diffuse_Light_Spot");
 
-	for (int i = 0; i < eBaseLightProgram_LastEnum; i++) {
-		mvVtxPrograms[i] = NULL;
-		mvFragPrograms[i] = NULL;
-	}
-
-	///////////////////////////////////////////
-	// Load the light pass vertex program
-	// Point
-	mvVtxPrograms[eBaseLightProgram_Point1] = mpProgramManager->CreateProgram(asLightVertexProgram1,
-																			  "main", eGpuProgramType_Vertex);
-	mvVtxPrograms[eBaseLightProgram_Point2] = mpProgramManager->CreateProgram(asLightVertexProgram2,
-																			  "main", eGpuProgramType_Vertex);
-	mvVtxPrograms[eBaseLightProgram_Spot1] = mpProgramManager->CreateProgram(asLightSpotVertexProgram1,
-																			 "main", eGpuProgramType_Vertex);
-	mvVtxPrograms[eBaseLightProgram_Spot2] = mpProgramManager->CreateProgram(asLightSpotVertexProgram2,
-																			 "main", eGpuProgramType_Vertex);
-
-	///////////////////////////////////////////
-	// Load the light pass fragment program
-	// Point
-	// mvFragPrograms[eBaseLightProgram_Point1] = mpProgramManager->CreateProgram("_Test_Diffuse_Light_fp.cg",
-	//											"main",	eGpuProgramType_Fragment);
-	if (mbUseNormalMap) {
-		if (mpLowLevelGraphics->GetCaps(eGraphicCaps_GL_ATIFragmentShader)) {
-			mvFragPrograms[eBaseLightProgram_Point1] = &gATIBumpGLState;
-			mvFragPrograms[eBaseLightProgram_Spot1] = &gATIBumpGLState;
-
-			mvFragPrograms[eBaseLightProgram_Spot2] = &gATISpotGLState;
-		} else {
-			mvFragPrograms[eBaseLightProgram_Point1] = &gBumpGLState;
-			mvFragPrograms[eBaseLightProgram_Spot1] = &gBumpGLState;
-
-			mvFragPrograms[eBaseLightProgram_Spot2] = NULL; // hplNew( cGLState_Spot,(mpLowLevelGraphics) );
-		}
-
-		// mvFragPrograms[eBaseLightProgram_Spot2] =  hplNew( cGLState_Spot,(mpLowLevelGraphics) );
-		// mvFragPrograms[eBaseLightProgram_Spot2] =  hplNew( cGLState_ATISpot, (mpLowLevelGraphics) );
-		// mvFragPrograms[eBaseLightProgram_Spot2] = mpProgramManager->CreateProgram(
-		//											"_Test_Diffuse_Light_fp.cg",
-		//											"main", eGpuProgramType_Fragment);
-	} else {
-		if (mpLowLevelGraphics->GetCaps(eGraphicCaps_GL_ATIFragmentShader)) {
-			mvFragPrograms[eBaseLightProgram_Point1] = &gATIDiffuseGLState;
-			mvFragPrograms[eBaseLightProgram_Spot1] = &gATIDiffuseGLState;
-
-			mvFragPrograms[eBaseLightProgram_Spot2] = &gATISpotGLState;
-		} else {
-			mvFragPrograms[eBaseLightProgram_Point1] = &gDiffuseGLState;
-			mvFragPrograms[eBaseLightProgram_Spot1] = &gDiffuseGLState;
-
-			mvFragPrograms[eBaseLightProgram_Spot2] = NULL; // hplNew( cGLState_Spot, (mpLowLevelGraphics) );
-		}
-
-		// mvFragPrograms[eBaseLightProgram_Spot2] = mpProgramManager->CreateProgram(
-		//											"_Test_Diffuse_Light_fp.cg",
-		//											"main", eGpuProgramType_Fragment);
-	}
-
-	///////////////////////////////////////////
-	// Load the Z pass vertex program
-	iGpuProgram *pVtxProg = mpProgramManager->CreateProgram("Diffuse_Color_vp.cg", "main", eGpuProgramType_Vertex);
-	SetProgram(pVtxProg, eGpuProgramType_Vertex, 1);
+	_diffuseShader = mpProgramManager->CreateProgram("Diffuse_Color", "Diffuse_Color");
+	_ambientShader = mpProgramManager->CreateProgram("Diffuse_Color", "Ambient_Color");
 
 	mpNormalizationMap = mpTextureManager->CreateCubeMap("Normalization", false);
 	mpNormalizationMap->SetWrapS(eTextureWrap_ClampToEdge);
@@ -396,10 +95,11 @@ iMaterial_Fallback01_BaseLight::~iMaterial_Fallback01_BaseLight() {
 		mpTextureManager->Destroy(mpSpotNegativeRejectMap);
 
 	for (int i = 0; i < eBaseLightProgram_LastEnum; i++) {
-		if (mvVtxPrograms[i])
-			mpProgramManager->Destroy(mvVtxPrograms[i]);
-		// if(mvFragPrograms[i])	mpProgramManager->Destroy(mvFragPrograms[i]);
+		if (_programs[i])
+			mpProgramManager->Destroy(_programs[i]);
 	}
+	if (_diffuseShader)
+		mpProgramManager->Destroy(_diffuseShader);
 }
 
 //-----------------------------------------------------------------------
@@ -410,7 +110,7 @@ iMaterial_Fallback01_BaseLight::~iMaterial_Fallback01_BaseLight() {
 
 //-----------------------------------------------------------------------
 
-iGpuProgram *iMaterial_Fallback01_BaseLight::GetVertexProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
+iGpuProgram *iMaterial_Fallback01_BaseLight::getGpuProgram(const eMaterialRenderType aType, const int alPass, iLight3D *apLight) {
 	eBaseLightProgram program;
 	if (apLight) {
 		if (apLight->GetLightType() == eLight3DType_Point)
@@ -420,14 +120,35 @@ iGpuProgram *iMaterial_Fallback01_BaseLight::GetVertexProgram(eMaterialRenderTyp
 	}
 
 	if (aType == eMaterialRenderType_Light) {
-		return mvVtxPrograms[program + alPass];
+		return _programs[program + alPass];
 	}
 	if (aType == eMaterialRenderType_Z)
-		return mpProgram[eGpuProgramType_Vertex][1];
+		return _ambientShader;
 	if (aType == eMaterialRenderType_Diffuse)
-		return mpProgram[eGpuProgramType_Vertex][1];
+		return _diffuseShader;
 
-	return NULL;
+	return nullptr;
+}
+
+class cAmbProgramSetup : public iMaterialProgramSetup {
+public:
+	void Setup(iGpuProgram *apProgram, cRenderSettings *apRenderSettings) {
+		if (apRenderSettings->mpSector)
+			apProgram->SetColor3f("ambientColor", apRenderSettings->mAmbientColor * apRenderSettings->mpSector->GetAmbientColor());
+		else
+			apProgram->SetColor3f("ambientColor", apRenderSettings->mAmbientColor);
+	}
+};
+
+iMaterialProgramSetup *iMaterial_Fallback01_BaseLight::getGpuProgramSetup(const eMaterialRenderType aType, const int alPass, iLight3D *apLight) {
+	static cAmbProgramSetup ambProgramSetup;
+	if (aType == eMaterialRenderType_Z)
+		return &ambProgramSetup;
+	return nullptr;
+}
+
+iGpuProgram *iMaterial_Fallback01_BaseLight::GetVertexProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
+	return nullptr;
 }
 
 //------------------------------------------------------------------------------------
@@ -450,17 +171,7 @@ bool iMaterial_Fallback01_BaseLight::VertexProgramUsesEye(eMaterialRenderType aT
 //------------------------------------------------------------------------------------
 
 iGpuProgram *iMaterial_Fallback01_BaseLight::GetFragmentProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
-	if (aType == eMaterialRenderType_Light) {
-		eBaseLightProgram program = eBaseLightProgram_Point1;
-
-		if (apLight->GetLightType() == eLight3DType_Point)
-			program = eBaseLightProgram_Point1;
-		else if (apLight->GetLightType() == eLight3DType_Spot)
-			program = eBaseLightProgram_Spot1;
-
-		return mvFragPrograms[program + alPass];
-	}
-	return NULL;
+	return nullptr;
 }
 
 //------------------------------------------------------------------------------------
