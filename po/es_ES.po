@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-10 23:16+0000\n"
-"PO-Revision-Date: 2022-08-10 12:11+0000\n"
+"PO-Revision-Date: 2022-08-11 09:30+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -6117,34 +6117,32 @@ msgid "Enable short transitions"
 msgstr "Transiciones breves"
 
 #: engines/mtropolis/detection.cpp:77
-#, fuzzy
-#| msgid ""
-#| "Enables transitions that are set to maximum rate instead of skipping them"
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
 msgstr ""
 "Hace que las transiciones vayan a la máxima velocidad en vez de omitirlas "
-"directamente"
+"directamente."
 
 #: engines/mtropolis/detection.cpp:87
 msgid "Enable subtitles for important sound effects"
-msgstr ""
+msgstr "Mostrar subtítulos para los efectos de sonido importantes"
 
 #: engines/mtropolis/detection.cpp:88
 msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
 msgstr ""
+"Activa el uso de subtítulos para los efectos de sonido más importantes. "
+"Podría reducir la dificultad de los acertijos y minijuegos de reconocimiento "
+"de sonidos."
 
 #: engines/mtropolis/detection.cpp:98
 msgid "Start with debugger"
 msgstr "Iniciar con el depurador"
 
 #: engines/mtropolis/detection.cpp:99
-#, fuzzy
-#| msgid "Starts with the debugger dashboard active"
 msgid "Starts with the debugger dashboard active."
-msgstr "Inicia el juego con el panel de control de depuración activado"
+msgstr "Inicia el juego con el panel de control de depuración activado."
 
 #: engines/mtropolis/saveload.cpp:123
 msgid "Failed to read version information from save file"
