@@ -1266,7 +1266,11 @@ void KyraEngine_LoK::seq_playCredits() {
 	uint8 *buffer = nullptr;
 	uint32 size = 0;
 
-	buffer = _res->fileData(creditsFile.c_str(), &size);
+	// The Mac Talkie version actually gets shipped with a credits.txt file, but that one
+	// does not contain the Mac credits. These are just the credits from the DOS version.
+	if (_flags.platform != Common::kPlatformMacintosh)
+		buffer = _res->fileData(creditsFile.c_str(), &size);
+
 	if (!buffer) {
 		int sizeTmp = 0;
 		const uint8 *bufferTmp = _staticres->loadRawData(k1CreditsStrings, sizeTmp);
