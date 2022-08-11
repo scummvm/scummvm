@@ -305,7 +305,7 @@ static const char *const k1GUIStringsDOSChineseTrad[28] = {
 	"\xb5""L",
 	"\xac""O",
 	"\xa7""_",
-	"123456789012345678901234567890123456""\xa6\xe6\xa8\xab\xb3""t""\xab\xd7",
+	"\xa6\xe6\xa8\xab\xb3""t""\xab\xd7",
 	"\xb0""T""\xae\xa7\xb3""t""\xab\xd7",
 	"\xad\xb5\xa1""@""\xa1""@""\xbc\xd6",
 	"\xad\xb5\xa1""@""\xa1""@""\xae\xc4"

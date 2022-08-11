@@ -311,7 +311,7 @@ static const char *const k1GUIStringsAmigaEnglish[60] = {
 	"\x01""Y""\xD6",
 	"\x01""Y""\xE4",
 	"\x01""Y""\xEC",
-	"\x01""Y""\xFA""Walk speed ",
+	"Walk speed ",
 	"Text speed ",
 	"Music is ",
 	"Sounds are "

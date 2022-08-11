@@ -331,7 +331,7 @@ static const char *const k1GUIStringsDOSGerman[52] = {
 	"Aus",
 	"Ja",
 	"Nein",
-	"V""\x0F""R+e""\x0F""R+m""\x0F""R+t""\x0F""R+|""\x0F""R+""\x8B\x0F""R+""\x9A\x0F""R+""\xA1\x0F""R+""\xA9\x0F""R+Schrittempo",
+	"Schrittempo",
 	"Textgeschwindigkeit",
 	"Die Musik ist",
 	"Die Soundeffekte sind"

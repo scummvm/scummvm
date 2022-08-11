@@ -315,7 +315,7 @@ static const char *const k1GUIStringsDOSCDFrench[35] = {
 	"d""\x82""sactiv""\x82",
 	"Oui",
 	"Non",
-	"?""\x0F"")+I""\x0F"")+N""\x0F"")+U""\x0F"")+\\""\x0F"")+h""\x0F"")+y""\x0F"")+""\x89\x0F"")+""\x97\x0F"")+""\xA1\x0F"")+""\xA8\x0F"")+""\xAF\x0F"")+Vitesse de d""\x82""placement",
+	"Vitesse de d""\x82""placement",
 	"Vitesse du texte",
 	"La musique est ",
 	"Les sons sont ",

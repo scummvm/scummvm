@@ -241,9 +241,10 @@ static const char *const k1FluteStringsDOSCDGerman[2] = {
 
 static const StringListProvider k1FluteStringsDOSCDGermanProvider = { ARRAYSIZE(k1FluteStringsDOSCDGerman), k1FluteStringsDOSCDGerman };
 
-static const char *const k1WispJewelStringsDOSCDGerman[2] = {
+static const char *const k1WispJewelStringsDOSCDGerman[3] = {
 	"Im Moment f""\x81""hle ich mich dazu nicht in der Lage.",
-	"Ich mu""\xE1"" wahrscheinlich erst mein(e)..."
+	"Ich mu""\xE1"" wahrscheinlich erst mein(e)...",
+	"ablegen."
 };
 
 static const StringListProvider k1WispJewelStringsDOSCDGermanProvider = { ARRAYSIZE(k1WispJewelStringsDOSCDGerman), k1WispJewelStringsDOSCDGerman };

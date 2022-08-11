@@ -232,47 +232,9 @@ static const char *const k1ThePoisonStringsDOSCDSpanish[4] = {
 
 static const StringListProvider k1ThePoisonStringsDOSCDSpanishProvider = { ARRAYSIZE(k1ThePoisonStringsDOSCDSpanish), k1ThePoisonStringsDOSCDSpanish };
 
-static const char *const k1FluteStringsDOSCDSpanish[40] = {
+static const char *const k1FluteStringsDOSCDSpanish[2] = {
 	"El sonido no impresiona.",
-	"Fijo que la ""\xA3""ltima nota era alta!",
-	"\xBA",
-	"\xBA",
-	"",
-	"\x01",
-	"\x01\xB3",
-	"\xB3",
-	"\x06\x04\x08\x03\x06",
-	"\x08\x01\x01",
-	"\x02\x04",
-	"\x05\x02",
-	"\x08\x01\x01",
-	"\x11",
-	"5",
-	"Y",
-	"",
-	"",
-	"",
-	"",
-	"\x15",
-	"9",
-	"]",
-	"",
-	"",
-	"",
-	"",
-	"\x07",
-	")",
-	"M",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"SHAPE_HORZ_REV",
-	"SHAPE_VERT_REV"
+	"Fijo que la ""\xA3""ltima nota era alta!"
 };
 
 static const StringListProvider k1FluteStringsDOSCDSpanishProvider = { ARRAYSIZE(k1FluteStringsDOSCDSpanish), k1FluteStringsDOSCDSpanish };
@@ -348,7 +310,7 @@ static const char *const k1GUIStringsDOSCDSpanish[35] = {
 	"off",
 	"S""\xA1",
 	"No",
-	"?""\x0F"")+F""\x0F"")+L""\x0F"")+T""\x0F"")+[""\x0F"")+h""\x0F"")+y""\x0F"")+""\x89\x0F"")+""\x97\x0F"")+""\x9D\x0F"")+""\xA5\x0F"")+""\xAC\x0F"")+Velocidad al paso    ",
+	"Velocidad al paso    ",
 	"Velocidad del texto",
 	"La m""\xA3""sica en ",
 	"Los sonidos en ",
