@@ -52,6 +52,8 @@ public:
 
 	bool UsesType(eMaterialRenderType aType);
 
+	iGpuProgram *getGpuProgram(const eMaterialRenderType aType, const int alPass, iLight3D *apLight);
+	iMaterialProgramSetup *getGpuProgramSetup(const eMaterialRenderType aType, const int alPass, iLight3D *apLight);
 	iGpuProgram *GetVertexProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 	bool VertexProgramUsesLight(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 	bool VertexProgramUsesEye(eMaterialRenderType aType, int alPass, iLight3D *apLight);
@@ -85,50 +87,9 @@ protected:
 
 	iTexture *mpAttenuationMap;
 
-	iGpuProgram *mvVtxPrograms[eBaseLightProgram_LastEnum];
-	iGpuProgram *mvFragPrograms[eBaseLightProgram_LastEnum];
-};
-
-//---------------------------------------------------------------
-
-class cGLStateTwoUnits_Diffuse : public iGLStateProgram {
-public:
-	cGLStateTwoUnits_Diffuse();
-
-	void Bind();
-	void UnBind();
-
-private:
-	void InitData() {}
-};
-
-//---------------------------------------------------------------
-
-class cGLStateTwoUnits_ATIDiffuse : public iGLStateProgram {
-public:
-	cGLStateTwoUnits_ATIDiffuse();
-	~cGLStateTwoUnits_ATIDiffuse();
-
-	void Bind();
-	void UnBind();
-
-private:
-	void InitData();
-
-	//int mlBind;
-};
-
-//---------------------------------------------------------------
-
-class cGLStateTwoUnits_Spot : public iGLStateProgram {
-public:
-	cGLStateTwoUnits_Spot();
-
-	void Bind();
-	void UnBind();
-
-private:
-	void InitData() {}
+	iGpuProgram *_gpuPrograms[eBaseLightProgram_LastEnum];
+	iGpuProgram *_diffuseGpuProgram;
+	iGpuProgram *_ambientGpuProgram;
 };
 
 //---------------------------------------------------------------
