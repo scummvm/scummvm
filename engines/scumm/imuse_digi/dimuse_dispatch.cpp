@@ -821,7 +821,7 @@ void IMuseDigital::dispatchPredictFirstStream() {
 }
 
 int IMuseDigital::dispatchNavigateMap(IMuseDigiDispatch *dispatchPtr) {
-	int32 *mapCurEvent;
+	uint8 *mapCurEvent;
 	int32 blockTag, effFadeSize, elapsedFadeSize, regionOffset;
 	char *marker = NULL;
 
@@ -844,7 +844,7 @@ int IMuseDigital::dispatchNavigateMap(IMuseDigiDispatch *dispatchPtr) {
 			return -1;
 		}
 
-		blockTag = mapCurEvent[0];
+		blockTag = READ_UINT32(mapCurEvent);
 		switch (blockTag) {
 		case MKTAG('J', 'U', 'M', 'P'):
 			// Handle any event found at this offset
@@ -855,9 +855,9 @@ int IMuseDigital::dispatchNavigateMap(IMuseDigiDispatch *dispatchPtr) {
 			// - Jump destination offset (4 bytes)
 			// - Hook ID (4 bytes)
 			// - Fade time in ms (4 bytes)
-			if (!checkHookId(dispatchPtr->trackPtr->jumpHook, mapCurEvent[4])) {
+			if (!checkHookId(dispatchPtr->trackPtr->jumpHook, READ_UINT32(mapCurEvent + 16))) {
 				// This is the right hookId, let's jump
-				dispatchPtr->currentOffset = mapCurEvent[3];
+				dispatchPtr->currentOffset = READ_UINT32(mapCurEvent + 12);
 				if (dispatchPtr->streamPtr) {
 					if (dispatchPtr->streamZoneList->size || !dispatchPtr->streamZoneList->next) {
 						debug(5, "IMuseDigital::dispatchNavigateMap(): next streamZone is unallocated, calling dispatchPrepareToJump()");
@@ -867,7 +867,8 @@ int IMuseDigital::dispatchNavigateMap(IMuseDigiDispatch *dispatchPtr) {
 					debug(5, "IMuseDigital::dispatchNavigateMap(): \n"
 							 "\tJUMP found for sound %d with valid candidateHookId (%d), \n"
 							 "\tgoing to offset %d with a crossfade of %d ms",
-						  dispatchPtr->trackPtr->soundId, mapCurEvent[4], mapCurEvent[3], mapCurEvent[5]);
+						  dispatchPtr->trackPtr->soundId, (int)READ_UINT32(mapCurEvent + 16),
+						  (int)READ_UINT32(mapCurEvent + 12), (int)READ_UINT32(mapCurEvent + 20));
 
 					dispatchPtr->streamZoneList->useFlag = 0;
 					removeStreamZoneFromList(&dispatchPtr->streamZoneList, dispatchPtr->streamZoneList);
@@ -935,24 +936,24 @@ int IMuseDigital::dispatchNavigateMap(IMuseDigiDispatch *dispatchPtr) {
 			// within the interpreter, so I'm not going to argue with it
 
 			if (!dispatchPtr->trackPtr->syncPtr_0) {
-				dispatchPtr->trackPtr->syncPtr_0 = (byte *)malloc(mapCurEvent[1]);
-				memcpy(dispatchPtr->trackPtr->syncPtr_0, mapCurEvent + 3, mapCurEvent[1]);
-				dispatchPtr->trackPtr->syncSize_0 = mapCurEvent[1];
+				dispatchPtr->trackPtr->syncPtr_0 = (byte *)malloc(READ_UINT32(mapCurEvent + 4));
+				memcpy(dispatchPtr->trackPtr->syncPtr_0, mapCurEvent + 3 * 4, READ_UINT32(mapCurEvent + 4));
+				dispatchPtr->trackPtr->syncSize_0 = READ_UINT32(mapCurEvent + 4);
 
 			} else if (!dispatchPtr->trackPtr->syncPtr_1) {
-				dispatchPtr->trackPtr->syncPtr_1 = (byte *)malloc(mapCurEvent[1]);
-				memcpy(dispatchPtr->trackPtr->syncPtr_1, mapCurEvent + 3, mapCurEvent[1]);
-				dispatchPtr->trackPtr->syncSize_1 = mapCurEvent[1];
+				dispatchPtr->trackPtr->syncPtr_1 = (byte *)malloc(READ_UINT32(mapCurEvent + 4));
+				memcpy(dispatchPtr->trackPtr->syncPtr_1, mapCurEvent + 3 * 4, READ_UINT32(mapCurEvent + 4));
+				dispatchPtr->trackPtr->syncSize_1 = READ_UINT32(mapCurEvent + 4);
 
 			} else if (!dispatchPtr->trackPtr->syncPtr_2) {
-				dispatchPtr->trackPtr->syncPtr_2 = (byte *)malloc(mapCurEvent[1]);
-				memcpy(dispatchPtr->trackPtr->syncPtr_2, mapCurEvent + 3, mapCurEvent[1]);
-				dispatchPtr->trackPtr->syncSize_2 = mapCurEvent[1];
+				dispatchPtr->trackPtr->syncPtr_2 = (byte *)malloc(READ_UINT32(mapCurEvent + 4));
+				memcpy(dispatchPtr->trackPtr->syncPtr_2, mapCurEvent + 3 * 4, READ_UINT32(mapCurEvent + 4));
+				dispatchPtr->trackPtr->syncSize_2 = READ_UINT32(mapCurEvent + 4);
 
 			} else if (!dispatchPtr->trackPtr->syncPtr_3) {
-				dispatchPtr->trackPtr->syncPtr_3 = (byte *)malloc(mapCurEvent[1]);
-				memcpy(dispatchPtr->trackPtr->syncPtr_3, mapCurEvent + 3, mapCurEvent[1]);
-				dispatchPtr->trackPtr->syncSize_3 = mapCurEvent[1];
+				dispatchPtr->trackPtr->syncPtr_3 = (byte *)malloc(READ_UINT32(mapCurEvent + 4));
+				memcpy(dispatchPtr->trackPtr->syncPtr_3, mapCurEvent + 3 * 4, READ_UINT32(mapCurEvent + 4));
+				dispatchPtr->trackPtr->syncSize_3 = READ_UINT32(mapCurEvent + 4);
 			}
 
 			continue;
@@ -965,9 +966,9 @@ int IMuseDigital::dispatchNavigateMap(IMuseDigiDispatch *dispatchPtr) {
 			// - Word size between 8, 12 and 16 (4 bytes)
 			// - Sample rate (4 bytes)
 			// - Number of channels (4 bytes)
-			dispatchPtr->wordSize = mapCurEvent[4];
-			dispatchPtr->sampleRate = mapCurEvent[5];
-			dispatchPtr->channelCount = mapCurEvent[6];
+			dispatchPtr->wordSize = READ_UINT32(mapCurEvent + 16);
+			dispatchPtr->sampleRate = READ_UINT32(mapCurEvent + 20);
+			dispatchPtr->channelCount = READ_UINT32(mapCurEvent + 24);
 
 			continue;
 		case MKTAG('R', 'E', 'G', 'N'):
@@ -976,9 +977,9 @@ int IMuseDigital::dispatchNavigateMap(IMuseDigiDispatch *dispatchPtr) {
 			// - Block size in bytes minus 8 (4 bytes)
 			// - Block offset (4 bytes)
 			// - Region length (4 bytes)
-			regionOffset = mapCurEvent[2];
+			regionOffset = READ_UINT32(mapCurEvent + 8);
 			if (regionOffset == dispatchPtr->currentOffset) {
-				dispatchPtr->audioRemaining = mapCurEvent[3];
+				dispatchPtr->audioRemaining = READ_UINT32(mapCurEvent + 12);
 				return 0;
 			} else {
 				debug(5, "IMuseDigital::dispatchNavigateMap(): ERROR: region offset %d != currentOffset %d", regionOffset, dispatchPtr->currentOffset);
@@ -1047,7 +1048,7 @@ int IMuseDigital::dispatchGetMap(IMuseDigiDispatch *dispatchPtr) {
 				}
 
 				dispatchPtr->currentOffset = size;
-				if (dispatchConvertMap(rawMap + 8, (uint8 *)dstMap)) {
+				if (dispatchConvertMap(rawMap + 8, dstMap)) {
 					debug(5, "IMuseDigital::dispatchGetMap(): ERROR: dispatchConvertMap() failed");
 					return -1;
 				}
@@ -1092,7 +1093,7 @@ int IMuseDigital::dispatchGetMap(IMuseDigiDispatch *dispatchPtr) {
 
 			if (READ_BE_UINT32(soundAddrData) == MKTAG('i', 'M', 'U', 'S') && READ_BE_UINT32(soundAddrData + 8) == MKTAG('M', 'A', 'P', ' ')) {
 				dispatchPtr->currentOffset = READ_BE_UINT32(soundAddrData + 12) + 24;
-				if (dispatchConvertMap((soundAddrData + 8), (uint8 *)dstMap)) {
+				if (dispatchConvertMap((soundAddrData + 8), dstMap)) {
 					debug(5, "IMuseDigital::dispatchGetMap(): ERROR: dispatchConvertMap() failure");
 					return -1;
 				}
@@ -1116,7 +1117,7 @@ int IMuseDigital::dispatchGetMap(IMuseDigiDispatch *dispatchPtr) {
 	return 0;
 }
 
-int IMuseDigital::dispatchConvertMap(uint8 *rawMap, uint8 *destMap) {
+int IMuseDigital::dispatchConvertMap(uint8 *rawMap, int32 *destMap) {
 	int32 effMapSize;
 	uint8 *mapCurPos;
 	int32 blockName;
@@ -1139,23 +1140,23 @@ int IMuseDigital::dispatchConvertMap(uint8 *rawMap, uint8 *destMap) {
 			// Fill (or rather, swap32) the fields:
 			// - The 4 bytes string 'MAP '
 			// - Size of the map
-			*(int32 *)destMap = READ_BE_UINT32(destMap);
-			*((int32 *)destMap + 1) = READ_BE_UINT32(destMap + 4);
+			destMap[0] = READ_BE_UINT32(destMap);
+			destMap[1] = READ_BE_UINT32(destMap + 4);
 
-			mapCurPos = destMap + 8;
-			endOfMapPtr = &destMap[effMapSize];
+			mapCurPos = (uint8 *)destMap + 8;
+			endOfMapPtr = (uint8 *)destMap + effMapSize;
 
 			// Swap32 the rest of the map
 			while (mapCurPos < endOfMapPtr) {
 				// Swap32 the 4 characters block name
 				int32 swapped = READ_BE_UINT32(mapCurPos);
-				*(int32 *)mapCurPos = swapped;
+				memcpy(mapCurPos, &swapped, 4);
 				blockName = swapped;
 
 				// Advance and Swap32 the block size (minus 8) field
 				blockSizePtr = mapCurPos + 4;
 				blockSizeMin8 = READ_BE_UINT32(blockSizePtr);
-				*(int32 *)blockSizePtr = blockSizeMin8;
+				memcpy(blockSizePtr, &blockSizeMin8, 4);
 				mapCurPos = blockSizePtr + 4;
 
 				// Swapping32 a TEXT block is different:
@@ -1163,7 +1164,8 @@ int IMuseDigital::dispatchConvertMap(uint8 *rawMap, uint8 *destMap) {
 				// since they're already good like this
 				if (blockName == MKTAG('T', 'E', 'X', 'T')) {
 					// Swap32 the block offset position
-					*(int32 *)mapCurPos = READ_BE_UINT32(mapCurPos);
+					swapped = READ_BE_UINT32(mapCurPos);
+					memcpy(mapCurPos, &swapped, 4);
 
 					// Skip the single characters
 					firstChar = mapCurPos + 4;
@@ -1180,7 +1182,8 @@ int IMuseDigital::dispatchConvertMap(uint8 *rawMap, uint8 *destMap) {
 
 					// ...and swap them of course
 					do {
-						*(int32 *)mapCurPos = READ_BE_UINT32(mapCurPos);
+						swapped = READ_BE_UINT32(mapCurPos);
+						memcpy(mapCurPos, &swapped, 4);
 						mapCurPos += 4;
 						--remainingFieldsNum;
 					} while (remainingFieldsNum);
@@ -1188,7 +1191,7 @@ int IMuseDigital::dispatchConvertMap(uint8 *rawMap, uint8 *destMap) {
 			}
 
 			// Just a sanity check to see if we've parsed the whole map
-			if (&destMap[bytesUntilEndOfMap] - mapCurPos == -8) {
+			if ((uint8 *)destMap + bytesUntilEndOfMap - mapCurPos == -8) {
 				return 0;
 			} else {
 				debug(5, "IMuseDigital::dispatchConvertMap(): ERROR: converted wrong number of bytes");
@@ -1206,13 +1209,13 @@ int IMuseDigital::dispatchConvertMap(uint8 *rawMap, uint8 *destMap) {
 	return 0;
 }
 
-int32 *IMuseDigital::dispatchGetNextMapEvent(int32 *mapPtr, int32 soundOffset, int32 *mapEvent) {
+uint8 *IMuseDigital::dispatchGetNextMapEvent(int32 *mapPtr, int32 soundOffset, uint8 *mapEvent) {
 	if (mapEvent) {
-		// Advance the map to the next block (mapEvent[1] + 8 is the size of the block)
-		mapEvent = (int32 *)((int8 *)mapEvent + mapEvent[1] + 8);
+		// Advance the map to the next block (READ_UINT32(mapEvent + 4) + 8 is the size of the block)
+		mapEvent = mapEvent + READ_UINT32(mapEvent + 4) + 8;
 
-		if ((int8 *)&mapPtr[2] + mapPtr[1] > (int8 *)mapEvent) {
-			if (mapEvent[2] != soundOffset) {
+		if ((uint8 *)&mapPtr[2] + mapPtr[1] > mapEvent) {
+			if ((int32)READ_UINT32(mapEvent + 8) != soundOffset) {
 				debug(5, "IMuseDigital::dispatchGetNextMapEvent(): ERROR: no more events at offset %d", soundOffset);
 				return nullptr;
 			}
@@ -1224,15 +1227,15 @@ int32 *IMuseDigital::dispatchGetNextMapEvent(int32 *mapPtr, int32 soundOffset, i
 	} else {
 		// Init the current map position starting from the first block
 		// (cells 0 and 1 are the tag 'MAP ' and the map size respectively)
-		mapEvent = &mapPtr[2];
+		mapEvent = (uint8 *)&mapPtr[2];
 
 		// Search for the block with the same offset as ours
-		while (mapEvent[2] != soundOffset) {
+		while ((int32)READ_UINT32(mapEvent + 8) != soundOffset) {
 			// Check if we've overrun the offset, to make sure
 			// that there actually is an event at our offset
-			mapEvent = (int32 *)((int8 *)mapEvent + mapEvent[1] + 8);
+			mapEvent = mapEvent + READ_UINT32(mapEvent + 4) + 8;
 
-			if ((int8 *)&mapPtr[2] + mapPtr[1] <= (int8 *)mapEvent) {
+			if ((uint8 *)&mapPtr[2] + mapPtr[1] <= mapEvent) {
 				debug(5, "IMuseDigital::dispatchGetNextMapEvent(): ERROR: couldn't find event at offset %d", soundOffset);
 				return nullptr;
 			}
@@ -1245,7 +1248,7 @@ int32 *IMuseDigital::dispatchGetNextMapEvent(int32 *mapPtr, int32 soundOffset, i
 void IMuseDigital::dispatchPredictStream(IMuseDigiDispatch *dispatchPtr) {
 	IMuseDigiStreamZone *szTmp, *lastStreamInList, *curStrZn;
 	int32 cumulativeStreamOffset;
-	int32 *jumpParameters;
+	uint8 *jumpParameters;
 
 	if (!dispatchPtr->streamPtr || !dispatchPtr->streamZoneList) {
 		debug(5, "IMuseDigital::dispatchPredictStream(): ERROR: NULL streamId or streamZoneList");
@@ -1279,18 +1282,18 @@ void IMuseDigital::dispatchPredictStream(IMuseDigiDispatch *dispatchPtr) {
 	}
 }
 
-int32 *IMuseDigital::dispatchCheckForJump(int32 *mapPtr, IMuseDigiStreamZone *strZnPtr, int &candidateHookId) {
-	int32 *curMapPlace = &mapPtr[2];
-	int32 *endOfMap = (int32 *)((int8 *)&mapPtr[2] + mapPtr[1]);
+uint8 *IMuseDigital::dispatchCheckForJump(int32 *mapPtr, IMuseDigiStreamZone *strZnPtr, int &candidateHookId) {
+	uint8 *curMapPlace = (uint8 *)&mapPtr[2];
+	uint8 *endOfMap = (uint8 *)&mapPtr[2] + mapPtr[1];
 	int32 mapPlaceTag, jumpHookPos, jumpHookId, bytesUntilNextPlace;
 
 	while (curMapPlace < endOfMap) {
-		mapPlaceTag = curMapPlace[0];
-		bytesUntilNextPlace = curMapPlace[1] + 8;
+		mapPlaceTag = READ_UINT32(curMapPlace);
+		bytesUntilNextPlace = READ_UINT32(curMapPlace + 4) + 8;
 
 		if (mapPlaceTag == MKTAG('J', 'U', 'M', 'P')) {
-			jumpHookPos = curMapPlace[2];
-			jumpHookId = curMapPlace[4];
+			jumpHookPos = READ_UINT32(curMapPlace + 8);
+			jumpHookId = READ_UINT32(curMapPlace + 16);
 
 			if (jumpHookPos > strZnPtr->offset && jumpHookPos <= strZnPtr->size + strZnPtr->offset) {
 				if (!checkHookId(candidateHookId, jumpHookId))
@@ -1298,13 +1301,13 @@ int32 *IMuseDigital::dispatchCheckForJump(int32 *mapPtr, IMuseDigiStreamZone *st
 			}
 		}
 		// Advance the map to the next place
-		curMapPlace = (int32 *)((int8 *)curMapPlace + bytesUntilNextPlace);
+		curMapPlace = curMapPlace + bytesUntilNextPlace;
 	}
 
 	return nullptr;
 }
 
-void IMuseDigital::dispatchPrepareToJump(IMuseDigiDispatch *dispatchPtr, IMuseDigiStreamZone *strZnPtr, int32 *jumpParams, int calledFromNavigateMap) {
+void IMuseDigital::dispatchPrepareToJump(IMuseDigiDispatch *dispatchPtr, IMuseDigiStreamZone *strZnPtr, uint8 *jumpParams, int calledFromNavigateMap) {
 	int32 hookPosition, jumpDestination, fadeTime;
 	IMuseDigiStreamZone *nextStreamZone;
 	IMuseDigiStreamZone *zoneForJump = nullptr;
@@ -1312,7 +1315,7 @@ void IMuseDigital::dispatchPrepareToJump(IMuseDigiDispatch *dispatchPtr, IMuseDi
 	uint32 streamOffset;
 	IMuseDigiStreamZone *zoneCycle;
 
-	// jumpParams format:
+	// jumpParams format (assuming jumpParams is int32*):
 	// jumpParams[0]: four bytes which form the string 'JUMP'
 	// jumpParams[1]: block size in bytes minus 8 (16 for a JUMP block like this one; total == 24 bytes)
 	// jumpParams[2]: hook position
@@ -1320,9 +1323,9 @@ void IMuseDigital::dispatchPrepareToJump(IMuseDigiDispatch *dispatchPtr, IMuseDi
 	// jumpParams[4]: hook ID
 	// jumpParams[5]: fade time in milliseconds
 
-	hookPosition = jumpParams[2];
-	jumpDestination = jumpParams[3];
-	fadeTime = jumpParams[5];
+	hookPosition = READ_UINT32(jumpParams + 8);
+	jumpDestination = READ_UINT32(jumpParams + 12);
+	fadeTime = READ_UINT32(jumpParams + 20);
 
 	// Edge cases handling
 	if (strZnPtr->size + strZnPtr->offset == hookPosition) {
