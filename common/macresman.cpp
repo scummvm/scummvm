@@ -598,7 +598,7 @@ void MacResManager::readMap() {
 	_stream->seek(_mapOffset + _resMap.typeOffset + 2);
 	_resTypes = new ResType[_resMap.numTypes];
 
-	debug(8, "numResTypes: %d total size: %lu", _resMap.numTypes, _stream->size());
+	debug(8, "numResTypes: %d total size: %u", _resMap.numTypes, unsigned(_stream->size()));
 
 	if (_stream->pos() + _resMap.numTypes * 8 > _stream->size())
 		error("MacResManager::readMap(): incorrect resource map, too big, %d types", _resMap.numTypes);
