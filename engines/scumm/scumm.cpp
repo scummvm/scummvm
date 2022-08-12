@@ -164,6 +164,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 	setTimerAndShakeFrequency();
 
+	memset(_savegameNames, 0, sizeof(_savegameNames));
+
 	camera.reset();
 	memset(_colorCycle, 0, sizeof(_colorCycle));
 	memset(_colorUsedByCycle, 0, sizeof(_colorUsedByCycle));
@@ -2122,6 +2124,14 @@ void ScummEngine::syncSoundSettings() {
 			// - 0 is the lowest text speed possible.
 			if (VAR_CHARINC != 0xFF)
 				VAR(VAR_CHARINC) = 9 - _defaultTalkDelay;
+		} else if (_game.version != 8) {
+			ConfMan.setInt("original_gui_text_speed", getTalkSpeed());
+		}
+
+		if (_game.version >= 7 && _imuseDigital) {
+			_imuseDigital->diMUSESetMusicGroupVol(ConfMan.getInt("music_volume") / 2);
+			_imuseDigital->diMUSESetVoiceGroupVol(ConfMan.getInt("speech_volume") / 2);
+			_imuseDigital->diMUSESetSFXGroupVol(ConfMan.getInt("sfx_volume") / 2);
 		}
 		return;
 	}
@@ -2657,7 +2667,7 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 				errMsg = _("Failed to save game to file:\n\n%s");
 
 			if (success && _saveTemporaryState && VAR_GAME_LOADED != 0xFF && _game.version <= 7)
-				VAR(VAR_GAME_LOADED) = 201;
+				VAR(VAR_GAME_LOADED) = GAME_PROPER_SAVE;
 
 			if (!_saveTemporaryState)
 				_lastSaveTime = _system->getMillis();
@@ -2667,7 +2677,7 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 				errMsg = _("Failed to load saved game from file:\n\n%s");
 
 			if (success && (_saveTemporaryState || _game.version == 8) && VAR_GAME_LOADED != 0xFF)
-				VAR(VAR_GAME_LOADED) = (_game.version == 8) ? 1 : 203;
+				VAR(VAR_GAME_LOADED) = (_game.version == 8) ? 1 : GAME_PROPER_LOAD;
 		}
 
 		if (!success) {

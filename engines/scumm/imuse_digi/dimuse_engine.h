@@ -110,6 +110,7 @@ private:
 	int _stopSequenceFlag;
 	int _scriptInitializedFlag;
 	char _emptyMarker[1];
+	bool _spooledMusicEnabled;
 
 	int _usecPerInt; // Microseconds between each callback (will be set to 50 Hz)
 	int _callbackInterruptFlag;
@@ -387,6 +388,8 @@ public:
 	int diMUSESetSequence(int soundId);
 	int diMUSESetCuePoint(int cueId);
 	int diMUSESetAttribute(int attrIndex, int attrVal);
+	void diMUSEEnableSpooledMusic();
+	void diMUSEDisableSpooledMusic();
 
 	// Utils
 	int addTrackToList(IMuseDigiTrack **listPtr, IMuseDigiTrack *listPtr_Item);

@@ -74,6 +74,7 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer)
 	_stopSequenceFlag = 0;
 	_scriptInitializedFlag = 0;
 	_callbackInterruptFlag = 0;
+	_spooledMusicEnabled = true;
 
 	_radioChatterSFX = false;
 	_isEngineDisabled = false;
@@ -919,6 +920,17 @@ int IMuseDigital::diMUSESetCuePoint(int cueId) {
 
 int IMuseDigital::diMUSESetAttribute(int attrIndex, int attrVal) {
 	return scriptParse(8, attrIndex, attrVal);
+}
+
+void IMuseDigital::diMUSEEnableSpooledMusic() {
+	_spooledMusicEnabled = true;
+}
+
+void IMuseDigital::diMUSEDisableSpooledMusic() {
+	_spooledMusicEnabled = true;
+	diMUSESetState(0);
+	diMUSESetSequence(0);
+	_spooledMusicEnabled = false;
 }
 
 // Debugger utility functions

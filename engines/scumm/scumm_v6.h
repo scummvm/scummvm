@@ -142,13 +142,13 @@ protected:
 
 	void setDefaultCursor() override;
 	void setCursorTransparency(int a) override;
-	void setCursorHotspot(int x, int y);
+	void setCursorHotspot(int x, int y) override;
 
 	virtual void setCursorFromImg(uint img, uint room, uint imgindex);
 	void useIm01Cursor(const byte *im, int w, int h);
 	void useBompCursor(const byte *im, int w, int h);
 	void grabCursor(int x, int y, int w, int h);
-	void setCursorFromBuffer(const byte *ptr, int width, int height, int pitch);
+	void setCursorFromBuffer(const byte *ptr, int width, int height, int pitch) override;
 	void ditherCursor();
 
 	virtual void drawBlastTexts() {}

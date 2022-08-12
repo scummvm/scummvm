@@ -147,9 +147,18 @@ protected:
 	const char *getGUIString(int stringId) override;
 	int getGUIStringHeight(const char *str) override;
 	int getGUIStringWidth(const char *str) override;
-	void drawGUIText(const char *buttonString, int textXPos, int textYPos, int textColor, bool centerFlag) override;
+	void drawGUIText(const char *buttonString, int textXPos, int textYPos, int rightRectClip, int textColor, bool centerFlag) override;
+	int getMusicVolume() override;
+	int getSpeechVolume() override;
+	int getSFXVolume() override;
+	void setMusicVolume(int volume) override;
+	void setSpeechVolume(int volume) override;
+	void setSFXVolume(int volume) override;
+	void toggleVoiceMode() override;
 
 	void setDefaultCursor() override;
+	void updateCursor() override;
+	void setCursorTransparency(int a) override;
 
 	void drawVerb(int verb, int mode) override;
 
