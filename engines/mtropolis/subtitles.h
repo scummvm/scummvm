@@ -94,15 +94,21 @@ public:
 		uint numLines;
 	};
 
+	enum LineClass {
+		kLineClassDefault,
+		kLineClassGameplay,
+	};
+
 	struct LineData {
 		LineData();
 
 		uint32 timeOffsetMSec;
-		uint location;
+		uint slot;
 		uint durationMSec;
 		Common::String textUTF8;
 		uint speakerID;
-		bool isGameplay;
+		LineClass lineClass;
+		double position;
 	};
 
 	const Common::Array<LineData> &getAllLines() const;
@@ -123,16 +129,18 @@ struct SubtitleTables {
 
 class SubtitleDisplayItem {
 public:
-	SubtitleDisplayItem(const Common::String &text, const Common::String &speaker, uint slot);
+	SubtitleDisplayItem(const Common::String &text, const Common::String &speaker, uint slot, double position);
 
 	const Common::U32String &getText() const;
 	const Common::U32String &getSpeaker() const;
 	uint getSlot() const;
+	double getPosition() const;
 
 private:
 	Common::U32String _text;
 	Common::U32String _speaker;
 	uint _slot;
+	double _position;
 };
 
 class SubtitleRenderer {
@@ -152,6 +160,7 @@ private:
 		DisplayItem();
 
 		Common::SharedPtr<SubtitleDisplayItem> item;
+		Common::SharedPtr<Graphics::ManagedSurface> surface;
 		uint64 expireTime;
 	};
 
@@ -159,10 +168,11 @@ private:
 	static void splitLines(const Common::U32String &str, Common::Array<Common::U32String> &outLines);
 
 	Common::Array<DisplayItem> _displayItems;
-	Common::SharedPtr<Graphics::ManagedSurface> _surface;
+
 	Common::SharedPtr<Graphics::Font> _font;
 	uint64 _lastTime;
 	uint _nonImmediateDisappearTime;
+	int _fontHeight;
 	bool _isDirty;
 };
 

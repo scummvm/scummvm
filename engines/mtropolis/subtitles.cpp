@@ -304,7 +304,7 @@ Common::ErrorCode SubtitleLineTable::load(const Common::String &filePath, const 
 	if (!loader.readLine(strs))
 		return Common::kReadingFailed;
 
-	if (strs.size() != 7 || strs[0] != "subtitle_set_id" || strs[1] != "text" || strs[2] != "time" || strs[3] != "duration" || strs[4] != "location" || strs[5] != "speaker" || strs[6] != "is_gameplay")
+	if (strs.size() != 8 || strs[0] != "subtitle_set_id" || strs[1] != "text" || strs[2] != "time" || strs[3] != "duration" || strs[4] != "slot" || strs[5] != "speaker" || strs[6] != "class" || strs[7] != "position")
 		return Common::kReadingFailed;
 
 	uint currentLine = 0;
@@ -312,32 +312,37 @@ Common::ErrorCode SubtitleLineTable::load(const Common::String &filePath, const 
 		if (strs.size() == 0)
 			break;
 
-		if (strs.size() != 7)
+		if (strs.size() != 8)
 			return Common::kReadingFailed;
 
 		double timestamp = 0;
 		double duration = 0;
-		uint location = 0;
-		uint isGameplay = 0;
+		double position = 0;
+		uint slot = 0;
+		LineClass lineClass = kLineClassDefault;
 		if (sscanf(strs[2].c_str(), "%lf", &timestamp) != 1)
 			timestamp = 0;
 
 		if (sscanf(strs[3].c_str(), "%lf", &duration) != 1)
 			duration = 0;
 
-		if (sscanf(strs[4].c_str(), "%u", &location) != 1)
-			location = 0;
+		if (sscanf(strs[4].c_str(), "%u", &slot) != 1)
+			slot = 0;
 
-		if (sscanf(strs[6].c_str(), "%u", &isGameplay) != 1)
-			isGameplay = 0;
+		if (strs[6] == "gameplay")
+			lineClass = kLineClassGameplay;
+
+		if (sscanf(strs[7].c_str(), "%lf", &position) != 1)
+			position = 0;
 
 		LineData lineData;
 		lineData.durationMSec = static_cast<uint32>(duration * 1000.0);
 		lineData.timeOffsetMSec = static_cast<uint32>(timestamp * 1000.0);
 		lineData.textUTF8 = strs[1];
-		lineData.location = location;
+		lineData.slot = slot;
 		lineData.speakerID = speakerTable.getSpeakerID(strs[5]);
-		lineData.isGameplay = isGameplay;
+		lineData.lineClass = lineClass;
+		lineData.position = position;
 
 		LineRange &range = _lineRanges[strs[0]];
 		if (range.numLines == 0)
@@ -361,7 +366,7 @@ SubtitleLineTable::LineRange::LineRange() : linesStart(0), numLines(0) {
 }
 
 
-SubtitleLineTable::LineData::LineData() : timeOffsetMSec(0), location(0), durationMSec(0), speakerID(0), isGameplay(false) {
+SubtitleLineTable::LineData::LineData() : timeOffsetMSec(0), slot(0), durationMSec(0), speakerID(0), lineClass(kLineClassDefault), position(0) {
 }
 
 const Common::Array<SubtitleLineTable::LineData> &SubtitleLineTable::getAllLines() const {
@@ -378,7 +383,8 @@ const SubtitleLineTable::LineRange *SubtitleLineTable::getLinesForSubtitleSetID(
 SubtitleRenderer::DisplayItem::DisplayItem() : expireTime(0) {
 }
 
-SubtitleDisplayItem::SubtitleDisplayItem(const Common::String &text, const Common::String &speaker, uint slot) : _slot(slot) {
+SubtitleDisplayItem::SubtitleDisplayItem(const Common::String &text, const Common::String &speaker, uint slot, double position)
+	: _slot(slot), _position(position) {
 	_text = text.decode(Common::kUtf8);
 	_speaker = speaker.decode(Common::kUtf8);
 }
@@ -395,14 +401,20 @@ uint SubtitleDisplayItem::getSlot() const {
 	return _slot;
 }
 
-SubtitleRenderer::SubtitleRenderer() : _nonImmediateDisappearTime(3500), _isDirty(true), _lastTime(0) {
+double SubtitleDisplayItem::getPosition() const {
+	return _position;
+}
+
+SubtitleRenderer::SubtitleRenderer() : _nonImmediateDisappearTime(3500), _isDirty(true), _lastTime(0), _fontHeight(0) {
 #ifdef USE_FREETYPE2
 	Common::File fontFile;
 	const char *fontPath = "LiberationSans-Bold.ttf";
 
 	_font.reset(Graphics::loadTTFFontFromArchive(fontPath, 14, Graphics::kTTFSizeModeCell));
 
-	if (!_font)
+	if (_font) {
+		_fontHeight = _font->getFontHeight();
+	} else
 		warning("Couldn't open '%s', subtitles will not work", fontPath);
 
 	// TODO: Maybe support subtitles some other way if FreeType isn't enabled
@@ -417,6 +429,7 @@ void SubtitleRenderer::addDisplayItem(const Common::SharedPtr<SubtitleDisplayIte
 	for (DisplayItem &existingItem : _displayItems) {
 		if (existingItem.item->getSlot() == item->getSlot()) {
 			existingItem.item = item;
+			existingItem.surface.reset();
 			if (duration > 0)
 				existingItem.expireTime = _lastTime + duration;
 			else
@@ -477,12 +490,14 @@ bool SubtitleRenderer::update(uint64 currentTime) {
 }
 
 void SubtitleRenderer::composite(Window &window) const {
-	if (_surface) {
-		Graphics::ManagedSurface *windowSurf = window.getSurface().get();
-		if (windowSurf) {
-			int x = (windowSurf->w - _surface->w) / 2;
-			int y = (windowSurf->h + 300) / 2 - _surface->h;
-			windowSurf->blitFrom(*_surface, Common::Point(x, y));
+	for (const DisplayItem& displayItem : _displayItems) {
+		if (displayItem.surface) {
+			Graphics::ManagedSurface *windowSurf = window.getSurface().get();
+			if (windowSurf) {
+				int x = (windowSurf->w - displayItem.surface->w) / 2;
+				int y = (windowSurf->h + 300) / 2 - displayItem.surface->h + static_cast<int>(_fontHeight * displayItem.item->getPosition());
+				windowSurf->blitFrom(*displayItem.surface, Common::Point(x, y));
+			}
 		}
 	}
 }
@@ -495,10 +510,13 @@ void SubtitleRenderer::render() {
 	if (!_font)
 		return;
 
-	uint widestLine = 0;
-	uint numLines = 0;
-	for (const DisplayItem &item : _displayItems) {
-		if (item.item) {
+	for (uint ri = _displayItems.size(); ri > 0; ri--) {
+		uint i = ri - 1;
+
+		DisplayItem &item = _displayItems[i];
+		if (!item.surface) {
+			uint widestLine = 0;
+
 			const SubtitleDisplayItem &dispItem = *item.item;
 			Common::Array<Common::U32String> lines;
 
@@ -521,56 +539,26 @@ void SubtitleRenderer::render() {
 					widestLine = speakerWidth;
 			}
 
-			if (itemLines > numLines)
-				numLines = itemLines;
-		}
-	}
+			if (itemLines == 0 || widestLine == 0) {
+				// Nothing to render, remove the item
+				_displayItems.remove_at(i);
+				_isDirty = true;
+				continue;
+			}
 
-	_surface.reset();
+			const int borderWidth = 1;
+			const int verticalPadding = 5;
+			const int horizontalPadding = 20;
 
-	if (numLines == 0 || widestLine == 0)
-		return;
+			int surfaceWidth = static_cast<int>(widestLine) + borderWidth * 2 + horizontalPadding * 2;
+			int surfaceHeight = static_cast<int>(itemLines) * _fontHeight + borderWidth * 2 + verticalPadding * 2;
 
-	int fontHeight = _font->getFontHeight();
+			Graphics::PixelFormat fmt = Graphics::createPixelFormat<8888>();
+			Common::SharedPtr<Graphics::ManagedSurface> surface(new Graphics::ManagedSurface(surfaceWidth, surfaceHeight, fmt));
 
-	const int borderWidth = 1;
-	const int verticalPadding = 5;
-	const int horizontalPadding = 20;
+			surface->fillRect(Common::Rect(0, 0, surfaceWidth, surfaceHeight), fmt.RGBToColor(0, 0, 0));
 
-	int surfaceWidth = static_cast<int>(widestLine) + borderWidth * 2 + horizontalPadding * 2;
-	int surfaceHeight = static_cast<int>(numLines) * fontHeight + borderWidth * 2 + verticalPadding * 2;
-
-	Graphics::PixelFormat fmt = Graphics::createPixelFormat<8888>();
-	_surface.reset(new Graphics::ManagedSurface(surfaceWidth, surfaceHeight, fmt));
-
-	_surface->fillRect(Common::Rect(0, 0, surfaceWidth, surfaceHeight), fmt.RGBToColor(0, 0, 0));
-
-	for (int drawPass = 0; drawPass < 2; drawPass++) {
-		for (const DisplayItem &item : _displayItems) {
-			if (item.item) {
-				const SubtitleDisplayItem &dispItem = *item.item;
-				Common::Array<Common::U32String> lines;
-
-				const Common::U32String &itemText = dispItem.getText();
-
-				int speakerLine = 0;
-				for (uint i = 0; i < itemText.size(); i++) {
-					if (itemText[i] == '\\')
-						speakerLine++;
-					else
-						break;
-				}
-
-				splitLines(itemText, lines);
-
-				for (const Common::U32String &str : lines) {
-					uint width = _font->getStringWidth(str);
-					if (width > widestLine)
-						widestLine = width;
-				}
-
-				const Common::U32String &speaker = item.item->getSpeaker();
-
+			for (int drawPass = 0; drawPass < 2; drawPass++) {
 				int textStartLine = 0;
 				if (speaker.size() > 0) {
 					textStartLine++;
@@ -585,7 +573,7 @@ void SubtitleRenderer::render() {
 					else
 						drawColor = fmt.RGBToColor(255, 255, 127);
 
-					_font->drawString(_surface.get(), speaker, startX, speakerLine * fontHeight + verticalPadding + borderWidth, speakerWidth, drawColor);
+					_font->drawString(surface.get(), speaker, startX, verticalPadding + borderWidth, speakerWidth, drawColor);
 				}
 
 				for (uint lineIndex = 0; lineIndex < lines.size(); lineIndex++) {
@@ -601,72 +589,75 @@ void SubtitleRenderer::render() {
 					else
 						drawColor = fmt.RGBToColor(255, 255, 255);
 
-					_font->drawString(_surface.get(), line, startX, (textStartLine + static_cast<int>(lineIndex)) * fontHeight + verticalPadding + borderWidth, lineWidth, drawColor);
+					_font->drawString(surface.get(), line, startX, (textStartLine + static_cast<int>(lineIndex)) * _fontHeight + verticalPadding + borderWidth, lineWidth, drawColor);
 				}
-			}
-		}
 
-		if (drawPass == 0) {
-			int w = _surface->w;
-			int h = _surface->h;
+				if (drawPass == 0) {
+					int w = surface->w;
+					int h = surface->h;
 
-			// Horizontal pass (max r -> g)
-			for (int y = borderWidth; y < h - borderWidth; y++) {
-				uint32 *rowPixels = static_cast<uint32 *>(_surface->getBasePtr(0, y));
+					// Horizontal pass (max r -> g)
+					for (int y = borderWidth; y < h - borderWidth; y++) {
+						uint32 *rowPixels = static_cast<uint32 *>(surface->getBasePtr(0, y));
 
-				for (int x = borderWidth; x < w - borderWidth; x++) {
-					uint8 r, g, b, a;
-					uint8 brightest = 0;
+						for (int x = borderWidth; x < w - borderWidth; x++) {
+							uint8 r, g, b, a;
+							uint8 brightest = 0;
 
-					for (int kxo = -borderWidth; kxo < borderWidth; kxo++) {
-						fmt.colorToARGB(rowPixels[x + kxo], a, r, g, b);
+							for (int kxo = -borderWidth; kxo < borderWidth; kxo++) {
+								fmt.colorToARGB(rowPixels[x + kxo], a, r, g, b);
 
-						if (r > brightest)
-							brightest = r;
+								if (r > brightest)
+									brightest = r;
+							}
+
+							fmt.colorToARGB(rowPixels[x], a, r, g, b);
+							rowPixels[x] = fmt.ARGBToColor(a, r, brightest, b);
+						}
 					}
 
-					fmt.colorToARGB(rowPixels[x], a, r, g, b);
-					rowPixels[x] = fmt.ARGBToColor(a, r, brightest, b);
-				}
-			}
+					// Vertical pass (max g -> b)
+					int pitch = surface->pitch;
+					for (int x = borderWidth; x < w - borderWidth; x++) {
+						char *basePixelPtr = static_cast<char *>(surface->getBasePtr(x, 0));
 
-			// Vertical pass (max g -> b)
-			int pitch = _surface->pitch;
-			for (int x = borderWidth; x < w - borderWidth; x++) {
-				char *basePixelPtr = static_cast<char *>(_surface->getBasePtr(x, 0));
+						for (int y = borderWidth; y < h - borderWidth; y++) {
+							uint8 r, g, b, a;
+							uint8 brightest = 0;
 
-				for (int y = borderWidth; y < h - borderWidth; y++) {
-					uint8 r, g, b, a;
-					uint8 brightest = 0;
+							for (int kyo = -borderWidth; kyo < borderWidth; kyo++) {
+								uint32 *offsetPxPtr = reinterpret_cast<uint32 *>(basePixelPtr + (y + kyo) * pitch);
+								fmt.colorToARGB(*offsetPxPtr, a, r, g, b);
 
-					for (int kyo = -borderWidth; kyo < borderWidth; kyo++) {
-						uint32 *offsetPxPtr = reinterpret_cast<uint32 *>(basePixelPtr + (y + kyo) * pitch);
-						fmt.colorToARGB(*offsetPxPtr, a, r, g, b);
+								if (g > brightest)
+									brightest = g;
+							}
 
-						if (g > brightest)
-							brightest = g;
+							uint32 *pxPtr = reinterpret_cast<uint32 *>(basePixelPtr + y * pitch);
+							fmt.colorToARGB(*pxPtr, a, r, g, b);
+							*pxPtr = fmt.ARGBToColor(a, r, g, brightest);
+						}
 					}
 
-					uint32 *pxPtr = reinterpret_cast<uint32 *>(basePixelPtr + y * pitch);
-					fmt.colorToARGB(*pxPtr, a, r, g, b);
-					*pxPtr = fmt.ARGBToColor(a, r, g, brightest);
+					// Shadow backdrop pass
+					for (int y = 0; y < h; y++) {
+						uint32 *rowPixels = static_cast<uint32 *>(surface->getBasePtr(0, y));
+
+						for (int x = 0; x < w; x++) {
+							uint8 a, r, g, b;
+							fmt.colorToARGB(rowPixels[x], a, r, g, b);
+
+							uint8 minGrayAlpha = 224;
+							uint8 grayAlpha = (((256 - minGrayAlpha) * b) >> 8) + minGrayAlpha;
+
+							rowPixels[x] = fmt.ARGBToColor(grayAlpha, 0, 0, 0);
+						}
+					}
 				}
 			}
 
-			// Shadow backdrop pass
-			for (int y = 0; y < h; y++) {
-				uint32 *rowPixels = static_cast<uint32 *>(_surface->getBasePtr(0, y));
-
-				for (int x = 0; x < w; x++) {
-					uint8 a, r, g, b;
-					fmt.colorToARGB(rowPixels[x], a, r, g, b);
-
-					uint8 minGrayAlpha = 224;
-					uint8 grayAlpha = (((256 - minGrayAlpha) * b) >> 8) + minGrayAlpha;
-
-					rowPixels[x] = fmt.ARGBToColor(grayAlpha, 0, 0, 0);
-				}
-			}
+			// Done drawing
+			item.surface = surface;
 		}
 	}
 }
@@ -728,9 +719,9 @@ void SubtitlePlayer::stop() {
 void SubtitlePlayer::triggerSubtitleLine(const SubtitleLineTable::LineData &line) {
 	SubtitleRenderer *renderer = _runtime->getSubtitleRenderer().get();
 	if (renderer) {
-		Common::SharedPtr<SubtitleDisplayItem> dispItem(new SubtitleDisplayItem(line.textUTF8, _speakers->getSpeakers()[line.speakerID], line.location));
+		Common::SharedPtr<SubtitleDisplayItem> dispItem(new SubtitleDisplayItem(line.textUTF8, _speakers->getSpeakers()[line.speakerID], line.slot, line.position));
 		for (uint i = 0; i < _items.size(); i++) {
-			if (_items[i]->getSlot() == line.location) {
+			if (_items[i]->getSlot() == line.slot) {
 				renderer->removeDisplayItem(_items[i].get(), true);
 				_items.remove_at(i);
 				break;
