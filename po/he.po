@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-11 21:30+0000\n"
+"POT-Creation-Date: 2022-08-12 04:33+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -6607,7 +6607,7 @@ msgstr "(שמירה אוטומטית)"
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr "אנא השתמש במציג חיצוני כדי לפתוח את קובץ העזרה של המשחק: %s"
 
-#: engines/sci/engine/kmisc.cpp:846
+#: engines/sci/engine/kmisc.cpp:883
 msgid ""
 "The Poker logic is hardcoded in an external DLL, and is not implemented yet. "
 "There exists some dummy logic for now, where opponent actions are chosen "
@@ -6649,7 +6649,7 @@ msgstr ""
 "התגלו משאבי משחק חסרים או פגומים. ייתכן שתכונות משחק מסוימות לא יעבדו כראוי. "
 "אנא בדוק במסוף מידע נוסף וודא שקבצי המשחק שלך תקפים."
 
-#: engines/sci/sci.cpp:387
+#: engines/sci/sci.cpp:388
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -6662,7 +6662,7 @@ msgstr ""
 "מהמשחק המקורי, הם לא תמיד נותנים כראוי או משקפים את נאום המשחק בפועל. זה לא "
 "באג ScummVM - זו בעיה עם נכסי המשחק."
 
-#: engines/sci/sci.cpp:411
+#: engines/sci/sci.cpp:412
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI Utility"
@@ -6682,7 +6682,7 @@ msgstr ""
 "המשויך ל- 4.PAT ולהניח אותו בתיקיית המשחק. ללא התיקון הזה, מוזיקת MIDI כללית "
 "למשחק זה תישמע מעוותת קשה."
 
-#: engines/sci/sci.cpp:430
+#: engines/sci/sci.cpp:431
 msgid ""
 "Your game is patched with a fan made script patch. Such patches have been "
 "reported to cause issues, as they modify game scripts extensively. The "
@@ -6695,17 +6695,17 @@ msgstr ""
 "הללו פותרים לא מתרחשות ב- ScummVM, לכן מומלץ להסיר תיקון זה מתיקיית המשחק "
 "שלך על מנת להימנע משגיאות ו / או בעיות לא צפויות בהמשך."
 
-#: engines/sci/sci.cpp:509
+#: engines/sci/sci.cpp:510
 msgid "Download patch"
 msgstr "ההורדה הושלמה"
 
-#: engines/sci/sci.cpp:510
+#: engines/sci/sci.cpp:511
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
 msgstr ""
 
-#: engines/sci/sci.cpp:517
+#: engines/sci/sci.cpp:518
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -6715,7 +6715,7 @@ msgid ""
 "GK2Subtitles.zip\n"
 msgstr ""
 
-#: engines/sci/sci.cpp:848
+#: engines/sci/sci.cpp:849
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
