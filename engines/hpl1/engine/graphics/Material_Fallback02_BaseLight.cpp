@@ -39,8 +39,6 @@
 #include "hpl1/engine/system/String.h"
 #include "common/algorithm.h"
 
-//#include <GL/GLee.h>
-
 namespace hpl {
 
 iMaterial_Fallback02_BaseLight::iMaterial_Fallback02_BaseLight(
@@ -60,7 +58,7 @@ iMaterial_Fallback02_BaseLight::iMaterial_Fallback02_BaseLight(
 	_gpuPrograms[eBaseLightProgram_Point1] = mpProgramManager->CreateProgram("Fallback02_Diffuse_Light_p1", "Fallback02_Diffuse_Light_p1");
 	//the second pass is the same as the second pass of fallback01
 	_gpuPrograms[eBaseLightProgram_Point2] = mpProgramManager->CreateProgram("Fallback02_Diffuse_Light_p2", "Fallback01_Diffuse_Light_p2");
-	_gpuPrograms[eBaseLightProgram_Spot1] =mpProgramManager->CreateProgram("Fallback02_Diffuse_Light_p1", "Fallback02_Diffuse_Light_p1");
+	_gpuPrograms[eBaseLightProgram_Spot1] = mpProgramManager->CreateProgram("Fallback02_Diffuse_Light_p1", "Fallback02_Diffuse_Light_p1");
 	_gpuPrograms[eBaseLightProgram_Spot2] = mpProgramManager->CreateProgram("Fallback02_Diffuse_Light_Spot_p2", "Fallback02_Diffuse_Light_Spot_p2");
 	_gpuPrograms[eBaseLightProgram_Spot3] = mpProgramManager->CreateProgram("Fallback02_Diffuse_Light_Spot_p3", "Fallback02_Diffuse_Light_Spot_p3");
 
@@ -130,10 +128,6 @@ iMaterialProgramSetup *iMaterial_Fallback02_BaseLight::getGpuProgramSetup(const 
 	return nullptr;
 }
 
-iGpuProgram *iMaterial_Fallback02_BaseLight::GetVertexProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
-	return nullptr;
-}
-
 //------------------------------------------------------------------------------------
 
 bool iMaterial_Fallback02_BaseLight::VertexProgramUsesLight(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
@@ -147,12 +141,6 @@ bool iMaterial_Fallback02_BaseLight::VertexProgramUsesLight(eMaterialRenderType 
 
 bool iMaterial_Fallback02_BaseLight::VertexProgramUsesEye(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
 	return false;
-}
-
-//------------------------------------------------------------------------------------
-
-iGpuProgram *iMaterial_Fallback02_BaseLight::GetFragmentProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
-	return nullptr;
 }
 
 //------------------------------------------------------------------------------------

@@ -136,11 +136,6 @@ iMaterialProgramSetup *iMaterial_Fallback01_BaseLight::getGpuProgramSetup(const 
 		return &ambProgramSetup;
 	return nullptr;
 }
-
-iGpuProgram *iMaterial_Fallback01_BaseLight::GetVertexProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
-	return nullptr;
-}
-
 //------------------------------------------------------------------------------------
 
 bool iMaterial_Fallback01_BaseLight::VertexProgramUsesLight(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
@@ -156,12 +151,6 @@ bool iMaterial_Fallback01_BaseLight::VertexProgramUsesEye(eMaterialRenderType aT
 	if (aType == eMaterialRenderType_Light && mbUseSpecular)
 		return true;
 	return false;
-}
-
-//------------------------------------------------------------------------------------
-
-iGpuProgram *iMaterial_Fallback01_BaseLight::GetFragmentProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
-	return nullptr;
 }
 
 //------------------------------------------------------------------------------------
