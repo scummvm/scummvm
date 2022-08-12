@@ -176,6 +176,8 @@ public:
 	Logic *_logic;
 	FontRenderer *_fontRenderer;
 
+	bool _isRTL;
+
 	Debugger *_debugger;
 
 	Common::RandomSource _rnd;

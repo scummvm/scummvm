@@ -41,6 +41,7 @@
 
 
 #include "common/system.h"
+#include "common/unicode-bidi.h"
 #include "common/textconsole.h"
 
 #include "sword2/sword2.h"
@@ -265,18 +266,23 @@ byte *FontRenderer::buildTextSprite(const byte *sentence, uint32 fontRes, uint8 
 
 	// Build the sprite, one line at a time
 
-	uint16 pos = 0;
-
 	for (i = 0; i < noOfLines; i++) {
 		// Center each line
 		byte *spritePtr = linePtr + (spriteWidth - line[i].width) / 2;
+		const byte *currTxtLine = sentence;
 
+		Common::String reversedString;
+		if (_vm->_isRTL) {
+			const Common::String textLogical((const char *)currTxtLine, line[i].length);
+			reversedString = Common::convertBiDiString(textLogical, Common::kWindows1255);
+			currTxtLine  = reinterpret_cast<const byte *>(reversedString.c_str());
+		}
 		// copy the sprite for each character in this line to the
 		// text sprite and inc the sprite ptr by the character's
 		// width minus the 'overlap'
 
 		for (uint j = 0; j < line[i].length; j++) {
-			byte *charPtr = findChar(sentence[pos++], charSet);
+			byte *charPtr = findChar(*currTxtLine++, charSet);
 
 			frame_head.read(charPtr);
 
@@ -293,7 +299,7 @@ byte *FontRenderer::buildTextSprite(const byte *sentence, uint32 fontRes, uint8 
 		}
 
 		// Skip space at end of last word in this line
-		pos++;
+		sentence += line[i].length + 1;
 
 		if (Sword2Engine::isPsx())
 			linePtr += (char_height / 2 + _lineSpacing) * spriteWidth;
@@ -677,7 +683,7 @@ void Sword2Engine::initializeFontResourceFlags() {
 	else
 		textLine = (char *)fetchTextLine(textFile, 54) + 2;
 
-	_system->setWindowCaption(Common::U32String(textLine));
+	_system->setWindowCaption(Common::U32String(textLine, _isRTL ? Common::kWindows1255 : Common::kUtf8));
 	_resman->closeResource(TEXT_RES);
 }
 
