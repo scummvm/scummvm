@@ -431,6 +431,7 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 	if (isUsingOriginalGUI()) {
 		char sliderString[256];
+		PauseToken pt;
 
 		if (lastKeyHit.keycode == Common::KEYCODE_b && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
 			int curBufferCount = _imuseDigital->roundRobinSetBufferCount();
@@ -444,8 +445,7 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 			if (lastKeyHit.keycode == Common::KEYCODE_o || lastKeyHit.keycode == Common::KEYCODE_p) {
 				Common::KeyState ks = lastKeyHit;
 
-				if (isSmushActive())
-					_mixer->pauseAll(true);
+				pt = pauseEngine();
 
 				int volume = _imuseDigital->diMUSEGetMusicGroupVol();
 				do {
@@ -459,17 +459,18 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 							volume = 127;
 					}
 
-					getSliderString(gsMusicVolume, volume, sliderString, sizeof(sliderString));
+					getSliderString(gsMusicVolumeSlider, volume, sliderString, sizeof(sliderString));
 					showBannerAndPause(0, 0, sliderString);
 					ks = Common::KEYCODE_INVALID;
 					bool leftBtnPressed = false, rightBtnPressed = false;
 					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
 				} while (ks.keycode == Common::KEYCODE_o || ks.keycode == Common::KEYCODE_p);
 				clearBanner();
-				_imuseDigital->diMUSESetMusicGroupVol(volume);
 
-				if (isSmushActive())
-					_mixer->pauseAll(false);
+				_imuseDigital->diMUSESetMusicGroupVol(volume);
+				ConfMan.setInt("music_volume", volume * 2);
+
+				pt.clear();
 
 				return;
 			}
@@ -478,8 +479,7 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 			if (lastKeyHit.keycode == Common::KEYCODE_k || lastKeyHit.keycode == Common::KEYCODE_l) {
 				Common::KeyState ks = lastKeyHit;
 
-				if (isSmushActive())
-					_mixer->pauseAll(true);
+				pt = pauseEngine();
 
 				int volume = _imuseDigital->diMUSEGetVoiceGroupVol();
 				do {
@@ -493,17 +493,18 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 							volume = 127;
 					}
 
-					getSliderString(gsVoiceVolume, volume, sliderString, sizeof(sliderString));
+					getSliderString(gsVoiceVolumeSlider, volume, sliderString, sizeof(sliderString));
 					showBannerAndPause(0, 0, sliderString);
 					ks = Common::KEYCODE_INVALID;
 					bool leftBtnPressed = false, rightBtnPressed = false;
 					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
 				} while (ks.keycode == Common::KEYCODE_k || ks.keycode == Common::KEYCODE_l);
 				clearBanner();
-				_imuseDigital->diMUSESetVoiceGroupVol(volume);
 
-				if (isSmushActive())
-					_mixer->pauseAll(false);
+				_imuseDigital->diMUSESetVoiceGroupVol(volume);
+				ConfMan.setInt("speech_volume", volume * 2);
+
+				pt.clear();
 
 				return;
 			}
@@ -512,8 +513,7 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 			if (lastKeyHit.keycode == Common::KEYCODE_n || lastKeyHit.keycode == Common::KEYCODE_m) {
 				Common::KeyState ks = lastKeyHit;
 
-				if (isSmushActive())
-					_mixer->pauseAll(true);
+				pt = pauseEngine();
 
 				int volume = _imuseDigital->diMUSEGetSFXGroupVol();
 				do {
@@ -527,17 +527,18 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 							volume = 127;
 					}
 
-					getSliderString(gsSfxVolume, volume, sliderString, sizeof(sliderString));
+					getSliderString(gsSfxVolumeSlider, volume, sliderString, sizeof(sliderString));
 					showBannerAndPause(0, 0, sliderString);
 					ks = Common::KEYCODE_INVALID;
 					bool leftBtnPressed = false, rightBtnPressed = false;
 					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
 				} while (ks.keycode == Common::KEYCODE_n || ks.keycode == Common::KEYCODE_m);
 				clearBanner();
-				_imuseDigital->diMUSESetSFXGroupVol(volume);
 
-				if (isSmushActive())
-					_mixer->pauseAll(false);
+				_imuseDigital->diMUSESetSFXGroupVol(volume);
+				ConfMan.setInt("sfx_volume", volume * 2);
+
+				pt.clear();
 
 				return;
 			}
@@ -549,8 +550,7 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 
 				Common::KeyState ks = lastKeyHit;
 
-				if (isSmushActive())
-					_mixer->pauseAll(true);
+				pt = pauseEngine();
 
 				do {
 					if (ks.ascii == '+') {
@@ -563,7 +563,7 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 							VAR(VAR_CHARINC) = 9;
 					}
 
-					getSliderString(gsTextSpeed, VAR(VAR_CHARINC), sliderString, sizeof(sliderString));
+					getSliderString(gsTextSpeedSlider, VAR(VAR_CHARINC), sliderString, sizeof(sliderString));
 					showBannerAndPause(0, 0, sliderString);
 					ks = Common::KEYCODE_INVALID;
 					bool leftBtnPressed = false, rightBtnPressed = false;
@@ -571,8 +571,7 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 				} while (ks.ascii == '+' || ks.ascii == '-');
 				clearBanner();
 
-				if (isSmushActive())
-					_mixer->pauseAll(false);
+				pt.clear();
 
 				return;
 			}
@@ -585,10 +584,9 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 	// a version dialog, unless VAR_VERSION_KEY is set to 0. However, the COMI
 	// version string is hard coded in the engine, hence we don't invoke
 	// versionDialog for it. Dig/FT version strings are partly hard coded, too.
-	if (_game.id != GID_CMI && 0 != VAR(VAR_VERSION_KEY) &&
+	if (!isUsingOriginalGUI() && _game.id != GID_CMI && 0 != VAR(VAR_VERSION_KEY) &&
 	    lastKeyHit.keycode == Common::KEYCODE_v && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
-		if (!isUsingOriginalGUI())
-			versionDialog();
+		versionDialog();
 
 	} else if (cutsceneExitKeyEnabled && lastKeyHit.keycode == Common::KEYCODE_ESCAPE) {
 		// Skip cutscene (or active SMUSH video).
@@ -850,7 +848,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		restartKeyEnabled = true;
 
 	if (isUsingOriginalGUI()) {
-		if (pauseKeyEnabled && (lastKeyHit.ascii == VAR(VAR_PAUSE_KEY) ||
+		if (VAR_PAUSE_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_PAUSE_KEY) ||
 			(lastKeyHit.keycode == Common::KEYCODE_SPACE && _game.features & GF_DEMO))) {
 			// Force the cursor OFF...
 			int8 oldCursorState = _cursor.state;
@@ -862,7 +860,9 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			return;
 		}
 
-		if (restartKeyEnabled && (lastKeyHit.ascii == VAR(VAR_RESTART_KEY))) {
+		if (VAR_RESTART_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_RESTART_KEY)) ||
+			((_game.id == GID_CMI && !(_game.features & GF_DEMO))
+				&& lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.hasFlags(0))) {
 			queryRestart();
 			return;
 		}
@@ -874,6 +874,12 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 		if (lastKeyHit.keycode == Common::KEYCODE_c && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
 			queryQuit();
+			return;
+		}
+
+		if (VAR_MAINMENU_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_MAINMENU_KEY) && lastKeyHit.hasFlags(0)) &&
+			_game.version > 6) {
+			showMainMenu();
 			return;
 		}
 	}

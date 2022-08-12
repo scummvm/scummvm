@@ -641,10 +641,10 @@ void ScummEngine::writeVar(uint var, int value) {
 			// look at the target specific settings, assuming that any global
 			// value is likely to be bogus. See also bug #4008.
 			if (ConfMan.hasKey("talkspeed", _targetName)) {
-				value = getTalkSpeed();
+				value = 9 - getTalkSpeed();
 			} else {
 				// Save the new talkspeed value to ConfMan
-				setTalkSpeed(value);
+				setTalkSpeed(9 - value);
 			}
 		}
 

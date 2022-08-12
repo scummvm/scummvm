@@ -136,8 +136,8 @@ static const ResString string_map_table_v7[] = {
 	{94, "/BOOT.026/Text speed"},
 	{95, "/BOOT.027/Display Text"},
 	{96, "game name and version"},
-	{138, "/BOOT.028/Spooled Music"},
-	{139, "/BOOT.029/Do you want to replace this saved game?  (Y/N)"},
+	{137, "/BOOT.028/Spooled Music"},
+	{138, "/BOOT.029/Do you want to replace this saved game?  (Y/N)"},
 	{141, "/NEW.020/Voice Only"},
 	{142, "/NEW.021/Voice and Text"},
 	{143, "/NEW.022/Text Display Only"},
@@ -416,7 +416,6 @@ void InfoDialog::reflowLayout() {
 }
 
 const char *InfoDialog::getPlainEngineString(int stringno) {
-	//char buf[256];
 	const char *result;
 
 	if (stringno == 0)

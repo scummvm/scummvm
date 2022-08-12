@@ -352,13 +352,47 @@ class ResourceManager;
 #define AMIGA_NTSC_VBLANK_RATE 240.0
 
 /**
- * GUI strings categories.
+ * Game saving/loading outcome codes
  */
+
+#define GAME_PROPER_SAVE 201
+#define GAME_FAILED_SAVE 202
+#define GAME_PROPER_LOAD 203
+#define GAME_FAILED_LOAD 204
+
+/**
+ * GUI defines and enums.
+ */
+
+#define GUI_PAGE_MAIN 0
+#define GUI_PAGE_SAVE 1
+#define GUI_PAGE_LOAD 2
+
+#define GUI_CTRL_FIRST_SG               1
+#define GUI_CTRL_LAST_SG                9
+#define GUI_CTRL_SAVE_BUTTON            10
+#define GUI_CTRL_LOAD_BUTTON            11
+#define GUI_CTRL_PLAY_BUTTON            12
+#define GUI_CTRL_QUIT_BUTTON            13
+#define GUI_CTRL_OK_BUTTON              14
+#define GUI_CTRL_CANCEL_BUTTON          15
+#define GUI_CTRL_ARROW_UP_BUTTON        16
+#define GUI_CTRL_ARROW_DOWN_BUTTON      17
+#define GUI_CTRL_PATH_BUTTON            18
+#define GUI_CTRL_MUSIC_SLIDER           19
+#define GUI_CTRL_SPEECH_SLIDER          20
+#define GUI_CTRL_SFX_SLIDER             21
+#define GUI_CTRL_TEXT_SPEED_SLIDER      22
+#define GUI_CTRL_DISPLAY_TEXT_CHECKBOX  23
+#define GUI_CTRL_SPOOLED_MUSIC_CHECKBOX 24
+#define GUI_CTRL_OUTER_BOX              26
+#define GUI_CTRL_INNER_BOX              27
+
 
 enum GUIString {
 	gsPause = 0,
 	gsVersion = 1,
-	gsTextSpeed = 2,
+	gsTextSpeedSlider = 2,
 	gsRestart = 3,
 	gsQuitPrompt = 4,
 	gsSave = 5,
@@ -382,12 +416,19 @@ enum GUIString {
 	gsTextDisplayOnly = 24,
 	gsVoiceOnly = 25,
 	gsYesKey = 26,
-	gsMusicVolume = 27,
-	gsVoiceVolume = 28,
-	gsSfxVolume = 29,
+	gsMusicVolumeSlider = 27,
+	gsVoiceVolumeSlider = 28,
+	gsSfxVolumeSlider = 29,
 	gsHeap = 30,
 	gsSavePath = 31,
-	gsTitle = 32
+	gsTitle = 32,
+	gsDisabled = 33,
+	gsMusic = 34,
+	gsVoice = 35,
+	gsSfx = 36,
+	gsTextSpeed = 37,
+	gsDisplayText = 38,
+	gsSpooledMusic = 39
 };
 
 struct InternalGUIControl {
@@ -405,6 +446,7 @@ struct InternalGUIControl {
 	int highlightedFillColor;
 	bool centerText;
 	char *label;
+	bool doubleLinesFlag;
 };
 
 /**
@@ -537,6 +579,9 @@ protected:
 	virtual void setDefaultCursor() {};
 	virtual void setCursorTransparency(int a) {};
 	virtual void resetCursors() {}
+	virtual void setCursorHotspot(int x, int y) {}
+	virtual void setCursorFromBuffer(const byte *ptr, int width, int height, int pitch) {}
+
 
 public:
 	void pauseGame();
@@ -564,19 +609,34 @@ protected:
 	uint32 _textSurfBannerMemSize = 0;
 
 	InternalGUIControl _internalGUIControls[30];
+
+	// Special GUI strings
 	char _emptyMsg[1] = {'\0'};
+	char _uncheckedBox[2] = {' ', '\0'};
+	char _checkedBox[2] = {'x', '\0'};
+	char _arrowUp[2] = {'\x18', '\0'};
+	char _arrowDown[2] = {'\x19', '\0'};
+
+	char _savegameNames[40 * 10];
+	int _menuPage = 0;
+	int _mainMenuSavegameLabel = 1;
+	bool _mainMenuIsActive = false;
+	bool _quitByButton = false;
+	char _mainMenuMusicSlider[17];
+	char _mainMenuSpeechSlider[17];
+	char _mainMenuSfxSlider[17];
+	char _mainMenuTextSpeedSlider[17];
+	int _spooledMusicIsToBeEnabled = 1;
 
 	void initBanners();
 	Common::KeyState showBannerAndPause(int bannerId, int32 waitTime, const char *msg, ...);
 	void clearBanner();
 	void setBannerColors(int bannerId, byte r, byte g, byte b);
-	//virtual int getBannerColor(int bannerId) { return getBannerColor(bannerId, _currentPalette); }
-	//int getBannerColor(int bannerId, byte *palette);
 	virtual int getBannerColor(int bannerId);
 	void setUpInternalGUIControl(int id, int normalFillColor, int normalTextColor,
 								 int topLineColor, int bottomLineColor, int leftLineColor, int rightLineColor,
 								 int highlightedTextColor, int highlightedFillColor,
-								 int anchorPointX, int anchorPointY, int x, int y, char *label, bool centerFlag);
+								 int anchorPointX, int anchorPointY, int x, int y, char *label, bool centerFlag, bool unknownFlag);
 	void drawInternalGUIControl(int id, bool highlightColor);
 	int getInternalGUIControlFromCoordinates(int x, int y);
 	virtual bool isSmushActive() { return false; }
@@ -587,8 +647,24 @@ protected:
 	void waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked);
 	virtual int getGUIStringHeight(const char *str);
 	virtual int getGUIStringWidth(const char *str);
-	virtual void drawGUIText(const char *buttonString, int textXPos, int textYPos, int textColor, bool centerFlag);
+	virtual void drawGUIText(const char *buttonString, int textXPos, int textYPos, int rightRectClip, int textColor, bool centerFlag);
 	void getSliderString(int stringId, int value, char *sliderString, int size);
+	virtual int getMusicVolume() { return 0; }
+	virtual int getSpeechVolume() { return 0; }
+	virtual int getSFXVolume() { return 0; }
+	virtual void setMusicVolume(int volume);
+	virtual void setSpeechVolume(int volume);
+	virtual void setSFXVolume(int volume);
+	virtual void toggleVoiceMode();
+
+	void showMainMenu();
+	void setUpMainMenuControls();
+	void drawMainMenuControls();
+	void updateMainMenuControls();
+	void drawMainMenuTitle(const char *title);
+	bool executeMainMenuOperation(int op, int mouseX);
+	bool shouldHighlightAndWait(int clickedControl);
+
 
 public:
 	char displayMessage(const char *altButton, const char *message, ...) GCC_PRINTF(3, 4);

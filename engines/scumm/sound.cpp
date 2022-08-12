@@ -1566,6 +1566,14 @@ void Sound::restoreAfterLoad() {
 	}
 }
 
+bool Sound::isAudioDisabled() {
+	if (_vm->_game.version > 6) {
+		return _vm->_imuseDigital->isEngineDisabled();
+	}
+
+	return false;
+}
+
 #pragma mark -
 #pragma mark --- Sound resource handling ---
 #pragma mark -

@@ -427,6 +427,9 @@ void IMuseDigital::playFtMusic(const char *songName, int transitionType, int vol
 	int oldSoundId = 0;
 	int soundId;
 
+	if (!_spooledMusicEnabled)
+		return;
+
 	// Check for any music piece which is played as a SFX (without an associated stream)
 	// and fade it out
 	for (int i = diMUSEGetNextSound(0); i; i = diMUSEGetNextSound(i)) {
