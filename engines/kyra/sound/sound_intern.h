@@ -383,6 +383,7 @@ private:
 
 	SoundMacRes *_res;
 	HalestormDriver *_driver;
+	const int _talkieFlag;
 	bool _ready;
 
 	const uint16 *_resIDMusic;
@@ -391,8 +392,8 @@ private:
 	static const uint16 _resIDMusicIntro[4];
 	static const uint16 _resIDMusicIngame[35];
 	static const uint8 _musicLoopTable[35];
-	static const uint16 _resIDSfxIntro[39];
-	static const uint16 _resIDSfxIngame[39];
+	static const uint16 _resIDSfxIntro[2][39];
+	static const uint16 _resIDSfxIngame[2][39];
 
 	struct SoundEffectDef {
 		uint8 note;
