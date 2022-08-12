@@ -30,7 +30,6 @@
 
 #include "hpl1/engine/graphics/Material.h"
 #include "hpl1/engine/scene/Light3D.h"
-#include <vector>
 
 #include "hpl1/engine/graphics/Material_BaseLight.h"
 
@@ -54,11 +53,9 @@ public:
 
 	iGpuProgram *getGpuProgram(const eMaterialRenderType aType, const int alPass, iLight3D *apLight);
 	iMaterialProgramSetup *getGpuProgramSetup(const eMaterialRenderType aType, const int alPass, iLight3D *apLight);
-	iGpuProgram *GetVertexProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+
 	bool VertexProgramUsesLight(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 	bool VertexProgramUsesEye(eMaterialRenderType aType, int alPass, iLight3D *apLight);
-
-	iGpuProgram *GetFragmentProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 
 	eMaterialAlphaMode GetAlphaMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 	eMaterialBlendMode GetBlendMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
