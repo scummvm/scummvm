@@ -1,0 +1,17 @@
+//Fallback02_Diffuse_Light_Spot_p3.fragment
+
+in vec4 vLightColor;
+in vec3 vUv;
+in vec4 vSpotlightUv;
+
+OUTPUT
+
+uniform sampler2D tex0; //diffuse
+uniform sampler2D tex1; //spotlight
+
+void main() {
+	vec4 diffuse = texture(tex0, vUv.xy);
+	vec4 spot = texture(tex1, vSpotlightUv.xy / vSpotlightUv.w);
+	outColor = diffuse * spot * vLightColor;
+}
+

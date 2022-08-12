@@ -1,0 +1,12 @@
+//Fallback02_Diffuse_Light_Spot_p2.fragment
+
+in vec4 vLightColor;
+in float vRejectUv;
+
+OUTPUT
+
+uniform sampler1D tex0; //spotNegRejectMap
+
+void main() {
+	outColor = texture1D(tex0, vRejectUv).r * vLightColor;
+}

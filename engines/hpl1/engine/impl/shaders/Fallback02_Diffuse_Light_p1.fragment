@@ -1,0 +1,16 @@
+//Fallback02_Diffuse_Light_p1.fragment
+
+in vec3 vLightDir;
+in vec3 vLightPos;
+
+OUTPUT
+
+uniform samplerCube tex0;
+uniform sampler3D tex1;
+
+void main() {
+	vec4 normalizedVec = textureCube(tex0, vLightDir);
+	vec4 attenuation = texture3D(tex1, vLightPos);
+	outColor = vec4(2.0*(normalizedVec.b - 0.5));
+	outColor.a *= attenuation.g;
+}

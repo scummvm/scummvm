@@ -13,8 +13,7 @@ vec4 position = gl_Vertex;
 vec3 normal = gl_Normal;
 vec4 tangent = gl_MultiTexCoord1;
 
-
-out vec4 vColor
+out vec4 vColor;
 out vec3 vLightDir;
 out vec3 vLightPos;
 
