@@ -49,6 +49,10 @@ enum MessageTypeSyncStrategy {
 #endif
 };
 
+enum {
+	kSpeedThrottleDefaultDelay = 30 // kGameIsRestarting default max delay in ms
+};
+
 class GameFeatures {
 public:
 	GameFeatures(SegManager *segMan, Kernel *kernel);

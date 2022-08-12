@@ -108,7 +108,7 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 		return make_reg(0, previousRestartingFlag);
 	}
 
-	uint32 neededSleep = 30;
+	uint32 neededSleep = g_sci->_speedThrottleDelay; // 30 ms (kSpeedThrottleDefaultDelay)
 
 	// WORKAROUNDS for scripts that are polling too quickly in scenes that
 	// are not animating much
