@@ -343,8 +343,7 @@ Common::SeekableReadStreamEndian *MacArchive::getResource(uint32 tag, uint16 id)
 	Common::SeekableReadStream *stream = _resFork->getResource(tag, id);
 
 	if (stream == nullptr) {
-		warning("MacArchive::getResource('%s', %d): Resource doesn't exit", tag2str(tag), id);
-		return nullptr;
+		error("MacArchive::getResource(): Archive does not contain '%s' %d", tag2str(tag), id);
 	}
 
 	return new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), true, DisposeAfterUse::YES);
@@ -922,8 +921,7 @@ Common::SeekableReadStreamEndian *RIFXArchive::getResource(uint32 tag, uint16 id
 			unsigned long actualUncompLength = res.uncompSize;
 			Common::SeekableReadStreamEndian *stream = readZlibData(*_stream, res.size, &actualUncompLength, _isBigEndian);
 			if (!stream) {
-				warning("RIFXArchive::getResource(): Could not uncompress '%s' %d", tag2str(tag), id);
-				return nullptr;
+				error("RIFXArchive::getResource(): Could not uncompress '%s' %d", tag2str(tag), id);
 			}
 			if (res.uncompSize != actualUncompLength) {
 				warning("RIFXArchive::getResource(): For '%s' %d expected uncompressed length %d but got length %lu",
