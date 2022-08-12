@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-12 04:33+0000\n"
-"PO-Revision-Date: 2022-04-24 20:27+0000\n"
+"PO-Revision-Date: 2022-08-12 15:37+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -219,9 +219,8 @@ msgid "Downloading icons list..."
 msgstr "S'està baixant la llista d'icones..."
 
 #: gui/downloadiconsdialog.cpp:190
-#, fuzzy
 msgid "Clear Cache"
-msgstr "Neteja el valor"
+msgstr "Neteja la memòria cau"
 
 #: gui/downloadiconsdialog.cpp:241
 #, c-format
@@ -819,7 +818,6 @@ msgid "Change global ScummVM options"
 msgstr "Canvia les opcions globals de ScummVM"
 
 #: gui/launcher.cpp:246
-#, fuzzy
 msgctxt "lowres"
 msgid "Global ~O~pts..."
 msgstr "~O~pcs. globals..."
@@ -969,10 +967,9 @@ msgid "Change game options"
 msgstr "Canvia les opcions del joc"
 
 #: gui/launcher.cpp:1017
-#, fuzzy
 msgctxt "lowres"
 msgid "~G~ame Opts..."
-msgstr "~O~pcs. del joc..."
+msgstr "Opcs. del ~j~oc..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
@@ -1534,7 +1531,6 @@ msgid "Icon Path:"
 msgstr "Directori d'icones:"
 
 #: gui/options.cpp:2307
-#, fuzzy
 msgctxt "path"
 msgid "Default"
 msgstr "Per defecte"
@@ -3739,40 +3735,34 @@ msgid "Choose the preferred touch mode:"
 msgstr ""
 
 #: backends/platform/android/options.cpp:96
-#, fuzzy
 msgid "In menus"
-msgstr "Activa el mode heli"
+msgstr "Als menús"
 
 #: backends/platform/android/options.cpp:98
 #: backends/platform/android/options.cpp:116
 #: backends/platform/android/options.cpp:117
-#, fuzzy
 msgid "Touchpad emulation"
-msgstr "Emulació de TV"
+msgstr "Emulació del ratolí tàctil"
 
 #: backends/platform/android/options.cpp:99
 #: backends/platform/android/options.cpp:119
 #: backends/platform/android/options.cpp:120
-#, fuzzy
 msgid "Direct mouse"
-msgstr "Ratolí virtual amunt"
+msgstr "Ratolí directe"
 
 #: backends/platform/android/options.cpp:100
 #: backends/platform/android/options.cpp:122
 #: backends/platform/android/options.cpp:123
-#, fuzzy
 msgid "Gamepad emulation"
-msgstr "Emulació de TV"
+msgstr "Emulació del comandament de joc"
 
 #: backends/platform/android/options.cpp:106
-#, fuzzy
 msgid "In 2D games"
-msgstr "Sincronització als jocs 3D"
+msgstr "En jocs 2D"
 
 #: backends/platform/android/options.cpp:108
-#, fuzzy
 msgid "In 3D games"
-msgstr "Sincronització als jocs 3D"
+msgstr "En jocs 3D"
 
 #. I18N: Show a button to revoke Storage Access Framework permissions for Android
 #: backends/platform/android/options.cpp:128
@@ -4333,9 +4323,8 @@ msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Prefereix els efectes de so digitals en lloc dels sintetitzats"
 
 #: engines/agos/detection.cpp:126
-#, fuzzy
 msgid "Disable fade-out effects"
-msgstr "Inhabilita el desament automàtic"
+msgstr "Desactiva els efectes d'esvaïment"
 
 #: engines/agos/detection.cpp:127
 msgid "Don't fade every screen to black when leaving a room."
@@ -4398,9 +4387,8 @@ msgid "Bring up the In-Game Menu"
 msgstr ""
 
 #: engines/asylum/metaengine.cpp:151
-#, fuzzy
 msgid "Open character inventory"
-msgstr "Obre/Tanca l'inventari"
+msgstr "Obre l'inventari del personatge"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:200
@@ -4487,9 +4475,8 @@ msgid ""
 msgstr ""
 
 #: engines/bladerunner/detection.cpp:108
-#, fuzzy
 msgid "Show subtitles during text crawl"
-msgstr "Mostra els subtítols i reprodueix la veu"
+msgstr "Mostra els subtítols durant el text d'introducció"
 
 #: engines/bladerunner/detection.cpp:109
 msgid "During the intro cutscene, show subtitles during the text crawl"
@@ -4607,9 +4594,8 @@ msgstr "Desplaça avall"
 #. I18N: This keymap allows (in KIA only) for a clue to be set as private or public
 #. (only when the KIA is upgraded).
 #: engines/bladerunner/metaengine.cpp:221
-#, fuzzy
 msgid "Toggle Clue Privacy"
-msgstr "Commuta el silenci"
+msgstr "Commuta la privadesa de la pista"
 
 #. I18N: This keymap opens KIA's SAVE GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -5204,27 +5190,24 @@ msgid "Enable Gore Mode when available"
 msgstr ""
 
 #: engines/hypno/detection.cpp:248
-#, fuzzy
 msgid "Enable original cheats"
-msgstr "Habilita els trucs (cheats)"
+msgstr "Habilita els trucs originals"
 
 #: engines/hypno/detection.cpp:249
 msgid "Allow cheats using the C key."
 msgstr ""
 
 #: engines/hypno/detection.cpp:259
-#, fuzzy
 msgid "Enable infinite health cheat"
-msgstr "Activa els cursors flotants"
+msgstr "Activa el truc de salut infinita"
 
 #: engines/hypno/detection.cpp:260
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
 
 #: engines/hypno/detection.cpp:270
-#, fuzzy
 msgid "Enable infinite ammo cheat"
-msgstr "Habilita els trucs (cheats)"
+msgstr "Activa el truc de munició infinita"
 
 #: engines/hypno/detection.cpp:271
 msgid "Player ammo will never decrease."
@@ -5922,14 +5905,12 @@ msgid "Start with debugger"
 msgstr "Inicia el depurador"
 
 #: engines/mtropolis/detection.cpp:99
-#, fuzzy
 msgid "Starts with the debugger dashboard active."
-msgstr "Inicia el depurador"
+msgstr "Inicia amb el tauler de control del depurador actiu."
 
 #: engines/mtropolis/saveload.cpp:123
-#, fuzzy
 msgid "Failed to read version information from save file"
-msgstr "No s'ha pogut carregar la partida desada al fitxer."
+msgstr "No s'ha pogut llegir la informació de la versió de la partida desada"
 
 #: engines/mtropolis/saveload.cpp:131
 msgid ""
@@ -6812,9 +6793,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:840
-#, fuzzy
 msgid "Playback Adjust:"
-msgstr "Reproducció"
+msgstr "Ajust de reproducció:"
 
 #: engines/scumm/dialogs.cpp:844
 msgid ""
