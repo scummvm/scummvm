@@ -4273,7 +4273,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1_l("phantplanet", "Demo", "PHANTASMAGORIA demo", "dc5a87dda7a0daf46604515f7d2cca66", 291960, Common::JA_JPN, 403),
 	WINDEMO1t_l("phantplanet", "Demo", "PHANDEMO.EXE", "56dc12f841f627be652d23e457875f61", 692923, Common::JA_JPN, 404),
-	MACGAME1_l("phantplanet", "Hybrid release", "phantasmagoria_PPC", "602e61f10c158183218405dd30a09b3f", 60352, Common::JA_JPN, 400),
+	MACGAME1_l("phantplanet", "Hybrid release", "phantasmagoria_PPC", "602e61f10c158183218405dd30a09b3f", 60096, Common::JA_JPN, 404),
 	WINGAME1_l("phantplanet", "Hybrid release", "PHANTAS.EXE", "c2dd62dd0f9488ae8102970553eff170", 690449, Common::JA_JPN, 400),
 	// Under the working title 'Micromondo'
 	MACDEMO1("phantplanet", "Demo", "MICROMONDO Demo", "8f597c0dc7a7f0d1d1e0b85404c62c1e", 286152, 404),
