@@ -191,18 +191,23 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 			// Determine how to distinguish these different types. Maybe stage version.
 			// for D4, 32-bit bitmap is RLE, and the encoding format is every line contains the a? r g b at the same line of the original image.
 			// i.e. for every line, we shall combine 4 parts to create the original image.
-			int data = stream.readByte();
-			int len = data + 1;
-			if ((data & 0x80) != 0) {
-				len = ((data ^ 0xFF) & 0xff) + 2;
-				data = stream.readByte();
-				for (int p = 0; p < len; p++) {
-					pixels.push_back(data);
-				}
+			if (_bitsPerPixel == 32 && _version < kFileVer400) {
+				int data = stream.readByte();
+				pixels.push_back(data);
 			} else {
-				for (int p = 0; p < len; p++) {
+				int data = stream.readByte();
+				int len = data + 1;
+				if ((data & 0x80) != 0) {
+					len = ((data ^ 0xFF) & 0xff) + 2;
 					data = stream.readByte();
-					pixels.push_back(data);
+					for (int p = 0; p < len; p++) {
+						pixels.push_back(data);
+					}
+				} else {
+					for (int p = 0; p < len; p++) {
+						data = stream.readByte();
+						pixels.push_back(data);
+					}
 				}
 			}
 		}
@@ -278,12 +283,21 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 				case 32:
 					// if we have the issue in D3 32bpp images, then the way to fix it should be the same as 16bpp images.
 					// check the code above, there is different behaviour between in D4 and D3. Currently we are only using D4.
-					convertPixelIntoSurface(_surface->getBasePtr(x, y),
-						(_bitsPerPixel / 8),
-						_surface->format.bytesPerPixel,
-						pixels[(((y * _surface->w * 4)) + (x + _surface->w))],
-						pixels[(((y * _surface->w * 4)) + (x + 2 * _surface->w))],
-						pixels[(((y * _surface->w * 4)) + (x + 3 * _surface->w))]);
+					if (_version < kFileVer400) {
+						convertPixelIntoSurface(_surface->getBasePtr(x, y),
+							(_bitsPerPixel / 8),
+							_surface->format.bytesPerPixel,
+							pixels[(((y * _surface->w * 4)) + (x * 4 + 1))],
+							pixels[(((y * _surface->w * 4)) + (x * 4 + 2))],
+							pixels[(((y * _surface->w * 4)) + (x * 4 + 3))]);
+					} else {
+						convertPixelIntoSurface(_surface->getBasePtr(x, y),
+							(_bitsPerPixel / 8),
+							_surface->format.bytesPerPixel,
+							pixels[(((y * _surface->w * 4)) + (x + _surface->w))],
+							pixels[(((y * _surface->w * 4)) + (x + 2 * _surface->w))],
+							pixels[(((y * _surface->w * 4)) + (x + 3 * _surface->w))]);
+					}
 					x++;
 					break;
 
