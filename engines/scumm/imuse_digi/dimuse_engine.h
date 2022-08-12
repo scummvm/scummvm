@@ -240,11 +240,11 @@ private:
 	void dispatchPredictFirstStream();
 	int dispatchNavigateMap(IMuseDigiDispatch *dispatchPtr);
 	int dispatchGetMap(IMuseDigiDispatch *dispatchPtr);
-	int dispatchConvertMap(uint8 *rawMap, uint8 *destMap);
-	int32 *dispatchGetNextMapEvent(int32 *mapPtr, int32 soundOffset, int32 *mapEvent);
+	int dispatchConvertMap(uint8 *rawMap, int32 *destMap);
+	uint8 *dispatchGetNextMapEvent(int32 *mapPtr, int32 soundOffset, uint8 *mapEvent);
 	void dispatchPredictStream(IMuseDigiDispatch *dispatchPtr);
-	int32 *dispatchCheckForJump(int32 *mapPtr, IMuseDigiStreamZone *strZnPtr, int &candidateHookId);
-	void dispatchPrepareToJump(IMuseDigiDispatch *dispatchPtr, IMuseDigiStreamZone *strZnPtr, int32 *jumpParamsFromMap, int calledFromGetNextMapEvent);
+	uint8 *dispatchCheckForJump(int32 *mapPtr, IMuseDigiStreamZone *strZnPtr, int &candidateHookId);
+	void dispatchPrepareToJump(IMuseDigiDispatch *dispatchPtr, IMuseDigiStreamZone *strZnPtr, uint8 *jumpParamsFromMap, int calledFromGetNextMapEvent);
 	void dispatchStreamNextZone(IMuseDigiDispatch *dispatchPtr, IMuseDigiStreamZone *strZnPtr);
 	IMuseDigiStreamZone *dispatchAllocateStreamZone();
 	uint8 *dispatchAllocateFade(int32 &fadeSize, const char *functionName);
