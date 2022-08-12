@@ -119,6 +119,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	_guestAdditions(nullptr),
 	_opcode_formats(nullptr),
 	_debugState(),
+	_speedThrottleDelay(kSpeedThrottleDefaultDelay),
 	_gameDescription(desc),
 	_gameId(gameId),
 	_resMan(nullptr),
