@@ -1,4 +1,4 @@
-//Fallback01_Diffuse_Light.fragment
+//Fallback01_Diffuse_Light_p2.fragment
 
 in vec4 vLightColor;
 in vec3 vUv;
