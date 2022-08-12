@@ -130,16 +130,6 @@ iGpuProgram *iMaterial_Fallback01_BaseLight::getGpuProgram(const eMaterialRender
 	return nullptr;
 }
 
-class cAmbProgramSetup : public iMaterialProgramSetup {
-public:
-	void Setup(iGpuProgram *apProgram, cRenderSettings *apRenderSettings) {
-		if (apRenderSettings->mpSector)
-			apProgram->SetColor3f("ambientColor", apRenderSettings->mAmbientColor * apRenderSettings->mpSector->GetAmbientColor());
-		else
-			apProgram->SetColor3f("ambientColor", apRenderSettings->mAmbientColor);
-	}
-};
-
 iMaterialProgramSetup *iMaterial_Fallback01_BaseLight::getGpuProgramSetup(const eMaterialRenderType aType, const int alPass, iLight3D *apLight) {
 	static cAmbProgramSetup ambProgramSetup;
 	if (aType == eMaterialRenderType_Z)

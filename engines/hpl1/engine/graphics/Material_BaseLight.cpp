@@ -48,17 +48,12 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-class cAmbProgramSetup : public iMaterialProgramSetup {
-public:
-	void Setup(iGpuProgram *apProgram, cRenderSettings *apRenderSettings) {
-		if (apRenderSettings->mpSector)
-			apProgram->SetColor3f("ambientColor", apRenderSettings->mAmbientColor * apRenderSettings->mpSector->GetAmbientColor());
-		else
-			apProgram->SetColor3f("ambientColor", apRenderSettings->mAmbientColor);
-	}
-};
-
-static cAmbProgramSetup gAmbProgramSetup;
+void cAmbProgramSetup::Setup(iGpuProgram *apProgram, cRenderSettings *apRenderSettings) {
+	if (apRenderSettings->mpSector)
+		apProgram->SetColor3f("ambientColor", apRenderSettings->mAmbientColor * apRenderSettings->mpSector->GetAmbientColor());
+	else
+		apProgram->SetColor3f("ambientColor", apRenderSettings->mAmbientColor);
+}
 
 //-----------------------------------------------------------------------
 
@@ -181,8 +176,9 @@ iGpuProgram *iMaterial_BaseLight::getGpuProgram(const eMaterialRenderType aType,
 }
 
 iMaterialProgramSetup *iMaterial_BaseLight::getGpuProgramSetup(const eMaterialRenderType aType, const int alPass, iLight3D *apLight) {
+	static cAmbProgramSetup ambProgramSetup;
 	if (aType == eMaterialRenderType_Z)
-		return &gAmbProgramSetup;
+		return &ambProgramSetup;
 	return nullptr;
 }
 
