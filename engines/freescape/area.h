@@ -62,9 +62,8 @@ public:
 	void removeDrill();
 
 	bool drillDeployed();
-
-	uint32 gasPocketX;
-	uint32 gasPocketY;
+	Math::Vector3d drillPosition;
+	Common::Point gasPocketPosition;
 	uint32 gasPocketRadius;
 
 private:

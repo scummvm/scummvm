@@ -84,9 +84,6 @@ Area::Area(
 	} compareObjects;
 
 	Common::sort(drawableObjects.begin(), drawableObjects.end(), compareObjects);
-
-	gasPocketX = 0;
-	gasPocketY = 0;
 	gasPocketRadius = 0;
 }
 
@@ -111,6 +108,10 @@ void Area::show() {
 }
 
 void Area::loadObjectFlags(Common::SeekableReadStream *stream) {
+	drillPosition.setValue(0, stream->readFloatLE());
+	drillPosition.setValue(1, stream->readFloatLE());
+	drillPosition.setValue(2, stream->readFloatLE());
+
 	for (int i = 0; i < int(objectsByID->size()); i++) {
 		uint16 key = stream->readUint32LE();
 		assert(objectsByID->contains(key));
@@ -121,6 +122,10 @@ void Area::loadObjectFlags(Common::SeekableReadStream *stream) {
 
 void Area::saveObjectFlags(Common::WriteStream *stream) {
 	int dirtyFlags = 0;
+	stream->writeFloatLE(drillPosition.x());
+	stream->writeFloatLE(drillPosition.y());
+	stream->writeFloatLE(drillPosition.z());
+
 	//stream->writeUint32LE(objectsByID->size());
 
 	for (ObjectMap::iterator iterator = objectsByID->begin(); iterator != objectsByID->end(); iterator++) {
@@ -183,6 +188,7 @@ Object *Area::checkCollisions(const Math::AABB &boundingBox) {
 
 void Area::addDrill(Area *structure, const Math::Vector3d position) {
 	//int drillObjectIDs[8] = {255, 254, 253, 252, 251, 250, 248, 247};
+	drillPosition = position;
 	Object *obj = nullptr;
 	Math::Vector3d offset = position;
 	offset.setValue(1, 1);
@@ -195,7 +201,6 @@ void Area::addDrill(Area *structure, const Math::Vector3d position) {
 	obj->setOrigin(offset);
 	offset.setValue(1, offset.y() + obj->getSize().y());
 	assert(obj);
-	(*objectsByID)[id] = obj;
 	obj->makeVisible();
 	drawableObjects.insert_at(0, obj);
 
@@ -205,7 +210,6 @@ void Area::addDrill(Area *structure, const Math::Vector3d position) {
 	offset.setValue(1, offset.y() + obj->getSize().y());
 	obj->setOrigin(offset);
 	assert(obj);
-	(*objectsByID)[id] = obj;
 	obj->makeVisible();
 	drawableObjects.insert_at(0, obj);
 
@@ -215,7 +219,6 @@ void Area::addDrill(Area *structure, const Math::Vector3d position) {
 	obj->setOrigin(offset);
 	offset.setValue(1, offset.y() + obj->getSize().y());
 	assert(obj);
-	(*objectsByID)[id] = obj;
 	obj->makeVisible();
 	drawableObjects.insert_at(0, obj);
 
@@ -225,12 +228,12 @@ void Area::addDrill(Area *structure, const Math::Vector3d position) {
 	obj->setOrigin(offset);
 	offset.setValue(1, offset.y() + obj->getSize().y());
 	assert(obj);
-	(*objectsByID)[id] = obj;
 	obj->makeVisible();
 	drawableObjects.insert_at(0, obj);
 }
 
 void Area::removeDrill() {
+	drillPosition = Math::Vector3d();
 	for (int16 id = 252; id < 256; id++) {
 		objectsByID->erase(id);
 		assert(drawableObjects[0]->getObjectID() == id);

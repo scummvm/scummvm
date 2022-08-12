@@ -215,8 +215,7 @@ void FreescapeEngine::processInput() {
 			else if (event.kbd.keycode == Common::KEYCODE_n)
 				gotoArea(_currentArea->getAreaID() + 1, 0);
 			else if (event.kbd.keycode == Common::KEYCODE_d) {
-				uint32 gasPocketX = _currentArea->gasPocketX;
-				uint32 gasPocketY = _currentArea->gasPocketX;
+				Common::Point gasPocket = _currentArea->gasPocketPosition;
 				uint32 gasPocketRadius = _currentArea->gasPocketRadius;
 				if (isDriller() && gasPocketRadius > 0 && !_currentArea->drillDeployed()) {
 					_gameStateVars[32]++;
@@ -224,10 +223,11 @@ void FreescapeEngine::processInput() {
 					// TODO: check if there is enough energy
 					Math::Vector3d drillPosition = _position + _cameraFront * 128;
 					drillPosition.setValue(1, 1);
-					const Math::Vector3d gasPocket(gasPocketX, 1, gasPocketY);
+					debugC(1, kFreescapeDebugMove, "Trying to adding drill at %f %f %f", drillPosition.x(), drillPosition.y(), drillPosition.z());
+					const Math::Vector3d gasPocket3D(gasPocket.x, 1, gasPocket.y);
 					_currentArea->addDrill(globalObjectsArea, drillPosition);
-					float distance = (gasPocket - drillPosition).length();
-					debug("length to gas pocket: %f with radius %d", distance, _currentArea->gasPocketRadius);
+					float distance = (gasPocket3D - drillPosition).length();
+					debugC(1, kFreescapeDebugMove, "length to gas pocket: %f with radius %d", distance, _currentArea->gasPocketRadius);
 					// TODO check the result of the drilling
 					// TODO: reduce energy
 				}
@@ -605,6 +605,9 @@ Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream
 		assert(_areaMap.contains(key));
 		Area *area = _areaMap[key];
 		area->loadObjectFlags(stream);
+		// Add drill, if available
+		if (area->drillPosition != Math::Vector3d())
+			area->addDrill(globalObjectsArea, area->drillPosition);
 	}
 
 	_flyMode = stream->readByte();
