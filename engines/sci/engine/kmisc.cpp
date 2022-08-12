@@ -55,9 +55,46 @@ reg_t kRestartGame16(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-/* kGameIsRestarting():
-** Returns the restarting_flag in acc
-*/
+/** 
+ * kGameIsRestarting returns the EngineState::gameIsRestarting flag.
+ * If zero is passed then the flag is cleared before returning its previous value.
+ *
+ * kGameIsRestarting(0) is unique because it is called by (almost) every game from
+ * the game loop (Game:doit, etc) and nowhere else. For that reason, we use this
+ * normally simple function as our main speed throttler. It prevents unthrottled
+ * games from running as fast as the CPU will allow. This creates a consistent
+ * playable experience and avoids the many script bugs that occur when thousands
+ * of game cycles run per second on a modern CPU.
+ *
+ * Early games throttle their own speed by calling kWait on every game cycle.
+ * The delay passed to kWait is the game speed selected by the user. At every speed
+ * except the fastest (kWait(1), or 17 ms) the kWait delay is greater than our
+ * speed throttle delay (30 ms). This means that our kGameIsRestarting throttle
+ * has no effect on these games other than to make the user-selected fastest speed
+ * run barely faster than the next-fastest selection (33 ms). It's unclear if that
+ * is intentional or a side-effect of throttling meant for unthrottled games.
+ * The speed throttling code is over a decade old and its details were uncommented.
+ * There have also been significant fixes to ScummVM's SCI timing code since then.
+ * It may be better to remove kGameIsRestarting throttling from kWait games to
+ * simplify things instead of having two overlapping throttlers run. That would
+ * allow those to run at their original speed when the user selects Fastest.
+ * kWait games are not the ones that run too fast at fast CPU speeds.
+ *
+ * If a scene in a game needs to be throttled further for compatibility then we
+ * add a workaround here. We also use script patches to make unthrottled inner loops
+ * call this function so that the program remains responsive and delays are
+ * consistent instead of CPU-bound.
+ *
+ * kGameIsRestarting was removed from SCI2 but Sierra left it in the PC interpreter
+ * as a no-op. Game scripts kept calling it even though it didn't do anything.
+ * That allows us to keep throttling those games this way; this is why this function
+ * is included in the kernel table for all SCI versions. SCI2 Mac scripts removed
+ * the call so they are unthrottled by this mechanism. They currently run faster
+ * than their PC versions. kGameIsRestarting was completely removed from SCI3.
+ *
+ * SCI2+ games (or versions) that don't call kGameIsRestarting are still limited
+ * to 60fps by GfxFrameout::throttle().
+ */
 reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 	// Always return the previous flag value
 	const int16 previousRestartingFlag = s->gameIsRestarting;
