@@ -11730,6 +11730,35 @@ static const uint16 pq1vgaPatchFloatOutsideCarols2[] = {
 	PATCH_END
 };
 
+// When all the poker players fold, the game displays the message "You wins."
+//  instead of "You win.". The script that builds the string compares the wrong
+//  objects to see who the winner is, and so it always adds the final "s".
+//
+// We fix this by comparing the correct objects.
+//
+// Applies to: English Floppy
+// Responsible method: HandList:winner
+static const uint16 pq1vgaSignaturePokerWinnerMessage[] = {
+	0x35, 0x00,                          // ldi 00
+	0xa3, 0x4a,                          // sal 4a   [ local74 = 0 ]
+	0x7c,                                // pushSelf [ hand1First or allHands ]
+	0x72, SIG_UINT16(0x033c),            // lofsa hand1
+	0x1c,                                // ne?      [ always true ]
+	SIG_ADDTOOFFSET(+51),
+	SIG_MAGICDWORD,
+	0x8d, 0x06,                          // lst 06 [ winning hand ]
+	0x72, SIG_UINT16(0x033c),            // lofsa hand1
+	0x1a,                                // eq?
+	SIG_END
+};
+
+static const uint16 pq1vgaPatchPokerWinnerMessage[] = {
+	0x76,                                // push0
+	0xab, 0x4a,                          // ssl 4a [ local74 = 0 ]
+	0x8d, 0x06,                          // lst 06 [ winning hand ]
+	PATCH_END
+};
+
 // The GOG release includes New Rising Sun's script patches which throttle speed
 //  in core classes. Since we do our own speed throttling, we patch the scripts
 //  back to the original code for compatibility.
@@ -11774,6 +11803,7 @@ static const SciScriptPatcherEntry pq1vgaSignatures[] = {
 	{  true,    30, "float outside carol's (1/2)",                    7, pq1vgaSignatureFloatOutsideCarols1,  pq1vgaPatchFloatOutsideCarols1 },
 	{  true,    30, "float outside carol's (2/2)",                    1, pq1vgaSignatureFloatOutsideCarols2,  pq1vgaPatchFloatOutsideCarols2 },
 	{  true,   152, "getting stuck while briefing is about to start", 1, pq1vgaSignatureBriefingGettingStuck, pq1vgaPatchBriefingGettingStuck },
+	{  true,   156, "poker winner message",                           1, pq1vgaSignaturePokerWinnerMessage,   pq1vgaPatchPokerWinnerMessage },
 	{  true,   341, "put gun in locker bug",                          1, pq1vgaSignaturePutGunInLockerBug,    pq1vgaPatchPutGunInLockerBug },
 	{  true,   500, "map save/restore bug",                           2, pq1vgaSignatureMapSaveRestoreBug,    pq1vgaPatchMapSaveRestoreBug },
 	{  true,   928, "Narrator lockup fix",                            1, sciNarratorLockupSignature,          sciNarratorLockupPatch },
