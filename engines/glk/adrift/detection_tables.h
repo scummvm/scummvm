@@ -196,7 +196,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "ilgolem", "Il Golem" },
 
 	// Spanish Games
-	{ "ad4-elancesor", "El Ancesor" },
+	{ "ad4-elascensor", "El Ascensor" },
 
 	// Three Hour Games Competition: July 2004
 	{ "3hgjailbreakbob", "Jailbreak Bob" },
@@ -546,7 +546,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRYL0("ilgolem", Common::IT_ITA, "7ab97545be9c30457d0c9e748ab7885f", 6372213),
 
 	// Spanish Games
-	DT_ENTRYL1("ad4-elancesor", Common::ES_ESP, "1.0.2", "30494599eb5c012b677fec49fa0766a8", 3219428),
+	DT_ENTRYL1("ad4-elascensor", Common::ES_ESP, "1.0.2", "30494599eb5c012b677fec49fa0766a8", 3219428),
 
 	// Three Hour Games Competition: July 2004
 	DT_ENTRY0("3hgjailbreakbob", "c2e909cf2ddda863d2eb613c8273ee37", 31064),
