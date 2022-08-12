@@ -469,12 +469,19 @@ void SeqPlayer::s1_playVocFile() {
 }
 
 void SeqPlayer::s1_miscUnk3() {
-	warning("STUB: s1_miscUnk3");
+	// This is just a file cash flushing function in the original. We don't need that.
 }
 
 void SeqPlayer::s1_prefetchVocFile() {
 	_seqData++;
 	// we do not have to prefetch the vocfiles on modern systems
+}
+
+void SeqPlayer::s1_textDisplayWait() {
+	// This is used in the Mac Talkie version for the Kallak writing sequence.
+	// But in my tests the condition was never reached...
+	if (_seqDisplayedTextTimer != 0xFFFFFFFF)
+		_seqData--;
 }
 
 #define SEQOP(n, x) { n, &SeqPlayer::x, #x }
@@ -570,7 +577,8 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		SEQOP(2, s1_playVocFile),
 		SEQOP(1, s1_miscUnk3),
 		// 0x24
-		SEQOP(2, s1_prefetchVocFile)
+		SEQOP(2, s1_prefetchVocFile),
+		SEQOP(1, s1_textDisplayWait)
 	};
 
 	const SeqEntry *commands;

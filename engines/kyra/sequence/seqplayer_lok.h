@@ -94,6 +94,7 @@ protected:
 	void s1_playVocFile();
 	void s1_miscUnk3();
 	void s1_prefetchVocFile();
+	void s1_textDisplayWait();
 
 	struct SeqMovie {
 		Movie *movie;
