@@ -999,7 +999,7 @@ void KyraEngine_LoK::loadMainScreen(int page) {
 
 	bool success = false;
 	
-	for (int i = 0; i < _langFileExt.size() && !success; ++i) {
+	for (uint i = 0; i < _langFileExt.size() && !success; ++i) {
 		Common::String tryFile = Common::String::format("MAIN%s.CPS", _langFileExt[i].c_str());
 		if ((success = _res->exists(tryFile.c_str())))
 			_screen->loadBitmap(tryFile.c_str(), page, page, i == 0 ? &_screen->getPalette(0) : 0);
