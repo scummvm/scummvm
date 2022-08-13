@@ -26,15 +26,15 @@
  */
 
 #include "hpl1/engine/impl/LowLevelSoundOpenAL.h"
+#include "hpl1/engine/impl/OpenALSoundChannel.h"
 #include "hpl1/engine/impl/OpenALSoundData.h"
 #include "hpl1/engine/impl/OpenALSoundEnvironment.h"
 #include "hpl1/engine/system/String.h"
-
+#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/math/Math.h"
 
-#include "hpl1/engine/system/low_level_system.h"
-#include "common/system.h"
 #include "audio/mixer.h"
+#include "common/system.h"
 #include "hpl1/debug.h"
 
 namespace hpl {
@@ -45,13 +45,15 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cLowLevelSoundOpenAL::cLowLevelSoundOpenAL() {
+cLowLevelSoundOpenAL::cLowLevelSoundOpenAL() :
+	_activeChannels(MAX_ACTIVE_CHANNELS, nullptr) {
 	mvFormats[0] = "OGG";
 	mvFormats[1] = "WAV";
 	mvFormats[2] = "";
 	mbInitialized = false;
 	mbEnvAudioEnabled = false;
 	mbNullEffectAttached = false;
+	_mixer = g_system->getMixer();
 }
 
 //-----------------------------------------------------------------------
@@ -69,7 +71,7 @@ cLowLevelSoundOpenAL::~cLowLevelSoundOpenAL() {
 
 iSoundData *cLowLevelSoundOpenAL::LoadSoundData(const tString &asName, const tString &asFilePath,
 												const tString &asType, bool abStream, bool abLoopStream) {
-	cOpenALSoundData *pSoundData = hplNew(cOpenALSoundData, (asName, abStream));
+	cOpenALSoundData *pSoundData = hplNew(cOpenALSoundData, (asName, abStream, this));
 
 	pSoundData->SetLoopStream(abLoopStream);
 
@@ -124,7 +126,7 @@ void cLowLevelSoundOpenAL::SetListenerAttributes(const cVector3f &avPos, const c
 //-----------------------------------------------------------------------
 
 void cLowLevelSoundOpenAL::SetListenerPosition(const cVector3f &avPos) {
-  	mvListenerPosition = avPos;
+	mvListenerPosition = avPos;
 }
 
 //-----------------------------------------------------------------------
@@ -153,9 +155,9 @@ void cLowLevelSoundOpenAL::Init(bool abUseHardware, bool abForceGeneric, bool ab
 								int alMaxMonoSourceHint, int alMaxStereoSourceHint,
 								int alStreamingBufferSize, int alStreamingBufferCount, bool abEnableLowLevelLog, tString asDeviceName) {
 
-	//Default listener settings.
-	mvListenerForward = cVector3f(0,0,1);
-	mvListenerUp = cVector3f(0,1,0);
+	// Default listener settings.
+	mvListenerForward = cVector3f(0, 0, 1);
+	mvListenerUp = cVector3f(0, 1, 0);
 
 	SetVolume(1.0f);
 }
@@ -182,6 +184,42 @@ void cLowLevelSoundOpenAL::SetSoundEnvironment(iSoundEnvironment *apSoundEnv) {
 
 void cLowLevelSoundOpenAL::FadeSoundEnvironment(iSoundEnvironment *apSourceSoundEnv, iSoundEnvironment *apDestSoundEnv, float afT) {
 	HPL1_UNIMPLEMENTED(cLowLevelSoundOpenAL::FadeSoundEnvironment);
+}
+
+static cOpenALSoundChannel **findBestSlot(Common::Array<cOpenALSoundChannel *> &slots, int priority) {
+	cOpenALSoundChannel **best = slots.end();
+	for(auto it = slots.begin(); it != slots.end(); ++it) {
+		if (*it == nullptr || !(*it)->IsPlaying())
+			return it;
+		if ((*it)->GetPriority() < priority)
+			best = it;
+	}
+	return best;
+}
+
+bool cLowLevelSoundOpenAL::playChannel(cOpenALSoundChannel *channel) {
+	auto slot = findBestSlot(_activeChannels, channel->GetPriority());
+	if (slot != _activeChannels.end()) {
+		if (*slot != nullptr) {
+			_mixer->stopHandle((*slot)->_handle);
+			(*slot)->mbStopUsed = true;
+			(*slot)->_playing = false;
+		}
+		*slot = channel;
+		_mixer->stopHandle(channel->_handle);
+		channel->_audioStream->rewind();
+		_mixer->playStream(Audio::Mixer::SoundType::kPlainSoundType, &channel->_handle, channel->_audioStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+		return true;
+	}
+	return false;
+}
+
+void cLowLevelSoundOpenAL::closeChannel(cOpenALSoundChannel *channel) {
+	auto slot = Common::find(_activeChannels.begin(), _activeChannels.end(), channel);
+	if (slot != _activeChannels.end()) {
+		_mixer->stopHandle((*slot)->_handle);
+		*slot = nullptr;
+	}
 }
 
 } // namespace hpl
