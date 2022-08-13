@@ -353,7 +353,7 @@ bool cInit::Init(tString asCommandLine) {
 
 	mlFSAA = mpConfig->GetInt("Graphics", "FSAA", 0);
 	mbPostEffects = mpConfig->GetBool("Graphics", "PostEffects", true);
-	iMaterial::SetQuality((eMaterialQuality)mpConfig->GetInt("Graphics", "ShaderQuality", eMaterialQuality_VeryLow));
+	iMaterial::SetQuality((eMaterialQuality)mpConfig->GetInt("Graphics", "ShaderQuality", eMaterialQuality_High));
 
 	mPhysicsAccuracy = (ePhysicsAccuracy)mpConfig->GetInt("Physics", "Accuracy", ePhysicsAccuracy_High);
 	mfPhysicsUpdatesPerSec = mpConfig->GetFloat("Physics", "UpdatesPerSec", 60.0f);
