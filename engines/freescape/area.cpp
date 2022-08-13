@@ -191,7 +191,6 @@ void Area::addDrill(Area *structure, const Math::Vector3d position) {
 	drillPosition = position;
 	Object *obj = nullptr;
 	Math::Vector3d offset = position;
-	offset.setValue(1, 1);
 
 	int16 id;
 
@@ -242,7 +241,7 @@ void Area::removeDrill() {
 }
 
 bool Area::drillDeployed() {
-	return (objectWithID(252) != nullptr);
+	return (drawableObjects[0]->getObjectID() == 252);
 }
 
 void Area::addStructure(Area *structure) {

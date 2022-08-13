@@ -222,7 +222,7 @@ void FreescapeEngine::processInput() {
 					// TODO: check if there is space for the drill
 					// TODO: check if there is enough energy
 					Math::Vector3d drillPosition = _position + _cameraFront * 128;
-					drillPosition.setValue(1, 1);
+					drillPosition.setValue(1, _position.y() - _playerHeight * _currentArea->getScale());
 					debugC(1, kFreescapeDebugMove, "Trying to adding drill at %f %f %f", drillPosition.x(), drillPosition.y(), drillPosition.z());
 					const Math::Vector3d gasPocket3D(gasPocket.x, 1, gasPocket.y);
 					_currentArea->addDrill(globalObjectsArea, drillPosition);
