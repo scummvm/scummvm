@@ -563,6 +563,10 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 							VAR(VAR_CHARINC) = 9;
 					}
 
+					_defaultTextSpeed = 9 - VAR(VAR_CHARINC);
+					ConfMan.setInt("original_gui_text_speed", _defaultTextSpeed);
+					setTalkSpeed(_defaultTextSpeed);
+
 					getSliderString(gsTextSpeedSlider, VAR(VAR_CHARINC), sliderString, sizeof(sliderString));
 					showBannerAndPause(0, 0, sliderString);
 					ks = Common::KEYCODE_INVALID;
@@ -949,20 +953,20 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		syncSoundSettings();
 
 	} else if (optionKeysEnabled && (lastKeyHit.ascii == '-' || lastKeyHit.ascii == '+')) { // Change text speed
-		if (lastKeyHit.ascii == '+' && _defaultTalkDelay > 0)
-			_defaultTalkDelay--;
-		else if (lastKeyHit.ascii == '-' && _defaultTalkDelay < 9)
-			_defaultTalkDelay++;
+		if (lastKeyHit.ascii == '-' && _defaultTextSpeed > 0)
+			_defaultTextSpeed--;
+		else if (lastKeyHit.ascii == '+' && _defaultTextSpeed < 9)
+			_defaultTextSpeed++;
 
 		// Display the talk speed
-		ValueDisplayDialog dlg(_("Subtitle speed: "), 0, 9, 9 - _defaultTalkDelay, '+', '-');
-		_defaultTalkDelay = 9 - runDialog(dlg);
+		ValueDisplayDialog dlg(_("Subtitle speed: "), 0, 9, _defaultTextSpeed, '+', '-');
+		_defaultTextSpeed = runDialog(dlg);
 
 		// Save the new talkspeed value to ConfMan
-		setTalkSpeed(_defaultTalkDelay);
+		setTalkSpeed(_defaultTextSpeed);
 
 		if (VAR_CHARINC != 0xFF)
-			VAR(VAR_CHARINC) = _defaultTalkDelay;
+			VAR(VAR_CHARINC) = 9 - _defaultTextSpeed;
 
 	} else {
 

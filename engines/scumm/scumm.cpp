@@ -1240,6 +1240,11 @@ Common::Error ScummEngine::init() {
 			ConfMan.setBool("subtitles", true);
 	}
 
+	// While most games set their own default talkspeed at start-up,
+	// some don't, so let's preventively set a default one.
+	if (!ConfMan.hasKey("talkspeed", _targetName))
+		setTalkSpeed(_defaultTextSpeed);
+
 	syncSoundSettings();
 
 	return Common::kNoError;
@@ -1674,7 +1679,7 @@ void ScummEngine::resetScumm() {
 	_varwatch = -1;
 	_screenStartStrip = 0;
 
-	_defaultTalkDelay = 3;
+	_defaultTextSpeed = 6;
 	_talkDelay = 0;
 	_keepText = false;
 	_nextLeft = 0;
@@ -2116,16 +2121,10 @@ void ScummEngine::syncSoundSettings() {
 				ConfMan.setInt("original_gui_text_speed", getTalkSpeed());
 			}
 
-			_defaultTalkDelay = ConfMan.getInt("original_gui_text_speed");
+			_defaultTextSpeed = ConfMan.getInt("original_gui_text_speed");
 
-			// In the original games the talk delay is represented as text speed,
-			// so we have to invert the value:
-			// - 9 is the highest text speed possible;
-			// - 0 is the lowest text speed possible.
 			if (VAR_CHARINC != 0xFF)
-				VAR(VAR_CHARINC) = 9 - _defaultTalkDelay;
-		} else if (_game.version != 8) {
-			ConfMan.setInt("original_gui_text_speed", getTalkSpeed());
+				VAR(VAR_CHARINC) = 9 - _defaultTextSpeed;
 		}
 
 		if (_game.version >= 7 && _imuseDigital) {
@@ -2168,14 +2167,10 @@ void ScummEngine::syncSoundSettings() {
 		VAR(VAR_VOICE_MODE) = _voiceMode;
 
 	if (ConfMan.hasKey("talkspeed", _targetName)) {
-		_defaultTalkDelay = getTalkSpeed();
+		_defaultTextSpeed = getTalkSpeed();
 
-		// In the original games the talk delay is represented as text speed,
-		// so we have to invert the value:
-		// - 9 is the highest text speed possible;
-		// - 0 is the lowest text speed possible.
 		if (VAR_CHARINC != 0xFF)
-			VAR(VAR_CHARINC) = 9 - _defaultTalkDelay;
+			VAR(VAR_CHARINC) = 9 - _defaultTextSpeed;
 	}
 
 	// Backyard Baseball 2003 uses a unique subtitle variable,
@@ -2871,7 +2866,7 @@ void ScummEngine_v5::scummLoop_handleSaveLoad() {
 
 		// For LOOM VGA Talkie, we restore the text glyphs on top of the note verbs
 		// and also restore the text description on top of the image of the selected
-		// object in the bottom right corner. 
+		// object in the bottom right corner.
 		// These text parts are not actually connected to the verbs (which are image
 		// verbs only). redrawVerbs() will not restore them. They require some script
 		// work. The original interpreter just sets this variable after loading.
