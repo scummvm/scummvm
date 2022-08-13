@@ -1,13 +1,32 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #ifndef FREESCAPE_H
 #define FREESCAPE_H
 
 #include "common/random.h"
-#include "common/serializer.h"
 #include "engines/engine.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "graphics/tinygl/pixelbuffer.h"
-#include "gui/debugger.h"
 
 #include "audio/mixer.h"
 #include "audio/softsynth/pcspk.h"
@@ -15,7 +34,6 @@
 #include "freescape/area.h"
 #include "freescape/objects/geometricobject.h"
 #include "freescape/objects/entrance.h"
-#include "freescape/language/instruction.h"
 #include "freescape/gfx.h"
 
 namespace Freescape {
@@ -171,15 +189,6 @@ public:
 	bool canSaveGameStateCurrently() override { return true; }
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
-};
-
-// Example console class
-class Console : public GUI::Debugger {
-public:
-	Console(FreescapeEngine *vm) {
-	}
-	virtual ~Console(void) {
-	}
 };
 
 extern FreescapeEngine *g_freescape;
