@@ -251,7 +251,7 @@ int cLowLevelGraphicsSDL::GetCaps(eGraphicCaps type) const {
 
 	// GL shaders
 	case eGraphicCaps_GL_GpuPrograms:
-		return 0; // gl 2.0
+		return 1; // gl 2.0
 
 	case eGraphicCaps_GL_BlendFunctionSeparate:
 		return 1; // gl 1.4
