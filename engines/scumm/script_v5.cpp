@@ -439,14 +439,16 @@ void ScummEngine_v5::o5_actorOps() {
 
 	// WORKAROUND: There's a continuity error in Monkey 1, in that the Jolly Roger should
 	// only appear in the first scene showing the Sea Monkey in the middle of the sea,
-	// since Guybrush must have picked it for the two other cutscenes to happen.
+	// since Guybrush must have picked it for the two other ship cutscenes to happen.
 	//
-	// The VGA releases fixed this, but this has been lost in the v5 versions. We just
-	// check that the script describing that "the crew begins to plan their voyage" is
-	// running, as that release did.  The Ultimate Talkie fixed this, but differently.
-	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY) && _roomResource == 87 &&
-		vm.slot[_currentScript].number == 10002 && act == 9 && _enableEnhancements &&
-		strcmp(_game.variant, "SE Talkie") != 0) {
+	// Some official releases appear to have a fix for this (e.g. the English floppy VGA
+	// version), but most releases don't. The fixed release would check whether the
+	// script describing that "the crew begins to plan their voyage" is running in order
+	// to display the flag, so we just reuse this check. The Ultimate Talkie also fixed
+	// this, but in a different way which doesn't look as portable between releases.
+	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA || _game.id == GID_MONKEY) &&
+		_roomResource == 87 && vm.slot[_currentScript].number == 10002 && act == 9 &&
+		_enableEnhancements && strcmp(_game.variant, "SE Talkie") != 0) {
 		const int scriptNr = (_game.version == 5) ? 122 : 119;
 		if (!isScriptRunning(scriptNr)) {
 			a->putActor(0);
