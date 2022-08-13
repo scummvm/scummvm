@@ -448,7 +448,10 @@ void IMuseDigital::playFtMusic(const char *songName, int transitionType, int vol
 			return;
 		case 1:
 			soundId = getSoundIdByName(songName);
-			_filesHandler->openSound(soundId);
+
+			if (_filesHandler->openSound(soundId))
+				return;
+
 			if (!soundId) {
 				debug(5, "IMuseDigital::playFtMusic(): failed to retrieve soundId for sound \"%s\"", songName);
 				break;
@@ -465,7 +468,8 @@ void IMuseDigital::playFtMusic(const char *songName, int transitionType, int vol
 		case 3:
 			soundId = getSoundIdByName(songName);
 			if (soundId)
-				_filesHandler->openSound(soundId);
+				if (_filesHandler->openSound(soundId))
+					return;
 
 			if (soundId) {
 				if (oldSoundId) {
@@ -574,7 +578,9 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 		debug(5, "IMuseDigital::playDigMusic(): NULL transition, ignored");
 		break;
 	case 1:
-		_filesHandler->openSound(table->soundId);
+		if (_filesHandler->openSound(table->soundId))
+			return;
+
 		if (table->soundId) {
 			if (diMUSEStartSound(table->soundId, 126))
 				debug(5, "IMuseDigital::playDigMusic(): transition 1, failed to start the sound (%d)", table->soundId);
@@ -590,7 +596,9 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 	case 2:
 	case 3:
 	case 4:
-		_filesHandler->openSound(table->soundId);
+		if (_filesHandler->openSound(table->soundId))
+			return;
+
 		if (table->filename[0] == 0 || table->soundId == 0) {
 			if (oldSoundId)
 				diMUSEFadeParam(oldSoundId, DIMUSE_P_VOLUME, 0, 60);
@@ -700,7 +708,9 @@ void IMuseDigital::playComiDemoMusic(const char *songName, const imuseComiTable 
 
 	switch (table->transitionType) {
 	case 3:
-		_filesHandler->openSound(table->soundId);
+		if (_filesHandler->openSound(table->soundId))
+			return;
+
 		if (table->filename[0] == 0 || table->soundId == 0) {
 			if (oldSoundId)
 				diMUSEFadeParam(oldSoundId, DIMUSE_P_VOLUME, 0, 60);
@@ -796,7 +806,9 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 		debug(5, "IMuseDigital::playComiMusic(): NULL transition, ignored");
 		break;
 	case 1:
-		_filesHandler->openSound(table->soundId);
+		if (_filesHandler->openSound(table->soundId))
+			return;
+
 		if (table->soundId) {
 			if (diMUSEStartSound(table->soundId, 126))
 				debug(5, "IMuseDigital::playComiMusic(): transition 1, failed to start the sound (%d)", table->soundId);
@@ -812,7 +824,9 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 	case 3:
 	case 4:
 	case 12:
-		_filesHandler->openSound(table->soundId);
+		if (_filesHandler->openSound(table->soundId))
+			return;
+
 		if (table->filename[0] == 0 || table->soundId == 0) {
 			if (oldSoundId)
 				diMUSEFadeParam(oldSoundId, DIMUSE_P_VOLUME, 0, 60);
