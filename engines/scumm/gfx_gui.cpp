@@ -1156,9 +1156,9 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX) {
 		ScummEngine::drawDirtyScreenParts();
 		break;
 	case GUI_CTRL_TEXT_SPEED_SLIDER:
-		_defaultTalkDelay = CLIP<int>(9 - (mouseX - 108) / 9, 0, 9);
-		ConfMan.setInt("original_gui_text_speed", _defaultTalkDelay);
-		setTalkSpeed(9 - _defaultTalkDelay);
+		_defaultTextSpeed = CLIP<int>((mouseX - 108) / 9, 0, 9);
+		ConfMan.setInt("original_gui_text_speed", _defaultTextSpeed);
+		setTalkSpeed(_defaultTextSpeed);
 		syncSoundSettings();
 		ConfMan.flushToDisk();
 		updateMainMenuControls();

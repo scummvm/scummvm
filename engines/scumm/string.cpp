@@ -790,7 +790,7 @@ void ScummEngine::CHARSET_1() {
 				restoreCharsetBg();
 		_msgCount = 0;
 	} else if (_game.version <= 2) {
-		_talkDelay += _msgCount * _defaultTalkDelay;
+		_talkDelay += _msgCount * _defaultTextSpeed;
 	}
 
 	if (_game.version > 3) {
@@ -892,7 +892,7 @@ void ScummEngine::CHARSET_1() {
 			mac_drawIndy3TextBox();
 
 		if (_game.version <= 2) {
-			_talkDelay += _defaultTalkDelay;
+			_talkDelay += _defaultTextSpeed;
 			VAR(VAR_CHARCOUNT)++;
 		} else {
 			_talkDelay += (int)VAR(VAR_CHARINC);

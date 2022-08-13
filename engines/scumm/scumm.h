@@ -1345,7 +1345,7 @@ protected:
 
 	bool _haveActorSpeechMsg = false;
 	bool _useTalkAnims = false;
-	uint16 _defaultTalkDelay = 0;
+	uint16 _defaultTextSpeed = 0;
 	int _saveSound = 0;
 	bool _native_mt32 = false;
 	bool _enable_gs = false;

@@ -789,7 +789,7 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 		if (_game.version == 8)
 			_scummVars[VAR_CHARINC] = (_game.features & GF_DEMO) ? 3 : 1;
 		// Needed due to subtitle speed changes
-		_defaultTalkDelay /= 20;
+		_defaultTextSpeed /= 20;
 	}
 
 	// For a long time, we used incorrect locations for some camera related
@@ -1325,7 +1325,7 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsByte(_useTalkAnims, VER(8));
 
 	s.syncAsSint16LE(_talkDelay, VER(8));
-	s.syncAsSint16LE(_defaultTalkDelay, VER(8));
+	s.syncAsSint16LE(_defaultTextSpeed, VER(8));
 	s.skip(2, VER(8), VER(27)); // _numInMsgStack
 	s.syncAsByte(_sentenceNum, VER(8));
 
