@@ -37,6 +37,10 @@ SeqPlayer::SeqPlayer(KyraEngine_LoK *vm, OSystem *system) {
 
 	_copyViewOffs = false;
 	_specialBuffer = nullptr;
+	_seqCode = 0;
+	_seqVocStartTimer = 0;
+	_seqSkipCommand = false;
+	_seqLoopPos = 0;
 
 	for (int i = 0; i < ARRAYSIZE(_handShapes); ++i)
 		_handShapes[i] = nullptr;
@@ -171,6 +175,8 @@ void SeqPlayer::s1_drawShape() {
 
 void SeqPlayer::s1_waitTicks() {
 	uint16 ticks = READ_LE_UINT16(_seqData); _seqData += 2;
+	if (_seqCode == 6 && _vm->speechEnabled() && !_vm->textEnabled())
+		return;
 	_vm->delay(ticks * _vm->tickLength());
 }
 
@@ -196,31 +202,47 @@ void SeqPlayer::s1_copyView() {
 }
 
 void SeqPlayer::s1_loopInit() {
-	uint8 seqLoop = *_seqData++;
-	if (seqLoop < ARRAYSIZE(_seqLoopTable))
-		_seqLoopTable[seqLoop].ptr = _seqData;
+	_seqLoopPos = *_seqData++;
+	if (_seqLoopPos < ARRAYSIZE(_seqLoopTable))
+		_seqLoopTable[_seqLoopPos].ptr = _seqData;
 	else
 		_seqQuitFlag = true;
 }
 
 void SeqPlayer::s1_loopInc() {
-	uint8 seqLoop = *_seqData++;
+	_seqLoopPos = *_seqData++;
 	uint16 seqLoopCount = READ_LE_UINT16(_seqData); _seqData += 2;
-	if (_seqLoopTable[seqLoop].count == 0xFFFF) {
-		_seqLoopTable[seqLoop].count = seqLoopCount - 1;
-		_seqData = _seqLoopTable[seqLoop].ptr;
-	} else if (_seqLoopTable[seqLoop].count == 0) {
-		_seqLoopTable[seqLoop].count = 0xFFFF;
-		_seqLoopTable[seqLoop].ptr = nullptr;
+
+	if (_seqCode == 13 && _vm->speechEnabled() && !_vm->textEnabled()) {
+		if (_vm->snd_voiceIsPlaying()) {
+			_seqData = _seqLoopTable[_seqLoopPos].ptr;
+		} else {
+			_seqLoopTable[_seqLoopPos].count = 0xFFFF;
+			_seqLoopTable[_seqLoopPos].ptr = nullptr;
+		}
+	} else if (_seqLoopTable[_seqLoopPos].count == 0xFFFF) {
+		_seqLoopTable[_seqLoopPos].count = seqLoopCount - 1;
+		_seqData = _seqLoopTable[_seqLoopPos].ptr;
+	} else if (_seqLoopTable[_seqLoopPos].count == 0) {
+		_seqLoopTable[_seqLoopPos].count = 0xFFFF;
+		_seqLoopTable[_seqLoopPos].ptr = nullptr;
 	} else {
-		--_seqLoopTable[seqLoop].count;
-		_seqData = _seqLoopTable[seqLoop].ptr;
+		--_seqLoopTable[_seqLoopPos].count;
+		_seqData = _seqLoopTable[_seqLoopPos].ptr;
 	}
 }
 
 void SeqPlayer::s1_skip() {
-	uint8 a = *_seqData++;
-	warning("STUB: s1_skip(%d)", a);
+	uint8 val = *_seqData++;
+	if (!_vm->speechEnabled() || _vm->textEnabled() || !val)
+		return;
+
+	_seqSkipCommand = true;
+	uint32 vocPlayTime = _vm->snd_getVoicePlayTime();
+	if (vocPlayTime) {
+		if (((_system->getMillis() - _seqVocStartTimer) / _vm->tickLength()) < (val * (vocPlayTime / _vm->tickLength()) / 100))
+			_seqSkipCommand = false;		
+	}
 }
 
 void SeqPlayer::s1_loadPalette() {
@@ -280,9 +302,6 @@ void SeqPlayer::s1_printTalkText() {
 	int y = *_seqData++;
 	uint8 fillColor = *_seqData++;
 
-	if (!_vm->textEnabled())
-		return;
-
 	int b;
 	if (_seqTalkTextPrinted && !_seqTalkTextRestored) {
 		if (_seqWsaCurDecodePage != 0 && !_specialBuffer)
@@ -291,6 +310,10 @@ void SeqPlayer::s1_printTalkText() {
 			b = 0;
 		_vm->text()->restoreTalkTextMessageBkgd(2, b);
 	}
+
+	if (!_vm->textEnabled())
+		return;
+
 	_seqTalkTextPrinted = true;
 	_seqTalkTextRestored = false;
 	if (_seqWsaCurDecodePage != 0 && !_specialBuffer)
@@ -464,8 +487,10 @@ void SeqPlayer::s1_loadIntroVRM() {
 void SeqPlayer::s1_playVocFile() {
 	_vm->snd_voiceWaitForFinish(false);
 	uint8 a = *_seqData++;
-	if (_vm->speechEnabled())
+	if (_vm->speechEnabled()) {
+		_seqVocStartTimer = _system->getMillis();
 		_vm->snd_playVoiceFile(a);
+	}
 }
 
 void SeqPlayer::s1_miscUnk3() {
@@ -603,9 +628,11 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 	_seqDisplayedChar = 0;
 	_seqTalkTextRestored = false;
 	_seqTalkTextPrinted = false;
+	_seqSkipCommand = false;
 
 	_seqQuitFlag = false;
 	_seqWsaCurDecodePage = 0;
+	_seqLoopPos = 0;
 
 	for (int i = 0; i < 20; ++i) {
 		_seqLoopTable[i].ptr = nullptr;
@@ -622,16 +649,27 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 	int charIdx = 0;
 	while (!_seqQuitFlag && !_vm->shouldQuit()) {
 		uint32 startFrameCt = _vm->_system->getMillis();
-		if (skipSeq && _vm->seq_skipSequence()) {
+		if (_seqSkipCommand || (skipSeq && _vm->seq_skipSequence())) {
 			while (1) {
 				uint8 code = *_seqData;
-				if (commands[code].proc == &SeqPlayer::s1_endOfScript || commands[code].proc == &SeqPlayer::s1_break)
+				if (commands[code].proc == &SeqPlayer::s1_endOfScript)
+					break;
+				if (_seqSkipCommand && commands[code].proc == &SeqPlayer::s1_skip && _seqData[1] == 0)
+					break;
+				if (commands[code].proc == &SeqPlayer::s1_break)
 					break;
 
 				_seqData += commands[code].len;
 			}
 			skipSeq = false;
 			seqSkippedFlag = true;
+
+			if (_seqSkipCommand) {
+				_seqSkipCommand = false;
+				_seqData += commands[14].len;
+				_seqLoopTable[_seqLoopPos].count = 0xFFFF;
+				_seqLoopTable[_seqLoopPos].ptr = nullptr;
+			}
 		}
 		// used in Kallak writing intro
 		if (_seqDisplayTextFlag && _seqDisplayedTextTimer != 0xFFFFFFFF && _vm->textEnabled()) {
@@ -673,13 +711,13 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 			}
 		}
 
-		uint8 seqCode = *_seqData++;
-		if (seqCode < numCommands) {
-			SeqProc currentProc = commands[seqCode].proc;
-			debugC(5, kDebugLevelSequence, "0x%.4X seqCode = %d (%s)", (uint16)(_seqData - 1 - seqData), seqCode, commands[seqCode].desc);
+		_seqCode = *_seqData++;
+		if (_seqCode < numCommands) {
+			SeqProc currentProc = commands[_seqCode].proc;
+			debugC(5, kDebugLevelSequence, "0x%.4X seqCode = %d (%s)", (uint16)(_seqData - 1 - seqData), _seqCode, commands[_seqCode].desc);
 			(this->*currentProc)();
 		} else {
-			error("Invalid sequence opcode %d called from 0x%.04X", seqCode, (uint16)(_seqData - 1 - seqData));
+			error("Invalid sequence opcode %d called from 0x%.04X", _seqCode, (uint16)(_seqData - 1 - seqData));
 		}
 
 		int extraDelay = _screen->updateScreen();
