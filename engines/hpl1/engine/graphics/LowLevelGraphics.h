@@ -177,7 +177,6 @@ enum eGraphicCaps {
 	eGraphicCaps_GL_GpuPrograms,
 	eGraphicCaps_GL_NVRegisterCombiners,
 	eGraphicCaps_GL_NVRegisterCombiners_MaxStages,
-	eGraphicCaps_GL_ATIFragmentShader,
 	eGraphicCaps_GL_BlendFunctionSeparate,
 	eGraphicCaps_GL_MultiTexture,
 
