@@ -117,12 +117,31 @@ public:
 };
 
 /**
+ * Generic loopable audio stream. Subclasses of this are used to feed
+ * looping sampled audio data into ScummVM's audio mixer.
+ */
+class LoopableAudioStream : public virtual AudioStream {
+public:
+
+	/**
+	 * Return the number of loops that the stream has played.
+	 */
+	virtual uint getCompleteIterations() const = 0;
+
+	/**
+	 * Set the number of remaining loops the stream should play
+	 * before stopping.
+	 */
+	virtual void setRemainingIterations(uint loops) = 0;
+};
+
+/**
  * A looping audio stream.
  *
  * This object does nothing besides using a RewindableAudioStream
  * to play a stream in a loop.
  */
-class LoopingAudioStream : public AudioStream {
+class LoopingAudioStream : public LoopableAudioStream {
 public:
 	/**
 	 * Create a looping audio stream object.
@@ -145,10 +164,8 @@ public:
 	bool isStereo() const { return _parent->isStereo(); }
 	int getRate() const { return _parent->getRate(); }
 
-	/**
-	 * Return the number of loops that the stream has played.
-	 */
 	uint getCompleteIterations() const { return _completeIterations; }
+	void setRemainingIterations(uint loops) { _loops = _completeIterations + loops; }
 private:
 	Common::DisposablePtr<RewindableAudioStream> _parent;
 
@@ -253,7 +270,7 @@ AudioStream *makeLoopingAudioStream(SeekableAudioStream *stream, Timestamp start
  * @b Important: This can be merged with SubSeekableAudioStream for playback purposes.
  *               To do this, it must be extended to accept a start time.
  */
-class SubLoopingAudioStream : public AudioStream {
+class SubLoopingAudioStream : public LoopableAudioStream {
 public:
 	/**
 	 * Constructor for a SubLoopingAudioStream.
@@ -279,14 +296,16 @@ public:
 
 	bool isStereo() const { return _parent->isStereo(); }
 	int getRate() const { return _parent->getRate(); }
+
+	uint getCompleteIterations() const { return _completeIterations; }
+	void setRemainingIterations(uint loops) { _loops = _completeIterations + loops; }
 private:
 	Common::DisposablePtr<SeekableAudioStream> _parent;
 
 	uint _loops;
+	uint _completeIterations;
 	Timestamp _pos;
 	Timestamp _loopStart, _loopEnd;
-
-	bool _done;
 };
 
 
