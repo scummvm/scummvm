@@ -34,9 +34,11 @@
 #include "common/str.h"
 namespace hpl {
 
+class cLowLevelSoundOpenAL;
+
 class cOpenALSoundData : public iSoundData {
 public:
-	cOpenALSoundData(tString asName, bool abStream);
+	cOpenALSoundData(tString asName, bool abStream, cLowLevelSoundOpenAL* lowLevelSound);
 	~cOpenALSoundData();
 
 	bool CreateFromFile(const tString &asFile);
@@ -47,6 +49,7 @@ public:
 
 private:
 	Common::String _filename;
+	cLowLevelSoundOpenAL *_lowLevelSound;
 };
 
 }     // namespace hpl

@@ -29,10 +29,16 @@
 #define HPL_LOWLEVELSOUND_OPENAL_H
 
 #include "hpl1/engine/sound/LowLevelSound.h"
+#include "common/array.h"
 
-class cOAL_Effect_Reverb;
+namespace Audio {
 
+class Mixer;
+
+}
 namespace hpl {
+
+class cOpenALSoundChannel;
 
 class cLowLevelSoundOpenAL : public iLowLevelSound {
 public:
@@ -54,8 +60,6 @@ public:
 
 	void SetListenerAttenuation(bool abEnabled);
 
-	//		void LogSoundStatus();
-
 	void Init(bool abUseHardware, bool abForceGeneric, bool abUseEnvAudio, int alMaxChannels,
 			  int alStreamUpdateFreq, bool abUseThreading, bool abUseVoiceManagement,
 			  int alMaxMonoSourceHint, int alMaxStereoSourceHint,
@@ -70,14 +74,16 @@ public:
 	void SetSoundEnvironment(iSoundEnvironment *apSoundEnv);
 	void FadeSoundEnvironment(iSoundEnvironment *apSourceSoundEnv, iSoundEnvironment *apDestSoundEnv, float afT);
 
-private:
-	tString mvFormats[30];
-	//bool mbLogSounds;
-	bool mbInitialized;
-	//int mlEffectSlotId;
-	bool mbNullEffectAttached;
+	bool playChannel(cOpenALSoundChannel *channel);
+	void closeChannel(cOpenALSoundChannel *channel);
 
-	//cOAL_Effect_Reverb *mpEffect;
+private:
+	static const int MAX_ACTIVE_CHANNELS = 32;
+	Common::Array<cOpenALSoundChannel *> _activeChannels;
+	Audio::Mixer *_mixer;
+	tString mvFormats[30];
+	bool mbInitialized;
+	bool mbNullEffectAttached;
 };
 
 }     // namespace hpl

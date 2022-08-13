@@ -28,6 +28,7 @@
 #include "hpl1/engine/impl/OpenALSoundChannel.h"
 #include "hpl1/engine/impl/OpenALSoundData.h"
 #include "hpl1/engine/resources/SoundManager.h"
+#include "hpl1/engine/impl/LowLevelSoundOpenAL.h"
 
 #include "audio/mixer.h"
 #include "common/system.h"
@@ -44,8 +45,8 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cOpenALSoundChannel::cOpenALSoundChannel(cOpenALSoundData *soundData, Audio::SeekableAudioStream *audioStream, cSoundManager *apSoundManger)
-	: iSoundChannel(soundData, apSoundManger), _playing(false), _audioStream(audioStream) {
+cOpenALSoundChannel::cOpenALSoundChannel(cOpenALSoundData *soundData, Audio::SeekableAudioStream *audioStream, cSoundManager *apSoundManger, cLowLevelSoundOpenAL *lowLevelSound, int priority)
+	: iSoundChannel(soundData, apSoundManger), _playing(false), _audioStream(audioStream), _lowLevelSound(lowLevelSound), _priority(priority) {
 	Hpl1::logInfo(Hpl1::kDebugAudio, "creating sound channel form file %s\n", mpData->GetName().c_str());
 	if (!_audioStream)
 		Hpl1::logError(Hpl1::kDebugAudio, "sound channel created with null audio stream%s", ".");
@@ -73,7 +74,7 @@ cOpenALSoundChannel::cOpenALSoundChannel(cOpenALSoundData *soundData, Audio::See
 //-----------------------------------------------------------------------
 
 cOpenALSoundChannel::~cOpenALSoundChannel() {
-	mixer->stopHandle(_handle);
+	_lowLevelSound->closeChannel(this);
 	if (_audioStream)
 		delete _audioStream;
 	if (mpSoundManger)
@@ -89,8 +90,13 @@ cOpenALSoundChannel::~cOpenALSoundChannel() {
 //-----------------------------------------------------------------------
 
 void cOpenALSoundChannel::Play() {
+	if (!_audioStream) {
+		Hpl1::logWarning(Hpl1::kDebugAudio, "trying to play an empty audio stream%c", '\n');
+		return;
+	}
 	Hpl1::logInfo(Hpl1::kDebugAudio, "playing sound channel from data %s\n", mpData->GetName().c_str());
-	restart();
+	_lowLevelSound->playChannel(this);
+	SetVolume(mfVolume);
 	if (mbLooping)
 		mixer->loopChannel(_handle);
 	_playing = true;
@@ -111,15 +117,13 @@ void cOpenALSoundChannel::SetPaused(bool pause) {
 	Hpl1::logInfo(Hpl1::kDebugAudio, "%spausing sound channel from data %s\n", pause ? "" : "un",
 				  mpData->GetName().c_str());
 	mixer->pauseHandle(_handle, pause);
-	if (!_playing && !pause && mbPaused) // corner case of the original implementation
-		Play();
 	mbPaused = pause;
 }
 
 //-----------------------------------------------------------------------
 
 void cOpenALSoundChannel::SetSpeed(float afSpeed) {
-  		mfSpeed = afSpeed;
+	mfSpeed = afSpeed;
 #if 0
 		OAL_Source_SetPitch ( mlChannel, afSpeed );
 #endif
@@ -136,9 +140,14 @@ void cOpenALSoundChannel::SetVolume(float volume) {
 
 void cOpenALSoundChannel::SetLooping(bool loop) {
 	Hpl1::logInfo(Hpl1::kDebugAudio, "%slooping audio from source %s\n", loop ? "" : "un", mpData->GetName().c_str());
+	const bool previousState = mbLooping;
 	mbLooping = loop;
-	if (loop)
+	if (_playing && loop) // it has already started
 		mixer->loopChannel(_handle);
+	if (previousState && !loop && _playing) { // unlooped while playing
+		_lowLevelSound->closeChannel(this);
+		Play();
+	}
 }
 
 //-----------------------------------------------------------------------
@@ -167,7 +176,7 @@ void cOpenALSoundChannel::SetPositionRelative(bool abRelative) {
 //-----------------------------------------------------------------------
 
 void cOpenALSoundChannel::SetPosition(const cVector3f &avPos) {
-  	mvPosition = avPos;
+	mvPosition = avPos;
 #if 0
 	OAL_Source_SetAttributes ( mlChannel, mvPosition.v, mvVelocity.v );
 #endif
@@ -196,26 +205,18 @@ void cOpenALSoundChannel::SetMaxDistance(float afMax) {
 //-----------------------------------------------------------------------
 
 bool cOpenALSoundChannel::IsPlaying() {
-	return _playing;
+	return _playing && (mbLooping || !_audioStream->endOfStream());
 }
 //-----------------------------------------------------------------------
 
 void cOpenALSoundChannel::SetPriority(int alX) {
-#if 0
-  		int lPrio = alX+mlPriorityModifier;
-		if(lPrio>255)lPrio = 255;
-
-		OAL_Source_SetPriority ( mlChannel, lPrio );
-#endif
+	_priority = MAX(alX, 255);
 }
 
 //-----------------------------------------------------------------------
 
 int cOpenALSoundChannel::GetPriority() {
-#if 0
-  		return OAL_Source_GetPriority ( mlChannel );
-#endif
-	return 0;
+	return _priority;
 }
 
 //-----------------------------------------------------------------------
@@ -249,13 +250,6 @@ void cOpenALSoundChannel::SetFilterGain(float afGain) {
 
 void cOpenALSoundChannel::SetFilterGainHF(float afGainHF) {
 	HPL1_UNIMPLEMENTED(cOpenALSoundChannel::SetFilterGainHF);
-}
-
-void cOpenALSoundChannel::restart() {
-	mixer->stopHandle(_handle);
-	_audioStream->rewind();
-	mixer->playStream(Audio::Mixer::SoundType::kPlainSoundType, &_handle, _audioStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
-	SetVolume(mfVolume);
 }
 
 } // namespace hpl
