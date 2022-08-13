@@ -71,8 +71,13 @@ iMaterial *cMaterialType_BumpColorSpec::Create(const tString &asName, iLowLevelG
 											   cImageManager *apImageManager, cTextureManager *apTextureManager,
 											   cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
 											   eMaterialPicture aPicture, cRenderer3D *apRenderer3D) {
-	if (apLowLevelGraphics->GetCaps(eGraphicCaps_GL_FragmentProgram) &&
-		iMaterial::GetQuality() >= eMaterialQuality_High) {
+
+	if (!apLowLevelGraphics->GetCaps(eGraphicCaps_GL_GpuPrograms) || iMaterial::GetQuality() == eMaterialQuality_VeryLow) {
+		return hplNew(cMaterial_Flat, (asName, apLowLevelGraphics,
+								apImageManager, apTextureManager, apRenderer,
+								apProgramManager, aPicture, apRenderer3D));
+	}
+	if (iMaterial::GetQuality() >= eMaterialQuality_High) {
 		if (apLowLevelGraphics->GetCaps(eGraphicCaps_MaxTextureImageUnits) >= 7) {
 			return hplNew(cMaterial_BumpColorSpec, (asName, apLowLevelGraphics,
 													apImageManager, apTextureManager, apRenderer,
@@ -87,8 +92,7 @@ iMaterial *cMaterialType_BumpColorSpec::Create(const tString &asName, iLowLevelG
 		return hplNew(cMaterial_Fallback01_Bump, (asName, apLowLevelGraphics,
 												  apImageManager, apTextureManager, apRenderer,
 												  apProgramManager, aPicture, apRenderer3D));
-	} else if (apLowLevelGraphics->GetCaps(eGraphicCaps_GL_VertexProgram) &&
-			   iMaterial::GetQuality() >= eMaterialQuality_Low) {
+	} else if (iMaterial::GetQuality() >= eMaterialQuality_Low) {
 		return hplNew(cMaterial_Fallback02_Diffuse, (asName, apLowLevelGraphics,
 													 apImageManager, apTextureManager, apRenderer,
 													 apProgramManager, aPicture, apRenderer3D));
