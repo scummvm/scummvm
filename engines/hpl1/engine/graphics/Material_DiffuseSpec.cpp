@@ -68,8 +68,13 @@ iMaterial *cMaterialType_DiffuseSpec::Create(const tString &asName, iLowLevelGra
 											 cImageManager *apImageManager, cTextureManager *apTextureManager,
 											 cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
 											 eMaterialPicture aPicture, cRenderer3D *apRenderer3D) {
-	if (apLowLevelGraphics->GetCaps(eGraphicCaps_GL_FragmentProgram) &&
-		iMaterial::GetQuality() >= eMaterialQuality_High) {
+
+	if (!apLowLevelGraphics->GetCaps(eGraphicCaps_GL_GpuPrograms) || iMaterial::GetQuality() == eMaterialQuality_VeryLow) {
+		return hplNew(cMaterial_Flat, (asName, apLowLevelGraphics,
+									   apImageManager, apTextureManager, apRenderer,
+									   apProgramManager, aPicture, apRenderer3D));
+	}
+	if (iMaterial::GetQuality() >= eMaterialQuality_High) {
 		return hplNew(cMaterial_DiffuseSpec, (asName, apLowLevelGraphics,
 											  apImageManager, apTextureManager, apRenderer,
 											  apProgramManager, aPicture, apRenderer3D));
@@ -78,8 +83,7 @@ iMaterial *cMaterialType_DiffuseSpec::Create(const tString &asName, iLowLevelGra
 		return hplNew(cMaterial_Fallback01_Diffuse, (asName, apLowLevelGraphics,
 													 apImageManager, apTextureManager, apRenderer,
 													 apProgramManager, aPicture, apRenderer3D));
-	} else if (apLowLevelGraphics->GetCaps(eGraphicCaps_GL_VertexProgram) &&
-			   iMaterial::GetQuality() >= eMaterialQuality_Low) {
+	} else if (iMaterial::GetQuality() >= eMaterialQuality_Low) {
 		return hplNew(cMaterial_Fallback02_Diffuse, (asName, apLowLevelGraphics,
 													 apImageManager, apTextureManager, apRenderer,
 													 apProgramManager, aPicture, apRenderer3D));

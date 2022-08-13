@@ -111,9 +111,10 @@ void CheckTimeLimit() {
 // BEGIN CHECK SUPPORT
 
 bool CheckSupport(cInit *apInit) {
+	return true;
+#if 0
 	iLowLevelGraphics *pLowLevelGraphics = apInit->mpGame->GetGraphics()->GetLowLevel();
 	cInit *mpInit = apInit;
-	return true;
 	// Vertex shader support.
 	if (pLowLevelGraphics->GetCaps(eGraphicCaps_GL_VertexProgram) == 0) {
 		apInit->msErrorMessage = kTranslate("StartUp", "Error_NoVertexShader") + _W("\n") +
@@ -128,7 +129,7 @@ bool CheckSupport(cInit *apInit) {
 								 kTranslate("StartUp", "ErrorAdd02");
 		return false;
 	}
-#if 0
+
 	Log("Checking Supported Profiles\n");
 #define CG_CHECK(p)                \
 	if (cgGLIsProfileSupported(p)) \

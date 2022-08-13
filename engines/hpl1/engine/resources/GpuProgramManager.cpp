@@ -75,7 +75,7 @@ iResourceBase *cGpuProgramManager::Create(const tString &asName) {
 
 iGpuProgram *cGpuProgramManager::CreateProgram(const tString &vertex, const tString &fragment,
 											   eGpuProgramType aType) {
-	if (!mpLowLevelGraphics->GetCaps(eGraphicCaps_GL_FragmentProgram))
+	if (!mpLowLevelGraphics->GetCaps(eGraphicCaps_GL_GpuPrograms))
 		return nullptr;
 
 	tString sPath;

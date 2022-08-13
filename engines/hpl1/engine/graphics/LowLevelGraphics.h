@@ -174,8 +174,7 @@ enum eGraphicCaps {
 
 	eGraphicCaps_Multisampling,
 
-	eGraphicCaps_GL_VertexProgram,
-	eGraphicCaps_GL_FragmentProgram,
+	eGraphicCaps_GL_GpuPrograms,
 	eGraphicCaps_GL_NVRegisterCombiners,
 	eGraphicCaps_GL_NVRegisterCombiners_MaxStages,
 	eGraphicCaps_GL_ATIFragmentShader,

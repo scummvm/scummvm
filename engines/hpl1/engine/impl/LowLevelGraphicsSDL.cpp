@@ -249,12 +249,8 @@ int cLowLevelGraphicsSDL::GetCaps(eGraphicCaps type) const {
 	case eGraphicCaps_Multisampling:
 		return 1; // gl 1.3
 
-	// GL Vertex program
-	case eGraphicCaps_GL_VertexProgram:
-		return 0; // gl 2.0
-
 	// GL Fragment program
-	case eGraphicCaps_GL_FragmentProgram:
+	case eGraphicCaps_GL_GpuPrograms:
 		return 0; // gl 2.0
 
 	case eGraphicCaps_GL_ATIFragmentShader:
