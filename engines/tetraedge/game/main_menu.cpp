@@ -1,0 +1,309 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/config-manager.h"
+#include "common/system.h"
+#include "common/events.h"
+#include "common/savefile.h"
+
+#include "tetraedge/tetraedge.h"
+#include "tetraedge/game/confirm.h"
+#include "tetraedge/game/game.h"
+#include "tetraedge/game/main_menu.h"
+#include "tetraedge/game/application.h"
+
+#include "tetraedge/te/te_button_layout.h"
+#include "tetraedge/te/te_sprite_layout.h"
+#include "tetraedge/te/te_text_layout.h"
+#include "tetraedge/te/te_music.h"
+
+
+namespace Tetraedge {
+
+static const char *LAST_SAVE_CONF = "lastSaveSlot";
+
+MainMenu::MainMenu() : _entered(false), _confirmingTuto(false) {
+	_newGameConfirm._onButtonYesSignal.add(this, &MainMenu::onNewGameConfirmed);
+	_tutoConfirm._onButtonYesSignal.add(this, &MainMenu::onActivedTuto);
+	_tutoConfirm._onButtonNoSignal.add(this, &MainMenu::onDisabledTuto);
+	_quitConfirm._onButtonYesSignal.add(this, &MainMenu::onQuit);
+	onFacebookLoggedSignal.add(this, &MainMenu::onFacebookLogged);
+}
+
+void MainMenu::enter() {
+	Application *app = g_engine->getApplication();
+	TeSpriteLayout &appSpriteLayout = app->appSpriteLayout();
+	appSpriteLayout.setVisible(true);
+	if (appSpriteLayout._tiledSurfacePtr->_frameAnim._runTimer._stopped) {
+		appSpriteLayout.load("menus/menu.ogv");
+		appSpriteLayout._tiledSurfacePtr->_frameAnim._loopCount = -1;
+		appSpriteLayout._tiledSurfacePtr->play();
+	}
+	app->captureFade();
+
+	_entered = true;
+	load("menus/mainMenu/mainMenu.lua");
+
+	TeLayout *menuLayout = layout("menu");
+	appSpriteLayout.addChild(menuLayout);
+
+	app->mouseCursorLayout().setVisible(true);
+	app->mouseCursorLayout().load("pictures/cursor.png");
+
+	TeMusic &music = app->music();
+	if (music.isPlaying()) {
+		// TODO: something here??
+	}
+	music.load(value("musicPath").toString());
+	music.play();
+	music.volume(1.0f);
+
+	TeButtonLayout *newGameButton = buttonLayout("newGameButton");
+	if (newGameButton)
+		newGameButton->onMouseClickValidated().add(this, &MainMenu::onNewGameButtonValidated);
+
+	TeButtonLayout *continueGameButton = buttonLayout("continueGameButton");
+	if (continueGameButton) {
+		continueGameButton->onMouseClickValidated().add(this, &MainMenu::onContinueGameButtonValidated);
+		continueGameButton->setEnable(ConfMan.hasKey(LAST_SAVE_CONF));
+	}
+
+	TeButtonLayout *loadGameButton = buttonLayout("loadGameButton");
+	if (loadGameButton)
+		loadGameButton->onMouseClickValidated().add(this, &MainMenu::onLoadGameButtonValidated);
+
+	TeButtonLayout *optionsButton = buttonLayout("optionsButton");
+	if (optionsButton)
+		optionsButton->onMouseClickValidated().add(this, &MainMenu::onOptionsButtonValidated);
+
+	TeButtonLayout *galleryButton = buttonLayout("galleryButton");
+	if (galleryButton)
+		galleryButton->onMouseClickValidated().add(this, &MainMenu::onGalleryButtonValidated);
+
+	TeButtonLayout *quitButton = buttonLayout("quitButton");
+	if (quitButton)
+		quitButton->onMouseClickValidated().add(this, &MainMenu::onQuitButtonValidated);
+
+	// TODO: confirmation (menus/confirm/confirmNotSound.lua)
+	// if TeSoundManager is not valid.
+
+	_confirmingTuto = false;
+	TeLayout *panel = layout("panel");
+
+	if (panel) {
+		const Common::String panelTypoVal = value("panelTypo").toString();
+		for (auto *child : panel->childList()) {
+			TeTextLayout *childText = dynamic_cast<TeTextLayout *>(child);
+			if (!childText)
+				continue;
+			childText->setName(panelTypoVal + childText->name());
+		}
+	}
+	setCenterButtonsVisibility(true);
+	TeTextLayout *versionNum = textLayout("versionNumber");
+	if (versionNum) {
+		const Common::String versionSectionStr("<section style=\"left\" /><color r=\"255\" g=\"255\" b=\"255\"/><font file=\"Common/Fonts/arial.ttf\" size=\"12\" />");
+		versionNum->setText(versionSectionStr + app->getVersionString());
+	}
+}
+
+void MainMenu::leave() {
+	if (!_entered)
+		return;
+
+	Application	*app = g_engine->getApplication();
+	app->captureFade();
+	warning("TODO: MainMenu::leave Stop some game sounds here.");
+	//Game *game = g_engine->getGame();
+	//game->stopSound("sounds/Ambiances/b_automatebike.ogg");
+	//game->stopSound("sounds/Ambiances/b_engrenagebg.ogg");
+	TeLuaGUI::unload();
+	app->fade();
+	_entered= false;
+}
+
+bool MainMenu::deleteFile(const Common::String &name) {
+	error("TODO: Implement MainMenu::deleteFile");
+}
+
+bool MainMenu::onActivedTuto() {
+	Application *app = g_engine->getApplication();
+	app->setTutoActivated(true);
+	// TODO: Set game val false too?
+	app->captureFade();
+	leave();
+	app->startGame(true, 1);
+	app->fade();
+	return false;
+}
+
+bool MainMenu::onBFGRateIt2ButtonValidated() {
+	error("TODO: Implement MainMenu::onBFGRateIt2ButtonValidated");
+}
+
+bool MainMenu::onBFGRateItButtonValidated() {
+	error("TODO: Implement MainMenu::onBFGRateItButtonValidated");
+}
+
+bool MainMenu::onBFGRateItQuitButtonValidated() {
+	error("TODO: Implement MainMenu function");
+}
+
+bool MainMenu::onBFGUnlockGameButtonValidated() {
+	error("TODO: Implement MainMenu function");
+}
+
+void MainMenu::tryDisableButton(const Common::String &btnName) {
+	TeButtonLayout *button = buttonLayout(btnName);
+	if (button)
+		button->setEnable(false);
+}
+
+bool MainMenu::onContinueGameButtonValidated() {
+	Application *app = g_engine->getApplication();
+	const Common::String lastSave = ConfMan.get(LAST_SAVE_CONF);
+	if (!lastSave.empty()) {
+		int saveSlot = lastSave.asUint64();
+		g_engine->loadGameState(saveSlot);
+		return false;
+	}
+
+	tryDisableButton("newGameButton");
+	tryDisableButton("continueGameButton");
+	tryDisableButton("loadGameButton");
+	tryDisableButton("optionsButton");
+	tryDisableButton("galleryButton");
+	tryDisableButton("quitButton");
+
+	if (_confirmingTuto)
+	  return false;
+
+	app->captureFade();
+	leave();
+	app->startGame(false, 1);
+	app->fade();
+	return false;
+}
+
+bool MainMenu::onDisabledTuto() {
+	Application *app = g_engine->getApplication();
+	app->setTutoActivated(false);
+	g_engine->getGame()->_firstInventory = false;
+	app->captureFade();
+	leave();
+	app->startGame(true, 1);
+	app->fade();
+	return false;
+}
+
+bool MainMenu::onEnterGameRotateAnimFinished() {
+	error("TODO: Implement MainMenu function");
+}
+
+bool MainMenu::onGalleryButtonValidated() {
+	error("TODO: Implement MainMenu function");
+}
+
+bool MainMenu::onHowToButtonValidated() {
+	onContinueGameButtonValidated();
+	_confirmingTuto = false;
+	return false;
+}
+
+bool MainMenu::onLoadGameButtonValidated() {
+	g_engine->loadGameDialog();
+	return false;
+}
+
+bool MainMenu::onNewGameButtonValidated() {
+	// Note: Original confirms whether to start new game here
+	// with "menus/confirm/confirmNewGame.lua"
+	// because only one save is allowed.  We just clear last
+	// save slot number and go ahead and start.
+	ConfMan.set(LAST_SAVE_CONF, "");
+	onNewGameConfirmed();
+	return false;
+}
+
+bool MainMenu::onNewGameConfirmed() {
+	// Note: Original game deletes saves here.  Don't do that..
+	_confirmingTuto = true;
+	_tutoConfirm.enter("menus/confirm/confirmTuto.lua", "");
+	onContinueGameButtonValidated();
+	return false;
+}
+
+bool MainMenu::onOptionsButtonValidated() {
+	g_engine->openConfigDialog();
+	return true;
+}
+
+bool MainMenu::onQuit() {
+	g_engine->quitGame();
+	leave();
+	return false;
+}
+
+bool MainMenu::onQuitButtonValidated() {
+	//Confirm::enter("menus/confirm/confirmQuit.lua", "");
+	error("TODO: Implement MainMenu::onQuitButtonValidated");
+}
+
+bool MainMenu::onUnlockGameButtonValidated() {
+	error("TODO: Implement MainMenu::onUnlockGameButtonValidated");
+}
+
+void MainMenu::refresh() {
+	// TODO: get a real value
+	bool haveSave = false;
+	TeButtonLayout *continueGameButton = buttonLayout("continueGameButton");
+	if (continueGameButton) {
+		continueGameButton->setEnable(haveSave);
+	}
+}
+
+void MainMenu::setCenterButtonsVisibility(bool visible) {
+	bool haveSave = false;
+
+	TeButtonLayout *continuegameunlockButton = buttonLayout("continuegameunlockButton");
+	if (continuegameunlockButton) {
+		continuegameunlockButton->setVisible(haveSave & visible);
+	}
+
+	TeButtonLayout *newGameUnlockButton = buttonLayout("newgameunlockButton");
+	if (newGameUnlockButton) {
+		newGameUnlockButton->setVisible(visible & !haveSave);
+	}
+
+	TeButtonLayout *unlockgameButton = buttonLayout("unlockgameButton");
+	if (unlockgameButton) {
+		unlockgameButton->setVisible(false);
+	}
+
+	TeLayout *rateItButton = layout("rateItButton");
+	if (rateItButton) {
+		rateItButton->setVisible(false);
+	}
+}
+
+
+
+} // end namespace Tetraedge

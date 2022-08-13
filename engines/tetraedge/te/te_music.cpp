@@ -1,0 +1,194 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/file.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/decoders/vorbis.h"
+#include "tetraedge/tetraedge.h"
+#include "tetraedge/te/te_music.h"
+#include "tetraedge/te/te_core.h"
+
+namespace Tetraedge {
+
+TeMusic::TeMusic() : _repeat(true), _isPlaying(false), _currentData(0),
+_volume(1.0), _isPaused(true), _channelName("music"), _sndHandleValid(false) {
+}
+
+void TeMusic::pause() {
+	_mutex.lock();
+	_isPaused = true;
+	if (_isPlaying) {
+		Audio::Mixer *mixer = g_system->getMixer();
+		mixer->pauseHandle(_sndHandle, true);
+	}
+	_mutex.unlock();
+}
+
+bool TeMusic::play() {
+	if (isPlaying())
+		return true;
+	if (_actualPath.empty() || !Common::File::exists(_actualPath))
+		return false;
+
+	Common::File *streamfile = new Common::File();
+	if (!streamfile->open(_actualPath)) {
+		delete streamfile;
+		return false;
+	}
+
+	Audio::AudioStream *stream = Audio::makeVorbisStream(streamfile, DisposeAfterUse::YES);
+	byte vol = round(_volume * 255.0);
+	int channelId = _channelName.hash();
+	Audio::Mixer *mixer = g_system->getMixer();
+	mixer->playStream(Audio::Mixer::kMusicSoundType, &_sndHandle, stream, channelId, vol);
+	_sndHandleValid = true;
+	if (_repeat)
+		mixer->loopChannel(_sndHandle);
+	return true;
+}
+
+bool TeMusic::repeat() {
+	_mutex.lock();
+	bool retval = _repeat;
+	_mutex.unlock();
+	return retval;
+}
+
+void TeMusic::repeat(bool val) {
+	_mutex.lock();
+	if (_repeat && !val && _sndHandleValid) {
+		error("TODO: Implement clearing of loop - not supported by ScummVM mixer");
+	}
+	_repeat = val;
+	if (_sndHandleValid) {
+		Audio::Mixer *mixer = g_system->getMixer();
+		mixer->loopChannel(_sndHandle);
+	}
+	_mutex.unlock();
+}
+
+void TeMusic::resume() {
+	_mutex.lock();
+	_isPaused = true;
+	if (_isPlaying) {
+		Audio::Mixer *mixer = g_system->getMixer();
+		mixer->pauseHandle(_sndHandle, false);
+	}
+	_mutex.unlock();
+}
+
+void TeMusic::stop() {
+	_mutex.lock();
+	_isStopped = true;
+	_mutex.unlock();
+	/* original does this here.. probably not needed as mixer
+	 does it for us.
+	_thread->waitForTerminate();
+	_soundStreamed->close(); */
+	if (_sndHandleValid) {
+		Audio::Mixer *mixer = g_system->getMixer();
+		mixer->stopHandle(_sndHandle);
+		_sndHandleValid = false;
+		_sndHandle = Audio::SoundHandle();
+		_onStopSignal.call();
+	}
+	return;
+}
+
+byte TeMusic::currentData() {
+	_mutex.lock();
+	byte retval = _currentData;
+	_mutex.unlock();
+	return retval;
+}
+
+/*
+ This is probably not needed - it's the thread function
+ which is handled by the mixer in ScummVM */
+void TeMusic::entry() {
+	error("TODO: Implement me");
+}
+
+bool TeMusic::isPlaying() {
+	_mutex.lock();
+	bool retval = _isPlaying;
+	_mutex.unlock();
+	return retval;
+}
+
+bool TeMusic::load(const Common::String &path) {
+	if (path.empty())
+		return false;
+
+	if (path != _rawPath)
+		setFilePath(path);
+
+	return true;
+}
+
+bool TeMusic::onSoundManagerVolumeChanged() {
+	// Note: Not needed in ScummVM as it recalcalates the sound
+	// volume given new global volume - but that's handled by the mixer.
+	return false;
+}
+
+Common::String TeMusic::path() {
+	_mutex.lock();
+	Common::String retval = _rawPath;
+	_mutex.unlock();
+	return retval;
+}
+
+void TeMusic::setFilePath(const Common::String &name) {
+	stop();
+	setAccessName(name);
+	_rawPath = name;
+	TeCore *core = g_engine->getCore();
+	const Common::Path namePath(name);
+	// Note: original search logic here abstracted away in our version..
+	Common::Path modPath = core->findFile(namePath);
+	_actualPath = modPath;
+}
+
+void TeMusic::update() {
+	/* Probably not needed in ScummVM? Handled by the mixer. */
+	error("TODO: Implement me");
+}
+
+void TeMusic::volume(float vol) {
+	_mutex.lock();
+	_volume = vol;
+	if (_sndHandleValid) {
+		Audio::Mixer *mixer = g_system->getMixer();
+		mixer->setChannelVolume(_sndHandle, round(_volume * 255.0));
+	}
+	_mutex.unlock();
+}
+
+float TeMusic::volume() {
+	_mutex.lock();
+	float retval = _volume;
+	_mutex.unlock();
+	return retval;
+}
+
+} // end namespace Tetraedge
