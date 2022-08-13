@@ -1,0 +1,145 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "tetraedge/tetraedge.h"
+#include "tetraedge/te/te_core.h"
+
+#include "tetraedge/game/cellphone.h"
+#include "tetraedge/te/te_text_layout.h"
+
+namespace Tetraedge {
+
+Cellphone::Cellphone() : _nextNumber(0) {
+}
+
+bool Cellphone::addNumber(const Common::String &num) {
+	for (const Common::String &addedNum : _addedNumbers) {
+		if (addedNum == num)
+			return false;
+	}
+
+	TeTextLayout *layout = new TeTextLayout();
+	static const Common::String namePrefix("numRepertoire");
+	layout->setName(namePrefix + num);
+	layout->setSizeType(RELATIVE_TO_PARENT);
+	layout->setAnchor(TeVector3f32(0.5f, 0.0f, 0.0f));
+	layout->setSize(TeVector3f32(1.0f, 1.0f, 0.0f));
+	layout->setPosition(TeVector3f32(0.5f, 0.08f, 0.0f));
+	layout->setTextSizeType(1);
+	layout->setTextSizeProportionalToWidth(46);
+	Common::String val("Unknown");
+	Common::String *locNum = g_engine->getCore()->loc()->text(num);
+	if (locNum)
+		val = *locNum;
+
+	layout->setText(_gui.value("textAttributs").toString() + val);
+	layout->setVisible(true);
+	_textLayoutArray.push_back(layout);
+	_addedNumbers.push_back(num);
+
+	TeSpriteLayout *sprite = _gui.spriteLayoutChecked("numRepertoire");
+	sprite->addChild(layout);
+	return true;
+}
+
+void Cellphone::currentPage(int offset) {
+	error("TODO: implement Cellphone::currentPage");
+}
+
+void Cellphone::enter() {
+	error("TODO: implement Cellphone::enter");
+}
+
+void Cellphone::leave() {
+	error("TODO: implement Cellphone::leave");
+}
+
+void Cellphone::load() {
+	_nextNumber = 0;
+	TeButtonLayout *btnlayout;
+	_gui.load("menus/cellphone.lua");
+	btnlayout = _gui.buttonLayoutChecked("haut");
+	btnlayout->onMouseClickValidated().add(this, &Cellphone::onPreviousNumber);
+	btnlayout = _gui.buttonLayoutChecked("bas");
+	btnlayout->onMouseClickValidated().add(this, &Cellphone::onNextNumber);
+	btnlayout = _gui.buttonLayoutChecked("appeler");
+	btnlayout->onMouseClickValidated().add(this, &Cellphone::onCallNumberValidated);
+	btnlayout = _gui.buttonLayoutChecked("fermer");
+	btnlayout->onMouseClickValidated().add(this, &Cellphone::onCloseButtonValidated);
+	btnlayout = _gui.buttonLayoutChecked("background");
+	btnlayout->setVisible(false);
+}
+
+void Cellphone::loadFromBackup(const Common::XMLParser::ParserNode *node) {
+	/*
+	 basic algorithm:
+	child = node->lastChild;
+	while (child != nullptr) {
+		if (child->type == ELEMENT) {
+			if (if child->userData == "Number") {
+				addNumber(this, child->getAttribute("num"));
+			}
+		}
+	child = child->prev;
+	}*/
+}
+
+bool Cellphone::onCallNumberValidated() {
+	_onCallNumberSignal.call(_addedNumbers[_nextNumber]);
+	return false;
+}
+
+bool Cellphone::onCloseButtonValidated() {
+	_gui.buttonLayoutChecked("background")->setVisible(false);
+	return false;
+}
+
+bool Cellphone::onNextNumber() {
+	error("TODO: work out how the max num works here.");
+	/*
+	int numoffset = _nextNumber + 1;
+	if (numoffset < _maxnum) {
+		currentPage(numoffset);
+	}*/
+	return false;
+}
+
+bool Cellphone::onPreviousNumber() {
+	int numoffset = _nextNumber - 1;
+	if (numoffset >= 0) {
+	  currentPage(numoffset);
+	}
+	return false;
+}
+
+void Cellphone::saveToBackup(Common::XMLParser::ParserNode *xmlnode) {
+	error("TODO: implement Cellphone::saveToBackup");
+}
+
+void Cellphone::setVisible(bool visible) {
+	_gui.buttonLayoutChecked("background")->setVisible(visible);
+}
+
+void Cellphone::unload() {
+	leave();
+	_gui.unload();
+}
+} // end namespace Tetraedge

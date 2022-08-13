@@ -1,0 +1,138 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "video/theora_decoder.h"
+
+#include "tetraedge/te/te_theora.h"
+
+namespace Tetraedge {
+
+TeTheora::TeTheora() {
+	_decoder = new Video::TheoraDecoder();
+}
+
+TeTheora::~TeTheora() {
+	delete _decoder;
+}
+
+/*static*/
+bool TeTheora::matchExtension(const Common::String &extn) {
+	return extn == "ogv";
+}
+
+bool TeTheora::load(const Common::Path &path) {
+	_path = path;
+	return _decoder->loadFile(path);
+}
+
+bool TeTheora::load(Common::SeekableReadStream &stream) {
+	return _decoder->loadStream(&stream);
+}
+
+uint TeTheora::width() {
+	return _decoder->getWidth();
+}
+
+uint TeTheora::height() {
+	return _decoder->getHeight();
+}
+
+int TeTheora::nbFrames() {
+	return _decoder->getFrameCount();
+}
+
+TeImage::Format TeTheora::imageFormat() {
+	//const Graphics::PixelFormat format = _decoder->getPixelFormat();
+	// TODO: use format?
+	return TeImage::RGBA8;
+}
+
+void TeTheora::setLeftBorderSize(uint val) {
+	error("TODO: Implement TeTheora::setLeftBorderSize");
+}
+
+uint TeTheora::leftBorderSize() {
+	error("TODO: Implement TeTheora::leftBorderSize");
+}
+
+void TeTheora::setRightBorderSize(uint val) {
+	error("TODO: Implement TeTheora::setRightBorderSize");
+}
+
+uint TeTheora::rightBorderSize() {
+	error("TODO: Implement TeTheora::rightBorderSize");
+}
+
+void TeTheora::setBottomBorderSize(uint val) {
+	error("TODO: Implement TeTheora::setBottomBorderSize");
+}
+
+uint TeTheora::bottomBorderSize() {
+	error("TODO: Implement TeTheora::bottomBorderSize");
+}
+
+void TeTheora::setTopBorderSize(uint val) {
+	error("TODO: Implement TeTheora::setTopBorderSize");
+}
+
+uint TeTheora::topBorderSize() {
+	error("TODO: Implement TeTheora::topBorderSize");
+}
+
+float TeTheora::frameRate() {
+	return _decoder->getRate().toDouble();
+}
+
+bool TeTheora::update(unsigned long i, TeImage &imgout) {
+	// TODO: Should this seek to frame i? Currently just continues.
+	const Graphics::Surface *frame = _decoder->decodeNextFrame();
+	if (frame) {
+		//debug("TeTheora: %s %ld", _path.toString().c_str(), i);
+		imgout.copyFrom(*frame);
+		return true;
+	} else if (isAtEnd() && !_path.empty()) {
+		load(_path);
+		frame = _decoder->decodeNextFrame();
+		if (frame) {
+			imgout.copyFrom(*frame);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool TeTheora::isAtEnd() {
+	return _decoder->endOfVideo();
+}
+
+void TeTheora::setColorKeyActivated(bool val) {
+	error("TODO: Implement TeTheora::setColorKeyActivated");
+}
+
+void TeTheora::setColorKey(const TeColor &col) {
+	error("TODO: Implement TeTheora::setColorKey");
+}
+
+void TeTheora::setColorKeyTolerence(float val) {
+	error("TODO: Implement TeTheora::setColorKeyTolerence");
+}
+
+} // end namespace Tetraedge
