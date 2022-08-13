@@ -164,7 +164,7 @@ jobs:
         if: matrix.platform == 'ubuntu-20.04'
         run: |
           sudo apt-add-repository 'deb http://archive.ubuntu.com/ubuntu/ xenial main'
-          sudo apt-add-repository 'deb http://dk.archive.ubuntu.com/ubuntu/ xenial universe'
+          sudo apt-add-repository 'deb http://archive.ubuntu.com/ubuntu/ xenial universe'
       - name: Install packages
         run: |
           sudo apt-get update
