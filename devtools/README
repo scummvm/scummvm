@@ -180,9 +180,10 @@ make_class.py
 	Examples:
 
 	$ make_class.py scumm . LeChuck
-	Make new class `LeChuck` in the scumm engine root (engines/scumm/).  Creates
-	boilerplate le_chuck.cpp and le_chuck.h containing class Scumm::LeChuck and
-	adds corresponding .o file to module.mk
+	Make new class `LeChuck` in the scumm engine root (engines/scumm/).
+	Creates boilerplate class Scumm::LeChuck, in le_chuck.cpp and le_chuck.h
+	(files are lower-cased, upper-case letters from class name get '_' added).
+	Adds corresponding .o file to module.mk list.
 
 	$ make_class.py -n BladeRunner bladerunner ui Scores
 	Make a new class BladeRunner::Scores in the engines/bladerunner/ui/

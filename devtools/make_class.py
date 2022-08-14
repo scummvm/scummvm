@@ -197,7 +197,7 @@ def main():
 	parser = argparse.ArgumentParser(description=HELPTEXT)
 	parser.add_argument('engine', help='name of the engine')
 	parser.add_argument('subpath', help='subpath within the engine (use \'.\' to add to the engine root)')
-	parser.add_argument('classname', help='CamelCase name of the class to add')
+	parser.add_argument('classname', help='CamelCase name of the class to add. Filenames will be lower_case (capitals become _)')
 	parser.add_argument('--namespace', '-n', help='Namespace tp use (default is name of engine with a capital letter start)')
 
 	args = parser.parse_args()
