@@ -881,10 +881,22 @@ void ScummEngine_v7::toggleVoiceMode() {
 }
 
 void ScummEngine_v7::handleLoadDuringSmush() {
+	// Notify the SMUSH player that we want to load a game...
 	_saveLoadFlag = 2;
 	_saveLoadSlot = _mainMenuSavegameLabel + _curDisplayedSaveSlotPage * 9;
-	_splayer->release();
-	_splayer->resetAudioTracks();
+
+	// Force screen to black to avoid glitches...
+	VirtScreen *vs = &_virtscr[kMainVirtScreen];
+	memset(vs->getPixels(0, 0), 0, vs->pitch * vs->h);
+	vs->setDirtyRange(0, vs->h);
+	ScummEngine::drawDirtyScreenParts();
+
+	// The original at this point does this, but we automatically
+	// handle the corresponding operations automatically in our
+	// SMUSH player...
+	//
+	//_splayer->release();
+	//_splayer->resetAudioTracks();
 }
 
 int ScummEngine_v7::getBannerColor(int bannerId) {
