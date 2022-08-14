@@ -189,6 +189,16 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
+		"wetlands", // Wetlands 1.1 (US)
+		nullptr,
+		AD_ENTRY2s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 647411,
+				"missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
+		Common::EN_USA,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
 		"wetlands", // Wetlands (FR)
 		nullptr,
 		AD_ENTRY2s("wetlands.exe", "edc5b0c0caf3d5b01d344cb555d9a085", 629575,
