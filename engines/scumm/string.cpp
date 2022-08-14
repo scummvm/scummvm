@@ -573,6 +573,13 @@ void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb) const {
 	while (ltext[ll] == 0xFF) {
 		ll += 4;
 	}
+
+	if (_game.id == GID_MONKEY2 && ltext[0] == 0x07) {
+		for (int i = 1; i < ll; i++)
+			ltext[i - 1] = ltext[i];
+		ltext[--ll] = 0x07;
+	}
+
 	int32 ipos = 0;
 	int32 start = 0;
 	byte *text = ltext + ll;
@@ -652,9 +659,9 @@ void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb) const {
 		if (_game.id == GID_INDY4 && ltext[0] == 0x7F) {
 			ltext[start + ipos + ll] = 0x80;
 			ltext[start + ipos + ll + 1] = 0;
-		} else if (_game.id == GID_MONKEY2 && ltext[0] == 0x07) {
-			ltext[0] = ' ';
-			ltext[start + ipos + ll] = 0x07;
+		} else if (_game.id == GID_MONKEY2) {
+			// add non-printable character to end to avoid space trimming
+			ltext[start + ipos + ll] = '@';
 			ltext[start + ipos + ll + 1] = 0;
 		}
 	}
