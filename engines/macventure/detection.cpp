@@ -41,7 +41,7 @@ static const ADGameDescription gameDescriptions[] = {
 
 	// 1993 Mac rereleases (identical to the Zojoi rereleases), no protection
 	MACGAME("shadowgate", "1993 rerelease", "Shadowgate", "0f4eb65cf369c6c75e4b991b986c34a2", 68718),
-	MACGAME("deja_vu", "1993 rerelease", "xn--Dj Vu-sqa5d", "0f4eb65cf369c6c75e4b991b986c34a2", 6877), // original filename is "Déjà Vu"
+	MACGAME("deja_vu", "1993 rerelease", "xn--Dj Vu-sqa5d", "0f4eb65cf369c6c75e4b991b986c34a2", 68778), // original filename is "Déjà Vu"
 	MACGAME("deja_vu2", "1993 rerelease", "Lost in Las Vegas", "0f4eb65cf369c6c75e4b991b986c34a2", 66264),
 	MACGAME("uninvited", "1993 rerelease", "Uninvited", "0f4eb65cf369c6c75e4b991b986c34a2", 68974),
 
@@ -86,7 +86,7 @@ class MacVentureMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	MacVentureMetaEngineDetection() : AdvancedMetaEngineDetection(MacVenture::gameDescriptions, sizeof(ADGameDescription), macventureGames) {
 		_guiOptions = GUIO1(GUIO_NOMIDI);
-		_md5Bytes = 5000000; // TODO: Upper limit, adjust it once all games are added
+		_md5Bytes = 5000;
 	}
 
 	const char *getName() const override {
