@@ -382,14 +382,27 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 			textXPos = 160;
 			textYPos = 82;
 		} else {
-			textHeight = getGUIStringHeight(buttonString);
+			textHeight = getGUIStringHeight(ctrl->label);
 
 			if (centerFlag)
 				textXPos = relCentX + (x - ctrl->relativeCenterX) / 2;
 			else
 				textXPos = relCentX + 2;
 
-			textYPos = relCentY + ((y - relCentY) - textHeight) / 2 + 1;
+			if (_game.version == 8) {
+				textYPos = relCentY + ((y - relCentY) - textHeight) / 2 + 1;
+			} else {
+				int yOffset = 8;
+
+				if ((_game.id == GID_DIG && _useCJKMode) &&
+					((ctrl->label[0] >= 128 && ctrl->label[0] <= 159) ||
+					 (ctrl->label[0] >= 224 && ctrl->label[0] <= 253))) {
+					yOffset = 16;
+				}
+
+				textYPos = relCentY + (y - yOffset - relCentY + 2) / 2;
+			}
+
 		}
 
 		// Finally, choose the color and draw the text message
@@ -402,6 +415,10 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 			strcpy(buttonString, ctrl->label);
 		else
 			strcpy(buttonString, "null button");
+
+		if (_mainMenuSavegameLabel == id && _menuPage == GUI_PAGE_SAVE) {
+			strcat(buttonString, "_");
+		}
 
 		int tmpRight = _string[5].right;
 		_string[5].right = _screenWidth - 1;
@@ -862,6 +879,13 @@ void ScummEngine_v7::toggleVoiceMode() {
 	}
 }
 
+void ScummEngine_v7::handleLoadDuringSmush() {
+	_saveLoadFlag = 2;
+	_saveLoadSlot = _mainMenuSavegameLabel + _curDisplayedSaveSlotPage * 9;
+	_splayer->release();
+	_splayer->resetAudioTracks();
+}
+
 int ScummEngine_v7::getBannerColor(int bannerId) {
 	if (_game.version == 8) {
 		byte *palette = isSmushActive() ? _splayer->getVideoPalette() : _currentPalette;
@@ -960,26 +984,146 @@ void ScummEngine::queryRestart() {
 // This function is actually not a thing in the original, it's here to
 // make things a little bit more modern and avoid making the menu feel
 // artificially slow.
-bool ScummEngine::shouldHighlightAndWait(int clickedControl) {
+bool ScummEngine::shouldHighlightLabelAndWait(int clickedControl) {
 	return ((clickedControl >= GUI_CTRL_SAVE_BUTTON && clickedControl <= GUI_CTRL_PATH_BUTTON) ||
 			(clickedControl == GUI_CTRL_DISPLAY_TEXT_CHECKBOX ||
 			 clickedControl == GUI_CTRL_SPOOLED_MUSIC_CHECKBOX));
 }
 
+void ScummEngine::fillSavegameLabels() {
+	bool availSaves[100];
+	listSavegames(availSaves, ARRAYSIZE(availSaves));
+	Common::String name;
+	for (int i = 0; i < 9; i++) {
+		int curSaveSlot = i + 1 + _curDisplayedSaveSlotPage * 9;
+		sprintf_s(_savegameNames[i].label, sizeof(_savegameNames[i].label), "%2d. ", curSaveSlot);
+
+		if (availSaves[curSaveSlot]) {
+			if (getSavegameName(curSaveSlot, name)) {
+				sprintf_s(_savegameNames[i].label, sizeof(_savegameNames[i].label), "%2d. %s", curSaveSlot, name.c_str());
+			} else {
+				// The original printed "WARNING... old savegame", but we do support old savegames :-)
+				sprintf_s(_savegameNames[i].label, sizeof(_savegameNames[i].label), "%2d. WARNING: wrong save version", curSaveSlot);
+			}
+		}
+	}
+}
+
+bool ScummEngine::canWriteGame(int slotId) {
+	bool saveList[100];
+	char msgLabelPtr[512];
+	char localizedYesKey;
+
+	listSavegames(saveList, ARRAYSIZE(saveList));
+	if (saveList[slotId]) {
+		convertMessageToString((const byte *)getGUIString(gsReplacePrompt), (byte *)msgLabelPtr, sizeof(msgLabelPtr));
+
+		// Fallback to a hardcoded string
+		if (msgLabelPtr[0] == '\0') {
+			strcpy(msgLabelPtr, "Do you want to replace this saved game?  (Y/N)Y");
+		}
+
+		localizedYesKey = msgLabelPtr[strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1];
+		msgLabelPtr[strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
+
+		// "Do you want to replace this saved game?  (Y/N)"
+		Common::KeyState ks = showBannerAndPause(0, -1, msgLabelPtr);
+
+		return (tolower(localizedYesKey) == ks.ascii || toupper(localizedYesKey) == ks.ascii);
+	}
+
+	return true;
+}
+
+bool ScummEngine::userWriteLabelRoutine(Common::KeyState &ks, bool &leftMsClicked, bool &rightMsClicked) {
+	while (true) {
+		waitForTimer(1);
+		waitForBannerInput(-1, ks, leftMsClicked, rightMsClicked);
+		rightMsClicked = false;
+		if (ks.keycode == Common::KEYCODE_RETURN) {
+			clearClickedStatus();
+			executeMainMenuOperation(GUI_CTRL_OK_BUTTON, -1);
+			return true;
+		} else if (leftMsClicked) {
+			clearClickedStatus();
+			break;
+		}
+
+		// Handle special key presses
+		int curLen = strlen(_savegameNames[_mainMenuSavegameLabel - 1].label);
+		if (ks.keycode == Common::KEYCODE_BACKSPACE) {
+			 // Prevent the user from deleting the header (" 1. ")
+			if ((curLen) > 4) {
+				_savegameNames[_mainMenuSavegameLabel - 1].label[curLen - 1] = '\0';
+				drawInternalGUIControl(_mainMenuSavegameLabel, 1);
+				ScummEngine::drawDirtyScreenParts();
+				_system->updateScreen();
+			}
+		} else if (ks.ascii >= 32 && ks.ascii <= 122) { // Handle characters
+			if (curLen < 39) {
+				_savegameNames[_mainMenuSavegameLabel - 1].label[curLen] = ks.ascii;
+				_savegameNames[_mainMenuSavegameLabel - 1].label[curLen + 1] = '\0';
+				drawInternalGUIControl(_mainMenuSavegameLabel, 1);
+				ScummEngine::drawDirtyScreenParts();
+				_system->updateScreen();
+			}
+		}
+
+		clearClickedStatus();
+	}
+
+	return false;
+}
+
+void ScummEngine::saveCursorPreMenu() {
+	// Force the cursor to be ON...
+	_oldCursorState = _cursor.state;
+	_cursor.state = 1;
+	CursorMan.showMouse(_cursor.state > 0);
+
+	if (_game.version > 5) {
+		// Backup the current cursor graphics and parameters
+		// and set up the main menu cursor...
+		_curGrabbedCursor = (byte *)malloc(sizeof(_grabbedCursor));
+		if (_curGrabbedCursor) {
+			memcpy(_curGrabbedCursor, _grabbedCursor, sizeof(_grabbedCursor));
+			_curCursorState = isSmushActive() ? 0 : _cursor.state;
+			_curCursorWidth = _cursor.width;
+			_curCursorHeight = _cursor.height;
+			_curCursorHotspotX = _cursor.hotspotX;
+			_curCursorHotspotY = _cursor.hotspotY;
+			setDefaultCursor();
+		}
+	}
+
+	CursorMan.showMouse(true);
+}
+
+void ScummEngine::restoreCursorPostMenu() {
+	if (_game.version > 5 && _curGrabbedCursor) {
+		// Restore the previous cursor...
+		_cursor.state = _curCursorState;
+		CursorMan.showMouse(_cursor.state > 0);
+		setCursorHotspot(_curCursorHotspotX, _curCursorHotspotY);
+		setCursorFromBuffer(_curGrabbedCursor, _curCursorWidth, _curCursorHeight, _curCursorWidth);
+		free(_curGrabbedCursor);
+		_curGrabbedCursor = nullptr;
+	}
+
+	// Restore the old cursor state...
+	_cursor.state = _oldCursorState;
+}
+
 void ScummEngine::showMainMenu() {
 	char saveScreenTitle[512];
-	byte *curGrabbedCursor = nullptr;
-	int curCursorWidth = -1;
-	int curCursorHeight = -1;
-	int curCursorHotspotX = -1;
-	int curCursorHotspotY = -1;
-	int curCursorState = -1;
 	int args[NUM_SCRIPT_LOCAL];
 	bool leftMsClicked = false, rightMsClicked = false;
 	int clickedControl = -1;
 	int curMouseX, curMouseY;
 
 	Common::KeyState ks;
+
+	memset(args, 0, sizeof(args));
 
 	// Pause the engine
 	PauseToken pt = pauseEngine();
@@ -998,27 +1142,8 @@ void ScummEngine::showMainMenu() {
 	drawMainMenuTitle(saveScreenTitle);
 	updateMainMenuControls();
 
-	// Force the cursor to be ON...
-	int8 oldCursorState = _cursor.state;
-	_cursor.state = 1;
-	CursorMan.showMouse(_cursor.state > 0);
-
-	if (_game.version > 5) {
-		// Backup the current cursor graphics and parameters
-		// and set up the main menu cursor...
-		curGrabbedCursor = (byte *)malloc(sizeof(_grabbedCursor));
-		if (curGrabbedCursor) {
-			memcpy(curGrabbedCursor, _grabbedCursor, sizeof(_grabbedCursor));
-			curCursorState = isSmushActive() ? 0 : _cursor.state;
-			curCursorWidth = _cursor.width;
-			curCursorHeight = _cursor.height;
-			curCursorHotspotX = _cursor.hotspotX;
-			curCursorHotspotY = _cursor.hotspotY;
-			setDefaultCursor();
-		}
-	}
-
-	CursorMan.showMouse(true);
+	// Save the current cursor state...
+	saveCursorPreMenu();
 
 	// Notify that the menu is now active
 	_mainMenuIsActive = true;
@@ -1031,8 +1156,14 @@ void ScummEngine::showMainMenu() {
 		// Update the screen and the cursor while we're in the loop
 		waitForTimer(1);
 
-		// Wait for any left mouse button presses...
-		waitForBannerInput(-1, ks, leftMsClicked, rightMsClicked);
+		if (_menuPage == GUI_PAGE_SAVE && _mainMenuSavegameLabel > 0) {
+			if (userWriteLabelRoutine(ks, leftMsClicked, rightMsClicked))
+				break;
+		} else {
+			// Wait for any left mouse button presses...
+			waitForBannerInput(-1, ks, leftMsClicked, rightMsClicked);
+		}
+
 		rightMsClicked = false; // We don't care for this
 
 		if (leftMsClicked) {
@@ -1052,7 +1183,7 @@ void ScummEngine::showMainMenu() {
 						// Wait a little bit (the original waited 120 quarter frames, which feels like molasses).
 						// We only perform this artificial wait for buttons; the original also did this for
 						// sliders but it feels artificially slow, and we don't want that here :-)
-						if (shouldHighlightAndWait(clickedControl))
+						if (shouldHighlightLabelAndWait(clickedControl))
 							waitForTimer(60);
 
 						// Dehighlight it
@@ -1060,6 +1191,20 @@ void ScummEngine::showMainMenu() {
 
 						// Execute the operation pertaining the clicked control
 						if (executeMainMenuOperation(clickedControl, curMouseX))
+							break;
+					}
+				} else {
+					int tmp = _mainMenuSavegameLabel;
+					_mainMenuSavegameLabel = clickedControl;
+
+					drawInternalGUIControl(tmp, 0);
+					drawInternalGUIControl(_mainMenuSavegameLabel, 1);
+
+					ScummEngine::drawDirtyScreenParts();
+					_system->updateScreen();
+
+					if (_menuPage == GUI_PAGE_LOAD) {
+						if (executeMainMenuOperation(GUI_CTRL_OK_BUTTON, curMouseX))
 							break;
 					}
 				}
@@ -1076,35 +1221,35 @@ void ScummEngine::showMainMenu() {
 
 	_completeScreenRedraw = true;
 
-	// Run the exit savescreen script, if available
-	if (VAR_SAVELOAD_SCRIPT2 != 0xFF)
-		runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, args);
+	// Restore the old cursor state only if we're not loading a game...
+	if (_saveScriptParam != GAME_PROPER_LOAD && _saveLoadFlag != 2) {
+		restoreCursorPostMenu();
+	} else if (_saveLoadFlag == 2) {
+		_cursor.state = 0;
+	}
 
-	if (_game.version > 5 && curGrabbedCursor) {
-		// Restore the previous cursor...
-		_cursor.state = curCursorState;
-		CursorMan.showMouse(_cursor.state > 0);
-		setCursorHotspot(curCursorHotspotX, curCursorHotspotY);
-		setCursorFromBuffer(curGrabbedCursor, curCursorWidth, curCursorHeight, curCursorWidth);
-		free(curGrabbedCursor);
-		curGrabbedCursor = nullptr;
+	// Run the exit savescreen script, if available
+	if (_saveScriptParam != 0) {
+		args[0] = _saveScriptParam;
+		if (VAR_SAVELOAD_SCRIPT2 != 0xFF) {
+			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, args);
+			_saveScriptParam = 0;
+		}
 	}
 
 	// Resume the engine
 	pt.clear();
 	clearClickedStatus();
-
-	// Restore the old cursor state...
-	_cursor.state = oldCursorState;
-	CursorMan.showMouse(_cursor.state > 0);
 }
 
 bool ScummEngine::executeMainMenuOperation(int op, int mouseX) {
 	char saveScreenTitle[512];
+	char formattedString[512];
+
 	switch (op) {
 	case GUI_CTRL_SAVE_BUTTON:
 		_mainMenuSavegameLabel = 0;
-		//constructSavegameString();
+		fillSavegameLabels();
 		_menuPage = GUI_PAGE_SAVE;
 		setUpMainMenuControls();
 		drawMainMenuControls();
@@ -1112,7 +1257,7 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX) {
 		break;
 	case GUI_CTRL_LOAD_BUTTON:
 		_mainMenuSavegameLabel = 0;
-		//constructSavegameString();
+		fillSavegameLabels();
 		_menuPage = GUI_PAGE_LOAD;
 		setUpMainMenuControls();
 		drawMainMenuControls();
@@ -1125,6 +1270,100 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX) {
 		_quitByButton = shouldQuit();
 		return true;
 	case GUI_CTRL_OK_BUTTON:
+		if (_menuPage == GUI_PAGE_SAVE) {
+			if (_mainMenuSavegameLabel > 0) {
+				convertMessageToString((const byte *)getGUIString(gsSaving), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
+				sprintf_s(formattedString, sizeof(formattedString), saveScreenTitle, &_savegameNames[_mainMenuSavegameLabel - 1].label[4]);
+				drawMainMenuTitle(formattedString);
+				ScummEngine::drawDirtyScreenParts();
+				_system->updateScreen();
+
+				waitForTimer(60);
+
+				Common::String dummyString;
+				_saveLoadDescription = &_savegameNames[_mainMenuSavegameLabel - 1].label[4];
+
+				if (canWriteGame(_mainMenuSavegameLabel + _curDisplayedSaveSlotPage * 9)) {
+					restoreCursorPostMenu();
+					if (saveState(_mainMenuSavegameLabel + _curDisplayedSaveSlotPage * 9, false, dummyString)) {
+						saveCursorPreMenu();
+						_saveScriptParam = GAME_PROPER_SAVE;
+						drawMainMenuControls();
+						return true;
+					}
+				} else {
+					saveCursorPreMenu();
+					convertMessageToString((const byte *)getGUIString(gsGameNotSaved), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
+					if (_game.id == GID_DIG) {
+						showBannerAndPause(1, -1, saveScreenTitle);
+						drawMainMenuControls();
+					} else {
+						drawMainMenuTitle(saveScreenTitle);
+					}
+
+					ScummEngine::drawDirtyScreenParts();
+				}
+			} else {
+				convertMessageToString((const byte *)getGUIString(gsMustName), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
+				drawMainMenuTitle(saveScreenTitle);
+				ScummEngine::drawDirtyScreenParts();
+			}
+
+			// The original, after doing the above, immediately redraws the menus,
+			// effectively overwriting the title we've just changed.
+			// In a DOS machine one could effectively see the changed title for a
+			// fraction of time, before reverting to the normale one.
+			// We, on the other hand, wouldn't be able to see changed title at all,
+			// so let's comment the following instruction :-)
+			//
+			//drawMainMenuControls();
+
+		} else if (_menuPage == GUI_PAGE_LOAD) {
+			if (_mainMenuSavegameLabel > 0) {
+				convertMessageToString((const byte *)getGUIString(gsLoading), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
+				sprintf_s(formattedString, sizeof(formattedString), saveScreenTitle, &_savegameNames[_mainMenuSavegameLabel - 1].label[4]);
+				drawMainMenuTitle(formattedString);
+				ScummEngine::drawDirtyScreenParts();
+				_system->updateScreen();
+
+				waitForTimer(60);
+
+				if (strlen(_savegameNames[_mainMenuSavegameLabel - 1].label) == 4) {
+					drawMainMenuControls();
+					ScummEngine::drawDirtyScreenParts();
+					break;
+				}
+
+				if (isSmushActive()) {
+					handleLoadDuringSmush();
+					return true;
+				}
+
+				if (loadState(_mainMenuSavegameLabel + _curDisplayedSaveSlotPage * 9, false)) {
+					if (!_spooledMusicIsToBeEnabled)
+						_imuseDigital->diMUSEDisableSpooledMusic();
+
+					setSkipVideo(0);
+					_saveScriptParam = GAME_PROPER_LOAD;
+					return true;
+				} else {
+					convertMessageToString((const byte *)getGUIString(gsGameNotLoaded), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
+					if (_game.id == GID_DIG) {
+						showBannerAndPause(1, -1, saveScreenTitle);
+						drawMainMenuControls();
+					} else {
+						drawMainMenuTitle(saveScreenTitle);
+					}
+
+					ScummEngine::drawDirtyScreenParts();
+				}
+
+				// See the comment for the Save control
+				//
+				//drawMainMenuControls();
+			}
+		}
+
 		break;
 	case GUI_CTRL_CANCEL_BUTTON:
 		_menuPage = GUI_PAGE_MAIN;
@@ -1137,6 +1376,20 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX) {
 		break;
 	case GUI_CTRL_ARROW_UP_BUTTON:
 	case GUI_CTRL_ARROW_DOWN_BUTTON:
+		if (_menuPage != GUI_PAGE_MAIN) {
+			if (op == GUI_CTRL_ARROW_UP_BUTTON) {
+				_curDisplayedSaveSlotPage--;
+			} else {
+				_curDisplayedSaveSlotPage++;
+			}
+
+			_curDisplayedSaveSlotPage = CLIP<int>(_curDisplayedSaveSlotPage, 0, 10);
+			_mainMenuSavegameLabel = 0;
+			fillSavegameLabels();
+			drawMainMenuControls();
+			ScummEngine::drawDirtyScreenParts();
+		}
+		break;
 	case GUI_CTRL_PATH_BUTTON:
 		// This apparently should't do anything
 		break;
@@ -1191,7 +1444,6 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX) {
 }
 
 void ScummEngine::setUpMainMenuControls() {
-	char *saveNames;
 	int yComponent, yConstant, yConstant2;
 
 	yComponent = (_game.id == GID_DIG && _useCJKMode) ? 130 : 121;
@@ -1534,7 +1786,6 @@ void ScummEngine::setUpMainMenuControls() {
 			(char *)getGUIString(gsCancel), 1, 1);
 
 		// Savegame names
-		saveNames = _savegameNames;
 		for (int i = GUI_CTRL_FIRST_SG, j = 11; i <= GUI_CTRL_LAST_SG; i++, j += 11) {
 			setUpInternalGUIControl(i,
 				getBannerColor(9),
@@ -1549,9 +1800,7 @@ void ScummEngine::setUpMainMenuControls() {
 				yConstant + j + ((_game.id == GID_DIG && _useCJKMode) ? 12 : 4),
 				-179,
 				-9,
-				saveNames, 0, 0);
-
-			saveNames += 40;
+				_savegameNames[i - 1].label, 0, 0);
 		}
 	}
 }

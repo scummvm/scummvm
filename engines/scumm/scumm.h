@@ -449,6 +449,10 @@ struct InternalGUIControl {
 	bool doubleLinesFlag;
 };
 
+struct GUISaveGameLabel {
+	char label[40];
+};
+
 /**
  * Base class for all SCUMM engines.
  */
@@ -617,9 +621,10 @@ protected:
 	char _arrowUp[2] = {'\x18', '\0'};
 	char _arrowDown[2] = {'\x19', '\0'};
 
-	char _savegameNames[40 * 10];
+	GUISaveGameLabel _savegameNames[9];
 	int _menuPage = 0;
 	int _mainMenuSavegameLabel = 1;
+	int _curDisplayedSaveSlotPage = 0;
 	bool _mainMenuIsActive = false;
 	bool _quitByButton = false;
 	char _mainMenuMusicSlider[17];
@@ -627,6 +632,16 @@ protected:
 	char _mainMenuSfxSlider[17];
 	char _mainMenuTextSpeedSlider[17];
 	int _spooledMusicIsToBeEnabled = 1;
+	int _saveScriptParam = 0;
+
+	// Saved cursor pre and post GUI
+	byte *_curGrabbedCursor = nullptr;
+	int8 _oldCursorState = 0;
+	int _curCursorState = 0;
+	int _curCursorWidth = 0;
+	int _curCursorHeight = 0;
+	int _curCursorHotspotX = 0;
+	int _curCursorHotspotY = 0;
 
 	void initBanners();
 	Common::KeyState showBannerAndPause(int bannerId, int32 waitTime, const char *msg, ...);
@@ -656,6 +671,8 @@ protected:
 	virtual void setSpeechVolume(int volume);
 	virtual void setSFXVolume(int volume);
 	virtual void toggleVoiceMode();
+	virtual void handleLoadDuringSmush() {}
+	virtual void setSkipVideo(int value) {}
 
 	void showMainMenu();
 	void setUpMainMenuControls();
@@ -663,7 +680,12 @@ protected:
 	void updateMainMenuControls();
 	void drawMainMenuTitle(const char *title);
 	bool executeMainMenuOperation(int op, int mouseX);
-	bool shouldHighlightAndWait(int clickedControl);
+	bool shouldHighlightLabelAndWait(int clickedControl);
+	void fillSavegameLabels();
+	bool canWriteGame(int slotId);
+	bool userWriteLabelRoutine(Common::KeyState &ks, bool &leftMsClicked, bool &rightMsClicked);
+	void saveCursorPreMenu();
+	void restoreCursorPostMenu();
 
 
 public:
