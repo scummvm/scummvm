@@ -427,10 +427,6 @@ const char *InfoDialog::getPlainEngineString(int stringno) {
 		result = (const char *)_vm->getStringAddressVar(string_map_table_v7[stringno - 1].num);
 
 		if (!result) {
-			result = (const char *)_vm->VAR(string_map_table_v7[stringno - 1].num);
-		}
-
-		if (!result) {
 			result = (const char *)string_map_table_v7[stringno - 1].string;
 		}
 	} else if (_vm->_game.version == 6) {
