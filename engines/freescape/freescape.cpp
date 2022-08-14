@@ -50,6 +50,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	_movementSpeed = 1.5f;
 	_mouseSensitivity = 0.1f;
 	_flyMode = false;
+	_playerHeightNumber = 1;
 	_borderTexture = nullptr;
 	_viewArea = Common::Rect(0, 0, _screenW, _screenH);
 
@@ -214,10 +215,10 @@ void FreescapeEngine::processInput() {
 				move(RIGHT, _scaleVector.y(), deltaTime);
 			else if (event.kbd.keycode == Common::KEYCODE_KP5 || event.kbd.keycode == Common::KEYCODE_KP0)
 				shoot();
+			else if (event.kbd.keycode == Common::KEYCODE_r)
+				rise();
 			else if (event.kbd.keycode == Common::KEYCODE_f)
-				_position.setValue(1, _position.y() + 12);
-			else if (event.kbd.keycode == Common::KEYCODE_v)
-				_position.setValue(1, _position.y() - 12);
+				lower();
 			else if (event.kbd.keycode == Common::KEYCODE_n)
 				gotoArea(_currentArea->getAreaID() + 1, 0);
 			else if (event.kbd.keycode == Common::KEYCODE_d) {
@@ -392,6 +393,67 @@ void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos)
 	v.normalize();
 	_cameraRight = v;
 }
+
+void FreescapeEngine::changePlayerHeight(int delta) {
+	int scale = _currentArea->getScale();
+	_position.setValue(1, _position.y() - scale * _playerHeight);
+	_playerHeight = _playerHeight + delta;
+	_position.setValue(1, _position.y() + scale * _playerHeight);
+}
+
+void FreescapeEngine::rise() {
+	int previousAreaID = _currentArea->getAreaID();
+	int scale = _currentArea->getScale();
+
+	if (_flyMode) {
+		_position.setValue(1, _position.y() + scale * 32);
+	} else {
+		if (_playerHeightNumber == 10) // TODO
+			return;
+
+		_playerHeightNumber++;
+		changePlayerHeight(16);
+	}
+
+	bool collided = checkCollisions(true);
+	if (collided) {
+		if (_currentArea->getAreaID() == previousAreaID) {
+			if (_flyMode)
+				_position = _lastPosition;
+			else {
+				changePlayerHeight(-16);
+			}
+		}
+	}
+
+	_lastPosition = _position;
+	debugC(1, kFreescapeDebugMove, "new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
+}
+
+void FreescapeEngine::lower() {
+	int previousAreaID = _currentArea->getAreaID();
+	int scale = _currentArea->getScale();
+
+	if (_flyMode) {
+		_position.setValue(1, _position.y() - scale * 32);
+		bool collided = checkCollisions(true);
+		if (collided) {
+			if (_currentArea->getAreaID() == previousAreaID) {
+				_position = _lastPosition;
+			}
+		}
+	} else {
+		if (_playerHeightNumber == 0)
+			return;
+
+		_playerHeightNumber--;
+		changePlayerHeight(-16);
+	}
+
+	_lastPosition = _position;
+	debugC(1, kFreescapeDebugMove, "new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
+}
+
 
 void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTime) {
 	debugC(1, kFreescapeDebugMove, "old player position: %f, %f, %f", _position.x(), _position.y(), _position.z());

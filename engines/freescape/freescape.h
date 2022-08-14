@@ -106,6 +106,9 @@ public:
 	bool _flyMode;
 	void processInput();
 	void move(CameraMovement direction, uint8 scale, float deltaTime);
+	void changePlayerHeight(int delta);
+	void rise();
+	void lower();
 	bool checkFloor(Math::Vector3d currentPosition);
 	bool tryStepUp(Math::Vector3d currentPosition);
 	bool tryStepDown(Math::Vector3d currentPosition);
@@ -130,6 +133,7 @@ public:
 	// Spacial attributes
 	Math::Vector3d _position, _rotation, _velocity;
 	Math::Vector3d _lastPosition;
+	int _playerHeightNumber;
 	uint16 _playerHeight;
 	uint16 _playerWidth;
 	uint16 _playerDepth;
