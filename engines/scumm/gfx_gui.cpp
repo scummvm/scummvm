@@ -953,7 +953,7 @@ void ScummEngine::queryQuit() {
 		localizedYesKey = msgLabelPtr[strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1];
 		msgLabelPtr[strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
 
-		// "Are you sure you want to quit?  (Y-N)"
+		// "Are you sure you want to quit?  (Y/N)"
 		Common::KeyState ks = showBannerAndPause(0, -1, msgLabelPtr);
 
 		if (tolower(localizedYesKey) == ks.ascii || toupper(localizedYesKey) == ks.ascii) {
@@ -1220,6 +1220,8 @@ void ScummEngine::showMainMenu() {
 		queryQuit();
 	}
 
+	_mainMenuIsActive = false;
+
 	_completeScreenRedraw = true;
 
 	// Restore the old cursor state only if we're not loading a game...
@@ -1237,6 +1239,12 @@ void ScummEngine::showMainMenu() {
 			_saveScriptParam = 0;
 		}
 	}
+
+	// A little bit of hackery: since we handle the main loop a little bit
+	// differently (basically we start from a different position, but the order
+	// remains the same), we call CHARSET_1() here to refresh the dialog texts
+	// immediately and avoid getting a frame in which their color is wrong...
+	CHARSET_1();
 
 	// Resume the engine
 	pt.clear();
@@ -1853,6 +1861,7 @@ void ScummEngine::drawMainMenuControls() {
 void ScummEngine::updateMainMenuControls() {
 	char msg[256];
 	int yComponent, yConstant;
+	int textColor = getBannerColor(2);
 
 	yComponent = (_game.id == GID_DIG && _useCJKMode) ? 130 : 121;
 	yConstant = _screenHeight / 2 - ((yComponent - 1) / 2);
@@ -1907,29 +1916,29 @@ void ScummEngine::updateMainMenuControls() {
 	// not rendered in the other games, so adjust that...
 	if (_game.id == GID_FT) {
 		convertMessageToString((const byte *)getGUIString(gsSpooledMusic), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 29, yConstant + 19, _screenWidth - 1, getBannerColor(2), false);
+		drawGUIText(msg, 29, yConstant + 19, _screenWidth - 1, textColor, false);
 
 		convertMessageToString((const byte *)getGUIString(gsMusic), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 29, yConstant + 33, _screenWidth - 1, getBannerColor(2), false);
+		drawGUIText(msg, 29, yConstant + 33, _screenWidth - 1, textColor, false);
 
 		convertMessageToString((const byte *)getGUIString(gsVoice), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 29, yConstant + 47, _screenWidth - 1, getBannerColor(2), false);
+		drawGUIText(msg, 29, yConstant + 47, _screenWidth - 1, textColor, false);
 	} else {
 		convertMessageToString((const byte *)getGUIString(gsMusic), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 29, yConstant + 25, _screenWidth - 1, getBannerColor(2), false);
+		drawGUIText(msg, 29, yConstant + 25, _screenWidth - 1, textColor, false);
 
 		convertMessageToString((const byte *)getGUIString(gsVoice), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 29, yConstant + 43, _screenWidth - 1, getBannerColor(2), false);
+		drawGUIText(msg, 29, yConstant + 43, _screenWidth - 1, textColor, false);
 	}
 
 	convertMessageToString((const byte *)getGUIString(gsSfx), (byte *)msg, sizeof(msg));
-	drawGUIText(msg, 29, yConstant + 61, _screenWidth - 1, getBannerColor(2), false);
+	drawGUIText(msg, 29, yConstant + 61, _screenWidth - 1, textColor, false);
 
 	convertMessageToString((const byte *)getGUIString(gsDisplayText), (byte *)msg, sizeof(msg));
-	drawGUIText(msg, 29, yConstant + 88, _screenWidth - 1, getBannerColor(2), false);
+	drawGUIText(msg, 29, yConstant + 88, _screenWidth - 1, textColor, false);
 
 	convertMessageToString((const byte *)getGUIString(gsTextSpeed), (byte *)msg, sizeof(msg));
-	drawGUIText(msg, 29, yConstant + 102, _screenWidth - 1, getBannerColor(2), false);
+	drawGUIText(msg, 29, yConstant + 102, _screenWidth - 1, textColor, false);
 
 	drawLine(23, yConstant + 77, 204, yConstant + 77, getBannerColor(17));
 	drawLine(23, yConstant + 78, 204, yConstant + 78, getBannerColor(4));
