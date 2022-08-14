@@ -541,6 +541,8 @@ bool ScummEngine::newLine() {
 	} else if (_isRTL) {
 		if (_game.id == GID_MANIAC || ((_game.id == GID_MONKEY || _game.id == GID_MONKEY2) && _charset->getCurID() == 4)) {
 			_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
+		} else if (_game.id == GID_MONKEY2 && _charset->getCurID() == 5) {
+			_nextLeft += _screenWidth - 210 - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos);
 		}
 	}
 	if (_game.version == 0) {
@@ -804,6 +806,8 @@ void ScummEngine::CHARSET_1() {
 	} else if (_isRTL) {
 		if (_game.id == GID_MANIAC || ((_game.id == GID_MONKEY || _game.id == GID_MONKEY2) && _charset->getCurID() == 4)) {
 			_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
+		} else if (_game.id == GID_MONKEY2 && _charset->getCurID() == 5) {
+			_nextLeft += _screenWidth - 210 - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos);
 		}
 	}
 
