@@ -165,6 +165,7 @@ protected:
 
 	int getBannerColor(int bannerId) override;
 	const char *getGUIString(int stringId) override;
+	void setSkipVideo(int value) override { _skipVideo = value; }
 
 public:
 	bool akos_increaseAnims(const byte *akos, Actor *a);

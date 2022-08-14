@@ -155,6 +155,7 @@ protected:
 	void setSpeechVolume(int volume) override;
 	void setSFXVolume(int volume) override;
 	void toggleVoiceMode() override;
+	void handleLoadDuringSmush() override;
 
 	void setDefaultCursor() override;
 	void updateCursor() override;

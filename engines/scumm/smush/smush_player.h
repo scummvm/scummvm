@@ -181,6 +181,7 @@ public:
 	void processDispatches(int16 feedSize);
 	bool isAudioCallbackEnabled();
 	byte *getVideoPalette();
+	void resetAudioTracks();
 
 protected:
 	int _width, _height;
@@ -226,7 +227,6 @@ private:
 	void terminateAudio();
 	int isChanActive(int flagId);
 	int addAudioTrack(int32 trackBlockSize, int32 maxBlockSize);
-	void resetAudioTracks();
 	void setGainReductionParams(int16 gainReductionLowerBound, int16 gainReductionMultiplier);
 	void fillAudioTrackInfo(uint8 *srcBuf, uint16 *flagsAccumulator, uint32 size, int groupId, int vol, int pan, int16 flags, int trkId, int index, int maxFrames);
 	bool processAudioCodes(int idx, int32 &tmpFeedSize, int &mixVolume);
