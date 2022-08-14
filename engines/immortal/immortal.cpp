@@ -156,6 +156,7 @@ Common::Error ImmortalEngine::run() {
 	_usingNormal = 0;
 		   _draw = 1;
 
+	initStoryStatic();						// Init the arrays of static story elements (done at compile time in the source)
 	loadPalette();							// We need to grab the palette from the disk first
 	useNormal();							// The first palette will be the default
 	loadFont();								// Load the font sprite

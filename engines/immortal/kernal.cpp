@@ -364,6 +364,125 @@ void ImmortalEngine::printChr(char c) {
  *
  */
 
+void ImmortalEngine::initStoryStatic() {
+	Common::Array<Common::String> s{"#" + Common::String(kSwordBigFrame) + "sword@",
+									"You find an Elven sword of&agility. Take it?@",
+									"Search the bones?%",
+									"}The sword permanently endows you with Elven agility and quickness in combat.@",
+									"}You notice something that looks wet and green under the pile. Search further?%",
+									"#" + Common::String(kBagBigFrame) + "  dust@"
+									"}You find a bag containing Dust of Complaisance.&@"
+									"}Drop the bait on the ground here?%"
+									"}To use this dust, you throw it in the air. Do that here?%"
+									"_}Don+t bother me, I+m cutting a gem. Yes, you need it. No, you can+t have it. I wouldn+t give it to anyone, least of all you. Go away. ]]]]="
+									"_}Let me help you. Please take this gem. No, really, I insist. Take it and go with my blessings. Good luck. ]]]]="
+									"#" + Common::String(kCarpetBigFrame) + "carpet@",
+									"#" + Common::String(kBombBigFrame) + " bomb@",
+									"A gas bomb that goblins&use to paralyze trolls.&@",
+									"Take it?<>@",
+									"%",
+									" other@",
+									"#" + Common::String(kKeyBigFrame) + "  key@",
+									"#" + Common::String(kKeyBigFrame) + "  key@",
+									"A key to a chest.&@",
+									"The chest is open. Examine&contents?%",
+									"Put it on?%",
+									"Drop it?%",
+									"It+s unlocked. Open it?%",
+									"It+s locked but you have&the key. Open it?%",
+									"It+s locked and you don+t&have the key.@",
+									"The lock, triggered by a&complicated set of latches,&is unfamiliar to you.@",
+									"#" + Common::String(kGoldBigFrame) + "$0 gold@",
+									"You find $0 gold pieces.&&^#" + Common::String(kPileFrame) + "@",
+									"@",
+									"You can+t plant them on&stone tiles.@",
+									"It+s locked but you are&able to unlock it with&the key.@",
+									"_}The king is not dead, but the poison is taking effect. When he sees you, he attempts to speak:[(Give me water... the fountain... I give you... information... peace...+[Give him water?%",
+									"_}You dont have any water to give him. He mumbles something. Then silence... You find a key on his body.]]]]=",
+									"_}He mumbles something. Then silence... You find a key on his body.]]]]=",
+									"_}I+ll tell you how to... next level... past slime... three jewels... slime... rock becomes... floor... right, left, center of the... [Then silence. His hand opens, releasing a key.]]]]=",
+									"You find a door key.&@",
+									"You find a note.&@",
+									"#" + Common::String(kNoteBigFrame) + "note@",
+									"He+s dead.&Look for possessions?%",
+									"You don+t have it. Check&your inventory.@",
+									"Game Over&&Play again?@",
+									"Congratulations!&&Play again?@",
+									"You find a bag of bait.&@",
+									"#" + Common::String(kBagBigFrame) + "   bait@",
+									"You find a stone. @",
+									"#" + Common::String(kStoneBigFrame) + " stone@",
+									"You find a red gem.&@",
+									"#" + Common::String(kGemBigFrame) + "  gem@",
+									"You find a scroll with&fireball spells.&@"
+									"#" + Common::String(kScrollBigFrame) + "$ shots@",
+									"You find a map warning&you about pit traps.&@"
+									"#" + Common::String(kMapBigFrame) + "  map@",
+									"#" + Common::String(kVaseBigFrame) + "   oil@",
+									"You apply the oil but notice&as you walk that the leather&is drying out quickly.@"
+									"}You discover a scroll with a charm spell to use on will o+ the wisps.&@"
+									"#" + Common::String(kScrollBigFrame) + " charm@",
+									"}This charms the will o+ the wisps to follow you. Read the spell again to turn them against your enemies.@"
+									"}It looks like water. Drink it?%",
+									"Drink it?%",
+									"}It works! You are much stronger.]]]=",
+									"}It looks like it has green stuff inside. Open it?%",
+									"Now this will take&effect when you press the&fire button.@",
+									"You find a potion,&Magic Muscle.&@",
+									"#" + Common::String(kVaseBigFrame) + "  potion@",
+									"You find a bottle.&@",
+									"#" + Common::String(kVaseBigFrame) + "  bottle@",
+									"#" + Common::String(kRingBigFrame) + "Protean@",
+									"You find a Protean Ring.&@",
+									"You find a troll ritual knife,&used to declare a fight to&the death. @",
+									"#" + Common::String(kKnifeBigFrame) + " knife@",
+									"_}It is a fine woman+s garment. Folded inside is a ring with the words,[`To Ana, so harm will never find you. -Your loving father, Dunric.+&@",
+									"You find a small, well&crafted ring. @",
+									"#" + Common::String(kRingBigFrame) + "  gift@",
+									"#" + Common::String(kRingBigFrame) + " Ana+s@",
+									"_}She is hurt and upset when she finds you don+t have her ring or won+t give it to her. She scurries back into the hole. The hole is too small for you to follow.&@",
+									"_}`Sir, can you help me,+ the girl pleads. `I was kidnapped and dragged down here. All the man would say is `Mordamir+s orders.+[I escaped using a ring my father gave me, but now I+ve lost it. Did you find it?+%",
+									"_}We have met before, old man. Do you remember? Because you helped me, you may pass. But I warn you, we are at war with the trolls.[Over this ladder, across the spikes, is troll territory. Very dangerous.@",
+									"_}You are an impostor!]]]]=",
+									"_}Old man, do you remember me? I am king of the goblins. You didn+t give me the water. You left me to die after you took the key from me. Now you will pay.]]]]=",
+									"_}You quickly fall into a deep, healing sleep...[Vivid images of a beautiful enchanted city pass by. All the city people are young and glowing. Fountains fill the city, and the splash and sparkle of water is everywhere...[Suddenly the images go black. A face appears... Mordamir!]][He is different from how you remember him. His gentle features are now withered. His kind eyes, now cold and sunken, seem to look through you with a dark, penetrating stare. You wake rejuvenated, but disturbed.]]]]]=",
+									"_}Here, take this ring in return. [I don+t know if it will help, but I heard the unpleasant little dwarf say, (Clockwise, three rings around the triangle.+[Could that be a clue to his exit puzzle? I must go. Goodbye.]]]]=",
+									"#" + Common::String(kSackBigFrame) + " spores@",
+									"You find a sack of bad&smelling spores.&@",
+									"Please insert play disk.@",
+									"New game?%",
+									"Enter certificate:&-=",
+									"Invalid certificate.@",
+									"End of level!&Here is your certificate:&&=",
+									"&@",
+									"   Electronic Arts presents&&       The Immortal&&&&      1990 Will Harvey|]]]]]]]]]=",
+									"          written by&&         Will Harvey&         Ian Gooding&      Michael Marcantel&       Brett G. Durrett&        Douglas Fulton|]]]]]]]/=",
+									"_}Greetings, friend! Come, I+ve got something you need. These parts are plagued with slime.[You can+t venture safely without my slime oil for boots, a bargain at only 80 gold pieces.%",
+									"_}All right, 60 gold pieces for my oil. Rub it on your boots and slime won+t touch you. 60, friend.%",
+									"This room doesn+t resemble&any part of the map.@",
+									"This room resembles part&of the map.@"};
+	_strPtrs = s;
+
+	Common::Array<Motive>   m{};
+	_motivePtrs = m;
+
+	Common::Array<Damage>   d{};
+	_damagePtrs = d;
+
+	Common::Array<Use>      u{};
+	_usePtrs = u;
+
+	Common::Array<Pickup>   p{};
+	_pickupPtrs = p;
+
+	CArray2D<Motive>       pr{};
+	_programPtrs = pr;
+
+	Common::Array<ObjType>  o{};
+	_objTypePtrs = o;
+
+}
+
 void ImmortalEngine::addSprite(uint16 x, uint16 y, SpriteName n, int frame, uint16 p) {
 	if (_numSprites != kMaxSprites) {
 		if (x >= (kResH + kMaxSpriteLeft)) {
