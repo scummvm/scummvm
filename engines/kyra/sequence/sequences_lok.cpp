@@ -251,9 +251,13 @@ bool KyraEngine_LoK::seq_introStory() {
 	if (!textEnabled() && speechEnabled() && _flags.lang != Common::IT_ITA)
 		return false;
 
+	// Mac Talkie has multiple versions of the file. Make sure the correct one gets picked.
+	int searchStart = (_flags.isTalkie && _flags.platform == Common::kPlatformMacintosh && _flags.lang != Common::EN_ANY) ? (_flags.lang == Common::FR_FRA ? 2 : 3) : 0;
+
 	bool success = false;
-	for (uint i = 0; i < _langFileExt.size() && !success; ++i) {
-		Common::String tryFile = Common::String::format("TEXT%s.CPS", _langFileExt[i].c_str());
+	static const char *pattern[] = { "", "_ENG", "_FRE", "_GER", "_SPA", "_ITA", "_HEB", "_HAN" };
+	for (int i = searchStart; i < ARRAYSIZE(pattern) && !success; ++i) {
+		Common::String tryFile = Common::String::format("TEXT%s.CPS", pattern[i]);
 		if ((success = _res->exists(tryFile.c_str())))
 			_screen->loadBitmap(tryFile.c_str(), 3, 3, &_screen->getPalette(0));
 	}

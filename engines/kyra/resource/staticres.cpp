@@ -998,9 +998,9 @@ void KyraEngine_LoK::loadMainScreen(int page) {
 	_screen->clearPage(page);
 
 	bool success = false;
-	
-	for (uint i = 0; i < _langFileExt.size() && !success; ++i) {
-		Common::String tryFile = Common::String::format("MAIN%s.CPS", _langFileExt[i].c_str());
+	static const char *pattern[] = { "15", "_ENG", "_FRE", "_GER", "_SPA", "_ITA", "_HEB", "_HAN", "" };
+	for (int i = 0; i < ARRAYSIZE(pattern) && !success; ++i) {
+		Common::String tryFile = Common::String::format("MAIN%s.CPS", pattern[i]);
 		if ((success = _res->exists(tryFile.c_str())))
 			_screen->loadBitmap(tryFile.c_str(), page, page, i == 0 ? &_screen->getPalette(0) : 0);
 	}

@@ -96,25 +96,8 @@ KyraEngine_LoK::KyraEngine_LoK(OSystem *system, const GameFlags &flags)
 	_malcolmFrame = 0;
 	_malcolmTimer1 = _malcolmTimer2 = 0;
 
-	// Determine search order for resource files with language specific file endings. Some versions have multiple
-	// versions in the folder, so we make sure that the one that matches the selected language gets tried first.
-	static const Common::Language langOrder[] = {
-		Common::EN_ANY, Common::FR_FRA, Common::DE_DEU, Common::ES_ESP, Common::IT_ITA, Common::HE_ISR, Common::KO_KOR
-	};
-	static const char *pattern[] = { "15", "_ENG", "_FRE", "_GER", "_SPA", "_ITA", "_HEB", "_HAN", "" };
-	uint8 _langFileExtIndex[ARRAYSIZE(pattern)];
-	memset(_langFileExtIndex, 0, sizeof(_langFileExtIndex));
-	for (int i = 0; i < ARRAYSIZE(langOrder); ++i) {
-		if (_flags.lang == langOrder[i])
-			_langFileExtIndex[0] = i + 1;
-	}
-	for (int i = 1; i < ARRAYSIZE(_langFileExtIndex); ++i)
-		_langFileExtIndex[i] = (i <= _langFileExtIndex[0]) ? i - 1 : i;
-	for (int i = 0; i < ARRAYSIZE(_langFileExtIndex); ++i)
-		_langFileExt.push_back(pattern[_langFileExtIndex[i]]);
-
 	_defaultFont = Screen::FID_8_FNT;
-	_noteFont = (_flags.isTalkie || flags.platform == Common::kPlatformAmiga) ? _defaultFont : Screen::FID_6_FNT;
+	_noteFont = (_flags.isTalkie || _flags.platform == Common::kPlatformAmiga) ? _defaultFont : Screen::FID_6_FNT;
 	_defaultLineSpacing = 0;
 
 	switch (_flags.lang) {
