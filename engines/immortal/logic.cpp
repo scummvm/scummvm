@@ -504,7 +504,7 @@ void ImmortalEngine::calcCheckSum(int l, uint8 checksum[]) {
 }
 
 bool ImmortalEngine::getCertificate() {
-	textPrint(kStrCertificate);
+	textPrint(kStrCert);
 	int certLen = 0;
 	bool entered = false;
 	int k = 0;
@@ -596,11 +596,11 @@ void ImmortalEngine::printCertificate() {
 	 */
 	char toHex[] = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
 
-	textBeginning(kStrCertificate);
+	textBeginning(kStrCert);
 	for (int i = 0; i < _lastCertLen; i++) {
 		printChr(toHex[_certificate[i]]);
 	}
-	textEnd(kStrCertificate2);
+	textEnd(kStrCert2);
 }
 
 bool ImmortalEngine::isSavedKing() {

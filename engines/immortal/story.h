@@ -67,7 +67,7 @@ enum ObjFlag : uint8 {
 	kObjIsOnGround     = 0x04,
 	kObjIsF1           = 0x02,
 	kObjIsF2           = 0x01,
-	kObjNone		   = 0x0
+	kObjNone		   		 = 0x0
 };
 
 enum MonsterFlag : uint8 {
@@ -121,16 +121,121 @@ enum Motive {						// This will likely be moved to a monster ai specific file la
 
 enum Str {
 	kStrNoDesc,
-	kStrOldGame = 0,
+	kStrSword,
+	kStrSwordDesc,
+	kStrBonesText1,
+	kStrBonesText2,
+	kStrBonesText3,
+	kStrComp,
+	kStrCompDesc,
+	kStrOpenBag,
+	kStrThrowComp,
+	kStrSmithText1,
+	kStrSmithText2,
+	kStrCarpet,
+	kStrBomb,
+	kStrBombDesc,
+	kStrPickItUp,
+	kStrYesNo,
+	kStrOther,
+	kStrChestKey,
+	kStrDoorKey,
+	kStrChestKeyDesc,
+	kStrOpenChestDesc,
+	kStrPutItOn,
+	kStrDropItThen,
+	kStrChestDesc,
+	kStrGoodChestDesc,
+	kStrBadChestDesc,
+	kStrComboLock,
+	kStrGold,
+	kStrFindGold,
+	kStrNull,
+	kStrNotHere,
+	kStrUnlockDoor,
+	kStrWeak1,
+	kStrDummyWater,
+	kStrBadWizard,
+	kStrDiesAnyway,
+	kStrDoorKeyDesc,
+	kStrNoteDesc,
+	kStrNote,
+	kStrLootBodyDesc,
+	kStrNotEnough,
+	kStrGameOver,
+	kStrYouWin,
+	kStrWormFoodDesc,
+	kStrWormFood,
+	kStrStoneDesc,
+	kStrStone,
+	kStrGemDesc,
+	kStrGem,
+	kStrFireBallDesc,
+	kStrFireBall,
+	kStrDeathMapDesc,
+	kStrDeathMap,
+	kStrBoots,
+	kStrUseBoots,
+	kStrWowCharmDesc,
+	kStrWowCharm,
+	kStrUseWowCharm,
+	kStrWaterOpen,
+	kStrDrinkIt,
+	kStrItWorks,
+	kStrSBOpen,
+	kStrUsesFire,
+	kStrMuscleDesc,
+	kStrMuscle,
+	kStrSBDesc,
+	kStrSB,
+	kStrFace,
+	kStrFaceDesc,
+	kStrTRNDesc,
+	kStrTRN,
+	kStrInvisDesc,
+	kStrGoodLuckDesc,
+	kStrAnaRing,
+	kStrInvis,
+	kStrGoesAway,
+	kStrGiveHerRing,
+	kStrGive2,
+	kStrMadKingText,
+	kStrMadKing3Text,
+	kStrMadKing2Text,
+	kStrDream1,
+	kStrDream1P2,
+	kStrDream1P3,
+	kStrHowToGetOut,
+	kStrSpore,
+	kStrSporeDesc,
+	kStrRequestPlayDisc,
+	kStrOldGame,
 	kStrEnterCertificate,
 	kStrBadCertificate,
-	kStrCertificate,
-	kStrCertificate2,
+	kStrCert,
+	kStrCert2,
 	kStrTitle0,
 	kStrTitle4,
-	kStrGold,
-	kStrYouWin,
-	kStrGameOver,
+	kStrMDesc,
+	kStrM3Desc,
+	kStrMapText1,
+	kStrMapText2,
+
+	// Level 0 str
+
+	// Level 1 str
+
+	// Level 2 str
+
+	// Level 3 str
+
+	// Level 4 str
+
+	// Level 5 str
+
+	// Level 6 str
+
+	// Level 7 str
 };
 
 enum SObjType {
@@ -157,6 +262,14 @@ enum SObjPickup {
 };
 
 enum SObjUse {
+
+};
+
+enum SDamage {
+
+};
+
+struct Damage {
 
 };
 

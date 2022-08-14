@@ -154,6 +154,18 @@ enum GameFlags : uint8 {
 	kSavedAna
 };
 
+struct Spark {
+};
+
+struct GenSprite {
+};
+
+struct Door {
+};
+
+struct Cycle {
+};
+
 struct Frame {
 	uint16  _deltaX;
 	uint16  _deltaY;
@@ -220,16 +232,6 @@ public:
 	const int kNiceTime       = 36;
 	const int kMaxCertificate = 16;
 
-	// Max strings = 250
-	// This should really be a char array, but inserting frame values will be stupid so it's just a string instead
-	const Common::String stringPtrs[250] = {"New game?%", "Enter certificate:&-=", "Invalid certificate.@",
-					   	   			  		"End of level!&Here is your certificate:&&=", "&@",
-						   			  		"   Electronic Arts presents&&       The Immortal&&&&      1990 Will Harvey|]]]]]]]]]=", // Might need \ for something
-						  		 	  		"          written by&&         Will Harvey&         Ian Gooding&      Michael Marcantel&       Brett G. Durrett&        Douglas Fulton|]]]]]]]/=",
-						   			  		"#" + Common::String(kGoldBigFrame) + "$0 gold@",
-						   			  		"Congratulations!&&Play again?@",
-						   			  		"Enter certificate:&-=",
-						   			  		"Game Over&&Play again?@"};
 	// Screen constants
 	const int    kResH 	     = 320;
 	const int    kResV 	     = 200;
@@ -307,7 +309,7 @@ public:
 	const int kMaxFilesPerLevel = 16;
 	const int kMaxPartInstances = 4;
 	const int kLevelToMaze[8]   = {0,0,1,1,2,2,2,3};
-
+//cantunlockdoor	set	badchestdesc
 	/* 
 	 * 'global' members
 	 */
@@ -371,6 +373,13 @@ public:
 	DataSprite  _font;									// The font sprite data is loaded separate from other sprite stuff
 		Sprite  _sprites[kMaxSprites];					// All the sprites shown on screen
 	DataSprite  _dataSprites[kFont + 1];				// All the sprite data, indexed by SpriteFile
+	Common::Array<Common::String> _strPtrs;				// Str should really be a char array, but inserting frame values will be stupid so it's just a string instead
+	Common::Array<Motive>		  _motivePtrs;
+	Common::Array<Damage>		  _damagePtrs;
+	Common::Array<Use>			  _usePtrs;
+	Common::Array<Pickup>		  _pickupPtrs;
+	CArray2D<Motive>			  _programPtrs;
+	Common::Array<ObjType>		  _objTypePtrs;
 
 	// Screen members
 	  byte *_window;									// Bitmap of the window around the game
@@ -467,6 +476,7 @@ public:
 
 	// Assets
 	Common::SeekableReadStream *loadIFF(Common::String fileName); // Loads a file and uncompresses if it is compressed
+	void initStoryStatic();								// Sets up all of the global static story elements
 	//void loadMazeGraphics();							// Creates a universe with a maze
 	void loadFont();									// Gets the font.spr file, and centers the sprite
 	void clearSprites();								// Clears all sprites before drawing the current frame
@@ -598,7 +608,7 @@ public:
 	 * [Story.cpp] Functions from Story.cpp
 	 */
 	// Init
-	void loadStoryFiles();
+	void initStoryDynamic();
 
 	/*
 	 * [Sprites.cpp] Functions from Sprites.GS and spriteList.GS

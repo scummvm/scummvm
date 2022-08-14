@@ -27,7 +27,7 @@ namespace Immortal {
 struct Flame;
 
 void ImmortalEngine::levelInitAtStartOfGameOnly() {
-	loadStoryFiles();
+	initStoryDynamic();
 	_lastLevelLoaded = -1;
 	_lastSongLoaded = -1;
 }

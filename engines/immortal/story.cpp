@@ -47,7 +47,7 @@
 
 namespace Immortal {
 
-void ImmortalEngine::loadStoryFiles() {
+void ImmortalEngine::initStoryDynamic() {
 	/* There is one major difference between the source logic and this method.
 	 * It doesn't change the game logic, but it does change the logic of storing
 	 * the initial rom data. In the source, because there are no language based
