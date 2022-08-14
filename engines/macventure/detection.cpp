@@ -86,7 +86,6 @@ class MacVentureMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	MacVentureMetaEngineDetection() : AdvancedMetaEngineDetection(MacVenture::gameDescriptions, sizeof(ADGameDescription), macventureGames) {
 		_guiOptions = GUIO1(GUIO_NOMIDI);
-		_md5Bytes = 5000;
 	}
 
 	const char *getName() const override {
