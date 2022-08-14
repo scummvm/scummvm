@@ -225,6 +225,7 @@ private:
 	bool parseEvent(HSSong &song, TrackState *s);
 	void noteOnOff(HSSong &song, TrackState *s, uint8 chan, uint8 note, uint8 velo);
 
+	uint8 _partVolume[16];
 	uint8 _partPrograms[16];
 	uint8 _curCmd;
 
@@ -671,6 +672,7 @@ void HSSong::updateTempo() {
 HSMidiParser::HSMidiParser(HSLowLevelDriver *driver) : _driver(driver), _trackState(nullptr), _tracks(), _data(), _curCmd(0) {
 	_trackState = new TrackState[24]();
 	memset(_partPrograms, 0, sizeof(_partPrograms));
+	memset(_partVolume, 0, sizeof(_partVolume));
 }
 
 HSMidiParser::~HSMidiParser() {
@@ -678,6 +680,7 @@ HSMidiParser::~HSMidiParser() {
 }
 
 bool HSMidiParser::loadTracks(HSSong &song) {
+	memset(_partVolume, 0x7f, sizeof(_partVolume));
 	for (int i = 0; i < ARRAYSIZE(_partPrograms); ++i)
 		_partPrograms[i] = i;
 
@@ -846,6 +849,8 @@ bool HSMidiParser::parseEvent(HSSong &song, TrackState *s) {
 
 	if (evt < 0xa0)
 		noteOnOff(song, s, chan, arg1, evt == 0x90 ? arg2 : 0);
+	else if (evt == 0xb0 && arg1 == 7)
+		_partVolume[chan] = arg2;
 	else if (evt == 0xc0 && (song._flags & 0x400))
 		s->program = _partPrograms[chan] = arg1;
 
@@ -866,7 +871,7 @@ void HSMidiParser::noteOnOff(HSSong &song, TrackState *s, uint8 chan, uint8 note
 		note += song._transpose;
 
 	if (velo)
-		_driver->noteOn(chan, prg, note, velo, 10000, s);
+		_driver->noteOn(chan, prg, note, _partVolume[chan] * velo / 0x7f, 10000, s);
 	else
 		_driver->noteOff(chan, note, s);
 }
