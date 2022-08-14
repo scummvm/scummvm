@@ -147,7 +147,7 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 		bannerSaveYStart = 78;
 	} else {
 		startingPointX = 156 - roundedWidth;
-		startingPointY = ((_game.version < 7) ? 80 : _screenTop + 90);
+		startingPointY = ((_game.version < 7) ? 80 : _screenHeight / 2 - 10);
 		xPos = roundedWidth + 163 + ((_game.version < 7) ? 1 : 0);
 		yPos = -12;
 		bannerSaveYStart = startingPointY - ((_game.version < 7) ? 2 : 0);
@@ -238,7 +238,7 @@ void ScummEngine::clearBanner() {
 			} else if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformFMTowns) {
 				startingPointY = 78;
 			} else {
-				startingPointY = ((_game.version < 7) ? 80 - 2 : _screenTop + 90);
+				startingPointY = ((_game.version < 7) ? 80 - 2 : _screenHeight / 2 - 10);
 			}
 
 			// FM-Towns games draw the banners on the text surface, so restore both surfaces...
@@ -323,6 +323,7 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 	int textColor, fillColor;
 	int boxSizeX, boxSizeY;
 	int offset = (_game.version == 8) ? 2 : 1;
+	int topComp = (_game.version < 8) ? _screenTop : 0;
 
 	bool centerFlag;
 	char buttonString[512];
@@ -350,7 +351,7 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 		} else {
 			if (ctrl->doubleLinesFlag) {
 				// Draw the main box...
-				drawBox(relCentX + 1, relCentY + 1, boxSizeX - offset, boxSizeY - offset, fillColor);
+				drawBox(relCentX + 1, relCentY + 1 + topComp, boxSizeX - offset, boxSizeY - offset + topComp, fillColor);
 
 				// Draw the contour lines for the box; each of the lines is doubled to give a 3D effect.
 				drawLine(relCentX + 1, relCentY, x - 1, relCentY, ctrl->topLineColor);
@@ -363,7 +364,7 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 				drawLine(relCentX + 1, relCentY + 1, relCentX + 1, y - 1, ctrl->leftLineColor);
 				drawLine(x - 1, relCentY + 1, x - 1, y - 1, ctrl->rightLineColor);
 			} else {
-				drawBox(relCentX, relCentY, x, y, (highlightColor ? ctrl->highlightedFillColor : ctrl->normalFillColor));
+				drawBox(relCentX, relCentY + topComp, x, y + topComp, (highlightColor ? ctrl->highlightedFillColor : ctrl->normalFillColor));
 
 				drawLine(relCentX, relCentY, x, relCentY, ctrl->topLineColor);
 				drawLine(relCentX, y, x, y, ctrl->bottomLineColor);
@@ -1447,8 +1448,8 @@ void ScummEngine::setUpMainMenuControls() {
 	int yComponent, yConstant, yConstant2;
 
 	yComponent = (_game.id == GID_DIG && _useCJKMode) ? 130 : 121;
-	yConstant = _screenHeight / 2 - ((yComponent - 1) / 2) + _screenTop;
-	yConstant2 = _screenHeight / 2 + ((yComponent - 1) / 2) + _screenTop;
+	yConstant = _screenHeight / 2 - ((yComponent - 1) / 2);
+	yConstant2 = _screenHeight / 2 + ((yComponent - 1) / 2);
 
 	for (int i = 0; i < ARRAYSIZE(_internalGUIControls); i++) {
 		_internalGUIControls[i].relativeCenterX = -1;
@@ -1499,7 +1500,7 @@ void ScummEngine::setUpMainMenuControls() {
 				getBannerColor(11),
 				getBannerColor(12),
 				108,
-				_screenTop + 57,
+				57,
 				-12,
 				-12,
 				_uncheckedBox, 1, 1);
@@ -1515,7 +1516,7 @@ void ScummEngine::setUpMainMenuControls() {
 				getBannerColor(10),
 				getBannerColor(12),
 				108,
-				_screenTop + 71,
+				71,
 				-90,
 				-12,
 				_uncheckedBox, 1, 1);
@@ -1531,7 +1532,7 @@ void ScummEngine::setUpMainMenuControls() {
 				getBannerColor(10),
 				getBannerColor(12),
 				108,
-				_screenTop + 85,
+				85,
 				-90,
 				-12,
 				_uncheckedBox, 1, 1);
@@ -1547,7 +1548,7 @@ void ScummEngine::setUpMainMenuControls() {
 				getBannerColor(10),
 				getBannerColor(12),
 				108,
-				_screenTop + 99,
+				99,
 				-90,
 				-12,
 				_uncheckedBox, 1, 1);
@@ -1764,7 +1765,6 @@ void ScummEngine::setUpMainMenuControls() {
 		if (_menuPage == GUI_PAGE_LOAD) {
 			cancelButtonAnchorY = _screenHeight / 2 +
 				(((_game.id == GID_DIG && _useCJKMode) ? 10 : 7) - yComponent / 2) +
-				_screenTop +
 				((_game.id == GID_DIG && _useCJKMode) ? 18 : 12) +
 				40;
 		} else {
@@ -1855,7 +1855,7 @@ void ScummEngine::updateMainMenuControls() {
 	int yComponent, yConstant;
 
 	yComponent = (_game.id == GID_DIG && _useCJKMode) ? 130 : 121;
-	yConstant = _screenHeight / 2 - ((yComponent - 1) / 2) + _screenTop;
+	yConstant = _screenHeight / 2 - ((yComponent - 1) / 2);
 
 	strncpy(_mainMenuMusicSlider, "\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v", sizeof(_mainMenuMusicSlider));
 	strncpy(_mainMenuSpeechSlider, "\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v", sizeof(_mainMenuSpeechSlider));
@@ -1959,13 +1959,13 @@ void ScummEngine::drawMainMenuTitle(const char *title) {
 
 		drawGUIText(title,
 			159,
-			_screenHeight / 2 - ((yComponent - 1) / 2) + _screenTop + 4,
+			_screenHeight / 2 - ((yComponent - 1) / 2) + 4,
 			_screenWidth - 1,
 			stringColor,
 			true);
 	} else {
 		drawBox(18, _screenTop + 44, 301, _screenTop + 52, boxColor);
-		drawGUIText(title, 159, _screenTop + 44, _screenWidth - 1, stringColor, true);
+		drawGUIText(title, 159, 44, _screenWidth - 1, stringColor, true);
 	}
 
 	ScummEngine::drawDirtyScreenParts();
