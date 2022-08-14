@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-12 04:33+0000\n"
+"POT-Creation-Date: 2022-08-14 07:16+0000\n"
 "PO-Revision-Date: 2022-08-11 17:17+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -5224,43 +5224,43 @@ msgstr "ゴアモード"
 msgid "Enable Gore Mode when available"
 msgstr "利用可能ならゴアモードを有効にする"
 
-#: engines/hypno/detection.cpp:248
+#: engines/hypno/detection.cpp:258
 msgid "Enable original cheats"
 msgstr "オリジナルチートを有効化"
 
-#: engines/hypno/detection.cpp:249
+#: engines/hypno/detection.cpp:259
 msgid "Allow cheats using the C key."
 msgstr "Cキーでチートが使えます。"
 
-#: engines/hypno/detection.cpp:259
+#: engines/hypno/detection.cpp:269
 msgid "Enable infinite health cheat"
 msgstr "体力無限チートを有効化"
 
-#: engines/hypno/detection.cpp:260
+#: engines/hypno/detection.cpp:270
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr "プレイヤーの体力が減りません(ゲームオーバーを除く)。"
 
-#: engines/hypno/detection.cpp:270
+#: engines/hypno/detection.cpp:280
 msgid "Enable infinite ammo cheat"
 msgstr "弾薬無限チートを有効化"
 
-#: engines/hypno/detection.cpp:271
+#: engines/hypno/detection.cpp:281
 msgid "Player ammo will never decrease."
 msgstr "プレイヤーの弾薬が減りません。"
 
-#: engines/hypno/detection.cpp:281
+#: engines/hypno/detection.cpp:291
 msgid "Unlock all levels"
 msgstr "全レベル解放"
 
-#: engines/hypno/detection.cpp:282
+#: engines/hypno/detection.cpp:292
 msgid "All levels will be available to play."
 msgstr "全レベルをプレイ可能にします。"
 
-#: engines/hypno/detection.cpp:292
+#: engines/hypno/detection.cpp:302
 msgid "Enable restored content"
 msgstr "復元されたコンテンツを有効にする"
 
-#: engines/hypno/detection.cpp:293
+#: engines/hypno/detection.cpp:303
 msgid "Add additional content that is not enabled the original implementation."
 msgstr "オリジナルの実装を有効にしていないコンテンツを追加します。"
 

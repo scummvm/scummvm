@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-12 04:33+0000\n"
+"POT-Creation-Date: 2022-08-14 07:16+0000\n"
 "PO-Revision-Date: 2022-06-29 20:10+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -5299,43 +5299,43 @@ msgstr "Gørrmodus"
 msgid "Enable Gore Mode when available"
 msgstr "Aktiver gørrmodus når tilgjengelig"
 
-#: engines/hypno/detection.cpp:248
+#: engines/hypno/detection.cpp:258
 msgid "Enable original cheats"
 msgstr "Aktiver opprinnelige juksefunksjoner"
 
-#: engines/hypno/detection.cpp:249
+#: engines/hypno/detection.cpp:259
 msgid "Allow cheats using the C key."
 msgstr "Tillat juksefunksjoner med C-tasten."
 
-#: engines/hypno/detection.cpp:259
+#: engines/hypno/detection.cpp:269
 msgid "Enable infinite health cheat"
 msgstr "Aktiver juksefunksjonen for uendelig liv"
 
-#: engines/hypno/detection.cpp:260
+#: engines/hypno/detection.cpp:270
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr "Spillerens liv minsker aldri (bortsett fra i Game Over-scener)."
 
-#: engines/hypno/detection.cpp:270
+#: engines/hypno/detection.cpp:280
 msgid "Enable infinite ammo cheat"
 msgstr "Aktiver juksefunksjonen for uendelig ammunisjon"
 
-#: engines/hypno/detection.cpp:271
+#: engines/hypno/detection.cpp:281
 msgid "Player ammo will never decrease."
 msgstr "Spillerens ammunisjon minsker aldri."
 
-#: engines/hypno/detection.cpp:281
+#: engines/hypno/detection.cpp:291
 msgid "Unlock all levels"
 msgstr ""
 
-#: engines/hypno/detection.cpp:282
+#: engines/hypno/detection.cpp:292
 msgid "All levels will be available to play."
 msgstr ""
 
-#: engines/hypno/detection.cpp:292
+#: engines/hypno/detection.cpp:302
 msgid "Enable restored content"
 msgstr "Bruk restaurert innhold"
 
-#: engines/hypno/detection.cpp:293
+#: engines/hypno/detection.cpp:303
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 "Legg til ekstra innhold som ikke var en del av den utgitte opplevelsen."

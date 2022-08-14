@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-12 04:33+0000\n"
+"POT-Creation-Date: 2022-08-14 07:16+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -5362,47 +5362,47 @@ msgstr "Gore modua"
 msgid "Enable Gore Mode when available"
 msgstr "Gaitu Gore modua eskuragarri dagoenean"
 
-#: engines/hypno/detection.cpp:248
+#: engines/hypno/detection.cpp:258
 #, fuzzy
 msgid "Enable original cheats"
 msgstr "Gaitu helio modua"
 
-#: engines/hypno/detection.cpp:249
+#: engines/hypno/detection.cpp:259
 msgid "Allow cheats using the C key."
 msgstr ""
 
-#: engines/hypno/detection.cpp:259
+#: engines/hypno/detection.cpp:269
 #, fuzzy
 msgid "Enable infinite health cheat"
 msgstr "Gaitu kurtsore flotatzaileak"
 
-#: engines/hypno/detection.cpp:260
+#: engines/hypno/detection.cpp:270
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
 
-#: engines/hypno/detection.cpp:270
+#: engines/hypno/detection.cpp:280
 #, fuzzy
 msgid "Enable infinite ammo cheat"
 msgstr "Gaitu helio modua"
 
-#: engines/hypno/detection.cpp:271
+#: engines/hypno/detection.cpp:281
 msgid "Player ammo will never decrease."
 msgstr ""
 
-#: engines/hypno/detection.cpp:281
+#: engines/hypno/detection.cpp:291
 msgid "Unlock all levels"
 msgstr ""
 
-#: engines/hypno/detection.cpp:282
+#: engines/hypno/detection.cpp:292
 msgid "All levels will be available to play."
 msgstr ""
 
-#: engines/hypno/detection.cpp:292
+#: engines/hypno/detection.cpp:302
 #, fuzzy
 msgid "Enable restored content"
 msgstr "Gaitu kurtsore flotatzaileak"
 
-#: engines/hypno/detection.cpp:293
+#: engines/hypno/detection.cpp:303
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 

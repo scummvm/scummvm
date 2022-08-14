@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-12 04:33+0000\n"
+"POT-Creation-Date: 2022-08-14 07:16+0000\n"
 "PO-Revision-Date: 2022-08-08 09:54+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -5287,43 +5287,43 @@ msgstr "Режим з кров'ю"
 msgid "Enable Gore Mode when available"
 msgstr "Ввімкнути режим з кров'ю, якщо є доступний"
 
-#: engines/hypno/detection.cpp:248
+#: engines/hypno/detection.cpp:258
 msgid "Enable original cheats"
 msgstr "Ввімкнути ориґінальні чіти"
 
-#: engines/hypno/detection.cpp:249
+#: engines/hypno/detection.cpp:259
 msgid "Allow cheats using the C key."
 msgstr "Увімкніть чіт-коди за допомогою клавіші C."
 
-#: engines/hypno/detection.cpp:259
+#: engines/hypno/detection.cpp:269
 msgid "Enable infinite health cheat"
 msgstr "Ввімкнути нескінченне здоров'я"
 
-#: engines/hypno/detection.cpp:260
+#: engines/hypno/detection.cpp:270
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr "Здоров'я гравця ніколи не зменшується (окрім екранів кінця гри)."
 
-#: engines/hypno/detection.cpp:270
+#: engines/hypno/detection.cpp:280
 msgid "Enable infinite ammo cheat"
 msgstr "Ввімкнути чіт нескінченних боєприпасів"
 
-#: engines/hypno/detection.cpp:271
+#: engines/hypno/detection.cpp:281
 msgid "Player ammo will never decrease."
 msgstr "Боєприпаси гравця ніколи не зменшуються."
 
-#: engines/hypno/detection.cpp:281
+#: engines/hypno/detection.cpp:291
 msgid "Unlock all levels"
 msgstr "Розблокувати всі рівні"
 
-#: engines/hypno/detection.cpp:282
+#: engines/hypno/detection.cpp:292
 msgid "All levels will be available to play."
 msgstr "Всі рівні будуть доступні для гри."
 
-#: engines/hypno/detection.cpp:292
+#: engines/hypno/detection.cpp:302
 msgid "Enable restored content"
 msgstr "Ввімкнути відновлений контент"
 
-#: engines/hypno/detection.cpp:293
+#: engines/hypno/detection.cpp:303
 msgid "Add additional content that is not enabled the original implementation."
 msgstr "Додатковий контент, який було вимкнуто в оригінальній грі."
 

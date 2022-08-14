@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-12 04:33+0000\n"
+"POT-Creation-Date: 2022-08-14 07:16+0000\n"
 "PO-Revision-Date: 2022-08-05 00:37+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -5275,43 +5275,43 @@ msgstr "Hurmemoodi"
 msgid "Enable Gore Mode when available"
 msgstr "Aktivoi hurmemoodi jos saatavilla"
 
-#: engines/hypno/detection.cpp:248
+#: engines/hypno/detection.cpp:258
 msgid "Enable original cheats"
 msgstr "Salli alkuperäiset huijaukset"
 
-#: engines/hypno/detection.cpp:249
+#: engines/hypno/detection.cpp:259
 msgid "Allow cheats using the C key."
 msgstr "Salli huijaukset käyttämällä C-näppäintä."
 
-#: engines/hypno/detection.cpp:259
+#: engines/hypno/detection.cpp:269
 msgid "Enable infinite health cheat"
 msgstr "Salli loppumattoman elinvoiman huijaus"
 
-#: engines/hypno/detection.cpp:260
+#: engines/hypno/detection.cpp:270
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr "Pelaajan elinvoima ei vähene (paitsi pelin päättymiskohtauksissa)."
 
-#: engines/hypno/detection.cpp:270
+#: engines/hypno/detection.cpp:280
 msgid "Enable infinite ammo cheat"
 msgstr "Salli loppumattomien ammusten huijaus"
 
-#: engines/hypno/detection.cpp:271
+#: engines/hypno/detection.cpp:281
 msgid "Player ammo will never decrease."
 msgstr "Pelaajan ammukset eivät vähene."
 
-#: engines/hypno/detection.cpp:281
+#: engines/hypno/detection.cpp:291
 msgid "Unlock all levels"
 msgstr "Avaa kaikki tasot"
 
-#: engines/hypno/detection.cpp:282
+#: engines/hypno/detection.cpp:292
 msgid "All levels will be available to play."
 msgstr "Kaikki tasot ovat pelattavissa."
 
-#: engines/hypno/detection.cpp:292
+#: engines/hypno/detection.cpp:302
 msgid "Enable restored content"
 msgstr "Käytä palautettua sisältöä"
 
-#: engines/hypno/detection.cpp:293
+#: engines/hypno/detection.cpp:303
 msgid "Add additional content that is not enabled the original implementation."
 msgstr "Lisää sisältöä joka ei ole nähtävissä alkuperäisessä toteutuksessa."
 

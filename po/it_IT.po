@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-12 04:33+0000\n"
+"POT-Creation-Date: 2022-08-14 07:16+0000\n"
 "PO-Revision-Date: 2022-08-11 12:21+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -5337,45 +5337,45 @@ msgstr "Sangue"
 msgid "Enable Gore Mode when available"
 msgstr "Abilita scene sanguinose (se disponibili)"
 
-#: engines/hypno/detection.cpp:248
+#: engines/hypno/detection.cpp:258
 msgid "Enable original cheats"
 msgstr "Abilita cheat originali"
 
-#: engines/hypno/detection.cpp:249
+#: engines/hypno/detection.cpp:259
 msgid "Allow cheats using the C key."
 msgstr "Permette l'uso dei cheat premendo il tasto C."
 
-#: engines/hypno/detection.cpp:259
+#: engines/hypno/detection.cpp:269
 msgid "Enable infinite health cheat"
 msgstr "Attiva cheat energia infinita"
 
-#: engines/hypno/detection.cpp:260
+#: engines/hypno/detection.cpp:270
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
 "L'energia del giocatore non scenderà mai (tranne che nelle scene di game "
 "over)."
 
-#: engines/hypno/detection.cpp:270
+#: engines/hypno/detection.cpp:280
 msgid "Enable infinite ammo cheat"
 msgstr "Attiva cheat munizioni infinite"
 
-#: engines/hypno/detection.cpp:271
+#: engines/hypno/detection.cpp:281
 msgid "Player ammo will never decrease."
 msgstr "Il giocatore non consumerà mai munizioni."
 
-#: engines/hypno/detection.cpp:281
+#: engines/hypno/detection.cpp:291
 msgid "Unlock all levels"
 msgstr "Sblocca tutti i livelli"
 
-#: engines/hypno/detection.cpp:282
+#: engines/hypno/detection.cpp:292
 msgid "All levels will be available to play."
 msgstr "Permette l'accesso a qualsiasi livello del gioco."
 
-#: engines/hypno/detection.cpp:292
+#: engines/hypno/detection.cpp:302
 msgid "Enable restored content"
 msgstr "Ripristina contenuti tagliati"
 
-#: engines/hypno/detection.cpp:293
+#: engines/hypno/detection.cpp:303
 msgid "Add additional content that is not enabled the original implementation."
 msgstr "Abilita alcune parti che sono state escluse dal gioco originale."
 
