@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-15 14:49+0000\n"
-"PO-Revision-Date: 2022-08-15 13:37+0000\n"
+"PO-Revision-Date: 2022-08-15 21:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -6078,16 +6078,16 @@ msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
 msgstr ""
+"Включить субтитры для важных звуковых эффектов.  Это поможет упростить "
+"распознавание значения звуков в головоломках и мини-играх."
 
 #: engines/mtropolis/detection.cpp:98
 msgid "Start with debugger"
 msgstr "Стартовать с отладчика"
 
 #: engines/mtropolis/detection.cpp:99
-#, fuzzy
-#| msgid "Starts with the debugger dashboard active"
 msgid "Starts with the debugger dashboard active."
-msgstr "Стартует с активной панелью отладчика"
+msgstr "Стартовать с активной панелью отладчика."
 
 #: engines/mtropolis/saveload.cpp:123
 msgid "Failed to read version information from save file"
@@ -6264,7 +6264,7 @@ msgstr "Данные Сцены"
 
 #: engines/nancy/dialogs.cpp:106
 msgid "Restart the Scene"
-msgstr "Перезапуск сцены"
+msgstr "Перезапустить сцену"
 
 #: engines/nancy/dialogs.cpp:108
 msgid "Scene Number"
@@ -7179,7 +7179,7 @@ msgstr "Показать / убрать консоль"
 
 #: engines/scumm/help.cpp:94
 msgid "Start the debugger"
-msgstr "Запуск отладчика"
+msgstr "Запустить отладчик"
 
 #: engines/scumm/help.cpp:95
 msgid "Show memory consumption"
