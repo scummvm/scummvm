@@ -4,8 +4,8 @@
 # GAMEID <TAB> DESCRIPTION
 # After this follows an arbitrary number of lines start with a tab. Each line
 # describes one specific variant of the game. It contains tab separated data:
-#  - MD5
-#  - file size (or -1 if unknown)
+#  - MD5 (first 1,048,576 bytes)
+#  - file size (or -1 if unknown, but only in last resort)
 #  - Language (two letter code)
 #  - Platform
 #  - Variant id
@@ -39,13 +39,14 @@
 # of detect files, automatically inserting the values in here:
 #
 # #!/bin/sh
+# set -f
 # OIFS=$IFS
 # IFS="
 # "
-# for i in `find -name 00.*` `find -name 000.*` `find -name *.??0` `find -name *Data*` ; do
-#	m=`head -c 1048576 "$i" | md5sum | cut -f1 -d' '` ;
-#	s=`du -b "$i" | cut -f1` ;
-#	sed -i -e "s/$m\t-1/$m\t$s/" /PATH/TO/scumm-md5.txt ;
+# for i in $(find . \( -name '00.*' -o -name '000.*' -o -name '*.??0' -o -name '*Data*' \) -type f); do
+#	m=$(dd if="$i" bs=1024k count=1 2>/dev/null | openssl dgst -md5 | awk '{print $NF}')
+#	s=$(wc -c < "$i" | awk '{print $1}')
+#	sed -i -e "s/$m\t-1/$m\t$s/" /PATH/TO/scumm-md5.txt
 # done
 # IFS=$OIFS
 #
