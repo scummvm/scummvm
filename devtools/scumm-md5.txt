@@ -279,6 +279,7 @@ monkey2	Monkey Island 2: LeChuck's Revenge
 	387a544b8b10b26912d8413bab63a853	9770	en	DOS	-	Demo	non-interactive, v2.5.1 9/30/91	khalek
 	f4d20ab4ce19743a646cb48bd93aee72	10835	en	DOS	SE Talkie	Unofficial SE Talkie v0.2	lotharsm
 	a95baf7746f1be4985ad42126993a744	-1	ko	DOS	-	-	Fan translation	ScummVM-Kor
+	0b5567c35e87f3c370439c5994628eaf	10835	he	DOS	-	-	Hebrew fan translation
 
 atlantis	Indiana Jones and the Fate of Atlantis
 	3a03dab514e4038df192d8a8de469788	12035	en	Amiga	Amiga	Floppy	-	dhewg
