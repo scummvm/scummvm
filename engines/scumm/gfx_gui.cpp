@@ -29,6 +29,7 @@
 #include "scumm/imuse_digi/dimuse_engine.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/thumbnail.h"
 
 namespace Scumm {
 
@@ -1137,6 +1138,9 @@ void ScummEngine::showMainMenu() {
 	Common::KeyState ks;
 
 	memset(args, 0, sizeof(args));
+
+	// Generate the thumbnail, in case the game is saved
+	Graphics::createThumbnail(_savegameThumbnail);
 
 	// Pause the engine
 	PauseToken pt = pauseEngine();
