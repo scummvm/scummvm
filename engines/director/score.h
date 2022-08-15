@@ -116,7 +116,7 @@ public:
 
 	void invalidateRectsForMember(CastMember *member);
 
-	void playSoundChannel(uint16 frameId);
+	void playSoundChannel(uint16 frameId, bool puppetOnly);
 
 private:
 	void update();
