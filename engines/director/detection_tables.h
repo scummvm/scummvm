@@ -1375,6 +1375,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "mavisbeacon",		"Mavis Beacon Teaches Typing" },
 	{ "mechwarrior2",		"MechWarrior 2" },
 	{ "meetingmaker",		"Meeting Maker" },
+	{ "mindbrain",			"The Lost Mind of Dr. Brain" },
 	{ "mothergoosehires",	"Mixed-Up Mother Goose Deluxe" },
 	{ "msaccess",			"Microsoft Access" },
 	{ "msarcade",			"Microsoft Arcade" },
@@ -2290,6 +2291,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("mazebrew", "v2.0", "MazeBrew  v.2.0", "f5277c53bacd27936158dd3867e587e2", 491957, Common::JA_JPN, 311),
 
 	MACDEMO1("meetingmaker", "Demo", "Meeting Maker Demo", "19fe54e0b5c60405c7a88d9e4e032965", 721976, 300),
+
+	WINDEMO1("mindbrain", "Demo", "INSTALL.EXE", "54fbe8edce6731ba6e89c16fd3be8e6d", 2558723, 404),
 
 	// Original filename is ピーターと狼
 	// One gameplay mode supports General MIDI
