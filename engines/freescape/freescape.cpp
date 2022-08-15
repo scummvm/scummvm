@@ -24,6 +24,7 @@
 #include "common/file.h"
 #include "common/math.h"
 #include "common/memstream.h"
+#include "graphics/cursorman.h"
 
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
@@ -35,7 +36,7 @@ FreescapeEngine *g_freescape = NULL;
 FreescapeEngine::FreescapeEngine(OSystem *syst)
 	: Engine(syst), _screenW(320), _screenH(200), _border(nullptr), _gfx(nullptr) {
 	g_freescape = this;
-	if (!ConfMan.hasKey("render_mode"))
+	if (!ConfMan.hasKey("render_mode") || ConfMan.get("render_mode").empty())
 		_renderMode = "ega";
 	else
 		_renderMode = ConfMan.get("render_mode");
@@ -48,7 +49,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	_cameraFront = Math::Vector3d(0.f, 0.f, 0.f);
 	_cameraRight = Math::Vector3d(0.f, 0.f, 0.f);
 	_movementSpeed = 1.5f;
-	_mouseSensitivity = 0.1f;
+	_mouseSensitivity = 0.25f;
 	_flyMode = false;
 	_playerHeightNumber = 1;
 	_borderTexture = nullptr;
@@ -255,17 +256,31 @@ void FreescapeEngine::processInput() {
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
-			rotate(_lastMousePos, mousePos);
-			_lastMousePos = mousePos;
 			if (mousePos.x <= 5 || mousePos.x >= _screenW - 5) {
 				g_system->warpMouse(_screenW / 2, mousePos.y);
+
 				_lastMousePos.x = _screenW / 2;
 				_lastMousePos.y = mousePos.y;
+				if (mousePos.x <= 5)
+					mousePos.x = _lastMousePos.x + 3;
+				else
+					mousePos.x = _lastMousePos.x - 3;
+
+				mousePos.y = _lastMousePos.y;
+
 			} else if (mousePos.y <= 5 || mousePos.y >= _screenH - 5) {
 				g_system->warpMouse(mousePos.x, _screenH / 2);
 				_lastMousePos.x = mousePos.x;
 				_lastMousePos.y = _screenH / 2;
+				if (mousePos.y <= 5)
+					mousePos.y = _lastMousePos.y + 3;
+				else
+					mousePos.y = _lastMousePos.y - 3;
+
+				mousePos.x = _lastMousePos.x;
 			}
+			rotate(_lastMousePos, mousePos);
+			_lastMousePos = mousePos;
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
@@ -344,6 +359,7 @@ Common::Error FreescapeEngine::run() {
 		gotoArea(_startArea, _startEntrance);
 
 	debugC(1, kFreescapeDebugMove, "Starting area %d", _currentArea->getAreaID());
+	_system->lockMouse(true);
 	while (!shouldQuit()) {
 		drawFrame();
 		processInput();
