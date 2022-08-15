@@ -2562,24 +2562,31 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
 
-	// Laura Bow 2 - English DOS CD (from "The Roberta Williams Antology"/1996)
+	// Laura Bow 2 - English DOS CD
 	// Executable scanning reports "1.001.072", VERSION file reports "1.1" (from jvprat)
-	// SCI interpreter version 1.001.069 (just a guess)
 	{"laurabow2", "CD", {
 		{"resource.map", 0, "a70945e61ba7ac7bfea6b7bd72c6aec5", 7274},
 		{"resource.000", 0, "82578b8d5a7e09c4c58891ca49fae35b", 5598672},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD, GUIO_STD16_SPEECH	},
 
-	// Laura Bow 2 - Korean fan translation, based on English DOS CD (from "The Roberta Williams Antology"/1996)
-	// Executable scanning reports "1.001.072", VERSION file reports "1.1" (from jvprat)
-	// SCI interpreter version 1.001.069 (just a guess)
+	// Laura Bow 2 - Korean fan translation, based on English DOS CD
+	// Executable scanning reports "1.001.072", VERSION file reports "1.1"
 	{"laurabow2", "CD", {
 		{"resource.map", 0, "a70945e61ba7ac7bfea6b7bd72c6aec5", 7274},
 		{"resource.000", 0, "82578b8d5a7e09c4c58891ca49fae35b", 5598672},
 		{"resource.msg", 0, "bdc2167ebe55612b8ff17347f70e2b83", 561801},
 		AD_LISTEND},
 		Common::KO_KOR, Common::kPlatformDOS, ADGF_CD, GUIO_STD16_SPEECH	},
+
+	// Laura Bow 2 - French fan translation, based on English DOS CD
+	// Executable scanning reports "1.001.072", VERSION file reports "1.1"
+	{"laurabow2", "CD", {
+		{"resource.map", 0, "a70945e61ba7ac7bfea6b7bd72c6aec5", 7274},
+		{"resource.000", 0, "82578b8d5a7e09c4c58891ca49fae35b", 5598672},
+		{"patch/0.fon",  0, "539b7c355c8b7915de2c0396790c46aa", 2767},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD, GUIO_STD16_SPEECH	},
 
 	// Laura Bow 2 v1.1 - French DOS Floppy (from Hkz)
 	{"laurabow2", "", {
