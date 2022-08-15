@@ -633,6 +633,7 @@ protected:
 	char _mainMenuTextSpeedSlider[17];
 	int _spooledMusicIsToBeEnabled = 1;
 	int _saveScriptParam = 0;
+	Graphics::Surface _savegameThumbnail;
 
 	// Saved cursor pre and post GUI
 	byte *_curGrabbedCursor = nullptr;

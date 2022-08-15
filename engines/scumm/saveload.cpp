@@ -497,7 +497,11 @@ bool ScummEngine::saveState(Common::WriteStream *out, bool writeHeader) {
 		saveSaveGameHeader(out, hdr);
 	}
 #if !defined(__DS__) && !defined(__N64__)
-	Graphics::saveThumbnail(*out);
+	if (isUsingOriginalGUI() && _mainMenuIsActive) {
+		Graphics::saveThumbnail(*out, _savegameThumbnail);
+	} else {
+		Graphics::saveThumbnail(*out);
+	}
 #endif
 	saveInfos(out);
 
