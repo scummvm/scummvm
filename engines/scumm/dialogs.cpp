@@ -170,7 +170,20 @@ static const ResString string_map_table_v6[] = {
 	{107, "Loading '%s'"},
 	{108, "Name your SAVE game"},
 	{109, "Select a game to LOAD"},
-	{117, "How may I serve you?"}
+	{117, "How may I serve you?"},
+	{80, "Text Speed"},
+	{81, "Display Text"},
+	{113, "Music"},
+	{114, "Voice"},
+	{115, "Sfx"},
+	{116, "disabled"},
+	{0, "Voice Only"},
+	{0, "Voice and Text"},
+	{0, "Text Display Only"},
+	{0, "Text Speed   Slow  ==========  Fast"},
+	{0, "Music Volume    Low  =========  High"},
+	{0, "Voice Volume    Low  =========  High"},
+	{0, "SFX Volume    Low  =========  High"},
 };
 
 #pragma mark -
@@ -431,6 +444,10 @@ const char *InfoDialog::getPlainEngineString(int stringno) {
 		}
 	} else if (_vm->_game.version == 6) {
 		result = (const char *)_vm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
+
+		if (!result) {
+			result = (const char *)string_map_table_v6[stringno - 1].string;
+		}
 	} else if (_vm->_game.version >= 3) {
 		result = (const char *)_vm->getStringAddress(string_map_table_v345[stringno - 1].num);
 	} else {

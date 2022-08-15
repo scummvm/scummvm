@@ -844,18 +844,15 @@ void ScummEngine_v7::drawGUIText(const char *buttonString, int textXPos, int tex
 }
 
 int ScummEngine_v7::getMusicVolume() {
-	//setMusicVolume(ConfMan.getInt("music_volume") / 2);
-	return CLIP<int>(ConfMan.getInt("music_volume") / 2, 0, 127); //_imuseDigital->diMUSEGetMusicGroupVol();
+	return CLIP<int>(ConfMan.getInt("music_volume") / 2, 0, 127);
 }
 
 int ScummEngine_v7::getSpeechVolume() {
-	//setMusicVolume(ConfMan.getInt("speech_volume") / 2);
-	return CLIP<int>(ConfMan.getInt("speech_volume") / 2, 0, 127); //_imuseDigital->diMUSEGetVoiceGroupVol();
+	return CLIP<int>(ConfMan.getInt("speech_volume") / 2, 0, 127);
 }
 
 int ScummEngine_v7::getSFXVolume() {
-	//setMusicVolume(ConfMan.getInt("sfx_volume") / 2);
-	return CLIP<int>(ConfMan.getInt("sfx_volume") / 2, 0, 127); //_imuseDigital->diMUSEGetSFXGroupVol();
+	return CLIP<int>(ConfMan.getInt("sfx_volume") / 2, 0, 127);
 }
 
 void ScummEngine_v7::setMusicVolume(int volume) {
@@ -943,19 +940,41 @@ void ScummEngine::toggleVoiceMode() {
 }
 
 void ScummEngine::setMusicVolume(int volume) {
+	volume = CLIP<int>(volume, 0, 127);
+	if (_game.version < 7)
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume * 2);
 	ConfMan.setInt("music_volume", volume * 2);
 	ConfMan.flushToDisk();
 }
 
 void ScummEngine::setSpeechVolume(int volume) {
+	volume = CLIP<int>(volume, 0, 127);
+	if (_game.version < 7)
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume * 2);
 	ConfMan.setInt("speech_volume", volume * 2);
 	ConfMan.flushToDisk();
 }
 
 void ScummEngine::setSFXVolume(int volume) {
+	volume = CLIP<int>(volume, 0, 127);
+	if (_game.version < 7)
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume * 2);
 	ConfMan.setInt("sfx_volume", volume * 2);
 	ConfMan.flushToDisk();
 }
+
+int ScummEngine::getMusicVolume() {
+	return CLIP<int>(_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 2, 0, 127);
+}
+
+int ScummEngine::getSpeechVolume() {
+	return CLIP<int>(_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / 2, 0, 127);
+}
+
+int ScummEngine::getSFXVolume() {
+	return CLIP<int>(_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 2, 0, 127);
+}
+
 
 void ScummEngine::queryQuit() {
 	char msgLabelPtr[512];
@@ -1260,7 +1279,8 @@ void ScummEngine::showMainMenu() {
 	// differently (basically we start from a different position, but the order
 	// remains the same), we call CHARSET_1() here to refresh the dialog texts
 	// immediately and avoid getting a frame in which their color is wrong...
-	CHARSET_1();
+	if (_game.version == 7)
+		CHARSET_1();
 
 	// Resume the engine
 	pt.clear();
@@ -1415,28 +1435,33 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX) {
 			fillSavegameLabels();
 			drawMainMenuControls();
 			ScummEngine::drawDirtyScreenParts();
+		} else {
+			drawInternalGUIControl(GUI_CTRL_ARROW_UP_BUTTON, 0);
+			drawInternalGUIControl(GUI_CTRL_ARROW_DOWN_BUTTON, 0);
+			ScummEngine::drawDirtyScreenParts();
 		}
+
 		break;
 	case GUI_CTRL_PATH_BUTTON:
 		// This apparently should't do anything
 		break;
 	case GUI_CTRL_MUSIC_SLIDER:
-		setMusicVolume(((mouseX - 111) << 7) / 87);
+		setMusicVolume(((mouseX - (_game.version == 7 ? 111 : 105)) << 7) / 87);
 		updateMainMenuControls();
 		ScummEngine::drawDirtyScreenParts();
 		break;
 	case GUI_CTRL_SPEECH_SLIDER:
-		setSpeechVolume(((mouseX - 111) << 7) / 87);
+		setSpeechVolume(((mouseX - (_game.version == 7 ? 111 : 105)) << 7) / 87);
 		updateMainMenuControls();
 		ScummEngine::drawDirtyScreenParts();
 		break;
 	case GUI_CTRL_SFX_SLIDER:
-		setSFXVolume(((mouseX - 111) << 7) / 87);
+		setSFXVolume(((mouseX - (_game.version == 7 ? 111 : 105)) << 7) / 87);
 		updateMainMenuControls();
 		ScummEngine::drawDirtyScreenParts();
 		break;
 	case GUI_CTRL_TEXT_SPEED_SLIDER:
-		_defaultTextSpeed = CLIP<int>((mouseX - 108) / 9, 0, 9);
+		_defaultTextSpeed = CLIP<int>((mouseX - (_game.version == 7 ? 108 : 102)) / 9, 0, 9);
 		ConfMan.setInt("original_gui_text_speed", _defaultTextSpeed);
 		setTalkSpeed(_defaultTextSpeed);
 		syncSoundSettings();
@@ -1471,11 +1496,19 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX) {
 }
 
 void ScummEngine::setUpMainMenuControls() {
-	int yComponent, yConstant, yConstant2;
 
-	yComponent = (_game.id == GID_DIG && _useCJKMode) ? 130 : 121;
-	yConstant = _screenHeight / 2 - ((yComponent - 1) / 2);
-	yConstant2 = _screenHeight / 2 + ((yComponent - 1) / 2);
+}
+
+void ScummEngine_v6::setUpMainMenuControls() {
+	int yComponentV7, yConstantV7, yConstant2V7, yConstantV6;
+
+	// V7 auxiliary constants
+	yComponentV7 = (_game.id == GID_DIG && _useCJKMode) ? 130 : 121;
+	yConstantV7 = _screenHeight / 2 - ((yComponentV7 - 1) / 2);
+	yConstant2V7 = _screenHeight / 2 + ((yComponentV7 - 1) / 2);
+
+	// V6 ausiliary constant
+	yConstantV6 = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
 
 	for (int i = 0; i < ARRAYSIZE(_internalGUIControls); i++) {
 		_internalGUIControls[i].relativeCenterX = -1;
@@ -1491,10 +1524,10 @@ void ScummEngine::setUpMainMenuControls() {
 		getBannerColor(16),
 		getBannerColor(6),
 		getBannerColor(4),
-		16,
-		yConstant,
-		303,
-		yConstant2,
+		(_game.version == 7 ? 16 : 20),
+		(_game.version == 7 ? yConstantV7 : yConstantV6 - 60),
+		(_game.version == 7 ? 303 : 300),
+		(_game.version == 7 ? yConstant2V7 : yConstantV6 + 60),
 		_emptyMsg, 1, 1);
 
 	// Inner box
@@ -1507,9 +1540,9 @@ void ScummEngine::setUpMainMenuControls() {
 		getBannerColor(19),
 		getBannerColor(6),
 		getBannerColor(7),
-		22,
-		yConstant + ((_game.id == GID_DIG && _useCJKMode) ? 21 : 13),
-		-183,
+		(_game.version == 7 ? 22 : 26),
+		(_game.version == 7 ? yConstantV7 + ((_game.id == GID_DIG && _useCJKMode) ? 21 : 13) : yConstantV6 - 47),
+		(_game.version == 7 ? -183 : -176),
 		-102,
 		_emptyMsg, 1, 1);
 
@@ -1589,8 +1622,8 @@ void ScummEngine::setUpMainMenuControls() {
 				getBannerColor(19),
 				getBannerColor(10),
 				getBannerColor(12),
-				108,
-				yConstant + 25,
+				(_game.version == 7 ? 108 : 102),
+				(_game.version == 7 ? yConstantV7 + 25 : yConstantV6 - 39),
 				-90,
 				-12,
 				_uncheckedBox, 1, 1);
@@ -1605,8 +1638,8 @@ void ScummEngine::setUpMainMenuControls() {
 				getBannerColor(19),
 				getBannerColor(10),
 				getBannerColor(12),
-				108,
-				yConstant + 43,
+				(_game.version == 7 ? 108 : 102),
+				(_game.version == 7 ? yConstantV7 + 43 : yConstantV6 - 25),
 				-90,
 				-12,
 				_uncheckedBox, 1, 1);
@@ -1621,8 +1654,8 @@ void ScummEngine::setUpMainMenuControls() {
 				getBannerColor(19),
 				getBannerColor(10),
 				getBannerColor(12),
-				108,
-				yConstant + 61,
+				(_game.version == 7 ? 108 : 102),
+				(_game.version == 7 ? yConstantV7 + 61 : yConstantV6 - 11),
 				-90,
 				-12,
 				_uncheckedBox, 1, 1);
@@ -1638,8 +1671,8 @@ void ScummEngine::setUpMainMenuControls() {
 			getBannerColor(19),
 			getBannerColor(11),
 			getBannerColor(12),
-			108,
-			yConstant + 85,
+			(_game.version == 7 ? 108 : 102),
+			(_game.version == 7 ? yConstantV7 + 85 : yConstantV6 + 17),
 			-12,
 			-12,
 			_uncheckedBox, 1, 1);
@@ -1654,14 +1687,13 @@ void ScummEngine::setUpMainMenuControls() {
 			getBannerColor(19),
 			getBannerColor(10),
 			getBannerColor(12),
-			108,
-			yConstant + 99,
+			(_game.version == 7 ? 108 : 102),
+			(_game.version == 7 ? yConstantV7 + 99 : yConstantV6 + 31),
 			-90,
 			-12,
 			_uncheckedBox, 1, 1);
 
 		// Save button
-		int saveButtonAnchorY = yConstant + 37;
 		setUpInternalGUIControl(GUI_CTRL_SAVE_BUTTON,
 			getBannerColor(4),
 			getBannerColor(5),
@@ -1671,14 +1703,14 @@ void ScummEngine::setUpMainMenuControls() {
 			getBannerColor(20),
 			getBannerColor(6),
 			getBannerColor(7),
-			235,
-			saveButtonAnchorY,
+			(_game.version == 7 ? 235 : 232),
+			(_game.version == 7 ? yConstantV7 + 37 : yConstantV6 - 23),
 			-60,
 			((_game.id == GID_DIG && _useCJKMode) ? -18 : -12),
 			(char *)getGUIString(gsSave), 1, 1);
 
 		// Load button
-		int loadButtonAnchorY = yConstant +
+		int loadButtonAnchorY = yConstantV7 +
 			((_game.id == GID_DIG && _useCJKMode) ? 18 : 12)
 			+ 40;
 		setUpInternalGUIControl(GUI_CTRL_LOAD_BUTTON,
@@ -1690,14 +1722,14 @@ void ScummEngine::setUpMainMenuControls() {
 			getBannerColor(20),
 			getBannerColor(6),
 			getBannerColor(7),
-			235,
-			loadButtonAnchorY,
+			(_game.version == 7 ? 235 : 232),
+			(_game.version == 7 ? loadButtonAnchorY : yConstantV6 - 8),
 			-60,
 			((_game.id == GID_DIG && _useCJKMode) ? -18 : -12),
 			(char *)getGUIString(gsLoad), 1, 1);
 
 		// Play button
-		int playButtonAnchorY = yConstant +
+		int playButtonAnchorY = yConstantV7 +
 			2 * ((_game.id == GID_DIG && _useCJKMode) ? 18 : 12)
 			+ 43;
 		setUpInternalGUIControl(GUI_CTRL_PLAY_BUTTON,
@@ -1709,14 +1741,14 @@ void ScummEngine::setUpMainMenuControls() {
 			getBannerColor(20),
 			getBannerColor(6),
 			getBannerColor(7),
-			235,
-			playButtonAnchorY,
+			(_game.version == 7 ? 235 : 232),
+			(_game.version == 7 ? playButtonAnchorY : yConstantV6 + 7),
 			-60,
 			((_game.id == GID_DIG && _useCJKMode) ? -18 : -12),
 			(char *)getGUIString(gsPlay), 1, 1);
 
 		// Quit button
-		int quitButtonAnchorY = yConstant +
+		int quitButtonAnchorY = yConstantV7 +
 			3 * ((_game.id == GID_DIG && _useCJKMode) ? 18 : 12)
 			+ 46;
 		setUpInternalGUIControl(GUI_CTRL_QUIT_BUTTON,
@@ -1728,48 +1760,49 @@ void ScummEngine::setUpMainMenuControls() {
 			getBannerColor(20),
 			getBannerColor(6),
 			getBannerColor(7),
-			235,
-			quitButtonAnchorY,
+			(_game.version == 7 ? 235 : 232),
+			(_game.version == 7 ? quitButtonAnchorY : yConstantV6 + 22),
 			-60,
 			((_game.id == GID_DIG && _useCJKMode) ? -18 : -12),
 			(char *)getGUIString(gsQuit), 1, 1);
 	}
 
+	// Arrow up button
+	setUpInternalGUIControl(GUI_CTRL_ARROW_UP_BUTTON,
+		getBannerColor(9),
+		getBannerColor(10),
+		getBannerColor(17),
+		getBannerColor(18),
+		getBannerColor(19),
+		getBannerColor(20),
+		getBannerColor(11),
+		getBannerColor(12),
+		(_game.version == 7 ? 209 : 206),
+		(_game.version == 7 ? yConstantV7 + ((_game.id == GID_DIG && _useCJKMode) ? 25 : 17) : yConstantV6 - 43),
+		-16,
+		-47,
+		_arrowUp, 1, 1);
+
+	// Arrow down button
+	setUpInternalGUIControl(GUI_CTRL_ARROW_DOWN_BUTTON,
+		getBannerColor(9),
+		getBannerColor(10),
+		getBannerColor(17),
+		getBannerColor(18),
+		getBannerColor(19),
+		getBannerColor(20),
+		getBannerColor(11),
+		getBannerColor(12),
+		(_game.version == 7 ? 209 : 206),
+		(_game.version == 7 ? yConstantV7 + ((_game.id == GID_DIG && _useCJKMode) ? 75 : 67) : yConstantV6 + 7),
+		-16,
+		-45,
+		_arrowDown, 1, 1);
+
 	if (_menuPage == GUI_PAGE_SAVE || _menuPage == GUI_PAGE_LOAD) {
-		// Arrow up button
-		setUpInternalGUIControl(GUI_CTRL_ARROW_UP_BUTTON,
-			getBannerColor(9),
-			getBannerColor(10),
-			getBannerColor(17),
-			getBannerColor(18),
-			getBannerColor(19),
-			getBannerColor(20),
-			getBannerColor(11),
-			getBannerColor(12),
-			209,
-			yConstant + ((_game.id == GID_DIG && _useCJKMode) ? 25 : 17),
-			-16,
-			-47,
-			_arrowUp, 1, 1);
-
-		// Arrow down button
-		setUpInternalGUIControl(GUI_CTRL_ARROW_DOWN_BUTTON,
-			getBannerColor(9),
-			getBannerColor(10),
-			getBannerColor(17),
-			getBannerColor(18),
-			getBannerColor(19),
-			getBannerColor(20),
-			getBannerColor(11),
-			getBannerColor(12),
-			209,
-			yConstant + ((_game.id == GID_DIG && _useCJKMode) ? 75 : 67),
-			-16,
-			-45,
-			_arrowDown, 1, 1);
-
 		if (_menuPage == GUI_PAGE_SAVE) {
 			// OK button
+			int okButtonAnchorY = ((_game.id == GID_DIG && _useCJKMode) ? 18 : 12) + yConstantV7 + 40;
 			setUpInternalGUIControl(GUI_CTRL_OK_BUTTON,
 				getBannerColor(4),
 				getBannerColor(5),
@@ -1779,22 +1812,22 @@ void ScummEngine::setUpMainMenuControls() {
 				getBannerColor(20),
 				getBannerColor(6),
 				getBannerColor(7),
-				235,
-				((_game.id == GID_DIG && _useCJKMode) ? 18 : 12) + yConstant + 40,
+				(_game.version == 7 ? 235 : 232),
+				(_game.version == 7 ? okButtonAnchorY : yConstantV6 - 8),
 				-60,
 				((_game.id == GID_DIG && _useCJKMode) ? -18 : -12),
 				(char *)getGUIString(gsOK), 1, 1);
 		}
 
 		// Cancel button
-		int cancelButtonAnchorY = 0;
+		int cancelButtonAnchorY;
 		if (_menuPage == GUI_PAGE_LOAD) {
 			cancelButtonAnchorY = _screenHeight / 2 +
-				(((_game.id == GID_DIG && _useCJKMode) ? 10 : 7) - yComponent / 2) +
+				(((_game.id == GID_DIG && _useCJKMode) ? 10 : 7) - yComponentV7 / 2) +
 				((_game.id == GID_DIG && _useCJKMode) ? 18 : 12) +
 				40;
 		} else {
-			cancelButtonAnchorY = yConstant + 43 + 2 * ((_game.id == GID_DIG && _useCJKMode) ? 18 : 12);
+			cancelButtonAnchorY = yConstantV7 + 43 + 2 * ((_game.id == GID_DIG && _useCJKMode) ? 18 : 12);
 		}
 		setUpInternalGUIControl(GUI_CTRL_CANCEL_BUTTON,
 			getBannerColor(4),
@@ -1805,14 +1838,15 @@ void ScummEngine::setUpMainMenuControls() {
 			getBannerColor(20),
 			getBannerColor(6),
 			getBannerColor(7),
-			235,
-			cancelButtonAnchorY,
+			(_game.version == 7 ? 235 : 232),
+			(_game.version == 7 ? cancelButtonAnchorY : yConstantV6 - 1),
 			-60,
 			((_game.id == GID_DIG && _useCJKMode) ? -18 : -12),
 			(char *)getGUIString(gsCancel), 1, 1);
 
 		// Savegame names
 		for (int i = GUI_CTRL_FIRST_SG, j = 11; i <= GUI_CTRL_LAST_SG; i++, j += 11) {
+			int curSaveLabelAnchorY = yConstantV7 + j + ((_game.id == GID_DIG && _useCJKMode) ? 12 : 4);
 			setUpInternalGUIControl(i,
 				getBannerColor(9),
 				getBannerColor(10),
@@ -1822,9 +1856,9 @@ void ScummEngine::setUpMainMenuControls() {
 				getBannerColor(4),
 				getBannerColor(11),
 				getBannerColor(12),
-				24,
-				yConstant + j + ((_game.id == GID_DIG && _useCJKMode) ? 12 : 4),
-				-179,
+				(_game.version == 7 ? 24 : 28),
+				(_game.version == 7 ? curSaveLabelAnchorY : yConstantV6 + j - 56),
+				(_game.version == 7 ? -179 : -172),
 				-9,
 				_savegameNames[i - 1].label, 0, 0);
 		}
@@ -1834,6 +1868,7 @@ void ScummEngine::setUpMainMenuControls() {
 void ScummEngine::drawMainMenuControls() {
 	char namePrompt[256];
 	char loadPrompt[256];
+	char insertDisk[256];
 
 	// Outer box
 	drawInternalGUIControl(GUI_CTRL_OUTER_BOX, 0);
@@ -1845,6 +1880,16 @@ void ScummEngine::drawMainMenuControls() {
 		drawInternalGUIControl(GUI_CTRL_QUIT_BUTTON, 0); // Quit button
 
 		drawInternalGUIControl(GUI_CTRL_INNER_BOX, 0); // Inner box
+
+		if (_game.version == 6) {
+			drawInternalGUIControl(GUI_CTRL_ARROW_UP_BUTTON, 0);   // Arrow up button
+			drawInternalGUIControl(GUI_CTRL_ARROW_DOWN_BUTTON, 0); // Arrow down button
+
+			if (VAR_FIXEDDISK != 0xFF && VAR(VAR_FIXEDDISK) == 0) {
+				convertMessageToString((const byte *)getGUIString(gsInsertSaveDisk), (byte *)insertDisk, sizeof(insertDisk));
+				drawMainMenuTitle(insertDisk);
+			}
+		}
 	}
 
 	if (_menuPage == GUI_PAGE_SAVE || _menuPage == GUI_PAGE_LOAD) {
@@ -1877,12 +1922,19 @@ void ScummEngine::drawMainMenuControls() {
 }
 
 void ScummEngine::updateMainMenuControls() {
+	if (!strcmp(_game.variant, "Floppy"))
+		return;
+
 	char msg[256];
-	int yComponent, yConstant;
+	int yComponentV7, yConstantV7, yConstantV6;
 	int textColor = getBannerColor(2);
 
-	yComponent = (_game.id == GID_DIG && _useCJKMode) ? 130 : 121;
-	yConstant = _screenHeight / 2 - ((yComponent - 1) / 2);
+	// V7 ausiliary constants
+	yComponentV7 = (_game.id == GID_DIG && _useCJKMode) ? 130 : 121;
+	yConstantV7 = _screenHeight / 2 - ((yComponentV7 - 1) / 2);
+
+	// V6 ausiliary constant
+	yConstantV6 = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
 
 	strncpy(_mainMenuMusicSlider, "\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v", sizeof(_mainMenuMusicSlider));
 	strncpy(_mainMenuSpeechSlider, "\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v", sizeof(_mainMenuSpeechSlider));
@@ -1930,43 +1982,65 @@ void ScummEngine::updateMainMenuControls() {
 	drawInternalGUIControl(GUI_CTRL_DISPLAY_TEXT_CHECKBOX, 0); // Display text checkbox
 	drawInternalGUIControl(GUI_CTRL_TEXT_SPEED_SLIDER,     0); // Text speed slider
 
-	// Full Throttle has the "Spooled Music" checkbox,
-	// not rendered in the other games, so adjust that...
-	if (_game.id == GID_FT) {
-		convertMessageToString((const byte *)getGUIString(gsSpooledMusic), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 29, yConstant + 19, _screenWidth - 1, textColor, false);
+	if (_game.version == 7) {
+		// Full Throttle has the "Spooled Music" checkbox,
+		// not rendered in the other games, so adjust that...
+		if (_game.id == GID_FT) {
+			convertMessageToString((const byte *)getGUIString(gsSpooledMusic), (byte *)msg, sizeof(msg));
+			drawGUIText(msg, 29, yConstantV7 + 19, _screenWidth - 1, textColor, false);
 
-		convertMessageToString((const byte *)getGUIString(gsMusic), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 29, yConstant + 33, _screenWidth - 1, textColor, false);
+			convertMessageToString((const byte *)getGUIString(gsMusic), (byte *)msg, sizeof(msg));
+			drawGUIText(msg, 29, yConstantV7 + 33, _screenWidth - 1, textColor, false);
 
-		convertMessageToString((const byte *)getGUIString(gsVoice), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 29, yConstant + 47, _screenWidth - 1, textColor, false);
+			convertMessageToString((const byte *)getGUIString(gsVoice), (byte *)msg, sizeof(msg));
+			drawGUIText(msg, 29, yConstantV7 + 47, _screenWidth - 1, textColor, false);
+		} else {
+			convertMessageToString((const byte *)getGUIString(gsMusic), (byte *)msg, sizeof(msg));
+			drawGUIText(msg, 29, yConstantV7 + 25, _screenWidth - 1, textColor, false);
+
+			convertMessageToString((const byte *)getGUIString(gsVoice), (byte *)msg, sizeof(msg));
+			drawGUIText(msg, 29, yConstantV7 + 43, _screenWidth - 1, textColor, false);
+		}
+
+		convertMessageToString((const byte *)getGUIString(gsSfx), (byte *)msg, sizeof(msg));
+		drawGUIText(msg, 29, yConstantV7 + 61, _screenWidth - 1, textColor, false);
+
+		convertMessageToString((const byte *)getGUIString(gsDisplayText), (byte *)msg, sizeof(msg));
+		drawGUIText(msg, 29, yConstantV7 + 88, _screenWidth - 1, textColor, false);
+
+		convertMessageToString((const byte *)getGUIString(gsTextSpeed), (byte *)msg, sizeof(msg));
+		drawGUIText(msg, 29, yConstantV7 + 102, _screenWidth - 1, textColor, false);
+
+		drawLine(23, yConstantV7 + 77, 204, yConstantV7 + 77, getBannerColor(17));
+		drawLine(23, yConstantV7 + 78, 204, yConstantV7 + 78, getBannerColor(4));
+		drawLine(23, yConstantV7 + 79, 204, yConstantV7 + 79, getBannerColor(4));
+		drawLine(23, yConstantV7 + 80, 204, yConstantV7 + 80, getBannerColor(18));
+
+		// The following line is from the Aaron Giles' interpreter of FT, based on the first DOS version;
+		// for some reason it doesn't get displayed in the DOS version, and it also overflows
+		// onto the internal panel lines, so let's just not draw it...
+		// drawLine(24, yConstantV7 + 81, 204, yConstantV7 + 81, getBannerColor(4));
 	} else {
 		convertMessageToString((const byte *)getGUIString(gsMusic), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 29, yConstant + 25, _screenWidth - 1, textColor, false);
+		drawGUIText(msg, 33, yConstantV6 - 36, _screenWidth - 1, textColor, false);
 
 		convertMessageToString((const byte *)getGUIString(gsVoice), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 29, yConstant + 43, _screenWidth - 1, textColor, false);
+		drawGUIText(msg, 33, yConstantV6 - 22, _screenWidth - 1, textColor, false);
+
+		convertMessageToString((const byte *)getGUIString(gsSfx), (byte *)msg, sizeof(msg));
+		drawGUIText(msg, 33, yConstantV6 - 8, _screenWidth - 1, textColor, false);
+
+		convertMessageToString((const byte *)getGUIString(gsDisplayText), (byte *)msg, sizeof(msg));
+		drawGUIText(msg, 33, yConstantV6 + 19, _screenWidth - 1, textColor, false);
+
+		convertMessageToString((const byte *)getGUIString(gsTextSpeed), (byte *)msg, sizeof(msg));
+		drawGUIText(msg, 33, yConstantV6 + 34, _screenWidth - 1, textColor, false);
+
+		drawLine(27, yConstantV6 + 8,  201, yConstantV6 + 8,  getBannerColor(17));
+		drawLine(27, yConstantV6 + 9,  201, yConstantV6 + 9,  getBannerColor(4));
+		drawLine(27, yConstantV6 + 10, 201, yConstantV6 + 10, getBannerColor(4));
+		drawLine(27, yConstantV6 + 11, 201, yConstantV6 + 11, getBannerColor(18));
 	}
-
-	convertMessageToString((const byte *)getGUIString(gsSfx), (byte *)msg, sizeof(msg));
-	drawGUIText(msg, 29, yConstant + 61, _screenWidth - 1, textColor, false);
-
-	convertMessageToString((const byte *)getGUIString(gsDisplayText), (byte *)msg, sizeof(msg));
-	drawGUIText(msg, 29, yConstant + 88, _screenWidth - 1, textColor, false);
-
-	convertMessageToString((const byte *)getGUIString(gsTextSpeed), (byte *)msg, sizeof(msg));
-	drawGUIText(msg, 29, yConstant + 102, _screenWidth - 1, textColor, false);
-
-	drawLine(23, yConstant + 77, 204, yConstant + 77, getBannerColor(17));
-	drawLine(23, yConstant + 78, 204, yConstant + 78, getBannerColor(4));
-	drawLine(23, yConstant + 79, 204, yConstant + 79, getBannerColor(4));
-	drawLine(23, yConstant + 80, 204, yConstant + 80, getBannerColor(18));
-
-	// The following line is in the Aaron Giles' interpreter of FT, based on the first DOS version;
-	// for some reason it doesn't get displayed in the DOS version, and it also overflows
-	// onto the internal panel lines, so let's just not draw it...
-	// drawLine(24, yConstant + 81, 204, yConstant + 81, getBannerColor(4));
 
 	ScummEngine::drawDirtyScreenParts();
 	_system->updateScreen();
@@ -1975,6 +2049,8 @@ void ScummEngine::updateMainMenuControls() {
 void ScummEngine::drawMainMenuTitle(const char *title) {
 	int boxColor = getBannerColor(4);
 	int stringColor = getBannerColor(2);
+	int yConstantV6 = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
+
 	if (_game.id == GID_DIG) {
 		int yComponent = _useCJKMode ? 130 : 121;
 
@@ -1990,9 +2066,12 @@ void ScummEngine::drawMainMenuTitle(const char *title) {
 			_screenWidth - 1,
 			stringColor,
 			true);
-	} else {
+	} else if (_game.version == 7) {
 		drawBox(18, _screenTop + 44, 301, _screenTop + 52, boxColor);
 		drawGUIText(title, 159, 44, _screenWidth - 1, stringColor, true);
+	} else {
+		drawBox(22, yConstantV6 - 56, 298, yConstantV6 - 48, boxColor);
+		drawGUIText(title, 160, yConstantV6 - 56, _screenWidth - 1, stringColor, true);
 	}
 
 	ScummEngine::drawDirtyScreenParts();
@@ -2053,8 +2132,6 @@ const char *ScummEngine_v6::getGUIString(int stringId) {
 	case gsPause:
 		resStringId = 4;
 		break;
-	case gsTextSpeedSlider:
-		break;
 	case gsRestart:
 		resStringId = 5;
 		break;
@@ -2078,6 +2155,9 @@ const char *ScummEngine_v6::getGUIString(int stringId) {
 		break;
 	case gsOK:
 		resStringId = 12;
+		break;
+	case gsInsertSaveDisk:
+		resStringId = 13;
 		break;
 	case gsMustName:
 		resStringId = 14;
@@ -2103,25 +2183,44 @@ const char *ScummEngine_v6::getGUIString(int stringId) {
 	case gsTitle:
 		resStringId = 21;
 		break;
-	case gsReplacePrompt:
+	case gsTextSpeed:
+		resStringId = 22;
 		break;
-	case gsYes:
+	case gsDisplayText:
+		resStringId = 23;
 		break;
-	case gsNo:
+	case gsMusic:
+		resStringId = 24;
 		break;
-	case gsIMuseBuffer:
+	case gsVoice:
+		resStringId = 25;
+		break;
+	case gsSfx:
+		resStringId = 26;
+		break;
+	case gsDisabled:
+		resStringId = 27;
+		break;
+	case gsVoiceOnly:
+		resStringId = 28;
 		break;
 	case gsVoiceAndText:
+		resStringId = 29;
 		break;
 	case gsTextDisplayOnly:
+		resStringId = 30;
 		break;
-	case gsYesKey:
+	case gsTextSpeedSlider:
+		resStringId = 31;
 		break;
 	case gsMusicVolumeSlider:
+		resStringId = 32;
 		break;
 	case gsVoiceVolumeSlider:
+		resStringId = 33;
 		break;
 	case gsSfxVolumeSlider:
+		resStringId = 34;
 		break;
 	case gsHeap:
 		return "Heap %dK";
