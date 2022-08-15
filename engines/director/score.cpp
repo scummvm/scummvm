@@ -510,7 +510,7 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 
 	_window->render();
 
-	playSoundChannel(frameId);
+	playSoundChannel(frameId, false);
 	playQueuedSound(); // this is currently only used in FPlayXObj
 
 	if (_cursorDirty) {
@@ -747,7 +747,7 @@ Channel *Score::getChannelById(uint16 id) {
 	return _channels[id];
 }
 
-void Score::playSoundChannel(uint16 frameId) {
+void Score::playSoundChannel(uint16 frameId, bool puppetOnly) {
 	Frame *frame = _frames[frameId];
 
 	debugC(5, kDebugLoading, "playSoundChannel(): Sound1 %s Sound2 %s", frame->_sound1.asString().c_str(), frame->_sound2.asString().c_str());
@@ -755,18 +755,22 @@ void Score::playSoundChannel(uint16 frameId) {
 
 	if (sound->isChannelPuppet(1)) {
 		sound->playPuppetSound(1);
-	} else if (frame->_soundType1 >= kMinSampledMenu && frame->_soundType1 <= kMaxSampledMenu) {
-		sound->playExternalSound(frame->_soundType1, frame->_sound1.member, 1);
-	} else {
-		sound->playCastMember(frame->_sound1, 1);
+	} else if (!puppetOnly) {
+		if (frame->_soundType1 >= kMinSampledMenu && frame->_soundType1 <= kMaxSampledMenu) {
+			sound->playExternalSound(frame->_soundType1, frame->_sound1.member, 1);
+		} else {
+			sound->playCastMember(frame->_sound1, 1);
+		}
 	}
 
 	if (sound->isChannelPuppet(2)) {
 		sound->playPuppetSound(2);
-	} else if (frame->_soundType2 >= kMinSampledMenu && frame->_soundType2 <= kMaxSampledMenu) {
-		sound->playExternalSound(frame->_soundType2, frame->_sound2.member, 2);
-	} else {
-		sound->playCastMember(frame->_sound2, 2);
+	} else if (!puppetOnly) {
+		if (frame->_soundType2 >= kMinSampledMenu && frame->_soundType2 <= kMaxSampledMenu) {
+			sound->playExternalSound(frame->_soundType2, frame->_sound2.member, 2);
+		} else {
+			sound->playCastMember(frame->_sound2, 2);
+		}
 	}
 
 	// Channels above 2 are only usable by Lingo.
