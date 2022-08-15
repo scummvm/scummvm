@@ -1347,17 +1347,19 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX) {
 			if (_mainMenuSavegameLabel > 0) {
 				convertMessageToString((const byte *)getGUIString(gsLoading), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
 				sprintf_s(formattedString, sizeof(formattedString), saveScreenTitle, &_savegameNames[_mainMenuSavegameLabel - 1].label[4]);
-				drawMainMenuTitle(formattedString);
-				ScummEngine::drawDirtyScreenParts();
-				_system->updateScreen();
-
-				waitForTimer(60);
 
 				if (strlen(_savegameNames[_mainMenuSavegameLabel - 1].label) == 4) {
 					drawMainMenuControls();
 					ScummEngine::drawDirtyScreenParts();
 					break;
 				}
+
+				drawMainMenuTitle(formattedString);
+				ScummEngine::drawDirtyScreenParts();
+				_system->updateScreen();
+
+				waitForTimer(60);
+
 
 				if (isSmushActive()) {
 					handleLoadDuringSmush();
