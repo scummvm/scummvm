@@ -457,14 +457,11 @@ int CharsetRendererClassic::getCharWidth(uint16 chr) const {
 int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int pos = 0;
 
-	// I have confirmed from disasm that LOOM EGA and FM-TOWNS (EN/JP) do not add 1 to the width
-	// while LOOM VGA Talkie and MONKEY1 EGA do. So that seems to have been introduced with version 4.
-	// TODO: Check other v1-3 games. Loom IS the only game in that version range that has charset mask
-	// (overlaying) text display, the others are limited to top screen and verb screen. So it might not
-	// be that relevant....
-	int width = 1;
-	if (_vm->_game.id == GID_FT || (_vm->_game.id == GID_LOOM && _vm->_game.version < 4))
-		width = 0;
+	// I have confirmed from disasm that neither LOOM EGA and FM-TOWNS (EN/JP) nor any other games withing the
+	// v0-v3 version range add 1 to the width. There isn't even a getStringWidth method. And the v0-2 games don't
+	// even support text rendering over strip borders. However, LOOM VGA Talkie and MONKEY1 EGA do have the
+	// getStringWidth method and they do add 1 to the width. So that seems to have been introduced with version 4.
+	int width = (_vm->_game.version < 4 || _vm->_game.id == GID_FT) ? 0 : 1;
 
 	int chr;
 	int oldID = getCurID();
