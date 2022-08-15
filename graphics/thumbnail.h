@@ -63,6 +63,11 @@ bool skipThumbnail(Common::SeekableReadStream &in);
 bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface *&thumbnail, bool skipThumbnail = false);
 
 /**
+ * Creates a thumbnail from screen contents.
+ */
+bool createThumbnail(Graphics::Surface &thumb);
+
+/**
  * Saves a thumbnail to the given write stream.
  * Automatically creates a thumbnail from screen contents.
  */
