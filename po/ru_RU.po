@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-14 07:16+0000\n"
-"PO-Revision-Date: 2022-08-08 09:53+0000\n"
+"PO-Revision-Date: 2022-08-15 13:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -5284,7 +5284,7 @@ msgstr "Режим с кровью"
 
 #: engines/hopkins/detection.cpp:47 engines/hopkins/detection.cpp:59
 msgid "Enable Gore Mode when available"
-msgstr "Включает режим с изображением крови, если он доступен"
+msgstr "Включить режим с изображением крови, если он доступен"
 
 #: engines/hypno/detection.cpp:258
 msgid "Enable original cheats"
@@ -6065,16 +6065,13 @@ msgid "Enable short transitions"
 msgstr "Включить короткие переходы"
 
 #: engines/mtropolis/detection.cpp:77
-#, fuzzy
-#| msgid ""
-#| "Enables transitions that are set to maximum rate instead of skipping them"
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
-msgstr "Включает переходы с максимальной скоростью, а не просто их пропускает"
+msgstr "Включить переходы с максимальной скоростью, а не просто их пропускать."
 
 #: engines/mtropolis/detection.cpp:87
 msgid "Enable subtitles for important sound effects"
-msgstr ""
+msgstr "Включить субтитры для важных звуковых эффектов"
 
 #: engines/mtropolis/detection.cpp:88
 msgid ""
@@ -6246,7 +6243,7 @@ msgid ""
 "Enable the Second Chance feature, which automatically saves at specific "
 "scenes. Enabling this disables timed autosaves."
 msgstr ""
-"Включает режим второй попытки, который автоматически делает сохранения в "
+"Включить режим второй попытки, который автоматически делает сохранения в "
 "некоторых сценах. Его включение выключает сохранения по таймеру."
 
 #: engines/nancy/dialogs.cpp:47
@@ -6615,7 +6612,7 @@ msgstr "Включить бородатых музыкантов"
 
 #: engines/sci/detection_options.h:209
 msgid "Enable graphics that were disabled for legal reasons"
-msgstr "Включает графику, которая была заблокирована по юридическим причинам"
+msgstr "Включить графику, которая была заблокирована по юридическим причинам"
 
 #: engines/sci/detection_options.h:237
 msgid "MIDI mode:"
