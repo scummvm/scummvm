@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-14 07:16+0000\n"
-"PO-Revision-Date: 2022-08-08 09:54+0000\n"
+"PO-Revision-Date: 2022-08-15 13:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -4726,7 +4726,7 @@ msgstr "Режим без кольору"
 
 #: engines/cge/detection.cpp:114
 msgid "Enable Color Blind Mode by default"
-msgstr "Вмикає режим для людей з погіршенним сприяттям кольору"
+msgstr "Ввімкнути режим для людей з погіршенним сприяттям кольору"
 
 #: engines/cge/detection.cpp:126 engines/glk/detection.cpp:238
 #: engines/sci/detection_options.h:221 engines/supernova/detection.cpp:53
@@ -5335,7 +5335,7 @@ msgstr "Аудіторія в студії"
 
 #: engines/kyra/detection.cpp:62
 msgid "Enable studio audience"
-msgstr "Додати аудіторію у студію"
+msgstr "Додати аудиторію у студію"
 
 #. I18N: This option allows the user to skip text and cutscenes.
 #: engines/kyra/detection.cpp:74
@@ -6063,32 +6063,29 @@ msgid "Enable short transitions"
 msgstr "Ввімкнути короткі переходи"
 
 #: engines/mtropolis/detection.cpp:77
-#, fuzzy
-#| msgid ""
-#| "Enables transitions that are set to maximum rate instead of skipping them"
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
-msgstr "Вмикає переходи з найбільшою швидкістю замість просто пропускання"
+msgstr "Вмикає переходи з найбільшою швидкістю замість просто пропускання."
 
 #: engines/mtropolis/detection.cpp:87
 msgid "Enable subtitles for important sound effects"
-msgstr ""
+msgstr "Ввімкнути субтитри для змістовних звукових ефектів"
 
 #: engines/mtropolis/detection.cpp:88
 msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
 msgstr ""
+"Вмикає субтитри для змістовних звукових ефектів.  Це полегшить складність "
+"деяких міні-ігор і головоломок шляхом показу змісту звуків."
 
 #: engines/mtropolis/detection.cpp:98
 msgid "Start with debugger"
 msgstr "Розпочинати з відладчика"
 
 #: engines/mtropolis/detection.cpp:99
-#, fuzzy
-#| msgid "Starts with the debugger dashboard active"
 msgid "Starts with the debugger dashboard active."
-msgstr "Відразу запускає активну панель відладчика"
+msgstr "Відразу запускає активну панель відладчика."
 
 #: engines/mtropolis/saveload.cpp:123
 msgid "Failed to read version information from save file"
@@ -6244,7 +6241,7 @@ msgid ""
 "Enable the Second Chance feature, which automatically saves at specific "
 "scenes. Enabling this disables timed autosaves."
 msgstr ""
-"Вмикає режим другої спроби, коли в деяких сценах відбувається автоматичне "
+"Ввімкнути режим другої спроби, коли в деяких сценах відбувається автоматичне "
 "збереження. Якщо цей режим увімкнено, автоматичні збереження по таймери "
 "вимикаються."
 
@@ -6574,7 +6571,7 @@ msgstr "Ввімкнути цензуру контенту"
 
 #: engines/sci/detection_options.h:157
 msgid "Enable the game's built-in optional content censoring"
-msgstr "Ввімкніть вбудовану додаткову цензуру вмісту гри"
+msgstr "Ввімкнути вбудовану додаткову цензуру вмісту гри"
 
 #: engines/sci/detection_options.h:169
 msgid "Upscale videos"
@@ -6607,7 +6604,8 @@ msgstr "Ввімкнути бородатих музикантів"
 
 #: engines/sci/detection_options.h:209
 msgid "Enable graphics that were disabled for legal reasons"
-msgstr "Вмикає графіку, яку було оригінально вимкнено через юридичні проблеми"
+msgstr ""
+"Ввімкнути графіку, яку було оригінально вимкнено через юридичні проблеми"
 
 #: engines/sci/detection_options.h:237
 msgid "MIDI mode:"
@@ -8350,7 +8348,7 @@ msgstr "Постійно ввімкнути Різдвяний секрет (eas
 
 #: engines/ultima/detection.cpp:167
 msgid "Enable the Christmas music at any time of year."
-msgstr "Увімкнути різдвяну музику у будь-яку пору року."
+msgstr "Ввімкнути різдвяну музику у будь-яку пору року."
 
 #: engines/ultima/shared/early/ultima_early.cpp:70
 msgid "Could not find correct ultima.dat datafile"
