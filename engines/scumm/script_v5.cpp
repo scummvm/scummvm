@@ -2450,8 +2450,21 @@ void ScummEngine_v5::o5_setOwnerOf() {
 
 void ScummEngine_v5::o5_setState() {
 	int obj, state;
+
 	obj = getVarOrDirectWord(PARAM_1);
 	state = getVarOrDirectByte(PARAM_2);
+
+	// WORKAROUND: The door will glitch if one closes it before using the voodoo
+	// doll on Largo. Script 13-213 triggers the same action without any glitch,
+	// though, since it properly resets the state of the (invisible) laundry claim
+	// ticket part of the door, so we just reuse its setState and setClass calls.
+	if (_game.id == GID_MONKEY2 && _currentRoom == 13 && vm.slot[_currentScript].number == 200 &&
+		obj == 108 && state == 1 && getState(100) != 1 && getState(111) != 2 && _enableEnhancements) {
+		putState(111, 2);
+		markObjectRectAsDirty(111);
+		putClass(111, 160, true);
+	}
+
 	putState(obj, state);
 	markObjectRectAsDirty(obj);
 	if (_bgNeedsRedraw)
