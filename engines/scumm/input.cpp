@@ -882,7 +882,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		}
 
 		if (VAR_MAINMENU_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_MAINMENU_KEY) && lastKeyHit.hasFlags(0)) &&
-			_game.version > 6) {
+			_game.version > 5) {
 			showMainMenu();
 			return;
 		}

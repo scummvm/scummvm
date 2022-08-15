@@ -428,7 +428,8 @@ enum GUIString {
 	gsSfx = 36,
 	gsTextSpeed = 37,
 	gsDisplayText = 38,
-	gsSpooledMusic = 39
+	gsSpooledMusic = 39,
+	gsInsertSaveDisk = 40
 };
 
 struct InternalGUIControl {
@@ -665,9 +666,9 @@ protected:
 	virtual int getGUIStringWidth(const char *str);
 	virtual void drawGUIText(const char *buttonString, int textXPos, int textYPos, int rightRectClip, int textColor, bool centerFlag);
 	void getSliderString(int stringId, int value, char *sliderString, int size);
-	virtual int getMusicVolume() { return 0; }
-	virtual int getSpeechVolume() { return 0; }
-	virtual int getSFXVolume() { return 0; }
+	virtual int getMusicVolume();
+	virtual int getSpeechVolume();
+	virtual int getSFXVolume();
 	virtual void setMusicVolume(int volume);
 	virtual void setSpeechVolume(int volume);
 	virtual void setSFXVolume(int volume);
@@ -676,7 +677,7 @@ protected:
 	virtual void setSkipVideo(int value) {}
 
 	void showMainMenu();
-	void setUpMainMenuControls();
+	virtual void setUpMainMenuControls();
 	void drawMainMenuControls();
 	void updateMainMenuControls();
 	void drawMainMenuTitle(const char *title);
