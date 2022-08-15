@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-15 14:49+0000\n"
-"PO-Revision-Date: 2022-08-15 13:37+0000\n"
+"PO-Revision-Date: 2022-08-16 03:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -6085,7 +6085,7 @@ msgstr "Розпочинати з відладчика"
 
 #: engines/mtropolis/detection.cpp:99
 msgid "Starts with the debugger dashboard active."
-msgstr "Відразу запускає активну панель відладчика."
+msgstr "Відразу запускати активну панель відладчика."
 
 #: engines/mtropolis/saveload.cpp:123
 msgid "Failed to read version information from save file"
