@@ -200,11 +200,8 @@ static cOpenALSoundChannel **findBestSlot(Common::Array<cOpenALSoundChannel *> &
 bool cLowLevelSoundOpenAL::playChannel(cOpenALSoundChannel *channel) {
 	auto slot = findBestSlot(_activeChannels, channel->GetPriority());
 	if (slot != _activeChannels.end()) {
-		if (*slot != nullptr) {
-			_mixer->stopHandle((*slot)->_handle);
-			(*slot)->mbStopUsed = true;
-			(*slot)->_playing = false;
-		}
+		if (*slot != nullptr)
+			(*slot)->Stop();
 		*slot = channel;
 		_mixer->stopHandle(channel->_handle);
 		channel->_audioStream->rewind();
