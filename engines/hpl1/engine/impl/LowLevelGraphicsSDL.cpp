@@ -409,14 +409,14 @@ iTexture *cLowLevelGraphicsSDL::CreateTexture(const cVector2l &avSize, int alBpp
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::PushMatrix(eMatrix aMtxType) {
-	GL_CHECK(SetMatrixMode(aMtxType));
+	SetMatrixMode(aMtxType);
 	GL_CHECK(glPushMatrix());
 }
 
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::PopMatrix(eMatrix aMtxType) {
-	GL_CHECK(SetMatrixMode(aMtxType));
+	SetMatrixMode(aMtxType);
 	GL_CHECK(glPopMatrix());
 }
 //-----------------------------------------------------------------------
@@ -430,14 +430,14 @@ void cLowLevelGraphicsSDL::SetMatrix(eMatrix aMtxType, const cMatrixf &a_mtxA) {
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::SetIdentityMatrix(eMatrix aMtxType) {
-	GL_CHECK(SetMatrixMode(aMtxType));
+	SetMatrixMode(aMtxType);
 	GL_CHECK(glLoadIdentity());
 }
 
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::TranslateMatrix(eMatrix aMtxType, const cVector3f &avPos) {
-	GL_CHECK(SetMatrixMode(aMtxType));
+	SetMatrixMode(aMtxType);
 	GL_CHECK(glTranslatef(avPos.x, avPos.y, avPos.z));
 }
 
