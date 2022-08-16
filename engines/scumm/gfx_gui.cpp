@@ -104,7 +104,7 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	}
 
 	// Backup the text surface...
-	if (_game.version < 7) {
+	if (_game.version < 7 && !_mainMenuIsActive) {
 		saveTextSurfacePreGUI();
 		restoreCharsetBg();
 	}
@@ -216,7 +216,7 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	}
 
 	// Restore the text surface...
-	if (_game.version < 7) {
+	if (_game.version < 7 && !_mainMenuIsActive) {
 		restoreTextSurfacePostGUI();
 		_completeScreenRedraw = true;
 	}
@@ -1388,7 +1388,9 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, bool &hasLoadedSt
 		return true;
 	case GUI_CTRL_QUIT_BUTTON:
 		queryQuit();
-		return true;
+		if (_game.version == 7)
+			return true;
+		break;
 	case GUI_CTRL_OK_BUTTON:
 		if (_menuPage == GUI_PAGE_SAVE) {
 			if (_mainMenuSavegameLabel > 0) {
