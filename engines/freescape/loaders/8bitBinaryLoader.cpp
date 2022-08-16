@@ -339,11 +339,6 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		debugC(1, kFreescapeDebugParser, "%s", conditionSource->c_str());
 	}
 
-	if (_areaMap.contains(255))
-		area->addStructure(_areaMap[255]);
-	else if (isCastle() || isEclipse())
-		area->addStructure(nullptr);
-
 	debugC(1, kFreescapeDebugParser, "End of area at %lx", file->pos());
 	return area;
 }
@@ -441,6 +436,12 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 			break;
 		}
 	}
+
+	if (_areaMap.contains(255)) {
+		for (AreaMap::iterator iterator = _areaMap.begin(); iterator != _areaMap.end(); iterator++)
+			iterator->_value->addStructure(_areaMap[255]);
+	}
+
 	if (isEclipse() || isCastle()) {
 		_playerHeight = 48;
 		_playerWidth = 8;
