@@ -39,16 +39,11 @@
 # of detect files, automatically inserting the values in here:
 #
 # #!/bin/sh
-# set -f
-# OIFS=$IFS
-# IFS="
-# "
-# for i in $(find . \( -name '00.*' -o -name '000.*' -o -name '*.??0' -o -name '*Data*' \) -type f); do
+# find . \( -name '00.*' -o -name '000.*' -o -name '*.??0' -o -name '*Data*' \) -type f | while read -r i; do
 #	m=$(dd if="$i" bs=1024k count=1 2>/dev/null | openssl dgst -md5 | awk '{print $NF}')
 #	s=$(wc -c < "$i" | awk '{print $1}')
 #	sed -i -e "s/$m\t-1/$m\t$s/" /PATH/TO/scumm-md5.txt
 # done
-# IFS=$OIFS
 #
 maniac	Maniac Mansion
 	2d624d1b214f7faf0094daea65c6d1a6	1188	en	2gs	Apple II	-	-
