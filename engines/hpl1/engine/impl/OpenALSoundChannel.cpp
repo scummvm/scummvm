@@ -95,7 +95,10 @@ void cOpenALSoundChannel::Play() {
 		return;
 	}
 	Hpl1::logInfo(Hpl1::kDebugAudio, "playing sound channel from data %s\n", mpData->GetName().c_str());
-	_lowLevelSound->playChannel(this);
+	if (!_lowLevelSound->playChannel(this)) {
+		Hpl1::logWarning(Hpl1::kDebugAudio, "sound channel from data %s could not be played\n",
+			mpData->GetName().c_str());
+	}
 	SetVolume(mfVolume);
 	if (mbLooping)
 		mixer->loopChannel(_handle);
@@ -106,6 +109,7 @@ void cOpenALSoundChannel::Play() {
 //-----------------------------------------------------------------------
 
 void cOpenALSoundChannel::Stop() {
+	Hpl1::logInfo(Hpl1::kDebugAudio, "stopping audio channel from data %s\n", mpData->GetName().c_str());
 	mixer->stopHandle(_handle);
 	mbStopUsed = true;
 	_playing = false;
