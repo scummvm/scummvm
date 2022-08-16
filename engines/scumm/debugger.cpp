@@ -532,6 +532,7 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 
 	if (argc < 3) {
 		debugPrintf("Syntax: actor <actornum> <command> <parameter>\n");
+		debugPrintf("Valid commands: animvar|anim|condmask|costume|_elevation|ignoreboxes|name|x|y\n");
 		return true;
 	}
 
@@ -587,7 +588,7 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 		}
 		debugPrintf("Actor[%d]._heCondMask = 0x%X\n", actnum, a->_heCondMask);
 	} else {
-		debugPrintf("Unknown actor command '%s'\nUse <ignoreboxes |costume> as command\n", argv[2]);
+		debugPrintf("Unknown actor command '%s'\n", argv[2]);
 	}
 
 	return true;
