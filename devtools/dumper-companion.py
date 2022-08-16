@@ -290,15 +290,6 @@ def encode_string(args: argparse.Namespace) -> int:
     return 0
 
 
-def generate_punyencoded_path(destination_dir: Path, hpath: Tuple[str]) -> Path:
-    """Convert a filepath to a punyencoded one"""
-    upath = destination_dir
-
-    for el in hpath:
-        upath /= punyencode(el)
-    return upath
-
-
 def extract_volume(args: argparse.Namespace) -> int:
     """Extract an HFS volume"""
     source_volume: Path = args.src
@@ -351,10 +342,14 @@ def extract_volume(args: argparse.Namespace) -> int:
             if japanese:
                 el = decode_macjapanese(el.encode("mac_roman"))
             else:
-                if decode_macjapanese(el.encode("mac_roman")) != el and not isinstance(
-                    obj, machfs.Folder
-                ):
-                    maybe_not_jp = True
+                try:
+                    if decode_macjapanese(el.encode("mac_roman")) != el and not isinstance(
+                        obj, machfs.Folder
+                    ):
+                        maybe_not_jp = True
+                except Exception:
+                    # If we get an exception from trying to decode it as Mac-Japanese, it's probably not
+                    pass
             if not rawtext:
                 el = punyencode(el)
 
