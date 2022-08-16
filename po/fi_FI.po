@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-15 14:49+0000\n"
-"PO-Revision-Date: 2022-08-05 00:37+0000\n"
+"PO-Revision-Date: 2022-08-16 20:14+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -6048,32 +6048,29 @@ msgid "Enable short transitions"
 msgstr "Lyhyet siirtymät"
 
 #: engines/mtropolis/detection.cpp:77
-#, fuzzy
-#| msgid ""
-#| "Enables transitions that are set to maximum rate instead of skipping them"
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
-msgstr "Näyttää siirtymät maksiminopeudella niiden ohittamisen sijaan"
+msgstr "Näyttää siirtymät maksiminopeudella niiden ohittamisen sijaan."
 
 #: engines/mtropolis/detection.cpp:87
 msgid "Enable subtitles for important sound effects"
-msgstr ""
+msgstr "Tekstitys tärkeille ääniefekteille"
 
 #: engines/mtropolis/detection.cpp:88
 msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
 msgstr ""
+"Näyttää tekstityksen tärkeille ääniefekteille. Tämä saattaa madaltaa "
+"äänentunnistustehtävien vaikeutta."
 
 #: engines/mtropolis/detection.cpp:98
 msgid "Start with debugger"
 msgstr "Käynnistä debuggeri päällä"
 
 #: engines/mtropolis/detection.cpp:99
-#, fuzzy
-#| msgid "Starts with the debugger dashboard active"
 msgid "Starts with the debugger dashboard active."
-msgstr "Käynnistää debuggerikojelauta aktiivisena"
+msgstr "Käynnistää debuggerikojelauta aktiivisena."
 
 #: engines/mtropolis/saveload.cpp:123
 msgid "Failed to read version information from save file"
@@ -6887,16 +6884,16 @@ msgstr ""
 "niitä on saatavilla."
 
 #: engines/scumm/detection.cpp:247
-#, fuzzy
-#| msgid "Enable the original audio cd track"
 msgid "Enable the original GUI and Menu"
-msgstr "Käytä alkuperäistä audio CD-raitaa"
+msgstr "Käytä alkuperäistä käyttöliittymää ja valikkoa"
 
 #: engines/scumm/detection.cpp:248
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu."
 msgstr ""
+"Salli pelin käyttää pelimoottorin sisäistä graafista käyttöliittymää sekä "
+"alkuperäistä tallennus/latausvalikkoa."
 
 #: engines/scumm/detection_internal.h:358
 msgid ""
