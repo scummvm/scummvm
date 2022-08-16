@@ -1255,7 +1255,8 @@ void ScummEngine::restoreCharsetBg() {
 	_nextLeft = _string[0].xpos;
 	_nextTop = _string[0].ypos + _screenTop;
 
-	if (_charset->_hasMask) {
+	if (_charset->_hasMask || _postGUICharMask) {
+		_postGUICharMask = false;
 		_charset->_hasMask = false;
 		_charset->_str.left = -1;
 		_charset->_left = -1;

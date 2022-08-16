@@ -103,6 +103,12 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 		convertMessageToString((const byte *)getGUIString(gsYesKey), (byte *)localizedY, sizeof(localizedY));
 	}
 
+	// Backup the text surface...
+	if (_game.version < 7) {
+		saveTextSurfacePreGUI();
+		restoreCharsetBg();
+	}
+
 	// Pause the engine
 	PauseToken pt = pauseEngine();
 
@@ -207,6 +213,12 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	if (waitTime) {
 		waitForBannerInput(waitTime, ks, leftBtnPressed, rightBtnPressed);
 		clearBanner();
+	}
+
+	// Restore the text surface...
+	if (_game.version < 7) {
+		restoreTextSurfacePostGUI();
+		_completeScreenRedraw = true;
 	}
 
 	// Finally, resume the engine, clear the input state, and restore the charset.
@@ -928,6 +940,50 @@ int ScummEngine::getBannerColor(int bannerId) {
 	return (int)arrAddr[bannerId];
 }
 
+void ScummEngine::saveTextSurfacePreGUI() {
+	if (_game.version < 4 || _game.version > 6)
+		return;
+
+	_tempTextSurface = (byte *)malloc(_textSurface.w * _textSurface.h * sizeof(byte));
+
+	int x, y;
+	uint32 curPix;
+	for (int i = 0; i < _textSurface.h; i++) {
+		for (int j = 0; j < _textSurface.w; j++) {
+			x = j;
+			y = i;
+			curPix = _textSurface.getPixel(x, y);
+			_tempTextSurface[j + i * _textSurface.w] = curPix;
+			if (curPix != 0xFD)
+				_virtscr[kMainVirtScreen].setPixel(_virtscr[kMainVirtScreen].xstart + x, y, curPix);
+		}
+	}
+}
+
+void ScummEngine::restoreTextSurfacePostGUI() {
+	if (_game.version < 4 || _game.version > 6)
+		return;
+
+	int x, y;
+	uint32 curPix;
+	for (int i = 0; i < _textSurface.h; i++) {
+		for (int j = 0; j < _textSurface.w; j++) {
+			x = j;
+			y = i;
+			curPix = _tempTextSurface[j + i * _textSurface.w];
+			_textSurface.setPixel(x, y, curPix);
+		}
+	}
+
+	// Signal the restoreCharsetBg() function that there's text
+	// on the text surface, so it gets deleted the next time another
+	// text is displayed...
+	_postGUICharMask = true;
+
+	free(_tempTextSurface);
+	_tempTextSurface = nullptr;
+}
+
 void ScummEngine::toggleVoiceMode() {
 	if (VAR_VOICE_MODE != 0xFF) {
 		VAR(VAR_VOICE_MODE) = (VAR(VAR_VOICE_MODE) != 1) ? 1 : 0;
@@ -1069,13 +1125,15 @@ bool ScummEngine::canWriteGame(int slotId) {
 }
 
 bool ScummEngine::userWriteLabelRoutine(Common::KeyState &ks, bool &leftMsClicked, bool &rightMsClicked) {
+	bool hasLoadedState = false;
+
 	while (true) {
 		waitForTimer(1);
 		waitForBannerInput(-1, ks, leftMsClicked, rightMsClicked);
 		rightMsClicked = false;
 		if (ks.keycode == Common::KEYCODE_RETURN) {
 			clearClickedStatus();
-			executeMainMenuOperation(GUI_CTRL_OK_BUTTON, -1);
+			executeMainMenuOperation(GUI_CTRL_OK_BUTTON, -1, hasLoadedState);
 			return true;
 		} else if (leftMsClicked) {
 			clearClickedStatus();
@@ -1153,6 +1211,7 @@ void ScummEngine::showMainMenu() {
 	bool leftMsClicked = false, rightMsClicked = false;
 	int clickedControl = -1;
 	int curMouseX, curMouseY;
+	bool hasLoadedState = false;
 
 	Common::KeyState ks;
 
@@ -1170,6 +1229,19 @@ void ScummEngine::showMainMenu() {
 
 	_saveSound = 1;
 	setShake(0);
+
+	if (_game.version < 7) {
+		// Below version 7, we draw texts on a separate surface which is then composited
+		// on top of the main one during ScummEngine::drawDirtyScreenParts().
+		// This results in texts overlapping on top of the menu; let's simulate the end result
+		// of the original by copying the text surface over the main one just before showing
+		// the menu...
+		saveTextSurfacePreGUI();
+
+		// V6 games should call for stopTalk() instead, but that's a bit too drastic;
+		// this ensures that we can at least hear the speech after the menu is closed.
+		restoreCharsetBg();
+	}
 
 	_menuPage = GUI_PAGE_MAIN;
 	setUpMainMenuControls();
@@ -1226,7 +1298,7 @@ void ScummEngine::showMainMenu() {
 						drawInternalGUIControl(clickedControl, 0);
 
 						// Execute the operation pertaining the clicked control
-						if (executeMainMenuOperation(clickedControl, curMouseX))
+						if (executeMainMenuOperation(clickedControl, curMouseX, hasLoadedState))
 							break;
 					}
 				} else {
@@ -1240,7 +1312,7 @@ void ScummEngine::showMainMenu() {
 					_system->updateScreen();
 
 					if (_menuPage == GUI_PAGE_LOAD) {
-						if (executeMainMenuOperation(GUI_CTRL_OK_BUTTON, curMouseX))
+						if (executeMainMenuOperation(GUI_CTRL_OK_BUTTON, curMouseX, hasLoadedState))
 							break;
 					}
 				}
@@ -1282,12 +1354,15 @@ void ScummEngine::showMainMenu() {
 	if (_game.version == 7)
 		CHARSET_1();
 
+	if (_game.version < 7 && !hasLoadedState && !_quitByButton)
+		restoreTextSurfacePostGUI();
+
 	// Resume the engine
 	pt.clear();
 	clearClickedStatus();
 }
 
-bool ScummEngine::executeMainMenuOperation(int op, int mouseX) {
+bool ScummEngine::executeMainMenuOperation(int op, int mouseX, bool &hasLoadedState) {
 	char saveScreenTitle[512];
 	char formattedString[512];
 
@@ -1312,7 +1387,6 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX) {
 		return true;
 	case GUI_CTRL_QUIT_BUTTON:
 		queryQuit();
-		_quitByButton = shouldQuit();
 		return true;
 	case GUI_CTRL_OK_BUTTON:
 		if (_menuPage == GUI_PAGE_SAVE) {
@@ -1386,7 +1460,13 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX) {
 					return true;
 				}
 
+				if (_game.version < 7) {
+					_postGUICharMask = true;
+				}
+
 				if (loadState(_mainMenuSavegameLabel + _curDisplayedSaveSlotPage * 9, false)) {
+					hasLoadedState = true;
+
 					if (!_spooledMusicIsToBeEnabled)
 						_imuseDigital->diMUSEDisableSpooledMusic();
 
