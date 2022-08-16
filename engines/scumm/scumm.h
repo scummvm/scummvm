@@ -635,6 +635,8 @@ protected:
 	int _spooledMusicIsToBeEnabled = 1;
 	int _saveScriptParam = 0;
 	Graphics::Surface _savegameThumbnail;
+	byte *_tempTextSurface;
+	bool _postGUICharMask = false;
 
 	// Saved cursor pre and post GUI
 	byte *_curGrabbedCursor = nullptr;
@@ -681,14 +683,15 @@ protected:
 	void drawMainMenuControls();
 	void updateMainMenuControls();
 	void drawMainMenuTitle(const char *title);
-	bool executeMainMenuOperation(int op, int mouseX);
+	bool executeMainMenuOperation(int op, int mouseX, bool &hasLoadedState);
 	bool shouldHighlightLabelAndWait(int clickedControl);
 	void fillSavegameLabels();
 	bool canWriteGame(int slotId);
 	bool userWriteLabelRoutine(Common::KeyState &ks, bool &leftMsClicked, bool &rightMsClicked);
 	void saveCursorPreMenu();
 	void restoreCursorPostMenu();
-
+	void saveTextSurfacePreGUI();
+	void restoreTextSurfacePostGUI();
 
 public:
 	char displayMessage(const char *altButton, const char *message, ...) GCC_PRINTF(3, 4);
