@@ -177,10 +177,15 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	}
 
 	// Visual Studio 2015 and up automatically import natvis files that are part of the project
-	if (name == PROJECT_NAME && _version >= 14) {
-		project << "\t<ItemGroup>\n";
-		project << "\t\t<None Include=\"" << setup.srcDir << "/devtools/create_project/scripts/scummvm.natvis\" />\n";
-		project << "\t</ItemGroup>\n";
+	if (_version >= 14) {
+		std::string natvisFile = setup.srcDir + "/devtools/create_project/scripts/scummvm" + (name == PROJECT_NAME ? "" : "-"+name) +".natvis";
+		std::ifstream natvisStream;
+		natvisStream.open(natvisFile);
+		if (natvisStream.is_open()) {
+			project << "\t<ItemGroup>\n";
+			project << "\t\t<None Include=\"" << natvisFile << "\" />\n";
+			project << "\t</ItemGroup>\n";
+		}
 	}
 
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.targets\" />\n"
