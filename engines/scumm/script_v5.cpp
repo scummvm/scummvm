@@ -1864,9 +1864,8 @@ void ScummEngine_v5::o5_putActor() {
 	y = getVarOrDirectWord(PARAM_3);
 
 	// WORKAROUND: When enabling the cigar smoke in the captain Smirk
-	// close-up, it turns out that the coordinates were changed in the CD
-	// version's script for no apparent reason. (Were they taken from the
-	// EGA version?)
+	// close-up, it turns out that the coordinates in the CD
+	// version's script were taken from the EGA version.
 	//
 	// The coordinates below are taken from the VGA floppy version. The
 	// "Ultimate Talkie" version also corrects the positions, but uses
