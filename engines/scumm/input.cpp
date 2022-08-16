@@ -430,155 +430,11 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 
 void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 	if (isUsingOriginalGUI()) {
-		char sliderString[256];
-		PauseToken pt;
-
 		if (lastKeyHit.keycode == Common::KEYCODE_b && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
 			int curBufferCount = _imuseDigital->roundRobinSetBufferCount();
 			// "iMuse buffer count changed to %d"
 			showBannerAndPause(0, 90, getGUIString(gsIMuseBuffer), curBufferCount);
 			return;
-		}
-
-		if (_game.version != 8 || (_game.version == 8 && (_game.features & GF_DEMO))) {
-			// "Music Volume  Low  =========  High"
-			if (lastKeyHit.keycode == Common::KEYCODE_o || lastKeyHit.keycode == Common::KEYCODE_p) {
-				Common::KeyState ks = lastKeyHit;
-
-				pt = pauseEngine();
-
-				int volume = _imuseDigital->diMUSEGetMusicGroupVol();
-				do {
-					if (ks.keycode == Common::KEYCODE_o) {
-						volume -= 16;
-						if (volume < 0)
-							volume = 0;
-					} else {
-						volume += 16;
-						if (volume > 127)
-							volume = 127;
-					}
-
-					getSliderString(gsMusicVolumeSlider, volume, sliderString, sizeof(sliderString));
-					showBannerAndPause(0, 0, sliderString);
-					ks = Common::KEYCODE_INVALID;
-					bool leftBtnPressed = false, rightBtnPressed = false;
-					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
-				} while (ks.keycode == Common::KEYCODE_o || ks.keycode == Common::KEYCODE_p);
-				clearBanner();
-
-				_imuseDigital->diMUSESetMusicGroupVol(volume);
-				ConfMan.setInt("music_volume", volume * 2);
-
-				pt.clear();
-
-				return;
-			}
-
-			// "Voice Volume  Low  =========  High"
-			if (lastKeyHit.keycode == Common::KEYCODE_k || lastKeyHit.keycode == Common::KEYCODE_l) {
-				Common::KeyState ks = lastKeyHit;
-
-				pt = pauseEngine();
-
-				int volume = _imuseDigital->diMUSEGetVoiceGroupVol();
-				do {
-					if (ks.keycode == Common::KEYCODE_k) {
-						volume -= 16;
-						if (volume < 0)
-							volume = 0;
-					} else {
-						volume += 16;
-						if (volume > 127)
-							volume = 127;
-					}
-
-					getSliderString(gsVoiceVolumeSlider, volume, sliderString, sizeof(sliderString));
-					showBannerAndPause(0, 0, sliderString);
-					ks = Common::KEYCODE_INVALID;
-					bool leftBtnPressed = false, rightBtnPressed = false;
-					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
-				} while (ks.keycode == Common::KEYCODE_k || ks.keycode == Common::KEYCODE_l);
-				clearBanner();
-
-				_imuseDigital->diMUSESetVoiceGroupVol(volume);
-				ConfMan.setInt("speech_volume", volume * 2);
-
-				pt.clear();
-
-				return;
-			}
-
-			// "Sfx Volume  Low  =========  High"
-			if (lastKeyHit.keycode == Common::KEYCODE_n || lastKeyHit.keycode == Common::KEYCODE_m) {
-				Common::KeyState ks = lastKeyHit;
-
-				pt = pauseEngine();
-
-				int volume = _imuseDigital->diMUSEGetSFXGroupVol();
-				do {
-					if (ks.keycode == Common::KEYCODE_n) {
-						volume -= 16;
-						if (volume < 0)
-							volume = 0;
-					} else {
-						volume += 16;
-						if (volume > 127)
-							volume = 127;
-					}
-
-					getSliderString(gsSfxVolumeSlider, volume, sliderString, sizeof(sliderString));
-					showBannerAndPause(0, 0, sliderString);
-					ks = Common::KEYCODE_INVALID;
-					bool leftBtnPressed = false, rightBtnPressed = false;
-					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
-				} while (ks.keycode == Common::KEYCODE_n || ks.keycode == Common::KEYCODE_m);
-				clearBanner();
-
-				_imuseDigital->diMUSESetSFXGroupVol(volume);
-				ConfMan.setInt("sfx_volume", volume * 2);
-
-				pt.clear();
-
-				return;
-			}
-
-			// "Text Speed  Slow  ==========  Fast"
-			if (lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-') {
-				if (VAR_CHARINC == 0xFF)
-					return;
-
-				Common::KeyState ks = lastKeyHit;
-
-				pt = pauseEngine();
-
-				do {
-					if (ks.ascii == '+') {
-						VAR(VAR_CHARINC) -= 1;
-						if (VAR(VAR_CHARINC) < 0)
-							VAR(VAR_CHARINC) = 0;
-					} else {
-						VAR(VAR_CHARINC) += 1;
-						if (VAR(VAR_CHARINC) > 9)
-							VAR(VAR_CHARINC) = 9;
-					}
-
-					_defaultTextSpeed = 9 - VAR(VAR_CHARINC);
-					ConfMan.setInt("original_gui_text_speed", _defaultTextSpeed);
-					setTalkSpeed(_defaultTextSpeed);
-
-					getSliderString(gsTextSpeedSlider, VAR(VAR_CHARINC), sliderString, sizeof(sliderString));
-					showBannerAndPause(0, 0, sliderString);
-					ks = Common::KEYCODE_INVALID;
-					bool leftBtnPressed = false, rightBtnPressed = false;
-					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
-				} while (ks.ascii == '+' || ks.ascii == '-');
-				clearBanner();
-
-				pt.clear();
-
-				return;
-			}
 		}
 	}
 
@@ -667,6 +523,150 @@ void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool 
 
 void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
 	if (isUsingOriginalGUI()) {
+		char sliderString[256];
+		PauseToken pt;
+
+		if (_game.version != 8 || (_game.version == 8 && (_game.features & GF_DEMO))) {
+			// "Music Volume  Low  =========  High"
+			if (lastKeyHit.hasFlags(Common::KBD_SHIFT) &&
+				(lastKeyHit.keycode == Common::KEYCODE_o || lastKeyHit.keycode == Common::KEYCODE_p)) {
+				Common::KeyState ks = lastKeyHit;
+
+				pt = pauseEngine();
+
+				int volume = (_game.version > 6) ? _imuseDigital->diMUSEGetMusicGroupVol() : getMusicVolume();
+				do {
+					if (ks.keycode == Common::KEYCODE_o) {
+						volume -= 16;
+						if (volume < 0)
+							volume = 0;
+					} else {
+						volume += 16;
+						if (volume > 127)
+							volume = 127;
+					}
+
+					getSliderString(gsMusicVolumeSlider, volume, sliderString, sizeof(sliderString));
+					showBannerAndPause(0, 0, sliderString);
+					ks = Common::KEYCODE_INVALID;
+					bool leftBtnPressed = false, rightBtnPressed = false;
+					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+				} while (ks.keycode == Common::KEYCODE_o || ks.keycode == Common::KEYCODE_p);
+				clearBanner();
+
+				setMusicVolume(volume);
+
+				pt.clear();
+
+				return;
+			}
+
+			// "Voice Volume  Low  =========  High"
+			if (lastKeyHit.hasFlags(Common::KBD_SHIFT) &&
+				(lastKeyHit.keycode == Common::KEYCODE_k || lastKeyHit.keycode == Common::KEYCODE_l)) {
+				Common::KeyState ks = lastKeyHit;
+
+				pt = pauseEngine();
+
+				int volume = (_game.version > 6) ? _imuseDigital->diMUSEGetVoiceGroupVol() : getSpeechVolume();
+				do {
+					if (ks.keycode == Common::KEYCODE_k) {
+						volume -= 16;
+						if (volume < 0)
+							volume = 0;
+					} else {
+						volume += 16;
+						if (volume > 127)
+							volume = 127;
+					}
+
+					getSliderString(gsVoiceVolumeSlider, volume, sliderString, sizeof(sliderString));
+					showBannerAndPause(0, 0, sliderString);
+					ks = Common::KEYCODE_INVALID;
+					bool leftBtnPressed = false, rightBtnPressed = false;
+					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+				} while (ks.keycode == Common::KEYCODE_k || ks.keycode == Common::KEYCODE_l);
+				clearBanner();
+
+				setSpeechVolume(volume);
+
+				pt.clear();
+
+				return;
+			}
+
+			// "Sfx Volume  Low  =========  High"
+			if (lastKeyHit.hasFlags(Common::KBD_SHIFT) &&
+				(lastKeyHit.keycode == Common::KEYCODE_n || lastKeyHit.keycode == Common::KEYCODE_m)) {
+				Common::KeyState ks = lastKeyHit;
+
+				pt = pauseEngine();
+
+				int volume = (_game.version > 6) ? _imuseDigital->diMUSEGetSFXGroupVol() : getSFXVolume();
+				do {
+					if (ks.keycode == Common::KEYCODE_n) {
+						volume -= 16;
+						if (volume < 0)
+							volume = 0;
+					} else {
+						volume += 16;
+						if (volume > 127)
+							volume = 127;
+					}
+
+					getSliderString(gsSfxVolumeSlider, volume, sliderString, sizeof(sliderString));
+					showBannerAndPause(0, 0, sliderString);
+					ks = Common::KEYCODE_INVALID;
+					bool leftBtnPressed = false, rightBtnPressed = false;
+					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+				} while (ks.keycode == Common::KEYCODE_n || ks.keycode == Common::KEYCODE_m);
+				clearBanner();
+
+				setSFXVolume(volume);
+
+				pt.clear();
+
+				return;
+			}
+
+			// "Text Speed  Slow  ==========  Fast"
+			if (lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-') {
+				if (VAR_CHARINC == 0xFF)
+					return;
+
+				Common::KeyState ks = lastKeyHit;
+
+				pt = pauseEngine();
+
+				do {
+					if (ks.ascii == '+') {
+						VAR(VAR_CHARINC) -= 1;
+						if (VAR(VAR_CHARINC) < 0)
+							VAR(VAR_CHARINC) = 0;
+					} else {
+						VAR(VAR_CHARINC) += 1;
+						if (VAR(VAR_CHARINC) > 9)
+							VAR(VAR_CHARINC) = 9;
+					}
+
+					_defaultTextSpeed = 9 - VAR(VAR_CHARINC);
+					ConfMan.setInt("original_gui_text_speed", _defaultTextSpeed);
+					setTalkSpeed(_defaultTextSpeed);
+
+					getSliderString(gsTextSpeedSlider, VAR(VAR_CHARINC), sliderString, sizeof(sliderString));
+					showBannerAndPause(0, 0, sliderString);
+					ks = Common::KEYCODE_INVALID;
+					bool leftBtnPressed = false, rightBtnPressed = false;
+					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+				} while (ks.ascii == '+' || ks.ascii == '-');
+				clearBanner();
+
+				pt.clear();
+
+				return;
+			}
+		}
+
 		if (VAR_VERSION_KEY != 0xFF && VAR(VAR_VERSION_KEY) != 0 &&
 			lastKeyHit.keycode == Common::KEYCODE_v && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
 			if (_game.version == 8) {
