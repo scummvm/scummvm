@@ -1240,13 +1240,8 @@ void ScummEngine_v2::o2_startScript() {
 	// a permanent resident.
 	// Our fix is simply to prevent the Cutscene playing, if the lab has already been stormed
 	if (_game.id == GID_MANIAC) {
-		if (_game.version >= 1 && script == 155) {
-			if (VAR(120) == 1)
-				return;
-		}
-		// Script numbers are different in V0
-		if (_game.version == 0 && script == 150) {
-			if (VAR(104) == 1)
+		if (script == MM_SCRIPT(150)) {
+			if (VAR(MM_VALUE(104, 120)) == 1)
 				return;
 		}
 	}

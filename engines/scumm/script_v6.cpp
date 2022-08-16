@@ -2903,12 +2903,12 @@ int ScummEngine::getKeyState(int key) {
 void ScummEngine_v6::o6_delayFrames() {
 	// WORKAROUND:  At startup, Moonbase Commander will pause for 20 frames before
 	// showing the Infogrames logo.  The purpose of this break is to give time for the
-	// GameSpy Arcade application to fill with the Online game infomation.
+	// GameSpy Arcade application to fill with the online game infomation.
 	//
 	// [0000] (84) localvar2 = max(readConfigFile.number(":var263:","user","wait-for-gamespy"),10)
 	// [0029] (08) delayFrames((localvar2 * 2))
 	//
-	// But since we don't support GameSpy and have our own Online support, this break
+	// But since we don't support GameSpy and have our own online support, this break
 	// has become redundant and only wastes time.
 	if (_game.id == GID_MOONBASE && vm.slot[_currentScript].number == 69) {
 		pop();
