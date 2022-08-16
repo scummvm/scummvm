@@ -46,7 +46,7 @@ namespace hpl {
 //-----------------------------------------------------------------------
 
 cOpenALSoundChannel::cOpenALSoundChannel(cOpenALSoundData *soundData, Audio::SeekableAudioStream *audioStream, cSoundManager *apSoundManger, cLowLevelSoundOpenAL *lowLevelSound, int priority)
-	: iSoundChannel(soundData, apSoundManger), _playing(false), _audioStream(audioStream), _lowLevelSound(lowLevelSound), _priority(priority) {
+	: iSoundChannel(soundData, apSoundManger), _audioStream(audioStream), _lowLevelSound(lowLevelSound), _priority(priority) {
 	Hpl1::logInfo(Hpl1::kDebugAudio, "creating sound channel form file %s\n", mpData->GetName().c_str());
 	if (!_audioStream)
 		Hpl1::logError(Hpl1::kDebugAudio, "sound channel created with null audio stream%s", ".");
@@ -102,8 +102,8 @@ void cOpenALSoundChannel::Play() {
 	SetVolume(mfVolume);
 	if (mbLooping)
 		mixer->loopChannel(_handle);
-	_playing = true;
 	mbStopUsed = false;
+	mbPaused = false;
 }
 
 //-----------------------------------------------------------------------
@@ -112,7 +112,7 @@ void cOpenALSoundChannel::Stop() {
 	Hpl1::logInfo(Hpl1::kDebugAudio, "stopping audio channel from data %s\n", mpData->GetName().c_str());
 	mixer->stopHandle(_handle);
 	mbStopUsed = true;
-	_playing = false;
+	mbLooping = false;
 }
 
 //-----------------------------------------------------------------------
@@ -146,9 +146,9 @@ void cOpenALSoundChannel::SetLooping(bool loop) {
 	Hpl1::logInfo(Hpl1::kDebugAudio, "%slooping audio from source %s\n", loop ? "" : "un", mpData->GetName().c_str());
 	const bool previousState = mbLooping;
 	mbLooping = loop;
-	if (_playing && loop) // it has already started
+	if (IsPlaying() && loop) // it has already started
 		mixer->loopChannel(_handle);
-	if (previousState && !loop && _playing) { // unlooped while playing
+	else if (previousState && !loop && IsPlaying()) { // unlooped while playing
 		_lowLevelSound->closeChannel(this);
 		Play();
 	}
@@ -209,7 +209,7 @@ void cOpenALSoundChannel::SetMaxDistance(float afMax) {
 //-----------------------------------------------------------------------
 
 bool cOpenALSoundChannel::IsPlaying() {
-	return _playing && (mbLooping || !_audioStream->endOfStream());
+	return mixer->isSoundHandleActive(_handle);
 }
 //-----------------------------------------------------------------------
 
