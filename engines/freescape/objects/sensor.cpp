@@ -32,6 +32,7 @@ Sensor::Sensor(
 	_objectID = objectID;
 	origin = _origin;
 	_rotation = rotation;
+	_flags = 0;
 }
 
 Sensor::~Sensor() {}

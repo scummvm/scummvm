@@ -37,6 +37,7 @@ Entrance::Entrance(
 	_objectID = objectID;
 	origin = _origin;
 	_rotation = rotation;
+	_flags = 0;
 }
 
 Entrance::~Entrance() {}
