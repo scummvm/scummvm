@@ -83,7 +83,6 @@ private:
 	void restart();
 
 	Audio::SoundHandle _handle;
-	bool _playing;
 	Audio::SeekableAudioStream *_audioStream;
 	cLowLevelSoundOpenAL *_lowLevelSound;
 	int _priority;
