@@ -200,8 +200,13 @@ static cOpenALSoundChannel **findBestSlot(Common::Array<cOpenALSoundChannel *> &
 bool cLowLevelSoundOpenAL::playChannel(cOpenALSoundChannel *channel) {
 	auto slot = findBestSlot(_activeChannels, channel->GetPriority());
 	if (slot != _activeChannels.end()) {
-		if (*slot != nullptr)
+		if (*slot != nullptr) {
+			if ((*slot)->IsPlaying()) {
+				Hpl1::logInfo(Hpl1::kDebugAudio, "evicting sound from data %s from mixer slot\n",
+					(*slot)->mpData->GetName().c_str());
+			}
 			(*slot)->Stop();
+		}
 		*slot = channel;
 		_mixer->stopHandle(channel->_handle);
 		channel->_audioStream->rewind();
@@ -214,7 +219,7 @@ bool cLowLevelSoundOpenAL::playChannel(cOpenALSoundChannel *channel) {
 void cLowLevelSoundOpenAL::closeChannel(cOpenALSoundChannel *channel) {
 	auto slot = Common::find(_activeChannels.begin(), _activeChannels.end(), channel);
 	if (slot != _activeChannels.end()) {
-		_mixer->stopHandle((*slot)->_handle);
+		(*slot)->Stop();
 		*slot = nullptr;
 	}
 }
