@@ -25,6 +25,7 @@
 #define SWORD2_DETECTION_INTERNAL_H
 
 #include "engines/metaengine.h"
+#include "common/file.h"
 #include "common/gui_options.h"
 #include "sword2/detection.h"
 
@@ -42,6 +43,11 @@ struct GameSettings {
 	Common::Platform platform;
 };
 
+struct GameLanguage {
+	int size;
+	Common::Language language;
+};
+
 static const GameSettings sword2_settings[] = {
 	/* Broken Sword II */
 	{"sword2", "Broken Sword II: The Smoking Mirror", 0, "players.clu", Common::kPlatformWindows },
@@ -51,6 +57,12 @@ static const GameSettings sword2_settings[] = {
 	{"sword2demo", "Broken Sword II: The Smoking Mirror (Demo)", Sword2::GF_DEMO, "players.clu", Common::kPlatformWindows },
 	{"sword2demo-es", "Broken Sword II: The Smoking Mirror (Spanish/Demo)", Sword2::GF_DEMO | Sword2::GF_SPANISHDEMO, "vielogo.tga", Common::kPlatformWindows },
 	{NULL, NULL, 0, NULL, Common::kPlatformUnknown }
+};
+
+static const GameLanguage languages[] = {
+	{ 304968, Common::EN_USA },
+	{ 556961, Common::DE_DEU },
+	{ 248702, Common::HE_ISR }
 };
 
 } // End of namespace Sword2
@@ -76,25 +88,37 @@ static DetectedGames detectGamesImpl(const Common::FSList &fslist, bool recursio
 	bool isFullVersion = isFullGame(fslist);
 
 	for (g = Sword2::sword2_settings; g->gameid; ++g) {
+		bool found = false;
+		DetectedGame game("sword2", g->gameid, g->description,
+						  Common::UNK_LANG, g->platform);
 		// Iterate over all files in the given directory
 		for (file = fslist.begin(); file != fslist.end(); ++file) {
 			if (file->isDirectory()) continue;
 
-			if (file->getName().equalsIgnoreCase(g->detectname)) {
+			if (!found && file->getName().equalsIgnoreCase(g->detectname)) {
 				// Make sure that the sword2 demo is not mixed up with the
 				// full version, since they use the same filename for detection
 				if ((g->features == Sword2::GF_DEMO && isFullVersion) ||
 					(g->features == 0 && !isFullVersion))
 					continue;
-
-				// Match found, add to list of candidates, then abort inner loop.
-				DetectedGame game = DetectedGame("sword2", g->gameid, g->description,
-												 Common::UNK_LANG, g->platform);
-				game.setGUIOptions(GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
-
-				detectedGames.push_back(game);
-				break;
+				found = true;
+			} else if (file->getName().equalsIgnoreCase("text.clu")) {
+				Common::File tmp;
+				tmp.open(*file);
+				const int size = tmp.size();
+				for (const Sword2::GameLanguage &lang : Sword2::languages) {
+					if (size == lang.size) {
+						game.language = lang.language;
+						break;
+					}
+				}
 			}
+		}
+
+		if (found) {
+			// Match found, add to list of candidates.
+			game.setGUIOptions(GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
+			detectedGames.push_back(game);
 		}
 	}
 
