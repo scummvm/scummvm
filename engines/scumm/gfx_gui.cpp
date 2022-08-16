@@ -963,25 +963,26 @@ void ScummEngine::saveTextSurfacePreGUI() {
 void ScummEngine::restoreTextSurfacePostGUI() {
 	if (_game.version < 4 || _game.version > 6)
 		return;
-
-	int x, y;
-	uint32 curPix;
-	for (int i = 0; i < _textSurface.h; i++) {
-		for (int j = 0; j < _textSurface.w; j++) {
-			x = j;
-			y = i;
-			curPix = _tempTextSurface[j + i * _textSurface.w];
-			_textSurface.setPixel(x, y, curPix);
+	if (_tempTextSurface) {
+		int x, y;
+		uint32 curPix;
+		for (int i = 0; i < _textSurface.h; i++) {
+			for (int j = 0; j < _textSurface.w; j++) {
+				x = j;
+				y = i;
+				curPix = _tempTextSurface[j + i * _textSurface.w];
+				_textSurface.setPixel(x, y, curPix);
+			}
 		}
+
+		// Signal the restoreCharsetBg() function that there's text
+		// on the text surface, so it gets deleted the next time another
+		// text is displayed...
+		_postGUICharMask = true;
+
+		free(_tempTextSurface);
+		_tempTextSurface = nullptr;
 	}
-
-	// Signal the restoreCharsetBg() function that there's text
-	// on the text surface, so it gets deleted the next time another
-	// text is displayed...
-	_postGUICharMask = true;
-
-	free(_tempTextSurface);
-	_tempTextSurface = nullptr;
 }
 
 void ScummEngine::toggleVoiceMode() {
@@ -1354,7 +1355,7 @@ void ScummEngine::showMainMenu() {
 	if (_game.version == 7)
 		CHARSET_1();
 
-	if (_game.version < 7 && !hasLoadedState && !_quitByButton)
+	if (_game.version < 7 && !hasLoadedState)
 		restoreTextSurfacePostGUI();
 
 	// Resume the engine
