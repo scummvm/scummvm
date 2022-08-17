@@ -39,10 +39,6 @@ void ImmortalEngine::levelInit() {
 void ImmortalEngine::levelNew(int l) {
 	stopMusic();
 	clearScreen();
-	/* commented out in the source for some reason? */
-	for (int i = 0; i < kMaxRooms; i++) {
-		delete _rooms[i];
-	}
 
 	levelStory(l);
 	if (kLevelToMaze[l] != _lastLevelLoaded) {
@@ -67,7 +63,7 @@ void ImmortalEngine::levelStory(int l) {
 }
 
 void ImmortalEngine::levelLoadFile(int l) {
-//	_dRoomNum = 0;
+	//	_dRoomNum = 0;
 
 	/* This was originally a large branching tree that checked the identifier of each entry and
 	 * Processed them all for the story. Once again, this would have been better as an indexed
@@ -76,34 +72,42 @@ void ImmortalEngine::levelLoadFile(int l) {
 	 */
 
 	// Create the rooms and doors, then populate the rooms with their objects and actors
+	debug("loading level file...");
 	for (int r = 0; r < _stories[l]._rooms.size(); r++) {
 		_rooms[r] = new Room(_stories[l]._rooms[r]._x, _stories[l]._rooms[r]._y, _stories[l]._rooms[r]._flags);
-		//doorNew(_stories[l]._doors[i]);
+		//doorNew(_stories[l]._doors[r]);
 		debug("Room %d", r);
-		for (int f = 0; f < _stories[l]._flames.size(); f++) {
-			if (_stories[l]._flames[r].size() > 0) {
-				//Flame flame;
-				//_rooms[r]->_flames.push_back(flame);
+
+		Common::Array<SFlame> allFlames(_stories[l]._flames[r].size());
+		if (_stories[l]._flames[r].size() > 0) {
+			for (int f = 0; f < _stories[l]._flames[r].size(); f++) {
+				SFlame sf;
+				sf._p = _stories[l]._flames[r][f]._p;
+				sf._x = _stories[l]._flames[r][f]._x;
+				sf._y = _stories[l]._flames[r][f]._y;
+				allFlames[f] = sf;
 				debugN("F%d", f);
 			}
 		}
+		_allFlames[r] = allFlames;
 		debug("");
 
-		for (int o = 0; o < _stories[l]._objects.size(); o++) {
-			if (_stories[l]._objects[r].size() > 0) {
+		if (_stories[l]._objects[r].size() > 0) {
+			for (int o = 0; o < _stories[l]._objects[r].size(); o++) {
 				//objNew(_stories[l]._objects[r][o]);
 				debugN("O%d", o);
 			}
 		}
 		debug("");
 
-		for (int m = 0; m < _stories[l]._monsters.size(); m++) {
-			if (_stories[l]._monsters[r].size() > 0) {
+		if (_stories[l]._monsters[r].size() > 0) {
+			for (int m = 0; m < _stories[l]._monsters[r].size(); m++) {
 				//monstNew(_stories[l]._monsters[r][m]);
 				debugN("M%d", m);
 			}
 		}
 		debug("");
+
 	}
 
 	// Set up the _initial variables for the engine scope
@@ -131,6 +135,7 @@ void ImmortalEngine::levelDrawAll() {
 
 void ImmortalEngine::levelShowRoom(int r, int bX, int bY) {
 	_currentRoom = r;
+	_rooms[r]->flameSetRoom(_allFlames[r]);
 	//univSetRoom(r, bX, bY);
 	//fset, spark, bullet, and door get set to the current room
 	//roomGetCell(r, bX, bY);
