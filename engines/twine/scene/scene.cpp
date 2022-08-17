@@ -685,8 +685,10 @@ void Scene::processZoneExtraBonus(ZoneStruct *zone) {
 	}
 
 	const int32 amount = zone->infoData.Bonus.amount;
-	const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(ABS(zone->maxs.x + zone->mins.x) / 2, ABS(zone->maxs.z + zone->mins.z) / 2, _sceneHero->_pos.x, _sceneHero->_pos.z);
-	const int32 index = _engine->_extra->addExtraBonus(ABS(zone->maxs.x + zone->mins.x) / 2, zone->maxs.y, ABS(zone->maxs.z + zone->mins.z) / 2, ANGLE_63, angle, bonusSprite, amount);
+	const int32 x = (zone->maxs.x + zone->mins.x) / 2;
+	const int32 z = (zone->maxs.z + zone->mins.z) / 2;
+	const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(x, z, _sceneHero->_pos.x, _sceneHero->_pos.z);
+	const int32 index = _engine->_extra->addExtraBonus(x, zone->maxs.y, z, ANGLE_63, angle, bonusSprite, amount);
 
 	if (index != -1) {
 		_engine->_extra->_extraList[index].type |= ExtraType::TIME_IN;
