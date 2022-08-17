@@ -50,7 +50,6 @@ public:
 	Common::String name;
 	Object *objectWithID(uint16 objectID);
 	Object *entranceWithID(uint16 objectID);
-	Object *firstEntrance();
 	uint16 getAreaID();
 	uint16 getAreaFlags();
 	uint8 getScale();
@@ -71,7 +70,6 @@ public:
 	// Driller specific
 	void addDrill(Area *structure, const Math::Vector3d position);
 	void removeDrill();
-
 	bool drillDeployed();
 	Math::Vector3d drillPosition;
 	Common::Point gasPocketPosition;

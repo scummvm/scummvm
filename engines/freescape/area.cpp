@@ -44,10 +44,6 @@ Object *Area::entranceWithID(uint16 objectID) {
 	return objectWithIDFromMap(entrancesByID, objectID);
 }
 
-Object *Area::firstEntrance() {
-	return entrancesByID->begin()->_value;
-}
-
 uint16 Area::getAreaID() {
 	return areaID;
 }
