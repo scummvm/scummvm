@@ -22,8 +22,25 @@
 #ifndef IMMORTAL_IMMORTAL_H
 #define IMMORTAL_IMMORTAL_H
 
+// Audio is only handled in kernal, therefore it is only needed here
 #include "audio/mixer.h"
 
+// Immortal.h is the engine, so it needs the engine headers
+#include "engines/engine.h"
+#include "engines/savestate.h"
+
+// Theorectically, all graphics should be handled through driver, which is part of kernal, which is in immortal.h
+#include "graphics/screen.h"
+#include "graphics/palette.h"
+#include "graphics/surface.h"
+
+// Detection is only needed by the main engine
+#include "immortal/detection.h"
+
+// Disk is only used by immortal.cpp
+#include "immortal/disk.h"
+
+// Common is needed by immortal.h, room.h, and monster.h
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
@@ -39,52 +56,17 @@
 #include "common/util.h"
 #include "common/platform.h"
 
-#include "engines/engine.h"
-#include "engines/savestate.h"
+// There is a lot of bit masking that needs to happen, so this header includes several enums for immortal.h, room.h, and monster.h
+#include "immortal/bitmask.h"
 
-#include "graphics/screen.h"
-#include "graphics/palette.h"
-#include "graphics/surface.h"
+#include "immortal/util.h"
 
-#include "immortal/detection.h"
-#include "immortal/disk.h"
-
+// Story is needed by both immortal.h and room.h
 #include "immortal/story.h"
 
 namespace Immortal {
 
-// There is a lot of bit masking that needs to happen, so this enum makes it a little easier to read
-enum BitMask16 : uint16 {
-	kMaskLow   = 0x00FF,
-	kMaskHigh  = 0xFF00,
-	kMaskLast  = 0xF000,
-	kMaskFirst = 0x000F,
-	kMaskHLow  = 0x0F00,
-	kMaskLHigh = 0x00F0,
-	kMaskNeg   = 0x8000,
-	kMask12Bit = 0x0F9F									// Compression code (pos, 00, len) is stored in lower 12 bits of word
-};
-
-enum BitMask8 : uint8 {
-	kMaskASCII = 0x7F,                                  // The non-extended ASCII table uses 7 bits, this makes a couple of things easier
-	kMask8High = 0xF0,
-	kMask8Low  = 0x0F
-};
-
-enum ColourBitMask : uint16 {
-	kMaskRed   = 0x0F00,
-	kMaskGreen = 0x00F0,
-	kMaskBlue  = 0x000F
-};
-
-enum ChrMask : uint16 {
-	kChr0  = 0x0000,
-	kChrL  = 0x0001,
-	kChrR  = 0xFFFF,
-	kChrLD = 0x0002,
-	kChrRD = 0xFFFE
-};
-
+// Needed by kernal for drawing
 enum Screen {											// These are constants that are used for defining screen related arrays
 	kMaxSprites   = 32,									// Number of sprites allowed at once
 	kViewPortCW   = 256 / 64,
@@ -92,16 +74,7 @@ enum Screen {											// These are constants that are used for defining screen
 	kMaxDrawItems = kViewPortCH + 1 + kMaxSprites
 };
 
-enum StoryMaxes {
-	kMaxRooms		 = 16,
-	kMaxDoors		 = 10,
-	kMaxFlames 	     = 32,
-	kMaxFlamesInRoom = 5,
-	kMaxObjects 	 = 42,
-	kMaxMonsters 	 = 20,
-	kMaxGenSprites	 = 6
-};
-
+// Needed by kernal for input
 enum InputAction {
 	kActionNothing,
 	kActionKey,
@@ -119,17 +92,21 @@ enum InputDirection {
 	kDirectionRight
 };
 
+// Needed by kernal for music
+enum Song {
+	kSongNothing,
+	kSongMaze,
+	kSongCombat,
+	kSongText
+};
+
+// Needed by logic for various things
 enum MonsterID {
 	kPlayerID
 };
 
-enum LevelType {
-	kRoomType,
-	kMonsterType,
-	kObjectType
-};
-
-enum CertIndex : uint8 {
+// Needed by logic for certificate processing
+enum CertificateIndex : uint8 {
 	kCertHits,
 	kCertLevel,
 	kCertLoGameFlags,
@@ -141,31 +118,40 @@ enum CertIndex : uint8 {
 	kCertGoldHi
 };
 
-enum Song {
-	kSongNothing,
-	kSongMaze,
-	kSongCombat,
-	kSongText
-};
-
+// Needed by logic for various things
 enum GameFlags : uint8 {
 	kSavedNone,
 	kSavedKing,
 	kSavedAna
 };
 
+// Needed by level (maybe?)
+enum LevelType {
+	kRoomType,
+	kMonsterType,
+	kObjectType
+};
+
+// Basically the equivalent of the explosion from a projectile in other games I think
 struct Spark {
 };
 
-struct GenSprite {
+// Generic sprites can be used anywhere, just sort of misc sprites
+struct GenericSprite {
 };
 
+// Doors are a property of the level, not the room, they defined the connections between rooms
 struct Door {
+	uint8 _x 		   = 0;
+	uint8 _y 		   = 0;
+	uint8 _from		   = 0;
+	uint8 _to		   = 0;
+	uint8 _busyOnRight = 0;
+	uint8 _on 		   = 0;
 };
 
-struct Cycle {
-};
 
+// Sprites are handled by driver in Kernal
 struct Frame {
 	uint16  _deltaX;
 	uint16  _deltaY;
@@ -192,7 +178,7 @@ DataSprite *_dSprite;
 
 struct ImmortalGameDescription;
 
-// Forward declaration because we will need the Disk class
+// Forward declaration because we will need the Disk and Room classes
 class ProDosDisk;
 class Room;
 
@@ -309,7 +295,7 @@ public:
 	const int kMaxFilesPerLevel = 16;
 	const int kMaxPartInstances = 4;
 	const int kLevelToMaze[8]   = {0,0,1,1,2,2,2,3};
-//cantunlockdoor	set	badchestdesc
+
 	/* 
 	 * 'global' members
 	 */
@@ -317,7 +303,7 @@ public:
 	// Misc
 	Common::ErrorCode _err;								// If this is not kNoError at any point, the engine will stop
 	uint8 _certificate[16];								// The certificate (password) is basically the inventory/equipment array
-	uint8 _lastCertLen = 0;
+	uint8 _lastCertLen  = 0;
 	 bool _draw 	    = 0;							// Whether the screen should draw this frame
 	  int _zero 	    = 0;							// No idea what this is yet
 	 bool _gameOverFlag = false;
@@ -353,6 +339,19 @@ public:
 	  int _roomCellX;
 	  int _roomCellY;
 	Room *_rooms[kMaxRooms];							// Rooms within the level
+	Common::Array<SFlame> _allFlames[kMaxRooms];		// The level needs it's own set of flames so that the flames can be turned on/off permenantly. This is technically more like a hashmap in the source, but it could also be seen as a 2d array, just hashed together in the source
+
+	// Door members
+	uint8 _numDoors 	   = 0;
+	uint8 _doorRoom 	   = 0;
+	uint8 _doorToNextLevel = 0;
+	uint8 _doorCameInFrom  = 0;
+	uint8 _ladders 		   = 0;
+	uint8 _numLadders 	   = 0;
+	uint8 _ladderInUse	   = 0;
+	uint8 _secretLadder    = 0;
+	uint8 _secretCount     = 0;
+	uint8 _secretDelta     = 0;
 
 	// Debug members
 	bool _singleStep;									// Flag for _singleStep mode
@@ -374,12 +373,12 @@ public:
 		Sprite  _sprites[kMaxSprites];					// All the sprites shown on screen
 	DataSprite  _dataSprites[kFont + 1];				// All the sprite data, indexed by SpriteFile
 	Common::Array<Common::String> _strPtrs;				// Str should really be a char array, but inserting frame values will be stupid so it's just a string instead
-	Common::Array<Motive>		  _motivePtrs;
-	Common::Array<Damage>		  _damagePtrs;
-	Common::Array<Use>			  _usePtrs;
-	Common::Array<Pickup>		  _pickupPtrs;
-	CArray2D<Motive>			  _programPtrs;
-	Common::Array<ObjType>		  _objTypePtrs;
+	Common::Array<Motive>  _motivePtrs;
+	Common::Array<Damage>  _damagePtrs;
+	Common::Array<Use>	   _usePtrs;
+	Common::Array<Pickup>  _pickupPtrs;
+	CArray2D<Motive>	   _programPtrs;
+	Common::Array<ObjType> _objTypePtrs;
 
 	// Screen members
 	  byte *_window;									// Bitmap of the window around the game
@@ -403,6 +402,8 @@ public:
     uint16  _myUnivPointY;
 	   int  _num2DrawItems = 0;
 	Graphics::Surface *_mainSurface;
+		Cyc _cycles[32];
+GenericSprite _genSprites[6];
 
 	// Palette members
 	   int _dontResetColors = 0;						// Not sure yet
@@ -556,9 +557,6 @@ public:
 	 */
 
 	// Misc
-	void delay(int j);									// Delay engine by j jiffies (from driver originally, but makes more sense grouped with misc)
-	void delay4(int j);									// || /4
-	void delay8(int j);									// || /8
 	void miscInit();
 	void setRandomSeed();
 	void getRandom();
@@ -575,10 +573,6 @@ public:
 	// Input related
 	void buttonPressed();
 	void firePressed();
-
-	// Screen related
-	void inside(int p, int p2, int a);
-	void insideRect(int p, int r);
 
 
 	/*
@@ -605,8 +599,31 @@ public:
 
 
 	/*
-	 * [Story.cpp] Functions from Story.cpp
+	 * [Cycle.cpp] Functions from Cyc
 	 */
+
+	// Misc
+	void cycleNew();									// Adds a cycle to the current list
+	 int getCycleChr();
+	void cycleFreeAll();								// Delete all cycles
+	void cycleGetFile();
+	void cycleGetNum();
+	void cycleGetIndex();
+	void cycleSetIndex();
+	void cycleGetFrame();
+	void cycleAdvance();
+
+	/* Unneccessary cycle functions
+	void cycleInit();
+	void cycleFree();
+	void cycleGetNumFrames();
+	void cycleGetList();*/
+
+
+	/*
+	 * [Story.cpp] Functions related to Story.GS
+	 */
+
 	// Init
 	void initStoryDynamic();
 
@@ -636,10 +653,41 @@ public:
 
 
 	/*
-	 * [Music.cpp] Functions from Music.cpp
+	 * [door.cpp] Functions from Door.GS
+	 */
+
+	void roomTransfer(int r, int x, int y);		// Transfers the player from the current room to a new room at x,y
+	void doorOpenSecret();
+	void doorCloseSecret();
+	//void doorToNextLevel();
+	void doorInit();
+	void doorClrLock();
+	void doorNew();
+	void doorDrawAll();
+	void doorOnDoorMat();
+	//void doorEnter();	// <-- this is actually a method of Player Monster, should probably move it there later		
+	int findDoorTop(int x, int y);
+	int findDoor(int x, int y);
+	bool doLockStuff(int d, MonsterID m, int top);
+	bool inDoorTop(int x, int y, MonsterID m);
+	bool inDoor(int x, int y, MonsterID m);
+	int doorDoStep(MonsterID m, int d, int index);
+	int doorSetOn(int d);
+	int doorComeOut(MonsterID m);
+	void doorSetLadders(MonsterID m);
+
+
+	/*
+	 * [Music.cpp] Functions from music.GS and sound.GS
 	 */
 
 	// Misc
+
+
+	/*
+	 * [Univ.cpp] Functions from Univ.GS
+	 */
+
 
 	/*
 	 * --- ScummVM general engine Functions ---

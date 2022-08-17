@@ -31,18 +31,6 @@ namespace Immortal {
  *
  */
 
-void ImmortalEngine::delay(int j) {             // Delay is measured in jiffies, which are 56.17ms
-	g_system->delayMillis(j * 56);
-}
-
-void ImmortalEngine::delay4(int j) {            // Named in source quarterClock for some reason, 1/4 jiffies are 14.04ms
-	g_system->delayMillis(j * 14);
-}
-
-void ImmortalEngine::delay8(int j) {            // 1/8 jiffies are 7.02ms
-	g_system->delayMillis(j * 7);
-}
-
 void ImmortalEngine::miscInit() {
     // In the source, this is where the seed for the rng is set, but we don't need to do that as we used _randomSource
     _lastGauge = 0;
@@ -90,10 +78,6 @@ void ImmortalEngine::firePressed() {}
  * -----                -----
  *
  */
-
-void ImmortalEngine::inside(int p, int p2, int a) {}
-void ImmortalEngine::insideRect(int p, int r) {}
-
 
 } // namespace Immortal
 

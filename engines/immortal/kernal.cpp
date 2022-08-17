@@ -750,13 +750,13 @@ void ImmortalEngine::pump() {
 	// Flashes the screen (except the frame thankfully) white, black, white, black, then clears the screen and goes back to normal
 	useWhite();
 	g_system->updateScreen();
-	delay(2);
+	Immortal::Util::delay(2);
 	useBlack();
 	g_system->updateScreen();
-	delay(2);
+	Immortal::Util::delay(2);
 	useWhite();
 	g_system->updateScreen();
-	delay(2);
+	Immortal::Util::delay(2);
 	useBlack();
 	g_system->updateScreen();
 	clearScreen();
@@ -818,7 +818,7 @@ void ImmortalEngine::fade(uint16 pal[], int dir, int delay) {
 
 	while ((count >= 0) && (count <= 256)) {
 		fadePal(pal, count, target);
-		delay8(delay);
+		Immortal::Util::delay8(delay);
 		setColors(target);
 
 		// Same as above, it was originally a branch, this does the same thing
