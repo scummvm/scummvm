@@ -1414,7 +1414,7 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, bool &hasLoadedSt
 						return true;
 					}
 				} else {
-					saveCursorPreMenu();
+					restoreCursorPostMenu();
 					convertMessageToString((const byte *)getGUIString(gsGameNotSaved), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
 					if (_game.id == GID_DIG) {
 						showBannerAndPause(1, -1, saveScreenTitle);
