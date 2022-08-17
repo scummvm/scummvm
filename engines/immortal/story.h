@@ -19,47 +19,45 @@
  *
  */
 
-#include "immortal/sprite_list.h"						// This is an enum of all available sprites
+// Definitions are the enum for the set of global definitions in Story.GS
+#include "immortal/definitions.h"
+
+// Sprite List is a list of all sprite definitions (could be included in definitions.h, but sprite_list.gs was a separate source file and is sprite specific)
+#include "immortal/sprite_list.h"
 
 #ifndef IMMORTAL_STORY_H
 #define IMMORTAL_STORY_H
 
 namespace Immortal {
 
+struct Frame;
+struct DataSprite;
+struct Sprite;
+
 // We need a few two-dimentional vectors, and writing them out in full each time is tedious
 template<class T> using CArray2D = Common::Array<Common::Array<T>>;
 
-enum DoorDir : bool {
-	kLeft = false,
-	kRight = true
+// These maximum numbers aren't really needed, because most of these are vectors and have .size()
+enum StoryMaxes {
+	kMaxRooms		 = 16,
+	kMaxDoors		 = 10,
+	kMaxFlames 	     = 32,
+	kMaxFlamesInRoom = 5,
+	kMaxObjects 	 = 42,
+	kMaxMonsters 	 = 20,
+	kMaxGenSprites	 = 6,
+	kMaxCycles		 = 32
 };
 
+// These are flags that are relevant to their specific story data structures
 enum RoomFlag : uint8 {							// Generic properties available to each room
-	kRoomFlag0 = 0x1,
-	kRoomFlag1 = 0x2,
-	kRoomFlag2 = 0x4,
-	kRoomFlag3 = 0x8
+	kRoomFlag0 = 0x01,
+	kRoomFlag1 = 0x02,
+	kRoomFlag2 = 0x04,
+	kRoomFlag3 = 0x08
 };
 
-enum FPattern : uint8 {							// This defines which Cyc animation it uses
-	kFlameNormal,
-	kFlameCandle,
-	kFlameOff,
-	kFlameGusty
-};
-
-enum OPMask : uint8 {							// These are not actually needed anymore, they were for the original compiler method for making story.gs. Keeping it just in case for now
-	kOPMaskRoom,
-	kOPMaskInRoom,
-	kOPMaskFlame,
-	kOPMaskUnivAt,
-	kOPMaskMonster,
-	kOPMaskDoor,
-	kOPMaskObject,
-	kOPMaskRecord
-};
-
-enum ObjFlag : uint8 {
+enum ObjFlag : uint8 {							// Properties of the object essentially
 	kObjUsesFireButton = 0x40,
 	kObjIsInvisible    = 0x20,
 	kObjIsRunning      = 0x10,
@@ -67,10 +65,16 @@ enum ObjFlag : uint8 {
 	kObjIsOnGround     = 0x04,
 	kObjIsF1           = 0x02,
 	kObjIsF2           = 0x01,
-	kObjNone		   		 = 0x0
+	kObjNone		   = 0x0
 };
 
-enum MonsterFlag : uint8 {
+enum IsA : uint8 {								// To be completely honest, I'm not really sure what this is. It seems to be more object flags, but they act a little strangely
+	kIsAF1 	 = 0x20,
+	kIsAF2 	 = 0x40,
+	kIsANone = 0x0,
+};
+
+enum MonsterFlag : uint8 {						// Mostly properties of the AI for a given monster, *including the player*
 	kMonstIsNone   = 0x00,
 	kMonstIsTough  = 0x10,
 	kMonstIsDead   = 0x20,
@@ -87,195 +91,44 @@ enum MonsterFlag : uint8 {
 	kMonstD 	   = 0x07
 };
 
-enum IsA : uint8 {
-	kIsAF1 = 0x20,
-	kIsAF2 = 0x40,
-	kIsANone = 0x0,
+// Flame pattern is used by the story data, in-room data, *and* the level based total flame data. So it needs to be in story.h to be used by immortal.h and room.h
+enum FPattern : uint8 {							// This defines which Cyc animation it uses
+	kFlameNormal,
+	kFlameCandle,
+	kFlameOff,
+	kFlameGusty
 };
 
-enum Motive {						// This will likely be moved to a monster ai specific file later
-	kMotiveRoomCombat,
-	kMotiveShadeFind,
-	kMotiveShadeLoose,
-	kMotiveEngage,
-	kMotiveUpdateGoal,
-	kMotiveFollow,
-	kMotiveShadeHesitate,
-	kMotiveEasyRoomCombat,
-	kMotiveFind8,
-	kMotiveLoose4,
-	kMotiveDefensiveCombat,
-	kMotiveUlinTalk,
-	kMotiveGive,
-	kMotiveUseUpMonster,
-	kMotiveAliveRoomCombat,
-	kMotiveFindAlways,
-	kMotivePlayerCombat,
-	kMotiveJoystick,
-	kMotivePlayerDoor,
-	kMotivewaittalk2,
-	kMotiveGetDisturbed,
-	kMotiveLoose32,
-	kMotiveIfNot1Skip1,
+enum DoorDir : bool {
+	kLeft  = false,
+	kRight = true
 };
 
-enum Str {
-	kStrNoDesc,
-	kStrSword,
-	kStrSwordDesc,
-	kStrBonesText1,
-	kStrBonesText2,
-	kStrBonesText3,
-	kStrComp,
-	kStrCompDesc,
-	kStrOpenBag,
-	kStrThrowComp,
-	kStrSmithText1,
-	kStrSmithText2,
-	kStrCarpet,
-	kStrBomb,
-	kStrBombDesc,
-	kStrPickItUp,
-	kStrYesNo,
-	kStrOther,
-	kStrChestKey,
-	kStrDoorKey,
-	kStrChestKeyDesc,
-	kStrOpenChestDesc,
-	kStrPutItOn,
-	kStrDropItThen,
-	kStrChestDesc,
-	kStrGoodChestDesc,
-	kStrBadChestDesc,
-	kStrComboLock,
-	kStrGold,
-	kStrFindGold,
-	kStrNull,
-	kStrNotHere,
-	kStrUnlockDoor,
-	kStrWeak1,
-	kStrDummyWater,
-	kStrBadWizard,
-	kStrDiesAnyway,
-	kStrDoorKeyDesc,
-	kStrNoteDesc,
-	kStrNote,
-	kStrLootBodyDesc,
-	kStrNotEnough,
-	kStrGameOver,
-	kStrYouWin,
-	kStrWormFoodDesc,
-	kStrWormFood,
-	kStrStoneDesc,
-	kStrStone,
-	kStrGemDesc,
-	kStrGem,
-	kStrFireBallDesc,
-	kStrFireBall,
-	kStrDeathMapDesc,
-	kStrDeathMap,
-	kStrBoots,
-	kStrUseBoots,
-	kStrWowCharmDesc,
-	kStrWowCharm,
-	kStrUseWowCharm,
-	kStrWaterOpen,
-	kStrDrinkIt,
-	kStrItWorks,
-	kStrSBOpen,
-	kStrUsesFire,
-	kStrMuscleDesc,
-	kStrMuscle,
-	kStrSBDesc,
-	kStrSB,
-	kStrFace,
-	kStrFaceDesc,
-	kStrTRNDesc,
-	kStrTRN,
-	kStrInvisDesc,
-	kStrGoodLuckDesc,
-	kStrAnaRing,
-	kStrInvis,
-	kStrGoesAway,
-	kStrGiveHerRing,
-	kStrGive2,
-	kStrMadKingText,
-	kStrMadKing3Text,
-	kStrMadKing2Text,
-	kStrDream1,
-	kStrDream1P2,
-	kStrDream1P3,
-	kStrHowToGetOut,
-	kStrSpore,
-	kStrSporeDesc,
-	kStrRequestPlayDisc,
-	kStrOldGame,
-	kStrEnterCertificate,
-	kStrBadCertificate,
-	kStrCert,
-	kStrCert2,
-	kStrTitle0,
-	kStrTitle4,
-	kStrMDesc,
-	kStrM3Desc,
-	kStrMapText1,
-	kStrMapText2,
-
-	// Level 0 str
-
-	// Level 1 str
-
-	// Level 2 str
-
-	// Level 3 str
-
-	// Level 4 str
-
-	// Level 5 str
-
-	// Level 6 str
-
-	// Level 7 str
+// Cycles define the animation of sprites within a level. There is a fixed total of cycles available, and they are not room dependant
+struct Cycle {
+DataSprite *_dSprite;
+	   int  _numCycles;
+	   int *_frames;
 };
 
-enum SObjType {
-	kTypeTrap,
-	kTypeCoin,
-	kTypeWowCharm,
-	kTypeDead,
-	kTypeFireBall,
-	kTypeDunRing,
-	kTypeChest,
-	kTypeDeathMap,
-	kTypeWater,
-	kTypeSpores,
-	kTypeWormFood,
-	kTypeChestKey,
-	kTypePhant,
-	kTypeGold,
-	kTypeHay,
-	kTypeBeam
-};
-
+// Object Pickup defines how an object can be picked up by the player, with different functions
 enum SObjPickup {
-
-};
-
-enum SObjUse {
-
-};
-
-enum SDamage {
-
-};
-
-struct Damage {
-
 };
 
 struct Pickup {
 	//pointer to function
 	int _param;
+};
+
+// Iirc damage is used by object types as well as enemy types
+enum SDamage {
+};
+
+struct Damage {
+};
+
+// Use is self explanitory, it defines the function and parameters for using an object
+enum SObjUse {
 };
 
 struct Use {
@@ -301,7 +154,7 @@ struct SRoom {
 	uint8 _x = 0;
 	uint8 _y = 0;
  RoomFlag _flags = kRoomFlag0;
-
+ 	SRoom() {}
  	SRoom(uint8 x, uint8 y, RoomFlag f) {
  			_x = x;
  			_y = y;
@@ -316,7 +169,7 @@ DoorDir _dir = kLeft;
 	uint8 _fromRoom = 0;
 	uint8 _toRoom = 0;
 	 bool _isLocked = false;
-
+	 SDoor() {}
 	 SDoor(DoorDir d, uint8 x, uint8 y, uint8 f, uint8 t, bool l) {
 	 	_dir = d;
 	 	_x = x;
@@ -330,12 +183,12 @@ DoorDir _dir = kLeft;
 struct SFlame {
 	 uint8 _x = 0;
 	 uint8 _y = 0;
-FPattern _pattern = kFlameOff;
-
+FPattern _p = kFlameOff;
+	SFlame() {}
  	SFlame(uint8 x, uint8 y, FPattern p) {
- 			  _x = x;
- 			  _y = y;
- 	_pattern = p;
+ 		_x = x;
+		_y = y;
+ 		_p = p;
  	}
 };
 
@@ -346,7 +199,7 @@ struct SObj {
 	  uint8 _flags = 0;
 SpriteFrame _frame = kNoFrame;
 Common::Array<uint8> _traps;
-
+	SObj() {}
 	SObj(uint8 x, uint8 y, SObjType t, SpriteFrame s, uint8 f, Common::Array<uint8> traps) {
  		    _x = x;
  		    _y = y;
@@ -365,15 +218,15 @@ MonsterFlag _madAt = kMonstIsNone;
 	    uint8 _flags = 0;
  SpriteName _sprite = kCandle;
 Common::Array<Motive> _program;
-
+	SMonster() {}
 	SMonster(uint8 x, uint8 y, uint8 h, MonsterFlag m, uint8 f, Common::Array<Motive> p, SpriteName s) {
  		    _x = x;
  		    _y = y;
- 	   _hits = h;
- 	  _madAt = m;
- 	  _flags = f;
- 	_program = p;
- 	 _sprite = s;
+ 	     _hits = h;
+ 	    _madAt = m;
+ 	    _flags = f;
+ 	  _program = p;
+ 	   _sprite = s;
 	}
 };
 
