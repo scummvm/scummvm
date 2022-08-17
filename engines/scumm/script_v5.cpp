@@ -1484,6 +1484,36 @@ void ScummEngine_v5::o5_isEqual() {
 			b = 549;
 	}
 
+	// WORKAROUND: The Ultimate Talkie edition of Monkey Island 2 has no
+	// audio for the "Hey spitter" and "C'mon!  What are you?  Afraid?"
+	// lines from the crowd in the spitting contest. It's there in the
+	// 000001e1, 00000661, 00000caf, 000001e8, 0000066c and 00000cba.wav
+	// files, but these resources are not called in this script, and it also
+	// looks like they're not built into the MONSTER.SOU file either, so
+	// these lines remain silent at the moment, although they were voiced.
+	//
+	// Try to detect and skip them, which as much care as possible for any
+	// future update or fan translation which would change this.
+	//
+	// Intentionally not using `_enableEnhancements` for this version.
+	if (_game.id == GID_MONKEY2 && _roomResource == 47 && vm.slot[_currentScript].number == 218 &&
+		var == 0x4000 + 1 && a == vm.localvar[_currentScript][1] && a == b && (b == 7 || b == 13) &&
+		strcmp(_game.variant, "SE Talkie") == 0) {
+		// No need to skip any line if playing in always-prefer-original-text
+		// mode (Bit[588]) where silent lines are expected, or if speech is muted.
+		if (readVar(0x8000 + 588) == 1 && !ConfMan.getBool("speech_mute")) {
+			// Only skip the line when we can detect one and it has no sound prologue.
+			if (memcmp(_scriptPointer + 2, "\x27\x01\x1D", 3) == 0 && memcmp(_scriptPointer + 5, "\xFF\x0A", 2) != 0) {
+				// Cheat and use the next recorded line, but do it in a way so that it
+				// shouldn't be played twice in a row.
+				if (vm.localvar[_currentScript][1] == _scummVars[516])
+					_scummVars[516]++;
+				vm.localvar[_currentScript][1]++;
+				a = -1;
+			}
+		}
+	}
+
 	// HACK: To allow demo script of Maniac Mansion V2
 	// The camera x position is only 100, instead of 180, after game title name scrolls.
 	if (_game.id == GID_MANIAC && _game.version == 2 && (_game.features & GF_DEMO) && isScriptRunning(173) && b == 180)
