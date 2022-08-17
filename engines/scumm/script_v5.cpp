@@ -3401,6 +3401,19 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		Common::strlcpy(tmpBuf + diff, "5000", sizeof(tmpBuf) - diff);
 		Common::strlcpy(tmpBuf + diff + 4, tmp + sizeof("NCREDIT-NOTE-AMOUNT") - 1, sizeof(tmpBuf) - diff - 4);
 		printString(textSlot, (byte *)tmpBuf);
+	} else if (_game.id == GID_MONKEY && _game.platform != Common::kPlatformSegaCD &&
+			((_roomResource == 78 && vm.slot[_currentScript].number == 201) ||
+			(_roomResource == 45 && vm.slot[_currentScript].number == 200 &&
+			isValidActor(10) && _actors[10]->isInCurrentRoom())) &&
+			_actorToPrintStrFor == 255 && _string[textSlot].color != 0x0F &&
+			strcmp(_game.variant, "SE Talkie") != 0 && _enableEnhancements) {
+		// WORKAROUND: When Guybrush goes to the church at the end of Monkey1,
+		// the color for the ghost priest's lines is inconsistent in the v5
+		// releases (except for the SegaCD one with the smaller palette).
+		// Fix this while making sure that it doesn't apply to Elaine saying
+		// "I heard that!" offscreen.
+		_string[textSlot].color = 0xF9;
+		printString(textSlot, _scriptPointer);
 	} else if (_game.id == GID_MONKEY && _roomResource == 25 && vm.slot[_currentScript].number == 205) {
 		printPatchedMI1CannibalString(textSlot, _scriptPointer);
 	} else {
