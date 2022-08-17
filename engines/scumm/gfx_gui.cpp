@@ -104,8 +104,8 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	}
 
 	// Backup the text surface...
-	if (_game.version < 7 && !_mainMenuIsActive) {
-		saveTextSurfacePreGUI();
+	if (_game.version < 7 && !_mainMenuIsActive && _game.platform != Common::kPlatformFMTowns) {
+		saveSurfacesPreGUI();
 		restoreCharsetBg();
 	}
 
@@ -216,9 +216,8 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	}
 
 	// Restore the text surface...
-	if (_game.version < 7 && !_mainMenuIsActive) {
-		restoreTextSurfacePostGUI();
-		_completeScreenRedraw = true;
+	if (_game.version < 7 && !_mainMenuIsActive && _game.platform != Common::kPlatformFMTowns) {
+		restoreSurfacesPostGUI();
 	}
 
 	// Finally, resume the engine, clear the input state, and restore the charset.
@@ -940,37 +939,57 @@ int ScummEngine::getBannerColor(int bannerId) {
 	return (int)arrAddr[bannerId];
 }
 
-void ScummEngine::saveTextSurfacePreGUI() {
+void ScummEngine::saveSurfacesPreGUI() {
+	// Why are we saving not one but TWO surfaces? Bear with me:
+	// texts in v6 and below are drawn sometimes onto the main surface, while
+	// other times they are drawn onto the text surface.
+	//
+	// Now, the original interpreters just killed every text after the
+	// menu is closed; this includes dialog texts, plain printed strings and
+	// possibly more.
+	//
+	// We can do better than that! Let's save both the main and the text surfaces
+	// so that we can restore them later when we're done with the menu.
+
+	uint32 curPix;
+
 	if (_game.version < 4 || _game.version > 6)
 		return;
 
 	_tempTextSurface = (byte *)malloc(_textSurface.w * _textSurface.h * sizeof(byte));
+	_tempMainSurface = (byte *)malloc(_virtscr[kMainVirtScreen].w * _virtscr[kMainVirtScreen].h * sizeof(byte));
 
-	int x, y;
-	uint32 curPix;
-	for (int i = 0; i < _textSurface.h; i++) {
-		for (int j = 0; j < _textSurface.w; j++) {
-			x = j;
-			y = i;
-			curPix = _textSurface.getPixel(x, y);
-			_tempTextSurface[j + i * _textSurface.w] = curPix;
-			if (curPix != 0xFD)
-				_virtscr[kMainVirtScreen].setPixel(_virtscr[kMainVirtScreen].xstart + x, y, curPix);
+	if (_tempMainSurface) {
+		for (int y = 0; y < _virtscr[kMainVirtScreen].h; y++) {
+			for (int x = 0; x < _virtscr[kMainVirtScreen].w; x++) {
+				curPix = _virtscr[kMainVirtScreen].getPixel(x, y);
+				_tempMainSurface[x + y * _virtscr[kMainVirtScreen].w] = curPix;
+			}
+		}
+	}
+
+	if (_tempTextSurface) {
+		for (int y = 0; y < _textSurface.h; y++) {
+			for (int x = 0; x < _textSurface.w; x++) {
+				curPix = _textSurface.getPixel(x, y);
+				_tempTextSurface[x + y * _textSurface.w] = curPix;
+				if (curPix != 0xFD)
+					_virtscr[kMainVirtScreen].setPixel(_virtscr[kMainVirtScreen].xstart + x, y, curPix);
+			}
 		}
 	}
 }
 
-void ScummEngine::restoreTextSurfacePostGUI() {
+void ScummEngine::restoreSurfacesPostGUI() {
+	uint32 curPix;
+
 	if (_game.version < 4 || _game.version > 6)
 		return;
+
 	if (_tempTextSurface) {
-		int x, y;
-		uint32 curPix;
-		for (int i = 0; i < _textSurface.h; i++) {
-			for (int j = 0; j < _textSurface.w; j++) {
-				x = j;
-				y = i;
-				curPix = _tempTextSurface[j + i * _textSurface.w];
+		for (int y = 0; y < _textSurface.h; y++) {
+			for (int x = 0; x < _textSurface.w; x++) {
+				curPix = _tempTextSurface[x + y * _textSurface.w];
 				_textSurface.setPixel(x, y, curPix);
 			}
 		}
@@ -982,6 +1001,20 @@ void ScummEngine::restoreTextSurfacePostGUI() {
 
 		free(_tempTextSurface);
 		_tempTextSurface = nullptr;
+	}
+
+	if (_tempMainSurface) {
+		for (int y = 0; y < _virtscr[kMainVirtScreen].h; y++) {
+			for (int x = 0; x < _virtscr[kMainVirtScreen].w; x++) {
+				curPix = _tempMainSurface[x + y * _virtscr[kMainVirtScreen].w];
+				_virtscr[kMainVirtScreen].setPixel(x, y, curPix);
+			}
+		}
+
+		free(_tempMainSurface);
+		_tempMainSurface = nullptr;
+
+		_virtscr[kMainVirtScreen].setDirtyRange(0, _virtscr[kMainVirtScreen].h);
 	}
 }
 
@@ -1086,14 +1119,14 @@ void ScummEngine::fillSavegameLabels() {
 	Common::String name;
 	for (int i = 0; i < 9; i++) {
 		int curSaveSlot = i + 1 + _curDisplayedSaveSlotPage * 9;
-		sprintf_s(_savegameNames[i].label, sizeof(_savegameNames[i].label), "%2d. ", curSaveSlot);
+		sprintf(_savegameNames[i].label, "%2d. ", curSaveSlot);
 
 		if (availSaves[curSaveSlot]) {
 			if (getSavegameName(curSaveSlot, name)) {
-				sprintf_s(_savegameNames[i].label, sizeof(_savegameNames[i].label), "%2d. %s", curSaveSlot, name.c_str());
+				sprintf(_savegameNames[i].label, "%2d. %s", curSaveSlot, name.c_str());
 			} else {
 				// The original printed "WARNING... old savegame", but we do support old savegames :-)
-				sprintf_s(_savegameNames[i].label, sizeof(_savegameNames[i].label), "%2d. WARNING: wrong save version", curSaveSlot);
+				sprintf(_savegameNames[i].label, "%2d. WARNING: wrong save version", curSaveSlot);
 			}
 		}
 	}
@@ -1103,6 +1136,9 @@ bool ScummEngine::canWriteGame(int slotId) {
 	bool saveList[100];
 	char msgLabelPtr[512];
 	char localizedYesKey;
+
+	if (_game.version < 7)
+		return true;
 
 	listSavegames(saveList, ARRAYSIZE(saveList));
 	if (saveList[slotId]) {
@@ -1130,6 +1166,7 @@ bool ScummEngine::userWriteLabelRoutine(Common::KeyState &ks, bool &leftMsClicke
 
 	while (true) {
 		waitForTimer(1);
+
 		waitForBannerInput(-1, ks, leftMsClicked, rightMsClicked);
 		rightMsClicked = false;
 		if (ks.keycode == Common::KEYCODE_RETURN) {
@@ -1237,7 +1274,7 @@ void ScummEngine::showMainMenu() {
 		// This results in texts overlapping on top of the menu; let's simulate the end result
 		// of the original by copying the text surface over the main one just before showing
 		// the menu...
-		saveTextSurfacePreGUI();
+		saveSurfacesPreGUI();
 
 		// V6 games should call for stopTalk() instead, but that's a bit too drastic;
 		// this ensures that we can at least hear the speech after the menu is closed.
@@ -1247,8 +1284,12 @@ void ScummEngine::showMainMenu() {
 	_menuPage = GUI_PAGE_MAIN;
 	setUpMainMenuControls();
 	drawMainMenuControls();
-	convertMessageToString((const byte *)getGUIString(gsTitle), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
-	drawMainMenuTitle(saveScreenTitle);
+
+	if (_game.id != GID_MONKEY2 && _game.id != GID_MONKEY) {
+		convertMessageToString((const byte *)getGUIString(gsTitle), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
+		drawMainMenuTitle(saveScreenTitle);
+	}
+
 	updateMainMenuControls();
 
 	// Save the current cursor state...
@@ -1269,18 +1310,18 @@ void ScummEngine::showMainMenu() {
 			if (userWriteLabelRoutine(ks, leftMsClicked, rightMsClicked))
 				break;
 		} else {
-			// Wait for any left mouse button presses...
+			// Wait for any mouse button presses...
 			waitForBannerInput(-1, ks, leftMsClicked, rightMsClicked);
 		}
 
-		rightMsClicked = false; // We don't care for this
-
-		if (leftMsClicked) {
+		if (leftMsClicked || rightMsClicked) {
 			curMouseX = _mouse.x;
 			curMouseY = _mouse.y;
 			clickedControl = getInternalGUIControlFromCoordinates(curMouseX, curMouseY);
 			clearClickedStatus();
 			leftMsClicked = false;
+			rightMsClicked = false;
+
 			if (clickedControl != -1) {
 				if (clickedControl < GUI_CTRL_FIRST_SG || clickedControl > GUI_CTRL_LAST_SG) {
 					// Avoid highlighting the main container boxes :-)
@@ -1330,7 +1371,8 @@ void ScummEngine::showMainMenu() {
 
 	_mainMenuIsActive = false;
 
-	_completeScreenRedraw = true;
+	if (_game.version > 6)
+		_completeScreenRedraw = true;
 
 	// Restore the old cursor state only if we're not loading a game...
 	if (_saveScriptParam != GAME_PROPER_LOAD && _saveLoadFlag != 2) {
@@ -1356,7 +1398,7 @@ void ScummEngine::showMainMenu() {
 		CHARSET_1();
 
 	if (_game.version < 7 && !hasLoadedState)
-		restoreTextSurfacePostGUI();
+		restoreSurfacesPostGUI();
 
 	// Resume the engine
 	pt.clear();
@@ -1395,7 +1437,7 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, bool &hasLoadedSt
 		if (_menuPage == GUI_PAGE_SAVE) {
 			if (_mainMenuSavegameLabel > 0) {
 				convertMessageToString((const byte *)getGUIString(gsSaving), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
-				sprintf_s(formattedString, sizeof(formattedString), saveScreenTitle, &_savegameNames[_mainMenuSavegameLabel - 1].label[4]);
+				sprintf(formattedString, saveScreenTitle, &_savegameNames[_mainMenuSavegameLabel - 1].label[4]);
 				drawMainMenuTitle(formattedString);
 				ScummEngine::drawDirtyScreenParts();
 				_system->updateScreen();
@@ -1443,7 +1485,7 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, bool &hasLoadedSt
 		} else if (_menuPage == GUI_PAGE_LOAD) {
 			if (_mainMenuSavegameLabel > 0) {
 				convertMessageToString((const byte *)getGUIString(gsLoading), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
-				sprintf_s(formattedString, sizeof(formattedString), saveScreenTitle, &_savegameNames[_mainMenuSavegameLabel - 1].label[4]);
+				sprintf(formattedString, saveScreenTitle, &_savegameNames[_mainMenuSavegameLabel - 1].label[4]);
 
 				if (strlen(_savegameNames[_mainMenuSavegameLabel - 1].label) == 4) {
 					drawMainMenuControls();
@@ -1456,7 +1498,6 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, bool &hasLoadedSt
 				_system->updateScreen();
 
 				waitForTimer(60);
-
 
 				if (isSmushActive()) {
 					handleLoadDuringSmush();
@@ -1499,8 +1540,12 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, bool &hasLoadedSt
 		_menuPage = GUI_PAGE_MAIN;
 		setUpMainMenuControls();
 		drawMainMenuControls();
-		convertMessageToString((const byte *)getGUIString(gsTitle), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
-		drawMainMenuTitle(saveScreenTitle);
+
+		if (_game.id != GID_MONKEY2 && _game.id != GID_MONKEY) {
+			convertMessageToString((const byte *)getGUIString(gsTitle), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
+			drawMainMenuTitle(saveScreenTitle);
+		}
+
 		updateMainMenuControls();
 		ScummEngine::drawDirtyScreenParts();
 		break;
@@ -1579,7 +1624,199 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, bool &hasLoadedSt
 }
 
 void ScummEngine::setUpMainMenuControls() {
+	int yConstant;
 
+	yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
+
+	for (int i = 0; i < ARRAYSIZE(_internalGUIControls); i++) {
+		_internalGUIControls[i].relativeCenterX = -1;
+	}
+
+	// Outer box
+	setUpInternalGUIControl(GUI_CTRL_OUTER_BOX,
+		getBannerColor(4),
+		getBannerColor(2),
+		getBannerColor(13),
+		getBannerColor(14),
+		getBannerColor(15),
+		getBannerColor(16),
+		getBannerColor(6),
+		getBannerColor(4),
+		20,
+		yConstant - 60,
+		300,
+		((yConstant + 60) < 0 ? -120 : yConstant + 60),
+		_emptyMsg, 1, 1);
+
+	// Inner box
+	setUpInternalGUIControl(GUI_CTRL_INNER_BOX,
+		getBannerColor(4),
+		getBannerColor(5),
+		getBannerColor(18),
+		getBannerColor(17),
+		getBannerColor(20),
+		getBannerColor(19),
+		getBannerColor(6),
+		getBannerColor(7),
+		26,
+		yConstant - 47,
+		212,
+		yConstant - 47 + 102,
+		_emptyMsg, 1, 1);
+
+	if (_menuPage == GUI_PAGE_MAIN) {
+		// Save button
+		setUpInternalGUIControl(GUI_CTRL_SAVE_BUTTON,
+			getBannerColor(4),
+			getBannerColor(5),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(6),
+			getBannerColor(7),
+			242,
+			yConstant - 23,
+			292,
+			yConstant - 23 + 12,
+			(char *)getGUIString(gsSave), 1, 1);
+
+		// Load button
+		setUpInternalGUIControl(GUI_CTRL_LOAD_BUTTON,
+			getBannerColor(4),
+			getBannerColor(5),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(6),
+			getBannerColor(7),
+			242,
+			yConstant - 8,
+			292,
+			yConstant - 8 + 12,
+			(char *)getGUIString(gsLoad), 1, 1);
+
+		// Play button
+		setUpInternalGUIControl(GUI_CTRL_PLAY_BUTTON,
+			getBannerColor(4),
+			getBannerColor(5),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(6),
+			getBannerColor(7),
+			242,
+			yConstant + 7,
+			292,
+			yConstant + 19,
+			(char *)getGUIString(gsPlay), 1, 1);
+
+		// Quit button
+		setUpInternalGUIControl(GUI_CTRL_QUIT_BUTTON,
+			getBannerColor(4),
+			getBannerColor(5),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(6),
+			getBannerColor(7),
+			242,
+			yConstant + 22,
+			292,
+			yConstant + 34,
+			(char *)getGUIString(gsQuit), 1, 1);
+	}
+
+	if (_menuPage != GUI_PAGE_MAIN || !(_game.id == GID_MONKEY2 || _game.id == GID_MONKEY)) {
+		// Arrow up button
+		setUpInternalGUIControl(GUI_CTRL_ARROW_UP_BUTTON,
+			getBannerColor(9),
+			getBannerColor(10),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(11),
+			getBannerColor(12),
+			216,
+			yConstant - 43,
+			232,
+			yConstant - 43 + 47,
+			_arrowUp, 1, 1);
+
+		// Arrow down button
+		setUpInternalGUIControl(GUI_CTRL_ARROW_DOWN_BUTTON,
+			getBannerColor(9),
+			getBannerColor(10),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(11),
+			getBannerColor(12),
+			216,
+			yConstant + 7,
+			232,
+			yConstant + 52,
+			_arrowDown, 1, 1);
+	}
+
+	if (_menuPage == GUI_PAGE_SAVE || _menuPage == GUI_PAGE_LOAD) {
+		if (_menuPage == GUI_PAGE_SAVE) {
+			// OK button
+			setUpInternalGUIControl(GUI_CTRL_OK_BUTTON,
+				getBannerColor(4),
+				getBannerColor(5),
+				getBannerColor(17),
+				getBannerColor(18),
+				getBannerColor(19),
+				getBannerColor(20),
+				getBannerColor(6),
+				getBannerColor(7),
+				242,
+				yConstant - 8,
+				292,
+				yConstant - 8 + 12,
+				(char *)getGUIString(gsOK), 1, 1);
+		}
+
+		// Cancel button
+		setUpInternalGUIControl(GUI_CTRL_CANCEL_BUTTON,
+			getBannerColor(4),
+			getBannerColor(5),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(6),
+			getBannerColor(7),
+			242,
+			(_menuPage == GUI_PAGE_LOAD ? yConstant - 1 : yConstant + 7),
+			292,
+			(_menuPage == GUI_PAGE_LOAD ? yConstant - 1 : yConstant + 7) + 12,
+			(char *)getGUIString(gsCancel), 1, 1);
+
+		// Savegame names
+		for (int i = GUI_CTRL_FIRST_SG, j = 0; i <= GUI_CTRL_LAST_SG; i++, j += 11) {
+			setUpInternalGUIControl(i,
+				getBannerColor(9),
+				getBannerColor(10),
+				getBannerColor(4),
+				getBannerColor(4),
+				getBannerColor(4),
+				getBannerColor(4),
+				getBannerColor(11),
+				getBannerColor(12),
+				28,
+				yConstant - 45 + j,
+				210,
+				-9,
+				_savegameNames[i - 1].label, 0, 0);
+		}
+	}
 }
 
 void ScummEngine_v6::setUpMainMenuControls() {
@@ -1905,12 +2142,20 @@ void ScummEngine_v6::setUpMainMenuControls() {
 		// Cancel button
 		int cancelButtonAnchorY;
 		if (_menuPage == GUI_PAGE_LOAD) {
-			cancelButtonAnchorY = _screenHeight / 2 +
-				(((_game.id == GID_DIG && _useCJKMode) ? 10 : 7) - yComponentV7 / 2) +
-				((_game.id == GID_DIG && _useCJKMode) ? 18 : 12) +
-				40;
+			if (_game.version == 7) {
+				cancelButtonAnchorY = _screenHeight / 2 +
+					(((_game.id == GID_DIG && _useCJKMode) ? 10 : 7) - yComponentV7 / 2) +
+					((_game.id == GID_DIG && _useCJKMode) ? 18 : 12) +
+					40;
+			} else {
+				cancelButtonAnchorY = yConstantV6 - 1;
+			}
 		} else {
-			cancelButtonAnchorY = yConstantV7 + 43 + 2 * ((_game.id == GID_DIG && _useCJKMode) ? 18 : 12);
+			if (_game.version == 7) {
+				cancelButtonAnchorY = yConstantV7 + 43 + 2 * ((_game.id == GID_DIG && _useCJKMode) ? 18 : 12);
+			} else {
+				cancelButtonAnchorY = yConstantV6 + 7;
+			}
 		}
 		setUpInternalGUIControl(GUI_CTRL_CANCEL_BUTTON,
 			getBannerColor(4),
@@ -1922,7 +2167,7 @@ void ScummEngine_v6::setUpMainMenuControls() {
 			getBannerColor(6),
 			getBannerColor(7),
 			(_game.version == 7 ? 235 : 232),
-			(_game.version == 7 ? cancelButtonAnchorY : yConstantV6 - 1),
+			cancelButtonAnchorY,
 			-60,
 			((_game.id == GID_DIG && _useCJKMode) ? -18 : -12),
 			(char *)getGUIString(gsCancel), 1, 1);
@@ -1962,9 +2207,10 @@ void ScummEngine::drawMainMenuControls() {
 		drawInternalGUIControl(GUI_CTRL_PLAY_BUTTON, 0); // Play button
 		drawInternalGUIControl(GUI_CTRL_QUIT_BUTTON, 0); // Quit button
 
-		drawInternalGUIControl(GUI_CTRL_INNER_BOX, 0); // Inner box
+		if (_game.id != GID_MONKEY2 && _game.id != GID_MONKEY)
+			drawInternalGUIControl(GUI_CTRL_INNER_BOX, 0); // Inner box
 
-		if (_game.version == 6) {
+		if ((_game.version == 5 &&( _game.id != GID_MONKEY2 && _game.id != GID_MONKEY)) || _game.version == 6) {
 			drawInternalGUIControl(GUI_CTRL_ARROW_UP_BUTTON, 0);   // Arrow up button
 			drawInternalGUIControl(GUI_CTRL_ARROW_DOWN_BUTTON, 0); // Arrow down button
 
@@ -2005,7 +2251,7 @@ void ScummEngine::drawMainMenuControls() {
 }
 
 void ScummEngine::updateMainMenuControls() {
-	if (!strcmp(_game.variant, "Floppy"))
+	if (!strcmp(_game.variant, "Floppy") || _game.version < 6)
 		return;
 
 	char msg[256];
@@ -2325,10 +2571,6 @@ const char *ScummEngine::getGUIString(int stringId) {
 	case gsPause:
 		resStringId = 4;
 		break;
-	case gsVersion:
-		break;
-	case gsTextSpeedSlider:
-		break;
 	case gsRestart:
 		resStringId = 5;
 		break;
@@ -2353,48 +2595,50 @@ const char *ScummEngine::getGUIString(int stringId) {
 	case gsOK:
 		resStringId = 12;
 		break;
-	case gsMustName:
+	case gsInsertSaveDisk:
 		resStringId = 13;
 		break;
-	case gsGameNotSaved:
+	case gsMustName:
 		resStringId = 14;
 		break;
-	case gsGameNotLoaded:
+	case gsGameNotSaved:
 		resStringId = 15;
 		break;
-	case gsSaving:
+	case gsGameNotLoaded:
 		resStringId = 16;
 		break;
-	case gsLoading:
+	case gsSaving:
 		resStringId = 17;
 		break;
-	case gsNamePrompt:
+	case gsLoading:
 		resStringId = 18;
 		break;
-	case gsSelectLoadPrompt:
+	case gsNamePrompt:
 		resStringId = 19;
 		break;
-	case gsReplacePrompt:
+	case gsSelectLoadPrompt:
+		resStringId = 20;
 		break;
-	case gsYes:
+	case gsTitle:
+		resStringId = 21;
 		break;
-	case gsNo:
+	case gsVoiceOnly:
+		resStringId = 22;
 		break;
 	case gsVoiceAndText:
+		resStringId = 23;
 		break;
 	case gsTextDisplayOnly:
+		resStringId = 24;
+		break;
+	case gsTextSpeedSlider:
+		resStringId = 25;
 		break;
 	case gsMusicVolumeSlider:
-		break;
-	case gsVoiceVolumeSlider:
-		break;
-	case gsSfxVolumeSlider:
+		resStringId = 26;
 		break;
 	case gsHeap:
 		return "Heap %dK";
-	case gsTitle:
-		resStringId = 20;
-		break;
 	default:
 		return "";
 	}

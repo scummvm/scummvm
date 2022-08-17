@@ -634,8 +634,11 @@ protected:
 	char _mainMenuTextSpeedSlider[17];
 	int _spooledMusicIsToBeEnabled = 1;
 	int _saveScriptParam = 0;
+	int _guiCursorAnimCounter = 0;
+
 	Graphics::Surface _savegameThumbnail;
 	byte *_tempTextSurface;
+	byte *_tempMainSurface;
 	bool _postGUICharMask = false;
 
 	// Saved cursor pre and post GUI
@@ -690,8 +693,8 @@ protected:
 	bool userWriteLabelRoutine(Common::KeyState &ks, bool &leftMsClicked, bool &rightMsClicked);
 	void saveCursorPreMenu();
 	void restoreCursorPostMenu();
-	void saveTextSurfacePreGUI();
-	void restoreTextSurfacePostGUI();
+	void saveSurfacesPreGUI();
+	void restoreSurfacesPostGUI();
 
 public:
 	char displayMessage(const char *altButton, const char *message, ...) GCC_PRINTF(3, 4);
