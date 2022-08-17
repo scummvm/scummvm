@@ -28,7 +28,7 @@
 namespace Immortal {
 
 enum DoorMask {
-	kDoorXMask = 0x1f,
+	kDoorXMask = 0x1f,                  // Only relevant for extracting the data from the compressed bytes in the story record
 	kDoorYMask = 0x1f,
 	kDoorFullMask = 0x40,
 	kDoorOnMask = 0x60
@@ -54,7 +54,17 @@ void ImmortalEngine::doorOpenSecret() {}
 void ImmortalEngine::doorCloseSecret() {}
 void ImmortalEngine::doorInit() {}
 void ImmortalEngine::doorClrLock() {}
-void ImmortalEngine::doorNew() {}
+void ImmortalEngine::doorNew(SDoor door) {
+	Door d;
+	d._x = door._x;
+	d._y = door._y;
+	d._fromRoom = door._fromRoom;
+	d._toRoom = door._toRoom;
+	d._busyOnRight = door._dir | door._x;
+	d._on = door._y & kDoorYMask;
+	_doors.push_back(d);
+}
+
 void ImmortalEngine::doorDrawAll() {}
 void ImmortalEngine::doorOnDoorMat() {}
  int ImmortalEngine::findDoorTop(int x, int y) {
