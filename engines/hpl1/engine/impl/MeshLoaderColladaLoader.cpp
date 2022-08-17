@@ -66,6 +66,7 @@ bool cMeshLoaderCollada::FillStructures(const tString &asFile,
 										tColladaControllerVec *apColladaControllerVec,
 										tColladaAnimationVec *apColladaAnimVec,
 										cColladaScene *apColladaScene, bool abCache) {
+	abCache = false; // FIXME: find a way to enable the use of cache files
 	bool bLoadCache = false;
 	// abCache = false;
 	// Log("Loading %s\n",asFile.c_str());
@@ -96,9 +97,9 @@ bool cMeshLoaderCollada::FillStructures(const tString &asFile,
 							  apColladaControllerVec,
 							  apColladaAnimVec,
 							  apColladaScene);
+	} else if (abCache) {
+		Log("Cache out of date! Reloading collada file '%s'\n and generating cache files", asFile.c_str());
 	}
-
-	Log("Cache out of date! Reloading collada file '%s'\n", asFile.c_str());
 
 	/////////////////////////////////////////////////
 	// LOAD THE DOCUMENT
