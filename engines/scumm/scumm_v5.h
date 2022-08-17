@@ -64,6 +64,7 @@ protected:
 	void setupScummVars() override;
 	void resetScummVars() override;
 	virtual void decodeParseString();
+	void decodeParseStringTextString(int textSlot);
 	void printPatchedMI1CannibalString(int textSlot, const byte *ptr);
 
 	void saveLoadWithSerializer(Common::Serializer &s) override;

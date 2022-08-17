@@ -3303,119 +3303,8 @@ void ScummEngine_v5::decodeParseString() {
 				}
 			}
 			break;
-		case 15:{	// SO_TEXTSTRING
-				const int len = resStrLen(_scriptPointer);
-
-				if (_game.id == GID_LOOM && _game.version == 4 && _language == Common::EN_ANY &&
-						vm.slot[_currentScript].number == 95 && _enableEnhancements &&
-						strcmp((const char *)_scriptPointer, "I am Choas.") == 0) {
-					// WORKAROUND: This happens when Chaos introduces
-					// herself to bishop Mandible. Of all the places to put
-					// a typo...
-					printString(textSlot, (const byte *)"I am Chaos.");
-				} else if (_game.id == GID_LOOM && _game.version == 4 && _roomResource == 90 &&
-						vm.slot[_currentScript].number == 203 && _string[textSlot].color == 0x0F && _enableEnhancements) {
-					// WORKAROUND: When Mandible speaks with Goodmold, his second
-					// speech line is missing its color parameter.
-					_string[textSlot].color = 0x0A;
-					printString(textSlot, _scriptPointer);
-				} else if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns && _roomResource == 80 &&
-						vm.slot[_currentScript].number == 201 && _enableEnhancements) {
-					// WORKAROUND: When Indy and his father escape the zeppelin
-					// with the biplane in the FM-TOWNS version, they share the
-					// same text color. Indeed, they're not given any explicit
-					// color, but for some reason this is only a problem on the
-					// FM-TOWNS. In order to determine who's who, we look for a
-					// `\xFF\x03` wait instruction or the `Junior` word, since
-					// only Henry Sr. uses them in this script.
-					if (strstr((const char *)_scriptPointer, "\xFF\x03") || strstr((const char *)_scriptPointer, "Junior"))
-						_string[textSlot].color = 0x0A;
-					else
-						_string[textSlot].color = 0x0E;
-					printString(textSlot, _scriptPointer);
-				} else if (_game.id == GID_INDY4 && _roomResource == 23 && vm.slot[_currentScript].number == 167 &&
-						len == 24 && 0==memcmp(_scriptPointer+16, "pregod", 6)) {
-					// WORKAROUND for bug #2961.
-					byte tmpBuf[25];
-					memcpy(tmpBuf, _scriptPointer, 25);
-					if (tmpBuf[22] == '8')
-						Common::strlcpy((char *)tmpBuf+16, "^18^", sizeof(tmpBuf) - 16);
-					else
-						Common::strlcpy((char *)tmpBuf+16, "^19^", sizeof(tmpBuf) - 16);
-					printString(textSlot, tmpBuf);
-				} else if (_game.id == GID_INDY4 && _language == Common::EN_ANY && _roomResource == 10 &&
-						vm.slot[_currentScript].number == 209 && _actorToPrintStrFor == 4 && len == 81 &&
-						strcmp(_game.variant, "Floppy") != 0 && _enableEnhancements) {
-					// WORKAROUND: The English Talkie version of Indy4 changed Kerner's
-					// lines when he uses the phone booth in New York, but the text doesn't
-					// match the voice and it mentions the wrong person, in most releases.
-					// The fixed string is taken from the 1994 Macintosh release.
-					const char origText[] = "Fritz^ Fantastic\x10news!\xFF\x03I think we've found the treasure we\x10seek.";
-					const char newText[] = "Dr. Ubermann^ Fantastic\x10news!\xFF\x03We've found the treasure we\x10seek.";
-					if (strcmp((const char *)_scriptPointer + 16, origText) == 0) {
-						byte *tmpBuf = new byte[sizeof(newText) + 16];
-						memcpy(tmpBuf, _scriptPointer, 16);
-						memcpy(tmpBuf + 16, newText, sizeof(newText));
-						printString(textSlot, tmpBuf);
-						delete[] tmpBuf;
-					} else {
-						printString(textSlot, _scriptPointer);
-					}
-				} else if (_game.id == GID_INDY4 && vm.slot[_currentScript].number == 161 && _actorToPrintStrFor == 2 &&
-						_game.platform != Common::kPlatformAmiga && strcmp(_game.variant, "Floppy") != 0 &&
-						_enableEnhancements) {
-					// WORKAROUND: In Indy 4, if one plays as Sophia and looks at Indy, then
-					// her "There's nothing to look at." reaction line will be said with
-					// Indy's voice, because script 68-161 doesn't check for Sophia in this
-					// case. Script 68-4 has a "There's nothing to look at." line for Sophia,
-					// though, so we reuse this if the current line contains the expected
-					// audio offset.
-					if (memcmp(_scriptPointer, "\xFF\x0A\x5D\x8E\xFF\x0A\x63\x08\xFF\x0A\x0E\x00\xFF\x0A\x00\x00", 16) == 0) {
-						byte *tmpBuf = new byte[len];
-						memcpy(tmpBuf, "\xFF\x0A\xCE\x3B\xFF\x0A\x01\x05\xFF\x0A\x0E\x00\xFF\x0A\x00\x00", 16);
-						memcpy(tmpBuf + 16, _scriptPointer + 16, len - 16);
-						printString(textSlot, tmpBuf);
-						delete[] tmpBuf;
-					} else {
-						printString(textSlot, _scriptPointer);
-					}
-				} else if (_game.id == GID_MONKEY_EGA && _roomResource == 30 && vm.slot[_currentScript].number == 411 &&
-							strstr((const char *)_scriptPointer, "NCREDIT-NOTE-AMOUNT")) {
-					// WORKAROUND for bug #4886 (MI1EGA German: Credit text incorrect)
-					// The script contains buggy text.
-					const char *tmp = strstr((const char *)_scriptPointer, "NCREDIT-NOTE-AMOUNT");
-					char tmpBuf[256];
-					const int diff = tmp - (const char *)_scriptPointer;
-					memcpy(tmpBuf, _scriptPointer, diff);
-					Common::strlcpy(tmpBuf + diff, "5000", sizeof(tmpBuf) - diff);
-					Common::strlcpy(tmpBuf + diff + 4, tmp + sizeof("NCREDIT-NOTE-AMOUNT") - 1, sizeof(tmpBuf) - diff - 4);
-					printString(textSlot, (byte *)tmpBuf);
-				} else if (_game.id == GID_MONKEY && _roomResource == 25 && vm.slot[_currentScript].number == 205) {
-					printPatchedMI1CannibalString(textSlot, _scriptPointer);
-				} else {
-					printString(textSlot, _scriptPointer);
-				}
-				_scriptPointer += len + 1;
-			}
-
-
-			// In SCUMM V1-V3, there were no 'default' values for the text slot
-			// values. Hence to achieve correct behavior, we have to keep the
-			// 'default' values in sync with the active values.
-			//
-			// Note: This is needed for Indy3 (Grail Diary). It's also needed
-			// for Loom, or the lines Bobbin speaks during the intro are put
-			// at position 0,0.
-			//
-			// Note: We can't use saveDefault() here because we only want to
-			// save the position and color. In particular, we do not want to
-			// save the 'center' flag. See bug #1588.
-			if (_game.version <= 3) {
-				_string[textSlot]._default.xpos = _string[textSlot].xpos;
-				_string[textSlot]._default.ypos = _string[textSlot].ypos;
-				_string[textSlot]._default.height = _string[textSlot].height;
-				_string[textSlot]._default.color = _string[textSlot].color;
-			}
+		case 15:	// SO_TEXTSTRING
+			decodeParseStringTextString(textSlot);
 			return;
 		default:
 			error("ScummEngine_v5::decodeParseString: Unhandled case %d", _opcode & 0xF);
@@ -3423,6 +3312,121 @@ void ScummEngine_v5::decodeParseString() {
 	}
 
 	_string[textSlot].saveDefault();
+}
+
+void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
+	const int len = resStrLen(_scriptPointer);
+
+	if (_game.id == GID_LOOM && _game.version == 4 && _language == Common::EN_ANY &&
+			vm.slot[_currentScript].number == 95 && _enableEnhancements &&
+			strcmp((const char *)_scriptPointer, "I am Choas.") == 0) {
+		// WORKAROUND: This happens when Chaos introduces
+		// herself to bishop Mandible. Of all the places to put
+		// a typo...
+		printString(textSlot, (const byte *)"I am Chaos.");
+	} else if (_game.id == GID_LOOM && _game.version == 4 && _roomResource == 90 &&
+			vm.slot[_currentScript].number == 203 && _string[textSlot].color == 0x0F && _enableEnhancements) {
+		// WORKAROUND: When Mandible speaks with Goodmold, his second
+		// speech line is missing its color parameter.
+		_string[textSlot].color = 0x0A;
+		printString(textSlot, _scriptPointer);
+	} else if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns && _roomResource == 80 &&
+			vm.slot[_currentScript].number == 201 && _enableEnhancements) {
+		// WORKAROUND: When Indy and his father escape the zeppelin
+		// with the biplane in the FM-TOWNS version, they share the
+		// same text color. Indeed, they're not given any explicit
+		// color, but for some reason this is only a problem on the
+		// FM-TOWNS. In order to determine who's who, we look for a
+		// `\xFF\x03` wait instruction or the `Junior` word, since
+		// only Henry Sr. uses them in this script.
+		if (strstr((const char *)_scriptPointer, "\xFF\x03") || strstr((const char *)_scriptPointer, "Junior"))
+			_string[textSlot].color = 0x0A;
+		else
+			_string[textSlot].color = 0x0E;
+		printString(textSlot, _scriptPointer);
+	} else if (_game.id == GID_INDY4 && _roomResource == 23 && vm.slot[_currentScript].number == 167 &&
+			len == 24 && 0==memcmp(_scriptPointer+16, "pregod", 6)) {
+		// WORKAROUND for bug #2961.
+		byte tmpBuf[25];
+		memcpy(tmpBuf, _scriptPointer, 25);
+		if (tmpBuf[22] == '8')
+			Common::strlcpy((char *)tmpBuf+16, "^18^", sizeof(tmpBuf) - 16);
+		else
+			Common::strlcpy((char *)tmpBuf+16, "^19^", sizeof(tmpBuf) - 16);
+		printString(textSlot, tmpBuf);
+	} else if (_game.id == GID_INDY4 && _language == Common::EN_ANY && _roomResource == 10 &&
+			vm.slot[_currentScript].number == 209 && _actorToPrintStrFor == 4 && len == 81 &&
+			strcmp(_game.variant, "Floppy") != 0 && _enableEnhancements) {
+		// WORKAROUND: The English Talkie version of Indy4 changed Kerner's
+		// lines when he uses the phone booth in New York, but the text doesn't
+		// match the voice and it mentions the wrong person, in most releases.
+		// The fixed string is taken from the 1994 Macintosh release.
+		const char origText[] = "Fritz^ Fantastic\x10news!\xFF\x03I think we've found the treasure we\x10seek.";
+		const char newText[] = "Dr. Ubermann^ Fantastic\x10news!\xFF\x03We've found the treasure we\x10seek.";
+		if (strcmp((const char *)_scriptPointer + 16, origText) == 0) {
+			byte *tmpBuf = new byte[sizeof(newText) + 16];
+			memcpy(tmpBuf, _scriptPointer, 16);
+			memcpy(tmpBuf + 16, newText, sizeof(newText));
+			printString(textSlot, tmpBuf);
+			delete[] tmpBuf;
+		} else {
+			printString(textSlot, _scriptPointer);
+		}
+	} else if (_game.id == GID_INDY4 && vm.slot[_currentScript].number == 161 && _actorToPrintStrFor == 2 &&
+			_game.platform != Common::kPlatformAmiga && strcmp(_game.variant, "Floppy") != 0 &&
+			_enableEnhancements) {
+		// WORKAROUND: In Indy 4, if one plays as Sophia and looks at Indy, then
+		// her "There's nothing to look at." reaction line will be said with
+		// Indy's voice, because script 68-161 doesn't check for Sophia in this
+		// case. Script 68-4 has a "There's nothing to look at." line for Sophia,
+		// though, so we reuse this if the current line contains the expected
+		// audio offset.
+		if (memcmp(_scriptPointer, "\xFF\x0A\x5D\x8E\xFF\x0A\x63\x08\xFF\x0A\x0E\x00\xFF\x0A\x00\x00", 16) == 0) {
+			byte *tmpBuf = new byte[len];
+			memcpy(tmpBuf, "\xFF\x0A\xCE\x3B\xFF\x0A\x01\x05\xFF\x0A\x0E\x00\xFF\x0A\x00\x00", 16);
+			memcpy(tmpBuf + 16, _scriptPointer + 16, len - 16);
+			printString(textSlot, tmpBuf);
+			delete[] tmpBuf;
+		} else {
+			printString(textSlot, _scriptPointer);
+		}
+	} else if (_game.id == GID_MONKEY_EGA && _roomResource == 30 && vm.slot[_currentScript].number == 411 &&
+				strstr((const char *)_scriptPointer, "NCREDIT-NOTE-AMOUNT")) {
+		// WORKAROUND for bug #4886 (MI1EGA German: Credit text incorrect)
+		// The script contains buggy text.
+		const char *tmp = strstr((const char *)_scriptPointer, "NCREDIT-NOTE-AMOUNT");
+		char tmpBuf[256];
+		const int diff = tmp - (const char *)_scriptPointer;
+		memcpy(tmpBuf, _scriptPointer, diff);
+		Common::strlcpy(tmpBuf + diff, "5000", sizeof(tmpBuf) - diff);
+		Common::strlcpy(tmpBuf + diff + 4, tmp + sizeof("NCREDIT-NOTE-AMOUNT") - 1, sizeof(tmpBuf) - diff - 4);
+		printString(textSlot, (byte *)tmpBuf);
+	} else if (_game.id == GID_MONKEY && _roomResource == 25 && vm.slot[_currentScript].number == 205) {
+		printPatchedMI1CannibalString(textSlot, _scriptPointer);
+	} else {
+		printString(textSlot, _scriptPointer);
+	}
+
+	_scriptPointer += len + 1;
+
+
+	// In SCUMM V1-V3, there were no 'default' values for the text slot
+	// values. Hence to achieve correct behavior, we have to keep the
+	// 'default' values in sync with the active values.
+	//
+	// Note: This is needed for Indy3 (Grail Diary). It's also needed
+	// for Loom, or the lines Bobbin speaks during the intro are put
+	// at position 0,0.
+	//
+	// Note: We can't use saveDefault() here because we only want to
+	// save the position and color. In particular, we do not want to
+	// save the 'center' flag. See bug #1588.
+	if (_game.version <= 3) {
+		_string[textSlot]._default.xpos = _string[textSlot].xpos;
+		_string[textSlot]._default.ypos = _string[textSlot].ypos;
+		_string[textSlot]._default.height = _string[textSlot].height;
+		_string[textSlot]._default.color = _string[textSlot].color;
+	}
 }
 
 void ScummEngine_v5::printPatchedMI1CannibalString(int textSlot, const byte *ptr) {
