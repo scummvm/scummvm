@@ -36,15 +36,15 @@
 namespace Immortal {
 
 void Room::flameSetRoom(Common::Array<SFlame> allFlames) {
-    for (int i = 0; i < allFlames.size(); i++) {
-        Flame f;
-        f._p = allFlames[i]._p;
-        f._x = allFlames[i]._x;
-        f._y = allFlames[i]._y;
-        f._c = flameGetCyc(0 | _candleTmp);
-        _candleTmp = 1;
-        _fset.push_back(f);
-    }
+	for (int i = 0; i < allFlames.size(); i++) {
+		Flame f;
+		f._p = allFlames[i]._p;
+		f._x = allFlames[i]._x;
+		f._y = allFlames[i]._y;
+		f._c = flameGetCyc(0 | _candleTmp);
+		_candleTmp = 1;
+		_fset.push_back(f);
+	}
 }
 
 void Room::flameDrawAll() {
@@ -52,36 +52,36 @@ void Room::flameDrawAll() {
 }
 
 bool Room::roomLighted() {
-    // Very simple, just checks every torch and if any of them are lit, we say the room is lit
-    for (int i = 0; i < _fset.size(); i++) {
-        if (_fset[i]._p != kFlameOff) {
-            return true;
-        }
-    }
-    return false;
+	// Very simple, just checks every torch and if any of them are lit, we say the room is lit
+	for (int i = 0; i < _fset.size(); i++) {
+		if (_fset[i]._p != kFlameOff) {
+			return true;
+		}
+	}
+	return false;
 }
 
 void Room::lightTorch(int x, int y) {
-    /* Checks every torch to see if it is:
-     * pattern == off, and inside the point x,y
-     * which is the fireball position. This is a
-     * little bit clever, because it saves cycles
-     * over checking x,y first, since you need to
-     * check both x,y and flame pattern. Neato.
-     */
+	/* Checks every torch to see if it is:
+	 * pattern == off, and inside the point x,y
+	 * which is the fireball position. This is a
+	 * little bit clever, because it saves cycles
+	 * over checking x,y first, since you need to
+	 * check both x,y and flame pattern. Neato.
+	 */
 
-    for (int i = 0; i < _fset.size(); i++) {
-        if (_fset[i]._p == kFlameOff) {
-            if (Immortal::Util::inside(x, y, kLightTorchX, _fset[i]._x + 16, _fset[i]._y + 8)) {
-                _fset[i]._p = kFlameNormal;
+	for (int i = 0; i < _fset.size(); i++) {
+		if (_fset[i]._p == kFlameOff) {
+			if (Immortal::Util::inside(x, y, kLightTorchX, _fset[i]._x + 16, _fset[i]._y + 8)) {
+				_fset[i]._p = kFlameNormal;
 
-            }
-        }
-    }
+			}
+		}
+	}
 }
 
 Cyc Room::flameGetCyc(int first) {
-    return kCycNone;
+	return kCycNone;
 }
 
 } // namespace immortal
