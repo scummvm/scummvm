@@ -144,12 +144,11 @@ struct GenericSprite {
 struct Door {
 	uint8 _x 		   = 0;
 	uint8 _y 		   = 0;
-	uint8 _from		   = 0;
-	uint8 _to		   = 0;
+	uint8 _fromRoom	   = 0;
+	uint8 _toRoom	   = 0;
 	uint8 _busyOnRight = 0;
 	uint8 _on 		   = 0;
 };
-
 
 // Sprites are handled by driver in Kernal
 struct Frame {
@@ -333,8 +332,8 @@ public:
 	  int _initialBX;
 	  int _initialBY;
 	  int _dRoomNum;
-	  int _initialRoom;
-	  int _currentRoom;
+	  int _initialRoom	= 0;
+	  int _currentRoom	= 0;
 	  int _lastType;
 	  int _roomCellX;
 	  int _roomCellY;
@@ -342,6 +341,7 @@ public:
 	Common::Array<SFlame> _allFlames[kMaxRooms];		// The level needs it's own set of flames so that the flames can be turned on/off permenantly. This is technically more like a hashmap in the source, but it could also be seen as a 2d array, just hashed together in the source
 
 	// Door members
+	Common::Array<Door> _doors;
 	uint8 _numDoors 	   = 0;
 	uint8 _doorRoom 	   = 0;
 	uint8 _doorToNextLevel = 0;
@@ -662,7 +662,7 @@ GenericSprite _genSprites[6];
 	//void doorToNextLevel();
 	void doorInit();
 	void doorClrLock();
-	void doorNew();
+	void doorNew(SDoor door);
 	void doorDrawAll();
 	void doorOnDoorMat();
 	//void doorEnter();	// <-- this is actually a method of Player Monster, should probably move it there later		

@@ -63,8 +63,6 @@ void ImmortalEngine::levelStory(int l) {
 }
 
 void ImmortalEngine::levelLoadFile(int l) {
-	//	_dRoomNum = 0;
-
 	/* This was originally a large branching tree that checked the identifier of each entry and
 	 * Processed them all for the story. Once again, this would have been better as an indexed
 	 * JSR instead of a set of comparisons and branches. Regardless, we instead use the information
@@ -73,9 +71,14 @@ void ImmortalEngine::levelLoadFile(int l) {
 
 	// Create the rooms and doors, then populate the rooms with their objects and actors
 	debug("loading level file...");
+
+	for (int d = 0; d < _stories[l]._doors.size(); d++) {
+		doorNew(_stories[l]._doors[d]);
+		debug("door %d", d);
+	}
+
 	for (int r = 0; r < _stories[l]._rooms.size(); r++) {
 		_rooms[r] = new Room(_stories[l]._rooms[r]._x, _stories[l]._rooms[r]._y, _stories[l]._rooms[r]._flags);
-		//doorNew(_stories[l]._doors[r]);
 		debug("Room %d", r);
 
 		Common::Array<SFlame> allFlames(_stories[l]._flames[r].size());
@@ -130,7 +133,7 @@ void ImmortalEngine::levelDrawAll() {
 	_count++;
 	//univAutoCenter();
 	clearSprites();
-	//rooms[_currentRoom].drawContents();
+	_rooms[_currentRoom]->drawContents();
 }
 
 void ImmortalEngine::levelShowRoom(int r, int bX, int bY) {

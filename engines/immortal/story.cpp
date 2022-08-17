@@ -102,10 +102,10 @@ void ImmortalEngine::initStoryDynamic() {
 
 	/* All of the doors
 	 */
-	Common::Array<SDoor> doors{SDoor(kLeft, 704, 224, 0, 2, false), SDoor(kRight, 576, 352, 4, 0, true),
-					  		   SDoor(kRight, 704,96, 2, 1, false), SDoor(kRight, 960,128, 7, 2, false),
-					  		   SDoor(kRight, 1088,160, 3, 7, false), SDoor(kRight, 1088,320, 6, 3, false),
-					  		   SDoor(kRight, 896,416, 4, 3, false)};
+	Common::Array<SDoor> doors{SDoor(0, 704, 224, 0, 2, false), SDoor(1, 576, 352, 4, 0, true),
+					  		   SDoor(1, 704, 96,  2, 1, false), SDoor(1, 960, 128, 7, 2, false),
+					  		   SDoor(1, 1088,160, 3, 7, false), SDoor(1, 1088,320, 6, 3, false),
+					  		   SDoor(1, 896, 416, 4, 3, false)};
 	_stories[0]._doors = doors;
 
 	/* All of the flames

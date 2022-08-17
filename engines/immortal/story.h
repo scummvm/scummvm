@@ -99,11 +99,6 @@ enum FPattern : uint8 {							// This defines which Cyc animation it uses
 	kFlameGusty
 };
 
-enum DoorDir : bool {
-	kLeft  = false,
-	kRight = true
-};
-
 // Cycles define the animation of sprites within a level. There is a fixed total of cycles available, and they are not room dependant
 struct Cycle {
 DataSprite *_dSprite;
@@ -163,14 +158,14 @@ struct SRoom {
 };
 
 struct SDoor {
-DoorDir _dir = kLeft;
-	uint8 _x = 0;
-	uint8 _y = 0;
+  uint8 _dir = 0;
+	uint8 _x   = 0;
+	uint8 _y   = 0;
 	uint8 _fromRoom = 0;
-	uint8 _toRoom = 0;
+	uint8 _toRoom   = 0;
 	 bool _isLocked = false;
 	 SDoor() {}
-	 SDoor(DoorDir d, uint8 x, uint8 y, uint8 f, uint8 t, bool l) {
+	 SDoor(uint8 d, uint8 x, uint8 y, uint8 f, uint8 t, bool l) {
 	 	_dir = d;
 	 	_x = x;
 	 	_y = y;
