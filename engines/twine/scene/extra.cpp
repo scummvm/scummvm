@@ -231,7 +231,7 @@ int32 Extra::addExtraBonus(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle
 		extra->type = ExtraType::STOP_COL | ExtraType::TAKABLE | ExtraType::WAIT_SOME_TIME;
 
 		if (type != SPRITEHQR_KEY) {
-			extra->type = ExtraType::TIME_OUT | ExtraType::TAKABLE | ExtraType::FLASH | ExtraType::STOP_COL | ExtraType::WAIT_SOME_TIME;
+			extra->type |= ExtraType::TIME_OUT | ExtraType::FLASH;
 		}
 
 		extra->pos.x = x;

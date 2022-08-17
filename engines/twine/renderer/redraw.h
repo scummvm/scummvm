@@ -128,6 +128,7 @@ private:
 
 	int32 fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw);
 	int32 fillExtraDrawingList(DrawListStruct *drawList, int32 drawListPos);
+	void correctZLevels(DrawListStruct *drawList, int32 drawListPos);
 	void processDrawList(DrawListStruct *drawList, int32 drawListPos, bool bgRedraw);
 	void renderOverlays();
 	void renderText();
@@ -135,7 +136,7 @@ private:
 public:
 	Redraw(TwinEEngine *engine);
 
-	bool _inSceneryView = false;
+	bool _inSceneryView = false; // FlagMCGA
 
 	/** Request background redraw */
 	bool _firstTime = false;

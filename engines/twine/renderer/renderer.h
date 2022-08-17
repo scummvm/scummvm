@@ -239,7 +239,7 @@ public:
 	void fillVertices(int vtop, int32 vsize, uint8 renderType, uint16 color);
 	void renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices, int vtop, int vbottom);
 
-	inline IVec3 &projectPositionOnScreen(const IVec3& pos) {
+	inline IVec3 &projectPositionOnScreen(const IVec3& pos) { // ProjettePoint
 		return projectPositionOnScreen(pos.x, pos.y, pos.z);
 	}
 

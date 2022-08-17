@@ -176,7 +176,7 @@ public:
 	EntityData *_entityDataPtr = nullptr;
 
 	int16 _actorIdx = 0; // own actor index
-	IVec3 _pos;
+	IVec3 _pos; // PosObjX, PosObjY, PosObjZ
 	int32 _strengthOfHit = 0;
 	int32 _hitBy = -1;
 	BonusParameter _bonusParameter;
@@ -231,7 +231,7 @@ public:
 	int32 _spriteActorRotation = 0;
 	uint8 _brickSound = 0U; // CodeJeu
 
-	BoundingBox _boundingBox;
+	BoundingBox _boundingBox; // Xmin, YMin, Zmin, Xmax, Ymax, Zmax
 	ActorMoveStruct _move;
 	AnimTimerDataStruct _animTimerData;
 };
