@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-15 14:49+0000\n"
+"POT-Creation-Date: 2022-08-16 21:18+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -242,7 +242,7 @@ msgid "Download complete, downloaded %d packs, %s %S"
 msgstr ""
 
 #: gui/downloadiconsdialog.cpp:283 gui/downloadiconsdialog.cpp:375
-#: gui/gui-manager.cpp:225 gui/unknown-game-dialog.cpp:53
+#: gui/gui-manager.cpp:226 gui/unknown-game-dialog.cpp:53
 #: engines/nancy/dialogs.cpp:313 engines/scumm/help.cpp:124
 #: engines/scumm/help.cpp:139 engines/scumm/help.cpp:164
 #: engines/scumm/help.cpp:190 engines/scumm/help.cpp:208
@@ -657,16 +657,16 @@ msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr ""
 
-#: gui/gui-manager.cpp:216
+#: gui/gui-manager.cpp:217
 msgid "GUI"
 msgstr ""
 
-#: gui/gui-manager.cpp:220 engines/mohawk/myst.cpp:573
+#: gui/gui-manager.cpp:221 engines/mohawk/myst.cpp:573
 #: engines/mohawk/riven.cpp:837
 msgid "Interact"
 msgstr ""
 
-#: gui/gui-manager.cpp:231 engines/metaengine.cpp:115
+#: gui/gui-manager.cpp:232 engines/metaengine.cpp:115
 #: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:95
 #: engines/grim/grim.cpp:453 engines/grim/grim.cpp:534
 #: engines/twine/metaengine.cpp:329 engines/twine/metaengine.cpp:396
@@ -677,7 +677,7 @@ msgstr ""
 msgid "Up"
 msgstr "ऊपर"
 
-#: gui/gui-manager.cpp:236 engines/metaengine.cpp:121
+#: gui/gui-manager.cpp:237 engines/metaengine.cpp:121
 #: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:101
 #: engines/grim/grim.cpp:458 engines/grim/grim.cpp:539
 #: engines/twine/metaengine.cpp:336 engines/twine/metaengine.cpp:404
@@ -688,7 +688,7 @@ msgstr "ऊपर"
 msgid "Down"
 msgstr "नीचे"
 
-#: gui/gui-manager.cpp:241 engines/metaengine.cpp:127
+#: gui/gui-manager.cpp:242 engines/metaengine.cpp:127
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:107
 #: engines/grim/grim.cpp:463 engines/grim/grim.cpp:544
 #: engines/twine/metaengine.cpp:351 engines/twine/metaengine.cpp:419
@@ -700,7 +700,7 @@ msgstr "नीचे"
 msgid "Left"
 msgstr "बाएँ"
 
-#: gui/gui-manager.cpp:246 engines/metaengine.cpp:133
+#: gui/gui-manager.cpp:247 engines/metaengine.cpp:133
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:113
 #: engines/grim/grim.cpp:468 engines/grim/grim.cpp:549
 #: engines/twine/metaengine.cpp:343 engines/twine/metaengine.cpp:412
@@ -712,7 +712,7 @@ msgstr "बाएँ"
 msgid "Right"
 msgstr "दाएँ"
 
-#: gui/gui-manager.cpp:251 engines/pegasus/pegasus.cpp:2814
+#: gui/gui-manager.cpp:252 engines/pegasus/pegasus.cpp:2814
 #: engines/wintermute/keymapper_tables.h:305
 #: engines/wintermute/keymapper_tables.h:346
 #: engines/wintermute/keymapper_tables.h:381
