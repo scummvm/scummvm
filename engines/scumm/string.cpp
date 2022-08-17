@@ -2018,6 +2018,13 @@ Common::CodePage ScummEngine::getDialogCodePage() const {
 		default:
 			return Common::kWindows1255;
 		}
+	case Common::DE_DEU:
+	case Common::ES_ESP:
+	case Common::FR_FRA:
+	case Common::IT_ITA:
+	case Common::PT_BRA:
+	case Common::PT_PRT:
+		return (_game.version > 7) ? Common::kWindows1252 : Common::kDos850;
 	default:
 		return Common::kCodePageInvalid;
 	}
