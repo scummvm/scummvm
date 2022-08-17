@@ -49,11 +49,6 @@ using GUI::WIDGET_ENABLED;
 
 namespace Scumm {
 
-struct ResString {
-	int num;
-	char string[80];
-};
-
 static const ResString string_map_table_v8[] = {
 	{0, "/BT_100/Please insert disk %d. Press ENTER"},
 	{0, "/BT__003/Unable to Find %s, (%s %d) Press Button."},
@@ -171,36 +166,6 @@ static const ResString string_map_table_v6[] = {
 	{108, "Name your SAVE game"},
 	{109, "Select a game to LOAD"},
 	{117, "How may I serve you?"}
-};
-
-static const ResString string_map_table_v345[] = {
-	{1, _s("Insert Disk %c and Press Button to Continue.")},
-	{2, _s("Unable to Find %s, (%c%d) Press Button.")},
-	{3, _s("Error reading disk %c, (%c%d) Press Button.")},
-	{4, _s("Game Paused.  Press SPACE to Continue.")},
-	// I18N: You may specify 'Yes' symbol at the end of the line, like this:
-	// "Moechten Sie wirklich neu starten?  (J/N)J"
-	// Will react to J as 'Yes'
-	{5, _s("Are you sure you want to restart?  (Y/N)Y")},
-	// I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
-	{6, _s("Are you sure you want to quit?  (Y/N)Y")},
-
-	// Added in SCUMM4
-	{7, _s("Save")},
-	{8, _s("Load")},
-	{9, _s("Play")},
-	{10, _s("Cancel")},
-	{11, _s("Quit")},
-	{12, _s("OK")},
-	{13, _s("Insert save/load game disk")},
-	{14, _s("You must enter a name")},
-	{15, _s("The game was NOT saved (disk full?)")},
-	{16, _s("The game was NOT loaded")},
-	{17, _s("Saving '%s'")},
-	{18, _s("Loading '%s'")},
-	{19, _s("Name your SAVE game")},
-	{20, _s("Select a game to LOAD")},
-	{28, _s("Game title)")}
 };
 
 #pragma mark -
@@ -400,6 +365,11 @@ InfoDialog::InfoDialog(ScummEngine *scumm, int res)
 
 	_message = queryResString(res);
 
+	// Trim the hardcoded strings for the GUI Dialog. The extra spaces which some strings have might
+	// be needed for proper alignment within the original display, but not here... 
+	if (scumm->_game.version < 3)
+		_message.trim();
+
 	Common::Language lang = isCJKLanguage(_vm->_language) ? _vm->_language : Common::UNK_LANG;
 
 	// Width and height are dummy
@@ -451,9 +421,9 @@ const char *InfoDialog::getPlainEngineString(int stringno) {
 	else if (_vm->_game.version == 6)
 		return (const char *)_vm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
 	else if (_vm->_game.version >= 3)
-		return (const char *)_vm->getStringAddress(string_map_table_v345[stringno - 1].num);
+		return (const char *)_vm->getStringAddress(getStaticResString(_vm->_language, stringno - 1).num);
 	else
-		return (const char *)(string_map_table_v345[stringno - 1].string);
+		return (const char *)(getStaticResString(_vm->_language, stringno - 1).string);
 }
 
 const Common::U32String InfoDialog::queryResString(int stringno) {
@@ -473,18 +443,17 @@ const Common::U32String InfoDialog::queryResString(int stringno) {
 	else if (_vm->_game.version == 6)
 		result = _vm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
 	else if (_vm->_game.version >= 3)
-		result = _vm->getStringAddress(string_map_table_v345[stringno - 1].num);
+		result = _vm->getStringAddress(getStaticResString(_vm->_language, stringno - 1).num);
 	else
-		return _(string_map_table_v345[stringno - 1].string);
+		result = (const byte *)getStaticResString(_vm->_language, stringno - 1).string;
 
 	if (result && *result == '/') {
 		_vm->translateText(result, buf);
 		result = buf;
 	}
 
-	if (!result || *result == '\0') {	// Gracelessly degrade to english :)
-		return _(string_map_table_v345[stringno - 1].string);
-	}
+	if (!result || *result == '\0') // Gracelessly degrade to english :)
+		result = (const byte *)getStaticResString(_vm->_language, stringno - 1).string;
 
 	if (_vm->reverseIfNeeded(result, reverseBuf))
 		result = reverseBuf;
@@ -499,8 +468,126 @@ const Common::U32String InfoDialog::queryResString(int stringno) {
 		}
 	}
 
-	const Common::CodePage convertFromCodePage = _vm->getDialogCodePage();
-	return convertFromCodePage == Common::kCodePageInvalid ? _(tmp) : U32String(tmp, convertFromCodePage);
+	return U32String(tmp, _vm->getDialogCodePage());
+}
+
+const ResString &InfoDialog::getStaticResString(Common::Language lang, int stringno) {
+	// The string parts are only needed for v1/2. So we need to provide only the
+	// language varieties that exist for these. I have added the langugage I found
+	// in scumm-md5.h. I guess we could actually ditch the first 3 lines...
+	static const ResString strMap1[][6] = {
+		{	// English
+			{1, "Insert Disk %c and Press Button to Continue."},	// Original DOS has: "Please Insert Disk n.  Press ENTER"
+			{2, "Unable to Find %s, (%c%d) Press Button."},			// Original DOS has: "Unable to find file nn.lfl Press ENTER"
+			{3, "Error reading disk %c, (%c%d) Press Button."},		// Original DOS has: "ERROR READING FILE.  HIT KEY TO RETRY'" and "ERROR READING %d type %d"
+			{4, "Game paused, press SPACE to continue.  "},			// Original string from the English v1/v2 interpreters
+			{5, "Are you sure you want to restart? (y/n)y"},		// Original string from the English v1/v2 interpreters
+			{6, "Are you sure you want to quit? (y/n)y"}			// The original does have a quit confirmation question. So this it just the restart string with a word replacement.
+		},
+
+		{	// French
+			{1, "Ins""\x82""rer le Disque %c et appuyer sur le Bouton pour Continuer."},
+			{2, "Impossible de trouver %s, (%c%d) Appuyer sur le Bouton."},
+			{3, "Erreur lors de la lecture du disque %c, (%c%d). Appuyer sur le Bouton."},
+			{4, "Jeu en pause. Appuyer sur Espace pour Reprendre."},
+			{5, "Voulez-vous vraiment recommencer ? (O/N)O"},
+			{6, "Voulez-vous vraiment quitter ? (O/N)O"}
+		},
+		{	// German
+			{1, "Bitte Disk %c einlegen und Taste dr""\x81""cken."},
+			{2, "Kann %s (%c%d) nicht finden, bitte Taste dr""\x81""cken."},
+			{3, "Fehler beim Lesen von Disk %c (%c%d), bitte Taste dr""\x81""cken."},
+			{4, "Spielpause.  Zum Weiterspielen Leertaste dr""\x81""cken."},
+			{5, "M""\x94""chten Sie wirklich neu starten?  (J/N)J"},
+			{6, "M""\x94""chten Sie wirklich beenden?  (J/N)J"}
+		},
+		{	// Italian
+			{1, "Inserisci il disco %c e premi un pulsante per continuare."},
+			{2, "Impossibile trovare %s, (%c%d) Premere un pulsante."},
+			{3, "Errore nella lettura del disco %c, (%c%d) Premere un pulsante."},
+			{4, "Gioco in pausa. Premi SPAZIO per continuare."},
+			{5, "Sei sicuro di voler ricominciare?  (S/N)S"},
+			{6, "Sei sicuro di voler uscire?  (S/N)S"}
+		},
+		{	// Spanish
+			{1, "Introduce el disco %c y pulsa un bot""\xa2""n para continuar."},
+			{2, "No se ha podido encontrar %s, (%c%d). Pulsa un bot""\xa2""n."},
+			{3, "Error al leer el disco %c, (%c%d). Pulsa un bot""\xa2""n."},
+			{4, "Partida en pausa. Pulsa Espacio para continuar."},
+			{5, """\xa8""Seguro que quieres reiniciar?  (S/N)S"},
+			{6, """\xa8""Seguro que quieres salir?  (S/N)S"}
+		},
+		{	// Russian
+			{1, "\x82\xe1\xe2\xa0\xa2\xec\xe2\xa5"" ""\xa4\xa8\xe1\xaa"" %c ""\xa8"" ""\xad\xa0\xa6\xac\xa8\xe2\xa5"" ""\xaa\xab\xa0\xa2\xa8\xe8\xe3"", ""\xe7\xe2\xae\xa1\xeb"" ""\xaf\xe0\xae\xa4\xae\xab\xa6\xa8\xe2\xec""."},
+			{2, "\x8d\xa5"" ""\xe3\xa4\xa0\xab\xae\xe1\xec"" ""\xad\xa0\xa9\xe2\xa8"" %s, (%c%d) ""\x8d\xa0\xa6\xac\xa8\xe2\xa5"" ""\xaa\xab\xa0\xa2\xa8\xe8\xe3""."},
+			{3, "\x8e\xe8\xa8\xa1\xaa\xa0"" ""\xe7\xe2\xa5\xad\xa8\xef"" ""\xa4\xa8\xe1\xaa\xa0"" %c, (%c%d) ""\x8d\xa0\xa6\xac\xa8\xe2\xa5"" ""\xaa\xab\xa0\xa2\xa8\xe8\xe3""."},
+			{4, "\x88\xa3\xe0\xa0"" ""\xaf\xe0\xa8\xae\xe1\xe2\xa0\xad\xae\xa2\xab\xa5\xad\xa0"".  ""\x84\xab\xef"" ""\xaf\xe0\xae\xa4\xae\xab\xa6\xa5\xad\xa8\xef"" ""\xad\xa0\xa6\xac\xa8\xe2\xa5"" ""\xaf\xe0\xae\xa1\xa5\xab""."},
+			{5, "\x82\xeb"" ""\xe3\xa2\xa5\xe0\xa5\xad\xeb"", ""\xe7\xe2\xae"" ""\xe5\xae\xe2\xa8\xe2\xa5"" ""\xad\xa0\xe7\xa0\xe2\xec"" ""\xe1\xad\xae\xa2\xa0""?  (Y/N)Y"},
+			{6, "\x82\xeb"" ""\xe3\xa2\xa5\xe0\xa5\xad\xeb"", ""\xe7\xe2\xae"" ""\xe5\xae\xe2\xa8\xe2\xa5"" ""\xa2\xeb\xa9\xe2\xa8""?  (Y/N)Y"}
+		},
+		{	// Swedish (seems to concern MM NES only)
+			{1, "Mata in skivan %c och tryck p""\x86"" knappen f""\x94""r att forts""\x84""tta."},
+			{2, "Kunde inte hitta %s, (%c%d) tryck p""\x86"" knappen."},
+			{3, "Fel vid inl""\x84""sning av skivan %c, (%c%d) tryck p""\x86"" knappen."},
+			{4, "Spelet pausat. Tryck MELLANSLAG f""\x94""r att forts""\x84""tta."},
+			{5, """\x8e""r du s""\x84""ker p""\x86"" att du vill starta om? (J/N)J"},
+			{6, """\x8e""r du s""\x84""ker p""\x86"" att du vill avsluta? (J/N)J"}
+		}
+	};
+	
+	// Added in SCUMM4. Only the numbers are used, so there
+	// is no need to provide language specific strings.
+	static const ResString strMap2[] = {
+		{7, ("Save")},
+		{8, ("Load")},
+		{9, ("Play")},
+		{10, ("Cancel")},
+		{11, ("Quit")},
+		{12, ("OK")},
+		{13, ("Insert save/load game disk")},
+		{14, ("You must enter a name")},
+		{15, ("The game was NOT saved (disk full?)")},
+		{16, ("The game was NOT loaded")},
+		{17, ("Saving '%s'")},
+		{18, ("Loading '%s'")},
+		{19, ("Name your SAVE game")},
+		{20, ("Select a game to LOAD")},
+		{28, ("Game title)")}
+	};
+
+	if (stringno >= ARRAYSIZE(strMap1)) {
+		stringno -= ARRAYSIZE(strMap1);
+		assert(stringno < ARRAYSIZE(strMap2));
+		return strMap2[stringno];
+	}
+
+	// I have added the langugages I found in scumm-md5.h for v1/2 games...
+	int langIndex = 0;
+	switch (lang) {
+	case Common::FR_FRA:
+		langIndex = 1;
+		break;
+	case Common::DE_DEU:
+		langIndex = 2;
+		break;
+	case Common::IT_ITA:
+		langIndex = 3;
+		break;
+	case Common::ES_ESP:
+		langIndex = 4;
+		break;
+	case Common::RU_RUS:
+		langIndex = 5;
+		break;
+	case Common::SE_SWE:
+		langIndex = 6;
+		break;
+	default:
+		// Just stick with English.
+		break;
+	}
+
+	return strMap1[langIndex][stringno];
 }
 
 #pragma mark -
