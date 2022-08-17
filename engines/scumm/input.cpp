@@ -489,6 +489,12 @@ void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool 
 		uint32 millis = _system->getMillis();
 		while (((_system->getMillis() - millis) * (_timerFrequency / 4) / 1000) < waitTime) {
 			waitForTimer(1); // Allow the engine to update the screen and fetch new inputs...
+
+			if (_game.version < 7 && (_guiCursorAnimCounter++ & 16)) {
+				_guiCursorAnimCounter = 0;
+				animateCursor();
+			}
+
 			ks = _keyPressed;
 			leftBtnClicked = (_leftBtnPressed & msClicked) != 0;
 			rightBtnClicked = (_rightBtnPressed & msClicked) != 0;
@@ -501,6 +507,12 @@ void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool 
 	} else {
 		while (!validKey && !leftBtnClicked && !rightBtnClicked) {
 			waitForTimer(1); // Allow the engine to update the screen and fetch new inputs...
+
+			if (_game.version < 7 && (_guiCursorAnimCounter++ & 16)) {
+				_guiCursorAnimCounter = 0;
+				animateCursor();
+			}
+
 			ks = _keyPressed;
 			leftBtnClicked = (_leftBtnPressed & msClicked) != 0;
 			rightBtnClicked = (_rightBtnPressed & msClicked) != 0;
@@ -628,43 +640,6 @@ void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
 
 				return;
 			}
-
-			// "Text Speed  Slow  ==========  Fast"
-			if (lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-') {
-				if (VAR_CHARINC == 0xFF)
-					return;
-
-				Common::KeyState ks = lastKeyHit;
-
-				pt = pauseEngine();
-
-				do {
-					if (ks.ascii == '+') {
-						VAR(VAR_CHARINC) -= 1;
-						if (VAR(VAR_CHARINC) < 0)
-							VAR(VAR_CHARINC) = 0;
-					} else {
-						VAR(VAR_CHARINC) += 1;
-						if (VAR(VAR_CHARINC) > 9)
-							VAR(VAR_CHARINC) = 9;
-					}
-
-					_defaultTextSpeed = 9 - VAR(VAR_CHARINC);
-					ConfMan.setInt("original_gui_text_speed", _defaultTextSpeed);
-					setTalkSpeed(_defaultTextSpeed);
-
-					getSliderString(gsTextSpeedSlider, VAR(VAR_CHARINC), sliderString, sizeof(sliderString));
-					showBannerAndPause(0, 0, sliderString);
-					ks = Common::KEYCODE_INVALID;
-					bool leftBtnPressed = false, rightBtnPressed = false;
-					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
-				} while (ks.ascii == '+' || ks.ascii == '-');
-				clearBanner();
-
-				pt.clear();
-
-				return;
-			}
 		}
 
 		if (VAR_VERSION_KEY != 0xFF && VAR(VAR_VERSION_KEY) != 0 &&
@@ -677,59 +652,16 @@ void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
 
 				if (_game.features & GF_DEMO)
 					showBannerAndPause(0, -1, "iMuse(tm) initialized");
+				return;
 			} else if (_game.version == 7) {
 				showBannerAndPause(0, -1, getGUIString(gsVersion));
 				showBannerAndPause(0, -1, "Scripts compiled %s", _dataFileVersionString);
 				showBannerAndPause(0, -1, "SPU(tm) version %s", _engineVersionString);
 				showBannerAndPause(0, -1, "iMuse(tm) initialized");
+				return;
 			}
-
-			return;
+			// Older versions show this banner via scripts, so just let it fallback...
 		}
-
-
-		if (lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
-			int voiceMode = VAR(VAR_VOICE_MODE);
-
-			voiceMode++;
-			if (voiceMode >= 3) {
-				voiceMode = 0;
-			}
-
-			switch (voiceMode) {
-			case 0: // "Voice Only"
-				showBannerAndPause(0, 120, getGUIString(gsVoiceOnly));
-				break;
-			case 1: // "Voice and Text"
-				showBannerAndPause(0, 120, getGUIString(gsVoiceAndText));
-				break;
-			default: // "Text Display Only"
-				showBannerAndPause(0, 120, getGUIString(gsTextDisplayOnly));
-			}
-
-			ConfMan.setInt("original_gui_text_status", voiceMode);
-			switch (voiceMode) {
-			case 0:
-				ConfMan.setBool("speech_mute", false);
-				ConfMan.setBool("subtitles", false);
-				break;
-			case 1:
-				ConfMan.setBool("speech_mute", false);
-				ConfMan.setBool("subtitles", true);
-				break;
-			case 2:
-				ConfMan.setBool("speech_mute", true);
-				ConfMan.setBool("subtitles", true);
-				break;
-			default:
-				break;
-			}
-
-			ConfMan.flushToDisk();
-			syncSoundSettings();
-			return;
-		}
-
 	} else {
 		if (lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
 			SubtitleSettingsDialog dialog(this, _voiceMode);
@@ -852,6 +784,9 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		restartKeyEnabled = true;
 
 	if (isUsingOriginalGUI()) {
+		char sliderString[256];
+		PauseToken pt;
+
 		if (VAR_PAUSE_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_PAUSE_KEY) ||
 			(lastKeyHit.keycode == Common::KEYCODE_SPACE && _game.features & GF_DEMO))) {
 			// Force the cursor OFF...
@@ -871,6 +806,89 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			return;
 		}
 
+		if (VAR_VOICE_MODE != 0xFF &&
+			(_game.version > 5 || (_game.id == GID_INDY4 &&
+				strcmp(_game.variant, "Floppy") && strcmp(_game.variant, "Amiga"))) &&
+			lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+			int voiceMode = VAR(VAR_VOICE_MODE);
+
+			voiceMode++;
+			if (voiceMode >= 3) {
+				voiceMode = 0;
+			}
+
+			switch (voiceMode) {
+			case 0: // "Voice Only"
+				showBannerAndPause(0, 120, getGUIString(gsVoiceOnly));
+				break;
+			case 1: // "Voice and Text"
+				showBannerAndPause(0, 120, getGUIString(gsVoiceAndText));
+				break;
+			default: // "Text Display Only"
+				showBannerAndPause(0, 120, getGUIString(gsTextDisplayOnly));
+			}
+
+			ConfMan.setInt("original_gui_text_status", voiceMode);
+			switch (voiceMode) {
+			case 0:
+				ConfMan.setBool("speech_mute", false);
+				ConfMan.setBool("subtitles", false);
+				break;
+			case 1:
+				ConfMan.setBool("speech_mute", false);
+				ConfMan.setBool("subtitles", true);
+				break;
+			case 2:
+				ConfMan.setBool("speech_mute", true);
+				ConfMan.setBool("subtitles", true);
+				break;
+			default:
+				break;
+			}
+
+			ConfMan.flushToDisk();
+			syncSoundSettings();
+			return;
+		}
+
+		// "Text Speed  Slow  ==========  Fast"
+		if (lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-') {
+			if (VAR_CHARINC == 0xFF)
+				return;
+
+			Common::KeyState ks = lastKeyHit;
+
+			pt = pauseEngine();
+
+			do {
+				if (ks.ascii == '+') {
+					VAR(VAR_CHARINC) -= 1;
+					if (VAR(VAR_CHARINC) < 0)
+						VAR(VAR_CHARINC) = 0;
+				} else {
+					VAR(VAR_CHARINC) += 1;
+					if (VAR(VAR_CHARINC) > 9)
+						VAR(VAR_CHARINC) = 9;
+				}
+
+				_defaultTextSpeed = 9 - VAR(VAR_CHARINC);
+				ConfMan.setInt("original_gui_text_speed", _defaultTextSpeed);
+				setTalkSpeed(_defaultTextSpeed);
+
+				getSliderString(gsTextSpeedSlider, VAR(VAR_CHARINC), sliderString, sizeof(sliderString));
+				showBannerAndPause(0, 0, sliderString);
+				ks = Common::KEYCODE_INVALID;
+				bool leftBtnPressed = false, rightBtnPressed = false;
+				waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+			} while (ks.ascii == '+' || ks.ascii == '-');
+			clearBanner();
+
+			pt.clear();
+
+			return;
+		}
+
+
 		if (lastKeyHit.keycode == Common::KEYCODE_k && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
 			showBannerAndPause(0, 120, getGUIString(gsHeap), _res->getHeapSize() / 1024);
 			return;
@@ -881,8 +899,8 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			return;
 		}
 
-		if (VAR_MAINMENU_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_MAINMENU_KEY) && lastKeyHit.hasFlags(0)) &&
-			_game.version > 5) {
+		if (VAR_MAINMENU_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_MAINMENU_KEY) && lastKeyHit.hasFlags(0))
+			&& _game.platform != Common::kPlatformFMTowns) {
 			showMainMenu();
 			return;
 		}

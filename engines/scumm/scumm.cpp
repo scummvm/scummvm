@@ -3119,6 +3119,9 @@ void ScummEngine::restart() {
 }
 
 bool ScummEngine::isUsingOriginalGUI() {
+	if (_game.heversion != 0)
+		return false;
+
 	if (_game.version > 4)
 		return _useOriginalGUI;
 

@@ -384,7 +384,7 @@ InfoDialog::InfoDialog(ScummEngine *scumm, int res)
 	_message = queryResString(res);
 
 	// Trim the hardcoded strings for the GUI Dialog. The extra spaces which some strings have might
-	// be needed for proper alignment within the original display, but not here... 
+	// be needed for proper alignment within the original display, but not here...
 	if (scumm->_game.version < 3)
 		_message.trim();
 
@@ -449,9 +449,13 @@ const char *InfoDialog::getPlainEngineString(int stringno) {
 			result = (const char *)string_map_table_v6[stringno - 1].string;
 		}
 	} else if (_vm->_game.version >= 3) {
-		result = (const char *)_vm->getStringAddress(string_map_table_v345[stringno - 1].num);
+		result = (const char *)_vm->getStringAddress(getStaticResString(_vm->_language, stringno - 1).num);
+
+		if (!result) {
+			result = (const char *)getStaticResString(_vm->_language, stringno - 1).string;
+		}
 	} else {
-		result = (const char *)(string_map_table_v345[stringno - 1].string);
+		result = (const char *)(getStaticResString(_vm->_language, stringno - 1).string);
 	}
 
 	return result;
@@ -614,9 +618,11 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 			{6, """\x8e""r du s""\x84""ker p""\x86"" att du vill avsluta? (J/N)J"}
 		}
 	};
-	
+
 	// Added in SCUMM4. Only the numbers are used, so there
-	// is no need to provide language specific strings.
+	// is no need to provide language specific strings; there are
+	// some exceptions for which there's only an hardcoded English
+	// string.
 	static const ResString strMap2[] = {
 		{7, ("Save")},
 		{8, ("Load")},
@@ -632,12 +638,19 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 		{18, ("Loading '%s'")},
 		{19, ("Name your SAVE game")},
 		{20, ("Select a game to LOAD")},
-		{28, ("Game title)")}
+		{28, ("Game title)")},
+
+		// Hardcoded in English for each localized version
+		{0, "Voice Only"},
+		{0, "Voice and Text"},
+		{0, "Text Display Only"},
+		{0, "Text Speed   Slow  ==========  Fast"},
+		{0, "Roland Volume    Low  =========  High"},
 	};
 
-	if (stringno >= ARRAYSIZE(strMap1)) {
-		stringno -= ARRAYSIZE(strMap1);
-		assert(stringno < ARRAYSIZE(strMap2));
+	if (stringno + 1 >= ARRAYSIZE(strMap1)) {
+		stringno -= ARRAYSIZE(strMap1) - 1;
+		assert(stringno + 1 < ARRAYSIZE(strMap2));
 		return strMap2[stringno];
 	}
 
