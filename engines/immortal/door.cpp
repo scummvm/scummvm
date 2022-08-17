@@ -28,26 +28,26 @@
 namespace Immortal {
 
 enum DoorMask {
-    kDoorXMask = 0x1f,
-    kDoorYMask = 0x1f,
-    kDoorFullMask = 0x40,
-    kDoorOnMask = 0x60
+	kDoorXMask = 0x1f,
+	kDoorYMask = 0x1f,
+	kDoorFullMask = 0x40,
+	kDoorOnMask = 0x60
 };
 
 enum DoorIs {
-    kDoorIsRight  = 0x80,
-    kDoorIsBusy   = 0x40,
-    kDoorIsLocked = 0x20
+	kDoorIsRight  = 0x80,
+	kDoorIsBusy   = 0x40,
+	kDoorIsLocked = 0x20
 };
 
 enum DoorSide {
-    kDoorTopPriority = 64,
-    kDoorPriority    = 85 - kDoorTopPriority,
-    kDoorLeftTop     = 24,              // To left of this enters door
-    kDoorRightTop    = 8,               // To right of this enters door
-    kDoorLeftBottom  = 10,
-    kDoorRightBottom = 22,
-    kDoorTopBottom   = 20
+	kDoorTopPriority = 64,
+	kDoorPriority    = 85 - kDoorTopPriority,
+	kDoorLeftTop     = 24,              // To left of this enters door
+	kDoorRightTop    = 8,               // To right of this enters door
+	kDoorLeftBottom  = 10,
+	kDoorRightBottom = 22,
+	kDoorTopBottom   = 20
 };
 
 void ImmortalEngine::doorOpenSecret() {}
@@ -58,28 +58,28 @@ void ImmortalEngine::doorNew() {}
 void ImmortalEngine::doorDrawAll() {}
 void ImmortalEngine::doorOnDoorMat() {}
  int ImmortalEngine::findDoorTop(int x, int y) {
-    return 0;
+	return 0;
  }
  int ImmortalEngine::findDoor(int x, int y) {
-    return 0;
+	return 0;
  }
 bool ImmortalEngine::doLockStuff(int d, MonsterID m, int top) {
-    return true;
+	return true;
 }
 bool ImmortalEngine::inDoorTop(int x, int y, MonsterID m) {
-    return true;
+	return true;
 }
 bool ImmortalEngine::inDoor(int x, int y, MonsterID m) {
-    return true;
+	return true;
 }
  int ImmortalEngine::doorDoStep(MonsterID m, int d, int index) {
-    return 0;
+	return 0;
  }
  int ImmortalEngine::doorSetOn(int d) {
-    return 0;
+	return 0;
  }
  int ImmortalEngine::doorComeOut(MonsterID m) {
-    return 0;
+	return 0;
  }
 void ImmortalEngine::doorSetLadders(MonsterID m) {}
 

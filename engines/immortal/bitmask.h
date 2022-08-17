@@ -25,34 +25,34 @@
 namespace Immortal {
 
 enum BitMask16 : uint16 {
-    kMaskLow   = 0x00FF,
-    kMaskHigh  = 0xFF00,
-    kMaskLast  = 0xF000,
-    kMaskFirst = 0x000F,
-    kMaskHLow  = 0x0F00,
-    kMaskLHigh = 0x00F0,
-    kMaskNeg   = 0x8000,
-    kMask12Bit = 0x0F9F                                 // Compression code (pos, 00, len) is stored in lower 12 bits of word
+	kMaskLow   = 0x00FF,
+	kMaskHigh  = 0xFF00,
+	kMaskLast  = 0xF000,
+	kMaskFirst = 0x000F,
+	kMaskHLow  = 0x0F00,
+	kMaskLHigh = 0x00F0,
+	kMaskNeg   = 0x8000,
+	kMask12Bit = 0x0F9F                                 // Compression code (pos, 00, len) is stored in lower 12 bits of word
 };
 
 enum BitMask8 : uint8 {
-    kMaskASCII = 0x7F,                                  // The non-extended ASCII table uses 7 bits, this makes a couple of things easier
-    kMask8High = 0xF0,
-    kMask8Low  = 0x0F
+	kMaskASCII = 0x7F,                                  // The non-extended ASCII table uses 7 bits, this makes a couple of things easier
+	kMask8High = 0xF0,
+	kMask8Low  = 0x0F
 };
 
 enum ColourBitMask : uint16 {
-    kMaskRed   = 0x0F00,
-    kMaskGreen = 0x00F0,
-    kMaskBlue  = 0x000F
+	kMaskRed   = 0x0F00,
+	kMaskGreen = 0x00F0,
+	kMaskBlue  = 0x000F
 };
 
 enum ChrMask : uint16 {
-    kChr0  = 0x0000,
-    kChrL  = 0x0001,
-    kChrR  = 0xFFFF,
-    kChrLD = 0x0002,
-    kChrRD = 0xFFFE
+	kChr0  = 0x0000,
+	kChrL  = 0x0001,
+	kChrR  = 0xFFFF,
+	kChrLD = 0x0002,
+	kChrRD = 0xFFFE
 };
 
 } // namespace immortal

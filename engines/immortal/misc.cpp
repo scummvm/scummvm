@@ -32,8 +32,8 @@ namespace Immortal {
  */
 
 void ImmortalEngine::miscInit() {
-    // In the source, this is where the seed for the rng is set, but we don't need to do that as we used _randomSource
-    _lastGauge = 0;
+	// In the source, this is where the seed for the rng is set, but we don't need to do that as we used _randomSource
+	_lastGauge = 0;
 }
 
 void ImmortalEngine::setRandomSeed() {}
