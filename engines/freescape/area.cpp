@@ -131,7 +131,6 @@ void Area::loadObjectFlags(Common::SeekableReadStream *stream) {
 }
 
 void Area::saveObjectFlags(Common::WriteStream *stream) {
-	int dirtyFlags = 0;
 	stream->writeFloatLE(drillPosition.x());
 	stream->writeFloatLE(drillPosition.y());
 	stream->writeFloatLE(drillPosition.z());
