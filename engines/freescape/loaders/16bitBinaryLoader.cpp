@@ -81,10 +81,10 @@ static Object *load16bitObject(Common::SeekableReadStream *file) {
 			byteSizeOfObject--;
 			uint8 c2 = file->readByte();
 			byteSizeOfObject--;
-			colours->push_back( (c1 & 0x0f) | ((c2 & 0x0f) << 4));
+			colours->push_back((c1 & 0x0f) | ((c2 & 0x0f) << 4));
 			debug("color[%d] = %d", 2*colour, (c1 & 0x0f) | ((c2 & 0x0f) << 4));
-			colours->push_back(c1 >> 4 | c2 & 0xf0);
-			debug("color[%d] = %d", 2*colour+1, c1 >> 4 | c2 & 0xf0);
+			colours->push_back((c1 >> 4) | (c2 & 0xf0));
+			debug("color[%d] = %d", 2*colour+1, (c1 >> 4) | (c2 & 0xf0));
 		}
 
 		// read extra vertices if required...

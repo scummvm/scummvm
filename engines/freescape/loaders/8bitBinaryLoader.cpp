@@ -231,6 +231,8 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 
 	uint8 ci1 = 0;
 	uint8 ci2 = 0;
+	uint8 ci3 = 0;
+	uint8 ci4 = 0;
 	uint8 skyColor = areaFlags & 15;
 	uint8 groundColor = areaFlags >> 4;
 
@@ -239,11 +241,11 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	if (skyColor == 0)
 		skyColor = 255;
 
-	file->readByte() & 15;
-	file->readByte() & 15;
-	ci1 = file->readByte();
-	ci2 = file->readByte();
-	debugC(1, kFreescapeDebugParser, "Colors: %d %d %d %d", ci1, ci2, skyColor, groundColor);
+	ci1 = file->readByte() & 15;
+	ci2 = file->readByte() & 15;
+	ci3 = file->readByte();
+	ci4 = file->readByte();
+	debugC(1, kFreescapeDebugParser, "Colors: %d %d %d %d %d %d", ci1, ci2, ci3, ci4, skyColor, groundColor);
 	// CPC
 	//groundColor = file->readByte() & 15;
 	//skyColor = file->readByte() & 15;
