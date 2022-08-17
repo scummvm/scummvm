@@ -1232,7 +1232,7 @@ void ScummEngine_v5::o5_getActorRoom() {
 	getResultPos();
 	int act = getVarOrDirectByte(PARAM_1);
 
-	// WORKAROUND bug #832: Invalid actor XXX in o5_getActorRoom().
+	// WORKAROUND bug #832: Invalid actor in o5_getActorRoom().
 	//
 	// Script 94-206 is started by script 94-200 this way:
 	//
@@ -1515,7 +1515,12 @@ void ScummEngine_v5::o5_isLessEqual() {
 	int16 a = readVar(var);
 	int16 b = getVarOrDirectWord(PARAM_1);
 
-	// WORKAROUND bug #1266 : Work around a bug in Indy3Town.
+	// WORKAROUND bug #1266: INDY3TOWNS: Biplane controls are haywire.
+	// This is broken under UNZ too; the script does an incorrect signed
+	// comparison, possibly with the intent of checking for a gamepad.
+	//
+	// Since the biplane is unplayable without this, we don't check for
+	// `_enableEnhancements`, and always enable this fix.
 	if (_game.id == GID_INDY3 && (_game.platform == Common::kPlatformFMTowns) &&
 	    (vm.slot[_currentScript].number == 200 || vm.slot[_currentScript].number == 203) &&
 	    _currentRoom == 70 && b == -256) {
