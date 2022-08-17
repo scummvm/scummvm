@@ -19,24 +19,9 @@
  *
  */
 
-/* [Alternate Name: Sprite Animation Processing]
- * --- What is a Cycle ---
- */
-
 #include "immortal/immortal.h"
 
 namespace Immortal {
 
-void ImmortalEngine::cycleNew() {}
- int ImmortalEngine::getCycleChr() {
-	 return 0;
- }
-void ImmortalEngine::cycleFreeAll() {}
-void ImmortalEngine::cycleGetFile() {}
-void ImmortalEngine::cycleGetNum() {}
-void ImmortalEngine::cycleGetIndex() {}
-void ImmortalEngine::cycleSetIndex() {}
-void ImmortalEngine::cycleGetFrame() {}
-void ImmortalEngine::cycleAdvance() {}
 
-} // namespace Immortal
+} // namespace immortal

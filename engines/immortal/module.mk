@@ -2,6 +2,7 @@ MODULE := engines/immortal
 
 MODULE_OBJS = \
 	metaengine.o \
+	util.o \
 	disk.o \
 	immortal.o \
 	kernal.o \
@@ -13,13 +14,13 @@ MODULE_OBJS = \
 	drawChr.o \
  	level.o \
  	story.o \
-	room.o
+	room.o \
+	flameSet.o \
+	univ.o \
+	door.o \
+	bullet.o 
 
-#	universe.o \
 #	object.o \
-#	door.o \
-#	flameset.o \
-#	bullet.o \
 #	monster.o \
 #	motives.o
 

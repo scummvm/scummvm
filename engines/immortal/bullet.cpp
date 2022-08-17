@@ -19,77 +19,14 @@
  *
  */
 
+/* [Alternate Name: Projectile Proccessing]
+ * --- What is a Bullet ---
+ */
+
 #include "immortal/room.h"
 
 namespace Immortal {
 
-Room::Room(uint8 x, uint8 y, RoomFlag f) {
-	_xPos = x;
-	_yPos = y;
-	_flags = f;
-	_candleTmp = 0;
-}
 
-void Room::addMonster() {
-	//_monsters->push_back(new Monster());
-}
-
-void Room::removeMonster() {
-	//_monsters->pop_back();
-}
-
-void Room::addObject() {
-	//_objects->push_back(new Object());
-}
-
-void Room::removeObject() {
-	//_objects->pop_back();
-}
-
-Common::Array<Monster> Room::getMonsterList() {
-	return _monsters;
-}
-
-Common::Array<Object> Room::getObjectList() {
-	return _objects;
-}
-
-void Room::getXY(uint16 &x, uint16 &y) {
-	x <<= 2;
-	y <<= 2;
-}
-
-void Room::getCell(uint16 &x, uint16 &y) {
-	x >>= 3;
-	y >>= 3;
-}
-
-void Room::setHole() {}
-void Room::drawContents() {}
-
-bool Room::getWideWallNormal(uint8 x, uint8 y, uint8 xPrev, uint8 yPrev, int id, int spacing) {
-	return true;
-}
-
-bool Room::getWallNormal(uint8 x, uint8 y, uint8 xPrev, uint8 yPrev, int id) {
-	return true;
-}
 
 } // namespace immortal
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
