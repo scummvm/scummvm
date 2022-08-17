@@ -677,7 +677,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
 	_engine->_interface->resetClip();
 
 	if (bgRedraw) {
-		_engine->freezeTime();
+		_engine->freezeTime(false);
 		if (_engine->_scene->_needChangeScene != SCENE_CEILING_GRID_FADE_1 && _engine->_scene->_needChangeScene != SCENE_CEILING_GRID_FADE_2) {
 			_engine->_screens->fadeOut(_engine->_screens->_paletteRGBA);
 		}

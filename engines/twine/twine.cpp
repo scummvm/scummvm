@@ -75,8 +75,8 @@
 
 namespace TwinE {
 
-ScopedEngineFreeze::ScopedEngineFreeze(TwinEEngine *engine) : _engine(engine) {
-	_engine->freezeTime();
+ScopedEngineFreeze::ScopedEngineFreeze(TwinEEngine *engine, bool pause) : _engine(engine) {
+	_engine->freezeTime(pause);
 }
 
 ScopedEngineFreeze::~ScopedEngineFreeze() {
@@ -602,10 +602,11 @@ int TwinEEngine::getRandomNumber(uint max) {
 	return _rnd.getRandomNumber(max - 1);
 }
 
-void TwinEEngine::freezeTime() {
+void TwinEEngine::freezeTime(bool pause) {
 	if (_isTimeFreezed == 0) {
 		_saveFreezedTime = _lbaTime;
-		_pauseToken = pauseEngine();
+		if (pause)
+			_pauseToken = pauseEngine();
 	}
 	_isTimeFreezed++;
 }
@@ -614,7 +615,9 @@ void TwinEEngine::unfreezeTime() {
 	--_isTimeFreezed;
 	if (_isTimeFreezed == 0) {
 		_lbaTime = _saveFreezedTime;
-		_pauseToken.clear();
+		if (_pauseToken.isActive()) {
+			_pauseToken.clear();
+		}
 	}
 }
 
@@ -878,7 +881,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		// Process Pause
 		if (_input->toggleActionIfActive(TwinEActionType::Pause)) {
-			ScopedEngineFreeze scopedFreeze(this);
+			ScopedEngineFreeze scopedFreeze(this, true);
 			const char *PauseString = "Pause";
 			_text->setFontColor(COLOR_WHITE);
 			if (_redraw->_inSceneryView) {
