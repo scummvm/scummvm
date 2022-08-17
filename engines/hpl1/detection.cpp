@@ -37,6 +37,7 @@ const DebugChannelDef Hpl1MetaEngineDetection::debugFlagList[] = {
 	{ Hpl1::kDebugOpenGL, "OpenGL", "OpenGL debug channel"},
 	{ Hpl1::kDebugRenderer, "Renderer", "Rederer debug channel"},
 	{ Hpl1::kDebugAudio, "Audio", "Audio debug channel"},
+	{ Hpl1::kDebugSaves, "Saves", "Channel for debugging game saving and loading"},
 	DEBUG_CHANNEL_END
 };
 
