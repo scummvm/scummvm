@@ -334,13 +334,16 @@ Common::Error FreescapeEngine::run() {
 	} else {
 		_farClipPlane = 8192.f;
 	}
+	int saveSlot = ConfMan.getInt("save_slot");
 
 	if (_border) {
-		drawBorder();
-		_gfx->flipBuffer();
-		g_system->updateScreen();
-		if (isDriller())
-			g_system->delayMillis(1000);
+		if (saveSlot == -1) {
+			drawBorder();
+			_gfx->flipBuffer();
+			g_system->updateScreen();
+			if (isDriller())
+				g_system->delayMillis(1000);
+		}
 
 		_borderTexture = nullptr;
 		if (isDriller())
@@ -352,7 +355,6 @@ Common::Error FreescapeEngine::run() {
 
 		_border->fillRect(_viewArea, 0xA0A0A0FF);
 	}
-	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot >= 0) { // load the savegame
 		loadGameState(saveSlot);
 	} else
