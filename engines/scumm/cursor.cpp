@@ -162,7 +162,7 @@ void ScummEngine_v6::setCursorTransparency(int a) {
 	} else {
 		for (i = 0; i < size; i++)
 			if (_grabbedCursor[i] == (byte)a)
-				_grabbedCursor[i] = 0x01;
+				_grabbedCursor[i] = 0xFF;
 	}
 
 	updateCursor();
