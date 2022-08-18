@@ -36,6 +36,10 @@
 #include "hpl1/penumbra-overture/Notebook.h"
 #include "hpl1/penumbra-overture/Player.h"
 #include "hpl1/penumbra-overture/RadioHandler.h"
+#include "hpl1/hpl1.h"
+#include "hpl1/string.h"
+#include "common/savefile.h"
+#include <stdio.h>
 
 //////////////////////////////////////////////////////////////////////////
 // SAVED WORLD
@@ -606,7 +610,7 @@ void cSaveHandler::AutoSave(const tWString &asDir, int alMaxSaves) {
 	sMapName = cString::ReplaceCharToW(sMapName, _W(":"), _W(" "));
 	cDate date = mpInit->mpGame->GetSystem()->GetLowLevel()->getDate();
 	wchar_t sTemp[512];
-	swprintf(sTemp, 512, _W("save/%ls/%ls %d-%02d-%02d_%02d.%02d.%02d_%02d.sav"),
+	swprintf(sTemp, 512, _W("save-%ls.%ls %d-%02d-%02d_%02d.%02d.%02d_%02d.sav"),
 			 asDir.c_str(),
 			 sMapName.c_str(),
 			 date.year,
@@ -625,10 +629,8 @@ void cSaveHandler::AutoSave(const tWString &asDir, int alMaxSaves) {
 //-----------------------------------------------------------------------
 
 void cSaveHandler::AutoLoad(const tWString &asDir) {
-	tWString sFile = GetLatest(_W("save/") + asDir, _W("*.sav"));
-
-	LoadGameFromFile(_W("save/") + asDir + _W("/") + sFile);
-
+	tWString latestSave = GetLatest(_W("save-") + asDir + _W(".*.sav"));
+	LoadGameFromFile(latestSave);
 	mpInit->mpGame->ResetLogicTimer();
 }
 
@@ -696,29 +698,28 @@ void cSaveHandler::DeleteOldestIfMax(const tWString &asDir, const tWString &asMa
 
 //-----------------------------------------------------------------------
 
-tWString cSaveHandler::GetLatest(const tWString &asDir, const tWString &asMask) {
-	LowLevelResources *pLowLevelResources = mpInit->mpGame->GetResources()->GetLowLevel();
-	/*LowLevelSystem *pLowLevelSystem = */mpInit->mpGame->GetSystem()->GetLowLevel();
+cDate cSaveHandler::parseDate(const Common::String &saveFile) {
+	cDate date;
+	Common::String strDate = saveFile.substr(saveFile.findLastOf(" "));
+	sscanf(strDate.c_str(), "%d-%d-%d_%d.%d.%d.sav", &date.year, &date.month, &date.month_day, &date.hours, &date.minutes, &date.seconds);
+	return date;
+}
 
-	tWString sPath = msSaveDir + asDir;
-
-	tStringList lstFiles;
-	pLowLevelResources->findFilesInDir(lstFiles, cString::To8Char(sPath), cString::To8Char(asMask));
-
-	tWString sNewest = _W("");
-	cDate newestDate;
-
-	tStringListIt it = lstFiles.begin();
-	for (; it != lstFiles.end(); ++it) {
-		tWString sFile = cString::To16Char(*it);
-		cDate date = FileModifiedDate(sPath + _W("/") + sFile);
-		if (sNewest == _W("") || newestDate < date) {
-			sNewest = sFile;
-			newestDate = date;
+tWString cSaveHandler::GetLatest(const tWString &asMask) {
+	// FIXME: string types
+	Common::StringArray saves = g_engine->getSaveFileManager()->listSavefiles(cString::To8Char(asMask).c_str());
+	if (saves.empty())
+		return _W("");
+	cDate latestDate = parseDate(saves.front());
+	const Common::String* latestSave = &saves.front();
+	for (auto it = saves.begin() + 1; it != saves.end(); ++it) {
+		cDate d = parseDate(*it);
+		if (d > latestDate) {
+			d = latestDate;
+			latestSave = it;
 		}
 	}
-
-	return sNewest;
+	return cString::To16Char(latestSave->c_str());
 }
 
 //-----------------------------------------------------------------------

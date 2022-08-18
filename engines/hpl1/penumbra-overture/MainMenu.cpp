@@ -37,6 +37,8 @@
 #include "hpl1/penumbra-overture/Player.h"
 #include "hpl1/penumbra-overture/PlayerHelper.h"
 #include "hpl1/penumbra-overture/SaveHandler.h"
+#include "hpl1/hpl1.h"
+#include "common/savefile.h"
 
 
 float gfMenuFadeAmount;
@@ -631,29 +633,9 @@ void cMainMenuWidget_Continue::OnMouseDown(eMButton aButton) {
 
 	mpInit->mpMainMenu->SetActive(false);
 
-	tWString sAuto = _W("save/auto/") + mpInit->mpSaveHandler->GetLatest(_W("save/auto/"), _W("*.sav"));
-	tWString sSpot = _W("save/spot/") + mpInit->mpSaveHandler->GetLatest(_W("save/spot/"), _W("*.sav"));
-
-	tWString sFile = _W("");
-
-	if (sAuto == _W("save/auto/")) {
-		sFile = sSpot;
-	} else if (sSpot == _W("save/spot/")) {
-		sFile = sAuto;
-	} else {
-		tWString sSaveDir = mpInit->mpSaveHandler->GetSaveDir();
-		cDate dateAuto = FileModifiedDate(sSaveDir + sAuto);
-		cDate dateSpot = FileModifiedDate(sSaveDir + sSpot);
-
-		if (dateAuto > dateSpot) {
-			sFile = sAuto;
-		} else {
-			sFile = sSpot;
-		}
-	}
-
-	if (sFile != _W(""))
-		mpInit->mpSaveHandler->LoadGameFromFile(sFile);
+	tWString latestSave = mpInit->mpSaveHandler->GetLatest(_W("save-????.*.sav"));
+	if (latestSave != _W(""))
+		mpInit->mpSaveHandler->LoadGameFromFile(latestSave);
 }
 
 //-----------------------------------------------------------------------
@@ -719,7 +701,7 @@ public:
 		if (mlSelected < 0)
 			return;
 
-		tWString sFile = msDir + _W("/") + gvSaveGameFileVec[mlNum][mlSelected];
+		tWString sFile = gvSaveGameFileVec[mlNum][mlSelected];
 
 		mpInit->mpMainMenu->SetActive(false);
 		mpInit->ResetGame(true);
@@ -805,7 +787,7 @@ public:
 		tWString sFile = mpInit->mpSaveHandler->GetSaveDir() + msDir +
 						 _W("/") + gvSaveGameFileVec[mlNum][lSelected];
 
-		tWString sDest = mpInit->mpSaveHandler->GetSaveDir() + _W("save/favorite/") +
+		tWString sDest = mpInit->mpSaveHandler->GetSaveDir() + _W("save-favorite.") +
 						 gvSaveGameFileVec[mlNum][lSelected];
 
 		CloneFile(sFile, sDest, true);
@@ -2503,10 +2485,9 @@ void cMainMenu::CreateWidgets() {
 		AddWidgetToState(eMainMenuState_Start, hplNew(cMainMenuWidget_Resume, (mpInit, vPos, kTranslate("MainMenu", "Resume"))));
 		vPos.y += 60;
 	} else {
-		tWString sAuto = mpInit->mpSaveHandler->GetLatest(_W("save/auto/"), _W("*.sav"));
-		tWString sSpot = mpInit->mpSaveHandler->GetLatest(_W("save/spot/"), _W("*.sav"));
+		tWString latestSave = mpInit->mpSaveHandler->GetLatest(_W("save-????.*.sav"));
 
-		if (sAuto != _W("") || sSpot != _W("")) {
+		if (latestSave != _W("")) {
 			AddWidgetToState(eMainMenuState_Start, hplNew(cMainMenuWidget_MainButton, (mpInit, vPos, kTranslate("MainMenu", "Continue"), eMainMenuState_Continue)));
 			vPos.y += 51;
 		}
@@ -2601,30 +2582,21 @@ void cMainMenu::CreateWidgets() {
 		vPos.y += 46 + 30;
 		vPos.x += 15;
 
-		tWString sDir = _W("save/spot");
+		tWString sDir = _W("save-spot");
 		if (i == 1)
-			sDir = _W("save/auto");
+			sDir = _W("save-auto");
 		else if (i == 2)
-			sDir = _W("save/favorite");
+			sDir = _W("save-favorite");
 
 		gpSaveGameList[i] = hplNew(cMainMenuWidget_SaveGameList, (
 																	 mpInit, vPos, cVector2f(355, 170), 15, sDir, (int)i));
 		AddWidgetToState(state, gpSaveGameList[i]);
 
-		LowLevelResources *pLowLevelResources = mpInit->mpGame->GetResources()->GetLowLevel();
-		/*LowLevelSystem *pLowLevelSystem = */mpInit->mpGame->GetSystem()->GetLowLevel();
-
-		tStringList lstFiles;
 		tTempFileAndDataSet setTempFiles;
-
-		tWString sFullPath = mpInit->mpSaveHandler->GetSaveDir() + sDir;
-		pLowLevelResources->findFilesInDir(lstFiles, cString::To8Char(sFullPath), "*.sav");
-
-		tStringListIt fileIt = lstFiles.begin();
-		for (; fileIt != lstFiles.end(); ++fileIt) {
-			tWString sFile = cString::To16Char(* fileIt);
-			cDate date = FileModifiedDate(sFullPath + _W("/") + sFile);
-
+		Common::StringArray saves = g_engine->getSaveFileManager()->listSavefiles( cString::To8Char(sDir).c_str() + Common::String("*.sav"));
+		for (auto &s : saves) {
+			tWString sFile = cString::To16Char(s.c_str());
+			cDate date = cSaveHandler::parseDate(s);
 			setTempFiles.insert(cTempFileAndData(sFile, date));
 		}
 
@@ -2639,6 +2611,7 @@ void cMainMenu::CreateWidgets() {
 			gvSaveGameFileVec[i].push_back(sFile);
 
 			sFile = cString::SetFileExtW(sFile, _W(""));
+			sFile = cString::SubW(sFile, sFile.find_first_of(_W(".")) + 1);
 			sFile = cString::SubW(sFile, 0, (int)sFile.length() - 3);
 			sFile = cString::ReplaceCharToW(sFile, _W("_"), _W(" "));
 			sFile = cString::ReplaceCharToW(sFile, _W("."), _W(":"));
