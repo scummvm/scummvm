@@ -231,6 +231,10 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 			ks = Common::KEYCODE_y;
 	}
 
+	// Deactivate this, so it does not trigger as invalid click target inside
+	// getInternalGUIControlFromCoordinates() (which can cause serious errors)
+	_internalGUIControls[0].relativeCenterX = -1;
+
 	return ks;
 }
 
