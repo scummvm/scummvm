@@ -57,6 +57,11 @@ enum {
 	kFreescapeDebugCode = 1 << 2
 };
 
+struct entrancesTableEntry {
+	int id;
+	int position[3];
+};
+
 class FreescapeEngine : public Engine {
 private:
 	// We need random numbers
@@ -101,6 +106,7 @@ public:
 	void gotoArea(uint16 areaID, int entranceID);
 	// Entrance
 	uint16 _startEntrance;
+	Common::HashMap<int, const struct entrancesTableEntry*> _entranceTable;
 
 	// Input
 	bool _flyMode;
