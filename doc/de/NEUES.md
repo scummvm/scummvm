@@ -36,9 +36,21 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      das Modell des Leuchtturms nicht aufhebt, bevor Captain Dread Guybrush
      zurück zu Scabb Island bringt.
    - Unterstützung für die originale Benutzeroberfläche von COMI hinzugefügt.
+   - Verbesserte Dekodierung einiger westeuropäischen Zeichenketten, wenn diese über
+     die ScummVM-Oberfläche dargestellt werden - beispielsweise, wenn ein Spiel pausiert wird.
 
  Toon:
    - Die Spiel-Menüs verhalten sich nun wie das Original.
+
+ TwinE:
+   - Darstellungsfehler bei Türen behoben.
+   - Fehlerhafte Musikwiedergabe in dem Verhaltens- und Inventarmenü korrigiert.
+   - Kashes werden nun statt Herzen als Fallback ausgegeben.
+   - Items flackern nun korrekt, wenn sie fallengelassen werden.
+   - Der Meca-Pinguin spawnt nun im korrekten Winkel.
+   - Hintergründe werden nun korrekt dargestellt, wenn Zwischenszenen im Fernseher angesehen werden.
+   - Der Bildschirm wird nun korrekt zentriert, wenn ein Inventar-Item aktiviert wird.
+   - Wenn man W drückt, um mit Leuten zu sprechen, springt man nicht mehr automatisch.
 
 
 #### 2.6.0 "Insane Escapism" (2022-08-01)
