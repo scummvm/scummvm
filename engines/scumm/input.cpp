@@ -787,7 +787,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		char sliderString[256];
 		PauseToken pt;
 
-		if (VAR_PAUSE_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_PAUSE_KEY) ||
+		if ((VAR_PAUSE_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_PAUSE_KEY)) ||
 			(lastKeyHit.keycode == Common::KEYCODE_SPACE && _game.features & GF_DEMO))) {
 			// Force the cursor OFF...
 			int8 oldCursorState = _cursor.state;
@@ -799,7 +799,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			return;
 		}
 
-		if (VAR_RESTART_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_RESTART_KEY)) ||
+		if ((VAR_RESTART_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_RESTART_KEY))) ||
 			((_game.id == GID_CMI && !(_game.features & GF_DEMO))
 				&& lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.hasFlags(0))) {
 			queryRestart();
