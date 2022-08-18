@@ -3119,6 +3119,9 @@ void ScummEngine::restart() {
 }
 
 bool ScummEngine::isUsingOriginalGUI() {
+	if (_game.id == GID_MONKEY2 && (_game.features & GF_DEMO))
+		return false;
+
 	if (_game.heversion != 0)
 		return false;
 
