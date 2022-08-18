@@ -635,6 +635,7 @@ protected:
 	int _spooledMusicIsToBeEnabled = 1;
 	int _saveScriptParam = 0;
 	int _guiCursorAnimCounter = 0;
+	int _v5VoiceMode = 0;
 
 	Graphics::Surface _savegameThumbnail;
 	byte *_tempTextSurface;
