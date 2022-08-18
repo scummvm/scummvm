@@ -1400,8 +1400,16 @@ void ScummEngine::showMainMenu() {
 	if (_game.version == 7)
 		CHARSET_1();
 
-	if (_game.version < 7 && !hasLoadedState)
+	if (_game.version < 7 && !hasLoadedState) {
 		restoreSurfacesPostGUI();
+	} else {
+		free(_tempTextSurface);
+		_tempTextSurface = nullptr;
+		free(_tempMainSurface);
+		_tempMainSurface = nullptr;
+	}
+
+	_savegameThumbnail.free();
 
 	// Resume the engine
 	pt.clear();
