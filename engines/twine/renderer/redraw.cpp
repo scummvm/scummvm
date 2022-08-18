@@ -279,28 +279,33 @@ int32 Redraw::fillExtraDrawingList(DrawListStruct *drawList, int32 drawListPos) 
 			}
 			continue;
 		}
-		if ((extra->type & ExtraType::TIME_OUT) || (extra->type & ExtraType::FLASH) || (extra->payload.lifeTime + extra->spawnTime - TO_SECONDS(3) < _engine->_lbaTime) || (!((_engine->_lbaTime + extra->spawnTime) & 8))) {
-			const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->_camera);
-
-			if (projPos.x > VIEW_X0 && projPos.x < VIEW_X1(_engine) && projPos.y > VIEW_Y0 && projPos.y < VIEW_Y1(_engine)) {
-				const int16 tmpVal = extra->pos.x - _engine->_grid->_camera.x + extra->pos.z - _engine->_grid->_camera.z;
-				drawList[drawListPos].posValue = tmpVal;
-				drawList[drawListPos].actorIdx = i;
-				drawList[drawListPos].type = DrawListType::DrawExtras;
-				drawListPos++;
-
-				if (_engine->_cfgfile.ShadowMode == 2 && !(extra->sprite & EXTRA_SPECIAL_MASK)) {
-					const IVec3 &shadowCoord = _engine->_movements->getShadowPosition(extra->pos);
-
-					drawList[drawListPos].posValue = tmpVal - 1;
-					drawList[drawListPos].actorIdx = 0;
-					drawList[drawListPos].type = DrawListType::DrawShadows;
-					drawList[drawListPos].x = shadowCoord.x;
-					drawList[drawListPos].y = shadowCoord.y;
-					drawList[drawListPos].z = shadowCoord.z;
-					drawList[drawListPos].offset = 0;
-					drawListPos++;
+		if ((extra->type & ExtraType::TIME_OUT) && (extra->type & ExtraType::FLASH)) {
+			if (_engine->_lbaTime >= extra->spawnTime + extra->payload.lifeTime - TO_SECONDS(3)) {
+				if ((_engine->_lbaTime + extra->spawnTime) & 8) {
+					continue;
 				}
+			}
+		}
+		const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->_camera);
+
+		if (projPos.x > VIEW_X0 && projPos.x < VIEW_X1(_engine) && projPos.y > VIEW_Y0 && projPos.y < VIEW_Y1(_engine)) {
+			const int16 tmpVal = extra->pos.x - _engine->_grid->_camera.x + extra->pos.z - _engine->_grid->_camera.z;
+			drawList[drawListPos].posValue = tmpVal;
+			drawList[drawListPos].actorIdx = i;
+			drawList[drawListPos].type = DrawListType::DrawExtras;
+			drawListPos++;
+
+			if (_engine->_cfgfile.ShadowMode == 2 && !(extra->sprite & EXTRA_SPECIAL_MASK)) {
+				const IVec3 &shadowCoord = _engine->_movements->getShadowPosition(extra->pos);
+
+				drawList[drawListPos].posValue = tmpVal - 1;
+				drawList[drawListPos].actorIdx = 0;
+				drawList[drawListPos].type = DrawListType::DrawShadows;
+				drawList[drawListPos].x = shadowCoord.x;
+				drawList[drawListPos].y = shadowCoord.y;
+				drawList[drawListPos].z = shadowCoord.z;
+				drawList[drawListPos].offset = 0;
+				drawListPos++;
 			}
 		}
 	}
