@@ -366,7 +366,9 @@ unsigned long LowLevelSystem::getTime() {
 }
 
 cDate LowLevelSystem::getDate() {
-	return {};
+	TimeDate td;
+	g_system->getTimeAndDate(td);
+	return {td.tm_sec, td.tm_min, td.tm_hour, td.tm_mday, td.tm_mon, td.tm_year - 100, td.tm_wday, 0};
 }
 
 iScript *LowLevelSystem::createScript(const tString &name) {
