@@ -666,7 +666,7 @@ protected:
 
 	virtual void queryQuit();
 	virtual void queryRestart();
-	virtual const char *getGUIString(int stringId);
+	virtual char *getGUIString(int stringId);
 	void waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked);
 	virtual int getGUIStringHeight(const char *str);
 	virtual int getGUIStringWidth(const char *str);
