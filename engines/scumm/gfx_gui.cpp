@@ -408,8 +408,8 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 				int yOffset = 8;
 
 				if ((_game.id == GID_DIG && _useCJKMode) &&
-					((ctrl->label[0] >= 128 && ctrl->label[0] <= 159) ||
-					 (ctrl->label[0] >= 224 && ctrl->label[0] <= 253))) {
+					(((byte)ctrl->label[0] >= 128 && (byte)ctrl->label[0] <= 159) ||
+					 ((byte)ctrl->label[0] >= 224 && (byte)ctrl->label[0] <= 253))) {
 					yOffset = 16;
 				}
 
@@ -655,7 +655,7 @@ void ScummEngine_v7::queryQuit() {
 	}
 }
 
-const char *ScummEngine_v8::getGUIString(int stringId) {
+char *ScummEngine_v8::getGUIString(int stringId) {
 	InfoDialog d(this, 0);
 	int resStringId = -1;
 
@@ -706,16 +706,16 @@ const char *ScummEngine_v8::getGUIString(int stringId) {
 		resStringId = 35;
 		break;
 	default:
-		return "";
+		return _emptyMsg;
 	}
 
 	if (resStringId > 0)
 		return d.getPlainEngineString(resStringId);
 	else
-		return "";
+		return _emptyMsg;
 }
 
-const char *ScummEngine_v7::getGUIString(int stringId) {
+char *ScummEngine_v7::getGUIString(int stringId) {
 	InfoDialog d(this, 0);
 	int resStringId = -1;
 
@@ -833,13 +833,13 @@ const char *ScummEngine_v7::getGUIString(int stringId) {
 		resStringId = 58;
 		break;
 	default:
-		return "";
+		return _emptyMsg;
 	}
 
 	if (resStringId > 0)
 		return d.getPlainEngineString(resStringId);
 	else
-		return "";
+		return _emptyMsg;
 }
 
 int ScummEngine_v7::getGUIStringHeight(const char *str) {
@@ -1679,7 +1679,7 @@ void ScummEngine::setUpMainMenuControls() {
 			yConstant - 23,
 			292,
 			yConstant - 23 + 12,
-			(char *)getGUIString(gsSave), 1, 1);
+			getGUIString(gsSave), 1, 1);
 
 		// Load button
 		setUpInternalGUIControl(GUI_CTRL_LOAD_BUTTON,
@@ -1695,7 +1695,7 @@ void ScummEngine::setUpMainMenuControls() {
 			yConstant - 8,
 			292,
 			yConstant - 8 + 12,
-			(char *)getGUIString(gsLoad), 1, 1);
+			getGUIString(gsLoad), 1, 1);
 
 		// Play button
 		setUpInternalGUIControl(GUI_CTRL_PLAY_BUTTON,
@@ -1711,7 +1711,7 @@ void ScummEngine::setUpMainMenuControls() {
 			yConstant + 7,
 			292,
 			yConstant + 19,
-			(char *)getGUIString(gsPlay), 1, 1);
+			getGUIString(gsPlay), 1, 1);
 
 		// Quit button
 		setUpInternalGUIControl(GUI_CTRL_QUIT_BUTTON,
@@ -1727,7 +1727,7 @@ void ScummEngine::setUpMainMenuControls() {
 			yConstant + 22,
 			292,
 			yConstant + 34,
-			(char *)getGUIString(gsQuit), 1, 1);
+			getGUIString(gsQuit), 1, 1);
 	}
 
 	if (_menuPage != GUI_PAGE_MAIN || !(_game.id == GID_MONKEY2 || _game.id == GID_MONKEY)) {
@@ -1780,7 +1780,7 @@ void ScummEngine::setUpMainMenuControls() {
 				yConstant - 8,
 				292,
 				yConstant - 8 + 12,
-				(char *)getGUIString(gsOK), 1, 1);
+				getGUIString(gsOK), 1, 1);
 		}
 
 		// Cancel button
@@ -1797,7 +1797,7 @@ void ScummEngine::setUpMainMenuControls() {
 			(_menuPage == GUI_PAGE_LOAD ? yConstant - 1 : yConstant + 7),
 			292,
 			(_menuPage == GUI_PAGE_LOAD ? yConstant - 1 : yConstant + 7) + 12,
-			(char *)getGUIString(gsCancel), 1, 1);
+			getGUIString(gsCancel), 1, 1);
 
 		// Savegame names
 		for (int i = GUI_CTRL_FIRST_SG, j = 0; i <= GUI_CTRL_LAST_SG; i++, j += 11) {
@@ -2027,7 +2027,7 @@ void ScummEngine_v6::setUpMainMenuControls() {
 			(_game.version == 7 ? yConstantV7 + 37 : yConstantV6 - 23),
 			-60,
 			((_game.id == GID_DIG && _useCJKMode) ? -18 : -12),
-			(char *)getGUIString(gsSave), 1, 1);
+			getGUIString(gsSave), 1, 1);
 
 		// Load button
 		int loadButtonAnchorY = yConstantV7 +
@@ -2046,7 +2046,7 @@ void ScummEngine_v6::setUpMainMenuControls() {
 			(_game.version == 7 ? loadButtonAnchorY : yConstantV6 - 8),
 			-60,
 			((_game.id == GID_DIG && _useCJKMode) ? -18 : -12),
-			(char *)getGUIString(gsLoad), 1, 1);
+			getGUIString(gsLoad), 1, 1);
 
 		// Play button
 		int playButtonAnchorY = yConstantV7 +
@@ -2065,7 +2065,7 @@ void ScummEngine_v6::setUpMainMenuControls() {
 			(_game.version == 7 ? playButtonAnchorY : yConstantV6 + 7),
 			-60,
 			((_game.id == GID_DIG && _useCJKMode) ? -18 : -12),
-			(char *)getGUIString(gsPlay), 1, 1);
+			getGUIString(gsPlay), 1, 1);
 
 		// Quit button
 		int quitButtonAnchorY = yConstantV7 +
@@ -2084,7 +2084,7 @@ void ScummEngine_v6::setUpMainMenuControls() {
 			(_game.version == 7 ? quitButtonAnchorY : yConstantV6 + 22),
 			-60,
 			((_game.id == GID_DIG && _useCJKMode) ? -18 : -12),
-			(char *)getGUIString(gsQuit), 1, 1);
+			getGUIString(gsQuit), 1, 1);
 	}
 
 	// Arrow up button
@@ -2136,7 +2136,7 @@ void ScummEngine_v6::setUpMainMenuControls() {
 				(_game.version == 7 ? okButtonAnchorY : yConstantV6 - 8),
 				-60,
 				((_game.id == GID_DIG && _useCJKMode) ? -18 : -12),
-				(char *)getGUIString(gsOK), 1, 1);
+				getGUIString(gsOK), 1, 1);
 		}
 
 		// Cancel button
@@ -2170,7 +2170,7 @@ void ScummEngine_v6::setUpMainMenuControls() {
 			cancelButtonAnchorY,
 			-60,
 			((_game.id == GID_DIG && _useCJKMode) ? -18 : -12),
-			(char *)getGUIString(gsCancel), 1, 1);
+			getGUIString(gsCancel), 1, 1);
 
 		// Savegame names
 		for (int i = GUI_CTRL_FIRST_SG, j = 11; i <= GUI_CTRL_LAST_SG; i++, j += 11) {
@@ -2283,9 +2283,9 @@ void ScummEngine::updateMainMenuControls() {
 	_internalGUIControls[GUI_CTRL_TEXT_SPEED_SLIDER].label = _mainMenuTextSpeedSlider;
 
 	if (_sound->isAudioDisabled()) {
-		_internalGUIControls[GUI_CTRL_MUSIC_SLIDER].label  = (char *)getGUIString(gsDisabled);
-		_internalGUIControls[GUI_CTRL_SPEECH_SLIDER].label = (char *)getGUIString(gsDisabled);
-		_internalGUIControls[GUI_CTRL_SFX_SLIDER].label    = (char *)getGUIString(gsDisabled);
+		_internalGUIControls[GUI_CTRL_MUSIC_SLIDER].label  = getGUIString(gsDisabled);
+		_internalGUIControls[GUI_CTRL_SPEECH_SLIDER].label = getGUIString(gsDisabled);
+		_internalGUIControls[GUI_CTRL_SFX_SLIDER].label    = getGUIString(gsDisabled);
 	}
 
 	if (_spooledMusicIsToBeEnabled) {
@@ -2298,7 +2298,7 @@ void ScummEngine::updateMainMenuControls() {
 
 	if (VAR_VOICE_MODE != 0xFF && VAR(VAR_VOICE_MODE) == 0) {
 		_internalGUIControls[GUI_CTRL_DISPLAY_TEXT_CHECKBOX].label = _uncheckedBox;
-		_internalGUIControls[GUI_CTRL_TEXT_SPEED_SLIDER].label = (char *)getGUIString(gsDisabled);
+		_internalGUIControls[GUI_CTRL_TEXT_SPEED_SLIDER].label = getGUIString(gsDisabled);
 	}
 
 	drawInternalGUIControl(GUI_CTRL_MUSIC_SLIDER,  0); // Music slider
@@ -2453,7 +2453,7 @@ void ScummEngine::getSliderString(int stringId, int value, char *sliderString, i
 	}
 }
 
-const char *ScummEngine_v6::getGUIString(int stringId) {
+char *ScummEngine_v6::getGUIString(int stringId) {
 	InfoDialog d(this, 0);
 	int resStringId = -1;
 
@@ -2552,18 +2552,19 @@ const char *ScummEngine_v6::getGUIString(int stringId) {
 		resStringId = 34;
 		break;
 	case gsHeap:
-		return "Heap %dK";
+		resStringId = 35;
+		break;
 	default:
-		return "";
+		return _emptyMsg;
 	}
 
 	if (resStringId > 0)
 		return d.getPlainEngineString(resStringId);
 	else
-		return "";
+		return _emptyMsg;
 }
 
-const char *ScummEngine::getGUIString(int stringId) {
+char *ScummEngine::getGUIString(int stringId) {
 	InfoDialog d(this, 0);
 	int resStringId = -1;
 
@@ -2638,15 +2639,16 @@ const char *ScummEngine::getGUIString(int stringId) {
 		resStringId = 26;
 		break;
 	case gsHeap:
-		return "Heap %dK";
+		resStringId = 28;
+		break;
 	default:
-		return "";
+		return _emptyMsg;
 	}
 
 	if (resStringId > 0)
 		return d.getPlainEngineString(resStringId);
 	else
-		return "";
+		return _emptyMsg;
 }
 
 } // End of namespace Scumm

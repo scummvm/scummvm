@@ -184,6 +184,7 @@ static const ResString string_map_table_v6[] = {
 	{0, "Music Volume    Low  =========  High"},
 	{0, "Voice Volume    Low  =========  High"},
 	{0, "SFX Volume    Low  =========  High"},
+	{0, "Heap %dK"}
 };
 
 #pragma mark -
@@ -428,34 +429,34 @@ void InfoDialog::reflowLayout() {
 	_text->setSize(_w, _h);
 }
 
-const char *InfoDialog::getPlainEngineString(int stringno) {
-	const char *result;
+char *InfoDialog::getPlainEngineString(int stringno) {
+	char *result;
 
 	if (stringno == 0)
 		return nullptr;
 
 	if (_vm->_game.version == 8) {
-		return (const char *)string_map_table_v8[stringno - 1].string;
+		return (char *)string_map_table_v8[stringno - 1].string;
 	} else if (_vm->_game.version == 7) {
-		result = (const char *)_vm->getStringAddressVar(string_map_table_v7[stringno - 1].num);
+		result = (char *)_vm->getStringAddressVar(string_map_table_v7[stringno - 1].num);
 
 		if (!result) {
-			result = (const char *)string_map_table_v7[stringno - 1].string;
+			result = (char *)string_map_table_v7[stringno - 1].string;
 		}
 	} else if (_vm->_game.version == 6) {
-		result = (const char *)_vm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
+		result = (char *)_vm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
 
 		if (!result) {
-			result = (const char *)string_map_table_v6[stringno - 1].string;
+			result = (char *)string_map_table_v6[stringno - 1].string;
 		}
 	} else if (_vm->_game.version >= 3) {
-		result = (const char *)_vm->getStringAddress(getStaticResString(_vm->_language, stringno - 1).num);
+		result = (char *)_vm->getStringAddress(getStaticResString(_vm->_language, stringno - 1).num);
 
 		if (!result) {
-			result = (const char *)getStaticResString(_vm->_language, stringno - 1).string;
+			result = (char *)getStaticResString(_vm->_language, stringno - 1).string;
 		}
 	} else {
-		result = (const char *)(getStaticResString(_vm->_language, stringno - 1).string);
+		result = (char *)(getStaticResString(_vm->_language, stringno - 1).string);
 	}
 
 	return result;
@@ -646,6 +647,7 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 		{0, "Text Display Only"},
 		{0, "Text Speed   Slow  ==========  Fast"},
 		{0, "Roland Volume    Low  =========  High"},
+		{0, "Heap %dK"}
 	};
 
 	if (stringno + 1 >= ARRAYSIZE(strMap1)) {

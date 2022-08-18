@@ -96,7 +96,7 @@ public:
 	}
 
 	void reflowLayout() override;
-	const char *getPlainEngineString(int stringno);
+	char *getPlainEngineString(int stringno);
 
 protected:
 	// Query a string from the resources
