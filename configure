@@ -2490,6 +2490,10 @@ case $_host_cpu in
 		_need_memalign=yes
 		;;
 esac
+if test "$_enable_ubsan" = yes ; then
+	# UBSan implies -fsanitize=alignment, so avoid false positives.
+	_need_memalign=yes
+fi
 echo "$_need_memalign"
 
 define_in_config_h_if_yes $_need_memalign 'SCUMM_NEED_ALIGNMENT'
