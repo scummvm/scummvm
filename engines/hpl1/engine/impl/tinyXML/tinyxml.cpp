@@ -580,7 +580,7 @@ void TiXmlElement::SetAttribute(const std::string &name, const std::string &_val
 }
 #endif
 
-void TiXmlElement::Print(Common::DumpFile &file, int depth) const {
+void TiXmlElement::Print(Common::WriteStream &file, int depth) const {
 	int i;
 	for (i = 0; i < depth; i++) {
 		file.writeString("    ");
@@ -731,22 +731,22 @@ bool TiXmlDocument::LoadFile(const char *filename, TiXmlEncoding encoding) {
 	value = filename;
 
 	// reading in binary mode so that tinyxml can normalize the EOL
-	Common::File file; 
-	file.open(value); 
-	
+	Common::File file;
+	file.open(value);
+
 	if (file.isOpen()) {
 		bool result = LoadFile(file, encoding);
 		return result;
 	} else {
-		debugC(Hpl1::kDebugFilePath, "file %s not found", value.c_str()); 
+		debugC(Hpl1::kDebugFilePath, "file %s not found", value.c_str());
 		SetError(TIXML_ERROR_OPENING_FILE, 0, 0, TIXML_ENCODING_UNKNOWN);
 		return false;
 	}
 }
 
-bool TiXmlDocument::LoadFile(Common::File &file, TiXmlEncoding encoding) {
+bool TiXmlDocument::LoadFile(Common::SeekableReadStream &file, TiXmlEncoding encoding) {
 	if (file.err()) {
-		debugC(Hpl1::kDebugResourceLoading, "file %s could not be read", file.getName()); 
+		Hpl1::logError(Hpl1::kDebugResourceLoading, "xml file could not be read%c", '\n');
 		SetError(TIXML_ERROR_OPENING_FILE, 0, 0, TIXML_ENCODING_UNKNOWN);
 		return false;
 	}
@@ -792,9 +792,9 @@ bool TiXmlDocument::LoadFile(Common::File &file, TiXmlEncoding encoding) {
 	char *buf = new char[length + 1];
 	buf[0] = 0;
 
-	file.read(buf, length); 
+	file.read(buf, length);
 	if (file.err()) {
-		debugC(Hpl1::kDebugResourceLoading, "file read for %s failed", file.getName()); 
+		Hpl1::logError(Hpl1::kDebugResourceLoading, "xml file read for failed%c", '\n');
 		delete[] buf;
 		SetError(TIXML_ERROR_OPENING_FILE, 0, 0, TIXML_ENCODING_UNKNOWN);
 		return false;
@@ -863,7 +863,7 @@ bool TiXmlDocument::SaveFile(const char *filename) const {
 	return false;
 }
 
-bool TiXmlDocument::SaveFile(Common::DumpFile &fp) const {
+bool TiXmlDocument::SaveFile(Common::WriteStream &fp) const {
 	if (useMicrosoftBOM) {
 		const unsigned char TIXML_UTF_LEAD_0 = 0xefU;
 		const unsigned char TIXML_UTF_LEAD_1 = 0xbbU;
@@ -897,7 +897,7 @@ TiXmlNode *TiXmlDocument::Clone() const {
 	return clone;
 }
 
-void TiXmlDocument::Print(Common::DumpFile &cfile, int depth) const {
+void TiXmlDocument::Print(Common::WriteStream &cfile, int depth) const {
 	for (const TiXmlNode *node = FirstChild(); node; node = node->NextSibling()) {
 		node->Print(cfile, depth);
 		cfile.writeString("\n"); 
@@ -952,7 +952,7 @@ TiXmlAttribute* TiXmlAttribute::Previous()
 }
 */
 
-void TiXmlAttribute::Print(Common::DumpFile *cfile, int /*depth*/, TIXML_STRING *str) const {
+void TiXmlAttribute::Print(Common::WriteStream *cfile, int /*depth*/, TIXML_STRING *str) const {
 	TIXML_STRING n, v;
 
 	PutString(name, &n);
@@ -1020,7 +1020,7 @@ void TiXmlComment::operator=(const TiXmlComment &base) {
 	base.CopyTo(this);
 }
 
-void TiXmlComment::Print(Common::DumpFile &cfile, int depth) const {
+void TiXmlComment::Print(Common::WriteStream &cfile, int depth) const {
 	for (int i = 0; i < depth; i++) {
 		cfile.writeString("    ");
 	}
@@ -1045,7 +1045,7 @@ TiXmlNode *TiXmlComment::Clone() const {
 	return clone;
 }
 
-void TiXmlText::Print(Common::DumpFile &cfile, int depth) const {
+void TiXmlText::Print(Common::WriteStream &cfile, int depth) const {
 	if (cdata) {
 		int i;
 		cfile.writeString("\n");
@@ -1110,7 +1110,7 @@ void TiXmlDeclaration::operator=(const TiXmlDeclaration &copy) {
 	copy.CopyTo(this);
 }
 
-void TiXmlDeclaration::Print(Common::DumpFile *cfile, int /*depth*/, TIXML_STRING *str) const {
+void TiXmlDeclaration::Print(Common::WriteStream *cfile, int /*depth*/, TIXML_STRING *str) const {
 	if (cfile)
 		cfile->writeString("<?xml ");
 	if (str)
@@ -1171,7 +1171,7 @@ TiXmlNode *TiXmlDeclaration::Clone() const {
 	return clone;
 }
 
-void TiXmlUnknown::Print(Common::DumpFile &cfile, int depth) const {
+void TiXmlUnknown::Print(Common::WriteStream &cfile, int depth) const {
 	for (int i = 0; i < depth; i++)
 		cfile.writeString("    ");
 	cfile.writeString("<" + value + ">");
