@@ -45,6 +45,7 @@
 #include "hpl1/engine/system/low_level_system.h"
 
 #include "common/events.h"
+#include "hpl1/hpl1.h"
 
 namespace hpl {
 
@@ -360,7 +361,7 @@ void cGame::Run() {
 
 	// cMemoryManager::SetLogCreation(true);
 
-	while (!mbGameIsDone) {
+	while (!mbGameIsDone && !g_engine->shouldQuit()) {
 		// Log("-----------------\n");
 		//////////////////////////
 		// Update logic.
