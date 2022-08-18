@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-17 05:54+0000\n"
+"POT-Creation-Date: 2022-08-18 00:35+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -78,8 +78,8 @@ msgstr "Уверх"
 #: engines/mohawk/riven_stacks/aspit.cpp:349
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/nancy/dialogs.cpp:100
-#: engines/parallaction/saveload.cpp:270 engines/scumm/dialogs.cpp:192
-#: engines/sword1/control.cpp:888 engines/wintermute/wintermute.cpp:182
+#: engines/parallaction/saveload.cpp:270 engines/sword1/control.cpp:888
+#: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "Адмена"
 
@@ -177,15 +177,15 @@ msgstr ""
 #: engines/groovie/script.cpp:652 engines/nancy/dialogs.cpp:101
 #: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:99
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:926
-#: engines/scumm/dialogs.cpp:194 engines/scumm/scumm.cpp:1078
-#: engines/scumm/scumm.cpp:1104 engines/scumm/scumm.cpp:1126
-#: engines/scumm/scumm.cpp:1422 engines/scumm/scumm.cpp:1895
-#: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:531
-#: engines/sword1/animation.cpp:552 engines/sword1/animation.cpp:568
-#: engines/sword1/animation.cpp:576 engines/sword1/control.cpp:888
-#: engines/sword1/logic.cpp:1634 engines/sword2/animation.cpp:428
-#: engines/sword2/animation.cpp:448 engines/sword2/animation.cpp:464
-#: engines/sword2/animation.cpp:474 engines/zvision/file/save_manager.cpp:225
+#: engines/scumm/scumm.cpp:1078 engines/scumm/scumm.cpp:1104
+#: engines/scumm/scumm.cpp:1126 engines/scumm/scumm.cpp:1422
+#: engines/scumm/scumm.cpp:1895 engines/sky/compact.cpp:141
+#: engines/sword1/animation.cpp:531 engines/sword1/animation.cpp:552
+#: engines/sword1/animation.cpp:568 engines/sword1/animation.cpp:576
+#: engines/sword1/control.cpp:888 engines/sword1/logic.cpp:1634
+#: engines/sword2/animation.cpp:428 engines/sword2/animation.cpp:448
+#: engines/sword2/animation.cpp:464 engines/sword2/animation.cpp:474
+#: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
 msgstr "OK"
 
@@ -886,9 +886,8 @@ msgstr "Загрузіць гульню:"
 #: gui/launcher.cpp:280 engines/dialogs.cpp:99 engines/engine.cpp:885
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:383
-#: engines/scumm/dialogs.cpp:190 engines/trecision/saveload.cpp:253
-#: engines/tsage/scenes.cpp:630 engines/wage/saveload.cpp:741
-#: engines/xeen/saves.cpp:255
+#: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
+#: engines/wage/saveload.cpp:741 engines/xeen/saves.cpp:255
 msgid "Load"
 msgstr "Загрузіць"
 
@@ -2204,7 +2203,7 @@ msgstr "Без графікі"
 msgid "Standard renderer"
 msgstr "Стандартны растарызатар"
 
-#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:705
+#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:792
 msgid "Standard"
 msgstr "Стандартны"
 
@@ -2272,7 +2271,7 @@ msgstr ""
 msgid "Clear value"
 msgstr "Ачысціць значэнне"
 
-#: gui/widgets/grid.cpp:218 engines/scumm/dialogs.cpp:191
+#: gui/widgets/grid.cpp:218
 msgid "Play"
 msgstr "Гуляць"
 
@@ -2544,8 +2543,7 @@ msgstr "Захаваць гульню:"
 #: engines/parallaction/metaengine.cpp:133
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:402
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:743
-#: engines/sci/engine/kfile.cpp:1079 engines/scumm/dialogs.cpp:189
-#: engines/sherlock/scalpel/scalpel.cpp:1249
+#: engines/sci/engine/kfile.cpp:1079 engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3765
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:628
@@ -3017,9 +3015,9 @@ msgstr "Вы сапраўды жадаеце выйсці? Усе незахав
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:260 engines/hdb/metaengine.cpp:255
 #: engines/mohawk/myst_stacks/menu.cpp:317
-#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/scumm/dialogs.cpp:193
-#: engines/scumm/help.cpp:81 engines/scumm/help.cpp:83
-#: engines/zvision/metaengine.cpp:203 engines/zvision/metaengine.cpp:221
+#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/scumm/help.cpp:81
+#: engines/scumm/help.cpp:83 engines/zvision/metaengine.cpp:203
+#: engines/zvision/metaengine.cpp:221
 msgid "Quit"
 msgstr "Выхад"
 
@@ -3572,7 +3570,7 @@ msgstr "Ніводнага файла не перададзена!"
 msgid "Uploaded successfully!"
 msgstr "Угружаны паспяхова!"
 
-#: backends/platform/3ds/options-dialog.cpp:44 engines/scumm/dialogs.cpp:292
+#: backends/platform/3ds/options-dialog.cpp:44 engines/scumm/dialogs.cpp:257
 msgid "~C~lose"
 msgstr "~З~ачыніць"
 
@@ -6878,12 +6876,12 @@ msgid ""
 "intro."
 msgstr ""
 
-#: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:739
+#: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:826
 #, fuzzy
 msgid "Enable game-specific enhancements"
 msgstr "Уключыць цэнзуру змесціва"
 
-#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:739
+#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:826
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
@@ -6922,155 +6920,86 @@ msgid ""
 "dumps that Limited Run Games also provided."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:177
-#, c-format
-msgid "Insert Disk %c and Press Button to Continue."
-msgstr "Устаўце дыск %c і націсніце клавішу, каб працягнуць."
-
-#: engines/scumm/dialogs.cpp:178
-#, c-format
-msgid "Unable to Find %s, (%c%d) Press Button."
-msgstr "Не атрымалася знайсці %s, (%c%d) Націсніце клавішу."
-
-#: engines/scumm/dialogs.cpp:179
-#, c-format
-msgid "Error reading disk %c, (%c%d) Press Button."
-msgstr "Памылка чытання дыска %c, (%c%d) Націсніце клавішу."
-
-#: engines/scumm/dialogs.cpp:180
-msgid "Game Paused.  Press SPACE to Continue."
-msgstr "Гульня прыпынена.  Каб працягнуць, націсніце прабел."
-
-#. I18N: You may specify 'Yes' symbol at the end of the line, like this:
-#. "Moechten Sie wirklich neu starten?  (J/N)J"
-#. Will react to J as 'Yes'
-#: engines/scumm/dialogs.cpp:184
-msgid "Are you sure you want to restart?  (Y/N)Y"
-msgstr "Вы ўпэўнены, што жадаеце пачаць ізноў?  (Y/N)Y"
-
-#. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
-#: engines/scumm/dialogs.cpp:186
-msgid "Are you sure you want to quit?  (Y/N)Y"
-msgstr "Вы ўпэўнены, што жадаеце выйсці?  (Y/N)Y"
-
-#: engines/scumm/dialogs.cpp:195
-msgid "Insert save/load game disk"
-msgstr "Устаўце дыск з захаваннямі"
-
-#: engines/scumm/dialogs.cpp:196
-msgid "You must enter a name"
-msgstr "Вы павінны ўвесці імя"
-
-#: engines/scumm/dialogs.cpp:197
-msgid "The game was NOT saved (disk full?)"
-msgstr "Гульня НЕ БЫЛА запісана (дыск поўны?)"
-
-#: engines/scumm/dialogs.cpp:198
-msgid "The game was NOT loaded"
-msgstr "Гульня НЕ БЫЛА загружана"
-
-#: engines/scumm/dialogs.cpp:199
-#, c-format
-msgid "Saving '%s'"
-msgstr "Захоўваю '%s'"
-
-#: engines/scumm/dialogs.cpp:200
-#, c-format
-msgid "Loading '%s'"
-msgstr "Загружаю '%s'"
-
-#: engines/scumm/dialogs.cpp:201
-msgid "Name your SAVE game"
-msgstr "Назавіце захаванне гульні"
-
-#: engines/scumm/dialogs.cpp:202
-msgid "Select a game to LOAD"
-msgstr "Абярыце гульню для загрузкі"
-
-#: engines/scumm/dialogs.cpp:203
-msgid "Game title)"
-msgstr "Назва гульні)"
-
 #. I18N: Previous page button
-#: engines/scumm/dialogs.cpp:289
+#: engines/scumm/dialogs.cpp:254
 msgid "~P~revious"
 msgstr "~П~апяр"
 
 #. I18N: Next page button
-#: engines/scumm/dialogs.cpp:291
+#: engines/scumm/dialogs.cpp:256
 msgid "~N~ext"
 msgstr "~Н~аст"
 
-#: engines/scumm/dialogs.cpp:644
+#: engines/scumm/dialogs.cpp:731
 msgid "Speech Only"
 msgstr "Толькі агучка"
 
-#: engines/scumm/dialogs.cpp:645
+#: engines/scumm/dialogs.cpp:732
 msgid "Speech and Subtitles"
 msgstr "Агучка і субтытры"
 
-#: engines/scumm/dialogs.cpp:646
+#: engines/scumm/dialogs.cpp:733
 msgid "Subtitles Only"
 msgstr "Толькі субтытры"
 
-#: engines/scumm/dialogs.cpp:654
+#: engines/scumm/dialogs.cpp:741
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Агучка і тэкст"
 
-#: engines/scumm/dialogs.cpp:700
+#: engines/scumm/dialogs.cpp:787
 msgid "Select a Proficiency Level."
 msgstr "Абярыце ўзровень складанасці."
 
-#: engines/scumm/dialogs.cpp:702
+#: engines/scumm/dialogs.cpp:789
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "За дапамогай звярніцеся да інструкцыі Loom(TM)."
 
-#: engines/scumm/dialogs.cpp:706
+#: engines/scumm/dialogs.cpp:793
 msgid "Practice"
 msgstr "Практыкант"
 
-#: engines/scumm/dialogs.cpp:707
+#: engines/scumm/dialogs.cpp:794
 msgid "Expert"
 msgstr "Эксперт"
 
-#: engines/scumm/dialogs.cpp:760
+#: engines/scumm/dialogs.cpp:847
 msgid "Overture Timing:"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:764
+#: engines/scumm/dialogs.cpp:851
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:840
+#: engines/scumm/dialogs.cpp:927
 #, fuzzy
 msgid "Playback Adjust:"
 msgstr "Прайграць"
 
-#: engines/scumm/dialogs.cpp:844
+#: engines/scumm/dialogs.cpp:931
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:916
+#: engines/scumm/dialogs.cpp:1003
 msgid "Intro Adjust:"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:920
+#: engines/scumm/dialogs.cpp:1007
 msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
 "syncs up with the intro."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:929
+#: engines/scumm/dialogs.cpp:1016
 msgid "Outlook Adjust:"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:933
+#: engines/scumm/dialogs.cpp:1020
 msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "
@@ -9157,6 +9086,51 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#~ msgid "Insert Disk %c and Press Button to Continue."
+#~ msgstr "Устаўце дыск %c і націсніце клавішу, каб працягнуць."
+
+#~ msgid "Unable to Find %s, (%c%d) Press Button."
+#~ msgstr "Не атрымалася знайсці %s, (%c%d) Націсніце клавішу."
+
+#~ msgid "Error reading disk %c, (%c%d) Press Button."
+#~ msgstr "Памылка чытання дыска %c, (%c%d) Націсніце клавішу."
+
+#~ msgid "Game Paused.  Press SPACE to Continue."
+#~ msgstr "Гульня прыпынена.  Каб працягнуць, націсніце прабел."
+
+#~ msgid "Are you sure you want to restart?  (Y/N)Y"
+#~ msgstr "Вы ўпэўнены, што жадаеце пачаць ізноў?  (Y/N)Y"
+
+#~ msgid "Are you sure you want to quit?  (Y/N)Y"
+#~ msgstr "Вы ўпэўнены, што жадаеце выйсці?  (Y/N)Y"
+
+#~ msgid "Insert save/load game disk"
+#~ msgstr "Устаўце дыск з захаваннямі"
+
+#~ msgid "You must enter a name"
+#~ msgstr "Вы павінны ўвесці імя"
+
+#~ msgid "The game was NOT saved (disk full?)"
+#~ msgstr "Гульня НЕ БЫЛА запісана (дыск поўны?)"
+
+#~ msgid "The game was NOT loaded"
+#~ msgstr "Гульня НЕ БЫЛА загружана"
+
+#~ msgid "Saving '%s'"
+#~ msgstr "Захоўваю '%s'"
+
+#~ msgid "Loading '%s'"
+#~ msgstr "Загружаю '%s'"
+
+#~ msgid "Name your SAVE game"
+#~ msgstr "Назавіце захаванне гульні"
+
+#~ msgid "Select a game to LOAD"
+#~ msgstr "Абярыце гульню для загрузкі"
+
+#~ msgid "Game title)"
+#~ msgstr "Назва гульні)"
 
 #, fuzzy
 #~ msgid "Save progress automatically"
