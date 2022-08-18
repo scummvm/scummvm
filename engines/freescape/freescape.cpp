@@ -33,6 +33,32 @@ namespace Freescape {
 
 FreescapeEngine *g_freescape = NULL;
 
+static const entrancesTableEntry rawEntranceTable[] = {
+	{183, {36, 137, 13}}, // Correct?
+	{184, {36, 137, 13}}, // TODO
+	{185, {36, 137, 13}}, // TODO
+	{186, {36, 137, 13}}, // TODO
+	{187, {36, 137, 13}}, // TODO
+	{188, {36, 137, 13}}, // TODO
+	{190, {36, 137, 13}}, // TODO
+	{191, {36, 137, 13}}, // TODO
+	{192, {36, 137, 13}}, // TODO
+	{193, {36, 137, 13}}, // TODO
+	{194, {36, 137, 13}}, // TODO
+	{195, {36, 137, 13}}, // TODO
+	{196, {36, 137, 13}}, // TODO
+	{197, {203, 0, 31}},  // TODO
+	{198, {36, 137, 13}}, // TODO
+	{199, {36, 137, 13}}, // TODO
+	{200, {36, 137, 13}}, // TODO
+	{201, {36, 137, 13}}, // TODO
+	{202, {360, 0, 373}}, // TODO
+	{203, {207, 0, 384}},
+	{204, {207, 0, 372}},
+	{206, {36, 137, 13}}, // TODO
+	{0, {0, 0, 0}},        // NULL
+};
+
 FreescapeEngine::FreescapeEngine(OSystem *syst)
 	: Engine(syst), _screenW(320), _screenH(200), _border(nullptr), _gfx(nullptr) {
 	g_freescape = this;
@@ -54,6 +80,13 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	_playerHeightNumber = 1;
 	_borderTexture = nullptr;
 	_viewArea = Common::Rect(0, 0, _screenW, _screenH);
+
+	// Total Eclipse specific
+	const entrancesTableEntry *entry = rawEntranceTable;
+	while (entry->id) {
+		_entranceTable[entry->id] = entry;
+		entry++;
+	}
 
 	_rnd = new Common::RandomSource("freescape");
 }
@@ -536,8 +569,11 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 			}
 		}
 	}
+	areaScale = _currentArea->getScale();
+
 	_lastPosition = _position;
 	debugC(1, kFreescapeDebugMove, "new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
+	debugC(1, kFreescapeDebugMove, "player height: %f", _position.y() - areaScale * _playerHeight);
 }
 
 bool FreescapeEngine::checkFloor(Math::Vector3d currentPosition) {
@@ -614,9 +650,14 @@ void FreescapeEngine::gotoArea(uint16 areaID, int entranceID) {
 	Entrance *entrance = nullptr;
 	if (entranceID > 0) {
 		entrance = (Entrance*) _currentArea->entranceWithID(entranceID);
-		assert(entrance);
 
-		_position = entrance->getOrigin();
+		if (!entrance) {
+			assert(_entranceTable.contains(entranceID));
+			const entrancesTableEntry *entry = _entranceTable[entranceID];
+			_position = scale * Math::Vector3d(entry->position[0], entry->position[1], entry->position[2]);
+		} else
+			_position = entrance->getOrigin();
+
 		if (_rotation == Math::Vector3d(0, 0, 0)) {
 			_rotation = entrance->getRotation();
 			_pitch = _rotation.x();
