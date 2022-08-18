@@ -35,6 +35,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      if one doesn't pick up the model lighthouse lens before Captain Dread brings
      Guybrush back to Scabb Island, at the end of Part II.
    - Added support for original GUI dialogs to COMI.
+   - Improved the decoding of some Western European game strings when they're
+     displayed through ScummVM's interface, such as when pausing a game.
 
  Toon:
    - Made game menus behave like in the original.
