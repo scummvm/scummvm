@@ -325,6 +325,8 @@ public:
 	cSaveHandler(cInit *apInit);
 	~cSaveHandler();
 
+	static cDate parseDate(const Common::String &saveFile);
+
 	void SaveData(const tString &asName);
 	void LoadData(const tString &asName);
 
@@ -345,7 +347,7 @@ public:
 	const tWString &GetSaveDir() { return msSaveDir; }
 
 	void DeleteOldestIfMax(const tWString &asDir, const tWString &asMask, int alMaxFiles);
-	tWString GetLatest(const tWString &asDir, const tWString &asMask);
+	tWString GetLatest(const tWString &asMask);
 
 private:
 	cInit *mpInit;
