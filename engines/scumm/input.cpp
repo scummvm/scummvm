@@ -498,7 +498,13 @@ void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool 
 			ks = _keyPressed;
 			leftBtnClicked = (_leftBtnPressed & msClicked) != 0;
 			rightBtnClicked = (_rightBtnPressed & msClicked) != 0;
-			if (ks.keycode != Common::KEYCODE_INVALID || leftBtnClicked || rightBtnClicked)
+
+			validKey = ks.keycode != Common::KEYCODE_INVALID &&
+					   ks.keycode != Common::KEYCODE_LALT    &&
+					   ks.keycode != Common::KEYCODE_RALT    &&
+					   !(ks.keycode == Common::KEYCODE_s && ks.hasFlags(Common::KBD_ALT));
+
+			if (validKey || leftBtnClicked || rightBtnClicked)
 				return;
 
 			if (shouldQuit())
@@ -520,7 +526,9 @@ void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool 
 			if (shouldQuit())
 				return;
 
-			validKey = ks.keycode != Common::KEYCODE_INVALID &&
+ 			validKey = ks.keycode != Common::KEYCODE_INVALID &&
+					   ks.keycode != Common::KEYCODE_LALT    &&
+					   ks.keycode != Common::KEYCODE_RALT    &&
 					   ks.keycode != Common::KEYCODE_LCTRL   &&
 					   ks.keycode != Common::KEYCODE_RCTRL   &&
 					   ks.keycode != Common::KEYCODE_LSHIFT  &&
@@ -528,7 +536,8 @@ void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool 
 					   ks.keycode != Common::KEYCODE_UP      &&
 					   ks.keycode != Common::KEYCODE_DOWN    &&
 					   ks.keycode != Common::KEYCODE_LEFT    &&
-					   ks.keycode != Common::KEYCODE_RIGHT;
+					   ks.keycode != Common::KEYCODE_RIGHT   &&
+					   !(ks.keycode == Common::KEYCODE_s && ks.hasFlags(Common::KBD_ALT));
 		}
 	}
 }
