@@ -24,10 +24,10 @@
 
 namespace Hpl1 {
 
-int stoi(const char *str, int emptyResult) {
-	if (str == nullptr)
-		return emptyResult;
-	return atoi(str);
+int stoi(const Common::String &str, int resultWhenEmpty) {
+	if (str == "")
+		return resultWhenEmpty;
+	return atoi(str.c_str());
 }
 
 Common::String fileDir(const Common::String &path) {

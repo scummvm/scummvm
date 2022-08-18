@@ -26,7 +26,7 @@
 
 namespace Hpl1 {
 
-int stoi(const char *str, int emptyResult = 0);
+int stoi(const Common::String &str, int resultWhenEmpty = 0);
 
 Common::String fileDir(const Common::String &path);
 
