@@ -38,6 +38,7 @@
 #include "hpl1/penumbra-overture/PlayerHelper.h"
 #include "hpl1/penumbra-overture/SaveHandler.h"
 #include "hpl1/hpl1.h"
+#include "hpl1/debug.h"
 #include "common/savefile.h"
 
 
@@ -772,10 +773,8 @@ public:
 class cMainMenuWidget_FavoriteSaveGame : public cMainMenuWidget_Button {
 public:
 	cMainMenuWidget_FavoriteSaveGame(cInit *apInit, const cVector3f &avPos, const tWString &asText,
-									 cVector2f avFontSize, eFontAlign aAlignment,
-									 tWString asDir, int alNum)
+									 cVector2f avFontSize, eFontAlign aAlignment, int alNum)
 		: cMainMenuWidget_Button(apInit, avPos, asText, eMainMenuState_LastEnum, avFontSize, aAlignment) {
-		msDir = asDir;
 		mlNum = alNum;
 	}
 
@@ -784,17 +783,13 @@ public:
 		if (lSelected < 0)
 			return;
 
-		tWString sFile = mpInit->mpSaveHandler->GetSaveDir() + msDir +
-						 _W("/") + gvSaveGameFileVec[mlNum][lSelected];
-
-		tWString sDest = mpInit->mpSaveHandler->GetSaveDir() + _W("save-favorite.") +
-						 gvSaveGameFileVec[mlNum][lSelected];
-
-		CloneFile(sFile, sDest, true);
+		tWString originalName = gvSaveGameFileVec[mlNum][lSelected];
+		tWString newName = _W("save-favorite.") + cString::SubW(originalName, originalName.find_first_of('.') + 1);
+		Hpl1::logInfo(Hpl1::kDebugSaves, "adding save %s to favourites\n", cString::To8Char(newName).c_str());
+		g_engine->getSaveFileManager()->copySavefile(cString::To8Char(originalName).c_str(), cString::To8Char(newName).c_str());
 		mpInit->mpMainMenu->UpdateWidgets();
 	}
 
-	tWString msDir;
 	int mlNum;
 };
 
@@ -2630,7 +2625,7 @@ void cMainMenu::CreateWidgets() {
 
 		vPos.x += 70;
 		if (i != 2)
-			AddWidgetToState(state, hplNew(cMainMenuWidget_FavoriteSaveGame, (mpInit, vPos, kTranslate("MainMenu", "Add To Favorites"), 17, eFontAlign_Left, sDir, (int)i)));
+			AddWidgetToState(state, hplNew(cMainMenuWidget_FavoriteSaveGame, (mpInit, vPos, kTranslate("MainMenu", "Add To Favorites"), 17, eFontAlign_Left, (int)i)));
 
 		vPos.x += 205;
 		AddWidgetToState(state, hplNew(cMainMenuWidget_RemoveSaveGame, (mpInit, vPos, kTranslate("MainMenu", "Remove"), 17, eFontAlign_Left, sDir, (int)i)));
