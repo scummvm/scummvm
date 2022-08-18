@@ -228,10 +228,7 @@ void ScummEngine::copyHeapSaveGameToFile(int slot, const char *saveName) {
 	if (!saveFile) {
 		saveFailed = true;
 	} else {
-		// This will not work for Russian, Japanese, Chinese, Korean.
-		// But it has to be investigated if we can just insert the
-		// codePage returned by getDialogCodePage() here...
-		Common::String temp = Common::U32String(saveName, Common::kISO8859_1).encode(Common::kUtf8);
+		Common::String temp = Common::U32String(saveName,  getDialogCodePage()).encode(Common::kUtf8);
 		Common::strlcpy(hdr.name, temp.c_str(), sizeof(hdr.name));
 		saveSaveGameHeader(saveFile, hdr);
 
@@ -950,10 +947,7 @@ bool ScummEngine::getSavegameName(int slot, Common::String &desc) {
 	}
 
 	Common::U32String temp(desc.c_str(), Common::kUtf8);
-	// This will not work for Russian, Japanese, Chinese, Korean.
-	// But it has to be investigated if we can just insert the
-	// codePage returned by getDialogCodePage() here...
-	desc = temp.encode(Common::kISO8859_1);
+	desc = temp.encode(getDialogCodePage());
 
 	return result;
 }
