@@ -1285,7 +1285,10 @@ void ScummEngine::showMainMenu() {
 	setUpMainMenuControls();
 	drawMainMenuControls();
 
-	if (_game.id != GID_MONKEY2 && _game.id != GID_MONKEY) {
+	if (_game.platform == Common::kPlatformAmiga) {
+		convertMessageToString((const byte *)getGUIString(gsInsertSaveDisk), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
+		drawMainMenuTitle(saveScreenTitle);
+	} else if (_game.id != GID_MONKEY2 && _game.id != GID_MONKEY) {
 		convertMessageToString((const byte *)getGUIString(gsTitle), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
 		drawMainMenuTitle(saveScreenTitle);
 	}
@@ -1541,7 +1544,10 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, bool &hasLoadedSt
 		setUpMainMenuControls();
 		drawMainMenuControls();
 
-		if (_game.id != GID_MONKEY2 && _game.id != GID_MONKEY) {
+		if (_game.platform == Common::kPlatformAmiga) {
+			convertMessageToString((const byte *)getGUIString(gsInsertSaveDisk), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
+			drawMainMenuTitle(saveScreenTitle);
+		} else if (_game.id != GID_MONKEY2 && _game.id != GID_MONKEY) {
 			convertMessageToString((const byte *)getGUIString(gsTitle), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
 			drawMainMenuTitle(saveScreenTitle);
 		}
@@ -2207,14 +2213,16 @@ void ScummEngine::drawMainMenuControls() {
 		drawInternalGUIControl(GUI_CTRL_PLAY_BUTTON, 0); // Play button
 		drawInternalGUIControl(GUI_CTRL_QUIT_BUTTON, 0); // Quit button
 
-		if (_game.id != GID_MONKEY2 && _game.id != GID_MONKEY)
+		if (_game.id != GID_MONKEY2 && _game.id != GID_MONKEY && _game.platform != Common::kPlatformAmiga)
 			drawInternalGUIControl(GUI_CTRL_INNER_BOX, 0); // Inner box
 
-		if ((_game.version == 5 &&( _game.id != GID_MONKEY2 && _game.id != GID_MONKEY)) || _game.version == 6) {
+		if ((_game.version == 5 &&
+			(_game.id != GID_MONKEY2 && _game.id != GID_MONKEY && _game.platform != Common::kPlatformAmiga)) ||
+			_game.version == 6) {
 			drawInternalGUIControl(GUI_CTRL_ARROW_UP_BUTTON, 0);   // Arrow up button
 			drawInternalGUIControl(GUI_CTRL_ARROW_DOWN_BUTTON, 0); // Arrow down button
 
-			if (VAR_FIXEDDISK != 0xFF && VAR(VAR_FIXEDDISK) == 0) {
+			if ((VAR_FIXEDDISK != 0xFF && VAR(VAR_FIXEDDISK) == 0) || _game.platform == Common::kPlatformAmiga) {
 				convertMessageToString((const byte *)getGUIString(gsInsertSaveDisk), (byte *)insertDisk, sizeof(insertDisk));
 				drawMainMenuTitle(insertDisk);
 			}
