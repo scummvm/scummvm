@@ -46,10 +46,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Darstellungsfehler bei Türen behoben.
    - Fehlerhafte Musikwiedergabe in dem Verhaltens- und Inventarmenü korrigiert.
    - Kashes werden nun statt Herzen als Fallback ausgegeben.
-   - Items flackern nun korrekt, wenn sie fallengelassen werden.
+   - Items flackern nicht mehr, wenn sie erscheinen werden.
    - Der Meca-Pinguin spawnt nun im korrekten Winkel.
    - Hintergründe werden nun korrekt dargestellt, wenn Zwischenszenen im Fernseher angesehen werden.
-   - Der Bildschirm wird nun korrekt zentriert, wenn ein Inventar-Item aktiviert wird.
+   - Der Bildschirm wird nun nicht mehr zentriert, wenn ein Inventar-Item aktiviert wird.
    - Wenn man W drückt, um mit Leuten zu sprechen, springt man nicht mehr automatisch.
 
 

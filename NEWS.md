@@ -46,7 +46,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed invalid music pause in behaviour and inventory menu
    - Fixed giving kashes instead of hearts as fallback
    - Fixed item flashing when they drop
-   - Fixed spawning meca penguin angle at spawn
+   - Fixed meca penguin angle at spawn
    - Fixed background redraw when watching cutscenes at the television
    - Fixed recenter the screen on activating an inventory item
    - Fixed pressing W to talk to people also makes you jump
