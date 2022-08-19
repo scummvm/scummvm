@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-18 18:35+0000\n"
+"POT-Creation-Date: 2022-08-19 05:20+0000\n"
 "PO-Revision-Date: 2022-08-11 06:37+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -6010,11 +6010,11 @@ msgstr ""
 "a játékot. A ScummVM nem teszi ezt\n"
 "az oldal többé nem elérhetõ."
 
-#: engines/mtropolis/detection.cpp:43
+#: engines/mtropolis/detection.cpp:44
 msgid "16:9 widescreen mod"
 msgstr "16:9 szélesvásznú mód"
 
-#: engines/mtropolis/detection.cpp:44
+#: engines/mtropolis/detection.cpp:45
 msgid ""
 "Removes letterboxing and moves some display elements, improving coverage on "
 "widescreen displays"
@@ -6022,11 +6022,11 @@ msgstr ""
 "Eltávolítja a levéldobozokat és áthelyez néhány kijelzőelemet, javítva a "
 "lefedettséget a szélesvásznú kijelzőkön"
 
-#: engines/mtropolis/detection.cpp:54
+#: engines/mtropolis/detection.cpp:55
 msgid "Improved music mixing"
 msgstr "Továbbfejlesztett zenekeverés"
 
-#: engines/mtropolis/detection.cpp:55
+#: engines/mtropolis/detection.cpp:56
 msgid ""
 "Enables dynamic MIDI mixer, improving quality, but behaving less like "
 "mTropolis Player."
@@ -6034,31 +6034,31 @@ msgstr ""
 "Lehetővé teszi a dinamikus MIDI keverőt, javítva a minőséget, de kevésbé "
 "viselkedik, mint az mTropolis Player."
 
-#: engines/mtropolis/detection.cpp:65
+#: engines/mtropolis/detection.cpp:66
 msgid "Autosave at progress points"
 msgstr "Automatikus mentés a folyamatpontokon"
 
-#: engines/mtropolis/detection.cpp:66
+#: engines/mtropolis/detection.cpp:67
 msgid "Automatically saves the game after completing puzzles and chapters."
 msgstr ""
 "A rejtvények és fejezetek befejezése után automatikusan elmenti a játékot."
 
-#: engines/mtropolis/detection.cpp:76
+#: engines/mtropolis/detection.cpp:77
 msgid "Enable short transitions"
 msgstr "Rövid átmenetek engedélyezése"
 
-#: engines/mtropolis/detection.cpp:77
+#: engines/mtropolis/detection.cpp:78
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
 msgstr ""
 "Engedélyezi a maximális sebességre beállított átmeneteket ahelyett, hogy "
 "kihagyná őket."
 
-#: engines/mtropolis/detection.cpp:87
+#: engines/mtropolis/detection.cpp:88
 msgid "Enable subtitles for important sound effects"
 msgstr "Engedélyezi a feliratokat a fontos hangeffektusokhoz"
 
-#: engines/mtropolis/detection.cpp:88
+#: engines/mtropolis/detection.cpp:89
 msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
@@ -6066,11 +6066,11 @@ msgstr ""
 "Feliratokat engedélyez a fontos hangeffektusokhoz. Ez csökkentheti a "
 "hangfelismerő rejtvények és minijátékok nehézségét."
 
-#: engines/mtropolis/detection.cpp:98
+#: engines/mtropolis/detection.cpp:99
 msgid "Start with debugger"
 msgstr "Kezdés a hibakeresővel"
 
-#: engines/mtropolis/detection.cpp:99
+#: engines/mtropolis/detection.cpp:100
 msgid "Starts with the debugger dashboard active."
 msgstr "A hibakereső irányítópult aktív állapotával kezdődik."
 

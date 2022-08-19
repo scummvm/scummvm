@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-18 18:35+0000\n"
+"POT-Creation-Date: 2022-08-19 05:20+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -5964,61 +5964,61 @@ msgstr ""
 "ScummVM은 그렇게 할 수도 없고\n"
 "해당 사이트도 지금은 존재하지 않습니다."
 
-#: engines/mtropolis/detection.cpp:43
+#: engines/mtropolis/detection.cpp:44
 #, fuzzy
 msgid "16:9 widescreen mod"
 msgstr "와이드 스크린 개조"
 
-#: engines/mtropolis/detection.cpp:44
+#: engines/mtropolis/detection.cpp:45
 msgid ""
 "Removes letterboxing and moves some display elements, improving coverage on "
 "widescreen displays"
 msgstr ""
 
-#: engines/mtropolis/detection.cpp:54
+#: engines/mtropolis/detection.cpp:55
 msgid "Improved music mixing"
 msgstr ""
 
-#: engines/mtropolis/detection.cpp:55
+#: engines/mtropolis/detection.cpp:56
 msgid ""
 "Enables dynamic MIDI mixer, improving quality, but behaving less like "
 "mTropolis Player."
 msgstr ""
 
-#: engines/mtropolis/detection.cpp:65
+#: engines/mtropolis/detection.cpp:66
 msgid "Autosave at progress points"
 msgstr ""
 
-#: engines/mtropolis/detection.cpp:66
+#: engines/mtropolis/detection.cpp:67
 msgid "Automatically saves the game after completing puzzles and chapters."
 msgstr ""
 
-#: engines/mtropolis/detection.cpp:76
+#: engines/mtropolis/detection.cpp:77
 #, fuzzy
 msgid "Enable short transitions"
 msgstr "Discord 통합 사용"
 
-#: engines/mtropolis/detection.cpp:77
+#: engines/mtropolis/detection.cpp:78
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
 msgstr ""
 
-#: engines/mtropolis/detection.cpp:87
+#: engines/mtropolis/detection.cpp:88
 msgid "Enable subtitles for important sound effects"
 msgstr ""
 
-#: engines/mtropolis/detection.cpp:88
+#: engines/mtropolis/detection.cpp:89
 msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
 msgstr ""
 
-#: engines/mtropolis/detection.cpp:98
+#: engines/mtropolis/detection.cpp:99
 #, fuzzy
 msgid "Start with debugger"
 msgstr "디버거를 시작"
 
-#: engines/mtropolis/detection.cpp:99
+#: engines/mtropolis/detection.cpp:100
 #, fuzzy
 msgid "Starts with the debugger dashboard active."
 msgstr "디버거를 시작"
