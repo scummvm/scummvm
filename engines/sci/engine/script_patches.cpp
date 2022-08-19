@@ -9640,6 +9640,31 @@ static const uint16 laurabow2PatchFixArmorHallDoorPathfinding[] = {
 	PATCH_END
 };
 
+// Clicking most inventory items on the Dagger of Amon Ra case in the Egyptian
+//  exhibit errors the floppy versions. The doVerb methods contain nonsensical
+//  instructions that attempt to access a non-existent class and property.
+//  This would silently fail in the original. It was fixed in the CD version.
+//
+// We patch out the illegal class instructions to avoid the error.
+//
+// Applies to: All floppy versions
+// Responsible methods: glass:doVerb, daggerCase:doVerb
+static const uint16 laurabow2SignatureFixDaggerCaseError[] = {
+	0x81, SIG_MAGICDWORD, 0x5b,         // lag 5b
+	0x4a, 0x0a,                         // send 4a
+	0x33, SIG_ADDTOOFFSET(+1),          // jmp [ end of method ]
+	0x50, SIG_ADDTOOFFSET(+2),          // class ????
+	SIG_END
+};
+
+static const uint16 laurabow2PatchFixDaggerCaseError[] = {
+	PATCH_ADDTOOFFSET(+6),
+	0x18,                               // not [ acc = 1 ]
+	0x3a,                               // toss
+	0x48,                               // ret
+	PATCH_END
+};
+
 // The crate room (room 460) in act 5 locks up the game if you enter from the
 //  elevator (room 660), swing the hanging crate, and then attempt to leave
 //  back through the elevator door.
@@ -10269,6 +10294,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   430, "CD/Floppy: make wired east door persistent",     1, laurabow2SignatureRememberWiredEastDoor,        laurabow2PatchRememberWiredEastDoor },
 	{  true,   430, "CD/Floppy: fix wired east door",                 1, laurabow2SignatureFixWiredEastDoor,             laurabow2PatchFixWiredEastDoor },
 	{  true,   448, "CD/Floppy: fix armor hall door pathfinding",     1, laurabow2SignatureFixArmorHallDoorPathfinding,  laurabow2PatchFixArmorHallDoorPathfinding },
+	{  true,   450, "Floppy: fix dagger case error",                  2, laurabow2SignatureFixDaggerCaseError,           laurabow2PatchFixDaggerCaseError },
 	{  true,   460, "CD/Floppy: fix crate room east door lockup",     1, laurabow2SignatureFixCrateRoomEastDoorLockup,   laurabow2PatchFixCrateRoomEastDoorLockup },
 	{  true,  2660, "CD/Floppy: fix elevator lockup",                 1, laurabow2SignatureFixElevatorLockup,            laurabow2PatchFixElevatorLockup },
 	{  true,   550, "CD/Floppy: fix back rub east entrance lockup",   1, laurabow2SignatureFixBackRubEastEntranceLockup, laurabow2PatchFixBackRubEastEntranceLockup },
