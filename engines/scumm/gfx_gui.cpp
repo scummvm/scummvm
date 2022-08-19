@@ -1237,8 +1237,12 @@ void ScummEngine::restoreCursorPostMenu() {
 		// Restore the previous cursor...
 		_cursor.state = _curCursorState;
 		CursorMan.showMouse(_cursor.state > 0);
+		if (_enableEGADithering) {
+			_curCursorHotspotX >>= 1;
+			_curCursorHotspotY >>= 1;
+		}
 		setCursorHotspot(_curCursorHotspotX, _curCursorHotspotY);
-		setCursorFromBuffer(_curGrabbedCursor, _curCursorWidth, _curCursorHeight, _curCursorWidth);
+		setCursorFromBuffer(_curGrabbedCursor, _curCursorWidth, _curCursorHeight, _curCursorWidth, true);
 		free(_curGrabbedCursor);
 		_curGrabbedCursor = nullptr;
 	}
