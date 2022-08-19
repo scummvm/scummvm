@@ -426,6 +426,51 @@ const char *InfoDialog::getPlainEngineString(int stringno) {
 		return (const char *)(getStaticResString(_vm->_language, stringno - 1).string);
 }
 
+void decodeV2String(Common::Language lang, Common::String &str) {
+	struct mapping { char o, n; };
+	// Just the bare minimum needed for the strings in getStaticResString()...
+	static const mapping mapFR[] = { { '[', '\x82' }, { '<', '\x85' }, { '~', '\x96' }, { '\0', '\0' } };
+	static const mapping mapDE[] = { { '\0', '\0' } };
+	static const mapping mapIT[] = { { '\0', '\0' } };
+	static const mapping mapES[] = { { '\0', '\0' } };
+	static const mapping mapRU[] = { { '\0', '\0' } };
+	static const mapping mapSE[] = { { '\0', '\0' } };
+
+	const mapping *map = 0;
+	switch (lang) {
+	case Common::FR_FRA:
+		map = mapFR;
+		break;
+	case Common::DE_DEU:
+		map = mapDE;
+		break;
+	case Common::IT_ITA:
+		map = mapIT;
+		break;
+	case Common::ES_ESP:
+		map = mapES;
+		break;
+	case Common::RU_RUS:
+		map = mapRU;
+		break;
+	case Common::SE_SWE:
+		map = mapSE;
+		break;
+	default:
+		break;
+	}
+
+	if (map) {
+		while (map->o) {
+			for (uint16 i = 0; i < str.size(); ++i) {
+				if (str[i] == map->o)
+					str.setChar(map->n, i);
+			}
+			++map;
+		}
+	}
+}
+
 const Common::U32String InfoDialog::queryResString(int stringno) {
 	byte buf[256];
 	byte reverseBuf[256];
@@ -468,6 +513,11 @@ const Common::U32String InfoDialog::queryResString(int stringno) {
 		}
 	}
 
+	// The localized v1/v2 games use custom encodings, different for each language.
+	// We just remap the characters that we need here..
+	if (_vm->_game.version < 3)
+		decodeV2String(_vm->_language, tmp);
+
 	return U32String(tmp, _vm->getDialogCodePage());
 }
 
@@ -482,16 +532,15 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 			{3, "Error reading disk %c, (%c%d) Press Button."},		// Original DOS has: "ERROR READING FILE.  HIT KEY TO RETRY'" and "ERROR READING %d type %d"
 			{4, "Game paused, press SPACE to continue.  "},			// Original string from the English v1/v2 interpreters
 			{5, "Are you sure you want to restart? (y/n)y"},		// Original string from the English v1/v2 interpreters
-			{6, "Are you sure you want to quit? (y/n)y"}			// The original does have a quit confirmation question. So this it just the restart string with a word replacement.
+			{6, "Are you sure you want to quit? (y/n)y"}			// The original does not have a quit confirmation question. So this it just the restart string with a word replacement.
 		},
-
 		{	// French
-			{1, "Ins""\x82""rer le Disque %c et appuyer sur le Bouton pour Continuer."},
-			{2, "Impossible de trouver %s, (%c%d) Appuyer sur le Bouton."},
-			{3, "Erreur lors de la lecture du disque %c, (%c%d). Appuyer sur le Bouton."},
-			{4, "Jeu en pause. Appuyer sur Espace pour Reprendre."},
-			{5, "Voulez-vous vraiment recommencer ? (O/N)O"},
-			{6, "Voulez-vous vraiment quitter ? (O/N)O"}
+			{1, "Ins[rez le disque n. Appuyez sur ENTER."},						// Original DOS
+			{2, "Incapable de trouver la fiche nn.lfl.   Appuyez sur ENTER."},	// Original DOS (bad translation...)
+			{3, "ERREUR. Appuyez sur une touche pour     essayer < nouveau."},	// Original DOS (with that many spaces, maybe to force it to go to a new line?)
+			{4, "PAUSE-Appuyez sur SPACE pour continuer."},						// Original string
+			{5, "Etes-vous s~r de vouloir recommencer?   (o/n)o"},				// Original string: note the lack of the ending letter after the last parenthesis. Multiple spaces make the "(o/n)" part go to the next line
+			{6, "Etes-vous s~r de vouloir quitter ? (o/n)o"}					// (matching the previous sentence)
 		},
 		{	// German
 			{1, "Bitte Disk %c einlegen und Taste dr""\x81""cken."},
