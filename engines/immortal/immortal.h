@@ -151,23 +151,8 @@ struct Door {
 };
 
 // Sprites are handled by driver in Kernal
-struct Frame {
-	uint16  _deltaX;
-	uint16  _deltaY;
-	uint16  _rectX;
-	uint16  _rectY;
-	  byte *_bitmap;
-};
-
-struct DataSprite {
-	uint16  _cenX;                                      // These are the base center positions
-	uint16  _cenY;
-	uint16  _numFrames;
-Common::Array<Frame> _frames;
-};
-
 struct Sprite {
-	   int  _frame;										// Index of _dSprite._frames[]
+	   int  _image;										// Index of _dSprite._frames[]
 	uint16  _X;
 	uint16  _Y;
 	uint16  _on;										// 1 = active
@@ -369,9 +354,9 @@ public:
 
 	// Asset members
 		   int	_numSprites = 0;						// This is more accurately actually the index within the sprite array, so _numSprites + 1 is the current number of sprites
-	DataSprite  _font;									// The font sprite data is loaded separate from other sprite stuff
-		Sprite  _sprites[kMaxSprites];					// All the sprites shown on screen
 	DataSprite  _dataSprites[kFont + 1];				// All the sprite data, indexed by SpriteFile
+		Sprite  _sprites[kMaxSprites];					// All the sprites shown on screen
+	  	  Cycle _cycles[kMaxCycles];
 	Common::Array<Common::String> _strPtrs;				// Str should really be a char array, but inserting frame values will be stupid so it's just a string instead
 	Common::Array<Motive>  _motivePtrs;
 	Common::Array<Damage>  _damagePtrs;
@@ -402,7 +387,6 @@ public:
     uint16  _myUnivPointY;
 	   int  _num2DrawItems = 0;
 	Graphics::Surface *_mainSurface;
-		Cyc _cycles[32];
 GenericSprite _genSprites[6];
 
 	// Palette members
@@ -482,7 +466,7 @@ GenericSprite _genSprites[6];
 	void loadFont();									// Gets the font.spr file, and centers the sprite
 	void clearSprites();								// Clears all sprites before drawing the current frame
 	void loadSprites();									// Loads all the sprite files and centers their sprites (in spritelist, but called from kernal)
-	void addSprite(uint16 x, uint16 y, SpriteName n, int frame, uint16 p);
+	void addSprite(uint16 x, uint16 y, SpriteName n, int img, uint16 p);
 
 	// Input
 	void userIO();										// Get input
@@ -603,15 +587,16 @@ GenericSprite _genSprites[6];
 	 */
 
 	// Misc
-	void cycleNew();									// Adds a cycle to the current list
-	 int getCycleChr();
+   CycID cycleNew(CycID id);							// Adds a cycle to the current list
 	void cycleFreeAll();								// Delete all cycles
-	void cycleGetFile();
-	void cycleGetNum();
-	void cycleGetIndex();
-	void cycleSetIndex();
-	void cycleGetFrame();
-	void cycleAdvance();
+	void cycleFree(CycID id);
+DataSprite *cycleGetDataSprite(CycID id);				// This takes the place of getFile + getNum
+	 int cycleGetIndex(CycID id);
+	void cycleSetIndex(CycID id, int f);
+	 int cycleGetFrame(CycID id);
+	 int cycleGetNumFrames(CycID id);
+	bool cycleAdvance(CycID id);
+  Cycle *getCycList(CycID id);
 
 	/* Unneccessary cycle functions
 	void cycleInit();
@@ -635,7 +620,7 @@ GenericSprite _genSprites[6];
 	void initDataSprite(Common::SeekableReadStream *f, DataSprite *d, int index, uint16 cenX, uint16 cenY); // Initializes the data sprite
 	
 	// Main
-	void superSprite(int s, uint16 x, uint16 y, Frame f, int bmw, byte *dst, int sT, int sB);
+	void superSprite(int s, uint16 x, uint16 y, Image img, int bmw, byte *dst, int sT, int sB);
 
 
 	/*

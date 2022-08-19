@@ -30,10 +30,6 @@
 
 namespace Immortal {
 
-struct Frame;
-struct DataSprite;
-struct Sprite;
-
 // We need a few two-dimentional vectors, and writing them out in full each time is tedious
 template<class T> using CArray2D = Common::Array<Common::Array<T>>;
 
@@ -97,13 +93,6 @@ enum FPattern : uint8 {							// This defines which Cyc animation it uses
 	kFlameCandle,
 	kFlameOff,
 	kFlameGusty
-};
-
-// Cycles define the animation of sprites within a level. There is a fixed total of cycles available, and they are not room dependant
-struct Cycle {
-DataSprite *_dSprite;
-	   int  _numCycles;
-	   int *_frames;
 };
 
 // Object Pickup defines how an object can be picked up by the player, with different functions

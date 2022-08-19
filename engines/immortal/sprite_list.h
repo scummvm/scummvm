@@ -24,6 +24,29 @@
 
 namespace Immortal {
 
+struct Image {
+	uint16  _deltaX;
+	uint16  _deltaY;
+	uint16  _rectX;
+	uint16  _rectY;
+	  byte *_bitmap;
+};
+
+struct DataSprite {
+	uint16  _cenX;                      // These are the base center positions
+	uint16  _cenY;
+	uint16  _numImages;
+Common::Array<Image> _images;
+};
+
+// Cycles define the animation of sprites within a level. There is a fixed total of cycles available, and they are not room dependant
+struct Cycle {
+DataSprite *_dSprite;
+	  bool  _repeat;
+	   int  _index;						// In source this is actually the position within the *instruction list*, but since cycle's are structs, it's just the index of frames now
+	   int *_frames;
+};
+
 enum SpriteFrame {
 	// Null
 	kNoFrame,

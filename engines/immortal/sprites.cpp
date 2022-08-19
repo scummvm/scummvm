@@ -43,37 +43,37 @@ void ImmortalEngine::initDataSprite(Common::SeekableReadStream *f, DataSprite *d
 	f->seek(index);
 
 	index = f->readUint16LE();
-	uint16 numFrames = f->readUint16LE();
+	uint16 numImages = f->readUint16LE();
 
-	d->_numFrames = numFrames;
-	debug("Number of Frames: %d", numFrames);
+	d->_numImages = numImages;
+	//debug("Number of Frames: %d", numFrames);
 
 	// Only here for dragon, but just in case, it's a high number so it should catch others
-	if (numFrames >= 0x0200) {
-		debug("** Crazy large value, this isn't a frame number **");
+	if (numImages >= 0x0200) {
+		//debug("** Crazy large value, this isn't a frame number **");
 		return;
 	}
 
-	Common::Array<Frame> frames;
+	Common::Array<Image> images;
 
-	for (int i = 0; i < numFrames; i++) {
-		Frame newFrame;
+	for (int i = 0; i < numImages; i++) {
+		Image newImage;
 		f->seek(index + (i*2));
 		int ptrFrame = f->readUint16LE();
 		f->seek(ptrFrame);
-		newFrame._deltaX = f->readUint16LE() << 1;      // the ASL might not be required, depending on how I translate the sprite drawing
-		newFrame._deltaY = f->readUint16LE();
-		newFrame._rectX = f->readUint16LE();
-		newFrame._rectY = f->readUint16LE();
-		frames.push_back(newFrame);
+		newImage._deltaX = f->readUint16LE() << 1;      // the ASL might not be required, depending on how I translate the sprite drawing
+		newImage._deltaY = f->readUint16LE();
+		newImage._rectX = f->readUint16LE();
+		newImage._rectY = f->readUint16LE();
+		images.push_back(newImage);
 		// This is probably where we will get the bitmap when I know how to get it
 	}
 
-	d->_frames = frames;
+	d->_images = images;
 }
 
 
-void ImmortalEngine::superSprite(int s, uint16 x, uint16 y, Frame f, int bmw, byte *dst, int sT, int sB) {}
+void ImmortalEngine::superSprite(int s, uint16 x, uint16 y, Image img, int bmw, byte *dst, int sT, int sB) {}
 
 } // namespace Immortal
 
