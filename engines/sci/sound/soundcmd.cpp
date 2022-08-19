@@ -463,15 +463,15 @@ reg_t SoundCommandParser::kDoSoundFade(EngineState *s, int argc, reg_t *argv) {
 	}
 #endif
 
-	// If sound is not playing currently, set signal directly
-	if (musicSlot->status != kSoundPlaying) {
-		debugC(kDebugLevelSound, "kDoSound(fade): %04x:%04x fading requested, but sound is currently not playing", PRINT_REG(obj));
-		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
-		return s->r_acc;
-	}
-
 	switch (argc) {
 	case 1: // SCI0
+		// If sound is not playing currently, set signal directly
+		if (musicSlot->status != kSoundPlaying) {
+			debugC(kDebugLevelSound, "kDoSound(fade): %04x:%04x fading requested, but sound is currently not playing", PRINT_REG(obj));
+			writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+			return s->r_acc;
+		}
+
 		// SCI0 fades out all the time and when fadeout is done it will also
 		// stop the music from playing
 		musicSlot->fadeTo = 0;
