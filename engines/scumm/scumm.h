@@ -638,8 +638,8 @@ protected:
 	int _v5VoiceMode = 0;
 
 	Graphics::Surface _savegameThumbnail;
-	byte *_tempTextSurface;
-	byte *_tempMainSurface;
+	byte *_tempTextSurface = nullptr;
+	byte *_tempMainSurface = nullptr;
 	bool _postGUICharMask = false;
 
 	// Saved cursor pre and post GUI
