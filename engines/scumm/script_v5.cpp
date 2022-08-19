@@ -3339,9 +3339,9 @@ void ScummEngine_v5::decodeParseString() {
 					byte tmpBuf[25];
 					memcpy(tmpBuf, _scriptPointer, 25);
 					if (tmpBuf[22] == '8')
-						strcpy((char *)tmpBuf+16, "^18^");
+						Common::strlcpy((char *)tmpBuf+16, "^18^", sizeof(tmpBuf) - 16);
 					else
-						strcpy((char *)tmpBuf+16, "^19^");
+						Common::strlcpy((char *)tmpBuf+16, "^19^", sizeof(tmpBuf) - 16);
 					printString(textSlot, tmpBuf);
 				} else if (_game.id == GID_INDY4 && _language == Common::EN_ANY && _roomResource == 10 &&
 						vm.slot[_currentScript].number == 209 && _actorToPrintStrFor == 4 && len == 81 &&
@@ -3387,8 +3387,8 @@ void ScummEngine_v5::decodeParseString() {
 					char tmpBuf[256];
 					const int diff = tmp - (const char *)_scriptPointer;
 					memcpy(tmpBuf, _scriptPointer, diff);
-					strcpy(tmpBuf + diff, "5000");
-					strcpy(tmpBuf + diff + 4, tmp + sizeof("NCREDIT-NOTE-AMOUNT") - 1);
+					Common::strlcpy(tmpBuf + diff, "5000", sizeof(tmpBuf) - diff);
+					Common::strlcpy(tmpBuf + diff + 4, tmp + sizeof("NCREDIT-NOTE-AMOUNT") - 1, sizeof(tmpBuf) - diff - 4);
 					printString(textSlot, (byte *)tmpBuf);
 				} else if (_game.id == GID_MONKEY && _roomResource == 25 && vm.slot[_currentScript].number == 205) {
 					printPatchedMI1CannibalString(textSlot, _scriptPointer);

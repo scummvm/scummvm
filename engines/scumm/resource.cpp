@@ -1127,7 +1127,7 @@ void ScummEngine::loadPtrToResource(ResType type, ResId idx, const byte *source)
 			refreshScriptPointer();
 			source = _scriptPointer;
 		}
-		translateText(source, translateBuffer);
+		translateText(source, translateBuffer, sizeof(translateBuffer));
 
 		source = translateBuffer;
 		len = resStrLen(source) + 1;

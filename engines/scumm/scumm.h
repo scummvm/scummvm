@@ -1290,9 +1290,9 @@ public:
 	Common::Language _language;	// Accessed by a hack in NutRenderer::loadFont
 
 	// Used by class ScummDialog:
-	virtual void translateText(const byte *text, byte *trans_buff);
+	virtual void translateText(const byte *text, byte *trans_buff, int transBufferSize);
 	// Old Hebrew games require reversing the dialog text.
-	bool reverseIfNeeded(const byte *text, byte *reverseBuf) const;
+	bool reverseIfNeeded(const byte *text, byte *reverseBuf, int reverseBufSize) const;
 	// Returns codepage that matches the game for languages that require it.
 	Common::CodePage getDialogCodePage() const;
 

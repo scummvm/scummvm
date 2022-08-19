@@ -161,7 +161,7 @@ protected:
 	void showMessageDialog(const byte *msg) override;
 
 	void actorTalk(const byte *msg) override;
-	void translateText(const byte *text, byte *trans_buff) override;
+	void translateText(const byte *text, byte *trans_buff, int transBufferSize) override;
 	void loadLanguageBundle() override;
 	void playSpeech(const byte *ptr);
 
