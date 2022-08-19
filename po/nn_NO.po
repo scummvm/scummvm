@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-19 05:20+0000\n"
+"POT-Creation-Date: 2022-08-19 11:20+0000\n"
 "PO-Revision-Date: 2022-06-03 20:16+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -2230,7 +2230,7 @@ msgstr "Deaktivert GFX"
 msgid "Standard renderer"
 msgstr "Standardteiknar"
 
-#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:792
+#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:841
 msgid "Standard"
 msgstr "Standard"
 
@@ -6868,12 +6868,12 @@ msgid ""
 "intro."
 msgstr ""
 
-#: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:826
+#: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:875
 #, fuzzy
 msgid "Enable game-specific enhancements"
 msgstr "Slå på flytande peikarar"
 
-#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:826
+#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:875
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
@@ -6921,76 +6921,76 @@ msgstr "~F~orrige"
 msgid "~N~ext"
 msgstr "~N~este"
 
-#: engines/scumm/dialogs.cpp:731
+#: engines/scumm/dialogs.cpp:780
 msgid "Speech Only"
 msgstr "Berre Tale"
 
-#: engines/scumm/dialogs.cpp:732
+#: engines/scumm/dialogs.cpp:781
 msgid "Speech and Subtitles"
 msgstr "Tale og undertekstar"
 
-#: engines/scumm/dialogs.cpp:733
+#: engines/scumm/dialogs.cpp:782
 msgid "Subtitles Only"
 msgstr "Berre undertekstar"
 
-#: engines/scumm/dialogs.cpp:741
+#: engines/scumm/dialogs.cpp:790
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Tekst & Tale"
 
-#: engines/scumm/dialogs.cpp:787
+#: engines/scumm/dialogs.cpp:836
 msgid "Select a Proficiency Level."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:789
+#: engines/scumm/dialogs.cpp:838
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "Sjå i Loom(TM)-manualen for hjelp."
 
-#: engines/scumm/dialogs.cpp:793
+#: engines/scumm/dialogs.cpp:842
 msgid "Practice"
 msgstr "Øving"
 
-#: engines/scumm/dialogs.cpp:794
+#: engines/scumm/dialogs.cpp:843
 msgid "Expert"
 msgstr "Ekspert"
 
-#: engines/scumm/dialogs.cpp:847
+#: engines/scumm/dialogs.cpp:896
 msgid "Overture Timing:"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:851
+#: engines/scumm/dialogs.cpp:900
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:927
+#: engines/scumm/dialogs.cpp:976
 #, fuzzy
 msgid "Playback Adjust:"
 msgstr "Spel"
 
-#: engines/scumm/dialogs.cpp:931
+#: engines/scumm/dialogs.cpp:980
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1003
+#: engines/scumm/dialogs.cpp:1052
 msgid "Intro Adjust:"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1007
+#: engines/scumm/dialogs.cpp:1056
 msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
 "syncs up with the intro."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1016
+#: engines/scumm/dialogs.cpp:1065
 msgid "Outlook Adjust:"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1020
+#: engines/scumm/dialogs.cpp:1069
 msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "

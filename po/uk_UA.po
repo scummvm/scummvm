@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-19 05:20+0000\n"
+"POT-Creation-Date: 2022-08-19 11:20+0000\n"
 "PO-Revision-Date: 2022-08-16 03:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -2195,7 +2195,7 @@ msgstr "Без графіки"
 msgid "Standard renderer"
 msgstr "Стандартний растеризатор"
 
-#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:792
+#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:841
 msgid "Standard"
 msgstr "Стандартний"
 
@@ -6878,11 +6878,11 @@ msgid ""
 msgstr ""
 "Вмикає менш плавну прокрутку під час швидкого переміщення камери у заставці."
 
-#: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:826
+#: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:875
 msgid "Enable game-specific enhancements"
 msgstr "Ввімкнути покращення для окремих ігор"
 
-#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:826
+#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:875
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
@@ -6940,44 +6940,44 @@ msgstr "~П~опер"
 msgid "~N~ext"
 msgstr "~Н~аст"
 
-#: engines/scumm/dialogs.cpp:731
+#: engines/scumm/dialogs.cpp:780
 msgid "Speech Only"
 msgstr "Тільки озвучка"
 
-#: engines/scumm/dialogs.cpp:732
+#: engines/scumm/dialogs.cpp:781
 msgid "Speech and Subtitles"
 msgstr "Озвучка та субтитри"
 
-#: engines/scumm/dialogs.cpp:733
+#: engines/scumm/dialogs.cpp:782
 msgid "Subtitles Only"
 msgstr "Тільки субтитри"
 
-#: engines/scumm/dialogs.cpp:741
+#: engines/scumm/dialogs.cpp:790
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Озвучка та текст"
 
-#: engines/scumm/dialogs.cpp:787
+#: engines/scumm/dialogs.cpp:836
 msgid "Select a Proficiency Level."
 msgstr "Оберіть режим складності."
 
-#: engines/scumm/dialogs.cpp:789
+#: engines/scumm/dialogs.cpp:838
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "За допомогою звертайтеся до інструкції Loom(TM)."
 
-#: engines/scumm/dialogs.cpp:793
+#: engines/scumm/dialogs.cpp:842
 msgid "Practice"
 msgstr "Практикант"
 
-#: engines/scumm/dialogs.cpp:794
+#: engines/scumm/dialogs.cpp:843
 msgid "Expert"
 msgstr "Експерт"
 
-#: engines/scumm/dialogs.cpp:847
+#: engines/scumm/dialogs.cpp:896
 msgid "Overture Timing:"
 msgstr "Час увертюри:"
 
-#: engines/scumm/dialogs.cpp:851
+#: engines/scumm/dialogs.cpp:900
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
@@ -6985,11 +6985,11 @@ msgstr ""
 "Якщо використовується заміна для музики, це налаштування підстроює час, коли "
 "увертюра переключиться на сцену з логотипами Lucasfilm та Loom."
 
-#: engines/scumm/dialogs.cpp:927
+#: engines/scumm/dialogs.cpp:976
 msgid "Playback Adjust:"
 msgstr "Підстроїти відтворення:"
 
-#: engines/scumm/dialogs.cpp:931
+#: engines/scumm/dialogs.cpp:980
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
@@ -6997,11 +6997,11 @@ msgstr ""
 "Під час програвання звуку з CD-треку, пидстроїти стартове положення звуку на "
 "вказаний обсяг. Використовуйте це, якщо чуєте неправильні звуки."
 
-#: engines/scumm/dialogs.cpp:1003
+#: engines/scumm/dialogs.cpp:1052
 msgid "Intro Adjust:"
 msgstr "Підстроїти вступ:"
 
-#: engines/scumm/dialogs.cpp:1007
+#: engines/scumm/dialogs.cpp:1056
 msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
@@ -7011,11 +7011,11 @@ msgstr ""
 "Використовуйте це, якщо музика завершується передчасно, або якщо вам не "
 "подобається, як музика синхронізується зі вступом."
 
-#: engines/scumm/dialogs.cpp:1016
+#: engines/scumm/dialogs.cpp:1065
 msgid "Outlook Adjust:"
 msgstr "Підстроїти краєвид:"
 
-#: engines/scumm/dialogs.cpp:1020
+#: engines/scumm/dialogs.cpp:1069
 msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "
