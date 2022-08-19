@@ -24,8 +24,8 @@
 
 namespace Immortal {
 
-enum Cyc {
-	kCycNone
+enum CycID {
+	kCycNone = 0
 };
 
 enum Motive {                       // This will likely be moved to a monster ai specific file later
