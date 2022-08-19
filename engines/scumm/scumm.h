@@ -585,7 +585,7 @@ protected:
 	virtual void setCursorTransparency(int a) {};
 	virtual void resetCursors() {}
 	virtual void setCursorHotspot(int x, int y) {}
-	virtual void setCursorFromBuffer(const byte *ptr, int width, int height, int pitch) {}
+	virtual void setCursorFromBuffer(const byte *ptr, int width, int height, int pitch, bool preventScale = false) {}
 
 
 public:

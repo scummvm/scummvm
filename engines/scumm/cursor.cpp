@@ -319,12 +319,13 @@ void ScummEngine_v7::updateCursor() {
 }
 #endif
 
-void ScummEngine_v6::setCursorFromBuffer(const byte *ptr, int width, int height, int pitch) {
+void ScummEngine_v6::setCursorFromBuffer(const byte *ptr, int width, int height, int pitch, bool preventScale) {
 	uint size;
 	byte *dst;
 
+	bool needsDithering = (_enableEGADithering && !preventScale);
 	size = width * height * _bytesPerPixel;
-	if (_enableEGADithering)
+	if (needsDithering)
 		size <<= 2;
 	if (size > sizeof(_grabbedCursor))
 		error("grabCursor: grabbed cursor too big");
@@ -333,14 +334,14 @@ void ScummEngine_v6::setCursorFromBuffer(const byte *ptr, int width, int height,
 	_cursor.height = height;
 	_cursor.animate = 0;
 
-	dst = _enableEGADithering ? _compositeBuf : _grabbedCursor;
+	dst = needsDithering ? _compositeBuf : _grabbedCursor;
 	for (; height; height--) {
 		memcpy(dst, ptr, width * _bytesPerPixel);
 		dst += width * _bytesPerPixel;
 		ptr += pitch;
 	}
 
-	if (_enableEGADithering)
+	if (needsDithering)
 		ditherCursor();
 
 	updateCursor();

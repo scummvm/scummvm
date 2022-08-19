@@ -148,7 +148,7 @@ protected:
 	void useIm01Cursor(const byte *im, int w, int h);
 	void useBompCursor(const byte *im, int w, int h);
 	void grabCursor(int x, int y, int w, int h);
-	void setCursorFromBuffer(const byte *ptr, int width, int height, int pitch) override;
+	void setCursorFromBuffer(const byte *ptr, int width, int height, int pitch, bool preventScale = false) override;
 	void ditherCursor();
 
 	virtual void drawBlastTexts() {}
