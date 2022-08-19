@@ -538,7 +538,7 @@ void MohawkEngine_Riven::loadLanguageDatafile(char prefix, uint16 stackId) {
 		if (stackId == kStackOspit && getLanguage() != Common::EN_ANY && getLanguage() != Common::RU_RUS) {
 			// WORKAROUND: The international CD versions were repacked for the 25th anniversary release
 			// so they share the same resources as the English DVD version. The resource IDs for the DVD
-			// version resources have a delta of 1 in their numbering when compared the CD version
+			// version resources have a delta of 1 in their numbering when compared to the CD version
 			// resources for Gehn's office. Unfortunately this delta was not compensated when repacking
 			// the archives. We need to do it here at run time...
 			mhk->offsetResourceIDs(ID_TBMP, 196, 1);
