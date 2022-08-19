@@ -136,15 +136,15 @@ void ImmortalEngine::addSprites() {
 			}
 
 			DataSprite *tempD = _sprites[i]._dSprite;
-			Frame *tempF = &(_sprites[i]._dSprite->_frames[_sprites[i]._frame]);
-			int sx = ((_sprites[i]._X + tempF->_deltaX) - tempD->_cenX) - _myViewPortX;
-			int sy = ((_sprites[i]._Y + tempF->_deltaY) - tempD->_cenY) - _myViewPortY;
+			Image *tempImg = &(_sprites[i]._dSprite->_images[_sprites[i]._image]);
+			int sx = ((_sprites[i]._X + tempImg->_deltaX) - tempD->_cenX) - _myViewPortX;
+			int sy = ((_sprites[i]._Y + tempImg->_deltaY) - tempD->_cenY) - _myViewPortY;
 
 			if (sx >= 0 ) {
 				if (sx >= kViewPortW) {
 					continue;
 				}
-			} else if ((sx + tempF->_rectX) <= 0) {
+			} else if ((sx + tempImg->_rectX) <= 0) {
 				continue;
 			}
 
@@ -152,7 +152,7 @@ void ImmortalEngine::addSprites() {
 				if (sy >= kViewPortH) {
 					continue;
 				}
-			} else if ((sy + tempF->_rectY) <= 0) {
+			} else if ((sy + tempImg->_rectY) <= 0) {
 				continue;
 			}
 
@@ -285,7 +285,7 @@ void ImmortalEngine::drawItems() {
 			// If positive, it's a sprite
 			uint16 x = (_sprites[index]._X - _myViewPortX) + kVSX;
 			uint16 y = (_sprites[index]._Y - _myViewPortY) + kVSY;
-			superSprite(index, x, y, _sprites[index]._dSprite->_frames[_sprites[index]._frame], kVSBMW, _screenBuff, kMySuperTop, kMySuperBottom);
+			superSprite(index, x, y, _sprites[index]._dSprite->_images[_sprites[index]._image], kVSBMW, _screenBuff, kMySuperTop, kMySuperBottom);
 		}
 		n++;
 	} while (n != _num2DrawItems);
@@ -348,7 +348,7 @@ void ImmortalEngine::printChr(char c) {
 		return;
 	}
 
-	superSprite(0, x, y, _dataSprites[kFont]._frames[(int) c], kScreenBMW, _screenBuff, kSuperTop, kSuperBottom);
+	superSprite(0, x, y, _dataSprites[kFont]._images[(int) c], kScreenBMW, _screenBuff, kSuperTop, kSuperBottom);
 	if ((c == 0x27) || (c == 'T')) {
 		_penX -= 2;					// Why is this done twice??
 	}
@@ -483,7 +483,7 @@ void ImmortalEngine::initStoryStatic() {
 
 }
 
-void ImmortalEngine::addSprite(uint16 x, uint16 y, SpriteName n, int frame, uint16 p) {
+void ImmortalEngine::addSprite(uint16 x, uint16 y, SpriteName n, int img, uint16 p) {
 	if (_numSprites != kMaxSprites) {
 		if (x >= (kResH + kMaxSpriteLeft)) {
 			x |= kMaskHigh;                         // Make it negative
@@ -500,7 +500,7 @@ void ImmortalEngine::addSprite(uint16 x, uint16 y, SpriteName n, int frame, uint
 		}
 		_sprites[_numSprites]._priority = ((p + y) ^ 0xFFFF) + 1;
 		
-		_sprites[_numSprites]._frame = frame;
+		_sprites[_numSprites]._image = img;
 		_sprites[_numSprites]._dSprite = &_dataSprites[n];
 		_sprites[_numSprites]._on = 1;
 		_numSprites += 1;
