@@ -116,7 +116,7 @@ Common::KeyState ScummEngine_v7::showBannerAndPause(int bannerId, int32 waitTime
 	// Take all the necessary measurements for the box which
 	// will contain the string...
 	bool isCOMIDemo = (_game.id == GID_CMI && (_game.features & GF_DEMO) != 0);
-	bannerMsgHeight = (isCOMIDemo ? _textV7->getStringHeight("ABC €x °x") : _textV7->getStringHeight(bannerMsg)) + 5;
+	bannerMsgHeight = (isCOMIDemo ? _textV7->getStringHeight("ABC \x80\x78 \xb0\x78") : _textV7->getStringHeight(bannerMsg)) + 5;
 	bannerMsgWidth = _textV7->getStringWidth(bannerMsg);
 	if (bannerMsgWidth < 100)
 		bannerMsgWidth = 100;
