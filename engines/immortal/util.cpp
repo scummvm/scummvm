@@ -25,23 +25,23 @@ namespace Immortal {
 
 namespace Util {
 
-void Util::delay(int j) {             // Delay is measured in jiffies, which are 56.17ms
-    g_system->delayMillis(j * 56);
+void Immortal::Util::delay(int j) {             // Delay is measured in jiffies, which are 56.17ms
+	g_system->delayMillis(j * 56);
 }
 
-void Util::delay4(int j) {            // Named in source quarterClock for some reason, 1/4 jiffies are 14.04ms
-    g_system->delayMillis(j * 14);
+void Immortal::Util::delay4(int j) {            // Named in source quarterClock for some reason, 1/4 jiffies are 14.04ms
+	g_system->delayMillis(j * 14);
 }
 
-void Util::delay8(int j) {            // 1/8 jiffies are 7.02ms
-    g_system->delayMillis(j * 7);
+void Immortal::Util::delay8(int j) {            // 1/8 jiffies are 7.02ms
+	g_system->delayMillis(j * 7);
 }
 
-bool Util::inside(int x1, int y1, int a, int x2, int y2) {
-    return false;
+bool Immortal::Util::inside(int x1, int y1, int a, int x2, int y2) {
+	return false;
 }
-bool Util::insideRect(int x, int y, int r) {
-    return false;
+bool Immortal::Util::insideRect(int x, int y, int r) {
+	return false;
 }
 
 }; // namespace Util
