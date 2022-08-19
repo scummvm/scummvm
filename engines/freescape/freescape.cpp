@@ -79,7 +79,8 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	_flyMode = false;
 	_playerHeightNumber = 1;
 	_borderTexture = nullptr;
-	_viewArea = Common::Rect(0, 0, _screenW, _screenH);
+	_fullscreenViewArea = Common::Rect(0, 0, _screenW, _screenH);
+	_viewArea = _fullscreenViewArea;
 
 	// Total Eclipse specific
 	const entrancesTableEntry *entry = rawEntranceTable;
@@ -101,12 +102,10 @@ void FreescapeEngine::drawBorder() {
 	if (!_border)
 		return;
 
-	const Common::Rect fullscreenViewArea(0, 0, _screenW, _screenH);
-	_gfx->setViewport(fullscreenViewArea);
-
+	_gfx->setViewport(_fullscreenViewArea);
 	if (!_borderTexture)
 		_borderTexture = _gfx->createTexture(_border);
-	_gfx->drawTexturedRect2D(fullscreenViewArea, fullscreenViewArea, _borderTexture);
+	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _borderTexture);
 	_gfx->setViewport(_viewArea);
 }
 
@@ -221,12 +220,42 @@ Math::Vector3d FreescapeEngine::directionToVector(float pitch, float heading) {
 	return v;
 }
 
+void FreescapeEngine::drawUI() {
+	_gfx->setViewport(_fullscreenViewArea);
+
+	if (isDriller()) {
+		int energy = _gameStateVars[k8bitVariableEnergy];
+		int shield = _gameStateVars[k8bitVariableShield];
+		if (_renderMode == "ega" && _border) {
+			//Common::Rect black(20, 177, 87, 191);
+			//_gfx->drawRect2D(black, 255, 0, 0, 0);
+
+			if (energy >= 0) {
+				Common::Rect black(20, 186, 87 - energy, 191);
+				_gfx->drawRect2D(black, 255, 0, 0, 0);
+				Common::Rect energyBar(87 - energy, 186, 87, 191);
+				_gfx->drawRect2D(energyBar, 255, 0xfc, 0xfc, 0x54);
+			}
+
+			if (shield >= 0) {
+				Common::Rect black(20, 178, 87 - shield, 183);
+				_gfx->drawRect2D(black, 255, 0, 0, 0);
+
+				Common::Rect shieldBar(87 - shield, 178, 87, 183);
+				_gfx->drawRect2D(shieldBar, 255, 0xfc, 0xfc, 0x54);
+			}
+		}
+	}
+}
+
+
 void FreescapeEngine::drawFrame() {
 	_gfx->updateProjectionMatrix(60.0, _nearClipPlane, _farClipPlane);
 	_gfx->positionCamera(_position, _position + _cameraFront);
 	_currentArea->draw(_gfx);
 	_gfx->renderCrossair(0);
 	drawBorder();
+	drawUI();
 }
 
 void FreescapeEngine::processInput() {
@@ -413,8 +442,8 @@ void FreescapeEngine::initGameState() {
 	for (AreaMap::iterator it = _areaMap.begin(); it != _areaMap.end(); ++it)
 		_gameStateBits[it->_key] = 0;
 
-	_gameStateVars[k8bitVariableEnergy] = 100;
-	_gameStateVars[k8bitVariableShield] = 100;
+	_gameStateVars[k8bitVariableEnergy] = 43;
+	_gameStateVars[k8bitVariableShield] = 48;
 }
 
 void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos) {
