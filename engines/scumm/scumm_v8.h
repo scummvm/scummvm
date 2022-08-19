@@ -46,8 +46,8 @@ protected:
 		int brightness;
 	};
 
-	int _savegameThumbnailPalette[256];
-	byte _savegameThumbnail[160 * 120]; // One fourth of the nominal 640x480 resolution
+	int _savegameThumbnailV8Palette[256];
+	byte _savegameThumbnailV8[160 * 120]; // One fourth of the nominal 640x480 resolution
 	StampShot _stampShots[20];
 	int _stampShotsInQueue = 0;
 
