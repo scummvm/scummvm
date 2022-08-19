@@ -621,9 +621,18 @@ bool Console::cmdKernelFunctions(int argc, const char **argv) {
 		const Common::String &kernelName = _engine->getKernel()->getKernelName(seeker);
 		if (kernelName == "Dummy")
 			continue;
-		debugPrintf("%03x: %20s | ", seeker, kernelName.c_str());
-		if ((column++ % 3) == 2)
-			debugPrintf("\n");
+
+		if (argc == 1) {
+			debugPrintf("%03x: %20s | ", seeker, kernelName.c_str());
+			if ((column++ % 3) == 2)
+				debugPrintf("\n");
+		} else {
+			for (int i = 1; i < argc; ++i) {
+				if (kernelName.equalsIgnoreCase(argv[i])) {
+					debugPrintf("%03x: %s\n", seeker, kernelName.c_str());
+				}
+			}
+		}
 	}
 
 	debugPrintf("\n");
