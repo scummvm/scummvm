@@ -632,7 +632,7 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 		// fireworks).
 		// It is also needed in other games, e.g. LSL6 when talking to the
 		// receptionist (bug #5601).
-		// TODO: More thorougly check the different SCI version:
+		// TODO: More thoroughly check the different SCI version:
 		// * SCI1late sets signal to 0xFE here. (With signal 0xFF
 		//       duplicate music plays in LauraBow2CD - bug #6462)
 		//   SCI1middle LSL1 1.000.510 does not have the 0xFE;
@@ -641,7 +641,7 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 		// * Need to check SCI0 behaviour.
 		uint16 sig;
 		if (getSciVersion() >= SCI_VERSION_1_LATE)
-			sig = 0xFFFE;
+			sig = 0x00fe;
 		else
 			sig = SIGNAL_OFFSET;
 		writeSelectorValue(_segMan, obj, SELECTOR(signal), sig);
