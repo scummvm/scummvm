@@ -288,9 +288,14 @@ void FreescapeEngine::processInput() {
 				Common::Point gasPocket = _currentArea->gasPocketPosition;
 				uint32 gasPocketRadius = _currentArea->gasPocketRadius;
 				if (isDriller() && gasPocketRadius > 0 && !_currentArea->drillDeployed()) {
+					if (_gameStateVars[k8bitVariableEnergy] < 5) {
+						// Show "no enough energy" message
+						continue;
+					}
+
+					_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
 					_gameStateVars[32]++;
 					// TODO: check if there is space for the drill
-					// TODO: check if there is enough energy
 					Math::Vector3d drillPosition = _position + _cameraFront * 128;
 					drillPosition.setValue(1, _position.y() - _playerHeight * _currentArea->getScale());
 					debugC(1, kFreescapeDebugMove, "Trying to adding drill at %f %f %f", drillPosition.x(), drillPosition.y(), drillPosition.z());
@@ -302,8 +307,14 @@ void FreescapeEngine::processInput() {
 					// TODO: reduce energy
 				}
 			} else if (event.kbd.keycode == Common::KEYCODE_c) {
-				// TODO: check if there is enough energy
+
 				if (isDriller() && _currentArea->drillDeployed()) {
+					if (_gameStateVars[k8bitVariableEnergy] < 5) {
+						// Show "no enough energy" message
+						continue;
+					}
+
+					_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
 					_gameStateVars[32]--;
 					_currentArea->removeDrill();
 				}
