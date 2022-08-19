@@ -9468,6 +9468,12 @@ static const uint16 laurabow2CDSignatureFixMuseumActorLoops1[] = {
 	SIG_END
 };
 
+static const uint16 laurabow2CDPatchFixMuseumActorLoops1[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x39, 0x04,                         // pushi 04 [ standing loop in CD ]
+	PATCH_END
+};
+
 static const uint16 laurabow2CDSignatureFixMuseumActorLoops2[] = {
 	0x39, SIG_SELECTOR8(loop),          // pushi loop
 	0x78,                               // push1
@@ -9477,8 +9483,8 @@ static const uint16 laurabow2CDSignatureFixMuseumActorLoops2[] = {
 	SIG_END
 };
 
-static const uint16 laurabow2CDPatchFixMuseumActorLoops[] = {
-	PATCH_ADDTOOFFSET(+4),
+static const uint16 laurabow2CDPatchFixMuseumActorLoops2[] = {
+	PATCH_ADDTOOFFSET(+3),
 	0x39, 0x04,                         // pushi 04 [ standing loop in CD ]
 	PATCH_END
 };
@@ -10328,15 +10334,15 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   110, "CD: fix intro music",                            1, laurabow2CDSignatureFixIntroMusic,              laurabow2CDPatchFixIntroMusic },
 	{  true,   350, "CD/Floppy: museum party fix entering south 1/2", 1, laurabow2SignatureMuseumPartyFixEnteringSouth1, laurabow2PatchMuseumPartyFixEnteringSouth1 },
 	{  true,   350, "CD/Floppy: museum party fix entering south 2/2", 1, laurabow2SignatureMuseumPartyFixEnteringSouth2, laurabow2PatchMuseumPartyFixEnteringSouth2 },
-	{ false,   355, "CD: fix museum actor loops",                     2, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops },
+	{ false,   355, "CD: fix museum actor loops",                     2, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops1 },
 	{  true,   430, "CD/Floppy: make wired east door persistent",     1, laurabow2SignatureRememberWiredEastDoor,        laurabow2PatchRememberWiredEastDoor },
 	{  true,   430, "CD/Floppy: fix wired east door",                 1, laurabow2SignatureFixWiredEastDoor,             laurabow2PatchFixWiredEastDoor },
 	{  true,   448, "CD/Floppy: fix armor hall door pathfinding",     1, laurabow2SignatureFixArmorHallDoorPathfinding,  laurabow2PatchFixArmorHallDoorPathfinding },
-	{ false,   400, "CD: fix museum actor loops",                     4, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops },
-	{ false,   420, "CD: fix museum actor loops",                     1, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops },
+	{ false,   400, "CD: fix museum actor loops",                     4, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops1 },
+	{ false,   420, "CD: fix museum actor loops",                     1, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops1 },
 	{  true,   450, "Floppy: fix dagger case error",                  2, laurabow2SignatureFixDaggerCaseError,           laurabow2PatchFixDaggerCaseError },
 	{  true,   460, "CD/Floppy: fix crate room east door lockup",     1, laurabow2SignatureFixCrateRoomEastDoorLockup,   laurabow2PatchFixCrateRoomEastDoorLockup },
-	{ false,   500, "CD: fix museum actor loops",                     3, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops },
+	{ false,   500, "CD: fix museum actor loops",                     3, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops1 },
 	{  true,  2660, "CD/Floppy: fix elevator lockup",                 1, laurabow2SignatureFixElevatorLockup,            laurabow2PatchFixElevatorLockup },
 	{  true,   550, "CD/Floppy: fix back rub east entrance lockup",   1, laurabow2SignatureFixBackRubEastEntranceLockup, laurabow2PatchFixBackRubEastEntranceLockup },
 	{  true,   550, "CD/Floppy: fix disappearing desk items",         1, laurabow2SignatureFixDisappearingDeskItems,     laurabow2PatchFixDisappearingDeskItems },
@@ -10345,7 +10351,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   448, "CD/Floppy: handle armor hall room events",       1, laurabow2SignatureHandleArmorRoomEvents,        laurabow2PatchHandleArmorRoomEvents },
 	{  true,   600, "Floppy: fix bugs with meat",                     1, laurabow2FloppySignatureFixBugsWithMeat,        laurabow2FloppyPatchFixBugsWithMeat },
 	{  true,   600, "CD: fix bugs with meat",                         1, laurabow2CDSignatureFixBugsWithMeat,            laurabow2CDPatchFixBugsWithMeat },
-	{ false,   650, "CD: fix museum actor loops",                     1, laurabow2CDSignatureFixMuseumActorLoops2,       laurabow2CDPatchFixMuseumActorLoops },
+	{ false,   650, "CD: fix museum actor loops",                     1, laurabow2CDSignatureFixMuseumActorLoops2,       laurabow2CDPatchFixMuseumActorLoops2 },
 	{  true,   480, "CD: fix act 5 finale music",                     1, laurabow2CDSignatureFixAct5FinaleMusic,         laurabow2CDPatchFixAct5FinaleMusic },
 	{  true,    28, "disable speed test",                             1, sci11SpeedTestSignature,                        sci11SpeedTestPatch },
 	{  true,   120, "CD: disable intro volume change in text mode",   1, laurabow2CDSignatureIntroVolumeChange,          laurabow2CDPatchIntroVolumeChange },
