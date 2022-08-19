@@ -1214,7 +1214,7 @@ void ScummEngine::saveCursorPreMenu() {
 	_cursor.state = 1;
 	CursorMan.showMouse(_cursor.state > 0);
 
-	if (_game.version > 5) {
+	if (_game.version > 6) {
 		// Backup the current cursor graphics and parameters
 		// and set up the main menu cursor...
 		_curGrabbedCursor = (byte *)malloc(sizeof(_grabbedCursor));
@@ -1227,13 +1227,19 @@ void ScummEngine::saveCursorPreMenu() {
 			_curCursorHotspotY = _cursor.hotspotY;
 			setDefaultCursor();
 		}
+	} else if (_game.version == 6) {
+		// V6 handles cursor substitution via scripts, but it handles
+		// setting dimensions and hotspot here; since manually changing
+		// cursor parameters at this stage glitches the cursor itself,
+		// let's call this function without saving anything unlike above...
+		setDefaultCursor();
 	}
 
 	CursorMan.showMouse(true);
 }
 
 void ScummEngine::restoreCursorPostMenu() {
-	if (_game.version > 5 && _curGrabbedCursor) {
+	if (_game.version > 6 && _curGrabbedCursor) {
 		// Restore the previous cursor...
 		_cursor.state = _curCursorState;
 		CursorMan.showMouse(_cursor.state > 0);
@@ -1245,6 +1251,10 @@ void ScummEngine::restoreCursorPostMenu() {
 		setCursorFromBuffer(_curGrabbedCursor, _curCursorWidth, _curCursorHeight, _curCursorWidth, true);
 		free(_curGrabbedCursor);
 		_curGrabbedCursor = nullptr;
+	} else if (_game.version == 6) {
+		setCursorHotspot(_curCursorHotspotX, _curCursorHotspotY);
+		_cursor.width = _curCursorWidth;
+		_cursor.height = _curCursorHeight;
 	}
 
 	// Restore the old cursor state...
@@ -1393,7 +1403,7 @@ void ScummEngine::showMainMenu() {
 	}
 
 	// Run the exit savescreen script, if available
-	if (_saveScriptParam != 0) {
+	if (_saveScriptParam != 0 || _game.version == 6) {
 		args[0] = _saveScriptParam;
 		if (VAR_SAVELOAD_SCRIPT2 != 0xFF) {
 			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, args);
