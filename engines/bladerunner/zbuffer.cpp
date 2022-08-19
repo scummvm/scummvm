@@ -98,17 +98,19 @@ static int decodePartialZBuffer(const uint8 *src, uint16 *curZBUF, uint32 srcLen
 	uint32 dstRemain = dstSize;
 
 	uint16 *curzp = curZBUF;
-	const uint16 *inp = (const uint16 *)src;
+	const uint8 *inp8 = src;
 
-	while (dstRemain && (inp - (const uint16 *)src) < (ptrdiff_t)srcLen) {
-		uint32 count = FROM_LE_16(*inp++);
+	while (dstRemain && (inp8 - src) < (ptrdiff_t)srcLen) {
+		uint32 count = READ_LE_UINT16(inp8);
+		inp8+=2;
 
 		if (count & 0x8000) {
 			count = MIN(count & 0x7fff, dstRemain);
 			dstRemain -= count;
 
 			while (count--) {
-				uint16 value = FROM_LE_16(*inp++);
+				uint16 value = READ_LE_UINT16(inp8);
+				inp8+=2;
 				if (value)
 					*curzp = value;
 				++curzp;
@@ -116,7 +118,8 @@ static int decodePartialZBuffer(const uint8 *src, uint16 *curZBUF, uint32 srcLen
 		} else {
 			count = MIN(count, dstRemain);
 			dstRemain -= count;
-			uint16 value = FROM_LE_16(*inp++);
+			uint16 value = READ_LE_UINT16(inp8);
+			inp8+=2;
 
 			if (!value) {
 				curzp += count;
