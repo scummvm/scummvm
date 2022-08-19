@@ -583,7 +583,7 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 
 	byte transBuf[512];
 	if (_vm->_game.id == GID_CMI) {
-		_vm->translateText((const byte *)str - 1, transBuf);
+		_vm->translateText((const byte *)str - 1, transBuf, sizeof(transBuf));
 		while (*str++ != '/')
 			;
 		string2 = (char *)transBuf;
@@ -678,8 +678,8 @@ bool SmushPlayer::readString(const char *file) {
 		error("invalid filename : %s", file);
 	}
 	char fname[260];
-	memcpy(fname, file, i - file);
-	strcpy(fname + (i - file), ".trs");
+	memcpy(fname, file, MIN<int>(sizeof(fname), i - file));
+	Common::strlcpy(fname + (i - file), ".trs", sizeof(fname) - (i - file));
 	if ((_strings = getStrings(_vm, fname, false)) != 0) {
 		return true;
 	}
@@ -1126,8 +1126,8 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 	// FIXME: How about using AudioStream::openStreamFile instead of the code below?
 
 #ifdef USE_VORBIS
-	memcpy(fname, filename, i - filename);
-	strcpy(fname + (i - filename), ".ogg");
+	memcpy(fname, filename, MIN<int>(i - filename, sizeof(fname)));
+	Common::strlcpy(fname + (i - filename), ".ogg", sizeof(fname) - (i - filename));
 	if (file->open(fname)) {
 		_compressedFileMode = true;
 		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, _compressedFileSoundHandle, Audio::makeVorbisStream(file, DisposeAfterUse::YES));
@@ -1135,8 +1135,8 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 	}
 #endif
 #ifdef USE_MAD
-	memcpy(fname, filename, i - filename);
-	strcpy(fname + (i - filename), ".mp3");
+	memcpy(fname, filename, MIN<int>(i - filename, sizeof(fname)));
+	Common::strlcpy(fname + (i - filename), ".mp3", sizeof(fname) - (i - filename));
 	if (file->open(fname)) {
 		_compressedFileMode = true;
 		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, _compressedFileSoundHandle, Audio::makeMP3Stream(file, DisposeAfterUse::YES));

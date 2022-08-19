@@ -493,14 +493,14 @@ const Common::U32String InfoDialog::queryResString(int stringno) {
 		result = (const byte *)getStaticResString(_vm->_language, stringno - 1).string;
 
 	if (result && *result == '/') {
-		_vm->translateText(result, buf);
+		_vm->translateText(result, buf, sizeof(buf));
 		result = buf;
 	}
 
 	if (!result || *result == '\0') // Gracelessly degrade to english :)
 		result = (const byte *)getStaticResString(_vm->_language, stringno - 1).string;
 
-	if (_vm->reverseIfNeeded(result, reverseBuf))
+	if (_vm->reverseIfNeeded(result, reverseBuf, sizeof(reverseBuf)))
 		result = reverseBuf;
 	// Convert to a proper string (take care of FF codes)
 	byte chr;

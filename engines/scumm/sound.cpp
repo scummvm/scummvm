@@ -728,21 +728,21 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 		char roomname[10];
 
 		if (offset == 1)
-			strcpy(roomname, "logo");
+			Common::strlcpy(roomname, "logo", sizeof(roomname));
 		else if (offset == 15)
-			strcpy(roomname, "canyon");
+			Common::strlcpy(roomname, "canyon", sizeof(roomname));
 		else if (offset == 17)
-			strcpy(roomname, "pig");
+			Common::strlcpy(roomname, "pig", sizeof(roomname));
 		else if (offset == 18)
-			strcpy(roomname, "derelict");
+			Common::strlcpy(roomname, "derelict", sizeof(roomname));
 		else if (offset == 19)
-			strcpy(roomname, "wreck");
+			Common::strlcpy(roomname, "wreck", sizeof(roomname));
 		else if (offset == 20)
-			strcpy(roomname, "grave");
+			Common::strlcpy(roomname, "grave", sizeof(roomname));
 		else if (offset == 23)
-			strcpy(roomname, "nexus");
+			Common::strlcpy(roomname, "nexus", sizeof(roomname));
 		else if (offset == 79)
-			strcpy(roomname, "newton");
+			Common::strlcpy(roomname, "newton", sizeof(roomname));
 		else {
 			warning("startTalkSound: dig demo: unknown room number: %d", offset);
 			return;
@@ -1748,7 +1748,7 @@ int ScummEngine::readSoundResource(ResId idx) {
 		// files seem to be 11 chars (8.3)
 		char *p = (char *)memchr(buffer, '.', 12);
 		if (!p) p = &buffer[8];
-		strcpy(p, ".dmu");
+		Common::strlcpy(p, ".dmu", sizeof(buffer) - (p - buffer));
 		debugC(DEBUG_SOUND, "FMUS file %s", buffer);
 
 		if (!dmuFile.open(buffer)) {
