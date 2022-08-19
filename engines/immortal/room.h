@@ -93,7 +93,7 @@ struct Flame {
 FPattern _p;
 	uint8 _x;
 	uint8 _y;
-	Cyc   _c;
+	CycID _c;
 };
 
 struct Chest {
@@ -128,7 +128,8 @@ Common::Array<Object>  _objects;
 	   uint8 _holeCellX;
 	   uint8 _holeCellY;
 	   uint8 _candleTmp;									// Special case for candle in maze 0
-
+	   uint8 _numFlames;
+	   uint8 _numInRoom;
 
 	/*
 	 * --- Methods ---
@@ -162,13 +163,13 @@ Common::Array<Object>  _objects;
 	 * [flameSet.cpp] Functions from flameSet.GS
 	 */
 
+	void flameInit();
 	void flameSetRoom(Common::Array<SFlame>);
 	void flameDrawAll();
 	bool roomLighted();
 	void lightTorch(int x, int y);
-	 Cyc flameGetCyc(int first);
-	//void flameFreeAll();
-	//void flameSetRoom();
+  CycID flameGetCyc(int first);
+	void flameFreeAll();
 
 	/*
 	 * [bullet.cpp] Functions from Bullet.GS

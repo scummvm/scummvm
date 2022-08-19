@@ -19,6 +19,7 @@
  *
  */
 
+#include "immortal/room.h"
 #include "immortal/immortal.h"
 
 namespace Immortal {
@@ -45,9 +46,7 @@ void ImmortalEngine::restartLogic() {
 
 	// Here's where the majority of the game actually gets initialized
 	miscInit();
-	//qarrayInit();
-	//cycInit();		<-- room.initCycles()
-	//fsetInit();		<-- room.initTorches()
+	cycleFreeAll();
 	levelInit();
 	//roomInit();		<-- will be run in constructor of room
 	//monstInit();		<-- room.initMonsters()		\
@@ -58,14 +57,12 @@ void ImmortalEngine::restartLogic() {
 	//objectInit(); 	<-- again? Odd...
 	//genericSpriteInit();	<-- room.initGenSprites()
 
-	// Probably will be written as:
-	// qarrayInit();  <-- will probably just be like, _qarray = new Common::Array<int? *>();
-	// levelInit();
-
 	if (fromOldGame() == false) {
 		_level = 0;
 		levelNew(_level);
 	}
+
+	_rooms[_currentRoom]->flameInit();
 
 	if (_level != 7) {
 		_themePaused = true;	// and #-1-2 = set both flags for themePaused
@@ -121,18 +118,16 @@ void ImmortalEngine::logic() {
 			levelDrawAll();
 			updateHitGauge();
 
-			// What the heck? Check if we are in level 0: room 0, with no lit torches, and no projectiles
-			// If so, dim the screen
 			_dim = 0;
-			if ((_level == 0) && (/*_currentLevel.getShowRoom()*/0 == 0) && (/*roomLighted()*/false == false) && (/*getNumBullets()*/ 0 == 0)) {
-				//_dim += 1;
+			if ((_level == 0) && (/*_currentLevel.getShowRoom()*/0 == 0) && (_rooms[_currentRoom]->roomLighted() == false) && (/*getNumBullets()*/ 0 == 0)) {
+				_dim += 1;
 			}
 
 			if (_level == 7) {
 				doGroan();
 			}
 
-			if (/*monstIsCombat(kPlayerID)*/true == true) {
+			if (/*monstIsCombat(kPlayerID)*/false == true) {
 				if (getPlaying() != kSongCombat) {
 					playCombatSong();
 				}
