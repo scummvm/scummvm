@@ -429,12 +429,12 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 			textColor = ctrl->normalTextColor;
 
 		if (ctrl->label)
-			strcpy(buttonString, ctrl->label);
+			Common::strlcpy(buttonString, ctrl->label, sizeof(buttonString));
 		else
-			strcpy(buttonString, "null button");
+			Common::strlcpy(buttonString, "null button", sizeof(buttonString));
 
 		if (_mainMenuSavegameLabel == id && _menuPage == GUI_PAGE_SAVE) {
-			strcat(buttonString, "_");
+			Common::strlcat(buttonString, "_", sizeof(buttonString));
 		}
 
 		int tmpRight = _string[5].right;
@@ -1150,7 +1150,7 @@ bool ScummEngine::canWriteGame(int slotId) {
 
 		// Fallback to a hardcoded string
 		if (msgLabelPtr[0] == '\0') {
-			strcpy(msgLabelPtr, "Do you want to replace this saved game?  (Y/N)Y");
+			Common::strlcpy(msgLabelPtr, "Do you want to replace this saved game?  (Y/N)Y", sizeof(msgLabelPtr));
 		}
 
 		localizedYesKey = msgLabelPtr[strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1];
@@ -2453,7 +2453,7 @@ void ScummEngine::getSliderString(int stringId, int value, char *sliderString, i
 	char *ptrToChar;
 	char tempStr[256];
 
-	strcpy(tempStr, getGUIString(stringId));
+	Common::strlcpy(tempStr, getGUIString(stringId), sizeof(tempStr));
 	convertMessageToString((const byte *)tempStr, (byte *)sliderString, size);
 
 	ptrToChar = strchr(sliderString, '=');
