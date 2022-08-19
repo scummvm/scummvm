@@ -116,6 +116,25 @@ void TinyGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vecto
 	tglTranslatef(-pos.x(), -pos.y(), -pos.z());
 }
 
+void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) {
+	tglDisable(TGL_TEXTURE_2D);
+	tglColor4ub(r, g, b, a);
+
+	if (a != 255) {
+		tglEnable(TGL_BLEND);
+		tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
+	}
+
+	tglBegin(TGL_TRIANGLE_STRIP);
+		tglVertex3f(rect.left, rect.bottom, 0.0f);
+		tglVertex3f(rect.right, rect.bottom, 0.0f);
+		tglVertex3f(rect.left, rect.top, 0.0f);
+		tglVertex3f(rect.right, rect.top, 0.0f);
+	tglEnd();
+
+	tglDisable(TGL_BLEND);
+}
+
 void TinyGLRenderer::renderCrossair(byte color) {
 	uint8 r, g, b;
 	_palette->getRGBAt(color, r, g, b);

@@ -216,10 +216,24 @@ void FreescapeEngine::executeIncrementVariable(FCLInstruction &instruction) {
 	uint16 variable = instruction.source;
 	uint16 increment = instruction.destination;
 	_gameStateVars[variable] = _gameStateVars[variable] + increment;
-	if (variable == k8bitVariableScore) {
+	switch (variable) {
+	case k8bitVariableScore:
 		debugC(1, kFreescapeDebugCode, "Score incremented by %d up to %d", increment, _gameStateVars[variable]);
-	} else
+	break;
+	case k8bitVariableEnergy:
+		if (_gameStateVars[variable] >= k8bitMaxEnergy)
+			_gameStateVars[variable] = k8bitMaxEnergy;
+		debugC(1, kFreescapeDebugCode, "Energy incremented by %d up to %d", increment, _gameStateVars[variable]);
+	break;
+	case k8bitVariableShield:
+		if (_gameStateVars[variable] >= k8bitMaxShield)
+			_gameStateVars[variable] = k8bitMaxShield;
+		debugC(1, kFreescapeDebugCode, "Shield incremented by %d up to %d", increment, _gameStateVars[variable]);
+	break;
+	default:
 		debugC(1, kFreescapeDebugCode, "Variable %d by %d incremented up to %d!", variable, increment, _gameStateVars[variable]);
+	break;
+	}
 }
 
 void FreescapeEngine::executeDecrementVariable(FCLInstruction &instruction) {

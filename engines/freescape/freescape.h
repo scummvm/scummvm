@@ -79,10 +79,13 @@ public:
 
 	Common::Error run() override;
 
-	// Border
+	// UI
 	Common::Rect _viewArea;
+	Common::Rect _fullscreenViewArea;
+
 	void convertBorder();
 	void drawBorder();
+	void drawUI();
 	Texture *_borderTexture;
 
 	// Parsing
