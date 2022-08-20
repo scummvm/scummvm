@@ -323,8 +323,8 @@ public:
 	void setEngineRedrawCallback(void *engine, void (*redrawCallback)(void *engine));
 
 	void passPalette(const byte *palette, uint size);
-	uint findBestColor(byte cr, byte cg, byte cb);
-	uint findBestColor(uint32 color);
+	uint32 findBestColor(byte cr, byte cg, byte cb);
+	uint32 findBestColor(uint32 color);
 	void decomposeColor(uint32 color, byte &r, byte &g, byte &b);
 	void setDesktopColor(byte, byte, byte);
 
