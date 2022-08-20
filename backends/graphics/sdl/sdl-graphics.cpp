@@ -186,7 +186,7 @@ bool SdlGraphicsManager::showMouse(bool visible) {
 		return visible;
 	}
 
-	int showCursor = SDL_DISABLE;
+	bool showCursor = false;
 	if (visible) {
 		// _cursorX and _cursorY are currently always clipped to the active
 		// area, so we need to ask SDL where the system's mouse cursor is
@@ -194,10 +194,10 @@ bool SdlGraphicsManager::showMouse(bool visible) {
 		int x, y;
 		SDL_GetMouseState(&x, &y);
 		if (!_activeArea.drawRect.contains(Common::Point(x, y))) {
-			showCursor = SDL_ENABLE;
+			showCursor = true;
 		}
 	}
-	SDL_ShowCursor(showCursor);
+	showSystemMouseCursor(showCursor);
 
 	return WindowedGraphicsManager::showMouse(visible);
 }
@@ -210,7 +210,7 @@ bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 	mouse.x = CLIP<int16>(mouse.x, 0, _windowWidth - 1);
 	mouse.y = CLIP<int16>(mouse.y, 0, _windowHeight - 1);
 
-	int showCursor = SDL_DISABLE;
+	bool showCursor = false;
 	// Currently on macOS we need to scale the events for HiDPI screen, but on
 	// Windows we do not. We can find out if we need to do it by querying the
 	// SDL window size vs the SDL drawable size.
@@ -251,17 +251,21 @@ bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 			}
 
 			if (_cursorVisible) {
-				showCursor = SDL_ENABLE;
+				showCursor = true;
 			}
 		}
 	}
 
-	SDL_ShowCursor(showCursor);
+	showSystemMouseCursor(showCursor);
 	if (valid) {
 		setMousePosition(mouse.x, mouse.y);
 		mouse = convertWindowToVirtual(mouse.x, mouse.y);
 	}
 	return valid;
+}
+
+void SdlGraphicsManager::showSystemMouseCursor(bool visible) {
+	SDL_ShowCursor(visible ? SDL_ENABLE : SDL_DISABLE);
 }
 
 void SdlGraphicsManager::setSystemMousePosition(const int x, const int y) {

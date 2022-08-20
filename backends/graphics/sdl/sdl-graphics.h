@@ -174,6 +174,8 @@ protected:
 #endif
 	}
 
+	virtual void showSystemMouseCursor(bool visible);
+
 	void setSystemMousePosition(const int x, const int y) override;
 
 	void notifyActiveAreaChanged() override;

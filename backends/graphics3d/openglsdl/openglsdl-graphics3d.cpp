@@ -755,17 +755,10 @@ bool OpenGLSdlGraphics3dManager::showMouse(bool visible) {
 	return true;
 }
 
-bool OpenGLSdlGraphics3dManager::notifyMousePosition(Common::Point &mouse) {
+void OpenGLSdlGraphics3dManager::showSystemMouseCursor(bool visible) {
 	// HACK: SdlGraphicsManager disables the system cursor when the mouse is in the
 	// active draw rect, however the 3D graphics manager uses it instead of the
 	// standard mouse graphic.
-	int showCursor = SDL_ShowCursor(SDL_QUERY);
-
-	bool valid = SdlGraphicsManager::notifyMousePosition(mouse);
-
-	SDL_ShowCursor(showCursor);
-
-	return valid;
 }
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
