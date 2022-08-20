@@ -20,6 +20,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "common/file.h"
 
 #include "freescape/freescape.h"
@@ -80,5 +81,41 @@ void DrillerEngine::drawUI() {
 	_gfx->setViewport(_viewArea);
 }
 
+void DrillerEngine::pressedKey(const int keycode) {
+	if (keycode == Common::KEYCODE_d) {
+		Common::Point gasPocket = _currentArea->gasPocketPosition;
+		uint32 gasPocketRadius = _currentArea->gasPocketRadius;
+		if (gasPocketRadius > 0 && !_currentArea->drillDeployed()) {
+			if (_gameStateVars[k8bitVariableEnergy] < 5) {
+				// Show "no enough energy" message
+				return;
+			}
+
+			_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
+			_gameStateVars[32]++;
+			// TODO: check if there is space for the drill
+			Math::Vector3d drillPosition = _position + _cameraFront * 128;
+			drillPosition.setValue(1, _position.y() - _playerHeight * _currentArea->getScale());
+			debugC(1, kFreescapeDebugMove, "Trying to adding drill at %f %f %f", drillPosition.x(), drillPosition.y(), drillPosition.z());
+			const Math::Vector3d gasPocket3D(gasPocket.x, 1, gasPocket.y);
+			_currentArea->addDrill(globalObjectsArea, drillPosition);
+			float distance = (gasPocket3D - drillPosition).length();
+			debugC(1, kFreescapeDebugMove, "length to gas pocket: %f with radius %d", distance, _currentArea->gasPocketRadius);
+			// TODO check the result of the drilling
+			// TODO: reduce energy
+		}
+	} else if (keycode == Common::KEYCODE_c) {
+		if (_currentArea->drillDeployed()) {
+			if (_gameStateVars[k8bitVariableEnergy] < 5) {
+				// Show "no enough energy" message
+				return;
+			}
+
+			_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
+			_gameStateVars[32]--;
+			_currentArea->removeDrill();
+		}
+	}
+}
 
 } // End of namespace Freescape

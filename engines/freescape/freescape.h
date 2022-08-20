@@ -114,6 +114,7 @@ public:
 	// Input
 	bool _flyMode;
 	void processInput();
+	virtual void pressedKey(const int keycode);
 	void move(CameraMovement direction, uint8 scale, float deltaTime);
 	void changePlayerHeight(int delta);
 	void rise();
@@ -210,6 +211,8 @@ public:
 
 	void loadAssets() override;
 	void drawUI() override;
+
+	void pressedKey(const int keycode) override;
 };
 
 class DarkEngine : public FreescapeEngine {
