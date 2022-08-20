@@ -218,6 +218,13 @@ public:
 	void loadAssets() override;
 };
 
+class CastleEngine : public FreescapeEngine {
+public:
+	CastleEngine(OSystem *syst);
+
+	void loadAssets() override;
+};
+
 extern FreescapeEngine *g_freescape;
 
 } // namespace Freescape
