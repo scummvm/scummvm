@@ -715,7 +715,7 @@ tWString cSaveHandler::GetLatest(const tWString &asMask) {
 	for (auto it = saves.begin() + 1; it != saves.end(); ++it) {
 		cDate d = parseDate(*it);
 		if (d > latestDate) {
-			d = latestDate;
+			latestDate = d;
 			latestSave = it;
 		}
 	}
