@@ -90,7 +90,7 @@ public:
 
 	// Parsing
 	uint8 _binaryBits;
-	void loadAssets();
+	virtual void loadAssets();
 	void load16bitBinary(Common::SeekableReadStream *file);
 
 	// 8-bits
@@ -207,11 +207,15 @@ public:
 class DrillerEngine : public FreescapeEngine {
 public:
 	DrillerEngine(OSystem *syst);
+
+	void loadAssets() override;
 };
 
 class EclipseEngine : public FreescapeEngine {
 public:
 	EclipseEngine(OSystem *syst);
+
+	void loadAssets() override;
 };
 
 extern FreescapeEngine *g_freescape;

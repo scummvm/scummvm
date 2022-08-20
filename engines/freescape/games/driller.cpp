@@ -19,10 +19,36 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "common/file.h"
+
 #include "freescape/freescape.h"
 
 namespace Freescape {
 
 DrillerEngine::DrillerEngine(OSystem *syst) : FreescapeEngine(syst) {}
+
+void DrillerEngine::loadAssets() {
+	Common::SeekableReadStream *file = nullptr;
+	Common::String path = ConfMan.get("path");
+	Common::FSDirectory gameDir(path);
+
+	Common::File exe;
+	if (_renderMode == "ega") {
+		file = gameDir.createReadStreamForMember("DRILLE.EXE");
+
+		if (file == nullptr)
+		    error("Failed to open DRILLE.EXE");
+
+		load8bitBinary(file, 0x9b40, 16);
+    } else if (_renderMode == "cga") {
+		file = gameDir.createReadStreamForMember("DRILLC.EXE");
+
+		if (file == nullptr)
+            error("Failed to open DRILLC.EXE");
+        load8bitBinary(file, 0x7bb0, 4);
+    } else
+        error("Invalid render mode %s for Driller", _renderMode.c_str());
+}
 
 } // End of namespace Freescape
