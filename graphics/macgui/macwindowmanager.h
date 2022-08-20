@@ -202,6 +202,7 @@ public:
 	 * @return Pointer to a new empty menu.
 	 */
 	MacMenu *addMenu();
+	MacPopUp *addPopUpMenu(int menuId);
 
 	void removeMenu();
 	void activateMenu();

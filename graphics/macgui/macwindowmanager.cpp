@@ -390,6 +390,15 @@ MacMenu *MacWindowManager::addMenu() {
 	return _menu;
 }
 
+MacPopUp *MacWindowManager::addPopUpMenu(int menuId) {
+
+	auto menu = new MacPopUp(menuId, getScreenBounds(), this);
+
+	_windows[menu->getId()] = menu;
+
+	return menu;
+}
+
 MacMenu *MacWindowManager::getMenu() {
 	if (_menu) {
 		return _menu;

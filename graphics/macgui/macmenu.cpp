@@ -636,7 +636,7 @@ void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
 		submenu = addSubMenu(nullptr, id);
 
 	for (uint i = 0; i < string.size(); i++) {
-		while (i < string.size() && string[i] != ';') // Read token
+		while (i < string.size() && (string[i] != ';' && string[i] != '\r')) // Read token
 			item += string[i++];
 
 		if (item.lastChar() == ']') { // we have command id

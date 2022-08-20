@@ -41,7 +41,7 @@
  *   example: "item1;item2;item3"
  * - a menulist can be a set of strings, each
  *   representing an item, separated by
- *   return and ending with &return
+ *   return and ending with return
  *   example: "item1"&return&"item2"&return
  * - a menulist could come from a cast member with
  *   each menu item separated by a carrage return.
@@ -145,8 +145,12 @@ PopUpMenuXObject::PopUpMenuXObject(ObjectType ObjectType) :Object<PopUpMenuXObje
 }
 
 void PopUpMenuXObj::m_new(int nargs) {
-	g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_new", nargs);
-	g_lingo->dropStack(nargs);
+	Datum menuId = g_lingo->pop();
+	Datum menuList = g_lingo->pop();
+
+	auto menu = g_director->_wm->addPopUpMenu(menuId.u.i);
+	menu->addMenuItem(nullptr, Common::String("\xf0"));
+	menu->createSubMenuFromString(0, menuList.u.s->c_str(), 0);
 	g_lingo->push(g_lingo->_currentMe);
 }
 

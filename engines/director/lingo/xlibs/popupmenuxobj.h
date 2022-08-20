@@ -22,11 +22,18 @@
 #ifndef DIRECTOR_LINGO_XLIBS_POPUPMENUXOBJ_H
 #define DIRECTOR_LINGO_XLIBS_POPUPMENUXOBJ_H
 
+#include "graphics/macgui/macmenu.h"
+
+namespace Graphics {
+class MacPopUp;
+}
+
 namespace Director {
 
 class PopUpMenuXObject : public Object<PopUpMenuXObject> {
 public:
 	PopUpMenuXObject(ObjectType objType);
+	Common::HashMap<int, Graphics::MacPopUp *> popUpList;
 };
 
 namespace PopUpMenuXObj {
