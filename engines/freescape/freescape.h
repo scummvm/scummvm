@@ -193,7 +193,7 @@ public:
 	Graphics::Surface *_border;
 
 	// Game state
-	void initGameState();
+	virtual void initGameState();
 	StateVars _gameStateVars;
 	StateBits _gameStateBits;
 
@@ -209,6 +209,7 @@ class DrillerEngine : public FreescapeEngine {
 public:
 	DrillerEngine(OSystem *syst);
 
+	void initGameState() override;
 	void loadAssets() override;
 	void drawUI() override;
 
