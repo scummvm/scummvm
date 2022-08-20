@@ -20,6 +20,9 @@
  */
 
 #include "hpl1/metaengine.h"
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "common/translation.h"
 #include "hpl1/detection.h"
 #include "hpl1/hpl1.h"
 
@@ -40,6 +43,56 @@ bool Hpl1MetaEngine::hasFeature(MetaEngineFeature f) const {
 		   (f == kSavesSupportMetaInfo) ||
 		   (f == kSavesSupportThumbnail) ||
 		   (f == kSupportsLoadingDuringStartup);
+}
+
+Common::Action *createKeyBoardAction(const char *id, const Common::U32String &desc, const char *defaultMap, const Common::KeyState &key) {
+	Common::Action *act = new Common::Action(id, desc);
+	act->setKeyEvent(key);
+	act->addDefaultInputMapping(defaultMap);
+	return act;
+}
+
+Common::Action *createMouseAction(const char *id, const Common::U32String &desc, const char *defaultMap, const Common::EventType type) {
+	Common::Action *act = new Common::Action(id, desc);
+	act->setEvent(type);
+	act->addDefaultInputMapping(defaultMap);
+	return act;
+}
+
+Common::Array<Common::Keymap *> Hpl1MetaEngine::initKeymaps(const char *target) const {
+	using Common::Keymap;
+	using namespace Hpl1;
+
+	Keymap *movement = new Keymap(Keymap::kKeymapTypeGame, "HPL1_MOVEMENT", "Movement");
+	movement->addAction(createKeyBoardAction("FORWARD", _("Forward"), "w", Common::KEYCODE_w));
+	movement->addAction(createKeyBoardAction("BACKWARD", _("Backward"), "s", Common::KEYCODE_s));
+	movement->addAction(createKeyBoardAction("LEFT", _("Strafe Left"), "a", Common::KEYCODE_a));
+	movement->addAction(createKeyBoardAction("RIGHT", _("Strafe Right"), "d", Common::KEYCODE_d));
+	movement->addAction(createKeyBoardAction("LEAN_LEFT", _("Lean Left"), "q", Common::KEYCODE_q));
+	movement->addAction(createKeyBoardAction("LEAN_RIGHT", _("Lean Right"), "e", Common::KEYCODE_e));
+	movement->addAction(createKeyBoardAction("RUN", _("Run"), "LSHIFT", Common::KEYCODE_LSHIFT));
+	movement->addAction(createKeyBoardAction("JUMP", _("Jump"), "SPACE", Common::KEYCODE_SPACE));
+	movement->addAction(createKeyBoardAction("CROUCH", _("Crouch"), "LCTRL", Common::KEYCODE_LCTRL));
+
+	Keymap *actions = new Keymap(Keymap::kKeymapTypeGame, "HPL1_ACTIONS", "Actions");
+	actions->addAction(createKeyBoardAction("INTERACTMODE", _("Interact Mode"), "r", Common::KEYCODE_r));
+	actions->addAction(createMouseAction("LOOK_MODE", _("Look Mode"), "MOUSE_MIDDLE", Common::EVENT_MBUTTONDOWN));
+	actions->addAction(createKeyBoardAction("HOLSTER", _("Holster"), "x", Common::KEYCODE_x));
+	actions->addAction(createMouseAction("EXAMINE", _("Examine"), "MOUSE_LEFT", Common::EVENT_LBUTTONDOWN));
+	actions->addAction(createMouseAction("INTERACT", _("Interact"), "MOUSE_RIGHT", Common::EVENT_RBUTTONDOWN));
+
+	Keymap *misc = new Keymap(Keymap::kKeymapTypeGame, "HPL1_MISC", "Misc");
+	misc->addAction(createKeyBoardAction("INVENTORY", _("Inventory"), "TAB", Common::KEYCODE_TAB));
+	misc->addAction(createKeyBoardAction("NOTEBOOK", _("Notebook"), "n", Common::KEYCODE_n));
+	misc->addAction(createKeyBoardAction("PERSONAL_NOTES", _("Personal Notes"), "p", Common::KEYCODE_p));
+	misc->addAction(createKeyBoardAction("FLASHLIGHT", _("Flashlight"), "f", Common::KEYCODE_f));
+	misc->addAction(createKeyBoardAction("GLOWSTICK", _("Glowstick"), "g", Common::KEYCODE_f));
+
+	Common::Array<Common::Keymap *> keymaps(3);
+	keymaps[0] = movement;
+	keymaps[1] = actions;
+	keymaps[2] = misc;
+	return keymaps;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(HPL1)
