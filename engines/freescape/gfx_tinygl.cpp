@@ -150,12 +150,15 @@ void TinyGLRenderer::renderCrossair(byte color) {
 
 	tglColor3ub(r, g, b);
 
-	tglBegin(TGL_LINES);
-	tglVertex2f(kOriginalWidth / 2 - 2, kOriginalHeight / 2);
-	tglVertex2f(kOriginalWidth / 2 + 3, kOriginalHeight / 2);
+	int viewPort[4];
+	tglGetIntegerv(TGL_VIEWPORT, viewPort);
 
-	tglVertex2f(kOriginalWidth / 2, kOriginalHeight / 2 - 2);
-	tglVertex2f(kOriginalWidth / 2, kOriginalHeight / 2 + 3);
+	tglBegin(TGL_LINES);
+	tglVertex2f(viewPort[0] + viewPort[2] / 2 - 2, (viewPort[1] + viewPort[3]) / 2);
+	tglVertex2f(viewPort[0] + viewPort[2] / 2 + 3, (viewPort[1] + viewPort[3]) / 2);
+
+	tglVertex2f(viewPort[0] + viewPort[2] / 2, (viewPort[1] + viewPort[3]) / 2 - 2);
+	tglVertex2f(viewPort[0] + viewPort[2] / 2, (viewPort[1] + viewPort[3]) / 2 + 3);
 	tglEnd();
 
 	tglDepthMask(TGL_TRUE);
@@ -177,18 +180,21 @@ void TinyGLRenderer::renderShoot(byte color) {
 
 	tglColor3ub(r, g, b);
 
+	int viewPort[4];
+	tglGetIntegerv(TGL_VIEWPORT, viewPort);
+
 	tglBegin(TGL_LINES);
-	tglVertex2f(0, kOriginalHeight - 2);
-	tglVertex2f(kOriginalWidth / 2, kOriginalHeight / 2);
+	tglVertex2f(0, viewPort[1] + viewPort[3] - 2);
+	tglVertex2f(viewPort[0] + viewPort[2] / 2, (viewPort[1] + viewPort[3]) / 2);
 
-	tglVertex2f(0, kOriginalHeight);
-	tglVertex2f(kOriginalWidth / 2, kOriginalHeight / 2);
+	tglVertex2f(0, viewPort[1] + viewPort[3]);
+	tglVertex2f(viewPort[0] + viewPort[2] / 2, (viewPort[1] + viewPort[3]) / 2);
 
-	tglVertex2f(kOriginalWidth, kOriginalHeight - 2);
-	tglVertex2f(kOriginalWidth / 2, kOriginalHeight / 2);
+	tglVertex2f(viewPort[0] + viewPort[2], viewPort[1] + viewPort[3] - 2);
+	tglVertex2f(viewPort[0] + viewPort[2] / 2, (viewPort[1] + viewPort[3]) / 2);
 
-	tglVertex2f(kOriginalWidth, kOriginalHeight);
-	tglVertex2f(kOriginalWidth / 2, kOriginalHeight / 2);
+	tglVertex2f(viewPort[0] + viewPort[2], viewPort[1] + viewPort[3]);
+	tglVertex2f(viewPort[0] + viewPort[2] / 2, (viewPort[1] + viewPort[3]) / 2);
 
 	tglEnd();
 

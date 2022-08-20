@@ -221,6 +221,7 @@ Math::Vector3d FreescapeEngine::directionToVector(float pitch, float heading) {
 }
 
 void FreescapeEngine::drawUI() {
+	_gfx->renderCrossair(0);
 	_gfx->setViewport(_fullscreenViewArea);
 
 	if (isDriller()) {
@@ -246,6 +247,7 @@ void FreescapeEngine::drawUI() {
 			}
 		}
 	}
+	_gfx->setViewport(_viewArea);
 }
 
 
@@ -253,7 +255,6 @@ void FreescapeEngine::drawFrame() {
 	_gfx->updateProjectionMatrix(60.0, _nearClipPlane, _farClipPlane);
 	_gfx->positionCamera(_position, _position + _cameraFront);
 	_currentArea->draw(_gfx);
-	_gfx->renderCrossair(0);
 	drawBorder();
 	drawUI();
 }
