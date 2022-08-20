@@ -104,7 +104,7 @@ void cDeathMenuButton::OnMouseOver(bool abOver) {
 //-----------------------------------------------------------------------
 
 void cDeathMenuButton_Continue::OnMouseDown() {
-	tWString save = mpInit->mpSaveHandler->GetLatest(_W("save-????.*.sav"));
+	tWString save = mpInit->mpSaveHandler->GetLatest(_W("hpl1-po-????.*.sav"));
 	if (save != _W(""))
 		mpInit->mpSaveHandler->LoadGameFromFile(save);
 }
@@ -301,7 +301,7 @@ void cDeathMenu::SetActive(bool abX) {
 		STLDeleteAll(mlstButtons);
 
 		// Continue
-		tWString latestSave = mpInit->mpSaveHandler->GetLatest(_W("save-????.*.sav"));
+		tWString latestSave = mpInit->mpSaveHandler->GetLatest(_W("hpl1-po-????.*.sav"));
 		if (latestSave != _W("")) {
 			mlstButtons.push_back(hplNew(cDeathMenuButton_Continue, (mpInit, cVector2f(400, 290), kTranslate("DeathMenu", "Continue"))));
 		}

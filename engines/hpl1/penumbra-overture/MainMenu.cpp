@@ -634,7 +634,7 @@ void cMainMenuWidget_Continue::OnMouseDown(eMButton aButton) {
 
 	mpInit->mpMainMenu->SetActive(false);
 
-	tWString latestSave = mpInit->mpSaveHandler->GetLatest(_W("save-????.*.sav"));
+	tWString latestSave = mpInit->mpSaveHandler->GetLatest(_W("hpl1-po-????.*.sav"));
 	if (latestSave != _W(""))
 		mpInit->mpSaveHandler->LoadGameFromFile(latestSave);
 }
@@ -2480,7 +2480,7 @@ void cMainMenu::CreateWidgets() {
 		AddWidgetToState(eMainMenuState_Start, hplNew(cMainMenuWidget_Resume, (mpInit, vPos, kTranslate("MainMenu", "Resume"))));
 		vPos.y += 60;
 	} else {
-		tWString latestSave = mpInit->mpSaveHandler->GetLatest(_W("save-????.*.sav"));
+		tWString latestSave = mpInit->mpSaveHandler->GetLatest(_W("hpl1-po-????.*.sav"));
 
 		if (latestSave != _W("")) {
 			AddWidgetToState(eMainMenuState_Start, hplNew(cMainMenuWidget_MainButton, (mpInit, vPos, kTranslate("MainMenu", "Continue"), eMainMenuState_Continue)));
@@ -2577,11 +2577,11 @@ void cMainMenu::CreateWidgets() {
 		vPos.y += 46 + 30;
 		vPos.x += 15;
 
-		tWString sDir = _W("save-spot");
+		tWString sDir = _W("hpl1-po-spot");
 		if (i == 1)
-			sDir = _W("save-auto");
+			sDir = _W("hpl1-po-auto");
 		else if (i == 2)
-			sDir = _W("save-favorite");
+			sDir = _W("hpl1-po-favorite");
 
 		gpSaveGameList[i] = hplNew(cMainMenuWidget_SaveGameList, (
 																	 mpInit, vPos, cVector2f(355, 170), 15, sDir, (int)i));
