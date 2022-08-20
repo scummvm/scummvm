@@ -41,10 +41,8 @@ Common::Array<Image> _images;
 
 // Cycles define the animation of sprites within a level. There is a fixed total of cycles available, and they are not room dependant
 struct Cycle {
-DataSprite *_dSprite;
-	  bool  _repeat;
-	   int  _index;						// In source this is actually the position within the *instruction list*, but since cycle's are structs, it's just the index of frames now
-	   int *_frames;
+	 int  _index;						// In source this is actually the position within the *instruction list*, but since cycle's are structs, it's just the index of frames now
+	CycID _cycList;
 };
 
 enum SpriteFrame {

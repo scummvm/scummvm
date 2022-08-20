@@ -44,20 +44,21 @@
 
 namespace Immortal {
 
-CycID ImmortalEngine::cycleNew(CycID id) {
+int ImmortalEngine::cycleNew(CycID id) {
 	// An 'available' cyc is identified by the index being -1
 	for (int i = 0; i < kMaxCycles; i++) {
 		if (_cycles[i]._index == -1) {
 			_cycles[i]._index = 0;
-			return (CycID) i;
+			_cycles[i]._cycList = id;
+			return i;
 		}
 	}
 	debug("Null Cyc, can not be created");
-	return (CycID) (kMaxCycles - 1);
+	return kMaxCycles - 1;
 }
 
-void ImmortalEngine::cycleFree(CycID id) {
-	_cycles[id]._index = -1;
+void ImmortalEngine::cycleFree(int c) {
+	_cycles[c]._index = -1;
 }
 
 void ImmortalEngine::cycleFreeAll() {
@@ -66,49 +67,49 @@ void ImmortalEngine::cycleFreeAll() {
 	}
 }
 
-bool ImmortalEngine::cycleAdvance(CycID id) {
+bool ImmortalEngine::cycleAdvance(int c) {
 	/* If we have reached the end, check if repeat == true, and set back to 0 if so
 	 * Otherwise, set to the last used index */
-	_cycles[id]._index++;
-	if (_cycles[id]._frames[_cycles[id]._index] == -1) {
-		if (_cycles[id]._repeat == true) {
-			_cycles[id]._index = 0;
+	_cycles[c]._index++;
+	if (_cycPtrs[_cycles[c]._index]._frames[_cycles[c]._index] == -1) {
+		if (_cycPtrs[_cycles[c]._index]._repeat == true) {
+			_cycles[c]._index = 0;
 		} else {
-			_cycles[id]._index--;
+			_cycles[c]._index--;
 			return true;
 		}
 	}
 	return false;
 }
 
-int ImmortalEngine::cycleGetFrame(CycID id) {
+int ImmortalEngine::cycleGetFrame(int c) {
 	// This originally did some shenanigans in Kernal to get the number, but really it's just this
-	 return _cycles[id]._frames[_cycles[id]._index];
+	 return _cycPtrs[_cycles[c]._cycList]._frames[_cycles[c]._index];
  }
 
-int ImmortalEngine::cycleGetNumFrames(CycID id) {
+int ImmortalEngine::cycleGetNumFrames(int c) {
 	// Why in the world is this not kept as a property of the cycle? We have to calculate the size of the array each time
 	int index = 0;
-	while (_cycles[id]._frames[index] != -1) {
+	while (_cycPtrs[_cycles[c]._cycList]._frames[index] != -1) {
 		index++;
 	}
 	return index;
 }
 
-DataSprite *ImmortalEngine::cycleGetDataSprite(CycID id) {
-	return _cycles[id]._dSprite;
+DataSprite *ImmortalEngine::cycleGetDataSprite(int c) {
+	return _cycPtrs[_cycles[c]._cycList]._dSprite;
 }
 
-Cycle *ImmortalEngine::getCycList(CycID id) {
-	return &_cycles[id];
+CycID ImmortalEngine::getCycList(int c) {
+	return _cycles[c]._cycList;
 }
 
-int ImmortalEngine::cycleGetIndex(CycID id) {
-	return _cycles[id]._index;
+int ImmortalEngine::cycleGetIndex(int c) {
+	return _cycles[c]._index;
 }
 
-void ImmortalEngine::cycleSetIndex(CycID id, int f) {
-	_cycles[id]._index = f;
+void ImmortalEngine::cycleSetIndex(int c, int f) {
+	_cycles[c]._index = f;
 }
 
 
