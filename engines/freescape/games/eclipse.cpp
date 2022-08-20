@@ -23,6 +23,38 @@
 
 namespace Freescape {
 
-DrillerEngine::DrillerEngine(OSystem *syst) : FreescapeEngine(syst) {}
+static const entrancesTableEntry rawEntranceTable[] = {
+	{183, {36, 137, 13}}, // Correct?
+	{184, {36, 137, 13}}, // TODO
+	{185, {36, 137, 13}}, // TODO
+	{186, {36, 137, 13}}, // TODO
+	{187, {36, 137, 13}}, // TODO
+	{188, {36, 137, 13}}, // TODO
+	{190, {36, 137, 13}}, // TODO
+	{191, {36, 137, 13}}, // TODO
+	{192, {36, 137, 13}}, // TODO
+	{193, {36, 137, 13}}, // TODO
+	{194, {36, 137, 13}}, // TODO
+	{195, {36, 137, 13}}, // TODO
+	{196, {36, 137, 13}}, // TODO
+	{197, {203, 0, 31}},  // TODO
+	{198, {36, 137, 13}}, // TODO
+	{199, {36, 137, 13}}, // TODO
+	{200, {36, 137, 13}}, // TODO
+	{201, {36, 137, 13}}, // TODO
+	{202, {360, 0, 373}}, // TODO
+	{203, {207, 0, 384}},
+	{204, {207, 0, 372}},
+	{206, {36, 137, 13}}, // TODO
+	{0, {0, 0, 0}},        // NULL
+};
+
+EclipseEngine::EclipseEngine(OSystem *syst) : FreescapeEngine(syst) {
+	const entrancesTableEntry *entry = rawEntranceTable;
+	while (entry->id) {
+		_entranceTable[entry->id] = entry;
+		entry++;
+	}
+}
 
 } // End of namespace Freescape

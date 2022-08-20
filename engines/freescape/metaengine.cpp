@@ -34,6 +34,8 @@ public:
 Common::Error FreescapeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (Common::String(desc->gameId) == "driller" || Common::String(desc->gameId) == "spacestationoblivion") {
 		*engine = (Engine *)new Freescape::DrillerEngine(syst);
+	} else 	if (Common::String(desc->gameId) == "totaleclipse") {
+		*engine = (Engine *)new Freescape::EclipseEngine(syst);
 	} else
 		*engine = new Freescape::FreescapeEngine(syst);
 

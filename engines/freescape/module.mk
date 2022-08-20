@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	freescape.o \
 	area.o \
 	games/driller.o \
+	games/eclipse.o \
 	gfx.o \
 	gfx_tinygl.o \
 	gfx_tinygl_texture.o \
