@@ -36,6 +36,8 @@ Common::Error FreescapeMetaEngine::createInstance(OSystem *syst, Engine **engine
 		*engine = (Engine *)new Freescape::DrillerEngine(syst);
 	} else 	if (Common::String(desc->gameId) == "totaleclipse") {
 		*engine = (Engine *)new Freescape::EclipseEngine(syst);
+	} else 	if (Common::String(desc->gameId) == "castlemaster") {
+		*engine = (Engine *)new Freescape::CastleEngine(syst);
 	} else
 		*engine = new Freescape::FreescapeEngine(syst);
 

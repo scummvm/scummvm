@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	metaengine.o \
 	freescape.o \
 	area.o \
+	games/castle.o \
 	games/driller.o \
 	games/eclipse.o \
 	gfx.o \
