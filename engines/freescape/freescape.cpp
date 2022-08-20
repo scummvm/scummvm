@@ -124,6 +124,8 @@ void FreescapeEngine::drawFrame() {
 	drawUI();
 }
 
+void FreescapeEngine::pressedKey(const int keycode) {}
+
 void FreescapeEngine::processInput() {
 	float currentFrame = g_system->getMillis();
 	float deltaTime = currentFrame - _lastFrame;
@@ -150,42 +152,10 @@ void FreescapeEngine::processInput() {
 				lower();
 			else if (event.kbd.keycode == Common::KEYCODE_n)
 				gotoArea(_currentArea->getAreaID() + 1, 0);
-			else if (event.kbd.keycode == Common::KEYCODE_d) {
-				Common::Point gasPocket = _currentArea->gasPocketPosition;
-				uint32 gasPocketRadius = _currentArea->gasPocketRadius;
-				if (isDriller() && gasPocketRadius > 0 && !_currentArea->drillDeployed()) {
-					if (_gameStateVars[k8bitVariableEnergy] < 5) {
-						// Show "no enough energy" message
-						continue;
-					}
-
-					_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
-					_gameStateVars[32]++;
-					// TODO: check if there is space for the drill
-					Math::Vector3d drillPosition = _position + _cameraFront * 128;
-					drillPosition.setValue(1, _position.y() - _playerHeight * _currentArea->getScale());
-					debugC(1, kFreescapeDebugMove, "Trying to adding drill at %f %f %f", drillPosition.x(), drillPosition.y(), drillPosition.z());
-					const Math::Vector3d gasPocket3D(gasPocket.x, 1, gasPocket.y);
-					_currentArea->addDrill(globalObjectsArea, drillPosition);
-					float distance = (gasPocket3D - drillPosition).length();
-					debugC(1, kFreescapeDebugMove, "length to gas pocket: %f with radius %d", distance, _currentArea->gasPocketRadius);
-					// TODO check the result of the drilling
-					// TODO: reduce energy
-				}
-			} else if (event.kbd.keycode == Common::KEYCODE_c) {
-
-				if (isDriller() && _currentArea->drillDeployed()) {
-					if (_gameStateVars[k8bitVariableEnergy] < 5) {
-						// Show "no enough energy" message
-						continue;
-					}
-
-					_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
-					_gameStateVars[32]--;
-					_currentArea->removeDrill();
-				}
-			} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+			else if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				openMainMenuDialog();
+			else
+				pressedKey(event.kbd.keycode);
 			break;
 
 		case Common::EVENT_QUIT:
