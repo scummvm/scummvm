@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	metaengine.o \
 	freescape.o \
 	area.o \
+	games/driller.o \
 	gfx.o \
 	gfx_tinygl.o \
 	gfx_tinygl_texture.o \

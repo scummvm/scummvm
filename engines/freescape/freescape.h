@@ -204,6 +204,11 @@ public:
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 };
 
+class DrillerEngine : public FreescapeEngine {
+public:
+	DrillerEngine(OSystem *syst);
+};
+
 extern FreescapeEngine *g_freescape;
 
 } // namespace Freescape
