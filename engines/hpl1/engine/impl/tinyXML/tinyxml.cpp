@@ -873,7 +873,7 @@ bool TiXmlDocument::SaveFile(Common::WriteStream &fp) const {
 		fp.writeByte(TIXML_UTF_LEAD_2); 
 	}
 	Print(fp, 0);
-	return fp.err();
+	return !fp.err();
 }
 
 void TiXmlDocument::CopyTo(TiXmlDocument *target) const {
