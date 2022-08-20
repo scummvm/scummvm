@@ -2750,6 +2750,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "theoccultist", "The Occultist - Old Growth" },
 	{ "theoffice", "The Office" },
 	{ "theoracle", "The Oracle" },
+	{ "theoven", "The Oven" },
 	{ "thepaparazziprince", "The Paparazzi Prince; and the Quest for Headlines" },
 	{ "thepark", "The Park" },
 	{ "theparrotsnatchers", "The Parrot Snatchers" },
@@ -6955,6 +6956,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("theoffice", "TheOffice.exe", "8e386ed8901186872484373c64fcd812", 355519407),  //v1.1 Win
 	GAME_ENTRY_EN("theoffice", "TheOffice.ags", "6721a4f1403e28a61dca04558728f914", 353015199),  //v1.1 Linux
 	GAME_ENTRY_EN("theoracle", "The Oracle.exe", "f120690b506dd63cd7d1112ea6af2f77", 7490474),  //v1.1
+	GAME_ENTRY_EN("theoven", "TheOven.exe", "618d7dce9631229b4579340b964c6810", 32992976), //v1.0.0.0
 	GAME_ENTRY_EN("thepaparazziprince", "Willy.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 3403804),
 	GAME_ENTRY_EN("thepark", "park.exe", "97d700529f5cc826f230c27acf81adfd", 709265),
 	GAME_ENTRY("theparrotsnatchers", "r.exe", "a524cbb1c51589903c4043b98917f1d9", 11945759),  // En-Pol
