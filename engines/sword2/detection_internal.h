@@ -50,7 +50,7 @@ static const GameSettings sword2_settings[] = {
 	{"sword2psxdemo", "Broken Sword II: The Smoking Mirror (PlayStation/Demo)", Sword2::GF_DEMO, "screens.clu", Common::kPlatformPSX },
 	{"sword2demo", "Broken Sword II: The Smoking Mirror (Demo)", Sword2::GF_DEMO, "players.clu", Common::kPlatformWindows },
 	{"sword2demo-es", "Broken Sword II: The Smoking Mirror (Spanish/Demo)", Sword2::GF_DEMO | Sword2::GF_SPANISHDEMO, "vielogo.tga", Common::kPlatformWindows },
-	{NULL, NULL, 0, NULL}
+	{NULL, NULL, 0, NULL, Common::kPlatformUnknown }
 };
 
 } // End of namespace Sword2
