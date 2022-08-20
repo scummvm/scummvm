@@ -85,7 +85,7 @@ public:
 
 	void convertBorder();
 	void drawBorder();
-	void drawUI();
+	virtual void drawUI();
 	Texture *_borderTexture;
 
 	// Parsing
@@ -209,6 +209,7 @@ public:
 	DrillerEngine(OSystem *syst);
 
 	void loadAssets() override;
+	void drawUI() override;
 };
 
 class DarkEngine : public FreescapeEngine {

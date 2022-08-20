@@ -112,31 +112,6 @@ Math::Vector3d FreescapeEngine::directionToVector(float pitch, float heading) {
 
 void FreescapeEngine::drawUI() {
 	_gfx->renderCrossair(0);
-	_gfx->setViewport(_fullscreenViewArea);
-
-	if (isDriller()) {
-		int energy = _gameStateVars[k8bitVariableEnergy];
-		int shield = _gameStateVars[k8bitVariableShield];
-		if (_renderMode == "ega" && _border) {
-			//Common::Rect black(20, 177, 87, 191);
-			//_gfx->drawRect2D(black, 255, 0, 0, 0);
-
-			if (energy >= 0) {
-				Common::Rect black(20, 186, 87 - energy, 191);
-				_gfx->drawRect2D(black, 255, 0, 0, 0);
-				Common::Rect energyBar(87 - energy, 186, 87, 191);
-				_gfx->drawRect2D(energyBar, 255, 0xfc, 0xfc, 0x54);
-			}
-
-			if (shield >= 0) {
-				Common::Rect black(20, 178, 87 - shield, 183);
-				_gfx->drawRect2D(black, 255, 0, 0, 0);
-
-				Common::Rect shieldBar(87 - shield, 178, 87, 183);
-				_gfx->drawRect2D(shieldBar, 255, 0xfc, 0xfc, 0x54);
-			}
-		}
-	}
 	_gfx->setViewport(_viewArea);
 }
 
