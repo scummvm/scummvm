@@ -184,10 +184,10 @@ void TinyGLRenderer::renderShoot(byte color) {
 	tglGetIntegerv(TGL_VIEWPORT, viewPort);
 
 	tglBegin(TGL_LINES);
-	tglVertex2f(0, viewPort[1] + viewPort[3] - 2);
+	tglVertex2f(viewPort[0], viewPort[1] + viewPort[3] - 2);
 	tglVertex2f(viewPort[0] + viewPort[2] / 2, (viewPort[1] + viewPort[3]) / 2);
 
-	tglVertex2f(0, viewPort[1] + viewPort[3]);
+	tglVertex2f(viewPort[0], viewPort[1] + viewPort[3]);
 	tglVertex2f(viewPort[0] + viewPort[2] / 2, (viewPort[1] + viewPort[3]) / 2);
 
 	tglVertex2f(viewPort[0] + viewPort[2], viewPort[1] + viewPort[3] - 2);
