@@ -610,7 +610,7 @@ void cSaveHandler::AutoSave(const tWString &asDir, int alMaxSaves) {
 	sMapName = cString::ReplaceCharToW(sMapName, _W(":"), _W(" "));
 	cDate date = mpInit->mpGame->GetSystem()->GetLowLevel()->getDate();
 	wchar_t sTemp[512];
-	swprintf(sTemp, 512, _W("save-%ls.%ls %d-%02d-%02d_%02d.%02d.%02d_%02d.sav"),
+	swprintf(sTemp, 512, _W("hpl1-po-%ls.%ls %d-%02d-%02d_%02d.%02d.%02d_%02d.sav"),
 			 asDir.c_str(),
 			 sMapName.c_str(),
 			 date.year,
@@ -629,7 +629,7 @@ void cSaveHandler::AutoSave(const tWString &asDir, int alMaxSaves) {
 //-----------------------------------------------------------------------
 
 void cSaveHandler::AutoLoad(const tWString &asDir) {
-	tWString latestSave = GetLatest(_W("save-") + asDir + _W(".*.sav"));
+	tWString latestSave = GetLatest(_W("hpl1-po-") + asDir + _W(".*.sav"));
 	LoadGameFromFile(latestSave);
 	mpInit->mpGame->ResetLogicTimer();
 }
