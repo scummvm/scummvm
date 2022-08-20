@@ -23,7 +23,6 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/math.h"
-#include "common/memstream.h"
 #include "graphics/cursorman.h"
 
 #include "freescape/freescape.h"
@@ -92,82 +91,7 @@ void FreescapeEngine::loadAssets() {
 
 		file = files.begin()->get()->createReadStream();
 		load16bitBinary(file);
-	} else if (isDriller()) {
-		Common::File exe;
-		if (_renderMode == "ega") {
-			file = gameDir.createReadStreamForMember("DRILLE.EXE");
-
-			if (file == nullptr)
-				error("Failed to open DRILLE.EXE");
-
-			load8bitBinary(file, 0x9b40, 16);
-		} else if (_renderMode == "cga") {
-			file = gameDir.createReadStreamForMember("DRILLC.EXE");
-
-			if (file == nullptr)
-				error("Failed to open DRILLC.EXE");
-			load8bitBinary(file, 0x7bb0, 4);
-		} else
-			error("Invalid render mode %s for Driller", _renderMode.c_str());
-
-	} else if (isDark()) {
-		Common::File exe;
-		if (_renderMode == "ega") {
-			file = gameDir.createReadStreamForMember("DSIDEE.EXE");
-
-			if (file == nullptr)
-				error("Failed to open DSIDEE.EXE");
-
-			load8bitBinary(file, 0xa280, 16);
-		} else if (_renderMode == "cga") {
-			file = gameDir.createReadStreamForMember("DSIDEC.EXE");
-
-			if (file == nullptr)
-				error("Failed to open DSIDE.EXE");
-			load8bitBinary(file, 0x7bb0, 4);
-		} else
-			error("Invalid render mode %s for Dark Side", _renderMode.c_str());
-
-	} else if (isEclipse()) {
-		Common::File exe;
-		if (_renderMode == "ega") {
-			file = gameDir.createReadStreamForMember("TOTEE.EXE");
-
-			if (file == nullptr)
-				error("Failed to open TOTEE.EXE");
-
-			load8bitBinary(file, 0x3ce0, 16);
-		} else if (_renderMode == "cga") {
-			file = gameDir.createReadStreamForMember("TOTEC.EXE");
-
-			if (file == nullptr)
-				error("Failed to open TOTEC.EXE");
-			load8bitBinary(file, 0x7bb0, 4); // TODO
-		} else
-			error("Invalid render mode %s for Total Eclipse", _renderMode.c_str());
-	   } else if (isCastle()) {
-			_renderMode = "ega";
-
-			file = gameDir.createReadStreamForMember("CMEDF");
-			int size = file->size();
-			byte *encryptedBuffer = (byte*) malloc(size);
-			file->read(encryptedBuffer, size);
-
-			int seed = 24;
-			for (int i = 0; i < size; i++) {
-				encryptedBuffer[i] ^= seed;
-				seed = (seed + 1) & 0xff;
-			}
-
-			file = new Common::MemoryReadStream(encryptedBuffer, size);
-			load8bitBinary(file, 0, 16);
-
-			// CPC
-			//file = gameDir.createReadStreamForMember("cm.bin");
-			//if (file == nullptr)
-			//	error("Failed to open cm.bin");
-			//load8bitBinary(file, 0x791a, 16);
-	   } else
+	} else
 		error("'%s' is an invalid game", _targetName.c_str());
 
 }
