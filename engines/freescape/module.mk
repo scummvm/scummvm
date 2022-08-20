@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	freescape.o \
 	area.o \
 	games/castle.o \
+	games/dark.o \
 	games/driller.o \
 	games/eclipse.o \
 	gfx.o \

@@ -211,6 +211,13 @@ public:
 	void loadAssets() override;
 };
 
+class DarkEngine : public FreescapeEngine {
+public:
+	DarkEngine(OSystem *syst);
+
+	void loadAssets() override;
+};
+
 class EclipseEngine : public FreescapeEngine {
 public:
 	EclipseEngine(OSystem *syst);
