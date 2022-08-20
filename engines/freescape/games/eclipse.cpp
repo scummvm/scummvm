@@ -19,6 +19,9 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "common/file.h"
+
 #include "freescape/freescape.h"
 
 namespace Freescape {
@@ -56,5 +59,30 @@ EclipseEngine::EclipseEngine(OSystem *syst) : FreescapeEngine(syst) {
 		entry++;
 	}
 }
+
+void EclipseEngine::loadAssets() {
+	Common::SeekableReadStream *file = nullptr;
+	Common::String path = ConfMan.get("path");
+	Common::FSDirectory gameDir(path);
+
+    Common::File exe;
+    if (_renderMode == "ega") {
+        file = gameDir.createReadStreamForMember("TOTEE.EXE");
+
+        if (file == nullptr)
+            error("Failed to open TOTEE.EXE");
+
+        load8bitBinary(file, 0x3ce0, 16);
+    } else if (_renderMode == "cga") {
+        file = gameDir.createReadStreamForMember("TOTEC.EXE");
+
+        if (file == nullptr)
+            error("Failed to open TOTEC.EXE");
+        load8bitBinary(file, 0x7bb0, 4); // TODO
+    } else
+        error("Invalid render mode %s for Total Eclipse", _renderMode.c_str());
+
+}
+
 
 } // End of namespace Freescape
