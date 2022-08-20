@@ -23,6 +23,7 @@
 #include "common/file.h"
 
 #include "freescape/freescape.h"
+#include "freescape/language/8bitDetokeniser.h"
 
 namespace Freescape {
 
@@ -38,17 +39,46 @@ void DrillerEngine::loadAssets() {
 		file = gameDir.createReadStreamForMember("DRILLE.EXE");
 
 		if (file == nullptr)
-		    error("Failed to open DRILLE.EXE");
+			error("Failed to open DRILLE.EXE");
 
 		load8bitBinary(file, 0x9b40, 16);
-    } else if (_renderMode == "cga") {
+	} else if (_renderMode == "cga") {
 		file = gameDir.createReadStreamForMember("DRILLC.EXE");
 
 		if (file == nullptr)
-            error("Failed to open DRILLC.EXE");
-        load8bitBinary(file, 0x7bb0, 4);
-    } else
-        error("Invalid render mode %s for Driller", _renderMode.c_str());
+			error("Failed to open DRILLC.EXE");
+		load8bitBinary(file, 0x7bb0, 4);
+	} else
+		error("Invalid render mode %s for Driller", _renderMode.c_str());
 }
+
+void DrillerEngine::drawUI() {
+	_gfx->renderCrossair(0);
+	_gfx->setViewport(_fullscreenViewArea);
+
+	int energy = _gameStateVars[k8bitVariableEnergy];
+	int shield = _gameStateVars[k8bitVariableShield];
+	if (_renderMode == "ega" && _border) {
+		//Common::Rect black(20, 177, 87, 191);
+		//_gfx->drawRect2D(black, 255, 0, 0, 0);
+
+		if (energy >= 0) {
+			Common::Rect black(20, 186, 87 - energy, 191);
+			_gfx->drawRect2D(black, 255, 0, 0, 0);
+			Common::Rect energyBar(87 - energy, 186, 87, 191);
+			_gfx->drawRect2D(energyBar, 255, 0xfc, 0xfc, 0x54);
+		}
+
+		if (shield >= 0) {
+			Common::Rect black(20, 178, 87 - shield, 183);
+			_gfx->drawRect2D(black, 255, 0, 0, 0);
+
+			Common::Rect shieldBar(87 - shield, 178, 87, 183);
+			_gfx->drawRect2D(shieldBar, 255, 0xfc, 0xfc, 0x54);
+		}
+	}
+	_gfx->setViewport(_viewArea);
+}
+
 
 } // End of namespace Freescape
