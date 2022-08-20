@@ -25,6 +25,8 @@
 #include "common/translation.h"
 #include "hpl1/detection.h"
 #include "hpl1/hpl1.h"
+#include "common/savefile.h"
+#include "common/system.h"
 
 const char *Hpl1MetaEngine::getName() const {
 	return "hpl1";
@@ -43,6 +45,26 @@ bool Hpl1MetaEngine::hasFeature(MetaEngineFeature f) const {
 		   (f == kSavesSupportMetaInfo) ||
 		   (f == kSavesSupportThumbnail) ||
 		   (f == kSupportsLoadingDuringStartup);
+}
+
+static Common::U32String formatSave(const Common::String &filename) {
+	const int begin = filename.findFirstOf('.') + 1;
+	const int len = filename.findLastOf('_') - begin;
+	Common::String name = filename.substr(begin, len);
+	Common::replace(name.begin(), name.end(), '.', ':');
+	Common::replace(name.begin(), name.end(), '_', ' ');
+	return name;
+}
+
+SaveStateList Hpl1MetaEngine::listSaves(const char *target) const {
+	SaveStateList saveList;
+	Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("hpl1-po-????.*");
+	int i = 0;
+	for (auto &save : filenames) {
+		if (!save.contains("favourite"))
+			saveList.push_back(SaveStateDescriptor(this, ++i, formatSave(save)));
+	}
+	return saveList;
 }
 
 Common::Action *createKeyBoardAction(const char *id, const Common::U32String &desc, const char *defaultMap, const Common::KeyState &key) {
