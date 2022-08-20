@@ -210,6 +210,7 @@ bool cSerializeClass::SaveToFile(iSerializable *apData, const tWString &asFile, 
 		Hpl1::logError(Hpl1::kDebugSaves, "couldn't save to file '%s'\n", asFile.c_str());
 		return false;
 	}
+	g_engine->getMetaEngine()->appendExtendedSave(savefile.get(), g_engine->getTotalPlayTime(), "", filename.contains("auto"));
 	return true;
 }
 
@@ -284,6 +285,12 @@ bool cSerializeClass::LoadFromFile(iSerializable *apData, const tWString &asFile
 		Hpl1::logError(Hpl1::kDebugSaves | Hpl1::kDebugResourceLoading, "save file %s could not be opened\n", filename.c_str());
 		return false;
 	}
+	ExtendedSavegameHeader header;
+	if (MetaEngine::readSavegameHeader(saveFile.get(), &header)) {
+		Hpl1::logError(Hpl1::kDebugResourceLoading | Hpl1::kDebugSaves, "couldn't load heaer from save file %s\n", filename.c_str());
+		return false;
+	}
+	g_engine->setTotalPlayTime(header.playtime);
 	if (pXmlDoc.LoadFile(*saveFile) == false) {
 		Hpl1::logError(Hpl1::kDebugResourceLoading | Hpl1::kDebugSaves,
 			"Couldn't load saved class file '%s' from %s!\n", cString::To8Char(asFile).c_str(),
