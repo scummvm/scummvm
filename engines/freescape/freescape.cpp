@@ -288,9 +288,6 @@ void FreescapeEngine::initGameState() {
 
 	for (AreaMap::iterator it = _areaMap.begin(); it != _areaMap.end(); ++it)
 		_gameStateBits[it->_key] = 0;
-
-	_gameStateVars[k8bitVariableEnergy] = 43;
-	_gameStateVars[k8bitVariableShield] = 48;
 }
 
 void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos) {
