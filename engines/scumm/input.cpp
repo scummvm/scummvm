@@ -797,10 +797,10 @@ void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
 }
 
 void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
-	// RETURN is used to skip cutscenes in the Commodote 64 version of Zak McKracken
+	// RETURN is used to skip cutscenes in the Commodore 64 version of Zak McKracken
 	if (_game.id == GID_ZAK &&_game.platform == Common::kPlatformC64 && lastKeyHit.keycode == Common::KEYCODE_RETURN && lastKeyHit.hasFlags(0)) {
 		lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);
-	// F7 is used to skip cutscenes in the Commodote 64 version of Maniac Mansion
+	// F7 is used to skip cutscenes in the Commodore 64 version of Maniac Mansion
 	} else if (_game.id == GID_MANIAC &&_game.platform == Common::kPlatformC64) {
 		// Demo always F7 to be pressed to restart
 		if (_game.features & GF_DEMO) {
