@@ -209,6 +209,11 @@ public:
 	DrillerEngine(OSystem *syst);
 };
 
+class EclipseEngine : public FreescapeEngine {
+public:
+	EclipseEngine(OSystem *syst);
+};
+
 extern FreescapeEngine *g_freescape;
 
 } // namespace Freescape
