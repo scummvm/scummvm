@@ -2712,9 +2712,9 @@ void cMainMenu::CreateWidgets() {
 
 		vPos.y += 5;
 	}
-	cMainMenuWidget *pWidgetChangeKeyConf = hplNew(cMainMenuWidget_Button, (mpInit, vPos, kTranslate("MainMenu", "Change Key Mapping"), eMainMenuState_OptionsKeySetupMove, 20, eFontAlign_Center));
-	AddWidgetToState(eMainMenuState_OptionsControls, pWidgetChangeKeyConf);
-	vPos.y += 35;
+	// cMainMenuWidget *pWidgetChangeKeyConf = hplNew(cMainMenuWidget_Button, (mpInit, vPos, kTranslate("MainMenu", "Change Key Mapping"), eMainMenuState_OptionsKeySetupMove, 20, eFontAlign_Center));
+	// AddWidgetToState(eMainMenuState_OptionsControls, pWidgetChangeKeyConf);
+	// vPos.y += 35;
 	AddWidgetToState(eMainMenuState_OptionsControls, hplNew(cMainMenuWidget_Button, (mpInit, vPos, kTranslate("MainMenu", "Back"), eMainMenuState_Options, 23, eFontAlign_Center)));
 
 	// Text
