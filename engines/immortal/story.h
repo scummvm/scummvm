@@ -134,6 +134,18 @@ struct ObjType {
  * bits 0-2 of X to also hold the roomOP, and bits 0-2 of Y to hold flags). However
  * for the moment there's no need to replicate this particular bit of space saving.
  */
+struct SCycle {
+DataSprite *_dSprite;
+	  bool  _repeat;
+	   int *_frames;
+	   SCycle() {}
+	   SCycle(DataSprite *d, bool r, int *f) {
+	   		_dSprite = d;
+	   		_repeat = r;
+	   		_frames = f;
+	   }
+};
+
 struct SRoom {
 	uint8 _x = 0;
 	uint8 _y = 0;

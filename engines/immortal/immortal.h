@@ -353,15 +353,16 @@ public:
 	int _combatID = 0;
 
 	// Asset members
-		   int	_numSprites = 0;						// This is more accurately actually the index within the sprite array, so _numSprites + 1 is the current number of sprites
-	DataSprite  _dataSprites[kFont + 1];				// All the sprite data, indexed by SpriteFile
-		Sprite  _sprites[kMaxSprites];					// All the sprites shown on screen
-	  	  Cycle _cycles[kMaxCycles];
+		   int _numSprites = 0;							// This is more accurately actually the index within the sprite array, so _numSprites + 1 is the current number of sprites
+	DataSprite _dataSprites[kFont + 1];					// All the sprite data, indexed by SpriteFile
+		Sprite _sprites[kMaxSprites];					// All the sprites shown on screen
+		 Cycle _cycles[kMaxCycles];
 	Common::Array<Common::String> _strPtrs;				// Str should really be a char array, but inserting frame values will be stupid so it's just a string instead
 	Common::Array<Motive>  _motivePtrs;
 	Common::Array<Damage>  _damagePtrs;
 	Common::Array<Use>	   _usePtrs;
 	Common::Array<Pickup>  _pickupPtrs;
+	Common::Array<SCycle>  _cycPtrs;
 	CArray2D<Motive>	   _programPtrs;
 	Common::Array<ObjType> _objTypePtrs;
 
@@ -587,16 +588,16 @@ GenericSprite _genSprites[6];
 	 */
 
 	// Misc
-   CycID cycleNew(CycID id);							// Adds a cycle to the current list
-	void cycleFreeAll();								// Delete all cycles
-	void cycleFree(CycID id);
-DataSprite *cycleGetDataSprite(CycID id);				// This takes the place of getFile + getNum
-	 int cycleGetIndex(CycID id);
-	void cycleSetIndex(CycID id, int f);
-	 int cycleGetFrame(CycID id);
-	 int cycleGetNumFrames(CycID id);
-	bool cycleAdvance(CycID id);
-  Cycle *getCycList(CycID id);
+     int cycleNew(CycID id);						// Adds a cycle to the current list
+	void cycleFreeAll();							// Delete all cycles
+	void cycleFree(int c);
+DataSprite *cycleGetDataSprite(int c);				// This takes the place of getFile + getNum
+	 int cycleGetIndex(int c);
+	void cycleSetIndex(int c, int f);
+	 int cycleGetFrame(int c);
+	 int cycleGetNumFrames(int c);
+	bool cycleAdvance(int c);
+   CycID getCycList(int c);
 
 	/* Unneccessary cycle functions
 	void cycleInit();
