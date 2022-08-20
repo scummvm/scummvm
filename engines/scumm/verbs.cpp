@@ -617,9 +617,16 @@ void ScummEngine::checkExecVerbs() {
 		// Generic keyboard input
 		runInputScript(kKeyClickArea, _mouseAndKeyboardStat, 1);
 	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
-		VirtScreen *zone = findVirtScreen(_mouse.y);
 		const byte code = _mouseAndKeyboardStat & MBS_LEFT_CLICK ? 1 : 2;
+		if (_game.id == GID_SAMNMAX) {
+			// This has been simplified for SAMNMAX while DOTT still has the "normal" implementation
+			// (which makes sense, since it still has the "normal" verb interface). Anyway, we need this,
+			// it fixes bug #13761 ("SAMNMAX: Can't shoot names during the credits").
+			runInputScript(kSceneClickArea, 0, code);
+			return;
+		}
 
+		VirtScreen *zone = findVirtScreen(_mouse.y);
 		// This could be kUnkVirtScreen.
 		// Fixes bug #2773: "MANIACNES: Crash on click in speechtext-area"
 		if (!zone)
