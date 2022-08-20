@@ -957,6 +957,10 @@ const byte *ScummEngine::postProcessDOSGraphics(VirtScreen *vs, int &pitch, int 
 
 	} else if (renderV1 && vs->number == kTextVirtScreen) {
 		// For EGA, the only colors that need remapping are for the kTextVirtScreen.
+		// ZAKv1 is the only game that is affected by this. The original interpreter
+		// will also apply this mapping in VGA mode (as we do) but not in MCGA mode.
+		// So, should we ever decide to offer a separate MCGA render mode, then we
+		// should skip this for that mode...
 		for (uint8 i = 0; i < ARRAYSIZE(tmpTxtColMap); ++i)
 			tmpTxtColMap[i] = _gdi->remapColorToRenderMode(i);
 		for (int h = height; h; --h)  {
