@@ -38,7 +38,7 @@ class TileMaps;
 class TileMap {
 	friend class TileMaps;
 private:
-	Std::map<uint, MapTile> _tileMap;
+	Common::HashMap<uint, MapTile> _tileMap;
 public:
 	/**
 	 * Translates a raw index to a MapTile.
@@ -48,7 +48,7 @@ public:
 	uint untranslate(MapTile &tile);
 };
 
-class TileMaps : public Std::map<Common::String, TileMap *> {
+class TileMaps : public Common::HashMap<Common::String, TileMap *> {
 private:
 	/**
 	 * Loads a tile map which translates between tile indices and tile

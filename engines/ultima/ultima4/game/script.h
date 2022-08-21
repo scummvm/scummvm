@@ -407,7 +407,7 @@ private:
 	 * Static variables
 	 */
 private:
-	typedef Std::map<Common::String, Action> ActionMap;
+	typedef Common::HashMap<Common::String, Action> ActionMap;
 	ActionMap _actionMap;
 
 private:
@@ -432,8 +432,8 @@ private:
 	Common::String _choices;
 	int _iterator;
 
-	Std::map<Common::String, Variable *> _variables;
-	Std::map<Common::String, Provider *> _providers;
+	Common::HashMap<Common::String, Variable *> _variables;
+	Common::HashMap<Common::String, Provider *> _providers;
 };
 
 } // End of namespace Ultima4

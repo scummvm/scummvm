@@ -1011,7 +1011,7 @@ MapId CombatMap::mapForTile(const Tile *groundTile, const Tile *transport, Objec
 	     toShip = false;
 	Object *objUnder = g_context->_location->_map->objectAt(g_context->_location->_coords);
 
-	static Std::map<const Tile *, MapId, PointerHash> tileMap;
+	static Common::HashMap<const Tile *, MapId, PointerHash> tileMap;
 	if (!tileMap.size()) {
 		tileMap[g_tileSets->get("base")->getByName("horse")] = MAP_GRASS_CON;
 		tileMap[g_tileSets->get("base")->getByName("swamp")] = MAP_MARSH_CON;
@@ -1034,7 +1034,7 @@ MapId CombatMap::mapForTile(const Tile *groundTile, const Tile *transport, Objec
 		tileMap[g_tileSets->get("base")->getByName("moongate_opening")] = MAP_GRASS_CON;
 		tileMap[g_tileSets->get("base")->getByName("dungeon_floor")] = MAP_GRASS_CON;
 	}
-	static Std::map<const Tile *, MapId, PointerHash> dungeontileMap;
+	static Common::HashMap<const Tile *, MapId, PointerHash> dungeontileMap;
 	if (!dungeontileMap.size()) {
 		dungeontileMap[g_tileSets->get("dungeon")->getByName("brick_floor")] = MAP_DNG0_CON;
 		dungeontileMap[g_tileSets->get("dungeon")->getByName("up_ladder")] = MAP_DNG1_CON;

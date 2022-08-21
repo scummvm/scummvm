@@ -149,7 +149,7 @@ private:
 
 	Std::list<Process *>::iterator _currentProcess;
 
-	Std::map<Common::String, ProcessLoadFunc> _processLoaders;
+	Common::HashMap<Common::String, ProcessLoadFunc> _processLoaders;
 
 	bool _loading;
 

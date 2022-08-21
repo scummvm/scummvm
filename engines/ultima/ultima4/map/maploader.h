@@ -75,7 +75,7 @@ protected:
 	static bool isChunkCompressed(Map *map, int chunk);
 
 private:
-	static Std::map<Map::Type, MapLoader *, MapType_Hash> *loaderMap;
+	static Common::HashMap<Map::Type, MapLoader *, MapType_Hash> *loaderMap;
 };
 
 class CityMapLoader : public MapLoader {
@@ -126,7 +126,7 @@ public:
 	bool load(Map *map) override;
 };
 
-class MapLoaders : public Std::map<Map::Type, MapLoader *, MapType_Hash> {
+class MapLoaders : public Common::HashMap<Map::Type, MapLoader *, MapType_Hash> {
 public:
 	/**
 	 * Constructor

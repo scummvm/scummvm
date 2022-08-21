@@ -281,7 +281,7 @@ public:
 	Music::Type _music;
 	MapData _data;
 	ObjectDeque _objects;
-	Std::map<Common::String, MapCoords> _labels;
+	Common::HashMap<Common::String, MapCoords> _labels;
 	Tileset *_tileSet;
 	TileMap *_tileMap;
 	MapTile _blank;

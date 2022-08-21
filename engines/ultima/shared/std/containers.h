@@ -211,11 +211,6 @@ public:
 	}
 };
 
-template<class Key, class Val, class HashFunc = Common::Hash<Key>,
-		 class EqualFunc = Common::EqualTo<Key> >
-class map : public Common::HashMap<Key, Val, HashFunc, EqualFunc> {
-};
-
 template<class VAL>
 class deque : public Common::List<VAL> {
 public:

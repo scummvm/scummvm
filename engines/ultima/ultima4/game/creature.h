@@ -35,7 +35,7 @@ class ConfigElement;
 class Tile;
 
 typedef unsigned short CreatureId;
-typedef Std::map<CreatureId, class Creature *> CreatureMap;
+typedef Common::HashMap<CreatureId, class Creature *> CreatureMap;
 typedef Std::vector<class Creature *> CreatureVector;
 
 #define MAX_CREATURES 128

@@ -1159,7 +1159,7 @@ void Screen::screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus,
 
 	if (map->_type == Map::DUNGEON) {
 		assertMsg(_charSetInfo, "charset not initialized");
-		Std::map<Common::String, int>::iterator charIndex = _dungeonTileChars.find(t.getTileType()->getName());
+		Common::HashMap<Common::String, int>::iterator charIndex = _dungeonTileChars.find(t.getTileType()->getName());
 		if (charIndex != _dungeonTileChars.end()) {
 			_charSetInfo->_image->drawSubRect((layout->_viewport.left + (x * layout->_tileShape.x)) * settings._scale,
 			                                  (layout->_viewport.top + (y * layout->_tileShape.y)) * settings._scale,

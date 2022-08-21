@@ -113,7 +113,7 @@ public:
 	bool _xu4Graphic;            /**< an original xu4 graphic not part of u4dos or the VGA upgrade */
 	ImageFixup _fixup;           /**< a routine to do miscellaneous fixes to the image */
 	Image *_image;               /**< the image we're describing */
-	Std::map<Common::String, SubImage *> _subImages;
+	Common::HashMap<Common::String, SubImage *> _subImages;
 
 	bool hasBlackBackground();
 };
@@ -192,7 +192,7 @@ private:
 	void update(Settings *newSettings);
 
 	static ImageMgr *_instance;
-	Std::map<Common::String, ImageSet *> _imageSets;
+	Common::HashMap<Common::String, ImageSet *> _imageSets;
 	Std::vector<Common::String> _imageSetNames;
 	ImageSet *_baseSet;
 	ImageInfo _screenInfo;
