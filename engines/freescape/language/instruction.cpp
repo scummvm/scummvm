@@ -318,6 +318,8 @@ void FreescapeEngine::executeToggleVisibility(FCLInstruction &instruction) {
 
 		// If an object is not in the area, it is considered to be invisible
 		_currentArea->addObjectFromArea(objectID, _areaMap[255]);
+		obj = _areaMap[areaID]->objectWithID(objectID);
+		obj->makeVisible();
 	}
 
 }
