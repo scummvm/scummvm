@@ -358,14 +358,15 @@ void Myst3Engine::closeArchives() {
 
 bool Myst3Engine::checkDatafiles() {
 	if (!SearchMan.hasFile("OVER101.m3o")) {
+		const char* urlForPatchesDownload = "https://www.scummvm.org/frs/extras/patches/";
 		warning("Unable to open the update game archive 'OVER101.m3o'");
 		Common::U32String updateMessage =
-				_("This version of Myst III has not been updated with the latest official patch.\n"
+				Common::U32String::format(_("This version of Myst III has not been updated with the latest official patch.\n"
 						  "Please install the official update corresponding to your game's language.\n"
 						  "The updates can be downloaded from:\n"
-						  "https://www.scummvm.org/frs/extras/patches/");
+						  "%s"), urlForPatchesDownload);
 		warning("%s", updateMessage.encode().c_str());
-		GUI::displayErrorDialog(updateMessage);
+		GUIErrorMessageWithURL(updateMessage, urlForPatchesDownload);
 		return false;
 	}
 
