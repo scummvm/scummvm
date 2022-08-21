@@ -24,6 +24,7 @@
 #include "common/translation.h"
 
 #include "gui/error.h"
+#include "gui/message.h"
 
 #include "engines/grim/md5check.h"
 #include "engines/grim/grim.h"
@@ -564,9 +565,10 @@ bool MD5Check::advanceCheck(int *pos, int *total) {
 		Common::String urlForRequiredDataFiles = Common::String::format("https://wiki.scummvm.org/index.php?title=%s#Required_data_files",
 		                                                                (g_grim->getGameType() == GType_GRIM)? "Grim_Fandango" : "Escape_from_Monkey_Island");
 		warning("Could not open %s for checking", sum.filename);
-		GUI::displayErrorDialog(Common::U32String::format(_("Could not open the file %s for checking.\nIt may be missing or "
+		GUI::MessageDialogWithURL dialog(Common::U32String::format(_("Could not open the file %s for checking.\nIt may be missing or "
 								"you may not have the rights to open it.\nGo to %s to see a list "
-								"of the needed files."), sum.filename, urlForRequiredDataFiles.c_str()));
+								"of the needed files."), sum.filename, urlForRequiredDataFiles.c_str()), urlForRequiredDataFiles.c_str());
+		dialog.runModal();
 		return false;
 	}
 
