@@ -81,6 +81,7 @@ public:
 
 	virtual int16 getHeight() const = 0;
 	virtual int16 getWidth() const = 0;
+	virtual Common::Rect getScreenRect() const = 0;
 	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
 	virtual void grabPalette(byte *colors, uint start, uint num) const = 0;
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) = 0;
@@ -101,6 +102,7 @@ public:
 	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) = 0;
 	virtual int16 getOverlayHeight() const = 0;
 	virtual int16 getOverlayWidth() const = 0;
+	virtual Common::Rect getOverlayRect() const = 0;
 	virtual float getHiDPIScreenFactor() const { return 1.0f; }
 
 	virtual bool showMouse(bool visible) = 0;
