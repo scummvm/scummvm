@@ -53,6 +53,14 @@ public:
 		_cursorNeedsRedraw(false),
 		_cursorLastInActiveArea(true) {}
 
+	Common::Rect getScreenRect() const override {
+		return _gameDrawRect;
+	}
+
+	Common::Rect getOverlayRect() const override {
+		return _overlayDrawRect;
+	}
+
 	void showOverlay() override {
 		if (_overlayVisible)
 			return;
