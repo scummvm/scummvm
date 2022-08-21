@@ -77,7 +77,6 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 		ADD_BIND(_("Space"), _("Pause game"));
 		ADD_BIND(_("Ctrl") + U32String(" 0-9"), _("Load saved game 1-10"));
 		ADD_BIND(_("Alt") + U32String(" 0-9"), _("Save game 1-10"));
-		ADD_BIND(_("Alt") + U32String(" s"), _("Save screenshot"));
 #ifdef MACOSX
 		ADD_BIND("Cmd q", _("Quit"));
 #else
@@ -85,7 +84,6 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 #endif
 		ADD_BIND(_("Alt") + U32String(" ") + _("Enter"), _("Toggle fullscreen"));
 		ADD_BIND("[, ]", _("Music volume up / down"));
-		ADD_BIND(_("Ctrl") + U32String(" u"), _("Toggle mute"));
 		ADD_BIND("-, +", _("Text speed slower / faster"));
 		ADD_BIND(_("Enter"), _("Simulate left mouse button"));
 		ADD_BIND(_("Tab"), _("Simulate right mouse button"));
@@ -98,11 +96,9 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 		ADD_BIND(_("Ctrl") + U32String(" f"), _("Run in fast mode (*)"));
 		ADD_BIND(_("Ctrl") + U32String(" g"), _("Run in really fast mode (*)"));
 		ADD_BIND(_("Ctrl") + U32String(" m"), _("Toggle mouse capture"));
-		ADD_BIND(_("Ctrl") + U32String(" ") + _("Alt") + U32String(" 9, 0"), _("Switch to next / previous scaler"));
+		ADD_BIND(_("Ctrl") + U32String(" ") + _("Alt") + U32String(" 1-8"), _("Switch between graphics filters"));
 		ADD_BIND(_("Ctrl") + U32String(" ") + _("Alt") + U32String(" +, -"), _("Increase / Decrease scale factor"));
-		ADD_BIND(_("Ctrl") + U32String(" ") + _("Alt") + U32String(" s"), _("Cycle through stretch modes"));
 		ADD_BIND(_("Ctrl") + U32String(" ") + _("Alt") + U32String(" a"), _("Toggle aspect-ratio correction"));
-		ADD_BIND(_("Ctrl") + U32String(" ") + _("Alt") + U32String(" f"), _("Toggle linear filtered scaling"));
 		ADD_LINE;
 		ADD_LINE;
 		// FIXME: This should use word-wrapping, and should not assume
