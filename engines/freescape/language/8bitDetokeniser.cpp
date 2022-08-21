@@ -104,6 +104,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			break;
 
 		case 0:
+			detokenisedStream += "NOP ";
 			break; // NOP
 		case 1:    // add three-byte value to score
 		{
