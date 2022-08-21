@@ -626,6 +626,7 @@ protected:
 	int _menuPage = 0;
 	int _mainMenuSavegameLabel = 1;
 	int _curDisplayedSaveSlotPage = 0;
+	int _firstSaveStateOfList = 0; // For LOOM VGA
 	bool _mainMenuIsActive = false;
 	bool _quitByButton = false;
 	char _mainMenuMusicSlider[17];
@@ -636,6 +637,7 @@ protected:
 	int _saveScriptParam = 0;
 	int _guiCursorAnimCounter = 0;
 	int _v5VoiceMode = 0;
+	int _internalSpeakerSoundsAreOn = 1;
 
 	Graphics::Surface _savegameThumbnail;
 	byte *_tempTextSurface = nullptr;
@@ -653,6 +655,7 @@ protected:
 
 	void initBanners();
 	Common::KeyState showBannerAndPause(int bannerId, int32 waitTime, const char *msg, ...);
+	Common::KeyState showOldStyleBannerAndPause(const char *msg, int color, int32 waitTime);
 	void clearBanner();
 	void setBannerColors(int bannerId, byte r, byte g, byte b);
 	virtual int getBannerColor(int bannerId);
@@ -687,7 +690,7 @@ protected:
 	void drawMainMenuControls();
 	void updateMainMenuControls();
 	void drawMainMenuTitle(const char *title);
-	bool executeMainMenuOperation(int op, int mouseX, bool &hasLoadedState);
+	bool executeMainMenuOperation(int op, int mouseX, int mouseY, bool &hasLoadedState);
 	bool shouldHighlightLabelAndWait(int clickedControl);
 	void fillSavegameLabels();
 	bool canWriteGame(int slotId);

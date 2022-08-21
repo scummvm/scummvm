@@ -154,7 +154,10 @@ void ScummEngine::showMessageDialog(const byte *msg) {
 		_string[3].color = 4;
 
 	if (isUsingOriginalGUI()) {
-		VAR(VAR_KEYPRESS) = showBannerAndPause(0, -1, (const char *)msg).ascii;
+		if (_game.version > 4)
+			VAR(VAR_KEYPRESS) = showBannerAndPause(0, -1, (const char *)msg).ascii;
+		else
+			VAR(VAR_KEYPRESS) = showOldStyleBannerAndPause((const char *)msg, _string[3].color, -1).ascii;
 	} else {
 		InfoDialog dialog(this, Common::U32String((char *)buf));
 		VAR(VAR_KEYPRESS) = runDialog(dialog);
@@ -2022,7 +2025,7 @@ Common::CodePage ScummEngine::getDialogCodePage() const {
 			return Common::kDos862;
 		default:
 			return Common::kWindows1255;
-		}	
+		}
 	default:
 		return (_game.version > 7) ? Common::kWindows1252 : Common::kDos850;
 	}

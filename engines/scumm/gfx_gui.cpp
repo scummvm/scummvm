@@ -20,6 +20,7 @@
  */
 
 #include "scumm/scumm.h"
+#include "scumm/scumm_v4.h"
 #include "scumm/scumm_v8.h"
 #include "scumm/gfx.h"
 #include "scumm/dialogs.h"
@@ -106,20 +107,30 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	// Backup the text surface...
 	if (_game.version < 7 && !_mainMenuIsActive && _game.platform != Common::kPlatformFMTowns) {
 		saveSurfacesPreGUI();
-		restoreCharsetBg();
+		if (_charset->_textScreenID == kMainVirtScreen && !(_game.version == 4 && _game.id == GID_LOOM))
+			restoreCharsetBg();
 	}
 
 	// Pause the engine
 	PauseToken pt = pauseEngine();
 
 	// Gather the colors needed for the banner
-	int palOffset = (_game.version == 8) ? 0 : 11;
-	normalFillColor = getBannerColor(6 * bannerId + 15 + palOffset);
-	normalTextColor = getBannerColor(6 * bannerId + 14 + palOffset);
-	topLineColor = getBannerColor(6 * bannerId + 16 + palOffset);
-	bottomLineColor = getBannerColor(6 * bannerId + 17 + palOffset);
-	leftLineColor = getBannerColor(6 * bannerId + 18 + palOffset);
-	rightLineColor = getBannerColor(6 * bannerId + 19 + palOffset);
+	if (_game.version == 4) {
+		normalFillColor = 7;
+		normalTextColor = 0;
+		topLineColor = 15;
+		bottomLineColor = 8;
+		leftLineColor = 15;
+		rightLineColor = 8;
+	} else {
+		int palOffset = (_game.version == 8) ? 0 : 11;
+		normalFillColor = getBannerColor(6 * bannerId + 15 + palOffset);
+		normalTextColor = getBannerColor(6 * bannerId + 14 + palOffset);
+		topLineColor = getBannerColor(6 * bannerId + 16 + palOffset);
+		bottomLineColor = getBannerColor(6 * bannerId + 17 + palOffset);
+		leftLineColor = getBannerColor(6 * bannerId + 18 + palOffset);
+		rightLineColor = getBannerColor(6 * bannerId + 19 + palOffset);
+	}
 
 	// Backup the current charsetId, since we're going to switch
 	// to charsetId == 1...
@@ -230,6 +241,97 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 		if (tolower(localizedY[0]) == ks.ascii || toupper(localizedY[0]) == ks.ascii)
 			ks = Common::KEYCODE_y;
 	}
+
+	// Deactivate this, so it does not trigger as invalid click target inside
+	// getInternalGUIControlFromCoordinates() (which can cause serious errors)
+	_internalGUIControls[0].relativeCenterX = -1;
+
+	return ks;
+}
+
+Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int color, int32 waitTime) {
+	// LOOM VGA uses the new style GUI
+	if (_game.version == 4 && _game.id == GID_LOOM) {
+		return showBannerAndPause(0, waitTime, msg);
+	}
+
+	char bannerMsg[512];
+	int bannerMsgWidth, bannerMsgHeight, roundedWidth;
+	int startingPointY;
+	int bannerSaveYStart;
+
+	// Fetch the translated string for the message...
+	convertMessageToString((const byte *)msg, (byte *)bannerMsg, sizeof(bannerMsg));
+
+	// Backup the text surface...
+	if (!_mainMenuIsActive) {
+		saveSurfacesPreGUI();
+		if (_charset->_textScreenID == kMainVirtScreen)
+			restoreCharsetBg();
+	}
+
+	// Pause the engine
+	PauseToken pt = pauseEngine();
+
+	// Backup the current charsetId, since we're going to switch
+	// to charsetId == 1...
+	int oldId = _charset->getCurID();
+	_charset->setCurID(1);
+
+	// Take all the necessary measurements for the box which
+	// will contain the string...
+	bannerMsgHeight = getGUIStringHeight(bannerMsg) + 3;
+	bannerMsgWidth = getGUIStringWidth(bannerMsg);
+	if (bannerMsgWidth < 100)
+		bannerMsgWidth = 100;
+
+	roundedWidth = bannerMsgWidth / 2;
+
+	startingPointY = 80;
+	bannerSaveYStart = startingPointY - 2;
+
+
+	// Save the pixels which will be overwritten by the banner,
+	// so that we can restore them later...
+	if (!_bannerMem) {
+		int rowSize = _screenWidth + 8;
+		_bannerMemSize = (bannerMsgHeight + 2) * (_screenWidth + 8);
+		_bannerMem = (byte *)malloc(_bannerMemSize * sizeof(byte));
+		if (_bannerMem) {
+			memcpy(
+				_bannerMem,
+				&_virtscr[kMainVirtScreen].getPixels(0, _screenTop)[rowSize * bannerSaveYStart],
+				_bannerMemSize);
+		}
+	}
+
+	// Draw the GUI control
+	drawBox(0, startingPointY, _screenWidth - 1, startingPointY + bannerMsgHeight, 0);
+	drawBox(0, startingPointY, _screenWidth - 1, startingPointY, color);
+	drawBox(0, startingPointY + bannerMsgHeight, _screenWidth - 1, startingPointY + bannerMsgHeight, color);
+	drawGUIText(bannerMsg, _screenWidth / 2, startingPointY + 2, _screenWidth - 1, color, true);
+	ScummEngine::drawDirtyScreenParts();
+
+	// Wait until the engine receives a new Keyboard or Mouse input,
+	// unless we have specified a positive waitTime: in that case, the banner
+	// will stay on screen until an input has been received or until the time-out.
+	Common::KeyState ks = Common::KEYCODE_INVALID;
+	bool leftBtnPressed = false, rightBtnPressed = false;
+	if (waitTime) {
+		waitForBannerInput(waitTime, ks, leftBtnPressed, rightBtnPressed);
+		clearBanner();
+	}
+
+	// Restore the text surface...
+	if (!_mainMenuIsActive) {
+		restoreSurfacesPostGUI();
+	}
+
+	// Finally, resume the engine, clear the input state, and restore the charset.
+	pt.clear();
+	clearClickedStatus();
+	if (oldId)
+		_charset->setCurID(oldId);
 
 	// Deactivate this, so it does not trigger as invalid click target inside
 	// getInternalGUIControlFromCoordinates() (which can cause serious errors)
@@ -369,23 +471,47 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 				// Draw the main box...
 				drawBox(relCentX + 1, relCentY + 1 + topComp, boxSizeX - offset, boxSizeY - offset + topComp, fillColor);
 
-				// Draw the contour lines for the box; each of the lines is doubled to give a 3D effect.
-				drawLine(relCentX + 1, relCentY, x - 1, relCentY, ctrl->topLineColor);
-				drawLine(relCentX + 1, y, x - 1, y, ctrl->bottomLineColor);
-				drawLine(relCentX, relCentY + 1, relCentX, y - 1, ctrl->leftLineColor);
-				drawLine(x, relCentY + 1, x, y - 1, ctrl->rightLineColor);
+				if (_game.version == 4 && _game.id != GID_LOOM) {
+					// This is for MI1 v4 (EGA and VGA floppy versions) and the Passport to Adventure demo;
+					// these games use a very early version of this GUI system, with only
+					// one line color; we will use the topLineColor to mimick that.
 
-				drawLine(relCentX + 1, relCentY + 1, x - 1, relCentY + 1, ctrl->topLineColor);
-				drawLine(relCentX + 1, y - 1, x - 1, y - 1, ctrl->bottomLineColor);
-				drawLine(relCentX + 1, relCentY + 1, relCentX + 1, y - 1, ctrl->leftLineColor);
-				drawLine(x - 1, relCentY + 1, x - 1, y - 1, ctrl->rightLineColor);
+					// Draw the contour lines...
+					drawBox(relCentX + 2, relCentY, x - 2, relCentY, ctrl->topLineColor);
+					drawBox(relCentX + 2, y, x - 2, y, ctrl->topLineColor);
+					drawBox(relCentX, relCentY + 2, relCentX, y - 2, ctrl->topLineColor);
+					drawBox(x, relCentY + 2, x, y - 2, ctrl->topLineColor);
+
+					// Draw single pixels for the button roundness effect...
+					drawBox(relCentX + 1, relCentY + 1, relCentX + 1, relCentY + 1, ctrl->topLineColor);
+					drawBox(x - 1, relCentY + 1, x - 1, relCentY + 1, ctrl->topLineColor);
+					drawBox(relCentX + 1, y - 1, relCentX + 1, y - 1, ctrl->topLineColor);
+					drawBox(x - 1, y - 1, x - 1, y - 1, ctrl->topLineColor);
+				} else {
+					// Draw the contour lines for the box; each of the lines is doubled to give a 3D effect.
+					drawLine(relCentX + 1, relCentY, x - 1, relCentY, ctrl->topLineColor);
+					drawLine(relCentX + 1, y, x - 1, y, ctrl->bottomLineColor);
+					drawLine(relCentX, relCentY + 1, relCentX, y - 1, ctrl->leftLineColor);
+					drawLine(x, relCentY + 1, x, y - 1, ctrl->rightLineColor);
+
+					drawLine(relCentX + 1, relCentY + 1, x - 1, relCentY + 1, ctrl->topLineColor);
+					drawLine(relCentX + 1, y - 1, x - 1, y - 1, ctrl->bottomLineColor);
+					drawLine(relCentX + 1, relCentY + 1, relCentX + 1, y - 1, ctrl->leftLineColor);
+					drawLine(x - 1, relCentY + 1, x - 1, y - 1, ctrl->rightLineColor);
+				}
 			} else {
 				drawBox(relCentX, relCentY + topComp, x, y + topComp, (highlightColor ? ctrl->highlightedFillColor : ctrl->normalFillColor));
-
-				drawLine(relCentX, relCentY, x, relCentY, ctrl->topLineColor);
-				drawLine(relCentX, y, x, y, ctrl->bottomLineColor);
-				drawLine(relCentX, relCentY, relCentX, y, ctrl->leftLineColor);
-				drawLine(x, relCentY, x, y, ctrl->rightLineColor);
+				if (_game.version == 4 && _game.id != GID_LOOM) {
+					drawBox(relCentX, relCentY, x, relCentY, ctrl->topLineColor);
+					drawBox(relCentX, y, x, y, ctrl->bottomLineColor);
+					drawBox(relCentX, relCentY, relCentX, y, ctrl->leftLineColor);
+					drawBox(x, relCentY, x, y, ctrl->rightLineColor);
+				} else {
+					drawLine(relCentX, relCentY, x, relCentY, ctrl->topLineColor);
+					drawLine(relCentX, y, x, y, ctrl->bottomLineColor);
+					drawLine(relCentX, relCentY, relCentX, y, ctrl->leftLineColor);
+					drawLine(x, relCentY, x, y, ctrl->rightLineColor);
+				}
 			}
 		}
 
@@ -896,7 +1022,7 @@ void ScummEngine_v7::toggleVoiceMode() {
 void ScummEngine_v7::handleLoadDuringSmush() {
 	// Notify the SMUSH player that we want to load a game...
 	_saveLoadFlag = 2;
-	_saveLoadSlot = _mainMenuSavegameLabel + _curDisplayedSaveSlotPage * 9;
+	_saveLoadSlot = _mainMenuSavegameLabel - 1 + _curDisplayedSaveSlotPage * 9;
 
 	// Force screen to black to avoid glitches...
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
@@ -934,6 +1060,10 @@ int ScummEngine_v7::getBannerColor(int bannerId) {
 }
 #endif
 
+int ScummEngine_v4::getBannerColor(int bannerId) {
+	return _GUIPalette[bannerId - 6];
+}
+
 int ScummEngine_v6::getBannerColor(int bannerId) {
 	return readArray(110, 0, bannerId);
 }
@@ -960,7 +1090,7 @@ void ScummEngine::saveSurfacesPreGUI() {
 	if (_game.version < 4 || _game.version > 6)
 		return;
 
-	_tempTextSurface = (byte *)malloc(_textSurface.w * _textSurface.h * sizeof(byte));
+	_tempTextSurface = (byte *)malloc(_screenWidth * _screenHeight * sizeof(byte));
 	_tempMainSurface = (byte *)malloc(_virtscr[kMainVirtScreen].w * _virtscr[kMainVirtScreen].h * sizeof(byte));
 
 	if (_tempMainSurface) {
@@ -973,12 +1103,13 @@ void ScummEngine::saveSurfacesPreGUI() {
 	}
 
 	if (_tempTextSurface) {
-		for (int y = 0; y < _textSurface.h; y++) {
-			for (int x = 0; x < _textSurface.w; x++) {
+		for (int y = 0; y < _screenHeight; y++) {
+			for (int x = 0; x < _screenWidth; x++) {
 				curPix = _textSurface.getPixel(x, y);
-				_tempTextSurface[x + y * _textSurface.w] = curPix;
-				if (curPix != 0xFD)
+				_tempTextSurface[x + y * _screenWidth] = curPix;
+				if (curPix != 0xFD && !(_game.version == 4 && _game.id == GID_LOOM)) {
 					_virtscr[kMainVirtScreen].setPixel(_virtscr[kMainVirtScreen].xstart + x, y, curPix);
+				}
 			}
 		}
 	}
@@ -991,9 +1122,9 @@ void ScummEngine::restoreSurfacesPostGUI() {
 		return;
 
 	if (_tempTextSurface) {
-		for (int y = 0; y < _textSurface.h; y++) {
-			for (int x = 0; x < _textSurface.w; x++) {
-				curPix = _tempTextSurface[x + y * _textSurface.w];
+		for (int y = 0; y < _screenHeight; y++) {
+			for (int x = 0; x < _screenWidth; x++) {
+				curPix = _tempTextSurface[x + y * _screenWidth];
 				_textSurface.setPixel(x, y, curPix);
 			}
 		}
@@ -1080,7 +1211,11 @@ void ScummEngine::queryQuit() {
 		msgLabelPtr[strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
 
 		// "Are you sure you want to quit?  (Y/N)"
-		Common::KeyState ks = showBannerAndPause(0, -1, msgLabelPtr);
+		Common::KeyState ks;
+		if (_game.version > 4)
+			ks = showBannerAndPause(0, -1, msgLabelPtr);
+		else
+			ks = showOldStyleBannerAndPause(msgLabelPtr, 12, -1);
 
 		if (tolower(localizedYesKey) == ks.ascii || toupper(localizedYesKey) == ks.ascii) {
 			_quitByButton = true;
@@ -1099,10 +1234,18 @@ void ScummEngine::queryRestart() {
 		msgLabelPtr[strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
 
 		// "Are you sure you want to restart?  (Y/N)"
-		Common::KeyState ks = showBannerAndPause(0, -1, msgLabelPtr);
+		Common::KeyState ks;
+		if (_game.version > 4)
+			ks = showBannerAndPause(0, -1, msgLabelPtr);
+		else
+			ks = showOldStyleBannerAndPause(msgLabelPtr, 12, -1);
 
 		if ((tolower(localizedYesKey) == ks.ascii || toupper(localizedYesKey) == ks.ascii) ||
 			(_game.version == 8 && ks.keycode == Common::KEYCODE_y)) {
+
+			if (_game.version < 5)
+				restoreCharsetBg();
+
 			restart();
 		}
 	}
@@ -1121,17 +1264,34 @@ void ScummEngine::fillSavegameLabels() {
 	bool availSaves[100];
 	listSavegames(availSaves, ARRAYSIZE(availSaves));
 	Common::String name;
+	int curSaveSlot;
+	bool isLoomVga = (_game.id == GID_LOOM && _game.version == 4);
+
 	for (int i = 0; i < 9; i++) {
-		int curSaveSlot = i + 1 + _curDisplayedSaveSlotPage * 9;
-		sprintf(_savegameNames[i].label, "%2d. ", curSaveSlot);
+		curSaveSlot = i + (isLoomVga ? _firstSaveStateOfList : _curDisplayedSaveSlotPage * 9);
+		if (_game.version > 4 || (_game.version == 4 && _game.id == GID_LOOM)) {
+			sprintf(_savegameNames[i].label, "%2d. ", curSaveSlot + 1);
+		} else {
+			_savegameNames[i].label[0] = '\0';
+		}
 
 		if (availSaves[curSaveSlot]) {
-			if (getSavegameName(curSaveSlot, name)) {
-				sprintf(_savegameNames[i].label, "%2d. %s", curSaveSlot, name.c_str());
+			if (_game.version > 4 || (_game.version == 4 && _game.id == GID_LOOM)) {
+				if (getSavegameName(curSaveSlot, name)) {
+					sprintf(_savegameNames[i].label, "%2d. %s", curSaveSlot + 1, name.c_str());
+				} else {
+					// The original printed "WARNING... old savegame", but we do support old savegames :-)
+					sprintf(_savegameNames[i].label, "%2d. WARNING: wrong save version", curSaveSlot + 1);
+				}
 			} else {
-				// The original printed "WARNING... old savegame", but we do support old savegames :-)
-				sprintf(_savegameNames[i].label, "%2d. WARNING: wrong save version", curSaveSlot);
+				if (getSavegameName(curSaveSlot, name)) {
+					sprintf(_savegameNames[i].label, "%s", name.c_str());
+				} else {
+					// The original printed "WARNING... old savegame", but we do support old savegames :-)
+					sprintf(_savegameNames[i].label, "%s", "WARNING: wrong save version");
+				}
 			}
+
 		}
 	}
 }
@@ -1167,15 +1327,15 @@ bool ScummEngine::canWriteGame(int slotId) {
 
 bool ScummEngine::userWriteLabelRoutine(Common::KeyState &ks, bool &leftMsClicked, bool &rightMsClicked) {
 	bool hasLoadedState = false;
-
-	while (true) {
+	int firstChar = (_game.version == 4 && _game.id != GID_LOOM) ? 0 : 4;
+	while (!shouldQuit()) {
 		waitForTimer(1);
 
 		waitForBannerInput(-1, ks, leftMsClicked, rightMsClicked);
 		rightMsClicked = false;
 		if (ks.keycode == Common::KEYCODE_RETURN) {
 			clearClickedStatus();
-			executeMainMenuOperation(GUI_CTRL_OK_BUTTON, -1, hasLoadedState);
+			executeMainMenuOperation(GUI_CTRL_OK_BUTTON, -1, -1, hasLoadedState);
 			return true;
 		} else if (leftMsClicked) {
 			clearClickedStatus();
@@ -1186,7 +1346,7 @@ bool ScummEngine::userWriteLabelRoutine(Common::KeyState &ks, bool &leftMsClicke
 		int curLen = strlen(_savegameNames[_mainMenuSavegameLabel - 1].label);
 		if (ks.keycode == Common::KEYCODE_BACKSPACE) {
 			 // Prevent the user from deleting the header (" 1. ")
-			if ((curLen) > 4) {
+			if (curLen > firstChar) {
 				_savegameNames[_mainMenuSavegameLabel - 1].label[curLen - 1] = '\0';
 				drawInternalGUIControl(_mainMenuSavegameLabel, 1);
 				ScummEngine::drawDirtyScreenParts();
@@ -1296,7 +1456,8 @@ void ScummEngine::showMainMenu() {
 
 		// V6 games should call for stopTalk() instead, but that's a bit too drastic;
 		// this ensures that we can at least hear the speech after the menu is closed.
-		restoreCharsetBg();
+		if (_charset->_textScreenID == kMainVirtScreen && !(_game.version == 4 && _game.id == GID_LOOM))
+			restoreCharsetBg();
 	}
 
 	_menuPage = GUI_PAGE_MAIN;
@@ -1306,7 +1467,7 @@ void ScummEngine::showMainMenu() {
 	if (_game.platform == Common::kPlatformAmiga) {
 		convertMessageToString((const byte *)getGUIString(gsInsertSaveDisk), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
 		drawMainMenuTitle(saveScreenTitle);
-	} else if (_game.id != GID_MONKEY2 && _game.id != GID_MONKEY) {
+	} else if (_game.version > 4 && _game.id != GID_MONKEY2 && _game.id != GID_MONKEY) {
 		convertMessageToString((const byte *)getGUIString(gsTitle), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
 		drawMainMenuTitle(saveScreenTitle);
 	}
@@ -1361,7 +1522,7 @@ void ScummEngine::showMainMenu() {
 						drawInternalGUIControl(clickedControl, 0);
 
 						// Execute the operation pertaining the clicked control
-						if (executeMainMenuOperation(clickedControl, curMouseX, hasLoadedState))
+						if (executeMainMenuOperation(clickedControl, curMouseX, curMouseY, hasLoadedState))
 							break;
 					}
 				} else {
@@ -1369,13 +1530,18 @@ void ScummEngine::showMainMenu() {
 					_mainMenuSavegameLabel = clickedControl;
 
 					drawInternalGUIControl(tmp, 0);
+
+					// For v4 we activated the first slot by default; deactivate it...
+					if (_game.version == 4 && _game.id != GID_LOOM)
+						drawInternalGUIControl(GUI_CTRL_FIRST_SG, 0);
+
 					drawInternalGUIControl(_mainMenuSavegameLabel, 1);
 
 					ScummEngine::drawDirtyScreenParts();
 					_system->updateScreen();
 
-					if (_menuPage == GUI_PAGE_LOAD) {
-						if (executeMainMenuOperation(GUI_CTRL_OK_BUTTON, curMouseX, hasLoadedState))
+					if (_menuPage == GUI_PAGE_LOAD && (_game.version != 4 || _game.id == GID_LOOM)) {
+						if (executeMainMenuOperation(GUI_CTRL_OK_BUTTON, curMouseX, curMouseY, hasLoadedState))
 							break;
 					}
 				}
@@ -1434,9 +1600,12 @@ void ScummEngine::showMainMenu() {
 	clearClickedStatus();
 }
 
-bool ScummEngine::executeMainMenuOperation(int op, int mouseX, bool &hasLoadedState) {
+bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool &hasLoadedState) {
 	char saveScreenTitle[512];
 	char formattedString[512];
+	int curSlot;
+	bool isLoomVga = (_game.id == GID_LOOM && _game.version == 4);
+	size_t labelSkip = (_game.version == 4 && _game.id != GID_LOOM) ? 0 : 4;
 
 	switch (op) {
 	case GUI_CTRL_SAVE_BUTTON:
@@ -1464,9 +1633,10 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, bool &hasLoadedSt
 		break;
 	case GUI_CTRL_OK_BUTTON:
 		if (_menuPage == GUI_PAGE_SAVE) {
-			if (_mainMenuSavegameLabel > 0) {
+			// We check for an empty label since v4 might generate that...
+			if (_mainMenuSavegameLabel > 0 && _savegameNames[_mainMenuSavegameLabel - 1].label[labelSkip] != '\0') {
 				convertMessageToString((const byte *)getGUIString(gsSaving), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
-				sprintf(formattedString, saveScreenTitle, &_savegameNames[_mainMenuSavegameLabel - 1].label[4]);
+				sprintf(formattedString, saveScreenTitle, &_savegameNames[_mainMenuSavegameLabel - 1].label[labelSkip]);
 				drawMainMenuTitle(formattedString);
 				ScummEngine::drawDirtyScreenParts();
 				_system->updateScreen();
@@ -1474,11 +1644,12 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, bool &hasLoadedSt
 				waitForTimer(60);
 
 				Common::String dummyString;
-				_saveLoadDescription = &_savegameNames[_mainMenuSavegameLabel - 1].label[4];
+				_saveLoadDescription = &_savegameNames[_mainMenuSavegameLabel - 1].label[labelSkip];
 
-				if (canWriteGame(_mainMenuSavegameLabel + _curDisplayedSaveSlotPage * 9)) {
+				curSlot = _mainMenuSavegameLabel + (isLoomVga ? _firstSaveStateOfList : _curDisplayedSaveSlotPage * 9);
+				if (canWriteGame(curSlot)) {
 					restoreCursorPostMenu();
-					if (saveState(_mainMenuSavegameLabel + _curDisplayedSaveSlotPage * 9, false, dummyString)) {
+					if (saveState(curSlot - 1, false, dummyString)) {
 						saveCursorPreMenu();
 						_saveScriptParam = GAME_PROPER_SAVE;
 						drawMainMenuControls();
@@ -1514,9 +1685,9 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, bool &hasLoadedSt
 		} else if (_menuPage == GUI_PAGE_LOAD) {
 			if (_mainMenuSavegameLabel > 0) {
 				convertMessageToString((const byte *)getGUIString(gsLoading), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
-				sprintf(formattedString, saveScreenTitle, &_savegameNames[_mainMenuSavegameLabel - 1].label[4]);
+				sprintf(formattedString, saveScreenTitle, &_savegameNames[_mainMenuSavegameLabel - 1].label[labelSkip]);
 
-				if (strlen(_savegameNames[_mainMenuSavegameLabel - 1].label) == 4) {
+				if (strlen(_savegameNames[_mainMenuSavegameLabel - 1].label) == labelSkip) {
 					drawMainMenuControls();
 					ScummEngine::drawDirtyScreenParts();
 					break;
@@ -1537,7 +1708,8 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, bool &hasLoadedSt
 					_postGUICharMask = true;
 				}
 
-				if (loadState(_mainMenuSavegameLabel + _curDisplayedSaveSlotPage * 9, false)) {
+				curSlot = _mainMenuSavegameLabel + (isLoomVga ? _firstSaveStateOfList : _curDisplayedSaveSlotPage * 9);
+				if (loadState(curSlot - 1, false)) {
 					hasLoadedState = true;
 
 					if (!_spooledMusicIsToBeEnabled)
@@ -1573,7 +1745,7 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, bool &hasLoadedSt
 		if (_game.platform == Common::kPlatformAmiga) {
 			convertMessageToString((const byte *)getGUIString(gsInsertSaveDisk), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
 			drawMainMenuTitle(saveScreenTitle);
-		} else if (_game.id != GID_MONKEY2 && _game.id != GID_MONKEY) {
+		} else if (_game.version > 4 && _game.id != GID_MONKEY2 && _game.id != GID_MONKEY) {
 			convertMessageToString((const byte *)getGUIString(gsTitle), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
 			drawMainMenuTitle(saveScreenTitle);
 		}
@@ -1584,13 +1756,26 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, bool &hasLoadedSt
 	case GUI_CTRL_ARROW_UP_BUTTON:
 	case GUI_CTRL_ARROW_DOWN_BUTTON:
 		if (_menuPage != GUI_PAGE_MAIN) {
-			if (op == GUI_CTRL_ARROW_UP_BUTTON) {
-				_curDisplayedSaveSlotPage--;
+			if (!isLoomVga) {
+				if (op == GUI_CTRL_ARROW_UP_BUTTON) {
+					_curDisplayedSaveSlotPage--;
+				} else {
+					_curDisplayedSaveSlotPage++;
+				}
+
+				_curDisplayedSaveSlotPage = CLIP<int>(_curDisplayedSaveSlotPage, 0, 10);
 			} else {
-				_curDisplayedSaveSlotPage++;
+				// LOOM VGA uses its own system to scroll the savegame list, based
+				// on high or low the arrow button is pressed...
+				if (op == GUI_CTRL_ARROW_UP_BUTTON) {
+					_firstSaveStateOfList -= ((_virtscr[kMainVirtScreen].h / 2) - mouseY + _virtscr[kMainVirtScreen].topline + 54) / 14;
+				} else {
+					_firstSaveStateOfList += (mouseY - (_virtscr[kMainVirtScreen].h / 2) - _virtscr[kMainVirtScreen].topline + 45) / 14;
+				}
+
+				_firstSaveStateOfList = CLIP<int>(_firstSaveStateOfList, 0, 90);
 			}
 
-			_curDisplayedSaveSlotPage = CLIP<int>(_curDisplayedSaveSlotPage, 0, 10);
 			_mainMenuSavegameLabel = 0;
 			fillSavegameLabels();
 			drawMainMenuControls();
@@ -1655,8 +1840,156 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, bool &hasLoadedSt
 	return false;
 }
 
+void ScummEngine_v4::setUpMainMenuControls() {
+	if (_game.id == GID_LOOM && _game.version == 4) {
+		ScummEngine::setUpMainMenuControls();
+		return;
+	}
+
+	int yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
+
+	for (int i = 0; i < ARRAYSIZE(_internalGUIControls); i++) {
+		_internalGUIControls[i].relativeCenterX = -1;
+	}
+
+	// Outer box
+	setUpInternalGUIControl(GUI_CTRL_OUTER_BOX,
+		getBannerColor(6),
+		getBannerColor(6),
+		getBannerColor(7),
+		getBannerColor(7),
+		getBannerColor(7),
+		getBannerColor(7),
+		getBannerColor(7),
+		getBannerColor(6),
+		20,
+		yConstant - 58,
+		300,
+		yConstant + 58,
+		_emptyMsg, 0, 0);
+
+	if (_menuPage == GUI_PAGE_MAIN) {
+		// Save button
+		setUpInternalGUIControl(GUI_CTRL_SAVE_BUTTON,
+			getBannerColor(10),
+			getBannerColor(11),
+			getBannerColor(9),
+			getBannerColor(9),
+			getBannerColor(9),
+			getBannerColor(9),
+			getBannerColor(12),
+			getBannerColor(13),
+			242,
+			yConstant - 25,
+			-50,
+			-12,
+			getGUIString(gsSave), 1, 1);
+
+		// Load button
+		setUpInternalGUIControl(GUI_CTRL_LOAD_BUTTON,
+			getBannerColor(10),
+			getBannerColor(11),
+			getBannerColor(9),
+			getBannerColor(9),
+			getBannerColor(9),
+			getBannerColor(9),
+			getBannerColor(12),
+			getBannerColor(13),
+			242,
+			yConstant - 11,
+			-50,
+			-12,
+			getGUIString(gsLoad), 1, 1);
+
+		// Play button
+		setUpInternalGUIControl(GUI_CTRL_PLAY_BUTTON,
+			getBannerColor(10),
+			getBannerColor(11),
+			getBannerColor(9),
+			getBannerColor(9),
+			getBannerColor(9),
+			getBannerColor(9),
+			getBannerColor(12),
+			getBannerColor(13),
+			242,
+			yConstant + 3,
+			-50,
+			-12,
+			getGUIString(gsPlay), 1, 1);
+
+		// Quit button
+		setUpInternalGUIControl(GUI_CTRL_QUIT_BUTTON,
+			getBannerColor(10),
+			getBannerColor(11),
+			getBannerColor(9),
+			getBannerColor(9),
+			getBannerColor(9),
+			getBannerColor(9),
+			getBannerColor(12),
+			getBannerColor(13),
+			242,
+			yConstant + 17,
+			-50,
+			-12,
+			getGUIString(gsQuit), 1, 1);
+	}
+
+	if (_menuPage == GUI_PAGE_SAVE || _menuPage == GUI_PAGE_LOAD) {
+		// OK button
+		setUpInternalGUIControl(GUI_CTRL_OK_BUTTON,
+			getBannerColor(10),
+			getBannerColor(11),
+			getBannerColor(9),
+			getBannerColor(9),
+			getBannerColor(9),
+			getBannerColor(9),
+			getBannerColor(12),
+			getBannerColor(13),
+			242,
+			yConstant - 11,
+			-50,
+			-12,
+			getGUIString(gsOK), 1, 1);
+
+		// Cancel button
+		setUpInternalGUIControl(GUI_CTRL_CANCEL_BUTTON,
+			getBannerColor(10),
+			getBannerColor(11),
+			getBannerColor(9),
+			getBannerColor(9),
+			getBannerColor(9),
+			getBannerColor(9),
+			getBannerColor(12),
+			getBannerColor(13),
+			242,
+			yConstant + 3,
+			-50,
+			-12,
+			getGUIString(gsCancel), 1, 1);
+
+		// Savegame names
+		for (int i = GUI_CTRL_FIRST_SG, j = 11; i <= GUI_CTRL_LAST_SG; i++, j += 11) {
+			setUpInternalGUIControl(i,
+				getBannerColor(15),
+				getBannerColor(16),
+				getBannerColor(14),
+				getBannerColor(14),
+				getBannerColor(14),
+				getBannerColor(14),
+				getBannerColor(17),
+				getBannerColor(18),
+				28,
+				yConstant - 56 + j,
+				-206,
+				-9,
+				_savegameNames[i - 1].label, 0, 0);
+		}
+	}
+}
+
 void ScummEngine::setUpMainMenuControls() {
 	int yConstant;
+	bool isLoomVGA = (_game.id == GID_LOOM && _game.version == 4);
 
 	yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
 
@@ -1666,14 +1999,14 @@ void ScummEngine::setUpMainMenuControls() {
 
 	// Outer box
 	setUpInternalGUIControl(GUI_CTRL_OUTER_BOX,
-		getBannerColor(4),
-		getBannerColor(2),
-		getBannerColor(13),
-		getBannerColor(14),
-		getBannerColor(15),
-		getBannerColor(16),
-		getBannerColor(6),
-		getBannerColor(4),
+		isLoomVGA ? 7  : getBannerColor(4),
+		isLoomVGA ? 0  : getBannerColor(2),
+		isLoomVGA ? 15 : getBannerColor(13),
+		isLoomVGA ? 8  : getBannerColor(14),
+		isLoomVGA ? 15 : getBannerColor(15),
+		isLoomVGA ? 8  : getBannerColor(16),
+		isLoomVGA ? 14 : getBannerColor(6),
+		isLoomVGA ? 1  : getBannerColor(4),
 		20,
 		yConstant - 60,
 		300,
@@ -1682,32 +2015,32 @@ void ScummEngine::setUpMainMenuControls() {
 
 	// Inner box
 	setUpInternalGUIControl(GUI_CTRL_INNER_BOX,
-		getBannerColor(4),
-		getBannerColor(5),
-		getBannerColor(18),
-		getBannerColor(17),
-		getBannerColor(20),
-		getBannerColor(19),
-		getBannerColor(6),
-		getBannerColor(7),
+		isLoomVGA ? 7  : getBannerColor(4),
+		isLoomVGA ? 0  : getBannerColor(5),
+		isLoomVGA ? 8  : getBannerColor(18),
+		isLoomVGA ? 15 : getBannerColor(17),
+		isLoomVGA ? 8  : getBannerColor(20),
+		isLoomVGA ? 15 : getBannerColor(19),
+		isLoomVGA ? 14 : getBannerColor(6),
+		isLoomVGA ? 1  : getBannerColor(7),
 		26,
 		yConstant - 47,
-		212,
+		212 - (isLoomVGA ? 10 : 0),
 		yConstant - 47 + 102,
 		_emptyMsg, 1, 1);
 
 	if (_menuPage == GUI_PAGE_MAIN) {
 		// Save button
 		setUpInternalGUIControl(GUI_CTRL_SAVE_BUTTON,
-			getBannerColor(4),
-			getBannerColor(5),
-			getBannerColor(17),
-			getBannerColor(18),
-			getBannerColor(19),
-			getBannerColor(20),
-			getBannerColor(6),
-			getBannerColor(7),
-			242,
+			isLoomVGA ? 7  : getBannerColor(4),
+			isLoomVGA ? 0  : getBannerColor(5),
+			isLoomVGA ? 15 : getBannerColor(17),
+			isLoomVGA ? 8  : getBannerColor(18),
+			isLoomVGA ? 15 : getBannerColor(19),
+			isLoomVGA ? 8  : getBannerColor(20),
+			isLoomVGA ? 14 : getBannerColor(6),
+			isLoomVGA ? 1  : getBannerColor(7),
+			242 - (isLoomVGA ? 10 : 0),
 			yConstant - 23,
 			292,
 			yConstant - 23 + 12,
@@ -1715,15 +2048,15 @@ void ScummEngine::setUpMainMenuControls() {
 
 		// Load button
 		setUpInternalGUIControl(GUI_CTRL_LOAD_BUTTON,
-			getBannerColor(4),
-			getBannerColor(5),
-			getBannerColor(17),
-			getBannerColor(18),
-			getBannerColor(19),
-			getBannerColor(20),
-			getBannerColor(6),
-			getBannerColor(7),
-			242,
+			isLoomVGA ? 7  : getBannerColor(4),
+			isLoomVGA ? 0  : getBannerColor(5),
+			isLoomVGA ? 15 : getBannerColor(17),
+			isLoomVGA ? 8  : getBannerColor(18),
+			isLoomVGA ? 15 : getBannerColor(19),
+			isLoomVGA ? 8  : getBannerColor(20),
+			isLoomVGA ? 14 : getBannerColor(6),
+			isLoomVGA ? 1  : getBannerColor(7),
+			242 - (isLoomVGA ? 10 : 0),
 			yConstant - 8,
 			292,
 			yConstant - 8 + 12,
@@ -1731,15 +2064,15 @@ void ScummEngine::setUpMainMenuControls() {
 
 		// Play button
 		setUpInternalGUIControl(GUI_CTRL_PLAY_BUTTON,
-			getBannerColor(4),
-			getBannerColor(5),
-			getBannerColor(17),
-			getBannerColor(18),
-			getBannerColor(19),
-			getBannerColor(20),
-			getBannerColor(6),
-			getBannerColor(7),
-			242,
+			isLoomVGA ? 7  : getBannerColor(4),
+			isLoomVGA ? 0  : getBannerColor(5),
+			isLoomVGA ? 15 : getBannerColor(17),
+			isLoomVGA ? 8  : getBannerColor(18),
+			isLoomVGA ? 15 : getBannerColor(19),
+			isLoomVGA ? 8  : getBannerColor(20),
+			isLoomVGA ? 14 : getBannerColor(6),
+			isLoomVGA ? 1  : getBannerColor(7),
+			242 - (isLoomVGA ? 10 : 0),
 			yConstant + 7,
 			292,
 			yConstant + 19,
@@ -1747,15 +2080,15 @@ void ScummEngine::setUpMainMenuControls() {
 
 		// Quit button
 		setUpInternalGUIControl(GUI_CTRL_QUIT_BUTTON,
-			getBannerColor(4),
-			getBannerColor(5),
-			getBannerColor(17),
-			getBannerColor(18),
-			getBannerColor(19),
-			getBannerColor(20),
-			getBannerColor(6),
-			getBannerColor(7),
-			242,
+			isLoomVGA ? 7  : getBannerColor(4),
+			isLoomVGA ? 0  : getBannerColor(5),
+			isLoomVGA ? 15 : getBannerColor(17),
+			isLoomVGA ? 8  : getBannerColor(18),
+			isLoomVGA ? 15 : getBannerColor(19),
+			isLoomVGA ? 8  : getBannerColor(20),
+			isLoomVGA ? 14 : getBannerColor(6),
+			isLoomVGA ? 1  : getBannerColor(7),
+			242 - (isLoomVGA ? 10 : 0),
 			yConstant + 22,
 			292,
 			yConstant + 34,
@@ -1765,33 +2098,33 @@ void ScummEngine::setUpMainMenuControls() {
 	if (_menuPage != GUI_PAGE_MAIN || !(_game.id == GID_MONKEY2 || _game.id == GID_MONKEY)) {
 		// Arrow up button
 		setUpInternalGUIControl(GUI_CTRL_ARROW_UP_BUTTON,
-			getBannerColor(9),
-			getBannerColor(10),
-			getBannerColor(17),
-			getBannerColor(18),
-			getBannerColor(19),
-			getBannerColor(20),
-			getBannerColor(11),
-			getBannerColor(12),
-			216,
+			isLoomVGA ? 7  : getBannerColor(9),
+			isLoomVGA ? 0  : getBannerColor(10),
+			isLoomVGA ? 15 : getBannerColor(17),
+			isLoomVGA ? 8  : getBannerColor(18),
+			isLoomVGA ? 15 : getBannerColor(19),
+			isLoomVGA ? 8  : getBannerColor(20),
+			isLoomVGA ? 14 : getBannerColor(11),
+			isLoomVGA ? 1  : getBannerColor(12),
+			216 - (isLoomVGA ? 10 : 0),
 			yConstant - 43,
-			232,
+			232 - (isLoomVGA ? 10 : 0),
 			yConstant - 43 + 47,
 			_arrowUp, 1, 1);
 
 		// Arrow down button
 		setUpInternalGUIControl(GUI_CTRL_ARROW_DOWN_BUTTON,
-			getBannerColor(9),
-			getBannerColor(10),
-			getBannerColor(17),
-			getBannerColor(18),
-			getBannerColor(19),
-			getBannerColor(20),
-			getBannerColor(11),
-			getBannerColor(12),
-			216,
+			isLoomVGA ? 7  : getBannerColor(9),
+			isLoomVGA ? 0  : getBannerColor(10),
+			isLoomVGA ? 15 : getBannerColor(17),
+			isLoomVGA ? 8  : getBannerColor(18),
+			isLoomVGA ? 15 : getBannerColor(19),
+			isLoomVGA ? 8  : getBannerColor(20),
+			isLoomVGA ? 14 : getBannerColor(11),
+			isLoomVGA ? 1  : getBannerColor(12),
+			216 - (isLoomVGA ? 10 : 0),
 			yConstant + 7,
-			232,
+			232 - (isLoomVGA ? 10 : 0),
 			yConstant + 52,
 			_arrowDown, 1, 1);
 	}
@@ -1800,15 +2133,15 @@ void ScummEngine::setUpMainMenuControls() {
 		if (_menuPage == GUI_PAGE_SAVE) {
 			// OK button
 			setUpInternalGUIControl(GUI_CTRL_OK_BUTTON,
-				getBannerColor(4),
-				getBannerColor(5),
-				getBannerColor(17),
-				getBannerColor(18),
-				getBannerColor(19),
-				getBannerColor(20),
-				getBannerColor(6),
-				getBannerColor(7),
-				242,
+				isLoomVGA ? 7  : getBannerColor(4),
+				isLoomVGA ? 0  : getBannerColor(5),
+				isLoomVGA ? 15 : getBannerColor(17),
+				isLoomVGA ? 8  : getBannerColor(18),
+				isLoomVGA ? 15 : getBannerColor(19),
+				isLoomVGA ? 8  : getBannerColor(20),
+				isLoomVGA ? 14 : getBannerColor(6),
+				isLoomVGA ? 1  : getBannerColor(7),
+				242 - (isLoomVGA ? 10 : 0),
 				yConstant - 8,
 				292,
 				yConstant - 8 + 12,
@@ -1817,15 +2150,15 @@ void ScummEngine::setUpMainMenuControls() {
 
 		// Cancel button
 		setUpInternalGUIControl(GUI_CTRL_CANCEL_BUTTON,
-			getBannerColor(4),
-			getBannerColor(5),
-			getBannerColor(17),
-			getBannerColor(18),
-			getBannerColor(19),
-			getBannerColor(20),
-			getBannerColor(6),
-			getBannerColor(7),
-			242,
+			isLoomVGA ? 7  : getBannerColor(4),
+			isLoomVGA ? 0  : getBannerColor(5),
+			isLoomVGA ? 15 : getBannerColor(17),
+			isLoomVGA ? 8  : getBannerColor(18),
+			isLoomVGA ? 15 : getBannerColor(19),
+			isLoomVGA ? 8  : getBannerColor(20),
+			isLoomVGA ? 14 : getBannerColor(6),
+			isLoomVGA ? 1  : getBannerColor(7),
+			242 - (isLoomVGA ? 10 : 0),
 			(_menuPage == GUI_PAGE_LOAD ? yConstant - 1 : yConstant + 7),
 			292,
 			(_menuPage == GUI_PAGE_LOAD ? yConstant - 1 : yConstant + 7) + 12,
@@ -1834,17 +2167,17 @@ void ScummEngine::setUpMainMenuControls() {
 		// Savegame names
 		for (int i = GUI_CTRL_FIRST_SG, j = 0; i <= GUI_CTRL_LAST_SG; i++, j += 11) {
 			setUpInternalGUIControl(i,
-				getBannerColor(9),
-				getBannerColor(10),
-				getBannerColor(4),
-				getBannerColor(4),
-				getBannerColor(4),
-				getBannerColor(4),
-				getBannerColor(11),
-				getBannerColor(12),
+				isLoomVGA ? 7  : getBannerColor(9),
+				isLoomVGA ? 0  : getBannerColor(10),
+				isLoomVGA ? 7  : getBannerColor(4),
+				isLoomVGA ? 7  : getBannerColor(4),
+				isLoomVGA ? 7  : getBannerColor(4),
+				isLoomVGA ? 7  : getBannerColor(4),
+				isLoomVGA ? 14 : getBannerColor(11),
+				isLoomVGA ? 1  : getBannerColor(12),
 				28,
 				yConstant - 45 + j,
-				210,
+				210 - (isLoomVGA ? 10 : 0),
 				-9,
 				_savegameNames[i - 1].label, 0, 0);
 		}
@@ -2239,7 +2572,9 @@ void ScummEngine::drawMainMenuControls() {
 		drawInternalGUIControl(GUI_CTRL_PLAY_BUTTON, 0); // Play button
 		drawInternalGUIControl(GUI_CTRL_QUIT_BUTTON, 0); // Quit button
 
-		if (_game.id != GID_MONKEY2 && _game.id != GID_MONKEY && _game.platform != Common::kPlatformAmiga)
+		if (_game.version > 4 &&
+			_game.id != GID_MONKEY2 && _game.id != GID_MONKEY &&
+			_game.platform != Common::kPlatformAmiga)
 			drawInternalGUIControl(GUI_CTRL_INNER_BOX, 0); // Inner box
 
 		if ((_game.version == 5 &&
@@ -2247,26 +2582,35 @@ void ScummEngine::drawMainMenuControls() {
 			_game.version == 6) {
 			drawInternalGUIControl(GUI_CTRL_ARROW_UP_BUTTON, 0);   // Arrow up button
 			drawInternalGUIControl(GUI_CTRL_ARROW_DOWN_BUTTON, 0); // Arrow down button
+		}
 
-			if ((VAR_FIXEDDISK != 0xFF && VAR(VAR_FIXEDDISK) == 0) || _game.platform == Common::kPlatformAmiga) {
-				convertMessageToString((const byte *)getGUIString(gsInsertSaveDisk), (byte *)insertDisk, sizeof(insertDisk));
-				drawMainMenuTitle(insertDisk);
-			}
+		if ((VAR_FIXEDDISK != 0xFF && VAR(VAR_FIXEDDISK) == 0) || _game.platform == Common::kPlatformAmiga) {
+			convertMessageToString((const byte *)getGUIString(gsInsertSaveDisk), (byte *)insertDisk, sizeof(insertDisk));
+			drawMainMenuTitle(insertDisk);
 		}
 	}
 
 	if (_menuPage == GUI_PAGE_SAVE || _menuPage == GUI_PAGE_LOAD) {
-		drawInternalGUIControl(GUI_CTRL_INNER_BOX, 0);     // Inner box
+		if (_game.version > 4 || (_game.version == 4 && _game.id == GID_LOOM))
+			drawInternalGUIControl(GUI_CTRL_INNER_BOX, 0);     // Inner box
+
 		drawInternalGUIControl(GUI_CTRL_PATH_BUTTON, 0);   // Path button
 		drawInternalGUIControl(GUI_CTRL_OK_BUTTON, 0);     // Ok button
 		drawInternalGUIControl(GUI_CTRL_CANCEL_BUTTON, 0); // Cancel button
 
 		// Savegame names
-		for (int i = GUI_CTRL_FIRST_SG; i <= GUI_CTRL_LAST_SG; i++)
-			drawInternalGUIControl(i, 0);
+		for (int i = GUI_CTRL_FIRST_SG; i <= GUI_CTRL_LAST_SG; i++) {
+			if ((_game.version == 4 && _game.id != GID_LOOM) && _mainMenuSavegameLabel == 0 && i == 1)
+				drawInternalGUIControl(i, 1);
+			else
+				drawInternalGUIControl(i, 0);
+		}
 
-		drawInternalGUIControl(GUI_CTRL_ARROW_UP_BUTTON, 0);   // Arrow up button
-		drawInternalGUIControl(GUI_CTRL_ARROW_DOWN_BUTTON, 0); // Arrow down button
+
+		if (_game.version > 4 || (_game.version == 4 && _game.id == GID_LOOM)) {
+			drawInternalGUIControl(GUI_CTRL_ARROW_UP_BUTTON, 0);   // Arrow up button
+			drawInternalGUIControl(GUI_CTRL_ARROW_DOWN_BUTTON, 0); // Arrow down button
+		}
 
 		if (_menuPage == GUI_PAGE_SAVE) {
 			convertMessageToString((const byte *)getGUIString(gsNamePrompt), (byte *)namePrompt, sizeof(namePrompt));
@@ -2285,7 +2629,7 @@ void ScummEngine::drawMainMenuControls() {
 }
 
 void ScummEngine::updateMainMenuControls() {
-	if (!strcmp(_game.variant, "Floppy") || _game.version < 6)
+	if ((_game.variant && !strcmp(_game.variant, "Floppy")) || _game.version < 6)
 		return;
 
 	char msg[256];
@@ -2410,9 +2754,21 @@ void ScummEngine::updateMainMenuControls() {
 }
 
 void ScummEngine::drawMainMenuTitle(const char *title) {
-	int boxColor = getBannerColor(4);
-	int stringColor = getBannerColor(2);
+	int boxColor, stringColor;
 	int yConstantV6 = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
+
+	if (_game.version == 4) {
+		if (_game.id == GID_LOOM) {
+			boxColor = 7;
+			stringColor = 0;
+		} else {
+			boxColor = getBannerColor(6);
+			stringColor = getBannerColor(8);
+		}
+	} else {
+		boxColor = getBannerColor(4);
+		stringColor = getBannerColor(2);
+	}
 
 	if (_game.id == GID_DIG) {
 		int yComponent = _useCJKMode ? 130 : 121;
@@ -2432,6 +2788,14 @@ void ScummEngine::drawMainMenuTitle(const char *title) {
 	} else if (_game.version == 7) {
 		drawBox(18, _screenTop + 44, 301, _screenTop + 52, boxColor);
 		drawGUIText(title, 159, 44, _screenWidth - 1, stringColor, true);
+	} else if (_game.version == 4) {
+		if (_game.id == GID_LOOM) {
+			drawBox(22, yConstantV6 - 57, 298, yConstantV6 - 49, boxColor);
+			drawGUIText(title, 160, yConstantV6 - 57, _screenWidth - 1, stringColor, true);
+		} else {
+			drawBox(21, yConstantV6 - 55, 299, yConstantV6 - 47, boxColor);
+			drawGUIText(title, 160, yConstantV6 - 55, _screenWidth - 1, stringColor, true);
+		}
 	} else {
 		drawBox(22, yConstantV6 - 56, 298, yConstantV6 - 48, boxColor);
 		drawGUIText(title, 160, yConstantV6 - 56, _screenWidth - 1, stringColor, true);
