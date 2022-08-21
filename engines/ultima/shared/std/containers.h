@@ -214,10 +214,6 @@ public:
 template<class Key, class Val, class HashFunc = Common::Hash<Key>,
 		 class EqualFunc = Common::EqualTo<Key> >
 class map : public Common::HashMap<Key, Val, HashFunc, EqualFunc> {
-public:
-	void insert(Common::Pair<Key, Val> elem) {
-		this->operator[](elem.first) = elem.second;
-	}
 };
 
 template<class VAL>

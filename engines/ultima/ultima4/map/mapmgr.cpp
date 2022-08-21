@@ -208,7 +208,7 @@ Map *MapMgr::initMapFromConf(const ConfigElement &mapConf) {
 		else if (i->getName() == "compressedchunk")
 			map->_compressedChunks.push_back(initCompressedChunkFromConf(*i));
 		else if (i->getName() == "label")
-			map->_labels.insert(initLabelFromConf(*i));
+			map->_labels[i->getString("name")] = MapCoords(i->getInt("x"), i->getInt("y"), i->getInt("z", 0));
 		else if (i->getName() == "tiles" && map->_type == Map::XML)
 			static_cast<XMLMap *>(map)->_tilesText = i->getNode()->firstChild()->text();
 	}
@@ -348,12 +348,6 @@ void MapMgr::createMoongateFromConf(const ConfigElement &moongateConf) {
 
 int MapMgr::initCompressedChunkFromConf(const ConfigElement &compressedChunkConf) {
 	return compressedChunkConf.getInt("index");
-}
-
-Common::Pair<Common::String, MapCoords> MapMgr::initLabelFromConf(const ConfigElement &labelConf) {
-	return Common::Pair<Common::String, MapCoords>
-	       (labelConf.getString("name"),
-	        MapCoords(labelConf.getInt("x"), labelConf.getInt("y"), labelConf.getInt("z", 0)));
 }
 
 } // End of namespace Ultima4
