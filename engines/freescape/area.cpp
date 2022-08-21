@@ -253,9 +253,22 @@ bool Area::drillDeployed() {
 	return (drawableObjects[0]->getObjectID() == 252);
 }
 
-void Area::addStructure(Area *structure) {
+void Area::addObjectFromArea(int16 id, Area *global) {
+	debug("Adding object %d to room structure", id);
+	Object *obj = global->objectWithID(id);
+	if (!obj) {
+		assert(global->entranceWithID(id));
+		(*entrancesByID)[id] = global->entranceWithID(id);
+	} else {
+		(*objectsByID)[id] = global->objectWithID(id);
+		if (obj->isDrawable())
+			drawableObjects.insert_at(0, obj);
+	}
+}
+
+void Area::addStructure(Area *global) {
 	Object *obj = nullptr;
-	if (!structure || !entrancesByID->contains(255)) {
+	if (!global || !entrancesByID->contains(255)) {
 		int id = 254;
 		Common::Array<uint8> *gColors = new Common::Array<uint8>;
 		for (int i = 0; i < 6; i++)
@@ -282,16 +295,7 @@ void Area::addStructure(Area *structure) {
 		if (id == 0)
 			continue;
 
-		debug("Adding object %d to room structure", id);
-		obj = structure->objectWithID(id);
-		if (!obj) {
-			assert(structure->entranceWithID(id));
-			(*entrancesByID)[id] = structure->entranceWithID(id);
-		} else {
-			(*objectsByID)[id] = structure->objectWithID(id);
-			if (obj->isDrawable())
-				drawableObjects.insert_at(0, obj);
-		}
+		addObjectFromArea(id, global);
 	}
 }
 

@@ -328,7 +328,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			break;
 
 		case 35:
-			detokenisedStream += "SCREEN ";
+			detokenisedStream += "SCREEN (";
 			break;
 
 		case 44:

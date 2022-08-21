@@ -311,8 +311,14 @@ void FreescapeEngine::executeToggleVisibility(FCLInstruction &instruction) {
 	Object *obj = _areaMap[areaID]->objectWithID(objectID);
 	if (obj)
 		obj->toggleVisibility();
-	else
-		debugC(1, kFreescapeDebugCode, "WARNING!: obj %d does not exists in area %d!", objectID, areaID);
+	else {
+		obj = _areaMap[255]->objectWithID(objectID);
+		if (!obj)
+			error("ERROR!: obj %d does not exists in area %d nor in the global one!", objectID, areaID);
+
+		// If an object is not in the area, it is considered to be invisible
+		_currentArea->addObjectFromArea(objectID, _areaMap[255]);
+	}
 
 }
 
