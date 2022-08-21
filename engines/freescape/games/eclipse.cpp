@@ -53,6 +53,11 @@ static const entrancesTableEntry rawEntranceTable[] = {
 };
 
 EclipseEngine::EclipseEngine(OSystem *syst) : FreescapeEngine(syst) {
+	_viewArea = Common::Rect(40, 32, 280, 132);
+	_playerHeight = 48;
+	_playerWidth = 8;
+	_playerDepth = 8;
+
 	const entrancesTableEntry *entry = rawEntranceTable;
 	while (entry->id) {
 		_entranceTable[entry->id] = entry;
@@ -65,22 +70,22 @@ void EclipseEngine::loadAssets() {
 	Common::String path = ConfMan.get("path");
 	Common::FSDirectory gameDir(path);
 
-    Common::File exe;
-    if (_renderMode == "ega") {
-        file = gameDir.createReadStreamForMember("TOTEE.EXE");
+	Common::File exe;
+	if (_renderMode == "ega") {
+		file = gameDir.createReadStreamForMember("TOTEE.EXE");
 
-        if (file == nullptr)
-            error("Failed to open TOTEE.EXE");
+		if (file == nullptr)
+			error("Failed to open TOTEE.EXE");
 
-        load8bitBinary(file, 0x3ce0, 16);
-    } else if (_renderMode == "cga") {
-        file = gameDir.createReadStreamForMember("TOTEC.EXE");
+		load8bitBinary(file, 0x3ce0, 16);
+	} else if (_renderMode == "cga") {
+		file = gameDir.createReadStreamForMember("TOTEC.EXE");
 
-        if (file == nullptr)
-            error("Failed to open TOTEC.EXE");
-        load8bitBinary(file, 0x7bb0, 4); // TODO
-    } else
-        error("Invalid render mode %s for Total Eclipse", _renderMode.c_str());
+		if (file == nullptr)
+			error("Failed to open TOTEC.EXE");
+		load8bitBinary(file, 0x7bb0, 4); // TODO
+	} else
+		error("Invalid render mode %s for Total Eclipse", _renderMode.c_str());
 
 }
 

@@ -27,34 +27,38 @@
 
 namespace Freescape {
 
-CastleEngine::CastleEngine(OSystem *syst) : FreescapeEngine(syst) {}
+CastleEngine::CastleEngine(OSystem *syst) : FreescapeEngine(syst) {
+	_playerHeight = 48;
+	_playerWidth = 8;
+	_playerDepth = 8;
+}
 
 void CastleEngine::loadAssets() {
 	Common::SeekableReadStream *file = nullptr;
 	Common::String path = ConfMan.get("path");
 	Common::FSDirectory gameDir(path);
 
-    _renderMode = "ega";
+	_renderMode = "ega";
 
-    file = gameDir.createReadStreamForMember("CMEDF");
-    int size = file->size();
-    byte *encryptedBuffer = (byte*) malloc(size);
-    file->read(encryptedBuffer, size);
+	file = gameDir.createReadStreamForMember("CMEDF");
+	int size = file->size();
+	byte *encryptedBuffer = (byte*) malloc(size);
+	file->read(encryptedBuffer, size);
 
-    int seed = 24;
-    for (int i = 0; i < size; i++) {
-        encryptedBuffer[i] ^= seed;
-        seed = (seed + 1) & 0xff;
+	int seed = 24;
+	for (int i = 0; i < size; i++) {
+		encryptedBuffer[i] ^= seed;
+		seed = (seed + 1) & 0xff;
     }
 
-    file = new Common::MemoryReadStream(encryptedBuffer, size);
-    load8bitBinary(file, 0, 16);
+	file = new Common::MemoryReadStream(encryptedBuffer, size);
+	load8bitBinary(file, 0, 16);
 
-    // CPC
-    //file = gameDir.createReadStreamForMember("cm.bin");
-    //if (file == nullptr)
-    //	error("Failed to open cm.bin");
-    //load8bitBinary(file, 0x791a, 16);
+	// CPC
+	//file = gameDir.createReadStreamForMember("cm.bin");
+	//if (file == nullptr)
+	//	error("Failed to open cm.bin");
+	//load8bitBinary(file, 0x791a, 16);
 }
 
 } // End of namespace Freescape

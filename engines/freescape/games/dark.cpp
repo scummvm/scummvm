@@ -26,7 +26,11 @@
 
 namespace Freescape {
 
-DarkEngine::DarkEngine(OSystem *syst) : FreescapeEngine(syst) {}
+DarkEngine::DarkEngine(OSystem *syst) : FreescapeEngine(syst) {
+	_playerHeight = 64;
+	_playerWidth = 12;
+	_playerDepth = 32;
+}
 
 void DarkEngine::loadAssets() {
 	Common::SeekableReadStream *file = nullptr;

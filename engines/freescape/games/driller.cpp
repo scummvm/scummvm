@@ -28,7 +28,12 @@
 
 namespace Freescape {
 
-DrillerEngine::DrillerEngine(OSystem *syst) : FreescapeEngine(syst) {}
+DrillerEngine::DrillerEngine(OSystem *syst) : FreescapeEngine(syst) {
+	_viewArea = Common::Rect(40, 16, 279, 116);
+	_playerHeight = 64;
+	_playerWidth = 12;
+	_playerDepth = 32;
+}
 
 void DrillerEngine::loadAssets() {
 	Common::SeekableReadStream *file = nullptr;
