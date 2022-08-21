@@ -20,13 +20,7 @@
  */
 
 #include "twine/renderer/renderer.h"
-#include "common/memstream.h"
-#include "common/stream.h"
-#include "common/textconsole.h"
-#include "common/util.h"
 #include "twine/menu/interface.h"
-#include "twine/menu/menu.h"
-#include "twine/parser/body.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/shadeangletab.h"
 #include "twine/resources/resources.h"
@@ -383,55 +377,375 @@ static FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
 	return x < a ? a : (x > b ? b : x);
 }
 
-bool Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int32 numVertices) { // ComputePolyMinMax
-	uint8 vertexParam1 = vertices[numVertices - 1].colorIndex;
-	int16 currentVertexX = vertices[numVertices - 1].x;
-	int16 currentVertexY = vertices[numVertices - 1].y;
+int16 Renderer::leftClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVertices) {
+	const Common::Rect &clip = _engine->_interface->_clip;
+	Vertex *pTabPolyClip = offTabPoly[1];
+	Vertex *pTabPoly = offTabPoly[0];
+	int16 newNbPoints = 0;
+
+	// invert the pointers to continue on the clipped vertices in the next method
+	offTabPoly[0] = pTabPolyClip;
+	offTabPoly[1] = pTabPoly;
+
+	for (; numVertices > 0; --numVertices, pTabPoly++) {
+		const Vertex *p0 = pTabPoly;
+		const Vertex *p1 = p0 + 1;
+
+		// clipFlag :
+		// 0x00 : none clipped
+		// 0x01 : point 0 clipped
+		// 0x02 : point 1 clipped
+		// 0x03 : both clipped
+		uint8 clipFlag = (p1->x < clip.left) ? 2 : 0;
+
+		if (p0->x < clip.left) {
+			if (clipFlag) {
+				continue; // both clipped, skip point 0
+			}
+			clipFlag |= 1;
+		} else {
+			// point 0 not clipped, store it
+			*pTabPolyClip++ = *pTabPoly;
+			++newNbPoints;
+		}
+
+		if (clipFlag) {
+			// point 0 or 1 is clipped, apply clipping
+			if (p1->x >= p0->x) {
+				p0 = p1;
+				p1 = pTabPoly;
+			}
+
+			const int32 dx = p1->x - p0->x;
+			const int32 dy = p1->y - p0->y;
+			const int32 dxClip = clip.left - p0->x;
+
+			pTabPolyClip->y = (int16)(p0->y + ((dxClip * dy) / dx));
+			pTabPolyClip->x = (int16)clip.left;
+
+			if (polyRenderType >= POLYGONTYPE_GOURAUD) {
+				pTabPolyClip->colorIndex = (int16)(p0->colorIndex + (((p1->colorIndex - p0->colorIndex) * dxClip) / dx));
+			}
+
+			++pTabPolyClip;
+			++newNbPoints;
+		}
+	}
+
+	// copy first vertex to the end
+	*pTabPolyClip = *offTabPoly[0];
+	return newNbPoints;
+}
+
+int16 Renderer::rightClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVertices) {
+	const Common::Rect &clip = _engine->_interface->_clip;
+	Vertex *pTabPolyClip = offTabPoly[1];
+	Vertex *pTabPoly = offTabPoly[0];
+	int16 newNbPoints = 0;
+
+	// invert the pointers to continue on the clipped vertices in the next method
+	offTabPoly[0] = pTabPolyClip;
+	offTabPoly[1] = pTabPoly;
+
+	for (; numVertices > 0; --numVertices, pTabPoly++) {
+		const Vertex *p0 = pTabPoly;
+		const Vertex *p1 = p0 + 1;
+
+		// clipFlag :
+		// 0x00 : none clipped
+		// 0x01 : point 0 clipped
+		// 0x02 : point 1 clipped
+		// 0x03 : both clipped
+		uint8 clipFlag = (p1->x > clip.right) ? 2 : 0;
+
+		if (p0->x > clip.right) {
+			if (clipFlag) {
+				continue; // both clipped, skip point 0
+			}
+			clipFlag |= 1;
+		} else {
+			// point 0 not clipped, store it
+			*pTabPolyClip++ = *pTabPoly;
+			++newNbPoints;
+		}
+
+		if (clipFlag) {
+			// point 0 or 1 is clipped, apply clipping
+			if (p1->x >= p0->x) {
+				p0 = p1;
+				p1 = pTabPoly;
+			}
+
+			const int32 dx = p1->x - p0->x;
+			const int32 dy = p1->y - p0->y;
+			const int32 dxClip = clip.right - p0->x;
+
+			pTabPolyClip->y = (int16)(p0->y + ((dxClip * dy) / dx));
+			pTabPolyClip->x = (int16)clip.right;
+
+			if (polyRenderType >= POLYGONTYPE_GOURAUD) {
+				pTabPolyClip->colorIndex = (int16)(p0->colorIndex + (((p1->colorIndex - p0->colorIndex) * dxClip) / dx));
+			}
+
+			++pTabPolyClip;
+			++newNbPoints;
+		}
+	}
+
+	// copy first vertex to the end
+	*pTabPolyClip = *offTabPoly[0];
+	return newNbPoints;
+}
+
+int16 Renderer::topClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVertices) {
+	const Common::Rect &clip = _engine->_interface->_clip;
+	Vertex *pTabPolyClip = offTabPoly[1];
+	Vertex *pTabPoly = offTabPoly[0];
+	int16 newNbPoints = 0;
+
+	// invert the pointers to continue on the clipped vertices in the next method
+	offTabPoly[0] = pTabPolyClip;
+	offTabPoly[1] = pTabPoly;
+
+	for (; numVertices > 0; --numVertices, pTabPoly++) {
+		const Vertex *p0 = pTabPoly;
+		const Vertex *p1 = p0 + 1;
+
+		// clipFlag :
+		// 0x00 : none clipped
+		// 0x01 : point 0 clipped
+		// 0x02 : point 1 clipped
+		// 0x03 : both clipped
+		uint8 clipFlag = (p1->y < clip.top) ? 2 : 0;
+
+		if (p0->y < clip.top) {
+			if (clipFlag) {
+				continue; // both clipped, skip point 0
+			}
+			clipFlag |= 1;
+		} else {
+			// point 0 not clipped, store it
+			*pTabPolyClip++ = *pTabPoly;
+			++newNbPoints;
+		}
+
+		if (clipFlag) {
+			// point 0 or 1 is clipped, apply clipping
+			if (p1->y >= p0->y) {
+				p0 = p1;
+				p1 = pTabPoly;
+			}
+
+			const int32 dx = p1->x - p0->x;
+			const int32 dy = p1->y - p0->y;
+			const int32 dyClip = clip.top - p0->y;
+
+			pTabPolyClip->x = (int16)(p0->x + ((dyClip * dx) / dy));
+			pTabPolyClip->y = (int16)clip.top;
+
+			if (polyRenderType >= POLYGONTYPE_GOURAUD) {
+				pTabPolyClip->colorIndex = (int16)(p0->colorIndex + (((p1->colorIndex - p0->colorIndex) * dyClip) / dy));
+			}
+
+			++pTabPolyClip;
+			++newNbPoints;
+		}
+	}
+
+	// copy first vertex to the end
+	*pTabPolyClip = *offTabPoly[0];
+	return newNbPoints;
+}
+
+int16 Renderer::bottomClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVertices) {
+	const Common::Rect &clip = _engine->_interface->_clip;
+	Vertex *pTabPolyClip = offTabPoly[1];
+	Vertex *pTabPoly = offTabPoly[0];
+	int16 newNbPoints = 0;
+
+	// invert the pointers to continue on the clipped vertices in the next method
+	offTabPoly[0] = pTabPolyClip;
+	offTabPoly[1] = pTabPoly;
+
+	for (; numVertices > 0; --numVertices, pTabPoly++) {
+		const Vertex *p0 = pTabPoly;
+		const Vertex *p1 = p0 + 1;
+
+		// clipFlag :
+		// 0x00 : none clipped
+		// 0x01 : point 0 clipped
+		// 0x02 : point 1 clipped
+		// 0x03 : both clipped
+		uint8 clipFlag = (p1->y > clip.bottom) ? 2 : 0;
+
+		if (p0->y > clip.bottom) {
+			if (clipFlag) {
+				continue; // both clipped, skip point 0
+			}
+			clipFlag |= 1;
+		} else {
+			// point 0 not clipped, store it
+			*pTabPolyClip++ = *pTabPoly;
+			++newNbPoints;
+		}
+
+		if (clipFlag) {
+			// point 0 or 1 is clipped, apply clipping
+			if (p1->y >= p0->y) {
+				p0 = p1;
+				p1 = pTabPoly;
+			}
+
+			const int32 dx = p1->x - p0->x;
+			const int32 dy = p1->y - p0->y;
+			const int32 dyClip = clip.bottom - p0->y;
+
+			pTabPolyClip->x = (int16)(p0->x + ((dyClip * dx) / dy));
+			pTabPolyClip->y = (int16)clip.bottom;
+
+			if (polyRenderType >= POLYGONTYPE_GOURAUD) {
+				pTabPolyClip->colorIndex = (int16)(p0->colorIndex + (((p1->colorIndex - p0->colorIndex) * dyClip) / dy));
+			}
+
+			++pTabPolyClip;
+			++newNbPoints;
+		}
+	}
+
+	// copy first vertex to the end
+	*pTabPolyClip = *offTabPoly[0];
+	return newNbPoints;
+}
+
+int32 Renderer::computePolyMinMax(int16 polyRenderType, Vertex **offTabPoly, int32 numVertices) {
+	const Common::Rect &clip = _engine->_interface->_clip;
+	if (clip.isEmpty()) {
+		return numVertices;
+	}
+
+	int32 minsx = SCENE_SIZE_MAX;
+	int32 maxsx = SCENE_SIZE_MIN;
+	int32 minsy = SCENE_SIZE_MAX;
+	int32 maxsy = SCENE_SIZE_MIN;
+
+	Vertex* pTabPoly = offTabPoly[0];
+	for (int32 i = 0; i < numVertices; i++) {
+		if (pTabPoly[i].x < minsx) {
+			minsx = pTabPoly[i].x;
+		}
+		if (pTabPoly[i].x > maxsx) {
+			maxsx = pTabPoly[i].x;
+		}
+		if (pTabPoly[i].y < minsy) {
+			minsy = pTabPoly[i].y;
+		}
+		if (pTabPoly[i].y > maxsy) {
+			maxsy = pTabPoly[i].y;
+		}
+	}
+
+	// no vertices
+	if (minsy > maxsy || maxsx < clip.left || minsx > clip.right || maxsy < clip.top || minsy > clip.bottom) {
+		debug(10, "Clipped %i:%i:%i:%i, clip rect(%i:%i:%i:%i)", minsx, minsy, maxsx, maxsy, clip.left, clip.top, clip.right, clip.bottom);
+		return 0;
+	}
+
+	pTabPoly[numVertices] = *offTabPoly[0];
+
+	bool hasBeenClipped = false;
+
+	int32 clippedNumVertices = numVertices;
+	if (minsx < clip.left) {
+		clippedNumVertices = leftClip(polyRenderType, offTabPoly, clippedNumVertices);
+		if (!clippedNumVertices) {
+			return 0;
+		}
+
+		hasBeenClipped = true;
+	}
+
+	if (maxsx > clip.right) {
+		clippedNumVertices = rightClip(polyRenderType, offTabPoly, clippedNumVertices);
+		if (!clippedNumVertices) {
+			return 0;
+		}
+
+		hasBeenClipped = true;
+	}
+
+	if (minsy < clip.top) {
+		clippedNumVertices = topClip(polyRenderType, offTabPoly, clippedNumVertices);
+		if (!clippedNumVertices) {
+			return 0;
+		}
+
+		hasBeenClipped = true;
+	}
+
+	if (maxsy > clip.bottom) {
+		clippedNumVertices = bottomClip(polyRenderType, offTabPoly, clippedNumVertices);
+		if (!clippedNumVertices) {
+			return 0;
+		}
+
+		hasBeenClipped = true;
+	}
+
+	if (hasBeenClipped) {
+		minsy = 32767;
+		maxsy = -32768;
+
+		for (int32 i = 0; i < clippedNumVertices; i++) {
+			if (offTabPoly[0][i].y < minsy) {
+				minsy = offTabPoly[0][i].y;
+			}
+
+			if (offTabPoly[0][i].y > maxsy) {
+				maxsy = offTabPoly[0][i].y;
+			}
+		}
+
+		if (minsy >= maxsy) {
+			return 0;
+		}
+	}
+
+	return clippedNumVertices;
+}
+
+bool Renderer::computePoly(int16 polyRenderType, const Vertex *vertices, int32 numVertices) {
 	const int16 *polyTabBegin = _polyTab;
 	const int16 *polyTabEnd = &_polyTab[_polyTabSize - 1];
 	const int16 *colProgressBufStart = _colorProgressionBuffer;
 	const int16 *colProgressBufEnd = &_colorProgressionBuffer[_polyTabSize - 1];
 	const int screenHeight = _engine->height();
 
-	const Common::Rect &clip = _engine->_interface->_clip;
-	if (!clip.isEmpty()) {
-		int32 vleft;
-		int32 vright;
-		int32 vtop;
-		int32 vbottom;
-
-		vleft = vtop = SCENE_SIZE_MAX;
-		vright = vbottom = SCENE_SIZE_MIN;
-
-		for (int32 i = 0; i < numVertices; i++) {
-			if (vertices[i].x < vleft)
-				vleft = vertices[i].x;
-			if (vertices[i].x > vright)
-				vright = vertices[i].x;
-			if (vertices[i].y < vtop)
-				vtop = vertices[i].y;
-			if (vertices[i].y > vbottom)
-				vbottom = vertices[i].y;
-		}
-		// no vertices
-		if (vtop > vbottom) {
-			return false;
-		}
-		if (vright <= clip.left || vleft >= clip.right || vbottom <= clip.top || vtop >= clip.bottom) {
-			debug(10, "Clipped %i:%i:%i:%i, clip rect(%i:%i:%i:%i)", vleft, vtop, vright, vbottom, clip.left, clip.top, clip.right, clip.bottom);
-			return false;
-		}
+	assert(numVertices < ARRAYSIZE(_clippedPolygonVertices1));
+	for (int i = 0; i < numVertices; ++i) {
+		_clippedPolygonVertices1[i] = vertices[i];
 	}
+
+	Vertex *offTabPoly[] = {_clippedPolygonVertices1, _clippedPolygonVertices2};
+
+	numVertices = computePolyMinMax(polyRenderType, offTabPoly, numVertices);
+	if (numVertices == 0) {
+		return false;
+	}
+
+	const Vertex *clippedVertices = offTabPoly[0];
+	uint8 vertexParam1 = clippedVertices[numVertices - 1].colorIndex;
+	int16 currentVertexX = clippedVertices[numVertices - 1].x;
+	int16 currentVertexY = clippedVertices[numVertices - 1].y;
 
 	for (int32 nVertex = 0; nVertex < numVertices; nVertex++) {
 		const int16 oldVertexY = currentVertexY;
 		const int16 oldVertexX = currentVertexX;
 		const uint8 oldVertexParam = vertexParam1;
 
-		vertexParam1 = vertices[nVertex].colorIndex;
+		vertexParam1 = clippedVertices[nVertex].colorIndex;
 		const uint8 vertexParam2 = vertexParam1;
-		currentVertexX = vertices[nVertex].x;
-		currentVertexY = vertices[nVertex].y;
+		currentVertexX = clippedVertices[nVertex].x;
+		currentVertexY = clippedVertices[nVertex].y;
 
 		// drawLine(oldVertexX,oldVertexY,currentVertexX,currentVertexY,255);
 
@@ -985,7 +1299,7 @@ void Renderer::renderPolygonsSimplified(int vtop, int32 vsize, uint16 color) con
 }
 
 void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices, int vtop, int vbottom) {
-	if (computePolygons(polygon.renderType, vertices, polygon.numVertices)) {
+	if (computePoly(polygon.renderType, vertices, polygon.numVertices)) {
 		const int32 vsize = vbottom - vtop + 1;
 		fillVertices(vtop, vsize, polygon.renderType, polygon.colorIndex);
 	}
