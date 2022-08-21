@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	games/dark.o \
 	games/driller.o \
 	games/eclipse.o \
+	games/palettes.o \
 	gfx.o \
 	gfx_tinygl.o \
 	gfx_tinygl_texture.o \
@@ -20,7 +21,7 @@ MODULE_OBJS := \
 	loaders/16bitBinaryLoader.o \
 	language/16bitDetokeniser.o \
 	language/instruction.o \
-	palettes.o
+
 
 MODULE_DIRS += \
 	engines/freescape
