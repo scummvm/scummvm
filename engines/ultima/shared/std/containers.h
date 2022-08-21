@@ -211,15 +211,6 @@ public:
 	}
 };
 
-struct PointerHash {
-	Common::Hash<const char *> hash;
-
-	uint operator()(const void *ptr) const {
-		Common::String str = Common::String::format("%p", ptr);
-		return hash.operator()(str.c_str());
-	}
-};
-
 template<class Key, class Val, class HashFunc = Common::Hash<Key>,
 		 class EqualFunc = Common::EqualTo<Key> >
 class map : public Common::HashMap<Key, Val, HashFunc, EqualFunc> {
