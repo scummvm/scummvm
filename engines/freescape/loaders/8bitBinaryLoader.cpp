@@ -444,16 +444,6 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 			iterator->_value->addStructure(_areaMap[255]);
 	}
 
-	if (isEclipse() || isCastle()) {
-		_playerHeight = 48;
-		_playerWidth = 8;
-		_playerDepth = 8;
-	} else {
-		_playerHeight = 64;
-		_playerWidth = 12;
-		_playerDepth = 32;
-	}
-
 	if (!_areaMap.contains(startArea))
 		_startArea = newArea->getAreaID();
 	else

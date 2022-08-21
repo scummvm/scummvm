@@ -255,13 +255,6 @@ Common::Error FreescapeEngine::run() {
 		}
 
 		_borderTexture = nullptr;
-		if (isDriller())
-			_viewArea = Common::Rect(40, 16, 279, 116);
-		else if (isEclipse())
-			_viewArea = Common::Rect(40, 32, 280, 132);
-		else
-			error("Invalid target!");
-
 		_border->fillRect(_viewArea, 0xA0A0A0FF);
 	}
 	if (saveSlot >= 0) { // load the savegame
