@@ -1491,7 +1491,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	const Common::RenderModeDescription *rm = Common::g_renderModes;
 	for (; rm->code; ++rm) {
 		Common::String renderGuiOption = Common::renderMode2GUIO(rm->id);
-		if ((_domain == Common::ConfigManager::kApplicationDomain) || (_domain != Common::ConfigManager::kApplicationDomain && !renderingTypeDefined) || (_guioptions.contains(renderGuiOption)))
+		if ((_domain == Common::ConfigManager::kApplicationDomain) || (_domain != Common::ConfigManager::kApplicationDomain && renderingTypeDefined && _guioptions.contains(renderGuiOption)))
 			_renderModePopUp->appendEntry(_c(rm->description, context), rm->id);
 	}
 
