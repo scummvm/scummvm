@@ -1463,13 +1463,6 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 			case AKC_C0A0:
 			case AKC_C0A1:
 			case AKC_C0A2:
-				// WORKAROUND bug #3533 luther does not moves his lips on subsequent sentences (only the first one).
-				// we skip the opcode instruction until all lines are said.
-				if (_game.id == GID_FREDDI4 && _currentRoom == 43 && a->_costume == 809 && code == AKC_C0A1 && a->getAnimVar(23) > 0) {
-					a->setAnimVar(23, a->getAnimVar(23) - 1);
-					((ActorHE *)a)->_heTalking = true;
-					break;
-				}
 				curpos += 4;
 				break;
 			case AKC_ComplexChan2:
@@ -1535,15 +1528,6 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 		case AKC_JumpL:
 		case AKC_JumpNE:
 		case AKC_JumpE:
-			// WORKAROUND bug #3533 when freddi talks in multiple sentences, she moves her lips on the first sequence.
-			// then luther moves his lips on the second and the rest are disembodied.
-			// we force the comparison (loop to start of freddi's lips) until all lines are said.
-			if (_game.id == GID_FREDDI4 && _currentRoom == 43 && a->_costume == 809 && a->getAnimVar(25) > 0) {
-				a->setAnimVar(25, a->getAnimVar(25) - 1);
-				curpos = GUW(2);
-				break;
-			}
-
 			if (akos_compare(a->getAnimVar(GB(4)), GW(5), code - AKC_JumpStart) != 0) {
 				curpos = GUW(2);
 				break;
