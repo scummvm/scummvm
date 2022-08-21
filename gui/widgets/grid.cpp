@@ -426,10 +426,8 @@ const Graphics::ManagedSurface *GridWidget::platformToSurface(Common::Platform p
 }
 
 const Graphics::ManagedSurface *GridWidget::demoToSurface(const Common::String extraString) {
-	debug(extraString.c_str());
 	if (! extraString.contains("Demo") )
 		return nullptr;
-	debug("Demo detected");
 	return _extraIcons[0];
 }
 
