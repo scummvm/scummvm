@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-21 15:45+0000\n"
-"PO-Revision-Date: 2022-08-11 06:37+0000\n"
+"PO-Revision-Date: 2022-08-21 19:29+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -4767,13 +4767,7 @@ msgid "Ok"
 msgstr "Ok"
 
 #: engines/dragons/dragons.cpp:1803
-#, fuzzy, c-format
-#| msgid ""
-#| "Error: The file '%s' hasn't been extracted properly.\n"
-#| "Please refer to the wiki page\n"
-#| "https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos for "
-#| "details on how to properly extract the DTSPEECH.XA and *.STR files from "
-#| "your game disc."
+#, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"
 "Please refer to the wiki page\n"
@@ -4781,20 +4775,12 @@ msgid ""
 "from your game disc."
 msgstr ""
 "Hiba: A '%s' fájlt nem sikerült helyesen kitömöríteni. \n"
-"Kérlek, olvasd el ezt a wiki oldalt\n"
-"https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos a "
-"részletekrõl a DTSPEECH.XA és *.STR fájlok helyes kitömörítésérõl a játék "
-"lemezedrõl."
+"Kérlek, olvasd el a wiki oldalt\n"
+"%s a DTSPEECH.XA és *.STR fájlok megfelelő kibontásával kapcsolatos "
+"részletekért a játéklemezről."
 
 #: engines/dragons/metaengine.cpp:122
-#, fuzzy, c-format
-#| msgid ""
-#| "Error: It appears that the game data files were extracted incorrectly.\n"
-#| "\n"
-#| "You should only extract STR and XA files using the special method. The "
-#| "rest should be copied normally from your game CD.\n"
-#| "\n"
-#| " See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
+#, c-format
 msgid ""
 "Error: It appears that the game data files were extracted incorrectly.\n"
 "\n"
@@ -4808,7 +4794,7 @@ msgstr ""
 "Csak az STR és XA fájlokat szabad kicsomagolnia a speciális módszerrel. A "
 "többit általában a játék CD-jérõl kell átmásolni.\n"
 "\n"
-" Nézd meg https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
+"  Nézd meg %s"
 
 #: engines/dragons/metaengine.cpp:137
 msgid "Action"
@@ -5135,12 +5121,7 @@ msgid "Escape from Monkey Island support is not compiled in"
 msgstr "Escape from Monkey Island támogatás nincs lefordítva"
 
 #: engines/grim/resource.cpp:102
-#, fuzzy, c-format
-#| msgid ""
-#| "The original patch of Grim Fandango\n"
-#| "is missing. Please download it from\n"
-#| "https://downloads.scummvm.org/frs/extras/patches/gfupd101.exe\n"
-#| "and put it in the game data files directory"
+#, c-format
 msgid ""
 "The original patch of Grim Fandango\n"
 "is missing. Please download it from\n"
@@ -5149,18 +5130,11 @@ msgid ""
 msgstr ""
 "A Grim Fandango eredeti javítása\n"
 "hiányzik. Kérlek, töltsd le innen\n"
-"https://downloads.scummvm.org/frs/extras/patches/gfupd101.exe\n"
+"%s\n"
 "és tedd a játék adatfájlok könyvtárába"
 
 #: engines/grim/resource.cpp:107
-#, fuzzy, c-format
-#| msgid ""
-#| "The original patch of Escape from Monkey Island is missing. \n"
-#| "Please download it from https://downloads.scummvm.org/frs/extras/"
-#| "patches/\n"
-#| "and put it in the game data files directory.\n"
-#| "Pay attention to download the correct version according to the game's "
-#| "language"
+#, c-format
 msgid ""
 "The original patch of Escape from Monkey Island is missing. \n"
 "Please download it from %s\n"
@@ -5169,9 +5143,10 @@ msgid ""
 "language!"
 msgstr ""
 "Az Escape from Monkey Island eredeti javítása hiányzik.\n"
-"Kérlek, töltsd le innen https://downloads.scummvm.org/frs/extras/patches/\n"
+"Kérlek, töltsd le innen %s\n"
 "és tedd a játék adatfájlok könyvtárába.\n"
-"Ügyelj arra, hogy a játék nyelvének megfelelően töltsd le a megfelelő verziót"
+"Ügyelj arra, hogy a játék nyelvének megfelelően töltsd le a megfelelő "
+"verziót!"
 
 #: engines/grim/emi/sound/emisound.cpp:655
 msgid ""
@@ -6144,14 +6119,7 @@ msgid "Enable widescreen rendering in fullscreen mode."
 msgstr "Engedélyezi a szélesképernyős megjelenítést teljesképernyős módban."
 
 #: engines/myst3/myst3.cpp:364
-#, fuzzy, c-format
-#| msgid ""
-#| "This version of Myst III has not been updated with the latest official "
-#| "patch.\n"
-#| "Please install the official update corresponding to your game's "
-#| "language.\n"
-#| "The updates can be downloaded from:\n"
-#| "https://www.scummvm.org/frs/extras/patches/"
+#, c-format
 msgid ""
 "This version of Myst III has not been updated with the latest official "
 "patch.\n"
@@ -6162,7 +6130,7 @@ msgstr ""
 "A Myst III ezen verzióját nem frissítették a legújabb hivatalos javítással.\n"
 "Kérlek, telepítsd a játék nyelvének megfelelő hivatalos frissítést.\n"
 "A frissítések letölthetők innen:\n"
-"https://www.scummvm.org/frs/extras/patches/"
+"%s"
 
 #: engines/myst3/myst3.cpp:1578 engines/pegasus/pegasus.cpp:744
 msgid "Invalid file name for saving"
