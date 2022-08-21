@@ -793,12 +793,6 @@ void ScummEngine_v72he::o72_actorOps() {
 		k = getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < k; ++i) {
 			a->setUserCondition(args[i] & 0x7F, args[i] & 0x80);
-			// WORKAROUND bug #3533 luther does not moves his lips on subsequent sentences (only the first one).
-			// we skip the opcode instruction until all lines are said.
-			// The animation var is set to the number of lines minus 1.
-			if (_game.id == GID_FREDDI4 && _game.heversion == 98 && _currentRoom == 43 && args[i] == 130  && vm.slot[_currentScript].offs != 84203) {
-				a->setAnimVar(23, vm.slot[_currentScript].offs == 79584 ? 2 : 1);
-			}
 		}
 		break;
 	case 24: 		// SO_TALK_CONDITION (HE 80+)
@@ -837,13 +831,6 @@ void ScummEngine_v72he::o72_actorOps() {
 		break;
 	case 76:		// SO_COSTUME
 		a->setActorCostume(pop());
-		// WORKAROUND bug #3533 when freddi talks in multiple sentences, she moves her lips on the first sequence.
-		// then luther moves his lips on the second and the rest are disembodied.
-		// we force the comparison (loop to start of freddi's lips) until all lines are said.
-		// The animation var is set to the number of lines minus 1.
-		if (_game.id == GID_FREDDI4 && _currentRoom == 43 && a->_costume == 809) {
-			a->setAnimVar(25, vm.slot[_currentScript].offs == 105213 ? 3 : 1);
-		}
 		break;
 	case 77:		// SO_STEP_DIST
 		j = pop();
