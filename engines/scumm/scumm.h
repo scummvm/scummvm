@@ -1257,6 +1257,7 @@ protected:
 	byte _charsetBuffer[512];
 
 	bool _keepText = false;
+	bool _actorShouldStopTalking = false;
 	byte _msgCount = 0;
 
 	int _nextLeft = 0, _nextTop = 0;

@@ -1813,6 +1813,13 @@ void ScummEngine_v6::akos_processQueue() {
 			error("akos_queCommand(%d,%d,%d,%d)", cmd, a->_number, param_1, param_2);
 		}
 	}
+
+	if (_game.heversion == 98 && _game.id == GID_FREDDI4 && _actorShouldStopTalking) {
+		Actor *a = derefActor(getTalkingActor(), "ScummEngine_v6::akos_processQueue()");
+		((ActorHE *)a)->_heTalking = false;
+		setTalkingActor(0);
+		_actorShouldStopTalking = false;
+	}
 }
 
 #ifdef ENABLE_SCUMM_7_8
