@@ -98,24 +98,6 @@ public:
 		resize(newSize, elem);
 	}
 
-	typename Common::Array<T>::iterator erase(typename Common::Array<T>::iterator pos) {
-		return Common::Array<T>::erase(pos);
-	}
-
-	typename Common::Array<T>::iterator erase(typename Common::Array<T>::iterator first,
-			typename Common::Array<T>::iterator last) {
-		Common::copy(last, this->_storage + this->_size, first);
-
-		int count = (last - first);
-		this->_size -= count;
-
-		// We also need to destroy the objects beyond the new size
-		for (uint idx = this->_size; idx < (this->_size + count); ++idx)
-			this->_storage[idx].~T();
-
-		return first;
-	}
-
 	void swap(vector &arr) {
 		SWAP(this->_capacity, arr._capacity);
 		SWAP(this->_size, arr._size);
