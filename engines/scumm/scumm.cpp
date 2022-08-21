@@ -252,7 +252,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		GID_MONKEY2			// Support in the original interpreter.
 	};
 
-	_supportsEGADithering = (_game.platform == Common::kPlatformDOS && _game.version > 3 && Common::find(egaModeIDs, &egaModeIDs[ARRAYSIZE(egaModeIDs)], _game.id) != &egaModeIDs[ARRAYSIZE(egaModeIDs)]);
+	_supportsEGADithering = ((_game.version == 6 || (_game.version > 3 && _game.platform == Common::kPlatformDOS)) && Common::find(egaModeIDs, &egaModeIDs[ARRAYSIZE(egaModeIDs)], _game.id) != &egaModeIDs[ARRAYSIZE(egaModeIDs)]);
 
 	if (_game.platform == Common::kPlatformFMTowns && _game.id != GID_LOOM && _game.version == 3)
 		if (ConfMan.getBool("aspect_ratio") && !ConfMan.getBool("trim_fmtowns_to_200_pixels")) {
@@ -278,7 +278,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	case Common::kRenderCGA:
 	case Common::kRenderEGA:
 		if ((_game.version >= 4 && !(_game.features & GF_16COLOR) && !_supportsEGADithering)
-			|| (_game.features & GF_OLD256) || _game.platform != Common::kPlatformDOS)
+			|| (_game.features & GF_OLD256) || (_game.platform != Common::kPlatformDOS && !_supportsEGADithering))
 			_renderMode = Common::kRenderDefault;
 		break;
 
