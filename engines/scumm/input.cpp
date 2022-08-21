@@ -796,14 +796,18 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		char sliderString[256];
 		PauseToken pt;
 
-		if ((VAR_PAUSE_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_PAUSE_KEY)) ||
-			(lastKeyHit.keycode == Common::KEYCODE_SPACE && _game.features & GF_DEMO))) {
+		if ((VAR_PAUSE_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_PAUSE_KEY))) ||
+			(lastKeyHit.keycode == Common::KEYCODE_SPACE && _game.features & GF_DEMO)) {
 			// Force the cursor OFF...
 			int8 oldCursorState = _cursor.state;
 			_cursor.state = 0;
 			CursorMan.showMouse(_cursor.state > 0);
 			// "Game Paused.  Press SPACE to Continue."
-			showBannerAndPause(0, -1, getGUIString(gsPause));
+			if (_game.version > 4)
+				showBannerAndPause(0, -1, getGUIString(gsPause));
+			else
+				showOldStyleBannerAndPause(getGUIString(gsPause), 12, -1);
+
 			_cursor.state = oldCursorState;
 			return;
 		}
@@ -865,7 +869,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		}
 
 		// "Text Speed  Slow  ==========  Fast"
-		if (lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-') {
+		if (_game.version > 3 && (lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-')) {
 			if (VAR_CHARINC == 0xFF)
 				return;
 
@@ -889,7 +893,11 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 				setTalkSpeed(_defaultTextSpeed);
 
 				getSliderString(gsTextSpeedSlider, VAR(VAR_CHARINC), sliderString, sizeof(sliderString));
-				showBannerAndPause(0, 0, sliderString);
+				if (_game.version > 4)
+					showBannerAndPause(0, 0, sliderString);
+				else
+					showOldStyleBannerAndPause(sliderString, 9, 0);
+
 				ks = Common::KEYCODE_INVALID;
 				bool leftBtnPressed = false, rightBtnPressed = false;
 				waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
@@ -902,7 +910,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		}
 
 
-		if (lastKeyHit.keycode == Common::KEYCODE_k && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+		if (_game.version > 4 && lastKeyHit.keycode == Common::KEYCODE_k && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
 			showBannerAndPause(0, 120, getGUIString(gsHeap), _res->getHeapSize() / 1024);
 			return;
 		}
@@ -916,6 +924,47 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			&& _game.platform != Common::kPlatformFMTowns) {
 			showMainMenu();
 			return;
+		}
+
+		if (_game.version == 4) {
+			if (lastKeyHit.keycode == Common::KEYCODE_r && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+				_snapScroll ^= 1;
+				if (_snapScroll) {
+					showOldStyleBannerAndPause("Horizontal Screen Snap", 9, 90);
+				} else {
+					showOldStyleBannerAndPause("Horizontal Screen Scroll", 9, 90);
+				}
+
+				if (VAR_CAMERA_FAST_X != 0xFF)
+					VAR(VAR_CAMERA_FAST_X) = _snapScroll;
+
+				return;
+			}
+
+			// The following ones serve no purpose whatsoever, but just for the sake of completeness...
+			// Also, these were originally mapped with the CTRL flag, but they would clash with other
+			// internal ScummVM commands, so they are instead available with the SHIFT flag.
+			if (lastKeyHit.keycode == Common::KEYCODE_j && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
+				showOldStyleBannerAndPause("Recalibrating Joystick", 2, 90);
+				return;
+			}
+
+			if (lastKeyHit.keycode == Common::KEYCODE_m && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
+				showOldStyleBannerAndPause("Mouse Mode", 2, 90);
+				return;
+			}
+
+			if (lastKeyHit.keycode == Common::KEYCODE_s && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
+				_internalSpeakerSoundsAreOn ^= 1;
+				if (_internalSpeakerSoundsAreOn) {
+					showOldStyleBannerAndPause("Sounds On", 9, 90);
+				} else {
+					showOldStyleBannerAndPause("Sounds Off", 9, 90);
+				}
+
+				return;
+			}
+
 		}
 	}
 
