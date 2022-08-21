@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-21 15:44+0000\n"
+"POT-Creation-Date: 2022-08-21 15:45+0000\n"
 "PO-Revision-Date: 2022-08-11 09:30+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -6240,13 +6240,21 @@ msgstr "Mode Ecran large"
 msgid "Enable widescreen rendering in fullscreen mode."
 msgstr "Active le rendu écran large en mode plein écran."
 
-#: engines/myst3/myst3.cpp:363
+#: engines/myst3/myst3.cpp:364
+#, fuzzy, c-format
+#| msgid ""
+#| "This version of Myst III has not been updated with the latest official "
+#| "patch.\n"
+#| "Please install the official update corresponding to your game's "
+#| "language.\n"
+#| "The updates can be downloaded from:\n"
+#| "https://www.scummvm.org/frs/extras/patches/"
 msgid ""
 "This version of Myst III has not been updated with the latest official "
 "patch.\n"
 "Please install the official update corresponding to your game's language.\n"
 "The updates can be downloaded from:\n"
-"https://www.scummvm.org/frs/extras/patches/"
+"%s"
 msgstr ""
 "Cette version de Myst III n'a pas été mise à jour avec le dernier patch "
 "officiel.\n"
@@ -6255,7 +6263,7 @@ msgstr ""
 "Les mises à jour peuvent être téléchargées à cette adresse :\n"
 "https://www.scummvm.org/frs/extras/patches/"
 
-#: engines/myst3/myst3.cpp:1577 engines/pegasus/pegasus.cpp:744
+#: engines/myst3/myst3.cpp:1578 engines/pegasus/pegasus.cpp:744
 msgid "Invalid file name for saving"
 msgstr "Nom de fichier invalide pour la sauvegarde"
 
