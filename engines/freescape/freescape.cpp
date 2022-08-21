@@ -375,8 +375,9 @@ void FreescapeEngine::lower() {
 void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTime) {
 	debugC(1, kFreescapeDebugMove, "old player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	int previousAreaID = _currentArea->getAreaID();
+	int areaScale = _currentArea->getScale();
 
-	float velocity = _movementSpeed * deltaTime;
+	float velocity = _movementSpeed * deltaTime * areaScale;
 	float positionY = _position.y();
 	switch (direction) {
 	case FORWARD:
@@ -392,7 +393,6 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 		_position = _position + _cameraRight * velocity;
 		break;
 	}
-	int areaScale = _currentArea->getScale();
 	// restore y coordinate
 	if (!_flyMode)
 		_position.set(_position.x(), positionY, _position.z());
