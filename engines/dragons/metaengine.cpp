@@ -112,14 +112,14 @@ SaveStateDescriptor DragonsMetaEngine::querySaveMetaInfos(const char *target, in
 
 Common::Error DragonsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Dragons::DragonsGameDescription *gd = (const Dragons::DragonsGameDescription *)desc;
+	const char* urlForRequiredDataFiles = "https://wiki.scummvm.org/index.php?title=Blazing_Dragons#Required_data_files";
 
 	switch (gd->gameId) {
 	case Dragons::kGameIdDragons:
 		*engine = new Dragons::DragonsEngine(syst, desc);
 		break;
 	case Dragons::kGameIdDragonsBadExtraction:
-		GUIErrorMessageWithURL(_("Error: It appears that the game data files were extracted incorrectly.\n\nYou should only extract STR and XA files using the special method. The rest should be copied normally from your game CD.\n\n See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"),
-		                       "https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons");
+		GUIErrorMessageWithURL(Common::U32String::format(_("Error: It appears that the game data files were extracted incorrectly.\n\nYou should only extract STR and XA files using the special method. The rest should be copied normally from your game CD.\n\n See %s"), urlForRequiredDataFiles), urlForRequiredDataFiles);
 		break;
 	default:
 		return Common::kUnsupportedGameidError;
