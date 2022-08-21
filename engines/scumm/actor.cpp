@@ -3064,14 +3064,20 @@ void ScummEngine::stopTalk() {
 		}
 		if (_game.version <= 7 && _game.heversion == 0)
 			setTalkingActor(0xFF);
-		if (_game.heversion != 0)
-			((ActorHE *)a)->_heTalking = false;
+		if (_game.heversion != 0) {
+			if (_game.heversion == 98 && _game.id == GID_FREDDI4) {
+				// Delay unsetting _heTalking to next sound frame. fixes bug #3533.
+				_actorShouldStopTalking = true;
+			} else {
+				((ActorHE *)a)->_heTalking = true;
+			}
+		}
 	}
 
 	if ((_game.id == GID_DIG && !(_game.features & GF_DEMO)) || _game.id == GID_CMI) {
 		setTalkingActor(0);
 		VAR(VAR_HAVE_MSG) = 0;
-	} else if (_game.heversion >= 60) {
+	} else if (_game.heversion >= 60 && !_actorShouldStopTalking) {
 		setTalkingActor(0);
 	}
 
