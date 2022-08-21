@@ -49,10 +49,10 @@ struct ActionType {
 	int params[c_maxparams];
 };
 
-typedef Std::map<uint32, ActionType> KeyMap;
+typedef Common::HashMap<uint32, ActionType> KeyMap;
 
-typedef Std::map<Common::String, Common::KeyCode> ParseKeyMap;
-typedef Std::map<Common::String, const void *> ParseActionMap;
+typedef Common::HashMap<Common::String, Common::KeyCode> ParseKeyMap;
+typedef Common::HashMap<Common::String, const void *> ParseActionMap;
 
 class Configuration;
 

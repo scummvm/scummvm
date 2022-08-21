@@ -211,7 +211,7 @@ uint16 Actor::get_tile_num(uint16 obj_num) {
 
 uint16 Actor::get_custom_tile_num(uint16 obj_num) {
 	if (custom_tile_tbl) {
-		Std::map<uint16, uint16>::iterator it;
+		Common::HashMap<uint16, uint16>::iterator it;
 		it = custom_tile_tbl->find(obj_num);
 		if (it != custom_tile_tbl->end()) {
 			return it->_value;
@@ -1961,7 +1961,7 @@ void Actor::cure() {
 
 void Actor::set_custom_tile_num(uint16 obj_num, uint16 tile_num) {
 	if (custom_tile_tbl == NULL) {
-		custom_tile_tbl = new Std::map<uint16, uint16>();
+		custom_tile_tbl = new Common::HashMap<uint16, uint16>();
 	}
 
 	(*custom_tile_tbl)[obj_num] = tile_num;

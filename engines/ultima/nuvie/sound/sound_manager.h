@@ -130,8 +130,8 @@ private:
 
 	uint16 RequestObjectSfxId(uint16 obj_n);
 
-	typedef map<int, SoundCollection *> IntCollectionMap;
-	typedef map<Common::String, SoundCollection *> StringCollectionMap;
+	typedef Common::HashMap<int, SoundCollection *> IntCollectionMap;
+	typedef Common::HashMap<Common::String, SoundCollection *> StringCollectionMap;
 	IntCollectionMap m_TileSampleMap;
 	IntCollectionMap m_ObjectSampleMap;
 	StringCollectionMap m_MusicMap;

@@ -306,7 +306,7 @@ bool SoundManager::groupAddSong(const char *group, Song *song) {
 	if (song != NULL) {
 		//we have a valid song
 		SoundCollection *psc;
-		Std::map <Common::String, SoundCollection * >::iterator it;
+		Common::HashMap <Common::String, SoundCollection * >::iterator it;
 		it = m_MusicMap.find(group);
 		if (it == m_MusicMap.end()) {
 			//is there already a collection for this entry?
@@ -363,7 +363,7 @@ bool SoundManager::LoadObjectSamples (string sound_dir)
 	  if (ps != NULL)
 		{                       //we have a valid sound
 		  SoundCollection *psc;
-		  Std::map < int, SoundCollection * >::iterator it;
+		  Common::HashMap < int, SoundCollection * >::iterator it;
 		  it = m_ObjectSampleMap.find (id);
 		  if (it == m_ObjectSampleMap.end ())
 			{                   //is there already a collection for this entry?
@@ -425,7 +425,7 @@ bool SoundManager::LoadTileSamples (string sound_dir)
 	  if (ps != NULL)
 		{                       //we have a valid sound
 		  SoundCollection *psc;
-		  Std::map < int, SoundCollection * >::iterator it;
+		  Common::HashMap < int, SoundCollection * >::iterator it;
 		  it = m_TileSampleMap.find (id);
 		  if (it == m_TileSampleMap.end ())
 			{                   //is there already a collection for this entry?
@@ -554,7 +554,7 @@ void SoundManager::update_map_sfx() {
 	MapWindow *mw = Game::get_game()->get_map_window();
 
 	vector < SfxIdType >currentlyActiveSounds;
-	map < SfxIdType, float >volumeLevels;
+	Common::HashMap < SfxIdType, float >volumeLevels;
 
 	p->get_location(&x, &y, &l);
 
@@ -574,7 +574,7 @@ void SoundManager::update_map_sfx() {
 				vol = 0;
 			//sp->SetVolume(vol);
 			//need the map to adjust volume according to number of active elements
-			Std::map < SfxIdType, float >::iterator it;
+			Common::HashMap < SfxIdType, float >::iterator it;
 			it = volumeLevels.find(sfx_id);
 			if (it != volumeLevels.end()) {
 				if (volumeLevels[sfx_id] < vol)
@@ -603,7 +603,7 @@ void SoundManager::update_map_sfx() {
 	          vol = 0;
 	        //sp->SetVolume(vol);
 	        //need the map to adjust volume according to number of active elements
-	        Std::map < Sound *, float >::iterator it;
+	        Common::HashMap < Sound *, float >::iterator it;
 	        it = volumeLevels.find (sp);
 	        if (it != volumeLevels.end ())
 	          {
@@ -701,7 +701,7 @@ Sound *SoundManager::SampleExists(string name) {
 }
 
 Sound *SoundManager::RequestTileSound(int id) {
-	Std::map < int, SoundCollection * >::iterator it;
+	Common::HashMap < int, SoundCollection * >::iterator it;
 	it = m_TileSampleMap.find(id);
 	if (it != m_TileSampleMap.end()) {
 		SoundCollection *psc;
@@ -712,7 +712,7 @@ Sound *SoundManager::RequestTileSound(int id) {
 }
 
 Sound *SoundManager::RequestObjectSound(int id) {
-	Std::map < int, SoundCollection * >::iterator it;
+	Common::HashMap < int, SoundCollection * >::iterator it;
 	it = m_ObjectSampleMap.find(id);
 	if (it != m_ObjectSampleMap.end()) {
 		SoundCollection *psc;
@@ -734,7 +734,7 @@ uint16 SoundManager::RequestObjectSfxId(uint16 obj_n) {
 }
 
 Sound *SoundManager::RequestSong(string group) {
-	Std::map<Common::String, SoundCollection * >::iterator it;
+	Common::HashMap<Common::String, SoundCollection * >::iterator it;
 	it = m_MusicMap.find(group);
 	if (it != m_MusicMap.end()) {
 		SoundCollection *psc;

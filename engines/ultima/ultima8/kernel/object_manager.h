@@ -80,7 +80,7 @@ private:
 	void addObjectLoader(Std::string classname, ObjectLoadFunc func) {
 		_objectLoaders[classname] = func;
 	}
-	Std::map<Common::String, ObjectLoadFunc> _objectLoaders;
+	Common::HashMap<Common::String, ObjectLoadFunc> _objectLoaders;
 
 	static ObjectManager *_objectManager;
 };

@@ -107,7 +107,7 @@ private:
 
 	Std::vector<TileAnimSet *> _tileAnimSets;
 	Layout *_gemLayout;
-	Std::map<Common::String, int> _dungeonTileChars;
+	Common::HashMap<Common::String, int> _dungeonTileChars;
 	ImageInfo *_charSetInfo;
 	ImageInfo *_gemTilesInfo;
 

@@ -31,7 +31,6 @@ namespace Nuvie {
 
 using Std::string;
 using Std::list;
-using Std::map;
 using Std::vector;
 
 class Sound {
