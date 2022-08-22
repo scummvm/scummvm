@@ -113,6 +113,8 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 	MacWidget(parent, x, y, w, h, wm, true, border, gutter, boxShadow),
 	_macFont(macFont), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
 
+	D(6, "MacText::MacText(): fgcolor: %d, bgcolor: %d s: \"%s\"", fgcolor, bgcolor, Common::toPrintable(s.encode()).c_str());
+
 	_str = s;
 	_fullRefresh = true;
 
@@ -231,9 +233,9 @@ void MacText::init() {
 	// currently, we are not using fg color to render text. And we are not passing fg color correctly, thus we read it our self.
 	MacFontRun colorFontRun = getFgColor();
 	if (!colorFontRun.text.empty()) {
-		debug(9, "Reading fg color though text, instead of the argument");
 		_fgcolor = colorFontRun.fgcolor;
 		colorFontRun.text.clear();
+		debug(9, "Reading fg color though text, instead of the argument, read %x", _fgcolor);
 		_defaultFormatting = colorFontRun;
 		_defaultFormatting.wm = _wm;
 	}
