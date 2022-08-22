@@ -3403,13 +3403,13 @@ void ActorHE::setHEFlag(int bit, int set) {
 	}
 }
 
-void ActorHE::setUserCondition(int slot, int set) {
+void ActorHE::setCondition(int slot, int set) {
 	const int condMaskCode = (_vm->_game.heversion >= 85) ? 0x1FFF : 0x3FF;
-	assertRange(1, slot, 32, "setUserCondition: Condition");
+	assertRange(1, slot, 32, "setCondition: Condition");
 	if (set == 0) {
-		_heCondMask &= ~(1 << (slot + 0xF));
+		_heCondMask &= ~(1 << (slot - 1));
 	} else {
-		_heCondMask |= 1 << (slot + 0xF);
+		_heCondMask |= 1 << (slot - 1);
 	}
 	if (_heCondMask & condMaskCode) {
 		_heCondMask &= ~1;
@@ -3418,28 +3418,33 @@ void ActorHE::setUserCondition(int slot, int set) {
 	}
 }
 
+bool ActorHE::isConditionSet(int slot) const {
+	assertRange(1, slot, 32, "isConditionSet: Condition");
+	return (_heCondMask & (1 << (slot - 1))) != 0;
+}
+
+void ActorHE::setUserCondition(int slot, int set) {
+	assertRange(1, slot, 16, "setUserCondition: Condition");
+	setCondition(slot + 16, set);
+}
+
 bool ActorHE::isUserConditionSet(int slot) const {
-	assertRange(1, slot, 32, "isUserConditionSet: Condition");
-	return (_heCondMask & (1 << (slot + 0xF))) != 0;
+	assertRange(1, slot, 16, "isUserConditionSet: Condition");
+	return isConditionSet(slot + 16);
 }
 
 void ActorHE::setTalkCondition(int slot) {
 	const int condMaskCode = (_vm->_game.heversion >= 85) ? 0x1FFF : 0x3FF;
-	assertRange(1, slot, 32, "setTalkCondition: Condition");
+	assertRange(1, slot, 16, "setTalkCondition: Condition");
 	_heCondMask = (_heCondMask & ~condMaskCode) | 1;
 	if (slot != 1) {
-		_heCondMask |= 1 << (slot - 1);
-		if (_heCondMask & condMaskCode) {
-			_heCondMask &= ~1;
-		} else {
-			_heCondMask |= 1;
-		}
+		setCondition(slot, 1);
 	}
 }
 
 bool ActorHE::isTalkConditionSet(int slot) const {
-	assertRange(1, slot, 32, "isTalkConditionSet: Condition");
-	return (_heCondMask & (1 << (slot - 1))) != 0;
+	assertRange(1, slot, 16, "isTalkConditionSet: Condition");
+	return isConditionSet(slot);
 }
 
 #ifdef ENABLE_HE

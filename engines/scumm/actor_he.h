@@ -61,6 +61,9 @@ public:
 
 	void setHEFlag(int bit, int set);
 
+	void setCondition(int slot, int set);
+	bool isConditionSet(int slot) const;
+
 	void setUserCondition(int slot, int set);
 	bool isUserConditionSet(int slot) const;
 
