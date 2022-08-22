@@ -124,13 +124,13 @@ void ScummEngine::parseEvent(Common::Event event) {
 		} else if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_s) {
 			_res->resourceStats();
 		} else if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == Common::KEYCODE_x) {
-			// TODO: Some SCUMM games quit when Alt-x is pressed. However, not
-			// all of them seem to exhibit this behavior. LordHoto found that
-			// the Loom manual does not mention this hotkey. On the other hand
-			// the Sam&Max manual mentions that Alt-x does so on "most"
-			// platforms. We should really check which games exhibit this
-			// behavior and only use it for them.
-			quitGame();
+			if (_game.version < 8) {
+				if (isUsingOriginalGUI()) {
+					_keyPressed = event.kbd;
+				} else {
+					quitGame();
+				}
+			}
 		} else {
 			// Normal key press, pass on to the game.
 			_keyPressed = event.kbd;
@@ -915,7 +915,8 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			return;
 		}
 
-		if (lastKeyHit.keycode == Common::KEYCODE_c && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+		if ((lastKeyHit.keycode == Common::KEYCODE_c && lastKeyHit.hasFlags(Common::KBD_CTRL)) ||
+			(lastKeyHit.keycode == Common::KEYCODE_x && lastKeyHit.hasFlags(Common::KBD_ALT))) {
 			queryQuit();
 			return;
 		}
