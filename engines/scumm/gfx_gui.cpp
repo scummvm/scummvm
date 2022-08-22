@@ -1217,7 +1217,9 @@ void ScummEngine::queryQuit() {
 		else
 			ks = showOldStyleBannerAndPause(msgLabelPtr, 12, -1);
 
-		if (tolower(localizedYesKey) == ks.ascii || toupper(localizedYesKey) == ks.ascii) {
+		if (tolower(localizedYesKey) == ks.ascii || toupper(localizedYesKey) == ks.ascii ||
+			(ks.keycode == Common::KEYCODE_c && ks.hasFlags(Common::KBD_CTRL)) ||
+			(ks.keycode == Common::KEYCODE_x && ks.hasFlags(Common::KBD_ALT))) {
 			_quitByButton = true;
 			quitGame();
 		}
