@@ -99,7 +99,9 @@ bool ScummEngine::canLoadGameStateCurrently() {
 	if (_game.id == GID_CMI)
 		return true;
 
-	return (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0);
+	bool isOriginalMenuActive = isUsingOriginalGUI() && _mainMenuIsActive;
+
+	return (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0) && !isOriginalMenuActive;
 }
 
 Common::Error ScummEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
@@ -144,9 +146,11 @@ bool ScummEngine::canSaveGameStateCurrently() {
 		return _currentRoom != 92;
 #endif
 
+	bool isOriginalMenuActive = isUsingOriginalGUI() && _mainMenuIsActive;
+
 	// SCUMM v4+ doesn't allow saving in room 0 or if
 	// VAR(VAR_MAINMENU_KEY) to set to zero.
-	return (VAR_MAINMENU_KEY == 0xFF || (VAR(VAR_MAINMENU_KEY) != 0 && _currentRoom != 0));
+	return (VAR_MAINMENU_KEY == 0xFF || (VAR(VAR_MAINMENU_KEY) != 0 && _currentRoom != 0)) && !isOriginalMenuActive;
 }
 
 
