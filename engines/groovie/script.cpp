@@ -19,8 +19,6 @@
  *
  */
 
-#include <limits.h>
-
 #include "audio/mididrv.h"
 
 #include "groovie/script.h"
@@ -76,7 +74,7 @@ enum kSpecialVariableTypes {
 
 Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_code(nullptr), _savedCode(nullptr), _stacktop(0), _debugger(nullptr), _vm(vm),
-	_videoFile(nullptr), _videoRef(UINT_MAX), _cellGame(nullptr), _lastCursor(0xff),
+	_videoFile(nullptr), _videoRef(uint32(-1)), _cellGame(nullptr), _lastCursor(0xff),
 #ifdef ENABLE_GROOVIE2
 	_beehive(ConfMan.getBool("easier_ai")), _cake(ConfMan.getBool("easier_ai")), _gallery(ConfMan.getBool("easier_ai")),
 	_mouseTrap(ConfMan.getBool("easier_ai")), _othello(ConfMan.getBool("easier_ai")), _pente(ConfMan.getBool("easier_ai")),
@@ -918,11 +916,11 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 
 		// Close the previous video file
 		if (_videoFile) {
-			_videoRef = UINT_MAX;
+			_videoRef = uint32(-1);
 			delete _videoFile;
 		}
 
-		if (fileref == UINT_MAX)
+		if (fileref == uint32(-1))
 			return true;
 
 		// Try to open the new file
@@ -1000,7 +998,7 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 			// Close the file
 			delete _videoFile;
 			_videoFile = nullptr;
-			_videoRef = UINT_MAX;
+			_videoRef = uint32(-1);
 
 			// Clear the input events while playing the video
 			_eventMouseClicked = 0;
@@ -1025,7 +1023,7 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 }
 
 bool Script::playBackgroundSound(uint32 fileref, uint32 loops) {
-	if (fileref == UINT_MAX) {
+	if (fileref == uint32(-1)) {
 		return false;
 	}
 
