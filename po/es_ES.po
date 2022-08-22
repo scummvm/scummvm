@@ -5155,8 +5155,8 @@ msgid ""
 "Go to %s to see a list of the needed files."
 msgstr ""
 "No se ha podido abrir el archivo %s para su validación.\n"
-"Es posible que no esté o que no tengas los permisos necesarios para abrirlo."
-"\n"
+"Es posible que no esté o que no tengas los permisos necesarios para "
+"abrirlo.\n"
 "Ve a %s para ver la lista de archivos necesarios."
 
 #: engines/grim/md5checkdialog.cpp:41
