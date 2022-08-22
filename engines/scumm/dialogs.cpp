@@ -430,7 +430,7 @@ void decodeV2String(Common::Language lang, Common::String &str) {
 	struct mapping { char o, n; };
 	// Just the bare minimum needed for the strings in getStaticResString()...
 	static const mapping mapFR[] = { { '[', '\x82' }, { '<', '\x85' }, { '~', '\x96' }, { '\0', '\0' } };
-	static const mapping mapDE[] = { { '\0', '\0' } };
+	static const mapping mapDE[] = { { '[', '\x81' }, { '\\','\x84' }, { '\0', '\0' } };
 	static const mapping mapIT[] = { { '\0', '\0' } };
 	static const mapping mapES[] = { { '\0', '\0' } };
 	static const mapping mapRU[] = { { '\0', '\0' } };
@@ -543,12 +543,12 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 			{6, "Etes-vous s~r de vouloir quitter ? (o/n)o"}					// (matching the previous sentence)
 		},
 		{	// German
-			{1, "Bitte Disk %c einlegen und Taste dr""\x81""cken."},
-			{2, "Kann %s (%c%d) nicht finden, bitte Taste dr""\x81""cken."},
-			{3, "Fehler beim Lesen von Disk %c (%c%d), bitte Taste dr""\x81""cken."},
-			{4, "Spielpause.  Zum Weiterspielen Leertaste dr""\x81""cken."},
-			{5, "M""\x94""chten Sie wirklich neu starten?  (J/N)J"},
-			{6, "M""\x94""chten Sie wirklich beenden?  (J/N)J"}
+			{1, "Diskette n einlegen.  Bet\\tige EINGABE."},		// Original DOS German v2
+			{2, "Datei nn.lfl nicht gefunden. EINGABE."},			// Original DOS German v2
+			{3, "ERROR. Bet\\tigen Sie eine Taste."},				// Original DOS German v2
+			{4, "PAUSE - Zum Spielen Leertaste dr[cken. "},			// Original DOS German v2
+			{5, "Wollen Sie neu starten? (j/n)j"},					// Original DOS German v2
+			{6, "Wollen Sie wirklich beenden? (j/n)j"}				// (matching the previous sentence)
 		},
 		{	// Italian
 			{1, "Inserisci il disco %c e premi un pulsante per continuare."},
