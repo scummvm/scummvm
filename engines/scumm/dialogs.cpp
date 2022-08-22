@@ -79,7 +79,7 @@ static const ResString string_map_table_v8[] = {
 	{0, "/BT_105/Text Display Only"},
 	{0, "/BT_103/Voice Only"},
 	{0, "/SYST300/y"},
-	{0, "/BOOT.005/Are you sure you want to quit?  (Y-N)"}, // Demo strings
+	{0, "/BOOT.005/Are you sure you want to quit?  (Y-N)Y"}, // Demo strings
 	{0, "/NEW.23/Text Speed  Slow  ==========  Fast"},
 	{0, "/NEW.24/Music Volume  Low  =========  High"},
 	{0, "/NEW.25/Voice Volume  Low  =========  High"},
