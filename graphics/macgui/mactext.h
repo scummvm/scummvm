@@ -212,8 +212,8 @@ public:
 	int getTextSize(int start, int end);
 	void setTextSize(int textSize, int start, int end);
 
-	uint getTextColor() { return _defaultFormatting.fgcolor; }
-	uint getTextColor(int start, int end);
+	uint32 getTextColor() { return _defaultFormatting.fgcolor; }
+	uint32 getTextColor(int start, int end);
 
 	int getTextFont(int start, int end);
 	void setTextFont(int fontId, int start, int end);
