@@ -26,7 +26,6 @@
 #include "ags/shared/ac/words_dictionary.h"
 #include "ags/shared/script/cc_script.h"
 #include "ags/shared/util/stream.h"
-#include <string.h>
 
 namespace AGS3 {
 

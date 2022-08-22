@@ -25,7 +25,6 @@
  *
  */
 
-#include <limits.h>
 #include "groovie/groovie.h"
 #include "groovie/logic/cake.h"
 

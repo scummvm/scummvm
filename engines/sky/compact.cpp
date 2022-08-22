@@ -27,7 +27,6 @@
 #include "common/translation.h"
 #include "sky/compact.h"
 #include "gui/message.h"
-#include <stddef.h>	// for ptrdiff_t
 
 namespace Sky {
 
