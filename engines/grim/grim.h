@@ -78,7 +78,7 @@ public:
 
 	void clearPools();
 
-	int getGameFlags() { return _gameFlags; }
+	uint32 getGameFlags() { return _gameFlags; }
 	GrimGameType getGameType() { return _gameType; }
 	Common::Language getGameLanguage() { return _gameLanguage; }
 	Common::Platform getGamePlatform() { return _gamePlatform; }
