@@ -42,7 +42,7 @@ class String;
 /**
  * List of game language.
  */
-enum Language {
+enum Language : int8 {
 	AR_ARB,
 	CA_ESP,
 	CS_CZE,
