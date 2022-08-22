@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-22 10:18+0000\n"
-"PO-Revision-Date: 2022-08-15 21:05+0000\n"
+"PO-Revision-Date: 2022-08-22 23:14+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -4786,13 +4786,7 @@ msgid "Ok"
 msgstr "Ok"
 
 #: engines/dragons/dragons.cpp:1803
-#, fuzzy, c-format
-#| msgid ""
-#| "Error: The file '%s' hasn't been extracted properly.\n"
-#| "Please refer to the wiki page\n"
-#| "https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos for "
-#| "details on how to properly extract the DTSPEECH.XA and *.STR files from "
-#| "your game disc."
+#, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"
 "Please refer to the wiki page\n"
@@ -4801,18 +4795,10 @@ msgid ""
 msgstr ""
 "Ошибка: Файл '%s' был неверно переписан.\n"
 "Пожалуйста, посмотрите на Вики\n"
-"https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos как "
-"правильно переписать с вашего диска с игрой файлы DTSPEECH.XA и *.STR."
+"%s как правильно переписать с вашего диска с игрой файлы DTSPEECH.XA и *.STR."
 
 #: engines/dragons/metaengine.cpp:122
-#, fuzzy, c-format
-#| msgid ""
-#| "Error: It appears that the game data files were extracted incorrectly.\n"
-#| "\n"
-#| "You should only extract STR and XA files using the special method. The "
-#| "rest should be copied normally from your game CD.\n"
-#| "\n"
-#| " See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
+#, c-format
 msgid ""
 "Error: It appears that the game data files were extracted incorrectly.\n"
 "\n"
@@ -4826,7 +4812,7 @@ msgstr ""
 "Вам необходимо конвертировать особым образом только файлы STR и XA. "
 "Остальные файлы нужно было просто скопировать с вашего CD.\n"
 "\n"
-"Смотрите https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
+"Смотрите %s"
 
 #: engines/dragons/metaengine.cpp:137
 msgid "Action"
@@ -5123,12 +5109,7 @@ msgstr ""
 "%s"
 
 #: engines/grim/md5check.cpp:567
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not open the file %s for checking.\n"
-#| "It may be missing or you may not have the rights to open it.\n"
-#| "Go to https://wiki.scummvm.org/index.php/Datafiles to see a list of the "
-#| "needed files."
+#, c-format
 msgid ""
 "Could not open the file %s for checking.\n"
 "It may be missing or you may not have the rights to open it.\n"
@@ -5136,8 +5117,7 @@ msgid ""
 msgstr ""
 "Не удалось открыть файл %s для проверки.\n"
 "Он либо отстутствует, либо у вас не хватает прав доступа до него.\n"
-"Перейдите на https://wiki.scummvm.org/index.php/Datafiles, чтобы увидеть "
-"список необходимых файлов."
+"Перейдите на %s, чтобы увидеть список необходимых файлов."
 
 #: engines/grim/md5checkdialog.cpp:41
 msgid ""
@@ -5156,12 +5136,7 @@ msgid "Escape from Monkey Island support is not compiled in"
 msgstr "Поддержка для Escape from Monkey Island не скомпилирована"
 
 #: engines/grim/resource.cpp:102
-#, fuzzy, c-format
-#| msgid ""
-#| "The original patch of Grim Fandango\n"
-#| "is missing. Please download it from\n"
-#| "https://downloads.scummvm.org/frs/extras/patches/gfupd101.exe\n"
-#| "and put it in the game data files directory"
+#, c-format
 msgid ""
 "The original patch of Grim Fandango\n"
 "is missing. Please download it from\n"
@@ -5170,18 +5145,11 @@ msgid ""
 msgstr ""
 "Отсутствует оригинальный патч игры\n"
 "Grim Fandango. Пожалуйста, скачайте его с\n"
-"https://downloads.scummvm.org/frs/extras/patches/gfupd101.exe\n"
+"%s\n"
 "и положите в каталог с игрой"
 
 #: engines/grim/resource.cpp:107
-#, fuzzy, c-format
-#| msgid ""
-#| "The original patch of Escape from Monkey Island is missing. \n"
-#| "Please download it from https://downloads.scummvm.org/frs/extras/"
-#| "patches/\n"
-#| "and put it in the game data files directory.\n"
-#| "Pay attention to download the correct version according to the game's "
-#| "language"
+#, c-format
 msgid ""
 "The original patch of Escape from Monkey Island is missing. \n"
 "Please download it from %s\n"
@@ -5190,8 +5158,7 @@ msgid ""
 "language!"
 msgstr ""
 "Отсутствует оригинальный патч игры Escape from Monkey Island.\n"
-"Пожалуйста, скачайте его с https://downloads.scummvm.org/frs/extras/"
-"patches/\n"
+"Пожалуйста, скачайте его с %s\n"
 "и положите в каталог с игрой.\n"
 "Необходим патч, соответствующий языку вашей копии игры"
 
@@ -6159,14 +6126,7 @@ msgid "Enable widescreen rendering in fullscreen mode."
 msgstr "Включить отрисовку в широком формате в полноэкранном режиме."
 
 #: engines/myst3/myst3.cpp:364
-#, fuzzy, c-format
-#| msgid ""
-#| "This version of Myst III has not been updated with the latest official "
-#| "patch.\n"
-#| "Please install the official update corresponding to your game's "
-#| "language.\n"
-#| "The updates can be downloaded from:\n"
-#| "https://www.scummvm.org/frs/extras/patches/"
+#, c-format
 msgid ""
 "This version of Myst III has not been updated with the latest official "
 "patch.\n"
@@ -6178,7 +6138,7 @@ msgstr ""
 "Пожалуйста, установите официальное обновление, соответствующее языку вашей "
 "игры.\n"
 "Обновления можно скачать с:\n"
-"https://www.scummvm.org/frs/extras/patches/"
+"%s"
 
 #: engines/myst3/myst3.cpp:1578 engines/pegasus/pegasus.cpp:744
 msgid "Invalid file name for saving"
