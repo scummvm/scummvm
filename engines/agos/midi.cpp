@@ -44,7 +44,7 @@
 #include "common/translation.h"
 
 #include "gui/message.h"
-#include <engines/agos/intern_detection.h>
+#include "agos/intern_detection.h"
 
 namespace AGOS {
 

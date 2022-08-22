@@ -43,7 +43,7 @@
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 
-#include <common/file.h>
+#include "common/file.h"
 #ifdef USE_PNG
 #include "image/png.h"
 #else
