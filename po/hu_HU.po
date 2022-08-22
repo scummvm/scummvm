@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-08-22 10:18+0000\n"
-"PO-Revision-Date: 2022-08-21 19:29+0000\n"
+"PO-Revision-Date: 2022-08-22 17:01+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -5092,12 +5092,7 @@ msgstr ""
 "%s"
 
 #: engines/grim/md5check.cpp:567
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not open the file %s for checking.\n"
-#| "It may be missing or you may not have the rights to open it.\n"
-#| "Go to https://wiki.scummvm.org/index.php/Datafiles to see a list of the "
-#| "needed files."
+#, c-format
 msgid ""
 "Could not open the file %s for checking.\n"
 "It may be missing or you may not have the rights to open it.\n"
@@ -5105,8 +5100,7 @@ msgid ""
 msgstr ""
 "Nem sikerült megnyitni a %s fájlt ellenőrzésre.\n"
 "Lehet hogy hiányzik, vagy nincs jogod megnyitni.\n"
-"Menj ide https://wiki.scummvm.org/index.php/Datafiles hogy megnézd a "
-"szükséges fájlokat."
+"Menj ide %s hogy megnézd a szükséges fájlokat."
 
 #: engines/grim/md5checkdialog.cpp:41
 msgid ""
