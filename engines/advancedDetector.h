@@ -86,27 +86,29 @@ struct ADGameFileDescription {
 
 /**
  * Flags used in the game description.
+ *
+ * Note that the lowest 16 bits are currently reserved for use by the client code.
  */
 enum ADGameFlags {
-	ADGF_NO_FLAGS        =  0,        ///< No flags.
-	ADGF_TAILMD5		 = (1 << 15), ///< Calculate the MD5 for this entry from the end of the file.
-	ADGF_REMASTERED      = (1 << 16), ///< Add "-remastered' to gameid.
-	ADGF_AUTOGENTARGET   = (1 << 17), ///< Automatically generate gameid from @ref ADGameDescription::extra.
-	ADGF_UNSTABLE        = (1 << 18), ///< Flag to designate not yet officially supported games that are not fit for public testing.
-	ADGF_TESTING         = (1 << 19), ///< Flag to designate not yet officially supported games that are fit for public testing.
-	ADGF_PIRATED         = (1 << 20), ///< Flag to designate well-known pirated versions with cracks.
-	ADGF_UNSUPPORTED     = (1 << 21), /*!< Flag to mark certain versions (like badly protected full games as demos) not to be run for various reasons.
-	                                       A custom message can be provided in the @ref ADGameDescription::extra field. */
-	ADGF_WARNING         = (1 << 22), /*!< Flag to mark certain versions to show confirmation warning before proceeding.
-	                                       A custom message should be provided in the @ref ADGameDescription::extra field. */
-	ADGF_ADDENGLISH      = (1 << 23), ///< Always add English as a language option.
-	ADGF_MACRESFORK      = (1 << 24), ///< Calculate the MD5 for this entry from the resource fork.
-	ADGF_USEEXTRAASTITLE = (1 << 25), ///< Use @ref ADGameDescription::extra as the main game title, not gameid.
-	ADGF_DROPLANGUAGE    = (1 << 26), ///< Do not add language to gameid.
-	ADGF_DROPPLATFORM    = (1 << 27), ///< Do not add platform to gameid.
-	ADGF_CD              = (1 << 28), ///< Add "-cd" to gameid.
-	ADGF_DVD             = (1 << 29), ///< Add "-dvd" to gameid.
-	ADGF_DEMO            = (1 << 30)  ///< Add "-demo" to gameid.
+	ADGF_NO_FLAGS        =  0u,        ///< No flags.
+	ADGF_TAILMD5         = (1u << 16), ///< Calculate the MD5 for this entry from the end of the file.
+	ADGF_AUTOGENTARGET   = (1u << 17), ///< Automatically generate gameid from @ref ADGameDescription::extra.
+	ADGF_UNSTABLE        = (1u << 18), ///< Flag to designate not yet officially supported games that are not fit for public testing.
+	ADGF_TESTING         = (1u << 19), ///< Flag to designate not yet officially supported games that are fit for public testing.
+	ADGF_PIRATED         = (1u << 20), ///< Flag to designate well-known pirated versions with cracks.
+	ADGF_UNSUPPORTED     = (1u << 21), /*!< Flag to mark certain versions (like badly protected full games as demos) not to be run for various reasons.
+	                                        A custom message can be provided in the @ref ADGameDescription::extra field. */
+	ADGF_WARNING         = (1u << 22), /*!< Flag to mark certain versions to show confirmation warning before proceeding.
+	                                        A custom message should be provided in the @ref ADGameDescription::extra field. */
+	ADGF_ADDENGLISH      = (1u << 23), ///< Always add English as a language option.
+	ADGF_MACRESFORK      = (1u << 24), ///< Calculate the MD5 for this entry from the resource fork.
+	ADGF_USEEXTRAASTITLE = (1u << 25), ///< Use @ref ADGameDescription::extra as the main game title, not gameid.
+	ADGF_DROPLANGUAGE    = (1u << 26), ///< Do not add language to gameid.
+	ADGF_DROPPLATFORM    = (1u << 27), ///< Do not add platform to gameid.
+	ADGF_CD              = (1u << 28), ///< Add "-cd" to gameid.
+	ADGF_DVD             = (1u << 29), ///< Add "-dvd" to gameid.
+	ADGF_DEMO            = (1u << 30), ///< Add "-demo" to gameid.
+	ADGF_REMASTERED      = (1u << 31)  ///< Add "-remastered' to gameid.
 };
 
 /**
