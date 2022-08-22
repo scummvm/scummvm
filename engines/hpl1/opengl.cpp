@@ -23,21 +23,23 @@
 #include "hpl1/debug.h"
 
 namespace Hpl1 {
-	static const char* getErrorString(const GLenum code) {
-		switch (code) {
-		case GL_INVALID_ENUM:
-			return "invalid enum";
-		case GL_INVALID_VALUE:
-			return "invalid value";
-		case GL_INVALID_OPERATION:
-			return "invalid operation";
-		}
-		return "unrecognized error";
-	}
 
-	void checkOGLErrors(const char *function, const int line) {
-		GLenum code;
-		while((code = glGetError()) != GL_NO_ERROR)
-			logError(kDebugOpenGL, "Opengl error: \'%s\' in function %s - %d\n", getErrorString(code), function, line);
+static const char* getErrorString(const GLenum code) {
+	switch (code) {
+	case GL_INVALID_ENUM:
+		return "invalid enum";
+	case GL_INVALID_VALUE:
+		return "invalid value";
+	case GL_INVALID_OPERATION:
+		return "invalid operation";
 	}
+	return "unrecognized error";
 }
+
+void checkOGLErrors(const char *function, const int line) {
+	GLenum code;
+	while((code = glGetError()) != GL_NO_ERROR)
+		logError(kDebugOpenGL, "Opengl error: \'%s\' in function %s - %d\n", getErrorString(code), function, line);
+}
+
+} // End of namespace Hpl1

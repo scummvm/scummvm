@@ -28,7 +28,9 @@
 #include "graphics/opengl/context.h"
 
 namespace Hpl1 {
-	void checkOGLErrors(const char *function, int line);
+
+void checkOGLErrors(const char *function, int line);
+
 }
 
 #define GL_CHECK(x) {x; ::Hpl1::checkOGLErrors(__func__, __LINE__);}
