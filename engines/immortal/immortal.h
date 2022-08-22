@@ -66,14 +66,6 @@
 
 namespace Immortal {
 
-// Needed by kernal for drawing
-enum Screen {											// These are constants that are used for defining screen related arrays
-	kMaxSprites   = 32,									// Number of sprites allowed at once
-	kViewPortCW   = 256 / 64,
-	kViewPortCH   = 128 / kMaxSprites,
-	kMaxDrawItems = kViewPortCH + 1 + kMaxSprites
-};
-
 // Needed by kernal for input
 enum InputAction {
 	kActionNothing,
@@ -150,16 +142,6 @@ struct Door {
 	uint8 _on 		   = 0;
 };
 
-// Sprites are handled by driver in Kernal
-struct Sprite {
-	   int  _image;										// Index of _dSprite._frames[]
-	uint16  _X;
-	uint16  _Y;
-	uint16  _on;										// 1 = active
-	uint16  _priority;
-DataSprite *_dSprite;
-};
-
 struct ImmortalGameDescription;
 
 // Forward declaration because we will need the Disk and Room classes
@@ -203,8 +185,6 @@ public:
 	const int kMaxCertificate = 16;
 
 	// Screen constants
-	const int    kResH 	     = 320;
-	const int    kResV 	     = 200;
 	const int    kScreenW__  = 128;						// ??? labeled in source as SCREENWIDTH
 	const int    kScreenH__  = 128;						// ???
 	const int    kViewPortW  = 256;
@@ -247,10 +227,6 @@ public:
 	const int kPaletteOffset  = 21205;					// This is the byte position of the palette data in the disk
 
 	// Sprite constants
-	const int kMaxSpriteAbove = 48;						// Maximum sprite extents from center
-	const int kMaxSpriteBelow = 16;
-	const int kMaxSpriteLeft  = 16;
-	const int kMaxSpriteRight = 16;
 	const int kMaxSpriteW 	  = 64;
 	const int kMaxSpriteH 	  = 64;
 	const int kSpriteDY		  = 32;
@@ -291,8 +267,8 @@ public:
 	 bool _draw 	    = 0;							// Whether the screen should draw this frame
 	  int _zero 	    = 0;							// No idea what this is yet
 	 bool _gameOverFlag = false;
-	uint8 _gameFlags;									// Bitflag array of event flags, but only two were used (saving ana and saving the king) <-- why is gameOverFlag not in this? Lol
-	 bool _themePaused;									// In the source, this is actually considered a bit flag array of 2 bits (b0 and b1). However, it only ever checks for non-zero, so it's effectively only 1 bit.
+	uint8 _gameFlags 	= 0;							// Bitflag array of event flags, but only two were used (saving ana and saving the king) <-- why is gameOverFlag not in this? Lol
+	 bool _themePaused	= false;						// In the source, this is actually considered a bit flag array of 2 bits (b0 and b1). However, it only ever checks for non-zero, so it's effectively only 1 bit.
 	  int _titlesShown  = 0;
 	  int _time 		= 0;
 	  int _promoting    = 0;							// I think promoting means the title stuff
@@ -302,26 +278,26 @@ public:
 	Story _stories[8];
 
 	// Level members
-	  int _maxLevels	= 0;							// This is determined when loading in story files
-	  int _level 	    = 0;
-	 bool _levelOver    = false;
-	  int _count;
-	  int _lastLevelLoaded;
-	  int _lastSongLoaded;
-	  int _storyLevel;
-	  int _storyX;
-	  int _loadA;
-	  int _loadY;
-	  uint16 _initialX;
-	  uint16 _initialY;
-	  int _initialBX;
-	  int _initialBY;
-	  int _dRoomNum;
-	  int _initialRoom	= 0;
-	  int _currentRoom	= 0;
-	  int _lastType;
-	  int _roomCellX;
-	  int _roomCellY;
+	  int _maxLevels	   = 0;							// This is determined when loading in story files
+	  int _level 	       = 0;
+	 bool _levelOver       = false;
+	  int _count 		   = 0;
+	  int _lastLevelLoaded = 0;
+	  int _lastSongLoaded  = 0;
+	  int _storyLevel 	   = 0;
+	  int _storyX 		   = 0;
+	  int _loadA 		   = 0;
+	  int _loadY 		   = 0;
+	  uint16 _initialX 	   = 0;
+	  uint16 _initialY     = 0;
+	  int _initialBX       = 0;
+	  int _initialBY 	   = 0;
+	  int _dRoomNum 	   = 0;
+	  int _initialRoom	   = 0;
+	  int _currentRoom	   = 0;
+	  int _lastType 	   = 0;
+	  int _roomCellX 	   = 0;
+	  int _roomCellY 	   = 0;
 	Room *_rooms[kMaxRooms];							// Rooms within the level
 	Common::Array<SFlame> _allFlames[kMaxRooms];		// The level needs it's own set of flames so that the flames can be turned on/off permenantly. This is technically more like a hashmap in the source, but it could also be seen as a 2d array, just hashed together in the source
 
@@ -342,19 +318,19 @@ public:
 	bool _singleStep;									// Flag for _singleStep mode
 
 	// Input members
-	int _pressedAction;
-	int _heldAction;
-	int _pressedDirection;
-	int _heldDirection;
+	int _pressedAction 	  = 0;
+	int _heldAction 	  = 0;
+	int _pressedDirection = 0;
+	int _heldDirection 	  = 0;
 
 	// Music members
 	Song _playing;										// Currently playing song
-	int _themeID  = 0;									// Not sure yet tbh
-	int _combatID = 0;
+	int _themeID  		  = 0;							// Not sure yet tbh
+	int _combatID 		  = 0;
 
 	// Asset members
 		   int _numSprites = 0;							// This is more accurately actually the index within the sprite array, so _numSprites + 1 is the current number of sprites
-	DataSprite _dataSprites[kFont + 1];					// All the sprite data, indexed by SpriteFile
+	DataSprite _dataSprites[kFont + 1];					// All the sprite data, indexed by SpriteName
 		Sprite _sprites[kMaxSprites];					// All the sprites shown on screen
 		 Cycle _cycles[kMaxCycles];
 	Common::Array<Common::String> _strPtrs;				// Str should really be a char array, but inserting frame values will be stupid so it's just a string instead
@@ -362,7 +338,7 @@ public:
 	Common::Array<Damage>  _damagePtrs;
 	Common::Array<Use>	   _usePtrs;
 	Common::Array<Pickup>  _pickupPtrs;
-	Common::Array<SCycle>  _cycPtrs;
+	Common::Array<SCycle>  _cycPtrs;					// This is not actually a set of pointers, but it is serving the function of what was called cycPtrs in the source
 	CArray2D<Motive>	   _programPtrs;
 	Common::Array<ObjType> _objTypePtrs;
 
@@ -377,15 +353,15 @@ public:
     uint16  _columnIndex[kViewPortCW + 1];				// Why the heck is this an entire array, when it's just an index that gets zeroed before it gets used anyway...
 	uint16  _tIndex[kMaxDrawItems];
 	uint16  _tPriority[kMaxDrawItems];
-    uint16  _viewPortX;
-    uint16  _viewPortY;
-    uint16  _myViewPortX;								// Probably mirror of viewportX
-    uint16  _myViewPortY;
+    uint16  _viewPortX = 0;
+    uint16  _viewPortY = 0;
+    uint16  _myViewPortX = 0;								// Probably mirror of viewportX
+    uint16  _myViewPortY = 0;
 	   int  _lastGauge = 0;								// Mirror for player health, used to update health gauge display
     uint16  _penX = 0;									// Basically where in the screen we are currently drawing
     uint16  _penY = 0;
-    uint16  _myUnivPointX;
-    uint16  _myUnivPointY;
+    uint16  _myUnivPointX = 0;
+    uint16  _myUnivPointY = 0;
 	   int  _num2DrawItems = 0;
 	Graphics::Surface *_mainSurface;
 GenericSprite _genSprites[6];
@@ -405,6 +381,8 @@ GenericSprite _genSprites[6];
 	 * --- Functions ---
 	 *
 	 */
+
+	void setSprites(Sprite *s);
 
 	/*
 	 * [Kernal.cpp] Functions from Kernal.gs and Driver.gs
@@ -467,7 +445,7 @@ GenericSprite _genSprites[6];
 	void loadFont();									// Gets the font.spr file, and centers the sprite
 	void clearSprites();								// Clears all sprites before drawing the current frame
 	void loadSprites();									// Loads all the sprite files and centers their sprites (in spritelist, but called from kernal)
-	void addSprite(uint16 x, uint16 y, SpriteName n, int img, uint16 p);
+	void kernalAddSprite(uint16 x, uint16 y, SpriteName n, int img, uint16 p);
 
 	// Input
 	void userIO();										// Get input
@@ -668,11 +646,6 @@ DataSprite *cycleGetDataSprite(int c);				// This takes the place of getFile + g
 	 */
 
 	// Misc
-
-
-	/*
-	 * [Univ.cpp] Functions from Univ.GS
-	 */
 
 
 	/*
