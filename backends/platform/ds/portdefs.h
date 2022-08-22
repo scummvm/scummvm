@@ -39,6 +39,7 @@ typedef unsigned int uint;
 #include <stddef.h>
 #include <assert.h>
 #include <ctype.h>
+#include <limits.h>
 #include <math.h>
 #include <new>
 

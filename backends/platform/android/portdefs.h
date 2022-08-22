@@ -29,6 +29,7 @@
 #include <stddef.h>
 #include <assert.h>
 #include <ctype.h>
+#include <limits.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <new>

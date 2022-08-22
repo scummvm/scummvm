@@ -41,7 +41,6 @@
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/tools/decompiler.h"
 
-#include <limits.h>
 #include "common/file.h"
 
 namespace Stark {

@@ -32,6 +32,7 @@
 #include <stddef.h>
 // No assert.h
 #include <ctype.h>
+#include <limits.h>
 #include <math.h>
 #include <new>
 

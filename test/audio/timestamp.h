@@ -2,8 +2,6 @@
 
 #include "audio/timestamp.h"
 
-#include <limits.h>
-
 class TimestampTestSuite : public CxxTest::TestSuite
 {
 	public:

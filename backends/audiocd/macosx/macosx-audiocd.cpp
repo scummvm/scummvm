@@ -44,7 +44,6 @@
 
 #include <sys/stat.h>
 #include <sys/mount.h>
-#include <limits.h>
 
 #include "common/scummsys.h"
 
