@@ -256,7 +256,7 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 	}
 
 	char bannerMsg[512];
-	int bannerMsgWidth, bannerMsgHeight, roundedWidth;
+	int bannerMsgWidth, bannerMsgHeight;
 	int startingPointY;
 	int bannerSaveYStart;
 
@@ -284,8 +284,6 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 	bannerMsgWidth = getGUIStringWidth(bannerMsg);
 	if (bannerMsgWidth < 100)
 		bannerMsgWidth = 100;
-
-	roundedWidth = bannerMsgWidth / 2;
 
 	startingPointY = 80;
 	bannerSaveYStart = startingPointY - 2;
