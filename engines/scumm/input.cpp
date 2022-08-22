@@ -238,6 +238,11 @@ void ScummEngine::parseEvent(Common::Event event) {
 			_keyPressed = Common::KeyState(Common::KEYCODE_6, 54);	// '6'
 		break;
 
+	case Common::EVENT_MAINMENU:
+		// Let the user open the GMM when the menu is active.
+		if (isUsingOriginalGUI() && _mainMenuIsActive)
+			openMainMenuDialog();
+		break;
 	default:
 		break;
 	}
