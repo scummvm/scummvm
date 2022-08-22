@@ -1375,7 +1375,7 @@ bool BoundaryDetectionMessengerModifier::load(ModifierLoaderContext &context, co
 
 	_exitTriggerMode = ((data.messageFlagsHigh & Data::BoundaryDetectionMessengerModifier::kDetectExiting) != 0) ? kExitTriggerExiting : kExitTriggerOnceExited;
 	_detectionMode = ((data.messageFlagsHigh & Data::BoundaryDetectionMessengerModifier::kWhileDetected) != 0) ? kContinuous : kOnFirstDetection;
-		
+
 	_detectTopEdge = ((data.messageFlagsHigh & Data::BoundaryDetectionMessengerModifier::kDetectTopEdge) != 0);
 	_detectBottomEdge = ((data.messageFlagsHigh & Data::BoundaryDetectionMessengerModifier::kDetectBottomEdge) != 0);
 	_detectLeftEdge = ((data.messageFlagsHigh & Data::BoundaryDetectionMessengerModifier::kDetectLeftEdge) != 0);
@@ -2064,7 +2064,7 @@ Modifier *CompoundVariableModifier::findChildByName(const Common::String &name) 
 CompoundVariableModifier::SaveLoad::ChildSaveLoad::ChildSaveLoad() : modifier(nullptr) {
 }
 
-CompoundVariableModifier::SaveLoad::SaveLoad(CompoundVariableModifier *modifier) : _modifier(modifier) {
+CompoundVariableModifier::SaveLoad::SaveLoad(CompoundVariableModifier *modifier) /* : _modifier(modifier) */ {
 	for (const Common::SharedPtr<Modifier> &child : modifier->_children) {
 		Common::SharedPtr<ModifierSaveLoad> childSL = child->getSaveLoad();
 		if (childSL) {

@@ -180,7 +180,7 @@ private:
 	uint8 _channel;
 	uint8 _note;
 	uint8 _volume;
-	uint8 _program;
+	//uint8 _program;
 
 	bool _initialized;
 };
@@ -301,7 +301,7 @@ void MidiFilePlayerImpl::onTimer() {
 }
 
 MidiNotePlayerImpl::MidiNotePlayerImpl(const Common::SharedPtr<MidiCombinerSource> &outputDriver, uint32 timerRate)
-	: _timerRate(timerRate), _durationRemaining(0), _outputDriver(outputDriver), _channel(0), _note(0), _program(0), _initialized(false), _volume(100) {
+	: _timerRate(timerRate), _durationRemaining(0), _outputDriver(outputDriver), _channel(0), _note(0), /* _program(0), */_initialized(false), _volume(100) {
 }
 
 MidiNotePlayerImpl::~MidiNotePlayerImpl() {
@@ -2317,8 +2317,8 @@ bool ObjectReferenceVariableModifier::SaveLoad::loadInternal(Common::ReadStream 
 }
 
 
-MidiModifier::MidiModifier() : _mode(kModeFile), _volume(100), _mutedTracks(0), _singleNoteChannel(0), _singleNoteNote(0),
-							   _plugIn(nullptr), _filePlayer(nullptr), _notePlayer(nullptr), _runtime(nullptr) {
+MidiModifier::MidiModifier() : _mode(kModeFile), _volume(100), _mutedTracks(0), /* _singleNoteChannel(0), _singleNoteNote(0), */
+							   _plugIn(nullptr), _filePlayer(nullptr), _notePlayer(nullptr) /*, _runtime(nullptr) */ {
 
 	memset(&this->_modeSpecific, 0, sizeof(this->_modeSpecific));
 }
@@ -2555,7 +2555,7 @@ MiniscriptInstructionOutcome MidiModifier::scriptSetNoteDuration(MiniscriptThrea
 		DynamicValue converted;
 		if (!value.convertToType(DynamicValueTypes::kFloat, converted))
 			return kMiniscriptInstructionOutcomeFailed;
-		asDouble = converted.getFloat();	
+		asDouble = converted.getFloat();
 	}
 
 	if (_mode == kModeSingleNote) {

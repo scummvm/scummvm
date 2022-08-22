@@ -310,14 +310,14 @@ private:
 	Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> _embeddedFile;
 
 	uint16 _mutedTracks;
-	uint8 _singleNoteChannel;
-	uint8 _singleNoteNote;
+	//uint8 _singleNoteChannel;
+	//uint8 _singleNoteNote;
 
 	StandardPlugIn *_plugIn;
 	MidiFilePlayer *_filePlayer;
 	MidiNotePlayer *_notePlayer;
 
-	Runtime *_runtime;
+	//Runtime *_runtime;
 };
 
 class ListVariableModifier : public VariableModifier {

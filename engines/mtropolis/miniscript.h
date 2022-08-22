@@ -345,7 +345,7 @@ namespace MiniscriptInstructions {
 
 		DataType _dataType;
 		ValueUnion _value;
-		bool _isLValue;
+		//bool _isLValue;
 	};
 
 	class PushGlobal : public MiniscriptInstruction {

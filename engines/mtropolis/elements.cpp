@@ -423,8 +423,8 @@ MovieResizeFilter::~MovieResizeFilter() {
 }
 
 MovieElement::MovieElement()
-	: _cacheBitmap(false), _alternate(false), _playEveryFrame(false), _reversed(false), _haveFiredAtLastCel(false),
-	  _haveFiredAtFirstCel(false), _shouldPlayIfNotPaused(true), _needsReset(true), _currentPlayState(kMediaStateStopped),
+	: _cacheBitmap(false), _alternate(false), _playEveryFrame(false), _reversed(false), /* _haveFiredAtLastCel(false), */
+	  /* _haveFiredAtFirstCel(false), */_shouldPlayIfNotPaused(true), _needsReset(true), _currentPlayState(kMediaStateStopped),
 	  _assetID(0), _maxTimestamp(0), _timeScale(0), _currentTimestamp(0), _volume(100),
 	  _displayFrame(nullptr), _runtime(nullptr) {
 }
@@ -1598,7 +1598,7 @@ MiniscriptInstructionOutcome MToonElement::scriptSetRate(MiniscriptThread *threa
 
 
 TextLabelElement::TextLabelElement()
-	: _cacheBitmap(false), _needsRender(false), _isBitmap(false), _assetID(0),
+	: _cacheBitmap(false), _needsRender(false), /*_isBitmap(false), */_assetID(0),
 	  _macFontID(0), _size(12), _alignment(kTextAlignmentLeft), _runtime(nullptr) {
 }
 
@@ -1693,7 +1693,7 @@ void TextLabelElement::activate() {
 
 	TextAsset *textAsset = static_cast<TextAsset *>(asset.get());
 
-	if (textAsset->isBitmap()) { 
+	if (textAsset->isBitmap()) {
 		_renderedText = textAsset->getBitmapSurface();
 		_needsRender = false;
 	} else {
@@ -1940,7 +1940,7 @@ MiniscriptInstructionOutcome TextLabelElement::scriptSetLine(MiniscriptThread *t
 	_needsRender = true;
 	_contentsDirty = true;
 	_macFormattingSpans.clear();
-	
+
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
@@ -2152,7 +2152,7 @@ void SoundElement::playMedia(Runtime *runtime, Project *project) {
 				// TODO: Check cue points and queue them here
 			}
 
-			
+
 			if (!_loop && newTime >= _finishTime) {
 				// Don't throw out the handle - It can still be playing but we just treat it like it's not.
 				// If it has anything left, then we let it finish and avoid clipping the sound, but we need

@@ -3876,7 +3876,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 
 	for (int i = 0; i < Actions::kMouseButtonCount; i++)
 		_mouseFocusFlags[i] = false;
-	
+
 	_worldManagerInterface.reset(new WorldManagerInterface());
 	_worldManagerInterface->setSelfReference(_worldManagerInterface);
 
@@ -4061,7 +4061,7 @@ bool Runtime::runFrame() {
 
 		// This has to be in this specific spot: Queued messages that occur from scene transitions are normally discharged
 		// after the "Scene Started" event, but before scene transition.
-		// 
+		//
 		// Obsidian depends on this behavior in several scripts, most notably setting up conditional ambience correctly.
 		// For example, in Inspiration chapter, on exiting the plane into the statue:
 		// Shared scene fires Parent Enabled which triggers "GEN_SND_Start_Ambience on PE" which sends GEN_SND_Start_Ambience
@@ -4254,7 +4254,7 @@ void Runtime::drawFrame() {
 
 		Common::sort(sortedBuckets, sortedBuckets + numWindows, WindowSortingBucket::sortPredicate);
 	}
-	
+
 	for (size_t i = 0; i < numWindows; i++) {
 		const Window &window = *sortedBuckets[i].window;
 		const Graphics::ManagedSurface &surface = *window.getSurface();
@@ -4265,9 +4265,9 @@ void Runtime::drawFrame() {
 		int32 destBottom = destTop + surface.h;
 
 		int32 srcLeft = 0;
-		int32 srcRight = surface.w;
+		//int32 srcRight = surface.w;
 		int32 srcTop = 0;
-		int32 srcBottom = surface.h;
+		//int32 srcBottom = surface.h;
 
 		// Clip to drawable area
 		if (destLeft < 0) {
@@ -4285,13 +4285,13 @@ void Runtime::drawFrame() {
 		if (destRight > width) {
 			int rightAdjust = width - destRight;
 			destRight += rightAdjust;
-			srcRight += rightAdjust;
+			//srcRight += rightAdjust;
 		}
 
 		if (destBottom > height) {
 			int bottomAdjust = height - destBottom;
 			destBottom += bottomAdjust;
-			srcBottom += bottomAdjust;
+			//srcBottom += bottomAdjust;
 		}
 
 		if (destLeft >= destRight || destTop >= destBottom || destLeft >= width || destTop >= height || destRight <= 0 || destBottom <= 0)
@@ -4303,7 +4303,7 @@ void Runtime::drawFrame() {
 	_system->updateScreen();
 
 	Common::SharedPtr<CursorGraphic> cursor;
-	
+
 	Common::SharedPtr<Window> focusWindow = _mouseFocusWindow.lock();
 
 	if (!focusWindow)
@@ -4543,7 +4543,7 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 						_sceneStack[0] = sharedSceneEntry;
 					}
 
-						
+
 					bool sceneAlreadyInStack = false;
 					for (size_t i = _sceneStack.size() - 1; i > 0; i--) {
 						Common::SharedPtr<Structural> stackedScene = _sceneStack[i].scene;
@@ -6081,7 +6081,7 @@ VThread& Runtime::getVThread() const {
 
 void Runtime::debugSetEnabled(bool enabled) {
 	if (enabled) {
-		if (!_debugger) 
+		if (!_debugger)
 			_debugger.reset(new Debugger(this));
 	} else {
 		_debugger.reset();

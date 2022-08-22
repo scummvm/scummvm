@@ -147,8 +147,8 @@ private:
 	bool _alternate;
 	bool _playEveryFrame;
 	bool _reversed;
-	bool _haveFiredAtLastCel;
-	bool _haveFiredAtFirstCel;
+	//bool _haveFiredAtLastCel;
+	//bool _haveFiredAtFirstCel;
 	bool _shouldPlayIfNotPaused;
 	bool _needsReset;	// If true, then the video position was reset by a seek or stop and decoding must be restarted even if the target state is the same as the play state.
 	MediaState _currentPlayState;
@@ -340,7 +340,7 @@ private:
 	bool _cacheBitmap;
 	bool _needsRender;
 
-	bool _isBitmap;
+	//bool _isBitmap;
 	uint32 _assetID;
 
 	Common::String _text;

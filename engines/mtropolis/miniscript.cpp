@@ -1564,7 +1564,7 @@ MiniscriptInstructionOutcome GetChild::readRValueAttribIndexed(MiniscriptThread 
 }
 
 PushValue::PushValue(DataType dataType, const void *value, bool isLValue)
-	: _dataType(dataType), _isLValue(isLValue) {
+	: _dataType(dataType)/*, _isLValue(isLValue) */ {
 
 	switch (dataType) {
 	case DataType::kDataTypeBool:

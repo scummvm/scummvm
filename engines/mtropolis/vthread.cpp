@@ -38,7 +38,7 @@ void VThreadTaskData::debugInspect(IDebugInspectionReport *report) const {
 }
 #endif
 
-VThread::VThread() : _faultID(nullptr), _stackUnalignedBase(nullptr), _stackAlignedBase(nullptr), _size(0), _alignment(1), _used(0) {
+VThread::VThread() : _faultID(nullptr), _stackUnalignedBase(nullptr), _stackAlignedBase(nullptr), /* _size(0), */_alignment(1), _used(0) {
 }
 
 VThread::~VThread() {

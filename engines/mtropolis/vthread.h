@@ -152,7 +152,7 @@ private:
 
 	void *_stackUnalignedBase;
 	void *_stackAlignedBase;
-	size_t _size;
+	//size_t _size;
 	size_t _alignment;
 	size_t _used;
 	VThreadFaultIdentifier *_faultID;
@@ -268,7 +268,7 @@ TData *VThread::pushFaultHandler(const char *name, VThreadState (*func)(const TD
 
 template<typename TClass, typename TData>
 TData *VThread::pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, const char *name, TClass *obj, VThreadState (TClass::*method)(const TData &data)) {
-	typedef VThreadMethodData<TClass, TData> FrameData_t; 
+	typedef VThreadMethodData<TClass, TData> FrameData_t;
 
 	const size_t frameAlignment = alignof(VThreadStackFrame);
 	const size_t dataAlignment = alignof(FrameData_t);

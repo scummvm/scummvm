@@ -788,7 +788,7 @@ private:
 
 		Common::Array<ChildSaveLoad> _childrenSaveLoad;
 
-		CompoundVariableModifier *_modifier;
+		//CompoundVariableModifier *_modifier;
 	};
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
