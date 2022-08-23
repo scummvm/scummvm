@@ -164,7 +164,7 @@ protected:
 	void clearDrawQueues() override;
 
 	int getBannerColor(int bannerId) override;
-	char *getGUIString(int stringId) override;
+	const char *getGUIString(int stringId) override;
 	void setSkipVideo(int value) override { _skipVideo = value; }
 	void setUpMainMenuControls() override;
 

@@ -144,7 +144,7 @@ protected:
 
 	void queryQuit() override;
 	int getBannerColor(int bannerId) override;
-	char *getGUIString(int stringId) override;
+	const char *getGUIString(int stringId) override;
 	int getGUIStringHeight(const char *str) override;
 	int getGUIStringWidth(const char *str) override;
 	void drawGUIText(const char *buttonString, int textXPos, int textYPos, int rightRectClip, int textColor, bool centerFlag) override;

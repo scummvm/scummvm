@@ -410,7 +410,7 @@ void ScummEngine::setBannerColors(int bannerId, byte r, byte g, byte b) {
 void ScummEngine::setUpInternalGUIControl(int id, int normalFillColor, int normalTextColor,
 										  int topLineColor, int bottomLineColor, int leftLineColor, int rightLineColor,
 										  int highlightedTextColor, int highlightedFillColor,
-										  int anchorPointX, int anchorPointY, int x, int y, char *label, bool centerFlag, bool doubleLinesFlag) {
+										  int anchorPointX, int anchorPointY, int x, int y, const char *label, bool centerFlag, bool doubleLinesFlag) {
 
 	int effX, effY;
 	InternalGUIControl *ctrl;
@@ -790,7 +790,7 @@ void ScummEngine_v7::queryQuit() {
 	}
 }
 
-char *ScummEngine_v8::getGUIString(int stringId) {
+const char *ScummEngine_v8::getGUIString(int stringId) {
 	InfoDialog d(this, 0);
 	int resStringId = -1;
 
@@ -850,7 +850,7 @@ char *ScummEngine_v8::getGUIString(int stringId) {
 		return _emptyMsg;
 }
 
-char *ScummEngine_v7::getGUIString(int stringId) {
+const char *ScummEngine_v7::getGUIString(int stringId) {
 	InfoDialog d(this, 0);
 	int resStringId = -1;
 
@@ -1066,7 +1066,7 @@ int ScummEngine_v7::getBannerColor(int bannerId) {
 #endif
 
 int ScummEngine_v4::getBannerColor(int bannerId) {
-	byte *palette = (_renderMode == Common::kRenderCGA) ? _GUIPaletteCGA : _GUIPalette;
+	const byte *palette = (_renderMode == Common::kRenderCGA) ? _GUIPaletteCGA : _GUIPalette;
 
 	return (int)palette[bannerId - 6];
 }
@@ -2867,7 +2867,7 @@ void ScummEngine::getSliderString(int stringId, int value, char *sliderString, i
 	}
 }
 
-char *ScummEngine_v6::getGUIString(int stringId) {
+const char *ScummEngine_v6::getGUIString(int stringId) {
 	InfoDialog d(this, 0);
 	int resStringId = -1;
 
@@ -2978,7 +2978,7 @@ char *ScummEngine_v6::getGUIString(int stringId) {
 		return _emptyMsg;
 }
 
-char *ScummEngine::getGUIString(int stringId) {
+const char *ScummEngine::getGUIString(int stringId) {
 	InfoDialog d(this, 0);
 	int resStringId = -1;
 
