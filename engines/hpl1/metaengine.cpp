@@ -25,6 +25,9 @@
 #include "common/translation.h"
 #include "hpl1/detection.h"
 #include "hpl1/hpl1.h"
+#include "hpl1/opengl.h"
+#include "graphics/scaler.h"
+#include "graphics/thumbnail.h"
 #include "common/savefile.h"
 #include "common/system.h"
 
@@ -45,6 +48,15 @@ bool Hpl1MetaEngine::hasFeature(MetaEngineFeature f) const {
 		   (f == kSavesSupportMetaInfo) ||
 		   (f == kSavesSupportThumbnail) ||
 		   (f == kSupportsLoadingDuringStartup);
+}
+
+void Hpl1MetaEngine::getSavegameThumbnail(Graphics::Surface &thumbnail) {
+	Common::ScopedPtr<Graphics::Surface> screen = Hpl1::createViewportScreenshot();
+	Common::ScopedPtr<Graphics::Surface> scaledScreen(screen->scale( kThumbnailWidth, kThumbnailHeight2));
+	scaledScreen->convertToInPlace(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+	thumbnail.copyFrom(*scaledScreen);
+	screen->free();
+	scaledScreen->free();
 }
 
 static Common::U32String formatSave(const Common::String &filename) {
