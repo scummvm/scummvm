@@ -39,6 +39,8 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 
+	void getSavegameThumbnail(Graphics::Surface &thumbnail) override;
+
 	Common::Array<Common::Keymap *> initKeymaps(const char *target) const override;
 };
 
