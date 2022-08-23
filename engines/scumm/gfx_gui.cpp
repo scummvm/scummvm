@@ -1059,7 +1059,9 @@ int ScummEngine_v7::getBannerColor(int bannerId) {
 #endif
 
 int ScummEngine_v4::getBannerColor(int bannerId) {
-	return _GUIPalette[bannerId - 6];
+	byte *palette = (_renderMode == Common::kRenderCGA) ? _GUIPaletteCGA : _GUIPalette;
+
+	return (int)palette[bannerId - 6];
 }
 
 int ScummEngine_v6::getBannerColor(int bannerId) {
