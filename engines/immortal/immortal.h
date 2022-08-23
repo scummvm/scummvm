@@ -56,13 +56,13 @@
 #include "common/util.h"
 #include "common/platform.h"
 
-// There is a lot of bit masking that needs to happen, so this header includes several enums for immortal.h, room.h, and monster.h
-#include "immortal/bitmask.h"
-
-#include "immortal/util.h"
-
 // Story is needed by both immortal.h and room.h
 #include "immortal/story.h"
+
+// Utilities.h contains many things used by all objects, not just immortal
+#include "immortal/utilities.h"
+
+#include "immortal/room.h"
 
 namespace Immortal {
 
@@ -185,25 +185,25 @@ public:
 	const int kMaxCertificate = 16;
 
 	// Screen constants
-	const int    kScreenW__  = 128;						// ??? labeled in source as SCREENWIDTH
-	const int    kScreenH__  = 128;						// ???
-	const int    kViewPortW  = 256;
-	const int    kViewPortH  = 128;
-	const int    kScreenSize = (kResH * kResV) * 2; 	// The size of the screen buffer is 320x200
-	const int    kScreenLeft = 32;
-	const int    kScreenTop  = 20;
-	const int    kTextLeft   = 8;
-	const int    kTextTop    = 4;
-	const int    kGaugeX     = 0;
-	const int    kGaugeY     = -13;						// ???
-	const int    kScreenBMW  = 160;						// Literally no idea yet
-	const uint16 kChrW 	     = 64;
-	const uint16 kChrH       = 32;
-	const uint16 kChrH2      = kChrH * 2;
-	const uint16 kChrH3      = kChrH * 3;
-	const int    kChrLen	 = (kChrW / 2) * kChrH;
-	const int    kChrBMW	 = kChrW / 2;
-	const int    kLCutaway   = 4;
+	const int    kScreenW__   = 128;					// ??? labeled in source as SCREENWIDTH
+	const int    kScreenH__   = 128;					// ???
+	const int    kViewPortW   = 256;
+	const int    kViewPortH   = 128;
+	const int    kScreenSize  = (kResH * kResV) * 2; 	// The size of the screen buffer is 320x200
+	const int    kScreenLeft  = 32;
+	const int    kScreenTop   = 20;
+	const int    kTextLeft    = 8;
+	const int    kTextTop     = 4;
+	const int    kGaugeX      = 0;
+	const int    kGaugeY      = -13;					// ???
+	const int    kScreenBMW   = 160;					// Screen BitMap Width?
+	const uint16 kChrW 	      = 64;
+	const uint16 kChrH        = 32;
+	const uint16 kChrH2       = kChrH * 2;
+	const uint16 kChrH3       = kChrH * 3;
+	const int    kChrLen	  = (kChrW / 2) * kChrH;
+	const int    kChrBMW	  = kChrW / 2;
+	const int    kLCutaway    = 4;
 
 	const uint16 kChrDy[19] = {kChr0, kChrH, kChrH2, kChrH, kChrH2,
 						   	   kChrH2, kChrH, kChrH2, kChrH2, kChr0,
@@ -224,31 +224,31 @@ public:
 							  		  0, 0, 0, 0, 0, 0};
 
 	// Disk offsets
-	const int kPaletteOffset  = 21205;					// This is the byte position of the palette data in the disk
+	const int kPaletteOffset    = 21205;				// This is the byte position of the palette data in the disk
 
 	// Sprite constants
-	const int kMaxSpriteW 	  = 64;
-	const int kMaxSpriteH 	  = 64;
-	const int kSpriteDY		  = 32;
-	const int kVSX			  = kMaxSpriteW;
-	const int kVSY 			  = kSpriteDY;
-	const int kVSBMW		  = (kViewPortW + kMaxSpriteW) / 2;
-	const int kVSLen		  = kVSBMW * (kViewPortH + kMaxSpriteH);
-	const int kVSDY			  = 32; 					// difference from top of screen to top of viewport in the virtual screen buffer
-	const int kMySuperBottom  = kVSDY + kViewPortH;
-	const int kSuperBottom 	  = 200;
-	const int kMySuperTop	  = kVSDY;
-	const int kSuperTop	  	  = 0;
-	const int kViewPortSpX	  = 32;
-	const int kViewPortSpY	  = 0;
-	const int kWizardX 		  = 28;						// Common sprite center for some reason
-	const int kWizardY 		  = 37;
+	const int kMaxSpriteW 	    = 64;
+	const int kMaxSpriteH 	    = 64;
+	const int kSpriteDY		    = 32;
+	const int kVSX			    = kMaxSpriteW;
+	const int kVSY 			    = kSpriteDY;
+	const int kVSBMW		    = (kViewPortW + kMaxSpriteW) / 2;
+	const int kVSLen		    = kVSBMW * (kViewPortH + kMaxSpriteH);
+	const int kVSDY			    = 32; 					// difference from top of screen to top of viewport in the virtual screen buffer
+	const int kMySuperBottom    = kVSDY + kViewPortH;
+	const int kSuperBottom 	    = 200;
+	const int kMySuperTop	    = kVSDY;
+	const int kSuperTop	  	    = 0;
+	const int kViewPortSpX	    = 32;
+	const int kViewPortSpY	    = 0;
+	const int kWizardX 		    = 28;					// Common sprite center for some reason
+	const int kWizardY 		    = 37;
 
 	// Asset constants
-	const char kGaugeOn	   	  = 1;						// On uses the sprite at index 1 of the font spriteset
-	const char kGaugeOff      = 0;						// Off uses the sprite at index 0 of the font spriteset
-	const char kGaugeStop     = 1;						// Literally just means the final kGaugeOn char to draw
-	const char kGaugeStart    = 1;						// First kGaugeOn char to draw
+	const char kGaugeOn	   	    = 1;					// On uses the sprite at index 1 of the font spriteset
+	const char kGaugeOff        = 0;					// Off uses the sprite at index 0 of the font spriteset
+	const char kGaugeStop       = 1;					// Literally just means the final kGaugeOn char to draw
+	const char kGaugeStart      = 1;					// First kGaugeOn char to draw
 
 	// Level constants
 	const int kStoryNull		= 5;
@@ -263,16 +263,16 @@ public:
 	// Misc
 	Common::ErrorCode _err;								// If this is not kNoError at any point, the engine will stop
 	uint8 _certificate[16];								// The certificate (password) is basically the inventory/equipment array
-	uint8 _lastCertLen  = 0;
-	 bool _draw 	    = 0;							// Whether the screen should draw this frame
-	  int _zero 	    = 0;							// No idea what this is yet
-	 bool _gameOverFlag = false;
-	uint8 _gameFlags 	= 0;							// Bitflag array of event flags, but only two were used (saving ana and saving the king) <-- why is gameOverFlag not in this? Lol
-	 bool _themePaused	= false;						// In the source, this is actually considered a bit flag array of 2 bits (b0 and b1). However, it only ever checks for non-zero, so it's effectively only 1 bit.
-	  int _titlesShown  = 0;
-	  int _time 		= 0;
-	  int _promoting    = 0;							// I think promoting means the title stuff
-	 bool _restart 	    = false;
+	uint8 _lastCertLen     = 0;
+	 bool _draw 	       = 0;							// Whether the screen should draw this frame
+	  int _zero 	       = 0;							// No idea what this is yet
+	 bool _gameOverFlag    = false;
+	uint8 _gameFlags 	   = 0;							// Bitflag array of event flags, but only two were used (saving ana and saving the king) <-- why is gameOverFlag not in this? Lol
+	 bool _themePaused	   = false;						// In the source, this is actually considered a bit flag array of 2 bits (b0 and b1). However, it only ever checks for non-zero, so it's effectively only 1 bit.
+	  int _titlesShown     = 0;
+	  int _time 		   = 0;
+	  int _promoting       = 0;							// I think promoting means the title stuff
+	 bool _restart 	       = false;
 
 	// Story members
 	Story _stories[8];
@@ -315,7 +315,7 @@ public:
 	uint8 _secretDelta     = 0;
 
 	// Debug members
-	bool _singleStep;									// Flag for _singleStep mode
+	bool _singleStep	  = false;						// Flag for _singleStep mode
 
 	// Input members
 	int _pressedAction 	  = 0;
@@ -353,16 +353,16 @@ public:
     uint16  _columnIndex[kViewPortCW + 1];				// Why the heck is this an entire array, when it's just an index that gets zeroed before it gets used anyway...
 	uint16  _tIndex[kMaxDrawItems];
 	uint16  _tPriority[kMaxDrawItems];
-    uint16  _viewPortX = 0;
-    uint16  _viewPortY = 0;
-    uint16  _myViewPortX = 0;								// Probably mirror of viewportX
-    uint16  _myViewPortY = 0;
-	   int  _lastGauge = 0;								// Mirror for player health, used to update health gauge display
-    uint16  _penX = 0;									// Basically where in the screen we are currently drawing
-    uint16  _penY = 0;
-    uint16  _myUnivPointX = 0;
-    uint16  _myUnivPointY = 0;
-	   int  _num2DrawItems = 0;
+    uint16  _viewPortX 		= 0;
+    uint16  _viewPortY 		= 0;
+    uint16  _myViewPortX 	= 0;						// Probably mirror of viewportX
+    uint16  _myViewPortY 	= 0;
+	   int  _lastGauge 		= 0;						// Mirror for player health, used to update health gauge display
+    uint16  _penX 			= 0;						// Basically where in the screen we are currently drawing
+    uint16  _penY 			= 0;
+    uint16  _myUnivPointX   = 0;
+    uint16  _myUnivPointY   = 0;
+	   int  _num2DrawItems  = 0;
 	Graphics::Surface *_mainSurface;
 GenericSprite _genSprites[6];
 
@@ -381,8 +381,6 @@ GenericSprite _genSprites[6];
 	 * --- Functions ---
 	 *
 	 */
-
-	void setSprites(Sprite *s);
 
 	/*
 	 * [Kernal.cpp] Functions from Kernal.gs and Driver.gs
@@ -560,28 +558,12 @@ GenericSprite _genSprites[6];
 	//void setLastType <-- sta lastType
 	//void getShowRoom <-- lda currentRoom
 
-
 	/*
 	 * [Cycle.cpp] Functions from Cyc
 	 */
 
 	// Misc
-     int cycleNew(CycID id);						// Adds a cycle to the current list
 	void cycleFreeAll();							// Delete all cycles
-	void cycleFree(int c);
-DataSprite *cycleGetDataSprite(int c);				// This takes the place of getFile + getNum
-	 int cycleGetIndex(int c);
-	void cycleSetIndex(int c, int f);
-	 int cycleGetFrame(int c);
-	 int cycleGetNumFrames(int c);
-	bool cycleAdvance(int c);
-   CycID getCycList(int c);
-
-	/* Unneccessary cycle functions
-	void cycleInit();
-	void cycleFree();
-	void cycleGetNumFrames();
-	void cycleGetList();*/
 
 
 	/*

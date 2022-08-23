@@ -21,7 +21,7 @@
 
 /* [Alternate Name: Sprite Animation Processing]
  * --- What is a Cycle ---
- * Strictly speaking, a Cycle is an instruction list, but it gets a little confusing.
+ * Strictly speaking, a Cycle is an instruction list, but more specifically:
  * A 'Cyc' is defined through Story as a static ROM entry of the format:
  * file, num, numcycles, cycles[]
  * However file + num = datasprite, and numcycles is actually a boolean for repeat animation.
@@ -40,16 +40,17 @@
  * list of lexical pointers as byte indexes into word pointers (cycID -> cyclist)
  */
 
-#include "immortal/immortal.h"
+#include "immortal/room.h"
 
 namespace Immortal {
 
-int ImmortalEngine::cycleNew(CycID id) {
+int Room::cycleNew(CycID id) {
 	// An 'available' cyc is identified by the index being -1
 	for (int i = 0; i < kMaxCycles; i++) {
 		if (_cycles[i]._index == -1) {
 			_cycles[i]._index = 0;
 			_cycles[i]._cycList = id;
+			debug("made cyc, = %d", i);
 			return i;
 		}
 	}
@@ -57,22 +58,16 @@ int ImmortalEngine::cycleNew(CycID id) {
 	return kMaxCycles - 1;
 }
 
-void ImmortalEngine::cycleFree(int c) {
+void Room::cycleFree(int c) {
 	_cycles[c]._index = -1;
 }
 
-void ImmortalEngine::cycleFreeAll() {
-	for (int i = 0; i < kMaxCycles; i++) {
-		_cycles[i]._index = -1;
-	}
-}
-
-bool ImmortalEngine::cycleAdvance(int c) {
+bool Room::cycleAdvance(int c) {
 	/* If we have reached the end, check if repeat == true, and set back to 0 if so
 	 * Otherwise, set to the last used index */
 	_cycles[c]._index++;
-	if (_cycPtrs[_cycles[c]._index]._frames[_cycles[c]._index] == -1) {
-		if (_cycPtrs[_cycles[c]._index]._repeat == true) {
+	if (_cycPtrs[_cycles[c]._cycList]._frames[_cycles[c]._index] == -1) {
+		if (_cycPtrs[_cycles[c]._cycList]._repeat == true) {
 			_cycles[c]._index = 0;
 		} else {
 			_cycles[c]._index--;
@@ -82,12 +77,13 @@ bool ImmortalEngine::cycleAdvance(int c) {
 	return false;
 }
 
-int ImmortalEngine::cycleGetFrame(int c) {
+int Room::cycleGetFrame(int c) {
 	// This originally did some shenanigans in Kernal to get the number, but really it's just this
-	 return _cycPtrs[_cycles[c]._cycList]._frames[_cycles[c]._index];
+	debug("%d", _cycPtrs[_cycles[c]._cycList]._frames[_cycles[c]._index]);
+	return _cycPtrs[_cycles[c]._cycList]._frames[_cycles[c]._index];
  }
 
-int ImmortalEngine::cycleGetNumFrames(int c) {
+int Room::cycleGetNumFrames(int c) {
 	// Why in the world is this not kept as a property of the cycle? We have to calculate the size of the array each time
 	int index = 0;
 	while (_cycPtrs[_cycles[c]._cycList]._frames[index] != -1) {
@@ -96,19 +92,19 @@ int ImmortalEngine::cycleGetNumFrames(int c) {
 	return index;
 }
 
-DataSprite *ImmortalEngine::cycleGetDataSprite(int c) {
-	return _cycPtrs[_cycles[c]._cycList]._dSprite;
+DataSprite *Room::cycleGetDataSprite(int c) {
+	return &_dataSprites[_cycPtrs[_cycles[c]._cycList]._sName];
 }
 
-CycID ImmortalEngine::getCycList(int c) {
+CycID Room::getCycList(int c) {
 	return _cycles[c]._cycList;
 }
 
-int ImmortalEngine::cycleGetIndex(int c) {
+int Room::cycleGetIndex(int c) {
 	return _cycles[c]._index;
 }
 
-void ImmortalEngine::cycleSetIndex(int c, int f) {
+void Room::cycleSetIndex(int c, int f) {
 	_cycles[c]._index = f;
 }
 

@@ -129,18 +129,24 @@ struct ObjType {
 	Use _run;
 };
 
+// Cycles define the animation of sprites within a level. There is a fixed total of cycles available, and they are not room dependant
+struct Cycle {
+	 int  _index;						// In source this is actually the position within the *instruction list*, but since cycle's are structs, it's just the index of frames now
+	CycID _cycList;
+};
+
 /* Strictly speaking, many of these structs (which were rom data written dynamically
  * with compiler macros) combine multiple properties into single bytes (ex. room uses
  * bits 0-2 of X to also hold the roomOP, and bits 0-2 of Y to hold flags). However
  * for the moment there's no need to replicate this particular bit of space saving.
  */
 struct SCycle {
-DataSprite *_dSprite;
+SpriteName  _sName;
 	  bool  _repeat;
-	   int *_frames;
+Common::Array<int> _frames;
 	   SCycle() {}
-	   SCycle(DataSprite *d, bool r, int *f) {
-	   		_dSprite = d;
+	   SCycle(SpriteName s, bool r, Common::Array<int> f) {
+	   		_sName = s;
 	   		_repeat = r;
 	   		_frames = f;
 	   }
