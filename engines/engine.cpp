@@ -19,12 +19,6 @@
  *
  */
 
-#if defined(WIN32)
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include "backends/platform/sdl/win32/win32_wrapper.h"
-#endif
-
 #include "engines/engine.h"
 #include "engines/dialogs.h"
 #include "engines/util.h"
@@ -496,28 +490,13 @@ bool Engine::existExtractedCDAudioFiles(uint track) {
  * @return			true, if this case is applicable and the warning is displayed
  */
 bool Engine::isDataAndCDAudioReadFromSameCD() {
-#if defined(WIN32)
-	// It is a known bug under Windows that games that play CD audio cause
-	// ScummVM to crash if the data files are read from the same CD. Check
-	// if this appears to be the case and issue a warning.
-
 	// If we can find a compressed audio track, then it should be ok even
 	// if it's running from CD.
-	char driveLetter;
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	if (!gameDataDir.getPath().empty()) {
-		driveLetter = gameDataDir.getPath()[0];
-	} else {
-		// That's it! I give up!
-		Common::FSNode currentDir(".");
-		if (!currentDir.getPath().empty()) {
-			driveLetter = currentDir.getPath()[0];
-		} else {
-			return false;
-		}
+	if (existExtractedCDAudioFiles()) {
+		return false;
 	}
 
-	if (Win32::isDriveCD(driveLetter)) {
+	if (g_system->getAudioCDManager()->isDataAndCDAudioReadFromSameCD()) {
 		GUI::MessageDialog dialog(
 			_("You appear to be playing this game directly\n"
 			"from the CD. This is known to cause problems,\n"
@@ -527,7 +506,6 @@ bool Engine::isDataAndCDAudioReadFromSameCD() {
 		dialog.runModal();
 		return true;
 	}
-#endif // defined(WIN32)
 	return false;
 }
 
