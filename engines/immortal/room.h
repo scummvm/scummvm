@@ -39,13 +39,13 @@
 #include "common/util.h"
 #include "common/platform.h"
 
-// There is a lot of bit masking that needs to happen, so this header includes several enums for immortal.h, room.h, and monster.h
-#include "immortal/bitmask.h"
-
-#include "immortal/util.h"
-
 // Story is needed by both immortal.h and room.h
 #include "immortal/story.h"
+
+// Utilities.h contains many things used by all objects, not just immortal
+#include "immortal/utilities.h"
+
+#include "immortal/immortal.h"
 
 #ifndef IMMORTAL_ROOM_H
 #define IMMORTAL_ROOM_H
@@ -90,10 +90,10 @@ struct Monster {
 };
 
 struct Flame {
-FPattern _p;
-	uint8 _x;
-	uint8 _y;
-	CycID _c;
+FPattern _p = kFlameOff;
+	uint8 _x = 0;
+	uint8 _y = 0;
+	  int _c = 0;
 };
 
 struct Chest {
@@ -104,9 +104,10 @@ struct Bullet {
 
 class Room {
 private:
+	Common::RandomSource _randomSource;
 
 public:
-	Room(uint8 x, uint8 y, RoomFlag f);
+	Room(uint8 x, uint8 y, RoomFlag f, Sprite *s, DataSprite *d, Cycle *c, Common::Array<SCycle> p);
 	~Room() {}
 
 	/*
@@ -115,8 +116,15 @@ public:
 	 */
 
 	// Constants
-	const uint8 kLightTorchX = 10;
+	const uint8 kLightTorchX  = 10;
+	const uint8 kMaxFlameCycs = 16;
 
+	// Other
+	 Sprite *_sprites;
+	  Cycle *_cycles;
+DataSprite *_dataSprites;
+
+Common::Array<SCycle>  _cycPtrs;
 Common::Array<Flame>   _fset;
 Common::Array<Monster> _monsters;
 Common::Array<Object>  _objects;
@@ -136,6 +144,10 @@ Common::Array<Object>  _objects;
 	 *
 	 */
 
+	uint32 getRandomNumber(uint maxNum) {
+		return _randomSource.getRandomNumber(maxNum);
+	}
+
 	/*
 	 * [room.cpp] Functions from Room.GS
 	 */
@@ -145,7 +157,7 @@ Common::Array<Object>  _objects;
 	//void getTilePair(uint8 x, uint8 y);			// Modifies a struct of the tile number, aboveTile number, and the cell coordinates of the tile
 
 	void setHole();
-	void drawContents();
+	void drawContents(uint16 vX, uint16 vY, int nS);
 	bool getTilePair(uint8 x, uint8 y, int id);
 	bool getWideWallNormal(uint8 x, uint8 y, uint8 xPrev, uint8 yPrev, int id, int spacing);
 	bool getWallNormal(uint8 x, uint8 y, uint8 xPrev, uint8 yPrev, int id);
@@ -160,16 +172,44 @@ Common::Array<Object>  _objects;
 
 
 	/*
+	 * [Cycle.cpp] Functions from Cyc
+	 */
+
+	// Init
+    int cycleNew(CycID id);						// Adds a cycle to the current list
+	void cycleFree(int c);
+
+	// Getters
+DataSprite *cycleGetDataSprite(int c);			// This takes the place of getFile + getNum
+	 int cycleGetIndex(int c);
+	 int cycleGetFrame(int c);
+	 int cycleGetNumFrames(int c);
+
+	// Setters
+	void cycleSetIndex(int c, int f);
+
+	// Misc
+	bool cycleAdvance(int c);
+   CycID getCycList(int c);
+
+	/* Unneccessary cycle functions
+	void cycleInit();
+	void cycleFree();
+	void cycleGetNumFrames();
+	void cycleGetList();*/
+
+	/*
 	 * [flameSet.cpp] Functions from flameSet.GS
 	 */
 
+	//void flameNew() does not need to exist, because we create the duplicate SFlame in Level, and the array in immortal.h is not accessable from here
 	void flameInit();
-	void flameSetRoom(Common::Array<SFlame>);
-	void flameDrawAll();
+	void flameDrawAll(uint16 vX, uint16 vY, int nS);
 	bool roomLighted();
 	void lightTorch(int x, int y);
-  CycID flameGetCyc(int first);
 	void flameFreeAll();
+	void flameSetRoom(Common::Array<SFlame>);
+    int flameGetCyc(Flame *f, int first);
 
 	/*
 	 * [bullet.cpp] Functions from Bullet.GS
@@ -182,6 +222,11 @@ Common::Array<Object>  _objects;
 	 */
 
 
+	/*
+	 * [Univ.cpp] Functions from Univ.GS
+	 */
+
+    void univAddSprite(uint16 vX, uint16 vY, int nS, uint16 x, uint16 y, SpriteName n, int img, uint16 p);
 };
 
 
