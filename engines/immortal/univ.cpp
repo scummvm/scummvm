@@ -19,9 +19,12 @@
  *
  */
 
-#include "immortal/immortal.h"
+#include "immortal/room.h"
 
 namespace Immortal {
 
+void Room::univAddSprite(uint16 vX, uint16 vY, int nS, uint16 x, uint16 y, SpriteName n, int img, uint16 p) {
+    //Immortal::Utilities::addSprite(_sprites, vX, vY, nS, &_dataSprites[n], img, x, y, p);
+}
 
 } // namespace immortal
