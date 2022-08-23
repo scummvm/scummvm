@@ -25,7 +25,48 @@
 namespace Immortal {
 
 enum CycID {
-	kCycNone = 0
+	kCycNone,
+	kCycBubble1 = 0,
+	kCycBubble2,
+	kCycSparkLBlood,
+	kCycSparkRBlood,
+	kCycSparkLWizBlood,
+	kCycSparkRWizBlood,
+	kCycBurst,
+	kCycPipe0,
+	kCycPipe1,
+	kCycPipe2,
+	kCycPipe3,
+	kCycAnaDisappears,
+	kCycAnaGlimpse,
+	kCycKnife,
+	kCycFireball0,
+	kCycArrow,
+	kCycMiniBall,
+	kCycBigBurst,
+	kCycFFlicker0,
+	kCycFFlicker1,
+	kCycFFlicker2,
+	kCycFNormal0,
+	kCycFNormal1,
+	kCycFNormal2,
+	kCycFOff,
+	kCycFCandleFlicker,
+	kCycFCandleLeap,
+	kCycFCandleJump,
+	kCycFCandleSway,
+	kCycFCandleBurst,
+	kCycSink,
+	kCycNorDown
+
+	// Level 0
+	// Level 1
+	// Level 2
+	// Level 3
+	// Level 4
+	// Level 5
+	// Level 6
+	// Level 7
 };
 
 enum Motive {                       // This will likely be moved to a monster ai specific file later

@@ -463,6 +463,58 @@ void ImmortalEngine::initStoryStatic() {
 									"This room resembles part&of the map.@"};
 	_strPtrs = s;
 
+	// Scope, amirite?
+	Common::Array<int> cyc0{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,-1};
+	Common::Array<int> cyc1{15,16,17,18,19,20,21,22,-1};
+	Common::Array<int> cyc2{0,1,2,-1};
+	Common::Array<int> cyc3{3,4,5,-1};
+	Common::Array<int> cyc4{6,7,8,9,10,-1};
+	Common::Array<int> cyc5{11,12,13,14,15,-1};
+	Common::Array<int> cyc6{16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,-1};
+	Common::Array<int> cyc7{0,1,2,3,4,-1};
+	Common::Array<int> cyc8{5,1+5,2+5,3+5,4+5,-1};
+	Common::Array<int> cyc9{10,1+10,2+10,3+10,4+10,-1};
+	Common::Array<int> cyc10{15,1+15,2+15,3+15,4+15,-1};
+	Common::Array<int> cyc11{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,-1};
+	Common::Array<int> cyc12{0,1,2,3,4,5,6,7,8,9,-1};
+	Common::Array<int> cyc13{0,1,2,3, 0,1,2,3, 0,1,2,3, 0,1,2,3, 0,1,2,3, 0,1,2,3, 0,1,2,3, 0,1,2,3, -1};
+	Common::Array<int> cyc14{31,32,33,32, 34,35,36,35, 37,38,39,38, 40,41,42,41, 43,44,45,44, 46,47,48,47, 49,50,51,50, 52,53,54,53, -1};
+	Common::Array<int> cyc15{55, -1};
+	Common::Array<int> cyc16{63,64,65,66, 63,64,65,66, 63,64,65,66, 63,64,65,66, 63,64,65,66, 63,64,65,66, 63,64,65,66, 63,64,65,66,-1};
+	Common::Array<int> cyc17{0,1,0,-1};
+	Common::Array<int> cyc18{0,1,2,4,5,6,7,8,9,10,11,12,2,1,-1};
+	Common::Array<int> cyc19{0,0,1,2,13,14,15,16,4,2,3,-1};
+	Common::Array<int> cyc20{0,1,2,3,20,21,22,23,24,25,26,27,5,4,3,-1};
+	Common::Array<int> cyc21{0,1,2,3,-1};
+	Common::Array<int> cyc22{0,17,18,19,3,-1};
+	Common::Array<int> cyc23{0,1,-1};
+	Common::Array<int> cyc24{28,28,28,28,-1};
+	Common::Array<int> cyc25{15,16,15,16,15,1+15,1+15,-1};
+	Common::Array<int> cyc26{10+15,11+15,12+15,13+15,14+15,15+15,16+15,-1};
+	Common::Array<int> cyc27{2+15,3+15,4+15,5+15,-1};
+	Common::Array<int> cyc28{6+15,7+15,8+15,9+15,-1};
+	Common::Array<int> cyc29{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,-1};
+	Common::Array<int> cyc30{0,1,2,3,3,3,3,4,5,6,-1};
+	Common::Array<int> cyc31{0,1,2,3,4,5,6,7,8,-1};
+
+	Common::Array<SCycle> c{SCycle(kBubble,     false, cyc0),  SCycle(kBubble, 	   false, cyc1),
+							SCycle(kSpark, 	    false, cyc2),  SCycle(kSpark, 	   false, cyc3),
+							SCycle(kSpark, 	    false, cyc4),  SCycle(kSpark, 	   false, cyc5),  SCycle(kSpark,  false, cyc6),
+							SCycle(kPipe, 	    false, cyc7),  SCycle(kPipe, 	   false, cyc8),
+							SCycle(kPipe,	    false, cyc9),  SCycle(kPipe, 	   false, cyc10),
+							SCycle(kAnaVanish,  false, cyc11), SCycle(kAnaGlimpse, false, cyc12),
+							SCycle(kKnife, 	    true,  cyc13),
+							SCycle(kSpark, 	    true,  cyc14), SCycle(kSpark, 	   true, cyc15), SCycle(kSpark,  true,  cyc16),
+							SCycle(kBigBurst,   false, cyc17),
+							SCycle(kFlame,      false, cyc18), SCycle(kFlame,      false, cyc19), SCycle(kFlame,  false, cyc20),
+							SCycle(kFlame,      false, cyc21), SCycle(kFlame,      false, cyc22), SCycle(kFlame,  false, cyc23),
+							SCycle(kFlame,      false, cyc24),
+							SCycle(kCandle,     false, cyc25), SCycle(kCandle,     false, cyc26), SCycle(kCandle, false, cyc27),
+							SCycle(kCandle,     false, cyc28), SCycle(kCandle,     false, cyc29),
+							SCycle(kSink,       false, cyc30),
+							SCycle(kNorlacDown, false, cyc31)};
+	_cycPtrs = c;
+
 	Common::Array<Motive>   m{};
 	_motivePtrs = m;
 
@@ -483,38 +535,21 @@ void ImmortalEngine::initStoryStatic() {
 
 }
 
-void ImmortalEngine::addSprite(uint16 x, uint16 y, SpriteName n, int img, uint16 p) {
-	if (_numSprites != kMaxSprites) {
-		if (x >= (kResH + kMaxSpriteLeft)) {
-			x |= kMaskHigh;                         // Make it negative
-		}
-		_sprites[_numSprites]._X = (x << 1) + _viewPortX;
-	
-		if (y >= (kMaxSpriteAbove + kResV)) {
-			y |= kMaskHigh;
-		}
-		_sprites[_numSprites]._Y = (y << 1) + _viewPortY;
-
-		if (p >= 0x80) {
-			p |= kMaskHigh;
-		}
-		_sprites[_numSprites]._priority = ((p + y) ^ 0xFFFF) + 1;
-		
-		_sprites[_numSprites]._image = img;
-		_sprites[_numSprites]._dSprite = &_dataSprites[n];
-		_sprites[_numSprites]._on = 1;
-		_numSprites += 1;
-
-	} else {
-		debug("Max sprites reached beeeeeep!!");
-	}
-
+void ImmortalEngine::kernalAddSprite(uint16 x, uint16 y, SpriteName n, int img, uint16 p) {
+	Immortal::Utilities::addSprite(_sprites, _viewPortX, _viewPortY, _numSprites, &_dataSprites[n], img, x, y, p);
 }
 
 void ImmortalEngine::clearSprites() {
 	// Just sets the 'active' flag on all possible sprites to 0
 	for (int i = 0; i < kMaxSprites; i++) {
 		_sprites[i]._on = 0;
+	}
+}
+
+void ImmortalEngine::cycleFreeAll() {
+	// Sets all cycle indexes to -1, indicating they are available
+	for (int i = 0; i < kMaxCycles; i++) {
+		_cycles[i]._index = -1;
 	}
 }
 
@@ -750,13 +785,13 @@ void ImmortalEngine::pump() {
 	// Flashes the screen (except the frame thankfully) white, black, white, black, then clears the screen and goes back to normal
 	useWhite();
 	g_system->updateScreen();
-	Immortal::Util::delay(2);
+	Immortal::Utilities::delay(2);
 	useBlack();
 	g_system->updateScreen();
-	Immortal::Util::delay(2);
+	Immortal::Utilities::delay(2);
 	useWhite();
 	g_system->updateScreen();
-	Immortal::Util::delay(2);
+	Immortal::Utilities::delay(2);
 	useBlack();
 	g_system->updateScreen();
 	clearScreen();
@@ -818,7 +853,7 @@ void ImmortalEngine::fade(uint16 pal[], int dir, int delay) {
 
 	while ((count >= 0) && (count <= 256)) {
 		fadePal(pal, count, target);
-		Immortal::Util::delay8(delay);
+		Immortal::Utilities::delay8(delay);
 		setColors(target);
 
 		// Same as above, it was originally a branch, this does the same thing
