@@ -634,7 +634,7 @@ void cMainMenuWidget_Continue::OnMouseDown(eMButton aButton) {
 
 	mpInit->mpMainMenu->SetActive(false);
 
-	tWString latestSave = mpInit->mpSaveHandler->GetLatest(_W("hpl1-po-????.*.sav"));
+	tWString latestSave = mpInit->mpSaveHandler->GetLatest(_W("????:*"));
 	if (latestSave != _W(""))
 		mpInit->mpSaveHandler->LoadGameFromFile(latestSave);
 }
@@ -784,9 +784,11 @@ public:
 			return;
 
 		tWString originalName = gvSaveGameFileVec[mlNum][lSelected];
-		tWString newName = _W("save-favorite.") + cString::SubW(originalName, originalName.find_first_of('.') + 1);
+		tWString newName = _W("favorite-") + cString::SubW(originalName, originalName.find_first_of('.') + 1);
 		Hpl1::logInfo(Hpl1::kDebugSaves, "adding save %s to favourites\n", cString::To8Char(newName).c_str());
-		g_engine->getSaveFileManager()->copySavefile(cString::To8Char(originalName).c_str(), cString::To8Char(newName).c_str());
+		Common::String originalFile(Hpl1::g_engine->mapInternalSaveToFile(cString::To8Char(originalName).c_str()));
+		Common::String newFile(Hpl1::g_engine->createSaveFile(cString::To8Char(newName).c_str()));
+		g_engine->getSaveFileManager()->copySavefile(originalFile, newFile);
 		mpInit->mpMainMenu->UpdateWidgets();
 	}
 
@@ -2480,7 +2482,7 @@ void cMainMenu::CreateWidgets() {
 		AddWidgetToState(eMainMenuState_Start, hplNew(cMainMenuWidget_Resume, (mpInit, vPos, kTranslate("MainMenu", "Resume"))));
 		vPos.y += 60;
 	} else {
-		tWString latestSave = mpInit->mpSaveHandler->GetLatest(_W("hpl1-po-????.*.sav"));
+		tWString latestSave = mpInit->mpSaveHandler->GetLatest(_W("????:*"));
 
 		if (latestSave != _W("")) {
 			AddWidgetToState(eMainMenuState_Start, hplNew(cMainMenuWidget_MainButton, (mpInit, vPos, kTranslate("MainMenu", "Continue"), eMainMenuState_Continue)));
@@ -2577,18 +2579,18 @@ void cMainMenu::CreateWidgets() {
 		vPos.y += 46 + 30;
 		vPos.x += 15;
 
-		tWString sDir = _W("hpl1-po-spot");
+		tWString sDir = _W("spot:");
 		if (i == 1)
-			sDir = _W("hpl1-po-auto");
+			sDir = _W("auto:");
 		else if (i == 2)
-			sDir = _W("hpl1-po-favorite");
+			sDir = _W("favorite:");
 
 		gpSaveGameList[i] = hplNew(cMainMenuWidget_SaveGameList, (
 																	 mpInit, vPos, cVector2f(355, 170), 15, sDir, (int)i));
 		AddWidgetToState(state, gpSaveGameList[i]);
 
 		tTempFileAndDataSet setTempFiles;
-		Common::StringArray saves = g_engine->getSaveFileManager()->listSavefiles( cString::To8Char(sDir).c_str() + Common::String("*.sav"));
+		Common::StringArray saves = Hpl1::g_engine->listInternalSaves(cString::To8Char(sDir).c_str() + Common::String("*"));
 		for (auto &s : saves) {
 			tWString sFile = cString::To16Char(s.c_str());
 			cDate date = cSaveHandler::parseDate(s);
@@ -2605,13 +2607,7 @@ void cMainMenu::CreateWidgets() {
 
 			gvSaveGameFileVec[i].push_back(sFile);
 
-			sFile = cString::SetFileExtW(sFile, _W(""));
-			sFile = cString::SubW(sFile, sFile.find_first_of(_W(".")) + 1);
-			sFile = cString::SubW(sFile, 0, (int)sFile.length() - 3);
-			sFile = cString::ReplaceCharToW(sFile, _W("_"), _W(" "));
-			sFile = cString::ReplaceCharToW(sFile, _W("."), _W(":"));
-
-			// TODO: PROBLEM!!!
+			sFile = cString::SubW(sFile, sFile.find_first_of(_W(":")) + 1);
 			gpSaveGameList[i]->AddEntry(sFile);
 			// gpSaveGameList[i]->AddEntry(sFile);
 		}
