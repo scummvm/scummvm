@@ -229,10 +229,20 @@ Common::ErrorCode SubtitleModifierMappingTable::load(const Common::String &fileP
 			return Common::kReadingFailed;
 
 		uint modifierGUID = 0;
-		if (sscanf(strs[1].c_str(), "%u", &modifierGUID) == 1 && modifierGUID != 0)
-			_guidToSubtitleSet[modifierGUID] = strs[0];
-		else
-			return Common::kReadingFailed;
+		for (char c : strs[1]) {
+			modifierGUID *= 0x10;
+			if (c >= '0' && c <= '9') {
+				modifierGUID += (c - '0');
+			} else if (c >= 'a' && c <= 'f') {
+				modifierGUID += (c - 'a' + 0xa);
+			} else if (c >= 'A' && c <= 'F') {
+				modifierGUID += (c - 'A' + 0xa);
+			} else {
+				return Common::kReadingFailed;
+			}
+		}
+
+		_guidToSubtitleSet[modifierGUID] = strs[0];
 	}
 
 	return Common::kNoError;
@@ -405,7 +415,8 @@ double SubtitleDisplayItem::getPosition() const {
 	return _position;
 }
 
-SubtitleRenderer::SubtitleRenderer() : _nonImmediateDisappearTime(3500), _isDirty(true), _lastTime(0), _fontHeight(0) {
+SubtitleRenderer::SubtitleRenderer(bool enableGameplaySubtitles)
+	: _nonImmediateDisappearTime(3500), _isDirty(true), _lastTime(0), _fontHeight(0), _enableGameplaySubtitles(enableGameplaySubtitles) {
 #ifdef USE_FREETYPE2
 	Common::File fontFile;
 	const char *fontPath = "LiberationSans-Bold.ttf";
@@ -505,6 +516,11 @@ void SubtitleRenderer::composite(Window &window) const {
 bool SubtitleRenderer::isDirty() const {
 	return _isDirty;
 }
+
+bool SubtitleRenderer::isGameplaySubtitlesEnabled() const {
+	return _enableGameplaySubtitles;
+}
+
 
 void SubtitleRenderer::render() {
 	if (!_font)
@@ -719,6 +735,9 @@ void SubtitlePlayer::stop() {
 void SubtitlePlayer::triggerSubtitleLine(const SubtitleLineTable::LineData &line) {
 	SubtitleRenderer *renderer = _runtime->getSubtitleRenderer().get();
 	if (renderer) {
+		if (line.lineClass == SubtitleLineTable::kLineClassGameplay && !renderer->isGameplaySubtitlesEnabled())
+			return;
+
 		Common::SharedPtr<SubtitleDisplayItem> dispItem(new SubtitleDisplayItem(line.textUTF8, _speakers->getSpeakers()[line.speakerID], line.slot, line.position));
 		for (uint i = 0; i < _items.size(); i++) {
 			if (_items[i]->getSlot() == line.slot) {

@@ -145,7 +145,7 @@ private:
 
 class SubtitleRenderer {
 public:
-	SubtitleRenderer();
+	explicit SubtitleRenderer(bool enableGameplaySubtitles);
 
 	void addDisplayItem(const Common::SharedPtr<SubtitleDisplayItem> &item, uint duration);
 	void removeDisplayItem(const SubtitleDisplayItem *item, bool immediately);
@@ -154,6 +154,8 @@ public:
 
 	void composite(Window &window) const;
 	bool isDirty() const;
+
+	bool isGameplaySubtitlesEnabled() const;
 
 private:
 	struct DisplayItem {
@@ -174,6 +176,7 @@ private:
 	uint _nonImmediateDisappearTime;
 	int _fontHeight;
 	bool _isDirty;
+	bool _enableGameplaySubtitles;
 };
 
 class SubtitlePlayer {

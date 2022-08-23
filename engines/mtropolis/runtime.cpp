@@ -3851,7 +3851,7 @@ void SceneTransitionHooks::onSceneTransitionSetup(Runtime *runtime, const Common
 void SceneTransitionHooks::onSceneTransitionEnded(Runtime *runtime, const Common::WeakPtr<Structural> &newScene) {
 }
 
-Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProvider, ILoadUIProvider *loadProvider)
+Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProvider, ILoadUIProvider *loadProvider, const Common::SharedPtr<SubtitleRenderer> &subRenderer)
 	: _system(system), _mixer(mixer), _saveProvider(saveProvider), _loadProvider(loadProvider),
 	  _nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
 	  _displayWidth(1024), _displayHeight(768), _realTime(0), _realTimeBase(0), _playTime(0), _playTimeBase(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning),
@@ -3859,11 +3859,10 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	  _cachedMousePosition(Common::Point(0, 0)), _realMousePosition(Common::Point(0, 0)), _trackedMouseOutside(false),
 	  _forceCursorRefreshOnce(true), _autoResetCursor(false), _haveModifierOverrideCursor(false), _sceneGraphChanged(false), _isQuitting(false),
 	  _collisionCheckTime(0), _defaultVolumeState(true), _activeSceneTransitionEffect(nullptr), _sceneTransitionStartTime(0), _sceneTransitionEndTime(0),
-	  _modifierOverrideCursorID(0) {
+	  _modifierOverrideCursorID(0), _subtitleRenderer(subRenderer) {
 	_random.reset(new Common::RandomSource("mtropolis"));
 
 	_vthread.reset(new VThread());
-	_subtitleRenderer.reset(new SubtitleRenderer());
 
 	for (int i = 0; i < kColorDepthModeCount; i++) {
 		_displayModeSupported[i] = false;
@@ -4211,7 +4210,7 @@ void Runtime::drawFrame() {
 	_system->fillScreen(Render::resolveRGB(0, 0, 0, getRenderPixelFormat()));
 
 	bool needToRenderSubtitles = false;
-	if (_subtitleRenderer->update(_playTime))
+	if (_subtitleRenderer && _subtitleRenderer->update(_playTime))
 		setSceneGraphDirty();
 
 	{
@@ -4228,7 +4227,7 @@ void Runtime::drawFrame() {
 				needToRenderSubtitles = !skipped;
 			}
 
-			if (needToRenderSubtitles)
+			if (needToRenderSubtitles && _subtitleRenderer)
 				_subtitleRenderer->composite(*mainWindow);
 		}
 	}

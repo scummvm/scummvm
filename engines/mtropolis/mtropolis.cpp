@@ -109,7 +109,14 @@ Common::Error MTropolisEngine::run() {
 	ColorDepthMode preferredColorDepthMode = kColorDepthMode8Bit;
 	ColorDepthMode enhancedColorDepthMode = kColorDepthMode8Bit;
 
-	_runtime.reset(new Runtime(_system, _mixer, this, this));
+	Common::SharedPtr<SubtitleRenderer> subRenderer;
+
+	if (ConfMan.getBool("subtitles"))
+		subRenderer.reset(new SubtitleRenderer(ConfMan.getBool("mtropolis_mod_sound_gameplay_subtitles")));
+
+	_runtime.reset(new Runtime(_system, _mixer, this, this, subRenderer));
+
+	subRenderer.reset();
 
 	Common::SharedPtr<ProjectDescription> projectDesc = bootProject(*_gameDescription);
 

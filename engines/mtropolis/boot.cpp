@@ -553,14 +553,10 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 		if ((gameDesc.desc.flags & ADGF_DEMO) == 0 && gameDesc.desc.language == Common::EN_ANY) {
 			linesTablePath = "subtitles_lines_obsidian_en.csv";
 			speakerTablePath = "subtitles_speakers_obsidian_en.csv";
+			assetMappingTablePath = "subtitles_asset_mapping_obsidian_en.csv";
 
-			if (gameDesc.desc.platform == Common::kPlatformWindows) {
-				assetMappingTablePath = "subtitles_asset_mapping_obsidian_win_en.csv";
-				modifierMappingTablePath = "subtitles_modifier_mapping_obsidian_win_en.csv";
-			} else if (gameDesc.desc.platform == Common::kPlatformMacintosh) {
-				assetMappingTablePath = "subtitles_asset_mapping_obsidian_mac_en.csv";
-				modifierMappingTablePath = "subtitles_modifier_mapping_obsidian_mac_en.csv";
-			}
+			// Currently, modifier mapping is the same for both Mac and Win retail, since the MIDI GUIDs are all identical.
+			modifierMappingTablePath = "subtitles_modifier_mapping_obsidian_en.csv";
 		}
 		break;
 	default:

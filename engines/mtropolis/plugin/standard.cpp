@@ -2386,6 +2386,16 @@ bool MidiModifier::respondsToEvent(const Event &evt) const {
 
 VThreadState MidiModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (_executeWhen.respondsTo(msg->getEvent())) {
+		const SubtitleTables &subtitleTables = runtime->getProject()->getSubtitles();
+		if (subtitleTables.modifierMapping) {
+			const Common::String *subSetIDPtr = subtitleTables.modifierMapping->findSubtitleSetForModifierGUID(getStaticGUID());
+			if (subSetIDPtr) {
+				// Don't currently support anything except play-on-start subs for MIDI
+				SubtitlePlayer subtitlePlayer(runtime, *subSetIDPtr, subtitleTables);
+				subtitlePlayer.update(0, 1);
+			}
+		}
+
 		if (_mode == kModeFile) {
 			if (_embeddedFile) {
 				debug(2, "MIDI (%x '%s'): Playing embedded file", getStaticGUID(), getName().c_str());
