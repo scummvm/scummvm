@@ -22,6 +22,8 @@
 #ifndef DIRECTOR_DIRECTOR_H
 #define DIRECTOR_DIRECTOR_H
 
+#include "backends/audiocd/audiocd.h"
+
 #include "common/file.h"
 #include "common/hashmap.h"
 #include "common/hash-ptr.h"
@@ -215,6 +217,7 @@ public:
 	RandomState _rnd;
 	Graphics::MacWindowManager *_wm;
 	Graphics::PixelFormat _pixelformat;
+	AudioCDManager::Status _cdda_status;
 
 public:
 	int _colorDepth;
