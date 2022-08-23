@@ -23,11 +23,16 @@
 
 namespace Immortal {
 
-Room::Room(uint8 x, uint8 y, RoomFlag f) {
-	_xPos = x;
-	_yPos = y;
-	_flags = f;
-	_candleTmp = 0;
+Room::Room(uint8 x, uint8 y, RoomFlag f, Sprite *s, DataSprite *d, Cycle *c, Common::Array<SCycle> p)
+	: _xPos(x)
+	, _yPos(y)
+	, _flags(f)
+	, _sprites(s)
+	, _dataSprites(d)
+	, _cycles(c)
+	, _cycPtrs(p)
+	, _candleTmp(0)
+	, _randomSource("Immortal") {
 }
 
 void Room::addMonster() {
@@ -65,7 +70,16 @@ void Room::getCell(uint16 &x, uint16 &y) {
 }
 
 void Room::setHole() {}
-void Room::drawContents() {}
+
+void Room::drawContents(uint16 vX, uint16 vY, int nS) {
+	flameDrawAll(vX, vY, nS);
+	//sparkDrawAll();
+	//bulletDrawAll();
+	//genSpriteDrawAll();
+	//loop over monsters and draw each
+	//loop over objects and draw each
+	//doorDrawAll();
+}
 
 bool Room::getWideWallNormal(uint8 x, uint8 y, uint8 xPrev, uint8 yPrev, int id, int spacing) {
 	return true;

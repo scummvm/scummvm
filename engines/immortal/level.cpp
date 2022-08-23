@@ -74,12 +74,10 @@ void ImmortalEngine::levelLoadFile(int l) {
 
 	for (int d = 0; d < _stories[l]._doors.size(); d++) {
 		doorNew(_stories[l]._doors[d]);
-		debug("door %d", d);
 	}
 
 	for (int r = 0; r < _stories[l]._rooms.size(); r++) {
-		_rooms[r] = new Room(_stories[l]._rooms[r]._x, _stories[l]._rooms[r]._y, _stories[l]._rooms[r]._flags);
-		debug("Room %d", r);
+		_rooms[r] = new Room(_stories[l]._rooms[r]._x, _stories[l]._rooms[r]._y, _stories[l]._rooms[r]._flags, _sprites, _dataSprites, _cycles, _cycPtrs);
 
 		Common::Array<SFlame> allFlames(_stories[l]._flames[r].size());
 		if (_stories[l]._flames[r].size() > 0) {
@@ -89,28 +87,21 @@ void ImmortalEngine::levelLoadFile(int l) {
 				sf._x = _stories[l]._flames[r][f]._x;
 				sf._y = _stories[l]._flames[r][f]._y;
 				allFlames[f] = sf;
-				debugN("F%d", f);
 			}
 		}
 		_allFlames[r] = allFlames;
-		debug("");
 
 		if (_stories[l]._objects[r].size() > 0) {
 			for (int o = 0; o < _stories[l]._objects[r].size(); o++) {
 				//objNew(_stories[l]._objects[r][o]);
-				debugN("O%d", o);
 			}
 		}
-		debug("");
 
 		if (_stories[l]._monsters[r].size() > 0) {
 			for (int m = 0; m < _stories[l]._monsters[r].size(); m++) {
 				//monstNew(_stories[l]._monsters[r][m]);
-				debugN("M%d", m);
 			}
 		}
-		debug("");
-
 	}
 
 	// Set up the _initial variables for the engine scope
@@ -123,6 +114,7 @@ void ImmortalEngine::univAtNew(int l) {
 	_initialY    = _stories[l]._initialUnivY;
 	_initialBX   = _stories[l]._playerPointX;
 	_initialBY   = _stories[l]._playerPointY;
+
 	//doorToNextLevel(_stories[l]._doorToNextLevel, _initialBX, _initialBY);
 	//doorSetLadders(_stories[l]._doorSetLadders);
 	//roomSetHole(_stories[l]._setHole, _stories[l]._setHoleX, _stories[l]._setHoleY);
@@ -133,12 +125,14 @@ void ImmortalEngine::levelDrawAll() {
 	_count++;
 	//univAutoCenter();
 	clearSprites();
-	_rooms[_currentRoom]->drawContents();
+	// Room needs to be able to add to the sprite list, so we need to give it a pointer to it first
+	_rooms[_currentRoom]->drawContents(_viewPortX, _viewPortY, _numSprites);
 }
 
 void ImmortalEngine::levelShowRoom(int r, int bX, int bY) {
 	_currentRoom = r;
-	_rooms[r]->flameSetRoom(_allFlames[r]);
+	cycleFreeAll();		// This may not be needed, or it may need to be changed slightly
+	_rooms[_currentRoom]->flameSetRoom(_allFlames[r]);
 	//univSetRoom(r, bX, bY);
 	//fset, spark, bullet, and door get set to the current room
 	//roomGetCell(r, bX, bY);
