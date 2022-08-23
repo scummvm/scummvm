@@ -610,7 +610,7 @@ void cSaveHandler::AutoSave(const tWString &asDir, int alMaxSaves) {
 	sMapName = cString::ReplaceCharToW(sMapName, _W(":"), _W(" "));
 	cDate date = mpInit->mpGame->GetSystem()->GetLowLevel()->getDate();
 	wchar_t sTemp[512];
-	swprintf(sTemp, 512, _W("hpl1-po-%ls.%ls %d-%02d-%02d_%02d.%02d.%02d_%02d.sav"),
+	swprintf(sTemp, 512, _W("%ls: %ls %d-%02d-%02d %02d:%02d:%02d"),
 			 asDir.c_str(),
 			 sMapName.c_str(),
 			 date.year,
@@ -618,8 +618,7 @@ void cSaveHandler::AutoSave(const tWString &asDir, int alMaxSaves) {
 			 date.month_day,
 			 date.hours,
 			 date.minutes,
-			 date.seconds,
-			 cMath::RandRectl(0, 99));
+			 date.seconds);
 	tWString sFile = sTemp;
 	SaveGameToFile(sFile);
 
@@ -629,7 +628,7 @@ void cSaveHandler::AutoSave(const tWString &asDir, int alMaxSaves) {
 //-----------------------------------------------------------------------
 
 void cSaveHandler::AutoLoad(const tWString &asDir) {
-	tWString latestSave = GetLatest(_W("hpl1-po-") + asDir + _W(".*.sav"));
+	tWString latestSave = GetLatest( asDir + _W(":*"));
 	LoadGameFromFile(latestSave);
 	mpInit->mpGame->ResetLogicTimer();
 }
@@ -700,14 +699,15 @@ void cSaveHandler::DeleteOldestIfMax(const tWString &asDir, const tWString &asMa
 
 cDate cSaveHandler::parseDate(const Common::String &saveFile) {
 	cDate date;
-	Common::String strDate = saveFile.substr(saveFile.findLastOf(" "));
-	sscanf(strDate.c_str(), "%d-%d-%d_%d.%d.%d.sav", &date.year, &date.month, &date.month_day, &date.hours, &date.minutes, &date.seconds);
+	auto firstDigit = Common::find_if(saveFile.begin(), saveFile.end(), Common::isDigit);
+	Common::String strDate = saveFile.substr(Common::distance(saveFile.begin(), firstDigit));
+	sscanf(strDate.c_str(), "%d-%d-%d %d:%d:%d", &date.year, &date.month, &date.month_day, &date.hours, &date.minutes, &date.seconds);
 	return date;
 }
 
 tWString cSaveHandler::GetLatest(const tWString &asMask) {
 	// FIXME: string types
-	Common::StringArray saves = g_engine->getSaveFileManager()->listSavefiles(cString::To8Char(asMask).c_str());
+	Common::StringArray saves = Hpl1::g_engine->listInternalSaves(cString::To8Char(asMask).c_str());
 	if (saves.empty())
 		return _W("");
 	cDate latestDate = parseDate(saves.front());

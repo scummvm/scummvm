@@ -195,22 +195,23 @@ bool cSerializeClass::SaveToFile(iSerializable *apData, const tWString &asFile, 
 
 	glTabs = 0;
 	// FIXME: string types
-	Common::String filename(cString::To8Char(asFile).c_str());
+	Common::String saveDesc(cString::To8Char(asFile).c_str());
+	Common::String filename(Hpl1::g_engine->createSaveFile(saveDesc));
 	TiXmlDocument pXmlDoc;
 	// Create root
 	TiXmlElement XmlRoot(asRoot.c_str());
 	TiXmlElement *pRootElem = static_cast<TiXmlElement *>(pXmlDoc.InsertEndChild(XmlRoot));
 	Common::ScopedPtr<Common::OutSaveFile> savefile(g_engine->getSaveFileManager()->openForSaving(filename));
 	if (!savefile) {
-		Hpl1::logError(Hpl1::kDebugSaves, "could't open file %s for saving\n", asFile.c_str());
+		Hpl1::logError(Hpl1::kDebugSaves, "could't open file %s for saving\n", filename.c_str());
 		return false;
 	}
 	SaveToElement(apData, "", pRootElem);
 	if (!pXmlDoc.SaveFile(*savefile)) {
-		Hpl1::logError(Hpl1::kDebugSaves, "couldn't save to file '%s'\n", asFile.c_str());
+		Hpl1::logError(Hpl1::kDebugSaves, "couldn't save to file '%s'\n", filename.c_str());
 		return false;
 	}
-	g_engine->getMetaEngine()->appendExtendedSave(savefile.get(), g_engine->getTotalPlayTime(), "", filename.contains("auto"));
+	g_engine->getMetaEngine()->appendExtendedSave(savefile.get(), g_engine->getTotalPlayTime(), saveDesc, filename.contains("auto"));
 	return true;
 }
 
@@ -279,15 +280,15 @@ bool cSerializeClass::LoadFromFile(iSerializable *apData, const tWString &asFile
 	// Load document
 	TiXmlDocument pXmlDoc;
 	// FIXME: string types
-	Common::String filename(cString::To8Char(asFile).c_str());
+	Common::String filename(Hpl1::g_engine->mapInternalSaveToFile(cString::To8Char(asFile).c_str()));
 	Common::ScopedPtr<Common::InSaveFile> saveFile(g_engine->getSaveFileManager()->openForLoading(filename));
 	if (!saveFile) {
 		Hpl1::logError(Hpl1::kDebugSaves | Hpl1::kDebugResourceLoading, "save file %s could not be opened\n", filename.c_str());
 		return false;
 	}
 	ExtendedSavegameHeader header;
-	if (MetaEngine::readSavegameHeader(saveFile.get(), &header)) {
-		Hpl1::logError(Hpl1::kDebugResourceLoading | Hpl1::kDebugSaves, "couldn't load heaer from save file %s\n", filename.c_str());
+	if (!MetaEngine::readSavegameHeader(saveFile.get(), &header)) {
+		Hpl1::logError(Hpl1::kDebugResourceLoading | Hpl1::kDebugSaves, "couldn't load header from save file %s\n", filename.c_str());
 		return false;
 	}
 	g_engine->setTotalPlayTime(header.playtime);

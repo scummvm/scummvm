@@ -59,26 +59,6 @@ void Hpl1MetaEngine::getSavegameThumbnail(Graphics::Surface &thumbnail) {
 	scaledScreen->free();
 }
 
-static Common::U32String formatSave(const Common::String &filename) {
-	const int begin = filename.findFirstOf('.') + 1;
-	const int len = filename.findLastOf('_') - begin;
-	Common::String name = filename.substr(begin, len);
-	Common::replace(name.begin(), name.end(), '.', ':');
-	Common::replace(name.begin(), name.end(), '_', ' ');
-	return name;
-}
-
-SaveStateList Hpl1MetaEngine::listSaves(const char *target) const {
-	SaveStateList saveList;
-	Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("hpl1-po-????.*");
-	int i = 0;
-	for (auto &save : filenames) {
-		if (!save.contains("favourite"))
-			saveList.push_back(SaveStateDescriptor(this, ++i, formatSave(save)));
-	}
-	return saveList;
-}
-
 Common::Action *createKeyBoardAction(const char *id, const Common::U32String &desc, const char *defaultMap, const Common::KeyState &key) {
 	Common::Action *act = new Common::Action(id, desc);
 	act->setKeyEvent(key);
