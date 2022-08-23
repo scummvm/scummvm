@@ -35,23 +35,30 @@
 
 namespace Immortal {
 
-void Room::flameSetRoom(Common::Array<SFlame> allFlames) {
-	for (int i = 0; i < allFlames.size(); i++) {
-		Flame f;
-		f._p = allFlames[i]._p;
-		f._x = allFlames[i]._x;
-		f._y = allFlames[i]._y;
-		f._c = flameGetCyc(0 | _candleTmp);
-		_candleTmp = 1;
-		_fset.push_back(f);
+void Room::flameInit() {
+	flameFreeAll();
+	_candleTmp = 0;
+}
+
+void Room::flameFreeAll() {
+	_numFlames = 0;
+	_numInRoom = 0;
+}
+
+void Room::flameDrawAll(uint16 vX, uint16 vY, int nS) {
+	for (int i = 0; i < _fset.size(); i++) {
+		univAddSprite(vX, vY, nS, _fset[i]._x, _fset[i]._y, _cycPtrs[_cycles[_fset[i]._c]._cycList]._sName, cycleGetFrame(_fset[i]._c), 0);
+		if (cycleAdvance(_fset[i]._c) == true) {
+			cycleFree(_fset[i]._c);
+			_fset[i]._c = flameGetCyc(&_fset[i], 1);
+		}
 	}
 }
 
-void Room::flameDrawAll() {
-
-}
-
 bool Room::roomLighted() {
+	// Just for now, we say it's always lit
+	return true;
+
 	// Very simple, just checks every torch and if any of them are lit, we say the room is lit
 	for (int i = 0; i < _fset.size(); i++) {
 		if (_fset[i]._p != kFlameOff) {
@@ -72,7 +79,7 @@ void Room::lightTorch(int x, int y) {
 
 	for (int i = 0; i < _fset.size(); i++) {
 		if (_fset[i]._p == kFlameOff) {
-			if (Immortal::Util::inside(x, y, kLightTorchX, _fset[i]._x + 16, _fset[i]._y + 8)) {
+			if (Immortal::Utilities::inside(x, y, kLightTorchX, _fset[i]._x + 16, _fset[i]._y + 8)) {
 				_fset[i]._p = kFlameNormal;
 
 			}
@@ -80,8 +87,62 @@ void Room::lightTorch(int x, int y) {
 	}
 }
 
-Cyc Room::flameGetCyc(int first) {
-	return kCycNone;
+void Room::flameSetRoom(Common::Array<SFlame> allFlames) {
+	for (int i = 0; i < allFlames.size(); i++) {
+		Flame f;
+		f._p = allFlames[i]._p;
+		f._x = allFlames[i]._x;
+		f._y = allFlames[i]._y;
+		f._c = flameGetCyc(&f, (0 | _candleTmp));
+		debug("made flame, cyc = %d", f._c);
+		_fset.push_back(f);
+	}
+	_candleTmp = 1;
+}
+
+int Room::flameGetCyc(Flame *f, int first) {
+	/* I must say, although this is clever, it is the most
+	 * convoluted way to do this I could imagine. Here's what it does:
+	 * Get a random number between 0 and 255. Now reduce this number by the length
+	 * of the array for the particular flame pattern until we are at less than 0.
+	 * Now add back that same length. We are now at the length of the array
+	 * minus a random amount between 0 and the length of the array.
+	 * This gives us a random entry within the array to start at.
+	 */
+	CycID flamePatA[] = {kCycFNormal0, kCycFNormal1, kCycFNormal2,
+						 kCycFNormal0, kCycFNormal1, kCycFNormal2,
+						 kCycFNormal0, kCycFNormal1, kCycFNormal2,
+						 kCycFNormal0, kCycFNormal1, kCycFNormal2};
+	CycID flamePatB[] = {kCycFCandleBurst,   kCycFCandleSway,    kCycFCandleJump,
+						 kCycFCandleLeap,    kCycFCandleFlicker,
+						 kCycFCandleFlicker, kCycFCandleFlicker, kCycFCandleFlicker};
+	CycID flamePatC[] = {kCycFOff};
+	CycID flamePatD[] = {kCycFFlicker0, kCycFFlicker1, kCycFFlicker2};
+
+	int numFlameCycs[] = {12, 8, 1, 3};
+
+	int r = getRandomNumber(255) & (kMaxFlameCycs - 1);
+
+	do {
+		r -= numFlameCycs[(int) f->_p];
+	} while (r >= 0);
+
+	r += numFlameCycs[(int) f->_p];
+
+	// Why is this not indexed further? ie. LDA patternTable,x : STA $00 : LDA ($00),y instead of a branch tree?
+	// Pretty sure CPX 3 times is more than a single LDA (dp),y
+	switch (f->_p) {
+		case 0:
+			return cycleNew(flamePatA[r]);
+		case 1:
+			return cycleNew(flamePatB[r]);
+		case 2:
+			return cycleNew(flamePatC[r]);
+		case 3:
+			return cycleNew(flamePatD[r]);
+		default:
+			return 0;
+	}
 }
 
 } // namespace immortal
