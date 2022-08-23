@@ -2,7 +2,7 @@ MODULE := engines/immortal
 
 MODULE_OBJS = \
 	metaengine.o \
-	util.o \
+	utilities.o \
 	disk.o \
 	immortal.o \
 	kernal.o \
