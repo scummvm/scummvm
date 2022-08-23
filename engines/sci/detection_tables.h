@@ -1655,9 +1655,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// SCI interpreter version 0.000.409
 	// Game version 1.003.006
 	// Released: January 24, 1989 (Information from QAFILE file)
+	// Resource files are identical to Atari ST 1.003.006
 	{"kq4sci", "SCI", {
-		{"resource.map", 0, "7c86c3c2bb93d581c2f587bfcbcc1617", 5766},
-		{"resource.001", 0, "a3cdb4848fb859fdd302976fff56490f", 1920200},
+		{"resource.map", 0, "8800cd62b1eee93752099986dc704a16", 7416},
+		{"resource.001", 0, "a3cdb4848fb859fdd302976fff56490f", 450790},
+		{"resource.002", 0, "a3cdb4848fb859fdd302976fff56490f", 535276},
+		{"resource.003", 0, "a3cdb4848fb859fdd302976fff56490f", 705074},
+		{"resource.004", 0, "a3cdb4848fb859fdd302976fff56490f", 478366},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
@@ -1706,6 +1710,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Game version 1.003.006 (January 12, 1989)
 	// SCI interpreter version 1.001.008
 	// Provided by fischersfritz in bug report #5518
+	// Resource files are identical to DOS 1.003.006
 	{"kq4sci", "SCI", {
 		{"resource.map", 0, "8800cd62b1eee93752099986dc704a16", 7416},
 		{"resource.001", 0, "a3cdb4848fb859fdd302976fff56490f", 450790},
