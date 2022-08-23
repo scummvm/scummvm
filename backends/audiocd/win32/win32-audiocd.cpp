@@ -151,6 +151,7 @@ public:
 	void close() override;
 	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
 			Audio::Mixer::SoundType soundType) override;
+	bool isDataAndCDAudioReadFromSameCD() override;
 
 protected:
 	bool openCD(int drive) override;
@@ -383,6 +384,26 @@ bool Win32AudioCDManager::tryAddDrive(char drive, DriveList &drives) {
 	debug(2, "Detected drive %c:\\ as a CD drive", drive);
 	drives.push_back(drive);
 	return true;
+}
+
+bool Win32AudioCDManager::isDataAndCDAudioReadFromSameCD() {
+	// It is a known bug under Windows that games that play CD audio cause
+	// ScummVM to crash if the data files are read from the same CD.
+	char driveLetter;
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	if (!gameDataDir.getPath().empty()) {
+		driveLetter = gameDataDir.getPath()[0];
+	} else {
+		// That's it! I give up!
+		Common::FSNode currentDir(".");
+		if (!currentDir.getPath().empty()) {
+			driveLetter = currentDir.getPath()[0];
+		} else {
+			return false;
+		}
+	}
+
+	return Win32::isDriveCD(driveLetter);
 }
 
 AudioCDManager *createWin32AudioCDManager() {

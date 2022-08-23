@@ -107,8 +107,15 @@ public:
 	/**
 	 * Checks whether the extracted audio cd tracks exists as files in
 	 * the search paths.
+	 * @return true if audio files of the expected naming scheme are found, and supported by ScummVM.
 	 */
 	virtual bool existExtractedCDAudioFiles(uint track) = 0;
+
+	/**
+	 * Checks if game data are read from the same CD drive which should also play game CD audio.
+	 * @return true, if this case is applicable, and the system doesn't allow it.
+	 */
+	virtual bool isDataAndCDAudioReadFromSameCD() = 0;
 };
 
 #endif
