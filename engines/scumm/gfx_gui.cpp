@@ -1132,7 +1132,8 @@ void ScummEngine::restoreSurfacesPostGUI() {
 		// Signal the restoreCharsetBg() function that there's text
 		// on the text surface, so it gets deleted the next time another
 		// text is displayed...
-		_postGUICharMask = true;
+		if (_game.version != 4 || _game.id != GID_LOOM)
+			_postGUICharMask = true;
 
 		free(_tempTextSurface);
 		_tempTextSurface = nullptr;
@@ -1706,7 +1707,7 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool 
 					return true;
 				}
 
-				if (_game.version < 7) {
+				if ((_game.version != 4 || _game.id != GID_LOOM) && _game.version < 7) {
 					_postGUICharMask = true;
 				}
 
