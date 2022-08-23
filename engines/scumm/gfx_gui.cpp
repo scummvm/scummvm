@@ -2454,37 +2454,39 @@ void ScummEngine_v6::setUpMainMenuControls() {
 			getGUIString(gsQuit), 1, 1);
 	}
 
-	// Arrow up button
-	setUpInternalGUIControl(GUI_CTRL_ARROW_UP_BUTTON,
-		getBannerColor(9),
-		getBannerColor(10),
-		getBannerColor(17),
-		getBannerColor(18),
-		getBannerColor(19),
-		getBannerColor(20),
-		getBannerColor(11),
-		getBannerColor(12),
-		(_game.version == 7 ? 209 : 206),
-		(_game.version == 7 ? yConstantV7 + ((_game.id == GID_DIG && _useCJKMode) ? 25 : 17) : yConstantV6 - 43),
-		-16,
-		-47,
-		_arrowUp, 1, 1);
+	if (_game.version == 6 || _menuPage != GUI_PAGE_MAIN) {
+		// Arrow up button
+		setUpInternalGUIControl(GUI_CTRL_ARROW_UP_BUTTON,
+			getBannerColor(9),
+			getBannerColor(10),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(11),
+			getBannerColor(12),
+			(_game.version == 7 ? 209 : 206),
+			(_game.version == 7 ? yConstantV7 + ((_game.id == GID_DIG && _useCJKMode) ? 25 : 17) : yConstantV6 - 43),
+			-16,
+			-47,
+			_arrowUp, 1, 1);
 
-	// Arrow down button
-	setUpInternalGUIControl(GUI_CTRL_ARROW_DOWN_BUTTON,
-		getBannerColor(9),
-		getBannerColor(10),
-		getBannerColor(17),
-		getBannerColor(18),
-		getBannerColor(19),
-		getBannerColor(20),
-		getBannerColor(11),
-		getBannerColor(12),
-		(_game.version == 7 ? 209 : 206),
-		(_game.version == 7 ? yConstantV7 + ((_game.id == GID_DIG && _useCJKMode) ? 75 : 67) : yConstantV6 + 7),
-		-16,
-		-45,
-		_arrowDown, 1, 1);
+		// Arrow down button
+		setUpInternalGUIControl(GUI_CTRL_ARROW_DOWN_BUTTON,
+			getBannerColor(9),
+			getBannerColor(10),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(11),
+			getBannerColor(12),
+			(_game.version == 7 ? 209 : 206),
+			(_game.version == 7 ? yConstantV7 + ((_game.id == GID_DIG && _useCJKMode) ? 75 : 67) : yConstantV6 + 7),
+			-16,
+			-45,
+			_arrowDown, 1, 1);
+	}
 
 	if (_menuPage == GUI_PAGE_SAVE || _menuPage == GUI_PAGE_LOAD) {
 		if (_menuPage == GUI_PAGE_SAVE) {
