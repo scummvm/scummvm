@@ -414,6 +414,20 @@ void ScummEngine_v2::decodeParseString() {
 		*ptr = 0;
 	}
 
+	// WORKAROUND: There is a typo in Syd's biography ("tring" instead of
+	// "trying") in the English DOS version of Maniac Mansion (v1). As far
+	// as I know, this is the only version with the typo.
+	else if (_game.id == GID_MANIAC && _game.version == 1
+		&& _game.platform == Common::kPlatformDOS
+		&& !(_game.features & GF_DEMO) && _language == Common::EN_ANY
+		&& vm.slot[_currentScript].number == 260 && _enableEnhancements
+		&& strncmp((char *)buffer + 26, " tring ", 7) == 0) {
+		for (byte *p = ptr; p >= buffer + 29; p--)
+			*(p + 1) = *p;
+
+		buffer[29] = 'y';
+	}
+
 	int textSlot = 0;
 	_string[textSlot].xpos = 0;
 	_string[textSlot].ypos = 0;
