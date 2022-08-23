@@ -5209,8 +5209,8 @@ msgstr ""
 "Le patch original de \"Escape from Monkey Island\" est manquant. \n"
 "Veuillez le télécharger à cette adresse : %s\n"
 "et le placer dans le répertoire des fichiers de données de jeu.\n"
-"Assurez-vous de télécharger la bonne version en fonction de la langue du jeu "
-"!"
+"Assurez-vous de télécharger la bonne version en fonction de la langue du "
+"jeu !"
 
 #: engines/grim/emi/sound/emisound.cpp:655
 msgid ""
