@@ -446,7 +446,7 @@ struct InternalGUIControl {
 	int highlightedTextColor;
 	int highlightedFillColor;
 	bool centerText;
-	char *label;
+	const char *label;
 	bool doubleLinesFlag;
 };
 
@@ -616,11 +616,11 @@ protected:
 	InternalGUIControl _internalGUIControls[30];
 
 	// Special GUI strings
-	char _emptyMsg[1] = {'\0'};
-	char _uncheckedBox[2] = {' ', '\0'};
-	char _checkedBox[2] = {'x', '\0'};
-	char _arrowUp[2] = {'\x18', '\0'};
-	char _arrowDown[2] = {'\x19', '\0'};
+	const char _emptyMsg[1] = {'\0'};
+	const char _uncheckedBox[2] = {' ', '\0'};
+	const char _checkedBox[2] = {'x', '\0'};
+	const char _arrowUp[2] = {'\x18', '\0'};
+	const char _arrowDown[2] = {'\x19', '\0'};
 
 	GUISaveGameLabel _savegameNames[9];
 	int _menuPage = 0;
@@ -662,14 +662,14 @@ protected:
 	void setUpInternalGUIControl(int id, int normalFillColor, int normalTextColor,
 								 int topLineColor, int bottomLineColor, int leftLineColor, int rightLineColor,
 								 int highlightedTextColor, int highlightedFillColor,
-								 int anchorPointX, int anchorPointY, int x, int y, char *label, bool centerFlag, bool unknownFlag);
+								 int anchorPointX, int anchorPointY, int x, int y, const char *label, bool centerFlag, bool unknownFlag);
 	void drawInternalGUIControl(int id, bool highlightColor);
 	int getInternalGUIControlFromCoordinates(int x, int y);
 	virtual bool isSmushActive() { return false; }
 
 	virtual void queryQuit();
 	virtual void queryRestart();
-	virtual char *getGUIString(int stringId);
+	virtual const char *getGUIString(int stringId);
 	void waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked);
 	virtual int getGUIStringHeight(const char *str);
 	virtual int getGUIStringWidth(const char *str);

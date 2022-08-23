@@ -429,34 +429,34 @@ void InfoDialog::reflowLayout() {
 	_text->setSize(_w, _h);
 }
 
-char *InfoDialog::getPlainEngineString(int stringno) {
-	char *result;
+const char *InfoDialog::getPlainEngineString(int stringno) {
+	const char *result;
 
 	if (stringno == 0)
 		return nullptr;
 
 	if (_vm->_game.version == 8) {
-		return (char *)string_map_table_v8[stringno - 1].string;
+		return string_map_table_v8[stringno - 1].string;
 	} else if (_vm->_game.version == 7) {
-		result = (char *)_vm->getStringAddressVar(string_map_table_v7[stringno - 1].num);
+		result = (const char *)_vm->getStringAddressVar(string_map_table_v7[stringno - 1].num);
 
 		if (!result) {
-			result = (char *)string_map_table_v7[stringno - 1].string;
+			result = string_map_table_v7[stringno - 1].string;
 		}
 	} else if (_vm->_game.version == 6) {
-		result = (char *)_vm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
+		result = (const char *)_vm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
 
 		if (!result) {
-			result = (char *)string_map_table_v6[stringno - 1].string;
+			result = string_map_table_v6[stringno - 1].string;
 		}
 	} else if (_vm->_game.version >= 3) {
-		result = (char *)_vm->getStringAddress(getStaticResString(_vm->_language, stringno - 1).num);
+		result = (const char *)_vm->getStringAddress(getStaticResString(_vm->_language, stringno - 1).num);
 
 		if (!result) {
-			result = (char *)getStaticResString(_vm->_language, stringno - 1).string;
+			result = getStaticResString(_vm->_language, stringno - 1).string;
 		}
 	} else {
-		result = (char *)(getStaticResString(_vm->_language, stringno - 1).string);
+		result = getStaticResString(_vm->_language, stringno - 1).string;
 	}
 
 	return result;
