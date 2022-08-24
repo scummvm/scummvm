@@ -25,23 +25,23 @@
 
 namespace Freescape {
 
-Object::Type Object::getType() { return _type; }
-uint16 Object::getObjectID() { return _objectID; }
-uint16 Object::getObjectFlags() { return _flags; }
-void Object::setObjectFlags(uint32 flags) { _flags = flags; }
+Object::Type Object::getType() { return type; }
+uint16 Object::getObjectID() { return objectID; }
+uint16 Object::getObjectFlags() { return flags; }
+void Object::setObjectFlags(uint32 _flags) { flags = _flags; }
 Math::Vector3d Object::getOrigin() { return origin; }
-void Object::setOrigin(Math::Vector3d _origin) { origin = _origin; };
+void Object::setOrigin(Math::Vector3d _origin) { origin = origin; };
 Math::Vector3d Object::getSize() { return size; }
 
 bool Object::isDrawable() { return false; }
 bool Object::isPlanar() { return false; }
 
-bool Object::isInvisible() { return _flags & 0x80; }
-void Object::makeInvisible() { _flags = _flags | 0x80; }
-void Object::makeVisible() { _flags = _flags & ~0x80; }
-bool Object::isDestroyed() { return _flags & 0x20; }
-void Object::destroy() { _flags = _flags | 0x20; }
-void Object::toggleVisibility() { _flags = _flags ^ 0x80; }
+bool Object::isInvisible() { return flags & 0x80; }
+void Object::makeInvisible() { flags = flags | 0x80; }
+void Object::makeVisible() { flags = flags & ~0x80; }
+bool Object::isDestroyed() { return flags & 0x20; }
+void Object::destroy() { flags = flags | 0x20; }
+void Object::toggleVisibility() { flags = flags ^ 0x80; }
 
 Object::~Object() {}
 
