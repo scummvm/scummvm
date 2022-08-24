@@ -98,6 +98,8 @@ public:
 
 	Common::StringArray listInternalSaves(const Common::String &pattern);
 
+	Common::Error loadGameState(int slot) override;
+
 	/**
 	 * Uses a serializer to allow implementing savegame
 	 * loading and saving using a single method
