@@ -20,6 +20,7 @@
  */
 
 #include "hpl1/penumbra-overture/Init.h"
+#include "hpl1/penumbra-overture/MainMenu.h"
 #include "engine/engine.h"
 #include "hpl1/hpl1.h"
 #include "common/config-manager.h"
@@ -71,6 +72,10 @@ Common::Error Hpl1Engine::run() {
 void Hpl1Engine::pauseEngineIntern(bool pause) {
 	_mixer->pauseAll(pause);
 	g_system->lockMouse(!pause);
+	// if a save is deleted from the global main menu,
+	// it would still appear on the game's menu
+	if (!pause)
+		_gameInit->mpMainMenu->UpdateWidgets();
 }
 
 static Common::String freeSaveSlot(const Engine *engine, const int maxSaves) {
