@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-22 10:18+0000\n"
+"POT-Creation-Date: 2022-08-23 22:20+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4496,7 +4496,7 @@ msgstr "패치 제작자가 번역물이 ScummVM에서 구동되길 원하지 �
 #: engines/mohawk/detection_tables.h:3175 engines/myst3/detection.cpp:142
 #: engines/neverhood/detection.cpp:124 engines/saga/detection_tables.h:186
 #: engines/saga/detection_tables.h:1241 engines/saga/detection_tables.h:1300
-#: engines/sci/detection_tables.h:5136 engines/sci/detection_tables.h:5144
+#: engines/sci/detection_tables.h:5141 engines/sci/detection_tables.h:5149
 #: engines/sherlock/detection_tables.h:223 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/toltecs/detection.cpp:212
 #: engines/trecision/detection.cpp:199 engines/zvision/detection_tables.h:200
@@ -6596,7 +6596,7 @@ msgstr "Roland D-110 / D-10 / D-20"
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
-#: engines/sci/detection_tables.h:4442
+#: engines/sci/detection_tables.h:4447
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "불완전한 게임이 감지되었습니다. 모든 CD로부터 데이터를 복사해야 합니다."
