@@ -77,7 +77,7 @@ Use sndio MIDI.
 .It Ar timidity
 Connect to TiMidity++ MIDI server.
 .It Ar towns
-Internal FM-TOWNS YM2612 emulation (only usable in SCUMM FM-TOWNS games)
+Internal FM-TOWNS YM2612 emulation (only usable in SCUMM FM-TOWNS games).
 Use only if you have a hardware MIDI synthesizer.
 .It Ar windows
 Windows built in MIDI sequencer for Windows users.
@@ -87,11 +87,11 @@ Force windowed mode.
 .It Fl f | -fullscreen
 Force full-screen mode.
 .It Fl g | -gfx-mode= Ns Ar MODE
-Select graphics mode:
+Select graphics mode
 .Po
 .Ar opengl ,
 .Ar surfacesdl
-.Pc
+.Pc .
 .It Fl h | -help
 Display a brief help text and exit.
 .It Fl l | -logfile= Ns Ar PATH
@@ -237,7 +237,7 @@ or
 .Fl -list-all-games
 only lists games for this engine.
 .It Fl -engine-speed= Ns Ar NUM
-Set frame per second limit (0 - 100), 0 = no limit (default: 60).
+Set frame per second limit (0-100), 0 = no limit (default: 60).
 .It Fl -extrapath= Ns Ar PATH
 Extra path to additional game data.
 .It Fl -filtering
@@ -310,8 +310,7 @@ is passed, then show the MD5 hash of the first or last
 bytes of each fork.
 .It Fl -midi-gain= Ns Ar NUM
 Set the gain for MIDI playback, 0-1000 (default: 100).
-.br
-(only supported by some MIDI drivers)
+Only supported by some MIDI drivers.
 .It Fl -multi-midi
 Enable combination of AdLib and native MIDI.
 .It Fl -native-mt32
