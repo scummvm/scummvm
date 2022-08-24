@@ -21,6 +21,8 @@
 
 #include "hpl1/penumbra-overture/Init.h"
 #include "hpl1/penumbra-overture/MainMenu.h"
+#include "hpl1/penumbra-overture/SaveHandler.h"
+#include "hpl1/engine/system/String.h"
 #include "engine/engine.h"
 #include "hpl1/hpl1.h"
 #include "common/config-manager.h"
@@ -122,6 +124,14 @@ Common::StringArray Hpl1Engine::listInternalSaves(const Common::String &pattern)
 			internalSaves.push_back(saveDesc);
 	}
 	return internalSaves;
+}
+
+Common::Error Hpl1Engine::loadGameState(int slot) {
+	SaveStateDescriptor a = getMetaEngine()->querySaveMetaInfos(_targetName.c_str(), slot);
+	_gameInit->mpMainMenu->SetActive(false);
+	// FIXME: strings
+	_gameInit->mpSaveHandler->LoadGameFromFile(cString::To16Char(Common::String(a.getDescription()).c_str()));
+	return Common::kNoError;
 }
 
 Common::Error Hpl1Engine::syncGame(Common::Serializer &s) {
