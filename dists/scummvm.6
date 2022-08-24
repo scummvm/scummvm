@@ -101,7 +101,7 @@ Set the music volume, 0-255 (default: 192).
 .It Fl n | -subtitles
 Enable subtitles (use with games that have voice).
 .It Fl p | -path= Ns Ar PATH
-Path to where the game is installed.
+Set the path to where the game is installed.
 .It Fl q | -language= Ns Ar LANG
 Select game's language:
 .Bl -tag -width auto -compact
@@ -192,7 +192,7 @@ exists in the current directory.
 .It Fl v | -version
 Display ScummVM version information and exit.
 .It Fl x | -save-slot= Ns Ar [SLOT]
-Saved game slot to load (default: autosave).
+Set the saved game slot to load (default: autosave).
 .It Fl z | -list-games
 Display list of supported games and exit.
 .It Fl -alt-intro
@@ -241,7 +241,7 @@ only lists games for this engine.
 .It Fl -engine-speed= Ns Ar NUM
 Set frame per second limit (0-100), 0 = no limit (default: 60).
 .It Fl -extrapath= Ns Ar PATH
-Extra path to additional game data.
+Set the extra path to additional game and ScummVM data.
 .It Fl -filtering
 Force filtered graphics mode.
 .It Fl -game= Ns Ar ID
@@ -257,7 +257,7 @@ Select a GUI theme, as given by
 .It Fl -joystick= Ns Ar NUM
 Enable joystick input (default: 0 = first joystick).
 .It Fl -iconspath= Ns Ar PATH
-Path to additional icons for the launcher grid view.
+Set the path to additional icons for the launcher grid view.
 .It Fl -list-all-debugflags
 Display list of all engine specified debugflags.
 .It Fl -list-all-engines
@@ -311,7 +311,8 @@ Only supported by some MIDI drivers.
 .It Fl -multi-midi
 Enable combination of AdLib and native MIDI.
 .It Fl -native-mt32
-True Roland MT-32 MIDI (disable GM emulation).
+Tell ScummVM that the MIDI device is an actual Roland MT-32 or compatible device.
+This disables any GM emulation.
 .It Fl -no-filtering
 Force unfiltered graphics mode.
 .It Fl -opl-driver= Ns Ar DRIVER
@@ -398,9 +399,9 @@ Select 3D renderer
 .Ar opengl_shaders
 .Pc .
 .It Fl -savepath= Ns Ar PATH
-Path to where saved games are stored.
+Specify where saved games are stored.
 .It Fl -scale-factor= Ns Ar FACTOR
-Factor to scale the graphics by.
+Set the factor to scale the graphics by.
 .It Fl -scaler= Ns Ar MODE
 Select graphics scaler
 .Po
@@ -439,7 +440,7 @@ Set talk delay for SCUMM games, or talk speed for other games (default: 60).
 .It Fl -tempo= Ns Ar NUM
 Set music tempo (in percent, 50-200) for SCUMM games (default: 100).
 .It Fl -themepath= Ns Ar PATH
-Path to where GUI themes are stored.
+Set the path to GUI themes.
 .It Fl -window-size= Ns Ar W,H
 Set the ScummVM window size to the specified dimensions (OpenGL only).
 .El
