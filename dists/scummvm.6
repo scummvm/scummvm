@@ -184,7 +184,7 @@ Set the voice volume to, 0-255 (default: 192).
 .It Fl s | -sfx-volume= Ns Ar NUM
 Set the sfx volume to, 0-255 (default: 192).
 .It Fl t | -list-targets
-Display list of configured targets and exit.
+Display list of user-configured game targets, and exit.
 .It Fl u | -dump-scripts
 Enable script dumping if a directory called
 .Pa dumps
@@ -220,7 +220,7 @@ Enable engine specific debug flags (separated by commas).
 Start demo mode of Maniac Mansion or The 7th Guest.
 .It Fl -detect
 Display a list of games with their ID from current or specified directory
-without adding it to the config.
+without adding it to the configuration file.
 Use
 .Fl -path= Ns Ar PATH
 to specify a directory.
@@ -301,7 +301,7 @@ is passed, fetch the MD5 length automatically, overriding
 .Fl -md5-length .
 .It Fl -md5mac
 Show MD5 hash for both the resource fork and data fork of the
-mac file given by
+Macintosh file given by
 .Fl -md5-path= Ns Ar PATH .
 If
 .Fl -md5-length= Ns Ar NUM
@@ -427,7 +427,7 @@ Display FPS in 3D games.
 Select the SoundFont for MIDI playback (only supported by some MIDI drivers).
 .It Fl -start-movie= Ns Ar NAME Ns Ar @NUM
 Start movie at frame for Director.
-Either can be specified without the other.
+Either argument can be specified without the other.
 .It Fl -stretch-mode= Ns Ar MODE
 Select stretch mode
 .Po
