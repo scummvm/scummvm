@@ -498,8 +498,9 @@ Override the default save path (POSIX systems).
 .El
 .Sh FILES
 .Bl -tag -width Ds
-.It Pa $HOME/.scummvmrc
-Configuration file on UNIX.
+.It Pa $HOME/.config/scummvm/scummvm.ini
+Configuration file on most Unix systems.
+XDG environment variables take precedence, if defined.
 .It Pa "$HOME/Library/Preferences/ScummVM Preferences"
 Configuration file on macOS.
 .El
