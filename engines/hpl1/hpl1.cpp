@@ -32,6 +32,7 @@
 #include "hpl1/detection.h"
 #include "hpl1/debug.h"
 #include "audio/mixer.h"
+#include "common/savefile.h"
 
 extern int hplMain(const hpl::tString &asCommandLine);
 
@@ -56,17 +57,7 @@ Common::String Hpl1Engine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
-static void initSaves(const char *target, Common::BitArray &slots, Common::HashMap<Common::String, int> &savemap) {
-	slots.set_size(g_engine->getMetaEngine()->getMaximumSaveSlot());
-	SaveStateList saves = g_engine->getMetaEngine()->listSaves(target);
-	for (auto &s : saves) {
-		savemap.setVal(s.getDescription(), s.getSaveSlot());
-		slots.set(s.getSaveSlot());
-	}
-}
-
 Common::Error Hpl1Engine::run() {
-	initSaves(_targetName.c_str(), _saveSlots, _internalSaves);
 	hplMain("");
 	return Common::kNoError;
 }
@@ -76,41 +67,50 @@ void Hpl1Engine::pauseEngineIntern(bool pause) {
 	g_system->lockMouse(!pause);
 }
 
-static int freeSaveSlot(Common::BitArray &slots, const int size) {
-	for (int i = 0; i < size; ++i) {
-		if (!slots.get(i))
-			return i;
+static Common::String freeSaveSlot(const Engine *engine, const int maxSaves) {
+	for (int i = 0; i < maxSaves; ++i) {
+		const Common::String name = engine->getSaveStateName(i);
+		if (g_system->getSavefileManager()->exists(name))
+			return name;
 	}
-	return -1;
+	return "";
 }
 
 Common::String Hpl1Engine::createSaveFile(const Common::String &internalName) {
-	const int freeSlot = freeSaveSlot(_saveSlots, getMetaEngine()->getMaximumSaveSlot());
-	if (freeSlot == -1) {
+	const Common::String freeSlot = freeSaveSlot(this, getMetaEngine()->getMaximumSaveSlot());
+	if (freeSlot == "")
 		warning("game out of save slots");
-		return "";
+	return freeSlot;
+}
+
+static Common::String findSaveFile(const SaveStateList &saves, const Common::String &internalName) {
+	for (auto &s : saves) {
+		if(s.getDescription() == internalName)
+			return g_engine->getSaveStateName(s.getSaveSlot());
 	}
-	_saveSlots.set(freeSlot);
-	_internalSaves.setVal(internalName, freeSlot);
-	return getSaveStateName(freeSlot);
+	logWarning(kDebugSaves | kDebugFilePath, "save file for save %s does not exist", internalName.c_str());
+	return "";
+}
+
+void Hpl1Engine::removeSaveFile(const Common::String &internalName) {
+	Common::String filename = findSaveFile(g_engine->getMetaEngine()->listSaves(_targetName.c_str()), internalName);
+	if (filename != "")
+		_saveFileMan->removeSavefile(filename);
 }
 
 Common::String Hpl1Engine::mapInternalSaveToFile(const Common::String &internalName) {
-	const int slot = _internalSaves.getValOrDefault(internalName, -1);
-	if (slot == -1) {
-		logError(Hpl1::kDebugLevelError, "trying to map invalid save name: %s\n", internalName.c_str());
-		return "";
-	}
-	return getSaveStateName(slot);
+	return findSaveFile(g_engine->getMetaEngine()->listSaves(_targetName.c_str()), internalName);
 }
 
 Common::StringArray Hpl1Engine::listInternalSaves(const Common::String &pattern) {
-	Common::StringArray saves;
-	for(auto &kv : _internalSaves) {
-		if (kv._key.matchString(pattern))
-			saves.push_back(kv._key);
+	Common::StringArray internalSaves;
+	SaveStateList saves = g_engine->getMetaEngine()->listSaves(_targetName.c_str());
+	for (auto &save : saves) {
+		const Common::String saveDesc = save.getDescription();
+		if (saveDesc.matchString(pattern))
+			internalSaves.push_back(saveDesc);
 	}
-	return saves;
+	return internalSaves;
 }
 
 Common::Error Hpl1Engine::syncGame(Common::Serializer &s) {

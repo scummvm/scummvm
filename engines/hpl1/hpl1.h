@@ -45,8 +45,6 @@ class Hpl1Engine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	Common::HashMap<Common::String, int> _internalSaves;
-	Common::BitArray _saveSlots;
 
 protected:
 	// Engine APIs
@@ -92,6 +90,8 @@ public:
 	Common::String createSaveFile(const Common::String &internalName);
 
 	Common::String mapInternalSaveToFile(const Common::String &internalName);
+
+	void removeSaveFile(const Common::String &internalName);
 
 	Common::StringArray listInternalSaves(const Common::String &pattern);
 
