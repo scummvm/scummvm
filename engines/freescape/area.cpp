@@ -122,7 +122,9 @@ void Area::loadObjectFlags(Common::SeekableReadStream *stream) {
 	drillPosition.setValue(1, stream->readFloatLE());
 	drillPosition.setValue(2, stream->readFloatLE());
 
-	for (int i = 0; i < int(objectsByID->size()); i++) {
+	int objectsByIDSize = stream->readUint32LE();
+
+	for (int i = 0; i < objectsByIDSize; i++) {
 		uint16 key = stream->readUint32LE();
 		assert(objectsByID->contains(key));
 		Object *obj = (*objectsByID)[key];
@@ -135,7 +137,7 @@ void Area::saveObjectFlags(Common::WriteStream *stream) {
 	stream->writeFloatLE(drillPosition.y());
 	stream->writeFloatLE(drillPosition.z());
 
-	//stream->writeUint32LE(objectsByID->size());
+	stream->writeUint32LE(objectsByID->size());
 
 	for (ObjectMap::iterator iterator = objectsByID->begin(); iterator != objectsByID->end(); iterator++) {
 		stream->writeUint32LE(iterator->_key);
@@ -195,53 +197,6 @@ Object *Area::checkCollisions(const Math::AABB &boundingBox) {
 	return collided;
 }
 
-void Area::addDrill(Area *global, const Math::Vector3d position) {
-	//int drillObjectIDs[8] = {255, 254, 253, 252, 251, 250, 248, 247};
-	drillPosition = position;
-	Object *obj = nullptr;
-	Math::Vector3d offset = position;
-
-	int16 id;
-
-	id = 255;
-	debug("Adding object %d to room structure", id);
-	obj = global->objectWithID(id);
-	obj->setOrigin(offset);
-	offset.setValue(1, offset.y() + obj->getSize().y());
-
-	//offset.setValue(1, offset.y() + obj->getSize().y());
-	assert(obj);
-	obj->makeVisible();
-	drawableObjects.insert_at(0, obj);
-
-	id = 254;
-	debug("Adding object %d to room structure", id);
-	obj = global->objectWithID(id);
-	offset.setValue(1, offset.y() + obj->getSize().y());
-	obj->setOrigin(offset);
-	assert(obj);
-	obj->makeVisible();
-	drawableObjects.insert_at(0, obj);
-
-	id = 253;
-	debug("Adding object %d to room structure", id);
-	obj = global->objectWithID(id);
-	obj->setOrigin(offset);
-	offset.setValue(1, offset.y() + obj->getSize().y());
-	assert(obj);
-	obj->makeVisible();
-	drawableObjects.insert_at(0, obj);
-
-	id = 252;
-	debug("Adding object %d to room structure", id);
-	obj = global->objectWithID(id);
-	obj->setOrigin(offset);
-	offset.setValue(1, offset.y() + obj->getSize().y());
-	assert(obj);
-	obj->makeVisible();
-	drawableObjects.insert_at(0, obj);
-}
-
 void Area::removeDrill() {
 	drillPosition = Math::Vector3d();
 	for (int16 id = 252; id < 256; id++) {
@@ -253,6 +208,15 @@ void Area::removeDrill() {
 
 bool Area::drillDeployed() {
 	return (drawableObjects[0]->getObjectID() == 252);
+}
+
+void Area::addObject(Object *obj) {
+	assert(obj);
+	int id = obj->getObjectID();
+	debug("Adding object %d to room %d", id, areaID);
+	(*objectsByID)[id] = obj;
+	if (obj->isDrawable())
+		drawableObjects.insert_at(0, obj);
 }
 
 void Area::addObjectFromArea(int16 id, Area *global) {
