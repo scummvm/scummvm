@@ -37,6 +37,8 @@
 
 #include "hpl1/detection.h"
 
+class cInit;
+
 namespace Hpl1 {
 
 struct Hpl1GameDescription;
@@ -45,6 +47,7 @@ class Hpl1Engine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+	cInit* _gameInit;
 
 protected:
 	// Engine APIs

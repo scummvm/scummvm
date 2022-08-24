@@ -19,6 +19,7 @@
  *
  */
 
+#include "hpl1/penumbra-overture/Init.h"
 #include "engine/engine.h"
 #include "hpl1/hpl1.h"
 #include "common/config-manager.h"
@@ -33,8 +34,6 @@
 #include "hpl1/debug.h"
 #include "audio/mixer.h"
 #include "common/savefile.h"
-
-extern int hplMain(const hpl::tString &asCommandLine);
 
 namespace Hpl1 {
 
@@ -58,7 +57,14 @@ Common::String Hpl1Engine::getGameId() const {
 }
 
 Common::Error Hpl1Engine::run() {
-	hplMain("");
+	_gameInit = new cInit(); // TODO: remove allocation
+	if (!_gameInit->Init("")) {
+		delete _gameInit;
+		return Common::kUnknownError; // TODO: better errors
+	};
+	_gameInit->Run();
+	_gameInit->Exit();
+	delete _gameInit;
 	return Common::kNoError;
 }
 

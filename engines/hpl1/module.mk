@@ -271,7 +271,6 @@ MODULE_OBJS := \
 	penumbra-overture/Init.o \
 	penumbra-overture/IntroStory.o \
 	penumbra-overture/Inventory.o \
-	penumbra-overture/Main.o \
 	penumbra-overture/MainMenu.o \
 	penumbra-overture/MapHandler.o \
 	penumbra-overture/MapLoadText.o \
