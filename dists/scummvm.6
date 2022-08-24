@@ -29,17 +29,17 @@ will turn aspect ratio correction off.
 This is useful if you want to override a setting in the configuration file.
 .Bl -tag -width Ds
 .It Fl a | -add
-Add all games from current or specified directory.
+Add all games from current or specified (with
+.Fl -path= Ns Ar PATH )
+directory.
 If
 .Fl -game= Ns Ar ID
 is passed, only the game with id
 .Ar ID
 is added.
+.Pp
 See also
 .Fl -detect .
-Use
-.Fl -path= Ns Ar PATH
-to specify a directory.
 .It Fl b | -boot-param= Ns Ar NUM
 Pass number to the boot script (boot param).
 .It Fl c | -config= Ns Ar CONFIG
