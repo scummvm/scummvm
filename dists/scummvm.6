@@ -266,13 +266,13 @@ Display list of all detection engines and exit.
 Display list of all detected games and exit.
 .It Fl -list-audio-devices
 List all available audio devices.
-.It Fl -list-debugflags= Ns Ar engine
-Display list of engine specified debugflags.
-if
-.Ar engine= Ns global
-or
-.Ar engine
-is not specified, then it will list global debugflags.
+.It Fl -list-debugflags= Ns Ar ENGINE
+Display list of engine specified debugflags, and exit.
+If the
+.Ar ENGINE
+argument is
+.Dq global ,
+or if it is not specified, list global debugflags.
 .It Fl -list-engines
 Display list of supported engines and exit.
 .It Fl -list-saves
