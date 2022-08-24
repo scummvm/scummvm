@@ -29,8 +29,8 @@
 #define WINTERMUTE_ANIMATION_SET_H
 
 #include "engines/wintermute/base/base_named_object.h"
-#include "engines/wintermute/base/gfx/x/animation.h"
-#include "engines/wintermute/base/gfx/x/frame_node.h"
+#include "engines/wintermute/base/gfx/xanimation.h"
+#include "engines/wintermute/base/gfx/xframe_node.h"
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/persistent.h"
 

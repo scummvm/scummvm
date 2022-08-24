@@ -24,10 +24,10 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/base_renderer3d.h"
-#include "engines/wintermute/base/gfx/3ds/camera3d.h"
-#include "engines/wintermute/base/gfx/3ds/light3d.h"
-#include "engines/wintermute/base/gfx/3ds/loader3ds.h"
-#include "engines/wintermute/base/gfx/3ds/mesh3ds.h"
+#include "engines/wintermute/base/gfx/3dcamera.h"
+#include "engines/wintermute/base/gfx/3dlight.h"
+#include "engines/wintermute/base/gfx/3dloader_3ds.h"
+#include "engines/wintermute/base/gfx/3dmesh.h"
 
 namespace Wintermute {
 

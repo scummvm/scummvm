@@ -27,7 +27,7 @@
 
 #include "engines/wintermute/ad/ad_block.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
-#include "engines/wintermute/base/gfx/3ds/mesh3ds.h"
+#include "engines/wintermute/base/gfx/3dmesh.h"
 
 namespace Wintermute {
 

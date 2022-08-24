@@ -26,11 +26,11 @@
  */
 
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/gfx/x/animation.h"
-#include "engines/wintermute/base/gfx/x/animation_set.h"
-#include "engines/wintermute/base/gfx/x/frame_node.h"
-#include "engines/wintermute/base/gfx/x/modelx.h"
-#include "engines/wintermute/base/gfx/x/loader_x.h"
+#include "engines/wintermute/base/gfx/xanimation.h"
+#include "engines/wintermute/base/gfx/xanimation_set.h"
+#include "engines/wintermute/base/gfx/xframe_node.h"
+#include "engines/wintermute/base/gfx/xmodel.h"
+#include "engines/wintermute/base/gfx/xloader.h"
 #include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {

@@ -25,28 +25,40 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#include "engines/wintermute/ad/ad_generic.h"
-#include "engines/wintermute/base/base_persistence_manager.h"
-#include "engines/wintermute/base/gfx/3dmesh.h"
+#ifndef WINTERMUTE_ANIMATION_CHANNEL_H
+#define WINTERMUTE_ANIMATION_CHANNEL_H
+
+#include "engines/wintermute/base/base.h"
+#include "engines/wintermute/base/gfx/xactive_animation.h"
+#include "engines/wintermute/base/gfx/xanimation_set.h"
 
 namespace Wintermute {
 
-//////////////////////////////////////////////////////////////////////////
-AdGeneric::AdGeneric(BaseGame *inGame) : BaseScriptable(inGame, false, false) {
-	_mesh = nullptr;
-	_active = true;
-	_receiveShadows = false;
-}
+class AnimationChannel : public BaseClass {
+public:
+	AnimationChannel(BaseGame *inGame, ModelX *model);
+	virtual ~AnimationChannel();
 
-//////////////////////////////////////////////////////////////////////////
-AdGeneric::~AdGeneric() {
-	delete _mesh;
-}
+	bool playAnim(AnimationSet *animSet, uint32 transitionTime = 0, uint32 stopTransitionTime = 0);
+	bool stopAnim(uint32 transitionTime);
 
-//////////////////////////////////////////////////////////////////////////
-bool AdGeneric::persist(BasePersistenceManager *persistMgr) {
-	persistMgr->transferBool(TMEMBER(_active));
-	return true;
-}
+	bool update(bool debug);
+
+	bool isPlaying();
+	char *getName();
+
+	bool persist(BasePersistenceManager *persistMgr);
+	bool unloadAnim(AnimationSet *animSet);
+
+private:
+	ModelX *_model;
+	ActiveAnimation *_anim[2];
+	bool _transitioning;
+	uint32 _transitionStart;
+	uint32 _transtitionTime;
+	uint32 _stopTransitionTime;
+};
 
 } // namespace Wintermute
+
+#endif

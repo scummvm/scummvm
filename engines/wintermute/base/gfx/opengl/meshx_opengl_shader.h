@@ -28,7 +28,7 @@
 #ifndef WINTERMUTE_MESH_X_OPENGL_SHADER_H
 #define WINTERMUTE_MESH_X_OPENGL_SHADER_H
 
-#include "engines/wintermute/base/gfx/x/meshx.h"
+#include "engines/wintermute/base/gfx/xmesh.h"
 
 #if defined(USE_OPENGL_SHADERS)
 

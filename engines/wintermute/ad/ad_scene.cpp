@@ -64,8 +64,8 @@
 #include "engines/wintermute/ad/ad_actor_3dx.h"
 #include "engines/wintermute/ad/ad_scene_geometry.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
-#include "engines/wintermute/base/gfx/3ds/camera3d.h"
-#include "engines/wintermute/base/gfx/3ds/light3d.h"
+#include "engines/wintermute/base/gfx/3dcamera.h"
+#include "engines/wintermute/base/gfx/3dlight.h"
 #endif
 
 namespace Wintermute {

@@ -29,7 +29,7 @@
 #define WINTERMUTE_MESH_X_H
 
 #include "engines/wintermute/base/base_named_object.h"
-#include "engines/wintermute/base/gfx/x/modelx.h"
+#include "engines/wintermute/base/gfx/xmodel.h"
 #include "engines/wintermute/coll_templ.h"
 
 #include "math/matrix4.h"

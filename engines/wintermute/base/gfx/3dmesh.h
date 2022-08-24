@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef WINTERMUTE_MESH_3DS_H
-#define WINTERMUTE_MESH_3DS_H
+#ifndef WINTERMUTE_3D_MESH_H
+#define WINTERMUTE_3D_MESH_H
 
 #include "common/memstream.h"
 

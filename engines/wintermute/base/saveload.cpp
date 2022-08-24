@@ -38,7 +38,7 @@
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #ifdef ENABLE_WME3D
-#include "engines/wintermute/base/gfx/x/modelx.h"
+#include "engines/wintermute/base/gfx/xmodel.h"
 #endif
 
 #include "common/savefile.h"

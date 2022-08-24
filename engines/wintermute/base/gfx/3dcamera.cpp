@@ -25,8 +25,8 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#include "engines/wintermute/base/gfx/3ds/camera3d.h"
-#include "engines/wintermute/base/gfx/3ds/loader3ds.h"
+#include "engines/wintermute/base/gfx/3dcamera.h"
+#include "engines/wintermute/base/gfx/3dloader_3ds.h"
 #include "engines/wintermute/math/math_util.h"
 
 #include "math/angle.h"

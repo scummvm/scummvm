@@ -21,8 +21,8 @@
 
 #include "common/file.h"
 
-#include "engines/wintermute/base/gfx/3ds/loader3ds.h"
-#include "engines/wintermute/base/gfx/3ds/mesh3ds.h"
+#include "engines/wintermute/base/gfx/3dloader_3ds.h"
+#include "engines/wintermute/base/gfx/3dmesh.h"
 
 namespace Wintermute {
 

@@ -27,8 +27,8 @@
 
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
-#include "engines/wintermute/base/gfx/3ds/light3d.h"
-#include "engines/wintermute/base/gfx/3ds/loader3ds.h"
+#include "engines/wintermute/base/gfx/3dlight.h"
+#include "engines/wintermute/base/gfx/3dloader_3ds.h"
 #include "engines/wintermute/math/math_util.h"
 #include "engines/wintermute/wintypes.h"
 

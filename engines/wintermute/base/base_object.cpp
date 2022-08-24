@@ -40,7 +40,7 @@
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/gfx/base_renderer3d.h"
-#include "engines/wintermute/base/gfx/x/modelx.h"
+#include "engines/wintermute/base/gfx/xmodel.h"
 #include "engines/wintermute/wintermute.h"
 #endif
 

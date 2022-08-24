@@ -29,7 +29,7 @@
 #define WINTERMUTE_ACTIVE_ANIMATION_H
 
 #include "engines/wintermute/base/base.h"
-#include "engines/wintermute/base/gfx/x/animation_set.h"
+#include "engines/wintermute/base/gfx/xanimation_set.h"
 
 namespace Wintermute {
 

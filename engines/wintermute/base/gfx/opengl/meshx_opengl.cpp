@@ -25,7 +25,7 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#include "engines/wintermute/base/gfx/x/material.h"
+#include "engines/wintermute/base/gfx/xmaterial.h"
 
 #include "graphics/opengl/system_headers.h"
 

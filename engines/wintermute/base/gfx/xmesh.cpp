@@ -25,12 +25,12 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#include "engines/wintermute/base/gfx/shadow_volume.h"
-#include "engines/wintermute/base/gfx/x/material.h"
-#include "engines/wintermute/base/gfx/x/meshx.h"
-#include "engines/wintermute/base/gfx/x/frame_node.h"
-#include "engines/wintermute/base/gfx/x/loader_x.h"
-#include "engines/wintermute/base/gfx/x/modelx.h"
+#include "engines/wintermute/base/gfx/3dshadow_volume.h"
+#include "engines/wintermute/base/gfx/xmaterial.h"
+#include "engines/wintermute/base/gfx/xmesh.h"
+#include "engines/wintermute/base/gfx/xframe_node.h"
+#include "engines/wintermute/base/gfx/xloader.h"
+#include "engines/wintermute/base/gfx/xmodel.h"
 #include "engines/wintermute/math/math_util.h"
 
 namespace Wintermute {

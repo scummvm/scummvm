@@ -25,47 +25,41 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#ifndef WINTERMUTE_SHADOW_VOLUME_H
-#define WINTERMUTE_SHADOW_VOLUME_H
-
-#include "engines/wintermute//base/base.h"
-#include "engines/wintermute/coll_templ.h"
-#include "math/matrix4.h"
-#include "math/vector3d.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
+#include "engines/wintermute/base/gfx/3dshadow_volume.h"
+#include "engines/wintermute/dcgf.h"
+#include "graphics/opengl/system_headers.h"
 
 namespace Wintermute {
 
-struct ShadowVertex {
-	float x;
-	float y;
-	float z;
-	uint8 r;
-	uint8 g;
-	uint8 b;
-	uint8 a;
-};
+//////////////////////////////////////////////////////////////////////////
+ShadowVolume::ShadowVolume(BaseGame *inGame) : BaseClass(inGame), _color(0x7f000000) {
+}
 
-class ShadowVolume : public BaseClass {
-public:
-	ShadowVolume(BaseGame *inGame);
-	virtual ~ShadowVolume();
+//////////////////////////////////////////////////////////////////////////
+ShadowVolume::~ShadowVolume() {
+}
 
-	void addVertex(const Math::Vector3d &vertex);
-	bool reset();
+//////////////////////////////////////////////////////////////////////////
+bool ShadowVolume::reset() {
+	_vertices.clear();
+	return true;
+}
 
-	virtual bool renderToStencilBuffer() = 0;
-	virtual bool renderToScene() = 0;
+//////////////////////////////////////////////////////////////////////////
+void ShadowVolume::addVertex(const Math::Vector3d &vertex) {
+	_vertices.add(vertex);
+}
 
-	bool setColor(uint32 color);
-
-protected:
-	BaseArray<Math::Vector3d> _vertices; // Vertex data for rendering shadow volume
-	uint32 _color;
-
-private:
-	virtual bool initMask() = 0;
-};
+//////////////////////////////////////////////////////////////////////////
+bool ShadowVolume::setColor(uint32 color) {
+	if (color != _color) {
+		_color = color;
+		return initMask();
+	} else {
+		return true;
+	}
+}
 
 } // namespace Wintermute
-
-#endif

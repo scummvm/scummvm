@@ -24,7 +24,7 @@
 #include "engines/wintermute/ad/ad_walkplane.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/base_image.h"
-#include "engines/wintermute/base/gfx/3ds/camera3d.h"
+#include "engines/wintermute/base/gfx/3dcamera.h"
 
 #include "graphics/opengl/system_headers.h"
 

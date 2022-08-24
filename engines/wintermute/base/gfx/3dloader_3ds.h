@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef WINTERMUTE_LOADER3DS_H
-#define WINTERMUTE_LOADER3DS_H
+#ifndef WINTERMUTE_3D_LOADER_3DS_H
+#define WINTERMUTE_3D_LOADER_3DS_H
 
 #include "engines/wintermute/coll_templ.h"
 

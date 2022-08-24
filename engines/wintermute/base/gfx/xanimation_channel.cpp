@@ -26,7 +26,7 @@
  */
 
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/gfx/x/animation_channel.h"
+#include "engines/wintermute/base/gfx/xanimation_channel.h"
 #include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {

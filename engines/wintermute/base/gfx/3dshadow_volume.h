@@ -11,7 +11,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -25,38 +25,45 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#ifndef WINTERMUTE_ANIMATION_CHANNEL_H
-#define WINTERMUTE_ANIMATION_CHANNEL_H
+#ifndef WINTERMUTE_3D_SHADOW_VOLUME_H
+#define WINTERMUTE_3D_SHADOW_VOLUME_H
 
-#include "engines/wintermute/base/base.h"
-#include "engines/wintermute/base/gfx/x/active_animation.h"
-#include "engines/wintermute/base/gfx/x/animation_set.h"
+#include "engines/wintermute//base/base.h"
+#include "engines/wintermute/coll_templ.h"
+#include "math/matrix4.h"
+#include "math/vector3d.h"
 
 namespace Wintermute {
 
-class AnimationChannel : public BaseClass {
+struct ShadowVertex {
+	float x;
+	float y;
+	float z;
+	uint8 r;
+	uint8 g;
+	uint8 b;
+	uint8 a;
+};
+
+class ShadowVolume : public BaseClass {
 public:
-	AnimationChannel(BaseGame *inGame, ModelX *model);
-	virtual ~AnimationChannel();
+	ShadowVolume(BaseGame *inGame);
+	virtual ~ShadowVolume();
 
-	bool playAnim(AnimationSet *animSet, uint32 transitionTime = 0, uint32 stopTransitionTime = 0);
-	bool stopAnim(uint32 transitionTime);
+	void addVertex(const Math::Vector3d &vertex);
+	bool reset();
 
-	bool update(bool debug);
+	virtual bool renderToStencilBuffer() = 0;
+	virtual bool renderToScene() = 0;
 
-	bool isPlaying();
-	char *getName();
+	bool setColor(uint32 color);
 
-	bool persist(BasePersistenceManager *persistMgr);
-	bool unloadAnim(AnimationSet *animSet);
+protected:
+	BaseArray<Math::Vector3d> _vertices; // Vertex data for rendering shadow volume
+	uint32 _color;
 
 private:
-	ModelX *_model;
-	ActiveAnimation *_anim[2];
-	bool _transitioning;
-	uint32 _transitionStart;
-	uint32 _transtitionTime;
-	uint32 _stopTransitionTime;
+	virtual bool initMask() = 0;
 };
 
 } // namespace Wintermute

@@ -27,10 +27,10 @@
 
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/base_renderer3d.h"
-#include "engines/wintermute/base/gfx/x/material.h"
-#include "engines/wintermute/base/gfx/x/frame_node.h"
-#include "engines/wintermute/base/gfx/x/modelx.h"
-#include "engines/wintermute/base/gfx/x/loader_x.h"
+#include "engines/wintermute/base/gfx/xmaterial.h"
+#include "engines/wintermute/base/gfx/xframe_node.h"
+#include "engines/wintermute/base/gfx/xmodel.h"
+#include "engines/wintermute/base/gfx/xloader.h"
 #include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {

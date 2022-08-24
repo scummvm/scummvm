@@ -22,7 +22,7 @@
 #ifndef WINTERMUTE_MESH_OPENGL_H
 #define WINTERMUTE_MESH_OPENGL_H
 
-#include "engines/wintermute/base/gfx/3ds/mesh3ds.h"
+#include "engines/wintermute/base/gfx/3dmesh.h"
 
 #if defined(USE_OPENGL_GAME)
 

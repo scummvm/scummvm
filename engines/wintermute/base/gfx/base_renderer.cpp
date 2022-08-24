@@ -36,7 +36,7 @@
 #include "engines/wintermute/base/base_persistence_manager.h"
 
 #ifdef ENABLE_WME3D
-#include "engines/wintermute/base/gfx/x/modelx.h"
+#include "engines/wintermute/base/gfx/xmodel.h"
 #endif
 
 namespace Wintermute {

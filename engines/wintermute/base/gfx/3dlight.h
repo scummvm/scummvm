@@ -25,8 +25,8 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#ifndef WINTERMUTE_LIGHT3D_H
-#define WINTERMUTE_LIGHT3D_H
+#ifndef WINTERMUTE_3D_LIGHT_H
+#define WINTERMUTE_3D_LIGHT_H
 
 #include "common/memstream.h"
 
