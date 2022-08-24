@@ -27,6 +27,7 @@ For example,
 .Fl -no-aspect-ratio
 will turn aspect ratio correction off.
 This is useful if you want to override a setting in the configuration file.
+.\" Note: sorted alphabetically, since that's the mdoc convention
 .Bl -tag -width Ds
 .It Fl a | -add
 Add all games from current or specified (with
@@ -108,7 +109,7 @@ Set the path to where the game is installed.
 .It Fl q | -language= Ns Ar LANG
 Select game's language:
 .Bl -tag -width auto -compact
-.\" Sorted by English name of language
+.\" From common/language.cpp, sorted by English name of language
 .It Ar ar
 Arabic (Modern Standard)
 .It Ar ca
@@ -332,6 +333,7 @@ Select AdLib (OPL) emulator
 Set output sample rate in Hz (e.g. 22050).
 .It Fl -platform= Ns Ar PLATFORM
 Specify platform of game
+.\" From common/platform.cpp
 .Po
 .Ar 2gs ,
 .Ar 3do ,
@@ -378,6 +380,7 @@ or
 recurse down all subdirectories.
 .It Fl -render-mode= Ns Ar MODE
 Enable additional render modes
+.\" From common/gui_options.cpp
 .Po
 .Ar 2gs ,
 .Ar amiga ,
@@ -431,6 +434,7 @@ Start movie at frame for Director.
 Either argument can be specified without the other.
 .It Fl -stretch-mode= Ns Ar MODE
 Select stretch mode
+.\" From backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp
 .Po
 .Ar center ,
 .Ar even-pixels ,
