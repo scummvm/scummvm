@@ -39,6 +39,7 @@
 #include "hpl1/hpl1.h"
 #include "hpl1/string.h"
 #include "common/savefile.h"
+#include "hpl1/debug.h"
 #include <stdio.h>
 
 //////////////////////////////////////////////////////////////////////////
@@ -601,7 +602,7 @@ void cSaveHandler::LoadGameFromFile(const tWString &asFile) {
 void cSaveHandler::AutoSave(const tWString &asDir, int alMaxSaves) {
 	//////////////////////
 	// Check the available autosaves
-	DeleteOldestIfMax(_W("save/") + asDir, _W("*.sav"), alMaxSaves);
+	DeleteOldestIfMax(asDir, _W(":*"), alMaxSaves);
 
 	//////////////////////
 	// Save the autosave
@@ -668,35 +669,6 @@ void cSaveHandler::OnExit() {
 
 //-----------------------------------------------------------------------
 
-void cSaveHandler::DeleteOldestIfMax(const tWString &asDir, const tWString &asMask, int alMaxFiles) {
-	LowLevelResources *pLowLevelResources = mpInit->mpGame->GetResources()->GetLowLevel();
-	/*LowLevelSystem *pLowLevelSystem = */mpInit->mpGame->GetSystem()->GetLowLevel();
-
-	tWString sPath = msSaveDir + asDir;
-
-	tStringList lstFiles;
-	pLowLevelResources->findFilesInDir(lstFiles, cString::To8Char(sPath), cString::To8Char(asMask));
-
-	// If there are too many files, remove oldest.
-	if ((int)lstFiles.size() >= alMaxFiles) {
-		tString sOldest = "";
-		cDate oldestDate;
-
-		tStringListIt it = lstFiles.begin();
-		for (; it != lstFiles.end(); ++it) {
-			cDate date = FileModifiedDate(sPath + _W("/") + cString::To16Char(*it));
-			if (sOldest == "" || oldestDate > date) {
-				sOldest = *it;
-				oldestDate = date;
-			}
-		}
-
-		RemoveFile(sPath + _W("/") + cString::To16Char(sOldest));
-	}
-}
-
-//-----------------------------------------------------------------------
-
 cDate cSaveHandler::parseDate(const Common::String &saveFile) {
 	cDate date;
 	auto firstDigit = Common::find_if(saveFile.begin(), saveFile.end(), Common::isDigit);
@@ -705,21 +677,37 @@ cDate cSaveHandler::parseDate(const Common::String &saveFile) {
 	return date;
 }
 
-tWString cSaveHandler::GetLatest(const tWString &asMask) {
-	// FIXME: string types
-	Common::StringArray saves = Hpl1::g_engine->listInternalSaves(cString::To8Char(asMask).c_str());
+template<typename DateCmp>
+Common::String firstSave(const Common::StringArray &saves, DateCmp cmp) {
 	if (saves.empty())
-		return _W("");
-	cDate latestDate = parseDate(saves.front());
+		return "";
+	cDate latestDate = cSaveHandler::parseDate(saves.front());
 	const Common::String* latestSave = &saves.front();
 	for (auto it = saves.begin() + 1; it != saves.end(); ++it) {
-		cDate d = parseDate(*it);
-		if (d > latestDate) {
+		cDate d = cSaveHandler::parseDate(*it);
+		if (cmp(d, latestDate)) {
 			latestDate = d;
 			latestSave = it;
 		}
 	}
-	return cString::To16Char(latestSave->c_str());
+	return *latestSave;
+}
+
+void cSaveHandler::DeleteOldestIfMax(const tWString &asDir, const tWString &asMask, int alMaxFiles) {
+	const Common::StringArray saves = Hpl1::g_engine->listInternalSaves(cString::To8Char(asDir + asMask).c_str());
+	if (static_cast<int>(saves.size()) > alMaxFiles) {
+		const Common::String oldest = firstSave(saves, [](const cDate& a, const cDate &b){return a < b;});
+		Hpl1::logInfo(Hpl1::kDebugSaves, "removing save %s\n", oldest.c_str());
+		Hpl1::g_engine->removeSaveFile(oldest);
+	}
+}
+
+//-----------------------------------------------------------------------
+
+tWString cSaveHandler::GetLatest(const tWString &asMask) {
+	// FIXME: string types
+	Common::StringArray saves = Hpl1::g_engine->listInternalSaves(cString::To8Char(asMask).c_str());
+	return cString::To16Char(firstSave(saves, [](const cDate& a, const cDate &b){return a > b;}).c_str());
 }
 
 //-----------------------------------------------------------------------
