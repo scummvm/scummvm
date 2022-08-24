@@ -111,22 +111,22 @@ bool GeometricObject::isPolygon(Type type) {
 }
 
 GeometricObject::GeometricObject(
-	Type type,
-	uint16 objectID,
-	uint16 flags,
+	Type _type,
+	uint16 _objectID,
+	uint16 _flags,
 	const Math::Vector3d &_origin,
 	const Math::Vector3d &_size,
 	Common::Array<uint8> *_colours,
 	Common::Array<uint16> *_ordinates,
 	FCLInstructionVector _conditionInstructions,
 	Common::String *_conditionSource) {
-	_type = type;
-	_flags = flags;
+	type = _type;
+	flags = _flags;
 
 	if (isDestroyed()) // If the object is destroyed, restore it
-		_flags = _flags & ~0x20;
+		flags = flags & ~0x20;
 
-	_objectID = objectID;
+	objectID = _objectID;
 	origin = _origin;
 	size = _size;
 
@@ -146,9 +146,9 @@ GeometricObject::GeometricObject(
 
 GeometricObject *GeometricObject::duplicate() {
 	return new GeometricObject(
-		_type,
-		_objectID,
-		_flags,
+		type,
+		objectID,
+		flags,
 		origin,
 		size,
 		colours,
@@ -159,32 +159,32 @@ GeometricObject *GeometricObject::duplicate() {
 
 void GeometricObject::createBoundingBox() {
 	Math::Vector3d v;
-	switch (_type) {
+	switch (type) {
 	default:
 	break;
 	case Cube:
-		_boundingBox.expand(origin);
+		boundingBox.expand(origin);
 		for (int i = 0; i < 3; i++) {
 			v = origin;
 			v.setValue(i, v.getValue(i) + size.getValue(i));
-			_boundingBox.expand(v);
+			boundingBox.expand(v);
 		}
 
 		for (int i = 0; i < 3; i++) {
 			v = origin + size;
 			v.setValue(i, v.getValue(i) - size.getValue(i));
-			_boundingBox.expand(v);
+			boundingBox.expand(v);
 		}
-		_boundingBox.expand(origin + size);
-		assert(_boundingBox.isValid());
+		boundingBox.expand(origin + size);
+		assert(boundingBox.isValid());
 		break;
 	case Rectangle:
-		_boundingBox.expand(origin);
-		_boundingBox.expand(origin + size);
+		boundingBox.expand(origin);
+		boundingBox.expand(origin + size);
 		break;
 	case Line:
 		for (int i = 0; i < int(ordinates->size()); i = i + 3) {
-			_boundingBox.expand(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1], (*ordinates)[i + 2]));
+			boundingBox.expand(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1], (*ordinates)[i + 2]));
 		}
 		int dx, dy, dz;
 		dx = dy = dz = 0;
@@ -200,7 +200,7 @@ void GeometricObject::createBoundingBox() {
 		}
 
 		for (int i = 0; i < int(ordinates->size()); i = i + 3) {
-			_boundingBox.expand(Math::Vector3d((*ordinates)[i] + dx, (*ordinates)[i + 1] + dy, (*ordinates)[i + 2] + dz));
+			boundingBox.expand(Math::Vector3d((*ordinates)[i] + dx, (*ordinates)[i + 1] + dy, (*ordinates)[i + 2] + dz));
 		}
 
 		break;
@@ -209,72 +209,72 @@ void GeometricObject::createBoundingBox() {
 	case Pentagon:
 	case Hexagon:
 		for (int i = 0; i < int(ordinates->size()); i = i + 3) {
-			_boundingBox.expand(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1], (*ordinates)[i + 2]));
+			boundingBox.expand(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1], (*ordinates)[i + 2]));
 		}
 		break;
 
 	case EastPyramid:
-		_boundingBox.expand(origin + Math::Vector3d(0, 0, size.z()));
-		_boundingBox.expand(origin + Math::Vector3d(0, size.y(), size.z()));
-		_boundingBox.expand(origin + Math::Vector3d(0, size.y(), 0));
+		boundingBox.expand(origin + Math::Vector3d(0, 0, size.z()));
+		boundingBox.expand(origin + Math::Vector3d(0, size.y(), size.z()));
+		boundingBox.expand(origin + Math::Vector3d(0, size.y(), 0));
 
-		_boundingBox.expand(origin + Math::Vector3d(size.x(), (*ordinates)[0], (*ordinates)[3]));
-		_boundingBox.expand(origin + Math::Vector3d(size.x(), (*ordinates)[2], (*ordinates)[3]));
-		_boundingBox.expand(origin + Math::Vector3d(size.x(), (*ordinates)[2], (*ordinates)[1]));
-		_boundingBox.expand(origin + Math::Vector3d(size.x(), (*ordinates)[0], (*ordinates)[1]));
+		boundingBox.expand(origin + Math::Vector3d(size.x(), (*ordinates)[0], (*ordinates)[3]));
+		boundingBox.expand(origin + Math::Vector3d(size.x(), (*ordinates)[2], (*ordinates)[3]));
+		boundingBox.expand(origin + Math::Vector3d(size.x(), (*ordinates)[2], (*ordinates)[1]));
+		boundingBox.expand(origin + Math::Vector3d(size.x(), (*ordinates)[0], (*ordinates)[1]));
 		break;
 	case WestPyramid:
-		_boundingBox.expand(origin + Math::Vector3d(size.x(), 0, 0));
-		_boundingBox.expand(origin + Math::Vector3d(size.x(), size.y(), 0));
-		_boundingBox.expand(origin + Math::Vector3d(size.x(), size.y(), size.z()));
-		_boundingBox.expand(origin + Math::Vector3d(size.x(), 0, size.z()));
+		boundingBox.expand(origin + Math::Vector3d(size.x(), 0, 0));
+		boundingBox.expand(origin + Math::Vector3d(size.x(), size.y(), 0));
+		boundingBox.expand(origin + Math::Vector3d(size.x(), size.y(), size.z()));
+		boundingBox.expand(origin + Math::Vector3d(size.x(), 0, size.z()));
 
-		_boundingBox.expand(origin + Math::Vector3d(0, (*ordinates)[0], (*ordinates)[1]));
-		_boundingBox.expand(origin + Math::Vector3d(0, (*ordinates)[2], (*ordinates)[1]));
-		_boundingBox.expand(origin + Math::Vector3d(0, (*ordinates)[2], (*ordinates)[3]));
-		_boundingBox.expand(origin + Math::Vector3d(0, (*ordinates)[0], (*ordinates)[3]));
+		boundingBox.expand(origin + Math::Vector3d(0, (*ordinates)[0], (*ordinates)[1]));
+		boundingBox.expand(origin + Math::Vector3d(0, (*ordinates)[2], (*ordinates)[1]));
+		boundingBox.expand(origin + Math::Vector3d(0, (*ordinates)[2], (*ordinates)[3]));
+		boundingBox.expand(origin + Math::Vector3d(0, (*ordinates)[0], (*ordinates)[3]));
 		break;
 	case UpPyramid:
-		_boundingBox.expand(origin + Math::Vector3d(size.x(), 0, 0));
-		_boundingBox.expand(origin + Math::Vector3d(size.x(), 0, size.z()));
-		_boundingBox.expand(origin + Math::Vector3d(0, 0, size.z()));
+		boundingBox.expand(origin + Math::Vector3d(size.x(), 0, 0));
+		boundingBox.expand(origin + Math::Vector3d(size.x(), 0, size.z()));
+		boundingBox.expand(origin + Math::Vector3d(0, 0, size.z()));
 
-		_boundingBox.expand(origin + Math::Vector3d((*ordinates)[0], size.y(), (*ordinates)[1]));
-		_boundingBox.expand(origin + Math::Vector3d((*ordinates)[2], size.y(), (*ordinates)[1]));
-		_boundingBox.expand(origin + Math::Vector3d((*ordinates)[2], size.y(), (*ordinates)[3]));
-		_boundingBox.expand(origin + Math::Vector3d((*ordinates)[0], size.y(), (*ordinates)[3]));
+		boundingBox.expand(origin + Math::Vector3d((*ordinates)[0], size.y(), (*ordinates)[1]));
+		boundingBox.expand(origin + Math::Vector3d((*ordinates)[2], size.y(), (*ordinates)[1]));
+		boundingBox.expand(origin + Math::Vector3d((*ordinates)[2], size.y(), (*ordinates)[3]));
+		boundingBox.expand(origin + Math::Vector3d((*ordinates)[0], size.y(), (*ordinates)[3]));
 		break;
 	case DownPyramid:
-		_boundingBox.expand(origin + Math::Vector3d(size.x(), size.y(), 0));
-		_boundingBox.expand(origin + Math::Vector3d(0, size.y(), 0));
-		_boundingBox.expand(origin + Math::Vector3d(0, size.y(), size.z()));
-		_boundingBox.expand(origin + Math::Vector3d(size.x(), size.y(), size.z()));
+		boundingBox.expand(origin + Math::Vector3d(size.x(), size.y(), 0));
+		boundingBox.expand(origin + Math::Vector3d(0, size.y(), 0));
+		boundingBox.expand(origin + Math::Vector3d(0, size.y(), size.z()));
+		boundingBox.expand(origin + Math::Vector3d(size.x(), size.y(), size.z()));
 
-		_boundingBox.expand(origin + Math::Vector3d((*ordinates)[2], 0, (*ordinates)[1]));
-		_boundingBox.expand(origin + Math::Vector3d((*ordinates)[0], 0, (*ordinates)[1]));
-		_boundingBox.expand(origin + Math::Vector3d((*ordinates)[0], 0, (*ordinates)[3]));
-		_boundingBox.expand(origin + Math::Vector3d((*ordinates)[2], 0, (*ordinates)[3]));
+		boundingBox.expand(origin + Math::Vector3d((*ordinates)[2], 0, (*ordinates)[1]));
+		boundingBox.expand(origin + Math::Vector3d((*ordinates)[0], 0, (*ordinates)[1]));
+		boundingBox.expand(origin + Math::Vector3d((*ordinates)[0], 0, (*ordinates)[3]));
+		boundingBox.expand(origin + Math::Vector3d((*ordinates)[2], 0, (*ordinates)[3]));
 		break;
 	case NorthPyramid:
-		_boundingBox.expand(origin + Math::Vector3d(0, size.y(), 0));
-		_boundingBox.expand(origin + Math::Vector3d(size.x(), size.y(), 0));
-		_boundingBox.expand(origin + Math::Vector3d(size.x(), 0, 0));
+		boundingBox.expand(origin + Math::Vector3d(0, size.y(), 0));
+		boundingBox.expand(origin + Math::Vector3d(size.x(), size.y(), 0));
+		boundingBox.expand(origin + Math::Vector3d(size.x(), 0, 0));
 
-		_boundingBox.expand(origin + Math::Vector3d((*ordinates)[0], (*ordinates)[3], size.z()));
-		_boundingBox.expand(origin + Math::Vector3d((*ordinates)[2], (*ordinates)[3], size.z()));
-		_boundingBox.expand(origin + Math::Vector3d((*ordinates)[2], (*ordinates)[1], size.z()));
-		_boundingBox.expand(origin + Math::Vector3d((*ordinates)[0], (*ordinates)[1], size.z()));
+		boundingBox.expand(origin + Math::Vector3d((*ordinates)[0], (*ordinates)[3], size.z()));
+		boundingBox.expand(origin + Math::Vector3d((*ordinates)[2], (*ordinates)[3], size.z()));
+		boundingBox.expand(origin + Math::Vector3d((*ordinates)[2], (*ordinates)[1], size.z()));
+		boundingBox.expand(origin + Math::Vector3d((*ordinates)[0], (*ordinates)[1], size.z()));
 		break;
 	case SouthPyramid:
-		_boundingBox.expand(origin + Math::Vector3d(0, 0, size.z()));
-		_boundingBox.expand(origin + Math::Vector3d(size.x(), 0, size.z()));
-		_boundingBox.expand(origin + Math::Vector3d(size.x(), size.y(), size.z()));
+		boundingBox.expand(origin + Math::Vector3d(0, 0, size.z()));
+		boundingBox.expand(origin + Math::Vector3d(size.x(), 0, size.z()));
+		boundingBox.expand(origin + Math::Vector3d(size.x(), size.y(), size.z()));
 
-		_boundingBox.expand(origin + Math::Vector3d(0, size.y(), size.z()));
-		_boundingBox.expand(origin + Math::Vector3d((*ordinates)[0], (*ordinates)[1], 0));
-		_boundingBox.expand(origin + Math::Vector3d((*ordinates)[2], (*ordinates)[1], 0));
-		_boundingBox.expand(origin + Math::Vector3d((*ordinates)[2], (*ordinates)[3], 0));
-		_boundingBox.expand(origin + Math::Vector3d((*ordinates)[0], (*ordinates)[3], 0));
+		boundingBox.expand(origin + Math::Vector3d(0, size.y(), size.z()));
+		boundingBox.expand(origin + Math::Vector3d((*ordinates)[0], (*ordinates)[1], 0));
+		boundingBox.expand(origin + Math::Vector3d((*ordinates)[2], (*ordinates)[1], 0));
+		boundingBox.expand(origin + Math::Vector3d((*ordinates)[2], (*ordinates)[3], 0));
+		boundingBox.expand(origin + Math::Vector3d((*ordinates)[0], (*ordinates)[3], 0));
 		break;
 	}
 }
@@ -288,16 +288,16 @@ bool GeometricObject::isPlanar() {
 	return (type >= Object::Line) || type == Object::Rectangle || !size.x() || !size.y() || !size.z();
 }
 
-bool GeometricObject::collides(const Math::AABB &boundingBox) {
-	if (isDestroyed() || isInvisible() || !_boundingBox.isValid() || !boundingBox.isValid())
+bool GeometricObject::collides(const Math::AABB &_boundingBox) {
+	if (isDestroyed() || isInvisible() || !boundingBox.isValid() || !_boundingBox.isValid())
 		return false;
 
-	return(	_boundingBox.getMax().x() > boundingBox.getMin().x() &&
-			_boundingBox.getMin().x() < boundingBox.getMax().x() &&
-			_boundingBox.getMax().y() > boundingBox.getMin().y() &&
-			_boundingBox.getMin().y() < boundingBox.getMax().y() &&
-			_boundingBox.getMax().z() > boundingBox.getMin().z() &&
-			_boundingBox.getMin().z() < boundingBox.getMax().z());
+	return(	boundingBox.getMax().x() > _boundingBox.getMin().x() &&
+			boundingBox.getMin().x() < _boundingBox.getMax().x() &&
+			boundingBox.getMax().y() > _boundingBox.getMin().y() &&
+			boundingBox.getMin().y() < _boundingBox.getMax().y() &&
+			boundingBox.getMax().z() > _boundingBox.getMin().z() &&
+			boundingBox.getMin().z() < _boundingBox.getMax().z());
 }
 
 void GeometricObject::draw(Freescape::Renderer *gfx) {
@@ -308,7 +308,7 @@ void GeometricObject::draw(Freescape::Renderer *gfx) {
 		gfx->renderRectangle(origin, size, colours);
 	} else if (isPyramid(this->getType())) {
 		gfx->renderPyramid(origin, size, ordinates, colours, this->getType());
-	} else if (this->isPlanar() && _type <= 14) {
+	} else if (this->isPlanar() && type <= 14) {
 		if (this->getType() == Triangle)
 			assert(ordinates->size() == 9);
 

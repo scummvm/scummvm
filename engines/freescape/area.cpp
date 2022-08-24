@@ -170,8 +170,8 @@ Object *Area::shootRay(const Math::Ray &ray) {
 	for (int i = 0; i < int(drawableObjects.size()); i++) {
 		float objSize = drawableObjects[i]->getSize().length();
 		if (!drawableObjects[i]->isDestroyed() && !drawableObjects[i]->isInvisible()
-		  && drawableObjects[i]->_boundingBox.isValid()
-		  && ray.intersectAABB(drawableObjects[i]->_boundingBox)
+		  && drawableObjects[i]->boundingBox.isValid()
+		  && ray.intersectAABB(drawableObjects[i]->boundingBox)
 		  && size >= objSize) {
 			debug("shot obj id: %d", drawableObjects[i]->getObjectID());
 			collided = drawableObjects[i];
