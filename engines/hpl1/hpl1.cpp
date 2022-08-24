@@ -31,6 +31,7 @@
 #include "hpl1/console.h"
 #include "hpl1/detection.h"
 #include "hpl1/debug.h"
+#include "audio/mixer.h"
 
 extern int hplMain(const hpl::tString &asCommandLine);
 
@@ -68,6 +69,11 @@ Common::Error Hpl1Engine::run() {
 	initSaves(_targetName.c_str(), _saveSlots, _internalSaves);
 	hplMain("");
 	return Common::kNoError;
+}
+
+void Hpl1Engine::pauseEngineIntern(bool pause) {
+	_mixer->pauseAll(pause);
+	g_system->lockMouse(!pause);
 }
 
 static int freeSaveSlot(Common::BitArray &slots, const int size) {
