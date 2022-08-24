@@ -110,9 +110,6 @@ bool GeometricObject::isPolygon(Type type) {
 	}
 }
 
-#pragma mark -
-#pragma mark Construction/Destruction
-
 GeometricObject::GeometricObject(
 	Type type,
 	uint16 objectID,
@@ -133,13 +130,31 @@ GeometricObject::GeometricObject(
 	origin = _origin;
 	size = _size;
 
+	colours = nullptr;
+
 	if (_colours)
 		colours = new Common::Array<uint8>(*_colours);
+
+	ordinates = nullptr;
+
 	if (_ordinates)
 		ordinates = new Common::Array<uint16>(*_ordinates);
 	condition = _conditionInstructions;
 	conditionSource = _conditionSource;
 	createBoundingBox();
+}
+
+GeometricObject *GeometricObject::duplicate() {
+	return new GeometricObject(
+		_type,
+		_objectID,
+		_flags,
+		origin,
+		size,
+		colours,
+		ordinates,
+		condition,
+		conditionSource);
 }
 
 void GeometricObject::createBoundingBox() {

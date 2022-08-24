@@ -108,7 +108,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 			debugC(1, kFreescapeDebugMove, "with pitch: %f and yaw %f", _pitch, _yaw);
 
 			const Math::Vector3d gasPocket3D(gasPocket.x, 1, gasPocket.y);
-			_currentArea->addDrill(globalObjectsArea, drillPosition);
+			addDrill(drillPosition);
 			float distance = (gasPocket3D - drillPosition).length();
 			debugC(1, kFreescapeDebugMove, "length to gas pocket: %f with radius %d", distance, _currentArea->gasPocketRadius);
 			// TODO check the result of the drilling
@@ -126,6 +126,57 @@ void DrillerEngine::pressedKey(const int keycode) {
 			_currentArea->removeDrill();
 		}
 	}
+}
+
+void DrillerEngine::addDrill(const Math::Vector3d position) {
+	//int drillObjectIDs[8] = {255, 254, 253, 252, 251, 250, 248, 247};
+	GeometricObject *obj = nullptr;
+	Math::Vector3d offset = position;
+
+	int16 id;
+
+	id = 255;
+	debug("Adding object %d to room structure", id);
+	obj = (GeometricObject*) globalObjectsArea->objectWithID(id);
+	assert(obj);
+	obj = obj->duplicate();
+	obj->setOrigin(offset);
+	offset.setValue(1, offset.y() + obj->getSize().y());
+
+	//offset.setValue(1, offset.y() + obj->getSize().y());
+	obj->makeVisible();
+	_currentArea->addObject(obj);
+
+	id = 254;
+	debug("Adding object %d to room structure", id);
+	obj = (GeometricObject*) globalObjectsArea->objectWithID(id);
+	assert(obj);
+	obj = obj->duplicate();
+	offset.setValue(1, offset.y() + obj->getSize().y());
+	obj->setOrigin(offset);
+	obj->makeVisible();
+	_currentArea->addObject(obj);
+
+	id = 253;
+	debug("Adding object %d to room structure", id);
+	obj = (GeometricObject*) globalObjectsArea->objectWithID(id);
+	assert(obj);
+	obj = obj->duplicate();
+	obj->setOrigin(offset);
+	offset.setValue(1, offset.y() + obj->getSize().y());
+	obj->makeVisible();
+	_currentArea->addObject(obj);
+
+	id = 252;
+	debug("Adding object %d to room structure", id);
+	obj = (GeometricObject*) globalObjectsArea->objectWithID(id);
+	assert(obj);
+	obj = obj->duplicate();
+	obj->setOrigin(offset);
+	offset.setValue(1, offset.y() + obj->getSize().y());
+	assert(obj);
+	obj->makeVisible();
+	_currentArea->addObject(obj);
 }
 
 void DrillerEngine::initGameState() {

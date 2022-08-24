@@ -59,6 +59,7 @@ public:
 	Object *shootRay(const Math::Ray &ray);
 	Object *checkCollisions(const Math::AABB &boundingBox);
 	void addObjectFromArea(int16 id, Area *global);
+	void addObject(Object *obj);
 	void addStructure(Area *global);
 
 	Common::Array<Common::String*> conditionSources;
@@ -69,7 +70,6 @@ public:
 	void loadObjectFlags(Common::SeekableReadStream *stream);
 
 	// Driller specific
-	void addDrill(Area *structure, const Math::Vector3d position);
 	void removeDrill();
 	bool drillDeployed();
 	Math::Vector3d drillPosition;

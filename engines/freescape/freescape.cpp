@@ -599,8 +599,8 @@ Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream
 		Area *area = _areaMap[key];
 		area->loadObjectFlags(stream);
 		// Add drill, if available
-		if (area->drillPosition != Math::Vector3d())
-			area->addDrill(globalObjectsArea, area->drillPosition);
+		//if (area->drillPosition != Math::Vector3d())
+		//	area->addDrill(globalObjectsArea, area->drillPosition);
 	}
 
 	_flyMode = stream->readByte();
