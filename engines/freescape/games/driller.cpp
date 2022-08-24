@@ -99,9 +99,14 @@ void DrillerEngine::pressedKey(const int keycode) {
 			_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
 			_gameStateVars[32]++;
 			// TODO: check if there is space for the drill
-			Math::Vector3d drillPosition = _position + _cameraFront * 128;
+			Math::Vector3d drillPosition = _cameraFront;
+			drillPosition =  _position + 256 * drillPosition;
+
+			debugC(1, kFreescapeDebugMove, "Current position at %f %f %f", _position.x(), _position.y(), _position.z());
 			drillPosition.setValue(1, _position.y() - _playerHeight * _currentArea->getScale());
 			debugC(1, kFreescapeDebugMove, "Trying to adding drill at %f %f %f", drillPosition.x(), drillPosition.y(), drillPosition.z());
+			debugC(1, kFreescapeDebugMove, "with pitch: %f and yaw %f", _pitch, _yaw);
+
 			const Math::Vector3d gasPocket3D(gasPocket.x, 1, gasPocket.y);
 			_currentArea->addDrill(globalObjectsArea, drillPosition);
 			float distance = (gasPocket3D - drillPosition).length();
