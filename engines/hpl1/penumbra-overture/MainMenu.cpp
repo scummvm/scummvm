@@ -759,10 +759,8 @@ public:
 		if (lSelected < 0)
 			return;
 
-		tWString sFile = mpInit->mpSaveHandler->GetSaveDir() + msDir +
-						 _W("/") + gvSaveGameFileVec[mlNum][lSelected];
-
-		RemoveFile(sFile);
+		tWString sFile = gvSaveGameFileVec[mlNum][lSelected];
+		Hpl1::g_engine->removeSaveFile(cString::To8Char(sFile).c_str());
 		mpInit->mpMainMenu->UpdateWidgets();
 	}
 
