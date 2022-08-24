@@ -720,8 +720,6 @@ void GridWidget::updateGrid() {
 
 void GridWidget::assignEntriesToItems() {
 	// Assign entries from _visibleEntries to each GridItem in _gridItems
-	if (_visibleEntryList.empty())
-		return;
 
 	// In case we have less ContainerWidgets than the number of visible entries
 	if (_visibleEntryList.size() > _gridItems.size()) {
