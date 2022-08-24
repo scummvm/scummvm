@@ -131,49 +131,68 @@ void DrillerEngine::pressedKey(const int keycode) {
 void DrillerEngine::addDrill(const Math::Vector3d position) {
 	//int drillObjectIDs[8] = {255, 254, 253, 252, 251, 250, 248, 247};
 	GeometricObject *obj = nullptr;
-	Math::Vector3d offset = position;
+	Math::Vector3d origin = position;
 
 	int16 id;
+	int heightLastObject;
 
 	id = 255;
 	debug("Adding object %d to room structure", id);
 	obj = (GeometricObject*) globalObjectsArea->objectWithID(id);
 	assert(obj);
 	obj = obj->duplicate();
-	obj->setOrigin(offset);
-	offset.setValue(1, offset.y() + obj->getSize().y());
-
+	obj->setOrigin(origin);
 	//offset.setValue(1, offset.y() + obj->getSize().y());
 	obj->makeVisible();
 	_currentArea->addObject(obj);
+
+	heightLastObject = obj->getSize().y();
 
 	id = 254;
 	debug("Adding object %d to room structure", id);
 	obj = (GeometricObject*) globalObjectsArea->objectWithID(id);
 	assert(obj);
+	// Set position for object
+	origin.setValue(0, origin.x() - obj->getSize().x() / 5);
+	origin.setValue(1, origin.y() + heightLastObject);
+	origin.setValue(2, origin.z() - obj->getSize().z() / 5);
+
 	obj = obj->duplicate();
-	offset.setValue(1, offset.y() + obj->getSize().y());
-	obj->setOrigin(offset);
+	obj->setOrigin(origin);
 	obj->makeVisible();
 	_currentArea->addObject(obj);
+
+	// Undo offset
+	origin.setValue(0, origin.x() + obj->getSize().x() / 5);
+	heightLastObject = obj->getSize().y();
+	origin.setValue(2, origin.z() + obj->getSize().z() / 5);
 
 	id = 253;
 	debug("Adding object %d to room structure", id);
 	obj = (GeometricObject*) globalObjectsArea->objectWithID(id);
 	assert(obj);
 	obj = obj->duplicate();
-	obj->setOrigin(offset);
-	offset.setValue(1, offset.y() + obj->getSize().y());
+
+	origin.setValue(0, origin.x() + obj->getSize().x() / 5);
+	origin.setValue(1, origin.y() + heightLastObject);
+	origin.setValue(2, origin.z() + obj->getSize().z() / 5);
+
+	obj->setOrigin(origin);
 	obj->makeVisible();
 	_currentArea->addObject(obj);
+
+	// Undo offset
+	//origin.setValue(0, origin.x() - obj->getSize().x() / 5);
+	heightLastObject = obj->getSize().y();
+	//origin.setValue(2, origin.z() - obj->getSize().z() / 5);
 
 	id = 252;
 	debug("Adding object %d to room structure", id);
 	obj = (GeometricObject*) globalObjectsArea->objectWithID(id);
 	assert(obj);
 	obj = obj->duplicate();
-	obj->setOrigin(offset);
-	offset.setValue(1, offset.y() + obj->getSize().y());
+	origin.setValue(1, origin.y() + heightLastObject);
+	obj->setOrigin(origin);
 	assert(obj);
 	obj->makeVisible();
 	_currentArea->addObject(obj);
