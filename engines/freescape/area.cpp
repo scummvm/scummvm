@@ -195,7 +195,7 @@ Object *Area::checkCollisions(const Math::AABB &boundingBox) {
 	return collided;
 }
 
-void Area::addDrill(Area *structure, const Math::Vector3d position) {
+void Area::addDrill(Area *global, const Math::Vector3d position) {
 	//int drillObjectIDs[8] = {255, 254, 253, 252, 251, 250, 248, 247};
 	drillPosition = position;
 	Object *obj = nullptr;
@@ -205,16 +205,18 @@ void Area::addDrill(Area *structure, const Math::Vector3d position) {
 
 	id = 255;
 	debug("Adding object %d to room structure", id);
-	obj = structure->objectWithID(id);
+	obj = global->objectWithID(id);
 	obj->setOrigin(offset);
 	offset.setValue(1, offset.y() + obj->getSize().y());
+
+	//offset.setValue(1, offset.y() + obj->getSize().y());
 	assert(obj);
 	obj->makeVisible();
 	drawableObjects.insert_at(0, obj);
 
 	id = 254;
 	debug("Adding object %d to room structure", id);
-	obj = structure->objectWithID(id);
+	obj = global->objectWithID(id);
 	offset.setValue(1, offset.y() + obj->getSize().y());
 	obj->setOrigin(offset);
 	assert(obj);
@@ -223,7 +225,7 @@ void Area::addDrill(Area *structure, const Math::Vector3d position) {
 
 	id = 253;
 	debug("Adding object %d to room structure", id);
-	obj = structure->objectWithID(id);
+	obj = global->objectWithID(id);
 	obj->setOrigin(offset);
 	offset.setValue(1, offset.y() + obj->getSize().y());
 	assert(obj);
@@ -232,7 +234,7 @@ void Area::addDrill(Area *structure, const Math::Vector3d position) {
 
 	id = 252;
 	debug("Adding object %d to room structure", id);
-	obj = structure->objectWithID(id);
+	obj = global->objectWithID(id);
 	obj->setOrigin(offset);
 	offset.setValue(1, offset.y() + obj->getSize().y());
 	assert(obj);
