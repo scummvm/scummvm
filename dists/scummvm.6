@@ -32,7 +32,7 @@ This is useful if you want to override a setting in the configuration file.
 Add all games from current or specified directory.
 If
 .Fl -game= Ns Ar ID
-is passed only the game with id
+is passed, only the game with id
 .Ar ID
 is added.
 See also
@@ -93,7 +93,7 @@ Select graphics mode
 .Ar surfacesdl
 .Pc .
 .It Fl h | -help
-Display a brief help text and exit.
+Display a brief help text, and exit.
 .It Fl l | -logfile= Ns Ar PATH
 Use alternate path for log file.
 .It Fl m | -music-volume= Ns Ar NUM
@@ -190,19 +190,19 @@ Enable script dumping if a directory called
 .Pa dumps
 exists in the current directory.
 .It Fl v | -version
-Display ScummVM version information and exit.
+Display ScummVM version information, and exit.
 .It Fl x | -save-slot= Ns Ar [SLOT]
 Set the saved game slot to load (default: autosave).
 .It Fl z | -list-games
-Display list of supported games and exit.
+Display list of supported games, and exit.
 .It Fl -alt-intro
 Use alternative intro for CD versions of Beneath a Steel Sky and Flight of the
 Amazon Queen.
 .It Fl -aspect-ratio
 Enable aspect ratio correction.
 .It Fl -auto-detect
-Display a list of games from current or specified directory and start the first
-one.
+Display a list of games from current or specified directory,
+and start the first one.
 Use
 .Fl -path= Ns Ar PATH
 to specify a directory.
@@ -236,8 +236,8 @@ Enable Roland GS mode for MIDI playback.
 In combination with
 .Fl -list-games
 or
-.Fl -list-all-games
-only lists games for this engine.
+.Fl -list-all-games ,
+only list games for this engine.
 .It Fl -engine-speed= Ns Ar NUM
 Set frame per second limit (0-100), 0 = no limit (default: 60).
 .It Fl -extrapath= Ns Ar PATH
@@ -248,8 +248,8 @@ Force filtered graphics mode.
 In combination with
 .Fl -add
 or
-.Fl -detect
-only adds or attempts to detect the game with id
+.Fl -detect ,
+only add or attempt to detect the game with id
 .Ar ID .
 .It Fl -gui-theme= Ns Ar THEME
 Select a GUI theme, as given by
@@ -261,9 +261,9 @@ Set the path to additional icons for the launcher grid view.
 .It Fl -list-all-debugflags
 Display list of all engine specified debugflags.
 .It Fl -list-all-engines
-Display list of all detection engines and exit.
+Display list of all detection engines, and exit.
 .It Fl -list-all-games
-Display list of all detected games and exit.
+Display list of all detected games, and exit.
 .It Fl -list-audio-devices
 List all available audio devices.
 .It Fl -list-debugflags= Ns Ar ENGINE
@@ -274,13 +274,13 @@ argument is
 .Dq global ,
 or if it is not specified, list global debugflags.
 .It Fl -list-engines
-Display list of supported engines and exit.
+Display list of supported engines, and exit.
 .It Fl -list-saves
 Display a list of saved games for the target specified with
-.Fl -game= Ns Ar TARGET
+.Fl -game= Ns Ar TARGET ,
 or all targets if none is specified.
 .It Fl -list-themes
-Display list of all usable GUI themes and exit.
+Display list of all usable GUI themes, and exit.
 .It Fl -md5
 Show MD5 hash of the file given by
 .Fl -md5-path= Ns Ar PATH .
@@ -370,7 +370,7 @@ Specify platform of game
 In combination with
 .Fl -add
 or
-.Fl -detect
+.Fl -detect ,
 recurse down all subdirectories.
 .It Fl -render-mode= Ns Ar MODE
 Enable additional render modes
@@ -511,7 +511,7 @@ Running the builtin game launcher:
 .Pp
 .Dl $ scummvm
 .Pp
-Running Day of the Tentacle specifying the path:
+Running Day of the Tentacle, specifying the path:
 .Pp
 .Dl $ scummvm -p /usr/local/share/games/tentacle scumm:tentacle
 .Pp
