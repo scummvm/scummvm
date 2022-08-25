@@ -111,6 +111,10 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 			restoreCharsetBg();
 	}
 
+	// Pause shake effect
+	_shakeTempSavedState = _shakeEnabled;
+	setShake(0);
+
 	// Pause the engine
 	PauseToken pt = pauseEngine();
 
@@ -389,6 +393,9 @@ void ScummEngine::clearBanner() {
 		free(_textSurfBannerMem);
 		_textSurfBannerMem = nullptr;
 	}
+
+	// Restore shake effect
+	setShake(_shakeTempSavedState);
 }
 
 void ScummEngine::setBannerColors(int bannerId, byte r, byte g, byte b) {
@@ -1447,6 +1454,7 @@ void ScummEngine::showMainMenu() {
 		runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, nullptr);
 
 	_saveSound = 1;
+	_shakeTempSavedState = _shakeEnabled;
 	setShake(0);
 
 	if (_game.version < 7) {
@@ -1589,6 +1597,9 @@ void ScummEngine::showMainMenu() {
 
 	if (_game.version < 7 && !hasLoadedState) {
 		restoreSurfacesPostGUI();
+
+		// Restore shake effect
+		setShake(_shakeTempSavedState);
 	} else {
 		free(_tempTextSurface);
 		_tempTextSurface = nullptr;
