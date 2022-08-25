@@ -73,7 +73,8 @@ void EditableWidget::setEditString(const Common::U32String &str) {
 	// TODO: We probably should filter the input string here,
 	// e.g. using tryInsertChar.
 	_editString = str;
-	_caretPos = 0;
+	setCaretPos(caretVisualPos(str.size()));
+	markAsDirty();
 }
 
 bool EditableWidget::tryInsertChar(Common::u32char_type_t c, int pos) {
