@@ -536,12 +536,10 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		return false;
 	}
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	_vsync = ConfMan.getBool("vsync");
 	if (SDL_GL_SetSwapInterval(_vsync ? 1 : 0)) {
 		warning("Unable to %s VSync: %s", _vsync ? "enable" : "disable", SDL_GetError());
 	}
-#endif
 
 	notifyContextCreate(_glContextType, rgba8888, rgba8888);
 	int actualWidth, actualHeight;
