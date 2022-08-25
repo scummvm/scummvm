@@ -594,12 +594,7 @@ const Graphics::ManagedSurface *scaleGfx(const Graphics::ManagedSurface *gfx, in
 	w = nw;
 	h = nh;
 
-	Graphics::ManagedSurface tmp(*gfx);
-
-	const Graphics::ManagedSurface *tmp2 = new Graphics::ManagedSurface(tmp.surfacePtr()->scale(w, h, filtering));
-	tmp.free();
-
-	return tmp2;
+	return new Graphics::ManagedSurface(gfx->rawSurface().scale(w, h, filtering));
 }
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey)
