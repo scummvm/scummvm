@@ -99,6 +99,7 @@ bool keyBlit(byte *dst, const byte *src,
 			   const uint dstPitch, const uint srcPitch,
 			   const uint w, const uint h,
 			   const uint bytesPerPixel, const uint32 key);
+
 /**
  * Blits a rectangle from one graphical format to another.
  *
@@ -126,10 +127,43 @@ bool crossBlit(byte *dst, const byte *src,
 			   const uint w, const uint h,
 			   const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt);
 
+/**
+ * Blits a rectangle from one graphical format to another with a transparent color key.
+ *
+ * @param dst		the buffer which will recieve the converted graphics data
+ * @param src		the buffer containing the original graphics data
+ * @param dstPitch	width in bytes of one full line of the dest buffer
+ * @param srcPitch	width in bytes of one full line of the source buffer
+ * @param w			the width of the graphics data
+ * @param h			the height of the graphics data
+ * @param dstFmt	the desired pixel format
+ * @param srcFmt	the original pixel format
+ * @param key			the transparent color key in the original pixel format
+ * @return			true if conversion completes successfully,
+ *					false if there is an error.
+ *
+ * @note Blitting to a 3Bpp destination is not supported
+ * @note This can convert a surface in place, regardless of the
+ *       source and destination format, as long as there is enough
+ *       space for the destination. The dstPitch / srcPitch ratio
+ *       must at least equal the dstBpp / srcBpp ratio for
+ *       dstPitch >= srcPitch and at most dstBpp / srcBpp for
+ *       dstPitch < srcPitch though.
+ */
+bool crossKeyBlit(byte *dst, const byte *src,
+			   const uint dstPitch, const uint srcPitch,
+			   const uint w, const uint h,
+			   const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt, const uint32 key);
+
 bool crossBlitMap(byte *dst, const byte *src,
 			   const uint dstPitch, const uint srcPitch,
 			   const uint w, const uint h,
 			   const uint bytesPerPixel, const uint32 *map);
+
+bool crossKeyBlitMap(byte *dst, const byte *src,
+			   const uint dstPitch, const uint srcPitch,
+			   const uint w, const uint h,
+			   const uint bytesPerPixel, const uint32 *map, const uint32 key);
 
 bool scaleBlit(byte *dst, const byte *src,
 			   const uint dstPitch, const uint srcPitch,
