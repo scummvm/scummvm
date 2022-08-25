@@ -1183,7 +1183,7 @@ public:
 	cMainMenuWidget_Language(cInit *apInit, const cVector3f &avPos, const tWString &asText, cVector2f avFontSize, eFontAlign aAlignment)
 		: cMainMenuWidget_Button(apInit, avPos, asText, eMainMenuState_LastEnum, avFontSize, aAlignment) {
 		tStringList lstStrings;
-		apInit->mpGame->GetResources()->GetLowLevel()->findFilesInDir(lstStrings, "config/", "*.lang");
+		apInit->mpGame->GetResources()->GetLowLevel()->findFilesInDir(lstStrings, "config", "*.lang");
 
 		mlCurrentFile = 0;
 		int lIdx = 0;
