@@ -1317,6 +1317,7 @@ public:
 
 protected:
 	bool _shakeEnabled = false;
+	bool _shakeTempSavedState = false; // For saving and restoring before and after GUI calls
 	uint _shakeFrame = 0;
 	uint32 _shakeNextTick = 0;
 	uint32 _shakeTickCounter = 0;
