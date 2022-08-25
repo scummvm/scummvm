@@ -59,9 +59,18 @@ Common::String Hpl1Engine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+static Common::String getStartupSave(MetaEngine *meta, const char* target) {
+	if (ConfMan.hasKey("save_slot")) {
+		const int saveSlot = ConfMan.getInt("save_slot");
+		const SaveStateDescriptor saveInfo = meta->querySaveMetaInfos(target, saveSlot);
+		return saveInfo.getDescription();
+	}
+	return "";
+}
+
 Common::Error Hpl1Engine::run() {
 	_gameInit = new cInit(); // TODO: remove allocation
-	if (!_gameInit->Init("")) {
+	if (!_gameInit->Init(getStartupSave(getMetaEngine(), _targetName.c_str()).c_str())) {
 		delete _gameInit;
 		return Common::kUnknownError; // TODO: better errors
 	};
