@@ -910,6 +910,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "orgotto",			"Orgotto" },
 	{ "osaka1",				"必修大阪弁集中講座I 2010年、標準語は大阪弁になる" }, // Hisshu Osaka-ben shuchu koza (Mandatory Osaka Dialect)
 	{ "osaka2",				"必修大阪弁集中講座II 2015年、東京人の逆襲" },		// Tokyoites Strike Back
+	{ "overringunder",		"Over-Ring-Under"},
 	{ "pantosstory",		"Pantos Story"},
 	{ "pasosuke",			"ぱそすけ"},
 	{ "peaceland",			"PeaceLand" },
@@ -1739,6 +1740,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 								  "StartUp",	  "4be24cb9ca426e9ae318163f75ae55ee", 51057, 201),
 	MACDEMO2("msword", "v5 Demo", "Double Click", "e54ec74aeb4355b0acd46320327c1bed", 204030,
 								  "MSWD pt. 1",   "d30e1cae275e7ecfdde92df03a28b309", 249005, 201),
+
+	MACGAME1_l("overringunder", "", "Over-Ring-Under", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 910381, Common::JA_JPN, 300),
 
 	// Movies called from HyperCard with external MacroMind Player 2.0
 	MACGAME1("spelunx", "v1.2", "Spelunx", "3eb3598b7f6bb09de4dd31aca3683d8f", 371154, 200),
