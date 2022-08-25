@@ -212,6 +212,8 @@ public:
 
 	void reflowLayout() override;
 
+	bool wantsFocus() override { return true; }
+
 	void openTray(int x, int y, int entryID);
 	void openTrayAtSelected();
 	void scrollBarRecalc();
