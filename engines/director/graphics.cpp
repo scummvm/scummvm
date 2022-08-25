@@ -121,7 +121,7 @@ void DirectorEngine::loadDefaultPalettes() {
 
 PaletteV4 *DirectorEngine::getPalette(int id) {
 	if (!_loadedPalettes.contains(id)) {
-		warning("DirectorEngine::addPalette(): Palette %d not found", id);
+		warning("DirectorEngine::getPalette(): Palette %d not found", id);
 		return nullptr;
 	}
 

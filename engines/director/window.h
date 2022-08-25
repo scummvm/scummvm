@@ -58,7 +58,13 @@ struct TransParams {
 
 	int stripSize;
 
-	TransParams() {
+	const byte *sourcePal;
+	uint16 sourcePalLength;
+	const byte *targetPal;
+	uint16 targetPalLength;
+	byte tempPal[768];
+
+	TransParams() : tempPal() {
 		type = kTransNone;
 		frame = 0;
 		duration = 250;
@@ -70,10 +76,15 @@ struct TransParams {
 
 		xStepSize = yStepSize = 0;
 		xpos = ypos = 0;
+
+		sourcePal = nullptr;
+		sourcePalLength = 0;
+		targetPal = nullptr;
+		targetPalLength = 0;
 	}
 
 	TransParams(uint16 d, uint16 a, uint16 c, TransitionType t) :
-			duration(d), area(a), chunkSize(c), type(t) {
+			duration(d), area(a), chunkSize(c), type(t), tempPal() {
 		frame = 0;
 		steps = 0;
 		stepDuration = 0;
@@ -81,6 +92,11 @@ struct TransParams {
 
 		xStepSize = yStepSize = 0;
 		xpos = ypos = 0;
+
+		sourcePal = nullptr;
+		sourcePalLength = 0;
+		targetPal = nullptr;
+		targetPalLength = 0;
 	}
 };
 
@@ -99,9 +115,9 @@ public:
 	void reset();
 
 	// transitions.cpp
-	void exitTransition(Graphics::ManagedSurface *nextFrame, Common::Rect clipRect);
-	void stepTransition();
-	void playTransition(uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType, uint frame);
+	void exitTransition(TransParams &t, int step, Graphics::ManagedSurface *nextFrame, Common::Rect clipRect);
+	void stepTransition(TransParams &t, int step);
+	void playTransition(uint frame, uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType, int paletteId);
 	void initTransParams(TransParams &t, Common::Rect &clipRect);
 	void dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
 	void dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
