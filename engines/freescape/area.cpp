@@ -117,7 +117,7 @@ void Area::show() {
 		debug("objID: %d, type: %d (entrance)", (*it)._value->getObjectID(), (*it)._value->getType());
 }
 
-void Area::loadObjectFlags(Common::SeekableReadStream *stream) {
+void Area::loadObjects(Common::SeekableReadStream *stream, Area *global) {
 	drillPosition.setValue(0, stream->readFloatLE());
 	drillPosition.setValue(1, stream->readFloatLE());
 	drillPosition.setValue(2, stream->readFloatLE());
@@ -126,13 +126,25 @@ void Area::loadObjectFlags(Common::SeekableReadStream *stream) {
 
 	for (int i = 0; i < objectsByIDSize; i++) {
 		uint16 key = stream->readUint32LE();
-		assert(objectsByID->contains(key));
-		Object *obj = (*objectsByID)[key];
-		obj->setObjectFlags(stream->readUint32LE());
+		uint32 flags = stream->readUint32LE();
+		float x = stream->readFloatLE();
+		float y = stream->readFloatLE();
+		float z = stream->readFloatLE();
+		Object *obj = nullptr;
+		if (objectsByID->contains(key)) {
+			obj = (*objectsByID)[key];
+		} else {
+			obj = global->objectWithID(key);
+			assert(obj);
+			obj = (Object*) ((GeometricObject*) obj)->duplicate();
+			addObject(obj);
+		}
+		obj->setObjectFlags(flags);
+		obj->setOrigin(Math::Vector3d(x, y, z));
 	}
 }
 
-void Area::saveObjectFlags(Common::WriteStream *stream) {
+void Area::saveObjects(Common::WriteStream *stream) {
 	stream->writeFloatLE(drillPosition.x());
 	stream->writeFloatLE(drillPosition.y());
 	stream->writeFloatLE(drillPosition.z());
@@ -140,8 +152,12 @@ void Area::saveObjectFlags(Common::WriteStream *stream) {
 	stream->writeUint32LE(objectsByID->size());
 
 	for (ObjectMap::iterator iterator = objectsByID->begin(); iterator != objectsByID->end(); iterator++) {
+		Object *obj = iterator->_value;
 		stream->writeUint32LE(iterator->_key);
-		stream->writeUint32LE(iterator->_value->getObjectFlags());
+		stream->writeUint32LE(obj->getObjectFlags());
+		stream->writeFloatLE(obj->getOrigin().x());
+		stream->writeFloatLE(obj->getOrigin().y());
+		stream->writeFloatLE(obj->getOrigin().z());
 	}
 }
 
@@ -214,6 +230,7 @@ void Area::addObject(Object *obj) {
 	assert(obj);
 	int id = obj->getObjectID();
 	debug("Adding object %d to room %d", id, areaID);
+	assert(!objectsByID->contains(id));
 	(*objectsByID)[id] = obj;
 	if (obj->isDrawable())
 		drawableObjects.insert_at(0, obj);

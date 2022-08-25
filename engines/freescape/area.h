@@ -66,8 +66,8 @@ public:
 	Common::Array<FCLInstructionVector> conditions;
 
 	// Serialization
-	void saveObjectFlags(Common::WriteStream *stream);
-	void loadObjectFlags(Common::SeekableReadStream *stream);
+	void saveObjects(Common::WriteStream *stream);
+	void loadObjects(Common::SeekableReadStream *stream, Area *global);
 
 	// Driller specific
 	void removeDrill();
