@@ -1839,7 +1839,7 @@ static const uint16 fanmadePatchDemoQuestInfiniteLoop[] = {
 //
 // Applies to: Fan games built with the SCI Studio / SCI Companion SCI0 template
 // Responsible method: TheMenuBar:handleEvent
-static const uint16 fangameSignatureVolumeSlider[] = {
+static const uint16 fangameSignatureVolumeSlider1[] = {
 	0x39, SIG_SELECTOR8(doit),       // pushi doit
 	SIG_ADDTOOFFSET(+1),             // push1 [ opcode 79 instead of 78 in some games ]
 	SIG_ADDTOOFFSET(+1),             // push2 [ opcode 7b instead of 7a in some games ]
@@ -1850,7 +1850,7 @@ static const uint16 fangameSignatureVolumeSlider[] = {
 	SIG_END
 };
 
-static const uint16 fangamePatchVolumeSlider[] = {
+static const uint16 fangamePatchVolumeSlider1[] = {
 	PATCH_ADDTOOFFSET(+3),
 	0x39, 0x01,                      // pushi 01
 	0x38, PATCH_UINT16(0x0008),      // pushi 0008 [ volume ]
@@ -1858,10 +1858,71 @@ static const uint16 fangamePatchVolumeSlider[] = {
 	PATCH_END
 };
 
+static const uint16 fangameSignatureVolumeSlider2[] = {
+	0x38, SIG_SELECTOR16(doit),      // pushi doit
+	0x39, 0x01,                      // pushi 01
+	0x39, 0x02,                      // pushi 02
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x0008),        // pushi 0808 [ volume ]
+	0x8d, 0x03,                      // lst 03     [ uninitialized variable ]
+	0x43, 0x31, 0x04,                // callk DoSound 04 [ set volume and return previous ]
+	SIG_END
+};
+
+static const uint16 fangamePatchVolumeSlider2[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x39, 0x01,                      // pushi 01
+	PATCH_ADDTOOFFSET(+3),
+	0x33, 0x00,                      // jmp 00
+	0x43, 0x31, 0x02,                // callk DoSound 02 [ return volume ]
+	PATCH_END
+};
+
+// Fan games based on the SCI Studio template reset their volume to 15 (max) in
+//  the init method of their game object in script 0. As with most SCI32 games,
+//  we patch this out so that the volume stored in ScummVM is used.
+// 
+// Applies to: Fan games built with the SCI Studio / SCI Companion SCI0 template
+// Responsible method: Template:init (the Game object in script 0)
+// Fixes bug: #13795
+static const uint16 fangameSignatureVolumeReset1[] = {
+	0x35, 0x0f,                      // ldi 0f
+	SIG_ADDTOOFFSET(+1), 0x1d,       // sag 1d   [ sag or sal depending on compiler ] 
+	SIG_ADDTOOFFSET(+1),             // push2    [ opcode 7b instead of 7a in some games ]
+	0x39, 0x08,                      // pushi 08 [ volume ]
+	SIG_ADDTOOFFSET(+1),             // lsg 1d   [ lsg or lsl depending on compiler ]
+	SIG_MAGICDWORD, 0x1d,      
+	0x43, 0x31, 0x04,                // callk DoSound 04
+	SIG_END
+};
+
+static const uint16 fangamePatchVolumeReset1[] = {
+	0x33, 0x0a,                      // jmp 0a
+	PATCH_END
+};
+
+static const uint16 fangameSignatureVolumeReset2[] = {
+	0x34, SIG_UINT16(0x000f),        // ldi 0f
+	0xa1, 0x1d,                      // sag 1d
+	0x39, 0x02,                      // pushi 02
+	0x38, SIG_UINT16(0x0008),        // pushi 0008 [ volume ]
+	0x89, SIG_MAGICDWORD, 0x1d,      // lsg 1d
+	0x43, 0x31, 0x04,                // callk DoSound 04
+	SIG_END
+};
+
+static const uint16 fangamePatchVolumeReset2[] = {
+	0x33, 0x0d,                      // jmp 0d
+	PATCH_END
+};
+
 //          script, description,                                      signature                                  patch
 static const SciScriptPatcherEntry fanmadeSignatures[] = {
+	{  true,     0, "SCI Template: disable volume reset",          1, fangameSignatureVolumeReset1,              fangamePatchVolumeReset1 },
+	{  true,     0, "SCI Template: disable volume reset",          1, fangameSignatureVolumeReset2,              fangamePatchVolumeReset2 },
 	{  true,   994, "Cascade Quest: fix auto-saving",              1, fanmadeSignatureCascadeQuestFixAutoSaving, fanmadePatchCascadeQuestFixAutoSaving },
-	{  true,   997, "SCI Template: fix volume slider",             1, fangameSignatureVolumeSlider,              fangamePatchVolumeSlider },
+	{  true,   997, "SCI Template: fix volume slider",             1, fangameSignatureVolumeSlider1,             fangamePatchVolumeSlider1 },
+	{  true,   997, "SCI Template: fix volume slider",             1, fangameSignatureVolumeSlider2,             fangamePatchVolumeSlider2 },
 	{  true,   999, "Demo Quest: infinite loop on typo",           1, fanmadeSignatureDemoQuestInfiniteLoop,     fanmadePatchDemoQuestInfiniteLoop },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
