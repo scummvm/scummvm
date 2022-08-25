@@ -1304,6 +1304,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("wishbringer", "R69-850920", "e7c0412c4b3bda39de438a02cbae3816", 128904),
 	ENTRY0("thewitness", "R13-830524", "d2297ddfe2c1b976c1b0c381ab01e2b3", 102608),
 	ENTRY0("thewitness", "R18-830910", "a6e441b0b92a72537c830fed201267af", 103728),
+	ENTRY0("thewitness", "R20-831119", "07be3335f793021997e9d92b72cd9cf0", 104740),
 	ENTRY0("thewitness", "R22-840924", "1019b9b1e1aa2c6eda945d7d92c2073a", 104664),
 	ENTRY0("zork0", "R296-881019", "fca554c21542729c9d154c319af6307e", 295536),
 	ENTRY0("zork0", "R366-demo-890323", "b58c35dc2ba36d48fade99564922c7c3", 296376),
