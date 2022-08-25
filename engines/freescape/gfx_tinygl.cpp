@@ -24,6 +24,7 @@
 #include "common/config-manager.h"
 #include "common/rect.h"
 #include "math/glmath.h"
+#include "common/math.h"
 #include "graphics/tinygl/tinygl.h"
 
 #include "engines/freescape/gfx_tinygl.h"
@@ -99,7 +100,7 @@ void TinyGLRenderer::updateProjectionMatrix(float fov, float nearClipPlane, floa
 
 	float aspectRatio = kOriginalWidth / (float) kFrameHeight;
 
-	float xmaxValue = nearClipPlane * tan(fov * M_PI / 360.0);
+	float xmaxValue = nearClipPlane * tan(Common::deg2rad(fov) / 2);
 	float ymaxValue = xmaxValue / aspectRatio;
 	//debug("max values: %f %f", xmaxValue, ymaxValue);
 
