@@ -933,6 +933,8 @@ void GridWidget::reflowLayout() {
 	_extraIconHeight = _extraIconWidth / 4;
 
 	if ((oldThumbnailHeight != _thumbnailHeight) || (oldThumbnailWidth != _thumbnailWidth)) {
+		unloadSurfaces(_platformIcons);
+		unloadSurfaces(_languageIcons);
 		unloadSurfaces(_loadedSurfaces);
 		reloadThumbnails();
 		loadFlagIcons();
