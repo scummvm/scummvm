@@ -92,7 +92,7 @@ public:
 	cInit();
 	~cInit();
 
-	bool Init(tString asCommandLine);
+	bool Init(tString saveToLoad);
 	void Run();
 	void Exit();
 

@@ -506,10 +506,11 @@ void cSaveHandler::SaveGameToFile(const tWString &asFile) {
 
 //-----------------------------------------------------------------------
 
-void cSaveHandler::LoadGameFromFile(const tWString &asFile) {
+void cSaveHandler::LoadGameFromFile(const tWString &asFile, bool drawLoadingScreen) {
 	///////////////////////////////
 	// Draw loading screen.
-	mpInit->mpGraphicsHelper->DrawLoadingScreen("");
+	if (drawLoadingScreen) // if the loading screen has already been drawn, drawing it twice causes bugs
+		mpInit->mpGraphicsHelper->DrawLoadingScreen("");
 
 	// 1. Reset everything
 	// 2. Load all data from file

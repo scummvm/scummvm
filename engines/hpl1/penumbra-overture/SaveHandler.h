@@ -331,7 +331,7 @@ public:
 	void LoadData(const tString &asName);
 
 	void SaveGameToFile(const tWString &asFile);
-	void LoadGameFromFile(const tWString &asFile);
+	void LoadGameFromFile(const tWString &asFile, bool drawLoadingScreen = true);
 
 	void AutoSave(const tWString &asDir, int alMaxSaves);
 	void AutoLoad(const tWString &asDir);

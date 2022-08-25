@@ -224,7 +224,7 @@ void cInit::CreateHardCodedPS(iParticleEmitterData *apPE) {
 
 //-----------------------------------------------------------------------
 
-bool cInit::Init(tString asCommandLine) {
+bool cInit::Init(tString saveToLoad) {
 	/*if(asCommandLine != "")
 	{
 		Log("CommandLine: %s\n",asCommandLine.c_str());
@@ -597,12 +597,12 @@ bool cInit::Init(tString asCommandLine) {
 	// mpGame->SetRenderOnce(true);
 	// mpGame->GetGraphics()->GetRenderer3D()->SetDebugFlags(eRendererDebugFlag_LogRendering);
 
-	if (mbShowPreMenu) {
+	if (saveToLoad == "")
 		mpPreMenu->SetActive(true);
-	} else if (mbShowMenu) {
-		mpMainMenu->SetActive(true);
-	} else {
-		mpMapHandler->Load(msStartMap, msStartLink);
+	else {
+		mpGame->GetInput()->GetLowLevel()->BeginInputUpdate(); // prevents the game from becoming unresponsive
+	 	mpSaveHandler->LoadGameFromFile(cString::To16Char(saveToLoad), false);
+		mpGame->GetInput()->GetLowLevel()->EndInputUpdate(); // clears the event queue
 	}
 
 	if (gbUsingUserSettings) {
