@@ -208,7 +208,22 @@ void Normal5x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 void NormalScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 #ifdef USE_SCALERS
-	if (_format.bytesPerPixel == 2) {
+	if (_format.bytesPerPixel == 1) {
+		switch (_factor) {
+		case 2:
+			Normal2x<uint8>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			break;
+		case 3:
+			Normal3x<uint8>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			break;
+		case 4:
+			Normal4x<uint8>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			break;
+		case 5:
+			Normal5x<uint8>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+			break;
+		}
+	} else if (_format.bytesPerPixel == 2) {
 		switch (_factor) {
 		case 2:
 #ifdef USE_ARM_SCALER_ASM
