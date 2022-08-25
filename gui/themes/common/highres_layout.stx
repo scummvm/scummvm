@@ -315,6 +315,8 @@
 						type = 'Slider'
 						rtl = 'no'
 				/>
+				<space size = '6'
+				/>
 				<widget name = 'GridItemsPerRowLabel'
 						type = 'SmallLabel'
 				/>
