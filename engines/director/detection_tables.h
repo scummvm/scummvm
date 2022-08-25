@@ -1741,8 +1741,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO2("msword", "v5 Demo", "Double Click", "e54ec74aeb4355b0acd46320327c1bed", 204030,
 								  "MSWD pt. 1",   "d30e1cae275e7ecfdde92df03a28b309", 249005, 201),
 
-	MACGAME1_l("overringunder", "", "Over-Ring-Under", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 910381, Common::JA_JPN, 300),
-
 	// Movies called from HyperCard with external MacroMind Player 2.0
 	MACGAME1("spelunx", "v1.2", "Spelunx", "3eb3598b7f6bb09de4dd31aca3683d8f", 371154, 200),
 
@@ -4192,6 +4190,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("oslotg", "", "OSLO's T&G", "ef59432e7b24df951cb7096cfd45d168", 307427, 400),
 	WINGAME1("oslotg", "", "OSLOTG.EXE", "c4be18eb4f16e3e21df22d0703866900", 995939, 400),
+
+	MACGAME1_l("overringunder", "", "Over-Ring-Under", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 910381, Common::JA_JPN, 300),
 
 	WINGAME1("painters", "", "PAINTERS.EXE", "3cba94b585493ef5f22d0d650b6eb7fd", 895727, 404),
 	MACGAME1("painters", "", "Painters Painting", "0a81aee4106eec4ffc0cc564a7c15a23", 288774, 404),
