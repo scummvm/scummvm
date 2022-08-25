@@ -138,7 +138,7 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 
 	id = 255;
 	debug("Adding object %d to room structure", id);
-	obj = (GeometricObject*) globalObjectsArea->objectWithID(id);
+	obj = (GeometricObject*) _areaMap[255]->objectWithID(id);
 	assert(obj);
 	obj = obj->duplicate();
 	obj->setOrigin(origin);
@@ -150,7 +150,7 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 
 	id = 254;
 	debug("Adding object %d to room structure", id);
-	obj = (GeometricObject*) globalObjectsArea->objectWithID(id);
+	obj = (GeometricObject*) _areaMap[255]->objectWithID(id);
 	assert(obj);
 	// Set position for object
 	origin.setValue(0, origin.x() - obj->getSize().x() / 5);
@@ -169,7 +169,7 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 
 	id = 253;
 	debug("Adding object %d to room structure", id);
-	obj = (GeometricObject*) globalObjectsArea->objectWithID(id);
+	obj = (GeometricObject*) _areaMap[255]->objectWithID(id);
 	assert(obj);
 	obj = obj->duplicate();
 
@@ -188,7 +188,7 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 
 	id = 252;
 	debug("Adding object %d to room structure", id);
-	obj = (GeometricObject*) globalObjectsArea->objectWithID(id);
+	obj = (GeometricObject*) _areaMap[255]->objectWithID(id);
 	assert(obj);
 	obj = obj->duplicate();
 	origin.setValue(1, origin.y() + heightLastObject);

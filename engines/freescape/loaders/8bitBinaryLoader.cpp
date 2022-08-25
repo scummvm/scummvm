@@ -407,7 +407,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 			(*globalObjectsByID)[gobj->getObjectID()] = gobj;
 		}
 
-		globalObjectsArea = new Area(255, 0, globalObjectsByID, nullptr, 1, 255, 255, nullptr);
+		_areaMap[255] = new Area(255, 0, globalObjectsByID, nullptr, 1, 255, 255, nullptr);
 	}
 
 	file->seek(offset + 0xc8);
@@ -439,7 +439,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		}
 	}
 
-	if (_areaMap.contains(255)) {
+	if (!isDriller() && !isDark() && _areaMap.contains(255)) {
 		for (AreaMap::iterator iterator = _areaMap.begin(); iterator != _areaMap.end(); iterator++)
 			iterator->_value->addStructure(_areaMap[255]);
 	}

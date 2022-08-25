@@ -597,10 +597,7 @@ Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream
 		uint16 key = stream->readUint16LE();
 		assert(_areaMap.contains(key));
 		Area *area = _areaMap[key];
-		area->loadObjectFlags(stream);
-		// Add drill, if available
-		//if (area->drillPosition != Math::Vector3d())
-		//	area->addDrill(globalObjectsArea, area->drillPosition);
+		area->loadObjects(stream, _areaMap[255]);
 	}
 
 	_flyMode = stream->readByte();
@@ -637,7 +634,7 @@ Common::Error FreescapeEngine::saveGameStream(Common::WriteStream *stream, bool 
 
 	for (AreaMap::iterator it = _areaMap.begin(); it != _areaMap.end(); ++it) {
 		stream->writeUint16LE(it->_key);
-		it->_value->saveObjectFlags(stream);
+		it->_value->saveObjects(stream);
 	}
 
 	stream->writeByte(_flyMode);
