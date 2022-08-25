@@ -130,17 +130,26 @@ struct {
 	TRANS(kTransDissolveBits,			kTransAlgoDissolve,	kTransDirNone)
 };
 
-void Window::exitTransition(Graphics::ManagedSurface *nextFrame, Common::Rect clipRect) {
+void Window::exitTransition(TransParams &t, int step, Graphics::ManagedSurface *nextFrame, Common::Rect clipRect) {
 	_composeSurface->blitFrom(*nextFrame, clipRect, Common::Point(clipRect.left, clipRect.top));
-	stepTransition();
+	stepTransition(t, step);
 }
 
-void Window::stepTransition() {
+void Window::stepTransition(TransParams &t, int step) {
 	_contentIsDirty = true;
+
+	if (t.sourcePal != t.targetPal) {
+		for (int i = 0; i < 768; i++) {
+			int sourceCol = (i < t.sourcePalLength * 3 ? t.sourcePal[i] : 0);
+			int targetCol = (i < t.targetPalLength * 3 ? t.targetPal[i] : 0);
+			t.tempPal[i] = static_cast<byte>((targetCol * step + sourceCol * (t.steps - step)) / t.steps);
+		}
+		g_director->setPalette(t.tempPal, 256);
+	}
 	g_director->draw();
 }
 
-void Window::playTransition(uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType, uint frame) {
+void Window::playTransition(uint frame, uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType, int paletteId) {
 	// Play a transition and return the number of subframes rendered
 	TransParams t;
 
@@ -153,6 +162,20 @@ void Window::playTransition(uint16 transDuration, uint8 transArea, uint8 transCh
 	// If we requested fast transitions, speed everything up
 	if (debugChannelSet(-1, kDebugFast))
 		t.duration = 250;
+
+	// Copy palette information
+	t.sourcePal = g_director->getPalette();
+	t.sourcePalLength = g_director->getPaletteColorCount();
+	t.targetPal = g_director->getPalette();
+	t.targetPalLength = g_director->getPaletteColorCount();
+
+	if (paletteId) {
+		PaletteV4 *target = g_director->getPalette(paletteId);
+		if (target) {
+			t.targetPal = target->palette;
+			t.targetPalLength = target->length;
+		}
+	}
 
 	// Cache a copy of the frame before the transition.
 	Graphics::ManagedSurface currentFrame(Graphics::ManagedSurface(_composeSurface->w, _composeSurface->h, g_director->_pixelformat));
@@ -515,17 +538,17 @@ void Window::playTransition(uint16 transDuration, uint8 transArea, uint8 transCh
 		_composeSurface->blitFrom(*blitFrom, rfrom, Common::Point(rto.left, rto.top));
 
 		if (_vm->processEvents(true)) {
-			exitTransition(&nextFrame, clipRect);
+			exitTransition(t, i, &nextFrame, clipRect);
 			break;
 		}
 
 		if (fullredraw) {
-			stepTransition();
+			stepTransition(t, i);
 		} else {
 			rto.clip(clipRect);
 
 			if (rto.height() > 0 && rto.width() > 0)
-				stepTransition();
+				stepTransition(t, i);
 		}
 
 		uint32 endTime = g_system->getMillis();
@@ -714,12 +737,12 @@ void Window::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::Man
 			}
 		} while (rnd != seed);
 
-		stepTransition();
+		stepTransition(t, i);
 
 		g_lingo->executePerFrameHook(t.frame, i + 1);
 
 		if (_vm->processEvents(true)) {
-			exitTransition(nextFrame, clipRect);
+			exitTransition(t, i, nextFrame, clipRect);
 			break;
 		}
 
@@ -820,12 +843,12 @@ void Window::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graph
 			}
 		}
 
-		stepTransition();
+		stepTransition(t, i);
 
 		g_lingo->executePerFrameHook(t.frame, i + 1);
 
 		if (_vm->processEvents(true)) {
-			exitTransition(nextFrame, clipRect);
+			exitTransition(t, i, nextFrame, clipRect);
 			break;
 		}
 
@@ -845,6 +868,7 @@ void Window::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::Ma
 
 	for (uint16 i = 1; i < t.steps; i++) {
 		uint32 startTime = g_system->getMillis();
+
 		bool stop = false;
 		rto = clipRect;
 
@@ -993,7 +1017,7 @@ void Window::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::Ma
 
 			if (rto.height() > 0 && rto.width() > 0) {
 				_composeSurface->blitFrom(*nextFrame, rto, Common::Point(rto.left, rto.top));
-				stepTransition();
+				stepTransition(t, i);
 			}
 		}
 		rects.clear();
@@ -1005,7 +1029,7 @@ void Window::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::Ma
 		g_system->delayMillis(MAX(0, diff));
 
 		if (_vm->processEvents(true)) {
-			exitTransition(nextFrame, clipRect);
+			exitTransition(t, i, nextFrame, clipRect);
 			break;
 		}
 
@@ -1054,7 +1078,7 @@ void Window::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::Managed
 		g_system->delayMillis(MAX(0, diff));
 
 		if (_vm->processEvents(true)) {
-			exitTransition(nextFrame, clipRect);
+			exitTransition(t, i, nextFrame, clipRect);
 			break;
 		}
 	}
