@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-25 15:59+0000\n"
+"POT-Creation-Date: 2022-08-26 20:47+0000\n"
 "PO-Revision-Date: 2022-07-13 06:51+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -3096,37 +3096,37 @@ msgstr "Touchscreen 'Tap Modus' - Zweven (DPad Klik)"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:254
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:228
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:235
 #: engines/twine/metaengine.cpp:228
 msgid "Center"
 msgstr "Centreer"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:255
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:229
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:236
 msgid "Pixel-perfect scaling"
 msgstr "Pixel-perfect schalen"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:256
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:230
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:237
 msgid "Even pixels scaling"
 msgstr "Gelijkmatig pixel schalen"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:257
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:231
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:238
 msgid "Fit to window"
 msgstr "Maak passend aan window"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:258
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:232
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:239
 msgid "Stretch to window"
 msgstr "Rek uit naar window"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:259
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:233
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:240
 msgid "Fit to window (4:3)"
 msgstr "Maak passend aan venster (4:3)"
 

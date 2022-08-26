@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-25 15:59+0000\n"
+"POT-Creation-Date: 2022-08-26 20:47+0000\n"
 "PO-Revision-Date: 2022-02-18 18:47+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -3089,38 +3089,38 @@ msgstr "Touchscreen 'Tap-läge' - Hover (DPad klick)"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:254
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:228
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:235
 #: engines/twine/metaengine.cpp:228
 msgid "Center"
 msgstr "Centrera"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:255
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:229
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:236
 msgid "Pixel-perfect scaling"
 msgstr "Pixelperfekt förstoring"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:256
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:230
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:237
 #, fuzzy
 msgid "Even pixels scaling"
 msgstr "Pixelperfekt förstoring"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:257
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:231
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:238
 msgid "Fit to window"
 msgstr "Anpassa till fönster"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:258
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:232
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:239
 msgid "Stretch to window"
 msgstr "Dra ut till fönsterstorlek"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:259
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
-#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:233
+#: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:240
 msgid "Fit to window (4:3)"
 msgstr "Anpassa till fönster (4:3)"
 
