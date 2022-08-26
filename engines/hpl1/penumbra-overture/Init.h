@@ -164,8 +164,6 @@ public:
 
 	tWString msErrorMessage;
 
-	tString msWebPageOnExit;
-
 	bool mbDebugInteraction;
 	float mfMaxPhysicsTimeStep;
 	bool mbDestroyGraphics; // If graphics should be destroyed by the entities. Set to false at map change.
@@ -175,8 +173,6 @@ public:
 	int mlMaxPSDataNum;
 
 	bool mbWeaponAttacking; // To see if it is a weapon that is dealing the damage.
-
-	tString msCurrentUser;
 
 	// Game objects
 	cMapHandler *mpMapHandler;
