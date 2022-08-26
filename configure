@@ -2908,7 +2908,7 @@ EOF
 			FREETYPE2_CFLAGS="-I$_freetypepath/include" # there were link errors / missing symbols without this
 			_freetype_found="true"
 		else
-			#use link time optimization to further reduce exe size (this can't be used with setjmp whcih freetype requires)
+			#use link time optimization to further reduce exe size (this can't be used with setjmp which freetype requires)
 			# TODO: Figure out why this is a conflict and/or if freetype can be built without setjmp
 			append_var CXXFLAGS "-flto"
 			append_var LDFLAGS "-flto"
