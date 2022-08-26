@@ -264,15 +264,30 @@ Common::Error FreescapeEngine::run() {
 
 	debugC(1, kFreescapeDebugMove, "Starting area %d", _currentArea->getAreaID());
 	_system->lockMouse(true);
-	while (!shouldQuit()) {
+	bool endGame = false;
+	while (!shouldQuit() && !endGame) {
 		drawFrame();
 		processInput();
 		_gfx->flipBuffer();
 		g_system->updateScreen();
 		g_system->delayMillis(10);
+		endGame = checkIfGameEnded();
 	}
 
 	return Common::kNoError;
+}
+
+bool FreescapeEngine::checkIfGameEnded() {
+	if (_gameStateVars[k8bitVariableShield] == 0) {
+		_flyMode = true;
+		gotoArea(127, 0);
+		drawFrame();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(5000);
+		return true;
+	}
+	return false;
 }
 
 void FreescapeEngine::initGameState() {
@@ -514,7 +529,7 @@ void FreescapeEngine::gotoArea(uint16 areaID, int entranceID) {
 	assert(scale > 0);
 
 	Entrance *entrance = nullptr;
-	if (entranceID > 0) {
+	if (entranceID > 0 || areaID == 127) {
 		entrance = (Entrance*) _currentArea->entranceWithID(entranceID);
 
 		if (!entrance) {

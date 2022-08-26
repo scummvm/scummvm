@@ -195,6 +195,7 @@ public:
 	virtual void initGameState();
 	StateVars _gameStateVars;
 	StateBits _gameStateBits;
+	bool checkIfGameEnded();
 
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return true; }
