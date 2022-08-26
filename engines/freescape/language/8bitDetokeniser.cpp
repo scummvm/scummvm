@@ -124,10 +124,10 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		} break;
 		case 2: // add one-byte value to energy
 			detokenisedStream += "ADDVAR ";
-			detokenisedStream += Common::String::format("(%d, v%d)", (int)tokenisedCondition[bytePointer], k8bitVariableEnergy);
+			detokenisedStream += Common::String::format("(%d, v%d)", (int8)tokenisedCondition[bytePointer], k8bitVariableEnergy);
 			currentInstruction = FCLInstruction(Token::ADDVAR);
 			currentInstruction.setSource(k8bitVariableEnergy);
-			currentInstruction.setDestination(tokenisedCondition[bytePointer]);
+			currentInstruction.setDestination((int8)tokenisedCondition[bytePointer]);
 			conditionalInstructions->push_back(currentInstruction);
 			currentInstruction = FCLInstruction(Token::UNKNOWN);
 			bytePointer++;
@@ -135,10 +135,10 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			break;
 		case 19: // add one-byte value to shield
 			detokenisedStream += "ADDVAR ";
-			detokenisedStream += Common::String::format("(%d, v%d)", (int)tokenisedCondition[bytePointer], k8bitVariableShield);
+			detokenisedStream += Common::String::format("(%d, v%d)", (int8)tokenisedCondition[bytePointer], k8bitVariableShield);
 			currentInstruction = FCLInstruction(Token::ADDVAR);
 			currentInstruction.setSource(k8bitVariableShield);
-			currentInstruction.setDestination(tokenisedCondition[bytePointer]);
+			currentInstruction.setDestination((int8) tokenisedCondition[bytePointer]);
 			conditionalInstructions->push_back(currentInstruction);
 			currentInstruction = FCLInstruction(Token::UNKNOWN);
 			bytePointer++;
