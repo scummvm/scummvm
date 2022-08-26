@@ -71,6 +71,8 @@
 
 #include "hpl1/penumbra-overture/Version.h" // cool version .h that uses SVN revision #s
 
+#include "common/config-manager.h"
+
 // Global init...
 cInit *gpInit;
 
@@ -190,7 +192,7 @@ bool gbUsingUserSettings = false;
 
 //-----------------------------------------------------------------------
 
-cInit::cInit(void) : iUpdateable("Init") {
+cInit::cInit() : iUpdateable("Init") {
 	mbDestroyGraphics = true;
 	mbWeaponAttacking = false;
 	mbResetCache = true;
@@ -205,7 +207,7 @@ cInit::cInit(void) : iUpdateable("Init") {
 
 //-----------------------------------------------------------------------
 
-cInit::~cInit(void) {
+cInit::~cInit() {
 }
 
 //-----------------------------------------------------------------------
@@ -224,17 +226,25 @@ void cInit::CreateHardCodedPS(iParticleEmitterData *apPE) {
 
 //-----------------------------------------------------------------------
 
-bool cInit::Init(tString saveToLoad) {
-	/*if(asCommandLine != "")
-	{
-		Log("CommandLine: %s\n",asCommandLine.c_str());
-		if(cSerialChecker::Validate(asCommandLine)<=0)
-		{
-			FatalError("Invalid serial number!\n");
-		}
-	}*/
+static int getIntConfig(const char *name, const int defaultVal) {
+	if (ConfMan.hasKey(name))
+		return ConfMan.getInt(name);
+	return defaultVal;
+}
 
-	// iResourceBase::SetLogCreateAndDelete(true);
+static bool getBoolConfig(const char *name, const bool defaultVal) {
+	if (ConfMan.hasKey(name))
+		return ConfMan.getBool(name);
+	return defaultVal;
+}
+
+static tString getStringConfig(const char *name, const tString &defaultVal) {
+	if (ConfMan.hasKey(name))
+		return ConfMan.get(name).c_str(); // FIXME: strings
+	return defaultVal;
+}
+
+bool cInit::Init(tString saveToLoad) {
 	SetWindowCaption("Penumbra Loading...");
 
 	// PERSONAL DIR /////////////////////
@@ -310,21 +320,19 @@ bool cInit::Init(tString saveToLoad) {
 	mpGameConfig = hplNew(cConfigFile, (_W("config/game.cfg")));
 	mpGameConfig->Load();
 
-	mvScreenSize.x = mpConfig->GetInt("Screen", "Width", 800);
-	mvScreenSize.y = mpConfig->GetInt("Screen", "Height", 600);
-	mbFullScreen = mpConfig->GetBool("Screen", "FullScreen", true);
-	mbVsync = mpConfig->GetBool("Screen", "Vsync", false);
-	mbLogResources = mpConfig->GetBool("Debug", "LogResources", false);
-	mbDebugInteraction = mpConfig->GetBool("Debug", "DebugInteraction", false);
+	mvScreenSize.x = getIntConfig("screen-width", 800);
+	mvScreenSize.y = getIntConfig("screen-height", 600);
+	mbFullScreen = ConfMan.getBool("fullscreen");
+	mbVsync = ConfMan.getBool("vsync");
+	mbLogResources = false;
+	mbDebugInteraction = false;
 
-	msWebPageOnExit = mpConfig->GetString("Demo", "WebPageOnExit", "http://www.Penumbra-Overture.com");
-
-	mbSubtitles = mpConfig->GetBool("Game", "Subtitles", true);
-	mbSimpleWeaponSwing = mpConfig->GetBool("Game", "SimpleWeaponSwing", false);
-	mbDisablePersonalNotes = mpConfig->GetBool("Game", "DisablePersonalNotes", false);
-	mbAllowQuickSave = mpConfig->GetBool("Game", "AllowQuickSave", false);
-	mbFlashItems = mpConfig->GetBool("Game", "FlashItems", true);
-	mbShowCrossHair = mpConfig->GetBool("Game", "ShowCrossHair", false);
+	mbSubtitles = ConfMan.getBool("subtitles");
+	mbSimpleWeaponSwing = getBoolConfig("simple_weapon_swing", false);
+	mbDisablePersonalNotes = getBoolConfig("disable_personal_notes", false);
+	mbAllowQuickSave = getBoolConfig("allow_quick_save", false);
+	mbFlashItems = getBoolConfig("flash_items", true);
+	mbShowCrossHair = getBoolConfig("show_crosshair", false);
 
 	mbHapticsAvailable = mpConfig->GetBool("Haptics", "Available", false);
 	if (mbHapticsAvailable) {
@@ -343,20 +351,18 @@ bool cInit::Init(tString saveToLoad) {
 
 	mbSimpleSwingInOptions = mpConfig->GetBool("Game", "SimpleSwingInOptions", mbHapticsAvailable ? true : false);
 
-	msGlobalScriptFile = mpConfig->GetString("Map", "GlobalScript", "global_script.hps");
-	msLanguageFile = mpConfig->GetString("Game", "LanguageFile", "english.lang");
-	msCurrentUser = mpConfig->GetString("Game", "CurrentUser", "default");
-	mDifficulty = (eGameDifficulty)mpConfig->GetInt("Game", "Difficulty", 1);
+	msGlobalScriptFile = getStringConfig("global_script", "global_script.hps");
+	msLanguageFile = "English.lang"; // TODO: replace with proper language support
+	mDifficulty = static_cast<eGameDifficulty>(getIntConfig("difficulty", eGameDifficulty_Normal));
 
-	msStartMap = mpConfig->GetString("Map", "File", "level00_01_boat_cabin.dae");
-	msStartLink = mpConfig->GetString("Map", "StartPos", "link01");
+	msStartMap = getStringConfig("starting_map", "level00_01_boat_cabin.dae");
+	msStartLink = getStringConfig("starting_map_position", "link01");
+	mlFSAA = getIntConfig("fsaa", 0);
+	mbPostEffects = getBoolConfig("post_effects", true);
+	iMaterial::SetQuality(static_cast<eMaterialQuality>(getIntConfig("shader_quality", eMaterialQuality_High)));
 
-	mlFSAA = mpConfig->GetInt("Graphics", "FSAA", 0);
-	mbPostEffects = mpConfig->GetBool("Graphics", "PostEffects", true);
-	iMaterial::SetQuality((eMaterialQuality)mpConfig->GetInt("Graphics", "ShaderQuality", eMaterialQuality_High));
-
-	mPhysicsAccuracy = (ePhysicsAccuracy)mpConfig->GetInt("Physics", "Accuracy", ePhysicsAccuracy_High);
-	mfPhysicsUpdatesPerSec = mpConfig->GetFloat("Physics", "UpdatesPerSec", 60.0f);
+	mPhysicsAccuracy = static_cast<ePhysicsAccuracy>(getIntConfig("physics_accuracy", ePhysicsAccuracy_High));
+	mfPhysicsUpdatesPerSec = static_cast<float>(getIntConfig("physics_updates_per_second", 60));
 
 	mlMaxSoundChannels = mpConfig->GetInt("Sound", "MaxSoundChannels", 32);
 	mbUseSoundHardware = mpConfig->GetBool("Sound", "UseSoundHardware", false);
@@ -395,10 +401,6 @@ bool cInit::Init(tString saveToLoad) {
 
 	Vars.AddBool("LowLevelSoundLogging", mpConfig->GetBool("Sound", "LowLevelLogging", false));
 
-	// Set CG Options
-	//cCGProgram::SetFProfile(mpConfig->GetString("Graphics", "ForceFP", "AUTO"));
-	//cCGProgram::SetVProfile(mpConfig->GetString("Graphics", "ForceVP", "AUTO"));
-
 	LowLevelGameSetup *pSetUp = NULL;
 
 	pSetUp = hplNew(LowLevelGameSetup, ());
@@ -419,9 +421,9 @@ bool cInit::Init(tString saveToLoad) {
 
 	mpGame->GetGraphics()->GetLowLevel()->SetVsyncActive(mbVsync);
 
-	mbShowPreMenu = mpConfig->GetBool("Game", "ShowPreMenu", true);
-	mbShowMenu = mpConfig->GetBool("Game", "ShowMenu", true);
-	mbShowIntro = mpConfig->GetBool("Game", "ShowIntro", true);
+	mbShowPreMenu = getBoolConfig("show_pre_menu", true);
+	mbShowIntro = getBoolConfig("show_intro", true);
+	mbShowMenu = getBoolConfig("show_menu", true);
 
 	mfMaxPhysicsTimeStep = 1.0f / mfPhysicsUpdatesPerSec;
 
@@ -464,7 +466,7 @@ bool cInit::Init(tString saveToLoad) {
 	mpGraphicsHelper->DrawLoadingScreen("");
 
 	// SOUND ////////////////////////////////
-	mpGame->GetSound()->GetLowLevel()->SetVolume(mpConfig->GetFloat("Sound", "Volume", 1));
+	mpGame->GetSound()->GetLowLevel()->SetVolume(1);
 
 	// PHYSICS INIT /////////////////////
 	mpGame->GetPhysics()->LoadSurfaceData("materials.cfg", mpGame->GetHaptic());
@@ -474,25 +476,25 @@ bool cInit::Init(tString saveToLoad) {
 
 	// GRAPHICS INIT ////////////////////
 	mpGame->GetGraphics()->GetRendererPostEffects()->SetActive(mbPostEffects);
-	mpGame->GetGraphics()->GetRendererPostEffects()->SetBloomActive(mpConfig->GetBool("Graphics", "Bloom", true));
+	mpGame->GetGraphics()->GetRendererPostEffects()->SetBloomActive(getBoolConfig("bloom", true));
 	mpGame->GetGraphics()->GetRendererPostEffects()->SetBloomSpread(6);
 
-	mpGame->GetGraphics()->GetRendererPostEffects()->SetMotionBlurActive(mpConfig->GetBool("Graphics", "MotionBlur", false));
-	mpGame->GetGraphics()->GetRendererPostEffects()->SetMotionBlurAmount(mpConfig->GetFloat("Graphics", "MotionBlurAmount", 0.3f));
+	mpGame->GetGraphics()->GetRendererPostEffects()->SetMotionBlurActive(getBoolConfig("motion_blur", false));
+	mpGame->GetGraphics()->GetRendererPostEffects()->SetMotionBlurAmount(static_cast<float>(getIntConfig("motion_blur_amount", 300)) / 1000.f);
 
-	mpGame->GetGraphics()->GetRenderer3D()->SetRefractionUsed(mpConfig->GetBool("Graphics", "Refractions", false));
+	mpGame->GetGraphics()->GetRenderer3D()->SetRefractionUsed(getBoolConfig("refractions", false));
 
-	mpEffectHandler->GetDepthOfField()->SetDisabled(!mpConfig->GetBool("Graphics", "DepthOfField", true));
+	mpEffectHandler->GetDepthOfField()->SetDisabled(!getBoolConfig("depth_of_field", true));
 
-	mpGame->GetResources()->GetMaterialManager()->SetTextureSizeLevel(mpConfig->GetInt("Graphics", "TextureSizeLevel", 0));
-	mpGame->GetResources()->GetMaterialManager()->SetTextureFilter((eTextureFilter)mpConfig->GetInt("Graphics", "TextureFilter", 0));
+	mpGame->GetResources()->GetMaterialManager()->SetTextureSizeLevel(getIntConfig("texture_size_level", 0));
+	mpGame->GetResources()->GetMaterialManager()->SetTextureFilter(static_cast<eTextureFilter>(getIntConfig("texture_filter", eTextureFilter_Bilinear)));
 	mpGame->GetResources()->GetMaterialManager()->SetTextureAnisotropy(mpConfig->GetFloat("Graphics", "TextureAnisotropy", 1.0f));
 
-	mpGame->GetGraphics()->GetLowLevel()->SetGammaCorrection(mpConfig->GetFloat("Graphics", "Gamma", 1.0f));
+	mpGame->GetGraphics()->GetLowLevel()->SetGammaCorrection(static_cast<float>(getIntConfig("gamma", 1000)) / 1000.f);
 
-	mpGame->GetGraphics()->GetRenderer3D()->SetShowShadows((eRendererShowShadows)mpConfig->GetInt("Graphics", "Shadows", 0));
+	mpGame->GetGraphics()->GetRenderer3D()->SetShowShadows(static_cast<eRendererShowShadows>(getIntConfig("shadows", eRendererShowShadows_All)));
 
-	mpGame->SetLimitFPS(mpConfig->GetBool("Graphics", "LimitFPS", true));
+	mpGame->SetLimitFPS(getBoolConfig("limit_fps", true));
 
 	// HAPTIC INIT ////////////////////
 	if (mbHasHaptics) {
@@ -588,18 +590,15 @@ bool cInit::Init(tString saveToLoad) {
 		mpGlobalScript->Run("OnInit()");
 	}
 
-	// mpGraphicsHelper->DrawLoadingScreen("");
-
-	// mpIntroStory->SetActive(true);
-	// mpCredits->SetActive(true);
-	// mpDemoEndText->SetActive(true);
-
-	// mpGame->SetRenderOnce(true);
-	// mpGame->GetGraphics()->GetRenderer3D()->SetDebugFlags(eRendererDebugFlag_LogRendering);
-
-	if (saveToLoad == "")
-		mpPreMenu->SetActive(true);
-	else {
+	if (saveToLoad == "") {
+		if (mbShowPreMenu) {
+			mpPreMenu->SetActive(true);
+		} else if (mbShowMenu) {
+			mpMainMenu->SetActive(true);
+		} else {
+			mpMapHandler->Load(msStartMap, msStartLink);
+		}
+	} else {
 		mpGame->GetInput()->GetLowLevel()->BeginInputUpdate(); // prevents the game from becoming unresponsive
 	 	mpSaveHandler->LoadGameFromFile(cString::To16Char(saveToLoad), false);
 		mpGame->GetInput()->GetLowLevel()->EndInputUpdate(); // clears the event queue
@@ -740,13 +739,12 @@ void cInit::Exit() {
 
 	Log(" Saving config\n");
 	// Save engine stuff.
-	mpConfig->SetBool("Graphics", "Bloom", mpGame->GetGraphics()->GetRendererPostEffects()->GetBloomActive());
-	mpConfig->SetBool("Graphics", "MotionBlur", mpGame->GetGraphics()->GetRendererPostEffects()->GetMotionBlurActive());
-	mpConfig->SetFloat("Graphics", "MotionBlurAmount", mpGame->GetGraphics()->GetRendererPostEffects()->GetMotionBlurAmount());
-	mpConfig->SetBool("Graphics", "DepthOfField", !mpEffectHandler->GetDepthOfField()->IsDisabled());
-	mpConfig->GetBool("Graphics", "Refractions", mpGame->GetGraphics()->GetRenderer3D()->GetRefractionUsed());
+	ConfMan.setBool("bloom", mpGame->GetGraphics()->GetRendererPostEffects()->GetBloomActive());
+	ConfMan.setBool("motion_blur", mpGame->GetGraphics()->GetRendererPostEffects()->GetMotionBlurActive());
+	ConfMan.setBool("depth_of_field", !mpEffectHandler->GetDepthOfField()->IsDisabled());
+	ConfMan.setInt("motion_blur_amount", static_cast<int>(mpGame->GetGraphics()->GetRendererPostEffects()->GetMotionBlurAmount() * 1000.f));
+	ConfMan.setBool("refractions", mpGame->GetGraphics()->GetRenderer3D()->GetRefractionUsed());
 
-	mpConfig->SetFloat("Sound", "Volume", mpGame->GetSound()->GetLowLevel()->GetVolume());
 	mpConfig->SetBool("Sound", "UseSoundHardware", mbUseSoundHardware);
 	mpConfig->SetInt("Sound", "MaxSoundChannels", mlMaxSoundChannels);
 	mpConfig->SetInt("Sound", "StreamUpdateFreq", mlStreamUpdateFreq);
@@ -755,18 +753,18 @@ void cInit::Exit() {
 	mpConfig->SetInt("Sound", "MaxStereoChannelsHint", mlMaxStereoChannelsHint);
 	mpConfig->SetString("Sound", "DeviceName", msDeviceName);
 
-	mpConfig->SetInt("Graphics", "TextureSizeLevel", mpGame->GetResources()->GetMaterialManager()->GetTextureSizeLevel());
-	mpConfig->SetInt("Graphics", "TextureFilter", mpGame->GetResources()->GetMaterialManager()->GetTextureFilter());
-	mpConfig->SetFloat("Graphics", "TextureAnisotropy", mpGame->GetResources()->GetMaterialManager()->GetTextureAnisotropy());
+	ConfMan.setInt("texture_size_level", mpGame->GetResources()->GetMaterialManager()->GetTextureSizeLevel());
+	ConfMan.setInt("texture_filter", mpGame->GetResources()->GetMaterialManager()->GetTextureFilter());
+	// mpConfig->SetFloat("Graphics", "TextureAnisotropy", mpGame->GetResources()->GetMaterialManager()->GetTextureAnisotropy());
 
-	mpConfig->SetFloat("Graphics", "Gamma", mpGame->GetGraphics()->GetLowLevel()->GetGammaCorrection());
+	ConfMan.setInt("gamma", mpGame->GetGraphics()->GetLowLevel()->GetGammaCorrection() * 1000.f);
 
-	mpConfig->SetInt("Graphics", "FSAA", mlFSAA);
-	mpConfig->SetBool("Graphics", "PostEffects", mbPostEffects);
-	mpConfig->SetInt("Graphics", "ShaderQuality", iMaterial::GetQuality());
-	mpConfig->SetBool("Graphics", "LimitFPS", mpGame->GetLimitFPS());
+	ConfMan.setInt("fsaa", mlFSAA);
+	ConfMan.setBool("post_effects", mbPostEffects);
+	ConfMan.setInt("shader_quality", iMaterial::GetQuality());
+	ConfMan.setBool("limit_fps", mpGame->GetLimitFPS());
 
-	mpConfig->SetInt("Graphics", "Shadows", mpGame->GetGraphics()->GetRenderer3D()->GetShowShadows());
+	ConfMan.setInt("shadows", mpGame->GetGraphics()->GetRenderer3D()->GetShowShadows());
 
 	Log(" Exit Effect Handler\n");
 	hplDelete(mpEffectHandler);
@@ -779,48 +777,33 @@ void cInit::Exit() {
 
 	Log(" Saving last config\n");
 	// Save the stuff to the config file
-	mpConfig->SetInt("Screen", "Width", mvScreenSize.x);
-	mpConfig->SetInt("Screen", "Height", mvScreenSize.y);
-	mpConfig->SetBool("Screen", "FullScreen", mbFullScreen);
-	mpConfig->SetBool("Screen", "Vsync", mbVsync);
+	ConfMan.setInt("screen-width", mvScreenSize.x);
+	ConfMan.setInt("screen-height", mvScreenSize.y);
 
-	mpConfig->SetString("Demo", "WebPageOnExit", msWebPageOnExit);
+	ConfMan.set("global_script", msGlobalScriptFile.c_str()); // FIXME: strings
 
-	mpConfig->SetString("Map", "GlobalScript", msGlobalScriptFile);
+	ConfMan.setBool("simple_weapon_swing", mbSimpleWeaponSwing);
+	ConfMan.setBool("disable_personal_notes", mbDisablePersonalNotes);
+	ConfMan.setBool("allow_quick_save", true);
+	ConfMan.setBool("flash_tems", mbFlashItems);
+	ConfMan.setBool("show_crosshair", mbShowCrossHair);
 
-	mpConfig->SetBool("Game", "Subtitles", mbSubtitles);
-	mpConfig->SetBool("Game", "SimpleWeaponSwing", mbSimpleWeaponSwing);
-	mpConfig->SetBool("Game", "DisablePersonalNotes", mbDisablePersonalNotes);
-	mpConfig->SetBool("Game", "AllowQuickSave", mbAllowQuickSave);
-	mpConfig->SetBool("Game", "FlashItems", mbFlashItems);
-	mpConfig->SetBool("Game", "ShowCrossHair", mbShowCrossHair);
+	ConfMan.set("starting_map", msStartMap.c_str()); // FIXME: strings
+	ConfMan.set("starting_map_position", msStartLink.c_str()); // FIXME: strings
 
-	mpConfig->SetBool("Game", "SimpleSwingInOptions", mbSimpleSwingInOptions);
+	ConfMan.setInt("difficulty", mDifficulty);
 
-	mpConfig->SetString("Map", "File", msStartMap);
-	mpConfig->SetString("Map", "StartPos", msStartLink);
+	ConfMan.setInt("physics_accuracy", mPhysicsAccuracy);
+	ConfMan.setInt("physics_updates_per_second", static_cast<int>(mfPhysicsUpdatesPerSec));
 
-	mpConfig->SetInt("Game", "Difficulty", mDifficulty);
-	mpConfig->SetString("Game", "CurrentUser", msCurrentUser);
-	mpConfig->SetString("Game", "LanguageFile", msLanguageFile);
-	mpConfig->SetBool("Game", "ShowPreMenu", mbShowPreMenu);
-	mpConfig->SetBool("Game", "ShowMenu", mbShowMenu);
-	mpConfig->SetBool("Game", "ShowIntro", mbShowIntro);
+	ConfMan.setBool("show_pre_menu", mbShowPreMenu);
+	ConfMan.setBool("show_menu", mbShowMenu);
+	ConfMan.setBool("show_intro", mbShowIntro);
 
-	mpConfig->SetInt("Physics", "PhysicsAccuracy", mPhysicsAccuracy);
-	mpConfig->SetFloat("Physics", "UpdatesPerSec", mfPhysicsUpdatesPerSec);
-
-	mpConfig->SetBool("Debug", "LogResources", mbLogResources);
-
-	mpConfig->Save();
 	hplDelete(mpConfig);
 
 	hplDelete(mpGameConfig);
-
-#ifdef DEMO_VERSION
-	if (msWebPageOnExit != "")
-		OpenBrowserWindow(cString::To16Char(msWebPageOnExit));
-#endif
+	ConfMan.flushToDisk();
 }
 
 //-----------------------------------------------------------------------
