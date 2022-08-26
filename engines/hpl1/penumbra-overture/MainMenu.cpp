@@ -963,99 +963,6 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////
-// OPTIONS SOUND
-//////////////////////////////////////////////////////////////////////////
-
-cMainMenuWidget_Text *gpSoundVolumeText = NULL;
-cMainMenuWidget_Text *gpSoundHardwareText = NULL;
-cMainMenuWidget_Text *gpSoundOutputDevice = NULL;
-
-class cMainMenuWidget_SoundVolume : public cMainMenuWidget_Button {
-public:
-	cMainMenuWidget_SoundVolume(cInit *apInit, const cVector3f &avPos, const tWString &asText, cVector2f avFontSize, eFontAlign aAlignment)
-		: cMainMenuWidget_Button(apInit, avPos, asText, eMainMenuState_LastEnum, avFontSize, aAlignment) {
-		msTip = kTranslate("MainMenu", "TipSoundVolume");
-	}
-
-	void OnMouseDown(eMButton aButton) {
-		float fVolume = mpInit->mpGame->GetSound()->GetLowLevel()->GetVolume();
-
-		if (aButton == eMButton_Left) {
-			fVolume += 0.1f;
-			if (fVolume > 1.0f)
-				fVolume = 1.0f;
-		} else if (aButton == eMButton_Right) {
-			fVolume -= 0.1f;
-			if (fVolume < 0.0f)
-				fVolume = 0.0f;
-		}
-
-		mpInit->mpGame->GetSound()->GetLowLevel()->SetVolume(fVolume);
-
-		char sTempVec[256];
-		sprintf(sTempVec, "%.0f", mpInit->mpGame->GetSound()->GetLowLevel()->GetVolume() * 100);
-		gpSoundVolumeText->msText = cString::To16Char(sTempVec);
-	}
-};
-
-class cMainMenuWidget_SoundHardware : public cMainMenuWidget_Button {
-public:
-	cMainMenuWidget_SoundHardware(cInit *apInit, const cVector3f &avPos, const tWString &asText, cVector2f avFontSize, eFontAlign aAlignment)
-		: cMainMenuWidget_Button(apInit, avPos, asText, eMainMenuState_LastEnum, avFontSize, aAlignment) {
-		msTip = kTranslate("MainMenu", "TipSoundHardware");
-	}
-
-	void OnMouseDown(eMButton aButton) {
-		mpInit->mbUseSoundHardware = !mpInit->mbUseSoundHardware;
-
-		gpSoundHardwareText->msText = mpInit->mbUseSoundHardware ? kTranslate("MainMenu", "On") : kTranslate("MainMenu", "Off");
-
-		gbMustRestart = true;
-	}
-};
-
-class cMainMenuWidget_SoundOutputDevice : public cMainMenuWidget_Button {
-public:
-	tStringVec mlDevices;
-
-	cMainMenuWidget_SoundOutputDevice(cInit *apInit, const cVector3f &avPos, const tWString &asText, cVector2f avFontSize, eFontAlign aAlignment)
-		: cMainMenuWidget_Button(apInit, avPos, asText, eMainMenuState_LastEnum, avFontSize, aAlignment) {
-		msTip = kTranslate("MainMenu", "TipSoundOutputDevice");
-#if 0
-		mlDevices = OAL_Info_GetOutputDevices();
-#endif
-	}
-
-	void OnMouseDown(eMButton aButton) {
-		int lCurrentNum = 0;
-
-		// get current num
-		for (int i = 0; i < mlDevices.size(); ++i) {
-			if (mlDevices[i] == mpInit->msDeviceName) {
-				lCurrentNum = i;
-				break;
-			}
-		}
-
-		if (aButton == eMButton_Left) {
-			lCurrentNum++;
-			if (lCurrentNum >= mlDevices.size())
-				lCurrentNum = 0;
-		} else if (aButton == eMButton_Right) {
-			lCurrentNum--;
-			if (lCurrentNum < 0)
-				lCurrentNum = mlDevices.size() - 1;
-		}
-
-		mpInit->msDeviceName = mlDevices[lCurrentNum];
-
-		gpSoundOutputDevice->msText = cString::To16Char(mpInit->msDeviceName);
-
-		gbMustRestart = true;
-	}
-};
-
-//////////////////////////////////////////////////////////////////////////
 // OPTIONS GAME
 //////////////////////////////////////////////////////////////////////////
 
@@ -2643,8 +2550,6 @@ void cMainMenu::CreateWidgets() {
 	vPos.y += 37;
 	AddWidgetToState(eMainMenuState_Options, hplNew(cMainMenuWidget_Button, (mpInit, vPos, kTranslate("MainMenu", "Game"), eMainMenuState_OptionsGame, 25, eFontAlign_Center)));
 	vPos.y += 37;
-	AddWidgetToState(eMainMenuState_Options, hplNew(cMainMenuWidget_Button, (mpInit, vPos, kTranslate("MainMenu", "Sound"), eMainMenuState_OptionsSound, 25, eFontAlign_Center)));
-	vPos.y += 37;
 	AddWidgetToState(eMainMenuState_Options, hplNew(cMainMenuWidget_Button, (mpInit, vPos, kTranslate("MainMenu", "Graphics"), eMainMenuState_OptionsGraphics, 25, eFontAlign_Center)));
 	vPos.y += 37;
 	AddWidgetToState(eMainMenuState_Options, hplNew(cMainMenuWidget_Button, (mpInit, vPos, kTranslate("MainMenu", "Back"), eMainMenuState_Start, 25, eFontAlign_Center)));
@@ -3022,52 +2927,6 @@ void cMainMenu::CreateWidgets() {
 	gpDisablePersonalText = hplNew(cMainMenuWidget_Text, (mpInit, vPos, sText, 20, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsGame, gpDisablePersonalText);
 	gpDisablePersonalText->SetExtraWidget(pWidgetDisablePersonal);
-
-	///////////////////////////////////
-	// Options Sound
-	///////////////////////////////////
-	vPos = vTextStart; // cVector3f(400, 230, 40);
-	// Head
-	AddWidgetToState(eMainMenuState_OptionsSound, hplNew(cMainMenuWidget_Text, (mpInit, vPos, kTranslate("MainMenu", "Sound"), 25, eFontAlign_Center)));
-	vPos.y += 37;
-
-	// Buttons
-	cMainMenuWidget *pWidgetSoundVolume = hplNew(cMainMenuWidget_SoundVolume, (mpInit, vPos, kTranslate("MainMenu", "Sound Volume:"), 20, eFontAlign_Right));
-	AddWidgetToState(eMainMenuState_OptionsSound, pWidgetSoundVolume);
-	vPos.y += 29;
-	cMainMenuWidget *pWidgetSoundHardware = hplNew(cMainMenuWidget_SoundHardware, (mpInit, vPos, kTranslate("MainMenu", "Use Hardware:"), 20, eFontAlign_Right));
-	AddWidgetToState(eMainMenuState_OptionsSound, pWidgetSoundHardware);
-	vPos.y += 29;
-	cMainMenuWidget *pWidgetSoundOutputDevice = hplNew(cMainMenuWidget_SoundOutputDevice, (mpInit, vPos, kTranslate("MainMenu", "Output Device:"), 20, eFontAlign_Right));
-	AddWidgetToState(eMainMenuState_OptionsSound, pWidgetSoundOutputDevice);
-	vPos.y += 35;
-	AddWidgetToState(eMainMenuState_OptionsSound, hplNew(cMainMenuWidget_GfxBack, (mpInit, vPos, kTranslate("MainMenu", "Back"), 23, eFontAlign_Center)));
-
-	// Text
-	vPos = cVector3f(vTextStart.x + 12, vTextStart.y + 37, vTextStart.z);
-
-	sprintf(sTempVec, "%.0f", mpInit->mpGame->GetSound()->GetLowLevel()->GetVolume() * 100);
-	sText = cString::To16Char(sTempVec);
-	gpSoundVolumeText = hplNew(cMainMenuWidget_Text, (mpInit, vPos, sText, 20, eFontAlign_Left));
-	AddWidgetToState(eMainMenuState_OptionsSound, gpSoundVolumeText);
-	gpSoundVolumeText->SetExtraWidget(pWidgetSoundVolume);
-
-	vPos.y += 29;
-	sText = mpInit->mbUseSoundHardware ? kTranslate("MainMenu", "On") : kTranslate("MainMenu", "Off");
-	gpSoundHardwareText = hplNew(cMainMenuWidget_Text, (mpInit, vPos, sText, 20, eFontAlign_Left));
-	AddWidgetToState(eMainMenuState_OptionsSound, gpSoundHardwareText);
-	gpSoundHardwareText->SetExtraWidget(pWidgetSoundHardware);
-
-	vPos.y += 29;
-	// Set the default to what's really being used
-#if 0
-	mpInit->msDeviceName = tString(OAL_Info_GetDeviceName());
-#endif
-
-	sText = cString::To16Char(mpInit->msDeviceName);
-	gpSoundOutputDevice = hplNew(cMainMenuWidget_Text, (mpInit, vPos, sText, 20, eFontAlign_Left));
-	AddWidgetToState(eMainMenuState_OptionsSound, gpSoundOutputDevice);
-	gpSoundOutputDevice->SetExtraWidget(pWidgetSoundOutputDevice);
 
 	///////////////////////////////////
 	// Options Graphics
