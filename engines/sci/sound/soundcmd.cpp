@@ -396,10 +396,17 @@ reg_t SoundCommandParser::kDoSoundPause(EngineState *s, int argc, reg_t *argv) {
 		// perform this action, but the architecture of the ScummVM
 		// implementation is so different that it doesn't matter here
 		if (_soundVersion >= SCI_VERSION_2_1_EARLY && musicSlot->isSample) {
-			if (shouldPause) {
-				g_sci->_audio32->pause(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj);
-			} else {
-				g_sci->_audio32->resume(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj);
+			// LSL6HIRES didn't support pausing samples with kDoSoundFade. Its interpreter's
+			// pause code didn't call kDoAudio. This feature appeared in PQ4 CD's interpreter
+			// a month later, according to the date strings, even though they have the same
+			// version string. LSL6HIRES door sounds depend on these pause calls not having
+			// any effect. Bug #13555
+			if (g_sci->getGameId() != GID_LSL6HIRES) {
+				if (shouldPause) {
+					g_sci->_audio32->pause(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj);
+				} else {
+					g_sci->_audio32->resume(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj);
+				}
 			}
 		} else
 #endif
