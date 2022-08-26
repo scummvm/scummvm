@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-26 20:48+0000\n"
+"POT-Creation-Date: 2022-08-26 22:15+0000\n"
 "PO-Revision-Date: 2022-08-22 17:11+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -1011,7 +1011,7 @@ msgstr "Δεν ανιχνεύτηκε η πλατφόρμα"
 msgid "All"
 msgstr "Όλα"
 
-#: gui/launcher.cpp:1601
+#: gui/launcher.cpp:1603
 msgid "Icons per row:"
 msgstr "Εικονίδια ανά σειρά:"
 
@@ -2117,7 +2117,7 @@ msgstr "Εγγραφή"
 msgid "Playback"
 msgstr "Αναπαραγωγή"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:224
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:231
 msgid "Edit"
 msgstr "Επεξεργασία"
 
@@ -2299,11 +2299,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "Σβήσιμο τιμής"
 
-#: gui/widgets/grid.cpp:218
+#: gui/widgets/grid.cpp:225
 msgid "Play"
 msgstr "Παίξε"
 
-#: gui/widgets/grid.cpp:221
+#: gui/widgets/grid.cpp:228
 msgid "Saves"
 msgstr "Αποθηκευμένα παιχνίδια"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-26 20:48+0000\n"
+"POT-Creation-Date: 2022-08-26 22:15+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -994,7 +994,7 @@ msgstr "플랫폼이 감지되지 않음"
 msgid "All"
 msgstr "모두"
 
-#: gui/launcher.cpp:1601
+#: gui/launcher.cpp:1603
 msgid "Icons per row:"
 msgstr ""
 
@@ -2051,7 +2051,7 @@ msgstr "녹화"
 msgid "Playback"
 msgstr "재생"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:224
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:231
 msgid "Edit"
 msgstr "수정"
 
@@ -2229,11 +2229,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "값 제거"
 
-#: gui/widgets/grid.cpp:218
+#: gui/widgets/grid.cpp:225
 msgid "Play"
 msgstr "플레이"
 
-#: gui/widgets/grid.cpp:221
+#: gui/widgets/grid.cpp:228
 msgid "Saves"
 msgstr "저장"
 

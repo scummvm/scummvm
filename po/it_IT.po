@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-26 20:48+0000\n"
+"POT-Creation-Date: 2022-08-26 22:15+0000\n"
 "PO-Revision-Date: 2022-08-24 18:45+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -1005,7 +1005,7 @@ msgstr "Piattaforma non rilevata"
 msgid "All"
 msgstr "Tutti"
 
-#: gui/launcher.cpp:1601
+#: gui/launcher.cpp:1603
 msgid "Icons per row:"
 msgstr "Icone per riga:"
 
@@ -2087,7 +2087,7 @@ msgstr "Registra"
 msgid "Playback"
 msgstr "Riproduci"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:224
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:231
 msgid "Edit"
 msgstr "Modifica"
 
@@ -2269,11 +2269,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "Cancella"
 
-#: gui/widgets/grid.cpp:218
+#: gui/widgets/grid.cpp:225
 msgid "Play"
 msgstr "Gioca"
 
-#: gui/widgets/grid.cpp:221
+#: gui/widgets/grid.cpp:228
 msgid "Saves"
 msgstr "Salvataggi"
 

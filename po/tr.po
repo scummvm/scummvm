@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-26 20:48+0000\n"
+"POT-Creation-Date: 2022-08-26 22:15+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -1019,7 +1019,7 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: gui/launcher.cpp:1601
+#: gui/launcher.cpp:1603
 msgid "Icons per row:"
 msgstr ""
 
@@ -2095,7 +2095,7 @@ msgstr "Kayıt"
 msgid "Playback"
 msgstr "Oynatma"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:224
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:231
 msgid "Edit"
 msgstr "Düzenle"
 
@@ -2278,11 +2278,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "Değeri sil"
 
-#: gui/widgets/grid.cpp:218
+#: gui/widgets/grid.cpp:225
 msgid "Play"
 msgstr ""
 
-#: gui/widgets/grid.cpp:221
+#: gui/widgets/grid.cpp:228
 #, fuzzy
 msgid "Saves"
 msgstr "Kaydet"

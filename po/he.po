@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-26 20:48+0000\n"
+"POT-Creation-Date: 2022-08-26 22:15+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -1007,7 +1007,7 @@ msgstr ""
 msgid "All"
 msgstr "אלט"
 
-#: gui/launcher.cpp:1601
+#: gui/launcher.cpp:1603
 msgid "Icons per row:"
 msgstr ""
 
@@ -2056,7 +2056,7 @@ msgstr "תקליט"
 msgid "Playback"
 msgstr "השמעה"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:224
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:231
 msgid "Edit"
 msgstr "ערוך"
 
@@ -2236,11 +2236,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "ערך ברור"
 
-#: gui/widgets/grid.cpp:218
+#: gui/widgets/grid.cpp:225
 msgid "Play"
 msgstr "שחק"
 
-#: gui/widgets/grid.cpp:221
+#: gui/widgets/grid.cpp:228
 #, fuzzy
 msgid "Saves"
 msgstr "לשמור"
