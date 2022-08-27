@@ -68,11 +68,14 @@ void DrillerEngine::drawUI() {
 		surface->create(_screenW, _screenH, _gfx->_currentPixelFormat);
 		surface->fillRect(_fullscreenViewArea, 0xA0A0A0FF);
 
+		int score = _gameStateVars[k8bitVariableScore];
+
 		uint32 yellow = 0xFFFF55FF;
 		uint32 black = 0x000000FF;
 
 		drawStringInSurface(_currentAreaMessages[0], 197, 177, yellow, black, surface);
 		drawStringInSurface(_currentAreaMessages[1], 197, 185, yellow, black, surface);
+		drawStringInSurface(Common::String::format("%07d", score), 240, 129, yellow, black, surface);
 
 		Texture *texture = _gfx->createTexture(surface);
 		_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, texture);
