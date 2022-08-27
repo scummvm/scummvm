@@ -69,9 +69,10 @@ void DrillerEngine::drawUI() {
 		surface->fillRect(_fullscreenViewArea, 0xA0A0A0FF);
 
 		uint32 yellow = 0xFFFF55FF;
+		uint32 black = 0x000000FF;
 
-		drawStringInSurface(_currentAreaMessages[0], 197, 177, yellow, surface);
-		drawStringInSurface(_currentAreaMessages[1], 197, 185, yellow, surface);
+		drawStringInSurface(_currentAreaMessages[0], 197, 177, yellow, black, surface);
+		drawStringInSurface(_currentAreaMessages[1], 197, 185, yellow, black, surface);
 
 		Texture *texture = _gfx->createTexture(surface);
 		_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, texture);

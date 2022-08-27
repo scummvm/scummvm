@@ -199,7 +199,7 @@ public:
 	Common::StringArray _currentAreaMessages;
 	Common::StringArray _currentEphymeralMessages;
 	Common::BitArray _font;
-	void drawStringInSurface(const Common::String &str, int x, int y, uint32 color, Graphics::Surface *surface);
+	void drawStringInSurface(const Common::String &str, int x, int y, uint32 fontColor, uint32 backColor, Graphics::Surface *surface);
 
 
 	// Game state
@@ -244,6 +244,8 @@ public:
 	EclipseEngine(OSystem *syst);
 
 	void loadAssets() override;
+
+	void drawUI() override;
 };
 
 class CastleEngine : public FreescapeEngine {
