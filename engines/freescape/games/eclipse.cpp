@@ -23,6 +23,7 @@
 #include "common/file.h"
 
 #include "freescape/freescape.h"
+#include "freescape/language/8bitDetokeniser.h"
 
 namespace Freescape {
 
@@ -99,10 +100,13 @@ void EclipseEngine::drawUI() {
 		surface->create(_screenW, _screenH, _gfx->_currentPixelFormat);
 		surface->fillRect(_fullscreenViewArea, 0xA0A0A0FF);
 
+		int score = _gameStateVars[k8bitVariableScore];
 		uint32 yellow = 0xFFFF55FF;
 		uint32 black = 0x000000FF;
+		uint32 white = 0xFFFFFFFF;
 
 		drawStringInSurface(_currentAreaMessages[1], 102, 135, black, yellow, surface);
+		drawStringInSurface(Common::String::format("%07d", score), 136, 6, black, white, surface);
 
 		Texture *texture = _gfx->createTexture(surface);
 		_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, texture);
