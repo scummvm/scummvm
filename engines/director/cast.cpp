@@ -684,10 +684,8 @@ void Cast::loadCastChildren() {
 			continue;
 		}
 
-		if (c->_value->_type != kCastBitmap) {
-			warning("BUILDBOT: STUB: Cast::loadCastChildren(): Unhandled child of type: %d", c->_value->_type);
+		if (c->_value->_type != kCastBitmap)
 			continue;
-		}	
 
 		// Then handle bitmaps
 		BitmapCastMember *bitmapCast = (BitmapCastMember *)c->_value;
