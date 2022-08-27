@@ -75,6 +75,11 @@ void DrillerEngine::drawUI() {
 
 		drawStringInSurface(_currentAreaMessages[0], 197, 177, yellow, black, surface);
 		drawStringInSurface(_currentAreaMessages[1], 197, 185, yellow, black, surface);
+		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.x())), 150, 145, yellow, black, surface);
+		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.z())), 150, 153, yellow, black, surface);
+		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 150, 161, yellow, black, surface);
+
+
 		drawStringInSurface(Common::String::format("%07d", score), 240, 129, yellow, black, surface);
 
 		Texture *texture = _gfx->createTexture(surface);
