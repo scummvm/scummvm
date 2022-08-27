@@ -60,20 +60,24 @@ void DrillerEngine::loadAssets() {
 
 void DrillerEngine::drawUI() {
 	_gfx->renderCrossair(0);
-	_gfx->setViewport(_fullscreenViewArea);
 
-	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(_screenW, _screenH, _gfx->_currentPixelFormat);
-	surface->fillRect(_fullscreenViewArea, 0xA0A0A0FF);
+	if (_currentAreaMessages.size() == 2) {
+		_gfx->setViewport(_fullscreenViewArea);
 
-	uint32 yellow = 0xFFFF55FF;
-	drawStringInSurface("   SCUMMVM   ", 197, 177, yellow, surface);
-	drawStringInSurface("    ROCKS    ", 197, 185, yellow, surface);
+		Graphics::Surface *surface = new Graphics::Surface();
+		surface->create(_screenW, _screenH, _gfx->_currentPixelFormat);
+		surface->fillRect(_fullscreenViewArea, 0xA0A0A0FF);
 
-	Texture *texture = _gfx->createTexture(surface);
-	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, texture);
-	surface->free();
-	delete surface;
+		uint32 yellow = 0xFFFF55FF;
+
+		drawStringInSurface(_currentAreaMessages[0], 197, 177, yellow, surface);
+		drawStringInSurface(_currentAreaMessages[1], 197, 185, yellow, surface);
+
+		Texture *texture = _gfx->createTexture(surface);
+		_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, texture);
+		surface->free();
+		delete surface;
+	}
 
 	int energy = _gameStateVars[k8bitVariableEnergy];
 	int shield = _gameStateVars[k8bitVariableShield];

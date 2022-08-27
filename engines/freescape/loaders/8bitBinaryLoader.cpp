@@ -396,7 +396,10 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		debugC(1, kFreescapeDebugParser, "%s", conditionSource->c_str());
 	}
 
-	if (isDriller()) {
+	if (isEclipse()) {
+		loadFonts(file, 0xd403);
+	} else if (isDriller()) {
+		loadMessages(file, 0x4135, 20);
 		loadFonts(file, 0x99dd);
 
 		ObjectMap *globalObjectsByID = new ObjectMap;
@@ -457,12 +460,27 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 
 void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset) {
 	file->seek(offset);
-	int charNumber = 59;
+	int charNumber = 60;
 	byte *font = (byte *)malloc(6 * charNumber);
 	file->read(font, 6 * charNumber);
 
 	_font.set_size(48 * charNumber);
 	_font.set_bits((byte *)font);
 }
+
+void FreescapeEngine::loadMessages(Common::SeekableReadStream *file, int offset, int number) {
+	file->seek(offset);
+	int messageSize = 14;
+	byte *buffer = (byte *)malloc(messageSize + 1);
+	buffer[14] = NULL;
+
+	for (int i = 0; i < number; i++) {
+		file->read(buffer, messageSize);
+		Common::String message = (const char*) buffer;
+		_messagesList.push_back(message);
+		debug("%s", _messagesList[i].c_str());
+	}
+}
+
 
 } // namespace Freescape
