@@ -192,9 +192,13 @@ public:
 	float _farClipPlane;
 	Graphics::Surface *_border;
 
-	// Fonts
-	Common::BitArray _font;
+	// Text messages and Fonts
+	Common::StringArray _messagesList;
+	void loadMessages(Common::SeekableReadStream *file, int offset, int number);
 	void loadFonts(Common::SeekableReadStream *file, int offset);
+	Common::StringArray _currentAreaMessages;
+	Common::StringArray _currentEphymeralMessages;
+	Common::BitArray _font;
 	void drawStringInSurface(const Common::String &str, int x, int y, uint32 color, Graphics::Surface *surface);
 
 

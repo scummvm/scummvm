@@ -525,6 +525,14 @@ void FreescapeEngine::gotoArea(uint16 areaID, int entranceID) {
 	_currentArea = _areaMap[areaID];
 	_currentArea->show();
 
+	_currentAreaMessages.clear();
+	if (!_messagesList.empty())
+		_currentAreaMessages.push_back(_messagesList[1]);
+	else
+		_currentAreaMessages.push_back("");
+
+	_currentAreaMessages.push_back(_currentArea->name);
+
 	int scale = _currentArea->getScale();
 	assert(scale > 0);
 
@@ -578,10 +586,12 @@ bool FreescapeEngine::hasFeature(EngineFeature f) const {
 }
 
 void FreescapeEngine::drawStringInSurface(const Common::String &str, int x, int y, uint32 color, Graphics::Surface *surface) {
-	for (uint32 c = 0; c < str.size(); c++) {
+	Common::String ustr = str;
+	ustr.toUppercase();
+	for (uint32 c = 0; c < ustr.size(); c++) {
 		for (int j = 0; j < 6; j++) {
 			for (int i = 0; i < 8; i++) {
-				if (_font.get(48*(str[c] - 32) + 1 + j*8 + i))
+				if (_font.get(48*(ustr[c] - 32) + 1 + j*8 + i))
 					surface->setPixel(x + 8 - i + 8*c, y + j, color);
 				else
 					surface->setPixel(x + 8 - i + 8*c, y + j, 0x000000FF);  // black
