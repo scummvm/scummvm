@@ -397,6 +397,8 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	}
 
 	if (isDriller()) {
+		loadFonts(file, 0x99dd);
+
 		ObjectMap *globalObjectsByID = new ObjectMap;
 		file->seek(0x3b42);
 		for (int i = 0; i < 8; i++) {
@@ -451,6 +453,16 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	_startEntrance = startEntrance;
 	_colorNumber = ncolors;
 	_binaryBits = 8;
+}
+
+void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset) {
+	file->seek(offset);
+	int charNumber = 59;
+	byte *font = (byte *)malloc(6 * charNumber);
+	file->read(font, 6 * charNumber);
+
+	_font.set_size(48 * charNumber);
+	_font.set_bits((byte *)font);
 }
 
 } // namespace Freescape
