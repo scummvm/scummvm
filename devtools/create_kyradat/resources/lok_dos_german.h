@@ -326,7 +326,7 @@ static const char *const k1GUIStringsDOSGerman[52] = {
 	"",
 	"XXXXXXXXXXXXXXXXX",
 	"XXXXXXXXXXXXXXXXX",
-	"Hauptmen""\x81",
+	"Hauptmen\x81",
 	"An",
 	"Aus",
 	"Ja",

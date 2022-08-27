@@ -331,7 +331,7 @@ static const char *const k1GUIStringsMacCDGerman[59] = {
 	"",
 	"",
 	"",
-	"Hauptmen""\x81",
+	"Hauptmen\x81",
 	"An",
 	"Aus",
 	"Ja",
@@ -370,7 +370,7 @@ static const StringListProvider k1ConfigStringsMacCDGermanProvider = { ARRAYSIZE
 
 static const char *const k1ConfigStrings2MacCDGerman[3] = {
 	"Keine Musik",
-	"Hohe Qualität",
+	"Hohe Qualit""\x64""t",
 	"Leise"
 };
 
