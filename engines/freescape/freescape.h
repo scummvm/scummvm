@@ -206,7 +206,7 @@ public:
 	virtual void initGameState();
 	StateVars _gameStateVars;
 	StateBits _gameStateBits;
-	bool checkIfGameEnded();
+	virtual bool checkIfGameEnded();
 
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return true; }
@@ -221,6 +221,8 @@ public:
 	DrillerEngine(OSystem *syst);
 
 	void initGameState() override;
+	bool checkIfGameEnded() override;
+
 	void loadAssets() override;
 	void drawUI() override;
 

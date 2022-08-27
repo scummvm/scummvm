@@ -226,4 +226,17 @@ void DrillerEngine::initGameState() {
 	_gameStateVars[k8bitVariableShield] = 48;
 }
 
+bool DrillerEngine::checkIfGameEnded() {
+	if (_gameStateVars[k8bitVariableShield] == 0) {
+		_flyMode = true;
+		gotoArea(127, 0);
+		drawFrame();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(5000);
+		return true;
+	}
+	return false;
+}
+
 } // End of namespace Freescape
