@@ -89,5 +89,29 @@ void EclipseEngine::loadAssets() {
 
 }
 
+void EclipseEngine::drawUI() {
+	_gfx->renderCrossair(0);
+
+	if (_currentAreaMessages.size() == 2) {
+		_gfx->setViewport(_fullscreenViewArea);
+
+		Graphics::Surface *surface = new Graphics::Surface();
+		surface->create(_screenW, _screenH, _gfx->_currentPixelFormat);
+		surface->fillRect(_fullscreenViewArea, 0xA0A0A0FF);
+
+		uint32 yellow = 0xFFFF55FF;
+		uint32 black = 0x000000FF;
+
+		drawStringInSurface(_currentAreaMessages[1], 102, 135, black, yellow, surface);
+
+		Texture *texture = _gfx->createTexture(surface);
+		_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, texture);
+		surface->free();
+		delete surface;
+	}
+
+	_gfx->setViewport(_viewArea);
+}
+
 
 } // End of namespace Freescape
