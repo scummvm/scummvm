@@ -525,7 +525,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO0()
 		},
-		GID_ALBERT2,
+		GID_ALBERT3,
 		0,
 		MTBOOT_ALBERT3_WIN_DE,
 	},
