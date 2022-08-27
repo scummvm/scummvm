@@ -62,6 +62,19 @@ void DrillerEngine::drawUI() {
 	_gfx->renderCrossair(0);
 	_gfx->setViewport(_fullscreenViewArea);
 
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(_screenW, _screenH, _gfx->_currentPixelFormat);
+	surface->fillRect(_fullscreenViewArea, 0xA0A0A0FF);
+
+	uint32 yellow = 0xFFFF55FF;
+	drawStringInSurface("   SCUMMVM   ", 197, 177, yellow, surface);
+	drawStringInSurface("    ROCKS    ", 197, 185, yellow, surface);
+
+	Texture *texture = _gfx->createTexture(surface);
+	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, texture);
+	surface->free();
+	delete surface;
+
 	int energy = _gameStateVars[k8bitVariableEnergy];
 	int shield = _gameStateVars[k8bitVariableShield];
 	if (_renderMode == "ega" && _border) {

@@ -22,6 +22,7 @@
 #ifndef FREESCAPE_H
 #define FREESCAPE_H
 
+#include "common/bitarray.h"
 #include "common/random.h"
 #include "engines/engine.h"
 #include "graphics/palette.h"
@@ -190,6 +191,12 @@ public:
 	float _nearClipPlane;
 	float _farClipPlane;
 	Graphics::Surface *_border;
+
+	// Fonts
+	Common::BitArray _font;
+	void loadFonts(Common::SeekableReadStream *file, int offset);
+	void drawStringInSurface(const Common::String &str, int x, int y, uint32 color, Graphics::Surface *surface);
+
 
 	// Game state
 	virtual void initGameState();
