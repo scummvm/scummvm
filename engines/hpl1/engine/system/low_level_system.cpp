@@ -21,6 +21,7 @@
 
 #include "hpl1/engine/impl/SqScript.h"
 #include "hpl1/engine/libraries/angelscript/add-ons/scriptstdstring.h"
+#include "hpl1/engine/libraries/angelscript/add-ons/scriptarray.h"
 #include "hpl1/engine/libraries/angelscript/angelscript.h"
 #include "hpl1/engine/system/String.h"
 
@@ -33,6 +34,7 @@ namespace hpl {
 
 LowLevelSystem::LowLevelSystem() {
 	_scriptEngine = asCreateScriptEngine(ANGELSCRIPT_VERSION);
+	RegisterScriptArray(_scriptEngine, true);
 	_scriptOutput = hplNew(cScriptOutput, ());
 	_scriptEngine->SetMessageCallback(asMETHOD(cScriptOutput, AddMessage), _scriptOutput, asCALL_THISCALL);
 	RegisterStdString(_scriptEngine);
