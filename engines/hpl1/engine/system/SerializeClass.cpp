@@ -78,7 +78,7 @@ cSerializeMemberFieldIterator::cSerializeMemberFieldIterator(cSerializeSavedClas
 
 	// Make sure that the first field type is not null
 	if (mpSavedClass && mpSavedClass->mpMemberFields[mlFieldNum].mType == eSerializeType_NULL) {
-		if (mpSavedClass->msParentName != "") {
+		if (mpSavedClass->msParentName[0] != '\0') {
 			cSerializeSavedClass *pClass = cSerializeClass::GetClass(mpSavedClass->msParentName);
 			if (pClass) {
 				mpSavedClass = pClass;
@@ -106,7 +106,7 @@ cSerializeMemberField *cSerializeMemberFieldIterator::GetNext() {
 	mlFieldNum++;
 
 	if (mpSavedClass->mpMemberFields[mlFieldNum].mType == eSerializeType_NULL) {
-		if (mpSavedClass->msParentName != "") {
+		if (mpSavedClass->msParentName[0] != '\0') {
 			cSerializeSavedClass *pClass = cSerializeClass::GetClass(mpSavedClass->msParentName);
 			if (pClass) {
 				mpSavedClass = pClass;
