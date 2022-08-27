@@ -125,6 +125,7 @@ MODULE_OBJS := \
 	engine/impl/VideoStreamTheora.o \
 	engine/libraries/angelscript/add-ons/scriptstdstring.o \
 	engine/libraries/angelscript/add-ons/scripthelper.o \
+	engine/libraries/angelscript/add-ons/scriptarray.o \
 	engine/impl/tinyXML/tinyxml.o \
 	engine/impl/tinyXML/tinyxmlerror.o \
 	engine/impl/tinyXML/tinyxmlparser.o \
