@@ -106,7 +106,7 @@ public:
 	Area *_currentArea;
 	Math::Vector3d _scale;
 
-	void gotoArea(uint16 areaID, int entranceID);
+	virtual void gotoArea(uint16 areaID, int entranceID);
 	// Entrance
 	uint16 _startEntrance;
 	Common::HashMap<int, const struct entrancesTableEntry*> _entranceTable;
@@ -223,6 +223,8 @@ public:
 	void initGameState() override;
 	bool checkIfGameEnded() override;
 
+	void gotoArea(uint16 areaID, int entranceID) override;
+
 	void loadAssets() override;
 	void drawUI() override;
 
@@ -244,6 +246,8 @@ public:
 	EclipseEngine(OSystem *syst);
 
 	void loadAssets() override;
+
+	void gotoArea(uint16 areaID, int entranceID) override;
 
 	void drawUI() override;
 };

@@ -35,6 +35,66 @@ DrillerEngine::DrillerEngine(OSystem *syst) : FreescapeEngine(syst) {
 	_playerDepth = 32;
 }
 
+void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
+	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
+	if (!_gameStateBits.contains(areaID))
+		_gameStateBits[areaID] = 0;
+
+	assert(_areaMap.contains(areaID));
+	_currentArea = _areaMap[areaID];
+	_currentArea->show();
+
+	_currentAreaMessages.clear();
+	if (_currentArea->gasPocketRadius > 0)
+		_currentAreaMessages.push_back(_messagesList[1]);
+	else
+		_currentAreaMessages.push_back(_messagesList[2]);
+
+	_currentAreaMessages.push_back(_currentArea->name);
+
+	int scale = _currentArea->getScale();
+	assert(scale > 0);
+
+	Entrance *entrance = nullptr;
+	if (entranceID > 0 || areaID == 127) {
+		entrance = (Entrance*) _currentArea->entranceWithID(entranceID);
+		assert(entrance);
+
+		_position = entrance->getOrigin();
+
+		if (_rotation == Math::Vector3d(0, 0, 0)) {
+			_rotation = entrance->getRotation();
+			_pitch = _rotation.x();
+			_yaw = _rotation.y() - 260;
+		}
+		debugC(1, kFreescapeDebugMove, "entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
+		debugC(1, kFreescapeDebugMove, "player height: %d", scale * _playerHeight);
+		_position.setValue(1, _position.y() + scale * _playerHeight);
+	} else if (entranceID == 0) {
+		Math::Vector3d diff = _lastPosition - _position;
+		debug("dif: %f %f %f", diff.x(), diff.y(), diff.z());
+		// diff should be used to determinate which entrance to use
+		int newPos = -1;
+		if (abs(diff.x()) < abs(diff.z())) {
+			if (diff.z() > 0)
+				newPos = 4000;
+			else
+				newPos = 100;
+			_position.setValue(2, newPos);
+		} else {
+			if (diff.x() > 0)
+				newPos = 4000;
+			else
+				newPos = 100;
+			_position.setValue(0, newPos);
+		}
+		assert(newPos != -1);
+	}
+
+	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
+}
+
+
 void DrillerEngine::loadAssets() {
 	Common::SeekableReadStream *file = nullptr;
 	Common::String path = ConfMan.get("path");
@@ -73,8 +133,8 @@ void DrillerEngine::drawUI() {
 		uint32 yellow = 0xFFFF55FF;
 		uint32 black = 0x000000FF;
 
-		drawStringInSurface(_currentAreaMessages[0], 197, 177, yellow, black, surface);
-		drawStringInSurface(_currentAreaMessages[1], 197, 185, yellow, black, surface);
+		drawStringInSurface(_currentAreaMessages[0], 196, 177, yellow, black, surface);
+		drawStringInSurface(_currentAreaMessages[1], 196, 185, yellow, black, surface);
 		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.x())), 150, 145, yellow, black, surface);
 		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.z())), 150, 153, yellow, black, surface);
 		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 150, 161, yellow, black, surface);
