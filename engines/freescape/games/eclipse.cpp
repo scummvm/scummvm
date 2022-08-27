@@ -90,29 +90,66 @@ void EclipseEngine::loadAssets() {
 
 }
 
+void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
+	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
+	if (!_gameStateBits.contains(areaID))
+		_gameStateBits[areaID] = 0;
+
+	assert(_areaMap.contains(areaID));
+	_currentArea = _areaMap[areaID];
+	_currentArea->show();
+
+	_currentAreaMessages.clear();
+	_currentAreaMessages.push_back(_currentArea->name);
+
+	int scale = _currentArea->getScale();
+	assert(scale > 0);
+
+	Entrance *entrance = nullptr;
+	assert(entranceID > 0);
+
+	entrance = (Entrance*) _currentArea->entranceWithID(entranceID);
+
+	if (!entrance) {
+		assert(_entranceTable.contains(entranceID));
+		const entrancesTableEntry *entry = _entranceTable[entranceID];
+		_position = scale * Math::Vector3d(entry->position[0], entry->position[1], entry->position[2]);
+	} else
+		_position = entrance->getOrigin();
+
+	if (_rotation == Math::Vector3d(0, 0, 0)) {
+		_rotation = entrance->getRotation();
+		_pitch = _rotation.x();
+		_yaw = _rotation.y() - 260;
+	}
+	debugC(1, kFreescapeDebugMove, "entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
+	debugC(1, kFreescapeDebugMove, "player height: %d", scale * _playerHeight);
+	_position.setValue(1, _position.y() + scale * _playerHeight);
+	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
+}
+
+
 void EclipseEngine::drawUI() {
 	_gfx->renderCrossair(0);
+	_gfx->setViewport(_fullscreenViewArea);
 
-	if (_currentAreaMessages.size() == 2) {
-		_gfx->setViewport(_fullscreenViewArea);
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(_screenW, _screenH, _gfx->_currentPixelFormat);
+	surface->fillRect(_fullscreenViewArea, 0xA0A0A0FF);
 
-		Graphics::Surface *surface = new Graphics::Surface();
-		surface->create(_screenW, _screenH, _gfx->_currentPixelFormat);
-		surface->fillRect(_fullscreenViewArea, 0xA0A0A0FF);
+	int score = _gameStateVars[k8bitVariableScore];
+	uint32 yellow = 0xFFFF55FF;
+	uint32 black = 0x000000FF;
+	uint32 white = 0xFFFFFFFF;
 
-		int score = _gameStateVars[k8bitVariableScore];
-		uint32 yellow = 0xFFFF55FF;
-		uint32 black = 0x000000FF;
-		uint32 white = 0xFFFFFFFF;
+	if (!_currentAreaMessages.empty())
+		drawStringInSurface(_currentAreaMessages[0], 102, 135, black, yellow, surface);
+	drawStringInSurface(Common::String::format("%07d", score), 136, 6, black, white, surface);
 
-		drawStringInSurface(_currentAreaMessages[1], 102, 135, black, yellow, surface);
-		drawStringInSurface(Common::String::format("%07d", score), 136, 6, black, white, surface);
-
-		Texture *texture = _gfx->createTexture(surface);
-		_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, texture);
-		surface->free();
-		delete surface;
-	}
+	Texture *texture = _gfx->createTexture(surface);
+	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, texture);
+	surface->free();
+	delete surface;
 
 	_gfx->setViewport(_viewArea);
 }

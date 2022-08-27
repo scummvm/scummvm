@@ -531,12 +531,8 @@ void FreescapeEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (entranceID > 0 || areaID == 127) {
 		entrance = (Entrance*) _currentArea->entranceWithID(entranceID);
 
-		if (!entrance) {
-			assert(_entranceTable.contains(entranceID));
-			const entrancesTableEntry *entry = _entranceTable[entranceID];
-			_position = scale * Math::Vector3d(entry->position[0], entry->position[1], entry->position[2]);
-		} else
-			_position = entrance->getOrigin();
+		assert(entrance);
+		_position = entrance->getOrigin();
 
 		if (_rotation == Math::Vector3d(0, 0, 0)) {
 			_rotation = entrance->getRotation();
