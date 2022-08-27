@@ -1608,7 +1608,7 @@ ios7)
 	;;
 ios7-arm64)
 	_host_os=iphone
-	# Remaining of configure don't known about arm64
+	# Remains of configure not knowing about arm64
 	_host_cpu=aarch64
 	_host_alias=arm64-apple-darwin11
 	;;
@@ -2833,7 +2833,7 @@ EOF
 		fi
 
 		# Use pandoc to generate README and NEWS file for the bundle
-		# Also default to  HTML rather than plain text as it gives a nicer
+		# Also default to HTML rather than plain text as it gives a nicer
 		# formating, especially for the README. We could consider using RTF
 		# as well, but TextEdit does not support links within the document,
 		# and having a TOC with links, which we do with html, is quite convenient.
@@ -2870,7 +2870,7 @@ EOF
 		append_var CXXFLAGS "-fno-strict-aliasing"
 		append_var CXXFLAGS "-fno-threadsafe-statics"
 		append_var CXXFLAGS "-fuse-cxa-atexit"
-		# Supress format warnings as the long 4 byte causes noisy warnings.
+		# Suppress format warnings as the long 4 byte causes noisy warnings.
 		append_var CXXFLAGS "-Wno-format"
 		append_var LDFLAGS "-mthumb"
 		append_var LDFLAGS "-mthumb-interwork"
@@ -4117,7 +4117,7 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 # The linker doesn't actually look in previously
 # loaded libraries when trying to resolve symbols -
 # effectively turning all dlopen(RTLD_GLOBAL) calls
-# into dlopen(RTLD_LOCAL).  It *does* look in
+# into dlopen(RTLD_LOCAL). It *does* look in
 # DT_NEEDED libraries, so the workaround is to add an
 # (otherwise unnecessary) dependency from plugins back
 # to the main libscummvm.so.
@@ -5264,7 +5264,7 @@ if test "$_libunity" = auto ; then
 			_libunity=no
 			;;
 		*)
-			# Unity has a lots of dependencies, update the libs and cflags var with them
+			# Unity has a lot of dependencies, update the libs and cflags var with them
 			LIBUNITY_LIBS="$LIBUNITY_LIBS `$_pkgconfig --libs 'unity > 3.8.1' 2>> "$TMPLOG"`"
 			LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `$_pkgconfig --cflags 'unity > 3.8.1' 2>> "$TMPLOG"`"
 			_libunity=no
@@ -5305,7 +5305,7 @@ if test "$_gtk" = auto ; then
 			_gtk=no
 			;;
 		*)
-			# GTK has a lots of dependencies, update the libs and cflags var with them
+			# GTK has a lot of dependencies, update the libs and cflags var with them
 			GTK_LIBS="$GTK_LIBS `$_pkgconfig --libs gtk+-3.0 2>> "$TMPLOG"`"
 			GTK_CFLAGS="$GTK_CFLAGS `$_pkgconfig --cflags gtk+-3.0 2>> "$TMPLOG"`"
 			_gtk=no
@@ -6229,7 +6229,7 @@ case $_host_os in
 
 		# -lgcc is carefully placed here - we want to catch
 		# all toolchain symbols in *our* libraries rather
-		# than pick up anything unhygenic from the Android libs.
+		# than pick up anything unhygienic from the Android libs.
 		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -landroid -ljnigraphics -lEGL"
 		;;
 	ds)
@@ -6238,7 +6238,7 @@ case $_host_os in
 			append_var LDFLAGS "-Wl,--gc-sections"
 		else
 			append_var LDFLAGS "-Wl,--no-gc-sections"
-			# TODO automate this required 2 step linking phase
+			# TODO: automate this required 2 step linking phase
 			# append_var LDFLAGS "-Wl,--retain-symbols-file,ds.syms"
 		fi
 		;;
@@ -6281,7 +6281,7 @@ case $_host_os in
 		fi
 		;;
 	n64)
-		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found
+		# Move some libs down here, otherwise some symbols required by libvorbis aren't found
 		# during linking stage
 		append_var LIBS "-lc -lgcc -lnosys"
 		;;
