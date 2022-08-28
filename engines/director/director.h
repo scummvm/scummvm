@@ -134,8 +134,13 @@ struct MacShape {
 };
 
 struct PatternTile {
-	Image::ImageDecoder *img;
+	Image::ImageDecoder *img = 0;
 	Common::Rect rect;
+
+	~PatternTile() {
+		if (img)
+			delete img;
+	}
 };
 
 const int SCALE_THRESHOLD = 0x100;
