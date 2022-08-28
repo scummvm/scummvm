@@ -461,6 +461,9 @@ endif
 ifdef ENABLE_XEEN
 DIST_FILES_ENGINEDATA+=xeen.ccs
 endif
+ifdef ENABLE_FREESCAPE
+DIST_FILES_ENGINEDATA+=freescape.dat
+endif
 ifdef USE_FREETYPE2
 DIST_FILES_ENGINEDATA+=fonts.dat
 endif
