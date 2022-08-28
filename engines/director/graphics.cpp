@@ -155,15 +155,47 @@ bool DirectorEngine::setPalette(int id) {
 }
 
 void DirectorEngine::setPalette(byte *palette, uint16 count) {
-	// Pass the palette to OSystem only for 8bpp mode
-	if (_pixelformat.bytesPerPixel == 1)
-		_system->getPaletteManager()->setPalette(palette, 0, count);
 
 	memset(_currentPalette, 0, 768);
-	memcpy(_currentPalette, palette, count * 3);
+	memmove(_currentPalette, palette, count * 3);
 	_currentPaletteLength = count;
 
-	_wm->passPalette(palette, count);
+	// Pass the palette to OSystem only for 8bpp mode
+	if (_pixelformat.bytesPerPixel == 1)
+		_system->getPaletteManager()->setPalette(_currentPalette, 0, _currentPaletteLength);
+
+	_wm->passPalette(_currentPalette, _currentPaletteLength);
+}
+
+void DirectorEngine::shiftPalette(int startIndex, int endIndex, bool reverse) {
+	if (startIndex == endIndex)
+		return;
+
+	if (endIndex > startIndex)
+		return;
+
+	// Palette indexes are in reverse order thanks to transformColor
+	byte temp[3] = { 0, 0, 0 };
+	int span = startIndex - endIndex + 1;
+	if (reverse) {
+		memcpy(temp, _currentPalette + 3 * endIndex, 3);
+		memmove(_currentPalette + 3 * endIndex,
+			_currentPalette + 3 * endIndex + 3,
+			(span - 1) * 3);
+		memcpy(_currentPalette + 3 * startIndex, temp, 3);
+	} else {
+		memcpy(temp, _currentPalette + 3 * startIndex, 3);
+		memmove(_currentPalette + 3 * endIndex + 3,
+			_currentPalette + 3 * endIndex,
+			(span - 1) * 3);
+		memcpy(_currentPalette + 3 * endIndex, temp, 3);
+	}
+
+	// Pass the palette to OSystem only for 8bpp mode
+	if (_pixelformat.bytesPerPixel == 1)
+		_system->getPaletteManager()->setPalette(_currentPalette, 0, _currentPaletteLength);
+
+	_wm->passPalette(_currentPalette, _currentPaletteLength);
 }
 
 void DirectorEngine::clearPalettes() {
