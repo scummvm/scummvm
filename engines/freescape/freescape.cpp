@@ -23,6 +23,7 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/math.h"
+#include "common/unzip.h"
 #include "graphics/cursorman.h"
 
 #include "freescape/freescape.h"
@@ -226,6 +227,8 @@ Common::Error FreescapeEngine::run() {
 	_gfx->clear();
 
 	// Load game data and init game state
+	loadDataBundle();
+	loadBorder();
 	loadAssets();
 	initGameState();
 	// Simple main event loop
@@ -665,6 +668,13 @@ Common::Error FreescapeEngine::saveGameStream(Common::WriteStream *stream, bool 
 
 	stream->writeByte(_flyMode);
 	return Common::kNoError;
+}
+
+void FreescapeEngine::loadDataBundle() {
+	_dataBundle = Common::makeZipArchive(FREESCAPE_DATA_BUNDLE);
+	if (!_dataBundle) {
+			error("ENGINE: Couldn't load data bundle '%s'.", FREESCAPE_DATA_BUNDLE.c_str());
+	}
 }
 
 } // namespace Freescape

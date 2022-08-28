@@ -41,6 +41,8 @@ namespace Freescape {
 
 class Renderer;
 
+#define FREESCAPE_DATA_BUNDLE Common::String("freescape.dat")
+
 enum CameraMovement {
     FORWARD,
     BACKWARD,
@@ -89,13 +91,17 @@ public:
 	virtual void drawUI();
 	Texture *_borderTexture;
 
-	// Parsing
+	// Parsing assets
 	uint8 _binaryBits;
 	virtual void loadAssets();
+	Common::Archive *_dataBundle;
+	void loadDataBundle();
+	void loadBorder();
+
+	// 16-bit
 	void load16bitBinary(Common::SeekableReadStream *file);
 
-	// 8-bits
-	//ObjectMap globalObjectsByID;
+	// 8-bit
 	void load8bitBinary(Common::SeekableReadStream *file, int offset, int ncolors);
 	Area *load8bitArea(Common::SeekableReadStream *file, uint16 ncolors);
 	Object *load8bitObject(Common::SeekableReadStream *file);
