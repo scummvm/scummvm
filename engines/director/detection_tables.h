@@ -182,6 +182,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "gigglefarm",			"AlphaBonk Farm" },
 	{ "giggletour",			"The Gigglebone Gang World Tour" },
 	{ "gigglevania",		"Pantsylvania: The Kingdom of the Fancy Pants" },
+	{ "goferwinkel",		"Goferwinkel's Adventures: The Lavender Land" },
 	{ "goldilocks",			"Goldilocks Gamebook" },
 	{ "gordak",				"Gord@k" },
 	{ "grammarplaytime2",	"Grammar Playtime Vol.2: Asking Questions" },
@@ -2042,6 +2043,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("goalrush1", "Demo", "GOAL RUSH!! DEMO", "f5277c53bacd27936158dd3867e587e2", 394728, Common::JA_JPN, 311),
 	MACDEMO1_l("goalrush1", "Demo", "GOAL RUSH!! DEMO", "f5277c53bacd27936158dd3867e587e2", 392276, Common::JA_JPN, 311),
 	MACDEMO1_l("goalrush2", "Demo", "GOAL RUSH!! DEMO", "276bee761e48a6fd709df77d5c2f60dd", 397408, Common::JA_JPN, 313),
+
+	WINGAME1t("goferwinkel", "", "GOFERWIN/GOFER.EXE", "cba909306680f788d77244147ddf76ae", 1065773, 300),
 
 	// Mac also has an 8-bit color binary. Win is limited to 8-bit color in D3.
 	MACGAME1("golfcd", "", "Great Golf CD (24bit)", "7f443f2e63fd497a9ad85b10dc880a91", 3633557, 313),
@@ -4640,6 +4643,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 							  "UNIVERSE/STARTUP.DIR",  "34d4084b17cea8982fd24f9561d77d65", 24958, 404),
 
 	WINGAME1t("ushistory", "", "HISTORY.EXE", "5660e6a7b772b5bf8867627ab0d7a58b", 703629, 404),
+
+	// Original filename is 'ペペロン村の四季'
+	MACGAME1_l("pepperon", "", "xn--u9j2la0f4a9404c9vg8wz", "8b138db44d4421cc7294a9dc792ccf1b", 521283, Common::JA_JPN, 404),
+	// Decomposed variant of the above
+	MACGAME1_l("pepperon", "", "xn--u9jtea0wb1ktbx480dksir53a", "8b138db44d4421cc7294a9dc792ccf1b", 521283, Common::JA_JPN, 404),
+	WINGAME1t_l("pepperon", "", "PEPPERON/START95.EXE", "b7fd4c43d44291a15ef1829e96652a5b", 1094585, Common::JA_JPN, 404),
 
 	// French version titled "Valmaison au fil des saisons"
 	MACGAME1_l("pepperon", "", "Valmaison", "8b138db44d4421cc7294a9dc792ccf1b", 502569, Common::FR_FRA, 404),
