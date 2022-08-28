@@ -21,6 +21,7 @@
 
 #include "sword1/sword1.h"
 
+#include "sword1/detection.h"
 #include "sword1/resman.h"
 #include "sword1/objectman.h"
 #include "sword1/mouse.h"
@@ -43,15 +44,11 @@ namespace Sword1 {
 
 SystemVars SwordEngine::_systemVars;
 
-SwordEngine::SwordEngine(OSystem *syst)
+SwordEngine::SwordEngine(OSystem *syst, const SwordGameDescription *gameDesc)
 	: Engine(syst) {
 
-	if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1demo") ||
-	        !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psxdemo") ||
-	        !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo"))
-		_features = GF_DEMO;
-	else
-		_features = 0;
+	_features = gameDesc->features;
+	_systemVars.platform = gameDesc->desc.platform;
 
 	// Add default file directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -93,15 +90,6 @@ SwordEngine::~SwordEngine() {
 Common::Error SwordEngine::init() {
 
 	initGraphics(640, 480);
-
-	if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1mac") ||
-	        0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo"))
-		_systemVars.platform = Common::kPlatformMacintosh;
-	else if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psx") ||
-	         0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psxdemo"))
-		_systemVars.platform = Common::kPlatformPSX;
-	else
-		_systemVars.platform = Common::kPlatformWindows;
 
 	checkCdFiles();
 

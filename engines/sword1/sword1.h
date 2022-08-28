@@ -29,6 +29,7 @@
 #include "common/util.h"
 #include "sword1/sworddefs.h"
 #include "sword1/console.h"
+#include "sword1/detection.h"
 
 /**
  * This is the namespace of the Sword1 engine.
@@ -39,10 +40,6 @@
  * - Broken Sword: The Shadow of the Templars
  */
 namespace Sword1 {
-
-enum {
-	GF_DEMO = 1 << 0
-};
 
 enum ControlPanelMode {
 	CP_NORMAL = 0,
@@ -82,7 +79,7 @@ struct SystemVars {
 class SwordEngine : public Engine {
 	friend class SwordConsole;
 public:
-	SwordEngine(OSystem *syst);
+	SwordEngine(OSystem *syst, const SwordGameDescription *gameDesc);
 	~SwordEngine() override;
 	static SystemVars _systemVars;
 	void reinitialize();
