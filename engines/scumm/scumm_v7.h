@@ -133,7 +133,7 @@ protected:
 
 	void createTextRenderer(GlyphRenderer_v7 *gr) override;
 	void enqueueText(const byte *text, int x, int y, byte color, byte charset, TextStyleFlags flags);
-	void drawTextImmediately(const byte *text, int x, int y, byte color, byte charset, TextStyleFlags flags);
+	void drawTextImmediately(const byte *text, Common::Rect *clipRect, int x, int y, byte color, byte charset, TextStyleFlags flags);
 	void drawBlastTexts() override;
 	void showMessageDialog(const byte *msg) override;
 
@@ -147,7 +147,7 @@ protected:
 	const char *getGUIString(int stringId) override;
 	int getGUIStringHeight(const char *str) override;
 	int getGUIStringWidth(const char *str) override;
-	void drawGUIText(const char *buttonString, int textXPos, int textYPos, int rightRectClip, int textColor, bool centerFlag) override;
+	void drawGUIText(const char *buttonString, Common::Rect *clipRect, int textXPos, int textYPos, int textColor, bool centerFlag) override;
 	int getMusicVolume() override;
 	int getSpeechVolume() override;
 	int getSFXVolume() override;
@@ -179,6 +179,8 @@ protected:
 
 	int _blastTextQueuePos;
 	BlastText _blastTextQueue[50];
+
+	byte *_guiStringTransBuff = nullptr;
 };
 
 

@@ -164,8 +164,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 	setTimerAndShakeFrequency();
 
-	memset(_savegameNames, 0, sizeof(_savegameNames));
-
 	camera.reset();
 	memset(_colorCycle, 0, sizeof(_colorCycle));
 	memset(_colorUsedByCycle, 0, sizeof(_colorUsedByCycle));
@@ -810,7 +808,9 @@ ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
 	_textV7 = NULL;
 	_newTextRenderStyle = (_game.version == 8 || _language == Common::JA_JPN || _language == Common::KO_KOR || _language == Common::ZH_TWN);
 	_defaultTextClipRect = Common::Rect(_screenWidth, _screenHeight);
-	_wrappedTextClipRect = _newTextRenderStyle ? Common::Rect(10, 10, _screenWidth - 10, _screenHeight - 10)  : Common::Rect(_screenWidth, _screenHeight);
+	_wrappedTextClipRect = _newTextRenderStyle ? Common::Rect(10, 10, _screenWidth - 10, _screenHeight - 10) : Common::Rect(_screenWidth, _screenHeight);
+
+	_guiStringTransBuff = new byte[512];
 
 	_game.features |= GF_NEW_COSTUMES;
 }
@@ -823,6 +823,7 @@ ScummEngine_v7::~ScummEngine_v7() {
 
 	delete _insane;
 	delete _textV7;
+	delete[] _guiStringTransBuff;
 
 	free(_languageBuffer);
 	free(_languageIndex);

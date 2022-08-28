@@ -436,11 +436,11 @@ void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byt
 	bt.flags = flags;
 }
 
-void ScummEngine_v7::drawTextImmediately(const byte *text, int x, int y, byte color, byte charset, TextStyleFlags flags) {
+void ScummEngine_v7::drawTextImmediately(const byte *text, Common::Rect *clipRect, int x, int y, byte color, byte charset, TextStyleFlags flags) {
 	// This function allows for a string to be immediately
 	// drawn on the screen without having to enqueueing it.
 	byte msg[256];
-	Common::Rect rect = _defaultTextClipRect;
+	Common::Rect rect = clipRect ? *clipRect : _defaultTextClipRect;
 	int effX = x;
 	TextStyleFlags effFlags = flags;
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];

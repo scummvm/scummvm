@@ -446,12 +446,8 @@ struct InternalGUIControl {
 	int highlightedTextColor;
 	int highlightedFillColor;
 	bool centerText;
-	const char *label;
+	Common::String label;
 	bool doubleLinesFlag;
-};
-
-struct GUISaveGameLabel {
-	char label[40];
 };
 
 /**
@@ -622,7 +618,7 @@ protected:
 	const char _arrowUp[2] = {'\x18', '\0'};
 	const char _arrowDown[2] = {'\x19', '\0'};
 
-	GUISaveGameLabel _savegameNames[9];
+	Common::StringArray _savegameNames;
 	int _menuPage = 0;
 	int _mainMenuSavegameLabel = 1;
 	int _curDisplayedSaveSlotPage = 0;
@@ -673,7 +669,7 @@ protected:
 	void waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked);
 	virtual int getGUIStringHeight(const char *str);
 	virtual int getGUIStringWidth(const char *str);
-	virtual void drawGUIText(const char *buttonString, int textXPos, int textYPos, int rightRectClip, int textColor, bool centerFlag);
+	virtual void drawGUIText(const char *buttonString, Common::Rect *clipRect, int textXPos, int textYPos, int textColor, bool centerFlag);
 	void getSliderString(int stringId, int value, char *sliderString, int size);
 	virtual int getMusicVolume();
 	virtual int getSpeechVolume();
