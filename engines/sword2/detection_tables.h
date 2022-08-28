@@ -21,24 +21,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SWORD2_DETECTION_H
-#define SWORD2_DETECTION_H
-
-#include "engines/advancedDetector.h"
+#define GAMEOPTION_OBJECT_LABELS GUIO_GAMEOPTIONS1
 
 namespace Sword2 {
 
-enum {
-	GF_DEMO	       = 1 << 0,
-	GF_SPANISHDEMO = 1 << 1
-};
+static const Sword2GameDescription gameDescriptions[] = {
+	{
+		{
+			"sword2",
+			"Demo",
+			AD_ENTRY1s("players.clu", "effc399b33e5f85329d7633ad4dc5e90", 10091432),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO0()
+		},
+		GF_DEMO
+	},
 
-struct Sword2GameDescription {
-	ADGameDescription desc;
+	{
+		{
+			"sword2",
+			"Demo",
+			AD_ENTRY1s("players.clu", "5068815a62ba932afba7267bafc9786d", 9904289),
+			Common::ES_ESP,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO0()
+		},
+		GF_DEMO | GF_SPANISHDEMO
+	},
 
-	uint32 features;
+	{
+		{
+			"sword2",
+			"Demo",
+			AD_ENTRY1s("players.clu", "e8786804d399310bda3fcbf897bc44f7", 3085812),
+			Common::EN_ANY,
+			Common::kPlatformPSX,
+			ADGF_DEMO,
+			GUIO0()
+		},
+		GF_DEMO
+	},
+
+	{ AD_TABLE_END_MARKER, 0 }
 };
 
 } // End of namespace Sword2
-
-#endif // SWORD2_DETECTION_H
