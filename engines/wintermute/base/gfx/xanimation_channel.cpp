@@ -32,7 +32,7 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-AnimationChannel::AnimationChannel(BaseGame *inGame, ModelX *model) : BaseClass(inGame) {
+AnimationChannel::AnimationChannel(BaseGame *inGame, XModel *model) : BaseClass(inGame) {
 	_anim[0] = _anim[1] = nullptr;
 
 	_transitioning = false;

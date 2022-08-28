@@ -39,7 +39,7 @@ public:
 	MeshXOpenGL(BaseGame *inGame);
 	~MeshXOpenGL() override;
 
-	bool render(ModelX *model) override;
+	bool render(XModel *model) override;
 	bool renderFlatShadowModel() override;
 };
 

@@ -146,10 +146,10 @@ static XFileLexer createXFileLexer(byte *&buffer, uint32 fileSize) {
 	}
 }
 
-IMPLEMENT_PERSISTENT(ModelX, false)
+IMPLEMENT_PERSISTENT(XModel, false)
 
 //////////////////////////////////////////////////////////////////////////
-ModelX::ModelX(BaseGame *inGame, BaseObject *owner) : BaseObject(inGame) {
+XModel::XModel(BaseGame *inGame, BaseObject *owner) : BaseObject(inGame) {
 	_owner = owner;
 
 	_rootFrame = nullptr;
@@ -172,12 +172,12 @@ ModelX::ModelX(BaseGame *inGame, BaseObject *owner) : BaseObject(inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ModelX::~ModelX() {
+XModel::~XModel() {
 	cleanup();
 }
 
 //////////////////////////////////////////////////////////////////////////
-void ModelX::cleanup(bool complete) {
+void XModel::cleanup(bool complete) {
 	// empty animation channels
 	for (int i = 0; i < X_NUM_ANIMATION_CHANNELS; i++) {
 		delete _channels[i];
@@ -218,7 +218,7 @@ void ModelX::cleanup(bool complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::loadFromFile(const Common::String &filename, ModelX *parentModel) {
+bool XModel::loadFromFile(const Common::String &filename, XModel *parentModel) {
 	cleanup(false);
 
 	_parentModel = parentModel;
@@ -245,7 +245,7 @@ bool ModelX::loadFromFile(const Common::String &filename, ModelX *parentModel) {
 	return res;
 }
 
-bool ModelX::mergeFromFile(const Common::String &filename) {
+bool XModel::mergeFromFile(const Common::String &filename) {
 	if (!_rootFrame) {
 		return false;
 	}
@@ -280,7 +280,7 @@ bool ModelX::mergeFromFile(const Common::String &filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::loadAnimationSet(XFileLexer &lexer, const Common::String &filename) {
+bool XModel::loadAnimationSet(XFileLexer &lexer, const Common::String &filename) {
 	bool res = true;
 
 	AnimationSet *animSet = new AnimationSet(_gameRef, this);
@@ -296,7 +296,7 @@ bool ModelX::loadAnimationSet(XFileLexer &lexer, const Common::String &filename)
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::loadAnimation(const Common::String &filename, AnimationSet *parentAnimSet) {
+bool XModel::loadAnimation(const Common::String &filename, AnimationSet *parentAnimSet) {
 	// not sure if we need this here (not completely implemented anyways and also not called)
 	// are there animation objects in .X outside of an animation set?
 
@@ -322,7 +322,7 @@ bool ModelX::loadAnimation(const Common::String &filename, AnimationSet *parentA
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::findBones(bool animOnly, ModelX *parentModel) {
+bool XModel::findBones(bool animOnly, XModel *parentModel) {
 	FrameNode *rootFrame;
 	if (parentModel == nullptr)
 		rootFrame = _rootFrame;
@@ -340,7 +340,7 @@ bool ModelX::findBones(bool animOnly, ModelX *parentModel) {
 	return true;
 }
 
-void ModelX::parseFrameDuringMerge(XFileLexer &lexer, const Common::String &filename) {
+void XModel::parseFrameDuringMerge(XFileLexer &lexer, const Common::String &filename) {
 	while (!lexer.eof()) {
 		if (lexer.tokenIsIdentifier("Frame")) {
 			lexer.advanceToNextToken();
@@ -357,7 +357,7 @@ void ModelX::parseFrameDuringMerge(XFileLexer &lexer, const Common::String &file
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::update() {
+bool XModel::update() {
 	// reset all bones to default position
 	reset();
 
@@ -379,7 +379,7 @@ bool ModelX::update() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::playAnim(int channel, const Common::String &name, uint32 transitionTime, bool forceReset, uint32 stopTransitionTime) {
+bool XModel::playAnim(int channel, const Common::String &name, uint32 transitionTime, bool forceReset, uint32 stopTransitionTime) {
 	if (channel < 0 || channel >= X_NUM_ANIMATION_CHANNELS) {
 		return false;
 	}
@@ -408,7 +408,7 @@ bool ModelX::playAnim(int channel, const Common::String &name, uint32 transition
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::stopAnim(int channel, uint32 transitionTime) {
+bool XModel::stopAnim(int channel, uint32 transitionTime) {
 	if (channel < 0 || channel >= X_NUM_ANIMATION_CHANNELS) {
 		return false;
 	}
@@ -417,7 +417,7 @@ bool ModelX::stopAnim(int channel, uint32 transitionTime) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::stopAnim(uint32 transitionTime) {
+bool XModel::stopAnim(uint32 transitionTime) {
 	const int NUM_SKEL_ANI_CHANNELS = 10;
 
 	for (int channel = 0; channel < NUM_SKEL_ANI_CHANNELS; channel++) {
@@ -428,7 +428,7 @@ bool ModelX::stopAnim(uint32 transitionTime) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::reset() {
+bool XModel::reset() {
 	if (_rootFrame) {
 		_rootFrame->resetMatrices();
 	}
@@ -437,7 +437,7 @@ bool ModelX::reset() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::isAnimPending(int channel, const char *animName) {
+bool XModel::isAnimPending(int channel, const char *animName) {
 	if (!animName) {
 		if (_channels[channel]->isPlaying()) {
 			return true;
@@ -451,7 +451,7 @@ bool ModelX::isAnimPending(int channel, const char *animName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::isAnimPending(char *animName) {
+bool XModel::isAnimPending(char *animName) {
 	for (int channel = 0; channel < X_NUM_ANIMATION_CHANNELS; channel++) {
 		if (isAnimPending(channel, animName)) {
 			return true;
@@ -461,7 +461,7 @@ bool ModelX::isAnimPending(char *animName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth) {
+bool XModel::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth) {
 	if (_rootFrame) {
 		return _rootFrame->updateShadowVol(shadow, modelMat, light, extrusionDepth);
 	} else {
@@ -470,7 +470,7 @@ bool ModelX::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, cons
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::render() {
+bool XModel::render() {
 	if (_rootFrame) {
 		// set culling
 		if(_owner && !_owner->_drawBackfaces) {
@@ -506,7 +506,7 @@ bool ModelX::render() {
 	}
 }
 
-bool ModelX::renderFlatShadowModel() {
+bool XModel::renderFlatShadowModel() {
 	if (_rootFrame) {
 		if(_owner && !_owner->_drawBackfaces) {
 			_gameRef->_renderer3D->enableCulling();
@@ -521,7 +521,7 @@ bool ModelX::renderFlatShadowModel() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Math::Matrix4 *ModelX::getBoneMatrix(const char *boneName) {
+Math::Matrix4 *XModel::getBoneMatrix(const char *boneName) {
 	FrameNode *bone = _rootFrame->findFrame(boneName);
 
 	if (bone) {
@@ -532,12 +532,12 @@ Math::Matrix4 *ModelX::getBoneMatrix(const char *boneName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-FrameNode *ModelX::getRootFrame() {
+FrameNode *XModel::getRootFrame() {
 	return _rootFrame;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::isTransparentAt(int x, int y) {
+bool XModel::isTransparentAt(int x, int y) {
 	if (!_rootFrame) {
 		return false;
 	}
@@ -556,7 +556,7 @@ bool ModelX::isTransparentAt(int x, int y) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void ModelX::updateBoundingRect() {
+void XModel::updateBoundingRect() {
 	_BBoxStart = Math::Vector3d(0, 0, 0);
 	_BBoxStart = Math::Vector3d(0, 0, 0);
 
@@ -607,7 +607,7 @@ void ModelX::updateBoundingRect() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void ModelX::updateRect(Rect32 *rc, int32 x, int32 y) {
+void XModel::updateRect(Rect32 *rc, int32 x, int32 y) {
 	rc->left   = MIN(rc->left, x);
 	rc->right  = MAX(rc->right, x);
 	rc->top    = MIN(rc->top, y);
@@ -615,7 +615,7 @@ void ModelX::updateRect(Rect32 *rc, int32 x, int32 y) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnimationSet *ModelX::getAnimationSetByName(const Common::String &name) {
+AnimationSet *XModel::getAnimationSetByName(const Common::String &name) {
 	for (uint32 i = 0; i < _animationSets.size(); i++) {
 		if (name.equalsIgnoreCase(_animationSets[i]->_name)) {
 			return _animationSets[i];
@@ -632,7 +632,7 @@ TOKEN_DEF_START
 	TOKEN_DEF(FRAME)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::parseAnim(byte *buffer) {
+bool XModel::parseAnim(byte *buffer) {
 	TOKEN_TABLE_START(commands)
 		TOKEN_TABLE(NAME)
 		TOKEN_TABLE(LOOPING)
@@ -696,7 +696,7 @@ bool ModelX::parseAnim(byte *buffer) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::parseEvent(AnimationSet *anim, byte *buffer) {
+bool XModel::parseEvent(AnimationSet *anim, byte *buffer) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(NAME)
 	TOKEN_TABLE(FRAME)
@@ -738,7 +738,7 @@ bool ModelX::parseEvent(AnimationSet *anim, byte *buffer) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::setMaterialSprite(const char *materialName, const char *spriteFilename) {
+bool XModel::setMaterialSprite(const char *materialName, const char *spriteFilename) {
 	if (!materialName || !spriteFilename) {
 		return false;
 	}
@@ -753,7 +753,7 @@ bool ModelX::setMaterialSprite(const char *materialName, const char *spriteFilen
 		return false;
 	}
 
-	ModelXMatSprite *matSprite = nullptr;
+	XModelMatSprite *matSprite = nullptr;
 	for (uint32 i = 0; i < _matSprites.size(); i++) {
 		if (scumm_stricmp(_matSprites[i]->_matName, materialName) == 0) {
 			matSprite = _matSprites[i];
@@ -763,7 +763,7 @@ bool ModelX::setMaterialSprite(const char *materialName, const char *spriteFilen
 	if (matSprite) {
 		matSprite->setSprite(sprite);
 	} else {
-		matSprite = new ModelXMatSprite(materialName, sprite);
+		matSprite = new XModelMatSprite(materialName, sprite);
 		_matSprites.add(matSprite);
 	}
 
@@ -773,7 +773,7 @@ bool ModelX::setMaterialSprite(const char *materialName, const char *spriteFilen
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::setMaterialTheora(const char *materialName, const char *theoraFilename) {
+bool XModel::setMaterialTheora(const char *materialName, const char *theoraFilename) {
 	if (!materialName || !theoraFilename) {
 		return false;
 	}
@@ -791,7 +791,7 @@ bool ModelX::setMaterialTheora(const char *materialName, const char *theoraFilen
 
 	theora->play(VID_PLAY_POS, 0, 0, false, false, true);
 
-	ModelXMatSprite *matSprite = nullptr;
+	XModelMatSprite *matSprite = nullptr;
 	for (uint32 i = 0; i < _matSprites.size(); i++) {
 		if (scumm_stricmp(_matSprites[i]->_matName, materialName) == 0) {
 			matSprite = _matSprites[i];
@@ -802,7 +802,7 @@ bool ModelX::setMaterialTheora(const char *materialName, const char *theoraFilen
 	if (matSprite) {
 		matSprite->setTheora(theora);
 	} else {
-		matSprite = new ModelXMatSprite(materialName, theora);
+		matSprite = new XModelMatSprite(materialName, theora);
 		_matSprites.add(matSprite);
 	}
 	_rootFrame->setMaterialTheora(matSprite->_matName, matSprite->_theora);
@@ -811,7 +811,7 @@ bool ModelX::setMaterialTheora(const char *materialName, const char *theoraFilen
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::initializeSimple() {
+bool XModel::initializeSimple() {
 	if (!_rootFrame) {
 		return false;
 	}
@@ -834,7 +834,7 @@ bool ModelX::initializeSimple() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::persist(BasePersistenceManager *persistMgr) {
+bool XModel::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 
 	persistMgr->transferVector3d(TMEMBER(_BBoxStart));
@@ -924,7 +924,7 @@ bool ModelX::persist(BasePersistenceManager *persistMgr) {
 		if (persistMgr->getIsSaving()) {
 			_matSprites[i]->persist(persistMgr);
 		} else {
-			ModelXMatSprite *MatSprite = new ModelXMatSprite();
+			XModelMatSprite *MatSprite = new XModelMatSprite();
 			MatSprite->persist(persistMgr);
 			_matSprites.add(MatSprite);
 		}
@@ -937,7 +937,7 @@ bool ModelX::persist(BasePersistenceManager *persistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::invalidateDeviceObjects() {
+bool XModel::invalidateDeviceObjects() {
 	if (_rootFrame) {
 		return _rootFrame->invalidateDeviceObjects();
 	} else {
@@ -946,7 +946,7 @@ bool ModelX::invalidateDeviceObjects() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::restoreDeviceObjects() {
+bool XModel::restoreDeviceObjects() {
 	if (_rootFrame) {
 		return _rootFrame->restoreDeviceObjects();
 	} else {
@@ -955,7 +955,7 @@ bool ModelX::restoreDeviceObjects() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::unloadAnimation(const char *animName) {
+bool XModel::unloadAnimation(const char *animName) {
 	bool found = false;
 	for (uint32 i = 0; i < _animationSets.size(); i++) {
 		if (scumm_stricmp(animName, _animationSets[i]->_name) == 0) {

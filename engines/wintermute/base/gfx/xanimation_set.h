@@ -36,7 +36,7 @@
 
 namespace Wintermute {
 
-class ModelX;
+class XModel;
 class XFileLexer;
 
 class AnimationSet : public BaseNamedObject {
@@ -73,7 +73,7 @@ public:
 		}
 	};
 
-	AnimationSet(BaseGame *inGame, ModelX *model);
+	AnimationSet(BaseGame *inGame, XModel *model);
 	virtual ~AnimationSet();
 
 	bool loadFromX(XFileLexer &lexer, const Common::String &filename);
@@ -96,7 +96,7 @@ protected:
 
 	int _frameTime;
 	uint32 _totalTime;
-	ModelX *_model;
+	XModel *_model;
 };
 
 } // namespace Wintermute

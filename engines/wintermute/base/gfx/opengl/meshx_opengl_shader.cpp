@@ -64,7 +64,7 @@ bool MeshXOpenGLShader::loadFromX(const Common::String &filename, XFileLexer &le
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool MeshXOpenGLShader::render(ModelX *model) {
+bool MeshXOpenGLShader::render(XModel *model) {
 	if (_vertexData == nullptr) {
 		return false;
 	}

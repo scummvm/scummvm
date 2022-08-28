@@ -590,7 +590,7 @@ ShadowVolume *AdObject3D::getShadowVolume() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject3D::getBonePosition2D(const char *boneName, int32 *x, int32 *y) {
-	if (!_modelX) {
+	if (!_xmodel) {
 		return false;
 	}
 
@@ -599,7 +599,7 @@ bool AdObject3D::getBonePosition2D(const char *boneName, int32 *x, int32 *y) {
 	if (!adGame->_scene || !adGame->_scene->_sceneGeometry)
 		return false;
 
-	Math::Matrix4 *boneMat = _modelX->getBoneMatrix(boneName);
+	Math::Matrix4 *boneMat = _xmodel->getBoneMatrix(boneName);
 
 	if (!boneMat) {
 		return false;
@@ -617,11 +617,11 @@ bool AdObject3D::getBonePosition2D(const char *boneName, int32 *x, int32 *y) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject3D::getBonePosition3D(const char *boneName, Math::Vector3d *pos, Math::Vector3d *offset) {
-	if (!_modelX) {
+	if (!_xmodel) {
 		return false;
 	}
 
-	Math::Matrix4 *boneMat = _modelX->getBoneMatrix(boneName);
+	Math::Matrix4 *boneMat = _xmodel->getBoneMatrix(boneName);
 	if (!boneMat) {
 		return false;
 	}

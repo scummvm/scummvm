@@ -39,7 +39,7 @@
 
 namespace Wintermute {
 
-class ModelX;
+class XModel;
 class BaseSprite;
 class XFileLexer;
 
@@ -51,12 +51,12 @@ public:
 	bool updateMatrices(Math::Matrix4 &parentMat);
 	bool updateMeshes();
 	bool resetMatrices();
-	bool render(ModelX *model);
+	bool render(XModel *model);
 	bool renderFlatShadowModel();
 	bool updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth);
 
-	bool loadFromX(const Common::String &filename, XFileLexer &lexer, ModelX *model, Common::Array<MaterialReference> &materialReferences);
-	bool loadFromXAsRoot(const Common::String &filename, XFileLexer &lexer, ModelX *model, Common::Array<MaterialReference> &materialReferences);
+	bool loadFromX(const Common::String &filename, XFileLexer &lexer, XModel *model, Common::Array<MaterialReference> &materialReferences);
+	bool loadFromXAsRoot(const Common::String &filename, XFileLexer &lexer, XModel *model, Common::Array<MaterialReference> &materialReferences);
 	bool findBones(FrameNode *rootFrame);
 	FrameNode *findFrame(const char *frameName);
 	Math::Matrix4 *getCombinedMatrix();

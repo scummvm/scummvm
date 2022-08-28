@@ -40,7 +40,7 @@ namespace Wintermute {
 class BaseSprite;
 class FrameNode;
 class Material;
-class ModelX;
+class XModel;
 class ShadowVolume;
 class VideoTheoraPlayer;
 class XFileLexer;
@@ -60,7 +60,7 @@ public:
 	virtual bool loadFromX(const Common::String &filename, XFileLexer &lexer, Common::Array<MaterialReference> &materialReferences);
 	bool findBones(FrameNode *rootFrame);
 	virtual bool update(FrameNode *parentFrame);
-	virtual bool render(ModelX *model) = 0;
+	virtual bool render(XModel *model) = 0;
 	virtual bool renderFlatShadowModel() = 0;
 	bool updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth);
 

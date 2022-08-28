@@ -97,7 +97,7 @@ void FrameNode::setTransformation(int slot, Math::Vector3d pos, Math::Vector3d s
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool FrameNode::loadFromX(const Common::String &filename, XFileLexer &lexer, ModelX *model, Common::Array<MaterialReference> &materialReferences) {
+bool FrameNode::loadFromX(const Common::String &filename, XFileLexer &lexer, XModel *model, Common::Array<MaterialReference> &materialReferences) {
 	_gameRef->miniUpdate();
 
 	bool ret = true;
@@ -165,7 +165,7 @@ bool FrameNode::loadFromX(const Common::String &filename, XFileLexer &lexer, Mod
 	return ret;
 }
 
-bool FrameNode::loadFromXAsRoot(const Common::String &filename, XFileLexer &lexer, ModelX *model, Common::Array<MaterialReference> &materialReferences) {
+bool FrameNode::loadFromXAsRoot(const Common::String &filename, XFileLexer &lexer, XModel *model, Common::Array<MaterialReference> &materialReferences) {
 	// technically, there is no root node in a .X file
 	// so we just start parsing it here
 	lexer.advanceToNextToken();
@@ -361,7 +361,7 @@ bool FrameNode::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, c
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool FrameNode::render(ModelX *model) {
+bool FrameNode::render(XModel *model) {
 	bool res = true;
 
 	// render meshes

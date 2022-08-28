@@ -36,7 +36,7 @@ namespace Wintermute {
 
 class AnimationChannel : public BaseClass {
 public:
-	AnimationChannel(BaseGame *inGame, ModelX *model);
+	AnimationChannel(BaseGame *inGame, XModel *model);
 	virtual ~AnimationChannel();
 
 	bool playAnim(AnimationSet *animSet, uint32 transitionTime = 0, uint32 stopTransitionTime = 0);
@@ -51,7 +51,7 @@ public:
 	bool unloadAnim(AnimationSet *animSet);
 
 private:
-	ModelX *_model;
+	XModel *_model;
 	ActiveAnimation *_anim[2];
 	bool _transitioning;
 	uint32 _transitionStart;

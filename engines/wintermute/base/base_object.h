@@ -51,7 +51,7 @@ class ScStack;
 class ScScript;
 
 #ifdef ENABLE_WME3D
-class ModelX;
+class XModel;
 #endif
 
 class BaseObject : public BaseScriptHolder {
@@ -149,8 +149,8 @@ public:
 
 #ifdef ENABLE_WME3D
 	Math::Angle _angle;
-	ModelX *_modelX;
-	ModelX *_shadowModel;
+	XModel *_xmodel;
+	XModel *_shadowModel;
 	Math::Matrix4 _worldMatrix;
 	Math::Vector3d _posVector;
 	bool getMatrix(Math::Matrix4 *modelMatrix, Math::Vector3d *posVect = nullptr);

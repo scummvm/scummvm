@@ -37,7 +37,7 @@ class BasePersistenceManager;
 
 class ActiveAnimation : public BaseClass {
 public:
-	ActiveAnimation(BaseGame *inGame, ModelX *model);
+	ActiveAnimation(BaseGame *inGame, XModel *model);
 	virtual ~ActiveAnimation();
 
 	bool start(AnimationSet *animation, bool looping = false);
@@ -61,7 +61,7 @@ public:
 	};
 
 private:
-	ModelX *_model;
+	XModel *_model;
 	int32 _currentFrame;
 	uint32 _startTime;
 	bool _looping;

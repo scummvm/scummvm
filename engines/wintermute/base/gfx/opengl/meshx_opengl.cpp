@@ -45,7 +45,7 @@ MeshXOpenGL::~MeshXOpenGL() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool MeshXOpenGL::render(ModelX *model) {
+bool MeshXOpenGL::render(XModel *model) {
 	if (_vertexData == nullptr) {
 		return false;
 	}

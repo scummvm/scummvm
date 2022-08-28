@@ -33,7 +33,7 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-ActiveAnimation::ActiveAnimation(BaseGame *inGame, ModelX *model) : BaseClass(inGame) {
+ActiveAnimation::ActiveAnimation(BaseGame *inGame, XModel *model) : BaseClass(inGame) {
 	_model = model;
 
 	_animation = nullptr;

@@ -50,7 +50,7 @@ private:
 	static void afterLoadSound(void *sound, void *data);
 	static void afterLoadFont(void *font, void *data);
 #ifdef ENABLE_WME3D
-	static void afterLoadModelX(void *model, void *data);
+	static void afterLoadXModel(void *model, void *data);
 #endif
 	static void afterLoadScript(void *script, void *data);
 };

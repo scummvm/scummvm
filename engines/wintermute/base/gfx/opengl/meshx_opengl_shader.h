@@ -42,7 +42,7 @@ public:
 	~MeshXOpenGLShader() override;
 
 	bool loadFromX(const Common::String &filename, XFileLexer &lexer, Common::Array<MaterialReference> &materialReferences) override;
-	bool render(ModelX *model) override;
+	bool render(XModel *model) override;
 	bool renderFlatShadowModel() override;
 	bool update(FrameNode *parentFrame) override;
 
