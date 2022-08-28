@@ -846,7 +846,6 @@ const char *ScummEngine_v8::getGUIString(int stringId) {
 const char *ScummEngine_v7::getGUIString(int stringId) {
 	InfoDialog d(this, 0);
 	int resStringId = -1;
-	resStringId = VAR(stringId);
 
 	switch (stringId) {
 	case gsPause:
