@@ -246,7 +246,7 @@ public:
 	uint16 _wmHeight;
 
 private:
-	byte *_currentPalette;
+	byte _currentPalette[768];
 	uint16 _currentPaletteLength;
 	Lingo *_lingo;
 	uint16 _version;
