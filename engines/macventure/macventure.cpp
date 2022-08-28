@@ -491,6 +491,7 @@ void MacVentureEngine::processEvents() {
 
 		switch (event.type) {
 		case Common::EVENT_QUIT:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
 			_gameState = kGameStateQuitting;
 			break;
 		default:
