@@ -183,6 +183,7 @@ public:
 	void addPalette(int id, byte *palette, int length);
 	bool setPalette(int id);
 	void setPalette(byte *palette, uint16 count);
+	void shiftPalette(int startIndex, int endIndex, bool reverse);
 	void clearPalettes();
 	PaletteV4 *getPalette(int id);
 	void loadDefaultPalettes();

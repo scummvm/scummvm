@@ -158,9 +158,16 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 		// palette
 		if (_vm->getPlatform() == Common::kPlatformWindows) {
 			_palette.paletteId = stream->readUint16();
-			_palette.firstColor = stream->readByte(); // for cycles. note: these start at 0x80 (for pal entry 0)!
-			_palette.lastColor = stream->readByte();
+			// loop points for color cycling
+			_palette.firstColor = g_director->transformColor(stream->readByte() ^ 0x80);
+			_palette.lastColor = g_director->transformColor(stream->readByte() ^ 0x80);
 			_palette.flags = stream->readByte();
+			_palette.colorCycling = (_palette.flags & 0x80) != 0;
+			_palette.normal = (_palette.flags & 0x60) == 0x00;
+			_palette.fadeToWhite = (_palette.flags & 0x60) == 0x60;
+			_palette.fadeToBlack = (_palette.flags & 0x60) == 0x40;
+			_palette.autoReverse = (_palette.flags & 0x10) != 0;
+			_palette.overTime = (_palette.flags & 0x04) != 0;
 			_palette.speed = stream->readByte();
 			_palette.frameCount = stream->readUint16();
 			_palette.cycleCount = stream->readUint16();
@@ -174,9 +181,16 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 			debugC(8, kDebugLoading, "Frame::readChannels(): STUB: unk1: %02x %02x %02x", unk[0], unk[1], unk[2]);
 
 			_palette.paletteId = stream->readSint16();
-			_palette.firstColor = stream->readByte(); // for cycles. note: these start at 0x80 (for pal entry 0)!
-			_palette.lastColor = stream->readByte();
+			// loop points for color cycling
+			_palette.firstColor = g_director->transformColor(stream->readByte() ^ 0x80);
+			_palette.lastColor = g_director->transformColor(stream->readByte() ^ 0x80);
 			_palette.flags = stream->readByte();
+			_palette.colorCycling = (_palette.flags & 0x80) != 0;
+			_palette.normal = (_palette.flags & 0x60) == 0x00;
+			_palette.fadeToWhite = (_palette.flags & 0x60) == 0x60;
+			_palette.fadeToBlack = (_palette.flags & 0x60) == 0x40;
+			_palette.autoReverse = (_palette.flags & 0x10) != 0;
+			_palette.overTime = (_palette.flags & 0x04) != 0;
 			_palette.cycleCount = stream->readByte();
 			_palette.speed = stream->readByte();
 			_palette.frameCount = stream->readByte();
@@ -227,9 +241,16 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 
 		// palette
 		_palette.paletteId = stream->readSint16();
-		_palette.firstColor = stream->readByte(); // for cycles. note: these start at 0x80 (for pal entry 0)!
-		_palette.lastColor = stream->readByte();
+		// loop points for color cycling
+		_palette.firstColor = g_director->transformColor(stream->readByte() + 0x80);
+		_palette.lastColor = g_director->transformColor(stream->readByte() + 0x80);
 		_palette.flags = stream->readByte();
+		_palette.colorCycling = (_palette.flags & 0x80) != 0;
+		_palette.normal = (_palette.flags & 0x60) == 0x00;
+		_palette.fadeToWhite = (_palette.flags & 0x60) == 0x60;
+		_palette.fadeToBlack = (_palette.flags & 0x60) == 0x40;
+		_palette.autoReverse = (_palette.flags & 0x10) != 0;
+		_palette.overTime = (_palette.flags & 0x04) != 0;
 		_palette.speed = stream->readByte();
 		_palette.frameCount = stream->readUint16();
 		_palette.cycleCount = stream->readUint16();

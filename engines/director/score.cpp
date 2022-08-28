@@ -499,16 +499,12 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 	if (_window->_newMovieStarted)
 		renderCursor(_movie->getWindow()->getMousePos(), true);
 
-	if (!renderTransition(frameId))
+	if (!renderTransition(frameId)) {
 		renderSprites(frameId, mode);
-
-	int currentPalette = _frames[frameId]->_palette.paletteId;
-	if (!_puppetPalette && currentPalette != _lastPalette && currentPalette) {
-		_lastPalette = currentPalette;
-		g_director->setPalette(resolvePaletteId(currentPalette));
+		_window->render();
+		renderPaletteCycle(frameId, mode);
 	}
 
-	_window->render();
 
 	playSoundChannel(frameId, false);
 	playQueuedSound(); // this is currently only used in FPlayXObj
@@ -585,6 +581,55 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 		if (channel->isActiveText())
 			_movie->_currentEditableTextChannel = i;
 	}
+}
+
+void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
+	int currentPalette = _frames[frameId]->_palette.paletteId;
+	if (!_puppetPalette && currentPalette != _lastPalette && currentPalette) {
+		_lastPalette = currentPalette;
+		g_director->setPalette(resolvePaletteId(currentPalette));
+	}
+
+	// Cycle speed in FPS
+	int speed = _frames[frameId]->_palette.speed;
+	if (speed == 0)
+		return;
+	// 30 (the maximum) is actually unbounded
+	int delay = speed == 30 ? 10 : 1000 / speed;
+	// Palette indexes are in reverse order thanks to transformColor
+	int firstColor = _frames[frameId]->_palette.firstColor;
+	int lastColor = _frames[frameId]->_palette.lastColor;
+	if (_frames[frameId]->_palette.colorCycling) {
+		if (_frames[frameId]->_palette.overTime) {
+			// do a single color step in one frame transition
+		} else {
+			// do a full color cycle in one frame transition
+			int steps = firstColor - lastColor + 1;
+			for (int i = 0; i < _frames[frameId]->_palette.cycleCount; i++) {
+				for (int j = 0; j < steps; j++) {
+					g_director->shiftPalette(firstColor, lastColor, false);
+					g_director->draw();
+					if (_vm->processEvents(true)) {
+						g_director->setPalette(resolvePaletteId(currentPalette));
+						return;
+					}
+					g_system->delayMillis(delay);
+				}
+				if (_frames[frameId]->_palette.autoReverse) {
+					for (int j = 0; j < steps; j++) {
+						g_director->shiftPalette(firstColor, lastColor, true);
+						g_director->draw();
+						if (_vm->processEvents(true)) {
+							g_director->setPalette(resolvePaletteId(currentPalette));
+							return;
+						}
+						g_system->delayMillis(delay);
+					}
+				}
+			}
+		}
+	}
+
 }
 
 void Score::renderCursor(Common::Point pos, bool forceUpdate) {
