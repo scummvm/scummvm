@@ -19,8 +19,13 @@
  *
  */
 
+#include "engines/advancedDetector.h"
+#include "engines/obsolete.h"
+
 #include "sword1/sword1.h"
 #include "sword1/control.h"
+#include "sword1/detection.h"
+#include "sword1/obsolete.h"
 
 #include "common/savefile.h"
 #include "common/system.h"
@@ -28,9 +33,7 @@
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
-#include "engines/metaengine.h"
-
-class SwordMetaEngine : public MetaEngine {
+class SwordMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "sword1";
@@ -43,7 +46,12 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine) override;
+	Common::Error createInstance(OSystem *syst, Engine **engine) override {
+		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
+		return AdvancedMetaEngine::createInstance(syst, engine);
+	}
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+
 	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
 		if (saveGameIdx == kSavegameFilePattern)
 			return Common::String::format("sword1.###");
@@ -70,9 +78,9 @@ bool Sword1::SwordEngine::hasFeature(EngineFeature f) const {
 	    (f == kSupportsLoadingDuringRuntime);
 }
 
-Common::Error SwordMetaEngine::createInstance(OSystem *syst, Engine **engine) {
-	assert(engine);
-	*engine = new Sword1::SwordEngine(syst);
+Common::Error SwordMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	const Sword1::SwordGameDescription *gd = (const Sword1::SwordGameDescription *)desc;
+	*engine = new Sword1::SwordEngine(syst, gd);
 	return Common::kNoError;
 }
 
