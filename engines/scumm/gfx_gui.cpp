@@ -537,7 +537,7 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 				textXPos = relCentX + (x - ctrl->relativeCenterX) / 2;
 			else
 				textXPos = relCentX + 2;
-		
+
 			if (_game.version == 8 || _game.id == GID_DIG)
 				textYPos = relCentY + (y - relCentY - textHeight) / 2 + 1;
 			else
@@ -2211,6 +2211,7 @@ void ScummEngine_v6::setUpMainMenuControls() {
 	_charset->setCurID(cid);
 	int yCntr = _screenHeight / 2;
 	int calculatedHeight = (110 + lh) / 2;
+	int yOffset = _useCJKMode ? 0 : 1;
 
 	// V6 auxiliary constant
 	yConstantV6 = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
@@ -2230,9 +2231,9 @@ void ScummEngine_v6::setUpMainMenuControls() {
 		getBannerColor(6),
 		getBannerColor(4),
 		(_game.version == 7 ? 16 : 20),
-		(_game.version == 7 ? yCntr - calculatedHeight : yConstantV6 - 60),
+		(_game.version == 7 ? yCntr - calculatedHeight - yOffset : yConstantV6 - 60),
 		(_game.version == 7 ? 303 : 300),
-		(_game.version == 7 ? yCntr + calculatedHeight : yConstantV6 + 60),
+		(_game.version == 7 ? yCntr + calculatedHeight + yOffset : yConstantV6 + 60),
 		_emptyMsg, 1, 1);
 
 	// Inner box
@@ -2328,7 +2329,7 @@ void ScummEngine_v6::setUpMainMenuControls() {
 				getBannerColor(10),
 				getBannerColor(12),
 				(_game.version == 7 ? 108 : 102),
-				(_game.version == 7 ? yCntr - calculatedHeight + 25 : yConstantV6 - 39),
+				(_game.version == 7 ? yCntr - calculatedHeight - yOffset + 25 : yConstantV6 - 39),
 				-90,
 				-12,
 				_uncheckedBox, 1, 1);
@@ -2344,7 +2345,7 @@ void ScummEngine_v6::setUpMainMenuControls() {
 				getBannerColor(10),
 				getBannerColor(12),
 				(_game.version == 7 ? 108 : 102),
-				(_game.version == 7 ? yCntr - calculatedHeight + 43 : yConstantV6 - 25),
+				(_game.version == 7 ? yCntr - calculatedHeight - yOffset + 43 : yConstantV6 - 25),
 				-90,
 				-12,
 				_uncheckedBox, 1, 1);
@@ -2360,7 +2361,7 @@ void ScummEngine_v6::setUpMainMenuControls() {
 				getBannerColor(10),
 				getBannerColor(12),
 				(_game.version == 7 ? 108 : 102),
-				(_game.version == 7 ? yCntr - calculatedHeight + 61 : yConstantV6 - 11),
+				(_game.version == 7 ? yCntr - calculatedHeight - yOffset + 61 : yConstantV6 - 11),
 				-90,
 				-12,
 				_uncheckedBox, 1, 1);
@@ -2377,7 +2378,7 @@ void ScummEngine_v6::setUpMainMenuControls() {
 			getBannerColor(11),
 			getBannerColor(12),
 			(_game.version == 7 ? 108 : 102),
-			(_game.version == 7 ? yCntr - calculatedHeight + 85 : yConstantV6 + 17),
+			(_game.version == 7 ? yCntr - calculatedHeight - yOffset + 85 : yConstantV6 + 17),
 			-12,
 			-12,
 			_uncheckedBox, 1, 1);
@@ -2393,7 +2394,7 @@ void ScummEngine_v6::setUpMainMenuControls() {
 			getBannerColor(10),
 			getBannerColor(12),
 			(_game.version == 7 ? 108 : 102),
-			(_game.version == 7 ? yCntr - calculatedHeight + 99 : yConstantV6 + 31),
+			(_game.version == 7 ? yCntr - calculatedHeight - yOffset + 99 : yConstantV6 + 31),
 			-90,
 			-(lh + 4),
 			_uncheckedBox, 1, 1);
@@ -2409,7 +2410,7 @@ void ScummEngine_v6::setUpMainMenuControls() {
 			getBannerColor(6),
 			getBannerColor(7),
 			(_game.version == 7 ? 235 : 232),
-			(_game.version == 7 ? yCntr - calculatedHeight + 30 : yConstantV6 - 23),
+			(_game.version == 7 ? yCntr - calculatedHeight + yOffset * 6 + 30 : yConstantV6 - 23),
 			-60,
 			-(lh + 4),
 			getGUIString(gsSave), 1, 1);
@@ -2425,7 +2426,7 @@ void ScummEngine_v6::setUpMainMenuControls() {
 			getBannerColor(6),
 			getBannerColor(7),
 			(_game.version == 7 ? 235 : 232),
-			(_game.version == 7 ? yCntr - calculatedHeight + lh + 37 : yConstantV6 - 8),
+			(_game.version == 7 ? yCntr - calculatedHeight + lh  + yOffset * 6 + 37 : yConstantV6 - 8),
 			-60,
 			-(lh + 4),
 			getGUIString(gsLoad), 1, 1);
@@ -2441,7 +2442,7 @@ void ScummEngine_v6::setUpMainMenuControls() {
 			getBannerColor(6),
 			getBannerColor(7),
 			(_game.version == 7 ? 235 : 232),
-			(_game.version == 7 ? yCntr - calculatedHeight + lh * 2 + 44 : yConstantV6 + 7),
+			(_game.version == 7 ? yCntr - calculatedHeight + lh * 2  + yOffset * 6 + 44 : yConstantV6 + 7),
 			-60,
 			-(lh + 4),
 			getGUIString(gsPlay), 1, 1);
@@ -2457,7 +2458,7 @@ void ScummEngine_v6::setUpMainMenuControls() {
 			getBannerColor(6),
 			getBannerColor(7),
 			(_game.version == 7 ? 235 : 232),
-			(_game.version == 7 ? yCntr - calculatedHeight + lh * 3 + 51 : yConstantV6 + 22),
+			(_game.version == 7 ? yCntr - calculatedHeight + lh * 3  + yOffset * 6 + 51 : yConstantV6 + 22),
 			-60,
 			-(lh + 4),
 			getGUIString(gsQuit), 1, 1);
@@ -2510,7 +2511,7 @@ void ScummEngine_v6::setUpMainMenuControls() {
 				getBannerColor(6),
 				getBannerColor(7),
 				(_game.version == 7 ? 235 : 232),
-				(_game.version == 7 ? yCntr - calculatedHeight + lh + 37: yConstantV6 - 8),
+				(_game.version == 7 ? yCntr - calculatedHeight + lh + yOffset * 6 + 37: yConstantV6 - 8),
 				-60,
 				-(lh + 4),
 				getGUIString(gsOK), 1, 1);
@@ -2520,13 +2521,13 @@ void ScummEngine_v6::setUpMainMenuControls() {
 		int cancelButtonAnchorY;
 		if (_menuPage == GUI_PAGE_LOAD) {
 			if (_game.version == 7) {
-				cancelButtonAnchorY = yCntr - calculatedHeight + (lh + 7) / 2 + lh + 37;
+				cancelButtonAnchorY = yCntr - calculatedHeight + (lh + 7) / 2 + lh + yOffset * 6 + 37;
 			} else {
 				cancelButtonAnchorY = yConstantV6 - 1;
 			}
 		} else {
 			if (_game.version == 7) {
-				cancelButtonAnchorY = yCntr - calculatedHeight + lh * 2 + 44;
+				cancelButtonAnchorY = yCntr - calculatedHeight + lh * 2 + yOffset * 6 + 44;
 			} else {
 				cancelButtonAnchorY = yConstantV6 + 7;
 			}
@@ -2650,6 +2651,7 @@ void ScummEngine::updateMainMenuControls() {
 	int yCntr = _screenHeight / 2;
 	int calculatedHeight = (110 + lh) / 2;
 	int textColor = getBannerColor(2);
+	int yOffset = _useCJKMode ? 0 : 1;
 
 	// V6 auxiliary constant
 	int yConstantV6 = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
@@ -2705,34 +2707,34 @@ void ScummEngine::updateMainMenuControls() {
 		// not rendered in the other games, so adjust that...
 		if (_game.id == GID_FT) {
 			convertMessageToString((const byte *)getGUIString(gsSpooledMusic), (byte *)msg, sizeof(msg));
-			drawGUIText(msg, 0, 29, yCntr - calculatedHeight + 19, textColor, false);
+			drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 19, textColor, false);
 
 			convertMessageToString((const byte *)getGUIString(gsMusic), (byte *)msg, sizeof(msg));
-			drawGUIText(msg, 0, 29, yCntr - calculatedHeight + 33, textColor, false);
+			drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 33, textColor, false);
 
 			convertMessageToString((const byte *)getGUIString(gsVoice), (byte *)msg, sizeof(msg));
-			drawGUIText(msg, 0, 29, yCntr - calculatedHeight + 47, textColor, false);
+			drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 47, textColor, false);
 		} else {
 			convertMessageToString((const byte *)getGUIString(gsMusic), (byte *)msg, sizeof(msg));
-			drawGUIText(msg, 0, 29, yCntr - calculatedHeight + 25, textColor, false);
+			drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 25, textColor, false);
 
 			convertMessageToString((const byte *)getGUIString(gsVoice), (byte *)msg, sizeof(msg));
-			drawGUIText(msg, 0, 29, yCntr - calculatedHeight + 43, textColor, false);
+			drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 43, textColor, false);
 		}
 
 		convertMessageToString((const byte *)getGUIString(gsSfx), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 0, 29, yCntr - calculatedHeight + 61, textColor, false);
+		drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 61, textColor, false);
 
 		convertMessageToString((const byte *)getGUIString(gsDisplayText), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 0, 29, yCntr - calculatedHeight + 88, textColor, false);
+		drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 88, textColor, false);
 
 		convertMessageToString((const byte *)getGUIString(gsTextSpeed), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 0, 29, yCntr - calculatedHeight + 102, textColor, false);
+		drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 102, textColor, false);
 
-		drawLine(23, yCntr - calculatedHeight + 77, 204, yCntr - calculatedHeight + 77, getBannerColor(17));
-		drawLine(23, yCntr - calculatedHeight + 78, 204, yCntr - calculatedHeight + 78, getBannerColor(4));
-		drawLine(23, yCntr - calculatedHeight + 79, 204, yCntr - calculatedHeight + 79, getBannerColor(4));
-		drawLine(23, yCntr - calculatedHeight + 80, 204, yCntr - calculatedHeight + 80, getBannerColor(18));
+		drawLine(23, yCntr - calculatedHeight - yOffset + 77, 204, yCntr - calculatedHeight - yOffset + 77, getBannerColor(17));
+		drawLine(23, yCntr - calculatedHeight - yOffset + 78, 204, yCntr - calculatedHeight - yOffset + 78, getBannerColor(4));
+		drawLine(23, yCntr - calculatedHeight - yOffset + 79, 204, yCntr - calculatedHeight - yOffset + 79, getBannerColor(4));
+		drawLine(23, yCntr - calculatedHeight - yOffset + 80, 204, yCntr - calculatedHeight - yOffset + 80, getBannerColor(18));
 
 		// The following line is from the Aaron Giles' interpreter of FT, based on the first DOS version;
 		// for some reason it doesn't get displayed in the DOS version, and it also overflows
@@ -2788,16 +2790,17 @@ void ScummEngine::drawMainMenuTitle(const char *title) {
 		_charset->setCurID(cid);
 		int yCntr = _screenHeight / 2;
 		int calculatedHeight = (110 + lh) / 2;
+		int yOffset = _useCJKMode ? 0 : 1;
 
 		drawBox(18,
-			yCntr - calculatedHeight + _screenTop + 4,
+			yCntr - calculatedHeight + _screenTop - yOffset + 4,
 			301,
-			yCntr - calculatedHeight + _screenTop + 3 + lh,
+			yCntr - calculatedHeight + _screenTop - yOffset + 3 + lh,
 			boxColor);
 
 		drawGUIText(title, 0,
 			159,
-			yCntr - calculatedHeight + 4,
+			yCntr - calculatedHeight - yOffset + 4,
 			stringColor,
 			true);
 	} else if (_game.version == 7) {
