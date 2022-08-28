@@ -646,6 +646,7 @@ void Cast::loadFilmLoopData(FilmLoopCastMember *member) {
 				Common::SeekableReadStreamEndian *loop = _castArchive->getResource(tag, filmLoopId);
 				debugC(2, kDebugLoading, "****** Loading '%s' id: %d, %d bytes", tag2str(tag), filmLoopId, (int)loop->size());
 				member->loadFilmLoopData(*loop);
+				delete loop;
 			} else {
 				warning("Cast::loadFilmLoopData(): Film loop not found");
 			}

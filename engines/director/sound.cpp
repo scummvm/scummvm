@@ -784,7 +784,7 @@ bool SNDDecoder::hasLoopBounds() {
 AudioFileDecoder::AudioFileDecoder(Common::String &path)
 		: AudioDecoder() {
 	_path = path;
-	_macresman = nullptr;
+	_macresman = new Common::MacResManager();
 }
 
 AudioFileDecoder::~AudioFileDecoder() {
@@ -795,7 +795,6 @@ Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, bool forPuppe
 	if (_path.empty())
 		return nullptr;
 
-	_macresman = new Common::MacResManager();
 	_macresman->open(Common::Path(pathMakeRelative(_path), g_director->_dirSeparator));
 	Common::SeekableReadStream *file = _macresman->getDataFork();
 

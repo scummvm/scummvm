@@ -743,6 +743,9 @@ void Datum::reset() {
 		case FIELDREF:
 			delete u.cast;
 			break;
+		case MENUREF:
+			delete u.menu;
+			break;
 		default:
 			break;
 		}
