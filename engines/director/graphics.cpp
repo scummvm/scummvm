@@ -159,7 +159,8 @@ void DirectorEngine::setPalette(byte *palette, uint16 count) {
 	if (_pixelformat.bytesPerPixel == 1)
 		_system->getPaletteManager()->setPalette(palette, 0, count);
 
-	_currentPalette = palette;
+	memset(_currentPalette, 0, 768);
+	memcpy(_currentPalette, palette, count * 3);
 	_currentPaletteLength = count;
 
 	_wm->passPalette(palette, count);

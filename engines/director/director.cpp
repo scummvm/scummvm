@@ -72,7 +72,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	// Load key codes
 	loadKeyCodes();
 
-	_currentPalette = nullptr;
+	memset(_currentPalette, 0, 768);
 	_currentPaletteLength = 0;
 	_stage = nullptr;
 	_windowList = new Datum;
@@ -175,7 +175,7 @@ Common::Error DirectorEngine::run() {
 		return Common::kAudioDeviceInitFailed;
 	}
 
-	_currentPalette = nullptr;
+	memset(_currentPalette, 0, 768);
 
 	//        we run mac-style menus     |   and we will redraw all widgets
 	_wmMode = Graphics::kWMModalMenuMode | Graphics::kWMModeManualDrawWidgets;
