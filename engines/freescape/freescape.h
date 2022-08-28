@@ -175,6 +175,7 @@ public:
 	bool executeEndIfBitNotEqual(FCLInstruction &instruction);
 	bool executeEndIfVisibilityIsNotEqual(FCLInstruction &instruction);
 	void executeSwapJet(FCLInstruction &instruction);
+	void executePrint(FCLInstruction &instruction);
 
 	// Sound
 	Audio::SoundHandle _speakerHandle;
@@ -194,7 +195,7 @@ public:
 
 	// Text messages and Fonts
 	Common::StringArray _messagesList;
-	void loadMessages(Common::SeekableReadStream *file, int offset, int number);
+	void loadMessages(Common::SeekableReadStream *file, int offset, int size, int number);
 	void loadFonts(Common::SeekableReadStream *file, int offset);
 	Common::StringArray _currentAreaMessages;
 	Common::StringArray _currentEphymeralMessages;

@@ -263,7 +263,8 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			break;
 
 		case 34: // show a message on screen
-			detokenisedStream += "MESSAGE (";
+			detokenisedStream += "PRINT (";
+			currentInstruction = FCLInstruction(Token::PRINT);
 			break;
 
 		case 12:

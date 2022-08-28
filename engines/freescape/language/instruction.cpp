@@ -153,6 +153,9 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			case Token::CLEARBIT:
 			executeClearBit(instruction);
 			break;
+			case Token::PRINT:
+			executePrint(instruction);
+			break;
 			case Token::BITNOTEQ:
 			if (executeEndIfBitNotEqual(instruction))
 				ip = codeSize;
@@ -183,6 +186,13 @@ void FreescapeEngine::executeDelay(FCLInstruction &instruction) {
 	uint16 delay = instruction.source;
 	debugC(1, kFreescapeDebugCode, "Delaying %d * 1/50 seconds", delay);
 	g_system->delayMillis(20 * delay);
+}
+
+void FreescapeEngine::executePrint(FCLInstruction &instruction) {
+	uint16 index = instruction.source - 1;
+	debugC(1, kFreescapeDebugCode, "Printing message %d", index);
+	_currentAreaMessages.clear();
+	_currentAreaMessages.push_back(_messagesList[index]);
 }
 
 bool FreescapeEngine::executeEndIfVisibilityIsNotEqual(FCLInstruction &instruction) {
