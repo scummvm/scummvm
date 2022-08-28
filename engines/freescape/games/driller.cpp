@@ -33,6 +33,11 @@ DrillerEngine::DrillerEngine(OSystem *syst) : FreescapeEngine(syst) {
 	_playerHeight = 64;
 	_playerWidth = 12;
 	_playerDepth = 32;
+
+	_initialProveEnergy = 48;
+	_initialProveShield = 50;
+	_initialJetEnergy = 29;
+	_initialJetShield = 34;
 }
 
 void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
@@ -291,8 +296,8 @@ void DrillerEngine::initGameState() {
 	for (AreaMap::iterator it = _areaMap.begin(); it != _areaMap.end(); ++it)
 		_gameStateBits[it->_key] = 0;
 
-	_gameStateVars[k8bitVariableEnergy] = 43;
-	_gameStateVars[k8bitVariableShield] = 48;
+	_gameStateVars[k8bitVariableEnergy] = _initialProveEnergy;
+	_gameStateVars[k8bitVariableShield] = _initialProveShield;
 }
 
 bool DrillerEngine::checkIfGameEnded() {

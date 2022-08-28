@@ -227,6 +227,12 @@ class DrillerEngine : public FreescapeEngine {
 public:
 	DrillerEngine(OSystem *syst);
 
+	uint32 _initialJetEnergy;
+	uint32 _initialJetShield;
+
+	uint32 _initialProveEnergy;
+	uint32 _initialProveShield;
+
 	void initGameState() override;
 	bool checkIfGameEnded() override;
 
