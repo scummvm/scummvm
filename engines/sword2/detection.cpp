@@ -23,22 +23,55 @@
 
 #include "common/translation.h"
 
-#include "engines/metaengine.h"
+#include "engines/advancedDetector.h"
+#include "engines/obsolete.h"
 
 #include "sword2/detection.h"
-#include "sword2/detection_internal.h"
+#include "sword2/obsolete.h" // Obsolete ID table.
 
-static const ExtraGuiOption sword2ExtraGuiOption = {
-	_s("Show object labels"),
-	_s("Show labels for objects on mouse hover"),
-	"object_labels",
-	false,
-	0,
-	0
+static const PlainGameDescriptor sword2Games[] = {
+	{"sword2", "Broken Sword II: The Smoking Mirror"},
+	{nullptr, nullptr}
 };
 
-class Sword2MetaEngineDetection : public MetaEngineDetection {
+#include "sword2/detection_tables.h"
+
+static const char *const directoryGlobs[] = {
+	"clusters",
+	nullptr
+};
+
+namespace Sword2 {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_OBJECT_LABELS,
+		{
+			_s("Show object labels"),
+			_s("Show labels for objects on mouse hover"),
+			"object_labels",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+} // End of namespace Sword2
+
+class Sword2MetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
+	Sword2MetaEngineDetection() : AdvancedMetaEngineDetection(Sword2::gameDescriptions, sizeof(Sword2::Sword2GameDescription), sword2Games, Sword2::optionsList) {
+		_guiOptions = GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_OBJECT_LABELS);
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
+	}
+
+	PlainGameDescriptor findGame(const char *gameId) const override {
+		return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
+	}
+
 	const char *getName() const override {
 		return "sword2";
 	}
@@ -46,60 +79,10 @@ public:
 	const char *getEngineName() const override {
 		return "Broken Sword II: The Smoking Mirror";
 	}
+
 	const char *getOriginalCopyright() const override {
 		return "Broken Sword II: The Smoking Mirror (C) Revolution";
 	}
-
-	PlainGameList getSupportedGames() const override;
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
-	PlainGameDescriptor findGame(const char *gameid) const override;
-	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) override;
 };
-
-PlainGameList Sword2MetaEngineDetection::getSupportedGames() const {
-	const Sword2::GameSettings *g = Sword2::sword2_settings;
-	PlainGameList games;
-	while (g->gameid) {
-		games.push_back(PlainGameDescriptor::of(g->gameid, g->description));
-		g++;
-	}
-	return games;
-}
-
-const ExtraGuiOptions Sword2MetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
-	ExtraGuiOptions options;
-	options.push_back(sword2ExtraGuiOption);
-	return options;
-}
-
-PlainGameDescriptor Sword2MetaEngineDetection::findGame(const char *gameid) const {
-	const Sword2::GameSettings *g = Sword2::sword2_settings;
-	while (g->gameid) {
-		if (0 == scumm_stricmp(gameid, g->gameid))
-			break;
-		g++;
-	}
-	return PlainGameDescriptor::of(g->gameid, g->description);
-}
-
-DetectedGames Sword2MetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) {
-	// The required game data files can be located in the game directory, or in
-	// a subdirectory called "clusters". In the latter case, we don't want to
-	// detect the game in that subdirectory, as this will detect the game twice
-	// when mass add is searching inside a directory. In this case, the first
-	// result (the game directory) will be correct, but the second result (the
-	// clusters subdirectory) will be wrong, as the optional speech, music and
-	// video data files will be ignored. Note that this fix will skip the game
-	// data files if the user has placed them inside a "clusters" subdirectory,
-	// or if he/she points ScummVM directly to the "clusters" directory of the
-	// game CD. Fixes bug #5273.
-	if (!fslist.empty()) {
-		Common::String directory = fslist[0].getParent().getName();
-		if (directory.hasPrefixIgnoreCase("clusters") && directory.size() <= 9)
-			return DetectedGames();
-	}
-
-	return detectGamesImpl(fslist);
-}
 
 REGISTER_PLUGIN_STATIC(SWORD2_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Sword2MetaEngineDetection);

@@ -21,24 +21,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SWORD2_DETECTION_H
-#define SWORD2_DETECTION_H
+#ifndef SWORD2_OBSOLETE_H
+#define SWORD2_OBSOLETE_H
 
-#include "engines/advancedDetector.h"
-
-namespace Sword2 {
-
-enum {
-	GF_DEMO	       = 1 << 0,
-	GF_SPANISHDEMO = 1 << 1
+static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
+	{"sword2alt", "sword2", Common::kPlatformWindows},
+	{"sword2psx", "sword2", Common::kPlatformPSX},
+	{"sword2psxdemo", "sword2", Common::kPlatformPSX},
+	{"sword2demo", "sword2", Common::kPlatformWindows},
+	{"sword2demo-es", "sword2", Common::kPlatformWindows},
+	{0, 0, Common::kPlatformUnknown}
 };
 
-struct Sword2GameDescription {
-	ADGameDescription desc;
-
-	uint32 features;
-};
-
-} // End of namespace Sword2
-
-#endif // SWORD2_DETECTION_H
+#endif // SWORD2_OBSOLETE_H
