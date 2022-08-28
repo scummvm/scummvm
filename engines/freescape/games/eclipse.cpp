@@ -53,6 +53,28 @@ static const entrancesTableEntry rawEntranceTable[] = {
 	{0, {0, 0, 0}},        // NULL
 };
 
+static const char* rawMessagesTable[] = {
+	"HEART  FAILURE",
+	"SUN ECLIPSED",
+	"CRUSHED TO DEATH",
+	"FATAL FALL",
+	"CURSE OVERCOME",
+	"TOTAL ECLIPSE",
+	"TOO HOT TO REST!",
+	"RESTING...",
+	" ANKH FOUND ",
+	"WAY  BLOCKED",
+	"5 ANKHS REQUIRED",
+	"$2M REWARD",
+	"MAKE THE MATCH",
+	"TOUCH TO COLLECT",
+	"NO ENTRY",
+	"REMOVE LID",
+	"POISON AIR",
+	"MATCH MADE",
+	NULL
+};
+
 EclipseEngine::EclipseEngine(OSystem *syst) : FreescapeEngine(syst) {
 	_viewArea = Common::Rect(40, 32, 280, 132);
 	_playerHeight = 48;
@@ -63,6 +85,14 @@ EclipseEngine::EclipseEngine(OSystem *syst) : FreescapeEngine(syst) {
 	while (entry->id) {
 		_entranceTable[entry->id] = entry;
 		entry++;
+	}
+
+	const char **messagePtr = rawMessagesTable;
+	while (*messagePtr) {
+		Common::String message(*messagePtr);
+		_messagesList.push_back(message);
+		debug("%s", message.c_str());
+		messagePtr++;
 	}
 }
 
