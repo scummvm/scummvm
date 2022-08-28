@@ -1603,6 +1603,8 @@ void ScummEngine::showMainMenu() {
 		_tempTextSurface = nullptr;
 		free(_tempMainSurface);
 		_tempMainSurface = nullptr;
+		free(_curGrabbedCursor);
+		_curGrabbedCursor = nullptr;
 	}
 
 	_savegameThumbnail.free();
