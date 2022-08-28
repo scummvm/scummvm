@@ -304,7 +304,7 @@ void CachedMToon::decompressRLEFrameToImage(size_t frameIndex, Graphics::Surface
 	} else if (_rleOptimizedFormat.bytesPerPixel == 2) {
 		decompressedOK = decompressMToonRLE<uint16, 0x8000u, 0x8000u>(_rleData[frameIndex], _rleData[frameIndex].data16, surface, isBottomUp);
 	} else if (_rleOptimizedFormat.bytesPerPixel == 1) {
-		decompressedOK = decompressMToonRLE<uint8, 0x80u, 0u>(_rleData[frameIndex], _rleData[frameIndex].data8, surface, isBottomUp);
+		decompressedOK = decompressMToonRLE<uint8, 0x80u, 0x80u>(_rleData[frameIndex], _rleData[frameIndex].data8, surface, isBottomUp);
 	} else
 		error("Unknown mToon encoding");
 
