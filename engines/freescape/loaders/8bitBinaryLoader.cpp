@@ -346,16 +346,6 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 }
 
 void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offset, int ncolors) {
-	Image::BitmapDecoder decoder;
-	Common::File borderFile;
-
-	if ((_renderMode == "ega" && borderFile.open("ega.bmp")) ||
-	    (_renderMode == "cga" && borderFile.open("cga.bmp"))) {
-		decoder.loadStream(borderFile);
-		_border = new Graphics::Surface();
-		_border->copyFrom(*decoder.getSurface());
-	}
-
 	file->seek(offset);
 	uint8 numberOfAreas = file->readByte();
 	uint16 dbSize = file->readUint16LE();
@@ -457,6 +447,19 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	_startEntrance = startEntrance;
 	_colorNumber = ncolors;
 	_binaryBits = 8;
+}
+
+void FreescapeEngine::loadBorder() {
+	Image::BitmapDecoder decoder;
+	Common::String borderFilename = _targetName + "_" + _renderMode + ".bmp";
+
+	if (_dataBundle->hasFile(borderFilename)) {
+		Common::SeekableReadStream *borderFile = _dataBundle->createReadStreamForMember(borderFilename);
+		decoder.loadStream(*borderFile);
+		_border = new Graphics::Surface();
+		_border->copyFrom(*decoder.getSurface());
+	} else
+		debugC(1, kFreescapeDebugParser, "Missing border file '%s' in data bundle", borderFilename.c_str());
 }
 
 void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset) {
