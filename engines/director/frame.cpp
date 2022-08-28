@@ -155,8 +155,6 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 			_soundType2 = stream->readByte();
 		}
 
-		debugC(8, kDebugLoading, "Frame::readChannels(): actId: %d soundType: %d transDur: %d transChunk: %d tempo: %d transType: %d sound1: %d skipFrame: %d blend: %d sound2: %d soundType2: %d", _actionId.member, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1.member, _skipFrameFlag, _blend, _sound2.member, _soundType2);
-
 		// palette
 		if (_vm->getPlatform() == Common::kPlatformWindows) {
 			_palette.paletteId = stream->readUint16();
@@ -187,10 +185,6 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 			stream->read(unk, 4);
 			debugC(8, kDebugLoading, "Frame::readChannels(): STUB: unk2: %02x %02x %02x %02x", unk[0], unk[1], unk[2], unk[3]);
 		}
-
-		debugC(8, kDebugLoading, "Frame::readChannels(): palId: %d palFirst: %d palLast: %d palFlags: %d palCycles: %d palSpeed: %d palFrame: %d palLength: %d",
-			_palette.paletteId, _palette.firstColor, _palette.lastColor, _palette.flags, _palette.cycleCount,
-			_palette.speed, _palette.frameCount, _palette.cycleLength);
 
 		if (_vm->getPlatform() == Common::kPlatformMacintosh || _vm->getPlatform() == Common::kPlatformMacintoshII) {
 			stream->read(unk, 3);
@@ -243,6 +237,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 		_palette.delay = stream->readByte();
 		_palette.style = stream->readByte();
 
+
 		unk1 = stream->readByte();
 		if (unk1)
 			warning("Frame::readChannels(): STUB: unk2: %d 0x%x", unk1, unk1);
@@ -259,7 +254,6 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 		if (unk1)
 			warning("Frame::readChannels(): STUB: unk5: %d 0x%x", unk1, unk1);
 
-		debugC(8, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId.member, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1.member, _skipFrameFlag, _blend, _sound2.member, _soundType2);
 	} else if (version >= kFileVer500 && version < kFileVer600) {
 		// Sound/Tempo/Transition channel
 		stream->read(unk, 24);
@@ -273,6 +267,22 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 		// Tempo
 		// Script
 	}
+
+	debugC(4, kDebugLoading, "TMPO:   tempo: %d, skipFrameFlag: %d, blend: %d",
+		_tempo, _skipFrameFlag, _blend);
+	if (_palette.paletteId) {
+		debugC(4, kDebugLoading, "PAL:    paletteId: %d, firstColor: %d, lastColor: %d, flags: %d, cycleCount: %d, cycleLength: %d, speed: %d, frameCount: %d, fade: %d, delay: %d, style: %d",
+			_palette.paletteId, _palette.firstColor, _palette.lastColor, _palette.flags,
+			_palette.cycleCount, _palette.cycleLength, _palette.speed, _palette.frameCount,
+			_palette.fade, _palette.delay, _palette.style);
+	} else {
+		debugC(4, kDebugLoading, "PAL:    paletteId: 000");
+	}
+	debugC(4, kDebugLoading, "TRAN:   transType: %d, transDuration: %d, transChunkSize: %d",
+		_transType, _transDuration, _transChunkSize);
+	debugC(4, kDebugLoading, "SND: 1  sound1: %d, soundType1: %d", _sound1.member, _soundType1);
+	debugC(4, kDebugLoading, "SND: 2  sound2: %d, soundType2: %d", _sound2.member, _soundType2);
+	debugC(4, kDebugLoading, "LSCR:   actionId: %d", _actionId.member);
 
 	_transChunkSize = CLIP<byte>(_transChunkSize, 0, 128);
 	_transDuration = CLIP<uint16>(_transDuration, 0, 32000);  // restrict to 32 secs
