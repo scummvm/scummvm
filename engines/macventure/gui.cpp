@@ -475,44 +475,7 @@ bool Gui::loadMenus() {
 
 	int i = 1;
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		res = _resourceManager->getResource(MKTAG('M', 'E', 'N', 'U'), *iter);
-		uint16 key;
-		uint16 style;
-		uint8 titleLength;
-		char *title;
-
-		/* Skip menuID, width, height, resourceID, placeholder */
-		for (int skip = 0; skip < 5; skip++) {
-			res->readUint16BE();
-		}
-		titleLength = res->readByte();
-		title = new char[titleLength + 1];
-		res->read(title, titleLength);
-		title[titleLength] = '\0';
-
-		if (titleLength > 1) {
-			_menu->addMenuItem(nullptr, title);
-			Graphics::MacMenuSubMenu *submenu = _menu->addSubMenu(nullptr);
-
-			// Read submenu items
-			while ((titleLength = res->readByte())) {
-				title = new char[titleLength + 1];
-				res->read(title, titleLength);
-				title[titleLength] = '\0';
-				// Skip icon
-				res->readUint16BE();
-				// Read key
-				key = res->readUint16BE();
-				// Skip mark
-				res->readUint16BE();
-				// Read style
-				style = res->readUint16BE();
-				_menu->addMenuItem(submenu, title, 0, style, key, false);
-			}
-		}
-
-		i++;
-		delete res;
+		_menu->loadMenuResource(_resourceManager, *iter);
 	}
 
 	return true;
