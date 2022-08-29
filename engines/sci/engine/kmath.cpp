@@ -274,9 +274,9 @@ reg_t kTimesCot(EngineState *s, int argc, reg_t *argv) {
 #ifdef ENABLE_SCI32
 
 reg_t kMulDiv(EngineState *s, int argc, reg_t *argv) {
-	int16 multiplicant = argv[0].toSint16();
-	int16 multiplier = argv[1].toSint16();
-	int16 denominator = argv[2].toSint16();
+	int multiplicant = argv[0].toSint16();
+	int multiplier = argv[1].toSint16();
+	int denominator = argv[2].toSint16();
 
 	// Sanity check...
 	if (!denominator) {
@@ -284,7 +284,11 @@ reg_t kMulDiv(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	return make_reg(0, multiplicant * multiplier / denominator);
+	int result = (abs(multiplicant * multiplier) + abs(denominator) / 2) / abs(denominator);
+	if (multiplicant && ((multiplicant / abs(multiplicant)) * multiplier * denominator < 0))
+		result = -result;
+
+	return make_reg(0, (int16)result);
 }
 
 #endif
