@@ -65,6 +65,7 @@ private:
 	bool Cmd_Show(int argc, const char **argv);
 	bool Cmd_Hide(int argc, const char **argv);
 
+	bool Cmd_Cosdump(int argc, const char **argv);
 	bool Cmd_IMuse(int argc, const char **argv);
 	bool Cmd_DiMuse(int argc, const char **argv);
 
