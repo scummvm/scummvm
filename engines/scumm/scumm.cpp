@@ -359,7 +359,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 	setV1ColorTable(_renderMode);
 
-	_isRTL = (_language == Common::HE_ISR && _game.heversion == 0)
+	_isRTL = (_language == Common::HE_ISR && (_game.heversion == 0 || _game.heversion >= 72)) 
 			&& (_game.id == GID_MANIAC || (_game.version >= 4 && _game.version < 7));
 #ifndef DISABLE_HELP
 	// Create custom GMM dialog providing a help subdialog
