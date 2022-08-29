@@ -164,8 +164,8 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 			_palette.flags = stream->readByte();
 			_palette.colorCycling = (_palette.flags & 0x80) != 0;
 			_palette.normal = (_palette.flags & 0x60) == 0x00;
-			_palette.fadeToWhite = (_palette.flags & 0x60) == 0x60;
-			_palette.fadeToBlack = (_palette.flags & 0x60) == 0x40;
+			_palette.fadeToBlack = (_palette.flags & 0x60) == 0x60;
+			_palette.fadeToWhite = (_palette.flags & 0x60) == 0x40;
 			_palette.autoReverse = (_palette.flags & 0x10) != 0;
 			_palette.overTime = (_palette.flags & 0x04) != 0;
 			_palette.speed = stream->readByte();
@@ -187,8 +187,8 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 			_palette.flags = stream->readByte();
 			_palette.colorCycling = (_palette.flags & 0x80) != 0;
 			_palette.normal = (_palette.flags & 0x60) == 0x00;
-			_palette.fadeToWhite = (_palette.flags & 0x60) == 0x60;
-			_palette.fadeToBlack = (_palette.flags & 0x60) == 0x40;
+			_palette.fadeToBlack = (_palette.flags & 0x60) == 0x60;
+			_palette.fadeToWhite = (_palette.flags & 0x60) == 0x40;
 			_palette.autoReverse = (_palette.flags & 0x10) != 0;
 			_palette.overTime = (_palette.flags & 0x04) != 0;
 			_palette.cycleCount = stream->readByte();
@@ -247,8 +247,8 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 		_palette.flags = stream->readByte();
 		_palette.colorCycling = (_palette.flags & 0x80) != 0;
 		_palette.normal = (_palette.flags & 0x60) == 0x00;
-		_palette.fadeToWhite = (_palette.flags & 0x60) == 0x60;
-		_palette.fadeToBlack = (_palette.flags & 0x60) == 0x40;
+		_palette.fadeToBlack = (_palette.flags & 0x60) == 0x60;
+		_palette.fadeToWhite = (_palette.flags & 0x60) == 0x40;
 		_palette.autoReverse = (_palette.flags & 0x10) != 0;
 		_palette.overTime = (_palette.flags & 0x04) != 0;
 		_palette.speed = stream->readByte();

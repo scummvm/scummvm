@@ -143,9 +143,10 @@ void Window::stepTransition(TransParams &t, int step) {
 
 	if (t.sourcePal != t.targetPal) {
 		for (int i = 0; i < 768; i++) {
-			int sourceCol = (i < t.sourcePalLength * 3 ? t.sourcePal[i] : 0);
-			int targetCol = (i < t.targetPalLength * 3 ? t.targetPal[i] : 0);
-			t.tempPal[i] = static_cast<byte>((targetCol * step + sourceCol * (t.steps - step)) / t.steps);
+			t.tempPal[i] = lerpByte(
+				(i < t.sourcePalLength * 3 ? t.sourcePal[i] : 0),
+				(i < t.targetPalLength * 3 ? t.targetPal[i] : 0),
+				step, t.steps);
 		}
 		g_director->setPalette(t.tempPal, 256);
 	}
