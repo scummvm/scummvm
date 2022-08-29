@@ -669,7 +669,7 @@ protected:
 	virtual void queryQuit();
 	virtual void queryRestart();
 	virtual const char *getGUIString(int stringId);
-	void waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked);
+	void waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked, bool handeleMouseWheel = false);
 	virtual int getGUIStringHeight(const char *str);
 	virtual int getGUIStringWidth(const char *str);
 	virtual void drawGUIText(const char *buttonString, Common::Rect *clipRect, int textXPos, int textYPos, int textColor, bool centerFlag);
@@ -790,6 +790,8 @@ protected:
 
 	uint16 _mouseAndKeyboardStat = 0;
 	byte _leftBtnPressed = 0, _rightBtnPressed = 0;
+
+	int _mouseWheelFlag = 0; // For original save/load dialog only
 
 	/**
 	 * Last time runInputScript was run (measured in terms of OSystem::getMillis()).

@@ -1550,13 +1550,27 @@ void ScummEngine::showMainMenu() {
 				break;
 		} else {
 			// Wait for any mouse button presses...
-			waitForBannerInput(-1, ks, leftMsClicked, rightMsClicked);
+			waitForBannerInput(-1, ks, leftMsClicked, rightMsClicked, _menuPage != GUI_PAGE_MAIN);
 		}
 
-		if (leftMsClicked || rightMsClicked) {
+		if (leftMsClicked || rightMsClicked || _mouseWheelFlag) {
 			curMouseX = _mouse.x;
 			curMouseY = _mouse.y;
 			clickedControl = getInternalGUIControlFromCoordinates(curMouseX, curMouseY);
+
+			// Mouse wheel movement with cursor over the list box. If there are actual button
+			// clicks, we ignore the wheel.
+			if (!(leftMsClicked || rightMsClicked)) {
+				if (clickedControl >= GUI_CTRL_FIRST_SG && clickedControl <= GUI_CTRL_LAST_SG) {
+					if (_mouseWheelFlag == Common::EVENT_WHEELUP)
+						clickedControl = (_internalGUIControls[GUI_CTRL_ARROW_UP_BUTTON].relativeCenterX != -1) ? GUI_CTRL_ARROW_UP_BUTTON : -1;
+					else if (_mouseWheelFlag == Common::EVENT_WHEELDOWN)
+						clickedControl = (_internalGUIControls[GUI_CTRL_ARROW_DOWN_BUTTON].relativeCenterX != -1) ? GUI_CTRL_ARROW_DOWN_BUTTON : -1;
+				} else {
+					clickedControl = -1;
+				}
+			}
+
 			clearClickedStatus();
 			leftMsClicked = false;
 			rightMsClicked = false;
