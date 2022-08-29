@@ -243,6 +243,26 @@ void ScummEngine::parseEvent(Common::Event event) {
 		if (isUsingOriginalGUI() && _mainMenuIsActive)
 			openMainMenuDialog();
 		break;
+	case Common::EVENT_RETURN_TO_LAUNCHER:
+	case Common::EVENT_QUIT:
+		if (isUsingOriginalGUI()) {
+			if (!_quitByGUIPrompt && !_mainMenuIsActive) {
+				// If another message banner is currently on the screen, close it
+				// and then execute the quit prompt. Otherwise, prompt the user.
+				getEventManager()->resetQuit();
+				getEventManager()->resetReturnToLauncher();
+				if (!_messageBannerActive) {
+					queryQuit();
+					_closeBannerAndQueryQuitFlag = false;
+				} else {
+					_closeBannerAndQueryQuitFlag = true;
+				}
+			} else if (_quitByGUIPrompt) {
+				if (!getEventManager()->shouldReturnToLauncher())
+					quitGame();
+			}
+		}
+		break;
 	default:
 		break;
 	}
@@ -514,6 +534,14 @@ void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool 
 
 			if (shouldQuit())
 				return;
+
+			if (_closeBannerAndQueryQuitFlag) {
+				_closeBannerAndQueryQuitFlag = false;
+				Common::Event event;
+				event.type = Common::EVENT_QUIT;
+				getEventManager()->pushEvent(event);
+				return;
+			}
 		}
 	} else {
 		while (!validKey && !leftBtnClicked && !rightBtnClicked) {
@@ -530,6 +558,14 @@ void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool 
 
 			if (shouldQuit())
 				return;
+
+			if (_closeBannerAndQueryQuitFlag && !_comiQuitMenuIsOpen) {
+				_closeBannerAndQueryQuitFlag = false;
+				Common::Event event;
+				event.type = Common::EVENT_QUIT;
+				getEventManager()->pushEvent(event);
+				return;
+			}
 
  			validKey = ks.keycode != Common::KEYCODE_INVALID &&
 					   ks.keycode != Common::KEYCODE_LALT    &&
@@ -922,7 +958,9 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 		if ((lastKeyHit.keycode == Common::KEYCODE_c && lastKeyHit.hasFlags(Common::KBD_CTRL)) ||
 			(lastKeyHit.keycode == Common::KEYCODE_x && lastKeyHit.hasFlags(Common::KBD_ALT))) {
-			queryQuit();
+			Common::Event event;
+			event.type = Common::EVENT_QUIT;
+			getEventManager()->pushEvent(event);
 			return;
 		}
 
