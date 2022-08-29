@@ -612,7 +612,7 @@ int ScummEngine::getInternalGUIControlFromCoordinates(int x, int y) {
 
 
 #ifdef ENABLE_SCUMM_7_8
-void ScummEngine_v7::queryQuit() {
+void ScummEngine_v7::queryQuit(bool returnToLauncher) {
 	if (isUsingOriginalGUI()) {
 		if (_game.version == 8 && !(_game.features & GF_DEMO)) {
 			int boxWidth, strWidth;
@@ -765,7 +765,13 @@ void ScummEngine_v7::queryQuit() {
 			ctrlId = getInternalGUIControlFromCoordinates(_mouse.x, _mouse.y);
 			if ((leftBtnPressed && ctrlId == 0) || (toupper(ks.ascii) == yesLabelPtr[0])) {
 				_quitByGUIPrompt = true;
-				quitGame();
+				if (returnToLauncher) {
+					Common::Event event;
+					event.type = Common::EVENT_RETURN_TO_LAUNCHER;
+					getEventManager()->pushEvent(event);
+				} else {
+					quitGame();
+				};
 			}
 
 			// Restore the previous cursor...
@@ -807,7 +813,7 @@ void ScummEngine_v7::queryQuit() {
 			_comiQuitMenuIsOpen = false;
 			_messageBannerActive = false;
 		} else {
-			ScummEngine::queryQuit();
+			ScummEngine::queryQuit(returnToLauncher);
 		}
 	} else {
 		ScummEngine::confirmExitDialog();
@@ -1236,7 +1242,7 @@ int ScummEngine::getSFXVolume() {
 	return CLIP<int>(_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 2, 0, 127);
 }
 
-void ScummEngine::queryQuit() {
+void ScummEngine::queryQuit(bool returnToLauncher) {
 	char msgLabelPtr[512];
 	char localizedYesKey;
 
@@ -1260,7 +1266,13 @@ void ScummEngine::queryQuit() {
 			(ks.keycode == Common::KEYCODE_c && ks.hasFlags(Common::KBD_CTRL)) ||
 			(ks.keycode == Common::KEYCODE_x && ks.hasFlags(Common::KBD_ALT))) {
 			_quitByGUIPrompt = true;
-			quitGame();
+			if (returnToLauncher) {
+				Common::Event event;
+				event.type = Common::EVENT_RETURN_TO_LAUNCHER;
+				getEventManager()->pushEvent(event);
+			} else {
+				quitGame();
+			}
 		}
 	}
 }
@@ -1621,8 +1633,6 @@ void ScummEngine::showMainMenu() {
 
 		if (shouldQuit() && !_quitByGUIPrompt) {
 			clearClickedStatus();
-			getEventManager()->resetQuit();
-			getEventManager()->resetReturnToLauncher();
 			if (executeMainMenuOperation(GUI_CTRL_QUIT_BUTTON, 0, 0, hasLoadedState) || _quitByGUIPrompt)
 				break;
 		}
@@ -1683,6 +1693,7 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool 
 	int curSlot;
 	bool isLoomVga = (_game.id == GID_LOOM && _game.version == 4);
 	size_t labelSkip = (_game.version == 4 && _game.id != GID_LOOM) ? 0 : 4;
+	bool rtlRequest = getEventManager()->shouldReturnToLauncher();
 
 	switch (op) {
 	case GUI_CTRL_SAVE_BUTTON:
@@ -1704,7 +1715,9 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool 
 	case GUI_CTRL_PLAY_BUTTON:
 		return true;
 	case GUI_CTRL_QUIT_BUTTON:
-		queryQuit();
+		getEventManager()->resetQuit();
+		getEventManager()->resetReturnToLauncher();
+		queryQuit(rtlRequest);
 		if (_game.version == 7)
 			return true;
 		break;
