@@ -1,4 +1,4 @@
-.Dd August 24, 2022
+.Dd August 29, 2022
 .Dt SCUMMVM 6
 .Os
 .Sh NAME
@@ -305,15 +305,10 @@ If
 is passed, fetch the MD5 length automatically, overriding
 .Fl -md5-length .
 .It Fl -md5mac
-Show MD5 hash for both the resource fork and data fork of the
-Macintosh file given by
-.Fl -md5-path= Ns Ar PATH .
-If
-.Fl -md5-length= Ns Ar NUM
-is passed, then show the MD5 hash of the first (if positive)
-or last (if negative)
-.Ar NUM
-bytes of each fork.
+Like
+.Fl -md5 ,
+but for old Macintosh files.
+Show MD5 hash for both the resource fork and data fork of the file.
 .It Fl -midi-gain= Ns Ar NUM
 Set the gain for MIDI playback, 0\(en1000 (default: 100).
 Only supported by some MIDI drivers.
