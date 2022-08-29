@@ -255,7 +255,7 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 
  	switch (p->ink) {
 	case kInkTypeBackgndTrans:
-		*dst = src == p->backColor ? *dst : src;
+		*dst = (src == (int)p->backColor) ? *dst : src;
 		break;
 	case kInkTypeMatte:
 		// fall through
