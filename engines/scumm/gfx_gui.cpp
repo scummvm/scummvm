@@ -556,15 +556,29 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 			Common::strlcat(buttonString, "_", sizeof(buttonString));
 		}
 
-		int tmpRight = _string[5].right;
-		_string[5].right = _screenWidth - 1;
+		if ((id == GUI_CTRL_ARROW_UP_BUTTON || id == GUI_CTRL_ARROW_DOWN_BUTTON) && _useCJKMode && _game.id == GID_DIG) {
+			// Instead of printing the "normal" arrow glyphs, the DIG CJK interpreter draws slightly larger arrows
+			// using the drawLine function. Instead of making a row of 14 drawLine calls here (like the original),
+			// I have implemented it like this...
+			static const int8 drwOffsets[2][29] = {
+				{ 0, 13, -5, 18, -5, 18, -3, 18, -3, 18, -3, 33, 0, 13, 5, 18, 5, 18, 3, 18, 3, 18, 3, 33, -3, 33, 3, 33, -1 },
+				{ 0, 33, -5, 28, -5, 28, -3, 28, -3, 28, -3, 13, 0, 33, 5, 28, 5, 28, 3, 28, 3, 28, 3, 13, -3, 13, 3, 13, -1 }
+			};
 
-		// The original CJK DIG interpreter limits the clipping to the save slots. Other elements
-		// seem to (theoretically) be allowed to draw text wherever they want...
-		bool isSaveSlot = (id >= 1 && id <= 9);
-		Common::Rect clipRect(relCentX, relCentY, x, y);
-		drawGUIText(buttonString, isSaveSlot ? &clipRect : 0, textXPos, textYPos, textColor, centerFlag);
-		_string[5].right = tmpRight;
+			for (const int8 *s = drwOffsets[id - GUI_CTRL_ARROW_UP_BUTTON]; *s != -1; s += 4)
+				drawLine(textXPos + s[0], relCentY + s[1], textXPos + s[2], relCentY + s[3], textColor);
+
+		} else {
+			int tmpRight = _string[5].right;
+			_string[5].right = _screenWidth - 1;
+
+			// The original CJK DIG interpreter limits the clipping to the save slots. Other elements
+			// seem to (theoretically) be allowed to draw text wherever they want...
+			bool isSaveSlot = (id >= GUI_CTRL_FIRST_SG && id <= GUI_CTRL_LAST_SG);
+			Common::Rect clipRect(relCentX, relCentY, x, y);
+			drawGUIText(buttonString, isSaveSlot ? &clipRect : 0, textXPos, textYPos, textColor, centerFlag);
+			_string[5].right = tmpRight;
+		}
 
 		// Restore the previous charset
 		if (oldId)
