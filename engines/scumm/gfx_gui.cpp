@@ -1245,12 +1245,16 @@ void ScummEngine::queryQuit() {
 		localizedYesKey = msgLabelPtr[strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1];
 		msgLabelPtr[strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
 
+		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+
 		// "Are you sure you want to quit?  (Y/N)"
 		Common::KeyState ks;
 		if (_game.version > 4)
 			ks = showBannerAndPause(0, -1, msgLabelPtr);
 		else
 			ks = showOldStyleBannerAndPause(msgLabelPtr, 12, -1);
+
+		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
 		if (tolower(localizedYesKey) == ks.ascii || toupper(localizedYesKey) == ks.ascii ||
 			(ks.keycode == Common::KEYCODE_c && ks.hasFlags(Common::KBD_CTRL)) ||
@@ -1270,12 +1274,16 @@ void ScummEngine::queryRestart() {
 		localizedYesKey = msgLabelPtr[strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1];
 		msgLabelPtr[strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
 
+		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+
 		// "Are you sure you want to restart?  (Y/N)"
 		Common::KeyState ks;
 		if (_game.version > 4)
 			ks = showBannerAndPause(0, -1, msgLabelPtr);
 		else
 			ks = showOldStyleBannerAndPause(msgLabelPtr, 12, -1);
+
+		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
 		if ((tolower(localizedYesKey) == ks.ascii || toupper(localizedYesKey) == ks.ascii) ||
 			(_game.version == 8 && ks.keycode == Common::KEYCODE_y)) {
@@ -1353,8 +1361,12 @@ bool ScummEngine::canWriteGame(int slotId) {
 		localizedYesKey = msgLabelPtr[strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1];
 		msgLabelPtr[strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
 
+		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+
 		// "Do you want to replace this saved game?  (Y/N)"
 		Common::KeyState ks = showBannerAndPause(0, -1, msgLabelPtr);
+
+		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
 		return (tolower(localizedYesKey) == ks.ascii || toupper(localizedYesKey) == ks.ascii);
 	}
@@ -1365,6 +1377,9 @@ bool ScummEngine::canWriteGame(int slotId) {
 bool ScummEngine::userWriteLabelRoutine(Common::KeyState &ks, bool &leftMsClicked, bool &rightMsClicked) {
 	bool hasLoadedState = false;
 	int firstChar = (_game.version == 4 && _game.id != GID_LOOM) ? 0 : 4;
+
+	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+
 	while (!shouldQuit()) {
 		waitForTimer(1);
 
@@ -1373,6 +1388,8 @@ bool ScummEngine::userWriteLabelRoutine(Common::KeyState &ks, bool &leftMsClicke
 		if (ks.keycode == Common::KEYCODE_RETURN) {
 			clearClickedStatus();
 			executeMainMenuOperation(GUI_CTRL_OK_BUTTON, -1, -1, hasLoadedState);
+
+			_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 			return true;
 		} else if (leftMsClicked) {
 			clearClickedStatus();
@@ -1403,6 +1420,7 @@ bool ScummEngine::userWriteLabelRoutine(Common::KeyState &ks, bool &leftMsClicke
 		clearClickedStatus();
 	}
 
+	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	return false;
 }
 
