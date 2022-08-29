@@ -48,8 +48,8 @@ to the boot script,
 for games supporting this feature.
 .It Fl c | -config= Ns Ar CONFIG
 Use alternate configuration file.
-.It Fl d | -debuglevel= Ns Ar NUM
-Set debug verbosity level.
+.It Fl d | -debuglevel Ns Op = Ns Ar NUM
+Enable and set debug verbosity level (default: 0).
 .It Fl e | -music-driver= Ns Ar MODE
 Select music driver:
 .Bl -tag -width 10m
@@ -195,8 +195,8 @@ Enable script dumping if a directory called
 exists in the current directory.
 .It Fl v | -version
 Display ScummVM version information, and exit.
-.It Fl x | -save-slot= Ns Ar [SLOT]
-Set the saved game slot to load (default: autosave).
+.It Fl x | -save-slot Ns Op = Ns Ar SLOT
+Set the saved game slot to load (default: 0 = autosave).
 .It Fl z | -list-games
 Display list of supported games, and exit.
 .It Fl - Ns Oo Cm no- Oc Ns Cm alt-intro
@@ -263,7 +263,7 @@ only add or attempt to detect the game with id
 .It Fl -gui-theme= Ns Ar THEME
 Select a GUI theme, as given by
 .Fl -list-themes .
-.It Fl -joystick= Ns Ar NUM
+.It Fl -joystick Ns Op = Ns Ar NUM
 Enable joystick input (default: 0 = first joystick).
 .It Fl -iconspath= Ns Ar PATH
 Set the path to additional icons for the launcher grid view.
@@ -275,7 +275,7 @@ Display list of all detection engines, and exit.
 Display list of all detected games, and exit.
 .It Fl -list-audio-devices
 List all available audio devices, and exit.
-.It Fl -list-debugflags= Ns Ar ENGINE
+.It Fl -list-debugflags Ns Op = Ns Ar ENGINE
 Display list of engine specified debugflags, and exit.
 If the
 .Ar ENGINE
