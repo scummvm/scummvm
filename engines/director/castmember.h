@@ -229,6 +229,18 @@ public:
 	Common::Array<Channel> _subchannels;
 };
 
+class MovieCastMember : public CastMember {
+public:
+	MovieCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
+
+	uint32 _flags;
+	bool _looping;
+	bool _enableScripts;
+	bool _enableSound;
+	bool _crop;
+	bool _center;
+};
+
 class SoundCastMember : public CastMember {
 public:
 	SoundCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);

@@ -924,6 +924,32 @@ void DigitalVideoCastMember::setFrameRate(int rate) {
 }
 
 /////////////////////////////////////
+// MovieCasts
+/////////////////////////////////////
+
+MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
+		: CastMember(cast, castId, stream) {
+	_type = kCastMovie;
+
+	_initialRect = Movie::readRect(stream);
+	_flags = stream.readUint32();
+
+	_looping = !(_flags & 0x20);
+	_enableScripts = _flags & 0x10;
+	_enableSound = _flags & 0x08;
+	_crop = !(_flags & 0x02);
+	_center = _flags & 0x01;
+
+	if (debugChannelSet(2, kDebugLoading))
+		_initialRect.debugPrint(2, "MovieCastMember(): rect:");
+	debugC(2, kDebugLoading, "MovieCastMember(): flags: (%d 0x%04x)", _flags, _flags);
+	debugC(2, kDebugLoading, "_looping: %d, _enableScripts %d, _enableSound: %d, _crop %d, _center: %d",
+			_looping, _enableScripts, _enableSound, _crop, _center);
+
+}
+
+
+/////////////////////////////////////
 // Film loops
 /////////////////////////////////////
 

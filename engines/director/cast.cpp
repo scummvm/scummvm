@@ -1107,8 +1107,8 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		castInfoSize = 0;
 		break;
 	case kCastMovie:
-		warning("BUILDBOT: STUB: Cast::loadCastData(): kCastMovie (id=%d, %d children)! This will be missing from the movie and may cause problems", id, res->children.size());
-		castInfoSize = 0;
+		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastMovie (id=%d, %d children)",  id, res->children.size());
+		_loadedCast->setVal(id, new MovieCastMember(this, id, castStream, _version));
 		break;
 	default:
 		warning("Cast::loadCastData(): Unhandled cast type: %d [%s] (id=%d, %d children)! This will be missing from the movie and may cause problems", castType, tag2str(castType), id, res->children.size());
