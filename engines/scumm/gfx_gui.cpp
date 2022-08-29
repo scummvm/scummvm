@@ -85,6 +85,8 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	int rightLineColor, leftLineColor, bottomLineColor, topLineColor;
 	int normalTextColor, normalFillColor;
 
+	_messageBannerActive = true;
+
 	// Fetch the translated string for the message...
 	convertMessageToString((const byte *)msg, (byte *)localizedMsg, sizeof(localizedMsg));
 	ptrToBreak = strstr(localizedMsg, "\\n");
@@ -251,6 +253,8 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	// getInternalGUIControlFromCoordinates() (which can cause serious errors)
 	_internalGUIControls[0].relativeCenterX = -1;
 
+	_messageBannerActive = false;
+
 	return ks;
 }
 
@@ -264,6 +268,8 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 	int bannerMsgWidth, bannerMsgHeight;
 	int startingPointY;
 	int bannerSaveYStart;
+
+	_messageBannerActive = true;
 
 	// Fetch the translated string for the message...
 	convertMessageToString((const byte *)msg, (byte *)bannerMsg, sizeof(bannerMsg));
@@ -339,6 +345,8 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 	// Deactivate this, so it does not trigger as invalid click target inside
 	// getInternalGUIControlFromCoordinates() (which can cause serious errors)
 	_internalGUIControls[0].relativeCenterX = -1;
+
+	_messageBannerActive = false;
 
 	return ks;
 }
@@ -552,7 +560,8 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 
 		Common::strlcpy(buttonString, ctrl->label.c_str(), sizeof(buttonString));
 
-		if (_mainMenuSavegameLabel == id && _menuPage == GUI_PAGE_SAVE) {
+		if ((id >= GUI_CTRL_FIRST_SG && id <= GUI_CTRL_LAST_SG) &&
+			_mainMenuSavegameLabel == id && _menuPage == GUI_PAGE_SAVE) {
 			Common::strlcat(buttonString, "_", sizeof(buttonString));
 		}
 
@@ -613,6 +622,9 @@ void ScummEngine_v7::queryQuit() {
 			char msgLabelPtr[512];
 			byte *curGrabbedCursor;
 			int curCursorWidth, curCursorHeight, curCursorHotspotX, curCursorHotspotY, curCursorState;
+
+			_messageBannerActive = true;
+			_comiQuitMenuIsOpen = true;
 
 			// Force the cursor to be ON...
 			int8 oldCursorState = _cursor.state;
@@ -751,8 +763,10 @@ void ScummEngine_v7::queryQuit() {
 					 (ks.keycode == Common::KEYCODE_c && ks.hasFlags(Common::KBD_CTRL)));
 
 			ctrlId = getInternalGUIControlFromCoordinates(_mouse.x, _mouse.y);
-			if ((leftBtnPressed && ctrlId == 0) || (toupper(ks.ascii) == yesLabelPtr[0]))
+			if ((leftBtnPressed && ctrlId == 0) || (toupper(ks.ascii) == yesLabelPtr[0])) {
+				_quitByGUIPrompt = true;
 				quitGame();
+			}
 
 			// Restore the previous cursor...
 			_cursor.state = curCursorState;
@@ -789,6 +803,9 @@ void ScummEngine_v7::queryQuit() {
 			// Restore the old cursor state...
 			_cursor.state = oldCursorState;
 			CursorMan.showMouse(_cursor.state > 0);
+
+			_comiQuitMenuIsOpen = false;
+			_messageBannerActive = false;
 		} else {
 			ScummEngine::queryQuit();
 		}
@@ -1238,7 +1255,7 @@ void ScummEngine::queryQuit() {
 		if (tolower(localizedYesKey) == ks.ascii || toupper(localizedYesKey) == ks.ascii ||
 			(ks.keycode == Common::KEYCODE_c && ks.hasFlags(Common::KBD_CTRL)) ||
 			(ks.keycode == Common::KEYCODE_x && ks.hasFlags(Common::KBD_ALT))) {
-			_quitByButton = true;
+			_quitByGUIPrompt = true;
 			quitGame();
 		}
 	}
@@ -1569,13 +1586,14 @@ void ScummEngine::showMainMenu() {
 				}
 			}
 		}
-	}
 
-	if (shouldQuit() && !_quitByButton) {
-		getEventManager()->resetQuit();
-		getEventManager()->resetReturnToLauncher();
-		clearClickedStatus();
-		queryQuit();
+		if (shouldQuit() && !_quitByGUIPrompt) {
+			clearClickedStatus();
+			getEventManager()->resetQuit();
+			getEventManager()->resetReturnToLauncher();
+			if (executeMainMenuOperation(GUI_CTRL_QUIT_BUTTON, 0, 0, hasLoadedState) || _quitByGUIPrompt)
+				break;
+		}
 	}
 
 	_mainMenuIsActive = false;

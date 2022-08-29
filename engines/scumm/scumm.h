@@ -604,6 +604,9 @@ protected:
 	int32 _bannerColors[50]; // Colors for the original GUI
 	byte *_bannerMem = nullptr;
 	uint32 _bannerMemSize = 0;
+	bool _messageBannerActive = false;
+	bool _comiQuitMenuIsOpen = false;
+	bool _closeBannerAndQueryQuitFlag = false;
 
 	// The followings are needed for MI1 FM-Towns
 	byte *_textSurfBannerMem = nullptr;
@@ -624,7 +627,7 @@ protected:
 	int _curDisplayedSaveSlotPage = 0;
 	int _firstSaveStateOfList = 0; // For LOOM VGA
 	bool _mainMenuIsActive = false;
-	bool _quitByButton = false;
+	bool _quitByGUIPrompt = false;
 	char _mainMenuMusicSlider[17];
 	char _mainMenuSpeechSlider[17];
 	char _mainMenuSfxSlider[17];
