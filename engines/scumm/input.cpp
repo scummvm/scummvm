@@ -251,12 +251,13 @@ void ScummEngine::parseEvent(Common::Event event) {
 	case Common::EVENT_QUIT:
 		if (isUsingOriginalGUI()) {
 			if (!_quitByGUIPrompt && !_mainMenuIsActive) {
+				bool exitType = (event.type == Common::EVENT_RETURN_TO_LAUNCHER);
 				// If another message banner is currently on the screen, close it
 				// and then execute the quit prompt. Otherwise, prompt the user.
 				getEventManager()->resetQuit();
 				getEventManager()->resetReturnToLauncher();
 				if (!_messageBannerActive) {
-					queryQuit();
+					queryQuit(exitType);
 					_closeBannerAndQueryQuitFlag = false;
 				} else {
 					_closeBannerAndQueryQuitFlag = true;

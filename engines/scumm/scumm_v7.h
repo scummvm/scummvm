@@ -142,7 +142,7 @@ protected:
 	void loadLanguageBundle() override;
 	void playSpeech(const byte *ptr);
 
-	void queryQuit() override;
+	void queryQuit(bool returnToLauncher) override;
 	int getBannerColor(int bannerId) override;
 	const char *getGUIString(int stringId) override;
 	int getGUIStringHeight(const char *str) override;

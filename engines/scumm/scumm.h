@@ -666,7 +666,7 @@ protected:
 	int getInternalGUIControlFromCoordinates(int x, int y);
 	virtual bool isSmushActive() { return false; }
 
-	virtual void queryQuit();
+	virtual void queryQuit(bool returnToLauncher);
 	virtual void queryRestart();
 	virtual const char *getGUIString(int stringId);
 	void waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked, bool handeleMouseWheel = false);
