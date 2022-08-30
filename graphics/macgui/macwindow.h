@@ -349,6 +349,7 @@ public:
 	void resizeBorderSurface();
 
 	void setMode(uint32 mode) { _mode = mode; }
+	void setBorderOffsets(BorderOffsets &offsets) { _macBorder.setOffsets(offsets); }
 
 	void updateInnerDims();
 
