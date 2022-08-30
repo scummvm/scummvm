@@ -1466,18 +1466,11 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 }
 
 void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
-	int id = 0;
+	int id = id1.asInt();
 	Score *score = _vm->getCurrentMovie()->getScore();
 
 	if (!score) {
 		warning("Lingo::setTheSprite(): The sprite %d field \"%s\" setting over non-active score", id, field2str(field));
-		return;
-	}
-
-	if (id1.type == INT) {
-		id = id1.u.i;
-	} else {
-		warning("Lingo::setTheSprite(): Unknown the sprite id type: %s", id1.type2str());
 		return;
 	}
 
