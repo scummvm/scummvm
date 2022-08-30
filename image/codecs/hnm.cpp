@@ -1200,7 +1200,7 @@ void DecoderImpl::renderIWshortmo(Graphics::Surface &current, uint x, uint y) {
 	HNM6::doMotion<2, 2>(xform, current, current, srx, sry, x, y);
 }
 
-template<int sx, int sy, bool small = false>
+template<int sx, int sy, bool small>
 void DecoderImpl::renderIXkfMotion(Graphics::Surface &current, uint x, uint y) {
 	uint16 moword = _motion.next();
 
@@ -1235,7 +1235,7 @@ void DecoderImpl::renderSkip(Graphics::Surface &current, Graphics::Surface &prev
 	doMotion<sx, sy>(0, current, previous, x, y, x, y);
 }
 
-template<int sx, int sy, bool small = false>
+template<int sx, int sy, bool small>
 void DecoderImpl::renderIXifMotion(Graphics::Surface &current, Graphics::Surface &previous,
                                    uint x, uint y) {
 	uint16 moword = _motion.next();

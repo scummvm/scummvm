@@ -34,7 +34,7 @@ namespace Audio {
 class APCStreamImpl : public APCStream {
 public:
 	// These parameters are completely optional and only used in HNM videos to make sure data is consistent
-	APCStreamImpl(uint sampleRate = uint(-1), byte stereo = byte(-1));
+	APCStreamImpl(uint32 sampleRate = uint(-1), byte stereo = byte(-1));
 
 	bool init(Common::SeekableReadStream &header) override;
 
