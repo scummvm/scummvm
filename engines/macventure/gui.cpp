@@ -381,7 +381,7 @@ WindowReference Gui::createInventoryWindow(ObjID objRef) {
 	//newWindow->setDimensions(newData.bounds);
 	//newWindow->setActive(false);
 	loadBorders(newWindow, newData.type);
-	newWindow->resize(newData.bounds.width() - bbs.rightScrollbarWidth, newData.bounds.height() - bbs.bottomScrollbarHeight, true);
+	newWindow->resize(newData.bounds.width(), newData.bounds.height() - bbs.bottomScrollbarHeight, true);
 	newWindow->move(newData.bounds.left - bbs.leftOffset, newData.bounds.top - bbs.topOffset);
 	newWindow->setCallback(inventoryWindowCallback, this);
 	//newWindow->setCloseable(true);
