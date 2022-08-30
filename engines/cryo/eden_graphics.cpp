@@ -1211,7 +1211,6 @@ void EdenGraphics::showMovie(int16 num, char arg1) {
 	if (!decoder->loadStream(stream)) {
 		warning("Could not load movie %d", num);
 		delete decoder;
-		delete stream;
 		return;
 	}
 
