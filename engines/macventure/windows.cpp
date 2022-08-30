@@ -94,7 +94,7 @@ Graphics::BorderOffsets borderOffsets(MVWindowType type) {
 	case MacVenture::kAltBox:
 		break;
 	case MacVenture::kNoGrowDoc:
-		offsets.titleTop = 0;
+		offsets.titleTop = 2;
 		offsets.titleBottom = 0;
 		offsets.titlePos = 0;
 		break;
@@ -122,7 +122,7 @@ Graphics::BorderOffsets borderOffsets(MVWindowType type) {
 		offsets.lowerScrollHeight = 20;
 		break;
 	case MacVenture::kRDoc4:
-		offsets.titleTop = 0;
+		offsets.titleTop = 2;
 		offsets.titleBottom = 0;
 		offsets.titlePos = 0;
 		break;
