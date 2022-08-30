@@ -678,6 +678,10 @@ void Gui::drawExitsWindow() {
 		button.draw(*srf);
 	}
 
+	Graphics::BorderOffsets offsets = borderOffsets(MacVenture::kRDoc4);
+	offsets.dark = _exitsWindow->_active;
+	_exitsWindow->setBorderOffsets(offsets);
+
 	findWindow(kExitsWindow)->setDirty(true);
 }
 
