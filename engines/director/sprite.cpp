@@ -244,13 +244,6 @@ MacShape *Sprite::getShape() {
 		default:
 			break;
 		}
-
-		if (g_director->getVersion() >= 400) {
-			shape->foreColor = sc->getForeColor();
-			shape->backColor = sc->getBackColor();
-			shape->lineSize = sc->_lineThickness;
-			shape->ink = sc->_ink;
-		}
 	}
 
 	// for outlined shapes, line thickness of 1 means invisible.
@@ -265,8 +258,7 @@ uint32 Sprite::getBackColor() {
 
 	switch (_cast->_type) {
 	case kCastText:
-	case kCastButton:
-	case kCastShape: {
+	case kCastButton: {
 		return _cast->getBackColor();
 	}
 	default:
@@ -280,8 +272,7 @@ uint32 Sprite::getForeColor() {
 
 	switch (_cast->_type) {
 	case kCastText:
-	case kCastButton:
-	case kCastShape: {
+	case kCastButton: {
 		return _cast->getForeColor();
 	}
 	default:
