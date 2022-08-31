@@ -1661,8 +1661,7 @@ void ScummEngine::drawPixel(VirtScreen *vs, int x, int y, int16 color, bool useB
 		if (useBackbuffer)
 			*(vs->getBackPixels(x, y + _screenTop - vs->topline)) = color;
 		else
-			vs->setPixel(x, y + _screenTop - vs->topline, color);
-
+			*(vs->getPixels(x, y + _screenTop - vs->topline)) = color;
 		markRectAsDirty(vs->number, x, x + 1, y + _screenTop - vs->topline, y + 1 + _screenTop - vs->topline);
 	}
 }
