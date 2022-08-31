@@ -1494,6 +1494,7 @@ void ScummEngine::showMainMenu() {
 	int args[NUM_SCRIPT_LOCAL];
 	bool leftMsClicked = false, rightMsClicked = false;
 	int clickedControl = -1;
+	int heldControl = -1;
 	int curMouseX, curMouseY;
 	bool hasLoadedState = false;
 
@@ -1582,6 +1583,36 @@ void ScummEngine::showMainMenu() {
 					clickedControl = -1;
 				}
 			}
+
+			// Allow the user to drag the volume and text speed sliders horizontally;
+			// this feature isn't available in the original interpreters (v6-v7),
+			// but it makes the sliders a lot more comfortable to use, so there shouldn't be
+			// any harm in this.
+			while ((_game.version >= 6) && (_menuPage == GUI_PAGE_MAIN) && (_leftBtnPressed & 1)) {
+				// Allow the engine to fetch new mouse states...
+				waitForTimer(1);
+
+				// Register one and only one control for the duration of this loop...
+				if (heldControl == -1)
+					heldControl = getInternalGUIControlFromCoordinates(curMouseX, curMouseY);
+
+				// Choose among the available sliders, register the new mouse coordinates,
+				// and execute the control operation...
+				switch (heldControl) {
+				case GUI_CTRL_MUSIC_SLIDER:
+				case GUI_CTRL_SPEECH_SLIDER:
+				case GUI_CTRL_SFX_SLIDER:
+				case GUI_CTRL_TEXT_SPEED_SLIDER:
+					curMouseX = _mouse.x;
+					curMouseY = _mouse.y;
+					executeMainMenuOperation(heldControl, curMouseX, curMouseY, hasLoadedState);
+					break;
+				default:
+					break;
+				}
+			}
+
+			heldControl = -1;
 
 			clearClickedStatus();
 			leftMsClicked = false;
