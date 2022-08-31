@@ -1659,7 +1659,7 @@ void ScummEngine::drawLine(int x1, int y1, int x2, int y2, int color) {
 void ScummEngine::drawPixel(VirtScreen *vs, int x, int y, int16 color, bool useBackbuffer) {
 	if (x >= 0 && y >= 0 && _screenWidth + 8 > x && _screenHeight > y) {
 		if (useBackbuffer)
-			vs->setPixel(x, y + _screenTop - vs->topline, color);
+			*(vs->getBackPixels(x, y + _screenTop - vs->topline)) = color;
 		else
 			vs->setPixel(x, y + _screenTop - vs->topline, color);
 
