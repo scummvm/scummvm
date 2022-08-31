@@ -453,6 +453,13 @@ void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {
 		useBompCursor(bomp, w, h);
 	else
 		useIm01Cursor(dataptr, w, h);
+
+	// There are several occasions in which the screen is not updated
+	// between subsequent cursor changes, and as a result we would never
+	// be able to see some of those updates (i.e. the loading cursors in
+	// The Dig and The Curse of Monkey Island). This forced screen update
+	// addresses that.
+	_system->updateScreen();
 }
 
 void ScummEngine_v6::useIm01Cursor(const byte *im, int w, int h) {
@@ -848,7 +855,7 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 	_cursor.hotspotY = _cursorHotspots[2 * _currentCursor + 1] * sclH;
 	_cursor.width = 16 * sclW;
 	_cursor.height = 16 * sclH;
-	
+
 	for (i = 0; i < 16; i++) {
 		for (j = 0; j < 16; j++) {
 			if (src[i] & (1 << j)) {
