@@ -1574,6 +1574,20 @@ void ScummEngine::showMainMenu() {
 			// Mouse wheel movement with cursor over the list box. If there are actual button
 			// clicks, we ignore the wheel.
 			if (!(leftMsClicked || rightMsClicked)) {
+				// Unfortunately, there can be space (vertically) between the save slot controls,
+				// so the mouse wheel will not catch if the cursor happens to be right at that pixel.
+				// Thus, we also have to check for the GUI_CTRL_OUTER_BOX and the see if the cursor
+				// is within the save list bounds. 
+				if (clickedControl == GUI_CTRL_OUTER_BOX && _internalGUIControls[GUI_CTRL_FIRST_SG].relativeCenterX != -1 &&
+					_internalGUIControls[GUI_CTRL_LAST_SG].relativeCenterX != -1) {
+						Common::Rect saveList(_internalGUIControls[GUI_CTRL_FIRST_SG].relativeCenterX,
+							_internalGUIControls[GUI_CTRL_FIRST_SG].relativeCenterY,
+							_internalGUIControls[GUI_CTRL_LAST_SG].xPos + 1,
+							_internalGUIControls[GUI_CTRL_LAST_SG].yPos + 1);
+						// Doesn't matter which slot we assign, we just want to trigger the next if-clause.
+						clickedControl = saveList.contains(curMouseX, curMouseY) ? GUI_CTRL_FIRST_SG : -1;
+				}
+
 				if (clickedControl >= GUI_CTRL_FIRST_SG && clickedControl <= GUI_CTRL_LAST_SG) {
 					if (_mouseWheelFlag == Common::EVENT_WHEELUP)
 						clickedControl = (_internalGUIControls[GUI_CTRL_ARROW_UP_BUTTON].relativeCenterX != -1) ? GUI_CTRL_ARROW_UP_BUTTON : -1;
