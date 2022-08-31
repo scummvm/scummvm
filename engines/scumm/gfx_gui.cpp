@@ -167,8 +167,8 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 		bannerMsgWidth = getGUIStringWidth(bannerMsg) / 2;
 		startingPointX = ((160 - bannerMsgWidth) - 8) & 0xFFF8;
 		startingPointY = (bannerMsgWidth + 168) | 0x7;
-		xPos = 1; // Bogus value, since it is unused
-		yPos = 1; // Bogus value, since it is unused
+		xPos = startingPointX + 1; // Bogus value, since it is unused
+		yPos = startingPointY + 1; // Bogus value, since it is unused
 		bannerSaveYStart = 78;
 	} else {
 		startingPointX = 156 - roundedWidth;
