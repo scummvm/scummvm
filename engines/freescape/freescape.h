@@ -192,6 +192,8 @@ public:
 	Renderer *_gfx;
 	Common::String _renderMode;
 	Graphics::PixelBuffer *getPalette(uint8 areaNumber, uint8 c1, uint8 c2, uint8 c3, uint8 c4, uint16 ncolors);
+	Common::Array<byte*> _colorMap;
+	uint8 findColor(uint8 index);
 	void drawFrame();
 	uint8 _colorNumber;
 	Math::Vector3d _scaleVector;
