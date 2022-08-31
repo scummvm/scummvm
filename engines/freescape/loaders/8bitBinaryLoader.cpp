@@ -92,14 +92,14 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			if (_renderMode == "cga")
 				entry = entry % 4; // TODO: use dithering
 
-			colours->push_back(findColor(entry));
+			colours->push_back(remapColor(entry));
 			debugC(1, kFreescapeDebugParser, "color[%d] = %x", 2*colour, entry);
 
 			entry = data >> 4;
 			if (_renderMode == "cga")
 				entry = entry % 4; // TODO: use dithering
 
-			colours->push_back(findColor(entry));
+			colours->push_back(remapColor(entry));
 			debugC(1, kFreescapeDebugParser, "color[%d] = %x", 2*colour+1, entry);
 			byteSizeOfObject--;
 		}
@@ -215,28 +215,6 @@ static const char *eclipseRoomName[] = {
 	"????????"
 };
 
-uint8 FreescapeEngine::findColor(uint8 index) {
-
-	if (index == 255 || index == 0)
-		return index;
-
-	byte *entry = _colorMap[index-1];
-	uint8 color = 0;
-	uint8 acc = 1;
-	for (int i = 0; i < 4; i++) {
-		byte b = *entry;
-		assert(b == 0 || b == 0xff);
-
-		if (b == 0xff)
-			color = color + acc;
-
-		acc = acc << 1;
-		entry++;
-	}
-	assert(color < 16);
-	return color;
-}
-
 Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 ncolors) {
 
 	Common::String name;
@@ -343,7 +321,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	uint8 numConditions = file->readByte();
 	debugC(1, kFreescapeDebugParser, "%d area conditions at %x of area %d", numConditions, base + cPtr, areaNumber);
 
-	Area *area = new Area(areaNumber, areaFlags, objectsByID, entrancesByID, scale, findColor(skyColor), findColor(groundColor), palette);
+	Area *area = new Area(areaNumber, areaFlags, objectsByID, entrancesByID, scale, remapColor(skyColor), remapColor(groundColor), palette);
 	area->name = name;
 	area->gasPocketPosition = Common::Point(32 * gasPocketX, 32 * gasPocketY);
 	area->gasPocketRadius = gasPocketRadius;
