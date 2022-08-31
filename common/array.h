@@ -26,7 +26,6 @@
 #include "common/algorithm.h"
 #include "common/textconsole.h" // For error()
 #include "common/memory.h"
-#include "common/initializer_list.h"
 
 namespace Common {
 
