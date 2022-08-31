@@ -241,8 +241,8 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		byte rSrc, gSrc, bSrc;
 		byte rDst, gDst, bDst;
 
-		wm->decomposeColor(src, rSrc, gSrc, bSrc);
-		wm->decomposeColor(*dst, rDst, gDst, bDst);
+		wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
+		wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
 
 		double alpha = (double)p->alpha / 100.0;
 		rDst = static_cast<byte>((rSrc * alpha) + (rDst * (1.0 - alpha)));
@@ -272,10 +272,10 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 				byte rFor, gFor, bFor;
 				byte rBak, gBak, bBak;
 
-				wm->decomposeColor(src, rSrc, gSrc, bSrc);
-				wm->decomposeColor(*dst, rDst, gDst, bDst);
-				wm->decomposeColor(p->foreColor, rFor, gFor, bFor);
-				wm->decomposeColor(p->backColor, rBak, gBak, bBak);
+				wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
+				wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
+				wm->decomposeColor<T>(p->foreColor, rFor, gFor, bFor);
+				wm->decomposeColor<T>(p->backColor, rBak, gBak, bBak);
 
 				*dst = wm->findBestColor((rSrc | rFor) & (~rSrc | rBak),
 										(gSrc | gFor) & (~gSrc | gBak),
@@ -297,10 +297,10 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 				byte rFor, gFor, bFor;
 				byte rBak, gBak, bBak;
 
-				wm->decomposeColor(src, rSrc, gSrc, bSrc);
-				wm->decomposeColor(*dst, rDst, gDst, bDst);
-				wm->decomposeColor(p->foreColor, rFor, gFor, bFor);
-				wm->decomposeColor(p->backColor, rBak, gBak, bBak);
+				wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
+				wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
+				wm->decomposeColor<T>(p->foreColor, rFor, gFor, bFor);
+				wm->decomposeColor<T>(p->backColor, rBak, gBak, bBak);
 
 				*dst = wm->findBestColor((~rSrc | rFor) & (rSrc | rBak),
 										(~gSrc | gFor) & (gSrc | gBak),
@@ -333,8 +333,8 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		byte rSrc, gSrc, bSrc;
 		byte rDst, gDst, bDst;
 
-		wm->decomposeColor(src, rSrc, gSrc, bSrc);
-		wm->decomposeColor(*dst, rDst, gDst, bDst);
+		wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
+		wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
 
 		switch (p->ink) {
 		case kInkTypeBlend:

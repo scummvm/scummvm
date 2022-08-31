@@ -323,15 +323,15 @@ public:
 	void setEngineRedrawCallback(void *engine, void (*redrawCallback)(void *engine));
 
 	void passPalette(const byte *palette, uint size);
-	uint32 findBestColor(byte cr, byte cg, byte cb);
+	template <typename T> void decomposeColor(uint32 color, byte &r, byte &g, byte &b);
+	uint findBestColor(byte cr, byte cg, byte cb);
 	uint32 findBestColor(uint32 color);
-	void decomposeColor(uint32 color, byte &r, byte &g, byte &b);
 	void setDesktopColor(byte, byte, byte);
 
-	uint inverter(uint src);
+	byte inverter(byte src);
 
 	const byte *getPalette() { return _palette; }
-	uint getPaletteSize() { return _paletteSize; }
+	byte getPaletteSize() { return _paletteSize; }
 
 	void renderZoomBox(bool redraw = false);
 	void addZoomBox(ZoomBox *box);

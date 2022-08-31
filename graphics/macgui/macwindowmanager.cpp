@@ -1306,12 +1306,6 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 	setFullRefresh(true);
 }
 
-uint32 MacWindowManager::findBestColor(uint32 color) {
-	byte r, g, b;
-	decomposeColor(color, r, g, b);
-	return _paletteLookup.findBestColor(r, g, b);
-}
-
 uint32 MacWindowManager::findBestColor(byte cr, byte cg, byte cb) {
 	if (_pixelformat.bytesPerPixel == 4)
 		return _pixelformat.RGBToColor(cr, cg, cb);
@@ -1319,23 +1313,34 @@ uint32 MacWindowManager::findBestColor(byte cr, byte cg, byte cb) {
 	return _paletteLookup.findBestColor(cr, cg, cb);
 }
 
-void MacWindowManager::decomposeColor(uint32 color, byte &r, byte &g, byte &b) {
-	if (_pixelformat.bytesPerPixel == 1 || color <= 0xff) {
-		r = *(_palette + 3 * color + 0);
-		g = *(_palette + 3 * color + 1);
-		b = *(_palette + 3 * color + 2);
-	} else {
-		_pixelformat.colorToRGB(color, r, g, b);
-	}
+template <>
+void MacWindowManager::decomposeColor<uint32>(uint32 color, byte &r, byte &g, byte &b) {
+	_pixelformat.colorToRGB(color, r, g, b);
 }
 
-uint MacWindowManager::inverter(uint src) {
+template <>
+void MacWindowManager::decomposeColor<byte>(uint32 color, byte& r, byte& g, byte& b) {
+	r = *(_palette + 3 * (byte)color + 0);
+	g = *(_palette + 3 * (byte)color + 1);
+	b = *(_palette + 3 * (byte)color + 2);
+}
+
+uint32 MacWindowManager::findBestColor(uint32 color) {
+	if (_pixelformat.bytesPerPixel == 4)
+		return color;
+
+	byte r, g, b;
+	decomposeColor<byte>(color, r, g, b);
+	return _paletteLookup.findBestColor(r, g, b);
+}
+
+byte MacWindowManager::inverter(byte src) {
 	if (_invertColorHash.contains(src))
 		return _invertColorHash[src];
 
 	if (_pixelformat.bytesPerPixel == 1) {
 		byte r, g, b;
-		decomposeColor(src, r, g, b);
+		decomposeColor<byte>(src, r, g, b);
 		r = ~r;
 		g = ~g;
 		b = ~b;
