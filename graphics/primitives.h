@@ -26,21 +26,21 @@
 
 namespace Graphics {
 
-void drawLine(int x0, int y0, int x1, int y1, int color, void (*plotProc)(int, int, int, void *), void *data);
-void drawHLine(int x1, int x2, int y, int color, void (*plotProc)(int, int, int, void *), void *data);
-void drawVLine(int x, int y1, int y2, int color, void (*plotProc)(int, int, int, void *), void *data);
-void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, int color, void (*plotProc)(int, int, int, void *), void *data);
-void drawThickLine2(int x1, int y1, int x2, int y2, int thick, int color,
+void drawLine(int x0, int y0, int x1, int y1, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
+void drawHLine(int x1, int x2, int y, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
+void drawVLine(int x, int y1, int y2, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
+void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
+void drawThickLine2(int x1, int y1, int x2, int y2, int thick, uint32 color,
 								void (*plotProc)(int, int, int, void *), void *data);
-void drawFilledRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data);
-void drawFilledRect1(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data);
-void drawRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data);
-void drawRect1(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data);
-void drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, void (*plotProc)(int, int, int, void *), void *data);
-void drawRoundRect1(Common::Rect &rect, int arc, int color, bool filled, void (*plotProc)(int, int, int, void *), void *data);
-void drawPolygonScan(int *polyX, int *polyY, int npoints, Common::Rect &bbox, int color,
+void drawFilledRect(Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
+void drawFilledRect1(Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
+void drawRect(Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
+void drawRect1(Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
+void drawRoundRect(Common::Rect &rect, int arc, uint32 color, bool filled, void (*plotProc)(int, int, int, void *), void *data);
+void drawRoundRect1(Common::Rect &rect, int arc, uint32 color, bool filled, void (*plotProc)(int, int, int, void *), void *data);
+void drawPolygonScan(int *polyX, int *polyY, int npoints, Common::Rect &bbox, uint32 color,
 								void (*plotProc)(int, int, int, void *), void *data);
-void drawEllipse(int x0, int y0, int x1, int y1, int color, bool filled, void (*plotProc)(int, int, int, void *), void *data);
+void drawEllipse(int x0, int y0, int x1, int y1, uint32 color, bool filled, void (*plotProc)(int, int, int, void *), void *data);
 
 } // End of namespace Graphics
 
