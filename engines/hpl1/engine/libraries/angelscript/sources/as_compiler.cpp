@@ -4411,13 +4411,13 @@ void asCCompiler::CompileIfStatement(asCScriptNode *inode, bool *hasReturn, asCB
 	// Add the byte code
 	LineInstr(bc, inode->firstChild->next->tokenPos);
 	bc->AddCode(&ifBC);
-
+#if 0
 	if( inode->firstChild->next->nodeType == snExpressionStatement && inode->firstChild->next->firstChild == 0 )
 	{
 		// Don't allow  if( expr );
 		Error(TXT_IF_WITH_EMPTY_STATEMENT, inode->firstChild->next);
 	}
-
+#endif
 	// If one of the statements call the constructor, the other must as well
 	// otherwise it is possible the constructor is never called
 	bool constructorCall1 = false;
