@@ -25,7 +25,7 @@
 
 namespace Graphics {
 
-void drawLine(int x0, int y0, int x1, int y1, int color, void (*plotProc)(int, int, int, void *), void *data) {
+void drawLine(int x0, int y0, int x1, int y1, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
 	// Bresenham's line algorithm, as described by Wikipedia
 	const bool steep = ABS(y1 - y0) > ABS(x1 - x0);
 
@@ -63,7 +63,7 @@ void drawLine(int x0, int y0, int x1, int y1, int color, void (*plotProc)(int, i
 	}
 }
 
-void drawHLine(int x1, int x2, int y, int color, void (*plotProc)(int, int, int, void *), void *data) {
+void drawHLine(int x1, int x2, int y, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
 	if (x1 > x2)
 		SWAP(x1, x2);
 
@@ -71,7 +71,7 @@ void drawHLine(int x1, int x2, int y, int color, void (*plotProc)(int, int, int,
 		(*plotProc)(x, y, color, data);
 }
 
-void drawVLine(int x, int y1, int y2, int color, void (*plotProc)(int, int, int, void *), void *data) {
+void drawVLine(int x, int y1, int y2, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
 	if (y1 > y2)
 		SWAP(y1, y2);
 
@@ -79,7 +79,7 @@ void drawVLine(int x, int y1, int y2, int color, void (*plotProc)(int, int, int,
 		(*plotProc)(x, y, color, data);
 }
 
-void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, int color, void (*plotProc)(int, int, int, void *), void *data) {
+void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
 	assert(penX > 0 && penY > 0);
 
 	// Shortcut
@@ -98,7 +98,7 @@ void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, int color
 
 /* Bresenham as presented in Foley & Van Dam */
 /* Code is based on GD lib http://libgd.github.io/ */
-void drawThickLine2(int x1, int y1, int x2, int y2, int thick, int color, void (*plotProc)(int, int, int, void *), void *data) {
+void drawThickLine2(int x1, int y1, int x2, int y2, int thick, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
 	int incr1, incr2, d, x, y, xend, yend, xdirflag, ydirflag;
 	int wid;
 	int w, wstart;
@@ -238,7 +238,7 @@ void drawThickLine2(int x1, int y1, int x2, int y2, int thick, int color, void (
 	}
 }
 
-void drawFilledRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data) {
+void drawFilledRect(Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
 	for (int y = rect.top; y < rect.bottom; y++)
 		drawHLine(rect.left, rect.right - 1, y, color, plotProc, data);
 }
@@ -246,12 +246,12 @@ void drawFilledRect(Common::Rect &rect, int color, void (*plotProc)(int, int, in
 /**
  * @brief Draws filled rectangle _with_ right and bottom edges
  */
-void drawFilledRect1(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data) {
+void drawFilledRect1(Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
 	for (int y = rect.top; y <= rect.bottom; y++)
 		drawHLine(rect.left, rect.right, y, color, plotProc, data);
 }
 
-void drawRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data) {
+void drawRect(Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
 	drawHLine(rect.left, rect.right - 1, rect.top, color, plotProc, data);
 	drawHLine(rect.left, rect.right - 1, rect.bottom - 1, color, plotProc, data);
 	drawVLine(rect.left, rect.top, rect.bottom - 1, color, plotProc, data);
@@ -261,21 +261,21 @@ void drawRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, voi
 /**
  * @brief Draws rectangle outline _with_ right and bottom edges
  */
-void drawRect1(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data) {
+void drawRect1(Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
 	drawHLine(rect.left, rect.right, rect.top, color, plotProc, data);
 	drawHLine(rect.left, rect.right, rect.bottom, color, plotProc, data);
 	drawVLine(rect.left, rect.top, rect.bottom, color, plotProc, data);
 	drawVLine(rect.right, rect.top, rect.bottom, color, plotProc, data);
 }
 
-void drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, void (*plotProc)(int, int, int, void *), void *data) {
+void drawRoundRect(Common::Rect &rect, int arc, uint32 color, bool filled, void (*plotProc)(int, int, int, void *), void *data) {
 	Common::Rect r(rect.left, rect.top, rect.right - 1, rect.bottom - 1);
 
 	drawRoundRect1(r, arc, color, filled, plotProc, data);
 }
 
 // http://members.chello.at/easyfilter/bresenham.html
-void drawRoundRect1(Common::Rect &rect, int arc, int color, bool filled, void (*plotProc)(int, int, int, void *), void *data) {
+void drawRoundRect1(Common::Rect &rect, int arc, uint32 color, bool filled, void (*plotProc)(int, int, int, void *), void *data) {
 	if (rect.height() < rect.width()) {
 		int x = -arc, y = 0, err = 2-2*arc; /* II. Quadrant */
 		int dy = rect.height() - arc * 2;
@@ -371,7 +371,7 @@ void drawRoundRect1(Common::Rect &rect, int arc, int color, bool filled, void (*
 
 // Based on public-domain code by Darel Rex Finley, 2007
 // http://alienryderflex.com/polygon_fill/
-void drawPolygonScan(int *polyX, int *polyY, int npoints, Common::Rect &bbox, int color, void (*plotProc)(int, int, int, void *), void *data) {
+void drawPolygonScan(int *polyX, int *polyY, int npoints, Common::Rect &bbox, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
 	int *nodeX = (int *)calloc(npoints, sizeof(int));
 	int i, j;
 
@@ -409,7 +409,7 @@ void drawPolygonScan(int *polyX, int *polyY, int npoints, Common::Rect &bbox, in
 }
 
 // http://members.chello.at/easyfilter/bresenham.html
-void drawEllipse(int x0, int y0, int x1, int y1, int color, bool filled, void (*plotProc)(int, int, int, void *), void *data) {
+void drawEllipse(int x0, int y0, int x1, int y1, uint32 color, bool filled, void (*plotProc)(int, int, int, void *), void *data) {
 	int a = abs(x1 - x0), b = abs(y1 - y0), b1 = b & 1; /* values of diameter */
 	long dx = 4 * (1 - a) * b * b, dy = 4 * (b1 + 1) * a * a; /* error increment */
 	long err = dx + dy + b1 * a * a, e2; /* error of 1.step */
