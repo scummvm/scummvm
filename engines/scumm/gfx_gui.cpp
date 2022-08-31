@@ -2426,7 +2426,7 @@ void ScummEngine_v6::setUpMainMenuControls() {
 				-90,
 				-12,
 				_uncheckedBox, 1, 1);
-		} else {
+		} else if (_game.variant && strcmp(_game.variant, "Floppy")) {
 			// Music volume slider
 			setUpInternalGUIControl(GUI_CTRL_MUSIC_SLIDER,
 				getBannerColor(9),
@@ -2476,37 +2476,39 @@ void ScummEngine_v6::setUpMainMenuControls() {
 				_uncheckedBox, 1, 1);
 		}
 
-		// Display text checkbox
-		setUpInternalGUIControl(GUI_CTRL_DISPLAY_TEXT_CHECKBOX,
-			getBannerColor(9),
-			getBannerColor(10),
-			getBannerColor(18),
-			getBannerColor(17),
-			getBannerColor(20),
-			getBannerColor(19),
-			getBannerColor(11),
-			getBannerColor(12),
-			(_game.version == 7 ? 108 : 102),
-			(_game.version == 7 ? yCntr - calculatedHeight - yOffset + 85 : yConstantV6 + 17),
-			-12,
-			-12,
-			_uncheckedBox, 1, 1);
+		if (_game.variant && strcmp(_game.variant, "Floppy")) {
+			// Display text checkbox
+			setUpInternalGUIControl(GUI_CTRL_DISPLAY_TEXT_CHECKBOX,
+				getBannerColor(9),
+				getBannerColor(10),
+				getBannerColor(18),
+				getBannerColor(17),
+				getBannerColor(20),
+				getBannerColor(19),
+				getBannerColor(11),
+				getBannerColor(12),
+				(_game.version == 7 ? 108 : 102),
+				(_game.version == 7 ? yCntr - calculatedHeight - yOffset + 85 : yConstantV6 + 17),
+				-12,
+				-12,
+				_uncheckedBox, 1, 1);
 
-		// Text speed slider
-		setUpInternalGUIControl(GUI_CTRL_TEXT_SPEED_SLIDER,
-			getBannerColor(9),
-			getBannerColor(10),
-			getBannerColor(18),
-			getBannerColor(17),
-			getBannerColor(20),
-			getBannerColor(19),
-			getBannerColor(10),
-			getBannerColor(12),
-			(_game.version == 7 ? 108 : 102),
-			(_game.version == 7 ? yCntr - calculatedHeight - yOffset + 99 : yConstantV6 + 31),
-			-90,
-			-(lh + 4),
-			_uncheckedBox, 1, 1);
+			// Text speed slider
+			setUpInternalGUIControl(GUI_CTRL_TEXT_SPEED_SLIDER,
+				getBannerColor(9),
+				getBannerColor(10),
+				getBannerColor(18),
+				getBannerColor(17),
+				getBannerColor(20),
+				getBannerColor(19),
+				getBannerColor(10),
+				getBannerColor(12),
+				(_game.version == 7 ? 108 : 102),
+				(_game.version == 7 ? yCntr - calculatedHeight - yOffset + 99 : yConstantV6 + 31),
+				-90,
+				-(lh + 4),
+				_uncheckedBox, 1, 1);
+		}
 
 		// Save button
 		setUpInternalGUIControl(GUI_CTRL_SAVE_BUTTON,
