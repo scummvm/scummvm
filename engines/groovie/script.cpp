@@ -973,8 +973,13 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 			// End the playback
 			return true;
 		}
-		_vm->_videoPlayer->fastForward();
-		_fastForwarding = true;
+		if (_fastForwarding == true) {
+			resetFastForward();
+			_vm->_videoPlayer->setOverrideSpeed(false);
+		} else {
+			_vm->_videoPlayer->fastForward();
+			_fastForwarding = true;
+		}
 	} else if (_fastForwarding) {
 		_vm->_videoPlayer->fastForward();
 	}

@@ -46,13 +46,13 @@ public:
 	bool isFastForwarding();
 	virtual void drawString(Graphics::Surface *surface, const Common::String text, int posx, int posy, uint32 color, bool blackBackground) {}
 	virtual void copyfgtobg(uint8 arg) {}
+	void setOverrideSpeed(bool isOverride);
 
 protected:
 	// To be implemented by subclasses
 	virtual uint16 loadInternal() = 0;
 	virtual bool playFrameInternal() = 0;
 
-	void setOverrideSpeed(bool isOverride);
 	bool getOverrideSpeed() const { return _overrideSpeed; }
 
 	GroovieEngine *_vm;
