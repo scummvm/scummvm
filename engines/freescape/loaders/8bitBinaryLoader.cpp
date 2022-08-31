@@ -92,14 +92,14 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			if (_renderMode == "cga")
 				entry = entry % 4; // TODO: use dithering
 
-			colours->push_back(entry);
+			colours->push_back(findColor(entry));
 			debugC(1, kFreescapeDebugParser, "color[%d] = %x", 2*colour, entry);
 
 			entry = data >> 4;
 			if (_renderMode == "cga")
 				entry = entry % 4; // TODO: use dithering
 
-			colours->push_back(entry);
+			colours->push_back(findColor(entry));
 			debugC(1, kFreescapeDebugParser, "color[%d] = %x", 2*colour+1, entry);
 			byteSizeOfObject--;
 		}
@@ -215,6 +215,28 @@ static const char *eclipseRoomName[] = {
 	"????????"
 };
 
+uint8 FreescapeEngine::findColor(uint8 index) {
+
+	if (index == 255 || index == 0)
+		return index;
+
+	byte *entry = _colorMap[index-1];
+	uint8 color = 0;
+	uint8 acc = 1;
+	for (int i = 0; i < 4; i++) {
+		byte b = *entry;
+		assert(b == 0 || b == 0xff);
+
+		if (b == 0xff)
+			color = color + acc;
+
+		acc = acc << 1;
+		entry++;
+	}
+	assert(color < 16);
+	return color;
+}
+
 Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 ncolors) {
 
 	Common::String name;
@@ -321,7 +343,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	uint8 numConditions = file->readByte();
 	debugC(1, kFreescapeDebugParser, "%d area conditions at %x of area %d", numConditions, base + cPtr, areaNumber);
 
-	Area *area = new Area(areaNumber, areaFlags, objectsByID, entrancesByID, scale, skyColor, groundColor, palette);
+	Area *area = new Area(areaNumber, areaFlags, objectsByID, entrancesByID, scale, findColor(skyColor), findColor(groundColor), palette);
 	area->name = name;
 	area->gasPocketPosition = Common::Point(32 * gasPocketX, 32 * gasPocketY);
 	area->gasPocketRadius = gasPocketRadius;
@@ -356,6 +378,32 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	debugC(1, kFreescapeDebugParser, "Start area: %d", startArea);
 	uint8 startEntrance = file->readByte();
 	debugC(1, kFreescapeDebugParser, "Entrace area: %d", startEntrance);
+
+	file->seek(offset + 0xa);
+	debugC(1, kFreescapeDebugParser, "Color map:");
+
+	uint8 data;
+	for (int i = 0; i < 15; i++) {
+		byte *entry = (byte*) malloc(4 * sizeof(byte));;
+		data = file->readByte();
+		*entry = data;
+		entry++;
+		debugC(1, kFreescapeDebugParser, "%x", data);
+		data = file->readByte();
+		*entry = data;
+		entry++;
+		debugC(1, kFreescapeDebugParser, "%x", data);
+		data = file->readByte();
+		*entry = data;
+		entry++;
+		debugC(1, kFreescapeDebugParser, "%x", data);
+		data = file->readByte();
+		*entry = data;
+		debugC(1, kFreescapeDebugParser, "%x", data);
+		debugC(1, kFreescapeDebugParser, "---");
+		_colorMap.push_back(entry - 3);
+	}
+	//assert(0);
 
 	file->seek(offset + 0x46); // 0x46
 
