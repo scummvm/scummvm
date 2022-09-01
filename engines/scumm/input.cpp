@@ -868,8 +868,8 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 		// Generally allow voice mode settings only for v6, 7 and 8.
 		// Also allow it for Indy4 Talkie, which does its own thing.
-		if (((VAR_VOICE_MODE != 0xFF) || !strcmp(_game.variant, "SE Talkie") ||
-			(_game.id == GID_INDY4 && strcmp(_game.variant, "Floppy") && strcmp(_game.variant, "Amiga"))) &&
+		if (((VAR_VOICE_MODE != 0xFF) || (_game.variant && (!strcmp(_game.variant, "SE Talkie") ||
+			(_game.id == GID_INDY4 && strcmp(_game.variant, "Floppy") && strcmp(_game.variant, "Amiga"))))) &&
 			(lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.hasFlags(Common::KBD_CTRL))) {
 			int voiceMode = (_game.version == 5) ? _v5VoiceMode : VAR(VAR_VOICE_MODE);
 
