@@ -641,6 +641,7 @@ protected:
 	Graphics::Surface _savegameThumbnail;
 	byte *_tempTextSurface = nullptr;
 	byte *_tempMainSurface = nullptr;
+	byte *_tempVerbSurface = nullptr;
 	bool _postGUICharMask = false;
 
 	// Saved cursor pre and post GUI
