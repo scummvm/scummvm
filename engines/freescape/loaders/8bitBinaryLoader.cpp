@@ -321,8 +321,14 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	uint8 numConditions = file->readByte();
 	debugC(1, kFreescapeDebugParser, "%d area conditions at %x of area %d", numConditions, base + cPtr, areaNumber);
 
-	Area *area = new Area(areaNumber, areaFlags, objectsByID, entrancesByID, scale, remapColor(skyColor), remapColor(groundColor), palette);
+	Area *area = new Area(areaNumber, areaFlags, objectsByID, entrancesByID);
 	area->name = name;
+	area->scale = scale;
+	area->skyColor = remapColor(skyColor);
+	area->groundColor = remapColor(groundColor);
+	area->palette = palette;
+
+	// Driller specific
 	area->gasPocketPosition = Common::Point(32 * gasPocketX, 32 * gasPocketY);
 	area->gasPocketRadius = gasPocketRadius;
 
@@ -429,7 +435,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 			(*globalObjectsByID)[gobj->getObjectID()] = gobj;
 		}
 
-		_areaMap[255] = new Area(255, 0, globalObjectsByID, nullptr, 1, 255, 255, nullptr);
+		_areaMap[255] = new Area(255, 0, globalObjectsByID, nullptr);
 	}
 
 	file->seek(offset + 0xc8);

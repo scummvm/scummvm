@@ -36,15 +36,7 @@ typedef Common::HashMap<uint16, Object *> ObjectMap;
 
 class Area {
 public:
-	Area(
-		uint16 areaID,
-		uint16 areaFlags,
-		ObjectMap *objectsByID,
-		ObjectMap *entrancesByID,
-		uint8 scale,
-		uint8 skyColor,
-		uint8 groundColor,
-		Graphics::PixelBuffer *palette = nullptr);
+	Area(uint16 areaID, uint16 areaFlags, ObjectMap *objectsByID, ObjectMap *entrancesByID);
 	virtual ~Area();
 
 	Common::String name;
@@ -76,13 +68,14 @@ public:
 	Common::Point gasPocketPosition;
 	uint32 gasPocketRadius;
 
-private:
-	uint16 areaID;
-	uint16 areaFlags;
 	uint8 scale;
 	Graphics::PixelBuffer *palette;
 	uint8 skyColor;
 	uint8 groundColor;
+
+private:
+	uint16 areaID;
+	uint16 areaFlags;
 	ObjectMap *objectsByID;
 	ObjectMap *entrancesByID;
 	Common::Array<Object *> drawableObjects;
