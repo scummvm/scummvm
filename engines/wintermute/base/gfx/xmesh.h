@@ -52,10 +52,10 @@ struct SkinWeights {
 	BaseArray<float> _vertexWeights;
 };
 
-class MeshX : public BaseNamedObject {
+class XMesh : public BaseNamedObject {
 public:
-	MeshX(BaseGame *inGame);
-	virtual ~MeshX();
+	XMesh(BaseGame *inGame);
+	virtual ~XMesh();
 
 	virtual bool loadFromX(const Common::String &filename, XFileLexer &lexer, Common::Array<MaterialReference> &materialReferences);
 	bool findBones(FrameNode *rootFrame);

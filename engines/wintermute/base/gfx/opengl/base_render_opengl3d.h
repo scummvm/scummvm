@@ -132,7 +132,7 @@ public:
 	void renderShadowGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks, const BaseArray<AdGeneric *> &generics, Camera3D *camera) override;
 
 	Mesh3DS *createMesh3DS() override;
-	MeshX *createMeshX() override;
+	XMesh *createXMesh() override;
 	ShadowVolume *createShadowVolume() override;
 
 private:

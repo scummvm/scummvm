@@ -36,10 +36,10 @@
 
 namespace Wintermute {
 
-class MeshXOpenGLShader : public MeshX {
+class XMeshOpenGLShader : public XMesh {
 public:
-	MeshXOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader, OpenGL::Shader *flatShadowShader);
-	~MeshXOpenGLShader() override;
+	XMeshOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader, OpenGL::Shader *flatShadowShader);
+	~XMeshOpenGLShader() override;
 
 	bool loadFromX(const Common::String &filename, XFileLexer &lexer, Common::Array<MaterialReference> &materialReferences) override;
 	bool render(XModel *model) override;

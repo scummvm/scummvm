@@ -36,9 +36,9 @@
 namespace Wintermute {
 
 // define constant to make it available to the linker
-const uint32 MeshX::kNullIndex;
+const uint32 XMesh::kNullIndex;
 
-MeshX::MeshX(Wintermute::BaseGame *inGame) : BaseNamedObject(inGame) {
+XMesh::XMesh(Wintermute::BaseGame *inGame) : BaseNamedObject(inGame) {
 	_numAttrs = 0;
 	_skinnedMesh = false;
 
@@ -51,7 +51,7 @@ MeshX::MeshX(Wintermute::BaseGame *inGame) : BaseNamedObject(inGame) {
 	_vertexCount = 0;
 }
 
-MeshX::~MeshX() {
+XMesh::~XMesh() {
 	delete[] _vertexData;
 	delete[] _vertexPositionData;
 	delete[] _vertexNormalData;
@@ -60,7 +60,7 @@ MeshX::~MeshX() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common::Array<MaterialReference> &materialReferences) {
+bool XMesh::loadFromX(const Common::String &filename, XFileLexer &lexer, Common::Array<MaterialReference> &materialReferences) {
 	lexer.advanceToNextToken(); // skip the name
 	lexer.advanceOnOpenBraces();
 	_vertexCount = lexer.readInt();
@@ -140,7 +140,7 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common:
 			lexer.advanceToNextToken(); // skip closed braces
 			break;
 		} else {
-			warning("MeshX::loadFromX unknown token %i encountered", lexer.getTypeOfToken());
+			warning("XMesh::loadFromX unknown token %i encountered", lexer.getTypeOfToken());
 			lexer.advanceToNextToken();
 		}
 	}
@@ -151,7 +151,7 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer, Common:
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool MeshX::generateAdjacency() {
+bool XMesh::generateAdjacency() {
 	_adjacency = Common::Array<uint32>(_indexData.size(), kNullIndex);
 
 	for (uint32 i = 0; i < _indexData.size() / 3; ++i) {
@@ -178,7 +178,7 @@ bool MeshX::generateAdjacency() {
 	return true;
 }
 
-bool MeshX::adjacentEdge(uint16 index1, uint16 index2, uint16 index3, uint16 index4) {
+bool XMesh::adjacentEdge(uint16 index1, uint16 index2, uint16 index3, uint16 index4) {
 	Math::Vector3d vertex1(_vertexPositionData + 3 * index1);
 	Math::Vector3d vertex2(_vertexPositionData + 3 * index2);
 	Math::Vector3d vertex3(_vertexPositionData + 3 * index3);
@@ -196,7 +196,7 @@ bool MeshX::adjacentEdge(uint16 index1, uint16 index2, uint16 index3, uint16 ind
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool MeshX::findBones(FrameNode *rootFrame) {
+bool XMesh::findBones(FrameNode *rootFrame) {
 	// normal meshes don't have bones
 	if (!_skinnedMesh) {
 		return true;
@@ -210,7 +210,7 @@ bool MeshX::findBones(FrameNode *rootFrame) {
 		if (frame) {
 			_boneMatrices[i] = frame->getCombinedMatrix();
 		} else {
-			warning("MeshXOpenGL::findBones could not find bone %s", skinWeightsList[i]._boneName.c_str());
+			warning("XMeshOpenGL::findBones could not find bone %s", skinWeightsList[i]._boneName.c_str());
 		}
 	}
 
@@ -218,7 +218,7 @@ bool MeshX::findBones(FrameNode *rootFrame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool MeshX::update(FrameNode *parentFrame) {
+bool XMesh::update(FrameNode *parentFrame) {
 	if (_vertexData == nullptr) {
 		return false;
 	}
@@ -304,7 +304,7 @@ bool MeshX::update(FrameNode *parentFrame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool MeshX::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth) {
+bool XMesh::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth) {
 	if (_vertexData == nullptr) {
 		return false;
 	}
@@ -392,7 +392,7 @@ bool MeshX::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool MeshX::pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir) {
+bool XMesh::pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir) {
 	if (_vertexData == nullptr) {
 		return false;
 	}
@@ -425,7 +425,7 @@ bool MeshX::pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir) {
 }
 
 ////////////////////////////////////////////////////////////////////////////
-bool MeshX::setMaterialSprite(const Common::String &matName, BaseSprite *sprite) {
+bool XMesh::setMaterialSprite(const Common::String &matName, BaseSprite *sprite) {
 	for (uint32 i = 0; i < _materials.size(); i++) {
 		if (_materials[i]->getName() && _materials[i]->getName() == matName) {
 			_materials[i]->setSprite(sprite);
@@ -435,7 +435,7 @@ bool MeshX::setMaterialSprite(const Common::String &matName, BaseSprite *sprite)
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool MeshX::setMaterialTheora(const Common::String &matName, VideoTheoraPlayer *theora) {
+bool XMesh::setMaterialTheora(const Common::String &matName, VideoTheoraPlayer *theora) {
 	for (uint32 i = 0; i < _materials.size(); i++) {
 		if (_materials[i]->getName() && _materials[i]->getName() == matName) {
 			_materials[i]->setTheora(theora);
@@ -445,7 +445,7 @@ bool MeshX::setMaterialTheora(const Common::String &matName, VideoTheoraPlayer *
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool MeshX::invalidateDeviceObjects() {
+bool XMesh::invalidateDeviceObjects() {
 	// release buffers here
 
 	for (uint32 i = 0; i < _materials.size(); i++) {
@@ -456,7 +456,7 @@ bool MeshX::invalidateDeviceObjects() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool MeshX::restoreDeviceObjects() {
+bool XMesh::restoreDeviceObjects() {
 	for (uint32 i = 0; i < _materials.size(); i++) {
 		_materials[i]->restoreDeviceObjects();
 	}
@@ -468,7 +468,7 @@ bool MeshX::restoreDeviceObjects() {
 	}
 }
 
-bool MeshX::parsePositionCoords(XFileLexer &lexer) {
+bool XMesh::parsePositionCoords(XFileLexer &lexer) {
 	for (uint i = 0; i < _vertexCount; ++i) {
 		for (int j = 0; j < 3; ++j) {
 			_vertexPositionData[i * 3 + j] = lexer.readFloat();
@@ -484,7 +484,7 @@ bool MeshX::parsePositionCoords(XFileLexer &lexer) {
 	return true;
 }
 
-bool MeshX::parseFaces(XFileLexer &lexer, int faceCount, Common::Array<int>& indexCountPerFace) {
+bool XMesh::parseFaces(XFileLexer &lexer, int faceCount, Common::Array<int>& indexCountPerFace) {
 	for (int i = 0; i < faceCount; ++i) {
 		int indexCount = lexer.readInt();
 
@@ -518,7 +518,7 @@ bool MeshX::parseFaces(XFileLexer &lexer, int faceCount, Common::Array<int>& ind
 
 			indexCountPerFace.push_back(6);
 		} else {
-			warning("MeshXOpenGL::loadFromX faces with more than four vertices are not supported");
+			warning("XMeshOpenGL::loadFromX faces with more than four vertices are not supported");
 			return false;
 		}
 	}
@@ -526,7 +526,7 @@ bool MeshX::parseFaces(XFileLexer &lexer, int faceCount, Common::Array<int>& ind
 	return true;
 }
 
-bool MeshX::parseTextureCoords(XFileLexer &lexer) {
+bool XMesh::parseTextureCoords(XFileLexer &lexer) {
 	// should be the same as _vertexCount
 	int textureCoordCount = lexer.readInt();
 
@@ -545,7 +545,7 @@ bool MeshX::parseTextureCoords(XFileLexer &lexer) {
 	return true;
 }
 
-bool MeshX::parseNormalCoords(XFileLexer &lexer) {
+bool XMesh::parseNormalCoords(XFileLexer &lexer) {
 	// should be the same as _vertex count
 	uint vertexNormalCount = lexer.readInt();
 //	assert(vertexNormalCount == _vertexCount);
@@ -593,7 +593,7 @@ bool MeshX::parseNormalCoords(XFileLexer &lexer) {
 
 			lexer.skipTerminator(); // skip semicolon
 		} else {
-			warning("MeshXOpenGL::loadFromX faces with more than four vertices are not supported");
+			warning("XMeshOpenGL::loadFromX faces with more than four vertices are not supported");
 			return false;
 		}
 	}
@@ -615,7 +615,7 @@ bool MeshX::parseNormalCoords(XFileLexer &lexer) {
 	return true;
 }
 
-bool MeshX::parseMaterials(XFileLexer &lexer, int faceCount, const Common::String &filename, Common::Array<MaterialReference> &materialReferences, const Common::Array<int> &indexCountPerFace) {
+bool XMesh::parseMaterials(XFileLexer &lexer, int faceCount, const Common::String &filename, Common::Array<MaterialReference> &materialReferences, const Common::Array<int> &indexCountPerFace) {
 	// there can be unused materials inside a .X file
 	// so this piece of information is probably useless
 	lexer.readInt(); // material count
@@ -681,7 +681,7 @@ bool MeshX::parseMaterials(XFileLexer &lexer, int faceCount, const Common::Strin
 			lexer.advanceToNextToken();
 			lexer.advanceToNextToken();
 		} else {
-			warning("MeshXOpenGL::loadFromX unknown token %i encountered while loading materials", lexer.getTypeOfToken());
+			warning("XMeshOpenGL::loadFromX unknown token %i encountered while loading materials", lexer.getTypeOfToken());
 			break;
 		}
 	}
@@ -691,7 +691,7 @@ bool MeshX::parseMaterials(XFileLexer &lexer, int faceCount, const Common::Strin
 	return true;
 }
 
-bool MeshX::parseSkinWeights(XFileLexer &lexer) {
+bool XMesh::parseSkinWeights(XFileLexer &lexer) {
 	skinWeightsList.resize(skinWeightsList.size() + 1);
 	SkinWeights &currSkinWeights = skinWeightsList.back();
 
@@ -740,7 +740,7 @@ bool MeshX::parseSkinWeights(XFileLexer &lexer) {
 	return true;
 }
 
-bool MeshX::parseVertexDeclaration(XFileLexer &lexer) {
+bool XMesh::parseVertexDeclaration(XFileLexer &lexer) {
 	int vertexElementCount = lexer.readInt();
 
 	// size of a vertex measured in four byte blocks
@@ -884,7 +884,7 @@ bool MeshX::parseVertexDeclaration(XFileLexer &lexer) {
 	return true;
 }
 
-void MeshX::updateBoundingBox() {
+void XMesh::updateBoundingBox() {
 	if (_vertexData == nullptr || _vertexCount == 0) {
 		return;
 	}

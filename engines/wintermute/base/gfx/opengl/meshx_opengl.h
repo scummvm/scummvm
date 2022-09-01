@@ -34,10 +34,10 @@
 
 namespace Wintermute {
 
-class MeshXOpenGL : public MeshX {
+class XMeshOpenGL : public XMesh {
 public:
-	MeshXOpenGL(BaseGame *inGame);
-	~MeshXOpenGL() override;
+	XMeshOpenGL(BaseGame *inGame);
+	~XMeshOpenGL() override;
 
 	bool render(XModel *model) override;
 	bool renderFlatShadowModel() override;

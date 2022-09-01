@@ -77,7 +77,7 @@ public:
 
 protected:
 	BaseArray<FrameNode *> _frames;
-	BaseArray<MeshX *> _meshes;
+	BaseArray<XMesh *> _meshes;
 
 	Math::Matrix4 _transformationMatrix;
 	Math::Matrix4 _originalMatrix;

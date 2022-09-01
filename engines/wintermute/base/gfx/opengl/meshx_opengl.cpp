@@ -37,15 +37,15 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-MeshXOpenGL::MeshXOpenGL(BaseGame *inGame) : MeshX(inGame) {
+XMeshOpenGL::XMeshOpenGL(BaseGame *inGame) : XMesh(inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-MeshXOpenGL::~MeshXOpenGL() {
+XMeshOpenGL::~XMeshOpenGL() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool MeshXOpenGL::render(XModel *model) {
+bool XMeshOpenGL::render(XModel *model) {
 	if (_vertexData == nullptr) {
 		return false;
 	}
@@ -91,7 +91,7 @@ bool MeshXOpenGL::render(XModel *model) {
 	return true;
 }
 
-bool MeshXOpenGL::renderFlatShadowModel() {
+bool XMeshOpenGL::renderFlatShadowModel() {
 	return true;
 }
 

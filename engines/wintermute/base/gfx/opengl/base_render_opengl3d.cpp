@@ -812,8 +812,8 @@ Mesh3DS *BaseRenderOpenGL3D::createMesh3DS() {
 	return new Mesh3DSOpenGL();
 }
 
-MeshX *BaseRenderOpenGL3D::createMeshX() {
-	return new MeshXOpenGL(_gameRef);
+XMesh *BaseRenderOpenGL3D::createXMesh() {
+	return new XMeshOpenGL(_gameRef);
 }
 
 ShadowVolume *BaseRenderOpenGL3D::createShadowVolume() {

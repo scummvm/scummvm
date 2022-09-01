@@ -117,7 +117,7 @@ bool FrameNode::loadFromX(const Common::String &filename, XFileLexer &lexer, XMo
 			}
 		} else if (lexer.tokenIsIdentifier("Mesh")) {
 			lexer.advanceToNextToken();
-			MeshX *mesh = _gameRef->_renderer3D->createMeshX();
+			XMesh *mesh = _gameRef->_renderer3D->createXMesh();
 
 			if (mesh->loadFromX(filename, lexer, materialReferences)) {
 				_meshes.add(mesh);
@@ -181,7 +181,7 @@ bool FrameNode::loadFromXAsRoot(const Common::String &filename, XFileLexer &lexe
 			}
 		} else if (lexer.tokenIsIdentifier("Mesh")) {
 			lexer.advanceToNextToken();
-			MeshX *mesh = _gameRef->_renderer3D->createMeshX();
+			XMesh *mesh = _gameRef->_renderer3D->createXMesh();
 
 			if (mesh->loadFromX(filename, lexer, materialReferences)) {
 				_meshes.add(mesh);
