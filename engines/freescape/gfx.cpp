@@ -52,25 +52,6 @@ Graphics::Surface *Renderer::convertFromPalette(Graphics::PixelBuffer *rawsurf) 
 	return surf;
 }
 
-Common::Rect Renderer::getFontCharacterRect(uint8 character) {
-	uint index = 0;
-
-	if (character == ' ')
-		index = 0;
-	else if (character >= '0' && character <= '9')
-		index = 1 + character - '0';
-	else if (character >= 'A' && character <= 'Z')
-		index = 1 + 10 + character - 'A';
-	else if (character == '|')
-		index = 1 + 10 + 26;
-	else if (character == '/')
-		index = 2 + 10 + 26;
-	else if (character == ':')
-		index = 3 + 10 + 26;
-
-	return Common::Rect(16 * index, 0, 16 * (index + 1), 32);
-}
-
 Common::Rect Renderer::viewport() const {
 	return _screenViewport;
 }
