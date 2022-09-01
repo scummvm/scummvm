@@ -711,7 +711,7 @@ void TextMgr::promptKeyPress(uint16 newKey) {
 	switch (_vm->getLanguage()) {
 	case Common::RU_RUS:
 	case Common::HE_ISR:
-		if (newKey >= 0x20)
+		if ((newKey >= 0x20) && (newKey <= 0xff))
 			acceptableInput = true;
 		break;
 	default:
@@ -1025,7 +1025,7 @@ void TextMgr::stringKeyPress(uint16 newKey) {
 			switch (_vm->getLanguage()) {
 			case Common::RU_RUS:
 			case Common::HE_ISR:
-				if (newKey >= 0x20)
+				if ((newKey >= 0x20) && (newKey <= 0xff))
 					acceptableInput = true;
 				break;
 			default:
