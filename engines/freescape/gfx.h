@@ -131,7 +131,6 @@ protected:
 
 	Math::Frustum _frustum;
 
-	Common::Rect getFontCharacterRect(uint8 character);
 	Math::Matrix4 makeProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) const;
 };
 
