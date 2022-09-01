@@ -14792,6 +14792,49 @@ static const uint16 qfg3PatchLaibonHutEntrance2[] = {
 	PATCH_END                           // ne? [ Haven't paid Laibon the bride price ]
 };
 
+// The Laibon's Teller needs updating to be compatible with the above script
+//  patches for the events in his hut. There are two options that should only
+//  appear in Event 6 before paying the bride's price: a "Leopardman" option and
+//  "Marriage". The script enforces this by simply testing that Johari's state
+//  is 2, which is the value for having entered the hut with all of the items.
+//  This assumes that this can only happen in Event 6, but that was one of the
+//  logic problems that we fixed, so this global can now also be 2 in Event 5.
+//
+// We fix this by only showing these Teller options when Johari's state is 2 and
+//  the room is Event 6.
+//
+// Applies to: All versions
+// Responsible method: laibonTell:showDialog
+// Fixes bug: #13748
+static const uint16 qfg3SignatureLaibonTeller[] = {
+	0x88, SIG_UINT16(0x0188),           // lsg 0188 [ johari state ]
+	SIG_MAGICDWORD,
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?      [ entered with bride price? ]
+	0x36,                               // push
+	0x39, 0xcf,                         // pushi cf [ Marriage cond 49 ]
+	0x88, SIG_UINT16(0x0188),           // lsg 0188 [ johari state ]
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?      [ entered with bride price? ]
+	0x36,                               // push
+	SIG_END
+};
+
+static const uint16 qfg3PatchLaibonTeller[] = {
+	0x80, PATCH_UINT16(0x0188),         // lag 0188 [ johari state ]
+	0x7a,                               // push2
+	0x1a,                               // eq?      [ entered with bride price? ]
+	0x36,                               // push
+	0x83, 0x0b,                         // lal 0b   [ room event ]
+	0x39, 0x06,                         // pushi 06
+	0x1a,                               // eq?      [ is room event 6? ]
+	0x12,                               // and
+	0x36,                               // push
+	0x39, 0xcf,                         // pushi cf [ Marriage cond 49 ]
+	0x36,                               // push
+	PATCH_END
+};
+
 //          script, description,                                      signature                    patch
 static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   944, "import dialog continuous calls",                     1, qfg3SignatureImportDialog,           qfg3PatchImportDialog },
@@ -14810,6 +14853,7 @@ static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   450, "laibon hut events (2/3)",                            1, qfg3SignatureLaibonHutEvents2,       qfg3PatchLaibonHutEvents2 },
 	{  true,   450, "laibon hut events (3/3)",                            1, qfg3SignatureLaibonHutEvents3,       qfg3PatchLaibonHutEvents3 },
 	{  true,   450, "NRS: laibon hut events (3/3)",                       1, qfg3SignatureNrsLaibonHutEvents3,    qfg3PatchNrsLaibonHutEvents3 },
+	{  true,   450, "laibon teller",                                      1, qfg3SignatureLaibonTeller,           qfg3PatchLaibonTeller },
 	{  true,   460, "NRS: floating spears",                               1, qfg3SignatureNrsFloatingSpears,      qfg3PatchNrsFloatingSpears },
 	{  true,   510, "ring rope prize",                                    1, qfg3SignatureRingRopePrize,          qfg3PatchRingRopePrize },
 	{  true,   550, "combat speed throttling script",                     1, qfg3SignatureCombatSpeedThrottling1, qfg3PatchCombatSpeedThrottling1 },
