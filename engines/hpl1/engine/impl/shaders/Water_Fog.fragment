@@ -1,0 +1,14 @@
+// Water_Diffuse.fragment
+
+in vec4 vColor;
+in vec2 vUv;
+in float vFogUv;
+
+OUTPUT
+
+uniform sampler2D tex0; // diffuse
+uniform sampler1D tex1; // fog
+
+void main() {
+	outColor = texture(tex0, vUv) * texture1D(tex1, vFogUv).rrrg * vColor;
+}

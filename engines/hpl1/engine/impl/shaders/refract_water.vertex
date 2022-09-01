@@ -14,8 +14,7 @@ vec4 color = gl_Color;
 vec2 uv = gl_MultiTexCoord0.xy;
 vec3 normal = gl_Normal;
 
-
-out vec4 vColor
+out vec4 vColor;
 out vec2 vUv;
 out vec3 vNormal;
 out vec3 vEyePos;

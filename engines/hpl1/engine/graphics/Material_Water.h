@@ -51,7 +51,6 @@ public:
 	iGpuProgram *getGpuProgram(const eMaterialRenderType aType, const int alPass, iLight3D *apLight);
 	iMaterialProgramSetup *getGpuProgramSetup(const eMaterialRenderType aType, const int alPass, iLight3D *apLight);
 
-	iGpuProgram *GetVertexProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 	bool VertexProgramUsesLight(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 	bool VertexProgramUsesEye(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 
@@ -64,7 +63,7 @@ public:
 
 	int GetNumOfPasses(eMaterialRenderType aType, iLight3D *apLight) { return 1; }
 
-	iGpuProgram * getRefractionProgram() { return _refractShader; }
+	iGpuProgram *getRefractionProgram() { return _refractProgram; }
 	bool GetRefractionUsesDiffuse() { return true; }
 	eMaterialTexture GetRefractionDiffuseTexture() { return eMaterialTexture_Specular; }
 	bool GetRefractionUsesEye() { return true; }
@@ -84,11 +83,9 @@ public:
 					  tVertexVec *apVtxVec, cVector3f *apTransform, unsigned int alIndexAdd) {}
 
 private:
-	iGpuProgram *mpFogVtxProg;
-
-	iGpuProgram *_refractShader;
-	iGpuProgram *mpRefractVtxProg;
-	iGpuProgram *mpRefractFragProg;
+	iGpuProgram *_fogProgram;
+	iGpuProgram *_diffuseProgram;
+	iGpuProgram *_refractProgram;
 
 	float mfTime;
 };

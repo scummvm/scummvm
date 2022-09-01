@@ -11,10 +11,10 @@
 
 vec4 position = gl_Vertex;
 vec4 color = gl_Color;
-vec3 uv = gl_MultiTexCoord0.xyz;
+vec2 uv = gl_MultiTexCoord0.xy;
 
-out vec4 vColor
-out vec3 vUv;
+out vec4 vColor;
+out vec2 vUv;
 out float vFogUv;
 
 uniform mat4 worldViewProj;
