@@ -520,7 +520,7 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	_transformStack.back().setToIdentity();
 
 	static const char *XModelAttributes[] = {"position", "texcoord", "normal", nullptr};
-	_xmodelShader = OpenGL::Shader::fromFiles("wme_XModel", XModelAttributes);
+	_xmodelShader = OpenGL::Shader::fromFiles("wme_modelx", XModelAttributes);
 
 	setDefaultAmbientLightColor();
 
@@ -568,7 +568,7 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	_lineShader->enableVertexAttribute("position", _lineVBO, 2, GL_FLOAT, false, 8, 0);
 
 	static const char *flatShadowXModelAttributes[] = { "position", nullptr };
-	_flatShadowXModelShader = OpenGL::Shader::fromFiles("wme_flat_shadow_XModel", flatShadowXModelAttributes);
+	_flatShadowXModelShader = OpenGL::Shader::fromFiles("wme_flat_shadow_modelx", flatShadowXModelAttributes);
 
 	_active = true;
 	// setup a proper state
