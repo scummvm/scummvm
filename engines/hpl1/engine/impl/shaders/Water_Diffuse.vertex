@@ -11,10 +11,10 @@
 
 vec4 position = gl_Vertex;
 vec3 color = gl_Color.xyz;
-vec3 uv = gl_MultiTexCoord0.xyz;
+vec2 uv = gl_MultiTexCoord0.xy;
 
 out vec3 vColor;
-out vec3 vUv;
+out vec2 vUv;
 
 uniform mat4 worldViewProj;
 uniform float timeCount;

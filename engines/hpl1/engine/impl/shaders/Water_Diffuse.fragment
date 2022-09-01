@@ -1,0 +1,13 @@
+// Water_Diffuse.fragment
+
+in vec3 vColor;
+in vec2 vUv;
+
+OUTPUT
+
+uniform sampler2D tex0; //diffuse
+
+void main() {
+	outColor = texture(tex0, vUv);
+	outColor.xyz *= vColor;
+}
