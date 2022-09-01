@@ -261,7 +261,12 @@ Area *load16bitArea(Common::SeekableReadStream *file) {
 		debug("%s", detokenise16bitCondition(conditionArray)->c_str());
 	}
 
-	return (new Area(areaNumber, areaFlags, objectsByID, entrancesByID, 1, skyColor, groundColor));
+	Area *area = new Area(areaNumber, areaFlags, objectsByID, entrancesByID);
+	area->scale = 1;
+	area->skyColor = skyColor;
+	area->groundColor = groundColor;
+
+	return area;
 }
 
 void FreescapeEngine::load16bitBinary(Common::SeekableReadStream *file) {

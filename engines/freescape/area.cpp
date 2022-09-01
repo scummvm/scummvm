@@ -56,23 +56,17 @@ uint8 Area::getScale() {
 	return scale;
 }
 
-Area::Area(
-	uint16 _areaID,
-	uint16 _areaFlags,
-	ObjectMap *_objectsByID,
-	ObjectMap *_entrancesByID,
-	uint8 _scale,
-	uint8 _skyColor,
-	uint8 _groundColor,
-	Graphics::PixelBuffer *_palette) {
-	scale = _scale;
-	palette = _palette;
-	skyColor = _skyColor;
-	groundColor = _groundColor;
+Area::Area(uint16 _areaID, uint16 _areaFlags, ObjectMap *_objectsByID, ObjectMap *_entrancesByID) {
 	areaID = _areaID;
 	areaFlags = _areaFlags;
 	objectsByID = _objectsByID;
 	entrancesByID = _entrancesByID;
+
+	scale = 0;
+	palette = 0;
+	skyColor = 255;
+	groundColor = 255;
+	gasPocketRadius = 0;
 
 	// create a list of drawable objects only
 	for (ObjectMap::iterator iterator = objectsByID->begin(); iterator != objectsByID->end(); iterator++) {
@@ -94,7 +88,6 @@ Area::Area(
 	} compareObjects;
 
 	Common::sort(drawableObjects.begin(), drawableObjects.end(), compareObjects);
-	gasPocketRadius = 0;
 }
 
 Area::~Area() {
