@@ -1115,7 +1115,7 @@ int ScummEngine::getBannerColor(int bannerId) {
 }
 
 void ScummEngine::saveSurfacesPreGUI() {
-	// Why are we saving not one but TWO surfaces? Bear with me:
+	// Why are we saving three surfaces? Bear with me:
 	// texts in v6 and below are drawn sometimes onto the main surface, while
 	// other times they are drawn onto the text surface.
 	//
@@ -1125,6 +1125,11 @@ void ScummEngine::saveSurfacesPreGUI() {
 	//
 	// We can do better than that! Let's save both the main and the text surfaces
 	// so that we can restore them later when we're done with the menu.
+	//
+	// Some edge cases can happen though: i.e. during the SAMNMAX credits there's
+	// not enough space for the menu to be drawn completely on the main surface,
+	// so the last line is being drawn on the verb surface; to address this, we
+	// save and restore that too.
 
 	uint32 curPix;
 
@@ -1133,12 +1138,22 @@ void ScummEngine::saveSurfacesPreGUI() {
 
 	_tempTextSurface = (byte *)malloc(_screenWidth * _screenHeight * sizeof(byte));
 	_tempMainSurface = (byte *)malloc(_virtscr[kMainVirtScreen].w * _virtscr[kMainVirtScreen].h * sizeof(byte));
+	_tempVerbSurface = (byte *)malloc(_virtscr[kVerbVirtScreen].w * _virtscr[kVerbVirtScreen].h * sizeof(byte));
 
 	if (_tempMainSurface) {
 		for (int y = 0; y < _virtscr[kMainVirtScreen].h; y++) {
 			for (int x = 0; x < _virtscr[kMainVirtScreen].w; x++) {
 				curPix = _virtscr[kMainVirtScreen].getPixel(x, y);
 				_tempMainSurface[x + y * _virtscr[kMainVirtScreen].w] = curPix;
+			}
+		}
+	}
+
+	if (_tempVerbSurface) {
+		for (int y = 0; y < _virtscr[kVerbVirtScreen].h; y++) {
+			for (int x = 0; x < _virtscr[kVerbVirtScreen].w; x++) {
+				curPix = _virtscr[kVerbVirtScreen].getPixel(x, y);
+				_tempVerbSurface[x + y * _virtscr[kVerbVirtScreen].w] = curPix;
 			}
 		}
 	}
@@ -1192,6 +1207,20 @@ void ScummEngine::restoreSurfacesPostGUI() {
 		_tempMainSurface = nullptr;
 
 		_virtscr[kMainVirtScreen].setDirtyRange(0, _virtscr[kMainVirtScreen].h);
+	}
+
+	if (_tempVerbSurface) {
+		for (int y = 0; y < _virtscr[kVerbVirtScreen].h; y++) {
+			for (int x = 0; x < _virtscr[kVerbVirtScreen].w; x++) {
+				curPix = _tempVerbSurface[x + y * _virtscr[kVerbVirtScreen].w];
+				_virtscr[kVerbVirtScreen].setPixel(x, y, curPix);
+			}
+		}
+
+		free(_tempVerbSurface);
+		_tempVerbSurface = nullptr;
+
+		_virtscr[kVerbVirtScreen].setDirtyRange(0, _virtscr[kVerbVirtScreen].h);
 	}
 }
 
@@ -1577,7 +1606,7 @@ void ScummEngine::showMainMenu() {
 				// Unfortunately, there can be space (vertically) between the save slot controls,
 				// so the mouse wheel will not catch if the cursor happens to be right at that pixel.
 				// Thus, we also have to check for the GUI_CTRL_OUTER_BOX and the see if the cursor
-				// is within the save list bounds. 
+				// is within the save list bounds.
 				if (clickedControl == GUI_CTRL_OUTER_BOX && _internalGUIControls[GUI_CTRL_FIRST_SG].relativeCenterX != -1 &&
 					_internalGUIControls[GUI_CTRL_LAST_SG].relativeCenterX != -1) {
 						Common::Rect saveList(_internalGUIControls[GUI_CTRL_FIRST_SG].relativeCenterX,
@@ -1721,6 +1750,8 @@ void ScummEngine::showMainMenu() {
 		_tempTextSurface = nullptr;
 		free(_tempMainSurface);
 		_tempMainSurface = nullptr;
+		free(_tempVerbSurface);
+		_tempVerbSurface = nullptr;
 		free(_curGrabbedCursor);
 		_curGrabbedCursor = nullptr;
 	}
