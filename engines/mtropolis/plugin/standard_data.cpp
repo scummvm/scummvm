@@ -74,17 +74,26 @@ DataReadErrorCode MediaCueMessengerModifier::load(PlugIn &plugIn, const PlugInMo
 }
 
 DataReadErrorCode ObjectReferenceVariableModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
-	if (prefix.plugInRevision != 2)
+	if (prefix.plugInRevision != 0 && prefix.plugInRevision != 2)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!setToSourceParentWhen.load(reader) || !unknown1.load(reader))
+	if (!setToSourceParentWhen.load(reader))
 		return kDataReadErrorReadFailed;
 
-	bool hasNoPath = (unknown1.type == Data::PlugInTypeTaggedValue::kInteger && unknown1.value.asInt == 0);
-	if (hasNoPath)
-		objectPath.type = Data::PlugInTypeTaggedValue::kNull;
-	else if (!objectPath.load(reader))
-		return kDataReadErrorReadFailed;
+	if (prefix.plugInRevision == 0) {
+		unknown1.type = Data::PlugInTypeTaggedValue::kNull;
+		if (!objectPath.load(reader))
+			return kDataReadErrorReadFailed;
+	} else {
+		if (!unknown1.load(reader))
+			return kDataReadErrorReadFailed;
+
+		bool hasNoPath = (unknown1.type == Data::PlugInTypeTaggedValue::kInteger && unknown1.value.asInt == 0);
+		if (hasNoPath)
+			objectPath.type = Data::PlugInTypeTaggedValue::kNull;
+		else if (!objectPath.load(reader))
+			return kDataReadErrorReadFailed;
+	}
 
 	return kDataReadErrorNone;
 }

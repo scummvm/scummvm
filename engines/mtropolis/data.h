@@ -467,6 +467,13 @@ struct AssetCatalog : public DataObject {
 		kFlag1LimitOnePerSegment = 2,
 	};
 
+	struct AssetInfoRev4Fields {
+		AssetInfoRev4Fields();
+
+		uint32 assetType;
+		uint32 flags2;
+	};
+
 	struct AssetInfo {
 		AssetInfo();
 
@@ -475,8 +482,9 @@ struct AssetCatalog : public DataObject {
 		uint16 alwaysZero;
 		uint32 unknown1;	 // Possibly scene ID
 		uint32 filePosition; // Contains a static value in Obsidian
-		uint32 assetType;
-		uint32 flags2;
+
+		AssetInfoRev4Fields rev4Fields;
+
 		Common::String name;
 	};
 
@@ -486,6 +494,8 @@ struct AssetCatalog : public DataObject {
 	uint32 totalNameSizePlus22;
 	uint8 unknown1[4];
 	uint32 numAssets;
+	bool haveRev4Fields;
+
 	Common::Array<AssetInfo> assets;
 
 protected:

@@ -54,11 +54,7 @@ MTropolisEngine::MTropolisEngine(OSystem *syst, const MTropolisGameDescription *
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Resource");
 
-	if (gameDesc->gameID == GID_OBSIDIAN && _gameDescription->desc.platform == Common::kPlatformWindows) {
-		SearchMan.addSubDirectoryMatching(gameDataDir, "Obsidian");
-		SearchMan.addSubDirectoryMatching(gameDataDir, "Obsidian/RESOURCE");
-		SearchMan.addSubDirectoryMatching(gameDataDir, "RESOURCE");
-	}
+	bootAddSearchPaths(gameDataDir, *gameDesc);
 }
 
 MTropolisEngine::~MTropolisEngine() {

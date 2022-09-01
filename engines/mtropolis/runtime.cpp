@@ -6720,7 +6720,7 @@ const SubtitleTables &Project::getSubtitles() const {
 
 void Project::loadPresentationSettings(const Data::PresentationSettings &presentationSettings) {
 	_presentationSettings.bitsPerPixel = presentationSettings.bitsPerPixel;
-	if (_presentationSettings.bitsPerPixel != 16) {
+	if (_presentationSettings.bitsPerPixel != 8 && _presentationSettings.bitsPerPixel != 16) {
 		error("Unsupported bit depth");
 	}
 	_presentationSettings.width = presentationSettings.dimensions.x;
@@ -6754,7 +6754,11 @@ void Project::loadAssetCatalog(const Data::AssetCatalog &assetCatalog) {
 
 			assetDesc.id = i + 1;
 			assetDesc.name = assetInfo.name;
-			assetDesc.typeCode = assetInfo.assetType;
+
+			if (assetCatalog.haveRev4Fields)
+				assetDesc.typeCode = assetInfo.rev4Fields.assetType;
+			else
+				assetDesc.typeCode = 0;
 
 			_assetsByID[assetDesc.id] = &assetDesc;
 			if (!assetDesc.name.empty())

@@ -816,6 +816,7 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 				case MKTAG('.', 'c', '9', '5'):
 				case MKTAG('.', 'e', '9', '5'):
 				case MKTAG('.', 'r', '9', '5'):
+				case MKTAG('.', 'x', '9', '5'):
 					winFile.category = MTFT_EXTENSION;
 					break;
 
@@ -941,6 +942,21 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 	desc->getSubtitles(subTables);
 
 	return desc;
+}
+
+void bootAddSearchPaths(const Common::FSNode &gameDataDir, const MTropolisGameDescription &gameDesc) {
+
+	if (gameDesc.gameID == GID_OBSIDIAN && gameDesc.desc.platform == Common::kPlatformWindows) {
+		SearchMan.addSubDirectoryMatching(gameDataDir, "Obsidian");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "Obsidian/RESOURCE");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "RESOURCE");
+	}
+
+	if (gameDesc.gameID == GID_MTI && gameDesc.desc.platform == Common::kPlatformWindows) {
+		SearchMan.addSubDirectoryMatching(gameDataDir, "MTPLAY32");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "MTPLAY32/RESOURCE");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "VIDEO");
+	}
 }
 
 } // End of namespace MTropolis

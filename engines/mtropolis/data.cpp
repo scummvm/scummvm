@@ -702,15 +702,20 @@ DataReadErrorCode PresentationSettings::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
-AssetCatalog::AssetInfo::AssetInfo() : flags1(0), nameLength(0), alwaysZero(0), unknown1(0), filePosition(0), assetType(0), flags2(0) {
+AssetCatalog::AssetInfoRev4Fields::AssetInfoRev4Fields() : assetType(0), flags2(0) {
 }
 
-AssetCatalog::AssetCatalog() : persistFlags(0), totalNameSizePlus22(0), unknown1{0, 0, 0, 0}, numAssets(0) {
+AssetCatalog::AssetInfo::AssetInfo() : flags1(0), nameLength(0), alwaysZero(0), unknown1(0), filePosition(0) {
+}
+
+AssetCatalog::AssetCatalog() : persistFlags(0), totalNameSizePlus22(0), unknown1{0, 0, 0, 0}, numAssets(0), haveRev4Fields(false) {
 }
 
 DataReadErrorCode AssetCatalog::load(DataReader& reader) {
-	if (_revision != 4)
+	if (_revision != 2 && _revision != 4)
 		return kDataReadErrorUnsupportedRevision;
+
+	haveRev4Fields = (_revision >= 4);
 
 	if (!reader.readU32(persistFlags) ||
 		!reader.readU32(totalNameSizePlus22) ||
@@ -722,8 +727,13 @@ DataReadErrorCode AssetCatalog::load(DataReader& reader) {
 
 	for (size_t i = 0; i < numAssets; i++) {
 		AssetInfo &asset = assets[i];
-		if (!reader.readU32(asset.flags1) || !reader.readU16(asset.nameLength) || !reader.readU16(asset.alwaysZero) || !reader.readU32(asset.unknown1) || !reader.readU32(asset.filePosition) || !reader.readU32(asset.assetType) || !reader.readU32(asset.flags2))
+		if (!reader.readU32(asset.flags1) || !reader.readU16(asset.nameLength) || !reader.readU16(asset.alwaysZero) || !reader.readU32(asset.unknown1) || !reader.readU32(asset.filePosition))
 			return kDataReadErrorReadFailed;
+
+		if (_revision >= 4) {
+			if (!reader.readU32(asset.rev4Fields.assetType) || !reader.readU32(asset.rev4Fields.flags2))
+				return kDataReadErrorReadFailed;
+		}
 
 		if (!reader.readTerminatedStr(asset.name, asset.nameLength))
 			return kDataReadErrorReadFailed;
