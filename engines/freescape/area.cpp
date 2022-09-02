@@ -155,9 +155,6 @@ void Area::saveObjects(Common::WriteStream *stream) {
 }
 
 void Area::draw(Freescape::Renderer *gfx) {
-	if (palette)
-		gfx->_palette = palette;
-
 	gfx->clear();
 	if (skyColor != 255) {
 		gfx->_keyColor = 0;

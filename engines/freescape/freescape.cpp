@@ -231,6 +231,8 @@ Common::Error FreescapeEngine::run() {
 	loadBorder();
 	loadAssets();
 	initGameState();
+	loadColorPalette();
+
 	// Simple main event loop
 	_lastMousePos = Common::Point(0, 0);
 	_lastFrame = 0.f;

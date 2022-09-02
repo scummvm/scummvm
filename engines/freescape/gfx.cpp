@@ -40,6 +40,8 @@ Renderer::Renderer(OSystem *system)
 	_originalPixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 	_palettePixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
 	_keyColor = -1;
+	_palette = nullptr;
+	_colorMap = nullptr;
 }
 
 Renderer::~Renderer() {}
