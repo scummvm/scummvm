@@ -31,6 +31,7 @@
 #include "hpl1/engine/impl/PhysicsWorldNewton.h"
 
 #include "hpl1/engine/system/low_level_system.h"
+#include "common/str.h"
 
 namespace hpl {
 
@@ -76,6 +77,10 @@ cPhysicsJointSliderNewton::~cPhysicsJointSliderNewton() {
 
 void cPhysicsJointSliderNewton::SetMaxDistance(float afX) {
 	mfMaxDistance = afX;
+	// fixes a problem with the crane in level 11 (new storage room) not updating
+	// after the the limits have been changed, preventing it from moving
+	if (mpChildBody && Common::String(msName.c_str()).contains("crane"))
+		mpChildBody->AddImpulse({0.001f, 0.001f, 0.001f});
 }
 void cPhysicsJointSliderNewton::SetMinDistance(float afX) {
 	mfMinDistance = afX;
