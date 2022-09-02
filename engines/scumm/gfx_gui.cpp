@@ -1131,40 +1131,41 @@ void ScummEngine::saveSurfacesPreGUI() {
 	// so the last line is being drawn on the verb surface; to address this, we
 	// save and restore that too.
 
-	uint32 curPix;
-
 	if (_game.version < 4 || _game.version > 6)
 		return;
 
-	_tempTextSurface = (byte *)malloc(_screenWidth * _screenHeight * sizeof(byte));
+	_tempTextSurface = (byte *)malloc(_textSurface.pitch * _textSurface.h * sizeof(byte));
 	_tempMainSurface = (byte *)malloc(_virtscr[kMainVirtScreen].w * _virtscr[kMainVirtScreen].h * sizeof(byte));
 	_tempVerbSurface = (byte *)malloc(_virtscr[kVerbVirtScreen].w * _virtscr[kVerbVirtScreen].h * sizeof(byte));
 
 	if (_tempMainSurface) {
 		for (int y = 0; y < _virtscr[kMainVirtScreen].h; y++) {
-			for (int x = 0; x < _virtscr[kMainVirtScreen].w; x++) {
-				curPix = _virtscr[kMainVirtScreen].getPixel(x, y);
-				_tempMainSurface[x + y * _virtscr[kMainVirtScreen].w] = curPix;
-			}
+			memcpy(&_tempMainSurface[y * _virtscr[kMainVirtScreen].w],
+				_virtscr[kMainVirtScreen].getBasePtr(_virtscr[kMainVirtScreen].xstart, y),
+				_virtscr[kMainVirtScreen].w);
 		}
 	}
 
 	if (_tempVerbSurface) {
-		for (int y = 0; y < _virtscr[kVerbVirtScreen].h; y++) {
-			for (int x = 0; x < _virtscr[kVerbVirtScreen].w; x++) {
-				curPix = _virtscr[kVerbVirtScreen].getPixel(x, y);
-				_tempVerbSurface[x + y * _virtscr[kVerbVirtScreen].w] = curPix;
-			}
-		}
+		memcpy(_tempVerbSurface,
+			_virtscr[kVerbVirtScreen].getBasePtr(0, 0),
+			_virtscr[kVerbVirtScreen].pitch * _virtscr[kVerbVirtScreen].h);
 	}
 
 	if (_tempTextSurface) {
-		for (int y = 0; y < _screenHeight; y++) {
-			for (int x = 0; x < _screenWidth; x++) {
-				curPix = _textSurface.getPixel(x, y);
-				_tempTextSurface[x + y * _screenWidth] = curPix;
-				if (curPix != 0xFD && !(_game.version == 4 && _game.id == GID_LOOM)) {
-					_virtscr[kMainVirtScreen].setPixel(_virtscr[kMainVirtScreen].xstart + x, y, curPix);
+		memcpy(_tempTextSurface, _textSurface.getBasePtr(0, 0), _textSurface.pitch * _textSurface.h);
+
+		// For each v4-v6 game (except for LOOM VGA which does its own thing), we take the text surface
+		// and stamp it on top of the main screen: this is done to ensure that the GUI is drawn on top
+		// of possible subtitle texts instead of having the latters being deleted or being drawn on top
+		// of the GUI...
+		if (!(_game.version == 4 && _game.id == GID_LOOM)) {
+			for (int y = 0; y < _screenHeight; y++) {
+				for (int x = 0; x < _screenWidth; x++) {
+					// Only draw non transparent pixels
+					if (_tempTextSurface[x + y * _screenWidth] != 0xFD) {
+						_virtscr[kMainVirtScreen].setPixel(_virtscr[kMainVirtScreen].xstart + x, y, _tempTextSurface[x + y * _screenWidth]);
+					}
 				}
 			}
 		}
@@ -1172,18 +1173,12 @@ void ScummEngine::saveSurfacesPreGUI() {
 }
 
 void ScummEngine::restoreSurfacesPostGUI() {
-	uint32 curPix;
 
 	if (_game.version < 4 || _game.version > 6)
 		return;
 
 	if (_tempTextSurface) {
-		for (int y = 0; y < _screenHeight; y++) {
-			for (int x = 0; x < _screenWidth; x++) {
-				curPix = _tempTextSurface[x + y * _screenWidth];
-				_textSurface.setPixel(x, y, curPix);
-			}
-		}
+		memcpy(_textSurface.getBasePtr(0, 0), _tempTextSurface, _textSurface.pitch * _textSurface.h);
 
 		// Signal the restoreCharsetBg() function that there's text
 		// on the text surface, so it gets deleted the next time another
@@ -1197,10 +1192,9 @@ void ScummEngine::restoreSurfacesPostGUI() {
 
 	if (_tempMainSurface) {
 		for (int y = 0; y < _virtscr[kMainVirtScreen].h; y++) {
-			for (int x = 0; x < _virtscr[kMainVirtScreen].w; x++) {
-				curPix = _tempMainSurface[x + y * _virtscr[kMainVirtScreen].w];
-				_virtscr[kMainVirtScreen].setPixel(x, y, curPix);
-			}
+			memcpy(_virtscr[kMainVirtScreen].getBasePtr(_virtscr[kMainVirtScreen].xstart, y),
+				&_tempMainSurface[y * _virtscr[kMainVirtScreen].w],
+				_virtscr[kMainVirtScreen].w);
 		}
 
 		free(_tempMainSurface);
@@ -1210,12 +1204,9 @@ void ScummEngine::restoreSurfacesPostGUI() {
 	}
 
 	if (_tempVerbSurface) {
-		for (int y = 0; y < _virtscr[kVerbVirtScreen].h; y++) {
-			for (int x = 0; x < _virtscr[kVerbVirtScreen].w; x++) {
-				curPix = _tempVerbSurface[x + y * _virtscr[kVerbVirtScreen].w];
-				_virtscr[kVerbVirtScreen].setPixel(x, y, curPix);
-			}
-		}
+		memcpy(_virtscr[kVerbVirtScreen].getBasePtr(0, 0),
+			_tempVerbSurface,
+			_virtscr[kVerbVirtScreen].pitch * _virtscr[kVerbVirtScreen].h);
 
 		free(_tempVerbSurface);
 		_tempVerbSurface = nullptr;
