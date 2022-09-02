@@ -639,12 +639,22 @@ void GridWidget::reloadThumbnails() {
 			Graphics::ManagedSurface *surf = loadSurfaceFromFile(path);
 			if (!surf) {
 				path = Common::String::format("icons/%s.png", entry->engineid.c_str());
-				surf = loadSurfaceFromFile(path);
+				if (!_loadedSurfaces.contains(path)) {
+					surf = loadSurfaceFromFile(path);
+				} else {
+					continue;
+				}
+
 			}
 
 			if (surf) {
 				const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, _thumbnailHeight, true));
 				_loadedSurfaces[entry->thumbPath] = scSurf;
+
+				if (path != entry->thumbPath) {
+					_loadedSurfaces[path] = new Graphics::ManagedSurface(*scSurf);
+				}
+
 				if (surf != scSurf) {
 					surf->free();
 					delete surf;
@@ -699,7 +709,6 @@ void GridWidget::loadExtraIcons() {  // for now only the demo icon is available
 	} else {
 		_extraIcons[0] = nullptr;
 	}
-	
 }
 
 void GridWidget::destroyItems() {
