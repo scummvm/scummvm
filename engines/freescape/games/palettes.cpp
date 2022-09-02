@@ -49,18 +49,17 @@ byte dos_CGA_palette[4][3] = {
 	{0x00, 0xa8, 0xa8},
 };
 
-Graphics::PixelBuffer *FreescapeEngine::getPalette(uint8 areaNumber, uint8 c1, uint8 c2, uint8 c3, uint8 c4, uint16 ncolors) {
-	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
+
+void FreescapeEngine::loadColorPalette() {
 	Graphics::PixelBuffer *palette = nullptr;
 	if (_renderMode == "ega")
-		palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&dos_EGA_palette);
+		palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, (byte*)&dos_EGA_palette);
 	else if (_renderMode == "cga")
-		palette = new Graphics::PixelBuffer(pixelFormat, (byte*)&dos_CGA_palette);
+		palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, (byte*)&dos_CGA_palette);
 
-	assert(palette);
-	return palette;
+	_gfx->_palette = palette;
+	_gfx->_colorMap = &_colorMap;
 }
-
 
 uint8 FreescapeEngine::remapColor(uint8 index) {
 

@@ -256,7 +256,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		groundColor = groundColor % 4;
 	}
 
-	Graphics::PixelBuffer *palette = getPalette(areaNumber, ci1, ci2, skyColor, groundColor, ncolors);
+	//Graphics::PixelBuffer *palette = getPalette(areaNumber, ci1, ci2, skyColor, groundColor, ncolors);
 
 	debugC(1, kFreescapeDebugParser, "Area %d", areaNumber);
 	debugC(1, kFreescapeDebugParser, "Flags: %d Objects: %d", areaFlags, numberOfObjects);
@@ -326,7 +326,6 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	area->scale = scale;
 	area->skyColor = remapColor(skyColor);
 	area->groundColor = remapColor(groundColor);
-	area->palette = palette;
 
 	// Driller specific
 	area->gasPocketPosition = Common::Point(32 * gasPocketX, 32 * gasPocketY);

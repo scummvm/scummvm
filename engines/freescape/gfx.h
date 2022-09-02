@@ -32,6 +32,8 @@
 
 namespace Freescape {
 
+typedef Common::Array<byte*> ColorMap;
+
 class Renderer;
 
 class Texture {
@@ -99,7 +101,8 @@ public:
 	virtual void drawFloor(uint8 color) = 0;
 
 	Common::Rect viewport() const;
-	Graphics::PixelBuffer *_palette = nullptr;
+	Graphics::PixelBuffer *_palette;
+	ColorMap *_colorMap;
 	int _keyColor;
 
 	/**
