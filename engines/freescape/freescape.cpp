@@ -205,6 +205,7 @@ void FreescapeEngine::processInput() {
 }
 
 void FreescapeEngine::shoot() {
+	playSound(0);
 	_gfx->renderShoot(0);
 	Math::Vector3d direction = directionToVector(_pitch, _yaw);
 	Math::Ray ray(_position, direction);
@@ -426,6 +427,7 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 				return;
 			}
 			_position.set(_position.x(), positionY - fallen * areaScale, _position.z());
+			playSound(2);
 		}
 		debugC(1, kFreescapeDebugCode, "Runing effects:");
 		checkCollisions(true); // run the effects
@@ -438,6 +440,7 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 			else {
 				bool stepUp = tryStepUp(_position);
 				if (stepUp) {
+					playSound(1);
 					debugC(1, kFreescapeDebugCode, "Runing effects:");
 					checkCollisions(true); // run the effects (again)
 				} else {
@@ -593,13 +596,6 @@ void FreescapeEngine::drawStringInSurface(const Common::String &str, int x, int 
 	}
 }
 
-void FreescapeEngine::playSound(int index) {
-	_mixer->stopAll();
-	debug("Playing sound %d", index);
-	Audio::PCSpeaker *speaker = new Audio::PCSpeaker();
-	speaker->play(Audio::PCSpeaker::kWaveFormSine, 2000, 100);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle, speaker);
-}
 
 Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream) {
 

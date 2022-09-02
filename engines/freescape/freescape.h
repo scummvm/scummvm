@@ -188,6 +188,8 @@ public:
 	// Sound
 	Audio::SoundHandle _speakerHandle;
 	void playSound(int index);
+	void playSoundConst(double hzFreq, int duration);
+	void playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution);
 
 	// Rendering
 	int _screenW, _screenH;
