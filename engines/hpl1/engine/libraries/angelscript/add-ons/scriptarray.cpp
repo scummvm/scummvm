@@ -1014,7 +1014,7 @@ bool CScriptArray::Less(const void *a, const void *b, bool asc)
 		// Simple compare of values
 		switch( subTypeId )
 		{
-			#define COMPARE(T) *((T*)a) < *((T*)b)
+			#define COMPARE(T) *((const T*)a) < *((const T*)b)
 			case asTYPEID_BOOL: return COMPARE(bool);
 			case asTYPEID_INT8: return COMPARE(signed char);
 			case asTYPEID_UINT8: return COMPARE(unsigned char);
@@ -1114,7 +1114,7 @@ bool CScriptArray::Equals(const void *a, const void *b, asIScriptContext *ctx, S
 		// Simple compare of values
 		switch( subTypeId )
 		{
-			#define COMPARE(T) *((T*)a) == *((T*)b)
+			#define COMPARE(T) *((const T*)a) == *((const T*)b)
 			case asTYPEID_BOOL: return COMPARE(bool);
 			case asTYPEID_INT8: return COMPARE(signed char);
 			case asTYPEID_UINT8: return COMPARE(unsigned char);
@@ -1135,7 +1135,7 @@ bool CScriptArray::Equals(const void *a, const void *b, asIScriptContext *ctx, S
 		if( subTypeId & asTYPEID_OBJHANDLE )
 		{
 			// Allow the find to work even if the array contains null handles
-			if( *(void**)a == *(void**)b ) return true;
+			if( *(const void**)a == *(const void**)b ) return true;
 		}
 
 		// Execute object opEquals if available
