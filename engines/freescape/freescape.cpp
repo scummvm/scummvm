@@ -41,6 +41,9 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	else
 		_renderMode = ConfMan.get("render_mode");
 
+	if (!Common::parseBool(ConfMan.get("prerecorded_sounds"), _usePrerecordedSounds))
+		error("Failed to parse bool from prerecorded_sounds option");
+
 	_currentArea = nullptr;
 	_rotation = Math::Vector3d(0.f, 0.f, 0.f);
 	_position = Math::Vector3d(0.f, 0.f, 0.f);
@@ -205,7 +208,7 @@ void FreescapeEngine::processInput() {
 }
 
 void FreescapeEngine::shoot() {
-	playSound(0);
+	playSound(1);
 	_gfx->renderShoot(0);
 	Math::Vector3d direction = directionToVector(_pitch, _yaw);
 	Math::Ray ray(_position, direction);
@@ -427,7 +430,7 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 				return;
 			}
 			_position.set(_position.x(), positionY - fallen * areaScale, _position.z());
-			playSound(2);
+			playSound(3);
 		}
 		debugC(1, kFreescapeDebugCode, "Runing effects:");
 		checkCollisions(true); // run the effects
@@ -440,10 +443,11 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 			else {
 				bool stepUp = tryStepUp(_position);
 				if (stepUp) {
-					playSound(1);
+					playSound(4);
 					debugC(1, kFreescapeDebugCode, "Runing effects:");
 					checkCollisions(true); // run the effects (again)
 				} else {
+					playSound(2);
 					_position = _lastPosition;
 				}
 			}
@@ -516,6 +520,7 @@ bool FreescapeEngine::checkCollisions(bool executeCode) {
 }
 
 void FreescapeEngine::gotoArea(uint16 areaID, int entranceID) {
+	playSound(5);
 	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
 	if (!_gameStateBits.contains(areaID))
 		_gameStateBits[areaID] = 0;
