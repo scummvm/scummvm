@@ -4965,8 +4965,6 @@ dgFloat32 dgJacobianMemory::CalculateJointForcesSimd(dgInt32 joint,
 
 dgFloat32 dgJacobianMemory::CalculateJointForces(dgInt32 joint,
 												 dgFloat32 *forceStep, dgFloat32 maxAccNorm) const {
-	dgInt32 m0;
-	dgInt32 m1;
 	dgInt32 first;
 	dgInt32 count;
 	dgInt32 maxPasses;
@@ -5038,8 +5036,6 @@ dgFloat32 dgJacobianMemory::CalculateJointForces(dgInt32 joint,
 	}
 
 	retAccel = accNorm;
-	m0 = constraintArray[joint].m_m0;
-	m1 = constraintArray[joint].m_m1;
 	clampedForceIndexValue = dgFloat32(0.0f);
 
 	dgVector zero(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
