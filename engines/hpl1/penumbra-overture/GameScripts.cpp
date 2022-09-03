@@ -754,7 +754,7 @@ static void ReplaceEntity(std::string asName, std::string asBodyName,
 			return;
 		}
 	} else {
-		iPhysicsBody *pBody = pEntity->GetBody(0);
+		pBody = pEntity->GetBody(0);
 	}
 
 	cMatrixf mtxTransform = pBody->GetWorldMatrix();
