@@ -56,33 +56,34 @@ cCollideShapeNewton::cCollideShapeNewton(eCollideShapeType aType, const cVector3
 		mtxTranspose = m_mtxOffset.GetTranspose();
 
 		pMtx = &(mtxTranspose.m[0][0]);
-	} else
+	} else {
 		m_mtxOffset = cMatrixf::Identity;
+	}
 
-		////////////////////////////////////////////
-		// Create Newton collision
+	////////////////////////////////////////////
+	// Create Newton collision
 
-  		switch(aType) {
-		case eCollideShapeType_Null:		mpNewtonCollision = NewtonCreateNull(apNewtonWorld); break;
+  	switch(aType) {
+	case eCollideShapeType_Null:		mpNewtonCollision = NewtonCreateNull(apNewtonWorld); break;
 
-		case eCollideShapeType_Box:			mpNewtonCollision = NewtonCreateBox(apNewtonWorld,
-												mvSize.x, mvSize.y, mvSize.z,
-												0, pMtx); break;
+	case eCollideShapeType_Box:			mpNewtonCollision = NewtonCreateBox(apNewtonWorld,
+											mvSize.x, mvSize.y, mvSize.z,
+											0, pMtx); break;
 
-		case eCollideShapeType_Sphere:		mpNewtonCollision = NewtonCreateSphere(apNewtonWorld,
-												mvSize.x, mvSize.y, mvSize.z,
-												0, pMtx); break;
+	case eCollideShapeType_Sphere:		mpNewtonCollision = NewtonCreateSphere(apNewtonWorld,
+											mvSize.x, mvSize.y, mvSize.z,
+											0, pMtx); break;
 
-		case eCollideShapeType_Cylinder:	mpNewtonCollision = NewtonCreateCylinder(apNewtonWorld,
-												mvSize.x, mvSize.y,
-												0, pMtx); break;
+	case eCollideShapeType_Cylinder:	mpNewtonCollision = NewtonCreateCylinder(apNewtonWorld,
+											mvSize.x, mvSize.y,
+											0, pMtx); break;
 
-		case eCollideShapeType_Capsule:		mpNewtonCollision = NewtonCreateCapsule(apNewtonWorld,
-												mvSize.x, mvSize.y,
-												0, pMtx); break;
-		default:
-			break;
-		}
+	case eCollideShapeType_Capsule:		mpNewtonCollision = NewtonCreateCapsule(apNewtonWorld,
+											mvSize.x, mvSize.y,
+											0, pMtx); break;
+	default:
+		break;
+	}
 
 	////////////////////////////////////////////
 	// Calculate Bounding volume and volume.
