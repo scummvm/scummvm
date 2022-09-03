@@ -161,7 +161,7 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 				ip = codeSize;
 			break;
 			case Token::INVISQ:
-			if (executeEndIfVisibilityIsNotEqual(instruction))
+			if (executeEndIfVisibilityIsEqual(instruction))
 				ip = codeSize;
 			break;
 		}
@@ -195,7 +195,7 @@ void FreescapeEngine::executePrint(FCLInstruction &instruction) {
 	_currentAreaMessages.push_back(_messagesList[index]);
 }
 
-bool FreescapeEngine::executeEndIfVisibilityIsNotEqual(FCLInstruction &instruction) {
+bool FreescapeEngine::executeEndIfVisibilityIsEqual(FCLInstruction &instruction) {
 	uint16 source = instruction.source;
 	uint16 additional = instruction.additional;
 	uint16 value = instruction.destination;
@@ -212,7 +212,7 @@ bool FreescapeEngine::executeEndIfVisibilityIsNotEqual(FCLInstruction &instructi
 		debugC(1, kFreescapeDebugCode, "End condition if visibility of obj with id %d in area %d is %d!", additional, source, value);
 	}
 
-	return (obj->isInvisible() != value);
+	return (obj->isInvisible() == value);
 }
 
 bool FreescapeEngine::executeEndIfNotEqual(FCLInstruction &instruction) {
@@ -275,7 +275,9 @@ void FreescapeEngine::executeDestroy(FCLInstruction &instruction) {
 	debugC(1, kFreescapeDebugCode, "Destroying obj %d in area %d!", objectID, areaID);
 	assert(_areaMap.contains(areaID));
 	Object *obj = _areaMap[areaID]->objectWithID(objectID);
-	assert(!(obj->isDestroyed()));
+	if (obj->isDestroyed())
+		debugC(1, kFreescapeDebugCode, "WARNING: Destroying obj %d in area %d already destroyed!", objectID, areaID);
+
 	obj->destroy();
 }
 

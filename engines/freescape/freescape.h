@@ -182,7 +182,7 @@ public:
 	void executeClearBit(FCLInstruction &instruction);
 	void executeToggleBit(FCLInstruction &instruction);
 	bool executeEndIfBitNotEqual(FCLInstruction &instruction);
-	bool executeEndIfVisibilityIsNotEqual(FCLInstruction &instruction);
+	bool executeEndIfVisibilityIsEqual(FCLInstruction &instruction);
 	void executeSwapJet(FCLInstruction &instruction);
 	void executePrint(FCLInstruction &instruction);
 

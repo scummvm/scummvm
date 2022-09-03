@@ -215,7 +215,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			detokenisedStream += "THEN END ENDIF";
 			currentInstruction = FCLInstruction(Token::INVISQ);
 			currentInstruction.setSource(tokenisedCondition[bytePointer]);
-			currentInstruction.setDestination(true); // visible
+			currentInstruction.setDestination(true); // invisible
 			conditionalInstructions->push_back(currentInstruction);
 			currentInstruction = FCLInstruction(Token::UNKNOWN);
 			bytePointer++;
