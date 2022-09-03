@@ -55,7 +55,7 @@ LowLevelSystem::~LowLevelSystem() {
 static void commonLog(int level, const char *fmt, va_list args) {
 	char buffer[256];
 	vsnprintf(buffer, 256, fmt, args);
-	debugN(level, buffer);
+	debugN(level, "%s", buffer);
 }
 
 void Error(const char *fmt, ...) {

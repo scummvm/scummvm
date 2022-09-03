@@ -45,18 +45,18 @@ enum DebugLevels {
 };
 
 template<typename... Args>
-void logError(int channel, const char *fmt, Args... args) {
-	debugCN(kDebugLevelError, channel, fmt, args...);
+void logError(uint32 channels, const char *fmt, Args... args) {
+	debugCN(kDebugLevelError, channels, fmt, args...);
 }
 
 template<typename... Args>
-void logWarning(int channel, const char *fmt, Args... args) {
-	debugCN(kDebugLevelWarning, channel, fmt, args...);
+void logWarning(uint32 channels, const char *fmt, Args... args) {
+	debugCN(kDebugLevelWarning, channels, fmt, args...);
 }
 
 template<typename... Args>
-void logInfo(int channel, const char *fmt, Args... args) {
-	debugCN(kDebugLevelLog, channel, fmt, args...);
+void logInfo(uint32 channels, const char *fmt, Args... args) {
+	debugCN(kDebugLevelLog, channels, fmt, args...);
 }
 
 }

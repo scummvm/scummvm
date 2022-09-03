@@ -77,7 +77,7 @@ cRenderSettings::cRenderSettings() {
 
 cRenderer3D::cRenderer3D(iLowLevelGraphics *apLowLevelGraphics, cResources *apResources,
 						 cMeshCreator *apMeshCreator, cRenderList *apRenderList) {
-	Hpl1::logInfo(Hpl1::kDebugGraphics, "Creating Renderer3D\n");
+	Hpl1::logInfo(Hpl1::kDebugGraphics, "%s", "Creating Renderer3D\n");
 
 	mpLowLevelGraphics = apLowLevelGraphics;
 	mpLowLevelResources = apResources->GetLowLevel();
@@ -113,7 +113,7 @@ cRenderer3D::cRenderer3D(iLowLevelGraphics *apLowLevelGraphics, cResources *apRe
 	mRenderSettings.mShowShadows = eRendererShowShadows_All;
 	mRenderSettings.mpTempIndexArray = hplNewArray(unsigned int, 60000);
 
-	Hpl1::logInfo(Hpl1::kDebugGraphics, "Load Renderer3D gpu programs:\n");
+	Hpl1::logInfo(Hpl1::kDebugGraphics, "%s", "Load Renderer3D gpu programs:\n");
 	cGpuProgramManager *pProgramManager = apResources->GetGpuProgramManager();
 
 	mRenderSettings.extrudeProgram = pProgramManager->CreateProgram("ShadowExtrude", "ShadowExtrude");
@@ -190,7 +190,7 @@ cRenderer3D::cRenderer3D(iLowLevelGraphics *apLowLevelGraphics, cResources *apRe
 	_refractSpecProgram = pProgramManager->CreateProgram("refract", "refract_special");
 	if (!_refractProgram || !_refractSpecProgram) {
 		mbRefractionAvailable = false;
-		Hpl1::logInfo(Hpl1::kDebugGraphics, "refraction will not be supported");
+		Hpl1::logInfo(Hpl1::kDebugGraphics, "%s", "refraction will not be supported");
 	}
 
 	/////////////////////////////////////////////
@@ -633,7 +633,7 @@ void cRenderer3D::RenderSkyBox(cCamera3D *apCamera) {
 	if (mbSkyBoxActive == false)
 		return;
 
-	Hpl1::logInfo(Hpl1::kDebugRenderer, "Drawing skybox");
+	Hpl1::logInfo(Hpl1::kDebugRenderer, "%s", "Drawing skybox");
 
 	if (mRenderSettings.gpuProgram) {
 		mRenderSettings.gpuProgram->UnBind();
@@ -714,7 +714,7 @@ void cRenderer3D::RenderOcclusionQueries(cCamera3D *apCamera) {
 			mRenderSettings.gpuProgram->UnBind();
 		mRenderSettings.gpuProgram = _diffuseProgram;
 		_diffuseProgram->Bind();
-		Hpl1::logInfo(Hpl1::kDebugGraphics, "binding Rendered3D::_diffuseProgram");
+		Hpl1::logInfo(Hpl1::kDebugGraphics, "%s", "binding Rendered3D::_diffuseProgram");
 	}
 
 	////////////////////////

@@ -87,7 +87,7 @@ cRendererPostEffects::cRendererPostEffects(iLowLevelGraphics *apLowLevelGraphics
 
 	///////////////////////////////////////////
 	// Create programs
-	Hpl1::logInfo(Hpl1::kDebugRenderer,"Creating RendererPostEffects programs");
+	Hpl1::logInfo(Hpl1::kDebugRenderer, "%s", "Creating RendererPostEffects programs");
 
 	/////////////////
 	// Blur programs
