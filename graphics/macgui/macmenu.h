@@ -171,11 +171,6 @@ private:
 	void *_cdata;
 };
 
-class MacPopUp : public MacMenu {
-public:
-	MacPopUp(int id, const Common::Rect &bounds, MacWindowManager *wm) : MacMenu(id, bounds, wm) {}
-};
-
 } // End of namespace Graphics
 
 #endif

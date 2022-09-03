@@ -31,6 +31,7 @@
 #include "graphics/fontman.h"
 #include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/macmenu.h"
+#include "graphics/macgui/macpopupmenu.h"
 
 #include "engines/engine.h"
 
@@ -202,7 +203,7 @@ public:
 	 * @return Pointer to a new empty menu.
 	 */
 	MacMenu *addMenu();
-	MacPopUp *addPopUpMenu(int menuId);
+	MacPopUp *addPopUpMenu(int id, const char *string);
 
 	void removeMenu();
 	void activateMenu();

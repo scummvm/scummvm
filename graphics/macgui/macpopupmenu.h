@@ -19,46 +19,26 @@
  *
  */
 
-#ifndef DIRECTOR_LINGO_XLIBS_POPUPMENUXOBJ_H
-#define DIRECTOR_LINGO_XLIBS_POPUPMENUXOBJ_H
+#ifndef GRAPHICS_MACGUI_MACPOPUPMENU_H
+#define GRAPHICS_MACGUI_MACPOPUPMENU_H
 
-#include "graphics/macgui/macpopupmenu.h"
+#include "graphics/macgui/macmenu.h"
+#include "graphics/macgui/macwindowmanager.h"
 
-namespace Graphics {
-class MacPopUp;
+namespace Common {
+class U32String;
+class MacResManager;
+class PEResources;
 }
 
-namespace Director {
+namespace Graphics {
 
-class PopUpMenuXObject : public Object<PopUpMenuXObject> {
+class MacMenu;
+
+class MacPopUp : public MacMenu {
 public:
-	PopUpMenuXObject(ObjectType objType);
-	Common::HashMap<int, Graphics::MacPopUp *> popUpList;
+	MacPopUp(int id, const Common::Rect &bounds, MacWindowManager *wm) : MacMenu(id, bounds, wm) {}
 };
 
-namespace PopUpMenuXObj {
-
-extern const char *xlibName;
-extern const char *fileNames[];
-
-void open(int type);
-void close(int type);
-
-void m_new(int nargs);
-void m_appendMenu(int nargs);
-void m_disableItem(int nargs);
-void m_enableItem(int nargs);
-void m_getItem(int nargs);
-void m_getMenuID(int nargs);
-void m_popNum(int nargs);
-void m_popText(int nargs);
-void m_setItem(int nargs);
-void m_setItemMark(int nargs);
-void m_smart(int nargs);
-void m_setItemIcon(int nargs);
-
-} // End of namespace PopUpMenuXObj
-
-} // End of namespace Director
-
+} // End of namespace Graphics
 #endif

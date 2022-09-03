@@ -139,7 +139,6 @@ void PopUpMenuXObj::close(int type) {
 	}
 }
 
-
 PopUpMenuXObject::PopUpMenuXObject(ObjectType ObjectType) :Object<PopUpMenuXObject>("PopMenu") {
 	_objType = ObjectType;
 }
@@ -148,9 +147,7 @@ void PopUpMenuXObj::m_new(int nargs) {
 	Datum menuId = g_lingo->pop();
 	Datum menuList = g_lingo->pop();
 
-	auto menu = g_director->_wm->addPopUpMenu(menuId.u.i);
-	menu->addMenuItem(nullptr, Common::String("\xf0"));
-	menu->createSubMenuFromString(0, menuList.u.s->c_str(), 0);
+	Graphics::MacPopUp *menu = g_director->_wm->addPopUpMenu(menuId.u.i, menuList.u.s->c_str());
 	g_lingo->push(g_lingo->_currentMe);
 }
 
