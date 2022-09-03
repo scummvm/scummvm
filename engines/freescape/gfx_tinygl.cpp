@@ -138,7 +138,7 @@ void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint
 
 void TinyGLRenderer::renderCrossair(byte color) {
 	uint8 r, g, b;
-	_palette->getRGBAt(color, r, g, b);
+	_palette->getRGBAt(color, r, g, b); // TODO: should use opposite color
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
@@ -165,7 +165,7 @@ void TinyGLRenderer::renderCrossair(byte color) {
 
 void TinyGLRenderer::renderShoot(byte color) {
 	uint8 r, g, b;
-	_palette->getRGBAt(color, r, g, b);
+	_palette->getRGBAt(color, r, g, b); // TODO: should use opposite color
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
@@ -237,22 +237,21 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vec
 	tglPolygonOffset(-2.0f, 1.f);
 
 	if (ordinates->size() == 6) { // Line
-		_palette->getRGBAt((*colours)[0], r, g, b);
+		assert(getRGBAt((*colours)[0], r, g, b)); // It will never return false?
 		tglColor3ub(r, g, b);
 		for (int i = 0; i < int(ordinates->size()); i = i + 3)
 			vertices.push_back(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1],	(*ordinates)[i + 2]));
 		renderFace(vertices);
 
 		vertices.clear();
-		_palette->getRGBAt((*colours)[1], r, g, b);
+		assert(getRGBAt((*colours)[1], r, g, b)); // It will never return false?
 		tglColor3ub(r, g, b);
 		for (int i = ordinates->size(); i > 0; i = i - 3)
 			vertices.push_back(Math::Vector3d((*ordinates)[i-3], (*ordinates)[i-2],	(*ordinates)[i-1]));
 		renderFace(vertices);
 
 	} else {
-		if ((*colours)[0] != _keyColor) {
-			_palette->getRGBAt((*colours)[0], r, g, b);
+		if (getRGBAt((*colours)[0], r, g, b)) {
 			tglColor3ub(r, g, b);
 			for (int i = 0; i < int(ordinates->size()); i = i + 3) {
 				vertices.push_back(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1], (*ordinates)[i + 2]));
@@ -260,8 +259,7 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vec
 			renderFace(vertices);
 		}
 		vertices.clear();
-		if ((*colours)[1] != _keyColor) {
-			_palette->getRGBAt((*colours)[1], r, g, b);
+		if (getRGBAt((*colours)[1], r, g, b)) {
 			tglColor3ub(r, g, b);
 			for (int i = ordinates->size(); i > 0; i = i - 3) {
 				vertices.push_back(Math::Vector3d((*ordinates)[i-3], (*ordinates)[i-2], (*ordinates)[i-1]));
@@ -286,8 +284,7 @@ void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::V
 	for (int i = 0; i < 2; i++) {
 
 		//debug("rec color: %d", (*colours)[i]);
-		if ((*colours)[i] != _keyColor) {
-			_palette->getRGBAt((*colours)[i], r, g, b);
+		if (getRGBAt((*colours)[i], r, g, b)) {
 			tglColor3ub(r, g, b);
 			vertices.clear();
 			vertices.push_back(Math::Vector3d(origin.x(), origin.y(), origin.z()));
@@ -407,8 +404,7 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 
 	Common::Array<Math::Vector3d> face;
 	uint8 r, g, b;
-	if ((*colours)[0] != _keyColor) {
-		_palette->getRGBAt((*colours)[0], r, g, b);
+	if (getRGBAt((*colours)[0], r, g, b)) {
 		tglColor3ub(r, g, b);
 		face.push_back(vertices[6]);
 		face.push_back(vertices[7]);
@@ -419,8 +415,7 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 		face.clear();
 	}
 
-	if ((*colours)[1] != _keyColor) {
-		_palette->getRGBAt((*colours)[1], r, g, b);
+	if (getRGBAt((*colours)[1], r, g, b)) {
 		tglColor3ub(r, g, b);
 
 		face.push_back(vertices[7]);
@@ -431,8 +426,7 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 		face.clear();
 	}
 
-	if ((*colours)[2] != _keyColor) {
-		_palette->getRGBAt((*colours)[2], r, g, b);
+	if (getRGBAt((*colours)[2], r, g, b)) {
 		tglColor3ub(r, g, b);
 
 		face.push_back(vertices[4]);
@@ -443,8 +437,7 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 		face.clear();
 	}
 
-	if ((*colours)[3] != _keyColor) {
-		_palette->getRGBAt((*colours)[3], r, g, b);
+	if (getRGBAt((*colours)[3], r, g, b)) {
 		tglColor3ub(r, g, b);
 
 		face.push_back(vertices[5]);
@@ -455,8 +448,7 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 		face.clear();
 	}
 
-	if ((*colours)[4] != _keyColor) {
-		_palette->getRGBAt((*colours)[4], r, g, b);
+	if (getRGBAt((*colours)[4], r, g, b)) {
 		tglColor3ub(r, g, b);
 
 		face.push_back(vertices[0]);
@@ -467,8 +459,7 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 		face.clear();
 	}
 
-	if ((*colours)[5] != _keyColor) {
-		_palette->getRGBAt((*colours)[5], r, g, b);
+	if (getRGBAt((*colours)[5], r, g, b)) {
 		tglColor3ub(r, g, b);
 
 		face.push_back(vertices[7]);
@@ -489,8 +480,7 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	uint8 r, g, b;
 
 	// Face 0
-	if ((*colours)[0] != _keyColor) {
-		_palette->getRGBAt((*colours)[0], r, g, b);
+	if (getRGBAt((*colours)[0], r, g, b)) {
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
 		tglVertex3f(origin.x(),	origin.y(),				origin.z());
@@ -504,8 +494,7 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	}
 
 	// Face 1
-	if ((*colours)[1] != _keyColor) {
-		_palette->getRGBAt((*colours)[1], r, g, b);
+	if (getRGBAt((*colours)[1], r, g, b)) {
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
 		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z());
@@ -519,8 +508,7 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	}
 
 	// Face 2
-	if ((*colours)[2] != _keyColor) {
-		_palette->getRGBAt((*colours)[2], r, g, b);
+	if (getRGBAt((*colours)[2], r, g, b)) {
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
 		tglVertex3f(origin.x() + size.x(),	origin.y(),	origin.z());
@@ -534,8 +522,7 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	}
 
 	// Face 3
-	if ((*colours)[3] != _keyColor) {
-		_palette->getRGBAt((*colours)[3], r, g, b);
+	if (getRGBAt((*colours)[3], r, g, b)) {
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
 		tglVertex3f(origin.x(),				origin.y() + size.y(),	origin.z());
@@ -549,8 +536,7 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	}
 
 	// Face 1
-	if ((*colours)[4] != _keyColor) {
-		_palette->getRGBAt((*colours)[4], r, g, b);
+	if (getRGBAt((*colours)[4], r, g, b)) {
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
 		tglVertex3f(origin.x(),				origin.y() + size.y(),	origin.z());
@@ -564,8 +550,7 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	}
 
 	// Face 0
-	if ((*colours)[5] != _keyColor) {
-		_palette->getRGBAt((*colours)[5], r, g, b);
+	if (getRGBAt((*colours)[5], r, g, b)) {
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
 		tglVertex3f(origin.x(),		        origin.y(),				origin.z() + size.z());
@@ -581,14 +566,14 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 
 void TinyGLRenderer::drawSky(uint8 color) {
 	uint8 r, g, b;
-	_palette->getRGBAt(color, r, g, b);
+	assert(getRGBAt(color, r, g, b)); // TODO: move check inside this function
 	tglClearColor(r / 255., g / 255., b / 255., 1.0);
 	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT);
 }
 
 void TinyGLRenderer::drawFloor(uint8 color) {
 	uint8 r, g, b;
-	_palette->getRGBAt(color, r, g, b);
+	assert(getRGBAt(color, r, g, b)); // TODO: move check inside this function
 	tglColor3ub(r, g, b);
 	tglBegin(TGL_QUADS);
 	tglVertex3f(-100000.f, 0.f, -100000.f);

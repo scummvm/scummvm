@@ -40,6 +40,7 @@ Renderer::Renderer(OSystem *system)
 	_originalPixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 	_palettePixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
 	_keyColor = -1;
+	_missingColor = -1;
 	_palette = nullptr;
 	_colorMap = nullptr;
 }
@@ -53,6 +54,36 @@ Graphics::Surface *Renderer::convertFromPalette(Graphics::PixelBuffer *rawsurf) 
 	surf->convertToInPlace(_currentPixelFormat, _palette->getRawBuffer());
 	return surf;
 }
+
+bool Renderer::getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
+
+	if (index == _keyColor)
+		return false;
+
+	if (index == 0) {
+		_palette->getRGBAt(_missingColor, r, g, b);
+		return true;
+	}
+
+	//assert(index-1 < _colorMap->size());
+	byte *entry = (*_colorMap)[index-1];
+	uint8 color = 0;
+	uint8 acc = 1;
+	for (int i = 0; i < 4; i++) {
+		byte be = *entry;
+		assert(be == 0 || be == 0xff);
+
+		if (be == 0xff)
+			color = color + acc;
+
+		acc = acc << 1;
+		entry++;
+	}
+	assert(color < 16);
+	_palette->getRGBAt(color, r, g, b);
+	return true;
+}
+
 
 Common::Rect Renderer::viewport() const {
 	return _screenViewport;

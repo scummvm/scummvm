@@ -101,9 +101,13 @@ public:
 	virtual void drawFloor(uint8 color) = 0;
 
 	Common::Rect viewport() const;
+
+	// palette
+	bool getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b);
 	Graphics::PixelBuffer *_palette;
 	ColorMap *_colorMap;
 	int _keyColor;
+	int _missingColor;
 
 	/**
 	 * Select the window where to render
