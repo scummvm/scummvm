@@ -209,25 +209,27 @@ void cSubMeshEntity::UpdateGraphics(cCamera3D *apCamera, float afFrameTime, cRen
 
 			const unsigned char *pBoneIdx = &mpSubMesh->mpVertexBones[vtx * 4];
 
-			const cMatrixf &mtxTransform = mpMeshEntity->mvBoneMatrices[*pBoneIdx];
+			{
+				const cMatrixf &mtxTransform = mpMeshEntity->mvBoneMatrices[*pBoneIdx];
 
-			// Log("Vtx: %d\n",vtx);
-			// Log("Boneidx: %d Count %d Weight: %f vtx: %d\n",(int)*pBoneIdx,lCount, *pWeight,vtx);
+				// Log("Vtx: %d\n",vtx);
+				// Log("Boneidx: %d Count %d Weight: %f vtx: %d\n",(int)*pBoneIdx,lCount, *pWeight,vtx);
 
-			// ATTENTION: Some optimizing might be done by accumulating the matrix instead.
-			// THIS is really unsure since it seems like it will result in more math, matrix mul = 8*4 calc
-			// Vertex mul with matrix is 3 * 3 calculations
-			// this means: vertex= 9*3 = 27, matrix = 32
+				// ATTENTION: Some optimizing might be done by accumulating the matrix instead.
+				// THIS is really unsure since it seems like it will result in more math, matrix mul = 8*4 calc
+				// Vertex mul with matrix is 3 * 3 calculations
+				// this means: vertex= 9*3 = 27, matrix = 32
 
-			MatrixFloatTransformSet(pSkinPos, mtxTransform, pBindPos, *pWeight);
+				MatrixFloatTransformSet(pSkinPos, mtxTransform, pBindPos, *pWeight);
 
-			MatrixFloatRotateSet(pSkinNormal, mtxTransform, pBindNormal, *pWeight);
+				MatrixFloatRotateSet(pSkinNormal, mtxTransform, pBindNormal, *pWeight);
 
-			MatrixFloatRotateSet(pSkinTangent, mtxTransform, pBindTangent, *pWeight);
+				MatrixFloatRotateSet(pSkinTangent, mtxTransform, pBindTangent, *pWeight);
 
-			++pWeight;
-			++pBoneIdx;
-			++lCount;
+				++pWeight;
+				++pBoneIdx;
+				++lCount;
+			}
 
 			// Iterate weights until 0 is found or count < 4
 			while (*pWeight != 0 && lCount < 4) {
