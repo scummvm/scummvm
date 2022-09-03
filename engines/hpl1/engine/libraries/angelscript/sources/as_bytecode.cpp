@@ -50,14 +50,14 @@
 
 BEGIN_AS_NAMESPACE
 
-asCByteCode::asCByteCode(asCScriptEngine *engine)
+asCByteCode::asCByteCode(asCScriptEngine *_engine)
 {
 	first = 0;
 	last  = 0;
 	largestStackUsed = -1;
 	temporaryVariables = 0;
 
-	this->engine = engine;
+	this->engine = _engine;
 }
 
 asCByteCode::~asCByteCode()

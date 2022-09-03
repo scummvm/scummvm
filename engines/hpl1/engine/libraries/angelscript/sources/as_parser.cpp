@@ -61,10 +61,10 @@
 
 BEGIN_AS_NAMESPACE
 
-asCParser::asCParser(asCBuilder *builder)
+asCParser::asCParser(asCBuilder *_builder)
 {
-	this->builder    = builder;
-	this->engine     = builder->engine;
+	this->builder    = _builder;
+	this->engine     = _builder->engine;
 
 	script                = 0;
 	scriptNode            = 0;

@@ -76,7 +76,7 @@ BEGIN_AS_NAMESPACE
 //       Instead the compiler should keep track of references in TypeInfo, where it should also state how the reference
 //       is currently stored, i.e. in variable, in register, on stack, etc.
 
-asCCompiler::asCCompiler(asCScriptEngine *engine) : byteCode(engine)
+asCCompiler::asCCompiler(asCScriptEngine *_engine) : byteCode(_engine)
 {
 	builder = 0;
 	script = 0;

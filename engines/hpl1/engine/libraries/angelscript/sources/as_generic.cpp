@@ -46,12 +46,12 @@ BEGIN_AS_NAMESPACE
 //                         doesn't have to count the position of the argument with every call
 
 // internal
-asCGeneric::asCGeneric(asCScriptEngine *engine, asCScriptFunction *sysFunction, void *currentObject, asDWORD *stackPointer)
+asCGeneric::asCGeneric(asCScriptEngine *_engine, asCScriptFunction *_sysFunction, void *_currentObject, asDWORD *_stackPointer)
 {
-	this->engine = engine;
-	this->sysFunction = sysFunction;
-	this->currentObject = currentObject;
-	this->stackPointer = stackPointer;
+	this->engine = _engine;
+	this->sysFunction = _sysFunction;
+	this->currentObject = _currentObject;
+	this->stackPointer = _stackPointer;
 	
 	objectRegister = 0;
 	returnVal = 0;

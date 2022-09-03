@@ -193,7 +193,7 @@ struct asSEnumValue
 class asCEnumType : public asCTypeInfo
 {
 public:
-	asCEnumType(asCScriptEngine *engine) : asCTypeInfo(engine) {}
+	asCEnumType(asCScriptEngine *_engine) : asCTypeInfo(_engine) {}
 	~asCEnumType();
 
 	asCArray<asSEnumValue*> enumValues;
@@ -208,7 +208,7 @@ protected:
 class asCTypedefType : public asCTypeInfo
 {
 public:
-	asCTypedefType(asCScriptEngine *engine) : asCTypeInfo(engine) {}
+	asCTypedefType(asCScriptEngine *_engine) : asCTypeInfo(_engine) {}
 	~asCTypedefType();
 
 	void DestroyInternal();

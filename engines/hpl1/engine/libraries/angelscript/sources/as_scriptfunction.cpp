@@ -341,7 +341,7 @@ int asCScriptFunction::ParseListPattern(asSListPatternNode *&target, const char 
 }
 
 // internal
-asCScriptFunction::asCScriptFunction(asCScriptEngine *engine, asCModule *mod, asEFuncType _funcType)
+asCScriptFunction::asCScriptFunction(asCScriptEngine *_engine, asCModule *mod, asEFuncType _funcType)
 {
 	funcType               = _funcType;
 	if( funcType == asFUNC_DELEGATE )
@@ -356,7 +356,7 @@ asCScriptFunction::asCScriptFunction(asCScriptEngine *engine, asCModule *mod, as
 		externalRefCount.set(0);
 	}
 
-	this->engine           = engine;
+	this->engine           = _engine;
 	this->scriptData       = 0;
 	module                 = mod;
 	objectType             = 0;
