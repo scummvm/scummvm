@@ -394,9 +394,9 @@ bool cWidgetTextBox::OnMouseDoubleClick(cGuiMessageData &aData) {
 
 	/////////////////////////////
 	// Get space to the left
-	for (size_t i = mlMarkerCharPos + 1; i < (int)msText.size(); ++i) {
-		if (msText[i] == _W(' ') || i == (int)msText.size() - 1) {
-			if (i == (int)msText.size() - 1)
+	for (size_t i = mlMarkerCharPos + 1; i < (size_t)msText.size(); ++i) {
+		if (msText[i] == _W(' ') || i == (size_t)msText.size() - 1) {
+			if (i == (size_t)msText.size() - 1)
 				SetMarkerPos((int)msText.size() - 1);
 			else
 				SetMarkerPos((int)i);
