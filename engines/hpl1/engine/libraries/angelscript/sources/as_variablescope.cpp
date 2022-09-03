@@ -44,9 +44,9 @@
 
 BEGIN_AS_NAMESPACE
 
-asCVariableScope::asCVariableScope(asCVariableScope *parent)
+asCVariableScope::asCVariableScope(asCVariableScope *_parent)
 {
-	this->parent    = parent;
+	this->parent    = _parent;
 	Reset();
 }
 
