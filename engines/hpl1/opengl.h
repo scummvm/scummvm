@@ -30,7 +30,7 @@
 
 namespace Graphics {
 
-class Surface;
+struct Surface;
 
 }
 
