@@ -70,6 +70,6 @@ public:
 									 float afMaxPercent, unsigned int alBufferSize) = 0;
 };
 
-}; // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MOUSE_H

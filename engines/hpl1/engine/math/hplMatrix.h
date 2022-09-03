@@ -274,6 +274,6 @@ public:
 	}
 };
 
-}; // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MATRIX_H

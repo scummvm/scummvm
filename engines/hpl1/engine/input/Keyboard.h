@@ -74,6 +74,6 @@ public:
 	virtual eKey StringToKey(tString) = 0;
 };
 
-}; // namespace hpl
+} // namespace hpl
 
 #endif // HPL_KEYBOARD_H

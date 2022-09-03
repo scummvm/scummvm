@@ -663,7 +663,7 @@ void dgWorld::Update(dgFloat32 timestep) {
 
 OnGetPerformanceCountCallback dgWorld::GetPerformaceFuntion() const {
 	return m_getPerformanceCount;
-};
+}
 
 void dgWorld::SetPerfomanceCounter(OnGetPerformanceCountCallback callback) {
 	m_threadsManager.SetPerfomanceCounter(callback);

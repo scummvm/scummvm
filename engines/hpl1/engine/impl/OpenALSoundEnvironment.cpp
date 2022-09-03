@@ -120,4 +120,4 @@ bool cOpenALSoundEnvironment::CreateFromFile(const tString &asFile) {
 	return true;
 }
 
-}; // namespace hpl
+} // namespace hpl

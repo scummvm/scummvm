@@ -85,7 +85,7 @@ bool dgMeshTreeCSGFace::CheckConvex(const dgHugeVector &normal) const {
 		e0 = e1.Scale(dgGoogol(-1.0f));
 	}
 	return true;
-};
+}
 
 void dgMeshTreeCSGFace::MergeMissingVertex(const dgMeshTreeCSGFace *const face) {
 	for (dgMeshTreeCSGFace::dgListNode *outNode = GetFirst();
