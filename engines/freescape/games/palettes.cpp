@@ -62,25 +62,7 @@ void FreescapeEngine::loadColorPalette() {
 }
 
 uint8 FreescapeEngine::remapColor(uint8 index) {
-
-	if (index == 255 || index == 0)
-		return index;
-
-	byte *entry = _colorMap[index-1];
-	uint8 color = 0;
-	uint8 acc = 1;
-	for (int i = 0; i < 4; i++) {
-		byte b = *entry;
-		assert(b == 0 || b == 0xff);
-
-		if (b == 0xff)
-			color = color + acc;
-
-		acc = acc << 1;
-		entry++;
-	}
-	assert(color < 16);
-	return color;
+	return index;
 }
 
 
