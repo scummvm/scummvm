@@ -120,7 +120,7 @@ void FreescapeEngine::playSound(int index) {
 
 		case 11: // ???
 			if (_usePrerecordedSounds) {
-				playWav("???.wav");
+				//playWav("???.wav");
 				//_system->delayMillis(50);
 			} else {
 				playSoundConst(82, 60);
@@ -192,7 +192,7 @@ void FreescapeEngine::playSound(int index) {
 
 		case 19:
 			if (_usePrerecordedSounds) {
-				playWav("???.wav");
+				//playWav("???.wav");
 				//_system->delayMillis(50);
 			} else {
 				playSoundConst(82, 60);
