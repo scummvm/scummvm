@@ -274,6 +274,6 @@ private:
 	bool mbRespawn;
 };
 
-}; // namespace hpl
+} // namespace hpl
 
 #endif // HPL_PARTICLE_EMITTER_3D_USER_DATA_H

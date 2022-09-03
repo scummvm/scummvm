@@ -144,6 +144,6 @@ private:
 	iMouse *mpMouse;
 	iKeyboard *mpKeyboard;
 };
-}; // namespace hpl
+} // namespace hpl
 
 #endif // HPL_INPUT_H

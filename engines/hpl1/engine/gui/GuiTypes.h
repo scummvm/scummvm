@@ -323,6 +323,6 @@ typedef tGuiGfxElementList::iterator tGuiGfxElementListIt;
 
 //--------------------------------
 
-}; // namespace hpl
+} // namespace hpl
 
 #endif // HPL_GAME_TYPES_H

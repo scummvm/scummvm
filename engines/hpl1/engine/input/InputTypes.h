@@ -220,6 +220,6 @@ struct cKeyPress {
 	int mlModifier;
 };
 
-}; // namespace hpl
+} // namespace hpl
 
 #endif // HPL_INPUT_TYPES_H

@@ -69,6 +69,6 @@ private:
 	cLowLevelInputSDL *_lowLevelSystem;
 };
 
-}; // namespace hpl
+} // namespace hpl
 
 #endif // HPL_KEYBOARD_SDL_H

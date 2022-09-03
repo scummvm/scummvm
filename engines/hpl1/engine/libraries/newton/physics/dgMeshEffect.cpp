@@ -1134,7 +1134,7 @@ void dgMeshEffect::PackVertexArrays() {
 		m_attib = attibArray;
 		m_maxAtribCount = m_atribCount;
 	}
-};
+}
 
 #ifdef __USE_DOUBLE_PRECISION__
 void dgMeshEffect::AddPolygon(dgInt32 count, const dgFloat32 *const vertexList, dgInt32 strideIndBytes, dgInt32 material)

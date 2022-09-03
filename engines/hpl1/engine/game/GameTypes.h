@@ -44,6 +44,6 @@ class cScriptVar : public iSerializable {
 typedef std::map<tString, cScriptVar> tScriptVarMap;
 typedef tScriptVarMap::iterator tScriptVarMapIt;
 
-}; // namespace hpl
+} // namespace hpl
 
 #endif // HPL_GAME_TYPES_H

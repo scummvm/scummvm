@@ -84,6 +84,6 @@ private:
 	iLowLevelGraphics *_lowLevelGraphics;
 };
 
-}; // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MOUSE_SDL_H

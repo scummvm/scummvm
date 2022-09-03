@@ -87,6 +87,6 @@ private:
 typedef std::vector<cResourceImage *> tResourceImageVec;
 typedef tResourceImageVec::iterator tResourceImageVecIt;
 
-}; // namespace hpl
+} // namespace hpl
 
 #endif // HPL_RESOURCE_IMAGE_H

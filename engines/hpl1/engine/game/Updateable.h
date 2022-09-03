@@ -58,6 +58,6 @@ public:
 private:
 	tString msName;
 };
-}; // namespace hpl
+} // namespace hpl
 
 #endif // HPL_UPDATEABLE_H

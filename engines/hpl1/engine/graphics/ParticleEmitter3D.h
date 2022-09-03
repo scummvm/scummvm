@@ -172,6 +172,6 @@ protected:
 
 	// ---
 };
-}; // namespace hpl
+} // namespace hpl
 
 #endif // HPL_PARTICLE_EMITTER_3D_H
