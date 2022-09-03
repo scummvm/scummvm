@@ -9914,7 +9914,7 @@ int asCCompiler::CompileVariableAccess(const asCString &name, const asCString &s
 				return -1;
 			}
 
-#if AS_DEBUG
+#ifdef AS_DEBUG
 			// If it is not a property, it may still be the name of a method which can be used to create delegates
 			asCObjectType *ot = outFunc->objectType;
 			asCScriptFunction *func = 0;
