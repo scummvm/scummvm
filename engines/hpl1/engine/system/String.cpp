@@ -575,7 +575,7 @@ tStringVec &cString::GetStringVec(const tString &asData, tStringVec &avVec, tStr
 		} else {
 			start = true;
 			str += c;
-			if (i == asData.length() - 1)
+			if (i == (int)asData.length() - 1)
 				avVec.push_back(str);
 		}
 	}
