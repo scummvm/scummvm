@@ -52,10 +52,6 @@ Common::Platform MTropolisEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
-uint16 MTropolisEngine::getVersion() const {
-	return _gameDescription->version;
-}
-
 } // End of namespace MTropolis
 
 class MTropolisMetaEngine : public AdvancedMetaEngine {

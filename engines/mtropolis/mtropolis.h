@@ -56,7 +56,6 @@ public:
 
 	const MTropolisGameDescription *_gameDescription;
 	uint32 getGameID() const;
-	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
 
 	bool promptSave(ISaveWriter *writer, const Graphics::Surface *screenshotOverride) override;

@@ -41,6 +41,45 @@ namespace MTropolis {
 
 namespace Boot {
 
+class GameDataHandler;
+
+struct ManifestSubtitlesDef {
+	const char *linesTablePath;
+	const char *speakerTablePath;
+	const char *assetMappingTablePath;
+	const char *modifierMappingTablePath;
+};
+
+enum ManifestFileType {
+	MTFT_AUTO = 0,       // Automatic, determine based on extension or file type
+	MTFT_PLAYER = 1,     // mTropolis Player program
+	MTFT_EXTENSION = 2,  // Extension (only use this if the extension contains cursors, otherwise use MTFT_SPECIAL if it has something else useful, or exclude it if not)
+	MTFT_MAIN = 3,       // Main segment
+	MTFT_ADDITIONAL = 4, // Additional segment
+	MTFT_VIDEO = 5,      // External video file
+	MTFT_SPECIAL = 6,    // Some other kind of file, or something that might be incorrectly detected as a different type of file (e.g. installers)
+};
+
+struct ManifestFile {
+	const char *fileName;
+	ManifestFileType fileType;
+};
+
+struct Game {
+	MTropolisGameBootID bootID;
+	const ManifestFile *manifest;
+	const char **directories;
+	const ManifestSubtitlesDef *subtitlesDef;
+	GameDataHandler *(*gameDataFactory)(const Boot::Game &game, const MTropolisGameDescription &desc);
+};
+
+template<class T>
+struct GameDataHandlerFactory {
+	static GameDataHandler *create(const Boot::Game &game, const MTropolisGameDescription &desc) {
+		return new T(game, desc);
+	}
+};
+
 struct FileIdentification {
 	union Tag {
 		uint32 value;
@@ -50,7 +89,7 @@ struct FileIdentification {
 	FileIdentification();
 
 	Common::String fileName;
-	MTropolisFileType category;
+	ManifestFileType category;
 
 	Tag macType;
 	Tag macCreator;
@@ -73,12 +112,16 @@ static void initResManForFile(FileIdentification &f) {
 
 class GameDataHandler {
 public:
+	GameDataHandler(const Boot::Game &game, const MTropolisGameDescription &desc);
 	virtual ~GameDataHandler();
 
 	virtual void unpackAdditionalFiles(Common::Array<Common::SharedPtr<ProjectPersistentResource> > &persistentResources, Common::Array<FileIdentification> &files);
 	virtual void categorizeSpecialFiles(Common::Array<FileIdentification> &files);
 	virtual void addPlugIns(ProjectDescription &projectDesc, const Common::Array<FileIdentification> &files);
 };
+
+GameDataHandler::GameDataHandler(const Boot::Game &game, const MTropolisGameDescription &desc) {
+}
 
 GameDataHandler::~GameDataHandler() {
 }
@@ -122,7 +165,7 @@ Common::SharedPtr<ProjectPersistentResource> PersistentResource<T>::wrap(const C
 
 class ObsidianGameDataHandler : public GameDataHandler {
 public:
-	explicit ObsidianGameDataHandler(const MTropolisGameDescription &gameDesc);
+	ObsidianGameDataHandler(const Game &game, const MTropolisGameDescription &gameDesc);
 
 	void unpackAdditionalFiles(Common::Array<Common::SharedPtr<ProjectPersistentResource> > &persistentResources, Common::Array<FileIdentification> &files) override;
 	void categorizeSpecialFiles(Common::Array<FileIdentification> &files) override;
@@ -140,7 +183,7 @@ private:
 	Common::SharedPtr<Common::Archive> _installerArchive;
 };
 
-ObsidianGameDataHandler::ObsidianGameDataHandler(const MTropolisGameDescription &gameDesc) {
+ObsidianGameDataHandler::ObsidianGameDataHandler(const Game &game, const MTropolisGameDescription &gameDesc) : GameDataHandler(game, gameDesc) {
 	_isMac = (gameDesc.desc.platform == Common::kPlatformMacintosh);
 	_isEnglish = (gameDesc.desc.language == Common::EN_ANY);
 	_isRetail = ((gameDesc.desc.flags & ADGF_DEMO) == 0);
@@ -527,7 +570,292 @@ static bool loadCursorsWin(FileIdentification &f, CursorGraphicCollection &curso
 	return true;
 }
 
-} // namespace Boot
+namespace Games {
+
+const ManifestFile obsidianRetailMacEnFiles[] = {
+	{"Obsidian Installer", MTFT_SPECIAL},
+	{"Obsidian Data 2", MTFT_ADDITIONAL},
+	{"Obsidian Data 3", MTFT_ADDITIONAL},
+	{"Obsidian Data 4", MTFT_ADDITIONAL},
+	{"Obsidian Data 5", MTFT_ADDITIONAL},
+	{"Obsidian Data 6", MTFT_ADDITIONAL},
+	{nullptr, MTFT_AUTO}
+};
+
+const ManifestFile obsidianDemoMacEnFiles[] = {
+	{"Obsidian Demo", MTFT_PLAYER},
+	{"Basic.rPP", MTFT_EXTENSION},
+	{"Experimental.rPP", MTFT_EXTENSION},
+	{"Extras.rPP", MTFT_EXTENSION},
+	{"mCursors.cPP", MTFT_EXTENSION},
+	{"mNet.rPP", MTFT_EXTENSION},
+	{"Obsidian.cPP", MTFT_EXTENSION},
+	{"RSGKit.rPP", MTFT_SPECIAL},
+	{"Obs Demo Large w Sega", MTFT_MAIN},
+	{nullptr, MTFT_AUTO}
+};
+
+const ManifestFile obsidianRetailWinEnFiles[] = {
+	{"Obsidian.exe", MTFT_PLAYER},
+	{"Obsidian.c95", MTFT_EXTENSION},
+	{"MCURSORS.C95", MTFT_EXTENSION},
+	{"RSGKit.r95", MTFT_SPECIAL},
+	{"Obsidian Data 1.MPL", MTFT_MAIN},
+	{"Obsidian Data 2.MPX", MTFT_ADDITIONAL},
+	{"Obsidian Data 3.MPX", MTFT_ADDITIONAL},
+	{"Obsidian Data 4.MPX", MTFT_ADDITIONAL},
+	{"Obsidian Data 5.MPX", MTFT_ADDITIONAL},
+	{"Obsidian Data 6.MPX", MTFT_ADDITIONAL},
+	{nullptr, MTFT_AUTO}
+};
+
+const ManifestFile obsidianDemoWinEnFiles1[] = {
+	{"OBSIDIAN.EXE", MTFT_PLAYER},
+	{"OBSIDIAN.R95", MTFT_EXTENSION},
+	{"TEXTWORK.R95", MTFT_EXTENSION},
+	{"EXPRMNTL.R95", MTFT_EXTENSION},
+	{"MCURSORS.C95", MTFT_EXTENSION},
+	{"OBSIDIAN DEMO DATA.MPL", MTFT_MAIN},
+	{nullptr, MTFT_AUTO}
+};
+
+const ManifestFile obsidianDemoWinEnFiles2[] = {
+	{"OBSIDIAN.EXE", MTFT_PLAYER},
+	{"OBSIDIAN.R95", MTFT_EXTENSION},
+	{"TEXTWORK.R95", MTFT_EXTENSION},
+	{"EXPRMNTL.R95", MTFT_EXTENSION},
+	{"MCURSORS.C95", MTFT_EXTENSION},
+	{"OBSIDI~1.MPL", MTFT_MAIN},
+	{nullptr, MTFT_AUTO}
+};
+
+const ManifestFile obsidianDemoWinEnFiles3[] = {
+	{"OBSIDIAN DEMO.EXE", MTFT_PLAYER},
+	{"OBSIDIAN1.R95", MTFT_EXTENSION},
+	{"OBSIDIAN2.R95", MTFT_EXTENSION},
+	{"OBSIDIAN3.R95", MTFT_EXTENSION},
+	{"OBSIDIAN4.C95", MTFT_EXTENSION},
+	{"OBSIDIAN DEMO DATA.MPL", MTFT_MAIN},
+	{nullptr, MTFT_AUTO}
+};
+
+const ManifestFile obsidianDemoWinEnFiles4[] = {
+	{"OBSIDIAN.EXE", MTFT_PLAYER},
+	{"OBSIDIAN.R95", MTFT_EXTENSION},
+	{"TEXTWORK.R95", MTFT_EXTENSION},
+	{"EXPRMNTL.R95", MTFT_EXTENSION},
+	{"MCURSORS.C95", MTFT_EXTENSION},
+	{"OBSIDIAN.MPL", MTFT_MAIN},
+	{nullptr, MTFT_AUTO}
+};
+
+const ManifestFile obsidianDemoWinEnFiles5[] = {
+	{"OBSIDI~1.EXE", MTFT_PLAYER},
+	{"OBSIDIAN.R95", MTFT_EXTENSION},
+	{"TEXTWORK.R95", MTFT_EXTENSION},
+	{"EXPRMNTL.R95", MTFT_EXTENSION},
+	{"MCURSORS.C95", MTFT_EXTENSION},
+	{"OBSIDI~1.MPL", MTFT_MAIN},
+	{nullptr, MTFT_AUTO}
+};
+
+const ManifestFile obsidianDemoWinEnFiles6[] = {
+	{"OBSIDIAN.EXE", MTFT_PLAYER},
+	{"OBSIDIAN.R95", MTFT_EXTENSION},
+	{"TEXTWORK.R95", MTFT_EXTENSION},
+	{"EXPRMNTL.R95", MTFT_EXTENSION},
+	{"MCURSORS.C95", MTFT_EXTENSION},
+	{"OBSIDIAN DEMO DATA.MPL", MTFT_MAIN},
+	{nullptr, MTFT_AUTO}
+};
+
+const ManifestFile obsidianDemoWinEnFiles7[] = {
+	{"OBSIDIAN DEMO.EXE", MTFT_PLAYER},
+	{"OBSIDIAN1.R95", MTFT_EXTENSION},
+	{"OBSIDIAN2.R95", MTFT_EXTENSION},
+	{"OBSIDIAN3.R95", MTFT_EXTENSION},
+	{"OBSIDIAN4.C95", MTFT_EXTENSION},
+	{"OBSIDIAN DEMO DATA.MPL", MTFT_MAIN},
+	{nullptr, MTFT_AUTO}
+};
+
+
+
+const ManifestFile obsidianRetailWinDeFiles[] = {
+	{"Obsidian.exe", MTFT_PLAYER},
+	{"Obsidian.c95", MTFT_EXTENSION},
+	{"MCURSORS.C95", MTFT_EXTENSION},
+	{"Obsidian Data 1.MPL", MTFT_MAIN},
+	{"Obsidian Data 2.MPX", MTFT_ADDITIONAL},
+	{"Obsidian Data 3.MPX", MTFT_ADDITIONAL},
+	{"Obsidian Data 4.MPX", MTFT_ADDITIONAL},
+	{"Obsidian Data 5.MPX", MTFT_ADDITIONAL},
+	{"Obsidian Data 6.MPX", MTFT_ADDITIONAL},
+	{nullptr, MTFT_AUTO}
+};
+
+
+const char *obsidianRetailWinDirectories[] = {
+	"Obsidian",
+	"Obsidian/RESOURCE",
+	"RESOURCE",
+	nullptr
+};
+
+const ManifestSubtitlesDef obsidianRetailEnSubtitlesDef = {
+	"subtitles_lines_obsidian_en.csv",
+	"subtitles_speakers_obsidian_en.csv",
+	"subtitles_asset_mapping_obsidian_en.csv",
+
+	// Modifier mapping is the same for both Mac and Win retail, since the MIDI GUIDs are all identical.
+	"subtitles_modifier_mapping_obsidian_en.csv"
+};
+
+const ManifestFile mtiRetailWinFiles[] = {
+	{"MTPLAY32.EXE", MTFT_PLAYER},
+	{"GROUP3.R95", MTFT_EXTENSION},
+	{"MTIKIT.R95", MTFT_EXTENSION},
+	{"MTI1.MPL", MTFT_MAIN},
+	{"MTI2.MPX", MTFT_ADDITIONAL},
+	{"MTI3.MPX", MTFT_ADDITIONAL},
+	{"MTI4.MPX", MTFT_ADDITIONAL},
+	{"1.AVI", MTFT_VIDEO},
+	{"2.AVI", MTFT_VIDEO},
+	{"3.AVI", MTFT_VIDEO},
+	{"4.AVI", MTFT_VIDEO},
+	{"5.AVI", MTFT_VIDEO},
+	{"6.AVI", MTFT_VIDEO},
+	{"7.AVI", MTFT_VIDEO},
+	{"8.AVI", MTFT_VIDEO},
+	{"9.AVI", MTFT_VIDEO},
+	{"10.AVI", MTFT_VIDEO},
+	{nullptr, MTFT_AUTO}};
+
+const ManifestFile mtiDemoWinFiles[] = {
+	{"MTIWIN95.EXE", MTFT_PLAYER},
+	{"GROUP3.R95", MTFT_EXTENSION},
+	{"MTIKIT.R95", MTFT_EXTENSION},
+	{"MUP_DATA.MPL", MTFT_MAIN},
+	{nullptr, MTFT_AUTO}
+};
+
+const char *mtiRetailWinDirectories[] = {
+	"MTPLAY32",
+	"MTPLAY32/RESOURCE",
+	"VIDEO",
+	nullptr
+};
+
+const Game games[] = {
+	// Obsidian - Retail - Macintosh - English
+	{
+		MTBOOT_OBSIDIAN_RETAIL_MAC_EN,
+		obsidianRetailMacEnFiles,
+		nullptr,
+		&obsidianRetailEnSubtitlesDef,
+		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+	},
+	// Obsidian - Retail - Windows - English
+	{
+		MTBOOT_OBSIDIAN_RETAIL_WIN_EN,
+		obsidianRetailWinEnFiles,
+		obsidianRetailWinDirectories,
+		&obsidianRetailEnSubtitlesDef,
+		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+	},
+	// Obsidian - Retail - Windows - German
+	{
+		MTBOOT_OBSIDIAN_RETAIL_WIN_DE,
+		obsidianRetailWinDeFiles,
+		obsidianRetailWinDirectories,
+		nullptr,
+		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+	},
+	// Obsidian - Demo - Macintosh - English
+	{
+		MTBOOT_OBSIDIAN_DEMO_MAC_EN,
+		obsidianDemoMacEnFiles,
+		nullptr,
+		nullptr,
+		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+	},
+	// Obsidian - Demo - Windows - English - Variant 1
+	{
+		MTBOOT_OBSIDIAN_DEMO_WIN_EN_1,
+		obsidianDemoWinEnFiles1,
+		nullptr,
+		nullptr,
+		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+	},
+	// Obsidian - Demo - Windows - English - Variant 2
+	{
+		MTBOOT_OBSIDIAN_DEMO_WIN_EN_2,
+		obsidianDemoWinEnFiles2,
+		nullptr,
+		nullptr,
+		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+	},
+	// Obsidian - Demo - Windows - English - Variant 3
+	{
+		MTBOOT_OBSIDIAN_DEMO_WIN_EN_3,
+		obsidianDemoWinEnFiles3,
+		nullptr,
+		nullptr,
+		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+	},
+	// Obsidian - Demo - Windows - English - Variant 4
+	{
+		MTBOOT_OBSIDIAN_DEMO_WIN_EN_4,
+		obsidianDemoWinEnFiles4,
+		nullptr,
+		nullptr,
+		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+	},
+	// Obsidian - Demo - Windows - English - Variant 5
+	{
+		MTBOOT_OBSIDIAN_DEMO_WIN_EN_5,
+		obsidianDemoWinEnFiles5,
+		nullptr,
+		nullptr,
+		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+	},
+	// Obsidian - Demo - Windows - English - Variant 6
+	{
+		MTBOOT_OBSIDIAN_DEMO_WIN_EN_6,
+		obsidianDemoWinEnFiles6,
+		nullptr,
+		nullptr,
+		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+	},
+	// Obsidian - Demo - Windows - English - Variant 7
+	{
+		MTBOOT_OBSIDIAN_DEMO_WIN_EN_7,
+		obsidianDemoWinEnFiles7,
+		nullptr,
+		nullptr,
+		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+	},
+	// Muppet Treasure Island - Retail - Windows - Multiple languages
+	{
+		MTBOOT_MTI_RETAIL_WIN,
+		mtiRetailWinFiles,
+		mtiRetailWinDirectories,
+		nullptr,
+		GameDataHandlerFactory<GameDataHandler>::create
+	},
+	// Muppet Treasure Island - Demo - Windows
+	{
+		MTBOOT_MTI_DEMO_WIN,
+		mtiDemoWinFiles,
+		nullptr,
+		nullptr,
+		GameDataHandlerFactory<GameDataHandler>::create
+	},
+};
+
+} // End of namespace Games
+
+} // End of namespace Boot
 
 Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription &gameDesc) {
 	Common::SharedPtr<ProjectDescription> desc;
@@ -546,22 +874,29 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 	Common::String assetMappingTablePath;
 	Common::String modifierMappingTablePath;
 
-	switch (gameDesc.gameID) {
-	case GID_OBSIDIAN:
-		gameDataHandler.reset(new Boot::ObsidianGameDataHandler(gameDesc));
-
-		if ((gameDesc.desc.flags & ADGF_DEMO) == 0 && gameDesc.desc.language == Common::EN_ANY) {
-			linesTablePath = "subtitles_lines_obsidian_en.csv";
-			speakerTablePath = "subtitles_speakers_obsidian_en.csv";
-			assetMappingTablePath = "subtitles_asset_mapping_obsidian_en.csv";
-
-			// Currently, modifier mapping is the same for both Mac and Win retail, since the MIDI GUIDs are all identical.
-			modifierMappingTablePath = "subtitles_modifier_mapping_obsidian_en.csv";
+	const Boot::Game *bootGame = nullptr;
+	for (const Boot::Game &bootGameCandidate : Boot::Games::games) {
+		if (bootGameCandidate.bootID == gameDesc.bootID) {
+			// Multiple manifests should not have the same manifest ID!
+			assert(!bootGame);
+			bootGame = &bootGameCandidate;
 		}
-		break;
-	default:
-		gameDataHandler.reset(new Boot::GameDataHandler());
-		break;
+	}
+
+	if (!bootGame)
+		error("Couldn't boot mTropolis game, don't have a file manifest for manifest ID %i", static_cast<int>(gameDesc.bootID));
+
+	if (bootGame->gameDataFactory)
+		gameDataHandler.reset(bootGame->gameDataFactory(*bootGame, gameDesc));
+	else
+		gameDataHandler.reset(new Boot::GameDataHandler(*bootGame, gameDesc));
+
+
+	if (bootGame->subtitlesDef) {
+		linesTablePath = bootGame->subtitlesDef->linesTablePath;
+		speakerTablePath = bootGame->subtitlesDef->speakerTablePath;
+		assetMappingTablePath = bootGame->subtitlesDef->assetMappingTablePath;
+		modifierMappingTablePath = bootGame->subtitlesDef->modifierMappingTablePath;
 	}
 
 	if (gameDesc.desc.platform == Common::kPlatformMacintosh) {
@@ -569,16 +904,16 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 
 		debug(1, "Attempting to boot Macintosh game...");
 
-		const ADGameFileDescription *fileDesc = gameDesc.desc.filesDescriptions;
+		const Boot::ManifestFile *fileDesc = bootGame->manifest;
 		while (fileDesc->fileName) {
 			const char *fileName = fileDesc->fileName;
 
 			Boot::FileIdentification ident;
 			ident.fileName = fileName;
-			ident.category = static_cast<MTropolisFileType>(fileDesc->fileType);
+			ident.category = static_cast<Boot::ManifestFileType>(fileDesc->fileType);
 			ident.macType.value = 0;
 			ident.macCreator.value = 0;
-			if (ident.category == MTFT_AUTO && !Boot::getMacTypesForFile(fileName, ident.macType.value, ident.macCreator.value))
+			if (ident.category == Boot::MTFT_AUTO && !Boot::getMacTypesForFile(fileName, ident.macType.value, ident.macCreator.value))
 				error("Couldn't determine Mac file type code for file '%s'", fileName);
 
 			macFiles.push_back(ident);
@@ -602,7 +937,7 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 		bool haveAnyMFxm = false;
 
 		for (Boot::FileIdentification &macFile : macFiles) {
-			if (macFile.category == MTFT_AUTO) {
+			if (macFile.category == Boot::MTFT_AUTO) {
 				switch (macFile.macType.value) {
 				case MKTAG('M', 'F', 'm', 'm'):
 					haveAnyMFmm = true;
@@ -628,25 +963,25 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 
 		// Identify unknown files
 		for (Boot::FileIdentification &macFile : macFiles) {
-			if (macFile.category == MTFT_AUTO) {
+			if (macFile.category == Boot::MTFT_AUTO) {
 				switch (macFile.macType.value) {
 				case MKTAG('M', 'F', 'm', 'm'):
-					macFile.category = MTFT_MAIN;
+					macFile.category = Boot::MTFT_MAIN;
 					break;
 				case MKTAG('M', 'F', 'm', 'x'):
-					macFile.category = isMT2CrossPlatform ? MTFT_MAIN : MTFT_ADDITIONAL;
+					macFile.category = isMT2CrossPlatform ? Boot::MTFT_MAIN : Boot::MTFT_ADDITIONAL;
 					break;
 				case MKTAG('M', 'F', 'x', 'm'):
 				case MKTAG('M', 'F', 'x', 'x'):
-					macFile.category = MTFT_ADDITIONAL;
+					macFile.category = Boot::MTFT_ADDITIONAL;
 					break;
 				case MKTAG('A', 'P', 'P', 'L'):
-					macFile.category = MTFT_PLAYER;
+					macFile.category = Boot::MTFT_PLAYER;
 					break;
 				case MKTAG('M', 'F', 'c', 'o'):
 				case MKTAG('M', 'F', 'c', 'r'):
 				case MKTAG('M', 'F', 'X', 'O'):
-					macFile.category = MTFT_EXTENSION;
+					macFile.category = Boot::MTFT_EXTENSION;
 					break;
 				default:
 					error("Failed to categorize input file '%s'", macFile.fileName.c_str());
@@ -661,16 +996,16 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 		// Bin segments
 		for (Boot::FileIdentification &macFile : macFiles) {
 			switch (macFile.category) {
-			case MTFT_PLAYER:
+			case Boot::MTFT_PLAYER:
 				// Case handled below after cursor loading
 				break;
-			case MTFT_EXTENSION:
+			case Boot::MTFT_EXTENSION:
 				// Case handled below after cursor loading
 				break;
-			case MTFT_MAIN:
+			case Boot::MTFT_MAIN:
 				mainSegmentFile = &macFile;
 				break;
-			case MTFT_ADDITIONAL: {
+			case Boot::MTFT_ADDITIONAL: {
 					int segmentID = Boot::resolveFileSegmentID(macFile.fileName);
 					if (segmentID < 2)
 						error("Unusual segment numbering scheme");
@@ -680,9 +1015,9 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 						segmentFiles.push_back(nullptr);
 					segmentFiles[segmentIndex] = &macFile;
 				} break;
-			case MTFT_SPECIAL:
+			case Boot::MTFT_SPECIAL:
 				break;
-			case MTFT_AUTO:
+			case Boot::MTFT_AUTO:
 				break;
 			}
 		}
@@ -696,12 +1031,12 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 		Common::SharedPtr<CursorGraphicCollection> cursorGraphics(new CursorGraphicCollection());
 
 		for (Boot::FileIdentification &macFile : macFiles) {
-			if (macFile.category == MTFT_PLAYER)
+			if (macFile.category == Boot::MTFT_PLAYER)
 				Boot::loadCursorsMac(macFile, *cursorGraphics);
 		}
 
 		for (Boot::FileIdentification &macFile : macFiles) {
-			if (macFile.category == MTFT_EXTENSION)
+			if (macFile.category == Boot::MTFT_EXTENSION)
 				Boot::loadCursorsMac(macFile, *cursorGraphics);
 		}
 
@@ -738,13 +1073,13 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 
 		debug(1, "Attempting to boot Windows game...");
 
-		const ADGameFileDescription *fileDesc = gameDesc.desc.filesDescriptions;
+		const Boot::ManifestFile *fileDesc = bootGame->manifest;
 		while (fileDesc->fileName) {
 			const char *fileName = fileDesc->fileName;
 
 			Boot::FileIdentification ident;
 			ident.fileName = fileName;
-			ident.category = MTFT_AUTO;
+			ident.category = Boot::MTFT_AUTO;
 			ident.macType.value = 0;
 			ident.macCreator.value = 0;
 			winFiles.push_back(ident);
@@ -764,17 +1099,17 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 
 		// Identify unknown files
 		for (Boot::FileIdentification &winFile : winFiles) {
-			if (winFile.category == MTFT_AUTO) {
+			if (winFile.category == Boot::MTFT_AUTO) {
 				switch (Boot::getWinFileEndingPseudoTag(winFile.fileName)) {
 				case MKTAG('.', 'm', 'p', 'l'):
-					winFile.category = MTFT_MAIN;
+					winFile.category = Boot::MTFT_MAIN;
 					isWindows = true;
 					isMT1 = true;
 					if (isMT2)
 						error("Unexpected mix of file platforms");
 					break;
 				case MKTAG('.', 'm', 'p', 'x'):
-					winFile.category = MTFT_ADDITIONAL;
+					winFile.category = Boot::MTFT_ADDITIONAL;
 					isWindows = true;
 					isMT1 = true;
 					if (isMT2)
@@ -782,7 +1117,7 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 					break;
 
 				case MKTAG('.', 'm', 'f', 'w'):
-					winFile.category = MTFT_MAIN;
+					winFile.category = Boot::MTFT_MAIN;
 					if (isMT1 || isCrossPlatform)
 						error("Unexpected mix of file platforms");
 					isWindows = true;
@@ -790,7 +1125,7 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 					break;
 
 				case MKTAG('.', 'm', 'x', 'w'):
-					winFile.category = MTFT_ADDITIONAL;
+					winFile.category = Boot::MTFT_ADDITIONAL;
 					if (isMT1 || isCrossPlatform)
 						error("Unexpected mix of file platforms");
 					isWindows = true;
@@ -798,7 +1133,7 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 					break;
 
 				case MKTAG('.', 'm', 'f', 'x'):
-					winFile.category = MTFT_MAIN;
+					winFile.category = Boot::MTFT_MAIN;
 					if (isWindows)
 						error("Unexpected mix of file platforms");
 					isCrossPlatform = true;
@@ -806,7 +1141,7 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 					break;
 
 				case MKTAG('.', 'm', 'x', 'x'):
-					winFile.category = MTFT_ADDITIONAL;
+					winFile.category = Boot::MTFT_ADDITIONAL;
 					if (isWindows)
 						error("Unexpected mix of file platforms");
 					isCrossPlatform = true;
@@ -817,11 +1152,11 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 				case MKTAG('.', 'e', '9', '5'):
 				case MKTAG('.', 'r', '9', '5'):
 				case MKTAG('.', 'x', '9', '5'):
-					winFile.category = MTFT_EXTENSION;
+					winFile.category = Boot::MTFT_EXTENSION;
 					break;
 
 				case MKTAG('.', 'e', 'x', 'e'):
-					winFile.category = MTFT_PLAYER;
+					winFile.category = Boot::MTFT_PLAYER;
 					break;
 
 				default:
@@ -837,16 +1172,16 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 		// Bin segments
 		for (Boot::FileIdentification &macFile : winFiles) {
 			switch (macFile.category) {
-			case MTFT_PLAYER:
+			case Boot::MTFT_PLAYER:
 				// Case handled below after cursor loading
 				break;
-			case MTFT_EXTENSION:
+			case Boot::MTFT_EXTENSION:
 				// Case handled below after cursor loading
 				break;
-			case MTFT_MAIN:
+			case Boot::MTFT_MAIN:
 				mainSegmentFile = &macFile;
 				break;
-			case MTFT_ADDITIONAL: {
+			case Boot::MTFT_ADDITIONAL: {
 				int segmentID = Boot::resolveFileSegmentID(macFile.fileName);
 				if (segmentID < 2)
 					error("Unusual segment numbering scheme");
@@ -856,9 +1191,9 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 					segmentFiles.push_back(nullptr);
 				segmentFiles[segmentIndex] = &macFile;
 			} break;
-			case MTFT_SPECIAL:
+			case Boot::MTFT_SPECIAL:
 				break;
-			case MTFT_AUTO:
+			case Boot::MTFT_AUTO:
 				break;
 			}
 		}
@@ -872,12 +1207,12 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 		Common::SharedPtr<CursorGraphicCollection> cursorGraphics(new CursorGraphicCollection());
 
 		for (Boot::FileIdentification &winFile : winFiles) {
-			if (winFile.category == MTFT_PLAYER)
+			if (winFile.category == Boot::MTFT_PLAYER)
 				Boot::loadCursorsWin(winFile, *cursorGraphics);
 		}
 
 		for (Boot::FileIdentification &winFile : winFiles) {
-			if (winFile.category == MTFT_EXTENSION)
+			if (winFile.category == Boot::MTFT_EXTENSION)
 				Boot::loadCursorsWin(winFile, *cursorGraphics);
 		}
 
@@ -946,16 +1281,26 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 
 void bootAddSearchPaths(const Common::FSNode &gameDataDir, const MTropolisGameDescription &gameDesc) {
 
-	if (gameDesc.gameID == GID_OBSIDIAN && gameDesc.desc.platform == Common::kPlatformWindows) {
-		SearchMan.addSubDirectoryMatching(gameDataDir, "Obsidian");
-		SearchMan.addSubDirectoryMatching(gameDataDir, "Obsidian/RESOURCE");
-		SearchMan.addSubDirectoryMatching(gameDataDir, "RESOURCE");
+	const Boot::Game *bootGame = nullptr;
+	for (const Boot::Game &bootGameCandidate : Boot::Games::games) {
+		if (bootGameCandidate.bootID == gameDesc.bootID) {
+			// Multiple manifests should not have the same manifest ID!
+			assert(!bootGame);
+			bootGame = &bootGameCandidate;
+		}
 	}
 
-	if (gameDesc.gameID == GID_MTI && gameDesc.desc.platform == Common::kPlatformWindows) {
-		SearchMan.addSubDirectoryMatching(gameDataDir, "MTPLAY32");
-		SearchMan.addSubDirectoryMatching(gameDataDir, "MTPLAY32/RESOURCE");
-		SearchMan.addSubDirectoryMatching(gameDataDir, "VIDEO");
+	if (!bootGame)
+		error("Couldn't boot mTropolis game, don't have a file manifest for manifest ID %i", static_cast<int>(gameDesc.bootID));
+
+	if (!bootGame->directories)
+		return;
+
+	size_t index = 0;
+	while (bootGame->directories[index]) {
+		const char *directoryPath = bootGame->directories[index++];
+
+		SearchMan.addSubDirectoryMatching(gameDataDir, directoryPath);
 	}
 }
 

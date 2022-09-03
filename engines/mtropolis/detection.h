@@ -32,13 +32,26 @@ enum MTropolisGameID {
 	GID_MTI    				= 2,
 };
 
-enum MTropolisFileType {
-	MTFT_AUTO		= 0,	// Automatic, determine based on extension or file type
-	MTFT_PLAYER		= 1,	// mTropolis Player program
-	MTFT_EXTENSION	= 2,	// Extension (only use this if the extension contains cursors, otherwise use MTFT_SPECIAL if it has something else useful, or exclude it if not)
-	MTFT_MAIN		= 3,	// Main segment
-	MTFT_ADDITIONAL	= 4,	// Additional segment
-	MTFT_SPECIAL	= 5,	// Some other kind of file, or something that might be incorrectly detected as a different type of file (e.g. installers)
+// Boot IDs - These can be shared across different variants if the file list and other properties are identical.
+// Cross-reference with the game table in mTropolis engine's boot.cpp
+enum MTropolisGameBootID {
+	MTBOOT_INVALID = 0,
+
+	MTBOOT_OBSIDIAN_RETAIL_MAC_EN,
+	MTBOOT_OBSIDIAN_RETAIL_WIN_EN,
+	MTBOOT_OBSIDIAN_RETAIL_WIN_DE,
+	MTBOOT_OBSIDIAN_DEMO_MAC_EN,
+	MTBOOT_OBSIDIAN_DEMO_WIN_EN_1,
+	MTBOOT_OBSIDIAN_DEMO_WIN_EN_2,
+	MTBOOT_OBSIDIAN_DEMO_WIN_EN_3,
+	MTBOOT_OBSIDIAN_DEMO_WIN_EN_4,
+	MTBOOT_OBSIDIAN_DEMO_WIN_EN_5,
+	MTBOOT_OBSIDIAN_DEMO_WIN_EN_6,
+	MTBOOT_OBSIDIAN_DEMO_WIN_EN_7,
+
+	MTBOOT_MTI_RETAIL_MAC,
+	MTBOOT_MTI_RETAIL_WIN,
+	MTBOOT_MTI_DEMO_WIN,
 };
 
 struct MTropolisGameDescription {
@@ -46,7 +59,7 @@ struct MTropolisGameDescription {
 
 	int gameID;
 	int gameType;
-	uint16 version;
+	MTropolisGameBootID bootID;
 };
 
 } // End of namespace MTropolis
