@@ -30,6 +30,7 @@
 #include "graphics/tinygl/pixelbuffer.h"
 
 #include "audio/mixer.h"
+#include "audio/decoders/wave.h"
 #include "audio/softsynth/pcspk.h"
 
 #include "freescape/area.h"
@@ -186,8 +187,10 @@ public:
 	void executePrint(FCLInstruction &instruction);
 
 	// Sound
-	Audio::SoundHandle _speakerHandle;
+	Audio::SoundHandle _handle;
+	bool _usePrerecordedSounds;
 	void playSound(int index);
+	void playWav(const Common::String filename);
 	void playSoundConst(double hzFreq, int duration);
 	void playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution);
 

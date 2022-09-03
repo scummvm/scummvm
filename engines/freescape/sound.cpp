@@ -28,32 +28,206 @@ namespace Freescape {
 const double kFreescapeSweepTuneFactor = 1.0;
 
 void FreescapeEngine::playSound(int index) {
-	_mixer->stopAll();
+	if (!_mixer->isSoundHandleActive(_handle))
+		_mixer->stopHandle(_handle);
+
+	assert(_usePrerecordedSounds);
 	debug("Playing sound %d", index);
 	switch (index) {
-		case 0:
-			playSoundSweepIncWL(1500, 700, 5.46 * kFreescapeSweepTuneFactor, 1);
+		case 1: // Done
+			if (_usePrerecordedSounds) {
+				playWav("fsDOS_laserFire.wav");
+				//_system->delayMillis(50);
+			} else
+				playSoundSweepIncWL(1500, 700, 5.46 * kFreescapeSweepTuneFactor, 1);
 		break;
-		case 1: // StairUp
-			playSoundConst(220, 50);
-			playSoundConst(340, 50);
+		case 2: // Done
+			if (_usePrerecordedSounds) {
+				playWav("fsDOS_WallBump.wav");
+				//_system->delayMillis(50);
+			} else {
+				playSoundConst(82, 60);
+			}
 		break;
-		case 2: // StairDown
-			playSoundConst(220, 50);
-			playSoundConst(185, 50);
+		case 3:
+			if (_usePrerecordedSounds) {
+				playWav("fsDOS_stairDown.wav");
+				//_system->delayMillis(50);
+			} else {
+				playSoundConst(220, 50);
+				playSoundConst(185, 50);
+			}
+		break;
+		case 4:
+			if (_usePrerecordedSounds) {
+				playWav("fsDOS_stairUp.wav");
+				//_system->delayMillis(50);
+			} else {
+				playSoundConst(220, 50);
+				playSoundConst(340, 50);
+			}
+		break;
+		case 5:
+			if (_usePrerecordedSounds) {
+				playWav("fsDOS_roomChange.wav");
+				//_system->delayMillis(50);
+			} else {
+				playSoundConst(82, 60);
+			}
+		break;
+		case 6:
+			if (_usePrerecordedSounds) {
+				playWav("fsDOS_configMenu.wav");
+				//_system->delayMillis(50);
+			} else {
+				playSoundConst(82, 60);
+			}
+		break;
+		case 7:
+			if (_usePrerecordedSounds) {
+				playWav("fsDOS_bigHit.wav");
+				//_system->delayMillis(50);
+			} else {
+				playSoundConst(82, 60);
+			}
+		break;
+		case 8:
+			if (_usePrerecordedSounds) {
+				playWav("fsDOS_teleportActivated.wav");
+				//_system->delayMillis(50);
+			} else {
+				playSoundConst(82, 60);
+			}
+		break;
+
+		case 9:
+			if (_usePrerecordedSounds) {
+				playWav("fsDOS_powerUp.wav");
+				//_system->delayMillis(50);
+			} else {
+				playSoundConst(82, 60);
+			}
+		break;
+
+		case 10:
+			if (_usePrerecordedSounds) {
+				playWav("fsDOS_energyDrain.wav");
+				//_system->delayMillis(50);
+			} else {
+				playSoundConst(82, 60);
+			}
+		break;
+
+		case 11: // ???
+			if (_usePrerecordedSounds) {
+				playWav("???.wav");
+				//_system->delayMillis(50);
+			} else {
+				playSoundConst(82, 60);
+			}
+		break;
+
+		case 12:
+			if (_usePrerecordedSounds) {
+				playWav("fsDOS_switchOff.wav");
+				//_system->delayMillis(50);
+			} else {
+				playSoundConst(82, 60);
+			}
+		break;
+
+		case 13: // Seems to be repeated?
+			if (_usePrerecordedSounds) {
+				playWav("fsDOS_laserHit.wav");
+				//_system->delayMillis(50);
+			} else {
+				playSoundConst(82, 60);
+			}
+		break;
+
+		case 14:
+			if (_usePrerecordedSounds) {
+				playWav("fsDOS_tankFall.wav");
+				//_system->delayMillis(50);
+			} else {
+				playSoundConst(82, 60);
+			}
+		break;
+
+		case 15:
+			if (_usePrerecordedSounds) {
+				playWav("fsDOS_successJingle.wav");
+				//_system->delayMillis(50);
+			} else {
+				playSoundConst(82, 60);
+			}
+		break;
+
+		case 16: // Silence?
+			if (_usePrerecordedSounds) {
+				//playWav("???.wav");
+				//_system->delayMillis(50);
+			} else {
+				playSoundConst(82, 60);
+			}
+		break;
+
+		case 17:
+			if (_usePrerecordedSounds) {
+				playWav("fsDOS_badJingle.wav");
+				//_system->delayMillis(50);
+			} else {
+				playSoundConst(82, 60);
+			}
+		break;
+
+		case 18: // Silence?
+			if (_usePrerecordedSounds) {
+				//playWav("???.wav");
+				//_system->delayMillis(50);
+			} else {
+				playSoundConst(82, 60);
+			}
+		break;
+
+		case 19:
+			if (_usePrerecordedSounds) {
+				playWav("???.wav");
+				//_system->delayMillis(50);
+			} else {
+				playSoundConst(82, 60);
+			}
+		break;
+
+		case 20:
+			if (_usePrerecordedSounds) {
+				playWav("fsDOS_bigHit.wav");
+				//_system->delayMillis(50);
+			} else {
+				playSoundConst(82, 60);
+			}
 		break;
 		default:
+		error("Unexpected sound %d", index);
 		break;
 	}
 }
+
+void FreescapeEngine::playWav(const Common::String filename) {
+	Common::SeekableReadStream *s = _dataBundle->createReadStreamForMember(filename);
+	assert(s);
+	Audio::AudioStream *stream = Audio::makeWAVStream(s, DisposeAfterUse::YES);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, stream);
+}
+
 
 void FreescapeEngine::playSoundConst(double hzFreq, int duration) {
 	Audio::PCSpeaker *speaker = new Audio::PCSpeaker();
 	speaker->setVolume(50);
 	speaker->play(Audio::PCSpeaker::kWaveFormSquare, hzFreq, duration);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle, speaker);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, speaker);
 	_system->delayMillis(duration);
-	_mixer->stopHandle(_speakerHandle);
+	_mixer->stopHandle(_handle);
 }
 
 
@@ -102,7 +276,7 @@ void FreescapeEngine::playSoundSweepIncWL(double hzFreq1, double hzFreq2, double
 		playSoundConst((1193180.0 / inv1), resolution);
 		inv1 += wlStep;
 	}
-	_mixer->stopHandle(_speakerHandle);
+	_mixer->stopHandle(_handle);
 }
 
 }
