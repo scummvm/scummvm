@@ -341,18 +341,6 @@ void cEffect_SaveEffect::NormalSaveUpdate(float afTimeStep) {
 
 		/////////////
 		// Display message
-		int lLevel = 0;
-		int lMaxRand = 3;
-		if (mpInit->mpPlayer->mlStat_NumOfSaves > 0)
-			lLevel = 1;
-		if (mpInit->mpPlayer->mlStat_NumOfSaves > 5)
-			lLevel = 2;
-		else if (mpInit->mpPlayer->mlStat_NumOfSaves > 20)
-			lLevel = 3;
-
-		if (lLevel == 0)
-			lMaxRand = 1;
-
 		tString sEntry = "AfterSave_Default";
 		if (mpSaveArea->GetHasBeenUsed() == false) {
 			mpInit->mpPlayer->mlStat_NumOfSaves++;
