@@ -1813,7 +1813,6 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool 
 						return true;
 					}
 				} else {
-					restoreCursorPostMenu();
 					convertMessageToString((const byte *)getGUIString(gsGameNotSaved), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
 					if (_game.id == GID_DIG) {
 						showBannerAndPause(1, -1, saveScreenTitle);
