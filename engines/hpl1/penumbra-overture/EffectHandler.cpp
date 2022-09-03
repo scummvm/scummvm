@@ -399,6 +399,8 @@ void cEffect_SaveEffect::AutoSaveUpdate(float afTimeStep) {
 		mlState++;
 		mFlashColor = cColor(0.0, 0.0);
 		mfFlashAlpha = 0.f;
+		// FIXME: Is fallthrough intended?
+		// fallthrough
 	}
 	case 3: {
 		Reset();
