@@ -1523,7 +1523,6 @@ bool cMath::CreateEdges(tTriEdgeVec &avEdges,
 	// TODO: iterate the amp here instead.
 	tVtxIdxMapIt VtxIt = mapVtxIndices.begin();
 	for (; VtxIt != mapVtxIndices.end(); ++VtxIt) {
-		const cVector3f vVtx = VtxIt->first;
 		cVertexIndices &Data = VtxIt->second;
 
 		// Iterate the indices and create edges.
@@ -1580,9 +1579,6 @@ bool cMath::CreateEdges(tTriEdgeVec &avEdges,
 	for (; EdgeIt != mapTriEdgeLists.end(); ++EdgeIt) {
 		cTriEdge &Edge = const_cast<cTriEdge &>(*EdgeIt);
 		const unsigned int *pTri1 = &apIndexArray[Edge.tri1 * 3];
-		const unsigned int *pTri2 = NULL;
-		if (Edge.tri2 >= 0)
-			pTri2 = &apIndexArray[Edge.tri2 * 3];
 
 		if (Edge.tri2 == -1) {
 			Edge.invert_tri2 = true;
