@@ -318,7 +318,6 @@ void cGameForceArea::LoadFromSaveData(iGameEntity_SaveData *apSaveData) {
 
 void cGameForceArea::SetupSaveData(iGameEntity_SaveData *apSaveData) {
 	super::SetupSaveData(apSaveData);
-	cGameForceArea_SaveData *pData = static_cast<cGameForceArea_SaveData *>(apSaveData);
 }
 
 //-----------------------------------------------------------------------
