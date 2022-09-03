@@ -31,6 +31,7 @@
 #include "engines/wintermute/base/base_named_object.h"
 #include "engines/wintermute/base/gfx/xanimation.h"
 #include "engines/wintermute/base/gfx/xframe_node.h"
+#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/persistent.h"
 
@@ -54,9 +55,7 @@ public:
 
 		AnimationEvent(char *name, int frame) {
 			_eventName = nullptr;
-			int size = strlen(name);
-			_eventName = new char[size];
-			Common::copy(name, name + size, _eventName);
+			BaseUtils::setString(&_eventName, name);
 			_frame = frame;
 		}
 
