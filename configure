@@ -2579,8 +2579,10 @@ case $_host_os in
 		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 		add_line_to_config_mk 'AMIGAOS = 1'
 		append_var CXXFLAGS "-mlongcall"
-		# Disable optimizations for non-debug builds
-		if test "$_debug_build" = yes ; then
+		# Enable full optimizations for non-debug builds
+		if test "$_debug_build" = no; then
+			_optimization_level=-O3
+		else
 			_optimization_level=-O0
 			append_var CXXFLAGS "-fno-omit-frame-pointer"
 			append_var CXXFLAGS "-fno-strict-aliasing"
@@ -6200,8 +6202,10 @@ case $_host_os in
 		;;
 	amigaos*)
 		# In release mode use LTO to improve performance
+		# and dead code elimination to reduce binary size
 		if test "$_release_build" = yes; then
 			append_var CXXFLAGS "-flto"
+			append_var CXXFLAGS "-ffunction-sections -fdata-sections"
 			append_var PLUGIN_LDFLAGS "-flto=jobserver"
 		fi
 		;;
