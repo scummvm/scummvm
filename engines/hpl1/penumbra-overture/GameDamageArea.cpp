@@ -255,6 +255,5 @@ void cGameDamageArea::LoadFromSaveData(iGameEntity_SaveData *apSaveData) {
 
 void cGameDamageArea::SetupSaveData(iGameEntity_SaveData *apSaveData) {
 	super::SetupSaveData(apSaveData);
-	cGameDamageArea_SaveData *pData = static_cast<cGameDamageArea_SaveData *>(apSaveData);
 }
 //-----------------------------------------------------------------------

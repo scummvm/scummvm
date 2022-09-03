@@ -381,6 +381,5 @@ void cGameLiquidArea::LoadFromSaveData(iGameEntity_SaveData *apSaveData) {
 
 void cGameLiquidArea::SetupSaveData(iGameEntity_SaveData *apSaveData) {
 	super::SetupSaveData(apSaveData);
-	cGameLiquidArea_SaveData *pData = static_cast<cGameLiquidArea_SaveData *>(apSaveData);
 }
 //-----------------------------------------------------------------------
