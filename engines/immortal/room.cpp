@@ -73,7 +73,7 @@ void Room::getCell(uint16 &x, uint16 &y) {
 void Room::setHole() {}
 
 void Room::drawContents(uint16 vX, uint16 vY) {
-	//flameDrawAll(vX, vY);
+	flameDrawAll(vX, vY);
 	//sparkDrawAll();
 	//bulletDrawAll();
 	//genSpriteDrawAll();

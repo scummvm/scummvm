@@ -55,9 +55,6 @@ void ImmortalEngine::drawUniv() {
 	sortDrawItems();						// Sort said items
 	drawItems();							// Draw the items over the background
 
-	// To start constructing the screem, we start with the frame as the base
-	memcpy(_screenBuff, _window, kScreenSize);
-
 	/* copyRectToSurface will apply the screenbuffer to the ScummVM surface.
 	 * We want to do 320 bytes per scanline, at location (0,0), with a
 	 * size of 320x200.
@@ -112,11 +109,14 @@ void ImmortalEngine::addSprites() {
 	// My goodness this routine is gross
 	int tmpNum = _num2DrawItems;
 	for (int i = 0; i < kMaxSprites; i++) {
+		// If the sprite is active
 		if (_sprites[i]._on == 1) {
+			// If sprite X is an odd number???
 			if ((_sprites[i]._X & 1) != 0) {
 				debug("not good! BRK");
 				return;
 			}
+
 			int tmpx = (_sprites[i]._X - kMaxSpriteW) - _myViewPortX;
 			if (tmpx < 0) {
 				if (tmpx + (kMaxSpriteW * 2) < 0) {
@@ -136,7 +136,8 @@ void ImmortalEngine::addSprites() {
 			}
 
 			DataSprite *tempD = _sprites[i]._dSprite;
-			Image *tempImg = &(_sprites[i]._dSprite->_images[_sprites[i]._image]);
+			debug("what sprite is this: %d %d %d", i, _sprites[i]._image, _sprites[i]._dSprite->_images.size());
+			Image *tempImg = &(tempD->_images[0/*_sprites[i]._image*/]);
 			int sx = ((_sprites[i]._X + tempImg->_deltaX) - tempD->_cenX) - _myViewPortX;
 			int sy = ((_sprites[i]._Y + tempImg->_deltaY) - tempD->_cenY) - _myViewPortY;
 
@@ -144,7 +145,7 @@ void ImmortalEngine::addSprites() {
 				if (sx >= kViewPortW) {
 					continue;
 				}
-			} else if ((sx + tempImg->_rectX) <= 0) {
+			} else if ((sx + tempImg->_rectW) <= 0) {
 				continue;
 			}
 
@@ -152,7 +153,7 @@ void ImmortalEngine::addSprites() {
 				if (sy >= kViewPortH) {
 					continue;
 				}
-			} else if ((sy + tempImg->_rectY) <= 0) {
+			} else if ((sy + tempImg->_rectH) <= 0) {
 				continue;
 			}
 
@@ -285,7 +286,7 @@ void ImmortalEngine::drawItems() {
 			// If positive, it's a sprite
 			uint16 x = (_sprites[index]._X - _myViewPortX) + kVSX;
 			uint16 y = (_sprites[index]._Y - _myViewPortY) + kVSY;
-			superSprite(index, x, y, _sprites[index]._dSprite->_images[_sprites[index]._image], kVSBMW, _screenBuff, kMySuperTop, kMySuperBottom);
+			//superSprite(index, x, y, _sprites[index]._dSprite->_images[0/*_sprites[index]._image*/], kVSBMW, _screenBuff, kMySuperTop, kMySuperBottom);
 		}
 		n++;
 	} while (n != _num2DrawItems);
@@ -348,7 +349,7 @@ void ImmortalEngine::printChr(char c) {
 		return;
 	}
 
-	superSprite(0, x, y, _dataSprites[kFont]._images[(int) c], kScreenBMW, _screenBuff, kSuperTop, kSuperBottom);
+	//superSprite(0, x, y, _dataSprites[kFont]._images[(int) c], kScreenBMW, _screenBuff, kSuperTop, kSuperBottom);
 	if ((c == 0x27) || (c == 'T')) {
 		_penX -= 2;					// Why is this done twice??
 	}
@@ -536,7 +537,7 @@ void ImmortalEngine::initStoryStatic() {
 }
 
 void ImmortalEngine::kernalAddSprite(uint16 x, uint16 y, SpriteName n, int img, uint16 p) {
-	Immortal::Utilities::addSprite(_sprites, _viewPortX, _viewPortY, _numSprites, &_dataSprites[n], img, x, y, p);
+	Utilities::addSprite(_sprites, _viewPortX, _viewPortY, &_numSprites, &_dataSprites[n], img, x, y, p);
 }
 
 void ImmortalEngine::clearSprites() {
@@ -643,6 +644,9 @@ void ImmortalEngine::loadWindow() {
 
 		// Now that the bitmap is processed and stored in a byte buffer, we can close the file
 		f.close();
+
+		// To start constructing the screen, we start with the frame as the base
+		memcpy(_screenBuff, _window, kScreenSize);
 
 	} else {
 		// Should probably give an error or something here

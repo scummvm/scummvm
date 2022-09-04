@@ -24,18 +24,23 @@
 
 namespace Immortal {
 
+// We need a few two-dimentional vectors, and writing them out in full each time is tedious
+template<class T> using CArray2D = Common::Array<Common::Array<T>>;
+
 struct Image {
-	uint16  _deltaX;
-	uint16  _deltaY;
-	uint16  _rectX;
-	uint16  _rectY;
-	  byte *_bitmap;
+	uint16 _deltaX;
+	uint16 _deltaY;
+	uint16 _rectW;
+	uint16 _rectH;
+Common::Array<uint16> _scanWidth;
+Common::Array<uint16> _deltaPos;
+CArray2D<byte> _bitmap;
 };
 
 struct DataSprite {
-	uint16  _cenX;                      // These are the base center positions
-	uint16  _cenY;
-	uint16  _numImages;
+	uint16 _cenX;                      					// These are the base center positions
+	uint16 _cenY;
+	uint16 _numImages;
 Common::Array<Image> _images;
 };
 

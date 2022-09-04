@@ -45,9 +45,9 @@ void Room::flameFreeAll() {
 	_numInRoom = 0;
 }
 
-void Room::flameDrawAll(uint16 vX, uint16 vY, int nS) {
+void Room::flameDrawAll(uint16 vX, uint16 vY) {
 	for (int i = 0; i < _fset.size(); i++) {
-		univAddSprite(vX, vY, nS, _fset[i]._x, _fset[i]._y, _cycPtrs[_cycles[_fset[i]._c]._cycList]._sName, cycleGetFrame(_fset[i]._c), 0);
+		univAddSprite(vX, vY, _fset[i]._x, _fset[i]._y, _cycPtrs[_cycles[_fset[i]._c]._cycList]._sName, cycleGetFrame(_fset[i]._c), 0);
 		if (cycleAdvance(_fset[i]._c) == true) {
 			cycleFree(_fset[i]._c);
 			_fset[i]._c = flameGetCyc(&_fset[i], 1);
