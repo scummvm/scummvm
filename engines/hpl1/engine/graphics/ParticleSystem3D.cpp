@@ -347,7 +347,7 @@ void cParticleSystem3D::LoadFromSaveData(iSaveData *apSaveData) {
 	kSaveData_LoadFrom(msDataName);
 	kSaveData_LoadFrom(mvDataSize);
 
-	if (GetEmitterNum() != pData->mvEmitters.Size()) {
+	if (GetEmitterNum() != (int)pData->mvEmitters.Size()) {
 		Error("Saved emitter number in %s/%d does not match loaded, killing system!\n",
 			  GetName().c_str(),
 			  GetSaveObjectId());
