@@ -235,13 +235,13 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			break;
 
 		case 32: // end condition if an object is visible in another area
-			detokenisedStream += "IF RVIS? ";
-			detokenisedStream += Common::String::format("(%d), (%d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
+			detokenisedStream += "IF RINVIS? ";
+			detokenisedStream += Common::String::format("(%d, %d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
 			detokenisedStream += "THEN END ENDIF";
 			currentInstruction = FCLInstruction(Token::INVISQ);
 			currentInstruction.setSource(tokenisedCondition[bytePointer]);
 			currentInstruction.setAdditional(tokenisedCondition[bytePointer + 1]);
-			currentInstruction.setDestination(false); // visible
+			currentInstruction.setDestination(true); // invisible
 			conditionalInstructions->push_back(currentInstruction);
 			currentInstruction = FCLInstruction(Token::UNKNOWN);
 			bytePointer += 2;
@@ -249,13 +249,13 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			break;
 
 		case 33: // end condition if an object is invisible in another area
-			detokenisedStream += "IF RINVIS? ";
-			detokenisedStream += Common::String::format("(%d), (%d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
+			detokenisedStream += "IF RVIS? ";
+			detokenisedStream += Common::String::format("(%d, %d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
 			detokenisedStream += "THEN END ENDIF";
 			currentInstruction = FCLInstruction(Token::INVISQ);
 			currentInstruction.setSource(tokenisedCondition[bytePointer]);
 			currentInstruction.setAdditional(tokenisedCondition[bytePointer + 1]);
-			currentInstruction.setDestination(true); // invisible
+			currentInstruction.setDestination(false); // visible
 			conditionalInstructions->push_back(currentInstruction);
 			currentInstruction = FCLInstruction(Token::UNKNOWN);
 			bytePointer += 2;
