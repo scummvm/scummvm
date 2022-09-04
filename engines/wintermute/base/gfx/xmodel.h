@@ -76,20 +76,14 @@ private:
 		XModelMatSprite(const char *matName, BaseSprite *sprite) {
 			_theora = nullptr;
 			_matName = nullptr;
-			uint32 size = strlen(matName);
-			_matName = new char[size + 1];
-			Common::copy(matName, matName + size, _matName);
-			_matName[size] = 0;
+			BaseUtils::setString(&_matName, matName);
 			_sprite = sprite;
 		}
 
 		XModelMatSprite(const char *matName, VideoTheoraPlayer *theora) {
 			_sprite = nullptr;
 			_matName = nullptr;
-			uint32 size = strlen(matName);
-			_matName = new char[size + 1];
-			Common::copy(matName, matName + size, _matName);
-			_matName[size] = 0;
+			BaseUtils::setString(&_matName, matName);
 			_theora = theora;
 		}
 
