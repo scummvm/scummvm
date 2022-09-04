@@ -1355,7 +1355,7 @@ void cRenderer3D::RenderDebug(cCamera3D *apCamera) {
 		while (objectIt.HasNext()) {
 			iRenderable *pObject = objectIt.Next();
 
-			RenderDebugObject(apCamera, pObject, NULL, NULL, NULL, eMaterialRenderType_Diffuse, NULL);
+			RenderDebugObject(apCamera, pObject, NULL, 0, NULL, eMaterialRenderType_Diffuse, NULL);
 		}
 
 		// Render debug for lights.
