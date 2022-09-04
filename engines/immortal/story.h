@@ -30,9 +30,6 @@
 
 namespace Immortal {
 
-// We need a few two-dimentional vectors, and writing them out in full each time is tedious
-template<class T> using CArray2D = Common::Array<Common::Array<T>>;
-
 // These maximum numbers aren't really needed, because most of these are vectors and have .size()
 enum StoryMaxes {
 	kMaxRooms		 = 16,

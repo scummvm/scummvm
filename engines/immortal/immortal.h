@@ -358,6 +358,9 @@ public:
     uint16  _myViewPortX 	= 0;						// Probably mirror of viewportX
     uint16  _myViewPortY 	= 0;
 	   int  _lastGauge 		= 0;						// Mirror for player health, used to update health gauge display
+    uint16  _lastBMW 		= 0;						// Mirrors used to determine where bitmap width needs to be re-calculated
+    uint16  _lastY 			= 0;
+    uint16  _lastPoint 		= 0;
     uint16  _penX 			= 0;						// Basically where in the screen we are currently drawing
     uint16  _penY 			= 0;
     uint16  _myUnivPointX   = 0;
@@ -581,8 +584,10 @@ GenericSprite _genSprites[6];
 	void initDataSprite(Common::SeekableReadStream *f, DataSprite *d, int index, uint16 cenX, uint16 cenY); // Initializes the data sprite
 	
 	// Main
-	void superSprite(int s, uint16 x, uint16 y, Image img, int bmw, byte *dst, int sT, int sB);
-
+	void superSprite(DataSprite *dSprite, uint16 x, uint16 y, int img, int bmw, byte *dst, int superTop, int superBottom);
+	bool clipSprite(uint16 &height, uint16 &pointIndex, uint16 &skipY, DataSprite *dSprite, uint16 &pointX, uint16 &pointY, int img, int bmw, int superTop, int superBottom);
+	void spriteAligned(DataSprite *dSprite, Image &img, uint16 &skipY, uint16 &pointIndex, uint16 &height, int bmw, byte *dst);
+	void spriteNotAligned();
 
 	/*
 	 * [Compression.cpp] Functions from Compression.GS

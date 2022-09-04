@@ -171,7 +171,6 @@ Common::Error ImmortalEngine::run() {
 	_err = Common::kNoError;
 
 	while (!shouldQuit()) {
-
 	/* The game loop runs at 60fps, which is 16 milliseconds per frame.
 	 * This loop keeps that time by getting the time in milliseconds at the start of the loop,
 	 * then again at the end, and the difference between them is the remainder
@@ -187,9 +186,11 @@ Common::Error ImmortalEngine::run() {
 		userIO();
 		noNetwork();
 		pollKeys();
-		logic();
+		//logic();
 		pollKeys();
 		if (logicFreeze() == 0) {
+				DataSprite *d = &_dataSprites[kFont];
+				superSprite(d, 0xC0, 0x50, 0, 0, _screenBuff, kSuperTop, kMySuperBottom);
 			drawUniv();
 			pollKeys();
 			fixColors();

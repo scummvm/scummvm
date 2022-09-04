@@ -78,7 +78,16 @@ bool Room::cycleAdvance(int c) {
 }
 
 int Room::cycleGetFrame(int c) {
-	// This originally did some shenanigans in Kernal to get the number, but really it's just this
+	/* The source version of this is facinating. It is basically:
+	 * in: cycList, Index
+	 * index -> tmp
+	 * Load the value of cycPtrs + cycList (returns address of start of cyc)
+	 * Add index (returns address of frame in cyc)
+	 * Store to the position of the next label
+	 * Load a single byte from the value at the address in the label (returns frame value within cyc)
+	 * This is essentially self-modifying code, and it saves 2 bytes of DP memory over the traditional
+	 * STA DP : LDA (DP)
+	 */
 	debug("%d", _cycPtrs[_cycles[c]._cycList]._frames[_cycles[c]._index]);
 	return _cycPtrs[_cycles[c]._cycList]._frames[_cycles[c]._index];
  }
