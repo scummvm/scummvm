@@ -107,7 +107,6 @@ public:
 	Graphics::PixelBuffer *_palette;
 	ColorMap *_colorMap;
 	int _keyColor;
-	int _missingColor;
 
 	/**
 	 * Select the window where to render

@@ -40,7 +40,6 @@ Renderer::Renderer(OSystem *system)
 	_originalPixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 	_palettePixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
 	_keyColor = -1;
-	_missingColor = -1;
 	_palette = nullptr;
 	_colorMap = nullptr;
 }
@@ -61,7 +60,7 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
 		return false;
 
 	if (index == 0) {
-		_palette->getRGBAt(_missingColor, r, g, b);
+		_palette->getRGBAt(0, r, g, b);
 		return true;
 	}
 

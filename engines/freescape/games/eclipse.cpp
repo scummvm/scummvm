@@ -109,7 +109,6 @@ void EclipseEngine::loadAssets() {
 			error("Failed to open TOTEE.EXE");
 
 		load8bitBinary(file, 0x3ce0, 16);
-		_gfx->_missingColor = 0;
 	} else if (_renderMode == "cga") {
 		file = gameDir.createReadStreamForMember("TOTEC.EXE");
 

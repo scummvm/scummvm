@@ -113,7 +113,6 @@ void DrillerEngine::loadAssets() {
 			error("Failed to open DRILLE.EXE");
 
 		load8bitBinary(file, 0x9b40, 16);
-		_gfx->_missingColor = 0;
 	} else if (_renderMode == "cga") {
 		file = gameDir.createReadStreamForMember("DRILLC.EXE");
 

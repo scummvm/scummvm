@@ -39,7 +39,6 @@ void CastleEngine::loadAssets() {
 	Common::FSDirectory gameDir(path);
 
 	_renderMode = "ega";
-	_gfx->_missingColor = 0;
 
 	file = gameDir.createReadStreamForMember("CMEDF");
 	int size = file->size();
