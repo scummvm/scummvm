@@ -89,7 +89,7 @@ void cNotebookState_Front::OnUpdate(float afTime) {
 	bool bFound = false;
 	for (size_t i = 0; i < mvOptions.size(); ++i) {
 		if (cMath::PointBoxCollision(mpNotebook->GetMousePos(), mvOptions[i].mRect)) {
-			if (mlSelected != i) {
+			if (mlSelected != (int)i) {
 				mlSelected = (int)i;
 				mvOptions[i].mfAlpha = 0;
 			}
@@ -260,7 +260,7 @@ void cNotebookState_TaskList::OnUpdate(float afTime) {
 	bool bFound = false;
 	for (size_t i = 0; i < mvOptions.size(); ++i) {
 		if (cMath::PointBoxCollision(mpNotebook->GetMousePos(), mvOptions[i].mRect)) {
-			if (mlSelected != i) {
+			if (mlSelected != (int)i) {
 				mlSelected = (int)i;
 				mvOptions[i].mfAlpha = 0;
 			}
@@ -484,7 +484,7 @@ void cNotebookState_NoteList::OnUpdate(float afTime) {
 	bool bFound = false;
 	for (size_t i = 0; i < mvOptions.size(); ++i) {
 		if (cMath::PointBoxCollision(mpNotebook->GetMousePos(), mvOptions[i].mRect)) {
-			if (mlSelected != i) {
+			if (mlSelected != (int)i) {
 				mlSelected = (int)i;
 				mvOptions[i].mfAlpha = 0;
 			}
@@ -713,7 +713,7 @@ void cNotebookState_Note::OnUpdate(float afTime) {
 	bool bFound = false;
 	for (size_t i = 0; i < mvOptions.size(); ++i) {
 		if (cMath::PointBoxCollision(mpNotebook->GetMousePos(), mvOptions[i].mRect)) {
-			if (mlSelected != i) {
+			if (mlSelected != (int)i) {
 				mlSelected = (int)i;
 				mvOptions[i].mfAlpha = 0;
 			}
@@ -754,7 +754,7 @@ void cNotebookState_Note::OnDraw() {
 	//////////////////////////////////
 	// Draw arrows back and forward
 	for (size_t i = 0; i < mvOptions.size(); ++i) {
-		if (i == 0 && mlCurrentPage == mvPages.size() - 1)
+		if (i == 0 && mlCurrentPage == (int)mvPages.size() - 1)
 			continue;
 		if (i == 1 && mlCurrentPage == 0)
 			continue;
