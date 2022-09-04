@@ -417,11 +417,11 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 
 	if (getRGBAt((*colours)[1], r, g, b)) {
 		tglColor3ub(r, g, b);
+		face.push_back(vertices[5]);
+		face.push_back(vertices[6]);
+		face.push_back(vertices[2]);
+		face.push_back(vertices[1]);
 
-		face.push_back(vertices[7]);
-		face.push_back(vertices[4]);
-		face.push_back(vertices[0]);
-		face.push_back(vertices[3]);
 		renderFace(face);
 		face.clear();
 	}
@@ -439,11 +439,11 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 
 	if (getRGBAt((*colours)[3], r, g, b)) {
 		tglColor3ub(r, g, b);
+		face.push_back(vertices[7]);
+		face.push_back(vertices[4]);
+		face.push_back(vertices[0]);
+		face.push_back(vertices[3]);
 
-		face.push_back(vertices[5]);
-		face.push_back(vertices[6]);
-		face.push_back(vertices[2]);
-		face.push_back(vertices[1]);
 		renderFace(face);
 		face.clear();
 	}

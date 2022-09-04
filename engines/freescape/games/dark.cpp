@@ -45,6 +45,7 @@ void DarkEngine::loadAssets() {
             error("Failed to open DSIDEE.EXE");
 
         load8bitBinary(file, 0xa280, 16);
+		_gfx->_missingColor = 0;
     } else if (_renderMode == "cga") {
         file = gameDir.createReadStreamForMember("DSIDEC.EXE");
 

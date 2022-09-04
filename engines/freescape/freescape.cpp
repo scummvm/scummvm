@@ -250,7 +250,6 @@ Common::Error FreescapeEngine::run() {
 		_farClipPlane = 14189.f;
 		_startArea = 1;
 	} else {
-		_gfx->_missingColor = 0;
 		_farClipPlane = 8192.f;
 	}
 	int saveSlot = ConfMan.getInt("save_slot");
