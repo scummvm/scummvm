@@ -185,7 +185,6 @@ private:
 
 	// Touch controls layer
 	GLESTexture *_touchcontrols_texture;
-	int _old_touch_mode;
 };
 
 #endif

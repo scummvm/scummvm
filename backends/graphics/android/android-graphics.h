@@ -100,7 +100,6 @@ protected:
 
 private:
 	OpenGL::Surface *_touchcontrols;
-	int _old_touch_mode;
 };
 
 #endif

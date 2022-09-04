@@ -92,8 +92,7 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_mouse_hotspot(),
 	_mouse_dont_scale(false),
 	_show_mouse(false),
-	_touchcontrols_texture(nullptr),
-	_old_touch_mode(OSystem_Android::TOUCH_MODE_TOUCHPAD) {
+	_touchcontrols_texture(nullptr) {
 
 	if (JNI::egl_bits_per_pixel == 16) {
 		// We default to RGB565 and RGBA5551 which is closest to what we setup in Java side
@@ -497,8 +496,6 @@ void AndroidGraphics3dManager::showOverlay() {
 	if (_show_overlay) {
 		return;
 	}
-
-	_old_touch_mode = JNI::getTouchMode();
 
 	_show_overlay = true;
 	_force_redraw = true;

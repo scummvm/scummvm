@@ -66,8 +66,7 @@ static void loadBuiltinTexture(JNI::BitmapResources resource, OpenGL::Surface *s
 // AndroidGraphicsManager
 //
 AndroidGraphicsManager::AndroidGraphicsManager() :
-	_touchcontrols(nullptr),
-	_old_touch_mode(OSystem_Android::TOUCH_MODE_TOUCHPAD) {
+	_touchcontrols(nullptr) {
 	ENTER();
 
 	// Initialize our OpenGL ES context.
@@ -157,8 +156,6 @@ void AndroidGraphicsManager::displayMessageOnOSD(const Common::U32String &msg) {
 void AndroidGraphicsManager::showOverlay() {
 	if (_overlayVisible)
 		return;
-
-	_old_touch_mode = JNI::getTouchMode();
 
 	OpenGL::OpenGLGraphicsManager::showOverlay();
 }
