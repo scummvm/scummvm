@@ -501,7 +501,7 @@ void cMainMenuWidget_List::OnDraw() {
 		if ((int)i - mlFirstRow >= mlMaxRows)
 			break;
 
-		if (mlSelected == i) {
+		if (mlSelected ==(int)i) {
 			mpFont->draw(vPos, mvFontSize, cColor(0.95f, 1), eFontAlign_Left, mvEntries[i].c_str());
 			mpDrawer->DrawGfxObject(mpBackGfx, vPos + cVector3f(0, 2, -1),
 									cVector2f(mvSize.x - 5, mvFontSize.y),
