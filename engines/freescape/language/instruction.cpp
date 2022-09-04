@@ -174,6 +174,9 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
 	debugC(1, kFreescapeDebugCode, "Redrawing screen");
 	drawFrame();
+	_gfx->flipBuffer();
+	g_system->updateScreen();
+	g_system->delayMillis(10);
 }
 
 void FreescapeEngine::executeSound(FCLInstruction &instruction) {
