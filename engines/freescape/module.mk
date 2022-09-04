@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	loaders/16bitBinaryLoader.o \
 	language/16bitDetokeniser.o \
 	language/instruction.o \
+	movement.o \
 	sound.o
 
 
