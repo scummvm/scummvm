@@ -159,8 +159,6 @@ void AndroidGraphicsManager::showOverlay() {
 		return;
 
 	_old_touch_mode = JNI::getTouchMode();
-	// not in 3D, in overlay
-	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, true);
 
 	OpenGL::OpenGLGraphicsManager::showOverlay();
 }
@@ -168,9 +166,6 @@ void AndroidGraphicsManager::showOverlay() {
 void AndroidGraphicsManager::hideOverlay() {
 	if (!_overlayVisible)
 		return;
-
-	// Restore touch mode active before overlay was shown
-	JNI::setTouchMode(_old_touch_mode);
 
 	OpenGL::OpenGLGraphicsManager::hideOverlay();
 }

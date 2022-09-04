@@ -499,8 +499,6 @@ void AndroidGraphics3dManager::showOverlay() {
 	}
 
 	_old_touch_mode = JNI::getTouchMode();
-	// in 3D, in overlay
-	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(true, true);
 
 	_show_overlay = true;
 	_force_redraw = true;
@@ -545,9 +543,6 @@ void AndroidGraphics3dManager::hideOverlay() {
 	_show_overlay = false;
 
 	_overlay_background->release();
-
-	// Restore touch mode active before overlay was shown
-	JNI::setTouchMode(_old_touch_mode);
 
 	warpMouse(_game_texture->width() / 2, _game_texture->height() / 2);
 
