@@ -281,6 +281,10 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 			restoreCharsetBg();
 	}
 
+	// Pause shake effect
+	_shakeTempSavedState = _shakeEnabled;
+	setShake(0);
+
 	// Pause the engine
 	PauseToken pt = pauseEngine();
 
