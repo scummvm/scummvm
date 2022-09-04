@@ -786,7 +786,7 @@ void MacVentureEngine::openObject(ObjID objID) {
 		Common::Point p(_world->getObjAttr(objID, kAttrPosX), _world->getObjAttr(objID, kAttrPosY));
 		WindowReference invID = _gui->createInventoryWindow(objID);
 		Common::String title = _world->getText(objID, objID, objID);
-		// HACK, trim titletext because windows can't be resized
+		// HACK, trim titletext to fit initial inventory size
 		while (title.size() > 6) {
 			title.deleteLastChar();
 		}
