@@ -25,8 +25,8 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#ifndef WINTERMUTE_MESH_X_OPENGL_SHADER_H
-#define WINTERMUTE_MESH_X_OPENGL_SHADER_H
+#ifndef WINTERMUTE_XMESH_OPENGL_SHADER_H
+#define WINTERMUTE_XMESH_OPENGL_SHADER_H
 
 #include "engines/wintermute/base/gfx/xmesh.h"
 

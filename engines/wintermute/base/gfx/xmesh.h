@@ -25,8 +25,8 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#ifndef WINTERMUTE_MESH_X_H
-#define WINTERMUTE_MESH_X_H
+#ifndef WINTERMUTE_XMESH_H
+#define WINTERMUTE_XMESH_H
 
 #include "engines/wintermute/base/base_named_object.h"
 #include "engines/wintermute/base/gfx/xmodel.h"

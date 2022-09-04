@@ -25,8 +25,8 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#ifndef WINTERMUTE_FRAME_NODE_H
-#define WINTERMUTE_FRAME_NODE_H
+#ifndef WINTERMUTE_XFRAME_NODE_H
+#define WINTERMUTE_XFRAME_NODE_H
 
 #include "engines/wintermute/base/base_named_object.h"
 #include "engines/wintermute/base/gfx/xmesh.h"

@@ -25,8 +25,8 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#ifndef WINTERMUTE_MATERIAL_H
-#define WINTERMUTE_MATERIAL_H
+#ifndef WINTERMUTE_XMATERIAL_H
+#define WINTERMUTE_XMATERIAL_H
 
 #include "engines/wintermute/base/base_named_object.h"
 

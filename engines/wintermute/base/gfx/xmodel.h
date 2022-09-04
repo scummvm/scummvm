@@ -25,8 +25,8 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#ifndef WINTERMUTE_MODEL_X_H
-#define WINTERMUTE_MODEL_X_H
+#ifndef WINTERMUTE_XMODEL_H
+#define WINTERMUTE_XMODEL_H
 
 #include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/base/base_sprite.h"
