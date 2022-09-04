@@ -311,7 +311,7 @@ void Subtitles::xcReload() {
 
 	for (int i = 0; i < kxcStringCount; ++i) {
 		int j = _vm->_rnd.getRandomNumberRng(i, kxcStringCount - 1);
-		SWAP<Common::String>(_xcStrings[i], _subtitlesEXC[j]);
+		SWAP<Common::String>(_xcStrings[i], _xcStrings[j]);
 	}
 
 	for (int i = 0; i < kxcLineCount; ++i) {
