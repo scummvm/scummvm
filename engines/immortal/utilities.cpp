@@ -23,57 +23,54 @@
 
 namespace Immortal {
 
-namespace Utilities {
-
-void Immortal::Utilities::delay(int j) {             // Delay is measured in jiffies, which are 56.17ms
+void Utilities::delay(int j) {             // Delay is measured in jiffies, which are 56.17ms
 	g_system->delayMillis(j * 56);
 }
 
-void Immortal::Utilities::delay4(int j) {            // Named in source quarterClock for some reason, 1/4 jiffies are 14.04ms
+void Utilities::delay4(int j) {            // Named in source quarterClock for some reason, 1/4 jiffies are 14.04ms
 	g_system->delayMillis(j * 14);
 }
 
-void Immortal::Utilities::delay8(int j) {            // 1/8 jiffies are 7.02ms
+void Utilities::delay8(int j) {            // 1/8 jiffies are 7.02ms
 	g_system->delayMillis(j * 7);
 }
 
-bool Immortal::Utilities::inside(int x1, int y1, int a, int x2, int y2) {
+bool Utilities::inside(int x1, int y1, int a, int x2, int y2) {
 	return false;
 }
-bool Immortal::Utilities::insideRect(int x, int y, int r) {
+bool Utilities::insideRect(int x, int y, int r) {
 	return false;
 }
 
-void Immortal::Utilities::addSprite(Sprite *sprites, uint16 vpX, uint16 vpY, int num, DataSprite *d, int img, uint16 x, uint16 y, uint16 p) {
-	if (num != kMaxSprites) {
+void Utilities::addSprite(Sprite *sprites, uint16 vpX, uint16 vpY, int *num, DataSprite *d, int img, uint16 x, uint16 y, uint16 p) {
+	debug("adding sprite...");
+	if (*num != kMaxSprites) {
 		if (x >= (kResH + kMaxSpriteLeft)) {
 			x |= kMaskHigh;                         // Make it negative
 		}
 		
-		sprites[num]._X = (x << 1) + vpX;
+		sprites[*num]._X = (x << 1) + vpX;
 	
 		if (y >= (kMaxSpriteAbove + kResV)) {
 			y |= kMaskHigh;
 		}
 		
-		sprites[num]._Y = (y << 1) + vpY;
+		sprites[*num]._Y = (y << 1) + vpY;
 
 		if (p >= 0x80) {
 			p |= kMaskHigh;
 		}
 
-		sprites[num]._priority = ((p + y) ^ 0xFFFF) + 1;
+		sprites[*num]._priority = ((p + y) ^ 0xFFFF) + 1;
 		
-		sprites[num]._image = img;
-		sprites[num]._dSprite = d;
-		sprites[num]._on = 1;
-		num += 1;
-
+		sprites[*num]._image = img;
+		sprites[*num]._dSprite = d;
+		sprites[*num]._on = 1;
+		*num += 1;
+		debug("sprite added");
 	} else {
 		debug("Max sprites reached beeeeeep!!");
 	}
 }
-
-}; // namespace Utilities
 
 }; // namespace Immortal
