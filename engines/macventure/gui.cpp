@@ -595,7 +595,7 @@ void Gui::drawCommandsWindow() {
 			srf,
 			_engine->getCommandsPausedString(),
 			0,
-			(srf->h / 2) - getCurrentFont().getFontHeight(),
+			(srf->h - getCurrentFont().getFontHeight()) / 2 - 1,
 			data.bounds.right - data.bounds.left,
 			kColorBlack,
 			Graphics::kTextAlignCenter);
