@@ -97,6 +97,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	}
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
+	playSound(5);
 }
 
 
