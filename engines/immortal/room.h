@@ -107,7 +107,7 @@ private:
 	Common::RandomSource _randomSource;
 
 public:
-	Room(uint8 x, uint8 y, RoomFlag f, Sprite *s, DataSprite *d, Cycle *c, Common::Array<SCycle> p);
+	Room(uint8 x, uint8 y, RoomFlag f, Sprite *s, DataSprite *d, Cycle *c, Common::Array<SCycle> p, int *n);
 	~Room() {}
 
 	/*
@@ -120,8 +120,9 @@ public:
 	const uint8 kMaxFlameCycs = 16;
 
 	// Other
-	 Sprite *_sprites;
-	  Cycle *_cycles;
+	   int *_numSprites;
+	Sprite *_sprites;
+	 Cycle *_cycles;
 DataSprite *_dataSprites;
 
 Common::Array<SCycle>  _cycPtrs;
@@ -157,7 +158,7 @@ Common::Array<Object>  _objects;
 	//void getTilePair(uint8 x, uint8 y);			// Modifies a struct of the tile number, aboveTile number, and the cell coordinates of the tile
 
 	void setHole();
-	void drawContents(uint16 vX, uint16 vY, int nS);
+	void drawContents(uint16 vX, uint16 vY);
 	bool getTilePair(uint8 x, uint8 y, int id);
 	bool getWideWallNormal(uint8 x, uint8 y, uint8 xPrev, uint8 yPrev, int id, int spacing);
 	bool getWallNormal(uint8 x, uint8 y, uint8 xPrev, uint8 yPrev, int id);
@@ -204,7 +205,7 @@ DataSprite *cycleGetDataSprite(int c);			// This takes the place of getFile + ge
 
 	//void flameNew() does not need to exist, because we create the duplicate SFlame in Level, and the array in immortal.h is not accessable from here
 	void flameInit();
-	void flameDrawAll(uint16 vX, uint16 vY, int nS);
+	void flameDrawAll(uint16 vX, uint16 vY);
 	bool roomLighted();
 	void lightTorch(int x, int y);
 	void flameFreeAll();
@@ -226,7 +227,7 @@ DataSprite *cycleGetDataSprite(int c);			// This takes the place of getFile + ge
 	 * [Univ.cpp] Functions from Univ.GS
 	 */
 
-    void univAddSprite(uint16 vX, uint16 vY, int nS, uint16 x, uint16 y, SpriteName n, int img, uint16 p);
+    void univAddSprite(uint16 vX, uint16 vY, uint16 x, uint16 y, SpriteName n, int img, uint16 p);
 };
 
 

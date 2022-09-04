@@ -70,14 +70,13 @@ void ImmortalEngine::levelLoadFile(int l) {
 	 */
 
 	// Create the rooms and doors, then populate the rooms with their objects and actors
-	debug("loading level file...");
 
 	for (int d = 0; d < _stories[l]._doors.size(); d++) {
 		doorNew(_stories[l]._doors[d]);
 	}
 
 	for (int r = 0; r < _stories[l]._rooms.size(); r++) {
-		_rooms[r] = new Room(_stories[l]._rooms[r]._x, _stories[l]._rooms[r]._y, _stories[l]._rooms[r]._flags, _sprites, _dataSprites, _cycles, _cycPtrs);
+		_rooms[r] = new Room(_stories[l]._rooms[r]._x, _stories[l]._rooms[r]._y, _stories[l]._rooms[r]._flags, _sprites, _dataSprites, _cycles, _cycPtrs, &_numSprites);
 
 		Common::Array<SFlame> allFlames(_stories[l]._flames[r].size());
 		if (_stories[l]._flames[r].size() > 0) {
@@ -126,7 +125,7 @@ void ImmortalEngine::levelDrawAll() {
 	//univAutoCenter();
 	clearSprites();
 	// Room needs to be able to add to the sprite list, so we need to give it a pointer to it first
-	_rooms[_currentRoom]->drawContents(_viewPortX, _viewPortY, _numSprites);
+	_rooms[_currentRoom]->drawContents(_viewPortX, _viewPortY);
 }
 
 void ImmortalEngine::levelShowRoom(int r, int bX, int bY) {

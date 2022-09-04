@@ -23,7 +23,7 @@
 
 namespace Immortal {
 
-Room::Room(uint8 x, uint8 y, RoomFlag f, Sprite *s, DataSprite *d, Cycle *c, Common::Array<SCycle> p)
+Room::Room(uint8 x, uint8 y, RoomFlag f, Sprite *s, DataSprite *d, Cycle *c, Common::Array<SCycle> p, int *n)
 	: _xPos(x)
 	, _yPos(y)
 	, _flags(f)
@@ -31,6 +31,7 @@ Room::Room(uint8 x, uint8 y, RoomFlag f, Sprite *s, DataSprite *d, Cycle *c, Com
 	, _dataSprites(d)
 	, _cycles(c)
 	, _cycPtrs(p)
+	, _numSprites(n)
 	, _candleTmp(0)
 	, _randomSource("Immortal") {
 }
@@ -71,8 +72,8 @@ void Room::getCell(uint16 &x, uint16 &y) {
 
 void Room::setHole() {}
 
-void Room::drawContents(uint16 vX, uint16 vY, int nS) {
-	flameDrawAll(vX, vY, nS);
+void Room::drawContents(uint16 vX, uint16 vY) {
+	//flameDrawAll(vX, vY);
 	//sparkDrawAll();
 	//bulletDrawAll();
 	//genSpriteDrawAll();
