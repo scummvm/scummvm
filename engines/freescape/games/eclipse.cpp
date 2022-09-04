@@ -136,6 +136,9 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	assert(scale > 0);
 
 	Entrance *entrance = nullptr;
+	if (entranceID == -1)
+		return;
+
 	assert(entranceID > 0);
 
 	entrance = (Entrance*) _currentArea->entranceWithID(entranceID);
