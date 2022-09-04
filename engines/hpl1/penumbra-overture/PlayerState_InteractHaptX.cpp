@@ -1013,7 +1013,7 @@ bool cPlayerState_PushHaptX::OnMoveForwards(float afMul, float afTimeStep) {
 
 			if (bCollide) {
 				cVector3f vPos = mpPlayer->GetCharacterBody()->GetPosition();
-				cVector3f vOldPos = vPos;
+				//cVector3f vOldPos = vPos;
 				cVector3f vNewPos;
 				vPos += mvForward * -1 * (fPosAdd + 0.1f);
 				mpPlayer->GetCharacterBody()->SetPosition(vPos);
