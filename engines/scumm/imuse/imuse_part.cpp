@@ -194,7 +194,7 @@ void Part::pitchBendFactor(byte value) {
 		return;
 	pitchBend(0);
 	_pitchbend_factor = value;
-	if (_mc)
+	if (_mc && !(_player->isGM()))
 		_mc->pitchBendFactor(value);
 }
 
@@ -339,7 +339,8 @@ void Part::sendAll() {
 	if (!clearToTransmit())
 		return;
 
-	_mc->pitchBendFactor(_pitchbend_factor);
+	if (!_player->isGM())
+		_mc->pitchBendFactor(_pitchbend_factor);
 	sendTranspose();
 	sendPitchBend();
 	_mc->volume(_vol_eff);
@@ -371,7 +372,14 @@ void Part::sendPitchBend() {
 	// We send the transpose value separately for Amiga (which is more like the original handles this).
 	// Some rhythm instruments depend on this.
 	int8 transpose = _se->_isAmiga ? 0 : _transpose_eff;
-	_mc->pitchBend(clamp(bend + (_detune_eff * 64 / 12) + (transpose * 8192 / 12), -8192, 8191));
+
+	if (_player->isGM())
+		// This is the DOTT formula. Might not be exactly like this for SAM...
+		bend = ((clamp(((bend * _pitchbend_factor) >> 6) + _detune_eff + (transpose << 7), -2048, 2047) + 0x800) << 2) - 0x2000;
+	else
+		bend = clamp(bend + (_detune_eff * 64 / 12) + (transpose * 8192 / 12), -8192, 8191);
+
+	_mc->pitchBend(bend);
 }
 
 void Part::sendTranspose() {

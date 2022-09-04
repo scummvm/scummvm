@@ -489,7 +489,10 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 		// GS Mode emulates MT-32 on a GS device, so _native_mt32 should always be true
 		if (_midi_native && _enable_gs) {
 			_native_mt32 = true;
-			initGM(_midi_native);
+			initGS(_midi_native);
+		} else {
+			// If GS is disabled we do the "normal" init from the original GM drivers.
+			initGM();
 		}
 		break;
 
@@ -1515,7 +1518,7 @@ void IMuseInternal::initMT32(MidiDriver *midi) {
 	_system->delayMillis(1000);
 }
 
-void IMuseInternal::initGM(MidiDriver *midi) {
+void IMuseInternal::initGS(MidiDriver *midi) {
 	byte buffer[12];
 	int i;
 
@@ -1620,6 +1623,31 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 		memcpy(&buffer[4], "\x40\x01\x34\x6A\x21", 5);
 		midi->sysEx(buffer, 9);
 		debug(2, "GS SysEx: Reverb Time is 106");
+	}
+}
+
+void IMuseInternal::initGM() {
+	if (!_midi_native || _native_mt32 || _enable_gs || _isAmiga)
+		return;
+	// These are the init messages from the DOTT General Midi
+	// driver. This is the major part of the bug fix for bug
+	// no. 13460 ("DOTT: Incorrect MIDI pitch bending").
+	// Might be worthwhile to check if other GM drivers (like
+	// SAM) have the same values...
+	MidiDriver *m = _midi_native;
+	for (int i = 0; i < 16; ++i) {
+		m->send(0x0064B0 | i);
+		m->send(0x0065B0 | i);
+		m->send(0x1006B0 | i);
+		m->send(0x7F07B0 | i);
+		m->send(0x3F0AB0 | i);
+		m->send(0x4000E0 | i);
+		m->send(0x0001B0 | i);
+		m->send(0x0040B0 | i);
+		m->send(0x405BB0 | i);
+		m->send(0x005DB0 | i);
+		m->send(0x0000B0 | i);
+		m->send(0x007BB0 | i);
 	}
 }
 
