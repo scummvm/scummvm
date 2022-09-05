@@ -28,17 +28,26 @@ namespace Data {
 
 namespace Standard {
 
-CursorModifier::CursorModifier()
-	: unknown1(0), applyWhen(Event::createDefault()), unknown2(0), removeWhen(Event::createDefault()),
-	  unknown3(0), unknown4{0, 0, 0, 0}, cursorID(0) {
+CursorModifier::CursorModifier() : haveRemoveWhen(false) {
 }
 
 DataReadErrorCode CursorModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
-	if (prefix.plugInRevision != 1)
+	if (prefix.plugInRevision != 0 && prefix.plugInRevision != 1)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!reader.readU16(unknown1) || !applyWhen.load(reader) || !reader.readU16(unknown2)
-		|| !removeWhen.load(reader) || !reader.readU16(unknown3) || !reader.readU32(cursorID) || !reader.readBytes(unknown4))
+	if (!applyWhen.load(reader))
+		return kDataReadErrorReadFailed;
+
+	if (prefix.plugInRevision >= 1) {
+		if (!removeWhen.load(reader))
+			return kDataReadErrorReadFailed;
+		haveRemoveWhen = true;
+	} else {
+		removeWhen.type = PlugInTypeTaggedValue::kNull;
+		haveRemoveWhen = false;
+	}
+
+	if (!cursorIDAsLabel.load(reader))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;

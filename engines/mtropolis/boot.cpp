@@ -1102,7 +1102,7 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 
 			Boot::FileIdentification ident;
 			ident.fileName = fileName;
-			ident.category = Boot::MTFT_AUTO;
+			ident.category = fileDesc->fileType;
 			ident.macType.value = 0;
 			ident.macCreator.value = 0;
 			winFiles.push_back(ident);

@@ -1588,9 +1588,21 @@ void CursorModifier::disable(Runtime *runtime) {
 }
 
 bool CursorModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::CursorModifier &data) {
-	if (!_applyWhen.load(data.applyWhen) || !_removeWhen.load(data.removeWhen))
+	if (data.applyWhen.type != Data::PlugInTypeTaggedValue::kEvent || data.cursorIDAsLabel.type != Data::PlugInTypeTaggedValue::kLabel)
 		return false;
-	_cursorID = data.cursorID;
+
+	if (!_applyWhen.load(data.applyWhen.value.asEvent))
+		return false;
+
+	if (data.haveRemoveWhen) {
+		if (!_removeWhen.load(data.removeWhen.value.asEvent))
+			return false;
+	}
+
+	if (data.cursorIDAsLabel.type != Data::PlugInTypeTaggedValue::kLabel)
+		return false;
+
+	_cursorID = data.cursorIDAsLabel.value.asLabel.labelID;
 
 	return true;
 }

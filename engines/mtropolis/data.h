@@ -110,7 +110,7 @@ enum DataObjectType {
 	kVectorMotionModifier					= 0x226,
 	kSceneTransitionModifier				= 0x26c,
 	kElementTransitionModifier				= 0x276,
-	kSharedSceneModifier					= 0x29a,	// NYI
+	kSharedSceneModifier					= 0x29a,
 	kIfMessengerModifier					= 0x2bc,
 	kBehaviorModifier						= 0x2c6,
 	kMessengerModifier						= 0x2da,
@@ -1233,6 +1233,21 @@ struct ElementTransitionModifier : public DataObject {
 	uint16 unknown4;
 	uint16 steps;
 	uint16 rate;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct SharedSceneModifier : public DataObject {
+	SharedSceneModifier();
+
+	TypicalModifierHeader modHeader;
+
+	Event executeWhen;
+	uint8_t unknown1[4];
+	uint32 sectionGUID;
+	uint32 subsectionGUID;
+	uint32 sceneGUID;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;

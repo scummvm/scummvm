@@ -1190,6 +1190,46 @@ void ElementTransitionModifier::setTransitionProgress(uint32 step, uint32 maxSte
 	}
 }
 
+
+SharedSceneModifier::SharedSceneModifier() : _targetSectionGUID(0), _targetSubsectionGUID(0), _targetSceneGUID(0) {
+}
+
+SharedSceneModifier::~SharedSceneModifier() {
+}
+
+bool SharedSceneModifier::load(ModifierLoaderContext &context, const Data::SharedSceneModifier &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	if (!_executeWhen.load(data.executeWhen))
+		return false;
+
+	_targetSectionGUID = data.sectionGUID;
+	_targetSubsectionGUID = data.subsectionGUID;
+	_targetSceneGUID = data.sceneGUID;
+
+	return true;
+}
+
+bool SharedSceneModifier::respondsToEvent(const Event &evt) const {
+	return _executeWhen.respondsTo(evt);
+}
+
+VThreadState SharedSceneModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	return kVThreadReturn;
+}
+
+void SharedSceneModifier::disable(Runtime *runtime) {
+}
+
+Common::SharedPtr<Modifier> SharedSceneModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new SharedSceneModifier(*this));
+}
+
+const char *SharedSceneModifier::getDefaultName() const {
+	return "Shared Scene Modifier";
+}
+
 bool IfMessengerModifier::load(ModifierLoaderContext &context, const Data::IfMessengerModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;

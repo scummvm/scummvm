@@ -1442,6 +1442,22 @@ DataReadErrorCode ElementTransitionModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+SharedSceneModifier::SharedSceneModifier()
+	: executeWhen(Event::createDefault()), unknown1{0, 0, 0, 0}, sectionGUID(0), subsectionGUID(0), sceneGUID(0) {
+}
+
+DataReadErrorCode SharedSceneModifier::load(DataReader &reader) {
+	if (_revision != 1000)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader) || !executeWhen.load(reader)
+		|| !reader.readBytes(unknown1) || !reader.readU32(sectionGUID)
+		|| !reader.readU32(subsectionGUID) || !reader.readU32(sceneGUID))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 IfMessengerModifier::IfMessengerModifier()
 	: messageFlags(0), send(Event::createDefault()), when(Event::createDefault()), unknown6(0), destination(0),
 	  unknown7{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, unknown9{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, withSourceLength(0), withStringLength(0) {
@@ -2288,6 +2304,9 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		break;
 	case DataObjectTypes::kElementTransitionModifier:
 		dataObject = new ElementTransitionModifier();
+		break;
+	case DataObjectTypes::kSharedSceneModifier:
+		dataObject = new SharedSceneModifier();
 		break;
 	case DataObjectTypes::kIfMessengerModifier:
 		dataObject = new IfMessengerModifier();
