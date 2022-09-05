@@ -1015,6 +1015,8 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 						segmentFiles.push_back(nullptr);
 					segmentFiles[segmentIndex] = &macFile;
 				} break;
+			case Boot::MTFT_VIDEO:
+				break;
 			case Boot::MTFT_SPECIAL:
 				break;
 			case Boot::MTFT_AUTO:
@@ -1191,6 +1193,8 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 					segmentFiles.push_back(nullptr);
 				segmentFiles[segmentIndex] = &macFile;
 			} break;
+			case Boot::MTFT_VIDEO:
+				break;
 			case Boot::MTFT_SPECIAL:
 				break;
 			case Boot::MTFT_AUTO:
