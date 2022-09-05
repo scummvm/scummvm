@@ -203,7 +203,6 @@ Datum Window::getStageRect() {
 
 void Window::reset() {
 	resize(_composeSurface->w, _composeSurface->h, true);
-	_composeSurface->clear(_stageColor);
 	_contentIsDirty = true;
 }
 
