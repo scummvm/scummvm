@@ -473,7 +473,6 @@ bool Gui::loadMenus() {
 
 	_menu->addMenuItem(nullptr, "Abb", kMenuActionAbout, 0, 'A', true);
 
-	int i = 1;
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		_menu->loadMenuResource(_resourceManager, *iter);
 	}
