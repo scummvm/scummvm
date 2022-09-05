@@ -110,6 +110,7 @@ Math::Vector3d FreescapeEngine::directionToVector(float pitch, float heading) {
 	v.setValue(0, cos(radPitch) * cos(radHeading));
 	v.setValue(1, sin(radPitch));
 	v.setValue(2, cos(radPitch) * sin(radHeading));
+	v.normalize();
 
 	return v;
 }
@@ -132,7 +133,7 @@ void FreescapeEngine::pressedKey(const int keycode) {}
 
 void FreescapeEngine::processInput() {
 	float currentFrame = g_system->getMillis();
-	float deltaTime = currentFrame - _lastFrame;
+	float deltaTime = 20.0;
 	_lastFrame = currentFrame;
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {

@@ -192,7 +192,8 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 		debugC(1, kFreescapeDebugCode, "Runing effects:");
 		checkCollisions(true); // run the effects
 	} else {
-		debugC(1, kFreescapeDebugCode, "Runing effects:");
+		debugC(1, kFreescapeDebugCode, "Runing effects: at: %f, %f, %f", _position.x(), _position.y(), _position.z());
+
 		checkCollisions(true); // run the effects
 		if (_currentArea->getAreaID() == previousAreaID) {
 			if (_flyMode)
@@ -258,8 +259,8 @@ bool FreescapeEngine::tryStepDown(Math::Vector3d currentPosition) {
 
 bool FreescapeEngine::checkCollisions(bool executeCode) {
 	int areaScale = _currentArea->getScale();
-	Math::Vector3d v1(_position.x() - areaScale * _playerWidth / 2, _position.y() - areaScale * _playerHeight , _position.z() - areaScale * _playerDepth / 2);
-	Math::Vector3d v2(_position.x() + areaScale * _playerWidth / 2, _position.y()                             , _position.z() + areaScale * _playerDepth / 2);
+	Math::Vector3d v1(_position.x() - areaScale * 0.75 * _playerWidth, _position.y() - areaScale * _playerHeight , _position.z() - areaScale * 0.75 * _playerDepth);
+	Math::Vector3d v2(_position.x() + areaScale * 0.75 * _playerWidth, _position.y()                             , _position.z() + areaScale * 0.75 * _playerDepth);
 
 	const Math::AABB boundingBox(v1, v2);
 	Object *obj = _currentArea->checkCollisions(boundingBox);
