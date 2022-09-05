@@ -31,10 +31,9 @@ void FreescapeEngine::playSound(int index) {
 	if (!_mixer->isSoundHandleActive(_handle))
 		_mixer->stopHandle(_handle);
 
-	assert(_usePrerecordedSounds);
 	debug("Playing sound %d", index);
 	switch (index) {
-		case 1: // Done
+		case 1:
 			if (_usePrerecordedSounds) {
 				playWav("fsDOS_laserFire.wav");
 				//_system->delayMillis(50);
@@ -72,7 +71,7 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_roomChange.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(82, 60);
+				playSoundSweepIncWL(262, 100, 65.52 * kFreescapeSweepTuneFactor, 1);
 			}
 		break;
 		case 6:
@@ -80,7 +79,7 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_configMenu.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(82, 60);
+				playSoundConst(830, 60);
 			}
 		break;
 		case 7:
@@ -88,15 +87,15 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_bigHit.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(82, 60);
+				playSoundSweepIncWL(3000, 155, 7.28 * kFreescapeSweepTuneFactor, 1);
 			}
 		break;
 		case 8:
 			if (_usePrerecordedSounds) {
-				playWav("fsDOS_teleportActivated.wav");
+				playWav("fsDOS_teleporterActivated.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(82, 60);
+				playTeleporter(22);
 			}
 		break;
 
@@ -105,7 +104,7 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_powerUp.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(82, 60);
+				playSoundSweepIncWL(280, 5000, 9.1 * kFreescapeSweepTuneFactor, 1);
 			}
 		break;
 
@@ -114,16 +113,17 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_energyDrain.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(82, 60);
+				playSoundSweepIncWL(240, 255, 1.82 * kFreescapeSweepTuneFactor, 1);
 			}
 		break;
 
 		case 11: // ???
+			debug("Playing unknown sound");
 			if (_usePrerecordedSounds) {
 				//playWav("???.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(82, 60);
+				//playSoundConst(82, 60);
 			}
 		break;
 
@@ -132,7 +132,7 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_switchOff.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(82, 60);
+				playSoundSweepIncWL(555, 440, 1.82 * kFreescapeSweepTuneFactor, 1);
 			}
 		break;
 
@@ -141,7 +141,7 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_laserHit.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(82, 60);
+				playSoundSweepIncWL(3000, 420, 14.56 * kFreescapeSweepTuneFactor, 1);
 			}
 		break;
 
@@ -150,7 +150,7 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_tankFall.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(82, 60);
+				playSoundSweepIncWL(785, 310, 1.82 * kFreescapeSweepTuneFactor, 1);
 			}
 		break;
 
@@ -159,7 +159,9 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_successJingle.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(82, 60);
+				playSoundConst(587.330, 250);
+				playSoundConst(740, 175);
+				playSoundConst(880, 450);
 			}
 		break;
 
@@ -168,7 +170,7 @@ void FreescapeEngine::playSound(int index) {
 				//playWav("???.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(82, 60);
+				//playSoundConst(82, 60);
 			}
 		break;
 
@@ -177,7 +179,8 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_badJingle.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(82, 60);
+				playSoundConst(65, 150);
+				playSoundConst(44, 400);
 			}
 		break;
 
@@ -186,16 +189,17 @@ void FreescapeEngine::playSound(int index) {
 				//playWav("???.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(82, 60);
+				//playSoundConst(82, 60);
 			}
 		break;
 
 		case 19:
+			debug("Playing unknown sound");
 			if (_usePrerecordedSounds) {
 				//playWav("???.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(82, 60);
+				//playSoundConst(82, 60);
 			}
 		break;
 
@@ -204,7 +208,7 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_bigHit.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(82, 60);
+				playSoundSweepIncWL(3000, 155, 7.28 * kFreescapeSweepTuneFactor, 1);
 			}
 		break;
 		default:
@@ -277,6 +281,42 @@ void FreescapeEngine::playSoundSweepIncWL(double hzFreq1, double hzFreq2, double
 		inv1 += wlStep;
 	}
 	_mixer->stopHandle(_handle);
+}
+
+void FreescapeEngine::playTeleporter(int totalIters) {
+	// Play FreeScape DOS teleporter-like effect, which is ascending arpeggio.
+	// Length of effect is variable; provide total number of iterations.
+
+	// The general pattern is two iterations upward, one iteration downward.
+	// This means one "ascension cycle" lasts three iterations.
+	// The result is a simulated echo (a better analogy would be a piano's
+	// damper pedal) with gradual ascending frequency.
+
+	// The frequency changes using the same wavelength-shift strategy that is
+	// found in playSoundSweepIncWL.
+
+	int i;
+	double fBase = 1193180.0 / 244.607;
+	double fInc = -600.0;
+	int stepCycle = 1;
+
+	// Loop over iterations
+	for (i = 0; i < totalIters; i++) {
+		playSoundConst(1193180.0 / fBase, 21);
+
+		if (stepCycle <= 1)
+		{
+			// Ascending first two portions of cycle
+			fBase += fInc;
+			stepCycle++;
+		}
+		else
+		{
+			// Descending final portion of cycle
+			fBase -= fInc;
+			stepCycle = 0;
+		}
+	}
 }
 
 }
