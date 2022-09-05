@@ -465,7 +465,6 @@ bool Gui::loadMenus() {
 	}
 
 	Common::MacResIDArray resArray;
-	Common::SeekableReadStream *res;
 	Common::MacResIDArray::const_iterator iter;
 
 	if ((resArray = _resourceManager->getResIDArray(MKTAG('M', 'E', 'N', 'U'))).size() == 0)
