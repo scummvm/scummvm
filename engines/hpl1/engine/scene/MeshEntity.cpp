@@ -566,8 +566,8 @@ void cMeshEntity::UpdateLogic(float afTimeStep) {
 
 				cAnimation *pAnim = pAnimState->GetAnimation();
 
-				for (int i2 = 0; i < pAnim->GetTrackNum(); i++) {
-					cAnimationTrack *pTrack = pAnim->GetTrack(i2);
+				for (int j = 0; j < pAnim->GetTrackNum(); j++) {
+					cAnimationTrack *pTrack = pAnim->GetTrack(j);
 
 					if (pTrack->GetNodeIndex() < 0) {
 						pTrack->SetNodeIndex(GetNodeStateIndex(pTrack->GetName()));
