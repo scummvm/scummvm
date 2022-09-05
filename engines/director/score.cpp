@@ -268,6 +268,8 @@ void Score::startPlay() {
 	}
 
 	_lastPalette = _frames[_currentFrame]->_palette.paletteId;
+	if (!_lastPalette)
+		_lastPalette = _movie->getCast()->_defaultPalette;
 	_vm->setPalette(resolvePaletteId(_lastPalette));
 
 	// All frames in the same movie have the same number of channels
