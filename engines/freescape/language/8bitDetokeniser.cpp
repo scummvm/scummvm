@@ -188,7 +188,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		case 11: // end condition if a variable doesn't have a particular value
 			detokenisedStream += "IF VAR!=? ";
 			detokenisedStream += Common::String::format("(v%d, %d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
-			detokenisedStream += "THEN END ENDIF";
+			detokenisedStream += " THEN END ENDIF";
 			currentInstruction = FCLInstruction(Token::VARNOTEQ);
 			currentInstruction.setSource(tokenisedCondition[bytePointer]);
 			currentInstruction.setDestination(tokenisedCondition[bytePointer + 1]);
@@ -200,7 +200,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		case 14: // end condition if a bit doesn't have a particular value
 			detokenisedStream += "IF BIT!=? ";
 			detokenisedStream += Common::String::format("(%d, %d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
-			detokenisedStream += "THEN END ENDIF";
+			detokenisedStream += " THEN END ENDIF";
 			currentInstruction = FCLInstruction(Token::BITNOTEQ);
 			currentInstruction.setSource(tokenisedCondition[bytePointer]);
 			currentInstruction.setDestination(tokenisedCondition[bytePointer + 1]);
@@ -212,7 +212,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		case 30: // end condition if an object is invisible
 			detokenisedStream += "IF INVIS? ";
 			detokenisedStream += Common::String::format("(%d)", (int)tokenisedCondition[bytePointer]);
-			detokenisedStream += "THEN END ENDIF";
+			detokenisedStream += " THEN END ENDIF";
 			currentInstruction = FCLInstruction(Token::INVISQ);
 			currentInstruction.setSource(tokenisedCondition[bytePointer]);
 			currentInstruction.setDestination(true); // invisible
@@ -224,7 +224,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		case 31: // end condition if an object is visible
 			detokenisedStream += "IF VIS? ";
 			detokenisedStream += Common::String::format("(%d)", (int)tokenisedCondition[bytePointer]);
-			detokenisedStream += "THEN END ENDIF";
+			detokenisedStream += " THEN END ENDIF";
 			currentInstruction = FCLInstruction(Token::INVISQ);
 			currentInstruction.setSource(tokenisedCondition[bytePointer]);
 			currentInstruction.setDestination(false); // visible
@@ -237,7 +237,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		case 32: // end condition if an object is visible in another area
 			detokenisedStream += "IF RINVIS? ";
 			detokenisedStream += Common::String::format("(%d, %d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
-			detokenisedStream += "THEN END ENDIF";
+			detokenisedStream += " THEN END ENDIF";
 			currentInstruction = FCLInstruction(Token::INVISQ);
 			currentInstruction.setSource(tokenisedCondition[bytePointer]);
 			currentInstruction.setAdditional(tokenisedCondition[bytePointer + 1]);
@@ -251,7 +251,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		case 33: // end condition if an object is invisible in another area
 			detokenisedStream += "IF RVIS? ";
 			detokenisedStream += Common::String::format("(%d, %d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
-			detokenisedStream += "THEN END ENDIF";
+			detokenisedStream += " THEN END ENDIF";
 			currentInstruction = FCLInstruction(Token::INVISQ);
 			currentInstruction.setSource(tokenisedCondition[bytePointer]);
 			currentInstruction.setAdditional(tokenisedCondition[bytePointer + 1]);
