@@ -193,6 +193,7 @@ public:
 	void playWav(const Common::String filename);
 	void playSoundConst(double hzFreq, int duration);
 	void playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution);
+	void playTeleporter(int totalIters);
 
 	// Rendering
 	int _screenW, _screenH;
