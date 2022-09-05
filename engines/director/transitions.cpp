@@ -58,7 +58,8 @@ enum TransitionDirection {
 	kTransDirStepsV,
 	kTransDirCheckers,
 	kTransDirBlindsV,
-	kTransDirBlindsH
+	kTransDirBlindsH,
+	kTransDirDissolve
 };
 
 enum {
@@ -104,7 +105,7 @@ struct {
 	TRANS(kTransDissolvePixelsFast,		kTransAlgoDissolve,	kTransDirNone),
 	TRANS(kTransDissolveBoxyRects,		kTransAlgoDissolve,	kTransDirNone),
 	TRANS(kTransDissolveBoxySquares,	kTransAlgoDissolve,	kTransDirNone),			// 25
-	TRANS(kTransDissolvePatterns,		kTransAlgoDissolve,	kTransDirNone),
+	TRANS(kTransDissolvePatterns,		kTransAlgoDissolve,	kTransDirDissolve),
 	TRANS(kTransRandomRows,				kTransAlgoDissolve,	kTransDirNone),
 	TRANS(kTransRandomColumns,			kTransAlgoDissolve,	kTransDirNone),
 	TRANS(kTransCoverDown,				kTransAlgoCover,	kTransDirVertical),
@@ -841,13 +842,13 @@ static byte dissolvePatterns[][8] = {
 };
 
 void Window::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *nextFrame) {
-	t.steps = 64;
-	t.stepDuration = t.duration / t.steps;
+	int patternSteps = 64;
 
 	for (int i = 0; i < t.steps; i++) {
+		int patternIndex = (patternSteps - 1) * (i + 1) / t.steps;
 		uint32 startTime = g_system->getMillis();
 		for (int y = clipRect.top; y < clipRect.bottom; y++) {
-			byte pat = dissolvePatterns[i][y % 8];
+			byte pat = dissolvePatterns[patternIndex][y % 8];
 			byte *dst = (byte *)_composeSurface->getBasePtr(clipRect.left, y);
 			byte *src = (byte *)nextFrame->getBasePtr(clipRect.left, y);
 
@@ -1187,6 +1188,11 @@ void Window::initTransParams(TransParams &t, Common::Rect &clipRect) {
 		t.yStepSize = t.chunkSize;
 		t.stripSize = (h + kNumBlinds - 1) / kNumBlinds;
 		t.steps = (t.stripSize + t.yStepSize - 1) / t.yStepSize;
+		break;
+
+	case kTransDirDissolve:
+		t.steps = MIN<int>(MAX_STEPS(t.duration), 64);
+		t.stepDuration = t.duration / t.steps;
 		break;
 
 	default:
