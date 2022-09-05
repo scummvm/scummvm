@@ -478,7 +478,9 @@ SpellResult Spells::wizard24_jump(Character *chr) {
 }
 
 SpellResult Spells::wizard25_levitate(Character *chr) {
-	return SR_FAILED;
+	g_globals->_spells._s.levitate =
+		g_globals->_currCharacter->_level._current;
+	return SR_SUCCESS_DONE;
 }
 
 SpellResult Spells::wizard32_fly(Character *chr) {
