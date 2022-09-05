@@ -102,12 +102,12 @@ struct {
 	TRANS(kTransRevealDownLeft,			kTransAlgoReveal,	kTransDirBoth),			// 20
 	TRANS(kTransRevealLeft,				kTransAlgoReveal,	kTransDirHorizontal),
 	TRANS(kTransRevealUpLeft,			kTransAlgoReveal,	kTransDirBoth),
-	TRANS(kTransDissolvePixelsFast,		kTransAlgoDissolve,	kTransDirNone),
-	TRANS(kTransDissolveBoxyRects,		kTransAlgoDissolve,	kTransDirNone),
-	TRANS(kTransDissolveBoxySquares,	kTransAlgoDissolve,	kTransDirNone),			// 25
+	TRANS(kTransDissolvePixelsFast,		kTransAlgoDissolve,	kTransDirDissolve),
+	TRANS(kTransDissolveBoxyRects,		kTransAlgoDissolve,	kTransDirDissolve),
+	TRANS(kTransDissolveBoxySquares,	kTransAlgoDissolve,	kTransDirDissolve),			// 25
 	TRANS(kTransDissolvePatterns,		kTransAlgoDissolve,	kTransDirDissolve),
-	TRANS(kTransRandomRows,				kTransAlgoDissolve,	kTransDirNone),
-	TRANS(kTransRandomColumns,			kTransAlgoDissolve,	kTransDirNone),
+	TRANS(kTransRandomRows,				kTransAlgoDissolve,	kTransDirDissolve),
+	TRANS(kTransRandomColumns,			kTransAlgoDissolve,	kTransDirDissolve),
 	TRANS(kTransCoverDown,				kTransAlgoCover,	kTransDirVertical),
 	TRANS(kTransCoverDownLeft,			kTransAlgoCover,	kTransDirBoth),			// 30
 	TRANS(kTransCoverDownRight,			kTransAlgoCover,	kTransDirBoth),
@@ -129,9 +129,9 @@ struct {
 	TRANS(kTransZoomOpen,				kTransAlgoZoom,		kTransDirBoth),
 	TRANS(kTransZoomClose,				kTransAlgoZoom,		kTransDirBoth),
 	TRANS(kTransVerticalBinds,			kTransAlgoBlinds,	kTransDirBlindsV),
-	TRANS(kTransDissolveBitsFast,		kTransAlgoDissolve,	kTransDirNone),			// 50
-	TRANS(kTransDissolvePixels,			kTransAlgoDissolve,	kTransDirNone),
-	TRANS(kTransDissolveBits,			kTransAlgoDissolve,	kTransDirNone)
+	TRANS(kTransDissolveBitsFast,		kTransAlgoDissolve,	kTransDirDissolve),			// 50
+	TRANS(kTransDissolvePixels,			kTransAlgoDissolve,	kTransDirDissolve),
+	TRANS(kTransDissolveBits,			kTransAlgoDissolve,	kTransDirDissolve)
 };
 
 void Window::exitTransition(TransParams &t, int step, Graphics::ManagedSurface *nextFrame, Common::Rect clipRect) {
@@ -695,70 +695,69 @@ void Window::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::Man
 
 	// Calculate steps
 	uint32 pixPerStepInit = 1;
-	t.steps = (1 << (hBits + vBits)) - 1;
+	int bitSteps = (1 << (hBits + vBits)) - 1;
 
-	while (t.steps > 64) {
+	while (bitSteps > 64) {
 		pixPerStepInit <<= 1;
-		t.steps >>= 1;
+		bitSteps >>= 1;
 	}
-	t.steps++;
-
-	t.stepDuration = t.duration / t.steps;
-
-	if (t.type == kTransDissolvePixelsFast ||
-			t.type == kTransDissolveBitsFast)
-		t.stepDuration = 0;						// No delay
+	bitSteps++;
 
 	Common::Rect r(MAX(1, t.xStepSize), t.yStepSize);
 
+	int bitIndex = -1;
 	for (int i = 0; i < t.steps; i++) {
 		uint32 startTime = g_system->getMillis();
-		uint32 pixPerStep = pixPerStepInit;
-		do {
-			uint32 x = (rnd - 1) >> vShift;
-			uint32 y = (rnd - 1) & hMask;
-			byte mask = 0;
+		int bitEndIndex = (bitSteps - 1) * (i + 1) / t.steps;
 
-			r.setWidth(MAX(1, t.xStepSize));
-			r.setHeight(t.yStepSize);
+		while (bitIndex < bitEndIndex) {
+			bitIndex++;
+			uint32 pixPerStep = pixPerStepInit;
+			do {
+				uint32 x = (rnd - 1) >> vShift;
+				uint32 y = (rnd - 1) & hMask;
+				byte mask = 0;
 
-			if (x < w && y < h) {
-				if (t.xStepSize >= 1) {
-					x = x * t.xStepSize;
-					y = y * t.yStepSize;
+				r.setWidth(MAX(1, t.xStepSize));
+				r.setHeight(t.yStepSize);
 
-					if (x < realw && y < realh) {
+				if (x < w && y < h) {
+					if (t.xStepSize >= 1) {
+						x = x * t.xStepSize;
+						y = y * t.yStepSize;
+
+						if (x < realw && y < realh) {
+							x += clipRect.left;
+							y += clipRect.top;
+							r.moveTo(x, y);
+							r.clip(clipRect);
+
+							if (!r.isEmpty())
+								_composeSurface->copyRectToSurface(*nextFrame, x, y, r);
+						}
+					} else {
+						mask = pixmask[x % -t.xStepSize];
+						x = x / -t.xStepSize;
+
 						x += clipRect.left;
 						y += clipRect.top;
-						r.moveTo(x, y);
-						r.clip(clipRect);
 
-						if (!r.isEmpty())
-							_composeSurface->copyRectToSurface(*nextFrame, x, y, r);
+						byte *dst = (byte *)_composeSurface->getBasePtr(x, y);
+						byte *src = (byte *)nextFrame->getBasePtr(x, y);
+
+						*dst = ((*dst & ~mask) | (*src & mask)) & 0xff;
 					}
-				} else {
-					mask = pixmask[x % -t.xStepSize];
-					x = x / -t.xStepSize;
-
-					x += clipRect.left;
-					y += clipRect.top;
-
-					byte *dst = (byte *)_composeSurface->getBasePtr(x, y);
-					byte *src = (byte *)nextFrame->getBasePtr(x, y);
-
-					*dst = ((*dst & ~mask) | (*src & mask)) & 0xff;
 				}
-			}
 
-			rnd = (rnd & 1) ? (rnd >> 1) ^ seed : rnd >> 1;
+				rnd = (rnd & 1) ? (rnd >> 1) ^ seed : rnd >> 1;
 
-			if (pixPerStep > 0) {
-				if (--pixPerStep == 0) {
-					break;
+				if (pixPerStep > 0) {
+					if (--pixPerStep == 0) {
+						break;
+					}
 				}
-			}
-		} while (rnd != seed);
-
+			} while (rnd != seed);
+		}
 		stepTransition(t, i);
 
 		g_lingo->executePerFrameHook(t.frame, i + 1);
@@ -1191,6 +1190,9 @@ void Window::initTransParams(TransParams &t, Common::Rect &clipRect) {
 		break;
 
 	case kTransDirDissolve:
+		if (t.type == kTransDissolvePixelsFast ||
+			t.type == kTransDissolveBitsFast)
+			t.duration = 250;						// Smallest possible delay
 		t.steps = MIN<int>(MAX_STEPS(t.duration), 64);
 		t.stepDuration = t.duration / t.steps;
 		break;
