@@ -333,9 +333,11 @@ void FreescapeEngine::executeToggleVisibility(FCLInstruction &instruction) {
 		obj->toggleVisibility();
 	else {
 		obj = _areaMap[255]->objectWithID(objectID);
-		if (!obj)
-			error("ERROR!: obj %d does not exists in area %d nor in the global one!", objectID, areaID);
-
+		if (!obj) {
+			// This happens in Driller, the ketar hangar
+			warning("ERROR!: obj %d does not exists in area %d nor in the global one!", objectID, areaID);
+			return;
+		}
 		// If an object is not in the area, it is considered to be invisible
 		_currentArea->addObjectFromArea(objectID, _areaMap[255]);
 		obj = _areaMap[areaID]->objectWithID(objectID);
