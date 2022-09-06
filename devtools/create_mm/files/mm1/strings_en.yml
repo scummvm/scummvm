@@ -251,6 +251,9 @@
 		not_enough_gems: "*** NOT ENOUGH GEMS ***"
 		not_enough_sp: "*** NOT ENOUGH SPELL POINTS ***"
 		full: "*** BACKPACK FULL ***"
+	spells:
+		fly_to_x: "FLY TO (A-E): "
+		fly_to_y: "(1-4): "
 enhdialogs:
 	character:
 		stats:

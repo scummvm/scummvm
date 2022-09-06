@@ -24,6 +24,7 @@
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/views/spells/fly.h"
 
 namespace MM {
 namespace MM1 {
@@ -125,6 +126,34 @@ Spells::SpellFn Spells::SPELLS[SPELLS_COUNT] = {
 	placeholder,
 	placeholder,
 	placeholder,
+};
+
+byte FLY_MAP_ID1[20] = {
+	1, 0, 4, 5, 0x12,
+	2, 3, 0x11, 5, 6,
+	2, 1, 4, 6, 0x1A,
+	3, 3, 4, 1, 0x1B
+};
+
+byte FLY_MAP_ID2[20] = {
+	0xF, 0xA, 3, 5, 1,
+	5, 7, 0xA, 0xB, 7,
+	0xB, 1, 9, 1, 0xB,
+	1, 0xD, 0xF, 8, 1
+};
+
+byte FLY_MAP_X[20] = {
+	15, 8, 11, 0, 9,
+	15, 3, 10, 4, 11,
+	15, 3, 3, 7, 12,
+	14, 11, 5, 7, 15
+};
+
+byte FLY_MAP_Y[20] = {
+	7, 10, 0, 8, 11,
+	7, 2, 10, 0, 0,
+	15, 3, 9, 0, 6,
+	14, 15, 15, 7, 15
 };
 
 SpellResult Spells::cast(int spell, Character *chr) {
@@ -484,7 +513,13 @@ SpellResult Spells::wizard25_levitate(Character *chr) {
 }
 
 SpellResult Spells::wizard32_fly(Character *chr) {
-	return SR_FAILED;
+	Views::Spells::Fly::show(
+		[](int mapId) {
+			error("TODO: fly to map %d", mapId);
+		}
+	);
+
+	return SR_SUCCESS_SILENT;
 }
 
 SpellResult Spells::wizard45_guardDog(Character *chr) {
