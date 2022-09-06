@@ -514,6 +514,8 @@ bool ROQPlayer::processBlock() {
 		break;
 	case 0x1011: // Quad vector quantised video frame
 		ok = processBlockQuadVector(blockHeader);
+		if (!ok)
+			break;
 		_dirty = true;
 		endframe = true;
 		debugC(3, kDebugVideo, "Groovie::ROQ:   Decoded Quad Vector frame.");
@@ -674,7 +676,7 @@ bool ROQPlayer::processBlockQuadVector(ROQBlockHeader &blockHeader) {
 	_motionOffY = blockHeader.param & 0xFF;
 
 	// Calculate where the block should end
-	int32 endpos =_file->pos() + blockHeader.size;
+	int64 endpos =_file->pos() + blockHeader.size;
 
 	// Reset the coding types
 	_codingTypeCount = 0;
@@ -692,7 +694,9 @@ bool ROQPlayer::processBlockQuadVector(ROQBlockHeader &blockHeader) {
 	}
 
 	// HACK: Skip the remaining bytes
-	int32 skipBytes = endpos -_file->pos();
+	int64 skipBytes = endpos -_file->pos();
+	if (abs(endpos - _file->pos()) > 2)
+		return false;
 	if (skipBytes > 0) {
 		_file->skip(skipBytes);
 		if (skipBytes != 2) {
