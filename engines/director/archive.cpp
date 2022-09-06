@@ -316,9 +316,11 @@ void MacArchive::readTags() {
 		for (uint32 j = 0; j < idArray.size(); j++) {
 			// Avoid assigning invalid entries to _types, because other
 			// functions will assume they exist and are valid if listed.
-			if (_resFork->getResource(tagArray[i], idArray[j]) == nullptr) {
+			Common::SeekableReadStream *readStream = _resFork->getResource(tagArray[i], idArray[j]);
+			if (readStream == nullptr) {
 				continue;
 			}
+			delete readStream;
 
 			Resource &res = resMap[idArray[j]];
 
