@@ -221,8 +221,9 @@ void FreescapeEngine::shoot() {
 		if (gobj->conditionSource != nullptr)
 			debug("Must use shot = true when executing: %s", gobj->conditionSource->c_str());
 
-		executeConditions(gobj, true, false);
+		executeObjectConditions(gobj, true, false);
 	}
+	executeLocalGlobalConditions(true, false); // Only execute "on shot" room/global conditions
 }
 
 Common::Error FreescapeEngine::run() {

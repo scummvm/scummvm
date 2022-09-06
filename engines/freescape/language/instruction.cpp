@@ -66,14 +66,15 @@ Token::Type FCLInstruction::getType() {
 	return type;
 }
 
-void FreescapeEngine::executeConditions(GeometricObject *obj, bool shot, bool collided) {
+void FreescapeEngine::executeObjectConditions(GeometricObject *obj, bool shot, bool collided) {
+	assert(obj != nullptr);
 	if (obj->conditionSource != nullptr) {
 		debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", obj->conditionSource->c_str());
 		executeCode(obj->condition, shot, collided);
 	}
+}
 
-	if (!isDriller())
-		return;
+void FreescapeEngine::executeLocalGlobalConditions(bool shot, bool collided) {
 
 	debugC(1, kFreescapeDebugCode, "Executing room conditions");
 	for (int i = 0; i < int(_currentArea->conditions.size()); i++) {
