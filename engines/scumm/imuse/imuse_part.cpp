@@ -387,8 +387,6 @@ void Part::sendPitchBend() {
 
 	if (_player->isGM()) {
 		if (_se->_game_id == GID_SAMNMAX) {
-			if (bend)
-				debug ("PB: _pitchbend %d, _pitchbend_factor %d", bend, _pitchbend_factor);
 			// SAMNMAX formula
 			bend = _pitchbend_factor ? (bend * _pitchbend_factor) >> 5 : bend >> 6;
 			bend = (bend + _detune_eff + (transpose << 8)) << 1;
