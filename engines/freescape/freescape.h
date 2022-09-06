@@ -162,7 +162,8 @@ public:
 	Common::Array<FCLInstructionVector> _conditions;
 
 	bool checkCollisions(bool executeCode);
-	void executeConditions(GeometricObject *obj, bool shot, bool collided);
+	void executeObjectConditions(GeometricObject *obj, bool shot, bool collided);
+	void executeLocalGlobalConditions(bool shot, bool collided);
 	void executeCode(FCLInstructionVector &code, bool shot, bool collided);
 
 	// Instructions
