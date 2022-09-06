@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-08-31 13:58+0000\n"
+"POT-Creation-Date: 2022-09-06 20:02+0000\n"
 "PO-Revision-Date: 2022-08-22 17:11+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -2871,7 +2871,7 @@ msgctxt "lowres"
 msgid "OpenGL with shaders"
 msgstr "OpenGL με σκιαστές"
 
-#: audio/adlib.cpp:2294
+#: audio/adlib.cpp:2303
 msgid "AdLib emulator"
 msgstr "Εξομοιωτής Adlib"
 
