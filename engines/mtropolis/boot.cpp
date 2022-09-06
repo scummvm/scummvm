@@ -694,6 +694,19 @@ const ManifestFile obsidianRetailWinDeFiles[] = {
 	{nullptr, MTFT_AUTO}
 };
 
+const ManifestFile obsidianRetailWinItFiles[] = {
+	{"Obsidian.exe", MTFT_PLAYER},
+	{"Obsidian.c95", MTFT_EXTENSION},
+	{"MCURSORS.C95", MTFT_EXTENSION},
+	{"RSGKit.r95", MTFT_SPECIAL},
+	{"Obsidian Data 1.MPL", MTFT_MAIN},
+	{"Obsidian Data 2.MPX", MTFT_ADDITIONAL},
+	{"Obsidian Data 3.MPX", MTFT_ADDITIONAL},
+	{"Obsidian Data 4.MPX", MTFT_ADDITIONAL},
+	{"Obsidian Data 5.MPX", MTFT_ADDITIONAL},
+	{"Obsidian Data 6.MPX", MTFT_ADDITIONAL},
+	{nullptr, MTFT_AUTO}
+};
 
 const char *obsidianRetailWinDirectories[] = {
 	"Obsidian",
@@ -767,6 +780,14 @@ const Game games[] = {
 	{
 		MTBOOT_OBSIDIAN_RETAIL_WIN_DE,
 		obsidianRetailWinDeFiles,
+		obsidianRetailWinDirectories,
+		nullptr,
+		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+	},
+	// Obsidian - Retail - Windows - Italian
+	{
+		MTBOOT_OBSIDIAN_RETAIL_WIN_IT,
+		obsidianRetailWinItFiles,
 		obsidianRetailWinDirectories,
 		nullptr,
 		GameDataHandlerFactory<ObsidianGameDataHandler>::create

@@ -135,6 +135,32 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		0,
 		MTBOOT_OBSIDIAN_RETAIL_WIN_DE,
 	},
+	{
+		// Obsidian, Italian Windows, installed
+		{
+			"obsidian",
+			"installed, CD",
+			{
+				//{ "Obsidian.exe",		 0, "0b50a779136ae6c9cc8bcfa3148c1127", 762368 },
+				//{ "Obsidian.c95",		 0, "fea68ff30ff319cdab30b79d2850a480", 145920 },
+				//{ "MCURSORS.C95",		 0, "dcbe480913eebf233d0cdc33809bf048", 87040 },
+				{ "Obsidian Data 1.MPL", 0, "7ea3e4ded35faebe254ed8f2d3693e82", 16306671 },
+				//{ "Obsidian Data 2.MPX", 0, "7d395964b968632548b66066454b35f1", 559967533 },
+				//{ "Obsidian Data 3.MPX", 0, "29091d607daf7f10e6ef910ebb539ad6", 614784639 },
+				//{ "Obsidian Data 4.MPX", 0, "384d2c4fc502f213764eb1796be43df0", 591490294 },
+				//{ "Obsidian Data 5.MPX", 0, "af2763c9deb312faf83d3621dd6cc60d", 578972797 },
+				//{ "Obsidian Data 6.MPX", 0, "9fdbff8188021c132fcee15ed8a6e936", 546307095 },
+				AD_LISTEND
+			},
+			Common::IT_ITA,
+			Common::kPlatformWindows,
+			ADGF_TESTING,
+			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
+		},
+		GID_OBSIDIAN,
+		0,
+		MTBOOT_OBSIDIAN_RETAIL_WIN_IT,
+	},
 
 	{ // Obsidian Macintosh demo from standalone CD titled "Demo v1.0 January 1997"
 		{
