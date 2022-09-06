@@ -78,8 +78,8 @@ namespace Utilities {
 void delay(int j);                                  // Delay engine by j jiffies (from driver originally, but makes more sense grouped with misc)
 void delay4(int j);                                 // || /4
 void delay8(int j);                                 // || /8
-bool inside(int x1, int y1, int a, int x2, int y2);
-bool insideRect(int x, int y, int r);
+bool inside(uint8 dist, uint8 centX, uint8 centY, uint8 pointX, uint8 pointY);
+bool insideRect(uint8 rectX, uint8 rectY, uint8 w, uint8 h, uint8 pointX, uint8 pointY);
 void addSprite(Sprite *sprites, uint16 vpX, uint16 vpY, int *num, DataSprite *d, int img, uint16 x, uint16 y, uint16 p);
 
 }; // namespace Util
