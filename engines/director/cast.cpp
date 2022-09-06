@@ -424,6 +424,8 @@ bool Cast::loadConfig() {
 		if (check != checksum)
 			warning("BUILDBOT: The checksum for this VWCF resource is incorrect. Got %04x, but expected %04x", check, checksum);
 
+		/* int16 field30 = */ stream->readSint16();
+
 		_defaultPalette = stream->readSint16();
 		// In this header value, the first builtin palette starts at 0 and
 		// continues down into negative numbers.
