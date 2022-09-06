@@ -281,9 +281,15 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 			i++;
 		}
 	} else if (isDriller() || isDark()) {
-		gasPocketX = file->readByte();
-		gasPocketY = file->readByte();
-		gasPocketRadius = file->readByte();
+		if (isDriller()) {
+			gasPocketX = file->readByte();
+			gasPocketY = file->readByte();
+			gasPocketRadius = file->readByte();
+		} else {
+			name = name + char(file->readByte());
+			name = name + char(file->readByte());
+			name = name + char(file->readByte());
+		}
 		debugC(1, kFreescapeDebugParser, "Gas pocket at (%d, %d) with radius %d", gasPocketX, gasPocketY, gasPocketRadius);
 		int i = 0;
 		while (i < 12) {
@@ -435,6 +441,9 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		}
 
 		_areaMap[255] = new Area(255, 0, globalObjectsByID, nullptr);
+	} else if (isDark()) {
+		//loadMessages(file, 0x4135, 14, 20);
+		loadFonts(file, 0xa113);
 	}
 
 	file->seek(offset + 0xc8);

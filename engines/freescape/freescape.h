@@ -263,6 +263,8 @@ public:
 	DarkEngine(OSystem *syst);
 
 	void loadAssets() override;
+	void gotoArea(uint16 areaID, int entranceID) override;
+	void drawUI() override;
 };
 
 class EclipseEngine : public FreescapeEngine {

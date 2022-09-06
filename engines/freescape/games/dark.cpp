@@ -23,6 +23,7 @@
 #include "common/file.h"
 
 #include "freescape/freescape.h"
+#include "freescape/language/8bitDetokeniser.h"
 
 namespace Freescape {
 
@@ -55,5 +56,94 @@ void DarkEngine::loadAssets() {
 	} else
 		error("Invalid render mode %s for Dark Side", _renderMode.c_str());
 }
+
+void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
+	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
+	if (!_gameStateBits.contains(areaID))
+		_gameStateBits[areaID] = 0;
+
+	assert(_areaMap.contains(areaID));
+	_currentArea = _areaMap[areaID];
+	_currentArea->show();
+
+	_currentAreaMessages.clear();
+	_currentAreaMessages.push_back(_currentArea->name);
+
+	int scale = _currentArea->getScale();
+	assert(scale > 0);
+
+	Entrance *entrance = nullptr;
+	if (entranceID > 0 || areaID == 127) {
+		entrance = (Entrance*) _currentArea->entranceWithID(entranceID);
+		assert(entrance);
+
+		_position = entrance->getOrigin();
+
+		if (_rotation == Math::Vector3d(0, 0, 0)) {
+			_rotation = entrance->getRotation();
+			_pitch = _rotation.x();
+			_yaw = _rotation.y() - 260;
+		}
+		debugC(1, kFreescapeDebugMove, "entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
+		debugC(1, kFreescapeDebugMove, "player height: %d", scale * _playerHeight);
+		_position.setValue(1, _position.y() + scale * _playerHeight);
+	} else if (entranceID == 0) {
+		Math::Vector3d diff = _lastPosition - _position;
+		debug("dif: %f %f %f", diff.x(), diff.y(), diff.z());
+		// diff should be used to determinate which entrance to use
+		int newPos = -1;
+		if (abs(diff.x()) < abs(diff.z())) {
+			if (diff.z() > 0)
+				newPos = 4000;
+			else
+				newPos = 100;
+			_position.setValue(2, newPos);
+		} else {
+			if (diff.x() > 0)
+				newPos = 4000;
+			else
+				newPos = 100;
+			_position.setValue(0, newPos);
+		}
+		assert(newPos != -1);
+	}
+
+	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
+	playSound(5);
+}
+
+
+void DarkEngine::drawUI() {
+	_gfx->renderCrossair(0);
+
+	if (_currentAreaMessages.size() == 1) {
+		_gfx->setViewport(_fullscreenViewArea);
+
+		Graphics::Surface *surface = new Graphics::Surface();
+		surface->create(_screenW, _screenH, _gfx->_currentPixelFormat);
+		surface->fillRect(_fullscreenViewArea, 0xA0A0A0FF);
+
+		int score = _gameStateVars[k8bitVariableScore];
+
+		uint32 yellow = 0xFFFF55FF;
+		uint32 black = 0x000000FF;
+
+		drawStringInSurface(_currentAreaMessages[0], 112, 177, yellow, black, surface);
+		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.x())), 201, 137, yellow, black, surface);
+		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.z())), 201, 145, yellow, black, surface);
+		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 201, 153, yellow, black, surface);
+
+
+		drawStringInSurface(Common::String::format("%07d", score), 95, 8, yellow, black, surface);
+
+		Texture *texture = _gfx->createTexture(surface);
+		_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, texture);
+		surface->free();
+		delete surface;
+	}
+
+	_gfx->setViewport(_viewArea);
+}
+
 
 } // End of namespace Freescape
