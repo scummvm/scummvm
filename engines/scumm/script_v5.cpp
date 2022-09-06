@@ -582,7 +582,7 @@ void ScummEngine_v5::o5_actorOps() {
 			if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && i == 0 && j == 0) {
 				for (int k = 0; k < 32; k++)
 					a->setPalette(k, 0xFF);
-			} else {	
+			} else {
 				a->setPalette(i, j);
 			}
 			break;
@@ -1062,6 +1062,21 @@ void ScummEngine_v5::o5_drawObject() {
 				putState(_objs[i].obj_nr, 0);
 		} while (--i);
 		return;
+	}
+
+	// WORKAROUND: In some of the earliest 16-color releases of Loom, the
+	// staircase at the right of room 32 will glitch if Bobbin uses it to exit
+	// the room, if he entered it via the other stairs in the ground. This has
+	// been officially fixed in some '1.2' releases (e.g. French DOS/EGA) and
+	// all later versions; this smaller workaround appears to be enough.
+	if (_game.id == GID_LOOM && _game.version == 3 && !(_game.features & GF_OLD256) && _roomResource == 32 &&
+		vm.slot[_currentScript].number == 10002 && obj == 540 && state == 1 && xpos == 255 && ypos == 255 &&
+		_enableEnhancements) {
+		if (getState(541) == 1) {
+			putState(obj, state);
+			obj = 541;
+			state = 0;
+		}
 	}
 
 	idx = getObjectIndex(obj);
