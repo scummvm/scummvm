@@ -34,6 +34,12 @@ enum SpellResult {
 	SR_SUCCESS_DONE, SR_SUCCESS_SILENT, SR_FAILED 
 };
 
+extern byte FLY_MAP_ID1[20];
+extern byte FLY_MAP_ID2[20];
+extern byte FLY_MAP_X[20];
+extern byte FLY_MAP_Y[20];
+
+
 struct ActiveSpellsStruct {
 	byte fear;
 	byte cold;

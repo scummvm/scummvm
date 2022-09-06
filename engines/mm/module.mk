@@ -42,6 +42,7 @@ MODULE_OBJS := \
 	mm1/views/locations/tavern.o \
 	mm1/views/locations/temple.o \
 	mm1/views/locations/training.o \
+	mm1/views/spells/fly.o \
 	mm1/views/are_you_ready.o \
 	mm1/views/cast_spell.o \
 	mm1/views/character_base.o \
