@@ -98,11 +98,6 @@ void ImmortalEngine::initDataSprite(Common::SeekableReadStream *f, DataSprite *d
 		uint16 next = 0;
 		for (int j = 0; j < newImage._rectH; j++) {
 			next = f->readUint16LE();
-			if (next >= 0x8000) {
-				next = uint16 (0 - next);
-			} else {
-				debug("HUH");
-			}
 			//debug("First after RectH: %04X", next);
 			newImage._deltaPos.push_back(next);
 			next = f->readUint16LE();
@@ -123,20 +118,23 @@ void ImmortalEngine::initDataSprite(Common::SeekableReadStream *f, DataSprite *d
 	d->_images = images;
 }
 
-bool ImmortalEngine::clipSprite(uint16 &height, uint16 &pointIndex, uint16 &skipY, DataSprite *dSprite, uint16 &pointX, uint16 &pointY, int img, int bmw, int superTop, int superBottom) {
+bool ImmortalEngine::clipSprite(uint16 &height, uint16 &pointIndex, uint16 &skipY, DataSprite *dSprite, uint16 &pointX, uint16 &pointY, int img, uint16 bmw, int superTop, int superBottom) {
 	// This bit is to get the base index into the screen buffer, unless that's already been done, which is _lastPoint
 	if ((pointY != _lastY) || (bmw != _lastBMW)) {
 		_lastBMW = bmw;
 		_lastY = pointY;
-		if (pointY >= 0) {
+		if (pointY < 0x80) {
 			_lastPoint = pointY * bmw;
 		} else {
-			pointY = !(pointY);
+			pointY = (pointY ^ 0xFF) + 1;
 			_lastPoint = pointY * bmw;
+			_lastPoint = 0 - _lastPoint;
 		}
 	}
 
 	pointIndex = _lastPoint;
+	return false;
+
 
 	// Now we begin clipping, starting with totally offscreen
 	// We do this by checking if the sprite is above the top of the screen, or below the bottom of it
@@ -155,7 +153,7 @@ bool ImmortalEngine::clipSprite(uint16 &height, uint16 &pointIndex, uint16 &skip
 		}
 
 		// Next we get the difference of overlap from the sprite if it is above the top
-		if ((superTop - pointY) >= 0) {
+		if ((superTop - pointY) < 0x8000) {
 			skipY = (superTop - pointY);
 		}
 
@@ -165,20 +163,37 @@ bool ImmortalEngine::clipSprite(uint16 &height, uint16 &pointIndex, uint16 &skip
 	return false;
 }
 
-void ImmortalEngine::spriteAligned(DataSprite *dSprite, Image &img, uint16 &skipY, uint16 &pointIndex, uint16 &height, int bmw, byte *dst) {
+void ImmortalEngine::spriteAligned(DataSprite *dSprite, Image &img, uint16 &skipY, uint16 &pointIndex, uint16 &height, uint16 bmw, byte *dst) {
 	//debug("draw the sprite");
 
-	//debug("%d, %d, %d", height, skipY, pointIndex);
+	debug("%d, %d, %04X", height, skipY, pointIndex);
 
 	byte pixel;
-	int pos;
+	// For debug currently, align to the word by default
+	pointIndex &= 0xFFFE;
+
+	// Position is weird
+	pointIndex += 50;
+
 	debug("SPRITE START ------");
-	for (int y = skipY; y < height; y++) {
-		for (int x = 0; x < img._scanWidth[y]; x ++) {
-			pos = ((pointIndex + (y * kResH)) - img._deltaPos[y]) + (x * 2);
-			pixel = img._bitmap[y][x];
-			_screenBuff[pos]     = (pixel & kMask8High) >> 4;
-			_screenBuff[pos + 1] =  pixel & kMask8Low;
+	for (int y = 0; y < height; y++, pointIndex += (bmw * 2)) {
+
+		//debug("%04X, %04X ", pointIndex, img._deltaPos[y]);
+		
+		if (img._deltaPos[y] < 0x8000) {
+			pointIndex += (img._deltaPos[y] * 2);
+		}
+		else {
+			pointIndex -= ((0 - img._deltaPos[y]) * 2);
+		}
+
+		for (int x = 0; x < img._scanWidth[y]; x++, pointIndex += 2) {
+
+			//if (y > skipY) {
+				pixel = img._bitmap[y][x];
+				_screenBuff[pointIndex]     = (pixel & kMask8High) >> 4;
+				_screenBuff[pointIndex + 1] =  pixel & kMask8Low;				
+			//}
 		}
 	}
 	debug("SPRITE END -------");
@@ -188,7 +203,7 @@ void ImmortalEngine::spriteNotAligned() {
 
 }
 
-void ImmortalEngine::superSprite(DataSprite *dSprite, uint16 pointX, uint16 pointY, int img, int bmw, byte *dst, int superTop, int superBottom) {
+void ImmortalEngine::superSprite(DataSprite *dSprite, uint16 pointX, uint16 pointY, int img, uint16 bmw, byte *dst, int superTop, int superBottom) {
 	// Main image construction routine
 
 	uint16 cenX   = dSprite->_cenX;

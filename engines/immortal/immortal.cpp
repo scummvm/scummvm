@@ -189,8 +189,8 @@ Common::Error ImmortalEngine::run() {
 		//logic();
 		pollKeys();
 		if (logicFreeze() == 0) {
-				DataSprite *d = &_dataSprites[kFont];
-				superSprite(d, 0xC0, 0x50, 0, 0, _screenBuff, kSuperTop, kMySuperBottom);
+				DataSprite *d = &_dataSprites[kGoblin2];
+				superSprite(d, 20, 0xA0, 4, kVSBMW, _screenBuff, kSuperTop, kMySuperBottom);
 			drawUniv();
 			pollKeys();
 			fixColors();

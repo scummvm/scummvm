@@ -232,7 +232,7 @@ public:
 	const int kSpriteDY		    = 32;
 	const int kVSX			    = kMaxSpriteW;
 	const int kVSY 			    = kSpriteDY;
-	const int kVSBMW		    = (kViewPortW + kMaxSpriteW) / 2;
+	const uint16 kVSBMW		    = (kViewPortW + kMaxSpriteW) / 2;
 	const int kVSLen		    = kVSBMW * (kViewPortH + kMaxSpriteH);
 	const int kVSDY			    = 32; 					// difference from top of screen to top of viewport in the virtual screen buffer
 	const int kMySuperBottom    = kVSDY + kViewPortH;
@@ -584,9 +584,9 @@ GenericSprite _genSprites[6];
 	void initDataSprite(Common::SeekableReadStream *f, DataSprite *d, int index, uint16 cenX, uint16 cenY); // Initializes the data sprite
 	
 	// Main
-	void superSprite(DataSprite *dSprite, uint16 x, uint16 y, int img, int bmw, byte *dst, int superTop, int superBottom);
-	bool clipSprite(uint16 &height, uint16 &pointIndex, uint16 &skipY, DataSprite *dSprite, uint16 &pointX, uint16 &pointY, int img, int bmw, int superTop, int superBottom);
-	void spriteAligned(DataSprite *dSprite, Image &img, uint16 &skipY, uint16 &pointIndex, uint16 &height, int bmw, byte *dst);
+	void superSprite(DataSprite *dSprite, uint16 x, uint16 y, int img, uint16 bmw, byte *dst, int superTop, int superBottom);
+	bool clipSprite(uint16 &height, uint16 &pointIndex, uint16 &skipY, DataSprite *dSprite, uint16 &pointX, uint16 &pointY, int img, uint16 bmw, int superTop, int superBottom);
+	void spriteAligned(DataSprite *dSprite, Image &img, uint16 &skipY, uint16 &pointIndex, uint16 &height, uint16 bmw, byte *dst);
 	void spriteNotAligned();
 
 	/*
