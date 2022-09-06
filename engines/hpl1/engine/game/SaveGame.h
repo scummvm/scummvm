@@ -46,7 +46,7 @@ class TiXmlElement;
 #define kSaveData_SetupBegin(aClass)                                           \
 	super::SaveDataSetup(apSaveObjectHandler, apGame);                         \
 	cSaveData_##aClass *pData = static_cast<cSaveData_##aClass *>(mpSaveData); \
-	const char *sClassNameString = #aClass;
+	(void)pData;
 
 #define kSaveData_BaseClass(aClass) class cSaveData_##aClass : public iSaveData
 #define kSaveData_ChildClass(aParent, aChild) class cSaveData_##aChild : public cSaveData_##aParent
