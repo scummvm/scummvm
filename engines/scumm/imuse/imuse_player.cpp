@@ -78,6 +78,7 @@ Player::Player() :
 	_isMT32(false),
 	_isMIDI(false),
 	_isGM(false),
+	_isAdLibOrFMTowns(false),
 	_supportsPercussion(false),
 	_se(nullptr),
 	_vol_chan(0),
@@ -109,6 +110,7 @@ bool Player::startSound(int sound, MidiDriver *midi) {
 	_isMIDI = _se->isMIDI(sound);
 	_supportsPercussion = _se->supportsPercussion(sound);
 	_isGM = (_supportsPercussion && !_isMT32); // Unlike IMuseInternal::isMIDI(), IMuseInternal::supportsPercussion() really filters out all non-MIDI things...
+	_isAdLibOrFMTowns = (_se->_midi_adlib && !_isMIDI);
 
 	_parts = nullptr;
 	_active = true;
@@ -1031,6 +1033,7 @@ void Player::fixAfterLoad() {
 		_isMIDI = _se->isMIDI(_id);
 		_supportsPercussion = _se->supportsPercussion(_id);
 		_isGM = (_supportsPercussion && !_isMT32); // Unlike IMuseInternal::isMIDI(), IMuseInternal::supportsPercussion() really filters out all non-MIDI things...
+		_isAdLibOrFMTowns = (_se->_midi_adlib && !_isMIDI);
 	}
 }
 

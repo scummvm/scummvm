@@ -1632,8 +1632,9 @@ void IMuseInternal::initGM() {
 	// These are the init messages from the DOTT General Midi
 	// driver. This is the major part of the bug fix for bug
 	// no. 13460 ("DOTT: Incorrect MIDI pitch bending").
-	// Might be worthwhile to check if other GM drivers (like
-	// SAM) have the same values...
+	// SAMNMAX has some less of the default settings (since
+	// the driver works a bit different), but it uses the same
+	// value for the pitch bend range.
 	MidiDriver *m = _midi_native;
 	for (int i = 0; i < 16; ++i) {
 		m->send(0x0064B0 | i);
@@ -1641,6 +1642,7 @@ void IMuseInternal::initGM() {
 		m->send(0x1006B0 | i);
 		m->send(0x7F07B0 | i);
 		m->send(0x3F0AB0 | i);
+		m->send(0x0000C0 | i);
 		m->send(0x4000E0 | i);
 		m->send(0x0001B0 | i);
 		m->send(0x0040B0 | i);

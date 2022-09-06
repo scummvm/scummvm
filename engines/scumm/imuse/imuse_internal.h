@@ -221,6 +221,7 @@ protected:
 	bool _isMIDI;
 	bool _isMT32;
 	bool _isGM;
+	bool _isAdLibOrFMTowns;
 	bool _supportsPercussion;
 
 protected:
@@ -277,6 +278,7 @@ public:
 	bool isMIDI() const { return _isMIDI; }
 	bool isMT32() const { return _isMT32; }
 	bool isGM() const { return _isGM; }
+	bool isAdLibOrFMTowns() const { return _isAdLibOrFMTowns; }
 	bool jump(uint track, uint beat, uint tick);
 	void onTimer();
 	void removePart(Part *part);
