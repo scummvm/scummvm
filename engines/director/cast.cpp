@@ -624,7 +624,7 @@ void Cast::loadStxtData(int key, TextCastMember *member) {
 	}
 }
 
-void Cast::loadPaletteData(PaletteCastMember *member, Common::HashMap<int, PaletteV4>::iterator p) {
+void Cast::loadPaletteData(PaletteCastMember *member, Common::HashMap<int, PaletteV4>::iterator &p) {
 	// TODO: Verify how palettes work in >D4 versions
 	if (_version >= kFileVer400 && _version < kFileVer500 && member->_children.size() == 1) {
 		member->_palette = g_director->getPalette(member->_children[0].index);
