@@ -27,6 +27,7 @@
 namespace Freescape {
 
 DarkEngine::DarkEngine(OSystem *syst) : FreescapeEngine(syst) {
+	_viewArea = Common::Rect(40, 24, 279, 124);
 	_playerHeight = 64;
 	_playerWidth = 12;
 	_playerDepth = 32;
@@ -37,22 +38,22 @@ void DarkEngine::loadAssets() {
 	Common::String path = ConfMan.get("path");
 	Common::FSDirectory gameDir(path);
 
-    Common::File exe;
-    if (_renderMode == "ega") {
-        file = gameDir.createReadStreamForMember("DSIDEE.EXE");
+	Common::File exe;
+	if (_renderMode == "ega") {
+		file = gameDir.createReadStreamForMember("DSIDEE.EXE");
 
-        if (file == nullptr)
-            error("Failed to open DSIDEE.EXE");
+		if (file == nullptr)
+			error("Failed to open DSIDEE.EXE");
 
-        load8bitBinary(file, 0xa280, 16);
-    } else if (_renderMode == "cga") {
-        file = gameDir.createReadStreamForMember("DSIDEC.EXE");
+		load8bitBinary(file, 0xa280, 16);
+	} else if (_renderMode == "cga") {
+		file = gameDir.createReadStreamForMember("DSIDEC.EXE");
 
-        if (file == nullptr)
-            error("Failed to open DSIDE.EXE");
-        load8bitBinary(file, 0x7bb0, 4); // TODO
-    } else
-        error("Invalid render mode %s for Dark Side", _renderMode.c_str());
+		if (file == nullptr)
+			error("Failed to open DSIDEC.EXE");
+		load8bitBinary(file, 0x7bb0, 4); // TODO
+	} else
+		error("Invalid render mode %s for Dark Side", _renderMode.c_str());
 }
 
 } // End of namespace Freescape
