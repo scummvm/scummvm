@@ -1312,6 +1312,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "kidtools",			"Kid Tools Series Demo" },
 	{ "learningsystem",		"The Learning System" },
 	{ "maxissampler",		"Maxis CD-ROM Sampler" },
+	{ "mcdonaldland",		"Mission to McDonaldland" },    // Promo game distributed by McDonald's fastfood chain (AU/NZ only)
 	{ "msgfromapple",		"Message from Apple" },
 	{ "newton",				"World of Newton" },
 	{ "origin",				"Origin Systems Product Catalog" },
@@ -6247,6 +6248,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("letterrally", "1.0", "L_Rally.exe", "b0f3841f6e8005e519445b22de37749b", 3921651, 600),
 
 	WINDEMO1("madtg", "1998 Demo", "MTGDSLID.EXE", "b0f3841f6e8005e519445b22de37749b", 1317661, 600),
+
+	WINGAME1t("mcdonaldland", "", "McLand.exe", "f15f57b8b90986d6b34f8bf3a5487dfb", 1501901, 602),
 
 	// Masters of the Elements - English and German (from lotharsm)
 	// Original Dutch game Meesters van Macht released in 1997
