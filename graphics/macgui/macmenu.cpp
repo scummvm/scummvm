@@ -492,10 +492,8 @@ int MacMenu::addMenuItem(MacMenuSubMenu *submenu, const Common::U32String &text,
 	return submenu->items.size() - 1;
 }
 
-void MacMenu::calcDimensions() {
+void MacMenu::calcDimensions(int x, int y) {
 	// Calculate menu dimensions
-	int y = 1;
-	int x = 18;
 
 	for (uint i = 0; i < _items.size(); i++) {
 		int w = _items[i]->unicode ? _font->getStringWidth(_items[i]->unicodeText) : _font->getStringWidth(_items[i]->text);
@@ -998,10 +996,36 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 	if ((_wm->_mode & kWMModalMenuMode) | !_wm->_screen)
 		g_system->copyRectToScreen(_screen.getBasePtr(_bbox.left, _bbox.top), _screen.pitch, _bbox.left, _bbox.top, _bbox.width(), _bbox.height());
 
-
 	for (uint i = 0; i < _menustack.size(); i++) {
 		renderSubmenu(g, _menustack[i], (i == _menustack.size() - 1));
 	}
+
+	if (g)
+		g->transBlitFrom(_screen, _wm->_colorGreen);
+
+	if (!(_wm->_mode & kWMModalMenuMode) && g)
+		g_system->copyRectToScreen(g->getPixels(), g->pitch, 0, 0, g->w, g->h);
+
+	return true;
+}
+
+bool MacMenu::drawCustom(ManagedSurface* g, int x, int y, bool forceRedraw) {
+	Common::Rect r(_bbox);
+
+	if (!_isVisible)
+		return false;
+
+	if (_dimensionsDirty)
+		calcDimensions(x, y);
+
+	if (!_contentIsDirty && !forceRedraw)
+		return false;
+
+	_contentIsDirty = false;
+
+	_screen.clear(_wm->_colorGreen);
+
+	renderSubmenu(g, _items[0]->submenu, true);
 
 	if (g)
 		g->transBlitFrom(_screen, _wm->_colorGreen);
@@ -1195,8 +1219,8 @@ bool MacMenu::checkIntersects(Common::Rect &rect) {
 	return false;
 }
 
-bool MacMenu::mouseClick(int x, int y) {
-	if (_bbox.contains(x, y)) {
+bool MacMenu::mouseClick(int x, int y, bool forceClick) {
+	if (_bbox.contains(x, y) || forceClick) {
 		for (uint i = 0; i < _items.size(); i++) {
 			if (_items[i]->bbox.contains(x, y)) {
 				if ((uint)_activeItem == i)
@@ -1229,8 +1253,11 @@ bool MacMenu::mouseClick(int x, int y) {
 		setActive(true);
 
 		if (_wm->_mode & kWMModalMenuMode) {
-			draw(_wm->_screen);
-			eventLoop();
+			if (!forceClick)
+				draw(_wm->_screen);
+			else
+				drawCustom(_wm->_screen, x, y);
+			eventLoop(x, y, forceClick);
 
 			// Do not do full refresh as we took care of restoring
 			// the screen. WM is not even aware we were drawing.
@@ -1495,7 +1522,7 @@ void MacMenu::disableAllMenus() {
 	_contentIsDirty = true;
 }
 
-void MacMenu::eventLoop() {
+void MacMenu::eventLoop(int x, int y, bool forceClick) {
 	_contentIsDirty = true;
 
 	while (_active) {
@@ -1503,8 +1530,11 @@ void MacMenu::eventLoop() {
 
 		while (g_system->getEventManager()->pollEvent(event)) {
 			processEvent(event);
-
-			draw(_wm->_screen);
+			
+			if (!forceClick)
+				draw(_wm->_screen);
+			else
+				drawCustom(_wm->_screen, x, y);
 		}
 
 		if (_active) {

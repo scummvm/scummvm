@@ -28,6 +28,7 @@ MODULE_OBJS := \
 	macgui/macwindow.o \
 	macgui/macwindowborder.o \
 	macgui/macwindowmanager.o \
+	macgui/macpopupmenu.o \
 	managed_surface.o \
 	nine_patch.o \
 	opengl/context.o \

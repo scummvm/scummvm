@@ -19,27 +19,13 @@
  *
  */
 
-#ifndef GRAPHICS_MACGUI_MACPOPUPMENU_H
-#define GRAPHICS_MACGUI_MACPOPUPMENU_H
-
-#include "graphics/macgui/macmenu.h"
-#include "graphics/macgui/macwindowmanager.h"
-
-namespace Common {
-class U32String;
-class MacResManager;
-class PEResources;
-}
+#include "graphics/macgui/macpopupmenu.h"
 
 namespace Graphics {
 
-class MacMenu;
-class MacWindowManager;
-
-class MacPopUp : public MacMenu {
-public:
-	MacPopUp(int id, const Common::Rect &bounds, MacWindowManager *wm, const char *string);
-};
-
-} // End of namespace Graphics
-#endif
+    MacPopUp::MacPopUp(int id, const Common::Rect &bounds, MacWindowManager *wm, const char *string) : MacMenu(id, bounds, wm) {
+		addMenuItem(nullptr, "");
+		createSubMenuFromString(0, string, 0);
+		wm->addMenu(id, this);
+    }
+}

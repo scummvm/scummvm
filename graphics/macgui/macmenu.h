@@ -24,6 +24,7 @@
 
 #include "common/str-array.h"
 #include "graphics/macgui/macfontmanager.h"
+#include "graphics/macgui/macwindow.h"
 #include "graphics/font.h"
 
 namespace Common {
@@ -64,7 +65,7 @@ public:
 	void setCommandsCallback(void (*callback)(int, Common::U32String &, void *), void *data) { _unicodeccallback = callback; _cdata = data; }
 
 	void addStaticMenus(const MacMenuData *data);
-	void calcDimensions();
+	void calcDimensions(int x = 18, int y = 1);
 
 	int numberOfMenus();
 	int numberOfMenuItems(MacMenuItem *menu);
@@ -85,6 +86,9 @@ public:
 	MacMenuSubMenu *getSubmenu(MacMenuSubMenu *submenu, int index);
 
 	bool draw(ManagedSurface *g, bool forceRedraw = false) override;
+	bool drawCustom(ManagedSurface *g, int x, int y, bool forceRedraw = false);
+	void eventLoop(int x, int y, bool forceClick = false);
+	bool mouseClick(int x, int y, bool forceClick = false);
 	bool draw(bool forceRedraw = false) override { return false; }
 	void blit(ManagedSurface *g, Common::Rect &dest) override {}
 
@@ -139,7 +143,6 @@ private:
 	void renderSubmenu(ManagedSurface *g, MacMenuSubMenu *menu, bool recursive = true);
 
 	bool keyEvent(Common::Event &event);
-	bool mouseClick(int x, int y);
 	bool mouseRelease(int x, int y);
 	bool mouseMove(int x, int y);
 
@@ -147,8 +150,6 @@ private:
 
 	void drawSubMenuArrow(ManagedSurface *dst, int x, int y, int color);
 	bool contains(int x, int y);
-
-	void eventLoop();
 
 	MacMenuItem *findMenuItem(const Common::String &menuId, const Common::String &itemId);
 	MacMenuItem *findMenuItem(int menuId, int itemId);

@@ -147,7 +147,7 @@ void PopUpMenuXObj::m_new(int nargs) {
 	Datum menuId = g_lingo->pop();
 	Datum menuList = g_lingo->pop();
 
-	Graphics::MacPopUp *menu = g_director->_wm->addPopUpMenu(menuId.u.i, menuList.u.s->c_str());
+	Graphics::MacPopUp *menu = new Graphics::MacPopUp(menuId.u.i, g_director->_wm->getScreenBounds(), g_director->_wm, menuList.u.s->c_str());
 	g_lingo->push(g_lingo->_currentMe);
 }
 
@@ -180,7 +180,13 @@ void PopUpMenuXObj::m_getMenuID(int nargs) {
 
 void PopUpMenuXObj::m_popNum(int nargs) {
 	g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_popNum", nargs);
-	g_lingo->dropStack(nargs);
+	Datum d1, d2, d3;
+	d1 = g_lingo->pop();
+	d2 = g_lingo->pop();
+	d3 = g_lingo->pop();
+
+	g_director->_wm->getMenu(201)->mouseClick(d3.u.i, d2.u.i, true);
+
 	g_lingo->push(Datum());
 }
 

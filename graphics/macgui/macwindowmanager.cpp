@@ -32,7 +32,6 @@
 #include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/mactextwindow.h"
 #include "graphics/macgui/macmenu.h"
-#include "graphics/macgui/macpopupmenu.h"
 
 #include "image/bmp.h"
 
@@ -391,21 +390,20 @@ MacMenu *MacWindowManager::addMenu() {
 	return _menu;
 }
 
-MacPopUp *MacWindowManager::addPopUpMenu(int id, const char *string) {
-
-	MacPopUp *menu = new MacPopUp(id, getScreenBounds(), this);
-	menu->addMenuItem(nullptr, "");
-	menu->createSubMenuFromString(0, string, 0);
-
-	_windows[menu->getId()] = menu;
-
-	return menu;
+void MacWindowManager::addMenu(int id, MacMenu* menu) {
+	_windows[id] = menu;
 }
 
 MacMenu *MacWindowManager::getMenu() {
 	if (_menu) {
 		return _menu;
 	}
+	return nullptr;
+}
+
+MacMenu* MacWindowManager::getMenu(int id) {
+	if (_windows.contains(id))
+		return (MacMenu *)_windows[id];
 	return nullptr;
 }
 
