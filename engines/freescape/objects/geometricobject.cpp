@@ -141,6 +141,25 @@ GeometricObject::GeometricObject(
 		ordinates = new Common::Array<uint16>(*_ordinates);
 	condition = _conditionInstructions;
 	conditionSource = _conditionSource;
+
+	if (type == Type::Rectangle) {
+		if ((size.x() == 0 && size.y() == 0) ||
+			(size.y() == 0 && size.z() == 0) ||
+			(size.x() == 0 && size.z() == 0)) {
+
+			type = Type::Line;
+			assert(!ordinates);
+			ordinates = new Common::Array<uint16>();
+			ordinates->push_back(origin.x());
+			ordinates->push_back(origin.y());
+			ordinates->push_back(origin.z());
+
+			ordinates->push_back(origin.x() + size.x());
+			ordinates->push_back(origin.y() + size.y());
+			ordinates->push_back(origin.z() + size.z());
+		   }
+	}
+
 	createBoundingBox();
 }
 
