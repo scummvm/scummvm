@@ -545,7 +545,7 @@ bool ROQPlayer::processBlock() {
 	}
 
 	if (endpos != _file->pos()) {
-		warning("Groovie::ROQ: BLOCK %04x Should have ended at %d, and has ended at %d", blockHeader.type, endpos, (int)_file->pos());
+		warning("Groovie::ROQ: BLOCK %04x Should have ended at %ld, and has ended at %d", blockHeader.type, endpos, (int)_file->pos());
 		warning("Ensure you've copied the files correctly according to the wiki.");
 		_file->seek(MIN(_file->pos(), endpos));
 	}
