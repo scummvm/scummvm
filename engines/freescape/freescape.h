@@ -153,6 +153,7 @@ public:
 	Math::Vector3d _position, _rotation, _velocity;
 	Math::Vector3d _lastPosition;
 	int _playerHeightNumber;
+	Common::Array<int> _playerHeights;
 	uint16 _playerHeight;
 	uint16 _playerWidth;
 	uint16 _playerDepth;

@@ -83,25 +83,26 @@ void FreescapeEngine::gotoArea(uint16 areaID, int entranceID) {
 	playSound(5);
 }
 
-void FreescapeEngine::changePlayerHeight(int delta) {
+void FreescapeEngine::changePlayerHeight(int index) {
 	int scale = _currentArea->getScale();
 	_position.setValue(1, _position.y() - scale * _playerHeight);
-	_playerHeight = _playerHeight + delta;
+	_playerHeight = _playerHeights[index];
 	_position.setValue(1, _position.y() + scale * _playerHeight);
 }
 
 void FreescapeEngine::rise() {
+	debugC(1, kFreescapeDebugMove, "playerHeightNumber: %d", _playerHeightNumber);
 	int previousAreaID = _currentArea->getAreaID();
 	int scale = _currentArea->getScale();
 
 	if (_flyMode) {
 		_position.setValue(1, _position.y() + scale * 32);
 	} else {
-		if (_playerHeightNumber == 10) // TODO
+		if (_playerHeightNumber == int(_playerHeights.size()) - 1)
 			return;
 
 		_playerHeightNumber++;
-		changePlayerHeight(16);
+		changePlayerHeight(_playerHeightNumber);
 	}
 
 	bool collided = checkCollisions(true);
@@ -110,7 +111,8 @@ void FreescapeEngine::rise() {
 			if (_flyMode)
 				_position = _lastPosition;
 			else {
-				changePlayerHeight(-16);
+				_playerHeightNumber--;
+				changePlayerHeight(_playerHeightNumber);
 			}
 		}
 	}
@@ -120,6 +122,7 @@ void FreescapeEngine::rise() {
 }
 
 void FreescapeEngine::lower() {
+	debugC(1, kFreescapeDebugMove, "playerHeightNumber: %d", _playerHeightNumber);
 	int previousAreaID = _currentArea->getAreaID();
 	int scale = _currentArea->getScale();
 
@@ -136,7 +139,7 @@ void FreescapeEngine::lower() {
 			return;
 
 		_playerHeightNumber--;
-		changePlayerHeight(-16);
+		changePlayerHeight(_playerHeightNumber);
 	}
 
 	_lastPosition = _position;
