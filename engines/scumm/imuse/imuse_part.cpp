@@ -117,9 +117,10 @@ void Part::set_detune(int8 detune) {
 	} else {
 		_detune_eff = clamp((_detune = detune) + _player->getDetune(), -128, 127);
 		// Some drivers handle the transpose and the detune in pitchBend()...
-		if (_mc && _player->isAdLibOrFMTowns())
-			_mc->detune(_detune_eff);
-		sendPitchBend();
+		if (_player->isAdLibOrFMTowns())
+			sendDetune();
+		else
+			sendPitchBend();
 	}
 }
 
@@ -348,6 +349,7 @@ void Part::sendAll() {
 	if (!_player->isGM())
 		_mc->pitchBendFactor(_pitchbend_factor);
 	sendTranspose();
+	sendDetune();
 	sendPitchBend();
 	_mc->volume(_vol_eff);
 	_mc->sustain(_pedal);
@@ -410,6 +412,17 @@ void Part::sendTranspose() {
 		return;
 
 	_mc->transpose(_transpose_eff);
+}
+
+void Part::sendDetune() {
+	if (!_mc)
+		return;
+
+	// Some drivers handle the transpose and the detune in pitchBend()...
+	if (!_player->isAdLibOrFMTowns())
+		return;
+
+	_mc->detune(_detune_eff);
 }
 
 void Part::programChange(byte value) {
