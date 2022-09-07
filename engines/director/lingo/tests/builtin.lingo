@@ -7,6 +7,16 @@ open "Hello"
 open "Hello" with "Finder"
 open "Hello" && "more" with "Finder"
 
+-- These are D4+
+move cast 1, cast 1
+move cast 1, 3
+move cast 3, 1
+put findEmpty(cast 10)
+pasteClipBoardInto cast 2
+put the width of cast 1
+
+-- Puppet commands must come after the move commands
+-- move does a force render. Combined with puppetTransitions it just waits and causes a timeout on the buildbot
 puppetPalette "Rainbow"
 puppetPalette "System",30
 puppetPalette "custompal", 15,4
@@ -19,14 +29,6 @@ puppetSprite 15, true
 puppetTempo 30
 puppetTransition 1
 puppetTransition 2,4,20
-
--- These are D4+
-move cast 1, cast 1
-move cast 1, 3
-move cast 3, 1
-put findEmpty(cast 10)
-pasteClipBoardInto cast 2
-put the width of cast 1
 
 unload
 unload ab
