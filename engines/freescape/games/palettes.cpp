@@ -61,9 +61,4 @@ void FreescapeEngine::loadColorPalette() {
 	_gfx->_colorMap = &_colorMap;
 }
 
-uint8 FreescapeEngine::remapColor(uint8 index) {
-	return index;
-}
-
-
 } // End of namespace Freescape

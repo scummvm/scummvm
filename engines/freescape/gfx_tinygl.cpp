@@ -569,6 +569,7 @@ void TinyGLRenderer::drawSky(uint8 color) {
 	assert(getRGBAt(color, r, g, b)); // TODO: move check inside this function
 	tglClearColor(r / 255., g / 255., b / 255., 1.0);
 	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT);
+	tglClearColor(0, 0, 0, 1.0);
 }
 
 void TinyGLRenderer::drawFloor(uint8 color) {
