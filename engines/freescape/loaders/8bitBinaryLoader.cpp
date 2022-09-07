@@ -92,14 +92,14 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			if (_renderMode == "cga")
 				entry = entry % 4; // TODO: use dithering
 
-			colours->push_back(remapColor(entry));
+			colours->push_back(entry);
 			debugC(1, kFreescapeDebugParser, "color[%d] = %x", 2*colour, entry);
 
 			entry = data >> 4;
 			if (_renderMode == "cga")
 				entry = entry % 4; // TODO: use dithering
 
-			colours->push_back(remapColor(entry));
+			colours->push_back(entry);
 			debugC(1, kFreescapeDebugParser, "color[%d] = %x", 2*colour+1, entry);
 			byteSizeOfObject--;
 		}
@@ -330,8 +330,8 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	Area *area = new Area(areaNumber, areaFlags, objectsByID, entrancesByID);
 	area->name = name;
 	area->scale = scale;
-	area->skyColor = remapColor(skyColor);
-	area->groundColor = remapColor(groundColor);
+	area->skyColor = skyColor;
+	area->groundColor = groundColor;
 
 	// Driller specific
 	area->gasPocketPosition = Common::Point(32 * gasPocketX, 32 * gasPocketY);
