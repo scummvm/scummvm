@@ -42,19 +42,6 @@ public:
 
 //----------------------------------------------------
 
-class cGLState_EnvMapReflect : public iGLStateProgram {
-public:
-	cGLState_EnvMapReflect();
-
-	void Bind();
-	void UnBind();
-
-private:
-	void InitData() {}
-};
-
-//----------------------------------------------------
-
 class cMaterial_EnvMap_Reflect : public iMaterial {
 public:
 	cMaterial_EnvMap_Reflect(const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
@@ -68,13 +55,11 @@ public:
 
 	bool UsesType(eMaterialRenderType aType);
 
-	iGpuProgram *GetVertexProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	iGpuProgram *getGpuProgram(const eMaterialRenderType aType, const int alPass, iLight3D *apLight);
+	iMaterialProgramSetup *getGpuProgramSetup(const eMaterialRenderType aType, const int alPass, iLight3D *apLight);
+
 	bool VertexProgramUsesLight(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 	bool VertexProgramUsesEye(eMaterialRenderType aType, int alPass, iLight3D *apLight);
-
-	iMaterialProgramSetup *GetVertexProgramSetup(eMaterialRenderType aType, int alPass, iLight3D *apLight);
-
-	iGpuProgram *GetFragmentProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 
 	eMaterialAlphaMode GetAlphaMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 	eMaterialBlendMode GetBlendMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
@@ -96,6 +81,11 @@ public:
 	eMaterialType GetType(eMaterialRenderType aType) { return eMaterialType_Diffuse; }
 	void EditVertexes(eMaterialRenderType aType, iCamera *apCam, iLight *pLight,
 					  tVertexVec *apVtxVec, cVector3f *apTransform, unsigned int alIndexAdd) {}
+
+private:
+	iGpuProgram *_diffuseProgram;
+	iGpuProgram *_diffuseReflectProgram;
+
 };
 
 class cMaterialType_EnvMap_Reflect : public iMaterialType {
