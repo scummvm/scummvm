@@ -29,6 +29,11 @@ namespace Freescape {
 
 DarkEngine::DarkEngine(OSystem *syst) : FreescapeEngine(syst) {
 	_viewArea = Common::Rect(40, 24, 279, 124);
+	_playerHeightNumber = 1;
+	_playerHeights.push_back(16);
+	_playerHeights.push_back(48);
+
+	_playerHeight = _playerHeights[_playerHeightNumber];
 	_playerHeight = 64;
 	_playerWidth = 12;
 	_playerDepth = 32;

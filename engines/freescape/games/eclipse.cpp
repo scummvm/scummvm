@@ -77,7 +77,11 @@ static const char* rawMessagesTable[] = {
 
 EclipseEngine::EclipseEngine(OSystem *syst) : FreescapeEngine(syst) {
 	_viewArea = Common::Rect(40, 32, 280, 132);
-	_playerHeight = 48;
+	_playerHeightNumber = 1;
+	_playerHeights.push_back(16);
+	_playerHeights.push_back(48);
+	_playerHeight = _playerHeights[_playerHeightNumber];
+
 	_playerWidth = 8;
 	_playerDepth = 8;
 

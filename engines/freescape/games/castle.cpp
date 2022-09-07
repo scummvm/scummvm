@@ -28,7 +28,11 @@
 namespace Freescape {
 
 CastleEngine::CastleEngine(OSystem *syst) : FreescapeEngine(syst) {
-	_playerHeight = 48;
+	_playerHeightNumber = 1;
+	_playerHeights.push_back(16);
+	_playerHeights.push_back(48);
+	_playerHeight = _playerHeights[_playerHeightNumber];
+
 	_playerWidth = 8;
 	_playerDepth = 8;
 }

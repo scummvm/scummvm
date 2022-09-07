@@ -30,7 +30,13 @@ namespace Freescape {
 
 DrillerEngine::DrillerEngine(OSystem *syst) : FreescapeEngine(syst) {
 	_viewArea = Common::Rect(40, 16, 279, 116);
-	_playerHeight = 64;
+	_playerHeightNumber = 1;
+	_playerHeights.push_back(16);
+	_playerHeights.push_back(48);
+	_playerHeights.push_back(80);
+	_playerHeights.push_back(112);
+
+	_playerHeight = _playerHeights[_playerHeightNumber];
 	_playerWidth = 12;
 	_playerDepth = 32;
 
