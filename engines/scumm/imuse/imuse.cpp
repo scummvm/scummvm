@@ -486,13 +486,15 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 	case IMuse::PROP_GS:
 		_enable_gs = (value > 0);
 
-		// GS Mode emulates MT-32 on a GS device, so _native_mt32 should always be true
-		if (_midi_native && _enable_gs) {
-			_native_mt32 = true;
-			initGS(_midi_native);
-		} else {
-			// If GS is disabled we do the "normal" init from the original GM drivers.
-			initGM();
+		if (_midi_native) {
+			if (_enable_gs) {
+				// GS Mode emulates MT-32 on a GS device, so _native_mt32 should always be true
+				_native_mt32 = true;
+				initGS(_midi_native);
+			} else if (!_native_mt32) {
+				// If GS is disabled we do the "normal" init from the original GM drivers.
+				initGM();
+			}
 		}
 		break;
 
