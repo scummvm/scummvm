@@ -156,12 +156,6 @@ void Area::saveObjects(Common::WriteStream *stream) {
 
 void Area::draw(Freescape::Renderer *gfx) {
 	gfx->clear();
-	if (skyColor != 255) {
-		gfx->_keyColor = 0;
-		gfx->drawSky(skyColor);
-	} else
-		gfx->_keyColor = 255;
-
 	assert(drawableObjects.size() > 0);
 	for (Common::Array<Object *>::iterator it = drawableObjects.begin(); it != drawableObjects.end(); it++) {
 		if (!(*it)->isDestroyed() && !(*it)->isInvisible()) {

@@ -164,6 +164,12 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	_position.setValue(1, _position.y() + scale * _playerHeight);
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	playSound(5);
+
+	if (_currentArea->skyColor > 0) {
+		_gfx->_keyColor = 0;
+		_gfx->setSkyColor(_currentArea->skyColor);
+	} else
+		_gfx->_keyColor = 255;
 }
 
 

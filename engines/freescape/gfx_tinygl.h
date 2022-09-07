@@ -54,7 +54,7 @@ public:
     virtual void renderFace(const Common::Array<Math::Vector3d> &vertices) override;
 
 	virtual void flipBuffer() override;
-	virtual void drawSky(uint8 color) override;
+	virtual void setSkyColor(uint8 color) override;
 	virtual void drawFloor(uint8 color) override;
 };
 

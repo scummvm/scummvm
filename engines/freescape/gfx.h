@@ -97,7 +97,7 @@ public:
 	virtual void renderPyramid(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours, int type) = 0;
 	virtual void renderFace(const Common::Array<Math::Vector3d> &vertices) = 0;
 
-	virtual void drawSky(uint8 color) = 0;
+	virtual void setSkyColor(uint8 color) = 0;
 	virtual void drawFloor(uint8 color) = 0;
 
 	Common::Rect viewport() const;
