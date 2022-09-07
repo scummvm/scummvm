@@ -112,7 +112,7 @@ bool Player::startSound(int sound, MidiDriver *midi) {
 	// IMuseInternal::supportsPercussion() filters out more non-MIDI things than IMuseInternal::isMIDI(),
 	// but still not the AdLib in Samnmax, so we make an extra test for that...
 	_isGM = (_supportsPercussion && !(_se->_game_id == GID_SAMNMAX && !_se->_midi_native && _se->_midi_adlib) && !_isMT32);
-	_isAdLibOrFMTowns = (_se->_midi_adlib && !_isMT32 && !_isGM);
+	_isAdLibOrFMTowns = (_se->_midi_adlib && !_isMT32 && !_isGM && !_se->_pcSpeaker);
 
 	_parts = nullptr;
 	_active = true;
@@ -1037,7 +1037,7 @@ void Player::fixAfterLoad() {
 		// IMuseInternal::supportsPercussion() filters out more non-MIDI things than IMuseInternal::isMIDI(),
 		// but still not the AdLib in SAMNMAX, so we make an extra test for that...
 		_isGM = (_supportsPercussion && !(_se->_game_id == GID_SAMNMAX && !_se->_midi_native && _se->_midi_adlib) && !_isMT32);
-		_isAdLibOrFMTowns = (_se->_midi_adlib && !_isMT32 && !_isGM);
+		_isAdLibOrFMTowns = (_se->_midi_adlib && !_isMT32 && !_isGM && !_se->_pcSpeaker);
 	}
 }
 
