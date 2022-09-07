@@ -27,6 +27,7 @@ class SeekableReadStream;
 typedef SeekableReadStream InSaveFile;
 class OutSaveFile;
 class MemoryWriteStreamDynamic;
+class String;
 }
 
 namespace Director {
