@@ -1,0 +1,16 @@
+// Diffuse_EnvMap_Reflect.fragment
+
+in vec3 vColor;
+in vec3 vUv;
+in vec3 vUv2;
+
+OUTPUT
+
+uniform sampler2D tex0; // diffuse
+uniform samplerCube tex1;
+
+void main() {
+	vec4 diffuseColor = texture(tex0, vUv.st);
+	vec4 col2 = textureCube(tex1, vUv2);
+	outColor = vec4(diffuseColor.xyz, diffuseColor.a * ( 1.0 - col2.a));
+}

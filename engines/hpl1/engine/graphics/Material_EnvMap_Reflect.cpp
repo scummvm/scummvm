@@ -54,41 +54,11 @@ void cEnvMapReflect_SetUp::Setup(iGpuProgram *apProgram, cRenderSettings *apRend
 void cEnvMapReflect_SetUp::SetupMatrix(cMatrixf *apModelMatrix, cRenderSettings *apRenderSettings) {
 	// Put here so it is updated with every matrix, just aswell...
 	if (apModelMatrix)
-		apRenderSettings->mpVertexProgram->SetMatrixf("objectWorldMatrix", *apModelMatrix);
+		apRenderSettings->gpuProgram->SetMatrixf("objectWorldMatrix", *apModelMatrix);
 	else {
-		apRenderSettings->mpVertexProgram->SetMatrixf("objectWorldMatrix", cMatrixf::Identity);
+		apRenderSettings->gpuProgram->SetMatrixf("objectWorldMatrix", cMatrixf::Identity);
 	}
 }
-
-//-----------------------------------------------------------------------
-
-static cEnvMapReflect_SetUp gEnvMaterialSetup;
-
-//////////////////////////////////////////////////////////////////////////
-// FRAGEMENT SETUP
-//////////////////////////////////////////////////////////////////////////
-
-//-----------------------------------------------------------------------
-
-cGLState_EnvMapReflect::cGLState_EnvMapReflect()
-	: iGLStateProgram("Internal_Diffuse") {
-}
-
-void cGLState_EnvMapReflect::Bind() {
-	mpLowGfx->SetActiveTextureUnit(1);
-	mpLowGfx->SetTextureEnv(eTextureParam_ColorFunc, eTextureFunc_Interpolate);
-	mpLowGfx->SetTextureEnv(eTextureParam_ColorSource2, eTextureSource_Previous);
-	mpLowGfx->SetTextureEnv(eTextureParam_ColorOp2, eTextureOp_Alpha);
-}
-
-void cGLState_EnvMapReflect::UnBind() {
-	mpLowGfx->SetActiveTextureUnit(1);
-	mpLowGfx->SetTextureEnv(eTextureParam_ColorFunc, eTextureFunc_Modulate);
-}
-
-//-----------------------------------------------------------------------
-
-cGLState_EnvMapReflect gGLState_EnvMapReflect;
 
 //////////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS
@@ -102,27 +72,21 @@ cMaterial_EnvMap_Reflect::cMaterial_EnvMap_Reflect(const tString &asName, iLowLe
 												   eMaterialPicture aPicture, cRenderer3D *apRenderer3D)
 	: iMaterial(asName, apLowLevelGraphics, apImageManager, apTextureManager, apRenderer, apProgramManager,
 				aPicture, apRenderer3D) {
-	error("cMaterial_EnvMap_Reflect not implemented");
 	mbIsTransperant = false;
 	mbIsGlowing = false;
 	mbUsesLights = false;
 
-	gGLState_EnvMapReflect.SetUp(apLowLevelGraphics);
-
-	///////////////////////////////////////////
-	// Load the Z pass vertex program
-	iGpuProgram *pVtxProg = mpProgramManager->CreateProgram("Diffuse_Color_vp.cg", "main", eGpuProgramType_Vertex);
-	SetProgram(pVtxProg, eGpuProgramType_Vertex, 0);
-
-	///////////////////////////////////////////
-	// Load the Z pass vertex program
-	pVtxProg = mpProgramManager->CreateProgram("Diffuse_EnvMap_Reflect_vp.cg", "main", eGpuProgramType_Vertex);
-	SetProgram(pVtxProg, eGpuProgramType_Vertex, 1);
+	_diffuseProgram = mpProgramManager->CreateProgram("Diffuse_Color", "Diffuse_Color");
+	_diffuseReflectProgram = mpProgramManager->CreateProgram("Diffuse_EnvMap_Reflect", "Diffuse_EnvMap_Reflect");
 }
 
 //-----------------------------------------------------------------------
 
 cMaterial_EnvMap_Reflect::~cMaterial_EnvMap_Reflect() {
+	if (_diffuseProgram)
+		mpProgramManager->Destroy(_diffuseProgram);
+	if (_diffuseReflectProgram)
+		mpProgramManager->Destroy(_diffuseReflectProgram);
 }
 
 //-----------------------------------------------------------------------
@@ -133,11 +97,17 @@ cMaterial_EnvMap_Reflect::~cMaterial_EnvMap_Reflect() {
 
 //-----------------------------------------------------------------------
 
-iGpuProgram *cMaterial_EnvMap_Reflect::GetVertexProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
+iGpuProgram *cMaterial_EnvMap_Reflect::getGpuProgram(const eMaterialRenderType aType, const int alPass, iLight3D *apLight) {
 	if (aType == eMaterialRenderType_Z)
-		return mpProgram[eGpuProgramType_Vertex][0];
-	else
-		return mpProgram[eGpuProgramType_Vertex][1];
+		return _diffuseProgram;
+	return _diffuseReflectProgram;
+}
+
+iMaterialProgramSetup *cMaterial_EnvMap_Reflect::getGpuProgramSetup(const eMaterialRenderType aType, const int alPass, iLight3D *apLight) {
+	static cEnvMapReflect_SetUp envMaterialSetup;
+	if (aType == eMaterialRenderType_Diffuse)
+		return &envMaterialSetup;
+	return nullptr;
 }
 
 bool cMaterial_EnvMap_Reflect::VertexProgramUsesLight(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
@@ -146,19 +116,6 @@ bool cMaterial_EnvMap_Reflect::VertexProgramUsesLight(eMaterialRenderType aType,
 
 bool cMaterial_EnvMap_Reflect::VertexProgramUsesEye(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
 	return false;
-}
-
-iMaterialProgramSetup *cMaterial_EnvMap_Reflect::GetVertexProgramSetup(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
-	if (aType == eMaterialRenderType_Diffuse)
-		return &gEnvMaterialSetup;
-
-	return NULL;
-}
-
-iGpuProgram *cMaterial_EnvMap_Reflect::GetFragmentProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
-	if (aType == eMaterialRenderType_Diffuse)
-		return &gGLState_EnvMapReflect;
-	return NULL;
 }
 
 eMaterialAlphaMode cMaterial_EnvMap_Reflect::GetAlphaMode(eMaterialRenderType aType, int alPass, iLight3D *apLight) {
