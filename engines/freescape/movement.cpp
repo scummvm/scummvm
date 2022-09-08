@@ -112,9 +112,17 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 		_position = _position + _cameraRight * velocity;
 		break;
 	}
+
 	// restore y coordinate
 	if (!_flyMode)
 		_position.set(_position.x(), positionY, _position.z());
+
+	for (int i = 0; i < 3; i++) {
+		if (_position.getValue(i) < 0)
+			_position.setValue(i, 0);
+		else if (_position.getValue(i) > 8128)
+			_position.setValue(i, 8128);
+	}
 
 	bool collided = checkCollisions(false);
 
@@ -208,7 +216,7 @@ bool FreescapeEngine::tryStepDown(Math::Vector3d currentPosition) {
 bool FreescapeEngine::checkCollisions(bool executeCode) {
 	int areaScale = _currentArea->getScale();
 	Math::Vector3d v1(_position.x() - areaScale * 0.75 * _playerWidth, _position.y() - areaScale * _playerHeight , _position.z() - areaScale * 0.75 * _playerDepth);
-	Math::Vector3d v2(_position.x() + areaScale * 0.75 * _playerWidth, _position.y()                             , _position.z() + areaScale * 0.75 * _playerDepth);
+	Math::Vector3d v2(_position.x() + areaScale * 0.75 * _playerWidth, _position.y() + areaScale                 , _position.z() + areaScale * 0.75 * _playerDepth);
 
 	const Math::AABB boundingBox(v1, v2);
 	Object *obj = _currentArea->checkCollisions(boundingBox);
