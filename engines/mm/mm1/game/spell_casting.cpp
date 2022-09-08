@@ -73,7 +73,7 @@ int SpellCasting::getSpellIndex(Character *chr, int lvl, int num) {
 	int lvlNum;
 	int setNum = chr->_class == ARCHER || chr->_class == SORCERER ? 1 : 0;
 	int spellNum = num - 1;
-	for (lvlNum = 2; lvlNum < MIN(lvl, 5); ++lvlNum)
+	for (lvlNum = 2; lvlNum <= MIN(lvl, 5); ++lvlNum)
 		spellNum += 8;
 	for (lvlNum = 5; lvlNum < lvl; ++lvlNum)
 		spellNum += 5;
