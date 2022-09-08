@@ -82,7 +82,7 @@ void iPhysicsWorld::Update(float afTimeStep) {
 
 	////////////////////////////////////
 	// Update character bodies
-	unsigned int lTime = GetApplicationTime();
+	//unsigned int lTime = GetApplicationTime();
 	tCharacterBodyListIt CharIt = mlstCharBodies.begin();
 	for (; CharIt != mlstCharBodies.end(); ++CharIt) {
 		iCharacterBody *pBody = *CharIt;
@@ -105,7 +105,7 @@ void iPhysicsWorld::Update(float afTimeStep) {
 
 	////////////////////////////////////
 	// Simulate the physics
-	lTime = GetApplicationTime();
+	//lTime = GetApplicationTime();
 	Simulate(afTimeStep);
 	// LogUpdate(" Updating lowlevel physics took %d ms\n",mpWorld3D->GetSystem()->GetLowLevel()->GetTime() - lTime);
 
