@@ -362,7 +362,7 @@ struct Part : public Common::Serializable {
 	void set_instrument(byte *data);
 	void load_global_instrument(byte b);
 
-	void set_transpose(int8 transpose);
+	void set_transpose(int8 transpose, int8 clipRangeLow, int8 clipRangeHi);
 	void set_detune(int8 detune);
 	void set_pri(int8 pri);
 	void set_pan(int8 pan);
@@ -415,7 +415,6 @@ protected:
 	TimerCallbackInfo _timer_info_native;
 
 	uint32 _game_id;
-	int _version; // V0: MI2 + INDY4, V1: DOTT, V2: SAM
 
 	// Plug-in SysEx handling. Right now this only supports one
 	// custom SysEx handler for the hardcoded IMUSE_SYSEX_ID

@@ -577,9 +577,10 @@ int Player::setTranspose(byte relative, int b) {
 
 	_transpose = b;
 
-	for (part = _parts; part; part = part->_next) {
-		part->set_transpose(part->_transpose);
-	}
+	// MI2 and INDY4 use bounds of -24/24, DOTT uses -12/12.
+	int lim = (_se->_game_id == GID_TENTACLE) ? 12 : 24;
+	for (part = _parts; part; part = part->_next)
+		part->set_transpose(part->_transpose, -lim, lim);
 
 	return 0;
 }
@@ -595,7 +596,10 @@ void Player::part_set_transpose(uint8 chan, byte relative, int8 b) {
 		return;
 	if (relative)
 		b = transpose_clamp(b + part->_transpose, -7, 7);
-	part->set_transpose(b);
+
+	// MI2 and INDY4 use bounds of -24/24, DOTT uses -12/12.
+	int lim = (_se->_game_id == GID_TENTACLE) ? 12 : 24;
+	part->set_transpose(b, -lim, lim);
 }
 
 bool Player::jump(uint track, uint beat, uint tick) {

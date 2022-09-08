@@ -146,14 +146,15 @@ void Part::set_pan(int8 pan) {
 	sendPanPosition(_pan_eff + 0x40);
 }
 
-void Part::set_transpose(int8 transpose) {
+void Part::set_transpose(int8 transpose, int8 clipRangeLow, int8 clipRangeHi)  {
+	if (_se->_game_id == GID_TENTACLE && (transpose > 24 || transpose < -24))
+		return;
+
 	_transpose = transpose;
-	// MI2 and INDY4 use bounds of -24/24, DOTT uses -12/12. SAMNMAX doesn't seem to do this clipping any more.
-	int lim = (_se->_version == 1) ? 12 : 24;
-	// The Amiga version has a signed/unsigned bug which makes the check for _transpose == -128 impossible. It actually checks for
+	// The Amiga versions have a signed/unsigned bug which makes the check for _transpose == -128 impossible. They actually check for
 	// a value of 128 with a signed int8 (a signed int8 can never be 128). The playback depends on this being implemented exactly
 	// like in the original driver. I found this bug with the WinUAE debugger. The DOS versions do not have that bug.
-	_transpose_eff = (_se->_version == 0 && !_se->_isAmiga && _transpose == -128) ? 0 : transpose_clamp(_transpose + _player->getTranspose(), -lim, lim);
+	_transpose_eff = (!_se->_isAmiga && _transpose == -128) ? 0 : transpose_clamp(_transpose + _player->getTranspose(), clipRangeLow, clipRangeHi);
 	if (_player->isAdLibOrFMTowns() || _se->_isAmiga)
 		sendTranspose();
 	else
@@ -184,7 +185,8 @@ void Part::effectLevel(byte value) {
 }
 
 void Part::fix_after_load() {
-	set_transpose(_transpose);
+	int lim = (_se->_game_id == GID_TENTACLE || _se->_isAmiga) ? 12 : 24;
+	set_transpose(_transpose, -lim, lim);
 	volume(_vol);
 	set_detune(_detune);
 	set_pri(_pri);

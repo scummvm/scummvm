@@ -513,7 +513,6 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 
 	case IMuse::PROP_GAME_ID:
 		_game_id = value;
-		_version = (_game_id == GID_SAMNMAX) ? 2 : (_game_id == GID_TENTACLE ? 1 : 0);
 		break;
 
 	case IMuse::PROP_PC_SPEAKER:
