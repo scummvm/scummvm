@@ -148,20 +148,16 @@ void Part::set_pan(int8 pan) {
 
 void Part::set_transpose(int8 transpose) {
 	_transpose = transpose;
-
-	if (_se->_isAmiga) {
-		// The Amiga version does a check like this. While this is probably a bug (a signed int8 can never be 128),
-		// the playback depends on this being implemented exactly like in the original driver. I found this bug with
-		// the WinUAE debugger. I don't know whether this is an Amiga only thing...
-		_transpose_eff = /*(_transpose == 128) ? 0 : */transpose_clamp(_transpose + _player->getTranspose(), -12, 12);
+	// MI2 and INDY4 use bounds of -24/24, DOTT uses -12/12. SAMNMAX doesn't seem to do this clipping any more.
+	int lim = (_se->_version == 1) ? 12 : 24;
+	// The Amiga version has a signed/unsigned bug which makes the check for _transpose == -128 impossible. It actually checks for
+	// a value of 128 with a signed int8 (a signed int8 can never be 128). The playback depends on this being implemented exactly
+	// like in the original driver. I found this bug with the WinUAE debugger. The DOS versions do not have that bug.
+	_transpose_eff = (_se->_version == 0 && !_se->_isAmiga && _transpose == -128) ? 0 : transpose_clamp(_transpose + _player->getTranspose(), -lim, lim);
+	if (_player->isAdLibOrFMTowns() || _se->_isAmiga)
 		sendTranspose();
-	} else {
-		_transpose_eff = (_transpose == -128) ? 0 : transpose_clamp(_transpose + _player->getTranspose(), -24, 24);
-		if (_player->isAdLibOrFMTowns())
-			sendTranspose();
-		else
-			sendPitchBend();
-	}
+	else
+		sendPitchBend();
 }
 
 void Part::sustain(bool value) {

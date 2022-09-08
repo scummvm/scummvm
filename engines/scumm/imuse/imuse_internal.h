@@ -415,6 +415,7 @@ protected:
 	TimerCallbackInfo _timer_info_native;
 
 	uint32 _game_id;
+	int _version; // V0: MI2 + INDY4, V1: DOTT, V2: SAM
 
 	// Plug-in SysEx handling. Right now this only supports one
 	// custom SysEx handler for the hardcoded IMUSE_SYSEX_ID
