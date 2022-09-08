@@ -142,7 +142,7 @@ void MoovXObj::m_movieKill(int nargs) {
 void MoovXObj::m_fondler(int nargs) {
 	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_currentMe.u.obj);
 
-	debug(5, "MoovXObj::m_fondler");
+	debug(10, "MoovXObj::m_fondler");
 	Graphics::Surface const *frame;
 
 	if (me->_video && me->_video->needsUpdate()) {
@@ -192,7 +192,7 @@ void MoovXObj::m_stopMovie(int nargs) {
 
 void MoovXObj::m_movieDone(int nargs) {
 	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_currentMe.u.obj);
-	debug(5, "MoovXObj::m_movieDone");
+	debug(10, "MoovXObj::m_movieDone");
 	bool result = (me->_video && !me->_video->endOfVideo());
 	g_lingo->push(result);
 }
