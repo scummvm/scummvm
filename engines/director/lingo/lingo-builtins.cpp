@@ -2605,6 +2605,7 @@ void LB::b_updateStage(int nargs) {
 
 	if (debugChannelSet(-1, kDebugFewFramesOnly)) {
 		score->_framesRan++;
+			warning("LB::b_updateStage(): ran frame %0d", score->_framesRan);
 
 		if (score->_framesRan > 9) {
 			warning("b_updateStage(): exiting due to debug few frames only");
