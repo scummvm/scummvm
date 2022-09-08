@@ -695,7 +695,7 @@ bool ROQPlayer::processBlockQuadVector(ROQBlockHeader &blockHeader) {
 
 	// HACK: Skip the remaining bytes
 	int64 skipBytes = endpos -_file->pos();
-	if (abs(endpos - _file->pos()) > 2)
+	if (abs(skipBytes) > 2)
 		return false;
 	if (skipBytes > 0) {
 		_file->skip(skipBytes);
