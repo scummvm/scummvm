@@ -23,11 +23,12 @@
 #define MM_MM1_CONSOLE_H
 
 #include "gui/debugger.h"
+#include "mm/mm1/game/spell_casting.h"
 
 namespace MM {
 namespace MM1 {
 
-class Console : public GUI::Debugger {
+class Console : public GUI::Debugger, public MM1::Game::SpellCasting {
 protected:
 	/**
 	 * Used to dump a map's code and data
@@ -53,6 +54,11 @@ protected:
 	 * Changes the party's position in the current map
 	 */
 	bool cmdPos(int argc, const char **argv);
+
+	/**
+	 * Casts a spell
+	 */
+	bool cmdCast(int argc, const char **argv);
 
 public:
 	Console();

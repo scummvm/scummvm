@@ -69,20 +69,26 @@ enum SpellFlag {
 	SF_OUTDOORS_ONLY = 0x10
 };
 
-void SpellCasting::setSpell(Character *chr, int lvl, int num) {
+int SpellCasting::getSpellIndex(Character *chr, int lvl, int num) {
 	int lvlNum;
 	int setNum = chr->_class == ARCHER || chr->_class == SORCERER ? 1 : 0;
-	_spellState = SS_OK;
-
-	// Figure the offset in the spell list
 	int spellNum = num - 1;
 	for (lvlNum = 2; lvlNum < MIN(lvl, 5); ++lvlNum)
 		spellNum += 8;
 	for (lvlNum = 5; lvlNum < lvl; ++lvlNum)
 		spellNum += 5;
 
-	// Get required SP
 	int spellIndex = setNum * 47 + spellNum;
+	return spellIndex;
+}
+
+void SpellCasting::setSpell(Character *chr, int lvl, int num) {
+	_spellState = SS_OK;
+
+	// Figure the offset in the spell list
+	int spellIndex = getSpellIndex(chr, lvl, num);
+
+	// Get required SP
 	int requiredSp = lvl - 1;
 
 	if (SPELLS_SP_GEMS[spellIndex] < 0)
