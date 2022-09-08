@@ -48,6 +48,11 @@ public:
 	void setSpell(Character *chr, int lvl, int num);
 
 	/**
+	 * Get the index in the spell array for a given spell
+	 */
+	static int getSpellIndex(Character *chr, int lvl, int num);
+
+	/**
 	 * Sets a spell directly by index
 	 */
 	void setSpell(int spellIndex, int requiredSp, int requiredGems);

@@ -36,6 +36,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("map", WRAP_METHOD(Console, cmdMap));
 	registerCmd("pos", WRAP_METHOD(Console, cmdPos));
 	registerCmd("intangible", WRAP_METHOD(Console, cmdIntangible));
+	registerCmd("cast", WRAP_METHOD(Console, cmdCast));
 }
 
 bool Console::cmdDumpMap(int argc, const char **argv) {
@@ -201,6 +202,34 @@ bool Console::cmdIntangible(int argc, const char **argv) {
 	g_globals->_intangible = (argc < 2) || strcmp(argv[1], "off");
 	debugPrintf("Intangibility is %s\n", g_globals->_intangible ? "on" : "off");
 	return true;
+}
+
+bool Console::cmdCast(int argc, const char **argv) {
+	if (argc != 3) {
+		debugPrintf("%s <level> <number>\n", argv[0]);
+		return true;
+	} else {
+		Character *c = g_globals->_currCharacter;
+		if (!c || (c->_class != CLERIC && c->_class != SORCERER
+				&& c->_class != ARCHER)) {
+			uint i;
+			for (i = 0; i < g_globals->_party.size(); ++i) {
+				if (g_globals->_party[i]._class == SORCERER) {
+					c = &g_globals->_party[i];
+					break;
+				}
+			}
+			if (i == g_globals->_party.size()) {
+				debugPrintf("Could not find sorcerer in party\n");
+				return true;
+			}
+		}
+
+		int spellIndex = getSpellIndex(c, strToInt(argv[1]), strToInt(argv[2]));
+		setSpell(spellIndex, 0, 0);
+		Spells::cast(_spellIndex, c);
+		return false;
+	}
 }
 
 } // namespace MM1
