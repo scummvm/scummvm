@@ -73,7 +73,7 @@ tFlag cCollider2D::CollideBody(cBody2D *apBody, cCollideData2D *apData) {
 
 	/////// TEST COLLISION WITH TILES
 	float fTileSize = mpWorld->GetTileMap()->GetTileSize();
-	cRect2f TileRect = cRect2f(0, 0, fTileSize, fTileSize);
+	//cRect2f TileRect = cRect2f(0, 0, fTileSize, fTileSize);
 
 	for (int i = 0; i < mpWorld->GetTileMap()->GetTileLayerNum(); i++) {
 		if (mpWorld->GetTileMap()->GetTileLayer(i)->HasCollision() == false)
@@ -83,8 +83,8 @@ tFlag cCollider2D::CollideBody(cBody2D *apBody, cCollideData2D *apData) {
 
 		while (pTileIt->HasNext()) {
 			cTile *pTile = pTileIt->Next();
-			TileRect.x = pTile->GetPosition().x - fTileSize / 2;
-			TileRect.y = pTile->GetPosition().y - fTileSize / 2;
+			//TileRect.x = pTile->GetPosition().x - fTileSize / 2;
+			//TileRect.y = pTile->GetPosition().y - fTileSize / 2;
 
 			// This can be used for material properties.
 			// cTileDataNormal *pTData = static_cast<cTileDataNormal*>(pTile->GetTileData());
@@ -219,7 +219,7 @@ tFlag cCollider2D::CollideRect(cRect2f &aRect, tFlag alCollideFlags, cCollideDat
 	//// Check for all tiles if the flag is set
 	if (alCollideFlags & eFlagBit_0) {
 		float fTileSize = mpWorld->GetTileMap()->GetTileSize();
-		cRect2f TileRect = cRect2f(0, 0, fTileSize, fTileSize);
+		//cRect2f TileRect = cRect2f(0, 0, fTileSize, fTileSize);
 
 		for (int i = 0; i < mpWorld->GetTileMap()->GetTileLayerNum(); i++) {
 			if (mpWorld->GetTileMap()->GetTileLayer(i)->HasCollision() == false)
@@ -229,8 +229,8 @@ tFlag cCollider2D::CollideRect(cRect2f &aRect, tFlag alCollideFlags, cCollideDat
 
 			while (pTileIt->HasNext()) {
 				cTile *pTile = pTileIt->Next();
-				TileRect.x = pTile->GetPosition().x - fTileSize / 2;
-				TileRect.y = pTile->GetPosition().y - fTileSize / 2;
+				//TileRect.x = pTile->GetPosition().x - fTileSize / 2;
+				//TileRect.y = pTile->GetPosition().y - fTileSize / 2;
 
 				if (pTile->GetCollisionMesh() == NULL)
 					continue;
