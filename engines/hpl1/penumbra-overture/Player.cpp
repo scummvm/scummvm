@@ -976,7 +976,7 @@ cTempCheckProxy gTempCheckProxy;
 
 void cPlayer::Update(float afTimeStep) {
 	cSystem *pSystem = mpInit->mpGame->GetSystem();
-	unsigned int lTime = pSystem->GetLowLevel()->getTime();
+	//unsigned int lTime = pSystem->GetLowLevel()->getTime();
 	iPhysicsWorld *pPhysicsWorld = mpScene->GetWorld3D()->GetPhysicsWorld();
 
 	/////////////////////////////////////
@@ -1014,7 +1014,7 @@ void cPlayer::Update(float afTimeStep) {
 	}
 	//LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);*/
 
-	lTime = pSystem->GetLowLevel()->getTime();
+	//lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  misc\n");
 	//////////////////////
 	// Reset roll
@@ -1035,28 +1035,28 @@ void cPlayer::Update(float afTimeStep) {
 	/////////////////////////////////////////////////
 	// Flashlight
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
-	lTime = pSystem->GetLowLevel()->getTime();
+	//lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  flashlight");
 	mpFlashLight->Update(afTimeStep);
 
 	/////////////////////////////////////////////////
 	// Glowstick
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
-	lTime = pSystem->GetLowLevel()->getTime();
+	//lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  glowstick\n");
 	mpGlowStick->Update(afTimeStep);
 
 	/////////////////////////////////////////////////
 	// Flare
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
-	lTime = pSystem->GetLowLevel()->getTime();
+	//lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  flare\n");
 	mpFlare->Update(afTimeStep);
 
 	/////////////////////////////////////////////////
 	// Lean
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
-	lTime = pSystem->GetLowLevel()->getTime();
+	//lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  more misc\n");
 	mpLean->Update(afTimeStep);
 
@@ -1083,12 +1083,12 @@ void cPlayer::Update(float afTimeStep) {
 	////////////////////////////////////////
 	// Hidden
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
-	lTime = pSystem->GetLowLevel()->getTime();
+	//lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  hidden\n");
 	mpHidden->Update(afTimeStep);
 
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
-	lTime = pSystem->GetLowLevel()->getTime();
+	//lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  collide scripts\n");
 	/////////////////////////////////////////////////
 	// Collide script
@@ -1189,7 +1189,7 @@ void cPlayer::Update(float afTimeStep) {
 		mlGroundCount--;
 
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
-	lTime = pSystem->GetLowLevel()->getTime();
+	//lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  Check For ground\n");
 	//////////////////////////////
 	// Cast ray and check for ground.
@@ -1205,7 +1205,7 @@ void cPlayer::Update(float afTimeStep) {
 	//////////////////////////////
 	// Update movement
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
-	lTime = pSystem->GetLowLevel()->getTime();
+	//lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  Movement\n");
 
 	if (mbMoving == false)
@@ -1219,7 +1219,7 @@ void cPlayer::Update(float afTimeStep) {
 	//////////////////////////////
 	// Update camera pos add
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
-	lTime = pSystem->GetLowLevel()->getTime();
+	//lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  Camera pos\n");
 	if (mpCharBody) {
 		float fYAdd = mfCameraHeightAdd + mpHeadMove->GetPos() + mfHeightAdd + mpDeath->GetHeighAdd() +
@@ -1245,7 +1245,7 @@ void cPlayer::Update(float afTimeStep) {
 	SetPickedBody(NULL);
 
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
-	lTime = pSystem->GetLowLevel()->getTime();
+	//lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  state %d\n",mState);
 	if (mpInit->mpInventory->IsActive() == false &&
 		mpInit->mpNotebook->IsActive() == false) {
