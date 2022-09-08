@@ -118,7 +118,7 @@ iParticleEmitter3D::~iParticleEmitter3D() {
 void iParticleEmitter3D::SetSubDivUV(const cVector2l &avSubDiv) {
 	// Check so that there is any subdivision and that no sub divison axis is
 	// equal or below zero
-	if ((avSubDiv.x > 1 || avSubDiv.x > 1) && (avSubDiv.x > 0 && avSubDiv.y > 0)) {
+	if ((avSubDiv.x > 1 || avSubDiv.y > 1) && (avSubDiv.x > 0 && avSubDiv.y > 0)) {
 		int lSubDivNum = avSubDiv.x * avSubDiv.y;
 
 		mvSubDivUV.resize(lSubDivNum);
