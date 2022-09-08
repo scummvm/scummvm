@@ -65,4 +65,44 @@ void CastleEngine::loadAssets() {
 	//load8bitBinary(file, 0x791a, 16);
 }
 
+void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
+	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
+	if (!_gameStateBits.contains(areaID))
+		_gameStateBits[areaID] = 0;
+
+	assert(_areaMap.contains(areaID));
+	_currentArea = _areaMap[areaID];
+	_currentArea->show();
+
+	int scale = _currentArea->getScale();
+	assert(scale > 0);
+
+	Entrance *entrance = nullptr;
+	if (entranceID > 0) {
+		entrance = (Entrance*) _currentArea->entranceWithID(entranceID);
+
+		assert(entrance);
+		_position = entrance->getOrigin();
+
+		if (_rotation == Math::Vector3d(0, 0, 0)) {
+			_rotation = entrance->getRotation();
+			_pitch = _rotation.x();
+			_yaw = _rotation.y() - 260;
+		}
+		debugC(1, kFreescapeDebugMove, "entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
+		debugC(1, kFreescapeDebugMove, "player height: %d", scale * _playerHeight);
+		_position.setValue(1, _position.y() + scale * _playerHeight);
+	}
+
+	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
+	playSound(5);
+
+	if (_currentArea->skyColor > 0) {
+		_gfx->_keyColor = 0;
+		_gfx->setSkyColor(_currentArea->skyColor);
+	} else
+		_gfx->_keyColor = 255;
+}
+
+
 } // End of namespace Freescape
