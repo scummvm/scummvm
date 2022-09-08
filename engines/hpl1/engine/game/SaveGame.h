@@ -28,6 +28,7 @@
 #ifndef HPL_SAVE_GAME_H
 #define HPL_SAVE_GAME_H
 
+#include <cassert>
 #include <map>
 
 #include "hpl1/engine/system/SerializeClass.h"
@@ -37,16 +38,18 @@ class TiXmlElement;
 
 #define kSaveData_LoadFromBegin(aClass)  \
 	super::LoadFromSaveData(apSaveData); \
-	cSaveData_##aClass *pData = static_cast<cSaveData_##aClass *>(apSaveData);
+	cSaveData_##aClass *pData = static_cast<cSaveData_##aClass *>(apSaveData); \
+	assert(pData != nullptr);
 
 #define kSaveData_SaveToBegin(aClass)  \
 	super::SaveToSaveData(apSaveData); \
-	cSaveData_##aClass *pData = static_cast<cSaveData_##aClass *>(apSaveData);
+	cSaveData_##aClass *pData = static_cast<cSaveData_##aClass *>(apSaveData); \
+	assert(pData != nullptr);
 
 #define kSaveData_SetupBegin(aClass)                                           \
 	super::SaveDataSetup(apSaveObjectHandler, apGame);                         \
 	cSaveData_##aClass *pData = static_cast<cSaveData_##aClass *>(mpSaveData); \
-	(void)pData;
+	assert(pData != nullptr);
 
 #define kSaveData_BaseClass(aClass) class cSaveData_##aClass : public iSaveData
 #define kSaveData_ChildClass(aParent, aChild) class cSaveData_##aChild : public cSaveData_##aParent
