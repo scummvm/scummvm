@@ -283,6 +283,8 @@ public:
 	CastleEngine(OSystem *syst);
 
 	void loadAssets() override;
+
+	void gotoArea(uint16 areaID, int entranceID) override;
 };
 
 extern FreescapeEngine *g_freescape;
