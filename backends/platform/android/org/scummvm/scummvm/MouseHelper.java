@@ -9,8 +9,6 @@ import android.view.MotionEvent;
 //import android.view.SurfaceView;
 import android.view.View;
 
-import static android.view.MotionEvent.TOOL_TYPE_STYLUS;
-
 /**
  * Contains helper methods for mouse/hover events that were introduced in Android 4.0.
  */
@@ -101,16 +99,6 @@ public class MouseHelper implements View.OnHoverListener {
 
 	}
 
-	public static boolean isStylus(MotionEvent e){
-		if (e == null) {
-			return false;
-		}
-
-		int toolType = e.getToolType(0);
-
-		return (toolType == TOOL_TYPE_STYLUS);
-	}
-
 	public static boolean isMouse(KeyEvent e) {
 		if (e == null) {
 			return false;
@@ -144,7 +132,7 @@ public class MouseHelper implements View.OnHoverListener {
 		// SOURCE_MOUSE_RELATIVE is sent when mouse is detected as trackball
 		// TODO: why does this happen? Do we need to also check for SOURCE_TRACKBALL here?
 		return ((sources & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE)
-		       ||  isStylus(e)
+		       || (e.getToolType(0) == MotionEvent.TOOL_TYPE_STYLUS)
 		       || ((sources & InputDevice.SOURCE_TOUCHPAD) == InputDevice.SOURCE_TOUCHPAD)
 		       ||  isTrackball(e);
 	}
