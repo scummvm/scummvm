@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-09-06 20:02+0000\n"
+"POT-Creation-Date: 2022-09-08 17:10+0000\n"
 "PO-Revision-Date: 2022-08-22 17:01+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -178,9 +178,9 @@ msgstr ""
 #: engines/groovie/script.cpp:650 engines/nancy/dialogs.cpp:101
 #: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:99
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:926
-#: engines/scumm/scumm.cpp:1090 engines/scumm/scumm.cpp:1116
-#: engines/scumm/scumm.cpp:1138 engines/scumm/scumm.cpp:1436
-#: engines/scumm/scumm.cpp:1909 engines/sky/compact.cpp:140
+#: engines/scumm/scumm.cpp:1097 engines/scumm/scumm.cpp:1123
+#: engines/scumm/scumm.cpp:1145 engines/scumm/scumm.cpp:1443
+#: engines/scumm/scumm.cpp:1916 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:531 engines/sword1/animation.cpp:552
 #: engines/sword1/animation.cpp:568 engines/sword1/animation.cpp:576
 #: engines/sword1/control.cpp:888 engines/sword1/logic.cpp:1634
@@ -2204,7 +2204,7 @@ msgstr "Gráf. desactivados"
 msgid "Standard renderer"
 msgstr "Renderizado estándar"
 
-#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:841
+#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:887
 msgid "Standard"
 msgstr "Estándar"
 
@@ -3578,7 +3578,7 @@ msgstr "¡No se ha transferido ningún archivo!"
 msgid "Uploaded successfully!"
 msgstr "¡Subida completada!"
 
-#: backends/platform/3ds/options-dialog.cpp:44 engines/scumm/dialogs.cpp:257
+#: backends/platform/3ds/options-dialog.cpp:44 engines/scumm/dialogs.cpp:276
 msgid "~C~lose"
 msgstr "Cerra~r~"
 
@@ -4268,7 +4268,7 @@ msgstr "Cargar"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "No se pueden usar el guardado o carga rápidos en este lugar"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2668
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2676
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4279,7 +4279,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2658
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2663
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4290,7 +4290,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2681
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2692
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6951,11 +6951,11 @@ msgstr ""
 "Reduce la suavidad del desplazamiento durante el movimiento rápido de la "
 "cámara en la introducción."
 
-#: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:875
+#: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:921
 msgid "Enable game-specific enhancements"
 msgstr "Activar mejoras específicas para este juego"
 
-#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:875
+#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:921
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
@@ -7005,53 +7005,53 @@ msgstr ""
 "KryoFlux que también incluyó Limited Run Games."
 
 #. I18N: Previous page button
-#: engines/scumm/dialogs.cpp:254
+#: engines/scumm/dialogs.cpp:273
 msgid "~P~revious"
 msgstr "~A~nterior"
 
 #. I18N: Next page button
-#: engines/scumm/dialogs.cpp:256
+#: engines/scumm/dialogs.cpp:275
 msgid "~N~ext"
 msgstr "Si~g~uiente"
 
-#: engines/scumm/dialogs.cpp:780
+#: engines/scumm/dialogs.cpp:826
 msgid "Speech Only"
 msgstr "Solo voces"
 
-#: engines/scumm/dialogs.cpp:781
+#: engines/scumm/dialogs.cpp:827
 msgid "Speech and Subtitles"
 msgstr "Voces y subtítulos"
 
-#: engines/scumm/dialogs.cpp:782
+#: engines/scumm/dialogs.cpp:828
 msgid "Subtitles Only"
 msgstr "Solo subtítulos"
 
-#: engines/scumm/dialogs.cpp:790
+#: engines/scumm/dialogs.cpp:836
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Voces y subtítulos"
 
-#: engines/scumm/dialogs.cpp:836
+#: engines/scumm/dialogs.cpp:882
 msgid "Select a Proficiency Level."
 msgstr "Selecciona un nivel de dificultad."
 
-#: engines/scumm/dialogs.cpp:838
+#: engines/scumm/dialogs.cpp:884
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "Consulta el manual para obtener más información."
 
-#: engines/scumm/dialogs.cpp:842
+#: engines/scumm/dialogs.cpp:888
 msgid "Practice"
 msgstr "Práctica"
 
-#: engines/scumm/dialogs.cpp:843
+#: engines/scumm/dialogs.cpp:889
 msgid "Expert"
 msgstr "Experto"
 
-#: engines/scumm/dialogs.cpp:896
+#: engines/scumm/dialogs.cpp:942
 msgid "Overture Timing:"
 msgstr "Cadencia de la obertura:"
 
-#: engines/scumm/dialogs.cpp:900
+#: engines/scumm/dialogs.cpp:946
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
@@ -7060,11 +7060,11 @@ msgstr ""
 "tarda en cambiar la obertura a la escena con los logotipos de Lucasfilm y "
 "Loom."
 
-#: engines/scumm/dialogs.cpp:976
+#: engines/scumm/dialogs.cpp:1022
 msgid "Playback Adjust:"
 msgstr "Ajuste de reproducción:"
 
-#: engines/scumm/dialogs.cpp:980
+#: engines/scumm/dialogs.cpp:1026
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
@@ -7073,11 +7073,11 @@ msgstr ""
 "de inicio de cada sonido según esta cantidad. Utiliza esta opción si oyes "
 "fragmentos de otro sonido que no corresponda."
 
-#: engines/scumm/dialogs.cpp:1052
+#: engines/scumm/dialogs.cpp:1098
 msgid "Intro Adjust:"
 msgstr "Ajuste de la introducción:"
 
-#: engines/scumm/dialogs.cpp:1056
+#: engines/scumm/dialogs.cpp:1102
 msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
@@ -7087,11 +7087,11 @@ msgstr ""
 "punto. Utiliza esta opción en caso de que la música se corte antes de tiempo "
 "o si no te gusta cómo está sincronizada con la introducción."
 
-#: engines/scumm/dialogs.cpp:1065
+#: engines/scumm/dialogs.cpp:1111
 msgid "Outlook Adjust:"
 msgstr "Ajuste del mirador:"
 
-#: engines/scumm/dialogs.cpp:1069
+#: engines/scumm/dialogs.cpp:1115
 msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "
@@ -7611,19 +7611,19 @@ msgstr "Volar a la derecha"
 msgid "Fly to lower right"
 msgstr "Volar abajo y a la derecha"
 
-#: engines/scumm/input.cpp:925
+#: engines/scumm/input.cpp:1060
 msgid "Snap scroll on"
 msgstr "Desplazamiento a saltos"
 
-#: engines/scumm/input.cpp:927
+#: engines/scumm/input.cpp:1062
 msgid "Snap scroll off"
 msgstr "Desplazamiento normal"
 
-#: engines/scumm/input.cpp:940
+#: engines/scumm/input.cpp:1075
 msgid "Music volume: "
 msgstr "Volumen de la música: "
 
-#: engines/scumm/input.cpp:957
+#: engines/scumm/input.cpp:1092
 msgid "Subtitle speed: "
 msgstr "Vel. de subtítulos: "
 
@@ -7658,7 +7658,7 @@ msgstr ""
 "Para corregirla, se debe recortar la resolución a 320x200. Esta opción está "
 "disponible en la pestaña Motor."
 
-#: engines/scumm/scumm.cpp:1089
+#: engines/scumm/scumm.cpp:1096
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
@@ -7666,7 +7666,7 @@ msgstr ""
 "No se ha encontrado el ejecutable de Macintosh de Indy.\n"
 "Se desactivarán las fuentes en alta resolución."
 
-#: engines/scumm/scumm.cpp:1115
+#: engines/scumm/scumm.cpp:1122
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
@@ -7675,7 +7675,7 @@ msgstr ""
 "Se desactivará la música, así como la fuente y el cursor\n"
 "en alta resolución."
 
-#: engines/scumm/scumm.cpp:1137
+#: engines/scumm/scumm.cpp:1144
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -7683,7 +7683,7 @@ msgstr ""
 "No se ha encontrado el ejecutable de Macintosh de Monkey Island\n"
 "para reproducir los instrumentos. Se ha desactivado la música."
 
-#: engines/scumm/scumm.cpp:1433
+#: engines/scumm/scumm.cpp:1440
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -7694,7 +7694,7 @@ msgstr ""
 "para este juego, así que el audio será desactivado.\n"
 "Vuelve a copiar el juego a partir de los archivos originales sin comprimir."
 
-#: engines/scumm/scumm.cpp:1907
+#: engines/scumm/scumm.cpp:1914
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -7703,7 +7703,7 @@ msgstr ""
 "El soporte MIDI nativo requiere la actualización Roland de LucasArts,\n"
 "pero %s no está disponible. Se usará AdLib."
 
-#: engines/scumm/scumm.cpp:3203
+#: engines/scumm/scumm.cpp:3220
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
