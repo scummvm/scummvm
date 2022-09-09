@@ -72,6 +72,7 @@
 #include "hpl1/penumbra-overture/Version.h" // cool version .h that uses SVN revision #s
 
 #include "common/config-manager.h"
+#include "hpl1/graphics.h"
 
 // Global init...
 cInit *gpInit;
@@ -359,7 +360,10 @@ bool cInit::Init(tString saveToLoad) {
 	msStartLink = getStringConfig("starting_map_position", "link01");
 	mlFSAA = getIntConfig("fsaa", 0);
 	mbPostEffects = getBoolConfig("post_effects", true);
-	iMaterial::SetQuality(static_cast<eMaterialQuality>(getIntConfig("shader_quality", eMaterialQuality_High)));
+	if (Hpl1::areShadersAvailable())
+		iMaterial::SetQuality(static_cast<eMaterialQuality>(getIntConfig("shader_quality", eMaterialQuality_High)));
+	else
+		iMaterial::SetQuality(eMaterialQuality_VeryLow);
 
 	mPhysicsAccuracy = static_cast<ePhysicsAccuracy>(getIntConfig("physics_accuracy", ePhysicsAccuracy_High));
 	mfPhysicsUpdatesPerSec = static_cast<float>(getIntConfig("physics_updates_per_second", 60));
@@ -761,7 +765,8 @@ void cInit::Exit() {
 
 	ConfMan.setInt("fsaa", mlFSAA);
 	ConfMan.setBool("post_effects", mbPostEffects);
-	ConfMan.setInt("shader_quality", iMaterial::GetQuality());
+	if (Hpl1::areShadersAvailable())
+		ConfMan.setInt("shader_quality", iMaterial::GetQuality());
 	ConfMan.setBool("limit_fps", mpGame->GetLimitFPS());
 
 	ConfMan.setInt("shadows", mpGame->GetGraphics()->GetRenderer3D()->GetShowShadows());

@@ -40,6 +40,7 @@
 #include "hpl1/hpl1.h"
 #include "hpl1/debug.h"
 #include "common/savefile.h"
+#include "hpl1/graphics.h"
 
 
 float gfMenuFadeAmount;
@@ -1406,6 +1407,8 @@ public:
 	}
 
 	void OnMouseDown(eMButton aButton) {
+		if (!Hpl1::areShadersAvailable())
+			return;
 		int lCurrent = iMaterial::GetQuality();
 		if (aButton == eMButton_Left) {
 			lCurrent++;
