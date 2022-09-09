@@ -427,9 +427,9 @@ bool testPath(Common::String &path, bool directory) {
 			// for each element in the path, choose the first FSNode
 			// with a case-insensitive matcing name
 			if (i->getName().equalsIgnoreCase(token)) {
-				// If this is a directory, it's not a valid candidate
+				// If this the final path component, check if we're allowed to match with a directory
 				node = Common::FSNode(*i);
-				if (node.isDirectory()) {
+				if (directory_list.empty() && !directory && node.isDirectory()) {
 					continue;
 				}
 
