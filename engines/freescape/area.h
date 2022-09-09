@@ -53,6 +53,7 @@ public:
 	void addObjectFromArea(int16 id, Area *global);
 	void addObject(Object *obj);
 	void addStructure(Area *global);
+	void removeObject(int16 id);
 
 	Common::Array<Common::String*> conditionSources;
 	Common::Array<FCLInstructionVector> conditions;
@@ -63,7 +64,6 @@ public:
 
 	// Driller specific
 	void removeDrill();
-	bool drillDeployed();
 	Math::Vector3d drillPosition;
 	Common::Point gasPocketPosition;
 	uint32 gasPocketRadius;

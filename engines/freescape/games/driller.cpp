@@ -203,7 +203,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 			return;
 		}
 
-		if (_currentArea->drillDeployed()) {
+		if (drillDeployed()) {
 			_currentAreaMessages[0] = _messagesList[12];
 			return;
 		}
@@ -241,7 +241,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 			return;
 		}
 
-		if (!_currentArea->drillDeployed()) {
+		if (!drillDeployed()) {
 			_currentAreaMessages[0] = _messagesList[13];
 			return;
 		}
@@ -253,8 +253,12 @@ void DrillerEngine::pressedKey(const int keycode) {
 
 		_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
 		_gameStateVars[32]--;
-		_currentArea->removeDrill();
+		removeDrill();
 	}
+}
+
+bool DrillerEngine::drillDeployed() {
+	return (_currentArea->objectWithID(252) != nullptr);
 }
 
 void DrillerEngine::addDrill(const Math::Vector3d position) {
@@ -325,6 +329,12 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 	assert(obj);
 	obj->makeVisible();
 	_currentArea->addObject(obj);
+}
+
+void DrillerEngine::removeDrill() {
+	for (int16 id = 252; id < 256; id++) {
+		_currentArea->removeObject(id);
+	}
 }
 
 void DrillerEngine::initGameState() {

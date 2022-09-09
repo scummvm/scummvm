@@ -197,19 +197,6 @@ Object *Area::checkCollisions(const Math::AABB &boundingBox) {
 	return collided;
 }
 
-void Area::removeDrill() {
-	drillPosition = Math::Vector3d();
-	for (int16 id = 252; id < 256; id++) {
-		objectsByID->erase(id);
-		assert(drawableObjects[0]->getObjectID() == id);
-		drawableObjects.remove_at(0);
-	}
-}
-
-bool Area::drillDeployed() {
-	return (drawableObjects[0]->getObjectID() == 252);
-}
-
 void Area::addObject(Object *obj) {
 	assert(obj);
 	int id = obj->getObjectID();
@@ -218,6 +205,17 @@ void Area::addObject(Object *obj) {
 	(*objectsByID)[id] = obj;
 	if (obj->isDrawable())
 		drawableObjects.insert_at(0, obj);
+}
+
+void Area::removeObject(int16 id) {
+	assert(objectsByID->contains(id));
+	for (int i = 0; i < int(drawableObjects.size()); i++) {
+		if (drawableObjects[i]->getObjectID() == id) {
+			drawableObjects.remove_at(i);
+			break;
+		}
+	}
+	objectsByID->erase(id);
 }
 
 void Area::addObjectFromArea(int16 id, Area *global) {
