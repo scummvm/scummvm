@@ -44,6 +44,7 @@
 #include "hpl1/debug.h"
 #include "hpl1/engine/impl/OcclusionQueryOGL.h"
 #include "hpl1/opengl.h"
+#include "hpl1/graphics.h"
 
 namespace hpl {
 
@@ -251,7 +252,7 @@ int cLowLevelGraphicsSDL::GetCaps(eGraphicCaps type) const {
 
 	// GL shaders
 	case eGraphicCaps_GL_GpuPrograms:
-		return 1; // gl 2.0
+		return Hpl1::areShadersAvailable(); // gl 2.0
 
 	case eGraphicCaps_GL_BlendFunctionSeparate:
 		return 1; // gl 1.4
