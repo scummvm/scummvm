@@ -195,41 +195,65 @@ void DrillerEngine::pressedKey(const int keycode) {
 	if (keycode == Common::KEYCODE_d) {
 		Common::Point gasPocket = _currentArea->gasPocketPosition;
 		uint32 gasPocketRadius = _currentArea->gasPocketRadius;
-		if (gasPocketRadius > 0 && !_currentArea->drillDeployed() && !_flyMode) {
-			if (_gameStateVars[k8bitVariableEnergy] < 5) {
-				// Show "no enough energy" message
-				return;
-			}
+		if (gasPocketRadius == 0)
+			return;
 
-			_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
-			_gameStateVars[32]++;
-			// TODO: check if there is space for the drill
-			Math::Vector3d drillPosition = _cameraFront;
-			drillPosition =  _position + 256 * drillPosition;
-
-			debugC(1, kFreescapeDebugMove, "Current position at %f %f %f", _position.x(), _position.y(), _position.z());
-			drillPosition.setValue(1, _position.y() - _playerHeight * _currentArea->getScale());
-			debugC(1, kFreescapeDebugMove, "Trying to adding drill at %f %f %f", drillPosition.x(), drillPosition.y(), drillPosition.z());
-			debugC(1, kFreescapeDebugMove, "with pitch: %f and yaw %f", _pitch, _yaw);
-
-			const Math::Vector3d gasPocket3D(gasPocket.x, 1, gasPocket.y);
-			addDrill(drillPosition);
-			float distance = (gasPocket3D - drillPosition).length();
-			debugC(1, kFreescapeDebugMove, "length to gas pocket: %f with radius %d", distance, _currentArea->gasPocketRadius);
-			// TODO check the result of the drilling
-			// TODO: reduce energy
+		if (_flyMode) {
+			_currentAreaMessages[0] = _messagesList[8];
+			return;
 		}
+
+		if (_currentArea->drillDeployed()) {
+			_currentAreaMessages[0] = _messagesList[12];
+			return;
+		}
+
+		if (_gameStateVars[k8bitVariableEnergy] < 5) {
+			_currentAreaMessages[0] = _messagesList[7];
+			return;
+		}
+
+		_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
+		_gameStateVars[32]++;
+		// TODO: check if there is space for the drill
+		Math::Vector3d drillPosition = _cameraFront;
+		drillPosition =  _position + 256 * drillPosition;
+
+		debugC(1, kFreescapeDebugMove, "Current position at %f %f %f", _position.x(), _position.y(), _position.z());
+		drillPosition.setValue(1, _position.y() - _playerHeight * _currentArea->getScale());
+		debugC(1, kFreescapeDebugMove, "Trying to adding drill at %f %f %f", drillPosition.x(), drillPosition.y(), drillPosition.z());
+		debugC(1, kFreescapeDebugMove, "with pitch: %f and yaw %f", _pitch, _yaw);
+
+		const Math::Vector3d gasPocket3D(gasPocket.x, 1, gasPocket.y);
+		addDrill(drillPosition);
+		float distance = (gasPocket3D - drillPosition).length();
+		debugC(1, kFreescapeDebugMove, "length to gas pocket: %f with radius %d", distance, _currentArea->gasPocketRadius);
+		// TODO: show the result of the drilling
+		_currentAreaMessages[0] = _messagesList[3];
+
 	} else if (keycode == Common::KEYCODE_c) {
-		if (_currentArea->drillDeployed() && !_flyMode) {
-			if (_gameStateVars[k8bitVariableEnergy] < 5) {
-				// Show "no enough energy" message
-				return;
-			}
+		uint32 gasPocketRadius = _currentArea->gasPocketRadius;
+		if (gasPocketRadius == 0)
+			return;
 
-			_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
-			_gameStateVars[32]--;
-			_currentArea->removeDrill();
+		if (_flyMode) {
+			_currentAreaMessages[0] = _messagesList[8];
+			return;
 		}
+
+		if (!_currentArea->drillDeployed()) {
+			_currentAreaMessages[0] = _messagesList[13];
+			return;
+		}
+
+		if (_gameStateVars[k8bitVariableEnergy] < 5) {
+			_currentAreaMessages[0] = _messagesList[7];
+			return;
+		}
+
+		_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
+		_gameStateVars[32]--;
+		_currentArea->removeDrill();
 	}
 }
 
