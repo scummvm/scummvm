@@ -975,7 +975,7 @@ public:
 cTempCheckProxy gTempCheckProxy;
 
 void cPlayer::Update(float afTimeStep) {
-	cSystem *pSystem = mpInit->mpGame->GetSystem();
+	//cSystem *pSystem = mpInit->mpGame->GetSystem();
 	//unsigned int lTime = pSystem->GetLowLevel()->getTime();
 	iPhysicsWorld *pPhysicsWorld = mpScene->GetWorld3D()->GetPhysicsWorld();
 
