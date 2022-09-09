@@ -76,8 +76,6 @@ cSDLTexture::cSDLTexture(const tString &asName, Graphics::PixelFormat *apPxlFmt,
 	: iTexture(asName, "OGL", apPxlFmt, apLowLevelGraphics, aType, abUseMipMaps, aTarget, abCompress) {
 	mbContainsData = false;
 
-	mpPBuffer = NULL;
-
 	if (aType == eTextureType_RenderTarget) {
 		Hpl1::logError(Hpl1::kDebugGraphics, "use of render target%s", ".");
 		// mpPBuffer = hplNew( cPBuffer, (mpLowLevelGraphics,true) );
@@ -96,9 +94,6 @@ cSDLTexture::cSDLTexture(const tString &asName, Graphics::PixelFormat *apPxlFmt,
 }
 
 cSDLTexture::~cSDLTexture() {
-	if (mpPBuffer)
-		hplDelete(mpPBuffer);
-
 	for (unsigned int &mvTextureHandle : mvTextureHandles) {
 		GL_CHECK(glDeleteTextures(1, (GLuint *)&mvTextureHandle));
 	}

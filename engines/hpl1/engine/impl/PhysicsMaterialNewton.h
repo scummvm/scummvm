@@ -32,8 +32,6 @@
 
 #include "hpl1/engine/physics/PhysicsMaterial.h"
 
-#include "temp-types.h"
-
 namespace hpl {
 
 class iPhysicsBody;
