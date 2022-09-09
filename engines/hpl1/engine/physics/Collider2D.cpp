@@ -72,7 +72,7 @@ tFlag cCollider2D::CollideBody(cBody2D *apBody, cCollideData2D *apData) {
 	cVector2f vLastPushVector;
 
 	/////// TEST COLLISION WITH TILES
-	float fTileSize = mpWorld->GetTileMap()->GetTileSize();
+	//float fTileSize = mpWorld->GetTileMap()->GetTileSize();
 	//cRect2f TileRect = cRect2f(0, 0, fTileSize, fTileSize);
 
 	for (int i = 0; i < mpWorld->GetTileMap()->GetTileLayerNum(); i++) {
@@ -218,7 +218,7 @@ tFlag cCollider2D::CollideRect(cRect2f &aRect, tFlag alCollideFlags, cCollideDat
 
 	//// Check for all tiles if the flag is set
 	if (alCollideFlags & eFlagBit_0) {
-		float fTileSize = mpWorld->GetTileMap()->GetTileSize();
+		//float fTileSize = mpWorld->GetTileMap()->GetTileSize();
 		//cRect2f TileRect = cRect2f(0, 0, fTileSize, fTileSize);
 
 		for (int i = 0; i < mpWorld->GetTileMap()->GetTileLayerNum(); i++) {
