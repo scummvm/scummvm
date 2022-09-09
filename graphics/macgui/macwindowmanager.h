@@ -324,7 +324,7 @@ public:
 
 	void passPalette(const byte *palette, uint size);
 	template <typename T> void decomposeColor(uint32 color, byte &r, byte &g, byte &b);
-	uint findBestColor(byte cr, byte cg, byte cb);
+	uint32 findBestColor(byte cr, byte cg, byte cb);
 	uint32 findBestColor(uint32 color);
 	void setDesktopColor(byte, byte, byte);
 
