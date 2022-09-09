@@ -255,7 +255,9 @@ public:
 	void pressedKey(const int keycode) override;
 
 	private:
+	bool drillDeployed();
 	void addDrill(const Math::Vector3d position);
+	void removeDrill();
 };
 
 class DarkEngine : public FreescapeEngine {
