@@ -53,7 +53,7 @@ struct ActiveSpellsStruct {
 	byte levitate;
 	byte walk_on_water;
 	byte guard_dog;
-	byte psychic_protecti;
+	byte psychic_protection;
 	byte bless;
 	byte invisbility;
 	byte shield;
