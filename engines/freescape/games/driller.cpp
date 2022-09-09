@@ -101,6 +101,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		}
 		assert(newPos != -1);
 	}
+	_lastPosition = _position;
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	playSound(5);

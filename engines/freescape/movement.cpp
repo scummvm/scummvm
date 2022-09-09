@@ -215,10 +215,13 @@ bool FreescapeEngine::tryStepDown(Math::Vector3d currentPosition) {
 
 bool FreescapeEngine::checkCollisions(bool executeCode) {
 	int areaScale = _currentArea->getScale();
-	Math::Vector3d v1(_position.x() - areaScale * 0.75 * _playerWidth, _position.y() - areaScale * _playerHeight , _position.z() - areaScale * 0.75 * _playerDepth);
-	Math::Vector3d v2(_position.x() + areaScale * 0.75 * _playerWidth, _position.y() + areaScale                 , _position.z() + areaScale * 0.75 * _playerDepth);
+	Math::AABB boundingBox(_lastPosition, _lastPosition);
 
-	const Math::AABB boundingBox(v1, v2);
+	Math::Vector3d v1(_position.x() - areaScale, _position.y() - areaScale * _playerHeight , _position.z() - areaScale);
+	Math::Vector3d v2(_position.x() + areaScale, _position.y() + areaScale                 , _position.z() + areaScale);
+
+	boundingBox.expand(v1);
+	boundingBox.expand(v2);
 	Object *obj = _currentArea->checkCollisions(boundingBox);
 
 	if (obj != nullptr) {

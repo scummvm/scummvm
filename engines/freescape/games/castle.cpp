@@ -96,8 +96,9 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	playSound(5);
+	_lastPosition = _position;
 
-	if (_currentArea->skyColor > 0) {
+	if (_currentArea->skyColor > 0 && _currentArea->skyColor != 255) {
 		_gfx->_keyColor = 0;
 		_gfx->setSkyColor(_currentArea->skyColor);
 	} else
