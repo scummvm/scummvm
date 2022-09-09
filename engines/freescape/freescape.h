@@ -143,6 +143,7 @@ public:
 	// Euler Angles
 	float _yaw;
 	float _pitch;
+	void traverseEntrance(uint16 entranceID);
 	Math::Vector3d directionToVector(float pitch, float heading);
 
 	// Camera options

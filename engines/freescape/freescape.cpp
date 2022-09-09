@@ -319,6 +319,11 @@ void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos)
 	if (_pitch < 0.0f)
 		_pitch += 360.0f;
 
+	if (_yaw > 360.0f)
+		_yaw -= 360.0f;
+	if (_yaw < 0.0f)
+		_yaw += 360.0f;
+
 	_cameraFront = directionToVector(_pitch, _yaw);
 
 	// // _right = _front x _up;

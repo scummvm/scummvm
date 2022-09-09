@@ -152,18 +152,7 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 		const entrancesTableEntry *entry = _entranceTable[entranceID];
 		_position = scale * Math::Vector3d(entry->position[0], entry->position[1], entry->position[2]);
 	} else
-		_position = entrance->getOrigin();
-
-	if (_rotation == Math::Vector3d(0, 0, 0)) {
-		_rotation = entrance->getRotation();
-		_pitch = _rotation.x();
-		_yaw = _rotation.y() - 260;
-	}
-	debugC(1, kFreescapeDebugMove, "entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
-	debugC(1, kFreescapeDebugMove, "player height: %d", scale * _playerHeight);
-	_position.setValue(1, _position.y() + scale * _playerHeight);
-	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
-	playSound(5);
+		traverseEntrance(entranceID);
 
 	_lastPosition = _position;
 
