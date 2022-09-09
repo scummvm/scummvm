@@ -421,6 +421,8 @@ void cSoundEntity::UpdateLogic(float afTimeStep) {
 					}
 
 					mvSounds[eSoundEntityType_Main] = NULL;
+					if (mbFadingOut)
+						mbStopped = true;
 				}
 
 				mbOutOfRange = true;
