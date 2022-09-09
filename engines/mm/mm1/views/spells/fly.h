@@ -44,18 +44,21 @@ private:
 	Mode _mode = SELECT_X;
 	int _xIndex = 0, _yIndex = 0;
 
-	/**
-	 * Constructor
-	 */
-	Fly();
 public:
 	/**
 	 * Show the view
 	 */
 	static void show(FlyCallback callback);
 public:
-	virtual ~Fly() {
-	}
+	/**
+	 * Constructor
+	 */
+	Fly();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~Fly() {}
 
 	/**
 	 * Show the view

@@ -36,7 +36,7 @@ void Fly::show(FlyCallback callback) {
 }
 
 Fly::Fly() : TextView("Fly") {
-	_bounds = getLineBounds(20, 24);
+	_bounds = getLineBounds(21, 24);
 }
 
 bool Fly::msgFocus(const FocusMessage &) {
@@ -63,10 +63,9 @@ void Fly::draw() {
 }
 
 bool Fly::msgKeypress(const KeypressMessage &msg) {
-	Maps::Maps &maps = *g_maps;
-
 	if (msg.keycode == Common::KEYCODE_ESCAPE) {
 		close();
+		_callback(-1);
 
 	} else if (_mode == SELECT_X && msg.keycode >= Common::KEYCODE_a
 		&& msg.keycode <= Common::KEYCODE_d) {
@@ -84,13 +83,9 @@ bool Fly::msgKeypress(const KeypressMessage &msg) {
 
 	} else if (_mode == CAST && msg.keycode == Common::KEYCODE_RETURN) {
 		// Spell was cast
-		int mapIndex = _yIndex * 5 + _xIndex;
-		int id = FLY_MAP_ID1[mapIndex] | ((int)FLY_MAP_ID2[mapIndex] << 8);
-
-		maps._mapPos.x = FLY_MAP_X[mapIndex];
-		maps._mapPos.y = FLY_MAP_Y[mapIndex];
-		maps.changeMap(id, 2);
 		close();
+		int mapIndex = _yIndex * 5 + _xIndex;
+		_callback(mapIndex);
 	}
 
 	return true;
