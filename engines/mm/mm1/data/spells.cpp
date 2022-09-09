@@ -530,11 +530,15 @@ SpellResult Spells::wizard32_fly(Character *chr) {
 }
 
 SpellResult Spells::wizard45_guardDog(Character *chr) {
-	return SR_FAILED;
+	g_globals->_spells._s.guard_dog =
+		g_globals->_currCharacter->_level._current;
+	return SR_SUCCESS_DONE;
 }
 
 SpellResult Spells::wizard46_psychicProtection(Character *chr) {
-	return SR_FAILED;
+	g_globals->_spells._s.psychic_protection =
+		g_globals->_currCharacter->_level._current;
+	return SR_SUCCESS_DONE;
 }
 
 SpellResult Spells::wizard54_shelter(Character *chr) {
@@ -546,7 +550,11 @@ SpellResult Spells::wizard55_teleport(Character *chr) {
 }
 
 SpellResult Spells::wizard63_etherialize(Character *chr) {
-	return SR_FAILED;
+	g_events->draw();
+	g_maps->_currentState = 0;
+	g_maps->step(Common::Point(1, 0));
+
+	return SR_SUCCESS_SILENT;
 }
 
 SpellResult Spells::wizard64_protectionFromMagic(Character *chr) {
@@ -560,7 +568,12 @@ SpellResult Spells::wizard65_rechargeItem(Character *chr) {
 }
 
 SpellResult Spells::wizard71_astralSpell(Character *chr) {
-	return SR_FAILED;
+	Maps::Maps &maps = *g_maps;
+	maps._mapPos.x = 7;
+	maps._mapPos.y = 0;
+	maps.changeMap(0xb1a, 3);
+
+	return SR_SUCCESS_SILENT;
 }
 
 SpellResult Spells::wizard72_duplication(Character *chr) {
