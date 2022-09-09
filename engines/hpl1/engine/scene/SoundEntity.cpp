@@ -254,6 +254,7 @@ void cSoundEntity::FadeIn(float afSpeed) {
 
 void cSoundEntity::FadeOut(float afSpeed) {
 	mbFadingOut = true;
+	_fadeSpeed = afSpeed;
 	if (mpSoundHandler->GetSilent())
 		return;
 

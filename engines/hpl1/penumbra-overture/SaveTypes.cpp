@@ -314,13 +314,17 @@ void cEngineSound_SaveData::ToSound(cSoundEntity *apSound) {
 	apSound->SetActive(mbActive);
 	if (mbStopped)
 		apSound->Stop(false);
+	if (_fading)
+		apSound->FadeOut(_fadeSpeed);
 }
 
 kBeginSerializeBase(cEngineSound_SaveData)
 	kSerializeVar(msName, eSerializeType_String)
 		kSerializeVar(mbActive, eSerializeType_Bool)
 			kSerializeVar(mbStopped, eSerializeType_Bool)
-				kEndSerialize()
+				kSerializeVar(_fading, eSerializeType_Bool)
+					kSerializeVar(_fadeSpeed, eSerializeType_Float32)
+						kEndSerialize()
 
 	//////////////////////////////////////////////////////////////////////////
 	// LIGHT
