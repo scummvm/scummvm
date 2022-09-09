@@ -102,6 +102,7 @@ public:
 
 	bool IsStopped();
 	bool IsFadingOut();
+	float getFadingSpeed() {return _fadeSpeed;}
 	bool GetRemoveWhenOver();
 
 	void SetVolume(float afX) { mfVolume = afX; }
@@ -162,6 +163,8 @@ private:
 	bool mbSkipStartEnd;
 
 	float mfSleepCount;
+
+	float _fadeSpeed;
 
 	static tSoundEntityGlobalCallbackList mlstGobalCallbacks;
 };
