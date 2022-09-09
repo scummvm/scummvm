@@ -514,8 +514,15 @@ SpellResult Spells::wizard25_levitate(Character *chr) {
 
 SpellResult Spells::wizard32_fly(Character *chr) {
 	Views::Spells::Fly::show(
-		[](int mapId) {
-			error("TODO: fly to map %d", mapId);
+		[](int mapIndex) {
+			if (mapIndex != -1) {
+				Maps::Maps &maps = *g_maps;
+				int id = FLY_MAP_ID1[mapIndex] | ((int)FLY_MAP_ID2[mapIndex] << 8);
+
+				maps._mapPos.x = FLY_MAP_X[mapIndex];
+				maps._mapPos.y = FLY_MAP_Y[mapIndex];
+				maps.changeMap(id, 2);
+			}
 		}
 	);
 
