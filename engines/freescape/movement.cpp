@@ -27,6 +27,27 @@ void FreescapeEngine::gotoArea(uint16 areaID, int entranceID) {
 	error("Function \"%s\" not implemented", __FUNCTION__);
 }
 
+void FreescapeEngine::traverseEntrance(uint16 entranceID) {
+	Entrance *entrance = (Entrance*) _currentArea->entranceWithID(entranceID);
+	assert(entrance);
+
+	int scale = _currentArea->getScale();
+	assert(scale > 0);
+
+	Math::Vector3d diff = _lastPosition - _position;
+	Math::Vector3d rotation = entrance->getRotation();
+	_position = entrance->getOrigin();
+	_pitch = rotation.x();
+	if (abs(diff.x()) > abs(diff.z()) && _lastPosition != Math::Vector3d(0, 0, 0)) {
+		_yaw = rotation.y() - 90;
+	} else {
+		_yaw = rotation.y() + 90;
+	}
+	debugC(1, kFreescapeDebugMove, "entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
+	debugC(1, kFreescapeDebugMove, "player height: %d", scale * _playerHeight);
+	_position.setValue(1, _position.y() + scale * _playerHeight);
+}
+
 void FreescapeEngine::changePlayerHeight(int index) {
 	int scale = _currentArea->getScale();
 	_position.setValue(1, _position.y() - scale * _playerHeight);
