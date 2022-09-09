@@ -115,6 +115,8 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	playSound(5);
+	_lastPosition = _position;
+
 	// Ignore sky/ground fields
 	if (_currentArea->getAreaFlags() == 1)
 		_gfx->_keyColor = 0;
