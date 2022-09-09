@@ -33,8 +33,6 @@
 #include "hpl1/engine/impl/PBuffer.h"
 #include "hpl1/engine/graphics/bitmap2D.h"
 
-#include "temp-types.h"
-
 namespace hpl {
 
 class cSDLTexture : public iTexture {
@@ -97,8 +95,6 @@ private:
 	float mfTimeCount;
 	int mlTextureIndex;
 	float mfTimeDir;
-
-	cPBuffer *mpPBuffer;
 };
 
 }     // namespace hpl
