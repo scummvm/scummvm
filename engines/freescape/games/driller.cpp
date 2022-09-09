@@ -195,7 +195,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 	if (keycode == Common::KEYCODE_d) {
 		Common::Point gasPocket = _currentArea->gasPocketPosition;
 		uint32 gasPocketRadius = _currentArea->gasPocketRadius;
-		if (gasPocketRadius > 0 && !_currentArea->drillDeployed()) {
+		if (gasPocketRadius > 0 && !_currentArea->drillDeployed() && !_flyMode) {
 			if (_gameStateVars[k8bitVariableEnergy] < 5) {
 				// Show "no enough energy" message
 				return;
@@ -220,7 +220,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 			// TODO: reduce energy
 		}
 	} else if (keycode == Common::KEYCODE_c) {
-		if (_currentArea->drillDeployed()) {
+		if (_currentArea->drillDeployed() && !_flyMode) {
 			if (_gameStateVars[k8bitVariableEnergy] < 5) {
 				// Show "no enough energy" message
 				return;
