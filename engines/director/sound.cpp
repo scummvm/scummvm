@@ -106,6 +106,8 @@ void DirectorSound::playStream(Audio::AudioStream &stream, uint8 soundChannel) {
 		return;
 
 	cancelFade(soundChannel);
+	if (_channels[soundChannel - 1].loopPtr)
+		_channels[soundChannel - 1].loopPtr = nullptr;
 	_mixer->stopHandle(_channels[soundChannel - 1].handle);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel - 1].handle, &stream, -1, getChannelVolume(soundChannel));
 }
