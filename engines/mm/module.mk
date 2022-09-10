@@ -21,6 +21,8 @@ MODULE_OBJS := \
 	mm1/data/party.o \
 	mm1/data/roster.o \
 	mm1/data/spells.o \
+	mm1/game/encounter.o \
+	mm1/game/rest.o \
 	mm1/game/search.o \
 	mm1/game/spell_casting.o \
 	mm1/game/view_base.o \
@@ -60,6 +62,7 @@ MODULE_OBJS := \
 	mm1/views/order.o \
 	mm1/views/protect.o \
 	mm1/views/quick_ref.o \
+	mm1/views/rest.o \
 	mm1/views/statue.o \
 	mm1/views/title.o \
 	mm1/views/text_entry.o \
