@@ -35,7 +35,7 @@ bool CastSpell::msgValue(const ValueMessage &msg) {
 	if (msg._value == 0) {
 		// Ensure current character can cast spells
 		if (g_globals->_currCharacter->_spellLevel != 0 &&
-			g_globals->_currCharacter->_sp != 0) {
+			g_globals->_currCharacter->_sp._current != 0) {
 			addView();
 			setState(SELECT_SPELL);
 		}

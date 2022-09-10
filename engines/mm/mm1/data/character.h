@@ -169,6 +169,14 @@ struct AttributePair16 {
 	uint16 _base = 0;
 
 	void clear() { _current = _base = 0; }
+	AttributePair16 &operator=(byte v) {
+		_base = _current = v;
+		return *this;
+	}
+	void synchronize(Common::Serializer &s) {
+		s.syncAsUint16LE(_base);
+		s.syncAsUint16LE(_current);
+	}
 };
 
 struct Arr58Fields {
@@ -207,12 +215,10 @@ struct Character {
 
 	AttributePair _level;
 	AttributePair _age;
-	AttributePair _sp;
+	AttributePair16 _sp;
 	AttributePair _spellLevel;
 	AttributePair _ac;
 
-	byte _v2c = 0;
-	byte _v2e = 0;
 	uint32 _exp = 0;
 	uint16 _gems = 0;
 	uint16 _hpBase = 0, _hp = 0, _hpMax = 0;

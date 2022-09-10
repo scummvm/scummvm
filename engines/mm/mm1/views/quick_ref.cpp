@@ -48,7 +48,7 @@ void QuickRef::draw() {
 
 		// Spell points
 		_textPos.x = 28;
-		writeNumber(c._sp);
+		writeNumber(c._sp._current);
 		_textPos.x = 32;
 		writeChar('/');
 		writeNumber(c._sp._base);
