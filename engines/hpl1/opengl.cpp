@@ -25,6 +25,8 @@
 #include "graphics/surface.h"
 #include "common/system.h"
 
+#ifdef USE_OPENGL
+
 namespace Hpl1 {
 
 static const char* getErrorString(const GLenum code) {
@@ -60,7 +62,7 @@ static Graphics::PixelFormat getRGBAPixelFormat() {
 #endif
 }
 
-Common::ScopedPtr<Graphics::Surface> createViewportScreenshot() {
+Common::ScopedPtr<Graphics::Surface> createGLViewportScreenshot() {
 	Common::ScopedPtr<Graphics::Surface> screen(new Graphics::Surface());
 	Common::Rect viewportSize = getGLViewport();
 	screen->create(viewportSize.width(), viewportSize.height(), getRGBAPixelFormat());
@@ -70,3 +72,5 @@ Common::ScopedPtr<Graphics::Surface> createViewportScreenshot() {
 }
 
 } // End of namespace Hpl1
+
+#endif // USE_OPENGL

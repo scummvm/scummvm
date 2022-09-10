@@ -32,6 +32,9 @@
 #include "hpl1/engine/impl/LowLevelGraphicsSDL.h"
 #include "hpl1/engine/impl/PBuffer.h"
 #include "hpl1/engine/graphics/bitmap2D.h"
+#include "common/scummsys.h"
+
+#ifdef USE_OPENGL
 
 namespace hpl {
 
@@ -99,4 +102,5 @@ private:
 
 }     // namespace hpl
 
+#endif // USE_OPENGL
 #endif // HPL_SDL_TEXTURE_H

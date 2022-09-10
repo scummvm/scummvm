@@ -25,7 +25,7 @@
 #include "common/translation.h"
 #include "hpl1/detection.h"
 #include "hpl1/hpl1.h"
-#include "hpl1/opengl.h"
+#include "hpl1/graphics.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "common/savefile.h"

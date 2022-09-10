@@ -28,22 +28,14 @@
 #ifndef HPL_LOWLEVELGRAPHICS_SDL_H
 #define HPL_LOWLEVELGRAPHICS_SDL_H
 
-// #include <GL/GLee.h>
-//
-// #include <Cg/cg.h>
-// #include <Cg/cgGL.h>
-//
-// #include <SDL/SDL.h>
-// #include <SDL/SDL_ttf.h>
-// Unix's X11 Defines DestoryAll which collides with methods
-#undef DestroyAll
-
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
 #include "graphics/pixelformat.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "graphics/surface.h"
 #include "common/ptr.h"
 #include "hpl1/opengl.h"
+
+#ifdef USE_OPENGL
 
 namespace hpl {
 
@@ -318,4 +310,5 @@ private:
 
 }     // namespace hpl
 
+#endif // USE_OPENGL
 #endif // HPL_LOWLEVELGRAPHICS_SDL_H

@@ -29,12 +29,22 @@
 #include "hpl1/engine/impl/LowLevelSoundOpenAL.h"
 #include "hpl1/engine/impl/MouseSDL.h"
 #include "hpl1/engine/haptic/LowLevelHaptic.h"
+#include "hpl1/graphics.h"
 
 namespace hpl {
 
+static iLowLevelGraphics *createLowLevelGfx()
+{
+#ifdef USE_OPENGL
+	if (Hpl1::useOpenGL())
+		return hplNew(cLowLevelGraphicsSDL, ());
+#endif
+	error("only opengl graphics are supported");
+}
+
 LowLevelGameSetup::LowLevelGameSetup() {
 	_lowLevelSystem = hplNew(LowLevelSystem, ());
-	_lowLevelGraphics = hplNew(cLowLevelGraphicsSDL, ());
+	_lowLevelGraphics = createLowLevelGfx();
 	_lowLevelInput = hplNew(cLowLevelInputSDL, (_lowLevelGraphics));
 	_lowLevelResources = hplNew(LowLevelResources, (_lowLevelGraphics));
 	_lowLevelSound = hplNew(cLowLevelSoundOpenAL, ());

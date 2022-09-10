@@ -35,6 +35,8 @@
 #include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/opengl.h"
 
+#ifdef USE_OPENGL
+
 namespace hpl {
 
 static void getSettings(Bitmap2D *apSrc, int &alChannels, GLint &internalFormat, GLenum &format) {
@@ -647,3 +649,5 @@ GLenum cSDLTexture::GetGLWrap(eTextureWrap aMode) {
 //-----------------------------------------------------------------------
 
 } // namespace hpl
+
+#endif //USE_OPENGL

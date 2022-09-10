@@ -29,6 +29,9 @@
 #define HPL_VERTEXBUFFER_VBO_H
 
 #include "hpl1/engine/graphics/VertexBuffer.h"
+#include "common/scummsys.h"
+
+#ifdef USE_OPENGL
 
 namespace hpl {
 
@@ -96,4 +99,5 @@ private:
 
 }     // namespace hpl
 
+#endif // USE_OPENGL
 #endif // HPL_RENDERER3D_VBO_H
