@@ -95,7 +95,7 @@ void SpellCasting::setSpell(Character *chr, int lvl, int num) {
 		// required SP increases with character's level
 		requiredSp = chr->_level;
 
-	if (!chr->_v2c) {
+	if (!chr->_sp._current) {
 		if (SPELLS_SP_GEMS[spellIndex] < 0 && chr->_sp._current < chr->_level._current)
 			_spellState = SS_NOT_ENOUGH_SP;
 		else if ((lvl - 1) > chr->_sp._current)

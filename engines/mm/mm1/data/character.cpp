@@ -114,10 +114,8 @@ void Character::synchronize(Common::Serializer &s) {
 	_age.synchronize(s);
 
 	s.syncAsUint32LE(_exp);
-	s.syncAsByte(_sp._current);
-	s.syncAsByte(_v2c);
-	s.syncAsByte(_sp._base);
-	s.syncAsByte(_v2e);
+	s.syncAsUint16LE(_sp._current);
+	s.syncAsUint16LE(_sp._base);
 	_spellLevel.synchronize(s);
 
 	s.syncAsUint16LE(_gems);
@@ -471,9 +469,54 @@ void Character::rest() {
 	_condition &= ~(ASLEEP | BLINDED | SILENCED |
 		PARALYZED | UNCONSCIOUS);
 
-//	if (_hpBase == 0 && )
+	if (_hpBase == 0)
+		_hpBase = 1;
 
-	// TODO: More stuff
+	if (_age._current++ == 255) {
+		_age._base = MIN((int)_age._base + 1, 255);
+	}
+	if ((g_engine->getRandomNumber(70) + 80) < _age._base) {
+		_condition = UNCONSCIOUS | BAD_CONDITION;
+		return;
+	}
+
+	if (_age._base >= 60) {
+		// Fun fact: in the original if any of the attributes
+		// reach zero, then it jumps to an instruction that
+		// jumps to itself, freezing the game.
+		if (--_might._current == 0 ||
+			--_endurance._current == 0 ||
+			--_speed._current == 0)
+			error("Attributes bottomed out during rest");
+
+		if (_age._base >= 70) {
+			if (--_might._current == 0 ||
+				--_endurance._current == 0 ||
+				--_speed._current == 0)
+				error("Attributes bottomed out during rest");
+		}
+
+		if (_age._base >= 80) {
+			if (_might._current <= 2)
+				error("Attributes bottomed out during rest");
+			_might._current -= 2;
+		}
+	}
+
+	if (_food > 0) {
+		--_food;
+
+		if (_condition & POISONED) {
+			_hpMax /= 2;
+		} else {
+			_hpMax = _hp;
+		}
+
+		if (_condition & DISEASED) {
+			_hpBase = _hpMax;
+			_sp._current = _sp._base;
+		}
+	}
 }
 
 } // namespace MM1
