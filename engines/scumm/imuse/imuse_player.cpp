@@ -577,8 +577,8 @@ int Player::setTranspose(byte relative, int b) {
 
 	_transpose = b;
 
-	// MI2 and INDY4 use bounds of -24/24, DOTT uses -12/12.
-	int lim = (_se->_game_id == GID_TENTACLE) ? 12 : 24;
+	// MI2 and INDY4 use boundaries of -12/12 for MT-32 and -24/24 for AdLib and PC Speaker, DOTT uses -12/12 for everything.
+	int lim = (_se->_game_id == GID_TENTACLE || _se->isNativeMT32()) ? 12 : 24;
 	for (part = _parts; part; part = part->_next)
 		part->set_transpose(part->_transpose, -lim, lim);
 
@@ -597,8 +597,8 @@ void Player::part_set_transpose(uint8 chan, byte relative, int8 b) {
 	if (relative)
 		b = transpose_clamp(b + part->_transpose, -7, 7);
 
-	// MI2 and INDY4 use bounds of -24/24, DOTT uses -12/12.
-	int lim = (_se->_game_id == GID_TENTACLE) ? 12 : 24;
+	// MI2 and INDY4 use boundaries of -12/12 for MT-32 and -24/24 for AdLib and PC Speaker, DOTT uses -12/12 for everything.
+	int lim = (_se->_game_id == GID_TENTACLE || _se->isNativeMT32()) ? 12 : 24;
 	part->set_transpose(b, -lim, lim);
 }
 

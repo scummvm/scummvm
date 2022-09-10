@@ -185,7 +185,7 @@ void Part::effectLevel(byte value) {
 }
 
 void Part::fix_after_load() {
-	int lim = (_se->_game_id == GID_TENTACLE || _se->_isAmiga) ? 12 : 24;
+	int lim = (_se->_game_id == GID_TENTACLE || _se->_isAmiga || _se->isNativeMT32()) ? 12 : 24;
 	set_transpose(_transpose, -lim, lim);
 	volume(_vol);
 	set_detune(_detune);
@@ -380,23 +380,30 @@ void Part::sendPitchBend() {
 		transpose = 0;
 	} else if (_player->isAdLibOrFMTowns()) {
 		transpose = detune = 0;
-	} else if (_player->_se->isNativeMT32()) {
-		// RPN-based pitchbend range doesn't work for the MT32, so we'll do the scaling ourselves.
-		bend = bend * _pitchbend_factor / 12;
 	}
 
-	if (_player->isGM()) {
+	bool oldPitchBendFormula = true;
+
+	if (_player->isGM() || _player->_se->isNativeMT32()) {
 		if (_se->_game_id == GID_SAMNMAX) {
-			// SAMNMAX formula
+			// SAMNMAX formula (same for Roland MT-32 and GM)
 			bend = _pitchbend_factor ? (bend * _pitchbend_factor) >> 5 : bend >> 6;
-			bend = (bend + _detune_eff + (transpose << 8)) << 1;
-		} else {
-			// DOTT formula (from the DOTT GMIDI.IMS driver)
-			bend = clamp(((bend * _pitchbend_factor) >> 6) + _detune_eff + (transpose << 7), -2048, 2047) << 2;
+			bend = (bend + detune + (transpose << 8)) << 1;
+			oldPitchBendFormula = false;
+		} else if (_se->_game_id == GID_TENTACLE || _se->_game_id == GID_INDY4 || _se->_game_id == GID_MONKEY2) {
+			// DOTT, INDY4 and MI2 formula (same for Roland MT-32 and GM)
+			bend = clamp(((bend * _pitchbend_factor) >> 6) + detune + (transpose << 7), -2048, 2047) << 2;
+			oldPitchBendFormula = false;
+		} else if (_se->isNativeMT32()) {
+			// RPN-based pitchbend range doesn't work for the MT32, so we'll do the scaling ourselves.
+			// athrxx: I haven't yet seen any evidence of this in any original driver. But I still
+			// haven't checked absolutely everything, so let's keep it around until we know better...
+			bend = bend * _pitchbend_factor / 12;
 		}
-	} else {
-		bend = clamp(bend + (_detune_eff * 64 / 12) + (transpose * 8192 / 12), -8192, 8191);
 	}
+
+	if (oldPitchBendFormula)
+		bend = clamp(bend + (detune * 64 / 12) + (transpose * 8192 / 12), -8192, 8191);
 
 	_mc->pitchBend(bend);
 }
