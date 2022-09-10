@@ -183,7 +183,7 @@ struct Character {
 	AttributePair _level;
 	AttributePair _age;
 	AttributePair _sp;
-	AttributePair _slvl;
+	AttributePair _spellLevel;
 	AttributePair _ac;
 
 	byte _v2c = 0;
@@ -262,11 +262,21 @@ struct Character {
 	void updateAC();
 
 	/**
+	 * Updates the character's SP
+	 */
+	void updateSP();
+
+	/**
 	 * Gets a character's condition string
 	 */
 	Common::String getConditionString() const;
 
 	void castUnknown();
+
+	/**
+	 * Rest the character
+	 */
+	void rest();
 };
 
 } // namespace MM1

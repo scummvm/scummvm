@@ -45,6 +45,7 @@ bool Rest::msgFocus(const FocusMessage &msg) {
 	_mode = CONFIRM;
 	if (g_maps->_currentState & 8)
 		tooDangerous();
+	return true;
 }
 
 void Rest::draw() {
@@ -60,8 +61,8 @@ bool Rest::msgKeypress(const KeypressMessage &msg) {
 			msg.keycode == Common::KEYCODE_n) {
 			close();
 		} else if (msg.keycode == Common::KEYCODE_y) {
-			Game::Rest::execute();
-			restComplete();
+			close();
+			Game::Rest::check();
 		}
 	}
 
@@ -69,16 +70,9 @@ bool Rest::msgKeypress(const KeypressMessage &msg) {
 }
 
 void Rest::tooDangerous() {
-	_mode = RESPONSE;
+	_mode = TOO_DANGEROUS;
 	clearSurface();
 	writeString(2, 0, STRING["dialogs.game.rest.too_dangerous"]);
-	delaySeconds(3);
-}
-
-void Rest::restComplete() {
-	_mode = RESPONSE;
-	clearSurface();
-	writeString(0, 0, STRING["dialogs.game.rest.rest_complete"]);
 	delaySeconds(3);
 }
 
