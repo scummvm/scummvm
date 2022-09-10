@@ -34,7 +34,7 @@ CastSpell::CastSpell() : TextView("CastSpell") {
 bool CastSpell::msgValue(const ValueMessage &msg) {
 	if (msg._value == 0) {
 		// Ensure current character can cast spells
-		if (g_globals->_currCharacter->_slvl != 0 &&
+		if (g_globals->_currCharacter->_spellLevel != 0 &&
 			g_globals->_currCharacter->_sp != 0) {
 			addView();
 			setState(SELECT_SPELL);
@@ -126,7 +126,7 @@ void CastSpell::draw() {
 void CastSpell::spellLevelEntered(uint level) {
 	// Ensure the spell level is valid
 	if (level < 1 || level > 7 ||
-		level > g_globals->_currCharacter->_slvl) {
+		level > g_globals->_currCharacter->_spellLevel) {
 		close();
 		return;
 	}

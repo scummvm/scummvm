@@ -30,11 +30,10 @@ namespace Views {
 
 class Rest : public TextView {
 private:
-	enum Mode { CONFIRM, RESPONSE };
+	enum Mode { CONFIRM, TOO_DANGEROUS };
 	Mode _mode = CONFIRM;
 
 	void tooDangerous();
-	void restComplete();
 public:
 	Rest();
 	virtual ~Rest() {}

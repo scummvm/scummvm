@@ -27,6 +27,15 @@ namespace MM1 {
 namespace Game {
 
 struct Rest {
+	/**
+	 * Checks the current map to see whether the
+	 * party is able to rest, or an encounter is triggered
+	 */
+	static void check();
+
+	/**
+	 * Handles the rest
+	 */
 	static void execute();
 };
 

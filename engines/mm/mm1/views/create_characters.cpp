@@ -176,7 +176,7 @@ void CreateCharacters::NewCharacter::setSP(int amount) {
 		level = 1;
 
 	re._sp = level + 3;
-	re._slvl = 1;
+	re._spellLevel = 1;
 }
 
 /*------------------------------------------------------------------------*/

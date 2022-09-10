@@ -20,15 +20,47 @@
  */
 
 #include "mm/mm1/events.h"
-#include "mm/mm1/sound.h"
+#include "mm/mm1/mm1.h"
 #include "mm/mm1/game/rest.h"
+#include "mm/mm1/game/encounter.h"
+#include "mm/mm1/maps/maps.h"
 
 namespace MM {
 namespace MM1 {
 namespace Game {
 
+void Rest::check() {
+	int dangerRate = g_maps->_currentMap->dataByte(44);
+	if (!dangerRate ||
+		g_engine->getRandomNumber(dangerRate) != dangerRate) {
+		// Rest allowed
+		execute();
+	} else {
+		// Choose a random character, and make everyone
+		// but them be asleep
+		uint awakeIndex = g_engine->getRandomNumber(
+			g_globals->_party.size() - 1);
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			Character &c = g_globals->_party[i];
+			if (c._condition >= 0 && i != awakeIndex)
+				c._condition |= ASLEEP;
+		}
+
+		// Start an encounter
+		Game::Encounter::execute();
+	}
+}
+
 void Rest::execute() {
-	// TODO: Handle properly
+	// Reset active spells
+	Common::fill(&g_globals->_spells._arr[0],
+		&g_globals->_spells._arr[ACTIVE_SPELLS_COUNT], 0);
+
+	// Rest the characters of the party
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		c.rest();
+	}
 }
 
 } // namespace Game

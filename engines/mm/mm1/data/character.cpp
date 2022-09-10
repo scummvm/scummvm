@@ -113,7 +113,7 @@ void Character::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_v2c);
 	s.syncAsByte(_sp._base);
 	s.syncAsByte(_v2e);
-	_slvl.synchronize(s);
+	_spellLevel.synchronize(s);
 
 	s.syncAsUint16LE(_gems);
 	s.syncAsUint16LE(_hpBase);
@@ -154,7 +154,7 @@ void Character::clear() {
 	_age = 0;
 	_exp = 0;
 	_sp = 0;
-	_slvl = 0;
+	_spellLevel = 0;
 	_gems = 0;
 	_hpBase = _hp = _hpMax = 0;
 	_gold = 0;
@@ -308,7 +308,7 @@ void Character::updateAttributes() {
 	_accuracy.reset();
 	_luck.reset();
 	_level.reset();
-	_slvl.reset();
+	_spellLevel.reset();
 }
 
 void Character::updateAC() {
@@ -342,6 +342,64 @@ void Character::updateAC() {
 		ac = MAX(ac - 3, 0);
 
 	_ac._current = ac;
+}
+
+void Character::updateSP() {
+	int intelligence = _intelligence._current;
+	int personality = _personality._current;
+	int level = _level._current;
+	int index = 3;
+	AttributePair newSP;
+
+	// Spell points only relevant for spell casters
+	if (_spellLevel._current) {
+		int threshold = -1;
+		if (_class == CLERIC)
+			threshold = personality;
+		else if (_class == SORCERER)
+			threshold = intelligence;
+		else if (level < 7)
+			threshold = -1;
+		else {
+			level -= 6;
+			threshold = (_class == PALADIN) ?
+				personality : intelligence;
+		}
+
+		if (threshold >= 40)
+			index += 10;
+		else if (threshold >= 35)
+			index += 9;
+		else if (threshold >= 30)
+			index += 8;
+		else if (threshold >= 27)
+			index += 7;
+		else if (threshold >= 24)
+			index += 6;
+		else if (threshold >= 21)
+			index += 5;
+		else if (threshold >= 19)
+			index += 4;
+		else if (threshold >= 17)
+			index += 3;
+		else if (threshold >= 15)
+			index += 2;
+		else if (threshold >= 13)
+			index += 1;
+		else if (threshold < 5)
+			index -= 3;
+		else if (threshold < 7)
+			index -= 2;
+		else if (threshold < 9)
+			index -= 1;
+
+		// Calculate the SP
+		newSP._base += index * level;
+		newSP._current = newSP._base;
+	}
+
+	// Set the character's new SP
+	_sp = newSP;
 }
 
 Common::String Character::getConditionString() const {
@@ -384,6 +442,17 @@ Common::String Character::getConditionString() const {
 
 void Character::castUnknown() {
 	warning("TODO: castUnknown method");
+}
+
+void Character::rest() {
+	// Characters with a bad condition like
+	// being stoned can't rest
+	if (_condition & BAD_CONDITION)
+		return;
+
+	updateSP();
+
+	// TODO: More stuff
 }
 
 } // namespace MM1

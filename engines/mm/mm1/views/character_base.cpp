@@ -59,7 +59,7 @@ void CharacterBase::printStats() {
 	writeNumber(re._sp._base);
 	_textPos.x = 22;
 	writeChar('(');
-	writeNumber(re._slvl._current);
+	writeNumber(re._spellLevel._current);
 	writeChar(')');
 	_textPos.x = 26;
 	writeString(STRING["stats.attributes.gems"]);
