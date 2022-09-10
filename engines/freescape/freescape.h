@@ -59,7 +59,8 @@ typedef Common::HashMap<uint16, uint32> StateBits;
 enum {
 	kFreescapeDebugMove = 1 << 0,
 	kFreescapeDebugParser = 1 << 1,
-	kFreescapeDebugCode = 1 << 2
+	kFreescapeDebugCode = 1 << 2,
+	kFreescapeDebugMedia = 1 << 4,
 };
 
 struct entrancesTableEntry {

@@ -31,7 +31,7 @@ void FreescapeEngine::playSound(int index) {
 	if (!_mixer->isSoundHandleActive(_handle))
 		_mixer->stopHandle(_handle);
 
-	debug("Playing sound %d", index);
+	debugC(1, kFreescapeDebugMedia, "Playing sound %d", index);
 	switch (index) {
 		case 1:
 			if (_usePrerecordedSounds) {
@@ -212,7 +212,7 @@ void FreescapeEngine::playSound(int index) {
 			}
 		break;
 		default:
-		error("Unexpected sound %d", index);
+		debugC(1, kFreescapeDebugMedia, "Unexpected sound %d", index);
 		break;
 	}
 }
