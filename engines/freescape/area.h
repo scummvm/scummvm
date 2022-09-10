@@ -63,8 +63,6 @@ public:
 	void loadObjects(Common::SeekableReadStream *stream, Area *global);
 
 	// Driller specific
-	void removeDrill();
-	Math::Vector3d drillPosition;
 	Common::Point gasPocketPosition;
 	uint32 gasPocketRadius;
 

@@ -111,10 +111,6 @@ void Area::show() {
 }
 
 void Area::loadObjects(Common::SeekableReadStream *stream, Area *global) {
-	drillPosition.setValue(0, stream->readFloatLE());
-	drillPosition.setValue(1, stream->readFloatLE());
-	drillPosition.setValue(2, stream->readFloatLE());
-
 	int objectsByIDSize = stream->readUint32LE();
 
 	for (int i = 0; i < objectsByIDSize; i++) {
@@ -138,10 +134,6 @@ void Area::loadObjects(Common::SeekableReadStream *stream, Area *global) {
 }
 
 void Area::saveObjects(Common::WriteStream *stream) {
-	stream->writeFloatLE(drillPosition.x());
-	stream->writeFloatLE(drillPosition.y());
-	stream->writeFloatLE(drillPosition.z());
-
 	stream->writeUint32LE(objectsByID->size());
 
 	for (ObjectMap::iterator iterator = objectsByID->begin(); iterator != objectsByID->end(); iterator++) {
