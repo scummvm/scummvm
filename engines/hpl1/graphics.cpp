@@ -21,13 +21,13 @@
 
 #include "hpl1/graphics.h"
 
-#include "graphics/renderer.h"
+#include "graphics/opengl/context.h"
 #include "common/config-manager.h"
 
 namespace Hpl1 {
 
 bool areShadersAvailable() {
-	return (Graphics::Renderer::getAvailableTypes() & Graphics::kRendererTypeOpenGLShaders) &&
+	return OpenGLContext.enginesShadersSupported &&
 		(!ConfMan.hasKey("renderer") || ConfMan.get("renderer") == "opengl_shaders");
 }
 
