@@ -123,6 +123,7 @@ public:
 
 	// Input
 	bool _flyMode;
+	bool _noClipMode;
 	void processInput();
 	virtual void pressedKey(const int keycode);
 	void move(CameraMovement direction, uint8 scale, float deltaTime);

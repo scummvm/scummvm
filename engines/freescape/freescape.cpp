@@ -54,6 +54,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	_movementSpeed = 1.5f;
 	_mouseSensitivity = 0.25f;
 	_flyMode = false;
+	_noClipMode = false;
 	_playerHeightNumber = 1;
 	_borderTexture = nullptr;
 	_fullscreenViewArea = Common::Rect(0, 0, _screenW, _screenH);
@@ -155,9 +156,10 @@ void FreescapeEngine::processInput() {
 				rise();
 			else if (event.kbd.keycode == Common::KEYCODE_f)
 				lower();
-			else if (event.kbd.keycode == Common::KEYCODE_n)
-				gotoArea(_currentArea->getAreaID() + 1, 0);
-			else if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+			else if (event.kbd.keycode == Common::KEYCODE_n) {
+				_noClipMode = !_noClipMode;
+				_flyMode = _noClipMode;
+			} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				openMainMenuDialog();
 			else
 				pressedKey(event.kbd.keycode);
