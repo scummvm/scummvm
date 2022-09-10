@@ -160,8 +160,13 @@ GeometricObject::GeometricObject(
 		   }
 	}
 
-	createBoundingBox();
+	computeBoundingBox();
 }
+
+void GeometricObject::setOrigin(Math::Vector3d _origin) {
+	origin = _origin;
+	computeBoundingBox();
+};
 
 GeometricObject *GeometricObject::duplicate() {
 	return new GeometricObject(
@@ -176,7 +181,8 @@ GeometricObject *GeometricObject::duplicate() {
 		conditionSource);
 }
 
-void GeometricObject::createBoundingBox() {
+void GeometricObject::computeBoundingBox() {
+	boundingBox = Math::AABB();
 	Math::Vector3d v;
 	switch (type) {
 	default:
