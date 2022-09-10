@@ -235,6 +235,8 @@ bool FreescapeEngine::tryStepDown(Math::Vector3d currentPosition) {
 
 
 bool FreescapeEngine::checkCollisions(bool executeCode) {
+	if (_noClipMode)
+		return false;
 	int areaScale = _currentArea->getScale();
 	Math::AABB boundingBox(_lastPosition, _lastPosition);
 
