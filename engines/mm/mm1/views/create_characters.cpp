@@ -106,20 +106,20 @@ void CreateCharacters::NewCharacter::save() {
 
 	switch (_race) {
 	case HUMAN:
-		re._v62 = re._v63 = 70;
-		re._v66 = re._v67 = 25;
+		re._arr58._s._v62 = 70;
+		re._arr58._s._v66 = 25;
 		break;
 	case ELF:
-		re._v62 = re._v63 = 70;
+		re._arr58._s._v62 = 70;
 		break;
 	case DWARF:
-		re._v64 = re._v65 = 25;
+		re._arr58._s._v64 = 25;
 		break;
 	case GNOME:
-		re._v58 = re._v59 = 20;
+		re._arr58._s._v58 = 20;
 		break;
 	case HALF_ORC:
-		re._v66 = re._v67 = 50;
+		re._arr58._s._v66 = 50;
 		break;
 	}
 
