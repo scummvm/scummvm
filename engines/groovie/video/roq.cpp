@@ -513,10 +513,7 @@ bool ROQPlayer::processBlock() {
 		ok = processBlockQuadCodebook(blockHeader);
 		break;
 	case 0x1011: // Quad vector quantised video frame
-		ok = processBlockQuadVector(blockHeader);
-		if (!ok)
-			break;
-		_dirty = true;
+		_dirty = ok = processBlockQuadVector(blockHeader);
 		endframe = true;
 		debugC(3, kDebugVideo, "Groovie::ROQ:   Decoded Quad Vector frame.");
 		break;
