@@ -47,9 +47,10 @@ public:
 		FCLInstructionVector conditionInstructions,
 		Common::String *conditionSource = nullptr);
 	virtual ~GeometricObject();
+	void setOrigin(Math::Vector3d origin) override;
 
 	GeometricObject *duplicate();
-	void createBoundingBox();
+	void computeBoundingBox();
 	bool collides(const Math::AABB &boundingBox);
 	void draw(Freescape::Renderer *gfx) override;
 	bool isDrawable();
