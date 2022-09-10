@@ -23,12 +23,31 @@
 
 #include "graphics/opengl/context.h"
 #include "common/config-manager.h"
+#include "graphics/surface.h"
+#include "hpl1/opengl.h"
 
 namespace Hpl1 {
 
 bool areShadersAvailable() {
-	return OpenGLContext.enginesShadersSupported &&
+#ifdef USE_OPENGL
+	return useOpenGL() && OpenGLContext.enginesShadersSupported &&
 		(!ConfMan.hasKey("renderer") || ConfMan.get("renderer") == "opengl_shaders");
+#endif
+	return false;
+}
+
+Common::ScopedPtr<Graphics::Surface> createViewportScreenshot() {
+#ifdef USE_OPENGL
+	return createGLViewportScreenshot();
+#endif
+	return nullptr;
+}
+
+bool useOpenGL() {
+#ifdef USE_OPENGL
+	return (!ConfMan.hasKey("renderer") || ConfMan.get("renderer").contains("opengl"));
+#endif
+	return false;
 }
 
 }

@@ -29,10 +29,10 @@
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/opengl.h"
-
 #include <memory.h>
 
-//#include <GL/GLee.h>
+#ifdef USE_OPENGL
+
 
 namespace hpl {
 
@@ -684,3 +684,5 @@ Log(") ");
 Log("\n");
 }
 }*/
+
+#endif // USE_OPENGL

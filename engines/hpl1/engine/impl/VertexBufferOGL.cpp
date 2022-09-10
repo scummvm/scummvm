@@ -29,10 +29,9 @@
 #include "hpl1/debug.h"
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/system/low_level_system.h"
-
-//#include <GL/GLee.h>
-
 #include <string.h>
+
+#ifdef USE_OPENGL
 
 namespace hpl {
 
@@ -508,3 +507,5 @@ void cVertexBufferOGL::SetVertexStates(tVertexFlag aFlags) {
 //-----------------------------------------------------------------------
 
 } // namespace hpl
+
+#endif // USE_OPENGL

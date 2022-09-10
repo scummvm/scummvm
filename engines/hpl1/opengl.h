@@ -22,11 +22,12 @@
 #ifndef HPL1_OPENGL_H
 #define HPL1_OPENGL_H
 
-#define USE_OPENGL
-#define USE_GLAD
 #include "graphics/opengl/system_headers.h"
 #include "graphics/opengl/context.h"
 #include "common/ptr.h"
+#include "common/scummsys.h"
+
+#ifdef USE_OPENGL
 
 namespace Graphics {
 
@@ -38,11 +39,12 @@ namespace Hpl1 {
 
 void checkOGLErrors(const char *function, int line);
 
-Common::ScopedPtr<Graphics::Surface> createViewportScreenshot();
+Common::ScopedPtr<Graphics::Surface> createGLViewportScreenshot();
 
 }
 
 #define GL_CHECK(x) {x; ::Hpl1::checkOGLErrors(__func__, __LINE__);}
 #define GL_CHECK_FN() GL_CHECK()
 
-#endif
+#endif // USE_OPENGL
+#endif // HPL1_OPENGL_H

@@ -46,6 +46,9 @@
 #include "hpl1/opengl.h"
 #include "hpl1/graphics.h"
 
+
+#ifdef USE_OPENGL
+
 namespace hpl {
 
 GLenum ColorFormatToGL(eColorDataFormat format) {
@@ -1775,3 +1778,5 @@ void cLowLevelGraphicsSDL::SetMatrixMode(eMatrix type) {
 //-----------------------------------------------------------------------
 
 } // namespace hpl
+
+#endif //USE_OPENGL

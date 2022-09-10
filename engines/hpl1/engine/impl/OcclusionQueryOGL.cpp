@@ -28,7 +28,8 @@
 #include "hpl1/engine/impl/OcclusionQueryOGL.h"
 #include "hpl1/opengl.h"
 
-//#include <GL/GLee.h>
+#ifdef USE_OPENGL
+
 
 namespace hpl {
 
@@ -81,3 +82,5 @@ unsigned int cOcclusionQueryOGL::GetSampleCount() {
 
 //-----------------------------------------------------------------------
 } // namespace hpl
+
+#endif // USE_OPENGL

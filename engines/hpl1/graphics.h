@@ -22,9 +22,19 @@
 #ifndef HPL1_GRAPHICS_H
 #define HPL1_GRAPHICS_H
 
+#include "common/ptr.h"
+
+namespace Graphics {
+struct Surface;
+}
+
 namespace Hpl1 {
 
 bool areShadersAvailable();
+
+Common::ScopedPtr<Graphics::Surface> createViewportScreenshot();
+
+bool useOpenGL();
 
 }
 
