@@ -30,6 +30,11 @@ static const int CLASS_HP_PER_LEVEL[6] = {
 	12, 10, 10, 8, 6, 8
 };
 
+Arr58::Arr58() {
+	for (int i = 0; i < 8; ++i)
+		_arr[i].clear();
+}
+
 void Inventory::clear() {
 	_items.clear();
 	_items.resize(INVENTORY_COUNT);
@@ -167,8 +172,11 @@ void Character::clear() {
 
 	_alignmentInitial = GOOD;
 	_alignment = GOOD;
-	_v58 = _v59 = _v62 = _v63 = _v64 = _v65 = 0;
-	_v66 = _v67 = _v6c = _v6f = 0;
+	_arr58._s._v58.clear();
+	_arr58._s._v62.clear();
+	_arr58._s._v64.clear();
+	_arr58._s._v66.clear();
+	_v6c = _v6f = 0;
 }
 
 
@@ -402,6 +410,11 @@ void Character::updateSP() {
 	_sp = newSP;
 }
 
+void Character::update58() {
+	for (int i = 0; i < 8; ++i)
+		_arr58._arr[i]._current = _arr58._arr[i]._base;
+}
+
 Common::String Character::getConditionString() const {
 	Common::String result;
 	int cond = _condition;
@@ -451,6 +464,14 @@ void Character::rest() {
 		return;
 
 	updateSP();
+	updateAttributes();
+	updateAC();
+	update58();
+
+	_condition &= ~(ASLEEP | BLINDED | SILENCED |
+		PARALYZED | UNCONSCIOUS);
+
+//	if (_hpBase == 0 && )
 
 	// TODO: More stuff
 }

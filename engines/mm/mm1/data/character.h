@@ -164,6 +164,31 @@ struct AttributePair {
 	}
 };
 
+struct AttributePair16 {
+	uint16 _current = 0;
+	uint16 _base = 0;
+
+	void clear() { _current = _base = 0; }
+};
+
+struct Arr58Fields {
+	AttributePair _v58;
+	AttributePair _v5a;
+	AttributePair _v5c;
+	AttributePair _v5e;
+	AttributePair _v60;
+	AttributePair _v62;
+	AttributePair _v64;
+	AttributePair _v66;
+};
+
+union Arr58 {
+	Arr58Fields _s;
+	AttributePair _arr[8];
+
+	Arr58();
+};
+
 struct Character {
 	char _name[16] = { 0 };
 	Sex _sex = MALE;
@@ -198,9 +223,8 @@ struct Character {
 	Inventory _backpack;
 
 	// TODO: Figure out what these are
-	int _v58, _v59, _v62, _v63, _v64, _v65;
-	int _v66, _v67, _v68, _v69, _v6a, _v6b,
-		_v6c, _v6e, _v6f;
+	Arr58 _arr58;
+	int _v68, _v69, _v6a, _v6b, _v6c, _v6e, _v6f;
 
 	byte _quest = 0;
 
@@ -265,6 +289,8 @@ struct Character {
 	 * Updates the character's SP
 	 */
 	void updateSP();
+
+	void update58();
 
 	/**
 	 * Gets a character's condition string
