@@ -184,12 +184,10 @@ void dgCollisionChamferCylinder::DebugCollision(const dgMatrix &matrixPtr,
 	dgFloat32 sliceStep;
 	dgFloat32 sliceAngle;
 	dgFloat32 breakStep;
-	dgFloat32 breakAngle;
 
 	slices = 12;
 	brakes = 24;
 	sliceAngle = dgFloat32(0.0f);
-	breakAngle = dgFloat32(0.0f);
 	sliceStep = dgPI / slices;
 	breakStep = dgPI2 / brakes;
 

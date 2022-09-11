@@ -467,12 +467,10 @@ dgCollisionCompoundBreakable::dgDebriGraph::~dgDebriGraph() {
 
 void dgCollisionCompoundBreakable::dgDebriGraph::Serialize(dgSerialize callback,
 														   void *const userData) const {
-	dgInt32 lru;
 	dgInt32 index;
 	dgInt32 count;
 	dgTree<dgInt32, dgListNode *> enumerator(GetAllocator());
 
-	lru = 0;
 	index = 1;
 	count = GetCount();
 	callback(userData, &count, dgInt32(sizeof(dgInt32)));
@@ -612,9 +610,9 @@ void dgCollisionCompoundBreakable::dgDebriGraph::AddMeshes(
 	dgFloat32 padding) {
 	// padding = 0.0f;
 
-	dgGraph<dgDebriNodeInfo, dgSharedNodeMesh>::dgListNode *fixNode;
+	//dgGraph<dgDebriNodeInfo, dgSharedNodeMesh>::dgListNode *fixNode;
 
-	fixNode = dgGraph<dgDebriNodeInfo, dgSharedNodeMesh>::AddNode();
+	/*fixNode =*/ dgGraph<dgDebriNodeInfo, dgSharedNodeMesh>::AddNode();
 	for (dgInt32 i = 0; i < count; i++) {
 		AddNode(vertexArray, (dgMeshEffect *)solidArray[i], internalFaceMaterial[i],
 				idArray[i], densities[i], padding);

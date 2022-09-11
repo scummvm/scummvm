@@ -4018,7 +4018,6 @@ class dgContactSolver {
 
 		dgFloat32 dist;
 		dgFloat32 minValue;
-		dgFloat32 penetration;
 		dgFloat32 ciclingMem[4];
 		dgMinkFace *face;
 		dgMinkFace *adjacent;
@@ -4039,7 +4038,6 @@ class dgContactSolver {
 		m_planeIndex = 4;
 		closestFace = NULL;
 		m_facePurge = NULL;
-		penetration = dgFloat32(0.0f);
 
 		_ASSERTE(m_vertexIndex == 4);
 		for (i = 0; i < 4; i++) {
@@ -4330,7 +4328,6 @@ class dgContactSolver {
 
 		dgFloat64 dist;
 		dgFloat64 minValue;
-		dgFloat64 penetration;
 		dgFloat64 ciclingMem[4];
 		dgMinkFace *face;
 		dgMinkFace *adjacent;
@@ -4351,7 +4348,6 @@ class dgContactSolver {
 		m_planeIndex = 4;
 		closestFace = NULL;
 		m_facePurge = NULL;
-		penetration = dgFloat64(0.0f);
 
 		_ASSERTE(m_vertexIndex == 4);
 		for (i = 0; i < 4; i++) {
@@ -7012,21 +7008,15 @@ dgInt32 dgWorld::CalculatePolySoupToSphereContactsDescrete(
 	dgInt32 indexCount;
 	dgInt32 reduceContactCountLimit;
 	dgFloat32 radius;
-	dgBody *soupBody;
-	dgBody *spheBody;
 	dgCollisionSphere *sphere;
 	dgCollisionMesh *polysoup;
 	dgCollisionMesh::dgCollisionConvexPolygon *polygon;
 	dgVector point;
 
 	count = 0;
-	_ASSERTE(
-		proxy.m_referenceCollision->IsType(dgCollision::dgCollisionSphere_RTTI));
-	_ASSERTE(
-		proxy.m_floatingCollision->IsType(dgCollision::dgCollisionMesh_RTTI));
+	_ASSERTE(proxy.m_referenceCollision->IsType(dgCollision::dgCollisionSphere_RTTI));
+	_ASSERTE(proxy.m_floatingCollision->IsType(dgCollision::dgCollisionMesh_RTTI));
 
-	spheBody = proxy.m_referenceBody;
-	soupBody = proxy.m_floatingBody;
 	sphere = (dgCollisionSphere *)proxy.m_referenceCollision;
 	polysoup = (dgCollisionMesh *)proxy.m_floatingCollision;
 
@@ -7129,21 +7119,15 @@ dgInt32 dgWorld::CalculatePolySoupToElipseContactsDescrete(
 	dgInt32 indexCount;
 	dgInt32 reduceContactCountLimit;
 	dgFloat32 radius;
-	dgBody *soupBody;
-	dgBody *spheBody;
 	dgCollisionEllipse *sphere;
 	dgCollisionMesh *polysoup;
 	dgCollisionMesh::dgCollisionConvexPolygon *polygon;
 	dgVector point;
 
 	count = 0;
-	_ASSERTE(
-		proxy.m_referenceCollision->IsType(dgCollision::dgCollisionEllipse_RTTI));
-	_ASSERTE(
-		proxy.m_floatingCollision->IsType(dgCollision::dgCollisionMesh_RTTI));
+	_ASSERTE(proxy.m_referenceCollision->IsType(dgCollision::dgCollisionEllipse_RTTI));
+	_ASSERTE(proxy.m_floatingCollision->IsType(dgCollision::dgCollisionMesh_RTTI));
 
-	spheBody = proxy.m_referenceBody;
-	soupBody = proxy.m_floatingBody;
 	sphere = (dgCollisionEllipse *)proxy.m_referenceCollision;
 	polysoup = (dgCollisionMesh *)proxy.m_floatingCollision;
 
@@ -7259,8 +7243,6 @@ dgInt32 dgWorld::CalculatePolySoupToSphereContactsContinue (dgCollisionParamProx
   dgFloat32 radius;
   dgInt32* indexArray;
   dgInt32* idArray;
-  dgBody* soupBody;
-  dgBody* spheBody;
   dgCollisionSphere *sphere;
   dgContactPoint* contactOut;
   dgCollisionMesh *polysoup;
@@ -7268,13 +7250,9 @@ dgInt32 dgWorld::CalculatePolySoupToSphereContactsContinue (dgCollisionParamProx
 
   count = 0;
 
-  _ASSERTE(
-	  proxy.m_referenceCollision->IsType (dgCollision::dgCollisionSphere_RTTI));
-  _ASSERTE(
-	  proxy.m_floatingCollision->IsType (dgCollision::dgCollisionMesh_RTTI));
+  _ASSERTE(proxy.m_referenceCollision->IsType (dgCollision::dgCollisionSphere_RTTI));
+  _ASSERTE(proxy.m_floatingCollision->IsType (dgCollision::dgCollisionMesh_RTTI));
 
-  spheBody = proxy.m_referenceBody;
-  soupBody = proxy.m_floatingBody;
   sphere = (dgCollisionSphere*) proxy.m_referenceCollision;
   polysoup = (dgCollisionMesh *) proxy.m_floatingCollision;
 

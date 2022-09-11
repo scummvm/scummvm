@@ -2889,12 +2889,10 @@ NewtonbreakableComponentMesh *NewtonBreakableGetMainMesh(
 
 void NewtonBreakableBeginDelete(const NewtonCollision *const compoundBreakable) {
 	dgCollision *collision;
-	NewtonbreakableComponentMesh *mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	collision = (dgCollision *)compoundBreakable;
 
-	mesh = NULL;
 	if (collision->IsType(dgCollision::dgCollisionCompoundBreakable_RTTI)) {
 		dgCollisionCompoundBreakable *compound;
 		compound = (dgCollisionCompoundBreakable *)collision;
@@ -2907,12 +2905,10 @@ NewtonBody *NewtonBreakableCreateDebrieBody(
 	const NewtonbreakableComponentMesh *const component) {
 	dgBody *body;
 	dgCollision *collision;
-	NewtonbreakableComponentMesh *mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	collision = (dgCollision *)compoundBreakable;
 
-	mesh = NULL;
 	body = NULL;
 	if (collision->IsType(dgCollision::dgCollisionCompoundBreakable_RTTI)) {
 		dgCollisionCompoundBreakable *compound;
@@ -2928,12 +2924,10 @@ void NewtonBreakableDeleteComponent(
 	const NewtonCollision *const compoundBreakable,
 	const NewtonbreakableComponentMesh *const component) {
 	dgCollision *collision;
-	NewtonbreakableComponentMesh *mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	collision = (dgCollision *)compoundBreakable;
 
-	mesh = NULL;
 	if (collision->IsType(dgCollision::dgCollisionCompoundBreakable_RTTI)) {
 		dgCollisionCompoundBreakable *compound;
 		compound = (dgCollisionCompoundBreakable *)collision;
@@ -2944,12 +2938,10 @@ void NewtonBreakableDeleteComponent(
 
 void NewtonBreakableEndDelete(const NewtonCollision *const compoundBreakable) {
 	dgCollision *collision;
-	NewtonbreakableComponentMesh *mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	collision = (dgCollision *)compoundBreakable;
 
-	mesh = NULL;
 	if (collision->IsType(dgCollision::dgCollisionCompoundBreakable_RTTI)) {
 		dgCollisionCompoundBreakable *compound;
 		compound = (dgCollisionCompoundBreakable *)collision;
