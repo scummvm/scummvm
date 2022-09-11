@@ -254,6 +254,8 @@
 	spells:
 		fly_to_x: "FLY TO (A-E): "
 		fly_to_y: "(1-4): "
+		teleport_dir: "DIRECTION (N,E,S,W): "
+		teleport_squares: "# OF SQUARES (0-9): "
 enhdialogs:
 	character:
 		stats:
