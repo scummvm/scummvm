@@ -60,7 +60,7 @@ class Inventory {
 public:
 	struct Entry {
 		byte _id = 0;
-		byte _field14 = 0;
+		byte _charges = 0;
 		operator bool() const { return _id != 0; }
 //		bool operator!() const { return !_id; }
 //		operator byte() const { return _id; }
@@ -111,6 +111,11 @@ public:
 	 * Returns true if the inventory is full
 	 */
 	bool full() const;
+
+	/**
+	 * Returns the size of the backpack that's filled in
+	 */
+	uint size() const;
 
 	/**
 	 * Adds an item to the inventory

@@ -46,6 +46,7 @@ MODULE_OBJS := \
 	mm1/views/locations/training.o \
 	mm1/views/spells/spell_view.o \
 	mm1/views/spells/cast_spell.o \
+	mm1/views/spells/detect_magic.o \
 	mm1/views/spells/fly.o \
 	mm1/views/spells/location.o \
 	mm1/views/spells/teleport.o \

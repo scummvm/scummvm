@@ -66,7 +66,7 @@ void BlacksmithSellItem::selectItem(uint index) {
 
 	// Remove the item
 	int itemId = c._backpack[index]._id;
-	int v14 = c._backpack[index]._field14;
+	int v14 = c._backpack[index]._charges;
 	c._backpack.removeAt(index);
 
 	getItem(itemId);

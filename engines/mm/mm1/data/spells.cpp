@@ -25,6 +25,7 @@
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/views/spells/detect_magic.h"
 #include "mm/mm1/views/spells/fly.h"
 #include "mm/mm1/views/spells/location.h"
 #include "mm/mm1/views/spells/teleport.h"
@@ -463,8 +464,8 @@ SpellResult Spells::cleric74_resurrection(Character *chr) {
 }
 
 SpellResult Spells::wizard12_detectMagic(Character *chr) {
-	error("TODO: detectMagic");
-	return SR_FAILED;
+	Views::Spells::DetectMagic::show();
+	return SR_SUCCESS_SILENT;
 }
 
 SpellResult Spells::wizard15_leatherSkin(Character *chr) {
