@@ -175,13 +175,19 @@ bool t3dGetFileDate(uint32 *date, uint32 *time, const char *name) {
 }
 
 Common::SeekableReadStream *openFile(const Common::String &filename) {
+	Common::String adjustedPath;
+	if (filename.hasPrefix("./")) {
+		adjustedPath = filename.substr(2, filename.size());
+	} else {
+		adjustedPath = filename;
+	}
 	Common::SeekableReadStream *file = nullptr;
 	// Try directly from SearchMan first
 	Common::ArchiveMemberList files;
-	SearchMan.listMatchingMembers(files, filename);
+	SearchMan.listMatchingMembers(files, adjustedPath);
 
 	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); ++it) {
-		if ((*it)->getName().equalsIgnoreCase(lastPathComponent(filename,'/'))) {
+		if ((*it)->getName().equalsIgnoreCase(lastPathComponent(adjustedPath,'/'))) {
 			file = (*it)->createReadStream();
 			break;
 		}
