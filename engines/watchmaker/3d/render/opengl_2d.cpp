@@ -23,15 +23,17 @@
 
 #if defined(USE_OPENGL_GAME)
 
+#include "graphics/pixelformat.h"
 #include "watchmaker/3d/render/opengl_2d.h"
-#include "watchmaker/utils.h"
-#include "watchmaker/render.h"
-#include "watchmaker/tga_util.h"
-#include "watchmaker/rect.h"
-#include "watchmaker/work_dirs.h"
+#include "watchmaker/3d/render/opengl_renderer.h"
 #include "watchmaker/game.h"
+#include "watchmaker/rect.h"
+#include "watchmaker/render.h"
 #include "watchmaker/renderer.h"
 #include "watchmaker/sdl_wrapper.h"
+#include "watchmaker/tga_util.h"
+#include "watchmaker/utils.h"
+#include "watchmaker/work_dirs.h"
 
 #include "graphics/opengl/system_headers.h"
 
@@ -200,11 +202,7 @@ void rBlitter(WGame &game, int dst, int src, int dposx, int dposy,
 		glEnable(GL_TEXTURE_2D);
 		glDisable(GL_ALPHA_TEST);
 		glDisable(GL_BLEND);
-		error("TODO: Replace SDL textures");
-#if 0
-		SDL_GL_BindTexture(bitmap.texture, nullptr, nullptr);
-#endif
-		//glBindTexture(GL_TEXTURE_2D, bitmap.texId);
+		glBindTexture(GL_TEXTURE_2D, bitmap.texId);
 		glLoadIdentity();
 		glTranslatef(0, 0, -1.0);
 		//glTranslatef((2.0 / dposx) - 1.0, (2.0 / dposy) - 1.0, 0.0f);
@@ -248,43 +246,6 @@ void rBlitter(WGame &game, int dst, int src, int dposx, int dposy,
 //#endif
 }
 
-// TODO: Deduplicate against the opengl_3d.cpp version
-int createTextureFromSurface2(Surface &surface, int texFormat) {
-	unsigned int texId = 0;
-	glGenTextures(1, &texId);
-
-	glBindTexture(GL_TEXTURE_2D, texId);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-	error("TODO: compressed textures");
-#if 0
-	bool compressed = false;
-	switch (texFormat) {
-		case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
-		case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-		case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
-			compressed = true;
-			break;
-		case GL_RGBA:
-		case GL_RGB:
-			compressed = false;
-			break;
-		default:
-			warning("Texture format not handled: %d", texFormat);
-	}
-
-	if (compressed) {
-		glCompressedTexImage2D(GL_TEXTURE_2D, 0, texFormat, surface.width, surface.height, 0, surface.dataSize, surface.data);
-	} else {
-		glTexImage2D(GL_TEXTURE_2D, 0, texFormat, surface.width, surface.height / 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface.data);
-	}
-#endif
-	return texId;
-}
-
 int rLoadBitmapImage(WGame &game, const char *TextName, unsigned char flags) {
 	WorkDirs &workDirs = game.workDirs;
 	if (flags & rTEXTURESURFACE) {
@@ -299,7 +260,7 @@ int rLoadBitmapImage(WGame &game, const char *TextName, unsigned char flags) {
 		return -1;
 	}
 
-	PixelFormat RGBA8888(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	Graphics::PixelFormat RGBA8888(4, 8, 8, 8, 8, 24, 16, 8, 0);
 
 	unsigned int pos = gGetBitmapListPosition();
 	if (pos == 0) {
@@ -309,14 +270,8 @@ int rLoadBitmapImage(WGame &game, const char *TextName, unsigned char flags) {
 	gTexture *Texture = &gBitmapList[pos];
 	*Texture = gTexture();
 	Texture->Flags = CurLoaderFlags;
-	Texture->surface = ReadTgaImage(TextName, stream.get(), RGBA8888, Texture->Flags);
-
-	error("TODO: textures in OSystem");
-#if 0
-	Texture->texture = SDL_CreateTextureFromSurface(game.sdl->renderer, Texture->surface->sdl_surface);
-#endif
-	//Texture->texId = createTextureFromSurface2(*Texture->surface, GL_RGBA);
-
+	Texture->surface = ReadTgaImage(TextName, *stream, RGBA8888, Texture->Flags);
+	Texture->texId = createTextureFromSurface(*Texture->surface, GL_RGBA);
 	Texture->name = TextName;
 
 	if (flags & rSURFACESTRETCH) { // Also rSURFACEFLIP
@@ -326,15 +281,15 @@ int rLoadBitmapImage(WGame &game, const char *TextName, unsigned char flags) {
 			warned = true;
 		}
 		// HACK: Just set a dimension at all:
-		Texture->DimX = Texture->surface->width;
-		Texture->DimY = Texture->surface->height;
+		Texture->DimX = Texture->surface->w;
+		Texture->DimY = Texture->surface->h;
 	} else {
-		Texture->DimX = Texture->surface->width;
-		Texture->DimY = Texture->surface->height;
+		Texture->DimX = Texture->surface->w;
+		Texture->DimY = Texture->surface->h;
 	}
 
-	Texture->RealDimX = Texture->surface->width;
-	Texture->RealDimY = Texture->surface->height;
+	Texture->RealDimX = Texture->surface->w;
+	Texture->RealDimY = Texture->surface->h;
 	// TODO: Colour-keying
 	return pos;
 }

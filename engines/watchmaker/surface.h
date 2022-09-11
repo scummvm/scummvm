@@ -24,15 +24,6 @@
 
 namespace Watchmaker {
 
-struct SDL_Surface;
-struct Surface {
-	int width = 0;
-	int height = 0;
-	void *data = nullptr;
-	int dataSize = 0;
-	SDL_Surface *sdl_surface;
-};
-
 } // End of namespace Watchmaker
 
 #endif // WATCHMAKER_SURFACE_H
