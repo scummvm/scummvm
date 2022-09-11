@@ -163,7 +163,7 @@ bool Material::loadFromX(XFileData *xobj, const Common::String &filename) {
 	_emissive.b() = material->_emissiveB;
 	_emissive.a() = 1.0f;
 
-	uint32 numChildren = 0;
+	uint numChildren = 0;
 	xobj->getChildren(numChildren);
 
 	for (uint32 i = 0; i < numChildren; i++) {

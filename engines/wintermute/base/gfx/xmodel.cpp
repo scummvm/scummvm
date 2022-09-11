@@ -148,7 +148,7 @@ bool XModel::loadFromFile(const Common::String &filename, XModel *parentModel) {
 		if (!resLoop)
 			break;
 
-		bool res = _rootFrame->loadFromXData(filename, this, &xobj, _materialReferences);
+		res = _rootFrame->loadFromXData(filename, this, &xobj, _materialReferences);
 		if (!res) {
 			BaseEngine::LOG(0, "Error loading top level object from '%s'", filename.c_str());
 			break;
@@ -251,7 +251,7 @@ bool XModel::loadAnimationSet(const Common::String &filename, XFileData *xobj) {
 	XFileData xchildData;
 	XClassType objectType;
 
-	uint32 numChildren = 0;
+	uint numChildren = 0;
 	xobj->getChildren(numChildren);
 
 	for (uint32 i = 0; i < numChildren; i++) {
@@ -296,7 +296,7 @@ bool XModel::loadAnimation(const Common::String &filename, XFileData *xobj, Anim
 	// create the new object
 	Animation *anim = new Animation(_gameRef);
 
-	uint32 numChildren = 0;
+	uint numChildren = 0;
 	xobj->getChildren(numChildren);
 
 	for (uint32 i = 0; i < numChildren; i++) {

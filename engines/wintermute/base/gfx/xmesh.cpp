@@ -91,7 +91,7 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj, Commo
 
 	parseFaces(mesh, faceCount, indexCountPerFace);
 
-	uint32 numChildren = 0;
+	uint numChildren = 0;
 	xobj->getChildren(numChildren);
 
 	for (uint32 i = 0; i < numChildren; i++) {
@@ -618,7 +618,7 @@ bool XMesh::parseMaterials(XFileData *xobj, int faceCount, const Common::String 
 	_indexRanges.push_back(currentIndex);
 	_numAttrs = _indexRanges.size() - 1;
 
-	uint32 numChildren = 0;
+	uint numChildren = 0;
 	xobj->getChildren(numChildren);
 
 	for (uint32 i = 0; i < numChildren; i++) {
