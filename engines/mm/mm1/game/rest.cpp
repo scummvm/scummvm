@@ -61,6 +61,10 @@ void Rest::execute() {
 		Character &c = g_globals->_party[i];
 		c.rest();
 	}
+
+	g_events->send(InfoMessage(
+		STRING["dialogs.game.rest.rest_complete"]
+	));
 }
 
 } // namespace Game

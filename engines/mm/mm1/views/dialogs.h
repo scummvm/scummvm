@@ -36,6 +36,7 @@
 #include "mm/mm1/views/character_info.h"
 #include "mm/mm1/views/characters.h"
 #include "mm/mm1/views/encounter.h"
+#include "mm/mm1/views/rest.h"
 #include "mm/mm1/views/locations/blacksmith.h"
 #include "mm/mm1/views/locations/inn.h"
 #include "mm/mm1/views/locations/market.h"
@@ -60,6 +61,7 @@ private:
 	Views::Order _order;
 	Views::Protect _protect;
 	Views::QuickRef _quickRef;
+	Views::Rest _rest;
 	Views::Title _title;
 	Views::CharacterInfo _characterInfo;
 

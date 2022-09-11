@@ -32,7 +32,7 @@ Rest::Rest() : TextView("Rest") {
 }
 
 bool Rest::msgGame(const GameMessage &msg) {
-	if (msg._name == "Rest") {
+	if (msg._name == "REST") {
 		// Show the dialog
 		addView(this);
 		return true;
