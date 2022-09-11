@@ -27,7 +27,6 @@
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-codegen.h"
 #include "director/debugger.h"
-#include "game.h"
 
 namespace Director {
 
@@ -98,12 +97,12 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" vars - Lists all of the variables available in the current script frame\n");
 	debugPrintf(" step / s [n] - Steps forward one or more operations\n");
 	debugPrintf(" next / n [n] - Steps forward one or more operations, skips over calls\n");
-	debugPrintf(" finish / fin - Steps until the current stack frame returns/n");
+	debugPrintf(" finish / fin - Steps until the current stack frame returns\n");
 	debugPrintf("\n");
 	debugPrintf("Breakpoints:\n");
 	debugPrintf("\n");
-	//debugPrintf(" bpset [funcname:n] - Creates a breakpoint on a Lingo script/n");
-	//debugPrintf(" bpdel [n] - Deletes a specific breakpoint /n");
+	//debugPrintf(" bpset [funcname:n] - Creates a breakpoint on a Lingo script\n");
+	//debugPrintf(" bpdel [n] - Deletes a specific breakpoint \n");
 	return true;
 }
 
@@ -123,14 +122,15 @@ bool Debugger::cmdVersion(int argc, const char **argv) {
 }
 
 bool Debugger::cmdRepl(int argc, const char **argv) {
-	debugPrintf("Switching to Lingo REPL mode, type 'exit' to return to the debug console.\n");
+	debugPrintf("Switching to Lingo REPL mode, type 'lingo off' to return to the debug console.\n");
 	registerDefaultCmd(WRAP_DEFAULTCOMMAND(Debugger, lingoCommandProcessor));
 	debugPrintf(PROMPT);
 	return true;
 }
 
 bool Debugger::cmdStack(int argc, const char **argv) {
-	debugPrintf("%s\n", g_director->getLingo()->formatStack().c_str());
+	Lingo *lingo = g_director->getLingo();
+	debugPrintf("%s\n", lingo->formatStack().c_str());
 	debugPrintf("\n");
 	return true;
 }
@@ -143,12 +143,14 @@ bool Debugger::cmdScriptFrame(int argc, const char **argv) {
 }
 
 bool Debugger::cmdBacktrace(int argc, const char **argv) {
-	debugPrintf("%s\n", g_director->getLingo()->formatCallStack(g_director->getLingo()->_pc).c_str());
+	Lingo *lingo = g_director->getLingo();
+	debugPrintf("%s\n", lingo->formatCallStack(lingo->_pc).c_str());
 	return true;
 }
 
 bool Debugger::cmdVars(int argc, const char **argv) {
-	debugPrintf("%s\n", g_director->getLingo()->formatAllVars().c_str());
+	Lingo *lingo = g_director->getLingo();
+	debugPrintf("%s\n", lingo->formatAllVars().c_str());
 	return true;
 }
 
@@ -180,7 +182,7 @@ bool Debugger::cmdFinish(int argc, const char **argv) {
 }
 
 bool Debugger::lingoCommandProcessor(const char *inputOrig) {
-	if (!strcmp(inputOrig, "exit")) {
+	if (!strcmp(inputOrig, "lingo off")) {
 		registerDefaultCmd(nullptr);
 		return true;
 	}
@@ -227,7 +229,6 @@ void Debugger::popContextHook() {
 	if (_finish)
 		_finishCounter--;
 }
-
 
 void Debugger::debugLogFile(Common::String logs, bool prompt) {
 	if (prompt)
