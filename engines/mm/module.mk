@@ -47,6 +47,7 @@ MODULE_OBJS := \
 	mm1/views/spells/spell_view.o \
 	mm1/views/spells/cast_spell.o \
 	mm1/views/spells/fly.o \
+	mm1/views/spells/location.o \
 	mm1/views/spells/teleport.o \
 	mm1/views/are_you_ready.o \
 	mm1/views/character_base.o \

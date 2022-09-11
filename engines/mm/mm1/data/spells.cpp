@@ -26,6 +26,7 @@
 #include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
 #include "mm/mm1/views/spells/fly.h"
+#include "mm/mm1/views/spells/location.h"
 #include "mm/mm1/views/spells/teleport.h"
 
 namespace MM {
@@ -472,7 +473,8 @@ SpellResult Spells::wizard15_leatherSkin(Character *chr) {
 }
 
 SpellResult Spells::wizard17_location(Character *chr) {
-	return SR_FAILED;
+	Views::Spells::Location::show();
+	return SR_SUCCESS_SILENT;
 }
 
 SpellResult Spells::wizard24_jump(Character *chr) {

@@ -45,6 +45,7 @@
 #include "mm/mm1/views/locations/training.h"
 #include "mm/mm1/views/spells/cast_spell.h"
 #include "mm/mm1/views/spells/fly.h"
+#include "mm/mm1/views/spells/location.h"
 #include "mm/mm1/views/spells/teleport.h"
 
 namespace MM {
@@ -75,6 +76,7 @@ private:
 
 	Views::Spells::CastSpell _castSpell;
 	Views::Spells::Fly _flySpell;
+	Views::Spells::Location _locationSpell;
 	Views::Spells::Teleport _telportSpell;
 public:
 	Dialogs() {}
