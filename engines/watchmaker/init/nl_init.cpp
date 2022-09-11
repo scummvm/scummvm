@@ -117,8 +117,6 @@ int LoadExternalText(Init *init, char *et) {
 		}
 	}
 
-	delete stream;
-
 	return true;
 }
 

@@ -70,7 +70,7 @@ static bool readKeyValuePair(Common::SeekableReadStream &stream, Common::String 
 
 WorkDirs::WorkDirs(const Common::String &filename) {
 	_fastFile = Common::SharedPtr<FastFile>(new FastFile(WmGameDataPak_FilePath));
-	auto *fcfg = openFile(filename.c_str());
+	auto fcfg = openFile(filename.c_str());
 	if (fcfg) {
 
 		Common::String key, value;
