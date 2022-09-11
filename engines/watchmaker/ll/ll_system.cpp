@@ -163,15 +163,10 @@ int t3dAccessFile(char *name) {
 }
 
 bool t3dGetFileDate(uint32 *date, uint32 *time, const char *name) {
-#if 0
-	FILE *f = fopen(name, "rb");
-	//warning("STUBBED: t3dGetFileDate(%s)", name);
-	if (f) {
-		fclose(f);
+	auto stream = openFile(name);
+	warning("TODO: t3dGetFileDate is currently super-inefficient");
+	if (stream)
 		return true;
-	}
-#endif
-	error("TODO: t3dGetFileDate");
 	return false;
 }
 
