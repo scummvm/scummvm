@@ -51,6 +51,11 @@ public:
 	 * Timeout for the failed/done display
 	 */
 	void timeout() override;
+
+	/**
+	 * Called when the view is focused
+	 */
+	bool msgFocus(const FocusMessage &msg) override;
 };
 
 } // namespace Spells

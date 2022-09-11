@@ -32,14 +32,16 @@ void Fly::show(FlyCallback callback) {
 	assert(fly);
 
 	fly->_callback = callback;
-	fly->focus();
+	fly->open();
 }
 
 Fly::Fly() : SpellView("Fly") {
 	_bounds = getLineBounds(21, 24);
 }
 
-bool Fly::msgFocus(const FocusMessage &) {
+bool Fly::msgFocus(const FocusMessage &msg) {
+	SpellView::msgFocus(msg);
+
 	_mode = SELECT_X;
 	_xIndex = _yIndex = 0;
 	return 0;

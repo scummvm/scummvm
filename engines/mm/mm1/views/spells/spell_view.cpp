@@ -50,6 +50,11 @@ void SpellView::timeout() {
 	close();
 }
 
+bool SpellView::msgFocus(const FocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
+	return true;
+}
+
 } // namespace Spells
 } // namespace Views
 } // namespace MM1
