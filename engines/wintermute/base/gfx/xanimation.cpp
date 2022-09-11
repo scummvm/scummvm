@@ -26,11 +26,12 @@
  */
 
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/gfx/xanimation.h"
 #include "engines/wintermute/base/gfx/xanimation_set.h"
 #include "engines/wintermute/base/gfx/xframe_node.h"
 #include "engines/wintermute/base/gfx/xmodel.h"
-#include "engines/wintermute/base/gfx/xloader.h"
+#include "engines/wintermute/base/gfx/xfile_loader.h"
 #include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
@@ -67,72 +68,197 @@ bool Animation::findBone(FrameNode *rootFrame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool Animation::loadFromX(XFileLexer &lexer, AnimationSet *parentAnimSet) {
-	if (lexer.tokenIsIdentifier()) {
-		lexer.advanceToNextToken(); // skip name
-		lexer.advanceOnOpenBraces();
-	} else {
-		lexer.advanceOnOpenBraces();
-	}
+bool Animation::load(XFileData *xobj, AnimationSet *parentAnimSet) {
+	bool result;
+	XClassType objectType;
 
-	bool ret = true;
+	if (xobj->isReference()) {
+		// The original data is found
+		result = xobj->getType(objectType);
+		if (!result)
+			return result;
 
-	while (!lexer.eof()) {
-		if (lexer.tokenIsIdentifier("AnimationKey")) {
-			lexer.advanceToNextToken();
-			lexer.advanceToNextToken(); // skip name
-			lexer.advanceOnOpenBraces();
-
-			int keyType = lexer.readInt();
-			int keyCount = lexer.readInt();
-
-			switch (keyType) {
-			case 0:
-				loadRotationKeyData(lexer, keyCount);
-				break;
-			case 1:
-				loadScaleKeyData(lexer, keyCount);
-				break;
-			case 2:
-				loadPositionKeyData(lexer, keyCount);
-				break;
-			case 3:
-			case 4:
-				loadMatrixKeyData(lexer, keyCount);
-				break;
-			default:
-				warning("Animation::loadFromX unknown key type encountered");
+		// The object must be a frame
+		if (objectType == kXClassFrame) {
+			// The frame is found, get its name
+			// The name will be used later by the findBone function to get
+			// a pointer to the target frame
+			if (_targetFrame) {
+				BaseEngine::LOG(0, "Animation frame name reference duplicated");
+				return false;
 			}
 
-			lexer.advanceToNextToken(); // skip closed braces
+			// get name
+			result = XModel::loadName(_targetName, xobj);
+			if (!result) {
+				BaseEngine::LOG(0, "Error retrieving frame name while loading animation");
+				return false;
+			}
+		}
+	} else {
+		// a data object is found, get its type
+		result = xobj->getType(objectType);
+		if (!result)
+			return false;
 
-		} else if (lexer.tokenIsIdentifier("AnimationOptions")) {
-			lexer.advanceToNextToken();
-			lexer.advanceToNextToken();
-			lexer.advanceOnOpenBraces();
-
-			// I think we can ignore these for the moment
-			lexer.readInt(); // whether animation is open or closed
-			lexer.readInt(); // position quality
-			lexer.advanceToNextToken(); // skip closed braces
-		} else if (lexer.tokenIsOfType(OPEN_BRACES)) {
-			// this is a reference to a frame/bone, given as an identifier
-			lexer.advanceToNextToken();
-			_targetName = lexer.readString();
-		} else if (lexer.tokenIsIdentifier("Animation")) {
-			// pass it up
-			break;
-		} else if (lexer.reachedClosedBraces()) {
-			lexer.advanceToNextToken(); // skip closed braces
-			break;
-		} else {
-			warning("Animation::loadFromX unexpected token encounterd");
-			ret = false;
-			break;
+		if (objectType == kXClassAnimationKey) {
+			// an animation key is found, load the data
+			XAnimationKeyObject *animationKey = xobj->getXAnimationKeyObject();
+			if (!animationKey)
+				return false;
+			result = loadAnimationKeyData(animationKey);
+			if (!result)
+				return false;
+		} else if (objectType == kXClassAnimationOptions) {
+			XAnimationOptionsObject *animationOptions = xobj->getXAnimationOptionsObject();
+			if (!animationOptions)
+				return false;
+			result = loadAnimationOptionData(animationOptions, parentAnimSet);
+			if (!result)
+				return false;
 		}
 	}
 
-	return ret;
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool Animation::loadAnimationOptionData(XAnimationOptionsObject *animationOptionData, AnimationSet *parentAnimSet) {
+	if (animationOptionData->_openclosed && parentAnimSet)
+		parentAnimSet->_looping = true;
+
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
+	// get the type and count of the key
+	uint32 keyType = animationKey->_keyType;
+	uint32 numKeys = animationKey->_numKeys;
+
+	if (keyType == 0) { // rotation key
+		if (_rotKeys.size() != 0) {
+			BaseEngine::LOG(0, "Rotation key duplicated");
+			return false;
+		}
+
+		for (uint32 key = 0; key < numKeys; key++) {
+			const XTimedFloatKeys *fileRotKey = &animationKey->_keys[key];
+			assert(fileRotKey->_numTfkeys == 4);
+
+			BoneRotationKey *rotKey = new BoneRotationKey;
+			rotKey->_time         = fileRotKey->_time;
+			// NOTE x files are w x y z and QUATERNIONS are x y z w
+			rotKey->_rotation.w() = fileRotKey->_tfkeys[0];
+			rotKey->_rotation.x() = fileRotKey->_tfkeys[1];
+			rotKey->_rotation.y() = fileRotKey->_tfkeys[2];
+			// mirror z component
+			rotKey->_rotation.z() = -fileRotKey->_tfkeys[3];
+
+			_rotKeys.push_back(rotKey);
+		}
+	} else if (keyType == 1) { // scale key
+		if (_scaleKeys.size() != 0) {
+			BaseEngine::LOG(0, "Scale key duplicated");
+			return false;
+		}
+
+		for (uint32 key = 0; key < numKeys; key++) {
+			const XTimedFloatKeys *fileScaleKey = &animationKey->_keys[key];
+			assert(fileScaleKey->_numTfkeys == 3);
+
+			BoneScaleKey *scaleKey = new BoneScaleKey;
+			scaleKey->_time  = fileScaleKey->_time;
+			for (uint i = 0; i < fileScaleKey->_numTfkeys; ++i) {
+				scaleKey->_scale.getData()[i] = fileScaleKey->_tfkeys[i];
+			}
+
+			_scaleKeys.push_back(scaleKey);
+		}
+	} else if (keyType == 2) { // position key
+		if (_posKeys.size() != 0) {
+			BaseEngine::LOG(0, "Position key duplicated");
+			return false;
+		}
+
+		for (uint32 key = 0; key < numKeys; key++) {
+			const XTimedFloatKeys *filePosKey = &animationKey->_keys[key];
+			assert(filePosKey->_numTfkeys == 3);
+
+			BonePositionKey *posKey = new BonePositionKey;
+			posKey->_time = filePosKey->_time;
+			for (uint i = 0; i < filePosKey->_numTfkeys; ++i) {
+				posKey->_pos.getData()[i] = filePosKey->_tfkeys[i];
+			}
+
+			// mirror Z
+			posKey->_pos.getData()[2] *= -1.0f;
+
+			_posKeys.push_back(posKey);
+		}
+	} else if (keyType == 4) { // matrix key
+		if (_rotKeys.size() != 0 || _scaleKeys.size() != 0 || _posKeys.size() != 0) {
+			BaseEngine::LOG(0, "Matrix key duplicated");
+			return false;
+		}
+
+		for (uint32 key = 0; key < numKeys; key++) {
+			const XTimedFloatKeys *fileMatrixKey = &animationKey->_keys[key];
+			uint32 time = fileMatrixKey->_time;
+			assert(fileMatrixKey->_numTfkeys == 16);
+
+			Math::Matrix4 keyData;
+			for (int r = 0; r < 4; ++r) {
+				for (int c = 0; c < 4; ++c) {
+					keyData(c, r) = fileMatrixKey->_tfkeys[r * 4 + c];
+				}
+			}
+
+			// mirror at orign
+			keyData(2, 3) *= -1.0f;
+
+			// mirror base vectors
+			keyData(2, 0) *= -1.0f;
+			keyData(2, 1) *= -1.0f;
+
+			// change handedness
+			keyData(0, 2) *= -1.0f;
+			keyData(1, 2) *= -1.0f;
+
+			Math::Vector3d translation = keyData.getPosition();
+
+			Math::Vector3d scale;
+			scale.x() = keyData(0, 0) * keyData(0, 0) + keyData(1, 0) * keyData(1, 0) + keyData(2, 0) * keyData(2, 0);
+			scale.x() = sqrtf(scale.x());
+			scale.y() = keyData(0, 1) * keyData(0, 1) + keyData(1, 1) * keyData(1, 1) + keyData(2, 1) * keyData(2, 1);
+			scale.y() = sqrtf(scale.y());
+			scale.z() = keyData(0, 2) * keyData(0, 2) + keyData(1, 2) * keyData(1, 2) + keyData(2, 2) * keyData(2, 2);
+			scale.z() = sqrtf(scale.z());
+
+			Math::Quaternion rotation;
+			rotation.fromMatrix(keyData.getRotation());
+
+			BonePositionKey *positionKey = new BonePositionKey;
+			BoneScaleKey *scaleKey = new BoneScaleKey;
+			BoneRotationKey *rotationKey = new BoneRotationKey;
+
+			positionKey->_time = time;
+			scaleKey->_time = time;
+			rotationKey->_time = time;
+
+			positionKey->_pos = translation;
+			scaleKey->_scale = scale;
+			rotationKey->_rotation = rotation;
+
+			_posKeys.push_back(positionKey);
+			_scaleKeys.push_back(scaleKey);
+			_rotKeys.push_back(rotationKey);
+		}
+	} else {
+		// the type is unknown, report the error
+		BaseEngine::LOG(0, "Unexpected animation key type (%d)", keyType);
+	}
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -305,148 +431,6 @@ uint32 Animation::getTotalTime() {
 	}
 
 	return totalTime;
-}
-
-// try to put these functions into a template?
-bool Animation::loadRotationKeyData(XFileLexer &lexer, int count) {
-	for (int keyIndex = 0; keyIndex < count; ++keyIndex) {
-		BoneRotationKey *key = new BoneRotationKey;
-		key->_time = lexer.readInt();
-
-		int floatCount = lexer.readInt();
-		assert(floatCount == 4);
-
-		// .X file format puts the w coordinate first
-		key->_rotation.w() = lexer.readFloat();
-		key->_rotation.x() = lexer.readFloat();
-		key->_rotation.y() = lexer.readFloat();
-		// mirror z component
-		key->_rotation.z() = -lexer.readFloat();
-
-		lexer.skipTerminator(); // skip semicolon
-
-		if (lexer.tokenIsOfType(SEMICOLON) || lexer.tokenIsOfType(COMMA)) {
-			lexer.advanceToNextToken(); // skip closed braces
-		}
-
-		_rotKeys.push_back(key);
-	}
-
-	return true;
-}
-
-bool Animation::loadScaleKeyData(XFileLexer &lexer, int count) {
-	for (int keyIndex = 0; keyIndex < count; ++keyIndex) {
-		BoneScaleKey *key = new BoneScaleKey;
-		key->_time = lexer.readInt();
-
-		int floatCount = lexer.readInt();
-		assert(floatCount == 3);
-
-		for (int i = 0; i < floatCount; ++i) {
-			key->_scale.getData()[i] = lexer.readFloat();
-		}
-
-		lexer.skipTerminator(); // skip semicolon
-
-		if (lexer.tokenIsOfType(SEMICOLON) || lexer.tokenIsOfType(COMMA)) {
-			lexer.advanceToNextToken(); // skip closed braces
-		}
-
-		_scaleKeys.push_back(key);
-	}
-
-	return true;
-}
-
-bool Animation::loadPositionKeyData(XFileLexer &lexer, int count) {
-	for (int keyIndex = 0; keyIndex < count; ++keyIndex) {
-		BonePositionKey *key = new BonePositionKey;
-		key->_time = lexer.readInt();
-
-		int floatCount = lexer.readInt();
-		assert(floatCount == 3);
-
-		for (int i = 0; i < floatCount; ++i) {
-			key->_pos.getData()[i] = lexer.readFloat();
-		}
-
-		key->_pos.getData()[2] *= -1.0f;
-
-		lexer.skipTerminator(); // skip semicolon
-
-		if (lexer.tokenIsOfType(SEMICOLON) || lexer.tokenIsOfType(COMMA)) {
-			lexer.advanceToNextToken(); // skip closed braces
-		}
-
-		_posKeys.push_back(key);
-	}
-
-	return true;
-}
-
-bool Animation::loadMatrixKeyData(XFileLexer &lexer, int count) {
-	for (int keyIndex = 0; keyIndex < count; ++keyIndex) {
-		uint32 time = lexer.readInt();
-		int floatCount = lexer.readInt();
-		assert(floatCount == 16);
-
-		Math::Matrix4 keyData;
-
-		for (int r = 0; r < 4; ++r) {
-			for (int c = 0; c < 4; ++c) {
-				keyData(c, r) = lexer.readFloat();
-			}
-		}
-
-		// mirror at orign
-		keyData(2, 3) *= -1.0f;
-
-		// mirror base vectors
-		keyData(2, 0) *= -1.0f;
-		keyData(2, 1) *= -1.0f;
-
-		// change handedness
-		keyData(0, 2) *= -1.0f;
-		keyData(1, 2) *= -1.0f;
-
-		Math::Vector3d translation = keyData.getPosition();
-
-		Math::Vector3d scale;
-		scale.x() = keyData(0, 0) * keyData(0, 0) + keyData(1, 0) * keyData(1, 0) + keyData(2, 0) * keyData(2, 0);
-		scale.x() = sqrtf(scale.x());
-		scale.y() = keyData(0, 1) * keyData(0, 1) + keyData(1, 1) * keyData(1, 1) + keyData(2, 1) * keyData(2, 1);
-		scale.y() = sqrtf(scale.y());
-		scale.z() = keyData(0, 2) * keyData(0, 2) + keyData(1, 2) * keyData(1, 2) + keyData(2, 2) * keyData(2, 2);
-		scale.z() = sqrtf(scale.z());
-
-		Math::Quaternion rotation;
-		rotation.fromMatrix(keyData.getRotation());
-
-		BonePositionKey *positionKey = new BonePositionKey;
-		BoneScaleKey *scaleKey = new BoneScaleKey;
-		BoneRotationKey *rotationKey = new BoneRotationKey;
-
-		positionKey->_time = time;
-		scaleKey->_time = time;
-		rotationKey->_time = time;
-
-		positionKey->_pos = translation;
-		scaleKey->_scale = scale;
-		rotationKey->_rotation = rotation;
-
-		_posKeys.push_back(positionKey);
-		_scaleKeys.push_back(scaleKey);
-		_rotKeys.push_back(rotationKey);
-
-		lexer.skipTerminator(); // skip semicolon
-
-		if (lexer.tokenIsOfType(SEMICOLON) || lexer.tokenIsOfType(COMMA)) {
-			lexer.advanceToNextToken(); // skip closed braces
-		}
-	}
-
-	return true;
 }
 
 } // namespace Wintermute

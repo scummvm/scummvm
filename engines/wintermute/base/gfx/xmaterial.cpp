@@ -30,7 +30,7 @@
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/gfx/xmaterial.h"
-#include "engines/wintermute/base/gfx/xloader.h"
+#include "engines/wintermute/base/gfx/xfile_loader.h"
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/video/video_theora_player.h"
@@ -141,51 +141,44 @@ BaseSurface *Material::getSurface() {
 	}
 }
 
-bool Material::loadFromX(XFileLexer &lexer, const Common::String &filename) {
-	lexer.advanceToNextToken(); // skip optional name
-	lexer.advanceOnOpenBraces();
+bool Material::loadFromX(XFileData *xobj, const Common::String &filename) {
+	XMaterialObject *material = xobj->getXMaterialObject();
+	if (!material)
+		return false;
 
-	_diffuse.r() = lexer.readFloat();
-	_diffuse.g() = lexer.readFloat();
-	_diffuse.b() = lexer.readFloat();
-	_diffuse.a() = lexer.readFloat();
-	lexer.skipTerminator(); // skip semicolon
+	_diffuse.r() = material->_colorR;
+	_diffuse.g() = material->_colorG;
+	_diffuse.b() = material->_colorB;
+	_diffuse.a() = material->_colorA;
 
-	_shininess = lexer.readFloat();
+	_shininess = material->_power;
 
-	_specular.r() = lexer.readFloat();
-	_specular.g() = lexer.readFloat();
-	_specular.b() = lexer.readFloat();
+	_specular.r() = material->_specularR;
+	_specular.g() = material->_specularG;
+	_specular.b() = material->_specularB;
 	_specular.a() = 1.0f;
-	lexer.skipTerminator(); // skip semicolon
 
-	_emissive.r() = lexer.readFloat();
-	_emissive.g() = lexer.readFloat();
-	_emissive.b() = lexer.readFloat();
+	_emissive.r() = material->_emissiveR;
+	_emissive.g() = material->_emissiveG;
+	_emissive.b() = material->_emissiveB;
 	_emissive.a() = 1.0f;
-	lexer.skipTerminator();
 
-	while (!lexer.eof()) {
-		// according to assimp sources, we got both possibilities
-		// wine also seems to support this
-		// MSDN only names the first option
-		if (lexer.tokenIsIdentifier("TextureFilename") || lexer.tokenIsIdentifier("TextureFileName")) {
-			lexer.advanceToNextToken(); // skip optional name
-			lexer.advanceOnOpenBraces();
+	uint32 numChildren = 0;
+	xobj->getChildren(numChildren);
 
-			Common::String textureFilename = lexer.readString();
-			PathUtil::getDirectoryName(filename);
-			setTexture(PathUtil::getDirectoryName(filename) + textureFilename);
-			lexer.advanceToNextToken(); // skip semicolon
-		} else if (lexer.tokenIsIdentifier()) {
-			warning("Material::loadFromX unexpected token %i", lexer.getTypeOfToken());
-			return false;
-		} else {
-			break;
+	for (uint32 i = 0; i < numChildren; i++) {
+		XFileData xchildData;
+		XClassType objectType;
+		bool res = xobj->getChild(i, xchildData);
+		if (res) {
+			res = xchildData.getType(objectType);
+			if (res && objectType == kXClassTextureFilename) {
+				Common::String textureFilename = xchildData.getXTextureFilenameObject()->_filename;
+				setTexture(PathUtil::getDirectoryName(filename) + textureFilename);
+			}
 		}
 	}
 
-	lexer.advanceToNextToken(); // skip semicolon
 	return true;
 }
 

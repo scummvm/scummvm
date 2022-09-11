@@ -40,8 +40,8 @@
 namespace Wintermute {
 
 class XModel;
+class XFileData;
 class BaseSprite;
-class XFileLexer;
 
 class FrameNode : public BaseNamedObject {
 public:
@@ -55,8 +55,8 @@ public:
 	bool renderFlatShadowModel();
 	bool updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth);
 
-	bool loadFromX(const Common::String &filename, XFileLexer &lexer, XModel *model, Common::Array<MaterialReference> &materialReferences);
-	bool loadFromXAsRoot(const Common::String &filename, XFileLexer &lexer, XModel *model, Common::Array<MaterialReference> &materialReferences);
+	bool loadFromXData(const Common::String &filename, XModel *model, XFileData *xobj, Common::Array<MaterialReference> &materialReferences);
+	bool mergeFromXData(const Common::String &filename, XModel *model, XFileData *xobj);
 	bool findBones(FrameNode *rootFrame);
 	FrameNode *findFrame(const char *frameName);
 	Math::Matrix4 *getCombinedMatrix();

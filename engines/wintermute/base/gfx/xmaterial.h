@@ -35,7 +35,7 @@ namespace Wintermute {
 class BaseSprite;
 class BaseSurface;
 class VideoTheoraPlayer;
-class XFileLexer;
+class XFileData;
 
 struct ColorValue {
 	float &r() {
@@ -89,7 +89,7 @@ public:
 	bool setTheora(VideoTheoraPlayer *theora, bool adoptName = false);
 	BaseSurface *getSurface();
 
-	bool loadFromX(XFileLexer &lexer, const Common::String &filename);
+	bool loadFromX(XFileData *xobj, const Common::String &filename);
 
 	bool invalidateDeviceObjects();
 	bool restoreDeviceObjects();

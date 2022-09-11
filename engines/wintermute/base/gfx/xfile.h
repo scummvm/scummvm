@@ -25,37 +25,32 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#ifndef WINTERMUTE_XMESH_OPENGL_SHADER_H
-#define WINTERMUTE_XMESH_OPENGL_SHADER_H
+#ifndef WINTERMUTE_XFILE_H
+#define WINTERMUTE_XFILE_H
 
-#include "engines/wintermute/base/gfx/xmesh.h"
-
-#if defined(USE_OPENGL_SHADERS)
-
-#include "graphics/opengl/shader.h"
+#include "engines/wintermute/base/base.h"
+#include "engines/wintermute/base/gfx/xfile_loader.h"
 
 namespace Wintermute {
 
-class XMeshOpenGLShader : public XMesh {
+class XFile : public BaseClass {
 public:
-	XMeshOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader, OpenGL::Shader *flatShadowShader);
-	~XMeshOpenGLShader() override;
+	XFile(BaseGame *inGame);
+	virtual ~XFile();
 
-	bool loadFromXData(const Common::String &filename, XFileData *xobj, Common::Array<MaterialReference> &materialReferences) override;
-	bool render(XModel *model) override;
-	bool renderFlatShadowModel() override;
-	bool update(FrameNode *parentFrame) override;
+	bool openFile(const Common::String &filename);
+	bool closeFile();
 
-protected:
-	GLuint _vertexBuffer;
-	GLuint _indexBuffer;
+	XFileEnumObject getEnum() {
+		return _xenum;
+	}
 
-	OpenGL::Shader *_shader;
-	OpenGL::Shader *_flatShadowShader;
+private:
+
+	XFileLoader *_xfile;
+	XFileEnumObject _xenum;
 };
 
 } // namespace Wintermute
-
-#endif // defined(USE_OPENGL_SHADERS)
 
 #endif

@@ -46,7 +46,7 @@ class AnimationSet;
 class FrameNode;
 class Material;
 class ShadowVolume;
-class XFileLexer;
+class XFileData;
 
 struct MaterialReference {
 	Common::String _name;
@@ -152,8 +152,11 @@ public:
 
 	bool isTransparentAt(int x, int y);
 
-	bool loadAnimationSet(XFileLexer &lexer, const Common::String &filename);
-	bool loadAnimation(const Common::String &filename, AnimationSet *parentAnimSet);
+	static bool loadName(BaseNamedObject *obj, XFileData *data);
+	static bool loadName(Common::String &targetStr, XFileData *data);
+
+	bool loadAnimationSet(const Common::String &filename, XFileData *xobj);
+	bool loadAnimation(const Common::String &filename, XFileData *xobj, AnimationSet *parentAnimSet = nullptr);
 
 	Math::Matrix4 _lastWorldMat;
 	Rect32 _boundingRect;
@@ -185,8 +188,6 @@ public:
 private:
 	void cleanup(bool complete = true);
 	bool findBones(bool animOnly = false, XModel *parentModel = nullptr);
-
-	void parseFrameDuringMerge(XFileLexer &lexer, const Common::String &filename);
 
 	void updateBoundingRect();
 	void static inline updateRect(Rect32 *rc, int32 x, int32 y);
