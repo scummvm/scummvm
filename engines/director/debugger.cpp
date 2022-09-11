@@ -19,12 +19,15 @@
  *
  */
 
+#include "common/language.h"
+#include "director/detection.h"
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-codegen.h"
 #include "director/debugger.h"
+#include "game.h"
 
 namespace Director {
 
@@ -34,7 +37,9 @@ Debugger *g_debugger;
 
 Debugger::Debugger(): GUI::Debugger() {
 	g_debugger = this;
-	registerCmd("lingo", WRAP_METHOD(Debugger, cmd_lingo));
+	registerCmd("help", WRAP_METHOD(Debugger, cmdHelp));
+	registerCmd("version", WRAP_METHOD(Debugger, cmdVersion));
+	registerCmd("repl", WRAP_METHOD(Debugger, cmdRepl));
 }
 
 Debugger::~Debugger() {
@@ -42,16 +47,68 @@ Debugger::~Debugger() {
 		_out.close();
 }
 
-bool Debugger::cmd_lingo(int argc, const char **argv) {
-	if (argc == 2 && !strcmp(argv[1], "on")) {
-		registerDefaultCmd(WRAP_DEFAULTCOMMAND(Debugger, lingoCommandProcessor));
-		debugPrintf(PROMPT);
-	}
+bool Debugger::cmdHelp(int argc, const char **argv) {
+	debugPrintf("\n");
+	debugPrintf("Debug flags\n");
+	debugPrintf("-----------\n");
+	debugPrintf("debugflag_list - Lists the available debug flags and their status\n");
+	debugPrintf("debugflag_enable - Enables a debug flag\n");
+	debugPrintf("debugflag_disable - Disables a debug flag\n");
+	debugPrintf("debuglevel - Shows or sets debug level\n");
+	debugPrintf("\n");
+	debugPrintf("Commands\n");
+	debugPrintf("--------\n");
+	debugPrintf("Player:\n");
+	debugPrintf(" version - Shows the Director version\n");
+	//debugPrintf(" movie [moviePath] - Get or sets the current movie\n");
+	//debugPrintf(" movieinfo - Show information for the current movie\n");
+	//debugPrintf(" scoreframe [frameNum] - Gets or sets the current score frame\n");
+	//debugPrintf(" channels [frameNum] - Shows channel information for a score frame\n");
+	//debugPrintf(" cast - Shows the cast list for the current movie\n");
+	debugPrintf("\n");
+	debugPrintf("Lingo execution:\n");
+	//debugPrintf(" eval [statement] - Evaluates a single Lingo statement\n");
+	debugPrintf(" repl - Switches to a REPL interface for evaluating Lingo code\n");
+	//debugPrintf(" backtrace / bt - Prints a backtrace of all stack frames\n");
+	//debugPrintf(" disasm [function] - Lists the bytecode disassembly for a script function\n");
+	//debugPrintf(" stack / st - Lists the elements on the stack\n");
+	//debugPrintf(" frame / f - Prints the current script frame\n");
+	//debugPrintf(" vars - Lists all of the variables available in the current script frame\n");
+	//debugPrintf(" step / s [n] - Steps forward one or more operations\n");
+	//debugPrintf(" next / n [n] - Steps forward one or more operations, skips over calls\n");
+	//debugPrintf(" finish / fin - Steps until the current stack frame returns/n");
+	debugPrintf("\n");
+	debugPrintf("Breakpoints:\n");
+	debugPrintf("\n");
+	//debugPrintf(" bpset [funcname:n] - Creates a breakpoint on a Lingo script/n");
+	//debugPrintf(" bpdel [n] - Deletes a specific breakpoint /n");
+	return true;
+}
+
+bool Debugger::cmdVersion(int argc, const char **argv) {
+	debugPrintf("Director version: %d\n", g_director->getVersion());
+	debugPrintf("Director platform: %s\n", Common::getPlatformCode(g_director->getPlatform()));
+	debugPrintf("Game ID: %s\n", g_director->getGameId());
+	debugPrintf("Game name: %s\n", getDescriptionFromGameId(g_director->getGameId()));
+	debugPrintf("Game variant: %s\n", g_director->getExtra());
+	debugPrintf("Language: %s\n", Common::getLanguageCode(g_director->getLanguage()));
+	debugPrintf("Expected Director version: %d\n", g_director->getDescriptionVersion());
+	debugPrintf("Executable name: %s\n", g_director->getEXEName().c_str());
+	debugPrintf("Startup file name: %s\n", g_director->_gameDescription->desc.filesDescriptions[0].fileName);
+	debugPrintf("Startup file MD5: %s\n", g_director->_gameDescription->desc.filesDescriptions[0].md5);
+	debugPrintf("\n");
+	return true;
+}
+
+bool Debugger::cmdRepl(int argc, const char **argv) {
+	debugPrintf("Switching to Lingo REPL mode, type 'exit' to return to the debug console.\n");
+	registerDefaultCmd(WRAP_DEFAULTCOMMAND(Debugger, lingoCommandProcessor));
+	debugPrintf(PROMPT);
 	return true;
 }
 
 bool Debugger::lingoCommandProcessor(const char *inputOrig) {
-	if (!strcmp(inputOrig, "lingo off")) {
+	if (!strcmp(inputOrig, "exit")) {
 		registerDefaultCmd(nullptr);
 		return true;
 	}
