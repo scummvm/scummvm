@@ -22,14 +22,14 @@
 #ifndef MM1_VIEWS_SPELLS_TELEPORT_H
 #define MM1_VIEWS_SPELLS_TELEPORT_H
 
-#include "mm/mm1/views/text_view.h"
+#include "mm/mm1/views/spells/spell_view.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Spells {
 
-class Teleport : public TextView {
+class Teleport : public SpellView {
 private:
 	enum Mode {
 		SELECT_DIRECTION, SELECT_SQUARES, CAST

@@ -34,7 +34,7 @@ void Teleport::show() {
 	teleport->focus();
 }
 
-Teleport::Teleport() : TextView("Teleport") {
+Teleport::Teleport() : SpellView("Teleport") {
 	_bounds = getLineBounds(20, 24);
 }
 

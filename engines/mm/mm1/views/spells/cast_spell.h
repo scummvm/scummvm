@@ -19,10 +19,10 @@
  *
  */
 
-#ifndef MM1_VIEWS_CAST_SPELL_H
-#define MM1_VIEWS_CAST_SPELL_H
+#ifndef MM1_VIEWS_SPELLS_CAST_SPELL_H
+#define MM1_VIEWS_SPELLS_CAST_SPELL_H
 
-#include "mm/mm1/views/text_view.h"
+#include "mm/mm1/views/spells/spell_view.h"
 #include "mm/mm1/views/text_entry.h"
 #include "mm/mm1/game/spell_casting.h"
 
@@ -31,7 +31,7 @@ namespace MM1 {
 namespace Views {
 namespace Spells {
 
-class CastSpell : public TextView, public MM1::Game::SpellCasting {
+class CastSpell : public SpellView, public MM1::Game::SpellCasting {
 	enum State {
 		SELECT_SPELL, SELECT_NUMBER, SELECT_CHAR, PRESS_ENTER,
 		ENDING
