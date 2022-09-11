@@ -459,6 +459,7 @@ void Lingo::execute() {
 		Common::String instr = decodeInstruction(_currentScript, _pc);
 		uint current = _pc;
 
+
 		if (debugChannelSet(5, kDebugLingoExec))
 			printStack("Stack before: ", current);
 
@@ -470,6 +471,8 @@ void Lingo::execute() {
 		}
 
 		debugC(3, kDebugLingoExec, "[%3d]: %s", current, instr.c_str());
+
+		g_debugger->stepHook();
 
 		_pc++;
 		(*((*_currentScript)[_pc - 1]))();
@@ -502,6 +505,7 @@ void Lingo::execute() {
 	if (_freezeContext) {
 		debugC(1, kDebugLingoExec, "Lingo::execute(): Context is frozen, pausing execution");
 	}
+	g_debugger->stepHook();
 }
 
 void Lingo::executeScript(ScriptType type, CastMemberID id) {

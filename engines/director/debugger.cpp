@@ -47,6 +47,19 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("backtrace", WRAP_METHOD(Debugger, cmdBacktrace));
 	registerCmd("bt", WRAP_METHOD(Debugger, cmdBacktrace));
 	registerCmd("vars", WRAP_METHOD(Debugger, cmdVars));
+	registerCmd("step", WRAP_METHOD(Debugger, cmdStep));
+	registerCmd("s", WRAP_METHOD(Debugger, cmdStep));
+	registerCmd("next", WRAP_METHOD(Debugger, cmdNext));
+	registerCmd("n", WRAP_METHOD(Debugger, cmdNext));
+	registerCmd("finish", WRAP_METHOD(Debugger, cmdFinish));
+	registerCmd("fin", WRAP_METHOD(Debugger, cmdFinish));
+
+	_step = false;
+	_stepCounter = 0;
+	_finish = false;
+	_finishCounter = 0;
+	_next = false;
+	_nextCounter = 0;
 }
 
 Debugger::~Debugger() {
@@ -81,9 +94,9 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" stack / st - Lists the elements on the stack\n");
 	//debugPrintf(" frame / f - Prints the current script frame\n");
 	debugPrintf(" vars - Lists all of the variables available in the current script frame\n");
-	//debugPrintf(" step / s [n] - Steps forward one or more operations\n");
-	//debugPrintf(" next / n [n] - Steps forward one or more operations, skips over calls\n");
-	//debugPrintf(" finish / fin - Steps until the current stack frame returns/n");
+	debugPrintf(" step / s [n] - Steps forward one or more operations\n");
+	debugPrintf(" next / n [n] - Steps forward one or more operations, skips over calls\n");
+	debugPrintf(" finish / fin - Steps until the current stack frame returns/n");
 	debugPrintf("\n");
 	debugPrintf("Breakpoints:\n");
 	debugPrintf("\n");
@@ -130,6 +143,33 @@ bool Debugger::cmdVars(int argc, const char **argv) {
 	return true;
 }
 
+bool Debugger::cmdStep(int argc, const char **argv) {
+	_step = true;
+	if (argc == 2 && atoi(argv[1]) > 0) {
+		_stepCounter = atoi(argv[1]);
+	} else {
+		_stepCounter = 1;
+	}
+	return cmdExit(0, nullptr);
+}
+
+bool Debugger::cmdNext(int argc, const char **argv) {
+	_step = true;
+	_next = true;
+	if (argc == 2 && atoi(argv[1]) > 0) {
+		_stepCounter = atoi(argv[1]);
+	} else {
+		_stepCounter = 1;
+	}
+	return cmdExit(0, nullptr);
+}
+
+bool Debugger::cmdFinish(int argc, const char **argv) {
+	_finish = true;
+	_finishCounter = 1;
+	return cmdExit(0, nullptr);
+}
+
 bool Debugger::lingoCommandProcessor(const char *inputOrig) {
 	if (!strcmp(inputOrig, "exit")) {
 		registerDefaultCmd(nullptr);
@@ -145,6 +185,38 @@ bool Debugger::lingoCommandProcessor(const char *inputOrig) {
 	debugPrintf(PROMPT);
 	return true;
 }
+
+void Debugger::stepHook() {
+	if (_step && _nextCounter == 0) {
+		_stepCounter--;
+		if (_stepCounter == 0) {
+			_step = false;
+			_next = false;
+			attach();
+			g_system->updateScreen();
+		}
+	}
+	if (_finish && _finishCounter == 0) {
+		_finish = false;
+		attach();
+		g_system->updateScreen();
+	}
+}
+
+void Debugger::pushContextHook() {
+	if (_next)
+		_nextCounter++;
+	if (_finish)
+		_finishCounter++;
+}
+
+void Debugger::popContextHook() {
+	if (_next && _nextCounter > 0)
+		_nextCounter--;
+	if (_finish)
+		_finishCounter--;
+}
+
 
 void Debugger::debugLogFile(Common::String logs, bool prompt) {
 	if (prompt)
