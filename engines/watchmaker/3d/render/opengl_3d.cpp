@@ -469,7 +469,7 @@ gTexture *gUserTexture(unsigned int dimx, unsigned int dimy) {
 		return nullptr;
 	}
 	Texture = &gTextureList[pos];
-	memset(Texture, 0, sizeof(gTexture));
+	*Texture = gTexture();
 	Texture->Flags = CurLoaderFlags;
 
 	{
