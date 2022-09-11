@@ -21,6 +21,7 @@
 
 #include "mm/mm1/data/spells.h"
 #include "mm/mm1/data/locations.h"
+#include "mm/mm1/game/rest.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
@@ -542,7 +543,11 @@ SpellResult Spells::wizard46_psychicProtection(Character *chr) {
 }
 
 SpellResult Spells::wizard54_shelter(Character *chr) {
-	return SR_FAILED;
+	if (g_maps->_currentState & 8)
+		return SR_FAILED;
+
+	Game::Rest::execute();
+	return SR_SUCCESS_SILENT;
 }
 
 SpellResult Spells::wizard55_teleport(Character *chr) {
