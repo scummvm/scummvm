@@ -305,6 +305,7 @@ public:
 	void printStack(const char *s, uint pc);
 	Common::String formatCallStack(uint pc);
 	void printCallStack(uint pc);
+	Common::String formatFrame();
 	Common::String decodeInstruction(ScriptData *sd, uint pc, uint *newPC = NULL);
 
 	void reloadBuiltIns();

@@ -337,18 +337,18 @@ Common::String Lingo::formatCallStack(uint pc) {
 	}
 	result += Common::String("Call stack:\n");
 	for (int i = 0; i < (int)callstack.size(); i++) {
-		CFrame *frame = callstack[i];
+		CFrame *frame = callstack[callstack.size() - i - 1];
 		uint framePc = pc;
-		if (i < (int)callstack.size() - 1)
-			framePc = callstack[i + 1]->retPC;
+		if (i > 0)
+			framePc = callstack[callstack.size() - i]->retPC;
 
 		if (frame->sp.type != VOIDSYM) {
-			result += Common::String::format("#%d %s:%d\n", i + 1,
-				callstack[i]->sp.name->c_str(),
+			result += Common::String::format("#%d %s:%d\n", i,
+				frame->sp.name->c_str(),
 				framePc
 			);
 		} else {
-			result += Common::String::format("#%d [unknown]:%d\n", i + 1,
+			result += Common::String::format("#%d [unknown]:%d\n", i,
 				framePc
 			);
 		}
@@ -358,6 +358,18 @@ Common::String Lingo::formatCallStack(uint pc) {
 
 void Lingo::printCallStack(uint pc) {
 	debugC(2, kDebugLingoExec, "\n%s", formatCallStack(pc).c_str());
+}
+
+Common::String Lingo::formatFrame() {
+	Common::Array<CFrame *> &callstack = _vm->getCurrentWindow()->_callstack;
+	if (callstack.size() == 0) {
+		return Common::String("End of execution");
+	}
+	CFrame *frame = callstack[callstack.size() - 1];
+	const char *funcName = frame->sp.type == VOIDSYM ? "[unknown]" : frame->sp.name->c_str();
+	Common::String result = Common::String::format("%s:%d\n", funcName, _pc);
+	result += Common::String::format("[%3d]: %s", _pc, decodeInstruction(_currentScript, _pc).c_str());
+	return result;
 }
 
 Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
@@ -456,9 +468,7 @@ void Lingo::execute() {
 				break;
 		}
 
-		Common::String instr = decodeInstruction(_currentScript, _pc);
 		uint current = _pc;
-
 
 		if (debugChannelSet(5, kDebugLingoExec))
 			printStack("Stack before: ", current);
@@ -470,7 +480,10 @@ void Lingo::execute() {
 				debug("me: %s", _currentMe.asString(true).c_str());
 		}
 
-		debugC(3, kDebugLingoExec, "[%3d]: %s", current, instr.c_str());
+		if (debugChannelSet(3, kDebugLingoExec)) {
+			Common::String instr = decodeInstruction(_currentScript, _pc);
+			debugC(3, kDebugLingoExec, "[%3d]: %s", current, instr.c_str());
+		}
 
 		g_debugger->stepHook();
 
