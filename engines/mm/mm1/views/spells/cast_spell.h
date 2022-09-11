@@ -29,6 +29,7 @@
 namespace MM {
 namespace MM1 {
 namespace Views {
+namespace Spells {
 
 class CastSpell : public TextView, public MM1::Game::SpellCasting {
 	enum State {
@@ -67,7 +68,8 @@ private:
 	void spellDone(const Common::String &msg, int xp);
 public:
 	CastSpell();
-	virtual ~CastSpell() {}
+	virtual ~CastSpell() {
+	}
 
 	bool msgValue(const ValueMessage &msg) override;
 	void draw() override;
@@ -76,6 +78,7 @@ public:
 	void timeout() override;
 };
 
+} // namespace Spells
 } // namespace Views
 } // namespace MM1
 } // namespace MM

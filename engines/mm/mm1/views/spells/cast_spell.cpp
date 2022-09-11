@@ -19,13 +19,14 @@
  *
  */
 
-#include "mm/mm1/views/cast_spell.h"
+#include "mm/mm1/views/spells/cast_spell.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
+namespace Spells {
 
 CastSpell::CastSpell() : TextView("CastSpell") {
 	_bounds = getLineBounds(20, 24);
@@ -85,7 +86,7 @@ void CastSpell::draw() {
 					(CastSpell *)g_events->focusedView();
 				view->spellLevelEntered(atoi(text.c_str()));
 			}
-		);
+			);
 		break;
 
 	case SELECT_NUMBER:
@@ -103,7 +104,7 @@ void CastSpell::draw() {
 					(CastSpell *)g_events->focusedView();
 				view->spellNumberEntered(atoi(text.c_str()));
 			}
-		);
+			);
 		break;
 
 	case SELECT_CHAR:
@@ -167,8 +168,8 @@ bool CastSpell::msgKeypress(const KeypressMessage &msg) {
 
 bool CastSpell::msgAction(const ActionMessage &msg) {
 	if (_state == SELECT_CHAR &&
-			msg._action >= KEYBIND_VIEW_PARTY1 &&
-			msg._action <= KEYBIND_VIEW_PARTY6) {
+		msg._action >= KEYBIND_VIEW_PARTY1 &&
+		msg._action <= KEYBIND_VIEW_PARTY6) {
 		uint charIndex = (int)(msg._action - KEYBIND_VIEW_PARTY1);
 		if (charIndex < g_globals->_party.size())
 			performSpell(&g_globals->_party[charIndex]);
@@ -193,7 +194,7 @@ void CastSpell::performSpell(Character *chr) {
 		spellDone(STRING["dialogs.misc.magic_doesnt_work"], 5);
 	} else {
 		// Cast the spell
-		switch (Spells::cast(_spellIndex, chr)) {
+		switch (MM1::Spells::cast(_spellIndex, chr)) {
 		case SR_FAILED:
 			// Spell failed
 			clearSurface();
@@ -242,6 +243,7 @@ void CastSpell::spellDone(const Common::String &msg, int xp) {
 	delaySeconds(3);
 }
 
+} // namespace Spells
 } // namespace Views
 } // namespace MM1
 } // namespace MM

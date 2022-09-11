@@ -32,7 +32,6 @@
 #include "mm/mm1/views/protect.h"
 #include "mm/mm1/views/quick_ref.h"
 #include "mm/mm1/views/title.h"
-#include "mm/mm1/views/cast_spell.h"
 #include "mm/mm1/views/character_info.h"
 #include "mm/mm1/views/characters.h"
 #include "mm/mm1/views/encounter.h"
@@ -44,6 +43,7 @@
 #include "mm/mm1/views/locations/tavern.h"
 #include "mm/mm1/views/locations/temple.h"
 #include "mm/mm1/views/locations/training.h"
+#include "mm/mm1/views/spells/cast_spell.h"
 #include "mm/mm1/views/spells/fly.h"
 #include "mm/mm1/views/spells/teleport.h"
 
@@ -54,7 +54,6 @@ namespace Views {
 struct Dialogs {
 private:
 	Views::AreYouReady _areYouReady;
-	Views::CastSpell _castSpell;
 	Views::CreateCharacters _createCharacters;
 	Views::Encounter _encounter;
 	Views::Game _game;
@@ -74,6 +73,7 @@ private:
 	Views::Locations::Temple _temple;
 	Views::Locations::Training _training;
 
+	Views::Spells::CastSpell _castSpell;
 	Views::Spells::Fly _flySpell;
 	Views::Spells::Teleport _telportSpell;
 public:
