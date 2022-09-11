@@ -235,7 +235,7 @@ bool CharacterInfo::msgAction(const ActionMessage &msg) {
 void CharacterInfo::equipItem(uint index) {
 	Character &c = *g_globals->_currCharacter;
 	uint itemId = c._backpack[index]._id;
-	uint item14 = c._backpack[index]._field14;
+	uint item14 = c._backpack[index]._charges;
 
 	int classBit = 0;
 	Common::String equipError;
@@ -346,7 +346,7 @@ void CharacterInfo::equipItem(uint index) {
 				equipError = STRING["dialogs.character.not_equipped"];
 				_textPos.x = 10;
 			} else if (item._equipMode == EQUIP_CURSED) {
-				c._equipped[freeIndex]._field14 += item._val10;
+				c._equipped[freeIndex]._charges += item._val10;
 			}
 		}
 	}
@@ -392,7 +392,7 @@ void CharacterInfo::equipItem(uint index) {
 void CharacterInfo::removeItem(uint index) {
 	Character &c = *g_globals->_currCharacter;
 	uint itemId = c._equipped[index]._id;
-	uint item14 = c._equipped[index]._field14;
+	uint item14 = c._equipped[index]._charges;
 
 	Common::String removeError;
 

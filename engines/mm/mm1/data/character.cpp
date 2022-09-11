@@ -42,7 +42,7 @@ void Inventory::clear() {
 
 void Inventory::synchronize(Common::Serializer &s, bool ids) {
 	for (int i = 0; i < INVENTORY_COUNT; ++i)
-		s.syncAsByte(ids ? _items[i]._id : _items[i]._field14);
+		s.syncAsByte(ids ? _items[i]._id : _items[i]._charges);
 }
 
 bool Inventory::empty() const {
@@ -61,10 +61,18 @@ bool Inventory::full() const {
 	return true;
 }
 
+uint Inventory::size() const {
+	for (int i = INVENTORY_COUNT - 1; i >= 0; --i) {
+		if (_items[i])
+			return i + 1;
+	}
+	return 0;
+}
+
 uint Inventory::add(byte id, byte field14) {
 	uint idx = getFreeSlot();
 	_items[idx]._id = id;
-	_items[idx]._field14 = field14;
+	_items[idx]._charges = field14;
 
 	return idx;
 }
@@ -200,7 +208,7 @@ Character::TradeResult Character::trade(int whoTo, int itemIndex) {
 
 	Inventory::Entry e = _backpack[itemIndex];
 	_backpack.removeAt(itemIndex);
-	dest._backpack.add(e._id, e._field14);
+	dest._backpack.add(e._id, e._charges);
 
 	return TRADE_SUCCESS;
 }

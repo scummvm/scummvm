@@ -252,10 +252,9 @@
 		not_enough_sp: "*** NOT ENOUGH SPELL POINTS ***"
 		full: "*** BACKPACK FULL ***"
 	spells:
+		detect_charges: "MAGIC (CHARGES)"
 		fly_to_x: "FLY TO (A-E): "
 		fly_to_y: "(1-4): "
-		teleport_dir: "DIRECTION (N,E,S,W): "
-		teleport_squares: "# OF SQUARES (0-9): "
 		location_loc: "LOCATION: "
 		location_town: "IN TOWN"
 		location_castle: "IN CASTLE"
@@ -266,6 +265,8 @@
 		location_surface_x: "SURFACE: X="
 		location_inside_x: "INSIDE: X="
 		location_facing: "FACING: "
+		teleport_dir: "DIRECTION (N,E,S,W): "
+		teleport_squares: "# OF SQUARES (0-9): "
 
 enhdialogs:
 	character:
