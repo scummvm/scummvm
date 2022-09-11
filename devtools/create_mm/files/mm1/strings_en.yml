@@ -256,6 +256,17 @@
 		fly_to_y: "(1-4): "
 		teleport_dir: "DIRECTION (N,E,S,W): "
 		teleport_squares: "# OF SQUARES (0-9): "
+		location_loc: "LOCATION: "
+		location_town: "IN TOWN"
+		location_castle: "IN CASTLE"
+		location_outdoors: "OUTDOORS"
+		location_unknown: "UNKNOWN"
+		location_under: "0' UNDER"
+		location_sector: "MAP SECTOR: "
+		location_surface_x: "SURFACE: X="
+		location_inside_x: "INSIDE: X="
+		location_facing: "FACING: "
+
 enhdialogs:
 	character:
 		stats:
