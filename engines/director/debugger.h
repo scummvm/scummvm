@@ -32,6 +32,9 @@ public:
 	Debugger();
 	~Debugger();
 	void debugLogFile(Common::String logs, bool prompt);
+	void stepHook();
+	void pushContextHook();
+	void popContextHook();
 
 private:
 	bool cmdHelp(int argc, const char **argv);
@@ -41,11 +44,22 @@ private:
 	bool cmdBacktrace(int argc, const char **argv);
 	bool cmdStack(int argc, const char **argv);
 	bool cmdVars(int argc, const char **argv);
+	bool cmdStep(int argc, const char **argv);
+	bool cmdNext(int argc, const char **argv);
+	bool cmdFinish(int argc, const char **argv);
 
 	bool lingoCommandProcessor(const char *inputOrig);
 
+
 	Common::DumpFile _out;
 	Common::String _outName;
+
+	bool _step;
+	int _stepCounter;
+	bool _finish;
+	int _finishCounter;
+	bool _next;
+	int _nextCounter;
 };
 
 

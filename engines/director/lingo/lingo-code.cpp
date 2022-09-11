@@ -240,6 +240,7 @@ void Lingo::saveStateToWindow() {
 }
 
 void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal) {
+	g_debugger->pushContextHook();
 	Common::Array<CFrame *> &callstack = _vm->getCurrentWindow()->_callstack;
 
 	debugC(5, kDebugLingoExec, "Pushing frame %d", callstack.size() + 1);
@@ -373,6 +374,8 @@ void Lingo::popContext(bool aborting) {
 	}
 
 	delete fp;
+
+	g_debugger->popContextHook();
 }
 
 bool Lingo::hasFrozenContext() {
