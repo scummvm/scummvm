@@ -54,7 +54,7 @@ public:
 		Common::String result =  first + second;
 
 		// Hacky, and assumes the extensions are the same length.
-		return result.substr(0, extReplacement.size()) + extReplacement;;
+		return result.substr(0, result.size() - extReplacement.size()) + extReplacement;;
 	}
 
 	Common::String unwindowsify(const Common::String &str) const {
