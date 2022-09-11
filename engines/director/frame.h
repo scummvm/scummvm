@@ -60,7 +60,6 @@ struct PaletteInfo {
 	byte speed;
 	uint16 frameCount;
 	uint16 cycleCount;
-	uint16 cycleLength;
 	byte fade;
 	byte delay;
 	byte style;
@@ -73,7 +72,7 @@ struct PaletteInfo {
 		normal = false; fadeToWhite = false;
 		fadeToBlack = false; autoReverse = false;
 		overTime = false; speed = 0;
-		frameCount = cycleCount = cycleLength = 0;
+		frameCount = cycleCount = 0;
 		fade = delay = style = colorCode = 0;
 	}
 };

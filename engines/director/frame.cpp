@@ -153,57 +153,31 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 		if (_vm->getPlatform() == Common::kPlatformWindows) {
 			_sound2 = CastMemberID(stream->readUint16(), 0);
 			_soundType2 = stream->readByte();
-		}
-
-		// palette
-		if (_vm->getPlatform() == Common::kPlatformWindows) {
-			_palette.paletteId = stream->readUint16();
-			// loop points for color cycling
-			_palette.firstColor = g_director->transformColor(stream->readByte() ^ 0x80);
-			_palette.lastColor = g_director->transformColor(stream->readByte() ^ 0x80);
-			_palette.flags = stream->readByte();
-			_palette.colorCycling = (_palette.flags & 0x80) != 0;
-			_palette.normal = (_palette.flags & 0x60) == 0x00;
-			_palette.fadeToBlack = (_palette.flags & 0x60) == 0x60;
-			_palette.fadeToWhite = (_palette.flags & 0x60) == 0x40;
-			_palette.autoReverse = (_palette.flags & 0x10) != 0;
-			_palette.overTime = (_palette.flags & 0x04) != 0;
-			_palette.speed = stream->readByte();
-			_palette.frameCount = stream->readUint16();
-			_palette.cycleCount = stream->readUint16();
-
-			stream->read(unk, 6);
-
-			debugC(8, kDebugLoading, "Frame::readChannels(): STUB: unk1: %02x %02x %02x %02x %02x %02x", unk[0],
-				unk[1], unk[2], unk[3], unk[4], unk[5]);
 		} else {
 			stream->read(unk, 3);
 			debugC(8, kDebugLoading, "Frame::readChannels(): STUB: unk1: %02x %02x %02x", unk[0], unk[1], unk[2]);
-
-			_palette.paletteId = stream->readSint16();
-			// loop points for color cycling
-			_palette.firstColor = g_director->transformColor(stream->readByte() ^ 0x80);
-			_palette.lastColor = g_director->transformColor(stream->readByte() ^ 0x80);
-			_palette.flags = stream->readByte();
-			_palette.colorCycling = (_palette.flags & 0x80) != 0;
-			_palette.normal = (_palette.flags & 0x60) == 0x00;
-			_palette.fadeToBlack = (_palette.flags & 0x60) == 0x60;
-			_palette.fadeToWhite = (_palette.flags & 0x60) == 0x40;
-			_palette.autoReverse = (_palette.flags & 0x10) != 0;
-			_palette.overTime = (_palette.flags & 0x04) != 0;
-			_palette.cycleCount = stream->readByte();
-			_palette.speed = stream->readByte();
-			_palette.frameCount = stream->readByte();
-			_palette.cycleLength = stream->readByte();
-
-			stream->read(unk, 4);
-			debugC(8, kDebugLoading, "Frame::readChannels(): STUB: unk2: %02x %02x %02x %02x", unk[0], unk[1], unk[2], unk[3]);
 		}
 
-		if (_vm->getPlatform() == Common::kPlatformMacintosh || _vm->getPlatform() == Common::kPlatformMacintoshII) {
-			stream->read(unk, 3);
-			debugC(8, kDebugLoading, "Frame::readChannels(): STUB: unk3: %02x %02x %02x", unk[0], unk[1], unk[2]);
-		}
+		// palette
+		_palette.paletteId = stream->readUint16();
+		// loop points for color cycling
+		_palette.firstColor = g_director->transformColor(stream->readByte() ^ 0x80);
+		_palette.lastColor = g_director->transformColor(stream->readByte() ^ 0x80);
+		_palette.flags = stream->readByte();
+		_palette.colorCycling = (_palette.flags & 0x80) != 0;
+		_palette.normal = (_palette.flags & 0x60) == 0x00;
+		_palette.fadeToBlack = (_palette.flags & 0x60) == 0x60;
+		_palette.fadeToWhite = (_palette.flags & 0x60) == 0x40;
+		_palette.autoReverse = (_palette.flags & 0x10) != 0;
+		_palette.overTime = (_palette.flags & 0x04) != 0;
+		_palette.speed = stream->readByte();
+		_palette.frameCount = stream->readUint16();
+		_palette.cycleCount = stream->readUint16();
+
+		stream->read(unk, 6);
+
+		debugC(8, kDebugLoading, "Frame::readChannels(): STUB: unk1: %02x %02x %02x %02x %02x %02x", unk[0],
+			unk[1], unk[2], unk[3], unk[4], unk[5]);
 	} else if (version >= kFileVer400 && version < kFileVer500) {
 		// Sound/Tempo/Transition
 		int unk1 = stream->readByte();
@@ -292,9 +266,9 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 	debugC(4, kDebugLoading, "TMPO:   tempo: %d, skipFrameFlag: %d, blend: %d",
 		_tempo, _skipFrameFlag, _blend);
 	if (_palette.paletteId) {
-		debugC(4, kDebugLoading, "PAL:    paletteId: %d, firstColor: %d, lastColor: %d, flags: %d, cycleCount: %d, cycleLength: %d, speed: %d, frameCount: %d, fade: %d, delay: %d, style: %d",
+		debugC(4, kDebugLoading, "PAL:    paletteId: %d, firstColor: %d, lastColor: %d, flags: %d, cycleCount: %d, speed: %d, frameCount: %d, fade: %d, delay: %d, style: %d",
 			_palette.paletteId, _palette.firstColor, _palette.lastColor, _palette.flags,
-			_palette.cycleCount, _palette.cycleLength, _palette.speed, _palette.frameCount,
+			_palette.cycleCount, _palette.speed, _palette.frameCount,
 			_palette.fade, _palette.delay, _palette.style);
 	} else {
 		debugC(4, kDebugLoading, "PAL:    paletteId: 000");
