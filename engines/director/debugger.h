@@ -38,6 +38,9 @@ private:
 
 	bool cmdVersion(int argc, const char **argv);
 	bool cmdRepl(int argc, const char **argv);
+	bool cmdBacktrace(int argc, const char **argv);
+	bool cmdStack(int argc, const char **argv);
+	bool cmdVars(int argc, const char **argv);
 
 	bool lingoCommandProcessor(const char *inputOrig);
 
