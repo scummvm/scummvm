@@ -21,6 +21,8 @@
 
 #include "watchmaker/game.h"
 
+#if defined(USE_OPENGL_GAME)
+
 #include "watchmaker/3d/render/opengl_2d.h"
 #include "watchmaker/utils.h"
 #include "watchmaker/render.h"
@@ -31,9 +33,7 @@
 #include "watchmaker/renderer.h"
 #include "watchmaker/sdl_wrapper.h"
 
-#ifdef USE_OPENGL_GAME
 #include "graphics/opengl/system_headers.h"
-#endif
 
 namespace Watchmaker {
 
@@ -113,8 +113,6 @@ void rResetExtends(void) {
 	gBlitterExtends.right = -99999999;
 	gBlitterExtends.bottom = -99999999;
 }
-
-#ifdef USE_OPENGL_GAME
 
 //************************************************************************************************************************
 void rBlitter(WGame &game, int dst, int src, int dposx, int dposy,
@@ -261,6 +259,8 @@ int createTextureFromSurface2(Surface &surface, int texFormat) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
+	error("TODO: compressed textures");
+#if 0
 	bool compressed = false;
 	switch (texFormat) {
 		case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
@@ -281,7 +281,7 @@ int createTextureFromSurface2(Surface &surface, int texFormat) {
 	} else {
 		glTexImage2D(GL_TEXTURE_2D, 0, texFormat, surface.width, surface.height / 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface.data);
 	}
-
+#endif
 	return texId;
 }
 
@@ -343,6 +343,6 @@ void rSetLoaderFlags(unsigned int NewLoaderFlags) {
 	CurLoaderFlags = NewLoaderFlags;
 }
 
-#endif // USE_OPENGL_GAME
-
 } // End of namespace Watchmaker
+
+#endif // USE_OPENGL_GAME
