@@ -3345,8 +3345,14 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 			_string[textSlot].color = 0x0E;
 		printString(textSlot, _scriptPointer);
 	} else if (_game.id == GID_INDY4 && _roomResource == 23 && vm.slot[_currentScript].number == 167 &&
-			len == 24 && 0==memcmp(_scriptPointer+16, "pregod", 6)) {
-		// WORKAROUND for bug #2961.
+			len == 24 && _enableEnhancements && memcmp(_scriptPointer+16, "pregod", 6) == 0) {
+		// WORKAROUND for bug #2961: At the end of Indy4, if Ubermann is told
+		// to use 20 orichalcum beads, he'll count "pregod8" and "pregod9"
+		// instead of "18" and "19", in some releases.
+		//
+		// TODO: Check whether this issue also appears in any floppy version,
+		// because the current workaround doesn't look compatible with
+		// non-talkie releases.
 		byte tmpBuf[25];
 		memcpy(tmpBuf, _scriptPointer, 25);
 		if (tmpBuf[22] == '8')
