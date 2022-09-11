@@ -26,6 +26,7 @@
 #include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
 #include "mm/mm1/views/spells/fly.h"
+#include "mm/mm1/views/spells/teleport.h"
 
 namespace MM {
 namespace MM1 {
@@ -551,7 +552,8 @@ SpellResult Spells::wizard54_shelter(Character *chr) {
 }
 
 SpellResult Spells::wizard55_teleport(Character *chr) {
-	return SR_FAILED;
+	Views::Spells::Teleport::show();
+	return SR_SUCCESS_SILENT;
 }
 
 SpellResult Spells::wizard63_etherialize(Character *chr) {
