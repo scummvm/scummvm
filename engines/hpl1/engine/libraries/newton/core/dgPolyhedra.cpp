@@ -3166,6 +3166,7 @@ dgEdge* dgPolyhedra::TriangulateFace(dgEdge* face, const dgFloat64* const pool,
     dgInt32 stride, dgDownHeap<dgEdge*, dgFloat64>& heap
     , dgBigVector* const faceNormalOut)
 {
+#if 0
   dgEdge* perimeter[1024 * 16];
   dgEdge* ptr = face;
   dgInt32 perimeterCount = 0;
@@ -3178,6 +3179,7 @@ dgEdge* dgPolyhedra::TriangulateFace(dgEdge* face, const dgFloat64* const pool,
   } while (ptr != face);
   perimeter[perimeterCount] = face;
   _ASSERTE((perimeterCount + 1) < dgInt32 (sizeof (perimeter) / sizeof (perimeter[0])));
+#endif
 
   dgBigVector normal(
       FaceNormal(face, pool, dgInt32(stride * sizeof(dgFloat64))));
