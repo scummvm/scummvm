@@ -88,7 +88,7 @@ struct _t3dLOADLIST *GetFromLoadList(void) {
 	int32 a;
 
 	for (a = 0; a < MAX_T3D_LOADLIST_ITEMS; a++) {
-		if (t3dLoadList[a].pname[0])
+		if (!t3dLoadList[a].pname.empty())
 			return &t3dLoadList[a];
 	}
 
