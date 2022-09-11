@@ -135,13 +135,18 @@ static const GroovieGameDescription gameDescriptions[] = {
 
 /*==== The 11th Hour ====*/
 	// The 11th Hour DOS/Windows English (Available on Steam)
-	T11HENTRY("", "script.grv", "bdb9a783d4debe477ac3856adc454c17", 62447, "introd1.gjd", nullptr, -1, EN_ANY, kPlatformWindows, BASE_FLAGS),
+	T11HENTRY("", "script.grv", "bdb9a783d4debe477ac3856adc454c17", 62447,
+					"introd1.gjd", "9ec3e727182fbe40ee23e786721180eb", 6437077, EN_ANY, kPlatformWindows, BASE_FLAGS),
 
 	// The 11th Hour DOS/Windows German
 	T11HENTRY("", "script.grv", "560e90b47054639668e44a8b365fbe26", 62447, "introd1.gjd", nullptr, -1, DE_DEU, kPlatformWindows, BASE_FLAGS),
 
 	// The 11th Hour DOS/Windows French
 	T11HENTRY("", "script.grv", "752c0a8ea62a1207c8583f3dbc16e6ef", 62447, "introd1.gjd", nullptr, -1, FR_FRA, kPlatformWindows, BASE_FLAGS),
+
+	// The 11th Hour DOS/Windows Russian (Akella)
+	T11HENTRY("", "script.grv", "bdb9a783d4debe477ac3856adc454c17", 62447,
+					"introd1.gjd", "b80c6d88ac576cdd6f98d1e467629108", 1516, RU_RUS, kPlatformWindows, BASE_FLAGS),
 
 	// The 11th Hour Mac English
 	T11HENTRY("", "script.grv", "bdb9a783d4debe477ac3856adc454c17", 62447,
