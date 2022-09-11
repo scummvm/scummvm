@@ -151,7 +151,7 @@ void Find2DConvexHull(DWORD nverts, COLORVERTEX *pntptr, DWORD *cNumOutIdxs, WOR
  *      find 2D convex hull for the object
  * --------------------------------------------------*/
 bool rMakeShadowVolume(SHADOWBOX *sb, gVertex *InVerts, DWORD nverts, float lightm[9]) {
-	warning("Stubbed: rMakeShadowVolume\n");
+	warning("Stubbed: rMakeShadowVolume");
 #if 0
 	Matrix4x4 matWorld, matView, matProj, IDmat;
 	DWORD i;
@@ -319,7 +319,7 @@ bool rMakeShadowVolume(SHADOWBOX *sb, gVertex *InVerts, DWORD nverts, float ligh
  *  makes a shadow box to avoid stenciled shadows over the object
  * --------------------------------------------------*/
 bool rMakeShadowBox(SHADOWBOX *sb, float BoxX, float BoxY, float BoxZ, WORD intens) {
-	warning("Stubbed: rMakeShadowBox\n");
+	warning("Stubbed: rMakeShadowBox");
 #if 0
 	bool hr;
 	LPDIRECT3DDEVICE7 pd3dDevice = g_pd3dDevice;
@@ -509,7 +509,7 @@ bool rMakeShadowBox(SHADOWBOX *sb, float BoxX, float BoxY, float BoxZ, WORD inte
  * --------------------------------------------------*/
 bool RenderShadow(SHADOW *pShad,
                   void *lpVBuf) {
-	warning("TODO: Stubbed RenderShadow\n");
+	warning("TODO: Stubbed RenderShadow");
 #if 0
 	LPDIRECT3DDEVICE7 pd3dDevice = g_pd3dDevice;
 
@@ -583,7 +583,7 @@ bool RenderShadow(SHADOW *pShad,
  * --------------------------------------------------*/
 bool RenderShadowBox(SHADOWBOX *pSB,
                      int lpVBuf) {
-	warning("TODO: RenderShadowBox\n");
+	warning("TODO: RenderShadowBox");
 #if 0
 	LPDIRECT3DDEVICE7 pd3dDevice = g_pd3dDevice;
 
@@ -628,7 +628,7 @@ bool RenderShadowBox(SHADOWBOX *pSB,
  *       of rendered 2D extent rect of all shadow vols.
  * --------------------------------------------------*/
 bool DrawShadow(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, WORD intens) {
-	warning("Stubbed: DrawShadow\n");
+	warning("Stubbed: DrawShadow");
 #if 0
 	LPDIRECT3DDEVICE7 pd3dDevice = g_pd3dDevice;
 
@@ -698,7 +698,7 @@ bool DrawShadow(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int 
  *      prepare shadow for projection to a texture
  * --------------------------------------------------*/
 bool rMakeProjectiveShadow(SHADOWBOX *sb, void *InVerts, DWORD nverts) {
-	warning("Stubbed. rMakeProjectiveShadow\n");
+	warning("Stubbed. rMakeProjectiveShadow");
 #if 0
 	SHADOW *shad = &sb->ShadowsList[0];
 	D3DVERTEXBUFFERDESC vbDesc;
@@ -820,7 +820,7 @@ bool rMakeProjectiveShadow(SHADOWBOX *sb, void *InVerts, DWORD nverts) {
  *      renders shadow to a specific texture
  * --------------------------------------------------*/
 bool RenderProjectiveShadow(SHADOW *pShad) {
-	warning("Stubbed. RenderPojectiveShadow\n");
+	warning("Stubbed. RenderPojectiveShadow");
 #if 0
 	HRESULT hres;
 	LPDIRECT3DDEVICE7 pd3dDevice = g_pd3dDevice;
@@ -911,7 +911,7 @@ bool RenderProjectiveShadow(SHADOW *pShad) {
  *      draw projected shadow texture to the room
  * --------------------------------------------------*/
 bool DrawProjectiveShadow(SHADOW *pShad) {
-	warning("Stubbed: DrawProjectiveShadow\n");
+	warning("Stubbed: DrawProjectiveShadow");
 #if 0
 	bool        hres;
 

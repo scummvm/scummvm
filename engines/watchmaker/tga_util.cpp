@@ -115,7 +115,7 @@ unsigned int TGAread(void *ptr, unsigned int size, unsigned int n, Common::Seeka
 	unsigned int len = size * n;
 #if 0
 	if ((!ptr) || (!len) || (/*stream.pos() > stream.size()*/)) {
-		warning("Overrun TGA parsing\n");
+		warning("Overrun TGA parsing");
 		return 0;
 	}
 #endif

@@ -419,7 +419,7 @@ void t3dReleaseBody(t3dBODY *b) {
  *                  t3dReleaseCharacter
  * --------------------------------------------------*/
 void t3dReleaseCharacter(t3dCHARACTER *b) {
-	warning("STUBBED: t3dReleaseCharacter\n");
+	warning("STUBBED: t3dReleaseCharacter");
 #if 0
 	t3dU32  i, j;
 
@@ -1325,7 +1325,7 @@ t3dF32 t3dCheckWithFloor(void) {
  *                  t3dProcessMirror
  * --------------------------------------------------*/
 void t3dProcessMirror(t3dMESH *mesh, t3dCAMERA *cam) {
-	warning("STUBBED: t3dProcessMirror\n");
+	warning("STUBBED: t3dProcessMirror");
 #if 0
 //	t3dBODY      *NewBody=NULL;
 	t3dV3F      appo, c0;
@@ -1855,7 +1855,7 @@ void t3dAddTextureBufferShadow(t3dCHARACTER *c, uint32 CurShadowBox, t3dLIGHT *l
 	gVertex     *gv, *pc;
 	t3dV3F      v, tmp, MinSco, MaxSco, Aspect, BBox[8], dir;
 
-	warning("TODO: t3dAddTextureBufferShadow\n");
+	warning("TODO: t3dAddTextureBufferShadow");
 	return;
 #if 0
 	if (!cm || !cm->VertexBuffer)
@@ -2449,11 +2449,11 @@ void t3dSetFaceVisibility(t3dMESH *mesh, t3dCAMERA *cam) {
 
 		if (*nf + 3 >= target->size()) {
 			// TODO: Why is this hack necessary?
-			warning("NumFaces: %d, Size: %d\n", *nf, target->size());
+			warning("NumFaces: %d, Size: %d", *nf, target->size());
 /*			static bool warned = false;
 			if (!warned) {
 				warned = true;*/
-				warning("Dropping face\n");
+				warning("Dropping face");
 //			}
 			target->resize(*nf + 4);
 			//continue;
@@ -2647,7 +2647,7 @@ void t3dAddParticle(gMaterial *Material, t3dV3F *Source, t3dF32 size, t3dV3F Col
 	t3dV3F      v0, v1, v2, v3;
 	uint32      rr, gg, bl, i;
 
-	warning("TODO: t3dAddParticle\n");
+	warning("TODO: t3dAddParticle");
 	return;
 #if 0
 	uvbc = rGetUserVertexBufferCounter();
@@ -2900,7 +2900,7 @@ void t3dCheckMaterialVB(MaterialPtr mat) {
 	if (i >= mat->NumAllocatedMesh)
 		return ;
 
-	//warning("TODO: Implement t3dCheckMaterialVB\n");
+	//warning("TODO: Implement t3dCheckMaterialVB");
 //	gv = rLockVertexPtr(mat->VB, DDLOCK_WRITEONLY | DDLOCK_NOSYSLOCK);
 	mat->VBO->_buffer.clear();
 	for (int i = 0; i < mat->NumAllocatedVerts; i++) {
@@ -3022,7 +3022,7 @@ void t3dAddLensFlare(gMaterial *Material, t3dV3F *Source, t3dF32 size, t3dF32 pe
 	t3dV3F      v0, v1, v2, v3;
 	int32      rr, gg, bb;
 
-	warning("TODO: t3dAddLensFlare\n");
+	warning("TODO: t3dAddLensFlare");
 	return;
 #if 0
 	uvbc = rGetUserVertexBufferCounter();

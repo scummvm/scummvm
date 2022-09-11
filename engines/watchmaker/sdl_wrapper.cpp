@@ -63,7 +63,7 @@ void sdl_wrapper::pollSDL() {
 				switch (event.button.button) {
 					case SDL_BUTTON_LEFT:
 						bLPressed = true;
-						warning("LEFT PRESSED\n");
+						warning("LEFT PRESSED");
 						break;
 					case SDL_BUTTON_RIGHT:
 						bRPressed = true;
@@ -76,7 +76,7 @@ void sdl_wrapper::pollSDL() {
 				switch (event.button.button) {
 					case SDL_BUTTON_LEFT:
 						bLPressed = false;
-						warning("LEFT RELEASED\n");
+						warning("LEFT RELEASED");
 						break;
 					case SDL_BUTTON_RIGHT:
 						bRPressed = false;
@@ -104,7 +104,7 @@ void sdl_wrapper::initWindow() {
 	window = SDL_CreateWindow("The Watchmaker", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, SDL_WINDOW_OPENGL);
 
 	if (window == nullptr) {
-		warning("Couldn't create window: %s\n", SDL_GetError());
+		warning("Couldn't create window: %s", SDL_GetError());
 		assert(false);
 	}
 	int numRenderers = SDL_GetNumRenderDrivers();
@@ -112,7 +112,7 @@ void sdl_wrapper::initWindow() {
 	for (int i = 0; i < numRenderers; i++) {
 		SDL_RendererInfo info;
 		SDL_GetRenderDriverInfo(i, &info);
-		warning("Renderer(%d): %s\n", i, info.name);
+		warning("Renderer(%d): %s", i, info.name);
 		if (strcmp(info.name, "opengl") == 0) {
 			renderIndex = i;
 		}
@@ -120,7 +120,7 @@ void sdl_wrapper::initWindow() {
 	renderer = SDL_CreateRenderer(window, renderIndex, SDL_RENDERER_ACCELERATED);
 	SDL_RendererInfo info;
 	SDL_GetRendererInfo(renderer, &info);
-	warning("Renderer: %s\n", info.name);
+	warning("Renderer: %s", info.name);
 	IMG_Init(0);
 #endif
 }

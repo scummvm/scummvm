@@ -40,7 +40,7 @@
 namespace Watchmaker {
 
 bool rInitialize3DEnvironment(WGame &game, char *cfg) {
-	warning("STUBBED: rInitialize3DEnvironment\n");
+	warning("STUBBED: rInitialize3DEnvironment");
 	game.sdl->initWindow();
 	game._renderer->initGL();
 	return true;
@@ -66,7 +66,7 @@ unsigned int gGetTextureListPosition() {
 #endif
 
 bool rSetRenderMode(int state) {
-	warning("STUBBED: rSetRenderMode\n");
+	warning("STUBBED: rSetRenderMode");
 }
 
 bool checkGlError(const char *when) {
@@ -83,7 +83,7 @@ bool checkGlError(const char *when) {
 			case GL_STACK_OVERFLOW: explanation = "GL_STACK_OVERFLOW"; break;
 			default: break;
 		}
-		warning("%s: GL raised error %d - %s\n", when, error, explanation.c_str());
+		warning("%s: GL raised error %d - %s", when, error, explanation.c_str());
 		return false;
 	}
 	return true;
@@ -103,41 +103,41 @@ bool rClearBuffers(char flags) {
 }
 
 unsigned char *rLockSurfaceDirect(gTexture *t, unsigned int *pitch) {
-	warning("STUBBED: rLockSurfaceDirect\n");
+	warning("STUBBED: rLockSurfaceDirect");
 	return nullptr;
 }
 
 void rUnlockSurfaceDirect(gTexture *t) {
-	warning("STUBBED: rUnlockSurfaceDirect\n");
+	warning("STUBBED: rUnlockSurfaceDirect");
 }
 
 uint16 rRGBAToTextureFormat(unsigned int r, unsigned int g, unsigned int b, unsigned int a) {
-	warning("STUBBED: rRGBAToTextureFormat\n");
+	warning("STUBBED: rRGBAToTextureFormat");
 	return 0;
 }
 
 bool rSetMovieFrame(MaterialPtr mat, uint32 dwCurrFrame) {
-	warning("STUBBED: rSetMovieFrame\n");
+	warning("STUBBED: rSetMovieFrame");
 	return false;
 }
 
 int rCreateSurface(unsigned int dimx, unsigned int dimy, unsigned char flags) {
-	warning("STUBBED: rCreateSurface\n");
+	warning("STUBBED: rCreateSurface");
 	return 0;
 }
 
 VertexBuffer rCreateVertexBuffer(unsigned int num) {
-	//warning("STUBBED: rCreateVertexBuffer\n");
+	//warning("STUBBED: rCreateVertexBuffer");
 	return VertexBuffer();
 }
 
 bool rDeleteVertexBuffer(VertexBuffer &vb) {
-	warning("STUBBED: rDeleteVertexBuffer\n");
+	warning("STUBBED: rDeleteVertexBuffer");
 	return false;
 }
 
 void rGetScreenInfos(unsigned int *width, unsigned int *height, unsigned int *bpp) {
-	warning("STUBBED: rGetScreenInfos\n");
+	warning("STUBBED: rGetScreenInfos");
 	*width = 800;
 	*height = 600;
 	*bpp = 32;
@@ -157,7 +157,7 @@ bool rSetProjectionMatrix(float width, float height, float fAspect,
 
 
 void rScreenSpaceToCameraSpace(float *dx, float *dy, float *dz, float x, float y) {
-	//warning("STUBBED: rScreenSpaceToCameraSpace\n");
+	//warning("STUBBED: rScreenSpaceToCameraSpace");
 #if 0
 	D3DMATRIX   m;
 	D3DVECTOR   v, d;
@@ -179,64 +179,64 @@ void rScreenSpaceToCameraSpace(float *dx, float *dy, float *dz, float x, float y
 }
 
 gTexture *gLoadTexture(char *TextName, unsigned int LoaderFlags) {
-	warning("STUBBED gLoadTexture\n");
+	warning("STUBBED gLoadTexture");
 	return nullptr;
 }
 
 bool rGrabVideo(const char *path, char flags) {
-	warning("STUBBED: rGrabVideo\n");
+	warning("STUBBED: rGrabVideo");
 	return true;
 }
 
 void rReleaseAllBitmaps(unsigned int NotFlags) {
-	warning("STUBBED: rReleaseAllBitmaps\n");
+	warning("STUBBED: rReleaseAllBitmaps");
 	return;
 }
 
 void rReleaseBitmap(int i) {
-	warning("STUBBED: rReleaseBitmap\n");
+	warning("STUBBED: rReleaseBitmap");
 	return;
 }
 
 void rReleaseAllTextures(unsigned int NotFlags) {
-	warning("STUBBED: rReleaseAllTextures\n");
+	warning("STUBBED: rReleaseAllTextures");
 	return;
 }
 
 void rSetBitmapName(unsigned int id, const char *s) {
-	warning("STUBBED: rSetBitmapName\n");
+	warning("STUBBED: rSetBitmapName");
 	return;
 }
 
 uint32 rGetMovieFrame(MaterialPtr mat) {
-	warning("STUBBED: rGetMovieFrame\n");
+	warning("STUBBED: rGetMovieFrame");
 	return 0;
 }
 
 
 void rPrintText(const char *s, unsigned int dst,  unsigned int src, unsigned short *FontTable, unsigned short x, unsigned short y) {
-	warning("STUBBED: rPrintText\n");
+	warning("STUBBED: rPrintText");
 	return;
 }
 
 void rGetTextDim(const char *s, unsigned short *FontTable, int *x, int *y) {
-	warning("STUBBED: rGetTextDim\n");
+	warning("STUBBED: rGetTextDim");
 	return;
 }
 
 
 void rResetPipeline() {
-	//warning("STUBBED: rResetPipeline\n");
+	//warning("STUBBED: rResetPipeline");
 	return;
 }
 
 void rClear(int dst, int dposx, int dposy, int sdimx, int sdimy, unsigned char r, unsigned char g, unsigned char b) {
-	//warning("STUBBED: rClear(%d, %d, %d, %d, %d\n", dst, dposx, dposy, sdimx, sdimy);
+	//warning("STUBBED: rClear(%d, %d, %d, %d, %d", dst, dposx, dposy, sdimx, sdimy);
 }
 
 
 void rBlitScreenBuffer(void) { // Should probably go to opengl_2d
-	//warning("STUBBED: rBlitScreenBuffer\n");
+	//warning("STUBBED: rBlitScreenBuffer");
 }
 
 bool gMovie_SetFrame(gMaterial *mat, WORD newFrame) {

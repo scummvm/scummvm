@@ -27,7 +27,7 @@ namespace Watchmaker {
 
 MaterialPtr rAddMaterial(gMaterial &Material, const Common::String &TextName, int NumFaces, unsigned int LoaderFlags) {
 	// TODO: This is duplicated in opengl_3d.cpp
-	warning("TODO: Fix rAddMaterial\n");
+	warning("TODO: Fix rAddMaterial");
 #if 0
 	bool			AlreadyLoaded=FALSE;
 	int				len=strlen(TextName);
@@ -237,7 +237,7 @@ void rRemoveMaterial(Common::SharedPtr<gMaterial> &m) {
  *  Aggiunge un materiale alla MaterialList
  * --------------------------------------------------*/
 void rAddToMaterialList(gMaterial &mat, signed short int ViewMatrixNum) {
-	//warning("Stubbed: rAddToMaterialList\n");
+	//warning("Stubbed: rAddToMaterialList");
 	//D3DVERTEXBUFFERDESC VBDesc;
 	gMaterial *cm;
 	gBatchBlock *bb;

@@ -25,77 +25,77 @@
 namespace Watchmaker {
 
 bool mInitMusicSystem(void) {
-	warning("STUBBED: mInitMusicSystem\n");
+	warning("STUBBED: mInitMusicSystem");
 	return true;
 }
 
 bool mCloseMusicSystem(void) {
-	warning("STUBBED: mCloseMusicSystem\n");
+	warning("STUBBED: mCloseMusicSystem");
 	return true;
 }
 
 bool mLoadMusic(const char *FileName) {
-	warning("STUBBED: mLoadMusic\n");
+	warning("STUBBED: mLoadMusic");
 	return true;
 }
 
 bool mPlayMusic(const char *FileName) {
-	warning("STUBBED: mPlayMusic\n");
+	warning("STUBBED: mPlayMusic");
 	return true;
 }
 
 bool mStopMusic(void) {
-	warning("STUBBED: mStopMusic\n");
+	warning("STUBBED: mStopMusic");
 	return true;
 }
 
 bool mRestoreMixerVolume(void) {
-	warning("STUBBED: mRestoreMixerVolume\n");
+	warning("STUBBED: mRestoreMixerVolume");
 	return true;
 }
 
 bool sSetListener(sListener *NewListener) {
-	warning("STUBBED: sSetListener\n");
+	warning("STUBBED: sSetListener");
 	return true;
 }
 
 bool sStartSound(sSound *CurSound, bool Reload) {
-	warning("STUBBED: sStartSound\n");
+	warning("STUBBED: sStartSound");
 	return true;
 }
 
 bool sStopSound(int32 index) {
-	warning("STUBBED: sStopSound\n");
+	warning("STUBBED: sStopSound");
 	return true;
 }
 
 bool sStopAllSounds(void) {
-	warning("STUBBED: sStopAllSounds\n");
+	warning("STUBBED: sStopAllSounds");
 	return true;
 }
 
 bool sIsPlaying(sS32 lIndex) {
-	warning("STUBBED: sIsPlaying\n");
+	warning("STUBBED: sIsPlaying");
 	return true;
 }
 
 bool mSetAllVolume(unsigned char Volume) {
-	warning("STUBBED: mSetAllVolume\n");
+	warning("STUBBED: mSetAllVolume");
 	return true;
 }
 
 bool sSetAllSoundsVolume(unsigned char Vol) {
-	warning("STUBBED: sSetAllSoundsVolume\n");
+	warning("STUBBED: sSetAllSoundsVolume");
 	return true;
 }
 
 bool sSetAllSpeechVolume(unsigned char Vol) {
-	warning("STUBBED: sSetAllSpeechVolume\n");
+	warning("STUBBED: sSetAllSpeechVolume");
 	return true;
 }
 
 bool sStartSoundDiffuse(sSound *CurSound) {
-	warning("STUBBED: sStartSoundDiffuse\n");
+	warning("STUBBED: sStartSoundDiffuse");
 	return true;
 }
 

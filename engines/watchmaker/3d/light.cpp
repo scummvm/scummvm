@@ -186,7 +186,7 @@ void LoadVolumetricMap(WorkDirs &workDirs, const char *pname, t3dBODY *b) {
  *              t3dLoadOutdoorLights
  * --------------------------------------------------*/
 void t3dLoadOutdoorLights(const char *pname, t3dBODY *b, int32 ora) {
-	warning("STUBBED, t3dLoadOutdoorLights\n");
+	warning("STUBBED, t3dLoadOutdoorLights");
 #if 0
 	t3dU32      i, j, k;
 	t3dMESH     *m;

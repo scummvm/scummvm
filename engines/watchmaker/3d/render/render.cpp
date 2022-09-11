@@ -128,7 +128,7 @@ void RenderGeometry(void) {
 	bool hres = false;
 
 	RenderSky();
-	//warning("TODO: Texture configuration\n");
+	//warning("TODO: Texture configuration");
 #if 0
 	g_renderer->SetTextureStageState(0, D3DTSS_TEXCOORDINDEX, 0);
 	g_renderer->SetTextureStageState(1, D3DTSS_TEXCOORDINDEX, 1);
@@ -165,7 +165,7 @@ void RenderGeometry(void) {
 		if ((g_renderer->supportsMultiTexturing()) && (bb->Texture2 != LastTexture2)) {
 			if (bb->Texture2 > 0) {
 				if (LastTexture2 <= 0) {
-					//warning("TODO: Texture configuration\n");
+					//warning("TODO: Texture configuration");
 #if 0
 					g_renderer->SetTextureStageState(1, D3DTSS_COLOROP,   D3DTOP_MODULATE);
 					g_renderer->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
@@ -177,7 +177,7 @@ void RenderGeometry(void) {
 				}
 				g_renderer->setTexture(1, gTextureList[bb->Texture2]);
 			} else if (LastTexture2 > 0) {
-				//warning("TODO: Texture configuration\n");
+				//warning("TODO: Texture configuration");
 #if 0
 				g_renderer->SetTextureStageState(1, D3DTSS_COLOROP,   D3DTOP_DISABLE);
 				g_renderer->SetTextureStageState(1, D3DTSS_ALPHAOP,   D3DTOP_DISABLE);
@@ -196,7 +196,7 @@ void RenderGeometry(void) {
 		}
 		bb->Texture1 = -3;
 	}
-	//warning("TODO: Texture configuration\n");
+	//warning("TODO: Texture configuration");
 #if 0
 	g_renderer->SetTextureStageState(1, D3DTSS_COLOROP,   D3DTOP_DISABLE);
 	g_renderer->SetTextureStageState(1, D3DTSS_ALPHAOP,   D3DTOP_DISABLE);
@@ -415,7 +415,7 @@ bool rRenderScene(void) {
 			SHADOWBOX *sb = ShadowBoxesList[j];
 			rSetUserViewMatrix(sb->ViewMatrixNum);
 			if (bDisableShadows) break;
-			warning("TODO: Shadows\n");
+			warning("TODO: Shadows");
 #if 0
 			for (i = 0; i < sb->NumShadowsList; i++) {
 				if (!(hres = RenderProjectiveShadow(&sb->ShadowsList[i]))) {

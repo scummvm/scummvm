@@ -285,7 +285,7 @@ void UpdateBall(WGame &game, struct SPhys *p) {
  *                  ProcessGopherKeyboard
  * --------------------------------------------------*/
 void ProcessGopherKeyboard() {
-	warning("Stubbed: ProcessGopherKeyboard\n");
+	warning("Stubbed: ProcessGopherKeyboard");
 #if 0
 	t3dF32 AngleX, AngleY, AngleSpeed;
 	t3dF32 TurnSpeed, Speed = 1.0f;
@@ -410,7 +410,7 @@ void ProcessGopherKeyboard() {
  *                  UpdateArrow
  * --------------------------------------------------*/
 void UpdateArrow() {
-	warning("Stubbed: UpdateArrow\n");
+	warning("Stubbed: UpdateArrow");
 #if 0
 	t3dF32 AngleX, AngleY, AngleSpeed;
 	t3dM3X3F mx, mv;

@@ -29,7 +29,7 @@ bool rGetStencilBitDepth() {
 #if 0
 	return gStencilBitDepth;
 #endif
-	//warning("TODO: Implement rGetStencilBitDepth\n");
+	//warning("TODO: Implement rGetStencilBitDepth");
 	return false;
 }
 

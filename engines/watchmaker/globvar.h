@@ -48,7 +48,7 @@ struct Init : public SerializableAsset {
 	SerializableDynamicArray<SCreditsRole> _creditsRoles;
 
 	void loadFromStream(Common::SeekableReadStream &stream) {
-		warning("Init\n");
+		warning("Init");
 		Room.loadFromStream(stream);
 		Obj.loadFromStream(stream);
 		InvObj.loadFromStream(stream);

@@ -49,7 +49,7 @@ uint8 force_debug_window = 0;
 void CleanUpAndPostQuit(WorkDirs &workDirs, GameOptions &gameOptions);
 
 int WMakerMain() {
-	warning("The Watchmaker\n");
+	warning("The Watchmaker");
 
 	//CreateWindow()
 	int loaderFlags = 0;
@@ -97,7 +97,7 @@ int WMakerMain() {
 	if (LoaderFlags & T3D_NOLIGHTMAPS) rSetLightmapRendering(0);         // Disattiva le Lightmaps
 	else rSetLightmapRendering(1);                                      // Attiva le Lightmaps
 	*/
-	warning("init engine...\n");
+	warning("init engine...");
 	if (!(rInitialize3DEnvironment(*game,/*hWnd, */ WmCfgName))) {               // Apre scheda 3D
 		game->CleanUpAndPostQuit();
 		return 1;
@@ -128,7 +128,7 @@ int WMakerMain() {
 
 	game->GameLoop();
 
-	warning("FIN\n");
+	warning("FIN");
 	delete game;
 	return 0;
 }

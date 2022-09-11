@@ -40,7 +40,7 @@ void t3dMESH::loadFaces(t3dBODY *b, Common::SeekableReadStream &stream) {
 
 		uint16 n = stream.readSint16LE();                                                                    // Legge indice materiale
 		if (n >= b->NumMaterials())
-			warning("Material index wrong: current index: %d; Max material index %d\n", n, b->NumMaterials());
+			warning("Material index wrong: current index: %d; Max material index %d", n, b->NumMaterials());
 		else {
 			FList[face].mat = b->MatTable[n];                                   // Make the pointer to the material
 			if (b->MatTable[n]->addNumFaces(1/*f2*/) == false)                    // Add face space to the material
