@@ -20,8 +20,8 @@
  */
 
 #include "watchmaker/ll/ll_ffile.h"
-#include "ll_system.h"
-#include <cstring>
+#include "common/substream.h"
+#include "watchmaker/ll/ll_system.h"
 
 namespace Watchmaker {
 
@@ -79,14 +79,8 @@ Common::SharedPtr<Common::SeekableReadStream> FastFile::resolve(const char *file
 	} else {
 		size = _files[index + 1].offset - entry.offset;
 	}
-	auto stream = openFile(_path);
+	auto stream = openFile(_path, entry.offset, size);
 	assert(stream);
-	stream->seek(SEEK_SET, entry.offset);
-	error("TODO: Substream-logic");
-#if 0
-	stream->setSize(size);
-	stream->setStart(entry.offset);
-#endif
 	return Common::SharedPtr<Common::SeekableReadStream>(stream);
 }
 

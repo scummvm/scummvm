@@ -59,7 +59,7 @@ void t3dForceNOFastFile(char valore);
 int t3dAccessFile(char *name);
 bool t3dGetFileDate(uint32 *date, uint32 *time, const char *name);
 Common::SeekableReadStream *resolveFile(const char *path);
-Common::SharedPtr<Common::SeekableReadStream> openFile(const Common::String &filename);
+Common::SharedPtr<Common::SeekableReadStream> openFile(const Common::String &filename, int offset = 0, int size = -1);
 
 } // End of namespace Watchmaker
 

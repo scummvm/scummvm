@@ -30,6 +30,7 @@
 #define MALLOC_SIZE  _msize
 #endif
 #endif
+#include "common/substream.h"
 #include "common/archive.h"
 #include "watchmaker/ll/ll_system.h"
 #include "watchmaker/types.h"
@@ -174,7 +175,7 @@ bool t3dGetFileDate(uint32 *date, uint32 *time, const char *name) {
 	return false;
 }
 
-Common::SharedPtr<Common::SeekableReadStream> openFile(const Common::String &filename) {
+Common::SharedPtr<Common::SeekableReadStream> openFile(const Common::String &filename, int offset, int size) {
 	Common::String adjustedPath;
 	if (filename.hasPrefix("./")) {
 		adjustedPath = filename.substr(2, filename.size());
@@ -191,6 +192,15 @@ Common::SharedPtr<Common::SeekableReadStream> openFile(const Common::String &fil
 			file = (*it)->createReadStream();
 			break;
 		}
+	}
+
+	if (offset != 0 || size != -1) {
+		if (size == -1) {
+			size = file->size();
+		}
+		assert(size <= file->size());
+		assert(offset >= 0 && offset <= file->size());
+		file = new Common::SeekableSubReadStream(file, offset, offset + size, DisposeAfterUse::YES);
 	}
 	return Common::SharedPtr<Common::SeekableReadStream>(file);
 }
