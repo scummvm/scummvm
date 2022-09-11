@@ -56,6 +56,9 @@ bool Game::msgAction(const ActionMessage &msg) {
 	case KEYBIND_QUICKREF:
 		addView("QuickRef");
 		return true;
+	case KEYBIND_REST:
+		g_events->send(GameMessage("REST"));
+		return true;
 	case KEYBIND_SEARCH:
 		MM1::Game::Search::execute();
 		break;
