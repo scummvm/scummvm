@@ -178,6 +178,8 @@ private:
 	static void scanDebuggableStatus(IDebuggable *debuggable, Common::HashMap<Common::String, SupportStatus> &unfinished);
 
 	struct ToastNotification {
+		ToastNotification();
+
 		Common::SharedPtr<Window> window;
 		uint64 dismissTime;
 	};

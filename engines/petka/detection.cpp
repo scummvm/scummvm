@@ -49,11 +49,11 @@ public:
 		_maxScanDepth = 2;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "petka";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Red Comrades";
 	}
 

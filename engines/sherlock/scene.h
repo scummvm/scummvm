@@ -268,7 +268,7 @@ public:
 	int checkForZones(const Common::Point &pt, int zoneType);
 
 	/**
-	 * Check which zone the the given position is located in.
+	 * Check which zone the given position is located in.
 	 */
 	int whichZone(const Common::Point &pt);
 

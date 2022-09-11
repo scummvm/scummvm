@@ -84,7 +84,7 @@ protected:
 	AdLibVoice *_voice;
 	int16 _pitchBend;
 	byte _pitchBendFactor;
-	//int8 _transposeEff;
+	int8 _transposeEff;
 	byte _volEff;
 	int8 _detuneEff;
 	byte _modWheel;
@@ -110,7 +110,7 @@ public:
 		_voice = nullptr;
 		_pitchBend = 0;
 		_pitchBendFactor = 2;
-		//_transposeEff = 0;
+		_transposeEff = 0;
 		_volEff = 0;
 		_detuneEff = 0;
 		_modWheel = 0;
@@ -148,6 +148,7 @@ public:
 	void panPosition(byte value) override;
 	void pitchBendFactor(byte value) override;
 	void detune(byte value) override;
+	void transpose(int8 value) override;
 	void priority(byte value) override;
 	void sustain(bool value) override;
 	void effectLevel(byte value) override { return; } // Not supported
@@ -1090,11 +1091,11 @@ void AdLibPart::pitchBend(int16 bend) {
 #ifdef ENABLE_OPL3
 		if (!_owner->_opl3Mode) {
 #endif
-			_owner->adlibNoteOn(voice->_channel, voice->_note/* + _transposeEff*/,
+			_owner->adlibNoteOn(voice->_channel, voice->_note + _transposeEff,
 								  (_pitchBend * _pitchBendFactor >> 6) + _detuneEff);
 #ifdef ENABLE_OPL3
 		} else {
-			_owner->adlibNoteOn(voice->_channel, voice->_note, (_pitchBend * _pitchBendFactor) >> 5);
+			_owner->adlibNoteOn(voice->_channel, voice->_note + _transposeEff, (_pitchBend * _pitchBendFactor) >> 5);
 		}
 #endif
 	}
@@ -1202,11 +1203,11 @@ void AdLibPart::pitchBendFactor(byte value) {
 #ifdef ENABLE_OPL3
 		if (!_owner->_opl3Mode) {
 #endif
-			_owner->adlibNoteOn(voice->_channel, voice->_note /* + _transposeEff*/,
+			_owner->adlibNoteOn(voice->_channel, voice->_note + _transposeEff,
 							  (_pitchBend * _pitchBendFactor >> 6) + _detuneEff);
 #ifdef ENABLE_OPL3
 		} else {
-			_owner->adlibNoteOn(voice->_channel, voice->_note, (_pitchBend * _pitchBendFactor) >> 5);
+			_owner->adlibNoteOn(voice->_channel, voice->_note + _transposeEff, (_pitchBend * _pitchBendFactor) >> 5);
 		}
 #endif
 	}
@@ -1229,8 +1230,16 @@ void AdLibPart::detune(byte value) {
 
 	_detuneEff = value;
 	for (voice = _voice; voice; voice = voice->_next) {
-		_owner->adlibNoteOn(voice->_channel, voice->_note/* + _transposeEff*/,
+		_owner->adlibNoteOn(voice->_channel, voice->_note + _transposeEff,
 							  (_pitchBend * _pitchBendFactor >> 6) + _detuneEff);
+	}
+}
+
+void AdLibPart::transpose(int8 value) {
+	_transposeEff = value;
+	for (AdLibVoice *voice = _voice; voice; voice = voice->_next) {
+		_owner->adlibNoteOn(voice->_channel, voice->_note + _transposeEff,
+			(_pitchBend * _pitchBendFactor >> 6) + _detuneEff);
 	}
 }
 
@@ -1566,11 +1575,11 @@ void MidiDriver_ADLIB::setPitchBendRange(byte channel, uint range) {
 #ifdef ENABLE_OPL3
 		if (!_opl3Mode) {
 #endif
-			adlibNoteOn(voice->_channel, voice->_note/* + part->_transposeEff*/,
+			adlibNoteOn(voice->_channel, voice->_note + part->_transposeEff,
 						(part->_pitchBend * part->_pitchBendFactor >> 6) + part->_detuneEff);
 #ifdef ENABLE_OPL3
 		} else {
-			adlibNoteOn(voice->_channel, voice->_note, (part->_pitchBend * part->_pitchBendFactor) >> 5);
+			adlibNoteOn(voice->_channel, voice->_note + part->_transposeEff, (part->_pitchBend * part->_pitchBendFactor) >> 5);
 		}
 #endif
 	}
@@ -2076,7 +2085,7 @@ void MidiDriver_ADLIB::mcKeyOn(AdLibVoice *voice, const AdLibInstrument *instr, 
 #ifdef ENABLE_OPL3
 	if (!_opl3Mode) {
 #endif
-		adlibNoteOnEx(voice->_channel, /*part->_transposeEff + */note, part->_detuneEff + (part->_pitchBend * part->_pitchBendFactor >> 6));
+		adlibNoteOnEx(voice->_channel, note + part->_transposeEff, part->_detuneEff + (part->_pitchBend * part->_pitchBendFactor >> 6));
 
 		if (instr->flagsA & 0x80) {
 			mcInitStuff(voice, &voice->_s10a, &voice->_s11a, instr->flagsA, &instr->extraA);
@@ -2092,7 +2101,7 @@ void MidiDriver_ADLIB::mcKeyOn(AdLibVoice *voice, const AdLibInstrument *instr, 
 #ifdef ENABLE_OPL3
 	} else {
 		adlibSetupChannelSecondary(voice->_channel, second, secVol1, secVol2, pan);
-		adlibNoteOnEx(voice->_channel, note, (part->_pitchBend * part->_pitchBendFactor) >> 5);
+		adlibNoteOnEx(voice->_channel, note + part->_transposeEff, (part->_pitchBend * part->_pitchBendFactor) >> 5);
 	}
 #endif
 }

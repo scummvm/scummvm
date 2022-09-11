@@ -45,6 +45,8 @@ class FilmLoopCastMember;
 class ScriptCastMember;
 class ShapeCastMember;
 class TextCastMember;
+class PaletteCastMember;
+class SoundCastMember;
 
 typedef Common::HashMap<byte, byte> CharMap;
 typedef Common::HashMap<uint16, uint16> FontSizeMap;
@@ -91,10 +93,13 @@ public:
 	void loadExternalSound(Common::SeekableReadStreamEndian &stream);
 	void loadSord(Common::SeekableReadStreamEndian &stream);
 
-	void loadCastChildren();
-	void loadSoundCasts();
+	void loadCastMemberData();
+	void loadStxtData(int key, TextCastMember *member);
+	void loadPaletteData(PaletteCastMember *member, Common::HashMap<int, PaletteV4>::iterator p);
+	void loadFilmLoopData(FilmLoopCastMember *member);
+	void loadBitmapData(int key, BitmapCastMember *bitmapCast);
+	void loadSoundData(int key, SoundCastMember *soundCast);
 
-	void copyCastStxts();
 	int getCastSize();
 	Common::Rect getCastMemberInitialRect(int castId);
 	void setCastMemberModified(int castId);

@@ -120,6 +120,18 @@ bool BehaviorModifier::respondsToEvent(const Event &evt) const {
 VThreadState BehaviorModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (_switchable) {
 		if (_disableWhen.respondsTo(msg->getEvent())) {
+			// These are executed in reverse order.  The disable event is propagated to children, then the disable task
+			// runs to forcibly disable any children.
+			//
+			// This works a bit weirdly in practice with child behaviors since ultimately we want them to be disabled and
+			// fire their Parent Disabled task but we don't actually do it on disable.  We instead rely on it being kind of
+			// the logical outcome of how this works:
+			//
+			// If the behavior is enabled, then Parent Disabled will propagate through the behavior, followed by the children
+			// actually being disabled.
+			DisableTaskData *disableTask = runtime->getVThread().pushTask("BehaviorModifier::disableTask", this, &BehaviorModifier::disableTask);
+			disableTask->runtime = runtime;
+
 			SwitchTaskData *taskData = runtime->getVThread().pushTask("BehaviorModifier::switchTask", this, &BehaviorModifier::switchTask);
 			taskData->targetState = false;
 			taskData->eventID = EventIDs::kParentDisabled;
@@ -134,6 +146,14 @@ VThreadState BehaviorModifier::consumeMessage(Runtime *runtime, const Common::Sh
 	}
 
 	return kVThreadReturn;
+}
+
+void BehaviorModifier::disable(Runtime *runtime) {
+	if (_switchable && _isEnabled)
+		_isEnabled = false;
+
+	for (const Common::SharedPtr<Modifier> &child : _children)
+		child->disable(runtime);
 }
 
 VThreadState BehaviorModifier::switchTask(const SwitchTaskData &taskData) {
@@ -159,10 +179,15 @@ VThreadState BehaviorModifier::propagateTask(const PropagateTaskData &taskData) 
 		propagateData->runtime = taskData.runtime;
 	}
 
-	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(taskData.eventID, 0), DynamicValue(), this->getSelfReference()));
+	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(taskData.eventID, 0), DynamicValue(), this->getSelfReference()));
 	Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, _children[taskData.index].get(), true, true, false));
 	taskData.runtime->sendMessageOnVThread(dispatch);
 
+	return kVThreadReturn;
+}
+
+VThreadState BehaviorModifier::disableTask(const DisableTaskData &taskData) {
+	disable(taskData.runtime);
 	return kVThreadReturn;
 }
 
@@ -559,23 +584,27 @@ VThreadState SoundEffectModifier::consumeMessage(Runtime *runtime, const Common:
 			_player.reset();
 		}
 	} else if (_executeWhen.respondsTo(msg->getEvent())) {
-		if (_soundType == kSoundTypeAudioAsset) {
-			if (!_cachedAudio)
-				loadAndCacheAudio(runtime);
-
-			if (_cachedAudio) {
-				if (_player) {
-					_player->stop();
-					_player.reset();
-				}
-
-				size_t numSamples = _cachedAudio->getNumSamples(*_metadata);
-				_player.reset(new AudioPlayer(runtime->getAudioMixer(), 255, 0, _metadata, _cachedAudio, false, 0, 0, numSamples));
-			}
-		}
+		disable(runtime);
 	}
 
 	return kVThreadReturn;
+}
+
+void SoundEffectModifier::disable(Runtime *runtime) {
+	if (_soundType == kSoundTypeAudioAsset) {
+		if (!_cachedAudio)
+			loadAndCacheAudio(runtime);
+
+		if (_cachedAudio) {
+			if (_player) {
+				_player->stop();
+				_player.reset();
+			}
+
+			size_t numSamples = _cachedAudio->getNumSamples(*_metadata);
+			_player.reset(new AudioPlayer(runtime->getAudioMixer(), 255, 0, _metadata, _cachedAudio, false, 0, 0, numSamples));
+		}
+	}
 }
 
 void SoundEffectModifier::loadAndCacheAudio(Runtime *runtime) {
@@ -605,6 +634,14 @@ Common::SharedPtr<Modifier> SoundEffectModifier::shallowClone() const {
 
 const char *SoundEffectModifier::getDefaultName() const {
 	return "Sound Effect Modifier";
+}
+
+PathMotionModifierV2::PointDef::PointDef() : frame(0), useFrame(false) {
+}
+
+PathMotionModifierV2::PathMotionModifierV2()
+	: _reverse(false), _loop(false), _alternate(false),
+	  _startAtBeginning(false), _frameDurationTimes10Million(0) {
 }
 
 bool PathMotionModifierV2::load(ModifierLoaderContext &context, const Data::PathMotionModifierV2 &data) {
@@ -651,16 +688,19 @@ VThreadState PathMotionModifierV2::consumeMessage(Runtime *runtime, const Common
 		return kVThreadReturn;
 	}
 	if (_terminateWhen.respondsTo(msg->getEvent())) {
-#ifdef MTROPOLIS_DEBUG_ENABLE
-		if (Debugger *debugger = runtime->debugGetDebugger())
-			debugger->notify(kDebugSeverityWarning, "Path motion modifier was supposed to terminate, but this isn't implemented yet");
-#endif
+		disable(runtime);
 		return kVThreadReturn;
 	}
 
 	return kVThreadReturn;
 }
 
+void PathMotionModifierV2::disable(Runtime *runtime) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	if (Debugger *debugger = runtime->debugGetDebugger())
+		debugger->notify(kDebugSeverityWarning, "Path motion modifier was supposed to terminate, but this isn't implemented yet");
+#endif
+}
 
 Common::SharedPtr<Modifier> PathMotionModifierV2::shallowClone() const {
 	Common::SharedPtr<PathMotionModifierV2> clone(new PathMotionModifierV2(*this));
@@ -733,13 +773,17 @@ VThreadState DragMotionModifier::consumeMessage(Runtime *runtime, const Common::
 		return kVThreadReturn;
 	}
 	if (_disableWhen.respondsTo(msg->getEvent())) {
-		Structural *owner = this->findStructuralOwner();
-		if (owner->isElement() && static_cast<Element *>(owner)->isVisual())
-			static_cast<VisualElement *>(owner)->setDragMotionProperties(nullptr);
+		disable(runtime);
 		return kVThreadReturn;
 	}
 
 	return kVThreadReturn;
+}
+
+void DragMotionModifier::disable(Runtime *runtime) {
+	Structural *owner = this->findStructuralOwner();
+	if (owner->isElement() && static_cast<Element *>(owner)->isVisual())
+		static_cast<VisualElement *>(owner)->setDragMotionProperties(nullptr);
 }
 
 VectorMotionModifier::~VectorMotionModifier() {
@@ -808,14 +852,18 @@ VThreadState VectorMotionModifier::consumeMessage(Runtime *runtime, const Common
 		}
 	}
 	if (_disableWhen.respondsTo(msg->getEvent())) {
-		if (_scheduledEvent) {
-			_scheduledEvent->cancel();
-			_scheduledEvent.reset();
-		}
+		disable(runtime);
 		return kVThreadReturn;
 	}
 
 	return kVThreadReturn;
+}
+
+void VectorMotionModifier::disable(Runtime *runtime) {
+	if (_scheduledEvent) {
+		_scheduledEvent->cancel();
+		_scheduledEvent.reset();
+	}
 }
 
 void VectorMotionModifier::trigger(Runtime *runtime) {
@@ -880,7 +928,7 @@ const char *VectorMotionModifier::getDefaultName() const {
 void VectorMotionModifier::linkInternalReferences(ObjectLinkingScope *scope) {
 	if (_vec.getType() == DynamicValueTypes::kVariableReference) {
 		const VarReference &varRef = _vec.getVarReference();
-		Common::WeakPtr<RuntimeObject> objRef = scope->resolve(varRef.guid, *varRef.source, false);
+		Common::WeakPtr<RuntimeObject> objRef = scope->resolve(varRef.guid, varRef.source, false);
 
 		RuntimeObject *obj = objRef.lock().get();
 		if (obj == nullptr || !obj->isModifier()) {
@@ -940,9 +988,13 @@ VThreadState SceneTransitionModifier::consumeMessage(Runtime *runtime, const Com
 		runtime->setSceneTransitionEffect(true, &effect);
 	}
 	if (_disableWhen.respondsTo(msg->getEvent()))
-		runtime->setSceneTransitionEffect(true, nullptr);
+		disable(runtime);
 
 	return kVThreadReturn;
+}
+
+void SceneTransitionModifier::disable(Runtime *runtime) {
+	runtime->setSceneTransitionEffect(true, nullptr);
 }
 
 Common::SharedPtr<Modifier> SceneTransitionModifier::shallowClone() const {
@@ -951,6 +1003,17 @@ Common::SharedPtr<Modifier> SceneTransitionModifier::shallowClone() const {
 
 const char *SceneTransitionModifier::getDefaultName() const {
 	return "Scene Transition Modifier";
+}
+
+ElementTransitionModifier::ElementTransitionModifier() : _rate(0), _steps(0),
+	_transitionType(kTransitionTypeFade), _revealType(kRevealTypeReveal), _transitionStartTime(0), _currentStep(0) {
+}
+
+ElementTransitionModifier::~ElementTransitionModifier() {
+	if (_scheduledEvent) {
+		_scheduledEvent->cancel();
+		_scheduledEvent.reset();
+	}
 }
 
 bool ElementTransitionModifier::load(ModifierLoaderContext &context, const Data::ElementTransitionModifier &data) {
@@ -1017,17 +1080,20 @@ VThreadState ElementTransitionModifier::consumeMessage(Runtime *runtime, const C
 		}
 
 		_scheduledEvent = runtime->getScheduler().scheduleMethod<ElementTransitionModifier, &ElementTransitionModifier::continueTransition>(runtime->getPlayTime() + 1, this);
+		_transitionStartTime = runtime->getPlayTime();
+		_currentStep = 0;
+		setTransitionProgress(0, _steps);
 
 		// Pushed tasks, so these are executed in reverse order (Show -> Transition Started)
 		{
-			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kTransitionStarted, 0), DynamicValue(), getSelfReference()));
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kTransitionStarted, 0), DynamicValue(), getSelfReference()));
 			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, findStructuralOwner(), false, true, false));
 			runtime->sendMessageOnVThread(dispatch);
 		}
 
 		if (_revealType == kRevealTypeReveal)
 		{
-			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kElementShow, 0), DynamicValue(), getSelfReference()));
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kElementShow, 0), DynamicValue(), getSelfReference()));
 			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, findStructuralOwner(), false, false, true));
 			runtime->sendMessageOnVThread(dispatch);
 		}
@@ -1036,16 +1102,19 @@ VThreadState ElementTransitionModifier::consumeMessage(Runtime *runtime, const C
 	}
 
 	if (_disableWhen.respondsTo(msg->getEvent())) {
-		if (_scheduledEvent) {
-			_scheduledEvent->cancel();
-
-			completeTransition(runtime);
-		}
-
+		disable(runtime);
 		return kVThreadReturn;
 	}
 
 	return Modifier::consumeMessage(runtime, msg);
+}
+
+void ElementTransitionModifier::disable(Runtime *runtime) {
+	if (_scheduledEvent) {
+		_scheduledEvent->cancel();
+
+		completeTransition(runtime);
+	}
 }
 
 Common::SharedPtr<Modifier> ElementTransitionModifier::shallowClone() const {
@@ -1060,24 +1129,64 @@ const char *ElementTransitionModifier::getDefaultName() const {
 }
 
 void ElementTransitionModifier::continueTransition(Runtime *runtime) {
-	// TODO: Make this functional
-	completeTransition(runtime);
+	_scheduledEvent.reset();
+
+	const uint64 playTime = runtime->getPlayTime();
+	const uint64 timeSinceStart = playTime - _transitionStartTime;
+
+	uint32 step = static_cast<uint32>(timeSinceStart * _rate / 1000);
+
+	if (step >= _steps || _rate == 0) {
+		completeTransition(runtime);
+		return;
+	}
+
+	if (step != _currentStep) {
+		setTransitionProgress(step, _steps);
+		_currentStep = step;
+	}
+
+	runtime->setSceneGraphDirty();
+	_scheduledEvent = runtime->getScheduler().scheduleMethod<ElementTransitionModifier, &ElementTransitionModifier::continueTransition>(playTime + 1, this);
 }
 
 void ElementTransitionModifier::completeTransition(Runtime *runtime) {
-	_scheduledEvent.reset();
-
 	// Pushed tasks, so these are executed in reverse order (Hide -> Transition Ended)
 	{
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kTransitionEnded, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kTransitionEnded, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, findStructuralOwner(), false, true, false));
 		runtime->sendMessageOnVThread(dispatch);
 	}
 
 	if (_revealType == kRevealTypeConceal) {
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kElementHide, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kElementHide, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, findStructuralOwner(), false, false, true));
 		runtime->sendMessageOnVThread(dispatch);
+	}
+
+	setTransitionProgress(( _revealType == kRevealTypeReveal) ? 1 : 0, 1);
+	runtime->setSceneGraphDirty();
+}
+
+void ElementTransitionModifier::setTransitionProgress(uint32 step, uint32 maxSteps) {
+	Structural *structural = findStructuralOwner();
+	if (structural && structural->isElement() && static_cast<Element *>(structural)->isVisual()) {
+		VisualElement *visual = static_cast<VisualElement *>(structural);
+		VisualElementTransitionProperties props = visual->getTransitionProperties();
+
+		if (_transitionType == kTransitionTypeFade) {
+			if (step > maxSteps)
+				step = maxSteps;
+
+			uint32 alpha = step * 255 / maxSteps;
+			if (_revealType == kRevealTypeConceal)
+				alpha = 255 - alpha;
+
+			props.setAlpha(alpha);
+			visual->setTransitionProperties(props);
+		} else {
+			warning("Unsupported transition type");
+		}
 	}
 }
 
@@ -1179,11 +1288,10 @@ bool TimerMessengerModifier::respondsToEvent(const Event &evt) const {
 VThreadState TimerMessengerModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	// If this terminates AND starts then just cancel out and terminate
 	if (_terminateWhen.respondsTo(msg->getEvent())) {
-		if (_scheduledEvent) {
-			_scheduledEvent->cancel();
-			_scheduledEvent.reset();
-		}
-	} else if (_executeWhen.respondsTo(msg->getEvent())) {
+		disable(runtime);
+		return kVThreadReturn;
+	}
+	if (_executeWhen.respondsTo(msg->getEvent())) {
 		// 0-time events are not allowed
 		uint32 realMilliseconds = _milliseconds;
 		if (realMilliseconds == 0)
@@ -1200,9 +1308,18 @@ VThreadState TimerMessengerModifier::consumeMessage(Runtime *runtime, const Comm
 		_incomingData = msg->getValue();
 		if (_incomingData.getType() == DynamicValueTypes::kList)
 			_incomingData.setList(_incomingData.getList()->clone());
+
+		return kVThreadReturn;
 	}
 
 	return kVThreadReturn;
+}
+
+void TimerMessengerModifier::disable(Runtime *runtime) {
+	if (_scheduledEvent) {
+		_scheduledEvent->cancel();
+		_scheduledEvent.reset();
+	}
 }
 
 void TimerMessengerModifier::linkInternalReferences(ObjectLinkingScope *outerScope) {
@@ -1238,9 +1355,9 @@ void TimerMessengerModifier::trigger(Runtime *runtime) {
 }
 
 BoundaryDetectionMessengerModifier::BoundaryDetectionMessengerModifier()
-	: _enableWhen(Event::create()), _disableWhen(Event::create()), _exitTriggerMode(kExitTriggerExiting),
-	_detectTopEdge(false), _detectBottomEdge(false), _detectLeftEdge(false), _detectRightEdge(false),
-	_detectionMode(kContinuous), _runtime(nullptr), _isActive(false) {
+	: _exitTriggerMode(kExitTriggerExiting), _detectTopEdge(false), _detectBottomEdge(false),
+	  _detectLeftEdge(false), _detectRightEdge(false), _detectionMode(kContinuous),
+	  _runtime(nullptr), _isActive(false) {
 }
 
 BoundaryDetectionMessengerModifier::~BoundaryDetectionMessengerModifier() {
@@ -1258,7 +1375,7 @@ bool BoundaryDetectionMessengerModifier::load(ModifierLoaderContext &context, co
 
 	_exitTriggerMode = ((data.messageFlagsHigh & Data::BoundaryDetectionMessengerModifier::kDetectExiting) != 0) ? kExitTriggerExiting : kExitTriggerOnceExited;
 	_detectionMode = ((data.messageFlagsHigh & Data::BoundaryDetectionMessengerModifier::kWhileDetected) != 0) ? kContinuous : kOnFirstDetection;
-		
+
 	_detectTopEdge = ((data.messageFlagsHigh & Data::BoundaryDetectionMessengerModifier::kDetectTopEdge) != 0);
 	_detectBottomEdge = ((data.messageFlagsHigh & Data::BoundaryDetectionMessengerModifier::kDetectBottomEdge) != 0);
 	_detectLeftEdge = ((data.messageFlagsHigh & Data::BoundaryDetectionMessengerModifier::kDetectLeftEdge) != 0);
@@ -1284,13 +1401,19 @@ VThreadState BoundaryDetectionMessengerModifier::consumeMessage(Runtime *runtime
 		if (_incomingData.getType() == DynamicValueTypes::kList)
 			_incomingData.setList(_incomingData.getList()->clone());
 	}
-	if (_disableWhen.respondsTo(msg->getEvent()) && _isActive) {
+	if (_disableWhen.respondsTo(msg->getEvent())) {
+		disable(runtime);
+	}
+
+	return kVThreadReturn;
+}
+
+void BoundaryDetectionMessengerModifier::disable(Runtime *runtime) {
+	if (_isActive) {
 		_runtime->removeBoundaryDetector(this);
 		_isActive = false;
 		_runtime = nullptr;
 	}
-
-	return kVThreadReturn;
 }
 
 void BoundaryDetectionMessengerModifier::linkInternalReferences(ObjectLinkingScope *outerScope) {
@@ -1332,9 +1455,9 @@ const char *BoundaryDetectionMessengerModifier::getDefaultName() const {
 }
 
 CollisionDetectionMessengerModifier::CollisionDetectionMessengerModifier()
-	: _runtime(nullptr), _isActive(false),
-	  _enableWhen(Event::create()), _disableWhen(Event::create()), _detectionMode(kDetectionModeFirstContact),
-	  _detectInFront(true), _detectBehind(true), _ignoreParent(true), _sendToCollidingElement(false) {
+	: _detectionMode(kDetectionModeFirstContact), _detectInFront(true), _detectBehind(true),
+	  _ignoreParent(true), _sendToCollidingElement(false), _sendToOnlyFirstCollidingElement(false),
+	  _runtime(nullptr), _isActive(false) {
 }
 
 CollisionDetectionMessengerModifier::~CollisionDetectionMessengerModifier() {
@@ -1392,14 +1515,18 @@ VThreadState CollisionDetectionMessengerModifier::consumeMessage(Runtime *runtim
 		}
 	}
 	if (_disableWhen.respondsTo(msg->getEvent())) {
-		if (_isActive) {
-			_isActive = false;
-			_runtime->removeCollider(this);
-			_incomingData = DynamicValue();
-		}
+		disable(runtime);
 	}
 
 	return kVThreadReturn;
+}
+
+void CollisionDetectionMessengerModifier::disable(Runtime *runtime) {
+	if (_isActive) {
+		_isActive = false;
+		_runtime->removeCollider(this);
+		_incomingData = DynamicValue();
+	}
 }
 
 void CollisionDetectionMessengerModifier::linkInternalReferences(ObjectLinkingScope *scope) {
@@ -1461,7 +1588,9 @@ void CollisionDetectionMessengerModifier::triggerCollision(Runtime *runtime, Str
 KeyboardMessengerModifier::~KeyboardMessengerModifier() {
 }
 
-KeyboardMessengerModifier::KeyboardMessengerModifier() : _isEnabled(false) {
+KeyboardMessengerModifier::KeyboardMessengerModifier()
+	: _onDown(false), _onUp(false), _onRepeat(false), _keyModControl(false), _keyModCommand(false), _keyModOption(false),
+	  _isEnabled(false), _keyCodeType(kAny), _macRomanChar(0) {
 }
 
 bool KeyboardMessengerModifier::isKeyboardMessenger() const {
@@ -1512,20 +1641,24 @@ bool KeyboardMessengerModifier::load(ModifierLoaderContext &context, const Data:
 }
 
 bool KeyboardMessengerModifier::respondsToEvent(const Event &evt) const {
-	if (Event::create(EventIDs::kParentEnabled, 0).respondsTo(evt) || Event::create(EventIDs::kParentDisabled, 0).respondsTo(evt))
+	if (Event(EventIDs::kParentEnabled, 0).respondsTo(evt) || Event(EventIDs::kParentDisabled, 0).respondsTo(evt))
 		return true;
 
 	return false;
 }
 
 VThreadState KeyboardMessengerModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
- 	if (Event::create(EventIDs::kParentEnabled, 0).respondsTo(msg->getEvent())) {
+ 	if (Event(EventIDs::kParentEnabled, 0).respondsTo(msg->getEvent())) {
 		_isEnabled = true;
-	} else if (Event::create(EventIDs::kParentDisabled, 0).respondsTo(msg->getEvent())) {
-		_isEnabled = false;
+	} else if (Event(EventIDs::kParentDisabled, 0).respondsTo(msg->getEvent())) {
+		disable(runtime);
 	}
 
 	return kVThreadReturn;
+}
+
+void KeyboardMessengerModifier::disable(Runtime *runtime) {
+	_isEnabled = false;
 }
 
 Common::SharedPtr<Modifier> KeyboardMessengerModifier::shallowClone() const {
@@ -1725,13 +1858,16 @@ VThreadState TextStyleModifier::consumeMessage(Runtime *runtime, const Common::S
 
 		return kVThreadReturn;
 	} else if (_removeWhen.respondsTo(msg->getEvent())) {
-		// Doesn't actually do anything
+		disable(runtime);
 		return kVThreadReturn;
 	}
 
 	return Modifier::consumeMessage(runtime, msg);
 }
 
+void TextStyleModifier::disable(Runtime *runtime) {
+	// Doesn't actually do anything
+}
 
 Common::SharedPtr<Modifier> TextStyleModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new TextStyleModifier(*this));
@@ -1797,11 +1933,28 @@ VThreadState GraphicModifier::consumeMessage(Runtime *runtime, const Common::Sha
 		visual->setRenderProperties(_renderProps, this->getSelfReference().staticCast<GraphicModifier>());
 	}
 	if (_removeWhen.respondsTo(msg->getEvent())) {
-		if (visual->getPrimaryGraphicModifier().lock().get() == this)
-			static_cast<VisualElement *>(element)->setRenderProperties(VisualElementRenderProperties(), Common::WeakPtr<GraphicModifier>());
+		disable(runtime);
 	}
 
 	return kVThreadReturn;
+}
+
+void GraphicModifier::disable(Runtime *runtime) {
+	Structural *owner = findStructuralOwner();
+	if (!owner)
+		return;
+
+	if (!owner->isElement())
+		return;
+
+	Element *element = static_cast<Element *>(owner);
+	if (!element->isVisual())
+		return;
+
+	VisualElement *visual = static_cast<VisualElement *>(element);
+
+	if (visual->getPrimaryGraphicModifier().lock().get() == this)
+		static_cast<VisualElement *>(element)->setRenderProperties(VisualElementRenderProperties(), Common::WeakPtr<GraphicModifier>());
 }
 
 Common::SharedPtr<Modifier> GraphicModifier::shallowClone() const {
@@ -1828,6 +1981,10 @@ bool CompoundVariableModifier::load(ModifierLoaderContext &context, const Data::
 	_name = data.name;
 
 	return true;
+}
+
+void CompoundVariableModifier::disable(Runtime *runtime) {
+	// Do nothing I guess, no variables can be disdabled
 }
 
 Common::SharedPtr<ModifierSaveLoad> CompoundVariableModifier::getSaveLoad() {
@@ -1904,7 +2061,10 @@ Modifier *CompoundVariableModifier::findChildByName(const Common::String &name) 
 	return nullptr;
 }
 
-CompoundVariableModifier::SaveLoad::SaveLoad(CompoundVariableModifier *modifier) : _modifier(modifier) {
+CompoundVariableModifier::SaveLoad::ChildSaveLoad::ChildSaveLoad() : modifier(nullptr) {
+}
+
+CompoundVariableModifier::SaveLoad::SaveLoad(CompoundVariableModifier *modifier) /* : _modifier(modifier) */ {
 	for (const Common::SharedPtr<Modifier> &child : modifier->_children) {
 		Common::SharedPtr<ModifierSaveLoad> childSL = child->getSaveLoad();
 		if (childSL) {
@@ -2290,7 +2450,7 @@ Common::SharedPtr<ModifierSaveLoad> PointVariableModifier::getSaveLoad() {
 
 bool PointVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kPoint)
-		_value = value.getPoint().toScummVMPoint();
+		_value = value.getPoint();
 	else
 		return false;
 

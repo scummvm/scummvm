@@ -49,6 +49,7 @@ static MethodProto xlibMethods[] = {
 	{ "readFile",				FileIO::m_readFile,			 0, 0,	200 },	// D2
 	{ "readLine",				FileIO::m_readLine,			 0, 0,	200 },	// D2
 	{ "readToken",				FileIO::m_readToken,		 2, 2,	200 },	// D2
+	{ "readPict",				FileIO::m_readPict,			 0,	0,	300 },  // D3
 	{ "readWord",				FileIO::m_readWord,			 0, 0,	200 },	// D2
 	{ "setFinderInfo",			FileIO::m_setFinderInfo,	 2, 2,	200 },	// D2
 	{ "setPosition",			FileIO::m_setPosition,		 1, 1,	200 },	// D2
@@ -258,6 +259,11 @@ void FileIO::m_readWord(int nargs) {
 	g_lingo->push(Datum(" "));
 	g_lingo->push(Datum(" \n"));
 	FileIO::m_readToken(2);
+}
+
+void FileIO::m_readPict(int nargs) {
+	g_lingo->printSTUBWithArglist("FileIO::m_readPict", nargs);
+	g_lingo->push(Datum(""));
 }
 
 bool FileIO::charInMatchString(char ch, const Common::String &matchString) {

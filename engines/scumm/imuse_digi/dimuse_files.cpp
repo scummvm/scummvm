@@ -98,7 +98,6 @@ uint8 *IMuseDigiFilesHandler::getSoundAddrData(int soundId) {
 	if (_engine->isEngineDisabled())
 		return nullptr;
 
-	Common::StackLock lock(_mutex);
 	// This function is always used for SFX (tracks which do not
 	// have a stream pointer), hence the use of the resource address
 	if (soundId != 0) {

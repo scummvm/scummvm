@@ -77,6 +77,9 @@ public:
 	MacMenuSubMenu *addSubMenu(MacMenuSubMenu *submenu, int index = -1);
 	int addMenuItem(MacMenuSubMenu *submenu, const Common::String &text, int action = -1, int style = 0, char shortcut = 0, bool enabled = true, bool checked = false);
 	int addMenuItem(MacMenuSubMenu *submenu, const Common::U32String &text, int action = 0, int style = 0, char shortcut = 0, bool enabled = true, bool checked = false);
+	void insertMenuItem(MacMenuSubMenu *submenu, const Common::String &text, uint pos, int action = -1, int style = 0, char shortcut = 0, bool enabled = true, bool checked = false);
+	void insertMenuItem(MacMenuSubMenu *submenu, const Common::U32String &text, uint pos, int action = 0, int style = 0, char shortcut = 0, bool enabled = true, bool checked = false);
+	void removeMenuItem(MacMenuSubMenu *submenu, uint pos);
 	void loadMenuResource(Common::MacResManager *resFork, uint16 id);
 	void loadMenuBarResource(Common::MacResManager *resFork, uint16 id);
 	void createSubMenuFromString(int id, const char *string, int commandId);
@@ -93,6 +96,7 @@ public:
 	void enableCommand(int menunum, int action, bool state);
 	void enableCommand(const char *menuitem, const char *menuaction, bool state);
 	void enableCommand(const Common::U32String &menuitem, const Common::U32String &menuaction, bool state);
+	void enableAllMenus();
 	void disableAllMenus();
 
 	bool isVisible() { return _isVisible; }
@@ -136,7 +140,7 @@ private:
 
 	int calcSubMenuWidth(MacMenuSubMenu *menu);
 	void calcSubMenuBounds(MacMenuSubMenu *menu, int x, int y);
-	void renderSubmenu(ManagedSurface *g, MacMenuSubMenu *menu, bool recursive = true);
+	void renderSubmenu(MacMenuSubMenu *menu, bool recursive = true);
 
 	bool keyEvent(Common::Event &event);
 	bool mouseClick(int x, int y);

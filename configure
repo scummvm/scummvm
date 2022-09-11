@@ -1608,7 +1608,7 @@ ios7)
 	;;
 ios7-arm64)
 	_host_os=iphone
-	# Remaining of configure don't known about arm64
+	# Remains of configure not knowing about arm64
 	_host_cpu=aarch64
 	_host_alias=arm64-apple-darwin11
 	;;
@@ -2490,6 +2490,10 @@ case $_host_cpu in
 		_need_memalign=yes
 		;;
 esac
+if test "$_enable_ubsan" = yes ; then
+	# UBSan implies -fsanitize=alignment, so avoid false positives.
+	_need_memalign=yes
+fi
 echo "$_need_memalign"
 
 define_in_config_h_if_yes $_need_memalign 'SCUMM_NEED_ALIGNMENT'
@@ -2575,9 +2579,9 @@ case $_host_os in
 		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 		add_line_to_config_mk 'AMIGAOS = 1'
 		append_var CXXFLAGS "-mlongcall"
-		# Enable optimizations for non-debug builds
+		# Enable full optimizations for non-debug builds
 		if test "$_debug_build" = no; then
-			_optimization_level=-O2
+			_optimization_level=-O3
 		else
 			_optimization_level=-O0
 			append_var CXXFLAGS "-fno-omit-frame-pointer"
@@ -2829,7 +2833,7 @@ EOF
 		fi
 
 		# Use pandoc to generate README and NEWS file for the bundle
-		# Also default to  HTML rather than plain text as it gives a nicer
+		# Also default to HTML rather than plain text as it gives a nicer
 		# formating, especially for the README. We could consider using RTF
 		# as well, but TextEdit does not support links within the document,
 		# and having a TOC with links, which we do with html, is quite convenient.
@@ -2866,7 +2870,7 @@ EOF
 		append_var CXXFLAGS "-fno-strict-aliasing"
 		append_var CXXFLAGS "-fno-threadsafe-statics"
 		append_var CXXFLAGS "-fuse-cxa-atexit"
-		# Supress format warnings as the long 4 byte causes noisy warnings.
+		# Suppress format warnings as the long 4 byte causes noisy warnings.
 		append_var CXXFLAGS "-Wno-format"
 		append_var LDFLAGS "-mthumb"
 		append_var LDFLAGS "-mthumb-interwork"
@@ -2904,7 +2908,7 @@ EOF
 			FREETYPE2_CFLAGS="-I$_freetypepath/include" # there were link errors / missing symbols without this
 			_freetype_found="true"
 		else
-			#use link time optimization to further reduce exe size (this can't be used with setjmp whcih freetype requires)
+			#use link time optimization to further reduce exe size (this can't be used with setjmp which freetype requires)
 			# TODO: Figure out why this is a conflict and/or if freetype can be built without setjmp
 			append_var CXXFLAGS "-flto"
 			append_var LDFLAGS "-flto"
@@ -3059,16 +3063,14 @@ EOF
 		append_var CXXFLAGS "-mlong-calls"
 		append_var CXXFLAGS "-mword-relocations"
 		append_var CXXFLAGS "-fomit-frame-pointer"
-		#use link time optimization to further reduce exe size
-		append_var CXXFLAGS "-flto"
-		append_var LDFLAGS "-flto=jobserver"
 		#ensure verbose output during linking to prevent buildbot kills after 1200 seconds
 		if test "$_verbose_build" = yes ; then
 			append_var LDFLAGS "-Wl,-v --verbose"
 		fi
-		#use linker dead code elimination to further reduce exe size
-		append_var CXXFLAGS "-ffunction-sections -fdata-sections"
-		append_var LDFLAGS "-Wl,--gc-sections"
+		if test "$_dynamic_modules" = yes ; then
+			_detection_features_static=no
+			_plugins_default=dynamic
+		fi
 		if test "$_debug_build" = no; then
 		#optimize for smallest file size. This is necessary to prevent a crash on startup
 		#due to the large executable file size when many engines are enabled
@@ -3165,6 +3167,7 @@ if test -n "$_host"; then
 	case "$_host" in
 		3ds)
 			append_var DEFINES "-DDISABLE_FANCY_THEMES"
+			append_var DEFINES "-DDISABLE_HELP_STRINGS"
 			append_var DEFINES "-DDISABLE_SID"
 			append_var DEFINES "-DDISABLE_NES_APU"
 			_backend="3ds"
@@ -3330,7 +3333,7 @@ if test -n "$_host"; then
 			if test "$_debug_build" != yes; then
 				append_var DEFINES "-DDISABLE_TEXT_CONSOLE"
 			fi
-			append_var DEFINES "-DDISABLE_COMMAND_LINE"
+			append_var DEFINES "-DDISABLE_HELP_STRINGS"
 			append_var DEFINES "-DDISABLE_DOSBOX_OPL"
 			append_var DEFINES "-DDISABLE_FANCY_THEMES"
 			append_var DEFINES "-DDISABLE_SID"
@@ -3700,6 +3703,7 @@ case $_backend in
 		append_var LIBS "-lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
 		append_var LIBS "-framework QuartzCore -framework CoreFoundation -framework Foundation"
 		append_var LIBS "-framework AudioToolbox -framework CoreAudio -framework SystemConfiguration "
+		append_var LIBS "-framework GameController"
 		if [ $_host_cpu = 'aarch64' ]; then
 			append_var LDFLAGS "-miphoneos-version-min=7.1 -arch arm64"
 			append_var CFLAGS "-miphoneos-version-min=7.1 -arch arm64"
@@ -4113,7 +4117,7 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 # The linker doesn't actually look in previously
 # loaded libraries when trying to resolve symbols -
 # effectively turning all dlopen(RTLD_GLOBAL) calls
-# into dlopen(RTLD_LOCAL).  It *does* look in
+# into dlopen(RTLD_LOCAL). It *does* look in
 # DT_NEEDED libraries, so the workaround is to add an
 # (otherwise unnecessary) dependency from plugins back
 # to the main libscummvm.so.
@@ -4253,6 +4257,19 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 _mak_plugins='
 LDFLAGS				+= -Wl,-T$(srcdir)/backends/plugins/psp/main_prog.ld  -Wl,-zmax-page-size=128
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -Wl,-zmax-page-size=128 -lstdc++
+'
+		;;
+	psp2)
+		_plugin_prefix=""
+		# This will create an ELF with a suprx extension which we will have to mangle when packaging
+		_plugin_suffix=".suprx"
+		append_var CXXFLAGS "-fuse-cxa-atexit"
+		append_var DEFINES "-DUNCACHED_PLUGINS"
+_mak_plugins='
+PLUGIN_EXTRA_DEPS	= $(EXECUTABLE) backends/plugins/psp2/plugin.o
+PLUGIN_LDFLAGS		+= -nostartfiles -nodefaultlibs backends/plugins/psp2/plugin.o -Wl,-q -Xlinker --just-symbols -Xlinker $(EXECUTABLE) -lgcc
+PRE_OBJS_FLAGS		:= -Wl,--whole-archive
+POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '
 		;;
 	riscos)
@@ -5247,7 +5264,7 @@ if test "$_libunity" = auto ; then
 			_libunity=no
 			;;
 		*)
-			# Unity has a lots of dependencies, update the libs and cflags var with them
+			# Unity has a lot of dependencies, update the libs and cflags var with them
 			LIBUNITY_LIBS="$LIBUNITY_LIBS `$_pkgconfig --libs 'unity > 3.8.1' 2>> "$TMPLOG"`"
 			LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `$_pkgconfig --cflags 'unity > 3.8.1' 2>> "$TMPLOG"`"
 			_libunity=no
@@ -5288,7 +5305,7 @@ if test "$_gtk" = auto ; then
 			_gtk=no
 			;;
 		*)
-			# GTK has a lots of dependencies, update the libs and cflags var with them
+			# GTK has a lot of dependencies, update the libs and cflags var with them
 			GTK_LIBS="$GTK_LIBS `$_pkgconfig --libs gtk+-3.0 2>> "$TMPLOG"`"
 			GTK_CFLAGS="$GTK_CFLAGS `$_pkgconfig --cflags gtk+-3.0 2>> "$TMPLOG"`"
 			_gtk=no
@@ -6183,6 +6200,15 @@ case $_host_os in
 			append_var LDFLAGS "-Wl,--no-gc-sections"
 		fi
 		;;
+	amigaos*)
+		# In release mode use LTO to improve performance
+		# and dead code elimination to reduce binary size
+		if test "$_release_build" = yes; then
+			append_var CXXFLAGS "-flto"
+			append_var CXXFLAGS "-ffunction-sections -fdata-sections"
+			append_var PLUGIN_LDFLAGS "-flto=jobserver"
+		fi
+		;;
 	android)
 		# Force treating unqualified char variables as signed by default.
 		# NDK compiler for ARM will treat them as unsigned otherwise, which creates bugs in the code.
@@ -6212,7 +6238,7 @@ case $_host_os in
 
 		# -lgcc is carefully placed here - we want to catch
 		# all toolchain symbols in *our* libraries rather
-		# than pick up anything unhygenic from the Android libs.
+		# than pick up anything unhygienic from the Android libs.
 		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -landroid -ljnigraphics -lEGL"
 		;;
 	ds)
@@ -6221,7 +6247,7 @@ case $_host_os in
 			append_var LDFLAGS "-Wl,--gc-sections"
 		else
 			append_var LDFLAGS "-Wl,--no-gc-sections"
-			# TODO automate this required 2 step linking phase
+			# TODO: automate this required 2 step linking phase
 			# append_var LDFLAGS "-Wl,--retain-symbols-file,ds.syms"
 		fi
 		;;
@@ -6264,9 +6290,19 @@ case $_host_os in
 		fi
 		;;
 	n64)
-		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found
+		# Move some libs down here, otherwise some symbols required by libvorbis aren't found
 		# during linking stage
 		append_var LIBS "-lc -lgcc -lnosys"
+		;;
+	psp2)
+		if test "$_dynamic_modules" = no ; then
+			#use link time optimization to further reduce exe size
+			append_var CXXFLAGS "-flto"
+			append_var LDFLAGS "-flto=jobserver"
+			#use linker dead code elimination to further reduce exe size
+			append_var CXXFLAGS "-ffunction-sections -fdata-sections"
+			append_var LDFLAGS "-Wl,--gc-sections"
+		fi
 		;;
 esac
 

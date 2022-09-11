@@ -472,11 +472,11 @@ class AdlMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	AdlMetaEngineDetection() : AdvancedMetaEngineDetection(gameFileDescriptions, sizeof(AdlGameDescription), adlGames, optionsList) { }
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "ADL";
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "adl";
 	}
 

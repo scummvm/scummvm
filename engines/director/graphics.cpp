@@ -197,10 +197,10 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 	if (!p->destRect.contains(x, y))
 		return;
 
-	T dst;
+	T *dst;
 	uint32 tmpDst;
 
-	dst = (T)p->dst->getBasePtr(x, y);
+	dst = (T *)p->dst->getBasePtr(x, y);
 
 	if (p->ms) {
 		if (p->ms->pd->thickness > 1) {
@@ -241,8 +241,8 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		byte rSrc, gSrc, bSrc;
 		byte rDst, gDst, bDst;
 
-		wm->decomposeColor(src, rSrc, gSrc, bSrc);
-		wm->decomposeColor(*dst, rDst, gDst, bDst);
+		wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
+		wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
 
 		double alpha = (double)p->alpha / 100.0;
 		rDst = static_cast<byte>((rSrc * alpha) + (rDst * (1.0 - alpha)));
@@ -255,28 +255,32 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 
  	switch (p->ink) {
 	case kInkTypeBackgndTrans:
-		if ((uint32)src == p->backColor)
-			break;
-		// fall through
+		*dst = (src == (int)p->backColor) ? *dst : src;
+		break;
 	case kInkTypeMatte:
+		// fall through
 	case kInkTypeMask:
 		// Only unmasked pixels make it here, so copy them straight
 	case kInkTypeCopy: {
 		if (p->applyColor) {
-			// TODO: Improve the efficiency of this composition
-			byte rSrc, gSrc, bSrc;
-			byte rDst, gDst, bDst;
-			byte rFor, gFor, bFor;
-			byte rBak, gBak, bBak;
+			if (sizeof(T) == 1) {
+				*dst = src == 0x00 ? p->foreColor : (src == 0xff ? p->backColor : *dst);
+			} else {
+				// TODO: Improve the efficiency of this composition
+				byte rSrc, gSrc, bSrc;
+				byte rDst, gDst, bDst;
+				byte rFor, gFor, bFor;
+				byte rBak, gBak, bBak;
 
-			wm->decomposeColor(src, rSrc, gSrc, bSrc);
-			wm->decomposeColor(*dst, rDst, gDst, bDst);
-			wm->decomposeColor(p->foreColor, rFor, gFor, bFor);
-			wm->decomposeColor(p->backColor, rBak, gBak, bBak);
+				wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
+				wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
+				wm->decomposeColor<T>(p->foreColor, rFor, gFor, bFor);
+				wm->decomposeColor<T>(p->backColor, rBak, gBak, bBak);
 
-			*dst = wm->findBestColor((rSrc | rFor) & (~rSrc | rBak),
-									 (gSrc | gFor) & (~gSrc | gBak),
-									 (bSrc | bFor) & (~bSrc | bBak));
+				*dst = wm->findBestColor((rSrc | rFor) & (~rSrc | rBak),
+										(gSrc | gFor) & (~gSrc | gBak),
+										(bSrc | bFor) & (~bSrc | bBak));
+			}
 		} else {
 			*dst = src;
 		}
@@ -284,20 +288,24 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 	}
 	case kInkTypeNotCopy:
 		if (p->applyColor) {
-			// TODO: Improve the efficiency of this composition
-			byte rSrc, gSrc, bSrc;
-			byte rDst, gDst, bDst;
-			byte rFor, gFor, bFor;
-			byte rBak, gBak, bBak;
+			if (sizeof(T) == 1) {
+				*dst = src == 0x00 ? p->backColor : (src == 0xff ? p->foreColor : src);
+			} else {
+				// TODO: Improve the efficiency of this composition
+				byte rSrc, gSrc, bSrc;
+				byte rDst, gDst, bDst;
+				byte rFor, gFor, bFor;
+				byte rBak, gBak, bBak;
 
-			wm->decomposeColor(src, rSrc, gSrc, bSrc);
-			wm->decomposeColor(*dst, rDst, gDst, bDst);
-			wm->decomposeColor(p->foreColor, rFor, gFor, bFor);
-			wm->decomposeColor(p->backColor, rBak, gBak, bBak);
+				wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
+				wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
+				wm->decomposeColor<T>(p->foreColor, rFor, gFor, bFor);
+				wm->decomposeColor<T>(p->backColor, rBak, gBak, bBak);
 
-			*dst = wm->findBestColor((~rSrc | rFor) & (rSrc | rBak),
-									 (~gSrc | gFor) & (gSrc | gBak),
-									 (~bSrc | bFor) & (bSrc | bBak));
+				*dst = wm->findBestColor((~rSrc | rFor) & (rSrc | rBak),
+										(~gSrc | gFor) & (gSrc | gBak),
+										(~bSrc | bFor) & (bSrc | bBak));
+			}
 		} else {
 			*dst = src;
 		}
@@ -325,8 +333,8 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		byte rSrc, gSrc, bSrc;
 		byte rDst, gDst, bDst;
 
-		wm->decomposeColor(src, rSrc, gSrc, bSrc);
-		wm->decomposeColor(*dst, rDst, gDst, bDst);
+		wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
+		wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
 
 		switch (p->ink) {
 		case kInkTypeBlend:
@@ -361,9 +369,9 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 
 Graphics::MacDrawPixPtr DirectorEngine::getInkDrawPixel() {
 	if (_pixelformat.bytesPerPixel == 1)
-		return &inkDrawPixel<byte *>;
+		return &inkDrawPixel<byte>;
 	else
-		return &inkDrawPixel<uint32 *>;
+		return &inkDrawPixel<uint32>;
 }
 
 void DirectorPlotData::setApplyColor() {

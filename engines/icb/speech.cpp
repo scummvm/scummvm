@@ -24,6 +24,7 @@
  *
  */
 
+#include "engines/icb/icb.h"
 #include "engines/icb/floors.h"
 #include "engines/icb/speech.h"
 #include "engines/icb/fn_routines.h"
@@ -87,14 +88,16 @@ mcodeFunctionReturnCodes _game_session::fn_get_speech_status(int32 &result, int3
 
 	result = total_convs;
 
-	if ((cur_id == player.Fetch_player_id()) && (player.player_status == REMORA))
-		Fatal_error("fn_get_speech_status - player cant start conversation inside remora!");
+	if (g_icb->getGameType() == GType_ICB) {
+		if ((cur_id == player.Fetch_player_id()) && (player.player_status == REMORA))
+			Fatal_error("fn_get_speech_status - player cant start conversation inside remora!");
 
-	if ((cur_id == player.Fetch_player_id()) && (g_oIconMenu->IsActive()))
-		g_oIconMenu->CloseDownIconMenu();
+		if ((cur_id == player.Fetch_player_id()) && (g_oIconMenu->IsActive()))
+			g_oIconMenu->CloseDownIconMenu();
 
-	if ((g_oIconMenu->IsActive()) || (player.player_status == REMORA))
-		result = 1;
+		if ((g_oIconMenu->IsActive()) || (player.player_status == REMORA))
+			result = 1;
+	}
 
 	if ((result) && (cur_id == player.Fetch_player_id()))
 		Tdebug("speech_check.txt", "get status");
@@ -110,7 +113,7 @@ mcodeFunctionReturnCodes _game_session::fn_request_speech(int32 &result, int32 *
 
 	const char *scene_script_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	Zdebug("[%s] fn_request_speech [%s]", object->GetName(), scene_script_name);
+	Zdebug("[%s] fn_request_speech [%s]", CGameObject::GetName(object), scene_script_name);
 
 	// there cannot be any other conversations happening - change to initial spec as it is not used and memory is required
 	if (total_convs) {
@@ -120,14 +123,36 @@ mcodeFunctionReturnCodes _game_session::fn_request_speech(int32 &result, int32 *
 		return IR_REPEAT; // just wait until other is done
 	}
 
-	if (player.player_status == REMORA)
-		return IR_REPEAT;
+	if (g_icb->getGameType() == GType_ICB) {
+		if (player.player_status == REMORA)
+			return IR_REPEAT;
+	} else {
+		// TODO: enable later
+		#if 0
+		if (cur_id == player.Fetch_player_id() && (player.player_status == MAP)) {
+			g_oMap.CloseDownMap();
+		}
+		#endif
+	}
 
 	if ((cur_id == player.Fetch_player_id()) && (g_oIconMenu->IsActive()))
 		g_oIconMenu->CloseDownIconMenu();
 
-	if ((g_oIconMenu->IsActive()) || (player.player_status == REMORA))
-		return IR_REPEAT;
+	if (g_icb->getGameType() == GType_ICB) {
+		if ((g_oIconMenu->IsActive()) || (player.player_status == REMORA))
+			return IR_REPEAT;
+	}
+
+	// TODO: enable later
+	#if 0
+	if (g_icb->getGameType() == GType_ELDORADO && L->mega) {
+		if (L->cur_anim_type == __STAND) {
+			M->idleAnimsOn = TRUE8;
+			M->idlePhase = NEEDS_INIT;
+		} else
+			M->idleAnimsOn = FALSE8;
+	}
+	#endif
 
 	// not started yet
 	S.state = __PENDING;
@@ -139,7 +164,7 @@ mcodeFunctionReturnCodes _game_session::fn_request_speech(int32 &result, int32 *
 	// form name of speech script
 	sprintf(temp_buf, "scenes::%s", scene_script_name);
 
-	S.script_pc = (char *)scripts->Try_fetch_item_by_name(temp_buf); // run init script
+	S.script_pc = (char *)LinkedDataObject::Try_fetch_item_by_name(scripts, temp_buf); // run init script
 
 	//	conversation script doesnt exist
 	if (!S.script_pc)
@@ -182,7 +207,7 @@ mcodeFunctionReturnCodes _game_session::fn_add_talker(int32 &, int32 *params) {
 		Fatal_error("fn_add_talker called but in wrong order");
 
 	// convert the ascii name into an object id
-	talk_id = objects->Fetch_item_number_by_name(object_name);
+	talk_id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	// check for illegal object
 	if (talk_id >= total_objects)
@@ -338,7 +363,7 @@ mcodeFunctionReturnCodes _game_session::fn_converse(int32 &, int32 *) {
 	int32 params;
 	mcodeFunctionReturnCodes ret;
 
-	Zdebug("fn_converse [%s] - uid %d", object->GetName(), L->conversation_uid);
+	Zdebug("fn_converse [%s] - uid %d", CGameObject::GetName(object), L->conversation_uid);
 
 	if (L->conversation_uid == NO_SPEECH_REQUEST) {
 		//		conversation has ended!
@@ -424,7 +449,7 @@ mcodeFunctionReturnCodes _game_session::fn_converse(int32 &, int32 *) {
 void _game_session::Service_speech() {
 	// the system runs all speech scripts
 
-	c_game_object *speech_object;
+	CGame *speech_object;
 	uint32 ret;
 
 	// anything going on?
@@ -452,8 +477,8 @@ void _game_session::Service_speech() {
 	switch (speech_info[CONV_ID].state) {
 	case __PROCESS: // run the script
 		// get the dummy speech object
-		speech_object = (c_game_object *)objects->Fetch_item_by_name("scenes");
-		cur_id = objects->Fetch_item_number_by_name("scenes");
+		speech_object = (CGame *)LinkedDataObject::Fetch_item_by_name(objects, "scenes");
+		cur_id = LinkedDataObject::Fetch_item_number_by_name(objects, "scenes");
 		L = logic_structs[cur_id];
 		I = nullptr;
 		M = nullptr;
@@ -538,13 +563,13 @@ mcodeFunctionReturnCodes _game_session::fn_speak(int32 &, int32 *params) {
 
 	// work out position using speakers position
 	// fetch the speaker
-	speaker_id = objects->Fetch_item_number_by_name(person_name);
+	speaker_id = LinkedDataObject::Fetch_item_number_by_name(objects, person_name);
 	if (speaker_id == PX_LINKED_DATA_FILE_ERROR)
 		Fatal_error("Unable to find object ID for [%s] in fn_speak()", person_name);
 
 	if (text) {
 		// retrieve text line
-		ascii = (char *)text->Try_fetch_item_by_name(text_label);
+		ascii = (char *)LinkedDataObject::Try_fetch_item_by_name(text, text_label);
 
 		if (!ascii)
 			ascii = error;
@@ -787,10 +812,10 @@ mcodeFunctionReturnCodes _game_session::speak_object_face_object(int32 &, int32 
 	const char *target_name = (const char *)MemoryUtil::resolvePtr(params[1]);
 
 	// fetch the speaker
-	speaker_id = objects->Fetch_item_number_by_name(speaker_name);
+	speaker_id = LinkedDataObject::Fetch_item_number_by_name(objects, speaker_name);
 
 	// fetch target
-	tar_id = objects->Fetch_item_number_by_name(target_name);
+	tar_id = LinkedDataObject::Fetch_item_number_by_name(objects, target_name);
 
 	// find next com slot
 	while ((speech_info[0].coms[com_no].active == TRUE8) && (speech_info[0].coms[com_no].id != speaker_id))
@@ -826,7 +851,7 @@ mcodeFunctionReturnCodes _game_session::speak_play_generic_anim(int32 &, int32 *
 	Zdebug("speak_play_generic_anim [%s] to face [%s]", person_name, anim_name);
 
 	// fetch the speaker
-	speaker_id = objects->Fetch_item_number_by_name(person_name);
+	speaker_id = LinkedDataObject::Fetch_item_number_by_name(objects, person_name);
 
 	while ((speech_info[0].coms[com_no].active == TRUE8) && (speech_info[0].coms[com_no].id != speaker_id))
 		com_no++;
@@ -860,7 +885,7 @@ mcodeFunctionReturnCodes _game_session::speak_set_custom(int32 &, int32 *params)
 	const char *custom_name = (const char *)MemoryUtil::resolvePtr(params[1]);
 
 	// fetch the speaker
-	speaker_id = objects->Fetch_item_number_by_name(person_name);
+	speaker_id = LinkedDataObject::Fetch_item_number_by_name(objects, person_name);
 
 	if (speaker_id == -1)
 		Fatal_error("speak_set_custom cant find object [%s]", person_name);
@@ -887,7 +912,7 @@ mcodeFunctionReturnCodes _game_session::speak_preload_custom_anim(int32 &, int32
 #define MM logic_structs[speaker_id]->mega
 
 	// fetch the speaker
-	speaker_id = objects->Fetch_item_number_by_name(mega_name);
+	speaker_id = LinkedDataObject::Fetch_item_number_by_name(objects, mega_name);
 
 	// build that name
 	II->Init_custom_animation(mega_name);
@@ -917,7 +942,7 @@ mcodeFunctionReturnCodes _game_session::speak_play_custom_anim(int32 &, int32 *p
 	const char *anim_name = (const char *)MemoryUtil::resolvePtr(params[1]);
 
 	// fetch the speaker
-	speaker_id = objects->Fetch_item_number_by_name(speaker_name);
+	speaker_id = LinkedDataObject::Fetch_item_number_by_name(objects, speaker_name);
 
 	while ((speech_info[0].coms[com_no].active == TRUE8) && (speech_info[0].coms[com_no].id != speaker_id))
 		com_no++;
@@ -952,7 +977,7 @@ mcodeFunctionReturnCodes _game_session::speak_reverse_custom_anim(int32 &, int32
 	const char *anim_name = (const char *)MemoryUtil::resolvePtr(params[1]);
 
 	// fetch the speaker
-	speaker_id = objects->Fetch_item_number_by_name(speaker_name);
+	speaker_id = LinkedDataObject::Fetch_item_number_by_name(objects, speaker_name);
 
 	while ((speech_info[0].coms[com_no].active == TRUE8) && (speech_info[0].coms[com_no].id != speaker_id))
 		com_no++;

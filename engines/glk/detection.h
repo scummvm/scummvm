@@ -32,11 +32,11 @@ class GlkMetaEngineDetection : public MetaEngineDetection {
 public:
 	GlkMetaEngineDetection() : MetaEngineDetection() {}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Glk";
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "glk";
 	}
 

@@ -404,7 +404,7 @@ void Sound::playSound(int soundID) {
 		stream = Audio::makeRawStream(sound, size, rate, Audio::FLAG_UNSIGNED);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, nullptr, stream, soundID);
 	}
-	// WORKAROUND bug # 1311447
+	// WORKAROUND bug #2221
 	else if (READ_BE_UINT32(ptr) == 0x460e200d) {
 		// This sound resource occurs in the Macintosh version of Monkey Island.
 		// I do now know whether it is used in any place other than the one
@@ -728,21 +728,21 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 		char roomname[10];
 
 		if (offset == 1)
-			strcpy(roomname, "logo");
+			Common::strlcpy(roomname, "logo", sizeof(roomname));
 		else if (offset == 15)
-			strcpy(roomname, "canyon");
+			Common::strlcpy(roomname, "canyon", sizeof(roomname));
 		else if (offset == 17)
-			strcpy(roomname, "pig");
+			Common::strlcpy(roomname, "pig", sizeof(roomname));
 		else if (offset == 18)
-			strcpy(roomname, "derelict");
+			Common::strlcpy(roomname, "derelict", sizeof(roomname));
 		else if (offset == 19)
-			strcpy(roomname, "wreck");
+			Common::strlcpy(roomname, "wreck", sizeof(roomname));
 		else if (offset == 20)
-			strcpy(roomname, "grave");
+			Common::strlcpy(roomname, "grave", sizeof(roomname));
 		else if (offset == 23)
-			strcpy(roomname, "nexus");
+			Common::strlcpy(roomname, "nexus", sizeof(roomname));
 		else if (offset == 79)
-			strcpy(roomname, "newton");
+			Common::strlcpy(roomname, "newton", sizeof(roomname));
 		else {
 			warning("startTalkSound: dig demo: unknown room number: %d", offset);
 			return;
@@ -1193,12 +1193,6 @@ void Sound::pauseSounds(bool pause) {
 	if (_vm->_imuse)
 		_vm->_imuse->pause(pause);
 
-	// Don't pause sounds if the game isn't active
-	// FIXME - this is quite a nasty hack, replace with something cleaner, and w/o
-	// having to access member vars directly!
-	if (!_vm->_roomResource)
-		return;
-
 	_soundsPaused = pause;
 
 #ifdef ENABLE_SCUMM_7_8
@@ -1209,7 +1203,7 @@ void Sound::pauseSounds(bool pause) {
 
 	_mixer->pauseAll(pause);
 
-	if ((_vm->_game.features & GF_AUDIOTRACKS) && _vm->VAR(_vm->VAR_MUSIC_TIMER) > 0) {
+	if ((_vm->_game.features & GF_AUDIOTRACKS) && _vm->VAR_MUSIC_TIMER != 0xFF && _vm->VAR(_vm->VAR_MUSIC_TIMER) > 0) {
 		if (pause)
 			stopCDTimer();
 		else
@@ -1572,6 +1566,14 @@ void Sound::restoreAfterLoad() {
 	}
 }
 
+bool Sound::isAudioDisabled() {
+	if (_vm->_game.version > 6) {
+		return _vm->_imuseDigital->isEngineDisabled();
+	}
+
+	return false;
+}
+
 #pragma mark -
 #pragma mark --- Sound resource handling ---
 #pragma mark -
@@ -1715,7 +1717,7 @@ int ScummEngine::readSoundResource(ResId idx) {
 	case MKTAG('T','A','L','K'):
 	case MKTAG('D','I','G','I'):
 	case MKTAG('C','r','e','a'):
-	case 0x460e200d:	// WORKAROUND bug # 1311447
+	case 0x460e200d:	// WORKAROUND bug #2221
 		_fileHandle->seek(-12, SEEK_CUR);
 		total_size = _fileHandle->readUint32BE();
 		ptr = _res->createResource(rtSound, idx, total_size);
@@ -1754,7 +1756,7 @@ int ScummEngine::readSoundResource(ResId idx) {
 		// files seem to be 11 chars (8.3)
 		char *p = (char *)memchr(buffer, '.', 12);
 		if (!p) p = &buffer[8];
-		strcpy(p, ".dmu");
+		Common::strlcpy(p, ".dmu", sizeof(buffer) - (p - buffer));
 		debugC(DEBUG_SOUND, "FMUS file %s", buffer);
 
 		if (!dmuFile.open(buffer)) {

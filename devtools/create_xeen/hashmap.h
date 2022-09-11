@@ -67,7 +67,7 @@ template<class T> class IteratorImpl;
  * For each used Key type, we need an "size_type hashit(Key,size_type)" function
  * that computes a hash for the given Key object and returns it as an
  * an integer from 0 to hashsize-1, and also an "equality functor".
- * that returns true if if its two arguments are to be considered
+ * that returns true if its two arguments are to be considered
  * equal. Also, we assume that "=" works on Val objects for assignment.
  *
  * If aa is an HashMap<Key,Val>, then space is allocated each time aa[key] is

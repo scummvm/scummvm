@@ -128,7 +128,7 @@ MapTile TileMap::translate(uint index) {
 uint TileMap::untranslate(MapTile &tile) {
 	uint index = 0;
 
-	for (Std::map<uint, MapTile>::iterator i = _tileMap.begin(); i != _tileMap.end(); i++) {
+	for (Common::HashMap<uint, MapTile>::iterator i = _tileMap.begin(); i != _tileMap.end(); i++) {
 		if (i->_value == tile) {
 			index = i->_key;
 			break;

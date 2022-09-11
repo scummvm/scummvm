@@ -492,7 +492,7 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 #endif
 
 //	TODO: Perhaps fix this check, currently doesn't work with PUSH and POP subfunctions
-//	Pepper uses them to to handle the glossary
+//	Pepper uses them to handle the glossary
 //	if ((func != K_MESSAGE_NEXT) && (argc < 2)) {
 //		warning("Message: not enough arguments passed to subfunction %d", func);
 //		return NULL_REG;

@@ -125,7 +125,7 @@ void WidgetTalk::handleEvents() {
 	int oldScrollIndex = _talkScrollIndex;
 	handleScrolling(_talkScrollIndex, NUM_VISIBLE_TALK_LINES, _statementLines.size());
 
-	// Only redraw the window if the the scrollbar position has changed
+	// Only redraw the window if the scrollbar position has changed
 	if (ui._scrollHighlight != oldHighlight || oldScrollIndex != _talkScrollIndex)
 		render(HL_NO_HIGHLIGHTING);
 

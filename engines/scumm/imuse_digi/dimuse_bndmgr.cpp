@@ -94,7 +94,7 @@ int BundleDirCache::matchFile(const char *filename) {
 			_budleDirCache[freeSlot].isCompressed = true;
 		offset = file.readUint32BE();
 
-		strcpy(_budleDirCache[freeSlot].fileName, filename);
+		Common::strlcpy(_budleDirCache[freeSlot].fileName, filename, sizeof(_budleDirCache[freeSlot].fileName));
 		_budleDirCache[freeSlot].numFiles = file.readUint32BE();
 		_budleDirCache[freeSlot].bundleTable = (AudioTable *)malloc(_budleDirCache[freeSlot].numFiles * sizeof(AudioTable));
 		assert(_budleDirCache[freeSlot].bundleTable);
@@ -122,12 +122,11 @@ int BundleDirCache::matchFile(const char *filename) {
 						name[z++] = c;
 
 				name[z] = '\0';
-				strcpy(_budleDirCache[freeSlot].bundleTable[i].filename, name);
+				Common::strlcpy(_budleDirCache[freeSlot].bundleTable[i].filename, name, sizeof(_budleDirCache[freeSlot].bundleTable[i].filename));
 			}
 			_budleDirCache[freeSlot].bundleTable[i].offset = file.readUint32BE();
 			_budleDirCache[freeSlot].bundleTable[i].size = file.readUint32BE();
-			strcpy(_budleDirCache[freeSlot].indexTable[i].filename,
-					_budleDirCache[freeSlot].bundleTable[i].filename);
+			Common::strlcpy(_budleDirCache[freeSlot].indexTable[i].filename, _budleDirCache[freeSlot].bundleTable[i].filename, sizeof(_budleDirCache[freeSlot].indexTable[i].filename));
 			_budleDirCache[freeSlot].indexTable[i].index = i;
 		}
 		qsort(_budleDirCache[freeSlot].indexTable, _budleDirCache[freeSlot].numFiles,
@@ -158,7 +157,7 @@ BundleMgr::~BundleMgr() {
 
 Common::SeekableReadStream *BundleMgr::getFile(const char *filename, int32 &offset, int32 &size) {
 	BundleDirCache::IndexNode target;
-	strcpy(target.filename, filename);
+	Common::strlcpy(target.filename, filename, sizeof(target.filename));
 	BundleDirCache::IndexNode *found = (BundleDirCache::IndexNode *)bsearch(&target, _indexTable, _numFiles,
 			sizeof(BundleDirCache::IndexNode), (int (*)(const void *, const void *))scumm_stricmp);
 	if (found) {

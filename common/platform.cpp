@@ -21,6 +21,7 @@
 
 #include "common/platform.h"
 #include "common/str.h"
+#include "common/algorithm.h"
 
 namespace Common {
 
@@ -118,6 +119,17 @@ const char *getPlatformDescription(Platform id) {
 			return l->description;
 	}
 	return l->description;
+}
+
+List<String> getPlatformList() {
+	List<String> list;
+
+	for (const PlatformDescription *l = g_platforms; l->code; ++l)
+		list.push_back(l->code2);
+
+	 Common::sort(list.begin(), list.end());
+
+	 return list;
 }
 
 } // End of namespace Common

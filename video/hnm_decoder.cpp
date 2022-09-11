@@ -27,16 +27,23 @@
 #include "common/textconsole.h"
 
 #include "audio/decoders/raw.h"
+#include "audio/decoders/apc.h"
+
+#include "image/codecs/hlz.h"
+#include "image/codecs/hnm.h"
 
 #include "video/hnm_decoder.h"
-#include "image/codecs/hlz.h"
 
 namespace Video {
 
-// When no sound display a frame every 80ms
-HNMDecoder::HNMDecoder(bool loop, byte *initialPalette) : _regularFrameDelayMs(80),
-	_videoTrack(nullptr), _audioTrack(nullptr), _stream(nullptr),
-	_loop(loop), _initialPalette(initialPalette), _dataBuffer(nullptr), _dataBufferAlloc(0) {
+HNMDecoder::HNMDecoder(const Graphics::PixelFormat &format, bool loop,
+                       byte *initialPalette) : _regularFrameDelayMs(uint32(-1)),
+	_videoTrack(nullptr), _audioTrack(nullptr), _stream(nullptr), _format(format),
+	_loop(loop), _initialPalette(initialPalette), _alignedChunks(false),
+	_dataBuffer(nullptr), _dataBufferAlloc(0) {
+	if (initialPalette && format.bytesPerPixel >= 2) {
+		error("Invalid pixel format while initial palette is set");
+	}
 }
 
 HNMDecoder::~HNMDecoder() {
@@ -50,17 +57,31 @@ HNMDecoder::~HNMDecoder() {
 bool HNMDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
+	// Take the ownership of stream immediately
+	_stream = stream;
+
 	uint32 tag = stream->readUint32BE();
 
-	/* For now, only HNM4 and UBB2, HNM6 in the future */
+	/* All HNM versions are supported */
 	if (tag != MKTAG('H', 'N', 'M', '4') &&
-	    tag != MKTAG('U', 'B', 'B', '2')) {
+	    tag != MKTAG('U', 'B', 'B', '2') &&
+	    tag != MKTAG('H', 'N', 'M', '6')) {
 		close();
 		return false;
 	}
 
-	//uint32 ukn = stream->readUint32BE();
-	stream->skip(4);
+	byte audioflags = 0;
+	uint16 soundBits = 0, soundFormat = 0;
+	if (tag == MKTAG('H', 'N', 'M', '6')) {
+		//uint16 ukn6_1 = stream->readUint16LE();
+		stream->skip(2);
+		audioflags = stream->readByte();
+		//byte bpp = stream->readByte();
+		stream->skip(1);
+	} else {
+		//uint32 ukn = stream->readUint32BE();
+		stream->skip(4);
+	}
 	uint16 width = stream->readUint16LE();
 	uint16 height = stream->readUint16LE();
 	//uint32 filesize = stream->readUint32LE();
@@ -68,8 +89,15 @@ bool HNMDecoder::loadStream(Common::SeekableReadStream *stream) {
 	uint32 frameCount = stream->readUint32LE();
 	//uint32 tabOffset = stream->readUint32LE();
 	stream->skip(4);
-	uint16 soundBits = stream->readUint16LE();
-	uint16 soundFormat = stream->readUint16LE();
+	if (tag == MKTAG('H', 'N', 'M', '4') ||
+	    tag == MKTAG('U', 'B', 'B', '2')) {
+		soundBits = stream->readUint16LE();
+		soundFormat = stream->readUint16LE();
+	} else {
+		//uint16 ukn6_2 = stream->readUint16LE();
+		//uint16 ukn6_3 = stream->readUint16LE();
+		stream->skip(4);
+	}
 	uint32 frameSize = stream->readUint32LE();
 
 	byte unknownStr[16];
@@ -84,10 +112,26 @@ bool HNMDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	// When no audio use a factor of 1 for audio timestamp
 	uint32 audioSampleRate = 1;
+	// When no sound display a frame every X ms if not overriden
+	if (_regularFrameDelayMs == uint32(-1)) {
+		if (tag == MKTAG('H', 'N', 'M', '4') ||
+		    tag == MKTAG('U', 'B', 'B', '2')) {
+			// For HNM4&5 it's every 80 ms
+			_regularFrameDelayMs = 80;
+		} else if (tag == MKTAG('H', 'N', 'M', '6')) {
+			// For HNM6 it's every 66 ms
+			_regularFrameDelayMs = 66;
+		}
+	}
 
 	_videoTrack = nullptr;
 	_audioTrack = nullptr;
 	if (tag == MKTAG('H', 'N', 'M', '4')) {
+		if (_format.bytesPerPixel >= 2) {
+			// Bad constructor used
+			close();
+			return false;
+		}
 		if (soundFormat == 2 && soundBits != 0) {
 			// HNM4 is Mono 22050Hz
 			_audioTrack = new DPCMAudioTrack(soundFormat, soundBits, 22050, false, getSoundType());
@@ -97,6 +141,11 @@ bool HNMDecoder::loadStream(Common::SeekableReadStream *stream) {
 		                                 _regularFrameDelayMs, audioSampleRate,
 		                                 _initialPalette);
 	} else if (tag == MKTAG('U', 'B', 'B', '2')) {
+		if (_format.bytesPerPixel >= 2) {
+			// Bad constructor used
+			close();
+			return false;
+		}
 		if (soundFormat == 2 && soundBits == 0) {
 			// UBB2 is Stereo 22050Hz
 			_audioTrack = new DPCMAudioTrack(soundFormat, 16, 22050, true, getSoundType());
@@ -105,6 +154,21 @@ bool HNMDecoder::loadStream(Common::SeekableReadStream *stream) {
 		_videoTrack = new HNM5VideoTrack(width, height, frameSize, frameCount,
 		                                 _regularFrameDelayMs, audioSampleRate,
 		                                 _initialPalette);
+	} else if (tag == MKTAG('H', 'N', 'M', '6')) {
+		if (_format.bytesPerPixel < 2) {
+			// Bad constructor used or bad format given
+			close();
+			return false;
+		}
+		_alignedChunks = true;
+		if (audioflags & 1) {
+			byte stereo = (audioflags >> 7) & 1;
+			audioSampleRate = ((audioflags >> 4) & 6) * 11025;
+			_audioTrack = new APCAudioTrack(audioSampleRate, stereo, getSoundType());
+		}
+		_videoTrack = new HNM6VideoTrack(width, height, frameSize, frameCount,
+		                                 _regularFrameDelayMs, audioSampleRate,
+		                                 _format);
 	} else {
 		// We should never be here
 		close();
@@ -114,8 +178,6 @@ bool HNMDecoder::loadStream(Common::SeekableReadStream *stream) {
 	if (_audioTrack) {
 		addTrack(_audioTrack);
 	}
-
-	_stream = stream;
 
 	return true;
 }
@@ -183,14 +245,20 @@ void HNMDecoder::readNextPacket() {
 			error("Chunk has a bogus size");
 		}
 
-		if (chunkType == MKTAG16('S', 'D')) {
+		if (chunkType == MKTAG16('S', 'D') ||
+		    chunkType == MKTAG16('A', 'A') ||
+		    chunkType == MKTAG16('B', 'B')) {
 			if (_audioTrack) {
-				audioNumSamples = _audioTrack->decodeSound(data_p, chunkSize - 8);
+				audioNumSamples = _audioTrack->decodeSound(chunkType, data_p, chunkSize - 8);
 			} else {
 				warning("Got audio data without an audio track");
 			}
 		} else {
 			_videoTrack->decodeChunk(data_p, chunkSize - 8, chunkType, flags);
+		}
+
+		if (_alignedChunks) {
+			chunkSize = ((chunkSize + 3) / 4) * 4;
 		}
 
 		data_p += (chunkSize - 8);
@@ -204,27 +272,6 @@ HNMDecoder::HNMVideoTrack::HNMVideoTrack(uint32 frameCount,
 	_frameCount(frameCount), _curFrame(-1), _regularFrameDelayMs(regularFrameDelayMs),
 	_nextFrameStartTime(0, audioSampleRate) {
 	restart();
-}
-
-void HNMDecoder::HNMVideoTrack::newFrame(uint32 frameDelay) {
-	// Frame done
-	_curFrame++;
-
-	// Add frameDelay if we had no sound
-	// We can't rely on a detection in the header as some soundless HNM indicate they have
-	if (frameDelay == uint32(-1)) {
-		_nextFrameStartTime = _nextFrameStartTime.addMsecs(_regularFrameDelayMs);
-		return;
-	}
-
-	// HNM decoders use sound double buffering to pace the frames
-	// First frame is loaded in first buffer, second frame in second buffer
-	// It's only for third frame that we wait for the first buffer to be free
-	// It's presentation time is then delayed by the number of sound samples in the first frame
-	if (_lastFrameDelaySamps) {
-		_nextFrameStartTime = _nextFrameStartTime.addFrames(_lastFrameDelaySamps);
-	}
-	_lastFrameDelaySamps = frameDelay;
 }
 
 HNMDecoder::HNM45VideoTrack::HNM45VideoTrack(uint32 width, uint32 height, uint32 frameSize,
@@ -258,6 +305,27 @@ HNMDecoder::HNM45VideoTrack::~HNM45VideoTrack() {
 	_frameBufferC = nullptr;
 	delete[] _frameBufferP;
 	_frameBufferP = nullptr;
+}
+
+void HNMDecoder::HNM45VideoTrack::newFrame(uint32 frameDelay) {
+	// Frame done
+	_curFrame++;
+
+	// Add regular frame delay if we had no sound
+	// We can't rely on a detection in the header as some soundless HNM indicate they have
+	if (frameDelay == uint32(-1)) {
+		_nextFrameStartTime = _nextFrameStartTime.addMsecs(_regularFrameDelayMs);
+		return;
+	}
+
+	// HNM decoders use sound double buffering to pace the frames
+	// First frame is loaded in first buffer, second frame in second buffer
+	// It's only for third frame that we wait for the first buffer to be free
+	// It's presentation time is then delayed by the number of sound samples in the first frame
+	if (_lastFrameDelaySamps) {
+		_nextFrameStartTime = _nextFrameStartTime.addFrames(_lastFrameDelaySamps);
+	}
+	_lastFrameDelaySamps = frameDelay;
 }
 
 void HNMDecoder::HNM45VideoTrack::decodePalette(byte *data, uint32 size) {
@@ -972,8 +1040,67 @@ void HNMDecoder::HNM5VideoTrack::decodeFrame(byte *data, uint32 size) {
 	_surface.setPixels(_frameBufferC);
 }
 
+HNMDecoder::HNM6VideoTrack::HNM6VideoTrack(uint32 width, uint32 height, uint32 frameSize,
+        uint32 frameCount, uint32 regularFrameDelayMs, uint32 audioSampleRate,
+        const Graphics::PixelFormat &format) :
+	HNMVideoTrack(frameCount, regularFrameDelayMs, audioSampleRate),
+	_decoder(Image::createHNM6Decoder(width, height, format, frameSize, true)),
+	_surface(nullptr) {
+}
+
+HNMDecoder::HNM6VideoTrack::~HNM6VideoTrack() {
+	delete _decoder;
+}
+
+uint16 HNMDecoder::HNM6VideoTrack::getWidth() const {
+	return _decoder->getWidth();
+}
+
+uint16 HNMDecoder::HNM6VideoTrack::getHeight() const {
+	return _decoder->getHeight();
+}
+
+Graphics::PixelFormat HNMDecoder::HNM6VideoTrack::getPixelFormat() const {
+	return _decoder->getPixelFormat();
+}
+
+void HNMDecoder::HNM6VideoTrack::decodeChunk(byte *data, uint32 size,
+        uint16 chunkType, uint16 flags) {
+	if (chunkType == MKTAG16('I', 'X') ||
+	    chunkType == MKTAG16('I', 'W')) {
+		Common::MemoryReadStream stream(data, size);
+		_surface = _decoder->decodeFrame(stream);
+	} else {
+		error("HNM6: Got %d chunk: size %d", chunkType, size);
+	}
+}
+
+void HNMDecoder::HNM6VideoTrack::newFrame(uint32 frameDelay) {
+	// Frame done
+	_curFrame++;
+
+	// In HNM6 first frame contains the sound for the 32 following frames (pre-buffering)
+	// Then other frames contain constant size sound chunks except for the 32 last ones
+	if (!_lastFrameDelaySamps) {
+		// Add regular frame delay if we had no sound
+		if (frameDelay == uint32(-1)) {
+			_nextFrameStartTime = _nextFrameStartTime.addMsecs(_regularFrameDelayMs);
+			return;
+		}
+
+		assert((frameDelay & 31) == 0);
+		_lastFrameDelaySamps = frameDelay / 32;
+		_nextFrameStartTime = _nextFrameStartTime.addFrames(_lastFrameDelaySamps);
+	} else {
+		if (frameDelay != uint32(-1)) {
+			assert(frameDelay == _lastFrameDelaySamps);
+		}
+		_nextFrameStartTime = _nextFrameStartTime.addFrames(_lastFrameDelaySamps);
+	}
+}
+
 HNMDecoder::DPCMAudioTrack::DPCMAudioTrack(uint16 format, uint16 bits, uint sampleRate, bool stereo,
-        Audio::Mixer::SoundType soundType) : AudioTrack(soundType), _audioStream(nullptr),
+        Audio::Mixer::SoundType soundType) : HNMAudioTrack(soundType), _audioStream(nullptr),
 	_gotLUT(false), _lastSampleL(0), _lastSampleR(0), _sampleRate(sampleRate), _stereo(stereo) {
 	if (bits != 16) {
 		error("Unsupported audio bits");
@@ -989,7 +1116,7 @@ HNMDecoder::DPCMAudioTrack::~DPCMAudioTrack() {
 	delete _audioStream;
 }
 
-uint32 HNMDecoder::DPCMAudioTrack::decodeSound(byte *data, uint32 size) {
+uint32 HNMDecoder::DPCMAudioTrack::decodeSound(uint16 chunkType, byte *data, uint32 size) {
 	if (!_gotLUT) {
 		if (size < 256 * sizeof(*_lut)) {
 			error("Invalid first sound chunk");
@@ -1048,6 +1175,41 @@ uint32 HNMDecoder::DPCMAudioTrack::decodeSound(byte *data, uint32 size) {
 	}
 
 	_audioStream->queueBuffer((byte *)out, size * sizeof(*out), DisposeAfterUse::YES, flags);
+	return numSamples;
+}
+
+HNMDecoder::APCAudioTrack::APCAudioTrack(uint sampleRate, byte stereo,
+        Audio::Mixer::SoundType soundType) : HNMAudioTrack(soundType),
+	_audioStream(Audio::makeAPCStream(sampleRate, stereo)) {
+}
+
+HNMDecoder::APCAudioTrack::~APCAudioTrack() {
+	delete _audioStream;
+}
+
+Audio::AudioStream *HNMDecoder::APCAudioTrack::getAudioStream() const {
+	return _audioStream;
+}
+
+uint32 HNMDecoder::APCAudioTrack::decodeSound(uint16 chunkType, byte *data, uint32 size) {
+	if (chunkType == MKTAG16('A', 'A')) {
+		Common::MemoryReadStream *stream = new Common::MemoryReadStream(data, size);
+		if (!_audioStream->init(*stream)) {
+			error("Invalid APC stream");
+		}
+		// Remove header for sample counting
+		size -= stream->pos();
+		_audioStream->queuePacket(stream);
+		// stream is freed now
+		stream = nullptr;
+	} else if (chunkType == MKTAG16('B', 'B')) {
+		_audioStream->queuePacket(new Common::MemoryReadStream(data, size));
+	}
+	// 2 4-bit samples in one byte
+	uint32 numSamples = size;
+	if (!_audioStream->isStereo()) {
+		numSamples *= 2;
+	}
 	return numSamples;
 }
 

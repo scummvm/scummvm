@@ -56,11 +56,11 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "pink";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Pink Panther";
 	}
 

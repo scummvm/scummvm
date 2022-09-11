@@ -37,12 +37,12 @@ namespace Scumm {
 /* Start executing script 'script' with the given parameters */
 void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, int *lvarptr, int cycle) {
 	ScriptSlot *s;
-	//byte *scriptPtr;
+
 	uint32 scriptOffs;
 	byte scriptType;
 	int slot;
 
-	if (!script)
+ 	if (!script)
 		return;
 
 	if (!recursive)
@@ -641,10 +641,10 @@ void ScummEngine::writeVar(uint var, int value) {
 			// look at the target specific settings, assuming that any global
 			// value is likely to be bogus. See also bug #4008.
 			if (ConfMan.hasKey("talkspeed", _targetName)) {
-				value = getTalkSpeed();
+				value = 9 - getTalkSpeed();
 			} else {
 				// Save the new talkspeed value to ConfMan
-				setTalkSpeed(value);
+				setTalkSpeed(9 - value);
 			}
 		}
 
@@ -688,8 +688,8 @@ void ScummEngine::writeVar(uint var, int value) {
 
 		// Unlike the PC version, the Macintosh version of Loom appears
 		// to hard-code the drawing of the practice mode box. This is
-		// handled by script 27 in both versions, but wherease the PC
-		// version draws the notes, the the Mac version this just sets
+		// handled by script 27 in both versions, but whereas the PC
+		// version draws the notes, the Mac version just sets
 		// variables 50 and 54.
 		//
 		// In this script, the variables are set to the same value but

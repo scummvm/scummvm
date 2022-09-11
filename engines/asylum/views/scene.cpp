@@ -456,6 +456,21 @@ bool Scene::action(AsylumAction a) {
 			getActor()->changeStatus(kActorStatusEnabled);
 		}
 		break;
+
+	case kAsylumActionShowMenu:
+		if (getSpeech()->getSoundResourceId()) {
+			getScene()->stopSpeech();
+		} else {
+			if (getCursor()->isHidden())
+				break;
+
+			if (!_vm->checkGameVersion("Demo")) {
+				_savedScreen.copyFrom(getScreen()->getSurface());
+				memcpy(_savedPalette, getScreen()->getPalette(), sizeof(_savedPalette));
+				_vm->switchEventHandler(_vm->menu());
+			}
+		}
+		break;
 	}
 
 	return true;
@@ -477,23 +492,6 @@ bool Scene::key(const AsylumEvent &evt) {
 	case Common::KEYCODE_RETURN:
 		// TODO add support for debug commands
 		warning("[Scene::key] debug command handling not implemented!");
-		break;
-
-	case Common::KEYCODE_ESCAPE:
-		// TODO add support for debug commands
-
-		if (getSpeech()->getSoundResourceId()) {
-			getScene()->stopSpeech();
-		} else {
-			if (getCursor()->isHidden())
-				break;
-
-			if (!_vm->checkGameVersion("Demo")) {
-				_savedScreen.copyFrom(getScreen()->getSurface());
-				memcpy(_savedPalette, getScreen()->getPalette(), sizeof(_savedPalette));
-				_vm->switchEventHandler(_vm->menu());
-			}
-		}
 		break;
 
 	case Common::KEYCODE_LEFTBRACKET:

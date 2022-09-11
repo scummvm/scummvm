@@ -50,11 +50,11 @@ public:
 	TinselMetaEngineDetection() : AdvancedMetaEngineDetection(Tinsel::gameDescriptions, sizeof(Tinsel::TinselGameDescription), tinselGames) {
 	}
 
-	const char *getEngineId() const  override{
+	const char *getName() const  override{
 		return "tinsel";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Tinsel";
 	}
 

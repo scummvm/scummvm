@@ -34,7 +34,7 @@ namespace Nuvie {
 CustomSfxManager::CustomSfxManager(Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m) {
 	Std::string cfg_filename;
 
-	sfx_map = new Std::map<uint16, uint16>();
+	sfx_map = new Common::HashMap<uint16, uint16>();
 
 	config->pathFromValue("config/ultima6/sfxdir", "", custom_filepath);
 
@@ -48,7 +48,7 @@ CustomSfxManager::~CustomSfxManager() {
 }
 
 
-bool CustomSfxManager::loadSfxMapFile(Std::string cfg_filename, Std::map<uint16, uint16> *m) {
+bool CustomSfxManager::loadSfxMapFile(Std::string cfg_filename, Common::HashMap<uint16, uint16> *m) {
 	char seps[] = ";\r\n";
 	char *token1;
 	char *token2;
@@ -84,7 +84,7 @@ bool CustomSfxManager::playSfx(SfxIdType sfx_id, uint8 volume) {
 
 
 bool CustomSfxManager::playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *handle, uint8 volume) {
-	Std::map < uint16, uint16 >::iterator it;
+	Common::HashMap < uint16, uint16 >::iterator it;
 
 	it = sfx_map->find((uint16)sfx_id);
 	if (it != sfx_map->end()) {

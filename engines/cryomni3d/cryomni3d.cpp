@@ -37,6 +37,7 @@
 #include "cryomni3d/datstream.h"
 
 #include "cryomni3d/image/hlz.h"
+#include "cryomni3d/image/hnm.h"
 #include "video/hnm_decoder.h"
 
 namespace CryOmni3D {
@@ -134,11 +135,15 @@ void CryOmni3DEngine::playHNM(const Common::String &filename, Audio::Mixer::Soun
 	const char *const extensions[] = { "hns", "hnm", "ubb", nullptr };
 	Common::String fname(prepareFileName(filename, extensions));
 
-	byte *currentPalette = new byte[256 * 3];
-	g_system->getPaletteManager()->grabPalette(currentPalette, 0, 256);
+	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
+	byte *currentPalette = nullptr;
+	if (screenFormat.bytesPerPixel == 1) {
+		currentPalette = new byte[256 * 3];
+		g_system->getPaletteManager()->grabPalette(currentPalette, 0, 256);
+	}
 
 	// Pass the ownership of currentPalette to HNMDecoder
-	Video::VideoDecoder *videoDecoder = new Video::HNMDecoder(false, currentPalette);
+	Video::VideoDecoder *videoDecoder = new Video::HNMDecoder(screenFormat, false, currentPalette);
 	videoDecoder->setSoundType(soundType);
 
 	if (!videoDecoder->loadFile(fname)) {

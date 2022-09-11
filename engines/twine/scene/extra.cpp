@@ -215,7 +215,7 @@ int Extra::getBonusSprite(BonusParameter bonusParameter) const {
 	int8 bonusSprite = bonusSprites[bonusIndex];
 	// if bonus is magic an no magic level yet, then give life points
 	if (!_engine->_gameState->_magicLevelIdx && bonusSprite == SPRITEHQR_MAGICPOINTS) {
-		bonusSprite = SPRITEHQR_KASHES;
+		bonusSprite = SPRITEHQR_LIFEPOINTS;
 	}
 
 	return bonusSprite;
@@ -231,7 +231,7 @@ int32 Extra::addExtraBonus(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle
 		extra->type = ExtraType::STOP_COL | ExtraType::TAKABLE | ExtraType::WAIT_SOME_TIME;
 
 		if (type != SPRITEHQR_KEY) {
-			extra->type = ExtraType::TIME_OUT | ExtraType::TAKABLE | ExtraType::FLASH | ExtraType::STOP_COL | ExtraType::WAIT_SOME_TIME;
+			extra->type |= ExtraType::TIME_OUT | ExtraType::FLASH;
 		}
 
 		extra->pos.x = x;
@@ -241,7 +241,7 @@ int32 Extra::addExtraBonus(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle
 		throwExtra(extra, xAngle, yAngle, 40, ToAngle(15));
 
 		extra->strengthOfHit = 0;
-		extra->payload.lifeTime = 1000;
+		extra->payload.lifeTime = TO_SECONDS(20);
 		extra->info1 = bonusAmount;
 		return i;
 	}

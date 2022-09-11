@@ -45,9 +45,9 @@
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
-#include "engines/wintermute/base/gfx/shadow_volume.h"
+#include "engines/wintermute/base/gfx/3dshadow_volume.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
-#include "engines/wintermute/base/gfx/x/modelx.h"
+#include "engines/wintermute/base/gfx/xmodel.h"
 #include "engines/wintermute/base/particles/part_emitter.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
@@ -124,7 +124,7 @@ AdActor3DX::~AdActor3DX() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor3DX::update() {
-	if (!_modelX) {
+	if (!_xmodel) {
 		return true;
 	}
 
@@ -134,7 +134,7 @@ bool AdActor3DX::update() {
 
 	AdGame *adGame = (AdGame *)_gameRef;
 
-	if (_state == STATE_READY && _stateAnimChannel >= 0 && _modelX) {
+	if (_state == STATE_READY && _stateAnimChannel >= 0 && _xmodel) {
 		_stateAnimChannel = -1;
 	}
 
@@ -145,7 +145,7 @@ bool AdActor3DX::update() {
 
 		// kill talking anim
 		if (_talkAnimChannel > 0)
-			_modelX->stopAnim(_talkAnimChannel, _defaultStopTransTime);
+			_xmodel->stopAnim(_talkAnimChannel, _defaultStopTransTime);
 	}
 
 	// update state
@@ -161,9 +161,9 @@ bool AdActor3DX::update() {
 				// disabled in original code
 			} else if (_directTurnMode != DIRECT_TURN_NONE) {
 				if (!_directTurnAnim.empty()) {
-					_modelX->playAnim(0, _directTurnAnim, _defaultTransTime, false, _defaultStopTransTime);
+					_xmodel->playAnim(0, _directTurnAnim, _defaultTransTime, false, _defaultStopTransTime);
 				} else {
-					_modelX->playAnim(0, _idleAnimName, _defaultTransTime, false, _defaultStopTransTime);
+					_xmodel->playAnim(0, _idleAnimName, _defaultTransTime, false, _defaultStopTransTime);
 				}
 			}
 
@@ -215,14 +215,14 @@ bool AdActor3DX::update() {
 
 				if (canWalk) {
 					if (!_directWalkAnim.empty()) {
-						_modelX->playAnim(0, _directWalkAnim, _defaultTransTime, false, _defaultStopTransTime);
+						_xmodel->playAnim(0, _directWalkAnim, _defaultTransTime, false, _defaultStopTransTime);
 					} else {
-						_modelX->playAnim(0, _walkAnimName, _defaultTransTime, false, _defaultStopTransTime);
+						_xmodel->playAnim(0, _walkAnimName, _defaultTransTime, false, _defaultStopTransTime);
 					}
 
 					_posVector = newPos;
 				} else {
-					_modelX->playAnim(0, _idleAnimName, _defaultTransTime, false, _defaultStopTransTime);
+					_xmodel->playAnim(0, _idleAnimName, _defaultTransTime, false, _defaultStopTransTime);
 				}
 			}
 		}
@@ -231,9 +231,9 @@ bool AdActor3DX::update() {
 	//////////////////////////////////////////////////////////////////////////
 	case STATE_TURNING:
 		if (_turningLeft) {
-			_modelX->playAnim(0, _turnLeftAnimName, _defaultTransTime, false, _defaultStopTransTime);
+			_xmodel->playAnim(0, _turnLeftAnimName, _defaultTransTime, false, _defaultStopTransTime);
 		} else {
-			_modelX->playAnim(0, _turnRightAnimName, _defaultTransTime, false, _defaultStopTransTime);
+			_xmodel->playAnim(0, _turnRightAnimName, _defaultTransTime, false, _defaultStopTransTime);
 		}
 
 		if (turnToStep(_angVelocity)) {
@@ -245,7 +245,7 @@ bool AdActor3DX::update() {
 	//////////////////////////////////////////////////////////////////////////
 	case STATE_SEARCHING_PATH:
 		// keep asking scene for the path
-		_modelX->playAnim(0, _idleAnimName, _defaultTransTime, false, _defaultStopTransTime);
+		_xmodel->playAnim(0, _idleAnimName, _defaultTransTime, false, _defaultStopTransTime);
 
 		if (adGame->_scene->_2DPathfinding) {
 			if (adGame->_scene->getPath(BasePoint(_posX, _posY), *_targetPoint2D, _path2D, this)) {
@@ -260,7 +260,7 @@ bool AdActor3DX::update() {
 	//////////////////////////////////////////////////////////////////////////
 	case STATE_WAITING_PATH:
 		// wait until the scene finished the path
-		_modelX->playAnim(0, _idleAnimName, _defaultTransTime, false, _defaultStopTransTime);
+		_xmodel->playAnim(0, _idleAnimName, _defaultTransTime, false, _defaultStopTransTime);
 		if (adGame->_scene->_2DPathfinding) {
 			if (_path2D->_ready) {
 				followPath2D();
@@ -280,7 +280,7 @@ bool AdActor3DX::update() {
 			getNextStep3D();
 		}
 
-		_modelX->playAnim(0, _walkAnimName, _defaultTransTime, false, _defaultStopTransTime);
+		_xmodel->playAnim(0, _walkAnimName, _defaultTransTime, false, _defaultStopTransTime);
 		break;
 
 	//////////////////////////////////////////////////////////////////////////
@@ -293,7 +293,7 @@ bool AdActor3DX::update() {
 
 		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) ||
 		                (!_sentence->_sound && _sentence->_duration <= _gameRef->getTimer()->getTime() - _sentence->_startTime);
-		if (_tempSkelAnim == nullptr || !_modelX->isAnimPending(0, _tempSkelAnim) || timeIsUp) {
+		if (_tempSkelAnim == nullptr || !_xmodel->isAnimPending(0, _tempSkelAnim) || timeIsUp) {
 			if (timeIsUp) {
 				_sentence->finish();
 				_tempSkelAnim = nullptr;
@@ -301,23 +301,23 @@ bool AdActor3DX::update() {
 				_nextState = STATE_READY;
 
 				if (_talkAnimChannel > 0)
-					_modelX->stopAnim(_talkAnimChannel, _defaultStopTransTime);
+					_xmodel->stopAnim(_talkAnimChannel, _defaultStopTransTime);
 			} else {
 				_tempSkelAnim = _sentence->getNextStance();
 				if (_tempSkelAnim)
-					_modelX->playAnim(0, _tempSkelAnim, _defaultTransTime, true, _defaultStopTransTime);
+					_xmodel->playAnim(0, _tempSkelAnim, _defaultTransTime, true, _defaultStopTransTime);
 				else {
-					if (_modelX->getAnimationSetByName(_talkAnimName))
-						_modelX->playAnim(_talkAnimChannel, _talkAnimName, _defaultTransTime, false, _defaultStopTransTime);
+					if (_xmodel->getAnimationSetByName(_talkAnimName))
+						_xmodel->playAnim(_talkAnimChannel, _talkAnimName, _defaultTransTime, false, _defaultStopTransTime);
 					else
-						_modelX->playAnim(0, _idleAnimName, _defaultTransTime, false, _defaultStopTransTime);
+						_xmodel->playAnim(0, _idleAnimName, _defaultTransTime, false, _defaultStopTransTime);
 				}
 
 				((AdGame *)_gameRef)->addSentence(_sentence);
 			}
 		} else {
 			if (_tempSkelAnim) {
-				_modelX->playAnim(0, _tempSkelAnim, _defaultTransTime, false, _defaultStopTransTime);
+				_xmodel->playAnim(0, _tempSkelAnim, _defaultTransTime, false, _defaultStopTransTime);
 			}
 
 			((AdGame *)_gameRef)->addSentence(_sentence);
@@ -327,13 +327,13 @@ bool AdActor3DX::update() {
 
 	case STATE_PLAYING_ANIM:
 		if (_stateAnimChannel != 0) {
-			_modelX->playAnim(0, _idleAnimName, _defaultTransTime, false, _defaultStopTransTime);
+			_xmodel->playAnim(0, _idleAnimName, _defaultTransTime, false, _defaultStopTransTime);
 		}
 		break;
 
 	//////////////////////////////////////////////////////////////////////////
 	case STATE_READY:
-		_modelX->playAnim(0, _idleAnimName, _defaultTransTime, false, _defaultStopTransTime);
+		_xmodel->playAnim(0, _idleAnimName, _defaultTransTime, false, _defaultStopTransTime);
 		break;
 
 	case STATE_IDLE:
@@ -345,7 +345,7 @@ bool AdActor3DX::update() {
 	} // switch(_state)
 
 	// finished playing animation?
-	if (_state == STATE_PLAYING_ANIM && !_modelX->isAnimPending(_stateAnimChannel)) {
+	if (_state == STATE_PLAYING_ANIM && !_xmodel->isAnimPending(_stateAnimChannel)) {
 		_state = _nextState;
 		_nextState = STATE_READY;
 	}
@@ -363,8 +363,8 @@ bool AdActor3DX::update() {
 		afterMove();
 	}
 
-	if (_modelX) {
-		_modelX->update();
+	if (_xmodel) {
+		_xmodel->update();
 
 		if (_shadowModel) {
 			_shadowModel->update();
@@ -379,7 +379,7 @@ bool AdActor3DX::update() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor3DX::display() {
-	if (!_modelX) {
+	if (!_xmodel) {
 		return true;
 	}
 
@@ -402,16 +402,16 @@ bool AdActor3DX::display() {
 
 	_gameRef->_renderer3D->setSpriteBlendMode(_blendMode);
 	_gameRef->_renderer3D->setWorldTransform(_worldMatrix);
-	_modelX->_lastWorldMat = _worldMatrix;
+	_xmodel->_lastWorldMat = _worldMatrix;
 
-	bool res = _modelX->render();
+	bool res = _xmodel->render();
 
 	if (_registrable) {
-		_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef, this, _modelX,
-		                                                      _modelX->_boundingRect.left,
-		                                                      _modelX->_boundingRect.top,
-		                                                      _modelX->_boundingRect.right - _modelX->_boundingRect.left,
-		                                                      _modelX->_boundingRect.bottom - _modelX->_boundingRect.top,
+		_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef, this, _xmodel,
+		                                                      _xmodel->_boundingRect.left,
+		                                                      _xmodel->_boundingRect.top,
+		                                                      _xmodel->_boundingRect.right - _xmodel->_boundingRect.left,
+		                                                      _xmodel->_boundingRect.bottom - _xmodel->_boundingRect.top,
 		                                                      true));
 	}
 
@@ -431,7 +431,7 @@ bool AdActor3DX::display() {
 	// not sure what to do about it right now
 	// accessibility
 	//	if (_gameRef->_accessMgr->GetActiveObject() == this) {
-	//		_gameRef->_accessMgr->SetHintRect(&_modelX->m_BoundingRect);
+	//		_gameRef->_accessMgr->SetHintRect(&_xmodel->m_BoundingRect);
 	//	}
 
 	return res;
@@ -439,7 +439,7 @@ bool AdActor3DX::display() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor3DX::renderModel() {
-	if (!_modelX) {
+	if (!_xmodel) {
 		return true;
 	}
 
@@ -449,14 +449,14 @@ bool AdActor3DX::renderModel() {
 	if (_shadowModel) {
 		res = _shadowModel->render();
 	} else {
-		res = _modelX->render();
+		res = _xmodel->render();
 	}
 
 	if (!res) {
 		return false;
 	}
 
-	_modelX->_lastWorldMat = _worldMatrix;
+	_xmodel->_lastWorldMat = _worldMatrix;
 
 	displayAttachments(false);
 	return res;
@@ -464,7 +464,7 @@ bool AdActor3DX::renderModel() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor3DX::displayShadowVolume() {
-	if (!_modelX) {
+	if (!_xmodel) {
 		return false;
 	}
 
@@ -478,11 +478,11 @@ bool AdActor3DX::displayShadowVolume() {
 
 	getShadowVolume()->reset();
 
-	ModelX *shadowModel;
+	XModel *shadowModel;
 	if (_shadowModel) {
 		shadowModel = _shadowModel;
 	} else {
-		shadowModel = _modelX;
+		shadowModel = _xmodel;
 	}
 
 	shadowModel->updateShadowVol(getShadowVolume(), _worldMatrix, lightVector, extrusionDepth);
@@ -495,7 +495,7 @@ bool AdActor3DX::displayShadowVolume() {
 			continue;
 		}
 
-		Math::Matrix4 *boneMat = _modelX->getBoneMatrix(at->getParentBone().c_str());
+		Math::Matrix4 *boneMat = _xmodel->getBoneMatrix(at->getParentBone().c_str());
 		if (!boneMat) {
 			continue;
 		}
@@ -526,7 +526,7 @@ bool AdActor3DX::updateAttachments() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor3DX::displayAttachments(bool registerObjects) {
-	if (!_modelX) {
+	if (!_xmodel) {
 		return false;
 	}
 
@@ -540,7 +540,7 @@ bool AdActor3DX::displayAttachments(bool registerObjects) {
 			continue;
 		}
 
-		Math::Matrix4 *boneMat = _modelX->getBoneMatrix(at->getParentBone().c_str());
+		Math::Matrix4 *boneMat = _xmodel->getBoneMatrix(at->getParentBone().c_str());
 		if (!boneMat) {
 			continue;
 		}
@@ -922,8 +922,8 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 		buffer = params;
 	}
 
-	delete _modelX;
-	_modelX = nullptr;
+	delete _xmodel;
+	_xmodel = nullptr;
 	delete _shadowModel;
 	_shadowModel = nullptr;
 
@@ -1059,27 +1059,27 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 		}
 
 		case TOKEN_MODEL:
-			if (!_modelX) {
-				_modelX = new ModelX(_gameRef, this);
+			if (!_xmodel) {
+				_xmodel = new XModel(_gameRef, this);
 
-				if (!_modelX || !_modelX->loadFromFile((char *)params)) {
-					delete _modelX;
-					_modelX = nullptr;
+				if (!_xmodel || !_xmodel->loadFromFile((char *)params)) {
+					delete _xmodel;
+					_xmodel = nullptr;
 					cmd = PARSERR_GENERIC;
 				}
 			} else {
-				if (!_modelX->mergeFromFile((char *)params)) {
+				if (!_xmodel->mergeFromFile((char *)params)) {
 					cmd = PARSERR_GENERIC;
 				}
 			}
 			break;
 
 		case TOKEN_SHADOW_MODEL:
-			if (_modelX) {
+			if (_xmodel) {
 				delete _shadowModel;
-				_shadowModel = new ModelX(_gameRef, this);
+				_shadowModel = new XModel(_gameRef, this);
 
-				if (!_shadowModel || !_shadowModel->loadFromFile((char *)params, _modelX)) {
+				if (!_shadowModel || !_shadowModel->loadFromFile((char *)params, _xmodel)) {
 					delete _shadowModel;
 					_shadowModel = nullptr;
 					cmd = PARSERR_GENERIC;
@@ -1112,15 +1112,15 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_ANIMATION:
-			if (_modelX) {
-				_modelX->parseAnim(params);
+			if (_xmodel) {
+				_xmodel->parseAnim(params);
 			} else {
 				_gameRef->LOG(0, "Error: a MODEL= line must precede any animation definitions (file: %s)", getFilename());
 			}
 			break;
 
 		case TOKEN_EFFECT:
-			if (_modelX)
+			if (_xmodel)
 				parseEffect(params);
 			else
 				_gameRef->LOG(0, "Error: a MODEL= line must precede any effect definitions (file: %s)", getFilename());
@@ -1184,7 +1184,7 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 		return false;
 	}
 
-	if (!_modelX) {
+	if (!_xmodel) {
 		_gameRef->LOG(0, "Error: No model has been loaded for 3D actor");
 		return false;
 	}
@@ -1249,11 +1249,11 @@ bool AdActor3DX::playAnim3DX(const char *name, bool setState) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor3DX::playAnim3DX(int channel, const char *name, bool setState) {
-	if (!_modelX) {
+	if (!_xmodel) {
 		return false;
 	}
 
-	bool res = _modelX->playAnim(channel, name, _defaultTransTime, true, _defaultStopTransTime);
+	bool res = _xmodel->playAnim(channel, name, _defaultTransTime, true, _defaultStopTransTime);
 	if (res && setState) {
 		_state = STATE_PLAYING_ANIM;
 		_stateAnimChannel = channel;
@@ -1269,10 +1269,10 @@ void AdActor3DX::talk(const char *text, const char *sound, uint32 duration, cons
 
 //////////////////////////////////////////////////////////////////////////
 int32 AdActor3DX::getHeight() {
-	if (!_modelX) {
+	if (!_xmodel) {
 		return 0;
 	} else {
-		return _posY - _modelX->_boundingRect.top - 5;
+		return _posY - _xmodel->_boundingRect.top - 5;
 	}
 }
 
@@ -1303,8 +1303,8 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		stack->correctParams(1);
 		int transTime = stack->pop()->getInt(_defaultStopTransTime);
 		bool ret = false;
-		if (_modelX) {
-			ret = _modelX->stopAnim(0, transTime);
+		if (_xmodel) {
+			ret = _xmodel->stopAnim(0, transTime);
 		}
 		stack->pushBool(ret);
 		return true;
@@ -1318,8 +1318,8 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		int channel = stack->pop()->getInt();
 		int transTime = stack->pop()->getInt();
 		bool ret = false;
-		if (_modelX) {
-			ret = _modelX->stopAnim(channel, transTime);
+		if (_xmodel) {
+			ret = _xmodel->stopAnim(channel, transTime);
 		}
 
 		stack->pushBool(ret);
@@ -1360,8 +1360,8 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			animName = val->getString();
 		}
 
-		if (_modelX) {
-			stack->pushBool(_modelX->isAnimPending(0, animName));
+		if (_xmodel) {
+			stack->pushBool(_xmodel->isAnimPending(0, animName));
 		} else {
 			stack->pushBool(false);
 		}
@@ -1383,8 +1383,8 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			animName = val->getString();
 		}
 
-		if (_modelX) {
-			stack->pushBool(_modelX->isAnimPending(channel, animName));
+		if (_xmodel) {
+			stack->pushBool(_xmodel->isAnimPending(channel, animName));
 		} else {
 			stack->pushBool(false);
 		}
@@ -1404,10 +1404,10 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		const char *attachName = stack->pop()->getString();
 		const char *boneName = stack->pop()->getString();
 
-		if (!_modelX) {
+		if (!_xmodel) {
 			stack->pushBool(false);
 		} else {
-			if (!_modelX->getBoneMatrix(boneName)) {
+			if (!_xmodel->getBoneMatrix(boneName)) {
 				script->runtimeError("Bone '%s' cannot be found", boneName);
 				stack->pushBool(false);
 			} else {
@@ -1448,7 +1448,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		stack->correctParams(1);
 		const char *attachmentName = stack->pop()->getString();
 
-		if (!_modelX) {
+		if (!_xmodel) {
 			stack->pushBool(false);
 		} else {
 			bool isFound = false;
@@ -1472,7 +1472,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		stack->correctParams(1);
 		const char *attachmentName = stack->pop()->getString();
 
-		if (!_modelX) {
+		if (!_xmodel) {
 			stack->pushNULL();
 		} else {
 			bool isFound = false;
@@ -1796,7 +1796,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		const char *materialName = stack->pop()->getString();
 		const char *textureFilename = stack->pop()->getString();
 
-		if (_modelX && _modelX->setMaterialSprite(materialName, textureFilename)) {
+		if (_xmodel && _xmodel->setMaterialSprite(materialName, textureFilename)) {
 			stack->pushBool(true);
 		} else {
 			stack->pushBool(false);
@@ -1813,7 +1813,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		const char *materialName = stack->pop()->getString();
 		const char *theoraFilename = stack->pop()->getString();
 
-		if (_modelX && _modelX->setMaterialTheora(materialName, theoraFilename)) {
+		if (_xmodel && _xmodel->setMaterialTheora(materialName, theoraFilename)) {
 			stack->pushBool(true);
 		} else {
 			stack->pushBool(false);
@@ -1830,7 +1830,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		/*const char *effectFilename =*/ stack->pop()->getString();
 
 		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
-		if (_modelX) {
+		if (_xmodel) {
 			stack->pushBool(true);
 		} else {
 			stack->pushBool(false);
@@ -1847,7 +1847,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		stack->pop();
 
 		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
-		if (_modelX) {
+		if (_xmodel) {
 			stack->pushBool(true);
 		} else {
 			stack->pushBool(false);
@@ -1865,7 +1865,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		/*ScValue *val =*/ stack->pop();
 
 		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
-		if (_modelX) {
+		if (_xmodel) {
 			stack->pushBool(true);
 		} else {
 			stack->pushBool(false);
@@ -1886,7 +1886,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		/*float w =*/ stack->pop()->getFloat();
 
 		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
-		if (_modelX) {
+		if (_xmodel) {
 			stack->pushBool(true);
 		} else {
 			stack->pushBool(false);
@@ -1904,7 +1904,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		/*uint32 color =*/ stack->pop()->getInt();
 
 		warning("AdActor3DX::scCallMethod D3DX effects are not supported");
-		if (_modelX) {
+		if (_xmodel) {
 			stack->pushBool(true);
 		} else {
 			stack->pushBool(false);
@@ -2300,8 +2300,8 @@ bool AdActor3DX::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor3DX::invalidateDeviceObjects() {
-	if (_modelX)
-		_modelX->invalidateDeviceObjects();
+	if (_xmodel)
+		_xmodel->invalidateDeviceObjects();
 	if (_shadowModel)
 		_shadowModel->invalidateDeviceObjects();
 
@@ -2314,8 +2314,8 @@ bool AdActor3DX::invalidateDeviceObjects() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor3DX::restoreDeviceObjects() {
-	if (_modelX) {
-		_modelX->restoreDeviceObjects();
+	if (_xmodel) {
+		_xmodel->restoreDeviceObjects();
 	}
 
 	if (_shadowModel) {
@@ -2331,11 +2331,11 @@ bool AdActor3DX::restoreDeviceObjects() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor3DX::mergeAnimations(const char *filename) {
-	if (!_modelX) {
+	if (!_xmodel) {
 		return false;
 	}
 
-	bool res = _modelX->mergeFromFile(filename);
+	bool res = _xmodel->mergeFromFile(filename);
 	if (!res) {
 		_gameRef->LOG(res, "Error: MergeAnims failed for file '%s'", filename);
 		return res;
@@ -2374,7 +2374,7 @@ bool AdActor3DX::mergeAnimations2(const char *filename) {
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_ANIMATION:
-			if (!_modelX->parseAnim(params)) {
+			if (!_xmodel->parseAnim(params)) {
 				cmd = PARSERR_GENERIC;
 			}
 		}
@@ -2395,8 +2395,8 @@ bool AdActor3DX::mergeAnimations2(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor3DX::unloadAnimation(const char *animName) {
-	if (_modelX) {
-		return _modelX->unloadAnimation(animName);
+	if (_xmodel) {
+		return _xmodel->unloadAnimation(animName);
 	} else {
 		return false;
 	}

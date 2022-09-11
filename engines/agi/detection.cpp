@@ -168,11 +168,11 @@ public:
 		_flags = kADFlagMatchFullPaths;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "agi";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "AGI preAGI + v2 + v3";
 	}
 

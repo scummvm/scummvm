@@ -70,7 +70,7 @@ public:
 
 protected:
 	bool indexToName(uint32 index, Std::string &name) const {
-		Std::map<uint32, Std::string>::const_iterator iter;
+		Common::HashMap<uint32, Std::string>::const_iterator iter;
 		iter = _indexedNames.find(index);
 		if (iter == _indexedNames.end()) return false;
 		name = iter->_value;
@@ -86,7 +86,7 @@ protected:
 		}
 	}
 
-	Std::map<uint32, Std::string> _indexedNames;
+	Common::HashMap<uint32, Std::string> _indexedNames;
 	uint32 _indexCount;
 };
 

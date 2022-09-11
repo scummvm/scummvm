@@ -476,7 +476,9 @@ int NutRenderer::draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, i
 	byte bits = *src;
 	const byte *origSrc = src;
 
-	for (int step = 0; step < _2byteSteps; ++step) {
+	int startFrame = (_2byteSteps == 4 && col == 0) ? _2byteSteps - 1 : 0;
+
+	for (int step = startFrame; step < _2byteSteps; ++step) {
 		int offX = MAX<int>(x + _2byteShadowXOffsetTable[step], clipRect.left);
 		int offY = MAX<int>(y + _2byteShadowYOffsetTable[step], clipRect.top);
 		byte drawColor = _2byteColorTable[step];

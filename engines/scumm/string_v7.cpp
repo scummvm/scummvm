@@ -183,11 +183,15 @@ void TextRenderer_v7::drawString(const char *str, byte *buffer, Common::Rect &cl
 
 	int totalLen = (int)strlen(str);
 	int lineStart = 0;
+	int xAdj = 0;
 
 	// COMI always does this for CJK strings (before any other possible yPos fixes).
 	if (_gameId == GID_CMI) {
-		if (_useCJKMode)
+		if (_useCJKMode) {
 			y += 2;
+			if (col != 0)
+				xAdj = 1; // x-adjust for left side glyph shadow
+		}
 		// No idea whether it is actually used. We currently don't handle this flag.
 		/*if (flags & 0x40)
 			y -= (getStringHeight(str, totalLen) / 2);*/
@@ -223,8 +227,8 @@ void TextRenderer_v7::drawString(const char *str, byte *buffer, Common::Rect &cl
 		lineStart = pos + 1;
 	}
 
-	clipRect.left = (flags & kStyleAlignCenter) ? x - maxWidth / 2 : ((flags & kStyleAlignRight) ? x - maxWidth : x);
-	clipRect.right = MIN<int>(clipRect.right, clipRect.left + maxWidth);
+	clipRect.left = MAX<int>(0, ((flags & kStyleAlignCenter) ? x - maxWidth / 2 : ((flags & kStyleAlignRight) ? x - maxWidth : x)) - xAdj);
+	clipRect.right = MIN<int>(clipRect.right, clipRect.left + xAdj + maxWidth);
 	clipRect.top = y2;
 	clipRect.bottom = y + (_newStyle ? 0 : 1);
 }
@@ -263,10 +267,14 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 	int maxWidth = 0;
 	int curWidth = 0;
 	int curPos = -1;
+	int xAdj = 0;
 
 	// COMI does this for CJK strings (before any other possible yPos fixes, see lines 343 - 355).
-	if (_gameId == GID_CMI && _useCJKMode)
+	if (_gameId == GID_CMI && _useCJKMode) {
 		y += 2;
+		if (col != 0)
+			xAdj = 1; // x-adjust for left side glyph shadow
+	}
 
 	while (curPos < len) {
 		int textStart = curPos + 1;
@@ -374,8 +382,8 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 		y += getStringHeight(str + substrStart[i], len);
 	}
 
-	clipRect.left = (flags & kStyleAlignCenter) ? x - maxWidth / 2 : ((flags & kStyleAlignRight) ? x - maxWidth : x);
-	clipRect.right = MIN<int>(clipRect.right, clipRect.left + maxWidth);
+	clipRect.left = MAX<int>(0, ((flags & kStyleAlignCenter) ? x - maxWidth / 2 : ((flags & kStyleAlignRight) ? x - maxWidth : x)) - xAdj);
+	clipRect.right = MIN<int>(clipRect.right, clipRect.left + xAdj + maxWidth);
 	clipRect.top = y2;
 	clipRect.bottom = y + (_newStyle ? 0 : 1);
 }
@@ -428,6 +436,32 @@ void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byt
 	bt.flags = flags;
 }
 
+void ScummEngine_v7::drawTextImmediately(const byte *text, Common::Rect *clipRect, int x, int y, byte color, byte charset, TextStyleFlags flags) {
+	// This function allows for a string to be immediately
+	// drawn on the screen without having to enqueueing it.
+	byte msg[256];
+	Common::Rect rect = clipRect ? *clipRect : _defaultTextClipRect;
+	int effX = x;
+	TextStyleFlags effFlags = flags;
+	VirtScreen *vs = &_virtscr[kMainVirtScreen];
+
+	convertMessageToString(text, msg, sizeof(msg));
+
+	_charset->setCurID(charset);
+
+	// If a Hebrew String comes up that is still marked as kStyleAlignLeft we fix it here...
+	if (_language == Common::HE_ISR && !(flags & (kStyleAlignCenter | kStyleAlignRight))) {
+		effFlags = (TextStyleFlags)(flags | kStyleAlignRight);
+		effX = _screenWidth - 1 - effX;
+	}
+
+	_textV7->drawString((const char *)msg, (byte *)vs->getPixels(0, _screenTop), rect, effX, y, vs->pitch, color, effFlags);
+
+	rect.top += _screenTop;
+	rect.bottom += _screenTop;
+	markRectAsDirty(vs->number, rect);
+}
+
 void ScummEngine_v7::drawBlastTexts() {
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 
@@ -471,12 +505,28 @@ void ScummEngine_v7::drawBlastTexts() {
 }
 
 void ScummEngine_v7::removeBlastTexts() {
-	int i;
+	if (_game.version == 8) {
+		if (_blastTextQueuePos != 0)
+			_blastTextRectsQueue = _blastTextQueuePos;
+		_blastTextQueuePos = 0;
+		return;
+	}
 
-	for (i = 0; i < _blastTextQueuePos; i++) {
+	for (int i = 0; i < _blastTextQueuePos; i++) {
 		restoreBackground(_blastTextQueue[i].rect);
 	}
 	_blastTextQueuePos = 0;
+}
+
+void ScummEngine_v7::restoreBlastTextsRects() {
+	if (_game.version < 8)
+		return;
+
+	for (int i = 0; i < _blastTextRectsQueue; i++) {
+		restoreBackground(_blastTextQueue[i].rect);
+	}
+
+	_blastTextRectsQueue = 0;
 }
 
 void ScummEngine_v8::printString(int m, const byte *msg) {
@@ -488,6 +538,24 @@ void ScummEngine_v8::printString(int m, const byte *msg) {
 		enqueueText(msg, st.xpos, st.ypos, st.color, st.charset, (TextStyleFlags)flags);
 	} else {
 		ScummEngine::printString(m, msg);
+	}
+}
+
+void ScummEngine_v7::showMessageDialog(const byte *msg) {
+	if (isUsingOriginalGUI()) {
+		int textColor = _string[3].color;
+		if (textColor)
+			setBannerColors(
+				26,
+				_currentPalette[3 * textColor],
+				_currentPalette[3 * textColor + 1],
+				_currentPalette[3 * textColor + 2]);
+		Common::KeyState ks = showBannerAndPause(2, -1, (const char *)msg);
+
+		if (VAR_KEYPRESS != 0xFF)
+			VAR(VAR_KEYPRESS) = ks.ascii;
+	} else {
+		ScummEngine::showMessageDialog(msg);
 	}
 }
 

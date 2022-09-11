@@ -136,6 +136,13 @@ void GridItemWidget::drawWidget() {
 		g_gui.theme()->drawSurface(p, *flagGfx, true);
 	}
 
+	// Draw Demo Overlay
+	const Graphics::ManagedSurface *demoGfx = _grid->demoToSurface(_activeEntry->extra);
+	if (demoGfx) {
+		Common::Point p(_x + ((thumbWidth - demoGfx->w)/2) , _y + (thumbHeight - demoGfx->h - 10));
+		g_gui.theme()->drawSurface(p, *demoGfx, true);
+	}
+
 	// Draw Title
 	if (_grid->_isTitlesVisible) {
 		// TODO: Currently title is fixed to two lines at all times, we may want
@@ -345,6 +352,8 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	_flagIconWidth = 0;
 	_platformIconHeight = 0;
 	_platformIconWidth = 0;
+	_extraIconHeight = 0;
+	_extraIconWidth = 0;
 	_minGridXSpacing = 0;
 	_minGridYSpacing = 0;
 	_isTitlesVisible = 0;
@@ -381,6 +390,7 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 GridWidget::~GridWidget() {
 	unloadSurfaces(_platformIcons);
 	unloadSurfaces(_languageIcons);
+	unloadSurfaces(_extraIcons);
 	unloadSurfaces(_loadedSurfaces);
 	_gridItems.clear();
 	_dataEntryList.clear();
@@ -413,6 +423,12 @@ const Graphics::ManagedSurface *GridWidget::platformToSurface(Common::Platform p
 	if (platformCode == Common::kPlatformUnknown)
 		return nullptr;
 	return _platformIcons[platformCode];
+}
+
+const Graphics::ManagedSurface *GridWidget::demoToSurface(const Common::String extraString) {
+	if (! extraString.contains("Demo") )
+		return nullptr;
+	return _extraIcons[0];
 }
 
 void GridWidget::setEntryList(Common::Array<GridItemInfo> *list) {
@@ -623,12 +639,22 @@ void GridWidget::reloadThumbnails() {
 			Graphics::ManagedSurface *surf = loadSurfaceFromFile(path);
 			if (!surf) {
 				path = Common::String::format("icons/%s.png", entry->engineid.c_str());
-				surf = loadSurfaceFromFile(path);
+				if (!_loadedSurfaces.contains(path)) {
+					surf = loadSurfaceFromFile(path);
+				} else {
+					continue;
+				}
+
 			}
 
 			if (surf) {
 				const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, _thumbnailHeight, true));
 				_loadedSurfaces[entry->thumbPath] = scSurf;
+
+				if (path != entry->thumbPath) {
+					_loadedSurfaces[path] = new Graphics::ManagedSurface(*scSurf);
+				}
+
 				if (surf != scSurf) {
 					surf->free();
 					delete surf;
@@ -668,6 +694,20 @@ void GridWidget::loadPlatformIcons() {
 		} else {
 			_platformIcons[l->id] = nullptr;
 		}
+	}
+}
+
+void GridWidget::loadExtraIcons() {  // for now only the demo icon is available
+	Graphics::ManagedSurface *gfx = loadSurfaceFromFile("icons/extra/demo.png");
+	if (gfx) {
+		const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, _extraIconWidth, _extraIconHeight, true);
+		_extraIcons[0] = scGfx;
+		if (gfx != scGfx) {
+			gfx->free();
+			delete gfx;
+		}
+	} else {
+		_extraIcons[0] = nullptr;
 	}
 }
 
@@ -720,8 +760,6 @@ void GridWidget::updateGrid() {
 
 void GridWidget::assignEntriesToItems() {
 	// Assign entries from _visibleEntries to each GridItem in _gridItems
-	if (_visibleEntryList.empty())
-		return;
 
 	// In case we have less ContainerWidgets than the number of visible entries
 	if (_visibleEntryList.size() > _gridItems.size()) {
@@ -891,12 +929,17 @@ void GridWidget::reflowLayout() {
 	_flagIconWidth = _thumbnailWidth / 4;
 	_flagIconHeight = _flagIconWidth / 2;
 	_platformIconHeight = _platformIconWidth = _thumbnailWidth / 6;
+	_extraIconWidth = _thumbnailWidth / 2;
+	_extraIconHeight = _extraIconWidth / 4;
 
 	if ((oldThumbnailHeight != _thumbnailHeight) || (oldThumbnailWidth != _thumbnailWidth)) {
+		unloadSurfaces(_platformIcons);
+		unloadSurfaces(_languageIcons);
 		unloadSurfaces(_loadedSurfaces);
 		reloadThumbnails();
 		loadFlagIcons();
 		loadPlatformIcons();
+		loadExtraIcons();
 	}
 
 	_trayHeight = kLineHeight * 3;

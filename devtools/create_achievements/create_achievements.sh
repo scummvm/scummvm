@@ -50,15 +50,23 @@ fi
 
 #AGS games:
 add_steam 80310
-add_steam 80310
+add_steamlike_gog 80310 1207659073
 add_steam 80330
+add_steamlike_gog 80330 1207662883
 add_steam 80340
+add_steamlike_gog 80340 1207662893
 add_steam 80350
+add_steamlike_gog 80350 1207662903
 add_steam 80360
+add_steamlike_gog 80360 1207662913
 add_steam 212050
+add_steamlike_gog 212050 1207659043
 add_steam 227000
+add_steamlike_gog 227000 1207659144
 add_steam 236930
+add_steamlike_gog 236930 1207664393
 add_steam 252370
+add_steamlike_gog 252370 1207660263
 add_steam 253110
 add_steam 264560
 add_steam 270610
@@ -70,9 +78,12 @@ add_steam 288930
 add_steam 296850
 add_steam 302690
 add_steam 307570
+add_steamlike_gog 307570 1430234218
 add_steam 307580
 add_steam 336130
+add_steamlike_gog 336130 1454499527
 add_steam 336140
+add_steamlike_gog 336140 1637485057
 add_steam 338420
 add_steam 357490
 add_steam 364350
@@ -84,9 +95,11 @@ add_steam 396090
 add_steam 420180
 add_steam 425600
 add_steamlike_gog 425600 1444830704
+add_steam 431850
 add_steam 439310
 add_steam 468530
 add_steam 509920
+add_steam 517910
 add_steam 551840
 add_steam 556060
 add_steamlike_gog 556060 1745746005
@@ -94,23 +107,41 @@ add_steam 561770
 add_steam 595560
 add_steam 603870
 add_steam 610900
+add_steamlike_gog 610900 1489938431
 add_steam 631570
 add_steamlike_gog 631570 1845001352
 add_steam 654550
+add_steam 655250
 add_steam 673850
+add_steam 710600
+add_steam 733300
 add_steam 761460
+add_steam 763030
 add_steam 782280
 add_steam 872750
 add_steamlike_gog 872750 1455980545
+add_steam 904600
 add_steam 904750
+add_steamlike_gog 904750 1664228813
+add_steam 917380
+add_steam 962700
 add_steam 1028740
+add_steam 1036200
+add_steam 1060560
 add_steam 1133950
 add_steam 1142230
 add_steam 1147030
 add_steam 1181570
+add_steam 1196520
 add_steam 1220930
+add_steam 1259140
 add_steam 1251910
 add_steam 1270590
+add_steam 1305500
+add_steam 1355910
+add_steam 1369520
+add_steamlike_gog 1369520 1392294208
+add_steam 1900280
 
 #TWINE games:
 add_steam 397330
@@ -131,6 +162,7 @@ add_steam 349140
 add_steam 405780
 add_steam 574420
 add_steam 1064660
+add_steam 1603980
 
 #ASYLUM games:
 add_steam 284050

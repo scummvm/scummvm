@@ -163,7 +163,6 @@ public:
 	 **/
 	PluginType getType() const;
 	const char *getName() const;
-	const char *getEngineId() const;
 
 	template <class T>
 	T &get() const {

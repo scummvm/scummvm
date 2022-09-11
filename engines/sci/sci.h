@@ -308,6 +308,7 @@ public:
 	opcode_format (*_opcode_formats)[4];
 
 	DebugState _debugState;
+	uint32 _speedThrottleDelay; // kGameIsRestarting maximum delay
 
 	Common::MacResManager *getMacExecutable() { return &_macExecutable; }
 

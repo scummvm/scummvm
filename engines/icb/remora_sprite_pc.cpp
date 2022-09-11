@@ -59,8 +59,8 @@ void _remora_sprite::GenericSpriteDraw(int32 nX, int32 nY, bool8 bPosition, cons
 	// Open the resource and get the current frame.
 	psBitmap = (_pxBitmap *)rs_remora->Res_open(m_pcName, m_nNameHash, m_pcClusterName, m_nClusterHash);
 
-	if (psBitmap->schema != PC_BITMAP_SCHEMA)
-		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", m_pcName, PC_BITMAP_SCHEMA, psBitmap->schema);
+	if (FROM_LE_32(psBitmap->schema) != PC_BITMAP_SCHEMA)
+		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", m_pcName, PC_BITMAP_SCHEMA, FROM_LE_32(psBitmap->schema));
 
 	// Lock the surface and get the pitch.
 	uint32 remoraSurfaceId = g_oRemora->GetRemoraSurfaceId();
@@ -95,7 +95,7 @@ uint32 _remora_sprite::GetHeight() {
 	psBitmap = (_pxBitmap *)rs_remora->Res_open(m_pcName, m_nNameHash, m_pcClusterName, m_nClusterHash);
 
 	// Get the first frame and return its height.
-	psSprite = psBitmap->Fetch_item_by_number(0);
+	psSprite = (_pxSprite *)((byte *)psBitmap + FROM_LE_32(psBitmap->sprite_offsets[0]));
 	return (psSprite->height);
 }
 
@@ -111,7 +111,7 @@ uint32 _remora_sprite::GetWidth() {
 	psBitmap = (_pxBitmap *)rs_remora->Res_open(m_pcName, m_nNameHash, m_pcClusterName, m_nClusterHash);
 
 	// Get the first frame and return its height.
-	psSprite = psBitmap->Fetch_item_by_number(0);
+	psSprite = (_pxSprite *)((byte *)psBitmap + FROM_LE_32(psBitmap->sprite_offsets[0]));
 	return (psSprite->width);
 }
 

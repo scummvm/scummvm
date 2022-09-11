@@ -54,6 +54,7 @@ struct GridItemInfo {
 	Common::String 		gameid;
 	Common::String 		title;
 	Common::String		description;
+	Common::String		extra;
 	Common::String 		thumbPath;
 	// Generic attribute value, may be any piece of metadata
 	Common::String		attribute;
@@ -63,8 +64,8 @@ struct GridItemInfo {
 	int32				x, y, w, h;
 
 	GridItemInfo(int id, const Common::String &eid, const Common::String &gid, const Common::String &t,
-		const Common::String &d, Common::Language l, Common::Platform p)
-		: entryID(id), gameid(gid), engineid(eid), title(t), description(d), language(l), platform(p), isHeader(false) {
+		const Common::String &d, const Common::String &e, Common::Language l, Common::Platform p)
+		: entryID(id), gameid(gid), engineid(eid), title(t), description(d), extra(e), language(l), platform(p), isHeader(false) {
 		thumbPath = Common::String::format("icons/%s-%s.png", engineid.c_str(), gameid.c_str());
 	}
 
@@ -99,6 +100,7 @@ class GridWidget : public ContainerWidget, public CommandSender {
 protected:
 	Common::HashMap<int, const Graphics::ManagedSurface *> _platformIcons;
 	Common::HashMap<int, const Graphics::ManagedSurface *> _languageIcons;
+	Common::HashMap<int, const Graphics::ManagedSurface *> _extraIcons;
 
 	// Images are mapped by filename -> surface.
 	Common::HashMap<Common::String, const Graphics::ManagedSurface *> _loadedSurfaces;
@@ -134,6 +136,8 @@ protected:
 	int				_flagIconWidth;
 	int				_platformIconHeight;
 	int				_platformIconWidth;
+	int				_extraIconHeight;
+	int				_extraIconWidth;
 	int				_minGridXSpacing;
 	int				_minGridYSpacing;
 	int				_rows;
@@ -169,6 +173,7 @@ public:
 	const Graphics::ManagedSurface *filenameToSurface(const Common::String &name);
 	const Graphics::ManagedSurface *languageToSurface(Common::Language languageCode);
 	const Graphics::ManagedSurface *platformToSurface(Common::Platform platformCode);
+	const Graphics::ManagedSurface *demoToSurface(const Common::String extraString);
 
 	/// Update _visibleEntries from _allEntries and returns true if reload is required.
 	bool calcVisibleEntries();
@@ -187,6 +192,7 @@ public:
 	void reloadThumbnails();
 	void loadFlagIcons();
 	void loadPlatformIcons();
+	void loadExtraIcons();
 
 	void destroyItems();
 	void calcInnerHeight();
@@ -205,6 +211,8 @@ public:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	void reflowLayout() override;
+
+	bool wantsFocus() override { return true; }
 
 	void openTray(int x, int y, int entryID);
 	void openTrayAtSelected();

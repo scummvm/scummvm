@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	fonts/cryoextfont.o \
 	fonts/cryofont.o \
 	image/hlz.o \
+	image/hnm.o \
 	cryomni3d.o \
 	datstream.o \
 	dialogs_manager.o \

@@ -102,11 +102,11 @@ public:
 		_flags = kADFlagUseExtraAsHint;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "lab";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Labyrinth of Time";
 	}
 

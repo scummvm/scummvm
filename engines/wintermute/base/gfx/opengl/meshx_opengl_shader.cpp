@@ -25,7 +25,7 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#include "engines/wintermute/base/gfx/x/material.h"
+#include "engines/wintermute/base/gfx/xmaterial.h"
 
 #include "graphics/opengl/system_headers.h"
 
@@ -37,20 +37,20 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-MeshXOpenGLShader::MeshXOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader, OpenGL::Shader *flatShadowShader) :
-	MeshX(inGame), _shader(shader), _flatShadowShader(flatShadowShader) {
+XMeshOpenGLShader::XMeshOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader, OpenGL::Shader *flatShadowShader) :
+	XMesh(inGame), _shader(shader), _flatShadowShader(flatShadowShader) {
 	glGenBuffers(1, &_vertexBuffer);
 	glGenBuffers(1, &_indexBuffer);
 }
 
 //////////////////////////////////////////////////////////////////////////
-MeshXOpenGLShader::~MeshXOpenGLShader() {
+XMeshOpenGLShader::~XMeshOpenGLShader() {
 	glDeleteBuffers(1, &_vertexBuffer);
 	glDeleteBuffers(1, &_indexBuffer);
 }
 
-bool MeshXOpenGLShader::loadFromX(const Common::String &filename, XFileLexer &lexer, Common::Array<MaterialReference> &materialReferences) {
-	if (MeshX::loadFromX(filename, lexer, materialReferences)) {
+bool XMeshOpenGLShader::loadFromX(const Common::String &filename, XFileLexer &lexer, Common::Array<MaterialReference> &materialReferences) {
+	if (XMesh::loadFromX(filename, lexer, materialReferences)) {
 		glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
 		glBufferData(GL_ARRAY_BUFFER, 4 * kVertexComponentCount * _vertexCount, _vertexData, GL_DYNAMIC_DRAW);
 
@@ -64,7 +64,7 @@ bool MeshXOpenGLShader::loadFromX(const Common::String &filename, XFileLexer &le
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool MeshXOpenGLShader::render(ModelX *model) {
+bool XMeshOpenGLShader::render(XModel *model) {
 	if (_vertexData == nullptr) {
 		return false;
 	}
@@ -106,7 +106,7 @@ bool MeshXOpenGLShader::render(ModelX *model) {
 	return true;
 }
 
-bool MeshXOpenGLShader::renderFlatShadowModel() {
+bool XMeshOpenGLShader::renderFlatShadowModel() {
 	if (_vertexData == nullptr) {
 		return false;
 	}
@@ -124,8 +124,8 @@ bool MeshXOpenGLShader::renderFlatShadowModel() {
 	return true;
 }
 
-bool MeshXOpenGLShader::update(FrameNode *parentFrame) {
-	MeshX::update(parentFrame);
+bool XMeshOpenGLShader::update(FrameNode *parentFrame) {
+	XMesh::update(parentFrame);
 
 	glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * kVertexComponentCount * _vertexCount, _vertexData);

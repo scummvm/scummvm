@@ -51,7 +51,7 @@ protected:
 	Common::SeekableReadStream *_rs;
 	uint32 _count;
 
-	Std::map<Common::String, uint32> _indices;
+	Common::HashMap<Common::String, uint32> _indices;
 	Std::vector<uint32> _offsets;
 	Std::vector<uint32> _sizes;
 

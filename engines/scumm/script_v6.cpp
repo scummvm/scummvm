@@ -781,27 +781,6 @@ void ScummEngine_v6::o6_startScript() {
 		return;
 	}
 
-	// WORKAROUND bug #3591: When turning pages in the recipe book
-	// (found on Blood Island), there is a brief moment where it displays
-	// text from two different pages at the same time.
-	//
-	// The content of the books is drawing (in an endless loop) by local
-	// script 2007. Changing the page is handled by script 2006, which
-	// first stops script 2007; then switches the page; then restarts
-	// script 2007. But it fails to clear the blast texts beforehand.
-	// Hence, the next time blast text is drawn, both the old one (from
-	// the old instance of script 2007) and the new text (from the new
-	// instance) are briefly drawn simultaneously.
-	//
-	// This looks like a script bug to me (a missing call to clearTextQueue).
-	// But this could also hint at a subtle bug in ScummVM; we should check
-	// whether this bug occurs with the original engine or not.
-	if (_game.id == GID_CMI && script == 2007 &&
-		_currentRoom == 62 && vm.slot[_currentScript].number == 2006) {
-
-		removeBlastTexts();
-	}
-
 	runScript(script, (flags & 1) != 0, (flags & 2) != 0, args);
 }
 
@@ -1815,7 +1794,16 @@ void ScummEngine_v6::o6_actorOps() {
 
 	switch (subOp) {
 	case 76:		// SO_COSTUME
-		a->setActorCostume(pop());
+		i = pop();
+		// WORKAROUND: There's a small continuity error in DOTT; the fire that
+		// makes Washington leave the room can only exist if he's wearing the
+		// chattering teeth, but yet when he comes back he's not wearing them
+		// during this cutscene.
+		if (_game.id == GID_TENTACLE && _currentRoom == 13 && vm.slot[_currentScript].number == 211 &&
+			a->_number == 8 && i == 53 && _enableEnhancements) {
+			i = 69;
+		}
+		a->setActorCostume(i);
 		break;
 	case 77:		// SO_STEP_DIST
 		j = pop();
@@ -2915,12 +2903,12 @@ int ScummEngine::getKeyState(int key) {
 void ScummEngine_v6::o6_delayFrames() {
 	// WORKAROUND:  At startup, Moonbase Commander will pause for 20 frames before
 	// showing the Infogrames logo.  The purpose of this break is to give time for the
-	// GameSpy Arcade application to fill with the Online game infomation.
+	// GameSpy Arcade application to fill with the online game infomation.
 	//
 	// [0000] (84) localvar2 = max(readConfigFile.number(":var263:","user","wait-for-gamespy"),10)
 	// [0029] (08) delayFrames((localvar2 * 2))
 	//
-	// But since we don't support GameSpy and have our own Online support, this break
+	// But since we don't support GameSpy and have our own online support, this break
 	// has become redundant and only wastes time.
 	if (_game.id == GID_MOONBASE && vm.slot[_currentScript].number == 69) {
 		pop();

@@ -193,6 +193,19 @@ static const SludgeGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"life",
+			"",
+			AD_ENTRY1s("gamedata", "a471759e071e5d2c0e8e6887607df778", 163794266),
+			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		0
+	},
+
+	{
+		{
 			"tgttpoacs",
 			"",
 			AD_ENTRY1s("gamedata", "d5ec4d7d8440f7744335d25d25e1e943", 40368),
@@ -388,9 +401,35 @@ static const SludgeGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"cubert",
+			"",
+			AD_ENTRY1s("cubert.dat", "cabc424d4e39ecdba4b0afd4033b5ea8", 19696514),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		3
+	},
+
+	{
+		{
 			"nsc",
 			"v1.03",
 			AD_ENTRY1s("gamedata.slg", "57f318cc09e93a1e0685b790a956ebdc", 12733871),
+			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		0
+	},
+
+	{
+		{
+			"nsc",
+			"v1.03",
+			AD_ENTRY1s("gamedata", "57f318cc09e93a1e0685b790a956ebdc", 12733871),
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
 			ADGF_UNSTABLE,

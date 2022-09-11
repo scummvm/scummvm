@@ -2,6 +2,8 @@ name: CI
 on: [push, pull_request]
 #  schedule:
 #    - cron: '0 0-23/4 * * *'
+permissions:
+  contents: read
 jobs:
   windows:
     name: Windows
@@ -102,7 +104,7 @@ jobs:
           - platform: macosx
             buildFlags: -scheme ScummVM-macOS
             configFlags: --disable-nasm --enable-faad --enable-mpeg2
-            brewPackages: a52dec faad2 flac fluid-synth freetype fribidi mad libmpeg2 libogg libpng libvorbis sdl2 sdl2_net theora giflib
+            brewPackages: a52dec faad2 flac fluid-synth freetype fribidi jpeg mad libmpeg2 libogg libpng libvorbis sdl2 sdl2_net theora giflib
           - platform: ios7
             buildFlags: -scheme ScummVM-iOS CODE_SIGN_IDENTITY="" CODE_SIGNING_ALLOWED=NO
             configFlags: --disable-nasm --disable-opengl --disable-theoradec --disable-mpeg2 --disable-taskbar --disable-tts --disable-fribidi
@@ -138,7 +140,7 @@ jobs:
           cache_key: ${{ matrix.platform }}
       - name: Build scummvm
         run: |
-          xcodebuild CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ build -project scummvm.xcodeproj ${{ matrix.buildFlags }}
+          xcodebuild CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ build -project scummvm.xcodeproj ${{ matrix.buildFlags }} | awk '$1 !~ /^(export|cd|clang++)/'
           ls
   ubuntu:
     name: Ubuntu
@@ -149,15 +151,22 @@ jobs:
         include:
           - platform: ubuntu-latest
             sdlConfig: sdl2-config
+            cxx: ccache g++
             aptPackages: 'libsdl2-dev libsdl2-net-dev liba52-dev libjpeg-turbo8-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libfribidi-dev libcurl4-openssl-dev libgtk-3-dev libspeechd-dev libsndio-dev libunity-dev'
-          - platform: ubuntu-18.04
+          - platform: ubuntu-20.04
             sdlConfig: sdl-config
-            aptPackages: 'libsdl1.2-dev libsdl-net1.2-dev liba52-dev libjpeg-turbo8-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libfribidi-dev libcurl4-openssl-dev libgtk-3-dev libspeechd-dev libsndio-dev libunity-dev'
+            cxx: ccache g++-4.8
+            aptPackages: 'g++-4.8 libsdl1.2-dev libsdl-net1.2-dev liba52-dev libjpeg-turbo8-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libfribidi-dev libcurl4-openssl-dev libgtk-3-dev libspeechd-dev libsndio-dev libunity-dev'
     env:
       SDL_CONFIG: ${{ matrix.sdlConfig }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Add Ubuntu Xenial package sources
+        if: matrix.platform == 'ubuntu-20.04'
+        run: |
+          sudo apt-add-repository 'deb http://archive.ubuntu.com/ubuntu/ xenial main'
+          sudo apt-add-repository 'deb http://archive.ubuntu.com/ubuntu/ xenial universe'
       - name: Install packages
         run: |
           sudo apt-get update
@@ -169,7 +178,7 @@ jobs:
           max-size: 1G
       - name: Call configure
         run: |
-          CXX='ccache g++' ./configure --enable-all-engines ${{ matrix.configflags }}
+          CXX='${{ matrix.cxx }}' ./configure --enable-all-engines ${{ matrix.configflags }}
       - name: Build scummvm
         run: |
           make -j2

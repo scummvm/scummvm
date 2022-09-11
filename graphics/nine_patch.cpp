@@ -149,7 +149,7 @@ void NinePatchSide::calcOffsets(int len, int titleIndex, int titleWidth) {
 			if (_m[i]->ratio == 0) {
 				_m[i]->dest_length = _m[i]->length;
 			} else {
-				_m[i]->dest_length = (len - _fix - titleWidth) * _m[i]->ratio;
+				_m[i]->dest_length = (len - _fix - titleWidth) * _m[i]->ratio + 0.5;
 				remaining_stretch -= _m[i]->dest_length;
 				j = i;
 			}

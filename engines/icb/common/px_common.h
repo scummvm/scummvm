@@ -97,20 +97,14 @@ enum _file_type {
 
 #define STANDARD_HEADER_NAME_LENGTH 32 // Max length of the header name
 
-class px_standard_header {
-public:
+typedef struct {
 	int32 version;                          // This is incremented every time the object is updated
 	_file_type type;                        // enumerated value for every type of object in the game
 	int32 owner;                            // Who is responsible for producing this object
 	int32 unused;                           // For future expansion
 	int32 unused2;                          // For future expansion
 	char name[STANDARD_HEADER_NAME_LENGTH]; // 32 bytes worth of ascii name information
-
-	void SetData(int32 version, _file_type type, int32 owner, const char *name);
-	_file_type GetType() { return (type); }
-	const char *GetName() { return (name); }
-	uint32 GetVersion() { return (version); }
-};
+} px_standard_header;
 
 typedef struct {
 	uint8 red;
@@ -225,6 +219,16 @@ inline uint32 READ_LE_U32(const void *p) {
 	const uint8 *data = (const uint8 *)p;
 	return (uint32)(((uint32)data[3] << 24) | ((uint32)data[2] << 16) | ((uint32)data[1] << 8) | (uint32)data[0]);
 }
+
+#if defined(SCUMM_LITTLE_ENDIAN)
+
+#define FROM_LE_FLOAT32(a) ((float)(a))
+
+#else
+
+#define FROM_LE_FLOAT32(a) ((float)(SWAP_BYTES_32(a)))
+
+#endif
 
 #define MKTAG(a0, a1, a2, a3) ((uint32)((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24)))
 

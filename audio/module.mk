@@ -27,6 +27,7 @@ MODULE_OBJS := \
 	decoders/aac.o \
 	decoders/adpcm.o \
 	decoders/aiff.o \
+	decoders/apc.o \
 	decoders/asf.o \
 	decoders/flac.o \
 	decoders/g711.o \

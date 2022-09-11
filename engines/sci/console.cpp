@@ -90,6 +90,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	// precaution is taken to assure that all assigned values are in the range
 	// of the enum type. We should handle this more carefully...
 	registerVar("script_abort_flag",	(int *)&_engine->_gamestate->abortScriptProcessing);
+	registerCmd("speed_throttle",   WRAP_METHOD(Console, cmdSpeedThrottle));
 
 	// General
 	registerCmd("help",				WRAP_METHOD(Console, cmdHelp));
@@ -320,6 +321,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf("simulated_key: Add a key with the specified scan code to the event list\n");
 	debugPrintf("track_mouse_clicks: Toggles mouse click tracking to the console\n");
 	debugPrintf("script_abort_flag: Set to 1 to abort script execution. Set to 2 to force a replay afterwards\n");
+	debugPrintf("speed_throttle: Displays or changes kGameIsRestarting maximum delay\n");
 	debugPrintf("\n");
 	debugPrintf("Debug flags\n");
 	debugPrintf("-----------\n");
@@ -619,9 +621,18 @@ bool Console::cmdKernelFunctions(int argc, const char **argv) {
 		const Common::String &kernelName = _engine->getKernel()->getKernelName(seeker);
 		if (kernelName == "Dummy")
 			continue;
-		debugPrintf("%03x: %20s | ", seeker, kernelName.c_str());
-		if ((column++ % 3) == 2)
-			debugPrintf("\n");
+
+		if (argc == 1) {
+			debugPrintf("%03x: %20s | ", seeker, kernelName.c_str());
+			if ((column++ % 3) == 2)
+				debugPrintf("\n");
+		} else {
+			for (int i = 1; i < argc; ++i) {
+				if (kernelName.equalsIgnoreCase(argv[i])) {
+					debugPrintf("%03x: %s\n", seeker, kernelName.c_str());
+				}
+			}
+		}
 	}
 
 	debugPrintf("\n");
@@ -4640,7 +4651,12 @@ bool Console::processGameFlagsOperation(GameFlagsOperation op, int argc, const c
 			continue;
 		}
 		uint16 globalValue = globalReg->toUint16();
-		uint16 flagMask = 0x8000 >> (flagNumber % 16);
+		uint16 flagMask;
+		if (g_sci->_features->isGameFlagBitOrderNormal()) {
+			flagMask = 0x0001 << (flagNumber % 16);
+		} else {
+			flagMask = 0x8000 >> (flagNumber % 16);
+		}
 		
 		// set or clear the flag
 		bool already = false;
@@ -4706,6 +4722,27 @@ bool Console::cmdAddresses(int argc, const char **argv) {
 	debugPrintf("   Underscores are used as substitute characters for spaces in object names.\n");
 	debugPrintf("   For example, an object named \"Glass Jar\" can be accessed as \"Glass_Jar\".\n");
 
+	return true;
+}
+
+bool Console::cmdSpeedThrottle(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Displays or changes kGameIsRestarting maximum delay in milliseconds\n");
+		debugPrintf("usage: %s [<delay>]\n", argv[0]);
+		return true;
+	}
+	if (argc == 2) {
+		int newDelay;
+		if (!parseInteger(argv[1], newDelay)) {
+			return true;
+		}
+		if (newDelay < 0) {
+			debugPrintf("invalid delay\n");
+			return true;
+		}
+		_engine->_speedThrottleDelay = newDelay;
+	}
+	debugPrintf("kGameIsRestarting maximum delay: %d ms\n", _engine->_speedThrottleDelay);
 	return true;
 }
 

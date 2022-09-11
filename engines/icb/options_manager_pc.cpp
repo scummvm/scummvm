@@ -104,7 +104,7 @@ void Init_play_movie(const char *param0, bool8 param1);
 uint32 GetFileSz(const char *path);
 
 // Translation tweaks
-_linked_data_file *LoadTranslatedFile(const char *session, const char *mission);
+LinkedDataFile *LoadTranslatedFile(const char *session, const char *mission);
 
 // Death text functions and defines
 #define MAX_DEATH_TEXT 4
@@ -300,10 +300,14 @@ void LoadThumbnail(uint32 slot_id, uint32 to_surface_id) {
 	uint8 *surface_address = surface_manager->Lock_surface(to_surface_id);
 	uint32 pitch = surface_manager->Get_pitch(to_surface_id);
 
+	uint32 *u32surfPtr = (uint32 *)surface_address;
 	// Now we need to read the 64 by 48 image data into the surface
 	for (uint32 i = 0; i < 48; i++) {
-		if (stream->read(surface_address, sizeof(uint32) * 64) != 64 * sizeof(uint32))
-			Fatal_error("LoadThumbnail() failed reading");
+		for (uint32 j = 0; j < 64; j++) {
+			u32surfPtr[j] = stream->readUint32LE();
+			if (stream->err())
+				Fatal_error("LoadThumbnail() failed reading");
+		}
 
 		surface_address += pitch;
 	}
@@ -637,9 +641,9 @@ void OptionsManager::StartGameOverOptions() {
 	bool8 regularPlayerDeath = TRUE8;
 
 	// Have we died under irregular circumstances?
-	c_game_object *playerObj = (c_game_object *)MS->objects->Fetch_item_by_number(MS->player.Fetch_player_id());
-	int32 state = playerObj->GetVariable("state");
-	if (playerObj->GetIntegerVariable(state) == 2)
+	CGame *playerObj = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, MS->player.Fetch_player_id());
+	int32 state = CGameObject::GetVariable(playerObj, "state");
+	if (CGameObject::GetIntegerVariable(playerObj, state) == 2)
 		regularPlayerDeath = FALSE8;
 
 	InitialiseSounds();
@@ -1604,7 +1608,9 @@ void OptionsManager::DrawMainOptionsScreen(uint32 surface_id) {
 		Draw_vertical_line(m_box.right + 1, m_box.bottom - m_lipLength, m_lipLength + 2, &m_drawColour, surface_address, pitch);
 		Draw_horizontal_line(m_box.left, m_box.bottom + 1, m_box.right - m_box.left + 1, &m_drawColour, surface_address, pitch);
 
-		DisplayText(surface_address, pitch, "Copyright 2000 Revolution Software", 0, SCREEN_DEPTH - 100, PALEFONT, TRUE8);
+		if (g_icb->getGameType() == GType_ELDORADO)
+			DisplayText(surface_address, pitch, "Copyright (c) 2000 DreamWorks SKG", 0, SCREEN_DEPTH - 120, PALEFONT, TRUE8);
+		DisplayText(surface_address, pitch, "Copyright (c) 2000 Revolution Software Ltd", 0, SCREEN_DEPTH - 100, PALEFONT, TRUE8);
 
 		// Unlock the working buffer
 		surface_manager->Unlock_surface(surface_id);
@@ -1919,20 +1925,46 @@ void OptionsManager::MoveSelected(bool8 _down_) {
 			currentlySelected--;
 
 		if (g_px->game_completed) {
-			if (currentlySelected < 0)
-				m_M_EXTRA_selected = (M_EXTRA_CHOICES)(NUMBER_OF_EXTRA_CHOICES - 1);
-			else
-				m_M_EXTRA_selected = (M_EXTRA_CHOICES)(currentlySelected % NUMBER_OF_EXTRA_CHOICES);
-		} else {
-			if (currentlySelected < 0)
-				m_M_EXTRA_selected = (M_EXTRA_CHOICES)(NUMBER_OF_EXTRA_CHOICES - 1);
-			else {
-				if (_down_ && currentlySelected == SLIDESHOW)
-					m_M_EXTRA_selected = CREDITS;
-				else if (!_down_ && currentlySelected == PROFILES)
-					m_M_EXTRA_selected = MOVIES;
+			if (g_icb->getGameType() == GType_ICB) {
+				if (currentlySelected < 0)
+					m_M_EXTRA_selected = (M_EXTRA_CHOICES)(NUMBER_OF_EXTRA_CHOICES - 1);
 				else
 					m_M_EXTRA_selected = (M_EXTRA_CHOICES)(currentlySelected % NUMBER_OF_EXTRA_CHOICES);
+			} else {
+				if (currentlySelected < 0)
+					m_M_EXTRA_selected = (M_EXTRA_CHOICES)(NUMBER_OF_EXTRA_CHOICES - 1);
+				else {
+					if (_down_ && currentlySelected == PLAYSELECT)
+						m_M_EXTRA_selected = CREDITS;
+					else if (!_down_ && currentlySelected == PROFILES)
+						m_M_EXTRA_selected = SLIDESHOW;
+					else
+						m_M_EXTRA_selected = (M_EXTRA_CHOICES)(currentlySelected % NUMBER_OF_EXTRA_CHOICES);
+				}
+			}
+		} else {
+			if (g_icb->getGameType() == GType_ICB) {
+				if (currentlySelected < 0)
+					m_M_EXTRA_selected = CREDITS;
+				else {
+					if (_down_ && currentlySelected == SLIDESHOW)
+						m_M_EXTRA_selected = CREDITS;
+					else if (!_down_ && currentlySelected == PROFILES)
+						m_M_EXTRA_selected = MOVIES;
+					else
+					m_M_EXTRA_selected = (M_EXTRA_CHOICES)(currentlySelected % NUMBER_OF_EXTRA_CHOICES);
+				}
+			} else {
+				if (currentlySelected < 0)
+					m_M_EXTRA_selected = CREDITS;
+				else {
+					if (_down_ && currentlySelected == SLIDESHOW)
+						m_M_EXTRA_selected = CREDITS;
+					else if (!_down_ && currentlySelected == PROFILES)
+						m_M_EXTRA_selected = SLIDESHOW;
+					else
+						m_M_EXTRA_selected = (M_EXTRA_CHOICES)(currentlySelected % NUMBER_OF_EXTRA_CHOICES);
+				}
 			}
 		}
 
@@ -4840,7 +4872,7 @@ void OptionsManager::AnimateSlotsPaging() {
 				DrawMovieSlots(m_movieOffset - M_NUMBER_OF_VISIBLE_MOVIE_SLOTS, m_mySlotSurface1ID);
 			}
 
-			// Blit this surface the the screen with animating offsets and transparency
+			// Blit this surface the screen with animating offsets and transparency
 			surface_manager->Blit_surface_to_surface(m_mySlotSurface1ID, working_buffer_id, &m_pageOn_from, &m_pageOn_dest, DDBLT_KEYSRC);
 		}
 
@@ -4863,7 +4895,7 @@ void OptionsManager::AnimateSlotsPaging() {
 				DrawMovieSlots(m_movieOffset, m_mySlotSurface1ID);
 			}
 
-			// Blit this surface the the screen with animating offsets and transparency
+			// Blit this surface the screen with animating offsets and transparency
 			surface_manager->Blit_surface_to_surface(m_mySlotSurface1ID, working_buffer_id, &m_pageOff_from, &m_pageOff_dest, DDBLT_KEYSRC);
 		}
 
@@ -4924,7 +4956,7 @@ void OptionsManager::AnimateSlotsPaging() {
 				DrawMovieSlots(m_movieOffset + M_NUMBER_OF_VISIBLE_MOVIE_SLOTS, m_mySlotSurface1ID);
 			}
 
-			// Blit this surface the the screen with animating offsets and transparency
+			// Blit this surface the screen with animating offsets and transparency
 			surface_manager->Blit_surface_to_surface(m_mySlotSurface1ID, working_buffer_id, &m_pageOn_from, &m_pageOn_dest, DDBLT_KEYSRC);
 		}
 
@@ -4946,7 +4978,7 @@ void OptionsManager::AnimateSlotsPaging() {
 				DrawMovieSlots(m_movieOffset, m_mySlotSurface1ID);
 			}
 
-			// Blit this surface the the screen with animating offsets and transparency
+			// Blit this surface the screen with animating offsets and transparency
 			surface_manager->Blit_surface_to_surface(m_mySlotSurface1ID, working_buffer_id, &m_pageOff_from, &m_pageOff_dest, DDBLT_KEYSRC);
 		}
 
@@ -5511,12 +5543,12 @@ const char *OptionsManager::GetTextFromReference(uint32 hashRef) {
 
 	// Get the text via a label
 	if (m_global_text)
-		textLine = (char *)m_global_text->Try_fetch_item_by_hash(hashRef);
+		textLine = (char *)LinkedDataObject::Try_fetch_item_by_hash(m_global_text, hashRef);
 
 	if (!textLine) {
 		// Try again with reloaded text file
 		LoadGlobalTextFile();
-		textLine = (char *)m_global_text->Try_fetch_item_by_hash(hashRef);
+		textLine = (char *)LinkedDataObject::Try_fetch_item_by_hash(m_global_text, hashRef);
 		if (!textLine)
 			return "Missing text!";
 	}
@@ -5565,10 +5597,10 @@ void OptionsManager::LoadBitmapFont() {
 	pxString font_cluster = FONT_CLUSTER_PATH;
 	m_font_file = (_pxBitmap *)rs_font->Res_open(m_fontName, hashedname, font_cluster, font_cluster_hash);
 
-	if (m_font_file->schema != PC_BITMAP_SCHEMA)
-		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", m_fontName, PC_BITMAP_SCHEMA, m_font_file->schema);
+	if (FROM_LE_32(m_font_file->schema) != PC_BITMAP_SCHEMA)
+		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", m_fontName, PC_BITMAP_SCHEMA, FROM_LE_32(m_font_file->schema));
 
-	m_fontPalette = (uint32 *)m_font_file->Fetch_palette_pointer();
+	m_fontPalette = (uint32 *)&m_font_file->palette[0];
 }
 
 void OptionsManager::LoadGlobalTextFile() {
@@ -5591,9 +5623,9 @@ void OptionsManager::LoadGlobalTextFile() {
 		if (m_global_text == nullptr)
 			m_global_text = LoadTranslatedFile("global", "global\\global\\");
 	} else
-		m_global_text = (_linked_data_file *)rs1->Res_open(textFileName, buf_hash, globalClusterFile, globalClusterHash);
+		m_global_text = (LinkedDataFile *)rs1->Res_open(textFileName, buf_hash, globalClusterFile, globalClusterHash);
 
-	m_global_text = (_linked_data_file *)rs1->Res_open(textFileName, buf_hash, globalClusterFile, globalClusterHash);
+	m_global_text = (LinkedDataFile *)rs1->Res_open(textFileName, buf_hash, globalClusterFile, globalClusterHash);
 }
 
 bool8 OptionsManager::SetCharacterSprite(char c) {
@@ -5602,10 +5634,10 @@ bool8 OptionsManager::SetCharacterSprite(char c) {
 		index += 256;
 
 	// Catch ernoeous characters and make them apostrophes
-	if ((uint)index >= m_font_file->Fetch_number_of_items())
+	if ((uint)index >= m_font_file->num_sprites)
 		index = 7;
 
-	m_currentSprite = m_font_file->Fetch_item_by_number(index);
+	m_currentSprite = (_pxSprite *)((byte *)m_font_file + FROM_LE_32(m_font_file->sprite_offsets[index]));
 
 	if (!m_currentSprite)
 		return FALSE8;

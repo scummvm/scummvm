@@ -57,11 +57,11 @@ public:
 	AvalancheMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(AvalancheGameDescription), avalancheGames) {
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "avalanche";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Avalanche";
 	}
 

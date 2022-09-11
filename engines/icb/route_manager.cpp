@@ -212,12 +212,14 @@ bool8 _game_session::Process_route() {
 		else
 			res = Play_anim_with_no_movement();
 
+		// if more to do then return
+		//if (!res)
 		return (res);
 
 		// remove the phase so headup diagnostics disappear now the route is effectively done
-		M->m_phase = RM_NONE;
+		//M->m_phase = RM_NONE;
 
-		return (1); // no slow-out so we're done
+		//return (1); // no slow-out so we're done
 	}
 
 	// ok, process that point-to-point route!
@@ -303,7 +305,7 @@ mcodeFunctionReturnCodes _game_session::fn_tiny_route(int32 &result, int32 *para
 
 	if (L->looping < 2) {
 
-		Tdebug("route_async.txt", "%s tiny", object->GetName());
+		Tdebug("route_async.txt", "%s tiny", CGameObject::GetName(object));
 
 		// check for free router
 		if (Is_router_busy())
@@ -504,10 +506,10 @@ mcodeFunctionReturnCodes _game_session::fn_route_to_nico(int32 &result, int32 *p
 			return IR_REPEAT;
 		}
 
-		monica = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+		monica = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 
 		if (!monica)
-			Fatal_error("fn_route_to_nico - object [%s] cant find nico [%s]", object->GetName(), nico_name);
+			Fatal_error("fn_route_to_nico - object [%s] cant find nico [%s]", CGameObject::GetName(object), nico_name);
 
 		// build route
 		if (!Setup_route(result, (int32)monica->x, (int32)monica->z, params[1], __FULL, TRUE8)) {
@@ -613,7 +615,7 @@ mcodeFunctionReturnCodes _game_session::fn_spectre_route_to_mega(int32 &result, 
 	const char *mega_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	// get object to check
-	id = objects->Fetch_item_number_by_name(mega_name);
+	id = LinkedDataObject::Fetch_item_number_by_name(objects, mega_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_spectre_route_to_mega - illegal object [%s]", mega_name);
 
@@ -786,15 +788,15 @@ mcodeFunctionReturnCodes _game_session::Route_to_near_mega_core(const char *name
 
 	// get object to check
 
-	monica = (_feature_info *)features->Try_fetch_item_by_name(name);
+	monica = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, name);
 	if (monica) {
 		x = monica->x;
 		z = monica->z;
 
 	} else {
-		id = objects->Fetch_item_number_by_name(name);
+		id = LinkedDataObject::Fetch_item_number_by_name(objects, name);
 		if (id == 0xffffffff)
-			Fatal_error("[%s] calling Route_to_near_mega_core - finds neither object or nico named [%s]", object->GetName(), name);
+			Fatal_error("[%s] calling Route_to_near_mega_core - finds neither object or nico named [%s]", CGameObject::GetName(object), name);
 		//			found mega with name!
 		//			check we are within the distance and stop us if so
 
@@ -895,10 +897,10 @@ mcodeFunctionReturnCodes _game_session::fn_route_to_marker(int32 &result, int32 
 		marker = (_map_marker *)markers.Fetch_marker_by_object_name(marker_name);
 
 		if (!marker)
-			Fatal_error("fn_route_to_marker - object [%s] cant find marker [%s]", object->GetName(), marker_name);
+			Fatal_error("fn_route_to_marker - object [%s] cant find marker [%s]", CGameObject::GetName(object), marker_name);
 
 		// build route
-		if (!Setup_route(result, (int32)marker->x, (int32)marker->z, params[1], __FULL, TRUE8)) {
+		if (!Setup_route(result, (int32)FROM_LE_FLOAT32(marker->x), (int32)FROM_LE_FLOAT32(marker->z), params[1], __FULL, TRUE8)) {
 			L->looping = 0;
 			return (IR_CONT);
 		}
@@ -952,7 +954,7 @@ bool8 _game_session::Setup_route(int32 &result, int32 corex, int32 corez, int32 
 
 	// quick CAPS check on the anim
 	if ((!L->voxel_info->IsAnimTable(L->cur_anim_type)))
-		Fatal_error("mega [%s] has anim [%s] missing", object->GetName(), master_anim_name_table[L->cur_anim_type].name);
+		Fatal_error("mega [%s] has anim [%s] missing", CGameObject::GetName(object), master_anim_name_table[L->cur_anim_type].name);
 
 	// new route do prepare a route request form!
 	// initial x,z
@@ -1057,8 +1059,8 @@ uint32 _game_session::Animate_points(_route_description *route) {
 	// get motion displacement from currently displayed frame to next one
 	// note that we always read frame+1 for motion of next frame even though the voxel frame itself will be looped back to 0
 	PXreal x1, z1, x2, z2, unused;
-	PXFrameEnOfAnim(L->anim_pc + 1, pAnim)->markers[ORG_POS].GetXYZ(&x1, &unused, &z1);
-	PXFrameEnOfAnim(L->anim_pc, pAnim)->markers[ORG_POS].GetXYZ(&x2, &unused, &z2);
+	PXmarker_PSX_Object::GetXYZ(&PXFrameEnOfAnim(L->anim_pc + 1, pAnim)->markers[ORG_POS], &x1, &unused, &z1);
+	PXmarker_PSX_Object::GetXYZ(&PXFrameEnOfAnim(L->anim_pc, pAnim)->markers[ORG_POS], &x2, &unused, &z2);
 
 	xnext = x1 - x2;
 	znext = z1 - z2;

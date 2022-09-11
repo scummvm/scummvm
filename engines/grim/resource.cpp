@@ -96,19 +96,21 @@ ResourceLoader::ResourceLoader() {
 		// Check if the update has been correctly loaded
 		if (!SearchMan.hasArchive("update")) {
 			Common::U32String errorMessage;
+			Common::String urlForPatchDownload = Common::String::format("https://downloads.scummvm.org/frs/extras/patches/%s",
+			                                     (g_grim->getGameType() == GType_GRIM)? "gfupd101.exe" : "");
 			if (g_grim->getGameType() == GType_GRIM) {
-				errorMessage = _("The original patch of Grim Fandango\n"
+				errorMessage = Common::U32String::format(_("The original patch of Grim Fandango\n"
 								"is missing. Please download it from\n"
-								"https://downloads.scummvm.org/frs/extras/patches/gfupd101.exe\n"
-								"and put it in the game data files directory");
+								"%s\n"
+								"and put it in the game data files directory"), urlForPatchDownload.c_str());
 			} else if (g_grim->getGameType() == GType_MONKEY4) {
-				errorMessage = _("The original patch of Escape from Monkey Island is missing. \n"
-								"Please download it from https://downloads.scummvm.org/frs/extras/patches/\n"
+				errorMessage = Common::U32String::format(_("The original patch of Escape from Monkey Island is missing. \n"
+								"Please download it from %s\n"
 								"and put it in the game data files directory.\n"
-								"Pay attention to download the correct version according to the game's language");
+								"Pay attention to download the correct version according to the game's language!"), urlForPatchDownload.c_str());
 			}
 
-			GUI::displayErrorDialog(errorMessage);
+			GUIErrorMessageWithURL(errorMessage, urlForPatchDownload.c_str());
 			error("%s not found", updateFilename);
 		}
 	}

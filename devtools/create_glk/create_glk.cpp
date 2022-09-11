@@ -128,11 +128,11 @@ const byte FONT[] = {
 };
 
 
-#define X_COUNT 32
-#define CHAR_COUNT (int)(sizeof(FONT) / 8)
-#define Y_COUNT 3
-#define CHAR_WIDTH 6
-#define CHAR_HEIGHT 8
+#define GLK_X_COUNT 32
+#define GLK_CHAR_COUNT (int)(sizeof(FONT) / 8)
+#define GLK_Y_COUNT 3
+#define GLK_CHAR_WIDTH 6
+#define GLK_CHAR_HEIGHT 8
 
 
 /**
@@ -222,7 +222,7 @@ public:
 int main(int argc, char *argv[]) {
 	MemoryReadStream src(FONT);
 
-	Surface norm(X_COUNT * CHAR_WIDTH, Y_COUNT * CHAR_HEIGHT), surf(X_COUNT * CHAR_WIDTH, Y_COUNT * CHAR_HEIGHT);
+	Surface norm(GLK_X_COUNT * GLK_CHAR_WIDTH, GLK_Y_COUNT * GLK_CHAR_HEIGHT), surf(GLK_X_COUNT * GLK_CHAR_WIDTH, GLK_Y_COUNT * GLK_CHAR_HEIGHT);
 
 	// Decode the normal font and write it out
 	norm.decodeFont(src);
@@ -232,18 +232,18 @@ int main(int argc, char *argv[]) {
 }
 
 void Surface::decodeFont(MemoryReadStream &src) {
-	for (int charNum = 0; charNum < CHAR_COUNT; ++charNum) {
-		int xs = (charNum % X_COUNT) * CHAR_WIDTH;
-		int ys = (charNum / X_COUNT) * CHAR_HEIGHT;
+	for (int charNum = 0; charNum < GLK_CHAR_COUNT; ++charNum) {
+		int xs = (charNum % GLK_X_COUNT) * GLK_CHAR_WIDTH;
+		int ys = (charNum / GLK_X_COUNT) * GLK_CHAR_HEIGHT;
 
-		for (int y = 0; y < CHAR_HEIGHT; ++y) {
+		for (int y = 0; y < GLK_CHAR_HEIGHT; ++y) {
 			byte *pDest = getBasePtr(xs, ys + y);
 			byte bits = src.readByte();
 
-			for (int x = 0; x < CHAR_WIDTH; ++x, ++pDest, bits <<= 1) {
+			for (int x = 0; x < GLK_CHAR_WIDTH; ++x, ++pDest, bits <<= 1) {
 				if (bits & 0x80) {
 					*pDest = 0;
-					assert(x < CHAR_WIDTH);
+					assert(x < GLK_CHAR_WIDTH);
 				}
 			}
 		}

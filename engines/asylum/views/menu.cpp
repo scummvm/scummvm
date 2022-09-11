@@ -26,6 +26,8 @@
 
 #include "common/keyboard.h"
 
+#include "graphics/palette.h"
+
 #include "asylum/views/menu.h"
 
 #include "asylum/resources/actor.h"
@@ -77,6 +79,9 @@ Menu::Menu(AsylumEngine *vm): _vm(vm) {
 	// Savegames
 	_prefixWidth = 0;
 	_loadingDuringStartup = false;
+
+	// Thumbnails
+	_thumbnailIndex = -1;
 
 	// Credits
 	_creditsFrameIndex = 0;
@@ -734,6 +739,39 @@ void Menu::updateNewGame() {
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1323));
 }
 
+bool Menu::hasThumbnail(int index) {
+	if (getSaveLoad()->hasSavegame(index + _startIndex))
+		return _vm->getMetaEngine()->querySaveMetaInfos(_vm->getTargetName().c_str(), index + _startIndex).getThumbnail();
+
+	return false;
+}
+
+void Menu::readThumbnail() {
+	if (_thumbnailSurface.getPixels())
+		_thumbnailSurface.free();
+
+	Graphics::PaletteLookup paletteLookup(getScreen()->getPalette(), 256);
+	SaveStateDescriptor desc = _vm->getMetaEngine()->querySaveMetaInfos(_vm->getTargetName().c_str(), _thumbnailIndex + _startIndex);
+	const Graphics::Surface *thumbnail = desc.getThumbnail();
+	int w = thumbnail->w, h = thumbnail->h;
+
+	_thumbnailSurface.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+	for (int i = 0; i < w; i++)
+		for (int j = 0; j < h; j++) {
+			byte r, g, b;
+			thumbnail->format.colorToRGB(thumbnail->getPixel(i, j), r, g, b);
+			_thumbnailSurface.setPixel(i, j, paletteLookup.findBestColor(r, g, b));
+		}
+}
+
+void Menu::showThumbnail() {
+	int x, y;
+	x = _thumbnailIndex < 6 ? 150 : 470;
+	y = 179 + (_thumbnailIndex % 6) * 29;
+
+	getScreen()->draw(_thumbnailSurface, x, y);
+}
+
 void Menu::updateLoadGame() {
 	Common::Point cursor = getCursor()->position();
 
@@ -769,6 +807,7 @@ void Menu::updateLoadGame() {
 	getText()->loadFont(kFontYellow);
 	getText()->drawCentered(Common::Point(10, 100), 620, MAKE_RESOURCE(kResourcePackText, 1325));
 
+	int current = -1;
 	if (_dword_455C78) {
 		getText()->drawCentered(Common::Point(10,      190), 620, MAKE_RESOURCE(kResourcePackText, 1332));
 		getText()->drawCentered(Common::Point(10, 190 + 29), 620, MAKE_RESOURCE(kResourcePackText, 1333));
@@ -798,6 +837,8 @@ void Menu::updateLoadGame() {
 				getText()->loadFont(kFontYellow);
 			} else {
 				getText()->loadFont(kFontBlue);
+				if (hasThumbnail(index))
+					current = index;
 			}
 
 			getText()->setPosition(Common::Point(30, y));
@@ -819,6 +860,8 @@ void Menu::updateLoadGame() {
 				getText()->loadFont(kFontYellow);
 			} else {
 				getText()->loadFont(kFontBlue);
+				if (hasThumbnail(index))
+					current = index;
 			}
 
 			getText()->setPosition(Common::Point(350, y));
@@ -860,6 +903,18 @@ void Menu::updateLoadGame() {
 
 	getText()->setPosition(Common::Point(550, 340));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1327));
+
+	if (current == -1) {
+		_thumbnailIndex = -1;
+		return;
+	}
+
+	if (current != _thumbnailIndex) {
+		_thumbnailIndex = current;
+		readThumbnail();
+	}
+
+	showThumbnail();
 }
 
 void Menu::updateSaveGame() {

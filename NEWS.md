@@ -6,8 +6,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  New games:
    - Added support for Soldier Boyz.
    - Added support for C64 and ZX Spectrum versions of GLK Scott Adams
-     Interactive Fiction games
+     Interactive Fiction games.
    - Added support for GLK Scott Adams adventures 1-12 in the TI99/4A format.
+   - Added support for Obsidian.
 
  General:
    - Reduced amount of false positives in Mass Add.
@@ -22,14 +23,33 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SCUMM:
    - Added support for CGA, CGA Composite, CGA black & white and Hercules modes
-     for SCUMM 1 versions of Zak McKracken and Maniac Mansion. Also improved
-	   accuracy of CGA and Hercules modes for SCUMM 2 (enhanced) versions of
-	   Zak McKracken and Maniac Mansion and fixed some minor glitches for the
-	   CGA mode of Loom.
+     for SCUMM 1 versions of Zak McKracken and Maniac Mansion.
+   - Improved accuracy of CGA and Hercules modes for SCUMM 2 (enhanced) versions of
+     Zak McKracken and Maniac Mansion.
+   - Improved accuracy of CGA and Hercules modes for Monkey Island 1 (EGA version
+     only - the VGA version does not have CGA and Hercules modes).
+   - Fixed some minor glitches for the CGA mode of Loom.
+   - Added EGA dithering mode for VGA versions of Loom, Monkey Island 1 and 2 and
+     Indiana Jones 4.
+   - Fixed a possible dead-end in the Ultimate Talkie Edition of Monkey Island 2,
+     if one doesn't pick up the model lighthouse lens before Captain Dread brings
+     Guybrush back to Scabb Island, at the end of Part II.
+   - Added support for original GUI dialogs to COMI.
+   - Improved the decoding of some Western European game strings when they're
+     displayed through ScummVM's interface, such as when pausing a game.
 
  Toon:
    - Made game menus behave like in the original.
 
+ TwinE:
+   - Fixed rendering issue with doors
+   - Fixed invalid music pause in behaviour and inventory menu
+   - Fixed giving kashes instead of hearts as fallback
+   - Fixed item flashing when they drop
+   - Fixed meca penguin angle at spawn
+   - Fixed background redraw when watching cutscenes at the television
+   - Fixed recenter the screen on activating an inventory item
+   - Fixed pressing W to talk to people also makes you jump
 
 #### 2.6.0 "Insane Escapism" (2022-08-01)
 

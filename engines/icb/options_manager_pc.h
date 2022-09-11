@@ -293,7 +293,7 @@ private:
 	uint32 m_fontHeight;
 	_pxPCSprite *m_currentSprite;
 	_rgb m_selectedShade;
-	_linked_data_file *m_global_text;
+	LinkedDataFile *m_global_text;
 
 	_rgb m_drawColour; // Current primitive drawing colour
 

@@ -204,11 +204,11 @@ public:
 		_guiOptions = GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "cruise";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Cinematique evo 2";
 	}
 

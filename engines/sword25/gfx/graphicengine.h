@@ -121,7 +121,7 @@ public:
 
 	/**
 	 * Creates a thumbnail with the dimensions of 200x125. This will not include the top and bottom of the screen..
-	 * the interface boards the the image as a 16th of it's original size.
+	 * the interface boards the image as a 16th of it's original size.
 	 * Notes: This method should only be called after a call to EndFrame(), and before the next call to StartFrame().
 	 * The frame buffer must have a resolution of 800x600.
 	 * @param Filename  The filename for the screenshot

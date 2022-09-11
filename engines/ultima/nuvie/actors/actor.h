@@ -31,7 +31,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::map;
 using Std::list;
 using Std::string;
 using Std::vector;
@@ -297,7 +296,7 @@ protected:
 	uint16 sched_pos;
 
 	list<Obj *> surrounding_objects; //used for multi-tile actors.
-	Std::map<uint16, uint16> *custom_tile_tbl;
+	Common::HashMap<uint16, uint16> *custom_tile_tbl;
 
 public:
 

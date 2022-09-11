@@ -75,8 +75,8 @@
 
 namespace TwinE {
 
-ScopedEngineFreeze::ScopedEngineFreeze(TwinEEngine *engine) : _engine(engine) {
-	_engine->freezeTime();
+ScopedEngineFreeze::ScopedEngineFreeze(TwinEEngine *engine, bool pause) : _engine(engine) {
+	_engine->freezeTime(pause);
 }
 
 ScopedEngineFreeze::~ScopedEngineFreeze() {
@@ -602,10 +602,11 @@ int TwinEEngine::getRandomNumber(uint max) {
 	return _rnd.getRandomNumber(max - 1);
 }
 
-void TwinEEngine::freezeTime() {
+void TwinEEngine::freezeTime(bool pause) {
 	if (_isTimeFreezed == 0) {
 		_saveFreezedTime = _lbaTime;
-		_pauseToken = pauseEngine();
+		if (pause)
+			_pauseToken = pauseEngine();
 	}
 	_isTimeFreezed++;
 }
@@ -614,7 +615,9 @@ void TwinEEngine::unfreezeTime() {
 	--_isTimeFreezed;
 	if (_isTimeFreezed == 0) {
 		_lbaTime = _saveFreezedTime;
-		_pauseToken.clear();
+		if (_pauseToken.isActive()) {
+			_pauseToken.clear();
+		}
 	}
 }
 
@@ -704,7 +707,7 @@ void TwinEEngine::processInventoryAction() {
 	case kiPenguin: {
 		ActorStruct *penguin = _scene->getActor(_scene->_mecaPenguinIdx);
 
-		const IVec3 &destPos = _movements->rotateActor(0, 800, penguin->_angle);
+		const IVec3 &destPos = _movements->rotateActor(0, 800, _scene->_sceneHero->_angle);
 
 		penguin->_pos = _scene->_sceneHero->_pos;
 		penguin->_pos.x += destPos.x;
@@ -718,7 +721,7 @@ void TwinEEngine::processInventoryAction() {
 			_actor->initModelActor(BodyType::btNormal, _scene->_mecaPenguinIdx);
 			penguin->_dynamicFlags.bIsDead = 0;
 			penguin->setBrickShape(ShapeType::kNone);
-			_movements->moveActor(penguin->_angle, penguin->_angle, penguin->_speed, &penguin->_move);
+			_movements->initRealAngleConst(penguin->_angle, penguin->_angle, penguin->_speed, &penguin->_move);
 			_gameState->removeItem(InventoryItems::kiPenguin);
 			penguin->_delayInMillis = _lbaTime + TO_SECONDS(30);
 		}
@@ -878,7 +881,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		// Process Pause
 		if (_input->toggleActionIfActive(TwinEActionType::Pause)) {
-			ScopedEngineFreeze scopedFreeze(this);
+			ScopedEngineFreeze scopedFreeze(this, true);
 			const char *PauseString = "Pause";
 			_text->setFontColor(COLOR_WHITE);
 			if (_redraw->_inSceneryView) {

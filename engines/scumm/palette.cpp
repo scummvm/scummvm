@@ -190,6 +190,7 @@ void ScummEngine::resetPalette() {
 
 	int cgaPalIndex = 1;
 	int cgaPalIntensity = 1;
+	_enableEGADithering = false;
 
 	if (_renderMode == Common::kRenderHercA) {
 		setPaletteFromTable(tableHercAPalette, sizeof(tableHercAPalette) / 3);
@@ -248,6 +249,15 @@ void ScummEngine::resetPalette() {
 			// else we initialize and then lock down the first 16 colors.
 			if (_renderMode != Common::kRenderEGA)
 				setPaletteFromTable(tableAmigaMIPalette, sizeof(tableAmigaMIPalette) / 3);
+		} else if (_renderMode == Common::kRenderEGA && _supportsEGADithering) {
+			setPaletteFromTable(tableEGAPalette, sizeof(tableEGAPalette) / 3);
+			_enableEGADithering = true;
+			// Set the color tables to sane values (for games that dither the mouse cursor
+			// right at the beginning, before these tables get filled normally.
+			if (_currentRoom == 0) {
+				for (uint16 i = 0; i < 256; ++i)
+					_egaColorMap[0][i] = _egaColorMap[1][i] = i & 0x0F;
+			}
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		} else if (_game.platform == Common::kPlatformFMTowns) {
 			if (_game.id == GID_INDY4 || _game.id == GID_MONKEY2)
@@ -729,6 +739,9 @@ void ScummEngine::cyclePalette() {
 		return;
 #endif
 
+	if (_enableEGADithering)
+		return;
+
 	valueToAdd = VAR(VAR_TIMER);
 	if (valueToAdd < VAR(VAR_TIMER_NEXT))
 		valueToAdd = VAR(VAR_TIMER_NEXT);
@@ -782,7 +795,10 @@ void ScummEngine::palManipulateInit(int resID, int start, int end, int time) {
 	// This function is actually a nullsub in Indy4 Amiga.
 	// It might very well be a nullsub in other Amiga games, but for now I
 	// limit this to Indy4 Amiga, since that is the only game I can check.
-	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4)
+	// UPDATE: Disable it for EGA mode, too. The original does not handle this. For
+	// Indy4 they just disabled the EGA mode completely. I have tried to make an EGA
+	// implementation, but it looks glitchy and unpleasant.
+	if ((_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) || _enableEGADithering)
 		return;
 
 	byte *string1 = getStringAddress(resID);
@@ -825,6 +841,9 @@ void ScummEngine::palManipulateInit(int resID, int start, int end, int time) {
 
 void ScummEngine_v6::palManipulateInit(int resID, int start, int end, int time) {
 	const byte *new_pal;
+
+	if (_enableEGADithering)
+		return;
 
 	new_pal = getPalettePtr(resID, _roomResource);
 
@@ -967,6 +986,36 @@ void ScummEngine::setShadowPalette(int redScale, int greenScale, int blueScale, 
 	}
 }
 
+byte egaFindBestMatch(int r, int g, int b) {
+	// This is almost like the normal EGA palette, but a bit different
+	static const byte matchPalette[] = {
+		0x00, 0x00, 0x00, 	0x00, 0x00, 0xAB, 	0x00, 0xAB, 0x00, 	0x00, 0xAB, 0xAB,
+		0xAB, 0x00, 0x00, 	0xAB, 0x00, 0xAB, 	0xAB, 0x57, 0x00, 	0xAB, 0xAB, 0xAB,
+		0x57, 0x57, 0x57, 	0x57, 0x57, 0xFF, 	0x57, 0xFF, 0x57, 	0x57, 0xFF, 0xFF,
+		0xFF, 0x57, 0x57, 	0xFF, 0x57, 0xFF, 	0xFF, 0xFF, 0x57, 	0xFF, 0xFF, 0xFF
+	};
+
+	uint32 best = (uint32)-1;
+	byte res = 0;
+
+	for (uint16 i = 0; i < 256; ++i) {
+		const byte *c1 = &matchPalette[(i >> 4) * 3];
+		const byte *c2 = &matchPalette[(i & 0x0F) * 3];
+
+		int dr = ((c1[0] + c2[0]) >> 1) - r;
+		int dg = ((c1[1] + c2[1]) >> 1) - g;
+		int db = ((c1[2] + c2[2]) >> 1) - b;
+
+		uint32 sum = dr * dr + dg * dg + db * db;
+		if (sum < best) {
+			best = sum;
+			res = i;
+		}
+	}
+
+	return res;
+}
+
 void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor) {
 	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) {
 		startColor = CLIP(startColor, 0, 255);
@@ -1019,6 +1068,44 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 		}
 
 		setDirtyColors(startColor, endColor);
+	} else if (_enableEGADithering) {
+		if (redScale == 0 || greenScale == 0 || blueScale == 0) {
+			for (int i = startColor; i <= endColor; ++i)
+				_egaColorMap[0][i] = _egaColorMap[1][i] = 0;
+
+		} else if (redScale == 0xFF || greenScale == 0xFF || blueScale == 0xFF) {
+			if (!_EPAL_offs) {
+				// We can support the EGA mode for games that aren't supposed to have it, like this.
+				// Might be glitchy, though...
+				const byte *p = getPalettePtr(_curPalIndex, _roomResource) + startColor * 3;
+				for (int i = startColor; i <= endColor; ++i) {
+					byte col = egaFindBestMatch(p[0], p[1], p[2]);
+					_egaColorMap[0][i] = col & 0x0F;
+					_egaColorMap[1][i] = col >> 4;
+					p += 3;
+				}
+			} else {
+				const byte *p = getResourceAddress(rtRoom, _roomResource) + _EPAL_offs + startColor;
+				for (int i = startColor; i <= endColor; ++i) {
+					_egaColorMap[0][i] = *p & 0x0F;
+					_egaColorMap[1][i] = *p++ >> 4;
+				}
+			}
+		} else {
+			const byte *p = getPalettePtr(_curPalIndex, _roomResource) + startColor * 3;
+			for (int i = startColor; i <= endColor; ++i) {
+				int vr = MIN<int>(*p++ * redScale / 0xFF, 0xFF);
+				int vg = MIN<int>(*p++ * greenScale / 0xFF, 0xFF);
+				int vb = MIN<int>(*p++ * blueScale / 0xFF, 0xFF);
+				byte col = egaFindBestMatch(vr, vg, vb);
+				_egaColorMap[0][i] = col & 0x0F;
+				_egaColorMap[1][i] = col >> 4;
+			}
+		}
+
+		_virtscr[kMainVirtScreen].setDirtyRange(0, _virtscr[kMainVirtScreen].h);
+		_virtscr[kVerbVirtScreen].setDirtyRange(0, _virtscr[kVerbVirtScreen].h);
+
 	} else {
 		int max;
 		if (_game.version >= 5 && _game.version <= 6 && _game.heversion <= 60) {
@@ -1274,6 +1361,15 @@ void ScummEngine::copyPalColor(int dst, int src) {
 }
 
 void ScummEngine::setPalColor(int idx, int r, int g, int b) {
+	if (_enableEGADithering) {
+		byte col = egaFindBestMatch(r, g, b);
+		_egaColorMap[0][idx] = col & 0x0F;
+		_egaColorMap[1][idx] = col >> 4;
+		_virtscr[kMainVirtScreen].setDirtyRange(0, _virtscr[kMainVirtScreen].h);
+		_virtscr[kVerbVirtScreen].setDirtyRange(0, _virtscr[kVerbVirtScreen].h);
+		return;
+	}
+
 	if (_game.heversion == 70)
 		idx = _HEV7ActorPalette[idx];
 
@@ -1342,6 +1438,24 @@ void ScummEngine::setCurrentPalette(int palindex) {
 #endif
 	} else if (_game.id == GID_INDY4 && _game.platform == Common::kPlatformAmiga) {
 		setAmigaPaletteFromPtr(pals);
+	} else if (_enableEGADithering) {
+		if (!_EPAL_offs) {
+			// We can support the EGA mode for games that aren't supposed to have it, like this.
+			// Might be glitchy, though...
+			const byte *p = getPalettePtr(_curPalIndex, _roomResource);
+			for (int i = 0; i < 256; ++i) {
+				byte col = egaFindBestMatch(p[0], p[1], p[2]);
+				_egaColorMap[0][i] = col & 0x0F;
+				_egaColorMap[1][i] = col >> 4;
+				p += 3;
+			}
+		} else {
+			pals = getResourceAddress(rtRoom, _roomResource) + _EPAL_offs;
+			for (int i = 0; i < 256; ++i) {
+				_egaColorMap[0][i] = *pals & 0x0F;
+				_egaColorMap[1][i] = *pals++ >> 4;
+			}
+		}
 	} else {
 		setPaletteFromPtr(pals);
 	}
@@ -1388,6 +1502,59 @@ const byte *ScummEngine::getPalettePtr(int palindex, int room) {
 		assert(cptr);
 	}
 	return cptr;
+}
+
+uint32 ScummEngine::getPaletteColorFromRGB(byte *palette, byte r, byte g, byte b) {
+	uint32 color, black = 0x00, white = 0xFF;
+
+	if ((r == 0xFF && b == 0xFF && g == 0xFF) || (r == 0x00 && g == 0x00 && b == 0x00)) {
+		fetchBlackAndWhite(black, white, palette, 256);
+
+		if (!r) {
+			color = black;
+		} else {
+			color = white;
+		}
+	} else {
+		color = findClosestPaletteColor(palette, 256, r, g, b);
+	}
+
+	return color;
+}
+
+uint32 ScummEngine::getPackedRGBColorFromPalette(byte *palette, uint32 color) {
+	return palette[3 * color] | (palette[3 * color + 1] << 8) | (palette[3 * color + 2] << 16);
+}
+
+void ScummEngine::fetchBlackAndWhite(uint32 &black, uint32 &white, byte *palette, int paletteEntries) {
+	int max = 0;
+	int r, g, b;
+	int componentsSum;
+	int min = 1000;
+
+	for (int elementId = 0; elementId < paletteEntries; elementId++) {
+		r = palette[0];
+		g = palette[1];
+		b = palette[2];
+
+		componentsSum = r + g + b;
+		if (elementId > 0 && componentsSum >= max) {
+			max = componentsSum;
+			white = elementId;
+		}
+
+		if (componentsSum <= min) {
+			min = componentsSum;
+			black = elementId;
+		}
+
+		palette += 3;
+	}
+}
+
+uint32 ScummEngine::findClosestPaletteColor(byte *palette, int paletteLength, byte r, byte g, byte b) {
+	_pl.setPalette(palette, paletteLength);
+	return (uint32)_pl.findBestColor(r, g, b, true);
 }
 
 void ScummEngine::updatePalette() {

@@ -48,7 +48,7 @@ class AdWalkplane;
 class BaseSurfaceOpenGL3D;
 class Light3D;
 class Mesh3DS;
-class MeshX;
+class XMesh;
 class ShadowVolume;
 
 class BaseRenderer3D : public BaseRenderer {
@@ -97,7 +97,7 @@ public:
 	}
 
 	virtual Mesh3DS *createMesh3DS() = 0;
-	virtual MeshX *createMeshX() = 0;
+	virtual XMesh *createXMesh() = 0;
 	virtual ShadowVolume *createShadowVolume() = 0;
 
 	bool drawSprite(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, float zoomX, float zoomY, const Vector2 &pos,

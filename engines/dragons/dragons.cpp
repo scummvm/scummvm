@@ -1799,8 +1799,8 @@ bool DragonsEngine::validateAVFile(const char *filename) {
 	file.close();
 
 	if(!fileValid) {
-		GUIErrorMessageWithURL(Common::U32String::format(_("Error: The file '%s' hasn't been extracted properly.\nPlease refer to the wiki page\nhttps://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos for details on how to properly extract the DTSPEECH.XA and *.STR files from your game disc."), filename),
-				"https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos");
+		const char* urlForFileExtractionInfo = "https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos";
+		GUIErrorMessageWithURL(Common::U32String::format(_("Error: The file '%s' hasn't been extracted properly.\nPlease refer to the wiki page\n%s for details on how to properly extract the DTSPEECH.XA and *.STR files from your game disc."), filename, urlForFileExtractionInfo), urlForFileExtractionInfo);
 	}
 	return fileValid;
 }

@@ -54,7 +54,7 @@ void TextAsset::decodeOld() {
 	bool lowercase = false;
 	char c = ' ';
 	for (uint16 i = 0; i < strLen; i++) {
-		char val = stream.getBits(5);
+		char val = stream.getBits<5>();
 		if (val == 0x0) { // Space
 			c = ' ';
 		} else if (val >= 0x1 && val <= 0x1A) {
@@ -79,7 +79,7 @@ void TextAsset::decodeOld() {
 			}
 			lowercase = true;
 		} else if (val == 0x1D) { // Composite
-			ObjID subval = stream.getBits(16);
+			ObjID subval = stream.getBits<16>();
 			Common::String child;
 			if (subval & 0x8000) {
 				// Composite object id
@@ -95,7 +95,7 @@ void TextAsset::decodeOld() {
 			}
 			lowercase = true;
 		} else if (val == 0x1E) {
-			c = stream.getBits(8);
+			c = stream.getBits<8>();
 			lowercase = true;
 		} else if (val == 0x1F) {
 			lowercase = !lowercase;
@@ -116,15 +116,15 @@ void TextAsset::decodeHuffman() {
 	Common::BitStream8MSB stream(res, DisposeAfterUse::YES);
 	uint16 strLen = 0;
 	if (stream.getBit()) {
-		strLen = stream.getBits(15);
+		strLen = stream.getBits<15>();
 	} else {
-		strLen = stream.getBits(7);
+		strLen = stream.getBits<7>();
 	}
 	uint32 mask = 0;
 	uint32 symbol = 0;
 	char c;
 	for (uint16 i = 0; i < strLen; i++) {
-		mask = stream.peekBits(16);
+		mask = stream.peekBits<16>();
 
 		uint32 entry;
 		// Find the length index
@@ -139,16 +139,16 @@ void TextAsset::decodeHuffman() {
 		symbol = _huffman->getSymbol(entry);
 
 		if (symbol == 1) { // 7-bit ascii
-			c = stream.getBits(7);
+			c = stream.getBits<7>();
 			_decoded += c;
 		} else if (symbol == 2) { // Composite
 			if (stream.getBit()) { // TextID
-				ObjID embedId = stream.getBits(15);
+				ObjID embedId = stream.getBits<15>();
 			
 				TextAsset embedded(_engine, embedId, _sourceObj, _targetObj, _container, _isOld, _huffman);
 				_decoded += *embedded.decode();
 			} else { //Composite obj string
-				ObjID embedId = stream.getBits(8);
+				ObjID embedId = stream.getBits<8>();
 				_decoded += getNoun(embedId);
 			}
 		} else { // Plain ascii

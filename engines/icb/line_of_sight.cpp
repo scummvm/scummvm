@@ -41,7 +41,7 @@ int32 john_total_traces = 0;
 void _line_of_sight::Initialise() {
 	uint32 i;
 	_floor_world *pFloorWorld;
-	_linked_data_file *pyBarriers;
+	LinkedDataFile *pyBarriers;
 	uint32 oFileName_hash = NULL_HASH;
 
 	// Set the number of subscribers processed per cycle back to its starting value.
@@ -65,13 +65,13 @@ void _line_of_sight::Initialise() {
 #endif
 
 	uint32 cluster_hash = MS->Fetch_session_cluster_hash();
-	m_pyLOSData = (_linked_data_file *)private_session_resman->Res_open(oFileName, oFileName_hash, MS->Fetch_session_cluster(), cluster_hash);
+	m_pyLOSData = (LinkedDataFile *)private_session_resman->Res_open(oFileName, oFileName_hash, MS->Fetch_session_cluster(), cluster_hash);
 
 	Zdebug("private_session_resman opened %s", (const char *)oFileName);
 
 	// Check file version is correct.
-	if (m_pyLOSData->GetHeaderVersion() != VERSION_PXWGLINEOFSIGHT)
-		Fatal_error(".pxwglineofsight version check failed (file has %d, engine has %d)", m_pyLOSData->GetHeaderVersion(), VERSION_PXWGLINEOFSIGHT);
+	if (LinkedDataObject::GetHeaderVersion(m_pyLOSData) != VERSION_PXWGLINEOFSIGHT)
+		Fatal_error(".pxwglineofsight version check failed (file has %d, engine has %d)", LinkedDataObject::GetHeaderVersion(m_pyLOSData), VERSION_PXWGLINEOFSIGHT);
 
 	// The tracer object can be initialised now we have the barrier map.
 	g_oTracer->SetUpParameters(m_pyLOSData);
@@ -157,7 +157,7 @@ void _line_of_sight::UnSubscribe(uint32 nObserverID, uint32 nTargetID) {
 	}
 }
 
-bool8 _line_of_sight::ObjectToObject(uint32 nObserverID, uint32 nTargetID, _barrier_ray_type eRayType, bool8 bCanSeeUs, ActorEyeMode eEyeMode, bool8 bOverrideHeightLimit) {
+bool8 _line_of_sight::ObjectToObject(uint32 nObserverID, uint32 nTargetID, eBarrierRayType eRayType, bool8 bCanSeeUs, ActorEyeMode eEyeMode, bool8 bOverrideHeightLimit) {
 	_logic *pObserver;
 	_logic *pTarget;
 	bool8 bObserverIsActor, bTargetIsActor;

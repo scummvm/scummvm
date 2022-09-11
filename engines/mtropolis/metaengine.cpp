@@ -52,10 +52,6 @@ Common::Platform MTropolisEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
-uint16 MTropolisEngine::getVersion() const {
-	return _gameDescription->version;
-}
-
 } // End of namespace MTropolis
 
 class MTropolisMetaEngine : public AdvancedMetaEngine {
@@ -86,15 +82,6 @@ bool MTropolisMetaEngine::hasFeature(MetaEngineFeature f) const {
 	default:
 		return false;
 	}
-}
-
-bool MTropolis::MTropolisEngine::hasFeature(EngineFeature f) const {
-	switch (f) {
-	case kSupportsReturnToLauncher:
-		return true;
-	default:
-		return false;
-	};
 }
 
 Common::Error MTropolisMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

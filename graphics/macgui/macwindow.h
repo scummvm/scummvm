@@ -349,6 +349,9 @@ public:
 	void resizeBorderSurface();
 
 	void setMode(uint32 mode) { _mode = mode; }
+	void setBorderOffsets(BorderOffsets &offsets) { _macBorder.setOffsets(offsets); }
+
+	void updateInnerDims();
 
 private:
 	void drawBorderFromSurface(ManagedSurface *g, uint32 flags);
@@ -356,7 +359,6 @@ private:
 	void drawBox(ManagedSurface *g, int x, int y, int w, int h);
 	void fillRect(ManagedSurface *g, int x, int y, int w, int h, int color);
 	const Font *getTitleFont();
-	void updateInnerDims();
 	void updateOuterDims();
 
 	bool isInCloseButton(int x, int y) const;

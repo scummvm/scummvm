@@ -27,6 +27,7 @@ class SeekableReadStream;
 typedef SeekableReadStream InSaveFile;
 class OutSaveFile;
 class MemoryWriteStreamDynamic;
+class String;
 }
 
 namespace Director {
@@ -85,6 +86,7 @@ namespace FileIO {
 	void m_readChar(int nargs);
 	void m_readFile(int nargs);
 	void m_readLine(int nargs);
+	void m_readPict(int nargs);
 	void m_readToken(int nargs);
 	void m_readWord(int nargs);
 	void m_setFinderInfo(int nargs);

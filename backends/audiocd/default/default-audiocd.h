@@ -48,6 +48,7 @@ public:
 	virtual void update();
 	virtual Status getStatus() const; // Subclasses should override for better status results
 	virtual bool existExtractedCDAudioFiles(uint track);
+	virtual bool isDataAndCDAudioReadFromSameCD() { return false; }
 
 private:
 	void fillPotentialTrackNames(Common::Array<Common::String> &trackNames, int track) const;

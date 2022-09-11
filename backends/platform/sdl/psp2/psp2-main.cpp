@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 #include "backends/platform/sdl/psp2/psp2.h"
-#include "backends/plugins/sdl/sdl-provider.h"
+#include "backends/plugins/psp2/psp2-provider.h"
 #include "base/main.h"
 
 int _newlib_heap_size_user = 192 * 1024 * 1024;
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
 	g_system->init();
 
 #ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
+	PluginManager::instance().addPluginProvider(new PSP2PluginProvider());
 #endif
 
 	sceAppMgrGetAppParam(boot_params);

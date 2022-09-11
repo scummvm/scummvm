@@ -28,7 +28,7 @@
 #ifndef WINTERMUTE_SHADOW_VOLUME_OPENGL_H
 #define WINTERMUTE_SHADOW_VOLUME_OPENGL_H
 
-#include "engines/wintermute/base/gfx/shadow_volume.h"
+#include "engines/wintermute/base/gfx/3dshadow_volume.h"
 
 #if defined(USE_OPENGL_GAME)
 

@@ -191,10 +191,11 @@ def file_to_macbin(f: machfs.File, name: ByteString) -> bytes:
 
     return macbin
 
+
 def macbin_get_datafork(f: bytes) -> bytes:
-    datalen, = unpack(">I", f[0x53:0x57])
+    (datalen,) = unpack(">I", f[0x53:0x57])
     print("Data len is:", datalen)
-    return f[0x80:0x80 + datalen]
+    return f[0x80 : 0x80 + datalen]
 
 
 def escape_string(s: str) -> str:
@@ -290,15 +291,6 @@ def encode_string(args: argparse.Namespace) -> int:
     return 0
 
 
-def generate_punyencoded_path(destination_dir: Path, hpath: Tuple[str]) -> Path:
-    """Convert a filepath to a punyencoded one"""
-    upath = destination_dir
-
-    for el in hpath:
-        upath /= punyencode(el)
-    return upath
-
-
 def extract_volume(args: argparse.Namespace) -> int:
     """Extract an HFS volume"""
     source_volume: Path = args.src
@@ -351,10 +343,14 @@ def extract_volume(args: argparse.Namespace) -> int:
             if japanese:
                 el = decode_macjapanese(el.encode("mac_roman"))
             else:
-                if decode_macjapanese(el.encode("mac_roman")) != el and not isinstance(
-                    obj, machfs.Folder
-                ):
-                    maybe_not_jp = True
+                try:
+                    if decode_macjapanese(
+                        el.encode("mac_roman")
+                    ) != el and not isinstance(obj, machfs.Folder):
+                        maybe_not_jp = True
+                except Exception:
+                    # If we get an exception from trying to decode it as Mac-Japanese, it's probably not
+                    pass
             if not rawtext:
                 el = punyencode(el)
 
@@ -560,7 +556,8 @@ def collect_forks(args: argparse.Namespace) -> int:
 def block_copy(dest, dest_offset, src, src_offset, size):
     if size == 0:
         return
-    dest[dest_offset:dest_offset+size] = src[src_offset:src_offset+size]
+    dest[dest_offset : dest_offset + size] = src[src_offset : src_offset + size]
+
 
 # Inserts bytes into sliding window ring buffer, returns new window position
 def insert_sl(sl, sl_pos, bytes_to_insert, insert_src_offset, size):
@@ -568,11 +565,14 @@ def insert_sl(sl, sl_pos, bytes_to_insert, insert_src_offset, size):
     if available < size:
         block_copy(sl, sl_pos, bytes_to_insert, insert_src_offset, available)
         sl_pos = 0
-        sl_pos = insert_sl(sl, sl_pos, bytes_to_insert, insert_src_offset + available, size - available)
+        sl_pos = insert_sl(
+            sl, sl_pos, bytes_to_insert, insert_src_offset + available, size - available
+        )
     else:
         block_copy(sl, sl_pos, bytes_to_insert, insert_src_offset, size)
         sl_pos = sl_pos + size
     return sl_pos
+
 
 # Reads bytes from sliding window ring buffer
 def read_sl(sl, sl_pos, out_buf, out_buf_pos, size):
@@ -583,9 +583,10 @@ def read_sl(sl, sl_pos, out_buf, out_buf_pos, size):
     else:
         block_copy(out_buf, out_buf_pos, sl, sl_pos, size)
 
+
 def read_lz(sl, sl_pos, out_buf, out_buf_pos, coded_offset, length):
     actual_offset = coded_offset + 1
-    read_pos = (sl_pos + 0x10000 - actual_offset) % 0x10000;
+    read_pos = (sl_pos + 0x10000 - actual_offset) % 0x10000
     while actual_offset < length:
         # Repeating sequence
         read_sl(sl, read_pos, out_buf, out_buf_pos, actual_offset)
@@ -593,6 +594,7 @@ def read_lz(sl, sl_pos, out_buf, out_buf_pos, coded_offset, length):
         length -= actual_offset
     # Copy
     read_sl(sl, read_pos, out_buf, out_buf_pos, length)
+
 
 def decompress(in_f, out_f, compressed_data_size):
     sl = bytearray(0x10000)
@@ -603,16 +605,16 @@ def decompress(in_f, out_f, compressed_data_size):
     while compressed_data_size > 0:
         code_byte_0 = in_f.read(1)[0]
         compressed_data_size -= 1
-        if (code_byte_0 & 0x80):
+        if code_byte_0 & 0x80:
             # Literal
-            chunk_size = (code_byte_0 & 0x7f) + 1
+            chunk_size = (code_byte_0 & 0x7F) + 1
             output_data = in_f.read(chunk_size)
             compressed_data_size -= chunk_size
-        elif (code_byte_0 & 0x40):
+        elif code_byte_0 & 0x40:
             # Large offset
             code_bytes_12 = in_f.read(2)
             compressed_data_size -= 2
-            chunk_size = (code_byte_0 & 0x3f) + 4
+            chunk_size = (code_byte_0 & 0x3F) + 4
             coded_offset = (code_bytes_12[0] << 8) + code_bytes_12[1]
             read_lz(sl, sl_pos, lz_bytes, 0, coded_offset, chunk_size)
             output_data = lz_bytes
@@ -620,12 +622,13 @@ def decompress(in_f, out_f, compressed_data_size):
             # Small offset
             code_byte_1 = in_f.read(1)[0]
             compressed_data_size -= 1
-            chunk_size = ((code_byte_0 & 0x3c) >> 2) + 3
+            chunk_size = ((code_byte_0 & 0x3C) >> 2) + 3
             coded_offset = ((code_byte_0 & 0x3) << 8) + code_byte_1
             read_lz(sl, sl_pos, lz_bytes, 0, coded_offset, chunk_size)
             output_data = lz_bytes
         out_f.write(output_data[0:chunk_size])
         sl_pos = insert_sl(sl, sl_pos, output_data, 0, chunk_size)
+
 
 def create_macfonts(args: argparse.Namespace) -> int:
     """
@@ -633,18 +636,22 @@ def create_macfonts(args: argparse.Namespace) -> int:
     int classicmacfonts.dat
     """
     print("Downloading System 7.0.1 image...", end="")
-    with urllib.request.urlopen("https://download.info.apple.com/Apple_Support_Area/Apple_Software_Updates/English-North_American/Macintosh/System/Older_System/System_7.0.x/System_7.0.1.smi.bin") as file:
+    with urllib.request.urlopen(
+        "https://download.info.apple.com/Apple_Support_Area/Apple_Software_Updates/English-North_American/Macintosh/System/Older_System/System_7.0.x/System_7.0.1.smi.bin"
+    ) as file:
         output = file.read()
-        print('done')
+        print("done")
 
     datafork = BytesIO(macbin_get_datafork(output))
-    print('Decompressing...', end="")
+    print("Decompressing...", end="")
     datafork.seek(-0x200, 2)
     alt_mdb_loc = datafork.tell()
     datafork.seek(-(0x200 - 0x12), 2)
-    num_allocation_blocks, allocation_block_size, first_allocation_block = unpack('>HI4xH', datafork.read(12))
+    num_allocation_blocks, allocation_block_size, first_allocation_block = unpack(
+        ">HI4xH", datafork.read(12)
+    )
     compressed_data_start = first_allocation_block * allocation_block_size
-    compressed_data_end = alt_mdb_loc   # ???
+    compressed_data_end = alt_mdb_loc  # ???
     datafork.seek(0)
     decdatafork = BytesIO()
     decdatafork.write(datafork.read(compressed_data_start))
@@ -652,25 +659,32 @@ def create_macfonts(args: argparse.Namespace) -> int:
     decompress(datafork, decdatafork, compressed_amount)
     datafork.seek(alt_mdb_loc)
     decdatafork.write(datafork.read(0x200))
-    print('done')
+    print("done")
 
     decdatafork.seek(0)
     vol = machfs.Volume()
     vol.read(decdatafork.read())
     for hpath, obj in vol.iter_paths():
-        if hpath == ('Fonts.image',):
+        if hpath == ("Fonts.image",):
             fontsvol = obj.data[0x54:]
             break
 
-    print('Reading Fonts.image...')
+    print("Reading Fonts.image...")
     vol = machfs.Volume()
     vol.read(fontsvol)
-    with zipfile.ZipFile('classicmacfonts.dat', mode='w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as fontzip:
+    with zipfile.ZipFile(
+        "classicmacfonts.dat",
+        mode="w",
+        compression=zipfile.ZIP_DEFLATED,
+        compresslevel=9,
+    ) as fontzip:
         for hpath, obj in vol.iter_paths():
-            print(f'Compressing {hpath[-1]}...')
-            fontzip.writestr(f'{hpath[-1]}.bin', file_to_macbin(obj, hpath[-1].encode("mac_roman")))
+            print(f"Compressing {hpath[-1]}...")
+            fontzip.writestr(
+                f"{hpath[-1]}.bin", file_to_macbin(obj, hpath[-1].encode("mac_roman"))
+            )
 
-    print('Done')
+    print("Done")
     return 0
 
 
@@ -749,8 +763,7 @@ def generate_parser() -> argparse.ArgumentParser:
         parser_macbinary.set_defaults(func=collect_forks)
 
     parser_macfonts = subparsers.add_parser(
-        "createmacfonts",
-        help="Creates classicmacfonts.dat from Mac OS 7 system images"
+        "createmacfonts", help="Creates classicmacfonts.dat from Mac OS 7 system images"
     )
     parser_macfonts.set_defaults(func=create_macfonts)
 

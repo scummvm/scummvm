@@ -162,7 +162,7 @@ enum class SceneLoopState {
 
 struct ScopedEngineFreeze {
 	TwinEEngine *_engine;
-	ScopedEngineFreeze(TwinEEngine *engine);
+	ScopedEngineFreeze(TwinEEngine *engine, bool pause = false);
 	~ScopedEngineFreeze();
 };
 
@@ -335,7 +335,7 @@ public:
 	void restoreFrontBuffer();
 	void saveFrontBuffer();
 
-	void freezeTime();
+	void freezeTime(bool pause);
 	void unfreezeTime();
 
 	/**

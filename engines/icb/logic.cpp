@@ -73,6 +73,8 @@ mcodeFunctionReturnCodes fn_set_dynamic_light(int32 &result, int32 *params) { re
 
 mcodeFunctionReturnCodes speak_set_dynamic_light(int32 &result, int32 *params) { return (MS->speak_set_dynamic_light(result, params)); }
 
+mcodeFunctionReturnCodes fn_is_player_standing_still(int32 &result, int32 *params) { return (MS->fn_is_player_standing_still(result, params)); }
+
 mcodeFunctionReturnCodes fn_activate_sparkle(int32 &result, int32 *params) { return (MS->fn_activate_sparkle(result, params)); }
 
 mcodeFunctionReturnCodes fn_deactivate_sparkle(int32 &result, int32 *params) { return (MS->fn_deactivate_sparkle(result, params)); }
@@ -125,6 +127,7 @@ void _logic::___init(const char *name) {
 
 	// defaults to a prop
 	image_type = PROP;
+	prop_interact_method = __ICB;
 
 	// defaults to no-type-set
 	object_type = __NO_TYPE_SET;
@@ -184,6 +187,8 @@ void _logic::___init(const char *name) {
 
 	// sparkle off by default
 	sparkleOn = FALSE8;
+
+	interact_dist = DEFAULT_interact_distance;  //default interact distance - this is the ICB figure, but ED imps can change as required
 }
 
 void _mega::___init() {
@@ -254,7 +259,13 @@ void _mega::___init() {
 	// set to draw
 	display_me = TRUE8;
 
+	// inventory is active as a default
+	inventoryActive = TRUE8;
+
 	dead = FALSE8; // still alive!
+
+	// height for looking at
+	height = DEFAULT_HEIGHT;	//170cm default
 
 	// camera control
 	y_locked = FALSE8;
@@ -272,6 +283,17 @@ mcodeFunctionReturnCodes _game_session::fn_set_to_exlusive_coords(int32 &, int32
 	return IR_CONT;
 }
 
+mcodeFunctionReturnCodes _game_session::fn_is_player_standing_still(int32 &result, int32 *) {
+	// stood or crouching?
+	if ((player.player_status == STOOD) || (player.player_status == CROUCHING) || (player.player_status == INVENTORY))
+		result = 1;
+	else
+		result = 0;
+
+	return IR_CONT;
+
+}
+
 mcodeFunctionReturnCodes _game_session::fn_get_persons_weapon(int32 &result, int32 *params) {
 	// return the weapon type to the script
 
@@ -281,7 +303,7 @@ mcodeFunctionReturnCodes _game_session::fn_get_persons_weapon(int32 &result, int
 
 	const char *mega_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	id = objects->Fetch_item_number_by_name(mega_name);
+	id = LinkedDataObject::Fetch_item_number_by_name(objects, mega_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_get_persons_weapon: object [%s] does not exist", mega_name);
 
@@ -395,7 +417,7 @@ void _game_session::Set_script(const char *script_name) {
 	// set the script on the current level
 	char *ad;
 
-	ad = (char *)scripts->Fetch_item_by_name(script_name);
+	ad = (char *)LinkedDataObject::Fetch_item_by_name(scripts, script_name);
 
 	L->logic[L->logic_level] = ad;
 
@@ -412,7 +434,7 @@ void _game_session::Context_check(uint32 script_name) {
 
 	Zdebug("context check");
 
-	ad = (char *)scripts->Try_fetch_item_by_hash(script_name);
+	ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, script_name);
 
 	Zdebug("context_check ad=%d ref=%d", ad, L->logic_ref[1]);
 
@@ -460,7 +482,7 @@ void _game_session::Shut_down_object() {
 
 	prop_state_table[cur_id] = 0; // set to state 0 - in case killed because of illegal frame
 
-	Tdebug("objects_that_died.txt", "**OBJECT '%s' [id=%d] has been shut down**", object->GetName(), cur_id);
+	Tdebug("objects_that_died.txt", "**OBJECT '%s' [id=%d] has been shut down**", CGameObject::GetName(object), cur_id);
 }
 
 mcodeFunctionReturnCodes _game_session::fn_kill_me(int32 &, int32 *) {
@@ -475,7 +497,7 @@ mcodeFunctionReturnCodes _game_session::fn_kill_object(int32 &, int32 *params) {
 	// kill this object
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	uint32 id = objects->Fetch_item_number_by_name(object_name);
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	if (id == 0xffffffff)
 		Fatal_error("fn_kill_object finds [%s] does not exist", object_name);
@@ -505,13 +527,13 @@ void _game_session::Shut_down_object(const char *ascii) {
 
 	prop_state_table[cur_id] = 0; // set to state 0 - in case killed because of illegal frame
 
-	Tdebug("objects_that_died.txt", "**OBJECT '%s' [id=%d] has been shut down** %s", object->GetName(), cur_id, ascii);
+	Tdebug("objects_that_died.txt", "**OBJECT '%s' [id=%d] has been shut down** %s", CGameObject::GetName(object), cur_id, ascii);
 }
 
 bool8 _game_session::Console_shut_down_object(const char *name) {
 	// we have name of object
 
-	uint32 id = objects->Fetch_item_number_by_name(name);
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, name);
 	if (id == 0xffffffff)
 		return (FALSE8);
 
@@ -529,7 +551,7 @@ bool8 _game_session::Console_shut_down_object(const char *name) {
 
 bool8 _game_session::Free_object(const char *name) {
 	// we have name of object
-	uint32 id = objects->Fetch_item_number_by_name(name);
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, name);
 
 	if (id == 0xffffffff)
 		return (FALSE8);
@@ -649,7 +671,7 @@ mcodeFunctionReturnCodes _game_session::fn_object_rerun_logic_context(int32 &, i
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	uint32 id = objects->Fetch_item_number_by_name(object_name);
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_object_rerun_logic_context cant find object [%s]", object_name);
 
@@ -692,11 +714,11 @@ mcodeFunctionReturnCodes _game_session::fn_new_script(int32 &, int32 *params) {
 	script_hash = HashString(script_name);
 
 	// try and find a script with the passed extention i.e. ???::looping
-	for (k = 0; k < object->GetNoScripts(); k++) {
-		if (script_hash == object->GetScriptNamePartHash(k)) {
+	for (k = 0; k < CGameObject::GetNoScripts(object); k++) {
+		if (script_hash == CGameObject::GetScriptNamePartHash(object, k)) {
 			// script k is the one to run
 			// get the address of the script we want to run
-			ad = (char *)scripts->Try_fetch_item_by_hash(object->GetScriptNameFullHash(k));
+			ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, CGameObject::GetScriptNameFullHash(object, k));
 
 			// write actual offset
 			L->logic[1] = ad;
@@ -716,7 +738,7 @@ mcodeFunctionReturnCodes _game_session::fn_new_script(int32 &, int32 *params) {
 		}
 	}
 
-	Fatal_error("fn_new_script - cant find script [%s] in object [%s]", script_name, object->GetName());
+	Fatal_error("fn_new_script - cant find script [%s] in object [%s]", script_name, CGameObject::GetName(object));
 	return IR_CONT; // keep daft compiler happy
 }
 
@@ -732,16 +754,16 @@ mcodeFunctionReturnCodes _game_session::fn_gosub(int32 &, int32 *params) {
 	script_hash = HashString(script_name);
 
 	if (L->logic_level != 1)
-		Fatal_error("object [%s] has performed an illegal gosub", object->GetName());
+		Fatal_error("object [%s] has performed an illegal gosub", CGameObject::GetName(object));
 
 	// try and find a script with the passed extention i.e. ???::looping
-	for (k = 0; k < object->GetNoScripts(); k++) {
+	for (k = 0; k < CGameObject::GetNoScripts(object); k++) {
 		// now check for actual script name
-		if (script_hash == object->GetScriptNamePartHash(k)) {
+		if (script_hash == CGameObject::GetScriptNamePartHash(object, k)) {
 			// script k is the one to run
 			// get the address of the script we want to run
 
-			ad = (char *)scripts->Try_fetch_item_by_hash(object->GetScriptNameFullHash(k));
+			ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, CGameObject::GetScriptNameFullHash(object, k));
 
 			// write actual offset
 			L->logic[2] = ad;
@@ -760,7 +782,7 @@ mcodeFunctionReturnCodes _game_session::fn_gosub(int32 &, int32 *params) {
 		}
 	}
 
-	Fatal_error("fn_gosub - cant find script [%s] in object [%s]", script_name, object->GetName());
+	Fatal_error("fn_gosub - cant find script [%s] in object [%s]", script_name, CGameObject::GetName(object));
 	return IR_CONT; // keep daft compiler happy
 }
 
@@ -770,7 +792,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_strike_overide(int32 &, int32 *pa
 	// params    0   name of mega
 	//			1  0 off 1 on
 	const char *mega_name = (const char *)MemoryUtil::resolvePtr(params[0]);
-	uint32 tar = MS->objects->Fetch_item_number_by_name(mega_name);
+	uint32 tar = LinkedDataObject::Fetch_item_number_by_name(MS->objects, mega_name);
 	if (tar == 0xffffffff)
 		Fatal_error("fn_set_strike_overide finds object [%s] does not exist", mega_name);
 
@@ -790,7 +812,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_shoot_overide(int32 &, int32 *par
 
 	const char *mega_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	uint32 tar = MS->objects->Fetch_item_number_by_name(mega_name);
+	uint32 tar = LinkedDataObject::Fetch_item_number_by_name(MS->objects, mega_name);
 	if (tar == 0xffffffff)
 		Fatal_error("fn_set_shoot_overide finds object [%s] does not exist", mega_name);
 
@@ -836,7 +858,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_dynamic_light(int32 &, int32 *par
 mcodeFunctionReturnCodes _game_session::speak_set_dynamic_light(int32 &, int32 *params) {
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	int32 obj_id = objects->Fetch_item_number_by_name(object_name);
+	int32 obj_id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	logic_structs[obj_id]->mega->SetDynamicLight(params[1],                       // cycles
 	                                             params[2], params[3], params[4], // rgb
@@ -952,7 +974,7 @@ void _game_session::UpdateMegaFX() {
 	    (speech_info[CONV_ID].state == __SAYING)                 // are definately saying, not just getting ready to...
 	    ) {
 		// get rap
-		rap_API *pose = (rap_API *)rs_anims->Res_open(I->get_pose_name(), I->pose_hash, I->base_path, I->base_path_hash);
+		RapAPI *pose = (RapAPI *)rs_anims->Res_open(I->get_pose_name(), I->pose_hash, I->base_path, I->base_path_hash);
 
 		// use it
 		UpdateTalking(L, pose); // update jaw and neck bone

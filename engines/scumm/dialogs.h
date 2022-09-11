@@ -36,6 +36,11 @@ class StaticTextWidget;
 
 namespace Scumm {
 
+struct ResString {
+	int num;
+	char string[80];
+};
+
 class ScummEngine;
 
 class ScummDialog : public GUI::Dialog {
@@ -91,11 +96,13 @@ public:
 	}
 
 	void reflowLayout() override;
+	const char *getPlainEngineString(int stringno);
 
 protected:
-
 	// Query a string from the resources
 	const U32String queryResString(int stringno);
+	// Query hard coded string (copied over from the executable)
+	const ResString &getStaticResString(Common::Language lang, int stringno);
 };
 
 /**

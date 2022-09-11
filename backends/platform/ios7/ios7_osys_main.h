@@ -25,6 +25,7 @@
 #include "graphics/surface.h"
 #include "backends/platform/ios7/ios7_common.h"
 #include "backends/modular-backend.h"
+#include "backends/keymapper/hardware-input.h"
 #include "common/events.h"
 #include "common/str.h"
 #include "common/ustr.h"
@@ -192,6 +193,8 @@ public:
 
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
 	void getTimeAndDate(TimeDate &td, bool skipRecord = false) const override;
+
+	Common::HardwareInputSet *getHardwareInputSet() override;
 
 	Audio::Mixer *getMixer() override;
 

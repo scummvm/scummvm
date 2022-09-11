@@ -31,6 +31,8 @@ namespace Data {
 namespace Standard {
 
 struct CursorModifier : public PlugInModifierData {
+	CursorModifier();
+
 	uint16 unknown1;
 	Event applyWhen;
 	uint16 unknown2;
@@ -69,6 +71,8 @@ struct MediaCueMessengerModifier : public PlugInModifierData {
 		kTriggerTimingDuring = 1,
 		kTriggerTimingEnd = 2,
 	};
+
+	MediaCueMessengerModifier();
 
 	PlugInTypeTaggedValue enableWhen;
 	PlugInTypeTaggedValue disableWhen;
@@ -117,6 +121,8 @@ struct MidiModifier : public PlugInModifierData {
 		EmbeddedPart embedded;
 		SingleNotePart singleNote;
 	};
+
+	MidiModifier();
 
 	PlugInTypeTaggedValue executeWhen;
 	PlugInTypeTaggedValue terminateWhen;

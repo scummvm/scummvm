@@ -178,11 +178,11 @@ public:
 		_guiOptions = GUIO5(GUIO_NOSUBTITLES, GUIO_NOMIDI, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_SKIP_HALL_OF_RECORDS, GAMEOPTION_SCALE_MAKING_OF_VIDEOS);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "neverhood";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "The Neverhood Chronicles";
 	}
 

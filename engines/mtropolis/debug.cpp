@@ -519,6 +519,8 @@ private:
 	};
 
 	struct SceneTreeEntry {
+		SceneTreeEntry();
+
 		SceneTreeEntryUIState uiState;
 		size_t parentIndex;
 		int level;
@@ -527,6 +529,8 @@ private:
 	};
 
 	struct RenderEntry {
+		RenderEntry();
+
 		size_t treeIndex;
 		size_t parentRenderIndex;
 	};
@@ -546,6 +550,13 @@ private:
 };
 
 DebugSceneTreeWindow::SceneTreeEntryUIState::SceneTreeEntryUIState() : expanded(false), selected(false) {
+}
+
+
+DebugSceneTreeWindow::SceneTreeEntry::SceneTreeEntry() : parentIndex(0), level(0), hasChildren(false) {
+}
+
+DebugSceneTreeWindow::RenderEntry::RenderEntry() : treeIndex(0), parentRenderIndex(0) {
 }
 
 DebugSceneTreeWindow::DebugSceneTreeWindow(Debugger *debugger, const WindowParameters &windowParams)
@@ -1260,6 +1271,9 @@ const Common::Array<IDebuggable*> &DebugPrimaryTaskList::getItems() const {
 
 const Common::String &DebugPrimaryTaskList::getName() const {
 	return _name;
+}
+
+Debugger::ToastNotification::ToastNotification() : dismissTime(0) {
 }
 
 

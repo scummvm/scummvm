@@ -271,7 +271,7 @@ int32 FxManager::GetDefaultRateByName(const char * /*name*/, uint32 byteOffsetIn
 	delete stream;
 
 	// Return the wavs sampling rate
-	return (header.samplesPerSec);
+	return (FROM_LE_32(header.samplesPerSec));
 }
 
 bool8 FxManager::Load(int32 id, const char * /*name*/, uint32 byteOffsetInCluster) {
@@ -294,11 +294,11 @@ bool8 FxManager::Load(int32 id, const char * /*name*/, uint32 byteOffsetInCluste
 	}
 
 	// Straighten out the block align. (someties it's per second and sometime per sample)
-	if (header.blockAlign > 16)
-		header.blockAlign = (uint16)(header.channels * header.bitsPerSample / 8);
+	if (FROM_LE_16(header.blockAlign) > 16)
+		header.blockAlign = TO_LE_16((uint16)(FROM_LE_16(header.channels) * FROM_LE_16(header.bitsPerSample) / 8));
 
 	// Store buffer sampling rate for easy access later
-	m_effects[id].rate = header.samplesPerSec;
+	m_effects[id].rate = FROM_LE_32(header.samplesPerSec);
 	m_effects[id]._stream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
 	if (m_effects[id].rate != 0)

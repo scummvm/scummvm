@@ -251,9 +251,12 @@ bool KyraEngine_LoK::seq_introStory() {
 	if (!textEnabled() && speechEnabled() && _flags.lang != Common::IT_ITA)
 		return false;
 
+	// Mac Talkie has multiple versions of the file. Make sure the correct one gets picked.
+	int searchStart = (_flags.isTalkie && _flags.platform == Common::kPlatformMacintosh && _flags.lang != Common::EN_ANY) ? (_flags.lang == Common::FR_FRA ? 2 : 3) : 0;
+
 	bool success = false;
 	static const char *pattern[] = { "", "_ENG", "_FRE", "_GER", "_SPA", "_ITA", "_HEB", "_HAN" };
-	for (int i = 0; i < ARRAYSIZE(pattern) && !success; ++i) {
+	for (int i = searchStart; i < ARRAYSIZE(pattern) && !success; ++i) {
 		Common::String tryFile = Common::String::format("TEXT%s.CPS", pattern[i]);
 		if ((success = _res->exists(tryFile.c_str())))
 			_screen->loadBitmap(tryFile.c_str(), 3, 3, &_screen->getPalette(0));
@@ -1267,7 +1270,11 @@ void KyraEngine_LoK::seq_playCredits() {
 	uint8 *buffer = nullptr;
 	uint32 size = 0;
 
-	buffer = _res->fileData(creditsFile.c_str(), &size);
+	// The Mac Talkie version actually gets shipped with a credits.txt file, but that one
+	// does not contain the Mac credits. These are just the credits from the DOS version.
+	if (_flags.platform != Common::kPlatformMacintosh)
+		buffer = _res->fileData(creditsFile.c_str(), &size);
+
 	if (!buffer) {
 		int sizeTmp = 0;
 		const uint8 *bufferTmp = _staticres->loadRawData(k1CreditsStrings, sizeTmp);

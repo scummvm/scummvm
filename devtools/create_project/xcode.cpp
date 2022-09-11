@@ -444,6 +444,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	DEF_SYSFRAMEWORK("CoreGraphics");
 	DEF_SYSFRAMEWORK("CoreFoundation");
 	DEF_SYSFRAMEWORK("Foundation");
+	DEF_SYSFRAMEWORK("GameController");
 	DEF_SYSFRAMEWORK("IOKit");
 	DEF_SYSFRAMEWORK("OpenGL");
 	DEF_SYSFRAMEWORK("OpenGLES");
@@ -555,6 +556,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_iOS.push_back("CoreGraphics.framework");
 	frameworks_iOS.push_back("CoreFoundation.framework");
 	frameworks_iOS.push_back("Foundation.framework");
+	frameworks_iOS.push_back("GameController.framework");
 	frameworks_iOS.push_back("UIKit.framework");
 	frameworks_iOS.push_back("SystemConfiguration.framework");
 	frameworks_iOS.push_back("AudioToolbox.framework");

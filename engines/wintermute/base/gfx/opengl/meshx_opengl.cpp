@@ -25,7 +25,7 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#include "engines/wintermute/base/gfx/x/material.h"
+#include "engines/wintermute/base/gfx/xmaterial.h"
 
 #include "graphics/opengl/system_headers.h"
 
@@ -37,15 +37,15 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-MeshXOpenGL::MeshXOpenGL(BaseGame *inGame) : MeshX(inGame) {
+XMeshOpenGL::XMeshOpenGL(BaseGame *inGame) : XMesh(inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-MeshXOpenGL::~MeshXOpenGL() {
+XMeshOpenGL::~XMeshOpenGL() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool MeshXOpenGL::render(ModelX *model) {
+bool XMeshOpenGL::render(XModel *model) {
 	if (_vertexData == nullptr) {
 		return false;
 	}
@@ -91,7 +91,7 @@ bool MeshXOpenGL::render(ModelX *model) {
 	return true;
 }
 
-bool MeshXOpenGL::renderFlatShadowModel() {
+bool XMeshOpenGL::renderFlatShadowModel() {
 	return true;
 }
 

@@ -123,6 +123,8 @@ class SpellStuff {
 	int32               range;
 	int16               sound;
 
+	bool _debug;
+
 public:
 
 	SpellStuff();

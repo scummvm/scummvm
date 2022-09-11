@@ -62,9 +62,9 @@ void Clip_text_print(_rgb *pen, uint32 x, uint32 y, uint8 *base, uint32 pitch, c
 		head = (_frameHeader *)FetchFrameHeader(charSet, (uint16)chr);
 		sprite_data = (uint8 *)(head + 1);
 
-		Render_clip_character(x, y, head->width, head->height, pen, base, pitch, sprite_data);
+		Render_clip_character(x, y, FROM_LE_16(head->width), FROM_LE_16(head->height), pen, base, pitch, sprite_data);
 
-		x += head->width + 1; // move on the x coordinate
+		x += FROM_LE_16(head->width) + 1; // move on the x coordinate
 
 	} while ((ascii[j]) && j < 150);
 }

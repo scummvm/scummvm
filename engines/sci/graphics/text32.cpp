@@ -392,7 +392,7 @@ void GfxText32::drawText(const uint index, uint length) {
 	} else {
 		const char *textOrig = _text.c_str() + index;
 		Common::String textLogical = Common::String(textOrig, (uint32)length);
-		textString = Common::convertBiDiString(textLogical, g_sci->getLanguage());
+		textString = Common::convertBiDiString(textLogical, g_sci->getLanguage(), Common::BiDiParagraph::BIDI_PAR_RTL);
 		text = textString.c_str();
 	}
 

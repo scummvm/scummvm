@@ -116,7 +116,11 @@ void Part::set_detune(int8 detune) {
 #endif
 	} else {
 		_detune_eff = clamp((_detune = detune) + _player->getDetune(), -128, 127);
-		sendPitchBend();
+		// Some drivers handle the transpose and the detune in pitchBend()...
+		if (_player->isAdLibOrFMTowns())
+			sendDetune();
+		else
+			sendPitchBend();
 	}
 }
 
@@ -142,19 +146,19 @@ void Part::set_pan(int8 pan) {
 	sendPanPosition(_pan_eff + 0x40);
 }
 
-void Part::set_transpose(int8 transpose) {
-	_transpose = transpose;
+void Part::set_transpose(int8 transpose, int8 clipRangeLow, int8 clipRangeHi)  {
+	if (_se->_game_id == GID_TENTACLE && (transpose > 24 || transpose < -24))
+		return;
 
-	if (_se->_isAmiga) {
-		// The Amiga version does a check like this. While this is probably a bug (a signed int8 can never be 128),
-		// the playback depends on this being implemented exactly like in the original driver. I found this bug with
-		// the WinUAE debugger. I don't know whether this is an Amiga only thing...
-		_transpose_eff = /*(_transpose == 128) ? 0 : */transpose_clamp(_transpose + _player->getTranspose(), -12, 12);
+	_transpose = transpose;
+	// The Amiga versions have a signed/unsigned bug which makes the check for _transpose == -128 impossible. They actually check for
+	// a value of 128 with a signed int8 (a signed int8 can never be 128). The playback depends on this being implemented exactly
+	// like in the original driver. I found this bug with the WinUAE debugger. The DOS versions do not have that bug.
+	_transpose_eff = (!_se->_isAmiga && _transpose == -128) ? 0 : transpose_clamp(_transpose + _player->getTranspose(), clipRangeLow, clipRangeHi);
+	if (_player->isAdLibOrFMTowns() || _se->_isAmiga)
 		sendTranspose();
-	} else {
-		_transpose_eff = (_transpose == -128) ? 0 : transpose_clamp(_transpose + _player->getTranspose(), -24, 24);
+	else
 		sendPitchBend();
-	}
 }
 
 void Part::sustain(bool value) {
@@ -181,7 +185,8 @@ void Part::effectLevel(byte value) {
 }
 
 void Part::fix_after_load() {
-	set_transpose(_transpose);
+	int lim = (_se->_game_id == GID_TENTACLE || _se->_isAmiga) ? 12 : 24;
+	set_transpose(_transpose, -lim, lim);
 	volume(_vol);
 	set_detune(_detune);
 	set_pri(_pri);
@@ -194,7 +199,7 @@ void Part::pitchBendFactor(byte value) {
 		return;
 	pitchBend(0);
 	_pitchbend_factor = value;
-	if (_mc)
+	if (_mc && !(_player->isGM()))
 		_mc->pitchBendFactor(value);
 }
 
@@ -339,8 +344,10 @@ void Part::sendAll() {
 	if (!clearToTransmit())
 		return;
 
-	_mc->pitchBendFactor(_pitchbend_factor);
+	if (!_player->isGM())
+		_mc->pitchBendFactor(_pitchbend_factor);
 	sendTranspose();
+	sendDetune();
 	sendPitchBend();
 	_mc->volume(_vol_eff);
 	_mc->sustain(_pedal);
@@ -363,28 +370,57 @@ void Part::sendPitchBend() {
 		return;
 
 	int16 bend = _pitchbend;
-	// RPN-based pitchbend range doesn't work for the MT32,
-	// so we'll do the scaling ourselves.
-	if (_player->_se->isNativeMT32())
-		bend = bend * _pitchbend_factor / 12;
+	int8 transpose = _transpose_eff;
+	int8 detune = _detune_eff;
 
-	// We send the transpose value separately for Amiga (which is more like the original handles this).
-	// Some rhythm instruments depend on this.
-	int8 transpose = _se->_isAmiga ? 0 : _transpose_eff;
-	_mc->pitchBend(clamp(bend + (_detune_eff * 64 / 12) + (transpose * 8192 / 12), -8192, 8191));
+	// For Amiga, AdLib and FM-Towns we send some values separately due to the way the drivers have
+	// been implemented (it must be avoided that the pitchbend factor gets applied on top). So we
+	// neutralize them here for the pitch bend calculation.
+	if (_se->_isAmiga) {
+		transpose = 0;
+	} else if (_player->isAdLibOrFMTowns()) {
+		transpose = detune = 0;
+	} else if (_player->_se->isNativeMT32()) {
+		// RPN-based pitchbend range doesn't work for the MT32, so we'll do the scaling ourselves.
+		bend = bend * _pitchbend_factor / 12;
+	}
+
+	if (_player->isGM()) {
+		if (_se->_game_id == GID_SAMNMAX) {
+			// SAMNMAX formula
+			bend = _pitchbend_factor ? (bend * _pitchbend_factor) >> 5 : bend >> 6;
+			bend = (bend + _detune_eff + (transpose << 8)) << 1;
+		} else {
+			// DOTT formula (from the DOTT GMIDI.IMS driver)
+			bend = clamp(((bend * _pitchbend_factor) >> 6) + _detune_eff + (transpose << 7), -2048, 2047) << 2;
+		}
+	} else {
+		bend = clamp(bend + (_detune_eff * 64 / 12) + (transpose * 8192 / 12), -8192, 8191);
+	}
+
+	_mc->pitchBend(bend);
 }
 
 void Part::sendTranspose() {
 	if (!_mc)
 		return;
 
-	// See comment above. The transpose function was never implemented into our other drivers,
-	// since this seems to have been handled via pitchBend() instead. The original drivers do have
-	// such functions.
-	if (!_se->_isAmiga)
+	// Some drivers handle the transpose and the detune in pitchBend()...
+	if (!_se->_isAmiga && !_player->isAdLibOrFMTowns())
 		return;
 
 	_mc->transpose(_transpose_eff);
+}
+
+void Part::sendDetune() {
+	if (!_mc)
+		return;
+
+	// Some drivers handle the transpose and the detune in pitchBend()...
+	if (!_player->isAdLibOrFMTowns())
+		return;
+
+	_mc->detune(_detune_eff);
 }
 
 void Part::programChange(byte value) {

@@ -164,7 +164,7 @@ void error(CONTEXT, MsgKind msgno) {
 
   statusline()
 
-  Print the the status line on the top of the screen.
+  Print the status line on the top of the screen.
 
   */
 void statusline() {

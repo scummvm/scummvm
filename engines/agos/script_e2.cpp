@@ -581,7 +581,7 @@ void AGOSEngine_Elvira2::oe2_ifExitLocked() {
 void AGOSEngine_Elvira2::oe2_playEffect() {
 	// 174: play sound
 	uint soundId = getVarOrWord();
-	playSfx(soundId, 0, 0, true);
+	playSfx(soundId, 0, 0);
 }
 
 void AGOSEngine_Elvira2::oe2_getDollar2() {

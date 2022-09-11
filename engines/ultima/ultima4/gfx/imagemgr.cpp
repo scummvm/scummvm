@@ -42,7 +42,7 @@ public:
 	Common::String _name;
 	Common::String _location;
 	Common::String _extends;
-	Std::map<Common::String, ImageInfo *> _info;
+	Common::HashMap<Common::String, ImageInfo *> _info;
 };
 
 ImageMgr *ImageMgr::_instance = nullptr;
@@ -69,7 +69,7 @@ ImageMgr::ImageMgr() : _baseSet(nullptr), _abyssData(nullptr) {
 ImageMgr::~ImageMgr() {
 	settings.deleteObserver(this);
 
-	for (Std::map<Common::String, ImageSet *>::iterator i = _imageSets.begin(); i != _imageSets.end(); i++)
+	for (Common::HashMap<Common::String, ImageSet *>::iterator i = _imageSets.begin(); i != _imageSets.end(); i++)
 		delete i->_value;
 
 	delete[] _abyssData;
@@ -111,7 +111,7 @@ void ImageMgr::init() {
 	}
 
 	_imageSetNames.clear();
-	for (Std::map<Common::String, ImageSet *>::const_iterator set = _imageSets.begin(); set != _imageSets.end(); set++)
+	for (Common::HashMap<Common::String, ImageSet *>::const_iterator set = _imageSets.begin(); set != _imageSets.end(); set++)
 		_imageSetNames.push_back(set->_key);
 
 	update(&settings);
@@ -465,7 +465,7 @@ void ImageMgr::fixupFMTowns(Image *im, int prescale) {
 }
 
 ImageSet *ImageMgr::getSet(const Common::String &setname) {
-	Std::map<Common::String, ImageSet *>::iterator i = _imageSets.find(setname);
+	Common::HashMap<Common::String, ImageSet *>::iterator i = _imageSets.find(setname);
 	if (i != _imageSets.end())
 		return i->_value;
 	else
@@ -481,7 +481,7 @@ ImageInfo *ImageMgr::getInfoFromSet(const Common::String &name, ImageSet *images
 		return nullptr;
 
 	/* if the image set contains the image we want, AND IT EXISTS we are done */
-	Std::map<Common::String, ImageInfo *>::iterator i = imageset->_info.find(name);
+	Common::HashMap<Common::String, ImageInfo *>::iterator i = imageset->_info.find(name);
 	if (i != imageset->_info.end())
 		if (imageExists(i->_value))
 			return i->_value;
@@ -643,9 +643,9 @@ SubImage *ImageMgr::getSubImage(const Common::String &name) {
 	ImageSet *set = _baseSet;
 
 	while (set != nullptr) {
-		for (Std::map<Common::String, ImageInfo *>::iterator i = set->_info.begin(); i != set->_info.end(); i++) {
+		for (Common::HashMap<Common::String, ImageInfo *>::iterator i = set->_info.begin(); i != set->_info.end(); i++) {
 			ImageInfo *info = (ImageInfo *) i->_value;
-			Std::map<Common::String, SubImage *>::iterator j = info->_subImages.find(name);
+			Common::HashMap<Common::String, SubImage *>::iterator j = info->_subImages.find(name);
 			if (j != info->_subImages.end())
 				return j->_value;
 		}
@@ -657,9 +657,9 @@ SubImage *ImageMgr::getSubImage(const Common::String &name) {
 }
 
 void ImageMgr::freeIntroBackgrounds() {
-	for (Std::map<Common::String, ImageSet *>::iterator i = _imageSets.begin(); i != _imageSets.end(); i++) {
+	for (Common::HashMap<Common::String, ImageSet *>::iterator i = _imageSets.begin(); i != _imageSets.end(); i++) {
 		ImageSet *set = i->_value;
-		for (Std::map<Common::String, ImageInfo *>::iterator j = set->_info.begin(); j != set->_info.end(); j++) {
+		for (Common::HashMap<Common::String, ImageInfo *>::iterator j = set->_info.begin(); j != set->_info.end(); j++) {
 			ImageInfo *info = j->_value;
 			if (info->_image != nullptr && info->_introOnly) {
 				delete info->_image;
@@ -682,7 +682,7 @@ void ImageMgr::update(Settings *newSettings) {
 }
 
 ImageSet::~ImageSet() {
-	for (Std::map<Common::String, ImageInfo *>::iterator i = _info.begin(); i != _info.end(); i++) {
+	for (Common::HashMap<Common::String, ImageInfo *>::iterator i = _info.begin(); i != _info.end(); i++) {
 		ImageInfo *imageInfo = i->_value;
 		if (imageInfo->_name != "screen")
 			delete imageInfo;
@@ -690,7 +690,7 @@ ImageSet::~ImageSet() {
 }
 
 ImageInfo::~ImageInfo() {
-	for (Std::map<Common::String, SubImage *>::iterator i = _subImages.begin(); i != _subImages.end(); i++)
+	for (Common::HashMap<Common::String, SubImage *>::iterator i = _subImages.begin(); i != _subImages.end(); i++)
 		delete i->_value;
 	if (_image != nullptr)
 		delete _image;

@@ -49,8 +49,7 @@ int IMuseDigital::cmdsHandleCmd(int cmd, uint8 *ptr, int a, int b, int c, int d,
 	case 4:
 		return cmdsResume();
 	case 7:
-		_groupsHandler->setGroupVol(a, b);
-		break;
+		return _groupsHandler->setGroupVol(a, b);
 	case 8:
 		cmdsStartSound(a, b);
 		break;

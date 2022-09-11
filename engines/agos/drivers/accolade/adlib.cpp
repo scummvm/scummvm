@@ -401,18 +401,18 @@ uint8 MidiDriver_Accolade_AdLib::calculateUnscaledVolume(uint8 channel, uint8 so
 	}
 	// Note velocity and the volume adjustment are added, clipped to normal
 	// velocity range and divided by 2 to get an OPL volume value.
-	uint8 volume = CLIP(velocity + volumeAdjustment, 0, 0x7F);
+	uint8 vol = CLIP(velocity + volumeAdjustment, 0, 0x7F);
 
 	if (!_newVersion) {
 		// The Elvira 1 version raises the volume a bit and clips the highest
 		// values.
-		volume += 0x18;
-		if (volume > 0x78)
-			volume = 0x78;
+		vol += 0x18;
+		if (vol > 0x78)
+			vol = 0x78;
 	}
 
 	// Invert the volume.
-	return 0x3F - (volume >> 1);
+	return 0x3F - (vol >> 1);
 }
 
 void MidiDriver_Accolade_AdLib::writePanning(uint8 oplChannel, OplInstrumentRhythmType rhythmType) {

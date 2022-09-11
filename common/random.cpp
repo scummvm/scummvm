@@ -19,8 +19,6 @@
  *
  */
 
-#include <limits.h>
-
 #include "common/random.h"
 #include "common/system.h"
 #include "gui/EventRecorder.h"

@@ -92,7 +92,7 @@ public:
 		: EditTextWidget(boss, name, text, tooltip) {}
 
 protected:
-	bool tryInsertChar(byte c, int pos) override {
+	bool tryInsertChar(Common::u32char_type_t c, int pos) override {
 		if (Common::isAlnum(c) || c == '-' || c == '_') {
 			_editString.insertChar(c, pos);
 			return true;

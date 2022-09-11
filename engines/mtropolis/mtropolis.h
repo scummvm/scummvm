@@ -56,7 +56,6 @@ public:
 
 	const MTropolisGameDescription *_gameDescription;
 	uint32 getGameID() const;
-	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
 
 	bool promptSave(ISaveWriter *writer, const Graphics::Surface *screenshotOverride) override;
@@ -64,6 +63,10 @@ public:
 	bool promptLoad(ISaveReader *reader) override;
 
 	const Graphics::Surface *getSavegameScreenshot() const;
+
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave) override;
+	bool canSaveAutosaveCurrently() override;
+	bool canSaveGameStateCurrently() override;	
 
 public:
 	void handleEvents();
@@ -74,6 +77,9 @@ protected:
 private:
 	static const uint kCurrentSaveFileVersion = 1;
 	static const uint kSavegameSignature = 0x6d545356;	// mTSV
+
+	ISaveWriter *_saveWriter;
+	bool _isTriggeredAutosave;
 
 	Common::ScopedPtr<Runtime> _runtime;
 };

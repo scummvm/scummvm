@@ -1418,7 +1418,7 @@ void PaulaSound::loadMusic(const char *name) {
 		// Remove the old module stream so that it won't be played.
 		// Fixes not trying to play a null stream or an old wrong music in
 		// e.g. Italian version of Future Wars when first teleporting from
-		// the office to to the swamp.
+		// the office to the swamp.
 		_moduleStream = nullptr;
 	}
 }

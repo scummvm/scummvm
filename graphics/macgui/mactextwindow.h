@@ -33,13 +33,14 @@ public:
 	MacTextWindow(MacWindowManager *wm, const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler = true);
 	virtual ~MacTextWindow();
 
-	virtual void resize(int w, int h, bool inner = false);
+	virtual void resize(int w, int h, bool inner = false) override;
+	void setDimensions(const Common::Rect &r) override;
 
-	virtual bool processEvent(Common::Event &event);
+	virtual bool processEvent(Common::Event &event) override;
 
-	virtual bool draw(ManagedSurface *g, bool forceRedraw = false);
-	virtual bool draw(bool forceRedraw = false);
-	virtual void blit(ManagedSurface *g, Common::Rect &dest);
+	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) override;
+	virtual bool draw(bool forceRedraw = false) override;
+	virtual void blit(ManagedSurface *g, Common::Rect &dest) override;
 
 	void setTextWindowFont(const MacFont *macFont);
 	const MacFont *getTextWindowFont();
@@ -48,7 +49,7 @@ public:
 	void appendText(const Common::String &str, const MacFont *macFont = nullptr, bool skipAdd = false);
 	void clearText();
 
-	void setEditable(bool editable) { _editable = editable; }
+	void setEditable(bool editable) { _editable = editable; _mactext->setEditable(editable); }
 	void setSelectable(bool selectable) { _selectable = selectable; }
 
 	void undrawCursor();

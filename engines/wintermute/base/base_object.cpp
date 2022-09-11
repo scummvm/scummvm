@@ -40,7 +40,7 @@
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/gfx/base_renderer3d.h"
-#include "engines/wintermute/base/gfx/x/modelx.h"
+#include "engines/wintermute/base/gfx/xmodel.h"
 #include "engines/wintermute/wintermute.h"
 #endif
 
@@ -98,7 +98,7 @@ BaseObject::BaseObject(BaseGame *inGame) : BaseScriptHolder(inGame) {
 	_saveState = true;
 
 #ifdef ENABLE_WME3D
-	_modelX = nullptr;
+	_xmodel = nullptr;
 	_shadowModel = nullptr;
 	_posVector = Math::Vector3d(0.0f, 0.0f, 0.0f);
 	_angle = 0.0f;
@@ -154,8 +154,8 @@ bool BaseObject::cleanup() {
 	}
 
 #ifdef ENABLE_WME3D
-	delete _modelX;
-	_modelX = nullptr;
+	delete _xmodel;
+	_xmodel = nullptr;
 	delete _shadowModel;
 	_shadowModel = nullptr;
 
@@ -1109,7 +1109,7 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 #ifdef ENABLE_WME3D
 	if (BaseEngine::instance().getFlags() & GF_3D) {
 		persistMgr->transferAngle(TMEMBER(_angle));
-		persistMgr->transferPtr(TMEMBER(_modelX));
+		persistMgr->transferPtr(TMEMBER(_xmodel));
 		persistMgr->transferPtr(TMEMBER(_shadowModel));
 		persistMgr->transferVector3d(TMEMBER(_posVector));
 		persistMgr->transferMatrix4(TMEMBER(_worldMatrix));
@@ -1400,8 +1400,8 @@ bool BaseObject::renderModel() {
 
 	_gameRef->_renderer3D->setWorldTransform(objectMat);
 
-	if (_modelX)
-		return _modelX->render();
+	if (_xmodel)
+		return _xmodel->render();
 	else
 		return false;
 }

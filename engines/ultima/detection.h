@@ -75,11 +75,11 @@ public:
 	UltimaMetaEngineDetection();
 	~UltimaMetaEngineDetection() override {}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "ultima";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Ultima";
 	}
 

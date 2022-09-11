@@ -201,6 +201,18 @@ bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface *&thumbnail
 	return true;
 }
 
+bool createThumbnail(Graphics::Surface &thumb) {
+	if (thumb.getPixels())
+		thumb.free();
+
+	if (!createThumbnailFromScreen(&thumb)) {
+		warning("Couldn't create thumbnail from screen, aborting thumbnail save");
+		return false;
+	}
+
+	return true;
+}
+
 bool saveThumbnail(Common::WriteStream &out) {
 	Graphics::Surface thumb;
 

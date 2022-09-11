@@ -617,6 +617,11 @@ struct TwineImage {
 #define ANGLE_1 5 // 1.75
 #define ANGLE_0 0
 
+#define VIEW_X0 (-50)
+#define VIEW_Y0 (-30)
+#define VIEW_X1(engine) ((engine)->width() - 40)
+#define VIEW_Y1(engine) ((engine)->height() + 100)
+
 inline int32 NormalizeAngle(int32 angle) {
 	if (angle < -ANGLE_180) {
 		angle += ANGLE_360;

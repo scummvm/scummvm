@@ -199,7 +199,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 			// get actor position on screen
 			const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(actor->pos() - _engine->_grid->_camera);
 			// check if actor is visible on screen, otherwise don't display it
-			if (projPos.x > -50 && projPos.x < _engine->width() + 40 && projPos.y > -30 && projPos.y < _engine->height() + 100) {
+			if (projPos.x > VIEW_X0 && projPos.x < VIEW_X1(_engine) && projPos.y > VIEW_Y0 && projPos.y < VIEW_Y1(_engine)) {
 				actor->_dynamicFlags.bIsDrawn = 1;
 			}
 			continue;
@@ -212,9 +212,9 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 		const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(actor->pos() - _engine->_grid->_camera);
 
 		if ((actor->_staticFlags.bUsesClipping && projPos.x > -112 && projPos.x < _engine->width() + 112 && projPos.y > -50 && projPos.y < _engine->height() + 171) ||
-		    ((!actor->_staticFlags.bUsesClipping) && projPos.x > -50 && projPos.x < _engine->width() + 40 && projPos.y > -30 && projPos.y < _engine->height() + 100)) {
+		    ((!actor->_staticFlags.bUsesClipping) && projPos.x > VIEW_X0 && projPos.x < VIEW_X1(_engine) && projPos.y > VIEW_Y0 && projPos.y < VIEW_Y1(_engine))) {
 
-			int32 ztri = actor->_pos.z + actor->_pos.x - _engine->_grid->_camera.x - _engine->_grid->_camera.z;
+			int32 ztri = actor->_pos.x - _engine->_grid->_camera.x + actor->_pos.z - _engine->_grid->_camera.z;
 
 			// if actor is above another actor
 			if (actor->_carryBy != -1) {
@@ -229,7 +229,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 					ztri = actor->_animStep.x - _engine->_grid->_camera.x + actor->_animStep.z - _engine->_grid->_camera.z;
 				}
 			} else {
-				drawList[drawListPos].type = 0;
+				drawList[drawListPos].type = DrawListType::DrawObject3D;
 				drawList[drawListPos].actorIdx = a;
 			}
 
@@ -265,7 +265,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 	return drawListPos;
 }
 
-int32 Redraw::fillExtraDrawingList(DrawListStruct *drawList, int32 drawListPos) {
+int32 Redraw::fillExtraDrawingList(DrawListStruct *drawList, int32 drawListPos) { // part of AffScene
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &_engine->_extra->_extraList[i];
 		if (extra->sprite == -1) {
@@ -279,28 +279,33 @@ int32 Redraw::fillExtraDrawingList(DrawListStruct *drawList, int32 drawListPos) 
 			}
 			continue;
 		}
-		if ((extra->type & ExtraType::TIME_OUT) || (extra->type & ExtraType::FLASH) || (extra->payload.lifeTime + extra->spawnTime - 150 < _engine->_lbaTime) || (!((_engine->_lbaTime + extra->spawnTime) & 8))) {
-			const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->_camera);
-
-			if (projPos.x > -50 && projPos.x < _engine->width() + 40 && projPos.y > -30 && projPos.y < _engine->height() + 100) {
-				const int16 tmpVal = extra->pos.x - _engine->_grid->_camera.x + extra->pos.z - _engine->_grid->_camera.z;
-				drawList[drawListPos].posValue = tmpVal;
-				drawList[drawListPos].actorIdx = i;
-				drawList[drawListPos].type = DrawListType::DrawExtras;
-				drawListPos++;
-
-				if (_engine->_cfgfile.ShadowMode == 2 && !(extra->sprite & EXTRA_SPECIAL_MASK)) {
-					const IVec3 &shadowCoord = _engine->_movements->getShadowPosition(extra->pos);
-
-					drawList[drawListPos].posValue = tmpVal - 1;
-					drawList[drawListPos].actorIdx = 0;
-					drawList[drawListPos].type = DrawListType::DrawShadows;
-					drawList[drawListPos].x = shadowCoord.x;
-					drawList[drawListPos].y = shadowCoord.y;
-					drawList[drawListPos].z = shadowCoord.z;
-					drawList[drawListPos].offset = 0;
-					drawListPos++;
+		if ((extra->type & ExtraType::TIME_OUT) && (extra->type & ExtraType::FLASH)) {
+			if (_engine->_lbaTime >= extra->spawnTime + extra->payload.lifeTime - TO_SECONDS(3)) {
+				if ((_engine->_lbaTime + extra->spawnTime) & 8) {
+					continue;
 				}
+			}
+		}
+		const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->_camera);
+
+		if (projPos.x > VIEW_X0 && projPos.x < VIEW_X1(_engine) && projPos.y > VIEW_Y0 && projPos.y < VIEW_Y1(_engine)) {
+			const int16 tmpVal = extra->pos.x - _engine->_grid->_camera.x + extra->pos.z - _engine->_grid->_camera.z;
+			drawList[drawListPos].posValue = tmpVal;
+			drawList[drawListPos].actorIdx = i;
+			drawList[drawListPos].type = DrawListType::DrawExtras;
+			drawListPos++;
+
+			if (_engine->_cfgfile.ShadowMode == 2 && !(extra->sprite & EXTRA_SPECIAL_MASK)) {
+				const IVec3 &shadowCoord = _engine->_movements->getShadowPosition(extra->pos);
+
+				drawList[drawListPos].posValue = tmpVal - 1;
+				drawList[drawListPos].actorIdx = 0;
+				drawList[drawListPos].type = DrawListType::DrawShadows;
+				drawList[drawListPos].x = shadowCoord.x;
+				drawList[drawListPos].y = shadowCoord.y;
+				drawList[drawListPos].z = shadowCoord.z;
+				drawList[drawListPos].offset = 0;
+				drawListPos++;
 			}
 		}
 	}
@@ -478,6 +483,123 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 		// show clipping area
 		//drawRectBorders(renderRect);
 		_engine->_interface->resetClip();
+	}
+}
+
+void Redraw::correctZLevels(DrawListStruct *drawList, int32 drawListPos) {
+	ActorStruct *ptrobj = _engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX);
+	if (ptrobj->_staticFlags.bIsHidden || ptrobj->_body == -1) {
+		return;
+	}
+
+	IVec3 tmin = ptrobj->pos() + ptrobj->_boundingBox.mins;
+	IVec3 tmax = ptrobj->pos() + ptrobj->_boundingBox.maxs;
+	int32 twinsenpos = -1;
+	int32 twinsenz = -1;
+	for (int32 pos = 0; pos < drawListPos; ++pos) {
+		DrawListStruct &drawCmd = drawList[pos];
+		if (drawCmd.type == DrawListType::DrawObject3D && drawCmd.actorIdx == OWN_ACTOR_SCENE_INDEX) {
+			twinsenpos = pos;
+			twinsenz = drawCmd.posValue;
+			break;
+		}
+	}
+
+	if (twinsenpos == -1) {
+		return;
+	}
+
+	for (int32 n = 0; n < drawListPos; ++n) {
+		DrawListStruct &ptrtri = drawList[n];
+		uint32 typeobj = ptrtri.type;
+		int32 numobj = ptrtri.actorIdx;
+		ptrobj = _engine->_scene->getActor(numobj);
+		switch (typeobj) {
+		default:
+			break;
+		case DrawListType::DrawActorSprites:
+			if (ptrobj->_staticFlags.bUsesClipping) {
+				IVec3 pmin = ptrobj->_animStep + ptrobj->_boundingBox.mins;
+				IVec3 pmax = ptrobj->_animStep + ptrobj->_boundingBox.maxs;
+
+				if (pmax.x > tmin.x && pmin.x < tmax.x) {
+					if (pmax.z <= tmin.z) {
+						// twinsen after
+						if (twinsenz < ptrtri.posValue) {
+							// correct the error
+							drawList[twinsenpos].posValue = ptrtri.posValue;
+							drawList[twinsenpos].actorIdx = ptrtri.actorIdx;
+							drawList[twinsenpos].type = ptrtri.type;
+
+							ptrtri.actorIdx = OWN_ACTOR_SCENE_INDEX;
+							ptrtri.type = DrawListType::DrawObject3D;
+							ptrtri.posValue = (int16)twinsenz;
+
+							twinsenpos = n;
+							numobj = -1;
+							break;
+						}
+					}
+					if (pmin.z >= tmax.z) {
+						// twinsen before
+						if (twinsenz > ptrtri.posValue) {
+							// correct the error
+							drawList[twinsenpos].posValue = ptrtri.posValue;
+							drawList[twinsenpos].actorIdx = ptrtri.actorIdx;
+							drawList[twinsenpos].type = ptrtri.type;
+
+							ptrtri.actorIdx = OWN_ACTOR_SCENE_INDEX;
+							ptrtri.type = DrawListType::DrawObject3D;
+							ptrtri.posValue = (int16)twinsenz;
+
+							twinsenpos = n;
+							numobj = -1;
+							break;
+						}
+					}
+				}
+
+				if (pmax.z > tmin.z && pmin.z < tmax.z) {
+					if (pmax.x <= tmin.x) {
+						// twinsen after
+						if (twinsenz < ptrtri.posValue) {
+							// correct the error
+							drawList[twinsenpos].posValue = ptrtri.posValue;
+							drawList[twinsenpos].actorIdx = ptrtri.actorIdx;
+							drawList[twinsenpos].type = ptrtri.type;
+
+							ptrtri.actorIdx = OWN_ACTOR_SCENE_INDEX;
+							ptrtri.type = DrawListType::DrawObject3D;
+							ptrtri.posValue = (int16)twinsenz;
+
+							twinsenpos = n;
+							numobj = -1;
+							break;
+						}
+					} else {
+						// twinsen before
+						if (twinsenz > ptrtri.posValue) {
+							// correct the error
+							drawList[twinsenpos].posValue = ptrtri.posValue;
+							drawList[twinsenpos].actorIdx = ptrtri.actorIdx;
+							drawList[twinsenpos].type = ptrtri.type;
+
+							ptrtri.actorIdx = OWN_ACTOR_SCENE_INDEX;
+							ptrtri.type = DrawListType::DrawObject3D;
+							ptrtri.posValue = (int16)twinsenz;
+
+							twinsenpos = n;
+							numobj = -1;
+							break;
+						}
+					}
+				}
+			}
+			break;
+		}
+		if (numobj == -1) {
+			break;
+		}
 	}
 }
 
@@ -677,7 +799,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
 	_engine->_interface->resetClip();
 
 	if (bgRedraw) {
-		_engine->freezeTime();
+		_engine->freezeTime(false);
 		if (_engine->_scene->_needChangeScene != SCENE_CEILING_GRID_FADE_1 && _engine->_scene->_needChangeScene != SCENE_CEILING_GRID_FADE_2) {
 			_engine->_screens->fadeOut(_engine->_screens->_paletteRGBA);
 		}
@@ -698,12 +820,13 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
 		blitBackgroundAreas();
 	}
 
-	DrawListStruct drawList[150];
+	DrawListStruct drawList[NUM_MAX_ACTORS + EXTRA_MAX_ENTRIES]; // ListTri[MAX_OBJECTS + MAX_EXTRAS]
 	int32 drawListPos = fillActorDrawingList(drawList, bgRedraw);
 	drawListPos = fillExtraDrawingList(drawList, drawListPos);
 	sortDrawingList(drawList, drawListPos);
 
 	_currNumOfRedrawBox = 0;
+	correctZLevels(drawList, drawListPos);
 	processDrawList(drawList, drawListPos, bgRedraw);
 
 	if (_engine->_cfgfile.Debug) {

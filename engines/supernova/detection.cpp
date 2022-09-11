@@ -126,11 +126,11 @@ public:
 	SupernovaMetaEngineDetection() : AdvancedMetaEngineDetection(Supernova::gameDescriptions, sizeof(ADGameDescription), supernovaGames, optionsList) {
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "supernova";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Mission Supernova";
 	}
 

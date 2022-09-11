@@ -456,7 +456,13 @@ int CharsetRendererClassic::getCharWidth(uint16 chr) const {
 
 int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int pos = 0;
-	int width = (_vm->_game.id == GID_FT) ? 0 : 1;
+
+	// I have confirmed from disasm that neither LOOM EGA and FM-TOWNS (EN/JP) nor any other games withing the
+	// v0-v3 version range add 1 to the width. There isn't even a getStringWidth method. And the v0-2 games don't
+	// even support text rendering over strip borders. However, LOOM VGA Talkie and MONKEY1 EGA do have the
+	// getStringWidth method and they do add 1 to the width. So that seems to have been introduced with version 4.
+	int width = (_vm->_game.version < 4 || _vm->_game.id == GID_FT) ? 0 : 1;
+
 	int chr;
 	int oldID = getCurID();
 	int code = (_vm->_game.heversion >= 80) ? 127 : 64;
@@ -2365,7 +2371,7 @@ void CharsetRendererTownsClassic::processCharsetColors() {
 		if (c > 16) {
 			uint8 t = (_vm->_currentPalette[c * 3] < 32) ? 4 : 12;
 			t |= ((_vm->_currentPalette[c * 3 + 1] < 32) ? 2 : 10);
-			t |= ((_vm->_currentPalette[c * 3 + 1] < 32) ? 1 : 9);
+			t |= ((_vm->_currentPalette[c * 3 + 2] < 32) ? 1 : 9);
 			c = t;
 		}
 

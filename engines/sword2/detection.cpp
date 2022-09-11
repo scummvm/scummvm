@@ -39,11 +39,11 @@ static const ExtraGuiOption sword2ExtraGuiOption = {
 
 class Sword2MetaEngineDetection : public MetaEngineDetection {
 public:
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "sword2";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Broken Sword II: The Smoking Mirror";
 	}
 	const char *getOriginalCopyright() const override {

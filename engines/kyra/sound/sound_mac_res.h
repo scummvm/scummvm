@@ -49,6 +49,7 @@ private:
 	Common::MacResManager *_resMan;
 	Common::Archive *_stuffItArchive;
 	Common::Mutex _mutex;
+	const bool _isTalkie;
 };
 
 } // End of namespace Kyra

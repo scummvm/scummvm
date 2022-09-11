@@ -26,7 +26,7 @@
 
 namespace Graphics {
 
-MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, bool focusable, uint16 border, uint16 gutter, uint16 shadow, uint fgcolor, uint bgcolor) :
+MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, bool focusable, uint16 border, uint16 gutter, uint16 shadow, uint32 fgcolor, uint32 bgcolor) :
 	_focusable(focusable), _parent(parent), _border(border), _gutter(gutter), _shadow(shadow), _wm(wm) {
 	_contentIsDirty = true;
 	_priority = 0;

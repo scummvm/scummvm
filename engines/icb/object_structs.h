@@ -103,9 +103,12 @@ public:
 	bool8 Set_texture(const char *texture_name);
 	bool8 Set_palette(const char *palette_name);
 	bool8 Set_mesh(const char *mesh_name);
+	bool8 Set_override_pose(const char *override_pose_name);
+	bool8 Cancel_override_pose();
 	void Promote_non_generic();
 	int8 IsAnimTable(int32 i);
 	void MakeAnimEntry(int32 i);
+	int Preload_file(const char *file);
 
 	// those hashs in full
 
@@ -117,6 +120,7 @@ public:
 	uint32 palette_hash;     // the name of the palette
 	uint32 texture_hash;     // the name of the texture (which includes a default palette)
 	uint32 pose_hash;        // the name of the ordinary pose/accessory mesh
+	uint32 override_pose_hash; // the name of the pose/accessory mesh overrides the default setting
 	uint32 custom_pose_hash; // the name of the "custom" pose/accessory mesh
 
 	// base path
@@ -152,6 +156,7 @@ public:
 	char palette_name[PALETTE_STR_LEN];
 	char pose_name[ANIM_NAME_STR_LEN];
 	char custom_pose_name[ANIM_NAME_STR_LEN];
+	char override_pose_name[ANIM_NAME_STR_LEN];
 
 	// and so the access functions return the
 	// actual thing
@@ -164,6 +169,7 @@ public:
 	char *get_palette_name() { return palette_name; }
 	char *get_pose_name() { return pose_name; }
 	char *get_custom_pose_name() { return custom_pose_name; }
+	char *get_override_pose_name() { return override_pose_name; }
 
 };
 
@@ -200,9 +206,11 @@ enum CameraStateEnum { OFF_CAMERA = 0x0, ON_CAMERA = 0x1 };
 // on camera last cycle and on this cycle
 #define ON_ON_CAMERA MAKE_VIEW_STATE(ON_CAMERA, ON_CAMERA)
 
+#define DEFAULT_HEIGHT 170
+
 class _mega { // mega logic specific
 public:
-	_parent_box *cur_parent; // our owner parent box
+	ParentBox *cur_parent;   // our owner parent box
 	uint32 par_number;       // for players abar list update
 	uint32 cur_slice;        // for speedups
 
@@ -242,6 +250,8 @@ public:
 	_route_description m_main_route;
 
 	Breath breath;
+
+	int32 height;	// looking height (El Dorado only)
 
 	// the dynamic lamp (with one state only) and a switch as to whether it is on or off (if >0 then it is on for dynLightOn cycles, if
 	// 0 then off, if -1 on until explicitly turned off)
@@ -312,6 +322,8 @@ public:
 	uint32 slice_hold_tolerance; // y distance to stray before slice hold kicks back in
 	uint8 idle_count;            // how int32 just been stood
 
+	bool8 inventoryActive;       // used to toggle the inventory on and off from scripts (El Dorado only)
+
 	// camera control
 	bool8 y_locked;
 	PXreal y_lock;
@@ -348,6 +360,8 @@ inline void _mega::ShiftViewState() { viewState = (uint8)((viewState >> THIS_CYC
 inline void _mega::SetThisViewState(enum CameraStateEnum status) { viewState = (uint8)((viewState & LAST_CYCLE_MASK) | ((int)status << THIS_CYCLE_SHIFT)); }
 
 enum _object_image_type { PROP, VOXEL };
+
+enum _prop_interact_type { __THREE_SIXTY = 1, __ICB, __RADIAL };
 
 enum _hold_mode {
 	prop_camera_hold = 1,
@@ -402,6 +416,10 @@ public:
 	// prop xyz coord derived from nico
 	PXvector prop_xyz;
 	PXfloat prop_interact_pan;
+	PXreal interact_dist;	//actual distance - can be changed by implementor
+	_prop_interact_type prop_interact_method;	//user interaction method
+	int32 radial_interact_distance;
+
 	PXfloat pan;        // engine pan
 	PXfloat pan_adjust; // pan neutraliser for frames that include a pan from the grab - i.e. turn on spot
 	// this is a distance to look up when looking at the object, only useful:

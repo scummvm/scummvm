@@ -214,7 +214,7 @@ public:
  * specific image set which shares the same name.
  */
 class TileAnimSet {
-	typedef Std::map<Common::String, TileAnim *> TileAnimMap;
+	typedef Common::HashMap<Common::String, TileAnim *> TileAnimMap;
 
 public:
 	TileAnimSet(const ConfigElement &conf);

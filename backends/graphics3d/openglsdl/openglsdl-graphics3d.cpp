@@ -55,6 +55,7 @@ OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSour
 	_overlayScreen(nullptr),
 	_overlayBackground(nullptr),
 	_fullscreen(false),
+	_lockAspectRatio(true),
 	_stretchMode(STRETCH_FIT),
 	_frameBuffer(nullptr),
 	_surfaceRenderer(nullptr),
@@ -156,6 +157,7 @@ bool OpenGLSdlGraphics3dManager::hasFeature(OSystem::Feature f) const {
 		(f == OSystem::kFeatureFullscreenToggleKeepsContext) ||
 #endif
 		(f == OSystem::kFeatureVSync) ||
+		(f == OSystem::kFeatureAspectRatioCorrection) ||
 		(f == OSystem::kFeatureStretchMode) ||
 		(f == OSystem::kFeatureOverlaySupportsAlpha && _overlayFormat.aBits() > 3);
 }
@@ -166,6 +168,8 @@ bool OpenGLSdlGraphics3dManager::getFeatureState(OSystem::Feature f) const {
 			return isVSyncEnabled();
 		case OSystem::kFeatureFullscreenMode:
 			return _fullscreen;
+		case OSystem::kFeatureAspectRatioCorrection:
+			return _lockAspectRatio;
 		default:
 			return false;
 	}
@@ -179,6 +183,9 @@ void OpenGLSdlGraphics3dManager::setFeatureState(OSystem::Feature f, bool enable
 				if (_transactionMode == kTransactionNone)
 					createOrUpdateScreen();
 			}
+			break;
+		case OSystem::kFeatureAspectRatioCorrection:
+			_lockAspectRatio = enable;
 			break;
 		default:
 			break;
@@ -428,6 +435,20 @@ void OpenGLSdlGraphics3dManager::handleResizeImpl(const int width, const int hei
 
 	// Something changed, so update the screen change ID.
 	_screenChangeCount++;
+}
+
+bool OpenGLSdlGraphics3dManager::gameNeedsAspectRatioCorrection() const {
+	if (_lockAspectRatio) {
+		const uint width = getWidth();
+		const uint height = getHeight();
+
+		// In case we enable aspect ratio correction we force a 4/3 ratio.
+		// But just for 320x200 and 640x400 games, since other games do not need
+		// this.
+		return (width == 320 && height == 200) || (width == 640 && height == 400);
+	}
+
+	return false;
 }
 
 void OpenGLSdlGraphics3dManager::initializeOpenGLContext() const {
@@ -734,17 +755,10 @@ bool OpenGLSdlGraphics3dManager::showMouse(bool visible) {
 	return true;
 }
 
-bool OpenGLSdlGraphics3dManager::notifyMousePosition(Common::Point &mouse) {
+void OpenGLSdlGraphics3dManager::showSystemMouseCursor(bool visible) {
 	// HACK: SdlGraphicsManager disables the system cursor when the mouse is in the
 	// active draw rect, however the 3D graphics manager uses it instead of the
 	// standard mouse graphic.
-	int showCursor = SDL_ShowCursor(SDL_QUERY);
-
-	bool valid = SdlGraphicsManager::notifyMousePosition(mouse);
-
-	SDL_ShowCursor(showCursor);
-
-	return valid;
 }
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)

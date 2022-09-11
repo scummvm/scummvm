@@ -82,7 +82,9 @@ protected:
 	};
 
 	int _blastObjectQueuePos;
+	int _blastObjectRectsQueue = 0;
 	BlastObject _blastObjectQueue[200];
+	Common::Rect _blastObjectsRectsToBeRestored[200];
 
 	// Akos Class
 	struct {
@@ -108,6 +110,7 @@ public:
 protected:
 	void setupOpcodes() override;
 
+	void scummLoop_handleSaveLoad() override;
 	void scummLoop_handleActors() override;
 	void processKeyboard(Common::KeyState lastKeyHit) override;
 
@@ -129,20 +132,24 @@ protected:
 	int findFreeArrayId();
 public: // FIXME. TODO
 	void nukeArray(int array);
+	void removeBlastObjects();
+	void restoreBlastObjectsRects();
 
 protected:
 	virtual int readArray(int array, int index, int base);
 	virtual void writeArray(int array, int index, int base, int value);
 	void shuffleArray(int num, int minIdx, int maxIdx);
 
-	virtual void setDefaultCursor();
-	void setCursorTransparency(int a);
-	void setCursorHotspot(int x, int y);
+	void setDefaultCursor() override;
+	void setCursorTransparency(int a) override;
+	void setCursorHotspot(int x, int y) override;
 
 	virtual void setCursorFromImg(uint img, uint room, uint imgindex);
 	void useIm01Cursor(const byte *im, int w, int h);
 	void useBompCursor(const byte *im, int w, int h);
 	void grabCursor(int x, int y, int w, int h);
+	void setCursorFromBuffer(const byte *ptr, int width, int height, int pitch, bool preventScale = false) override;
+	void ditherCursor();
 
 	virtual void drawBlastTexts() {}
 	virtual void removeBlastTexts() {}
@@ -151,10 +158,15 @@ protected:
 	                   int objectHeight, int scaleX, int scaleY, int image, int mode);
 	void drawBlastObjects();
 	void drawBlastObject(BlastObject *eo);
-	void removeBlastObjects();
-	void removeBlastObject(BlastObject *eo);
+
+	void restoreBlastObjectRect(Common::Rect r);
 
 	void clearDrawQueues() override;
+
+	int getBannerColor(int bannerId) override;
+	const char *getGUIString(int stringId) override;
+	void setSkipVideo(int value) override { _skipVideo = value; }
+	void setUpMainMenuControls() override;
 
 public:
 	bool akos_increaseAnims(const byte *akos, Actor *a);

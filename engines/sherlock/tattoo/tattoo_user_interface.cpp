@@ -225,7 +225,7 @@ void TattooUserInterface::doJournal() {
 	_windowOpen = false;
 	_key = -1;
 
-	// Restore the the old screen palette and greyscale lookup table
+	// Restore the old screen palette and greyscale lookup table
 	screen.clear();
 	screen.setPalette(screen._cMap);
 	Common::copy(&lookupTable[0], &lookupTable[PALETTE_COUNT], &_lookupTable[0]);

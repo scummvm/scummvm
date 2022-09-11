@@ -444,7 +444,7 @@ void SpritesMgr::showObject(int16 viewNr) {
  * @param x     x coordinate to place the view
  * @param y     y coordinate to place the view
  * @param pri   priority to use
- * @param mar   if < 4, create a margin around the the base of the cel
+ * @param mar   if < 4, create a margin around the base of the cel
  */
 void SpritesMgr::addToPic(int16 viewNr, int16 loopNr, int16 celNr, int16 xPos, int16 yPos, int16 priority, int16 border) {
 	debugC(3, kDebugLevelSprites, "addToPic(view=%d, loop=%d, cel=%d, x=%d, y=%d, pri=%d, border=%d)", viewNr, loopNr, celNr, xPos, yPos, priority, border);

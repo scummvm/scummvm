@@ -421,7 +421,7 @@ static int njGetVLC(nj_vlc_code_t *vlc, byte *code) {
 		return 0;
 	value = njGetBits(bits);
 	if (value < (1 << (bits - 1)))
-		value += ((-1) << bits) + 1;
+		value += (0xffffffff << bits) + 1;
 	return value;
 }
 

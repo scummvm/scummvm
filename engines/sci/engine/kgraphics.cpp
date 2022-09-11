@@ -698,6 +698,19 @@ reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv) {
 			g_sci->_gfxPalette16->kernelAnimateSet();
 	}
 
+	// WORKAROUNDS: kPaletteAnimate produces different results in ScummVM than
+	// the original when multiple calls occur in the same game cycle.
+	// SSCI updated the screen immediately so each call took a noticeable amount
+	// of time and the results of each call were visible.
+	// We generally update the screen on each game cycle; that makes all of the
+	// palette changes appear at once. No extra delay is produced since updating
+	// the palette data by itself takes an insignificant amount of time.
+	// Most scripts that call kPaletteAnimate only do so once per game cycle, so
+	// they are unaffected. Most that call it multiple times achieve practically
+	// the same effect in ScummVM. (Longbow title screen, EcoQuest ocean rooms,
+	// QFG1VGA room 10) But for scripts or effects that depend on the delay,
+	// or seeing each individual update, we currently work around them.
+
 	// WORKAROUND: The game scripts in SQ4 floppy count the number of elapsed
 	// cycles in the intro from the number of successive kAnimate calls during
 	// the palette cycling effect, while showing the SQ4 logo. This worked in
@@ -718,6 +731,25 @@ reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv) {
 	// right after a gameover (room#376)
 	if (g_sci->getGameId() == GID_SQ4 && !g_sci->isCD())
 		g_sci->sleep(10);
+
+	// WORKAROUND: PQ1 and PQ3 title screens call kPaletteAnimate eight times
+	// on each game cycle to animate police lights. The effect relies on every
+	// palette change being drawn to the screen instead of just the last one.
+	// We fix this by updating the screen on every call. Normally we would want
+	// to process events to keep the cursor smooth during these lengthy game
+	// cycles, but it doesn't matter here because the cursor is hidden.
+	// We call OSystem::updateScreen() directly to avoid the SCI throttler that
+	// discards multiple updates within 1/60th of a second, as that can lose
+	// some of the animation frames. This is only applied to the VGA version.
+	if ((g_sci->getGameId() == GID_PQ1 && s->currentRoomNumber() == 1) ||
+		(g_sci->getGameId() == GID_PQ3 && s->currentRoomNumber() == 2)) {
+		// PQ1 also cycles the Sierra logo in its room 1, so limit the
+		// workaround to just the police lights.
+		uint16 fromColor = argv[0].toUint16();
+		if (fromColor >= 208 && paletteChanged) {
+			g_system->updateScreen();
+		}
+	}
 
 	return s->r_acc;
 }

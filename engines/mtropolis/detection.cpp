@@ -29,6 +29,7 @@
 
 static const PlainGameDescriptor mTropolisGames[] = {
 	{"obsidian", "Obsidian"},
+	{"mti", "Muppet Treasure Island"},
 	{nullptr, nullptr}
 };
 
@@ -60,11 +61,11 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 	{
-		GAMEOPTION_AUTO_SAVE,
+		GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS,
 		{
-			_s("Save progress automatically"),
-			_s("Automatically saves the game at certain progress points."),
-			"mtropolis_mod_auto_save",
+			_s("Autosave at progress points"),
+			_s("Automatically saves the game after completing puzzles and chapters."),
+			"mtropolis_mod_auto_save_at_checkpoints",
 			true,
 			0,
 			0
@@ -74,9 +75,20 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_ENABLE_SHORT_TRANSITIONS,
 		{
 			_s("Enable short transitions"),
-			_s("Enables transitions that are set to maximum rate instead of skipping them"),
+			_s("Enables transitions that are set to maximum rate instead of skipping them."),
 			"mtropolis_mod_minimum_transition_duration",
 			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_SOUND_EFFECT_SUBTITLES,
+		{
+			_s("Enable subtitles for important sound effects"),
+			_s("Enables subtitles for important sound effects.  This may reduce the difficulty of sound recognition puzzles and minigames."),
+			"mtropolis_mod_sound_gameplay_subtitles",
+			false,
 			0,
 			0
 		}
@@ -85,19 +97,8 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_LAUNCH_DEBUG,
 		{
 			_s("Start with debugger"),
-			_s("Starts with the debugger dashboard active"),
+			_s("Starts with the debugger dashboard active."),
 			"mtropolis_debug_at_start",
-			false,
-			0,
-			0
-		}
-	},
-	{
-		GAMEOPTION_LAUNCH_BREAK,
-		{
-			_s("Start debugging immediately"),
-			_s("Halts progress and stops at the debugger immediately"),
-			"mtropolis_pause_at_start",
 			false,
 			0,
 			0
@@ -112,28 +113,31 @@ static const char *directoryGlobs[] = {
 	"Obsidian",
 	"RESOURCE",
 	"Saved Games",
+	"MTPLAY32",
 	nullptr
 };
 
 class MTropolisMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	MTropolisMetaEngineDetection() : AdvancedMetaEngineDetection(MTropolis::gameDescriptions, sizeof(MTropolis::MTropolisGameDescription), mTropolisGames, MTropolis::optionsList) {
-		_guiOptions = GUIO4(GAMEOPTION_DYNAMIC_MIDI, GAMEOPTION_LAUNCH_DEBUG, GAMEOPTION_LAUNCH_BREAK, GAMEOPTION_ENABLE_SHORT_TRANSITIONS);
+		_guiOptions = GUIO3(GAMEOPTION_DYNAMIC_MIDI, GAMEOPTION_LAUNCH_DEBUG, GAMEOPTION_ENABLE_SHORT_TRANSITIONS);
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "mtropolis";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "mTropolis";
 	}
 
 	const char *getOriginalCopyright() const override {
 		return "mTropolis (C) mFactory/Quark";
 	}
+
+	bool canPlayUnknownVariants() const override { return true; }
 };
 
 REGISTER_PLUGIN_STATIC(MTROPOLIS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, MTropolisMetaEngineDetection);

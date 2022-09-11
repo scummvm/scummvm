@@ -129,8 +129,8 @@ Script::~Script() {
 	// Smart pointers anyone?
 
 	// Clean variables
-	Std::map<Common::String, Script::Variable *>::iterator variableItem = _variables.begin();
-	Std::map<Common::String, Script::Variable *>::iterator variablesEnd = _variables.end();
+	Common::HashMap<Common::String, Script::Variable *>::iterator variableItem = _variables.begin();
+	Common::HashMap<Common::String, Script::Variable *>::iterator variablesEnd = _variables.end();
 	while (variableItem != variablesEnd) {
 		delete variableItem->_value;
 		++variableItem;
@@ -138,7 +138,7 @@ Script::~Script() {
 }
 
 void Script::removeCurrentVariable(const Common::String &name) {
-	Std::map<Common::String, Script::Variable *>::iterator dup = _variables.find(name);
+	Common::HashMap<Common::String, Script::Variable *>::iterator dup = _variables.find(name);
 	if (dup != _variables.end()) {
 		delete dup->_value;
 		_variables.erase(dup); // not strictly necessary, but correct.
@@ -1239,7 +1239,7 @@ Script::ReturnCode Script::karma(Shared::XMLNode *script, Shared::XMLNode *curre
 	if (_debug)
 		debugN("Karma: adjusting - '%s'", action.c_str());
 
-	typedef Std::map<Common::String, KarmaAction /*, Std::less<Common::String> */> KarmaActionMap;
+	typedef Common::HashMap<Common::String, KarmaAction /*, Std::less<Common::String> */> KarmaActionMap;
 	static KarmaActionMap action_map;
 
 	if (action_map.size() == 0) {
@@ -1313,7 +1313,7 @@ Script::ReturnCode Script::setVar(Shared::XMLNode *script, Shared::XMLNode *curr
 }
 
 Script::ReturnCode Script::ztats(Shared::XMLNode *script, Shared::XMLNode *current) {
-	typedef Std::map<Common::String, StatsView/*, Std::less<Common::String>*/ > StatsViewMap;
+	typedef Common::HashMap<Common::String, StatsView/*, Std::less<Common::String>*/ > StatsViewMap;
 	static StatsViewMap view_map;
 
 	if (view_map.size() == 0) {

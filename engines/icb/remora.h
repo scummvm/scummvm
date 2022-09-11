@@ -326,7 +326,7 @@ private:
 	uint32 m_nCurrentZoom;                                 // 128 = scale of 1.0, 1 = x(1/128), 512 = scale of x4
 	uint32 m_nMinZoom;                                     // Minimum zoom level allowed for the Remora.
 	uint32 m_nMaxZoom;                                     // Maximum zoom level allowed for the Remora.
-	_barrier_slice *m_pSlices[REMORA_MAX_INCLUDED_SLICES]; // Slices of barriers for player's current height.
+	BarrierSlice *m_pSlices[REMORA_MAX_INCLUDED_SLICES];   // Slices of barriers for player's current height.
 	uint32 m_pnSlices[REMORA_MAX_INCLUDED_SLICES];         // Index of slice player is on.
 	int32 m_nIncludedCeiling;                              // Top coordinate of things to include in scan modes.
 	int32 m_nIncludedFloor;                                // Bottom coordinate of things to include in scan modes.

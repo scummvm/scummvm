@@ -19,7 +19,7 @@
  *
  */
 
-#include <common/math.h>
+#include "common/math.h"
 
 #include "asylum/puzzles/pipes.h"
 

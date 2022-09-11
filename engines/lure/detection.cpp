@@ -279,11 +279,11 @@ public:
 		_guiOptions = GUIO1(GUIO_NOSPEECH);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "lure";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Lure of the Temptress";
 	}
 

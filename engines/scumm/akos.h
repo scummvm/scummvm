@@ -123,6 +123,75 @@ protected:
 	void markRectAsDirty(Common::Rect rect);
 };
 
+enum AkosOpcodes {
+	AKC_Return = 0xC001,
+	AKC_SetVar = 0xC010,
+	AKC_CmdQue3 = 0xC015,
+	AKC_C016 = 0xC016,
+	AKC_C017 = 0xC017,
+	AKC_C018 = 0xC018,
+	AKC_C019 = 0xC019,
+	AKC_ComplexChan = 0xC020,
+	AKC_C021 = 0xC021,
+	AKC_C022 = 0xC022,
+	AKC_ComplexChan2 = 0xC025,
+	AKC_Jump = 0xC030,
+	AKC_JumpIfSet = 0xC031,
+	AKC_AddVar = 0xC040,
+	AKC_C042 = 0xC042,
+	AKC_C044 = 0xC044,
+	AKC_C045 = 0xC045,
+	AKC_C046 = 0xC046,
+	AKC_C047 = 0xC047,
+	AKC_C048 = 0xC048,
+	AKC_Ignore = 0xC050,
+	AKC_IncVar = 0xC060,
+	AKC_CmdQue3Quick = 0xC061,
+	AKC_JumpStart = 0xC070,
+	AKC_JumpE = 0xC070,
+	AKC_JumpNE = 0xC071,
+	AKC_JumpL = 0xC072,
+	AKC_JumpLE = 0xC073,
+	AKC_JumpG = 0xC074,
+	AKC_JumpGE = 0xC075,
+	AKC_StartAnim = 0xC080,
+	AKC_StartVarAnim = 0xC081,
+	AKC_Random = 0xC082,
+	AKC_SetActorClip = 0xC083,
+	AKC_StartAnimInActor = 0xC084,
+	AKC_SetVarInActor = 0xC085,
+	AKC_HideActor = 0xC086,
+	AKC_SetDrawOffs = 0xC087,
+	AKC_JumpTable = 0xC088,
+	AKC_SoundStuff = 0xC089,
+	AKC_Flip = 0xC08A,
+	AKC_Cmd3 = 0xC08B,
+	AKC_Ignore3 = 0xC08C,
+	AKC_Ignore2 = 0xC08D,
+	AKC_C08E = 0xC08E,
+	AKC_SkipStart = 0xC090,
+	AKC_SkipE = 0xC090,
+	AKC_SkipNE = 0xC091,
+	AKC_SkipL = 0xC092,
+	AKC_SkipLE = 0xC093,
+	AKC_SkipG = 0xC094,
+	AKC_SkipGE = 0xC095,
+	AKC_ClearFlag = 0xC09F,
+	AKC_C0A0 = 0xC0A0,
+	AKC_C0A1 = 0xC0A1,
+	AKC_C0A2 = 0xC0A2,
+	AKC_C0A3 = 0xC0A3,
+	AKC_C0A4 = 0xC0A4,
+	AKC_C0A5 = 0xC0A5,
+	AKC_C0A6 = 0xC0A6,
+	AKC_C0A7 = 0xC0A7,
+	AKC_EndSeq = 0xC0FF
+};
+
+#define GW(o) ((int16)READ_LE_UINT16(aksq+curpos+(o)))
+#define GUW(o) READ_LE_UINT16(aksq+curpos+(o))
+#define GB(o) aksq[curpos+(o)]
+
 } // End of namespace Scumm
 
 #endif

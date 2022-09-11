@@ -24,6 +24,7 @@
  *
  */
 
+#include "engines/icb/common/px_linkeddatafile.h"
 #include "engines/icb/remora.h"
 #include "engines/icb/line_of_sight.h"
 #include "engines/icb/sound.h"
@@ -447,7 +448,7 @@ void _remora::CycleRemoraLogic(const _input &sKeyboardState) {
 		// Remora is now inactive.
 		m_eGameState = INACTIVE;
 
-		nRemoraID = MS->objects->Fetch_item_number_by_name(REMORA_NAME);
+		nRemoraID = LinkedDataObject::Fetch_item_number_by_name(MS->objects, REMORA_NAME);
 
 		if (nRemoraID == PX_LINKED_DATA_FILE_ERROR)
 			Fatal_error("No logic object for Remora in _remora::CycleRemoraLogic()");
@@ -633,14 +634,14 @@ void _remora::SetupPicture(uint32 nXPixelOffset, const char *pcPictureName) {
 }
 
 void _remora::AddFloorRange(uint32 nLower, uint32 nUpper) {
-	_linked_data_file *pSlices;
+	LinkedDataFile *pSlices;
 
 	// Check that top value is within the available slices (bottom one must be because it is unsigned).  First,
 	// get the pointer to the slices (this will already have been loaded by the line-of-sight engine).
 	pSlices = g_oLineOfSight->GetSlicesPointer();
 
-	if (nUpper >= pSlices->Fetch_number_of_items())
-		nUpper = pSlices->Fetch_number_of_items() - 1;
+	if (nUpper >= LinkedDataObject::Fetch_number_of_items(pSlices))
+		nUpper = LinkedDataObject::Fetch_number_of_items(pSlices) - 1;
 
 	// Upper must be greater than lower, or it isn't a range.
 	if (nUpper <= nLower)
@@ -734,14 +735,14 @@ const char *_remora::LocateTextFromReference(uint32 nHashRef) {
 	const char *pcTextLine;
 
 	// Look for the reference.
-	pcTextLine = (const char *)MS->text->Try_fetch_item_by_hash(nHashRef);
+	pcTextLine = (const char *)LinkedDataObject::Try_fetch_item_by_hash(MS->text, nHashRef);
 
 	// If we found it, return it.
 	if (pcTextLine)
 		return (pcTextLine);
 
 	// Look in the global text file.
-	pcTextLine = (const char *)global_text->Try_fetch_item_by_hash(nHashRef);
+	pcTextLine = (const char *)LinkedDataObject::Try_fetch_item_by_hash(global_text, nHashRef);
 
 	// Return the pointer regardless.
 	return (pcTextLine);
@@ -897,8 +898,8 @@ void _remora::DrawVoiceOverText() const {
 void _remora::SetCommonActivateInfo(RemoraMode eMode) {
 	uint32 i, j;
 	_logic *pPlayerObject;
-	_linked_data_file *pSlices;
-	_barrier_slice *pSlice;
+	LinkedDataFile *pSlices;
+	BarrierSlice *pSlice;
 	int32 nSlice;
 	uint32 nNumSlices;
 	bool8 bInFloorRange;
@@ -930,12 +931,12 @@ void _remora::SetCommonActivateInfo(RemoraMode eMode) {
 	pSlices = g_oLineOfSight->GetSlicesPointer();
 
 	// Find out which slice we're in.
-	nNumSlices = pSlices->Fetch_number_of_items();
+	nNumSlices = LinkedDataObject::Fetch_number_of_items(pSlices);
 	nSlice = 0;
 
 	for (i = 0; i < nNumSlices; ++i) {
 		// Get the slice.
-		pSlice = (_barrier_slice *)pSlices->Fetch_item_by_number(i);
+		pSlice = (BarrierSlice *)LinkedDataObject::Fetch_item_by_number(pSlices, i);
 
 		// See if the player's feet are in this slice.
 		if ((m_nPlayerY >= pSlice->bottom) && (m_nPlayerY < pSlice->top))
@@ -953,7 +954,7 @@ void _remora::SetCommonActivateInfo(RemoraMode eMode) {
 			bInFloorRange = TRUE8;
 
 			for (j = m_pFloorRanges[i].s_nLower; j <= m_pFloorRanges[i].s_nUpper; ++j) {
-				m_pSlices[m_nNumCurrentFloorRanges] = (_barrier_slice *)pSlices->Fetch_item_by_number(j);
+				m_pSlices[m_nNumCurrentFloorRanges] = (BarrierSlice *)LinkedDataObject::Fetch_item_by_number(pSlices, j);
 				m_pnSlices[m_nNumCurrentFloorRanges] = j;
 				++m_nNumCurrentFloorRanges;
 			}
@@ -965,7 +966,7 @@ void _remora::SetCommonActivateInfo(RemoraMode eMode) {
 	// If we didn't set a floor range then we must set a single floor slice.
 	if (!bInFloorRange) {
 		// Only one slice required to be displayed.
-		m_pSlices[0] = (_barrier_slice *)pSlices->Fetch_item_by_number(nSlice);
+		m_pSlices[0] = (BarrierSlice *)LinkedDataObject::Fetch_item_by_number(pSlices, nSlice);
 		m_pnSlices[0] = nSlice;
 		m_nNumCurrentFloorRanges = 1;
 	}
@@ -980,12 +981,12 @@ void _remora::SetCommonActivateInfo(RemoraMode eMode) {
 
 void _remora::AccessMenuLevelVariables(int32 *pnParams, MenuVariableAccessMode eRetrieve) {
 	uint32 i, j;
-	c_game_object *pGameObject;
+	CGame *pGameObject;
 	char pcVarName[] = REMORA_MENU_LEVEL_NAME;
 	uint32 nDigitPos;
 
 	// Get the Remora's game object.
-	pGameObject = (c_game_object *)MS->objects->Fetch_item_by_name(REMORA_NAME);
+	pGameObject = (CGame *)LinkedDataObject::Fetch_item_by_name(MS->objects, REMORA_NAME);
 
 	// Get the position where we need to add the digit to the menu variable name.
 	nDigitPos = strlen(pcVarName) - 1;
@@ -997,24 +998,24 @@ void _remora::AccessMenuLevelVariables(int32 *pnParams, MenuVariableAccessMode e
 
 		// Find the variable in the Remora's game object.
 		j = 0;
-		while ((j < pGameObject->GetNoLvars()) && strcmp(pcVarName, pGameObject->GetScriptVariableName(j)))
+		while ((j < CGameObject::GetNoLvars(pGameObject)) && strcmp(pcVarName, CGameObject::GetScriptVariableName(pGameObject, j)))
 			++j;
 
 		// If we ran out of variables, this is an error because we haven't found the one we're looking for.
-		if (j == pGameObject->GetNoLvars())
+		if (j == CGameObject::GetNoLvars(pGameObject))
 			Fatal_error("Failed to find menu variable %s in _remora::AccessMenuLevelVariables()", pcVarName);
 
 		// Found it, so get or set it.
 		if (eRetrieve == GET)
-			pnParams[i] = pGameObject->GetIntegerVariable(j);
+			pnParams[i] = CGameObject::GetIntegerVariable(pGameObject, j);
 		else
-			pGameObject->SetIntegerVariable(j, pnParams[i]);
+			CGameObject::SetIntegerVariable(pGameObject, j, pnParams[i]);
 	}
 }
 
 _remora::ScreenSymbol _remora::GetSymbolToDrawObject(_logic *pObject, uint32 nID) const {
 	__object_type eObjectType;
-	c_game_object *pGameObject;
+	CGame *pGameObject;
 	uint32 nScriptVar, nVarVal;
 
 	// If it's player, always return same symbol.
@@ -1036,9 +1037,9 @@ _remora::ScreenSymbol _remora::GetSymbolToDrawObject(_logic *pObject, uint32 nID
 
 	case (__ORGANIC_MEGA):
 		// Need to find out if the human is alive or dead.
-		pGameObject = (c_game_object *)MS->objects->Fetch_item_by_number(nID);
-		nScriptVar = pGameObject->GetVariable("state");
-		nVarVal = pGameObject->GetIntegerVariable(nScriptVar);
+		pGameObject = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, nID);
+		nScriptVar = CGameObject::GetVariable(pGameObject, "state");
+		nVarVal = CGameObject::GetIntegerVariable(pGameObject, nScriptVar);
 		if (nVarVal == 1)
 			return (DEAD_HUMAN);
 		else
@@ -1048,9 +1049,9 @@ _remora::ScreenSymbol _remora::GetSymbolToDrawObject(_logic *pObject, uint32 nID
 
 	case (__NON_ORGANIC_MEGA):
 		// Need to find out if the robot is alive or dead.
-		pGameObject = (c_game_object *)MS->objects->Fetch_item_by_number(nID);
-		nScriptVar = pGameObject->GetVariable("state");
-		nVarVal = pGameObject->GetIntegerVariable(nScriptVar);
+		pGameObject = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, nID);
+		nScriptVar = CGameObject::GetVariable(pGameObject, "state");
+		nVarVal = CGameObject::GetIntegerVariable(pGameObject, nScriptVar);
 		if (nVarVal == 1)
 			return (DEAD_ROBOT);
 		else
@@ -1060,9 +1061,9 @@ _remora::ScreenSymbol _remora::GetSymbolToDrawObject(_logic *pObject, uint32 nID
 
 	case (__REMORA_CARRIER):
 		// This is an object carrying a Remora, but only the player gets a special symbol now.
-		pGameObject = (c_game_object *)MS->objects->Fetch_item_by_number(nID);
-		nScriptVar = pGameObject->GetVariable("state");
-		nVarVal = pGameObject->GetIntegerVariable(nScriptVar);
+		pGameObject = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, nID);
+		nScriptVar = CGameObject::GetVariable(pGameObject, "state");
+		nVarVal = CGameObject::GetIntegerVariable(pGameObject, nScriptVar);
 		if (nVarVal == 1)
 			return (DEAD_HUMAN);
 		else
@@ -1070,9 +1071,9 @@ _remora::ScreenSymbol _remora::GetSymbolToDrawObject(_logic *pObject, uint32 nID
 		break;
 
 	case (__RECHARGE_POINT):
-		pGameObject = (c_game_object *)MS->objects->Fetch_item_by_number(nID);
-		nScriptVar = pGameObject->GetVariable("set_mine");
-		nVarVal = pGameObject->GetIntegerVariable(nScriptVar);
+		pGameObject = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, nID);
+		nScriptVar = CGameObject::GetVariable(pGameObject, "set_mine");
+		nVarVal = CGameObject::GetIntegerVariable(pGameObject, nScriptVar);
 		if (nVarVal == 1)
 			return (RECHARGE_ARMED);
 		else

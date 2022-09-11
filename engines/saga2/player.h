@@ -273,7 +273,7 @@ bool actorIDToPlayerID(ObjectID id, PlayerActorID &result);
 void handlePlayerActorDeath(PlayerActorID id);
 
 //  Transport the center actor and the banded brothers who have a path
-//  the the center actor
+//  the center actor
 void transportCenterBand(const Location &loc);
 
 void handlePlayerActorAttacked(PlayerActorID id);

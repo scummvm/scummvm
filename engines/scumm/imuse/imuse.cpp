@@ -486,10 +486,15 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 	case IMuse::PROP_GS:
 		_enable_gs = (value > 0);
 
-		// GS Mode emulates MT-32 on a GS device, so _native_mt32 should always be true
-		if (_midi_native && _enable_gs) {
-			_native_mt32 = true;
-			initGM(_midi_native);
+		if (_midi_native) {
+			if (_enable_gs) {
+				// GS Mode emulates MT-32 on a GS device, so _native_mt32 should always be true
+				_native_mt32 = true;
+				initGS(_midi_native);
+			} else if (!_native_mt32) {
+				// If GS is disabled we do the "normal" init from the original GM drivers.
+				initGM();
+			}
 		}
 		break;
 
@@ -674,7 +679,7 @@ bool IMuseInternal::startSound_internal(int sound, int offset) {
 	if (_game_id == GID_SAMNMAX && sound == 82 && getSoundStatus_internal(81, false))
 		ImClearTrigger(81, 1);
 
-	// Workaround for monkey2 bug #1410 / Scabb Island
+	// WORKAROUND for monkey2 bug #1410 / Scabb Island
 	//
 	// Tunes involved:
 	// 100 - Captain Dread's map
@@ -691,11 +696,11 @@ bool IMuseInternal::startSound_internal(int sound, int offset) {
 	if (_game_id == GID_MONKEY2 && (sound == 107) && (getSoundStatus_internal(100, true) == 1))
 		return false;
 
-	// In some cases 107 is running and doesn't get killed at Dread's map
+	// WORKAROUND: In some cases 107 is running and doesn't get killed at Dread's map
 	if (_game_id == GID_MONKEY2 && (sound == 100) && (getSoundStatus_internal(107, true) == 1))
 		IMuseInternal::stopSound_internal(107);
 
-	// Workaround for monkey2 bug #1410 / Booty Island
+	// WORKAROUND for monkey2 bug #1410 / Booty Island
 	//
 	// Tunes involved
 	// 100 - Captain Dread's map
@@ -1515,7 +1520,7 @@ void IMuseInternal::initMT32(MidiDriver *midi) {
 	_system->delayMillis(1000);
 }
 
-void IMuseInternal::initGM(MidiDriver *midi) {
+void IMuseInternal::initGS(MidiDriver *midi) {
 	byte buffer[12];
 	int i;
 
@@ -1620,6 +1625,33 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 		memcpy(&buffer[4], "\x40\x01\x34\x6A\x21", 5);
 		midi->sysEx(buffer, 9);
 		debug(2, "GS SysEx: Reverb Time is 106");
+	}
+}
+
+void IMuseInternal::initGM() {
+	if (!_midi_native || _native_mt32 || _enable_gs || _isAmiga)
+		return;
+	// These are the init messages from the DOTT General Midi
+	// driver. This is the major part of the bug fix for bug
+	// no. 13460 ("DOTT: Incorrect MIDI pitch bending").
+	// SAMNMAX has some less of the default settings (since
+	// the driver works a bit different), but it uses the same
+	// value for the pitch bend range.
+	MidiDriver *m = _midi_native;
+	for (int i = 0; i < 16; ++i) {
+		m->send(0x0064B0 | i);
+		m->send(0x0065B0 | i);
+		m->send(0x1006B0 | i);
+		m->send(0x7F07B0 | i);
+		m->send(0x3F0AB0 | i);
+		m->send(0x0000C0 | i);
+		m->send(0x4000E0 | i);
+		m->send(0x0001B0 | i);
+		m->send(0x0040B0 | i);
+		m->send(0x405BB0 | i);
+		m->send(0x005DB0 | i);
+		m->send(0x0000B0 | i);
+		m->send(0x007BB0 | i);
 	}
 }
 

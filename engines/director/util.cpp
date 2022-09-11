@@ -393,6 +393,7 @@ Common::String getPath(Common::String path, Common::String cwd) {
 
 bool testPath(Common::String &path, bool directory) {
 	Common::FSNode d = Common::FSNode(*g_director->getGameDataDir());
+	Common::FSNode node;
 
 	// Test if we have it right in the SearchMan
 	if (SearchMan.hasFile(Common::Path(path, g_director->_dirSeparator)))
@@ -426,12 +427,18 @@ bool testPath(Common::String &path, bool directory) {
 			// for each element in the path, choose the first FSNode
 			// with a case-insensitive matcing name
 			if (i->getName().equalsIgnoreCase(token)) {
+				// If this is a directory, it's not a valid candidate
+				node = Common::FSNode(*i);
+				if (node.isDirectory()) {
+					continue;
+				}
+
 				exists = true;
 				newPath += i->getName();
 				if (!directory_list.empty())
 					newPath += (g_director->_dirSeparator);
 
-				d = Common::FSNode(*i);
+				d = node;
 				break;
 			}
 		}

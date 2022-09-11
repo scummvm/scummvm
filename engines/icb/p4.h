@@ -93,7 +93,7 @@ extern uint32 SONICS_BUFFER_SIZE;
 #define ANIM_CHECK(a)                                                                                                                                                              \
 	if (!I->IsAnimTable(a))                                                                                                                                                    \
 		Fatal_error("engine finds anim [%s] '%s' %X missing for object [%s]", (const char *)master_anim_name_table[a].name, I->get_info_name(a), I->info_name_hash[a],     \
-		            object->GetName());
+		            CGameObject::GetName(object));
 
 enum __stub_modes {
 	__mission_and_console,

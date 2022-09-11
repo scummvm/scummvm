@@ -19,7 +19,7 @@
  *
  */
 
-/* RearWindow is a Mac only XObject. It's purpose is to cover the screen
+/* RearWindow is a Mac only XObject. Its purpose is to cover the screen
  * with either a 1-bit pattern, indexed color, direct(RGB) color, bitmappedCastMember
  * or PICT file picture.
  *
@@ -56,7 +56,7 @@ const char *RearWindowXObj::fileNames[] = {
 --   © 1989-93 by Macromedia Inc.
 --
 -- Purpose of the XObject:
---   Covers the the Finder desktop (behind the Director Stage) with a window
+--   Covers the Finder desktop (behind the Director Stage) with a window
 --   containing either a 1-bit pattern, indexed color, direct (RGB) color,
 --   bitmapped castMember, or PICT file picture.
 --
@@ -104,7 +104,7 @@ S   mGetAppName -- returns name of current application, so you can test for eith
 --
 I  mGetMemoryNeeded  -- Returns number of Bytes needed to create a RearWindow
 --  for all screen devices. Compare this with the Lingo function 'the freeBlock'.
---  If the the mNew method specified "Single" monitor configuration, then
+--  If the mNew method specified "Single" monitor configuration, then
 --  this refers to the number of Bytes for only one monitor. See the
 --  RearWindow Example Movie for how to use this with Lingo
 --

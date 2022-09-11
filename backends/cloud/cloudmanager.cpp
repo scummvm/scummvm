@@ -421,6 +421,12 @@ double CloudManager::getSyncDownloadingProgress() const {
 	return 1;
 }
 
+void CloudManager::getSyncDownloadingInfo(Storage::SyncDownloadingInfo &info) const {
+	Storage *storage = getCurrentStorage();
+	if (storage)
+		storage->getSyncDownloadingInfo(info);
+}
+
 double CloudManager::getSyncProgress() const {
 	Storage *storage = getCurrentStorage();
 	if (storage)
@@ -439,12 +445,6 @@ void CloudManager::cancelSync() const {
 	Storage *storage = getCurrentStorage();
 	if (storage)
 		storage->cancelSync();
-}
-
-void CloudManager::setSyncTarget(GUI::CommandReceiver *target) const {
-	Storage *storage = getCurrentStorage();
-	if (storage)
-		storage->setSyncTarget(target);
 }
 
 void CloudManager::showCloudDisabledIcon() {

@@ -24,8 +24,8 @@
 #include "engines/wintermute/ad/ad_walkplane.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/base_image.h"
-#include "engines/wintermute/base/gfx/3ds/camera3d.h"
-#include "engines/wintermute/base/gfx/3ds/light3d.h"
+#include "engines/wintermute/base/gfx/3dcamera.h"
+#include "engines/wintermute/base/gfx/3dlight.h"
 
 #include "graphics/opengl/system_headers.h"
 
@@ -812,8 +812,8 @@ Mesh3DS *BaseRenderOpenGL3D::createMesh3DS() {
 	return new Mesh3DSOpenGL();
 }
 
-MeshX *BaseRenderOpenGL3D::createMeshX() {
-	return new MeshXOpenGL(_gameRef);
+XMesh *BaseRenderOpenGL3D::createXMesh() {
+	return new XMeshOpenGL(_gameRef);
 }
 
 ShadowVolume *BaseRenderOpenGL3D::createShadowVolume() {

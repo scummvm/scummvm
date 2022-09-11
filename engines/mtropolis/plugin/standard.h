@@ -49,6 +49,7 @@ public:
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Cursor Modifier"; }
@@ -71,10 +72,13 @@ class STransCtModifier : public Modifier {
 public:
 	static const int32 kMaxDuration = 600000;
 
+	STransCtModifier();
+
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::STransCtModifier &data);
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
@@ -104,11 +108,13 @@ private:
 class MediaCueMessengerModifier : public Modifier {
 public:
 	MediaCueMessengerModifier();
+	~MediaCueMessengerModifier();
 
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::MediaCueMessengerModifier &data);
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Media Cue Modifier"; }
@@ -121,13 +127,25 @@ private:
 		kCueSourceIntegerRange,
 		kCueSourceVariableReference,
 		kCueSourceLabel,
+
+		kCueSourceInvalid = -1,
 	};
 
 	union CueSourceUnion {
+		CueSourceUnion();
+		~CueSourceUnion();
+
 		int32 asInt;
 		IntRange asIntRange;
 		uint32 asVarRefGUID;
 		Label asLabel;
+		uint64 asUnset;
+
+		template<class T, T (CueSourceUnion::*TMember)>
+		void construct(const T &value);
+
+		template<class T, T (CueSourceUnion::*TMember)>
+		void destruct();
 	};
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
@@ -219,6 +237,7 @@ public:
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
@@ -246,8 +265,9 @@ private:
 	MiniscriptInstructionOutcome scriptSetLoop(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetPlayNote(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetTempo(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetMuteTrack(MiniscriptThread *thread, const DynamicValue &value);
 
-	MiniscriptInstructionOutcome scriptSetMuteTrack(MiniscriptThread *thread, size_t trackIndex, bool muted);
+	MiniscriptInstructionOutcome scriptSetMuteTrackIndexed(MiniscriptThread *thread, size_t trackIndex, bool muted);
 
 	uint getBoostedVolume(Runtime *runtime) const;
 
@@ -290,14 +310,10 @@ private:
 	Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> _embeddedFile;
 
 	uint16 _mutedTracks;
-	uint8 _singleNoteChannel;
-	uint8 _singleNoteNote;
 
 	StandardPlugIn *_plugIn;
 	MidiFilePlayer *_filePlayer;
 	MidiNotePlayer *_notePlayer;
-
-	Runtime *_runtime;
 };
 
 class ListVariableModifier : public VariableModifier {
@@ -356,6 +372,8 @@ public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::SysInfoModifier &data);
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
+
+	void disable(Runtime *runtime) override {}
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "System Info Modifier"; }

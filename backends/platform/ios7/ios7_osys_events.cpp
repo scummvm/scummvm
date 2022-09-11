@@ -123,6 +123,27 @@ bool OSystem_iOS7::pollEvent(Common::Event &event) {
 			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 			break;
 
+		case kInputJoystickAxisMotion:
+			event.type = Common::EVENT_JOYAXIS_MOTION;
+			event.joystick.axis = internalEvent.value1;
+			event.joystick.position = internalEvent.value2;
+			break;
+
+		case kInputJoystickButtonDown:
+			event.type = Common::EVENT_JOYBUTTON_DOWN;
+			event.joystick.button = internalEvent.value1;
+			break;
+
+		case kInputJoystickButtonUp:
+			event.type = Common::EVENT_JOYBUTTON_UP;
+			event.joystick.button = internalEvent.value1;
+
+		case kInputChanged:
+			event.type = Common::EVENT_INPUT_CHANGED;
+			_queuedInputEvent.type = Common::EVENT_INVALID;
+			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
+			break;
+
 		default:
 			break;
 		}

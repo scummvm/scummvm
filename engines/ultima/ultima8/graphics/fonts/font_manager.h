@@ -61,7 +61,7 @@ private:
 		}
 	};
 
-	typedef Std::map<TTFId, Graphics::Font *, TTFHash, TTFEqual> TTFFonts;
+	typedef Common::HashMap<TTFId, Graphics::Font *, TTFHash, TTFEqual> TTFFonts;
 	TTFFonts _ttfFonts;
 
 	//! Get a (possibly cached) TTF_Font structure for filename/pointsize,

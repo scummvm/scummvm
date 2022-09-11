@@ -28,6 +28,11 @@ namespace Data {
 
 namespace Standard {
 
+CursorModifier::CursorModifier()
+	: unknown1(0), applyWhen(Event::createDefault()), unknown2(0), removeWhen(Event::createDefault()),
+	  unknown3(0), unknown4{0, 0, 0, 0}, cursorID(0) {
+}
+
 DataReadErrorCode CursorModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
 	if (prefix.plugInRevision != 1)
 		return kDataReadErrorUnsupportedRevision;
@@ -51,6 +56,10 @@ DataReadErrorCode STransCtModifier::load(PlugIn &plugIn, const PlugInModifier &p
 	return kDataReadErrorNone;
 }
 
+MediaCueMessengerModifier::MediaCueMessengerModifier()
+	: unknown1(0), destination(0), unknown2(0) {
+}
+
 DataReadErrorCode MediaCueMessengerModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
 	if (prefix.plugInRevision != 1)
 		return kDataReadErrorUnsupportedRevision;
@@ -65,19 +74,32 @@ DataReadErrorCode MediaCueMessengerModifier::load(PlugIn &plugIn, const PlugInMo
 }
 
 DataReadErrorCode ObjectReferenceVariableModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
-	if (prefix.plugInRevision != 2)
+	if (prefix.plugInRevision != 0 && prefix.plugInRevision != 2)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!setToSourceParentWhen.load(reader) || !unknown1.load(reader))
+	if (!setToSourceParentWhen.load(reader))
 		return kDataReadErrorReadFailed;
 
-	bool hasNoPath = (unknown1.type == Data::PlugInTypeTaggedValue::kInteger && unknown1.value.asInt == 0);
-	if (hasNoPath)
-		objectPath.type = Data::PlugInTypeTaggedValue::kNull;
-	else if (!objectPath.load(reader))
-		return kDataReadErrorReadFailed;
+	if (prefix.plugInRevision == 0) {
+		unknown1.type = Data::PlugInTypeTaggedValue::kNull;
+		if (!objectPath.load(reader))
+			return kDataReadErrorReadFailed;
+	} else {
+		if (!unknown1.load(reader))
+			return kDataReadErrorReadFailed;
+
+		bool hasNoPath = (unknown1.type == Data::PlugInTypeTaggedValue::kInteger && unknown1.value.asInt == 0);
+		if (hasNoPath)
+			objectPath.type = Data::PlugInTypeTaggedValue::kNull;
+		else if (!objectPath.load(reader))
+			return kDataReadErrorReadFailed;
+	}
 
 	return kDataReadErrorNone;
+}
+
+MidiModifier::MidiModifier() : embeddedFlag(0) {
+	memset(&this->modeSpecific, 0, sizeof(this->modeSpecific));
 }
 
 DataReadErrorCode MidiModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
@@ -117,7 +139,8 @@ DataReadErrorCode MidiModifier::load(PlugIn &plugIn, const PlugInModifier &prefi
 	return kDataReadErrorNone;
 }
 
-ListVariableModifier::ListVariableModifier() : values(nullptr) {
+ListVariableModifier::ListVariableModifier() : unknown1(0), contentsType(0), unknown2{0, 0, 0, 0},
+	havePersistentData(false), numValues(0), values(nullptr), persistentValuesGarbled(false) {
 }
 
 ListVariableModifier::~ListVariableModifier() {
@@ -126,7 +149,7 @@ ListVariableModifier::~ListVariableModifier() {
 }
 
 DataReadErrorCode ListVariableModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
-	if (prefix.plugInRevision != 2 && prefix.plugInRevision != 3)
+	if (prefix.plugInRevision < 1 || prefix.plugInRevision > 3)
 		return kDataReadErrorUnsupportedRevision;
 
 	int64 privateDataPos = reader.tell();
@@ -136,12 +159,17 @@ DataReadErrorCode ListVariableModifier::load(PlugIn &plugIn, const PlugInModifie
 
 	persistentValuesGarbled = false;
 
-	if (prefix.plugInRevision == 3) {
-		PlugInTypeTaggedValue persistentFlag;
-		if (!persistentFlag.load(reader) || persistentFlag.type != PlugInTypeTaggedValue::kBoolean)
-			return kDataReadErrorReadFailed;
+	if (prefix.plugInRevision == 1 || prefix.plugInRevision == 3) {
+		if (prefix.plugInRevision == 1) {
+			havePersistentData = true;
+		} else if (prefix.plugInRevision == 3) {
+			PlugInTypeTaggedValue persistentFlag;
+			if (!persistentFlag.load(reader) || persistentFlag.type != PlugInTypeTaggedValue::kBoolean)
+				return kDataReadErrorReadFailed;
 
-		havePersistentData = (persistentFlag.value.asBoolean != 0);
+			havePersistentData = (persistentFlag.value.asBoolean != 0);
+		}
+
 		if (havePersistentData) {
 			PlugInTypeTaggedValue numValuesVar;
 			if (!numValuesVar.load(reader) || numValuesVar.type != PlugInTypeTaggedValue::kInteger || numValuesVar.value.asInt < 0)

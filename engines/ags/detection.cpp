@@ -25,6 +25,7 @@
 #include "common/md5.h"
 #include "common/str-array.h"
 #include "common/util.h"
+#include "common/punycode.h"
 #include "ags/detection.h"
 #include "ags/detection_tables.h"
 
@@ -152,8 +153,9 @@ ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 			// Neither, so move on
 			continue;
 
+		filename = Common::punycode_encodefilename(filename);
 		Common::File f;
-		if (!f.open(allFiles[filename]))
+		if (!allFiles.contains(filename) || !f.open(allFiles[filename]))
 			continue;
 
 		if (AGS3::isAGSFile(f)) {

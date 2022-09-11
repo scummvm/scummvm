@@ -158,8 +158,21 @@ MODULE_OBJS += \
 	ad/ad_scene_geometry.o \
 	ad/ad_walkplane.o \
 	ad/ad_waypoint_group3d.o \
+	base/gfx/3dcamera.o \
+	base/gfx/3dlight.o \
+	base/gfx/3dloader_3ds.o \
+	base/gfx/3dmesh.o \
+	base/gfx/3dshadow_volume.o \
 	base/gfx/base_renderer3d.o \
-	base/gfx/shadow_volume.o \
+	base/gfx/xactive_animation.o \
+	base/gfx/xanimation.o \
+	base/gfx/xanimation_channel.o \
+	base/gfx/xanimation_set.o \
+	base/gfx/xframe_node.o \
+	base/gfx/xmaterial.o \
+	base/gfx/xmesh.o \
+	base/gfx/xmodel.o \
+	base/gfx/xloader.o \
 	base/gfx/opengl/base_surface_opengl3d.o \
 	base/gfx/opengl/base_render_opengl3d.o \
 	base/gfx/opengl/base_render_opengl3d_shader.o \
@@ -169,19 +182,6 @@ MODULE_OBJS += \
 	base/gfx/opengl/mesh3ds_opengl_shader.o \
 	base/gfx/opengl/shadow_volume_opengl.o \
 	base/gfx/opengl/shadow_volume_opengl_shader.o \
-	base/gfx/x/active_animation.o \
-	base/gfx/x/animation.o \
-	base/gfx/x/animation_channel.o \
-	base/gfx/x/animation_set.o \
-	base/gfx/x/frame_node.o \
-	base/gfx/x/material.o \
-	base/gfx/x/meshx.o \
-	base/gfx/x/modelx.o \
-	base/gfx/x/loader_x.o \
-	base/gfx/3ds/camera3d.o \
-	base/gfx/3ds/light3d.o \
-	base/gfx/3ds/loader3ds.o \
-	base/gfx/3ds/mesh3ds.o \
 	base/base_animation_transition_time.o
 endif
 

@@ -259,7 +259,7 @@ void SfxParser_Accolade::processOpCode(SfxSlot *sfxSlot, byte opCode) {
 		noteOff(sfxSlot);
 		int8 note;
 		note = sfxSlot->readScript(false) & 0xFF;
-		assert(note >= 0 && note <= 0x7F);
+		assert(note >= 0);
 		sfxSlot->currentNoteFraction = note << 8;
 		noteOn(sfxSlot);
 		break;

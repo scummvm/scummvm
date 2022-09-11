@@ -229,7 +229,7 @@ void TVA::recalcSustain() {
 	// Real hardware units ignore this possibility and rely on the assumption that the target is the current amp.
 	// This is OK in most situations but when the ramp that is currently in progress needs to change direction
 	// due to a volume/expression update, this leads to a jump in the amp that is audible as an unpleasant click.
-	// To avoid that, we compare the newTarget with the the actual current ramp value and correct the direction if necessary.
+	// To avoid that, we compare the newTarget with the actual current ramp value and correct the direction if necessary.
 	int targetDelta = newTarget - target;
 
 	// Calculate an increment to get to the new amp value in a short, more or less consistent amount of time

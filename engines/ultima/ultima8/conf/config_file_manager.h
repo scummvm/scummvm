@@ -30,7 +30,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-typedef Std::map<istring, Std::string, Common::IgnoreCase_Hash> KeyMap;
+typedef Common::HashMap<istring, Std::string, Common::IgnoreCase_Hash> KeyMap;
 
 class ConfigFileManager {
 public:

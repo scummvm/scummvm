@@ -72,7 +72,9 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 			part->volume(buf[3]);
 			part->set_pan(buf[4]);
 			part->_percussion = player->_supportsPercussion ? ((buf[5] & 0x80) > 0) : false;
-			part->set_transpose(buf[5]);
+			// The original intepreter uses a different clipping range for MI2 and INDY4 here,
+			// instead of the usual -24/24. DOTT always uses -12/12.
+			part->set_transpose(buf[5], -12, 12);
 			part->set_detune(buf[6]);
 			part->pitchBendFactor(buf[7]);
 			if (part->_percussion) {

@@ -158,11 +158,11 @@ public:
 		return detectGameFilebased(allFiles, Toon::fileBasedFallback);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "toon";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Toonstruck";
 	}
 

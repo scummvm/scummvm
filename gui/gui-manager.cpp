@@ -89,6 +89,7 @@ GuiManager::GuiManager() : CommandSender(nullptr), _redrawStatus(kRedrawDisabled
 
 	initTextToSpeech();
 	initIconsSet();
+	_iconsSetChanged = false;
 
 	ConfMan.registerDefault("gui_theme", "scummremastered");
 	Common::String themefile(ConfMan.get("gui_theme"));

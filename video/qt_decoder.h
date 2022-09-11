@@ -155,6 +155,7 @@ private:
 		Common::QuickTimeParser::Track *_parent;
 		uint32 _curEdit;
 		int32 _curFrame;
+		int32 _delayedFrameToBufferTo;
 		uint32 _nextFrameStartTime; // media time
 		Graphics::Surface *_scaledSurface;
 		int32 _durationOverride;    // media time
@@ -172,7 +173,7 @@ private:
 		uint32 getCurFrameDuration();            // media time
 		uint32 findKeyFrame(uint32 frame) const;
 		bool isEmptyEdit() const;
-		void enterNewEditListEntry(bool bufferFrames);
+		void enterNewEditListEntry(bool bufferFrames, bool intializingTrack = false);
 		const Graphics::Surface *bufferNextFrame();
 		uint32 getRateAdjustedFrameTime() const; // media time
 		uint32 getCurEditTimeOffset() const;     // media time

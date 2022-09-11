@@ -244,6 +244,7 @@ void Window::playTransition(uint16 transDuration, uint8 transArea, uint8 transCh
 	uint h = clipRect.height();
 
 	for (uint16 i = 1; i < t.steps + 1; i++) {
+		uint32 startTime = g_system->getMillis();
 		bool stop = false;
 		rto = clipRect;
 		rfrom = clipRect;
@@ -513,7 +514,6 @@ void Window::playTransition(uint16 transDuration, uint8 transArea, uint8 transCh
 
 		_composeSurface->blitFrom(*blitFrom, rfrom, Common::Point(rto.left, rto.top));
 
-		g_system->delayMillis(t.stepDuration);
 		if (_vm->processEvents(true)) {
 			exitTransition(&nextFrame, clipRect);
 			break;
@@ -527,6 +527,10 @@ void Window::playTransition(uint16 transDuration, uint8 transArea, uint8 transCh
 			if (rto.height() > 0 && rto.width() > 0)
 				stepTransition();
 		}
+
+		uint32 endTime = g_system->getMillis();
+		int diff = (int)t.stepDuration - (int)(endTime - startTime);
+		g_system->delayMillis(MAX(0, diff));
 
 		g_lingo->executePerFrameHook(t.frame, i);
 	}
@@ -663,6 +667,7 @@ void Window::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::Man
 	Common::Rect r(MAX(1, t.xStepSize), t.yStepSize);
 
 	for (int i = 0; i < t.steps; i++) {
+		uint32 startTime = g_system->getMillis();
 		uint32 pixPerStep = pixPerStepInit;
 		do {
 			uint32 x = (rnd - 1) >> vShift;
@@ -718,7 +723,9 @@ void Window::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::Man
 			break;
 		}
 
-		g_system->delayMillis(t.stepDuration);
+		uint32 endTime = g_system->getMillis();
+		int diff = (int)t.stepDuration - (int)(endTime - startTime);
+		g_system->delayMillis(MAX(0, diff));
 	}
 }
 
@@ -794,6 +801,7 @@ void Window::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graph
 	t.stepDuration = t.duration / t.steps;
 
 	for (int i = 0; i < t.steps; i++) {
+		uint32 startTime = g_system->getMillis();
 		for (int y = clipRect.top; y < clipRect.bottom; y++) {
 			byte pat = dissolvePatterns[i][y % 8];
 			byte *dst = (byte *)_composeSurface->getBasePtr(clipRect.left, y);
@@ -821,7 +829,9 @@ void Window::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graph
 			break;
 		}
 
-		g_system->delayMillis(t.stepDuration);
+		uint32 endTime = g_system->getMillis();
+		int diff = (int)t.stepDuration - (int)(endTime - startTime);
+		g_system->delayMillis(MAX(0, diff));
 	}
 }
 
@@ -834,6 +844,7 @@ void Window::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::Ma
 	Common::Array<Common::Rect> rects;
 
 	for (uint16 i = 1; i < t.steps; i++) {
+		uint32 startTime = g_system->getMillis();
 		bool stop = false;
 		rto = clipRect;
 
@@ -989,7 +1000,9 @@ void Window::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::Ma
 
 		g_lingo->executePerFrameHook(t.frame, i);
 
-		g_system->delayMillis(t.stepDuration);
+		uint32 endTime = g_system->getMillis();
+		int diff = (int)t.stepDuration - (int)(endTime - startTime);
+		g_system->delayMillis(MAX(0, diff));
 
 		if (_vm->processEvents(true)) {
 			exitTransition(nextFrame, clipRect);
@@ -1009,7 +1022,7 @@ void Window::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::Managed
 	Graphics::MacPlotData pd(_composeSurface, nullptr, &g_director->_wm->getPatterns(), Graphics::kPatternCheckers, 0, 0, 1, 0);
 
 	for (uint16 i = 1; i < t.steps; i++) {
-
+		uint32 startTime = g_system->getMillis();
 		for (int s = 2; s >= 0; s--) {
 			if (i - s < 0 || i - s > t.steps - 2)
 				continue;
@@ -1036,7 +1049,9 @@ void Window::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::Managed
 
 		g_lingo->executePerFrameHook(t.frame, i);
 
-		g_system->delayMillis(t.stepDuration);
+		uint32 endTime = g_system->getMillis();
+		int diff = (int)t.stepDuration - (int)(endTime - startTime);
+		g_system->delayMillis(MAX(0, diff));
 
 		if (_vm->processEvents(true)) {
 			exitTransition(nextFrame, clipRect);

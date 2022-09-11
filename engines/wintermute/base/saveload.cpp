@@ -38,7 +38,7 @@
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #ifdef ENABLE_WME3D
-#include "engines/wintermute/base/gfx/x/modelx.h"
+#include "engines/wintermute/base/gfx/xmodel.h"
 #endif
 
 #include "common/savefile.h"
@@ -124,7 +124,7 @@ bool SaveLoad::initAfterLoad() {
 	SystemClassRegistry::getInstance()->enumInstances(afterLoadSound,    "BaseSound",    nullptr);
 	SystemClassRegistry::getInstance()->enumInstances(afterLoadFont,     "BaseFontTT",   nullptr);
 #ifdef ENABLE_WME3D
-	SystemClassRegistry::getInstance()->enumInstances(afterLoadModelX,   "ModelX",       nullptr);
+	SystemClassRegistry::getInstance()->enumInstances(afterLoadXModel,   "XModel",       nullptr);
 #endif
 	SystemClassRegistry::getInstance()->enumInstances(afterLoadScript,   "ScScript",  nullptr);
 	// AdGame:
@@ -161,8 +161,8 @@ void SaveLoad::afterLoadFont(void *font, void *data) {
 
 #ifdef ENABLE_WME3D
 //////////////////////////////////////////////////////////////////////////
-void SaveLoad::afterLoadModelX(void *model, void *data) {
-	((ModelX *)model)->initializeSimple();
+void SaveLoad::afterLoadXModel(void *model, void *data) {
+	((XModel *)model)->initializeSimple();
 }
 #endif
 

@@ -81,6 +81,8 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	// To enable "Help", an engine needs to use a subclass of MainMenuDialog
 	// (at least for now, we might change how this works in the future).
 	_helpButton = new GUI::ButtonWidget(this, "GlobalMenu.Help", _("~H~elp"), Common::U32String(), kHelpCmd);
+	_helpButton->setVisible(_engine->hasFeature(Engine::kSupportsHelp));
+	_helpButton->setEnabled(_engine->hasFeature(Engine::kSupportsHelp));
 
 	new GUI::ButtonWidget(this, "GlobalMenu.About", _("~A~bout"), Common::U32String(), kAboutCmd);
 

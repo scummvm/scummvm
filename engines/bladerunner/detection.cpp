@@ -122,8 +122,8 @@ class BladeRunnerMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	BladeRunnerMetaEngineDetection();
 
-	const char *getEngineId() const override;
 	const char *getName() const override;
+	const char *getEngineName() const override;
 	const char *getOriginalCopyright() const override;
 	const DebugChannelDef *getDebugChannels() const override;
 };
@@ -145,11 +145,11 @@ BladeRunnerMetaEngineDetection::BladeRunnerMetaEngineDetection()
 		_flags = kADFlagUseExtraAsHint;
 }
 
-const char *BladeRunnerMetaEngineDetection::getEngineId() const {
+const char *BladeRunnerMetaEngineDetection::getName() const {
 	return "bladerunner";
 }
 
-const char *BladeRunnerMetaEngineDetection::getName() const {
+const char *BladeRunnerMetaEngineDetection::getEngineName() const {
 	return "Blade Runner";
 }
 

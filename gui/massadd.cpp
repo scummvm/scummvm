@@ -210,8 +210,8 @@ void MassAddDialog::handleTickle() {
 					// If the engineid, gameid, platform and language match -> skip it
 					Common::ConfigManager::Domain *dom = ConfMan.getDomain(*iter);
 					assert(dom);
-					
-					if ((*dom)["engineid"] == result.engineId &&
+
+					if ((!dom->contains("engineid") || (*dom)["engineid"] == result.engineId) &&
 						(*dom)["gameid"] == result.gameId &&
 					    dom->getValOrDefault("platform") == resultPlatformCode &&
 						parseLanguage(dom->getValOrDefault("language")) == parseLanguage(resultLanguageCode)) {

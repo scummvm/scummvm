@@ -224,7 +224,7 @@
 					/>
 				</layout>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '2'>
+			<layout type = 'horizontal' padding = '0, 0, 6, 0' spacing = '2'>
 				<widget name = 'ListSwitch'
 						height = 'Globals.Button.Height'
 						width = 'Globals.Button.Height'
@@ -297,10 +297,9 @@
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
-				<widget name = 'GameList'/>
 				<widget name = 'IconArea'/>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
+			<layout type = 'horizontal' padding = '0, 0, 6, 0' spacing = '2'>
 				<widget name = 'ListSwitch'
 						height = 'Globals.Button.Height'
 						width = 'Globals.Button.Height'
@@ -315,6 +314,8 @@
 				<widget name = 'GridItemsPerRow'
 						type = 'Slider'
 						rtl = 'no'
+				/>
+				<space size = '6'
 				/>
 				<widget name = 'GridItemsPerRowLabel'
 						type = 'SmallLabel'

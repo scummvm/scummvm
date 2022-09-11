@@ -571,10 +571,10 @@ void AGOSEngine::loadSound(uint16 sound, int16 pan, int16 vol, uint16 type) {
 		_sound->playSfx5Data(dst, sound, pan, vol);
 }
 
-void AGOSEngine::playSfx(uint16 sound, uint16 freq, uint16 flags, bool canUseMidiSfx) {
-	if (_useDigitalSfx) {
+void AGOSEngine::playSfx(uint16 sound, uint16 freq, uint16 flags, bool digitalOnly, bool midiOnly) {
+	if (_useDigitalSfx && !midiOnly) {
 		loadSound(sound, freq, flags);
-	} else if (canUseMidiSfx) {
+	} else if (!_useDigitalSfx && !digitalOnly) {
 		playMidiSfx(sound);
 	}
 }

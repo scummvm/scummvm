@@ -60,11 +60,11 @@ public:
 	MadeMetaEngineDetection() : AdvancedMetaEngineDetection(Made::gameDescriptions, sizeof(Made::MadeGameDescription), madeGames, Made::optionsList) {
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "made";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "MADE";
 	}
 

@@ -38,11 +38,11 @@ public:
 		_directoryGlobs = ZVision::directoryGlobs;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "zvision";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Z-Vision";
 	}
 

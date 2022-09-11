@@ -27,7 +27,6 @@
 #include "common/str.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
-#include <limits.h>
 
 /**
  * Provides a default savefile manager implementation for common platforms.

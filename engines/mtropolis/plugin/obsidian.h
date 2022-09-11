@@ -46,6 +46,8 @@ public:
 
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
 
+	void disable(Runtime *runtime) override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Movement Modifier"; }
 	void debugInspect(IDebugInspectionReport *report) const override;
@@ -81,6 +83,7 @@ public:
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
 
 	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::RectShiftModifier &data);
 
@@ -115,6 +118,8 @@ public:
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
 
+	void disable(Runtime *runtime) override {}
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "TextWork Modifier"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
@@ -143,6 +148,8 @@ public:
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
+
+	void disable(Runtime *runtime) override {}
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Dictionary Modifier"; }
@@ -173,6 +180,8 @@ public:
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
 
+	void disable(Runtime *runtime) override {}
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "WordMixer Modifier"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
@@ -201,6 +210,7 @@ public:
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Xor Mod Modifier"; }
@@ -225,6 +235,8 @@ public:
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
+
+	void disable(Runtime *runtime) override {}
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Xor Check Modifier"; }
@@ -272,14 +284,18 @@ struct WordGameLoadBucket {
 class WordGameData {
 public:
 	struct WordBucket {
-		Common::Array<char> chars;
-		Common::Array<uint16> wordIndexes;
-		uint32 spacing;
+		WordBucket();
+
+		Common::Array<char> _chars;
+		Common::Array<uint16> _wordIndexes;
+		uint32 _spacing;
 	};
 
 	struct SortedWord {
-		const char *chars;
-		uint length;
+		SortedWord();
+
+		const char *_chars;
+		uint _length;
 	};
 
 	bool load(Common::SeekableReadStream *stream, const WordGameLoadBucket *buckets, uint numBuckets, uint alignment, bool backwards);

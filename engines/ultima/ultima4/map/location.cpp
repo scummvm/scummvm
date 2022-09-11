@@ -166,7 +166,7 @@ Std::vector<MapTile> Location::tilesAt(MapCoords coords, bool &focus) {
 }
 
 TileId Location::getReplacementTile(MapCoords atCoords, const Tile *forTile) {
-	Std::map<TileId, int> validMapTileCount;
+	Common::HashMap<TileId, int> validMapTileCount;
 
 	const static int dirs[][2] = {{ -1, 0}, {1, 0}, {0, -1}, {0, 1}};
 	const static int dirs_per_step = sizeof(dirs) / sizeof(*dirs);
@@ -197,7 +197,7 @@ TileId Location::getReplacementTile(MapCoords atCoords, const Tile *forTile) {
 
 			if ((tileType->isReplacement() && (forTile->isLandForeground() || forTile->isLivingObject())) ||
 			        (tileType->isWaterReplacement() && forTile->isWaterForeground())) {
-				Std::map<TileId, int>::iterator validCount = validMapTileCount.find(tileType->getId());
+				Common::HashMap<TileId, int>::iterator validCount = validMapTileCount.find(tileType->getId());
 
 				if (validCount == validMapTileCount.end()) {
 					validMapTileCount[tileType->getId()] = 1;
@@ -208,7 +208,7 @@ TileId Location::getReplacementTile(MapCoords atCoords, const Tile *forTile) {
 		}
 
 		if (validMapTileCount.size() > 0) {
-			Std::map<TileId, int>::iterator itr = validMapTileCount.begin();
+			Common::HashMap<TileId, int>::iterator itr = validMapTileCount.begin();
 
 			TileId winner = itr->_key;
 			int score = itr->_value;

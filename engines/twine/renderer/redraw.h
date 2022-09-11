@@ -51,7 +51,7 @@ struct OverlayListStruct {
 	int16 y = 0;
 	int16 info1 = 0; // text = actor | total coins
 	OverlayPosType posType = OverlayPosType::koNormal;
-	int16 lifeTime = 0;
+	int16 lifeTime = 0; // life time in ticks - see TO_SECONDS()
 };
 
 struct DrawListStruct {
@@ -65,10 +65,6 @@ struct DrawListStruct {
 	uint16 y = 0;
 	uint16 z = 0;
 	uint16 offset = 0;
-
-	uint16 field_C = 0;
-	uint16 field_E = 0;
-	uint16 field_10 = 0;
 
 	inline bool operator==(const DrawListStruct& other) const {
 		return posValue == other.posValue;
@@ -132,6 +128,7 @@ private:
 
 	int32 fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw);
 	int32 fillExtraDrawingList(DrawListStruct *drawList, int32 drawListPos);
+	void correctZLevels(DrawListStruct *drawList, int32 drawListPos);
 	void processDrawList(DrawListStruct *drawList, int32 drawListPos, bool bgRedraw);
 	void renderOverlays();
 	void renderText();
@@ -139,7 +136,7 @@ private:
 public:
 	Redraw(TwinEEngine *engine);
 
-	bool _inSceneryView = false;
+	bool _inSceneryView = false; // FlagMCGA
 
 	/** Request background redraw */
 	bool _firstTime = false;

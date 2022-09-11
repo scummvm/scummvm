@@ -141,11 +141,11 @@ public:
 	CGEMetaEngineDetection() : AdvancedMetaEngineDetection(CGE::gameDescriptions, sizeof(ADGameDescription), CGEGames, optionsList) {
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "cge";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "CGE";
 	}
 

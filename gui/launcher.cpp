@@ -648,7 +648,7 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 			selectTarget(editDialog.getDomain());
 			g_gui.scheduleTopDialogRedraw();
 		} else {
-			// User aborted, remove the the new domain again
+			// User aborted, remove the new domain again
 			ConfMan.removeGameDomain(domain);
 		}
 
@@ -875,7 +875,7 @@ void LauncherChooser::genGameList() {
 
 		PlainGameList list = metaEngine.getSupportedGames();
 		for (auto v = list.begin(); v != list.end(); ++v) {
-			_games[buildQualifiedGameName(metaEngine.getEngineId(), v->gameId)] = v->description;
+			_games[buildQualifiedGameName(metaEngine.getName(), v->gameId)] = v->description;
 		}
 	}
 }
@@ -1547,11 +1547,13 @@ void LauncherGrid::updateListing() {
 		Common::String engineid = "UNK";
 		Common::String language = "XX";
 		Common::String platform;
+		Common::String extra;
 		iter->domain->tryGetVal("engineid", engineid);
 		iter->domain->tryGetVal("language", language);
 		iter->domain->tryGetVal("platform", platform);
+		iter->domain->tryGetVal("extra", extra);
 		attrs.push_back(iter->domain);
-		gridList.push_back(GridItemInfo(k++, engineid, gameid, iter->title, iter->description, Common::parseLanguage(language), Common::parsePlatform(platform)));
+		gridList.push_back(GridItemInfo(k++, engineid, gameid, iter->title, iter->description, extra, Common::parseLanguage(language), Common::parsePlatform(platform)));
 	}
 
 	const int oldSel = _grid->getSelected();

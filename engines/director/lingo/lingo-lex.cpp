@@ -1,6 +1,6 @@
-#line 1 "engines/director/lingo/lingo-lex.cpp"
+#line 2 "engines/director/lingo/lingo-lex.cpp"
 
-#line 3 "engines/director/lingo/lingo-lex.cpp"
+#line 4 "engines/director/lingo/lingo-lex.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -249,7 +249,7 @@ struct yy_buffer_state
 /* Stack of input buffers. */
 static size_t yy_buffer_stack_top = 0; /**< index of top of stack. */
 static size_t yy_buffer_stack_max = 0; /**< capacity of stack. */
-static YY_BUFFER_STATE * yy_buffer_stack = nullptr; /**< Stack as an array. */
+static YY_BUFFER_STATE * yy_buffer_stack = NULL; /**< Stack as an array. */
 
 /* We provide macros for accessing buffer states in case in the
  * future we want to put the buffer states in a more general
@@ -271,7 +271,7 @@ static int yy_n_chars;		/* number of characters read into yy_ch_buf */
 int yyleng;
 
 /* Points to current character in buffer. */
-static char *yy_c_buf_p = nullptr;
+static char *yy_c_buf_p = NULL;
 static int yy_init = 0;		/* whether we need to initialize */
 static int yy_start = 0;	/* start state number */
 
@@ -328,7 +328,7 @@ void yyfree ( void *  );
 #define YY_SKIP_YYWRAP
 typedef flex_uint8_t YY_CHAR;
 
-FILE *yyin = nullptr, *yyout = nullptr;
+FILE *yyin = NULL, *yyout = NULL;
 
 typedef int yy_state_type;
 
@@ -441,7 +441,7 @@ static const YY_CHAR yy_ec[256] =
 
 static const YY_CHAR yy_meta[64] =
     {   0,
-        1,    2,    3,    3,    2,    1,    1,    1,    1,    1,
+        1,    2,    3,    3,    2,    1,    1,    1,    1,    4,
         4,    1,    1,    1,    5,    5,    5,    5,    5,    5,
         5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
         5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
@@ -768,7 +768,7 @@ char *yytext;
  *
  */
 #define YY_NO_INPUT 1
-#line 32 "engines/director/lingo/lingo-lex.l"
+#line 31 "engines/director/lingo/lingo-lex.l"
 
 #define YY_NO_UNISTD_H
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
@@ -830,7 +830,7 @@ static Common::String *cleanupString(const char *s) {
 	while (*s) {
 		if (*s == '\xC2' && *(s + 1) == '\xAC') { // continuation
 			s += 2;
-			*res += ' ';
+			*res += ' '; // replace with space
 			continue;
 		}
 		*res += *s;
@@ -875,7 +875,7 @@ static Common::String *readUntilNull(const char **ptr) {
 	while (**ptr) {
 		if (**ptr == '\xC2' && *(*ptr + 1) == '\xAC') { // continuation
 			*ptr += 2;
-			*res += " "; // replace with space
+			*res += ' '; // replace with space
 			continue;
 		}
 		*res += **ptr;
@@ -1104,7 +1104,7 @@ YY_DECL
 		}
 
 	{
-#line 160 "engines/director/lingo/lingo-lex.l"
+#line 159 "engines/director/lingo/lingo-lex.l"
 
 
 #line 1111 "engines/director/lingo/lingo-lex.cpp"
@@ -1163,87 +1163,87 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 162 "engines/director/lingo/lingo-lex.l"
+#line 161 "engines/director/lingo/lingo-lex.l"
 { count(); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 164 "engines/director/lingo/lingo-lex.l"
+#line 163 "engines/director/lingo/lingo-lex.l"
 { count(); yylval.s = new Common::String(yytext + 1); return tSYMBOL; }	// D3, skip '#'
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 166 "engines/director/lingo/lingo-lex.l"
+#line 165 "engines/director/lingo/lingo-lex.l"
 { count(); return tABBREVIATED; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 167 "engines/director/lingo/lingo-lex.l"
+#line 166 "engines/director/lingo/lingo-lex.l"
 { count(); return tABBREV; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 168 "engines/director/lingo/lingo-lex.l"
+#line 167 "engines/director/lingo/lingo-lex.l"
 { count(); return tABBR; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 169 "engines/director/lingo/lingo-lex.l"
+#line 168 "engines/director/lingo/lingo-lex.l"
 { count(); return tAFTER; }		// D3
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 170 "engines/director/lingo/lingo-lex.l"
+#line 169 "engines/director/lingo/lingo-lex.l"
 { count(); return tAND; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 171 "engines/director/lingo/lingo-lex.l"
+#line 170 "engines/director/lingo/lingo-lex.l"
 { count(); return tBEFORE; }	// D3
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 172 "engines/director/lingo/lingo-lex.l"
+#line 171 "engines/director/lingo/lingo-lex.l"
 { count(); return tCAST; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 173 "engines/director/lingo/lingo-lex.l"
+#line 172 "engines/director/lingo/lingo-lex.l"
 { count(); return tCHAR; }		// D3
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 174 "engines/director/lingo/lingo-lex.l"
+#line 173 "engines/director/lingo/lingo-lex.l"
 { count(); return tCHARS; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 175 "engines/director/lingo/lingo-lex.l"
+#line 174 "engines/director/lingo/lingo-lex.l"
 { count(); return tCONTAINS; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 176 "engines/director/lingo/lingo-lex.l"
+#line 175 "engines/director/lingo/lingo-lex.l"
 { count(); return tDATE; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 177 "engines/director/lingo/lingo-lex.l"
+#line 176 "engines/director/lingo/lingo-lex.l"
 { count(); return tDELETE; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 178 "engines/director/lingo/lingo-lex.l"
+#line 177 "engines/director/lingo/lingo-lex.l"
 { count(); return tDOWN; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 179 "engines/director/lingo/lingo-lex.l"
+#line 178 "engines/director/lingo/lingo-lex.l"
 { count(); return tELSE; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 180 "engines/director/lingo/lingo-lex.l"
+#line 179 "engines/director/lingo/lingo-lex.l"
 {
 		count();
 
@@ -1264,252 +1264,252 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 197 "engines/director/lingo/lingo-lex.l"
+#line 196 "engines/director/lingo/lingo-lex.l"
 { count(); return tEXIT; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 198 "engines/director/lingo/lingo-lex.l"
+#line 197 "engines/director/lingo/lingo-lex.l"
 { count(); return tFACTORY; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 199 "engines/director/lingo/lingo-lex.l"
+#line 198 "engines/director/lingo/lingo-lex.l"
 { count(); return tFIELD; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 200 "engines/director/lingo/lingo-lex.l"
+#line 199 "engines/director/lingo/lingo-lex.l"
 { count(); return tFRAME; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 201 "engines/director/lingo/lingo-lex.l"
+#line 200 "engines/director/lingo/lingo-lex.l"
 { count(); return tGLOBAL; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 202 "engines/director/lingo/lingo-lex.l"
+#line 201 "engines/director/lingo/lingo-lex.l"
 { count(); return tGO; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 203 "engines/director/lingo/lingo-lex.l"
+#line 202 "engines/director/lingo/lingo-lex.l"
 { count(); return tHILITE; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 204 "engines/director/lingo/lingo-lex.l"
+#line 203 "engines/director/lingo/lingo-lex.l"
 { count(); return tIF; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 205 "engines/director/lingo/lingo-lex.l"
+#line 204 "engines/director/lingo/lingo-lex.l"
 { count(); return tINSTANCE; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 206 "engines/director/lingo/lingo-lex.l"
+#line 205 "engines/director/lingo/lingo-lex.l"
 { count(); return tINTERSECTS;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 207 "engines/director/lingo/lingo-lex.l"
+#line 206 "engines/director/lingo/lingo-lex.l"
 { count(); return tINTO; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 208 "engines/director/lingo/lingo-lex.l"
+#line 207 "engines/director/lingo/lingo-lex.l"
 { count(); return tIN; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 209 "engines/director/lingo/lingo-lex.l"
+#line 208 "engines/director/lingo/lingo-lex.l"
 { count(); return tITEM; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 210 "engines/director/lingo/lingo-lex.l"
+#line 209 "engines/director/lingo/lingo-lex.l"
 { count(); return tITEMS; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 211 "engines/director/lingo/lingo-lex.l"
+#line 210 "engines/director/lingo/lingo-lex.l"
 { count(); return tLAST; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 212 "engines/director/lingo/lingo-lex.l"
+#line 211 "engines/director/lingo/lingo-lex.l"
 { count(); return tLINE; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 213 "engines/director/lingo/lingo-lex.l"
+#line 212 "engines/director/lingo/lingo-lex.l"
 { count(); return tLINES; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 214 "engines/director/lingo/lingo-lex.l"
+#line 213 "engines/director/lingo/lingo-lex.l"
 { count(); return tLONG; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 215 "engines/director/lingo/lingo-lex.l"
+#line 214 "engines/director/lingo/lingo-lex.l"
 { count(); return tMACRO; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 216 "engines/director/lingo/lingo-lex.l"
+#line 215 "engines/director/lingo/lingo-lex.l"
 { count(); return tMENU; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 217 "engines/director/lingo/lingo-lex.l"
+#line 216 "engines/director/lingo/lingo-lex.l"
 { count(); return tMENUITEM;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 218 "engines/director/lingo/lingo-lex.l"
+#line 217 "engines/director/lingo/lingo-lex.l"
 { count(); return tMENUITEMS; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 219 "engines/director/lingo/lingo-lex.l"
+#line 218 "engines/director/lingo/lingo-lex.l"
 { count(); return tMETHOD; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 220 "engines/director/lingo/lingo-lex.l"
+#line 219 "engines/director/lingo/lingo-lex.l"
 { count(); return tMOD;}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 221 "engines/director/lingo/lingo-lex.l"
+#line 220 "engines/director/lingo/lingo-lex.l"
 { count(); return tMOVIE; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 222 "engines/director/lingo/lingo-lex.l"
+#line 221 "engines/director/lingo/lingo-lex.l"
 { count(); return tNEXT; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 223 "engines/director/lingo/lingo-lex.l"
+#line 222 "engines/director/lingo/lingo-lex.l"
 { count(); return tNOT; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 224 "engines/director/lingo/lingo-lex.l"
+#line 223 "engines/director/lingo/lingo-lex.l"
 { count(); return tNUMBER; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 225 "engines/director/lingo/lingo-lex.l"
+#line 224 "engines/director/lingo/lingo-lex.l"
 { count(); return tOF; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 226 "engines/director/lingo/lingo-lex.l"
+#line 225 "engines/director/lingo/lingo-lex.l"
 { count(); return tON; }		// D3
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 227 "engines/director/lingo/lingo-lex.l"
+#line 226 "engines/director/lingo/lingo-lex.l"
 { count(); return tOPEN; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 228 "engines/director/lingo/lingo-lex.l"
+#line 227 "engines/director/lingo/lingo-lex.l"
 { count(); return tOR; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 229 "engines/director/lingo/lingo-lex.l"
+#line 228 "engines/director/lingo/lingo-lex.l"
 { count(); return tPLAY; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 230 "engines/director/lingo/lingo-lex.l"
+#line 229 "engines/director/lingo/lingo-lex.l"
 { count(); return tPREVIOUS; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 231 "engines/director/lingo/lingo-lex.l"
+#line 230 "engines/director/lingo/lingo-lex.l"
 { count(); return tPROPERTY; }	// D4
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 232 "engines/director/lingo/lingo-lex.l"
+#line 231 "engines/director/lingo/lingo-lex.l"
 { count(); return tPUT; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 233 "engines/director/lingo/lingo-lex.l"
+#line 232 "engines/director/lingo/lingo-lex.l"
 { count(); return tREPEAT; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 234 "engines/director/lingo/lingo-lex.l"
+#line 233 "engines/director/lingo/lingo-lex.l"
 { count(); return tSCRIPT; }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 235 "engines/director/lingo/lingo-lex.l"
+#line 234 "engines/director/lingo/lingo-lex.l"
 { count(); return tASSERTERROR; }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 236 "engines/director/lingo/lingo-lex.l"
+#line 235 "engines/director/lingo/lingo-lex.l"
 { count(); return tSET; }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 237 "engines/director/lingo/lingo-lex.l"
+#line 236 "engines/director/lingo/lingo-lex.l"
 { count(); return tSHORT; }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 238 "engines/director/lingo/lingo-lex.l"
+#line 237 "engines/director/lingo/lingo-lex.l"
 { count(); return tSOUND; }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 239 "engines/director/lingo/lingo-lex.l"
+#line 238 "engines/director/lingo/lingo-lex.l"
 { count(); return tSPRITE; }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 240 "engines/director/lingo/lingo-lex.l"
+#line 239 "engines/director/lingo/lingo-lex.l"
 { count(); return tSTARTS; }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 241 "engines/director/lingo/lingo-lex.l"
+#line 240 "engines/director/lingo/lingo-lex.l"
 { count(); return tTELL; }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 242 "engines/director/lingo/lingo-lex.l"
+#line 241 "engines/director/lingo/lingo-lex.l"
 { count(); return tTHE; }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 243 "engines/director/lingo/lingo-lex.l"
+#line 242 "engines/director/lingo/lingo-lex.l"
 { count(); return tTHEN; }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 244 "engines/director/lingo/lingo-lex.l"
+#line 243 "engines/director/lingo/lingo-lex.l"
 { count(); return tTIME; }
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 245 "engines/director/lingo/lingo-lex.l"
+#line 244 "engines/director/lingo/lingo-lex.l"
 { count(); return tTO; }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 246 "engines/director/lingo/lingo-lex.l"
+#line 245 "engines/director/lingo/lingo-lex.l"
 {
 		count();
 
@@ -1531,62 +1531,62 @@ YY_RULE_SETUP
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 264 "engines/director/lingo/lingo-lex.l"
+#line 263 "engines/director/lingo/lingo-lex.l"
 { count(); return tWHILE; }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 265 "engines/director/lingo/lingo-lex.l"
+#line 264 "engines/director/lingo/lingo-lex.l"
 { count(); return tWINDOW; }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 266 "engines/director/lingo/lingo-lex.l"
+#line 265 "engines/director/lingo/lingo-lex.l"
 { count(); return tWITH; }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 267 "engines/director/lingo/lingo-lex.l"
+#line 266 "engines/director/lingo/lingo-lex.l"
 { count(); return tWITHIN; }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 268 "engines/director/lingo/lingo-lex.l"
+#line 267 "engines/director/lingo/lingo-lex.l"
 { count(); return tWORD; }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 269 "engines/director/lingo/lingo-lex.l"
+#line 268 "engines/director/lingo/lingo-lex.l"
 { count(); return tWORDS; }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 271 "engines/director/lingo/lingo-lex.l"
+#line 270 "engines/director/lingo/lingo-lex.l"
 { count(); return tNEQ; }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 272 "engines/director/lingo/lingo-lex.l"
+#line 271 "engines/director/lingo/lingo-lex.l"
 { count(); return tGE; }
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 273 "engines/director/lingo/lingo-lex.l"
+#line 272 "engines/director/lingo/lingo-lex.l"
 { count(); return tLE; }
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 274 "engines/director/lingo/lingo-lex.l"
+#line 273 "engines/director/lingo/lingo-lex.l"
 { count(); return tCONCAT; }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 275 "engines/director/lingo/lingo-lex.l"
+#line 274 "engines/director/lingo/lingo-lex.l"
 { count(); return tEQ; }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 277 "engines/director/lingo/lingo-lex.l"
+#line 276 "engines/director/lingo/lingo-lex.l"
 {
 		count();
 		yylval.s = new Common::String(yytext);
@@ -1596,38 +1596,38 @@ YY_RULE_SETUP
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 283 "engines/director/lingo/lingo-lex.l"
+#line 282 "engines/director/lingo/lingo-lex.l"
 { count(); yylval.f = atof(yytext); return tFLOAT; }
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 284 "engines/director/lingo/lingo-lex.l"
-{ count(); yylval.i = strtol(yytext, nullptr, 10); return tINT; }
+#line 283 "engines/director/lingo/lingo-lex.l"
+{ count(); yylval.i = strtol(yytext, NULL, 10); return tINT; }
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 285 "engines/director/lingo/lingo-lex.l"
+#line 284 "engines/director/lingo/lingo-lex.l"
 { count(); return *yytext; }
 	YY_BREAK
 case 83:
 /* rule 83 can match eol */
 YY_RULE_SETUP
-#line 286 "engines/director/lingo/lingo-lex.l"
+#line 285 "engines/director/lingo/lingo-lex.l"
 { count(); return '\n'; }
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 287 "engines/director/lingo/lingo-lex.l"
+#line 286 "engines/director/lingo/lingo-lex.l"
 { count(); yylval.s = cleanupString(&yytext[1]); yylval.s->deleteLastChar(); return tSTRING; }
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 288 "engines/director/lingo/lingo-lex.l"
+#line 287 "engines/director/lingo/lingo-lex.l"
 { count(); }
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 290 "engines/director/lingo/lingo-lex.l"
+#line 289 "engines/director/lingo/lingo-lex.l"
 ECHO;
 	YY_BREAK
 #line 1634 "engines/director/lingo/lingo-lex.cpp"
@@ -1846,7 +1846,7 @@ static int yy_get_next_buffer (void)
 				}
 			else
 				/* Can't grow it, we don't own it. */
-				b->yy_ch_buf = nullptr;
+				b->yy_ch_buf = NULL;
 
 			if ( ! b->yy_ch_buf )
 				YY_FATAL_ERROR(
@@ -2148,7 +2148,7 @@ static void yy_load_buffer_state  (void)
 		return;
 
 	if ( b == YY_CURRENT_BUFFER ) /* Not sure if we should pop here. */
-		YY_CURRENT_BUFFER_LVALUE = (YY_BUFFER_STATE) nullptr;
+		YY_CURRENT_BUFFER_LVALUE = (YY_BUFFER_STATE) 0;
 
 	if ( b->yy_is_our_buffer )
 		yyfree( (void *) b->yy_ch_buf  );
@@ -2219,7 +2219,7 @@ static void yy_load_buffer_state  (void)
  */
 void yypush_buffer_state (YY_BUFFER_STATE new_buffer )
 {
-    	if (new_buffer == nullptr)
+    	if (new_buffer == NULL)
 		return;
 
 	yyensure_buffer_stack();
@@ -2253,7 +2253,7 @@ void yypop_buffer_state (void)
 		return;
 
 	yy_delete_buffer(YY_CURRENT_BUFFER );
-	YY_CURRENT_BUFFER_LVALUE = nullptr;
+	YY_CURRENT_BUFFER_LVALUE = NULL;
 	if ((yy_buffer_stack_top) > 0)
 		--(yy_buffer_stack_top);
 
@@ -2323,7 +2323,7 @@ YY_BUFFER_STATE yy_scan_buffer  (char * base, yy_size_t  size )
 	     base[size-2] != YY_END_OF_BUFFER_CHAR ||
 	     base[size-1] != YY_END_OF_BUFFER_CHAR )
 		/* They forgot to leave room for the EOB's. */
-		return nullptr;
+		return NULL;
 
 	b = (YY_BUFFER_STATE) yyalloc( sizeof( struct yy_buffer_state )  );
 	if ( ! b )
@@ -2332,7 +2332,7 @@ YY_BUFFER_STATE yy_scan_buffer  (char * base, yy_size_t  size )
 	b->yy_buf_size = (int) (size - 2);	/* "- 2" to take care of EOB's */
 	b->yy_buf_pos = b->yy_ch_buf = base;
 	b->yy_is_our_buffer = 0;
-	b->yy_input_file = nullptr;
+	b->yy_input_file = NULL;
 	b->yy_n_chars = b->yy_buf_size;
 	b->yy_is_interactive = 0;
 	b->yy_at_bol = 1;
@@ -2508,10 +2508,10 @@ static int yy_init_globals (void)
      * This function is called from yylex_destroy(), so don't allocate here.
      */
 
-    (yy_buffer_stack) = nullptr;
+    (yy_buffer_stack) = NULL;
     (yy_buffer_stack_top) = 0;
     (yy_buffer_stack_max) = 0;
-    (yy_c_buf_p) = nullptr;
+    (yy_c_buf_p) = NULL;
     (yy_init) = 0;
     (yy_start) = 0;
 
@@ -2520,8 +2520,8 @@ static int yy_init_globals (void)
     yyin = stdin;
     yyout = stdout;
 #else
-    yyin = nullptr;
-    yyout = nullptr;
+    yyin = NULL;
+    yyout = NULL;
 #endif
 
     /* For future reference: Set errno on error, since we are called by
@@ -2537,13 +2537,13 @@ int yylex_destroy  (void)
     /* Pop the buffer stack, destroying each element. */
 	while(YY_CURRENT_BUFFER){
 		yy_delete_buffer( YY_CURRENT_BUFFER  );
-		YY_CURRENT_BUFFER_LVALUE = nullptr;
+		YY_CURRENT_BUFFER_LVALUE = NULL;
 		yypop_buffer_state();
 	}
 
 	/* Destroy the stack itself. */
 	yyfree((yy_buffer_stack) );
-	(yy_buffer_stack) = nullptr;
+	(yy_buffer_stack) = NULL;
 
     /* Reset the globals. This is important in a non-reentrant scanner so the next time
      * yylex() is called, initialization will occur. */
@@ -2602,7 +2602,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 290 "engines/director/lingo/lingo-lex.l"
+#line 289 "engines/director/lingo/lingo-lex.l"
 
 
 extern int yydebug;

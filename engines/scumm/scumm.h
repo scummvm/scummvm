@@ -38,6 +38,7 @@
 #include "common/textconsole.h"
 #include "graphics/surface.h"
 #include "graphics/sjis.h"
+#include "graphics/palette.h"
 
 #include "scumm/gfx.h"
 #include "scumm/detection.h"
@@ -351,6 +352,105 @@ class ResourceManager;
 #define AMIGA_NTSC_VBLANK_RATE 240.0
 
 /**
+ * Game saving/loading outcome codes
+ */
+
+#define GAME_PROPER_SAVE 201
+#define GAME_FAILED_SAVE 202
+#define GAME_PROPER_LOAD 203
+#define GAME_FAILED_LOAD 204
+
+/**
+ * GUI defines and enums.
+ */
+
+#define GUI_PAGE_MAIN 0
+#define GUI_PAGE_SAVE 1
+#define GUI_PAGE_LOAD 2
+
+#define GUI_CTRL_FIRST_SG               1
+#define GUI_CTRL_LAST_SG                9
+#define GUI_CTRL_SAVE_BUTTON            10
+#define GUI_CTRL_LOAD_BUTTON            11
+#define GUI_CTRL_PLAY_BUTTON            12
+#define GUI_CTRL_QUIT_BUTTON            13
+#define GUI_CTRL_OK_BUTTON              14
+#define GUI_CTRL_CANCEL_BUTTON          15
+#define GUI_CTRL_ARROW_UP_BUTTON        16
+#define GUI_CTRL_ARROW_DOWN_BUTTON      17
+#define GUI_CTRL_PATH_BUTTON            18
+#define GUI_CTRL_MUSIC_SLIDER           19
+#define GUI_CTRL_SPEECH_SLIDER          20
+#define GUI_CTRL_SFX_SLIDER             21
+#define GUI_CTRL_TEXT_SPEED_SLIDER      22
+#define GUI_CTRL_DISPLAY_TEXT_CHECKBOX  23
+#define GUI_CTRL_SPOOLED_MUSIC_CHECKBOX 24
+#define GUI_CTRL_OUTER_BOX              26
+#define GUI_CTRL_INNER_BOX              27
+
+
+enum GUIString {
+	gsPause = 0,
+	gsVersion = 1,
+	gsTextSpeedSlider = 2,
+	gsRestart = 3,
+	gsQuitPrompt = 4,
+	gsSave = 5,
+	gsLoad = 6,
+	gsPlay = 7,
+	gsCancel = 8,
+	gsQuit = 9,
+	gsOK = 10,
+	gsMustName = 11,
+	gsGameNotSaved = 12,
+	gsGameNotLoaded = 13,
+	gsSaving = 14,
+	gsLoading = 15,
+	gsNamePrompt = 16,
+	gsSelectLoadPrompt = 17,
+	gsReplacePrompt = 18,
+	gsYes = 20,
+	gsNo = 21,
+	gsIMuseBuffer = 22,
+	gsVoiceAndText = 23,
+	gsTextDisplayOnly = 24,
+	gsVoiceOnly = 25,
+	gsYesKey = 26,
+	gsMusicVolumeSlider = 27,
+	gsVoiceVolumeSlider = 28,
+	gsSfxVolumeSlider = 29,
+	gsHeap = 30,
+	gsSavePath = 31,
+	gsTitle = 32,
+	gsDisabled = 33,
+	gsMusic = 34,
+	gsVoice = 35,
+	gsSfx = 36,
+	gsTextSpeed = 37,
+	gsDisplayText = 38,
+	gsSpooledMusic = 39,
+	gsInsertSaveDisk = 40
+};
+
+struct InternalGUIControl {
+	int relativeCenterX;
+	int relativeCenterY;
+	int xPos;
+	int yPos;
+	int normalFillColor;
+	int topLineColor;
+	int bottomLineColor;
+	int leftLineColor;
+	int rightLineColor;
+	int normalTextColor;
+	int highlightedTextColor;
+	int highlightedFillColor;
+	bool centerText;
+	Common::String label;
+	bool doubleLinesFlag;
+};
+
+/**
  * Base class for all SCUMM engines.
  */
 class ScummEngine : public Engine, public Common::Serializable {
@@ -386,6 +486,7 @@ public:
 	ResourceManager *_res = nullptr;
 
 	bool _enableEnhancements = false;
+	bool _useOriginalGUI = true;
 	bool _enableAudioOverride = false;
 
 protected:
@@ -473,15 +574,20 @@ protected:
 	virtual void clearClickedStatus();
 
 	// Cursor/palette
-	void updateCursor();
+	virtual void updateCursor();
 	virtual void animateCursor() {}
 	virtual void updatePalette();
-
+	virtual void setDefaultCursor() {};
+	virtual void setCursorTransparency(int a) {};
 	virtual void resetCursors() {}
+	virtual void setCursorHotspot(int x, int y) {}
+	virtual void setCursorFromBuffer(const byte *ptr, int width, int height, int pitch, bool preventScale = false) {}
+
 
 public:
 	void pauseGame();
 	void restart();
+	bool isUsingOriginalGUI();
 
 protected:
 	Dialog *_pauseDialog = nullptr;
@@ -493,6 +599,106 @@ protected:
 	void pauseDialog();
 	void messageDialog(const Common::U32String &message);
 	void versionDialog();
+
+	// Original GUI
+	int32 _bannerColors[50]; // Colors for the original GUI
+	byte *_bannerMem = nullptr;
+	uint32 _bannerMemSize = 0;
+	bool _messageBannerActive = false;
+	bool _comiQuitMenuIsOpen = false;
+	bool _closeBannerAndQueryQuitFlag = false;
+
+	// The followings are needed for MI1 FM-Towns
+	byte *_textSurfBannerMem = nullptr;
+	uint32 _textSurfBannerMemSize = 0;
+
+	InternalGUIControl _internalGUIControls[30];
+
+	// Special GUI strings
+	const char _emptyMsg[1] = {'\0'};
+	const char _uncheckedBox[2] = {' ', '\0'};
+	const char _checkedBox[2] = {'x', '\0'};
+	const char _arrowUp[2] = {'\x18', '\0'};
+	const char _arrowDown[2] = {'\x19', '\0'};
+
+	Common::StringArray _savegameNames;
+	int _menuPage = 0;
+	int _mainMenuSavegameLabel = 1;
+	int _curDisplayedSaveSlotPage = 0;
+	int _firstSaveStateOfList = 0; // For LOOM VGA
+	bool _mainMenuIsActive = false;
+	bool _quitByGUIPrompt = false;
+	char _mainMenuMusicSlider[17];
+	char _mainMenuSpeechSlider[17];
+	char _mainMenuSfxSlider[17];
+	char _mainMenuTextSpeedSlider[17];
+	int _spooledMusicIsToBeEnabled = 1;
+	int _saveScriptParam = 0;
+	int _guiCursorAnimCounter = 0;
+	int _v5VoiceMode = 0;
+	int _internalSpeakerSoundsAreOn = 1;
+
+	Graphics::Surface _savegameThumbnail;
+	byte *_tempTextSurface = nullptr;
+	byte *_tempMainSurface = nullptr;
+	byte *_tempVerbSurface = nullptr;
+	bool _postGUICharMask = false;
+
+	// Saved cursor pre and post GUI
+	byte *_curGrabbedCursor = nullptr;
+	int8 _oldCursorState = 0;
+	int _curCursorState = 0;
+	int _curCursorWidth = 0;
+	int _curCursorHeight = 0;
+	int _curCursorHotspotX = 0;
+	int _curCursorHotspotY = 0;
+
+	void initBanners();
+	Common::KeyState showBannerAndPause(int bannerId, int32 waitTime, const char *msg, ...);
+	Common::KeyState showOldStyleBannerAndPause(const char *msg, int color, int32 waitTime);
+	void clearBanner();
+	void setBannerColors(int bannerId, byte r, byte g, byte b);
+	virtual int getBannerColor(int bannerId);
+	void setUpInternalGUIControl(int id, int normalFillColor, int normalTextColor,
+								 int topLineColor, int bottomLineColor, int leftLineColor, int rightLineColor,
+								 int highlightedTextColor, int highlightedFillColor,
+								 int anchorPointX, int anchorPointY, int x, int y, const char *label, bool centerFlag, bool unknownFlag);
+	void drawInternalGUIControl(int id, bool highlightColor);
+	int getInternalGUIControlFromCoordinates(int x, int y);
+	virtual bool isSmushActive() { return false; }
+
+	virtual void queryQuit(bool returnToLauncher);
+	virtual void queryRestart();
+	virtual const char *getGUIString(int stringId);
+	void waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked, bool handeleMouseWheel = false);
+	virtual int getGUIStringHeight(const char *str);
+	virtual int getGUIStringWidth(const char *str);
+	virtual void drawGUIText(const char *buttonString, Common::Rect *clipRect, int textXPos, int textYPos, int textColor, bool centerFlag);
+	void getSliderString(int stringId, int value, char *sliderString, int size);
+	virtual int getMusicVolume();
+	virtual int getSpeechVolume();
+	virtual int getSFXVolume();
+	virtual void setMusicVolume(int volume);
+	virtual void setSpeechVolume(int volume);
+	virtual void setSFXVolume(int volume);
+	virtual void toggleVoiceMode();
+	virtual void handleLoadDuringSmush() {}
+	virtual void setSkipVideo(int value) {}
+
+	void showMainMenu();
+	virtual void setUpMainMenuControls();
+	void drawMainMenuControls();
+	void updateMainMenuControls();
+	void drawMainMenuTitle(const char *title);
+	bool executeMainMenuOperation(int op, int mouseX, int mouseY, bool &hasLoadedState);
+	bool shouldHighlightLabelAndWait(int clickedControl);
+	void fillSavegameLabels();
+	bool canWriteGame(int slotId);
+	bool userWriteLabelRoutine(Common::KeyState &ks, bool &leftMsClicked, bool &rightMsClicked);
+	void saveCursorPreMenu();
+	void restoreCursorPostMenu();
+	void saveSurfacesPreGUI();
+	void restoreSurfacesPostGUI();
 
 public:
 	char displayMessage(const char *altButton, const char *message, ...) GCC_PRINTF(3, 4);
@@ -586,6 +792,8 @@ protected:
 	uint16 _mouseAndKeyboardStat = 0;
 	byte _leftBtnPressed = 0, _rightBtnPressed = 0;
 
+	int _mouseWheelFlag = 0; // For original save/load dialog only
+
 	/**
 	 * Last time runInputScript was run (measured in terms of OSystem::getMillis()).
 	 * This is currently only used for Indy3 mac to detect "double clicks".
@@ -606,6 +814,7 @@ protected:
 	uint32 _lastSaveTime = 0;
 	bool _saveTemporaryState = false;
 	bool _loadFromLauncher = false;
+	bool _videoModeChanged = false;
 	Common::String _saveLoadFileName;
 	Common::String _saveLoadDescription;
 
@@ -618,6 +827,7 @@ protected:
 	void loadResource(Common::Serializer &ser, ResType type, ResId idx);
 	void loadResourceOLD(Common::Serializer &ser, ResType type, ResId idx);	// "Obsolete"
 
+	void copyHeapSaveGameToFile(int slot, const char *saveName);
 	virtual Common::SeekableReadStream *openSaveFileForReading(int slot, bool compat, Common::String &fileName);
 	virtual Common::WriteStream *openSaveFileForWriting(int slot, bool compat, Common::String &fileName);
 
@@ -656,6 +866,9 @@ protected:
 	byte _currentScript = 0xFF; // Let debug() work on init stage
 	int _scummStackPos = 0;
 	int _vmStack[256];
+
+	char _engineVersionString[50];
+	char _dataFileVersionString[50];
 
 	OpcodeEntry _opcodes[256];
 
@@ -848,8 +1061,10 @@ protected:
 	virtual int actorToObj(int actor);
 	int getObjX(int obj);
 	int getObjY(int obj);
-	void getObjectXYPos(int object, int &x, int &y)	{ int dir; getObjectXYPos(object, x, y, dir); }
-	void getObjectXYPos(int object, int &x, int &y, int &dir);
+	void getObjectWidth(int object, int &width) { int x, y, dir; getObjectXYPos(object, x, y, dir, width); }
+	void getObjectXYPos(int object, int &x, int &y) { int dir, width; getObjectXYPos(object, x, y, dir, width); }
+	void getObjectXYPos(int object, int &x, int &y, int &dir) { int width; getObjectXYPos(object, x, y, dir, width); }
+	void getObjectXYPos(int object, int &x, int &y, int &dir, int &width);
 	int getObjOldDir(int obj);
 	int getObjNewDir(int obj);
 	int getObjectIndex(int object) const;
@@ -858,6 +1073,7 @@ protected:
 	int findObject(int x, int y);
 	void findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint object, uint room);
 public:
+	int getObjectOrActorWidth(int object, int &width); // Used in v4 and below
 	int getObjectOrActorXY(int object, int &x, int &y);	// Used in actor.cpp, hence public
 	int getDist(int x, int y, int x2, int y2);	// Also used in actor.cpp
 protected:
@@ -958,6 +1174,7 @@ public:
 protected:
 	ColorCycle _colorCycle[16];	// Palette cycles
 	uint8 _colorUsedByCycle[256];
+	Graphics::PaletteLookup _pl; // Used by the internal GUI
 
 	uint32 _ENCD_offs = 0, _EXCD_offs = 0;
 	uint32 _CLUT_offs = 0, _EPAL_offs = 0;
@@ -1000,6 +1217,8 @@ protected:
 	void drawRoomObjects(int arg);
 	void drawRoomObject(int i, int arg);
 	void drawBox(int x, int y, int x2, int y2, int color);
+	void drawLine(int x1, int y1, int x2, int y2, int color);
+	void drawPixel(VirtScreen *vs, int x, int y, int16 color, bool useBackbuffer = false);
 
 	void moveScreen(int dx, int dy, int height);
 
@@ -1037,9 +1256,14 @@ protected:
 	void stopCycle(int i);
 	virtual void palManipulateInit(int resID, int start, int end, int time);
 	void palManipulate();
+	uint32 findClosestPaletteColor(byte *palette, int paletteLength, byte r, byte g, byte b);
+
 public:
 	uint8 *getHEPaletteSlot(uint16 palSlot);
 	uint16 get16BitColor(uint8 r, uint8 g, uint8 b);
+	uint32 getPaletteColorFromRGB(byte *palette, byte r, byte g, byte b);
+	uint32 getPackedRGBColorFromPalette(byte *palette, uint32 color);
+	void fetchBlackAndWhite(uint32 &black, uint32 &white, byte *palette, int paletteEntries);
 	int remapPaletteColor(int r, int g, int b, int threshold);		// Used by Actor::remapActorPalette
 	void readPCEPalette(const byte **ptr, byte **dest, int numEntries);
 	void colorPCEToRGB(uint16 color, byte *r, byte *g, byte *b);
@@ -1050,8 +1274,6 @@ protected:
 	void setShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor, int start, int end);
 	virtual void darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
 
-	void setCursorFromBuffer(const byte *ptr, int width, int height, int pitch);
-
 public:
 	void markRectAsDirty(VirtScreenNumber virt, int left, int right, int top, int bottom, int dirtybit = 0);
 	void markRectAsDirty(VirtScreenNumber virt, const Common::Rect& rect, int dirtybit = 0) {
@@ -1061,6 +1283,8 @@ protected:
 	// Screen rendering
 	byte *_compositeBuf;
 	byte *_hercCGAScaleBuf = nullptr;
+	bool _enableEGADithering = false;
+	bool _supportsEGADithering = false;
 
 	virtual void drawDirtyScreenParts();
 	void updateDirtyScreen(VirtScreenNumber slot);
@@ -1072,8 +1296,8 @@ protected:
 	void mac_undrawIndy3TextBox();
 	void mac_undrawIndy3CreditsText();
 
-	const byte *postProcessV2Graphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const;
-	void ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const;
+	const byte *postProcessDOSGraphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const;
+	const byte *ditherVGAtoEGA(int &pitch, int &x, int &y, int &width, int &height) const;
 
 public:
 	VirtScreen *findVirtScreen(int y);
@@ -1082,7 +1306,6 @@ public:
 protected:
 	void fadeIn(int effect);
 	void fadeOut(int effect);
-	void setScrollBuffer();
 
 	void dissolveEffectSelector();
 	void transitionEffect(int a);
@@ -1096,6 +1319,7 @@ public:
 
 protected:
 	bool _shakeEnabled = false;
+	bool _shakeTempSavedState = false; // For saving and restoring before and after GUI calls
 	uint _shakeFrame = 0;
 	uint32 _shakeNextTick = 0;
 	uint32 _shakeTickCounter = 0;
@@ -1115,7 +1339,7 @@ protected:
 	 * If the leftmost bit is set, the strip (background) is dirty
 	 * needs to be redrawn.
 	 *
-	 * The second leftmost bit is set by removeBlastObject() and
+	 * The second leftmost bit is set by restoreBlastObjectsRect() and
 	 * restoreBackground(), but I'm not yet sure why.
 	 */
 	uint32 gfxUsageBits[410 * 3];
@@ -1158,7 +1382,7 @@ protected:
 
 	bool _haveActorSpeechMsg = false;
 	bool _useTalkAnims = false;
-	uint16 _defaultTalkDelay = 0;
+	uint16 _defaultTextSpeed = 0;
 	int _saveSound = 0;
 	bool _native_mt32 = false;
 	bool _enable_gs = false;
@@ -1172,6 +1396,9 @@ protected:
 	int remapRoomPaletteColor(int r, int g, int b);
 	void mapVerbPalette(int idx);
 	int remapVerbPaletteColor(int r, int g, int b);
+
+	// EGA dithering mode color tables for certain VGA games like MI2, LOOM Talkie...
+	byte *_egaColorMap[2];
 
 public:
 	uint16 _extraBoxFlags[65];
@@ -1235,6 +1462,7 @@ protected:
 	byte _charsetBuffer[512];
 
 	bool _keepText = false;
+	bool _actorShouldStopTalking = false;
 	byte _msgCount = 0;
 
 	int _nextLeft = 0, _nextTop = 0;
@@ -1255,7 +1483,7 @@ protected:
 	void drawString(int a, const byte *msg);
 	void fakeBidiString(byte *ltext, bool ignoreVerb) const;
 	void debugMessage(const byte *msg);
-	void showMessageDialog(const byte *msg);
+	virtual void showMessageDialog(const byte *msg);
 
 	virtual int convertMessageToString(const byte *msg, byte *dst, int dstSize);
 	int convertIntMessage(byte *dst, int dstSize, int var);
@@ -1267,9 +1495,9 @@ public:
 	Common::Language _language;	// Accessed by a hack in NutRenderer::loadFont
 
 	// Used by class ScummDialog:
-	virtual void translateText(const byte *text, byte *trans_buff);
+	virtual void translateText(const byte *text, byte *trans_buff, int transBufferSize);
 	// Old Hebrew games require reversing the dialog text.
-	bool reverseIfNeeded(const byte *text, byte *reverseBuf) const;
+	bool reverseIfNeeded(const byte *text, byte *reverseBuf, int reverseBufSize) const;
 	// Returns codepage that matches the game for languages that require it.
 	Common::CodePage getDialogCodePage() const;
 
@@ -1437,6 +1665,8 @@ public:
 	byte VAR_RIGHTBTN_HOLD = 0xFF;	// V6/V72HE/V7/V8
 	byte VAR_SAVELOAD_SCRIPT = 0xFF;	// V6/V7 (not HE)
 	byte VAR_SAVELOAD_SCRIPT2 = 0xFF;	// V6/V7 (not HE)
+	byte VAR_SAVELOAD_PAGE = 0xFF;		// V8
+	byte VAR_OBJECT_LABEL_FLAG = 0xFF;	// V8
 
 	// V6/V7 specific variables (FT & Sam & Max specific)
 	byte VAR_CHARSET_MASK = 0xFF;

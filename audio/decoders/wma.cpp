@@ -571,7 +571,7 @@ Common::SeekableReadStream *WMACodec::decodeSuperFrame(Common::SeekableReadStrea
 		bits.skip(4); // Super frame index
 
 		// Number of frames in this superframe
-		int newFrameCount = bits.getBits(4) - 1;
+		int newFrameCount = bits.getBits<4>() - 1;
 		if (newFrameCount < 0) {
 			warning("WMACodec::decodeSuperFrame(): newFrameCount == %d", newFrameCount);
 
@@ -603,7 +603,7 @@ Common::SeekableReadStream *WMACodec::decodeSuperFrame(Common::SeekableReadStrea
 			byte *lastSuperframeEnd = _lastSuperframe + _lastSuperframeLen;
 
 			while (bitOffset > 7) { // Full bytes
-				*lastSuperframeEnd++ = bits.getBits(8);
+				*lastSuperframeEnd++ = bits.getBits<8>();
 
 				bitOffset          -= 8;
 				_lastSuperframeLen += 1;
@@ -936,7 +936,7 @@ bool WMACodec::decodeNoise(Common::BitStream8MSB &bits, int bSize,
 				val += code - 18;
 
 			} else
-				val = bits.getBits(7) - 19;
+				val = bits.getBits<7>() - 19;
 
 			_highBandValues[i][j] = val;
 
@@ -1223,7 +1223,7 @@ bool WMACodec::decodeExpHuffman(Common::BitStream8MSB &bits, int ch) {
 	int lastExp;
 	if (_version == 1) {
 
-		lastExp = bits.getBits(5) + 10;
+		lastExp = bits.getBits<5>() + 10;
 
 		float   v = ptab[lastExp];
 		uint32 iv = iptab[lastExp];
@@ -1314,9 +1314,9 @@ bool WMACodec::decodeExpLSP(Common::BitStream8MSB &bits, int ch) {
 		int val;
 
 		if (i == 0 || i >= 8)
-			val = bits.getBits(3);
+			val = bits.getBits<3>();
 		else
-			val = bits.getBits(4);
+			val = bits.getBits<4>();
 
 		lspCoefs[i] = lspCodebook[i][val];
 	}
@@ -1374,7 +1374,7 @@ bool WMACodec::decodeRunLevel(Common::BitStream8MSB &bits, const HuffmanDecoder 
 						} else
 							offset += bits.getBits(frameLenBits) + 4;
 					} else
-						offset += bits.getBits(2) + 1;
+						offset += bits.getBits<2>() + 1;
 				}
 
 			}
@@ -1472,7 +1472,7 @@ int WMACodec::readTotalGain(Common::BitStream8MSB &bits) {
 
 	int v = 127;
 	while (v == 127) {
-		v = bits.getBits(7);
+		v = bits.getBits<7>();
 
 		totalGain += v;
 	}
@@ -1491,19 +1491,19 @@ int WMACodec::totalGainToBits(int totalGain) {
 uint32 WMACodec::getLargeVal(Common::BitStream8MSB &bits) {
 	// Consumes up to 34 bits
 
-	int count = 8;
 	if (bits.getBit()) {
-		count += 8;
-
 		if (bits.getBit()) {
-			count += 8;
-
-			if (bits.getBit())
-				count += 7;
+			if (bits.getBit()) {
+				return bits.getBits<31>();
+			} else {
+				return bits.getBits<24>();
+			}
+		} else {
+			return bits.getBits<16>();
 		}
+	} else {
+		return bits.getBits<8>();
 	}
-
-	return bits.getBits(count);
 }
 
 } // End of namespace Audio

@@ -381,7 +381,7 @@ WindowReference Gui::createInventoryWindow(ObjID objRef) {
 	//newWindow->setDimensions(newData.bounds);
 	//newWindow->setActive(false);
 	loadBorders(newWindow, newData.type);
-	newWindow->resize(newData.bounds.width() - bbs.rightScrollbarWidth, newData.bounds.height() - bbs.bottomScrollbarHeight, true);
+	newWindow->resize(newData.bounds.width(), newData.bounds.height() - bbs.bottomScrollbarHeight, true);
 	newWindow->move(newData.bounds.left - bbs.leftOffset, newData.bounds.top - bbs.topOffset);
 	newWindow->setCallback(inventoryWindowCallback, this);
 	//newWindow->setCloseable(true);
@@ -465,7 +465,6 @@ bool Gui::loadMenus() {
 	}
 
 	Common::MacResIDArray resArray;
-	Common::SeekableReadStream *res;
 	Common::MacResIDArray::const_iterator iter;
 
 	if ((resArray = _resourceManager->getResIDArray(MKTAG('M', 'E', 'N', 'U'))).size() == 0)
@@ -473,46 +472,8 @@ bool Gui::loadMenus() {
 
 	_menu->addMenuItem(nullptr, "Abb", kMenuActionAbout, 0, 'A', true);
 
-	int i = 1;
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		res = _resourceManager->getResource(MKTAG('M', 'E', 'N', 'U'), *iter);
-		uint16 key;
-		uint16 style;
-		uint8 titleLength;
-		char *title;
-
-		/* Skip menuID, width, height, resourceID, placeholder */
-		for (int skip = 0; skip < 5; skip++) {
-			res->readUint16BE();
-		}
-		titleLength = res->readByte();
-		title = new char[titleLength + 1];
-		res->read(title, titleLength);
-		title[titleLength] = '\0';
-
-		if (titleLength > 1) {
-			_menu->addMenuItem(nullptr, title);
-			Graphics::MacMenuSubMenu *submenu = _menu->addSubMenu(nullptr);
-
-			// Read submenu items
-			while ((titleLength = res->readByte())) {
-				title = new char[titleLength + 1];
-				res->read(title, titleLength);
-				title[titleLength] = '\0';
-				// Skip icon
-				res->readUint16BE();
-				// Read key
-				key = res->readUint16BE();
-				// Skip mark
-				res->readUint16BE();
-				// Read style
-				style = res->readUint16BE();
-				_menu->addMenuItem(submenu, title, 0, style, key, false);
-			}
-		}
-
-		i++;
-		delete res;
+		_menu->loadMenuResource(_resourceManager, *iter);
 	}
 
 	return true;
@@ -632,7 +593,7 @@ void Gui::drawCommandsWindow() {
 			srf,
 			_engine->getCommandsPausedString(),
 			0,
-			(srf->h / 2) - getCurrentFont().getFontHeight(),
+			(srf->h - getCurrentFont().getFontHeight()) / 2 - 1,
 			data.bounds.right - data.bounds.left,
 			kColorBlack,
 			Graphics::kTextAlignCenter);
@@ -714,6 +675,10 @@ void Gui::drawExitsWindow() {
 		CommandButton button = *it;
 		button.draw(*srf);
 	}
+
+	Graphics::BorderOffsets offsets = borderOffsets(MacVenture::kRDoc4);
+	offsets.dark = _exitsWindow->_active;
+	_exitsWindow->setBorderOffsets(offsets);
 
 	findWindow(kExitsWindow)->setDirty(true);
 }

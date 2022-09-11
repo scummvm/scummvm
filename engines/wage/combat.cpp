@@ -495,16 +495,7 @@ void WageEngine::takeObj(Obj *obj) {
 
 		_world->move(obj, _world->_player);
 		int type = _world->_player->wearObjIfPossible(obj);
-		if (type == Chr::HEAD_ARMOR) {
-			snprintf(buf, 256, "You are now wearing the %s.", obj->_name.c_str());
-			appendText(buf);
-		} else if (type == Chr::BODY_ARMOR) {
-			snprintf(buf, 256, "You are now wearing the %s.", obj->_name.c_str());
-			appendText(buf);
-		} else if (type == Chr::SHIELD_ARMOR) {
-			snprintf(buf, 256, "You are now wearing the %s.", obj->_name.c_str());
-			appendText(buf);
-		} else if (type == Chr::MAGIC_ARMOR) {
+		if (type == Chr::BODY_ARMOR || type == Chr::SHIELD_ARMOR || type == Chr::MAGIC_ARMOR) {
 			snprintf(buf, 256, "You are now wearing the %s.", obj->_name.c_str());
 			appendText(buf);
 		} else {

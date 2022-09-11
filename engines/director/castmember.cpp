@@ -924,6 +924,32 @@ void DigitalVideoCastMember::setFrameRate(int rate) {
 }
 
 /////////////////////////////////////
+// MovieCasts
+/////////////////////////////////////
+
+MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
+		: CastMember(cast, castId, stream) {
+	_type = kCastMovie;
+
+	_initialRect = Movie::readRect(stream);
+	_flags = stream.readUint32();
+
+	_looping = !(_flags & 0x20);
+	_enableScripts = _flags & 0x10;
+	_enableSound = _flags & 0x08;
+	_crop = !(_flags & 0x02);
+	_center = _flags & 0x01;
+
+	if (debugChannelSet(2, kDebugLoading))
+		_initialRect.debugPrint(2, "MovieCastMember(): rect:");
+	debugC(2, kDebugLoading, "MovieCastMember(): flags: (%d 0x%04x)", _flags, _flags);
+	debugC(2, kDebugLoading, "_looping: %d, _enableScripts %d, _enableSound: %d, _crop %d, _center: %d",
+			_looping, _enableScripts, _enableSound, _crop, _center);
+
+}
+
+
+/////////////////////////////////////
 // Film loops
 /////////////////////////////////////
 
@@ -986,8 +1012,16 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, C
 		chan._height = height;
 
 		_subchannels.push_back(chan);
-		_subchannels[_subchannels.size() - 1].replaceWidget();
+
 	}
+	// Initialise the widgets on all of the subchannels.
+	// This has to be done once the list has been constructed, otherwise
+	// the list grow operation will erase the widgets as they aren't
+	// part of the Channel assignment constructor.
+	for (auto &iter : _subchannels) {
+		iter.replaceWidget();
+	}
+
 	return &_subchannels;
 }
 
@@ -1393,7 +1427,7 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 	case kCastButton:
 		// note that we use _initialRect for the dimensions of the button;
 		// the values provided in the sprite bounding box are ignored
-		widget = new Graphics::MacButton(Graphics::MacButtonType(buttonType), getAlignment(), g_director->getCurrentWindow(), bbox.left, bbox.top, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), 0xff);
+		widget = new Graphics::MacButton(Graphics::MacButtonType(buttonType), getAlignment(), g_director->getCurrentWindow(), bbox.left, bbox.top, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), g_director->_wm->_colorWhite);
 		widget->_focusable = true;
 
 		((Graphics::MacButton *)widget)->setHilite(_hilite);

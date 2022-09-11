@@ -251,6 +251,9 @@ public:
 	/** Returns a number in [0, 1] range which represents current sync downloading progress (1 = complete). */
 	double getSyncDownloadingProgress() const;
 
+	/** Fills a struct with numbers about current sync downloading progress. */
+	void getSyncDownloadingInfo(Storage::SyncDownloadingInfo &info) const;
+
 	/** Returns a number in [0, 1] range which represents current sync progress (1 = complete). */
 	double getSyncProgress() const;
 
@@ -259,9 +262,6 @@ public:
 
 	/** Cancels running sync. */
 	void cancelSync() const;
-
-	/** Sets SavesSyncRequest's target to given CommandReceiver. */
-	void setSyncTarget(GUI::CommandReceiver *target) const;
 
 	/** Shows a "cloud disabled" icon for three seconds. */
 	void showCloudDisabledIcon();

@@ -48,7 +48,7 @@ struct MacFontRun {
 	uint16 palinfo1;
 	uint16 palinfo2;
 	uint16 palinfo3;
-	uint16 fgcolor;
+	uint32 fgcolor;
 	// to determine whether the next word is part of this one
 	bool wordContinuation;
 	const Font *font;
@@ -157,12 +157,12 @@ struct SelectedText {
 
 class MacText : public MacWidget {
 public:
-	MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0, bool fixedDims = true);
+	MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *font, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0, bool fixedDims = true);
 	// 0 pixels between the lines by default
 
-	MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0, bool fixedDims = true);
+	MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *font, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0, bool fixedDims = true);
 
-	MacText(const Common::U32String &s, MacWindowManager *wm, const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0, bool fixedDims = true);
+	MacText(const Common::U32String &s, MacWindowManager *wm, const Font *font, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0, bool fixedDims = true);
 
 	virtual ~MacText();
 
@@ -212,8 +212,8 @@ public:
 	int getTextSize(int start, int end);
 	void setTextSize(int textSize, int start, int end);
 
-	uint getTextColor() { return _defaultFormatting.fgcolor; }
-	uint getTextColor(int start, int end);
+	uint32 getTextColor() { return _defaultFormatting.fgcolor; }
+	uint32 getTextColor(int start, int end);
 
 	int getTextFont(int start, int end);
 	void setTextFont(int fontId, int start, int end);

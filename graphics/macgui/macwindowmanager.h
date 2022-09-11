@@ -76,18 +76,19 @@ enum MacCursorType {
 };
 
 enum {
-	kWMModeNone         	= 0,
-	kWMModeNoDesktop    	= (1 << 0),
-	kWMModeAutohideMenu 	= (1 << 1),
-	kWMModalMenuMode 		= (1 << 2),
-	kWMModeForceBuiltinFonts= (1 << 3),
-	kWMModeUnicode			= (1 << 4),
-	kWMModeManualDrawWidgets= (1 << 5),
-	kWMModeFullscreen       = (1 << 6),
-	kWMModeButtonDialogStyle= (1 << 7),
-	kWMMode32bpp			= (1 << 8),
-	kWMNoScummVMWallpaper   = (1 << 9),
-	kWMModeWin95            = (1 << 10)
+	kWMModeNone         		= 0,
+	kWMModeNoDesktop    		= (1 << 0),
+	kWMModeAutohideMenu 		= (1 << 1),
+	kWMModalMenuMode 			= (1 << 2),
+	kWMModeForceBuiltinFonts	= (1 << 3),
+	kWMModeUnicode				= (1 << 4),
+	kWMModeManualDrawWidgets	= (1 << 5),
+	kWMModeFullscreen			= (1 << 6),
+	kWMModeButtonDialogStyle	= (1 << 7),
+	kWMMode32bpp				= (1 << 8),
+	kWMNoScummVMWallpaper		= (1 << 9),
+	kWMModeWin95				= (1 << 10),
+	kWMModeForceMacFontsInWin95 = (1 << 11) // Enforce Mac font for languages which don't have glyphs in ms_sans_serif.ttf
 };
 
 }
@@ -322,15 +323,15 @@ public:
 	void setEngineRedrawCallback(void *engine, void (*redrawCallback)(void *engine));
 
 	void passPalette(const byte *palette, uint size);
-	uint findBestColor(byte cr, byte cg, byte cb);
-	uint findBestColor(uint32 color);
-	void decomposeColor(uint32 color, byte &r, byte &g, byte &b);
+	template <typename T> void decomposeColor(uint32 color, byte &r, byte &g, byte &b);
+	uint32 findBestColor(byte cr, byte cg, byte cb);
+	uint32 findBestColor(uint32 color);
 	void setDesktopColor(byte, byte, byte);
 
-	uint inverter(uint src);
+	byte inverter(byte src);
 
 	const byte *getPalette() { return _palette; }
-	uint getPaletteSize() { return _paletteSize; }
+	byte getPaletteSize() { return _paletteSize; }
 
 	void renderZoomBox(bool redraw = false);
 	void addZoomBox(ZoomBox *box);

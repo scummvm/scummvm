@@ -77,7 +77,7 @@ public:
 
 	int32 Project_point_down_through_floors(int32 nX, int32 nY, int32 nZ);
 
-	_linked_data_file *floors; // the floor definition file
+	LinkedDataFile *floors; // the floor definition file
 
 private:
 	uint32 total_floors; // total number of individual floors
@@ -104,12 +104,12 @@ inline uint32 _floor_world::Fetch_total_floors() { return (total_floors); }
 
 inline _floor *_floor_world::Fetch_named_floor(const char *name) {
 	// return a pointer to a named floor to an external routine - most likely a fn_funtion
-	return ((_floor *)floors->Fetch_item_by_name(name));
+	return ((_floor *)LinkedDataObject::Fetch_item_by_name(floors, name));
 }
 
 inline _floor *_floor_world::Fetch_floor_number(uint32 num) {
 	// return a pointer to a named floor to an external routine - most likely a fn_funtion
-	return ((_floor *)floors->Fetch_item_by_number(num));
+	return ((_floor *)LinkedDataObject::Fetch_item_by_number(floors, num));
 }
 
 } // End of namespace ICB

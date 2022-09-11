@@ -26,7 +26,6 @@
 #include "common/algorithm.h"
 #include "common/textconsole.h" // For error()
 #include "common/memory.h"
-#include "common/initializer_list.h"
 
 namespace Common {
 
@@ -289,6 +288,20 @@ public:
 		// We also need to destroy the last object properly here.
 		_storage[_size].~T();
 		return pos;
+	}
+
+	/** Erase the elements from @p first to @p last and return an iterator pointing to the next element in the array. */
+	iterator erase(iterator first, iterator last) {
+		copy(last, _storage + _size, first);
+
+		int count = (last - first);
+		_size -= count;
+
+		// We also need to destroy the objects beyond the new size
+		for (uint idx = _size; idx < (_size + count); ++idx)
+			_storage[idx].~T();
+
+		return first;
 	}
 
 	/** Check whether the array is empty. */

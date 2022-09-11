@@ -67,11 +67,11 @@ public:
 		return detectGameFilebased(allFiles, fileBased);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "cryomni3d";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Cryo Omni3D";
 	}
 

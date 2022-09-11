@@ -22,6 +22,8 @@
 #ifndef DIRECTOR_DIRECTOR_H
 #define DIRECTOR_DIRECTOR_H
 
+#include "backends/audiocd/audiocd.h"
+
 #include "common/file.h"
 #include "common/hashmap.h"
 #include "common/hash-ptr.h"
@@ -85,7 +87,8 @@ enum {
 	kDebugDesktop		= 1 << 15,
 	kDebug32bpp			= 1 << 16,
 	kDebugEndVideo		= 1 << 17,
-	kDebugLingoStrict	= 1 << 18
+	kDebugLingoStrict	= 1 << 18,
+	kDebugSound			= 1 << 19,
 };
 
 struct MovieReference {
@@ -214,6 +217,7 @@ public:
 	RandomState _rnd;
 	Graphics::MacWindowManager *_wm;
 	Graphics::PixelFormat _pixelformat;
+	AudioCDManager::Status _cdda_status;
 
 public:
 	int _colorDepth;

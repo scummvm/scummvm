@@ -455,7 +455,7 @@ void DownloadIconsDialog::clearCache() {
 		// Build list of previously downloaded icon files
 		for (auto ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
 			Common::String fname = (*ic)->getName();
-			Common::FSNode fs(iconsPath + fname);
+			Common::FSNode fs(Common::Path(iconsPath).join(fname));
 			Common::WriteStream *str = fs.createWriteStream();
 
 			// Overwrite previously downloaded icon files with dummy data

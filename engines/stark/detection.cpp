@@ -424,11 +424,11 @@ public:
 		_guiOptions = GUIO4(GUIO_NOMIDI, GAMEOPTION_ASSETS_MOD, GAMEOPTION_LINEAR_FILTERING, GAMEOPTION_FONT_ANTIALIASING);
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Stark";
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "stark";
 	}
 

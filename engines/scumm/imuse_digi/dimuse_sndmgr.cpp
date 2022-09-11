@@ -192,7 +192,7 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 		error("ImuseDigiSndMgr::openSound() Unknown soundType %d (trying to load sound %d)", soundType, soundId);
 	}
 
-	strcpy(sound->name, soundName);
+	Common::strlcpy(sound->name, soundName, sizeof(sound->name));
 	sound->soundId = soundId;
 
 	if (soundType == IMUSE_BUNDLE) {

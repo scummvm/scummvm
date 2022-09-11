@@ -121,7 +121,7 @@ public:
 	void renderShadowGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks, const BaseArray<AdGeneric *> &generics, Camera3D *camera) override;
 
 	Mesh3DS *createMesh3DS() override;
-	MeshX *createMeshX() override;
+	XMesh *createXMesh() override;
 	ShadowVolume *createShadowVolume() override;
 
 private:
@@ -148,12 +148,12 @@ private:
 	GLuint _flatShadowDepthBuffer;
 	OpenGL::Shader *_spriteShader;
 	OpenGL::Shader *_fadeShader;
-	OpenGL::Shader *_modelXShader;
+	OpenGL::Shader *_xmodelShader;
 	OpenGL::Shader *_geometryShader;
 	OpenGL::Shader *_shadowVolumeShader;
 	OpenGL::Shader *_shadowMaskShader;
 	OpenGL::Shader *_lineShader;
-	OpenGL::Shader *_flatShadowModelXShader;
+	OpenGL::Shader *_flatShadowXModelShader;
 	OpenGL::Shader *_flatShadowMaskShader;
 };
 

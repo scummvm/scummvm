@@ -560,7 +560,7 @@ int ccInstance::Run(int32_t curpc) {
 				_G(new_line_hook)(this, _G(currentline));
 			break;
 		case SCMD_ADD:
-			// If the the register is SREG_SP, we are allocating new variable on the stack
+			// If the register is SREG_SP, we are allocating new variable on the stack
 			if (arg1.IValue == SREG_SP) {
 				// Only allocate new data if current stack entry is invalid;
 				// in some cases this may be advancing over value that was written by MEMWRITE*

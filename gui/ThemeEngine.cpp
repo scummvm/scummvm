@@ -1665,11 +1665,11 @@ int ThemeEngine::getStringWidth(const Common::U32String &str, FontStyle font) co
 	return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getStringWidth(str) : 0;
 }
 
-int ThemeEngine::getCharWidth(byte c, FontStyle font) const {
+int ThemeEngine::getCharWidth(uint32 c, FontStyle font) const {
 	return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getCharWidth(c) : 0;
 }
 
-int ThemeEngine::getKerningOffset(byte left, byte right, FontStyle font) const {
+int ThemeEngine::getKerningOffset(uint32 left, uint32 right, FontStyle font) const {
 	return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getKerningOffset(left, right) : 0;
 }
 

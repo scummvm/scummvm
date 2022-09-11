@@ -18,7 +18,7 @@ ifdef MAKERUN
 	$(MAKERUN) $(APP_NAME)/scummvm,ff8 ${srcdir}/dists/riscos/!Run,feb $(APP_NAME)/!Run,feb
 else
 	cp ${srcdir}/dists/riscos/!Run,feb $(APP_NAME)/!Run,feb
-	sed -i -e "s/WIMPSLOT/WimpSlot -min `du -k $(APP_NAME)/scummvm,ff8 | cut -f1`K/g" $(APP_NAME)/!Run,feb
+	sed -i -e "s/WIMPSLOT/WimpSlot -min $$(($$(du -k $(EXECUTABLE) | cut -f1) + 32))K/g" $(APP_NAME)/!Run,feb
 endif
 ifeq ($(APP_NAME),$(BASE_APP_NAME))
 	cp ${srcdir}/dists/riscos/!Boot,feb $(APP_NAME)/!Boot,feb

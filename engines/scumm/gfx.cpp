@@ -54,8 +54,6 @@ static void copy8Col(byte *dst, int dstPitch, const byte *src, int height, uint8
 #endif
 static void clear8Col(byte *dst, int dstPitch, int height, uint8 bitDepth);
 
-static void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height);
-
 struct StripTable {
 	int offsets[160];
 	int run[160];
@@ -573,9 +571,12 @@ void ScummEngine_v6::drawDirtyScreenParts() {
 	// Call the original method.
 	ScummEngine::drawDirtyScreenParts();
 
-	// Remove all blasted objects/text again.
-	removeBlastTexts();
-	removeBlastObjects();
+	// Remove all blasted objects/text again, except
+	// for v7-8 which do that at a later time.
+	if (_game.version < 7) {
+		removeBlastTexts();
+		removeBlastObjects();
+	}
 }
 
 /**
@@ -629,6 +630,13 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	assert(top >= 0 && bottom <= vs->h);
 	assert(x >= 0 && width <= vs->pitch);
 	assert(_textSurface.getPixels());
+
+	// Some extra vertical alignment for certain render modes. It matters for MI1EGA. The dithering patterns require the alignment,
+	// otherwise there will be visible glitches. It can be found in the original interpreters.
+	int align = (_game.version > 2 && (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderHercG || _renderMode == Common::kRenderHercA)) ? 4 : (_enableEGADithering ? 2 : 1);
+	top &= ~(align - 1);
+	if (bottom & (align - 1))
+		bottom = (bottom + align) & ~(align - 1);
 
 	// Perform some clipping
 	if (width > vs->w - x)
@@ -767,27 +775,18 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 					_system->copyRectToScreen(blackbuf, 16, 0, 0, 16, 240); // Fix left strip
 				}
 			}
-		} else if (_game.version == 1 || _game.version == 2) {
-			// MM/ZAK v1/v2
-			src = postProcessV2Graphics(vs, pitch, x, y, width, height);
-		} else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-			// MI1
-			ditherHerc(_compositeBuf, _hercCGAScaleBuf, width, &x, &y, &width, &height);
-
-			src = _hercCGAScaleBuf + x + y * kHercWidth;
-			pitch = kHercWidth;
-
-			// center image on the screen
-			x += (kHercWidth - _screenWidth * 2) / 2;	// (720 - 320*2)/2 = 40
 		} else if (_useCJKMode && m == 2) {
 			pitch *= m;
 			x *= m;
 			y *= m;
 			width *= m;
 			height *= m;
-		} else if (_renderMode == Common::kRenderCGA) {
-			// LOOM, MI1
-			ditherCGA(_compositeBuf, width, x, y, width, height);
+		} else if (_enableEGADithering) {
+			// EGA mode for certain VGA versions (MI2, LOOM Talkie)
+			src = ditherVGAtoEGA(pitch, x, y, width, height);
+		} else if (_game.platform == Common::kPlatformDOS && _game.version < 5) {
+			// CGA and Hercules modes for MM/ZAK v1/v2, INDY3, LOOM, MI1EGA
+			src = postProcessDOSGraphics(vs, pitch, x, y, width, height);
 		}
 	}
 
@@ -795,11 +794,27 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	_system->copyRectToScreen(src, pitch, x, y, width, height);
 }
 
-const byte *ScummEngine::postProcessV2Graphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const {
+const byte *ScummEngine::postProcessDOSGraphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const {
 	static const byte v2VrbColMap[] =	{ 0x0, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF, 0xF, 0x5, 0x5, 0x5, 0xA, 0xA, 0xF, 0xF };
 	static const byte v2TxtColMap[] =	{ 0x0, 0xF, 0xA, 0x5, 0xA, 0x5, 0x5, 0xF, 0xA, 0xA, 0xA, 0xA, 0xA, 0x5, 0x5, 0xF };
 	static const byte mmv1VrbColMap[] =	{ 0x0, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF, 0xA, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF };
 	static const byte v2MainColMap[] =	{ 0x0, 0x4, 0x1, 0x5, 0x8, 0xA, 0x2, 0xF, 0xC, 0x7, 0xD, 0x5, 0xE, 0xB, 0xD, 0xF };
+
+	static const byte v3MainColMap[] =	{
+		0x0, 0x4, 0x1, 0x5, 0x8, 0xA, 0x2, 0x3, 0xC, 0x7, 0xD, 0x5, 0xF, 0xB, 0x5, 0xF, 0x0, 0x1, 0x4, 0x5, 0x2, 0xA, 0x8, 0xC, 0x3, 0xD, 0x5, 0x5, 0xF, 0xE, 0x5, 0xF
+	};
+
+	static const byte v4MainColMap[] =	{
+		0x0, 0x4, 0x1, 0x5, 0x2, 0xA, 0x2, 0x3, 0x0, 0x5, 0x5, 0x7, 0xF, 0xE, 0x5, 0xF, 0x0, 0x1, 0x4, 0x5, 0x8, 0xA, 0x8, 0xC, 0x0, 0x7, 0x5, 0xD, 0xF, 0xB, 0x5, 0xF,
+		0x0, 0x4, 0x1, 0x5, 0x2, 0xA, 0x2, 0x3, 0x0, 0x5, 0x5, 0x7, 0xF, 0xE, 0x5, 0xF, 0x0, 0x1, 0x4, 0x5, 0x8, 0xA, 0x8, 0xC, 0x0, 0xD, 0x5, 0xD, 0xF, 0xB, 0x5, 0xF
+	};
+
+	static const byte hrcTableV4[32] = {
+		0x00, 0x08, 0xAA, 0xBB, 0x55, 0x66, 0x99, 0x7F, 0x11, 0x55, 0x77, 0xEE, 0xAA, 0xEE, 0xFF, 0xFF,
+		0x00, 0x80, 0xAA, 0xDD, 0x00, 0x99, 0x66, 0xF7, 0x44, 0xAA, 0xDD, 0x77, 0xFF, 0xBB, 0xBB, 0xFF
+	};
+
+	static const byte *mainColMap[] = { nullptr, nullptr, v2MainColMap, v3MainColMap, v4MainColMap };
 
 	byte tmpTxtColMap[16];
 	for (uint8 i = 0; i < ARRAYSIZE(tmpTxtColMap); ++i)
@@ -809,17 +824,30 @@ const byte *ScummEngine::postProcessV2Graphics(VirtScreen *vs, int &pitch, int &
 	byte *dst = _compositeBuf;
 	const byte *src = res;
 	bool renderHerc = (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG);
+	bool renderV1 = (_game.version == 1);
+	bool renderV3 = _game.version > 2;
+
+	if (!renderV1 && !renderHerc && _renderMode != Common::kRenderCGA)
+		return res;
+
 	const byte *colMap = (_game.id == GID_ZAK || _game.version == 2) ? ((vs->number == kVerbVirtScreen || renderHerc) ? v2VrbColMap : v2TxtColMap) : (vs->number == kVerbVirtScreen ? mmv1VrbColMap : tmpTxtColMap);
+	const byte *colMap2 = mainColMap[_game.version];
+
+	// For LOOM and INDY3, CGA gets dithered as 2x2 squares, for MI1EGA as 2x4 squares. Odd lines have the colors swapped, so there will be checkered patterns.
+	uint8 lnMod = (_game.version > 3 && !renderHerc) ? 0x40 : 0x20;
+	uint8 lnIdx = renderV3 ? ((y & ((lnMod >> 4) - 1)) << 4) : 0;
 
 	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp) {
-		if (vs->number == kMainVirtScreen) {
+		if (renderV3 || vs->number == kMainVirtScreen) {
 			for (int h = height; h; --h) {
 				for (int w = width >> 1; w; --w) {
-					byte c = (_game.version == 1) ? *src : (v2MainColMap[src[0]] & 0x0C) | (v2MainColMap[src[1]] & 0x03);
+					byte c = renderV1 ? *src : (colMap2[src[0] + lnIdx] & 0x0C) | (colMap2[src[1] + lnIdx] & 0x03);
 					*dst++ = (c >> 2) & 3;
 					*dst++ = c & 3;
 					src += 2;
 				}
+				if (renderV3)
+					lnIdx = (lnIdx + 0x10) % lnMod;
 			}
 		} else {
 			for (int h = height; h; --h) {
@@ -831,18 +859,39 @@ const byte *ScummEngine::postProcessV2Graphics(VirtScreen *vs, int &pitch, int &
 		}
 
 	} else if (renderHerc || _renderMode == Common::kRenderCGA_BW) {
-		// The monochrome rendering is very similiar for Hercules and CGA b/w.
-		// For Hercules we have to do some corrections to fit into the 350 pixels
-		// height. The text and verb vs are rendered in normal height, only the
-		// main vs gets scaled by leaving out every other line. And we center the
-		// image horizontally within the 720 pixels width.
-		// For CGA b/w the origial resolution is 640x200, so we just scale that
-		// to our 640x400 by repeating each line.
+		// The monochrome rendering is very similiar for Hercules and CGA b/w. For Hercules we have to do some corrections to fit into the 350 pixels height.
+		// For Hercules V1/2, the text and verb vs are rendered in normal height, only the main vs gets scaled by leaving out every other line. Hercules V4
+		// instead scales everything in a 4-to-7 lines ratio. And for all versions, we center the image horizontally within the 720 pixels width.
+		// For CGA b/w the origial resolution is 640x200, so we just scale that to our 640x400 by repeating each line.
 		pitch = renderHerc ? kHercWidth : (_screenWidth << 1);
 		dst = res = _hercCGAScaleBuf;
 		int pitch1 = (pitch - width) << 1;
 
-		if (vs->number == kMainVirtScreen) {
+		if (renderV3) {
+			// This is for MI1EGA Hercules only
+			pitch1 = pitch - (width << 1);
+			int height2 = height >> 2;
+			height = height2 * 7;
+			y = (y << 1) - (y >> 2);
+
+			for (int h1 = height2; h1; --h1) {
+				lnIdx = 0; // The 7-lines pattern always starts from the beginning. Which works fine, since the strips get vertically aligned for Hercules and CGA.
+				for (int h2 = 7; h2; --h2) {
+					for (int w = width >> 2; w; --w) {
+						byte c = (hrcTableV4[src[0] + lnIdx] & 0xC0) | (hrcTableV4[src[1] + lnIdx] & 0x30) | (hrcTableV4[src[2] + lnIdx] & 0x0C) | (hrcTableV4[src[3] + lnIdx] & 0x03);
+						for (int i = 7; i >= 0; --i)
+							*dst++ = (c >> i) & 1;
+						src += 4;
+					}
+					dst += pitch1;
+					if (lnIdx ^= 0x10)
+						src -= width;
+				}
+				src += width;
+			}
+
+		} else if (vs->number == kMainVirtScreen) {
+			// V1/2 Hercules and CGA b/w mode
 			uint32 *dst2 = (uint32*)(dst + pitch);
 			int pitch2 = pitch1 >> 2;
 			int height2 = height;
@@ -856,7 +905,7 @@ const byte *ScummEngine::postProcessV2Graphics(VirtScreen *vs, int &pitch, int &
 			for (int h = height2; h; --h) {
 				for (int w = width >> 1; w; --w) {
 					const uint32 *s = (const uint32*)dst;
-					byte c = (_game.version == 1) ? *src : (v2MainColMap[src[0]] & 0x0C) | (v2MainColMap[src[1]] & 0x03);
+					byte c = renderV1 ? *src : (colMap2[src[0]] & 0x0C) | (colMap2[src[1]] & 0x03);
 					*dst++ = (c >> 3) & 1;
 					*dst++ = (c >> 2) & 1;
 					*dst++ = (c >> 1) & 1;
@@ -869,6 +918,7 @@ const byte *ScummEngine::postProcessV2Graphics(VirtScreen *vs, int &pitch, int &
 			}
 
 		} else {
+			// V1/2 Hercules and CGA b/w mode
 			if (renderHerc) {
 				pitch1 = kHercWidth - (width << 1);
 				y -= vs->topline;
@@ -905,8 +955,12 @@ const byte *ScummEngine::postProcessV2Graphics(VirtScreen *vs, int &pitch, int &
 			height <<= 1;
 		}
 
-	} else if (_game.version == 1 && vs->number == kTextVirtScreen) {
+	} else if (renderV1 && vs->number == kTextVirtScreen) {
 		// For EGA, the only colors that need remapping are for the kTextVirtScreen.
+		// ZAKv1 is the only game that is affected by this. The original interpreter
+		// will also apply this mapping in VGA mode (as we do) but not in MCGA mode.
+		// So, should we ever decide to offer a separate MCGA render mode, then we
+		// should skip this for that mode...
 		for (uint8 i = 0; i < ARRAYSIZE(tmpTxtColMap); ++i)
 			tmpTxtColMap[i] = _gdi->remapColorToRenderMode(i);
 		for (int h = height; h; --h)  {
@@ -918,76 +972,30 @@ const byte *ScummEngine::postProcessV2Graphics(VirtScreen *vs, int &pitch, int &
 	return res;
 }
 
-// CGA
-// indy3 loom maniac monkey1 zak
-//
-// Herc (720x350)
-// maniac monkey1 zak
-//
-// EGA
-// monkey2 loom maniac monkey1 atlantis indy3 zak loomcd
+const byte *ScummEngine::ditherVGAtoEGA(int &pitch, int &x, int &y, int &width, int &height) const {
+	pitch <<= 1;
+	int pitch2 = (pitch - width) << 1;
 
-static const byte cgaDither[2][2][16] = {
-	{{0, 1, 0, 1, 2, 2, 0, 0, 3, 1, 3, 1, 3, 2, 1, 3},
-	 {0, 0, 1, 1, 0, 2, 2, 3, 0, 3, 1, 1, 3, 3, 1, 3}},
-	{{0, 0, 1, 1, 0, 2, 2, 3, 0, 3, 1, 1, 3, 3, 1, 3},
-	 {0, 1, 0, 1, 2, 2, 0, 0, 3, 1, 1, 1, 3, 2, 1, 3}}};
+	uint8 *dst0 = _hercCGAScaleBuf;
+	uint8 *dst1 = _hercCGAScaleBuf + pitch;
+	uint8 *src = _compositeBuf;
 
-void ScummEngine::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const {
-	byte *ptr;
-	int idx1, idx2;
-	// CGA dithers 4x4 square with direct substitutes
-	// Odd lines have colors swapped, so there will be checkered patterns.
-	// But apparently there is a mistake for 10th color.
-	for (int y1 = 0; y1 < height; y1++) {
-		ptr = dst + y1 * dstPitch;
-		idx1 = (y + y1) % 2;
-
-		for (int x1 = 0; x1 < width; x1++) {
-			idx2 = (x + x1) % 2;
-			*ptr = cgaDither[idx1][idx2][*ptr & 0xF];
-			ptr++;
+	for (int i = height, st = 1 ^ (y & 1); i; --i, st ^= 1) {
+		for (int ii = width; ii; --ii) {
+			byte in = *src++;
+			*dst0++ = *dst1++ = _egaColorMap[st][in];
+			*dst0++ = *dst1++ = _egaColorMap[st ^ 1][in];
 		}
-	}
-}
-
-// Hercules dithering. It uses same dithering tables but output is 1bpp and
-// it stretches in this way:
-//         aaaa0
-// aa      aaaa1
-// bb      bbbb0      Here 0 and 1 mean dithering table row number
-// cc -->  bbbb1
-// dd      cccc0
-//         cccc1
-//         dddd0
-void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height) {
-	byte *srcptr, *dstptr;
-	const int xo = *x, yo = *y, widtho = *width, heighto = *height;
-	int dsty = yo*2 - yo/4;
-
-	for (int y1 = 0; y1 < heighto;) {
-		assert(dsty < kHercHeight);
-
-		srcptr = src + y1 * srcPitch;
-		dstptr = hercbuf + dsty * kHercWidth + xo * 2;
-
-		const int idx1 = (dsty % 7) % 2;
-		for (int x1 = 0; x1 < widtho; x1++) {
-			const int idx2 = (xo + x1) % 2;
-			const byte tmp = cgaDither[idx1][idx2][*srcptr & 0xF];
-			*dstptr++ = tmp >> 1;
-			*dstptr++ = tmp & 0x1;
-			srcptr++;
-		}
-		if (idx1 || dsty % 7 == 6)
-			y1++;
-		dsty++;
+		dst0 += pitch2;
+		dst1 += pitch2;
 	}
 
-	*x *= 2;
-	*y = yo*2 - yo/4;
-	*width *= 2;
-	*height = dsty - *y;
+	x <<= 1;
+	y <<= 1;
+	width <<= 1;
+	height <<= 1;
+
+	return _hercCGAScaleBuf;
 }
 
 #pragma mark -
@@ -1247,7 +1255,8 @@ void ScummEngine::restoreCharsetBg() {
 	_nextLeft = _string[0].xpos;
 	_nextTop = _string[0].ypos + _screenTop;
 
-	if (_charset->_hasMask) {
+	if (_charset->_hasMask || _postGUICharMask) {
+		_postGUICharMask = false;
 		_charset->_hasMask = false;
 		_charset->_str.left = -1;
 		_charset->_left = -1;
@@ -1417,6 +1426,25 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	if ((vs = findVirtScreen(y)) == nullptr)
 		return;
 
+	if (_game.version == 8) {
+		width = _screenWidth + 8;
+		height = _screenHeight;
+		int effX2 = x2;
+		int effX;
+		if (width >= x2) {
+			effX = x;
+		} else {
+			effX2 = width;
+			effX = x;
+			if (x < 0)
+				effX = 0;
+		}
+		backbuff = vs->getPixels(effX, y + _screenTop);
+		fill(backbuff, vs->pitch, color, effX2, y2, vs->format.bytesPerPixel);
+		markRectAsDirty(vs->number, effX, effX + effX2, y + _screenTop, y + y2 + _screenTop);
+		return;
+	}
+
 	// Indy4 Amiga always uses the room or verb palette map to match colors to
 	// the currently setup palette, thus we need to select it over here too.
 	// Done like the original interpreter.
@@ -1550,6 +1578,97 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 
 			fill(backbuff, vs->pitch, color, width, height, vs->format.bytesPerPixel);
 		}
+	}
+}
+
+void ScummEngine::drawLine(int x1, int y1, int x2, int y2, int color) {
+	if (_game.platform == Common::kPlatformFMTowns) {
+		drawBox(x1, y1, x2, y2, color);
+		return;
+	}
+
+	int effColor, black, white;
+	int effX1, effY1;
+	int width, height, widthAccumulator, heightAccumulator, horizontalStrips, originalHeight;
+	int nudgeX, nudgeY;
+
+	bool canDrawPixel, noColorSpecified;
+
+	VirtScreen *vs;
+
+	if ((vs = findVirtScreen(y1)) == nullptr)
+		return;
+
+	black = getPaletteColorFromRGB(_currentPalette, 0x00, 0x00, 0x00);
+	white = getPaletteColorFromRGB(_currentPalette, 0xFC, 0xFC, 0xFC);
+
+	noColorSpecified = false;
+	effColor = color;
+	if (color == -1) {
+		noColorSpecified = true;
+		effColor = white;
+	}
+
+	effX1 = x1;
+	effY1 = y1;
+	width = abs(x2 - x1);
+	height = abs(y2 - y1);
+	originalHeight = height;
+
+	if (height <= width)
+		height = width;
+
+	widthAccumulator = 0;
+	heightAccumulator = 0;
+
+	drawPixel(vs, x1, y1, effColor);
+
+	if (height >= 0) {
+		horizontalStrips = height + 1;
+		do {
+			widthAccumulator += width;
+			canDrawPixel = false;
+			heightAccumulator += originalHeight;
+			if (widthAccumulator > height) {
+				canDrawPixel = true;
+				widthAccumulator -= height;
+				nudgeX = 1;
+				if (x2 - x1 < 0)
+					nudgeX = -1;
+				effX1 += nudgeX;
+			}
+
+			if (heightAccumulator > height) {
+				canDrawPixel = true;
+				heightAccumulator -= height;
+				nudgeY = 1;
+				if (y2 - y1 < 0)
+					nudgeY = -1;
+				effY1 += nudgeY;
+			}
+
+			if (canDrawPixel) {
+				drawPixel(vs, effX1, effY1, effColor);
+				if (noColorSpecified) {
+					if (effColor != white)
+						effColor = white;
+					else
+						effColor = black;
+				}
+			}
+
+			horizontalStrips--;
+		} while (horizontalStrips);
+	}
+}
+
+void ScummEngine::drawPixel(VirtScreen *vs, int x, int y, int16 color, bool useBackbuffer) {
+	if (x >= 0 && y >= 0 && _screenWidth + 8 > x && _screenHeight > y) {
+		if (useBackbuffer)
+			*(vs->getBackPixels(x, y + _screenTop - vs->topline)) = color;
+		else
+			*(vs->getPixels(x, y + _screenTop - vs->topline)) = color;
+		markRectAsDirty(vs->number, x, x + 1, y + _screenTop - vs->topline, y + 1 + _screenTop - vs->topline);
 	}
 }
 
@@ -4264,11 +4383,28 @@ void ScummEngine::dissolveEffect(int width, int height) {
 			mac_drawStripToScreen(vs, y, x, y + vs->topline, width, height);
 		else if (IS_ALIGNED(width, 4))
 			drawStripToScreen(vs, x, width, y, y + height);
-		else
-			// This is not suitable for any render mode that requires post-processing of the pixels (CGA; Hercules...).
-			// Currently, non of the targets in concern will arrive here, but we will have to look at this again if we
-			// want to support things like the EGA mode of LOOM VGA Talkie...
-			_system->copyRectToScreen(vs->getPixels(x, y), vs->pitch, x, y + vs->topline, width, height);
+		else {
+			const byte *src = vs->getPixels(x, y);
+			int pitch = vs->pitch;
+			y += vs->topline;
+			int wd = width;
+			int ht = height;
+
+			if (_enableEGADithering) {
+				if (is1x1Pattern) {
+					*_compositeBuf = *src;
+				} else {
+					for (int ii = 0; ii < height; ++ii) {
+						memcpy(_compositeBuf + width * ii, src, width);
+						src += pitch;
+					}
+				}
+				pitch = width;
+				src = ditherVGAtoEGA(pitch, x, y, wd, ht);
+			}
+
+			_system->copyRectToScreen(src, pitch, x, y, wd, ht);
+		}
 
 		// Test for 1x1 pattern...
 		canHalt |= is1x1Pattern && ++blits >= blitsBeforeRefresh;

@@ -37,11 +37,28 @@ protected:
 	int _objectIDMapSize;
 	ObjectNameId *_objectIDMap;
 
+	struct StampShot {
+		int slot;
+		int boxX;
+		int boxY;
+		int boxWidth;
+		int boxHeight;
+		int brightness;
+	};
+
+	int _savegameThumbnailV8Palette[256];
+	byte _savegameThumbnailV8[160 * 120]; // One fourth of the nominal 640x480 resolution
+	StampShot _stampShots[20];
+	int _stampShotsInQueue = 0;
+
 	int _keyScriptKey, _keyScriptNo;
 
 public:
 	ScummEngine_v8(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v8() override;
+
+	void setKeyScriptVars(int _keyScriptKey, int _keyScriptNo);
+	void stampShotDequeue();
 
 protected:
 	void setupOpcodes() override;
@@ -67,9 +84,17 @@ protected:
 	int getObjectIdFromOBIM(const byte *obim) override;
 
 	void processKeyboard(Common::KeyState lastKeyHit) override;
-
+	void setDefaultCursor() override;
 	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
 
+	void stampShotEnqueue(int slot, int boxX, int boxY, int boxWidth, int boxHeight, int brightness);
+	void stampScreenShot(int slot, int boxX, int boxY, int boxWidth, int boxHeight, int brightness);
+	void saveLoadWithSerializer(Common::Serializer &s) override;
+	void createInternalSaveStateThumbnail();
+	bool fetchInternalSaveStateThumbnail(int slotId, bool isHeapSave);
+	uint32 *fetchScummVMSaveStateThumbnail(int slotId, bool isHeapSave, int brightness);
+
+	const char *getGUIString(int stringId) override;
 
 	/* Version 8 script opcodes */
 	void o8_mod();

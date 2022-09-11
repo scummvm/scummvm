@@ -52,6 +52,7 @@ public:
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Behavior Modifier"; }
@@ -60,19 +61,30 @@ public:
 
 private:
 	struct SwitchTaskData {
+		SwitchTaskData() : targetState(false), eventID(EventIDs::kNothing), runtime(nullptr) {}
+
 		bool targetState;
 		EventIDs::EventID eventID;
 		Runtime *runtime;
 	};
 
 	struct PropagateTaskData {
+		PropagateTaskData() : index(0), eventID(EventIDs::kNothing), runtime(nullptr) {}
+
 		size_t index;
 		EventIDs::EventID eventID;
 		Runtime *runtime;
 	};
 
+	struct DisableTaskData {
+		DisableTaskData() : runtime(nullptr) {}
+
+		Runtime *runtime;
+	};
+
 	VThreadState switchTask(const SwitchTaskData &taskData);
 	VThreadState propagateTask(const PropagateTaskData &taskData);
+	VThreadState disableTask(const DisableTaskData &taskData);
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
 	const char *getDefaultName() const override;
@@ -93,6 +105,8 @@ public:
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	void disable(Runtime *runtime) override {}
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Miniscript Modifier"; }
@@ -117,6 +131,8 @@ public:
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	void disable(Runtime *runtime) override {}
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Save And Restore Modifier"; }
@@ -143,6 +159,8 @@ public:
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
+	void disable(Runtime *runtime) override {}
+
 	void linkInternalReferences(ObjectLinkingScope *outerScope) override;
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
@@ -162,6 +180,8 @@ private:
 class SetModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::SetModifier &data);
+
+	void disable(Runtime *runtime) override {}
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Set Modifier"; }
@@ -183,6 +203,8 @@ public:
 
 	bool isAlias() const override;
 
+	void disable(Runtime *runtime) override {}
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Alias Modifier"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
@@ -201,6 +223,8 @@ public:
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	void disable(Runtime *runtime) override {}
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Change Scene Modifier"; }
@@ -233,6 +257,7 @@ public:
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Sound Effect Modifier"; }
@@ -262,10 +287,13 @@ private:
 
 class PathMotionModifierV2 : public Modifier {
 public:
+	PathMotionModifierV2();
+
 	bool load(ModifierLoaderContext &context, const Data::PathMotionModifierV2 &data);
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Path Motion Modifier"; }
@@ -274,6 +302,8 @@ public:
 
 private:
 	struct PointDef {
+		PointDef();
+
 		Common::Point point;
 		uint32 frame;
 		bool useFrame;
@@ -305,6 +335,7 @@ public:
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Drag Motion Modifier"; }
@@ -329,6 +360,7 @@ public:
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Vector Modifier"; }
@@ -363,6 +395,7 @@ public:
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Scene Transition Modifier"; }
@@ -383,10 +416,14 @@ private:
 
 class ElementTransitionModifier : public Modifier {
 public:
+	ElementTransitionModifier();
+	~ElementTransitionModifier();
+
 	bool load(ModifierLoaderContext &context, const Data::ElementTransitionModifier &data);
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
 
 	enum TransitionType {
 		kTransitionTypeRectangularIris,
@@ -412,13 +449,18 @@ private:
 	void continueTransition(Runtime *runtime);
 	void completeTransition(Runtime *runtime);
 
+	void setTransitionProgress(uint32 steps, uint32 maxSteps);
+
 	Event _enableWhen;
 	Event _disableWhen;
 
-	uint32 _rate;	// 1-100, higher is faster
+	uint32 _rate;	// Steps per second
 	uint16 _steps;
 	TransitionType _transitionType;
 	RevealType _revealType;
+
+	uint64 _transitionStartTime;
+	uint32 _currentStep;
 
 	Common::SharedPtr<ScheduledEvent> _scheduledEvent;
 };
@@ -429,6 +471,7 @@ public:
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override {}
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "If Messenger Modifier"; }
@@ -437,6 +480,8 @@ public:
 
 private:
 	struct EvaluateAndSendTaskData {
+		EvaluateAndSendTaskData() : runtime(nullptr) {}
+
 		Common::SharedPtr<MiniscriptThread> thread;
 		Runtime *runtime;
 		DynamicValue incomingData;
@@ -464,6 +509,7 @@ public:
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
 
 	void linkInternalReferences(ObjectLinkingScope *outerScope) override;
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
@@ -498,6 +544,7 @@ public:
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
 
 	void linkInternalReferences(ObjectLinkingScope *outerScope) override;
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
@@ -547,6 +594,7 @@ public:
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
 
 	void linkInternalReferences(ObjectLinkingScope *scope) override;
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
@@ -597,6 +645,7 @@ public:
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
 
 	bool checkKeyEventTrigger(Runtime *runtime, Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt, Common::String &outChar) const;
 	void dispatchMessage(Runtime *runtime, const Common::String &charStr);
@@ -612,8 +661,6 @@ private:
 
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 	void linkInternalReferences(ObjectLinkingScope *scope) override;
-
-	Event _send;
 
 	enum KeyCodeType {
 		kAny = 0x00,
@@ -635,6 +682,8 @@ private:
 		kMacRomanChar = 0xff,
 	};
 
+	Event _send;
+
 	bool _onDown : 1;
 	bool _onUp : 1;
 	bool _onRepeat : 1;
@@ -654,6 +703,7 @@ public:
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Text Style Modifier"; }
@@ -680,6 +730,7 @@ public:
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Graphic Modifier"; }
@@ -705,6 +756,8 @@ class CompoundVariableModifier : public Modifier, public IModifierContainer {
 public:
 	bool load(ModifierLoaderContext &context, const Data::CompoundVariableModifier &data);
 
+	void disable(Runtime *runtime) override;
+
 	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
 
 	IModifierContainer *getChildContainer() override;
@@ -727,13 +780,15 @@ private:
 
 	private:
 		struct ChildSaveLoad {
+			ChildSaveLoad();
+
 			Modifier *modifier;
 			Common::SharedPtr<ModifierSaveLoad> saveLoad;
 		};
 
 		Common::Array<ChildSaveLoad> _childrenSaveLoad;
 
-		CompoundVariableModifier *_modifier;
+		//CompoundVariableModifier *_modifier;
 	};
 
 	Common::SharedPtr<Modifier> shallowClone() const override;

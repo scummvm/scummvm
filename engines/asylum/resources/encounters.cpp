@@ -374,6 +374,16 @@ bool Encounter::handleEvent(const AsylumEvent &evt) {
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_RBUTTONUP:
 		return mouse(evt);
+
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		if ((AsylumAction)evt.customType == kAsylumActionShowMenu) {
+			if (!isSpeaking()
+			 && _isDialogOpen
+			 && !getSpeech()->getTextData()
+			 && !getSpeech()->getTextDataPos())
+				_shouldCloseDialog = true;
+		}
+		return true;
 	}
 
 	return false;
@@ -511,18 +521,6 @@ bool Encounter::update() {
 
 		getSharedData()->setFlag(kFlagRedraw, false);
 		getSharedData()->setNextScreenUpdate(tick + 55);
-	}
-
-	return true;
-}
-
-bool Encounter::key(const AsylumEvent &evt) {
-	if (evt.kbd.keycode == Common::KEYCODE_ESCAPE) {
-		if (!isSpeaking()
-		 && _isDialogOpen
-		 && !getSpeech()->getTextData()
-		 && !getSpeech()->getTextDataPos())
-			_shouldCloseDialog = true;
 	}
 
 	return true;

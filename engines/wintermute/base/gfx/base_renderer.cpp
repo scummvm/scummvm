@@ -36,7 +36,7 @@
 #include "engines/wintermute/base/base_persistence_manager.h"
 
 #ifdef ENABLE_WME3D
-#include "engines/wintermute/base/gfx/x/modelx.h"
+#include "engines/wintermute/base/gfx/xmodel.h"
 #endif
 
 namespace Wintermute {
@@ -213,8 +213,8 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 				}
 
 #ifdef ENABLE_WME3D
-				if (_rectList[i]->_modelX) {
-					if (!_rectList[i]->_modelX->isTransparentAt(x, y)) {
+				if (_rectList[i]->_xmodel) {
+					if (!_rectList[i]->_xmodel->isTransparentAt(x, y)) {
 						return _rectList[i]->_owner;
 					}
 				}

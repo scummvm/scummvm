@@ -182,12 +182,12 @@ public:
 
 	/**
 	 * Move actor around the scene
-	 * @param angleFrom Current actor angle
-	 * @param angleTo Angle to rotate
-	 * @param speed Rotate speed
+	 * @param start Current actor angle
+	 * @param end Angle to rotate
+	 * @param duration Rotate speed
 	 * @param movePtr Pointer to process movements
 	 */
-	void moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMoveStruct *movePtr) const;
+	void initRealAngleConst(int32 start, int32 end, int32 duration, ActorMoveStruct *movePtr) const;
 
 	void processActorMovements(int32 actorIdx);
 };

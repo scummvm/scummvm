@@ -27,7 +27,6 @@
 #include "common/scummsys.h"
 #include "common/algorithm.h"
 #include "common/memory.h"
-#include "common/initializer_list.h"
 
 namespace AGS3 {
 namespace std {

@@ -99,6 +99,9 @@ MacFontFormatting::MacFontFormatting() : fontID(0), fontFlags(0), size(12) {
 MacFontFormatting::MacFontFormatting(uint16 mff_fontID, uint8 mff_fontFlags, uint16 mff_size) : fontID(mff_fontID), fontFlags(mff_fontFlags), size(mff_size) {
 }
 
+MacFormattingSpan::MacFormattingSpan() : spanStart(0) {
+}
+
 WindowParameters::WindowParameters(Runtime *wp_runtime, int32 wp_x, int32 wp_y, int16 wp_width, int16 wp_height, const Graphics::PixelFormat &wp_format)
 	: runtime(wp_runtime), x(wp_x), y(wp_y), width(wp_width), height(wp_height), format(wp_format) {
 }
@@ -256,7 +259,7 @@ static void renderDirectElement(const RenderItem &item, Window *mainWindow) {
 	renderNormalElement(item, mainWindow);	// Meh
 }
 
-void renderProject(Runtime *runtime, Window *mainWindow) {
+void renderProject(Runtime *runtime, Window *mainWindow, bool *outSkipped) {
 	bool sceneChanged = runtime->isSceneGraphDirty();
 
 	Common::Array<Structural *> scenes;
@@ -293,6 +296,9 @@ void renderProject(Runtime *runtime, Window *mainWindow) {
 	}
 
 	if (sceneChanged) {
+		if (outSkipped)
+			*outSkipped = false;
+
 		for (Common::Array<RenderItem>::const_iterator it = normalBucket.begin(), itEnd = normalBucket.end(); it != itEnd; ++it)
 			renderNormalElement(*it, mainWindow);
 
@@ -301,6 +307,9 @@ void renderProject(Runtime *runtime, Window *mainWindow) {
 
 		for (const IPostEffect *postEffect : runtime->getPostEffects())
 			postEffect->renderPostEffect(*mainWindow->getSurface());
+	} else {
+		if (outSkipped)
+			*outSkipped = true;
 	}
 
 	runtime->clearSceneGraphDirty();

@@ -382,9 +382,8 @@ struct AIStateDef {
 	const char *name;
 };
 
-// Structs for Function Table Lookup for SaveGames
-typedef void(*FuncPtr)(AIEntity *);
-typedef void(*EntFuncPtr)(AIEntity *, int, int);
+// Struct for Function Table Lookup for SaveGames
+typedef void(*FuncPtr)(AIEntity *, int, int);
 
 struct AIEntity {
 	AIType type;
@@ -397,7 +396,7 @@ struct AIEntity {
 	FuncPtr aiInit2;									// func ptr to init2 routine - graphic init only (this for LoadGame functionality)
 	FuncPtr aiAction;									// func ptr to action routine
 	FuncPtr aiUse;										// func ptr to use routine
-	EntFuncPtr aiDraw;									// func ptr to extra drawing routine (only for special stuff) - pass in mapx, mapy
+	FuncPtr aiDraw;										// func ptr to extra drawing routine (only for special stuff) - pass in mapx, mapy
 
 	char		luaFuncInit[32];						// Lua function for Init (always called after entity's init). These are ptrs into the map header.
 	char		luaFuncAction[32];						// Lua function for Action
@@ -573,7 +572,7 @@ struct AIEntLevel2 {
 	uint16 y;
 	Tile *draw;
 	AIEntity *e;
-	EntFuncPtr aiDraw;
+	FuncPtr aiDraw;
 	uint32 stunnedWait;
 
 	AIEntLevel2() : x(0), y(0), draw(nullptr), e(nullptr), aiDraw(nullptr), stunnedWait(0) {}

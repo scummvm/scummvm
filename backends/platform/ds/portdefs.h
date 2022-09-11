@@ -32,12 +32,14 @@ typedef unsigned int uint;
 #define SCUMMVM_DONT_DEFINE_TYPES
 
 // Include required headers
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <stddef.h>
+#include <assert.h>
 #include <ctype.h>
+#include <limits.h>
 #include <math.h>
 #include <new>
 

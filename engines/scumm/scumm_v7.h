@@ -70,6 +70,7 @@ protected:
 	Common::Rect _defaultTextClipRect;
 	Common::Rect _wrappedTextClipRect;
 	bool _newTextRenderStyle;
+	int _blastTextRectsQueue = 0;
 
 	int _verbLineSpacing;
 	bool _existLanguageFile;
@@ -98,8 +99,9 @@ public:
 	void addSubtitleToQueue(const byte *text, const Common::Point &pos, byte color, byte charset, bool center, bool wrap);
 	void clearSubtitleQueue();
 	void CHARSET_1() override;
-	bool isSmushActive() { return _smushActive; }
+	bool isSmushActive() override { return _smushActive; }
 	void removeBlastTexts() override;
+	void restoreBlastTextsRects();
 
 protected:
 
@@ -131,12 +133,33 @@ protected:
 
 	void createTextRenderer(GlyphRenderer_v7 *gr) override;
 	void enqueueText(const byte *text, int x, int y, byte color, byte charset, TextStyleFlags flags);
+	void drawTextImmediately(const byte *text, Common::Rect *clipRect, int x, int y, byte color, byte charset, TextStyleFlags flags);
 	void drawBlastTexts() override;
+	void showMessageDialog(const byte *msg) override;
 
 	void actorTalk(const byte *msg) override;
-	void translateText(const byte *text, byte *trans_buff) override;
+	void translateText(const byte *text, byte *trans_buff, int transBufferSize) override;
 	void loadLanguageBundle() override;
 	void playSpeech(const byte *ptr);
+
+	void queryQuit(bool returnToLauncher) override;
+	int getBannerColor(int bannerId) override;
+	const char *getGUIString(int stringId) override;
+	int getGUIStringHeight(const char *str) override;
+	int getGUIStringWidth(const char *str) override;
+	void drawGUIText(const char *buttonString, Common::Rect *clipRect, int textXPos, int textYPos, int textColor, bool centerFlag) override;
+	int getMusicVolume() override;
+	int getSpeechVolume() override;
+	int getSFXVolume() override;
+	void setMusicVolume(int volume) override;
+	void setSpeechVolume(int volume) override;
+	void setSFXVolume(int volume) override;
+	void toggleVoiceMode() override;
+	void handleLoadDuringSmush() override;
+
+	void setDefaultCursor() override;
+	void updateCursor() override;
+	void setCursorTransparency(int a) override;
 
 	void drawVerb(int verb, int mode) override;
 
@@ -156,6 +179,8 @@ protected:
 
 	int _blastTextQueuePos;
 	BlastText _blastTextQueue[50];
+
+	byte *_guiStringTransBuff = nullptr;
 };
 
 

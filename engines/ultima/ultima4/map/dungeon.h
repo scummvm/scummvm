@@ -86,7 +86,7 @@ struct DngRoom {
 	 * tile when entering the dungeon room.
 	 *
 	 * Also, one dungeon room is apparently supposed to be connected
-	 * to another, although the the connection does not exist in the
+	 * to another, although the connection does not exist in the
 	 * DOS U4 dungeon data file.  This was fixed by removing a few
 	 * wall tiles, and relocating a chest and the few monsters around
 	 * it to the center of the room.

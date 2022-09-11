@@ -24,6 +24,7 @@
  *
  */
 
+#include "engines/icb/icb.h"
 #include "engines/icb/common/px_rcutypes.h"
 #include "engines/icb/common/ptr_util.h"
 #include "engines/icb/global_objects.h"
@@ -68,6 +69,8 @@ mcodeFunctionReturnCodes fn_use_medipacks(int32 &result, int32 *params) { return
 mcodeFunctionReturnCodes fn_add_ammo_clips(int32 &result, int32 *params) { return (MS->fn_add_ammo_clips(result, params)); }
 
 mcodeFunctionReturnCodes fn_use_ammo_clips(int32 &result, int32 *params) { return (MS->fn_use_ammo_clips(result, params)); }
+
+mcodeFunctionReturnCodes fn_shutdown_inventory(int32 &result, int32 *params) { return (MS->fn_shutdown_inventory(result, params)); }
 
 mcodeFunctionReturnCodes _game_session::fn_is_carrying(int32 &result, int32 *params) {
 	const char *item_name = (const char *)MemoryUtil::resolvePtr(params[0]);
@@ -142,6 +145,11 @@ mcodeFunctionReturnCodes _game_session::fn_remove_inventory_item(int32 &, int32 
 }
 
 mcodeFunctionReturnCodes _game_session::fn_add_medipacks(int32 &result, int32 *params) {
+	if (g_icb->getGameType() == GType_ELDORADO) {
+		result = 0;
+		return IR_CONT;
+	}
+
 	char pcIconPath[ENGINE_STRING_LEN];
 	bool8 bFlashIcons;
 
@@ -175,6 +183,10 @@ mcodeFunctionReturnCodes _game_session::fn_use_medipacks(int32 &, int32 *params)
 }
 
 mcodeFunctionReturnCodes _game_session::fn_add_ammo_clips(int32 &result, int32 *params) {
+	if (g_icb->getGameType() == GType_ELDORADO) {
+		return IR_CONT;
+	}
+
 	char pcIconPath[ENGINE_STRING_LEN];
 	bool8 bFlashIcons;
 
@@ -300,6 +312,13 @@ mcodeFunctionReturnCodes _game_session::fn_interact_choose(int32 &, int32 *param
 
 	// To fix a GCC compiler warning.
 	return (IR_REPEAT);
+}
+
+mcodeFunctionReturnCodes _game_session::fn_shutdown_inventory(int32 &, int32 *) {
+	g_oIconMenu->CloseDownIconMenu();
+
+	// Calling script can continue.
+	return IR_CONT;
 }
 
 } // End of namespace ICB

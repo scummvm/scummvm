@@ -32,6 +32,8 @@
 #include "engines/icb/common/px_clu_api.h"
 #include "engines/icb/debug.h"
 
+#include "common/endian.h"
+
 namespace ICB {
 
 // This value is returned as an error condition.
@@ -46,80 +48,82 @@ typedef struct {
 	int32 data_offset;      // Offset to the item
 	int32 data_size;        // Size of the items data
 	uint32 name_hash_value; // hash value of name item...
-} _linkedDataFileEntry;
+} LinkedDataFileEntry;
 
-class _linked_data_file { // Should be CObjectFile
-
-public:
-	inline uint32 Fetch_number_of_items() { // how many
-		return (number_of_items);
-	}
-
-	inline uint32 GetHeaderVersion() { return (header.GetVersion()); }
-
-	inline int32 OrderPreserved() { return ((flags) & (ORDER_PRESERVED_FLAG)); }
-
-	inline int32 NameSearchable() { return (!OrderPreserved()); }
-
-	uint32 Fetch_item_number_by_hash(const uint32 hash);
-	uint32 Fetch_item_number_by_name(const char *name); // reference a number by its ascii name
-
-	void *Fetch_item_by_number(uint32 number); // reference a resource by number
-
-	void *Fetch_item_by_name(const char *name); // reference a resource by its ascii name
-
-	void *Fetch_items_name_by_number(uint32 number); // return pointer to name of item number n
-
-	void *Try_fetch_item_by_name(const char *);   // reference a resource by name
-	void *Try_fetch_item_by_hash(uint32); // reference a resource by hash
-
-	void *Try_fetch_item_by_script_name(const char *name);
-
+typedef struct {
 	px_standard_header header;
 
 	uint32 number_of_items;
 	uint32 flags;
 
-	_linkedDataFileEntry list[1]; // 1 used to prevent 0 sized array warnings
-	                              // This structure is a variable size and so should never
-	                              // be a parameter to sizeof anyway
+	LinkedDataFileEntry list[1];  // 1 used to prevent 0 sized array warnings
+								  // This structure is a variable size and so should never
+								  // be a parameter to sizeof anyway
+} LinkedDataFile;
+
+class LinkedDataObject { // Should be CObjectFile
+
+public:
+	static inline uint32 Fetch_number_of_items(LinkedDataFile *file) { // how many
+		return (FROM_LE_32(file->number_of_items));
+	}
+
+	static inline uint32 GetHeaderVersion(LinkedDataFile *file) { return (FROM_LE_32(file->header.version)); }
+
+	static inline int32 OrderPreserved(LinkedDataFile *file) { return (FROM_LE_32(file->flags) & (ORDER_PRESERVED_FLAG)); }
+
+	static inline int32 NameSearchable(LinkedDataFile *file) { return (!OrderPreserved(file)); }
+
+	static uint32 Fetch_item_number_by_hash(LinkedDataFile *file, const uint32 hash);
+	static uint32 Fetch_item_number_by_name(LinkedDataFile *file, const char *name); // reference a number by its ascii name
+
+	static void *Fetch_item_by_number(LinkedDataFile *file, uint32 number); // reference a resource by number
+
+	static void *Fetch_item_by_name(LinkedDataFile *file, const char *name); // reference a resource by its ascii name
+
+	static void *Fetch_items_name_by_number(LinkedDataFile *file, uint32 number); // return pointer to name of item number n
+
+	static void *Try_fetch_item_by_name(LinkedDataFile *file, const char *);   // reference a resource by name
+	static void *Try_fetch_item_by_hash(LinkedDataFile *file, uint32); // reference a resource by hash
+
+	static void *Try_fetch_item_by_script_name(LinkedDataFile *file, const char *name);
 };
 
 // get DATA given NUMBER
-inline void *_linked_data_file::Fetch_item_by_number(uint32 number) {
+inline void *LinkedDataObject::Fetch_item_by_number(LinkedDataFile *file, uint32 number) {
 	// illegal reference number
-	assert(number < number_of_items);
+	assert(number < FROM_LE_32(file->number_of_items));
 	// return address of resource
-	return (((uint8 *)&header) + list[number].data_offset);
+	return (((uint8 *)&file->header) + FROM_LE_32(file->list[number].data_offset));
 }
 
 // get NAME given NUMBER
-inline void *_linked_data_file::Fetch_items_name_by_number(uint32 number) {
+inline void *LinkedDataObject::Fetch_items_name_by_number(LinkedDataFile *file, uint32 number) {
 	// illegal reference number
-	assert(number < number_of_items);
+	assert(number < FROM_LE_32(file->number_of_items));
 	// return name
-	return (((uint8 *)&header) + list[number].name_offset);
+	return (((uint8 *)&file->header) + FROM_LE_32(file->list[number].name_offset));
 }
 
 // this is the one that does the search...
 // get NUMBER given NAME (does search)
-inline uint32 _linked_data_file::Fetch_item_number_by_name(const char *name) {
+inline uint32 LinkedDataObject::Fetch_item_number_by_name(LinkedDataFile *file, const char *name) {
 	uint32 hash;
 
-	if (!NameSearchable()) {
+	if (!NameSearchable(file)) {
 		Fatal_error("This file is not searchable by name and was created as such (name %s)", name);
 	}
 
 	hash = EngineHashString(name);
 
-	return Fetch_item_number_by_hash(hash);
+	return Fetch_item_number_by_hash(file, hash);
 }
 
 // get ITEM given NAME      (uses Try_fetch_item_by_name, fatal error if can't find)
-inline void *_linked_data_file::Fetch_item_by_name(const char *name) {
+inline void *LinkedDataObject::Fetch_item_by_name(LinkedDataFile *file, const char *name) {
 	void *search;
 
-	search = Try_fetch_item_by_name(name);
+	search = Try_fetch_item_by_name(file, name);
 
 	if (search == 0) {
 		Fatal_error("pxLinked_data_file::Fetch_item_by_name Object %s not found", name);
@@ -132,40 +136,40 @@ inline void *_linked_data_file::Fetch_item_by_name(const char *name) {
 }
 
 // get DATA given NAME (uses get NUMBER given NAME and returns 0 if not found or uses get DATA given NUMBER to return DATA)
-inline void *_linked_data_file::Try_fetch_item_by_name(const char *name) {
+inline void *LinkedDataObject::Try_fetch_item_by_name(LinkedDataFile *file, const char *name) {
 	// as Fetch_item_with_name but will return 0 if entry could not be found as opposed to an assert
 	uint32 search = 0;
 
-	search = Fetch_item_number_by_name(name);
+	search = Fetch_item_number_by_name(file, name);
 
 	if (search == PX_LINKED_DATA_FILE_ERROR)
 		return 0; // not found (legal)
 	else
-		return Fetch_item_by_number(search);
+		return Fetch_item_by_number(file, search);
 }
 
 // get DATA given HASH (uses get NUMBER given HASH and returns 0 if not found or uses get DATA given NUMBER to return DATA)
-inline void *_linked_data_file::Try_fetch_item_by_hash(uint32 hash) {
+inline void *LinkedDataObject::Try_fetch_item_by_hash(LinkedDataFile *file, uint32 hash) {
 	// as Fetch_item_with_name but will return 0 if entry could not be found as opposed to an assert
 	uint32 search = 0;
 
-	search = Fetch_item_number_by_hash(hash);
+	search = Fetch_item_number_by_hash(file, hash);
 
 	if (search == PX_LINKED_DATA_FILE_ERROR)
 		return 0; // not found (legal)
 	else
-		return Fetch_item_by_number(search);
+		return Fetch_item_by_number(file, search);
 }
 
-inline void *_linked_data_file::Try_fetch_item_by_script_name(const char *name) {
+inline void *LinkedDataObject::Try_fetch_item_by_script_name(LinkedDataFile *file, const char *name) {
 	uint32 search = 0;
 
 	do {
-		if (strstr((const char *)((uint8 *)&header) + list[search].name_offset, (const char *)name))
-			return (((uint8 *)&header) + list[search].data_offset);
+		if (strstr((const char *)((uint8 *)&file->header) + FROM_LE_32(file->list[search].name_offset), (const char *)name))
+			return (((uint8 *)&file->header) + FROM_LE_32(file->list[search].data_offset));
 
 		search++;
-	} while (search < number_of_items);
+	} while (search < FROM_LE_32(file->number_of_items));
 
 	// not found at all
 	return (0);

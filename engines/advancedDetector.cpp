@@ -186,7 +186,7 @@ DetectedGame AdvancedMetaEngineDetection::toDetectedGame(const ADDetectedGame &a
 			title = extraInfo->gameName.c_str();
 	}
 
-	DetectedGame game(getEngineId(), desc->gameId, title, desc->language, desc->platform, extra, ((desc->flags & (ADGF_UNSUPPORTED | ADGF_WARNING)) != 0));
+	DetectedGame game(getName(), desc->gameId, title, desc->language, desc->platform, extra, ((desc->flags & (ADGF_UNSUPPORTED | ADGF_WARNING)) != 0));
 	game.hasUnknownFiles = adGame.hasUnknownFiles;
 	game.matchedFiles = adGame.matchedFiles;
 
@@ -481,6 +481,7 @@ void AdvancedMetaEngineDetection::composeFileHashMap(FileMap &allFiles, const Co
 				continue;
 
 			composeFileHashMap(allFiles, files, depth - 1, tstr);
+			continue;
 		}
 
 		// Strip any trailing dot
@@ -489,6 +490,8 @@ void AdvancedMetaEngineDetection::composeFileHashMap(FileMap &allFiles, const Co
 
 		if (efname.lastChar() == '.')
 			efname.deleteLastChar();
+
+		debugC(9, kDebugGlobalDetection, "$$ ['%s'] ['%s'] in '%s", tstr.c_str(), efname.c_str(), firstPathComponents(fslist.front().getPath(), '/').c_str());
 
 		allFiles[tstr] = *file;		// Record the presence of this file
 		allFiles[efname] = *file;	// ...and its file name
@@ -581,7 +584,7 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 	const ADGameDescription *g;
 	const byte *descPtr;
 
-	debugC(3, kDebugGlobalDetection, "Starting detection for engine '%s' in dir '%s'", getEngineId(), parent.getPath().c_str());
+	debugC(3, kDebugGlobalDetection, "Starting detection for engine '%s' in dir '%s'", getName(), parent.getPath().c_str());
 
 	preprocessDescriptions();
 
@@ -840,9 +843,11 @@ void AdvancedMetaEngineDetection::preprocessDescriptions() {
 			if (strchr(fileDesc->fileName, '/')) {
 				if (!(_flags & kADFlagMatchFullPaths))
 					warning("Path component detected in entry for '%s' in engine '%s' but no kADFlagMatchFullPaths is set",
-						g->gameId, getEngineId());
+						g->gameId, getName());
 
 				Common::StringTokenizer tok(fileDesc->fileName, "/");
+
+				uint32 depth = 0;
 
 				while (!tok.empty()) {
 					Common::String component = tok.nextToken();
@@ -851,6 +856,14 @@ void AdvancedMetaEngineDetection::preprocessDescriptions() {
 						_globsMap.setVal(component, true);
 						debugC(4, kDebugGlobalDetection, "  Added '%s' to globs", component.c_str());
 					}
+
+					depth++;
+				}
+
+				if (depth > _maxScanDepth) {
+					_maxScanDepth = depth;
+
+					debugC(4, kDebugGlobalDetection, "  Increased scan depth to %d", _maxScanDepth);
 				}
 			}
 		}
@@ -858,7 +871,7 @@ void AdvancedMetaEngineDetection::preprocessDescriptions() {
 		// Check if the detection entry have only files from the blacklist
 		if (isEntryGrayListed(g)) {
 			debug(0, "WARNING: Detection entry for '%s' in engine '%s' contains only blacklisted names. Add more files to the entry (%s)",
-				g->gameId, getEngineId(), g->filesDescriptions[0].md5);
+				g->gameId, getName(), g->filesDescriptions[0].md5);
 		}
 	}
 }

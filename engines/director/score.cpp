@@ -168,7 +168,7 @@ void Score::setStartToLabel(Common::String &label) {
 }
 
 void Score::gotoLoop() {
-	// This command has the playback head contonuously return to the first marker to to the left and then loop back.
+	// This command has the playback head continuously return to the first marker to the left and then loop back.
 	// If no marker are to the left of the playback head, the playback head continues to the right.
 	if (_labels == nullptr) {
 		_nextFrame = 1;

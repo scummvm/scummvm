@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	maccursor.o \
 	macgui/datafiles.o \
 	macgui/macbutton.o \
+	macgui/macdialog.o \
 	macgui/macfontmanager.o \
 	macgui/macmenu.o \
 	macgui/mactext.o \

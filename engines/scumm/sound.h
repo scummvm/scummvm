@@ -154,13 +154,15 @@ public:
 	int getCurrentCDSound() const { return _currentCDSound; }
 	int getCDTrackIdFromSoundId(int soundId, int &loops, int &start);
 	bool isRolandLoom() const;
-	bool useReplacementAudioTracks() const { return _useReplacementAudioTracks; }
+	bool useReplacementAudio() const { return _useReplacementAudioTracks; }
 	void updateMusicTimer();
 	int getMusicTimer() const { return _musicTimer; }
 	int getCDMusicTimer() const { return _cdMusicTimer; }
 
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
 	void restoreAfterLoad();
+
+	bool isAudioDisabled();
 
 protected:
 	void setupSfxFile();

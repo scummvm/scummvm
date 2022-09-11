@@ -51,7 +51,7 @@ public:
 	// higher (up to 12 bits, depending on the channel use). I have
 	// added an "output16bit" option which will output the unmodified
 	// intermediate data (but converting it from unsigned to signed).
-	bool init(bool hiQuality, InterpolationMode imode, bool output16bit);
+	bool init(bool hiQuality, InterpolationMode imode, int numChanSfx, bool output16bit);
 
 	void registerSamples(const uint16 *resList, bool registerOnly);
 	void releaseSamples();

@@ -24,8 +24,6 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
 
-#include <limits.h>
-
 #include "engines/advancedDetector.h"
 #include "engines/metaengine.h"
 #include "base/commandLine.h"
@@ -55,20 +53,16 @@ namespace Base {
 
 #ifndef DISABLE_COMMAND_LINE
 
-#if !defined(__DS__)
+#ifndef DISABLE_HELP_STRINGS
 static const char USAGE_STRING[] =
 	"%s: %s\n"
 	"Usage: %s [OPTIONS]... [GAME]\n"
 	"\n"
 	"Try '%s --help' for more options.\n"
 ;
-#endif
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
-#if defined(ANDROID) || defined(__DS__) || defined(__3DS__)
-static const char HELP_STRING[] = "NoUsageString"; // save more data segment space
-#else
-static const char HELP_STRING[] =
+static const char HELP_STRING1[] =
 	"ScummVM - Graphical Adventure Game Interpreter\n"
 	"Usage: %s [OPTIONS]... [GAME]\n"
 	"  -v, --version            Display ScummVM version information and exit\n"
@@ -125,9 +119,19 @@ static const char HELP_STRING[] =
 	"  --themepath=PATH         Path to where GUI themes are stored\n"
 	"  --list-themes            Display list of all usable GUI themes\n"
 	"  -e, --music-driver=MODE  Select music driver (see README for details)\n"
-	"  --list-audio-devices     List all available audio devices\n"
-	"  -q, --language=LANG      Select language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,\n"
-	"                           hb,ru,cz)\n"
+	"  --list-audio-devices     List all available audio devices\n";
+
+// Make it match the indentation of the main list
+#define kCommandLineIndent \
+	"                           "
+#define kCommandMaxWidth 79
+static const char HELP_STRING2[] =
+	"  -q, --language=LANG      Select language (";
+
+static const char HELP_STRING3[] =
+	"  --platform=WORD          Specify platform of game (allowed values: ";
+
+static const char HELP_STRING4[] =
 	"  -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)\n"
 	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)\n"
 	"  -r, --speech-volume=NUM  Set the speech volume, 0-255 (default: 192)\n"
@@ -146,9 +150,6 @@ static const char HELP_STRING[] =
 	"                           drive, path, or numeric index (default: 0 = best\n"
 	"                           choice drive)\n"
 	"  --joystick[=NUM]         Enable joystick input (default: 0 = first joystick)\n"
-	"  --platform=WORD          Specify platform of game (allowed values: 2gs, 3do,\n"
-	"                           acorn, amiga, atari, c64, fmtowns, nes, mac, pc, pc98,\n"
-	"                           pce, segacd, wii, windows)\n"
 	"  --savepath=PATH          Path to where saved games are stored\n"
 	"  --extrapath=PATH         Extra path to additional game data\n"
 	"  --iconspath=PATH         Path to additional icons for the launcher grid view\n"
@@ -241,6 +242,7 @@ static const char *s_appName = "scummvm";
 static void NORETURN_PRE usage(MSVC_PRINTF const char *s, ...) GCC_PRINTF(1, 2) NORETURN_POST;
 
 static void usage(const char *s, ...) {
+#ifndef DISABLE_HELP_STRINGS
 	char buf[STRINGBUFLEN];
 	va_list va;
 
@@ -248,7 +250,6 @@ static void usage(const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-#if !defined(__DS__)
 	printf(USAGE_STRING, s_appName, buf, s_appName, s_appName);
 #endif
 	exit(1);
@@ -952,10 +953,10 @@ static void listGames(const Common::String &engineID) {
 			continue;
 		}
 
-		if (all || (p->getEngineId() == engineID)) {
+		if (all || (p->getName() == engineID)) {
 			PlainGameList list = p->get<MetaEngineDetection>().getSupportedGames();
 			for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
-				printf("%-30s %s\n", buildQualifiedGameName(p->get<MetaEngineDetection>().getEngineId(), v->gameId).c_str(), v->description);
+				printf("%-30s %s\n", buildQualifiedGameName(p->get<MetaEngineDetection>().getName(), v->gameId).c_str(), v->description);
 			}
 		}
 	}
@@ -972,10 +973,10 @@ static void listAllGames(const Common::String &engineID) {
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 
-		if (any || (metaEngine.getEngineId() == engineID)) {
+		if (any || (metaEngine.getName() == engineID)) {
 			PlainGameList list = metaEngine.getSupportedGames();
 			for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
-				printf("%-30s %s\n", buildQualifiedGameName(metaEngine.getEngineId(), v->gameId).c_str(), v->description);
+				printf("%-30s %s\n", buildQualifiedGameName(metaEngine.getName(), v->gameId).c_str(), v->description);
 			}
 		}
 	}
@@ -994,7 +995,7 @@ static void listEngines() {
 			continue;
 		}
 
-		printf("%-15s %s\n", p->get<MetaEngineDetection>().getEngineId(), p->get<MetaEngineDetection>().getName());
+		printf("%-15s %s\n", p->get<MetaEngineDetection>().getName(), p->get<MetaEngineDetection>().getEngineName());
 	}
 }
 
@@ -1006,7 +1007,7 @@ static void listAllEngines() {
 	const PluginList &plugins = EngineMan.getPlugins();
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
-		printf("%-15s %s\n", metaEngine.getEngineId(), metaEngine.getName());
+		printf("%-15s %s\n", metaEngine.getName(), metaEngine.getEngineName());
 	}
 }
 
@@ -1060,10 +1061,10 @@ static void listDebugFlags(const Common::String &engineID) {
 		const PluginList &plugins = EngineMan.getPlugins();
 		for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 			const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
-			if (metaEngine.getEngineId() == engineID) {
+			if (metaEngine.getName() == engineID) {
 				printf("Flag name       Flag description                                           \n");
 				printf("--------------- ------------------------------------------------------\n");
-				printf("ID=%-12s Name=%s\n", metaEngine.getEngineId(), metaEngine.getName());
+				printf("ID=%-12s Name=%s\n", metaEngine.getName(), metaEngine.getEngineName());
 				printDebugFlags(metaEngine.getDebugChannels());
 				return;
 			}
@@ -1080,7 +1081,7 @@ static void listAllEngineDebugFlags() {
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 		printf("--------------- ------------------------------------------------------\n");
-		printf("ID=%-12s Name=%s\n", metaEngine.getEngineId(), metaEngine.getName());
+		printf("ID=%-12s Name=%s\n", metaEngine.getName(), metaEngine.getEngineName());
 		printDebugFlags(metaEngine.getDebugChannels());
 	}
 }
@@ -1737,7 +1738,44 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		printf("Features compiled in: %s\n", gScummVMFeatures);
 		return true;
 	} else if (command == "help") {
-		printf(HELP_STRING, s_appName);
+#ifndef DISABLE_HELP_STRINGS
+		printf(HELP_STRING1, s_appName);
+
+		Common::String s = HELP_STRING2;
+		Common::List<Common::String> langs = Common::getLanguageList();
+
+		s += langs.front();
+		langs.pop_front();
+
+		for (auto &l : langs) {
+			if (s.size() + l.size() + 2 >= kCommandMaxWidth) {
+				printf("%s,\n", s.c_str());
+				s = kCommandLineIndent + l;
+			} else {
+				s += ", " + l;
+			}
+		}
+
+		printf("%s)\n", s.c_str());
+
+		s = HELP_STRING3;
+		Common::List<Common::String> platforms = Common::getPlatformList();
+		s += platforms.front();
+		langs.pop_front();
+
+		for (auto &p : platforms) {
+			if (s.size() + p.size() + 2 >= kCommandMaxWidth) {
+				printf("%s,\n", s.c_str());
+				s = kCommandLineIndent + p;
+			} else {
+				s += ", " + p;
+			}
+		}
+
+		printf("%s)\n", s.c_str());
+
+		printf(HELP_STRING4);
+#endif
 		return true;
 	} else if (command == "auto-detect") {
 		bool resursive = settings["recursive"] == "true";

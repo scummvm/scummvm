@@ -66,10 +66,10 @@ static const SkyVersion skyVersions[] = {
 
 class SkyMetaEngineDetection : public MetaEngineDetection {
 public:
-	const char *getName() const override;
+	const char *getEngineName() const override;
 	const char *getOriginalCopyright() const override;
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "sky";
 	}
 
@@ -79,7 +79,7 @@ public:
 	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) override;
 };
 
-const char *SkyMetaEngineDetection::getName() const {
+const char *SkyMetaEngineDetection::getEngineName() const {
 	return "Beneath a Steel Sky";
 }
 
@@ -162,12 +162,12 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 		if (sv->dinnerTableEntries) {
 			Common::String extra = Common::String::format("v0.0%d %s", sv->version, sv->extraDesc);
 
-			DetectedGame game = DetectedGame(getEngineId(), skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown, extra);
+			DetectedGame game = DetectedGame(getName(), skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown, extra);
 			game.setGUIOptions(sv->guioptions);
 
 			detectedGames.push_back(game);
 		} else {
-			detectedGames.push_back(DetectedGame(getEngineId(), skySetting.gameId, skySetting.description));
+			detectedGames.push_back(DetectedGame(getName(), skySetting.gameId, skySetting.description));
 		}
 	}
 

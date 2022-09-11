@@ -104,7 +104,7 @@ void Versailles_DialogsManager::playDialog(const Common::String &video, const Co
 	}
 	soundFName = _engine->prepareFileName(soundFName, "wav");
 
-	Video::HNMDecoder *videoDecoder = new Video::HNMDecoder(true);
+	Video::HNMDecoder *videoDecoder = new Video::HNMDecoder(g_system->getScreenFormat(), true);
 
 	if (!videoDecoder->loadFile(videoFName)) {
 		warning("Failed to open movie file %s/%s", video.c_str(), videoFName.c_str());
@@ -355,7 +355,7 @@ uint Versailles_DialogsManager::askPlayerQuestions(const Common::String &video,
 void Versailles_DialogsManager::loadFrame(const Common::String &video) {
 	Common::String videoFName(_engine->prepareFileName(video, "hnm"));
 
-	Video::HNMDecoder *videoDecoder = new Video::HNMDecoder();
+	Video::HNMDecoder *videoDecoder = new Video::HNMDecoder(g_system->getScreenFormat());
 
 	if (!videoDecoder->loadFile(videoFName)) {
 		warning("Failed to open movie file %s/%s", video.c_str(), videoFName.c_str());

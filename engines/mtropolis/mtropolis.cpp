@@ -50,15 +50,11 @@
 
 namespace MTropolis {
 
-MTropolisEngine::MTropolisEngine(OSystem *syst, const MTropolisGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+MTropolisEngine::MTropolisEngine(OSystem *syst, const MTropolisGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc), _saveWriter(nullptr), _isTriggeredAutosave(false) {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Resource");
 
-	if (gameDesc->gameID == GID_OBSIDIAN && _gameDescription->desc.platform == Common::kPlatformWindows) {
-		SearchMan.addSubDirectoryMatching(gameDataDir, "Obsidian");
-		SearchMan.addSubDirectoryMatching(gameDataDir, "Obsidian/RESOURCE");
-		SearchMan.addSubDirectoryMatching(gameDataDir, "RESOURCE");
-	}
+	bootAddSearchPaths(gameDataDir, *gameDesc);
 }
 
 MTropolisEngine::~MTropolisEngine() {
@@ -109,7 +105,14 @@ Common::Error MTropolisEngine::run() {
 	ColorDepthMode preferredColorDepthMode = kColorDepthMode8Bit;
 	ColorDepthMode enhancedColorDepthMode = kColorDepthMode8Bit;
 
-	_runtime.reset(new Runtime(_system, _mixer, this, this));
+	Common::SharedPtr<SubtitleRenderer> subRenderer;
+
+	if (ConfMan.getBool("subtitles"))
+		subRenderer.reset(new SubtitleRenderer(ConfMan.getBool("mtropolis_mod_sound_gameplay_subtitles")));
+
+	_runtime.reset(new Runtime(_system, _mixer, this, this, subRenderer));
+
+	subRenderer.reset();
 
 	Common::SharedPtr<ProjectDescription> projectDesc = bootProject(*_gameDescription);
 
@@ -121,8 +124,9 @@ Common::Error MTropolisEngine::run() {
 
 		HackSuites::addObsidianQuirks(*_gameDescription, _runtime->getHacks());
 		HackSuites::addObsidianBugFixes(*_gameDescription, _runtime->getHacks());
+		HackSuites::addObsidianSaveMechanism(*_gameDescription, _runtime->getHacks());
 
-		if (ConfMan.getBool("mtropolis_mod_auto_save"))
+		if (ConfMan.getBool("mtropolis_mod_auto_save_at_checkpoints"))
 			HackSuites::addObsidianAutoSaves(*_gameDescription, _runtime->getHacks(), this);
 
 		if (ConfMan.getBool("mtropolis_mod_obsidian_widescreen")) {
@@ -207,7 +211,7 @@ Common::Error MTropolisEngine::run() {
 
 	// If that fails, then try to find the best one available
 	if (selectedMode == kColorDepthModeInvalid) {
-		for (int i = preferredColorDepthMode - 1; i >= 0; i++) {
+		for (int i = preferredColorDepthMode - 1; i >= 0; i--) {
 			if (haveExactMode[i] || haveCloseMode[i]) {
 				selectedMode = static_cast<ColorDepthMode>(i);
 				break;
@@ -260,6 +264,18 @@ Common::Error MTropolisEngine::run() {
 
 void MTropolisEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
+}
+
+
+
+bool MTropolisEngine::hasFeature(EngineFeature f) const {
+	switch (f) {
+	case kSupportsReturnToLauncher:
+	case kSupportsSavingDuringRuntime:
+		return true;
+	default:
+		return false;
+	};
 }
 
 } // End of namespace MTropolis

@@ -125,7 +125,7 @@ private:
 	void resetScene();
 
 	// the first actor is the own hero
-	ActorStruct _sceneActors[NUM_MAX_ACTORS];
+	ActorStruct _sceneActors[NUM_MAX_ACTORS]; // ListObjet
 	int32 _currentSceneSize = 0;
 	bool _isOutsideScene = false; // lba2
 

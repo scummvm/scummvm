@@ -71,7 +71,7 @@ bool U8SaveFile::readMetadata() {
 }
 
 bool U8SaveFile::findIndex(const Std::string &name, uint32 &index) const {
-	Std::map<Common::String, uint32>::const_iterator iter;
+	Common::HashMap<Common::String, uint32>::const_iterator iter;
 	iter = _indices.find(name);
 	if (iter == _indices.end()) return false;
 	index = iter->_value;

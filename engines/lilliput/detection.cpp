@@ -119,11 +119,11 @@ public:
 	LilliputMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(LilliputGameDescription), lilliputGames) {
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "lilliput";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Lilliput";
 	}
 

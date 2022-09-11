@@ -43,13 +43,25 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 
 	uint32 offset = textStream.readUint32();
 	if (offset != 12) {
-		error("Stxt init: unhandlef offset");
+		error("Stxt init: unhandled offset");
 		return;
 	}
 	uint32 strLen = textStream.readUint32();
 	uint32 dataLen = textStream.readUint32();
 	Common::String text = textStream.readString(0, strLen);
 	debugC(3, kDebugText, "Stxt init: offset: %d strLen: %d dataLen: %d textlen: %u", offset, strLen, dataLen, text.size());
+
+	// TODO: Before applying formatting and decoding the text to a U32String,
+	// check if the following hold true:
+	// - The engine platform doesn't match the file platform
+	// - The movie has a valid font table (FXmp)
+	// - The font table has a mapping between the two platforms
+	// - The text has sections written in a font without a Map None qualifier
+	// If yes, then just those sections should be preprocessed by churning the
+	// bytes through the appropriate mapping (e.g. if running a Mac file on
+	// Windows, use the "Mac: => Win:" rules).
+	// Confirmed in real Director 4 that these sections are preprocessed in
+	// the cast member on startup and not faked at text render time.
 
 	uint16 formattingCount = textStream.readUint16();
 	uint32 prevPos = 0;

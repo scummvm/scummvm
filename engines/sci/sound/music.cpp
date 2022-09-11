@@ -1323,7 +1323,10 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 	if (_playList.empty())
 		return map;
 
-	// TODO: set reverb, either from first song, or from global???
+	// Set reverb, either from first song, or from global (verified with KQ5 floppy
+	// and LSL6 interpreters, fixes bug # 11683 ("QFG2 - Heavy reverb from city street sounds...").
+	int8 reverb = _playList.front()->reverb;
+	_pMidiDrv->setReverb(reverb == 127 ? _globalReverb : reverb);
 
 	MusicList::iterator songIter;
 	int songIndex = -1;

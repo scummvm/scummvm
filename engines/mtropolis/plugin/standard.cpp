@@ -180,7 +180,7 @@ private:
 	uint8 _channel;
 	uint8 _note;
 	uint8 _volume;
-	uint8 _program;
+	//uint8 _program;
 
 	bool _initialized;
 };
@@ -301,7 +301,7 @@ void MidiFilePlayerImpl::onTimer() {
 }
 
 MidiNotePlayerImpl::MidiNotePlayerImpl(const Common::SharedPtr<MidiCombinerSource> &outputDriver, uint32 timerRate)
-	: _timerRate(timerRate), _durationRemaining(0), _outputDriver(outputDriver), _channel(0), _note(0), _program(0), _initialized(false) {
+	: _timerRate(timerRate), _durationRemaining(0), _outputDriver(outputDriver), _channel(0), _note(0), /* _program(0), */_initialized(false), _volume(100) {
 }
 
 MidiNotePlayerImpl::~MidiNotePlayerImpl() {
@@ -332,7 +332,13 @@ void MidiNotePlayerImpl::play(uint8 volume, uint8 channel, uint8 program, uint8 
 	_note = note;
 	_volume = volume;
 
-	const uint16 hpVolume = volume * 0x3fff / 100;
+	// GM volume scale to linear is x^4 so we need the 4th root of the volume, and need to rescale it from 0-100 to 0-0x3f80
+	// = 0x3f80 / sqrt(sqrt(100))
+	const double volumeMultiplier = 5140.5985643697174420974013458299;
+
+	if (volume > 100)
+		volume = 100;
+	uint16 hpVolume = static_cast<uint16>(floor(sqrt(sqrt(volume)) * volumeMultiplier));
 
 	_outputDriver->send(MidiDriver_BASE::MIDI_COMMAND_PROGRAM_CHANGE | _channel, program, 0);
 	_outputDriver->send(MidiDriver_BASE::MIDI_COMMAND_CONTROL_CHANGE | _channel, MidiDriver_BASE::MIDI_CONTROLLER_EXPRESSION, 127);
@@ -500,7 +506,7 @@ private:
 		void deallocate();
 
 		SourceChannelState _sourceChannelState[MidiDriver_BASE::MIDI_CHANNEL_COUNT];
-		uint8 _masterVolume;
+		uint16 _root4MasterVolume;
 		bool _isAllocated;
 	};
 
@@ -633,7 +639,7 @@ void MidiCombinerDynamic::deallocateSource(uint sourceID) {
 
 void MidiCombinerDynamic::setSourceVolume(uint sourceID, uint8 volume) {
 	SourceState &src = _sources[sourceID];
-	src._masterVolume = volume;
+	src._root4MasterVolume = static_cast<uint16>(floor(sqrt(sqrt(volume)) * 16400.0));
 
 	for (uint i = 0; i < ARRAYSIZE(_outputChannels); i++) {
 		OutputChannelState &ch = _outputChannels[i];
@@ -1262,8 +1268,15 @@ void MidiCombinerDynamic::syncSourceHRController(uint outputChannel, OutputChann
 
 	uint16 effectiveValue = srcMidiChState._hrControllers[hrController];
 
-	if (hrController == MidiDriver_BASE::MIDI_CONTROLLER_VOLUME)
-		effectiveValue = effectiveValue * srcState._masterVolume / 255;
+	if (hrController == MidiDriver_BASE::MIDI_CONTROLLER_VOLUME) {
+		// GM volume to gain control is 40*log10(V/127)
+		// This means linear scale is (volume/0x3f80)^4
+		// To modulate the volume linearly, we must multiply the volume by the 4th root
+		// of the volume.
+		uint32 effectiveValueScaled = static_cast<uint32>(srcState._root4MasterVolume) * static_cast<uint32>(effectiveValue);
+		effectiveValueScaled += (effectiveValueScaled >> 16) + 1u;
+		effectiveValue = static_cast<uint16>(effectiveValueScaled >> 16);
+	}
 
 	if (outState._hrControllers[hrController] == effectiveValue)
 		return;
@@ -1370,7 +1383,7 @@ MidiCombinerDynamic::SourceChannelState::SourceChannelState() {
 void MidiCombinerDynamic::SourceChannelState::reset() {
 }
 
-MidiCombinerDynamic::SourceState::SourceState() : _isAllocated(false), _masterVolume(255) {
+MidiCombinerDynamic::SourceState::SourceState() : _isAllocated(false), _root4MasterVolume(0xffffu) {
 }
 
 void MidiCombinerDynamic::SourceState::allocate() {
@@ -1541,14 +1554,17 @@ void MultiMidiPlayer::stopNote(MidiNotePlayer *player) {
 }
 
 uint32 MultiMidiPlayer::getBaseTempo() const {
-	return _driver->getBaseTempo();
+	if (_driver)
+		return _driver->getBaseTempo();
+	return 1;
 }
 
 void MultiMidiPlayer::send(uint32 b) {
-	_driver->send(b);
+	if (_driver)
+		_driver->send(b);
 }
 
-CursorModifier::CursorModifier() {
+CursorModifier::CursorModifier() : _cursorID(0) {
 }
 
 bool CursorModifier::respondsToEvent(const Event &evt) const {
@@ -1561,9 +1577,14 @@ VThreadState CursorModifier::consumeMessage(Runtime *runtime, const Common::Shar
 		runtime->setModifierCursorOverride(_cursorID);
 	}
 	if (_removeWhen.respondsTo(msg->getEvent())) {
+		// This doesn't call "disable" because the behavior is actually different.
+		// Disabling a cursor modifier doesn't seem to remove it.
 		runtime->clearModifierCursorOverride();
 	}
 	return kVThreadReturn;
+}
+
+void CursorModifier::disable(Runtime *runtime) {
 }
 
 bool CursorModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::CursorModifier &data) {
@@ -1581,6 +1602,9 @@ Common::SharedPtr<Modifier> CursorModifier::shallowClone() const {
 
 const char *CursorModifier::getDefaultName() const {
 	return "Cursor Modifier";
+}
+
+STransCtModifier::STransCtModifier() : _transitionType(0), _transitionDirection(0), _steps(0), _duration(0), _fullScreen(false) {
 }
 
 bool STransCtModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::STransCtModifier &data) {
@@ -1629,9 +1653,13 @@ VThreadState STransCtModifier::consumeMessage(Runtime *runtime, const Common::Sh
 		}
 	}
 	if (_disableWhen.respondsTo(msg->getEvent()))
-		runtime->setSceneTransitionEffect(false, nullptr);
+		disable(runtime);
 
 	return kVThreadReturn;
+}
+
+void STransCtModifier::disable(Runtime *runtime) {
+	runtime->setSceneTransitionEffect(false, nullptr);
 }
 
 bool STransCtModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
@@ -1705,8 +1733,46 @@ MiniscriptInstructionOutcome STransCtModifier::scriptSetSteps(MiniscriptThread *
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
-MediaCueMessengerModifier::MediaCueMessengerModifier() : _isActive(false) {
+MediaCueMessengerModifier::CueSourceUnion::CueSourceUnion() : asUnset(0) {
+}
+
+MediaCueMessengerModifier::CueSourceUnion::~CueSourceUnion() {
+}
+
+template<class T, T (MediaCueMessengerModifier::CueSourceUnion::*TMember)>
+void MediaCueMessengerModifier::CueSourceUnion::construct(const T &value) {
+	T *field = &(this->*TMember);
+	new (field) T(value);
+}
+
+template<class T, T (MediaCueMessengerModifier::CueSourceUnion::*TMember)>
+void MediaCueMessengerModifier::CueSourceUnion::destruct() {
+	T *field = &(this->*TMember);
+	field->~T();
+}
+
+MediaCueMessengerModifier::MediaCueMessengerModifier() : _isActive(false), _cueSourceType(kCueSourceInvalid) {
 	_mediaCue.sourceModifier = this;
+}
+
+MediaCueMessengerModifier::~MediaCueMessengerModifier() {
+	switch (_cueSourceType) {
+	case kCueSourceInteger:
+		_cueSource.destruct<int32, &CueSourceUnion::asInt>();
+		break;
+	case kCueSourceIntegerRange:
+		_cueSource.destruct<IntRange, &CueSourceUnion::asIntRange>();
+		break;
+	case kCueSourceVariableReference:
+		_cueSource.destruct<uint32, &CueSourceUnion::asVarRefGUID>();
+		break;
+	case kCueSourceLabel:
+		_cueSource.destruct<Label, &CueSourceUnion::asLabel>();
+		break;
+	default:
+		_cueSource.destruct<uint64, &CueSourceUnion::asUnset>();
+		break;
+	}
 }
 
 bool MediaCueMessengerModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::MediaCueMessengerModifier &data) {
@@ -1830,16 +1896,20 @@ VThreadState MediaCueMessengerModifier::consumeMessage(Runtime *runtime, const C
 		}
 	}
 	if (_disableWhen.respondsTo(msg->getEvent())) {
-		if (_isActive) {
-			Structural *owner = findStructuralOwner();
-			if (owner && owner->isElement())
-				static_cast<Element *>(owner)->removeMediaCue(&_mediaCue);
-
-			_isActive = false;
-		}
+		disable(runtime);
 	}
 
 	return kVThreadReturn;
+}
+
+void MediaCueMessengerModifier::disable(Runtime *runtime) {
+	if (_isActive) {
+		Structural *owner = findStructuralOwner();
+		if (owner && owner->isElement())
+			static_cast<Element *>(owner)->removeMediaCue(&_mediaCue);
+
+		_isActive = false;
+	}
 }
 
 Common::SharedPtr<Modifier> MediaCueMessengerModifier::shallowClone() const {
@@ -1870,7 +1940,7 @@ void MediaCueMessengerModifier::visitInternalReferences(IStructuralReferenceVisi
 	_mediaCue.send.visitInternalReferences(visitor);
 }
 
-ObjectReferenceVariableModifier::ObjectReferenceVariableModifier() : _setToSourceParentWhen(Event::create()) {
+ObjectReferenceVariableModifier::ObjectReferenceVariableModifier() {
 }
 
 bool ObjectReferenceVariableModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::ObjectReferenceVariableModifier &data) {
@@ -2246,8 +2316,11 @@ bool ObjectReferenceVariableModifier::SaveLoad::loadInternal(Common::ReadStream 
 	return true;
 }
 
-MidiModifier::MidiModifier() : _plugIn(nullptr), _filePlayer(nullptr), _notePlayer(nullptr), _mutedTracks(0),
-	_singleNoteChannel(0), _singleNoteNote(0), _runtime(nullptr), _volume(100) {
+
+MidiModifier::MidiModifier() : _mode(kModeFile), _volume(100), _mutedTracks(0), /* _singleNoteChannel(0), _singleNoteNote(0), */
+							   _plugIn(nullptr), _filePlayer(nullptr), _notePlayer(nullptr) /*, _runtime(nullptr) */ {
+
+	memset(&this->_modeSpecific, 0, sizeof(this->_modeSpecific));
 }
 
 MidiModifier::~MidiModifier() {
@@ -2313,6 +2386,16 @@ bool MidiModifier::respondsToEvent(const Event &evt) const {
 
 VThreadState MidiModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (_executeWhen.respondsTo(msg->getEvent())) {
+		const SubtitleTables &subtitleTables = runtime->getProject()->getSubtitles();
+		if (subtitleTables.modifierMapping) {
+			const Common::String *subSetIDPtr = subtitleTables.modifierMapping->findSubtitleSetForModifierGUID(getStaticGUID());
+			if (subSetIDPtr) {
+				// Don't currently support anything except play-on-start subs for MIDI
+				SubtitlePlayer subtitlePlayer(runtime, *subSetIDPtr, subtitleTables);
+				subtitlePlayer.update(0, 1);
+			}
+		}
+
 		if (_mode == kModeFile) {
 			if (_embeddedFile) {
 				debug(2, "MIDI (%x '%s'): Playing embedded file", getStaticGUID(), getName().c_str());
@@ -2329,17 +2412,21 @@ VThreadState MidiModifier::consumeMessage(Runtime *runtime, const Common::Shared
 		}
 	}
 	if (_terminateWhen.respondsTo(msg->getEvent())) {
-		if (_filePlayer) {
-			_plugIn->getMidi()->deleteFilePlayer(_filePlayer);
-			_filePlayer = nullptr;
-		}
-		if (_notePlayer) {
-			_plugIn->getMidi()->deleteNotePlayer(_notePlayer);
-			_notePlayer = nullptr;
-		}
+		disable(runtime);
 	}
 
 	return kVThreadReturn;
+}
+
+void MidiModifier::disable(Runtime *runtime) {
+	if (_filePlayer) {
+		_plugIn->getMidi()->deleteFilePlayer(_filePlayer);
+		_filePlayer = nullptr;
+	}
+	if (_notePlayer) {
+		_plugIn->getMidi()->deleteNotePlayer(_notePlayer);
+		_notePlayer = nullptr;
+	}
 }
 
 void MidiModifier::playSingleNote() {
@@ -2384,6 +2471,9 @@ MiniscriptInstructionOutcome MidiModifier::writeRefAttribute(MiniscriptThread *t
 	} else if (attrib == "tempo") {
 		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetTempo>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "mutetrack") {
+		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetMuteTrack>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	return Modifier::writeRefAttribute(thread, result, attrib);
@@ -2398,7 +2488,7 @@ MiniscriptInstructionOutcome MidiModifier::writeRefAttributeIndexed(MiniscriptTh
 		}
 
 		result.pod.objectRef = this;
-		result.pod.ptrOrOffset = asInteger - 1;
+		result.pod.ptrOrOffset = static_cast<uintptr>(asInteger) - 1;
 		result.pod.ifc = DynamicValueWriteInterfaceGlue<MuteTrackProxyInterface>::getInstance();
 
 		return kMiniscriptInstructionOutcomeContinue;
@@ -2475,7 +2565,7 @@ MiniscriptInstructionOutcome MidiModifier::scriptSetNoteDuration(MiniscriptThrea
 		DynamicValue converted;
 		if (!value.convertToType(DynamicValueTypes::kFloat, converted))
 			return kMiniscriptInstructionOutcomeFailed;
-		asDouble = converted.getFloat();	
+		asDouble = converted.getFloat();
 	}
 
 	if (_mode == kModeSingleNote) {
@@ -2552,7 +2642,25 @@ MiniscriptInstructionOutcome MidiModifier::scriptSetPlayNote(MiniscriptThread *t
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
-MiniscriptInstructionOutcome MidiModifier::scriptSetMuteTrack(MiniscriptThread *thread, size_t trackIndex, bool muted) {
+MiniscriptInstructionOutcome MidiModifier::scriptSetMuteTrack(MiniscriptThread *thread, const DynamicValue &value) {
+	if (value.getType() != DynamicValueTypes::kBoolean) {
+		thread->error("Invalid type for mutetrack");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	uint16 mutedTracks = value.getBool() ? 0xffffu : 0u;
+
+	if (mutedTracks != _mutedTracks) {
+		_mutedTracks = mutedTracks;
+
+		if (_filePlayer)
+			_plugIn->getMidi()->setPlayerMutedTracks(_filePlayer, mutedTracks);
+	}
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome MidiModifier::scriptSetMuteTrackIndexed(MiniscriptThread *thread, size_t trackIndex, bool muted) {
 	if (trackIndex >= 16) {
 		thread->error("Invalid track index for mutetrack");
 		return kMiniscriptInstructionOutcomeFailed;
@@ -2582,7 +2690,7 @@ MiniscriptInstructionOutcome MidiModifier::MuteTrackProxyInterface::write(Minisc
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	return static_cast<MidiModifier *>(objectRef)->scriptSetMuteTrack(thread, ptrOrOffset, value.getBool());
+	return static_cast<MidiModifier *>(objectRef)->scriptSetMuteTrackIndexed(thread, ptrOrOffset, value.getBool());
 }
 
 MiniscriptInstructionOutcome MidiModifier::MuteTrackProxyInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) {
@@ -2779,7 +2887,7 @@ void ListVariableModifier::debugInspect(IDebugInspectionReport *report) const {
 }
 #endif
 
-ListVariableModifier::ListVariableModifier(const ListVariableModifier &other) {
+ListVariableModifier::ListVariableModifier(const ListVariableModifier &other) : _preferredContentType(DynamicValueTypes::kNull) {
 	if (other._list)
 		_list = other._list->clone();
 }

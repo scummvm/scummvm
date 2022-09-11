@@ -43,7 +43,7 @@ inline frac_t fp_sqroot(uint32 x) {
 	return doubleToFrac(sqrt((double)x));
 #else
 	// The code below wants to use a lot of registers, which is not good on
-	// x86 processors. By taking advantage of the fact the the input value is
+	// x86 processors. By taking advantage of the fact the input value is
 	// an integer, it might be possible to improve this. Furthermore, we could
 	// take advantage of the fact that we call this function several times on
 	// decreasing values. By feeding it the sqrt of the previous old x, as well

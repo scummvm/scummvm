@@ -123,6 +123,7 @@
 	#include <stddef.h>
 	#include <assert.h>
 	#include <ctype.h>
+	#include <limits.h>
 	// MSVC does not define M_PI, M_SQRT2 and other math defines by default.
 	// _USE_MATH_DEFINES must be defined in order to have these defined, thus
 	// we enable it here. For more information, check:
@@ -502,6 +503,50 @@ namespace std {
 	typedef decltype(nullptr) nullptr_t;
 }
 #endif
+
+//
+// std::initializer_list
+// Provide replacement when not available
+//
+#if defined(NO_CXX11_INITIALIZER_LIST)
+namespace std {
+	template<class T> class initializer_list {
+	public:
+		typedef T value_type;
+		typedef const T &reference;
+		typedef const T &const_reference;
+		typedef size_t size_type;
+		typedef const T *iterator;
+		typedef const T *const_iterator;
+
+		constexpr initializer_list() noexcept = default;
+		constexpr size_t size() const noexcept { return _size; };
+		constexpr const T *begin() const noexcept { return _begin; };
+		constexpr const T *end() const noexcept { return _begin + _size; }
+
+	private:
+		// Note: begin has to be first or the compiler may get very upset
+		const T *_begin = { nullptr };
+		size_t _size = { 0 };
+
+		// The compiler is allowed to call this constructor
+		constexpr initializer_list(const T* t, size_t s) noexcept : _begin(t) , _size(s) {}
+	};
+
+	template<class T> constexpr const T* begin(initializer_list<T> il) noexcept {
+		return il.begin();
+	}
+
+	template<class T> constexpr const T* end(initializer_list<T> il) noexcept {
+		return il.end();
+	}
+}
+
+#else
+
+#include <initializer_list>
+
+#endif // NO_CXX11_INITIALIZER_LIST
 
 #include "common/forbidden.h"
 

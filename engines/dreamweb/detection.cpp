@@ -110,11 +110,11 @@ public:
 		_guiOptions = GUIO1(GUIO_NOMIDI);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "dreamweb";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "DreamWeb";
 	}
 

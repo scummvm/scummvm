@@ -49,6 +49,7 @@
 #include "director/lingo/xlibs/labeldrvxobj.h"
 #include "director/lingo/xlibs/memoryxobj.h"
 #include "director/lingo/xlibs/miscx.h"
+#include "director/lingo/xlibs/moovxobj.h"
 #include "director/lingo/xlibs/movemousexobj.h"
 #include "director/lingo/xlibs/movutils.h"
 #include "director/lingo/xlibs/orthoplayxobj.h"
@@ -143,6 +144,7 @@ static struct XLibProto {
 	{ LabelDrvXObj::fileNames,			LabelDrvXObj::open,			LabelDrvXObj::close,		kXObj,					400 },	// D4
 	{ MemoryXObj::fileNames,			MemoryXObj::open,			MemoryXObj::close,			kXObj,					300 },	// D3
 	{ MiscX::fileNames,					MiscX::open,				MiscX::close,				kXObj,					400 },	// D4
+	{ MoovXObj::fileNames, 				MoovXObj::open, 			MoovXObj::close,			kXObj,					300 },  // D3
 	{ MoveMouseXObj::fileNames,			MoveMouseXObj::open,		MoveMouseXObj::close,		kXObj,					400 },	// D4
 	{ MovUtilsXObj::fileNames,			MovUtilsXObj::open,			MovUtilsXObj::close,		kXObj,					400 },	// D4
 	{ OrthoPlayXObj::fileNames,			OrthoPlayXObj::open,		OrthoPlayXObj::close,		kXObj,					400 },	// D4

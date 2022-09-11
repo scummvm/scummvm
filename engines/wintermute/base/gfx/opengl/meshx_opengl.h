@@ -25,21 +25,21 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#ifndef WINTERMUTE_MESH_X_OPENGL_H
-#define WINTERMUTE_MESH_X_OPENGL_H
+#ifndef WINTERMUTE_XMESH_OPENGL_H
+#define WINTERMUTE_XMESH_OPENGL_H
 
-#include "engines/wintermute/base/gfx/x/meshx.h"
+#include "engines/wintermute/base/gfx/xmesh.h"
 
 #if defined(USE_OPENGL_GAME)
 
 namespace Wintermute {
 
-class MeshXOpenGL : public MeshX {
+class XMeshOpenGL : public XMesh {
 public:
-	MeshXOpenGL(BaseGame *inGame);
-	~MeshXOpenGL() override;
+	XMeshOpenGL(BaseGame *inGame);
+	~XMeshOpenGL() override;
 
-	bool render(ModelX *model) override;
+	bool render(XModel *model) override;
 	bool renderFlatShadowModel() override;
 };
 

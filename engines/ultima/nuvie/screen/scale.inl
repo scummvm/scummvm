@@ -983,7 +983,7 @@ static void Scale_Scale2x
 typedef unsigned int COMPONENT;
 
 
-// fill `row' with the the disassembled color components from the original
+// fill `row' with the disassembled color components from the original
 // pixel values in `from'; if we run out of source pixels, just keep copying
 // the last one we got
 static inline void fill_rgb_row

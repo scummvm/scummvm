@@ -146,7 +146,7 @@ static Common::String *readUntilNull(const char **ptr) {
 
 %}
 
-identifier [_[:alpha:]][_[:alnum:]]*
+identifier [_[:alpha:]][_\.[:alnum:]]*
 constfloat [[:digit:]]+\.[[:digit:]]*
 constinteger [[:digit:]]+
 conststring \"[^\"\r\n]*\"

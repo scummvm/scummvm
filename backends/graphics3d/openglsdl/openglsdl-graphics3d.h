@@ -110,9 +110,9 @@ public:
 	void notifyVideoExpose() override {};
 	void notifyResize(const int width, const int height) override;
 
-	bool gameNeedsAspectRatioCorrection() const override { return false; }
+	bool gameNeedsAspectRatioCorrection() const override;
 
-	bool notifyMousePosition(Common::Point &mouse) override;
+	void showSystemMouseCursor(bool visible) override;
 
 protected:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -159,6 +159,7 @@ protected:
 	int _stretchMode;
 	bool _vsync;
 	bool _fullscreen;
+	bool _lockAspectRatio;
 
 	OpenGL::TiledSurface *_overlayScreen;
 	OpenGL::TiledSurface *_overlayBackground;

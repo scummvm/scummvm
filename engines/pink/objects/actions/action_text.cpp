@@ -21,6 +21,7 @@
 
 #include "common/debug.h"
 #include "common/substream.h"
+#include "common/unicode-bidi.h"
 
 #include "graphics/transparent_surface.h"
 
@@ -95,7 +96,9 @@ void ActionText::start() {
 	stream->read(str, stream->size());
 	delete stream;
 
-	switch(_actor->getPage()->getGame()->getLanguage()) {
+	Common::Language language = _actor->getPage()->getGame()->getLanguage();
+	screen->getWndManager()._language = language;
+	switch(language) {
 	case Common::DA_DNK:
 	case Common::ES_ESP:
 	case Common::FR_FRA:
@@ -129,6 +132,7 @@ void ActionText::start() {
 		break;
 	}
 
+	_text.trim();
 	delete[] str;
 
 	while ( _text.size() > 0 && (_text[ _text.size() - 1 ] == '\n' || _text[ _text.size() - 1 ] == '\r') )
@@ -162,6 +166,7 @@ Common::Rect ActionText::getBound() {
 
 void ActionText::end() {
 	Screen *screen = _actor->getPage()->getGame()->getScreen();
+	screen->addDirtyRect(this->getBound());
 	if (_scrollBar && _txtWnd) {
 		screen->getWndManager().removeWindow(_txtWnd);
 		screen->removeTextWindow(_txtWnd);
@@ -173,15 +178,14 @@ void ActionText::end() {
 }
 
 void ActionText::draw(Graphics::ManagedSurface *surface) {
-	int xOffset = 0, yOffset = 0;
+	int yOffset = 0;
 	// we need to first fill this area with backgroundColor, in order to wash away the previous text
 	surface->fillRect(Common::Rect(_xLeft, _yTop, _xRight, _yBottom), _backgroundColorIndex);
 
 	if (_centered) {
-		xOffset = (_xRight - _xLeft) / 2 - _macText->getTextMaxWidth() / 2;
 		yOffset = (_yBottom - _yTop) / 2 - _macText->getTextHeight() / 2;
 	}
-	_macText->drawToPoint(surface, Common::Rect(0, 0, _xRight - _xLeft, _yBottom - _yTop), Common::Point(_xLeft + xOffset, _yTop + yOffset));
+	_macText->drawToPoint(surface, Common::Rect(0, 0, _xRight - _xLeft, _yBottom - _yTop), Common::Point(_xLeft, _yTop + yOffset));
 }
 
 #define BLUE(rgb) ((rgb) & 0xFF)

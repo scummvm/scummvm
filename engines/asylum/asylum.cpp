@@ -402,7 +402,7 @@ void AsylumEngine::handleEvents() {
 	Common::Keymapper *const keymapper = _eventMan->getKeymapper();
 
 	while (_eventMan->pollEvent(ev)) {
-		keymapper->setEnabled(_handler == _scene || (_handler == _menu && !_menu->isEditingSavegameName()));
+		keymapper->setEnabled(_handler != _menu || (!_menu->isEditingSavegameName() && !_menu->isConfiguringKeyboard()));
 		switch (ev.type) {
 		default:
 			break;

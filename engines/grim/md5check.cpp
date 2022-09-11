@@ -561,10 +561,12 @@ bool MD5Check::advanceCheck(int *pos, int *total) {
 			return false;
 		}
 	} else {
+		Common::String urlForRequiredDataFiles = Common::String::format("https://wiki.scummvm.org/index.php?title=%s#Required_data_files",
+		                                                                (g_grim->getGameType() == GType_GRIM)? "Grim_Fandango" : "Escape_from_Monkey_Island");
 		warning("Could not open %s for checking", sum.filename);
-		GUI::displayErrorDialog(Common::U32String::format(_("Could not open the file %s for checking.\nIt may be missing or "
-								"you may not have the rights to open it.\nGo to https://wiki.scummvm.org/index.php/Datafiles to see a list "
-								"of the needed files."), sum.filename));
+		GUIErrorMessageWithURL(Common::U32String::format(_("Could not open the file %s for checking.\nIt may be missing or "
+		                       "you may not have the rights to open it.\nGo to %s to see a list "
+		                       "of the needed files."), sum.filename, urlForRequiredDataFiles.c_str()), urlForRequiredDataFiles.c_str());
 		return false;
 	}
 

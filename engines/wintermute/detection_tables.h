@@ -918,6 +918,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("dirtysplit", "",
 		WME_ENTRY1s("data.dcp", "139d8a25579e969f8b37d20e6e3de5f9", 92668291), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_5),
 
+	// Dirty Split (PC Action Coverdisc) (German)
+	WME_WINENTRY("dirtysplit", "PC Action",
+		WME_ENTRY1s("data.dcp", "6279b5cc077519f472bb18a0d358bd4e", 92673062), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_5),
+
 	// Dirty Split (Italian)
 	WME_WINENTRY("dirtysplit", "",
 		WME_ENTRY2s("italian.dcp", "8108807fbd8af70be1ec452d0fd1131b", 125513726,

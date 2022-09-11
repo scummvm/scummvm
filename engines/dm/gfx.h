@@ -731,7 +731,7 @@ public:
 
 
 	/* srcHeight and destHeight are not necessary for blitting, only error checking, thus they are defaulted for existing code which
-	does not pass anything, newly imported calls do pass srcHeght and srcWidth, so this is a ceonvenience change so the the parameters
+	does not pass anything, newly imported calls do pass srcHeght and srcWidth, so this is a convenience change so the parameters
 	match the original exactly, if need arises for heights then we'll have to retrospectively add them in old function calls*/
 	/* Expects inclusive boundaries in box */
 	void blitToBitmap(byte *srcBitmap, byte *destBitmap, const Box &box, uint16 srcX, uint16 srcY, uint16 srcByteWidth,

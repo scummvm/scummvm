@@ -141,7 +141,10 @@ public:
 	virtual ~MetaEngineDetection() {}
 
 	/** Get the engine ID. */
-	virtual const char *getEngineId() const = 0;
+	virtual const char *getName() const = 0;
+
+	/** Get the engine name. */
+	virtual const char *getEngineName() const = 0;
 
 	/** Return some copyright information about the original engine. */
 	virtual const char *getOriginalCopyright() const = 0;

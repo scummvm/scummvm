@@ -90,8 +90,8 @@ protected:
 	 * Inner method for copying another surface into this one at a given destination position.
 	 */
 	void transBlitFromInner(const Surface &src, const Common::Rect &srcRect,
-		const Common::Rect &destRect, uint transColor, bool flipped, uint overrideColor,
-		uint srcAlpha, const uint32 *srcPalette, const uint32 *dstPalette, const Surface *mask, bool maskOnly);
+		const Common::Rect &destRect, uint32 transColor, bool flipped, uint32 overrideColor,
+		uint32 srcAlpha, const uint32 *srcPalette, const uint32 *dstPalette, const Surface *mask, bool maskOnly);
 public:
 	/**
 	 * Clip the given source bounds so the passed destBounds will be entirely on-screen.
@@ -354,8 +354,8 @@ public:
 	 *						the source surface.
 	 * @param srcAlpha		Optional additional transparency applied to @p src.
 	 */
-	void transBlitFrom(const Surface &src, uint transColor = 0, bool flipped = false,
-		uint overrideColor = 0, uint srcAlpha = 0xff);
+	void transBlitFrom(const Surface &src, uint32 transColor = 0, bool flipped = false,
+		uint32 overrideColor = 0, uint32 srcAlpha = 0xff);
 
 	/**
 	 * Copy another surface into this one, ignoring pixels of a designated transparent color.
@@ -369,7 +369,7 @@ public:
 	 * @param srcAlpha		Optional additional transparency applied to @p src.
 	 */
 	void transBlitFrom(const Surface &src, const Common::Point &destPos,
-		uint transColor = 0, bool flipped = false, uint overrideColor = 0, uint srcAlpha = 0xff);
+		uint32 transColor = 0, bool flipped = false, uint32 overrideColor = 0, uint32 srcAlpha = 0xff);
 
 	/**
 	 * Copy another surface into this one, ignoring pixels of a designated transparent color.
@@ -404,7 +404,7 @@ public:
 	 * @param srcAlpha		Optional additional transparency applied to @p src.
 	 */
 	void transBlitFrom(const Surface &src, const Common::Rect &srcRect, const Common::Point &destPos,
-		uint transColor = 0, bool flipped = false, uint overrideColor = 0, uint srcAlpha = 0xff);
+		uint32 transColor = 0, bool flipped = false, uint32 overrideColor = 0, uint32 srcAlpha = 0xff);
 
 	/**
 	 * Copy another surface into this one, ignoring pixels of a designated transparent color.
@@ -422,7 +422,7 @@ public:
 	 * @param maskOnly		Optional parameter for using mask over @p transColor.
 	 */
 	void transBlitFrom(const Surface &src, const Common::Rect &srcRect, const Common::Rect &destRect,
-		uint transColor = 0, bool flipped = false, uint overrideColor = 0, uint srcAlpha = 0xff,
+		uint32 transColor = 0, bool flipped = false, uint32 overrideColor = 0, uint32 srcAlpha = 0xff,
 		const Surface *mask = nullptr, bool maskOnly = false);
 
 	/**
@@ -435,8 +435,8 @@ public:
 	 *						the source surface.
 	 * @param srcAlpha		Optional additional transparency applied to @p src.
 	 */
-	void transBlitFrom(const ManagedSurface &src, uint transColor = 0, bool flipped = false,
-		uint overrideColor = 0, uint srcAlpha = 0xff);
+	void transBlitFrom(const ManagedSurface &src, uint32 transColor = 0, bool flipped = false,
+		uint32 overrideColor = 0, uint32 srcAlpha = 0xff);
 
 	/**
 	 * Copy another surface into this one, ignoring pixels of a designated transparent color.
@@ -450,7 +450,7 @@ public:
 	 * @param srcAlpha		Optional additional transparency applied to @p src.
 	 */
 	void transBlitFrom(const ManagedSurface &src, const Common::Point &destPos,
-		uint transColor = 0, bool flipped = false, uint overrideColor = 0, uint srcAlpha = 0xff);
+		uint32 transColor = 0, bool flipped = false, uint32 overrideColor = 0, uint32 srcAlpha = 0xff);
 
 	/**
 	 * Copy another surface into this one, ignoring pixels of a designated transparent color.
@@ -475,7 +475,7 @@ public:
 	 * @param srcAlpha		Optional additional transparency applied to @p src.
 	 */
 	void transBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect, const Common::Point &destPos,
-		uint transColor = 0, bool flipped = false, uint overrideColor = 0, uint srcAlpha = 0xff);
+		uint32 transColor = 0, bool flipped = false, uint32 overrideColor = 0, uint32 srcAlpha = 0xff);
 
 	/**
 	 * Copy another surface into this one, ignoring pixels of a designated transparent color.
@@ -493,7 +493,7 @@ public:
 	 * @param maskOnly		Optional parameter for using mask over @p transColor.
 	 */
 	void transBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect, const Common::Rect &destRect,
-		uint transColor = 0, bool flipped = false, uint overrideColor = 0, uint srcAlpha = 0xff,
+		uint32 transColor = 0, bool flipped = false, uint32 overrideColor = 0, uint32 srcAlpha = 0xff,
 		const Surface *mask = nullptr, bool maskOnly = false);
 
 	/**
@@ -508,7 +508,7 @@ public:
 	/**
 	 * Clear the entire surface.
 	 */
-	void clear(uint color = 0);
+	void clear(uint32 color = 0);
 
 	/**
 	 * Mark the entire surface as dirty.
@@ -642,7 +642,7 @@ public:
 	/**
 	 * Set the transparent color.
 	 */
-	void setTransparentColor(uint color) {
+	void setTransparentColor(uint32 color) {
 		_transparentColor = color;
 		_transparentColorSet = true;
 	}

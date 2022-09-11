@@ -50,7 +50,7 @@ The Game tab also shows settings unique to the game engine for the selected game
 To find out which engine powers your game, have a look at the ScummVM Supported Games `wiki page
 <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ or :ref:`group <group>` games by Engine in the Launcher. 
 
-Engines: ADL_ | AGI_ | AGOS_ | BLADERUNNER_ | CGE_ | CINE_ | DRASCULA_ | DREAMWEB_ | HDB_ | HOPKINS_ | KYRA_ | LURE_ | MADS_ | NEVERHOOD_ | SCI_ | SCUMM_ | SHERLOCK_ | SKY_ | SUPERNOVA_ | TOLTECS_ | WINTERMUTE_ | XEEN_ |
+Engines: ADL_ | AGI_ | AGOS_ | BLADERUNNER_ | CGE_ | CINE_ | DRASCULA_ | DREAMWEB_ | HDB_ | HOPKINS_ | KYRA_ | LURE_ | MADS_ | MTROPOLIS_ | NEVERHOOD_ | SCI_ | SCUMM_ | SHERLOCK_ | SKY_ | SUPERNOVA_ | TOLTECS_ | WINTERMUTE_ | XEEN_ |
 
 
 
@@ -411,6 +411,48 @@ Graphics dithering
 	Enables graphics dithering.
 
 	*GraphicsDithering*
+
+,,,,,,,,,,
+
+.. _MTROPOLIS:
+
+MTROPOLIS
+*******
+
+.. _widescreen:
+
+16:9 widescreen mod
+	Removes letterboxing and moves some display elements, improving coverage on widescreen displays.
+
+	*mtropolis_mod_obsidian_widescreen*
+
+.. _dynamicmidi:
+
+Improved music mixing
+	Enables dynamic MIDI mixer, improving music quality.
+
+	*mtropolis_mod_dynamic_midi*
+
+.. _saveatcheckpoints:
+
+Autosave at progress points
+	Automatically saves the game at major progress points.
+
+	*mtropolis_mod_auto_save_at_checkpoints*
+
+.. _shorttransitions:
+
+Enable short transitions
+	Plays short transitions that would normally be skipped on fast CPUs.
+
+	*mtropolis_mod_minimum_transition_duration*
+
+.. _debugger:
+
+Start with debugger
+	Starts the game with the debug overlay active.
+
+	*mtropolis_debug_at_start*
 
 ,,,,,,,,,,
 

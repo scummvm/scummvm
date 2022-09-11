@@ -137,9 +137,16 @@ reg_t reg_t::operator%(const reg_t right) const {
 			warning("Modulo of a negative number has been requested for SCI0. This *could* lead to issues");
 		int16 value = toSint16();
 		int16 modulo = ABS(right.toSint16());
-		int16 result = value % modulo;
-		if (result < 0)
-			result += modulo;
+		int16 result;
+		if (getSciVersion() <= SCI_VERSION_2_1_MIDDLE) {
+			result = value % modulo;
+			if (result < 0)
+				result += modulo;
+		} else {
+			// SCI2.1 Late and SCI3 treat the dividend as unsigned.
+			// LSL7 ocean motion depends on this. Bug #10270
+			result = (uint16)value % modulo;
+		}
 		return make_reg(0, result);
 	} else
 		return lookForWorkaround(right, "modulo");
