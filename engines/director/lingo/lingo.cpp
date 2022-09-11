@@ -741,6 +741,12 @@ void Datum::reset() {
 #ifndef __COVERITY__
 	if (*refCount <= 0) {
 		switch (type) {
+		case VOID:
+		case INT:
+		case FLOAT:
+		case ARGC:
+		case ARGCNORET:
+			break;
 		case VARREF:
 		case GLOBALREF:
 		case LOCALREF:
@@ -777,6 +783,7 @@ void Datum::reset() {
 			delete u.menu;
 			break;
 		default:
+			warning("Datum::reset(): Unprocessed REF type %d", type);
 			break;
 		}
 		if (type != OBJECT) // object owns refCount
