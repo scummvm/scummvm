@@ -36,6 +36,7 @@
 #ifdef USE_OPENGL_GAME
 
 #include "graphics/opengl/system_headers.h"
+#include "watchmaker/tga_util.h"
 
 #define MAXTEXTURES     2000
 
@@ -343,11 +344,12 @@ gVertex *rLockVertexPtr(void *vb, int flags) {
 	return nullptr;
 }
 
-Surface *gCreateSurface(int width, int height, void *ptr) {
-	auto surface = new Surface();
-	surface->data = ptr;
-	surface->width = width;
-	surface->height = height;
+Graphics::Surface *gCreateSurface(int width, int height, void *ptr) {
+	auto surface = new Graphics::Surface();
+	surface->w = width;
+	surface->h = height;
+	surface->pitch = width * 4; // TODO
+	surface->setPixels(ptr);
 	return surface;
 }
 
@@ -541,7 +543,7 @@ gTexture *gUserTexture(unsigned int dimx, unsigned int dimy) {
 	return Texture;
 }
 
-int createTextureFromSurface(Surface &surface, int texFormat) {
+int createTextureFromData(int width, int height, int dataSize, void *data, int texFormat) {
 	unsigned int texId = 0;
 	glGenTextures(1, &texId);
 
@@ -552,22 +554,26 @@ int createTextureFromSurface(Surface &surface, int texFormat) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
 	bool compressed = false;
-	error("TODO: Compressed textures");
-#if 0
+	// TODO: Check both compiletime and runtime for the existence of EXT_texture_compression_s3tc
+
 	switch (texFormat) {
 	case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
 	case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
 	case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
 		compressed = true;
 		break;
+	case GL_RGBA:
+	case GL_RGB:
+		compressed = false;
+		break;
 	default:
 		warning("Texture format not handled: %d", texFormat);
 	}
-#endif
+
 	if (compressed) {
-		glCompressedTexImage2D(GL_TEXTURE_2D, 0, texFormat, surface.width, surface.height, 0, surface.dataSize, surface.data);
+		glCompressedTexImage2D(GL_TEXTURE_2D, 0, texFormat, width, height, 0, dataSize, data);
 	} else {
-		glTexImage2D(GL_TEXTURE_2D, 0, texFormat, surface.width, surface.height, 0, surface.dataSize, GL_UNSIGNED_BYTE, surface.data);
+		glTexImage2D(GL_TEXTURE_2D, 0, texFormat, width, height, 0, dataSize, GL_UNSIGNED_BYTE, data);
 	}
 
 	return texId;
@@ -590,18 +596,36 @@ DDSHeader parseDDSHeader(Common::SeekableReadStream &stream) {
 	uint32 flags = stream.readUint32LE();
 	header.height = stream.readUint32LE();
 	header.width = stream.readUint32LE();
-	stream.seek(SEEK_SET, size + 4);
+	stream.seek(size + 4, SEEK_SET);
 	return header;
 }
 
-Surface *parseDDS(Common::SeekableReadStream &stream) {
+struct DDSurface {
+	int width;
+	int height;
+	int dataSize;
+	void *data;
+};
+
+DDSurface *parseDDS(Common::SeekableReadStream &stream) {
 	DDSHeader header = parseDDSHeader(stream);
 	auto dataSize = stream.size() - stream.pos();
 	auto data = new unsigned char[dataSize]();
 	stream.read(data, dataSize);
-	auto result = gCreateSurface(header.width, header.height, data);
+	DDSurface *result = new DDSurface;
+	result->width = header.width;
+	result->height = header.height;
+	result->data = data;
 	result->dataSize = dataSize;
 	return result;
+}
+
+int createTextureFromSurface(Graphics::Surface &surface, int texFormat) {
+	return createTextureFromData(surface.w, surface.h, surface.pitch * surface.h, surface.getPixels(), texFormat);
+}
+
+int createCompressedTextureFromSurface(DDSurface &surface) {
+	return createTextureFromData(surface.width, surface.height, surface.dataSize, surface.data, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT);
 }
 
 //*********************************************************************************************
@@ -704,7 +728,7 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 	//uint32        magic,retv;
 	unsigned long   dwWidth = 0, dwHeight = 0;
 	//DDSURFACEDESC2            DDSurfDesc;
-	Surface *lpSSource = nullptr;
+	Graphics::Surface *lpSSource = nullptr;
 
 	if (!TextName) return nullptr;
 	lpSSource = nullptr;
@@ -768,14 +792,11 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 			DebugLogFile("gAddMaterial:gLoadTexture: Cannot find %s.\n", AlternateName);
 			return nullptr;
 		}
-		lpSSource = parseDDS(*stream);
-		dwWidth = lpSSource->width;
-		dwHeight = lpSSource->height;
-		error("TODO");
-#if 0
-		Texture->texId = createTextureFromSurface(*lpSSource, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT);
-#endif
-		delete lpSSource;
+		auto compressed = parseDDS(*stream);
+		dwWidth = compressed->width;
+		dwHeight = compressed->height;
+		Texture->texId = createCompressedTextureFromSurface(*compressed);
+		delete compressed;
 		lpSSource = nullptr;
 #if 0
 		if (gRenderFlags & gDXT1SUPPORTED) {
@@ -810,8 +831,11 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 #endif
 		stream = nullptr;
 	} else { // TGA
-		//warning("TODO: Handle TGA");
+		auto stream = workDirs.resolveFile(TextName);
+		auto image = ReadTgaImage(TextName, *stream, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), 0); // TODO Flags
+		createTextureFromSurface(*image, GL_RGBA);
 #if 0
+		//warning("TODO: Handle TGA");
 		if (!t3dOpenFile(TextName)) {
 			DebugLogFile("gAddMaterial:gLoadTexture: Cannot find %s.\n", TextName);
 			return NULL;

@@ -23,6 +23,7 @@
 #define WATCHMAKER_TEXTURE_H
 
 #include "common/str.h"
+#include "graphics/surface.h"
 #include "watchmaker/surface.h"
 
 namespace Watchmaker {
@@ -31,9 +32,8 @@ struct SDL_Texture;
 // Texture structs
 struct gTexture {
 	Common::String			name;
-	Surface                 *surface = nullptr;         // 2d surface
+	Graphics::Surface      *surface = nullptr;         // 2d surface
 	int                     texId = 0;                  // OpenGL tex id
-	SDL_Texture				*texture = nullptr;
 	int                     RealDimX = 0;               // original dimensions
 	int                     RealDimY = 0;               // original dimensions
 	int                     DimX = 0;                   // current dimensions
@@ -42,7 +42,7 @@ struct gTexture {
 	int                     Flags = 0;                  // Flags
 
 	bool isEmpty() {
-		return texId == 0 && texture == nullptr;
+		return texId == 0;
 	}
 };
 
