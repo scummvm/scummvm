@@ -32,8 +32,11 @@ WatchmakerGame::~WatchmakerGame() {
 	//_console is deleted by Engine
 }
 
+// TODO: We should be moving most of the WMakerMain() stuff here:
+int WMakerMain();
+
 Common::Error WatchmakerGame::run() {
-	error("TODO: Implement engine");
+	WMakerMain();
 	return Common::kNoError;
 }
 
