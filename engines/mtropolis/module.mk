@@ -16,6 +16,8 @@ MODULE_OBJS = \
 	modifiers.o \
 	modifier_factory.o \
 	mtropolis.o \
+	plugin/mti.o \
+	plugin/mti_data.o \
 	plugin/obsidian.o \
 	plugin/obsidian_data.o \
 	plugin/standard.o \

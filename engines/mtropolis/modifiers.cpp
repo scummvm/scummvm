@@ -255,6 +255,37 @@ void MiniscriptModifier::visitInternalReferences(IStructuralReferenceVisitor *vi
 	_references->visitInternalReferences(visitor);
 }
 
+ColorTableModifier::ColorTableModifier() : _assetID(0xffffffff) {
+}
+
+bool ColorTableModifier::load(ModifierLoaderContext &context, const Data::ColorTableModifier &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	if (!_applyWhen.load(data.applyWhen))
+		return false;
+
+	_assetID = data.assetID;
+
+	return true;
+}
+
+bool ColorTableModifier::respondsToEvent(const Event &evt) const {
+	return _applyWhen.respondsTo(evt);
+}
+
+VThreadState ColorTableModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	return kVThreadReturn;
+}
+
+Common::SharedPtr<Modifier> ColorTableModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new ColorTableModifier(*this));
+}
+
+const char *ColorTableModifier::getDefaultName() const {
+	return "Color Table Modifier";
+}
+
 bool SaveAndRestoreModifier::load(ModifierLoaderContext &context, const Data::SaveAndRestoreModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;

@@ -125,7 +125,7 @@ enum DataObjectType {
 	kMiniscriptModifier						= 0x3c0,
 	kCursorModifierV1						= 0x3ca,	// NYI - Obsolete version
 	kGradientModifier						= 0x4b0,	// NYI
-	kColorTableModifier						= 0x4c4,	// NYI
+	kColorTableModifier						= 0x4c4,
 	kSaveAndRestoreModifier					= 0x4d8,
 
 	kCompoundVariableModifier				= 0x2c7,
@@ -936,6 +936,18 @@ protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
+struct ColorTableModifier : public DataObject {
+	ColorTableModifier();
+
+	TypicalModifierHeader modHeader;
+	Event applyWhen;
+	uint32 unknown1;
+	uint8 unknown2[4];
+	uint32 assetID;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
 
 struct SaveAndRestoreModifier : public DataObject {
 	SaveAndRestoreModifier();

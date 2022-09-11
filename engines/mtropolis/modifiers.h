@@ -125,6 +125,31 @@ private:
 	Common::SharedPtr<MiniscriptReferences> _references;
 };
 
+class ColorTableModifier : public Modifier {
+public:
+	ColorTableModifier();
+
+	bool load(ModifierLoaderContext &context, const Data::ColorTableModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	void disable(Runtime *runtime) override {}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Color Table Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusNone; }
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+
+	Event _applyWhen;
+
+	uint32 _assetID;
+};
+
 class SaveAndRestoreModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::SaveAndRestoreModifier &data);

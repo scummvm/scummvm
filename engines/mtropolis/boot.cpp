@@ -33,6 +33,7 @@
 #include "mtropolis/runtime.h"
 #include "mtropolis/subtitles.h"
 
+#include "mtropolis/plugin/mti.h"
 #include "mtropolis/plugin/obsidian.h"
 #include "mtropolis/plugin/standard.h"
 #include "mtropolis/plugins.h"
@@ -374,6 +375,25 @@ Common::SharedPtr<Obsidian::WordGameData> ObsidianGameDataHandler::loadWinWordGa
 	}
 
 	return wgData;
+}
+
+class MTIGameDataHandler : public GameDataHandler {
+public:
+	MTIGameDataHandler(const Game &game, const MTropolisGameDescription &gameDesc);
+
+	void addPlugIns(ProjectDescription &projectDesc, const Common::Array<FileIdentification> &files) override;
+};
+
+MTIGameDataHandler::MTIGameDataHandler(const Game &game, const MTropolisGameDescription &gameDesc) : GameDataHandler(game, gameDesc) {
+}
+
+void MTIGameDataHandler::addPlugIns(ProjectDescription &projectDesc, const Common::Array<FileIdentification> &files) {
+	Common::SharedPtr<MTropolis::PlugIn> mtiPlugIn(new MTI::MTIPlugIn());
+	projectDesc.addPlugIn(mtiPlugIn);
+
+	Common::SharedPtr<MTropolis::PlugIn> standardPlugIn = PlugIns::createStandard();
+	static_cast<Standard::StandardPlugIn *>(standardPlugIn.get())->getHacks().allowGarbledListModData = true;
+	projectDesc.addPlugIn(standardPlugIn);
 }
 
 static bool getMacTypesForMacBinary(const char *fileName, uint32 &outType, uint32 &outCreator) {
@@ -862,7 +882,7 @@ const Game games[] = {
 		mtiRetailWinFiles,
 		mtiRetailWinDirectories,
 		nullptr,
-		GameDataHandlerFactory<GameDataHandler>::create
+		GameDataHandlerFactory<MTIGameDataHandler>::create
 	},
 	// Muppet Treasure Island - Demo - Windows
 	{
@@ -870,7 +890,7 @@ const Game games[] = {
 		mtiDemoWinFiles,
 		nullptr,
 		nullptr,
-		GameDataHandlerFactory<GameDataHandler>::create
+		GameDataHandlerFactory<MTIGameDataHandler>::create
 	},
 };
 

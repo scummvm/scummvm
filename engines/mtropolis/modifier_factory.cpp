@@ -73,6 +73,8 @@ SIModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectTyp
 		return ModifierFactory<BehaviorModifier, Data::BehaviorModifier>::getInstance();
 	case Data::DataObjectTypes::kMiniscriptModifier:
 		return ModifierFactory<MiniscriptModifier, Data::MiniscriptModifier>::getInstance();
+	case Data::DataObjectTypes::kColorTableModifier:
+		return ModifierFactory<ColorTableModifier, Data::ColorTableModifier>::getInstance();
 	case Data::DataObjectTypes::kSaveAndRestoreModifier:
 		return ModifierFactory<SaveAndRestoreModifier, Data::SaveAndRestoreModifier>::getInstance();
 	case Data::DataObjectTypes::kAliasModifier:

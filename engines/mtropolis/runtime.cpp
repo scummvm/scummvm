@@ -6645,6 +6645,10 @@ void Project::loadBootStream(size_t streamIndex, const Hacks &hacks) {
 
 	size_t numObjectsLoaded = 0;
 	while (stream.pos() != streamDesc.size) {
+		uint64 streamPos = stream.pos();
+
+		debug(3, "Loading boot object from %x (abs %x)", static_cast<int>(streamPos), static_cast<int>(streamDesc.pos + streamPos));
+
 		Common::SharedPtr<Data::DataObject> dataObject;
 		Data::loadDataObject(plugInDataLoaderRegistry, reader, dataObject);
 
