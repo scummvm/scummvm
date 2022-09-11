@@ -301,7 +301,9 @@ public:
 
 	void executeHandler(const Common::String &name);
 	void executeScript(ScriptType type, CastMemberID id);
+	Common::String formatStack();
 	void printStack(const char *s, uint pc);
+	Common::String formatCallStack(uint pc);
 	void printCallStack(uint pc);
 	Common::String decodeInstruction(ScriptData *sd, uint pc, uint *newPC = NULL);
 
@@ -354,6 +356,7 @@ public:
 
 	int getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly);
 
+	Common::String formatAllVars();
 	void printAllVars();
 
 	inst readInst() { return getInst(_pc++); }

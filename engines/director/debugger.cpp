@@ -38,8 +38,15 @@ Debugger *g_debugger;
 Debugger::Debugger(): GUI::Debugger() {
 	g_debugger = this;
 	registerCmd("help", WRAP_METHOD(Debugger, cmdHelp));
+
 	registerCmd("version", WRAP_METHOD(Debugger, cmdVersion));
+
 	registerCmd("repl", WRAP_METHOD(Debugger, cmdRepl));
+	registerCmd("stack", WRAP_METHOD(Debugger, cmdStack));
+	registerCmd("st", WRAP_METHOD(Debugger, cmdStack));
+	registerCmd("backtrace", WRAP_METHOD(Debugger, cmdBacktrace));
+	registerCmd("bt", WRAP_METHOD(Debugger, cmdBacktrace));
+	registerCmd("vars", WRAP_METHOD(Debugger, cmdVars));
 }
 
 Debugger::~Debugger() {
@@ -69,11 +76,11 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf("Lingo execution:\n");
 	//debugPrintf(" eval [statement] - Evaluates a single Lingo statement\n");
 	debugPrintf(" repl - Switches to a REPL interface for evaluating Lingo code\n");
-	//debugPrintf(" backtrace / bt - Prints a backtrace of all stack frames\n");
+	debugPrintf(" backtrace / bt - Prints a backtrace of all stack frames\n");
 	//debugPrintf(" disasm [function] - Lists the bytecode disassembly for a script function\n");
-	//debugPrintf(" stack / st - Lists the elements on the stack\n");
+	debugPrintf(" stack / st - Lists the elements on the stack\n");
 	//debugPrintf(" frame / f - Prints the current script frame\n");
-	//debugPrintf(" vars - Lists all of the variables available in the current script frame\n");
+	debugPrintf(" vars - Lists all of the variables available in the current script frame\n");
 	//debugPrintf(" step / s [n] - Steps forward one or more operations\n");
 	//debugPrintf(" next / n [n] - Steps forward one or more operations, skips over calls\n");
 	//debugPrintf(" finish / fin - Steps until the current stack frame returns/n");
@@ -104,6 +111,22 @@ bool Debugger::cmdRepl(int argc, const char **argv) {
 	debugPrintf("Switching to Lingo REPL mode, type 'exit' to return to the debug console.\n");
 	registerDefaultCmd(WRAP_DEFAULTCOMMAND(Debugger, lingoCommandProcessor));
 	debugPrintf(PROMPT);
+	return true;
+}
+
+bool Debugger::cmdStack(int argc, const char **argv) {
+	debugPrintf("%s\n", g_director->getLingo()->formatStack().c_str());
+	debugPrintf("\n");
+	return true;
+}
+
+bool Debugger::cmdBacktrace(int argc, const char **argv) {
+	debugPrintf("%s\n", g_director->getLingo()->formatCallStack(g_director->getLingo()->_pc).c_str());
+	return true;
+}
+
+bool Debugger::cmdVars(int argc, const char **argv) {
+	debugPrintf("%s\n", g_director->getLingo()->formatAllVars().c_str());
 	return true;
 }
 
