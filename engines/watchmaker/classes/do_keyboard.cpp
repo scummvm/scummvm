@@ -248,7 +248,7 @@ void HandleFirstPersonView( void )
  * --------------------------------------------------*/
 
 void ProcessKeyboard(WGame &game) {
-	//warning("STUBBED: ProcessKeyboard\n");
+	//warning("STUBBED: ProcessKeyboard");
 
 	// Hack: Skip intro:
 	if ((CurDialog == dR000) || (CurDialog == dR111) || (CurDialog == dR211)) {

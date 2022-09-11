@@ -81,7 +81,7 @@ void t3dLoadMaterials(WGame &game, t3dBODY *b, Common::SeekableReadStream &strea
 		if (LoaderFlags & T3D_HALFTEXTURESIZE) flag = rSURFACEHALF;                             // Se deve scalare le textures
 		else flag = 0;
 		MaterialPtr mat = b->MatTable[material];
-		//warning("Loading material %d\n", material);
+		//warning("Loading material %d", material);
 #ifndef WMGEN
 		if (!(game._renderer->addMaterial(mat, Appo,/*f1*/0, flag))) {                                            // Carica e scala texture
 			warning("Material file %s not found, ", Appo);                                               // Se non trova la texture
@@ -269,7 +269,7 @@ void LoadBounds(WorkDirs &workDirs, const char *pname, t3dBODY *b) {
 	}
 	b->NumLevels = nlev = stream->readSint16LE();
 	if (nlev > T3D_MAX_LEVELS) {
-		warning("Too much Floor Levels in %s: %d instead of %d\n", pname, b->NumLevels, T3D_MAX_LEVELS);
+		warning("Too much Floor Levels in %s: %d instead of %d", pname, b->NumLevels, T3D_MAX_LEVELS);
 		b->NumLevels = nlev = T3D_MAX_LEVELS;
 	}
 
@@ -537,7 +537,7 @@ t3dBODY *t3dBODY::loadFromStream(WGame &game, const Common::String &pname, Commo
 #endif
 //----------------END OF VERTEX PRE-LIGHTING---------------------
 
-	warning("LoaderFlags late = %08X\n", LoaderFlags);
+	warning("LoaderFlags late = %08X", LoaderFlags);
 	//decodeLoaderFlags(LoaderFlags);
 	if (!(LoaderFlags & T3D_NOBOUNDS)) {                                                        // Carica Bounds
 		auto bndName = workdirs.join(workdirs._bndDir, pname, "bnd");

@@ -43,7 +43,7 @@ struct gMovie {
 	// TODO
 
 	~gMovie() {
-		//warning("TODO: Clean up gMovie properly\n");
+		//warning("TODO: Clean up gMovie properly");
 	}
 };
 

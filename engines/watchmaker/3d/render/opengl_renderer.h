@@ -76,11 +76,11 @@ public:
 	void setRenderState(RenderState state, int value);
 	void setBlendFunc(BlendFactor src, BlendFactor dst);
 	bool error() const {
-		//warning("TODO: Implement error\n");
+		//warning("TODO: Implement error");
 		return false;
 	}
 	Common::String getErrorString() {
-		warning("TODO: Implement getErrorString\n");
+		warning("TODO: Implement getErrorString");
 		return "";
 	}
 	// TODO: This just maps to the D3D way to setting textures

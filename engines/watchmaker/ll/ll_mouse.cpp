@@ -153,7 +153,7 @@ void HandleMouseChanges()
 	bLPressed = buttonState & SDL_BUTTON_LMASK;
 	bRPressed = buttonState & SDL_BUTTON_RMASK;
 
-	//warning("L: %d %d R: %d %d\n", bLPressed, bLPressedPrev, bRPressed, bRPressedPrev);
+	//warning("L: %d %d R: %d %d", bLPressed, bLPressedPrev, bRPressed, bRPressedPrev);
 	// Button 0 pressed or released
 	if( bLPressed != bLPressedPrev )
 	{

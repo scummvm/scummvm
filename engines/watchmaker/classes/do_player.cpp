@@ -332,7 +332,7 @@ void UpdatePlayerStand(WGame &game, uint8 oc) {
 			mindist = dist;
 			na = b;
 		}
-		warning("Found %d, dist %f, good %d\n", b, dist, na);
+		warning("Found %d, dist %f, good %d", b, dist, na);
 
 		panims[pc] = b ;
 		pc ++;
@@ -424,7 +424,7 @@ void ChangePlayer(WGame &game, uint8 oc) {
 		}
 	}
 //	Cambia stanza andandosi a leggere la posizione e l'animazione che aveva prima
-	warning("Changing Room to |%s| pos: %d an: %d\n", PlayerStand[CurPlayer].roomName.c_str(), PlayerStand[CurPlayer].pos, PlayerStand[CurPlayer].an);
+	warning("Changing Room to |%s| pos: %d an: %d", PlayerStand[CurPlayer].roomName.c_str(), PlayerStand[CurPlayer].pos, PlayerStand[CurPlayer].an);
 	ChangeRoom(game, PlayerStand[CurPlayer].roomName, PlayerStand[CurPlayer].pos, 0);
 	if ((curRoom == r15) || (curRoom == r1F))
 		SetBndLevel(init, nullptr, PlayerStand[CurPlayer].bnd);

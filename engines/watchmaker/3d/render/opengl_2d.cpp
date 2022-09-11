@@ -118,7 +118,7 @@ void rResetExtends(void) {
 void rBlitter(WGame &game, int dst, int src, int dposx, int dposy,
               int sposx, int sposy, int sdimx, int sdimy) {
 	// TODO: This currently gets called a bit too much.
-	//warning("TODO: Stubbed rBlitter(%s, %d, %d, %d, %d, %d, %d, %d, %d)\n", gBitmapList[src].Name, dst, src, dposx, dposy, sposx, sposy, sdimx, sdimy);
+	//warning("TODO: Stubbed rBlitter(%s, %d, %d, %d, %d, %d, %d, %d, %d)", gBitmapList[src].Name, dst, src, dposx, dposy, sposx, sposy, sdimx, sdimy);
 	auto &bitmap = gBitmapList[src];
 
 	checkGlError("rBlitter Start");
@@ -273,7 +273,7 @@ int createTextureFromSurface2(Surface &surface, int texFormat) {
 			compressed = false;
 			break;
 		default:
-			warning("Texture format not handled: %d\n", texFormat);
+			warning("Texture format not handled: %d", texFormat);
 	}
 
 	if (compressed) {
@@ -288,14 +288,14 @@ int createTextureFromSurface2(Surface &surface, int texFormat) {
 int rLoadBitmapImage(WGame &game, const char *TextName, unsigned char flags) {
 	WorkDirs &workDirs = game.workDirs;
 	if (flags & rTEXTURESURFACE) {
-		warning("TODO: support texture surface loading\n");
+		warning("TODO: support texture surface loading");
 		//  return ((int) gLoadTexture(TextName, flags));
 	}
 
 	assert(TextName);
 	auto stream = workDirs.resolveFile(TextName);
 	if (!stream) {
-		warning("gLoadBitmapImage: Cannot find %s.\n", TextName);
+		warning("gLoadBitmapImage: Cannot find %s.", TextName);
 		return -1;
 	}
 
@@ -303,7 +303,7 @@ int rLoadBitmapImage(WGame &game, const char *TextName, unsigned char flags) {
 
 	unsigned int pos = gGetBitmapListPosition();
 	if (pos == 0) {
-		warning("rLoadBitmap: Can't create more bitmaps\n");
+		warning("rLoadBitmap: Can't create more bitmaps");
 		return -1;
 	}
 	gTexture *Texture = &gBitmapList[pos];
@@ -322,7 +322,7 @@ int rLoadBitmapImage(WGame &game, const char *TextName, unsigned char flags) {
 	if (flags & rSURFACESTRETCH) { // Also rSURFACEFLIP
 		static bool warned = false;
 		if (!warned) {
-			warning("TODO: rSURFACESTRETCH\n");
+			warning("TODO: rSURFACESTRETCH");
 			warned = true;
 		}
 		// HACK: Just set a dimension at all:

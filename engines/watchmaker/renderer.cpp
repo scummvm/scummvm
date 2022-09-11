@@ -92,7 +92,7 @@ bool Renderer::createScreenBuffer() {
 	_viewport.left = _viewport.top = 0;
 	_viewport.right = 800;
 	_viewport.bottom = 600;
-	warning("TODO: Implement createScreenBuffer\n");
+	warning("TODO: Implement createScreenBuffer");
 	return false;
 }
 

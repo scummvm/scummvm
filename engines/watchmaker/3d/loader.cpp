@@ -133,31 +133,31 @@ t3dCAMERAPATH::t3dCAMERAPATH(Common::SeekableReadStream &stream) {
 	}
 }
 void decodeLoaderFlags(uint32 flags) {
-	warning("%d: T3D_GENERATESHADOWMAPS\n", flags & T3D_GENERATESHADOWMAPS);
-	warning("%d: T3D_NOLIGHTMAPS\n", flags & T3D_NOLIGHTMAPS);
-	warning("%d: T3D_NORECURSION\n", flags & T3D_NORECURSION);
-	warning("%d: T3D_HALFTEXTURESIZE\n", flags & T3D_HALFTEXTURESIZE);
-	warning("%d: T3D_FULLSCREEN\n", flags & T3D_FULLSCREEN);
-	warning("%d: T3D_FASTRENDERING\n", flags & T3D_FASTRENDERING);
-	warning("%d: T3D_OUTDOORLIGHTS\n", flags & T3D_OUTDOORLIGHTS);
-	warning("%d: T3D_NOVOLUMETRICLIGHTS\n", flags & T3D_NOVOLUMETRICLIGHTS);
-	warning("%d: T3D_NOBOUNDS\n", flags & T3D_NOBOUNDS);
-	warning("%d: T3D_NOCAMERAS\n", flags & T3D_NOCAMERAS);
-	warning("%d: T3D_NONEXCLUSIVEMOUSE\n", flags & T3D_NONEXCLUSIVEMOUSE);
-	warning("%d: T3D_RECURSIONLEVEL1\n", flags & T3D_RECURSIONLEVEL1);
-	warning("%d: T3D_SKY\n", flags & T3D_SKY);
-	warning("%d: T3D_PRELOAD_RXT\n", flags & T3D_PRELOAD_RXT);
-	warning("%d: T3D_STATIC_SET0\n", flags & T3D_STATIC_SET0);
-	warning("%d: T3D_STATIC_SET1\n", flags & T3D_STATIC_SET1);
-	warning("%d: T3D_NOSHADOWS\n", flags & T3D_NOSHADOWS);
-	warning("%d: T3D_NOICONS\n", flags & T3D_NOICONS);
-	warning("%d: T3D_NOSOUND\n", flags & T3D_NOSOUND);
-	warning("%d: T3D_PRELOADBASE\n", flags & T3D_PRELOADBASE);
-	warning("%d: T3D_NOMUSIC\n", flags & T3D_NOMUSIC);
-	warning("%d: T3D_DEBUGMODE\n", flags & T3D_DEBUGMODE);
-	warning("%d: T3D_FASTFILE\n", flags & T3D_FASTFILE);
-	warning("%d: T3D_HIPOLYPLAYERS\n", flags & T3D_HIPOLYPLAYERS);
-	warning("%d: T3D_HIPOLYCHARACTERS\n", flags & T3D_HIPOLYCHARACTERS);
+	warning("%d: T3D_GENERATESHADOWMAPS", flags & T3D_GENERATESHADOWMAPS);
+	warning("%d: T3D_NOLIGHTMAPS", flags & T3D_NOLIGHTMAPS);
+	warning("%d: T3D_NORECURSION", flags & T3D_NORECURSION);
+	warning("%d: T3D_HALFTEXTURESIZE", flags & T3D_HALFTEXTURESIZE);
+	warning("%d: T3D_FULLSCREEN", flags & T3D_FULLSCREEN);
+	warning("%d: T3D_FASTRENDERING", flags & T3D_FASTRENDERING);
+	warning("%d: T3D_OUTDOORLIGHTS", flags & T3D_OUTDOORLIGHTS);
+	warning("%d: T3D_NOVOLUMETRICLIGHTS", flags & T3D_NOVOLUMETRICLIGHTS);
+	warning("%d: T3D_NOBOUNDS", flags & T3D_NOBOUNDS);
+	warning("%d: T3D_NOCAMERAS", flags & T3D_NOCAMERAS);
+	warning("%d: T3D_NONEXCLUSIVEMOUSE", flags & T3D_NONEXCLUSIVEMOUSE);
+	warning("%d: T3D_RECURSIONLEVEL1", flags & T3D_RECURSIONLEVEL1);
+	warning("%d: T3D_SKY", flags & T3D_SKY);
+	warning("%d: T3D_PRELOAD_RXT", flags & T3D_PRELOAD_RXT);
+	warning("%d: T3D_STATIC_SET0", flags & T3D_STATIC_SET0);
+	warning("%d: T3D_STATIC_SET1", flags & T3D_STATIC_SET1);
+	warning("%d: T3D_NOSHADOWS", flags & T3D_NOSHADOWS);
+	warning("%d: T3D_NOICONS", flags & T3D_NOICONS);
+	warning("%d: T3D_NOSOUND", flags & T3D_NOSOUND);
+	warning("%d: T3D_PRELOADBASE", flags & T3D_PRELOADBASE);
+	warning("%d: T3D_NOMUSIC", flags & T3D_NOMUSIC);
+	warning("%d: T3D_DEBUGMODE", flags & T3D_DEBUGMODE);
+	warning("%d: T3D_FASTFILE", flags & T3D_FASTFILE);
+	warning("%d: T3D_HIPOLYPLAYERS", flags & T3D_HIPOLYPLAYERS);
+	warning("%d: T3D_HIPOLYCHARACTERS", flags & T3D_HIPOLYCHARACTERS);
 }
 
 /* -----------------10/06/99 16.04-------------------
@@ -190,7 +190,7 @@ Common::String constructPath(const Common::String &prefix, const Common::String 
  *                  t3dLoadSingleRoom
  * --------------------------------------------------*/
 t3dBODY *t3dLoadSingleRoom(WGame &game, const Common::String &_pname, t3dBODY *b, uint16 *NumBody, uint32 LoaderFlags) {
-	//warning("t3dLoadSingleRoom(workDirs, %s, b, %d, %d)\n", _pname, *NumBody, LoaderFlags);
+	//warning("t3dLoadSingleRoom(workDirs, %s, b, %d, %d)", _pname, *NumBody, LoaderFlags);
 	//decodeLoaderFlags(LoaderFlags);
 	Common::String pname(_pname);
 
@@ -209,10 +209,10 @@ t3dBODY *t3dLoadSingleRoom(WGame &game, const Common::String &_pname, t3dBODY *b
 
 	auto name = constructPath(workdirs._t3dDir, pname);
 
-	//warning("t3dLoadSingleRoom opening(%s)\n", name.c_str());
+	//warning("t3dLoadSingleRoom opening(%s)", name.c_str());
 	auto stream = openFile(name);
 	if (!(stream)) { // Apre file
-		warning("t3dLoadSingleRoom: Failed to open(%s)\n", name.c_str());
+		warning("t3dLoadSingleRoom: Failed to open(%s)", name.c_str());
 		return nullptr;
 	}
 
@@ -222,7 +222,7 @@ t3dBODY *t3dLoadSingleRoom(WGame &game, const Common::String &_pname, t3dBODY *b
 	} else
 		b = (t3dBODY *)t3dRealloc((uint32 *)b, sizeof(t3dBODY) * (++(*NumBody)));                         // Altrimenti, ridimensiona
 
-	//warning("Loading %s ...\n", name.c_str());
+	//warning("Loading %s ...", name.c_str());
 	*b = t3dBODY();	// Azzera Body
 
 	uint16 fileVersion = stream->readByte();
@@ -254,7 +254,7 @@ t3dBODY *t3dLoadSingleRoom(WGame &game, const Common::String &_pname, t3dBODY *b
  *                  t3dLoadRoom
  * --------------------------------------------------*/
 t3dBODY *t3dLoadRoom(WGame &game, const Common::String &pname, t3dBODY *b, uint16 *NumBody, uint32 LoaderFlags) {
-	warning("t3dLoadRoom(%s, b, %d, %d)\n", pname.c_str(), *NumBody, LoaderFlags);
+	warning("t3dLoadRoom(%s, b, %d, %d)", pname.c_str(), *NumBody, LoaderFlags);
 	struct _t3dLOADLIST *l;
 	t3dBODY *r, *rez;
 	t3dBODY *body;
@@ -291,7 +291,7 @@ t3dBODY *t3dLoadRoom(WGame &game, const Common::String &pname, t3dBODY *b, uint1
 				t3dCalcRejectedMeshFromPortal(LoadedFiles[i].b);
 	}
 
-	warning("Room loaded\n");
+	warning("Room loaded");
 	return r;
 }
 

@@ -119,7 +119,7 @@ void loadAll(WorkDirs &workDirs, Init &init) {
 // NOTA: se slot==255 forza il save (salva senza controllare le condizioni)
 bool DataSave(const char *SaveName, uint8 slot) {
 	char str[T3D_NAMELEN];
-	warning("STUBBED: DataSave\n");
+	warning("STUBBED: DataSave");
 #if 0
 	FILE *fhs;
 	int32 i, j;

@@ -26,7 +26,7 @@
 namespace Watchmaker {
 
 void ResetDIKbd(void) {
-	warning("STUBBED ResetDIKbd\n");
+	warning("STUBBED ResetDIKbd");
 }
 
 uint32 timeGetTime() {
@@ -34,12 +34,12 @@ uint32 timeGetTime() {
 }
 
 void GetLocalTime(SYSTEMTIME *) {
-	warning("STUBBED GetLocalTime\n");
+	warning("STUBBED GetLocalTime");
 	return;
 }
 
 void CopyFile(char *, char *, bool) {
-	warning("STUBBED CopyFile\n");
+	warning("STUBBED CopyFile");
 }
 
 } // End of namespace Watchmaker

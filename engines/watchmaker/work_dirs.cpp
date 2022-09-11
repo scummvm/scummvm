@@ -36,7 +36,7 @@ Common::SharedPtr<Common::SeekableReadStream> WorkDirs::resolveFile(const Common
 	}
 	Common::String converted = convertedFilename;
 	delete[] convertedFilename;
-	//warning("Resolve: %s\n", path);
+	//warning("Resolve: %s", path);
 	Common::SharedPtr<Common::SeekableReadStream> stream = nullptr;
 	if (!noFastFile) {
 		stream = _fastFile->resolve(converted.c_str());

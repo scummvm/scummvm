@@ -5448,7 +5448,7 @@ void CaricaSaves(WGame &game) {
 	char GfxFile[MAX_PATH];
 	char Temp[10];
 	char Data[T3D_NAMELEN + 8];
-	warning("STUBBED: CaricaSaves\n");
+	warning("STUBBED: CaricaSaves");
 #if 0
 	FILE *file;
 
@@ -5508,7 +5508,7 @@ void CaricaSaves(WGame &game) {
 }
 
 void SortSaves(void) {
-	warning("STUBBED: SortSaves\n");
+	warning("STUBBED: SortSaves");
 #if 0
 	qsort(Saves, NSaves, sizeof(SavesS), CompareSaves);
 #endif

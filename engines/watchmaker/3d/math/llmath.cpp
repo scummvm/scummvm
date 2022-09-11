@@ -26,7 +26,7 @@ namespace Watchmaker {
 
 int32 t3dFloatToInt(t3dF32 nfloat) {
 	int32  sint = nfloat;
-	//  warning("STUBBED: t3dFloatToInt\n");
+	//  warning("STUBBED: t3dFloatToInt");
 	/*
 	    __asm
 	    {

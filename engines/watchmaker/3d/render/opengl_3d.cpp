@@ -109,7 +109,7 @@ void rAddLinesArray() {
 
 //***********************************************************************************************
 void *rLockPointArray() {
-	warning("TODO: Implement rLockPointArray\n");
+	warning("TODO: Implement rLockPointArray");
 #if 0
 	HRESULT hResult;
 	LPVOID v;
@@ -138,7 +138,7 @@ void rAddTrianglesArray(float x, float y, int r, int g, int b, int a) {
 
 //***********************************************************************************************
 void rUnlockPointArray() {
-	warning("TODO: Implement rUnlockPointArray\n");
+	warning("TODO: Implement rUnlockPointArray");
 #if 0
 	g_lpD3DPointsBuffer->Unlock();
 #endif
@@ -272,10 +272,10 @@ int rAddUserViewMatrix(float _00, float _01, float _02,
 	rTempViewMatrix.setValue(4, 4, 1.0f);
 
 	auto &tmp = rTempViewMatrix;
-	//warning("Adding: \n");
+	//warning("Adding: ");
 	//tmp.print();
 	for (i = 0, um = &rUserViewMatrix[0]; i < rNumUserViewMatrices; i++, um++) {
-		//warning("Comparing %d\n", i);
+		//warning("Comparing %d", i);
 		//um->print();
 		if (*um == tmp) {
 			return i;
@@ -423,7 +423,7 @@ void gBuildAlternateName(char *AltName, const char *Name) {
 		}
 	}
 
-	//warning("Build alternate name %s -> %s\n", Name, AltName);
+	//warning("Build alternate name %s -> %s", Name, AltName);
 }
 
 //*********************************************************************************************
@@ -561,7 +561,7 @@ int createTextureFromSurface(Surface &surface, int texFormat) {
 		compressed = true;
 		break;
 	default:
-		warning("Texture format not handled: %d\n", texFormat);
+		warning("Texture format not handled: %d", texFormat);
 	}
 #endif
 	if (compressed) {
@@ -580,7 +580,7 @@ struct DDSHeader {
 
 DDSHeader parseDDSHeader(Common::SeekableReadStream &stream) {
 	DDSHeader header;
-	//warning("TODO: Implement DDS Header parsing\n");
+	//warning("TODO: Implement DDS Header parsing");
 	uint32 retv = ' SDD'; //MAKEFOURCC( 'D','D','S',' ' );
 	uint32 magic = stream.readUint32LE();
 	if (magic != retv) {
@@ -674,7 +674,7 @@ Common::SharedPtr<gMovie> gLoadMovie(WorkDirs &workDirs, const char *TextName) {
 
 	{
 		//create surface
-		//warning("TODO: Create compressed surface\n");
+		//warning("TODO: Create compressed surface");
 #if 0
 		DDSURFACEDESC2 ddsd2;
 
@@ -709,7 +709,7 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 	if (!TextName) return nullptr;
 	lpSSource = nullptr;
 
-	//warning("gLoadTexture(%s)\n", TextName);
+	//warning("gLoadTexture(%s)", TextName);
 //	Check if already loaded
 	for (uint32 i = 0; i < gNumTextureList; i++) {
 		if (gTextureList[i].name.equalsIgnoreCase(TextName)) {
@@ -935,7 +935,7 @@ MaterialPtr Renderer::addMaterial(MaterialPtr MList, const Common::String &name,
 	bool            AlreadyLoaded = FALSE;
 	int             len = name.size();
 
-	//warning("AddMaterial(%s)\n", name.c_str());
+	//warning("AddMaterial(%s)", name.c_str());
 	if (((name[len - 1 - 0] == 'i') || (name[len - 1 - 0] == 'I')) &&
 	        ((name[len - 1 - 1] == 'v') || (name[len - 1 - 1] == 'V')) &&
 	        ((name[len - 1 - 2] == 'a') || (name[len - 1 - 2] == 'A'))) {

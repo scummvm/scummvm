@@ -140,7 +140,7 @@ void Event(EventClass classe, uint8 event, uint16 flags, int16 wparam1, int16 wp
 	pqueue *lq;
 	message *lm;
 
-	warning("Event(%s, event=%d, flags=%d, wparam1=%d, wparam2=%d, bparam=%d\n", eventToString(classe), event, flags, wparam1, wparam2);
+	warning("Event(%s, event=%d, flags=%d, wparam1=%d, wparam2=%d, bparam=%d", eventToString(classe), event, flags, wparam1, wparam2);
 	if (classe == EventClass::MC_IDLE && !event)
 		return ;
 
@@ -168,9 +168,9 @@ void Event(EventClass classe, uint8 event, uint16 flags, int16 wparam1, int16 wp
 			return;
 		} else {
 			for (a = 0; a < MAXWAITINGMSGS; a++)
-				warning("%d: %d %d %d %d\n", a, WaitingMsg[a].classe, WaitingMsg[a].event, WaitingMsg[a].flags, WaitingMsg[a].lparam[1]);
+				warning("%d: %d %d %d %d", a, WaitingMsg[a].classe, WaitingMsg[a].event, WaitingMsg[a].flags, WaitingMsg[a].lparam[1]);
 
-			warning("ERRORE! CODA WAITING PIENA! - messy %d %d MAX %d\n", classe, event, MAXWAITINGMSGS);
+			warning("ERRORE! CODA WAITING PIENA! - messy %d %d MAX %d", classe, event, MAXWAITINGMSGS);
 			return;
 		}
 	}
@@ -179,9 +179,9 @@ void Event(EventClass classe, uint8 event, uint16 flags, int16 wparam1, int16 wp
 		uint8 pos;
 
 		for (pos = lq->head; pos != lq->tail; pos = (pos == MAX_MESSAGES - 1) ? 0 : pos + 1)
-			warning("EVENT %d %d\n", lq->event[pos]->classe, lq->event[pos]->event);
+			warning("EVENT %d %d", lq->event[pos]->classe, lq->event[pos]->event);
 
-		warning("ERRORE! CODA GAME PIENA! - messy %d %d MAX %d\n", classe, event, MAX_MESSAGES);
+		warning("ERRORE! CODA GAME PIENA! - messy %d %d MAX %d", classe, event, MAX_MESSAGES);
 		return;
 	}
 
@@ -224,7 +224,7 @@ void Scheduler() {
 		Counter = 0;
 		TheMessage = &idlemessage;
 	}
-	//warning("Scheduler: %s %d\n", eventToString(TheMessage->classe), TheMessage->event);
+	//warning("Scheduler: %s %d", eventToString(TheMessage->classe), TheMessage->event);
 }
 
 /* -----------------08/02/99 10.11-------------------
@@ -232,7 +232,7 @@ void Scheduler() {
  * --------------------------------------------------*/
 void ProcessTheMessage(WGame &game) {
 SUPEREVENT:
-	//warning("Event: %s - %d\n", eventToString(TheMessage->classe), TheMessage->event);
+	//warning("Event: %s - %d", eventToString(TheMessage->classe), TheMessage->event);
 	switch (TheMessage->classe) {
 	case EventClass::MC_IDLE:
 		break;

@@ -114,7 +114,7 @@ const char *CharNameHI_Strings[] = {
  * --------------------------------------------------*/
 //	Controllo che la giusta MoglieSupervisore sia caricata
 bool WGame::CheckAndLoadMoglieSupervisoreModel(int32 c) {
-	warning("CheckAndLoadMoglieSupervisoreModel(workDirs, %d)\n", c);
+	warning("CheckAndLoadMoglieSupervisoreModel(workDirs, %d)", c);
 	char RemoveName[128] = "";
 	char RemoveNameHI[128] = "";
 	int32 j;
@@ -289,7 +289,7 @@ int WGame::StartPlayingGame(const Common::String &LoaderName_override) {
 bool WGame::LoadAndSetup(const Common::String &name, uint8 lite) {
 	uint16 i = 0;
 
-	warning("--=>> %s <<=--: LoaderFlags: %08X\n", name.c_str(), LoaderFlags);
+	warning("--=>> %s <<=--: LoaderFlags: %08X", name.c_str(), LoaderFlags);
 	t3dCurCamera = &t3dIconCamera;
 
 	auto windowInfo = _renderer->getScreenInfos();
@@ -318,7 +318,7 @@ bool WGame::LoadAndSetup(const Common::String &name, uint8 lite) {
 				return false;
 			}
 
-			warning("Reached loop: %02X\n", LoadChar);
+			warning("Reached loop: %02X", LoadChar);
 			for (i = 0; i < 32; i++) {
 				if (i >= ocCURPLAYER) continue;
 
@@ -341,7 +341,7 @@ bool WGame::LoadAndSetup(const Common::String &name, uint8 lite) {
 							CharNameHI_Strings[i + 1] = "MoglieKimono.t3d";
 						}
 					}
-					warning("About to load %s\n", CharName[i + 1]);
+					warning("About to load %s", CharName[i + 1]);
 					if (!(Character[i + 1] = t3dLoadCharacter(*this, CharName[i + 1], Character[i + 1], i))) {
 						warning("Error loading %s", CharName[i + 1]);
 						return false;
@@ -540,7 +540,7 @@ void WGame::UpdateAll() {
  *
  * --------------------------------------------------*/
 void WGame::LoadMisc() {
-	warning("LoadMisc\n");
+	warning("LoadMisc");
 	char str[20];
 	int32 i;
 
@@ -606,7 +606,7 @@ void WGame::LoadMisc() {
 	}
 
 	bMiscLoaded = 1;
-	warning("LoadMisc Done\n");
+	warning("LoadMisc Done");
 }
 
 void WGame::GameLoop() {
@@ -637,7 +637,7 @@ void WGame::GameLoop() {
 		sdl->pollSDL();
 		done = sdl->shouldQuit;
 		if (g_bActive && g_bReady) {
-			//warning("NextMessage\n");
+			//warning("NextMessage");
 			NextMessage(*this);
 		}
 		//}
@@ -649,7 +649,7 @@ void WGame::CleanUpAndPostQuit() {
 	extern char *TextBucket;
 
 	gameOptions.save(workDirs);
-	warning("STUBBED CleanupAndPostQuit\n");
+	warning("STUBBED CleanupAndPostQuit");
 #if 0
 	if (CreditsNames) t3dFree(CreditsNames);
 	if (CreditsRoles) t3dFree(CreditsRoles);

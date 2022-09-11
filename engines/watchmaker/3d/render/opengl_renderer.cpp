@@ -64,7 +64,7 @@ void OpenGLRenderer::drawIndexedPrimitivesVBO(PrimitiveType primitiveType, Commo
 	for (int i = 0; i < numFaces; i++) {
 		int index = faces[i];
 		auto &vertex = VBO->_buffer[index];
-		//warning("%d/%d %d: [%f, %f, %f], [%f, %f], [%f, %f]\n", i, numFaces, index, vertex.x, vertex.y, vertex.z, vertex.u1, vertex.v1, vertex.u2, vertex.v2);
+		//warning("%d/%d %d: [%f, %f, %f], [%f, %f], [%f, %f]", i, numFaces, index, vertex.x, vertex.y, vertex.z, vertex.u1, vertex.v1, vertex.u2, vertex.v2);
 		//glColor3f((float)i/numFaces, 1.0, 0.0);
 		glColor3f(1.0f, 1.0f, 1.0f);
 		glTexCoord2f(vertex.u1, vertex.v1);
@@ -91,7 +91,7 @@ void OpenGLRenderer::drawPrimitives(PrimitiveType primitiveType, Vertex *vertice
 	glFlush();
 }
 void OpenGLRenderer::drawIndexedPrimitivesVBO(PrimitiveType primitiveType, int VBO, int firstVertex, int numVertices, uint16 *faces, uint32 numFaces) {
-	//warning("TODO: Implement drawIndexedPrimitivesVBO\n");
+	//warning("TODO: Implement drawIndexedPrimitivesVBO");
 }
 
 
@@ -176,7 +176,7 @@ void OpenGLRenderer::setRenderState(RenderState state, int value) {
 		case RenderState::ALPHABLEND: setGlFeature(GL_BLEND, value); break; // TODO
 
 	}
-	//warning("TODO: Implement setRenderState\n");
+	//warning("TODO: Implement setRenderState");
 }
 
 GLenum translateBlendFactorToGL(BlendFactor factor) {

@@ -239,7 +239,7 @@ void ResetScreenBuffer() {
 	memset(OldPaintRect, 0, sizeof(OldPaintRect));
 
 	if (!rClearBuffers(rCLEARSCREENBUFFER | rCLEARZBUFFER))
-		warning("Unable to clear screenbuffer\n");
+		warning("Unable to clear screenbuffer");
 }
 
 /* -----------------30/10/98 16.18-------------------
@@ -262,7 +262,7 @@ void AddPaintRect(int32 tnum, int32 px, int32 py, int32 ox, int32 oy, int32 dx, 
 
 	// ce ne sono troppe
 	if (a >= MAX_PAINT_RECTS) {
-		warning("Too many PaintRects!\n");
+		warning("Too many PaintRects!");
 		return ;
 	}
 

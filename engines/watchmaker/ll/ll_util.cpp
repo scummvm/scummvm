@@ -253,7 +253,7 @@ int32 CreateTooltipBitmap(Renderer &renderer, char *tooltip, struct SFont *f, ui
  *                  LoadFont
  * --------------------------------------------------*/
 void LoadFont(struct SFont *f, const char *n) {
-	warning("STUBBED: LoadFont(%s)\n", n);
+	warning("STUBBED: LoadFont(%s)", n);
 #if 0
 	char name[100], a;
 
@@ -288,7 +288,7 @@ int32 LoadDDBitmap(WGame &game, const char *n, uint8 flags) {
 	int rez = rLoadBitmapImage(game, name.c_str(), (uint8)(rBITMAPSURFACE | rSURFACEFLIP | flags));
 
 	if (rez <= 0) {
-		warning("Failed to load %s. Quitting ...\n", name.c_str());
+		warning("Failed to load %s. Quitting ...", name.c_str());
 		CloseSys(game);
 	}
 
@@ -505,7 +505,7 @@ bool SetBndLevel(Init &init, const char *roomname, int32 lev) {
  *                  PrintLoading
  * --------------------------------------------------*/
 void PrintLoading(void) {
-	warning("STUBBED: PrintLoading\n");
+	warning("STUBBED: PrintLoading");
 #if 0
 //	Stampa la scritta loading
 
@@ -654,7 +654,7 @@ void DisplayD3DTriangle(Renderer &renderer, int32 x1, int32 y1, int32 x2, int32 
 	}
 
 	if (a >= MAX_D3D_TRIANGLES) {
-		warning("Too many D3D Triangles!\n");
+		warning("Too many D3D Triangles!");
 		return ;
 	}
 
@@ -686,7 +686,7 @@ void DisplayD3DRect(Renderer &renderer, int32 px, int32 py, int32 dx, int32 dy, 
 	}
 
 	if (a >= MAX_D3D_RECTS) {
-		warning("Too many D3D Rects!\n");
+		warning("Too many D3D Rects!");
 		return ;
 	}
 
@@ -711,7 +711,7 @@ void DisplayDDBitmap(Renderer &renderer, int32 tnum, int32 px, int32 py, int32 o
 			break;
 
 	if (a >= MAX_DD_BITMAPS) {
-		warning("Too many DD Bitmaps!\n");
+		warning("Too many DD Bitmaps!");
 		return ;
 	}
 
@@ -736,7 +736,7 @@ void DisplayDDBitmap_NoFit(int32 tnum, int32 px, int32 py, int32 ox, int32 oy, i
 			break;
 
 	if (a >= MAX_DD_BITMAPS) {
-		warning("Too many DD Bitmaps!\n");
+		warning("Too many DD Bitmaps!");
 		return ;
 	}
 
@@ -799,7 +799,7 @@ void DisplayDDText(Renderer &renderer, char *text, struct SFont *f, uint8 color,
 			break;
 
 	if (a >= MAX_DD_TEXTS) {
-		warning("Too many DD Texts!\n");
+		warning("Too many DD Texts!");
 		return ;
 	}
 

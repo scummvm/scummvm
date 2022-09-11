@@ -51,7 +51,7 @@ namespace Watchmaker {
  *                  InitMusic
  * --------------------------------------------------*/
 bool InitMusic() {
-	warning("STUBBED InitMusic\n");
+	warning("STUBBED InitMusic");
 #if 0
 	if (!mInitMusicSystem())
 		return false;

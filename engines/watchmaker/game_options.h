@@ -55,7 +55,7 @@ public:
 		subtitles_on = stream->readByte();
 		bShowRoomDescriptions = stream->readByte();
 		bShowExtraLocalizationStrings = stream->readByte();
-		warning("Done loading options\n");
+		warning("Done loading options");
 #endif
 		return true;
 	}

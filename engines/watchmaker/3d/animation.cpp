@@ -211,7 +211,7 @@ int8 t3dLoadAnimation(WGame &game, const char *s, t3dMESH *mesh, uint16 Flag) {
 		{
 			auto stream = game.resolveFile(name);
 			if (!stream) {
-				warning("File %s not found\n", name);
+				warning("File %s not found", name);
 				return -1;
 			}
 
@@ -569,7 +569,7 @@ t3dBODY *LoadShadowMeshes(WGame &game, const char *pname, t3dBODY *Body) {
  *                  t3dLoadCharacter
  * --------------------------------------------------*/
 t3dCHARACTER *t3dLoadCharacter(WGame &game, const char *pname, t3dCHARACTER *b, uint16 num) {
-	warning("LoadCharacter(%s)\n", pname);
+	warning("LoadCharacter(%s)", pname);
 	uint8   Mirror = 1;
 	uint16  n = 0, f, i;
 	t3dV3F tmp;
@@ -585,7 +585,7 @@ t3dCHARACTER *t3dLoadCharacter(WGame &game, const char *pname, t3dCHARACTER *b, 
 	if (num >= 2) b->Flags |= T3D_CHARACTER_BNDHIDE;
 	//Try to load animation
 	if (t3dLoadAnimation(game, pname, b->Mesh, T3D_MESH_DEFAULTANIM) == -1) {
-		warning("t3dLoadCharacter: Error loading %s\n", pname);
+		warning("t3dLoadCharacter: Error loading %s", pname);
 		return nullptr;
 	}
 	FixupAnim(b->Mesh, 0, "");

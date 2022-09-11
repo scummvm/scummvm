@@ -89,7 +89,7 @@ void *t3dRealloc(void *pp, uint32 additionalBytes) {
 	t3dAllocatedMemory += additionalBytes;
 	//malloc_size()
 	pp = res;//realloc(pp, additionalBytes);
-	//warning("t3dRealloc() size: %d, additionalBytes: %d, newSize = %d\n", size, additionalBytes, malloc_size(pp));
+	//warning("t3dRealloc() size: %d, additionalBytes: %d, newSize = %d", size, additionalBytes, malloc_size(pp));
 	return (pp);
 }
 
@@ -106,7 +106,7 @@ void t3dFree(void *p) {
 
 //..........................................................................
 void t3dStartTime() {
-	warning("STUBBED t3dStartTime\n");
+	warning("STUBBED t3dStartTime");
 #if 0
 	timeGetDevCaps(&tc, sizeof(tc));
 	timeBeginPeriod(tc.wPeriodMin);
@@ -115,7 +115,7 @@ void t3dStartTime() {
 }
 
 void t3dEndTime() {
-	warning("STUBBED t3dEndTime\n");
+	warning("STUBBED t3dEndTime");
 #if 0
 	timeEndPeriod(tc.wPeriodMin);
 #endif
@@ -129,7 +129,7 @@ uint32 t3dReadTime() {
 //------------------------- File I/O Functions -----------------------------
 
 bool t3dFastFileInit(const char *name) {
-	warning("STUBBED t3dFastFileInit\n");
+	warning("STUBBED t3dFastFileInit");
 #if 0
 	bUsingFastFile = FastFileInit(name);
 	return (BOOL)(bUsingFastFile);
@@ -165,7 +165,7 @@ int t3dAccessFile(char *name) {
 bool t3dGetFileDate(uint32 *date, uint32 *time, const char *name) {
 #if 0
 	FILE *f = fopen(name, "rb");
-	//warning("STUBBED: t3dGetFileDate(%s)\n", name);
+	//warning("STUBBED: t3dGetFileDate(%s)", name);
 	if (f) {
 		fclose(f);
 		return true;
