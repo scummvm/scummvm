@@ -78,6 +78,12 @@ public:
 	void close();
 
 	/**
+	 * Flattens edit lists to a single edit containing the first edit contiguously through the last edit.
+	 * Used to work around bad edit offsets.
+	 */
+	void flattenEditLists();
+
+	/**
 	 * Set the beginning offset of the video so we can modify the offsets in the stco
 	 * atom of videos inside the Mohawk/mTropolis archives
 	 * @param offset the beginning offset of the video
