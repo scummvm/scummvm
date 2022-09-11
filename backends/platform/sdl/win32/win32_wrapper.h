@@ -97,7 +97,7 @@ char *unicodeToAnsi(const wchar_t *s);
 /**
  * Converts a Common::String to a TCHAR array for the purpose of passing to
  * a Windows API or CRT call. If UNICODE is defined then the string will be
- * converted from UTF8 to to wide characters, otherwise the character array
+ * converted from UTF8 to wide characters, otherwise the character array
  * will be copied with no conversion.
  *
  * @param s Source string
