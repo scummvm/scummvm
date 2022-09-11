@@ -35,7 +35,7 @@ void Fly::show(FlyCallback callback) {
 	fly->focus();
 }
 
-Fly::Fly() : TextView("Fly") {
+Fly::Fly() : SpellView("Fly") {
 	_bounds = getLineBounds(21, 24);
 }
 

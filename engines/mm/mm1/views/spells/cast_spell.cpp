@@ -28,7 +28,7 @@ namespace MM1 {
 namespace Views {
 namespace Spells {
 
-CastSpell::CastSpell() : TextView("CastSpell") {
+CastSpell::CastSpell() : SpellView("CastSpell") {
 	_bounds = getLineBounds(20, 24);
 }
 
@@ -197,21 +197,12 @@ void CastSpell::performSpell(Character *chr) {
 		switch (MM1::Spells::cast(_spellIndex, chr)) {
 		case SR_FAILED:
 			// Spell failed
-			clearSurface();
-			writeString(10, 2, STRING["spells.failed"]);
-
-			Sound::sound(SOUND_2);
-			delaySeconds(3);
+			spellFailed();
 			break;
 
 		case SR_SUCCESS_DONE:
 			// Display spell done
-			clearSurface();
-			writeString(14, 2, STRING["dialogs.misc.done"]);
-			g_globals->_party.updateAC();
-
-			Sound::sound(SOUND_2);
-			delaySeconds(3);
+			spellDone();
 			break;
 
 		default:

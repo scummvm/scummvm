@@ -19,61 +19,38 @@
  *
  */
 
-#ifndef MM1_VIEWS_SPELLS_FLY_H
-#define MM1_VIEWS_SPELLS_FLY_H
+#ifndef MM1_VIEWS_SPELLS_SPELL_VIEW_H
+#define MM1_VIEWS_SPELLS_SPELL_VIEW_H
 
-#include "mm/mm1/views/spells/spell_view.h"
+#include "common/str.h"
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Spells {
 
-/**
- * Callback that specifies the map selected,
- * or -1 if escape was pressed
- */
-typedef void (*FlyCallback)(int mapId);
-
-class Fly : public SpellView {
-private:
-	FlyCallback _callback;
-	enum Mode {
-		SELECT_X, SELECT_Y, CAST
-	};
-	Mode _mode = SELECT_X;
-	int _xIndex = 0, _yIndex = 0;
-
+class SpellView : public TextView {
 public:
-	/**
-	 * Show the view
-	 */
-	static void show(FlyCallback callback);
-public:
-	/**
-	 * Constructor
-	 */
-	Fly();
+	SpellView(const Common::String &name) : TextView(name) {}
+	SpellView(const Common::String &name, UIElement *owner) :
+		TextView(name, owner) {}
+	virtual ~SpellView() {}
 
 	/**
-	 * Destructor
+	 * Spell failed display
 	 */
-	virtual ~Fly() {}
+	void spellFailed();
 
 	/**
-	 * Show the view
+	 * Spell done display
 	 */
-	bool msgFocus(const FocusMessage &) override;
+	void spellDone();
 
 	/**
-	 * Draw the view contents
+	 * Timeout for the failed/done display
 	 */
-	void draw() override;
-
-	/**
-	 * Keypress handler
-	 */
-	bool msgKeypress(const KeypressMessage &msg) override;
+	void timeout() override;
 };
 
 } // namespace Spells
