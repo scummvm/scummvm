@@ -22,8 +22,10 @@
 #include "watchmaker/3d/render/opengl_renderer.h"
 #include "watchmaker/t3d.h"
 
-#ifdef USE_OPENGL_GAME
+#if defined(USE_OPENGL_GAME)
+
 #include "graphics/opengl/system_headers.h"
+#include "math/glmath.h"
 
 #include "math/glmath.h"
 

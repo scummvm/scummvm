@@ -19,28 +19,19 @@
  *
  */
 
-#include <SDL_opengl.h>
-#include "SDL.h"
+#include "common/scummsys.h"
 
-#ifdef __APPLE__
-#define GL_SILENCE_DEPRECATION
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <OpenGL/glext.h>
-#include <unistd.h>
+#if defined(USE_OPENGL_GAME)
 
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glext.h>
-#endif
+#include "graphics/opengl/system_headers.h"
 
+#include "watchmaker/globvar.h"
+#include "watchmaker/ll/ll_system.h"
+#include "math/glmath.h"
+#include "watchmaker/rect.h"
 #include "watchmaker/renderer.h"
 #include "watchmaker/render.h"
 #include "watchmaker/windows_hacks.h"
-#include "watchmaker/globvar.h"
-#include "watchmaker/ll/ll_system.h"
-#include "watchmaker/rect.h"
 
 namespace Watchmaker {
 
@@ -69,7 +60,8 @@ void Renderer::initGL() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	gluPerspective(60.0, ratio, 1.0, 1024.0);
+	auto perspectiveMatrix = Math::makePerspectiveMatrix(60.0, ratio, 1.0, 1024.0);;
+	glLoadMatrixf(perspectiveMatrix.getData());
 }
 
 void Renderer::setVirtualScreen(unsigned int dimX, unsigned int dimY) {
@@ -144,3 +136,5 @@ int Renderer::rInvFitY(int y) {
 }
 
 } // End of namespace Watchmaker
+
+#endif // USE_OPENGL_GAME

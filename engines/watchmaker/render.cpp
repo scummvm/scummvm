@@ -19,7 +19,6 @@
  *
  */
 
-#include <SDL_opengl.h>
 #include "watchmaker/sdl_wrapper.h"
 #include "watchmaker/render.h"
 #include "watchmaker/utils.h"
@@ -30,18 +29,10 @@
 #include "watchmaker/rect.h"
 #include "watchmaker/renderer.h"
 
-#ifdef __APPLE__
-#define GL_SILENCE_DEPRECATION
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <OpenGL/glext.h>
-//#include <unistd.h>
+#if defined(USE_OPENGL_GAME)
 
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glext.h>
-#endif
+#include "graphics/opengl/system_headers.h"
+#include "math/glmath.h"
 
 #define MAXTEXTURES     2000
 #define MAX_BITMAP_LIST 1024
@@ -157,7 +148,8 @@ bool rSetProjectionMatrix(float width, float height, float fAspect,
                           float fNearPlane, float fFarPlane) {
 	// Not sure if fAspect is Y here though
 	glMatrixMode(GL_PROJECTION);
-	gluPerspective(fAspect, width / height, fNearPlane, fFarPlane);
+	auto perspectiveMatrix = Math::makePerspectiveMatrix(fAspect, width / height, fNearPlane, fFarPlane);
+	glLoadMatrixf(perspectiveMatrix.getData());
 
 	glMatrixMode(GL_MODELVIEW);
 	return false;
@@ -335,3 +327,5 @@ bool gUpdateMovie(gMaterial *mat) {
 }
 
 } // End of namespace Watchmaker
+
+#endif // USE_OPENGL_GAME
