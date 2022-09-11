@@ -151,6 +151,7 @@ public:
 	void addView(UIElement *ui);
 	void addView(const Common::String &name);
 	void addView();
+	void open() { addView(); }
 
 	/**
 	 * Sets the element's bounds

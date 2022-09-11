@@ -28,17 +28,19 @@ namespace Views {
 namespace Spells {
 
 void Teleport::show() {
-	Teleport *teleport = dynamic_cast<Teleport *>(g_events->findView("Teleport"));
+	UIElement *teleport = dynamic_cast<Teleport *>(g_events->findView("Teleport"));
 	assert(teleport);
 
-	teleport->focus();
+	teleport->open();
 }
 
 Teleport::Teleport() : SpellView("Teleport") {
 	_bounds = getLineBounds(20, 24);
 }
 
-bool Teleport::msgFocus(const FocusMessage &) {
+bool Teleport::msgFocus(const FocusMessage &msg) {
+	SpellView::msgFocus(msg);
+
 	_mode = SELECT_DIRECTION;
 	return 0;
 }
@@ -50,12 +52,12 @@ void Teleport::draw() {
 	clearSurface();
 	escToGoBack(0);
 
-	writeString(10, 0, STRING["dialogs.spells.teleport_dir"]);
+	writeString(10, 1, STRING["dialogs.spells.teleport_dir"]);
 	writeChar((_mode == SELECT_DIRECTION) ? '_' : _direction);
 
 	if (_mode != SELECT_DIRECTION) {
-		writeString(11, 1, STRING["dialogs.spells.teleport_squares"]);
-		writeChar((_mode == CAST) ? '_' : '0' + _squares);
+		writeString(11, 2, STRING["dialogs.spells.teleport_squares"]);
+		writeChar((_mode == SELECT_SQUARES) ? '_' : '0' + _squares);
 	}
 
 	if (_mode == CAST)
@@ -94,8 +96,8 @@ void Teleport::teleport() {
 	Maps::Map &map = *maps._currentMap;
 
 	if (map[46] & 2) {
-		// Given map doesn't allow teleporting
-		error("TODO: spell failed");
+		spellFailed();
+
 	} else {
 		switch (_direction) {
 		case 'N':
@@ -111,8 +113,11 @@ void Teleport::teleport() {
 			maps.step(Common::Point(-_squares, 0));
 			break;
 		default:
-			break;
+			return;
 		}
+
+		close();
+		send("Game", GameMessage("UPDATE"));
 	}
 }
 
