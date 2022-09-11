@@ -34,7 +34,10 @@ public:
 	void debugLogFile(Common::String logs, bool prompt);
 
 private:
-	bool cmd_lingo(int argc, const char **argv);
+	bool cmdHelp(int argc, const char **argv);
+
+	bool cmdVersion(int argc, const char **argv);
+	bool cmdRepl(int argc, const char **argv);
 
 	bool lingoCommandProcessor(const char *inputOrig);
 
