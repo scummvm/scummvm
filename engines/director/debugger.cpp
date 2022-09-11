@@ -44,6 +44,8 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("repl", WRAP_METHOD(Debugger, cmdRepl));
 	registerCmd("stack", WRAP_METHOD(Debugger, cmdStack));
 	registerCmd("st", WRAP_METHOD(Debugger, cmdStack));
+	registerCmd("scriptframe", WRAP_METHOD(Debugger, cmdScriptFrame));
+	registerCmd("sf", WRAP_METHOD(Debugger, cmdScriptFrame));
 	registerCmd("backtrace", WRAP_METHOD(Debugger, cmdBacktrace));
 	registerCmd("bt", WRAP_METHOD(Debugger, cmdBacktrace));
 	registerCmd("vars", WRAP_METHOD(Debugger, cmdVars));
@@ -92,7 +94,7 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" backtrace / bt - Prints a backtrace of all stack frames\n");
 	//debugPrintf(" disasm [function] - Lists the bytecode disassembly for a script function\n");
 	debugPrintf(" stack / st - Lists the elements on the stack\n");
-	//debugPrintf(" frame / f - Prints the current script frame\n");
+	debugPrintf(" scriptframe / sf - Prints the current script frame\n");
 	debugPrintf(" vars - Lists all of the variables available in the current script frame\n");
 	debugPrintf(" step / s [n] - Steps forward one or more operations\n");
 	debugPrintf(" next / n [n] - Steps forward one or more operations, skips over calls\n");
@@ -129,6 +131,13 @@ bool Debugger::cmdRepl(int argc, const char **argv) {
 
 bool Debugger::cmdStack(int argc, const char **argv) {
 	debugPrintf("%s\n", g_director->getLingo()->formatStack().c_str());
+	debugPrintf("\n");
+	return true;
+}
+
+bool Debugger::cmdScriptFrame(int argc, const char **argv) {
+	Lingo *lingo = g_director->getLingo();
+	debugPrintf("%s\n", lingo->formatFrame().c_str());
 	debugPrintf("\n");
 	return true;
 }
@@ -192,12 +201,14 @@ void Debugger::stepHook() {
 		if (_stepCounter == 0) {
 			_step = false;
 			_next = false;
+			cmdScriptFrame(0, nullptr);
 			attach();
 			g_system->updateScreen();
 		}
 	}
 	if (_finish && _finishCounter == 0) {
 		_finish = false;
+		cmdScriptFrame(0, nullptr);
 		attach();
 		g_system->updateScreen();
 	}

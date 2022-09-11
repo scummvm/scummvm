@@ -43,6 +43,7 @@ private:
 	bool cmdRepl(int argc, const char **argv);
 	bool cmdBacktrace(int argc, const char **argv);
 	bool cmdStack(int argc, const char **argv);
+	bool cmdScriptFrame(int argc, const char **argv);
 	bool cmdVars(int argc, const char **argv);
 	bool cmdStep(int argc, const char **argv);
 	bool cmdNext(int argc, const char **argv);
