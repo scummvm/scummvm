@@ -24,6 +24,7 @@
 
 #include "watchmaker/types.h"
 #include "common/stream.h"
+#include "common/ptr.h"
 
 namespace Watchmaker {
 
@@ -58,7 +59,7 @@ void t3dForceNOFastFile(char valore);
 int t3dAccessFile(char *name);
 bool t3dGetFileDate(uint32 *date, uint32 *time, const char *name);
 Common::SeekableReadStream *resolveFile(const char *path);
-Common::SeekableReadStream *openFile(const Common::String &filename);
+Common::SharedPtr<Common::SeekableReadStream> openFile(const Common::String &filename);
 
 } // End of namespace Watchmaker
 

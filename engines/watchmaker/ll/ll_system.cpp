@@ -174,7 +174,7 @@ bool t3dGetFileDate(uint32 *date, uint32 *time, const char *name) {
 	return false;
 }
 
-Common::SeekableReadStream *openFile(const Common::String &filename) {
+Common::SharedPtr<Common::SeekableReadStream> openFile(const Common::String &filename) {
 	Common::String adjustedPath;
 	if (filename.hasPrefix("./")) {
 		adjustedPath = filename.substr(2, filename.size());
@@ -192,7 +192,7 @@ Common::SeekableReadStream *openFile(const Common::String &filename) {
 			break;
 		}
 	}
-	return file;
+	return Common::SharedPtr<Common::SeekableReadStream>(file);
 }
 
 } // End of namespace Watchmaker
