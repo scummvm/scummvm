@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-09-08 17:10+0000\n"
+"POT-Creation-Date: 2022-09-11 22:38+0000\n"
 "PO-Revision-Date: 2022-08-22 17:11+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -4190,7 +4190,7 @@ msgstr "Να μη γίνει προσομοίωση \"παράσιτων\" το�
 
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:54
-#: engines/groovie/detection.cpp:287 engines/neverhood/detection.cpp:139
+#: engines/groovie/detection.cpp:292 engines/neverhood/detection.cpp:139
 #: engines/sci/detection_options.h:105 engines/sherlock/detection.cpp:58
 #: engines/toltecs/detection.cpp:228 engines/trecision/detection.cpp:219
 #: engines/ultima/detection.cpp:55 engines/zvision/detection_tables.h:50
@@ -4199,7 +4199,7 @@ msgstr "Χρήση αρχικών οθονών αποθήκευσης/φόρτω
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:304 engines/dreamweb/detection.cpp:55
-#: engines/groovie/detection.cpp:288 engines/neverhood/detection.cpp:140
+#: engines/groovie/detection.cpp:293 engines/neverhood/detection.cpp:140
 #: engines/sci/detection_options.h:106 engines/sherlock/detection.cpp:59
 #: engines/toltecs/detection.cpp:229 engines/trecision/detection.cpp:220
 #: engines/ultima/detection.cpp:56 engines/zvision/detection_tables.h:51
@@ -5280,29 +5280,29 @@ msgstr ""
 "Εναλλακτικά, μια έκδοση του παιχνιδιού από Steam ή GOG περικλείει ήδη ένα "
 "ενιαίο αρχείο FullMonkeyMap.int που συνδυάζει τα δύο αρχικά"
 
-#: engines/groovie/detection.cpp:275
+#: engines/groovie/detection.cpp:280
 msgid "Fast movie speed"
 msgstr "Γρήγορη ταχύτητα ταινιών"
 
-#: engines/groovie/detection.cpp:276
+#: engines/groovie/detection.cpp:281
 msgid "Play movies at an increased speed"
 msgstr "Αναπαραγωγή ταινιών με αυξημένη ταχύτητα"
 
-#: engines/groovie/detection.cpp:299
+#: engines/groovie/detection.cpp:304
 msgid "Easier AI"
 msgstr "Ευκολότερη ΤΝ"
 
-#: engines/groovie/detection.cpp:300
+#: engines/groovie/detection.cpp:305
 msgid "Decrease the difficulty of AI puzzles"
 msgstr ""
 "Μειώνει το βαθμό δυσκολίας των γρίφων που λειτουργούν με Τεχνητή Νοημοσύνη "
 "(ΤΝ)"
 
-#: engines/groovie/detection.cpp:311
+#: engines/groovie/detection.cpp:316
 msgid "Updated Credits Music"
 msgstr "Ενημερωμένη Μουσική Τίτλων Τέλους"
 
-#: engines/groovie/detection.cpp:312
+#: engines/groovie/detection.cpp:317
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""

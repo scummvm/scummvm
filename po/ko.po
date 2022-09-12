@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-09-08 17:10+0000\n"
+"POT-Creation-Date: 2022-09-11 22:38+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4099,7 +4099,7 @@ msgstr "텍스트에 대해서 NTSC 효과를 에뮬레이트하지 않습니다
 
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:54
-#: engines/groovie/detection.cpp:287 engines/neverhood/detection.cpp:139
+#: engines/groovie/detection.cpp:292 engines/neverhood/detection.cpp:139
 #: engines/sci/detection_options.h:105 engines/sherlock/detection.cpp:58
 #: engines/toltecs/detection.cpp:228 engines/trecision/detection.cpp:219
 #: engines/ultima/detection.cpp:55 engines/zvision/detection_tables.h:50
@@ -4108,7 +4108,7 @@ msgstr "원본 저장/불러오기 화면 사용"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:304 engines/dreamweb/detection.cpp:55
-#: engines/groovie/detection.cpp:288 engines/neverhood/detection.cpp:140
+#: engines/groovie/detection.cpp:293 engines/neverhood/detection.cpp:140
 #: engines/sci/detection_options.h:106 engines/sherlock/detection.cpp:59
 #: engines/toltecs/detection.cpp:229 engines/trecision/detection.cpp:220
 #: engines/ultima/detection.cpp:56 engines/zvision/detection_tables.h:51
@@ -5165,27 +5165,27 @@ msgstr ""
 "\n"
 "혹은, Steam이나 GOG 버전의 통합된 FullMonkeyMap.imt을 사용해도 됩니다"
 
-#: engines/groovie/detection.cpp:275
+#: engines/groovie/detection.cpp:280
 msgid "Fast movie speed"
 msgstr "동영상 빠르게 재생"
 
-#: engines/groovie/detection.cpp:276
+#: engines/groovie/detection.cpp:281
 msgid "Play movies at an increased speed"
 msgstr "동영상을 빠른 속도로 재생합니다"
 
-#: engines/groovie/detection.cpp:299
+#: engines/groovie/detection.cpp:304
 msgid "Easier AI"
 msgstr "더 쉬운 AI"
 
-#: engines/groovie/detection.cpp:300
+#: engines/groovie/detection.cpp:305
 msgid "Decrease the difficulty of AI puzzles"
 msgstr "AI 퍼즐의 난이도 낮추기"
 
-#: engines/groovie/detection.cpp:311
+#: engines/groovie/detection.cpp:316
 msgid "Updated Credits Music"
 msgstr "업데이트된 크레딧 음악"
 
-#: engines/groovie/detection.cpp:312
+#: engines/groovie/detection.cpp:317
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""
