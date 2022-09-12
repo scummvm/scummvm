@@ -13,9 +13,7 @@ vec4 position = gl_Vertex;
 vec3 normal = gl_Normal;
 vec3 color = gl_Color.xyz;
 
-
 out vec3 vColor;
-//out float oVelocity	:TEX0
 out vec4 vVtxPos;
 out vec4 vPrevVtxPos;
 
@@ -44,24 +42,10 @@ void main()
 	//Interpolate the previous according to blurscale
 	prevPos = mix(pos, prevPos, blurScale);
 
-	//Choose previous or current position based on dot product between motion vector and normal
-	//float flag = dot(motionVector, eyeNormal) > 0;
-	//vec4 Pstretch = flag ? pos : prevPos;
-	//vPos = Pstretch;
 	gl_Position = pos;
-
-	//Divide by W -> NDC coordinates
-	//pos.xyz = pos.xyz / pos.w;
-	//prevPos.xyz = prevPos.xyz / prevPos.w;
-	//Calculate window space velocity
-	//vec3 windowVel = (prevPos.xyz - pos.xyz);// * vec3(400,300,1);
-	//oVelocity = windowVel * blurScale;
 
 	vVtxPos = pos;
 	vPrevVtxPos = prevPos;
 
-	//vColor.xy = 0.5 + (windowVel.xy * 0.005);
-	//vColor.z = 1;
-	//vColor = (1 + eyeNormal)*0.5;
 	vColor = vec3(0.5);
 }
