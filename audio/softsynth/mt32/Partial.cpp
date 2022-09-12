@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2021 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2022 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -60,8 +60,8 @@ Partial::Partial(Synth *useSynth, int usePartialIndex) :
 	tvp = new TVP(this);
 	tvf = new TVF(this, &cutoffModifierRamp);
 	ownerPart = -1;
-	poly = nullptr;
-	pair = nullptr;
+	poly = NULL;
+	pair = NULL;
 	switch (synth->getSelectedRendererType()) {
 	case RendererType_BIT16S:
 		la32Pair = new LA32IntPartialPair;
@@ -70,7 +70,7 @@ Partial::Partial(Synth *useSynth, int usePartialIndex) :
 		la32Pair = new LA32FloatPartialPair;
 		break;
 	default:
-		la32Pair = nullptr;
+		la32Pair = NULL;
 	}
 }
 
@@ -114,7 +114,7 @@ void Partial::deactivate() {
 	}
 	ownerPart = -1;
 	synth->partialManager->partialDeactivated(partialIndex);
-	if (poly != nullptr) {
+	if (poly != NULL) {
 		poly->partialDeactivated(this);
 	}
 #if MT32EMU_MONITOR_PARTIALS > 2
@@ -127,17 +127,17 @@ void Partial::deactivate() {
 		la32Pair->deactivate(LA32PartialPair::MASTER);
 		if (hasRingModulatingSlave()) {
 			pair->deactivate();
-			pair = nullptr;
+			pair = NULL;
 		}
 	}
-	if (pair != nullptr) {
-		pair->pair = nullptr;
+	if (pair != NULL) {
+		pair->pair = NULL;
 	}
 }
 
 void Partial::startPartial(const Part *part, Poly *usePoly, const PatchCache *usePatchCache, const MemParams::RhythmTemp *rhythmTemp, Partial *pairPartial) {
-	if (usePoly == nullptr || usePatchCache == nullptr) {
-		synth->printDebug("[Partial %d] *** Error: Starting partial for owner %d, usePoly=%s, usePatchCache=%s", partialIndex, ownerPart, usePoly == nullptr ? "*** NULL ***" : "OK", usePatchCache == nullptr ? "*** NULL ***" : "OK");
+	if (usePoly == NULL || usePatchCache == NULL) {
+		synth->printDebug("[Partial %d] *** Error: Starting partial for owner %d, usePoly=%s, usePatchCache=%s", partialIndex, ownerPart, usePoly == NULL ? "*** NULL ***" : "OK", usePatchCache == NULL ? "*** NULL ***" : "OK");
 		return;
 	}
 	patchCache = usePatchCache;
@@ -145,7 +145,7 @@ void Partial::startPartial(const Part *part, Poly *usePoly, const PatchCache *us
 	mixType = patchCache->structureMix;
 	structurePosition = patchCache->structurePosition;
 
-	Bit8u panSetting = rhythmTemp != nullptr ? rhythmTemp->panpot : part->getPatchTemp()->panpot;
+	Bit8u panSetting = rhythmTemp != NULL ? rhythmTemp->panpot : part->getPatchTemp()->panpot;
 	if (mixType == 3) {
 		if (structurePosition == 0) {
 			panSetting = PAN_NUMERATOR_MASTER[panSetting] << 1;
@@ -154,7 +154,7 @@ void Partial::startPartial(const Part *part, Poly *usePoly, const PatchCache *us
 		}
 		// Do a normal mix independent of any pair partial.
 		mixType = 0;
-		pairPartial = nullptr;
+		pairPartial = NULL;
 	} else if (!synth->isNicePanningEnabled()) {
 		// Mok wanted an option for smoother panning, and we love Mok.
 		// CONFIRMED by Mok: exactly bytes like this (right shifted) are sent to the LA32.
@@ -197,7 +197,7 @@ void Partial::startPartial(const Part *part, Poly *usePoly, const PatchCache *us
 		}
 		pcmWave = &synth->pcmWaves[pcmNum];
 	} else {
-		pcmWave = nullptr;
+		pcmWave = NULL;
 	}
 
 	// CONFIRMED: pulseWidthVal calculation is based on information from Mok
@@ -264,26 +264,26 @@ Bit32u Partial::getCutoffValue() {
 }
 
 bool Partial::hasRingModulatingSlave() const {
-	return pair != nullptr && structurePosition == 0 && (mixType == 1 || mixType == 2);
+	return pair != NULL && structurePosition == 0 && (mixType == 1 || mixType == 2);
 }
 
 bool Partial::isRingModulatingSlave() const {
-	return pair != nullptr && structurePosition == 1 && (mixType == 1 || mixType == 2);
+	return pair != NULL && structurePosition == 1 && (mixType == 1 || mixType == 2);
 }
 
 bool Partial::isRingModulatingNoMix() const {
-	return pair != nullptr && ((structurePosition == 1 && mixType == 1) || mixType == 2);
+	return pair != NULL && ((structurePosition == 1 && mixType == 1) || mixType == 2);
 }
 
 bool Partial::isPCM() const {
-	return pcmWave != nullptr;
+	return pcmWave != NULL;
 }
 
 const ControlROMPCMStruct *Partial::getControlROMPCMStruct() const {
-	if (pcmWave != nullptr) {
+	if (pcmWave != NULL) {
 		return pcmWave->controlROMPCMStruct;
 	}
-	return nullptr;
+	return NULL;
 }
 
 Synth *Partial::getSynth() const {
@@ -305,7 +305,7 @@ bool Partial::canProduceOutput() {
 	if (!isActive() || alreadyOutputed || isRingModulatingSlave()) {
 		return false;
 	}
-	if (poly == nullptr) {
+	if (poly == NULL) {
 		synth->printDebug("[Partial %d] *** ERROR: poly is NULL at Partial::produceOutput()!", partialIndex);
 		return false;
 	}

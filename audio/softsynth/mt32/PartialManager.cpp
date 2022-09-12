@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2021 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2022 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -46,7 +46,7 @@ PartialManager::PartialManager(Synth *useSynth, Part **useParts) {
 PartialManager::~PartialManager(void) {
 	for (unsigned int i = 0; i < synth->getPartialCount(); i++) {
 		delete partialTable[i];
-		if (freePolys[i] != nullptr) delete freePolys[i];
+		if (freePolys[i] != NULL) delete freePolys[i];
 	}
 	delete[] partialTable;
 	delete[] inactivePartials;
@@ -97,7 +97,7 @@ Partial *PartialManager::allocPartial(int partNum) {
 		const Partial *partial = partialTable[i];
 		synth->printDebug("[Partial %d]: activation=%d, owner part=%d\n", i, partial->isActive(), partial->getOwnerPart());
 	}
-	return nullptr;
+	return NULL;
 }
 
 unsigned int PartialManager::getFreePartialCount() {
@@ -257,7 +257,7 @@ bool PartialManager::freePartials(unsigned int needed, int partNum) {
 
 const Partial *PartialManager::getPartial(unsigned int partialNum) const {
 	if (partialNum > synth->getPartialCount() - 1) {
-		return nullptr;
+		return NULL;
 	}
 	return partialTable[partialNum];
 }
@@ -265,12 +265,12 @@ const Partial *PartialManager::getPartial(unsigned int partialNum) const {
 Poly *PartialManager::assignPolyToPart(Part *part) {
 	if (firstFreePolyIndex < synth->getPartialCount()) {
 		Poly *poly = freePolys[firstFreePolyIndex];
-		freePolys[firstFreePolyIndex] = nullptr;
+		freePolys[firstFreePolyIndex] = NULL;
 		firstFreePolyIndex++;
 		poly->setPart(part);
 		return poly;
 	}
-	return nullptr;
+	return NULL;
 }
 
 void PartialManager::polyFreed(Poly *poly) {
@@ -279,7 +279,7 @@ void PartialManager::polyFreed(Poly *poly) {
 		for (Bit32u partNum = 0; partNum < 9; partNum++) {
 			const Poly *activePoly = synth->getPart(partNum)->getFirstActivePoly();
 			Bit32u polyCount = 0;
-			while (activePoly != nullptr) {
+			while (activePoly != NULL) {
 				activePoly = activePoly->getNext();
 				polyCount++;
 			}
@@ -289,7 +289,7 @@ void PartialManager::polyFreed(Poly *poly) {
 		firstFreePolyIndex--;
 		freePolys[firstFreePolyIndex] = poly;
 	}
-	poly->setPart(nullptr);
+	poly->setPart(NULL);
 }
 
 void PartialManager::partialDeactivated(int partialIndex) {
