@@ -71,7 +71,7 @@ cMaterial_Modulative::cMaterial_Modulative(const tString &asName, iLowLevelGraph
 	mbIsGlowing = false;
 	mbUsesLights = false;
 
-	_fogShader = mpProgramManager->CreateProgram("Fog_Trans", "Fog_Trans_Mod");
+	_fogShader = mpProgramManager->CreateProgram("hpl1_Fog_Trans", "hpl1_Fog_Trans_Mod");
 }
 
 //-----------------------------------------------------------------------

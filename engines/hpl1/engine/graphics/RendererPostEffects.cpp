@@ -92,12 +92,12 @@ cRendererPostEffects::cRendererPostEffects(iLowLevelGraphics *apLowLevelGraphics
 	/////////////////
 	// Blur programs
 	mbBlurFallback = false; // Set to true if the fallbacks are used.
-	_blur2DProgram = mpGpuManager->CreateProgram("PostEffect_Blur", "PostEffect_Blur_2D");
-	_blurRectProgram = mpGpuManager->CreateProgram("PostEffect_Blur", "PostEffect_Blur_Rect");
+	_blur2DProgram = mpGpuManager->CreateProgram("hpl1_PostEffect_Blur", "hpl1_PostEffect_Blur_2D");
+	_blurRectProgram = mpGpuManager->CreateProgram("hpl1_PostEffect_Blur", "hpl1_PostEffect_Blur_Rect");
 
 	/////////////////
 	// Bloom programs
-	_bloomProgram = mpGpuManager->CreateProgram("PostEffect_Bloom", "PostEffect_Bloom");
+	_bloomProgram = mpGpuManager->CreateProgram("hpl1_PostEffect_Bloom", "hpl1_PostEffect_Bloom");
 
 	// Bloom blur textures
 	mpBloomBlurTexture = mpLowLevelGraphics->CreateTexture(
@@ -114,11 +114,11 @@ cRendererPostEffects::cRendererPostEffects(iLowLevelGraphics *apLowLevelGraphics
 
 	/////////////////
 	// MotionBlur programs
-	_motionBlurProgram = mpGpuManager->CreateProgram("PostEffect_Motion", "PostEffect_Motion"); // CHECK APPLE
+	_motionBlurProgram = mpGpuManager->CreateProgram("hpl1_PostEffect_Motion", "hpl1_PostEffect_Motion"); // CHECK APPLE
 
 	/////////////////
 	// Depth of Field programs
-	_depthOfFieldProgram = mpGpuManager->CreateProgram("PostEffect_DoF", "PostEffect_DoF");
+	_depthOfFieldProgram = mpGpuManager->CreateProgram("hpl1_PostEffect_DoF", "hpl1_PostEffect_DoF");
 
 	// Depth of Field blur textures
 	mpDofBlurTexture = mpLowLevelGraphics->CreateTexture(cVector2l(256, 256),

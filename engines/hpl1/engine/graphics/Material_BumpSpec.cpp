@@ -44,8 +44,8 @@ cMaterial_BumpSpec::cMaterial_BumpSpec(const tString &asName, iLowLevelGraphics 
 									   cImageManager *apImageManager, cTextureManager *apTextureManager,
 									   cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
 									   eMaterialPicture aPicture, cRenderer3D *apRenderer3D)
-	: iMaterial_BaseLight("DiffuseSpec_Light",
-						  "BumpSpec_Light",
+	: iMaterial_BaseLight("hpl1_DiffuseSpec_Light",
+						  "hpl1_BumpSpec_Light",
 						  asName, apLowLevelGraphics, apImageManager, apTextureManager, apRenderer, apProgramManager,
 						  aPicture, apRenderer3D) {
 	mbUseSpecular = true;

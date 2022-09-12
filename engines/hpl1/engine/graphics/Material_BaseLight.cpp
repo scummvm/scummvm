@@ -102,8 +102,8 @@ iMaterial_BaseLight::iMaterial_BaseLight(const tString &asLightVertexProgram,
 		_shaders[eBaseLightProgram_Spot2] = mpProgramManager->CreateProgram(sSpotVtxProgram, sSpotFragProgram2);
 	}
 
-	_diffuseShader = mpProgramManager->CreateProgram("Diffuse_Color", "Diffuse_Color");
-	_ambientShader = mpProgramManager->CreateProgram("Diffuse_Color", "Ambient_Color");
+	_diffuseShader = mpProgramManager->CreateProgram("hpl1_Diffuse_Color", "hpl1_Diffuse_Color");
+	_ambientShader = mpProgramManager->CreateProgram("hpl1_Diffuse_Color", "hpl1_Ambient_Color");
 
 	///////////////////////////////////////////
 	// Normalization map
