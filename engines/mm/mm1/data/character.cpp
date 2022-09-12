@@ -69,10 +69,10 @@ uint Inventory::size() const {
 	return 0;
 }
 
-uint Inventory::add(byte id, byte field14) {
+uint Inventory::add(byte id, byte charges) {
 	uint idx = getFreeSlot();
 	_items[idx]._id = id;
-	_items[idx]._charges = field14;
+	_items[idx]._charges = charges;
 
 	return idx;
 }
@@ -305,7 +305,7 @@ Character::BuyResult Character::buyItem(byte itemId) {
 
 	// Add the item
 	_gold -= item._cost;
-	_backpack.add(itemId, item._val13);
+	_backpack.add(itemId, item._maxCharges);
 
 	return BUY_SUCCESS;
 }

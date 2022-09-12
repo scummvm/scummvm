@@ -49,9 +49,6 @@ void Teleport::draw() {
 	clearSurface();
 	escToGoBack(0);
 
-	clearSurface();
-	escToGoBack(0);
-
 	writeString(10, 1, STRING["dialogs.spells.teleport_dir"]);
 	writeChar((_mode == SELECT_DIRECTION) ? '_' : _direction);
 

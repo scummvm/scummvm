@@ -55,7 +55,7 @@ struct ItemData {
 	byte _val10;
 	byte _val11;
 	byte _spellId;
-	byte _val13;
+	byte _maxCharges;
 	uint16 _cost;
 	byte _val16;
 	byte _val17;
