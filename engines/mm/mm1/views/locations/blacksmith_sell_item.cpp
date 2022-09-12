@@ -70,7 +70,7 @@ void BlacksmithSellItem::selectItem(uint index) {
 	c._backpack.removeAt(index);
 
 	getItem(itemId);
-	if (!v14 && g_globals->_currItem._val13)
+	if (!v14 && g_globals->_currItem._maxCharges)
 		g_globals->_currItem._cost /= 2;
 
 	c._gold += g_globals->_currItem._cost / 2;

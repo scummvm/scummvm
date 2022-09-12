@@ -120,7 +120,7 @@ public:
 	/**
 	 * Adds an item to the inventory
 	 */
-	uint add(byte id, byte field14);
+	uint add(byte id, byte charges);
 
 	/**
 	 * Removes an index from the inventory
