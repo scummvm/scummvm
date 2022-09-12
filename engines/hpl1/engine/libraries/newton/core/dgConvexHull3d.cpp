@@ -344,14 +344,14 @@ dgInt32 dgConvexHull3d::InitVertexArray(dgHullVertex* const points, const dgFloa
   bool validTetrahedrum = false;
   dgBigVector e1 (dgFloat64 (0.0f), dgFloat64 (0.0f), dgFloat64 (0.0f), dgFloat64 (0.0f)) ;
   for (dgInt32 i = 1; i < normalCount; i ++) {
-    dgInt32 index = SupportVertex (&tree, points, normalArray[i]);
-    _ASSERTE (index >= 0);
+    dgInt32 indexSV = SupportVertex (&tree, points, normalArray[i]);
+    _ASSERTE (indexSV >= 0);
 
-    e1 = points[index] - m_points[0];
+    e1 = points[indexSV] - m_points[0];
     dgFloat64 error2 = e1 % e1;
     if (error2 > (dgFloat32 (1.0e-4f) * m_diag * m_diag)) {
-      m_points[1] = points[index];
-      points[index].m_index = 1;
+      m_points[1] = points[indexSV];
+      points[indexSV].m_index = 1;
       validTetrahedrum = true;
       break;
     }
@@ -366,14 +366,14 @@ dgInt32 dgConvexHull3d::InitVertexArray(dgHullVertex* const points, const dgFloa
   dgBigVector e2(dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f));;
   dgBigVector normal (dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f));
   for (dgInt32 i = 2; i < normalCount; i ++) {
-    dgInt32 index = SupportVertex (&tree, points, normalArray[i]);
-    _ASSERTE (index >= 0);
-    e2 = points[index] - m_points[0];
+    dgInt32 indexSV = SupportVertex (&tree, points, normalArray[i]);
+    _ASSERTE (indexSV >= 0);
+    e2 = points[indexSV] - m_points[0];
     normal = e1 * e2;
     dgFloat64 error2 = sqrt (normal % normal);
     if (error2 > (dgFloat32 (1.0e-4f) * m_diag * m_diag)) {
-      m_points[2] = points[index];
-      points[index].m_index = 1;
+      m_points[2] = points[indexSV];
+      points[indexSV].m_index = 1;
       validTetrahedrum = true;
       break;
     }
@@ -400,28 +400,28 @@ dgInt32 dgConvexHull3d::InitVertexArray(dgHullVertex* const points, const dgFloa
   }
   if (!validTetrahedrum) {
     dgVector n (normal.Scale(dgFloat64 (-1.0f)));
-    dgInt32 index = SupportVertex (&tree, points, n);
-    e3 = points[index] - m_points[0];
-    dgFloat64 error2 = normal % e3;
-    if (fabs (error2) > (dgFloat64 (1.0e-6f) * m_diag * m_diag)) {
+    dgInt32 indexSV = SupportVertex (&tree, points, n);
+    e3 = points[indexSV] - m_points[0];
+    dgFloat64 error2n = normal % e3;
+    if (fabs (error2n) > (dgFloat64 (1.0e-6f) * m_diag * m_diag)) {
       // we found a valid tetrahedra, about and start build the hull by adding the rest of the points
-      m_points[3] = points[index];
-      points[index].m_index = 1;
+      m_points[3] = points[indexSV];
+      points[indexSV].m_index = 1;
       validTetrahedrum = true;
     }
   }
   if (!validTetrahedrum) {
     for (dgInt32 i = 3; i < normalCount; i ++) {
-      dgInt32 index = SupportVertex (&tree, points, normalArray[i]);
-      _ASSERTE (index >= 0);
+      dgInt32 indexSV = SupportVertex (&tree, points, normalArray[i]);
+      _ASSERTE (indexSV >= 0);
 
       //make sure the volume of the fist tetrahedral is no negative
-      e3 = points[index] - m_points[0];
-      dgFloat64 error2 = normal % e3;
-      if (fabs (error2) > (dgFloat64 (1.0e-6f) * m_diag * m_diag)) {
+      e3 = points[indexSV] - m_points[0];
+      dgFloat64 error2n = normal % e3;
+      if (fabs (error2n) > (dgFloat64 (1.0e-6f) * m_diag * m_diag)) {
         // we found a valid tetrahedra, about and start build the hull by adding the rest of the points
-        m_points[3] = points[index];
-        points[index].m_index = 1;
+        m_points[3] = points[indexSV];
+        points[indexSV].m_index = 1;
         validTetrahedrum = true;
         break;
       }
@@ -749,22 +749,22 @@ void dgConvexHull3d::CalculateConvexHull (dgAABBPointTree3d* vertexTree, dgHullV
 
       while (stackIndex) {
         stackIndex --;
-        dgListNode* const node = stack[stackIndex];
-        dgConvexHull3DFace* const face = &node->GetInfo();
+        dgListNode* const stackNode = stack[stackIndex];
+        dgConvexHull3DFace* const stackFace = &stackNode->GetInfo();
 
-        if (!face->m_mark && (face->Evalue(&m_points[0], p) > dgFloat64(0.0f))) {
+        if (!stackFace->m_mark && (stackFace->Evalue(&m_points[0], p) > dgFloat64(0.0f))) {
           #ifdef _DEBUG
           for (dgInt32 i = 0; i < deletedCount; i ++) {
-            _ASSERTE (deleteList[i] != node);
+            _ASSERTE (deleteList[i] != stackNode);
           }
           #endif
 
-          deleteList[deletedCount] = node;
+          deleteList[deletedCount] = stackNode;
           deletedCount ++;
           _ASSERTE (deletedCount < dgInt32 (deleteListPool.GetElementsCount()));
-          face->m_mark = 1;
+          stackFace->m_mark = 1;
           for (dgInt32 i = 0; i < 3; i ++) {
-            dgListNode* const twinNode = (dgListNode*)face->m_twin[i];
+            dgListNode* const twinNode = (dgListNode*)stackFace->m_twin[i];
             _ASSERTE (twinNode);
             dgConvexHull3DFace* const twinFace = &twinNode->GetInfo();
             if (!twinFace->m_mark) {
@@ -782,21 +782,21 @@ void dgConvexHull3d::CalculateConvexHull (dgAABBPointTree3d* vertexTree, dgHullV
 
       dgInt32 newCount = 0;
       for (dgInt32 i = 0; i < deletedCount; i ++) {
-        dgListNode* const node = deleteList[i];
-        dgConvexHull3DFace* const face = &node->GetInfo();
-        _ASSERTE (face->m_mark == 1);
+        dgListNode* const deleteNode = deleteList[i];
+        dgConvexHull3DFace* const deleteFace = &deleteNode->GetInfo();
+        _ASSERTE (deleteFace->m_mark == 1);
         for (dgInt32 j0 = 0; j0 < 3; j0 ++) {
-          dgListNode* const twinNode = face->m_twin[j0];
+          dgListNode* const twinNode = deleteFace->m_twin[j0];
           dgConvexHull3DFace* const twinFace = &twinNode->GetInfo();
           if (!twinFace->m_mark) {
             dgInt32 j1 = (j0 == 2) ? 0 : j0 + 1;
-            dgListNode* const newNode = AddFace (currentIndex, face->m_index[j0], face->m_index[j1]);
+            dgListNode* const newNode = AddFace (currentIndex, deleteFace->m_index[j0], deleteFace->m_index[j1]);
             boundaryFaces.Addtop(newNode);
 
             dgConvexHull3DFace* const newFace = &newNode->GetInfo();
             newFace->m_twin[1] = twinNode;
             for (dgInt32 k = 0; k < 3; k ++) {
-              if (twinFace->m_twin[k] == node) {
+              if (twinFace->m_twin[k] == deleteNode) {
                 twinFace->m_twin[k] = newNode;
               }
             }
@@ -991,66 +991,67 @@ dgFloat64 dgConvexHull3d::RayCast (const dgBigVector& localP0, const dgBigVector
 	
 	heap.Push (data, t);
 	while (heap.GetCount()) {
-		const dgConvexHullRayCastData& data = heap[0];
-		dgFloat64 t = heap.Value();
-		const dgConvexHull3DFace* face = data.m_face;
-		dgFloat64 normalDistProjection = data.m_normalProjection;
+		const dgConvexHullRayCastData& heapData = heap[0];
+		dgFloat64 tc = heap.Value();
+		const dgConvexHull3DFace* heapFace = heapData.m_face;
+		dgFloat64 normalDistProjection = heapData.m_normalProjection;
 		heap.Pop();
 
 		bool foundThisBestFace = true;
 		if (normalDistProjection < dgFloat64 (0.0f)) {
-			if (t > t0) {
-				t0 = t;
+			if (tc > t0) {
+				t0 = tc;
 			}
 			if (t0 > t1) {
-				#ifdef DG_SANITY_CHECK_RAYCAST
-					dgFloat64 t2 = RayCastBruteForce(localP0, localP1);
-					_ASSERTE (fabs (1.2 - t2) < 1.0e-6f);
-				#endif
-		return dgFloat64 (1.2f);
-	}
+#ifdef DG_SANITY_CHECK_RAYCAST
+				dgFloat64 t2 = RayCastBruteForce(localP0, localP1);
+				_ASSERTE (fabs (1.2 - t2) < 1.0e-6f);
+#endif
+				return dgFloat64 (1.2f);
+			}
 		} else {
 			foundThisBestFace = false;
 		}
 
 		for (dgInt32 i = 0; i < 3; i ++) {
-			const dgConvexHull3DFace* const face1 = &face->m_twin[i]->GetInfo();
+			const dgConvexHull3DFace* const face1 = &heapFace->m_twin[i]->GetInfo();
 
 			if (face1->m_mark != m_mark) {
 				face1->m_mark = m_mark;
-				dgConvexHullRayCastData data;
-				data.m_face = face1;
-				dgFloat64 t = FaceRayCast (face1, localP0, dS, data.m_normalProjection);
-				if (data.m_normalProjection >= dgFloat32 (0.0)) {
-					t = dgFloat64 (-1.0e30);
-				} else if (t >= t0) {
+				dgConvexHullRayCastData newData;
+				newData.m_face = face1;
+				dgFloat64 tn = FaceRayCast (face1, localP0, dS, newData.m_normalProjection);
+				if (newData.m_normalProjection >= dgFloat32 (0.0)) {
+					tn = dgFloat64 (-1.0e30);
+				} else if (tn >= t0) {
 					foundThisBestFace = false;
-				} else if (fabs (t - t0) < dgFloat64 (1.0e-12f)) {
+				} else if (fabs (tn - t0) < dgFloat64 (1.0e-12f)) {
 					// this convex hull have face that at almost parallel, partial hill climbing will not work
 					return RayCastBruteForce(localP0, localP1);
+				}
+				heap.Push (newData, tn);
 			}
-				heap.Push (data, t);
 		}
-	}
+
 		if (foundThisBestFace) {
 			if ((t0 >= dgFloat64 (0.0f)) && (t0 <= dgFloat64 (1.0f))) {
-				#ifdef DG_SANITY_CHECK_RAYCAST
-					dgFloat64 t2 = RayCastBruteForce(localP0, localP1);
-					_ASSERTE (fabs (t0 - t2) < 1.0e-6f);
-				#endif
-	if (firstFaceGuess) {
-		*firstFaceGuess = face;
-	}
+#ifdef DG_SANITY_CHECK_RAYCAST
+				dgFloat64 t2 = RayCastBruteForce(localP0, localP1);
+				_ASSERTE (fabs (t0 - t2) < 1.0e-6f);
+#endif
+				if (firstFaceGuess) {
+					*firstFaceGuess = heapFace;
+				}
 				return t0;
 			}
 			break;
 		}
 	}
 
-	#ifdef DG_SANITY_CHECK_RAYCAST
-		dgFloat64 t2 = RayCastBruteForce(localP0, localP1);
-		_ASSERTE (fabs (1.2f - t2) < 1.0e-6f);
-	#endif
+#ifdef DG_SANITY_CHECK_RAYCAST
+	dgFloat64 t2 = RayCastBruteForce(localP0, localP1);
+	_ASSERTE (fabs (1.2f - t2) < 1.0e-6f);
+#endif
 	return dgFloat64 (1.2f);
 }
 
