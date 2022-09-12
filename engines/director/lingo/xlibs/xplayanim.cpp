@@ -67,7 +67,7 @@ void XPlayAnim::b_xplayanim(int nargs) {
 	}
 
 	memcpy(origPalette, g_director->getPalette(), origCount * 3);
-	Graphics::Surface const *frame;
+	Graphics::Surface const *frame = nullptr;
 	Common::Event event;
 	bool keepPlaying = true;
 	video->start();
@@ -101,10 +101,11 @@ void XPlayAnim::b_xplayanim(int nargs) {
 		g_system->delayMillis(10);
 
 	}
-	// Display the last frame after the video is done
-	g_director->getCurrentWindow()->getSurface()->copyRectToSurface(
-		frame->getPixels(), frame->pitch, x, y, frame->w, frame->h
-	);
+	if (frame != nullptr)
+		// Display the last frame after the video is done
+		g_director->getCurrentWindow()->getSurface()->copyRectToSurface(
+			frame->getPixels(), frame->pitch, x, y, frame->w, frame->h
+		);
 
 	video->close();
 	delete video;
