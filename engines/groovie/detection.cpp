@@ -220,8 +220,8 @@ static const GroovieGameDescription gameDescriptions[] = {
 	// Funsoft (1997-02-14)
 	UHPENTRY("", "tpot.grv", "30d06af7669004f1ea7a99a5ebdb6935", 10469, "trt7g.gjd", nullptr, -1, DE_DEU, kPlatformWindows, BASE_FLAGS),
 
-	// Uncle Henry's Playhouse PC English (1996-09-13)
-	UHPENTRY("", "tpot.grv", "0ae5d44c9e3079c62569656aeaa515bb", 11686, "tpt.gjd", nullptr, -1, EN_ANY, kPlatformWindows, BASE_FLAGS),
+	// Uncle Henry's Playhouse Beta Version PC English (1996-09-05)
+	UHPENTRY("", "tpot.grv", "123113a26d4bdad6d1f88a53ec6b28a3", 11686, "tpt.gjd", nullptr, -1, EN_ANY, kPlatformWindows, BASE_FLAGS),
 
 /*==== Tender Loving Care ====*/
 	// Tender Loving Care PC English (CD-ROM 1998-05-01)
