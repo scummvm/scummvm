@@ -1,6 +1,5 @@
 //FallBack01_Bump_Light.fragment
 
-in vec4 vColor;
 in vec3 vLightDir;
 in vec3 vUv;
 in vec3 vLightPos;
