@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2021 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2022 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -27,16 +27,16 @@
 namespace MT32Emu {
 
 Poly::Poly() {
-	part = nullptr;
+	part = NULL;
 	key = 255;
 	velocity = 255;
 	sustain = false;
 	activePartialCount = 0;
 	for (int i = 0; i < 4; i++) {
-		partials[i] = nullptr;
+		partials[i] = NULL;
 	}
 	state = POLY_Inactive;
-	next = nullptr;
+	next = NULL;
 }
 
 void Poly::setPart(Part *usePart) {
@@ -48,12 +48,12 @@ void Poly::reset(unsigned int newKey, unsigned int newVelocity, bool newSustain,
 		// This should never happen
 		part->getSynth()->printDebug("Resetting active poly. Active partial count: %i\n", activePartialCount);
 		for (int i = 0; i < 4; i++) {
-			if (partials[i] != nullptr && partials[i]->isActive()) {
+			if (partials[i] != NULL && partials[i]->isActive()) {
 				partials[i]->deactivate();
 				activePartialCount--;
 			}
 		}
-		state = POLY_Inactive;
+		setState(POLY_Inactive);
 	}
 
 	key = newKey;
@@ -63,9 +63,9 @@ void Poly::reset(unsigned int newKey, unsigned int newVelocity, bool newSustain,
 	activePartialCount = 0;
 	for (int i = 0; i < 4; i++) {
 		partials[i] = newPartials[i];
-		if (newPartials[i] != nullptr) {
+		if (newPartials[i] != NULL) {
 			activePartialCount++;
-			state = POLY_Playing;
+			setState(POLY_Playing);
 		}
 	}
 }
@@ -80,7 +80,7 @@ bool Poly::noteOff(bool pedalHeld) {
 		if (state == POLY_Held) {
 			return false;
 		}
-		state = POLY_Held;
+		setState(POLY_Held);
 	} else {
 		startDecay();
 	}
@@ -98,11 +98,11 @@ bool Poly::startDecay() {
 	if (state == POLY_Inactive || state == POLY_Releasing) {
 		return false;
 	}
-	state = POLY_Releasing;
+	setState(POLY_Releasing);
 
 	for (int t = 0; t < 4; t++) {
 		Partial *partial = partials[t];
-		if (partial != nullptr) {
+		if (partial != NULL) {
 			partial->startDecayAll();
 		}
 	}
@@ -115,7 +115,7 @@ bool Poly::startAbort() {
 	}
 	for (int t = 0; t < 4; t++) {
 		Partial *partial = partials[t];
-		if (partial != nullptr) {
+		if (partial != NULL) {
 			partial->startAbort();
 			part->getSynth()->abortingPoly = this;
 		}
@@ -123,10 +123,17 @@ bool Poly::startAbort() {
 	return true;
 }
 
+void Poly::setState(PolyState newState) {
+	if (state == newState) return;
+	PolyState oldState = state;
+	state = newState;
+	part->polyStateChanged(oldState, newState);
+}
+
 void Poly::backupCacheToPartials(PatchCache cache[4]) {
 	for (int partialNum = 0; partialNum < 4; partialNum++) {
 		Partial *partial = partials[partialNum];
-		if (partial != nullptr) {
+		if (partial != NULL) {
 			partial->backupCache(cache[partialNum]);
 		}
 	}
@@ -166,14 +173,14 @@ bool Poly::isActive() const {
 void Poly::partialDeactivated(Partial *partial) {
 	for (int i = 0; i < 4; i++) {
 		if (partials[i] == partial) {
-			partials[i] = nullptr;
+			partials[i] = NULL;
 			activePartialCount--;
 		}
 	}
 	if (activePartialCount == 0) {
-		state = POLY_Inactive;
+		setState(POLY_Inactive);
 		if (part->getSynth()->abortingPoly == this) {
-			part->getSynth()->abortingPoly = nullptr;
+			part->getSynth()->abortingPoly = NULL;
 		}
 	}
 	part->partialDeactivated(this);

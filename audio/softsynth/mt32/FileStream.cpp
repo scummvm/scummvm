@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2021 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2022 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -20,6 +20,11 @@
 #endif
 
 #include "internals.h"
+
+// Disable MSVC STL exceptions
+#ifdef _MSC_VER
+#define _HAS_EXCEPTIONS 0
+#endif
 
 #include "FileStream.h"
 
@@ -42,7 +47,7 @@ static inline void configureSystemLocale() {
 
 using std::ios_base;
 
-FileStream::FileStream() : ifsp(*new std::ifstream), data(nullptr), size(0)
+FileStream::FileStream() : ifsp(*new std::ifstream), data(NULL), size(0)
 {}
 
 FileStream::~FileStream() {
@@ -64,24 +69,24 @@ size_t FileStream::getSize() {
 }
 
 const Bit8u *FileStream::getData() {
-	if (data != nullptr) {
+	if (data != NULL) {
 		return data;
 	}
 	if (!ifsp.is_open()) {
-		return nullptr;
+		return NULL;
 	}
 	if (getSize() == 0) {
-		return nullptr;
+		return NULL;
 	}
 	Bit8u *fileData = new Bit8u[size];
-	if (fileData == nullptr) {
-		return nullptr;
+	if (fileData == NULL) {
+		return NULL;
 	}
 	ifsp.seekg(0);
 	ifsp.read(reinterpret_cast<char *>(fileData), std::streamsize(size));
 	if (size_t(ifsp.tellg()) != size) {
 		delete[] fileData;
-		return nullptr;
+		return NULL;
 	}
 	data = fileData;
 	close();

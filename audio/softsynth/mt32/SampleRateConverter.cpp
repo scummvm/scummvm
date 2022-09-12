@@ -1,4 +1,4 @@
-/* Copyright (C) 2015-2021 Sergey V. Mikayev
+/* Copyright (C) 2015-2022 Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -14,9 +14,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define MT32EMU_WITH_LIBSOXR_RESAMPLER 0
-#define MT32EMU_WITH_LIBSAMPLERATE_RESAMPLER 0
-#define MT32EMU_WITH_INTERNAL_RESAMPLER 1
+#include <cstddef>
 
 #include "SampleRateConverter.h"
 
@@ -41,7 +39,7 @@ static inline void *createDelegate(Synth &synth, double targetSampleRate, Sample
 	return new InternalResampler(synth, targetSampleRate, quality);
 #else
 	(void)synth, (void)targetSampleRate, (void)quality;
-	return nullptr;
+	return NULL;
 #endif
 }
 

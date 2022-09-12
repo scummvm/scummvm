@@ -1,4 +1,4 @@
-/* Copyright (C) 2015-2021 Sergey V. Mikayev
+/* Copyright (C) 2015-2022 Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -32,7 +32,7 @@ public:
 	SynthWrapper(Synth &useSynth) : synth(useSynth)
 	{}
 
-	void getOutputSamples(FloatSample *outBuffer, unsigned int size) override {
+	void getOutputSamples(FloatSample *outBuffer, unsigned int size) {
 		synth.render(outBuffer, size);
 	}
 };
