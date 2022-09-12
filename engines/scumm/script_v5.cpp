@@ -3177,11 +3177,19 @@ void ScummEngine_v5::decodeParseString() {
 			// color. We can't find an exact match to what the
 			// floppy version used, but we pick on that's as close
 			// as we can get.
+			//
+			// The SEGA CD version uses the old colors already, and
+			// the FM Towns version makes the text more readable by
+			// giving it a black outline.
 
-			else if (_game.id == GID_MONKEY && _currentRoom == 36
-					&& vm.slot[_currentScript].number == 201 && color == 2
-					&& strcmp(_game.variant, "SE Talkie") != 0
-					&& _enableEnhancements) {
+			else if (_game.id == GID_MONKEY &&
+					_game.platform != Common::kPlatformSegaCD &&
+					_game.platform != Common::kPlatformFMTowns &&
+					_currentRoom == 36 &&
+					vm.slot[_currentScript].number == 201 &&
+					color == 2 &&
+					strcmp(_game.variant, "SE Talkie") != 0 &&
+					_enableEnhancements) {
 				color = findClosestPaletteColor(_currentPalette, 256, 0, 171, 0);
 			}
 
