@@ -219,8 +219,8 @@ dgBigVector dgConvexHull4dTetraherum::CircumSphereCenter(
       }
       matrix[i][3] = dgGoogol(1.0f);
     }
-    dgGoogol det(Determinant4x4(matrix));
-    dgFloat64 val = det.GetAproximateValue() * sign;
+    dgGoogol detN(Determinant4x4(matrix));
+    dgFloat64 val = detN.GetAproximateValue() * sign;
     sign *= dgFloat64(-1.0f);
     centerOut[k] = val * invDen;
   }
@@ -766,15 +766,15 @@ dgInt32 dgConvexHull4d::InitVertexArray(dgHullVector* const points,
       dgFloat64(0.0f));
   for (dgInt32 i = 1; i < normalCount; i++)
   {
-    dgInt32 index = SupportVertex(&tree, points, normalArray[i]);
-    _ASSERTE(index >= 0);
-    e1 = points[index].Sub4(convexPoints[0]);
+    dgInt32 indexSV = SupportVertex(&tree, points, normalArray[i]);
+    _ASSERTE(indexSV >= 0);
+    e1 = points[indexSV].Sub4(convexPoints[0]);
     e1.m_w = dgFloat64(0.0f);
     dgFloat64 error2 = e1.DotProduct4(e1);
     if (error2 > (dgFloat32(1.0e-4f) * m_diag * m_diag))
     {
-      convexPoints[1] = points[index];
-      points[index].m_mark = 1;
+      convexPoints[1] = points[indexSV];
+      points[indexSV].m_mark = 1;
       validTetrahedrum = true;
       break;
     }
@@ -794,10 +794,10 @@ dgInt32 dgConvexHull4d::InitVertexArray(dgHullVector* const points,
   ;
   for (dgInt32 i = 2; i < normalCount; i++)
   {
-    dgInt32 index = SupportVertex(&tree, points, normalArray[i]);
-    _ASSERTE(index >= 0);
-    _ASSERTE(index < count);
-    e2 = points[index].Sub4(convexPoints[0]);
+    dgInt32 indexSV = SupportVertex(&tree, points, normalArray[i]);
+    _ASSERTE(indexSV >= 0);
+    _ASSERTE(indexSV < count);
+    e2 = points[indexSV].Sub4(convexPoints[0]);
     e2.m_w = dgFloat64(0.0f);
     dgFloat64 den = e2.DotProduct4(e2);
     if (fabs(den) > (dgFloat64(1.0e-6f) * m_diag))
@@ -808,13 +808,13 @@ dgInt32 dgConvexHull4d::InitVertexArray(dgHullVector* const points,
       if (cosAngle < bestValue)
       {
         bestValue = cosAngle;
-        bestIndex = index;
+        bestIndex = indexSV;
       }
 
       if (cosAngle < 0.9f)
       {
-//				convexPoints[2] = points[index];
-//				points[index].m_mark = 1;
+//				convexPoints[2] = points[indexSV];
+//				points[indexSV].m_mark = 1;
 //				validTetrahedrum = true;
         break;
       }
@@ -840,17 +840,17 @@ dgInt32 dgConvexHull4d::InitVertexArray(dgHullVector* const points,
   ;
   for (dgInt32 i = 3; i < normalCount; i++)
   {
-    dgInt32 index = SupportVertex(&tree, points, normalArray[i]);
-    _ASSERTE(index >= 0);
-    _ASSERTE(index < count);
+    dgInt32 indexSV = SupportVertex(&tree, points, normalArray[i]);
+    _ASSERTE(indexSV >= 0);
+    _ASSERTE(indexSV < count);
 
-    e3 = points[index].Sub4(convexPoints[0]);
+    e3 = points[indexSV].Sub4(convexPoints[0]);
     e3.m_w = dgFloat64(0.0f);
     dgFloat64 volume = (e1 * e2) % e3;
     if (fabs(volume) > (dgFloat64(1.0e-4f) * m_diag * m_diag * m_diag))
     {
-      convexPoints[3] = points[index];
-      points[index].m_mark = 1;
+      convexPoints[3] = points[indexSV];
+      points[indexSV].m_mark = 1;
       validTetrahedrum = true;
       break;
     }
@@ -1195,39 +1195,39 @@ dgConvexHull4d::dgListNode* dgConvexHull4d::FindFacingNode(
   while (heap.GetCount())
   {
     dgListNode* const node = heap[0];
-    dgFloat64 dist = heap.Value();
-    if (dist > dgFloat64(1.0e-5f))
+    dgFloat64 distN = heap.Value();
+    if (distN > dgFloat64(1.0e-5f))
     {
       return node;
     }
     heap.Pop();
-    dgConvexHull4dTetraherum* const tetra = &node->GetInfo();
+    dgConvexHull4dTetraherum* const tetraN = &node->GetInfo();
     for (dgInt32 i = 0; i < 4; i++)
     {
-      dgListNode* neigborghNode = tetra->m_faces[i].m_twin;
+      dgListNode* neigborghNode = tetraN->m_faces[i].m_twin;
       dgConvexHull4dTetraherum* const neighborgh = &neigborghNode->GetInfo();
       if (neighborgh->GetMark() != mark)
       {
         neighborgh->SetMark(mark);
         if (heap.GetCount() >= maxCount)
         {
-          for (dgInt32 i = 0; i < releafCount; i++)
+          for (dgInt32 j = 0; j < releafCount; j++)
           {
             heap.Remove(heap.GetCount() - 1);
           }
         }
-        dgConvexHull4dTetraherum::dgTetrahedrumPlane plane(
+        dgConvexHull4dTetraherum::dgTetrahedrumPlane planeN(
             neighborgh->GetPlaneEquation(hullVertexArray));
-        heap.Push(neigborghNode, plane.Evalue(vertex));
+        heap.Push(neigborghNode, planeN.Evalue(vertex));
       }
     }
   }
 
   for (dgListNode* node = GetFirst(); node; node = node->GetNext())
   {
-    dgConvexHull4dTetraherum* const tetra = &node->GetInfo();
-    dgFloat64 dist = tetra->Evalue(hullVertexArray, vertex);
-    if (dist > dgFloat64(0.0f))
+    dgConvexHull4dTetraherum* const tetraN = &node->GetInfo();
+    dgFloat64 distN = tetraN->Evalue(hullVertexArray, vertex);
+    if (distN > dgFloat64(0.0f))
     {
       return node;
     }
