@@ -116,15 +116,15 @@ cRenderer3D::cRenderer3D(iLowLevelGraphics *apLowLevelGraphics, cResources *apRe
 	Hpl1::logInfo(Hpl1::kDebugGraphics, "%s", "Load Renderer3D gpu programs:\n");
 	cGpuProgramManager *pProgramManager = apResources->GetGpuProgramManager();
 
-	mRenderSettings.extrudeProgram = pProgramManager->CreateProgram("ShadowExtrude", "ShadowExtrude");
+	mRenderSettings.extrudeProgram = pProgramManager->CreateProgram("hpl1_ShadowExtrude", "hpl1_ShadowExtrude");
 
 	///////////////////////////////////
 	// Load diffuse program, for stuff like query rendering
-	_diffuseProgram = pProgramManager->CreateProgram("Diffuse_Color", "Diffuse_Color");
+	_diffuseProgram = pProgramManager->CreateProgram("hpl1_Diffuse_Color", "hpl1_Diffuse_Color");
 
 	///////////////////////////////////
 	// Fog Vertex Program Init
-	_solidFogProgram = pProgramManager->CreateProgram("Fog_Solid", "Fog_Solid");
+	_solidFogProgram = pProgramManager->CreateProgram("hpl1_Fog_Solid", "hpl1_Fog_Solid");
 
 	///////////////////////////////////
 	// Fog Texture Init
@@ -186,8 +186,8 @@ cRenderer3D::cRenderer3D(iLowLevelGraphics *apLowLevelGraphics, cResources *apRe
 	/////////////////////////////////////////////
 	// Create Refraction programs
 	mbRefractionAvailable = true;
-	_refractProgram = pProgramManager->CreateProgram("refract", "refract");
-	_refractSpecProgram = pProgramManager->CreateProgram("refract", "refract_special");
+	_refractProgram = pProgramManager->CreateProgram("hpl1_refract", "hpl1_refract");
+	_refractSpecProgram = pProgramManager->CreateProgram("hpl1_refract", "hpl1_refract_special");
 	if (!_refractProgram || !_refractSpecProgram) {
 		mbRefractionAvailable = false;
 		Hpl1::logInfo(Hpl1::kDebugGraphics, "%s", "refraction will not be supported");

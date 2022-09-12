@@ -52,7 +52,7 @@ cMaterial_BumpSpec2D::cMaterial_BumpSpec2D(const tString &asName, iLowLevelGraph
 	mbHasSpecular = true;
 	mType = eMaterialType_BumpSpec;
 
-	_shader = mpProgramManager->CreateProgram("BumpSpec2D_Light", "BumpSpec2D_Light");
+	_shader = mpProgramManager->CreateProgram("hpl1_BumpSpec2D_Light", "hpl1_BumpSpec2D_Light");
 }
 
 //-----------------------------------------------------------------------

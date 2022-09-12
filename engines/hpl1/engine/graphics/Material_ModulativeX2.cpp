@@ -69,7 +69,7 @@ cMaterial_ModulativeX2::cMaterial_ModulativeX2(const tString &asName, iLowLevelG
 	mbIsTransperant = true;
 	mbIsGlowing = false;
 	mbUsesLights = false;
-	_fogShader = mpProgramManager->CreateProgram("Fog_Trans", "Fog_Trans_ModX2");
+	_fogShader = mpProgramManager->CreateProgram("hpl1_Fog_Trans", "hpl1_Fog_Trans_ModX2");
 }
 
 //-----------------------------------------------------------------------

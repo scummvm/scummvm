@@ -76,8 +76,8 @@ cMaterial_EnvMap_Reflect::cMaterial_EnvMap_Reflect(const tString &asName, iLowLe
 	mbIsGlowing = false;
 	mbUsesLights = false;
 
-	_diffuseProgram = mpProgramManager->CreateProgram("Diffuse_Color", "Diffuse_Color");
-	_diffuseReflectProgram = mpProgramManager->CreateProgram("Diffuse_EnvMap_Reflect", "Diffuse_EnvMap_Reflect");
+	_diffuseProgram = mpProgramManager->CreateProgram("hpl1_Diffuse_Color", "hpl1_Diffuse_Color");
+	_diffuseReflectProgram = mpProgramManager->CreateProgram("hpl1_Diffuse_EnvMap_Reflect", "hpl1_Diffuse_EnvMap_Reflect");
 }
 
 //-----------------------------------------------------------------------

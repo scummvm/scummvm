@@ -72,7 +72,7 @@ cMaterial_Additive::cMaterial_Additive(const tString &asName, iLowLevelGraphics 
 	mbIsGlowing = false;
 	mbUsesLights = false;
 
-	_fogShader = mpProgramManager->CreateProgram("Fog_Trans", "Fog_Trans_Alpha");
+	_fogShader = mpProgramManager->CreateProgram("hpl1_Fog_Trans", "hpl1_Fog_Trans_Alpha");
 }
 
 //-----------------------------------------------------------------------

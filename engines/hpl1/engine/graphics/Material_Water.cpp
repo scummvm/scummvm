@@ -85,9 +85,9 @@ cMaterial_Water::cMaterial_Water(const tString &asName, iLowLevelGraphics *apLow
 	mbIsGlowing = false;
 	mbUsesLights = false;
 
-	_fogProgram = mpProgramManager->CreateProgram("Water_Fog", "Water_Fog");
-	_diffuseProgram = mpProgramManager->CreateProgram("Water_Diffuse", "Water_Diffuse");
-	_refractProgram = mpProgramManager->CreateProgram("refract_water", "refract_water");
+	_fogProgram = mpProgramManager->CreateProgram("hpl1_Water_Fog", "hpl1_Water_Fog");
+	_diffuseProgram = mpProgramManager->CreateProgram("hpl1_Water_Diffuse", "hpl1_Water_Diffuse");
+	_refractProgram = mpProgramManager->CreateProgram("hpl1_refract_water", "hpl1_refract_water");
 
 	mfTime = 0;
 }

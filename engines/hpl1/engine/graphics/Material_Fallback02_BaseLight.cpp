@@ -55,15 +55,15 @@ iMaterial_Fallback02_BaseLight::iMaterial_Fallback02_BaseLight(
 
 	Common::fill(_gpuPrograms, _gpuPrograms + eBaseLightProgram_LastEnum, nullptr);
 
-	_gpuPrograms[eBaseLightProgram_Point1] = mpProgramManager->CreateProgram("Fallback02_Diffuse_Light_p1", "Fallback02_Diffuse_Light_p1");
+	_gpuPrograms[eBaseLightProgram_Point1] = mpProgramManager->CreateProgram("hpl1_Fallback02_Diffuse_Light_p1", "hpl1_Fallback02_Diffuse_Light_p1");
 	//the second pass is the same as the second pass of fallback01
-	_gpuPrograms[eBaseLightProgram_Point2] = mpProgramManager->CreateProgram("Fallback02_Diffuse_Light_p2", "Fallback01_Diffuse_Light_p2");
-	_gpuPrograms[eBaseLightProgram_Spot1] = mpProgramManager->CreateProgram("Fallback02_Diffuse_Light_p1", "Fallback02_Diffuse_Light_p1");
-	_gpuPrograms[eBaseLightProgram_Spot2] = mpProgramManager->CreateProgram("Fallback02_Diffuse_Light_Spot_p2", "Fallback02_Diffuse_Light_Spot_p2");
-	_gpuPrograms[eBaseLightProgram_Spot3] = mpProgramManager->CreateProgram("Fallback02_Diffuse_Light_Spot_p3", "Fallback02_Diffuse_Light_Spot_p3");
+	_gpuPrograms[eBaseLightProgram_Point2] = mpProgramManager->CreateProgram("hpl1_Fallback02_Diffuse_Light_p2", "hpl1_Fallback01_Diffuse_Light_p2");
+	_gpuPrograms[eBaseLightProgram_Spot1] = mpProgramManager->CreateProgram("hpl1_Fallback02_Diffuse_Light_p1", "hpl1_Fallback02_Diffuse_Light_p1");
+	_gpuPrograms[eBaseLightProgram_Spot2] = mpProgramManager->CreateProgram("hpl1_Fallback02_Diffuse_Light_Spot_p2", "hpl1_Fallback02_Diffuse_Light_Spot_p2");
+	_gpuPrograms[eBaseLightProgram_Spot3] = mpProgramManager->CreateProgram("hpl1_Fallback02_Diffuse_Light_Spot_p3", "hpl1_Fallback02_Diffuse_Light_Spot_p3");
 
-	_diffuseGpuProgram = mpProgramManager->CreateProgram("Diffuse_Color", "Diffuse_Color");
-	_ambientGpuProgram = mpProgramManager->CreateProgram("Diffuse_Color", "Ambient_Color");
+	_diffuseGpuProgram = mpProgramManager->CreateProgram("hpl1_Diffuse_Color", "hpl1_Diffuse_Color");
+	_ambientGpuProgram = mpProgramManager->CreateProgram("hpl1_Diffuse_Color", "hpl1_Ambient_Color");
 
 	mpNormalizationMap = mpTextureManager->CreateCubeMap("Normalization", false);
 	mpNormalizationMap->SetWrapS(eTextureWrap_ClampToEdge);
