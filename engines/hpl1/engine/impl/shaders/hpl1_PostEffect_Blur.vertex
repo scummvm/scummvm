@@ -13,7 +13,6 @@ vec4 position = gl_Vertex;
 vec3 color = gl_Color.xyz;
 vec2 uv = gl_MultiTexCoord0.xy;
 
-out vec3 vColor;
 out vec2 vUv0;
 out vec2 vUv1;
 out vec2 vUv2;
@@ -27,7 +26,6 @@ uniform float amount;
 void main()
 {
 	gl_Position = (worldViewProj * position);
-	vColor = clamp(color, vec3(0.0), vec3(1.0));
 	vUv0 = uv + vec2(xOffset, yOffset) * amount;
 	vUv1 = uv + vec2(xOffset, yOffset) * 2.0 * amount;
 	vUv2 = uv - vec2(xOffset, yOffset) * amount;

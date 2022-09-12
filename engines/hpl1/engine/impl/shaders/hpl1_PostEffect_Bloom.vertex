@@ -14,7 +14,6 @@ vec3 color = gl_Color.xyz;
 vec2 uv0 = gl_MultiTexCoord0.xy;
 vec2 uv1 = gl_MultiTexCoord1.xy;
 
-out vec3 vColor;
 out vec2 vUv0;
 out vec2 vUv1;
 
@@ -23,7 +22,6 @@ uniform mat4 worldViewProj;
 void main()
 {
 	gl_Position = (worldViewProj * position);
-	vColor = clamp(color, vec3(0.0), vec3(1.0));
 
 	vUv0 = uv0;
 	vUv1 = uv1;
