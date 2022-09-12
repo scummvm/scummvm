@@ -645,36 +645,36 @@ void dgMatrix::EigenVectors (dgVector &eigenValues, const dgMatrix& initialGuess
 					for (dgInt32 j = 0; j <= ip - 1; j ++) {
 						//ROT (mat, j, ip, j, iq, s, tau); 
 						//ROT(dgMatrix &a, dgInt32 i, dgInt32 j, dgInt32 k, dgInt32 l, dgFloat32 s, dgFloat32 tau) 
-						dgFloat32 g = mat[j][ip]; 
-						dgFloat32 h = mat[j][iq]; 
-						mat[j][ip] = g - s * (h + g * tau); 
-						mat[j][iq] = h + s * (g - h * tau);
+						dgFloat32 gg = mat[j][ip];
+						dgFloat32 hh = mat[j][iq];
+						mat[j][ip] = gg - s * (hh + gg * tau);
+						mat[j][iq] = hh + s * (gg - hh * tau);
 
 					}
 					for (dgInt32 j = ip + 1; j <= iq - 1; j ++) {
 						//ROT (mat, ip, j, j, iq, s, tau); 
 						//ROT(dgMatrix &a, dgInt32 i, dgInt32 j, dgInt32 k, dgInt32 l, dgFloat32 s, dgFloat32 tau) 
-						dgFloat32 g = mat[ip][j]; 
-						dgFloat32 h = mat[j][iq]; 
-						mat[ip][j] = g - s * (h + g * tau); 
-						mat[j][iq] = h + s * (g - h * tau);
+						dgFloat32 gg = mat[ip][j];
+						dgFloat32 hh = mat[j][iq];
+						mat[ip][j] = gg - s * (hh + gg * tau);
+						mat[j][iq] = hh + s * (gg - hh * tau);
 					}
 					for (dgInt32 j = iq + 1; j < 3; j ++) {
 						//ROT (mat, ip, j, iq, j, s, tau); 
 						//ROT(dgMatrix &a, dgInt32 i, dgInt32 j, dgInt32 k, dgInt32 l, dgFloat32 s, dgFloat32 tau) 
-						dgFloat32 g = mat[ip][j]; 
-						dgFloat32 h = mat[iq][j]; 
-						mat[ip][j] = g - s * (h + g * tau); 
-						mat[iq][j] = h + s * (g - h * tau);
+						dgFloat32 gg = mat[ip][j];
+						dgFloat32 hh = mat[iq][j];
+						mat[ip][j] = gg - s * (hh + gg * tau);
+						mat[iq][j] = hh + s * (gg - hh * tau);
 					}
 
 					for (dgInt32 j = 0; j < 3; j ++) {
 						//ROT (eigenVectors, j, ip, j, iq, s, tau); 
 						//ROT(dgMatrix &a, dgInt32 i, dgInt32 j, dgInt32 k, dgInt32 l, dgFloat32 s, dgFloat32 tau) 
-						dgFloat32 g = eigenVectors[j][ip]; 
-						dgFloat32 h = eigenVectors[j][iq]; 
-						eigenVectors[j][ip] = g - s * (h + g * tau); 
-						eigenVectors[j][iq] = h + s * (g - h * tau);
+						dgFloat32 gg = eigenVectors[j][ip];
+						dgFloat32 hh = eigenVectors[j][iq];
+						eigenVectors[j][ip] = gg - s * (hh + gg * tau);
+						eigenVectors[j][iq] = hh + s * (gg - hh * tau);
 					}
 				}
 			}
