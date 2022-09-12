@@ -1730,9 +1730,11 @@ dgIntersectStatus dgAABBPolygonSoup::CalculateAllFaceEdgeNormals(void *context, 
   AdjacentdFaces adjacentFaces;
   adjacentFaces.m_count = indexCount;
   adjacentFaces.m_index = (dgInt32*) indexArray;
-  dgVector n(&polygon[indexArray[indexCount] * stride]);
-  dgVector p(&polygon[indexArray[0] * stride]);
-  adjacentFaces.m_normal = dgPlane(n, -(n % p));
+  {
+    dgVector n(&polygon[indexArray[indexCount] * stride]);
+    dgVector p(&polygon[indexArray[0] * stride]);
+    adjacentFaces.m_normal = dgPlane(n, -(n % p));
+  }
 
   _ASSERTE(indexCount < dgInt32 (sizeof (adjacentFaces.m_edgeMap) / sizeof (adjacentFaces.m_edgeMap[0])));
 
@@ -1774,12 +1776,12 @@ dgIntersectStatus dgAABBPolygonSoup::CalculateAllFaceEdgeNormals(void *context, 
 dgFloat32 dgAABBPolygonSoup::CalculateFaceMaxSize(dgTriplex* const vertex, dgInt32 indexCount, const dgInt32* const indexArray) const
 {
   dgFloat32 maxSize = dgFloat32(0.0f);
-  dgInt32 index = indexArray[indexCount - 1];
-  dgVector p0(vertex[index].m_x, vertex[index].m_y, vertex[index].m_z,  dgFloat32(0.0f));
+  dgInt32 indexPZero = indexArray[indexCount - 1];
+  dgVector p0(vertex[indexPZero].m_x, vertex[indexPZero].m_y, vertex[indexPZero].m_z,  dgFloat32(0.0f));
   for (dgInt32 i = 0; i < indexCount; i++)
   {
-    dgInt32 index = indexArray[i];
-    dgVector p1(vertex[index].m_x, vertex[index].m_y, vertex[index].m_z, dgFloat32(0.0f));
+    dgInt32 indexPOne = indexArray[i];
+    dgVector p1(vertex[indexPOne].m_x, vertex[indexPOne].m_y, vertex[indexPOne].m_z, dgFloat32(0.0f));
 
     dgVector dir(p1 - p0);
     dir = dir.Scale(dgRsqrt (dir % dir));
@@ -1788,8 +1790,8 @@ dgFloat32 dgAABBPolygonSoup::CalculateFaceMaxSize(dgTriplex* const vertex, dgInt
     dgFloat32 minVal = dgFloat32(1.0e10f);
     for (dgInt32 j = 0; j < indexCount; j++)
     {
-      dgInt32 index = indexArray[j];
-      dgVector q(vertex[index].m_x, vertex[index].m_y, vertex[index].m_z, dgFloat32(0.0f));
+      dgInt32 indexQ = indexArray[j];
+      dgVector q(vertex[indexQ].m_x, vertex[indexQ].m_y, vertex[indexQ].m_z, dgFloat32(0.0f));
       dgFloat32 val = dir % q;
       minVal = GetMin(minVal, val);
       maxVal = GetMax(maxVal, val);
