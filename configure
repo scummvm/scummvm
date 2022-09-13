@@ -355,7 +355,7 @@ EOF
 }
 
 gcc_get_define() {
-	echo "" | $CXX -dM -E - | fgrep "$1" | head -n1 | cut -d ' ' -f 3-
+	echo "" | $CXX -dM -E - | grep -F "$1" | head -n1 | cut -d ' ' -f 3-
 }
 
 #
