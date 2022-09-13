@@ -22,6 +22,7 @@
 #include "common/language.h"
 #include "director/director.h"
 #include "director/debugger.h"
+#include "director/frame.h"
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/lingo/lingo.h"
@@ -42,6 +43,8 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("version", WRAP_METHOD(Debugger, cmdVersion));
 	registerCmd("frame", WRAP_METHOD(Debugger, cmdFrame));
 	registerCmd("f", WRAP_METHOD(Debugger, cmdFrame));
+	registerCmd("channels", WRAP_METHOD(Debugger, cmdChannels));
+	registerCmd("chan", WRAP_METHOD(Debugger, cmdChannels));
 	registerCmd("nextframe", WRAP_METHOD(Debugger, cmdNextFrame));
 	registerCmd("nf", WRAP_METHOD(Debugger, cmdNextFrame));
 
@@ -89,7 +92,7 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	//debugPrintf(" movie [moviePath] - Get or sets the current movie\n");
 	//debugPrintf(" movieinfo - Show information for the current movie\n");
 	debugPrintf(" frame / f [frameNum] - Gets or sets the current score frame\n");
-	//debugPrintf(" channels / chan [frameNum] - Shows channel information for a score frame\n");
+	debugPrintf(" channels / chan [frameNum] - Shows channel information for a score frame\n");
 	//debugPrintf(" cast - Shows the cast list for the current movie\n");
 	debugPrintf(" nextframe / nf [n] - Steps forward one or more score frames\n");
 	//debugPrintf(" nextmovie / nm - Steps forward until the next change of movie\n");
@@ -145,6 +148,23 @@ bool Debugger::cmdFrame(int argc, const char **argv) {
 		lingo->func_goto(frame, movie);
 	} else {
 		debugPrintf("%d\n", score->getCurrentFrame());
+	}
+	return true;
+}
+
+bool Debugger::cmdChannels(int argc, const char **argv) {
+	Lingo *lingo = g_director->getLingo();
+	Score *score = g_director->getCurrentMovie()->getScore();
+
+	int maxSize = (int)score->_frames.size();
+	int frameId = score->getCurrentFrame();
+	if (argc == 2)
+		frameId = atoi(argv[1]);
+
+	if (frameId >= 1 && frameId <= maxSize) {
+		debugPrintf("%s\n", score->_frames[frameId-1]->formatChannelInfo().c_str());
+	} else {
+		debugPrintf("Must specify a frame number between 1 and %d\n", maxSize);
 	}
 	return true;
 }

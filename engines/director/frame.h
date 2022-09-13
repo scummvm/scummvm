@@ -96,6 +96,8 @@ public:
 
 	void executeImmediateScripts();
 
+	Common::String formatChannelInfo();
+
 private:
 
 	void readPaletteInfo(Common::SeekableReadStreamEndian &stream);

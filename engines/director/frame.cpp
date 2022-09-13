@@ -263,22 +263,6 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 		// Script
 	}
 
-	debugC(4, kDebugLoading, "TMPO:   tempo: %d, skipFrameFlag: %d, blend: %d",
-		_tempo, _skipFrameFlag, _blend);
-	if (_palette.paletteId) {
-		debugC(4, kDebugLoading, "PAL:    paletteId: %d, firstColor: %d, lastColor: %d, flags: %d, cycleCount: %d, speed: %d, frameCount: %d, fade: %d, delay: %d, style: %d",
-			_palette.paletteId, _palette.firstColor, _palette.lastColor, _palette.flags,
-			_palette.cycleCount, _palette.speed, _palette.frameCount,
-			_palette.fade, _palette.delay, _palette.style);
-	} else {
-		debugC(4, kDebugLoading, "PAL:    paletteId: 000");
-	}
-	debugC(4, kDebugLoading, "TRAN:   transType: %d, transDuration: %d, transChunkSize: %d",
-		_transType, _transDuration, _transChunkSize);
-	debugC(4, kDebugLoading, "SND: 1  sound1: %d, soundType1: %d", _sound1.member, _soundType1);
-	debugC(4, kDebugLoading, "SND: 2  sound2: %d, soundType2: %d", _sound2.member, _soundType2);
-	debugC(4, kDebugLoading, "LSCR:   actionId: %d", _actionId.member);
-
 	_transChunkSize = CLIP<byte>(_transChunkSize, 0, 128);
 	_transDuration = CLIP<uint16>(_transDuration, 0, 32000);  // restrict to 32 secs
 
@@ -388,18 +372,47 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 			sprite._trails = 0;
 
 		sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
+	}
 
+	if (debugChannelSet(4, kDebugLoading)) {
+		debugC(4, kDebugLoading, "%s", formatChannelInfo().c_str());
+	}
+}
+
+Common::String Frame::formatChannelInfo() {
+	Common::String result;
+	result += Common::String::format("TMPO:   tempo: %d, skipFrameFlag: %d, blend: %d\n",
+		_tempo, _skipFrameFlag, _blend);
+	if (_palette.paletteId) {
+		result += Common::String::format("PAL:    paletteId: %d, firstColor: %d, lastColor: %d, flags: %d, cycleCount: %d, speed: %d, frameCount: %d, fade: %d, delay: %d, style: %d\n",
+			_palette.paletteId, _palette.firstColor, _palette.lastColor, _palette.flags,
+			_palette.cycleCount, _palette.speed, _palette.frameCount,
+			_palette.fade, _palette.delay, _palette.style);
+	} else {
+		result += Common::String::format("PAL:    paletteId: 000\n");
+	}
+	result += Common::String::format("TRAN:   transType: %d, transDuration: %d, transChunkSize: %d\n",
+		_transType, _transDuration, _transChunkSize);
+	result += Common::String::format("SND: 1  sound1: %d, soundType1: %d\n", _sound1.member, _soundType1);
+	result += Common::String::format("SND: 2  sound2: %d, soundType2: %d\n", _sound2.member, _soundType2);
+	result += Common::String::format("LSCR:   actionId: %d\n", _actionId.member);
+
+	for (int i = 0; i < _numChannels; i++) {
+		Sprite &sprite = *_sprites[i + 1];
 		if (sprite._castId.member) {
-			debugC(4, kDebugLoading, "CH: %-3d castId: %s [inkData:%02x [ink: %x trails: %d line: %d], %dx%d@%d,%d type: %d fg: %d bg: %d] script: %s, flags2: %x, unk2: %x, unk3: %x",
+			result += Common::String::format("CH: %-3d castId: %s [inkData:%02x [ink: %x trails: %d line: %d], %dx%d@%d,%d type: %d fg: %d bg: %d] script: %s, flags2: %x, unk2: %x, unk3: %x\n",
 				i + 1, sprite._castId.asString().c_str(), sprite._inkData,
 				sprite._ink, sprite._trails, sprite._thickness, sprite._width, sprite._height,
 				sprite._startPoint.x, sprite._startPoint.y,
 				sprite._spriteType, sprite._foreColor, sprite._backColor, sprite._scriptId.asString().c_str(), sprite._colorcode, sprite._blendAmount, sprite._unk3);
 		} else {
-			debugC(4, kDebugLoading, "CH: %-3d castId: 000", i + 1);
+			result += Common::String::format("CH: %-3d castId: 000\n", i + 1);
 		}
 	}
+
+	return result;
 }
+
 
 void Frame::readMainChannels(Common::SeekableReadStreamEndian &stream, uint16 offset, uint16 size) {
 	uint16 finishPosition = offset + size;
