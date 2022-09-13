@@ -142,10 +142,12 @@ cRenderer3D::cRenderer3D(iLowLevelGraphics *apLowLevelGraphics, cResources *apRe
 		pFogArray[i * 2 + 1] = 255 - (unsigned char)i;
 	}
 
-	pTex->CreateFromArray(pFogArray, 2, cVector3l(256, 1, 1));
-	pTex->SetWrapR(eTextureWrap_ClampToEdge);
-	pTex->SetWrapS(eTextureWrap_ClampToEdge);
-	pTex->SetWrapT(eTextureWrap_ClampToEdge);
+	if (pTex) {
+		pTex->CreateFromArray(pFogArray, 2, cVector3l(256, 1, 1));
+		pTex->SetWrapR(eTextureWrap_ClampToEdge);
+		pTex->SetWrapS(eTextureWrap_ClampToEdge);
+		pTex->SetWrapT(eTextureWrap_ClampToEdge);
+	}
 
 	mpFogLinearSolidTexture = pTex;
 
@@ -158,9 +160,11 @@ cRenderer3D::cRenderer3D(iLowLevelGraphics *apLowLevelGraphics, cResources *apRe
 		pFogArray[i * 2 + 1] = (unsigned char)i;
 	}
 
-	pTex->CreateFromArray(pFogArray, 2, cVector3l(256, 1, 1));
-	pTex->SetWrapR(eTextureWrap_ClampToEdge);
-	pTex->SetWrapS(eTextureWrap_ClampToEdge);
+	if (pTex) {
+		pTex->CreateFromArray(pFogArray, 2, cVector3l(256, 1, 1));
+		pTex->SetWrapR(eTextureWrap_ClampToEdge);
+		pTex->SetWrapS(eTextureWrap_ClampToEdge);
+	}
 
 	mpFogLinearAddTexture = pTex;
 
@@ -173,9 +177,11 @@ cRenderer3D::cRenderer3D(iLowLevelGraphics *apLowLevelGraphics, cResources *apRe
 		pFogArray[i * 2 + 1] = (unsigned char)i;
 	}
 
-	pTex->CreateFromArray(pFogArray, 2, cVector3l(256, 1, 1));
-	pTex->SetWrapR(eTextureWrap_ClampToEdge);
-	pTex->SetWrapS(eTextureWrap_ClampToEdge);
+	if (pTex) {
+		pTex->CreateFromArray(pFogArray, 2, cVector3l(256, 1, 1));
+		pTex->SetWrapR(eTextureWrap_ClampToEdge);
+		pTex->SetWrapS(eTextureWrap_ClampToEdge);
+	}
 
 	mpFogLinearAlphaTexture = pTex;
 

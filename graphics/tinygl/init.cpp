@@ -261,7 +261,7 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	// color mask
 	color_mask_red = color_mask_green = color_mask_blue = color_mask_alpha = true;
 
-	const int kDrawCallMemory = 5 * 1024 * 1024;
+	const size_t kDrawCallMemory = 1024 * 1024 * 1024;
 
 	_currentAllocatorIndex = 0;
 	_drawCallAllocator[0].initialize(kDrawCallMemory);

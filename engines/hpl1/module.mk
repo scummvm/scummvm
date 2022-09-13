@@ -98,6 +98,9 @@ MODULE_OBJS := \
 	engine/impl/CollideShapeNewton.o \
 	engine/impl/KeyboardSDL.o \
 	engine/impl/LowLevelGraphicsSDL.o \
+	engine/impl/low_level_graphics_tgl.o \
+	engine/impl/texture_tgl.o \
+	engine/impl/vertex_buffer_tgl.o \
 	engine/impl/LowLevelInputSDL.o \
 	engine/impl/LowLevelPhysicsNewton.o \
 	engine/impl/LowLevelSoundOpenAL.o \
