@@ -406,15 +406,15 @@ class IMuseInternal : public IMuse {
 #endif
 
 protected:
-	bool _native_mt32;
-	bool _enable_gs;
-	bool _isAmiga;
+	const bool _native_mt32;
+	const bool _enable_gs;
+	const MidiDriverFlags _soundType;
 	MidiDriver *_midi_adlib;
 	MidiDriver *_midi_native;
 	TimerCallbackInfo _timer_info_adlib;
 	TimerCallbackInfo _timer_info_native;
 
-	uint32 _game_id;
+	const uint32 _game_id;
 
 	// Plug-in SysEx handling. Right now this only supports one
 	// custom SysEx handler for the hardcoded IMUSE_SYSEX_ID
@@ -453,13 +453,12 @@ protected:
 	Player _players[8];
 	Part _parts[32];
 
-	bool _pcSpeaker;
 	Instrument _global_instruments[32];
 	CommandQueue _cmd_queue[64];
 	DeferredCommand _deferredCommands[4];
 
 protected:
-	IMuseInternal(Common::Mutex &mutex);
+	IMuseInternal(ScummEngine *vm, MidiDriverFlags sndType, uint32 initFlags);
 	~IMuseInternal() override;
 
 	int initialize(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver);
@@ -555,7 +554,7 @@ public:
 
 public:
 	// Factory function
-	static IMuseInternal *create(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver);
+	static IMuseInternal *create(ScummEngine *vm, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver, MidiDriverFlags sndType, uint32 initFlags);
 };
 
 } // End of namespace Scumm

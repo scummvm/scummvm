@@ -154,8 +154,8 @@ void Part::set_transpose(int8 transpose, int8 clipRangeLow, int8 clipRangeHi)  {
 	// The Amiga versions have a signed/unsigned bug which makes the check for _transpose == -128 impossible. They actually check for
 	// a value of 128 with a signed int8 (a signed int8 can never be 128). The playback depends on this being implemented exactly
 	// like in the original driver. I found this bug with the WinUAE debugger. The DOS versions do not have that bug.
-	_transpose_eff = (!_se->_isAmiga && _transpose == -128) ? 0 : transpose_clamp(_transpose + _player->getTranspose(), clipRangeLow, clipRangeHi);
-	if (_player->isAdLibOrFMTowns() || _se->_isAmiga)
+	_transpose_eff = (_se->_soundType != MDT_AMIGA && _transpose == -128) ? 0 : transpose_clamp(_transpose + _player->getTranspose(), clipRangeLow, clipRangeHi);
+	if (_player->isAdLibOrFMTowns() || _se->_soundType == MDT_AMIGA)
 		sendTranspose();
 	else
 		sendPitchBend();
@@ -185,7 +185,7 @@ void Part::effectLevel(byte value) {
 }
 
 void Part::fix_after_load() {
-	int lim = (_se->_game_id == GID_TENTACLE || _se->_isAmiga || _se->isNativeMT32()) ? 12 : 24;
+	int lim = (_se->_game_id == GID_TENTACLE || _se->_soundType == MDT_AMIGA|| _se->isNativeMT32()) ? 12 : 24;
 	set_transpose(_transpose, -lim, lim);
 	volume(_vol);
 	set_detune(_detune);
@@ -214,7 +214,7 @@ void Part::set_onoff(bool on) {
 }
 
 void Part::set_instrument(byte *data) {
-	if (_se->_pcSpeaker)
+	if (_se->_soundType == MDT_PCSPK)
 		_instrument.pcspk(data);
 	else
 		_instrument.adlib(data);
@@ -376,7 +376,7 @@ void Part::sendPitchBend() {
 	// For Amiga, AdLib and FM-Towns we send some values separately due to the way the drivers have
 	// been implemented (it must be avoided that the pitchbend factor gets applied on top). So we
 	// neutralize them here for the pitch bend calculation.
-	if (_se->_isAmiga) {
+	if (_se->_soundType == MDT_AMIGA) {
 		transpose = 0;
 	} else if (_player->isAdLibOrFMTowns()) {
 		transpose = detune = 0;
@@ -413,7 +413,7 @@ void Part::sendTranspose() {
 		return;
 
 	// Some drivers handle the transpose and the detune in pitchBend()...
-	if (!_se->_isAmiga && !_player->isAdLibOrFMTowns())
+	if (_se->_soundType != MDT_AMIGA && !_player->isAdLibOrFMTowns())
 		return;
 
 	_mc->transpose(_transpose_eff);

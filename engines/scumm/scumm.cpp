@@ -1952,10 +1952,7 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 	}
 
 	// DOTT + SAM use General MIDI, so they shouldn't use GS settings
-	if ((_game.id == GID_TENTACLE) || (_game.id == GID_SAMNMAX))
-		_enable_gs = false;
-	else
-		_enable_gs = ConfMan.getBool("enable_gs");
+	bool enable_gs = (_game.id == GID_TENTACLE || _game.id == GID_SAMNMAX) ? false : ConfMan.getBool("enable_gs");
 
 	/* Bind the mixer to the system => mixer will be invoked
 	 * automatically when samples need to be generated */
@@ -2040,7 +2037,7 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 			useOnlyNative = true;
 		} else if (_sound->_musicType == MDT_AMIGA) {
 			nativeMidiDriver = new IMuseDriver_Amiga(_mixer);
-			_native_mt32 = _enable_gs = false;
+			_native_mt32 = enable_gs = false;
 			useOnlyNative = true;
 		} else if (_sound->_musicType != MDT_ADLIB && _sound->_musicType != MDT_TOWNS && _sound->_musicType != MDT_PCSPK) {
 			nativeMidiDriver = MidiDriver::createMidi(dev);
@@ -2062,7 +2059,13 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 			}
 		}
 
-		_imuse = IMuse::create(_system, nativeMidiDriver, adlibMidiDriver);
+		uint32 imsFlags = 0;
+		if (_native_mt32)
+			imsFlags |= IMuse::kFlagNativeMT32;
+		if (enable_gs && MidiDriver::getMusicType(dev) != MT_MT32)
+			imsFlags |= IMuse::kFlagRolandGS;
+
+		_imuse = IMuse::create(this, nativeMidiDriver, adlibMidiDriver, isMacM68kIMuse() ? MDT_MACINTOSH : _sound->_musicType, imsFlags);
 
 		if (_game.platform == Common::kPlatformFMTowns) {
 			_musicEngine = _townsPlayer = new Player_Towns_v2(this, _mixer, _imuse, true);
@@ -2076,22 +2079,12 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 			_imuse->addSysexHandler
 				(/*IMUSE_SYSEX_ID*/ 0x7D,
 				 (_game.id == GID_SAMNMAX) ? sysexHandler_SamNMax : sysexHandler_Scumm);
-			_imuse->property(IMuse::PROP_GAME_ID, _game.id);
 			if (ConfMan.hasKey("tempo"))
 				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
-			if (midi != MDT_NONE) {
-				_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
-				if (MidiDriver::getMusicType(dev) != MT_MT32) // MT-32 Emulation shouldn't be GM/GS initialized
-					_imuse->property(IMuse::PROP_GS, _enable_gs);
-			}
 			if (_game.heversion >= 60) {
 				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);
 				_imuse->property(IMuse::PROP_RECYCLE_PLAYERS, 1);
 			}
-			if (_sound->_musicType == MDT_PCSPK)
-				_imuse->property(IMuse::PROP_PC_SPEAKER, 1);
-			if (_sound->_musicType == MDT_AMIGA)
-				_imuse->property(IMuse::PROP_AMIGA, 1);
 		}
 	}
 }

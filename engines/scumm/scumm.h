@@ -1385,7 +1385,6 @@ protected:
 	uint16 _defaultTextSpeed = 0;
 	int _saveSound = 0;
 	bool _native_mt32 = false;
-	bool _enable_gs = false;
 	bool _copyProtection = false;
 
 	// Indy4 Amiga specific
