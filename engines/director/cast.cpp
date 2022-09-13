@@ -1499,4 +1499,22 @@ void Cast::loadVWTL(Common::SeekableReadStreamEndian &stream) {
 
 }
 
+Common::String Cast::formatCastSummary() {
+	Common::String result;
+	Common::Array<int> castIds;
+	for (auto it = _loadedCast->begin(); it != _loadedCast->end(); ++it) {
+		castIds.push_back(it->_key);
+	}
+	Common::sort(castIds.begin(), castIds.end());
+	for (auto it = castIds.begin(); it != castIds.end(); ++it) {
+		CastMember *castMember = getCastMember(*it);
+		CastMemberInfo *castMemberInfo = getCastMemberInfo(*it);
+		result += Common::String::format("%d: type=%s, name=\"%s\"\n",
+			*it, castTypeToString(castMember->_type).c_str(),
+			castMemberInfo ? castMemberInfo->name.c_str() : ""
+		);
+	}
+	return result;
+}
+
 } // End of namespace Director
