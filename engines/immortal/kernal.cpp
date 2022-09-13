@@ -48,6 +48,9 @@ void ImmortalEngine::drawUniv() {
 	_myUnivPointX = !(_myViewPortX & (kChrW - 1)) + kViewPortSpX;
 	_myUnivPointY = !(_myViewPortY & (kChrH - 1)) + kViewPortSpY;
 
+	// To start constructing the screen, we start with the frame as the base
+	memcpy(_screenBuff, _window, kScreenSize);
+
 	makeMyCNM();
 	drawBGRND();							// Draw floor parts of leftmask rightmask and maskers
 	addRows();								// Add rows to drawitem array
@@ -286,7 +289,7 @@ void ImmortalEngine::drawItems() {
 			// If positive, it's a sprite
 			uint16 x = (_sprites[index]._X - _myViewPortX) + kVSX;
 			uint16 y = (_sprites[index]._Y - _myViewPortY) + kVSY;
-			//superSprite(index, x, y, _sprites[index]._dSprite->_images[0/*_sprites[index]._image*/], kVSBMW, _screenBuff, kMySuperTop, kMySuperBottom);
+			superSprite(_sprites[index]._dSprite, x, y, _sprites[index]._image, kVSBMW, _screenBuff, kMySuperTop, kMySuperBottom);
 		}
 		n++;
 	} while (n != _num2DrawItems);
@@ -349,7 +352,7 @@ void ImmortalEngine::printChr(char c) {
 		return;
 	}
 
-	//superSprite(0, x, y, _dataSprites[kFont]._images[(int) c], kScreenBMW, _screenBuff, kSuperTop, kSuperBottom);
+	superSprite(&_dataSprites[kFont], x, y, (int) c, kScreenBMW, _screenBuff, kSuperTop, kSuperBottom);
 	if ((c == 0x27) || (c == 'T')) {
 		_penX -= 2;					// Why is this done twice??
 	}
@@ -644,9 +647,6 @@ void ImmortalEngine::loadWindow() {
 
 		// Now that the bitmap is processed and stored in a byte buffer, we can close the file
 		f.close();
-
-		// To start constructing the screen, we start with the frame as the base
-		memcpy(_screenBuff, _window, kScreenSize);
 
 	} else {
 		// Should probably give an error or something here

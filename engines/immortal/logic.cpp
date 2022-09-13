@@ -201,6 +201,18 @@ void ImmortalEngine::doSingleStep() {
 	}
 }
 
+void ImmortalEngine::setPen(uint16 penX, uint16 penY) {
+	_penX = penX & kMaskLow;
+	// Is this screen wrap?
+	if ((penY & kMaskLow) < 200) {
+		_penY = penY & kMaskLow;
+	}
+
+	else {
+		_penY = penY | kMaskHigh;
+	}
+}
+
 void ImmortalEngine::updateHitGauge() {
 	/* This HUD (essentially) drawing routine is a bit weird because
 	 * the game was originally meant to have multiple player characters
@@ -211,7 +223,7 @@ void ImmortalEngine::updateHitGauge() {
 	 * probably just check a global 'health' variable instead.
 	 */
 	//int hits = _rooms[_currentRoom]._monsters[kPlayerID]._getHits();
-	int hits = 0;
+	int hits = 15;
 	if (hits != _lastGauge) {
 		// Update the mirror value if the health has changed since last frame
 		_lastGauge = hits;
@@ -237,8 +249,9 @@ void ImmortalEngine::drawGauge(int h) {
 	 * the index of the chr for the other icons.
 	 */
 	int r = 16 - h;
-	_penX = kGaugeX;
-	_penY = kGaugeY;
+	setPen(kGaugeX, kGaugeY);
+	// Temporary x value, until it's clear why printchr is designed to add 8 pixels *before* drawing the char
+	_penX = 0xFFF0;
 	h--;
 	if (h >= 0) {
 		// This could be written as a regular for loop, but the game thinks of start/stop as different from on
@@ -248,7 +261,6 @@ void ImmortalEngine::drawGauge(int h) {
 			if (h == 0) {
 				// Redundant code is redundant
 				printChr(kGaugeStop);
-
 			} else {
 				printChr(kGaugeOn);
 			}
