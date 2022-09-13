@@ -22,6 +22,8 @@
 #include "common/language.h"
 #include "director/director.h"
 #include "director/debugger.h"
+#include "director/movie.h"
+#include "director/score.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-object.h"
@@ -38,6 +40,10 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("help", WRAP_METHOD(Debugger, cmdHelp));
 
 	registerCmd("version", WRAP_METHOD(Debugger, cmdVersion));
+	registerCmd("frame", WRAP_METHOD(Debugger, cmdFrame));
+	registerCmd("f", WRAP_METHOD(Debugger, cmdFrame));
+	registerCmd("nextframe", WRAP_METHOD(Debugger, cmdNextFrame));
+	registerCmd("nf", WRAP_METHOD(Debugger, cmdNextFrame));
 
 	registerCmd("repl", WRAP_METHOD(Debugger, cmdRepl));
 	registerCmd("stack", WRAP_METHOD(Debugger, cmdStack));
@@ -82,9 +88,11 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" version - Shows the Director version\n");
 	//debugPrintf(" movie [moviePath] - Get or sets the current movie\n");
 	//debugPrintf(" movieinfo - Show information for the current movie\n");
-	//debugPrintf(" scoreframe [frameNum] - Gets or sets the current score frame\n");
-	//debugPrintf(" channels [frameNum] - Shows channel information for a score frame\n");
+	debugPrintf(" frame / f [frameNum] - Gets or sets the current score frame\n");
+	//debugPrintf(" channels / chan [frameNum] - Shows channel information for a score frame\n");
 	//debugPrintf(" cast - Shows the cast list for the current movie\n");
+	debugPrintf(" nextframe / nf [n] - Steps forward one or more score frames\n");
+	//debugPrintf(" nextmovie / nm - Steps forward until the next change of movie\n");
 	debugPrintf("\n");
 	debugPrintf("Lingo execution:\n");
 	//debugPrintf(" eval [statement] - Evaluates a single Lingo statement\n");
@@ -93,6 +101,7 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	//debugPrintf(" disasm [function] - Lists the bytecode disassembly for a script function\n");
 	debugPrintf(" stack / st - Lists the elements on the stack\n");
 	debugPrintf(" scriptframe / sf - Prints the current script frame\n");
+	//debugPrintf(" funcs - Lists all of the functions available in the current script frame\n");
 	debugPrintf(" vars - Lists all of the variables available in the current script frame\n");
 	debugPrintf(" step / s [n] - Steps forward one or more operations\n");
 	debugPrintf(" next / n [n] - Steps forward one or more operations, skips over calls\n");
@@ -101,7 +110,11 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf("Breakpoints:\n");
 	debugPrintf("\n");
 	//debugPrintf(" bpset [funcname:n] - Creates a breakpoint on a Lingo script\n");
-	//debugPrintf(" bpdel [n] - Deletes a specific breakpoint \n");
+	//debugPrintf(" bpframe [frameId] - Create a breakpoint on a frame in the score\n");
+	//debugPrintf(" bpdel [n] - Deletes a specific breakpoint\n");
+	//debugPrintf(" bpenable [n] - Enables a specific breakpoint\n");
+	//debugPrintf(" bpdisable [n] - Disables a specific breakpoint\n");
+	//debugPrintf(" bplist - Lists all breakpoints\n");
 	return true;
 }
 
@@ -117,6 +130,33 @@ bool Debugger::cmdVersion(int argc, const char **argv) {
 	debugPrintf("Startup file MD5: %s\n", g_director->_gameDescription->desc.filesDescriptions[0].md5);
 	debugPrintf("\n");
 	return true;
+}
+
+bool Debugger::cmdFrame(int argc, const char **argv) {
+	Lingo *lingo = g_director->getLingo();
+	Score *score = g_director->getCurrentMovie()->getScore();
+	if (argc == 2 && atoi(argv[1]) > 0) {
+		Datum frame, movie;
+		if (atoi(argv[1]) > 0) {
+			frame = Datum(atoi(argv[1]));
+		} else {
+			frame = Datum(argv[1]);
+		}
+		lingo->func_goto(frame, movie);
+	} else {
+		debugPrintf("%d\n", score->getCurrentFrame());
+	}
+	return true;
+}
+
+bool Debugger::cmdNextFrame(int argc, const char **argv) {
+	_nextFrame = true;
+	if (argc == 2 && atoi(argv[1]) > 0) {
+		_nextFrameCounter = atoi(argv[1]);
+	} else {
+		_nextFrameCounter = 1;
+	}
+	return cmdExit(0, nullptr);
 }
 
 bool Debugger::cmdRepl(int argc, const char **argv) {
@@ -211,6 +251,18 @@ void Debugger::stepHook() {
 		cmdScriptFrame(0, nullptr);
 		attach();
 		g_system->updateScreen();
+	}
+}
+
+void Debugger::frameHook() {
+	if (_nextFrame) {
+		_nextFrameCounter--;
+		if (_nextFrameCounter == 0) {
+			_nextFrame = false;
+			cmdFrame(0, nullptr);
+			attach();
+			g_system->updateScreen();
+		}
 	}
 }
 
