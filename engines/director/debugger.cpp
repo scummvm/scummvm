@@ -20,13 +20,12 @@
  */
 
 #include "common/language.h"
-#include "director/detection.h"
 #include "director/director.h"
+#include "director/debugger.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-codegen.h"
-#include "director/debugger.h"
 
 namespace Director {
 
@@ -110,7 +109,6 @@ bool Debugger::cmdVersion(int argc, const char **argv) {
 	debugPrintf("Director version: %d\n", g_director->getVersion());
 	debugPrintf("Director platform: %s\n", Common::getPlatformCode(g_director->getPlatform()));
 	debugPrintf("Game ID: %s\n", g_director->getGameId());
-	debugPrintf("Game name: %s\n", getDescriptionFromGameId(g_director->getGameId()));
 	debugPrintf("Game variant: %s\n", g_director->getExtra());
 	debugPrintf("Language: %s\n", Common::getLanguageCode(g_director->getLanguage()));
 	debugPrintf("Expected Director version: %d\n", g_director->getDescriptionVersion());

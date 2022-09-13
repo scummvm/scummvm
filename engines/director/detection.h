@@ -41,8 +41,6 @@ struct DirectorGameDescription {
 
 extern const char *directoryGlobs[];
 
-const char *getDescriptionFromGameId(const char *gameId);
-
 } // End of namespace Director
 
 #endif // DIRECTOR_DETECTION_H
