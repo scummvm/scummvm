@@ -379,7 +379,7 @@ void LowLevelGraphicsTGL::SetupGL() {
 	// Set Shade model and clear color.
 	tglShadeModel(TGL_SMOOTH);
 	tglClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	tglViewport(0, 0, 800, 600);
+	tglViewport(0, 0, mvScreenSize.x, mvScreenSize.y);
 
 	// Depth Test setup
 	tglClearDepth(1.0f);      // VAlues buffer is cleared with
