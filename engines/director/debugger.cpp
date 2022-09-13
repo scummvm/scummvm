@@ -57,6 +57,7 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("st", WRAP_METHOD(Debugger, cmdStack));
 	registerCmd("scriptframe", WRAP_METHOD(Debugger, cmdScriptFrame));
 	registerCmd("sf", WRAP_METHOD(Debugger, cmdScriptFrame));
+	registerCmd("funcs", WRAP_METHOD(Debugger, cmdFuncs));
 	registerCmd("backtrace", WRAP_METHOD(Debugger, cmdBacktrace));
 	registerCmd("bt", WRAP_METHOD(Debugger, cmdBacktrace));
 	registerCmd("vars", WRAP_METHOD(Debugger, cmdVars));
@@ -108,7 +109,7 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	//debugPrintf(" disasm [function] - Lists the bytecode disassembly for a script function\n");
 	debugPrintf(" stack / st - Lists the elements on the stack\n");
 	debugPrintf(" scriptframe / sf - Prints the current script frame\n");
-	//debugPrintf(" funcs - Lists all of the functions available in the current script frame\n");
+	debugPrintf(" funcs - Lists all of the functions available in the current script frame\n");
 	debugPrintf(" vars - Lists all of the variables available in the current script frame\n");
 	debugPrintf(" step / s [n] - Steps forward one or more operations\n");
 	debugPrintf(" next / n [n] - Steps forward one or more operations, skips over calls\n");
@@ -220,6 +221,59 @@ bool Debugger::cmdStack(int argc, const char **argv) {
 bool Debugger::cmdScriptFrame(int argc, const char **argv) {
 	Lingo *lingo = g_director->getLingo();
 	debugPrintf("%s\n", lingo->formatFrame().c_str());
+	debugPrintf("\n");
+	return true;
+}
+
+bool Debugger::cmdFuncs(int argc, const char **argv) {
+	Lingo *lingo = g_director->getLingo();
+	ScriptContext *csc = lingo->_currentScriptContext;
+	debugPrintf("Frame functions:\n");
+	if (csc) {
+		Common::Array<Common::String> names;
+		for (auto it = csc->_functionHandlers.begin(); it != csc->_functionHandlers.end(); ++it) {
+			names.push_back(it->_key);
+		}
+		Common::sort(names.begin(), names.end());
+		for (auto it = names.begin(); it != names.end(); ++it) {
+			debugPrintf("%s\n", it->c_str());
+		}
+	} else {
+		debugPrintf("not found!\n");
+	}
+	debugPrintf("\n");
+	Movie *movie = g_director->getCurrentMovie();
+	debugPrintf("Cast functions:\n");
+	Cast *cast = movie->getCast();
+	if (cast && cast->_lingoArchive) {
+		SymbolHash *fh = &cast->_lingoArchive->functionHandlers;
+		Common::Array<Common::String> names;
+		for (auto it = fh->begin(); it != fh->end(); ++it) {
+			names.push_back(it->_key);
+		}
+		Common::sort(names.begin(), names.end());
+		for (auto it = names.begin(); it != names.end(); ++it) {
+			debugPrintf("%s\n", it->c_str());
+		}
+	} else {
+		debugPrintf("not found!\n");
+	}
+	debugPrintf("\n");
+	debugPrintf("Shared cast functions:\n");
+	Cast *sharedCast = movie->getSharedCast();
+	if (sharedCast && sharedCast->_lingoArchive) {
+		SymbolHash *fh = &sharedCast->_lingoArchive->functionHandlers;
+		Common::Array<Common::String> names;
+		for (auto it = fh->begin(); it != fh->end(); ++it) {
+			names.push_back(it->_key);
+		}
+		Common::sort(names.begin(), names.end());
+		for (auto it = names.begin(); it != names.end(); ++it) {
+			debugPrintf("%s\n", it->c_str());
+		}
+	} else {
+		debugPrintf("not found!\n");
+	}
 	debugPrintf("\n");
 	return true;
 }
