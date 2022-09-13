@@ -342,7 +342,7 @@ bool LowLevelGraphicsTGL::Init(int alWidth, int alHeight, int alBpp, int abFulls
 	mlBpp = alBpp;
 
 	mlMultisampling = alMultisampling;
-	initGraphics(alWidth, alHeight);
+	initGraphics(alWidth, alHeight, nullptr);
 	TinyGL::createContext(alWidth, alHeight, mpPixelFormat, 256, false);
 	SetupGL();
 	ShowCursor(false);
