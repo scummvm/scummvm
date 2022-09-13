@@ -22,6 +22,8 @@
 #include "common/language.h"
 #include "director/director.h"
 #include "director/debugger.h"
+#include "director/cast.h"
+#include "director/castmember.h"
 #include "director/frame.h"
 #include "director/movie.h"
 #include "director/score.h"
@@ -29,6 +31,7 @@
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-codegen.h"
+#include "director/util.h"
 
 namespace Director {
 
@@ -45,6 +48,7 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("f", WRAP_METHOD(Debugger, cmdFrame));
 	registerCmd("channels", WRAP_METHOD(Debugger, cmdChannels));
 	registerCmd("chan", WRAP_METHOD(Debugger, cmdChannels));
+	registerCmd("cast", WRAP_METHOD(Debugger, cmdCast));
 	registerCmd("nextframe", WRAP_METHOD(Debugger, cmdNextFrame));
 	registerCmd("nf", WRAP_METHOD(Debugger, cmdNextFrame));
 
@@ -93,7 +97,7 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	//debugPrintf(" movieinfo - Show information for the current movie\n");
 	debugPrintf(" frame / f [frameNum] - Gets or sets the current score frame\n");
 	debugPrintf(" channels / chan [frameNum] - Shows channel information for a score frame\n");
-	//debugPrintf(" cast - Shows the cast list for the current movie\n");
+	debugPrintf(" cast - Shows the cast list for the current movie\n");
 	debugPrintf(" nextframe / nf [n] - Steps forward one or more score frames\n");
 	//debugPrintf(" nextmovie / nm - Steps forward until the next change of movie\n");
 	debugPrintf("\n");
@@ -153,7 +157,6 @@ bool Debugger::cmdFrame(int argc, const char **argv) {
 }
 
 bool Debugger::cmdChannels(int argc, const char **argv) {
-	Lingo *lingo = g_director->getLingo();
 	Score *score = g_director->getCurrentMovie()->getScore();
 
 	int maxSize = (int)score->_frames.size();
@@ -166,6 +169,27 @@ bool Debugger::cmdChannels(int argc, const char **argv) {
 	} else {
 		debugPrintf("Must specify a frame number between 1 and %d\n", maxSize);
 	}
+	return true;
+}
+
+bool Debugger::cmdCast(int argc, const char **argv) {
+	Cast *cast = g_director->getCurrentMovie()->getCast();
+	Cast *sharedCast = g_director->getCurrentMovie()->getSharedCast();
+
+	debugPrintf("Cast:\n");
+	if (cast) {
+		debugPrintf("%s\n", cast->formatCastSummary().c_str());
+	} else {
+		debugPrintf("not found!\n");
+	}
+	debugPrintf("\n");
+	debugPrintf("Shared cast:\n");
+	if (sharedCast) {
+		debugPrintf("%s\n", sharedCast->formatCastSummary().c_str());
+	} else {
+		debugPrintf("not found!\n"); 
+	}
+	debugPrintf("\n");
 	return true;
 }
 

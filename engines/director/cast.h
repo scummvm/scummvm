@@ -122,6 +122,8 @@ public:
 	Common::CodePage getFileEncoding();
 	Common::U32String decodeString(const Common::String &str);
 
+	Common::String formatCastSummary();
+
 private:
 	void loadScriptText(Common::SeekableReadStreamEndian &stream, uint16 id);
 	void loadFontMap(Common::SeekableReadStreamEndian &stream);
