@@ -462,7 +462,7 @@ Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
 void Lingo::execute() {
 	uint localCounter = 0;
 
-	while (!_abort && !_freezeContext && (*_currentScript)[_pc] != STOP) {
+	while (!_abort && !_freezeContext && _currentScript && (*_currentScript)[_pc] != STOP) {
 		if (_globalCounter > 1000 && debugChannelSet(-1, kDebugFewFramesOnly)) {
 			warning("Lingo::execute(): Stopping due to debug few frames only");
 			_vm->getCurrentMovie()->getScore()->_playState = kPlayStopped;
