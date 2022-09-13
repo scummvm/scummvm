@@ -508,10 +508,7 @@ cPlanef LowLevelGraphicsTGL::GetClipPlane(int alIdx, const cPlanef &aPlane) {
 }
 
 void LowLevelGraphicsTGL::SetClipPlaneActive(int alIdx, bool toggle) {
-	if (toggle)
-		tglEnable(TGL_CLIP_PLANE0 + alIdx);
-	else
-		tglDisable(TGL_CLIP_PLANE0 + alIdx);
+	HPL1_UNIMPLEMENTED(LowLevelGraphicsTGL::SetClipPlaneActive);
 }
 
 //-----------------------------------------------------------------------
@@ -763,9 +760,8 @@ void LowLevelGraphicsTGL::SwapBuffers() {
 	TinyGL::presentBuffer();
 	Graphics::Surface glBuffer;
 	TinyGL::getSurfaceRef(glBuffer);
-	glBuffer.debugPrint();
 	g_system->copyRectToScreen(glBuffer.getPixels(), glBuffer.pitch,
-									0, 0, mvScreenSize.x, mvScreenSize.y);
+									0, 0, glBuffer.w, glBuffer.h);
 	g_system->updateScreen();
 }
 
