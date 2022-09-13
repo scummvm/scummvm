@@ -413,6 +413,7 @@ void Score::update() {
 	}
 
 	debugC(1, kDebugImages, "******************************  Current frame: %d", _currentFrame);
+	g_debugger->frameHook();
 
 	uint initialCallStackSize = _window->_callstack.size();
 
