@@ -70,17 +70,6 @@ static const DebugChannelDef debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-namespace Director {
-
-const char *getDescriptionFromGameId(const char *gameId) {
-	const PlainGameDescriptor *g = findPlainGameDescriptor(gameId, directorGames);
-	if (!g)
-		return nullptr;
-	return g->description;
-}
-
-} // End of namespace Director
-
 class DirectorMetaEngineDetection : public AdvancedMetaEngineDetection {
 private:
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _customTarget;
