@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"	// for setFocusRectangle/clearFocusRectangle
+#include "common/scummsys.h"
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/actor_he.h"
@@ -628,7 +629,7 @@ int Actor_v3::actorWalkStep() {
 		// The next two lines fix bug #12278 for ZAK FM-TOWNS (SCUMM3). They are alse required for SCUMM 1/2 to prevent movement while
 		// turning, but only if the character has to make a turn. The correct behavior for v1/2 can be tested by letting Zak (only v1/2
 		// versions) walk in the starting room from the torn wallpaper to the desk drawer: Zak should first turn around clockwise by
-		// 180�, then walk one step to the left, then turn clockwise 90�. For ZAK FM-TOWNS (SCUMM3) this part will look quite different
+		// 180°, then walk one step to the left, then turn clockwise 90°. For ZAK FM-TOWNS (SCUMM3) this part will look quite different
 		// (and a bit weird), but I have confirmed the correctness with the FM-Towns emulator, too.
 		if (_vm->_game.version == 3 || (_vm->_game.version <= 2 && (_moving & MF_TURN)))
 			return 1;
@@ -2890,6 +2891,20 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	Actor *a;
 	bool stringWrap = false;
 	bool usingOldSystem = (_game.id == GID_FT) || (_game.id == GID_DIG && _game.features & GF_DEMO);
+
+	// WORKAROUND bug #1493: In Puerto Pollo, if you have Guybrush examine
+	// the church clock, he'll read out the current time. However, this was
+	// disabled in some releases, possibly because of the poor results for
+	// some languages (e.g. German, French). The check was done inside the
+	// original interpreters, so we replicate their behavior.
+	if (_game.id == GID_CMI && _language != Common::EN_ANY && _language != Common::IT_ITA && _language != Common::RU_RUS) {
+		if (strncmp((const char *)msg, "/CKGT326/", 9) == 0)
+			msg = (const byte *)"/VDSO325/Whoa! Look at the time. Gotta scoot.";
+
+		// Reject every line which begins with the CKGT tag ("ClocK Guybrush Threepwood")
+		if (strncmp((const char *)msg, "/CKGT", 5) == 0)
+			return;
+	}
 
 	convertMessageToString(msg, _charsetBuffer, sizeof(_charsetBuffer));
 
