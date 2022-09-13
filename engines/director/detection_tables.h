@@ -1043,6 +1043,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "keiri",				"経理入門" },										// Introduction to Accounting
 	{ "llla",				"Live Love Life AIDS" },
 	{ "mazebox",			"The Latest Works of MazeBox" },
+	{ "macintosho20",		"村上隆" }, // Macintosho exhibit disk #20 - Takashi Murakami's Hiropon
 	{ "microphonefiend",	"Microphone Fiend" },
 	{ "mmedia11",			"Masters of Media: The Making of サクラ大戦" },			// Sakura Taisen
 	{ "moderntimes",		"Charles Chaplin in Modern Times" },
@@ -2240,6 +2241,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Training movies that came with preinstalled Mac OS 7 installs
 	MACGAME1("macbasics", "v5.0.3", "Macintosh Basics", "2ce360c9ea2da80a2c6d1040b0ad92dd", 403625, 310),
 	MACGAME1("mousebasics", "v4.5", "Mouse Basics", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 360662, 300),
+
+	MACGAME2_l("macintosho20", "", "DOB", "f5277c53bacd27936158dd3867e587e2", 392248, "data", "7379e695efd1cb858c3cb28ec2e8fac6", 1513714, Common::JA_JPN, 311),
 
 	MACGAME1("macweekvideo", "", "Click Here To Get Started!", "dc99af32d1580cd6177dc77d49a103d6", 383587, 313),
 
