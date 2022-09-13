@@ -189,21 +189,21 @@ public:
 	const int    kScreenH__   = 128;					// ???
 	const int    kViewPortW   = 256;
 	const int    kViewPortH   = 128;
-	const int    kScreenSize  = (kResH * kResV) * 2; 	// The size of the screen buffer is 320x200
-	const int    kScreenLeft  = 32;
-	const int    kScreenTop   = 20;
+	const int 	 kScreenSize  = (kResH * kResV) * 2; 	// The size of the screen buffer is (320x200) * 2 byte words
+	const uint16 kScreenLeft  = 32;
+	const uint16 kScreenTop   = 20;
 	const int    kTextLeft    = 8;
 	const int    kTextTop     = 4;
 	const int    kGaugeX      = 0;
 	const int    kGaugeY      = -13;					// ???
-	const int    kScreenBMW   = 160;					// Screen BitMap Width?
+	const uint16 kScreenBMW   = 160;					// Screen BitMap Width?
 	const uint16 kChrW 	      = 64;
 	const uint16 kChrH        = 32;
 	const uint16 kChrH2       = kChrH * 2;
 	const uint16 kChrH3       = kChrH * 3;
-	const int    kChrLen	  = (kChrW / 2) * kChrH;
-	const int    kChrBMW	  = kChrW / 2;
-	const int    kLCutaway    = 4;
+	const uint16 kChrLen	  = (kChrW / 2) * kChrH;
+	const uint16 kChrBMW	  = kChrW / 2;
+	const uint16 kLCutaway    = 4;
 
 	const uint16 kChrDy[19] = {kChr0, kChrH, kChrH2, kChrH, kChrH2,
 						   	   kChrH2, kChrH, kChrH2, kChrH2, kChr0,
@@ -227,22 +227,22 @@ public:
 	const int kPaletteOffset    = 21205;				// This is the byte position of the palette data in the disk
 
 	// Sprite constants
-	const int kMaxSpriteW 	    = 64;
-	const int kMaxSpriteH 	    = 64;
-	const int kSpriteDY		    = 32;
-	const int kVSX			    = kMaxSpriteW;
-	const int kVSY 			    = kSpriteDY;
+	const uint16 kMaxSpriteW 	= 64;
+	const uint16 kMaxSpriteH 	= 64;
+	const uint16 kSpriteDY		= 32;
+	const uint16 kVSX			= kMaxSpriteW;
+	const uint16 kVSY 			= kSpriteDY;
 	const uint16 kVSBMW		    = (kViewPortW + kMaxSpriteW) / 2;
-	const int kVSLen		    = kVSBMW * (kViewPortH + kMaxSpriteH);
-	const int kVSDY			    = 32; 					// difference from top of screen to top of viewport in the virtual screen buffer
-	const int kMySuperBottom    = kVSDY + kViewPortH;
-	const int kSuperBottom 	    = 200;
-	const int kMySuperTop	    = kVSDY;
-	const int kSuperTop	  	    = 0;
-	const int kViewPortSpX	    = 32;
-	const int kViewPortSpY	    = 0;
-	const int kWizardX 		    = 28;					// Common sprite center for some reason
-	const int kWizardY 		    = 37;
+	const uint16 kVSLen		    = kVSBMW * (kViewPortH + kMaxSpriteH);
+	const uint16 kVSDY			= 32; 					// difference from top of screen to top of viewport in the virtual screen buffer
+	const uint16 kMySuperBottom = kVSDY + kViewPortH;
+	const uint16 kSuperBottom 	= 200;
+	const uint16 kMySuperTop	= kVSDY;
+	const uint16 kSuperTop	  	= 0;
+	const uint16 kViewPortSpX	= 32;
+	const uint16 kViewPortSpY	= 0;
+	const uint16 kWizardX 		= 28;					// Common sprite center for some reason
+	const uint16 kWizardY 		= 37;
 
 	// Asset constants
 	const char kGaugeOn	   	    = 1;					// On uses the sprite at index 1 of the font spriteset
@@ -409,6 +409,7 @@ GenericSprite _genSprites[6];
 	void addSprites();									// Add all active sprites that are in the viewport, into a list that will be sorted by priority
 	void sortDrawItems();								// Sort said items
 	void drawItems();									// Draw the items over the background
+	void setPen(uint16 penX, uint16 penY);				// Sets the 'pen' x and y positions, including making y negative if above a certain point
 
 	// Music
 	void toggleSound();									// Actually pauses the sound, doesn't just turn it off/mute
@@ -584,10 +585,9 @@ GenericSprite _genSprites[6];
 	void initDataSprite(Common::SeekableReadStream *f, DataSprite *d, int index, uint16 cenX, uint16 cenY); // Initializes the data sprite
 	
 	// Main
-	void superSprite(DataSprite *dSprite, uint16 x, uint16 y, int img, uint16 bmw, byte *dst, int superTop, int superBottom);
-	bool clipSprite(uint16 &height, uint16 &pointIndex, uint16 &skipY, DataSprite *dSprite, uint16 &pointX, uint16 &pointY, int img, uint16 bmw, int superTop, int superBottom);
+	void superSprite(DataSprite *dSprite, uint16 x, uint16 y, int img, uint16 bmw, byte *dst, uint16 superTop, uint16 superBottom);
+	bool clipSprite(uint16 &height, uint16 &pointIndex, uint16 &skipY, DataSprite *dSprite, uint16 &pointX, uint16 &pointY, int img, uint16 bmw, uint16 superTop, uint16 superBottom);
 	void spriteAligned(DataSprite *dSprite, Image &img, uint16 &skipY, uint16 &pointIndex, uint16 &height, uint16 bmw, byte *dst);
-	void spriteNotAligned();
 
 	/*
 	 * [Compression.cpp] Functions from Compression.GS
