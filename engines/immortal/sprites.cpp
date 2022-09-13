@@ -76,7 +76,7 @@ void ImmortalEngine::initDataSprite(Common::SeekableReadStream *f, DataSprite *d
 	uint16 numImages = f->readUint16LE();
 
 	d->_numImages = numImages;
-	//debug("Number of Frames: %d", numFrames);
+	//debug("Number of Frames: %d", numImages);
 
 	// Only here for dragon, but just in case, it's a high number so it should catch others
 	if (numImages >= 0x0200) {
@@ -118,92 +118,110 @@ void ImmortalEngine::initDataSprite(Common::SeekableReadStream *f, DataSprite *d
 	d->_images = images;
 }
 
-bool ImmortalEngine::clipSprite(uint16 &height, uint16 &pointIndex, uint16 &skipY, DataSprite *dSprite, uint16 &pointX, uint16 &pointY, int img, uint16 bmw, int superTop, int superBottom) {
+bool ImmortalEngine::clipSprite(uint16 &height, uint16 &pointIndex, uint16 &skipY, DataSprite *dSprite, uint16 &pointX, uint16 &pointY, int img, uint16 bmw, uint16 superTop, uint16 superBottom) {
+	/* Something important to note here:
+	 * In the source, bmw is not *2, and pointX is /2. However, the source
+	 * was using a buffer of 2 pixels per byte. In ScummVM, the screen buffer
+	 * is 1 pixel per byte. This means some calculations are slightly different.
+	 */
+
 	// This bit is to get the base index into the screen buffer, unless that's already been done, which is _lastPoint
 	if ((pointY != _lastY) || (bmw != _lastBMW)) {
 		_lastBMW = bmw;
 		_lastY = pointY;
-		if (pointY < 0x80) {
-			_lastPoint = pointY * bmw;
+		if (pointY < kMaskNeg) {
+			// The source does not double the bmw here to get the bytes, why not?
+			_lastPoint = pointY * (bmw * 2);
 		} else {
-			pointY = (pointY ^ 0xFF) + 1;
-			_lastPoint = pointY * bmw;
+			// Screen wrapping??
+			uint16 temp = (0 - pointY) + 1;
+			_lastPoint = temp * bmw;
 			_lastPoint = 0 - _lastPoint;
 		}
 	}
 
 	pointIndex = _lastPoint;
-	return false;
-
 
 	// Now we begin clipping, starting with totally offscreen
-	// We do this by checking if the sprite is above the top of the screen, or below the bottom of it
 	if (pointY > superBottom) {
 		return true;
 
-	} else if ((height + pointY) < superTop) {
+	} else if ((pointY + height) < superTop) {
 		return true;
 
-	// Now we actually clip top/bottom parts
+	/* The actual clipping is pretty simple:
+	 * Lower height = stop drawing the sprite early. Higher SkipY = start drawing the sprite late
+	 * So we just determine the delta for each based on superTop and superBottom
+	 */
 	} else {
 
 		// Starting with checking if any of the sprite is under the bottom of the screen
-		if ((height + pointY) >= superBottom) {
+		if ((pointY + height) >= superBottom) {
 			height = superBottom - pointY;
 		}
 
 		// Next we get the difference of overlap from the sprite if it is above the top
-		if ((superTop - pointY) < 0x8000) {
+		if (uint16((superTop - pointY)) < kMaskNeg) {
 			skipY = (superTop - pointY);
 		}
 
 		// The image is clipped, time to move the index to the sprite's first scanline base position
-		pointIndex += (pointX / 2) + dSprite->_images[img]._rectW;
+		pointIndex += (pointX) + dSprite->_images[img]._rectW;
 	}
 	return false;
 }
 
 void ImmortalEngine::spriteAligned(DataSprite *dSprite, Image &img, uint16 &skipY, uint16 &pointIndex, uint16 &height, uint16 bmw, byte *dst) {
-	//debug("draw the sprite");
+	/* This is an approximation of the sprite drawing system in the source.
+	 * It is an approximation because the source needed to do some things
+	 * that aren't relevant anymore, and it had some....creative solutions.
+	 * For example, transparency was handled with a 256 byte table of masks
+	 * that was indexed by the pixel itself, and used to find what nyble needed
+	 * to be masked. However we are using a slightly different kind of screen buffer,
+	 * and so I chose a more traditional method. Likewise, alignement was
+	 * relevant for the source, but is not relevant here (thankfully, considering
+	 * how confusing sprite drawing is when not an even position).
+	 */
+	byte pixel1 = 0;
+	byte pixel2 = 0;
 
-	debug("%d, %d, %04X", height, skipY, pointIndex);
-
-	byte pixel;
-	// For debug currently, align to the word by default
-	pointIndex &= 0xFFFE;
-
-	// Position is weird
-	pointIndex += 50;
-
-	debug("SPRITE START ------");
+	// For every scanline before height
 	for (int y = 0; y < height; y++, pointIndex += (bmw * 2)) {
 
-		//debug("%04X, %04X ", pointIndex, img._deltaPos[y]);
-		
-		if (img._deltaPos[y] < 0x8000) {
+		// We increase the position by one screen width
+		if (img._deltaPos[y] < kMaskNeg) {
 			pointIndex += (img._deltaPos[y] * 2);
 		}
+
+		// And if the delta X for the line is positive, we add it. If negative we subtract
 		else {
 			pointIndex -= ((0 - img._deltaPos[y]) * 2);
 		}
 
+		// For every pixel in the scanline
 		for (int x = 0; x < img._scanWidth[y]; x++, pointIndex += 2) {
+			// SkipY defines the lines we don't draw because they are clipped
+			if (y >= skipY) {
 
-			//if (y > skipY) {
-				pixel = img._bitmap[y][x];
-				_screenBuff[pointIndex]     = (pixel & kMask8High) >> 4;
-				_screenBuff[pointIndex + 1] =  pixel & kMask8Low;				
-			//}
+				// For handling transparency, I chose to simply check if the pixel is 0,
+				// as that is the transparent colour
+				pixel1 = (img._bitmap[y][x] & kMask8High) >> 4;
+				pixel2 = (img._bitmap[y][x] & kMask8Low);
+				
+				if (pixel1 != 0) {
+					_screenBuff[pointIndex] = pixel1;
+				}
+
+				if (pixel2 != 0) {
+					_screenBuff[pointIndex + 1] = pixel2;
+				}
+
+			}
 		}
 	}
-	debug("SPRITE END -------");
 }
 
-void ImmortalEngine::spriteNotAligned() {
-
-}
-
-void ImmortalEngine::superSprite(DataSprite *dSprite, uint16 pointX, uint16 pointY, int img, uint16 bmw, byte *dst, int superTop, int superBottom) {
+void ImmortalEngine::superSprite(DataSprite *dSprite, uint16 pointX, uint16 pointY, int img, uint16 bmw, byte *dst, uint16 superTop, uint16 superBottom) {
 	// Main image construction routine
 
 	uint16 cenX   = dSprite->_cenX;
@@ -220,13 +238,9 @@ void ImmortalEngine::superSprite(DataSprite *dSprite, uint16 pointX, uint16 poin
 
 	// Normally I would just make the return from clip be reversed, but the idea is that the return would be 'offscreen == true'
 	if (!(clipSprite(height, pointIndex, skipY, dSprite, pointX, pointY, img, bmw, superTop, superBottom))) {
-		// Alignment is determined by whether the x position of the point is positive or negative
-		if (pointX >= 0x8000) {
-			spriteAligned(dSprite, dSprite->_images[img], skipY, pointIndex, height, bmw, dst);
 		
-		} else {
-			spriteAligned(dSprite, dSprite->_images[img], skipY, pointIndex, height, bmw, dst);
-		}
+		// Alignment was a factor in the assembly because it was essentially 2 pixels per byte. However ScummVM is 1 pixel per byte
+		spriteAligned(dSprite, dSprite->_images[img], skipY, pointIndex, height, bmw, dst);
 	}
 
 }
