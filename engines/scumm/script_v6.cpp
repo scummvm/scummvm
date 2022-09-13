@@ -763,24 +763,6 @@ void ScummEngine_v6::o6_startScript() {
 		o6_breakHere();
 	}
 
-	// WORKAROUND bug #1493: In Puerto Pollo, if you have Guybrush examine
-	// the church clock, he'll read out the current time. Nice touch, only that
-	// it sounds crap in the german version (and maybe others, too). It seems
-	// the original engine of the german version played just a simple fixed
-	// text in this spot, for the above reason. Since the data files are
-	// unchanged, it must have been an engine hack job. No idea how they did
-	// it exactly, but this here is how we do it :-)
-	if (_game.id == GID_CMI && script == 204 &&
-		_currentRoom == 15 && vm.slot[_currentScript].number == 421 &&
-		_language == Common::DE_DEU) {
-
-		_actorToPrintStrFor = 1;
-		_string[0].loadDefault();
-		actorTalk((const byte *)"/VDSO325/Whoa! Look at the time. Gotta scoot.");
-
-		return;
-	}
-
 	runScript(script, (flags & 1) != 0, (flags & 2) != 0, args);
 }
 
