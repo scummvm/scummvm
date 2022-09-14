@@ -207,6 +207,7 @@ static const char *const selectorNameTable[] = {
 	"retreat",      // QFG4
 	"sayMessage",   // QFG4
 	"setLooper",    // QFG4
+	"use",          // QFG4
 	"useStamina",   // QFG4
 	"value",        // QFG4
 	"setupExit",    // SQ6
@@ -344,6 +345,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_retreat,
 	SELECTOR_sayMessage,
 	SELECTOR_setLooper,
+	SELECTOR_use,
 	SELECTOR_useStamina,
 	SELECTOR_value,
 	SELECTOR_setupExit,
@@ -19254,6 +19256,64 @@ static const uint16 qfg4DeathScreenKeyboardPatch[] = {
 	PATCH_END
 };
 
+// There are several rooms in which throwing a projectile (dagger or rock) uses
+//  two or three items instead of just one. In addition, throwing a dagger in
+//  these rooms when the player has exactly two locks up the game. For example,
+//  this occurs in room 600 at night when throwing at the castle gate.
+//
+// These problems are due to an incorrect coding pattern with several mistakes
+//  that was repeated in rooms 600, 625, 730, and 740. These scripts manually
+//  remove the thrown projectile from inventory with hero:use, but that is
+//  incorrect because the global script `project` does this for all throws.
+//  These scripts also prevent the player from throwing their last dagger with a
+//  message, but they repeat the check after removing the item from inventory
+//  and make a broken call to gloryMessgaer:say within a handsOff script. This
+//  redunant check wouldn't have any effect if it weren't for the first bug.
+//
+// We fix this by patching out all of the hero:use calls that consume daggers or
+//  rocks in the rooms with this bug. There are several forms of these scripts,
+//  so we patch the "use" selector to "has" so that the calls have no effect.
+//
+// Applies to: All versions
+// Responsible methods: aGate:doVerb, rm625:doVerb, theGhost:doVerb, avis:doVerb,
+//                      altarHead:doVerb, sThrowIt:changeState in script 740
+// Fixes bug: #13824
+static const uint16 qfg4UseExtraProjectileSignature1[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(use),          // pushi use
+	0x7a,                               // push2
+	0x39, SIG_ADDTOOFFSET(+1),          // pushi 05 [ dagger ] or 06 [ rock ]
+	0x78,                               // push1
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0008),           // send 08 [ hero use: (5 or 6) 1 ]
+	0x35, SIG_ADDTOOFFSET(+1),          // ldi 01 or 02
+	0xa3,                               // sal
+	SIG_END
+};
+
+static const uint16 qfg4UseExtraProjectileSignature2[] = {
+	0x38, SIG_SELECTOR16(use),          // pushi use
+	0x78,                               // push1
+	0x39, SIG_MAGICDWORD, 0x05,         // pushi 05 [ dagger ]
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ hero use: 5 ]
+	SIG_END
+};
+
+static const uint16 qfg4UseExtraProjectileSignature3[] = {
+	0x38, SIG_SELECTOR16(use),          // pushi use
+	0x78,                               // push1
+	0x39, SIG_MAGICDWORD, 0x06,         // pushi 06 [ rock ]
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ hero use: 6 ]
+	SIG_END
+};
+
+static const uint16 qfg4UseExtraProjectilePatch[] = {
+	0x38, PATCH_SELECTOR16(has),        // pushi has
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -19316,6 +19376,8 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   600, "fix passable closed gate after geas",         1, qfg4DungeonGateSignature,      qfg4DungeonGatePatch },
 	{  true,   600, "fix gate options after geas",                 1, qfg4GateOptionsSignature,      qfg4GateOptionsPatch },
 	{  true,   600, "fix paladin's necrotaur message",             1, qfg4NecrotaurMessageSignature, qfg4NecrotaurMessagePatch },
+	{  true,   600, "fix using extra projectile",                  2, qfg4UseExtraProjectileSignature1, qfg4UseExtraProjectilePatch },
+	{  true,   625, "fix using extra projectile",                  4, qfg4UseExtraProjectileSignature1, qfg4UseExtraProjectilePatch },
 	{  true,   630, "fix great hall entry from barrel room",       1, qfg4GreatHallEntrySignature,   qfg4GreatHallEntryPatch },
 	{  true,   633, "fix stairway pathfinding",                    1, qfg4StairwayPathfindingSignature, qfg4StairwayPathfindingPatch },
 	{  true,   633, "Floppy: fix argument message",                1, qfg4ArgumentMessageFloppySignature,  qfg4ArgumentMessageFloppyPatch },
@@ -19357,6 +19419,10 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   730, "fix ad avis projectile message",              1, qfg4AdAvisMessageSignature,    qfg4AdAvisMessagePatch },
 	{  true,   730, "fix throwing weapons at ad avis",             1, qfg4AdAvisThrowWeaponSignature,qfg4AdAvisThrowWeaponPatch },
 	{  true,   730, "fix fighter's spear animation",               1, qfg4FighterSpearSignature,     qfg4FighterSpearPatch },
+	{  true,   730, "fix using extra projectile",                  1, qfg4UseExtraProjectileSignature2, qfg4UseExtraProjectilePatch },
+	{  true,   730, "fix using extra projectile",                  1, qfg4UseExtraProjectileSignature3, qfg4UseExtraProjectilePatch },
+	{  true,   740, "fix using extra projectile",                  2, qfg4UseExtraProjectileSignature2, qfg4UseExtraProjectilePatch },
+	{  true,   740, "fix using extra projectile",                  1, qfg4UseExtraProjectileSignature3, qfg4UseExtraProjectilePatch },
 	{  true,   770, "fix bone cage teller",                        1, qfg4BoneCageTellerSignature,   qfg4BoneCageTellerPatch },
 	{  true,   800, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,   800, "fix grapnel removing hero's scaler",          1, qfg4RopeScalerSignature,       qfg4RopeScalerPatch },
