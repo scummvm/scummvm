@@ -713,7 +713,7 @@ void LowLevelGraphicsTGL::SetTextureEnv(eTextureParam aParam, int alVal) {
 //-----------------------------------------------------------------------
 
 void LowLevelGraphicsTGL::SetTextureConstantColor(const cColor &color) {
-	float vColor[] = {color.r, color.g, color.b, color.a};
+	//float vColor[] = {color.r, color.g, color.b, color.a};
 
 	//tglTexEnvfv(TGL_TEXTURE_ENV, TGL_TEXTURE_ENV_COLOR, &vColor[0]);
 }
