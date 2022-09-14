@@ -1787,23 +1787,30 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff, int trans
 	if (found != NULL) {
 		Common::strlcpy((char *)trans_buff, _languageBuffer + found->offset, transBufferSize);
 
-		if ((_game.id == GID_DIG) && !(_game.features & GF_DEMO)) {
-			// Replace any '%___' by the corresponding special codes in the source text
+		if (((_game.id == GID_DIG) && !(_game.features & GF_DEMO)) || _game.version == 8) {
+			// Replace any '%___' (or '%<var-name>%' for v8) by the corresponding special codes in the source text
 			const byte *src = text;
 			char *dst = (char *)trans_buff;
 
-			while ((dst = strstr(dst, "%___"))) {
+			while ((dst = (_game.version == 8 ? strchr(dst, '%') : strstr(dst, "%___")))) {
 				// Search for a special code in the message.
 				while (*src && *src != 0xFF) {
 					src++;
 				}
 
-				// Replace the %___ by the special code. Luckily, we can do
-				// that in-place.
+				// Replace the %___ (or %<var-name>%) by the special code.
+				// Luckily, we can do that in-place.
 				if (*src == 0xFF) {
-					memcpy(dst, src, 4);
-					src += 4;
-					dst += 4;
+					if (_game.version == 7) {
+						memcpy(dst, src, 4);
+						src += 4;
+						dst += 4;
+					} else {
+						memcpy(dst, src, 6);
+						src += 6;
+						dst += 6;
+						*dst = '\0';
+					}
 				} else
 					break;
 			}
