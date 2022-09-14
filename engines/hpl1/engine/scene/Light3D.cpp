@@ -65,8 +65,10 @@ iLight3D::iLight3D(tString asName, cResources *apResources) : iLight(), iRendera
 	mpFileSearcher = apResources->GetFileSearcher();
 
 	mpFalloffMap = mpTextureManager->Create1D("core_falloff_linear", false);
-	mpFalloffMap->SetWrapS(eTextureWrap_ClampToEdge);
-	mpFalloffMap->SetWrapT(eTextureWrap_ClampToEdge);
+	if (mpFalloffMap) {
+		mpFalloffMap->SetWrapS(eTextureWrap_ClampToEdge);
+		mpFalloffMap->SetWrapT(eTextureWrap_ClampToEdge);
+	}
 
 	mpVisSectorCont = NULL;
 	mlSectorVisibilityCount = -1;
@@ -78,7 +80,8 @@ iLight3D::iLight3D(tString asName, cResources *apResources) : iLight(), iRendera
 //-----------------------------------------------------------------------
 
 iLight3D::~iLight3D() {
-	mpTextureManager->Destroy(mpFalloffMap);
+	if (mpFalloffMap)
+		mpTextureManager->Destroy(mpFalloffMap);
 
 	if (mpVisSectorCont)
 		hplDelete(mpVisSectorCont);
@@ -465,13 +468,15 @@ void iLight3D::SetFalloffMap(iTexture *apTexture) {
 	if (mpFalloffMap)
 		mpTextureManager->Destroy(mpFalloffMap);
 
-	mpFalloffMap = apTexture;
-	mpFalloffMap->SetWrapS(eTextureWrap_ClampToEdge);
-	mpFalloffMap->SetWrapT(eTextureWrap_ClampToEdge);
+	if (apTexture) {
+		mpFalloffMap = apTexture;
+		mpFalloffMap->SetWrapS(eTextureWrap_ClampToEdge);
+		mpFalloffMap->SetWrapT(eTextureWrap_ClampToEdge);
+	} else {
+		mpFalloffMap = nullptr;
+	}
 
-	// reset temp textures.
-	for (int i = 0; i < 3; ++i)
-		mvTempTextures[i] = NULL;
+	Common::fill(mvTempTextures, mvTempTextures + 3, nullptr);
 }
 
 //-----------------------------------------------------------------------
