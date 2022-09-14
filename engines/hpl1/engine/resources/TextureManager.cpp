@@ -35,6 +35,7 @@
 #include "hpl1/engine/resources/Resources.h"
 #include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
+#include "hpl1/debug.h"
 
 namespace hpl {
 
@@ -381,46 +382,43 @@ iTexture *cTextureManager::CreateFlatTexture(const tString &asName, bool abUseMi
 											 bool abCompress, eTextureType aType, eTextureTarget aTarget,
 											 unsigned int alTextureSizeLevel) {
 	tString sPath;
-	iTexture *pTexture;
 
 	BeginLoad(asName);
 
-	pTexture = FindTexture2D(asName, sPath);
+	Common::ScopedPtr<iTexture> pTexture(FindTexture2D(asName, sPath));
 
-	if (pTexture == NULL && sPath != "") {
-		// Load the bitmap
-		Bitmap2D *pBmp;
-		pBmp = mpLowLevelResources->loadBitmap2D(sPath);
-		if (pBmp == NULL) {
-			Error("Texturemanager Couldn't load bitmap '%s'\n", sPath.c_str());
+	if (!pTexture && sPath != "") {
+		// Load the bitmaps
+		Common::ScopedPtr<Bitmap2D> bmp(mpLowLevelResources->loadBitmap2D(sPath));
+		if (!bmp) {
+			Hpl1::logError(Hpl1::kDebugResourceLoading, "Texturemanager Couldn't load bitmap '%s'\n", sPath.c_str());
 			EndLoad();
-			return NULL;
+			return nullptr;
 		}
 
 		// Create the texture and load from bitmap
-		pTexture = mpGraphics->GetLowLevel()->CreateTexture(asName, abUseMipMaps, aType,
-															aTarget);
-		pTexture->SetSizeLevel(alTextureSizeLevel);
-		if (pTexture->CreateFromBitmap(pBmp) == false) {
-			hplDelete(pTexture);
-			hplDelete(pBmp);
+		pTexture.reset(mpGraphics->GetLowLevel()->CreateTexture(asName, abUseMipMaps, aType,
+															aTarget));
+		if (!pTexture) {
 			EndLoad();
-			return NULL;
+			return nullptr;
+		}
+		pTexture->SetSizeLevel(alTextureSizeLevel);
+		if (!pTexture->CreateFromBitmap(bmp.get())) {
+			EndLoad();
+			return nullptr;
 		}
 
-		// Bitmap is no longer needed so delete it.
-		hplDelete(pBmp);
-
-		AddResource(pTexture);
+		AddResource(pTexture.get());
 	}
 
 	if (pTexture)
 		pTexture->IncUserCount();
 	else
-		Error("Couldn't texture '%s'\n", asName.c_str());
+		Hpl1::logError(Hpl1::kDebugResourceLoading, "texture '%s' is invalid\n", asName.c_str());
 
 	EndLoad();
-	return pTexture;
+	return pTexture.release();
 }
 
 //-----------------------------------------------------------------------
