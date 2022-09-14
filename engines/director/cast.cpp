@@ -617,10 +617,12 @@ void Cast::loadStxtData(int key, TextCastMember *member) {
 	else
 		stxtid = key;
 
-	if (_loadedStxts->getVal(stxtid)) {
+	if (_loadedStxts->contains(stxtid)) {
 		const Stxt *stxt = _loadedStxts->getVal(stxtid);
 		member->importStxt(stxt);
 		member->_size = stxt->_size;
+	} else {
+		warning("Cast::loadStxtData: stxtid %i isn't loaded", stxtid);
 	}
 }
 
