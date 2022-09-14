@@ -714,6 +714,10 @@ void TextMgr::promptKeyPress(uint16 newKey) {
 		if ((newKey >= 0x20) && (newKey <= 0xff))
 			acceptableInput = true;
 		break;
+	case Common::FR_FRA:
+		if ((newKey >= 0x20) && (newKey != 0x5e) && (newKey <= 0xff))
+			acceptableInput = true;
+		break;
 	default:
 		if ((newKey >= 0x20) && (newKey <= 0x7f))
 			acceptableInput = true;
@@ -1026,6 +1030,10 @@ void TextMgr::stringKeyPress(uint16 newKey) {
 			case Common::RU_RUS:
 			case Common::HE_ISR:
 				if ((newKey >= 0x20) && (newKey <= 0xff))
+					acceptableInput = true;
+				break;
+			case Common::FR_FRA:
+				if ((newKey >= 0x20) && (newKey != 0x5e) && (newKey <= 0xff))
 					acceptableInput = true;
 				break;
 			default:

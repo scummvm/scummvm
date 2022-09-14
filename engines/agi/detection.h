@@ -67,7 +67,8 @@ enum AgiGameFeatures {
 	GF_AGI256      = (1 << 2), // marks fanmade AGI-256 games
 	GF_FANMADE     = (1 << 3), // marks fanmade games
 	GF_OLDAMIGAV20 = (1 << 4),
-	GF_2GSOLDSOUND = (1 << 5)
+	GF_2GSOLDSOUND = (1 << 5),
+	GF_EXTCHAR = (1 << 6) // use WORDS.TOK.EXTENDED
 };
 
 enum BooterDisks {

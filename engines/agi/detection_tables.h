@@ -717,7 +717,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("pq1", "2.0G 1987-12-03", "d194e5d88363095f55d5096b8e32fbbb", 0x2917, GID_PQ1),
 
 	// Police Quest 1 (PC) 2.0G 12/3/87; with Hebrew translation
-	GAME_LVFPN("pq1", "2.0G 1987-12-03", "PQ1.WAG", "59e1b2fb6d025968b8ed7388f107c7b5", -1, Common::HE_ISR, 0x2917, 0, GID_PQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+	GAME_LVFPN("pq1", "2.0G 1987-12-03", "PQ1.WAG", "59e1b2fb6d025968b8ed7388f107c7b5", -1, Common::HE_ISR, 0x2917, GF_EXTCHAR, GID_PQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
 
 	// Police Quest 1 (CoCo3 360k) [AGI 2.023]
 	GAME_PS("pq1", "", "28a077041f75aab78f66804800940085", 375, 0x2440, GID_PQ1, Common::kPlatformCoCo3),
@@ -756,6 +756,9 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Space Quest 1 (PC 5.25"/3.5") 2.2 [AGI 2.426/2.917]
 	GAME("sq1", "2.2 1987-05-07 5.25\"/3.5\"", "5d67630aba008ec5f7f9a6d0a00582f4", 0x2440, GID_SQ1),
+
+	// Space Quest 1 (PC 5.25"/3.5") 2.2 [AGI 2.917]; French Translation
+	GAME_LVFPN("sq1", "2.2 1987-05-07 5.25\"/3.5\"", "words.tok.extended", "3f1730f3c9d4622a986f735af0f8734a", 12665, Common::FR_FRA, 0x2917, GF_EXTCHAR, GID_SQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
 
 	// Space Quest 1 (CoCo3 360k) [AGI 2.072]
 	GAME_PS("sq1", "", "5d67630aba008ec5f7f9a6d0a00582f4", 372, 0x2440, GID_SQ1, Common::kPlatformCoCo3),
