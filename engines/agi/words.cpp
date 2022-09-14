@@ -251,7 +251,7 @@ int16 Words::findWordInDictionary(const Common::String &userInputLowcased, uint1
 
 	foundWordLen = 0;
 
-	const byte lastCharInAbc = _vm->getLanguage() == Common::HE_ISR ? 0xfa : 'z';
+	const byte lastCharInAbc = _vm->getFeatures() & GF_EXTCHAR ? 0xff : 'z';
 
 	if ((firstChar >= 'a') && (firstChar <= lastCharInAbc)) {
 		// word has to start with a letter
