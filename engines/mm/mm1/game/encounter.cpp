@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/game/encounter.h"
+#include "mm/mm1/data/monsters.h"
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
@@ -71,6 +72,27 @@ void Encounter::execute() {
 			comp = MIN(maxVal, 10);
 		}
 
+		assert(_val5 < 15);
+		_arr1[_val5] = comp;
+		_val11 = comp;
+		_levelIndex += comp;
+
+		_randVal = g_engine->getRandomNumber(16);
+		_arr2[_val5] = _randVal;
+		_val5 = (_val5 + 1) & 0xff;
+
+		if (_val5 < 15) {
+			if (_val5 < map[34]) {
+				getMonsterVal();
+
+			} else {
+				break;
+			}
+		} else {
+			break;
+		}
+
+
 		// TODO
 	}
 
@@ -90,6 +112,11 @@ void Encounter::randomAdjust() {
 		_val6 += 3;
 	else
 		_val6 += 4;
+}
+
+void Encounter::getMonsterVal() {
+	assert(_val11 >= 8);
+	_monsterValP = &MONSTERS[_randVal]._attr[(_val11 - 8) * 2];
 }
 
 } // namespace Game
