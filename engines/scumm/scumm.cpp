@@ -2087,6 +2087,14 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 			}
 		}
 	}
+
+	// Restore audio cd settings to defaults, since they might have been changed
+	// outside the engine (the audio cd manager is a global object). FM-Towns does
+	// these things in the sound driver, so we skip it here.
+	if (_sound->_musicType != MDT_TOWNS && (_game.features & GF_AUDIOTRACKS)) {
+		g_system->getAudioCDManager()->setVolume(Audio::Mixer::kMaxChannelVolume);
+		g_system->getAudioCDManager()->setBalance(0);
+	}
 }
 
 void ScummEngine::syncSoundSettings() {
