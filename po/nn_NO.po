@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-09-14 15:25+0000\n"
+"POT-Creation-Date: 2022-09-14 21:07+0000\n"
 "PO-Revision-Date: 2022-06-03 20:16+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -7510,21 +7510,21 @@ msgstr "Fly til høgre"
 msgid "Fly to lower right"
 msgstr "Fly til nedre høgre"
 
-#: engines/scumm/input.cpp:1060
+#: engines/scumm/input.cpp:1061
 #, fuzzy
 msgid "Snap scroll on"
 msgstr "Bla liste ned"
 
-#: engines/scumm/input.cpp:1062
+#: engines/scumm/input.cpp:1063
 #, fuzzy
 msgid "Snap scroll off"
 msgstr "Bla liste ned"
 
-#: engines/scumm/input.cpp:1075
+#: engines/scumm/input.cpp:1076
 msgid "Music volume: "
 msgstr "Musikkvolum: "
 
-#: engines/scumm/input.cpp:1092
+#: engines/scumm/input.cpp:1093
 msgid "Subtitle speed: "
 msgstr "Subtitle speed: "
 
