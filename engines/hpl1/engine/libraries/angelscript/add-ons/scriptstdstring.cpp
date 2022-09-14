@@ -491,7 +491,7 @@ static string formatInt(asINT64 value, const string &options, asUINT width)
 
 	string buf;
 	buf.resize(width+30);
-#if _MSC_VER >= 1400 && !defined(__S3E__)
+#if defined(_MSC_VER) && _MSC_VER >= 1400 && !defined(__S3E__)
 	// MSVC 8.0 / 2005 or newer
 	sprintf_s(&buf[0], buf.size(), fmt.c_str(), width, value);
 #else
@@ -535,7 +535,7 @@ static string formatUInt(asQWORD value, const string &options, asUINT width)
 
 	string buf;
 	buf.resize(width+30);
-#if _MSC_VER >= 1400 && !defined(__S3E__)
+#if defined(_MSC_VER) && _MSC_VER >= 1400 && !defined(__S3E__)
 	// MSVC 8.0 / 2005 or newer
 	sprintf_s(&buf[0], buf.size(), fmt.c_str(), width, value);
 #else
@@ -571,7 +571,7 @@ static string formatFloat(double value, const string &options, asUINT width, asU
 
 	string buf;
 	buf.resize(width+precision+50);
-#if _MSC_VER >= 1400 && !defined(__S3E__)
+#if defined(_MSC_VER) && _MSC_VER >= 1400 && !defined(__S3E__)
 	// MSVC 8.0 / 2005 or newer
 	sprintf_s(&buf[0], buf.size(), fmt.c_str(), width, precision, value);
 #else
