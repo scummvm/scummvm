@@ -47,6 +47,20 @@ set res to a >= machinery
 set res to machinery = a
 set res to machinery >= a
 
+-- property Array tests
+set propArray to [501: "cast", 502: "value", 1.5: "script", a: "score", #b: "member"]
+set var to getPropAt(propArray, 1)
+scummvmAssertEqual(var, 501)
+set var to getAt(propArray, 1)
+scummvmAssertEqual(var, "cast")
+
+set var to getProp(propArray, 1.5)
+scummvmAssertEqual(var, "script")
+set var to getProp(propArray, #a)
+scummvmAssertEqual(var, "score")
+set var to getProp(propArray, #b)
+scummvmAssertEqual(var, "member")
+
 -- itemOf
 set string_array to "one,, three, four"
 set res to item 2 of string_array

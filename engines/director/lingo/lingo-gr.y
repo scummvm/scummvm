@@ -751,6 +751,8 @@ proplist: proppair[item]				{
 proppair: tSYMBOL ':' expr		{ $$ = new PropPairNode(new SymbolNode($tSYMBOL), $expr); }
 	| ID ':' expr				{ $$ = new PropPairNode(new SymbolNode($ID), $expr); }
 	| tSTRING ':' expr 			{ $$ = new PropPairNode(new StringNode($tSTRING), $expr); }
+	| tINT ':' expr             { $$ = new PropPairNode(new IntNode($tINT), $expr); }
+	| tFLOAT ':' expr           { $$ = new PropPairNode(new FloatNode($tFLOAT), $expr); }
 	;
 
 unarymath: '+' simpleexpr[arg]  %prec tUNARY	{ $$ = $arg; }

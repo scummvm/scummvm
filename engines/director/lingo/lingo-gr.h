@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 3.7.6.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
@@ -147,7 +147,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 112 "engines/director/lingo/lingo-gr.y"
+#line 111 "engines/director/lingo/lingo-gr.y"
 
 	Common::String *s;
 	int i;
@@ -173,6 +173,8 @@ typedef union YYSTYPE YYSTYPE;
 
 extern YYSTYPE yylval;
 
-//int yyparse (void);
+
+int yyparse (void);
+
 
 #endif /* !YY_YY_ENGINES_DIRECTOR_LINGO_LINGO_GR_H_INCLUDED  */
