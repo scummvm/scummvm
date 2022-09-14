@@ -261,19 +261,19 @@ void dgMemoryAllocator::Free (void* const retPtr)
       dgInt32 sizeInBytes = bin->m_info.m_stepInBites;
       char* charPtr = bin->m_pool;
       for (dgInt32 i = 0; i < count; i ++) {
-        dgMemoryCacheEntry* const tmpCashe = (dgMemoryCacheEntry*) charPtr;
+        dgMemoryCacheEntry* const tmpCache = (dgMemoryCacheEntry*) charPtr;
         charPtr += sizeInBytes;
 
-        if (tmpCashe == m_memoryDirectory[entry].m_cache) {
-          m_memoryDirectory[entry].m_cache = tmpCashe->m_next;
+        if (tmpCache == m_memoryDirectory[entry].m_cache) {
+          m_memoryDirectory[entry].m_cache = tmpCache->m_next;
         }
 
-        if (tmpCashe->m_prev) {
-          tmpCashe->m_prev->m_next = tmpCashe->m_next;
+        if (tmpCache->m_prev) {
+          tmpCache->m_prev->m_next = tmpCache->m_next;
         }
 
-        if (tmpCashe->m_next) {
-          tmpCashe->m_next->m_prev = tmpCashe->m_prev;
+        if (tmpCache->m_next) {
+          tmpCache->m_next->m_prev = tmpCache->m_prev;
         }
       }
 
