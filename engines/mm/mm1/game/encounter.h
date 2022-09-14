@@ -27,7 +27,16 @@ namespace MM1 {
 namespace Game {
 
 struct Encounter {
-	static void execute();
+private:
+	bool _flag = false;
+	int _val1 = 0, _val2 = 0, _val3 = 0;
+	int _levelIndex = 0, _val5 = 0, _val6 = 0;
+	int _val8 = 0, _val9 = 0, _val10 = 0;
+	int _totalLevels = 0, _highestLevel = 0;
+
+	void randomAdjust();
+public:
+	void execute();
 };
 
 } // namespace Game

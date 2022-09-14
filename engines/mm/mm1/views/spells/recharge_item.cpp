@@ -53,7 +53,7 @@ bool RechargeItem::msgKeypress(const KeypressMessage &msg) {
 		spellFailed();
 
 	} else if (msg.keycode >= Common::KEYCODE_a &&
-			msg.keycode < (Common::KEYCODE_a + inv.size())) {
+			msg.keycode < (Common::KEYCODE_a + (int)inv.size())) {
 		int itemIndex = msg.keycode - Common::KEYCODE_a;
 		Item *item = getItem(inv[itemIndex]._id);
 

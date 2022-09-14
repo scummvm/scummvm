@@ -30,6 +30,7 @@
 #include "mm/mm1/data/game_state.h"
 #include "mm/mm1/data/items.h"
 #include "mm/mm1/data/roster.h"
+#include "mm/mm1/game/encounter.h"
 #include "mm/mm1/maps/maps.h"
 
 namespace MM {
@@ -46,6 +47,7 @@ public:
 	bool _intangible = false; // Console flag
 	BitmapFont _font;
 	bool _heardRumor = false;
+	Game::Encounter _encounters;
 public:
 	// Enhanced mode globals
 	Xeen::SpriteResource _mainIcons;

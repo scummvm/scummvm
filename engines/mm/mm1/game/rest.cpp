@@ -47,7 +47,7 @@ void Rest::check() {
 		}
 
 		// Start an encounter
-		Game::Encounter::execute();
+		g_globals->_encounters.execute();
 	}
 }
 
