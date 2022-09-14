@@ -786,6 +786,7 @@ static const char *grayList[] = {
 	"demo.exe",
 	"game",
 	"demo",
+	"data",
 	"data.z",
 	"data1.cab",
 	"data.cab",
