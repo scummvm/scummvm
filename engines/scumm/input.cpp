@@ -916,7 +916,8 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		}
 
 		// "Text Speed  Slow  ==========  Fast"
-		if (_game.version > 3 && (lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-')) {
+		if (((_game.version > 3 && _game.version < 8) || (_game.version == 8 && (_game.features & GF_DEMO)))
+			&& (lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-')) {
 			if (VAR_CHARINC == 0xFF)
 				return;
 
