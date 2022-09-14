@@ -392,6 +392,11 @@ TownsAudioInterfaceInternal::~TownsAudioInterfaceInternal() {
 		delete[] _pcmChan;
 	}
 	delete _pcmDev;
+
+	// Restore cd audio settings to default (the settings will be kept when returning
+	// to the launcher, since the manager is a global object).
+	g_system->getAudioCDManager()->setVolume(Audio::Mixer::kMaxChannelVolume);
+	g_system->getAudioCDManager()->setBalance(0);
 }
 
 TownsAudioInterfaceInternal *TownsAudioInterfaceInternal::addNewRef(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver, bool externalMutex) {
