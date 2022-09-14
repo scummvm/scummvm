@@ -80,7 +80,7 @@ class dgNode: public dgBaseNode
 	public:
 	dgNode ();
 	dgNode (const char *name);
-	void Attach (T *parent, bool addFirst = false);
+	void Attach (T *parentNode, bool addFirst = false);
 	void Detach ();
 	T *GetChild () const;
 	T *GetSibling () const;
@@ -180,9 +180,9 @@ dgRef *dgNode<T>::CreateClone () const
 }
 
 template<class T>
-void dgNode<T>::Attach (T *parent, bool addFirst)
+void dgNode<T>::Attach (T *parentNode, bool addFirst)
 {
-	dgBaseNode::Attach(parent, addFirst);
+	dgBaseNode::Attach(parentNode, addFirst);
 }
 
 template<class T>
