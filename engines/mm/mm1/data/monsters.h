@@ -19,34 +19,21 @@
  *
  */
 
-#ifndef MM1_GAME_ENCOUNTER_H
-#define MM1_GAME_ENCOUNTER_H
+#ifndef MM1_DATA_MONSTERS_H
+#define MM1_DATA_MONSTERS_H
 
 #include "common/scummsys.h"
 
 namespace MM {
 namespace MM1 {
-namespace Game {
 
-struct Encounter {
-private:
-	bool _flag = false;
-	int _val1 = 0, _val2 = 0, _val3 = 0;
-	int _levelIndex = 0, _val5 = 0, _val6 = 0;
-	int _val8 = 0, _val9 = 0, _val10 = 0;
-	int _val11 = 0;
-	int _totalLevels = 0, _highestLevel = 0;
-	int _randVal = 0;
-	byte _arr1[15], _arr2[15];
-	const byte *_monsterValP;
-
-	void randomAdjust();
-	void getMonsterVal();
-public:
-	void execute();
+struct Monster {
+	const char *_name; // char _name[15];
+	byte _attr[17];
 };
 
-} // namespace Game
+extern const Monster MONSTERS[1];
+
 } // namespace MM1
 } // namespace MM
 
