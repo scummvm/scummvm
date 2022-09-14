@@ -1236,6 +1236,7 @@ void SciMusic::remapChannels(bool mainThread) {
 #ifdef DEBUG_REMAP
 			debug(" Mapping (dontRemap) song %d, channel %d to device channel %d", songIndex, _channelMap[i]._channel, i);
 #endif
+			resetDeviceChannel(i, mainThread);
 			if (mainThread) _channelMap[i]._song->pMidiParser->mainThreadBegin();
 			_channelMap[i]._song->pMidiParser->remapChannel(_channelMap[i]._channel, i);
 			if (mainThread) _channelMap[i]._song->pMidiParser->mainThreadEnd();
