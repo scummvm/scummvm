@@ -37,6 +37,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("pos", WRAP_METHOD(Console, cmdPos));
 	registerCmd("intangible", WRAP_METHOD(Console, cmdIntangible));
 	registerCmd("cast", WRAP_METHOD(Console, cmdCast));
+	registerCmd("encounter", WRAP_METHOD(Console, cmdEncounter));
 }
 
 bool Console::cmdDumpMap(int argc, const char **argv) {
@@ -230,6 +231,11 @@ bool Console::cmdCast(int argc, const char **argv) {
 		Spells::cast(_spellIndex, c);
 		return false;
 	}
+}
+
+bool Console::cmdEncounter(int argc, const char **argv) {
+	g_globals->_encounters.execute();
+	return false;
 }
 
 } // namespace MM1
