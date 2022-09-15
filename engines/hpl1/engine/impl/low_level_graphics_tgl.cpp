@@ -21,7 +21,6 @@
 
 #include <assert.h>
 
-#include "hpl1/engine/graphics/font_data.h"
 #include "hpl1/engine/impl/low_level_graphics_tgl.h"
 
 #include "hpl1/engine/graphics/bitmap2D.h"
@@ -29,12 +28,12 @@
 #include "hpl1/engine/impl/vertex_buffer_tgl.h"
 #include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/impl/texture_tgl.h"
+#include "hpl1/engine/impl/occlusion_query_tgl.h"
 
 #include "common/algorithm.h"
 #include "common/system.h"
 #include "engines/util.h"
 #include "hpl1/debug.h"
-#include "hpl1/engine/impl/OcclusionQueryOGL.h"
 #include "graphics/tinygl/tinygl.h"
 #include "hpl1/graphics.h"
 
@@ -834,8 +833,7 @@ void LowLevelGraphicsTGL::DrawQuadMultiTex(const tVertexVec &avVtx, const tVecto
 //-----------------------------------------------------------------------
 
 iOcclusionQuery *LowLevelGraphicsTGL::CreateOcclusionQuery() {
-	//return hplNew(cOcclusionQueryOGL, ());
-	return nullptr;
+	return hplNew(OcclusionQueryTGL, ());
 }
 
 //-----------------------------------------------------------------------
