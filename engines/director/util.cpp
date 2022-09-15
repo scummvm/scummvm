@@ -27,6 +27,7 @@
 #include "common/tokenizer.h"
 #include "common/zlib.h"
 
+#include "director/types.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"
 
@@ -1025,7 +1026,7 @@ Common::String utf8ToPrintable(const Common::String &str) {
 
 Common::String castTypeToString(const CastType &type) {
 	Common::String res;
-	switch(type) {
+	switch (type) {
 	case kCastBitmap:
 		res = "bitmap";
 		break;

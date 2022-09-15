@@ -294,12 +294,7 @@ Symbol ScriptContext::define(const Common::String &name, ScriptData *code, Commo
 	sym.ctx = this;
 
 	if (debugChannelSet(1, kDebugCompile)) {
-		uint pc = 0;
-		while (pc < sym.u.defn->size()) {
-			uint spc = pc;
-			Common::String instr = g_lingo->decodeInstruction(sym.u.defn, pc, &pc);
-			debugC(1, kDebugCompile, "[%5d] %s", spc, instr.c_str());
-		}
+		debugC(1, kDebugCompile, "%s", g_lingo->decodeFunctionBody(sym).c_str());
 		debugC(1, kDebugCompile, "<end define code>");
 	}
 
@@ -386,6 +381,15 @@ bool ScriptContext::setProp(const Common::String &propName, const Datum &value) 
 	}
 	return false;
 }
+
+Common::String ScriptContext::formatFunctionList(const char *prefix) {
+	Common::String result;
+	for (auto it = _functionHandlers.begin(); it != _functionHandlers.end(); ++it) {
+		result += Common::String::format("%s%s\n", prefix, g_lingo->decodeFunctionName(it->_value).c_str());
+	}
+	return result;
+}
+
 
 // Object array
 

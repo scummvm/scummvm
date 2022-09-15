@@ -178,7 +178,7 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 		currentFunc.type = HANDLER;
 		currentFunc.u.defn = _currentAssembly;
 		Common::String typeStr = Common::String(scriptType2str(type));
-		currentFunc.name = new Common::String("[" + typeStr + " " + _assemblyContext->getName() + "]");
+		currentFunc.name = new Common::String("scummvm_" + typeStr + "_" + _assemblyContext->getName());
 		currentFunc.ctx = _assemblyContext;
 		currentFunc.anonymous = anonymous;
 		Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
@@ -204,15 +204,18 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 
 		currentFunc.argNames = argNames;
 		currentFunc.varNames = varNames;
+		_assemblyContext->_functionHandlers[*currentFunc.name] = currentFunc;
 		_assemblyContext->_eventHandlers[kEventGeneric] = currentFunc;
 	} else {
 		delete _currentAssembly;
 	}
 
 	// Register this context's functions with the containing archive.
-	for (SymbolHash::iterator it = _assemblyContext->_functionHandlers.begin(); it != _assemblyContext->_functionHandlers.end(); ++it) {
-		if (!_assemblyArchive->functionHandlers.contains(it->_key)) {
-			_assemblyArchive->functionHandlers[it->_key] = it->_value;
+	if (_assemblyArchive) {
+		for (SymbolHash::iterator it = _assemblyContext->_functionHandlers.begin(); it != _assemblyContext->_functionHandlers.end(); ++it) {
+			if (!_assemblyArchive->functionHandlers.contains(it->_key)) {
+				_assemblyArchive->functionHandlers[it->_key] = it->_value;
+			}
 		}
 	}
 

@@ -253,6 +253,20 @@ Common::String LingoArchive::getName(uint16 id) {
 	return result;
 }
 
+Common::String LingoArchive::formatFunctionList(const char *prefix) {
+	Common::String result;
+	for (int i = 0; i <= kMaxScriptType; i++) {
+		result += Common::String::format("%s%s:\n", prefix, scriptType2str((ScriptType)i));
+		if (scriptContexts[i].size() == 0)
+			result += Common::String::format("%s  [empty]\n", prefix);
+		for (ScriptContextHash::iterator it = scriptContexts[i].begin(); it != scriptContexts[i].end(); ++it) {
+			result += Common::String::format("%s  %d:\n", prefix, it->_key);
+			result += (*it->_value).formatFunctionList(Common::String::format("%s    ", prefix).c_str());
+		}
+	}
+	return result;
+}
+
 Symbol Lingo::getHandler(const Common::String &name) {
 	Symbol sym;
 
@@ -460,7 +474,7 @@ Common::String Lingo::decodeScript(ScriptData *sd) {
 	return result;
 }
 
-Common::String Lingo::decodeFunctionSym(Symbol &sym) {
+Common::String Lingo::decodeFunctionName(Symbol &sym) {
 	Common::String result;
 	if (sym.type != HANDLER)
 		return result;
@@ -473,7 +487,16 @@ Common::String Lingo::decodeFunctionSym(Symbol &sym) {
 		if (i < (sym.nargs - 1))
 			result += ", ";
 	}
-	result += ")\n";
+	result += ")";
+	return result;
+}
+
+Common::String Lingo::decodeFunctionBody(Symbol &sym) {
+	Common::String result;
+	if (sym.type != HANDLER)
+		return result;
+	result += decodeFunctionName(sym);
+	result += "\n";
 	result += decodeScript(sym.u.defn);
 	result += "\n";
 	return result;

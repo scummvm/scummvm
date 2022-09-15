@@ -281,6 +281,7 @@ struct LingoArchive {
 
 	ScriptContext *getScriptContext(ScriptType type, uint16 id);
 	Common::String getName(uint16 id);
+	Common::String formatFunctionList(const char *prefix);
 
 	void addCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName = nullptr);
 	void removeCode(ScriptType type, uint16 id);
@@ -308,7 +309,8 @@ public:
 	Common::String formatFrame();
 	Common::String decodeInstruction(ScriptData *sd, uint pc, uint *newPC = NULL);
 	Common::String decodeScript(ScriptData *sd);
-	Common::String decodeFunctionSym(Symbol &sym);
+	Common::String decodeFunctionName(Symbol &sym);
+	Common::String decodeFunctionBody(Symbol &sym);
 
 	void reloadBuiltIns();
 	void initBuiltIns();

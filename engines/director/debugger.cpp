@@ -106,7 +106,7 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	//debugPrintf(" eval [statement] - Evaluates a single Lingo statement\n");
 	debugPrintf(" repl - Switches to a REPL interface for evaluating Lingo code\n");
 	debugPrintf(" backtrace / bt - Prints a backtrace of all stack frames\n");
-	//debugPrintf(" disasm [function] - Lists the bytecode disassembly for a script function\n");
+	//debugPrintf(" disasm [scriptid:funcname] - Lists the bytecode disassembly for a script function\n");
 	debugPrintf(" stack / st - Lists the elements on the stack\n");
 	debugPrintf(" scriptframe / sf - Prints the current script frame\n");
 	debugPrintf(" funcs - Lists all of the functions available in the current script frame\n");
@@ -117,7 +117,10 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf("\n");
 	debugPrintf("Breakpoints:\n");
 	debugPrintf("\n");
-	//debugPrintf(" bpset [funcname:n] - Creates a breakpoint on a Lingo script\n");
+	//debugPrintf(" bpset [funcname] - Creates a breakpoint on a Lingo function matching a name\n");
+	//debugPrintf(" bpset [funcname] [offset] - Creates a breakpoint on a Lingo function matching a name and offset\n");
+	//debugPrintf(" bpset [scriptid:funcname] - Creates a breakpoint on a Lingo function matching a script ID and name\n");
+	//debugPrintf(" bpset [scriptid:funcname] [offset] - Creates a breakpoint on a Lingo function matching a script ID, name and offset\n");
 	//debugPrintf(" bpframe [frameId] - Create a breakpoint on a frame in the score\n");
 	//debugPrintf(" bpdel [n] - Deletes a specific breakpoint\n");
 	//debugPrintf(" bpenable [n] - Enables a specific breakpoint\n");
@@ -166,6 +169,7 @@ bool Debugger::cmdChannels(int argc, const char **argv) {
 		frameId = atoi(argv[1]);
 
 	if (frameId >= 1 && frameId <= maxSize) {
+		debugPrintf("Channel info for frame %d of %d", frameId, maxSize);
 		debugPrintf("%s\n", score->_frames[frameId-1]->formatChannelInfo().c_str());
 	} else {
 		debugPrintf("Must specify a frame number between 1 and %d\n", maxSize);
@@ -181,14 +185,14 @@ bool Debugger::cmdCast(int argc, const char **argv) {
 	if (cast) {
 		debugPrintf("%s\n", cast->formatCastSummary().c_str());
 	} else {
-		debugPrintf("not found!\n");
+		debugPrintf("[empty]\n");
 	}
 	debugPrintf("\n");
 	debugPrintf("Shared cast:\n");
 	if (sharedCast) {
 		debugPrintf("%s\n", sharedCast->formatCastSummary().c_str());
 	} else {
-		debugPrintf("not found!\n"); 
+		debugPrintf("[empty]\n");
 	}
 	debugPrintf("\n");
 	return true;
@@ -230,49 +234,26 @@ bool Debugger::cmdFuncs(int argc, const char **argv) {
 	ScriptContext *csc = lingo->_currentScriptContext;
 	debugPrintf("Frame functions:\n");
 	if (csc) {
-		Common::Array<Common::String> names;
-		for (auto it = csc->_functionHandlers.begin(); it != csc->_functionHandlers.end(); ++it) {
-			names.push_back(it->_key);
-		}
-		Common::sort(names.begin(), names.end());
-		for (auto it = names.begin(); it != names.end(); ++it) {
-			debugPrintf("%s\n", it->c_str());
-		}
+		debugPrintf("%s", csc->formatFunctionList("  ").c_str());
 	} else {
-		debugPrintf("not found!\n");
+		debugPrintf("  [empty]\n");
 	}
 	debugPrintf("\n");
 	Movie *movie = g_director->getCurrentMovie();
 	debugPrintf("Cast functions:\n");
 	Cast *cast = movie->getCast();
 	if (cast && cast->_lingoArchive) {
-		SymbolHash *fh = &cast->_lingoArchive->functionHandlers;
-		Common::Array<Common::String> names;
-		for (auto it = fh->begin(); it != fh->end(); ++it) {
-			names.push_back(it->_key);
-		}
-		Common::sort(names.begin(), names.end());
-		for (auto it = names.begin(); it != names.end(); ++it) {
-			debugPrintf("%s\n", it->c_str());
-		}
+		debugPrintf("%s", cast->_lingoArchive->formatFunctionList("  ").c_str());
 	} else {
-		debugPrintf("not found!\n");
+		debugPrintf("  [empty]\n");
 	}
 	debugPrintf("\n");
 	debugPrintf("Shared cast functions:\n");
 	Cast *sharedCast = movie->getSharedCast();
 	if (sharedCast && sharedCast->_lingoArchive) {
-		SymbolHash *fh = &sharedCast->_lingoArchive->functionHandlers;
-		Common::Array<Common::String> names;
-		for (auto it = fh->begin(); it != fh->end(); ++it) {
-			names.push_back(it->_key);
-		}
-		Common::sort(names.begin(), names.end());
-		for (auto it = names.begin(); it != names.end(); ++it) {
-			debugPrintf("%s\n", it->c_str());
-		}
+		debugPrintf("%s", sharedCast->_lingoArchive->formatFunctionList("  ").c_str());
 	} else {
-		debugPrintf("not found!\n");
+		debugPrintf("  [empty]\n");
 	}
 	debugPrintf("\n");
 	return true;
