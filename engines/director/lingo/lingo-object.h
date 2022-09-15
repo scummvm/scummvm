@@ -221,6 +221,8 @@ public:
 	bool setProp(const Common::String &propName, const Datum &value) override;
 
 	Symbol define(const Common::String &name, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames);
+
+	Common::String formatFunctionList(const char *prefix);
 };
 
 namespace LM {
