@@ -29,7 +29,7 @@ namespace MM1 {
 
 struct Monster {
 	const char *_name; // char _name[15];
-	byte _unused;
+	byte _count;
 	byte _attr[16];
 };
 
