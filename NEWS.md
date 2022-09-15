@@ -34,9 +34,19 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed a possible dead-end in the Ultimate Talkie Edition of Monkey Island 2,
      if one doesn't pick up the model lighthouse lens before Captain Dread brings
      Guybrush back to Scabb Island, at the end of Part II.
-   - Added support for original GUI dialogs to COMI.
+   - Fixed various original game bugs, oversights and continuity errors (only
+     when using the "Enable game-specific enhancements" setting).
+   - Added support for original GUI dialogs to v4-v8 LucasArts games.
    - Improved the decoding of some Western European game strings when they're
      displayed through ScummVM's interface, such as when pausing a game.
+   - Fixed the navigator head not pointing to some directions in Monkey
+     Island 1, in the original releases without the enhanced verb interface.
+   - Fixed slightly inaccurate text position in v4 games and in Loom v3.
+   - Fixed shooting the text from the game credits at the end of Sam & Max.
+   - Fixed lipsync issues in the final scene of Freddi Fish 4.
+   - Fixed The Dig and COMI loading cursors not being shown when they should.
+   - Fixed the accuracy of some audio drivers, which was notably impacting the
+     pitch bending effect in the DOTT intro music.
 
  Toon:
    - Made game menus behave like in the original.
