@@ -30,8 +30,23 @@ Encounter::Encounter() : TextView("Encounter") {
 }
 
 void Encounter::draw() {
-	clearSurface();
-	writeString(10, 10, "Encounter");
+	const Game::Encounter &enc = g_globals->_encounters;
+
+	// Clear the commands area
+	Graphics::ManagedSurface s = getSurface();
+	s.fillRect(Common::Rect(31 * 8, 0, 320, 17 * 8), 0);
+
+	// Write the monster list
+	for (uint i = 0; i < enc._monsterList.size(); ++i) {
+		writeChar(22, i, 'A' + i);
+		writeString(") ");
+		writeString(enc._monsterList[i]._name);
+	}
+
+	// Display the monster
+
+	// Write the encounter options
+
 }
 
 } // namespace Views

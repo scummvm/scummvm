@@ -29,7 +29,8 @@ namespace MM1 {
 
 struct Monster {
 	const char *_name; // char _name[15];
-	byte _attr[17];
+	byte _unused;
+	byte _attr[16];
 };
 
 extern const Monster MONSTERS[1];
