@@ -49,6 +49,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Die Lade-Animation des Mauszeigers in The Dig und COMI wurde nicht immer dargestellt.
    - Genauigkeit einiger Audio-Treiber verbessert. Die Fehler haben sich merklich auf die
      Änderung der Tonhöhe in der Intro-Musik von DOTT ausgewirkt.
+   - In COMI liest Guybrush die Uhr von Puerto Pollo nur in der englischen, italienischen
+     und der (von Fans erstellten) russischen Version des Spiels, was das Verhalten des
+     originalen Interpreters widerspiegelt (vermutlich aufgrund der schlechten Resultate
+     in den anderen Sprachen).
 
  Toon:
    - Die Spiel-Menüs verhalten sich nun wie das Original.
