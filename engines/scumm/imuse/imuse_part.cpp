@@ -283,11 +283,12 @@ void Part::noteOff(byte note) {
 	}
 }
 
-void Part::init() {
+void Part::init(bool useNativeMT32) {
 	_player = nullptr;
 	_next = nullptr;
 	_prev = nullptr;
 	_mc = nullptr;
+	_instrument.setNativeMT32Mode(useNativeMT32);
 }
 
 void Part::setup(Player *player) {

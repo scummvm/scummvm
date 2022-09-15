@@ -354,7 +354,7 @@ struct Part : public Common::Serializable {
 	void allNotesOff();
 
 	void set_param(byte param, int value) { }
-	void init();
+	void init(bool useNativeMT32);
 	void setup(Player *player);
 	void uninit();
 	void off();

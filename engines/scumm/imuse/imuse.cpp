@@ -333,7 +333,7 @@ void IMuseInternal::init_parts() {
 	int i;
 
 	for (i = 0, part = _parts; i != ARRAYSIZE(_parts); i++, part++) {
-		part->init();
+		part->init(_native_mt32);
 		part->_se = this;
 		part->_slot = i;
 	}
@@ -1439,7 +1439,6 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *native_midi, MidiDriver
 
 	if (_midi_native && _soundType != MDT_MACINTOSH && _soundType != MDT_AMIGA) {
 		if (_native_mt32 && !_enable_gs) {
-			Instrument::nativeMT32(_native_mt32);
 			initMT32(_midi_native);
 		} else if (_enable_gs) {
 			initGS(_midi_native);
