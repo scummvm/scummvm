@@ -34,7 +34,6 @@
 #include "mm/mm1/views/title.h"
 #include "mm/mm1/views/character_info.h"
 #include "mm/mm1/views/characters.h"
-#include "mm/mm1/views/encounter.h"
 #include "mm/mm1/views/rest.h"
 #include "mm/mm1/views/locations/blacksmith.h"
 #include "mm/mm1/views/locations/inn.h"
