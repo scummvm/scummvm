@@ -1737,9 +1737,13 @@ void LC::c_delete() {
 			break;
 		case kChunkItem:
 		case kChunkLine:
-			// last char of the first portion is the delimiter. skip it.
-			if (start > 0)
+			// when deleting the first item, include the delimiter after the item
+			// deleting another item, remove the delimiter in front
+			if (start == 0) {
+				end++;
+			} else {
 				start--;
+			}
 			break;
 		}
 	}
