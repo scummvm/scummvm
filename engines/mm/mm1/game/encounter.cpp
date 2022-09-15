@@ -105,6 +105,28 @@ void Encounter::execute() {
 	}
 
 exit_loop:
+	_monsterList.clear();
+
+	for (int i = 0; i < _val5; ++i) {
+		maxVal = (_arr1[i] - 1) * 16 + _arr2[i];
+		if ((_arr1[i] > 0 && _arr1[i] <= 12) || (maxVal >= 196)) {
+			_arr1[i] = 10;
+			_arr2[i] = g_engine->getRandomNumber(15);
+		}
+
+		// Add monster details to list
+		_val11 = _arr1[i];
+		assert(_val11 == 1);
+		const Monster &mons = MONSTERS[_arr2[i]];
+		_monsterList.push_back(mons);
+
+		if (_val11 > _val9) {
+			_val9 = _val11;
+			_val10 = mons._attr[0];
+			_val8 = mons._attr[15];
+		}
+	}
+
 	g_events->addView("Encounter");
 }
 
@@ -124,8 +146,9 @@ void Encounter::randomAdjust() {
 }
 
 void Encounter::getMonsterVal() {
-	assert(_val11 >= 8);
-	_monsterValP = &MONSTERS[_randVal]._attr[(_val11 - 8) * 2];
+	_randVal = 0; //****DEBUG****
+	assert(_val11 >= 9);
+	_monsterValP = &MONSTERS[_randVal]._attr[(_val11 - 9) * 2];
 }
 
 } // namespace Game

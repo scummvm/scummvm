@@ -22,7 +22,8 @@
 #ifndef MM1_GAME_ENCOUNTER_H
 #define MM1_GAME_ENCOUNTER_H
 
-#include "common/scummsys.h"
+#include "common/array.h"
+#include "mm/mm1/data/monsters.h"
 
 namespace MM {
 namespace MM1 {
@@ -33,7 +34,7 @@ private:
 	bool _flag = false;
 	int _val1 = 0, _val2 = 0, _val3 = 0;
 	int _levelIndex = 0, _val5 = 0, _val6 = 0;
-	int _val8 = 0, _val9 = 0, _val10 = 0;
+	int _val9 = 0, _val10 = 0;
 	int _val11 = 0;
 	int _totalLevels = 0, _highestLevel = 0;
 	int _randVal = 0;
@@ -42,6 +43,9 @@ private:
 
 	void randomAdjust();
 	void getMonsterVal();
+public:
+	Common::Array<Monster> _monsterList;
+	int _val8 = 0;
 public:
 	void execute();
 };
