@@ -307,6 +307,8 @@ public:
 	void printCallStack(uint pc);
 	Common::String formatFrame();
 	Common::String decodeInstruction(ScriptData *sd, uint pc, uint *newPC = NULL);
+	Common::String decodeScript(ScriptData *sd);
+	Common::String decodeFunctionSym(Symbol &sym);
 
 	void reloadBuiltIns();
 	void initBuiltIns();
