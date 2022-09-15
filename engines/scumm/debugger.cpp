@@ -124,7 +124,7 @@ void ScummDebugger::onFrame() {
 	Debugger::onFrame();
 #if defined(ENABLE_SCUMM_7_8)
 	if (_vm->_imuseDigital && !_vm->_imuseDigital->isEngineDisabled()) {
-		_vm->_imuseDigital->refreshScripts();
+		_vm->_imuseDigital->diMUSEProcessStreams();
 	}
 #endif
 }
