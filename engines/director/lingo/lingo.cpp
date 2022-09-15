@@ -381,13 +381,13 @@ Common::String Lingo::formatFrame() {
 }
 
 Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
-	Symbol sym;
+	void *opcodeFunc;
 	Common::String res;
 
-	sym.u.func = (*sd)[pc++];
-	if (_functions.contains((void *)sym.u.s)) {
-		res = _functions[(void *)sym.u.s]->name;
-		const char *pars = _functions[(void *)sym.u.s]->proto;
+	opcodeFunc = (void *)(*sd)[pc++];
+	if (_functions.contains(opcodeFunc)) {
+		res = _functions[opcodeFunc]->name;
+		const char *pars = _functions[opcodeFunc]->proto;
 		inst i;
 		uint start = pc;
 
@@ -403,11 +403,10 @@ Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
 				}
 			case 'f':
 				{
-					Datum d;
 					i = (*sd)[pc++];
-					d.u.f = *(double *)(&i);
+					double d = *(double *)(&i);
 
-					res += Common::String::format(" %f", d.u.f);
+					res += Common::String::format(" %f", d);
 					break;
 				}
 			case 'o':
@@ -443,7 +442,7 @@ Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
 					break;
 				}
 			default:
-				warning("decodeInstruction: Unknown parameter type: %c", pars[-1]);
+				warning("Lingo::decodeInstruction(): Unknown parameter type: %c", pars[-1]);
 			}
 
 			if (*pars)
@@ -457,6 +456,35 @@ Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
 		*newPc = pc;
 
 	return res;
+}
+
+Common::String Lingo::decodeScript(ScriptData *sd) {
+	uint pc = 0;
+	Common::String result;
+	while (pc < sd->size()) {
+		result += Common::String::format("[%5d] ", pc);
+		result += Common::String::format("%s\n", Lingo::decodeInstruction(sd, pc, &pc).c_str());
+	}
+	return result;
+}
+
+Common::String Lingo::decodeFunctionSym(Symbol &sym) {
+	Common::String result;
+	if (sym.type != HANDLER)
+		return result;
+	if (sym.name && sym.name->size())
+		result += Common::String::format("%s(", sym.name->c_str());
+	else
+		result += "<unknown>(";
+	for (int i = 0; i < sym.nargs; i++) {
+		result += (*sym.argNames)[i].c_str();
+		if (i < (sym.nargs - 1))
+			result += ", ";
+	}
+	result += ")\n";
+	result += decodeScript(sym.u.defn);
+	result += "\n";
+	return result;
 }
 
 void Lingo::execute() {
