@@ -82,21 +82,30 @@ void Encounter::execute() {
 		_val5 = (_val5 + 1) & 0xff;
 
 		if (_val5 < 15) {
-			if (_val5 < map[34]) {
-				getMonsterVal();
+			if (_val5 >= map[34])
+				goto exit_loop;
 
-			} else {
-				break;
+			getMonsterVal();
+			maxVal = g_engine->getRandomNumber(*_monsterValP);
+			for (int i = 0; i < maxVal; ++i) {
+				assert(_val5 > 0);
+				_arr1[_val5] = _arr1[_val5 - 1];
+				_levelIndex += _arr1[_val5];
+				_arr2[_val5] = _arr2[_val5 - 1];
+
+				if (++_val5 >= 15)
+					goto exit_loop;
+
+				if (_val5 >= map[34])
+					goto exit_loop;
 			}
 		} else {
-			break;
+			goto exit_loop;
 		}
-
-
-		// TODO
 	}
 
-	// TODO: Handle properly
+exit_loop:
+	g_events->addView("Encounter");
 }
 
 void Encounter::randomAdjust() {
