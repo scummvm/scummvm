@@ -65,7 +65,7 @@ darkness:
 	} else if (_stepRandom) {
 		_encounterFlag = true;
 		_stepRandom = false;
-		addView("Encounter");
+		g_globals->_encounters.execute();
 	} else {
 		map.checkPartyDead();
 	}

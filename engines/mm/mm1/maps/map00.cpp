@@ -54,7 +54,7 @@ void Map00::special() {
 
 	// All other cells on the map are encounters
 	g_maps->clearSpecial();
-	g_events->addView("Encounter");
+	g_globals->_encounters.execute();
 }
 
 void Map00::special00() {
