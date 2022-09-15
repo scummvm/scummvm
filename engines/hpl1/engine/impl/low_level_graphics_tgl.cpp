@@ -64,6 +64,12 @@ TGLenum TextureTargetToTGL(eTextureTarget target) {
 	case eTextureTarget_1D:
 	case eTextureTarget_2D:
 		return TGL_TEXTURE_2D;
+
+	case eTextureTarget_Rect:
+	case eTextureTarget_CubeMap:
+	case eTextureTarget_3D:
+	case eTextureTarget_LastEnum:
+		break;
 	}
 	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid texture target (%d)\n", target);
 	return 0;
@@ -162,6 +168,14 @@ TGLenum GetGLTextureFuncEnum(eTextureFunc type) {
 		return TGL_REPLACE;
 	case eTextureFunc_Add:
 		return TGL_ADD;
+
+	case eTextureFunc_Substract:
+	case eTextureFunc_AddSigned:
+	case eTextureFunc_Interpolate:
+	case eTextureFunc_Dot3RGB:
+	case eTextureFunc_Dot3RGBA:
+	case eTextureFunc_LastEnum:
+		break;
 	}
 	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid texture function (%d)", type);
 	return 0;
@@ -821,6 +835,7 @@ void LowLevelGraphicsTGL::DrawQuadMultiTex(const tVertexVec &avVtx, const tVecto
 
 iOcclusionQuery *LowLevelGraphicsTGL::CreateOcclusionQuery() {
 	//return hplNew(cOcclusionQueryOGL, ());
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------
