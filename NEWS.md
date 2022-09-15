@@ -46,8 +46,12 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed shooting the text from the game credits at the end of Sam & Max.
    - Fixed lipsync issues in the final scene of Freddi Fish 4.
    - Fixed The Dig and COMI loading cursors not being shown when they should.
-   - Fixed the accuracy of some audio drivers, which was notably impacting the
-     pitch bending effect in the DOTT intro music.
+   - Improved the accuracy of some audio drivers, which was notably impacting
+     the pitch bending effect in the DOTT intro music.
+   - In COMI, only let Guybrush read the clock of Puerto Pollo in the English,
+     Italian and (fan-made) Russian versions of the game, matching the behavior
+     of the original interpreters (probably because of the poor results in the
+     other languages).
 
  Toon:
    - Made game menus behave like in the original.
