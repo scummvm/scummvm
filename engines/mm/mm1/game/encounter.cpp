@@ -33,6 +33,7 @@ namespace Game {
 void Encounter::execute() {
 	Maps::Map &map = *g_maps->_currentMap;
 	int comp, maxRand, maxVal;
+	const Monster *monsterP;
 	_val1 = _val2 = _val3 = 0;
 
 	if (!_flag) {
@@ -85,8 +86,10 @@ void Encounter::execute() {
 			if (_val5 >= map[34])
 				goto exit_loop;
 
-			getMonsterVal();
-			maxVal = g_engine->getRandomNumber(*_monsterValP);
+			assert(_val11 == 1);
+			monsterP = getMonster();
+			maxVal = g_engine->getRandomNumber(monsterP->_count);
+
 			for (int i = 0; i < maxVal; ++i) {
 				assert(_val5 > 0);
 				_arr1[_val5] = _arr1[_val5 - 1];
@@ -145,10 +148,16 @@ void Encounter::randomAdjust() {
 		_val6 += 4;
 }
 
+const Monster *Encounter::getMonster() {
+	_randVal = 1; //****DEBUG****
+	assert(_randVal > 0);
+	return &MONSTERS[_randVal - 1];
+}
+
 void Encounter::getMonsterVal() {
-	_randVal = 0; //****DEBUG****
-	assert(_val11 >= 9);
-	_monsterValP = &MONSTERS[_randVal]._attr[(_val11 - 9) * 2];
+	_randVal = 1; //****DEBUG****
+	assert(_val11 >= 8 && _randVal > 0);
+	_monsterValP = &MONSTERS[_randVal - 1]._attr[(_val11 - 8) * 2];
 }
 
 } // namespace Game

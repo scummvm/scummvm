@@ -42,6 +42,7 @@ private:
 	const byte *_monsterValP;
 
 	void randomAdjust();
+	const Monster *getMonster();
 	void getMonsterVal();
 public:
 	Common::Array<Monster> _monsterList;
