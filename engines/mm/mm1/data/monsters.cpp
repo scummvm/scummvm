@@ -20,6 +20,8 @@
  */
 
 #include "mm/mm1/data/monsters.h"
+#include "mm/mm1/gfx/dta.h"
+#include "mm/mm1/gfx/screen_decoder.h"
 #include "common/file.h"
 
 namespace MM {
@@ -60,6 +62,22 @@ byte Monsters::getNextValue(Common::String &line) {
 		line.deleteChar(0);
 
 	return result;
+}
+
+Graphics::ManagedSurface Monsters::getMonsterImage(int monsterNum) {
+	Common::SeekableReadStream *entry = _monPix.load(monsterNum);
+	//entry->skip(2);
+	byte v1 = entry->readByte();
+	byte v2 = entry->readByte();
+	debug("%d %d", v1, v2);
+
+	// Decode the image
+	Graphics::ManagedSurface img;
+	Gfx::ScreenDecoder decoder;
+	if (!decoder.loadStream(*entry, 105, 105))
+		error("Failed decoding monster image");
+
+	return img;
 }
 
 } // namespace MM1
