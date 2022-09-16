@@ -30,10 +30,19 @@ namespace MM1 {
 namespace Views {
 
 class Encounter : public TextView {
+private:
+	/**
+	 * Draws a monster
+	 */
+	void drawMonster(int monsterNum);
 public:
 	Encounter();
 	virtual ~Encounter() {}
 
+	/**
+	 * Draw the encounter details overlayed on
+	 * the existing game screen
+	 */
 	void draw() override;
 };
 

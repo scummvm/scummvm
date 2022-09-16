@@ -22,7 +22,9 @@
 #ifndef MM1_DATA_MONSTERS_H
 #define MM1_DATA_MONSTERS_H
 
+#include "mm/mm1/gfx/dta.h"
 #include "common/str.h"
+#include "graphics/managed_surface.h"
 
 namespace MM {
 namespace MM1 {
@@ -38,24 +40,32 @@ struct Monster {
 class Monsters {
 private:
 	Monster _monsters[MONSTERS_COUNT];
-
+	Gfx::DTA _monPix;
 private:
 	/**
 	 * Get the next value from a read line
 	 */
 	byte getNextValue(Common::String &line);
 public:
-	Monsters() {}
+	Monsters() : _monPix(MONPIX_DTA) {}
 
 	/**
 	 * Load the monster list
 	 */
 	bool load();
 
+	/**
+	 * Square brackets operator
+	 */
 	const Monster &operator[](uint i) {
 		assert(i >= 1 && i <= MONSTERS_COUNT);
 		return _monsters[i];
 	}
+
+	/**
+	 * Get a monster image
+	 */
+	Graphics::ManagedSurface getMonsterImage(int monsterNum);
 };
 
 } // namespace MM1

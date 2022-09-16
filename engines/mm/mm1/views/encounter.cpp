@@ -44,9 +44,16 @@ void Encounter::draw() {
 	}
 
 	// Display the monster
+	drawMonster(enc._val8);
 
 	// Write the encounter options
 
+}
+
+void Encounter::drawMonster(int monsterNum) {
+	Graphics::ManagedSurface img =
+		g_globals->_monsters.getMonsterImage(monsterNum);
+	getSurface().blitFrom(img, Common::Point(20, 20));
 }
 
 } // namespace Views
