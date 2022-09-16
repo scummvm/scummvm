@@ -134,3 +134,8 @@ put a + 5 -- point(15, 15)
 put 5 + a -- point(15, 15)
 put b + 5 -- rect(25, 25, 25, 25)
 put 5 + b -- rect(25, 25, 25, 25)
+
+-- proplist with missing keys
+set proplist_without_keys = ["key": "value", "keyless expr 1", "keyless expr 2"]
+set proplist_with_keys = ["key": "value", 2: "keyless expr 1", 3: "keyless expr 2"]
+scummvmAssert(proplist_without_keys = proplist_with_keys)
