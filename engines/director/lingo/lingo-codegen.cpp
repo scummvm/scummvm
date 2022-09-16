@@ -1094,7 +1094,25 @@ bool LingoCompiler::visitListNode(ListNode *node) {
 /* PropListNode */
 
 bool LingoCompiler::visitPropListNode(PropListNode *node) {
-	COMPILE_LIST(node->items);
+	bool refModeStore = _refMode;
+	_refMode = false;
+	bool success = true;
+	for (uint i = 0; i < node->items->size(); i++) {
+		Node *item = (*node->items)[i];
+		if (item->type != kPropPairNode) {
+			// We have a keyless expression, as in ["key": "value", "keyless expression"]
+			// Automatically set its key to its index in the list.
+			code1(LC::c_intpush);
+			codeInt(i + 1);
+		}
+		success = item->accept(this);
+		if (!success)
+			break;
+	}
+	_refMode = refModeStore;
+	if (!success)
+		return false;
+
 	code1(LC::c_proparraypush);
 	codeInt(node->items->size());
 	return true;

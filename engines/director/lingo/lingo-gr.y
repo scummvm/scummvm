@@ -739,11 +739,17 @@ list: '[' exprlist ']'			{ $$ = new ListNode($exprlist); }
 	| '[' proplist ']'			{ $$ = new PropListNode($proplist); }
 	;
 
+// A property list must start with a proppair, but it may be followed by
+// keyless expressions, which will be compiled as equivalent to the
+// proppair <index>: <expr>.
 proplist: proppair[item]				{
 		NodeList *list = new NodeList; 
 		list->push_back($item);
 		$$ = list; }
 	| proplist[prev] ',' proppair[item]	{
+		$prev->push_back($item);
+		$$ = $prev; }
+	| proplist[prev] ',' expr[item]	{
 		$prev->push_back($item);
 		$$ = $prev; }
 	;
