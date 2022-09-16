@@ -593,7 +593,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "trekship",			"Star Trek: Starship Creator"},
 	{ "trekshipaddon",		"Star Trek: Starship Creator Add-on Pack"},
 	{ "trektech",			"Star Trek: The Next Generation Interactive Technical Manual" },
-	{ "trekchair",			"Star Trek: Captain's Chair"},
 	{ "trekshipcreate",		"Star Trek: Starship Creator"},
 	{ "truthsfictions",		"Truths & Fictions: A Journey from Documentary to Digital Photography" },
 	{ "universe",			"Invisible Universe" },
