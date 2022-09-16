@@ -124,7 +124,7 @@ exit_loop:
 		// Add monster details to list
 		_val11 = _arr1[i];
 		assert(_val11 == 1);
-		const Monster &mons = MONSTERS[_arr2[i]];
+		const Monster &mons = g_globals->_monsters[_arr2[i]];
 		_monsterList.push_back(mons);
 
 		if (_val11 > _val9) {
@@ -154,12 +154,12 @@ void Encounter::randomAdjust() {
 
 const Monster *Encounter::getMonster() {
 	assert(_randVal > 0);
-	return &MONSTERS[_randVal - 1];
+	return &g_globals->_monsters[_randVal];
 }
 
 void Encounter::getMonsterVal() {
 	assert(_val11 == 1 && _randVal > 0);
-	_monsterValP = &MONSTERS[_randVal - 1]._attr[(_val11 - 8) * 2];
+	_monsterValP = &g_globals->_monsters[_randVal]._attr[(_val11 - 8) * 2];
 }
 
 } // namespace Game

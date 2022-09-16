@@ -32,6 +32,7 @@ namespace MM1 {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("dump_map", WRAP_METHOD(Console, cmdDumpMap));
+	registerCmd("dump_monsters", WRAP_METHOD(Console, cmdDumpMonsters));
 	registerCmd("map_string", WRAP_METHOD(Console, cmdMapString));
 	registerCmd("map", WRAP_METHOD(Console, cmdMap));
 	registerCmd("pos", WRAP_METHOD(Console, cmdPos));
@@ -111,6 +112,39 @@ bool Console::cmdDumpMap(int argc, const char **argv) {
 		debugPrintf("Done.\n");
 	}
 
+	return true;
+}
+
+bool Console::cmdDumpMonsters(int argc, const char **argv) {
+	Common::File f;
+	Common::DumpFile df;
+	if (f.open("mm.exe")) {
+		if (df.open("monsters.txt")) {
+			f.seek(0x1b312);
+
+			for (int i = 0; i < 195; ++i) {
+				Common::String line = "\"";
+				for (int j = 0; j < 15; ++j)
+					line += f.readByte();
+				line += '"';
+
+				for (int j = 0; j < 17; ++j) {
+					line += ", ";
+					line += Common::String::format("%d", f.readByte());
+				}
+
+				df.writeString(line);
+				df.writeByte('\n');
+			}
+
+			df.close();
+			f.close();
+			debugPrintf("Done\n");
+			return true;
+		}
+	}
+
+	debugPrintf("Could not create\n");
 	return true;
 }
 

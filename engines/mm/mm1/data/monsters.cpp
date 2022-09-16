@@ -20,13 +20,47 @@
  */
 
 #include "mm/mm1/data/monsters.h"
+#include "common/file.h"
 
 namespace MM {
 namespace MM1 {
 
-const Monster MONSTERS[1] = {
-	{ "FLESH EATER    ", 6, 0, 2, 2, 6, 1, 7, 40, 0, 0, 0, 0, 0x82, 0 }
-};
+bool Monsters::load() {
+	Common::File f;
+	if (!f.open("monsters.txt"))
+		return false;
+
+	for (int lineNum = 0; lineNum < MONSTERS_COUNT; ++lineNum) {
+		Monster &mon = _monsters[lineNum];
+		Common::String line = f.readLine();
+		assert(line.size() > 20 && line[0] == '"' && line[16] == '"');
+
+		mon._name = Common::String(line.c_str() + 1, line.c_str() + 15);
+		line = Common::String(line.c_str() + 17);
+
+		mon._count = getNextValue(line);
+
+		for (int i = 0; i < 16; ++i)
+			mon._attr[i] = getNextValue(line);
+	}
+
+	return true;
+}
+
+byte Monsters::getNextValue(Common::String &line) {
+	// Verify the next comma
+	if (!line.hasPrefix(", "))
+		return 0;
+	line.deleteChar(0);
+	line.deleteChar(0);
+
+	// Get the value
+	byte result = atoi(line.c_str());
+	while (!line.empty() && Common::isDigit(line.firstChar()))
+		line.deleteChar(0);
+
+	return result;
+}
 
 } // namespace MM1
 } // namespace MM
