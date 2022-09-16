@@ -59,6 +59,7 @@ void Encounter::execute() {
 
 	while (firstLoop || _levelIndex < _totalLevels) {
 		randomAdjust();
+
 		maxRand = _val6 + _highestLevel;
 		if (maxRand >= 2) {
 			int highestRand = map[33];
@@ -112,7 +113,10 @@ exit_loop:
 
 	for (int i = 0; i < _val5; ++i) {
 		maxVal = (_arr1[i] - 1) * 16 + _arr2[i];
-		if ((_arr1[i] > 0 && _arr1[i] <= 12) || (maxVal >= 196)) {
+		if (_arr1[i] < 1 || _arr1[i] > 12 || maxVal >= 196) {
+			// TODO: This section doesn't make sense, since it will
+			// result in an invalid monster offset calculated
+			warning("TODO: Nonsensical monster offset set");
 			_arr1[i] = 10;
 			_arr2[i] = g_engine->getRandomNumber(15);
 		}
@@ -149,14 +153,12 @@ void Encounter::randomAdjust() {
 }
 
 const Monster *Encounter::getMonster() {
-	_randVal = 1; //****DEBUG****
 	assert(_randVal > 0);
 	return &MONSTERS[_randVal - 1];
 }
 
 void Encounter::getMonsterVal() {
-	_randVal = 1; //****DEBUG****
-	assert(_val11 >= 8 && _randVal > 0);
+	assert(_val11 == 1 && _randVal > 0);
 	_monsterValP = &MONSTERS[_randVal - 1]._attr[(_val11 - 8) * 2];
 }
 
