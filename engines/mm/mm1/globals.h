@@ -29,6 +29,7 @@
 #include "mm/xeen/sprites.h"
 #include "mm/mm1/data/game_state.h"
 #include "mm/mm1/data/items.h"
+#include "mm/mm1/data/monsters.h"
 #include "mm/mm1/data/roster.h"
 #include "mm/mm1/game/encounter.h"
 #include "mm/mm1/maps/maps.h"
@@ -48,6 +49,7 @@ public:
 	BitmapFont _font;
 	bool _heardRumor = false;
 	Game::Encounter _encounters;
+	Monsters _monsters;
 public:
 	// Enhanced mode globals
 	Xeen::SpriteResource _mainIcons;

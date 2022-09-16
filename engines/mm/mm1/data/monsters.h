@@ -22,18 +22,41 @@
 #ifndef MM1_DATA_MONSTERS_H
 #define MM1_DATA_MONSTERS_H
 
-#include "common/scummsys.h"
+#include "common/str.h"
 
 namespace MM {
 namespace MM1 {
 
+#define MONSTERS_COUNT 195
+
 struct Monster {
-	const char *_name; // char _name[15];
+	Common::String _name; // char _name[15];
 	byte _count;
 	byte _attr[16];
 };
 
-extern const Monster MONSTERS[1];
+class Monsters {
+private:
+	Monster _monsters[MONSTERS_COUNT];
+
+private:
+	/**
+	 * Get the next value from a read line
+	 */
+	byte getNextValue(Common::String &line);
+public:
+	Monsters() {}
+
+	/**
+	 * Load the monster list
+	 */
+	bool load();
+
+	const Monster &operator[](uint i) {
+		assert(i >= 1 && i <= MONSTERS_COUNT);
+		return _monsters[i];
+	}
+};
 
 } // namespace MM1
 } // namespace MM

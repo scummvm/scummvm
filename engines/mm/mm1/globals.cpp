@@ -52,6 +52,9 @@ bool Globals::load(bool isEnhanced) {
 	if (!_font.load("font.bmp"))
 		return false;
 
+	if (!_monsters.load())
+		return false;
+
 	// Load roster
 	_roster.load();
 
