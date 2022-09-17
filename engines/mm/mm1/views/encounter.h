@@ -31,6 +31,12 @@ namespace Views {
 
 class Encounter : public TextView {
 private:
+	enum Mode {
+		ALERT, SURPRISED_BY_MONSTERS, SURPRISED_MONSTERS,
+		NORMAL_ENCOUNTER
+	};
+	Mode _mode = ALERT;
+
 	/**
 	 * Draws a monster
 	 */
@@ -40,10 +46,20 @@ public:
 	virtual ~Encounter() {}
 
 	/**
+	 * Called when the view is focused
+	 */
+	bool msgFocus(const FocusMessage &msg) override;
+
+	/**
 	 * Draw the encounter details overlayed on
 	 * the existing game screen
 	 */
 	void draw() override;
+
+	/**
+	 * Handles delay timeouts
+	 */
+	void timeout() override;
 };
 
 } // namespace Views

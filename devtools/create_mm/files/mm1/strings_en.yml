@@ -267,6 +267,9 @@
 		location_facing: "FACING: "
 		teleport_dir: "DIRECTION (N,E,S,W): "
 		teleport_squares: "# OF SQUARES (0-9): "
+	encounter:
+		title: " ENCOUNTER! "
+		surprised: "THE MONSTERS SURPRISED YOU!"
 
 enhdialogs:
 	character:

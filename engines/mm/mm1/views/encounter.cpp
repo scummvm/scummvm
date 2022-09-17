@@ -20,7 +20,9 @@
  */
 
 #include "mm/mm1/views/encounter.h"
+#include "mm/mm1/game/encounter.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 
 namespace MM {
 namespace MM1 {
@@ -29,8 +31,32 @@ namespace Views {
 Encounter::Encounter() : TextView("Encounter") {
 }
 
+bool Encounter::msgFocus(const FocusMessage &msg) {
+	_mode = ALERT;
+	return true;
+}
+
 void Encounter::draw() {
 	const Game::Encounter &enc = g_globals->_encounters;
+
+	switch (_mode) {
+	case ALERT:
+		writeString(9, 6, "            ");
+		writeString(9, 7, STRING["dialogs.encounter.title"]);
+		writeString(9, 8, "            ");
+
+		delaySeconds(2);
+		break;
+
+	case SURPRISED_BY_MONSTERS:
+		writeString(6, 21, STRING["dialogs.encounter.surprised"]);
+		delaySeconds(2);
+		break;
+
+	case NORMAL_ENCOUNTER:
+
+		break;
+	}
 
 	// Clear the commands area
 	Graphics::ManagedSurface s = getSurface();
@@ -54,6 +80,32 @@ void Encounter::drawMonster(int monsterNum) {
 	Graphics::ManagedSurface img =
 		g_globals->_monsters.getMonsterImage(monsterNum);
 	getSurface().blitFrom(img, Common::Point(64, 16));
+}
+
+void Encounter::timeout() {
+	Game::Encounter &enc = g_globals->_encounters;
+	const Maps::Map &map = *g_maps->_currentMap;
+
+	switch (_mode) {
+	case ALERT:
+		// Finished displaying initial encounter alert
+		if (enc._encounterFlag < 0 /* FORCE_SURPRISED */ ||
+			((enc._encounterFlag == Game::NORMAL_SURPRISED ||
+				/* NORMAL_ENCOUNTER */
+				g_engine->getRandomNumber(1, 100) > map[21]) &&
+			(!g_globals->_spells._s.guard_dog ||
+				g_engine->getRandomNumber(1, 100) > map[20]))
+		) {
+			_mode = SURPRISED_BY_MONSTERS;
+			enc._encounterFlag = Game::FORCE_SURPRISED;
+		} else {
+			_mode = NORMAL_ENCOUNTER;
+		}
+		break;
+
+	default:
+		break;
+	}
 }
 
 } // namespace Views

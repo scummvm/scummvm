@@ -29,6 +29,10 @@ namespace MM {
 namespace MM1 {
 namespace Game {
 
+enum EncounterType {
+	FORCE_SURPRISED = -1, NORMAL_SURPRISED = 0, NORMAL_ENCOUNTER = 1
+};
+
 struct Encounter {
 private:
 	bool _flag = false;
@@ -46,6 +50,7 @@ private:
 public:
 	Common::Array<Monster> _monsterList;
 	int _val8 = 0;
+	EncounterType _encounterFlag = NORMAL_SURPRISED;
 public:
 	void execute();
 };
