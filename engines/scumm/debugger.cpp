@@ -123,7 +123,7 @@ void ScummDebugger::postEnter() {
 void ScummDebugger::onFrame() {
 	Debugger::onFrame();
 #if defined(ENABLE_SCUMM_7_8)
-	if (_vm->_imuseDigital && !_vm->_imuseDigital->isEngineDisabled()) {
+	if (_vm->_imuseDigital && !_vm->_imuseDigital->isEngineDisabled() && !_vm->isSmushActive()) {
 		_vm->_imuseDigital->diMUSEProcessStreams();
 	}
 #endif
