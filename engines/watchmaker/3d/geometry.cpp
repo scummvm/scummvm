@@ -370,8 +370,6 @@ void t3dCalcRejectedMeshFromPortal(t3dBODY *body) {
  *                  t3dReleaseBody
  * --------------------------------------------------*/
 void t3dReleaseBody(t3dBODY *b) {
-	uint16 i;
-
 	if (!b) return;
 
 	for (auto &mesh : b->MeshTable) {
@@ -388,7 +386,7 @@ void t3dReleaseBody(t3dBODY *b) {
 	b->LightmapTable.clear();
 
 	if (b->MirrorMatTable.size() > 0) {
-		for (i = 0; i < b->NumMirrorMaterials(); i++)
+		for (int i = 0; i < b->NumMirrorMaterials(); i++)
 			b->MirrorMatTable[i]->Movie = nullptr;
 		rRemoveMaterials(b->MirrorMatTable);
 	}
@@ -827,11 +825,12 @@ void t3dCreateProceduralSky(void) {
  *              t3dCreateSmokeParticle
  * --------------------------------------------------*/
 uint8 t3dCreateSmokeParticle(uint32 Num, uint8 Type, uint32 Opacity) {
+	error("TODO: t3dCreateSmokeParticle");
+#if 0
 	t3dF32  v1, v2;
 	int32  i, j, pitch, color;
 	unsigned short *p;
-	error("TODO: t3dCreateSmokeParticle");
-#if 0
+
 	Particles[t3dNumParticles].Material = gMaterial();
 
 	if ((SmokeSurface == nullptr) && (Type == 1)) {
@@ -1845,6 +1844,9 @@ void t3dSetVisibileVertex(t3dMESH &mesh) {
  *              t3dAddTextureBufferShadow
  * --------------------------------------------------*/
 void t3dAddTextureBufferShadow(t3dCHARACTER *c, uint32 CurShadowBox, t3dLIGHT *light) {
+	warning("TODO: t3dAddTextureBufferShadow");
+	return;
+#if 0
 	SHADOWBOX   *sb = c->ShadowBox[CurShadowBox];
 	SHADOW      *shad = &sb->ShadowsList[0];
 	uint32      i, k, ff, kkk, StartVert;
@@ -1856,9 +1858,6 @@ void t3dAddTextureBufferShadow(t3dCHARACTER *c, uint32 CurShadowBox, t3dLIGHT *l
 	gVertex     *gv, *pc;
 	t3dV3F      v, tmp, MinSco, MaxSco, Aspect, BBox[8], dir;
 
-	warning("TODO: t3dAddTextureBufferShadow");
-	return;
-#if 0
 	if (!cm || !cm->VertexBuffer)
 		return ;
 //tb
@@ -2612,15 +2611,15 @@ void t3dCalcHalos(t3dBODY *b) {
  *                  t3dAddParticle
  * --------------------------------------------------*/
 void t3dAddParticle(gMaterial *Material, t3dV3F *Source, t3dF32 size, t3dV3F Color, uint32 num) {
+	warning("TODO: t3dAddParticle");
+	return;
+#if 0
 	int16      T1;
 	uint32      uvbc;
 	gVertex     *gv;
 	t3dV3F      v0, v1, v2, v3;
 	uint32      rr, gg, bl, i;
 
-	warning("TODO: t3dAddParticle");
-	return;
-#if 0
 	uvbc = rGetUserVertexBufferCounter();
 	gv = rLockVertexPtr(rGetUserVertexBuffer(), rVBLOCK_NOSYSLOCK);
 	gv += uvbc;
@@ -2987,14 +2986,14 @@ bool t3dTransformBody(t3dBODY *b) {
  *                  t3dAddLensFlare
  * --------------------------------------------------*/
 void t3dAddLensFlare(gMaterial *Material, t3dV3F *Source, t3dF32 size, t3dF32 perc2, t3dV3F Color) {
+	warning("TODO: t3dAddLensFlare");
+	return;
+#if 0
 	uint32      uvbc;
 	gVertex     *gv;
 	t3dV3F      v0, v1, v2, v3;
 	int32      rr, gg, bb;
 
-	warning("TODO: t3dAddLensFlare");
-	return;
-#if 0
 	uvbc = rGetUserVertexBufferCounter();
 	gv = rLockVertexPtr(rGetUserVertexBuffer(), rVBLOCK_NOSYSLOCK);
 	gv += uvbc;
