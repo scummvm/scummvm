@@ -40,6 +40,21 @@ struct Party : public Common::Array<Character> {
 	uint getPartyGold() const;
 
 	/**
+	 * Reset entire party's gold to zero
+	 */
+	void clearPartyGold();
+
+	/**
+	 * Reset entire party's gems to zero
+	 */
+	void clearPartyGems();
+
+	/**
+	 * Reset entire party's food to zero
+	 */
+	void clearPartyFood();
+
+	/**
 	 * Update the entire party AC
 	 */
 	void updateAC();

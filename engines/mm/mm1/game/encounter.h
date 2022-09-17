@@ -37,8 +37,8 @@ struct Encounter {
 private:
 	bool _flag = false;
 	int _val1 = 0, _val2 = 0, _val3 = 0;
-	int _levelIndex = 0, _val5 = 0, _val6 = 0;
-	int _val9 = 0, _val10 = 0;
+	int _levelIndex = 0, _val6 = 0;
+	int _val9 = 0;
 	int _val11 = 0;
 	int _totalLevels = 0, _highestLevel = 0;
 	int _randVal = 0;
@@ -49,10 +49,19 @@ private:
 	byte getMonsterCount();
 public:
 	Common::Array<Monster> _monsterList;
-	int _val8 = 0;
+	int _val5 = 0, _val8 = 0;
 	EncounterType _encounterFlag = NORMAL_SURPRISED;
+	byte _fleeThreshold = 0;
 public:
+	/**
+	 * Start an encounter
+	 */
 	void execute();
+
+	/**
+	 * Chooses whether an encounter can be fleed
+	 */
+	bool checkSurroundParty() const;
 };
 
 } // namespace Game

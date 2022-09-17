@@ -40,7 +40,7 @@ void Encounter::execute() {
 	}
 
 	_totalLevels = _highestLevel = 0;
-	_val6 = _val8 = _val9 = _val10 = 0;
+	_val6 = _val8 = _val9 = _fleeThreshold = 0;
 
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		const Character &c = g_globals->_party[i];
@@ -124,7 +124,7 @@ exit_loop:
 
 		if (_val11 > _val9) {
 			_val9 = _val11;
-			_val10 = mons._counts[1];
+			_fleeThreshold = mons._counts[1];
 			_val8 = mons._counts[16];
 		}
 	}
@@ -155,6 +155,10 @@ const Monster *Encounter::getMonster() {
 byte Encounter::getMonsterCount() {
 	assert(_val11 >= 1 && _val11 <= 8);
 	return getMonster()->_counts[(_val11 - 1) * 2];
+}
+
+bool Encounter::checkSurroundParty() const {
+	return g_engine->getRandomNumber(1, 100) > _fleeThreshold;
 }
 
 } // namespace Game

@@ -270,6 +270,11 @@
 	encounter:
 		title: " ENCOUNTER! "
 		surprised: "THE MONSTERS SURPRISED YOU!"
+		surprise: "YOU SURPRISED A GROUP OF MONSTERS,"
+		approach: "APPROACH (Y/N)?"
+		options1: "OPTIONS:  'A' ATTACK  'R' RETREAT"
+		options2: "'B' BRIBE   'S' SURRENDER"
+		surrender_failed: "THE MONSTERS DON'T TAKE PRISONERS!"
 
 enhdialogs:
 	character:

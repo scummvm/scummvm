@@ -37,7 +37,7 @@ bool Encounter::msgFocus(const FocusMessage &msg) {
 }
 
 void Encounter::draw() {
-	const Game::Encounter &enc = g_globals->_encounters;
+	Game::Encounter &enc = g_globals->_encounters;
 
 	switch (_mode) {
 	case ALERT:
@@ -50,30 +50,52 @@ void Encounter::draw() {
 
 	case SURPRISED_BY_MONSTERS:
 		writeString(6, 21, STRING["dialogs.encounter.surprised"]);
+		enc._encounterFlag = Game::FORCE_SURPRISED;
 		delaySeconds(2);
 		break;
 
-	case NORMAL_ENCOUNTER:
+	case SURPRISED_MONSTERS:
+		writeString(2, 21, STRING["dialogs.encounter.surprise"]);
+		writeString(1, 22, STRING["dialogs.encounter.surprise"]);
+		break;
 
+	case ENCOUNTER_OPTIONS: {
+		// Clear the commands area
+		Graphics::ManagedSurface s = getSurface();
+		s.fillRect(Common::Rect(31 * 8, 0, 320, 17 * 8), 0);
+
+		// Write the encounter options
+		clearLines(20, 24);
+		writeString(0, 21, STRING["dialogs.encounter.option1"]);
+		writeString(10, 22, STRING["dialogs.encounter.option2"]);
 		break;
 	}
 
-	// Clear the commands area
-	Graphics::ManagedSurface s = getSurface();
-	s.fillRect(Common::Rect(31 * 8, 0, 320, 17 * 8), 0);
+	case NOWHERE_TO_RUN:
+		clearLines(20, 24);
+		writeString(11, 21, STRING["dialogs.encounter.nowhere_to_run"]);
+		delaySeconds(2);
+		break;
 
-	// Write the monster list
-	for (uint i = 0; i < enc._monsterList.size(); ++i) {
-		writeChar(22, i, 'A' + i);
-		writeString(") ");
-		writeString(enc._monsterList[i]._name);
+	case SURRENDER_FAILED:
+		clearLines(20, 24);
+		writeString(2, 21, STRING["dialogs.encounter.surrender_failed"]);
+
+	default:
+		break;
 	}
 
-	// Display the monster
-	drawMonster(enc._val8);
+	if (_mode != ALERT) {
+		// Display the monster
+		drawMonster(enc._val8);
 
-	// Write the encounter options
-
+		// Write the monster list
+		for (uint i = 0; i < enc._monsterList.size(); ++i) {
+			writeChar(22, i, 'A' + i);
+			writeString(") ");
+			writeString(enc._monsterList[i]._name);
+		}
+	}
 }
 
 void Encounter::drawMonster(int monsterNum) {
@@ -83,30 +105,147 @@ void Encounter::drawMonster(int monsterNum) {
 }
 
 void Encounter::timeout() {
-	Game::Encounter &enc = g_globals->_encounters;
+	const Game::Encounter &enc = g_globals->_encounters;
 	const Maps::Map &map = *g_maps->_currentMap;
 
 	switch (_mode) {
 	case ALERT:
 		// Finished displaying initial encounter alert
-		if (enc._encounterFlag < 0 /* FORCE_SURPRISED */ ||
-			((enc._encounterFlag == Game::NORMAL_SURPRISED ||
-				/* NORMAL_ENCOUNTER */
-				g_engine->getRandomNumber(1, 100) > map[21]) &&
-			(!g_globals->_spells._s.guard_dog ||
-				g_engine->getRandomNumber(1, 100) > map[20]))
-		) {
+		if (enc._encounterFlag < 0 /* FORCE_SURPRISED */) {
 			_mode = SURPRISED_BY_MONSTERS;
-			enc._encounterFlag = Game::FORCE_SURPRISED;
+		} else if (enc._encounterFlag == Game::NORMAL_SURPRISED ||
+			/* ENCOUNTER_OPTIONS */
+			g_engine->getRandomNumber(1, 100) > map[21]) {
+			// Potentially surprised. Check for guard dog spell
+			if (g_globals->_spells._s.guard_dog ||
+				g_engine->getRandomNumber(1, 100) > map[20])
+				_mode = ENCOUNTER_OPTIONS;
+			else
+				_mode = SURPRISED_BY_MONSTERS;
 		} else {
-			_mode = NORMAL_ENCOUNTER;
+			_mode = SURPRISED_MONSTERS;
 		}
+		break;
+
+	case NOWHERE_TO_RUN:
+	case SURRENDER_FAILED:
+		_mode = BATTLE;
 		break;
 
 	default:
 		break;
 	}
+
+	redraw();
 }
+
+bool Encounter::msgKeypress(const KeypressMessage &msg) {
+	switch (_mode) {
+	case SURPRISED_MONSTERS:
+		if (msg.keycode == Common::KEYCODE_y) {
+			_mode = ENCOUNTER_OPTIONS;
+			redraw();
+		} else if (msg.keycode == Common::KEYCODE_n) {
+			encounterEnded();
+		}
+		break;
+
+	case ENCOUNTER_OPTIONS:
+		switch (msg.keycode) {
+		case Common::KEYCODE_a:
+			attack();
+			break;
+		case Common::KEYCODE_b:
+			bribe();
+			break;
+		case Common::KEYCODE_r:
+			retreat();
+			break;
+		case Common::KEYCODE_s:
+			surrender();
+			break;
+		default:
+			break;
+		}
+
+	default:
+		break;
+	}
+
+	return true;
+}
+
+void Encounter::encounterEnded() {
+	close();
+	g_events->send("Game", GameMessage("UPDATE"));
+}
+
+void Encounter::attack() {
+
+}
+
+void Encounter::bribe() {
+
+}
+
+void Encounter::retreat() {
+	const Game::Encounter &enc = g_globals->_encounters;
+	int val = getRandomNumber(1, 110);
+
+	if (val >= 100) {
+		flee();
+	} else if (val > Maps::MAP_FLEE_THRESHOLD) {
+		_mode = NOWHERE_TO_RUN;
+		redraw();
+	} else if (enc._val5 < (int)g_globals->_party.size() || !enc.checkSurroundParty()) {
+		flee();
+	}
+}
+
+void Encounter::surrender() {
+	const Game::Encounter &enc = g_globals->_encounters;
+	const Maps::Map &map = *g_maps->_currentMap;
+
+	if (getRandomNumber(1, 100) > map[Maps::MAP_SURRENDER_THRESHOLD] ||
+			getRandomNumber(1, 100) > enc._fleeThreshold) {
+		_mode = SURRENDER_FAILED;
+		redraw();
+	} else {
+		g_maps->_mapPos.x = map[Maps::MAP_SURRENDER_X];
+		g_maps->_mapPos.y = map[Maps::MAP_SURRENDER_Y];
+
+		// Randomly remove food, gems, or gold from the party
+		int val = getRandomNumber(1, 200);
+		if (val < 51) {
+		} else if (val < 151) {
+			g_globals->_party.clearPartyGold();
+		} else if (val < 161) {
+			g_globals->_party.clearPartyGems();
+		} else if (val < 171) {
+			g_globals->_party.clearPartyFood();
+		} else if (val < 191) {
+			g_globals->_party.clearPartyFood();
+			g_globals->_party.clearPartyGold();
+		} else if (val < 200) {
+			g_globals->_party.clearPartyGold();
+			g_globals->_party.clearPartyGems();
+		} else {
+			g_globals->_party.clearPartyGems();
+			g_globals->_party.clearPartyFood();
+			g_globals->_party.clearPartyGold();
+		}
+
+		encounterEnded();
+	}
+}
+
+void Encounter::flee() {
+	const Maps::Map &map = *g_maps->_currentMap;
+	g_maps->_mapPos.x = map[Maps::MAP_FLEE_X];
+	g_maps->_mapPos.y = map[Maps::MAP_FLEE_Y];
+	encounterEnded();
+}
+
 
 } // namespace Views
 } // namespace MM1
