@@ -58,12 +58,12 @@ darkness:
 	}
 
 	// Encounter checks
-	_encounterFlag = false;
+	g_globals->_encounters._encounterFlag = NORMAL_SURPRISED;
 	if (maps._currentState & 0x80) {
 		map.special();
 
 	} else if (_stepRandom) {
-		_encounterFlag = true;
+		g_globals->_encounters._encounterFlag = NORMAL_ENCOUNTER;
 		_stepRandom = false;
 		g_globals->_encounters.execute();
 	} else {

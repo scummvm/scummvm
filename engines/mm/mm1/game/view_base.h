@@ -40,7 +40,6 @@ protected:
 	int _businessDisplay = -1;
 	byte _arr2[8];
 	bool _stepRandom = false;
-	bool _encounterFlag = false;
 private:
 	/**
 	 * Turn left
