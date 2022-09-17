@@ -48,6 +48,7 @@ void Encounter::draw() {
 
 	// Write the encounter options
 
+	getSurface().markAllDirty();
 }
 
 void Encounter::drawMonster(int monsterNum) {
