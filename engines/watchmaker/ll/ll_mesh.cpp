@@ -214,6 +214,7 @@ void t3dLightRoom(Init &init, t3dBODY *b, t3dV3F *p, t3dF32 NearRange, t3dF32 Fa
  *                  t3dLightChar
  * --------------------------------------------------*/
 void t3dLightChar(t3dMESH *mesh, t3dV3F *p) {
+#if 0
 	int16 df;
 	uint32 j, rr, gg, bb, cr, cb, cg;
 	t3dF32 addr = 110 + 60;
@@ -225,7 +226,6 @@ void t3dLightChar(t3dMESH *mesh, t3dV3F *p) {
 
 	if (!mesh || !p) return;
 
-#if 0
 	t3dVectAdd(&ppos, &mesh->Trasl, &mesh->Pos);
 	gv = mesh->VBptr = mesh->VertexBuffer;
 

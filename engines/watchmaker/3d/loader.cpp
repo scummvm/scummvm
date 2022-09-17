@@ -194,10 +194,6 @@ t3dBODY *t3dLoadSingleRoom(WGame &game, const Common::String &_pname, t3dBODY *b
 	//decodeLoaderFlags(LoaderFlags);
 	Common::String pname(_pname);
 
-	uint16  light;
-	t3dPLIGHT   *PLight;
-	t3dF32  minx, miny, minz, maxx, maxy, maxz;
-
 	WorkDirs &workdirs = game.workDirs;
 
 	if (pname.equalsIgnoreCase("r1c.t3d"))
