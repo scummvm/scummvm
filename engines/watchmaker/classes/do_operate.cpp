@@ -95,50 +95,50 @@ void UpdateSpecial(WGame &game, int32 room) {
 		break;
 
 	case r1D:
-		if ((m = LinkMeshToStr(init, "o1d-rotellina01")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Comb1D[0]) >= 0 ? (Comb1D[0]) : 0);
-		if ((m = LinkMeshToStr(init, "o1d-rotellina02")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Comb1D[1]) >= 0 ? (Comb1D[1]) : 0);
-		if ((m = LinkMeshToStr(init, "o1d-rotellina03")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Comb1D[2]) >= 0 ? (Comb1D[2]) : 0);
-		if ((m = LinkMeshToStr(init, "o1d-rotellina04")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Comb1D[3]) >= 0 ? (Comb1D[3]) : 0);
-		if ((m = LinkMeshToStr(init, "o1d-rotellina05")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Comb1D[4]) >= 0 ? (Comb1D[4]) : 0);
+		if ((m = LinkMeshToStr(init, "o1d-rotellina01")) && m->hasFaceMaterial())
+			m->setMovieFrame((Comb1D[0]) >= 0 ? (Comb1D[0]) : 0);
+		if ((m = LinkMeshToStr(init, "o1d-rotellina02")) && m->hasFaceMaterial())
+			m->setMovieFrame((Comb1D[1]) >= 0 ? (Comb1D[1]) : 0);
+		if ((m = LinkMeshToStr(init, "o1d-rotellina03")) && m->hasFaceMaterial())
+			m->setMovieFrame((Comb1D[2]) >= 0 ? (Comb1D[2]) : 0);
+		if ((m = LinkMeshToStr(init, "o1d-rotellina04")) && m->hasFaceMaterial())
+			m->setMovieFrame((Comb1D[3]) >= 0 ? (Comb1D[3]) : 0);
+		if ((m = LinkMeshToStr(init, "o1d-rotellina05")) && m->hasFaceMaterial())
+			m->setMovieFrame((Comb1D[4]) >= 0 ? (Comb1D[4]) : 0);
 		break;
 
 	case r25:
-		if ((m = LinkMeshToStr(init, "o25-mikrondedisplayON")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Forno25) >= 0 ? (Forno25) : 0);
-		if ((m = LinkMeshToStr(init, "o25-freezervask02")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Frigo25) >= 0 ? (Frigo25) : 0);
+		if ((m = LinkMeshToStr(init, "o25-mikrondedisplayON")) && m->hasFaceMaterial())
+			m->setMovieFrame((Forno25) >= 0 ? (Forno25) : 0);
+		if ((m = LinkMeshToStr(init, "o25-freezervask02")) && m->hasFaceMaterial())
+			m->setMovieFrame((Frigo25) >= 0 ? (Frigo25) : 0);
 
 		break;
 
 	case r2D:
-		if ((m = LinkMeshToStr(init, "o2d-displayino01")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Comb2D[0] - o2D0 + 1) >= 0 ? (Comb2D[0] - o2D0 + 1) : 0);
-		if ((m = LinkMeshToStr(init, "o2d-displayino02")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Comb2D[1] - o2D0 + 1) >= 0 ? (Comb2D[1] - o2D0 + 1) : 0);
-		if ((m = LinkMeshToStr(init, "o2d-displayino03")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Comb2D[2] - o2D0 + 1) >= 0 ? (Comb2D[2] - o2D0 + 1) : 0);
-		if ((m = LinkMeshToStr(init, "o2d-displayino04")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Comb2D[3] - o2D0 + 1) >= 0 ? (Comb2D[3] - o2D0 + 1) : 0);
-		if ((m = LinkMeshToStr(init, "o2d-displayino05")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Comb2D[4] - o2D0 + 1) >= 0 ? (Comb2D[4] - o2D0 + 1) : 0);
+		if ((m = LinkMeshToStr(init, "o2d-displayino01")) && m->hasFaceMaterial())
+			m->setMovieFrame((Comb2D[0] - o2D0 + 1) >= 0 ? (Comb2D[0] - o2D0 + 1) : 0);
+		if ((m = LinkMeshToStr(init, "o2d-displayino02")) && m->hasFaceMaterial())
+			m->setMovieFrame((Comb2D[1] - o2D0 + 1) >= 0 ? (Comb2D[1] - o2D0 + 1) : 0);
+		if ((m = LinkMeshToStr(init, "o2d-displayino03")) && m->hasFaceMaterial())
+			m->setMovieFrame((Comb2D[2] - o2D0 + 1) >= 0 ? (Comb2D[2] - o2D0 + 1) : 0);
+		if ((m = LinkMeshToStr(init, "o2d-displayino04")) && m->hasFaceMaterial())
+			m->setMovieFrame((Comb2D[3] - o2D0 + 1) >= 0 ? (Comb2D[3] - o2D0 + 1) : 0);
+		if ((m = LinkMeshToStr(init, "o2d-displayino05")) && m->hasFaceMaterial())
+			m->setMovieFrame((Comb2D[4] - o2D0 + 1) >= 0 ? (Comb2D[4] - o2D0 + 1) : 0);
 		break;
 
 	case r2Q:
-		if ((m = LinkMeshToStr(init, "o2q-displayino01")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Comb2Q[0] - o2Q0 + 1) >= 0 ? (Comb2Q[0] - o2Q0 + 1) : 0);
-		if ((m = LinkMeshToStr(init, "o2q-displayino02")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Comb2Q[1] - o2Q0 + 1) >= 0 ? (Comb2Q[1] - o2Q0 + 1) : 0);
-		if ((m = LinkMeshToStr(init, "o2q-displayino03")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Comb2Q[2] - o2Q0 + 1) >= 0 ? (Comb2Q[2] - o2Q0 + 1) : 0);
-		if ((m = LinkMeshToStr(init, "o2q-displayino04")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Comb2Q[3] - o2Q0 + 1) >= 0 ? (Comb2Q[3] - o2Q0 + 1) : 0);
-		if ((m = LinkMeshToStr(init, "o2q-displayino05")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Comb2Q[4] - o2Q0 + 1) >= 0 ? (Comb2Q[4] - o2Q0 + 1) : 0);
+		if ((m = LinkMeshToStr(init, "o2q-displayino01")) && m->hasFaceMaterial())
+			m->setMovieFrame((Comb2Q[0] - o2Q0 + 1) >= 0 ? (Comb2Q[0] - o2Q0 + 1) : 0);
+		if ((m = LinkMeshToStr(init, "o2q-displayino02")) && m->hasFaceMaterial())
+			m->setMovieFrame((Comb2Q[1] - o2Q0 + 1) >= 0 ? (Comb2Q[1] - o2Q0 + 1) : 0);
+		if ((m = LinkMeshToStr(init, "o2q-displayino03")) && m->hasFaceMaterial())
+			m->setMovieFrame((Comb2Q[2] - o2Q0 + 1) >= 0 ? (Comb2Q[2] - o2Q0 + 1) : 0);
+		if ((m = LinkMeshToStr(init, "o2q-displayino04")) && m->hasFaceMaterial())
+			m->setMovieFrame((Comb2Q[3] - o2Q0 + 1) >= 0 ? (Comb2Q[3] - o2Q0 + 1) : 0);
+		if ((m = LinkMeshToStr(init, "o2q-displayino05")) && m->hasFaceMaterial())
+			m->setMovieFrame((Comb2Q[4] - o2Q0 + 1) >= 0 ? (Comb2Q[4] - o2Q0 + 1) : 0);
 		break;
 
 	case r31:
@@ -170,16 +170,16 @@ void UpdateSpecial(WGame &game, int32 room) {
 		break;
 
 	case r45:
-		if ((m = LinkMeshToStr(init, "o45-contatore01")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Comb45[0]) >= 0 ? (Comb45[0]) : 0);
-		if ((m = LinkMeshToStr(init, "o45-contatore02")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Comb45[1]) >= 0 ? (Comb45[1]) : 0);
-		if ((m = LinkMeshToStr(init, "o45-contatore03")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Comb45[2]) >= 0 ? (Comb45[2]) : 0);
-		if ((m = LinkMeshToStr(init, "o45-contatore04")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Comb45[3]) >= 0 ? (Comb45[3]) : 0);
-		if ((m = LinkMeshToStr(init, "o45-contatore05")) && !m->FList.empty() && m->FList[0].mat)
-			rSetMovieFrame(m->FList[0].mat, (Comb45[4]) >= 0 ? (Comb45[4]) : 0);
+		if ((m = LinkMeshToStr(init, "o45-contatore01")) && m->hasFaceMaterial())
+			m->setMovieFrame((Comb45[0]) >= 0 ? (Comb45[0]) : 0);
+		if ((m = LinkMeshToStr(init, "o45-contatore02")) && m->hasFaceMaterial())
+			m->setMovieFrame((Comb45[1]) >= 0 ? (Comb45[1]) : 0);
+		if ((m = LinkMeshToStr(init, "o45-contatore03")) && m->hasFaceMaterial())
+			m->setMovieFrame((Comb45[2]) >= 0 ? (Comb45[2]) : 0);
+		if ((m = LinkMeshToStr(init, "o45-contatore04")) && m->hasFaceMaterial())
+			m->setMovieFrame((Comb45[3]) >= 0 ? (Comb45[3]) : 0);
+		if ((m = LinkMeshToStr(init, "o45-contatore05")) && m->hasFaceMaterial())
+			m->setMovieFrame((Comb45[4]) >= 0 ? (Comb45[4]) : 0);
 		break;
 	}
 }

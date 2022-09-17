@@ -390,7 +390,8 @@ t3dLIGHT::t3dLIGHT(t3dBODY *b, WorkDirs &workDirs, Common::SeekableReadStream &s
 #if 0
 		Light[light].Material[0].VB = rGetUserVertexBuffer();
 #endif
-		Material[0].NumAllocatedVerts += 45;
+		warning("TODO: Lights");
+		//Material[0].NumAllocatedVerts += 45;
 #endif
 	}
 

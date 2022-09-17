@@ -302,7 +302,7 @@ bool gUpdateMovie(gMaterial *mat) {
 	WORD newFrame = 0;
 	DWORD curTime;
 
-	if (mat->Flags & T3D_MATERIAL_MOVIEPAUSED)
+	if (mat->hasFlag(T3D_MATERIAL_MOVIEPAUSED))
 		return TRUE;
 
     Common::SharedPtr<gMovie> mv = mat->Movie;

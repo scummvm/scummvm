@@ -125,7 +125,7 @@ t3dCAMERAPATH::t3dCAMERAPATH(Common::SeekableReadStream &stream) {
 	int numPoints = stream.readSint16LE();
 	CarrelloDist = stream.readSint32LE();
 
-	PList.reserve(numPoints);
+	PList.resize(numPoints);
 	for (int j = 0; j < numPoints; j++) {
 		PList[j].x = stream.readFloatLE() * SCALEFACTOR;
 		PList[j].y = stream.readFloatLE() * SCALEFACTOR;
@@ -446,7 +446,8 @@ void t3dLoadSky(WGame &game, t3dBODY * /*body*/) {
 	}
 
 	for (n = 0; n < t3dSky->NumMaterials(); n++) {
-		t3dSky->MatTable[n]->Flags |= T3D_MATERIAL_SKY | T3D_MATERIAL_NOLIGHTMAP;
+		t3dSky->MatTable[n]->addProperty(T3D_MATERIAL_SKY);
+		t3dSky->MatTable[n]->addProperty(T3D_MATERIAL_NOLIGHTMAP);
 	}
 }
 
@@ -463,7 +464,7 @@ Common::SharedPtr<VertexBuffer> t3dAddVertexBuffer(t3dBODY *b, uint32 numv) {
 void t3dOptimizeMaterialList(t3dBODY *b) {
 	for (int i = 0; i < b->NumMaterials(); i++) {                                              // Scorre tutti materilai di un body
 		MaterialPtr Mat = b->MatTable[i];
-		if ((Mat == nullptr) || /*(!Mat->Texture->Name) ||*/ (Mat->Movie) || (Mat->Flags & T3D_MATERIAL_MOVIE)) // Se non esiste o non ha texture
+		if ((Mat == nullptr) || /*(!Mat->Texture->Name) ||*/ (Mat->Movie) || (Mat->hasFlag(T3D_MATERIAL_MOVIE))) // Se non esiste o non ha texture
 			continue;                                                                           // esce
 
 		for (int j = 0; j < b->NumMaterials(); j++) {                                       // Cerca materiali uguali
@@ -505,10 +506,10 @@ void t3dFinalizeMaterialList(t3dBODY *b) {
 #endif
 		for (uint32 j = 0; j < Mesh.NumFaces(); j++) {
 			t3dFACE &Face = Mesh.FList[j];
-			MaterialPtr Mat = Face.mat;
+			MaterialPtr Mat = Face.getMaterial();
 			if (Face.lightmap) {
 				Mat = nullptr;
-				for (auto material : Face.mat->AddictionalMaterial) {
+				for (auto material : Face.getMaterial()->AddictionalMaterial) {
 					if (Mat->Texture->ID == Face.lightmap->Texture->ID) {
 						Mat = material;
 						break;
@@ -516,8 +517,8 @@ void t3dFinalizeMaterialList(t3dBODY *b) {
 				}
 				if (Mat == nullptr) {
 					warning("%s: Can't find Lightmap Sub-Material!", Mesh.name.c_str());
-					warning("%d %d", Face.mat->NumAddictionalMaterial, Face.lightmap->Texture->ID);
-					for (auto material : Face.mat->AddictionalMaterial) {
+					warning("%d %d", Face.getMaterial()->NumAddictionalMaterial, Face.lightmap->Texture->ID);
+					for (auto material : Face.getMaterial()->AddictionalMaterial) {
 						warning("%d", material->Texture->ID);
 					}
 					continue;
@@ -537,16 +538,17 @@ void t3dFinalizeMaterialList(t3dBODY *b) {
 			Mesh.Flags |= T3D_MESH_UPDATEVB;
 
 			for (uint32 h = 0; h < 3; h++) {
-				for (k = 0; k < (uint32)Mat->NumAllocatedVerts; k++)
+				for (k = 0; k < (uint32)Mat->NumAllocatedVerts(); k++)
 					if (Mat->VertsList[k] == &Mesh.VBptr[Face.VertexIndex[h]])
 						break;
 
-				if (k >= (uint32)Mat->NumAllocatedVerts) {
-					Mat->VertsList = (gVertex **)t3dRealloc(Mat->VertsList, sizeof(gVertex *));
-					Mat->VertsList[Mat->NumAllocatedVerts++] = &Mesh.VBptr[Face.VertexIndex[h]];
+				if (k >= (uint32)Mat->NumAllocatedVerts()) {
+					Mat->VertsList.push_back(&Mesh.VBptr[Face.VertexIndex[h]]);
 				}
+				assert(k < Mat->VertsList.size());
 				Face.MatVertexIndex[h] = (int16)k;
 			}
+
 		}
 #ifndef WMGEN
 		Mesh.VBptr = nullptr;
@@ -559,7 +561,7 @@ void t3dFinalizeMaterialList(t3dBODY *b) {
 		auto &Mat = b->MatTable[i];
 		Mat->VBO = b->addVertexBuffer(); // t3dAddVertexBuffer(b, Mat->NumAllocatedVerts);
 		for (int j = 0; j < (uint32)Mat->NumAddictionalMaterial; j++)
-			Mat->AddictionalMaterial[j]->VBO = t3dAddVertexBuffer(b, Mat->AddictionalMaterial[j]->NumAllocatedVerts);
+			Mat->AddictionalMaterial[j]->VBO = t3dAddVertexBuffer(b, Mat->AddictionalMaterial[j]->NumAllocatedVerts());
 	}
 }
 

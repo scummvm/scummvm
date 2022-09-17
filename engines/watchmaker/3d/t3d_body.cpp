@@ -25,13 +25,14 @@
 
 #include "watchmaker/3d/t3d_body.h"
 #include "common/stream.h"
-#include "watchmaker/3d/t3d_mesh.h"
-#include "watchmaker/3d/math/llmath.h"
-#include "watchmaker/3d/loader.h"
-#include "watchmaker/ll/ll_system.h"
-#include "watchmaker/game.h"
-#include "watchmaker/renderer.h"
 #include "watchmaker/3d/light.h"
+#include "watchmaker/3d/loader.h"
+#include "watchmaker/3d/math/llmath.h"
+#include "watchmaker/3d/t3d_face.h"
+#include "watchmaker/3d/t3d_mesh.h"
+#include "watchmaker/game.h"
+#include "watchmaker/ll/ll_system.h"
+#include "watchmaker/renderer.h"
 
 namespace Watchmaker {
 
@@ -328,8 +329,7 @@ void LoadLightmaps(WorkDirs &workDirs, t3dBODY *b) {
 		if (rAddMaterial(*b->LightmapTable[i], Appo, 0, 0) == nullptr)
 			return;
 
-		b->LightmapTable[i]->Flags = 0;
-		b->LightmapTable[i]->NumFaces = 0;
+		b->LightmapTable[i]->clear();
 	}
 
 	for (uint32 i = 0; i < b->NumNormals; i++) {
@@ -364,11 +364,11 @@ void LoadLightmaps(WorkDirs &workDirs, t3dBODY *b) {
 //					gMaterial *newmat;
 					if (f.n == b->NList[i]) {
 //						f->mat->Texture=f->mat->Lightmap;
-						if ((!(f.mat->Flags & T3D_MATERIAL_OPACITY)) &&
-							(!(f.mat->Flags & T3D_MATERIAL_CLIPMAP)) &&
-							(!(f.mat->Flags & T3D_MATERIAL_BOTTLE)) &&
-							(!(f.mat->Flags & T3D_MATERIAL_ADDITIVE)) &&
-							(!(f.mat->Flags & T3D_MATERIAL_GLASS))) {
+						if ((!(f.hasMaterialFlag(T3D_MATERIAL_OPACITY))) &&
+							(!(f.hasMaterialFlag(T3D_MATERIAL_CLIPMAP))) &&
+							(!(f.hasMaterialFlag(T3D_MATERIAL_BOTTLE))) &&
+							(!(f.hasMaterialFlag(T3D_MATERIAL_ADDITIVE))) &&
+							(!(f.hasMaterialFlag(T3D_MATERIAL_GLASS)))) {
 							alphaval1 = RGBA_GETALPHA(gv[f.VertexIndex[0]].diffuse);
 							alphaval2 = RGBA_GETALPHA(gv[f.VertexIndex[1]].diffuse);
 							alphaval3 = RGBA_GETALPHA(gv[f.VertexIndex[2]].diffuse);
@@ -376,12 +376,12 @@ void LoadLightmaps(WorkDirs &workDirs, t3dBODY *b) {
 							gv[f.VertexIndex[1]].diffuse = RGBA_MAKE(254, 254, 254, alphaval2);
 							gv[f.VertexIndex[2]].diffuse = RGBA_MAKE(254, 254, 254, alphaval3);
 							f.lightmap = b->LightmapTable[Map];
-							f.mat->addNumFacesAdditionalMaterial(f.lightmap, 1);
-						} else if (((f.mat->Flags & T3D_MATERIAL_OPACITY)) ||
-								   ((f.mat->Flags & T3D_MATERIAL_CLIPMAP)) ||
-								   ((f.mat->Flags & T3D_MATERIAL_BOTTLE)) ||
-								   ((f.mat->Flags & T3D_MATERIAL_ADDITIVE)) ||
-								   ((f.mat->Flags & T3D_MATERIAL_GLASS))) {
+							f.getMaterial()->addNumFacesAdditionalMaterial(f.lightmap, 1);
+						} else if (((f.hasMaterialFlag(T3D_MATERIAL_OPACITY))) ||
+								   ((f.hasMaterialFlag(T3D_MATERIAL_CLIPMAP))) ||
+								   ((f.hasMaterialFlag(T3D_MATERIAL_BOTTLE))) ||
+								   ((f.hasMaterialFlag(T3D_MATERIAL_ADDITIVE))) ||
+								   ((f.hasMaterialFlag(T3D_MATERIAL_GLASS)))) {
 							f.lightmap = nullptr;
 						}
 
@@ -420,11 +420,11 @@ void LoadLightmaps(WorkDirs &workDirs, t3dBODY *b) {
 					if (f.n == b->NList[i]) {
 						f.lightmap = nullptr;
 //						if (Map==-1)
-						if ((!(f.mat->Flags & T3D_MATERIAL_OPACITY)) &&
-							(!(f.mat->Flags & T3D_MATERIAL_CLIPMAP)) &&
-							(!(f.mat->Flags & T3D_MATERIAL_BOTTLE)) &&
-							(!(f.mat->Flags & T3D_MATERIAL_ADDITIVE)) &&
-							(!(f.mat->Flags & T3D_MATERIAL_GLASS))) {
+						if ((!(f.hasMaterialFlag(T3D_MATERIAL_OPACITY))) &&
+							(!(f.hasMaterialFlag(T3D_MATERIAL_CLIPMAP))) &&
+							(!(f.hasMaterialFlag(T3D_MATERIAL_BOTTLE))) &&
+							(!(f.hasMaterialFlag(T3D_MATERIAL_ADDITIVE))) &&
+							(!(f.hasMaterialFlag(T3D_MATERIAL_GLASS)))) {
 							alphaval1 = RGBA_GETALPHA(gv[f.VertexIndex[0]].diffuse);
 							alphaval2 = RGBA_GETALPHA(gv[f.VertexIndex[1]].diffuse);
 							alphaval3 = RGBA_GETALPHA(gv[f.VertexIndex[2]].diffuse);

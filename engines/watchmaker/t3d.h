@@ -113,25 +113,6 @@ namespace Watchmaker {
 #define T3D_CHARACTER_BNDHIDE               (1<<5)      // don't use char BND
 #define T3D_CHARACTER_DIARYDISABLE          (1<<6)      // diable diary
 
-struct t3dFACE {
-	uint32      flags = 0;                 // face status                                  4
-	NormalPtr   n;                         // pointer to the face normal                   4
-	int16      VertexIndex[3] = {};       // Vertices indices in mesh                     6
-	int16      MatVertexIndex[3] = {};    // Vertices indices in material                 6
-	MaterialPtr mat;                       // pointer to material                          4
-	MaterialPtr lightmap;                  // pointer to lightmap (or 2nd material)        4
-
-	bool isVisible() const {
-		if (!n)
-			return true;
-		else if (n->flag != T3D_NORMAL_VISIBLE)
-			return false;
-
-		return true;
-	}
-};
-
-
 struct t3dM3X3F {
 	t3dF32  M[9] = {};                           // Matrix 3 x 3
 	uint8   Flags = 0;                          // flags: if identity
