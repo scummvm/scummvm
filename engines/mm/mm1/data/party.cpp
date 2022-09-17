@@ -58,6 +58,21 @@ uint Party::getPartyGold() const {
 	return total;
 }
 
+void Party::clearPartyGold() {
+	for (uint i = 0; i < size(); ++i)
+		(*this)[i]._gold = 0;
+}
+
+void Party::clearPartyGems() {
+	for (uint i = 0; i < size(); ++i)
+		(*this)[i]._gems = 0;
+}
+
+void Party::clearPartyFood() {
+	for (uint i = 0; i < size(); ++i)
+		(*this)[i]._food = 0;
+}
+
 void Party::updateAC() {
 	for (uint i = 0; i < size(); ++i)
 		(*this)[i].updateAC();

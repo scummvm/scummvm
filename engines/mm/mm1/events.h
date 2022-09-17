@@ -154,6 +154,12 @@ public:
 	void open() { addView(); }
 
 	/**
+	 * Returns a random number
+	 */
+	int getRandomNumber(int minNumber, int maxNumber);
+	int getRandomNumber(int maxNumber);
+
+	/**
 	 * Sets the element's bounds
 	 */
 	virtual void setBounds(const Common::Rect &r) {

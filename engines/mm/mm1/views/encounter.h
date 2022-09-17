@@ -33,7 +33,9 @@ class Encounter : public TextView {
 private:
 	enum Mode {
 		ALERT, SURPRISED_BY_MONSTERS, SURPRISED_MONSTERS,
-		NORMAL_ENCOUNTER
+		ENCOUNTER_OPTIONS, NOWHERE_TO_RUN, SURRENDER_FAILED,
+
+		BATTLE
 	};
 	Mode _mode = ALERT;
 
@@ -41,6 +43,16 @@ private:
 	 * Draws a monster
 	 */
 	void drawMonster(int monsterNum);
+
+	/**
+	 * Handles the end of the encounter
+	 */
+	void encounterEnded();
+	void attack();
+	void bribe();
+	void retreat();
+	void surrender();
+	void flee();
 public:
 	Encounter();
 	virtual ~Encounter() {}
@@ -60,6 +72,11 @@ public:
 	 * Handles delay timeouts
 	 */
 	void timeout() override;
+
+	/**
+	 * Handles keypresses
+	 */
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 } // namespace Views

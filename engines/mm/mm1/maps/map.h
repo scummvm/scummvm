@@ -36,6 +36,15 @@ namespace Maps {
 
 class Maps;
 
+enum DataOffset {
+	MAP_FLEE_THRESHOLD = 22,
+	MAP_FLEE_X = 23,
+	MAP_FLEE_Y = 24,
+	MAP_SURRENDER_THRESHOLD = 25,
+	MAP_SURRENDER_X = 26,
+	MAP_SURRENDER_Y = 27
+};
+
 enum WallType {
 	WALL_NONE = 0, WALL_NORMAL = 1, WALL_DOOR = 2,
 	WALL_TORCH = 3
