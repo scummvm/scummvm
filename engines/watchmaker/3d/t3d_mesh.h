@@ -22,6 +22,7 @@
 #ifndef WATCHMAKER_T3D_MESH_H
 #define WATCHMAKER_T3D_MESH_H
 
+#include "watchmaker/3d/t3d_face.h"
 #include "watchmaker/t3d.h"
 
 namespace Watchmaker {
@@ -85,7 +86,7 @@ struct t3dMESH {
 #endif
 		for (uint16 j = 0; j < this->NumFaces(); j++) {                                          // Scorre le facce
 			t3dFACE &Face = this->FList[j];
-			MaterialPtr Material = Face.mat;
+			MaterialPtr Material = Face.getMaterial();
 			uint32      alphaval = 2;
 			uint32      rr = 0, gg = 0, bb = 0;
 
@@ -93,7 +94,7 @@ struct t3dMESH {
 			gg = Material->g;
 			bb = Material->b;
 
-			if (Material->Flags & T3D_MATERIAL_CLIPMAP) {                                       // Se il materiale e' clipmap
+			if (Material->hasFlag(T3D_MATERIAL_CLIPMAP)) {                                       // Se il materiale e' clipmap
 				alphaval = 0xfe;
 				Face.flags |= T3D_MATERIAL_CLIPMAP;                                            // lo setta sulla faccia
 				/*              Face->flags&=~T3D_MATERIAL_OPACITY;
@@ -102,22 +103,22 @@ struct t3dMESH {
 								Material->Flags&=~T3D_MATERIAL_GLASS;*/
 //				r=g=b=0;
 			}
-			if (Material->Flags & T3D_MATERIAL_OPACITY) {                                       // Se il materiale e' opacity
+			if (Material->hasFlag(T3D_MATERIAL_OPACITY)) {                                       // Se il materiale e' opacity
 				Face.flags |= T3D_MATERIAL_OPACITY;                                            // lo setta sulla faccia
 				alphaval = 0x88;
 				rr = gg = bb = 0;
 			}
-			if (Material->Flags & T3D_MATERIAL_GLASS) {                                         // Se e' un glass
+			if (Material->hasFlag(T3D_MATERIAL_GLASS)) {                                         // Se e' un glass
 				Face.flags |= T3D_MATERIAL_GLASS;                                              // lo setta sulla faccia
 				alphaval = 0xfe;
 				rr = gg = bb = 255;
 			}
-			if (Material->Flags & T3D_MATERIAL_BOTTLE) {                                        // Se e' un bottle
+			if (Material->hasFlag(T3D_MATERIAL_BOTTLE)) {                                        // Se e' un bottle
 				Face.flags |= T3D_MATERIAL_BOTTLE;                                             // sulla faccia
 				alphaval = 0x88;
 				rr = gg = bb = 255;
 			}
-			if (Material->Flags & T3D_MATERIAL_ADDITIVE) {                                      // Se e' un additivo
+			if (Material->hasFlag(T3D_MATERIAL_ADDITIVE)) {                                      // Se e' un additivo
 				Face.flags |= T3D_MATERIAL_ADDITIVE;                                           // sulla faccia
 				alphaval = 0x88;
 				rr = gg = bb = 255;
@@ -137,9 +138,24 @@ struct t3dMESH {
 
 	t3dMESH() = default;
 	t3dMESH(t3dBODY *b, Common::SeekableReadStream &stream, t3dMESH *&ReceiveRipples, uint8 &Mirror);
-	void loadFaces(t3dBODY *b, Common::SeekableReadStream &stream);
+	void loadFaces(t3dBODY *b, Common::SeekableReadStream &stream, int numFaces);
 	void release();
 	void releaseAnim(uint8 flag);
+
+	bool hasFaceMaterial() const {
+		return !this->FList.empty() && (bool)(this->FList[0].getMaterial());
+	}
+
+	void setMovieFrame(uint32 dwCurrFrame) {
+		// TODO: Could just inline rSetMovieFrame?
+		if (!this->FList.empty() && this->FList[0].getMaterial()) {
+			rSetMovieFrame(this->FList[0].getMaterial(), dwCurrFrame);
+		}
+	}
+	uint32 getMovieFrame() {
+		assert(!this->FList.empty() && this->FList[0].getMaterial());
+		return rGetMovieFrame(this->FList[0].getMaterial());
+	}
 };
 
 } // End of namespace Watchmaker

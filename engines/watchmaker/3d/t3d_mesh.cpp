@@ -28,25 +28,12 @@
 
 namespace Watchmaker {
 
-void t3dMESH::loadFaces(t3dBODY *b, Common::SeekableReadStream &stream) {
+void t3dMESH::loadFaces(t3dBODY *b, Common::SeekableReadStream &stream, int numFaces) {
 	//Mesh[mesh].FList = new t3dFACE[Mesh[mesh].NumFaces]{};                  // Alloca facce
 
-	for (uint16 face = 0; face < NumFaces(); face++) {
-		FList[face].VertexIndex[0] = stream.readSint16LE();                                                                    // Legge VertexIndex0
-		FList[face].VertexIndex[1] = stream.readSint16LE();                                                                    // Legge VertexIndex1
-		FList[face].VertexIndex[2] = stream.readSint16LE();                                                                    // Legge VertexIndex2
-
-		FList[face].n = b->NList[stream.readSint16LE()];                                  // Legge puntatore a normale
-
-		uint16 n = stream.readSint16LE();                                                                    // Legge indice materiale
-		if (n >= b->NumMaterials())
-			warning("Material index wrong: current index: %d; Max material index %d", n, b->NumMaterials());
-		else {
-			FList[face].mat = b->MatTable[n];                                   // Make the pointer to the material
-			if (b->MatTable[n]->addNumFaces(1/*f2*/) == false)                    // Add face space to the material
-				warning("Can't realloc material faces");
-		}
-
+	this->FList.reserve(numFaces); // Legge numero facce mesh
+	for (uint16 face = 0; face < numFaces; face++) {
+		FList.push_back(t3dFACE(b, stream));
 	}//__for_face
 }
 
@@ -62,7 +49,7 @@ t3dMESH::t3dMESH(t3dBODY *b, Common::SeekableReadStream &stream, t3dMESH *&Recei
 	stream.read(stringBuffer, T3D_NAMELEN); // Legge nome portale
 	this->portalName = stringBuffer;
 
-	this->FList.resize(stream.readSint16LE()); // Legge numero facce mesh
+	int numFaces = stream.readSint16LE(); // Legge numero facce mesh
 
 	t3dVectFill(&this->Trasl, 0.0f);
 	this->Pos = t3dV3F(stream) * SCALEFACTOR;
@@ -123,7 +110,7 @@ t3dMESH::t3dMESH(t3dBODY *b, Common::SeekableReadStream &stream, t3dMESH *&Recei
 	}
 	this->CurFrame = 0;
 
-	this->loadFaces(b, stream);
+	this->loadFaces(b, stream, numFaces);
 
 	this->NumVerts = stream.readSint16LE();                                                      // Rilegge numero vertici
 	b->NumTotVerts += this->NumVerts;

@@ -19,20 +19,21 @@
  *
  */
 
-#include "watchmaker/t3d.h"
+#include "watchmaker/3d/mem_management.h"
 #include "watchmaker/3d/geometry.h"
 #include "watchmaker/3d/light.h"
-#include "watchmaker/3d/mem_management.h"
+#include "watchmaker/3d/loader.h"
 #include "watchmaker/3d/math/llmath.h"
+#include "watchmaker/3d/t3d_face.h"
 #include "watchmaker/3d/t3d_body.h"
 #include "watchmaker/3d/t3d_mesh.h"
+#include "watchmaker/globvar.h"
 #include "watchmaker/ll/ll_system.h"
 #include "watchmaker/render.h"
-#include "watchmaker/utils.h"
-#include "watchmaker/3d/loader.h"
-#include "watchmaker/windows_hacks.h"
-#include "watchmaker/globvar.h"
 #include "watchmaker/renderer.h"
+#include "watchmaker/t3d.h"
+#include "watchmaker/utils.h"
+#include "watchmaker/windows_hacks.h"
 
 #define SKY_SPEED               0.00005f
 #define EXPRESSION_SET_LEN      14
@@ -2182,7 +2183,7 @@ enabledinmirror:
  *                  ProcessWater
  * --------------------------------------------------*/
 void ProcessWater(t3dMESH &mesh, int32 CurPass, int32 MaxPass) {
-	MaterialPtr mat = mesh.FList[0].mat;
+	MaterialPtr mat = mesh.FList[0].getMaterial();
 	uint32  dimx = mat->Texture->DimX;
 	uint32  dimy = mat->Texture->DimY;
 	int32  *dest = mesh.WaterBuffer2 + dimx * 2, *source = mesh.WaterBuffer1 + dimx * 2;
@@ -2203,7 +2204,7 @@ void ProcessWater(t3dMESH &mesh, int32 CurPass, int32 MaxPass) {
  *                  t3dRenderWater
  * --------------------------------------------------*/
 void t3dRenderWater(t3dMESH &mesh, uint32 Type) {
-	MaterialPtr &mat = mesh.FList[0].mat;
+	MaterialPtr mat = mesh.FList[0].getMaterial();
 	int32  pitch, Xoffset, Yoffset;
 	int32  dimx = (int32)mat->Texture->DimX;
 	int32  dimy = (int32)mat->Texture->DimY;
@@ -2340,10 +2341,8 @@ void t3dMoveTexture(gVertex *gv, uint32 NumVerts, t3dF32 XInc, t3dF32 YInc) {
  * --------------------------------------------------*/
 void t3dSetFaceVisibility(t3dMESH *mesh, t3dCAMERA *cam) {
 	uint32      pl;
-	int32      j, *nf;
+	int32      j;
 	int16      LastT1, LastT2, T1, T2;
-	uint32      F1, F2;
-	MaterialPtr Material;
 
 	if (mesh->Flags & T3D_MESH_PORTAL) {                                                         // se e' un portale
 		if (bOrigRoom && !bDisableMirrors && (!(mesh->Flags & T3D_MESH_NOPORTALCHECK)) && (mesh->PortalList)) {
@@ -2364,26 +2363,23 @@ void t3dSetFaceVisibility(t3dMESH *mesh, t3dCAMERA *cam) {
 
 	LastT1 = LastT2 = -2;
 	T1 = T2 = -1;
-	F1 = F2 = 0;
-	Material = nullptr;
-	Common::Array<uint16> *target = nullptr;
+
+	MaterialPtr target = nullptr;
 	int targetIndex = 0;
 	for (uint32 i = 0; i < mesh->NumFaces(); i++) {
 		t3dFACE &f = mesh->FList[i];
-		if (!f.mat || !(f.flags & T3D_FACE_VISIBLE))
+		if (!f.getMaterial() || !(f.flags & T3D_FACE_VISIBLE))
 			continue;
 
-		Material = f.mat;
+		MaterialPtr Material = f.getMaterial();
 		T1 = Material->Texture->ID;
-		F1 = Material->Flags;
 
 		if (!bNoLightmapsCalc && f.lightmap) {
 			T2 = f.lightmap->Texture->ID;
-			F2 = f.lightmap->Flags;
 		} else
 			T2 = -1;
 
-		if (Material->Flags & T3D_MATERIAL_ENVIROMENT) {                                        // se ha l'enviroment
+		if (Material->hasFlag(T3D_MATERIAL_ENVIROMENT)) {                                        // se ha l'enviroment
 			t3dV3F  v;
 			t3dV3F  *n;
 			gVertex *gv;
@@ -2429,11 +2425,9 @@ void t3dSetFaceVisibility(t3dMESH *mesh, t3dCAMERA *cam) {
 					continue;
 
 				}
-				nf = &(Material->AddictionalMaterial[j]->NumFaces);
-				target = &Material->AddictionalMaterial[j]->FacesList;
+				target = Material->AddictionalMaterial[j];
 			} else {
-				nf = &(Material->NumFaces);
-				target = &Material->FacesList;
+				target = Material;
 			}
 			LastT1 = T1;
 			LastT2 = T2;
@@ -2441,28 +2435,9 @@ void t3dSetFaceVisibility(t3dMESH *mesh, t3dCAMERA *cam) {
 
 		// Something is wrong here, as the original game seems to be just writing to NumFaces + 0,1,2, as if there
 		// was space allocated there.
-#if 0
-		target->at(*nf + 0) = f.MatVertexIndex[0];
-		target->at(*nf + 1) = f.MatVertexIndex[1];
-		target->at(*nf + 2) = f.MatVertexIndex[2];
-#endif
-
-		if (*nf + 3 >= target->size()) {
-			// TODO: Why is this hack necessary?
-			warning("NumFaces: %d, Size: %d", *nf, target->size());
-/*			static bool warned = false;
-			if (!warned) {
-				warned = true;*/
-				warning("Dropping face");
-//			}
-			target->resize(*nf + 4);
-			//continue;
+		for (int v = 0; v < 3; v++) {
+			target->addFace(f.MatVertexIndex[v]);
 		}
-		//warning("LOOK INTO WHY THIS IS BROKEN");
-		(*target)[(*nf + 0)] = f.MatVertexIndex[0];
-		(*target)[(*nf + 1)] = f.MatVertexIndex[1];
-		(*target)[(*nf + 2)] = f.MatVertexIndex[2];
-		*nf += 3;
 
 		StatNumTris++;
 	}
@@ -2525,7 +2500,7 @@ void t3dCAMERA::normalizedSight() {
 void t3dCalcHalos(t3dBODY *b) {
 	gMaterial   *Material;
 	int16      T1;
-	uint32      F1, uvbc;
+	uint32      uvbc;
 	uint32      i;
 	gVertex     *gv;
 	t3dF32      size;
@@ -2561,7 +2536,6 @@ void t3dCalcHalos(t3dBODY *b) {
 		if (l.Type & T3D_LIGHT_FLARE) {
 			Material = &l.Material[0];
 			T1 = Material->Texture->ID;
-			F1 = Material->Flags;
 
 			size = l.FlareSize;
 
@@ -2585,18 +2559,15 @@ void t3dCalcHalos(t3dBODY *b) {
 			v3.z = 0.0f;
 			t3dVectTransformInv(&v3, &v3, &t3dCurViewMatrix);
 
-			uint16 &fp = Material->FacesList[Material->NumFaces];
-			Material->FacesList[Material->NumFaces + 0] = 0 + uvbc;
-			Material->FacesList[Material->NumFaces + 1] = 1 + uvbc;
-			Material->FacesList[Material->NumFaces + 2] = 2 + uvbc;
+			for (int f = 0; f < 3; f++) {
+				Material->addFace(f + uvbc);
+			}
 			StatNumTris++;
-			Material->NumFaces += 3;
 
-			Material->FacesList[Material->NumFaces + 3] = 2 + uvbc;
-			Material->FacesList[Material->NumFaces + 4] = 3 + uvbc;
-			Material->FacesList[Material->NumFaces + 5] = 1 + uvbc;
+			Material->addFace(2 + uvbc);
+			Material->addFace(3 + uvbc);
+			Material->addFace(1 + uvbc);
 			StatNumTris++;
-			Material->NumFaces += 3;
 
 			gv[0].x = v0.x + l.Source.x;
 			gv[0].y = v0.y + l.Source.y;
@@ -2642,7 +2613,7 @@ void t3dCalcHalos(t3dBODY *b) {
  * --------------------------------------------------*/
 void t3dAddParticle(gMaterial *Material, t3dV3F *Source, t3dF32 size, t3dV3F Color, uint32 num) {
 	int16      T1;
-	uint32      F1, uvbc;
+	uint32      uvbc;
 	gVertex     *gv;
 	t3dV3F      v0, v1, v2, v3;
 	uint32      rr, gg, bl, i;
@@ -2655,7 +2626,6 @@ void t3dAddParticle(gMaterial *Material, t3dV3F *Source, t3dF32 size, t3dV3F Col
 	gv += uvbc;
 
 	T1 = Material->Texture->ID;
-	F1 = Material->Flags;
 
 	uint32 faceOffset = Material->NumFaces;
 
@@ -2889,7 +2859,7 @@ void t3dAnimLights(t3dBODY *b) {
  *              t3dCheckMaterialVB
  * --------------------------------------------------*/
 void t3dCheckMaterialVB(MaterialPtr mat) {
-	if (!mat || (mat->NumAllocatedVerts < 3))
+	if (!mat || (mat->NumAllocatedVerts() < 3))
 		return ;
 
 	int i;
@@ -2903,7 +2873,7 @@ void t3dCheckMaterialVB(MaterialPtr mat) {
 	//warning("TODO: Implement t3dCheckMaterialVB");
 //	gv = rLockVertexPtr(mat->VB, DDLOCK_WRITEONLY | DDLOCK_NOSYSLOCK);
 	mat->VBO->_buffer.clear();
-	for (int i = 0; i < mat->NumAllocatedVerts; i++) {
+	for (int i = 0; i < mat->NumAllocatedVerts(); i++) {
 		auto vert = *mat->VertsList[i];
 		mat->VBO->_buffer.push_back(vert);
 		//memcpy(gv, mat->VertsList[i], sizeof(gVertex));

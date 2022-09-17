@@ -72,6 +72,13 @@ void gMaterial::addProperty(int flag) {
 	this->Flags |= flag;
 }
 
+void gMaterial::clearFlag(int flag) {
+	this->Flags &= ~flag;
+}
+
+bool gMaterial::hasFlag(int flag) {
+	return this->Flags & flag;
+}
 
 void gMaterial::addColor(unsigned char r_add, unsigned char g_add, unsigned char b_add) {
 	int rr, gg, bb;
@@ -109,22 +116,14 @@ bool gMaterial::addNumFacesAdditionalMaterial(MaterialPtr am, unsigned int num) 
 	{
 		this->AddictionalMaterial.push_back(Common::SharedPtr<gMaterial>(new gMaterial(*am)));
 		cm = this->AddictionalMaterial.back();
-		cm->NumAllocatedFaces=0;
-		cm->FacesList.clear();
+		cm->FacesList.resize(0);
 		this->NumAddictionalMaterial++;
 	}
-
-	cm->FacesList.resize(cm->FacesList.size() + num*3);
-	cm->NumAllocatedFaces+=num*3;
 	return true;
 }
 
 bool gMaterial::addNumFaces(unsigned int num) {
-	if (num == 0)
-		return false;
-
-	FacesList.resize(FacesList.size() + num * 3);
-	NumAllocatedFaces += num * 3;
+	// TODO: Remove, as this is not necessary with a Common::Array
 	return true;
 }
 
@@ -135,10 +134,8 @@ MaterialPtr rMergeMaterial(MaterialPtr Mat1, MaterialPtr Mat2) {
 
 	for ( int i=0; i<Mat2->NumAddictionalMaterial; i++ ) {
 		Mat1->addNumFacesAdditionalMaterial(Mat2->AddictionalMaterial[i],
-									   Mat2->AddictionalMaterial[i]->NumAllocatedFaces);
+									   /*Mat2->AddictionalMaterial[i]->NumAllocatedFaces*/ Mat2->AddictionalMaterial[i]->NumFaces());
 	}
-	Mat1->addNumFaces(Mat2->NumAllocatedFaces);
-
 	//reset mat2
 	rRemoveMaterial(Mat2);
 	*Mat2 = gMaterial();
@@ -158,23 +155,25 @@ Common::SharedPtr<gMaterial> rCopyMaterial(Common::SharedPtr<gMaterial> Mat1, Co
 	if (!Mat1 || !Mat2)
 		return nullptr;
 
-	Mat1->FacesList.clear();
+	Mat1->clearFaceList();
 	Mat1->AddictionalMaterial.clear();
-	Mat1->FacesList.clear();
-	delete[] Mat1->VertsList;
-	Mat1->VertsList = nullptr;
+	Mat1->clearFaceList();
+	Mat1->VertsList.clear();
 	//t3dFree(Mat1->FlagsList);
 	*Mat1 = gMaterial();
 
-	if (Mat2->NumAllocatedFaces) {
-		Mat1->addNumFaces(Mat2->NumAllocatedFaces);
-		for (int i = 0; i < Mat2->NumAllocatedFaces; i++) {
-			Mat1->FacesList.push_back(Mat2->FacesList[i]);
+	if (Mat2->NumFaces()) {
+		for (int i = 0; i < Mat2->NumFaces(); i++) {
+			Mat1->addFace(Mat2->getFace(i));
 		}
 	}
-	if (Mat2->NumAllocatedVerts) {
-		Mat1->VertsList = new gVertex*[Mat2->NumAllocatedVerts]{};
-		memcpy(Mat1->VertsList, Mat2->VertsList, sizeof(gVertex *)*Mat2->NumAllocatedVerts);
+	for (int i = 0; i < Mat2->NumFaces(); i++) {
+		if (Mat2->getFace(i) >= Mat2->VertsList.size()) {
+			warning("TODO");
+		}
+	}
+	if (Mat2->NumAllocatedVerts()) {
+		Mat1->VertsList = Mat2->VertsList;
 	}
 	if (Mat2->NumAllocatedMesh) {
 		Mat1->FlagsList = Mat2->FlagsList;
@@ -183,9 +182,6 @@ Common::SharedPtr<gMaterial> rCopyMaterial(Common::SharedPtr<gMaterial> Mat1, Co
 	Mat1->Texture = Mat2->Texture;
 	Mat1->Movie = Mat2->Movie;
 	Mat1->Flags = Mat2->Flags;
-	Mat1->NumFaces = Mat2->NumFaces;
-	Mat1->NumAllocatedFaces = Mat2->NumAllocatedFaces;
-	Mat1->NumAllocatedVerts = Mat2->NumAllocatedVerts;
 	Mat1->VBO = Mat2->VBO;
 	Mat1->NumAllocatedMesh = Mat2->NumAllocatedMesh;
 	Mat1->r = Mat2->r;
@@ -203,13 +199,15 @@ Common::SharedPtr<gMaterial> rCopyMaterial(Common::SharedPtr<gMaterial> Mat1, Co
 }
 
 void gMaterial::clear() {
+	// TODO: This flag clearing doesn't happen in the original, but shouldn't matter as the class is instantiated again when used in Particles.
+	Flags = 0;
+
 	if (Movie)
 	{
 		Movie = nullptr;
 	}
 	FacesList.clear();
-	delete[] VertsList;
-	VertsList=nullptr;
+	VertsList.clear();
 	FlagsList.clear();
 // 	rDeleteVertexBuffer(m->VB);
 	VBO=0;
@@ -218,8 +216,7 @@ void gMaterial::clear() {
 	{
 		Common::SharedPtr<gMaterial> cm = AddictionalMaterial[j];
 		cm->FacesList.clear();
-		delete[] cm->VertsList;
-		cm->VertsList=nullptr;
+		cm->VertsList.clear();
 		cm->FlagsList.clear();
 // 		rDeleteVertexBuffer(cm->VB);
 		cm->VBO=0;
@@ -249,14 +246,14 @@ void rAddToMaterialList(gMaterial &mat, signed short int ViewMatrixNum) {
 	if ((mat.Flags & T3D_MATERIAL_MOVIE))
 		gUpdateMovie(mat);
 #endif
-	if ((mat.NumFaces >= 3) && (mat.VBO)) {
+	if ((mat.NumFaces() >= 3) && (mat.VBO)) {
 		bb = rNewBatchBlock(mat.Texture->ID, mat.Flags, 0, 0);
 		bb->ViewMatrixNum = ViewMatrixNum;
-		bb->NumFaces = (unsigned short int) mat.NumFaces;
-		bb->FacesList = mat.FacesList;
+		bb->NumFaces = (unsigned short int) mat.NumFaces();
+		bb->FacesList = mat.getFacesList();
 		bb->VBO = mat.VBO;
-		bb->NumVerts = (unsigned short int) mat.NumAllocatedVerts;
-		mat.NumFaces = 0;
+		bb->NumVerts = (unsigned short int) mat.NumAllocatedVerts();
+		mat.clearFaceList();
 //		if ( bb->VB == g_lpD3DUserVertexBuffer )
 //			DebugLogFile("User VB %s with %d verts",mat->Texture->Name,bb->NumVerts);
 #if 0
@@ -271,15 +268,15 @@ void rAddToMaterialList(gMaterial &mat, signed short int ViewMatrixNum) {
 	}
 
 	for (auto &cm : mat.AddictionalMaterial) {
-		if (cm->NumFaces < 3) continue;
+		if (cm->NumFaces() < 3) continue;
 		if (cm->VBO == NULL) continue;
 		bb = rNewBatchBlock(mat.Texture->ID, mat.Flags, cm->Texture->ID, cm->Flags);
 		bb->ViewMatrixNum = ViewMatrixNum;
-		bb->NumFaces = (unsigned short int) cm->NumFaces;
-		bb->FacesList = cm->FacesList;
+		bb->NumFaces = (unsigned short int) cm->NumFaces();
+		bb->FacesList = cm->getFacesList();
 		bb->VBO = cm->VBO;
-		bb->NumVerts = (unsigned short int) cm->NumAllocatedVerts;
-		cm->NumFaces = 0;
+		bb->NumVerts = (unsigned short int) cm->NumAllocatedVerts();
+		cm->emptyFacesList();
 		if (bb->NumVerts == 0) {
 #if 0
 			if (bb->VBO->GetVertexBufferDesc(&VBDesc) != D3D_OK)

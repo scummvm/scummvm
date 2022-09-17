@@ -40,11 +40,19 @@ struct gMaterial {
 	gTexture                *Texture = nullptr;         // pointer to texture struct
 	Common::SharedPtr<gMovie> Movie;                      // pointer to movie struct
 	unsigned int            Flags = 0;                  // material flags
-	int                     NumFaces = 0;               // current number of faces to be processed
-	int                     NumAllocatedFaces = 0;      // maximum number of faces
+	int NumFaces() { return FacesList.size(); };        // current number of faces to be processed
+	void addFace(uint16 face) {
+		FacesList.push_back(face);
+	}
+	uint16 getFace(int index) const { return FacesList[index]; }
+	void clearFaceList() { FacesList.clear(); }
+	void emptyFacesList() { FacesList.resize(0); }
+	Common::Array<uint16> getFacesList() { return FacesList; }
+private:
 	Common::Array<uint16>     FacesList;                  // list of verts indices
-	int                     NumAllocatedVerts = 0;      // number of allocated vertex in mat VB
-	gVertex                 **VertsList = nullptr;      // pointers to pointers to verts
+public:
+	Common::Array<gVertex*> VertsList;                  // pointers to pointers to verts
+	int                     NumAllocatedVerts() { return this->VertsList.size(); };      // number of allocated vertex in mat VB
 	Common::SharedPtr<VertexBuffer> VBO = nullptr;
 //	LPDIRECT3DVERTEXBUFFER7 VB;                         // mat VB struct
 	int                     NumAllocatedMesh = 0;       // num mesh to check for modifications
@@ -58,6 +66,8 @@ public:
 	}
 	void addColor(unsigned char r, unsigned char g, unsigned char b);
 	void addProperty(int flag);
+	bool hasFlag(int flag);
+	void clearFlag(int flag);
 	bool addNumFaces(unsigned int num);
 	bool addNumFacesAdditionalMaterial(MaterialPtr am, unsigned int num);
 	void clear();

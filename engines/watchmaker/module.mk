@@ -17,6 +17,7 @@ MODULE_OBJS = \
 	3d/render/render.o \
 	3d/render/shadows.o \
 	3d/t3d_body.o \
+	3d/t3d_face.o \
 	3d/t3d_mesh.o \
 	3d/t3d_mesh.o \
 	3d/texture.o \

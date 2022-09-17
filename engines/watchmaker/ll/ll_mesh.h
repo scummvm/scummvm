@@ -41,7 +41,7 @@ void UpdateObjMesh(Init &init, int32 in);
 void UpdateBoundingBox(t3dMESH *mesh);
 void UpdateCharHead(int32 oc, t3dV3F *dir);
 void SetMeshMaterialMovieFrame(t3dMESH *m, int8 op, int32 newframe);
-void ChangeMeshMaterialFlags(t3dMESH *m, int8 add, uint32 newflags);
+void ChangeMeshMaterialFlag(t3dMESH *m, int8 add, uint32 newflag);
 void ChangeHaloesStatus(t3dBODY *b, int8 op);
 uint8 t3dVectMeshInters(t3dMESH *m, t3dV3F start, t3dV3F end, t3dV3F *inters);
 void t3dLightRoom(Init &init, t3dBODY *b, t3dV3F *p, t3dF32 NearRange, t3dF32 FarRange, t3dF32 IperRange);

@@ -892,10 +892,10 @@ void ProcessATF(WGame &game, int32 an, int32 atf) {
 		SetMeshMaterialMovieFrame(h->sub[in - 1].ptr, -1, 1);
 	case ATFM_START_MOVIE:
 		SetMeshMaterialMovieFrame(h->sub[in - 1].ptr, 0, 1);
-		ChangeMeshMaterialFlags(h->sub[in - 1].ptr, -1, T3D_MATERIAL_MOVIEPAUSED);
+		ChangeMeshMaterialFlag(h->sub[in - 1].ptr, -1, T3D_MATERIAL_MOVIEPAUSED);
 		break;
 	case ATFM_STOP_MOVIE:
-		ChangeMeshMaterialFlags(h->sub[in - 1].ptr, +1, T3D_MATERIAL_MOVIEPAUSED);
+		ChangeMeshMaterialFlag(h->sub[in - 1].ptr, +1, T3D_MATERIAL_MOVIEPAUSED);
 		break;
 	case ATFH_ON:
 		ChangeHaloesStatus(nullptr, +1);

@@ -970,19 +970,14 @@ MaterialPtr Renderer::addMaterial(MaterialPtr MList, const Common::String &name,
 //		if( (Material->Texture=gUserTexture(    Material->Movie->g_psiStreamInfo.rcFrame.right,
 //										Material->Movie->g_psiStreamInfo.rcFrame.bottom)) == NULL )
 			return nullptr;
-		Material->Flags |= T3D_MATERIAL_MOVIE;
+		Material->addProperty(T3D_MATERIAL_MOVIE);
 	} else {
 		if ((Material->Texture = gLoadTexture(*_workDirs, name.c_str(), LoaderFlags)) == nullptr)
 			return nullptr;
 	}
 
 //f
-//f Material->FacesList=(WORD *)t3dRealloc(Material->FacesList,sizeof(WORD)*3*NumFaces+1);
-//f Material->NumAllocatedFaces+=3*NumFaces+1;
-	Material->FacesList.resize(Material->FacesList.size() + NumFaces * 3 );
-	Material->NumAllocatedFaces += NumFaces * 3;
-//f
-	Material->Flags |= T3D_MATERIAL_NOLIGHTMAP;
+	Material->addProperty(T3D_MATERIAL_NOLIGHTMAP);
 	return Material;
 }
 

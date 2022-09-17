@@ -488,11 +488,11 @@ void ModifyMesh(WGame &game, t3dMESH *mesh) {
 
 //	Aggiorna Materiali
 	if (mm->Flags & MM_REMOVE_MAT_FLAGS)
-		mesh->FList[0].mat->Flags &= ~mm->RemoveMatFlags;
+		mesh->FList[0].getMaterial()->Flags &= ~mm->RemoveMatFlags;
 	if (mm->Flags & MM_ADD_MAT_FLAGS)
-		mesh->FList[0].mat->Flags |= mm->AddMatFlags;
+		mesh->FList[0].getMaterial()->Flags |= mm->AddMatFlags;
 	if (mm->Flags & MM_SET_MAT_FRAME)
-		rSetMovieFrame(mesh->FList[0].mat, mm->MatFrame);
+		mesh->setMovieFrame(mm->MatFrame); // This did NOT check for existing face/material before setting before.
 
 //	Aggiorna Anim
 	if ((mm->Flags & MM_ANIM_BLOCK) && (!mm->animName.empty()) && (!mesh->CurFrame)) {
@@ -814,16 +814,16 @@ void UpdateObjMesh(Init &init, int32 in) {
  *              SetMeshMaterialMovieFrame
  * --------------------------------------------------*/
 void SetMeshMaterialMovieFrame(t3dMESH *m, int8 op, int32 newframe) {
-	if (!m || m->FList.empty() || !m->FList[0].mat) return;
+	if (!m || m->FList.empty() || !m->FList[0].getMaterial()) return;
 
 	if (op == 0)
-		rSetMovieFrame(m->FList[0].mat, newframe);
+		m->setMovieFrame(newframe);
 	else if (op > 0)
-		rSetMovieFrame(m->FList[0].mat, rGetMovieFrame(m->FList[0].mat) + newframe);
+		m->setMovieFrame(m->getMovieFrame() + newframe);
 	else if (op < 0)
-		rSetMovieFrame(m->FList[0].mat, rGetMovieFrame(m->FList[0].mat) - newframe);
+		m->setMovieFrame(m->getMovieFrame() - newframe);
 
-	newframe = rGetMovieFrame(m->FList[0].mat);
+	newframe = m->getMovieFrame();
 
 	AddMeshModifier(m->name, MM_SET_MAT_FRAME, &newframe);
 }
@@ -831,15 +831,15 @@ void SetMeshMaterialMovieFrame(t3dMESH *m, int8 op, int32 newframe) {
 /* -----------------22/06/00 12.15-------------------
  *              ChangeMeshMaterialFlags
  * --------------------------------------------------*/
-void ChangeMeshMaterialFlags(t3dMESH *m, int8 add, uint32 newflags) {
-	if (!m || m->FList.empty() || !m->FList[0].mat) return;
+void ChangeMeshMaterialFlag(t3dMESH *m, int8 add, uint32 newflag) {
+	if (!m || m->hasFaceMaterial()) return;
 
 	if (add > 0) {
-		m->FList[0].mat->Flags |= newflags;
-		AddMeshModifier(m->name, MM_ADD_MAT_FLAGS, &newflags);
+		m->FList[0].getMaterial()->addProperty(newflag);
+		AddMeshModifier(m->name, MM_ADD_MAT_FLAGS, &newflag);
 	} else {
-		m->FList[0].mat->Flags &= ~newflags;
-		AddMeshModifier(m->name, MM_REMOVE_MAT_FLAGS, &newflags);
+		m->FList[0].getMaterial()->clearFlag(newflag);
+		AddMeshModifier(m->name, MM_REMOVE_MAT_FLAGS, &newflag);
 	}
 }
 
