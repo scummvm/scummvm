@@ -63,18 +63,16 @@ byte Monsters::getNextValue(Common::String &line) {
 }
 
 Graphics::ManagedSurface Monsters::getMonsterImage(int monsterNum) {
-	monsterNum = 1; //***DEBUG***
 	Common::SeekableReadStream *entry = _monPix.load(monsterNum);
-	//entry->skip(2);
-	byte v1 = entry->readByte();
-	byte v2 = entry->readByte();
-	debug("%d %d", v1, v2);
+	entry->skip(2);
 
 	// Decode the image
 	Graphics::ManagedSurface img;
 	Gfx::ScreenDecoder decoder;
 	if (!decoder.loadStream(*entry, 104, 96))
 		error("Failed decoding monster image");
+
+	img.copyFrom(decoder.getSurface());
 
 	return img;
 }

@@ -48,13 +48,12 @@ void Encounter::draw() {
 
 	// Write the encounter options
 
-	getSurface().markAllDirty();
 }
 
 void Encounter::drawMonster(int monsterNum) {
 	Graphics::ManagedSurface img =
 		g_globals->_monsters.getMonsterImage(monsterNum);
-	getSurface().blitFrom(img, Common::Point(20, 20));
+	getSurface().blitFrom(img, Common::Point(64, 16));
 }
 
 } // namespace Views
