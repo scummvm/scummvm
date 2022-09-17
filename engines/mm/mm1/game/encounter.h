@@ -39,11 +39,10 @@ private:
 	int _totalLevels = 0, _highestLevel = 0;
 	int _randVal = 0;
 	byte _arr1[15], _arr2[15];
-	const byte *_monsterValP;
 
 	void randomAdjust();
 	const Monster *getMonster();
-	void getMonsterVal();
+	byte getMonsterCount();
 public:
 	Common::Array<Monster> _monsterList;
 	int _val8 = 0;

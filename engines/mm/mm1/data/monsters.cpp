@@ -40,10 +40,8 @@ bool Monsters::load() {
 		mon._name = Common::String(line.c_str() + 1, line.c_str() + 15);
 		line = Common::String(line.c_str() + 17);
 
-		mon._count = getNextValue(line);
-
-		for (int i = 0; i < 16; ++i)
-			mon._attr[i] = getNextValue(line);
+		for (int i = 0; i < 17; ++i)
+			mon._counts[i] = getNextValue(line);
 	}
 
 	return true;
@@ -65,6 +63,7 @@ byte Monsters::getNextValue(Common::String &line) {
 }
 
 Graphics::ManagedSurface Monsters::getMonsterImage(int monsterNum) {
+	monsterNum = 1; //***DEBUG***
 	Common::SeekableReadStream *entry = _monPix.load(monsterNum);
 	//entry->skip(2);
 	byte v1 = entry->readByte();
@@ -74,7 +73,7 @@ Graphics::ManagedSurface Monsters::getMonsterImage(int monsterNum) {
 	// Decode the image
 	Graphics::ManagedSurface img;
 	Gfx::ScreenDecoder decoder;
-	if (!decoder.loadStream(*entry, 105, 105))
+	if (!decoder.loadStream(*entry, 104, 96))
 		error("Failed decoding monster image");
 
 	return img;

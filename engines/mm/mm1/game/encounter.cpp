@@ -32,8 +32,7 @@ namespace Game {
 
 void Encounter::execute() {
 	Maps::Map &map = *g_maps->_currentMap;
-	int comp, maxRand, maxVal;
-	const Monster *monsterP;
+	int comp, maxRand, maxVal, monsterCount;
 	_val1 = _val2 = _val3 = 0;
 
 	if (!_flag) {
@@ -87,9 +86,8 @@ void Encounter::execute() {
 			if (_val5 >= map[34])
 				goto exit_loop;
 
-			assert(_val11 == 1);
-			monsterP = getMonster();
-			maxVal = g_engine->getRandomNumber(1, monsterP->_count);
+			monsterCount = getMonsterCount();
+			maxVal = g_engine->getRandomNumber(1, monsterCount);
 
 			for (int i = 0; i < maxVal; ++i) {
 				assert(_val5 > 0);
@@ -114,9 +112,6 @@ exit_loop:
 	for (int i = 0; i < _val5; ++i) {
 		maxVal = (_arr1[i] - 1) * 16 + _arr2[i];
 		if (_arr1[i] < 1 || _arr1[i] > 12 || maxVal >= 196) {
-			// TODO: This section doesn't make sense, since it will
-			// result in an invalid monster offset calculated
-			warning("TODO: Nonsensical monster offset set");
 			_arr1[i] = 10;
 			_arr2[i] = g_engine->getRandomNumber(1, 15);
 		}
@@ -129,8 +124,8 @@ exit_loop:
 
 		if (_val11 > _val9) {
 			_val9 = _val11;
-			_val10 = mons._attr[0];
-			_val8 = mons._attr[15];
+			_val10 = mons._counts[1];
+			_val8 = mons._counts[16];
 		}
 	}
 
@@ -153,12 +148,13 @@ void Encounter::randomAdjust() {
 }
 
 const Monster *Encounter::getMonster() {
+	assert(_randVal > 0);
 	return &g_globals->_monsters[_randVal];
 }
 
-void Encounter::getMonsterVal() {
-	assert(_val11 == 1 && _randVal > 0);
-	_monsterValP = &g_globals->_monsters[_randVal]._attr[(_val11 - 8) * 2];
+byte Encounter::getMonsterCount() {
+	assert(_val11 >= 1 && _val11 <= 8);
+	return getMonster()->_counts[(_val11 - 1) * 2];
 }
 
 } // namespace Game
