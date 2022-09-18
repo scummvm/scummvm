@@ -1330,7 +1330,7 @@ void DecoderImpl::renderIXifShortmo(Graphics::Surface &current, Graphics::Surfac
 
 DecoderImpl::DecoderImpl(uint16 width, uint16 height, const Graphics::PixelFormat &format,
                          uint32 bufferSize, bool videoMode) :
-	HNM6Decoder(width, height, format, videoMode), _bufferSize(bufferSize) {
+	HNM6Decoder(width, height, format, videoMode), _bufferSize(bufferSize), _keyframe(false) {
 	if (format.bytesPerPixel != 2 && format.bytesPerPixel != 4) {
 		error("Unsupported bpp");
 	}
