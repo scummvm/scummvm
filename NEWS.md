@@ -14,6 +14,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Reduced amount of false positives in Mass Add.
    - Updated the Roland MT-32 emulation code to Munt mt32emu 2.7.0.
 
+ AGI:
+   - Improved support for French translations.
+
  AGOS:
    - Added option to disable the fade-out effects on room transition for
      Simon1 and 2.
