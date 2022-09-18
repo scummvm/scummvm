@@ -340,8 +340,24 @@ bool XMLParser::parse() {
 		case kParserNeedHeader:
 		case kParserNeedKey:
 			if (_char != '<') {
-				parserError("Parser expecting key start.");
-				break;
+				if (_allowText) {
+					Common::String text;
+					do {
+						text += _char;
+						_char = _stream->readByte();
+					} while (_char != '<' && _char);
+					if (!_char) {
+						parserError("Unexpected end of file.");
+						break;
+					}
+					if (!textCallback(text)) {
+						parserError("Failed to process text segment.");
+						break;
+					}
+				} else {
+					parserError("Parser expecting key start.");
+					break;
+				}
 			}
 
 			if ((_char = _stream->readByte()) == 0) {
