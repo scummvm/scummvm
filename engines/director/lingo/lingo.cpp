@@ -375,15 +375,24 @@ void Lingo::printCallStack(uint pc) {
 }
 
 Common::String Lingo::formatFrame() {
+	Common::String result;
 	Common::Array<CFrame *> &callstack = _vm->getCurrentWindow()->_callstack;
 	if (callstack.size() == 0) {
 		return Common::String("End of execution");
 	}
+	if (_currentScriptContext->_id)
+		result += Common::String::format("%d:", _currentScriptContext->_id);
 	CFrame *frame = callstack[callstack.size() - 1];
-	const char *funcName = frame->sp.type == VOIDSYM ? "[unknown]" : frame->sp.name->c_str();
-	Common::String result = Common::String::format("%s:%d\n", funcName, _pc);
-	result += Common::String::format("[%3d]: %s", _pc, decodeInstruction(_currentScript, _pc).c_str());
+	if (frame->sp.type == VOIDSYM || !frame->sp.name)
+		result += "[unknown]";
+	else
+		result += frame->sp.name->c_str();
+	result += Common::String::format(" at [%3d]", _pc);
 	return result;
+}
+
+Common::String Lingo::formatCurrentInstruction() {
+	return Common::String::format("[%3d]: %s", _pc, decodeInstruction(_currentScript, _pc).c_str());
 }
 
 Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
@@ -474,7 +483,7 @@ Common::String Lingo::decodeScript(ScriptData *sd) {
 	return result;
 }
 
-Common::String Lingo::decodeFunctionName(Symbol &sym) {
+Common::String Lingo::formatFunctionName(Symbol &sym) {
 	Common::String result;
 	if (sym.type != HANDLER)
 		return result;
@@ -491,11 +500,11 @@ Common::String Lingo::decodeFunctionName(Symbol &sym) {
 	return result;
 }
 
-Common::String Lingo::decodeFunctionBody(Symbol &sym) {
+Common::String Lingo::formatFunctionBody(Symbol &sym) {
 	Common::String result;
 	if (sym.type != HANDLER)
 		return result;
-	result += decodeFunctionName(sym);
+	result += formatFunctionName(sym);
 	result += "\n";
 	result += decodeScript(sym.u.defn);
 	result += "\n";

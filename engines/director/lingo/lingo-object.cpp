@@ -294,7 +294,7 @@ Symbol ScriptContext::define(const Common::String &name, ScriptData *code, Commo
 	sym.ctx = this;
 
 	if (debugChannelSet(1, kDebugCompile)) {
-		debugC(1, kDebugCompile, "%s", g_lingo->decodeFunctionBody(sym).c_str());
+		debugC(1, kDebugCompile, "%s", g_lingo->formatFunctionBody(sym).c_str());
 		debugC(1, kDebugCompile, "<end define code>");
 	}
 
@@ -385,7 +385,7 @@ bool ScriptContext::setProp(const Common::String &propName, const Datum &value) 
 Common::String ScriptContext::formatFunctionList(const char *prefix) {
 	Common::String result;
 	for (auto it = _functionHandlers.begin(); it != _functionHandlers.end(); ++it) {
-		result += Common::String::format("%s%s\n", prefix, g_lingo->decodeFunctionName(it->_value).c_str());
+		result += Common::String::format("%s%s\n", prefix, g_lingo->formatFunctionName(it->_value).c_str());
 	}
 	return result;
 }

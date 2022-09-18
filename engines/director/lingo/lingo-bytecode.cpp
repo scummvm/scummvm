@@ -1573,7 +1573,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 		}
 
 		if (!skipdump && ConfMan.getBool("dump_scripts")) {
-			out.writeString(g_lingo->decodeFunctionBody(sym));
+			out.writeString(g_lingo->formatFunctionBody(sym));
 		}
 
 		_assemblyContext->_functionNames.push_back(*sym.name);
