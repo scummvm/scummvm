@@ -390,7 +390,7 @@ MacMenuItem *MacMenu::getSubMenuItem(MacMenuItem *menu, int itemId) {
 
 int MacMenu::numberOfMenuItems(MacMenuItem *menu) {
 	if (!menu) {
-		warning("MacMenu::numberOfMenuItems: can not find menu with id %s", menu->text.c_str());
+		warning("MacMenu::numberOfMenuItems: can not find menu");
 		return 0;
 	}
 
