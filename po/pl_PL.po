@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-09-18 12:55+0000\n"
+"POT-Creation-Date: 2022-09-18 14:16+0000\n"
 "PO-Revision-Date: 2022-02-18 18:47+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -70,7 +70,7 @@ msgstr "W górę"
 #: gui/saveload-dialog.cpp:64 gui/saveload-dialog.cpp:457
 #: gui/saveload-dialog.cpp:528 gui/saveload-dialog.cpp:830
 #: gui/saveload-dialog.cpp:1223 gui/themebrowser.cpp:54
-#: gui/unknown-game-dialog.cpp:53 engines/engine.cpp:699
+#: gui/unknown-game-dialog.cpp:53 engines/engine.cpp:700
 #: backends/dialogs/gtk/gtk-dialogs.cpp:63
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:217
@@ -100,7 +100,7 @@ msgstr "Wybierz"
 msgid "Select directory where to download game data"
 msgstr "Wybierz katalog, do którego pobrane zostaną pliki gry"
 
-#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:583 gui/launcher.cpp:277
+#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:583 gui/launcher.cpp:279
 msgid "Select directory with game data"
 msgstr "Wybierz katalog z plikami gry"
 
@@ -138,7 +138,7 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
-#: gui/launcher.cpp:401 gui/launcher.cpp:430 gui/launcher.cpp:473
+#: gui/launcher.cpp:403 gui/launcher.cpp:432 gui/launcher.cpp:475
 #: gui/options.cpp:3133 gui/options.cpp:3171
 #: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:580
 #: engines/director/events.cpp:91 engines/grim/grim.cpp:355
@@ -150,7 +150,7 @@ msgstr "Tak"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
-#: gui/launcher.cpp:401 gui/launcher.cpp:430 gui/launcher.cpp:473
+#: gui/launcher.cpp:403 gui/launcher.cpp:432 gui/launcher.cpp:475
 #: gui/options.cpp:3133 gui/options.cpp:3171 engines/buried/buried.cpp:580
 #: engines/director/events.cpp:91 engines/grim/grim.cpp:355
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
@@ -159,7 +159,7 @@ msgstr "Tak"
 msgid "No"
 msgstr "Nie"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:575
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:577
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM nie może otworzyć katalogu!"
 
@@ -173,9 +173,9 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:385
 #: gui/editrecorddialog.cpp:67 gui/fluidsynth-dialog.cpp:153
-#: gui/launcher.cpp:529 gui/launcher.cpp:533 gui/massadd.cpp:90
+#: gui/launcher.cpp:531 gui/launcher.cpp:535 gui/massadd.cpp:90
 #: gui/options.cpp:2195 gui/predictivedialog.cpp:69
-#: gui/saveload-dialog.cpp:1224 engines/engine.cpp:505 engines/engine.cpp:528
+#: gui/saveload-dialog.cpp:1224 engines/engine.cpp:506 engines/engine.cpp:529
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
 #: engines/buried/saveload.cpp:69
 #: engines/director/lingo/lingo-builtins.cpp:1677
@@ -794,101 +794,101 @@ msgctxt "group"
 msgid "Platform"
 msgstr "Platforma:"
 
-#: gui/launcher.cpp:213
+#: gui/launcher.cpp:215
 msgid "Select Group by"
 msgstr ""
 
-#: gui/launcher.cpp:218
+#: gui/launcher.cpp:220
 msgid "Group by: "
 msgstr ""
 
-#: gui/launcher.cpp:220
+#: gui/launcher.cpp:222
 msgid "Select a criteria to group the entries"
 msgstr ""
 
-#: gui/launcher.cpp:243 engines/dialogs.cpp:96
+#: gui/launcher.cpp:245 engines/dialogs.cpp:96
 msgid "~Q~uit"
 msgstr "~Z~akończ"
 
-#: gui/launcher.cpp:243 backends/platform/sdl/macosx/appmenu_osx.mm:229
+#: gui/launcher.cpp:245 backends/platform/sdl/macosx/appmenu_osx.mm:229
 msgid "Quit ScummVM"
 msgstr "Zakończ ScummVM"
 
-#: gui/launcher.cpp:245
+#: gui/launcher.cpp:247
 #, fuzzy
 msgid "A~b~out"
 msgstr "I~n~formacje..."
 
-#: gui/launcher.cpp:245 backends/platform/sdl/macosx/appmenu_osx.mm:223
+#: gui/launcher.cpp:247 backends/platform/sdl/macosx/appmenu_osx.mm:223
 msgid "About ScummVM"
 msgstr "Książka ScummVM"
 
-#: gui/launcher.cpp:246
+#: gui/launcher.cpp:248
 #, fuzzy
 msgid "Global ~O~ptions..."
 msgstr "~O~pcje..."
 
-#: gui/launcher.cpp:246
+#: gui/launcher.cpp:248
 msgid "Change global ScummVM options"
 msgstr "Zmień ustawienia ScummVM"
 
-#: gui/launcher.cpp:246
+#: gui/launcher.cpp:248
 #, fuzzy
 msgctxt "lowres"
 msgid "Global ~O~pts..."
 msgstr "~O~pcje..."
 
-#: gui/launcher.cpp:250
+#: gui/launcher.cpp:252
 msgid "~A~dd Game..."
 msgstr "~D~odaj grę..."
 
-#: gui/launcher.cpp:250
+#: gui/launcher.cpp:252
 msgid "Add games to the list"
 msgstr "Dodaj gry do listy"
 
-#: gui/launcher.cpp:250
+#: gui/launcher.cpp:252
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~D~odaj grę..."
 
-#: gui/launcher.cpp:253
-msgid "~R~emove Game"
-msgstr "~U~suń grę"
-
-#: gui/launcher.cpp:253
-msgid "Remove game from the list. The game data files stay intact"
-msgstr "Usuwa grę z listy. Pliki gry pozostają nietknięte"
-
-#: gui/launcher.cpp:253
-msgctxt "lowres"
+#: gui/launcher.cpp:255
 msgid "~R~emove Game"
 msgstr "~U~suń grę"
 
 #: gui/launcher.cpp:255
+msgid "Remove game from the list. The game data files stay intact"
+msgstr "Usuwa grę z listy. Pliki gry pozostają nietknięte"
+
+#: gui/launcher.cpp:255
+msgctxt "lowres"
+msgid "~R~emove Game"
+msgstr "~U~suń grę"
+
+#: gui/launcher.cpp:257
 msgid "Mass Add..."
 msgstr "Przeszukaj..."
 
-#: gui/launcher.cpp:257
+#: gui/launcher.cpp:259
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Masowe dodawanie..."
 
-#: gui/launcher.cpp:265
+#: gui/launcher.cpp:267
 msgid "Search in game list"
 msgstr "Wyszukaj grę na liście"
 
-#: gui/launcher.cpp:269 gui/launcher.cpp:782
+#: gui/launcher.cpp:271 gui/launcher.cpp:784
 msgid "Search:"
 msgstr "Szukaj:"
 
-#: gui/launcher.cpp:280 engines/dialogs.cpp:99 engines/engine.cpp:863
+#: gui/launcher.cpp:282 engines/dialogs.cpp:99 engines/engine.cpp:864
 #: engines/pegasus/pegasus.cpp:383 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:630 engines/wage/saveload.cpp:741
 #: engines/xeen/saves.cpp:255
 msgid "Load game:"
 msgstr "Wczytaj grę:"
 
-#: gui/launcher.cpp:280 engines/dialogs.cpp:99 engines/engine.cpp:863
+#: gui/launcher.cpp:282 engines/dialogs.cpp:99 engines/engine.cpp:864
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:383
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
@@ -896,88 +896,88 @@ msgstr "Wczytaj grę:"
 msgid "Load"
 msgstr "Wczytaj"
 
-#: gui/launcher.cpp:389
+#: gui/launcher.cpp:391
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr "Z tego katalogu nie można jeszcze korzystać, trwa pobieranie!"
 
-#: gui/launcher.cpp:400
+#: gui/launcher.cpp:402
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
 "Chcesz uruchomić masowy detektor gier? Może dodać wiele tytułów do listy."
 
-#: gui/launcher.cpp:430
+#: gui/launcher.cpp:432
 msgid "Do you really want to remove this game configuration?"
 msgstr "Na pewno chcesz usunąć tę grę z konfiguracji?"
 
-#: gui/launcher.cpp:472
+#: gui/launcher.cpp:474
 msgid "Do you want to load saved game?"
 msgstr "Chcesz wczytać zapis stanu gry?"
 
-#: gui/launcher.cpp:529
+#: gui/launcher.cpp:531
 msgid "This game does not support loading games from the launcher."
 msgstr "Ta gra nie wspiera wczytywania z launchera."
 
-#: gui/launcher.cpp:533
+#: gui/launcher.cpp:535
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM nie znalazł silnika zdolnego uruchomić wybraną grę!"
 
-#: gui/launcher.cpp:594
+#: gui/launcher.cpp:596
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM nie znalazł żadnej gry w tym katalogu!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:610
+#: gui/launcher.cpp:612
 msgid "Unknown variant"
 msgstr "Nieznany wariant gry"
 
-#: gui/launcher.cpp:616
+#: gui/launcher.cpp:618
 msgid "Pick the game:"
 msgstr "Wybierz grę:"
 
-#: gui/launcher.cpp:791
+#: gui/launcher.cpp:793
 msgid "Group by:"
 msgstr ""
 
-#: gui/launcher.cpp:831 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:833 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr "Widok listy"
 
-#: gui/launcher.cpp:832 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:834 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr "Widok siatki"
 
-#: gui/launcher.cpp:1006
+#: gui/launcher.cpp:1008
 msgid "~S~tart"
 msgstr "~S~tart"
 
-#: gui/launcher.cpp:1006
+#: gui/launcher.cpp:1008
 msgid "Start selected game"
 msgstr "Rozpocznij wybraną grę"
 
-#: gui/launcher.cpp:1009
+#: gui/launcher.cpp:1011
 msgid "~L~oad..."
 msgstr "~W~czytaj..."
 
-#: gui/launcher.cpp:1009
+#: gui/launcher.cpp:1011
 msgid "Load saved game for selected game"
 msgstr "Wczytaj zapis wybranej gry"
 
-#: gui/launcher.cpp:1011
+#: gui/launcher.cpp:1013
 msgid "Record..."
 msgstr "Nagraj..."
 
-#: gui/launcher.cpp:1017
+#: gui/launcher.cpp:1019
 #, fuzzy
 msgid "~G~ame Options..."
 msgstr "~O~pcje..."
 
-#: gui/launcher.cpp:1017
+#: gui/launcher.cpp:1019
 msgid "Change game options"
 msgstr "Zmień opcje gry"
 
-#: gui/launcher.cpp:1017
+#: gui/launcher.cpp:1019
 #, fuzzy
 msgctxt "lowres"
 msgid "~G~ame Opts..."
@@ -985,42 +985,42 @@ msgstr "~O~pcje..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1138 gui/launcher.cpp:1333
+#: gui/launcher.cpp:1140 gui/launcher.cpp:1335
 #, fuzzy
 msgid "Unknown Engine"
 msgstr "Nieznany wariant gry"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1156 gui/launcher.cpp:1365
+#: gui/launcher.cpp:1158 gui/launcher.cpp:1367
 #, fuzzy
 msgid "Unknown Publisher"
 msgstr "Nieznany autor"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1174 gui/launcher.cpp:1351
+#: gui/launcher.cpp:1176 gui/launcher.cpp:1353
 msgid "No Series"
 msgstr ""
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1189 gui/launcher.cpp:1384
+#: gui/launcher.cpp:1191 gui/launcher.cpp:1386
 msgid "Language not detected"
 msgstr "Nie wykryto języka"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1204 gui/launcher.cpp:1399
+#: gui/launcher.cpp:1206 gui/launcher.cpp:1401
 msgid "Platform not detected"
 msgstr "Platforma nie wykryta"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1410 gui/widgets/groupedlist.cpp:80
+#: gui/launcher.cpp:1412 gui/widgets/groupedlist.cpp:80
 #, fuzzy
 msgid "All"
 msgstr "Alt"
 
-#: gui/launcher.cpp:1603
+#: gui/launcher.cpp:1605
 msgid "Icons per row:"
 msgstr ""
 
@@ -1935,7 +1935,7 @@ msgid ""
 "And more..."
 msgstr "Dodaj grę..."
 
-#: gui/options.cpp:2663 engines/engine.cpp:558
+#: gui/options.cpp:2663 engines/engine.cpp:559
 #, fuzzy
 msgid "Move"
 msgstr "Ruch wstecz"
@@ -2526,7 +2526,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~P~owrót do launchera"
 
-#: engines/dialogs.cpp:100 engines/engine.cpp:892 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:100 engines/engine.cpp:893 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -2547,7 +2547,7 @@ msgstr "~P~owrót do launchera"
 msgid "Save game:"
 msgstr "Zapis:"
 
-#: engines/dialogs.cpp:100 engines/engine.cpp:892 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:100 engines/engine.cpp:893 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -2597,42 +2597,42 @@ msgstr "~O~K"
 msgid "~C~ancel"
 msgstr "~A~nuluj"
 
-#: engines/engine.cpp:336
+#: engines/engine.cpp:337
 #, c-format
 msgid "Could not switch to resolution '%dx%d'."
 msgstr "Nie udało się przełączyć do rozdzielczości '%dx%d'."
 
-#: engines/engine.cpp:345
+#: engines/engine.cpp:346
 msgid "Could not initialize color format."
 msgstr "Nie udało się zainicjalizować formatu kolorów."
 
-#: engines/engine.cpp:354
+#: engines/engine.cpp:355
 #, c-format
 msgid "Could not switch to video mode '%s'."
 msgstr "Nie udało się przełączyć w tryb video '%s'."
 
-#: engines/engine.cpp:362
+#: engines/engine.cpp:363
 #, c-format
 msgid "Could not switch to stretch mode '%s'."
 msgstr "Nie udało się przełączyć w tryb wideo: '%s'."
 
-#: engines/engine.cpp:369
+#: engines/engine.cpp:370
 msgid "Could not apply aspect ratio setting."
 msgstr "Nie udało się zastosować ustawienia formatu obrazu."
 
-#: engines/engine.cpp:374
+#: engines/engine.cpp:375
 msgid "Could not apply fullscreen setting."
 msgstr "Nie udało się zastosować ustawienia pełnego ekranu."
 
-#: engines/engine.cpp:379
+#: engines/engine.cpp:380
 msgid "Could not apply filtering setting."
 msgstr "Nie udało się zastosować ustawienia filtrowania."
 
-#: engines/engine.cpp:438
+#: engines/engine.cpp:439
 msgid "Error"
 msgstr "Błąd"
 
-#: engines/engine.cpp:501
+#: engines/engine.cpp:502
 #, fuzzy
 msgid ""
 "You appear to be playing this game directly\n"
@@ -2645,7 +2645,7 @@ msgstr ""
 "znane problemów. Stąd zalecane jest skopiowanie plików gry na twardy dysk.\n"
 "Dalsze informacje są dostępne w pliku README."
 
-#: engines/engine.cpp:524
+#: engines/engine.cpp:525
 #, fuzzy
 msgid ""
 "This game has audio tracks on its CD. These\n"
@@ -2658,15 +2658,15 @@ msgstr ""
 "skopiować na dysk za pomocą odpowiedniego rippera CD audio.\n"
 "Dalsze informacje są dostępne w pliku README."
 
-#: engines/engine.cpp:551
+#: engines/engine.cpp:552
 msgid "Overwrite"
 msgstr "Nadpisz"
 
-#: engines/engine.cpp:552
+#: engines/engine.cpp:553
 msgid "Cancel autosave"
 msgstr "Anuluj autozapis"
 
-#: engines/engine.cpp:554
+#: engines/engine.cpp:555
 #, c-format
 msgid ""
 "WARNING: The autosave slot has a saved game named %S. You can either move "
@@ -2678,21 +2678,21 @@ msgstr ""
 "anulować automatyczny zapis stanu gry (program nie zapyta ponownie bez "
 "restartu)"
 
-#: engines/engine.cpp:562
+#: engines/engine.cpp:563
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "BŁĄD: Nie udało się skopiować zapisu stanu gry do nowego slotu"
 
-#: engines/engine.cpp:588 engines/metaengine.cpp:380 engines/savestate.cpp:98
+#: engines/engine.cpp:589 engines/metaengine.cpp:380 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:255 engines/sky/metaengine.cpp:185
 #: engines/xeen/saves.cpp:289
 msgid "Autosave"
 msgstr "Autozapis"
 
-#: engines/engine.cpp:596
+#: engines/engine.cpp:597
 msgid "Error occurred making autosave"
 msgstr "Wystąpił błąd podczas zapisu"
 
-#: engines/engine.cpp:671
+#: engines/engine.cpp:672
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -2701,16 +2701,16 @@ msgstr ""
 "Odczyt stanu gry nie powiódł się (%s)! Aby uzyskać podstawowe informacje "
 "oraz dowiedzieć się, jak szukać dalszej pomocy, sprawdź plik README."
 
-#: engines/engine.cpp:695
+#: engines/engine.cpp:696
 msgid "WARNING: "
 msgstr "UWAGA: "
 
-#: engines/engine.cpp:695
+#: engines/engine.cpp:696
 #, fuzzy
 msgid " Shall we still run the game?"
 msgstr "Pełny tytuł gry"
 
-#: engines/engine.cpp:696
+#: engines/engine.cpp:697
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2720,27 +2720,27 @@ msgstr ""
 "ScummVM. W związku z tym może być ona niestabilna, a wszelkie zapisy, "
 "których dokonasz, mogą być nieobsługiwane w przyszłych wersjach ScummVM."
 
-#: engines/engine.cpp:699 engines/wintermute/wintermute.cpp:182
+#: engines/engine.cpp:700 engines/wintermute/wintermute.cpp:182
 msgid "Start anyway"
 msgstr "Włącz mimo tego"
 
-#: engines/engine.cpp:717
+#: engines/engine.cpp:718
 #, fuzzy
 msgid "This game is not supported."
 msgstr "Identyfikator gry nie jest wspierany"
 
-#: engines/engine.cpp:717
+#: engines/engine.cpp:718
 #, fuzzy
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
 msgstr "Ta gra nie wspiera wczytywania z launchera."
 
-#: engines/engine.cpp:859
+#: engines/engine.cpp:860
 msgid "Loading game is currently unavailable"
 msgstr "Załadowanie gry nie jest możliwe w tym momencie"
 
-#: engines/engine.cpp:888
+#: engines/engine.cpp:889
 msgid "Saving game is currently unavailable"
 msgstr "Zapis gry jest w tym momencie niemożliwy"
 
