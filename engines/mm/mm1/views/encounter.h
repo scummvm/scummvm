@@ -34,10 +34,14 @@ private:
 	enum Mode {
 		ALERT, SURPRISED_BY_MONSTERS, SURPRISED_MONSTERS,
 		ENCOUNTER_OPTIONS, NOWHERE_TO_RUN, SURRENDER_FAILED,
-
+		NO_RESPONSE, BRIBE, NOT_ENOUGH,
+		ALIGNMENT_CHECK,
 		BATTLE
 	};
 	Mode _mode = ALERT;
+	enum BribeType { BRIBE_GOLD, BRIBE_GEMS, BRIBE_FOOD };
+	BribeType _bribeType = BRIBE_GOLD;
+	Common::String _bribeTypeStr;
 
 	/**
 	 * Draws a monster
@@ -53,6 +57,7 @@ private:
 	void retreat();
 	void surrender();
 	void flee();
+	void updateAlignments();
 public:
 	Encounter();
 	virtual ~Encounter() {}

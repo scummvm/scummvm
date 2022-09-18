@@ -182,7 +182,7 @@ void Character::clear() {
 	_arr58._s._v62.clear();
 	_arr58._s._v64.clear();
 	_arr58._s._v66.clear();
-	_v6c = _v6f = 0;
+	_v6c = _alignmentCtr = 0;
 }
 
 
