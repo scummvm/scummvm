@@ -104,6 +104,12 @@ void Encounter::draw() {
 		delaySeconds(2);
 		break;
 
+	case COMBAT:
+		clearLines(20, 24);
+		writeString(16, 21, STRING["dialogs.encounter.combat"]);
+		delaySeconds(2);
+		break;
+
 	default:
 		break;
 	}
@@ -120,7 +126,8 @@ void Encounter::draw() {
 		}
 	}
 
-	if (_mode == NO_RESPONSE || _mode == NOT_ENOUGH) {
+	if (_mode == NO_RESPONSE || _mode == NOT_ENOUGH ||
+			_mode == COMBAT || _mode == SURPRISED_BY_MONSTERS) {
 		if (enc._val2) {
 			writeString(8, 23, STRING["dialogs.encounter.alignment_slips"]);
 			Sound::sound(SOUND_2);
@@ -159,8 +166,7 @@ void Encounter::timeout() {
 		}
 		break;
 
-	case NOWHERE_TO_RUN:
-	case SURRENDER_FAILED:
+	case ALIGNMENT_CHECK:
 		_mode = BATTLE;
 		break;
 
@@ -209,7 +215,19 @@ bool Encounter::msgKeypress(const KeypressMessage &msg) {
 				_mode = NOT_ENOUGH;
 				redraw();
 			} else {
-				//xxxxxxxxxxx
+				switch (_bribeType) {
+				case BRIBE_GOLD:
+					g_globals->_party.clearPartyGold();
+					break;
+				case BRIBE_GEMS:
+					g_globals->_party.clearPartyGems();
+					break;
+				case BRIBE_FOOD:
+					g_globals->_party.clearPartyFood();
+					break;
+				}
+
+				encounterEnded();
 			}
 		} else if (msg.keycode == Common::KEYCODE_n) {
 			_mode = ENCOUNTER_OPTIONS;
@@ -230,7 +248,15 @@ void Encounter::encounterEnded() {
 }
 
 void Encounter::attack() {
+	const Game::Encounter &enc = g_globals->_encounters;
 
+	if (!enc.checkSurroundParty() || !enc.checkSurroundParty() ||
+			!enc.checkSurroundParty()) {
+		increaseAlignments();
+	}
+
+	_mode = COMBAT;
+	redraw();
 }
 
 void Encounter::bribe() {
@@ -238,7 +264,7 @@ void Encounter::bribe() {
 
 	if (enc.checkSurroundParty()) {
 		if (!enc._val3)
-			updateAlignments();
+			decreaseAlignments();
 
 		_mode = NO_RESPONSE;
 		redraw();
@@ -324,7 +350,7 @@ void Encounter::flee() {
 	encounterEnded();
 }
 
-void Encounter::updateAlignments() {
+void Encounter::decreaseAlignments() {
 	Game::Encounter &enc = g_globals->_encounters;
 
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
@@ -335,6 +361,23 @@ void Encounter::updateAlignments() {
 			--c._alignmentCtr;
 			if (c._alignmentCtr == 0)
 				enc.changeCharAlignment(GOOD);
+			else if (c._alignmentCtr == 16)
+				enc.changeCharAlignment(NEUTRAL);
+		}
+	}
+}
+
+void Encounter::increaseAlignments() {
+	Game::Encounter &enc = g_globals->_encounters;
+
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		g_globals->_currCharacter = &c;
+
+		if (c._alignmentCtr != 32) {
+			++c._alignmentCtr;
+			if (c._alignmentCtr == 32)
+				enc.changeCharAlignment(EVIL);
 			else if (c._alignmentCtr == 16)
 				enc.changeCharAlignment(NEUTRAL);
 		}
