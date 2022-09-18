@@ -440,6 +440,7 @@ void MacFontManager::loadWindowsFont(const Common::String fileName) {
 
 	if (!isLoaded) {
 		warning("MacFontManager::loadWindowsFont(): Windows Font data from file %s not loaded", fileName.c_str());
+		delete winFont;
 		return;
 	}
 
