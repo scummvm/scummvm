@@ -564,17 +564,13 @@ public:
 
 	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
 
-#ifdef HNM_DEBUG
-	uint32 _frameNr;
-#endif
-
 private:
 	uint32 _bufferSize;
 	byte *_buffer;
 	Graphics::Surface _surface;
 	Graphics::Surface _surfaceOld;
 
-	bool keyframe;
+	bool _keyframe;
 	HNM6::BitBuffer _bitbuf;
 	HNM6::MotionBuffer _motion;
 	HNM6::ShortMotionBuffer _shortmo;
@@ -637,7 +633,6 @@ private:
 	template<int sx, int sy>
 	FORCEINLINE void renderIXifShortmo(Graphics::Surface &current, Graphics::Surface &previous,
 	                                   uint x, uint y);
-
 };
 
 void DecoderImpl::reset(byte *buffer, uint32 bit_start, uint32 motion_start,
@@ -649,7 +644,7 @@ void DecoderImpl::reset(byte *buffer, uint32 bit_start, uint32 motion_start,
 	_jpeg.reset(buffer + jpeg_start, end - jpeg_start);
 
 	assert(!_warpMode || quality > 0);
-	keyframe = quality < 0;
+	_keyframe = quality < 0;
 
 	quality = ABS(quality);
 	quality = CLIP<int32>(quality, 1, 100);
@@ -679,7 +674,7 @@ void DecoderImpl::decode(Graphics::Surface &current, Graphics::Surface &old) {
 	assert((current.w & 0x7) == 0 && (current.h & 0x7) == 0);
 	if (_warpMode) {
 		decodeIWkf(current);
-	} else if (keyframe) {
+	} else if (_keyframe) {
 		decodeIXkf(current);
 	} else {
 		assert((old.w & 0x7) == 0 && (old.h & 0x7) == 0);
