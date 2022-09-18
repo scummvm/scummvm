@@ -78,7 +78,7 @@ void GUIErrorMessageWithURL(const Common::String &msg, const char *url);
 /**
  * Initialize graphics and show an error message.
  */
-void GUIErrorMessageFormat(const Common::U32String &fmt, ...);
+void GUIErrorMessageFormat(Common::U32String fmt, ...);
 /**
  * Initialize graphics and show an error message.
  */

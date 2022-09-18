@@ -464,7 +464,7 @@ void GUIErrorMessageFormat(const char *fmt, ...) {
 	GUIErrorMessage(msg);
 }
 
-void GUIErrorMessageFormat(const Common::U32String &fmt, ...) {
+void GUIErrorMessageFormat(Common::U32String fmt, ...) {
 	Common::U32String msg("");
 
 	va_list va;
