@@ -98,6 +98,7 @@ void XFileLoader::init() {
 	deinit();
 
 	_decompBuffer = nullptr;
+	_bufferLeft = 0;
 	_tokenPresent = false;
 	_isText = false;
 	_listSeparator = false;
