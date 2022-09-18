@@ -449,12 +449,6 @@ void ScummEngine_v7::drawTextImmediately(const byte *text, Common::Rect *clipRec
 
 	_charset->setCurID(charset);
 
-	// If a Hebrew String comes up that is still marked as kStyleAlignLeft we fix it here...
-	if (_language == Common::HE_ISR && !(flags & (kStyleAlignCenter | kStyleAlignRight))) {
-		effFlags = (TextStyleFlags)(flags | kStyleAlignRight);
-		effX = _screenWidth - 1 - effX;
-	}
-
 	_textV7->drawString((const char *)msg, (byte *)vs->getPixels(0, _screenTop), rect, effX, y, vs->pitch, color, effFlags);
 
 	rect.top += _screenTop;
@@ -469,12 +463,6 @@ void ScummEngine_v7::drawBlastTexts() {
 		BlastText &bt = _blastTextQueue[i];
 
 		_charset->setCurID(_blastTextQueue[i].charset);
-
-		// If a Hebrew String comes up that is still marked as kStyleAlignLeft we fix it here...
-		if (_language == Common::HE_ISR && !(bt.flags & (kStyleAlignCenter | kStyleAlignRight))) {
-			bt.flags = (TextStyleFlags)(bt.flags | kStyleAlignRight);
-			bt.xpos = _screenWidth - 1 - bt.xpos;
-		}
 
 		if (bt.flags & kStyleWordWrap) {
 			bt.rect = _wrappedTextClipRect;
