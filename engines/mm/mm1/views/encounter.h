@@ -34,7 +34,7 @@ private:
 	enum Mode {
 		ALERT, SURPRISED_BY_MONSTERS, SURPRISED_MONSTERS,
 		ENCOUNTER_OPTIONS, NOWHERE_TO_RUN, SURRENDER_FAILED,
-		NO_RESPONSE, BRIBE, NOT_ENOUGH,
+		NO_RESPONSE, BRIBE, NOT_ENOUGH, COMBAT,
 		ALIGNMENT_CHECK,
 		BATTLE
 	};
@@ -57,7 +57,8 @@ private:
 	void retreat();
 	void surrender();
 	void flee();
-	void updateAlignments();
+	void decreaseAlignments();
+	void increaseAlignments();
 public:
 	Encounter();
 	virtual ~Encounter() {}
