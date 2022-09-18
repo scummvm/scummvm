@@ -67,6 +67,7 @@ private:
 
 APCStreamImpl::APCStreamImpl(uint32 sampleRate, byte stereo) :
 	_sampleRate(sampleRate), _stereo(stereo) {
+	memset(_status, 0, sizeof(_status));
 	if (_sampleRate != uint32(-1) && _stereo != byte(-1)) {
 		_audStream.reset(makeQueuingAudioStream(_sampleRate, _stereo));
 	}
