@@ -280,6 +280,7 @@ public:
 			for (uint i = 0; i < len; i++)
 				syncAsUint32LE(sl[i]);
 			str = U32String(sl, len);
+			delete[] sl;
 		} else {
 			for (uint i = 0; i < len; i++)
 				_saveStream->writeUint32LE(str[i]);
