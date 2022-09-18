@@ -37,7 +37,7 @@ enum EncounterType {
 struct Encounter {
 private:
 	bool _flag = false;
-	int _levelIndex = 0, _val6 = 0;
+	int _levelIndex = 0, _levelOffset = 0;
 	int _val9 = 0;
 	int _val11 = 0;
 	int _totalLevels = 0, _highestLevel = 0;
@@ -49,8 +49,10 @@ private:
 	byte getMonsterCount();
 public:
 	Common::Array<Monster> _monsterList;
-	int _val1 = 0, _val2 = 0;
-	int _val3 = 0, _val5 = 0, _val8 = 0;
+	int _bribeAlignmentCtr = 0, _bribeFleeCtr = 0;
+	int _alignmentsChanged = 0;
+	int _monsterImgNum = 0;
+	int _monsterIndex = 0;
 	EncounterType _encounterFlag = NORMAL_SURPRISED;
 	byte _fleeThreshold = 0;
 public:
