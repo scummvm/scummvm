@@ -91,8 +91,8 @@ void Encounter::draw() {
 		break;
 
 	case BRIBE:
-		enc._val1++;
-		enc._val3++;
+		enc._bribeFleeCtr++;
+		enc._bribeAlignmentCtr++;
 		writeString(5, 21, Common::String::format(
 			STRING["dialogs.encounter.give_up"].c_str(),
 			_bribeTypeStr.c_str()));
@@ -116,7 +116,7 @@ void Encounter::draw() {
 
 	if (_mode != ALERT) {
 		// Display the monster
-		drawMonster(enc._val8);
+		drawMonster(enc._monsterImgNum);
 
 		// Write the monster list
 		for (uint i = 0; i < enc._monsterList.size(); ++i) {
@@ -128,7 +128,7 @@ void Encounter::draw() {
 
 	if (_mode == NO_RESPONSE || _mode == NOT_ENOUGH ||
 			_mode == COMBAT || _mode == SURPRISED_BY_MONSTERS) {
-		if (enc._val2) {
+		if (enc._alignmentsChanged) {
 			writeString(8, 23, STRING["dialogs.encounter.alignment_slips"]);
 			Sound::sound(SOUND_2);
 		}
@@ -263,13 +263,13 @@ void Encounter::bribe() {
 	const Game::Encounter &enc = g_globals->_encounters;
 
 	if (enc.checkSurroundParty()) {
-		if (!enc._val3)
+		if (!enc._bribeAlignmentCtr)
 			decreaseAlignments();
 
 		_mode = NO_RESPONSE;
 		redraw();
 
-	} else if (getRandomNumber(1, 7) == 5 && !enc._val1) {
+	} else if (getRandomNumber(1, 7) == 5 && !enc._bribeFleeCtr) {
 		// Rare chance to abort combat immediately
 		encounterEnded();
 
@@ -301,7 +301,7 @@ void Encounter::retreat() {
 	} else if (val > Maps::MAP_FLEE_THRESHOLD) {
 		_mode = NOWHERE_TO_RUN;
 		redraw();
-	} else if (enc._val5 < (int)g_globals->_party.size() || !enc.checkSurroundParty()) {
+	} else if (enc._monsterIndex < (int)g_globals->_party.size() || !enc.checkSurroundParty()) {
 		flee();
 	}
 }

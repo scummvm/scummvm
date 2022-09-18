@@ -33,14 +33,15 @@ namespace Game {
 void Encounter::execute() {
 	Maps::Map &map = *g_maps->_currentMap;
 	int comp, maxRand, maxVal, monsterCount;
-	_val1 = _val2 = _val3 = 0;
+	_bribeFleeCtr = _bribeAlignmentCtr = 0;
+	_alignmentsChanged = 0;
 
 	if (!_flag) {
-		_levelIndex = _val5 = 0;
+		_levelIndex = _monsterIndex = 0;
 	}
 
 	_totalLevels = _highestLevel = 0;
-	_val6 = _val8 = _val9 = _fleeThreshold = 0;
+	_levelOffset = _monsterImgNum = _val9 = _fleeThreshold = 0;
 
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		const Character &c = g_globals->_party[i];
@@ -59,7 +60,7 @@ void Encounter::execute() {
 	while (firstLoop || _levelIndex < _totalLevels) {
 		randomAdjust();
 
-		maxRand = _val6 + _highestLevel;
+		maxRand = _levelOffset + _highestLevel;
 		if (maxRand >= 2) {
 			int highestRand = map[33];
 			maxRand = MIN(maxRand, highestRand);
@@ -73,32 +74,32 @@ void Encounter::execute() {
 			comp = MIN(maxVal, 10);
 		}
 
-		assert(_val5 < 15);
-		_arr1[_val5] = comp;
+		assert(_monsterIndex < 15);
+		_arr1[_monsterIndex] = comp;
 		_val11 = comp;
 		_levelIndex += comp;
 
 		_randVal = g_engine->getRandomNumber(1, 16);
-		_arr2[_val5] = _randVal;
-		_val5 = (_val5 + 1) & 0xff;
+		_arr2[_monsterIndex] = _randVal;
+		_monsterIndex = (_monsterIndex + 1) & 0xff;
 
-		if (_val5 < 15) {
-			if (_val5 >= map[34])
+		if (_monsterIndex < 15) {
+			if (_monsterIndex >= map[34])
 				goto exit_loop;
 
 			monsterCount = getMonsterCount();
 			maxVal = g_engine->getRandomNumber(1, monsterCount);
 
 			for (int i = 0; i < maxVal; ++i) {
-				assert(_val5 > 0);
-				_arr1[_val5] = _arr1[_val5 - 1];
-				_levelIndex += _arr1[_val5];
-				_arr2[_val5] = _arr2[_val5 - 1];
+				assert(_monsterIndex > 0);
+				_arr1[_monsterIndex] = _arr1[_monsterIndex - 1];
+				_levelIndex += _arr1[_monsterIndex];
+				_arr2[_monsterIndex] = _arr2[_monsterIndex - 1];
 
-				if (++_val5 >= 15)
+				if (++_monsterIndex >= 15)
 					goto exit_loop;
 
-				if (_val5 >= map[34])
+				if (_monsterIndex >= map[34])
 					goto exit_loop;
 			}
 		} else {
@@ -109,7 +110,7 @@ void Encounter::execute() {
 exit_loop:
 	_monsterList.clear();
 
-	for (int i = 0; i < _val5; ++i) {
+	for (int i = 0; i < _monsterIndex; ++i) {
 		maxVal = (_arr1[i] - 1) * 16 + _arr2[i];
 		if (_arr1[i] < 1 || _arr1[i] > 12 || maxVal >= 196) {
 			_arr1[i] = 10;
@@ -125,7 +126,7 @@ exit_loop:
 		if (_val11 > _val9) {
 			_val9 = _val11;
 			_fleeThreshold = mons._counts[1];
-			_val8 = mons._counts[16];
+			_monsterImgNum = mons._counts[16];
 		}
 	}
 
@@ -134,17 +135,17 @@ exit_loop:
 
 void Encounter::randomAdjust() {
 	int rval = g_engine->getRandomNumber(1, 100);
-	_val6 = 0;
+	_levelOffset = 0;
 
 	if (rval < 51) {
 	} else if (rval < 71)
-		_val6 += 1;
+		_levelOffset += 1;
 	else if (rval < 86)
-		_val6 += 2;
+		_levelOffset += 2;
 	else if (rval < 96)
-		_val6 += 3;
+		_levelOffset += 3;
 	else
-		_val6 += 4;
+		_levelOffset += 4;
 }
 
 const Monster *Encounter::getMonster() {
@@ -164,7 +165,7 @@ bool Encounter::checkSurroundParty() const {
 void Encounter::changeCharAlignment(Alignment align) {
 	if (g_globals->_currCharacter->_alignment != align) {
 		g_globals->_currCharacter->_alignment = align;
-		++_val2;
+		++_alignmentsChanged;
 	}
 }
 
