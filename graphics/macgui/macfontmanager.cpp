@@ -140,7 +140,8 @@ Common::String cleanFontName(const Common::String fontname) {
 	return f;
 }
 
-MacFontManager::MacFontManager(uint32 mode, Common::Language language) : _mode(mode), _language(language) {
+MacFontManager::MacFontManager(uint32 mode, Common::Language language) : _mode(mode),
+	_language(language), _japaneseFontsLoaded(false) {
 	for (FontProto *font = defaultFonts; font->name; font++) {
 		if (!_fontInfo.contains(font->id)) {
 			FontInfo *info = new FontInfo;
@@ -171,7 +172,6 @@ MacFontManager::MacFontManager(uint32 mode, Common::Language language) : _mode(m
 	} else {
 		loadFonts();
 	}
-	_japaneseFontsLoaded = false;
 }
 
 MacFontManager::~MacFontManager() {
