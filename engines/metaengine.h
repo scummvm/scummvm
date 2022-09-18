@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/error.h"
 #include "common/array.h"
+#include "common/gui_options.h"
 
 #include "engines/game.h"
 #include "engines/savestate.h"
@@ -179,6 +180,21 @@ public:
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const {
 		return ExtraGuiOptions();
 	}
+
+	/**
+	 * The default version of this method will just parse the options string from
+	 * the config manager. However it also allows the meta engine to post process
+	 * result and add/remove other options as needed.
+	 * 
+	 * @param optionsString		Options string that from the config manager.
+	 * @param domain			Domain of the current target.
+	 *
+	 * @return    The fully processed options string that is usable by the GUI.
+	 *
+	 */
+	virtual Common::String parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const {
+		return parseGameGUIOptions(optionsString);
+	} 
 
 	/**
 	 * Return a list of engine specified debug channels
