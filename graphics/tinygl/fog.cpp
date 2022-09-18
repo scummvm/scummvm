@@ -82,10 +82,11 @@ void GLContext::gl_calc_fog_factor(GLVertex *v) {
 		v->fog_factor = expf(-(fog_density * fog_density * eye_distance * eye_distance));
 		break;
 	default:
+		v->fog_factor = 0;
 		break;
 	}
 
-	clampf(v->fog_factor, 0.0f, 1.0f);
+	v->fog_factor = clampf(v->fog_factor, 0.0f, 1.0f);
 }
 
 } // end of namespace TinyGL
