@@ -23,6 +23,7 @@
 #include "mm/mm1/game/encounter.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
@@ -80,6 +81,28 @@ void Encounter::draw() {
 	case SURRENDER_FAILED:
 		clearLines(20, 24);
 		writeString(2, 21, STRING["dialogs.encounter.surrender_failed"]);
+		delaySeconds(2);
+		break;
+
+	case NO_RESPONSE:
+		clearLines(20, 24);
+		writeString(12, 21, STRING["dialogs.encounter.no_response"]);
+		delaySeconds(2);
+		break;
+
+	case BRIBE:
+		enc._val1++;
+		enc._val3++;
+		writeString(5, 21, Common::String::format(
+			STRING["dialogs.encounter.give_up"].c_str(),
+			_bribeTypeStr.c_str()));
+		break;
+
+	case NOT_ENOUGH:
+		clearLines(20, 24);
+		writeString(14, 21, STRING["dialogs.encounter.not_enough"]);
+		delaySeconds(2);
+		break;
 
 	default:
 		break;
@@ -95,6 +118,15 @@ void Encounter::draw() {
 			writeString(") ");
 			writeString(enc._monsterList[i]._name);
 		}
+	}
+
+	if (_mode == NO_RESPONSE || _mode == NOT_ENOUGH) {
+		if (enc._val2) {
+			writeString(8, 23, STRING["dialogs.encounter.alignment_slips"]);
+			Sound::sound(SOUND_2);
+		}
+
+		_mode = ALIGNMENT_CHECK;
 	}
 }
 
@@ -140,6 +172,8 @@ void Encounter::timeout() {
 }
 
 bool Encounter::msgKeypress(const KeypressMessage &msg) {
+	const Maps::Map &map = *g_maps->_currentMap;
+
 	switch (_mode) {
 	case SURPRISED_MONSTERS:
 		if (msg.keycode == Common::KEYCODE_y) {
@@ -167,6 +201,21 @@ bool Encounter::msgKeypress(const KeypressMessage &msg) {
 		default:
 			break;
 		}
+		break;
+
+	case BRIBE:
+		if (msg.keycode == Common::KEYCODE_y) {
+			if (getRandomNumber(1, 100) > map[Maps::MAP_BRIBE_THRESHOLD]) {
+				_mode = NOT_ENOUGH;
+				redraw();
+			} else {
+				//xxxxxxxxxxx
+			}
+		} else if (msg.keycode == Common::KEYCODE_n) {
+			_mode = ENCOUNTER_OPTIONS;
+			redraw();
+		}
+		break;
 
 	default:
 		break;
@@ -185,7 +234,36 @@ void Encounter::attack() {
 }
 
 void Encounter::bribe() {
+	const Game::Encounter &enc = g_globals->_encounters;
 
+	if (enc.checkSurroundParty()) {
+		if (!enc._val3)
+			updateAlignments();
+
+		_mode = NO_RESPONSE;
+		redraw();
+
+	} else if (getRandomNumber(1, 7) == 5 && !enc._val1) {
+		// Rare chance to abort combat immediately
+		encounterEnded();
+
+	} else {
+		_mode = BRIBE;
+
+		int val = getRandomNumber(1, 100);
+		if (val < 6) {
+			_bribeType = BRIBE_GEMS;
+			_bribeTypeStr = STRING["dialogs.encounter.gems"];
+		} else if (val < 16) {
+			_bribeType = BRIBE_FOOD;
+			_bribeTypeStr = STRING["dialogs.encounter.food"];
+		} else {
+			_bribeType = BRIBE_GOLD;
+			_bribeTypeStr = STRING["dialogs.encounter.gold"];
+		}
+
+		redraw();
+	}
 }
 
 void Encounter::retreat() {
@@ -246,6 +324,22 @@ void Encounter::flee() {
 	encounterEnded();
 }
 
+void Encounter::updateAlignments() {
+	Game::Encounter &enc = g_globals->_encounters;
+
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		g_globals->_currCharacter = &c;
+
+		if (c._alignmentCtr) {
+			--c._alignmentCtr;
+			if (c._alignmentCtr == 0)
+				enc.changeCharAlignment(GOOD);
+			else if (c._alignmentCtr == 16)
+				enc.changeCharAlignment(NEUTRAL);
+		}
+	}
+}
 
 } // namespace Views
 } // namespace MM1

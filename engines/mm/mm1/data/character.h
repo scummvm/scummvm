@@ -235,7 +235,7 @@ struct Character {
 
 	// TODO: Figure out what these are
 	Arr58 _arr58;
-	int _v68, _v69, _v6a, _v6b, _v6c, _v6e, _v6f;
+	int _v68, _v69, _v6a, _v6b, _v6c, _v6e, _alignmentCtr;
 
 	byte _quest = 0;
 

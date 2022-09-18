@@ -23,6 +23,7 @@
 #define MM1_GAME_ENCOUNTER_H
 
 #include "common/array.h"
+#include "mm/mm1/data/character.h"
 #include "mm/mm1/data/monsters.h"
 
 namespace MM {
@@ -36,7 +37,6 @@ enum EncounterType {
 struct Encounter {
 private:
 	bool _flag = false;
-	int _val1 = 0, _val2 = 0, _val3 = 0;
 	int _levelIndex = 0, _val6 = 0;
 	int _val9 = 0;
 	int _val11 = 0;
@@ -49,7 +49,8 @@ private:
 	byte getMonsterCount();
 public:
 	Common::Array<Monster> _monsterList;
-	int _val5 = 0, _val8 = 0;
+	int _val1 = 0, _val2 = 0;
+	int _val3 = 0, _val5 = 0, _val8 = 0;
 	EncounterType _encounterFlag = NORMAL_SURPRISED;
 	byte _fleeThreshold = 0;
 public:
@@ -62,6 +63,8 @@ public:
 	 * Chooses whether an encounter can be fleed
 	 */
 	bool checkSurroundParty() const;
+
+	void changeCharAlignment(Alignment align);
 };
 
 } // namespace Game

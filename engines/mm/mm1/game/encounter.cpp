@@ -161,6 +161,13 @@ bool Encounter::checkSurroundParty() const {
 	return g_engine->getRandomNumber(1, 100) > _fleeThreshold;
 }
 
+void Encounter::changeCharAlignment(Alignment align) {
+	if (g_globals->_currCharacter->_alignment != align) {
+		g_globals->_currCharacter->_alignment = align;
+		++_val2;
+	}
+}
+
 } // namespace Game
 } // namespace MM1
 } // namespace MM

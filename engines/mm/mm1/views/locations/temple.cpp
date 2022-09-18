@@ -187,7 +187,7 @@ void Temple::restoreAlignment() {
 	if (subtractGold(_alignmentCost)) {
 		Character &c = *g_globals->_currCharacter;
 		c._alignment = c._alignmentInitial;
-		c._v6f = ALIGNMENT_VALS[c._alignment];
+		c._alignmentCtr = ALIGNMENT_VALS[c._alignment];
 
 		redraw();
 	}
