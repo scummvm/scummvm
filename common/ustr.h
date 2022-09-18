@@ -137,7 +137,7 @@ public:
 	 * Similar to sprintf, except that it stores the result
 	 * in a (variably sized) string instead of a fixed-size buffer.
 	 */
-	static U32String format(U32String fmt, ...);
+	static U32String format(const U32String &fmt, ...);
 
 	/** @overload **/
 	static U32String format(const char *fmt, ...);
