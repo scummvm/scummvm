@@ -84,6 +84,7 @@ public:
 	PlainGameDescriptor findGame(const char *gameid) const override;
 	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) override;
 
+	Common::String parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const override;
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 };
 
@@ -251,6 +252,53 @@ static const ExtraGuiOption enableOriginalGUI = {
 	0,
 	0
 };
+
+Common::String ScummMetaEngineDetection::parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const {
+	Common::String result = MetaEngineDetection::parseAndCustomizeGuiOptions(optionsString, domain);
+	const char *defaultRenderOption = nullptr;
+
+	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", domain));
+	const Common::String extra = ConfMan.get("extra", domain);
+
+	// Add default rendermode option for target. We don't put the default mode into the
+	// detection tables, due to the amount of targets we have. It it more convenient to
+	// add the option here.
+	switch (platform) {
+	case Common::kPlatformAmiga:
+		defaultRenderOption = GUIO_RENDERAMIGA;
+		break;
+	case Common::kPlatformApple2GS:
+		defaultRenderOption = GUIO_RENDERAPPLE2GS;
+		break;
+	case Common::kPlatformMacintosh:
+		defaultRenderOption = GUIO_RENDERMACINTOSH;
+		break;
+	case Common::kPlatformFMTowns:
+		defaultRenderOption = GUIO_RENDERFMTOWNS;
+		break;
+	case Common::kPlatformAtariST:
+		defaultRenderOption = GUIO_RENDERATARIST;
+		break;
+	case Common::kPlatformDOS:
+		defaultRenderOption = (extra.equalsIgnoreCase("EGA") || extra.equalsIgnoreCase("V1") || extra.equalsIgnoreCase("V2")) ? GUIO_RENDEREGA : GUIO_RENDERVGA;
+		break;
+	case Common::kPlatformUnknown:
+		// For targets that don't specify the platform (often happens with SCUMM6+ games) we stick with default VGA.
+		defaultRenderOption = GUIO_RENDERVGA;
+		break;
+	default:
+		// Leave this as nullptr for platforms that don't have a specific render option (SegaCD, NES, ...).
+		// These targets will then have the full set of render mode options in the launcher options dialog. 
+		break;
+	}
+
+	// If the render option is already part of the string (specified in the
+	// detection tables) we don't add it again.
+	if (defaultRenderOption != nullptr && !result.contains(defaultRenderOption))
+		result += defaultRenderOption;
+
+	return result;
+}
 
 const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
