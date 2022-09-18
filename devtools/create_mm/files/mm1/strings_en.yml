@@ -275,6 +275,8 @@
 		options1: "OPTIONS:  'A' ATTACK  'R' RETREAT"
 		options2: "'B' BRIBE   'S' SURRENDER"
 		surrender_failed: "THE MONSTERS DON'T TAKE PRISONERS!"
+		nowhere_to_run: "NOWHERE TO RUN"
+		surround: "THE MONSTERS SURROUND YOU!"
 		no_response: "NO RESPONSE"
 		give_up: "GIVE UP ALL YOUR %s (Y/N)?"
 		gems: "GEMS"

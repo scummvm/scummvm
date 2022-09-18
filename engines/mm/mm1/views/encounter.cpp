@@ -67,14 +67,20 @@ void Encounter::draw() {
 
 		// Write the encounter options
 		clearLines(20, 24);
-		writeString(0, 21, STRING["dialogs.encounter.option1"]);
-		writeString(10, 22, STRING["dialogs.encounter.option2"]);
+		writeString(0, 21, STRING["dialogs.encounter.options1"]);
+		writeString(10, 22, STRING["dialogs.encounter.options2"]);
 		break;
 	}
 
 	case NOWHERE_TO_RUN:
 		clearLines(20, 24);
 		writeString(11, 21, STRING["dialogs.encounter.nowhere_to_run"]);
+		delaySeconds(2);
+		break;
+
+	case SURROUNDED:
+		clearLines(20, 24);
+		writeString(5, 21, STRING["dialogs.encounter.surround"]);
 		delaySeconds(2);
 		break;
 
@@ -126,8 +132,9 @@ void Encounter::draw() {
 		}
 	}
 
-	if (_mode == NO_RESPONSE || _mode == NOT_ENOUGH ||
-			_mode == COMBAT || _mode == SURPRISED_BY_MONSTERS) {
+	if (_mode == NO_RESPONSE || _mode == SURROUNDED ||
+			_mode == NOT_ENOUGH || _mode == COMBAT ||
+			_mode == SURPRISED_BY_MONSTERS) {
 		if (enc._alignmentsChanged) {
 			writeString(8, 23, STRING["dialogs.encounter.alignment_slips"]);
 			Sound::sound(SOUND_2);
@@ -293,16 +300,24 @@ void Encounter::bribe() {
 }
 
 void Encounter::retreat() {
+	const Maps::Map &map = *g_maps->_currentMap;
 	const Game::Encounter &enc = g_globals->_encounters;
 	int val = getRandomNumber(1, 110);
 
 	if (val >= 100) {
+		// 9% chance of simply fleeing
 		flee();
-	} else if (val > Maps::MAP_FLEE_THRESHOLD) {
+	} else if (val > map[Maps::MAP_FLEE_THRESHOLD]) {
+		// Nowhere to run depending on the map
 		_mode = NOWHERE_TO_RUN;
 		redraw();
-	} else if (enc._monsterIndex < (int)g_globals->_party.size() || !enc.checkSurroundParty()) {
+	} else if (enc._monsterList.size() < (int)g_globals->_party.size() || !enc.checkSurroundParty()) {
+		// Only allow fleeing if the number of monsters
+		// are less than the size of the party
 		flee();
+	} else {
+		_mode = SURROUNDED;
+		redraw();
 	}
 }
 
