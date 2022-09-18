@@ -262,8 +262,8 @@ void drawRect(Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, 
  * @brief Draws rectangle outline _with_ right and bottom edges
  */
 void drawRect1(Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data) {
-	drawHLine(rect.left, rect.right, rect.top, color, plotProc, data);
-	drawHLine(rect.left, rect.right, rect.bottom, color, plotProc, data);
+	drawHLine(rect.left + 1, rect.right - 1, rect.top, color, plotProc, data);
+	drawHLine(rect.left + 1, rect.right - 1, rect.bottom, color, plotProc, data);
 	drawVLine(rect.left, rect.top, rect.bottom, color, plotProc, data);
 	drawVLine(rect.right, rect.top, rect.bottom, color, plotProc, data);
 }
