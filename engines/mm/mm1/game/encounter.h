@@ -39,14 +39,13 @@ private:
 	bool _flag = false;
 	int _levelIndex = 0, _levelOffset = 0;
 	int _val9 = 0;
-	int _val11 = 0;
+	int _monsterNum16 = 0;
 	int _totalLevels = 0, _highestLevel = 0;
-	int _randVal = 0;
+	int _monsterNum = 0;
 	byte _arr1[15], _arr2[15];
 
 	void randomAdjust();
 	const Monster *getMonster();
-	byte getMonsterCount();
 public:
 	Common::Array<Monster> _monsterList;
 	int _bribeAlignmentCtr = 0, _bribeFleeCtr = 0;

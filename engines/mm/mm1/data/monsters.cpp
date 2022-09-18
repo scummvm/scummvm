@@ -40,8 +40,10 @@ bool Monsters::load() {
 		mon._name = Common::String(line.c_str() + 1, line.c_str() + 15);
 		line = Common::String(line.c_str() + 17);
 
-		for (int i = 0; i < 17; ++i)
-			mon._counts[i] = getNextValue(line);
+		mon._count = getNextValue(line);
+
+		for (int i = 0; i < 16; ++i)
+			mon._unk[i] = getNextValue(line);
 	}
 
 	return true;

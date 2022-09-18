@@ -32,7 +32,8 @@ namespace Game {
 
 void Encounter::execute() {
 	Maps::Map &map = *g_maps->_currentMap;
-	int comp, maxRand, maxVal, monsterCount;
+	int comp, maxRand, maxVal;
+	const Monster *monsterP;
 	_bribeFleeCtr = _bribeAlignmentCtr = 0;
 	_alignmentsChanged = 0;
 
@@ -76,19 +77,19 @@ void Encounter::execute() {
 
 		assert(_monsterIndex < 15);
 		_arr1[_monsterIndex] = comp;
-		_val11 = comp;
+		_monsterNum16 = comp;
 		_levelIndex += comp;
 
-		_randVal = g_engine->getRandomNumber(1, 16);
-		_arr2[_monsterIndex] = _randVal;
+		_monsterNum = g_engine->getRandomNumber(1, 16);
+		_arr2[_monsterIndex] = _monsterNum;
 		_monsterIndex = (_monsterIndex + 1) & 0xff;
 
 		if (_monsterIndex < 15) {
 			if (_monsterIndex >= map[34])
 				goto exit_loop;
 
-			monsterCount = getMonsterCount();
-			maxVal = g_engine->getRandomNumber(1, monsterCount);
+			monsterP = getMonster();
+			maxVal = g_engine->getRandomNumber(1, monsterP->_count);
 
 			for (int i = 0; i < maxVal; ++i) {
 				assert(_monsterIndex > 0);
@@ -118,15 +119,14 @@ exit_loop:
 		}
 
 		// Add monster details to list
-		_val11 = _arr1[i];
-		assert(_val11 == 1);
+		_monsterNum16 = _arr1[i];
 		const Monster &mons = g_globals->_monsters[_arr2[i]];
 		_monsterList.push_back(mons);
 
-		if (_val11 > _val9) {
-			_val9 = _val11;
-			_fleeThreshold = mons._counts[1];
-			_monsterImgNum = mons._counts[16];
+		if (_monsterNum16 > _val9) {
+			_val9 = _monsterNum16;
+			_fleeThreshold = mons._unk[0];
+			_monsterImgNum = mons._unk[15];
 		}
 	}
 
@@ -149,13 +149,8 @@ void Encounter::randomAdjust() {
 }
 
 const Monster *Encounter::getMonster() {
-	assert(_randVal > 0);
-	return &g_globals->_monsters[_randVal];
-}
-
-byte Encounter::getMonsterCount() {
-	assert(_val11 >= 1 && _val11 <= 8);
-	return getMonster()->_counts[(_val11 - 1) * 2];
+	assert(_monsterNum > 0 && _monsterNum16 > 0);
+	return &g_globals->_monsters[_monsterNum + ((_monsterNum16 - 1) * 16)];
 }
 
 bool Encounter::checkSurroundParty() const {
