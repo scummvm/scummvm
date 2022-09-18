@@ -167,7 +167,7 @@ uint32 CryoFont::mapGlyph(uint32 chr) const {
 	return chr;
 }
 
-CryoFont::Glyph::Glyph() : offX(0), offY(0), advance(0), bitmap(nullptr) {
+CryoFont::Glyph::Glyph() : h(0), w(0), offX(0), offY(0), advance(0), bitmap(nullptr) {
 }
 
 CryoFont::Glyph::~Glyph() {

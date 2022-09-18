@@ -90,7 +90,7 @@ void Versailles_Documentation::init(const Sprites *sprites, FontManager *fontMan
 	_allDocsFileName = allDocsFileName;
 	_linksDocsFileName = linksDocsFileName;
 
-	// Japanese version of Versailles handles records attributeswith multilines
+	// Japanese version of Versailles handles records attributes with multilines
 	_multilineAttributes = (_engine->getLanguage() == Common::JA_JPN);
 
 	// Build list of records
