@@ -40,7 +40,7 @@ public:
 	~SegaSequencePlayer();
 
 	bool play(int id);
-	void pause(bool pause);
+	void pause(bool togglePause);
 
 private:
 	void run(const uint8 *data);

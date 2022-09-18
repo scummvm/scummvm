@@ -290,7 +290,7 @@ void EoBEngine::gui_displayMap() {
 		removeInputTop();
 
 		drawMapSpots(level, animState < 20 ? 0 : 1);
-		bool update = (animState == 0 || animState == 20);
+		bool needupdate = (animState == 0 || animState == 20);
 		if (++animState == 40)
 			animState = 0;
 
@@ -302,7 +302,7 @@ void EoBEngine::gui_displayMap() {
 				drawMapPage(level);
 		}
 
-		if (update) {
+		if (needupdate) {
 			r->render(0);
 			_screen->updateScreen();
 		}

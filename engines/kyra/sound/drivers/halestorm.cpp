@@ -171,7 +171,7 @@ public:
 	void setTempo(uint32 tempo);
 	void setTicksPerSecond(uint32 tps);
 
-	uint16 tempo() const { return _internalTempo; }
+	uint16 getTempo() const { return _internalTempo; }
 
 public:
 	int _numChanMusic;
@@ -763,7 +763,7 @@ bool HSMidiParser::nextTick(HSSong &song) {
 			s->status = 'R';
 			checkPos = false;
 		} else {
-			s->ticker -= song.tempo();
+			s->ticker -= song.getTempo();
 			if (s->ticker >= 0)
 				continue;
 		}
