@@ -145,7 +145,7 @@ void U32String::insertString(const String &s, uint32 p, CodePage page) {
 	insertString(U32String(s, page), p);
 }
 
-U32String U32String::format(const U32String &fmt, ...) {
+U32String U32String::format(U32String fmt, ...) {
 	U32String output;
 
 	va_list va;
