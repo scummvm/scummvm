@@ -99,7 +99,7 @@ void XPFloat::toDoubleBitsSafe(uint64 &result, bool &outOverflowed, Semantics se
 	if ((signAndExponent & 0x7fff) == 0x7fff) {
 		if ((mantissa & 0x7fffffffffffffffu) == 0) {
 			// Infinity
-			doubleBits = (static_cast<uint64>(signAndExponent & 0x8000) << 63) | 0x7ff0000000000000u;
+			doubleBits = (static_cast<uint64>(signAndExponent & 0x8000) << (63 - 15)) | 0x7ff0000000000000u;
 		} else {
 			// NaN
 			doubleBits = 0xffffffffffffffff;
