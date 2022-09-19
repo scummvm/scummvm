@@ -64,19 +64,15 @@ static void getSettings(Bitmap2D *apSrc, int &alChannels, TGLint &internalFormat
 //-----------------------------------------------------------------------
 
 TGLTexture::TGLTexture(const tString &asName, Graphics::PixelFormat *apPxlFmt, iLowLevelGraphics *apLowLevelGraphics,
-						 eTextureType aType, bool abUseMipMaps, eTextureTarget aTarget,
-						 bool abCompress)
+					   eTextureType aType, bool abUseMipMaps, eTextureTarget aTarget,
+					   bool abCompress)
 	: iTexture(asName, "OGL", apPxlFmt, apLowLevelGraphics, aType, abUseMipMaps, aTarget, abCompress) {
 	mbContainsData = false;
 
-	if (aType == eTextureType_RenderTarget) {
-		Hpl1::logError(Hpl1::kDebugGraphics, "use of render target%s", ".");
-		// mpPBuffer = hplNew( cPBuffer, (mpLowLevelGraphics,true) );
-	}
-
-	// Cubemap does not like mipmaps
-	if (aTarget == eTextureTarget_CubeMap)
-		mbUseMipMaps = false;
+	if (aType == eTextureType_RenderTarget)
+		error("texture render target not supported");
+	if (mTarget != eTextureTarget_2D)
+		error("TGLTexture only supports 2D textures");
 
 	mpGfxSDL = static_cast<LowLevelGraphicsTGL *>(mpLowLevelGraphics);
 
@@ -105,10 +101,6 @@ bool TGLTexture::CreateFromBitmap(Bitmap2D *pBmp) {
 	if (mvTextureHandles.empty()) {
 		mvTextureHandles.resize(1);
 		tglGenTextures(1, &mvTextureHandles[0]);
-	} else {
-		// Log("Delete + Generate!\n");
-		// glDeleteTextures(1,(GLuint *)&mvTextureHandles[0]);
-		// glGenTextures(1,(GLuint *)&mvTextureHandles[0]);
 	}
 
 	return CreateFromBitmapToHandle(pBmp, 0);
@@ -144,10 +136,12 @@ bool TGLTexture::Create(unsigned int alWidth, unsigned int alHeight, cColor aCol
 //-----------------------------------------------------------------------
 
 static void generateMipmaps(eTextureTarget target) {
-
 }
 
 bool TGLTexture::CreateFromArray(unsigned char *apPixelData, int alChannels, const cVector3l &avSize) {
+	if (mTarget != eTextureTarget_2D)
+		error("non-2D textures are not supported in TGLTexture");
+
 	if (mvTextureHandles.empty()) {
 		mvTextureHandles.resize(1);
 		tglGenTextures(1, &mvTextureHandles[0]);
@@ -155,36 +149,21 @@ bool TGLTexture::CreateFromArray(unsigned char *apPixelData, int alChannels, con
 
 	TGLenum GLTarget = InitCreation(0);
 
-	int lChannels = alChannels;
-	TGLenum format = 0;
-	switch (lChannels) {
-	case 1:
-	case 2:
-	case 3:
-		format = TGL_RGB;
-		break;
-	case 4:
-		format = TGL_RGBA;
-		break;
-	}
+	if (alChannels == 1 || alChannels == 2)
+		error("TGLTexture only supports RGB and RGBA");
+
+	TGLenum format = alChannels == 3 ? TGL_RGB : TGL_RGBA;
 
 	_width = avSize.x;
 	_height = avSize.y;
-	_bpp = lChannels * 8;
+	_bpp = alChannels * 8;
 
 	if (!cMath::IsPow2(_height) || !cMath::IsPow2(_width) || !cMath::IsPow2(avSize.z)) {
 		Hpl1::logWarning(Hpl1::kDebugGraphics, "Texture '%s' does not have a pow2 size", msName.c_str());
 	}
 
-	if (mTarget == eTextureTarget_1D) {
-		tglTexImage2D(GLTarget, 0, format, _width, 1, 0, format,
-							  TGL_UNSIGNED_BYTE, apPixelData);
-	} else if (mTarget == eTextureTarget_2D) {
-		tglTexImage2D(GLTarget, 0, format, _width, _height,
-							  0, format, TGL_UNSIGNED_BYTE, apPixelData);
-	} else if (mTarget == eTextureTarget_3D) {
-		error("trying to create a texture 3D in TGLTexture");
-	}
+	tglTexImage2D(GLTarget, 0, format, _width, _height,
+				  0, format, TGL_UNSIGNED_BYTE, apPixelData);
 
 	if (mbUseMipMaps && mTarget != eTextureTarget_Rect && mTarget != eTextureTarget_3D)
 		generateMipmaps(mTarget);
@@ -197,7 +176,7 @@ bool TGLTexture::CreateFromArray(unsigned char *apPixelData, int alChannels, con
 //-----------------------------------------------------------------------
 
 void TGLTexture::SetPixels2D(int alLevel, const cVector2l &avOffset, const cVector2l &avSize,
-							  eColorDataFormat aDataFormat, void *apPixelData) {
+							 eColorDataFormat aDataFormat, void *apPixelData) {
 	HPL1_UNIMPLEMENTED(TGLTexture::SetPixels2D);
 }
 
@@ -296,7 +275,7 @@ void TGLTexture::SetFilter(eTextureFilter aFilter) {
 
 	mFilter = aFilter;
 	if (mbContainsData) {
-		TGLenum GLTarget =GetTGLTextureTargetEnum(mTarget);
+		TGLenum GLTarget = GetTGLTextureTargetEnum(mTarget);
 
 		tglEnable(GLTarget);
 		for (size_t i = 0; i < mvTextureHandles.size(); ++i) {
@@ -355,20 +334,7 @@ void TGLTexture::SetWrapT(eTextureWrap aMode) {
 //-----------------------------------------------------------------------
 
 void TGLTexture::SetWrapR(eTextureWrap aMode) {
-	if (mbContainsData) {
-		TGLenum GLTarget = GetTGLTextureTargetEnum(mTarget);
-
-		tglEnable(GLTarget);
-		tglEnable(GLTarget);
-		for (size_t i = 0; i < mvTextureHandles.size(); ++i) {
-			tglBindTexture(GLTarget, mvTextureHandles[i]);
-
-			//tglTexParameteri(GLTarget, TGL_TEXTURE_WRAP_R, GetGLWrap(aMode));
-		}
-		tglDisable(GLTarget);
-
-		tglDisable(GLTarget);
-	}
+	HPL1_UNIMPLEMENTED(TGLTexture::SetWrapR);
 }
 
 //-----------------------------------------------------------------------
@@ -391,16 +357,6 @@ unsigned int TGLTexture::GetTextureHandle() {
 //-----------------------------------------------------------------------
 
 bool TGLTexture::CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx) {
-	if (mType == eTextureType_RenderTarget)
-		error("trying to create a rendertarget in SDLTexture::CreateBitmapToHandle");
-
-	// For some reason checking for ARB texture is not working on radeon cards.
-	/*if(mTarget == eTextureTarget_Rect && !GLEE_ARB_texture_rectangle)
-	{
-	Error("Rectangle texture target not supported\n");
-	return false;
-	}*/
-
 	TGLenum GLTarget = InitCreation(alHandleIdx);
 
 	Bitmap2D *pBitmapSrc = pBmp;
@@ -425,7 +381,6 @@ bool TGLTexture::CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx) {
 		// Log("OldSize: %d x %d ",mlWidth,mlHeight);
 
 		int lOldW = _width;
-		//int lOldH = _height;
 
 		int lSizeDiv = (int)pow((float)2, (int)mlSizeLevel);
 
@@ -469,12 +424,7 @@ bool TGLTexture::CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx) {
 
 	// Log("Loading %s  %d x %d\n",msName.c_str(), pSrc->GetWidth(), pSrc->GetHeight());
 	// Log("Channels: %d Format: %x\n",lChannels, format);
-
-	if (mTarget == eTextureTarget_1D)
-		tglTexImage2D(GLTarget, 0, internalFormat, _width, 1, 0, format,
-					 TGL_UNSIGNED_BYTE, pPixelSrc);
-	else
-		tglTexImage2D(GLTarget, 0, internalFormat, _width, _height,
+	tglTexImage2D(GLTarget, 0, internalFormat, _width, _height,
 					0, format, TGL_UNSIGNED_BYTE, pPixelSrc);
 
 	//if (tglGetError() != TGL_NO_ERROR)
@@ -529,7 +479,7 @@ TGLenum TGLTexture::GetGLWrap(eTextureWrap aMode) {
 	case eTextureWrap_ClampToEdge:
 		return TGL_CLAMP_TO_EDGE;
 	case eTextureWrap_ClampToBorder:
-		return TGL_CLAMP_TO_EDGE;//TGL_CLAMP_TO_BORDER;
+		return TGL_CLAMP_TO_EDGE; // TGL_CLAMP_TO_BORDER;
 	default:
 		break;
 	}
@@ -537,5 +487,5 @@ TGLenum TGLTexture::GetGLWrap(eTextureWrap aMode) {
 	return TGL_REPEAT;
 }
 
-}
-//-----------------------------------------------------------------------
+} // namespace hpl
+  //-----------------------------------------------------------------------
