@@ -194,11 +194,11 @@ public:
 	// Sound
 	Audio::SoundHandle _handle;
 	bool _usePrerecordedSounds;
-	void playSound(int index);
+	void playSound(int index, bool sync);
 	void playWav(const Common::String filename);
-	void playSoundConst(double hzFreq, int duration);
-	void playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution);
-	void playTeleporter(int totalIters);
+	void playSoundConst(double hzFreq, int duration, bool sync);
+	void playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution, bool sync);
+	void playTeleporter(int totalIters, bool sync);
 
 	// Rendering
 	int _screenW, _screenH;

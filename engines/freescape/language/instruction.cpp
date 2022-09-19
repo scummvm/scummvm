@@ -182,8 +182,9 @@ void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
 
 void FreescapeEngine::executeSound(FCLInstruction &instruction) {
 	uint16 index = instruction.source;
+	bool sync = instruction.additional;
 	debugC(1, kFreescapeDebugCode, "Playing sound %d", index);
-	playSound(index);
+	playSound(index, sync);
 }
 
 void FreescapeEngine::executeDelay(FCLInstruction &instruction) {
