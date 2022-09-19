@@ -280,6 +280,7 @@ struct LingoArchive {
 	SymbolHash functionHandlers;
 
 	ScriptContext *getScriptContext(ScriptType type, uint16 id);
+	ScriptContext *findScriptContext(uint16 id);
 	Common::String getName(uint16 id);
 	Common::String formatFunctionList(const char *prefix);
 
