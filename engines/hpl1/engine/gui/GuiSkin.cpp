@@ -69,7 +69,7 @@ cGuiSkin::cGuiSkin(const tString &asName, cGui *apGui) {
 
 	mvGfxElements.resize(eGuiSkinGfx_LastEnum, NULL);
 	mvFonts.resize(eGuiSkinFont_LastEnum, NULL);
-	mvAttributes.resize(eGuiSkinAttribute_LastEnum, NULL);
+	mvAttributes.resize(eGuiSkinAttribute_LastEnum);
 }
 
 //-----------------------------------------------------------------------
