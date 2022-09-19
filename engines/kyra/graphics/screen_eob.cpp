@@ -1534,8 +1534,10 @@ const uint8 *Screen_EoB::getEGADitheringTable() {
 bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
 	Font *&fnt = _fonts[fontId];
 	int temp = 0;
-	if (fnt)
+	if (fnt) {
 		delete fnt;
+		fnt = nullptr;
+	}
 
 	if (fontId == FID_SJIS_SMALL_FNT) {
 		if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
@@ -1559,8 +1561,12 @@ bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
 	if (!file)
 		error("Font file '%s' is missing", filename);
 
-	bool ret = fnt->load(*file);
-	fnt->setColorMap(_textColorsMap);
+	bool ret = false;
+	if (fnt) {
+		ret = fnt->load(*file);
+		fnt->setColorMap(_textColorsMap);
+	}
+
 	delete file;
 	return ret;
 }
