@@ -211,7 +211,8 @@ void FreescapeEngine::processInput() {
 }
 
 void FreescapeEngine::shoot() {
-	playSound(1);
+	playSound(1, true);
+	_mixer->stopAll();
 	_gfx->renderShoot(0);
 	Math::Vector3d direction = directionToVector(_pitch, _yaw);
 	Math::Ray ray(_position, direction);

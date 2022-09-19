@@ -25,27 +25,27 @@ namespace Freescape {
 
 // If step rate for playSoundSweepIncWL calls needs adjusting,
 // can tweak wlStepPerMS parameter by the factor below.
-const double kFreescapeSweepTuneFactor = 1.0;
+const double kFreescapeSweepTuneFactor = 10.0;
 
-void FreescapeEngine::playSound(int index) {
-	if (!_mixer->isSoundHandleActive(_handle))
-		_mixer->stopHandle(_handle);
+void FreescapeEngine::playSound(int index, bool sync) {
+	//if (!_mixer->isSoundHandleActive(_handle))
+	//	_mixer->stopHandle(_handle);
 
-	debugC(1, kFreescapeDebugMedia, "Playing sound %d", index);
+	debugC(1, kFreescapeDebugMedia, "Playing sound %d with sync: %d", index, sync);
 	switch (index) {
 		case 1:
 			if (_usePrerecordedSounds) {
 				playWav("fsDOS_laserFire.wav");
 				//_system->delayMillis(50);
 			} else
-				playSoundSweepIncWL(1500, 700, 5.46 * kFreescapeSweepTuneFactor, 1);
+				playSoundSweepIncWL(1500, 700, 5.46 * kFreescapeSweepTuneFactor, 1, sync);
 		break;
 		case 2: // Done
 			if (_usePrerecordedSounds) {
 				playWav("fsDOS_WallBump.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(82, 60);
+				playSoundConst(82, 60, sync);
 			}
 		break;
 		case 3:
@@ -53,8 +53,8 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_stairDown.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(220, 50);
-				playSoundConst(185, 50);
+				playSoundConst(220, 50, sync);
+				playSoundConst(185, 50, sync);
 			}
 		break;
 		case 4:
@@ -62,8 +62,8 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_stairUp.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(220, 50);
-				playSoundConst(340, 50);
+				playSoundConst(220, 50, sync);
+				playSoundConst(340, 50, sync);
 			}
 		break;
 		case 5:
@@ -71,7 +71,7 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_roomChange.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundSweepIncWL(262, 100, 65.52 * kFreescapeSweepTuneFactor, 1);
+				playSoundSweepIncWL(262, 100, 65.52 * kFreescapeSweepTuneFactor, 1, sync);
 			}
 		break;
 		case 6:
@@ -79,7 +79,7 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_configMenu.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(830, 60);
+				playSoundConst(830, 60, sync);
 			}
 		break;
 		case 7:
@@ -87,7 +87,7 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_bigHit.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundSweepIncWL(3000, 155, 7.28 * kFreescapeSweepTuneFactor, 1);
+				playSoundSweepIncWL(3000, 155, 7.28 * kFreescapeSweepTuneFactor, 1, sync);
 			}
 		break;
 		case 8:
@@ -95,7 +95,7 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_teleporterActivated.wav");
 				//_system->delayMillis(50);
 			} else {
-				playTeleporter(22);
+				playTeleporter(22, sync);
 			}
 		break;
 
@@ -104,7 +104,7 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_powerUp.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundSweepIncWL(280, 5000, 9.1 * kFreescapeSweepTuneFactor, 1);
+				playSoundSweepIncWL(280, 5000, 9.1 * kFreescapeSweepTuneFactor, 1, sync);
 			}
 		break;
 
@@ -113,17 +113,16 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_energyDrain.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundSweepIncWL(240, 255, 1.82 * kFreescapeSweepTuneFactor, 1);
+				playSoundSweepIncWL(240, 255, 1.82 * kFreescapeSweepTuneFactor, 1, sync);
 			}
 		break;
 
 		case 11: // ???
 			debugC(1, kFreescapeDebugMedia, "Playing unknown sound");
 			if (_usePrerecordedSounds) {
-				//playWav("???.wav");
-				//_system->delayMillis(50);
+				// TODO
 			} else {
-				//playSoundConst(82, 60);
+				// TODO
 			}
 		break;
 
@@ -132,7 +131,7 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_switchOff.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundSweepIncWL(555, 440, 1.82 * kFreescapeSweepTuneFactor, 1);
+				playSoundSweepIncWL(555, 440, 1.82 * kFreescapeSweepTuneFactor, 1, sync);
 			}
 		break;
 
@@ -141,7 +140,7 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_laserHit.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundSweepIncWL(3000, 420, 14.56 * kFreescapeSweepTuneFactor, 1);
+				playSoundSweepIncWL(3000, 420, 14.56 * kFreescapeSweepTuneFactor, 1, sync);
 			}
 		break;
 
@@ -150,7 +149,7 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_tankFall.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundSweepIncWL(785, 310, 1.82 * kFreescapeSweepTuneFactor, 1);
+				playSoundSweepIncWL(785, 310, 1.82 * kFreescapeSweepTuneFactor, 1, sync);
 			}
 		break;
 
@@ -159,18 +158,17 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_successJingle.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(587.330, 250);
-				playSoundConst(740, 175);
-				playSoundConst(880, 450);
+				playSoundConst(587.330, 250, sync);
+				playSoundConst(740, 175, sync);
+				playSoundConst(880, 450, sync);
 			}
 		break;
 
 		case 16: // Silence?
 			if (_usePrerecordedSounds) {
-				//playWav("???.wav");
-				//_system->delayMillis(50);
+				// TODO
 			} else {
-				//playSoundConst(82, 60);
+				// TODO
 			}
 		break;
 
@@ -179,27 +177,25 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_badJingle.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundConst(65, 150);
-				playSoundConst(44, 400);
+				playSoundConst(65, 150, sync);
+				playSoundConst(44, 400, sync);
 			}
 		break;
 
 		case 18: // Silence?
 			if (_usePrerecordedSounds) {
-				//playWav("???.wav");
-				//_system->delayMillis(50);
+				// TODO
 			} else {
-				//playSoundConst(82, 60);
+				// TODO
 			}
 		break;
 
 		case 19:
 			debugC(1, kFreescapeDebugMedia, "Playing unknown sound");
 			if (_usePrerecordedSounds) {
-				//playWav("???.wav");
-				//_system->delayMillis(50);
+				// TODO
 			} else {
-				//playSoundConst(82, 60);
+				// TODO
 			}
 		break;
 
@@ -208,7 +204,7 @@ void FreescapeEngine::playSound(int index) {
 				playWav("fsDOS_bigHit.wav");
 				//_system->delayMillis(50);
 			} else {
-				playSoundSweepIncWL(3000, 155, 7.28 * kFreescapeSweepTuneFactor, 1);
+				playSoundSweepIncWL(3000, 155, 7.28 * kFreescapeSweepTuneFactor, 1, sync);
 			}
 		break;
 		default:
@@ -225,17 +221,18 @@ void FreescapeEngine::playWav(const Common::String filename) {
 }
 
 
-void FreescapeEngine::playSoundConst(double hzFreq, int duration) {
+void FreescapeEngine::playSoundConst(double hzFreq, int duration, bool sync) {
 	Audio::PCSpeaker *speaker = new Audio::PCSpeaker();
 	speaker->setVolume(50);
 	speaker->play(Audio::PCSpeaker::kWaveFormSquare, hzFreq, duration);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, speaker);
-	_system->delayMillis(duration);
-	_mixer->stopHandle(_handle);
+	if (sync) {
+		_system->delayMillis(duration);
+	}
 }
 
 
-void FreescapeEngine::playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution) {
+void FreescapeEngine::playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution, bool sync) {
 	// Play a PC speaker sweep between sound frequencies, using constant wavelength increment.
 
 	// The wavelength step-per-milliseconds value, or wlStepPerMS, describes how
@@ -277,13 +274,13 @@ void FreescapeEngine::playSoundSweepIncWL(double hzFreq1, double hzFreq2, double
 	// Loop over frequency range
 	int hzCounts = (int)((inv2 - inv1) / wlStep);
 	while (hzCounts-- >= 0) {
-		playSoundConst((1193180.0 / inv1), resolution);
+		playSoundConst((1193180.0 / inv1), resolution, sync);
 		inv1 += wlStep;
 	}
 	_mixer->stopHandle(_handle);
 }
 
-void FreescapeEngine::playTeleporter(int totalIters) {
+void FreescapeEngine::playTeleporter(int totalIters, bool sync) {
 	// Play FreeScape DOS teleporter-like effect, which is ascending arpeggio.
 	// Length of effect is variable; provide total number of iterations.
 
@@ -302,7 +299,7 @@ void FreescapeEngine::playTeleporter(int totalIters) {
 
 	// Loop over iterations
 	for (i = 0; i < totalIters; i++) {
-		playSoundConst(1193180.0 / fBase, 21);
+		playSoundConst(1193180.0 / fBase, 21, sync);
 
 		if (stepCycle <= 1)
 		{

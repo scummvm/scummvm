@@ -77,7 +77,7 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (entranceID > 0)
 		traverseEntrance(entranceID);
 
-	playSound(5);
+	playSound(5, false);
 	_lastPosition = _position;
 
 	if (_currentArea->skyColor > 0 && _currentArea->skyColor != 255) {
