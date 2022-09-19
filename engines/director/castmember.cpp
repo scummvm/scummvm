@@ -732,6 +732,7 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 	debugC(2, kDebugLoading | kDebugImages, "Loading video %s -> %s", path.c_str(), path1.c_str());
 	bool result = _video->loadFile(Common::Path(path1, g_director->_dirSeparator));
 	if (!result) {
+		delete _video;
 		_video = new Video::AVIDecoder();
 		result = _video->loadFile(Common::Path(path1, g_director->_dirSeparator));
 	}
