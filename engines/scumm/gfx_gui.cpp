@@ -875,7 +875,7 @@ const char *ScummEngine_v8::getGUIString(int stringId) {
 		resStringId = 35;
 		break;
 	default:
-		return _emptyMsg;
+		break;
 	}
 
 	if (resStringId > 0)
@@ -1002,12 +1002,12 @@ const char *ScummEngine_v7::getGUIString(int stringId) {
 		resStringId = 58;
 		break;
 	default:
-		return _emptyMsg;
+		break;
 	}
 
 	const char *res =  (resStringId > 0) ? d.getPlainEngineString(resStringId) : _emptyMsg;
 
-	if (_game.id == GID_DIG) {
+	if (_game.id == GID_DIG && resStringId > 0) {
 		convertMessageToString((const byte*)res, _guiStringTransBuff, 512);
 		res = (const char*)_guiStringTransBuff;
 	}
@@ -3121,7 +3121,7 @@ const char *ScummEngine_v6::getGUIString(int stringId) {
 		resStringId = 35;
 		break;
 	default:
-		return _emptyMsg;
+		break;
 	}
 
 	if (resStringId > 0)
@@ -3208,7 +3208,7 @@ const char *ScummEngine::getGUIString(int stringId) {
 		resStringId = 28;
 		break;
 	default:
-		return _emptyMsg;
+		break;
 	}
 
 	if (resStringId > 0)
