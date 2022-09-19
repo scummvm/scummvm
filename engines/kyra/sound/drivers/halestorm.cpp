@@ -1820,7 +1820,7 @@ void HSLowLevelDriver::noteOn(uint8 part, uint8 prg, uint8 note, uint8 velo, uin
 		}
 	}
 
-	uint16 type = snd ? READ_BE_UINT16(snd) : 0;
+	uint16 type = READ_BE_UINT16(snd);
 	uint16 n = 0;
 	if (type == 1 || type == 2) {
 		uint16 numTypes = (type == 1) ? READ_BE_UINT16(snd + 2) : 0;

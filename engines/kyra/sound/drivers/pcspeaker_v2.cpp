@@ -68,9 +68,6 @@ void MidiDriver_PCSpeaker::send(uint32 data) {
 		return;
 
 	case 0x90:	// note on
-		if (channel > 1)
-			return;
-
 		if (param2)
 			noteOn(channel, param1);
 		else

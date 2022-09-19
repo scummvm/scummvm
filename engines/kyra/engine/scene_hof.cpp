@@ -626,12 +626,7 @@ void KyraEngine_HoF::initSceneAnims(int unk1) {
 			animState->needRefresh = 1;
 			animState->specialRefresh = 1;
 
-			if (animInit) {
-				_animList = addToAnimListSorted(_animList, animState);
-			} else {
-				_animList = initAnimList(_animList, animState);
-				animInit = true;
-			}
+			_animList = addToAnimListSorted(_animList, animState);
 		}
 	}
 
