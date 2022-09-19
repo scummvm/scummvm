@@ -91,8 +91,8 @@ inline int transpose_clamp(int a, int b, int c) {
 //////////////////////////////////////////////////
 
 struct TimerCallbackInfo {
-	IMuseInternal *imuse;
-	MidiDriver *driver;
+	IMuseInternal *imuse = nullptr;
+	MidiDriver *driver = nullptr;
 };
 
 struct HookDatas {
