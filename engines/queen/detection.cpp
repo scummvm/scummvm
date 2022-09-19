@@ -36,6 +36,7 @@ static const PlainGameDescriptor queenGames[] = {
 };
 
 #define GAMEOPTION_ALT_INTRO  GUIO_GAMEOPTIONS1
+#define GAMEOPTION_ALT_FONT  GUIO_GAMEOPTIONS2 
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
@@ -44,6 +45,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Alternative intro"),
 			_s("Use an alternative game intro (CD version only)"),
 			"alt_intro",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_ALT_FONT,
+		{
+			_s("Improved font"),
+			_s("Use an easier to read custom font"),
+			"alt_font",
 			false,
 			0,
 			0
@@ -273,7 +285,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::HE_ISR,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GAMEOPTION_ALT_INTRO)
+			GUIO2(GAMEOPTION_ALT_INTRO, GAMEOPTION_ALT_FONT)
 		},
 	},
 
@@ -377,7 +389,7 @@ static const QueenGameDescription gameDescriptions[] = {
 			Common::HE_ISR,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GAMEOPTION_ALT_INTRO)
+			GUIO2(GAMEOPTION_ALT_INTRO, GAMEOPTION_ALT_FONT)
 		},
 	},
 
