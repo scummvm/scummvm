@@ -21,6 +21,7 @@
 
 #include "hpl1/engine/game/low_level_game_setup.h"
 #include "hpl1/engine/system/low_level_system.h"
+#include "hpl1/engine/impl/low_level_graphics_tgl.h"
 #include "hpl1/engine/impl/KeyboardSDL.h"
 #include "hpl1/engine/impl/LowLevelGraphicsSDL.h"
 #include "hpl1/engine/impl/LowLevelInputSDL.h"
@@ -39,7 +40,7 @@ static iLowLevelGraphics *createLowLevelGfx()
 	if (Hpl1::useOpenGL())
 		return hplNew(cLowLevelGraphicsSDL, ());
 #endif
-	error("only opengl graphics are supported");
+	return hplNew(LowLevelGraphicsTGL, ());
 }
 
 LowLevelGameSetup::LowLevelGameSetup() {
