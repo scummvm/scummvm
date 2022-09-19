@@ -47,6 +47,7 @@ private:
 	bool cmdNextFrame(int argc, const char **argv);
 	bool cmdRepl(int argc, const char **argv);
 	bool cmdBacktrace(int argc, const char **argv);
+	bool cmdDisasm(int argc, const char **argv);
 	bool cmdStack(int argc, const char **argv);
 	bool cmdScriptFrame(int argc, const char **argv);
 	bool cmdFuncs(int argc, const char **argv);

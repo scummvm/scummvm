@@ -251,6 +251,15 @@ ScriptContext *LingoArchive::getScriptContext(ScriptType type, uint16 id) {
 	return scriptContexts[type][id];
 }
 
+ScriptContext *LingoArchive::findScriptContext(uint16 id) {
+	for (int i = 0; i < kMaxScriptType + 1; i++) {
+		if (scriptContexts[i].contains(id)) {
+			return scriptContexts[i][id];
+		}
+	}
+	return nullptr;
+}
+
 Common::String LingoArchive::getName(uint16 id) {
 	Common::String result;
 	if (id >= names.size()) {
@@ -400,12 +409,17 @@ Common::String Lingo::formatFrame() {
 }
 
 Common::String Lingo::formatCurrentInstruction() {
-	return Common::String::format("[%3d]: %s", _pc, decodeInstruction(_currentScript, _pc).c_str());
+	Common::String instr = decodeInstruction(_currentScript, _pc);
+	if (instr.empty())
+		return instr;
+	return Common::String::format("[%3d]: %s", _pc, instr.c_str());
 }
 
 Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
 	void *opcodeFunc;
 	Common::String res;
+	if (!sd || pc >= sd->size())
+		return res;
 
 	opcodeFunc = (void *)(*sd)[pc++];
 	if (_functions.contains(opcodeFunc)) {
@@ -512,10 +526,11 @@ Common::String Lingo::formatFunctionBody(Symbol &sym) {
 	Common::String result;
 	if (sym.type != HANDLER)
 		return result;
+	if (sym.ctx && sym.ctx->_id)
+		result += Common::String::format("%d:", sym.ctx->_id);
 	result += formatFunctionName(sym);
 	result += "\n";
 	result += decodeScript(sym.u.defn);
-	result += "\n";
 	return result;
 }
 

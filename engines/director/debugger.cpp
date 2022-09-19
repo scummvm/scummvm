@@ -27,11 +27,12 @@
 #include "director/frame.h"
 #include "director/movie.h"
 #include "director/score.h"
+#include "director/util.h"
+#include "director/window.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-codegen.h"
-#include "director/util.h"
 
 namespace Director {
 
@@ -60,6 +61,8 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("funcs", WRAP_METHOD(Debugger, cmdFuncs));
 	registerCmd("backtrace", WRAP_METHOD(Debugger, cmdBacktrace));
 	registerCmd("bt", WRAP_METHOD(Debugger, cmdBacktrace));
+	registerCmd("disasm", WRAP_METHOD(Debugger, cmdDisasm));
+	registerCmd("da", WRAP_METHOD(Debugger, cmdDisasm));
 	registerCmd("vars", WRAP_METHOD(Debugger, cmdVars));
 	registerCmd("step", WRAP_METHOD(Debugger, cmdStep));
 	registerCmd("s", WRAP_METHOD(Debugger, cmdStep));
@@ -106,7 +109,7 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	//debugPrintf(" eval [statement] - Evaluates a single Lingo statement\n");
 	debugPrintf(" repl - Switches to a REPL interface for evaluating Lingo code\n");
 	debugPrintf(" backtrace / bt - Prints a backtrace of all stack frames\n");
-	//debugPrintf(" disasm [scriptid:funcname] - Lists the bytecode disassembly for a script function\n");
+	debugPrintf(" disasm / da [scriptid:funcname] - Lists the bytecode disassembly for a script function\n");
 	debugPrintf(" stack / st - Lists the elements on the stack\n");
 	debugPrintf(" scriptframe / sf - Prints the current script frame\n");
 	debugPrintf(" funcs - Lists all of the functions available in the current script frame\n");
@@ -225,21 +228,24 @@ bool Debugger::cmdStack(int argc, const char **argv) {
 bool Debugger::cmdScriptFrame(int argc, const char **argv) {
 	Lingo *lingo = g_director->getLingo();
 	debugPrintf("%s\n", lingo->formatFrame().c_str());
-	debugPrintf("\n");
+	debugPrintf("%s\n", lingo->formatCurrentInstruction().c_str());
 	return true;
 }
 
 bool Debugger::cmdFuncs(int argc, const char **argv) {
 	Lingo *lingo = g_director->getLingo();
+	Movie *movie = g_director->getCurrentMovie();
+	Score *score = movie->getScore();
 	ScriptContext *csc = lingo->_currentScriptContext;
-	debugPrintf("Frame functions:\n");
 	if (csc) {
-		debugPrintf("%s", csc->formatFunctionList("  ").c_str());
+		debugPrintf("Functions attached to frame %d:\n", score->getCurrentFrame());
+		debugPrintf("  %d:", csc->_id);
+		debugPrintf("%s", csc->formatFunctionList("    ").c_str());
 	} else {
+		debugPrintf("Functions attached to frame %d:\n", score->getCurrentFrame());
 		debugPrintf("  [empty]\n");
 	}
 	debugPrintf("\n");
-	Movie *movie = g_director->getCurrentMovie();
 	debugPrintf("Cast functions:\n");
 	Cast *cast = movie->getCast();
 	if (cast && cast->_lingoArchive) {
@@ -262,6 +268,56 @@ bool Debugger::cmdFuncs(int argc, const char **argv) {
 bool Debugger::cmdBacktrace(int argc, const char **argv) {
 	Lingo *lingo = g_director->getLingo();
 	debugPrintf("%s\n", lingo->formatCallStack(lingo->_pc).c_str());
+	return true;
+}
+
+bool Debugger::cmdDisasm(int argc, const char **argv) {
+	Lingo *lingo = g_director->getLingo();
+	if (argc == 2) {
+		Common::String target(argv[1]);
+		uint splitPoint = target.findFirstOf(":");
+		if (splitPoint == Common::String::npos) {
+			debugPrintf("Must provide target in format scriptid:funcname.\n");
+			return true;
+		}
+		Common::String scriptIdStr = target.substr(0, splitPoint);
+		int scriptId = atoi(scriptIdStr.c_str());
+		if (!scriptId) {
+			debugPrintf("Invalid scriptid, must be an integer.\n");
+			return true;
+		}
+
+		Common::String funcName = target.substr(splitPoint + 1, Common::String::npos);
+		Movie *movie = g_director->getCurrentMovie();
+		Cast *cast = movie->getCast();
+		if (cast && cast->_lingoArchive) {
+			ScriptContext *ctx = cast->_lingoArchive->findScriptContext(scriptId);
+			if (ctx && ctx->_functionHandlers.contains(funcName)) {
+				debugPrintf("%s\n", lingo->formatFunctionBody(ctx->_functionHandlers[funcName]).c_str());
+				return true;
+			}
+		}
+		Cast *sharedCast = movie->getSharedCast();
+		if (sharedCast && sharedCast->_lingoArchive) {
+			ScriptContext *ctx = sharedCast->_lingoArchive->findScriptContext(scriptId);
+			if (ctx && ctx->_functionHandlers.contains(funcName)) {
+				debugPrintf("%s\n", lingo->formatFunctionBody(ctx->_functionHandlers[funcName]).c_str());
+				return true;
+			}
+		}
+
+	} else {
+		Common::Array<CFrame *> &callstack = g_director->getCurrentWindow()->_callstack;
+		if (callstack.size() == 0) {
+			debugPrintf("Lingo is not executing, nothing to disassemble.\n");
+			return true;
+		} else {
+			CFrame *frame = callstack[callstack.size() - 1];
+			debugPrintf("%s\n", lingo->formatFunctionBody(frame->sp).c_str());
+			return true;
+		}
+	}
+	debugPrintf("Script not found.\n");
 	return true;
 }
 
