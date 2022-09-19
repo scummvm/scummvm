@@ -92,10 +92,11 @@ EclipseEngine::EclipseEngine(OSystem *syst) : FreescapeEngine(syst) {
 	}
 
 	const char **messagePtr = rawMessagesTable;
+	debugC(1, kFreescapeDebugParser, "String table:");
 	while (*messagePtr) {
 		Common::String message(*messagePtr);
 		_messagesList.push_back(message);
-		debug("%s", message.c_str());
+		debugC(1, kFreescapeDebugParser, "%s", message.c_str());
 		messagePtr++;
 	}
 }

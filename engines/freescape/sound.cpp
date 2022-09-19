@@ -118,7 +118,7 @@ void FreescapeEngine::playSound(int index) {
 		break;
 
 		case 11: // ???
-			debug("Playing unknown sound");
+			debugC(1, kFreescapeDebugMedia, "Playing unknown sound");
 			if (_usePrerecordedSounds) {
 				//playWav("???.wav");
 				//_system->delayMillis(50);
@@ -194,7 +194,7 @@ void FreescapeEngine::playSound(int index) {
 		break;
 
 		case 19:
-			debug("Playing unknown sound");
+			debugC(1, kFreescapeDebugMedia, "Playing unknown sound");
 			if (_usePrerecordedSounds) {
 				//playWav("???.wav");
 				//_system->delayMillis(50);

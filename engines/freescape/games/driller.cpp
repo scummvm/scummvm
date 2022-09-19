@@ -67,7 +67,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		traverseEntrance(entranceID);
 	} else if (entranceID == 0) {
 		Math::Vector3d diff = _lastPosition - _position;
-		debug("dif: %f %f %f", diff.x(), diff.y(), diff.z());
+		//debug("dif: %f %f %f", diff.x(), diff.y(), diff.z());
 		// diff should be used to determinate which entrance to use
 		int newPos = -1;
 		if (abs(diff.x()) < abs(diff.z())) {
@@ -254,7 +254,7 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 	int heightLastObject;
 
 	id = 255;
-	debug("Adding object %d to room structure", id);
+	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
 	obj = (GeometricObject*) _areaMap[255]->objectWithID(id);
 	assert(obj);
 	obj = obj->duplicate();
@@ -266,7 +266,7 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 	heightLastObject = obj->getSize().y();
 
 	id = 254;
-	debug("Adding object %d to room structure", id);
+	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
 	obj = (GeometricObject*) _areaMap[255]->objectWithID(id);
 	assert(obj);
 	// Set position for object
@@ -285,7 +285,7 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 	origin.setValue(2, origin.z() + obj->getSize().z() / 5);
 
 	id = 253;
-	debug("Adding object %d to room structure", id);
+	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
 	obj = (GeometricObject*) _areaMap[255]->objectWithID(id);
 	assert(obj);
 	obj = obj->duplicate();
@@ -304,7 +304,7 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 	//origin.setValue(2, origin.z() - obj->getSize().z() / 5);
 
 	id = 252;
-	debug("Adding object %d to room structure", id);
+	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
 	obj = (GeometricObject*) _areaMap[255]->objectWithID(id);
 	assert(obj);
 	obj = obj->duplicate();
