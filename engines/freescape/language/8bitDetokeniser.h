@@ -34,11 +34,9 @@ enum {
 	k8bitVariableScore = 61
 };
 
-
-static uint8 k8bitMaxVariable = 64;
-static uint8 k8bitMaxShield = 64;
-static uint8 k8bitMaxEnergy = 64;
-
+extern uint8 k8bitMaxVariable;
+extern uint8 k8bitMaxShield;
+extern uint8 k8bitMaxEnergy;
 
 Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition, FCLInstructionVector &instructions);
 

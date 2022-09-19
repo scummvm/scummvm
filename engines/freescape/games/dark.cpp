@@ -77,7 +77,6 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 	int scale = _currentArea->getScale();
 	assert(scale > 0);
 
-	Entrance *entrance = nullptr;
 	if (entranceID > 0 || areaID == 127) {
 		traverseEntrance(entranceID);
 	} else if (entranceID == 0) {

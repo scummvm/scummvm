@@ -27,6 +27,10 @@
 
 namespace Freescape {
 
+uint8 k8bitMaxVariable = 64;
+uint8 k8bitMaxShield = 64;
+uint8 k8bitMaxEnergy = 64;
+
 Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition, FCLInstructionVector &instructions) {
 	Common::String detokenisedStream;
 	Common::Array<uint8>::size_type bytePointer = 0;
