@@ -84,6 +84,7 @@ private:
 		uint16 getHeight() const { return _displaySurface.h; }
 		Graphics::PixelFormat getPixelFormat() const { return _displaySurface.format; }
 		int getCurFrame() const { return _curFrame; }
+		const Common::Rational &getFrameRate() const { return _frameRate; }
 		uint32 getNextFrameStartTime() const { return (uint32)(_nextFrameStartTime * 1000); }
 		const Graphics::Surface *decodeNextFrame() { return &_displaySurface; }
 
