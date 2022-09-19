@@ -52,7 +52,7 @@ private:
 	cGraphics *mpGraphics;
 	cResources *mpResources;
 
-	tUIntVec mvImageHandle;
+	tIntVec mvImageHandle;
 };
 
 }     // namespace hpl
