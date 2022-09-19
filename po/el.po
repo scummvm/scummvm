@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-09-18 14:16+0000\n"
+"POT-Creation-Date: 2022-09-19 22:27+0000\n"
 "PO-Revision-Date: 2022-08-22 17:11+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -4356,7 +4356,7 @@ msgstr "Δεν βρέθηκε το αρχείο ενδιάμεσης σκηνή�
 msgid "AGOS 2 support is not compiled in"
 msgstr "Η υποστήριξη για το AGOS 2 δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
-#: engines/agos/midi.cpp:184 engines/kyra/sound/sound_pc_midi.cpp:75
+#: engines/agos/midi.cpp:184 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"

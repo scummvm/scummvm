@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-09-18 14:16+0000\n"
+"POT-Creation-Date: 2022-09-19 22:27+0000\n"
 "PO-Revision-Date: 2022-07-13 06:51+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4306,7 +4306,7 @@ msgstr "Cutscene bestand '%s' niet gevonden!"
 msgid "AGOS 2 support is not compiled in"
 msgstr "Ondersteuning voor AGOS 2 is niet meegecompileerd"
 
-#: engines/agos/midi.cpp:184 engines/kyra/sound/sound_pc_midi.cpp:75
+#: engines/agos/midi.cpp:184 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
