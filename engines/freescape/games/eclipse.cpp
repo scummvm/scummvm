@@ -30,26 +30,26 @@ namespace Freescape {
 static const entrancesTableEntry rawEntranceTable[] = {
 	{183, {36, 137, 13}}, // Correct?
 	{184, {36, 137, 13}}, // TODO
-	{185, {36, 137, 13}}, // TODO
-	{186, {36, 137, 13}}, // TODO
+	{185, {204, 68, 66}},
+	{186, {204, 88, 66}},
 	{187, {36, 137, 13}}, // TODO
-	{188, {36, 137, 13}}, // TODO
+	{188, {352, 105, 204}},
 	{190, {36, 137, 13}}, // TODO
-	{191, {36, 137, 13}}, // TODO
+	{191, {49, 7, 23}}, // TODO
 	{192, {36, 137, 13}}, // TODO
 	{193, {36, 137, 13}}, // TODO
 	{194, {36, 137, 13}}, // TODO
 	{195, {36, 137, 13}}, // TODO
-	{196, {36, 137, 13}}, // TODO
+	{196, {36, 137, 13}}, // <-
 	{197, {203, 0, 31}},  // TODO
 	{198, {36, 137, 13}}, // TODO
 	{199, {36, 137, 13}}, // TODO
 	{200, {36, 137, 13}}, // TODO
 	{201, {36, 137, 13}}, // TODO
-	{202, {360, 0, 373}}, // TODO
-	{203, {207, 0, 384}},
-	{204, {207, 0, 372}},
-	{206, {36, 137, 13}}, // TODO
+	{202, {360, 25, 373}},
+	{203, {207, 25, 384}},
+	{204, {33, 48, 366}},
+	{206, {25, 8, 200}},
 	{0, {0, 0, 0}},        // NULL
 };
 
@@ -151,6 +151,9 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 		assert(_entranceTable.contains(entranceID));
 		const entrancesTableEntry *entry = _entranceTable[entranceID];
 		_position = scale * Math::Vector3d(entry->position[0], entry->position[1], entry->position[2]);
+		_position.setValue(1, _position.y() + scale * _playerHeight);
+		debugC(1, kFreescapeDebugMove, "entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
+		debugC(1, kFreescapeDebugMove, "player height: %d", scale * _playerHeight);
 	} else
 		traverseEntrance(entranceID);
 
