@@ -151,9 +151,9 @@ void dgPolygonSoupDatabaseBuilder::AddMesh(const dgFloat32* const vertex,
     {
       convexFaces = 1;
       dgBigVector p0(m_vertexPoints[pool[2]]);
-      for (dgInt32 i = 0; i < 3; i++)
+      for (dgInt32 m = 0; m < 3; m++)
       {
-        dgBigVector p1(m_vertexPoints[pool[i]]);
+        dgBigVector p1(m_vertexPoints[pool[m]]);
         dgBigVector edge(p1 - p0);
         dgFloat64 mag2 = edge % edge;
         if (mag2 < dgFloat32(1.0e-6f))
@@ -187,18 +187,18 @@ void dgPolygonSoupDatabaseBuilder::AddMesh(const dgFloat32* const vertex,
     }
 
     dgInt32 index = 0;
-    for (dgInt32 k = 0; k < convexFaces; k++)
+    for (dgInt32 m = 0; m < convexFaces; m++)
     {
-      dgInt32 count = faces[k];
+      dgInt32 fcount = faces[m];
       m_vertexIndex[m_indexCount] = faceTagsData[i];
       m_indexCount++;
-      for (dgInt32 j = 0; j < count; j++)
+      for (dgInt32 j = 0; j < fcount; j++)
       {
         m_vertexIndex[m_indexCount] = pool[index];
         index++;
         m_indexCount++;
       }
-      m_faceVertexCount[m_faceCount] = count + 1;
+      m_faceVertexCount[m_faceCount] = fcount + 1;
       m_faceCount++;
     }
   }
@@ -1026,8 +1026,8 @@ dgInt32 dgPolygonSoupDatabaseBuilder::AddConvexFace(dgInt32 count,
         e1 = e1.Scale(dgRsqrt (e1 % e1 + dgFloat32(1.0e-10f)));
 
         dgBigVector n(e0 * e1);
-        dgFloat64 mag2 = n % normal;
-        if (mag2 < dgFloat32(1.0e-5f))
+        dgFloat64 nmag2 = n % normal;
+        if (nmag2 < dgFloat32(1.0e-5f))
         {
           isconvex = 0;
           break;
@@ -1084,17 +1084,17 @@ dgInt32 dgPolygonSoupDatabaseBuilder::AddConvexFace(dgInt32 count,
     dgPolyhedra::Iterator iter(polyhedra2);
     for (iter.Begin(); iter; iter++)
     {
-      dgEdge* const edge = &(*iter);
-      if (edge->m_incidentFace < 0)
+      dgEdge* const iedge = &(*iter);
+      if (iedge->m_incidentFace < 0)
       {
         continue;
       }
-      if (edge->m_mark == mark)
+      if (iedge->m_mark == mark)
       {
         continue;
       }
 
-      ptr = edge;
+      ptr = iedge;
       count = 0;
       do
       {
@@ -1103,7 +1103,7 @@ dgInt32 dgPolygonSoupDatabaseBuilder::AddConvexFace(dgInt32 count,
         index++;
         count++;
         ptr = ptr->m_next;
-      } while (ptr != edge);
+      } while (ptr != iedge);
 
       facesArray[facesCount] = count;
       facesCount++;
