@@ -53,7 +53,7 @@ void TinyGLRenderer::freeTexture(Texture *texture) {
 }
 
 void TinyGLRenderer::init() {
-	debug("Initializing Software 3D Renderer");
+	//debug("Initializing Software 3D Renderer");
 
 	computeScreenViewport();
 
