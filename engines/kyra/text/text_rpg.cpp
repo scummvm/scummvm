@@ -74,6 +74,8 @@ TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(e
 	_table1 = new char[128]();
 	_table2 = new char[16]();
 
+	_tempString1 = _tempString2 = 0;
+
 	_waitButtonSpace = 0;
 }
 

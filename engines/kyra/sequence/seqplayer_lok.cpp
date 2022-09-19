@@ -42,6 +42,17 @@ SeqPlayer::SeqPlayer(KyraEngine_LoK *vm, OSystem *system) {
 	_seqSkipCommand = false;
 	_seqLoopPos = 0;
 
+	_seqData = nullptr;
+	_seqWsaCurDecodePage = 0;
+	_seqDisplayedTextTimer = 0;
+	_seqDisplayTextFlag = false;
+	_seqDisplayedText = 0;;
+	_seqDisplayedChar = 0;
+	_seqDisplayedTextX = 0;
+	_seqTalkTextPrinted = false;
+	_seqTalkTextRestored = false;
+	_seqQuitFlag = false;
+
 	for (int i = 0; i < ARRAYSIZE(_handShapes); ++i)
 		_handShapes[i] = nullptr;
 	for (int i = 0; i < ARRAYSIZE(_seqMovies); ++i)

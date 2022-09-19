@@ -26,7 +26,7 @@
 #include "common/endian.h"
 
 namespace Kyra {
-EMCInterpreter::EMCInterpreter(KyraEngine_v1 *vm) : _vm(vm), _scriptData(nullptr), _filename(nullptr) {
+EMCInterpreter::EMCInterpreter(KyraEngine_v1 *vm) : _vm(vm), _scriptData(nullptr), _filename(nullptr), _parameter(0) {
 #define OPCODE(x) { &EMCInterpreter::x, #x }
 	static const OpcodeEntry opcodes[] = {
 		// 0x00

@@ -384,6 +384,11 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 	_target = kHoF;
 	_firstScene = _loopStartScene = 0;
 
+	_specialAnimTimeOutTotal = 0;
+	_specialAnimFrameTimeOut = 0;
+
+	memset(_hofDemoItemShapes, 0, sizeof(_hofDemoItemShapes));
+
 	_defaultFont = (_vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : ((_vm->gameFlags().lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : Screen::FID_GOLDFONT_FNT);
 	_creditsFont = (_vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT;
 	_creditsFont2 = (_vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_GOLDFONT_FNT : Screen::FID_8_FNT;

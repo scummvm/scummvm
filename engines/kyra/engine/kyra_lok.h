@@ -66,8 +66,8 @@ struct Room {
 };
 
 struct SeqLoop {
-	const uint8 *ptr;
-	uint16 count;
+	const uint8 *ptr = nullptr;
+	uint16 count = 0;
 };
 
 struct SceneExits {

@@ -71,6 +71,7 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 	_segaCustomPalettes = 0;
 	_palFaders = 0;
 	_defaultRenderBuffer = 0;
+	_defaultRenderBufferSize = 0;
 	_specialColorReplace = false;
 	memset(_segaCurPalette, 0, sizeof(_segaCurPalette));
 }
