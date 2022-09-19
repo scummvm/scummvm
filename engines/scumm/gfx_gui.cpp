@@ -412,8 +412,8 @@ void ScummEngine::clearBanner() {
 }
 
 void ScummEngine::setBannerColors(int bannerId, byte r, byte g, byte b) {
-	if (bannerId < 0 || bannerId > 50) {
-		debug(1, "ScummEngine::setBannerColors(): invalid slot %d out of range (min %d, max %d)", bannerId, 0, 50);
+	if (bannerId < 0 || bannerId > 49) {
+		debug(1, "ScummEngine::setBannerColors(): invalid slot %d out of range (min %d, max %d)", bannerId, 0, 49);
 		return;
 	}
 
