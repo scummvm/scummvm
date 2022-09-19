@@ -317,7 +317,7 @@ iMaterial *cMaterialManager::LoadFromFile(const tString &asName, const tString &
 				pTex = mpResources->GetTextureManager()->Create1D(sFile, bMipMaps, bCompress,
 																  eTextureType_Normal,
 																  mlTextureSizeLevel);
-			} else if (eTextureTarget_CubeMap) {
+			} else if (target == eTextureTarget_CubeMap) {
 				pTex = mpResources->GetTextureManager()->CreateCubeMap(sFile, bMipMaps, bCompress,
 																	   eTextureType_Normal,
 																	   mlTextureSizeLevel);
