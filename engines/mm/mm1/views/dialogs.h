@@ -24,6 +24,7 @@
 
 #include "mm/mm1/events.h"
 #include "mm/mm1/views/are_you_ready.h"
+#include "mm/mm1/views/combat.h"
 #include "mm/mm1/views/create_characters.h"
 #include "mm/mm1/views/encounter.h"
 #include "mm/mm1/views/game.h"
@@ -57,6 +58,7 @@ namespace Views {
 struct Dialogs {
 private:
 	Views::AreYouReady _areYouReady;
+	Views::Combat _combat;
 	Views::CreateCharacters _createCharacters;
 	Views::Encounter _encounter;
 	Views::Game _game;

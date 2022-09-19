@@ -284,6 +284,7 @@
 		gold: "GOLD"
 		not_enough: "NOT ENOUGH"
 		alignment_slips: "*** ALIGNMENT SLIPS ***"
+		combat: "COMBAT!"
 
 enhdialogs:
 	character:

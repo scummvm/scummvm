@@ -41,8 +41,11 @@ bool Monsters::load() {
 		line = Common::String(line.c_str() + 17);
 
 		mon._count = getNextValue(line);
+		mon._field10 = getNextValue(line);
+		mon._field11 = getNextValue(line);
+		mon._field12 = getNextValue(line);
 
-		for (int i = 0; i < 16; ++i)
+		for (int i = 0; i < 13; ++i)
 			mon._unk[i] = getNextValue(line);
 	}
 

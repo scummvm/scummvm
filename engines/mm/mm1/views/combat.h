@@ -19,49 +19,64 @@
  *
  */
 
-#ifndef MM1_DATA_PARTY_H
-#define MM1_DATA_PARTY_H
+#ifndef MM1_VIEWS_COMBAT_H
+#define MM1_VIEWS_COMBAT_H
 
-#include "common/array.h"
-#include "mm/mm1/data/character.h"
+#include "mm/mm1/events.h"
+#include "mm/mm1/data/party.h"
+#include "mm/mm1/game/encounter.h"
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 
-#define MAX_PARTY_SIZE 6
+class Combat : public TextView {
+private:
+	enum Mode {
+		BATTLE
+	};
+	Mode _mode = BATTLE;
+	int _monstersCount = 0;
+	Common::Array<Character *> _party;
+	Monster *_monsterP;
+	byte _arr1[MAX_COMBAT_MONSTERS];
+	byte _arr2[MAX_COMBAT_MONSTERS];
+	byte _arr3[MAX_COMBAT_MONSTERS];
+	byte _arr4[MAX_PARTY_SIZE];
+	int _val1, _val8, _val9, _val10;
+	int _monsterIndex;
 
-struct Party : public Common::Array<Character> {
-	/**
-	 * Share food, gold, gems between entire party
-	 */
-	static void share(TransferKind shareType);
-
-	/**
-	 * Get the party gold combined
-	 */
-	uint getPartyGold() const;
-
-	/**
-	 * Reset entire party's gold to zero
-	 */
-	void clearPartyGold();
-
-	/**
-	 * Reset entire party's gems to zero
-	 */
-	void clearPartyGems();
-
-	/**
-	 * Reset entire party's food to zero
-	 */
-	void clearPartyFood();
+	void clear();
+	void loadArrays();
+	void monsterIndexOf();
+public:
+	Combat();
+	virtual ~Combat() {}
 
 	/**
-	 * Update the entire party AC
+	 * Called when the view is focused
 	 */
-	void updateAC();
+	bool msgFocus(const FocusMessage &msg) override;
+
+	/**
+	 * Draw the Combat details overlayed on
+	 * the existing game screen
+	 */
+	void draw() override;
+
+	/**
+	 * Handles delay timeouts
+	 */
+	void timeout() override;
+
+	/**
+	 * Handles keypresses
+	 */
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
+} // namespace Views
 } // namespace MM1
 } // namespace MM
 
