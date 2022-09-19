@@ -34,7 +34,11 @@ namespace MM1 {
 struct Monster {
 	Common::String _name; // char _name[15];
 	byte _count;
-	byte _unk[16];
+	byte _field10;
+	byte _field11;
+	byte _field12;
+	byte _unk[12];
+	byte _field1f;
 };
 
 class Monsters {

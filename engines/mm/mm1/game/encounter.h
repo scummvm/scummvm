@@ -30,6 +30,8 @@ namespace MM {
 namespace MM1 {
 namespace Game {
 
+#define MAX_COMBAT_MONSTERS 15
+
 enum EncounterType {
 	FORCE_SURPRISED = -1, NORMAL_SURPRISED = 0, NORMAL_ENCOUNTER = 1
 };

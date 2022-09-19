@@ -75,7 +75,7 @@ void Encounter::execute() {
 			comp = MIN(maxVal, 10);
 		}
 
-		assert(_monsterIndex < 15);
+		assert(_monsterIndex < MAX_COMBAT_MONSTERS);
 		_arr1[_monsterIndex] = comp;
 		_monsterNum16 = comp;
 		_levelIndex += comp;
@@ -84,7 +84,7 @@ void Encounter::execute() {
 		_arr2[_monsterIndex] = _monsterNum;
 		_monsterIndex = (_monsterIndex + 1) & 0xff;
 
-		if (_monsterIndex < 15) {
+		if (_monsterIndex < MAX_COMBAT_MONSTERS) {
 			if (_monsterIndex >= map[34])
 				goto exit_loop;
 
@@ -97,7 +97,7 @@ void Encounter::execute() {
 				_levelIndex += _arr1[_monsterIndex];
 				_arr2[_monsterIndex] = _arr2[_monsterIndex - 1];
 
-				if (++_monsterIndex >= 15)
+				if (++_monsterIndex >= MAX_COMBAT_MONSTERS)
 					goto exit_loop;
 
 				if (_monsterIndex >= map[34])
@@ -115,7 +115,7 @@ exit_loop:
 		maxVal = (_arr1[i] - 1) * 16 + _arr2[i];
 		if (_arr1[i] < 1 || _arr1[i] > 12 || maxVal >= 196) {
 			_arr1[i] = 10;
-			_arr2[i] = g_engine->getRandomNumber(1, 15);
+			_arr2[i] = g_engine->getRandomNumber(1, MAX_COMBAT_MONSTERS);
 		}
 
 		// Add monster details to list
@@ -125,8 +125,8 @@ exit_loop:
 
 		if (_monsterNum16 > _val9) {
 			_val9 = _monsterNum16;
-			_fleeThreshold = mons._unk[0];
-			_monsterImgNum = mons._unk[15];
+			_fleeThreshold = mons._field10;
+			_monsterImgNum = mons._field1f;
 		}
 	}
 

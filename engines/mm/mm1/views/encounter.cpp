@@ -140,7 +140,7 @@ void Encounter::draw() {
 			Sound::sound(SOUND_2);
 		}
 
-		_mode = ALIGNMENT_CHECK;
+		_mode = BATTLE;
 	}
 }
 
@@ -173,8 +173,9 @@ void Encounter::timeout() {
 		}
 		break;
 
-	case ALIGNMENT_CHECK:
-		_mode = BATTLE;
+	case BATTLE:
+		// Switch to combat view
+		replaceView("Combat");
 		break;
 
 	default:
