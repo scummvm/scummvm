@@ -309,8 +309,8 @@ GeometricObject::~GeometricObject() {
 
 bool GeometricObject::isDrawable() { return true; }
 bool GeometricObject::isPlanar() {
-	Type type = this->getType();
-	return (type >= Object::Line) || type == Object::Rectangle || !size.x() || !size.y() || !size.z();
+	Type t = this->getType();
+	return (t >= Object::Line) || t == Object::Rectangle || !size.x() || !size.y() || !size.z();
 }
 
 bool GeometricObject::collides(const Math::AABB &_boundingBox) {

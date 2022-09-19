@@ -515,7 +515,7 @@ void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset) {
 void FreescapeEngine::loadMessages(Common::SeekableReadStream *file, int offset, int size, int number) {
 	file->seek(offset);
 	byte *buffer = (byte *)malloc(size + 1);
-	buffer[size] = NULL;
+	buffer[size] = 0;
 	debugC(1, kFreescapeDebugParser, "String table:");
 
 	for (int i = 0; i < number; i++) {
