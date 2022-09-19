@@ -60,7 +60,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 	assert(byteSizeOfObject >= 9);
 	byteSizeOfObject = byteSizeOfObject - 9;
 	if (objectID == 255 && objectType == Object::Type::Entrance) {
-		debug("Found the room structure (objectID: 255 with size %d)", byteSizeOfObject + 6);
+		debugC(1, kFreescapeDebugParser, "Found the room structure (objectID: 255 with size %d)", byteSizeOfObject + 6);
 		byte *structureData = (byte*)malloc(byteSizeOfObject + 6);
 		structureData[0] = int(position.x());
 		structureData[1] = int(position.y());
@@ -190,7 +190,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 	} break;
 
 	case Object::Group:
-		debug("Object of type 'group'");
+		debugC(1, kFreescapeDebugParser, "Object of type 'group'");
 		file->seek(byteSizeOfObject, SEEK_CUR);
 		return new Sensor(
 			objectID,
@@ -470,7 +470,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 			else
 				debugC(1, kFreescapeDebugParser, "WARNING: area ID repeated: %d", newArea->getAreaID());
 		} else {
-			debug("Invalid area %d?", area);
+			debugC(1, kFreescapeDebugParser, "Invalid area %d?", area);
 			break;
 		}
 	}
@@ -516,12 +516,13 @@ void FreescapeEngine::loadMessages(Common::SeekableReadStream *file, int offset,
 	file->seek(offset);
 	byte *buffer = (byte *)malloc(size + 1);
 	buffer[size] = NULL;
+	debugC(1, kFreescapeDebugParser, "String table:");
 
 	for (int i = 0; i < number; i++) {
 		file->read(buffer, size);
 		Common::String message = (const char*) buffer;
 		_messagesList.push_back(message);
-		debug("%s", _messagesList[i].c_str());
+		debugC(1, kFreescapeDebugParser, "%s", _messagesList[i].c_str());
 	}
 }
 
