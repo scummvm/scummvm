@@ -242,6 +242,7 @@ void Archive::dumpChunk(Resource &res, Common::DumpFile &out) {
 	}
 
 	delete resStream;
+	free(data);
 }
 
 // Mac Archive code
