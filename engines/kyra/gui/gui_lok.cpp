@@ -752,7 +752,9 @@ void GUI_LoK::updateSavegameString() {
 				Util::mergeUpdateJohabChars(prevTwoByteChar, newTwoByteChar, oneByteInput, _resetHanInput);
 				if (prevTwoByteChar) {
 					WRITE_BE_UINT16(&_savegameName[length - 2], prevTwoByteChar);
-					_savegameName[length] = _savegameName[length + 1] = 0;
+					_savegameName[length] = 0;
+					if (length < ARRAYSIZE(_savegameName) - 1)
+						_savegameName[length + 1] = 0;
 					_backupChars[_inputState++] = prevTwoByteChar;
 				}
 				// A new character will only be added if there is still space left.
