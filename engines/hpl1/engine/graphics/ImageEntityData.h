@@ -77,7 +77,7 @@ public:
 	void unload() {}
 	void destroy() {}
 
-	bool CreateFromFile(const tString &asFile, tUIntVec &avImageHandle);
+	bool CreateFromFile(const tString &asFile, tIntVec &avImageHandle);
 
 	cImageFrame *GetImageFrame(int alFrame);
 	tUIntVec *GetIndexVec() { return &mvIdxVec; }

@@ -102,7 +102,7 @@ cImageAnimation *cImageEntityData::GetAnimationByHandle(int alHandle) {
 
 //-----------------------------------------------------------------------
 
-bool cImageEntityData::CreateFromFile(const tString &asFile, tUIntVec &avImageHandle) {
+bool cImageEntityData::CreateFromFile(const tString &asFile, tIntVec &avImageHandle) {
 	bool bGotAnim = false;
 	TiXmlDocument *pDoc = hplNew(TiXmlDocument, (asFile.c_str()));
 	if (!pDoc->LoadFile()) {
