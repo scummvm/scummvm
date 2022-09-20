@@ -246,6 +246,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_levelMaps = 0;
 	_closeSpellbookAfterUse = false;
 	_wndBackgrnd = 0;
+	_ascii2SjisTables = _ascii2SjisTables2 = _mageSpellList2 = _clericSpellList2 = nullptr;
 
 	memset(_cgaMappingLevel, 0, sizeof(_cgaMappingLevel));
 	memset(_expRequirementTables, 0, sizeof(_expRequirementTables));
@@ -255,6 +256,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	memset(_scriptTimers, 0, sizeof(_scriptTimers));
 	memset(_monsterBlockPosArray, 0, sizeof(_monsterBlockPosArray));
 	memset(_foundMonstersArray, 0, sizeof(_foundMonstersArray));
+	memset(_palette16c, 0, sizeof(_palette16c));
 
 #define DWM0 _dscWallMapping.push_back(0)
 #define DWM(x) _dscWallMapping.push_back(&_sceneDrawVar##x)

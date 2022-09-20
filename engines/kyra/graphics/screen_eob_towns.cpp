@@ -119,7 +119,7 @@ void SJISFontLarge::drawChar(uint16 c, byte *dst, int pitch, int) const {
 	_font->drawChar(dst, c, 320, 1, _colorMap[1], _colorMap[0], 320, 200);
 }
 
-SJISFont12x12::SJISFont12x12(const uint16 *searchTable) : _height(6), _width(6), _data(0) {
+SJISFont12x12::SJISFont12x12(const uint16 *searchTable) : _height(6), _width(6), _data(0), _colorMap(nullptr) {
 	assert(searchTable);
 	for (int i = 0; i < 148; i++)
 		_searchTable[searchTable[i]] = i + 1;
