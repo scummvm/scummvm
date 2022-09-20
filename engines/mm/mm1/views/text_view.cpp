@@ -36,7 +36,7 @@ TextView::TextView(const Common::String &name, UIElement *owner) :
 		UIElement(name, owner) {
 }
 
-void TextView::writeChar(char c) {
+void TextView::writeChar(unsigned char c) {
 	if (c == '\r' || c == '\n') {
 		_textPos.x = 0;
 		_textPos.y++;
@@ -52,7 +52,7 @@ void TextView::writeChar(char c) {
 	}
 }
 
-void TextView::writeChar(int x, int y, char c) {
+void TextView::writeChar(int x, int y, unsigned char c) {
 	_textPos.x = x;
 	_textPos.y = y;
 	writeChar(c);

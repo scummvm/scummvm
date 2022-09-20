@@ -46,6 +46,9 @@ bool Combat::msgFocus(const FocusMessage &msg) {
 
 	loadArrays();
 
+	// TODO: Replace with correct selection of starting char
+	g_globals->_currCharacter = &g_globals->_party[0];
+
 	return true;
 }
 
@@ -53,7 +56,7 @@ void Combat::draw() {
 	//Game::Encounter &enc = g_globals->_encounters;
 
 	clearSurface();
-	writeString(10, 10, "TODO: COMBAT VIEW");
+	writeOptions();
 }
 
 void Combat::timeout() {
@@ -64,11 +67,74 @@ bool Combat::msgKeypress(const KeypressMessage &msg) {
 	return true;
 }
 
+void Combat::writeOptions() {
+	resetBottom();
+	writeString(0, 20, STRING["dialogs.combat.options_for"]);
+	writeString(0, 22, g_globals->_currCharacter->_name);
+
+	switch (_currentChar) {
+	case 0:
+		writeChar(3, 3, (unsigned char)'\xB1');
+		break;
+	case 1:
+		writeChar(7, 3, (unsigned char)'\xB2');
+		break;
+	case 2:
+		writeChar(3, 4, (unsigned char)'\xB3');
+		break;
+	case 3:
+		writeChar(7, 4, (unsigned char)'\xB4');
+		break;
+	case 4:
+		writeChar(3, 5, (unsigned char)'\xB5');
+		break;
+	case 5:
+		writeChar(7, 5, (unsigned char)'\xB6');
+		break;
+	default:
+		break;
+	}
+
+	bool canAttack = _canAttack[_currentChar];
+	if (canAttack) {
+		writeAttackOptions();
+		_val5 = 'A';
+		_val2 = 'F';
+
+		// Archers can always attack
+		canAttack = g_globals->_currCharacter->_class == ARCHER;
+	}
+	if (canAttack && g_globals->_currCharacter->_v6a) {
+		_val3 = 'S';
+		writeShootOption();
+	}
+
+	if (g_globals->_currCharacter->_sp._current) {
+		writeCastOption();
+		_val4 = 'C';
+	}
+
+	writeString(16, 22, STRING["dialogs.combat.exchange_use"]);
+	writeString(16, 23, STRING["dialogs.combat.retreat_block"]);
+}
+
 void Combat::writeAttackOptions() {
 	writeString(16, 20, STRING["dialogs.combat.attack"]);
 	writeString(16, 21, STRING["dialogs.combat.fight"]);
 }
 
+void Combat::writeCastOption() {
+	writeString(30, 21, STRING["dialogs.combat.cast"]);
+}
+
+void Combat::writeShootOption() {
+	writeString(30, 20, STRING["dialogs.combat.shoot"]);
+}
+
+void Combat::resetBottom() {
+	clearLines(20, 24);
+	_val2 = _val3 = _val4 = _val5 = ' ';
+}
 
 } // namespace Views
 } // namespace MM1
