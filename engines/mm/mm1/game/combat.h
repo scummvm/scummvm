@@ -42,7 +42,8 @@ protected:
 	byte _arr3[MAX_COMBAT_MONSTERS];
 	bool _canAttack[MAX_PARTY_SIZE];
 	int _val1, _val8, _val9, _val10;
-	int _monsterIndex;
+	int _monsterIndex, _currentChar;
+	char _val2, _val3, _val4, _val5;
 
 	Combat() { clear(); }
 

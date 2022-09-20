@@ -32,9 +32,10 @@ void Combat::clear() {
 	Common::fill(&_arr2[0], &_arr2[MAX_COMBAT_MONSTERS], 0);
 	Common::fill(&_arr3[0], &_arr3[MAX_COMBAT_MONSTERS], 0);
 	Common::fill(&_canAttack[0], &_canAttack[6], false);
-	_val1 = _val8 = _val9 = _val10 = 0;
+	_val1 = _val2 = _val3 = _val4 = _val5 = 0;
+	_val8 = _val9 = _val10 = 0;
 	_monsterP = nullptr;
-	_monsterIndex = 0;
+	_monsterIndex = _currentChar = 0;
 	// TODO: clear everything
 }
 

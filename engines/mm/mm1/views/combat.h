@@ -36,7 +36,11 @@ private:
 	};
 	Mode _mode = BATTLE;
 
+	void writeOptions();
 	void writeAttackOptions();
+	void writeCastOption();
+	void writeShootOption();
+	void resetBottom();
 public:
 	Combat();
 	virtual ~Combat() {}

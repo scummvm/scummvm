@@ -286,8 +286,13 @@
 		alignment_slips: "*** ALIGNMENT SLIPS ***"
 		combat: "COMBAT!"
 	combat:
+		options_for: "OPTIONS FOR: "
 		attack: "'A' ATTACK(A)"
+		cast: "'C' CAST"
 		fight: "'F' FIGHT(+)"
+		shoot: "'S' SHOOT"
+		exchange_use: "'E' EXCHANGE  'U' USE"
+		retreat_block: "'R' RETREAT   'B' BLOCK"
 
 enhdialogs:
 	character:

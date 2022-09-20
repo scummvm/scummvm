@@ -58,13 +58,19 @@ bool BitmapFont::load(const Common::String &filename) {
 }
 
 void BitmapFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
+	// Get the fg/bg color. When the character is >= 128,
+	// the colors are reversed from normal
+	byte fgColor = (chr < 128) ? color : 0;
+	byte bgColor = (chr < 128) ? 0 : color;
+	chr &= 0x7f;
+
 	const Graphics::ManagedSurface &c = _chars[chr - _startingChar];
 	for (int yCtr = 0; yCtr < c.h; ++yCtr) {
 		const byte *srcP = (const byte *)c.getBasePtr(0, yCtr);
 
 		for (int xCtr = 0; xCtr < c.w; ++xCtr, ++srcP) {
 			dst->hLine(x + xCtr, y + yCtr, x + xCtr,
-				*srcP ? 0 : color);
+				*srcP ? bgColor : fgColor);
 		}
 	}
 }
