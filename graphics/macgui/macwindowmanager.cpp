@@ -228,6 +228,13 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::L
 	setDesktopMode(mode);
 }
 
+void MacWindowManager::cleanupDesktopBmp() {
+	if (_desktopBmp) {
+		_desktopBmp->free();
+		delete _desktopBmp;
+	}
+}
+
 MacWindowManager::~MacWindowManager() {
 	for (Common::HashMap<uint, BaseMacWindow *>::iterator it = _windows.begin(); it != _windows.end(); it++)
 		delete it->_value;
@@ -238,12 +245,9 @@ MacWindowManager::~MacWindowManager() {
 	delete _fontMan;
 	delete _screenCopy;
 
-	if (_desktopBmp) {
-		_desktopBmp->free();
-		delete _desktopBmp;
-	}
 	delete _desktop;
 
+	cleanupDesktopBmp();
 	cleanupDataBundle();
 
 	g_system->getTimerManager()->removeTimerProc(&menuTimerHandler);
@@ -253,9 +257,8 @@ void MacWindowManager::setDesktopMode(uint32 mode) {
 	if (!(mode & Graphics::kWMNoScummVMWallpaper)) {
 		if (!_mode || (_mode & Graphics::kWMNoScummVMWallpaper))
 			loadDesktop();
-	} else if (_desktopBmp) {
-		_desktopBmp->free();
-		_desktopBmp = nullptr;
+	} else {
+		cleanupDesktopBmp();
 	}
 
 	_mode = mode;
@@ -782,6 +785,7 @@ void MacWindowManager::loadDesktop() {
 }
 
 void MacWindowManager::setDesktopColor(byte r, byte g, byte b) {
+	cleanupDesktopBmp();
 	_desktopBmp = new Graphics::TransparentSurface();
 	uint32 color = TS_RGB(r, g, b);
 
