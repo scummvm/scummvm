@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-09-20 18:33+0000\n"
+"POT-Creation-Date: 2022-09-20 21:10+0000\n"
 "PO-Revision-Date: 2022-08-23 11:37+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -5513,84 +5513,84 @@ msgid "Eye of Beholder support is not compiled in"
 msgstr ""
 "La prise en charge de Eye Of Beholder n'a pas été activée dans cette version"
 
-#: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:468
+#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:468
 #: engines/ultima/ultima4/meta_engine.cpp:224
 #: engines/ultima/ultima8/meta_engine.cpp:142
 msgid "Interact via Left Click"
 msgstr "Interagir via Clic Gauche"
 
-#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:469
+#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:230
 #: engines/ultima/ultima8/meta_engine.cpp:148
 msgid "Interact via Right Click"
 msgstr "Interagir via Clic Droit"
 
-#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:476
+#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:476
 #: engines/twine/metaengine.cpp:248
 msgid "Move Forward"
 msgstr "Avancer"
 
-#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:477
+#: engines/kyra/engine/eobcommon.cpp:372 engines/kyra/engine/lol.cpp:477
 msgid "Move Back"
 msgstr "Reculer"
 
-#: engines/kyra/engine/eobcommon.cpp:371
+#: engines/kyra/engine/eobcommon.cpp:373
 msgid "Move Left"
 msgstr "Aller vers la Gauche"
 
-#: engines/kyra/engine/eobcommon.cpp:372
+#: engines/kyra/engine/eobcommon.cpp:374
 msgid "Move Right"
 msgstr "Aller vers la Droite"
 
-#: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:480
+#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:480
 #: engines/pegasus/pegasus.cpp:2735 engines/twine/metaengine.cpp:269
 #: engines/zvision/metaengine.cpp:140
 msgid "Turn Left"
 msgstr "Tourner vers la Gauche"
 
-#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:481
+#: engines/kyra/engine/eobcommon.cpp:376 engines/kyra/engine/lol.cpp:481
 #: engines/pegasus/pegasus.cpp:2742 engines/twine/metaengine.cpp:262
 #: engines/zvision/metaengine.cpp:146
 msgid "Turn Right"
 msgstr "Tourner vers la Droite"
 
-#: engines/kyra/engine/eobcommon.cpp:375
+#: engines/kyra/engine/eobcommon.cpp:377
 msgid "Open/Close Inventory"
 msgstr "Ouvrir/Fermer l'inventaire"
 
-#: engines/kyra/engine/eobcommon.cpp:376
+#: engines/kyra/engine/eobcommon.cpp:378
 msgid "Switch Inventory/Character screen"
 msgstr "Inventaire/Écran de personnage"
 
-#: engines/kyra/engine/eobcommon.cpp:377
+#: engines/kyra/engine/eobcommon.cpp:379
 msgid "Camp"
 msgstr "Campement"
 
-#: engines/kyra/engine/eobcommon.cpp:378
+#: engines/kyra/engine/eobcommon.cpp:380
 msgid "Cast Spell"
 msgstr "Lancer un Sort"
 
-#: engines/kyra/engine/eobcommon.cpp:381
+#: engines/kyra/engine/eobcommon.cpp:383
 msgid "Spell Level 1"
 msgstr "Sort Niveau 1"
 
-#: engines/kyra/engine/eobcommon.cpp:382
+#: engines/kyra/engine/eobcommon.cpp:384
 msgid "Spell Level 2"
 msgstr "Sort Niveau 2"
 
-#: engines/kyra/engine/eobcommon.cpp:383
+#: engines/kyra/engine/eobcommon.cpp:385
 msgid "Spell Level 3"
 msgstr "Sort Niveau 3"
 
-#: engines/kyra/engine/eobcommon.cpp:384
+#: engines/kyra/engine/eobcommon.cpp:386
 msgid "Spell Level 4"
 msgstr "Sort Niveau 4"
 
-#: engines/kyra/engine/eobcommon.cpp:385
+#: engines/kyra/engine/eobcommon.cpp:387
 msgid "Spell Level 5"
 msgstr "Sort Niveau 5"
 
-#: engines/kyra/engine/eobcommon.cpp:387
+#: engines/kyra/engine/eobcommon.cpp:389
 msgid "Spell Level 6"
 msgstr "Sort Niveau 6"
 
