@@ -207,6 +207,16 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(sy
 	_lightningFirstSfx = 0;
 	_lightningSfxFrame = 0;
 
+	_stashSetupData = _monsterDirFlags = _monsterScaleX = _monsterScaleY = _updateSpellBookCoords = _updateSpellBookAnimData = _healShapeFrames = nullptr;
+	_sceneItemOffs = _monsterShiftOffs = nullptr;
+	_flyingItemShapes = nullptr;
+	_monsterDecorationShapes = nullptr;
+	_monsterModifiers1 = _monsterModifiers2 = _monsterModifiers3 = _monsterModifiers4 = _monsterScaleWH = _autoMapStrings = nullptr;
+	_fireBallCoords = nullptr;
+	_subMenuIndex = _numFireballShapes = _numHealShapes = _numHealiShapes = 0;
+	_currentMapLevel = _automapTopLeftX = _automapTopLeftY = 0;
+	_mapUpdateNeeded = false;
+
 	_compassTimer = 0;
 	_scriptCharacterCycle = 0;
 	_partyDamageFlags = -1;

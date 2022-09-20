@@ -68,6 +68,10 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_mouseX = _mouseY = 0;
 	_transOffsY = 0;
 	_asciiCodeEvents = _kbEventSkip = false;
+
+	_configMusic = 0;
+	_configSounds = false;
+	_configVoice = _configWalkspeed = 0;
 }
 
 void KyraEngine_v1::pauseEngineIntern(bool pause) {

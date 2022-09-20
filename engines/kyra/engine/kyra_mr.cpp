@@ -151,6 +151,15 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_configHelium = false;
 	_fadeOutMusicChannel = -1;
 	memset(_scaleTable, 0, sizeof(_scaleTable));
+	_gui = nullptr;
+	_soundListSize = _sfxFileMapSize = _sfxFileListSize = _mainMenuStringsSize = _itemStringMapSize = _malcolmShapeXOffset = _malcolmShapeYOffset = _currentTalkFile = 0;
+	_sceneMinX = _sceneMaxX = _badConscienceAnim = _scoreMax = _scoreTableSize = 0;
+	_sfxFileMap = _itemMagicTable = _itemStringMap = _scoreTable = nullptr;
+	_sfxFileList = _mainMenuStrings = nullptr;
+	_shownMessage = nullptr;
+	_itemAnimDefinition = nullptr;
+	_restoreCommandLine = _badConsciencePosition = _useFrameTable = false;
+	_actorFileSize = 0;
 }
 
 KyraEngine_MR::~KyraEngine_MR() {

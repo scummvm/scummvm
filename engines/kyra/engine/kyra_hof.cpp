@@ -132,6 +132,14 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_setCharPalFinal = false;
 	_useCharPal = false;
 
+	_gui = nullptr;
+	_bookShown = _fadeMessagePalette = false;
+	_ingamePakList = _musicFileListIntro = _musicFileListFinale = _musicFileListIngame = _ingameSoundList = _ingameTimJpStr = nullptr;
+	_ingamePakListSize = _musicFileListIntroSize = _musicFileListFinaleSize = _musicFileListIngameSize = _cdaTrackTableIntroSize = _cdaTrackTableIngameSize = _cdaTrackTableFinaleSize = 0;
+	_cdaTrackTableIntro = _cdaTrackTableIngame = _cdaTrackTableFinale = nullptr;
+	_ingameSoundListSize = _ingameSoundIndexSize = _ingameTalkObjIndexSize = _ingameTimJpStrSize = _itemAnimDefinitionSize = 0;
+	_ingameSoundIndex = nullptr;
+	_ingameTalkObjIndex = nullptr;
 	memset(_characterFacingCountTable, 0, sizeof(_characterFacingCountTable));
 
 	_defaultFont = (_flags.lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : ((_flags.lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
