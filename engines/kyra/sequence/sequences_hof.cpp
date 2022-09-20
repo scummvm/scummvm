@@ -1002,7 +1002,7 @@ void SeqPlayer_HOF::playAnimation(WSAMovie_v2 *wsaObj, int startFrame, int lastF
 			origW = 320 - x;
 
 		if (y + origH > 199)
-			origW = 200 - y;
+			origH = 200 - y;
 	}
 
 	int8 frameStep = (startFrame > lastFrame) ? -1 : 1;
