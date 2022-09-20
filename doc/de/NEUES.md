@@ -14,6 +14,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Anzahl an falsch-positiven Einträgen reduziert, wenn das Gerät nach Spielen durchsucht wird.
    - Code der Roland MT-32-Emulation auf Munt mt32emu 2.7.0 aktualisiert.
 
+ AGI:
+   - Unterstützung der französischen Übersetzungen verbessert.
+
  AGOS:
    - Option hinzugefügt, mit der die Ausblende-Effekte bei einem Raum-Wechsel in Simon 1 und 2
      deaktiviert werden können.
