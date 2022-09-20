@@ -133,6 +133,7 @@ void Window::probeMacBinary(MacArchive *archive) {
 					v->preReleaseVer, v->region, v->str.c_str(), v->msg.c_str());
 
 				delete v;
+				delete vvers;
 			}
 		}
 
