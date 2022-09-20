@@ -45,7 +45,6 @@ class RewindableAudioStream;
 
 class AIFFHeader {
 public:
-	~AIFFHeader();
 	static AIFFHeader *readAIFFHeader(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 	RewindableAudioStream *makeAIFFStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 
