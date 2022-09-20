@@ -19,51 +19,23 @@
  *
  */
 
-#ifndef MM1_VIEWS_COMBAT_H
-#define MM1_VIEWS_COMBAT_H
-
-#include "mm/mm1/game/combat.h"
-#include "mm/mm1/views/text_view.h"
+#ifndef MM1_GAME_GAME_LOGIC_H
+#define MM1_GAME_GAME_LOGIC_H
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace Game {
 
-class Combat : public TextView, public Game::Combat {
-private:
-	enum Mode {
-		BATTLE
-	};
-	Mode _mode = BATTLE;
-
-	void writeAttackOptions();
+class GameLogic {
 public:
-	Combat();
-	virtual ~Combat() {}
-
 	/**
-	 * Called when the view is focused
+	 * Returns a random number
 	 */
-	bool msgFocus(const FocusMessage &msg) override;
-
-	/**
-	 * Draw the Combat details overlayed on
-	 * the existing game screen
-	 */
-	void draw() override;
-
-	/**
-	 * Handles delay timeouts
-	 */
-	void timeout() override;
-
-	/**
-	 * Handles keypresses
-	 */
-	bool msgKeypress(const KeypressMessage &msg) override;
+	static int getRandomNumber(int minNumber, int maxNumber);
+	static int getRandomNumber(int maxNumber);
 };
 
-} // namespace Views
+} // namespace Game
 } // namespace MM1
 } // namespace MM
 

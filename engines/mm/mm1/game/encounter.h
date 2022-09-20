@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "mm/mm1/data/character.h"
 #include "mm/mm1/data/monsters.h"
+#include "mm/mm1/game/game_logic.h"
 
 namespace MM {
 namespace MM1 {
@@ -36,7 +37,7 @@ enum EncounterType {
 	FORCE_SURPRISED = -1, NORMAL_SURPRISED = 0, NORMAL_ENCOUNTER = 1
 };
 
-struct Encounter {
+class Encounter : public GameLogic {
 private:
 	bool _flag = false;
 	int _levelIndex = 0, _levelOffset = 0;

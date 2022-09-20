@@ -19,51 +19,43 @@
  *
  */
 
-#ifndef MM1_VIEWS_COMBAT_H
-#define MM1_VIEWS_COMBAT_H
+#ifndef MM1_GAME_COMBAT_H
+#define MM1_GAME_COMBAT_H
 
-#include "mm/mm1/game/combat.h"
-#include "mm/mm1/views/text_view.h"
+#include "common/array.h"
+#include "mm/mm1/data/character.h"
+#include "mm/mm1/data/party.h"
+#include "mm/mm1/game/game_logic.h"
+#include "mm/mm1/game/encounter.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace Game {
 
-class Combat : public TextView, public Game::Combat {
-private:
-	enum Mode {
-		BATTLE
-	};
-	Mode _mode = BATTLE;
+class Combat : public GameLogic {
+protected:
+	int _monstersCount = 0;
+	Common::Array<Character *> _party;
+	Monster *_monsterP;
+	byte _arr1[MAX_COMBAT_MONSTERS];
+	byte _arr2[MAX_COMBAT_MONSTERS];
+	byte _arr3[MAX_COMBAT_MONSTERS];
+	bool _canAttack[MAX_PARTY_SIZE];
+	int _val1, _val8, _val9, _val10;
+	int _monsterIndex;
 
-	void writeAttackOptions();
-public:
-	Combat();
-	virtual ~Combat() {}
-
-	/**
-	 * Called when the view is focused
-	 */
-	bool msgFocus(const FocusMessage &msg) override;
+	Combat() { clear(); }
 
 	/**
-	 * Draw the Combat details overlayed on
-	 * the existing game screen
+	 * Clear all the combat variables
 	 */
-	void draw() override;
+	void clear();
 
-	/**
-	 * Handles delay timeouts
-	 */
-	void timeout() override;
-
-	/**
-	 * Handles keypresses
-	 */
-	bool msgKeypress(const KeypressMessage &msg) override;
+	void loadArrays();
+	void monsterIndexOf();
 };
 
-} // namespace Views
+} // namespace Game
 } // namespace MM1
 } // namespace MM
 

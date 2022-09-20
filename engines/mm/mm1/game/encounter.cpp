@@ -65,7 +65,7 @@ void Encounter::execute() {
 		if (maxRand >= 2) {
 			int highestRand = map[33];
 			maxRand = MIN(maxRand, highestRand);
-			comp = g_engine->getRandomNumber(1, maxRand);
+			comp = getRandomNumber(1, maxRand);
 		} else {
 			comp = 1;
 		}
@@ -80,7 +80,7 @@ void Encounter::execute() {
 		_monsterNum16 = comp;
 		_levelIndex += comp;
 
-		_monsterNum = g_engine->getRandomNumber(1, 16);
+		_monsterNum = getRandomNumber(1, 16);
 		_arr2[_monsterIndex] = _monsterNum;
 		_monsterIndex = (_monsterIndex + 1) & 0xff;
 
@@ -89,7 +89,7 @@ void Encounter::execute() {
 				goto exit_loop;
 
 			monsterP = getMonster();
-			maxVal = g_engine->getRandomNumber(1, monsterP->_count);
+			maxVal = getRandomNumber(1, monsterP->_count);
 
 			for (int i = 0; i < maxVal; ++i) {
 				assert(_monsterIndex > 0);
@@ -115,7 +115,7 @@ exit_loop:
 		maxVal = (_arr1[i] - 1) * 16 + _arr2[i];
 		if (_arr1[i] < 1 || _arr1[i] > 12 || maxVal >= 196) {
 			_arr1[i] = 10;
-			_arr2[i] = g_engine->getRandomNumber(1, MAX_COMBAT_MONSTERS);
+			_arr2[i] = getRandomNumber(1, MAX_COMBAT_MONSTERS);
 		}
 
 		// Add monster details to list
@@ -134,7 +134,7 @@ exit_loop:
 }
 
 void Encounter::randomAdjust() {
-	int rval = g_engine->getRandomNumber(1, 100);
+	int rval = getRandomNumber(1, 100);
 	_levelOffset = 0;
 
 	if (rval < 51) {
@@ -154,7 +154,7 @@ const Monster *Encounter::getMonster() {
 }
 
 bool Encounter::checkSurroundParty() const {
-	return g_engine->getRandomNumber(1, 100) > _fleeThreshold;
+	return getRandomNumber(1, 100) > _fleeThreshold;
 }
 
 void Encounter::changeCharAlignment(Alignment align) {
