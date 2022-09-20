@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-09-20 17:38+0000\n"
+"POT-Creation-Date: 2022-09-20 17:39+0000\n"
 "PO-Revision-Date: 2022-07-13 06:51+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -6518,14 +6518,24 @@ msgstr ""
 "Gecomprimeerd spel gedetecteerd. Pak a.u.b. het spel uit zoals beschreven "
 "bij de spel omschrijving op onze Wiki"
 
-#: engines/queen/detection.cpp:44
+#: engines/queen/detection.cpp:45
 msgid "Alternative intro"
 msgstr "Alternatieve intro"
 
-#: engines/queen/detection.cpp:45
+#: engines/queen/detection.cpp:46
 msgid "Use an alternative game intro (CD version only)"
 msgstr ""
 "Gebruik een alternatieve versie van de intro (alleen voor de CD versie)"
+
+#: engines/queen/detection.cpp:56
+#, fuzzy
+#| msgid "Improved mode"
+msgid "Improved font"
+msgstr "Verbeterde modus"
+
+#: engines/queen/detection.cpp:57
+msgid "Use an easier to read custom font"
+msgstr ""
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:813

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-09-20 17:38+0000\n"
+"POT-Creation-Date: 2022-09-20 17:39+0000\n"
 "PO-Revision-Date: 2022-05-01 15:27+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -6474,13 +6474,22 @@ msgid ""
 "description on our Wiki"
 msgstr ""
 
-#: engines/queen/detection.cpp:44
+#: engines/queen/detection.cpp:45
 msgid "Alternative intro"
 msgstr "Alternativní úvod"
 
-#: engines/queen/detection.cpp:45
+#: engines/queen/detection.cpp:46
 msgid "Use an alternative game intro (CD version only)"
 msgstr "Použít jinou verzi úvodu (Pouze verze CD)"
+
+#: engines/queen/detection.cpp:56
+#, fuzzy
+msgid "Improved font"
+msgstr "Režim do okna"
+
+#: engines/queen/detection.cpp:57
+msgid "Use an easier to read custom font"
+msgstr ""
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:813

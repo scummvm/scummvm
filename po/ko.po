@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-09-20 17:38+0000\n"
+"POT-Creation-Date: 2022-09-20 17:39+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -6424,13 +6424,23 @@ msgstr ""
 "압축된 게임을 감지했습니다. ScummVM 위키의 게임 설명란을 참고해 압축을 해제"
 "해 주세요"
 
-#: engines/queen/detection.cpp:44
+#: engines/queen/detection.cpp:45
 msgid "Alternative intro"
 msgstr "대체 인트로"
 
-#: engines/queen/detection.cpp:45
+#: engines/queen/detection.cpp:46
 msgid "Use an alternative game intro (CD version only)"
 msgstr "다른 버전의 게임 인트로를 사용합니다 (CD 버전에서만)"
+
+#: engines/queen/detection.cpp:56
+#, fuzzy
+#| msgid "Improved mode"
+msgid "Improved font"
+msgstr "향상된 모드"
+
+#: engines/queen/detection.cpp:57
+msgid "Use an easier to read custom font"
+msgstr ""
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:813

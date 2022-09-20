@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-09-20 17:38+0000\n"
+"POT-Creation-Date: 2022-09-20 17:39+0000\n"
 "PO-Revision-Date: 2022-08-12 15:37+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -6259,13 +6259,23 @@ msgstr ""
 "S'ha detectat un joc comprimit. Descomprimiu-lo com s'especifica a la "
 "descripció del joc dins la nostra viquipèdia"
 
-#: engines/queen/detection.cpp:44
+#: engines/queen/detection.cpp:45
 msgid "Alternative intro"
 msgstr "Introducció alternativa"
 
-#: engines/queen/detection.cpp:45
+#: engines/queen/detection.cpp:46
 msgid "Use an alternative game intro (CD version only)"
 msgstr "Utilitza una introducció del joc alternativa (només per la versió CD)"
+
+#: engines/queen/detection.cpp:56
+#, fuzzy
+#| msgid "Improved mode"
+msgid "Improved font"
+msgstr "Mode millorat"
+
+#: engines/queen/detection.cpp:57
+msgid "Use an easier to read custom font"
+msgstr ""
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:813
