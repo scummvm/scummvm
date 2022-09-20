@@ -232,6 +232,7 @@ void MacWindowManager::cleanupDesktopBmp() {
 	if (_desktopBmp) {
 		_desktopBmp->free();
 		delete _desktopBmp;
+		_desktopBmp = nullptr;
 	}
 }
 
