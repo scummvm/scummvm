@@ -1228,6 +1228,10 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 					error("Cast::loadLingoContext: Script already defined for type %s, id %d", scriptType2str(script->_scriptType), script->_id);
 				}
 				_lingoArchive->scriptContexts[script->_scriptType][script->_id] = script;
+			} else {
+				// Keep track of scripts that are not in scriptContexts 
+				// Those scripts need to be cleaned up on ~LingoArchive
+				script->setOnlyInLctxContexts();
 			}
 		}
 	} else {

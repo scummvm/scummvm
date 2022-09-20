@@ -227,6 +227,15 @@ void Lingo::reloadBuiltIns() {
 }
 
 LingoArchive::~LingoArchive() {
+
+	// First cleanup the ScriptContexts that are only in LctxContexts.
+	// LctxContexts has a huge overlap with scriptContexts.
+	for (ScriptContextHash::iterator it = lctxContexts.begin(); it != lctxContexts.end(); ++it){
+		ScriptContext *script = it->_value;
+		if (script->getOnlyInLctxContexts())
+			delete script;
+	}
+
 	for (int i = 0; i <= kMaxScriptType; i++) {
 		for (ScriptContextHash::iterator it = scriptContexts[i].begin(); it != scriptContexts[i].end(); ++it) {
 			*it->_value->_refCount -= 1;

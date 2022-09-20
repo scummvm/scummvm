@@ -200,6 +200,9 @@ public:
 	DatumHash _properties;
 	Common::HashMap<uint32, Datum> _objArray;
 
+private:
+	bool _onlyInLctxContexts = false;
+
 public:
 	ScriptContext(Common::String name, ScriptType type = kNoneScript, int id = 0);
 	ScriptContext(const ScriptContext &sc);
@@ -207,6 +210,9 @@ public:
 
 	bool isFactory() const { return _objType == kFactoryObj; };
 	void setFactory(bool flag) { _objType = flag ? kFactoryObj : kScriptObj; }
+
+	void setOnlyInLctxContexts() { _onlyInLctxContexts = true; }
+	bool getOnlyInLctxContexts() { return _onlyInLctxContexts; }
 
 	Common::String asString() override;
 	Symbol getMethod(const Common::String &methodName) override;
