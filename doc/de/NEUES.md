@@ -25,6 +25,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für die koreanische Version von Legend of Kyrandia 1 hinzugefügt.
    - Unterstützung für die hebräische Version von Legend of Kyrandia 3 hinzugefügt.
 
+ Queen:
+   - Eine zusätzliche Option erlaubt die Verwendung einer verbesserten Schriftart für die hebräische Version.
+
  SCUMM:
    - Unterstützung von CGA-, CGA Composite-, CGA schwarz/weiß- und Herkules-Grafikmodi
      für die SCUMM 1-Versionen von Zak McKracken und Maniac Mansion hinzugefügt.
