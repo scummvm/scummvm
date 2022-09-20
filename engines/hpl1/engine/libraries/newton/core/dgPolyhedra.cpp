@@ -1904,9 +1904,9 @@ dgEdge* dgPolyhedra::AddFace(dgInt32 count, const dgInt32* const index,
     udata0 = udata1;
     udata1 = dgUnsigned64(userdata ? userdata[i] : 0);
 
-    dgPairKey code(i0, i1);
-    dgEdge tmpEdge(i0, m_faceSecuence, udata0);
-    node = Insert(tmpEdge, code.GetVal(), state);
+    dgPairKey codeI(i0, i1);
+    dgEdge tmpEdgeI(i0, m_faceSecuence, udata0);
+    node = Insert(tmpEdgeI, codeI.GetVal(), state);
     _ASSERTE(!state);
 
     dgEdge* const edge1 = &node->GetInfo();
@@ -2015,10 +2015,10 @@ void dgPolyhedra::DeleteFace(dgEdge* const face)
 
     for (dgInt32 i = 0; i < count; i++)
     {
-      dgEdge* const ptr = edgeList[i];
-      if (ptr->m_twin->m_incidentFace < 0)
+      dgEdge* const ptrI = edgeList[i];
+      if (ptrI->m_twin->m_incidentFace < 0)
       {
-        DeleteEdge(ptr);
+        DeleteEdge(ptrI);
       }
     }
   }
@@ -2247,15 +2247,15 @@ bool dgPolyhedra::GetConectedSurface(dgPolyhedra &polyhedra) const
   while (index)
   {
     index--;
-    dgEdge* const edge = stack[index];
+    dgEdge* const edgeI = stack[index];
 
-    if (edge->m_mark == mark)
+    if (edgeI->m_mark == mark)
     {
       continue;
     }
 
     dgInt32 count = 0;
-    dgEdge* ptr = edge;
+    dgEdge* ptr = edgeI;
     do
     {
       ptr->m_mark = mark;
@@ -2272,7 +2272,7 @@ bool dgPolyhedra::GetConectedSurface(dgPolyhedra &polyhedra) const
       }
 
       ptr = ptr->m_next;
-    } while (ptr != edge);
+    } while (ptr != edgeI);
 
     polyhedra.AddFace(count, &faceIndex[0], &faceDataIndex[0]);
   }
@@ -2576,17 +2576,17 @@ dgFloat64 dgPolyhedra::EdgePenalty(const dgBigVector* const pool,
         && (adj->m_prev->m_incidentFace == face))
     {
 
-      dgInt32 i0 = adj->m_next->m_incidentVertex;
-      const dgBigVector& p0 = pool[i0];
+      dgInt32 iv0 = adj->m_next->m_incidentVertex;
+      const dgBigVector& pv0 = pool[iv0];
 
-      dgInt32 i1 = adj->m_incidentVertex;
-      const dgBigVector& p1 = pool[i1];
+      dgInt32 iv1 = adj->m_incidentVertex;
+      const dgBigVector& pv1 = pool[iv1];
 
-      dgInt32 i2 = adj->m_prev->m_incidentVertex;
-      const dgBigVector& p2 = pool[i2];
+      dgInt32 iv2 = adj->m_prev->m_incidentVertex;
+      const dgBigVector& pv2 = pool[iv2];
 
-      dgBigVector n0((p1 - p0) * (p2 - p0));
-      dgBigVector n1((p1 - p) * (p2 - p));
+      dgBigVector n0((pv1 - pv0) * (pv2 - pv0));
+      dgBigVector n1((pv1 - p) * (pv2 - p));
 
 //			dgFloat64 mag0 = n0 % n0;
 //			_ASSERTE (mag0 > dgFloat64(1.0e-16f));
@@ -2595,10 +2595,10 @@ dgFloat64 dgPolyhedra::EdgePenalty(const dgBigVector* const pool,
 //			dgFloat64 mag1 = n1 % n1;
 //			mag1 = sqrt (mag1);
 
-      dgFloat64 dot = n0 % n1;
-      if (dot < dgFloat64(0.0f))
+      dgFloat64 dotn = n0 % n1;
+      if (dotn < dgFloat64(0.0f))
       {
-//			if (dot <= (mag0 * mag1 * dgFloat32 (0.707f)) || (mag0 > (dgFloat64(16.0f) * mag1))) {
+//			if (dotn <= (mag0 * mag1 * dgFloat32 (0.707f)) || (mag0 > (dgFloat64(16.0f) * mag1))) {
         penalty = true;
         break;
       }
@@ -2610,24 +2610,23 @@ dgFloat64 dgPolyhedra::EdgePenalty(const dgBigVector* const pool,
   dgFloat64 aspect = dgFloat32(-1.0f);
   if (!penalty)
   {
-    dgInt32 i0 = edge->m_twin->m_incidentVertex;
-    dgBigVector p0(pool[i0]);
+    dgInt32 iv0 = edge->m_twin->m_incidentVertex;
+    dgBigVector pv0(pool[iv0]);
 
     aspect = dgFloat32(1.0f);
-    for (dgEdge* ptr = edge->m_twin->m_next->m_twin->m_next; ptr != edge; ptr =
-        ptr->m_twin->m_next)
+    for (dgEdge* ptrn = edge->m_twin->m_next->m_twin->m_next; ptrn != edge; ptrn = ptr->m_twin->m_next)
     {
-      if (ptr->m_incidentFace > 0)
+      if (ptrn->m_incidentFace > 0)
       {
-        dgInt32 i0 = ptr->m_next->m_incidentVertex;
-        const dgBigVector& p1 = pool[i0];
+        dgInt32 iv1 = ptrn->m_next->m_incidentVertex;
+        const dgBigVector& pv1 = pool[iv1];
 
-        dgInt32 i1 = ptr->m_prev->m_incidentVertex;
-        const dgBigVector& p2 = pool[i1];
+        dgInt32 iv2 = ptrn->m_prev->m_incidentVertex;
+        const dgBigVector& pv2 = pool[iv2];
 
-        dgBigVector e0(p1 - p0);
-        dgBigVector e1(p2 - p1);
-        dgBigVector e2(p0 - p2);
+        dgBigVector e0(pv1 - pv0);
+        dgBigVector e1(pv2 - pv1);
+        dgBigVector e2(pv0 - pv2);
 
         dgFloat64 mag0 = e0 % e0;
         dgFloat64 mag1 = e1 % e1;
