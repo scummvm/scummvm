@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-09-19 22:27+0000\n"
+"POT-Creation-Date: 2022-09-20 17:38+0000\n"
 "PO-Revision-Date: 2022-08-22 23:14+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4236,7 +4236,7 @@ msgstr "Lataa tallenne"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "Pelin pikalataus tai tallennus ei ole tuettu tässä sijainnissa"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2679
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2681
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4247,7 +4247,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2666
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2668
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4258,7 +4258,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2695
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2697
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7511,19 +7511,19 @@ msgstr "Lennä oikealle"
 msgid "Fly to lower right"
 msgstr "Lennä alas oikealle"
 
-#: engines/scumm/input.cpp:1061
+#: engines/scumm/input.cpp:1073
 msgid "Snap scroll on"
 msgstr "Snap scroll päälle"
 
-#: engines/scumm/input.cpp:1063
+#: engines/scumm/input.cpp:1075
 msgid "Snap scroll off"
 msgstr "Snap scroll pois päältä"
 
-#: engines/scumm/input.cpp:1076
+#: engines/scumm/input.cpp:1088
 msgid "Music volume: "
 msgstr "Musiikin äänenvoimakkuus: "
 
-#: engines/scumm/input.cpp:1093
+#: engines/scumm/input.cpp:1105
 msgid "Subtitle speed: "
 msgstr "Tekstien nopeus: "
 
@@ -7601,7 +7601,7 @@ msgstr ""
 "Suora MIDI tuki vaatii Roland päivityksen LucasArtsilta, mutta\n"
 "%s puuttuu. Käytetään AdLibia sen sijaan."
 
-#: engines/scumm/scumm.cpp:3223
+#: engines/scumm/scumm.cpp:3225
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
