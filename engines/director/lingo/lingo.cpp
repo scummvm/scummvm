@@ -227,7 +227,6 @@ void Lingo::reloadBuiltIns() {
 }
 
 LingoArchive::~LingoArchive() {
-
 	// First cleanup the ScriptContexts that are only in LctxContexts.
 	// LctxContexts has a huge overlap with scriptContexts.
 	for (ScriptContextHash::iterator it = lctxContexts.begin(); it != lctxContexts.end(); ++it){
