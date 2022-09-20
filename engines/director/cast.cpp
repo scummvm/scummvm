@@ -721,8 +721,10 @@ void Cast::loadBitmapData(int key, BitmapCastMember *bitmapCast) {
 		break;
 	}
 
-	if (!img)
+	if (!img) {
+		delete pic;
 		return;
+	}
 
 	img->loadStream(*pic);
 
