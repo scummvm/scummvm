@@ -219,6 +219,7 @@ void Window::loadEXE(const Common::String movie) {
 	} else {
 		warning("No LINGO.INI");
 	}
+	delete iniStream;
 
 	Common::SeekableReadStream *exeStream = SearchMan.createReadStreamForMember(Common::Path(movie, g_director->_dirSeparator));
 	if (!exeStream)
