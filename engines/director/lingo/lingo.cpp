@@ -763,6 +763,7 @@ Datum::Datum(int val) {
 	type = INT;
 	refCount = new int;
 	*refCount = 1;
+	ignoreGlobal = false;
 }
 
 Datum::Datum(double val) {
