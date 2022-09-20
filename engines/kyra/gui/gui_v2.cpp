@@ -32,7 +32,6 @@ namespace Kyra {
 GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI_v1(vm), _vm(vm), _screen(vm->screen_v2()) {
 	_backUpButtonList = _specialProcessButton = nullptr;
 	_buttonListChanged = false;
-	_lastScreenUpdate = 0;
 	_flagsModifier = 0;
 
 	_currentMenu = nullptr;
@@ -47,6 +46,9 @@ GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI_v1(vm), _vm(vm), _screen(vm->screen_v2()
 	_saveMenuFont = Screen::FID_8_FNT;
 	_saveMenuCursor = Common::Rect(1, 1, 7, 8);
 	_saveLoadNumSlots = 5;
+	_isChoiceMenu = _isOptionsMenu = _madeSave = _loadedSave = _restartGame = _reloadTemporarySave = false;
+	_noLoadProcess = _noSaveProcess = _choice = _finishNameInput = _cancelNameInput = false;
+	_saveSlot = _slotToDelete = 0;
 
 	if (vm->game() == GI_KYRA2 && vm->gameFlags().lang == Common::ZH_TWN) {
 		_saveMenuFont = Screen::FID_CHINESE_FNT;

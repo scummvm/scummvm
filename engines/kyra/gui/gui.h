@@ -123,7 +123,6 @@ protected:
 
 	virtual void sortSaveSlots();
 
-	uint32 _lastScreenUpdate;
 	char **_savegameList;
 	int _savegameListSize;
 	bool _saveSlotsListUpdateNeeded;

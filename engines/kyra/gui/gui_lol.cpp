@@ -1854,6 +1854,11 @@ GUI_LoL::GUI_LoL(LoLEngine *vm) : GUI_v1(vm), _vm(vm), _screen(vm->_screen) {
 	_specialProcessButton = _backUpButtonList = 0;
 	_flagsModifier = 0;
 	_sliderSfx = 11;
+
+	_currentMenu = _lastMenu = _newMenu = nullptr;
+	_saveDescription = nullptr;
+	_menuResult = _savegameOffset = 0;
+	_pressFlag = false;
 }
 
 void GUI_LoL::processButton(Button *button) {

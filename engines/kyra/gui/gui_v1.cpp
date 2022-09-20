@@ -35,6 +35,9 @@ GUI_v1::GUI_v1(KyraEngine_v1 *kyra) : GUI(kyra), _text(kyra->text()) {
 
 	_redrawButtonFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::redrawButtonCallback);
 	_redrawShadedButtonFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::redrawShadedButtonCallback);
+
+	_displayMenu = _displaySubMenu = _cancelSubMenu = false;
+	_lastScreenUpdate = 0;
 }
 
 Button *GUI_v1::addButtonToList(Button *list, Button *newButton) {
@@ -414,6 +417,8 @@ MainMenu::MainMenu(KyraEngine_v1 *vm) : _vm(vm), _screen(nullptr) {
 	_screen = _vm->screen();
 	_nextUpdate = 0;
 	_system = g_system;
+	memset(&_static, 0, sizeof(_static));
+	memset(&_animIntern, 0, sizeof(_animIntern));
 }
 
 void MainMenu::init(StaticData data, Animation anim) {
