@@ -21,14 +21,17 @@
 
 #include "scumm/scumm.h"
 #include "scumm/scumm_v4.h"
+#include "scumm/scumm_v6.h"
 #include "scumm/scumm_v8.h"
 #include "scumm/gfx.h"
 #include "scumm/dialogs.h"
 #include "scumm/charset.h"
 #include "scumm/string_v7.h"
+#include "scumm/sound.h"
 #include "scumm/smush/smush_player.h"
 #include "scumm/imuse_digi/dimuse_engine.h"
 
+#include "audio/mixer.h"
 #include "graphics/cursorman.h"
 #include "graphics/thumbnail.h"
 
@@ -1872,8 +1875,10 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool 
 				if (loadState(curSlot - 1, false)) {
 					hasLoadedState = true;
 
+#ifdef ENABLE_SCUMM_7_8
 					if (!_spooledMusicIsToBeEnabled)
 						_imuseDigital->diMUSEDisableSpooledMusic();
+#endif
 
 					setSkipVideo(0);
 					_saveScriptParam = GAME_PROPER_LOAD;
@@ -1987,6 +1992,7 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool 
 	case GUI_CTRL_SPOOLED_MUSIC_CHECKBOX:
 		_spooledMusicIsToBeEnabled ^= 1;
 
+#ifdef ENABLE_SCUMM_7_8
 		// Just for safety, this should never be nullptr...
 		if (_imuseDigital) {
 			if (_spooledMusicIsToBeEnabled) {
@@ -1995,6 +2001,7 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool 
 				_imuseDigital->diMUSEDisableSpooledMusic();
 			}
 		}
+#endif
 		updateMainMenuControls();
 		ScummEngine::drawDirtyScreenParts();
 		break;

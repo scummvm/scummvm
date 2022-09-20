@@ -602,7 +602,11 @@ void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
 
 				pt = pauseEngine();
 
+#ifdef ENABLE_SCUMM_7_8
 				int volume = (_game.version > 6) ? _imuseDigital->diMUSEGetMusicGroupVol() : getMusicVolume();
+#else
+				int volume = getMusicVolume();
+#endif
 				do {
 					if (ks.keycode == Common::KEYCODE_o) {
 						volume -= 16;
@@ -636,7 +640,11 @@ void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
 
 				pt = pauseEngine();
 
+#ifdef ENABLE_SCUMM_7_8
 				int volume = (_game.version > 6) ? _imuseDigital->diMUSEGetVoiceGroupVol() : getSpeechVolume();
+#else
+				int volume = getSpeechVolume();
+#endif
 				do {
 					if (ks.keycode == Common::KEYCODE_k) {
 						volume -= 16;
@@ -670,7 +678,11 @@ void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
 
 				pt = pauseEngine();
 
+#ifdef ENABLE_SCUMM_7_8
 				int volume = (_game.version > 6) ? _imuseDigital->diMUSEGetSFXGroupVol() : getSFXVolume();
+#else
+				int volume = getSFXVolume();
+#endif
 				do {
 					if (ks.keycode == Common::KEYCODE_n) {
 						volume -= 16;
