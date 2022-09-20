@@ -3084,7 +3084,7 @@ void ScummEngine::stopTalk() {
 				// Delay unsetting _heTalking to next sound frame. fixes bug #3533.
 				_actorShouldStopTalking = true;
 			} else {
-				((ActorHE *)a)->_heTalking = true;
+				((ActorHE *)a)->_heTalking = false;
 			}
 		}
 	}
