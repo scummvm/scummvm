@@ -19,57 +19,53 @@
  *
  */
 
-#include "mm/mm1/views/combat.h"
-#include "mm/mm1/game/encounter.h"
+#include "mm/mm1/game/combat.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
-#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace Game {
 
-Combat::Combat() : TextView("Combat") {
+void Combat::clear() {
+	Common::fill(&_arr1[0], &_arr1[MAX_COMBAT_MONSTERS], 0);
+	Common::fill(&_arr2[0], &_arr2[MAX_COMBAT_MONSTERS], 0);
+	Common::fill(&_arr3[0], &_arr3[MAX_COMBAT_MONSTERS], 0);
+	Common::fill(&_canAttack[0], &_canAttack[6], false);
+	_val1 = _val8 = _val9 = _val10 = 0;
+	_monsterP = nullptr;
+	_monsterIndex = 0;
+	// TODO: clear everything
 }
 
-bool Combat::msgFocus(const FocusMessage &msg) {
+
+void Combat::loadArrays() {
 	Game::Encounter &enc = g_globals->_encounters;
-	_mode = BATTLE;
 
-	// Clear combat data
-	clear();
+	for (uint i = 0; i < enc._monsterList.size(); ++i) {
+		Monster &mon = enc._monsterList[i];
+		int val = getRandomNumber(1, 8);
 
-	_monstersCount = enc._monsterList.size();
-	_party.clear();
-	for (uint i = 0; i < g_globals->_party.size(); ++i)
-		_party.push_back(&g_globals->_party[i]);
+		mon._field11 += val;
+		_arr1[i] = mon._field11;
+		_arr2[i] = mon._field12;
 
-	loadArrays();
-
-	return true;
+		monsterIndexOf();
+	}
 }
 
-void Combat::draw() {
-	//Game::Encounter &enc = g_globals->_encounters;
+void Combat::monsterIndexOf() {
+	Game::Encounter &enc = g_globals->_encounters;
 
-	clearSurface();
-	writeString(10, 10, "TODO: COMBAT VIEW");
+	_monsterIndex = MAX_COMBAT_MONSTERS;
+	for (uint i = 0; i < enc._monsterList.size(); ++i) {
+		if (_monsterP == &enc._monsterList[i]) {
+			_monsterIndex = i;
+			break;
+		}
+	}
 }
 
-void Combat::timeout() {
-	redraw();
-}
-
-bool Combat::msgKeypress(const KeypressMessage &msg) {
-	return true;
-}
-
-void Combat::writeAttackOptions() {
-	writeString(16, 20, STRING["dialogs.combat.attack"]);
-	writeString(16, 21, STRING["dialogs.combat.fight"]);
-}
-
-
-} // namespace Views
+} // namespace Game
 } // namespace MM1
 } // namespace MM

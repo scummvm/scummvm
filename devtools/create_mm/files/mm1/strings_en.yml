@@ -285,6 +285,9 @@
 		not_enough: "NOT ENOUGH"
 		alignment_slips: "*** ALIGNMENT SLIPS ***"
 		combat: "COMBAT!"
+	combat:
+		attack: "'A' ATTACK(A)"
+		fight: "'F' FIGHT(+)"
 
 enhdialogs:
 	character:
