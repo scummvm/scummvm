@@ -1088,6 +1088,9 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 						newEntry.name = entryStr;
 					}
 
+					// The pointer (and the responsibility for the deletion) has been
+					// passed on. Clear the variable as a signal that it can be reused.
+					outbuffer = nullptr;
 					fileList.push_back(newEntry);
 				}
 				pos++;
@@ -1136,6 +1139,12 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 					pos += (kHeaderSize + filestrlen - m);
 					tmpFile->seek(pos, SEEK_SET);
 
+					if (outbuffer) {
+						delete[] outbuffer;
+						// We can prevent memory leakage, but we should never arrive here, since we still have unprocessed data in the outbuffer.
+						error("InstallerLoader::load(): Unknown decompression failure.");
+					}
+
 					outbuffer = new uint8[outsize];
 					if (!outbuffer)
 						error("Out of memory: Can't uncompress installer files");
@@ -1177,6 +1186,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 							newEntry.name = entryStr;
 						}
 
+						outbuffer = nullptr;
 						fileList.push_back(newEntry);
 					}
 
@@ -1193,6 +1203,12 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 			delete tmpFile;
 			tmpFile = nullptr;
 		}
+	}
+
+	if (outbuffer) {
+		delete[] outbuffer;
+		// We can prevent memory leakage, but we should never arrive here, since we still have unprocessed data in the outbuffer.
+		error("InstallerLoader::load(): Unknown decompression failure.");
 	}
 
 	archives.clear();
