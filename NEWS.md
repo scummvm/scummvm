@@ -26,7 +26,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for the Hebrew version of Legend of Kyrandia 3.
 
  Queen:
-   - Added option for using abetter font in Hebrew version.
+   - Added option for using a better font in Hebrew version.
 
  SCUMM:
    - Added support for CGA, CGA Composite, CGA black & white and Hercules modes
