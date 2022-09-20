@@ -1186,6 +1186,8 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 							newEntry.name = entryStr;
 						}
 
+						// The pointer (and the responsibility for the deletion) has been
+						// passed on. Clear the variable as a signal that it can be reused.
 						outbuffer = nullptr;
 						fileList.push_back(newEntry);
 					}
