@@ -377,6 +377,7 @@ bool Window::step() {
 					_nextMovie.frameI = -1;
 				}
 
+
 				if (!debugChannelSet(-1, kDebugCompileOnly) && goodMovie) {
 					debugC(1, kDebugEvents, "Starting playback of movie '%s'", _currentMovie->getMacName().c_str());
 					_currentMovie->getScore()->startPlay();
@@ -384,6 +385,7 @@ bool Window::step() {
 						_currentMovie->getScore()->setCurrentFrame(_startFrame);
 						_startFrame = -1;
 					}
+					g_debugger->movieHook();
 				} else {
 					return false;
 				}
