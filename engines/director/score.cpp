@@ -942,6 +942,7 @@ void Score::screenShot() {
 	}
 
 	newSurface->free();
+	delete newSurface;
 }
 
 uint16 Score::getSpriteIDFromPos(Common::Point pos) {
