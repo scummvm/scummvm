@@ -694,10 +694,10 @@ void EoBEngine::readLevelFileData(int level) {
 
 void EoBEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 	if (file)
-		strcpy(_lastBlockDataFile, file);
+		_lastBlockDataFile = file;
 	delete[] _vcnBlocks;
 
-	Common::String fn = Common::String::format(_vcnFilePattern.c_str(), _lastBlockDataFile);
+	Common::String fn = Common::String::format(_vcnFilePattern.c_str(), _lastBlockDataFile.c_str());
 	if (_flags.platform == Common::kPlatformAmiga) {
 		Common::SeekableReadStream *in = _res->createReadStream(fn);
 		uint32 vcnSize = in->readUint16LE() * (_vcnSrcBitsPerPixel << 3);

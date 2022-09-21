@@ -1313,7 +1313,7 @@ int LoLEngine::olol_drawExitButton(EMCState *script) {
 	int y = printPara[3 * stackPos(0) + 1];
 	int offs = printPara[3 * stackPos(0) + 2];
 
-	char *str = getLangString(0x4033);
+	const char *str = getLangString(0x4033);
 	int w = _screen->getTextWidth(str);
 
 	if (_flags.use16ColorMode) {
@@ -1592,7 +1592,7 @@ int LoLEngine::olol_playDialogueTalkText(EMCState *script) {
 	int track = stackPos(0);
 
 	if (!snd_playCharacterSpeech(track, 0, 0) || textEnabled()) {
-		char *s = getLangString(track);
+		const char *s = getLangString(track);
 		_txt->printDialogueText2(4, s, script, 0, 1);
 	}
 
@@ -2579,23 +2579,18 @@ int LoLEngine::tlol_fadeInScene(const TIM *tim, const uint16 *param) {
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 0, 2, Screen::CR_NO_P_CHECK);
 
-	char filename[32];
-	strcpy(filename, sceneFile);
-	strcat(filename, ".CPS");
-
-	_screen->loadBitmap(filename, 7, 5, &_screen->getPalette(0));
+	Common::String filename = Common::String(sceneFile) + ".CPS";
+	_screen->loadBitmap(filename.c_str(), 7, 5, &_screen->getPalette(0));
 
 	uint8 *overlay = 0;
 	if (!_flags.use16ColorMode) {
-		filename[0] = 0;
+		filename.clear();
 
-		if (_flags.isTalkie) {
-			strcpy(filename, _languageExt[_lang]);
-			strcat(filename, "/");
-		}
+		if (_flags.isTalkie)
+			filename = Common::String(_languageExt[_lang]) + "/";
 
-		strcat(filename, overlayFile);
-		overlay = _res->fileData(filename, 0);
+		filename += overlayFile;
+		overlay = _res->fileData(filename.c_str(), 0);
 
 		for (int i = 0; i < 3; ++i) {
 			uint32 endTime = _system->getMillis() + 10 * _tickLength;

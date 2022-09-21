@@ -139,7 +139,6 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_configHpBarGraphs = true;
 	_configMouseBtSwap = false;
 
-	memset(_dialogueLastBitmap, 0, 13);
 	_npcSequenceSub = 0;
 	_moveCounter = 0;
 	_partyResting = false;
@@ -1565,7 +1564,7 @@ void EoBCoreEngine::initDialogueSequence() {
 	_npcSequenceSub = -1;
 	_txt->setWaitButtonMode(0);
 	_dialogueField = true;
-	_dialogueLastBitmap[0] = 0;
+	_dialogueLastBitmap.clear();
 
 	_txt->resetPageBreakString();
 	gui_updateControls();
@@ -1596,7 +1595,7 @@ void EoBCoreEngine::restoreAfterDialogueSequence() {
 	_txt->allowPageBreak(false);
 	_dialogueField = _dialogueFieldAmiga = false;
 
-	_dialogueLastBitmap[0] = 0;
+	_dialogueLastBitmap.clear();
 
 	gui_restorePlayField();
 	//_allowSkip = false;
@@ -1617,7 +1616,7 @@ void EoBCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, i
 	int page = ((flags & 2) || destRect) ? 0 : 6;
 	int amigaPalIndex = (x1 ? 1 : 0) + (y1 ? 2 : 0) + 1;
 
-	if (scumm_stricmp(_dialogueLastBitmap, file)) {
+	if (!_dialogueLastBitmap.equalsIgnoreCase(file)) {
 		_screen->clearPage(2);
 		if (!destRect) {
 			if (!(flags & 1)) {
@@ -1634,7 +1633,7 @@ void EoBCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, i
 		}
 
 		_screen->loadEoBBitmap(file, 0, 3, 3, 2);
-		strcpy(_dialogueLastBitmap, file);
+		_dialogueLastBitmap = file;
 	}
 
 	if (_flags.platform == Common::kPlatformAmiga) {

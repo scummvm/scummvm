@@ -850,7 +850,7 @@ protected:
 	void drawSequenceBitmap(const char *file, int destRect, int x1, int y1, int flags);
 	int runDialogue(int dialogueTextId, int numStr, int loopButtonId, ...);
 
-	char _dialogueLastBitmap[13];
+	Common::String _dialogueLastBitmap;
 	int _moveCounter;
 
 	const char *const *_chargenStatStrings;

@@ -52,11 +52,10 @@ void KyraEngine_HoF::timerCauldronAnimation(int arg) {
 		if (animation == -1)
 			animation = _rnd.getRandomNumberRng(1, 6);
 
-		char filename[13];
-		strcpy(filename, "CAULD00.WSA");
-		filename[5] = (animation / 10) + '0';
-		filename[6] = (animation % 10) + '0';
-		loadInvWsa(filename, 0, 8, 0, -1, -1, 1);
+		Common::String filename = "CAULD00.WSA";
+		filename.setChar((animation / 10) + '0', 5);
+		filename.setChar((animation % 10) + '0', 6);
+		loadInvWsa(filename.c_str(), 0, 8, 0, -1, -1, 1);
 	}
 }
 

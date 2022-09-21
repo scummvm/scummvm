@@ -404,46 +404,46 @@ int KyraEngine_HoF::bookButton(Button *button) {
 }
 
 void KyraEngine_HoF::loadBookBkgd() {
-	char filename[16];
+	Common::String filename;
 
 	if (_flags.isTalkie)
-		strcpy(filename, (_bookBkgd == 0) ? "_XBOOKD.CPS" : "_XBOOKC.CPS");
+		filename = (_bookBkgd == 0) ? "_XBOOKD.CPS" : "_XBOOKC.CPS";
 	else
-		strcpy(filename, (_bookBkgd == 0) ? "_BOOKD.CPS" : "_BOOKC.CPS");
+		filename = (_bookBkgd == 0) ? "_BOOKD.CPS" : "_BOOKC.CPS";
 
 	_bookBkgd ^= 1;
 
 	if (_flags.isTalkie) {
 		if (!_bookCurPage)
-			strcpy(filename, "_XBOOKB.CPS");
+			filename = "_XBOOKB.CPS";
 		if (_bookCurPage == _bookMaxPage)
-			strcpy(filename, "_XBOOKA.CPS");
+			filename = "_XBOOKA.CPS";
 
 		switch (_lang) {
 		case 0:
-			filename[1] = 'E';
+			filename.setChar('E', 1);
 			break;
 
 		case 1:
-			filename[1] = 'F';
+			filename.setChar('F', 1);
 			break;
 
 		case 2:
-			filename[1] = 'G';
+			filename.setChar('G', 1);
 			break;
 
 		default:
 			warning("loadBookBkgd unsupported language");
-			filename[1] = 'E';
+			filename.setChar('E', 1);
 		}
 	} else {
 		if (!_bookCurPage)
-			strcpy(filename, "_BOOKB.CPS");
+			filename = "_BOOKB.CPS";
 		if (_bookCurPage == _bookMaxPage)
-			strcpy(filename, "_BOOKA.CPS");
+			filename = "_BOOKA.CPS";
 	}
 
-	_screen->loadBitmap(filename, 3, 3, nullptr);
+	_screen->loadBitmap(filename.c_str(), 3, 3, nullptr);
 }
 
 void KyraEngine_HoF::showBookPage() {

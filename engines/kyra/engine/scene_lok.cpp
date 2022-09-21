@@ -143,10 +143,7 @@ void KyraEngine_LoK::enterNewScene(int sceneId, int facing, int unk1, int unk2, 
 	_currentRoom = sceneId;
 
 	int tableId = _roomTable[sceneId].nameIndex;
-	char fileNameBuffer[32];
-	strcpy(fileNameBuffer, _roomFilenameTable[tableId]);
-	strcat(fileNameBuffer, ".DAT");
-	_sprites->loadDat(fileNameBuffer, _sceneExits);
+	_sprites->loadDat((Common::String(_roomFilenameTable[tableId]) + ".DAT").c_str(), _sceneExits);
 	_sprites->setupSceneAnims();
 	_emc->unload(&_scriptClickData);
 	loadSceneMsc();
@@ -188,13 +185,10 @@ void KyraEngine_LoK::transcendScenes(int roomIndex, int roomName) {
 	assert(roomIndex < _roomTableSize);
 
 	if (_flags.isTalkie) {
-		char file[32];
 		assert(roomIndex < _roomTableSize);
 		int tableId = _roomTable[roomIndex].nameIndex;
 		assert(tableId < _roomFilenameTableSize);
-		strcpy(file, _roomFilenameTable[tableId]);
-		strcat(file, ".VRM");
-		_res->unloadPakFile(file);
+		_res->unloadPakFile(Common::String(_roomFilenameTable[tableId]) + ".VRM");
 	}
 
 	_roomTable[roomIndex].nameIndex = roomName;
@@ -378,25 +372,21 @@ void KyraEngine_LoK::loadSceneMsc() {
 	assert(_currentCharacter->sceneId < _roomTableSize);
 	int tableId = _roomTable[_currentCharacter->sceneId].nameIndex;
 	assert(tableId < _roomFilenameTableSize);
-	char fileNameBuffer[32];
-	strcpy(fileNameBuffer, _roomFilenameTable[tableId]);
-	strcat(fileNameBuffer, ".MSC");
+	Common::String fileNameBuffer = Common::String(_roomFilenameTable[tableId]) + ".MSC";
 	_screen->fillRect(0, 0, 319, 199, 0, 5);
-	_res->exists(fileNameBuffer, true);
-	_screen->loadBitmap(fileNameBuffer, 3, 5, nullptr);
+	_res->exists(fileNameBuffer.c_str(), true);
+	_screen->loadBitmap(fileNameBuffer.c_str(), 3, 5, nullptr);
 }
 
 void KyraEngine_LoK::startSceneScript(int brandonAlive) {
 	assert(_currentCharacter->sceneId < _roomTableSize);
 	int tableId = _roomTable[_currentCharacter->sceneId].nameIndex;
 	assert(tableId < _roomFilenameTableSize);
-	char fileNameBuffer[32];
-	strcpy(fileNameBuffer, _roomFilenameTable[tableId]);
-	strcat(fileNameBuffer, ".CPS");
+	Common::String fileNameBuffer = Common::String(_roomFilenameTable[tableId]) + ".CPS";
 	_screen->clearPage(3);
-	_res->exists(fileNameBuffer, true);
+	_res->exists(fileNameBuffer.c_str(), true);
 	// FIXME: check this hack for amiga version
-	_screen->loadBitmap(fileNameBuffer, 3, 3, (_flags.platform == Common::kPlatformAmiga ? &_screen->getPalette(0) : nullptr));
+	_screen->loadBitmap(fileNameBuffer.c_str(), 3, 3, (_flags.platform == Common::kPlatformAmiga ? &_screen->getPalette(0) : nullptr));
 	_sprites->loadSceneShapes();
 	_exitListPtr = nullptr;
 
@@ -406,11 +396,10 @@ void KyraEngine_LoK::startSceneScript(int brandonAlive) {
 
 	clearNoDropRects();
 	_emc->init(&_scriptClick, &_scriptClickData);
-	strcpy(fileNameBuffer, _roomFilenameTable[tableId]);
-	strcat(fileNameBuffer, ".EMC");
-	_res->exists(fileNameBuffer, true);
+	fileNameBuffer = Common::String(_roomFilenameTable[tableId]) + ".EMC";
+	_res->exists(fileNameBuffer.c_str(), true);
 	_emc->unload(&_scriptClickData);
-	_emc->load(fileNameBuffer, &_scriptClickData, &_opcodes);
+	_emc->load(fileNameBuffer.c_str(), &_scriptClickData, &_opcodes);
 	_emc->start(&_scriptClick, 0);
 	_scriptClick.regs[0] = _currentCharacter->sceneId;
 	_scriptClick.regs[7] = brandonAlive;
@@ -1272,24 +1261,18 @@ void KyraEngine_LoK::setupSceneResource(int sceneId) {
 	if (!_flags.isTalkie)
 		return;
 
+	Common::String file;
+
 	if (_currentRoom != 0xFFFF) {
 		assert(_currentRoom < _roomTableSize);
 		int tableId = _roomTable[_currentRoom].nameIndex;
 		assert(tableId < _roomFilenameTableSize);
 
 		// unload our old room
-		char file[64];
-		strcpy(file, _roomFilenameTable[tableId]);
-		strcat(file, ".VRM");
-		_res->unloadPakFile(file);
-
-		strcpy(file, _roomFilenameTable[tableId]);
-		strcat(file, ".PAK");
-		_res->unloadPakFile(file);
-
-		strcpy(file, _roomFilenameTable[tableId]);
-		strcat(file, ".APK");
-		_res->unloadPakFile(file);
+		file = _roomFilenameTable[tableId];
+		_res->unloadPakFile(file + ".VRM");
+		_res->unloadPakFile(file + ".PAK");
+		_res->unloadPakFile(file + ".APK");
 	}
 
 	assert(sceneId < _roomTableSize);
@@ -1297,20 +1280,16 @@ void KyraEngine_LoK::setupSceneResource(int sceneId) {
 	assert(tableId < _roomFilenameTableSize);
 
 	// load our new room
-	char file[64];
-	strcpy(file, _roomFilenameTable[tableId]);
-	strcat(file, ".VRM");
-	if (_res->exists(file))
+	file = Common::String(_roomFilenameTable[tableId]) + ".VRM";
+	if (_res->exists(file.c_str()))
 		_res->loadPakFile(file);
 
-	strcpy(file, _roomFilenameTable[tableId]);
-	strcat(file, ".PAK");
-	if (_res->exists(file))
+	file = Common::String(_roomFilenameTable[tableId]) + ".PAK";
+	if (_res->exists(file.c_str()))
 		_res->loadPakFile(file);
 
-	strcpy(file, _roomFilenameTable[tableId]);
-	strcat(file, ".APK");
-	if (_res->exists(file))
+	file = Common::String(_roomFilenameTable[tableId]) + ".APK";
+	if (_res->exists(file.c_str()))
 		_res->loadPakFile(file);
 }
 

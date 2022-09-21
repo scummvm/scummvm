@@ -459,7 +459,7 @@ bool StaticResource::loadStringTable(Common::SeekableReadStream &stream, void *&
 			string += c;
 
 		output[i] = new char[string.size() + 1];
-		strcpy(output[i], string.c_str());
+		Common::strlcpy(output[i], string.c_str(), string.size() + 1);
 	}
 
 	ptr = output;

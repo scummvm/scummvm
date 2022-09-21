@@ -323,7 +323,7 @@ protected:
 	int16 *_lvlShapeTop;
 	int16 *_lvlShapeBottom;
 
-	char _lastBlockDataFile[13];
+	Common::String _lastBlockDataFile;
 	uint32 _hasTempDataFlags;
 
 	int16 _sceneDrawVarDown;

@@ -325,7 +325,7 @@ void KyraEngine_MR::setupSceneAnimObject(int animId, uint16 flags, int x, int y,
 	anim.specialSize = specialSize;
 	anim.shapeIndex = shape;
 	if (filename)
-		strcpy(anim.filename, filename);
+		Common::strlcpy(anim.filename, filename, sizeof(anim.filename));
 
 	if (flags & 8) {
 		_sceneAnimMovie[animId]->open(filename, 1, nullptr);

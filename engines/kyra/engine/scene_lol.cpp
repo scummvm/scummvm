@@ -301,7 +301,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	if (file) {
 		_lastSpecialColor = specialColor;
 		_lastSpecialColorWeight = weight;
-		strcpy(_lastBlockDataFile, file);
+		_lastBlockDataFile = file;
 		if (palFile)
 			_lastOverridePalFile = palFile;
 		else
@@ -312,7 +312,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		if (_lastSpecialColor == 1)
 			_lastSpecialColor = 0x44;
 		else if (_lastSpecialColor == 0x66)
-			_lastSpecialColor = scumm_stricmp(_lastBlockDataFile, "YVEL2") ? 0xCC : 0x44;
+			_lastSpecialColor = _lastBlockDataFile.equalsIgnoreCase("YVEL2") ? 0x44 : 0xCC;
 		else if (_lastSpecialColor == 0x6B)
 			_lastSpecialColor = 0xCC;
 		else
@@ -324,7 +324,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	int tlen = 0;
 
 	if (_flags.use16ColorMode) {
-		fname = Common::String::format("%s.VCF", _lastBlockDataFile);
+		fname = _lastBlockDataFile + ".VCF";
 		_screen->loadBitmap(fname.c_str(), 3, 3, 0);
 		v = _screen->getCPagePtr(2);
 		tlen = READ_LE_UINT16(v) << 5;
@@ -336,7 +336,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		memcpy(_vcfBlocks, v, tlen);
 	}
 
-	fname = Common::String::format("%s.VCN", _lastBlockDataFile);
+	fname = _lastBlockDataFile + ".VCN";
 	_screen->loadBitmap(fname.c_str(), 3, 3, 0);
 	v = _screen->getCPagePtr(2);
 	tlen = READ_LE_UINT16(v);
@@ -387,7 +387,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	memcpy(_vcnBlocks, v, vcnLen);
 	v += vcnLen;
 
-	fname = Common::String::format("%s.VMP", _lastBlockDataFile);
+	fname = _lastBlockDataFile + ".VMP";
 	_screen->loadBitmap(fname.c_str(), 3, 3, 0);
 	v = _screen->getCPagePtr(2);
 

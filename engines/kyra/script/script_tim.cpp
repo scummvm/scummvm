@@ -994,7 +994,7 @@ void TIMInterpreter_LoL::checkSpeechProgress() {
 	}
 }
 
-char *TIMInterpreter_LoL::getTableString(int id) {
+const char *TIMInterpreter_LoL::getTableString(int id) {
 	return _vm->getLangString(id);
 }
 

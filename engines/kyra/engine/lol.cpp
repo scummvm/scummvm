@@ -1007,7 +1007,7 @@ void LoLEngine::update() {
 
 #pragma mark - Localization
 
-char *LoLEngine::getLangString(uint16 id) {
+const char *LoLEngine::getLangString(uint16 id) {
 	if (id == 0xFFFF)
 		return 0;
 
@@ -1862,7 +1862,7 @@ int LoLEngine::characterSays(int track, int charId, bool redraw) {
 	return r ? (textEnabled() ? 1 : 0) : 1;
 }
 
-int LoLEngine::playCharacterScriptChat(int charId, int mode, int restorePortrait, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
+int LoLEngine::playCharacterScriptChat(int charId, int mode, int restorePortrait, const char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
 	int ch = 0;
 	bool skipAnim = false;
 

@@ -335,7 +335,7 @@ protected:
 	Common::String getTableString(int id, uint8 *buffer, bool decode);
 	Common::String getChapterString(int id);
 
-	void changeFileExtension(char *buffer);
+	void changeFileExtension(Common::String &file);
 
 	// - Just used in French version
 	int getItemCommandStringDrop(Item item);
@@ -429,7 +429,7 @@ protected:
 	};
 	TalkSections _currentTalkSections;
 
-	char _TLKFilename[13];
+	Common::String _TLKFilename;
 
 	// tim
 	void playTim(const char *filename);

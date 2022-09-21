@@ -318,7 +318,7 @@ void EoBCoreEngine::addLevelItems() {
 
 void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 	uint32 vcnSize = 0;
-	Common::String fn = Common::String::format(_vcnFilePattern.c_str(), _lastBlockDataFile);
+	Common::String fn = Common::String::format(_vcnFilePattern.c_str(), _lastBlockDataFile.c_str());
 	_screen->loadBitmap(fn.c_str(), 3, 3, 0, true);
 
 	const uint8 *pos = _screen->getCPagePtr(3);

@@ -481,11 +481,11 @@ bool DarkMoonEngine::killMonsterExtra(EoBMonsterInPlay *m) {
 
 void DarkMoonEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 	if (file)
-		strcpy(_lastBlockDataFile, file);
+		_lastBlockDataFile = file;
 	delete[] _vcnBlocks;
 
 	if (_flags.platform == Common::kPlatformFMTowns) {
-		Common::String fn = Common::String::format(_vcnFilePattern.c_str(), _lastBlockDataFile);
+		Common::String fn = Common::String::format(_vcnFilePattern.c_str(), _lastBlockDataFile.c_str());
 		_vcnBlocks = _res->fileData(fn.c_str(), 0);
 	} else {
 		EoBCoreEngine::loadVcnData(file, cgaMapping);
