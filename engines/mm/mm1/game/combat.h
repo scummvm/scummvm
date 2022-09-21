@@ -44,6 +44,7 @@ protected:
 	int _val1, _val8, _val9, _val10;
 	int _monsterIndex, _currentChar;
 	char _val2, _val3, _val4, _val5;
+	int _attackerVal;
 
 	Combat() { clear(); }
 
@@ -53,7 +54,35 @@ protected:
 	void clear();
 
 	void loadArrays();
+
+	/**
+	 * Sets the _monsterIndex to the index of
+	 * _monsterP in the monster list
+	 */
 	void monsterIndexOf();
+
+	/**
+	 * Sets up the flags for whether each character
+	 * in the party can attack from their position.
+	 */
+	void setupCanAttacks();
+
+	/**
+	 * Chooses the starting character to 
+	 */
+	void setupAttackerVal();
+
+	/**
+	 * Checks whether the third party member
+	 * is blocked by a left wall
+	 */
+	void checkLeftWall();
+
+	/**
+	 * Checks whether the fourth party member
+	 * is blocked by a right wall
+	 */
+	void checkRightWall();
 };
 
 } // namespace Game

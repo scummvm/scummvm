@@ -37,6 +37,7 @@ namespace Maps {
 class Maps;
 
 enum DataOffset {
+	MAP_ID = 0,
 	MAP_FLEE_THRESHOLD = 22,
 	MAP_FLEE_X = 23,
 	MAP_FLEE_Y = 24,
