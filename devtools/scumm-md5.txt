@@ -809,7 +809,7 @@ puttcircus	Putt-Putt Joins the Circus
 	db74136c20557eca6ed3411bff39f7a1	36655	gb	Windows	-	-	-	Reckless
 	d0ad929def3e9cfe39dea55bd12098d4	36655	fr	Windows	-	-	-	gist974
 	febf4a983ea5faea1c9dd6c710ebb09c	36655	de	Windows	-	-	-	andy482
-	c8253da0f4626d2236b5291b99e33408	-1	he	Windows	HE 99	-	-	Matan Bareket
+	c8253da0f4626d2236b5291b99e33408	-1	he	Windows	-	-	-	Matan Bareket
 
 	a7cacad9c40c4dc9e1812abf6c8af9d5	-1	us	All	-	Demo	-	Kirben, sev
 	1387d16aa620dc1c2d1fd87f8a9e7a09	-1	fr	Windows	-	Demo	-	Mevi
