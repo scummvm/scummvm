@@ -1280,8 +1280,7 @@ Datum LC::compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, 
 	}
 
 	Datum res;
-	res.type = INT;
-	res.u.i = location ? -1 : 1;
+	res = location ? -1 : 1;
 	Datum a = d1;
 	Datum b = d2;
 	for (uint i = 0; i < arraySize; i++) {

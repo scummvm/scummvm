@@ -812,8 +812,7 @@ Datum DigitalVideoCastMember::getField(int field) {
 	case kTheDuration:
 		// sometimes, we will get duration before we start video.
 		// _duration is initialized in startVideo, thus we will not get the correct number.
-		d.type = INT;
-		d.u.i = getDuration();
+		d = (int)getDuration();
 		break;
 	case kTheFrameRate:
 		d = _frameRate;
@@ -904,8 +903,7 @@ Datum BitmapCastMember::getField(int field) {
 
 	switch (field) {
 	case kTheDepth:
-		d.type = INT;
-		d.u.i = _bitsPerPixel;
+		d = _bitsPerPixel;
 		break;
 	case kTheRegPoint:
 		d.type = POINT;
@@ -1004,13 +1002,13 @@ Datum TextCastMember::getField(int field) {
 		d.u.s = new Common::String(g_director->_wm->_fontMan->getFontName(_fontId));
 		break;
 	case kTheTextHeight:
-		d.u.i = getTextHeight();
+		d = getTextHeight();
 		break;
 	case kTheTextSize:
-		d.u.i = getTextSize();
+		d = getTextSize();
 		break;
 	case kTheTextStyle:
-		d.u.i = _textSlant;
+		d = (int)_textSlant;
 		break;
 	default:
 		d = CastMember::getField(field);

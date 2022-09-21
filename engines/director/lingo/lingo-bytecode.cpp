@@ -945,9 +945,7 @@ void LC::cb_v4theentityassign() {
 }
 
 void LC::cb_zeropush() {
-	Datum d;
-	d.u.i = 0;
-	d.type = INT;
+	Datum d(0);
 	g_lingo->push(d);
 }
 

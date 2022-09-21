@@ -687,8 +687,7 @@ void LB::b_findPos(int nargs) {
 
 	int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 	if (index > 0) {
-		d.type = INT;
-		d.u.i = index;
+		d = index;
 	}
 
 	g_lingo->push(d);
@@ -1219,9 +1218,8 @@ void LB::b_showXlib(int nargs) {
 }
 
 void LB::b_xFactoryList(int nargs) {
-	Datum d = g_lingo->pop();
-	d.type = STRING;
-	d.u.s = new Common::String();
+	g_lingo->pop();
+	Datum d("");
 
 	for (auto it = g_lingo->_openXLibs.begin(); it != g_lingo->_openXLibs.end(); it++)
 		*d.u.s += it->_key + "\n";
@@ -1863,6 +1861,8 @@ void LB::b_findEmpty(int nargs) {
 		return;
 	}
 
+	Datum res;
+
 	if (d.u.cast->member > c_end) {
 		d.type = INT;
 		g_lingo->push(d);
@@ -1875,16 +1875,14 @@ void LB::b_findEmpty(int nargs) {
 
 	for (uint16 i = c_start; i <= c_end; i++) {
 		if (!(cast->getCastMember(i) && cast->getCastMember(i)->_type != kCastTypeNull)) {
-			d.u.i = i;
-			d.type = INT;
-			g_lingo->push(d);
+			res = i;
+			g_lingo->push(res);
 			return;
 		}
 	}
 
-	d.type = INT;
-	d.u.i = (int) c_end + 1;
-	g_lingo->push(d);
+	res = (int) c_end + 1;
+	g_lingo->push(res);
 }
 
 void LB::b_importFileInto(int nargs) {
@@ -2677,8 +2675,7 @@ void LB::b_intersect(int nargs) {
 	Common::Rect rect1(r1.u.farr->arr[0].asInt(), r1.u.farr->arr[1].asInt(), r1.u.farr->arr[2].asInt(), r1.u.farr->arr[3].asInt());
 	Common::Rect rect2(r2.u.farr->arr[0].asInt(), r2.u.farr->arr[1].asInt(), r2.u.farr->arr[2].asInt(), r2.u.farr->arr[3].asInt());
 
-	d.type = INT;
-	d.u.i = rect1.intersects(rect2);
+	d = rect1.intersects(rect2);
 
 	g_lingo->push(d);
 }
@@ -2690,8 +2687,7 @@ void LB::b_inside(int nargs) {
 	Common::Rect rect2(r2.u.farr->arr[0].asInt(), r2.u.farr->arr[1].asInt(), r2.u.farr->arr[2].asInt(), r2.u.farr->arr[3].asInt());
 	Common::Point point1(p1.u.farr->arr[0].asInt(), p1.u.farr->arr[1].asInt());
 
-	d.type = INT;
-	d.u.i = rect2.contains(point1);
+	d = rect2.contains(point1);
 
 	g_lingo->push(d);
 }
