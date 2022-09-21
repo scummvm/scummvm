@@ -45,6 +45,8 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("help", WRAP_METHOD(Debugger, cmdHelp));
 
 	registerCmd("version", WRAP_METHOD(Debugger, cmdVersion));
+	registerCmd("movie", WRAP_METHOD(Debugger, cmdMovie));
+	registerCmd("m", WRAP_METHOD(Debugger, cmdMovie));
 	registerCmd("frame", WRAP_METHOD(Debugger, cmdFrame));
 	registerCmd("f", WRAP_METHOD(Debugger, cmdFrame));
 	registerCmd("channels", WRAP_METHOD(Debugger, cmdChannels));
@@ -52,6 +54,8 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("cast", WRAP_METHOD(Debugger, cmdCast));
 	registerCmd("nextframe", WRAP_METHOD(Debugger, cmdNextFrame));
 	registerCmd("nf", WRAP_METHOD(Debugger, cmdNextFrame));
+	registerCmd("nextmovie", WRAP_METHOD(Debugger, cmdNextMovie));
+	registerCmd("nm", WRAP_METHOD(Debugger, cmdNextMovie));
 
 	registerCmd("repl", WRAP_METHOD(Debugger, cmdRepl));
 	registerCmd("stack", WRAP_METHOD(Debugger, cmdStack));
@@ -70,7 +74,12 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("n", WRAP_METHOD(Debugger, cmdNext));
 	registerCmd("finish", WRAP_METHOD(Debugger, cmdFinish));
 	registerCmd("fin", WRAP_METHOD(Debugger, cmdFinish));
+	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("c", WRAP_METHOD(Debugger, cmdExit));
 
+	_nextFrame = false;
+	_nextFrameCounter = 0;
+	_nextMovie = false;
 	_step = false;
 	_stepCounter = 0;
 	_finish = false;
@@ -99,13 +108,13 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf("--------\n");
 	debugPrintf("Player:\n");
 	debugPrintf(" version - Shows the Director version\n");
-	//debugPrintf(" movie [moviePath] - Get or sets the current movie\n");
-	//debugPrintf(" movieinfo - Show information for the current movie\n");
+	debugPrintf(" movie / m [moviePath] - Get or sets the current movie\n");
+	//debugPrintf(" movieinfo / mi - Show information for the current movie\n");
 	debugPrintf(" frame / f [frameNum] - Gets or sets the current score frame\n");
 	debugPrintf(" channels / chan [frameNum] - Shows channel information for a score frame\n");
 	debugPrintf(" cast [castNum] - Shows the cast list or castNum for the current movie\n");
 	debugPrintf(" nextframe / nf [n] - Steps forward one or more score frames\n");
-	//debugPrintf(" nextmovie / nm - Steps forward until the next change of movie\n");
+	debugPrintf(" nextmovie / nm - Steps forward until the next change of movie\n");
 	debugPrintf("\n");
 	debugPrintf("Lingo execution:\n");
 	//debugPrintf(" eval [statement] - Evaluates a single Lingo statement\n");
@@ -119,6 +128,7 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" step / s [n] - Steps forward one or more operations\n");
 	debugPrintf(" next / n [n] - Steps forward one or more operations, skips over calls\n");
 	debugPrintf(" finish / fin - Steps until the current stack frame returns\n");
+	debugPrintf(" continue / c - Continues execution\n");
 	debugPrintf("\n");
 	debugPrintf("Breakpoints:\n");
 	debugPrintf("\n");
@@ -161,6 +171,18 @@ bool Debugger::cmdFrame(int argc, const char **argv) {
 		lingo->func_goto(frame, movie);
 	} else {
 		debugPrintf("%d\n", score->getCurrentFrame());
+	}
+	return true;
+}
+
+bool Debugger::cmdMovie(int argc, const char **argv) {
+	Lingo *lingo = g_director->getLingo();
+	Movie *movie = g_director->getCurrentMovie();
+	if (argc == 2) {
+		Datum frame, mov(argv[1]);
+		lingo->func_goto(frame, mov);
+	} else {
+		debugPrintf("%s\n", movie->getArchive()->getFileName().c_str());
 	}
 	return true;
 }
@@ -220,6 +242,11 @@ bool Debugger::cmdNextFrame(int argc, const char **argv) {
 	} else {
 		_nextFrameCounter = 1;
 	}
+	return cmdExit(0, nullptr);
+}
+
+bool Debugger::cmdNextMovie(int argc, const char **argv) {
+	_nextMovie = true;
 	return cmdExit(0, nullptr);
 }
 
@@ -410,6 +437,15 @@ void Debugger::frameHook() {
 			attach();
 			g_system->updateScreen();
 		}
+	}
+}
+
+void Debugger::movieHook() {
+	if (_nextMovie) {
+		_nextMovie = false;
+		cmdMovie(0, nullptr);
+		attach();
+		g_system->updateScreen();
 	}
 }
 

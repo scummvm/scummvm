@@ -34,6 +34,7 @@ public:
 	void debugLogFile(Common::String logs, bool prompt);
 	void stepHook();
 	void frameHook();
+	void movieHook();
 	void pushContextHook();
 	void popContextHook();
 
@@ -41,10 +42,12 @@ private:
 	bool cmdHelp(int argc, const char **argv);
 
 	bool cmdVersion(int argc, const char **argv);
+	bool cmdMovie(int argc, const char **argv);
 	bool cmdFrame(int argc, const char **argv);
 	bool cmdChannels(int argc, const char **argv);
 	bool cmdCast(int argc, const char **argv);
 	bool cmdNextFrame(int argc, const char **argv);
+	bool cmdNextMovie(int argc, const char **argv);
 	bool cmdRepl(int argc, const char **argv);
 	bool cmdBacktrace(int argc, const char **argv);
 	bool cmdDisasm(int argc, const char **argv);
@@ -64,6 +67,7 @@ private:
 
 	bool _nextFrame;
 	int _nextFrameCounter;
+	bool _nextMovie;
 	bool _step;
 	int _stepCounter;
 	bool _finish;
