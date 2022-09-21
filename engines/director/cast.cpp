@@ -1499,7 +1499,7 @@ void Cast::loadVWTL(Common::SeekableReadStreamEndian &stream) {
 
 }
 
-Common::String Cast::formatCastSummary() {
+Common::String Cast::formatCastSummary(int castId = -1) {
 	Common::String result;
 	Common::Array<int> castIds;
 	for (auto it = _loadedCast->begin(); it != _loadedCast->end(); ++it) {
@@ -1507,6 +1507,8 @@ Common::String Cast::formatCastSummary() {
 	}
 	Common::sort(castIds.begin(), castIds.end());
 	for (auto it = castIds.begin(); it != castIds.end(); ++it) {
+		if (castId > -1 &&  *it != castId)
+			continue;
 		CastMember *castMember = getCastMember(*it);
 		CastMemberInfo *castMemberInfo = getCastMemberInfo(*it);
 		result += Common::String::format("%d: type=%s, name=\"%s\"\n",

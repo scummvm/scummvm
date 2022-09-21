@@ -122,7 +122,7 @@ public:
 	Common::CodePage getFileEncoding();
 	Common::U32String decodeString(const Common::String &str);
 
-	Common::String formatCastSummary();
+	Common::String formatCastSummary(int castId);
 
 private:
 	void loadScriptText(Common::SeekableReadStreamEndian &stream, uint16 id);

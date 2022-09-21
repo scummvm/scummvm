@@ -101,7 +101,7 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	//debugPrintf(" movieinfo - Show information for the current movie\n");
 	debugPrintf(" frame / f [frameNum] - Gets or sets the current score frame\n");
 	debugPrintf(" channels / chan [frameNum] - Shows channel information for a score frame\n");
-	debugPrintf(" cast - Shows the cast list for the current movie\n");
+	debugPrintf(" cast [castNum] - Shows the cast list or castNum for the current movie\n");
 	debugPrintf(" nextframe / nf [n] - Steps forward one or more score frames\n");
 	//debugPrintf(" nextmovie / nm - Steps forward until the next change of movie\n");
 	debugPrintf("\n");
@@ -184,16 +184,24 @@ bool Debugger::cmdCast(int argc, const char **argv) {
 	Cast *cast = g_director->getCurrentMovie()->getCast();
 	Cast *sharedCast = g_director->getCurrentMovie()->getSharedCast();
 
+	int castId = -1;
+	if (argc == 2)
+		castId = atoi(argv[1]);
+
 	debugPrintf("Cast:\n");
-	if (cast) {
-		debugPrintf("%s\n", cast->formatCastSummary().c_str());
+	if (castId > -1 && !cast->getCastMember(castId)) {
+		debugPrintf("[not found]\n");
+	} else if (cast) {
+		debugPrintf("%s\n", cast->formatCastSummary(castId).c_str());
 	} else {
 		debugPrintf("[empty]\n");
 	}
 	debugPrintf("\n");
 	debugPrintf("Shared cast:\n");
-	if (sharedCast) {
-		debugPrintf("%s\n", sharedCast->formatCastSummary().c_str());
+	if (castId > -1 && !sharedCast->getCastMember(castId)) {
+		debugPrintf("[not found]\n");
+	} else if (sharedCast) {
+		debugPrintf("%s\n", sharedCast->formatCastSummary(castId).c_str());
 	} else {
 		debugPrintf("[empty]\n");
 	}
