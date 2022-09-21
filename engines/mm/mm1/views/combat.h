@@ -52,6 +52,11 @@ private:
 	 */
 	void writeStaticContent();
 
+	/**
+	 * Write out the round number
+	 */
+	void writeRound();
+
 public:
 	Combat();
 	virtual ~Combat() {}
