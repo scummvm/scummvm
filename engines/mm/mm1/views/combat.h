@@ -57,6 +57,12 @@ private:
 	 */
 	void writeRound();
 
+	/**
+	 * Writes out the party member numbers,
+	 * with a plus next to each if they can attack
+	 */
+	void writePartyNumbers();
+
 public:
 	Combat();
 	virtual ~Combat() {}

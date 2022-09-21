@@ -61,6 +61,7 @@ void Combat::draw() {
 	writeStaticContent();
 	writeHandicap();
 	writeRound();
+	writePartyNumbers();
 
 	writeOptions();
 }
@@ -177,6 +178,14 @@ void Combat::writeHandicap() {
 
 void Combat::writeRound() {
 	writeNumber(7, 1, _roundNum);
+}
+
+void Combat::writePartyNumbers() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		writeChar(2 + 4 * (i % 2), 3 + (i / 2),
+			_canAttack[i] ? '+' : ' ');
+		writeChar('1' + i);
+	}
 }
 
 } // namespace Views
