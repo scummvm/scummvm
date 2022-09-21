@@ -104,6 +104,26 @@ static const ADGameDescription gameDescriptions[] = {
 	 Common::kPlatformDOS,
 	 ADGF_NO_FLAGS,
 	 GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)},
+	{"driller",
+	 "Driller",
+	 {
+		{"driller", 0, "13dab2e10d8e8b9a364c94a660e0d42a", 282384},
+		AD_LISTEND
+	 },
+	 Common::EN_ANY,
+	 Common::kPlatformAmiga,
+	 ADGF_NO_FLAGS,
+	 GUIO1(GUIO_NOMIDI)},
+	{"driller",
+	 "Rolling Demo",
+	 {
+		{"amiga.demo", 0, "0b056286d2d91f302499c97aca235462", 24220},
+		AD_LISTEND
+	 },
+	 Common::EN_ANY,
+	 Common::kPlatformAmiga,
+	 ADGF_NO_FLAGS | ADGF_DEMO,
+	 GUIO1(GUIO_NOMIDI)},
 	{"darkside",
 	 "Dark Side",
 	 {
