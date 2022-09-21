@@ -45,6 +45,7 @@ bool Combat::msgFocus(const FocusMessage &msg) {
 		_party.push_back(&g_globals->_party[i]);
 
 	loadArrays();
+	setupCanAttacks();
 
 	// TODO: Replace with correct selection of starting char
 	g_globals->_currCharacter = &g_globals->_party[0];
@@ -56,6 +57,8 @@ void Combat::draw() {
 	//Game::Encounter &enc = g_globals->_encounters;
 
 	clearSurface();
+	writeHandicap();
+
 	writeOptions();
 }
 
@@ -134,6 +137,23 @@ void Combat::writeShootOption() {
 void Combat::resetBottom() {
 	clearLines(20, 24);
 	_val2 = _val3 = _val4 = _val5 = ' ';
+}
+
+void Combat::writeHandicap() {
+	writeString(0, 13, "          ");
+	_textPos.x = 0;
+
+	switch (_handicap) {
+	case HANDICAP_EVEN:
+		writeString(STRING["dialogs.combat.even"]);
+		break;
+	case HANDICAP_PARTY:
+		writeString(STRING["dialogs.combat.party_plus"]);
+		break;
+	case HANDICAP_MONSTER:
+		writeString(STRING["dialogs.combat.monster_plus"]);
+		break;
+	}
 }
 
 } // namespace Views

@@ -41,10 +41,15 @@ protected:
 	byte _arr2[MAX_COMBAT_MONSTERS];
 	byte _arr3[MAX_COMBAT_MONSTERS];
 	bool _canAttack[MAX_PARTY_SIZE];
-	int _val1, _val8, _val9, _val10;
+	int _val1, _val9, _val10;
 	int _monsterIndex, _currentChar;
 	char _val2, _val3, _val4, _val5;
 	int _attackerVal;
+	enum Handicap {
+		HANDICAP_EVEN = 0, HANDICAP_PARTY = 1,
+		HANDICAP_MONSTER = 2
+	};
+	Handicap _handicap = HANDICAP_EVEN;
 
 	Combat() { clear(); }
 

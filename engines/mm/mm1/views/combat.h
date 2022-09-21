@@ -41,6 +41,8 @@ private:
 	void writeCastOption();
 	void writeShootOption();
 	void resetBottom();
+	void writeHandicap();
+
 public:
 	Combat();
 	virtual ~Combat() {}
