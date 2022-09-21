@@ -131,23 +131,15 @@ void Combat::setupAttackerVal() {
 void Combat::checkLeftWall() {
 	Maps::Maps &maps = *g_maps;
 
-	if ((maps._currentWalls & maps._leftMask) &&
-			getRandomNumber(1, 100) >= 26) {
-		_canAttack[2] = false;
-	} else {
-		_canAttack[2] = true;
-	}
+	_canAttack[2] = !(maps._currentWalls & maps._leftMask) ||
+		getRandomNumber(1, 100) <= 25;
 }
 
 void Combat::checkRightWall() {
 	Maps::Maps &maps = *g_maps;
 
-	if ((maps._currentWalls & maps._rightMask) &&
-		getRandomNumber(1, 100) >= 26) {
-		_canAttack[3] = false;
-	} else {
-		_canAttack[3] = true;
-	}
+	_canAttack[3] = !(maps._currentWalls & maps._rightMask) ||
+		getRandomNumber(1, 100) <= 25;
 }
 
 void Combat::setupHandicap() {
