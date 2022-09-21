@@ -41,7 +41,16 @@ private:
 	void writeCastOption();
 	void writeShootOption();
 	void resetBottom();
+
+	/**
+	 * Write the encounter handicap
+	 */
 	void writeHandicap();
+
+	/**
+	 * Write out all the static content
+	 */
+	void writeStaticContent();
 
 public:
 	Combat();

@@ -286,6 +286,13 @@
 		alignment_slips: "*** ALIGNMENT SLIPS ***"
 		combat: "COMBAT!"
 	combat:
+		combat: "COMBAT"
+		round: "ROUND #:"
+		delay: "D DELAY"
+		protect: "P PROTECT"
+		quickref: "Q QUICKREF"
+		view_char: "# VIEW CH"
+		handicap: "HANDICAP"
 		options_for: "OPTIONS FOR: "
 		attack: "'A' ATTACK(A)"
 		cast: "'C' CAST"

@@ -57,6 +57,7 @@ void Combat::draw() {
 	//Game::Encounter &enc = g_globals->_encounters;
 
 	clearSurface();
+	writeStaticContent();
 	writeHandicap();
 
 	writeOptions();
@@ -154,6 +155,20 @@ void Combat::writeHandicap() {
 		writeString(STRING["dialogs.combat.monster_plus"]);
 		break;
 	}
+}
+
+void Combat::writeStaticContent() {
+	writeString(0, 0, STRING["dialogs.combat.combat"]);
+	writeString(0, 1, STRING["dialogs.combat.round"]);
+	writeString(0, 7, STRING["dialogs.combat.delay"]);
+	writeString(0, 8, STRING["dialogs.combat.protect"]);
+	writeString(0, 9, STRING["dialogs.combat.quickref"]);
+	writeString(0, 10, STRING["dialogs.combat.view_char"]);
+	writeString(0, 12, STRING["dialogs.combat.handicap"]);
+
+	_textPos = Common::Point(0, 15);
+	for (int i = 0; i < 40; ++i)
+		writeChar('-');
 }
 
 } // namespace Views
