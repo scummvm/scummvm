@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-09-20 21:10+0000\n"
-"PO-Revision-Date: 2022-08-22 23:14+0000\n"
+"PO-Revision-Date: 2022-09-21 09:37+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -6373,14 +6373,12 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "もう1つのイントロを使用する(CD版のみ)"
 
 #: engines/queen/detection.cpp:56
-#, fuzzy
-#| msgid "Improved mode"
 msgid "Improved font"
-msgstr "改善モード"
+msgstr "改善フォント"
 
 #: engines/queen/detection.cpp:57
 msgid "Use an easier to read custom font"
-msgstr ""
+msgstr "読みやすいカスタムフォントを使用"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:813
