@@ -36,6 +36,7 @@ void Combat::clear() {
 	_val8 = _val9 = _val10 = 0;
 	_monsterP = nullptr;
 	_monsterIndex = _currentChar = 0;
+	_attackerVal = 0;
 	// TODO: clear everything
 }
 
@@ -64,6 +65,85 @@ void Combat::monsterIndexOf() {
 			_monsterIndex = i;
 			break;
 		}
+	}
+}
+
+void Combat::setupCanAttacks() {
+	const Encounter &enc = g_globals->_encounters;
+	const Maps::Map &map = *g_maps->_currentMap;
+	Common::fill(&_canAttack[0], &_canAttack[MAX_PARTY_SIZE], false);
+
+	if ((int8)map[Maps::MAP_ID] < 0) {
+		if (enc._encounterFlag != FORCE_SURPRISED) {
+			for (uint i = 0; i < g_globals->_party.size(); ++i) {
+				if (i < (MAX_PARTY_SIZE - 1)) {
+					_canAttack[i] = true;
+				} else {
+					_canAttack[MAX_PARTY_SIZE - 1] =
+						getRandomNumber(1, 100) <= 10;
+				}
+			}
+
+			setupCanAttacks();
+			return;
+		}
+	} else {
+		if (enc._encounterFlag != FORCE_SURPRISED) {
+			_canAttack[0] = true;
+			if (g_globals->_party.size() > 1)
+				_canAttack[1] = true;
+			if (g_globals->_party.size() > 2)
+				checkLeftWall();
+			if (g_globals->_party.size() > 3)
+				checkRightWall();
+			if (g_globals->_party.size() > 4) {
+				if (_canAttack[2] && getRandomNumber(1, 100) <= 5)
+					_canAttack[4] = true;
+			}
+			if (g_globals->_party.size() > 5) {
+				if (_canAttack[3] && getRandomNumber(1, 100) <= 5)
+					_canAttack[5] = true;
+			}
+
+			setupAttackerVal();
+			return;
+		}
+	}
+
+	// Entire party is allowed to attack
+	Common::fill(&_canAttack[0], &_canAttack[g_globals->_party.size()], true);
+	setupAttackerVal();
+}
+
+void Combat::setupAttackerVal() {
+	_attackerVal = 0;
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		if (_canAttack[i])
+			++_attackerVal;
+	}
+
+	_attackerVal = getRandomNumber(1, _attackerVal + 1) - 1;
+}
+
+void Combat::checkLeftWall() {
+	Maps::Maps &maps = *g_maps;
+
+	if ((maps._currentWalls & maps._leftMask) &&
+			getRandomNumber(1, 100) >= 26) {
+		_canAttack[2] = false;
+	} else {
+		_canAttack[2] = true;
+	}
+}
+
+void Combat::checkRightWall() {
+	Maps::Maps &maps = *g_maps;
+
+	if ((maps._currentWalls & maps._rightMask) &&
+		getRandomNumber(1, 100) >= 26) {
+		_canAttack[3] = false;
+	} else {
+		_canAttack[3] = true;
 	}
 }
 
