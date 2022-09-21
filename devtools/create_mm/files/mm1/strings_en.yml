@@ -293,6 +293,9 @@
 		shoot: "'S' SHOOT"
 		exchange_use: "'E' EXCHANGE  'U' USE"
 		retreat_block: "'R' RETREAT   'B' BLOCK"
+		even: "EVEN"
+		party_plus: "PARTY +"
+		monster_plus: "MONSTER +"
 
 enhdialogs:
 	character:
