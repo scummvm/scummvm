@@ -30,28 +30,45 @@
 
 namespace Freescape {
 
+uint16 FreescapeEngine::readField(Common::SeekableReadStream *file, int bits) {
+	uint16 value;
+	assert(bits == 8 || bits == 16);
+	if (isAmiga()) {
+		value = file->readUint16BE();
+		if (bits == 8)
+			assert(value < 256);
+	} else {
+		if (bits == 8)
+			value = file->readByte();
+		else
+			value = file->readUint16LE();
+	}
+
+	return value;
+}
+
 Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 
-	byte rawFlagsAndType = file->readByte();
+	byte rawFlagsAndType = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Raw object data flags and type: %d", rawFlagsAndType);
 	Object::Type objectType = (Object::Type)(rawFlagsAndType & 0x1F);
 
 	Math::Vector3d position, v;
 
-	position.x() = file->readByte();
-	position.y() = file->readByte();
-	position.z() = file->readByte();
+	position.x() = readField(file, 8);
+	position.y() = readField(file, 8);
+	position.z() = readField(file, 8);
 
-	v.x() = file->readByte();
-	v.y() = file->readByte();
-	v.z() = file->readByte();
+	v.x() = readField(file, 8);
+	v.y() = readField(file, 8);
+	v.z() = readField(file, 8);
 
 	// object ID
-	uint16 objectID = file->readByte();
+	uint16 objectID = readField(file, 8);
 	// size of object on disk; we've accounted for 8 bytes
 	// already so we can subtract that to get the remaining
 	// length beyond here
-	uint8 byteSizeOfObject = file->readByte();
+	uint8 byteSizeOfObject = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Raw object %d ; type %d ; size %d", objectID, (int)objectType, byteSizeOfObject);
 	if (byteSizeOfObject < 9) {
 		error("Not enough bytes %d to read object %d with type %d", byteSizeOfObject, objectID, objectType);
@@ -87,7 +104,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		debugC(1, kFreescapeDebugParser, "Number of colors: %d", numberOfColours/2);
 		uint8 entry;
 		for (uint8 colour = 0; colour < numberOfColours/2; colour++) {
-			uint8 data = file->readByte();
+			uint8 data = readField(file, 8);
 			entry = data & 0xf;
 			if (_renderMode == "cga")
 				entry = entry % 4; // TODO: use dithering
@@ -118,7 +135,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 				//return nullptr;
 			}
 			for (int ordinate = 0; ordinate < numberOfOrdinates; ordinate++) {
-				ord = file->readByte();
+				ord = readField(file, 8);
 				debugC(1, kFreescapeDebugParser, "ord: %x", ord);
 				ordinates->push_back(32 * ord);
 				byteSizeOfObject--;
@@ -358,14 +375,18 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 
 void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offset, int ncolors) {
 	file->seek(offset);
-	uint8 numberOfAreas = file->readByte();
-	uint16 dbSize = file->readUint16LE();
+	uint8 numberOfAreas = readField(file, 8);
+	uint16 dbSize = 0;
 	debugC(1, kFreescapeDebugParser, "Number of areas: %d", numberOfAreas);
-	debugC(1, kFreescapeDebugParser, "Database ends at %x", dbSize);
 
-	uint8 startArea = file->readByte();
+	if (!isAmiga()) {
+		dbSize = readField(file, 16);
+		debugC(1, kFreescapeDebugParser, "Database ends at %x", dbSize);
+	}
+
+	uint8 startArea = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Start area: %d", startArea);
-	uint8 startEntrance = file->readByte();
+	uint8 startEntrance = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Entrace area: %d", startEntrance);
 
 	file->seek(offset + 0xa);
@@ -397,11 +418,11 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	file->seek(offset + 0x46); // 0x46
 
 	uint16 globalSomething;
-	globalSomething = file->readUint16LE();
+	globalSomething = readField(file, 16);
 	debugC(1, kFreescapeDebugParser, "Pointer to something: %x\n", globalSomething);
 
 	uint16 globalByteCodeTable;
-	globalByteCodeTable = file->readUint16LE();
+	globalByteCodeTable = readField(file, 16);
 	debugC(1, kFreescapeDebugParser, "GBCT: %d\n", globalByteCodeTable);
 
 	file->seek(offset + globalByteCodeTable);

@@ -103,7 +103,14 @@ void DrillerEngine::loadAssets() {
 	Common::FSDirectory gameDir(path);
 
 	Common::File exe;
-	if (_renderMode == "ega") {
+	if (isAmiga()) {
+		file = gameDir.createReadStreamForMember("driller");
+
+		if (file == nullptr)
+			error("Failed to open 'driller' executable for Amiga");
+
+		load8bitBinary(file, 0xbd90, 16);
+	} else if (_renderMode == "ega") {
 		file = gameDir.createReadStreamForMember("DRILLE.EXE");
 
 		if (file == nullptr)

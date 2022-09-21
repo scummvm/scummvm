@@ -82,6 +82,7 @@ public:
 	bool isDark() { return _targetName.hasPrefix("darkside"); }
 	bool isEclipse() { return _targetName.hasPrefix("totaleclipse"); }
 	bool isCastle() { return _targetName.hasPrefix("castle"); }
+	bool isAmiga() { return _targetName.hasSuffix("-amiga"); }
 
 	Common::Error run() override;
 
@@ -102,6 +103,7 @@ public:
 	void loadBorder();
 	void loadColorPalette();
 
+	uint16 readField(Common::SeekableReadStream *file, int nbits);
 	// 16-bit
 	void load16bitBinary(Common::SeekableReadStream *file);
 
