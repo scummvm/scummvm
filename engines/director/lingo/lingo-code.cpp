@@ -1329,9 +1329,9 @@ Datum LC::eqData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::eqData, d1, d2, false, true);
 	}
-	d1.u.i = d1.equalTo(d2, true);
-	d1.type = INT;
-	return d1;
+	Datum check;
+	check = d1.equalTo(d2, true);
+	return check;
 }
 
 void LC::c_eq() {
@@ -1345,9 +1345,9 @@ Datum LC::neqData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::neqData, d1, d2, false, true);
 	}
-	d1.u.i = !d1.equalTo(d2, true);
-	d1.type = INT;
-	return d1;
+	Datum check;
+	check = !d1.equalTo(d2, true);
+	return check;
 }
 
 void LC::c_neq() {
@@ -1361,9 +1361,9 @@ Datum LC::gtData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::gtData, d1, d2, false, true);
 	}
-	d1.u.i = d1 > d2 ? 1 : 0;
-	d1.type = INT;
-	return d1;
+	Datum check;
+	check = (d1 > d2 ? 1 : 0);
+	return check;
 }
 
 void LC::c_gt() {
@@ -1377,9 +1377,9 @@ Datum LC::ltData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::ltData, d1, d2, false, true);
 	}
-	d1.u.i = d1 < d2 ? 1 : 0;
-	d1.type = INT;
-	return d1;
+	Datum check;
+	check = d1 < d2 ? 1 : 0;
+	return check;
 }
 
 void LC::c_lt() {
@@ -1393,9 +1393,9 @@ Datum LC::geData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::geData, d1, d2, false, true);
 	}
-	d1.u.i = d1 >= d2 ? 1 : 0;
-	d1.type = INT;
-	return d1;
+	Datum check;
+	check = d1 >= d2 ? 1 : 0;
+	return check;
 }
 
 void LC::c_ge() {
@@ -1409,9 +1409,9 @@ Datum LC::leData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::leData, d1, d2, false, true);
 	}
-	d1.u.i = d1 <= d2 ? 1 : 0;
-	d1.type = INT;
-	return d1;
+	Datum check;
+	check =  d1 <= d2 ? 1 : 0;
+	return check;
 }
 
 void LC::c_le() {
