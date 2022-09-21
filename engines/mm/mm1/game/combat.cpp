@@ -33,14 +33,15 @@ void Combat::clear() {
 	Common::fill(&_arr3[0], &_arr3[MAX_COMBAT_MONSTERS], 0);
 	Common::fill(&_canAttack[0], &_canAttack[6], false);
 	_val1 = _val2 = _val3 = _val4 = _val5 = 0;
+	_val10 = 0;
+	_handicap1 = _handicap2 = 0;
+	_handicap3 = _handicap4 = 0;
 	_handicap = HANDICAP_EVEN;
-	_val9 = _val10 = 0;
 	_monsterP = nullptr;
 	_monsterIndex = _currentChar = 0;
 	_attackerVal = 0;
 	// TODO: clear everything
 }
-
 
 void Combat::loadArrays() {
 	Game::Encounter &enc = g_globals->_encounters;
@@ -146,6 +147,34 @@ void Combat::checkRightWall() {
 	} else {
 		_canAttack[3] = true;
 	}
+}
+
+void Combat::setupHandicap() {
+	_handicap2 = _handicap3 = 40;
+	_handicap1 = getRandomNumber(1, 7);
+
+	int val = getRandomNumber(1, 7);
+	if (val < _handicap1) {
+		SWAP(val, _handicap1);
+		_handicap4 = val - _handicap1;
+
+		if (_handicap4) {
+			_handicap = HANDICAP_MONSTER;
+			_handicap2 += _handicap4;
+			return;
+		}
+	} else if (val > _handicap1) {
+		_handicap4 -= _handicap1;
+
+		if (_handicap4) {
+			_handicap = HANDICAP_PARTY;
+			_handicap3 += _handicap4;
+			return;
+		}
+	}
+
+	_handicap = HANDICAP_EVEN;
+	_handicap4 = 0;
 }
 
 } // namespace Game
