@@ -46,6 +46,7 @@ bool Combat::msgFocus(const FocusMessage &msg) {
 
 	loadArrays();
 	setupCanAttacks();
+	setupHandicap();
 
 	// TODO: Replace with correct selection of starting char
 	g_globals->_currCharacter = &g_globals->_party[0];
@@ -59,6 +60,7 @@ void Combat::draw() {
 	clearSurface();
 	writeStaticContent();
 	writeHandicap();
+	writeRound();
 
 	writeOptions();
 }
@@ -140,23 +142,6 @@ void Combat::resetBottom() {
 	_val2 = _val3 = _val4 = _val5 = ' ';
 }
 
-void Combat::writeHandicap() {
-	writeString(0, 13, "          ");
-	_textPos.x = 0;
-
-	switch (_handicap) {
-	case HANDICAP_EVEN:
-		writeString(STRING["dialogs.combat.even"]);
-		break;
-	case HANDICAP_PARTY:
-		writeString(STRING["dialogs.combat.party_plus"]);
-		break;
-	case HANDICAP_MONSTER:
-		writeString(STRING["dialogs.combat.monster_plus"]);
-		break;
-	}
-}
-
 void Combat::writeStaticContent() {
 	writeString(0, 0, STRING["dialogs.combat.combat"]);
 	writeString(0, 1, STRING["dialogs.combat.round"]);
@@ -169,6 +154,29 @@ void Combat::writeStaticContent() {
 	_textPos = Common::Point(0, 15);
 	for (int i = 0; i < 40; ++i)
 		writeChar('-');
+}
+
+void Combat::writeHandicap() {
+	writeString(0, 13, "          ");
+	_textPos.x = 0;
+
+	switch (_handicap) {
+	case HANDICAP_EVEN:
+		writeString(STRING["dialogs.combat.even"]);
+		break;
+	case HANDICAP_PARTY:
+		writeString(STRING["dialogs.combat.party_plus"]);
+		writeNumber(_handicap4);
+		break;
+	case HANDICAP_MONSTER:
+		writeString(STRING["dialogs.combat.monster_plus"]);
+		writeNumber(_handicap4);
+		break;
+	}
+}
+
+void Combat::writeRound() {
+	writeNumber(7, 1, _roundNum);
 }
 
 } // namespace Views
