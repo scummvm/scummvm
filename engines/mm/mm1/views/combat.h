@@ -79,6 +79,16 @@ private:
 	 */
 	void writeDots();
 
+	/**
+	 * Writes out the party members
+	 */
+	void writeParty();
+
+	/**
+	 * Clears the party area
+	 */
+	void clearPartyArea();
+
 public:
 	Combat();
 	virtual ~Combat() {}
