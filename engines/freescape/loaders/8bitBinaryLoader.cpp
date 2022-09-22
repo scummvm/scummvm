@@ -458,14 +458,6 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		debugC(1, kFreescapeDebugParser, "%s", conditionSource->c_str());
 	}
 
-	if (isEclipse()) {
-		loadFonts(file, 0xd403);
-		//loadMessages(file, 0x7110, 17, 20);
-	} else if (isDark()) {
-		//loadMessages(file, 0x4135, 14, 20);
-		loadFonts(file, 0xa113);
-	}
-
 	file->seek(offset + 0xc8);
 	//file->seek(offset + 0x4f); //CPC
 

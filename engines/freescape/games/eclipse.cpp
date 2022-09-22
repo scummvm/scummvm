@@ -113,6 +113,7 @@ void EclipseEngine::loadAssets() {
 		if (file == nullptr)
 			error("Failed to open TOTEE.EXE");
 
+		loadFonts(file, 0xd403);
 		load8bitBinary(file, 0x3ce0, 16);
 	} else if (_renderMode == "cga") {
 		file = gameDir.createReadStreamForMember("TOTEC.EXE");
