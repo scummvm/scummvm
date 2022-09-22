@@ -314,18 +314,18 @@ uint Maps::getIndex(uint16 id, byte section) {
 }
 
 void Maps::loadTiles() {
-	_loadArea = _currentMap->dataByte(1);
-	_loadId = _currentMap->dataWord(2);
+	_loadArea = _currentMap->dataByte(MAP_1);
+	_loadId = _currentMap->dataWord(MAP_2);
 	_loadSection = 1;
 	loadTile();
 
-	_loadArea = _currentMap->dataByte(1);
-	_loadId = _currentMap->dataWord(4);
+	_loadArea = _currentMap->dataByte(MAP_1);
+	_loadId = _currentMap->dataWord(MAP_4);
 	_loadSection = 2;
 	loadTile();
 
-	_loadArea = _currentMap->dataByte(1);
-	_loadId = _currentMap->dataWord(6);
+	_loadArea = _currentMap->dataByte(MAP_1);
+	_loadId = _currentMap->dataWord(MAP_6);
 	_loadSection = 3;
 	loadTile();
 }
@@ -410,20 +410,20 @@ void Maps::step(const Common::Point &delta) {
 	int section = 0, id = 0;
 	if (_mapPos.x < 0) {
 		_mapPos.x = MAP_W - 1;
-		id = _currentMap->dataWord(16);
-		section = _currentMap->dataByte(14);
+		id = _currentMap->dataWord(MAP_16);
+		section = _currentMap->dataByte(MAP_14);
 	} else if (_mapPos.x >= MAP_W) {
 		_mapPos.x = 0;
-		id = _currentMap->dataWord(11);
-		section = _currentMap->dataByte(13);
+		id = _currentMap->dataWord(MAP_SURFACE_DEST_ID1);
+		section = _currentMap->dataByte(MAP_SURFACE_DEST_SECTION);
 	} else if (_mapPos.y < 0) {
 		_mapPos.y = MAP_H - 1;
-		id = _currentMap->dataWord(17);
-		section = _currentMap->dataByte(19);
+		id = _currentMap->dataWord(MAP_17);
+		section = _currentMap->dataByte(MAP_19);
 	} else if (_mapPos.y >= MAP_H) {
 		_mapPos.y = 0;
-		id = _currentMap->dataWord(8);
-		section = _currentMap->dataByte(10);
+		id = _currentMap->dataWord(MAP_8);
+		section = _currentMap->dataByte(MAP_10);
 	} else {
 		return;
 	}

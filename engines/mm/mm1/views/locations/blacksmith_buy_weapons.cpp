@@ -36,7 +36,7 @@ BlacksmithBuyWeapons::BlacksmithBuyWeapons() :
 }
 
 bool BlacksmithBuyWeapons::msgFocus(const FocusMessage &msg) {
-	int townNum = g_maps->_currentMap->dataByte(0);
+	int townNum = g_maps->_currentMap->dataByte(Maps::MAP_ID);
 	if (townNum < 1 || townNum >= 6)
 		townNum = 1;
 	_items = WEAPONS[townNum - 1];

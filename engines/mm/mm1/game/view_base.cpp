@@ -165,7 +165,7 @@ void ViewBase::forward(KeybindingAction action) {
 			else
 				offset = 0;
 
-			if (map.dataByte(30 + offset) == 4 &&
+			if (map.dataByte(Maps::MAP_30 + offset) == 4 &&
 				!g_globals->_spells._s.walk_on_water) {
 				Sound::sound(SOUND_1);
 				_dialogMessage = STRING["movement.obstructed.cant_swim"];
@@ -183,7 +183,7 @@ void ViewBase::forward(KeybindingAction action) {
 
 	Common::fill(&_arr2[0], &_arr2[8], 0);
 
-	int maxVal = map.dataByte(29);
+	int maxVal = map[Maps::MAP_29];
 	if (g_engine->getRandomNumber(maxVal) == maxVal)
 		_stepRandom = true;
 
@@ -211,7 +211,7 @@ void ViewBase::backwards() {
 
 	Common::fill(&_arr2[0], &_arr2[8], 0);
 
-	int maxVal = map.dataByte(29);
+	int maxVal = map[Maps::MAP_29];
 	if (g_engine->getRandomNumber(maxVal) == maxVal)
 		_stepRandom = true;
 
@@ -249,11 +249,11 @@ void ViewBase::bash() {
 		// No forward obstruction, so simply move forward
 		forward(KEYBIND_FORWARDS);
 	} else {
-		int index = 32;
+		int index = Maps::MAP_32;
 		if (!(maps._currentWalls & maps._forwardMask & 0x55))
-			index = 31;
+			index = Maps::MAP_31;
 		else if (!(maps._currentWalls & maps._forwardMask & 0x55))
-			index = 30;
+			index = Maps::MAP_30;
 
 		if (map.dataByte(index) != 1) {
 			forward(KEYBIND_FORWARDS);
@@ -266,7 +266,7 @@ void ViewBase::bash() {
 			might = MIN(might, 255U);
 
 			// Check for busting
-			uint threshold = map.dataByte(45);
+			uint threshold = map[Maps::MAP_45];
 			if (threshold && might >= threshold) {
 				map._states[maps._mapOffset + maps._forwardMask] ^=
 					(maps._forwardMask & 0x55);
@@ -274,7 +274,7 @@ void ViewBase::bash() {
 			}
 
 			// Check for trap being triggered
-			if (g_engine->getRandomNumber(100) >= map.dataByte(48)) {
+			if (g_engine->getRandomNumber(100) >= map[Maps::MAP_48]) {
 				warning("TODO: trigger trap");
 
 			} else {
