@@ -227,7 +227,7 @@ Common::String SRTParser::getSubtitle(uint32 timestamp) {
 
 #define SHADOW 1
 
-Subtitles::Subtitles() : _loaded(false), _font(nullptr) {
+Subtitles::Subtitles() : _loaded(false), _font(nullptr), _hPad(0), _vPad(0) {
 	_surface = new Graphics::Surface();
 }
 
@@ -275,6 +275,11 @@ void Subtitles::setColor(byte r, byte g, byte b) {
 	_transparentColor = _surface->format.ARGBToColor(0, 0, 0, 0);
 }
 
+void Subtitles::setPadding(uint16 horizontal, uint16 vertical) {
+	_hPad = horizontal;
+	_vPad = vertical;
+}
+
 void Subtitles::drawSubtitle(uint32 timestamp, bool force) {
 	if (!_loaded)
 		return;
@@ -294,23 +299,33 @@ void Subtitles::drawSubtitle(uint32 timestamp, bool force) {
 
 	_font->wordWrapText(convertUtf8ToUtf32(subtitle), _bbox.width(), lines);
 
-	int y = 0;
+	if (lines.empty())
+		return;
 
-	for (int i = 0; i < lines.size(); i++) {
-		_font->drawString(_surface, lines[i], 0, y, _bbox.width(), _blackColor, Graphics::kTextAlignCenter);
-		_font->drawString(_surface, lines[i], SHADOW * 2, y, _bbox.width(), _blackColor, Graphics::kTextAlignCenter);
-		_font->drawString(_surface, lines[i], 0, y + SHADOW * 2, _bbox.width(), _blackColor, Graphics::kTextAlignCenter);
-		_font->drawString(_surface, lines[i], SHADOW * 2, y + SHADOW * 2, _bbox.width(), _blackColor, Graphics::kTextAlignCenter);
+	int height = _vPad;
 
-		_font->drawString(_surface, lines[i], SHADOW, y + SHADOW, _bbox.width(), _color, Graphics::kTextAlignCenter);
+	int width = 0;
+	for (uint i = 0; i < lines.size(); i++)
+		width = MAX(_font->getStringWidth(lines[i]), width);
+	width = MIN(width + 2 * _hPad, (int)_bbox.width());
 
-		y += _font->getFontHeight();
+	for (uint i = 0; i < lines.size(); i++) {
+		_font->drawString(_surface, lines[i], 0, height, width, _blackColor, Graphics::kTextAlignCenter);
+		_font->drawString(_surface, lines[i], SHADOW * 2, height, width, _blackColor, Graphics::kTextAlignCenter);
+		_font->drawString(_surface, lines[i], 0, height + SHADOW * 2, width, _blackColor, Graphics::kTextAlignCenter);
+		_font->drawString(_surface, lines[i], SHADOW * 2, height + SHADOW * 2, width, _blackColor, Graphics::kTextAlignCenter);
 
-		if (y > _bbox.bottom)
+		_font->drawString(_surface, lines[i], SHADOW, height + SHADOW, width, _color, Graphics::kTextAlignCenter);
+
+		height += _font->getFontHeight();
+
+		if (height + _vPad > _bbox.bottom)
 			break;
 	}
 
-	g_system->copyRectToOverlay(_surface->getPixels(), _surface->pitch, _bbox.left, _bbox.top, _bbox.width(), _bbox.height());
+	height += _vPad;
+
+	g_system->copyRectToOverlay(_surface->getPixels(), _surface->pitch, _bbox.left + (_bbox.width() - width) / 2, _bbox.top, width + SHADOW * 2, height + SHADOW * 2);
 	g_system->updateScreen();
 }
 

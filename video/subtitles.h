@@ -67,6 +67,7 @@ public:
 	void setFont(const char *fontname, int height = 18);
 	void setBBox(const Common::Rect bbox);
 	void setColor(byte r, byte g, byte b);
+	void setPadding(uint16 horizontal, uint16 vertical);
 	void drawSubtitle(uint32 timestamp, bool force = false);
 
 private:
@@ -85,6 +86,8 @@ private:
 	uint32 _color;
 	uint32 _blackColor;
 	uint32 _transparentColor;
+	uint16 _hPad;
+	uint16 _vPad;
 };
 
 } // End of namespace Video
