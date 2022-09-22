@@ -39,7 +39,7 @@ protected:
 	Monster *_monsterP;
 	byte _arr1[MAX_COMBAT_MONSTERS];
 	byte _arr2[MAX_COMBAT_MONSTERS];
-	byte _arr3[MAX_COMBAT_MONSTERS];
+	byte _monsterStatus[MAX_COMBAT_MONSTERS];
 	bool _canAttack[MAX_PARTY_SIZE];
 	int _val1;
 	int _roundNum;
@@ -68,6 +68,11 @@ protected:
 	 * _monsterP in the monster list
 	 */
 	void monsterIndexOf();
+
+	/**
+	 * Sets _monsterP to point to a specified monster
+	 */
+	void monsterSetPtr(int monsterNum);
 
 	/**
 	 * Sets up the flags for whether each character

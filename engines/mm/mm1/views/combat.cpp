@@ -29,7 +29,8 @@ namespace MM {
 namespace MM1 {
 namespace Views {
 
-Combat::Combat() : TextView("Combat") {
+Combat::Combat() : TextView("Combat"),
+		_monsterList(g_globals->_encounters._monsterList) {
 }
 
 bool Combat::msgFocus(const FocusMessage &msg) {
@@ -62,6 +63,7 @@ void Combat::draw() {
 	writeHandicap();
 	writeRound();
 	writePartyNumbers();
+	writeMonsters();
 
 	writeOptions();
 }
@@ -187,6 +189,61 @@ void Combat::writePartyNumbers() {
 		writeChar('1' + i);
 	}
 }
+
+void Combat::writeMonsters() {
+	const Game::Encounter &enc = g_globals->_encounters;
+
+	if (enc._monsterList.empty()) {
+		_textPos = Common::Point(10, 0);
+		writeSpaces(30);
+	} else {
+		for (uint i = 0; i < _monsterList.size(); ++i) {
+			_textPos = Common::Point(11, i);
+			writeChar(i < _attackerVal ? '+' : ' ');
+			writeChar('A' + i);
+			writeString(") ");
+			writeString(_monsterList[i]._name);
+			writeMonsterStatus(i);
+		}
+	}
+
+	for (; _textPos.y < 15; _textPos.y++) {
+		_textPos.x = 10;
+		writeSpaces(30);
+	}
+}
+
+void Combat::writeMonsterStatus(int monsterNum) {
+	monsterSetPtr(monsterNum);
+	byte statusBits = _monsterStatus[monsterNum];
+
+	if (statusBits) {
+		writeDots();
+
+		int status;
+		if (statusBits == 0xff) {
+			status = MON_DEAD;
+		} else {	
+			for (status = MON_PARALYZED; !(statusBits & 0x80);
+					++status, statusBits <<= 1) {
+			}
+		}
+
+		writeString(STRING[Common::String::format("dialogs.combat.status.%d",
+			status)]);
+	} else if (_arr1[monsterNum] != _monsterP->_field11) {
+		writeDots();
+		writeString(STRING["dialogs.combat.status.wounded"]);
+	} else {
+		writeSpaces(40 - _textPos.x);
+	}
+}
+
+void Combat::writeDots() {
+	while (_textPos.x < 30)
+		writeChar('.');
+}
+
 
 } // namespace Views
 } // namespace MM1

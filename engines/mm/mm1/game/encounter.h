@@ -45,7 +45,8 @@ private:
 	int _monsterNum16 = 0;
 	int _totalLevels = 0, _highestLevel = 0;
 	int _monsterNum = 0;
-	byte _arr1[15], _arr2[15];
+	byte _arr1[MAX_COMBAT_MONSTERS];
+	byte _monsIndexes[MAX_COMBAT_MONSTERS];
 
 	void randomAdjust();
 	const Monster *getMonster();

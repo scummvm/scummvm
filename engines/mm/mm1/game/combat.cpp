@@ -30,7 +30,7 @@ namespace Game {
 void Combat::clear() {
 	Common::fill(&_arr1[0], &_arr1[MAX_COMBAT_MONSTERS], 0);
 	Common::fill(&_arr2[0], &_arr2[MAX_COMBAT_MONSTERS], 0);
-	Common::fill(&_arr3[0], &_arr3[MAX_COMBAT_MONSTERS], 0);
+	Common::fill(&_monsterStatus[0], &_monsterStatus[MAX_COMBAT_MONSTERS], 0);
 	Common::fill(&_canAttack[0], &_canAttack[6], false);
 	_val1 = _val2 = _val3 = _val4 = _val5 = 0;
 	_handicap1 = _handicap2 = 0;
@@ -69,6 +69,10 @@ void Combat::monsterIndexOf() {
 			break;
 		}
 	}
+}
+
+void Combat::monsterSetPtr(int monsterNum) {
+	_monsterP = &g_globals->_encounters._monsterList[monsterNum];
 }
 
 void Combat::setupCanAttacks() {
