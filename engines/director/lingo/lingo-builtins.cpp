@@ -1059,13 +1059,22 @@ void LB::b_closeDA(int nargs) {
 
 void LB::b_closeResFile(int nargs) {
 	if (nargs == 0) { // Close all res files
+		for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator
+				it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
+			delete it->_value;
+		}
 		g_director->_openResFiles.clear();
 		return;
 	}
+
 	Datum d = g_lingo->pop();
 	Common::String resFileName = g_director->getCurrentWindow()->getCurrentPath() + d.asString();
 
-	g_director->_openResFiles.erase(resFileName);
+	if (g_director->_openResFiles.contains(resFileName)) {
+		auto archive = g_director->_openResFiles.getVal(resFileName);
+		delete archive;
+		g_director->_openResFiles.erase(resFileName);
+	}
 }
 
 void LB::b_closeXlib(int nargs) {
@@ -1145,6 +1154,8 @@ void LB::b_openResFile(int nargs) {
 
 		if (resFile->openFile(pathMakeRelative(resPath))) {
 			g_director->_openResFiles.setVal(resPath, resFile);
+		} else {
+			delete resFile;
 		}
 	}
 }
@@ -1179,6 +1190,8 @@ void LB::b_openXlib(int nargs) {
 					g_lingo->openXLib(xlibName, kXObj);
 				}
 				return;
+			} else {
+				delete resFile;
 			}
 		}
 	}
