@@ -3888,6 +3888,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("majestic", "", "Majestic", "01be45e7241194dad07938e7059b88e3", 483774, 400),
 	WINGAME1("majestic", "", "MAJESTIC.EXE", "624267f70253e5327981003a6fc0aeba", 23437631, 400),
+	WINGAME1t_l("majestic", "", "Maj32.exe", "d1cced6eff47da53845679d05b5d2bf3", 24166899, Common::DE_DEU, 400),
 
 	// Original filename is Make•A•Mug™ V1.0
 	MACGAME1("makeamug", "v1.0", "xn--MakeAMug V1.0-lt6gb312b", "4f8bb7ad0cbcec1815538ba15a899061", 304279, 400),
