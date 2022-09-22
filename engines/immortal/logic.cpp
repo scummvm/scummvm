@@ -99,7 +99,7 @@ void ImmortalEngine::logic() {
 			_levelOver = false;
 
 			if (_level == (_maxLevels-1)) {
-				textPrint(kStrYouWin);
+				textPrint(kStrYouWin, 0);
 
 			} else {
 				makeCertificate();
@@ -201,18 +201,6 @@ void ImmortalEngine::doSingleStep() {
 	}
 }
 
-void ImmortalEngine::setPen(uint16 penX, uint16 penY) {
-	_penX = penX & kMaskLow;
-	// Is this screen wrap?
-	if ((penY & kMaskLow) < 200) {
-		_penY = penY & kMaskLow;
-	}
-
-	else {
-		_penY = penY | kMaskHigh;
-	}
-}
-
 void ImmortalEngine::updateHitGauge() {
 	/* This HUD (essentially) drawing routine is a bit weird because
 	 * the game was originally meant to have multiple player characters
@@ -250,8 +238,6 @@ void ImmortalEngine::drawGauge(int h) {
 	 */
 	int r = 16 - h;
 	setPen(kGaugeX, kGaugeY);
-	// Temporary x value, until it's clear why printchr is designed to add 8 pixels *before* drawing the char
-	_penX = 0xFFF0;
 	h--;
 	if (h >= 0) {
 		// This could be written as a regular for loop, but the game thinks of start/stop as different from on
@@ -277,7 +263,7 @@ void ImmortalEngine::drawGauge(int h) {
 bool ImmortalEngine::printAnd(Str s) {
 	// Only ever used by fromOldGame()
 	// Just prints what it's given and then checks for input
-	textPrint(s);
+	textPrint(s, 0);
 	getInput();
 	if (_heldAction != kActionNothing) {
 		return true;
@@ -307,7 +293,7 @@ bool ImmortalEngine::fromOldGame() {
 	} else {
 
 		do {
-			if (!textPrint(kStrOldGame)) {
+			if (!textPrint(kStrOldGame, 0)) {
 				// They choose not to load an old game
 				return false;			
 			}
@@ -511,7 +497,7 @@ void ImmortalEngine::calcCheckSum(int l, uint8 checksum[]) {
 }
 
 bool ImmortalEngine::getCertificate() {
-	textPrint(kStrCert);
+	textPrint(kStrCert, 0);
 	int certLen = 0;
 	bool entered = false;
 	int k = 0;
@@ -575,14 +561,14 @@ bool ImmortalEngine::getCertificate() {
 	}
 	if (certLen != 0) {
 		if (certLen < 4) {
-			textPrint(kStrBadCertificate);
+			textPrint(kStrBadCertificate, 0);
 			return false;
 		}
 		uint8 checksum[4];
 		calcCheckSum(certLen, checksum);
 		for (int i = 0; i < 4; i++) {
 			if (checksum[i] != _certificate[i]) {
-				textPrint(kStrBadCertificate);
+				textPrint(kStrBadCertificate, 0);
 				return false;
 			}
 		}
@@ -603,11 +589,11 @@ void ImmortalEngine::printCertificate() {
 	 */
 	char toHex[] = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
 
-	textBeginning(kStrCert);
+	textBeginning(kStrCert, 0);
 	for (int i = 0; i < _lastCertLen; i++) {
 		printChr(toHex[_certificate[i]]);
 	}
-	textEnd(kStrCert2);
+	textEnd(kStrCert2, 0);
 }
 
 bool ImmortalEngine::isSavedKing() {
@@ -645,7 +631,7 @@ int ImmortalEngine::getLevel() {
 
 void ImmortalEngine::gameOverDisplay() {
 	_themePaused = true;
-	textPrint(kStrGameOver);
+	textPrint(kStrGameOver, 0);
 }
 
 void ImmortalEngine::gameOver() {
