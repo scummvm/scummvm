@@ -38,9 +38,20 @@ class Maps;
 
 enum DataOffset {
 	MAP_ID = 0,
+	MAP_1 = 1,
+	MAP_2 = 2,
+	MAP_4 = 4,
+	MAP_6 = 6,
+	MAP_8 = 8,
+	MAP_10 = 10,
 	MAP_SURFACE_DEST_ID1 = 11,
 	MAP_SURFACE_DEST_ID2 = 12,
 	MAP_SURFACE_DEST_SECTION = 13,
+	MAP_14 = 14,
+	MAP_16 = 16,
+	MAP_17 = 17,
+	MAP_18 = 18,
+	MAP_19 = 19,
 	MAP_20 = 20,
 	MAP_21 = 21,
 	MAP_FLEE_THRESHOLD = 22,
@@ -50,6 +61,10 @@ enum DataOffset {
 	MAP_SURRENDER_X = 26,
 	MAP_SURRENDER_Y = 27,
 	MAP_BRIBE_THRESHOLD = 28,
+	MAP_29 = 29,
+	MAP_30 = 30,
+	MAP_31 = 31,
+	MAP_32 = 32,
 	MAP_33 = 33,
 	MAP_MAX_MONSTERS = 34,
 	MAP_35 = 35,
@@ -58,8 +73,11 @@ enum DataOffset {
 	MAP_DISPEL_THRESHOLD = 38,
 	MAP_SURFACE_X = 42,
 	MAP_SURFACE_Y = 43,
+	MAP_44 = 44,
+	MAP_45 = 45,
 	MAP_FLAGS = 46,
-	MAP_47 = 47
+	MAP_47 = 47,
+	MAP_48 = 48
 };
 
 enum WallType {

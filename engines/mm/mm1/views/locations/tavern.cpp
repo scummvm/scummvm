@@ -108,7 +108,7 @@ void Tavern::tipBartender() {
 		} else if (g_engine->getRandomNumber(3) != 3) {
 			displayMessage(STRING["dialogs.tavern.have_another_drink"]);
 		} else {
-			int townNum = g_maps->_currentMap->dataByte(0);
+			int townNum = g_maps->_currentMap->dataByte(Maps::MAP_ID);
 			displayMessage(STRING[Common::String::format(
 				"dialogs.tavern.tips.%d_%d",
 				townNum, g_globals->_currCharacter->_numDrinks
