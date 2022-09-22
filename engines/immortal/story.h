@@ -118,8 +118,8 @@ struct Use {
 };
 
 struct ObjType {
-	Str _str = kStrNoDesc;
-	Str _desc = kStrNoDesc;
+	Str _str = kStrNull;
+	Str _desc = kStrNull;
 	int _size = 0;
  Pickup _pickup;
 	Use _use;
@@ -150,11 +150,11 @@ Common::Array<int> _frames;
 };
 
 struct SRoom {
-	uint8 _x = 0;
-	uint8 _y = 0;
+	uint16 _x = 0;
+	uint16 _y = 0;
  RoomFlag _flags = kRoomFlag0;
  	SRoom() {}
- 	SRoom(uint8 x, uint8 y, RoomFlag f) {
+ 	SRoom(uint16 x, uint16 y, RoomFlag f) {
  			_x = x;
  			_y = y;
  		_flags = f;
@@ -163,13 +163,13 @@ struct SRoom {
 
 struct SDoor {
   uint8 _dir = 0;
-	uint8 _x   = 0;
-	uint8 _y   = 0;
-	uint8 _fromRoom = 0;
-	uint8 _toRoom   = 0;
+	uint16 _x   = 0;
+	uint16 _y   = 0;
+	uint16 _fromRoom = 0;
+	uint16 _toRoom   = 0;
 	 bool _isLocked = false;
 	 SDoor() {}
-	 SDoor(uint8 d, uint8 x, uint8 y, uint8 f, uint8 t, bool l) {
+	 SDoor(uint8 d, uint16 x, uint16 y, uint16 f, uint16 t, bool l) {
 	 	_dir = d;
 	 	_x = x;
 	 	_y = y;
@@ -180,11 +180,11 @@ struct SDoor {
 };
 
 struct SFlame {
-	 uint8 _x = 0;
-	 uint8 _y = 0;
+	 uint16 _x = 0;
+	 uint16 _y = 0;
 FPattern _p = kFlameOff;
 	SFlame() {}
- 	SFlame(uint8 x, uint8 y, FPattern p) {
+ 	SFlame(uint16 x, uint16 y, FPattern p) {
  		_x = x;
 		_y = y;
  		_p = p;
@@ -192,14 +192,14 @@ FPattern _p = kFlameOff;
 };
 
 struct SObj {
-	  uint8 _x = 0;
-	  uint8 _y = 0;
+	  uint16 _x = 0;
+	  uint16 _y = 0;
    SObjType _type = kTypeTrap;
 	  uint8 _flags = 0;
 SpriteFrame _frame = kNoFrame;
 Common::Array<uint8> _traps;
 	SObj() {}
-	SObj(uint8 x, uint8 y, SObjType t, SpriteFrame s, uint8 f, Common::Array<uint8> traps) {
+	SObj(uint16 x, uint16 y, SObjType t, SpriteFrame s, uint8 f, Common::Array<uint8> traps) {
  		    _x = x;
  		    _y = y;
  		 _type = t;
@@ -210,15 +210,15 @@ Common::Array<uint8> _traps;
 };
 
 struct SMonster {
-	    uint8 _x = 0;
-	    uint8 _y = 0;
-	    uint8 _hits = 0;
+	    uint16 _x = 0;
+	    uint16 _y = 0;
+	    uint16 _hits = 0;
 MonsterFlag _madAt = kMonstIsNone;
 	    uint8 _flags = 0;
  SpriteName _sprite = kCandle;
 Common::Array<Motive> _program;
 	SMonster() {}
-	SMonster(uint8 x, uint8 y, uint8 h, MonsterFlag m, uint8 f, Common::Array<Motive> p, SpriteName s) {
+	SMonster(uint16 x, uint16 y, uint16 h, MonsterFlag m, uint8 f, Common::Array<Motive> p, SpriteName s) {
  		    _x = x;
  		    _y = y;
  	     _hits = h;
@@ -233,10 +233,10 @@ struct Story {
 	 int _level = 0;
 	 int _part  = 1;
 
-   uint8 _initialUnivX = 0;
-   uint8 _initialUnivY = 0;
-   uint8 _playerPointX = 0;
-   uint8 _playerPointY = 0;
+   uint16 _initialUnivX = 0;
+   uint16 _initialUnivY = 0;
+   uint16 _playerPointX = 0;
+   uint16 _playerPointY = 0;
 
   Common::Array<int> _ladders;
 Common::Array<SRoom> _rooms;
