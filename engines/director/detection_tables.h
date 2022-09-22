@@ -916,6 +916,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "peaceland",			"PeaceLand" },
 	{ "peepeebonbon",		"Pee Pee Bon Bon"},
 	{ "phantplanet",		"アミューズメント プラネット ファンタスマゴリア" },	// Amusement Planet Phantasmagoria
+	{ "phibos",				"フィボス ～彗星を追って～" },	// Phibos: Following the Comet
 	{ "picklesbook",		"Pickle's Book" },
 	{ "pinkgear",			"Pink Gear Collection" },
 	{ "pinkgear2",			"Pink Gear 2" },
@@ -2419,6 +2420,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("peaceland", "", "PeaceLand 8m", "f5277c53bacd27936158dd3867e587e2", 392232, Common::JA_JPN, 311),
 	MACDEMO1_l("peaceland", "Demo", "PeaceLand", "276bee761e48a6fd709df77d5c2f60dd", 393877, Common::JA_JPN, 313),
+
+	WINGAME1t_l("phibos", "", "PHIBOS.EXE", "298f47fd72d3f3cee220c25dd797dbb4", 747095, Common::JA_JPN, 404),
 
 	// Original Mac-only release
 	MACGAME1_l("picklesbook", "", "Pickle's Book/Pickle", "c9ec74eea228500976ba680a362308bb", 456728, Common::JA_JPN, 300),
