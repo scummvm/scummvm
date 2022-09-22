@@ -189,23 +189,25 @@ bool Debugger::cmdCast(int argc, const char **argv) {
 		castId = atoi(argv[1]);
 
 	debugPrintf("Cast:\n");
-	if (castId > -1 && !cast->getCastMember(castId)) {
+	if (!cast) {
+		debugPrintf("[empty]\n");
+	} else if (castId > -1 && !cast->getCastMember(castId)) {
 		debugPrintf("[not found]\n");
-	} else if (cast) {
+	} else {
 		debugPrintf("%s\n", cast->formatCastSummary(castId).c_str());
-	} else {
-		debugPrintf("[empty]\n");
 	}
 	debugPrintf("\n");
+
 	debugPrintf("Shared cast:\n");
-	if (castId > -1 && !sharedCast->getCastMember(castId)) {
-		debugPrintf("[not found]\n");
-	} else if (sharedCast) {
-		debugPrintf("%s\n", sharedCast->formatCastSummary(castId).c_str());
-	} else {
+	if (!sharedCast) {
 		debugPrintf("[empty]\n");
+	} else if (castId > -1 && !sharedCast->getCastMember(castId)) {
+		debugPrintf("[not found]\n");
+	} else {
+		debugPrintf("%s\n", sharedCast->formatCastSummary(castId).c_str());
 	}
 	debugPrintf("\n");
+
 	return true;
 }
 
