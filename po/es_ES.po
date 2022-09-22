@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-09-21 20:39+0000\n"
-"PO-Revision-Date: 2022-09-20 21:31+0000\n"
+"PO-Revision-Date: 2022-09-22 09:50+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -5255,14 +5255,12 @@ msgstr ""
 "reutilizar otras canciones MIDI"
 
 #: engines/groovie/detection.cpp:332
-#, fuzzy
-#| msgid "Hover Mode"
 msgid "Speedrun Mode"
-msgstr "Modo flotante"
+msgstr "Modo «speedrun»"
 
 #: engines/groovie/detection.cpp:333
 msgid "Affects the controls for fast forwarding the game"
-msgstr ""
+msgstr "Afecta a los controles para acelerar el juego"
 
 #: engines/groovie/metaengine.cpp:52
 msgid "GroovieV2 support is not compiled in"
