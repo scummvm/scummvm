@@ -43,7 +43,7 @@ void ImmortalEngine::levelNew(int l) {
 	levelStory(l);
 	if (kLevelToMaze[l] != _lastLevelLoaded) {
 		_lastLevelLoaded = kLevelToMaze[l];
-		//loadMaze(l);
+		//loadMazeGraphics(l);
 	}
 
 	if (_level != _lastSongLoaded) {
@@ -76,7 +76,7 @@ void ImmortalEngine::levelLoadFile(int l) {
 	}
 
 	for (int r = 0; r < _stories[l]._rooms.size(); r++) {
-		_rooms[r] = new Room(_stories[l]._rooms[r]._x, _stories[l]._rooms[r]._y, _stories[l]._rooms[r]._flags, _sprites, _dataSprites, _cycles, _cycPtrs, &_numSprites);
+		_rooms[r] = new Room(_stories[l]._rooms[r]._x, _stories[l]._rooms[r]._y, _stories[l]._rooms[r]._flags);
 
 		Common::Array<SFlame> allFlames(_stories[l]._flames[r].size());
 		if (_stories[l]._flames[r].size() > 0) {
@@ -124,7 +124,6 @@ void ImmortalEngine::levelDrawAll() {
 	_count++;
 	//univAutoCenter();
 	clearSprites();
-	// Room needs to be able to add to the sprite list, so we need to give it a pointer to it first
 	_rooms[_currentRoom]->drawContents(_viewPortX, _viewPortY);
 }
 
