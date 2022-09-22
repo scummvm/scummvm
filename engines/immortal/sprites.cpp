@@ -98,18 +98,14 @@ void ImmortalEngine::initDataSprite(Common::SeekableReadStream *f, DataSprite *d
 		uint16 next = 0;
 		for (int j = 0; j < newImage._rectH; j++) {
 			next = f->readUint16LE();
-			//debug("First after RectH: %04X", next);
 			newImage._deltaPos.push_back(next);
 			next = f->readUint16LE();
-			//debug("Second after RectH: %04X", next);
 			newImage._scanWidth.push_back(next);
 			Common::Array<byte> b;
 			b.resize(newImage._scanWidth[j]);
 			for (int k = 0; k < newImage._scanWidth[j]; k++) {
 				b[k] = f->readByte();
-				//debugN("%02X", b[k]);
 			}
-			//debug("");
 			newImage._bitmap.push_back(b);
 		}
 		images.push_back(newImage);
@@ -130,8 +126,8 @@ bool ImmortalEngine::clipSprite(uint16 &height, uint16 &pointIndex, uint16 &skip
 		_lastBMW = bmw;
 		_lastY = pointY;
 		if (pointY < kMaskNeg) {
-			// The source does not double the bmw here to get the bytes, why not?
-			_lastPoint = pointY * (bmw * 2);
+			// For the Apple IIGS, pointY in pixels needed to be converted to bytes. For us, it's the other way around, we need bmw in pixels
+			_lastPoint = pointY * (bmw);
 		} else {
 			// Screen wrapping??
 			uint16 temp = (0 - pointY) + 1;
@@ -166,7 +162,7 @@ bool ImmortalEngine::clipSprite(uint16 &height, uint16 &pointIndex, uint16 &skip
 		}
 
 		// The image is clipped, time to move the index to the sprite's first scanline base position
-		pointIndex += (pointX) + dSprite->_images[img]._rectW;
+		pointIndex += pointX;// + dSprite->_images[img]._rectW;
 	}
 	return false;
 }
@@ -186,7 +182,7 @@ void ImmortalEngine::spriteAligned(DataSprite *dSprite, Image &img, uint16 &skip
 	byte pixel2 = 0;
 
 	// For every scanline before height
-	for (int y = 0; y < height; y++, pointIndex += (bmw * 2)) {
+	for (int y = 0; y < height; y++, pointIndex += (bmw)) {
 
 		// We increase the position by one screen width
 		if (img._deltaPos[y] < kMaskNeg) {
@@ -223,6 +219,9 @@ void ImmortalEngine::spriteAligned(DataSprite *dSprite, Image &img, uint16 &skip
 
 void ImmortalEngine::superSprite(DataSprite *dSprite, uint16 pointX, uint16 pointY, int img, uint16 bmw, byte *dst, uint16 superTop, uint16 superBottom) {
 	// Main image construction routine
+
+	// For the Apple IIGS, the bmw is in bytes, but for us it needs to be the reverse, in pixels
+	bmw <<= 1;
 
 	uint16 cenX   = dSprite->_cenX;
 	uint16 cenY   = dSprite->_cenY;
