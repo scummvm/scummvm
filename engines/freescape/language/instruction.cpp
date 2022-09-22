@@ -75,7 +75,8 @@ void FreescapeEngine::executeObjectConditions(GeometricObject *obj, bool shot, b
 }
 
 void FreescapeEngine::executeLocalGlobalConditions(bool shot, bool collided) {
-
+	if (isCastle())
+		return;
 	debugC(1, kFreescapeDebugCode, "Executing room conditions");
 	for (int i = 0; i < int(_currentArea->conditions.size()); i++) {
 		debugC(1, kFreescapeDebugCode, "%s", _currentArea->conditionSources[i]->c_str());
