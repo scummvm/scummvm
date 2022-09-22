@@ -28,13 +28,13 @@
 
 namespace Immortal {
 
-ImmortalEngine *g_engine;
+ImmortalEngine *g_immortal;
 
 ImmortalEngine::ImmortalEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst)
 	, _gameDescription(gameDesc)
 	, _randomSource("Immortal") {
-	g_engine = this;
+	g_immortal = this;
 
 	// Add the game folder to the search manager path variable
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -151,21 +151,28 @@ Common::Error ImmortalEngine::run() {
 	}
 
 	//Main:
-		   _zero = 0;
-			_dim = 0;
-	_usingNormal = 0;
-		   _draw = 1;
+	_zero = 0;
+	_draw = 1;
+	_usingNormal = 1;
+	_penY = 7;
+	_penX = 1;
 
 	initStoryStatic();						// Init the arrays of static story elements (done at compile time in the source)
 	loadPalette();							// We need to grab the palette from the disk first
+
+	// This is the equivalent of Main->InitGraphics->MyClearScreen in Driver
 	useNormal();							// The first palette will be the default
+	
 	loadFont();								// Load the font sprite
 	loadWindow();							// Load the window background
 	loadSingles("Song A");					// Music
 	loadSprites();							// Get all the sprite data into memory
+
 	_playing = kSongNothing;
 	_themePaused = 0;
+
 	clearSprites();							// Clear the sprites before we start
+	// This is where the request play disk would happen, but that's not needed here
 	logicInit();							// Init the game logic
 
 	_err = Common::kNoError;
@@ -186,11 +193,9 @@ Common::Error ImmortalEngine::run() {
 		userIO();
 		noNetwork();
 		pollKeys();
-		//logic();
+		logic();
 		pollKeys();
 		if (logicFreeze() == 0) {
-				DataSprite *d = &_dataSprites[kGoblin2];
-				superSprite(d, 20, 0xA0, 4, kVSBMW, _screenBuff, kSuperTop, kMySuperBottom);
 			drawUniv();
 			pollKeys();
 			fixColors();

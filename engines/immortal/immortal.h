@@ -77,11 +77,22 @@ enum InputAction {
 	kActionDBGStep										// Debug key for moving engine forward one frame at a time
 };
 
+enum ButtonHeldMask {
+	kButton0Held = 2,
+	kButton1Held = 4
+};
+
 enum InputDirection {
 	kDirectionUp,
 	kDirectionLeft,
 	kDirectionDown,
 	kDirectionRight
+};
+
+// Needed by kernal for text
+enum FadeType {
+	kTextFadeIn,
+	kTextDontFadeIn
 };
 
 // Needed by kernal for music
@@ -90,6 +101,15 @@ enum Song {
 	kSongMaze,
 	kSongCombat,
 	kSongText
+};
+
+enum Sound {
+	kSoundSwish = 6,
+	kSoundAwe,
+	kSoundHuh,
+	kSoundClank,
+	kSoundFireBall,
+	kSoundDoor
 };
 
 // Needed by logic for various things
@@ -132,7 +152,7 @@ struct Spark {
 struct GenericSprite {
 };
 
-// Doors are a property of the level, not the room, they defined the connections between rooms
+// Doors are a property of the level, not the room, they define the connections between rooms
 struct Door {
 	uint8 _x 		   = 0;
 	uint8 _y 		   = 0;
@@ -192,10 +212,10 @@ public:
 	const int 	 kScreenSize  = (kResH * kResV) * 2; 	// The size of the screen buffer is (320x200) * 2 byte words
 	const uint16 kScreenLeft  = 32;
 	const uint16 kScreenTop   = 20;
-	const int    kTextLeft    = 8;
-	const int    kTextTop     = 4;
-	const int    kGaugeX      = 0;
-	const int    kGaugeY      = -13;					// ???
+	const uint8  kTextLeft    = 8;
+	const uint8  kTextTop     = 4;
+	const uint8  kGaugeX      = 0;
+	const uint8  kGaugeY      = -13;					// ???
 	const uint16 kScreenBMW   = 160;					// Screen BitMap Width?
 	const uint16 kChrW 	      = 64;
 	const uint16 kChrH        = 32;
@@ -243,6 +263,18 @@ public:
 	const uint16 kViewPortSpY	= 0;
 	const uint16 kWizardX 		= 28;					// Common sprite center for some reason
 	const uint16 kWizardY 		= 37;
+	const uint16 kObjectY 		= 24;
+	const uint16 kObjectX 		= 32;
+	const uint16 kObjectHeight  = 48;
+	const uint16 kObjectWidth	= 64;
+
+	// Text constants
+	const uint8 kMaxRows 		= 5;
+	const uint8 kMaxCollumns 	= 26;
+
+	const uint16 kYesNoY		= 88;
+	const uint16 kYesNoX1		= 8;
+	const uint16 kYesNoX2		= 182;
 
 	// Asset constants
 	const char kGaugeOn	   	    = 1;					// On uses the sprite at index 1 of the font spriteset
@@ -323,6 +355,14 @@ public:
 	int _pressedDirection = 0;
 	int _heldDirection 	  = 0;
 
+	// Text printing members
+	uint8 _slowText  = 0;
+	uint8 _formatted = 0;
+	uint8 _collumn 	 = 0;
+	uint8 _row 		 = 0;
+	uint8 _myButton	 = 0;
+	uint8 _lastYes	 = 0;
+
 	// Music members
 	Song _playing;										// Currently playing song
 	int _themeID  		  = 0;							// Not sure yet tbh
@@ -343,7 +383,6 @@ public:
 	Common::Array<ObjType> _objTypePtrs;
 
 	// Screen members
-	  byte *_window;									// Bitmap of the window around the game
 	  byte *_screenBuff;								// The final buffer that will transfer to the screen
     uint16  _myCNM[(kViewPortCW + 1)][(kViewPortCH + 1)];
     uint16  _myModCNM[(kViewPortCW + 1)][(kViewPortCH + 1)];
@@ -394,6 +433,7 @@ GenericSprite _genSprites[6];
 	void whiteScreen();									// Draws a white rectanlge on the screen buffer (but does not do anything with resetColors)
 	void rect(int x, int y, int w, int h);				// Draws a solid rectangle at x,y with size w,h. Also shadows for blit?
 	void backspace();									// Moves draw position back and draws empty rect in place of char
+	void printByte(int b);
 	void printChr(char c);
 	void loadWindow();									// Gets the window.bm file
 	void drawUniv();									// Draw the background, add the sprites, determine draw order, draw the sprites
@@ -406,10 +446,14 @@ GenericSprite _genSprites[6];
 	void makeMyCNM();									// ?
 	void drawBGRND();									// Draw floor parts of leftmask rightmask and maskers
 	void addRows();										// Add rows to drawitem array
+	void addSprite(uint16 vpX, uint16 vpY, SpriteName s, int img, uint16 x, uint16 y, uint16 p);
 	void addSprites();									// Add all active sprites that are in the viewport, into a list that will be sorted by priority
 	void sortDrawItems();								// Sort said items
 	void drawItems();									// Draw the items over the background
+	void drawIcon(int img);
 	void setPen(uint16 penX, uint16 penY);				// Sets the 'pen' x and y positions, including making y negative if above a certain point
+	void center();
+	void carriageReturn();
 
 	// Music
 	void toggleSound();									// Actually pauses the sound, doesn't just turn it off/mute
@@ -417,11 +461,13 @@ GenericSprite _genSprites[6];
 	Song getPlaying();
 	void playMazeSong();
 	void playCombatSong();
+	void playTextSong();
 	void doGroan();
 	void stopMusic();
 	void musicPause(int sID);
 	void musicUnPause(int sID);
 	void loadSingles(Common::String songName);			// Loads and then parse the maze song
+	void standardBeep();
 
 	// Palette
 	void loadPalette();									// Get the static palette data from the disk
@@ -443,17 +489,17 @@ GenericSprite _genSprites[6];
 	// Assets
 	Common::SeekableReadStream *loadIFF(Common::String fileName); // Loads a file and uncompresses if it is compressed
 	void initStoryStatic();								// Sets up all of the global static story elements
-	//void loadMazeGraphics();							// Creates a universe with a maze
+	void loadMazeGraphics(int m);							// Creates a universe with a maze
 	void loadFont();									// Gets the font.spr file, and centers the sprite
 	void clearSprites();								// Clears all sprites before drawing the current frame
 	void loadSprites();									// Loads all the sprite files and centers their sprites (in spritelist, but called from kernal)
-	void kernalAddSprite(uint16 x, uint16 y, SpriteName n, int img, uint16 p);
 
 	// Input
 	void userIO();										// Get input
 	void pollKeys();									// Buffer input
 	void noNetwork();									// Setup input mirrors
 	void waitKey();										// Waits until a key is pressed (until getInput() returns true)
+	void waitClick();									// Waits until one of the two buttons is pressed
 	void blit8();										// This is actually just input, but it is called blit because it does a 'paddle blit' 8 times
 
 	// These will replace the myriad of hardware input handling from the source
@@ -525,19 +571,31 @@ GenericSprite _genSprites[6];
 	void miscInit();
 	void setRandomSeed();
 	void getRandom();
-	void myDelay();
-
-	// Text printing
-	bool textPrint(Str s);
-	void textSub();
-	void textEnd(Str s);
-	void textMiddle(Str s);
-	void textBeginning(Str s);
-	void yesNo();
 
 	// Input related
-	void buttonPressed();
-	void firePressed();
+	bool buttonPressed();
+	bool firePressed();
+
+	// Text printing
+	void myFadeOut();
+	void myFadeIn();
+	bool textPrint(Str s, int n);
+	bool textBeginning(Str s, int n);
+	bool textSub(Str s, FadeType f, int n);
+	void textEnd(Str s, int n);
+	void textMiddle(Str s, int n);
+
+	void textCR();
+	void textPageBreak(Common::String s, int &index);
+	void textAutoPageBreak();
+	void textDoSpace(Common::String s, int index);
+	void textBounceDelay();
+
+	bool yesNo();
+	void noOn();
+	void yesOn();
+
+	void myDelay(int j);
 
 
 	/*
@@ -680,8 +738,8 @@ GenericSprite _genSprites[6];
 	} */
 };
 
-extern ImmortalEngine *g_engine;
-#define SHOULD_QUIT ::Immortal::g_engine->shouldQuit()
+extern ImmortalEngine *g_immortal;
+#define SHOULD_QUIT ::Immortal::g_immortal->shouldQuit()
 
 } // namespace Immortal
 
