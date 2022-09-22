@@ -23,6 +23,14 @@
 
 namespace Immortal {
 
+/* 
+ *
+ * -----             -----
+ * ----- General Use -----
+ * -----             -----
+ *
+ */
+
 void Utilities::delay(int j) {             // Delay is measured in jiffies, which are 56.17ms
 	g_system->delayMillis(j * 56);
 }
@@ -96,37 +104,6 @@ bool Utilities::insideRect(uint8 rectX, uint8 rectY, uint8 w, uint8 h, uint8 poi
 	}
 
 	return false;
-}
-
-void Utilities::addSprite(Sprite *sprites, uint16 vpX, uint16 vpY, int *num, DataSprite *d, int img, uint16 x, uint16 y, uint16 p) {
-	debug("adding sprite...");
-	if (*num != kMaxSprites) {
-		if (x >= (kResH + kMaxSpriteLeft)) {
-			x |= kMaskHigh;                         // Make it negative
-		}
-		
-		sprites[*num]._X = (x << 1) + vpX;
-	
-		if (y >= (kMaxSpriteAbove + kResV)) {
-			y |= kMaskHigh;
-		}
-		
-		sprites[*num]._Y = (y << 1) + vpY;
-
-		if (p >= 0x80) {
-			p |= kMaskHigh;
-		}
-
-		sprites[*num]._priority = ((p + y) ^ 0xFFFF) + 1;
-		
-		sprites[*num]._image = img;
-		sprites[*num]._dSprite = d;
-		sprites[*num]._on = 1;
-		*num += 1;
-		debug("sprite added");
-	} else {
-		debug("Max sprites reached beeeeeep!!");
-	}
 }
 
 }; // namespace Immortal
