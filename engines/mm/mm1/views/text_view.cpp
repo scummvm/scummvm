@@ -89,6 +89,11 @@ void TextView::newLine() {
 	_textPos.y++;
 }
 
+void TextView::writeSpaces(size_t count) {
+	for (size_t i = 0; i < count; ++i)
+		writeChar(' ');
+}
+
 void TextView::clearSurface() {
 	UIElement::clearSurface();
 	_textPos.x = _textPos.y = 0;

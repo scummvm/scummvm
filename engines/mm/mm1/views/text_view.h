@@ -68,6 +68,11 @@ protected:
 	void newLine();
 
 	/**
+	 * Write out spaces
+	 */
+	void writeSpaces(size_t count);
+
+	/**
 	 * Clear the surface
 	 */
 	void clearSurface() override;

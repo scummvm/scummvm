@@ -315,6 +315,7 @@
 			6: "(BLINDED) "
 			7: "(AFRAID)  "
 			8: "(DEAD)    "
+			wounded: "(WOUNDED) "
 
 enhdialogs:
 	character:

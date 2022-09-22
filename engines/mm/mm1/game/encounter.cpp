@@ -81,7 +81,7 @@ void Encounter::execute() {
 		_levelIndex += comp;
 
 		_monsterNum = getRandomNumber(1, 16);
-		_arr2[_monsterIndex] = _monsterNum;
+		_monsIndexes[_monsterIndex] = _monsterNum;
 		_monsterIndex = (_monsterIndex + 1) & 0xff;
 
 		if (_monsterIndex < MAX_COMBAT_MONSTERS) {
@@ -95,7 +95,7 @@ void Encounter::execute() {
 				assert(_monsterIndex > 0);
 				_arr1[_monsterIndex] = _arr1[_monsterIndex - 1];
 				_levelIndex += _arr1[_monsterIndex];
-				_arr2[_monsterIndex] = _arr2[_monsterIndex - 1];
+				_monsIndexes[_monsterIndex] = _monsIndexes[_monsterIndex - 1];
 
 				if (++_monsterIndex >= MAX_COMBAT_MONSTERS)
 					goto exit_loop;
@@ -112,15 +112,15 @@ exit_loop:
 	_monsterList.clear();
 
 	for (int i = 0; i < _monsterIndex; ++i) {
-		maxVal = (_arr1[i] - 1) * 16 + _arr2[i];
+		maxVal = (_arr1[i] - 1) * 16 + _monsIndexes[i];
 		if (_arr1[i] < 1 || _arr1[i] > 12 || maxVal >= 196) {
 			_arr1[i] = 10;
-			_arr2[i] = getRandomNumber(1, MAX_COMBAT_MONSTERS);
+			_monsIndexes[i] = getRandomNumber(1, MAX_COMBAT_MONSTERS);
 		}
 
 		// Add monster details to list
 		_monsterNum16 = _arr1[i];
-		const Monster &mons = g_globals->_monsters[_arr2[i]];
+		const Monster &mons = g_globals->_monsters[_monsIndexes[i]];
 		_monsterList.push_back(mons);
 
 		if (_monsterNum16 > _val9) {

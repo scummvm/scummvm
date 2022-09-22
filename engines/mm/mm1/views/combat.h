@@ -35,6 +35,7 @@ private:
 		BATTLE
 	};
 	Mode _mode = BATTLE;
+	Common::Array<Monster> &_monsterList;
 
 	void writeOptions();
 	void writeAttackOptions();
@@ -62,6 +63,21 @@ private:
 	 * with a plus next to each if they can attack
 	 */
 	void writePartyNumbers();
+
+	/**
+	 * Write the monsters list
+	 */
+	void writeMonsters();
+
+	/**
+	 * Write out a monster's status
+	 */
+	void writeMonsterStatus(int monsterNum);
+
+	/**
+	 * Write out a series of dots
+	 */
+	void writeDots();
 
 public:
 	Combat();
