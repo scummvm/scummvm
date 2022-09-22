@@ -268,6 +268,13 @@ bool Console::cmdCast(int argc, const char **argv) {
 }
 
 bool Console::cmdEncounter(int argc, const char **argv) {
+	if (argc > 1) {
+		int encType = strToInt(argv[1]);
+		if (encType == -1 || encType == 0 || encType == 1)
+			g_globals->_encounters._encounterType =
+				(Game::EncounterType)encType;
+	}
+
 	g_globals->_encounters.execute();
 	return false;
 }
