@@ -34,13 +34,12 @@ Combat::Combat() : TextView("Combat"),
 }
 
 bool Combat::msgFocus(const FocusMessage &msg) {
-	Game::Encounter &enc = g_globals->_encounters;
 	_mode = BATTLE;
 
 	// Clear combat data
 	clear();
 
-	_monstersCount = enc._monsterList.size();
+	_monstersCount = _monsterList.size();
 	_party.clear();
 	for (uint i = 0; i < g_globals->_party.size(); ++i)
 		_party.push_back(&g_globals->_party[i]);
@@ -64,6 +63,7 @@ void Combat::draw() {
 	writeRound();
 	writePartyNumbers();
 	writeMonsters();
+	writeParty();
 
 	writeOptions();
 }
@@ -191,13 +191,11 @@ void Combat::writePartyNumbers() {
 }
 
 void Combat::writeMonsters() {
-	const Game::Encounter &enc = g_globals->_encounters;
-
-	if (enc._monsterList.empty()) {
+	if (_monsterList.empty()) {
 		_textPos = Common::Point(10, 0);
 		writeSpaces(30);
 	} else {
-		for (uint i = 0; i < _monsterList.size(); ++i) {
+		for (int i = 0; i < (int)_monsterList.size(); ++i) {
 			_textPos = Common::Point(11, i);
 			writeChar(i < _attackerVal ? '+' : ' ');
 			writeChar('A' + i);
@@ -244,6 +242,19 @@ void Combat::writeDots() {
 		writeChar('.');
 }
 
+void Combat::writeParty() {
+	clearPartyArea();
+
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		writeChar(1 + 21 * (i % 2), 16 + (i / 2), '1' + i);
+		writeString(") ");
+		writeString(g_globals->_party[i]._name);
+	}
+}
+
+void Combat::clearPartyArea() {
+	clearLines(16, 18);
+}
 
 } // namespace Views
 } // namespace MM1
