@@ -96,6 +96,20 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		_gfx->_keyColor = 255;
 }
 
+void DrillerEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offset) {
+	assert(!_areaMap.contains(255));
+	ObjectMap *globalObjectsByID = new ObjectMap;
+	file->seek(offset);
+	for (int i = 0; i < 8; i++) {
+		Object *gobj = load8bitObject(file);
+		assert(gobj);
+		assert(!globalObjectsByID->contains(gobj->getObjectID()));
+		debugC(1, kFreescapeDebugParser, "Adding global object: %d", gobj->getObjectID());
+		(*globalObjectsByID)[gobj->getObjectID()] = gobj;
+	}
+
+	_areaMap[255] = new Area(255, 0, globalObjectsByID, nullptr);
+}
 
 void DrillerEngine::loadAssets() {
 	Common::SeekableReadStream *file = nullptr;
@@ -109,13 +123,22 @@ void DrillerEngine::loadAssets() {
 		if (file == nullptr)
 			error("Failed to open 'driller' executable for Amiga");
 
-		load8bitBinary(file, 0xbd90, 16);
+		loadGlobalObjects(file, 0xbd62);
+		/*file->seek(0x29efe);
+		load8bitArea(file, 16);
+		file->seek(0x2a450);
+		load8bitArea(file, 16);*/
+
+		load8bitBinary(file, 0x29c16, 16);
 	} else if (_renderMode == "ega") {
 		file = gameDir.createReadStreamForMember("DRILLE.EXE");
 
 		if (file == nullptr)
 			error("Failed to open DRILLE.EXE");
 
+		loadMessages(file, 0x4135, 14, 20);
+		loadFonts(file, 0x99dd);
+		loadGlobalObjects(file, 0x3b42);
 		load8bitBinary(file, 0x9b40, 16);
 	} else if (_renderMode == "cga") {
 		file = gameDir.createReadStreamForMember("DRILLC.EXE");
