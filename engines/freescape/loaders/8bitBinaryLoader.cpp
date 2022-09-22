@@ -487,11 +487,6 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		}
 	}
 
-	if (!isDriller() && !isDark() && _areaMap.contains(255)) {
-		for (AreaMap::iterator iterator = _areaMap.begin(); iterator != _areaMap.end(); iterator++)
-			iterator->_value->addStructure(_areaMap[255]);
-	}
-
 	if (!_areaMap.contains(startArea))
 		_startArea = newArea->getAreaID();
 	else

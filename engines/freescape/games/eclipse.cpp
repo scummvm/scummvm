@@ -115,6 +115,9 @@ void EclipseEngine::loadAssets() {
 
 		loadFonts(file, 0xd403);
 		load8bitBinary(file, 0x3ce0, 16);
+		for (AreaMap::iterator iterator = _areaMap.begin(); iterator != _areaMap.end(); iterator++)
+			iterator->_value->addStructure(_areaMap[255]);
+
 	} else if (_renderMode == "cga") {
 		file = gameDir.createReadStreamForMember("TOTEC.EXE");
 
