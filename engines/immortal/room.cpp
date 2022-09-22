@@ -23,15 +23,10 @@
 
 namespace Immortal {
 
-Room::Room(uint8 x, uint8 y, RoomFlag f, Sprite *s, DataSprite *d, Cycle *c, Common::Array<SCycle> p, int *n)
+Room::Room(uint8 x, uint8 y, RoomFlag f)
 	: _xPos(x)
 	, _yPos(y)
 	, _flags(f)
-	, _sprites(s)
-	, _dataSprites(d)
-	, _cycles(c)
-	, _cycPtrs(p)
-	, _numSprites(n)
 	, _candleTmp(0)
 	, _randomSource("Immortal") {
 }

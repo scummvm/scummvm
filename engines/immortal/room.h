@@ -107,7 +107,7 @@ private:
 	Common::RandomSource _randomSource;
 
 public:
-	Room(uint8 x, uint8 y, RoomFlag f, Sprite *s, DataSprite *d, Cycle *c, Common::Array<SCycle> p, int *n);
+	Room(uint8 x, uint8 y, RoomFlag f);
 	~Room() {}
 
 	/*
@@ -119,26 +119,20 @@ public:
 	const uint8 kLightTorchX  = 10;
 	const uint8 kMaxFlameCycs = 16;
 
-	// Other
-	   int *_numSprites;
-	Sprite *_sprites;
-	 Cycle *_cycles;
-DataSprite *_dataSprites;
-
 Common::Array<SCycle>  _cycPtrs;
 Common::Array<Flame>   _fset;
 Common::Array<Monster> _monsters;
 Common::Array<Object>  _objects;
 
    RoomFlag _flags;
-	   uint8 _xPos;
-	   uint8 _yPos;
-	   uint8 _holeRoom;
-	   uint8 _holeCellX;
-	   uint8 _holeCellY;
-	   uint8 _candleTmp;									// Special case for candle in maze 0
-	   uint8 _numFlames;
-	   uint8 _numInRoom;
+	  uint8 _xPos 	   = 0;
+	  uint8 _yPos 	   = 0;
+	  uint8 _holeRoom  = 0;
+	  uint8 _holeCellX = 0;
+	  uint8 _holeCellY = 0;
+	  uint8 _candleTmp = 0;							// Special case for candle in maze 0
+	  uint8 _numFlames = 0;
+	  uint8 _numInRoom = 0;
 
 	/*
 	 * --- Methods ---
@@ -207,7 +201,7 @@ DataSprite *cycleGetDataSprite(int c);			// This takes the place of getFile + ge
 	void flameInit();
 	void flameDrawAll(uint16 vX, uint16 vY);
 	bool roomLighted();
-	void lightTorch(int x, int y);
+	void lightTorch(uint8 x, uint8 y);
 	void flameFreeAll();
 	void flameSetRoom(Common::Array<SFlame>);
     int flameGetCyc(Flame *f, int first);
@@ -227,10 +221,8 @@ DataSprite *cycleGetDataSprite(int c);			// This takes the place of getFile + ge
 	 * [Univ.cpp] Functions from Univ.GS
 	 */
 
-    void univAddSprite(uint16 vX, uint16 vY, uint16 x, uint16 y, SpriteName n, int img, uint16 p);
+    void univAddSprite(uint16 vX, uint16 vY, uint16 x, uint16 y, SpriteName s, int img, uint16 p);
 };
-
-
 
 } // namespace immortal
 
