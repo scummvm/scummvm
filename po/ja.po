@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-09-21 20:39+0000\n"
-"PO-Revision-Date: 2022-09-21 09:37+0000\n"
+"PO-Revision-Date: 2022-09-22 09:19+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5148,14 +5148,12 @@ msgid ""
 msgstr "クレジットでMIDI曲を再利用せず、代わりにThe Final Hourを流す"
 
 #: engines/groovie/detection.cpp:332
-#, fuzzy
-#| msgid "Hover Mode"
 msgid "Speedrun Mode"
-msgstr "ホバーモード"
+msgstr "スピードランモード"
 
 #: engines/groovie/detection.cpp:333
 msgid "Affects the controls for fast forwarding the game"
-msgstr ""
+msgstr "ゲームの早送り操作に影響します"
 
 #: engines/groovie/metaengine.cpp:52
 msgid "GroovieV2 support is not compiled in"
