@@ -303,6 +303,18 @@
 		even: "EVEN"
 		party_plus: "PARTY +"
 		monster_plus: "MONSTER +"
+		and_goes_down: "AND GOES DOWN!!!"
+		dies: "DIES!"
+		status:
+			0: "(PARALYZE)"
+			1: "(WEBBED)  "
+			2: "(HELD)    "
+			3: "(ASLEEP)  "
+			4: "(MINDLESS)"
+			5: "(SILENCED)"
+			6: "(BLINDED) "
+			7: "(AFRAID)  "
+			8: "(DEAD)    "
 
 enhdialogs:
 	character:

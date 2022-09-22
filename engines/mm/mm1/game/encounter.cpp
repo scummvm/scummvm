@@ -63,14 +63,14 @@ void Encounter::execute() {
 
 		maxRand = _levelOffset + _highestLevel;
 		if (maxRand >= 2) {
-			int highestRand = map[33];
+			int highestRand = map[Maps::MAP_33];
 			maxRand = MIN(maxRand, highestRand);
 			comp = getRandomNumber(1, maxRand);
 		} else {
 			comp = 1;
 		}
 
-		maxVal = map[47];
+		maxVal = map[Maps::MAP_47];
 		if (comp < maxVal) {
 			comp = MIN(maxVal, 10);
 		}
@@ -85,7 +85,7 @@ void Encounter::execute() {
 		_monsterIndex = (_monsterIndex + 1) & 0xff;
 
 		if (_monsterIndex < MAX_COMBAT_MONSTERS) {
-			if (_monsterIndex >= map[34])
+			if (_monsterIndex >= map[Maps::MAP_MAX_MONSTERS])
 				goto exit_loop;
 
 			monsterP = getMonster();
@@ -100,7 +100,7 @@ void Encounter::execute() {
 				if (++_monsterIndex >= MAX_COMBAT_MONSTERS)
 					goto exit_loop;
 
-				if (_monsterIndex >= map[34])
+				if (_monsterIndex >= map[Maps::MAP_MAX_MONSTERS])
 					goto exit_loop;
 			}
 		} else {

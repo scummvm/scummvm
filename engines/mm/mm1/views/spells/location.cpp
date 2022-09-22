@@ -64,16 +64,16 @@ void Location::draw() {
 		}
 
 		writeString(21, 0, STRING["dialogs.spells.location_sector"]);
-		writeChar(map[35] & 0x7f);
+		writeChar(map[Maps::MAP_35] & 0x7f);
 		writeChar('-');
-		writeChar(map[36] & 0x7f);
+		writeChar(map[Maps::MAP_36] & 0x7f);
 
 		writeString(21, 1, STRING["dialogs.spells.location_surface_x"]);
 
-		if (map[37]) {
-			writeNumber(map[42]);
+		if (map[Maps::MAP_37]) {
+			writeNumber(map[Maps::MAP_SURFACE_X]);
 			writeString(35, 1, "Y=");
-			writeNumber(map[43]);
+			writeNumber(map[Maps::MAP_SURFACE_Y]);
 
 			writeString(22, 2, STRING["dialogs.spells.location_inside_x"]);
 		}

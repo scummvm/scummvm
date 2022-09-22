@@ -117,7 +117,8 @@ void SpellCasting::setSpell(int spellIndex, int requiredSp, int requiredGems) {
 
 	if (SPELL_FLAGS[spellIndex] & SF_COMBAT_ONLY)
 		_spellState = SS_COMBAT_ONLY;
-	else if ((SPELL_FLAGS[spellIndex] & SF_OUTDOORS_ONLY) && !(map[0] & 0x80))
+	else if ((SPELL_FLAGS[spellIndex] & SF_OUTDOORS_ONLY) &&
+			!(map[Maps::MAP_ID] & 0x80))
 		_spellState = SS_OUTDOORS_ONLY;
 }
 

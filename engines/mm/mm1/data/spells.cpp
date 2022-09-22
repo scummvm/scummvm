@@ -295,18 +295,21 @@ SpellResult Spells::cleric45_restoreAlignment(Character *chr) {
 SpellResult Spells::cleric48_surface(Character *chr) {
 	Maps::Maps &maps = *g_maps;
 	Maps::Map &map = *maps._currentMap;
-	if (map[46] & 4) {
+	if (map[Maps::MAP_FLAGS] & 4) {
 		return SR_FAILED;
 	} else {
-		maps._mapPos = Common::Point(map[42], map[43]);
-		maps.changeMap(map[11] & (map[12] << 8), map[13]);
+		maps._mapPos = Common::Point(map[Maps::MAP_SURFACE_X],
+			map[Maps::MAP_SURFACE_Y]);
+		maps.changeMap(map[Maps::MAP_SURFACE_DEST_ID1] &
+			(map[Maps::MAP_SURFACE_DEST_ID2] << 8),
+			map[Maps::MAP_SURFACE_DEST_SECTION]);
 		return SR_SUCCESS_SILENT;
 	}
 }
 
 SpellResult Spells::cleric52_dispelMagic(Character *chr) {
 	Maps::Map &map = *g_maps->_currentMap;
-	if (g_engine->getRandomNumber(100) >= map[38]) {
+	if (g_engine->getRandomNumber(100) >= map[Maps::MAP_DISPEL_THRESHOLD]) {
 		Common::fill(&g_globals->_spells._arr[0],
 			&g_globals->_spells._arr[18], 0);
 

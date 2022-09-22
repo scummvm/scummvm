@@ -38,7 +38,7 @@ bool Market::msgFocus(const FocusMessage &msg) {
 	send("View", ValueMessage(LOC_MARKET));
 
 	Maps::Map &map = *g_maps->_currentMap;
-	_foodCost = FOOD_COST[map[0] - 1];
+	_foodCost = FOOD_COST[map[Maps::MAP_ID] - 1];
 
 	return true;
 }

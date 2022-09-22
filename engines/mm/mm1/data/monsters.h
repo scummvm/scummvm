@@ -31,6 +31,12 @@ namespace MM1 {
 
 #define MONSTERS_COUNT 195
 
+enum MonsterStatus {
+	MON_PARALYZED = 0, MON_WEBBED = 1, MON_HELD = 2,
+	MON_ASLEEP = 3, MON_MINDLESS = 4, MON_SILENCED = 5,
+	MON_BLINDED = 6, MON_AFRAID = 7, MON_DEAD = 8
+};
+
 struct Monster {
 	Common::String _name; // char _name[15];
 	byte _count;
