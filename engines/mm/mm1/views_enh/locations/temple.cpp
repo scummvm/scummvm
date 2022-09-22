@@ -121,7 +121,7 @@ void Temple::changeCharacter(uint index) {
 
 	_isEradicated = false;
 
-	int townNum = map[0];
+	int townNum = map[Maps::MAP_ID];
 	if (townNum < 1 || townNum >= 6)
 		townNum = 1;
 	--townNum;
@@ -202,7 +202,7 @@ void Temple::donate() {
 		Maps::Map &map = *g_maps->_currentMap;
 		Character &c = *g_globals->_currCharacter;
 
-		int townNum = map[0];
+		int townNum = map[Maps::MAP_ID];
 		if (townNum < 1 || townNum >= 6)
 			townNum = 1;
 		--townNum;

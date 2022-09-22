@@ -92,7 +92,7 @@ void Teleport::teleport() {
 	Maps::Maps &maps = *g_maps;
 	Maps::Map &map = *maps._currentMap;
 
-	if (map[46] & 2) {
+	if (map[Maps::MAP_FLAGS] & 2) {
 		spellFailed();
 
 	} else {

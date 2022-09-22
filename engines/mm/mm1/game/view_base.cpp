@@ -51,7 +51,7 @@ void ViewBase::update() {
 		}
 	}
 
-	if ((map[46] & 1) && !g_globals->_spells._s.light) {
+	if ((map[Maps::MAP_FLAGS] & 1) && !g_globals->_spells._s.light) {
 darkness:
 		// TODO
 		_isDark = true;

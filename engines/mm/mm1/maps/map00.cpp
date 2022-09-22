@@ -293,8 +293,8 @@ void Map00::special21() {
 
 void Map00::special22() {
 	Map &map = *g_maps->_currentMap;
-	map[0x2f] = 3;
-	map[0x21] = 6;
+	map[MM1::Maps::MAP_47] = 3;
+	map[MM1::Maps::MAP_33] = 6;
 	g_maps->clearSpecial();
 }
 
