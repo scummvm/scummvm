@@ -40,6 +40,10 @@ bool Encounter::msgFocus(const FocusMessage &msg) {
 void Encounter::draw() {
 	Game::Encounter &enc = g_globals->_encounters;
 
+	// Clear the commands area
+	Graphics::ManagedSurface s = getSurface();
+	s.fillRect(Common::Rect(31 * 8, 0, 320, 17 * 8), 0);
+
 	switch (_mode) {
 	case ALERT:
 		writeString(9, 6, "            ");
@@ -51,7 +55,7 @@ void Encounter::draw() {
 
 	case SURPRISED_BY_MONSTERS:
 		writeString(6, 21, STRING["dialogs.encounter.surprised"]);
-		enc._encounterFlag = Game::FORCE_SURPRISED;
+		enc._encounterType = Game::FORCE_SURPRISED;
 		delaySeconds(2);
 		break;
 
@@ -61,10 +65,6 @@ void Encounter::draw() {
 		break;
 
 	case ENCOUNTER_OPTIONS: {
-		// Clear the commands area
-		Graphics::ManagedSurface s = getSurface();
-		s.fillRect(Common::Rect(31 * 8, 0, 320, 17 * 8), 0);
-
 		// Write the encounter options
 		clearLines(20, 24);
 		writeString(0, 21, STRING["dialogs.encounter.options1"]);
@@ -157,9 +157,9 @@ void Encounter::timeout() {
 	switch (_mode) {
 	case ALERT:
 		// Finished displaying initial encounter alert
-		if (enc._encounterFlag < 0 /* FORCE_SURPRISED */) {
+		if (enc._encounterType < 0 /* FORCE_SURPRISED */) {
 			_mode = SURPRISED_BY_MONSTERS;
-		} else if (enc._encounterFlag == Game::NORMAL_SURPRISED ||
+		} else if (enc._encounterType == Game::NORMAL_SURPRISED ||
 			/* ENCOUNTER_OPTIONS */
 			g_engine->getRandomNumber(1, 100) > map[21]) {
 			// Potentially surprised. Check for guard dog spell

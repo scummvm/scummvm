@@ -55,7 +55,7 @@ public:
 	int _alignmentsChanged = 0;
 	int _monsterImgNum = 0;
 	int _monsterIndex = 0;
-	EncounterType _encounterFlag = NORMAL_SURPRISED;
+	EncounterType _encounterType = NORMAL_SURPRISED;
 	byte _fleeThreshold = 0;
 public:
 	/**

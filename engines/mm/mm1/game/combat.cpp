@@ -77,7 +77,7 @@ void Combat::setupCanAttacks() {
 	Common::fill(&_canAttack[0], &_canAttack[MAX_PARTY_SIZE], false);
 
 	if ((int8)map[Maps::MAP_ID] < 0) {
-		if (enc._encounterFlag != FORCE_SURPRISED) {
+		if (enc._encounterType != FORCE_SURPRISED) {
 			for (uint i = 0; i < g_globals->_party.size(); ++i) {
 				if (i < (MAX_PARTY_SIZE - 1)) {
 					_canAttack[i] = true;
@@ -91,7 +91,7 @@ void Combat::setupCanAttacks() {
 			return;
 		}
 	} else {
-		if (enc._encounterFlag != FORCE_SURPRISED) {
+		if (enc._encounterType != FORCE_SURPRISED) {
 			_canAttack[0] = true;
 			if (g_globals->_party.size() > 1)
 				_canAttack[1] = true;
@@ -113,7 +113,9 @@ void Combat::setupCanAttacks() {
 		}
 	}
 
-	// Entire party is allowed to attack
+	// Entire party is allowed to attack, I guess
+	// because the monsters are surrounding the party,
+	// placing them within reach
 	Common::fill(&_canAttack[0], &_canAttack[g_globals->_party.size()], true);
 	setupAttackerVal();
 }
