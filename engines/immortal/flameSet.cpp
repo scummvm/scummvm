@@ -47,7 +47,7 @@ void Room::flameFreeAll() {
 
 void Room::flameDrawAll(uint16 vX, uint16 vY) {
 	for (int i = 0; i < _fset.size(); i++) {
-		univAddSprite(vX, vY, _fset[i]._x, _fset[i]._y, _cycPtrs[_cycles[_fset[i]._c]._cycList]._sName, cycleGetFrame(_fset[i]._c), 0);
+		univAddSprite(vX, vY, _fset[i]._x, _fset[i]._y, g_immortal->_cycPtrs[g_immortal->_cycles[_fset[i]._c]._cycList]._sName, cycleGetFrame(_fset[i]._c), 0);
 		if (cycleAdvance(_fset[i]._c) == true) {
 			cycleFree(_fset[i]._c);
 			_fset[i]._c = flameGetCyc(&_fset[i], 1);
@@ -68,7 +68,7 @@ bool Room::roomLighted() {
 	return false;
 }
 
-void Room::lightTorch(int x, int y) {
+void Room::lightTorch(uint8 x, uint8 y) {
 	/* Checks every torch to see if it is:
 	 * pattern == off, and inside the point x,y
 	 * which is the fireball position. This is a
@@ -79,7 +79,7 @@ void Room::lightTorch(int x, int y) {
 
 	for (int i = 0; i < _fset.size(); i++) {
 		if (_fset[i]._p == kFlameOff) {
-			if (Immortal::Utilities::inside(x, y, kLightTorchX, _fset[i]._x + 16, _fset[i]._y + 8)) {
+			if (Utilities::inside(kLightTorchX, x, y, _fset[i]._x + 16, _fset[i]._y + 8)) {
 				_fset[i]._p = kFlameNormal;
 
 			}

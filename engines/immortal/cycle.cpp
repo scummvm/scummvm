@@ -47,10 +47,10 @@ namespace Immortal {
 int Room::cycleNew(CycID id) {
 	// An 'available' cyc is identified by the index being -1
 	for (int i = 0; i < kMaxCycles; i++) {
-		if (_cycles[i]._index == -1) {
-			_cycles[i]._index = 0;
-			_cycles[i]._cycList = id;
-			debug("made cyc, = %d", i);
+		if (g_immortal->_cycles[i]._index == -1) {
+			g_immortal->_cycles[i]._index = 0;
+			g_immortal->_cycles[i]._cycList = id;
+			//debug("made cyc, = %d", i);
 			return i;
 		}
 	}
@@ -59,18 +59,18 @@ int Room::cycleNew(CycID id) {
 }
 
 void Room::cycleFree(int c) {
-	_cycles[c]._index = -1;
+	g_immortal->_cycles[c]._index = -1;
 }
 
 bool Room::cycleAdvance(int c) {
 	/* If we have reached the end, check if repeat == true, and set back to 0 if so
 	 * Otherwise, set to the last used index */
-	_cycles[c]._index++;
-	if (_cycPtrs[_cycles[c]._cycList]._frames[_cycles[c]._index] == -1) {
-		if (_cycPtrs[_cycles[c]._cycList]._repeat == true) {
-			_cycles[c]._index = 0;
+	g_immortal->_cycles[c]._index++;
+	if (g_immortal->_cycPtrs[g_immortal->_cycles[c]._cycList]._frames[g_immortal->_cycles[c]._index] == -1) {
+		if (g_immortal->_cycPtrs[g_immortal->_cycles[c]._cycList]._repeat == true) {
+			g_immortal->_cycles[c]._index = 0;
 		} else {
-			_cycles[c]._index--;
+			g_immortal->_cycles[c]._index--;
 			return true;
 		}
 	}
@@ -88,33 +88,33 @@ int Room::cycleGetFrame(int c) {
 	 * This is essentially self-modifying code, and it saves 2 bytes of DP memory over the traditional
 	 * STA DP : LDA (DP)
 	 */
-	debug("%d", _cycPtrs[_cycles[c]._cycList]._frames[_cycles[c]._index]);
-	return _cycPtrs[_cycles[c]._cycList]._frames[_cycles[c]._index];
+	//debug("%d", _cycPtrs[_cycles[c]._cycList]._frames[_cycles[c]._index]);
+	return g_immortal->_cycPtrs[g_immortal->_cycles[c]._cycList]._frames[g_immortal->_cycles[c]._index];
  }
 
 int Room::cycleGetNumFrames(int c) {
 	// Why in the world is this not kept as a property of the cycle? We have to calculate the size of the array each time
 	int index = 0;
-	while (_cycPtrs[_cycles[c]._cycList]._frames[index] != -1) {
+	while (g_immortal->_cycPtrs[g_immortal->_cycles[c]._cycList]._frames[index] != -1) {
 		index++;
 	}
 	return index;
 }
 
 DataSprite *Room::cycleGetDataSprite(int c) {
-	return &_dataSprites[_cycPtrs[_cycles[c]._cycList]._sName];
+	return &g_immortal->_dataSprites[g_immortal->_cycPtrs[g_immortal->_cycles[c]._cycList]._sName];
 }
 
 CycID Room::getCycList(int c) {
-	return _cycles[c]._cycList;
+	return g_immortal->_cycles[c]._cycList;
 }
 
 int Room::cycleGetIndex(int c) {
-	return _cycles[c]._index;
+	return g_immortal->_cycles[c]._index;
 }
 
 void Room::cycleSetIndex(int c, int f) {
-	_cycles[c]._index = f;
+	g_immortal->_cycles[c]._index = f;
 }
 
 
