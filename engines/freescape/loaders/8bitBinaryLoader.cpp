@@ -32,11 +32,18 @@ namespace Freescape {
 
 uint16 FreescapeEngine::readField(Common::SeekableReadStream *file, int bits) {
 	uint16 value;
-	assert(bits == 8 || bits == 16);
+	assert(bits == 8 || bits == 16 || bits == 32);
 	if (isAmiga()) {
-		value = file->readUint16BE();
-		if (bits == 8)
-			assert(value < 256);
+		if (bits == 32)
+			value = file->readUint32BE();
+		else {
+			value = file->readUint16BE();
+			if (bits == 8) {
+				if (value >= 256)
+					warning("failed to read byte with value 0x%x", value);
+				value = value & 0xff;
+			}
+		}
 	} else {
 		if (bits == 8)
 			value = file->readByte();
@@ -45,6 +52,15 @@ uint16 FreescapeEngine::readField(Common::SeekableReadStream *file, int bits) {
 	}
 
 	return value;
+}
+
+Common::Array<uint8> FreescapeEngine::readArray(Common::SeekableReadStream *file, int size) {
+	byte *data = (byte*)malloc(size);
+	for (int i = 0; i < size; i++) {
+		data[i] = readField(file, 8);
+	}
+	Common::Array<uint8> array(data, size);
+	return array;
 }
 
 Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
@@ -146,9 +162,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		FCLInstructionVector instructions;
 		Common::String *conditionSource = nullptr;
 		if (byteSizeOfObject) {
-			byte *conditionData = (byte*)malloc(byteSizeOfObject);
-			file->read(conditionData, byteSizeOfObject);
-			Common::Array<uint8> conditionArray(conditionData, byteSizeOfObject);
+			Common::Array<uint8> conditionArray = readArray(file, byteSizeOfObject);
 			conditionSource = detokenise8bitCondition(conditionArray, instructions);
 			//instructions = getInstructions(conditionSource);
 			debugC(1, kFreescapeDebugParser, "%s", conditionSource->c_str());
@@ -237,13 +251,13 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	Common::String name;
 	uint32 base = file->pos();
 	debugC(1, kFreescapeDebugParser, "Area base: %x", base);
-	uint8 areaFlags = file->readByte();
-	uint8 numberOfObjects = file->readByte();
-	uint8 areaNumber = file->readByte();
+	uint8 areaFlags = readField(file, 8);
+	uint8 numberOfObjects = readField(file, 8);
+	uint8 areaNumber = readField(file, 8);
 
-	uint16 cPtr = file->readUint16LE();
+	uint32 cPtr = readField(file, 32);
 	debugC(1, kFreescapeDebugParser, "Condition pointer: %x", cPtr);
-	uint8 scale = file->readByte();
+	uint8 scale = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Scale: %d", scale);
 
 	uint8 ci1 = 0;
@@ -258,10 +272,10 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	if (skyColor == 0)
 		skyColor = 255;
 
-	ci1 = file->readByte() & 15;
-	ci2 = file->readByte() & 15;
-	ci3 = file->readByte();
-	ci4 = file->readByte();
+	ci1 = readField(file, 8) & 15;
+	ci2 = readField(file, 8) & 15;
+	ci3 = readField(file, 8);
+	ci4 = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Colors: %d %d %d %d %d %d", ci1, ci2, ci3, ci4, skyColor, groundColor);
 	// CPC
 	//groundColor = file->readByte() & 15;
@@ -299,18 +313,18 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		}
 	} else if (isDriller() || isDark()) {
 		if (isDriller()) {
-			gasPocketX = file->readByte();
-			gasPocketY = file->readByte();
-			gasPocketRadius = file->readByte();
+			gasPocketX = readField(file, 8);
+			gasPocketY = readField(file, 8);
+			gasPocketRadius = readField(file, 8);
 		} else {
-			name = name + char(file->readByte());
-			name = name + char(file->readByte());
-			name = name + char(file->readByte());
+			name = name + char(readField(file, 8));
+			name = name + char(readField(file, 8));
+			name = name + char(readField(file, 8));
 		}
 		debugC(1, kFreescapeDebugParser, "Gas pocket at (%d, %d) with radius %d", gasPocketX, gasPocketY, gasPocketRadius);
 		int i = 0;
 		while (i < 12) {
-			name = name + char(file->readByte());
+			name = name + char(readField(file, 8));
 			i++;
 		}
 		debugC(1, kFreescapeDebugParser, "Area name: %s", name.c_str());
@@ -339,9 +353,11 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	}
 	long int endLastObject = file->pos();
 	debugC(1, kFreescapeDebugParser, "Last position %lx", endLastObject);
-	assert(endLastObject == base + cPtr || areaNumber == 192);
-	file->seek(base + cPtr);
-	uint8 numConditions = file->readByte();
+	if (!isAmiga()) {
+		assert(endLastObject == base + cPtr || areaNumber == 192);
+		file->seek(base + cPtr);
+	}
+	uint8 numConditions = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "%d area conditions at %x of area %d", numConditions, base + cPtr, areaNumber);
 
 	Area *area = new Area(areaNumber, areaFlags, objectsByID, entrancesByID);
@@ -357,12 +373,10 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	while (numConditions--) {
 		FCLInstructionVector instructions;
 		// get the length
-		uint32 lengthOfCondition = file->readByte();
+		uint32 lengthOfCondition = readField(file, 8);
 		debugC(1, kFreescapeDebugParser, "length of condition: %d", lengthOfCondition);
 		// get the condition
-		byte *conditionData = (byte*)malloc(lengthOfCondition);
-		file->read(conditionData, lengthOfCondition);
-		Common::Array<uint8> conditionArray(conditionData, lengthOfCondition);
+		Common::Array<uint8> conditionArray = readArray(file, lengthOfCondition);
 		Common::String *conditionSource = detokenise8bitCondition(conditionArray, instructions);
 		area->conditions.push_back(instructions);
 		area->conditionSources.push_back(conditionSource);
@@ -382,7 +396,8 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	if (!isAmiga()) {
 		dbSize = readField(file, 16);
 		debugC(1, kFreescapeDebugParser, "Database ends at %x", dbSize);
-	}
+	} else
+		dbSize = readField(file, 32);
 
 	uint8 startArea = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Start area: %d", startArea);
@@ -413,7 +428,6 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		debugC(1, kFreescapeDebugParser, "---");
 		_colorMap.push_back(entry - 3);
 	}
-	//assert(0);
 
 	file->seek(offset + 0x46); // 0x46
 
@@ -447,21 +461,6 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	if (isEclipse()) {
 		loadFonts(file, 0xd403);
 		//loadMessages(file, 0x7110, 17, 20);
-	} else if (isDriller()) {
-		loadMessages(file, 0x4135, 14, 20);
-		loadFonts(file, 0x99dd);
-
-		ObjectMap *globalObjectsByID = new ObjectMap;
-		file->seek(0x3b42);
-		for (int i = 0; i < 8; i++) {
-			Object *gobj = load8bitObject(file);
-			assert(gobj);
-			assert(!globalObjectsByID->contains(gobj->getObjectID()));
-			debugC(1, kFreescapeDebugParser, "Adding global object: %d", gobj->getObjectID());
-			(*globalObjectsByID)[gobj->getObjectID()] = gobj;
-		}
-
-		_areaMap[255] = new Area(255, 0, globalObjectsByID, nullptr);
 	} else if (isDark()) {
 		//loadMessages(file, 0x4135, 14, 20);
 		loadFonts(file, 0xa113);
@@ -473,7 +472,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	debugC(1, kFreescapeDebugParser, "areas index at: %lx", file->pos());
 	uint16 *fileOffsetForArea = new uint16[numberOfAreas];
 	for (uint16 area = 0; area < numberOfAreas; area++) {
-		fileOffsetForArea[area] = file->readUint16LE();
+		fileOffsetForArea[area] = readField(file, 16);
 		debugC(1, kFreescapeDebugParser, "offset: %x", fileOffsetForArea[area]);
 	}
 

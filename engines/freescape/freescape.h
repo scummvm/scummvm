@@ -104,6 +104,7 @@ public:
 	void loadColorPalette();
 
 	uint16 readField(Common::SeekableReadStream *file, int nbits);
+	Common::Array<uint8> readArray(Common::SeekableReadStream *file, int size);
 	// 16-bit
 	void load16bitBinary(Common::SeekableReadStream *file);
 
@@ -260,6 +261,7 @@ public:
 	void pressedKey(const int keycode) override;
 
 	private:
+	void loadGlobalObjects(Common::SeekableReadStream *file, int offset);
 	bool drillDeployed();
 	void addDrill(const Math::Vector3d position);
 	void removeDrill();
