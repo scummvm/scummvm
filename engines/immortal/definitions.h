@@ -96,7 +96,6 @@ enum Motive {                       // This will likely be moved to a monster ai
 };
 
 enum Str {
-	kStrNoDesc,
 	kStrSword,
 	kStrSwordDesc,
 	kStrBonesText1,
