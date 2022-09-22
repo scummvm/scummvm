@@ -48,25 +48,21 @@ void ImmortalEngine::drawUniv() {
 	_myUnivPointX = !(_myViewPortX & (kChrW - 1)) + kViewPortSpX;
 	_myUnivPointY = !(_myViewPortY & (kChrH - 1)) + kViewPortSpY;
 
-	// To start constructing the screen, we start with the frame as the base
-	memcpy(_screenBuff, _window, kScreenSize);
-
 	makeMyCNM();
 	drawBGRND();							// Draw floor parts of leftmask rightmask and maskers
 	addRows();								// Add rows to drawitem array
 	addSprites();							// Add all active sprites that are in the viewport, into a list that will be sorted by priority
 	sortDrawItems();						// Sort said items
 	drawItems();							// Draw the items over the background
+}
 
+void ImmortalEngine::copyToScreen() {
 	/* copyRectToSurface will apply the screenbuffer to the ScummVM surface.
 	 * We want to do 320 bytes per scanline, at location (0,0), with a
 	 * size of 320x200.
 	 */
 	_mainSurface->copyRectToSurface(_screenBuff, kResH, 0, 0, kResH, kResV);
 
-}
-
-void ImmortalEngine::copyToScreen() {
 	if (_draw == 1) {
 		g_system->copyRectToScreen((byte *)_mainSurface->getPixels(), kResH, 0, 0, kResH, kResV);
 		g_system->updateScreen();
@@ -74,19 +70,24 @@ void ImmortalEngine::copyToScreen() {
 }
 
 void ImmortalEngine::clearScreen() {
-	//fill the visible screen with black pixels by drawing a rectangle
+	// Fill the visible screen with black pixels by drawing a rectangle
 
 	//rect(32, 20, 256, 128, 0)
+	// This is just temporary, until rect() is implemented
+	for (int y = 0; y < 128; y++) {
+		for (int x = 0; x < 256; x++) {
+			_screenBuff[((y + 20) * kResH) + (x + 32)] = 0;
+		}
+	}
 	
+	_penX = kTextLeft;
+	_penY = kTextTop;
+
 	if ((_dontResetColors & kMaskLow) == 0) {
 		useNormal();
 	}
-}
 
-void ImmortalEngine::whiteScreen() {
-	//fill the visible screen with black pixels by drawing a rectangle
-
-	//rect(32, 20, 256, 128, 13)
+	copyToScreen();
 }
 
 void ImmortalEngine::mungeBM() {}
@@ -95,6 +96,11 @@ void ImmortalEngine::blit40() {}
 void ImmortalEngine::sBlit() {}
 void ImmortalEngine::scroll() {}
 void ImmortalEngine::makeMyCNM() {}									// ?
+
+void ImmortalEngine::drawIcon(int img) {
+	superSprite(&_dataSprites[kObject], ((kObjectWidth / 2) + kScreenLeft) + _penX, _penY + (kObjectY + kScreenTop), img, kScreenBMW, _screenBuff, 0, 200);
+	_penY += kObjectHeight;
+}
 
 void ImmortalEngine::addRows() {
 	// I'm not really sure how this works yet
@@ -108,12 +114,43 @@ void ImmortalEngine::addRows() {
 	_num2DrawItems = i;
 }
 
+void ImmortalEngine::addSprite(uint16 vpX, uint16 vpY, SpriteName s, int img, uint16 x, uint16 y, uint16 p) {
+	debug("adding sprite...");
+	if (_numSprites != kMaxSprites) {
+		if (x >= (kResH + kMaxSpriteLeft)) {
+			x |= kMaskHigh;                         // Make it negative
+		}
+		
+		_sprites[_numSprites]._X = (x << 1) + vpX;
+	
+		if (y >= (kMaxSpriteAbove + kResV)) {
+			y |= kMaskHigh;
+		}
+		
+		_sprites[_numSprites]._Y = (y << 1) + vpY;
+
+		if (p >= 0x80) {
+			p |= kMaskHigh;
+		}
+
+		_sprites[_numSprites]._priority = ((p + y) ^ 0xFFFF) + 1;
+		
+		_sprites[_numSprites]._image = img;
+		_sprites[_numSprites]._dSprite = &_dataSprites[s];
+		_sprites[_numSprites]._on = 1;
+		_numSprites += 1;
+		debug("sprite added");
+	} else {
+		debug("Max sprites reached beeeeeep!!");
+	}
+}
+
 void ImmortalEngine::addSprites() {
 	// My goodness this routine is gross
 	int tmpNum = _num2DrawItems;
 	for (int i = 0; i < kMaxSprites; i++) {
 		// If the sprite is active
-		if (_sprites[i]._on == 1) {
+		if (/*_sprites[i]._on*/0 == 1) {
 			// If sprite X is an odd number???
 			if ((_sprites[i]._X & 1) != 0) {
 				debug("not good! BRK");
@@ -140,7 +177,7 @@ void ImmortalEngine::addSprites() {
 
 			DataSprite *tempD = _sprites[i]._dSprite;
 			debug("what sprite is this: %d %d %d", i, _sprites[i]._image, _sprites[i]._dSprite->_images.size());
-			Image *tempImg = &(tempD->_images[0/*_sprites[i]._image*/]);
+			Image *tempImg = &(tempD->_images[_sprites[i]._image]);
 			int sx = ((_sprites[i]._X + tempImg->_deltaX) - tempD->_cenX) - _myViewPortX;
 			int sy = ((_sprites[i]._Y + tempImg->_deltaY) - tempD->_cenY) - _myViewPortY;
 
@@ -299,6 +336,38 @@ void ImmortalEngine::backspace() {
 	// Just moves the drawing position back by a char, and then draws an empty rect there (I think)
 	_penX -= 8;
 	//rect(_penX + 32, 40, 8, 16, 0);
+
+	// The Y is set here presumably because it's only used for the certificate
+	for (int y = 0; y < 16; y++) {
+		for (int x = 0; x < 8; x++) {
+			_screenBuff[((y + 40) * kResH) + (x + (_penX + 32))] = 0;
+		}
+	}
+}
+
+void ImmortalEngine::printByte(int b) {
+	int hundreds = 0;
+	int tens = 0;
+
+	while ((b - 100) >= 0) {
+		hundreds++;
+		b -= 100;
+	}
+
+	if (hundreds > 0) {
+		printChr(char (hundreds + '0'));
+	}
+
+	while ((b - 10) >= 0) {
+		tens++;
+		b -= 10;
+	}
+
+	if (tens > 0) {
+		printChr(char (tens + '0'));
+	}
+
+	printChr(char (b + '0'));
 }
 
 void ImmortalEngine::printChr(char c) {
@@ -310,36 +379,37 @@ void ImmortalEngine::printChr(char c) {
 		return;
 	}
 
+	// Why is single quote done twice?
 	if (c == 0x27) {
 		_penX -= 2;
 	}
 
-	if ((c >= 'A') && (c <= 'Z')) {
-		_penX += 8;
+	switch (c) {
+		case 'm':
+		case 'w':
+		case 'M':
+		case 'W':
+			_penX += 8;
+		default:
+			break;
+	}
 
-	} else {
-		switch (c) {
-			// Capitals, the health bar icons, and lower case m/w are all 2 chars wide
-			case 'm':
-			case 'w':
-			case 'M':
-			case 'W':
-			case 1:						// Can't use the constant for this for some reason
-			case 0:
-				_penX += 8;
-				break;
-			case 'i':
-				_penX -= 3;
-				break;
-			case 'j':
-			case 't':
-				_penX -= 2;
-				break;
-			case 'l':
-				_penX -= 4;
-			default:
-				break;
-		}
+	if ((((c >= 'A') && (c <= 'Z'))) || ((c == kGaugeOn) || (c == kGaugeOff))) {
+		_penX += 8;
+	}
+
+	switch (c) {
+		case 'i':
+			_penX -= 3;
+			break;
+		case 'j':
+		case 't':
+			_penX -= 2;
+			break;
+		case 'l':
+			_penX -= 4;
+		default:
+			break;
 	}
 
 	uint16 x = _penX + kScreenLeft;
@@ -353,8 +423,15 @@ void ImmortalEngine::printChr(char c) {
 	}
 
 	superSprite(&_dataSprites[kFont], x, y, (int) c, kScreenBMW, _screenBuff, kSuperTop, kSuperBottom);
-	if ((c == 0x27) || (c == 'T')) {
-		_penX -= 2;					// Why is this done twice??
+
+	// Single quote?
+	if (c == 0x27) {
+		_penX -= 2;
+	}
+
+	// If the letter was a captial T, the next letter should be a little closer
+	if (c == 'T') {
+		_penX -= 2;
 	}
 
 	_penX += 8;
@@ -367,181 +444,6 @@ void ImmortalEngine::printChr(char c) {
  * -----            -----
  *
  */
-
-void ImmortalEngine::initStoryStatic() {
-	Common::Array<Common::String> s{"#" + Common::String(kSwordBigFrame) + "sword@",
-									"You find an Elven sword of&agility. Take it?@",
-									"Search the bones?%",
-									"}The sword permanently endows you with Elven agility and quickness in combat.@",
-									"}You notice something that looks wet and green under the pile. Search further?%",
-									"#" + Common::String(kBagBigFrame) + "  dust@"
-									"}You find a bag containing Dust of Complaisance.&@"
-									"}Drop the bait on the ground here?%"
-									"}To use this dust, you throw it in the air. Do that here?%"
-									"_}Don+t bother me, I+m cutting a gem. Yes, you need it. No, you can+t have it. I wouldn+t give it to anyone, least of all you. Go away. ]]]]="
-									"_}Let me help you. Please take this gem. No, really, I insist. Take it and go with my blessings. Good luck. ]]]]="
-									"#" + Common::String(kCarpetBigFrame) + "carpet@",
-									"#" + Common::String(kBombBigFrame) + " bomb@",
-									"A gas bomb that goblins&use to paralyze trolls.&@",
-									"Take it?<>@",
-									"%",
-									" other@",
-									"#" + Common::String(kKeyBigFrame) + "  key@",
-									"#" + Common::String(kKeyBigFrame) + "  key@",
-									"A key to a chest.&@",
-									"The chest is open. Examine&contents?%",
-									"Put it on?%",
-									"Drop it?%",
-									"It+s unlocked. Open it?%",
-									"It+s locked but you have&the key. Open it?%",
-									"It+s locked and you don+t&have the key.@",
-									"The lock, triggered by a&complicated set of latches,&is unfamiliar to you.@",
-									"#" + Common::String(kGoldBigFrame) + "$0 gold@",
-									"You find $0 gold pieces.&&^#" + Common::String(kPileFrame) + "@",
-									"@",
-									"You can+t plant them on&stone tiles.@",
-									"It+s locked but you are&able to unlock it with&the key.@",
-									"_}The king is not dead, but the poison is taking effect. When he sees you, he attempts to speak:[(Give me water... the fountain... I give you... information... peace...+[Give him water?%",
-									"_}You dont have any water to give him. He mumbles something. Then silence... You find a key on his body.]]]]=",
-									"_}He mumbles something. Then silence... You find a key on his body.]]]]=",
-									"_}I+ll tell you how to... next level... past slime... three jewels... slime... rock becomes... floor... right, left, center of the... [Then silence. His hand opens, releasing a key.]]]]=",
-									"You find a door key.&@",
-									"You find a note.&@",
-									"#" + Common::String(kNoteBigFrame) + "note@",
-									"He+s dead.&Look for possessions?%",
-									"You don+t have it. Check&your inventory.@",
-									"Game Over&&Play again?@",
-									"Congratulations!&&Play again?@",
-									"You find a bag of bait.&@",
-									"#" + Common::String(kBagBigFrame) + "   bait@",
-									"You find a stone. @",
-									"#" + Common::String(kStoneBigFrame) + " stone@",
-									"You find a red gem.&@",
-									"#" + Common::String(kGemBigFrame) + "  gem@",
-									"You find a scroll with&fireball spells.&@"
-									"#" + Common::String(kScrollBigFrame) + "$ shots@",
-									"You find a map warning&you about pit traps.&@"
-									"#" + Common::String(kMapBigFrame) + "  map@",
-									"#" + Common::String(kVaseBigFrame) + "   oil@",
-									"You apply the oil but notice&as you walk that the leather&is drying out quickly.@"
-									"}You discover a scroll with a charm spell to use on will o+ the wisps.&@"
-									"#" + Common::String(kScrollBigFrame) + " charm@",
-									"}This charms the will o+ the wisps to follow you. Read the spell again to turn them against your enemies.@"
-									"}It looks like water. Drink it?%",
-									"Drink it?%",
-									"}It works! You are much stronger.]]]=",
-									"}It looks like it has green stuff inside. Open it?%",
-									"Now this will take&effect when you press the&fire button.@",
-									"You find a potion,&Magic Muscle.&@",
-									"#" + Common::String(kVaseBigFrame) + "  potion@",
-									"You find a bottle.&@",
-									"#" + Common::String(kVaseBigFrame) + "  bottle@",
-									"#" + Common::String(kRingBigFrame) + "Protean@",
-									"You find a Protean Ring.&@",
-									"You find a troll ritual knife,&used to declare a fight to&the death. @",
-									"#" + Common::String(kKnifeBigFrame) + " knife@",
-									"_}It is a fine woman+s garment. Folded inside is a ring with the words,[`To Ana, so harm will never find you. -Your loving father, Dunric.+&@",
-									"You find a small, well&crafted ring. @",
-									"#" + Common::String(kRingBigFrame) + "  gift@",
-									"#" + Common::String(kRingBigFrame) + " Ana+s@",
-									"_}She is hurt and upset when she finds you don+t have her ring or won+t give it to her. She scurries back into the hole. The hole is too small for you to follow.&@",
-									"_}`Sir, can you help me,+ the girl pleads. `I was kidnapped and dragged down here. All the man would say is `Mordamir+s orders.+[I escaped using a ring my father gave me, but now I+ve lost it. Did you find it?+%",
-									"_}We have met before, old man. Do you remember? Because you helped me, you may pass. But I warn you, we are at war with the trolls.[Over this ladder, across the spikes, is troll territory. Very dangerous.@",
-									"_}You are an impostor!]]]]=",
-									"_}Old man, do you remember me? I am king of the goblins. You didn+t give me the water. You left me to die after you took the key from me. Now you will pay.]]]]=",
-									"_}You quickly fall into a deep, healing sleep...[Vivid images of a beautiful enchanted city pass by. All the city people are young and glowing. Fountains fill the city, and the splash and sparkle of water is everywhere...[Suddenly the images go black. A face appears... Mordamir!]][He is different from how you remember him. His gentle features are now withered. His kind eyes, now cold and sunken, seem to look through you with a dark, penetrating stare. You wake rejuvenated, but disturbed.]]]]]=",
-									"_}Here, take this ring in return. [I don+t know if it will help, but I heard the unpleasant little dwarf say, (Clockwise, three rings around the triangle.+[Could that be a clue to his exit puzzle? I must go. Goodbye.]]]]=",
-									"#" + Common::String(kSackBigFrame) + " spores@",
-									"You find a sack of bad&smelling spores.&@",
-									"Please insert play disk.@",
-									"New game?%",
-									"Enter certificate:&-=",
-									"Invalid certificate.@",
-									"End of level!&Here is your certificate:&&=",
-									"&@",
-									"   Electronic Arts presents&&       The Immortal&&&&      1990 Will Harvey|]]]]]]]]]=",
-									"          written by&&         Will Harvey&         Ian Gooding&      Michael Marcantel&       Brett G. Durrett&        Douglas Fulton|]]]]]]]/=",
-									"_}Greetings, friend! Come, I+ve got something you need. These parts are plagued with slime.[You can+t venture safely without my slime oil for boots, a bargain at only 80 gold pieces.%",
-									"_}All right, 60 gold pieces for my oil. Rub it on your boots and slime won+t touch you. 60, friend.%",
-									"This room doesn+t resemble&any part of the map.@",
-									"This room resembles part&of the map.@"};
-	_strPtrs = s;
-
-	// Scope, amirite?
-	Common::Array<int> cyc0{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,-1};
-	Common::Array<int> cyc1{15,16,17,18,19,20,21,22,-1};
-	Common::Array<int> cyc2{0,1,2,-1};
-	Common::Array<int> cyc3{3,4,5,-1};
-	Common::Array<int> cyc4{6,7,8,9,10,-1};
-	Common::Array<int> cyc5{11,12,13,14,15,-1};
-	Common::Array<int> cyc6{16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,-1};
-	Common::Array<int> cyc7{0,1,2,3,4,-1};
-	Common::Array<int> cyc8{5,1+5,2+5,3+5,4+5,-1};
-	Common::Array<int> cyc9{10,1+10,2+10,3+10,4+10,-1};
-	Common::Array<int> cyc10{15,1+15,2+15,3+15,4+15,-1};
-	Common::Array<int> cyc11{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,-1};
-	Common::Array<int> cyc12{0,1,2,3,4,5,6,7,8,9,-1};
-	Common::Array<int> cyc13{0,1,2,3, 0,1,2,3, 0,1,2,3, 0,1,2,3, 0,1,2,3, 0,1,2,3, 0,1,2,3, 0,1,2,3, -1};
-	Common::Array<int> cyc14{31,32,33,32, 34,35,36,35, 37,38,39,38, 40,41,42,41, 43,44,45,44, 46,47,48,47, 49,50,51,50, 52,53,54,53, -1};
-	Common::Array<int> cyc15{55, -1};
-	Common::Array<int> cyc16{63,64,65,66, 63,64,65,66, 63,64,65,66, 63,64,65,66, 63,64,65,66, 63,64,65,66, 63,64,65,66, 63,64,65,66,-1};
-	Common::Array<int> cyc17{0,1,0,-1};
-	Common::Array<int> cyc18{0,1,2,4,5,6,7,8,9,10,11,12,2,1,-1};
-	Common::Array<int> cyc19{0,0,1,2,13,14,15,16,4,2,3,-1};
-	Common::Array<int> cyc20{0,1,2,3,20,21,22,23,24,25,26,27,5,4,3,-1};
-	Common::Array<int> cyc21{0,1,2,3,-1};
-	Common::Array<int> cyc22{0,17,18,19,3,-1};
-	Common::Array<int> cyc23{0,1,-1};
-	Common::Array<int> cyc24{28,28,28,28,-1};
-	Common::Array<int> cyc25{15,16,15,16,15,1+15,1+15,-1};
-	Common::Array<int> cyc26{10+15,11+15,12+15,13+15,14+15,15+15,16+15,-1};
-	Common::Array<int> cyc27{2+15,3+15,4+15,5+15,-1};
-	Common::Array<int> cyc28{6+15,7+15,8+15,9+15,-1};
-	Common::Array<int> cyc29{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,-1};
-	Common::Array<int> cyc30{0,1,2,3,3,3,3,4,5,6,-1};
-	Common::Array<int> cyc31{0,1,2,3,4,5,6,7,8,-1};
-
-	Common::Array<SCycle> c{SCycle(kBubble,     false, cyc0),  SCycle(kBubble, 	   false, cyc1),
-							SCycle(kSpark, 	    false, cyc2),  SCycle(kSpark, 	   false, cyc3),
-							SCycle(kSpark, 	    false, cyc4),  SCycle(kSpark, 	   false, cyc5),  SCycle(kSpark,  false, cyc6),
-							SCycle(kPipe, 	    false, cyc7),  SCycle(kPipe, 	   false, cyc8),
-							SCycle(kPipe,	    false, cyc9),  SCycle(kPipe, 	   false, cyc10),
-							SCycle(kAnaVanish,  false, cyc11), SCycle(kAnaGlimpse, false, cyc12),
-							SCycle(kKnife, 	    true,  cyc13),
-							SCycle(kSpark, 	    true,  cyc14), SCycle(kSpark, 	   true, cyc15), SCycle(kSpark,  true,  cyc16),
-							SCycle(kBigBurst,   false, cyc17),
-							SCycle(kFlame,      false, cyc18), SCycle(kFlame,      false, cyc19), SCycle(kFlame,  false, cyc20),
-							SCycle(kFlame,      false, cyc21), SCycle(kFlame,      false, cyc22), SCycle(kFlame,  false, cyc23),
-							SCycle(kFlame,      false, cyc24),
-							SCycle(kCandle,     false, cyc25), SCycle(kCandle,     false, cyc26), SCycle(kCandle, false, cyc27),
-							SCycle(kCandle,     false, cyc28), SCycle(kCandle,     false, cyc29),
-							SCycle(kSink,       false, cyc30),
-							SCycle(kNorlacDown, false, cyc31)};
-	_cycPtrs = c;
-
-	Common::Array<Motive>   m{};
-	_motivePtrs = m;
-
-	Common::Array<Damage>   d{};
-	_damagePtrs = d;
-
-	Common::Array<Use>      u{};
-	_usePtrs = u;
-
-	Common::Array<Pickup>   p{};
-	_pickupPtrs = p;
-
-	CArray2D<Motive>       pr{};
-	_programPtrs = pr;
-
-	Common::Array<ObjType>  o{};
-	_objTypePtrs = o;
-
-}
-
-void ImmortalEngine::kernalAddSprite(uint16 x, uint16 y, SpriteName n, int img, uint16 p) {
-	Utilities::addSprite(_sprites, _viewPortX, _viewPortY, &_numSprites, &_dataSprites[n], img, x, y, p);
-}
 
 void ImmortalEngine::clearSprites() {
 	// Just sets the 'active' flag on all possible sprites to 0
@@ -557,6 +459,10 @@ void ImmortalEngine::cycleFreeAll() {
 	}
 }
 
+void ImmortalEngine::loadMazeGraphics(int m) {
+	//setColors();
+}
+
 void ImmortalEngine::loadSprites() {
 	/* This is a bit weird, so I'll explain.
 	 * In the source, this routine loads the files onto the heap, and then
@@ -567,7 +473,7 @@ void ImmortalEngine::loadSprites() {
 	 * We aren't going to have the sprite properties inside the file data, so instead
 	 * we have an array of all game sprites _dataSprites which is indexed
 	 * soley by a sprite number now. This also means that a sprite itself has a reference to
-	 * a datasprite, instead of the sprite index and separate the file pointer. Datasprite
+	 * a datasprite, instead of the sprite index and separately the file pointer. Datasprite
 	 * is what needs the file, so that's where the pointer is. The index isn't used by
 	 * the sprite or datasprite themselves, so it isn't a member of either of them.
 	 */
@@ -621,9 +527,16 @@ void ImmortalEngine::loadSprites() {
 }
 
 void ImmortalEngine::loadWindow() {
+	/* Technically, the source uses loadIFF to just move the window bitmap from
+	 * the file straight into the virtual screen buffer. However, since
+	 * we will have to extract each pixel from the buffer to use with
+	 * Surface anyway, we are doing the extracting in advance, since that is
+	 * more or less what is happening at this point in the source. This will
+	 * likely be combined with something else in the future.
+	 */
+
 	// Initialize the window bitmap
 	Common::File f;
-	_window = new byte[kScreenSize];
 
 	if (f.open("WINDOWS.BM")) {
 
@@ -640,8 +553,8 @@ void ImmortalEngine::loadWindow() {
 			for (int x = 0; x < kResH; x += 2) {
 				pos = (y * kResH) + x;
 				pixel = f.readByte();
-				_window[pos]     = (pixel & kMask8High) >> 4;
-				_window[pos + 1] =  pixel & kMask8Low;
+				_screenBuff[pos]     = (pixel & kMask8High) >> 4;
+				_screenBuff[pos + 1] =  pixel & kMask8Low;
 			}
 		}
 
@@ -664,7 +577,7 @@ void ImmortalEngine::loadFont() {
 		_dataSprites[kFont] = d;
 
 	} else {
-		debug("file doesn't exit?!");
+		debug("file doesn't exist?!");
 	}
 
 }
@@ -774,12 +687,12 @@ void ImmortalEngine::setColors(uint16 pal[]) {
 
 void ImmortalEngine::fixColors() {
 	// Pretty silly that this is done with two separate variables, could just index by one...
-	if (_dim == true) {
-		if (_usingNormal == true) {
+	if (_dim == 1) {
+		if (_usingNormal == 1) {
 			useDim();
 		}
 	} else {
-		if (_usingNormal == false) {
+		if (_usingNormal == 0) {
 			useNormal();
 		}
 	}
@@ -789,13 +702,13 @@ void ImmortalEngine::pump() {
 	// Flashes the screen (except the frame thankfully) white, black, white, black, then clears the screen and goes back to normal
 	useWhite();
 	g_system->updateScreen();
-	Immortal::Utilities::delay(2);
+	Utilities::delay(2);
 	useBlack();
 	g_system->updateScreen();
-	Immortal::Utilities::delay(2);
+	Utilities::delay(2);
 	useWhite();
 	g_system->updateScreen();
-	Immortal::Utilities::delay(2);
+	Utilities::delay(2);
 	useBlack();
 	g_system->updateScreen();
 	clearScreen();
@@ -857,7 +770,7 @@ void ImmortalEngine::fade(uint16 pal[], int dir, int delay) {
 
 	while ((count >= 0) && (count <= 256)) {
 		fadePal(pal, count, target);
-		Immortal::Utilities::delay8(delay);
+		Utilities::delay8(delay);
 		setColors(target);
 
 		// Same as above, it was originally a branch, this does the same thing
@@ -896,12 +809,12 @@ void ImmortalEngine::useWhite() {
 
 void ImmortalEngine::useNormal() {
 	setColors(_palDefault);
-	 _usingNormal = true;
+	 _usingNormal = 1;
 }
 
 void ImmortalEngine::useDim() {
 	setColors(_palDim);
-	_usingNormal = false;
+	_usingNormal = 0;
 }
 
 
@@ -922,6 +835,19 @@ void ImmortalEngine::waitKey() {
 	while (wait == true) {
 		if (getInput() == true) {
 			wait = false;
+		}
+	}
+}
+
+// This was originally in Motives, which is weird since it seems more like an engine level function, so it's in kernal now
+void ImmortalEngine::waitClick() {
+	bool wait = true;
+	while (wait == true) {
+		if (getInput() == true) {
+			Utilities::delay(25);
+			if (buttonPressed() || firePressed()) {
+				wait = false;
+			}
 		}
 	}
 }
@@ -1000,6 +926,10 @@ void ImmortalEngine::playMazeSong() {
 void ImmortalEngine::playCombatSong() {
 }
 
+void ImmortalEngine::playTextSong() {
+	
+}
+
 void ImmortalEngine::loadSingles(Common::String songName) {
 	debug("%s", songName.c_str());
 }
@@ -1008,6 +938,34 @@ void ImmortalEngine::stopMusic() {
 	//musicStop(-1)
 	_playing = kSongNothing;
 	//stopSound();
+}
+
+/*
+ *
+ * -----                         -----
+ * ----- 'Pen' related Functions -----
+ * -----                         -----
+ *
+ */
+
+void ImmortalEngine::setPen(uint16 penX, uint16 penY) {
+	_penX = penX & kMaskLow;
+	if ((penY & kMaskLow) < 200) {
+		_penY = penY & kMaskLow;
+	}
+
+	else {
+		_penY = penY | kMaskHigh;
+	}
+}
+
+void ImmortalEngine::center() {
+	_penX = ((uint16) 128) - (kObjectWidth / 2);
+}
+
+void ImmortalEngine::carriageReturn() {
+	_penY += 16;
+	_penX = kTextLeft;	
 }
 
 } // namespace Immortal
