@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-09-21 20:39+0000\n"
-"PO-Revision-Date: 2022-09-21 09:37+0000\n"
+"PO-Revision-Date: 2022-09-22 16:47+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -5196,14 +5196,12 @@ msgstr ""
 "a stáblista alatt"
 
 #: engines/groovie/detection.cpp:332
-#, fuzzy
-#| msgid "Hover Mode"
 msgid "Speedrun Mode"
-msgstr "Húzás mód"
+msgstr "Speedrun Mód"
 
 #: engines/groovie/detection.cpp:333
 msgid "Affects the controls for fast forwarding the game"
-msgstr ""
+msgstr "A játék gyors előrehaladásának vezérlőelemeit érinti"
 
 #: engines/groovie/metaengine.cpp:52
 msgid "GroovieV2 support is not compiled in"
