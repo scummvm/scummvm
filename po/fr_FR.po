@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-09-21 20:39+0000\n"
-"PO-Revision-Date: 2022-08-23 11:37+0000\n"
+"PO-Revision-Date: 2022-09-22 09:19+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -5263,14 +5263,12 @@ msgstr ""
 "des musiques MIDI"
 
 #: engines/groovie/detection.cpp:332
-#, fuzzy
-#| msgid "Hover Mode"
 msgid "Speedrun Mode"
-msgstr "Mode Survol"
+msgstr "Mode Speedrun"
 
 #: engines/groovie/detection.cpp:333
 msgid "Affects the controls for fast forwarding the game"
-msgstr ""
+msgstr "Modifie les contrôles pour accélérer le jeu"
 
 #: engines/groovie/metaengine.cpp:52
 msgid "GroovieV2 support is not compiled in"
@@ -6562,14 +6560,12 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "Utiliser une intro alternative (version CD uniquement)"
 
 #: engines/queen/detection.cpp:56
-#, fuzzy
-#| msgid "Improved mode"
 msgid "Improved font"
-msgstr "Mode jeu amélioré"
+msgstr "Police améliorée"
 
 #: engines/queen/detection.cpp:57
 msgid "Use an easier to read custom font"
-msgstr ""
+msgstr "Utilise une police de caractères personnalisée plus facile à lire"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:813
