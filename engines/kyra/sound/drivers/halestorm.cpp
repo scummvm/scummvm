@@ -85,18 +85,22 @@ static int DEBUG_BUFFERS_COUNT = 0;
 class ShStBuffer {
 public:
 	ShStBuffer(const ShStBuffer &buff) : ptr(buff.ptr), len(buff.len), lifes(buff.lifes) { if (lifes) (*lifes)++; }
+	ShStBuffer(ShStBuffer &&buff) noexcept : ptr(buff.ptr), len(buff.len), lifes(buff.lifes) { buff.lifes = nullptr; }
 	ShStBuffer(const void *p, uint32 cb, bool allocate = false) : ptr((const uint8*)p), len(cb), lifes(nullptr) { if (allocate) memcpy(crtbuf(), p, cb); }
 	ShStBuffer() : ShStBuffer(nullptr, 0) {}
 	ShStBuffer(Common::SeekableReadStream *s) : len(s ? s->size() : 0), lifes(nullptr) { s->read(crtbuf(), len); }
 	~ShStBuffer() { dcrlif(); }
-	void operator=(Common::SeekableReadStream *s) { operator=(ShStBuffer(s)); }
-	void operator=(const ShStBuffer &buff) {
-		dcrlif();
-		ptr = buff.ptr;
-		len = buff.len;
-		lifes = buff.lifes;
+	ShStBuffer &operator=(Common::SeekableReadStream *s) { return operator=(ShStBuffer(s)); }
+	ShStBuffer &operator=(ShStBuffer &&buff) noexcept {
+		trans(buff);
+		buff.lifes = nullptr;
+		return *this;
+	}
+	ShStBuffer &operator=(const ShStBuffer &buff) {
+		trans(buff);
 		if (lifes)
 			(*lifes)++;
+		return *this;
 	}
 	const uint8 *ptr;
 	uint32 len;
@@ -116,6 +120,12 @@ private:
 		*lifes = 1;
 		DEBUG_BUFFERS_COUNT++;
 		return tptr;
+	}
+	void trans(const ShStBuffer &buff) {
+		dcrlif();
+		ptr = buff.ptr;
+		len = buff.len;
+		lifes = buff.lifes;
 	}
 	int *lifes;
 };
