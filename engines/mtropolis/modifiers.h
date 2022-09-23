@@ -799,6 +799,43 @@ private:
 	VisualElementRenderProperties _renderProps;
 };
 
+class ImageEffectModifier : public Modifier {
+public:
+	ImageEffectModifier();
+
+	bool load(ModifierLoaderContext &context, const Data::ImageEffectModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Image Effect Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusNone; }
+#endif
+
+private:
+	enum Type {
+		kTypeUnknown = 0,
+
+		kTypeInvert = 1,
+		kTypeSelectedBevels,
+		kTypeDeselectedBevels,
+		kTypeToneDown,
+		kTypeToneUp,
+	};
+
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+
+	Event _applyWhen;
+	Event _removeWhen;
+	Type _type;
+	uint16 _bevelWidth;
+	uint16 _toneAmount;
+	bool _includeBorders;
+};
+
 // Compound variable modifiers are not true variable modifiers.
 // They aren't treated as values by Miniscript and they aren't
 // treated as unique objects by aliases.  The only way that

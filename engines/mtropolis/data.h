@@ -95,7 +95,7 @@ enum DataObjectType {
 
 	kGraphicElement							= 0x8,
 	kMovieElement							= 0x5,
-	kMToonElement							= 0x6,		// NYI
+	kMToonElement							= 0x6,
 	kImageElement							= 0x7,
 	kSoundElement							= 0xa,
 	kTextLabelElement						= 0x15,
@@ -121,7 +121,7 @@ enum DataObjectType {
 	kKeyboardMessengerModifier				= 0x302,
 	kTextStyleModifier						= 0x32a,
 	kGraphicModifier						= 0x334,
-	kImageEffectModifier					= 0x384,	// NYI
+	kImageEffectModifier					= 0x384,
 	kMiniscriptModifier						= 0x3c0,
 	kCursorModifierV1						= 0x3ca,	// NYI - Obsolete version
 	kGradientModifier						= 0x4b0,	// NYI
@@ -1513,6 +1513,31 @@ struct GraphicModifier : public DataObject {
 	uint8 unknown6[8];
 
 	Common::Array<Point> polyPoints;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct ImageEffectModifier : public DataObject {
+	ImageEffectModifier();
+
+	enum Types {
+		kTypeInvert = 1,
+		kTypeSelectedBevels = 2,
+		kTypeDeselectedBevels = 3,
+		kTypeToneDown = 4,
+		kTypeToneUp = 5,
+	};
+
+	TypicalModifierHeader modHeader;
+
+	uint32 flags;
+	uint16 type;
+	Event applyWhen;
+	Event removeWhen;
+	uint16 bevelWidth;
+	uint16 toneAmount;
+	uint8 unknown2[2];
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;

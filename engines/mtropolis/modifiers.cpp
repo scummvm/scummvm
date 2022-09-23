@@ -2036,6 +2036,41 @@ const char *GraphicModifier::getDefaultName() const {
 	return "Graphic Modifier";
 }
 
+ImageEffectModifier::ImageEffectModifier() : _type(kTypeUnknown), _bevelWidth(0), _toneAmount(0), _includeBorders(false) {
+}
+
+bool ImageEffectModifier::load(ModifierLoaderContext &context, const Data::ImageEffectModifier &data) {
+	if (!loadTypicalHeader(data.modHeader) || !_applyWhen.load(data.applyWhen) || !_removeWhen.load(data.removeWhen))
+		return false;
+
+	_includeBorders = ((data.flags & 0x40000000) != 0);
+	_type = static_cast<Type>(data.type);
+	_bevelWidth = data.bevelWidth;
+	_toneAmount = data.toneAmount;
+
+	return true;
+}
+
+bool ImageEffectModifier::respondsToEvent(const Event &evt) const {
+	return _applyWhen.respondsTo(evt) || _removeWhen.respondsTo(evt);
+}
+
+VThreadState ImageEffectModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	warning("Image effect modifier not implemented");
+	return kVThreadReturn;
+}
+
+void ImageEffectModifier::disable(Runtime *runtime) {
+}
+
+Common::SharedPtr<Modifier> ImageEffectModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new ImageEffectModifier(*this));
+}
+
+const char *ImageEffectModifier::getDefaultName() const {
+	return "Image Effect Modifier";
+}
+
 bool CompoundVariableModifier::load(ModifierLoaderContext &context, const Data::CompoundVariableModifier &data) {
 	if (data.numChildren > 0) {
 		ChildLoaderContext loaderContext;

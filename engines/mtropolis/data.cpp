@@ -1650,6 +1650,20 @@ DataReadErrorCode GraphicModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+ImageEffectModifier::ImageEffectModifier() : flags(0), type(0), bevelWidth(0), toneAmount(0), unknown2{0, 0} {
+}
+
+DataReadErrorCode ImageEffectModifier::load(DataReader &reader) {
+	if (_revision != 1000)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader) || !reader.readU32(flags) || !reader.readU16(type) || !applyWhen.load(reader) || !removeWhen.load(reader)
+		|| !reader.readU16(bevelWidth) || !reader.readU16(toneAmount) || !reader.readBytes(unknown2))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 CompoundVariableModifier::CompoundVariableModifier()
 	: modifierFlags(0), sizeIncludingTag(0), unknown1{0, 0}, guid(0), unknown4{0, 0, 0, 0, 0, 0}, unknown5(0),
 	  editorLayoutPosition(Point::createDefault()), lengthOfName(0), numChildren(0), unknown7{0, 0, 0, 0} {
@@ -2375,6 +2389,9 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		break;
 	case DataObjectTypes::kGraphicModifier:
 		dataObject = new GraphicModifier();
+		break;
+	case DataObjectTypes::kImageEffectModifier:
+		dataObject = new ImageEffectModifier();
 		break;
 
 	case DataObjectTypes::kColorTableAsset:

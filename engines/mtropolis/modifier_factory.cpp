@@ -109,6 +109,8 @@ SIModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectTyp
 		return ModifierFactory<TextStyleModifier, Data::TextStyleModifier>::getInstance();
 	case Data::DataObjectTypes::kGraphicModifier:
 		return ModifierFactory<GraphicModifier, Data::GraphicModifier>::getInstance();
+	case Data::DataObjectTypes::kImageEffectModifier:
+		return ModifierFactory<ImageEffectModifier, Data::ImageEffectModifier>::getInstance();
 	case Data::DataObjectTypes::kMessengerModifier:
 		return ModifierFactory<MessengerModifier, Data::MessengerModifier>::getInstance();
 	case Data::DataObjectTypes::kSetModifier:
