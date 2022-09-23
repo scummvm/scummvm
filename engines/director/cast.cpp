@@ -474,7 +474,7 @@ void Cast::loadCast() {
 
 	// Font Directory
 	if (_castArchive->hasResource(MKTAG('F', 'O', 'N', 'D'), -1)) {
-		debug("Cast::loadArchive(): Movie has fonts. Loading....");
+		debug("Cast::loadCast(): Movie has fonts. Loading....");
 
 		_vm->_wm->_fontMan->loadFonts(_castArchive->getPathName());
 	}
