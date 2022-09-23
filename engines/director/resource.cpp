@@ -38,17 +38,12 @@
 namespace Director {
 
 Archive *DirectorEngine::createArchive() {
-	if (getPlatform() != Common::kPlatformWindows) {
-		if (getVersion() < 400)
+	if (getVersion() < 400) {
+		if (getPlatform() != Common::kPlatformWindows)
 			return new MacArchive();
-		else
-			return new RIFXArchive();
-	} else {
-		if (getVersion() < 400)
-			return new RIFFArchive();
-		else
-			return new RIFXArchive();
+		return new RIFFArchive();
 	}
+	return new RIFXArchive();
 }
 
 Common::Error Window::loadInitialMovie() {
