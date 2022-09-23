@@ -1934,6 +1934,7 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int restorePortrait
 
 void LoLEngine::setupDialogueButtons(int numStr, const char *s1, const char *s2, const char *s3) {
 	screen()->setScreenDim(5);
+	assert(numStr);
 
 	if (numStr == 1 && speechEnabled()) {
 		_dialogueNumButtons = 0;
