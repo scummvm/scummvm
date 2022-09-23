@@ -94,6 +94,7 @@ public:
 	void drawBorder();
 	virtual void drawUI();
 	Texture *_borderTexture;
+	Texture *_uiTexture;
 
 	// Parsing assets
 	uint8 _binaryBits;
