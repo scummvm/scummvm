@@ -1124,12 +1124,14 @@ int HSLowLevelDriver::cmd_playSoundEffect(va_list &arg) {
 	if (!vc || !vc->dataPtr || !_song._numChanSfx)
 		return 0;
 
-	HSSoundChannel *chan = &_chan[_song._numChanMusic];
+	HSSoundChannel *chan = nullptr;
 	int16 lowest = 32767;
 	for (int i = _song._numChanMusic; i < _song._numChanMusic + _song._numChanSfx; ++i) {
 		HSSoundChannel *c = &_chan[i];
-		if (c->status < 0)
+		if (c->status < 0) {
+			chan = c;
 			break;
+		}
 		if (c->status < lowest) {
 			chan = c;
 			lowest = c->status;
