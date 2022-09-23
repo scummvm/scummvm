@@ -34,8 +34,6 @@ Combat::Combat() : TextView("Combat"),
 }
 
 bool Combat::msgFocus(const FocusMessage &msg) {
-	_mode = BATTLE;
-
 	// Clear combat data
 	clear();
 
@@ -48,8 +46,7 @@ bool Combat::msgFocus(const FocusMessage &msg) {
 	setupCanAttacks();
 	setupHandicap();
 
-	// TODO: Replace with correct selection of starting char
-	g_globals->_currCharacter = &g_globals->_party[0];
+	combatLoop();
 
 	return true;
 }
@@ -65,7 +62,13 @@ void Combat::draw() {
 	writeMonsters();
 	writeParty();
 
-	writeOptions();
+	switch (_mode) {
+	case SELECT_OPTION:
+		writeOptions();
+		break;
+	default:
+		break;
+	}
 }
 
 void Combat::timeout() {
@@ -255,6 +258,45 @@ void Combat::writeParty() {
 void Combat::clearPartyArea() {
 	clearLines(16, 18);
 }
+
+void Combat::combatLoop() {
+	if (_monsterIndex != 0) {
+		selectParty();
+	} else {
+		selectMonster();
+	}
+}
+
+void Combat::selectMonster() {
+	for (uint i = 0; i < _monsterList.size(); ++i) {
+		// TODO
+	}
+
+	// TODO
+}
+
+void Combat::selectParty() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		g_globals->_currCharacter = &c;
+
+		int speed = c._speed._current;
+		if (speed && speed >= _handicap2) {
+			if (!(c._condition & (BLINDED | SILENCED | DISEASED | POISONED))) {
+				// Character is enabled
+				_mode = SELECT_OPTION;
+				return;
+			}
+		}
+	}
+
+	loop1();
+}
+
+void Combat::loop1() {
+	// TODO
+}
+
 
 } // namespace Views
 } // namespace MM1

@@ -41,6 +41,7 @@ protected:
 	byte _arr2[MAX_COMBAT_MONSTERS];
 	byte _monsterStatus[MAX_COMBAT_MONSTERS];
 	bool _canAttack[MAX_PARTY_SIZE];
+	int _arr3[MAX_PARTY_SIZE / 2];
 	int _val1;
 	int _roundNum;
 	int _monsterIndex, _currentChar;
