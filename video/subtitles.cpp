@@ -240,9 +240,11 @@ void Subtitles::setFont(const char *fontname, int height) {
 
 	_fontHeight = height;
 
+#ifdef USE_FREETYPE2
 	if (file.open(fontname)) {
 		_font = Graphics::loadTTFFont(file, _fontHeight, Graphics::kTTFSizeModeCharacter, 96);
 	}
+#endif
 
 	if (!_font) {
 		warning("Cannot load font %s directly", fontname);
