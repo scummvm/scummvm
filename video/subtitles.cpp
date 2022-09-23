@@ -23,6 +23,7 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "common/ustr.h"
+#include "common/unicode-bidi.h"
 
 #include "graphics/fonts/ttf.h"
 #include "graphics/font.h"
@@ -310,12 +311,14 @@ void Subtitles::drawSubtitle(uint32 timestamp, bool force) {
 	width = MIN(width + 2 * _hPad, (int)_bbox.width());
 
 	for (uint i = 0; i < lines.size(); i++) {
-		_font->drawString(_surface, lines[i], 0, height, width, _blackColor, Graphics::kTextAlignCenter);
-		_font->drawString(_surface, lines[i], SHADOW * 2, height, width, _blackColor, Graphics::kTextAlignCenter);
-		_font->drawString(_surface, lines[i], 0, height + SHADOW * 2, width, _blackColor, Graphics::kTextAlignCenter);
-		_font->drawString(_surface, lines[i], SHADOW * 2, height + SHADOW * 2, width, _blackColor, Graphics::kTextAlignCenter);
+		Common::U32String line = convertBiDiU32String(lines[i]).visual;
 
-		_font->drawString(_surface, lines[i], SHADOW, height + SHADOW, width, _color, Graphics::kTextAlignCenter);
+		_font->drawString(_surface, line, 0, height, width, _blackColor, Graphics::kTextAlignCenter);
+		_font->drawString(_surface, line, SHADOW * 2, height, width, _blackColor, Graphics::kTextAlignCenter);
+		_font->drawString(_surface, line, 0, height + SHADOW * 2, width, _blackColor, Graphics::kTextAlignCenter);
+		_font->drawString(_surface, line, SHADOW * 2, height + SHADOW * 2, width, _blackColor, Graphics::kTextAlignCenter);
+
+		_font->drawString(_surface, line, SHADOW, height + SHADOW, width, _color, Graphics::kTextAlignCenter);
 
 		height += _font->getFontHeight();
 
