@@ -270,6 +270,8 @@ void Window::loadEXE(const Common::String movie) {
 		}
 	}
 
+	delete exeStream;
+
 	if (_mainArchive)
 		_mainArchive->setPathName(movie);
 }
@@ -318,10 +320,12 @@ void Window::loadEXEv3(Common::SeekableReadStream *stream) {
 
 		_mainArchive = new RIFFArchive();
 
-		if (!_mainArchive->openStream(stream, riffOffset))
-			warning("Failed to load RIFF from EXE");
-		else
+		if (_mainArchive->openStream(stream, riffOffset))
 			return;
+
+		warning("Failed to load RIFF from EXE");
+		delete _mainArchive;
+		_mainArchive = nullptr;
 	}
 
 	openMainArchive(mmmFileName);
