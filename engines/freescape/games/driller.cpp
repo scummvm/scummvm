@@ -136,7 +136,7 @@ void DrillerEngine::loadAssets() {
 		if (file == nullptr)
 			error("Failed to open DRILLE.EXE");
 
-		loadMessages(file, 0x4135, 14, 20);
+		loadMessagesFixedSize(file, 0x4135, 14, 20);
 		loadFonts(file, 0x99dd);
 		loadGlobalObjects(file, 0x3b42);
 		load8bitBinary(file, 0x9b40, 16);

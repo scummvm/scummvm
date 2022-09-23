@@ -37,14 +37,11 @@ CastleEngine::CastleEngine(OSystem *syst) : FreescapeEngine(syst) {
 	_playerDepth = 8;
 }
 
-void CastleEngine::loadAssets() {
-	Common::SeekableReadStream *file = nullptr;
+Common::SeekableReadStream *CastleEngine::decryptFile(const Common::String filename) {
 	Common::String path = ConfMan.get("path");
 	Common::FSDirectory gameDir(path);
 
-	_renderMode = "ega";
-
-	file = gameDir.createReadStreamForMember("CMEDF");
+	Common::SeekableReadStream *file = gameDir.createReadStreamForMember(filename);
 	int size = file->size();
 	byte *encryptedBuffer = (byte*) malloc(size);
 	file->read(encryptedBuffer, size);
@@ -55,7 +52,19 @@ void CastleEngine::loadAssets() {
 		seed = (seed + 1) & 0xff;
     }
 
-	file = new Common::MemoryReadStream(encryptedBuffer, size);
+	return (new Common::MemoryReadStream(encryptedBuffer, size));
+}
+
+
+void CastleEngine::loadAssets() {
+	Common::SeekableReadStream *file = nullptr;
+	_renderMode = "ega";
+
+	file = decryptFile("CMLE");
+	loadMessagesVariableSize(file, 0, 172);
+	delete file;
+
+	file = decryptFile("CMEDF");
 	load8bitBinary(file, 0, 16);
 	for (AreaMap::iterator iterator = _areaMap.begin(); iterator != _areaMap.end(); iterator++)
 		iterator->_value->addStructure(_areaMap[255]);

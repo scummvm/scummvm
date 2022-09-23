@@ -519,7 +519,7 @@ void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset) {
 	_font.set_bits((byte *)font);
 }
 
-void FreescapeEngine::loadMessages(Common::SeekableReadStream *file, int offset, int size, int number) {
+void FreescapeEngine::loadMessagesFixedSize(Common::SeekableReadStream *file, int offset, int size, int number) {
 	file->seek(offset);
 	byte *buffer = (byte *)malloc(size + 1);
 	buffer[size] = 0;
@@ -533,5 +533,22 @@ void FreescapeEngine::loadMessages(Common::SeekableReadStream *file, int offset,
 	}
 }
 
+void FreescapeEngine::loadMessagesVariableSize(Common::SeekableReadStream *file, int offset, int number) {
+	file->seek(offset);
+	debugC(1, kFreescapeDebugParser, "String table:");
+
+	for (int i = 0; i < number; i++) {
+		Common::String message = "";
+		while (true) {
+			byte c = file->readByte();
+			if (c <= 1)
+				break;
+			message = message + c;
+		}
+
+		_messagesList.push_back(message);
+		debugC(1, kFreescapeDebugParser, "%s", _messagesList[i].c_str());
+	}
+}
 
 } // namespace Freescape

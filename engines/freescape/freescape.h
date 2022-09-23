@@ -218,7 +218,9 @@ public:
 
 	// Text messages and Fonts
 	Common::StringArray _messagesList;
-	void loadMessages(Common::SeekableReadStream *file, int offset, int size, int number);
+	void loadMessagesFixedSize(Common::SeekableReadStream *file, int offset, int size, int number);
+	void loadMessagesVariableSize(Common::SeekableReadStream *file, int offset, int number);
+
 	void loadFonts(Common::SeekableReadStream *file, int offset);
 	Common::StringArray _currentAreaMessages;
 	Common::StringArray _currentEphymeralMessages;
@@ -294,6 +296,9 @@ public:
 	void loadAssets() override;
 
 	void gotoArea(uint16 areaID, int entranceID) override;
+
+private:
+	Common::SeekableReadStream *decryptFile(const Common::String filename);
 };
 
 extern FreescapeEngine *g_freescape;
