@@ -33,8 +33,8 @@ namespace Freescape {
 
 FreescapeEngine *g_freescape = NULL;
 
-FreescapeEngine::FreescapeEngine(OSystem *syst)
-	: Engine(syst), _screenW(320), _screenH(200), _border(nullptr), _gfx(nullptr) {
+FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
+	: Engine(syst), _gameDescription(gd), _screenW(320), _screenH(200), _border(nullptr), _gfx(nullptr) {
 	g_freescape = this;
 	if (!ConfMan.hasKey("render_mode") || ConfMan.get("render_mode").empty())
 		_renderMode = "ega";

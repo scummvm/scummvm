@@ -28,7 +28,7 @@
 
 namespace Freescape {
 
-DrillerEngine::DrillerEngine(OSystem *syst) : FreescapeEngine(syst) {
+DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
 	_viewArea = Common::Rect(40, 16, 279, 116);
 	_playerHeightNumber = 1;
 	_playerHeights.push_back(16);
@@ -112,6 +112,37 @@ void DrillerEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offs
 }
 
 void DrillerEngine::loadAssets() {
+	if (isDemo())
+		loadAssetsDemo();
+	else
+		loadAssetsFullGame();
+}
+
+void DrillerEngine::loadAssetsDemo() {
+	Common::SeekableReadStream *file = nullptr;
+	Common::String path = ConfMan.get("path");
+	Common::FSDirectory gameDir(path);
+
+	Common::File exe;
+	if (isAmiga()) {
+		file = gameDir.createReadStreamForMember("amiga.demo");
+
+		if (file == nullptr)
+			error("Failed to open 'amiga.demo' file");
+
+		//loadGlobalObjects(file, 0xbd62);
+		/*file->seek(0x29efe);
+		load8bitArea(file, 16);
+		file->seek(0x2a450);
+		load8bitArea(file, 16);*/
+
+		load8bitBinary(file, 0, 16);
+	} else
+		error("Unsupported demo for Driller");
+}
+
+
+void DrillerEngine::loadAssetsFullGame() {
 	Common::SeekableReadStream *file = nullptr;
 	Common::String path = ConfMan.get("path");
 	Common::FSDirectory gameDir(path);

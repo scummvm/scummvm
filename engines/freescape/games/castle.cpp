@@ -27,7 +27,7 @@
 
 namespace Freescape {
 
-CastleEngine::CastleEngine(OSystem *syst) : FreescapeEngine(syst) {
+CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
 	_playerHeightNumber = 1;
 	_playerHeights.push_back(16);
 	_playerHeights.push_back(48);
