@@ -75,7 +75,7 @@ static const char* rawMessagesTable[] = {
 	NULL
 };
 
-EclipseEngine::EclipseEngine(OSystem *syst) : FreescapeEngine(syst) {
+EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
 	_viewArea = Common::Rect(40, 32, 280, 132);
 	_playerHeightNumber = 1;
 	_playerHeights.push_back(16);

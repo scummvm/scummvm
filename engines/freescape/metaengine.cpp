@@ -28,23 +28,31 @@ public:
 		return "freescape";
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 };
 
-Common::Error FreescapeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (Common::String(desc->gameId) == "driller" || Common::String(desc->gameId) == "spacestationoblivion") {
-		*engine = (Engine *)new Freescape::DrillerEngine(syst);
-	} else 	if (Common::String(desc->gameId) == "darkside") {
-		*engine = (Engine *)new Freescape::DarkEngine(syst);
-	} else 	if (Common::String(desc->gameId) == "totaleclipse") {
-		*engine = (Engine *)new Freescape::EclipseEngine(syst);
-	} else 	if (Common::String(desc->gameId) == "castlemaster") {
-		*engine = (Engine *)new Freescape::CastleEngine(syst);
+Common::Error FreescapeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
+	if (Common::String(gd->gameId) == "driller" || Common::String(gd->gameId) == "spacestationoblivion") {
+		*engine = (Engine *)new Freescape::DrillerEngine(syst, gd);
+	} else 	if (Common::String(gd->gameId) == "darkside") {
+		*engine = (Engine *)new Freescape::DarkEngine(syst, gd);
+	} else 	if (Common::String(gd->gameId) == "totaleclipse") {
+		*engine = (Engine *)new Freescape::EclipseEngine(syst, gd);
+	} else 	if (Common::String(gd->gameId) == "castlemaster") {
+		*engine = (Engine *)new Freescape::CastleEngine(syst, gd);
 	} else
-		*engine = new Freescape::FreescapeEngine(syst);
+		*engine = new Freescape::FreescapeEngine(syst, gd);
 
 	return Common::kNoError;
 }
+
+namespace Freescape {
+
+bool FreescapeEngine::isDemo() const {
+	return (bool)(_gameDescription->flags & ADGF_DEMO);
+}
+
+} // End of namespace freescape
 
 #if PLUGIN_ENABLED_DYNAMIC(FREESCAPE)
 REGISTER_PLUGIN_DYNAMIC(FREESCAPE, PLUGIN_TYPE_ENGINE, FreescapeMetaEngine);

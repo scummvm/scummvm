@@ -25,6 +25,7 @@
 #include "common/bitarray.h"
 #include "common/random.h"
 #include "engines/engine.h"
+#include "engines/advancedDetector.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "graphics/tinygl/pixelbuffer.h"
@@ -74,8 +75,11 @@ private:
 	Common::RandomSource *_rnd;
 
 public:
-	FreescapeEngine(OSystem *syst);
+	FreescapeEngine(OSystem *syst, const ADGameDescription *gd);
 	~FreescapeEngine();
+
+	const ADGameDescription *_gameDescription;
+	bool isDemo() const;
 
 	// Game selection
 	bool isDriller() { return _targetName.hasPrefix("driller") || _targetName.hasPrefix("spacestationoblivion"); }
@@ -245,7 +249,7 @@ public:
 
 class DrillerEngine : public FreescapeEngine {
 public:
-	DrillerEngine(OSystem *syst);
+	DrillerEngine(OSystem *syst, const ADGameDescription *gd);
 
 	uint32 _initialJetEnergy;
 	uint32 _initialJetShield;
@@ -263,16 +267,19 @@ public:
 
 	void pressedKey(const int keycode) override;
 
-	private:
+private:
 	void loadGlobalObjects(Common::SeekableReadStream *file, int offset);
 	bool drillDeployed();
 	void addDrill(const Math::Vector3d position);
 	void removeDrill();
+
+	void loadAssetsDemo();
+	void loadAssetsFullGame();
 };
 
 class DarkEngine : public FreescapeEngine {
 public:
-	DarkEngine(OSystem *syst);
+	DarkEngine(OSystem *syst, const ADGameDescription *gd);
 
 	void loadAssets() override;
 	void gotoArea(uint16 areaID, int entranceID) override;
@@ -281,7 +288,7 @@ public:
 
 class EclipseEngine : public FreescapeEngine {
 public:
-	EclipseEngine(OSystem *syst);
+	EclipseEngine(OSystem *syst, const ADGameDescription *gd);
 
 	void loadAssets() override;
 
@@ -292,7 +299,7 @@ public:
 
 class CastleEngine : public FreescapeEngine {
 public:
-	CastleEngine(OSystem *syst);
+	CastleEngine(OSystem *syst, const ADGameDescription *gd);
 
 	void loadAssets() override;
 
