@@ -32,9 +32,9 @@ namespace Views {
 class Combat : public TextView, public Game::Combat {
 private:
 	enum Mode {
-		BATTLE
+		SELECT_OPTION, FIGHT_WHICH
 	};
-	Mode _mode = BATTLE;
+	Mode _mode = SELECT_OPTION;
 	Common::Array<Monster> &_monsterList;
 
 	void writeOptions();
@@ -89,6 +89,13 @@ private:
 	 */
 	void clearPartyArea();
 
+	/** Start of the main combat loop
+	 */
+	void combatLoop();
+
+	void selectMonster();
+	void selectParty();
+	void loop1();
 public:
 	Combat();
 	virtual ~Combat() {}
