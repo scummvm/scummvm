@@ -513,7 +513,8 @@ bool ROQPlayer::processBlock() {
 		ok = processBlockQuadCodebook(blockHeader);
 		break;
 	case 0x1011: // Quad vector quantised video frame
-		_dirty = ok = processBlockQuadVector(blockHeader);
+		ok = processBlockQuadVector(blockHeader);
+		_dirty = true;
 		endframe = true;
 		debugC(3, kDebugVideo, "Groovie::ROQ:   Decoded Quad Vector frame.");
 		break;
@@ -543,7 +544,7 @@ bool ROQPlayer::processBlock() {
 		_file->skip(blockHeader.size);
 	}
 
-	if (endpos != _file->pos()) {
+	if (endpos != _file->pos() && !_file->eos()) {
 		warning("Groovie::ROQ: BLOCK %04x Should have ended at %d, and has ended at %d", blockHeader.type, endpos, (int)_file->pos());
 		warning("Ensure you've copied the files correctly according to the wiki.");
 		_file->seek(MIN(_file->pos(), endpos));
@@ -692,9 +693,10 @@ bool ROQPlayer::processBlockQuadVector(ROQBlockHeader &blockHeader) {
 
 	// HACK: Skip the remaining bytes
 	int64 skipBytes = endpos -_file->pos();
-	if (abs(skipBytes) > 2)
-		return false;
 	if (skipBytes > 0) {
+		if (_file->eos()) {
+			return false;
+		}
 		_file->skip(skipBytes);
 		if (skipBytes != 2) {
 			warning("Groovie::ROQ: Skipped %d bytes", skipBytes);
