@@ -827,9 +827,7 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 		}
 	}
 
-	_thrownItemShapes = new const uint8*[_numThrownItemShapes];
-	if (_flags.gameID == GI_EOB2)
-		_spellShapes = new const uint8*[4];
+	_thrownItemShapes = new const uint8*[_numThrownItemShapes];	
 	_firebeamShapes = new const uint8*[3];
 
 	_screen->loadShapeSetBitmap("THROWN", 5, 3);
@@ -843,6 +841,7 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 				_thrownItemShapesScl[c][i] = _screen->encodeShape((i / div) << 2, (i % div) * mul + 24 + (c << 4), 3 - c, 16 - ((c >> 1) << 3), false, _cgaMappingThrown);
 		}
 	} else {
+		_spellShapes = new const uint8*[4];
 		for (int i = 0; i < 4; i++)
 			_spellShapes[i] = _screen->encodeShape(8, i << 5, 6, 32, false, _cgaMappingThrown);
 	}
@@ -870,13 +869,12 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 
 	_teleporterShapes = new const uint8*[6];
 	_sparkShapes = new const uint8*[4];
-	_compassShapes = new const uint8*[12];
-	if (_flags.gameID == GI_EOB2)
-		_wallOfForceShapes = new const uint8*[6];
+	_compassShapes = new const uint8*[12];		
 
 	_screen->loadShapeSetBitmap("DECORATE", 5, 3);
 	if (_flags.gameID == GI_EOB2) {
 		_lightningColumnShape = _screen->encodeShape(18, 88, 4, 64);
+		_wallOfForceShapes = new const uint8*[6];
 		for (int i = 0; i < 6; i++)
 			_wallOfForceShapes[i] = _screen->encodeShape(_wallOfForceShapeDefs[(i << 2)], _wallOfForceShapeDefs[(i << 2) + 1], _wallOfForceShapeDefs[(i << 2) + 2], _wallOfForceShapeDefs[(i << 2) + 3]);
 	}

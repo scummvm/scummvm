@@ -569,14 +569,17 @@ void Screen::resetPagePtrsAndBuffers(int pageSize) {
 	uint32 bufferSize = numPages * _screenPageSize;
 
 	uint8 *pagePtr = new uint8[bufferSize]();
+	uint8 *pos = pagePtr;
 
 	memset(_pagePtrs, 0, sizeof(_pagePtrs));
 	for (int i = 0; i < SCREEN_PAGE_NUM; i++) {
 		if (_pagePtrs[_pageMapping[i]]) {
 			_pagePtrs[i] = _pagePtrs[_pageMapping[i]];
+		} else if (pos < &pagePtr[bufferSize]) {
+			_pagePtrs[i] = pos;
+			pos += _screenPageSize;
 		} else {
-			_pagePtrs[i] = pagePtr;
-			pagePtr += _screenPageSize;
+			error("Screen::resetPagePtrsAndBuffers(): Failed to allocate screen page buffers");
 		}
 	}
 }

@@ -360,17 +360,19 @@ AmigaDOSFont::TextFont *AmigaDOSFont::loadContentFile(const Common::String fileN
 
 	str->seek(curPos - 18, SEEK_SET);
 	uint32 offset = str->readUint32();
-	fnt->bitmap = offset ? buffer + offset - (curPos - hunkStartPos) : 0;
+	fnt->bitmap = offset ? buffer + offset - (curPos - hunkStartPos) : nullptr;
+	assert(fnt->bitmap);
 	fnt->modulo = str->readUint16();
 
 	offset = str->readUint32();
-	uint16 *loc = (uint16*)(offset ? buffer + offset - (curPos - hunkStartPos) : 0);
+	uint16 *loc = (uint16*)(offset ? buffer + offset - (curPos - hunkStartPos) : nullptr);
+	assert(loc);
 	for (int i = 0; i <= (fnt->lastChar - fnt->firstChar) * 2 + 1; ++i)
 		loc[i] = READ_BE_UINT16(&loc[i]);
 	fnt->location = loc;
 
 	offset = str->readUint32();
-	int16 *idat = offset ? (int16*)(buffer + offset - (curPos - hunkStartPos)) : 0;
+	int16 *idat = offset ? (int16*)(buffer + offset - (curPos - hunkStartPos)) : nullptr;
 	if (idat) {
 		for (int i = 0; i <= (fnt->lastChar - fnt->firstChar) * 2 + 1; ++i)
 			idat[i] = (int16)READ_BE_UINT16(&idat[i]);
@@ -381,7 +383,7 @@ AmigaDOSFont::TextFont *AmigaDOSFont::loadContentFile(const Common::String fileN
 	// This warning will only show up if someone tries to use this code elsewhere. It cannot happen with EOB fonts.
 	if (offset)
 		warning("Trying to load an AmigaDOS font with kerning data. This is not implemented. Font Rendering will not be accurate.");
-	idat = offset ? (int16*)(buffer + offset - (curPos - hunkStartPos)) : 0;
+	idat = offset ? (int16*)(buffer + offset - (curPos - hunkStartPos)) : nullptr;
 	if (idat) {
 		for (int i = 0; i <= (fnt->lastChar - fnt->firstChar) * 2 + 1; ++i)
 			idat[i] = (int16)READ_BE_UINT16(&idat[i]);

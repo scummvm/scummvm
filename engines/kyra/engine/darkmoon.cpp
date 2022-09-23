@@ -110,8 +110,7 @@ void DarkMoonEngine::loadItemsAndDecorationsShapes() {
 	_teleporterShapes = new const uint8 *[6];
 	_sparkShapes = new const uint8 *[3];
 	_compassShapes = new const uint8 *[12];
-	if (_flags.gameID == GI_EOB2)
-		_wallOfForceShapes = new const uint8 *[6];
+	_wallOfForceShapes = new const uint8 *[6];
 
 	_lightningColumnShape = _staticres->loadRawData(kEoB2LightningColumnShapeData, size);
 	for (int i = 0; i < 6; i++)
