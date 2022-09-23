@@ -189,8 +189,13 @@ void EclipseEngine::drawUI() {
 		drawStringInSurface(_currentAreaMessages[0], 102, 135, black, yellow, surface);
 	drawStringInSurface(Common::String::format("%07d", score), 136, 6, black, white, surface);
 
-	Texture *texture = _gfx->createTexture(surface);
-	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, texture);
+	if (!_uiTexture)
+		_uiTexture = _gfx->createTexture(surface);
+	else
+		_uiTexture->update(surface);
+
+	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
+
 	surface->free();
 	delete surface;
 

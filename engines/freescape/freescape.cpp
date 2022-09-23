@@ -57,6 +57,8 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 	_noClipMode = false;
 	_playerHeightNumber = 1;
 	_borderTexture = nullptr;
+	_uiTexture = nullptr;
+
 	_fullscreenViewArea = Common::Rect(0, 0, _screenW, _screenH);
 	_viewArea = _fullscreenViewArea;
 	_rnd = new Common::RandomSource("freescape");
@@ -65,6 +67,9 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 FreescapeEngine::~FreescapeEngine() {
 	delete _rnd;
 	delete _border;
+	delete _borderTexture;
+	delete _uiTexture;
+
 	delete _gfx;
 }
 

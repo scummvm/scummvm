@@ -175,8 +175,12 @@ void DrillerEngine::drawUI() {
 
 		drawStringInSurface(Common::String::format("%07d", score), 240, 129, yellow, black, surface);
 
-		Texture *texture = _gfx->createTexture(surface);
-		_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, texture);
+		if (!_uiTexture)
+			_uiTexture = _gfx->createTexture(surface);
+		else
+			_uiTexture->update(surface);
+
+		_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
 		surface->free();
 		delete surface;
 	}
