@@ -1058,9 +1058,13 @@ void LB::b_closeDA(int nargs) {
 }
 
 void LB::b_closeResFile(int nargs) {
-	if (nargs == 0) { // Close all res files
-		for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator
+	// closeResFile closes only resource files that were opened with openResFile.
+
+	if (nargs == 0) { // Close all open resesource files
+		for (Common::HashMap<Common::String, MacArchive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator
 				it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
+			// also clean up the global resource file hashmap
+			g_director->_allOpenResFiles.erase(it->_key);
 			delete it->_value;
 		}
 		g_director->_openResFiles.clear();
@@ -1074,6 +1078,8 @@ void LB::b_closeResFile(int nargs) {
 		auto archive = g_director->_openResFiles.getVal(resFileName);
 		delete archive;
 		g_director->_openResFiles.erase(resFileName);
+		// also clean up the global resource file hashmap
+		g_director->_allOpenResFiles.erase(resFileName);
 	}
 }
 
@@ -1149,11 +1155,13 @@ void LB::b_openResFile(int nargs) {
 		return;
 	}
 
-	if (!g_director->_openResFiles.contains(resPath)) {
+	if (!g_director->_allOpenResFiles.contains(resPath)) {
 		MacArchive *resFile = new MacArchive();
 
 		if (resFile->openFile(pathMakeRelative(resPath))) {
+			// Track responsibility. closeResFile may only close resource files opened by openResFile.
 			g_director->_openResFiles.setVal(resPath, resFile);
+			g_director->_allOpenResFiles.setVal(resPath, resFile);
 		} else {
 			delete resFile;
 		}
@@ -1169,11 +1177,11 @@ void LB::b_openXlib(int nargs) {
 	if (g_director->getPlatform() == Common::kPlatformMacintosh) {
 		// try opening the file as a resfile
 		Common::String resPath = g_director->getCurrentWindow()->getCurrentPath() + d.asString();
-		if (!g_director->_openResFiles.contains(resPath)) {
+		if (!g_director->_allOpenResFiles.contains(resPath)) {
 			MacArchive *resFile = new MacArchive();
 
 			if (resFile->openFile(pathMakeRelative(resPath))) {
-				g_director->_openResFiles.setVal(resPath, resFile);
+				g_director->_allOpenResFiles.setVal(resPath, resFile);
 				uint32 XCOD = MKTAG('X', 'C', 'O', 'D');
 				uint32 XCMD = MKTAG('X', 'C', 'M', 'D');
 
@@ -1216,7 +1224,7 @@ void LB::b_showResFile(int nargs) {
 	if (nargs)
 		g_lingo->pop();
 	Common::String out;
-	for (auto it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); it++)
+	for (auto it = g_director->_allOpenResFiles.begin(); it != g_director->_allOpenResFiles.end(); it++)
 		out += it->_key + "\n";
 	g_debugger->debugLogFile(out, false);
 }

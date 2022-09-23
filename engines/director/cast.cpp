@@ -961,11 +961,11 @@ void Cast::loadExternalSound(Common::SeekableReadStreamEndian &stream) {
 
 	Common::String resPath = g_director->getCurrentPath() + str;
 
-	if (!g_director->_openResFiles.contains(resPath)) {
+	if (!g_director->_allOpenResFiles.contains(resPath)) {
 		MacArchive *resFile = new MacArchive();
 
 		if (resFile->openFile(resPath)) {
-			g_director->_openResFiles.setVal(resPath, resFile);
+			g_director->_allOpenResFiles.setVal(resPath, resFile);
 		} else {
 			delete resFile;
 		}

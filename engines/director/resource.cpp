@@ -185,7 +185,7 @@ void Window::probeMacBinary(MacArchive *archive) {
 		}
 	}
 	// Register the resfile so that Cursor::readFromResource can find it
-	g_director->_openResFiles.setVal(archive->getPathName(), archive);
+	g_director->_allOpenResFiles.setVal(archive->getPathName(), archive);
 }
 
 Archive *Window::openMainArchive(const Common::String movie) {

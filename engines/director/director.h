@@ -58,6 +58,7 @@ class ManagedSurface;
 namespace Director {
 
 class Archive;
+class MacArchive;
 class Cast;
 class DirectorSound;
 class Lingo;
@@ -237,8 +238,12 @@ public:
 	Common::Rect _fixStageRect;
 	Common::List<Common::String> _extraSearchPath;
 
-	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _openResFiles;
+	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _allOpenResFiles;
+	// Opened Resource Files that were opened by OpenResFile
+	Common::HashMap<Common::String, MacArchive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _openResFiles;
+
 	Common::Array<Graphics::WinCursorGroup *> _winCursor;
+
 
 protected:
 	Common::Error run() override;

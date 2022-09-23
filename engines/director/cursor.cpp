@@ -175,7 +175,7 @@ void Cursor::readFromResource(Datum resourceId) {
 	default:
 		bool readSuccessful = false;
 
-		for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
+		for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_allOpenResFiles.begin(); it != g_director->_allOpenResFiles.end(); ++it) {
 			MacArchive *arch = (MacArchive *)it->_value;
 			Common::SeekableReadStreamEndian *cursorStream = nullptr;
 			if (arch->hasResource(MKTAG('C', 'U', 'R', 'S'), resourceId.asInt()))
