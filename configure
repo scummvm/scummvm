@@ -571,13 +571,7 @@ get_system_exe_extension() {
 
 # Show the configure help line for an option
 option_help() {
-	if test "${3}" != "" ; then
-		tmpopt_prefix="${3}"
-	else
-		tmpopt_prefix="--"
-	fi
-	tmpopt=`echo $1 | sed 's/_/-/g'`
-	option=`echo "${tmpopt_prefix}${tmpopt}                       " | sed "s/\(.\{23\}\).*/\1/"`
+	option=$(echo "${3:---}${1}                       " | sed -e "s/\(.\{23\}\).*/\1/" -e "s/_/-/g")
 	echo "  ${option}  ${2}"
 }
 
@@ -628,12 +622,11 @@ get_engine_subengines() {
 }
 
 # Ask if this is a subengine
-get_engine_sub() {
-	sub=`get_var _engine_$1_sub`
-	if test -z "$sub" ; then
-		sub=no
+check_is_subengine() {
+	if test -z "$(get_var _engine_$1_sub)" ; then
+		return 1
 	fi
-	echo $sub
+	return 0
 }
 
 # Get a subengine's parent (undefined for non-subengines)
@@ -688,7 +681,7 @@ engine_enable() {
 	engine=`echo $eng | sed 's/-/_/g'`
 
 	# Filter the parameter for the subengines
-	if test "`get_engine_sub ${engine}`" != "no" ; then
+	if check_is_subengine ${engine} ; then
 		if test "$opt" != "yes" ; then
 			subengine_option_error ${engine}
 			return
@@ -767,7 +760,7 @@ copy_if_changed() {
 for parm in "$@" ; do
 	if test "$parm" = "--help" || test "$parm" = "-help" || test "$parm" = "-h" ; then
 		for engine in $_engines; do
-			if test `get_engine_sub $engine` = no ; then
+			if ! check_is_subengine $engine ; then
 				engines_help="$engines_help`show_engine_help $engine`
 "
 			fi
