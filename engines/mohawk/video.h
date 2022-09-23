@@ -30,6 +30,7 @@
 #include "common/ptr.h"
 #include "common/rational.h"
 #include "graphics/pixelformat.h"
+#include "video/subtitles.h"
 
 namespace Video {
 class VideoDecoder;
@@ -253,6 +254,7 @@ public:
 	VideoEntryPtr findVideo(const Common::String &fileName);
 	void drawVideoFrame(const VideoEntryPtr &video, const Audio::Timestamp &time);
 	void removeEntry(const VideoEntryPtr &video);
+	void loadSubtitles(const char *fname) { _subtitles.loadSRTFile(fname); }
 
 protected:
 	MohawkEngine *_vm;
@@ -272,6 +274,8 @@ protected:
 	// Dithering control
 	bool _enableDither;
 	void checkEnableDither(VideoEntryPtr &entry);
+
+	Video::Subtitles _subtitles;
 };
 
 } // End of namespace Mohawk
