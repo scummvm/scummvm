@@ -764,7 +764,7 @@ void AGOSEngine_Feeble::printScreenText(uint vgaSpriteId, uint color, const char
 					*convertedString2++ = ' ';
 					spaces--;
 			}
-			strcpy(convertedString2, string);
+			Common::strcpy_s(convertedString2, sizeof(convertedString) - (convertedString2 - convertedString), string);
 			break;
 		}
 		while (*string2 != ' ') {
