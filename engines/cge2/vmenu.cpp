@@ -110,12 +110,13 @@ char *VMenu::vmGather(Common::Array<Choice *> list) {
 		len += strlen(list[i]->_text);
 		++h;
 	}
-	_vmgt = new char[len + h];
+	len += h;
+	_vmgt = new char[len];
 	*_vmgt = '\0';
 	for (uint i = 0; i < list.size(); i++) {
 		if (*_vmgt)
-			strcat(_vmgt, "|");
-		strcat(_vmgt, list[i]->_text);
+			Common::strcat_s(_vmgt, len, "|");
+		Common::strcat_s(_vmgt, len, list[i]->_text);
 		++h;
 	}
 
