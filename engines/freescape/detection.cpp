@@ -108,6 +108,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 "Driller",
 	 {
 		{"driller", 0, "13dab2e10d8e8b9a364c94a660e0d42a", 282384},
+		{"title.seq", 0, "4dd1b3b45110b24e8240a6132241c973", 185296},
 		AD_LISTEND
 	 },
 	 Common::EN_ANY,
@@ -117,7 +118,9 @@ static const ADGameDescription gameDescriptions[] = {
 	{"driller",
 	 "Rolling Demo",
 	 {
-		{"amiga.demo", 0, "0b056286d2d91f302499c97aca235462", 24220},
+		{"driller", 0, "f0d0e9447830e329e110e384371955fd", 162880},
+		{"data", 0, "0b056286d2d91f302499c97aca235462", 24220},
+		{"demo.cmd", 0, "7b90427c5c3c4bbb42d14076af994d50", 4096},
 		AD_LISTEND
 	 },
 	 Common::EN_ANY,
