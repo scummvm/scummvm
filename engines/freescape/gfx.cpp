@@ -70,7 +70,11 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
 	uint8 acc = 1;
 	for (int i = 0; i < 4; i++) {
 		byte be = *entry;
-		assert(be == 0 || be == 0xff);
+		if (be != 0 && be != 0xff) {
+			// TODO: fix colors for non-DOS releases
+			_palette->getRGBAt(index, r, g, b);
+			return true;
+		}
 
 		if (be == 0xff)
 			color = color + acc;

@@ -56,12 +56,14 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	_currentArea->show();
 
 	_currentAreaMessages.clear();
-	if (_currentArea->gasPocketRadius > 0)
-		_currentAreaMessages.push_back(_messagesList[1]);
-	else
-		_currentAreaMessages.push_back(_messagesList[2]);
+	if (_messagesList.size() > 2) {
+		if (_currentArea->gasPocketRadius > 0)
+			_currentAreaMessages.push_back(_messagesList[1]);
+		else
+			_currentAreaMessages.push_back(_messagesList[2]);
 
-	_currentAreaMessages.push_back(_currentArea->name);
+		_currentAreaMessages.push_back(_currentArea->name);
+	}
 
 	if (entranceID > 0 || areaID == 127) {
 		traverseEntrance(entranceID);
@@ -155,9 +157,11 @@ void DrillerEngine::loadAssetsFullGame() {
 			error("Failed to open 'driller' executable for Amiga");
 
 		loadGlobalObjects(file, 0xbd62);
-		/*file->seek(0x29efe);
-		load8bitArea(file, 16);
-		file->seek(0x2a450);
+		// Font data: 0x8940
+		//file->seek(0x29efe);
+		//load8bitArea(file, 16);
+		//assert(0);
+		/*file->seek(0x2a450);
 		load8bitArea(file, 16);*/
 
 		load8bitBinary(file, 0x29c16, 16);

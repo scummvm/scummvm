@@ -32,15 +32,19 @@ namespace Freescape {
 
 uint16 FreescapeEngine::readField(Common::SeekableReadStream *file, int bits) {
 	uint16 value;
-	assert(bits == 8 || bits == 16 || bits == 32);
+	assert(bits == 8 || bits == 16);
 	if (isAmiga()) {
-		if (bits == 32)
-			value = file->readUint32BE();
-		else {
+		if (bits == 16) {
+			uint16 lo = file->readUint16BE();
+			assert(lo < 256);
+			uint16 hi = file->readUint16BE();
+			assert(hi < 256);
+			value = 256 * hi + lo;
+		} else {
+			assert(bits == 8);
 			value = file->readUint16BE();
-			if (bits == 8) {
-				if (value >= 256)
-					warning("failed to read byte with value 0x%x", value);
+			if (value >= 256) {
+				warning("failed to read byte with value 0x%x", value);
 				value = value & 0xff;
 			}
 		}
@@ -190,7 +194,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			// TODO: there is something here
 			debugC(1, kFreescapeDebugParser, "Warning: extra %d bytes in entrance", byteSizeOfObject);
 			while (byteSizeOfObject--) {
-				debugC(1, kFreescapeDebugParser, "b: %x", file->readByte());
+				debugC(1, kFreescapeDebugParser, "b: %x", readField(file, 8));
 			}
 			byteSizeOfObject = 0;
 		}
@@ -208,7 +212,8 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		if (byteSizeOfObject > 0) {
 			// TODO: there is something here
 			debugC(1, kFreescapeDebugParser, "Warning: extra %d bytes in sensor", byteSizeOfObject);
-			file->seek(byteSizeOfObject, SEEK_CUR);
+			for (int i = 0; i < byteSizeOfObject; i++)
+				readField(file, 8);
 			byteSizeOfObject = 0;
 		}
 		assert(byteSizeOfObject == 0);
@@ -255,7 +260,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	uint8 numberOfObjects = readField(file, 8);
 	uint8 areaNumber = readField(file, 8);
 
-	uint32 cPtr = readField(file, 32);
+	uint16 cPtr = readField(file, 16);
 	debugC(1, kFreescapeDebugParser, "Condition pointer: %x", cPtr);
 	uint8 scale = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Scale: %d", scale);
@@ -390,23 +395,22 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offset, int ncolors) {
 	file->seek(offset);
 	uint8 numberOfAreas = readField(file, 8);
-	uint16 dbSize = 0;
 	debugC(1, kFreescapeDebugParser, "Number of areas: %d", numberOfAreas);
 
-	if (!isAmiga()) {
-		dbSize = readField(file, 16);
-		debugC(1, kFreescapeDebugParser, "Database ends at %x", dbSize);
-	} else
-		dbSize = readField(file, 32);
+	uint32 dbSize = readField(file, 16);
+	debugC(1, kFreescapeDebugParser, "Database ends at %x", dbSize);
 
 	uint8 startArea = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Start area: %d", startArea);
 	uint8 startEntrance = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Entrace area: %d", startEntrance);
 
-	file->seek(offset + 0xa);
-	debugC(1, kFreescapeDebugParser, "Color map:");
+	if (isAmiga())
+		file->seek(offset + 0x16);
+	else
+		file->seek(offset + 0xa);
 
+	debugC(1, kFreescapeDebugParser, "Color map:");
 	uint8 data;
 	for (int i = 0; i < 15; i++) {
 		byte *entry = (byte*) malloc(4 * sizeof(byte));;
@@ -429,7 +433,10 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		_colorMap.push_back(entry - 3);
 	}
 
-	file->seek(offset + 0x46); // 0x46
+	if (isAmiga())
+		file->seek(offset + 0x8a);
+	else
+		file->seek(offset + 0x46); // 0x46
 
 	uint16 globalSomething;
 	globalSomething = readField(file, 16);
@@ -437,20 +444,18 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 
 	uint16 globalByteCodeTable;
 	globalByteCodeTable = readField(file, 16);
-	debugC(1, kFreescapeDebugParser, "GBCT: %d\n", globalByteCodeTable);
+	debugC(1, kFreescapeDebugParser, "GBCT: %x\n", globalByteCodeTable);
 
 	file->seek(offset + globalByteCodeTable);
-	uint8 numConditions = file->readByte();
+	uint8 numConditions = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "%d global conditions", numConditions);
 	while (numConditions--) {
 		FCLInstructionVector instructions;
 		// get the length
-		uint32 lengthOfCondition = file->readByte();
+		uint32 lengthOfCondition = readField(file, 8);
 		debugC(1, kFreescapeDebugParser, "length of condition: %d at %lx", lengthOfCondition, file->pos());
 		// get the condition
-		byte *conditionData = (byte*)malloc(lengthOfCondition);
-		file->read(conditionData, lengthOfCondition);
-		Common::Array<uint8> conditionArray(conditionData, lengthOfCondition);
+		Common::Array<uint8> conditionArray = readArray(file, lengthOfCondition);
 		//debug("Global condition %d", numConditions + 1);
 		Common::String *conditionSource = detokenise8bitCondition(conditionArray, instructions);
 		_conditions.push_back(instructions);
@@ -458,13 +463,18 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		debugC(1, kFreescapeDebugParser, "%s", conditionSource->c_str());
 	}
 
-	file->seek(offset + 0xc8);
+	if (isAmiga())
+		file->seek(offset + 0x190);
+	else
+		file->seek(offset + 0xc8);
 	//file->seek(offset + 0x4f); //CPC
 
 	debugC(1, kFreescapeDebugParser, "areas index at: %lx", file->pos());
 	uint16 *fileOffsetForArea = new uint16[numberOfAreas];
 	for (uint16 area = 0; area < numberOfAreas; area++) {
 		fileOffsetForArea[area] = readField(file, 16);
+		if (isAmiga())
+			fileOffsetForArea[area] = 2 * fileOffsetForArea[area];
 		debugC(1, kFreescapeDebugParser, "offset: %x", fileOffsetForArea[area]);
 	}
 
