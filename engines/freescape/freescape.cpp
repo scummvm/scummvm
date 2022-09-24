@@ -58,6 +58,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_playerHeightNumber = 1;
 	_borderTexture = nullptr;
 	_uiTexture = nullptr;
+	_fontLoaded = false;
 
 	_fullscreenViewArea = Common::Rect(0, 0, _screenW, _screenH);
 	_viewArea = _fullscreenViewArea;
@@ -349,6 +350,8 @@ bool FreescapeEngine::hasFeature(EngineFeature f) const {
 }
 
 void FreescapeEngine::drawStringInSurface(const Common::String &str, int x, int y, uint32 fontColor, uint32 backColor, Graphics::Surface *surface) {
+	if (!_fontLoaded)
+		return;
 	Common::String ustr = str;
 	ustr.toUppercase();
 	for (uint32 c = 0; c < ustr.size(); c++) {

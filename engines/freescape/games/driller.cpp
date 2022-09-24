@@ -156,6 +156,7 @@ void DrillerEngine::loadAssetsFullGame() {
 		if (file == nullptr)
 			error("Failed to open 'driller' executable for Amiga");
 
+		loadMessagesFixedSize(file, 0xc66e, 14, 20);
 		loadGlobalObjects(file, 0xbd62);
 		// Font data: 0x8940
 		//file->seek(0x29efe);

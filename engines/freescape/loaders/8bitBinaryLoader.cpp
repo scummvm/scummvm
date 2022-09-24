@@ -524,6 +524,7 @@ void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset) {
 
 	_font.set_size(48 * charNumber);
 	_font.set_bits((byte *)font);
+	_fontLoaded = true;
 }
 
 void FreescapeEngine::loadMessagesFixedSize(Common::SeekableReadStream *file, int offset, int size, int number) {
