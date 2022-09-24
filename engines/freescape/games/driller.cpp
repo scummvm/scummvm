@@ -29,7 +29,8 @@
 namespace Freescape {
 
 DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
-	_viewArea = Common::Rect(40, 16, 279, 116);
+	if (!isAmiga())
+		_viewArea = Common::Rect(40, 16, 279, 116);
 	_playerHeightNumber = 1;
 	_playerHeights.push_back(16);
 	_playerHeights.push_back(48);

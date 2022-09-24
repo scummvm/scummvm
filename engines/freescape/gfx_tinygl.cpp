@@ -32,11 +32,11 @@
 
 namespace Freescape {
 
-Renderer *CreateGfxTinyGL(OSystem *system) {
-	return new TinyGLRenderer(system);
+Renderer *CreateGfxTinyGL(OSystem *system, int screenW, int screenH) {
+	return new TinyGLRenderer(system, screenW, screenH);
 }
 
-TinyGLRenderer::TinyGLRenderer(OSystem *system) : Renderer(system) {
+TinyGLRenderer::TinyGLRenderer(OSystem *system, int screenW, int screenH) : Renderer(system, screenW, screenH) {
 }
 
 TinyGLRenderer::~TinyGLRenderer() {
@@ -57,7 +57,7 @@ void TinyGLRenderer::init() {
 
 	computeScreenViewport();
 
-	TinyGL::createContext(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat(), 512, true, ConfMan.getBool("dirtyrects"));
+	TinyGL::createContext(_screenW, _screenH, g_system->getScreenFormat(), 512, true, ConfMan.getBool("dirtyrects"));
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
@@ -98,7 +98,7 @@ void TinyGLRenderer::updateProjectionMatrix(float fov, float nearClipPlane, floa
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
 
-	float aspectRatio = kOriginalWidth / (float) kFrameHeight;
+	float aspectRatio = _screenW / (float) _screenH;
 
 	float xmaxValue = nearClipPlane * tan(Common::deg2rad(fov) / 2);
 	float ymaxValue = xmaxValue / aspectRatio;
@@ -142,7 +142,7 @@ void TinyGLRenderer::renderCrossair(byte color) {
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
-	tglOrtho(0, kOriginalWidth, kOriginalHeight, 0, 0, 1);
+	tglOrtho(0, _screenW, _screenH, 0, 0, 1);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
 
@@ -152,11 +152,11 @@ void TinyGLRenderer::renderCrossair(byte color) {
 	tglColor3ub(r, g, b);
 
 	tglBegin(TGL_LINES);
-	tglVertex2f(kOriginalWidth / 2 - 1, kOriginalHeight / 2);
-	tglVertex2f(kOriginalWidth / 2 + 3, kOriginalHeight / 2);
+	tglVertex2f(_screenW / 2 - 1, _screenH / 2);
+	tglVertex2f(_screenW / 2 + 3, _screenH / 2);
 
-	tglVertex2f(kOriginalWidth / 2, kOriginalHeight / 2 - 3);
-	tglVertex2f(kOriginalWidth / 2, kOriginalHeight / 2 + 3);
+	tglVertex2f(_screenW / 2, _screenH / 2 - 3);
+	tglVertex2f(_screenW / 2, _screenH / 2 + 3);
 	tglEnd();
 
 	tglDepthMask(TGL_TRUE);
@@ -169,7 +169,7 @@ void TinyGLRenderer::renderShoot(byte color) {
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
-	tglOrtho(0, kOriginalWidth, kOriginalHeight, 0, 0, 1);
+	tglOrtho(0, _screenW, _screenH, 0, 0, 1);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
 
@@ -182,17 +182,17 @@ void TinyGLRenderer::renderShoot(byte color) {
 	tglGetIntegerv(TGL_VIEWPORT, viewPort);
 
 	tglBegin(TGL_LINES);
-	tglVertex2f(0, kOriginalHeight - 2);
-	tglVertex2f(kOriginalWidth / 2, kOriginalHeight / 2);
+	tglVertex2f(0, _screenH - 2);
+	tglVertex2f(_screenW / 2, _screenH / 2);
 
-	tglVertex2f(0, kOriginalHeight - 2);
-	tglVertex2f(kOriginalWidth / 2, kOriginalHeight / 2);
+	tglVertex2f(0, _screenH - 2);
+	tglVertex2f(_screenW / 2, _screenH / 2);
 
-	tglVertex2f(kOriginalWidth, kOriginalHeight - 2);
-	tglVertex2f(kOriginalWidth / 2, kOriginalHeight / 2);
+	tglVertex2f(_screenW, _screenH - 2);
+	tglVertex2f(_screenW / 2, _screenH / 2);
 
-	tglVertex2f(kOriginalWidth, kOriginalHeight);
-	tglVertex2f(kOriginalWidth / 2, kOriginalHeight / 2);
+	tglVertex2f(_screenW, _screenH);
+	tglVertex2f(_screenW / 2, _screenH / 2);
 
 	tglEnd();
 

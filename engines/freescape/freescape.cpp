@@ -34,12 +34,20 @@ namespace Freescape {
 FreescapeEngine *g_freescape = NULL;
 
 FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
-	: Engine(syst), _gameDescription(gd), _screenW(320), _screenH(200), _border(nullptr), _gfx(nullptr) {
+	: Engine(syst), _gameDescription(gd), _border(nullptr), _gfx(nullptr) {
 	g_freescape = this;
 	if (!ConfMan.hasKey("render_mode") || ConfMan.get("render_mode").empty())
 		_renderMode = "ega";
 	else
 		_renderMode = ConfMan.get("render_mode");
+
+	if (isAmiga()) {
+		_screenW = 640;
+		_screenH = 480;
+	} else {
+		_screenW = 320;
+		_screenH = 200;
+	}
 
 	if (!Common::parseBool(ConfMan.get("prerecorded_sounds"), _usePrerecordedSounds))
 		error("Failed to parse bool from prerecorded_sounds option");
@@ -237,7 +245,7 @@ void FreescapeEngine::shoot() {
 
 Common::Error FreescapeEngine::run() {
 	// Initialize graphics
-	_gfx = createRenderer(_system);
+	_gfx = createRenderer(_system, _screenW, _screenH);
 	_gfx->init();
 	_gfx->clear();
 

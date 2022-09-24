@@ -53,7 +53,7 @@ public:
 
 class Renderer {
 public:
-	Renderer(OSystem *system);
+	Renderer(OSystem *system, int screenW, int screenH);
 	virtual ~Renderer();
 
 	Graphics::PixelFormat _currentPixelFormat;
@@ -121,9 +121,8 @@ public:
 
 	void flipVertical(Graphics::Surface *s);
 
-	static const int kOriginalWidth = 320;
-	static const int kOriginalHeight = 200;
-	static const int kFrameHeight = 200;
+	int _screenW;
+	int _screenH;
 
 	void computeScreenViewport();
 
@@ -164,8 +163,8 @@ private:
 
 Renderer *CreateGfxOpenGL(OSystem *system);
 Renderer *CreateGfxOpenGLShader(OSystem *system);
-Renderer *CreateGfxTinyGL(OSystem *system);
-Renderer *createRenderer(OSystem *system);
+Renderer *CreateGfxTinyGL(OSystem *system, int screenW, int screenH);
+Renderer *createRenderer(OSystem *system, int screenW, int screenH);
 
 } // End of namespace Freescape
 
