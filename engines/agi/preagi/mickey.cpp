@@ -614,7 +614,7 @@ void MickeyEngine::patchMenu(MSA_MENU *menu) {
 
 	// change planet name in ship airlock menu
 	if (_gameStateMickey.iRoom == IDI_MSA_PIC_SHIP_AIRLOCK) {
-		strcpy((char *)menu->row[1].entry[2].szText, IDS_MSA_NAME_PLANET[_gameStateMickey.iPlanet]);
+		Common::strcpy_s(menu->row[1].entry[2].szText, IDS_MSA_NAME_PLANET[_gameStateMickey.iPlanet]);
 	}
 
 	// exit if fix unnecessary
