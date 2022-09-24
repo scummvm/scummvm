@@ -344,7 +344,7 @@ SpellResult Spells::cleric54_removeCondition(Character *chr) {
 SpellResult Spells::cleric55_restoreEnergy(Character *chr) {
 	if (chr->_level._current < chr->_level._base) {
 		chr->_level._current = MIN(
-			chr->_level._current + g_engine->getRandomNumber(1, 5),
+			chr->_level._current + g_engine->getRandomNumber(5),
 			(int)chr->_level._base
 		);
 		return SR_SUCCESS_DONE;
@@ -378,7 +378,7 @@ SpellResult Spells::cleric62_raiseDead(Character *chr) {
 
 SpellResult Spells::cleric63_rejuvinate(Character *chr) {
 	if (g_engine->getRandomNumber(100) < 75) {
-		chr->_age._base = MIN(chr->_age._base - g_engine->getRandomNumber(1, 10),
+		chr->_age._base = MIN(chr->_age._base - g_engine->getRandomNumber(10),
 			200);
 		return SR_FAILED;
 	} else {

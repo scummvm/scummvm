@@ -60,7 +60,7 @@ public:
 		return _randomSource.getRandomNumber(maxNumber - minNumber + 1) + minNumber;
 	}
 	int getRandomNumber(int maxNumber) {
-		return _randomSource.getRandomNumber(maxNumber);
+		return getRandomNumber(1, maxNumber - 1);
 	}
 
 	Common::String getTargetName() const {
