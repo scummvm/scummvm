@@ -27,6 +27,8 @@
 namespace MM {
 namespace MM1 {
 
+#define TREASURE_COUNT 8
+
 enum EnablementBit {
 	KNIGHT_BIT = 0x20, PALADIN_BIT = 0x10, ARCHER_BIT = 8,
 	CLERIC_BIT = 4, SORCERER_BIT = 2, ROBBER_BIT = 1,

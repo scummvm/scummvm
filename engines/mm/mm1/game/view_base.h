@@ -38,7 +38,6 @@ protected:
 	bool _isDark = false;
 	Common::String _dialogMessage;
 	int _businessDisplay = -1;
-	byte _arr2[8];
 	bool _stepRandom = false;
 private:
 	/**

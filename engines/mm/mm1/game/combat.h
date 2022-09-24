@@ -47,6 +47,7 @@ protected:
 	int _roundNum;
 	int _monsterIndex, _currentChar;
 	char _val2, _val3, _val4, _val5;
+	int _val6, _val7;
 	int _handicap1, _handicap2;
 	int _handicap3, _handicap4;
 	int _attackerVal;
@@ -122,7 +123,7 @@ protected:
 	void selectMonster();
 	void selectParty();
 	void loop1();
-
+	void proc1();
 };
 
 } // namespace Game

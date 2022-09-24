@@ -38,6 +38,7 @@ void Combat::clear() {
 	Common::fill(&_canAttack[0], &_canAttack[6], false);
 	Common::fill(&_arr3[0], &_arr3[MAX_PARTY_SIZE / 2], 0);
 	_val1 = _val2 = _val3 = _val4 = _val5 = 0;
+	_val6 = _val7 = 0;
 	_handicap1 = _handicap2 = 0;
 	_handicap3 = _handicap4 = 0;
 	_handicap = HANDICAP_EVEN;
@@ -191,8 +192,13 @@ void Combat::combatLoop() {
 }
 
 void Combat::selectMonster() {
+	_monsterP = &_monsterList[0];
+	monsterIndexOf();
+	int count = 0;
+
 	for (uint i = 0; i < _monsterList.size(); ++i) {
-		// TODO
+		count += _monsterP->_field16;
+		proc1();
 	}
 
 	// TODO
@@ -218,6 +224,28 @@ void Combat::selectParty() {
 
 void Combat::loop1() {
 	// TODO
+}
+
+void Combat::proc1() {
+	_val7 = _monsterP->_field18;
+	_val6 = MAX(_val6, _val7);
+
+	if (_val7 & 1)
+		g_globals->_treasure[7] += getRandomNumber(1, 6);
+
+	if (_val7 & 6) {
+		if (!(_val7 & 2)) {
+			WRITE_LE_UINT16(&g_globals->_treasure[5],
+				READ_LE_UINT16(&g_globals->_treasure[5]) +
+				getRandomNumber(1, 10));
+		} else if (!(_val7 & 4)) {
+			WRITE_LE_UINT16(&g_globals->_treasure[5],
+				READ_LE_UINT16(&g_globals->_treasure[5]) +
+				getRandomNumber(1, 100));
+		} else {
+			g_globals->_treasure[6] += getRandomNumber(1, 4);
+		}
+	}
 }
 
 } // namespace Game

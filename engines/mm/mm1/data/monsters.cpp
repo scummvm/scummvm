@@ -44,9 +44,19 @@ bool Monsters::load() {
 		mon._field10 = getNextValue(line);
 		mon._field11 = getNextValue(line);
 		mon._field12 = getNextValue(line);
-
-		for (int i = 0; i < 13; ++i)
-			mon._unk[i] = getNextValue(line);
+		mon._field13 = getNextValue(line);
+		mon._field14 = getNextValue(line);
+		mon._field15 = getNextValue(line);
+		mon._field16 = getNextValue(line);
+		mon._field17 = getNextValue(line);
+		mon._field18 = getNextValue(line);
+		mon._field19 = getNextValue(line);
+		mon._field1a = getNextValue(line);
+		mon._field1b = getNextValue(line);
+		mon._field1c = getNextValue(line);
+		mon._field1d = getNextValue(line);
+		mon._field1e = getNextValue(line);
+		mon._field1f = getNextValue(line);
 	}
 
 	return true;

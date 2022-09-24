@@ -50,6 +50,7 @@ public:
 	bool _heardRumor = false;
 	Game::Encounter _encounters;
 	Monsters _monsters;
+	byte _treasure[TREASURE_COUNT];
 public:
 	// Enhanced mode globals
 	Xeen::SpriteResource _mainIcons;
