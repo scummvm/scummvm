@@ -29,8 +29,7 @@ namespace MM {
 namespace MM1 {
 namespace Views {
 
-Combat::Combat() : TextView("Combat"),
-		_monsterList(g_globals->_encounters._monsterList) {
+Combat::Combat() : TextView("Combat") {
 }
 
 bool Combat::msgFocus(const FocusMessage &msg) {
@@ -258,45 +257,6 @@ void Combat::writeParty() {
 void Combat::clearPartyArea() {
 	clearLines(16, 18);
 }
-
-void Combat::combatLoop() {
-	if (_monsterIndex != 0) {
-		selectParty();
-	} else {
-		selectMonster();
-	}
-}
-
-void Combat::selectMonster() {
-	for (uint i = 0; i < _monsterList.size(); ++i) {
-		// TODO
-	}
-
-	// TODO
-}
-
-void Combat::selectParty() {
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		Character &c = g_globals->_party[i];
-		g_globals->_currCharacter = &c;
-
-		int speed = c._speed._current;
-		if (speed && speed >= _handicap2) {
-			if (!(c._condition & (BLINDED | SILENCED | DISEASED | POISONED))) {
-				// Character is enabled
-				_mode = SELECT_OPTION;
-				return;
-			}
-		}
-	}
-
-	loop1();
-}
-
-void Combat::loop1() {
-	// TODO
-}
-
 
 } // namespace Views
 } // namespace MM1

@@ -27,6 +27,10 @@ namespace MM {
 namespace MM1 {
 namespace Game {
 
+Combat::Combat() : _monsterList(g_globals->_encounters._monsterList) {
+	clear();
+}
+
 void Combat::clear() {
 	Common::fill(&_arr1[0], &_arr1[MAX_COMBAT_MONSTERS], 0);
 	Common::fill(&_arr2[0], &_arr2[MAX_COMBAT_MONSTERS], 0);
@@ -175,6 +179,45 @@ void Combat::setupHandicap() {
 
 	_handicap = HANDICAP_EVEN;
 	_handicap4 = 0;
+}
+
+
+void Combat::combatLoop() {
+	if (_monsterIndex != 0) {
+		selectParty();
+	} else {
+		selectMonster();
+	}
+}
+
+void Combat::selectMonster() {
+	for (uint i = 0; i < _monsterList.size(); ++i) {
+		// TODO
+	}
+
+	// TODO
+}
+
+void Combat::selectParty() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		g_globals->_currCharacter = &c;
+
+		int speed = c._speed._current;
+		if (speed && speed >= _handicap2) {
+			if (!(c._condition & (BLINDED | SILENCED | DISEASED | POISONED))) {
+				// Character is enabled
+				_mode = SELECT_OPTION;
+				return;
+			}
+		}
+	}
+
+	loop1();
+}
+
+void Combat::loop1() {
+	// TODO
 }
 
 } // namespace Game
