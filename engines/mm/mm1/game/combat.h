@@ -43,11 +43,12 @@ protected:
 	byte _monsterStatus[MAX_COMBAT_MONSTERS];
 	bool _canAttack[MAX_PARTY_SIZE];
 	int _arr3[MAX_PARTY_SIZE / 2];
+	bool _treasureFlags[MAX_PARTY_SIZE];
 	int _val1;
 	int _roundNum;
 	int _monsterIndex, _currentChar;
 	char _val2, _val3, _val4, _val5;
-	int _val6, _val7;
+	byte _val6, _val7;
 	int _handicap1, _handicap2;
 	int _handicap3, _handicap4;
 	int _attackerVal;
@@ -58,7 +59,7 @@ protected:
 	};
 	Handicap _handicap = HANDICAP_EVEN;
 	enum Mode {
-		SELECT_OPTION, FIGHT_WHICH
+		SELECT_OPTION, FIGHT_WHICH, DEFEATED_MONSTER
 	};
 	Mode _mode = SELECT_OPTION;
 
@@ -120,10 +121,17 @@ protected:
 	 */
 	void combatLoop();
 
-	void selectMonster();
+	void defeatedMonster();
 	void selectParty();
 	void loop1();
 	void proc1();
+	void shareSplit();
+
+	/**
+	 * Select treasure for a defeated monster
+	 */
+	void selectTreasure();
+	void selectTreasure2(int index);
 };
 
 } // namespace Game

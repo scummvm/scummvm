@@ -65,6 +65,9 @@ void Combat::draw() {
 	case SELECT_OPTION:
 		writeOptions();
 		break;
+	case DEFEATED_MONSTER:
+
+
 	default:
 		break;
 	}
