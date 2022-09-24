@@ -76,6 +76,12 @@ Window::~Window() {
 		delete _macBinary;
 		_macBinary = nullptr;
 	}
+
+	for (auto &it: _callstack) {
+		delete it;
+	}
+	delete _retContext;
+	delete _retLocalVars;
 }
 
 void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
