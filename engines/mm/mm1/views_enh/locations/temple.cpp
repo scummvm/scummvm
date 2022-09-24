@@ -19,7 +19,7 @@
  *
  */
 
-#include "mm/mm1/views_enh/locations/Temple.h"
+#include "mm/mm1/views_enh/locations/temple.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"

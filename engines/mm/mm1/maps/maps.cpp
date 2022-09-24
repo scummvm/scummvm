@@ -261,6 +261,8 @@ void Maps::loadTown(TownId townId) {
 		_mapPos = Common::Point(4, 4);
 		display(0xB1A);
 		break;
+	default:
+		break;
 	}
 
 	_currentMap->_visited[_mapPos.y * MAP_W + _mapPos.x] = true;
