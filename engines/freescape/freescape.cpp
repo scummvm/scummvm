@@ -44,6 +44,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	if (isAmiga()) {
 		_screenW = 640;
 		_screenH = 480;
+		_renderMode = "amiga";
 	} else {
 		_screenW = 320;
 		_screenH = 200;
