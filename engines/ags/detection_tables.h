@@ -2983,6 +2983,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "whentheworldcalls", "When the world calls..." },
 	{ "whentimestops", "Reef Rivers in: When Time Stops" },
 	{ "wherebedragons", "Where Be Dragons?" },
+	{ "wheredidhumansgo", "Where Did the Humans Go?" },
 	{ "wheredidsamgo", "Where did Sam go?" },
 	{ "wheresmhatma", "Where's M' Hat Ma?" },
 	{ "whichwitch", "Which Witch" },
@@ -7277,6 +7278,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("whentheworldcalls", "When the world calls.exe", "338fa79960d40689063af31c671b8729", 1111169904),
 	GAME_ENTRY_EN("whentimestops", "When Time Stops.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 142215901),
 	GAME_ENTRY_EN("wherebedragons", "Where Be Dragons.exe", "d8ccbb83c73ca8520b19412ce0d8de10", 2607599),
+	GAME_ENTRY_EN("wheredidhumansgo", "AdvGameChallenge22.exe", "805aebfc9a02cd02f892de6cd2cb7c87", 34137412),
 	GAME_ENTRY_EN("wheredidsamgo", "WDSG.exe", "0710e2ec71042617f565c01824f0cf3c", 4921841),
 	GAME_ENTRY_EN_PLATFORM("wheresmhatma", "WMHM.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 50659613, "MAGS"),
 	GAME_ENTRY_EN("wheresmhatma", "WMHM.exe", "25f919423520b921a041ec854e3a0217", 51766424),  //v2.0
