@@ -368,9 +368,9 @@ bool run_service_key_controls(KeyInput &out_key) {
 		for (int ff = 0; ff < _GP(game).numcharacters; ff++) {
 			if (_GP(game).chars[ff].room != _G(displayed_room)) continue;
 			if (strlen(bigbuffer) > 430) {
-				strcat(bigbuffer, "and more...");
+				Common::strcat_s(bigbuffer, "and more...");
 				Display(bigbuffer);
-				strcpy(bigbuffer, "CHARACTERS IN THIS ROOM (cont'd):[");
+				Common::strcpy_s(bigbuffer, "CHARACTERS IN THIS ROOM (cont'd):[");
 			}
 			chd = ff;
 			sprintf(&bigbuffer[strlen(bigbuffer)],

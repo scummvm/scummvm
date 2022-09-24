@@ -19,6 +19,9 @@
  *
  */
 
+// For dangerous AGS API
+#define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
+
 #include "ags/lib/allegro.h"
 #include "ags/lib/std/vector.h"
 #include "ags/shared/core/platform.h"
