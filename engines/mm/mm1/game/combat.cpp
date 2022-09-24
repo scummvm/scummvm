@@ -217,6 +217,7 @@ void Combat::defeatedMonsters() {
 	int activeCharCount = 0;
 	_totalExperience = 0;
 
+	// Count total experience from all defeated monsters
 	for (uint i = 0; i < _monsterList.size(); ++i) {
 		_monsterP = &_monsterList[i];
 		monsterIndexOf();
@@ -225,12 +226,21 @@ void Combat::defeatedMonsters() {
 		proc1();
 	}
 
+	// Count number of active characters
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		if (!(g_globals->_party[i]._condition & BAD_CONDITION))
 			++activeCharCount;
 	}
 
-	shareSplit();
+	// Split the experience between the active characters
+	_totalExperience /= activeCharCount;
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		if (!(g_globals->_party[i]._condition & BAD_CONDITION))
+			g_globals->_party[i]._exp += _totalExperience;
+	}
+
+	// Update the party's characters
+	g_globals->_party.combatDone();
 
 	// TODO
 }

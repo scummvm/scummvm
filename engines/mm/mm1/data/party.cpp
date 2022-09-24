@@ -80,5 +80,16 @@ void Party::updateAC() {
 		(*this)[i].updateAC();
 }
 
+void Party::combatDone() {
+	for (uint i = 0; i < size(); ++i) {
+		Character &c = (*this)[i];
+		c.updateAttributes();
+		c.update58();
+
+		if (!(c._condition & BAD_CONDITION))
+			c._condition &= ~(ASLEEP | SILENCED);
+	}
+}
+
 } // namespace MM1
 } // namespace MM

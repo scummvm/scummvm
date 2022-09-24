@@ -60,6 +60,11 @@ struct Party : public Common::Array<Character> {
 	 * Update the entire party AC
 	 */
 	void updateAC();
+
+	/**
+	 * Called to update the party after combat is done
+	 */
+	void combatDone();
 };
 
 } // namespace MM1
