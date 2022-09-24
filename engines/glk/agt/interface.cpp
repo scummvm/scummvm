@@ -260,6 +260,7 @@ char *agt_readline(int in_type) {
 	if (logflag & 1)
 		put_log(s);
 
+	agt_newline();
 	return s;
 }
 
