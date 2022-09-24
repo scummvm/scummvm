@@ -76,6 +76,30 @@ private:
 	const char *getDefaultName() const override;
 };
 
+class PrintModifier : public Modifier {
+public:
+	PrintModifier();
+	~PrintModifier();
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
+
+	bool load(const PlugInModifierLoaderContext &context, const Data::MTI::PrintModifier &data);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Print Modifier"; }
+	void debugInspect(IDebugInspectionReport *report) const override;
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+
+	Event _executeWhen;
+	Common::String _filePath;
+};
+
 
 class MTIPlugIn : public MTropolis::PlugIn {
 public:
@@ -86,6 +110,7 @@ public:
 private:
 	PlugInModifierFactory<PanningModifier, Data::MTI::PanningModifier> _panningModifierFactory;
 	PlugInModifierFactory<ShanghaiModifier, Data::MTI::ShanghaiModifier> _shanghaiModifierFactory;
+	PlugInModifierFactory<PrintModifier, Data::MTI::PrintModifier> _printModifierFactory;
 };
 
 } // End of namespace MTI

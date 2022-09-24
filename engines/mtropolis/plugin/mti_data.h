@@ -53,6 +53,18 @@ protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
 };
 
+struct PrintModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue executeWhen;
+	PlugInTypeTaggedValue unknown1Bool;
+	PlugInTypeTaggedValue unknown2Bool;
+	PlugInTypeTaggedValue unknown3Bool;
+	PlugInTypeTaggedValue filePath;
+	PlugInTypeTaggedValue unknown4Bool;
+
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
+
 } // End of namespace MTI
 
 } // End of namespace Data

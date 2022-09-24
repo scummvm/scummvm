@@ -98,13 +98,60 @@ const char *ShanghaiModifier::getDefaultName() const {
 	return "Shanghai Modifier";	// ???
 }
 
+
+PrintModifier::PrintModifier() {
+}
+
+PrintModifier::~PrintModifier() {
+}
+
+bool PrintModifier::respondsToEvent(const Event &evt) const {
+	return _executeWhen.respondsTo(evt);
+}
+
+VThreadState PrintModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	warning("Print modifier is not implemented");
+	return kVThreadReturn;
+}
+
+void PrintModifier::disable(Runtime *runtime) {
+}
+
+bool PrintModifier::load(const PlugInModifierLoaderContext &context, const Data::MTI::PrintModifier &data) {
+	if (data.executeWhen.type != Data::PlugInTypeTaggedValue::kEvent)
+		return false;
+
+	if (data.filePath.type != Data::PlugInTypeTaggedValue::kString)
+		return false;
+
+	_filePath = data.executeWhen.str;
+	if (!_executeWhen.load(data.executeWhen.value.asEvent))
+		return false;
+
+	return true;
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void PrintModifier::debugInspect(IDebugInspectionReport *report) const {
+}
+#endif
+
+Common::SharedPtr<Modifier> PrintModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new PrintModifier(*this));
+}
+
+const char *PrintModifier::getDefaultName() const {
+	return "Print Modifier";
+}
+
 MTIPlugIn::MTIPlugIn()
-	: _panningModifierFactory(this), _shanghaiModifierFactory(this) {
+	: _panningModifierFactory(this), _shanghaiModifierFactory(this), _printModifierFactory(this) {
 }
 
 void MTIPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) const {
 	registrar->registerPlugInModifier("panning", &_panningModifierFactory);
 	registrar->registerPlugInModifier("Shanghai", &_shanghaiModifierFactory);
+	registrar->registerPlugInModifier("Print", &_printModifierFactory);
 }
 
 
