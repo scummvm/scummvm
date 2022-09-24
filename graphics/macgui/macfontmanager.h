@@ -189,7 +189,7 @@ private:
 	Common::Language _language;
 	Common::HashMap<Common::String, Graphics::Font *> _winFontRegistry;
 	Common::HashMap<Common::String, MacFont *> _fontRegistry;
-	Common::HashMap<Common::String, MacFontFamily *> _fontFamilies;
+	Common::Array<MacFontFamily *> _fontFamilies;
 
 	Common::HashMap<int, FontInfo *> _fontInfo;
 	Common::HashMap<Common::String, int> _fontIds;
