@@ -1000,7 +1000,7 @@ char *scumm_strdup(const char *in) {
 	const size_t len = strlen(in) + 1;
 	char *out = (char *)malloc(len);
 	if (out) {
-		strcpy(out, in);
+		Common::strcpy_s(out, len, in);
 	}
 	return out;
 }

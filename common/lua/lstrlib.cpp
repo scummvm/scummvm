@@ -4,6 +4,8 @@
 ** See Copyright Notice in lua.h
 */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
+
 #include "common/util.h"
 
 #define lstrlib_c
