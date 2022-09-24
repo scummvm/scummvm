@@ -49,7 +49,7 @@ void Characters::draw() {
 			pad_string(charName, 16, '.');
 
 			Common::String level = Common::String::format("(%d)L%d",
-					roster._towns[charNum], re._level);
+					roster._towns[charNum], re._level._current);
 			pad_string(level, 7);
 
 			Common::String className = (re._class >= KNIGHT && re._class <= ROBBER) ?
