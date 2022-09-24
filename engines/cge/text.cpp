@@ -113,8 +113,9 @@ void Text::load() {
 			++s;
 
 		_cache[idx]._ref = r;
-		_cache[idx]._text = new char[strlen(s) + 1];
-		strcpy(_cache[idx]._text, s);
+		size_t ln = strlen(s) + 1;
+		_cache[idx]._text = new char[ln];
+		Common::strcpy_s(_cache[idx]._text, ln, s);
 		idx++;
 	}
 }
