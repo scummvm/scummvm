@@ -37,6 +37,8 @@ void Combat::clear() {
 	Common::fill(&_monsterStatus[0], &_monsterStatus[MAX_COMBAT_MONSTERS], 0);
 	Common::fill(&_canAttack[0], &_canAttack[6], false);
 	Common::fill(&_arr3[0], &_arr3[MAX_PARTY_SIZE / 2], 0);
+	Common::fill(&_treasureFlags[0], &_treasureFlags[MAX_PARTY_SIZE], false);
+
 	_val1 = _val2 = _val3 = _val4 = _val5 = 0;
 	_val6 = _val7 = 0;
 	_handicap1 = _handicap2 = 0;
@@ -187,28 +189,8 @@ void Combat::combatLoop() {
 	if (_monsterIndex != 0) {
 		selectParty();
 	} else {
-		selectMonster();
+		defeatedMonster();
 	}
-}
-
-void Combat::selectMonster() {
-	int count = 0;
-	int activeCharCount = 0;
-
-	for (uint i = 0; i < _monsterList.size(); ++i) {
-		_monsterP = &_monsterList[i];
-		monsterIndexOf();
-
-		count += _monsterP->_field16;
-		proc1();
-	}
-
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		if (!(g_globals->_party[i]._condition & BAD_CONDITION))
-			++activeCharCount;
-	}
-
-	// TODO
 }
 
 void Combat::selectParty() {
@@ -227,6 +209,28 @@ void Combat::selectParty() {
 	}
 
 	loop1();
+}
+
+void Combat::defeatedMonster() {
+	int count = 0;
+	int activeCharCount = 0;
+
+	for (uint i = 0; i < _monsterList.size(); ++i) {
+		_monsterP = &_monsterList[i];
+		monsterIndexOf();
+
+		count += _monsterP->_field16;
+		proc1();
+	}
+
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		if (!(g_globals->_party[i]._condition & BAD_CONDITION))
+			++activeCharCount;
+	}
+
+	shareSplit();
+
+	// TODO
 }
 
 void Combat::loop1() {
@@ -253,6 +257,65 @@ void Combat::proc1() {
 			g_globals->_treasure[6] += getRandomNumber(4);
 		}
 	}
+}
+
+void Combat::shareSplit() {
+
+}
+
+#define SHIFT_BIT (_val6 & 0x80) != 0; _val6 <<= 1
+
+void Combat::selectTreasure() {
+	for (int i = 0; i < 5; ++i) {
+		bool flag = SHIFT_BIT;
+		if (flag && getRandomNumber(100) <= (10 + i * 10))
+			selectTreasure2(5 - i);
+	}
+
+	auto &treasure = g_globals->_treasure;
+	treasure[0] = 0;
+
+	if (_treasureFlags[4]) {
+		treasure[1] = 10;
+	} else if (_treasureFlags[3]) {
+		treasure[1] = 5 + getRandomNumber(4);
+	} else if (_treasureFlags[2]) {
+		treasure[1] = 4 + getRandomNumber(4);
+	} else if (_treasureFlags[1]) {
+		treasure[1] = 3 + getRandomNumber(4);
+	} else if (_treasureFlags[0] || treasure[7]) {
+		treasure[1] = 1 + getRandomNumber(4);
+	} else if (treasure[6]) {
+		treasure[1] = getRandomNumber(4) - 1;
+	} else {
+		treasure[1] = getRandomNumber(2) - 1;
+	}
+}
+
+void Combat::selectTreasure2(int count) {
+	static const byte TREASURES_ARR1[6] = { 1, 61, 86, 121, 156, 171 };
+	static const byte TREASURES_ARR2[6] = { 12, 5, 7, 7, 3, 12 };
+	byte val1, val2;
+	int idx;
+
+	_treasureFlags[count - 1] = true;
+
+	idx = getRandomNumber(0, 5);
+	val1 = TREASURES_ARR1[idx];
+	val2 = TREASURES_ARR2[idx];
+
+	for (idx = 0; idx < count; ++idx)
+		_val1 += _val2;
+
+	_val1 += getRandomNumber(_val2) - 1;
+
+	auto &treasure = g_globals->_treasure;
+	if (!treasure[2])
+		treasure[2] = _val1;
+	else if (!treasure[3])
+		treasure[3] = _val1;
+	else if (!treasure[4])
+		treasure[4] = _val1;
 }
 
 } // namespace Game
