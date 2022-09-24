@@ -222,6 +222,7 @@ static char *get_log(void)
 		} else {
 			logflag &= ~2;
 			fast_replay = 0;
+			if (s[0] != 0) writestr(s);
 		}
 	} else { /* Need to delay or wait for keypress */
 		if (logdelay == -1) agt_waitkey();
