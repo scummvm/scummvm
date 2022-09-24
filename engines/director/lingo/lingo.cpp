@@ -662,6 +662,10 @@ void Lingo::resetLingo() {
 
 	g_director->_wm->removeMenu();
 
+	while (_vm->getCurrentWindow()->_callstack.size()) {
+		popContext(true);
+	}
+
 	// TODO
 	//
 	// reset the following:

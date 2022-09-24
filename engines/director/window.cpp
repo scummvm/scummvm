@@ -78,12 +78,6 @@ Window::~Window() {
 	}
 	if (_puppetTransition)
 		delete _puppetTransition;
-
-	for (auto &it: _callstack) {
-		delete it;
-	}
-	delete _retContext;
-	delete _retLocalVars;
 }
 
 void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
