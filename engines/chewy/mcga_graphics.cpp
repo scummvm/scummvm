@@ -428,7 +428,7 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 					if (!zaehler)
 						zaehler = 81;
 					charstr = va_arg(parptr, char *);
-					strcpy(zstring, charstr);
+					Common::strcpy_s(zstring, charstr);
 					break;
 
 				default:
@@ -533,7 +533,7 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 
 						if (stelle > 0) {
 							const uint16 fontWidth = _G(fontMgr)->getFont()->getDataWidth();
-							strcpy(zstring + stelle - 1, zstring + stelle);
+							Common::strcpy_s(zstring + stelle - 1, sizeof(zstring) - (stelle - 1), zstring + stelle);
 							plot_scan_cur((x + disp_akt * fontWidth), _G(gcury), bcol, bcol, scrwidth, cursor_z);
 							--stelle;
 							--stellemax;
@@ -604,7 +604,7 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 							while (kbhit())
 								getch();
 							eing = 1;
-							strcpy(zstring + stelle, zstring + stelle + 1);
+							Common::strcpy_s(zstring + stelle, sizeof(zstring) - stelle, zstring + stelle + 1);
 							--stellemax;
 						}
 
@@ -655,8 +655,8 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 								++stelle;
 							}
 						} else {
-							strcpy(z1string, zstring);
-							strcpy(zstring + stelle + 1, z1string + stelle);
+							Common::strcpy_s(z1string, zstring);
+							Common::strcpy_s(zstring + stelle + 1, sizeof(zstring) - (stelle + 1), z1string + stelle);
 							zstring[stelle] = izahl;
 							zstring[(int)zaehler] = 0;
 							if (stellemax < zaehler) {
@@ -700,7 +700,7 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 			longzahl[0] = atol(zstring);
 			break;
 		case 3:
-			strcpy(charstr, zstring);
+			Common::strcpy_s(charstr, 81, zstring);
 			break;
 		case 4:
 			intzahl1[0] = atoi(zstring);
