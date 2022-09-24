@@ -403,7 +403,7 @@ bool DrasculaEngine::room_13(int fl) {
 		talk(411);
 		trackProtagonist = 3;
 		talk(412);
-		strcpy(objName[1], _textmisc[4]); // "yoda"
+		Common::strcpy_s(objName[1], _textmisc[4]); // "yoda"
 	} else if (pickedObject == kVerbTalk && fl == 51) {
 		converse(7);
 	} else if (pickedObject == 19 && fl == 51) {
@@ -1671,7 +1671,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 
 	_hasName = false;
 
-	strcpy(currentData, fileName);
+	Common::strcpy_s(currentData, fileName);
 
 	Common::SeekableReadStream *stream = _archives.open(fileName);
 	if (!stream)
@@ -1706,7 +1706,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 			p.parseString(surfaceName);
 			loadPic(surfaceName, backSurface);
 
-			strcpy(menuBackground, surfaceName);
+			Common::strcpy_s(menuBackground, surfaceName);
 		} else {
 			curWidth = CHARACTER_WIDTH;
 			curHeight = CHARACTER_HEIGHT;
@@ -1718,7 +1718,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 			loadPic(96, frontSurface);
 			loadPic(99, backSurface);
 
-			strcpy(menuBackground, "99.alg");
+			Common::strcpy_s(menuBackground, "99.alg");
 		}
 	}
 

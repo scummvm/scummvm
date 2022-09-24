@@ -406,7 +406,7 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 		Common::strlcat(tmpMessageCurLine, curWord, 50);
 		if (textFitsCentered(tmpMessageCurLine, textX)) {
 			// Line fits, so add the word to the current message line
-			strcpy(messageCurLine, tmpMessageCurLine);
+			Common::strcpy_s(messageCurLine, tmpMessageCurLine);
 		} else {
 			// Line does't fit. Store the current line and start a new line.
 			Common::strlcpy(messageLines[curLine++], messageCurLine, 41);
@@ -424,7 +424,7 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 			if (!textFitsCentered(messageCurLine, textX)) {
 				messageCurLine[strlen(messageCurLine) - 1] = '\0';
 				Common::strlcpy(messageLines[curLine++], messageCurLine, 41);
-				strcpy(messageLines[curLine++], " ");
+				Common::strcpy_s(messageLines[curLine++], " ");
 			} else
 				Common::strlcpy(messageLines[curLine++], messageCurLine, 41);
 		}
