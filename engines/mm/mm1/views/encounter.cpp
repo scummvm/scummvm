@@ -161,10 +161,10 @@ void Encounter::timeout() {
 			_mode = SURPRISED_BY_MONSTERS;
 		} else if (enc._encounterType == Game::NORMAL_SURPRISED ||
 			/* ENCOUNTER_OPTIONS */
-			g_engine->getRandomNumber(1, 100) > map[Maps::MAP_21]) {
+			g_engine->getRandomNumber(100) > map[Maps::MAP_21]) {
 			// Potentially surprised. Check for guard dog spell
 			if (g_globals->_spells._s.guard_dog ||
-				g_engine->getRandomNumber(1, 100) > map[Maps::MAP_20])
+				g_engine->getRandomNumber(100) > map[Maps::MAP_20])
 				_mode = ENCOUNTER_OPTIONS;
 			else
 				_mode = SURPRISED_BY_MONSTERS;
@@ -219,7 +219,7 @@ bool Encounter::msgKeypress(const KeypressMessage &msg) {
 
 	case BRIBE:
 		if (msg.keycode == Common::KEYCODE_y) {
-			if (getRandomNumber(1, 100) > map[Maps::MAP_BRIBE_THRESHOLD]) {
+			if (getRandomNumber(100) > map[Maps::MAP_BRIBE_THRESHOLD]) {
 				_mode = NOT_ENOUGH;
 				redraw();
 			} else {
@@ -277,14 +277,14 @@ void Encounter::bribe() {
 		_mode = NO_RESPONSE;
 		redraw();
 
-	} else if (getRandomNumber(1, 7) == 5 && !enc._bribeFleeCtr) {
+	} else if (getRandomNumber(7) == 5 && !enc._bribeFleeCtr) {
 		// Rare chance to abort combat immediately
 		encounterEnded();
 
 	} else {
 		_mode = BRIBE;
 
-		int val = getRandomNumber(1, 100);
+		int val = getRandomNumber(100);
 		if (val < 6) {
 			_bribeType = BRIBE_GEMS;
 			_bribeTypeStr = STRING["dialogs.encounter.gems"];
@@ -303,7 +303,7 @@ void Encounter::bribe() {
 void Encounter::retreat() {
 	const Maps::Map &map = *g_maps->_currentMap;
 	const Game::Encounter &enc = g_globals->_encounters;
-	int val = getRandomNumber(1, 110);
+	int val = getRandomNumber(110);
 
 	if (val >= 100) {
 		// 9% chance of simply fleeing
@@ -326,8 +326,8 @@ void Encounter::surrender() {
 	const Game::Encounter &enc = g_globals->_encounters;
 	const Maps::Map &map = *g_maps->_currentMap;
 
-	if (getRandomNumber(1, 100) > map[Maps::MAP_SURRENDER_THRESHOLD] ||
-			getRandomNumber(1, 100) > enc._fleeThreshold) {
+	if (getRandomNumber(100) > map[Maps::MAP_SURRENDER_THRESHOLD] ||
+			getRandomNumber(100) > enc._fleeThreshold) {
 		_mode = SURRENDER_FAILED;
 		redraw();
 	} else {
@@ -335,7 +335,7 @@ void Encounter::surrender() {
 		g_maps->_mapPos.y = map[Maps::MAP_SURRENDER_Y];
 
 		// Randomly remove food, gems, or gold from the party
-		int val = getRandomNumber(1, 200);
+		int val = getRandomNumber(200);
 		if (val < 51) {
 		} else if (val < 151) {
 			g_globals->_party.clearPartyGold();

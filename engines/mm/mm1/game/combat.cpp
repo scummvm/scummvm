@@ -55,7 +55,7 @@ void Combat::loadArrays() {
 
 	for (uint i = 0; i < enc._monsterList.size(); ++i) {
 		Monster &mon = enc._monsterList[i];
-		int val = getRandomNumber(1, 8);
+		int val = getRandomNumber(8);
 
 		mon._field11 += val;
 		_arr1[i] = mon._field11;
@@ -93,7 +93,7 @@ void Combat::setupCanAttacks() {
 					_canAttack[i] = true;
 				} else {
 					_canAttack[MAX_PARTY_SIZE - 1] =
-						getRandomNumber(1, 100) <= 10;
+						getRandomNumber(100) <= 10;
 				}
 			}
 
@@ -110,11 +110,11 @@ void Combat::setupCanAttacks() {
 			if (g_globals->_party.size() > 3)
 				checkRightWall();
 			if (g_globals->_party.size() > 4) {
-				if (_canAttack[2] && getRandomNumber(1, 100) <= 5)
+				if (_canAttack[2] && getRandomNumber(100) <= 5)
 					_canAttack[4] = true;
 			}
 			if (g_globals->_party.size() > 5) {
-				if (_canAttack[3] && getRandomNumber(1, 100) <= 5)
+				if (_canAttack[3] && getRandomNumber(100) <= 5)
 					_canAttack[5] = true;
 			}
 
@@ -137,28 +137,28 @@ void Combat::setupAttackerVal() {
 			++_attackerVal;
 	}
 
-	_attackerVal = getRandomNumber(1, _attackerVal + 1) - 1;
+	_attackerVal = getRandomNumber(_attackerVal + 1) - 1;
 }
 
 void Combat::checkLeftWall() {
 	Maps::Maps &maps = *g_maps;
 
 	_canAttack[2] = !(maps._currentWalls & maps._leftMask) ||
-		getRandomNumber(1, 100) <= 25;
+		getRandomNumber(100) <= 25;
 }
 
 void Combat::checkRightWall() {
 	Maps::Maps &maps = *g_maps;
 
 	_canAttack[3] = !(maps._currentWalls & maps._rightMask) ||
-		getRandomNumber(1, 100) <= 25;
+		getRandomNumber(100) <= 25;
 }
 
 void Combat::setupHandicap() {
 	_handicap2 = _handicap3 = 40;
-	_handicap1 = getRandomNumber(1, 7);
+	_handicap1 = getRandomNumber(7);
 
-	int val = getRandomNumber(1, 7);
+	int val = getRandomNumber(7);
 	if (val < _handicap1) {
 		SWAP(val, _handicap1);
 		_handicap4 = val - _handicap1;
@@ -231,19 +231,19 @@ void Combat::proc1() {
 	_val6 = MAX(_val6, _val7);
 
 	if (_val7 & 1)
-		g_globals->_treasure[7] += getRandomNumber(1, 6);
+		g_globals->_treasure[7] += getRandomNumber(6);
 
 	if (_val7 & 6) {
 		if (!(_val7 & 2)) {
 			WRITE_LE_UINT16(&g_globals->_treasure[5],
 				READ_LE_UINT16(&g_globals->_treasure[5]) +
-				getRandomNumber(1, 10));
+				getRandomNumber(10));
 		} else if (!(_val7 & 4)) {
 			WRITE_LE_UINT16(&g_globals->_treasure[5],
 				READ_LE_UINT16(&g_globals->_treasure[5]) +
-				getRandomNumber(1, 100));
+				getRandomNumber(100));
 		} else {
-			g_globals->_treasure[6] += getRandomNumber(1, 4);
+			g_globals->_treasure[6] += getRandomNumber(4);
 		}
 	}
 }
