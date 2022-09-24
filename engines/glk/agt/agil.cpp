@@ -300,6 +300,7 @@ void agil_option(int optnum, char *optstr[], rbool setflag, rbool lastpass) {
 	else if (opt("tone")) PURE_TONE = setflag;
 	else if (opt("input_bold")) PURE_INPUT = setflag;
 	else if (opt("force_load")) FORCE_VERSION = setflag;
+	else if (opt("stable_random")) stable_random = setflag;
 	else if (!agt_option(optnum, optstr, setflag)) /* Platform specific options */
 		rprintf("Invalid option %s\n", optstr[0]);
 }

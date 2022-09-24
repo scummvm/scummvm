@@ -370,6 +370,7 @@ extern long read_number(void);
 /* -------------------------------------------------------------------- */
 extern void init_stack(void);  /* Set up expression stack */
 extern void clear_stack(void);  /* Set stack back to empty state */
+int get_random(int a, int b);  /* Return random number from a to b, inclusive */
 
 /* -------------------------------------------------------------------- */
 /* In OBJECT.C                              */
