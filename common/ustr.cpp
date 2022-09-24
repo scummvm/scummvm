@@ -60,6 +60,11 @@ U32String &U32String::operator=(const U32String &str) {
 	return *this;
 }
 
+U32String &U32String::operator=(U32String &&str) {
+	assign(static_cast<U32String &&>(str));
+	return *this;
+}
+
 U32String &U32String::operator=(const String &str) {
 	clear();
 	decodeInternal(str.c_str(), str.size(), Common::kUtf8);

@@ -78,7 +78,10 @@ public:
 	String(const char *beginP, const char *endP) : BaseString<char>(beginP, endP) {}
 
 	/** Construct a copy of the given string. */
-	String(const String &str) : BaseString<char>(str) {};
+	String(const String &str) : BaseString<char>(str) {}
+
+	/** Construct a string by moving an existing string. */
+	String(String &&str) : BaseString<char>(static_cast<BaseString<char> &&>(str)) {}
 
 	/** Construct a string consisting of the given character. */
 	explicit String(char c);
@@ -88,6 +91,7 @@ public:
 
 	String &operator=(const char *str);
 	String &operator=(const String &str);
+	String &operator=(String &&str);
 	String &operator=(char c);
 	String &operator+=(const char *str);
 	String &operator+=(const String &str);

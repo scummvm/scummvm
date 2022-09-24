@@ -86,6 +86,9 @@ public:
 	/** Construct a copy of the given string. */
 	BaseString(const BaseString &str);
 
+	/** Construct a string by moving an existing string. */
+	BaseString(BaseString &&str);
+
 	/** Construct a new string from the given NULL-terminated C string. */
 	explicit BaseString(const value_type *str);
 
@@ -247,6 +250,7 @@ protected:
 	void assignAppend(value_type c);
 	void assignAppend(const BaseString &str);
 	void assign(const BaseString &str);
+	void assign(BaseString &&str);
 	void assign(value_type c);
 	void assign(const value_type *str);
 
