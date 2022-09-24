@@ -670,6 +670,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "blacksect2", "Black Sect 2: The Cursed Crypt - Remake" },
 	{ "blackudder", "Blackudder: To Doubloon or not to Doubloon" },
 	{ "bladespassion", "Blades of Passion: An Oceanspirit Dennis Adventure" },
+	{ "blazeos", "Blaze From Outer Space" },
 	{ "blindsweeper", "BlindSweeper" },
 	{ "blindtosiberia", "Blind to Siberia" },
 	{ "blitheep1", "Blithe - Episode 1: The quiet town" },
@@ -748,6 +749,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "captaindownes", "Captain Downes and the Pirate Princess" },
 	{ "captainskull", "The Astonishing Captain Skull" },
 	{ "carrotbobinzxspeccyworld", "Carrot Bob in ZX Spectrum world" },
+	{ "cartenstein", "Cartenstein" },
 	{ "cartlife", "Cart Life" },
 	{ "casablancathedayafter", "Casablanca, The Day After" },
 	{ "casenoir", "Case Noir" },
@@ -936,6 +938,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "deathsdoor", "Death's Door" },
 	{ "deathsquest", "Deat(h)'s Quest" },
 	{ "deathworeendlessfeathersdisk1", "Death Wore Endless Feathers Disk 1" },
+	{ "deckhex", "DeckHex" },
 	{ "deephope", "Deep Hope" },
 	{ "deepspacemission", "Deep Space Mission: Are we alone?" },
 	{ "deflus", "Deflus" },
@@ -1518,6 +1521,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "laportenoire", "AAaaah!! La porte noire" },
 	{ "lasol", "Submerged - LaSol" },
 	{ "lastclown", "Last Clown Standing" },
+	{ "lasthope", "Last Hope" },
 	{ "lastlightpost", "The Last Light Post" },
 	{ "lastnfurious", "Last'n'Furious" },
 	{ "latelastnite", "Late Last Nite" },
@@ -1529,6 +1533,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "legacyicecream", "The Legacy of Icecream Man" },
 	{ "legendofrovendale", "Legend of Rovendale" },
 	{ "legendofseththebard", "The Legend of Seth the Bard" },
+	{ "legendofskystones", "Legend Of Sky Stones" },
 	{ "legendsofmardaram", "Legends of Mardaram" },
 	{ "leisuresuitlarry2", "Leisure Suit Larry 2 - Point and Click Remake" },
 	{ "leisuresuitlarrylil", "Leisure Suit Larry: Lost in Love!" },
@@ -1913,6 +1918,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "mordy2", "Mordy 2: The Mirror of Truth" },
 	{ "moremonkeys", "More Monkeys" },
 	{ "morganale1", "Morgan Ale, Case 1: Professor D" },
+	{ "morningshift", "Morning Shift" },
 	{ "morphine", "Morphine" },
 	{ "mortifer", "Nous, les Mortifer" },
 	{ "motlpaa", "MOTLPAA" },
@@ -2208,6 +2214,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "profneely", "Professor Neely And The Death Ray Of Doom" },
 	{ "projectevilspy2", "Project Evilspy II" },
 	{ "projectlazarus", "Project Lazarus" },
+	{ "projectmadness", "Project Madness" },
 	{ "proofoffiction", "Proof of Fiction" },
 	{ "proposal", "Proposal" },
 	{ "prototypical", "Prototypical" },
@@ -2585,6 +2592,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "studiomediocre", "Studio Mediocre: The Case of the Bedeaded Dramatist" },
 	{ "subatomic", "subAtomic" },
 	{ "subterra", "Subterra" },
+	{ "subwaycrisis", "Subway Crisis" },
 	{ "suenanfantasmas", "¿Sueñan Los Fantasmas?" },
 	{ "summerwoes", "Summer Woes" },
 	{ "sunriseparadise", "Sunrise Paradise" },
@@ -2908,6 +2916,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "unprintablemagenta", "The unprintable Magenta" },
 	{ "unprofe", "Un Profe" },
 	{ "unraveling", "The Tapestry - Chapter 1: The Unraveling" },
+	{ "unscripted", "Unscripted" },
 	{ "unsolvedmystery", "Bob Smith and the Unsolved Case of Mystery" },
 	{ "untildawn", "Until Dawn Tomorrow" },
 	{ "untilfurthernotice", "Stories of the unexpected: 'Until further notice'" },
@@ -3014,6 +3023,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "writersblocks", "Writer's Blocks" },
 	{ "wrongchannel", "Wrong Channel" },
 	{ "wulffenstein", "Wulffenstein – Im Kreuzfeuer der Reporter" },
+	{ "y", "Y" },
 	{ "yago", "Yago, the Coquerrestrial / Yago, el Coquerrestre" },
 	{ "yoda", "Yoda" },
 	{ "yourgrace", "Your Grace" },
@@ -4576,6 +4586,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("blacksect2", "BS2-TCC.exe", "b96aaa8eae38a02f0c8c5262ec0a5057", 22765022),
 	GAME_ENTRY_EN("blackudder", "blackudder.exe", "338fa79960d40689063af31c671b8729", 87695958),
 	GAME_ENTRY_EN("bladespassion", "blades_of_passion.exe", "3f29c1146aff735c61362fc5162f42e4", 13267106),
+	GAME_ENTRY_EN("blazeos", "Ludum Dare 42.ags", "c0d10e40ad4ae03ea3f38f6fd679549a", 6864287),  // Linux
+	GAME_ENTRY_EN("blazeos", "Ludum Dare 42.exe", "8aff96231ca059cd61fe5ce68b83f50f", 9351087),  // Windows
 	GAME_ENTRY_EN("blindsweeper", "BlindSweeper.exe", "495d45fb8adfd49690ae3b97921feec6", 3437862),
 	GAME_ENTRY_EN("blindtosiberia", "blindtosiberia.exe", "e8985d9ffbfa1eda77f2eb8d1331944a", 5899304),
 	GAME_ENTRY("blitheep1", "Blithe.exe", "4049012409f119dd39cdba7ed1be17d2", 259848131),  // Eng-Esp-Ita
@@ -4659,6 +4671,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("captaindownes", "ac2game.dat", "01c5914ae83d39dab345f2f70dd3e4ee", 30285588),  // Mac Eng-Swe
 	GAME_ENTRY_EN("captainskull", "The Astonishing Captain Skull.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 21319808),
 	GAME_ENTRY_EN("carrotbobinzxspeccyworld", "carrotbob.exe", "949f7440e3692b7366c2029979dee9a0", 914509),
+	GAME_ENTRY_EN("cartenstein", "Ludum Dare 41.ags", "8c15c837060a65decd61d3a99c78a15c", 1655510),  // Linux
+	GAME_ENTRY_EN("cartenstein", "Ludum Dare 41.exe", "78dd4ca028ee0156b6a093d6d780aa65", 4140262),  // Windows
 	GAME_ENTRY_EN("cartlife", "cartlife.exe", "7c8d67dd922fa543a1b1b76f9e1cc7c2", 21045074),
 	GAME_ENTRY_EN("casablancathedayafter", "casablanca.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 4238105),
 	GAME_ENTRY_EN("casenoir", "case noir.exe", "fd3ecd8289bebadbf775fe8a13b9c5d7", 15407193),
@@ -4877,6 +4891,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("deathsdoor", "Death's Door.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 31447213),
 	GAME_ENTRY_EN("deathsquest", "HEHU!.exe", "949f7440e3692b7366c2029979dee9a0", 991809),
 	GAME_ENTRY_EN("deathworeendlessfeathersdisk1", "Cyberpunk.exe", "2aaa2609117a34adf666ea546e6dc000", 12620944),
+	GAME_ENTRY_EN("deckhex", "DeckHex.ags", "f83dddc650f81536028f6fd9fd81180b", 17562316),  // Linux
+	GAME_ENTRY_EN("deckhex", "DeckHex.exe", "dbe9bab672130b9a84925cb6da64a3db", 20670688),  // Windows
 	GAME_ENTRY_EN("deephope", "DeepHope.exe", "615e73fc1874e92d60a1996c2330ea36", 5039793),
 	GAME_ENTRY_EN("deepspacemission", "DSM.exe", "173f00e582eebd082d66f1291702b373", 340115162),
 	GAME_ENTRY_EN("dehaunt", "dehaunt.exe", "06a03fe35791b0578068ab1873455463", 3166435),
@@ -5558,6 +5574,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("lagrandeplaine", "La Grande Plaine.exe", "7a3096ac0237cb6aa8e1718e28caf039", 63873569, Common::FR_FRA),
 	GAME_ENTRY_LANG("lallaveyfabianshones", "LLAVE.exe", "a8d73d686b2eb77caab8c05e3e1f1d57", 3374527, Common::ES_ESP),
 	GAME_ENTRY("lamaleta", "La Maleta.ags", "144566549a27ad1b41346627ec82f586", 43741777),  // Eng-Esp
+	GAME_ENTRY_EN("lasthope", "Ludum Dare 46.ags", "37b6847ce6000a0a51391e8c1013bf2b", 25212295),  // Linux
+	GAME_ENTRY_EN("lasthope", "Ludum Dare 46.exe", "8aff96231ca059cd61fe5ce68b83f50f", 27699095),  // Windows
 	GAME_ENTRY_EN("lancethepenguin", "LanceThePenguin.exe", "a524cbb1c51589903c4043b98917f1d9", 3838581),
 	GAME_ENTRY_LANG("laodiseadelfracaso2", "La Odisea II.exe", "0710e2ec71042617f565c01824f0cf3c", 3083622, Common::ES_ESP),
 	GAME_ENTRY_EN_PLATFORM("larrylotter", "Warthogs.exe", "06a03fe35791b0578068ab1873455463", 3387147, "MAGS"),
@@ -5576,6 +5594,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("legendofrovendale", "Vampire.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 10018497, Common::RU_RUS),
 	GAME_ENTRY_EN("legendofseththebard", "LOSTB 1.48.exe", "a524cbb1c51589903c4043b98917f1d9", 10669482),  //v1.48
 	GAME_ENTRY_EN("legendofseththebard", "LOSTB 1.50.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 10670757),  //v1.50
+	GAME_ENTRY_EN("legendofskystones", "Ludum Dare 45.ags", "38cfb1d9b153efbd94528f3c711ca5a0", 8869946),  // Linux
+	GAME_ENTRY_EN("legendofskystones", "Ludum Dare 45.exe", "8aff96231ca059cd61fe5ce68b83f50f", 11356746),  // Windows
 	GAME_ENTRY_LANG("legendsofmardaram", "LOM.exe", "0710e2ec71042617f565c01824f0cf3c", 50183544, Common::DE_DEU),
 	GAME_ENTRY_EN("leisuresuitlarry2", "Larry 2.exe", "949f7440e3692b7366c2029979dee9a0", 11971760),
 	GAME_ENTRY_EN("lelac", "Le Lac - EN.exe", "4eed763ae52a4acd9c231f09ece7b914", 188867790),
@@ -5995,6 +6015,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("mordy2", "Mordy2.exe", "0710e2ec71042617f565c01824f0cf3c", 5186329),
 	GAME_ENTRY_EN("moremonkeys", "MoreMonkeys.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 2652682),
 	GAME_ENTRY_EN("morganale1", "Professor D.exe", "6f9a7b413f14514c8314fe56fda90179", 4009582),
+	GAME_ENTRY_EN("morningshift", "Ludum Dare 48.ags", "bd508b7787384ae2ad5b487692d3b807", 3793136),  // Linux
+	GAME_ENTRY_EN("morningshift", "Ludum Dare 48.exe", "7c6e063343fc2ec2bfffc93a1bbd6cfe", 6280960),  // Windows
 	GAME_ENTRY_LANG("mortifer", "Nous les Mortifer.exe", "7ddb9e776648faed5a51170d087074e9", 187358960, Common::FR_FRA),
 	GAME_ENTRY_EN("motlpaa", "MOTLPAA.exe", "0710e2ec71042617f565c01824f0cf3c", 1575258),
 	GAME_ENTRY_EN("motlpaa", "MOTLPAA.ags", "0710e2ec71042617f565c01824f0cf3c", 1575258),
@@ -6327,6 +6349,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_PLATFORM("profneely", "ProfN.exe", "26cfa7bd1be5485e1f0385101b31e43b", 3917542, "Anniversary Update"), // v1.1
 	GAME_ENTRY_EN("projectevilspy2", "Project Evilspy II.exe", "0b7529a76f38283d6e850b8d56526fc1", 1583899),
 	GAME_ENTRY_EN("projectlazarus", "plazarus.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 13219923),
+	GAME_ENTRY_EN("projectmadness", "LD40.ags", "c0a6bf580c38bb214da45f8383a62a6a", 6724821),  // Linux
+	GAME_ENTRY_EN("projectmadness", "LD40.exe", "b142b43c146c25443a1d155d441a6a81", 9204965),  // Windows
 	GAME_ENTRY_EN("proofoffiction", "PoF.exe", "9cf51833e787cc919837d9a8bd8fc14c", 2723885),
 	GAME_ENTRY_EN("proposal", "Proposal.exe", "46aaeedf91c1763adc2978cacd9673e5", 4593850),
 	GAME_ENTRY("providence", "Providence.exe", "1c00b5d482f5531cb1eba7360b98b3e4", 625922261),  // Eng-Ita
@@ -6771,6 +6795,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("stuckonyou", "Stuck on you.ags", "e2416cf4eeb317fb2f6127b398ad0979", 82798497),  // Linux
 	GAME_ENTRY_EN("studiomediocre", "Studio.exe", "9cb3c8dc7a8ab9c44815955696be2677", 10524547),
 	GAME_ENTRY_EN("subatomic", "LD48-23.exe", "75f4c7f66b1be60af5b2d65f617b91a7", 25655660),
+	GAME_ENTRY_EN("subwaycrisis", "Ludum Dare 43.ags", "97341b3ddd7a0eb8ae4a247fe25dc082", 3508218),  // Linux
+	GAME_ENTRY_EN("subwaycrisis", "Ludum Dare 43.exe", "78f88f71bbef277d93cbe10f1d2ac404", 5996042),  // Windows
 	GAME_ENTRY_LANG("suenanfantasmas", "SueñanLosFantasmas.exe", "50a7ba44a0d5499628de2a46bb4a9e97", 71071264, Common::ES_ESP),  // Windows
 	GAME_ENTRY_LANG("suenanfantasmas", "SuenanLosFantasmas.ags", "4092234ccc703586b54d86900550baa0", 67828236, Common::ES_ESP),  // Linux
 	GAME_ENTRY_EN("summerwoes", "MAGSAugust.exe", "7921b41f852d8dd62922d87cc69d9e83", 4896812),
@@ -7172,6 +7198,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("unprintablemagenta", "Magenta.exe", "615e73fc1874e92d60a1996c2330ea36", 113259258),
 	GAME_ENTRY_LANG("unprofe", "Un Profe.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 3465541, Common::ES_ESP),
 	GAME_ENTRY_EN("unraveling", "unraveling.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 2927577),
+	GAME_ENTRY_EN("unscripted", "LD47.ags", "b7de4a31e3118480997975b7c6c204e7", 3547098),  // Linux
+	GAME_ENTRY_EN("unscripted", "LD47.exe", "7c6e063343fc2ec2bfffc93a1bbd6cfe", 6034922),  // Windows
 	GAME_ENTRY_EN("unsolvedmystery", "UCOM.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 1593175),
 	GAME_ENTRY_EN("untildawn", "Until Dawn Tomorrow.exe", "7f151ffa6f87f2c5690d308bfba59805", 256429497),
 	GAME_ENTRY_EN("untilfurthernotice", "Until further notice.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 391431917),
@@ -7294,6 +7322,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("wrecked", "AGS_Wrecked.exe", "310def5b0f0e3b1ec1e1f0198011c17c", 171806325),
 	GAME_ENTRY_EN("wrongchannel", "wrongchannel.exe", "09e8e7ecf1f748e57cda4b22661a8be7", 16509778),
 	GAME_ENTRY_LANG("wulffenstein", "wulffenstein.exe", "615e73fc1874e92d60a1996c2330ea36", 2575514, Common::DE_DEU),
+	GAME_ENTRY_EN("y", "LD49.ags", "e970fc2371524fefd8b52f0906b96f12", 12219717),  // Linux
+	GAME_ENTRY_EN("y", "LD49.exe", "776a62db4387dc68be92ef9933399fd5", 15326041),  // Windows
 	GAME_ENTRY("yago", "Yago.exe", "7c6e063343fc2ec2bfffc93a1bbd6cfe", 864427955),  //Eng-Esp Win
 	GAME_ENTRY("yago", "Yago.ags", "1f5c1900e2e1406a0beba1e7d04520c2", 861940131),  //Eng-Esp Linux
 	GAME_ENTRY_EN("yoda", "Yoda.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 2461339),
