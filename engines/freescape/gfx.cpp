@@ -33,9 +33,11 @@
 
 namespace Freescape {
 
-Renderer::Renderer(OSystem *system)
+Renderer::Renderer(OSystem *system, int screenW, int screenH)
 		: _system(system) {
 
+	_screenW = screenW;
+	_screenH = screenH;
 	_currentPixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	_originalPixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 	_palettePixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
@@ -48,7 +50,7 @@ Renderer::~Renderer() {}
 
 Graphics::Surface *Renderer::convertFromPalette(Graphics::PixelBuffer *rawsurf) {
 	Graphics::Surface * surf = new Graphics::Surface();
-	surf->create(kOriginalWidth, kOriginalHeight, _originalPixelFormat);
+	surf->create(_screenW, _screenH, _originalPixelFormat);
 	surf->copyRectToSurface(rawsurf->getRawBuffer(), surf->w, 0, 0, surf->w, surf->h);
 	surf->convertToInPlace(_currentPixelFormat, _palette->getRawBuffer());
 	return surf;
@@ -95,10 +97,10 @@ Common::Rect Renderer::viewport() const {
 void Renderer::computeScreenViewport() {
 	int32 screenWidth = _system->getWidth();
 	int32 screenHeight = _system->getHeight();
-	_screenViewport = Common::Rect(screenWidth, screenHeight);
+	_screenViewport = Common::Rect(_screenW, _screenH);
 }
 
-Renderer *createRenderer(OSystem *system) {
+Renderer *createRenderer(OSystem *system, int screenW, int screenH) {
 	Common::String rendererConfig = ConfMan.get("renderer");
 	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	Graphics::RendererType desiredRendererType = Graphics::kRendererTypeTinyGL; //Graphics::parseRendererTypeCode(rendererConfig);
@@ -106,13 +108,10 @@ Renderer *createRenderer(OSystem *system) {
 
 	bool isAccelerated = 0; //matchingRendererType != Graphics::kRendererTypeTinyGL;
 
-	uint width = Renderer::kOriginalWidth;
-	uint height = Renderer::kOriginalHeight;
-
 	if (isAccelerated) {
-		initGraphics3d(width, height);
+		initGraphics3d(screenW, screenH);
 	} else {
-		initGraphics(width, height, &pixelFormat);
+		initGraphics(screenW, screenH, &pixelFormat);
 	}
 
 /*#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
@@ -142,7 +141,7 @@ Renderer *createRenderer(OSystem *system) {
 	}
 #endif*/
 	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
-		return CreateGfxTinyGL(system);
+		return CreateGfxTinyGL(system, screenW, screenH);
 	}
 
 	error("Unable to create a '%s' renderer", rendererConfig.c_str());

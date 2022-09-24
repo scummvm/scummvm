@@ -31,7 +31,7 @@ namespace Freescape {
 
 class TinyGLRenderer : public Renderer {
 public:
-	TinyGLRenderer(OSystem *_system);
+	TinyGLRenderer(OSystem *system, int screenW, int screenH);
 	virtual ~TinyGLRenderer();
 
 	virtual void init() override;
