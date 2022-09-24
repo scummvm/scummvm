@@ -55,6 +55,11 @@ String &String::operator=(const String &str) {
 	return *this;
 }
 
+String &String::operator=(String &&str) {
+	assign(static_cast<String &&>(str));
+	return *this;
+}
+
 String &String::operator=(char c) {
 	assign(c);
 	return *this;
