@@ -897,7 +897,7 @@ long read_number(void) {
 		n = strtol(s, &err, 10);
 		if (err == s) err = nullptr;
 		rfree(s);
-	} while (err == nullptr);
+	} while (!quitflag && (err == nullptr));
 	return n;
 }
 

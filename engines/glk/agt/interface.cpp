@@ -613,7 +613,7 @@ int agt_menu(const char *header, int size, int width, menuentry *menu)
 		i = read_number() - 1;
 		if (i < 0 || i >= size)
 			writeln("Please choose an option from the menu.");
-	} while (i < 0 || i >= size);
+	} while (!quitflag && (i < 0 || i >= size));
 	return i;
 }
 
