@@ -103,19 +103,19 @@ int FindMatchingMultiWordWord(char *thisword, const char **text) {
 	const char *tempptr = *text;
 	char tempword[150] = "";
 	if (thisword != nullptr)
-		strcpy(tempword, thisword);
+		Common::strcpy_s(tempword, thisword);
 
 	int bestMatchFound = -1, word;
 	const char *tempptrAtBestMatch = tempptr;
 
 	do {
 		// extract and concat the next word
-		strcat(tempword, " ");
+		Common::strcat_s(tempword, " ");
 		while (tempptr[0] == ' ') tempptr++;
 		char chbuffer[2];
 		while (is_valid_word_char(tempptr[0])) {
 			snprintf(chbuffer, sizeof(chbuffer), "%c", tempptr[0]);
-			strcat(tempword, chbuffer);
+			Common::strcat_s(tempword, chbuffer);
 			tempptr++;
 		}
 		// is this it?
@@ -134,7 +134,7 @@ int FindMatchingMultiWordWord(char *thisword, const char **text) {
 		// yes, a word like "pick up" was found
 		*text = tempptrAtBestMatch;
 		if (thisword != nullptr)
-			strcpy(thisword, tempword);
+			Common::strcpy_s(thisword, 150, tempword);
 	}
 
 	return word;
@@ -247,7 +247,7 @@ int parse_sentence(const char *src_text, int *numwords, short *wordarray, short 
 						continueSearching = 0;
 
 						if (text[0] == ' ') {
-							strcpy(thisword, textStart);
+							Common::strcpy_s(thisword, textStart);
 							thisword[text - textStart] = 0;
 							// forward past any multi-word alternatives
 							if (FindMatchingMultiWordWord(thisword, &text) >= 0)
@@ -275,7 +275,7 @@ int parse_sentence(const char *src_text, int *numwords, short *wordarray, short 
 				// if it's an unknown word, store it for use in messages like
 				// "you can't use the word 'xxx' in this game"
 				if ((word < 0) && (_GP(play).bad_parsed_word[0] == 0))
-					strcpy(_GP(play).bad_parsed_word, thisword);
+					Common::strcpy_s(_GP(play).bad_parsed_word, 100, thisword);
 			}
 
 			if (do_word_now) {
