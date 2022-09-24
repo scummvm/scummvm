@@ -150,13 +150,13 @@ bool DialogMan::isMessageOnTwoLines(const char *str, char *part1, char *part2) {
 	if (strLength <= 30)
 		return false;
 
-	strcpy(part1, str);
+	Common::strcpy_s(part1, 70, str);
 	uint16 splitPosition = strLength >> 1;
 	while ((splitPosition < strLength) && (part1[splitPosition] != ' '))
 		splitPosition++;
 
 	part1[splitPosition] = '\0';
-	strcpy(part2, &part1[splitPosition + 1]);
+	Common::strcpy_s(part2, 70, &part1[splitPosition + 1]);
 	return true;
 }
 
