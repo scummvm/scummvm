@@ -83,6 +83,8 @@ private:
 	 */
 	void clearPartyArea();
 
+	void writeDefeat();
+
 public:
 	Combat();
 	virtual ~Combat() {}

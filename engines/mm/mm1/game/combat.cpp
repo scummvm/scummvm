@@ -47,6 +47,8 @@ void Combat::clear() {
 	_monsterP = nullptr;
 	_monsterIndex = _currentChar = 0;
 	_attackerVal = 0;
+	_totalExperience = 0;
+
 	// TODO: clear everything
 
 	_roundNum = 1;
@@ -189,7 +191,7 @@ void Combat::combatLoop() {
 	if (_monsterIndex != 0) {
 		selectParty();
 	} else {
-		defeatedMonster();
+		defeatedMonsters();
 	}
 }
 
@@ -211,15 +213,15 @@ void Combat::selectParty() {
 	loop1();
 }
 
-void Combat::defeatedMonster() {
-	int count = 0;
+void Combat::defeatedMonsters() {
 	int activeCharCount = 0;
+	_totalExperience = 0;
 
 	for (uint i = 0; i < _monsterList.size(); ++i) {
 		_monsterP = &_monsterList[i];
 		monsterIndexOf();
 
-		count += _monsterP->_field16;
+		_totalExperience += _monsterP->_experience;
 		proc1();
 	}
 

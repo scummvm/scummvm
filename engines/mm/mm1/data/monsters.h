@@ -46,8 +46,7 @@ struct Monster {
 	byte _field13;
 	byte _field14;
 	byte _field15;
-	byte _field16;
-	byte _field17;
+	uint16 _experience;
 	byte _field18;
 	byte _field19;
 	byte _field1a;
@@ -66,7 +65,7 @@ private:
 	/**
 	 * Get the next value from a read line
 	 */
-	byte getNextValue(Common::String &line);
+	uint getNextValue(Common::String &line);
 public:
 	Monsters() : _monPix(MONPIX_DTA) {}
 
