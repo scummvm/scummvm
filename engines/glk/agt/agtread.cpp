@@ -549,6 +549,39 @@ static int translate_vnum(int vnum)
 	return vnum;
 }
 
+static word check_comb(int combptr, int verbcmd, int nouncmd) {
+	word w;
+
+	if (combptr == 0) return 0;
+
+	w = syntbl[combptr];
+	if (syntbl[combptr+1] != verbcmd) return 0;
+	if (syntbl[combptr+2] != nouncmd) return 0;
+	if (syntbl[combptr+3] == 0) return w;
+
+	return 0;
+}
+
+/* For metacommands that apply to built-in two-word synonyms (e.g. GET OUT),
+   change the command to apply to the canonical form. */
+void command_syn_canon(cmd_rec* cmd) {
+	int i, vb;
+	word w;
+
+	/* VERB NOUN only */
+	if(cmd->verbcmd > 0 && cmd->nouncmd > 0 && cmd->prep == 0 && cmd->objcmd == 0) {
+		for(i = 0; i < num_auxcomb; i++) {
+			w = check_comb(auxcomb[i], cmd->verbcmd, cmd->nouncmd);
+			if (w > 0) {
+				vb = verb_builtin(w);
+				if(vb > 0) {
+					cmd->verbcmd = syntbl[auxsyn[vb]];
+					cmd->nouncmd = 0;
+				}
+			}
+		}
+	}
+}
 
 #define CREC_SIZE (FRS_CMD)
 
@@ -591,6 +624,7 @@ static void read_da5(fc_type fc) {
 			cmd_ptr[i] = (long)buff[bp] + (((long)buff[bp + 1]) << 8);
 			bp += 2;
 		}
+		command_syn_canon(command+i);
 	}
 	if (DIAG)
 		rprintf("     Internal:%ld\n", bp);
@@ -1691,6 +1725,7 @@ static void finish_read(rbool cleanup)
 		}
 	}
 
+	/* Set the flag number for nouns mentioned in the flag_noun list */
 	int flagnum = 1;
 	for (i = 0; i <MAX_FLAG_NOUN; i++) {
 		if (flag_noun[i] != 0) {
