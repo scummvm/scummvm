@@ -65,8 +65,11 @@ void Combat::draw() {
 	case SELECT_OPTION:
 		writeOptions();
 		break;
-	case DEFEATED_MONSTER:
 
+	case DEFEATED_MONSTERS:
+		writeDefeat();
+		delaySeconds(3);
+		break;
 
 	default:
 		break;
@@ -259,6 +262,22 @@ void Combat::writeParty() {
 
 void Combat::clearPartyArea() {
 	clearLines(16, 18);
+}
+
+void Combat::writeDefeat() {
+	resetBottom();
+	writeString(10, 0, "+----------------------------+");
+	for (int y = 1; y < 8; ++y) {
+		writeChar(10, y, '!');
+		writeChar(37, y, '!');
+	}
+	writeString(10, 0, "+----------------------------+");
+
+	writeString(10, 2, STRING["dialogs.combat.defeating1"]);
+	writeString(10, 4, STRING["dialogs.combat.defeating1"]);
+	writeNumber(14, 6, _totalExperience);
+	_textPos.x++;
+	writeString(STRING["dialogs.combat.xp"]);
 }
 
 } // namespace Views

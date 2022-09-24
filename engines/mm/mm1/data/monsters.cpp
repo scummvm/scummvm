@@ -47,8 +47,7 @@ bool Monsters::load() {
 		mon._field13 = getNextValue(line);
 		mon._field14 = getNextValue(line);
 		mon._field15 = getNextValue(line);
-		mon._field16 = getNextValue(line);
-		mon._field17 = getNextValue(line);
+		mon._experience = getNextValue(line);
 		mon._field18 = getNextValue(line);
 		mon._field19 = getNextValue(line);
 		mon._field1a = getNextValue(line);
@@ -62,7 +61,7 @@ bool Monsters::load() {
 	return true;
 }
 
-byte Monsters::getNextValue(Common::String &line) {
+uint Monsters::getNextValue(Common::String &line) {
 	// Verify the next comma
 	if (!line.hasPrefix(", "))
 		return 0;
@@ -70,7 +69,7 @@ byte Monsters::getNextValue(Common::String &line) {
 	line.deleteChar(0);
 
 	// Get the value
-	byte result = atoi(line.c_str());
+	int result = atoi(line.c_str());
 	while (!line.empty() && Common::isDigit(line.firstChar()))
 		line.deleteChar(0);
 

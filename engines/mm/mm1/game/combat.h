@@ -52,6 +52,7 @@ protected:
 	int _handicap1, _handicap2;
 	int _handicap3, _handicap4;
 	int _attackerVal;
+	int _totalExperience;
 
 	enum Handicap {
 		HANDICAP_EVEN = 0, HANDICAP_PARTY = 1,
@@ -59,7 +60,7 @@ protected:
 	};
 	Handicap _handicap = HANDICAP_EVEN;
 	enum Mode {
-		SELECT_OPTION, FIGHT_WHICH, DEFEATED_MONSTER
+		SELECT_OPTION, FIGHT_WHICH, DEFEATED_MONSTERS
 	};
 	Mode _mode = SELECT_OPTION;
 
@@ -121,7 +122,7 @@ protected:
 	 */
 	void combatLoop();
 
-	void defeatedMonster();
+	void defeatedMonsters();
 	void selectParty();
 	void loop1();
 	void proc1();

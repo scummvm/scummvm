@@ -309,6 +309,9 @@
 		monster_plus: "MONSTER +"
 		and_goes_down: "AND GOES DOWN!!!"
 		dies: "DIES!"
+		defeating1: "! FOR DEFEATING THE MONSTERS !"
+		defeating2: "!   EACH SURVIVOR RECEIVES   !"
+		xp: "EXPERIENCE POINTS."
 		status:
 			0: "(PARALYZE)"
 			1: "(WEBBED)  "
