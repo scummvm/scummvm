@@ -246,9 +246,10 @@ char *agt_readline(int in_type) {
 	char *s;
 
 	if (PURE_INPUT) agt_textcolor(-1);
-	if (logflag & 2)
+	if (logflag & 2) {
 		s = get_log();
-	else
+		agt_newline();
+	} else
 		s = agt_input(in_type);
 
 	if (g_vm->shouldQuit())
@@ -260,7 +261,6 @@ char *agt_readline(int in_type) {
 	if (logflag & 1)
 		put_log(s);
 
-	agt_newline();
 	return s;
 }
 
