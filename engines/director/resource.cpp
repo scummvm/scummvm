@@ -85,6 +85,7 @@ Common::Error Window::loadInitialMovie() {
 			_currentMovie->processEvent(kEventStartUp);
 
 			free(script);
+			delete stream;
 		} else {
 			warning("Window::LoadInitialMovie: failed to load startup scripts");
 		}
@@ -212,10 +213,10 @@ void Window::loadEXE(const Common::String movie) {
 		_currentMovie = nullptr;
 
 		free(script);
+		delete iniStream;
 	} else {
 		warning("No LINGO.INI");
 	}
-	delete iniStream;
 
 	Common::SeekableReadStream *exeStream = SearchMan.createReadStreamForMember(Common::Path(movie, g_director->_dirSeparator));
 	if (!exeStream)
