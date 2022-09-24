@@ -316,7 +316,8 @@ void InventoryMan::drawPanelScroll(Scroll *scroll) {
 	DisplayMan &dispMan = *_vm->_displayMan;
 
 	char stringFirstLine[300];
-	_vm->_dungeonMan->decodeText(stringFirstLine, Thing(scroll->getTextStringThingIndex()), (TextType)(kDMTextTypeScroll | kDMMaskDecodeEvenIfInvisible));
+	_vm->_dungeonMan->decodeText(stringFirstLine, sizeof(stringFirstLine),
+			Thing(scroll->getTextStringThingIndex()), (TextType)(kDMTextTypeScroll | kDMMaskDecodeEvenIfInvisible));
 	char *charRed = stringFirstLine;
 	while (*charRed && (*charRed != '\n'))
 		charRed++;
@@ -414,27 +415,27 @@ void InventoryMan::buildObjectAttributeString(int16 potentialAttribMask, int16 a
 		return;
 	}
 
-	strcpy(destString, prefixString);
+	Common::strcpy_s(destString, 40, prefixString);
 
 	attribMask = 1;
 	for (uint16 stringIndex = 0; stringIndex < 16; stringIndex++, attribMask <<= 1) {
 		if (attribMask & potentialAttribMask & actualAttribMask) {
-			strcat(destString, attribStrings[stringIndex]);
+			Common::strcat_s(destString, 40, attribStrings[stringIndex]);
 			if (identicalBitCount-- > 2) {
-				strcat(destString, ", ");
+				Common::strcat_s(destString, 40, ", ");
 			} else if (identicalBitCount == 1) {
 
 				switch (_vm->getGameLanguage()) { // localized
 				default:
-				case Common::EN_ANY: strcat(destString, " AND "); break;
-				case Common::DE_DEU: strcat(destString, " UND "); break;
-				case Common::FR_FRA: strcat(destString, " ET "); break;
+				case Common::EN_ANY: Common::strcat_s(destString, 40, " AND "); break;
+				case Common::DE_DEU: Common::strcat_s(destString, 40, " UND "); break;
+				case Common::FR_FRA: Common::strcat_s(destString, 40, " ET "); break;
 				}
 			}
 		}
 	}
 
-	strcat(destString, suffixString);
+	Common::strcat_s(destString, 40, suffixString);
 }
 
 void InventoryMan::drawPanelObjectDescriptionString(const char *descString) {
@@ -446,7 +447,7 @@ void InventoryMan::drawPanelObjectDescriptionString(const char *descString) {
 
 	if (descString[0]) {
 		char stringTmpBuff[128];
-		strcpy(stringTmpBuff, descString);
+		Common::strcpy_s(stringTmpBuff, descString);
 
 		char *stringLine = stringTmpBuff;
 		bool severalLines = false;

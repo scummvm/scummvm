@@ -2755,7 +2755,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 	unsigned char inscriptionString[70];
 	bool isInscription = (wallOrnamentIndex == dungeon._currMapInscriptionWallOrnIndex);
 	if (isInscription)
-		dungeon.decodeText((char *)inscriptionString, _inscriptionThing, kDMTextTypeInscription);
+		dungeon.decodeText((char *)inscriptionString, sizeof(inscriptionString), _inscriptionThing, kDMTextTypeInscription);
 
 	int16 blitPosX;
 	byte *ornBlitBitmap;

@@ -1046,7 +1046,7 @@ Thing DungeonMan::getNextThing(Thing thing) {
 	return Thing(getThingData(thing)[0]);
 }
 
-void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
+void DungeonMan::decodeText(char *destString, size_t maxSize, Thing thing, TextType type) {
 	static char messageAndScrollEscReplacementStrings[32][8] = { // @ G0255_aac_Graphic559_MessageAndScrollEscapeReplacementStrings
 		{'x',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { '?',  0,  0,  0, 0, 0, 0, 0 }, */
 		{'y',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { '!',  0,  0,  0, 0, 0, 0, 0 }, */
@@ -1145,7 +1145,8 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 		uint16 *codeWord = _dungeonTextData + textString.getWordOffset();
 		uint16 code = 0, codes = 0;
 		char *escReplString = nullptr;
-		for (;;) { /*infinite loop*/
+		char *endDestString = destString + maxSize;
+		for (; destString < endDestString; ) {
 			if (!codeCounter) {
 				codes = *codeWord++;
 				code = (codes >> 10) & 0x1F;
@@ -1167,8 +1168,8 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 				} else
 					escReplString = escReplacementCharacters[code];
 
-				strcat(destString, escReplString);
-				destString += strlen(escReplString);
+				size_t ln = Common::strlcpy(destString, escReplString, endDestString - destString);
+				destString += ln;
 				escChar = 0;
 			} else if (code < 28) {
 				if (type != kDMTextTypeInscription) {
@@ -1187,6 +1188,7 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 			else
 				break;
 		}
+		assert(destString < endDestString);
 	}
 	*destString = ((type == kDMTextTypeInscription) ? 0x81 : '\0');
 }
