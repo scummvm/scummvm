@@ -31,7 +31,6 @@ namespace MM1 {
 namespace Game {
 
 ViewBase::ViewBase(UIElement *owner) : Views::TextView("View", owner) {
-	Common::fill(&_arr2[0], &_arr2[8], 0);
 }
 
 void ViewBase::update() {
@@ -181,7 +180,8 @@ void ViewBase::forward(KeybindingAction action) {
 		}
 	}
 
-	Common::fill(&_arr2[0], &_arr2[8], 0);
+	Common::fill(&g_globals->_treasure[0],
+		&g_globals->_treasure[TREASURE_COUNT], 0);
 
 	int maxVal = map[Maps::MAP_29];
 	if (g_engine->getRandomNumber(maxVal) == maxVal)
@@ -209,7 +209,8 @@ void ViewBase::backwards() {
 		}
 	}
 
-	Common::fill(&_arr2[0], &_arr2[8], 0);
+	Common::fill(&g_globals->_treasure[0],
+		&g_globals->_treasure[TREASURE_COUNT], 0);
 
 	int maxVal = map[Maps::MAP_29];
 	if (g_engine->getRandomNumber(maxVal) == maxVal)

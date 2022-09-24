@@ -43,7 +43,18 @@ struct Monster {
 	byte _field10;
 	byte _field11;
 	byte _field12;
-	byte _unk[12];
+	byte _field13;
+	byte _field14;
+	byte _field15;
+	byte _field16;
+	byte _field17;
+	byte _field18;
+	byte _field19;
+	byte _field1a;
+	byte _field1b;
+	byte _field1c;
+	byte _field1d;
+	byte _field1e;
 	byte _field1f;
 };
 

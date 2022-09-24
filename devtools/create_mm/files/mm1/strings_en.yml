@@ -126,6 +126,10 @@
 	ready:
 		1: "  ARE YOU READY? "
 		2: "THEN PRESS ENTER!"
+	search:
+		search: "SEARCH: "
+		you_found: "YOU FOUND..."
+		nothing: "NOTHING"
 	statues:
 		stone: "ON THIS STONE STATUE OF "
 		plaque: "A PLAQUE READS..."
