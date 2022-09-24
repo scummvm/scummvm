@@ -147,11 +147,11 @@ Bitmap &Bitmap::operator=(const Bitmap &bmp) {
 }
 
 char *Bitmap::forceExt(char *buf, const char *name, const char *ext) {
-	strcpy(buf, name);
+	Common::strcpy_s(buf, kMaxPath, name);
 	char *dot = strrchr(buf, '.');
 	if (dot)
 		*dot = '\0';
-	strcat(buf, ext);
+	Common::strcat_s(buf, kMaxPath, ext);
 
 	return buf;
 }

@@ -115,10 +115,10 @@ const Dac g_stdPal[] =  {// R    G   B
 };
 
 char *CGEEngine::mergeExt(char *buf, const char *name, const char *ext) {
-	strcpy(buf, name);
+	Common::strcpy_s(buf, kPathMax, name);
 	char *dot = strrchr(buf, '.');
 	if (!dot)
-		strcat(buf, ext);
+		Common::strcat_s(buf, kPathMax, ext);
 
 	return buf;
 }
@@ -1041,6 +1041,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 
 	char tmpStr[kLineMax + 1];
 	Common::String line;
+	STATIC_ASSERT(kLineMax + 1 >= kPathMax, mergeExt_expects_kPathMax_buffer);
 	mergeExt(tmpStr, fname, kSprExt);
 
 	if (_resman->exist(tmpStr)) {      // sprite description file exist
