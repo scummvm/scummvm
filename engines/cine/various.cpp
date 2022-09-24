@@ -312,11 +312,11 @@ void CineEngine::resetEngine() {
 	bgVar0 = 0;
 	var2 = var3 = var4 = lastType20OverlayBgIdx = 0;
 
-	strcpy(newPrcName, "");
-	strcpy(newRelName, "");
-	strcpy(newObjectName, "");
-	strcpy(newMsgName, "");
-	strcpy(currentCtName, "");
+	newPrcName[0] = '\0';
+	newRelName[0] = '\0';
+	newObjectName[0] = '\0';
+	newMsgName[0] = '\0';
+	currentCtName[0] = '\0';
 
 	allowPlayerInput = 0;
 	waitForPlayerClick = 0;
@@ -609,7 +609,7 @@ int16 buildObjectListCommand(int16 param) {
 
 	for (i = 0; i < 255; i++) {
 		if (g_cine->_objectTable[i].name[0] && g_cine->_objectTable[i].costume == param) {
-			strcpy(objectListCommand[j], g_cine->_objectTable[i].name);
+			Common::strcpy_s(objectListCommand[j], g_cine->_objectTable[i].name);
 			objListTab[j] = i;
 			j++;
 		}
@@ -1471,8 +1471,8 @@ void checkForPendingDataLoad() {
 	if (newPrcName[0] != 0) {
 		bool loadPrcOk = loadPrc(newPrcName);
 
-		strcpy(currentPrcName, newPrcName);
-		strcpy(newPrcName, "");
+		Common::strcpy_s(currentPrcName, newPrcName);
+		newPrcName[0] = '\0';
 
 		// Check that the loading of the script file was successful before
 		// trying to add script 1 from it to the global scripts list. This
@@ -1490,8 +1490,8 @@ void checkForPendingDataLoad() {
 	if (newRelName[0] != 0) {
 		loadRel(newRelName);
 
-		strcpy(currentRelName, newRelName);
-		strcpy(newRelName, "");
+		Common::strcpy_s(currentRelName, newRelName);
+		newRelName[0] = '\0';
 	}
 
 	if (newObjectName[0] != 0) {
@@ -1499,23 +1499,23 @@ void checkForPendingDataLoad() {
 
 		loadObject(newObjectName);
 
-		strcpy(currentObjectName, newObjectName);
-		strcpy(newObjectName, "");
+		Common::strcpy_s(currentObjectName, newObjectName);
+		newObjectName[0] = '\0';
 	}
 
 	if (newMsgName[0] != 0) {
 		loadMsg(newMsgName);
 
-		strcpy(currentMsgName, newMsgName);
-		strcpy(newMsgName, "");
+		Common::strcpy_s(currentMsgName, newMsgName);
+		newMsgName[0] = '\0';
 	}
 }
 
 void hideMouse() {
 }
 
-void removeExtention(char *dest, const char *source) {
-	strcpy(dest, source);
+void removeExtention(char *dest, const char *source, size_t sz) {
+	Common::strcpy_s(dest, sz, source);
 
 	byte *ptr = (byte *) strchr(dest, '.');
 
@@ -1954,7 +1954,7 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 				if (inputPos != inputLength) {
 					strncat(tempString, &inputString[inputPos], inputLength - inputPos);
 				}
-				strcpy(inputString, tempString);
+				Common::strcpy_s(inputString, stringMaxLength, tempString);
 				inputLength = strlen(inputString);
 				redraw = true;
 			}
@@ -1980,16 +1980,16 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 					ch[0] = ascii;
 					if (inputPos != 1) {
 						strncpy(tempString, inputString, inputPos - 1);
-						strcat(tempString, ch);
+						Common::strcat_s(tempString, ch);
 					}
 					if ((inputLength == 0) || (inputPos == 1)) {
-						strcpy(tempString, ch);
+						Common::strcpy_s(tempString, ch);
 					}
 					if ((inputLength != 0) && (inputPos != inputLength)) {
 						strncat(tempString, &inputString[inputPos - 1], inputLength - inputPos + 1);
 					}
 
-					strcpy(inputString, tempString);
+					Common::strcpy_s(inputString, stringMaxLength, tempString);
 					inputLength = strlen(inputString);
 					inputPos++;
 					redraw = true;

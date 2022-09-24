@@ -1380,7 +1380,7 @@ int FWScript::o1_loadBg() {
 
 	if (g_cine->getGameType() == GType_FW && (g_cine->getFeatures() & GF_CD)) {
 		char buffer[20];
-		removeExtention(buffer, param);
+		removeExtention(buffer, param, sizeof(buffer));
 		g_sound->setBgMusic(atoi(buffer + 1));
 	}
 
@@ -2212,7 +2212,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			opcode = 0;
 		}
 
-		strcpy(lineBuffer, "");
+		Common::strcpy_s(lineBuffer, "");
 
 		switch (opcode - 1) {
 		case -1: {
@@ -3222,7 +3222,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 		}
 
 		//printf(lineBuffer);
-		strcpy(decompileBuffer[decompileBufferPosition++], lineBuffer);
+		Common::strcpy_s(decompileBuffer[decompileBufferPosition++], lineBuffer);
 
 		exitScript = 0;
 		if (position >= scriptSize) {
