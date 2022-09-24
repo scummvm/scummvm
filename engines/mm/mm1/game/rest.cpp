@@ -42,7 +42,7 @@ void Rest::check() {
 			g_globals->_party.size() - 1);
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
 			Character &c = g_globals->_party[i];
-			if (c._condition >= 0 && i != awakeIndex)
+			if (!(c._condition & BAD_CONDITION) && i != awakeIndex)
 				c._condition |= ASLEEP;
 		}
 

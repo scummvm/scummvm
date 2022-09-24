@@ -81,7 +81,7 @@ bool Teleport::msgKeypress(const KeypressMessage &msg) {
 		_mode = CAST;
 		redraw();
 
-	} else if (_mode == CAST && Common::KEYCODE_RETURN) {
+	} else if (_mode == CAST && msg.keycode == Common::KEYCODE_RETURN) {
 		teleport();
 	}
 

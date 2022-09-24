@@ -312,7 +312,7 @@ void Encounter::retreat() {
 		// Nowhere to run depending on the map
 		_mode = NOWHERE_TO_RUN;
 		redraw();
-	} else if (enc._monsterList.size() < (int)g_globals->_party.size() || !enc.checkSurroundParty()) {
+	} else if (enc._monsterList.size() < g_globals->_party.size() || !enc.checkSurroundParty()) {
 		// Only allow fleeing if the number of monsters
 		// are less than the size of the party
 		flee();

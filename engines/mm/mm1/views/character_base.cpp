@@ -148,7 +148,7 @@ void CharacterBase::printInventory() {
 		_textPos.x++;
 		if (re._equipped[i])
 			writeString(STRING[Common::String::format("stats.items.%d",
-				re._equipped[i])]);
+				(int)re._equipped[i]._id)]);
 
 		// Backpack item
 		writeChar(20, 13 + i, 'A' + i);
@@ -156,7 +156,7 @@ void CharacterBase::printInventory() {
 		_textPos.x++;
 		if (re._backpack[i])
 			writeString(STRING[Common::String::format("stats.items.%d",
-				re._backpack[i])]);
+			(int)re._backpack[i]._id)]);
 	}
 }
 

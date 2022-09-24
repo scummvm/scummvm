@@ -47,6 +47,8 @@ void Party::share(TransferKind shareType) {
 	case TK_FOOD:
 		SHARE_FIELD(_food);
 		break;
+	default:
+		break;
 	}
 }
 
