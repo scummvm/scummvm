@@ -40,6 +40,7 @@ uint16 FreescapeEngine::readField(Common::SeekableReadStream *file, int bits) {
 			uint16 hi = file->readUint16BE();
 			assert(hi < 256);
 			value = 256 * hi + lo;
+			value = 2 * value; // Unclear why, but this reads a pointer
 		} else {
 			assert(bits == 8);
 			value = file->readUint16BE();
@@ -358,10 +359,8 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	}
 	long int endLastObject = file->pos();
 	debugC(1, kFreescapeDebugParser, "Last position %lx", endLastObject);
-	if (!isAmiga()) {
-		assert(endLastObject == base + cPtr || areaNumber == 192);
-		file->seek(base + cPtr);
-	}
+	assert(endLastObject == base + cPtr || areaNumber == 192);
+	file->seek(base + cPtr);
 	uint8 numConditions = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "%d area conditions at %x of area %d", numConditions, base + cPtr, areaNumber);
 
@@ -449,7 +448,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	file->seek(offset + globalByteCodeTable);
 	uint8 numConditions = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "%d global conditions", numConditions);
-	while (numConditions--) {
+	while (!isAmiga() && numConditions--) { // TODO: read global conditions in Amiga
 		FCLInstructionVector instructions;
 		// get the length
 		uint32 lengthOfCondition = readField(file, 8);
@@ -473,8 +472,6 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	uint16 *fileOffsetForArea = new uint16[numberOfAreas];
 	for (uint16 area = 0; area < numberOfAreas; area++) {
 		fileOffsetForArea[area] = readField(file, 16);
-		if (isAmiga())
-			fileOffsetForArea[area] = 2 * fileOffsetForArea[area];
 		debugC(1, kFreescapeDebugParser, "offset: %x", fileOffsetForArea[area]);
 	}
 
