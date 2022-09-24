@@ -194,6 +194,8 @@ void Map00::special08() {
 				maps._mapPos = Common::Point(8, 5);
 				g_events->send("View", GameMessage("UPDATE"));
 				break;
+			default:
+				break;
 			}
 		}
 	);
