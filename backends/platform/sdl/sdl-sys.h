@@ -64,6 +64,16 @@
 #define mkdir FAKE_mkdir
 #endif
 
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_strcpy)
+#undef strcpy
+#define strcpy FAKE_strcpy
+#endif
+
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_strcat)
+#undef strcat
+#define strcat FAKE_strcat
+#endif
+
 // Fix compilation with MacPorts SDL 2
 // It needs various (usually forbidden) symbols from time.h
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_time_h
@@ -253,6 +263,16 @@
 #if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_mkdir)
 #undef mkdir
 #define mkdir(a,b) FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_strcpy)
+#undef strcpy
+#define strcpy(a,b)    FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_strcat)
+#undef strcat
+#define strcat(a,b)    FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
 // re-forbid all those time.h symbols again (if they were forbidden)
