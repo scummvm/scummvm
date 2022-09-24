@@ -1182,7 +1182,7 @@ void increment_turn(void) {
 	/* Now increment the time counter */
 	if (delta_time > 0) {
 		if (PURE_TIME)
-			add_time(agt_rand(min_delta(), delta_time));
+			add_time(get_random(min_delta(), delta_time));
 		else /* if !PURE_TIME */
 			add_time(delta_time);
 	}
