@@ -763,7 +763,7 @@ void DrasculaEngine::animation_16_2() {
 		if (i < 4)
 			sprintf(curPic, "his%i.alg", i);
 		else
-			strcpy(curPic, "his4_2.alg");
+			Common::strcpy_s(curPic, "his4_2.alg");
 
 		loadPic(curPic, screenSurface, HALF_PAL);
 		centerText(_texthis[i], 180, 180);
@@ -2079,7 +2079,7 @@ void DrasculaEngine::animation_1_4() {
 	debug(4, "animation_1_4()");
 
 	if (flags[21] == 0) {
-		strcpy(objName[2], _textmisc[5]); // "igor"
+		Common::strcpy_s(objName[2], _textmisc[5]); // "igor"
 		talk(275);
 
 		updateRefresh_pre();
