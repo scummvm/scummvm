@@ -297,12 +297,13 @@ void addDecomp(char *string, ...) {
 
 void resolveVarName(char *ovlIdxString, int varType, char *varIdxString,
 					char *outputName) {
+	// outputName is 256 length
 	int varIdx = atoi(varIdxString);
 
-	strcpy(outputName, "");
+	outputName[0] = '\0';
 
 	if (varType == 2) {
-		strcpy(outputName, getStringNameFromIdx(varType,
+		Common::strlcpy(outputName, 256, getStringNameFromIdx(varType,
 		                                        varIdxString));
 		return;
 	}
@@ -333,7 +334,7 @@ void resolveVarName(char *ovlIdxString, int varType, char *varIdxString,
 		sprintf(outputName, "ovl(%s).[%d][%s]", ovlIdxString, varType,
 		        varIdxString);
 	} else {
-		strcpy(outputName, ovlIdxString);
+		Common::strcpy_s(outputName, 256,  ovlIdxString);
 	}
 }
 
@@ -451,7 +452,7 @@ int decompSaveVar() {
 		break;
 	}
 	case 4: {
-		strcpy(decompSaveOpcodeVar, popDecomp());
+		Common::strcpy_s(decompSaveOpcodeVar,  popDecomp());
 		break;
 	}
 	case 5: {
@@ -685,8 +686,8 @@ int decompSwapStack() {
 	stack1 = popDecomp();
 	stack2 = popDecomp();
 
-	strcpy(buffer1, stack1);
-	strcpy(buffer2, stack2);
+	Common::strcpy_s(buffer1,  stack1);
+	Common::strcpy_s(buffer2,  stack2);
 
 	pushDecomp(buffer1);
 	pushDecomp(buffer2);
@@ -722,7 +723,7 @@ int decompFunction() {
 
 	case 0x6: {
 		unsigned long int numArg = atoi(popDecomp());
-		char functionName[100];
+		char functionName[256];
 
 		char *idxStr = popDecomp();
 		char *ovlStr = popDecomp();

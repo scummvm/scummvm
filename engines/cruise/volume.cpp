@@ -70,7 +70,7 @@ int closeBase() {
 
 		MemFree(volumePtrToFileDescriptor);
 
-		strcpy(currentBaseName, "");
+		currentBaseName[0] = '\0';
 	}
 
 	if (_vm->_PAL_file.isOpen()) {
@@ -91,7 +91,7 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 
 	askDisk(-1);
 
-	strcpy(buffer, entry->ident);
+	Common::strcpy_s(buffer, entry->ident);
 
 	_vm->_currentVolumeFile.open(buffer);
 
@@ -125,7 +125,7 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 		volumePtrToFileDescriptor[i].unk3 = _vm->_currentVolumeFile.readSint32BE();
 	}
 
-	strcpy(currentBaseName, entry->ident);
+	Common::strcpy_s(currentBaseName, entry->ident);
 
 	loadPal(entry);
 

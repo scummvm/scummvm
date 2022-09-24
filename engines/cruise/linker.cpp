@@ -45,7 +45,7 @@ exportEntryStruct *parseExport(int *out1, int *pExportedFuncionIdx, char *buffer
 		Common::strlcpy(functionName, dotPtr + 1, sizeof(functionName));
 		*dotPtr = 0;
 
-		strcpy(overlayName, localBuffer);
+		Common::strcpy_s(overlayName, localBuffer);
 	} else {
 		overlayName[0] = 0;
 
