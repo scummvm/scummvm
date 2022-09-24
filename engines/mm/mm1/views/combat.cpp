@@ -68,6 +68,7 @@ void Combat::draw() {
 
 	case DEFEATED_MONSTERS:
 		writeDefeat();
+		Sound::sound2(SOUND_3);
 		delaySeconds(3);
 		break;
 
@@ -77,6 +78,22 @@ void Combat::draw() {
 }
 
 void Combat::timeout() {
+	switch (_mode) {
+	case DEFEATED_MONSTERS: {
+		auto &spells = g_globals->_spells;
+		spells._s.bless = 0;
+		spells._s.invisbility = 0;
+		spells._s.shield = 0;
+		spells._s.power_shield = 0;
+
+		close();
+		g_events->send("Game", GameMessage("UPDATE"));
+		return;
+	}
+	default:
+		 break;
+	}
+
 	redraw();
 }
 
