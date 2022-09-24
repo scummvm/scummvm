@@ -1151,8 +1151,6 @@ struct PathMotionModifier : public DataObject {
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
-
-	uint version;
 };
 
 struct DragMotionModifier : public DataObject {
