@@ -1294,10 +1294,9 @@ void Lingo::runTests() {
 			}
 
 			free(script);
-
+			delete stream;
 			counter++;
 		}
-		delete stream;
 
 		inFile.close();
 	}
