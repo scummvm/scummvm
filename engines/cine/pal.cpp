@@ -35,9 +35,9 @@ static byte paletteBuffer2[16];
 void loadPal(const char *fileName) {
 	char buffer[20];
 
-	removeExtention(buffer, fileName);
+	removeExtention(buffer, fileName, sizeof(buffer));
 
-	strcat(buffer, ".PAL");
+	Common::strcat_s(buffer, ".PAL");
 	g_cine->_palArray.clear();
 
 	Common::File palFileHandle;
@@ -86,7 +86,7 @@ void loadRelatedPalette(const char *fileName) {
 	byte i;
 	int16 paletteIndex;
 
-	removeExtention(localName, fileName);
+	removeExtention(localName, fileName, sizeof(localName));
 
 	paletteIndex = findPaletteFromName(localName);
 
