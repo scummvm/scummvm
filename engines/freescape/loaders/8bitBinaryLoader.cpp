@@ -505,7 +505,11 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 
 void FreescapeEngine::loadBorder() {
 	Image::BitmapDecoder decoder;
-	Common::String borderFilename = _targetName + "_" + _renderMode + ".bmp";
+	Common::String borderFilename;
+	if (isAmiga())
+		borderFilename = _targetName + ".bmp";
+	else
+		borderFilename = _targetName + "_" + _renderMode + ".bmp";
 
 	if (_dataBundle->hasFile(borderFilename)) {
 		Common::SeekableReadStream *borderFile = _dataBundle->createReadStreamForMember(borderFilename);
