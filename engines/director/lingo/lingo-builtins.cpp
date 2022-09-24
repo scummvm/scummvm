@@ -1885,8 +1885,8 @@ void LB::b_findEmpty(int nargs) {
 	Datum res;
 
 	if (d.u.cast->member > c_end) {
-		d.type = INT;
-		g_lingo->push(d);
+		res = d.u.cast->member;
+		g_lingo->push(res);
 		return;
 	}
 
@@ -2173,9 +2173,10 @@ void LB::b_move(int nargs) {
 
 	movie->getScore()->renderFrame(frame, kRenderForceUpdate);
 
+	g_director->getCurrentMovie()->eraseCastMember(dest.asMemberID());
+	
 	CastMember *toMove = g_director->getCurrentMovie()->getCastMember(src.asMemberID());
-	CastMember *toReplace = new CastMember(*toMove);
-	toReplace->_type = kCastTypeNull;
+	CastMember *toReplace = new CastMember(toMove->getCast(), src.asMemberID().member);
 	g_director->getCurrentMovie()->createOrReplaceCastMember(dest.asMemberID(), toMove);
 	g_director->getCurrentMovie()->createOrReplaceCastMember(src.asMemberID(), toReplace);
 

@@ -76,6 +76,8 @@ Window::~Window() {
 		delete _macBinary;
 		_macBinary = nullptr;
 	}
+	if (_puppetTransition)
+		delete _puppetTransition;
 
 	for (auto &it: _callstack) {
 		delete it;

@@ -204,6 +204,8 @@ CastMember *Cast::setCastMember(CastMemberID castId, CastMember *cast) {
 
 bool Cast::eraseCastMember(CastMemberID castId) {
 	if (_loadedCast->contains(castId.member)) {
+		CastMember *member = _loadedCast->getVal(castId.member);
+		delete member;
 		_loadedCast->erase(castId.member);
 		return true;
 	}

@@ -1293,6 +1293,7 @@ void Lingo::runTests() {
 
 			counter++;
 		}
+		delete stream;
 
 		inFile.close();
 	}
