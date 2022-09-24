@@ -325,7 +325,7 @@ static const char *keycodeDescTable[] = {
 	"Break",
 	"Menu",
 	"Power",
-	"€",
+	"Euro",
 	"Undo"
 };
 static const int keycodeDescTableSize = 322;
