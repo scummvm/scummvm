@@ -77,6 +77,17 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("c", WRAP_METHOD(Debugger, cmdExit));
 
+	registerCmd("bpset", WRAP_METHOD(Debugger, cmdBpSet));
+	registerCmd("b", WRAP_METHOD(Debugger, cmdBpSet));
+	registerCmd("bpmovie", WRAP_METHOD(Debugger, cmdBpMovie));
+	registerCmd("bm", WRAP_METHOD(Debugger, cmdBpMovie));
+	registerCmd("bpframe", WRAP_METHOD(Debugger, cmdBpFrame));
+	registerCmd("bf", WRAP_METHOD(Debugger, cmdBpFrame));
+	registerCmd("bpdel", WRAP_METHOD(Debugger, cmdBpDel));
+	registerCmd("bpenable", WRAP_METHOD(Debugger, cmdBpEnable));
+	registerCmd("bpdisable", WRAP_METHOD(Debugger, cmdBpDisable));
+	registerCmd("bplist", WRAP_METHOD(Debugger, cmdBpList));
+
 	_nextFrame = false;
 	_nextFrameCounter = 0;
 	_nextMovie = false;
@@ -88,6 +99,10 @@ Debugger::Debugger(): GUI::Debugger() {
 	_nextCounter = 0;
 	_nextFrame = false;
 	_nextFrameCounter = 0;
+	_bpNextId = 1;
+	_bpCheckFuncName = false;
+	_bpCheckMoviePath = false;
+	_bpNextMovieMatch = false;
 }
 
 Debugger::~Debugger() {
@@ -120,7 +135,7 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	//debugPrintf(" eval [statement] - Evaluates a single Lingo statement\n");
 	debugPrintf(" repl - Switches to a REPL interface for evaluating Lingo code\n");
 	debugPrintf(" backtrace / bt - Prints a backtrace of all stack frames\n");
-	debugPrintf(" disasm / da [scriptid:funcname] - Lists the bytecode disassembly for a script function\n");
+	debugPrintf(" disasm / da [scriptId:funcName] - Lists the bytecode disassembly for a script function\n");
 	debugPrintf(" stack / st - Lists the elements on the stack\n");
 	debugPrintf(" scriptframe / sf - Prints the current script frame\n");
 	debugPrintf(" funcs - Lists all of the functions available in the current script frame\n");
@@ -131,16 +146,17 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" continue / c - Continues execution\n");
 	debugPrintf("\n");
 	debugPrintf("Breakpoints:\n");
-	debugPrintf("\n");
-	//debugPrintf(" bpset [funcname] - Creates a breakpoint on a Lingo function matching a name\n");
-	//debugPrintf(" bpset [funcname] [offset] - Creates a breakpoint on a Lingo function matching a name and offset\n");
-	//debugPrintf(" bpset [scriptid:funcname] - Creates a breakpoint on a Lingo function matching a script ID and name\n");
-	//debugPrintf(" bpset [scriptid:funcname] [offset] - Creates a breakpoint on a Lingo function matching a script ID, name and offset\n");
-	//debugPrintf(" bpframe [frameId] - Create a breakpoint on a frame in the score\n");
-	//debugPrintf(" bpdel [n] - Deletes a specific breakpoint\n");
-	//debugPrintf(" bpenable [n] - Enables a specific breakpoint\n");
-	//debugPrintf(" bpdisable [n] - Disables a specific breakpoint\n");
-	//debugPrintf(" bplist - Lists all breakpoints\n");
+	debugPrintf(" bpset / b [funcName] - Creates a breakpoint on a Lingo function matching a name\n");
+	debugPrintf(" bpset / b [funcName] [offset] - Creates a breakpoint on a Lingo function matching a name and offset\n");
+	debugPrintf(" bpset / b [scriptId:funcName] - Creates a breakpoint on a Lingo function matching a script ID and name\n");
+	debugPrintf(" bpset / b [scriptId:funcName] [offset] - Creates a breakpoint on a Lingo function matching a script ID, name and offset\n");
+	debugPrintf(" bpmovie / bf [moviePath] - Create a breakpoint on a switch to a movie\n");
+	debugPrintf(" bpframe / bf [frameId] - Create a breakpoint on a frame in the score\n");
+	debugPrintf(" bpframe / bf [moviePath] [frameId] - Create a breakpoint on a frame in the score of a specific movie\n");
+	debugPrintf(" bpdel [n] - Deletes a specific breakpoint\n");
+	debugPrintf(" bpenable [n] - Enables a specific breakpoint\n");
+	debugPrintf(" bpdisable [n] - Disables a specific breakpoint\n");
+	debugPrintf(" bplist - Lists all breakpoints\n");
 	return true;
 }
 
@@ -196,10 +212,10 @@ bool Debugger::cmdChannels(int argc, const char **argv) {
 		frameId = atoi(argv[1]);
 
 	if (frameId >= 1 && frameId <= maxSize) {
-		debugPrintf("Channel info for frame %d of %d", frameId, maxSize);
+		debugPrintf("Channel info for frame %d of %d\n", frameId, maxSize);
 		debugPrintf("%s\n", score->_frames[frameId-1]->formatChannelInfo().c_str());
 	} else {
-		debugPrintf("Must specify a frame number between 1 and %d\n", maxSize);
+		debugPrintf("Must specify a frame number between 1 and %d.\n", maxSize);
 	}
 	return true;
 }
@@ -393,6 +409,218 @@ bool Debugger::cmdFinish(int argc, const char **argv) {
 	return cmdExit(0, nullptr);
 }
 
+bool Debugger::cmdBpSet(int argc, const char **argv) {
+	if (argc == 2 || argc == 3) {
+		Breakpoint bp;
+		bp.id = _bpNextId;
+		_bpNextId++;
+		bp.type = kBreakpointFunction;
+		Common::String target(argv[1]);
+		uint splitPoint = target.findFirstOf(":");
+		if (splitPoint == Common::String::npos) {
+			bp.funcName = target;
+		} else {
+			bp.scriptId = atoi(target.substr(0, splitPoint).c_str());
+			bp.funcName = target.substr(splitPoint + 1, Common::String::npos);
+		}
+		if (argc == 3) {
+			bp.funcOffset = atoi(argv[2]);
+		}
+		_breakpoints.push_back(bp);
+		bpUpdateState();
+		debugPrintf("Added %s\n", bp.format().c_str());
+	} else {
+		debugPrintf("Must specify a function name.\n");
+	}
+	return true;
+}
+
+bool Debugger::cmdBpMovie(int argc, const char **argv) {
+	if (argc == 2) {
+		Breakpoint bp;
+		bp.id = _bpNextId;
+		_bpNextId++;
+		bp.type = kBreakpointMovie;
+		bp.moviePath = argv[1];
+		_breakpoints.push_back(bp);
+		bpUpdateState();
+		debugPrintf("Added %s\n", bp.format().c_str());
+	} else {
+		debugPrintf("Must specify a movie path.\n");
+	}
+	return true;
+}
+
+bool Debugger::cmdBpFrame(int argc, const char **argv) {
+	Movie *movie = g_director->getCurrentMovie();
+	if (argc == 2 || argc == 3) {
+		Breakpoint bp;
+		bp.id = _bpNextId;
+		_bpNextId++;
+		bp.type = kBreakpointMovieFrame;
+		Common::String target(argv[1]);
+		if (argc == 3) {
+			bp.moviePath = argv[1];
+			bp.frameOffset = atoi(argv[2]);
+		} else {
+			bp.moviePath = movie->getArchive()->getFileName();
+			bp.frameOffset = atoi(argv[1]);
+		}
+		if (bp.frameOffset == 0) {
+			debugPrintf("Must specify a valid frame ID.\n");
+			return true;
+		}
+		_breakpoints.push_back(bp);
+		bpUpdateState();
+		debugPrintf("Added %s\n", bp.format().c_str());
+	} else {
+		debugPrintf("Must specify a valid frame ID.\n");
+	}
+	return true;
+}
+
+bool Debugger::cmdBpDel(int argc, const char **argv) {
+	if (argc == 2 && atoi(argv[1]) > 0) {
+		bool found = false;
+		for (auto it = _breakpoints.begin(); it != _breakpoints.end(); ++it) {
+			if (it->id == atoi(argv[1])) {
+				it = _breakpoints.erase(it);
+				found = true;
+				bpUpdateState();
+				debugPrintf("Deleted breakpoint %s.\n", argv[1]);
+				break;
+			}
+		}
+		if (!found)
+			debugPrintf("No breakpoint with ID %s.\n", argv[1]);
+	} else {
+		debugPrintf("Must specify a breakpoint ID.\n");
+	}
+	return true;
+}
+
+bool Debugger::cmdBpEnable(int argc, const char **argv) {
+	if (argc == 2 && atoi(argv[1]) > 0) {
+		bool found = false;
+		for (auto it = _breakpoints.begin(); it != _breakpoints.end(); ++it) {
+			if (it->id == atoi(argv[1])) {
+				it->enabled = true;
+				found = true;
+				bpUpdateState();
+				debugPrintf("Enabled breakpoint %s.\n", argv[1]);
+				break;
+			}
+		}
+		if (!found)
+			debugPrintf("No breakpoint with ID %s.\n", argv[1]);
+	} else {
+		debugPrintf("Must specify a breakpoint ID.\n");
+	}
+	return true;
+}
+
+bool Debugger::cmdBpDisable(int argc, const char **argv) {
+	if (argc == 2 && atoi(argv[1]) > 0) {
+		bool found = false;
+		for (auto it = _breakpoints.begin(); it != _breakpoints.end(); ++it) {
+			if (it->id == atoi(argv[1])) {
+				it->enabled = false;
+				found = true;
+				bpUpdateState();
+				debugPrintf("Disabled breakpoint %s.\n", argv[1]);
+				break;
+			}
+		}
+		if (!found)
+			debugPrintf("No breakpoint with ID %s.\n", argv[1]);
+	} else {
+		debugPrintf("Must specify a breakpoint ID.\n");
+	}
+	return true;
+}
+
+bool Debugger::cmdBpList(int argc, const char **argv) {
+	if (_breakpoints.size()) {
+		for (auto &it : _breakpoints) {
+			debugPrintf("%s (%s)\n", it.format().c_str(), it.enabled ? "enabled" : "disabled");
+		}
+	} else {
+		debugPrintf("No breakpoints set.\n");
+	}
+	return true;
+}
+
+void Debugger::bpUpdateState() {
+	_bpCheckFuncName = false;
+	_bpCheckMoviePath = false;
+	_bpNextMovieMatch = false;
+	_bpMatchFuncOffsets.clear();
+	_bpMatchFuncName.clear();
+	_bpMatchMoviePath.clear();
+	_bpMatchFrameOffsets.clear();
+	Movie *movie = g_director->getCurrentMovie();
+	Common::Array<CFrame *> &callstack = g_director->getCurrentWindow()->_callstack;
+	for (auto &it : _breakpoints) {
+		if (!it.enabled)
+			continue;
+		if (it.type == kBreakpointFunction) {
+			_bpCheckFuncName = true;
+			if (!callstack.size())
+				continue;
+			CFrame *head = callstack[callstack.size() - 1];
+			if (!head->sp.name)
+				continue;
+			if (it.funcName.equalsIgnoreCase(*head->sp.name)) {
+				_bpMatchFuncName = it.funcName;
+				_bpMatchFuncOffsets.setVal(it.funcOffset, nullptr);
+			}
+		} else if (it.type == kBreakpointMovie || it.type == kBreakpointMovieFrame) {
+			_bpCheckMoviePath = true;
+			if (it.moviePath.equalsIgnoreCase(movie->getArchive()->getFileName())) {
+				_bpNextMovieMatch |= it.type == kBreakpointMovie;
+				_bpMatchMoviePath = it.moviePath;
+				_bpMatchFrameOffsets.setVal(it.frameOffset, nullptr);
+			}
+		}
+	}
+}
+
+void Debugger::bpTest(bool forceCheck) {
+	bool stop = forceCheck;
+	uint funcOffset = g_lingo->_pc;
+	Score *score = g_director->getCurrentMovie()->getScore();
+	uint frameOffset = score->getCurrentFrame();
+	if (_bpCheckFuncName) {
+		stop |= _bpMatchFuncOffsets.contains(funcOffset);
+	}
+	if (_bpCheckMoviePath) {
+		stop |= _bpMatchFrameOffsets.contains(frameOffset);
+	}
+	if (stop) {
+		debugPrintf("Hit a breakpoint:\n");
+		for (auto &it : _breakpoints) {
+			if (!it.enabled)
+				continue;
+			if (it.type == kBreakpointFunction) {
+				if (it.funcName.equalsIgnoreCase(_bpMatchFuncName) && it.funcOffset == funcOffset)
+					debugPrintf("%s\n", it.format().c_str());
+			} else if (it.type == kBreakpointMovie && _bpNextMovieMatch) {
+				if (it.moviePath.equalsIgnoreCase(_bpMatchMoviePath))
+					debugPrintf("%s\n", it.format().c_str());
+			} else if (it.type == kBreakpointMovieFrame) {
+				if (it.moviePath.equalsIgnoreCase(_bpMatchMoviePath) && it.frameOffset == frameOffset)
+					debugPrintf("%s\n", it.format().c_str());
+			}
+		}
+		// reset all step commands before returning to console
+		_nextMovie = false;
+		_nextFrame = false;
+		cmdScriptFrame(0, nullptr);
+		attach();
+		g_system->updateScreen();
+	}
+}
+
 bool Debugger::lingoCommandProcessor(const char *inputOrig) {
 	if (!strcmp(inputOrig, "lingo off")) {
 		registerDefaultCmd(nullptr);
@@ -410,6 +638,7 @@ bool Debugger::lingoCommandProcessor(const char *inputOrig) {
 }
 
 void Debugger::stepHook() {
+	bpTest();
 	if (_step && _nextCounter == 0) {
 		_stepCounter--;
 		if (_stepCounter == 0) {
@@ -429,6 +658,7 @@ void Debugger::stepHook() {
 }
 
 void Debugger::frameHook() {
+	bpTest();
 	if (_nextFrame) {
 		_nextFrameCounter--;
 		if (_nextFrameCounter == 0) {
@@ -441,6 +671,8 @@ void Debugger::frameHook() {
 }
 
 void Debugger::movieHook() {
+	bpUpdateState();
+	bpTest(_bpNextMovieMatch);
 	if (_nextMovie) {
 		_nextMovie = false;
 		cmdMovie(0, nullptr);
@@ -454,6 +686,7 @@ void Debugger::pushContextHook() {
 		_nextCounter++;
 	if (_finish)
 		_finishCounter++;
+	bpUpdateState();
 }
 
 void Debugger::popContextHook() {
@@ -461,6 +694,25 @@ void Debugger::popContextHook() {
 		_nextCounter--;
 	if (_finish)
 		_finishCounter--;
+	bpUpdateState();
+}
+
+void Debugger::builtinHook(const Symbol &funcSym) {
+	if (!funcSym.name)
+		return;
+	bpUpdateState();
+	bool builtinMatch = false;
+	if (_bpCheckFuncName) {
+		for (auto &it : _breakpoints) {
+			if (it.type != kBreakpointFunction)
+				continue;
+			if (it.funcName.equalsIgnoreCase(*funcSym.name)) {
+				builtinMatch = true;
+				break;
+			}
+		}
+	}
+	bpTest(builtinMatch);
 }
 
 void Debugger::debugLogFile(Common::String logs, bool prompt) {
