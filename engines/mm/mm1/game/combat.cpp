@@ -192,13 +192,20 @@ void Combat::combatLoop() {
 }
 
 void Combat::selectMonster() {
-	_monsterP = &_monsterList[0];
-	monsterIndexOf();
 	int count = 0;
+	int activeCharCount = 0;
 
 	for (uint i = 0; i < _monsterList.size(); ++i) {
+		_monsterP = &_monsterList[i];
+		monsterIndexOf();
+
 		count += _monsterP->_field16;
 		proc1();
+	}
+
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		if (!(g_globals->_party[i]._condition & BAD_CONDITION))
+			++activeCharCount;
 	}
 
 	// TODO
