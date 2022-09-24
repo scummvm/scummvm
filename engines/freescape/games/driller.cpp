@@ -127,10 +127,10 @@ void DrillerEngine::loadAssetsDemo() {
 
 	Common::File exe;
 	if (isAmiga()) {
-		file = gameDir.createReadStreamForMember("amiga.demo");
+		file = gameDir.createReadStreamForMember("data");
 
 		if (file == nullptr)
-			error("Failed to open 'amiga.demo' file");
+			error("Failed to open 'data' file");
 
 		//loadGlobalObjects(file, 0xbd62);
 		/*file->seek(0x29efe);
@@ -138,7 +138,7 @@ void DrillerEngine::loadAssetsDemo() {
 		file->seek(0x2a450);
 		load8bitArea(file, 16);*/
 
-		load8bitBinary(file, 0, 16);
+		load8bitBinary(file, 0x442, 16);
 	} else
 		error("Unsupported demo for Driller");
 }
