@@ -93,6 +93,8 @@ static long ask_for_number(int n1, int n2) {
 	for (;;) {
 		writestr(s);
 		n = read_number();
+		if (aver < AGX00)
+			n = (integer) n;
 		if (n1 == n2 || (n >= n1 && n <= n2)) return n;
 		writeln("");
 	}
