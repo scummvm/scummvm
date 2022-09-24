@@ -667,48 +667,56 @@ const char *SoundEffectModifier::getDefaultName() const {
 	return "Sound Effect Modifier";
 }
 
-PathMotionModifierV2::PointDef::PointDef() : frame(0), useFrame(false) {
+PathMotionModifier::PointDef::PointDef() : frame(0), useFrame(false) {
 }
 
-PathMotionModifierV2::PathMotionModifierV2()
+PathMotionModifier::PathMotionModifier()
 	: _reverse(false), _loop(false), _alternate(false),
 	  _startAtBeginning(false), _frameDurationTimes10Million(0) {
 }
 
-bool PathMotionModifierV2::load(ModifierLoaderContext &context, const Data::PathMotionModifierV2 &data) {
+bool PathMotionModifier::load(ModifierLoaderContext &context, const Data::PathMotionModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
 	if (!_executeWhen.load(data.executeWhen) || !_terminateWhen.load(data.terminateWhen))
 		return false;
 
-	_reverse = ((data.flags & Data::PathMotionModifierV2::kFlagReverse) != 0);
-	_loop = ((data.flags & Data::PathMotionModifierV2::kFlagLoop) != 0);
-	_alternate = ((data.flags & Data::PathMotionModifierV2::kFlagAlternate) != 0);
-	_startAtBeginning = ((data.flags & Data::PathMotionModifierV2::kFlagStartAtBeginning) != 0);
+	_reverse = ((data.flags & Data::PathMotionModifier::kFlagReverse) != 0);
+	_loop = ((data.flags & Data::PathMotionModifier::kFlagLoop) != 0);
+	_alternate = ((data.flags & Data::PathMotionModifier::kFlagAlternate) != 0);
+	_startAtBeginning = ((data.flags & Data::PathMotionModifier::kFlagStartAtBeginning) != 0);
 
 	_frameDurationTimes10Million = data.frameDurationTimes10Million;
 
 	_points.resize(data.numPoints);
 
 	for (size_t i = 0; i < _points.size(); i++) {
-		const Data::PathMotionModifierV2::PointDef &inPoint = data.points[i];
+		const Data::PathMotionModifier::PointDef &inPoint = data.points[i];
 		PointDef &outPoint = _points[i];
 
 		outPoint.frame = inPoint.frame;
-		outPoint.useFrame = ((inPoint.frameFlags & Data::PathMotionModifierV2::PointDef::kFrameFlagPlaySequentially) != 0);
-		if (!inPoint.point.toScummVMPoint(outPoint.point) || !outPoint.sendSpec.load(inPoint.send, inPoint.messageFlags, inPoint.with, inPoint.withSource, inPoint.withString, inPoint.destination))
+		outPoint.useFrame = ((inPoint.frameFlags & Data::PathMotionModifier::PointDef::kFrameFlagPlaySequentially) != 0);
+		if (!inPoint.point.toScummVMPoint(outPoint.point))
 			return false;
+
+		if (data.havePointDefMessageSpecs) {
+			const Data::PathMotionModifier::PointDefMessageSpec &messageSpec = inPoint.messageSpec;
+			if (!outPoint.sendSpec.load(messageSpec.send, messageSpec.messageFlags, messageSpec.with, messageSpec.withSource, messageSpec.withString, messageSpec.destination))
+				return false;
+		} else {
+			outPoint.sendSpec.destination = kMessageDestNone;
+		}
 	}
 
 	return true;
 }
 
-bool PathMotionModifierV2::respondsToEvent(const Event &evt) const {
+bool PathMotionModifier::respondsToEvent(const Event &evt) const {
 	return _executeWhen.respondsTo(evt) || _terminateWhen.respondsTo(evt);
 }
 
-VThreadState PathMotionModifierV2::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+VThreadState PathMotionModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (_executeWhen.respondsTo(msg->getEvent())) {
 #ifdef MTROPOLIS_DEBUG_ENABLE
 		if (Debugger *debugger = runtime->debugGetDebugger())
@@ -726,20 +734,20 @@ VThreadState PathMotionModifierV2::consumeMessage(Runtime *runtime, const Common
 	return kVThreadReturn;
 }
 
-void PathMotionModifierV2::disable(Runtime *runtime) {
+void PathMotionModifier::disable(Runtime *runtime) {
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	if (Debugger *debugger = runtime->debugGetDebugger())
 		debugger->notify(kDebugSeverityWarning, "Path motion modifier was supposed to terminate, but this isn't implemented yet");
 #endif
 }
 
-Common::SharedPtr<Modifier> PathMotionModifierV2::shallowClone() const {
-	Common::SharedPtr<PathMotionModifierV2> clone(new PathMotionModifierV2(*this));
+Common::SharedPtr<Modifier> PathMotionModifier::shallowClone() const {
+	Common::SharedPtr<PathMotionModifier> clone(new PathMotionModifier(*this));
 	clone->_incomingData = DynamicValue();
 	return clone;
 }
 
-const char *PathMotionModifierV2::getDefaultName() const {
+const char *PathMotionModifier::getDefaultName() const {
 	return "Path Motion Modifier";
 }
 

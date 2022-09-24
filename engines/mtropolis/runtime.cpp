@@ -1824,7 +1824,7 @@ void DynamicValueWriteObjectHelper::create(RuntimeObject *obj, DynamicValueWrite
 	proxy.pod.ptrOrOffset = 0;
 }
 
-MessengerSendSpec::MessengerSendSpec() : destination(0), _linkType(kLinkTypeNotYetLinked) {
+MessengerSendSpec::MessengerSendSpec() : destination(kMessageDestNone), _linkType(kLinkTypeNotYetLinked) {
 }
 
 bool MessengerSendSpec::load(const Data::Event &dataEvent, uint32 dataMessageFlags, const Data::InternalTypeTaggedValue &dataLocator, const Common::String &dataWithSource, const Common::String &dataWithString, uint32 dataDestination) {

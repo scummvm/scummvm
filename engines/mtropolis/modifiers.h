@@ -310,11 +310,11 @@ private:
 	Common::SharedPtr<AudioPlayer> _player;
 };
 
-class PathMotionModifierV2 : public Modifier {
+class PathMotionModifier : public Modifier {
 public:
-	PathMotionModifierV2();
+	PathMotionModifier();
 
-	bool load(ModifierLoaderContext &context, const Data::PathMotionModifierV2 &data);
+	bool load(ModifierLoaderContext &context, const Data::PathMotionModifier &data);
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;

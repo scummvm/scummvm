@@ -127,6 +127,7 @@ bool isModifier(DataObjectType type) {
 	case kFloatingPointVariableModifier:
 	case kStringVariableModifier:
 	case kPlugInModifier:
+	case kSoundFadeModifier:
 	case kDebris:
 		return true;
 	default:
@@ -1301,11 +1302,12 @@ DataReadErrorCode SoundEffectModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
-bool PathMotionModifierV2::PointDef::load(DataReader &reader) {
-	if (!point.load(reader)
-		|| !reader.readU32(frame)
-		|| !reader.readU32(frameFlags)
-		|| !reader.readU32(messageFlags)
+PathMotionModifier::PointDefMessageSpec::PointDefMessageSpec() : messageFlags(0), send(Event::createDefault()), unknown11(0),
+	  destination(0), unknown13{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, withSourceLength(0), withStringLength(0) {
+}
+
+bool PathMotionModifier::PointDefMessageSpec::load(DataReader &reader) {
+	if (!reader.readU32(messageFlags)
 		|| !send.load(reader)
 		|| !reader.readU16(unknown11)
 		|| !reader.readU32(destination)
@@ -1320,18 +1322,27 @@ bool PathMotionModifierV2::PointDef::load(DataReader &reader) {
 	return true;
 }
 
+bool PathMotionModifier::PointDef::load(DataReader &reader, bool haveMessageSpec) {
+	if (!point.load(reader) || !reader.readU32(frame) || !reader.readU32(frameFlags))
+		return false;
 
-PathMotionModifierV2::PointDef::PointDef()
-	: point(Point::createDefault()), frame(0), frameFlags(0), messageFlags(0), send(Event::createDefault()), unknown11(0),
-	  destination(0), unknown13{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, withSourceLength(0), withStringLength(0) {
+	if (haveMessageSpec && messageSpec.load(reader))
+		return false;
+
+	return true;
 }
 
-PathMotionModifierV2::PathMotionModifierV2()
+
+PathMotionModifier::PointDef::PointDef()
+	: point(Point::createDefault()), frame(0), frameFlags(0) {
+}
+
+PathMotionModifier::PathMotionModifier(uint version)
 	: flags(0), executeWhen(Event::createDefault()), terminateWhen(Event::createDefault()), unknown2{0, 0}, numPoints(0), unknown3{0, 0, 0, 0},
-	  frameDurationTimes10Million(0), unknown5{0, 0, 0, 0}, unknown6(0) {
+	  frameDurationTimes10Million(0), unknown5{0, 0, 0, 0}, unknown6(0), havePointDefMessageSpecs(version >= 2) {
 }
 
-DataReadErrorCode PathMotionModifierV2::load(DataReader &reader) {
+DataReadErrorCode PathMotionModifier::load(DataReader &reader) {
 	if (_revision != 1001)
 		return kDataReadErrorUnsupportedRevision;
 
@@ -1350,7 +1361,7 @@ DataReadErrorCode PathMotionModifierV2::load(DataReader &reader) {
 	points.resize(numPoints);
 
 	for (size_t i = 0; i < numPoints; i++) {
-		if (!points[i].load(reader))
+		if (!points[i].load(reader, havePointDefMessageSpecs))
 			return kDataReadErrorReadFailed;
 	}
 
@@ -2324,8 +2335,11 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 	case DataObjectTypes::kDragMotionModifier:
 		dataObject = new DragMotionModifier();
 		break;
+	case DataObjectTypes::kPathMotionModifierV1:
+		dataObject = new PathMotionModifier(1);
+		break;
 	case DataObjectTypes::kPathMotionModifierV2:
-		dataObject = new PathMotionModifierV2();
+		dataObject = new PathMotionModifier(2);
 		break;
 	case DataObjectTypes::kVectorMotionModifier:
 		dataObject = new VectorMotionModifier();

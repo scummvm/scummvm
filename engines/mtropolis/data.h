@@ -105,7 +105,7 @@ enum DataObjectType {
 	kReturnModifier							= 0x140,	// NYI
 	kSoundEffectModifier					= 0x1a4,
 	kDragMotionModifier						= 0x208,
-	kPathMotionModifierV1					= 0x21c,	// NYI - Obsolete version
+	kPathMotionModifierV1					= 0x21c,
 	kPathMotionModifierV2					= 0x21b,
 	kVectorMotionModifier					= 0x226,
 	kSceneTransitionModifier				= 0x26c,
@@ -126,6 +126,7 @@ enum DataObjectType {
 	kCursorModifierV1						= 0x3ca,	// NYI - Obsolete version
 	kGradientModifier						= 0x4b0,	// NYI
 	kColorTableModifier						= 0x4c4,
+	kSoundFadeModifier						= 0x4ce,
 	kSaveAndRestoreModifier					= 0x4d8,
 
 	kCompoundVariableModifier				= 0x2c7,
@@ -1087,17 +1088,10 @@ protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
-struct PathMotionModifierV2 : public DataObject {
-	struct PointDef {
-		PointDef();
+struct PathMotionModifier : public DataObject {
+	struct PointDefMessageSpec {
+		PointDefMessageSpec();
 
-		enum FrameFlags {
-			kFrameFlagPlaySequentially = 1,
-		};
-
-		Point point;
-		uint32 frame;
-		uint32 frameFlags;
 		uint32 messageFlags;
 		Event send;
 		uint16 unknown11;
@@ -1113,6 +1107,22 @@ struct PathMotionModifierV2 : public DataObject {
 		bool load(DataReader &reader);
 	};
 
+	struct PointDef {
+		PointDef();
+
+		enum FrameFlags {
+			kFrameFlagPlaySequentially = 1,
+		};
+
+		Point point;
+		uint32 frame;
+		uint32 frameFlags;
+
+		PointDefMessageSpec messageSpec;
+
+		bool load(DataReader &reader, bool haveMessageSpec);
+	};
+
 	enum Flags {
 		kFlagReverse = 0x00100000,
 		kFlagLoop = 0x10000000,
@@ -1120,7 +1130,7 @@ struct PathMotionModifierV2 : public DataObject {
 		kFlagStartAtBeginning = 0x08000000,
 	};
 
-	PathMotionModifierV2();
+	explicit PathMotionModifier(uint version);
 
 	TypicalModifierHeader modHeader;
 	uint32 flags;
@@ -1135,10 +1145,14 @@ struct PathMotionModifierV2 : public DataObject {
 	uint8 unknown5[4];
 	uint32 unknown6;
 
+	bool havePointDefMessageSpecs;
+
 	Common::Array<PointDef> points;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
+
+	uint version;
 };
 
 struct DragMotionModifier : public DataObject {
