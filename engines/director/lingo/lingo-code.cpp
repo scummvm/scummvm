@@ -240,7 +240,6 @@ void Lingo::saveStateToWindow() {
 }
 
 void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal) {
-	g_debugger->pushContextHook();
 	Common::Array<CFrame *> &callstack = _vm->getCurrentWindow()->_callstack;
 
 	debugC(5, kDebugLingoExec, "Pushing frame %d", callstack.size() + 1);
@@ -315,6 +314,8 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 	if (debugChannelSet(2, kDebugLingoExec)) {
 		g_lingo->printCallStack(0);
 	}
+	g_lingo->_pc = 0;
+	g_debugger->pushContextHook();
 }
 
 void Lingo::popContext(bool aborting) {
@@ -1631,6 +1632,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 	}
 
 	if (funcSym.type != HANDLER) {
+		g_debugger->builtinHook(funcSym);
 		uint stackSizeBefore = g_lingo->_stack.size() - nargs;
 
 		if (target.type != VOID) {
@@ -1670,8 +1672,6 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 	}
 
 	g_lingo->pushContext(funcSym, allowRetVal, defaultRetVal);
-
-	g_lingo->_pc = 0;
 }
 
 void LC::c_procret() {
