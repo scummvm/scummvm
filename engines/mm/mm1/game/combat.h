@@ -34,6 +34,7 @@ namespace Game {
 
 class Combat : public GameLogic {
 protected:
+	Common::Array<Monster> &_monsterList;
 	int _monstersCount = 0;
 	Common::Array<Character *> _party;
 	Monster *_monsterP;
@@ -49,13 +50,21 @@ protected:
 	int _handicap1, _handicap2;
 	int _handicap3, _handicap4;
 	int _attackerVal;
+
 	enum Handicap {
 		HANDICAP_EVEN = 0, HANDICAP_PARTY = 1,
 		HANDICAP_MONSTER = 2
 	};
 	Handicap _handicap = HANDICAP_EVEN;
+	enum Mode {
+		SELECT_OPTION, FIGHT_WHICH
+	};
+	Mode _mode = SELECT_OPTION;
 
-	Combat() { clear(); }
+	/**
+	 * Constructor
+	 */
+	Combat();
 
 	/**
 	 * Clear all the combat variables
@@ -102,6 +111,18 @@ protected:
 	 * Sets up the handicap for the encounter
 	 */
 	void setupHandicap();
+
+	/*------- combat execution ------*/
+
+	/**
+	 * Start of the main combat loop
+	 */
+	void combatLoop();
+
+	void selectMonster();
+	void selectParty();
+	void loop1();
+
 };
 
 } // namespace Game
