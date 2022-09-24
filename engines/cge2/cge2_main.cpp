@@ -169,6 +169,7 @@ Sprite *CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) 
 	ID id;
 
 	char tmpStr[kLineMax + 1];
+	STATIC_ASSERT(sizeof(tmpStr) >= kPathMax, mergeExt_expects_kPathMax_buffer);
 	mergeExt(tmpStr, fname, kSprExt);
 
 	if (_resman->exist(tmpStr)) { // sprite description file exist
@@ -758,10 +759,10 @@ void CGE2Engine::cge2_main() {
 }
 
 char *CGE2Engine::mergeExt(char *buf, const char *name, const char *ext) {
-	strcpy(buf, name);
+	Common::strcpy_s(buf, kPathMax, name);
 	char *dot = strrchr(buf, '.');
 	if (!dot)
-		strcat(buf, ext);
+		Common::strcat_s(buf, kPathMax, ext);
 
 	return buf;
 }
@@ -777,8 +778,9 @@ void CGE2Engine::setEye(const V2D& e2, int z) {
 }
 
 void CGE2Engine::setEye(const char *s) {
-	char *tempStr = new char[strlen(s) + 1];
-	strcpy(tempStr, s);
+	size_t ln = strlen(s) + 1;
+	char *tempStr = new char[ln];
+	Common::strcpy_s(tempStr, ln, s);
 	_eye->_x = atoi(token(tempStr));
 	_eye->_y = atoi(token(nullptr));
 	_eye->_z = atoi(token(nullptr));
