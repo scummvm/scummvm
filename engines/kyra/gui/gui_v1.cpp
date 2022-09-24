@@ -97,6 +97,8 @@ void GUI_v1::initMenu(Menu &menu) {
 		printMenuText(getMenuTitle(menu), textX, textY, menu.textColor, 0, 0);
 	}
 
+	assert (menu.numberOfItems < ARRAYSIZE(menu.item));
+
 	int x1, y1, x2, y2;
 	for (int i = 0; i < menu.numberOfItems; ++i) {
 		if (!menu.item[i].enabled)
@@ -108,20 +110,18 @@ void GUI_v1::initMenu(Menu &menu) {
 		x2 = x1 + menu.item[i].width - 1;
 		y2 = y1 + menu.item[i].height - 1;
 
-		if (i < 7) {
-			Button *menuButtonData = getButtonListData() + i;
-			menuButtonData->nextButton = nullptr;
-			menuButtonData->x = x1;
-			menuButtonData->y = y1;
-			menuButtonData->width  = menu.item[i].width - 1;
-			menuButtonData->height = menu.item[i].height - 1;
-			menuButtonData->buttonCallback = menu.item[i].callback;
-			menuButtonData->keyCode = menu.item[i].keyCode;
-			menuButtonData->keyCode2 = 0;
-			menuButtonData->arg = menu.item[i].itemId;
+		Button *menuButtonData = getButtonListData() + i;
+		menuButtonData->nextButton = nullptr;
+		menuButtonData->x = x1;
+		menuButtonData->y = y1;
+		menuButtonData->width  = menu.item[i].width - 1;
+		menuButtonData->height = menu.item[i].height - 1;
+		menuButtonData->buttonCallback = menu.item[i].callback;
+		menuButtonData->keyCode = menu.item[i].keyCode;
+		menuButtonData->keyCode2 = 0;
+		menuButtonData->arg = menu.item[i].itemId;
 
-			_menuButtonList = addButtonToList(_menuButtonList, menuButtonData);
-		}
+		_menuButtonList = addButtonToList(_menuButtonList, menuButtonData);
 
 		_screen->fillRect(x1, y1, x2, y2, menu.item[i].bkgdColor);
 		_screen->drawShadedBox(x1, y1, x2, y2, menu.item[i].color1, menu.item[i].color2);

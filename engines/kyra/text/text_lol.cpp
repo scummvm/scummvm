@@ -305,21 +305,33 @@ void TextDisplayer_LoL::preprocessString(const char *str, EMCState *script, cons
 			break;
 
 		case 'n':
-			Common::strlcpy(dst, _vm->_characters[script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]].name, 2560 - (dst - _dialogueBuffer));
-			dst += Common::strnlen(dst, 2559 - (dst - _dialogueBuffer));
+			if (script || paramList) {
+				Common::strlcpy(dst, _vm->_characters[script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]].name, 2560 - (dst - _dialogueBuffer));
+				dst += Common::strnlen(dst, 2559 - (dst - _dialogueBuffer));
+			} else {
+				warning("TextDisplayer_LoL::preprocessString(): Missing replacement data for placeholder '%%%c'", para);
+			}
 			break;
 
 		case 's':
-			Common::strlcpy(dst, _vm->getLangString(script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]), 2560 - (dst - _dialogueBuffer));
-			dst += Common::strnlen(dst, 2559 - (dst - _dialogueBuffer));
+			if (script || paramList) {
+				Common::strlcpy(dst, _vm->getLangString(script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]), 2560 - (dst - _dialogueBuffer));
+				dst += Common::strnlen(dst, 2559 - (dst - _dialogueBuffer));
+			} else {
+				warning("TextDisplayer_LoL::preprocessString(): Missing replacement data for placeholder '%%%c'", para);
+			}
 			break;
 
 		case 'X':
 		case 'd':
 		case 'u':
 		case 'x':
-			Common::strlcpy(dst, Common::String::format("%d", script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]).c_str(), 2560 - (dst - _dialogueBuffer));
-			dst += Common::strnlen(dst, 2559 - (dst - _dialogueBuffer));
+			if (script || paramList) {
+				Common::strlcpy(dst, Common::String::format("%d", script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]).c_str(), 2560 - (dst - _dialogueBuffer));
+				dst += Common::strnlen(dst, 2559 - (dst - _dialogueBuffer));
+			} else {
+				warning("TextDisplayer_LoL::preprocessString(): Missing replacement data for placeholder '%%%c'", para);
+			}
 			break;
 
 		case '\0':

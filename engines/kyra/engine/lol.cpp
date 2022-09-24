@@ -494,7 +494,7 @@ void LoLEngine::pauseEngineIntern(bool pause) {
 
 Common::Error LoLEngine::go() {
 	int action = -1;
-
+	
 	if (_gameToLoad == -1) {
 		action = processPrologue();
 		if (action == -1)

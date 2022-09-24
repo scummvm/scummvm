@@ -672,7 +672,7 @@ int KyraEngine_HoF::o2_getSceneExitToFacing(EMCState *script) {
 int KyraEngine_HoF::o2_setLayerFlag(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setLayerFlag(%p) (%d)", (const void *)script, stackPos(0));
 	int layer = stackPos(0);
-	if (layer >= 1 && layer <= 16)
+	if (layer >= 1 && layer <= 15)
 		_layerFlagTable[layer] = 1;
 	return 0;
 }
