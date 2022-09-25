@@ -633,10 +633,10 @@ SpellInstance::SpellInstance(SpellCaster *newCaster, TilePoint &newTarget, Spell
 SpellInstance::~SpellInstance() {
 	if (age < implementAge && g_vm->_gameRunning)
 		spellBook[spell].implement(caster, target);
-	for (int32 i = 0; i < eList.count; i++) {
-		if (eList.displayList[i].efx)
-			delete eList.displayList[i].efx;
-		eList.displayList[i].efx = nullptr;
+	for (int32 i = 0; i < eList._count; i++) {
+		if (eList._displayList[i]._efx)
+			delete eList._displayList[i]._efx;
+		eList._displayList[i]._efx = nullptr;
 	}
 	if (target)
 		delete target;
@@ -670,11 +670,11 @@ void SpellInstance::init() {
 // common cleanup
 
 void SpellInstance::termEffect() {
-	if (eList.count)
-		for (int32 i = 0; i < eList.count; i++) {
-			if (eList.displayList[i].efx) {
-				delete eList.displayList[i].efx;
-				eList.displayList[i].efx = nullptr;
+	if (eList._count)
+		for (int32 i = 0; i < eList._count; i++) {
+			if (eList._displayList[i]._efx) {
+				delete eList._displayList[i]._efx;
+				eList._displayList[i]._efx = nullptr;
 			}
 		}
 }
@@ -683,11 +683,11 @@ void SpellInstance::termEffect() {
 // visual init
 
 void SpellInstance::initEffect(TilePoint startpoint) {
-	eList.count = effect->nodeCount; //sdp->effCount;
-	if (eList.count)
-		for (int32 i = 0; i < eList.count; i++) {
+	eList._count = effect->nodeCount; //sdp->effCount;
+	if (eList._count)
+		for (int32 i = 0; i < eList._count; i++) {
 			Effectron *e = new Effectron(0, i);
-			eList.displayList[i].efx = e;
+			eList._displayList[i]._efx = e;
 			e->parent = this;
 			e->start = startpoint;
 			e->current = startpoint;

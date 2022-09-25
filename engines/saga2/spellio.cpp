@@ -265,7 +265,7 @@ StorageSpellInstance::StorageSpellInstance(SpellInstance &si) {
 	spell = si.spell;
 	maxAge = si.maxAge;
 	effSeq = si.effSeq;         // which effect in a sequence is being played
-	eListSize = si.eList.count;
+	eListSize = si.eList._count;
 }
 
 StorageSpellTarget::StorageSpellTarget() {
@@ -420,30 +420,30 @@ void SpellDisplayList::wipe() {
 size_t SpellInstance::saveSize() {
 	size_t total = 0;
 	total += sizeof(StorageSpellInstance);
-	if (eList.count)
-		for (int32 i = 0; i < eList.count; i++) {
+	if (eList._count)
+		for (int32 i = 0; i < eList._count; i++) {
 			total += sizeof(StorageEffectron);
 		}
 	return total;
 }
 
 void SpellInstance::writeEffect(Common::MemoryWriteStreamDynamic *out) {
-	if (eList.count > 0 && !(maxAge > 0 && (age + 1) > maxAge))
-		for (int32 i = 0; i < eList.count; i++) {
-			StorageEffectron se = StorageEffectron(*eList.displayList[i].efx);
+	if (eList._count > 0 && !(maxAge > 0 && (age + 1) > maxAge))
+		for (int32 i = 0; i < eList._count; i++) {
+			StorageEffectron se = StorageEffectron(*eList._displayList[i]._efx);
 			se.write(out);
 		}
 }
 
 void SpellInstance::readEffect(Common::InSaveFile *in, uint16 eListSize) {
 	assert(eListSize == effect->nodeCount);
-	eList.count = effect->nodeCount; //sdp->effCount;
-	if (eList.count)
-		for (int32 i = 0; i < eList.count; i++) {
+	eList._count = effect->nodeCount; //sdp->effCount;
+	if (eList._count)
+		for (int32 i = 0; i < eList._count; i++) {
 			StorageEffectron se;
 			se.read(in);
 			Effectron *e = new Effectron(se, this);
-			eList.displayList[i].efx = e;
+			eList._displayList[i]._efx = e;
 		}
 }
 
