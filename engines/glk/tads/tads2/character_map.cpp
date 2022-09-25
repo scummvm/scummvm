@@ -74,7 +74,7 @@ void cmap_init_default(void)
 	memset(G_cmap_id, 0, sizeof(G_cmap_id));
 
 	/* indicate that it's the default */
-	strcpy(G_cmap_ldesc, "(native/no mapping)");
+	Common::strcpy_s(G_cmap_ldesc, "(native/no mapping)");
 
 	/* note that we have no character set loaded */
 	S_cmap_loaded = FALSE;
@@ -331,7 +331,7 @@ void cmap_set_game_charset(errcxdef *ec,
 	 *   provide here.  Save the game's character set ldesc for that
 	 *   eventuality, since it describes exactly what the *game* wanted.
 	 */
-	strcpy(G_cmap_ldesc, internal_ldesc);
+	Common::strcpy_s(G_cmap_ldesc, internal_ldesc);
 }
 
 } // End of namespace TADS2

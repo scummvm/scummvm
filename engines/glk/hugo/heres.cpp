@@ -255,9 +255,9 @@ long Hugo::FindResource(const char *filename, const char *resname) {
 
 	resource_file = nullptr;
 
-	strcpy(loaded_filename, filename);
-	strcpy(loaded_resname, resname);
-	if (!strcmp(filename, "")) strcpy(loaded_filename, resname);
+	Common::strcpy_s(loaded_filename, filename);
+	Common::strcpy_s(loaded_resname, resname);
+	if (!strcmp(filename, "")) Common::strcpy_s(loaded_filename, resname);
 
 	/* See if the file is supposed to be in a resourcefile to
 	   begin with
@@ -433,12 +433,12 @@ int Hugo::GetResourceParameters(char *filename, char *resname, int restype) {
 		return 0;
 	}
 
-	strcpy(filename, GetWord((unsigned int)f));
+	Common::strcpy_s(filename, MAX_RES_PATH, GetWord((unsigned int)f));
 
 	if (MEM(codeptr++)!=EOL_T)	/* two or more parameters */
 	{
 		strupr(filename);
-		strcpy(resname, GetWord(GetValue()));
+		Common::strcpy_s(resname, MAX_RES_PATH, GetWord(GetValue()));
 		if (MEM(codeptr++)==COMMA_T)
 		{
 			extra_param = GetValue();
@@ -447,8 +447,8 @@ int Hugo::GetResourceParameters(char *filename, char *resname, int restype) {
 	}
 	else				/* only one parameter */
 	{
-		strcpy(resname, filename);
-		strcpy(filename, "");
+		Common::strcpy_s(resname, MAX_RES_PATH, filename);
+		filename[0] = '\0';
 	}
 
 	return true;

@@ -830,8 +830,9 @@ static void gagt_status_print() {
 
 	/* Save the details of the printed status buffer. */
 	free(gagt_status_buffer_printed);
-	gagt_status_buffer_printed = (char *)gagt_malloc(strlen(gagt_status_buffer) + 1);
-	strcpy(gagt_status_buffer_printed, gagt_status_buffer);
+	size_t ln = strlen(gagt_status_buffer) + 1;
+	gagt_status_buffer_printed = (char *)gagt_malloc(ln);
+	Common::strcpy_s(gagt_status_buffer_printed, ln, gagt_status_buffer);
 }
 
 
@@ -4523,8 +4524,9 @@ static int gagt_command_escape(const char *string) {
 		return FALSE;
 
 	/* Take a copy of the string, without any leading space or introducer. */
-	string_copy = (char *)gagt_malloc(strlen(string + posn) + 1 - strlen("glk"));
-	strcpy(string_copy, string + posn + strlen("glk"));
+	size_t ln = strlen(string + posn) + 1 - 3 /*strlen("glk")*/;
+	string_copy = (char *)gagt_malloc(ln);
+	Common::strcpy_s(string_copy, ln, string + posn + 3 /*strlen("glk")*/);
 
 	/*
 	 * Find the subcommand; the first word in the string copy.  Find its end,

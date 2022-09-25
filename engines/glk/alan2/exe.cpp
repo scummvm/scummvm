@@ -159,7 +159,7 @@ Boolean confirm(MsgKind msgno) {
 	   it could be affirmative, but for now any input is NOT! */
 	prmsg(msgno);
 
-	if (!readline(buf)) return TRUE;
+	if (!readline(buf, sizeof(buf))) return TRUE;
 	col = 1;
 
 	return (buf[0] == '\0');
@@ -173,7 +173,7 @@ void quit(CONTEXT) {
 		col = 1;
 		statusline();
 		prmsg(M_QUITACTION);
-		if (!readline(buf)) {
+		if (!readline(buf, sizeof(buf))) {
 			CALL1(terminate, 0)
 		}
 

@@ -307,7 +307,7 @@ void build_proxy() {
 	/* LOOP THROUGH ALL THE PARAMETERS OF THE PROXY COMMAND
 	   AND BUILD THE MOVE TO BE ISSUED ON THE PLAYER'S BEHALF */
 	for (index = 1; word[index] != nullptr; index++) {
-		strcat(proxy_buffer, text_of_word(index));
+		Common::strcat_s(proxy_buffer, 1024, text_of_word(index));
 	}
 
 	for (index = 0; index < (int)strlen(proxy_buffer); index++) {
@@ -588,11 +588,11 @@ int execute(const char *funcname) {
 				// infile REMAINS OPEN DURING THE ITERATION, ONLY NEEDS
 				// OPENING THE FIRST TIME
 				if (infile == nullptr) {
-					strcpy(temp_buffer, data_directory);
-					strcat(temp_buffer, prefix);
-					strcat(temp_buffer, "-");
-					strcat(temp_buffer, text_of_word(1));
-					strcat(temp_buffer, ".csv");
+					Common::strcpy_s(temp_buffer, 1024, data_directory);
+					Common::strcat_s(temp_buffer, 1024, prefix);
+					Common::strcat_s(temp_buffer, 1024, "-");
+					Common::strcat_s(temp_buffer, 1024, text_of_word(1));
+					Common::strcat_s(temp_buffer, 1024, ".csv");
 
 					infile = File::openForReading(temp_buffer);
 
@@ -662,24 +662,24 @@ int execute(const char *funcname) {
 				// infile REMAINS OPEN DURING THE ITERATION, ONLY NEEDS
 				// OPENING THE FIRST TIME
 				if (infile == nullptr) {
-					strcpy(in_name, data_directory);
-					strcat(in_name, prefix);
-					strcat(in_name, "-");
-					strcat(in_name, text_of_word(1));
-					strcat(in_name, ".csv");
+					Common::strcpy_s(in_name, data_directory);
+					Common::strcat_s(in_name, prefix);
+					Common::strcat_s(in_name, "-");
+					Common::strcat_s(in_name, text_of_word(1));
+					Common::strcat_s(in_name, ".csv");
 
 					infile = File::openForReading(in_name);
 				}
 
 				if (outfile == nullptr) {
 					// OPEN A TEMPORARY OUTPUT FILE TO WRITE THE MODIFICATIONS TO
-					strcpy(out_name, data_directory);
-					strcat(out_name, prefix);
-					strcat(out_name, "-");
-					strcat(out_name, text_of_word(1));
-					strcat(out_name, "-");
-					strcat(out_name, user_id);
-					strcat(out_name, ".csv");
+					Common::strcpy_s(out_name, data_directory);
+					Common::strcat_s(out_name, prefix);
+					Common::strcat_s(out_name, "-");
+					Common::strcat_s(out_name, text_of_word(1));
+					Common::strcat_s(out_name, "-");
+					Common::strcat_s(out_name, user_id);
+					Common::strcat_s(out_name, ".csv");
 
 					outfile = File::openForWriting(out_name);
 				}
@@ -874,10 +874,10 @@ int execute(const char *funcname) {
 
 				if (word[1][0] == '!') {
 					criterion_negate = TRUE;
-					strcpy(argument_buffer, &word[1][1]);
+					Common::strcpy_s(argument_buffer, &word[1][1]);
 				} else {
 					criterion_negate = FALSE;
-					strcpy(argument_buffer, word[1]);
+					Common::strcpy_s(argument_buffer, word[1]);
 				}
 
 				// DETERMINE THE CRITERION FOR SELETION
@@ -1629,7 +1629,7 @@ int execute(const char *funcname) {
 					string_buffer[0] = 0;
 
 					for (counter = 1; word[counter] != nullptr && counter < MAX_WORDS; counter++) {
-						strcat(string_buffer, arg_text_of_word(counter));
+						Common::strcat_s(string_buffer, arg_text_of_word(counter));
 					}
 
 					if (function_resolve(string_buffer) == nullptr && !strcmp(word[0], "execute")) {
@@ -1734,7 +1734,7 @@ int execute(const char *funcname) {
 						} else if (text_buffer[index - 1] != '^') {
 							// ADD AN IMPLICIT SPACE IF THE PREVIOUS LINE
 							// DIDN'T END WITH A CARRIAGE RETURN
-							strcat(text_buffer, " ");
+							Common::strcat_s(text_buffer, 1024, " ");
 						}
 
 						// OUTPUT THE LINE READ AS PLAIN TEXT
@@ -1838,8 +1838,8 @@ int execute(const char *funcname) {
 				char *match = nullptr;
 				struct string_type *resolved_splitstring = nullptr;
 
-				strcpy(split_buffer, text_of_word(2));
-				strcpy(delimiter, text_of_word(3));
+				Common::strcpy_s(split_buffer, text_of_word(2));
+				Common::strcpy_s(delimiter, text_of_word(3));
 
 				char *source = split_buffer;
 
@@ -1860,32 +1860,32 @@ int execute(const char *funcname) {
 
 						while ((match = strstr(source, delimiter))) {
 							*match = 0;
-							strcpy(container_buffer, var_text_of_word(4));
-							strcat(container_buffer, "[");
+							Common::strcpy_s(container_buffer, var_text_of_word(4));
+							Common::strcat_s(container_buffer, "[");
 							sprintf(integer_buffer, "%d", *split_container);
-							strcat(container_buffer, integer_buffer);
-							strcat(container_buffer, "]");
+							Common::strcat_s(container_buffer, integer_buffer);
+							Common::strcat_s(container_buffer, "]");
 
 							if ((resolved_splitstring = string_resolve(container_buffer)) == nullptr) {
 								unkstrrun(var_text_of_word(4));
 								return (exit_function(TRUE));
 							} else {
-								strcpy(resolved_splitstring->value, source);
+								Common::strcpy_s(resolved_splitstring->value, source);
 								source = match + strlen(delimiter);
 								(*split_container)++;
 							}
 						}
-						strcpy(container_buffer, var_text_of_word(4));
-						strcat(container_buffer, "[");
+						Common::strcpy_s(container_buffer, var_text_of_word(4));
+						Common::strcat_s(container_buffer, "[");
 						sprintf(integer_buffer, "%d", *split_container);
-						strcat(container_buffer, integer_buffer);
-						strcat(container_buffer, "]");
+						Common::strcat_s(container_buffer, integer_buffer);
+						Common::strcat_s(container_buffer, "]");
 
 						if ((resolved_splitstring = string_resolve(container_buffer)) == nullptr) {
 							unkstrrun(word[1]);
 							return (exit_function(TRUE));
 						} else {
-							strcpy(resolved_splitstring->value, source);
+							Common::strcpy_s(resolved_splitstring->value, source);
 							(*split_container)++;
 						}
 					}
@@ -1908,7 +1908,7 @@ int execute(const char *funcname) {
 
 					/* RESOLVE ALL THE TEXT AND STORE IT IN A TEMPORARY BUFFER*/
 					for (counter = 2; word[counter] != nullptr && counter < MAX_WORDS; counter++) {
-						strcat(setstring_buffer, text_of_word(counter));
+						Common::strcat_s(setstring_buffer, text_of_word(counter));
 					}
 
 					/* setstring_buffer IS NOW FILLED, COPY THE UP TO 256 BYTES OF
@@ -1941,7 +1941,7 @@ int execute(const char *funcname) {
 					index = value_of(word[3], TRUE);
 
 					for (counter = 0; counter < index; counter++) {
-						strcat(setstring_buffer, text_of_word(2));
+						Common::strcat_s(setstring_buffer, text_of_word(2));
 					}
 
 					/* setstring_buffer IS NOW FILLED, COPY THE UP TO 256 BYTES OF
@@ -2184,11 +2184,11 @@ int execute(const char *funcname) {
 					noproprun();
 					return (exit_function(TRUE));
 				} else {
-					strcpy(temp_buffer, data_directory);
-					strcat(temp_buffer, prefix);
-					strcat(temp_buffer, "-");
-					strcat(temp_buffer, text_of_word(1));
-					strcat(temp_buffer, ".csv");
+					Common::strcpy_s(temp_buffer, 1024, data_directory);
+					Common::strcat_s(temp_buffer, 1024, prefix);
+					Common::strcat_s(temp_buffer, 1024, "-");
+					Common::strcat_s(temp_buffer, 1024, text_of_word(1));
+					Common::strcat_s(temp_buffer, 1024, ".csv");
 
 					outfile = File::openForWriting(temp_buffer);
 
@@ -2310,7 +2310,7 @@ int execute(const char *funcname) {
 					string_buffer[0] = 0;
 
 					for (counter = 1; word[counter] != nullptr && counter < MAX_WORDS; counter++) {
-						strcat(string_buffer, arg_text_of_word(counter));
+						Common::strcat_s(string_buffer, arg_text_of_word(counter));
 					}
 
 					if (execute(string_buffer)) {
@@ -2397,8 +2397,8 @@ char *object_names(int object_index, char *names_buffer) {
 	names_buffer[0] = 0;
 
 	while (current_name != nullptr) {
-		strcat(names_buffer, " ");
-		strcat(names_buffer, current_name->name);
+		Common::strcat_s(names_buffer, 1024, " ");
+		Common::strcat_s(names_buffer, 1024, current_name->name);
 		current_name = current_name->next_name;
 	}
 

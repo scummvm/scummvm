@@ -290,7 +290,7 @@ AddFontCode:
 			bufferbreak = 0;
 			bufferbreaklen = 0;
 #endif
-			strcpy(pbuffer, "");
+			pbuffer[0] = '\0';
 			plen = 0;
 			linebreak = 0;
 			linebreaklen = 0;
@@ -435,7 +435,7 @@ AddFontCode:
 		hugo_font(currentfont = lastfont);
 		Printout(pbuffer, 0);
 		lastfont = currentfont;
-		strcpy(pbuffer, "");
+		pbuffer[0] = '\0';
 		linebreak = 0;
 		linebreaklen = 0;
 		thisline = 0;
@@ -573,7 +573,7 @@ unsigned int Hugo::Dict() {
 	codeptr += 2;                           /* "(" */
 
 	if (MEM(codeptr)==PARSE_T || MEM(codeptr)==WORD_T)
-		strcpy(line, GetWord(GetValue()));
+		Common::strcpy_s(line, GetWord(GetValue()));
 	else
 	{
 		/* Get the array address to read the to-be-
@@ -760,7 +760,7 @@ void Hugo::FileIO() {
 	ioerror = 0;
 
 	/* Make sure the filename is legal, 8 alphanumeric characters or less */
-	strcpy(line, GetWord(fnameval));
+	Common::strcpy_s(line, GetWord(fnameval));
 	if (strlen(line) > 8) goto LeaveFileIO;
 	for (i=0; i<(int)strlen(line); i++)
 	{
@@ -779,7 +779,7 @@ void Hugo::FileIO() {
 	hugo_splitpath(program_path, drive, dir, fname, ext);
 	hugo_makepath(fileiopath, drive, dir, GetWord(fnameval), "");
 #else
-	strcpy(fileiopath, GetWord(fnameval));
+	Common::strcpy_s(fileiopath, GetWord(fnameval));
 #endif
 
 	if (iotype==WRITEFILE_T)        /* "writefile" */
@@ -863,7 +863,7 @@ void Hugo::Flushpbuffer() {
 	pbuffer[strlen(pbuffer)] = (char)NO_NEWLINE;
 	Printout(Ltrim(pbuffer), 0);
 	currentpos = hugo_textwidth(pbuffer);	/* -charwidth; */
-	strcpy(pbuffer, "");
+	pbuffer[0] = '\0';
 }
 
 void Hugo::GetCommand() {
@@ -918,9 +918,9 @@ void Hugo::GetCommand() {
 	hugo_getline(a);
 #endif
 	during_player_input = false;
-	strcpy(buffer, Rtrim(buffer));
+	Common::strcpy_s(buffer, Rtrim(buffer));
 
-	strcpy(parseerr, "");
+	parseerr[0] = '\0';
 
 	full = 1;
 	remaining = 0;
@@ -1072,7 +1072,7 @@ void Hugo::InitGame() {
 	if (_savegameSlot == -1) {
 #endif
 #if defined (DEBUGGER)
-	for (i=0; i<MAXLOCALS; i++) strcpy(localname[i], "");
+	for (i=0; i<MAXLOCALS; i++) localname[i][0] = '\0';
 	window[VIEW_LOCALS].count = current_locals = 0;
 
 	PassLocals(0);
@@ -1103,7 +1103,7 @@ void Hugo::LoadGame() {
 	if (!strcmp(gamefile, ""))
 	{
 		game = nullptr;
-		strcpy(gamefile, "(no file)");
+		Common::strcpy_s(gamefile, "(no file)");
 		return;
 	}
 #endif
@@ -1303,15 +1303,15 @@ void Hugo::LoadGame() {
 
 	/* build punctuation string (additional user-specified punctuation) */
 	synptr = 2;
-	strcpy(punc_string, "");
+	punc_string[0] = '\0';
 	for (i=1; i<=syncount; i++)
 	{
 		defseg = syntable;
 		if (Peek(synptr)==3)	/* 3 = punctuation */
 		{
-			strcpy(line, GetWord(PeekWord(synptr+1)));
+			Common::strcpy_s(line, GetWord(PeekWord(synptr+1)));
 			if (strlen(line) + strlen(punc_string) > 63) break;
-			strcat(punc_string, line);
+			Common::strcat_s(punc_string, line);
 		}
 		synptr+=5;
 	}
@@ -1452,7 +1452,7 @@ const char *Hugo::PrintHex(long a) {
 	static char hex[7];
 	int h = 0;
 
-	strcpy(hex, "");
+	hex[0] = '\0';
 
 	if (a < 0L) a = 0;
 

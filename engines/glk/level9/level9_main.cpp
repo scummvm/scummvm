@@ -1227,7 +1227,7 @@ void calldriver() {
 		*list9startptr = *a6;
 	} else if (d0 == 0x0b) {
 		char NewName[MAX_PATH];
-		strcpy(NewName, LastGame);
+		Common::strcpy_s(NewName, LastGame);
 		if (*a6 == 0) {
 			printstring("\rSearching for next sub-game file.\r");
 			if (!os_get_game_file(NewName, MAX_PATH)) {
@@ -1553,7 +1553,7 @@ L9BOOL GetWordV3(char *buff, int Word) {
 			Word++; /* force unpack again */
 		}
 	}
-	strcpy(buff, threechars);
+	Common::strcpy_s(buff, IBUFFSIZE, threechars);
 	for (i = 0; i < (int)strlen(buff); i++) buff[i] &= 0x7f;
 	return TRUE;
 }
@@ -2991,7 +2991,7 @@ L9BOOL LoadGame2(const char *filename, char *picname) {
 		randomseed = constseed;
 	else
 		randomseed = (L9UINT16)g_system->getMillis();
-	strcpy(LastGame, filename);
+	Common::strcpy_s(LastGame, filename);
 	return Running = TRUE;
 }
 

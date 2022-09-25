@@ -1033,16 +1033,17 @@ static sc_char *parse_read_multiline(CONTEXT) {
 
 	/* Take a simple copy of the first line. */
 	R0FUNC0(parse_get_taf_string, line);
-	multiline = (sc_char *)sc_malloc(strlen(line) + 1);
-	strcpy(multiline, line);
+	size_t ln = strlen(line) + 1;
+	multiline = (sc_char *)sc_malloc(ln);
+	Common::strcpy_s(multiline, ln, line);
 
 	/* Now concatenate until separator found. */
 	R0FUNC0(parse_get_taf_string, line);
 	while (memcmp(line, separator, SEPARATOR_SIZE) != 0) {
-		multiline = (sc_char *)sc_realloc(multiline,
-		                                  strlen(multiline) + strlen(line) + 2);
-		strcat(multiline, "\n");
-		strcat(multiline, line);
+		ln = strlen(multiline) + strlen(line) + 2;
+		multiline = (sc_char *)sc_realloc(multiline, ln);
+		Common::strcat_s(multiline, ln, "\n");
+		Common::strcat_s(multiline, ln, line);
 		R0FUNC0(parse_get_taf_string, line);
 	}
 
@@ -1188,8 +1189,9 @@ static sc_int parse_get_v400_resource_offset(const sc_char *name,
 	 * Take a copy of the name, and remove any trailing "##" looping sound
 	 * indicator flag.  Who thinks this junk up?
 	 */
-	clean_name = (sc_char *)sc_malloc(strlen(name) + 1);
-	strcpy(clean_name, name);
+	size_t ln = strlen(name) + 1;
+	clean_name = (sc_char *)sc_malloc(ln);
+	Common::strcpy_s(clean_name, ln, name);
 	if (strcmp(clean_name + strlen(clean_name) - 2, "##") == 0)
 		clean_name[strlen(clean_name) - 2] = NUL;
 
@@ -2006,10 +2008,11 @@ static void parse_fixup_v390(CONTEXT, const sc_char *fixup) {
 			sc_char *restrmask;
 			sc_int index_;
 
-			restrmask = (sc_char *)sc_malloc(2 * restriction_count);
-			strcpy(restrmask, "#");
+			size_t ln = 2 * restriction_count;
+			restrmask = (sc_char *)sc_malloc(ln);
+			Common::strcpy_s(restrmask, ln, "#");
 			for (index_ = 1; index_ < restriction_count; index_++)
-				strcat(restrmask, "A#");
+				Common::strcat_s(restrmask, ln, "A#");
 
 			vt_key.string = "RestrMask";
 			parse_push_key(vt_key, PROP_KEY_STRING);
@@ -2754,10 +2757,11 @@ static void parse_fixup_v380(const sc_char *fixup) {
 			sc_char *restrmask;
 			sc_int index_;
 
-			restrmask = (sc_char *)sc_malloc(2 * restriction_count);
-			strcpy(restrmask, "#");
+			size_t ln = 2 * restriction_count;
+			restrmask = (sc_char *)sc_malloc(ln);
+			Common::strcpy_s(restrmask, ln, "#");
 			for (index_ = 1; index_ < restriction_count; index_++)
-				strcat(restrmask, "A#");
+				Common::strcat_s(restrmask, ln, "A#");
 
 			vt_key.string = "RestrMask";
 			parse_push_key(vt_key, PROP_KEY_STRING);

@@ -386,32 +386,32 @@ void call_functions(const char *base_name) {
 	TIME->value = TRUE;
 
 	strncpy(base_function, base_name + 1, 80);
-	strcat(base_function, "_");
+	Common::strcat_s(base_function, "_");
 
 	strncpy(override_, base_function, 80);
 
-	strcpy(before_function, "+before_");
-	strcat(before_function, base_name + 1);
+	Common::strcpy_s(before_function, "+before_");
+	Common::strcat_s(before_function, base_name + 1);
 
-	strcpy(after_function, "+after_");
-	strcat(after_function, base_name + 1);
+	Common::strcpy_s(after_function, "+after_");
+	Common::strcat_s(after_function, base_name + 1);
 
-	strcpy(local_after_function, "after_");
-	strcat(local_after_function, base_name + 1);
+	Common::strcpy_s(local_after_function, "after_");
+	Common::strcat_s(local_after_function, base_name + 1);
 	if (noun[1] != FALSE) {
-		strcat(local_after_function, "_");
-		strcat(local_after_function, object[noun[1]]->label);
+		Common::strcat_s(local_after_function, "_");
+		Common::strcat_s(local_after_function, object[noun[1]]->label);
 	}
 	if (noun[0] != FALSE) {
-		strcat(local_after_function, "_");
-		strcat(local_after_function, object[noun[0]]->label);
+		Common::strcat_s(local_after_function, "_");
+		Common::strcat_s(local_after_function, object[noun[0]]->label);
 	}
 
 	/* THIS IS CALLED IF AN 'override' COMMAND IS EXECUTED
 	 * IN A LIBRARY FUNCTION BUT THE OBJECT-OR-LOCATION-SPECIFIC
 	 * OVERRIDE DOES NOT EXIST. IT IS SET TO '+default_func' */
-	strcpy(default_function, "+default_");
-	strcat(default_function, base_name + 1);
+	Common::strcpy_s(default_function, "+default_");
+	Common::strcat_s(default_function, base_name + 1);
 
 	/* EXECUTE THE GLOBAL *DEFAULT* BEFORE FUNCTION
 	 * AND RETURN IF IT RETURNS TRUE */
@@ -424,7 +424,7 @@ void call_functions(const char *base_name) {
 		return;
 
 	if (noun[0] == FALSE) { /* USER'S COMMAND HAS NO NOUNS */
-		strcat(base_function, object[HERE]->label);
+		Common::strcat_s(base_function, object[HERE]->label);
 		/* EXECUTE THE FUNCTION 'func_here' */
 		if (execute(base_function) == FALSE) {
 			/* THIS LOCATION-SPECIFIC FUNCTION DOES NOT
@@ -438,19 +438,19 @@ void call_functions(const char *base_name) {
 
 			/* PREPARE THE OVERRIDE FUNCTION NAME IN CASE IT
 			 * IS NEEDED */
-			strcat(override_, "override_");
-			strcat(override_, object[HERE]->label);
+			Common::strcat_s(override_, 81, "override_");
+			Common::strcat_s(override_, 81, object[HERE]->label);
 
 			/* CREATE THE FUNCTION NAME '+func' */
-			strcpy(base_function, "+");
-			strcat(base_function, base_name + 1);
+			Common::strcpy_s(base_function, "+");
+			Common::strcat_s(base_function, base_name + 1);
 
 			/* CALL THE LIBRARY'S DEFAULT BEHAVIOR */
 			if (execute(base_function) == FALSE)
 				unkfunrun(base_function);
 		}
 	} else if (noun[1] == FALSE) { /* USER'S COMMAND HAS ONE NOUN */
-		strcat(base_function, object[noun[0]]->label);
+		Common::strcat_s(base_function, object[noun[0]]->label);
 		/* EXECUTE THE FUNCTION 'func_noun1' */
 		if (execute(base_function) == FALSE) {
 			/* THIS OBJECT-SPECIFIC FUNCTION DOES NOT
@@ -464,21 +464,21 @@ void call_functions(const char *base_name) {
 
 			/* PREPARE THE OVERRIDE FUNCTION NAME IN CASE IT
 			 * IS NEEDED */
-			strcat(override_, "override_");
-			strcat(override_, object[noun[0]]->label);
+			Common::strcat_s(override_, 81, "override_");
+			Common::strcat_s(override_, 81, object[noun[0]]->label);
 
 			/* CREATE THE FUNCTION NAME '+func' */
-			strcpy(base_function, "+");
-			strcat(base_function, base_name + 1);
+			Common::strcpy_s(base_function, "+");
+			Common::strcat_s(base_function, base_name + 1);
 
 			/* CALL THE LIBRARY'S DEFAULT BEHAVIOR */
 			if (execute(base_function) == FALSE)
 				unkfunrun(base_function);
 		}
 	} else { /* USER'S COMMAND HAS TWO NOUNS */
-		strcat(base_function, object[noun[1]]->label);
-		strcat(base_function, "_");
-		strcat(base_function, object[noun[0]]->label);
+		Common::strcat_s(base_function, object[noun[1]]->label);
+		Common::strcat_s(base_function, "_");
+		Common::strcat_s(base_function, object[noun[0]]->label);
 		/* EXECUTE THE FUNCTION 'func_noun2_noun1'
 		 * IE give_to_fred THAT IS ASSOCIATED WITH
 		 * THE OBJECT flint_stone */
@@ -494,13 +494,13 @@ void call_functions(const char *base_name) {
 
 			/* PREPARE THE OVERRIDE FUNCTION NAME IN CASE IT
 			 * IS NEEDED */
-			strcat(override_, object[noun[1]]->label);
-			strcat(override_, "_override_");
-			strcat(override_, object[noun[0]]->label);
+			Common::strcat_s(override_, 81, object[noun[1]]->label);
+			Common::strcat_s(override_, 81, "_override_");
+			Common::strcat_s(override_, 81, object[noun[0]]->label);
 
 			/* CREATE THE FUNCTION NAME '+func' */
-			strcpy(base_function, "+");
-			strcat(base_function, base_name + 1);
+			Common::strcpy_s(base_function, "+");
+			Common::strcat_s(base_function, base_name + 1);
 
 			/* CALL THE LIBRARY'S DEFAULT BEHAVIOR */
 			if (execute(base_function) == FALSE)
@@ -1128,9 +1128,9 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 			}
 
 			object_expected = TRUE;
-			strcpy(object_name, word[wp]);
-			strcat(object_name, " ");
-			strcat(object_name, cstring_resolve("OF_WORD")->value);
+			Common::strcpy_s(object_name, word[wp]);
+			Common::strcat_s(object_name, " ");
+			Common::strcat_s(object_name, cstring_resolve("OF_WORD")->value);
 
 			/* MOVE THE WORD POINTER TO AFTER THE 'OF' */
 			wp = wp + 2;
@@ -1147,9 +1147,9 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 		// ADD THE WORDS USED TO error_buffer FOR POSSIBLE USE
 		// IN A DISABMIGUATE EMESSAGE
 		if (first_word == FALSE) {
-			strcat(error_buffer, " ");
+			Common::strcat_s(error_buffer, 1024, " ");
 		}
-		strcat(error_buffer, word[wp]);
+		Common::strcat_s(error_buffer, 1024, word[wp]);
 		first_word = FALSE;
 
 		/* LOOP THROUGH WORDS IN THE PLAYER'S INPUT */
@@ -1203,9 +1203,9 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 		 * IS TRYING TO REFER TO FOR USE IN AN ERROR MESSAGE IF
 		 * LATER REQUIRED */
 		if (object_name[0] != 0)
-			strcat(object_name, " ");
+			Common::strcat_s(object_name, " ");
 
-		strcat(object_name, word[wp]);
+		Common::strcat_s(object_name, word[wp]);
 
 		if (!strcmp("everything", word[wp])) {
 			/* ALL THIS NEEDS TO SIGNIFY IS THAT IT IS OKAY TO RETURN MULTIPLE

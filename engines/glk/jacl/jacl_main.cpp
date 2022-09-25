@@ -283,7 +283,7 @@ void glk_main() {
 		status_line();
 
 		if (current_command != nullptr) {
-			strcpy(last_command, current_command);
+			Common::strcpy_s(last_command, current_command);
 		}
 
 		if (inputwin == promptwin) {
@@ -404,7 +404,7 @@ void glk_main() {
 		if (text_buffer[0] == 0) {
 			/* NO COMMAND WAS SPECIFIED, FILL THE COMMAND IN AS 'blankjacl'
 			 * FOR THE GAME TO PROCESS AS DESIRED */
-			strcpy(text_buffer, "blankjacl");
+			Common::strcpy_s(text_buffer, 1024, "blankjacl");
 			current_command = blank_command;
 		}
 
@@ -438,7 +438,7 @@ void glk_main() {
 		} else {
 			/* NO COMMAND WAS SPECIFIED, FILL THE COMMAND IN AS 'blankjacl'
 			 * FOR THE GAME TO PROCESS AS DESIRED */
-			strcpy(text_buffer, "blankjacl");
+			Common::strcpy_s(text_buffer, 1024, "blankjacl");
 			command_encapsulate();
 			preparse();
 		}
@@ -530,8 +530,8 @@ void word_check() {
 					TIME->value = FALSE;
 				}
 			} else {
-				strcpy(oops_buffer, word[wp]);
-				strcpy(text_buffer, last_command);
+				Common::strcpy_s(oops_buffer, word[wp]);
+				Common::strcpy_s(text_buffer, 1024, last_command);
 				command_encapsulate();
 				//printf("--- trying to replace %s with %s\n", word[oops_word], oops_buffer);
 				jacl_truncate();
@@ -543,10 +543,10 @@ void word_check() {
 
 				while (word[index] != nullptr) {
 					if (oopsed_current[0] != 0) {
-						strcat(oopsed_current, " ");
+						Common::strcat_s(oopsed_current, " ");
 					}
 
-					strcat(oopsed_current, word[index]);
+					Common::strcat_s(oopsed_current, word[index]);
 
 					index++;
 				}
@@ -570,7 +570,7 @@ void word_check() {
 			write_text(cstring_resolve("NOT_CLEVER")->value);
 			TIME->value = FALSE;
 		} else {
-			strcpy(text_buffer, last_command);
+			Common::strcpy_s(text_buffer, 1024, last_command);
 			current_command = last_command;
 			command_encapsulate();
 			jacl_truncate();
@@ -1186,7 +1186,7 @@ void walking_thru() {
 		}
 	}
 
-	strcpy(script_line, text_buffer);
+	Common::strcpy_s(script_line, text_buffer);
 
 	while (result && INTERRUPTED->value == FALSE) {
 		/* THERE COULD BE A LOT OF PROCESSING GOING ON HERE BEFORE GETTING
@@ -1222,7 +1222,7 @@ void walking_thru() {
 			}
 		}
 
-		strcpy(script_line, text_buffer);
+		Common::strcpy_s(script_line, text_buffer);
 	}
 
 	/* CLOSE THE STREAM */

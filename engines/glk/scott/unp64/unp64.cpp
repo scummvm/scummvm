@@ -587,7 +587,7 @@ int unp64(uint8_t *compressed, size_t length, uint8_t *destinationBuffer, size_t
 	}
 
 	if (*forcedname) {
-		strcpy(name, forcedname);
+		Common::strcpy_s(name, forcedname);
 	} else {
 		if (strlen(name) > 248) /* dirty hack in case name is REALLY long */
 			name[248] = 0;

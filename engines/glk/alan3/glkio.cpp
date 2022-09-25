@@ -177,7 +177,7 @@ bool GlkIO::readLine(CONTEXT, char *buffer, size_t maxLen) {
 		// Return a "restore" command
 		forcePrint("> ");
 		forcePrint("restore\n");
-		strcpy(buffer, "restore");
+		Common::strcpy_s(buffer, maxLen, "restore");
 
 	} else if (readingCommands) {
 		if (glk_get_line_stream(commandFile, buffer, maxLen) == 0) {

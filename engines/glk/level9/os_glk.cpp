@@ -3517,8 +3517,9 @@ static int gln_command_escape(const char *string) {
 		return FALSE;
 
 	/* Take a copy of the string, without any leading space or introducer. */
-	string_copy = (char *)gln_malloc(strlen(string + posn) + 1 - strlen("glk"));
-	strcpy(string_copy, string + posn + strlen("glk"));
+	size_t ln = strlen(string + posn) + 1 - 3/*strlen("glk")*/;
+	string_copy = (char *)gln_malloc(ln);
+	Common::strcpy_s(string_copy, ln, string + posn + 3/*strlen("glk")*/);
 
 	/*
 	 * Find the subcommand; the first word in the string copy.  Find its end,
@@ -3625,8 +3626,9 @@ static int gln_command_intercept(char *string) {
 
 	/* Take a copy of the string, excluding any leading whitespace. */
 	posn = strspn(string, "\t ");
-	string_copy = (char *)gln_malloc(strlen(string + posn) + 1);
-	strcpy(string_copy, string + posn);
+	size_t ln = strlen(string + posn) + 1;
+	string_copy = (char *)gln_malloc(ln);
+	Common::strcpy_s(string_copy, ln, string + posn);
 
 	/*
 	 * Find the space or NUL after the first word, and check that anything
@@ -4500,8 +4502,9 @@ static void gln_establish_picture_filename(const char *name, char **graphics) {
 	assert(name && graphics);
 
 	/* Take a destroyable copy of the input filename. */
-	base = (char *)gln_malloc(strlen(name) + 1);
-	strcpy(base, name);
+	size_t ln = strlen(name) + 1;
+	base = (char *)gln_malloc(ln);
+	Common::strcpy_s(base, ln, name);
 
 	/* If base has an extension .LEV, .SNA, or similar, remove it. */
 	if (strrchr(base, '.')) {
@@ -4509,44 +4512,45 @@ static void gln_establish_picture_filename(const char *name, char **graphics) {
 	}
 
 	/* Allocate space for the return graphics file. */
-	graphics_file = (char *)gln_malloc(strlen(base) + strlen(".___") + 1);
+	ln = strlen(base) + 4/*strlen(".___")*/ + 1;
+	graphics_file = (char *)gln_malloc(ln);
 
 	/* Form a candidate graphics file, using a .PIC extension. */
 	if (!f.isOpen()) {
-		strcpy(graphics_file, base);
-		strcat(graphics_file, ".PIC");
+		Common::strcpy_s(graphics_file, ln, base);
+		Common::strcat_s(graphics_file, ln, ".PIC");
 		f.open(graphics_file);
 	}
 
 	if (!f.isOpen()) {
-		strcpy(graphics_file, base);
-		strcat(graphics_file, ".pic");
+		Common::strcpy_s(graphics_file, ln, base);
+		Common::strcat_s(graphics_file, ln, ".pic");
 		f.open(graphics_file);
 	}
 
 	/* Form a candidate graphics file, using a .CGA extension. */
 	if (!f.isOpen()) {
-		strcpy(graphics_file, base);
-		strcat(graphics_file, ".CGA");
+		Common::strcpy_s(graphics_file, ln, base);
+		Common::strcat_s(graphics_file, ln, ".CGA");
 		f.open(graphics_file);
 	}
 
 	if (!f.isOpen()) {
-		strcpy(graphics_file, base);
-		strcat(graphics_file, ".cga");
+		Common::strcpy_s(graphics_file, ln, base);
+		Common::strcat_s(graphics_file, ln, ".cga");
 		f.open(graphics_file);
 	}
 
 	/* Form a candidate graphics file, using a .HRC extension. */
 	if (!f.isOpen()) {
-		strcpy(graphics_file, base);
-		strcat(graphics_file, ".HRC");
+		Common::strcpy_s(graphics_file, ln, base);
+		Common::strcat_s(graphics_file, ln, ".HRC");
 		f.open(graphics_file);
 	}
 
 	if (!f.isOpen()) {
-		strcpy(graphics_file, base);
-		strcat(graphics_file, ".hrc");
+		Common::strcpy_s(graphics_file, ln, base);
+		Common::strcat_s(graphics_file, ln, ".hrc");
 		f.open(graphics_file);
 	}
 
@@ -4566,16 +4570,17 @@ static void gln_establish_picture_filename(const char *name, char **graphics) {
 	}
 
 	/* Again, allocate space for the return graphics file. */
-	graphics_file = (char *)gln_malloc(strlen(base) + strlen("PICTURE.DAT") + 1);
+	ln = strlen(base) + strlen("PICTURE.DAT") + 1;
+	graphics_file = (char *)gln_malloc(ln);
 
 	/* As above, form a candidate graphics file. */
-	strcpy(graphics_file, base);
-	strcat(graphics_file, "PICTURE.DAT");
+	Common::strcpy_s(graphics_file, ln, base);
+	Common::strcat_s(graphics_file, ln, "PICTURE.DAT");
 
 	if (!f.open(graphics_file)) {
 		/* Retry, using picture.dat extension instead. */
-		strcpy(graphics_file, base);
-		strcat(graphics_file, "picture.dat");
+		Common::strcpy_s(graphics_file, ln, base);
+		Common::strcat_s(graphics_file, ln, "picture.dat");
 		if (!f.open(graphics_file)) {
 			/*
 			 * No access to this graphics file.  In this case, free memory

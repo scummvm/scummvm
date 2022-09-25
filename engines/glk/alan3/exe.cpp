@@ -327,9 +327,10 @@ void schedule(Aword event, Aword where, Aword after) {
 Aptr concat(Aptr as1, Aptr as2) {
 	char *s1 = (char *)fromAptr(as1);
 	char *s2 = (char *)fromAptr(as2);
-	char *result = (char *)allocate(strlen((char *)s1) + strlen((char *)s2) + 1);
-	strcpy(result, s1);
-	strcat(result, s2);
+	size_t ln = strlen(s1) + strlen(s2) + 1;
+	char *result = (char *)allocate(ln);
+	Common::strcpy_s(result, ln, s1);
+	Common::strcat_s(result, ln, s2);
 	return toAptr(result);
 }
 

@@ -238,7 +238,7 @@ void read_gamefile() {
 		outofmem();
 	else {
 		current_function = function_table;
-		strcpy(current_function->name, "JACL*Internal");
+		Common::strcpy_s(current_function->name, "JACL*Internal");
 		current_function->position = 0;
 		current_function->self = 0;
 		current_function->call_count = 0;
@@ -329,10 +329,10 @@ void read_gamefile() {
 						object[objects]->label[40] = 0;
 						object[objects]->first_plural = nullptr;
 
-						strcpy(object[objects]->described, object[objects]->label);
-						strcpy(object[objects]->inventory, object[objects]->label);
-						strcpy(object[objects]->article, "the");
-						strcpy(object[objects]->definite, "the");
+						Common::strcpy_s(object[objects]->described, object[objects]->label);
+						Common::strcpy_s(object[objects]->inventory, object[objects]->label);
+						Common::strcpy_s(object[objects]->article, "the");
+						Common::strcpy_s(object[objects]->definite, "the");
 						object[objects]->attributes = FALSE;
 						object[objects]->user_attributes = FALSE;
 
@@ -694,8 +694,9 @@ void read_gamefile() {
 						errors++;
 					} else {
 						strncpy(function_name, word[wp], 59);
-						strcat(function_name, "_");
-						strcat(function_name, object[object_count]->label);
+						function_name[60] = '\0';
+						Common::strcat_s(function_name, "_");
+						Common::strcat_s(function_name, object[object_count]->label);
 						self_parent = object_count;
 					}
 					if (function_table == nullptr) {
@@ -708,7 +709,7 @@ void read_gamefile() {
 							functions++;
 
 							current_function = function_table;
-							strcpy(current_function->name, function_name);
+							Common::strcpy_s(current_function->name, function_name);
 
 							current_function->position = g_vm->glk_stream_get_position(game_stream);
 							current_function->call_count = 0;
@@ -727,7 +728,7 @@ void read_gamefile() {
 							functions++;
 
 							current_function = current_function->next_function;
-							strcpy(current_function->name, function_name);
+							Common::strcpy_s(current_function->name, function_name);
 
 							current_function->position = g_vm->glk_stream_get_position(game_stream);
 							current_function->call_count = 0;

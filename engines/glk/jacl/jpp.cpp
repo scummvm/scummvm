@@ -96,7 +96,7 @@ int jpp() {
 						return (FALSE);
 					}
 				}
-				strcpy(processed_file, game_file);
+				Common::strcpy_s(processed_file, 256, game_file);
 
 				return (TRUE);
 			}
@@ -183,10 +183,10 @@ int process_file(const char *sourceFile1, char *sourceFile2) {
 			includeFile = strchr(text_buffer, '"');
 
 			if (includeFile != nullptr) {
-				strcpy(temp_buffer1, game_path);
-				strcat(temp_buffer1, includeFile + 1);
-				strcpy(temp_buffer2, include_directory);
-				strcat(temp_buffer2, includeFile + 1);
+				Common::strcpy_s(temp_buffer1, game_path);
+				Common::strcat_s(temp_buffer1, includeFile + 1);
+				Common::strcpy_s(temp_buffer2, include_directory);
+				Common::strcat_s(temp_buffer2, includeFile + 1);
 				if (process_file(temp_buffer1, temp_buffer2) == FALSE) {
 					return (FALSE);
 				}

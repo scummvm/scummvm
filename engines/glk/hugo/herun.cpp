@@ -176,8 +176,8 @@ RestartDebugger:
 
 Start:
 	stack_depth = 0;
-	strcpy(errbuf, "");
-	strcpy(oops, "");
+	errbuf[0] = '\0';
+	oops[0] = '\0';
 
 #if defined (GLK)
 	// Handle any savegame selected directly from the ScummVM launcher
@@ -277,7 +277,7 @@ FreshInput:
 							// Trigger a "look" command so that players will get some initial text
 							// after loading a savegame directly from the launcher
 							_savegameSlot = -1;
-							strcpy(buffer, "look");
+							Common::strcpy_s(buffer, "look");
 						}
 						else
 #endif
@@ -349,7 +349,7 @@ RecordedNewline:;
 
 					if (!strcmp(buffer, "") || buffer[0]=='.')
 					{
-						strcpy(parseerr, "");
+						parseerr[0] = '\0';
 
 						/* "What?" */
 						ParseError(0, 0);
@@ -412,13 +412,13 @@ Skipmc:;
 		{
 			if (parsestr[0]=='\"')
 			{
-				strcpy(parseerr, Right(parsestr, strlen(parsestr)-1));
+				Common::strcpy_s(parseerr, Right(parsestr, strlen(parsestr)-1));
 				if (parseerr[strlen(parseerr)-1]=='\"')
 					parseerr[strlen(parseerr)-1] = '\0';
 			}
 		}
 		else
-			strcpy(parseerr, "");
+			parseerr[0] = '\0';
 
 		/* default actor */
 		var[actor] = var[player];
@@ -487,7 +487,7 @@ NextPerform:
 					   trash passlocal[])
 					*/
 					if (parseerr[0]=='\0' && parsestr[0]=='\0')
-						strcpy(parseerr, Name(objlist[i]));
+						Common::strcpy_s(parseerr, Name(objlist[i]));
 
 					/* Set up arguments for Perform */
 					passlocal[0] = var[verbroutine];
@@ -544,7 +544,7 @@ NextPerform:
 					for (i=0; i<objcount; i++)
 					{
 						if (parseerr[0]=='\0' && parsestr[0]=='\0')
-							strcpy(parseerr, Name(objlist[i]));
+							Common::strcpy_s(parseerr, Name(objlist[i]));
 
 						if (ValidObj(objlist[i]) &&
 							((objcount>1 && objlist[i]!=var[xobject]) || objcount==1))
@@ -830,7 +830,7 @@ PasstoBlock:
 void Hugo::RunInput() {
 	int i;
 
-	strcpy(parseerr, "");
+	parseerr[0] = '\0';
 
 	Flushpbuffer();
 
@@ -842,7 +842,7 @@ void Hugo::RunInput() {
 	if (debugger_collapsing) return;
 #endif
 
-	strcpy(buffer, Rtrim(strlwr(buffer)));
+	Common::strcpy_s(buffer, Rtrim(strlwr(buffer)));
 
 	SeparateWords();
 
@@ -854,10 +854,10 @@ void Hugo::RunInput() {
 		if (wd[i]==UNKNOWN_WORD)
 		{
 			wd[i] = 0;
-			strcpy(parseerr, word[i]);
+			Common::strcpy_s(parseerr, word[i]);
 			if (parseerr[0]=='\"')
 			{
-				strcpy(parseerr, Right(parseerr, strlen(parseerr)-1));
+				Common::strcpy_s(parseerr, Right(parseerr, strlen(parseerr)-1));
 				if (parseerr[strlen(parseerr)-1]=='\"')
 					parseerr[strlen(parseerr)-1] = '\0';
 			}
@@ -933,7 +933,7 @@ void Hugo::RunPrint() {
 
 	while (MEM(codeptr) != EOL_T)
 	{
-		strcpy(line, "");
+		line[0] = '\0';
 
 		switch (MEM(codeptr))
 		{
@@ -968,7 +968,7 @@ void Hugo::RunPrint() {
 					a = (int)(ACTUAL_LINELENGTH() / ratio);
 				}
 #endif
-				strcpy(line, "");
+				line[0] = '\0';
 				l = 0;
 				if (a*FIXEDCHARWIDTH >
 					hugo_textwidth(pbuffer)+currentpos-hugo_charwidth(' '))
@@ -1031,7 +1031,7 @@ void Hugo::RunPrint() {
 				a = GetValue();
 				if (!number)
 				{
-					strcpy(line, GetWord(a));
+					Common::strcpy_s(line, GetWord(a));
 				}
 				else
 				{
@@ -1061,7 +1061,7 @@ void Hugo::RunPrint() {
 		if (MEM(codeptr)==SEMICOLON_T)
 		{
 			codeptr++;
-			strcat(line, "\\;");
+			Common::strcat_s(line, "\\;");
 		}
 		if (capital)
 		{
@@ -1329,14 +1329,14 @@ void Hugo::RunRoutine(long addr) {
 			/* If not object.property or an event */
 			if (strchr(debug_line, '.')==nullptr && strstr(debug_line, "vent ")==nullptr)
 			{
-				strcat(debug_line, "(");
+				Common::strcat_s(debug_line, "(");
 				for (i=0; i<arguments_passed; i++)
 				{
 					sprintf(debug_line+strlen(debug_line), "%d", var[MAXGLOBALS+i]);
 					if (i<arguments_passed-1)
-						strcat(debug_line, ", ");
+						Common::strcat_s(debug_line, ", ");
 				}
-				strcat(debug_line, ")");
+				Common::strcat_s(debug_line, ")");
 			}
 			AddStringtoCodeWindow(debug_line);
 		}
@@ -1556,7 +1556,7 @@ ProcessToken:
 						/* If it doesn't exist, add it */
 						if (i==current_locals)
 						{
-							strcpy(localname[current_locals], line);
+							Common::strcpy_s(localname[current_locals], line);
 							if (++current_locals==MAXLOCALS)
 								current_locals--;
 							window[VIEW_LOCALS].count = current_locals;
@@ -1576,10 +1576,10 @@ ProcessToken:
 			case TEXTDATA_T:        /* printed text from file */
 			{
 				textaddr = Peek(codeptr+1)*65536L+(long)PeekWord(codeptr+2);
-				strcpy(line, GetText(textaddr));
+				Common::strcpy_s(line, GetText(textaddr));
 				codeptr += 4;
 				if (Peek(codeptr)==SEMICOLON_T)
-					{strcat(line, "\\;");
+					{Common::strcat_s(line, "\\;");
 					codeptr++;}
 				if (capital)
 					{line[0] = (char)toupper((int)line[0]);
@@ -2104,7 +2104,7 @@ ReturnfromRoutine:
 			{
 				sprintf(debug_line+strlen(debug_line), " to %s", RoutineName(old_currentroutine));
 			}
-			strcat(debug_line, ")");
+			Common::strcat_s(debug_line, ")");
 			AddStringtoCodeWindow(debug_line);
 			AddStringtoCodeWindow("");
 
@@ -2253,7 +2253,7 @@ int Hugo::RunString() {
 		maxlen = GetValue();
 	if (Peek(codeptr)==CLOSE_BRACKET_T) codeptr++;
 
-	strcpy(line, GetWord(dword));
+	Common::strcpy_s(line, GetWord(dword));
 
 	defseg = arraytable;
 	pos = 0;

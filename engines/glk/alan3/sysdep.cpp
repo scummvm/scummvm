@@ -208,6 +208,7 @@ int compareStrings(char *str1, char *str2) {
 }
 
 
+#if 0
 
 /*----------------------------------------------------------------------
   toIso
@@ -312,6 +313,8 @@ void toNative(char copy[], char original[], int charset) {
 	if (NATIVECHARSET != 0)
 		fromIso(copy, copy);
 }
+
+#endif
 
 
 /*======================================================================*/

@@ -53,8 +53,8 @@ void eachturn() {
 	 * OCCURING DUE TO THE PASSING OF TIME */
 	TOTAL_MOVES->value++;
 	execute("+eachturn");
-	strcpy(function_name, "eachturn_");
-	strcat(function_name, object[HERE]->label);
+	Common::strcpy_s(function_name, 81, "eachturn_");
+	Common::strcat_s(function_name, 81, object[HERE]->label);
 	execute(function_name);
 	execute("+system_eachturn");
 
@@ -106,6 +106,7 @@ int random_number() {
 	return g_vm->getRandomNumber(0x7fffffff);
 }
 
+#ifndef GLK
 void create_paths(char *full_path) {
 	int       index;
 	char      *last_slash;
@@ -181,6 +182,7 @@ void create_paths(char *full_path) {
 		strcat(data_directory, DATA_DIR);
 	}
 }
+#endif
 
 int jacl_whitespace(char character) {
 	/* CHECK IF A CHARACTER IS CONSIDERED WHITE SPACE IN THE JACL LANGUAGE */

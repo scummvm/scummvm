@@ -59,14 +59,14 @@ void glkio_printf(const char *fmt, ...) {
   */
 
   /* 4f - length of user buffer should be used */
-Boolean readline(char usrbuf[]) {
+Boolean readline(char usrbuf[], size_t maxlen) {
 	if (g_vm->_pendingLook) {
 		g_vm->_pendingLook = false;
 		glkio_printf("look\n");
-		strcpy(usrbuf, "look");
+		Common::strcpy_s(usrbuf, maxlen, "look");
 	} else {
 		event_t event;
-		g_vm->glk_request_line_event(glkMainWin, usrbuf, 255, 0);
+		g_vm->glk_request_line_event(glkMainWin, usrbuf, maxlen, 0);
 
 		/* FIXME: buffer size should be infallible: all existing calls use 256 or
 		   80 character buffers, except parse which uses LISTLEN (currently 100)

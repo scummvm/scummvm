@@ -99,6 +99,7 @@ extern char *stringLower(char str[]); /* INOUT - ISO string to convert */
 extern char *stringUpper(char str[]); /* INOUT - ISO string to convert */
 extern int compareStrings(char str1[], char str2[]); /* Case-insensitive compare */
 
+#if 0
 /* ISO string conversion functions */
 extern void toIso(char copy[],  /* OUT - Mapped string */
 				  char original[], /* IN - string to convert */
@@ -110,6 +111,7 @@ extern void fromIso(char copy[], /* OUT - Mapped string */
 extern void toNative(char copy[], /* OUT - Mapped string */
 					 char original[], /* IN - string to convert */
 					 int charset); /* IN - current character set */
+#endif
 
 extern char *baseNameStart(char *fullPathName);
 

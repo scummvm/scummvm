@@ -1030,7 +1030,7 @@ void linfnam(lindef *lin, char *buf)
 {
 #   define  linf ((linfdef *)lin)
 
-	strcpy(buf, linf->linfnam);
+	Common::strcpy_s(buf, OSFNMAX, linf->linfnam);
 
 #   undef linf
 }

@@ -86,11 +86,12 @@ static Boolean eol = TRUE;  /* Looking at End of line? Yes, initially */
 
 
 static void unknown(CONTEXT, char token[]) {
-	char *str = (char *)allocate((int)strlen(token) + 4);
+	size_t ln = strlen(token) + 4;
+	char *str = (char *)allocate((int)ln);
 
 	str[0] = '\'';
-	strcpy(&str[1], token);
-	strcat(str, "'?");
+	Common::strcpy_s(&str[1], ln, token);
+	Common::strcat_s(str, ln, "'?");
 	output(str);
 	free(str);
 	eol = TRUE;
@@ -156,7 +157,7 @@ static void agetline(CONTEXT) {
 		if (logflg)
 			fprintf(logfil, "> ");
 
-		if (!readline(buf)) {
+		if (!readline(buf, sizeof(buf))) {
 			if (g_vm->shouldQuit())
 				return;
 
@@ -167,7 +168,7 @@ static void agetline(CONTEXT) {
 		anyOutput = FALSE;
 		if (logflg)
 			fprintf(logfil, "%s\n", buf);
-		strcpy(isobuf, buf);
+		Common::strcpy_s(isobuf, buf);
 
 		token = gettoken(isobuf);
 		if (token != nullptr && strcmp("debug", token) == 0 && header->debug) {

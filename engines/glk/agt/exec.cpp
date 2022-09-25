@@ -219,9 +219,9 @@ static word it_pronoun(int item, rbool ind_form)
 /* (In particular, proper nouns shouldn't have a "the") */
 static void theset(char *buff, int item) {
 	if (it_proper(item))
-		strcpy(buff, "");
+		buff[0] = '\0';
 	else
-		strcpy(buff, "the ");
+		Common::strcpy_s(buff, FILL_SIZE, "the ");
 }
 
 
@@ -236,7 +236,7 @@ static void num_name_func(parse_rec *obj_rec, char *fill_buff, word prev_adj)
 	word w;
 
 	if (obj_rec == nullptr) {
-		strcpy(fill_buff, "");
+		fill_buff[0] = '\0';
 		return;
 	}
 
@@ -247,9 +247,9 @@ static void num_name_func(parse_rec *obj_rec, char *fill_buff, word prev_adj)
 
 	if (w == 0) {
 		if (obj_rec->info == D_NUM) sprintf(fill_buff, "%ld", (long)obj_rec->num);
-		else strcpy(fill_buff, "");
+		else fill_buff[0] = '\0';
 #if 0
-		strcpy(fill_buff, "that"); /* We can try and hope */
+		Common::strcpy_s(fill_buff, FILL_SIZE, "that"); /* We can try and hope */
 #endif
 		return;
 	}
@@ -269,7 +269,7 @@ static word get_adj(parse_rec *obj_rec, char *buff) {
 	if (obj_rec->adj != 0) w = obj_rec->adj;
 	else w = it_adj(obj_rec->obj);
 
-	if (w == 0) strcpy(buff, "");
+	if (w == 0) buff[0] = '\0';
 	else {
 		rstrncpy(buff, dict[w], FILL_SIZE);
 		if (it_proper(obj_rec->obj)) buff[0] = toupper(buff[0]);
@@ -283,7 +283,7 @@ static word get_adj(parse_rec *obj_rec, char *buff) {
 #define d2buff(i) {rstrncpy(fill_buff,dict[i],FILL_SIZE);return 1;}
 #define num_name(obj_rec,jsa)  {num_name_func(obj_rec,fill_buff,jsa);return 1;}
 /* jsa= Just seen adj */
-#define youme(mestr,youstr) {strcpy(fill_buff,irun_mode?mestr:youstr);\
+#define youme(mestr,youstr) {Common::strcpy_s(fill_buff,FILL_SIZE,irun_mode?mestr:youstr);\
 		return 1;}
 
 word just_seen_adj;  /* This determines if we just saw $adjective$; if so,
@@ -345,15 +345,15 @@ static int wordcode_match(const char **pvarname, char *fill_buff,
 		return 1;
 	} else if (match_str(pvarname, "OPEN")) {
 		hold_val = extract_number(pvarname, maxnoun, '$');
-		strcpy(fill_buff, it_open(hold_val) ? "open" : "closed");
+		Common::strcpy_s(fill_buff, FILL_SIZE, it_open(hold_val) ? "open" : "closed");
 		return 1;
 	} else if (match_str(pvarname, "ON")) {
 		hold_val = extract_number(pvarname, maxnoun, '$');
-		strcpy(fill_buff, it_on(hold_val) ? "on" : "off");
+		Common::strcpy_s(fill_buff, FILL_SIZE, it_on(hold_val) ? "on" : "off");
 		return 1;
 	} else if (match_str(pvarname, "LOCKED")) {
 		hold_val = extract_number(pvarname, maxnoun, '$');
-		strcpy(fill_buff, it_locked(hold_val, 0) ? "locked" : "unlocked");
+		Common::strcpy_s(fill_buff, FILL_SIZE, it_locked(hold_val, 0) ? "locked" : "unlocked");
 		return 1;
 	}
 

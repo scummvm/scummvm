@@ -670,8 +670,9 @@ static void task_run_change_variable_action(sc_gameref_t game,
 			if (!expr_eval_string_expression(expr, vars, &mutable_string)) {
 				sc_error("task_run_change_variable_action:"
 				         " invalid string expression, %s\n", expr);
-				mutable_string = (sc_char *)sc_malloc(strlen("[expr error]") + 1);
-				strcpy(mutable_string, "[expr error]");
+				size_t ln = strlen("[expr error]") + 1;
+				mutable_string = (sc_char *)sc_malloc(ln);
+				Common::strcpy_s(mutable_string, ln, "[expr error]");
 			}
 			if (task_trace) {
 				sc_trace("Task: variable %ld (%s) = %s, %s\n",

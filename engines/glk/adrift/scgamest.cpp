@@ -812,8 +812,9 @@ static void gs_string_copy(sc_char **to_string, const sc_char *from_string) {
 
 	/* Copy from_string if set, otherwise set to_string to NULL. */
 	if (from_string) {
-		*to_string = (sc_char *)sc_malloc(strlen(from_string) + 1);
-		strcpy(*to_string, from_string);
+		size_t ln = strlen(from_string) + 1;
+		*to_string = (sc_char *)sc_malloc(ln);
+		Common::strcpy_s(*to_string, ln, from_string);
 	} else
 		*to_string = nullptr;
 }
