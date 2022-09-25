@@ -501,7 +501,7 @@ inline void _remora::SetMinimumZoom(uint32 nZoom) {
 	m_nMinZoom = nZoom;
 }
 
-inline void _remora::NewEmail(const char *pcEmailID) { strcpy(m_pcEmailID, pcEmailID); }
+inline void _remora::NewEmail(const char *pcEmailID) { Common::strcpy_s(m_pcEmailID, pcEmailID); }
 
 inline void _remora::ResetFloorRanges() {
 	m_nNumFloorRangesSet = 0;

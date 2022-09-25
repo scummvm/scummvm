@@ -193,8 +193,8 @@ int32 ClusterManager::WhichCD(MISSION_ID mission) {
 }
 
 bool8 ClusterManager::CheckForCD(int32 /*number*/) {
-	strcpy(m_cdroot1, "");
-	strcpy(m_cdroot2, "");
+	m_cdroot1[0] = '\0';
+	m_cdroot2[0] = '\0';
 	return TRUE8;
 }
 

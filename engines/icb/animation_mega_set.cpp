@@ -150,8 +150,8 @@ void _vox_image::___init(const char *chr, const char *set, __weapon weapon) {
 	Cancel_override_pose();
 
 	// store these things temporarily so we can recall this function when swapping voxel -> polygon and vice verse...
-	strcpy(temp_chr, chr);
-	strcpy(temp_set, set);
+	Common::strcpy_s(temp_chr, chr);
+	Common::strcpy_s(temp_set, set);
 	temp_weapon = weapon;
 
 	// constructor for mega-set-caps class
@@ -238,7 +238,7 @@ void _vox_image::MakeAnimEntry(int32 i) {
 	if (strName.size() > ANIM_NAME_STR_LEN) {
 		Fatal_error("_vox_image::___init [%s] string too long", strName.c_str());
 	}
-	strcpy(anim_name[i], strName.c_str());
+	Common::strcpy_s(anim_name[i], strName.c_str());
 
 	anim_name_hash[i] = HashString(anim_name[i]);
 
@@ -247,7 +247,7 @@ void _vox_image::MakeAnimEntry(int32 i) {
 	if (strName.size() > ANIM_NAME_STR_LEN) {
 		Fatal_error("_vox_image::___init [%s] string too long", strName.c_str());
 	}
-	strcpy(info_name[i], strName.c_str());
+	Common::strcpy_s(info_name[i], strName.c_str());
 
 	info_name_hash[i] = HashString(info_name[i]);
 
@@ -415,7 +415,7 @@ bool8 _vox_image::Set_texture(const char *tex_name) {
 
 	// set palette to be same as texture
 
-	strcpy(palette_name, texture_name);
+	Common::strcpy_s(palette_name, texture_name);
 	palette_hash = texture_hash;
 
 	// okay preload the texture/palette combo
@@ -428,8 +428,8 @@ bool8 _vox_image::Set_mesh(const char *m_name) {
 	char name[32];
 	int32 len;
 
-	strcpy(name, m_name);
-	strcat(name, ".rap");
+	Common::strcpy_s(name, m_name);
+	Common::strcat_s(name, ".rap");
 
 	len = sprintf(mesh_name, "%s", name);
 	if (len > IMAGE_PATH_STR_LEN)

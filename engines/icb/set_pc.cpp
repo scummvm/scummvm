@@ -609,7 +609,7 @@ bool8 _set::Init(const char *camera_name, const char *clustered_camera_name) {
 	uint32 p_rcvf_hash = HashString(p_rcvf);
 
 	// Keep the non clustered name of the camera ( not really needed but nicer for error messages)
-	strcpy(set_name, camera_name);
+	Common::strcpy_s(set_name, camera_name);
 
 	// Load this camera
 	m_currentCamera = (_pcSetHeader *)rs_bg->Res_open(p_rcvf, p_rcvf_hash, set_cluster, set_cluster_hash);
@@ -628,7 +628,7 @@ bool8 _set::Init(const char *camera_name, const char *clustered_camera_name) {
 void _set::Reset() {
 	// Free all the prop surface that have been created.
 	if (m_setOk) {
-		strcpy(set_name, "None");
+		Common::strcpy_s(set_name, "None");
 
 		// Remove all the old surface
 		for (int32 s = 0; s < m_TotalPropSurfaces; s++) {

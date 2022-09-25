@@ -167,67 +167,67 @@ void InitialiseMovieLibrary() {
 	}
 
 	// Setup filename mappings (only done here)
-	strcpy(g_movieLibrary[0].filename, "m01int2");
-	strcpy(g_movieLibrary[1].filename, "m01intro");
-	strcpy(g_movieLibrary[2].filename, "m01accel");
-	strcpy(g_movieLibrary[3].filename, "m01cable");
-	strcpy(g_movieLibrary[4].filename, "m01chasm");
-	strcpy(g_movieLibrary[5].filename, "m01cut");
-	strcpy(g_movieLibrary[6].filename, "m01robot");
-	strcpy(g_movieLibrary[7].filename, "m01robt2");
-	strcpy(g_movieLibrary[8].filename, "m01robt3");
-	strcpy(g_movieLibrary[9].filename, "m01outro");
+	Common::strcpy_s(g_movieLibrary[0].filename, "m01int2");
+	Common::strcpy_s(g_movieLibrary[1].filename, "m01intro");
+	Common::strcpy_s(g_movieLibrary[2].filename, "m01accel");
+	Common::strcpy_s(g_movieLibrary[3].filename, "m01cable");
+	Common::strcpy_s(g_movieLibrary[4].filename, "m01chasm");
+	Common::strcpy_s(g_movieLibrary[5].filename, "m01cut");
+	Common::strcpy_s(g_movieLibrary[6].filename, "m01robot");
+	Common::strcpy_s(g_movieLibrary[7].filename, "m01robt2");
+	Common::strcpy_s(g_movieLibrary[8].filename, "m01robt3");
+	Common::strcpy_s(g_movieLibrary[9].filename, "m01outro");
 
-	strcpy(g_movieLibrary[10].filename, "m02tortu");
-	strcpy(g_movieLibrary[11].filename, "m02intro");
-	strcpy(g_movieLibrary[12].filename, "m02outro");
+	Common::strcpy_s(g_movieLibrary[10].filename, "m02tortu");
+	Common::strcpy_s(g_movieLibrary[11].filename, "m02intro");
+	Common::strcpy_s(g_movieLibrary[12].filename, "m02outro");
 
-	strcpy(g_movieLibrary[13].filename, "m03tortu");
-	strcpy(g_movieLibrary[14].filename, "m03intro");
-	strcpy(g_movieLibrary[15].filename, "m03bomb");
-	strcpy(g_movieLibrary[16].filename, "m03cord");
-	strcpy(g_movieLibrary[17].filename, "m03shoot");
-	strcpy(g_movieLibrary[18].filename, "m03c1sep");
-	strcpy(g_movieLibrary[19].filename, "m03outro");
+	Common::strcpy_s(g_movieLibrary[13].filename, "m03tortu");
+	Common::strcpy_s(g_movieLibrary[14].filename, "m03intro");
+	Common::strcpy_s(g_movieLibrary[15].filename, "m03bomb");
+	Common::strcpy_s(g_movieLibrary[16].filename, "m03cord");
+	Common::strcpy_s(g_movieLibrary[17].filename, "m03shoot");
+	Common::strcpy_s(g_movieLibrary[18].filename, "m03c1sep");
+	Common::strcpy_s(g_movieLibrary[19].filename, "m03outro");
 
-	strcpy(g_movieLibrary[20].filename, "m04tortu");
-	strcpy(g_movieLibrary[21].filename, "m04intro");
-	strcpy(g_movieLibrary[22].filename, "m04lift1");
-	strcpy(g_movieLibrary[23].filename, "m04lift2");
-	strcpy(g_movieLibrary[24].filename, "m04spec");
-	strcpy(g_movieLibrary[25].filename, "m04zapp");
-	strcpy(g_movieLibrary[26].filename, "m04tube");
-	strcpy(g_movieLibrary[27].filename, "m04nag");
-	strcpy(g_movieLibrary[28].filename, "m04outro");
+	Common::strcpy_s(g_movieLibrary[20].filename, "m04tortu");
+	Common::strcpy_s(g_movieLibrary[21].filename, "m04intro");
+	Common::strcpy_s(g_movieLibrary[22].filename, "m04lift1");
+	Common::strcpy_s(g_movieLibrary[23].filename, "m04lift2");
+	Common::strcpy_s(g_movieLibrary[24].filename, "m04spec");
+	Common::strcpy_s(g_movieLibrary[25].filename, "m04zapp");
+	Common::strcpy_s(g_movieLibrary[26].filename, "m04tube");
+	Common::strcpy_s(g_movieLibrary[27].filename, "m04nag");
+	Common::strcpy_s(g_movieLibrary[28].filename, "m04outro");
 
-	strcpy(g_movieLibrary[29].filename, "m05tortu");
-	strcpy(g_movieLibrary[30].filename, "m05intro");
-	strcpy(g_movieLibrary[31].filename, "m05outro");
+	Common::strcpy_s(g_movieLibrary[29].filename, "m05tortu");
+	Common::strcpy_s(g_movieLibrary[30].filename, "m05intro");
+	Common::strcpy_s(g_movieLibrary[31].filename, "m05outro");
 
-	strcpy(g_movieLibrary[32].filename, "m07tortu");
-	strcpy(g_movieLibrary[33].filename, "m07intro");
-	strcpy(g_movieLibrary[34].filename, "m07sam");
-	strcpy(g_movieLibrary[35].filename, "m07doors");
-	strcpy(g_movieLibrary[36].filename, "m07outro");
+	Common::strcpy_s(g_movieLibrary[32].filename, "m07tortu");
+	Common::strcpy_s(g_movieLibrary[33].filename, "m07intro");
+	Common::strcpy_s(g_movieLibrary[34].filename, "m07sam");
+	Common::strcpy_s(g_movieLibrary[35].filename, "m07doors");
+	Common::strcpy_s(g_movieLibrary[36].filename, "m07outro");
 
-	strcpy(g_movieLibrary[37].filename, "m08intro");
-	strcpy(g_movieLibrary[38].filename, "m08betr");
-	strcpy(g_movieLibrary[39].filename, "m08tortu");
-	strcpy(g_movieLibrary[40].filename, "m08outro");
+	Common::strcpy_s(g_movieLibrary[37].filename, "m08intro");
+	Common::strcpy_s(g_movieLibrary[38].filename, "m08betr");
+	Common::strcpy_s(g_movieLibrary[39].filename, "m08tortu");
+	Common::strcpy_s(g_movieLibrary[40].filename, "m08outro");
 
-	strcpy(g_movieLibrary[41].filename, "m10intro");
-	strcpy(g_movieLibrary[42].filename, "m10luk");
-	strcpy(g_movieLibrary[43].filename, "m10exp");
-	strcpy(g_movieLibrary[44].filename, "m10miss");
-	strcpy(g_movieLibrary[45].filename, "m10coptr");
-	strcpy(g_movieLibrary[46].filename, "m10outro");
+	Common::strcpy_s(g_movieLibrary[41].filename, "m10intro");
+	Common::strcpy_s(g_movieLibrary[42].filename, "m10luk");
+	Common::strcpy_s(g_movieLibrary[43].filename, "m10exp");
+	Common::strcpy_s(g_movieLibrary[44].filename, "m10miss");
+	Common::strcpy_s(g_movieLibrary[45].filename, "m10coptr");
+	Common::strcpy_s(g_movieLibrary[46].filename, "m10outro");
 }
 
 void Movie_ID_to_name(uint32 id, char *buff) {
 	if (id >= TOTAL_NUMBER_OF_MOVIES)
 		Fatal_error("Movies information out-of-date!");
 
-	strcpy(buff, g_movieLibrary[id].filename);
+	Common::strcpy_s(buff, 32, g_movieLibrary[id].filename);
 }
 
 int32 Movie_name_to_ID(char *name) {
@@ -3132,7 +3132,7 @@ void OptionsManager::DoChoice() {
 			// If the slot contains data, copy the label into our editing buffer else use default name
 			if (m_slots[m_slotOffset + m_GAMESLOT_selected] != nullptr) {
 				// Wish to edit an existing slot label
-				strcpy(m_editBuffer, m_slots[m_slotOffset + m_GAMESLOT_selected]->label);
+				Common::strcpy_s(m_editBuffer, m_slots[m_slotOffset + m_GAMESLOT_selected]->label);
 				// Record this ex-time played so we restore if if the action is cancelled
 				m_emptySlotFlag = m_slots[m_slotOffset + m_GAMESLOT_selected]->secondsPlayed;
 				// Overwrite with current timeplayed
@@ -3143,7 +3143,7 @@ void OptionsManager::DoChoice() {
 				m_slots[m_slotOffset + m_GAMESLOT_selected] = new _SLOT;
 				m_slots[m_slotOffset + m_GAMESLOT_selected]->secondsPlayed = m_timePlayed;
 				memset(m_slots[m_slotOffset + m_GAMESLOT_selected]->label, 0, MAX_LABEL_LENGTH);
-				strcpy(m_editBuffer, m_defaultSlotName);
+				Common::strcpy_s(m_editBuffer, m_defaultSlotName);
 				m_defaultWiper = TRUE8;
 				// By setting this to zero it can be used to identify this newly created slot on cencel (ie need a delete)
 				m_emptySlotFlag = 0;
@@ -3196,7 +3196,7 @@ void OptionsManager::DoChoice() {
 			m_editBuffer[m_cursorPos] = '\0';
 
 			// Then set the label to equal the buffer
-			strcpy(m_slots[m_slotOffset + m_GAMESLOT_selected]->label, m_editBuffer);
+			Common::strcpy_s(m_slots[m_slotOffset + m_GAMESLOT_selected]->label, m_editBuffer);
 
 			// Now actually save the game
 			MakeFullSaveFilename(m_slotOffset + m_GAMESLOT_selected, buff);
@@ -3418,7 +3418,7 @@ void OptionsManager::EditSlotLabel() {
 			m_editBuffer[m_cursorPos] = '\0';
 
 			// Then set the label to equal the buffer
-			strcpy(m_slots[id]->label, m_editBuffer);
+			Common::strcpy_s(m_slots[id]->label, m_editBuffer);
 
 			// Now actually save the game
 			g_mission->Save_game_position(buff, m_slots[id]->label, m_slots[id]->secondsPlayed);

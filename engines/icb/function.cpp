@@ -3472,8 +3472,8 @@ mcodeFunctionReturnCodes _game_session::fn_hard_load_mesh(int32 &, int32 *params
 	const char *base_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	char mesh[32];
-	strcpy(mesh, base_name);
-	strcat(mesh, ".rap");
+	Common::strcpy_s(mesh, base_name);
+	Common::strcat_s(mesh, ".rap");
 
 	uint32 fileHash = NULL_HASH;
 	rs_anims->Res_open(mesh, fileHash, L->voxel_info->base_path, L->voxel_info->base_path_hash);
@@ -3485,8 +3485,8 @@ mcodeFunctionReturnCodes _game_session::fn_preload_mesh(int32 &, int32 *params) 
 	const char *base_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	char filename[32];
-	strcpy(filename, base_name);
-	strcat(filename, ".rap");
+	Common::strcpy_s(filename, base_name);
+	Common::strcat_s(filename, ".rap");
 
 	if (L->voxel_info->Preload_file(filename) == 0)
 		return IR_REPEAT;
@@ -3498,8 +3498,8 @@ mcodeFunctionReturnCodes _game_session::fn_preload_texture(int32 &, int32 *param
 	const char *base_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	char filename[32];
-	strcpy(filename, base_name);
-	strcat(filename, ".revtex");
+	Common::strcpy_s(filename, base_name);
+	Common::strcat_s(filename, ".revtex");
 
 	if (L->voxel_info->Preload_file(filename) == 0)
 		return IR_REPEAT;
@@ -3511,8 +3511,8 @@ mcodeFunctionReturnCodes _game_session::fn_preload_palette(int32 &, int32 *param
 	const char *base_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	char filename[32];
-	strcpy(filename, base_name);
-	strcat(filename, ".revtex");
+	Common::strcpy_s(filename, base_name);
+	Common::strcat_s(filename, ".revtex");
 
 	if (L->voxel_info->Preload_file(filename) == 0)
 		return IR_REPEAT;
@@ -3528,23 +3528,23 @@ mcodeFunctionReturnCodes _game_session::fn_preload_animation(int32 &param1, int3
 	char file[128];
 
 	// The set name
-	strcpy(stub, set_name);
+	Common::strcpy_s(stub, set_name);
 
 	// The actual animation name
-	strcat(stub, "\\");
-	strcat(stub, anim_name);
+	Common::strcat_s(stub, "\\");
+	Common::strcat_s(stub, anim_name);
 
 	// Preload the marker file into memory
-	strcpy(file, stub);
-	strcat(file, ".raj");
+	Common::strcpy_s(file, stub);
+	Common::strcat_s(file, ".raj");
 
 	if (L->voxel_info->Preload_file(file) == 0) {
 		return IR_REPEAT;
 	}
 
 	// Preload the animation file into memory
-	strcpy(file, stub);
-	strcat(file, ".rab");
+	Common::strcpy_s(file, stub);
+	Common::strcat_s(file, ".rab");
 
 	 if (L->voxel_info->Preload_file(file) == 0) {
 		return IR_REPEAT;

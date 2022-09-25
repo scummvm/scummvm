@@ -61,7 +61,7 @@ void _line_of_sight::Initialise() {
 	char oFileName[ENGINE_STRING_LEN];
 
 	// When clustered the session files have the base stripped
-	strcpy(oFileName, PX_FILENAME_LINEOFSIGHT);
+	Common::strcpy_s(oFileName, PX_FILENAME_LINEOFSIGHT);
 #endif
 
 	uint32 cluster_hash = MS->Fetch_session_cluster_hash();

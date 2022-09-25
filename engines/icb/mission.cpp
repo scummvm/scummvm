@@ -205,7 +205,7 @@ void _mission::___init_mission(const char *new_mission_name, const char *session
 
 	// When using clusters keep items withouth the root so the correct hashing
 	// start point can be maintained
-	strcpy(mission_name, new_mission_name);
+	Common::strcpy_s(mission_name, new_mission_name);
 
 	Set_string(new_mission_name, tiny_mission_name, TINY_NAME_LEN);
 	Set_string(session_name, tiny_session_name, TINY_NAME_LEN);
