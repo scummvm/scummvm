@@ -254,7 +254,7 @@ void Game::execute() {
 			destRoom = fields.getField(NEW_ROOM_NUMBER);
 			if (destRoom != 0) {
 				// Need to change the current room
-				strcpy(room.statusLine(), "");
+				room.statusLine()[0] = '\0';
 				bool remoteFlag = fields.getField(OLD_ROOM_NUMBER) != 0;
 				room.setRoomNumber(destRoom, remoteFlag);
 				fields.setField(NEW_ROOM_NUMBER, 0);
@@ -543,7 +543,7 @@ void Game::handleRightClickMenu() {
 	bool breakFlag = false;
 	while (!breakFlag) {
 		statusLine = room.statusLine();
-		strcpy(statusLine, "");
+		statusLine[0] = '\0';
 		room.update();
 		screen.update();
 
@@ -644,7 +644,7 @@ void Game::handleRightClickMenu() {
 		}
 	} else {
 		// Clear the status line
-		strcpy(room.statusLine(), "");
+		room.statusLine()[0] = '\0';
 	}
 }
 
@@ -660,7 +660,7 @@ void Game::handleLeftClick() {
 	player->stopWalking();
 	player->setDestHotspot(0);
 	player->setActionCtr(0);
-	strcpy(room.statusLine(), "");
+	room.statusLine()[0] = '\0';
 
 	if ((room.destRoomNumber() == 0) && (room.hotspotId() != 0)) {
 		// Handle look at hotspot
@@ -689,7 +689,8 @@ bool Game::GetTellActions() {
 	Room &room = Room::getReference();
 	StringData &strings = StringData::getReference();
 	StringList &stringList = res.stringList();
-	char *statusLine = room.statusLine();
+	char *origStatusLine = room.statusLine();
+	char *statusLine = origStatusLine;
 	uint16 *commands = &_tellCommands[1];
 	char *statusLinePos[MAX_TELL_COMMANDS][4];
 	int paramIndex = 0;
@@ -778,7 +779,7 @@ bool Game::GetTellActions() {
 
 					// Store selected entry
 					commands[_numTellCommands * 3 + 1] = selectionId;
-					strcat(statusLine, selectionName);
+					Common::strcat_s(statusLine, MAX_DESC_SIZE - (statusLine - origStatusLine), selectionName);
 				}
 
 				++paramIndex;
@@ -810,7 +811,7 @@ bool Game::GetTellActions() {
 					hotspot = res.getHotspot(selectionId);
 					assert(hotspot);
 					strings.getString(hotspot->nameId, selectionName);
-					strcat(statusLine, selectionName);
+					Common::strcat_s(statusLine, MAX_DESC_SIZE - (statusLine - origStatusLine), selectionName);
 
 					commands[_numTellCommands * 3 + 2] = selectionId;
 					++paramIndex;
@@ -872,7 +873,7 @@ bool Game::GetTellActions() {
 	if (result) {
 		_numTellCommands &= 0xff;
 		assert((_numTellCommands > 0) && (_numTellCommands <= MAX_TELL_COMMANDS));
-		strcpy(statusLinePos[0][0], "..");
+		Common::strcpy_s(statusLinePos[0][0], MAX_DESC_SIZE - (statusLinePos[0][0] - origStatusLine), "..");
 		room.update();
 		screen.update();
 	}

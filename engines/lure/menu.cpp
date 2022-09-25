@@ -385,9 +385,9 @@ uint16 PopupMenu::ShowItems(Action contextAction, uint16 roomNumber) {
 	if (numItems == 0) {
 		// No items, so add a 'nothing' to the statusLine
 		if (LureEngine::getReference().getLanguage() == Common::RU_RUS)
-			strcat(room.statusLine(), "(ybxtuj ytn)");
+			Common::strcat_s(room.statusLine(), MAX_DESC_SIZE, "(ybxtuj ytn)");
 		else
-			strcat(room.statusLine(), "(nothing)");
+			Common::strcat_s(room.statusLine(), MAX_DESC_SIZE, "(nothing)");
 	}
 
 	room.update();
