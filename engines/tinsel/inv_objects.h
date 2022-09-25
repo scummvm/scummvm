@@ -29,9 +29,9 @@ namespace Tinsel {
 
 // attribute values - not a bit bit field to prevent portability problems
 enum class InvObjAttr {
-	IO_DROPCODE = 0x01,
-	IO_ONLYINV1 = 0x02,
-	IO_ONLYINV2 = 0x04,
+	IO_ONLYINV1 = 0x01,
+	IO_ONLYINV2 = 0x02,
+	IO_DROPCODE = 0x04,
 	DEFINV1 = 0x08,
 	DEFINV2 = 0x10,
 	PERMACONV = 0x20,
